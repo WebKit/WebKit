@@ -25,13 +25,12 @@
 
 #pragma once
 
+#include "InlineIteratorBoxLegacyPath.h"
 #include "LayoutIntegrationInlineContent.h"
-#include "LayoutIntegrationRunIteratorLegacyPath.h"
 #include "LegacyRootInlineBox.h"
 
 namespace WebCore {
-
-namespace LayoutIntegration {
+namespace InlineIterator {
 
 class LineIteratorLegacyPath {
 public:
@@ -76,25 +75,25 @@ public:
 
     bool atEnd() const { return !m_rootInlineBox; }
 
-    RunIteratorLegacyPath firstRun() const
+    BoxIteratorLegacyPath firstRun() const
     {
         return { m_rootInlineBox->firstLeafDescendant() };
     }
 
-    RunIteratorLegacyPath lastRun() const
+    BoxIteratorLegacyPath lastRun() const
     {
         return { m_rootInlineBox->lastLeafDescendant() };
     }
 
 
-    RunIteratorLegacyPath logicalStartRun() const
+    BoxIteratorLegacyPath logicalStartRun() const
     {
-        return { *m_rootInlineBox, RunIteratorLegacyPath::LogicalOrder::Start };
+        return { *m_rootInlineBox, BoxIteratorLegacyPath::LogicalOrder::Start };
     }
 
-    RunIteratorLegacyPath logicalEndRun() const
+    BoxIteratorLegacyPath logicalEndRun() const
     {
-        return { *m_rootInlineBox, RunIteratorLegacyPath::LogicalOrder::End };
+        return { *m_rootInlineBox, BoxIteratorLegacyPath::LogicalOrder::End };
     }
 
 private:

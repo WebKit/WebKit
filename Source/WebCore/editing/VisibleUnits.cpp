@@ -31,9 +31,9 @@
 #include "HTMLBRElement.h"
 #include "HTMLElement.h"
 #include "HTMLNames.h"
+#include "InlineIteratorBox.h"
+#include "InlineIteratorLine.h"
 #include "InlineRunAndOffset.h"
-#include "LayoutIntegrationLineIterator.h"
-#include "LayoutIntegrationRunIterator.h"
 #include "NodeTraversal.h"
 #include "Range.h"
 #include "RenderBlockFlow.h"
@@ -124,12 +124,12 @@ static Position nextLineCandidatePosition(Node* node, const VisiblePosition& vis
     return Position();
 }
 
-static bool isTextOrLineBreakRun(LayoutIntegration::RunIterator run)
+static bool isTextOrLineBreakRun(InlineIterator::BoxIterator run)
 {
     return run && (run->isText() || run->renderer().isBR());
 }
 
-static LayoutIntegration::RunIterator previousTextOrLineBreakRun(LayoutIntegration::RunIterator run)
+static InlineIterator::BoxIterator previousTextOrLineBreakRun(InlineIterator::BoxIterator run)
 {
     while (run) {
         run.traversePreviousOnLineInLogicalOrder();
@@ -139,7 +139,7 @@ static LayoutIntegration::RunIterator previousTextOrLineBreakRun(LayoutIntegrati
     return { };
 }
 
-static LayoutIntegration::RunIterator nextTextOrLineBreakRun(LayoutIntegration::RunIterator run)
+static InlineIterator::BoxIterator nextTextOrLineBreakRun(InlineIterator::BoxIterator run)
 {
     while (run) {
         run.traverseNextOnLineInLogicalOrder();
@@ -149,7 +149,7 @@ static LayoutIntegration::RunIterator nextTextOrLineBreakRun(LayoutIntegration::
     return { };
 }
 
-static LayoutIntegration::RunIterator startTextOrLineBreakRun(LayoutIntegration::LineIterator line)
+static InlineIterator::BoxIterator startTextOrLineBreakRun(InlineIterator::LineIterator line)
 {
     auto run = line->logicalStartRun();
     if (isTextOrLineBreakRun(run))
@@ -157,7 +157,7 @@ static LayoutIntegration::RunIterator startTextOrLineBreakRun(LayoutIntegration:
     return nextTextOrLineBreakRun(run);
 }
 
-static LayoutIntegration::RunIterator endTextOrLineBreakRun(LayoutIntegration::LineIterator line)
+static InlineIterator::BoxIterator endTextOrLineBreakRun(InlineIterator::LineIterator line)
 {
     auto run = line->logicalEndRun();
     if (isTextOrLineBreakRun(run))
@@ -165,7 +165,7 @@ static LayoutIntegration::RunIterator endTextOrLineBreakRun(LayoutIntegration::L
     return previousTextOrLineBreakRun(run);
 }
 
-static const LayoutIntegration::RunIterator logicallyPreviousRun(const VisiblePosition& visiblePosition, LayoutIntegration::RunIterator startRun, bool& previousBoxInDifferentLine)
+static const InlineIterator::BoxIterator logicallyPreviousRun(const VisiblePosition& visiblePosition, InlineIterator::BoxIterator startRun, bool& previousBoxInDifferentLine)
 {
     if (auto previousRun = previousTextOrLineBreakRun(startRun))
         return previousRun;
@@ -203,7 +203,7 @@ static const LayoutIntegration::RunIterator logicallyPreviousRun(const VisiblePo
 }
 
 
-static const LayoutIntegration::RunIterator logicallyNextRun(const VisiblePosition& visiblePosition, LayoutIntegration::RunIterator startRun, bool& nextBoxInDifferentLine)
+static const InlineIterator::BoxIterator logicallyNextRun(const VisiblePosition& visiblePosition, InlineIterator::BoxIterator startRun, bool& nextBoxInDifferentLine)
 {
     if (auto nextRun = nextTextOrLineBreakRun(startRun))
         return nextRun;
@@ -240,7 +240,7 @@ static const LayoutIntegration::RunIterator logicallyNextRun(const VisiblePositi
     return { };
 }
 
-static UBreakIterator* wordBreakIteratorForMinOffsetBoundary(const VisiblePosition& visiblePosition, LayoutIntegration::TextRunIterator textRun,
+static UBreakIterator* wordBreakIteratorForMinOffsetBoundary(const VisiblePosition& visiblePosition, InlineIterator::TextBoxIterator textRun,
     unsigned& previousRunLength, bool& previousRunInDifferentLine, Vector<UChar, 1024>& string)
 {
     previousRunInDifferentLine = false;
@@ -255,7 +255,7 @@ static UBreakIterator* wordBreakIteratorForMinOffsetBoundary(const VisiblePositi
     string.clear();
 
     if (previousRun) {
-        auto& previousTextRun = downcast<LayoutIntegration::TextRunIterator>(previousRun);
+        auto& previousTextRun = downcast<InlineIterator::TextBoxIterator>(previousRun);
         previousRunLength = previousTextRun->length();
         append(string, previousTextRun->text());
     }
@@ -264,7 +264,7 @@ static UBreakIterator* wordBreakIteratorForMinOffsetBoundary(const VisiblePositi
     return wordBreakIterator(StringView(string.data(), string.size()));
 }
 
-static UBreakIterator* wordBreakIteratorForMaxOffsetBoundary(const VisiblePosition& visiblePosition, LayoutIntegration::TextRunIterator textRun,
+static UBreakIterator* wordBreakIteratorForMaxOffsetBoundary(const VisiblePosition& visiblePosition, InlineIterator::TextBoxIterator textRun,
     bool& nextRunInDifferentLine, Vector<UChar, 1024>& string)
 {
     nextRunInDifferentLine = false;
@@ -280,7 +280,7 @@ static UBreakIterator* wordBreakIteratorForMaxOffsetBoundary(const VisiblePositi
     append(string, textRun->text());
 
     if (nextRun) {
-        auto& nextTextRun = downcast<LayoutIntegration::TextRunIterator>(nextRun);
+        auto& nextTextRun = downcast<InlineIterator::TextBoxIterator>(nextRun);
         append(string, nextTextRun->text());
     }
 
@@ -315,7 +315,7 @@ static VisiblePosition visualWordPosition(const VisiblePosition& visiblePosition
     visiblePosition.deepEquivalent().document()->updateLayoutIgnorePendingStylesheets();
 
     TextDirection blockDirection = directionOfEnclosingBlock(visiblePosition.deepEquivalent());
-    LayoutIntegration::RunIterator previouslyVisitedRun;
+    InlineIterator::BoxIterator previouslyVisitedRun;
     VisiblePosition current = visiblePosition;
     std::optional<VisiblePosition> previousPosition;
     UBreakIterator* iter = nullptr;
@@ -340,7 +340,7 @@ static VisiblePosition visualWordPosition(const VisiblePosition& visiblePosition
             continue;
         }
 
-        auto& textRun = downcast<LayoutIntegration::TextRunIterator>(run);
+        auto& textRun = downcast<InlineIterator::TextBoxIterator>(run);
         unsigned previousRunLength = 0;
         bool previousRunInDifferentLine = false;
         bool nextRunInDifferentLine = false;
@@ -764,7 +764,7 @@ static VisiblePosition startPositionForLine(const VisiblePosition& c, LineEndpoi
             startRun.traverseNextOnLine();
     }
 
-    return is<Text>(*startNode) ? Position(downcast<Text>(startNode), downcast<LayoutIntegration::PathTextRun>(*startRun).start())
+    return is<Text>(*startNode) ? Position(downcast<Text>(startNode), downcast<InlineIterator::TextBox>(*startRun).start())
         : positionBeforeNode(startNode);
 }
 
@@ -837,8 +837,8 @@ static VisiblePosition endPositionForLine(const VisiblePosition& c, LineEndpoint
     Position pos;
     if (is<HTMLBRElement>(*endNode))
         pos = positionBeforeNode(endNode);
-    else if (is<LayoutIntegration::PathTextRun>(*endRun) && is<Text>(*endNode)) {
-        auto& endTextRun = downcast<LayoutIntegration::PathTextRun>(*endRun);
+    else if (is<InlineIterator::TextBox>(*endRun) && is<Text>(*endNode)) {
+        auto& endTextRun = downcast<InlineIterator::TextBox>(*endRun);
         int endOffset = endTextRun.start();
         if (!endTextRun.isLineBreak())
             endOffset += endTextRun.length();
@@ -929,7 +929,7 @@ bool isLogicalEndOfLine(const VisiblePosition& p)
     return p.isNotNull() && p == logicalEndOfLine(p);
 }
 
-static inline IntPoint absoluteLineDirectionPointToLocalPointInBlock(LayoutIntegration::LineIterator& line, int lineDirectionPoint)
+static inline IntPoint absoluteLineDirectionPointToLocalPointInBlock(InlineIterator::LineIterator& line, int lineDirectionPoint)
 {
     auto& containingBlock = line->containingBlock();
     FloatPoint absoluteBlockPoint = containingBlock.localToAbsolute(FloatPoint()) - toFloatSize(containingBlock.scrollPosition());
@@ -961,7 +961,7 @@ VisiblePosition previousLinePosition(const VisiblePosition& visiblePosition, int
     if (!renderer)
         return VisiblePosition();
 
-    LayoutIntegration::LineIterator line;
+    InlineIterator::LineIterator line;
     if (auto run = visiblePosition.inlineRunAndOffset().run) {
         line = run->line()->previous();
         // We want to skip zero height boxes.
@@ -1011,7 +1011,7 @@ VisiblePosition nextLinePosition(const VisiblePosition& visiblePosition, int lin
     if (!node->renderer())
         return VisiblePosition();
 
-    LayoutIntegration::LineIterator line;
+    InlineIterator::LineIterator line;
     if (auto run = visiblePosition.inlineRunAndOffset().run) {
         line = run->line()->next();
         // We want to skip zero height boxes.

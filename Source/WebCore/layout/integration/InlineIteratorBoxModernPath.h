@@ -32,17 +32,16 @@
 #include "TextBoxSelectableRange.h"
 
 namespace WebCore {
+namespace InlineIterator {
 
-namespace LayoutIntegration {
-
-class RunIteratorModernPath {
+class BoxIteratorModernPath {
 public:
-    RunIteratorModernPath(const InlineContent& inlineContent)
+    BoxIteratorModernPath(const LayoutIntegration::InlineContent& inlineContent)
         : m_inlineContent(&inlineContent)
     {
         setAtEnd();
     }
-    RunIteratorModernPath(const InlineContent& inlineContent, size_t startIndex)
+    BoxIteratorModernPath(const LayoutIntegration::InlineContent& inlineContent, size_t startIndex)
         : m_inlineContent(&inlineContent)
         , m_boxIndex(startIndex)
     {
@@ -175,16 +174,13 @@ public:
         traversePreviousOnLine();
     }
 
-    bool operator==(const RunIteratorModernPath& other) const { return m_inlineContent == other.m_inlineContent && m_boxIndex == other.m_boxIndex; }
+    bool operator==(const BoxIteratorModernPath& other) const { return m_inlineContent == other.m_inlineContent && m_boxIndex == other.m_boxIndex; }
 
     bool atEnd() const { return m_boxIndex == boxes().size(); }
     const InlineDisplay::Box& box() const { return boxes()[m_boxIndex]; }
+    auto& inlineContent() const { return *m_inlineContent; }
 
 private:
-    friend class LineIteratorModernPath;
-    friend class PathRun;
-    friend class RunIterator;
-
     void traverseNextLeaf()
     {
         ASSERT(!atEnd());
@@ -203,8 +199,8 @@ private:
 
     void setAtEnd() { m_boxIndex = boxes().size(); }
 
-    const InlineContent::Boxes& boxes() const { return m_inlineContent->boxes; }
-    const Line& line() const { return m_inlineContent->lineForBox(box()); }
+    const LayoutIntegration::InlineContent::Boxes& boxes() const { return m_inlineContent->boxes; }
+    const LayoutIntegration::Line& line() const { return m_inlineContent->lineForBox(box()); }
 
     enum class HyphenMode { Include, Ignore };
     TextRun createTextRun(HyphenMode hyphenMode) const
@@ -226,7 +222,7 @@ private:
         return textRun;
     };
 
-    RefPtr<const InlineContent> m_inlineContent;
+    RefPtr<const LayoutIntegration::InlineContent> m_inlineContent;
     size_t m_boxIndex { 0 };
 };
 

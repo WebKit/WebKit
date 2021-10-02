@@ -28,9 +28,9 @@
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 #include "FloatRect.h"
+#include "InlineIteratorBox.h"
+#include "InlineIteratorLine.h"
 #include "LayoutIntegrationBoxTree.h"
-#include "LayoutIntegrationLineIterator.h"
-#include "LayoutIntegrationRunIterator.h"
 #include "LayoutPoint.h"
 #include "LayoutState.h"
 #include "RenderObjectEnums.h"
@@ -96,10 +96,10 @@ public:
     void paint(PaintInfo&, const LayoutPoint& paintOffset);
     bool hitTest(const HitTestRequest&, HitTestResult&, const HitTestLocation&, const LayoutPoint& accumulatedOffset, HitTestAction);
 
-    TextRunIterator textRunsFor(const RenderText&) const;
-    RunIterator runFor(const RenderElement&) const;
-    LineIterator firstLine() const;
-    LineIterator lastLine() const;
+    InlineIterator::TextBoxIterator textRunsFor(const RenderText&) const;
+    InlineIterator::BoxIterator runFor(const RenderElement&) const;
+    InlineIterator::LineIterator firstLine() const;
+    InlineIterator::LineIterator lastLine() const;
 
     LayoutRect firstInlineBoxRect(const RenderInline&) const;
     LayoutRect enclosingBorderBoxRectFor(const RenderInline&) const;

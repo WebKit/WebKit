@@ -26,21 +26,20 @@
 #pragma once
 
 #include "FontBaseline.h"
-#include "LayoutIntegrationLineIteratorLegacyPath.h"
-#include "LayoutIntegrationLineIteratorModernPath.h"
+#include "InlineIteratorLineLegacyPath.h"
+#include "InlineIteratorLineModernPath.h"
 #include <wtf/Variant.h>
 
 namespace WebCore {
-
-namespace LayoutIntegration {
+namespace InlineIterator {
 
 class LineIterator;
 class PathIterator;
-class RunIterator;
+class BoxIterator;
 
 struct EndLineIterator { };
 
-class PathLine {
+class Line {
 public:
     using PathVariant = Variant<
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
@@ -49,7 +48,7 @@ public:
         LineIteratorLegacyPath
     >;
 
-    PathLine(PathVariant&&);
+    Line(PathVariant&&);
 
     LayoutUnit top() const;
     LayoutUnit bottom() const;
@@ -82,22 +81,22 @@ public:
 
     bool isFirst() const;
 
-    RunIterator firstRun() const;
-    RunIterator lastRun() const;
+    BoxIterator firstRun() const;
+    BoxIterator lastRun() const;
 
     LineIterator next() const;
     LineIterator previous() const;
 
-    RunIterator closestRunForPoint(const IntPoint& pointInContents, bool editableOnly) const;
-    RunIterator closestRunForLogicalLeftPosition(int position, bool editableOnly = false) const;
+    BoxIterator closestRunForPoint(const IntPoint& pointInContents, bool editableOnly) const;
+    BoxIterator closestRunForLogicalLeftPosition(int position, bool editableOnly = false) const;
 
-    RunIterator logicalStartRun() const;
-    RunIterator logicalEndRun() const;
-    RunIterator logicalStartRunWithNode() const;
-    RunIterator logicalEndRunWithNode() const;
+    BoxIterator logicalStartRun() const;
+    BoxIterator logicalEndRun() const;
+    BoxIterator logicalStartRunWithNode() const;
+    BoxIterator logicalEndRunWithNode() const;
     
-    RunIterator firstSelectedBox() const;
-    RunIterator lastSelectedBox() const;
+    BoxIterator firstSelectedBox() const;
+    BoxIterator lastSelectedBox() const;
 
 private:
     friend class LineIterator;
@@ -109,8 +108,8 @@ class LineIterator {
 public:
     LineIterator() : m_line(LineIteratorLegacyPath { nullptr }) { };
     LineIterator(const LegacyRootInlineBox* rootInlineBox) : m_line(LineIteratorLegacyPath { rootInlineBox }) { };
-    LineIterator(PathLine::PathVariant&&);
-    LineIterator(const PathLine&);
+    LineIterator(Line::PathVariant&&);
+    LineIterator(const Line&);
 
     LineIterator& operator++() { return traverseNext(); }
     LineIterator& traverseNext();
@@ -124,13 +123,13 @@ public:
     bool operator==(EndLineIterator) const { return atEnd(); }
     bool operator!=(EndLineIterator) const { return !atEnd(); }
 
-    const PathLine& operator*() const { return m_line; }
-    const PathLine* operator->() const { return &m_line; }
+    const Line& operator*() const { return m_line; }
+    const Line* operator->() const { return &m_line; }
 
     bool atEnd() const;
 
 private:
-    PathLine m_line;
+    Line m_line;
 };
 
 LineIterator firstLineFor(const RenderBlockFlow&);
@@ -138,132 +137,132 @@ LineIterator lastLineFor(const RenderBlockFlow&);
 
 // -----------------------------------------------
 
-inline PathLine::PathLine(PathVariant&& path)
+inline Line::Line(PathVariant&& path)
     : m_pathVariant(WTFMove(path))
 {
 }
 
-inline LayoutUnit PathLine::top() const
+inline LayoutUnit Line::top() const
 {
     return WTF::switchOn(m_pathVariant, [](const auto& path) {
         return path.top();
     });
 }
 
-inline LayoutUnit PathLine::bottom() const
+inline LayoutUnit Line::bottom() const
 {
     return WTF::switchOn(m_pathVariant, [](const auto& path) {
         return path.bottom();
     });
 }
 
-inline LayoutUnit PathLine::selectionTop() const
+inline LayoutUnit Line::selectionTop() const
 {
     return WTF::switchOn(m_pathVariant, [](const auto& path) {
         return path.selectionTop();
     });
 }
 
-inline LayoutUnit PathLine::selectionTopForHitTesting() const
+inline LayoutUnit Line::selectionTopForHitTesting() const
 {
     return WTF::switchOn(m_pathVariant, [](const auto& path) {
         return path.selectionTopForHitTesting();
     });
 }
 
-inline LayoutUnit PathLine::selectionBottom() const
+inline LayoutUnit Line::selectionBottom() const
 {
     return WTF::switchOn(m_pathVariant, [](const auto& path) {
         return path.selectionBottom();
     });
 }
 
-inline LayoutUnit PathLine::selectionHeight() const
+inline LayoutUnit Line::selectionHeight() const
 {
     return selectionBottom() - selectionTop();
 }
 
-inline LayoutUnit PathLine::lineBoxTop() const
+inline LayoutUnit Line::lineBoxTop() const
 {
     return WTF::switchOn(m_pathVariant, [](const auto& path) {
         return path.lineBoxTop();
     });
 }
 
-inline LayoutUnit PathLine::lineBoxBottom() const
+inline LayoutUnit Line::lineBoxBottom() const
 {
     return WTF::switchOn(m_pathVariant, [](const auto& path) {
         return path.lineBoxBottom();
     });
 }
 
-inline LayoutRect PathLine::selectionRect() const
+inline LayoutRect Line::selectionRect() const
 {
     return { LayoutPoint { contentLogicalLeft(), selectionTop() }, LayoutPoint { contentLogicalRight(), selectionBottom() } };
 }
 
-inline float PathLine::y() const
+inline float Line::y() const
 {
     return WTF::switchOn(m_pathVariant, [](const auto& path) {
         return path.y();
     });
 }
 
-inline float PathLine::contentLogicalLeft() const
+inline float Line::contentLogicalLeft() const
 {
     return WTF::switchOn(m_pathVariant, [](const auto& path) {
         return path.contentLogicalLeft();
     });
 }
 
-inline float PathLine::contentLogicalRight() const
+inline float Line::contentLogicalRight() const
 {
     return WTF::switchOn(m_pathVariant, [](const auto& path) {
         return path.contentLogicalRight();
     });
 }
 
-inline float PathLine::contentLogicalWidth() const
+inline float Line::contentLogicalWidth() const
 {
     return contentLogicalRight() - contentLogicalLeft();
 }
 
-inline float PathLine::logicalHeight() const
+inline float Line::logicalHeight() const
 {
     return WTF::switchOn(m_pathVariant, [](const auto& path) {
         return path.logicalHeight();
     });
 }
 
-inline bool PathLine::isHorizontal() const
+inline bool Line::isHorizontal() const
 {
     return WTF::switchOn(m_pathVariant, [](const auto& path) {
         return path.isHorizontal();
     });
 }
 
-inline FontBaseline PathLine::baselineType() const
+inline FontBaseline Line::baselineType() const
 {
     return WTF::switchOn(m_pathVariant, [](const auto& path) {
         return path.baselineType();
     });
 }
 
-inline const RenderBlockFlow& PathLine::containingBlock() const
+inline const RenderBlockFlow& Line::containingBlock() const
 {
     return WTF::switchOn(m_pathVariant, [](const auto& path) -> const RenderBlockFlow& {
         return path.containingBlock();
     });
 }
 
-inline const LegacyRootInlineBox* PathLine::legacyRootInlineBox() const
+inline const LegacyRootInlineBox* Line::legacyRootInlineBox() const
 {
     return WTF::switchOn(m_pathVariant, [](const auto& path) {
         return path.legacyRootInlineBox();
     });
 }
 
-inline bool PathLine::isFirst() const
+inline bool Line::isFirst() const
 {
     return !previous();
 }

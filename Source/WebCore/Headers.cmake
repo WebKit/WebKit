@@ -795,14 +795,14 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     layout/formattingContexts/inline/display/InlineDisplayBox.h
     layout/formattingContexts/inline/InlineRect.h
 
+    layout/integration/InlineIteratorBox.h
+    layout/integration/InlineIteratorBoxLegacyPath.h
+    layout/integration/InlineIteratorBoxModernPath.h
+    layout/integration/InlineIteratorLine.h
+    layout/integration/InlineIteratorLineLegacyPath.h
+    layout/integration/InlineIteratorLineModernPath.h
     layout/integration/LayoutIntegrationInlineContent.h
     layout/integration/LayoutIntegrationLine.h
-    layout/integration/LayoutIntegrationLineIterator.h
-    layout/integration/LayoutIntegrationLineIteratorLegacyPath.h
-    layout/integration/LayoutIntegrationLineIteratorModernPath.h
-    layout/integration/LayoutIntegrationRunIterator.h
-    layout/integration/LayoutIntegrationRunIteratorLegacyPath.h
-    layout/integration/LayoutIntegrationRunIteratorModernPath.h
     layout/layouttree/LayoutBox.h
 
     loader/CanvasActivityRecord.h

@@ -391,7 +391,7 @@ InlineContent& LineLayout::ensureInlineContent()
     return *m_inlineContent;
 }
 
-TextRunIterator LineLayout::textRunsFor(const RenderText& renderText) const
+InlineIterator::TextBoxIterator LineLayout::textRunsFor(const RenderText& renderText) const
 {
     if (!m_inlineContent)
         return { };
@@ -401,10 +401,10 @@ TextRunIterator LineLayout::textRunsFor(const RenderText& renderText) const
     if (!firstIndex)
         return { };
 
-    return LayoutIntegration::textRunFor(*m_inlineContent, *firstIndex);
+    return InlineIterator::textRunFor(*m_inlineContent, *firstIndex);
 }
 
-RunIterator LineLayout::runFor(const RenderElement& renderElement) const
+InlineIterator::BoxIterator LineLayout::runFor(const RenderElement& renderElement) const
 {
     if (!m_inlineContent)
         return { };
@@ -414,23 +414,23 @@ RunIterator LineLayout::runFor(const RenderElement& renderElement) const
     if (!firstIndex)
         return { };
 
-    return LayoutIntegration::runFor(*m_inlineContent, *firstIndex);
+    return InlineIterator::runFor(*m_inlineContent, *firstIndex);
 }
 
-LineIterator LineLayout::firstLine() const
+InlineIterator::LineIterator LineLayout::firstLine() const
 {
     if (!m_inlineContent)
         return { };
 
-    return { LineIteratorModernPath(*m_inlineContent, 0) };
+    return { InlineIterator::LineIteratorModernPath(*m_inlineContent, 0) };
 }
 
-LineIterator LineLayout::lastLine() const
+InlineIterator::LineIterator LineLayout::lastLine() const
 {
     if (!m_inlineContent)
         return { };
 
-    return { LineIteratorModernPath(*m_inlineContent, m_inlineContent->lines.isEmpty() ? 0 : m_inlineContent->lines.size() - 1) };
+    return { InlineIterator::LineIteratorModernPath(*m_inlineContent, m_inlineContent->lines.isEmpty() ? 0 : m_inlineContent->lines.size() - 1) };
 }
 
 LayoutRect LineLayout::firstInlineBoxRect(const RenderInline& renderInline) const

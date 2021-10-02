@@ -26,9 +26,9 @@
 #include "FontMetrics.h"
 #include "HTMLElement.h"
 #include "HTMLWBRElement.h"
+#include "InlineIteratorBox.h"
+#include "InlineIteratorLine.h"
 #include "InlineRunAndOffset.h"
-#include "LayoutIntegrationLineIterator.h"
-#include "LayoutIntegrationRunIterator.h"
 #include "LegacyInlineElementBox.h"
 #include "LegacyRootInlineBox.h"
 #include "LogicalSelectionOffsetCaches.h"
@@ -144,7 +144,7 @@ VisiblePosition RenderLineBreak::positionForPoint(const LayoutPoint&, const Rend
 
 IntRect RenderLineBreak::linesBoundingBox() const
 {
-    auto run = LayoutIntegration::runFor(*this);
+    auto run = InlineIterator::runFor(*this);
     if (!run)
         return { };
 
@@ -153,7 +153,7 @@ IntRect RenderLineBreak::linesBoundingBox() const
 
 void RenderLineBreak::absoluteRects(Vector<IntRect>& rects, const LayoutPoint& accumulatedOffset) const
 {
-    auto box = LayoutIntegration::runFor(*this);
+    auto box = InlineIterator::runFor(*this);
     if (!box)
         return;
 
@@ -163,7 +163,7 @@ void RenderLineBreak::absoluteRects(Vector<IntRect>& rects, const LayoutPoint& a
 
 void RenderLineBreak::absoluteQuads(Vector<FloatQuad>& quads, bool* wasFixed) const
 {
-    auto box = LayoutIntegration::runFor(*this);
+    auto box = InlineIterator::runFor(*this);
     if (!box)
         return;
 
@@ -180,7 +180,7 @@ void RenderLineBreak::updateFromStyle()
 #if PLATFORM(IOS_FAMILY)
 void RenderLineBreak::collectSelectionGeometries(Vector<SelectionGeometry>& rects, unsigned, unsigned)
 {
-    auto run = LayoutIntegration::runFor(*this);
+    auto run = InlineIterator::runFor(*this);
 
     if (!run)
         return;

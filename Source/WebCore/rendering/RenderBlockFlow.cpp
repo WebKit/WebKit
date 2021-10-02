@@ -33,9 +33,9 @@
 #include "HTMLParserIdioms.h"
 #include "HTMLTextAreaElement.h"
 #include "HitTestLocation.h"
-#include "LayoutIntegrationLineIterator.h"
+#include "InlineIteratorBox.h"
+#include "InlineIteratorLine.h"
 #include "LayoutIntegrationLineLayout.h"
-#include "LayoutIntegrationRunIterator.h"
 #include "LayoutRepainter.h"
 #include "LegacyInlineTextBox.h"
 #include "LegacyLineLayout.h"
@@ -3041,7 +3041,7 @@ void RenderBlockFlow::adjustForBorderFit(LayoutUnit x, LayoutUnit& left, LayoutU
     // We don't deal with relative positioning.  Our assumption is that you shrink to fit the lines without accounting
     // for either overflow or translations via relative positioning.
     if (childrenInline()) {
-        for (auto line = LayoutIntegration::firstLineFor(*this); line; line.traverseNext()) {
+        for (auto line = InlineIterator::firstLineFor(*this); line; line.traverseNext()) {
             left = std::min(left, x + LayoutUnit(line->contentLogicalLeft()));
             right = std::max(right, x + LayoutUnit(ceilf(line->contentLogicalRight())));
         }
@@ -3248,7 +3248,7 @@ LayoutUnit RenderBlockFlow::adjustSelectionTopForPrecedingBlock(LayoutUnit top) 
     if (!offsetToBlockBefore.height())
         return top;
 
-    if (auto lastLine = LayoutIntegration::lastLineFor(*blockBefore)) {
+    if (auto lastLine = InlineIterator::lastLineFor(*blockBefore)) {
         RenderObject::HighlightState lastLineSelectionState = lastLine->selectionState();
         if (lastLineSelectionState != RenderObject::HighlightState::Inside && lastLineSelectionState != RenderObject::HighlightState::Start)
             return top;
@@ -3274,11 +3274,11 @@ GapRects RenderBlockFlow::inlineSelectionGaps(RenderBlock& rootBlock, const Layo
         return { };
     }
 
-    auto hasSelectedChildren = [&](const LayoutIntegration::LineIterator& line) {
+    auto hasSelectedChildren = [&](const InlineIterator::LineIterator& line) {
         return line->selectionState() != RenderObject::HighlightState::None;
     };
 
-    auto lineSelectionGap = [&](const LayoutIntegration::LineIterator& line, LayoutUnit selTop, LayoutUnit selHeight) -> GapRects {
+    auto lineSelectionGap = [&](const InlineIterator::LineIterator& line, LayoutUnit selTop, LayoutUnit selHeight) -> GapRects {
         RenderObject::HighlightState lineState = line->selectionState();
 
         bool leftGap, rightGap;
@@ -3331,8 +3331,8 @@ GapRects RenderBlockFlow::inlineSelectionGaps(RenderBlock& rootBlock, const Layo
         return result;
     };
 
-    LayoutIntegration::LineIterator lastSelectedLine;
-    LayoutIntegration::LineIterator line = LayoutIntegration::firstLineFor(*this);
+    InlineIterator::LineIterator lastSelectedLine;
+    InlineIterator::LineIterator line = InlineIterator::firstLineFor(*this);
     for (; line && !hasSelectedChildren(line); line.traverseNext()) { }
 
     GapRects result;
@@ -3358,7 +3358,7 @@ GapRects RenderBlockFlow::inlineSelectionGaps(RenderBlock& rootBlock, const Layo
 
     if (containsStart && !lastSelectedLine)
         // VisibleSelection must start just after our last line.
-        lastSelectedLine = LayoutIntegration::lastLineFor(*this);
+        lastSelectedLine = InlineIterator::lastLineFor(*this);
 
     if (lastSelectedLine && selectionState() != HighlightState::End && selectionState() != HighlightState::Both) {
         // Update our lastY to be the bottom of the last selected line.
@@ -3455,7 +3455,7 @@ bool RenderBlockFlow::containsNonZeroBidiLevel() const
     return false;
 }
 
-static Position positionForRun(const RenderBlockFlow& flow, LayoutIntegration::RunIterator run, bool start)
+static Position positionForRun(const RenderBlockFlow& flow, InlineIterator::BoxIterator run, bool start)
 {
     if (!run)
         return Position();
@@ -3463,10 +3463,10 @@ static Position positionForRun(const RenderBlockFlow& flow, LayoutIntegration::R
     if (!run->renderer().nonPseudoNode())
         return makeDeprecatedLegacyPosition(flow.nonPseudoElement(), start ? flow.caretMinOffset() : flow.caretMaxOffset());
 
-    if (!is<LayoutIntegration::TextRunIterator>(run))
+    if (!is<InlineIterator::TextBoxIterator>(run))
         return makeDeprecatedLegacyPosition(run->renderer().nonPseudoNode(), start ? run->renderer().caretMinOffset() : run->renderer().caretMaxOffset());
 
-    auto& textRun = downcast<LayoutIntegration::TextRunIterator>(run);
+    auto& textRun = downcast<InlineIterator::TextBoxIterator>(run);
     return makeDeprecatedLegacyPosition(textRun->renderer().nonPseudoNode(), start ? textRun->start() : textRun->end());
 }
 
@@ -3519,7 +3519,7 @@ RenderText* RenderBlockFlow::findClosestTextAtAbsolutePoint(const FloatPoint& po
     // Only check the gaps between the root line boxes. We deliberately ignore overflow because
     // experience has shown that hit tests on an exploded text node can fail when within the
     // overflow fragment.
-    for (auto current = LayoutIntegration::firstLineFor(blockFlow), last = LayoutIntegration::lastLineFor(blockFlow); current && current != last; current.traverseNext()) {
+    for (auto current = InlineIterator::firstLineFor(blockFlow), last = InlineIterator::lastLineFor(blockFlow); current && current != last; current.traverseNext()) {
         float currentBottom = current->y() + current->logicalHeight();
         if (localPoint.y() < currentBottom)
             return nullptr;
@@ -3539,7 +3539,7 @@ VisiblePosition RenderBlockFlow::positionForPointWithInlineChildren(const Layout
 {
     ASSERT(childrenInline());
 
-    auto firstLine = LayoutIntegration::firstLineFor(*this);
+    auto firstLine = InlineIterator::firstLineFor(*this);
 
     if (!firstLine)
         return createVisiblePosition(0, Affinity::Downstream);
@@ -3548,9 +3548,9 @@ VisiblePosition RenderBlockFlow::positionForPointWithInlineChildren(const Layout
     bool blocksAreFlipped = style().isFlippedBlocksWritingMode();
 
     // look for the closest line box in the root box which is at the passed-in y coordinate
-    LayoutIntegration::RunIterator closestRun;
-    LayoutIntegration::LineIterator firstLineWithChildren;
-    LayoutIntegration::LineIterator lastLineWithChildren;
+    InlineIterator::BoxIterator closestRun;
+    InlineIterator::LineIterator firstLineWithChildren;
+    InlineIterator::LineIterator lastLineWithChildren;
     for (auto line = firstLine; line; line.traverseNext()) {
         if (fragment && line->legacyRootInlineBox() && line->legacyRootInlineBox()->containingFragment() != fragment)
             continue;

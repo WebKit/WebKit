@@ -47,12 +47,12 @@
 #include "HTMLLIElement.h"
 #include "HTMLNames.h"
 #include "HTMLSpanElement.h"
+#include "InlineIteratorBox.h"
 #include "InsertIntoTextNodeCommand.h"
 #include "InsertLineBreakCommand.h"
 #include "InsertNodeBeforeCommand.h"
 #include "InsertParagraphSeparatorCommand.h"
 #include "InsertTextCommand.h"
-#include "LayoutIntegrationRunIterator.h"
 #include "LegacyInlineTextBox.h"
 #include "MergeIdenticalElementsCommand.h"
 #include "NodeTraversal.h"
@@ -1016,7 +1016,7 @@ void CompositeEditCommand::deleteInsignificantText(Text& textNode, unsigned star
         if (!textRenderer)
             return;
 
-        auto run = LayoutIntegration::firstTextRunInTextOrderFor(*textRenderer);
+        auto run = InlineIterator::firstTextRunInTextOrderFor(*textRenderer);
         if (!run) {
             wholeTextNodeIsEmpty = true;
             return;
@@ -1027,7 +1027,7 @@ void CompositeEditCommand::deleteInsignificantText(Text& textNode, unsigned star
             return;
 
         unsigned removed = 0;
-        LayoutIntegration::TextRunIterator previousRun;
+        InlineIterator::TextBoxIterator previousRun;
 
         // This loop structure works to process all gaps preceding a box,
         // and also will look at the gap after the last box.

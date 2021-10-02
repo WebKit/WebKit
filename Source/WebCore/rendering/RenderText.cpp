@@ -35,10 +35,10 @@
 #include "FrameView.h"
 #include "HTMLParserIdioms.h"
 #include "Hyphenation.h"
+#include "InlineIteratorBox.h"
+#include "InlineIteratorLine.h"
 #include "InlineRunAndOffset.h"
-#include "LayoutIntegrationLineIterator.h"
 #include "LayoutIntegrationLineLayout.h"
-#include "LayoutIntegrationRunIterator.h"
 #include "LegacyEllipsisBox.h"
 #include "Range.h"
 #include "RenderBlock.h"
@@ -307,7 +307,7 @@ String RenderText::originalText() const
 
 void RenderText::absoluteRects(Vector<IntRect>& rects, const LayoutPoint& accumulatedOffset) const
 {
-    for (auto& run : LayoutIntegration::textRunsFor(*this)) {
+    for (auto& run : InlineIterator::textRunsFor(*this)) {
         auto rect = run.rect();
         rects.append(enclosingIntRect(FloatRect(accumulatedOffset + rect.location(), rect.size())));
     }
@@ -326,7 +326,7 @@ Vector<IntRect> RenderText::absoluteRectsForRange(unsigned start, unsigned end, 
 // Full annotations are added in this class.
 void RenderText::collectSelectionGeometries(Vector<SelectionGeometry>& rects, unsigned start, unsigned end)
 {
-    for (auto run = LayoutIntegration::firstTextRunFor(*this); run; run = run.traverseNextTextRun()) {
+    for (auto run = InlineIterator::firstTextRunFor(*this); run; run = run.traverseNextTextRun()) {
         LayoutRect rect;
         if (start <= run->start() && run->end() <= end)
             rect = run->selectionRect(start, end);
@@ -386,7 +386,7 @@ void RenderText::collectSelectionGeometries(Vector<SelectionGeometry>& rects, un
 }
 #endif
 
-static FloatRect boundariesForTextRun(const LayoutIntegration::PathTextRun& run)
+static FloatRect boundariesForTextRun(const InlineIterator::TextBox& run)
 {
     if (is<SVGInlineTextBox>(run.legacyInlineBox()))
         return downcast<SVGInlineTextBox>(*run.legacyInlineBox()).calculateBoundaries();
@@ -394,7 +394,7 @@ static FloatRect boundariesForTextRun(const LayoutIntegration::PathTextRun& run)
     return run.rect();
 }
 
-static IntRect ellipsisRectForTextRun(const LayoutIntegration::PathTextRun& run, unsigned start, unsigned end)
+static IntRect ellipsisRectForTextRun(const InlineIterator::TextBox& run, unsigned start, unsigned end)
 {
     // FIXME: No ellipsis support in modern path yet.
     if (!run.legacyInlineBox())
@@ -428,7 +428,7 @@ enum class ClippingOption { NoClipping, ClipToEllipsis };
 static Vector<FloatQuad> collectAbsoluteQuads(const RenderText& textRenderer, bool* wasFixed, ClippingOption clipping)
 {
     Vector<FloatQuad> quads;
-    for (auto& run : LayoutIntegration::textRunsFor(textRenderer)) {
+    for (auto& run : InlineIterator::textRunsFor(textRenderer)) {
         auto boundaries = boundariesForTextRun(run);
 
         // Shorten the width of this text box if it ends in an ellipsis.
@@ -457,7 +457,7 @@ void RenderText::absoluteQuads(Vector<FloatQuad>& quads, bool* wasFixed) const
     quads.appendVector(collectAbsoluteQuads(*this, wasFixed, ClippingOption::NoClipping));
 }
 
-static FloatRect localQuadForTextRun(const LayoutIntegration::PathTextRun& run, unsigned start, unsigned end, bool useSelectionHeight)
+static FloatRect localQuadForTextRun(const InlineIterator::TextBox& run, unsigned start, unsigned end, bool useSelectionHeight)
 {
     unsigned realEnd = std::min(run.end(), end);
     LayoutRect boxSelectionRect = run.selectionRect(start, realEnd);
@@ -490,7 +490,7 @@ Vector<FloatQuad> RenderText::absoluteQuadsForRange(unsigned start, unsigned end
     end = std::min(end, static_cast<unsigned>(INT_MAX));
 
     Vector<FloatQuad> quads;
-    for (auto& run : LayoutIntegration::textRunsFor(*this)) {
+    for (auto& run : InlineIterator::textRunsFor(*this)) {
         if (ignoreEmptyTextSelections && !run.selectableRange().intersects(start, end))
             continue;
         if (start <= run.start() && run.end() <= end) {
@@ -523,7 +523,7 @@ Position RenderText::positionForPoint(const LayoutPoint& point)
 
 enum ShouldAffinityBeDownstream { AlwaysDownstream, AlwaysUpstream, UpstreamIfPositionIsNotAtStart };
 
-static bool lineDirectionPointFitsInBox(int pointLineDirection, const LayoutIntegration::TextRunIterator& textRun, ShouldAffinityBeDownstream& shouldAffinityBeDownstream)
+static bool lineDirectionPointFitsInBox(int pointLineDirection, const InlineIterator::TextBoxIterator& textRun, ShouldAffinityBeDownstream& shouldAffinityBeDownstream)
 {
     shouldAffinityBeDownstream = AlwaysDownstream;
 
@@ -560,7 +560,7 @@ static bool lineDirectionPointFitsInBox(int pointLineDirection, const LayoutInte
     return false;
 }
 
-static VisiblePosition createVisiblePositionForBox(const LayoutIntegration::RunIterator& run, unsigned offset, ShouldAffinityBeDownstream shouldAffinityBeDownstream)
+static VisiblePosition createVisiblePositionForBox(const InlineIterator::BoxIterator& run, unsigned offset, ShouldAffinityBeDownstream shouldAffinityBeDownstream)
 {
     auto affinity = VisiblePosition::defaultAffinity;
     switch (shouldAffinityBeDownstream) {
@@ -577,7 +577,7 @@ static VisiblePosition createVisiblePositionForBox(const LayoutIntegration::RunI
     return run->renderer().createVisiblePosition(offset, affinity);
 }
 
-static VisiblePosition createVisiblePositionAfterAdjustingOffsetForBiDi(const LayoutIntegration::TextRunIterator& run, unsigned offset, ShouldAffinityBeDownstream shouldAffinityBeDownstream)
+static VisiblePosition createVisiblePositionAfterAdjustingOffsetForBiDi(const InlineIterator::TextBoxIterator& run, unsigned offset, ShouldAffinityBeDownstream shouldAffinityBeDownstream)
 {
     if (offset && offset < run->length())
         return createVisiblePositionForBox(run, run->start() + offset, shouldAffinityBeDownstream);
@@ -604,7 +604,7 @@ static VisiblePosition createVisiblePositionAfterAdjustingOffsetForBiDi(const La
 
         if (!previousRun || previousRun->bidiLevel() < run->bidiLevel()) {
             // e.g. left of D in aDC12BAb
-            LayoutIntegration::RunIterator rightmostRun = run;
+            InlineIterator::BoxIterator rightmostRun = run;
             for (auto nextRun = run->nextOnLineIgnoringLineBreak(); nextRun; nextRun.traverseNextOnLineIgnoringLineBreak()) {
                 if (nextRun->bidiLevel() < run->bidiLevel())
                     break;
@@ -637,7 +637,7 @@ static VisiblePosition createVisiblePositionAfterAdjustingOffsetForBiDi(const La
 
     if (!nextRun || nextRun->bidiLevel() < run->bidiLevel()) {
         // e.g. right of A in aDC12BAb
-        LayoutIntegration::RunIterator leftmostRun = run;
+        InlineIterator::BoxIterator leftmostRun = run;
         for (auto previousRun = run->previousOnLineIgnoringLineBreak(); previousRun; previousRun.traversePreviousOnLineIgnoringLineBreak()) {
             if (previousRun->bidiLevel() < run->bidiLevel())
                 break;
@@ -654,7 +654,7 @@ static VisiblePosition createVisiblePositionAfterAdjustingOffsetForBiDi(const La
 
 VisiblePosition RenderText::positionForPoint(const LayoutPoint& point, const RenderFragmentContainer*)
 {
-    auto firstRun = LayoutIntegration::firstTextRunFor(*this);
+    auto firstRun = InlineIterator::firstTextRunFor(*this);
 
     if (!firstRun || !text().length())
         return createVisiblePosition(0, Affinity::Downstream);
@@ -663,7 +663,7 @@ VisiblePosition RenderText::positionForPoint(const LayoutPoint& point, const Ren
     LayoutUnit pointBlockDirection = firstRun->isHorizontal() ? point.y() : point.x();
     bool blocksAreFlipped = style().isFlippedBlocksWritingMode();
 
-    LayoutIntegration::TextRunIterator lastRun;
+    InlineIterator::TextBoxIterator lastRun;
     for (auto run = firstRun; run; run.traverseNextTextRun()) {
         if (run->isLineBreak() && !run->previousOnLine() && run->nextOnLine() && !run->nextOnLine()->isLineBreak())
             run.traverseNextTextRun();
@@ -1272,7 +1272,7 @@ Vector<std::pair<unsigned, unsigned>> RenderText::draggedContentRangesBetweenOff
 
 IntPoint RenderText::firstRunLocation() const
 {
-    auto first = LayoutIntegration::firstTextRunFor(*this);
+    auto first = InlineIterator::firstTextRunFor(*this);
     if (!first)
         return { };
     return IntPoint(first->rect().location());
@@ -1576,7 +1576,7 @@ float RenderText::width(unsigned from, unsigned len, const FontCascade& f, float
 
 IntRect RenderText::linesBoundingBox() const
 {
-    auto first = LayoutIntegration::firstTextRunFor(*this);
+    auto first = InlineIterator::firstTextRunFor(*this);
     if (!first)
         return { };
 
@@ -1634,7 +1634,7 @@ LayoutRect RenderText::collectSelectionGeometriesForLineBoxes(const RenderLayerM
 
     LayoutRect resultRect;
 
-    for (auto& run : LayoutIntegration::textRunsFor(*this)) {
+    for (auto& run : InlineIterator::textRunsFor(*this)) {
         LayoutRect rect;
         rect.unite(run.selectionRect(startOffset, endOffset));
         rect.unite(ellipsisRectForTextRun(run, startOffset, endOffset));
@@ -1664,7 +1664,7 @@ LayoutRect RenderText::selectionRectForRepaint(const RenderLayerModelObject* rep
 
 int RenderText::caretMinOffset() const
 {
-    auto first = LayoutIntegration::firstTextRunFor(*this);
+    auto first = InlineIterator::firstTextRunFor(*this);
     if (!first)
         return 0;
 
@@ -1677,7 +1677,7 @@ int RenderText::caretMinOffset() const
 
 int RenderText::caretMaxOffset() const
 {
-    auto first = LayoutIntegration::firstTextRunFor(*this);
+    auto first = InlineIterator::firstTextRunFor(*this);
     if (!first)
         return text().length();
 
@@ -1691,7 +1691,7 @@ int RenderText::caretMaxOffset() const
 unsigned RenderText::countRenderedCharacterOffsetsUntil(unsigned offset) const
 {
     unsigned result = 0;
-    for (auto& run : LayoutIntegration::textRunsFor(*this)) {
+    for (auto& run : InlineIterator::textRunsFor(*this)) {
         auto start = run.start();
         auto length = run.length();
         if (offset < start)
@@ -1708,7 +1708,7 @@ unsigned RenderText::countRenderedCharacterOffsetsUntil(unsigned offset) const
 enum class OffsetType { Character, Caret };
 static bool containsOffset(const RenderText& text, unsigned offset, OffsetType type)
 {
-    for (auto box = LayoutIntegration::firstTextRunInTextOrderFor(text); box; box.traverseNextTextRunInTextOrder()) {
+    for (auto box = InlineIterator::firstTextRunInTextOrderFor(text); box; box.traverseNextTextRunInTextOrder()) {
         auto start = box->start();
         if (offset < start)
             return false;
@@ -1737,7 +1737,7 @@ bool RenderText::containsCaretOffset(unsigned offset) const
 
 bool RenderText::hasRenderedText() const
 {
-    for (auto& box : LayoutIntegration::textRunsFor(*this)) {
+    for (auto& box : InlineIterator::textRunsFor(*this)) {
         if (box.length())
             return true;
     }

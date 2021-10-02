@@ -580,7 +580,7 @@ bool TextIterator::handleTextNode()
         return true;
     }
 
-    m_textRun = LayoutIntegration::firstTextRunInTextOrderFor(renderer);
+    m_textRun = InlineIterator::firstTextRunInTextOrderFor(renderer);
 
     bool shouldHandleFirstLetter = !m_handledFirstLetter && is<RenderTextFragment>(renderer) && !m_offset;
     if (shouldHandleFirstLetter)
@@ -607,7 +607,7 @@ void TextIterator::handleTextRun()
         return;
     }
 
-    auto firstTextRun = LayoutIntegration::firstTextRunInTextOrderFor(renderer);
+    auto firstTextRun = InlineIterator::firstTextRunInTextOrderFor(renderer);
 
     String rendererText = renderer.text();
     unsigned start = m_offset;
@@ -701,7 +701,7 @@ void TextIterator::handleTextNodeFirstLetter(RenderTextFragment& renderer)
         if (auto* firstLetterText = firstRenderTextInFirstLetter(firstLetter)) {
             m_handledFirstLetter = true;
             m_remainingTextRun = m_textRun;
-            m_textRun = LayoutIntegration::firstTextRunInTextOrderFor(*firstLetterText);
+            m_textRun = InlineIterator::firstTextRunInTextOrderFor(*firstLetterText);
             m_firstLetterText = firstLetterText;
         }
     }

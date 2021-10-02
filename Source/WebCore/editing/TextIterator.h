@@ -27,7 +27,7 @@
 
 #include "CharacterRange.h"
 #include "FindOptions.h"
-#include "LayoutIntegrationRunIterator.h"
+#include "InlineIteratorBox.h"
 #include "SimpleRange.h"
 #include "TextIteratorBehavior.h"
 #include <wtf/Vector.h>
@@ -149,10 +149,10 @@ private:
 
     // Used when there is still some pending text from the current node; when these are false and null, we go back to normal iterating.
     Node* m_nodeForAdditionalNewline { nullptr };
-    LayoutIntegration::TextRunIterator m_textRun;
+    InlineIterator::TextBoxIterator m_textRun;
 
     // Used when iterating over :first-letter text to save pointer to remaining text box.
-    LayoutIntegration::TextRunIterator m_remainingTextRun;
+    InlineIterator::TextBoxIterator m_remainingTextRun;
 
     // Used to point to RenderText object for :first-letter.
     RenderText* m_firstLetterText { nullptr };

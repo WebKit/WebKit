@@ -24,21 +24,21 @@
  */
 
 #include "config.h"
-#include "LayoutIntegrationLineIterator.h"
+#include "InlineIteratorLine.h"
 
+#include "InlineIteratorBox.h"
 #include "LayoutIntegrationLineLayout.h"
-#include "LayoutIntegrationRunIterator.h"
 #include "RenderBlockFlow.h"
 
 namespace WebCore {
-namespace LayoutIntegration {
+namespace InlineIterator {
 
-LineIterator::LineIterator(PathLine::PathVariant&& pathVariant)
+LineIterator::LineIterator(Line::PathVariant&& pathVariant)
     : m_line(WTFMove(pathVariant))
 {
 }
 
-LineIterator::LineIterator(const PathLine& line)
+LineIterator::LineIterator(const Line& line)
     : m_line(line)
 {
 }
@@ -91,45 +91,45 @@ LineIterator lastLineFor(const RenderBlockFlow& flow)
     return { LineIteratorLegacyPath { flow.lastRootBox() } };
 }
 
-LineIterator PathLine::next() const
+LineIterator Line::next() const
 {
     return LineIterator(*this).traverseNext();
 }
 
-LineIterator PathLine::previous() const
+LineIterator Line::previous() const
 {
     return LineIterator(*this).traversePrevious();
 }
 
-RunIterator PathLine::firstRun() const
+BoxIterator Line::firstRun() const
 {
-    return WTF::switchOn(m_pathVariant, [](auto& path) -> RunIterator {
+    return WTF::switchOn(m_pathVariant, [](auto& path) -> BoxIterator {
         return { path.firstRun() };
     });
 }
 
-RunIterator PathLine::lastRun() const
+BoxIterator Line::lastRun() const
 {
-    return WTF::switchOn(m_pathVariant, [](auto& path) -> RunIterator {
+    return WTF::switchOn(m_pathVariant, [](auto& path) -> BoxIterator {
         return { path.lastRun() };
     });
 }
 
-RunIterator PathLine::logicalStartRun() const
+BoxIterator Line::logicalStartRun() const
 {
-    return WTF::switchOn(m_pathVariant, [](auto& path) -> RunIterator {
+    return WTF::switchOn(m_pathVariant, [](auto& path) -> BoxIterator {
         return { path.logicalStartRun() };
     });
 }
 
-RunIterator PathLine::logicalEndRun() const
+BoxIterator Line::logicalEndRun() const
 {
-    return WTF::switchOn(m_pathVariant, [](auto& path) -> RunIterator {
+    return WTF::switchOn(m_pathVariant, [](auto& path) -> BoxIterator {
         return { path.logicalEndRun() };
     });
 }
 
-RunIterator PathLine::logicalStartRunWithNode() const
+BoxIterator Line::logicalStartRunWithNode() const
 {
     for (auto run = logicalStartRun(); run; run.traverseNextOnLineInLogicalOrder()) {
         if (run->renderer().node())
@@ -138,7 +138,7 @@ RunIterator PathLine::logicalStartRunWithNode() const
     return { };
 }
 
-RunIterator PathLine::logicalEndRunWithNode() const
+BoxIterator Line::logicalEndRunWithNode() const
 {
     for (auto run = logicalEndRun(); run; run.traversePreviousOnLineInLogicalOrder()) {
         if (run->renderer().node())
@@ -147,12 +147,12 @@ RunIterator PathLine::logicalEndRunWithNode() const
     return { };
 }
 
-RunIterator PathLine::closestRunForPoint(const IntPoint& pointInContents, bool editableOnly) const
+BoxIterator Line::closestRunForPoint(const IntPoint& pointInContents, bool editableOnly) const
 {
     return closestRunForLogicalLeftPosition(isHorizontal() ? pointInContents.x() : pointInContents.y(), editableOnly);
 }
 
-RunIterator PathLine::closestRunForLogicalLeftPosition(int leftPosition, bool editableOnly) const
+BoxIterator Line::closestRunForLogicalLeftPosition(int leftPosition, bool editableOnly) const
 {
     auto isEditable = [&](auto run) {
         return run && run->renderer().node() && run->renderer().node()->hasEditableStyle();
@@ -189,22 +189,22 @@ RunIterator PathLine::closestRunForLogicalLeftPosition(int leftPosition, bool ed
     return closestRun;
 }
 
-int PathLine::blockDirectionPointInLine() const
+int Line::blockDirectionPointInLine() const
 {
     return !containingBlock().style().isFlippedBlocksWritingMode() ? std::max(top(), selectionTop()) : std::min(bottom(), selectionBottom());
 }
 
-LayoutUnit PathLine::selectionTopAdjustedForPrecedingBlock() const
+LayoutUnit Line::selectionTopAdjustedForPrecedingBlock() const
 {
     return containingBlock().adjustSelectionTopForPrecedingBlock(selectionTop());
 }
 
-LayoutUnit PathLine::selectionHeightAdjustedForPrecedingBlock() const
+LayoutUnit Line::selectionHeightAdjustedForPrecedingBlock() const
 {
     return std::max<LayoutUnit>(0, selectionBottom() - selectionTopAdjustedForPrecedingBlock());
 }
 
-RenderObject::HighlightState PathLine::selectionState() const
+RenderObject::HighlightState Line::selectionState() const
 {
     auto& block = containingBlock();
     if (block.selectionState() == RenderObject::None)
@@ -229,7 +229,7 @@ RenderObject::HighlightState PathLine::selectionState() const
     return state;
 }
 
-RunIterator PathLine::firstSelectedBox() const
+BoxIterator Line::firstSelectedBox() const
 {
     for (auto box = firstRun(); box; box.traverseNextOnLine()) {
         if (box->selectionState() != RenderObject::HighlightState::None)
@@ -238,7 +238,7 @@ RunIterator PathLine::firstSelectedBox() const
     return { };
 }
 
-RunIterator PathLine::lastSelectedBox() const
+BoxIterator Line::lastSelectedBox() const
 {
     for (auto box = lastRun(); box; box.traversePreviousOnLine()) {
         if (box->selectionState() != RenderObject::HighlightState::None)

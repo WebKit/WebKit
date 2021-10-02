@@ -24,10 +24,10 @@
  */
 
 #include "config.h"
-#include "LayoutIntegrationRunIterator.h"
+#include "InlineIteratorBox.h"
 
 
-#include "LayoutIntegrationLineIterator.h"
+#include "InlineIteratorLine.h"
 #include "LayoutIntegrationLineLayout.h"
 #include "RenderBlockFlow.h"
 #include "RenderCombineText.h"
@@ -35,79 +35,79 @@
 #include "RenderView.h"
 
 namespace WebCore {
-namespace LayoutIntegration {
+namespace InlineIterator {
 
-RunIterator::RunIterator(PathRun::PathVariant&& pathVariant)
+BoxIterator::BoxIterator(Box::PathVariant&& pathVariant)
     : m_run(WTFMove(pathVariant))
 {
 }
 
-RunIterator::RunIterator(const PathRun& run)
+BoxIterator::BoxIterator(const Box& run)
     : m_run(run)
 {
 }
 
-bool RunIterator::operator==(const RunIterator& other) const
+bool BoxIterator::operator==(const BoxIterator& other) const
 {
     return m_run.m_pathVariant == other.m_run.m_pathVariant;
 }
 
-bool RunIterator::atEnd() const
+bool BoxIterator::atEnd() const
 {
     return WTF::switchOn(m_run.m_pathVariant, [](auto& path) {
         return path.atEnd();
     });
 }
 
-RunIterator PathRun::nextOnLine() const
+BoxIterator Box::nextOnLine() const
 {
-    return RunIterator(*this).traverseNextOnLine();
+    return BoxIterator(*this).traverseNextOnLine();
 }
 
-RunIterator PathRun::previousOnLine() const
+BoxIterator Box::previousOnLine() const
 {
-    return RunIterator(*this).traversePreviousOnLine();
+    return BoxIterator(*this).traversePreviousOnLine();
 }
 
-RunIterator PathRun::nextOnLineIgnoringLineBreak() const
+BoxIterator Box::nextOnLineIgnoringLineBreak() const
 {
-    return RunIterator(*this).traverseNextOnLineIgnoringLineBreak();
+    return BoxIterator(*this).traverseNextOnLineIgnoringLineBreak();
 }
 
-RunIterator PathRun::previousOnLineIgnoringLineBreak() const
+BoxIterator Box::previousOnLineIgnoringLineBreak() const
 {
-    return RunIterator(*this).traversePreviousOnLineIgnoringLineBreak();
+    return BoxIterator(*this).traversePreviousOnLineIgnoringLineBreak();
 }
 
-LineIterator PathRun::line() const
+LineIterator Box::line() const
 {
-    return WTF::switchOn(m_pathVariant, [](const RunIteratorLegacyPath& path) {
+    return WTF::switchOn(m_pathVariant, [](const BoxIteratorLegacyPath& path) {
         return LineIterator(LineIteratorLegacyPath(&path.rootInlineBox()));
     }
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-    , [](const RunIteratorModernPath& path) {
-        return LineIterator(LineIteratorModernPath(*path.m_inlineContent, path.box().lineIndex()));
+    , [](const BoxIteratorModernPath& path) {
+        return LineIterator(LineIteratorModernPath(path.inlineContent(), path.box().lineIndex()));
     }
 #endif
     );
 }
 
-const RenderStyle& PathRun::style() const
+const RenderStyle& Box::style() const
 {
     return line()->isFirst() ? renderer().firstLineStyle() : renderer().style();
 }
 
-TextRunIterator PathTextRun::nextTextRun() const
+TextBoxIterator TextBox::nextTextRun() const
 {
-    return TextRunIterator(*this).traverseNextTextRun();
+    return TextBoxIterator(*this).traverseNextTextRun();
 }
 
-TextRunIterator PathTextRun::nextTextRunInTextOrder() const
+TextBoxIterator TextBox::nextTextRunInTextOrder() const
 {
-    return TextRunIterator(*this).traverseNextTextRunInTextOrder();
+    return TextBoxIterator(*this).traverseNextTextRunInTextOrder();
 }
 
-LayoutRect PathTextRun::selectionRect(unsigned rangeStart, unsigned rangeEnd) const
+LayoutRect TextBox::selectionRect(unsigned rangeStart, unsigned rangeEnd) const
 {
     auto [clampedStart, clampedEnd] = selectableRange().clamp(rangeStart, rangeEnd);
 
@@ -126,13 +126,13 @@ LayoutRect PathTextRun::selectionRect(unsigned rangeStart, unsigned rangeEnd) co
     return snappedSelectionRect(selectionRect, logicalRight(), selectionTop, selectionHeight, isHorizontal());
 }
 
-bool PathTextRun::isCombinedText() const
+bool TextBox::isCombinedText() const
 {
     auto& renderer = this->renderer();
     return is<RenderCombineText>(renderer) && downcast<RenderCombineText>(renderer).isCombined();
 }
 
-const FontCascade& PathTextRun::fontCascade() const
+const FontCascade& TextBox::fontCascade() const
 {
     if (isCombinedText())
         return downcast<RenderCombineText>(renderer()).textCombineFont();
@@ -140,27 +140,27 @@ const FontCascade& PathTextRun::fontCascade() const
     return style().fontCascade();
 }
 
-RenderObject::HighlightState PathRun::selectionState() const
+RenderObject::HighlightState Box::selectionState() const
 {
     if (isText()) {
-        auto& text = downcast<PathTextRun>(*this);
+        auto& text = downcast<TextBox>(*this);
         auto& renderer = text.renderer();
         return renderer.view().selection().highlightStateForTextBox(renderer, text.selectableRange());
     }
     return renderer().selectionState();
 }
 
-TextRunIterator::TextRunIterator(PathRun::PathVariant&& pathVariant)
-    : RunIterator(WTFMove(pathVariant))
+TextBoxIterator::TextBoxIterator(Box::PathVariant&& pathVariant)
+    : BoxIterator(WTFMove(pathVariant))
 {
 }
 
-TextRunIterator::TextRunIterator(const PathRun& run)
-    : RunIterator(run)
+TextBoxIterator::TextBoxIterator(const Box& run)
+    : BoxIterator(run)
 {
 }
 
-TextRunIterator& TextRunIterator::traverseNextTextRun()
+TextBoxIterator& TextBoxIterator::traverseNextTextRun()
 {
     WTF::switchOn(m_run.m_pathVariant, [](auto& path) {
         path.traverseNextTextRun();
@@ -168,7 +168,7 @@ TextRunIterator& TextRunIterator::traverseNextTextRun()
     return *this;
 }
 
-TextRunIterator& TextRunIterator::traverseNextTextRunInTextOrder()
+TextBoxIterator& TextBoxIterator::traverseNextTextRunInTextOrder()
 {
     WTF::switchOn(m_run.m_pathVariant, [](auto& path) {
         path.traverseNextTextRunInTextOrder();
@@ -176,7 +176,7 @@ TextRunIterator& TextRunIterator::traverseNextTextRunInTextOrder()
     return *this;
 }
 
-RunIterator& RunIterator::traverseNextOnLine()
+BoxIterator& BoxIterator::traverseNextOnLine()
 {
     WTF::switchOn(m_run.m_pathVariant, [](auto& path) {
         path.traverseNextOnLine();
@@ -184,7 +184,7 @@ RunIterator& RunIterator::traverseNextOnLine()
     return *this;
 }
 
-RunIterator& RunIterator::traversePreviousOnLine()
+BoxIterator& BoxIterator::traversePreviousOnLine()
 {
     WTF::switchOn(m_run.m_pathVariant, [](auto& path) {
         path.traversePreviousOnLine();
@@ -192,7 +192,7 @@ RunIterator& RunIterator::traversePreviousOnLine()
     return *this;
 }
 
-RunIterator& RunIterator::traverseNextOnLineIgnoringLineBreak()
+BoxIterator& BoxIterator::traverseNextOnLineIgnoringLineBreak()
 {
     do {
         traverseNextOnLine();
@@ -200,7 +200,7 @@ RunIterator& RunIterator::traverseNextOnLineIgnoringLineBreak()
     return *this;
 }
 
-RunIterator& RunIterator::traversePreviousOnLineIgnoringLineBreak()
+BoxIterator& BoxIterator::traversePreviousOnLineIgnoringLineBreak()
 {
     do {
         traversePreviousOnLine();
@@ -208,7 +208,7 @@ RunIterator& RunIterator::traversePreviousOnLineIgnoringLineBreak()
     return *this;
 }
 
-RunIterator& RunIterator::traverseNextOnLineInLogicalOrder()
+BoxIterator& BoxIterator::traverseNextOnLineInLogicalOrder()
 {
     WTF::switchOn(m_run.m_pathVariant, [](auto& path) {
         path.traverseNextOnLineInLogicalOrder();
@@ -216,7 +216,7 @@ RunIterator& RunIterator::traverseNextOnLineInLogicalOrder()
     return *this;
 }
 
-RunIterator& RunIterator::traversePreviousOnLineInLogicalOrder()
+BoxIterator& BoxIterator::traversePreviousOnLineInLogicalOrder()
 {
     WTF::switchOn(m_run.m_pathVariant, [](auto& path) {
         path.traversePreviousOnLineInLogicalOrder();
@@ -224,17 +224,17 @@ RunIterator& RunIterator::traversePreviousOnLineInLogicalOrder()
     return *this;
 }
 
-TextRunIterator firstTextRunFor(const RenderText& text)
+TextBoxIterator firstTextRunFor(const RenderText& text)
 {
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-    if (auto* lineLayout = LineLayout::containing(text))
+    if (auto* lineLayout = LayoutIntegration::LineLayout::containing(text))
         return lineLayout->textRunsFor(text);
 #endif
 
-    return { RunIteratorLegacyPath { text.firstTextBox() } };
+    return { BoxIteratorLegacyPath { text.firstTextBox() } };
 }
 
-TextRunIterator firstTextRunInTextOrderFor(const RenderText& text)
+TextBoxIterator firstTextRunInTextOrderFor(const RenderText& text)
 {
     if (text.firstTextBox() && text.containsReversedText()) {
         Vector<const LegacyInlineBox*> sortedTextBoxes;
@@ -244,27 +244,27 @@ TextRunIterator firstTextRunInTextOrderFor(const RenderText& text)
             return LegacyInlineTextBox::compareByStart(downcast<LegacyInlineTextBox>(a), downcast<LegacyInlineTextBox>(b));
         });
         auto* first = sortedTextBoxes[0];
-        return { RunIteratorLegacyPath { first, WTFMove(sortedTextBoxes), 0 } };
+        return { BoxIteratorLegacyPath { first, WTFMove(sortedTextBoxes), 0 } };
     }
 
     return firstTextRunFor(text);
 }
 
-TextRunIterator textRunFor(const LegacyInlineTextBox* legacyInlineTextBox)
+TextBoxIterator textRunFor(const LegacyInlineTextBox* legacyInlineTextBox)
 {
-    return { RunIteratorLegacyPath { legacyInlineTextBox } };
+    return { BoxIteratorLegacyPath { legacyInlineTextBox } };
 }
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-TextRunIterator textRunFor(const InlineContent& content, const InlineDisplay::Box& box)
+TextBoxIterator textRunFor(const LayoutIntegration::InlineContent& content, const InlineDisplay::Box& box)
 {
     return textRunFor(content, content.indexForBox(box));
 }
 
-TextRunIterator textRunFor(const InlineContent& content, size_t boxIndex)
+TextBoxIterator textRunFor(const LayoutIntegration::InlineContent& content, size_t boxIndex)
 {
     ASSERT(content.boxes[boxIndex].text());
-    return { RunIteratorModernPath { content, boxIndex } };
+    return { BoxIteratorModernPath { content, boxIndex } };
 }
 #endif
 
@@ -273,41 +273,41 @@ TextRunRange textRunsFor(const RenderText& text)
     return { firstTextRunFor(text) };
 }
 
-RunIterator runFor(const RenderLineBreak& renderer)
+BoxIterator runFor(const RenderLineBreak& renderer)
 {
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-    if (auto* lineLayout = LineLayout::containing(renderer))
+    if (auto* lineLayout = LayoutIntegration::LineLayout::containing(renderer))
         return lineLayout->runFor(renderer);
 #endif
-    return { RunIteratorLegacyPath(renderer.inlineBoxWrapper()) };
+    return { BoxIteratorLegacyPath(renderer.inlineBoxWrapper()) };
 }
 
-RunIterator runFor(const RenderBox& renderer)
+BoxIterator runFor(const RenderBox& renderer)
 {
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-    if (auto* lineLayout = LineLayout::containing(renderer))
+    if (auto* lineLayout = LayoutIntegration::LineLayout::containing(renderer))
         return lineLayout->runFor(renderer);
 #endif
-    return { RunIteratorLegacyPath(renderer.inlineBoxWrapper()) };
+    return { BoxIteratorLegacyPath(renderer.inlineBoxWrapper()) };
 }
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-RunIterator runFor(const InlineContent& content, size_t runIndex)
+BoxIterator runFor(const LayoutIntegration::InlineContent& content, size_t runIndex)
 {
-    return { RunIteratorModernPath { content, runIndex } };
+    return { BoxIteratorModernPath { content, runIndex } };
 }
 #endif
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-const RunIteratorModernPath& PathRun::modernPath() const
+const BoxIteratorModernPath& Box::modernPath() const
 {
-    return WTF::get<RunIteratorModernPath>(m_pathVariant);
+    return WTF::get<BoxIteratorModernPath>(m_pathVariant);
 }
 #endif
 
-const RunIteratorLegacyPath& PathRun::legacyPath() const
+const BoxIteratorLegacyPath& Box::legacyPath() const
 {
-    return WTF::get<RunIteratorLegacyPath>(m_pathVariant);
+    return WTF::get<BoxIteratorLegacyPath>(m_pathVariant);
 }
 
 }

@@ -29,8 +29,8 @@
 #include "FontCascade.h"
 #include "HTMLAnchorElement.h"
 #include "HTMLNames.h"
-#include "LayoutIntegrationLineIterator.h"
-#include "LayoutIntegrationRunIterator.h"
+#include "InlineIteratorBox.h"
+#include "InlineIteratorLine.h"
 #include "LegacyInlineTextBox.h"
 #include "LegacyRootInlineBox.h"
 #include "RenderInline.h"
@@ -49,7 +49,7 @@ static bool isAncestorAndWithinBlock(const RenderInline& ancestor, const RenderO
     return false;
 }
 
-static void minLogicalTopForTextDecorationLine(const LayoutIntegration::LineIterator& line, float& minLogicalTop, const RenderElement* decorationRenderer, OptionSet<TextDecoration> textDecoration)
+static void minLogicalTopForTextDecorationLine(const InlineIterator::LineIterator& line, float& minLogicalTop, const RenderElement* decorationRenderer, OptionSet<TextDecoration> textDecoration)
 {
     for (auto run = line->firstRun(); run; run.traverseNextOnLine()) {
         if (run->renderer().isOutOfFlowPositioned())
@@ -66,7 +66,7 @@ static void minLogicalTopForTextDecorationLine(const LayoutIntegration::LineIter
     }
 }
 
-static void maxLogicalBottomForTextDecorationLine(const LayoutIntegration::LineIterator& line, float& maxLogicalBottom, const RenderElement* decorationRenderer, OptionSet<TextDecoration> textDecoration)
+static void maxLogicalBottomForTextDecorationLine(const InlineIterator::LineIterator& line, float& maxLogicalBottom, const RenderElement* decorationRenderer, OptionSet<TextDecoration> textDecoration)
 {
     for (auto run = line->firstRun(); run; run.traverseNextOnLine()) {
         if (run->renderer().isOutOfFlowPositioned())
@@ -101,7 +101,7 @@ static const RenderElement* enclosingRendererWithTextDecoration(const RenderText
     return current;
 }
     
-float computeUnderlineOffset(TextUnderlinePosition underlinePosition, TextUnderlineOffset underlineOffset, const FontMetrics& fontMetrics, const LayoutIntegration::TextRunIterator& textRun, float defaultGap)
+float computeUnderlineOffset(TextUnderlinePosition underlinePosition, TextUnderlineOffset underlineOffset, const FontMetrics& fontMetrics, const InlineIterator::TextBoxIterator& textRun, float defaultGap)
 {
     // This represents the gap between the baseline and the closest edge of the underline.
     float gap = std::max<int>(1, std::ceil(defaultGap / 2.0f));
@@ -165,7 +165,7 @@ WavyStrokeParameters getWavyStrokeParameters(float fontSize)
     return result;
 }
 
-GlyphOverflow visualOverflowForDecorations(const RenderStyle& lineStyle, const LayoutIntegration::TextRunIterator& textRun)
+GlyphOverflow visualOverflowForDecorations(const RenderStyle& lineStyle, const InlineIterator::TextBoxIterator& textRun)
 {
     ASSERT(!textRun || textRun->style() == lineStyle);
     

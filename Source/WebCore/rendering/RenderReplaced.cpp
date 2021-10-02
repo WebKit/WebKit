@@ -34,8 +34,8 @@
 #include "HTMLParserIdioms.h"
 #include "HighlightData.h"
 #include "HighlightRegister.h"
-#include "LayoutIntegrationLineIterator.h"
-#include "LayoutIntegrationRunIterator.h"
+#include "InlineIteratorBox.h"
+#include "InlineIteratorLine.h"
 #include "LayoutRepainter.h"
 #include "RenderBlock.h"
 #include "RenderFragmentedFlow.h"
@@ -689,7 +689,7 @@ void RenderReplaced::computePreferredLogicalWidths()
 VisiblePosition RenderReplaced::positionForPoint(const LayoutPoint& point, const RenderFragmentContainer* fragment)
 {
     auto [top, bottom] = [&] {
-        if (auto run = LayoutIntegration::runFor(*this)) {
+        if (auto run = InlineIterator::runFor(*this)) {
             auto line = run->line();
             return std::make_pair(line->selectionTopForHitTesting(), line->selectionBottom());
         }

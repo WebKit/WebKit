@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "LayoutIntegrationRunIteratorLegacyPath.h"
-#include "LayoutIntegrationRunIteratorModernPath.h"
+#include "InlineIteratorBoxLegacyPath.h"
+#include "InlineIteratorBoxModernPath.h"
 #include "LegacyInlineElementBox.h"
 #include <wtf/Variant.h>
 
@@ -37,24 +37,24 @@ class RenderObject;
 class RenderStyle;
 class RenderText;
 
-namespace LayoutIntegration {
+namespace InlineIterator {
 
 class LineIterator;
-class RunIterator;
-class TextRunIterator;
+class BoxIterator;
+class TextBoxIterator;
 
 struct EndIterator { };
 
-class PathRun {
+class Box {
 public:
     using PathVariant = Variant<
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-        RunIteratorModernPath,
+        BoxIteratorModernPath,
 #endif
-        RunIteratorLegacyPath
+        BoxIteratorLegacyPath
     >;
 
-    PathRun(PathVariant&&);
+    Box(PathVariant&&);
 
     bool isText() const;
 
@@ -90,29 +90,29 @@ public:
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
     const InlineDisplay::Box* inlineBox() const;
 #endif
-    RunIterator nextOnLine() const;
-    RunIterator previousOnLine() const;
-    RunIterator nextOnLineIgnoringLineBreak() const;
-    RunIterator previousOnLineIgnoringLineBreak() const;
+    BoxIterator nextOnLine() const;
+    BoxIterator previousOnLine() const;
+    BoxIterator nextOnLineIgnoringLineBreak() const;
+    BoxIterator previousOnLineIgnoringLineBreak() const;
 
     LineIterator line() const;
 
 protected:
-    friend class RunIterator;
-    friend class TextRunIterator;
+    friend class BoxIterator;
+    friend class TextBoxIterator;
 
     // To help with debugging.
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-    const RunIteratorModernPath& modernPath() const;
+    const BoxIteratorModernPath& modernPath() const;
 #endif
-    const RunIteratorLegacyPath& legacyPath() const;
+    const BoxIteratorLegacyPath& legacyPath() const;
 
     PathVariant m_pathVariant;
 };
 
-class PathTextRun : public PathRun {
+class TextBox : public Box {
 public:
-    PathTextRun(PathVariant&&);
+    TextBox(PathVariant&&);
 
     bool hasHyphen() const;
     StringView text() const;
@@ -132,244 +132,244 @@ public:
 
     TextRun createTextRun() const;
 
-    const RenderText& renderer() const { return downcast<RenderText>(PathRun::renderer()); }
-    const LegacyInlineTextBox* legacyInlineBox() const { return downcast<LegacyInlineTextBox>(PathRun::legacyInlineBox()); }
+    const RenderText& renderer() const { return downcast<RenderText>(Box::renderer()); }
+    const LegacyInlineTextBox* legacyInlineBox() const { return downcast<LegacyInlineTextBox>(Box::legacyInlineBox()); }
 
-    TextRunIterator nextTextRun() const;
-    TextRunIterator nextTextRunInTextOrder() const;
+    TextBoxIterator nextTextRun() const;
+    TextBoxIterator nextTextRunInTextOrder() const;
 };
 
-class RunIterator {
+class BoxIterator {
 public:
-    RunIterator() : m_run(RunIteratorLegacyPath { nullptr, { } }) { };
-    RunIterator(PathRun::PathVariant&&);
-    RunIterator(const PathRun&);
+    BoxIterator() : m_run(BoxIteratorLegacyPath { nullptr, { } }) { };
+    BoxIterator(Box::PathVariant&&);
+    BoxIterator(const Box&);
 
     explicit operator bool() const { return !atEnd(); }
 
-    bool operator==(const RunIterator&) const;
-    bool operator!=(const RunIterator& other) const { return !(*this == other); }
+    bool operator==(const BoxIterator&) const;
+    bool operator!=(const BoxIterator& other) const { return !(*this == other); }
 
     bool operator==(EndIterator) const { return atEnd(); }
     bool operator!=(EndIterator) const { return !atEnd(); }
 
-    const PathRun& operator*() const { return m_run; }
-    const PathRun* operator->() const { return &m_run; }
+    const Box& operator*() const { return m_run; }
+    const Box* operator->() const { return &m_run; }
 
     bool atEnd() const;
 
-    RunIterator& traverseNextOnLine();
-    RunIterator& traversePreviousOnLine();
-    RunIterator& traverseNextOnLineIgnoringLineBreak();
-    RunIterator& traversePreviousOnLineIgnoringLineBreak();
-    RunIterator& traverseNextOnLineInLogicalOrder();
-    RunIterator& traversePreviousOnLineInLogicalOrder();
+    BoxIterator& traverseNextOnLine();
+    BoxIterator& traversePreviousOnLine();
+    BoxIterator& traverseNextOnLineIgnoringLineBreak();
+    BoxIterator& traversePreviousOnLineIgnoringLineBreak();
+    BoxIterator& traverseNextOnLineInLogicalOrder();
+    BoxIterator& traversePreviousOnLineInLogicalOrder();
 
 protected:
-    PathRun m_run;
+    Box m_run;
 };
 
-class TextRunIterator : public RunIterator {
+class TextBoxIterator : public BoxIterator {
 public:
-    TextRunIterator() { }
-    TextRunIterator(PathRun::PathVariant&&);
-    TextRunIterator(const PathRun&);
+    TextBoxIterator() { }
+    TextBoxIterator(Box::PathVariant&&);
+    TextBoxIterator(const Box&);
 
-    TextRunIterator& operator++() { return traverseNextTextRun(); }
+    TextBoxIterator& operator++() { return traverseNextTextRun(); }
 
-    const PathTextRun& operator*() const { return get(); }
-    const PathTextRun* operator->() const { return &get(); }
+    const TextBox& operator*() const { return get(); }
+    const TextBox* operator->() const { return &get(); }
 
-    TextRunIterator& traverseNextTextRun();
-    TextRunIterator& traverseNextTextRunInTextOrder();
+    TextBoxIterator& traverseNextTextRun();
+    TextBoxIterator& traverseNextTextRunInTextOrder();
 
 private:
-    RunIterator& traverseNextOnLine() = delete;
-    RunIterator& traversePreviousOnLine() = delete;
-    RunIterator& traverseNextOnLineIgnoringLineBreak() = delete;
-    RunIterator& traversePreviousOnLineIgnoringLineBreak() = delete;
-    RunIterator& traverseNextOnLineInLogicalOrder() = delete;
-    RunIterator& traversePreviousOnLineInLogicalOrder() = delete;
+    BoxIterator& traverseNextOnLine() = delete;
+    BoxIterator& traversePreviousOnLine() = delete;
+    BoxIterator& traverseNextOnLineIgnoringLineBreak() = delete;
+    BoxIterator& traversePreviousOnLineIgnoringLineBreak() = delete;
+    BoxIterator& traverseNextOnLineInLogicalOrder() = delete;
+    BoxIterator& traversePreviousOnLineInLogicalOrder() = delete;
 
-    const PathTextRun& get() const { return downcast<PathTextRun>(m_run); }
+    const TextBox& get() const { return downcast<TextBox>(m_run); }
 };
 
 class TextRunRange {
 public:
-    TextRunRange(TextRunIterator begin)
+    TextRunRange(TextBoxIterator begin)
         : m_begin(begin)
     {
     }
 
-    TextRunIterator begin() const { return m_begin; }
+    TextBoxIterator begin() const { return m_begin; }
     EndIterator end() const { return { }; }
 
 private:
-    TextRunIterator m_begin;
+    TextBoxIterator m_begin;
 };
 
-TextRunIterator firstTextRunFor(const RenderText&);
-TextRunIterator firstTextRunInTextOrderFor(const RenderText&);
-TextRunIterator textRunFor(const LegacyInlineTextBox*);
+TextBoxIterator firstTextRunFor(const RenderText&);
+TextBoxIterator firstTextRunInTextOrderFor(const RenderText&);
+TextBoxIterator textRunFor(const LegacyInlineTextBox*);
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-TextRunIterator textRunFor(const InlineContent&, const InlineDisplay::Box&);
-TextRunIterator textRunFor(const InlineContent&, size_t runIndex);
+TextBoxIterator textRunFor(const LayoutIntegration::InlineContent&, const InlineDisplay::Box&);
+TextBoxIterator textRunFor(const LayoutIntegration::InlineContent&, size_t runIndex);
 #endif
 TextRunRange textRunsFor(const RenderText&);
-RunIterator runFor(const RenderLineBreak&);
-RunIterator runFor(const RenderBox&);
+BoxIterator runFor(const RenderLineBreak&);
+BoxIterator runFor(const RenderBox&);
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-RunIterator runFor(const InlineContent&, size_t runIndex);
+BoxIterator runFor(const LayoutIntegration::InlineContent&, size_t runIndex);
 #endif
 
 // -----------------------------------------------
 
-inline PathRun::PathRun(PathVariant&& path)
+inline Box::Box(PathVariant&& path)
     : m_pathVariant(WTFMove(path))
 {
 }
 
-inline bool PathRun::isText() const
+inline bool Box::isText() const
 {
     return WTF::switchOn(m_pathVariant, [](auto& path) {
         return path.isText();
     });
 }
 
-inline FloatRect PathRun::rect() const
+inline FloatRect Box::rect() const
 {
     return WTF::switchOn(m_pathVariant, [](auto& path) {
         return path.rect();
     });
 }
 
-inline bool PathRun::isHorizontal() const
+inline bool Box::isHorizontal() const
 {
     return WTF::switchOn(m_pathVariant, [](auto& path) {
         return path.isHorizontal();
     });
 }
 
-inline bool PathRun::dirOverride() const
+inline bool Box::dirOverride() const
 {
     return WTF::switchOn(m_pathVariant, [](auto& path) {
         return path.dirOverride();
     });
 }
 
-inline bool PathRun::isLineBreak() const
+inline bool Box::isLineBreak() const
 {
     return WTF::switchOn(m_pathVariant, [](auto& path) {
         return path.isLineBreak();
     });
 }
 
-inline unsigned PathRun::minimumCaretOffset() const
+inline unsigned Box::minimumCaretOffset() const
 {
     return WTF::switchOn(m_pathVariant, [](auto& path) {
         return path.minimumCaretOffset();
     });
 }
 
-inline unsigned PathRun::maximumCaretOffset() const
+inline unsigned Box::maximumCaretOffset() const
 {
     return WTF::switchOn(m_pathVariant, [](auto& path) {
         return path.maximumCaretOffset();
     });
 }
 
-inline unsigned char PathRun::bidiLevel() const
+inline unsigned char Box::bidiLevel() const
 {
     return WTF::switchOn(m_pathVariant, [](auto& path) {
         return path.bidiLevel();
     });
 }
 
-inline const RenderObject& PathRun::renderer() const
+inline const RenderObject& Box::renderer() const
 {
     return WTF::switchOn(m_pathVariant, [](auto& path) -> const RenderObject& {
         return path.renderer();
     });
 }
 
-inline const LegacyInlineBox* PathRun::legacyInlineBox() const
+inline const LegacyInlineBox* Box::legacyInlineBox() const
 {
-    if (!WTF::holds_alternative<RunIteratorLegacyPath>(m_pathVariant))
+    if (!WTF::holds_alternative<BoxIteratorLegacyPath>(m_pathVariant))
         return nullptr;
-    return WTF::get<RunIteratorLegacyPath>(m_pathVariant).legacyInlineBox();
+    return WTF::get<BoxIteratorLegacyPath>(m_pathVariant).legacyInlineBox();
 }
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-inline const InlineDisplay::Box* PathRun::inlineBox() const
+inline const InlineDisplay::Box* Box::inlineBox() const
 {
-    if (!WTF::holds_alternative<RunIteratorModernPath>(m_pathVariant))
+    if (!WTF::holds_alternative<BoxIteratorModernPath>(m_pathVariant))
         return nullptr;
-    return &WTF::get<RunIteratorModernPath>(m_pathVariant).box();
+    return &WTF::get<BoxIteratorModernPath>(m_pathVariant).box();
 }
 #endif
 
-inline bool PathTextRun::hasHyphen() const
+inline bool TextBox::hasHyphen() const
 {
     return WTF::switchOn(m_pathVariant, [](auto& path) {
         return path.hasHyphen();
     });
 }
 
-inline PathTextRun::PathTextRun(PathVariant&& path)
-    : PathRun(WTFMove(path))
+inline TextBox::TextBox(PathVariant&& path)
+    : Box(WTFMove(path))
 {
 }
 
-inline StringView PathTextRun::text() const
+inline StringView TextBox::text() const
 {
     return WTF::switchOn(m_pathVariant, [](auto& path) {
         return path.text();
     });
 }
 
-inline unsigned PathTextRun::start() const
+inline unsigned TextBox::start() const
 {
     return WTF::switchOn(m_pathVariant, [](auto& path) {
         return path.start();
     });
 }
 
-inline unsigned PathTextRun::end() const
+inline unsigned TextBox::end() const
 {
     return WTF::switchOn(m_pathVariant, [](auto& path) {
         return path.end();
     });
 }
 
-inline unsigned PathTextRun::length() const
+inline unsigned TextBox::length() const
 {
     return WTF::switchOn(m_pathVariant, [](auto& path) {
         return path.length();
     });
 }
 
-inline unsigned PathTextRun::offsetForPosition(float x) const
+inline unsigned TextBox::offsetForPosition(float x) const
 {
     return WTF::switchOn(m_pathVariant, [&](auto& path) {
         return path.offsetForPosition(x);
     });
 }
 
-inline float PathTextRun::positionForOffset(unsigned offset) const
+inline float TextBox::positionForOffset(unsigned offset) const
 {
     return WTF::switchOn(m_pathVariant, [&](auto& path) {
         return path.positionForOffset(offset);
     });
 }
 
-inline TextBoxSelectableRange PathTextRun::selectableRange() const
+inline TextBoxSelectableRange TextBox::selectableRange() const
 {
     return WTF::switchOn(m_pathVariant, [&](auto& path) {
         return path.selectableRange();
     });
 }
 
-inline TextRun PathTextRun::createTextRun() const
+inline TextRun TextBox::createTextRun() const
 {
     return WTF::switchOn(m_pathVariant, [&](auto& path) {
         return path.createTextRun();
@@ -379,10 +379,10 @@ inline TextRun PathTextRun::createTextRun() const
 }
 }
 
-SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::LayoutIntegration::PathTextRun)
-static bool isType(const WebCore::LayoutIntegration::PathRun& run) { return run.isText(); }
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::InlineIterator::TextBox)
+static bool isType(const WebCore::InlineIterator::Box& run) { return run.isText(); }
 SPECIALIZE_TYPE_TRAITS_END()
 
-SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::LayoutIntegration::TextRunIterator)
-static bool isType(const WebCore::LayoutIntegration::RunIterator& runIterator) { return !runIterator || runIterator->isText(); }
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::InlineIterator::TextBoxIterator)
+static bool isType(const WebCore::InlineIterator::BoxIterator& runIterator) { return !runIterator || runIterator->isText(); }
 SPECIALIZE_TYPE_TRAITS_END()

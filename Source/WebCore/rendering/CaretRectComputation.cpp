@@ -27,8 +27,8 @@
 #include "CaretRectComputation.h"
 
 #include "Editing.h"
-#include "LayoutIntegrationLineIterator.h"
-#include "LayoutIntegrationRunIterator.h"
+#include "InlineIteratorBox.h"
+#include "InlineIteratorLine.h"
 #include "RenderBlockFlow.h"
 #include "RenderInline.h"
 #include "RenderLineBreak.h"
@@ -109,7 +109,7 @@ static LayoutRect computeCaretRectForEmptyElement(const RenderBoxModelObject& re
     return currentStyle.isHorizontalWritingMode() ? rect : rect.transposedRect();
 }
 
-static LayoutRect computeCaretRectForLinePosition(const LayoutIntegration::LineIterator& line, float logicalLeftPosition, CaretRectMode caretRectMode)
+static LayoutRect computeCaretRectForLinePosition(const InlineIterator::LineIterator& line, float logicalLeftPosition, CaretRectMode caretRectMode)
 {
     auto& containingBlock = line->containingBlock();
     auto lineSelectionRect = line->selectionRect();
@@ -171,7 +171,7 @@ static LayoutRect computeCaretRectForText(const InlineRunAndOffset& runAndOffset
     if (!runAndOffset.run)
         return { };
 
-    auto& textRun = downcast<LayoutIntegration::TextRunIterator>(runAndOffset.run);
+    auto& textRun = downcast<InlineIterator::TextBoxIterator>(runAndOffset.run);
     auto line = textRun->line();
 
     float position = textRun->positionForOffset(runAndOffset.offset);

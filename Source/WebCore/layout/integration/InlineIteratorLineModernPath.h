@@ -27,19 +27,18 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
+#include "InlineIteratorBoxModernPath.h"
 #include "LayoutIntegrationInlineContent.h"
-#include "LayoutIntegrationRunIteratorModernPath.h"
 #include "RenderBlockFlow.h"
 
 namespace WebCore {
+namespace InlineIterator {
 
-namespace LayoutIntegration {
-
-class RunIteratorModernPath;
+class BoxIteratorModernPath;
 
 class LineIteratorModernPath {
 public:
-    LineIteratorModernPath(const InlineContent& inlineContent, size_t lineIndex)
+    LineIteratorModernPath(const LayoutIntegration::InlineContent& inlineContent, size_t lineIndex)
         : m_inlineContent(&inlineContent)
         , m_lineIndex(lineIndex)
     {
@@ -96,33 +95,33 @@ public:
 
     bool atEnd() const { return m_lineIndex == lines().size(); }
 
-    RunIteratorModernPath firstRun() const
+    BoxIteratorModernPath firstRun() const
     {
         if (!line().boxCount())
             return { *m_inlineContent };
-        auto runIterator = RunIteratorModernPath { *m_inlineContent, line().firstBoxIndex() };
+        auto runIterator = BoxIteratorModernPath { *m_inlineContent, line().firstBoxIndex() };
         if (runIterator.box().isInlineBox())
             runIterator.traverseNextOnLine();
         return runIterator;
     }
 
-    RunIteratorModernPath lastRun() const
+    BoxIteratorModernPath lastRun() const
     {
         auto boxCount = line().boxCount();
         if (!boxCount)
             return { *m_inlineContent };
-        auto runIterator = RunIteratorModernPath { *m_inlineContent, line().firstBoxIndex() + boxCount - 1 };
+        auto runIterator = BoxIteratorModernPath { *m_inlineContent, line().firstBoxIndex() + boxCount - 1 };
         if (runIterator.box().isInlineBox())
             runIterator.traversePreviousOnLine();
         return runIterator;
     }
 
-    RunIteratorModernPath logicalStartRun() const
+    BoxIteratorModernPath logicalStartRun() const
     {
         return firstRun();
     }
 
-    RunIteratorModernPath logicalEndRun() const
+    BoxIteratorModernPath logicalEndRun() const
     {
         return lastRun();
     }
@@ -130,10 +129,10 @@ public:
 private:
     void setAtEnd() { m_lineIndex = lines().size(); }
 
-    const InlineContent::Lines& lines() const { return m_inlineContent->lines; }
-    const Line& line() const { return lines()[m_lineIndex]; }
+    const LayoutIntegration::InlineContent::Lines& lines() const { return m_inlineContent->lines; }
+    const LayoutIntegration::Line& line() const { return lines()[m_lineIndex]; }
 
-    RefPtr<const InlineContent> m_inlineContent;
+    RefPtr<const LayoutIntegration::InlineContent> m_inlineContent;
     size_t m_lineIndex { 0 };
 };
 

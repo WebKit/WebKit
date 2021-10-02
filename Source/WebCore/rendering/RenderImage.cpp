@@ -44,8 +44,8 @@
 #include "HTMLMapElement.h"
 #include "HTMLNames.h"
 #include "HitTestResult.h"
-#include "LayoutIntegrationLineIterator.h"
-#include "LayoutIntegrationRunIterator.h"
+#include "InlineIteratorBox.h"
+#include "InlineIteratorLine.h"
 #include "Page.h"
 #include "PaintInfo.h"
 #include "RenderChildIterator.h"
@@ -91,7 +91,7 @@ void RenderImage::collectSelectionGeometries(Vector<SelectionGeometry>& geometri
     bool isFirstOnLine = false;
     bool isLastOnLine = false;
 
-    auto run = LayoutIntegration::runFor(*this);
+    auto run = InlineIterator::runFor(*this);
     if (!run) {
         // This is a block image.
         imageRect = IntRect(0, 0, width(), height());

@@ -33,18 +33,18 @@
 #include <wtf/Vector.h>
 
 namespace WebCore {
-namespace LayoutIntegration {
+namespace InlineIterator {
 
-class RunIteratorLegacyPath {
+class BoxIteratorLegacyPath {
 public:
-    RunIteratorLegacyPath(const LegacyInlineBox* inlineBox, Vector<const LegacyInlineBox*>&& sortedInlineBoxes = { }, size_t sortedInlineBoxIndex = 0)
+    BoxIteratorLegacyPath(const LegacyInlineBox* inlineBox, Vector<const LegacyInlineBox*>&& sortedInlineBoxes = { }, size_t sortedInlineBoxIndex = 0)
         : m_inlineBox(inlineBox)
         , m_logicalOrderCache(WTFMove(sortedInlineBoxes))
         , m_logicalOrderCacheIndex(sortedInlineBoxIndex)
     { }
 
     enum class LogicalOrder { Start, End };
-    RunIteratorLegacyPath(const LegacyRootInlineBox& root, LogicalOrder order)
+    BoxIteratorLegacyPath(const LegacyRootInlineBox& root, LogicalOrder order)
         : m_logicalOrderCache(inlineBoxesInLogicalOrder(root))
     {
         if (!m_logicalOrderCache.isEmpty()) {
@@ -117,7 +117,7 @@ public:
         traversePreviousInlineBoxInCacheOrder();
     }
 
-    bool operator==(const RunIteratorLegacyPath& other) const { return m_inlineBox == other.m_inlineBox; }
+    bool operator==(const BoxIteratorLegacyPath& other) const { return m_inlineBox == other.m_inlineBox; }
 
     bool atEnd() const { return !m_inlineBox; }
 
@@ -154,14 +154,14 @@ private:
 };
 
 
-inline void RunIteratorLegacyPath::traverseNextInlineBoxInCacheOrder()
+inline void BoxIteratorLegacyPath::traverseNextInlineBoxInCacheOrder()
 {
     ASSERT(!m_logicalOrderCache.isEmpty());
     ++m_logicalOrderCacheIndex;
     m_inlineBox = m_logicalOrderCacheIndex < m_logicalOrderCache.size() ? m_logicalOrderCache[m_logicalOrderCacheIndex] : nullptr;
 }
 
-inline void RunIteratorLegacyPath::traversePreviousInlineBoxInCacheOrder()
+inline void BoxIteratorLegacyPath::traversePreviousInlineBoxInCacheOrder()
 {
     ASSERT(!m_logicalOrderCache.isEmpty());
     if (!m_logicalOrderCacheIndex) {

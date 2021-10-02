@@ -35,9 +35,9 @@
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
 #include "HTMLTableElement.h"
+#include "InlineIteratorBox.h"
+#include "InlineIteratorLine.h"
 #include "InlineRunAndOffset.h"
-#include "LayoutIntegrationLineIterator.h"
-#include "LayoutIntegrationRunIterator.h"
 #include "LegacyInlineTextBox.h"
 #include "Logging.h"
 #include "NodeTraversal.h"
@@ -69,11 +69,11 @@ using namespace HTMLNames;
 
 static bool hasInlineRun(RenderObject& renderer)
 {
-    if (is<RenderBox>(renderer) && LayoutIntegration::runFor(downcast<RenderBox>(renderer)))
+    if (is<RenderBox>(renderer) && InlineIterator::runFor(downcast<RenderBox>(renderer)))
         return true;
-    if (is<RenderText>(renderer) && LayoutIntegration::firstTextRunFor(downcast<RenderText>(renderer)))
+    if (is<RenderText>(renderer) && InlineIterator::firstTextRunFor(downcast<RenderText>(renderer)))
         return true;
-    if (is<RenderLineBreak>(renderer) && LayoutIntegration::runFor(downcast<RenderLineBreak>(renderer)))
+    if (is<RenderLineBreak>(renderer) && InlineIterator::runFor(downcast<RenderLineBreak>(renderer)))
         return true;
     return false;
 }
@@ -739,7 +739,7 @@ Position Position::upstream(EditingBoundaryCrossingRule rule) const
         if (is<RenderText>(*renderer)) {
             auto& textRenderer = downcast<RenderText>(*renderer);
 
-            auto firstTextRun = LayoutIntegration::firstTextRunInTextOrderFor(textRenderer);
+            auto firstTextRun = InlineIterator::firstTextRunInTextOrderFor(textRenderer);
             if (!firstTextRun)
                 continue;
 
@@ -846,7 +846,7 @@ Position Position::downstream(EditingBoundaryCrossingRule rule) const
         if (is<RenderText>(*renderer)) {
             auto& textRenderer = downcast<RenderText>(*renderer);
 
-            auto firstTextRun = LayoutIntegration::firstTextRunInTextOrderFor(textRenderer);
+            auto firstTextRun = InlineIterator::firstTextRunInTextOrderFor(textRenderer);
             if (!firstTextRun)
                 continue;
 
@@ -1160,7 +1160,7 @@ static bool isNonTextLeafChild(RenderObject& object)
     return !downcast<RenderElement>(object).firstChild();
 }
 
-static LayoutIntegration::TextRunIterator searchAheadForBetterMatch(RenderText& renderer)
+static InlineIterator::TextBoxIterator searchAheadForBetterMatch(RenderText& renderer)
 {
     RenderBlock* container = renderer.containingBlock();
     RenderObject* next = &renderer;
@@ -1172,7 +1172,7 @@ static LayoutIntegration::TextRunIterator searchAheadForBetterMatch(RenderText& 
         if (isNonTextLeafChild(*next))
             return { };
         if (is<RenderText>(*next)) {
-            if (auto run = LayoutIntegration::firstTextRunInTextOrderFor(downcast<RenderText>(*next)))
+            if (auto run = InlineIterator::firstTextRunInTextOrderFor(downcast<RenderText>(*next)))
                 return run;
         }
     }
@@ -1210,17 +1210,17 @@ InlineRunAndOffset Position::inlineRunAndOffset(Affinity affinity, TextDirection
     if (!renderer)
         return { { }, caretOffset };
 
-    LayoutIntegration::RunIterator run;
+    InlineIterator::BoxIterator run;
 
     if (renderer->isBR()) {
         auto& lineBreakRenderer = downcast<RenderLineBreak>(*renderer);
         if (!caretOffset)
-            run = LayoutIntegration::runFor(lineBreakRenderer);
+            run = InlineIterator::runFor(lineBreakRenderer);
     } else if (is<RenderText>(*renderer)) {
         auto& textRenderer = downcast<RenderText>(*renderer);
 
-        auto textRun = LayoutIntegration::firstTextRunFor(textRenderer);
-        LayoutIntegration::TextRunIterator candidate;
+        auto textRun = InlineIterator::firstTextRunFor(textRenderer);
+        InlineIterator::TextBoxIterator candidate;
 
         for (; textRun; ++textRun) {
             unsigned caretMinOffset = textRun->minimumCaretOffset();
@@ -1270,7 +1270,7 @@ InlineRunAndOffset Position::inlineRunAndOffset(Affinity affinity, TextDirection
             return equivalent.inlineRunAndOffset(Affinity::Upstream, primaryDirection);
         }
         if (is<RenderBox>(*renderer)) {
-            run = LayoutIntegration::runFor(downcast<RenderBox>(*renderer));
+            run = InlineIterator::runFor(downcast<RenderBox>(*renderer));
             if (run && caretOffset > run->minimumCaretOffset() && caretOffset < run->maximumCaretOffset())
                 return { run, caretOffset };
         }

@@ -24,7 +24,7 @@
 
 #include "Color.h"
 #include "FloatPoint.h"
-#include "LayoutIntegrationRunIterator.h"
+#include "InlineIteratorBox.h"
 #include "RenderStyleConstants.h"
 #include <wtf/OptionSet.h>
 
@@ -46,7 +46,7 @@ public:
     struct Styles;
     TextDecorationPainter(GraphicsContext&, OptionSet<TextDecoration> decorations, const RenderText&, bool isFirstLine, const FontCascade&, std::optional<Styles> = std::nullopt);
     
-    void setTextRunIterator(LayoutIntegration::TextRunIterator textRun) { m_textRun = textRun; }
+    void setTextBoxIterator(InlineIterator::TextBoxIterator textRun) { m_textRun = textRun; }
     void setIsHorizontal(bool isHorizontal) { m_isHorizontal = isHorizontal; }
     void setWidth(float width) { m_width = width; }
     void setTextShadow(const ShadowData* textShadow) { m_shadow = textShadow; }
@@ -79,7 +79,7 @@ private:
     bool m_isHorizontal { true };
     const ShadowData* m_shadow { nullptr };
     const FilterOperations* m_shadowColorFilter { nullptr };
-    LayoutIntegration::TextRunIterator m_textRun;
+    InlineIterator::TextBoxIterator m_textRun;
     const FontCascade& m_font;
 
     Styles m_styles;

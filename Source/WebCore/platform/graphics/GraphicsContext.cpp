@@ -41,15 +41,15 @@
 
 namespace WebCore {
 
-class TextRunIterator {
+class TextBoxIterator {
 public:
-    TextRunIterator()
+    TextBoxIterator()
         : m_textRun(0)
         , m_offset(0)
     {
     }
 
-    TextRunIterator(const TextRun* textRun, unsigned offset)
+    TextBoxIterator(const TextRun* textRun, unsigned offset)
         : m_textRun(textRun)
         , m_offset(offset)
     {
@@ -61,12 +61,12 @@ public:
     UChar current() const { return (*m_textRun)[m_offset]; }
     UCharDirection direction() const { return atEnd() ? U_OTHER_NEUTRAL : u_charDirection(current()); }
 
-    bool operator==(const TextRunIterator& other)
+    bool operator==(const TextBoxIterator& other)
     {
         return m_offset == other.m_offset && m_textRun == other.m_textRun;
     }
 
-    bool operator!=(const TextRunIterator& other) { return !operator==(other); }
+    bool operator!=(const TextBoxIterator& other) { return !operator==(other); }
 
 private:
     const TextRun* m_textRun;
@@ -499,14 +499,14 @@ void GraphicsContext::drawEmphasisMarks(const FontCascade& font, const TextRun& 
 
 void GraphicsContext::drawBidiText(const FontCascade& font, const TextRun& run, const FloatPoint& point, FontCascade::CustomFontNotReadyAction customFontNotReadyAction)
 {
-    BidiResolver<TextRunIterator, BidiCharacterRun> bidiResolver;
+    BidiResolver<TextBoxIterator, BidiCharacterRun> bidiResolver;
     bidiResolver.setStatus(BidiStatus(run.direction(), run.directionalOverride()));
-    bidiResolver.setPositionIgnoringNestedIsolates(TextRunIterator(&run, 0));
+    bidiResolver.setPositionIgnoringNestedIsolates(TextBoxIterator(&run, 0));
 
     // FIXME: This ownership should be reversed. We should pass BidiRunList
     // to BidiResolver in createBidiRunsForLine.
     BidiRunList<BidiCharacterRun>& bidiRuns = bidiResolver.runs();
-    bidiResolver.createBidiRunsForLine(TextRunIterator(&run, run.length()));
+    bidiResolver.createBidiRunsForLine(TextBoxIterator(&run, run.length()));
 
     if (!bidiRuns.runCount())
         return;
