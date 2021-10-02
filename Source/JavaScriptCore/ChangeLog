@@ -1,5 +1,17 @@
 2021-10-02  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] Enable HAVE_ICU_U_DATE_INTERVAL_FORMAT_FORMAT_RANGE_TO_PARTS on Darwin OSS build
+        https://bugs.webkit.org/show_bug.cgi?id=231120
+
+        Reviewed by Ross Kirsling.
+
+        We now assume that ICU is 64.2 or later in Darwin since Mojave WebKit build is no longer supported.
+        We enable HAVE_ICU_U_DATE_INTERVAL_FORMAT_FORMAT_RANGE_TO_PARTS on Darwin OSS build.
+
+        * runtime/IntlDateTimeFormat.h:
+
+2021-10-02  Yusuke Suzuki  <ysuzuki@apple.com>
+
         Remove JSC hack after r283410
         https://bugs.webkit.org/show_bug.cgi?id=230261
 

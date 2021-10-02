@@ -33,8 +33,7 @@
 struct UDateIntervalFormat;
 
 #if !defined(HAVE_ICU_U_DATE_INTERVAL_FORMAT_FORMAT_RANGE_TO_PARTS)
-// ICU header is up-to-date if the build is non-Darwin or using Apple Internal SDK.
-#if (USE(APPLE_INTERNAL_SDK) || !OS(DARWIN)) && U_ICU_VERSION_MAJOR_NUM >= 64
+#if U_ICU_VERSION_MAJOR_NUM >= 64
 #define HAVE_ICU_U_DATE_INTERVAL_FORMAT_FORMAT_RANGE_TO_PARTS 1
 #endif
 #endif
