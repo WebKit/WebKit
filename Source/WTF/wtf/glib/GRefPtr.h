@@ -29,6 +29,7 @@
 #include <wtf/HashTraits.h>
 
 extern "C" {
+    typedef struct _GDBusConnection GDBusConnection;
     typedef struct _GDBusNodeInfo GDBusNodeInfo;
     GDBusNodeInfo* g_dbus_node_info_ref(GDBusNodeInfo*);
     void g_dbus_node_info_unref(GDBusNodeInfo*);

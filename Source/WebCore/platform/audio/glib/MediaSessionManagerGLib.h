@@ -20,6 +20,7 @@
 
 #if USE(GLIB) && ENABLE(MEDIA_SESSION)
 
+#include "MediaSessionIdentifier.h"
 #include "NowPlayingManager.h"
 #include "PlatformMediaSessionManager.h"
 #include <wtf/glib/GRefPtr.h>
@@ -27,16 +28,15 @@
 namespace WebCore {
 
 struct NowPlayingInfo;
+class MediaSessionGLib;
 
 class MediaSessionManagerGLib
     : public PlatformMediaSessionManager
     , private NowPlayingManager::Client {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    MediaSessionManagerGLib();
+    MediaSessionManagerGLib(GRefPtr<GDBusNodeInfo>&&);
     ~MediaSessionManagerGLib();
-
-    bool setupMpris();
 
     void beginInterruption(PlatformMediaSession::InterruptionType) final;
 
@@ -48,13 +48,10 @@ public:
     bool registeredAsNowPlayingApplication() const final { return m_registeredAsNowPlayingApplication; }
     bool haveEverRegisteredAsNowPlayingApplication() const final { return m_haveEverRegisteredAsNowPlayingApplication; }
 
-    void busAcquired(GDBusConnection*);
-    void nameAcquired(GDBusConnection* connection) { m_connection = connection; }
-    void nameLost(GDBusConnection*);
-    GVariant* getMetadataAsGVariant() const { return m_nowPlayingInfo.get(); }
-    GVariant* getPlaybackStatusAsGVariant(std::optional<const PlatformMediaSession*>);
-    GVariant* getActiveSessionPosition();
     void dispatch(PlatformMediaSession::RemoteControlCommandType, PlatformMediaSession::RemoteCommandArgument);
+
+    const GRefPtr<GDBusNodeInfo>& mprisInterface() const { return m_mprisInterface; }
+    PlatformMediaSession* nowPlayingEligibleSession();
 
 protected:
     void scheduleSessionStatusUpdate() final;
@@ -73,8 +70,6 @@ protected:
 
     virtual void providePresentingApplicationPIDIfNecessary() { }
 
-    PlatformMediaSession* nowPlayingEligibleSession();
-
     void addSupportedCommand(PlatformMediaSession::RemoteControlCommandType) final;
     void removeSupportedCommand(PlatformMediaSession::RemoteControlCommandType) final;
     RemoteCommandListener::RemoteCommandsSet supportedCommands() const final;
@@ -82,8 +77,6 @@ protected:
     void resetHaveEverRegisteredAsNowPlayingApplicationForTesting() final { m_haveEverRegisteredAsNowPlayingApplication = false; };
 
 private:
-    void emitPropertiesChanged(GVariant*);
-
 #if !RELEASE_LOG_DISABLED
     const char* logClassName() const override { return "MediaSessionManagerGLib"; }
 #endif
@@ -91,14 +84,8 @@ private:
     // NowPlayingManager::Client
     void didReceiveRemoteControlCommand(PlatformMediaSession::RemoteControlCommandType type, const PlatformMediaSession::RemoteCommandArgument& argument) final { processDidReceiveRemoteControlCommand(type, argument); }
 
-    String m_instanceId;
-    unsigned m_ownerId { 0 };
-    unsigned m_rootRegistrationId { 0 };
-    unsigned m_playerRegistrationId { 0 };
     bool m_isSeeking { false };
-    GRefPtr<GDBusConnection> m_connection;
     GRefPtr<GDBusNodeInfo> m_mprisInterface;
-    GRefPtr<GVariant> m_nowPlayingInfo;
 
     bool m_nowPlayingActive { false };
     bool m_registeredAsNowPlayingApplication { false };
@@ -111,8 +98,9 @@ private:
     MediaUniqueIdentifier m_lastUpdatedNowPlayingInfoUniqueIdentifier;
 
     const std::unique_ptr<NowPlayingManager> m_nowPlayingManager;
+    HashMap<MediaSessionIdentifier, std::unique_ptr<MediaSessionGLib>> m_sessions;
 };
 
 } // namespace WebCore
 
-#endif // USE(GLIB)
+#endif // USE(GLIB) && ENABLE(MEDIA_SESSION)

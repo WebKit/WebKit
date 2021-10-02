@@ -1,3 +1,12 @@
+2021-10-02  Philippe Normand  <pnormand@igalia.com>
+
+        [GLib] Media session manager unable to handle more than one session
+        https://bugs.webkit.org/show_bug.cgi?id=230250
+
+        Reviewed by Adrian Perez de Castro.
+
+        * wtf/glib/GRefPtr.h: Forward-declare GDBusConnection.
+
 2021-10-01  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Upgrade in-tree OSS ICU header to 64.2 because macOS Mojave build will be dropped
