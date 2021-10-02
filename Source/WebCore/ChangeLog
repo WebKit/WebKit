@@ -1,3 +1,11 @@
+2021-10-01  Lauro Moura  <lmoura@igalia.com>
+
+        [GLIB] Fix build on Ubuntu 20.04 after 242376@main
+
+        Unreviewed build fix.
+
+        * dom/Position.cpp: Add missing header.
+
 2021-10-01  Chris Dumez  <cdumez@apple.com>
 
         Drop support for macOS < 10.15

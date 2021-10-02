@@ -43,6 +43,7 @@
 #include "NodeTraversal.h"
 #include "PositionIterator.h"
 #include "RenderBlock.h"
+#include "RenderBlockFlow.h"
 #include "RenderFlexibleBox.h"
 #include "RenderGrid.h"
 #include "RenderInline.h"
