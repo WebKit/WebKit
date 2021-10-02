@@ -35,6 +35,11 @@ static const int infinity = -1;
 
 enum SizingOperation { TrackSizing, IntrinsicSizeComputation };
 
+enum class TrackSizeComputationVariant : uint8_t {
+    NotCrossingFlexibleTracks,
+    CrossingFlexibleTracks,
+};
+
 enum TrackSizeComputationPhase {
     ResolveIntrinsicMinimums,
     ResolveContentBasedMinimums,
@@ -42,6 +47,11 @@ enum TrackSizeComputationPhase {
     ResolveIntrinsicMaximums,
     ResolveMaxContentMaximums,
     MaximizeTracks,
+};
+
+enum class SpaceDistributionLimit : uint8_t  {
+    UpToGrowthLimit,
+    BeyondGrowthLimit,
 };
 
 class GridTrackSizingAlgorithmStrategy;
@@ -152,9 +162,11 @@ private:
     void sizeTrackToFitNonSpanningItem(const GridSpan&, RenderBox& gridItem, GridTrack&);
     bool spanningItemCrossesFlexibleSizedTracks(const GridSpan&) const;
     typedef struct GridItemsSpanGroupRange GridItemsSpanGroupRange;
-    template <TrackSizeComputationPhase phase> void increaseSizesToAccommodateSpanningItems(const GridItemsSpanGroupRange& gridItemsWithSpan);
+    template <TrackSizeComputationVariant variant, TrackSizeComputationPhase phase> void increaseSizesToAccommodateSpanningItems(const GridItemsSpanGroupRange& gridItemsWithSpan);
+    template <TrackSizeComputationVariant variant> void increaseSizesToAccommodateSpanningItems(const GridItemsSpanGroupRange& gridItemsWithSpan);
     LayoutUnit itemSizeForTrackSizeComputationPhase(TrackSizeComputationPhase, RenderBox&) const;
-    template <TrackSizeComputationPhase phase> void distributeSpaceToTracks(Vector<GridTrack*>& tracks, Vector<GridTrack*>* growBeyondGrowthLimitsTracks, LayoutUnit& availableLogicalSpace) const;
+    template <TrackSizeComputationVariant variant, TrackSizeComputationPhase phase> void distributeSpaceToTracks(Vector<GridTrack*>& tracks, Vector<GridTrack*>* growBeyondGrowthLimitsTracks, LayoutUnit& freeSpace) const;
+
     std::optional<LayoutUnit> gridAreaBreadthForChild(const RenderBox&, GridTrackSizingDirection) const;
 
     void computeBaselineAlignmentContext();
@@ -274,7 +286,7 @@ protected:
     LayoutUnit computeTrackBasedSize() const { return m_algorithm.computeTrackBasedSize(); }
     GridTrackSizingDirection direction() const { return m_algorithm.m_direction; }
     double findFrUnitSize(const GridSpan& tracksSpan, LayoutUnit leftOverSpace) const { return m_algorithm.findFrUnitSize(tracksSpan, leftOverSpace); }
-    void distributeSpaceToTracks(Vector<GridTrack*>& tracks, LayoutUnit& availableLogicalSpace) const { m_algorithm.distributeSpaceToTracks<MaximizeTracks>(tracks, nullptr, availableLogicalSpace); }
+    void distributeSpaceToTracks(Vector<GridTrack*>& tracks, LayoutUnit& availableLogicalSpace) const { m_algorithm.distributeSpaceToTracks<TrackSizeComputationVariant::NotCrossingFlexibleTracks, MaximizeTracks>(tracks, nullptr, availableLogicalSpace); }
     const RenderGrid* renderGrid() const { return m_algorithm.m_renderGrid; }
     std::optional<LayoutUnit> availableSpace() const { return m_algorithm.availableSpace(); }
 
