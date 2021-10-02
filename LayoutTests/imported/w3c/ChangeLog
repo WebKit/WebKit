@@ -1,3 +1,17 @@
+2021-10-02  Nikos Mouchtaris  <nmouchtaris@apple.com>
+
+        WPTs for hypot,sqrt,pow calc functions
+        https://bugs.webkit.org/show_bug.cgi?id=231053
+
+        Reviewed by Simon Fraser.
+
+        * web-platform-tests/css/css-values/hypot-pow-sqrt-computed-expected.txt: Added.
+        * web-platform-tests/css/css-values/hypot-pow-sqrt-computed.html: Added.
+        * web-platform-tests/css/css-values/hypot-pow-sqrt-invalid-expected.txt: Added.
+        * web-platform-tests/css/css-values/hypot-pow-sqrt-invalid.html: Added.
+        * web-platform-tests/css/css-values/hypot-pow-sqrt-serialize-expected.txt: Added.
+        * web-platform-tests/css/css-values/hypot-pow-sqrt-serialize.html: Added.
+
 2021-10-02  Ziran Sun  <zsun@igalia.com>
 
         [css-grid] Accommodate spanning items crossing flexible tracks
