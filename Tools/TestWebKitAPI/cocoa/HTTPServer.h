@@ -41,7 +41,7 @@ class HTTPServer {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     struct RequestData;
-    enum class Protocol : uint8_t { Http, Https, HttpsWithLegacyTLS, Http2 };
+    enum class Protocol : uint8_t { Http, Https, HttpsWithLegacyTLS, Http2, HttpsProxy };
     using CertificateVerifier = Function<void(sec_protocol_metadata_t, sec_trust_t, sec_protocol_verify_complete_t)>;
 
     HTTPServer(std::initializer_list<std::pair<String, HTTPResponse>>, Protocol = Protocol::Http, CertificateVerifier&& = nullptr, RetainPtr<SecIdentityRef>&& = nullptr, std::optional<uint16_t> port = { });

@@ -1,3 +1,24 @@
+2021-10-01  Alex Christensen  <achristensen@webkit.org>
+
+        Implement HTTPS proxy in HTTPServer
+        https://bugs.webkit.org/show_bug.cgi?id=231109
+
+        Reviewed by Geoff Garen.
+
+        Previously we used TCPServer for this, which is picky about the exact number of connections, requests, and replies.
+        If everything isn't perfect, it hangs in the TCPServer destructor.
+        It also doesn't run the server logic on the main thread.
+        This will allow migration to HTTPServer, the replacement for TCPServer.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/Proxy.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/cocoa/HTTPServer.h:
+        * TestWebKitAPI/cocoa/HTTPServer.mm:
+        (TestWebKitAPI::proxyDefinition):
+        (TestWebKitAPI::HTTPServer::listenerParameters):
+        (TestWebKitAPI::HTTPServer::respondWithOK):
+        (TestWebKitAPI::HTTPServer::request const):
+
 2021-10-01  Jonathan Bedard  <jbedard@apple.com>
 
         [webkitcorepy] Add TaskPool (Follow-up fix)

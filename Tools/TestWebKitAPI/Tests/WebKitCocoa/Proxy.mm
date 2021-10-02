@@ -78,7 +78,7 @@ namespace TestWebKitAPI {
 
 TEST(WebKit, HTTPSProxy)
 {
-    TCPServer server(TCPServer::Protocol::HTTPSProxy, TCPServer::respondWithOK);
+    HTTPServer server(HTTPServer::respondWithOK, HTTPServer::Protocol::HttpsProxy);
 
     auto storeConfiguration = adoptNS([_WKWebsiteDataStoreConfiguration new]);
     [storeConfiguration setHTTPSProxy:[NSURL URLWithString:[NSString stringWithFormat:@"https://127.0.0.1:%d/", server.port()]]];

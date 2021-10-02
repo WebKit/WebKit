@@ -52,11 +52,34 @@ struct HTTPServer::RequestData : public ThreadSafeRefCounted<RequestData, WTF::D
     Vector<Connection> connections;
 };
 
+static RetainPtr<nw_protocol_definition_t> proxyDefinition()
+{
+    return adoptNS(nw_framer_create_definition("HttpsProxy", NW_FRAMER_CREATE_FLAGS_DEFAULT, [] (nw_framer_t framer) -> nw_framer_start_result_t {
+        nw_framer_set_input_handler(framer, [] (nw_framer_t framer) -> size_t {
+            nw_framer_parse_input(framer, 1, std::numeric_limits<uint32_t>::max(), nullptr, [retainedFramer = retainPtr(framer)](uint8_t*, size_t bufferLength, bool) mutable -> size_t {
+                const char* negotiationResponse = ""
+                    "HTTP/1.1 200 Connection Established\r\n"
+                    "Connection: close\r\n\r\n";
+                auto response = adoptNS(dispatch_data_create(negotiationResponse, strlen(negotiationResponse), nullptr, nullptr));
+                nw_framer_write_output_data(retainedFramer.get(), response.get());
+                nw_framer_mark_ready(retainedFramer.get());
+                nw_framer_pass_through_input(retainedFramer.get());
+                nw_framer_pass_through_output(retainedFramer.get());
+                retainedFramer = nullptr;
+                return bufferLength;
+            });
+            return 0;
+        });
+        return nw_framer_start_result_will_mark_ready;
+    }));
+}
+
 RetainPtr<nw_parameters_t> HTTPServer::listenerParameters(Protocol protocol, CertificateVerifier&& verifier, RetainPtr<SecIdentityRef>&& customTestIdentity, std::optional<uint16_t> port)
 {
     if (protocol != Protocol::Http && !customTestIdentity)
         customTestIdentity = testIdentity();
-    auto configureTLS = protocol == Protocol::Http ? makeBlockPtr(NW_PARAMETERS_DISABLE_PROTOCOL) : makeBlockPtr([protocol, verifier = WTFMove(verifier), testIdentity = WTFMove(customTestIdentity)] (nw_protocol_options_t protocolOptions) mutable {
+
+    auto configureTLS = [protocol, verifier = WTFMove(verifier), testIdentity = WTFMove(customTestIdentity)] (nw_protocol_options_t protocolOptions) mutable {
 #if HAVE(TLS_PROTOCOL_VERSION_T)
         auto options = adoptNS(nw_tls_copy_sec_protocol_options(protocolOptions));
         auto identity = adoptNS(sec_identity_create(testIdentity.get()));
@@ -75,10 +98,23 @@ RetainPtr<nw_parameters_t> HTTPServer::listenerParameters(Protocol protocol, Cer
         UNUSED_PARAM(protocolOptions);
         ASSERT_UNUSED(protocol, protocol != Protocol::HttpsWithLegacyTLS);
 #endif
-    });
-    auto parameters = adoptNS(nw_parameters_create_secure_tcp(configureTLS.get(), NW_PARAMETERS_DEFAULT_CONFIGURATION));
+    };
+
+    auto configureTLSBlock = protocol == Protocol::Http || protocol == Protocol::HttpsProxy ? makeBlockPtr(NW_PARAMETERS_DISABLE_PROTOCOL) : makeBlockPtr(WTFMove(configureTLS));
+    auto parameters = adoptNS(nw_parameters_create_secure_tcp(configureTLSBlock.get(), NW_PARAMETERS_DEFAULT_CONFIGURATION));
     if (port)
         nw_parameters_set_local_endpoint(parameters.get(), nw_endpoint_create_host("::", makeString(*port).utf8().data()));
+
+    if (protocol == Protocol::HttpsProxy) {
+        auto stack = adoptNS(nw_parameters_copy_default_protocol_stack(parameters.get()));
+        auto options = adoptNS(nw_framer_create_options(proxyDefinition().get()));
+        nw_protocol_stack_prepend_application_protocol(stack.get(), options.get());
+
+        auto tlsOptions = adoptNS(nw_tls_create_options());
+        configureTLS(tlsOptions.get());
+        nw_protocol_stack_prepend_application_protocol(stack.get(), tlsOptions.get());
+    }
+
     return parameters;
 }
 
@@ -160,8 +196,8 @@ void HTTPServer::respondWithOK(Connection connection)
     connection.receiveHTTPRequest([connection] (Vector<char>&&) {
         connection.send(
             "HTTP/1.1 200 OK\r\n"
-            "Content-Length: 13\r\n\r\n"
-            "Hello, World!"
+            "Content-Length: 34\r\n\r\n"
+            "<script>alert('success!')</script>"
         );
     });
 }
@@ -268,7 +304,7 @@ uint16_t HTTPServer::port() const
 
 NSURLRequest *HTTPServer::request(const String& path) const
 {
-    NSString *format;
+    NSString *format = nil;
     switch (m_protocol) {
     case Protocol::Http:
         format = @"http://127.0.0.1:%d%s";
@@ -278,6 +314,8 @@ NSURLRequest *HTTPServer::request(const String& path) const
     case Protocol::Http2:
         format = @"https://127.0.0.1:%d%s";
         break;
+    case Protocol::HttpsProxy:
+        RELEASE_ASSERT_NOT_REACHED();
     }
     return [NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:format, port(), path.utf8().data()]]];
 }
