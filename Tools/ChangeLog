@@ -1,3 +1,30 @@
+2021-10-01  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitscmpy] Get pull-request by number
+        https://bugs.webkit.org/show_bug.cgi?id=231039
+        <rdar://problem/83740215>
+
+        Reviewed by Stephanie Lewis.
+
+        * Scripts/libraries/webkitscmpy/setup.py: Bump version.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/__init__.py: Ditto.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/mocks/remote/git_hub.py:
+        (GitHub.request): Add pull-request access by number.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/remote/bitbucket.py:
+        (BitBucket.PRGenerator.PullRequest): Shared JSON pull-request generator.
+        (BitBucket.PRGenerator.get): Get pull-request by number.
+        (BitBucket.PRGenerator.find): Use shared pull-request generator.
+        (BitBucket.PRGenerator.create): Ditto.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/remote/git_hub.py:
+        (GitHub.PRGenerator.PullRequest): Shared JSON pull-request generator.
+        (GitHub.PRGenerator.get): Get pull-request by number.
+        (GitHub.PRGenerator.find): Use shared pull-request generator.
+        (GitHub.PRGenerator.create):
+        * Scripts/libraries/webkitscmpy/webkitscmpy/remote/scm.py:
+        (Scm.PRGenerator.get):
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/pull_request_unittest.py:
+        (TestNetworkPullRequestGitHub): Added.
+
 2021-10-01  Alex Christensen  <achristensen@webkit.org>
 
         Implement HTTPS proxy in HTTPServer

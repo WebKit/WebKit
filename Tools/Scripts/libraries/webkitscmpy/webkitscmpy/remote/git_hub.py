@@ -39,6 +39,21 @@ class GitHub(Scm):
     EMAIL_RE = re.compile(r'(?P<email>[^@]+@[^@]+)(@.*)?')
 
     class PRGenerator(Scm.PRGenerator):
+        def PullRequest(self, data):
+            if not data:
+                return None
+            return PullRequest(
+                number=data['number'],
+                title=data.get('title'),
+                body=data.get('body'),
+                author=self.repository.contributors.create(data['user']['login']),
+                head=data['head']['ref'],
+                base=data['base']['ref'],
+            )
+
+        def get(self, number):
+            return self.PullRequest(self.repository.request('pulls/{}'.format(int(number))))
+
         def find(self, state=None, head=None, base=None):
             if not state:
                 state = 'all'
@@ -51,16 +66,9 @@ class GitHub(Scm):
             for datum in data or []:
                 if base and datum['base']['ref'] != base:
                     continue
-                if head and not datum['head']['ref'].endswith(head):
+                if head and not datum['head']['ref'].endswith(head.split(':')[-1]):
                     continue
-                yield PullRequest(
-                    number=datum['number'],
-                    title=datum.get('title'),
-                    body=datum.get('body'),
-                    author=self.repository.contributors.create(datum['user']['login']),
-                    head=datum['head']['ref'],
-                    base=datum['base']['ref'],
-                )
+                yield self.PullRequest(datum)
 
         def create(self, head, title, body=None, commits=None, base=None):
             for key, value in dict(head=head, title=title).items():
@@ -84,15 +92,7 @@ class GitHub(Scm):
             )
             if response.status_code // 100 != 2:
                 return None
-            data = response.json()
-            return PullRequest(
-                number=data['number'],
-                title=data.get('title'),
-                body=data.get('body'),
-                author=self.repository.contributors.create(data['user']['login']),
-                head=data['head']['ref'],
-                base=data['base']['ref'],
-            )
+            return self.PullRequest(response.json())
 
         def update(self, pull_request, head=None, title=None, body=None, commits=None, base=None):
             if not isinstance(pull_request, PullRequest):

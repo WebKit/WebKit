@@ -30,6 +30,9 @@ class Scm(ScmBase):
         def __init__(self, repository):
             self.repository = repository
 
+        def get(self, number):
+            raise NotImplementedError()
+
         def find(self, state=None, head=None, base=None):
             raise NotImplementedError()
 

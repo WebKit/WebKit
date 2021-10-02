@@ -25,7 +25,7 @@ import sys
 import unittest
 
 from webkitcorepy import OutputCapture, testing
-from webkitscmpy import Commit, PullRequest, program, mocks
+from webkitscmpy import Commit, PullRequest, program, mocks, remote
 
 
 class TestPullRequest(unittest.TestCase):
@@ -425,3 +425,97 @@ Rebased 'eng/pr-branch' on 'main!'""")
                 "Updated 'PR 1 | Amended commit'!",
             ],
         )
+
+
+class TestNetworkPullRequestGitHub(unittest.TestCase):
+    remote = 'https://github.example.com/WebKit/WebKit'
+
+    @classmethod
+    def webserver(cls):
+        result = mocks.remote.GitHub()
+        result.pull_requests = [dict(
+            number=1,
+            state='open',
+            title='Example Change',
+            user=dict(login='tcontributor'),
+            body='''#### 95507e3a1a4a919d1a156abbc279fdf6d24b13f5
+<pre>
+Example Change
+<a href="https://bugs.webkit.org/show_bug.cgi?id=1234">https://bugs.webkit.org/show_bug.cgi?id=1234</a>
+
+Reviewed by NOBODY (OOPS!).
+
+* Source/file.cpp:
+</pre>
+''',
+            head=dict(ref='eng/pull-request'),
+            base=dict(ref='main'),
+        )]
+        return result
+
+    def test_find(self):
+        with self.webserver():
+            prs = list(remote.GitHub(self.remote).pull_requests.find())
+            self.assertEqual(len(prs), 1)
+            self.assertEqual(prs[0].number, 1)
+            self.assertEqual(prs[0].title, 'Example Change')
+            self.assertEqual(prs[0].head, 'eng/pull-request')
+            self.assertEqual(prs[0].base, 'main')
+
+    def test_get(self):
+        with self.webserver():
+            pr = remote.GitHub(self.remote).pull_requests.get(1)
+            self.assertEqual(pr.number, 1)
+            self.assertEqual(pr.title, 'Example Change')
+            self.assertEqual(pr.head, 'eng/pull-request')
+            self.assertEqual(pr.base, 'main')
+
+
+class TestNetworkPullRequestBitBucket(unittest.TestCase):
+    remote = 'https://bitbucket.example.com/projects/WEBKIT/repos/webkit'
+
+    @classmethod
+    def webserver(cls):
+        result = mocks.remote.BitBucket()
+        result.pull_requests = [dict(
+            id=1,
+            state='OPEN',
+            title='Example Change',
+            author=dict(
+                user=dict(
+                    name='tcontributor',
+                    emailAddress='tcontributor@apple.com',
+                    displayName='Tim Contributor',
+                ),
+            ), body='''#### 95507e3a1a4a919d1a156abbc279fdf6d24b13f5
+```
+Example Change
+https://bugs.webkit.org/show_bug.cgi?id=1234
+
+Reviewed by NOBODY (OOPS!).
+
+* Source/file.cpp:
+```
+''',
+            fromRef=dict(displayId='eng/pull-request'),
+            toRef=dict(displayId='main'),
+        )]
+        return result
+
+    def test_find(self):
+        with self.webserver():
+            with self.webserver():
+                prs = list(remote.BitBucket(self.remote).pull_requests.find())
+                self.assertEqual(len(prs), 1)
+                self.assertEqual(prs[0].number, 1)
+                self.assertEqual(prs[0].title, 'Example Change')
+                self.assertEqual(prs[0].head, 'eng/pull-request')
+                self.assertEqual(prs[0].base, 'main')
+
+    def test_get(self):
+        with self.webserver():
+            pr = remote.BitBucket(self.remote).pull_requests.get(1)
+            self.assertEqual(pr.number, 1)
+            self.assertEqual(pr.title, 'Example Change')
+            self.assertEqual(pr.head, 'eng/pull-request')
+            self.assertEqual(pr.base, 'main')

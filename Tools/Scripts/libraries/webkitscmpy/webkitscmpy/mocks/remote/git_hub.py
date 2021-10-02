@@ -335,7 +335,7 @@ class GitHub(mocks.Requests):
             username = (json or {}).get('owner', None)
             if username:
                 self.forks.append(username)
-            return mocks.Response.fromJson({}) if username else mocks.Response.create404(url)
+            return mocks.Response.fromJson({}, url=url) if username else mocks.Response.create404(url)
 
         # All pull-requests
         pr_base = '{}/pulls'.format(self.api_remote)
@@ -352,7 +352,14 @@ class GitHub(mocks.Requests):
                 if head and head not in [candidate.get('head', {}).get('ref'), candidate.get('head', {}).get('label')]:
                     continue
                 prs.append(candidate)
-            return mocks.Response.fromJson(prs)
+            return mocks.Response.fromJson(prs, url=url)
+
+        # Pull-request by number
+        if method == 'GET' and stripped_url.startswith(pr_base):
+            for candidate in self.pull_requests:
+                if stripped_url.split('/')[-1] == str(candidate['number']):
+                    return mocks.Response.fromJson(candidate, url=url)
+            return mocks.Response.create404(url)
 
         # Create/update pull-request
         pr = dict()
@@ -379,7 +386,7 @@ class GitHub(mocks.Requests):
             pr['number'] = 1 + max([0] + [pr.get('number', 0) for pr in self.pull_requests])
             pr['user'] = dict(login=auth.username)
             self.pull_requests.append(pr)
-            return mocks.Response.fromJson(pr)
+            return mocks.Response.fromJson(pr, url=url)
 
         # Update specifically
         if method == 'POST' and auth and stripped_url.startswith(pr_base):
@@ -391,6 +398,6 @@ class GitHub(mocks.Requests):
             if existing is None:
                 return mocks.Response.create404(url)
             self.pull_requests[existing].update(pr)
-            return mocks.Response.fromJson(self.pull_requests[i])
+            return mocks.Response.fromJson(self.pull_requests[i], url=url)
 
         return mocks.Response.create404(url)
