@@ -402,7 +402,7 @@ namespace WebCore {
     macro(makeThisTypeError) \
     macro(matchingElementInFlatTree) \
     macro(mediaStreamTrackConstraints) \
-    macro(openDatabase) \
+    macro(onpush) \
     macro(onrtctransform) \
     macro(ontouchcancel) \
     macro(ontouchend) \
@@ -417,6 +417,7 @@ namespace WebCore {
     macro(onvrdisplaydisconnect) \
     macro(onvrdisplayfocus) \
     macro(onvrdisplaypresentchange) \
+    macro(openDatabase) \
     macro(opener) \
     macro(operations) \
     macro(ownerReadableStream) \

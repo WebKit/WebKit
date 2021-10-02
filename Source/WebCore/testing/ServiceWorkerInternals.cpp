@@ -57,6 +57,30 @@ void ServiceWorkerInternals::terminate()
     });
 }
 
+void ServiceWorkerInternals::schedulePushEvent(const String& message, RefPtr<DeferredPromise>&& promise)
+{
+    auto counter = ++m_pushEventCounter;
+    m_pushEventPromises.add(counter, WTFMove(promise));
+
+    std::optional<Vector<uint8_t>> data;
+    if (!message.isNull()) {
+        auto utf8 = message.utf8();
+        data = Vector<uint8_t> { reinterpret_cast<const uint8_t*>(utf8.data()), utf8.length()};
+    }
+    callOnMainThread([identifier = m_identifier, data = WTFMove(data), weakThis = makeWeakPtr(this), counter]() mutable {
+        SWContextManager::singleton().firePushEvent(identifier, WTFMove(data), [identifier, weakThis = WTFMove(weakThis), counter](bool result) mutable {
+            if (auto* proxy = SWContextManager::singleton().workerByID(identifier)) {
+                proxy->thread().runLoop().postTaskForMode([weakThis = WTFMove(weakThis), counter, result](auto&) {
+                    if (!weakThis)
+                        return;
+                    if (auto promise = weakThis->m_pushEventPromises.take(counter))
+                        promise->resolve<IDLBoolean>(result);
+                }, WorkerRunLoop::defaultMode());
+            }
+        });
+    });
+}
+
 void ServiceWorkerInternals::waitForFetchEventToFinish(FetchEvent& event, DOMPromiseDeferred<IDLInterface<FetchResponse>>&& promise)
 {
     event.onResponse([promise = WTFMove(promise), event = Ref { event }] (auto&& result) mutable {

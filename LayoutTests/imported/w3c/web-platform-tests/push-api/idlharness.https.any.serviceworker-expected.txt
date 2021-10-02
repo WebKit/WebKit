@@ -79,8 +79,8 @@ FAIL PushSubscriptionChangeEvent interface: new PushSubscriptionChangeEvent("pus
 FAIL PushSubscriptionChangeEvent interface: new PushSubscriptionChangeEvent("pushsubscriptionchange") must inherit property "oldSubscription" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: PushSubscriptionChangeEvent"
 FAIL ServiceWorkerRegistration interface: attribute pushManager assert_true: The prototype object must have a property "pushManager" expected true got false
 FAIL ServiceWorkerRegistration interface: registration must inherit property "pushManager" with the proper type assert_inherits: property "pushManager" not found in prototype chain
-FAIL ServiceWorkerGlobalScope interface: attribute onpush assert_own_property: The global object must have a property "onpush" expected property "onpush" missing
+PASS ServiceWorkerGlobalScope interface: attribute onpush
 FAIL ServiceWorkerGlobalScope interface: attribute onpushsubscriptionchange assert_own_property: The global object must have a property "onpushsubscriptionchange" expected property "onpushsubscriptionchange" missing
-FAIL ServiceWorkerGlobalScope interface: self must inherit property "onpush" with the proper type assert_own_property: expected property "onpush" missing
+PASS ServiceWorkerGlobalScope interface: self must inherit property "onpush" with the proper type
 FAIL ServiceWorkerGlobalScope interface: self must inherit property "onpushsubscriptionchange" with the proper type assert_own_property: expected property "onpushsubscriptionchange" missing
 

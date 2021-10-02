@@ -501,6 +501,7 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/push-api/PushEvent.idl
     Modules/push-api/PushEventInit.idl
     Modules/push-api/PushMessageData.idl
+    Modules/push-api/ServiceWorkerGlobalScope+PushAPI.idl
 
     Modules/remoteplayback/RemotePlayback.idl
     Modules/remoteplayback/RemotePlaybackAvailabilityCallback.idl

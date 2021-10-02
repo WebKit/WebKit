@@ -1,3 +1,13 @@
+2021-10-02  Youenn Fablet  <youenn@apple.com>
+
+        Add support for ServiceWorkerGlobalScope push event handler
+        https://bugs.webkit.org/show_bug.cgi?id=231008
+        <rdar://problem/83710760>
+
+        Reviewed by Chris Dumez.
+
+        * web-platform-tests/push-api/idlharness.https.any.serviceworker-expected.txt:
+
 2021-10-01  Nikos Mouchtaris  <nmouchtaris@apple.com>
 
         Allow NaN, infinity, and -infinity in calc

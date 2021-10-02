@@ -37,6 +37,7 @@
 #include "LoaderStrategy.h"
 #include "Logging.h"
 #include "PlatformStrategies.h"
+#include "PushEvent.h"
 #include "SWContextManager.h"
 #include "SecurityOrigin.h"
 #include "ServiceWorkerFetch.h"
@@ -212,6 +213,28 @@ void ServiceWorkerThread::queueTaskToFireActivateEvent()
     });
 }
 
+void ServiceWorkerThread::queueTaskToFirePushEvent(std::optional<Vector<uint8_t>>&& data, Function<void(bool)>&& callback)
+{
+    auto& serviceWorkerGlobalScope = downcast<ServiceWorkerGlobalScope>(*globalScope());
+    serviceWorkerGlobalScope.eventLoop().queueTask(TaskSource::DOMManipulation, [weakThis = makeWeakPtr(this), serviceWorkerGlobalScope = Ref { serviceWorkerGlobalScope }, data = WTFMove(data), callback = WTFMove(callback)]() mutable {
+        RELEASE_LOG(ServiceWorker, "ServiceWorkerThread::queueTaskToFirePushEvent firing event for worker %" PRIu64, serviceWorkerGlobalScope->thread().identifier().toUInt64());
+
+        auto pushEvent = PushEvent::create(eventNames().pushEvent, { }, WTFMove(data), ExtendableEvent::IsTrusted::Yes);
+        serviceWorkerGlobalScope->dispatchEvent(pushEvent);
+
+        pushEvent->whenAllExtendLifetimePromisesAreSettled([weakThis = WTFMove(weakThis), callback = WTFMove(callback)](auto&& extendLifetimePromises) mutable {
+            bool hasRejectedAnyPromise = false;
+            for (auto& promise : extendLifetimePromises) {
+                if (promise->status() == DOMPromise::Status::Rejected) {
+                    hasRejectedAnyPromise = true;
+                    break;
+                }
+            }
+            callback(!hasRejectedAnyPromise);
+        });
+    });
+}
+
 void ServiceWorkerThread::finishedEvaluatingScript()
 {
     ASSERT(globalScope()->isContextThread());
@@ -244,6 +267,12 @@ void ServiceWorkerThread::startFetchEventMonitoring()
     startHeartBeatTimer();
 }
 
+void ServiceWorkerThread::startPushEventMonitoring()
+{
+    m_isHandlingPushEvent = true;
+    startHeartBeatTimer();
+}
+
 void ServiceWorkerThread::startHeartBeatTimer()
 {
     // We cannot detect responsiveness for service workers running on the main thread by using a main thread timer.
@@ -266,7 +295,7 @@ void ServiceWorkerThread::startHeartBeatTimer()
 void ServiceWorkerThread::heartBeatTimerFired()
 {
     if (!m_ongoingHeartBeatCheck) {
-        if (m_state == State::Installing || m_state == State::Activating || m_isHandlingFetchEvent || m_messageEventCount)
+        if (m_state == State::Installing || m_state == State::Activating || m_isHandlingFetchEvent || m_isHandlingPushEvent || m_messageEventCount)
             startHeartBeatTimer();
         return;
     }

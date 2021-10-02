@@ -122,6 +122,10 @@ ServiceWorkerThreadProxy::~ServiceWorkerThreadProxy()
 {
     ASSERT(allServiceWorkerThreadProxies().contains(this));
     allServiceWorkerThreadProxies().remove(this);
+
+    auto pushTasks = WTFMove(m_ongoingPushTasks);
+    for (auto& callback : pushTasks.values())
+        callback(false);
 }
 
 void ServiceWorkerThreadProxy::setLastNavigationWasAppInitiated(bool wasAppInitiated)
@@ -292,6 +296,28 @@ void ServiceWorkerThreadProxy::didSaveScriptsToDisk(ScriptBuffer&& script, HashM
     thread().runLoop().postTask([script = WTFMove(script), importedScripts = WTFMove(importedScripts)](auto& context) mutable {
         downcast<ServiceWorkerGlobalScope>(context).didSaveScriptsToDisk(WTFMove(script), WTFMove(importedScripts));
     });
+}
+
+void ServiceWorkerThreadProxy::firePushEvent(std::optional<Vector<uint8_t>>&& data, CompletionHandler<void(bool)>&& callback)
+{
+    if (m_ongoingPushTasks.isEmpty())
+        thread().startPushEventMonitoring();
+
+    auto identifier = ++m_pushTasksCounter;
+    ASSERT(!m_ongoingPushTasks.contains(identifier));
+    m_ongoingPushTasks.add(identifier, WTFMove(callback));
+    bool isPosted = postTaskForModeToWorkerOrWorkletGlobalScope([this, protectedThis = Ref { *this }, identifier, data = WTFMove(data)](auto&) mutable {
+        thread().queueTaskToFirePushEvent(WTFMove(data), [this, protectedThis = WTFMove(protectedThis), identifier](bool result) mutable {
+            callOnMainThread([this, protectedThis = WTFMove(protectedThis), identifier, result]() mutable {
+                if (auto callback = m_ongoingPushTasks.take(identifier))
+                    callback(result);
+                if (m_ongoingPushTasks.isEmpty())
+                    thread().stopPushEventMonitoring();
+            });
+        });
+    }, WorkerRunLoop::defaultMode());
+    if (!isPosted)
+        m_ongoingPushTasks.take(identifier)(false);
 }
 
 } // namespace WebCore

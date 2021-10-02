@@ -52,6 +52,7 @@ public:
     Ref<FetchEvent> createBeingDispatchedFetchEvent(ScriptExecutionContext&);
     Ref<FetchResponse> createOpaqueWithBlobBodyResponse(ScriptExecutionContext&);
 
+    void schedulePushEvent(const String&, RefPtr<DeferredPromise>&&);
     Vector<String> fetchResponseHeaderList(FetchResponse&);
 
     String processName() const;
@@ -67,6 +68,8 @@ private:
 
     ServiceWorkerIdentifier m_identifier;
     RefPtr<DeferredPromise> m_lastNavigationWasAppInitiatedPromise;
+    HashMap<uint64_t, RefPtr<DeferredPromise>> m_pushEventPromises;
+    uint64_t m_pushEventCounter { 0 };
 };
 
 } // namespace WebCore

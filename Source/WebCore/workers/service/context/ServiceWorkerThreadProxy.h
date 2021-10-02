@@ -80,6 +80,8 @@ public:
     void postMessageToServiceWorker(MessageWithMessagePorts&&, ServiceWorkerOrClientData&&);
     void fireInstallEvent();
     void fireActivateEvent();
+    void firePushEvent(std::optional<Vector<uint8_t>>&&, CompletionHandler<void(bool)>&&);
+
     void didSaveScriptsToDisk(ScriptBuffer&&, HashMap<URL, ScriptBuffer>&& importedScripts);
 
     WEBCORE_EXPORT void setLastNavigationWasAppInitiated(bool);
@@ -112,6 +114,8 @@ private:
 
     ServiceWorkerInspectorProxy m_inspectorProxy;
     HashMap<std::pair<SWServerConnectionIdentifier, FetchIdentifier>, Ref<ServiceWorkerFetch::Client>> m_ongoingFetchTasks;
+    uint64_t m_pushTasksCounter { 0 };
+    HashMap<uint64_t, CompletionHandler<void(bool)>> m_ongoingPushTasks;
 };
 
 } // namespace WebKit

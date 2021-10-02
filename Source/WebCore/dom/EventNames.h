@@ -221,6 +221,7 @@ namespace WebCore {
     macro(previoustrack) \
     macro(processorerror) \
     macro(progress) \
+    macro(push) \
     macro(ratechange) \
     macro(readystatechange) \
     macro(rejectionhandled) \

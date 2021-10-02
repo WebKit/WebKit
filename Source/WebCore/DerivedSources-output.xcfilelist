@@ -2229,6 +2229,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSServiceWorkerClients.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSServiceWorkerClients.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSServiceWorkerContainer.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSServiceWorkerContainer.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSServiceWorkerGlobalScope+PushAPI.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSServiceWorkerGlobalScope+PushAPI.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSServiceWorkerGlobalScope.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSServiceWorkerGlobalScope.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSServiceWorkerInternals.cpp

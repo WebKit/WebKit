@@ -109,6 +109,18 @@ void SWContextManager::fireActivateEvent(ServiceWorkerIdentifier identifier)
     serviceWorker->fireActivateEvent();
 }
 
+void SWContextManager::firePushEvent(ServiceWorkerIdentifier identifier, std::optional<Vector<uint8_t>>&& data, CompletionHandler<void(bool)>&& callback)
+{
+    auto* serviceWorker = m_workerMap.get(identifier);
+    if (!serviceWorker) {
+        callback(false);
+        return;
+    }
+
+    serviceWorker->firePushEvent(WTFMove(data), WTFMove(callback));
+}
+
+
 void SWContextManager::terminateWorker(ServiceWorkerIdentifier identifier, Seconds timeout, Function<void()>&& completionHandler)
 {
     auto serviceWorker = m_workerMap.take(identifier);

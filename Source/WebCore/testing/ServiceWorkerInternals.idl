@@ -38,6 +38,8 @@
 
     sequence<ByteString> fetchResponseHeaderList(FetchResponse response);
 
+    Promise<boolean> schedulePushEvent(optional DOMString data);
+
     readonly attribute DOMString processName;
     readonly attribute boolean isThrottleable;
 
