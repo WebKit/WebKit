@@ -1,3 +1,27 @@
+2021-10-01  Remy Demarest  <rdemarest@apple.com>
+
+        Use DYLD_FRAMEWORK_PATH instead of DYLD_VERSIONED_FRAMEWORK_PATH on Safari Big Sur
+        https://bugs.webkit.org/show_bug.cgi?id=231058
+
+        Reviewed by David Kilzer.
+
+        Modify the DYLD environment variable that is used when compiling with staged frameworks.
+        We want to use DYLD_VERSIONED_FRAMEWORK_PATH to define the search path of the frameworks
+        for DYLD because this makes launching Safari and its child processes faster. However,
+        on Apple Silicon Big Sur using that environment variable does not work and results in Safari
+        loading frameworks from the System folder rather than from the StagedFrameworks/Safari
+        folder, this is because dyld on M1 does not look up that variable properly. To make sure
+        we actually load the frameworks from the desired location, we need to use DYLD_FRAMEWORK_PATH
+        instead, this makes dyld perform more stat() calls than usual to link the frameworks hence
+        why we prefer the other variable, but this is the only way to workaround the issue in
+        Big Sur on M1. In Monterey and above, this bug will be fixed in dyld so we only need this
+        variable before macOS 11.
+
+        Override OTHER_LDFLAGS_VERSIONED_FRAMEWORK_PATH_YES based on SDK and architecture to use
+        DYLD_FRAMEWORK_PATH instead of DYLD_VERSIONED_FRAMEWORK_PATH when building for macOS 11 and arm64.
+
+        * Configurations/BaseTarget.xcconfig:
+
 2021-10-01  Brent Fulgham  <bfulgham@apple.com>
 
         Remove reference to od-server-name from sandbox profiles 
