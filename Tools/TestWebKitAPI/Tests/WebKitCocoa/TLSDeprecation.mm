@@ -141,8 +141,6 @@ namespace TestWebKitAPI {
 
 const uint16_t tls1_1 = 0x0302;
 
-#if HAVE(TLS_PROTOCOL_VERSION_T)
-
 TEST(TLSVersion, DefaultBehavior)
 {
     HTTPServer server(HTTPServer::respondWithOK, HTTPServer::Protocol::HttpsWithLegacyTLS);
@@ -156,8 +154,6 @@ TEST(TLSVersion, DefaultBehavior)
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"https://127.0.0.1:%d/", server.port()]]]];
     [delegate waitForDidFinishNavigation];
 }
-
-#endif // HAVE(TLS_PROTOCOL_VERSION_T)
 
 #if HAVE(TLS_VERSION_DURING_CHALLENGE)
 
@@ -262,8 +258,6 @@ TEST(TLSVersion, Preconnect)
 }
 
 #endif // HAVE(TLS_VERSION_DURING_CHALLENGE)
-
-#if HAVE(TLS_PROTOCOL_VERSION_T)
 
 static std::pair<RetainPtr<WKWebView>, RetainPtr<TestNavigationDelegate>> webViewWithNavigationDelegate()
 {
@@ -498,8 +492,6 @@ TEST(TLSVersion, LegacySubresources)
 }
 
 #endif // HAVE(TLS_VERSION_DURING_CHALLENGE)
-
-#endif // HAVE(TLS_PROTOCOL_VERSION_T)
 
 }
 

@@ -392,11 +392,7 @@ bool addKeyToKeychain(const String& privateKeyBase64, const String& rpId, const 
         (id)kSecAttrLabel: rpId,
         (id)kSecAttrApplicationTag: adoptNS([[NSData alloc] initWithBase64EncodedString:userHandleBase64 options:NSDataBase64DecodingIgnoreUnknownCharacters]).get(),
         (id)kSecAttrAccessible: (id)kSecAttrAccessibleAfterFirstUnlock,
-#if HAVE(DATA_PROTECTION_KEYCHAIN)
         (id)kSecUseDataProtectionKeychain: @YES
-#else
-        (id)kSecAttrNoLegacy: @YES
-#endif
     };
     OSStatus status = SecItemAdd((__bridge CFDictionaryRef)addQuery, NULL);
     if (status)
@@ -411,11 +407,7 @@ void cleanUpKeychain(const String& rpId)
         (id)kSecClass: (id)kSecClassKey,
         (id)kSecAttrLabel: rpId,
         (id)kSecAttrAccessible: (id)kSecAttrAccessibleAfterFirstUnlock,
-#if HAVE(DATA_PROTECTION_KEYCHAIN)
         (id)kSecUseDataProtectionKeychain: @YES
-#else
-        (id)kSecAttrNoLegacy: @YES
-#endif
     };
     SecItemDelete((__bridge CFDictionaryRef)deleteQuery);
 }
@@ -1468,11 +1460,7 @@ TEST(WebAuthenticationPanel, LAMakeCredentialRollBackCredential)
         (id)kSecClass: (id)kSecClassKey,
         (id)kSecAttrKeyClass: (id)kSecAttrKeyClassPrivate,
         (id)kSecAttrLabel: @"",
-#if HAVE(DATA_PROTECTION_KEYCHAIN)
         (id)kSecUseDataProtectionKeychain: @YES
-#else
-        (id)kSecAttrNoLegacy: @YES
-#endif
     };
     OSStatus status = SecItemCopyMatching((__bridge CFDictionaryRef)query, nullptr);
     EXPECT_EQ(status, errSecItemNotFound);

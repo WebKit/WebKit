@@ -308,10 +308,8 @@
             (global-name "com.apple.cvmsServ")
         )
     )
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400 || PLATFORM(MACCATALYST)
     (allow file-read*
         (prefix "/private/var/db/CVMS/cvmsCodeSignObj"))
-#endif
     ;; OpenCL
     (if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES")
         (allow iokit-open
@@ -837,7 +835,6 @@
     (iokit-property "saved-config")
     (iokit-property "startup-timing")
     (iokit-property "touch-size-id")
-#if !PLATFORM(MAC) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
     (iokit-property "ATY,cbits")
     (iokit-property "ATY,intrev")
     (iokit-property "AccelNativeDMARowByteAlignment")
@@ -855,7 +852,6 @@
     (iokit-property "TelemetryDisable")
     (iokit-property "cail_properties")
     (iokit-property "dpm")
-#endif
     (iokit-property "IOGVAH264EncodeCapabilities") ;; <rdar://problem/49498040>
 #if !PLATFORM(MAC) || __MAC_OS_X_VERSION_MIN_REQUIRED > 101500
     (iokit-property "IOAVDHEVCDecodeCapabilities") ;; <rdar://problem/71100188>
@@ -1352,9 +1348,6 @@
 
 ;; Various services required by AppKit and other frameworks
 (allow mach-lookup
-#if __MAC_OS_X_VERSION_MIN_REQUIRED < 101400
-       (global-name "com.apple.FontObjectsServer")
-#endif
        (global-name "com.apple.logd")
        (global-name "com.apple.logd.events")
        (global-name "com.apple.CARenderServer") ; Needed for [CAContext remoteContextWithOptions]
@@ -1389,7 +1382,6 @@
     (global-name "com.apple.lsd.mapdb")
 )
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400 || PLATFORM(MACCATALYST)
 ;; <rdar://problem/47268166>
 (allow mach-lookup
     (require-all
@@ -1404,15 +1396,12 @@
         (xpc-service-name "com.apple.MTLCompilerService")
     )
 )
-#endif
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400 || PLATFORM(MACCATALYST)
 (deny mach-lookup (with no-log)
     (global-name "com.apple.CoreServices.coreservicesd")
     (global-name "com.apple.DiskArbitration.diskarbitrationd")
     (global-name "com.apple.ViewBridgeAuxiliary")
     (global-name "com.apple.windowserver.active"))
-#endif
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 110000
 (deny mach-lookup (with no-log)
@@ -1711,11 +1700,7 @@
         (global-name
             "com.apple.analyticsd"
             "com.apple.nehelper"
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101500 || PLATFORM(MACCATALYST)
             "com.apple.nesessionmanager.content-filter"
-#else
-            "com.apple.nesessionmanager"
-#endif
             "com.apple.webinspector"
             "com.apple.cfprefsd.agent"
             "com.apple.cfprefsd.daemon"

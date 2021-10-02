@@ -207,11 +207,7 @@ static RetainPtr<NSArray> getAllLocalAuthenticatorCredentialsImpl(NSString *acce
         (__bridge id)kSecAttrAccessGroup: accessGroup,
         (__bridge id)kSecReturnAttributes: @YES,
         (__bridge id)kSecMatchLimit: (__bridge id)kSecMatchLimitAll,
-#if HAVE(DATA_PROTECTION_KEYCHAIN)
         (__bridge id)kSecUseDataProtectionKeychain: @YES
-#else
-        (__bridge id)kSecAttrNoLegacy: @YES
-#endif
     };
     CFTypeRef attributesArrayRef = nullptr;
     OSStatus status = SecItemCopyMatching((__bridge CFDictionaryRef)query, &attributesArrayRef);
@@ -270,11 +266,7 @@ static RetainPtr<NSArray> getAllLocalAuthenticatorCredentialsImpl(NSString *acce
     NSDictionary* deleteQuery = @{
         (__bridge id)kSecClass: (__bridge id)kSecClassKey,
         (__bridge id)kSecAttrApplicationLabel: credentialID,
-#if HAVE(DATA_PROTECTION_KEYCHAIN)
         (__bridge id)kSecUseDataProtectionKeychain: @YES
-#else
-        (__bridge id)kSecAttrNoLegacy: @YES
-#endif
     };
     SecItemDelete((__bridge CFDictionaryRef)deleteQuery);
 #endif

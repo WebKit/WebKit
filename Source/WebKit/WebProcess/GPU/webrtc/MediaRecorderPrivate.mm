@@ -26,7 +26,7 @@
 #include "config.h"
 #include "MediaRecorderPrivate.h"
 
-#if PLATFORM(COCOA) && ENABLE(GPU_PROCESS) && ENABLE(MEDIA_STREAM) && HAVE(AVASSETWRITERDELEGATE)
+#if PLATFORM(COCOA) && ENABLE(GPU_PROCESS) && ENABLE(MEDIA_STREAM)
 
 #include <WebCore/CoreVideoSoftLink.h>
 

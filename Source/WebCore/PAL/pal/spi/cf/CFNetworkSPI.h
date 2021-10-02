@@ -301,12 +301,10 @@ typedef NS_ENUM(NSInteger, NSURLSessionCompanionProxyPreference) {
 #endif
 @end
 
-#if HAVE(CFNETWORK_NEGOTIATED_SSL_PROTOCOL_CIPHER)
 @interface NSURLSessionTaskTransactionMetrics ()
 @property (assign) SSLProtocol _negotiatedTLSProtocol;
 @property (assign) SSLCipherSuite _negotiatedTLSCipher;
 @end
-#endif
 
 @interface NSURLSession (SPI)
 #if HAVE(CFNETWORK_NSURLSESSION_STRICTRUSTEVALUATE)

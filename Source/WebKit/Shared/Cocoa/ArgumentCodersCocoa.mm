@@ -66,14 +66,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (nullable id)archiver:(NSKeyedArchiver *)archiver willEncodeObject:(id)object
 {
-#if HAVE(NSFONT_WITH_OPTICAL_SIZING_BUG)
-    if (auto font = dynamic_objc_cast<NSFont>(object)) {
-        // Recreate any serialized fonts after normalizing the
-        // font attributes to work around <rdar://problem/51657880>.
-        return WebKit::fontWithAttributes(font.fontDescriptor.fontAttributes, 0);
-    }
-#endif
-
     if (auto unwrappedURL = dynamic_objc_cast<NSURL>(object))
         return adoptNS([[WKSecureCodingURLWrapper alloc] initWithURL:unwrappedURL]).autorelease();
 

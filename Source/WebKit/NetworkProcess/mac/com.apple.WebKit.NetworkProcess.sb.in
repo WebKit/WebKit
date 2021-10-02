@@ -38,7 +38,7 @@
 
 #include "Shared/Sandbox/preferences.sb"
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101500
+#if PLATFORM(MAC)
 ;;;
 ;;; The following rules were originally contained in 'common.sb'. We are duplicating them here so we can
 ;;; remove unneeded sandbox extensions.

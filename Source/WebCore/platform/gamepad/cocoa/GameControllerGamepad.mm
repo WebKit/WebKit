@@ -130,12 +130,10 @@ void GameControllerGamepad::setupAsExtendedGamepad()
     }
 
     // Select, Start
-#if HAVE(GCEXTENDEDGAMEPAD_BUTTONS_OPTIONS_MENU)
     bindButton(m_extendedGamepad.get().buttonOptions, GamepadButtonRole::CenterClusterLeft);
     disableDefaultSystemAction(m_extendedGamepad.get().buttonOptions);
     bindButton(m_extendedGamepad.get().buttonMenu, GamepadButtonRole::CenterClusterRight);
     disableDefaultSystemAction(m_extendedGamepad.get().buttonMenu);
-#endif
 
     // L3, R3
 #if HAVE(GCEXTENDEDGAMEPAD_BUTTONS_THUMBSTICK)

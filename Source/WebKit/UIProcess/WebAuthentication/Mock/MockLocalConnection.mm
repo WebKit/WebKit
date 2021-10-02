@@ -121,11 +121,7 @@ RetainPtr<SecKeyRef> MockLocalConnection::createCredentialPrivateKey(LAContext *
         (id)kSecAttrLabel: secAttrLabel,
         (id)kSecAttrApplicationTag: secAttrApplicationTag,
         (id)kSecAttrAccessible: (id)kSecAttrAccessibleAfterFirstUnlock,
-#if HAVE(DATA_PROTECTION_KEYCHAIN)
         (id)kSecUseDataProtectionKeychain: @YES
-#else
-        (id)kSecAttrNoLegacy: @YES
-#endif
     };
     OSStatus status = SecItemAdd((__bridge CFDictionaryRef)addQuery, NULL);
     if (status) {

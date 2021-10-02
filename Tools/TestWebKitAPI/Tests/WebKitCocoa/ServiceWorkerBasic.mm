@@ -2182,8 +2182,6 @@ TEST(ServiceWorkers, ContentRuleList)
     TestWebKitAPI::Util::run(&doneRemoving);
 }
 
-#if HAVE(TLS_PROTOCOL_VERSION_T)
-
 static bool isTestServerTrust(SecTrustRef trust)
 {
     if (!trust)
@@ -2371,8 +2369,6 @@ TEST(ServiceWorkers, ChangeOfServerCertificate)
         EXPECT_WK_STREQ([webView2 _test_waitForAlert], "new worker");
     }
 }
-
-#endif // HAVE(TLS_PROTOCOL_VERSION_T)
 
 TEST(ServiceWorkers, ClearDOMCacheAlsoIncludesServiceWorkerRegistrations)
 {

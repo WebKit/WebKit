@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if HAVE(HID_FRAMEWORK) && USE(APPLE_INTERNAL_SDK)
+#if USE(APPLE_INTERNAL_SDK)
 
 #include <dispatch/dispatch.h>
 #include <wtf/FastMalloc.h>
@@ -123,4 +123,4 @@ private:
 };
 } // namespace TestWebKitAPI
 
-#endif // HAVE(HID_FRAMEWORK) && USE(APPLE_INTERNAL_SDK)
+#endif // USE(APPLE_INTERNAL_SDK)

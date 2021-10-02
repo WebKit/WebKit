@@ -122,7 +122,6 @@ void NetworkStorageSession::setAllCookiesToSameSiteStrict(const RegistrableDomai
 {
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessRawCookies));
 
-#if HAVE(CFNETWORK_SAMESITE_COOKIE_API)
     RetainPtr<NSMutableArray<NSHTTPCookie *>> oldCookiesToDelete = adoptNS([[NSMutableArray alloc] init]);
     RetainPtr<NSMutableArray<NSHTTPCookie *>> newCookiesToAdd = adoptNS([[NSMutableArray alloc] init]);
 
@@ -143,9 +142,7 @@ void NetworkStorageSession::setAllCookiesToSameSiteStrict(const RegistrableDomai
     for (NSHTTPCookie *newCookie in newCookiesToAdd.get())
         [nsCookieStorage() setCookie:newCookie];
     END_BLOCK_OBJC_EXCEPTIONS
-#else
-    UNUSED_PARAM(domain);
-#endif
+
     completionHandler();
 }
 

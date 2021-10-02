@@ -30,10 +30,6 @@
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 
 @interface NSView () <CALayerDelegate> {
-#if !HAVE(SUBVIEWS_IVAR_SPI) && !HAVE(SUBVIEWS_IVAR_DECLARED_BY_SDK)
-@package
-    NSMutableArray<__kindof NSView *> *_subviews;
-#endif
 }
 
 - (NSView *)_findLastViewInKeyViewLoop;

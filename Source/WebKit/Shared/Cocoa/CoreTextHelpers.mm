@@ -35,21 +35,7 @@ CocoaFont *fontWithAttributes(NSDictionary *attributes, CGFloat size)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
 
-#if HAVE(NSFONT_WITH_OPTICAL_SIZING_BUG)
-    auto mutableDictionary = adoptNS([attributes mutableCopy]);
-    if (id opticalSizeAttribute = [mutableDictionary objectForKey:(__bridge NSString *)kCTFontOpticalSizeAttribute]) {
-        if ([opticalSizeAttribute isKindOfClass:[NSString class]]) {
-            [mutableDictionary removeObjectForKey:(__bridge NSString *)kCTFontOpticalSizeAttribute];
-            if (NSNumber *size = [mutableDictionary objectForKey:(__bridge NSString *)kCTFontSizeAttribute])
-                [mutableDictionary setObject:size forKey:(__bridge NSString *)kCTFontOpticalSizeAttribute];
-        }
-    }
-
-    auto descriptor = [CocoaFontDescriptor fontDescriptorWithFontAttributes:mutableDictionary.get()];
-#else
     auto descriptor = [CocoaFontDescriptor fontDescriptorWithFontAttributes:attributes];
-#endif
-
     return [CocoaFont fontWithDescriptor:descriptor size:size];
 
     END_BLOCK_OBJC_EXCEPTIONS

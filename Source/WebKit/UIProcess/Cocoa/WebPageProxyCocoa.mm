@@ -634,11 +634,7 @@ Vector<SandboxExtension::Handle> WebPageProxy::createNetworkExtensionsSandboxExt
     if (!process.hasNetworkExtensionSandboxAccess() && NetworkExtensionContentFilter::isRequired()) {
         process.markHasNetworkExtensionSandboxAccess();
         constexpr ASCIILiteral neHelperService { "com.apple.nehelper"_s };
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101500
-        constexpr ASCIILiteral neSessionManagerService { "com.apple.nesessionmanager"_s };
-#else
         constexpr ASCIILiteral neSessionManagerService { "com.apple.nesessionmanager.content-filter"_s };
-#endif
         return SandboxExtension::createHandlesForMachLookup({ neHelperService, neSessionManagerService }, std::nullopt);
     }
 #endif

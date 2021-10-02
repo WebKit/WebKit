@@ -3192,14 +3192,6 @@ void MediaPlayerPrivateAVFoundationObjC::playerItemStatusDidChange(int status)
 {
     m_cachedItemStatus = status;
 
-    // Setting the pitch algorithm here causes tests to fail on Mojave; revert this change
-    // for <= Mojave builds.
-#if !(PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED > 101400)
-    // FIXME(rdar://72829354): Remove after AVFoundation radar is fixed.
-    if (status == AVPlayerItemStatusReadyToPlay)
-        [m_avPlayerItem setAudioTimePitchAlgorithm:audioTimePitchAlgorithmForMediaPlayerPitchCorrectionAlgorithm(player()->pitchCorrectionAlgorithm(), player()->preservesPitch(), m_requestedRate)];
-#endif
-
     updateStates();
 }
 

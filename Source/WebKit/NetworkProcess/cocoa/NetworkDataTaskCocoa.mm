@@ -130,13 +130,7 @@ NSHTTPCookieStorage *NetworkDataTaskCocoa::statelessCookieStorage()
 {
     static NeverDestroyed<RetainPtr<NSHTTPCookieStorage>> statelessCookieStorage;
     if (!statelessCookieStorage.get()) {
-#if HAVE(NSHTTPCOOKIESTORAGE__INITWITHIDENTIFIER_WITH_INACCURATE_NULLABILITY)
-        IGNORE_NULL_CHECK_WARNINGS_BEGIN
-#endif
         statelessCookieStorage.get() = adoptNS([[NSHTTPCookieStorage alloc] _initWithIdentifier:nil private:YES]);
-#if HAVE(NSHTTPCOOKIESTORAGE__INITWITHIDENTIFIER_WITH_INACCURATE_NULLABILITY)
-        IGNORE_NULL_CHECK_WARNINGS_END
-#endif
         statelessCookieStorage.get().get().cookieAcceptPolicy = NSHTTPCookieAcceptPolicyNever;
     }
     ASSERT(statelessCookieStorage.get().get().cookies.count == 0);

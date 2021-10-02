@@ -284,11 +284,9 @@ RetainPtr<PKPaymentRequest> WebPaymentCoordinatorProxy::platformPaymentRequest(c
 
     [result setSupportedCountries:toNSSet(paymentRequest.supportedCountries()).get()];
 
-#if HAVE(PASSKIT_BOUND_INTERFACE_IDENTIFIER)
     auto& boundInterfaceIdentifier = m_client.paymentCoordinatorBoundInterfaceIdentifier(*this);
     if (!boundInterfaceIdentifier.isEmpty())
         [result setBoundInterfaceIdentifier:boundInterfaceIdentifier];
-#endif
 
     // FIXME: Instead of using respondsToSelector, this should use a proper #if version check.
     auto& bundleIdentifier = m_client.paymentCoordinatorSourceApplicationBundleIdentifier(*this);

@@ -26,7 +26,7 @@
 #include "config.h"
 #include "RemoteMediaRecorder.h"
 
-#if PLATFORM(COCOA) && ENABLE(GPU_PROCESS) && ENABLE(MEDIA_STREAM) && HAVE(AVASSETWRITERDELEGATE)
+#if PLATFORM(COCOA) && ENABLE(GPU_PROCESS) && ENABLE(MEDIA_STREAM)
 
 #include "Connection.h"
 #include "GPUConnectionToWebProcess.h"
@@ -134,4 +134,4 @@ void RemoteMediaRecorder::resume(CompletionHandler<void()>&& completionHandler)
 
 #undef MESSAGE_CHECK
 
-#endif // PLATFORM(COCOA) && ENABLE(GPU_PROCESS) && ENABLE(MEDIA_STREAM) && HAVE(AVASSETWRITERDELEGATE)
+#endif // PLATFORM(COCOA) && ENABLE(GPU_PROCESS) && ENABLE(MEDIA_STREAM)

@@ -159,7 +159,6 @@ static WebCore::PrivacyStance toPrivacyStance(nw_connection_privacy_stance_t sta
 }
 #endif
 
-#if HAVE(CFNETWORK_NEGOTIATED_SSL_PROTOCOL_CIPHER)
 #if HAVE(CFNETWORK_METRICS_APIS_V4)
 static String stringForTLSProtocolVersion(tls_protocol_version_t protocol)
 {
@@ -439,7 +438,6 @@ static String stringForSSLCipher(SSLCipherSuite cipher)
 #undef STRINGIFY_CIPHER
 }
 #endif // HAVE(CFNETWORK_METRICS_APIS_V4)
-#endif // HAVE(CFNETWORK_NEGOTIATED_SSL_PROTOCOL_CIPHER)
 
 @interface WKNetworkSessionDelegate : NSObject <NSURLSessionDataDelegate
 #if HAVE(NSURLSESSION_WEBSOCKET)
@@ -727,14 +725,13 @@ static inline void processServerTrustEvaluation(NetworkSessionCocoa& session, Se
         if (NetworkSessionCocoa::allowsSpecificHTTPSCertificateForHost(challenge))
             return completionHandler(NSURLSessionAuthChallengeUseCredential, [NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust]);
 
-#if HAVE(TLS_PROTOCOL_VERSION_T)
         NSURLSessionTaskTransactionMetrics *metrics = task._incompleteTaskMetrics.transactionMetrics.lastObject;
         auto tlsVersion = (tls_protocol_version_t)metrics.negotiatedTLSProtocolVersion.unsignedShortValue;
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         if (tlsVersion == tls_protocol_version_TLSv10 || tlsVersion == tls_protocol_version_TLSv11)
             negotiatedLegacyTLS = NegotiatedLegacyTLS::Yes;
 ALLOW_DEPRECATED_DECLARATIONS_END
-#endif
+
         ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         if (negotiatedLegacyTLS == NegotiatedLegacyTLS::No && [task respondsToSelector:@selector(_TLSNegotiatedProtocolVersion)]) {
             SSLProtocol tlsVersion = [task _TLSNegotiatedProtocolVersion];
@@ -851,12 +848,10 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         networkLoadMetrics.markComplete();
         networkLoadMetrics.redirectCount = metrics.redirectCount;
         networkLoadMetrics.protocol = String(m.networkProtocolName);
-#if HAVE(CFNETWORK_METRICS_CONNECTION_PROPERTIES)
         networkLoadMetrics.cellular = m.cellular;
         networkLoadMetrics.expensive = m.expensive;
         networkLoadMetrics.constrained = m.constrained;
         networkLoadMetrics.multipath = m.multipath;
-#endif
         networkLoadMetrics.isReusedConnection = m.isReusedConnection;
 
 #if HAVE(NETWORK_CONNECTION_PRIVACY_STANCE)
@@ -879,7 +874,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
             additionalMetrics->connectionIdentifier = String([m._connectionIdentifier UUIDString]);
 
-#if HAVE(CFNETWORK_NEGOTIATED_SSL_PROTOCOL_CIPHER)
 #if HAVE(CFNETWORK_METRICS_APIS_V4)
             additionalMetrics->tlsProtocol = stringForTLSProtocolVersion((tls_protocol_version_t)[m.negotiatedTLSProtocolVersion unsignedShortValue]);
             additionalMetrics->tlsCipher = stringForTLSCipherSuite((tls_ciphersuite_t)[m.negotiatedTLSCipherSuite unsignedShortValue]);
@@ -888,7 +882,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
             additionalMetrics->tlsProtocol = stringForSSLProtocol(m._negotiatedTLSProtocol);
             additionalMetrics->tlsCipher = stringForSSLCipher(m._negotiatedTLSCipher);
             ALLOW_DEPRECATED_DECLARATIONS_END
-#endif
 #endif
 
             __block WebCore::HTTPHeaderMap requestHeaders;
@@ -942,22 +935,13 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
         NegotiatedLegacyTLS negotiatedLegacyTLS = NegotiatedLegacyTLS::No;
         NSURLSessionTaskMetrics *taskMetrics = dataTask._incompleteTaskMetrics;
-#if HAVE(TLS_PROTOCOL_VERSION_T)
+
         NSURLSessionTaskTransactionMetrics *metrics = taskMetrics.transactionMetrics.lastObject;
         auto tlsVersion = (tls_protocol_version_t)metrics.negotiatedTLSProtocolVersion.unsignedShortValue;
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         if (tlsVersion == tls_protocol_version_TLSv10 || tlsVersion == tls_protocol_version_TLSv11)
             negotiatedLegacyTLS = NegotiatedLegacyTLS::Yes;
 ALLOW_DEPRECATED_DECLARATIONS_END
-#else // We do not need to check _TLSNegotiatedProtocolVersion if we have metrics.negotiatedTLSProtocolVersion because it works at response time even before rdar://problem/56522601
-        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-        if ([dataTask respondsToSelector:@selector(_TLSNegotiatedProtocolVersion)]) {
-            SSLProtocol tlsVersion = [dataTask _TLSNegotiatedProtocolVersion];
-            if (tlsVersion == kTLSProtocol11 || tlsVersion == kTLSProtocol1)
-                negotiatedLegacyTLS = NegotiatedLegacyTLS::Yes;
-        }
-        ALLOW_DEPRECATED_DECLARATIONS_END
-#endif
         
         // Avoid MIME type sniffing if the response comes back as 304 Not Modified.
         int statusCode = [response isKindOfClass:NSHTTPURLResponse.class] ? [(NSHTTPURLResponse *)response statusCode] : 0;

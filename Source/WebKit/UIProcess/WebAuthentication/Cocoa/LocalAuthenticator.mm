@@ -127,11 +127,7 @@ static std::optional<Vector<Ref<AuthenticatorAssertionResponse>>> getExistingCre
         (id)kSecAttrLabel: rpId,
         (id)kSecReturnAttributes: @YES,
         (id)kSecMatchLimit: (id)kSecMatchLimitAll,
-#if HAVE(DATA_PROTECTION_KEYCHAIN)
         (id)kSecUseDataProtectionKeychain: @YES
-#else
-        (id)kSecAttrNoLegacy: @YES
-#endif
     }];
     updateQueryIfNecessary(query.get());
 
@@ -182,11 +178,7 @@ void LocalAuthenticator::clearAllCredentials()
     [query setDictionary:@{
         (id)kSecClass: (id)kSecClassKey,
         (id)kSecAttrAccessGroup: (id)String(LocalAuthenticatiorAccessGroup),
-#if HAVE(DATA_PROTECTION_KEYCHAIN)
         (id)kSecUseDataProtectionKeychain: @YES
-#else
-        (id)kSecAttrNoLegacy: @YES
-#endif
     }];
     updateQueryIfNecessary(query.get());
 
@@ -394,11 +386,7 @@ void LocalAuthenticator::continueMakeCredentialAfterUserVerification(SecAccessCo
             (id)kSecAttrKeyClass: (id)kSecAttrKeyClassPrivate,
             (id)kSecAttrLabel: secAttrLabel,
             (id)kSecAttrApplicationLabel: m_provisionalCredentialId.get(),
-#if HAVE(DATA_PROTECTION_KEYCHAIN)
             (id)kSecUseDataProtectionKeychain: @YES
-#else
-            (id)kSecAttrNoLegacy: @YES
-#endif
         }];
         updateQueryIfNecessary(query.get());
 
@@ -599,11 +587,7 @@ void LocalAuthenticator::continueGetAssertionAfterUserVerification(Ref<WebCore::
             (id)kSecAttrKeyClass: (id)kSecAttrKeyClassPrivate,
             (id)kSecAttrApplicationLabel: nsCredentialId.get(),
             (id)kSecReturnRef: @YES,
-#if HAVE(DATA_PROTECTION_KEYCHAIN)
             (id)kSecUseDataProtectionKeychain: @YES
-#else
-            (id)kSecAttrNoLegacy: @YES
-#endif
         } mutableCopy];
 
         if (context)
@@ -640,11 +624,7 @@ void LocalAuthenticator::continueGetAssertionAfterUserVerification(Ref<WebCore::
         (id)kSecClass: (id)kSecClassKey,
         (id)kSecAttrKeyClass: (id)kSecAttrKeyClassPrivate,
         (id)kSecAttrApplicationLabel: nsCredentialId.get(),
-#if HAVE(DATA_PROTECTION_KEYCHAIN)
         (id)kSecUseDataProtectionKeychain: @YES
-#else
-        (id)kSecAttrNoLegacy: @YES
-#endif
     }];
     updateQueryIfNecessary(query.get());
 
@@ -671,11 +651,7 @@ void LocalAuthenticator::receiveException(ExceptionData&& exception, WebAuthenti
         [query setDictionary:@{
             (id)kSecClass: (id)kSecClassKey,
             (id)kSecAttrApplicationLabel: m_provisionalCredentialId.get(),
-#if HAVE(DATA_PROTECTION_KEYCHAIN)
             (id)kSecUseDataProtectionKeychain: @YES
-#else
-            (id)kSecAttrNoLegacy: @YES
-#endif
         }];
         updateQueryIfNecessary(query.get());
 
@@ -708,11 +684,7 @@ void LocalAuthenticator::deleteDuplicateCredential() const
         [query setDictionary:@{
             (id)kSecClass: (id)kSecClassKey,
             (id)kSecAttrApplicationLabel: toNSData(credential->rawId()).get(),
-#if HAVE(DATA_PROTECTION_KEYCHAIN)
             (id)kSecUseDataProtectionKeychain: @YES
-#else
-            (id)kSecAttrNoLegacy: @YES
-#endif
         }];
         updateQueryIfNecessary(query.get());
 

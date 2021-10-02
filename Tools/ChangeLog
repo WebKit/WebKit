@@ -1,3 +1,16 @@
+2021-10-01  Chris Dumez  <cdumez@apple.com>
+
+        Drop support for macOS < 10.15
+        https://bugs.webkit.org/show_bug.cgi?id=231085
+
+        Reviewed by Darin Adler.
+
+        * TestRunnerShared/spi/AppKitTestSPI.h:
+        * TestWebKitAPI/Tests/WebCore/cocoa/AVFoundationSoftLinkTest.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/Preconnect.mm:
+        * TestWebKitAPI/config.h:
+
 2021-10-01  Jonathan Bedard  <jbedard@apple.com>
 
         [webkitpy] Add a delay between successive iOS simulator boots (Follow-up fix)

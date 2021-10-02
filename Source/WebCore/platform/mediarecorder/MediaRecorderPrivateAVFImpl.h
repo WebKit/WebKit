@@ -24,7 +24,7 @@
 
 #pragma once
 
-#if ENABLE(MEDIA_STREAM) && HAVE(AVASSETWRITERDELEGATE)
+#if ENABLE(MEDIA_STREAM)
 
 #include "CAAudioStreamDescription.h"
 #include "MediaRecorderPrivate.h"
@@ -68,4 +68,4 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(MEDIA_STREAM) && HAVE(AVASSETWRITERDELEGATE)
+#endif // ENABLE(MEDIA_STREAM)

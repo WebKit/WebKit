@@ -413,9 +413,7 @@ typedef NS_ENUM(NSInteger, PKPaymentSetupFeatureType) {
 @property (nonatomic, strong) NSString *sourceApplicationBundleIdentifier;
 @property (nonatomic, strong) NSString *sourceApplicationSecondaryIdentifier;
 @property (nonatomic, strong) NSString *CTDataConnectionServiceType;
-#if HAVE(PASSKIT_BOUND_INTERFACE_IDENTIFIER)
 @property (nonatomic, copy) NSString *boundInterfaceIdentifier;
-#endif
 @end
 
 #if !HAVE(PASSKIT_INSTALLMENTS)
@@ -442,11 +440,9 @@ typedef NS_ENUM(NSInteger, PKPaymentButtonType) {
     PKPaymentButtonTypeSetUp,
     PKPaymentButtonTypeInStore,
     PKPaymentButtonTypeDonate,
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101400) || PLATFORM(IOS_FAMILY)
     PKPaymentButtonTypeCheckout,
     PKPaymentButtonTypeBook,
     PKPaymentButtonTypeSubscribe,
-#endif
 };
 #endif // !HAVE(PASSKIT_RECURRING_SUMMARY_ITEM)
 

@@ -1,3 +1,20 @@
+2021-10-01  Chris Dumez  <cdumez@apple.com>
+
+        Drop support for macOS < 10.15
+        https://bugs.webkit.org/show_bug.cgi?id=231085
+
+        Reviewed by Darin Adler.
+
+        * NetworkProcess/mac/com.apple.WebKit.NetworkProcess.sb.in:
+        * Shared/Cocoa/ArgumentCodersCocoa.mm:
+        (-[WKSecureCodingArchivingDelegate archiver:willEncodeObject:]):
+        * Shared/Cocoa/CoreTextHelpers.mm:
+        (WebKit::fontWithAttributes):
+        * UIProcess/Cocoa/WebPageProxyCocoa.mm:
+        (WebKit::WebPageProxy::createNetworkExtensionsSandboxExtensions):
+        * WebAuthnProcess/mac/com.apple.WebKit.WebAuthnProcess.sb.in:
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2021-10-01  Remy Demarest  <rdemarest@apple.com>
 
         Use DYLD_FRAMEWORK_PATH instead of DYLD_VERSIONED_FRAMEWORK_PATH on Safari Big Sur

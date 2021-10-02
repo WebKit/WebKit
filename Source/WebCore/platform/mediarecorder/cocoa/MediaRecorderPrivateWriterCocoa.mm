@@ -26,7 +26,7 @@
 #include "config.h"
 #include "MediaRecorderPrivateWriterCocoa.h"
 
-#if ENABLE(MEDIA_STREAM) && HAVE(AVASSETWRITERDELEGATE)
+#if ENABLE(MEDIA_STREAM)
 
 #include "AudioSampleBufferCompressor.h"
 #include "AudioStreamDescription.h"
@@ -582,4 +582,4 @@ unsigned MediaRecorderPrivateWriter::videoBitRate() const
 
 } // namespace WebCore
 
-#endif // ENABLE(MEDIA_STREAM) && HAVE(AVASSETWRITERDELEGATE)
+#endif // ENABLE(MEDIA_STREAM)

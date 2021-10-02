@@ -60,10 +60,7 @@ typedef NS_OPTIONS(NSUInteger, NSWindowShadowOptions) {
 - (void)setInspectorBar:(NSInspectorBar *)bar;
 
 @property (readonly) NSWindowShadowOptions shadowOptions;
-
-#if __MAC_OS_X_VERSION_MAX_ALLOWED >= 101400
 @property CGFloat titlebarAlphaValue;
-#endif
 
 #if HAVE(NSSCROLLVIEW_SEPARATOR_TRACKING_ADAPTER)
 - (BOOL)registerScrollViewSeparatorTrackingAdapter:(NSObject<NSScrollViewSeparatorTrackingAdapter> *)adapter;
@@ -81,12 +78,6 @@ typedef NS_OPTIONS(NSUInteger, NSWindowShadowOptions) {
 @interface NSInspectorBar (IPI)
 - (void)_update;
 @end
-
-#if __MAC_OS_X_VERSION_MAX_ALLOWED < 101400
-@interface NSWindow (IPI)
-@property CGFloat titlebarAlphaValue;
-@end
-#endif
 
 // FIXME: Move this above once <rdar://problem/70224980> is in an SDK.
 @interface NSCursor ()

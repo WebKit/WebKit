@@ -120,10 +120,8 @@
     ;; CVMS
     (allow mach-lookup (with telemetry)
         (global-name "com.apple.cvmsServ"))
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400 || PLATFORM(MACCATALYST)
     (allow file-read* (with telemetry)
         (prefix "/private/var/db/CVMS/cvmsCodeSignObj"))
-#endif
     ;; OpenCL
     (allow iokit-open (with telemetry)
         (iokit-connection "IOAccelerator")
@@ -431,7 +429,6 @@
     (iokit-property "saved-config")
     (iokit-property "startup-timing")
     (iokit-property "touch-size-id")
-#if !PLATFORM(MAC) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
     (iokit-property "ATY,cbits")
     (iokit-property "ATY,intrev")
     (iokit-property "AccelNativeDMARowByteAlignment")
@@ -449,7 +446,6 @@
     (iokit-property "TelemetryDisable")
     (iokit-property "cail_properties")
     (iokit-property "dpm")
-#endif
     (iokit-property "IOGVAH264EncodeCapabilities") ;; <rdar://problem/49498040>
 #if !PLATFORM(MAC) || __MAC_OS_X_VERSION_MIN_REQUIRED > 101500
     (iokit-property "IOAVDHEVCDecodeCapabilities") ;; <rdar://problem/71100188>
@@ -704,9 +700,6 @@
        (global-name "com.apple.logd.events"))
 
 (allow mach-lookup (with telemetry)
-#if __MAC_OS_X_VERSION_MIN_REQUIRED < 101400
-       (global-name "com.apple.FontObjectsServer")
-#endif
        (global-name "com.apple.SystemConfiguration.configd")
        (global-name "com.apple.assertiond.processassertionconnection")
        (global-name "com.apple.audio.toolbox.reporting.service")
@@ -722,18 +715,14 @@
        (global-name "com.apple.tccd.system")
 )
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400 || PLATFORM(MACCATALYST)
 ;; <rdar://problem/47268166>
 (allow mach-lookup (with telemetry) (xpc-service-name "com.apple.MTLCompilerService"))
-#endif
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400 || PLATFORM(MACCATALYST)
 (deny mach-lookup (with no-log)
     (global-name "com.apple.CoreServices.coreservicesd")
     (global-name "com.apple.DiskArbitration.diskarbitrationd")
     (global-name "com.apple.ViewBridgeAuxiliary")
     (global-name "com.apple.windowserver.active"))
-#endif
 
 ;; Needed to support encrypted media playback <rdar://problem/40038478>
 (allow mach-lookup (with telemetry)

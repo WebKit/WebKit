@@ -130,7 +130,6 @@ OSStatus SetApplicationIsDaemon(Boolean);
 AXError _AXUIElementUseSecondaryAXThread(bool enabled);
 #endif
 
-#if HAVE(AX_CLIENT_TYPE)
 typedef CF_ENUM(int32_t, AXClientType)
 {
     kAXClientTypeNoActiveRequestFound = 0,
@@ -147,7 +146,6 @@ typedef CF_ENUM(int32_t, AXClientType)
 };
 AXClientType _AXGetClientForCurrentRequestUntrusted(void);
 void _AXSetClientIdentificationOverride(AXClientType);
-#endif // HAVE(AX_CLIENT_TYPE)
 
 extern CFStringRef kAXInterfaceReduceMotionKey;
 extern CFStringRef kAXInterfaceReduceMotionStatusDidChangeNotification;

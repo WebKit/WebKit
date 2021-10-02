@@ -825,16 +825,9 @@ SynthesisPair computeNecessarySynthesis(CTFontRef font, const FontDescription& f
 
     CTFontSymbolicTraits actualTraits = 0;
     if (isFontWeightBold(fontDescription.weight()) || isItalic(fontDescription.italic())) {
-        if (shouldComputePhysicalTraits == ShouldComputePhysicalTraits::Yes) {
-#if HAVE(CTFONTGETPHYSICALSYMBOLICTRAITS)
+        if (shouldComputePhysicalTraits == ShouldComputePhysicalTraits::Yes)
             actualTraits = CTFontGetPhysicalSymbolicTraits(font);
-#else
-            auto fontForSynthesisComputation = retainPtr(font);
-            if (auto physicalFont = adoptCF(CTFontCopyPhysicalFont(font)))
-                fontForSynthesisComputation = WTFMove(physicalFont);
-            actualTraits = CTFontGetSymbolicTraits(fontForSynthesisComputation.get());
-#endif
-        } else
+        else
             actualTraits = CTFontGetSymbolicTraits(font);
     }
 

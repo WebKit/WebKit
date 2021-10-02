@@ -30,7 +30,7 @@
 #import <AVFoundation/AVFoundation.h>
 #import <wtf/SoftLinking.h>
 
-#if !(PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101500) && !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
+#if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
 SOFT_LINK_FRAMEWORK_FOR_SOURCE_WITH_EXPORT(PAL, AVFoundation, PAL_EXPORT)
 #else
 @interface AVPlayerItem (DisableKVOOnSupressesVideoLayers)

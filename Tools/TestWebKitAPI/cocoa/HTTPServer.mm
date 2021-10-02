@@ -80,7 +80,6 @@ RetainPtr<nw_parameters_t> HTTPServer::listenerParameters(Protocol protocol, Cer
         customTestIdentity = testIdentity();
 
     auto configureTLS = [protocol, verifier = WTFMove(verifier), testIdentity = WTFMove(customTestIdentity)] (nw_protocol_options_t protocolOptions) mutable {
-#if HAVE(TLS_PROTOCOL_VERSION_T)
         auto options = adoptNS(nw_tls_copy_sec_protocol_options(protocolOptions));
         auto identity = adoptNS(sec_identity_create(testIdentity.get()));
         sec_protocol_options_set_local_identity(options.get(), identity.get());
@@ -94,10 +93,6 @@ RetainPtr<nw_parameters_t> HTTPServer::listenerParameters(Protocol protocol, Cer
         }
         if (protocol == Protocol::Http2)
             sec_protocol_options_add_tls_application_protocol(options.get(), "h2");
-#else
-        UNUSED_PARAM(protocolOptions);
-        ASSERT_UNUSED(protocol, protocol != Protocol::HttpsWithLegacyTLS);
-#endif
     };
 
     auto configureTLSBlock = protocol == Protocol::Http || protocol == Protocol::HttpsProxy ? makeBlockPtr(NW_PARAMETERS_DISABLE_PROTOCOL) : makeBlockPtr(WTFMove(configureTLS));

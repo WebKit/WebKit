@@ -174,7 +174,7 @@ private:
     UserMediaCaptureManagerProxy& userMediaCaptureManagerProxy();
     RemoteAudioMediaStreamTrackRendererInternalUnitManager& audioMediaStreamTrackRendererInternalUnitManager();
 #endif
-#if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM) && HAVE(AVASSETWRITERDELEGATE)
+#if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
     RemoteMediaRecorderManager& mediaRecorderManager();
 #endif
 
@@ -256,7 +256,7 @@ private:
     std::unique_ptr<RemoteAudioMediaStreamTrackRendererInternalUnitManager> m_audioMediaStreamTrackRendererInternalUnitManager;
     Ref<RemoteSampleBufferDisplayLayerManager> m_sampleBufferDisplayLayerManager;
 #endif
-#if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM) && HAVE(AVASSETWRITERDELEGATE)
+#if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
     std::unique_ptr<RemoteMediaRecorderManager> m_remoteMediaRecorderManager;
 #endif
 #if ENABLE(MEDIA_STREAM)
