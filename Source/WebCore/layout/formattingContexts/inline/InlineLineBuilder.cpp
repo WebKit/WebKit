@@ -725,10 +725,20 @@ LineBuilder::Result LineBuilder::handleInlineContent(InlineContentBreaker& inlin
         auto& inlineTextItem = downcast<InlineTextItem>(candidateRuns.first().inlineItem);
         if (inlineTextItem.isWhitespace())
             return { };
+        auto& overflowingRun = candidateRuns.first();
+        if (m_isFirstLine) {
+            auto& usedStyle = overflowingRun.style;
+            auto& style = overflowingRun.inlineItem.style();
+            if (&usedStyle != &style && usedStyle.fontCascade() != style.fontCascade()) {
+                // We may have the incorrect text width when styles differ. Just re-measure the text content when we place it on the next line.
+                return { };
+            }
+        }
+        auto logicalWidthForNextLineAsLeading = overflowingRun.logicalWidth;
         if (result.action == InlineContentBreaker::Result::Action::Wrap)
-            return candidateRuns.first().logicalWidth;
+            return logicalWidthForNextLineAsLeading;
         if (result.action == InlineContentBreaker::Result::Action::Break && result.partialTrailingContent->partialRun)
-            return candidateRuns.first().logicalWidth - result.partialTrailingContent->partialRun->logicalWidth;
+            return logicalWidthForNextLineAsLeading - result.partialTrailingContent->partialRun->logicalWidth;
         return { };
     };
 
