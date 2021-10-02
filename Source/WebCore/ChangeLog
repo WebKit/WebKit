@@ -1,3 +1,53 @@
+2021-10-02  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r283444. rdar://problem/83784757
+
+    Remove JSC hack after r283410
+    https://bugs.webkit.org/show_bug.cgi?id=230261
+    
+    Reviewed by Mark Lam.
+    
+    Source/JavaScriptCore:
+    
+    * runtime/JSObject.cpp:
+    (JSC::JSObject::getOwnPropertyDescriptor):
+    * runtime/PropertySlot.h:
+    
+    Source/WebCore:
+    
+    We revert a hack for accessors in JSC since this is not necessary.
+    
+    * bindings/scripts/CodeGeneratorJS.pm:
+    (GetJSCAttributesForAttribute):
+    * bindings/scripts/test/JS/JSTestObj.cpp:
+    (WebCore::JSTestObjDOMConstructor::construct):
+    (WebCore::jsTestObj_searchGetter):
+    (WebCore::JSC_DEFINE_CUSTOM_GETTER):
+    (WebCore::setJSTestObj_searchSetter):
+    (WebCore::JSC_DEFINE_CUSTOM_SETTER):
+    * bindings/scripts/test/TestObj.idl:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@283444 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-10-02  Yusuke Suzuki  <ysuzuki@apple.com>
+
+            Remove JSC hack after r283410
+            https://bugs.webkit.org/show_bug.cgi?id=230261
+
+            Reviewed by Mark Lam.
+
+            We revert a hack for accessors in JSC since this is not necessary.
+
+            * bindings/scripts/CodeGeneratorJS.pm:
+            (GetJSCAttributesForAttribute):
+            * bindings/scripts/test/JS/JSTestObj.cpp:
+            (WebCore::JSTestObjDOMConstructor::construct):
+            (WebCore::jsTestObj_searchGetter):
+            (WebCore::JSC_DEFINE_CUSTOM_GETTER):
+            (WebCore::setJSTestObj_searchSetter):
+            (WebCore::JSC_DEFINE_CUSTOM_SETTER):
+            * bindings/scripts/test/TestObj.idl:
+
 2021-10-01  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r283410. rdar://problem/83784757
