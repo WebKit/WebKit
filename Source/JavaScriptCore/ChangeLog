@@ -1,3 +1,14 @@
+2021-10-02  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Remove JSC hack after r283410
+        https://bugs.webkit.org/show_bug.cgi?id=230261
+
+        Reviewed by Mark Lam.
+
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::getOwnPropertyDescriptor):
+        * runtime/PropertySlot.h:
+
 2021-10-01  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r283293.
