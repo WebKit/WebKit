@@ -1,5 +1,15 @@
 2021-10-01  Jonathan Bedard  <jbedard@apple.com>
 
+        [webkitpy] Add a delay between successive iOS simulator boots (Follow-up fix)
+        https://bugs.webkit.org/show_bug.cgi?id=226376
+
+        Unreviewed infrastrucutre fix.
+
+        * Scripts/webkitpy/xcode/simulated_device.py:
+        (SimulatedDeviceManager._boot_device): Increase delay to support iOS 15.
+
+2021-10-01  Jonathan Bedard  <jbedard@apple.com>
+
         [webkitscmpy] Get pull-request by number
         https://bugs.webkit.org/show_bug.cgi?id=231039
         <rdar://problem/83740215>
