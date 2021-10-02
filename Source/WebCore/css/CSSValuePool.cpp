@@ -112,8 +112,6 @@ Ref<CSSPrimitiveValue> CSSValuePool::createColorValue(const Color& color)
 
 Ref<CSSPrimitiveValue> CSSValuePool::createValue(double value, CSSUnitType type)
 {
-    ASSERT(std::isfinite(value));
-
     if (value < 0 || value > StaticCSSValuePool::maximumCacheableIntegerValue)
         return CSSPrimitiveValue::create(value, type);
 

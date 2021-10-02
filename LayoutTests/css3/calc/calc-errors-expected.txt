@@ -3,7 +3,6 @@ All boxes below should be 100px * 100px and green.
 unclosed calc => PASS
 unclosed calc with garbage => PASS
 garbage => PASS
-zero division => PASS
 non length => PASS
 number + length => PASS
 length + number => PASS

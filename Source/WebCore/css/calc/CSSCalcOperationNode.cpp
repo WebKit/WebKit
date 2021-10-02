@@ -70,7 +70,7 @@ static CalculationCategory determineCategory(const CSSCalcExpressionNode& leftSi
             return CalculationCategory::Other;
         return leftCategory == CalculationCategory::Number ? rightCategory : leftCategory;
     case CalcOperator::Divide:
-        if (rightCategory != CalculationCategory::Number || rightSide.isZero())
+        if (rightCategory != CalculationCategory::Number)
             return CalculationCategory::Other;
         return leftCategory;
     case CalcOperator::Sin:
@@ -158,7 +158,7 @@ static CalculationCategory determineCategory(const Vector<Ref<CSSCalcExpressionN
             // At a / sub-expression, let left type be the result of finding the types of its left argument,
             // and right type be the result of finding the types of its right argument and then inverting it.
             // The sub-expression’s type is the result of multiplying the left type and right type.
-            if (invertCategory != CalculationCategory::Number || node.isZero())
+            if (invertCategory != CalculationCategory::Number)
                 return CalculationCategory::Other;
             break;
         }
@@ -438,17 +438,10 @@ RefPtr<CSSCalcOperationNode> CSSCalcOperationNode::createLog(Vector<Ref<CSSCalcE
     if (values.size() != 1 && values.size() != 2)
         return nullptr;
     for (auto& value : values) {
-        // TODO: Support infinity
-        if (value->category() != CalculationCategory::Number || !value->doubleValue(value->primitiveType())) {
+        if (value->category() != CalculationCategory::Number) {
             LOG_WITH_STREAM(Calc, stream << "Failed to create log node because unable to determine category from " << prettyPrintNodes(values));
             return nullptr;
         }
-    }
-    
-    // TODO: Support infinity
-    if ((values.size() == 2 && values[1]->doubleValue(values[1]->primitiveType()) == 1)) {
-        LOG_WITH_STREAM(Calc, stream << "Failed to create log node because unable to determine category from " << prettyPrintNodes(values));
-        return nullptr;
     }
 
     return adoptRef(new CSSCalcOperationNode(CalculationCategory::Number, CalcOperator::Log, WTFMove(values)));
@@ -567,12 +560,6 @@ RefPtr<CSSCalcOperationNode> CSSCalcOperationNode::createStep(CalcOperator op, V
         LOG_WITH_STREAM(Calc, stream << "Failed to create stepped value node because unable to determine category from " << prettyPrintNodes(values));
         return nullptr;
     }
-    
-    if (!values[1]->doubleValue(values[1]->primitiveType())) {
-        LOG_WITH_STREAM(Calc, stream << "Failed to create stepped value node because unable to determine category from " << prettyPrintNodes(values));
-        return nullptr;
-    }
-
     return adoptRef(new CSSCalcOperationNode(values[0]->category(), op, WTFMove(values)));
 }
 
@@ -608,10 +595,6 @@ RefPtr<CSSCalcOperationNode> CSSCalcOperationNode::createRound(Vector<Ref<CSSCal
     CalcOperator roundType = values.size() == 2 ?  CalcOperator::Nearest : downcast<CSSCalcOperationNode>(values[0].get()).calcOperator();
     if (values.size() == 3)
         values.remove(0);
-    if (!values[1]->doubleValue(values[1]->primitiveType())) {
-        LOG_WITH_STREAM(Calc, stream << "Failed to create round node because unable to determine category from " << prettyPrintNodes(values));
-        return nullptr;
-    }
     return adoptRef(new CSSCalcOperationNode(values.rbegin()[0]->category(), roundType, WTFMove(values)));
 }
 

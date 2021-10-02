@@ -1366,6 +1366,9 @@ mod
 rem
 to-zero
 nearest
+infinity
+-infinity
+NaN
 
 from-image
 

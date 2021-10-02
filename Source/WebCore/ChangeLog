@@ -1,3 +1,32 @@
+2021-10-01  Nikos Mouchtaris  <nmouchtaris@apple.com>
+
+        Allow NaN, infinity, and -infinity in calc
+        https://bugs.webkit.org/show_bug.cgi?id=231044
+
+        Reviewed by Simon Fraser.
+
+        Modified existing serialization tests.
+
+        Added support for NaN, infinity and -infinity keywords in calc. Involved removing checks for 
+        inputs that would result in these values and introduction of new CSSKeywords for these three 
+        constants. Spec for this: https://drafts.csswg.org/css-values-4/#calc-error-constants. 
+
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        (WebCore::CSSPrimitiveValue::formatNumberValue const):
+        * css/CSSValueKeywords.in:
+        * css/CSSValuePool.cpp:
+        (WebCore::CSSValuePool::createValue):
+        * css/calc/CSSCalcExpressionNodeParser.cpp:
+        (WebCore::getConstantTable):
+        * css/calc/CSSCalcOperationNode.cpp:
+        (WebCore::determineCategory):
+        (WebCore::CSSCalcOperationNode::createLog):
+        (WebCore::CSSCalcOperationNode::createStep):
+        (WebCore::CSSCalcOperationNode::createRound):
+        * css/calc/CSSCalcPrimitiveValueNode.cpp:
+        (WebCore::CSSCalcPrimitiveValueNode::invert):
+
 2021-10-01  Lauro Moura  <lmoura@igalia.com>
 
         [GLIB] Fix build on Ubuntu 20.04 after 242376@main

@@ -50,4 +50,31 @@ test_serialization(
     'calc(sign(.1) + 1)',
     'calc(2)',
     '2');
+
+test_serialization(
+    'calc(abs(inFinity))',
+    'calc(inFinity)',
+    'infinity');
+
+test_serialization(
+    'calc(abs(infinity))',
+    'calc(infinity)',
+    'infinity');
+test_serialization(
+    'calc(sign(infinity))',
+    'calc(1)',
+    '1');
+test_serialization(
+    'abs(infinity)',
+    'calc(infinity)',
+    'infinity');
+    
+test_serialization(
+    'calc(abs(-infinity))',
+    'calc(infinity)',
+    'infinity');
+test_serialization(
+    'calc(sign(-1 * infinity))',
+    'calc(-1)',
+    '-1');
 </script>

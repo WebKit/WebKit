@@ -27,4 +27,16 @@ PASS 'calc(tan(0) + 0.5)' as a specified value should serialize as 'calc(0.5)'.
 PASS 'scale(calc(tan(0) + 0.5))' as a specified value should serialize as 'scale(calc(0.5))'.
 PASS 'calc(tan(0) + 0.5)' as a computed value should serialize as '0.5'.
 PASS 'scale(calc(tan(0) + 0.5))' as a computed value should serialize as 'matrix(0.5, 0, 0, 0.5, 0, 0)'.
+PASS 'calc(sin(infinity))' as a specified value should serialize as 'calc(NaN)'.
+PASS 'scale(calc(sin(infinity)))' as a specified value should serialize as 'scale(calc(NaN))'.
+FAIL 'calc(sin(infinity))' as a computed value should serialize as 'NaN'. assert_equals: 'NaN' should round-trip exactly in computed values. expected "NaN" but got "1"
+FAIL 'scale(calc(sin(infinity)))' as a computed value should serialize as 'matrix(NaN, 0, 0, NaN, 0, 0)'. assert_equals: 'matrix(NaN, 0, 0, NaN, 0, 0)' should round-trip exactly in computed values. expected "matrix(NaN, 0, 0, NaN, 0, 0)" but got "none"
+PASS 'calc(cos(infinity))' as a specified value should serialize as 'calc(NaN)'.
+PASS 'scale(calc(cos(infinity)))' as a specified value should serialize as 'scale(calc(NaN))'.
+FAIL 'calc(cos(infinity))' as a computed value should serialize as 'NaN'. assert_equals: 'NaN' should round-trip exactly in computed values. expected "NaN" but got "1"
+FAIL 'scale(calc(cos(infinity)))' as a computed value should serialize as 'matrix(NaN, 0, 0, NaN, 0, 0)'. assert_equals: 'matrix(NaN, 0, 0, NaN, 0, 0)' should round-trip exactly in computed values. expected "matrix(NaN, 0, 0, NaN, 0, 0)" but got "none"
+PASS 'calc(tan(infinity))' as a specified value should serialize as 'calc(NaN)'.
+PASS 'scale(calc(tan(infinity)))' as a specified value should serialize as 'scale(calc(NaN))'.
+FAIL 'calc(tan(infinity))' as a computed value should serialize as 'NaN'. assert_equals: 'NaN' should round-trip exactly in computed values. expected "NaN" but got "1"
+FAIL 'scale(calc(tan(infinity)))' as a computed value should serialize as 'matrix(NaN, 0, 0, NaN, 0, 0)'. assert_equals: 'matrix(NaN, 0, 0, NaN, 0, 0)' should round-trip exactly in computed values. expected "matrix(NaN, 0, 0, NaN, 0, 0)" but got "none"
 

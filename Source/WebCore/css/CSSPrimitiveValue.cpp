@@ -260,7 +260,6 @@ CSSPrimitiveValue::CSSPrimitiveValue(double num, CSSUnitType type)
     : CSSValue(PrimitiveClass)
 {
     setPrimitiveUnitType(type);
-    ASSERT(std::isfinite(num));
     m_value.num = num;
 }
 
@@ -951,6 +950,10 @@ String CSSPrimitiveValue::stringValue() const
 
 NEVER_INLINE String CSSPrimitiveValue::formatNumberValue(StringView suffix) const
 {
+    if (m_value.num == std::numeric_limits<double>::infinity())
+        return makeString("infinity", suffix);
+    if (m_value.num == -1 * std::numeric_limits<double>::infinity())
+        return makeString("-infinity", suffix);
     return makeString(m_value.num, suffix);
 }
 
