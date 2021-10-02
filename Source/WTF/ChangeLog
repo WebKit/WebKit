@@ -1,3 +1,133 @@
+2021-10-01  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Upgrade in-tree OSS ICU header to 64.2 because macOS Mojave build will be dropped
+        https://bugs.webkit.org/show_bug.cgi?id=231104
+
+        Reviewed by Myles C. Maxfield.
+
+        WebKit no longer supports macOS Mojave build. This means that we can upgrade in-tree ICU header,
+        which is only used when OSS WebKit is built. ICU 64.2 is ICU shipped in macOS Catalina.
+
+        * icu/LICENSE:
+        * icu/README:
+        * icu/unicode/alphaindex.h:
+        * icu/unicode/brkiter.h:
+        * icu/unicode/bytestream.h:
+        (StringByteSink::StringByteSink):
+        * icu/unicode/calendar.h:
+        * icu/unicode/caniter.h:
+        * icu/unicode/casemap.h:
+        * icu/unicode/char16ptr.h:
+        (Char16Ptr::Char16Ptr):
+        (Char16Ptr::~Char16Ptr):
+        (Char16Ptr::get const):
+        (ConstChar16Ptr::ConstChar16Ptr):
+        (ConstChar16Ptr::~ConstChar16Ptr):
+        (ConstChar16Ptr::get const):
+        (toUCharPtr):
+        (toOldUCharPtr):
+        * icu/unicode/coll.h:
+        * icu/unicode/compactdecimalformat.h:
+        * icu/unicode/currpinf.h:
+        (CurrencyPluralInfo::operator!= const):
+        * icu/unicode/currunit.h:
+        * icu/unicode/datefmt.h:
+        * icu/unicode/dcfmtsym.h:
+        * icu/unicode/decimfmt.h:
+        * icu/unicode/docmain.h:
+        * icu/unicode/dtintrv.h:
+        * icu/unicode/dtitvfmt.h:
+        * icu/unicode/dtitvinf.h:
+        * icu/unicode/dtptngen.h:
+        * icu/unicode/edits.h:
+        * icu/unicode/enumset.h:
+        * icu/unicode/filteredbrk.h:
+        * icu/unicode/fmtable.h:
+        * icu/unicode/formattedvalue.h: Added.
+        * icu/unicode/gender.h:
+        * icu/unicode/icuplug.h:
+        * icu/unicode/listformatter.h:
+        * icu/unicode/localebuilder.h: Added.
+        * icu/unicode/localpointer.h:
+        (LocalPointer::LocalPointer):
+        (LocalPointer::operator std::unique_ptr<T> ):
+        (LocalArray::LocalArray):
+        (LocalArray::operator std::unique_ptr<T[]> ):
+        * icu/unicode/locdspnm.h:
+        * icu/unicode/locid.h:
+        (Locale::toLanguageTag const):
+        (Locale::getKeywords const):
+        (Locale::getUnicodeKeywords const):
+        (Locale::getKeywordValue const):
+        (Locale::getUnicodeKeywordValue const):
+        * icu/unicode/measfmt.h:
+        * icu/unicode/measunit.h:
+        * icu/unicode/messagepattern.h:
+        * icu/unicode/msgfmt.h:
+        * icu/unicode/normalizer2.h:
+        * icu/unicode/nounit.h:
+        * icu/unicode/numberformatter.h:
+        * icu/unicode/numberrangeformatter.h: Added.
+        * icu/unicode/numfmt.h:
+        * icu/unicode/numsys.h:
+        * icu/unicode/parsepos.h:
+        * icu/unicode/platform.h:
+        * icu/unicode/plurfmt.h:
+        * icu/unicode/plurrule.h:
+        * icu/unicode/ptypes.h:
+        * icu/unicode/rbbi.h:
+        * icu/unicode/rbnf.h:
+        * icu/unicode/regex.h:
+        * icu/unicode/region.h:
+        * icu/unicode/reldatefmt.h:
+        * icu/unicode/simpleformatter.h:
+        * icu/unicode/smpdtfmt.h:
+        * icu/unicode/stringoptions.h:
+        * icu/unicode/stringtriebuilder.h:
+        * icu/unicode/timezone.h:
+        * icu/unicode/translit.h:
+        * icu/unicode/tzfmt.h:
+        * icu/unicode/ubidi.h:
+        * icu/unicode/ubiditransform.h:
+        * icu/unicode/ucal.h:
+        * icu/unicode/uchar.h:
+        * icu/unicode/ucnv.h:
+        * icu/unicode/ucol.h:
+        * icu/unicode/uconfig.h:
+        * icu/unicode/ucpmap.h: Added.
+        * icu/unicode/ucptrie.h: Added.
+        * icu/unicode/ucurr.h:
+        * icu/unicode/udat.h:
+        * icu/unicode/udateintervalformat.h:
+        * icu/unicode/udatpg.h:
+        * icu/unicode/uenum.h:
+        * icu/unicode/uformattedvalue.h: Added.
+        * icu/unicode/ugender.h:
+        * icu/unicode/ulistformatter.h:
+        * icu/unicode/umachine.h:
+        * icu/unicode/umutablecptrie.h: Added.
+        * icu/unicode/uniset.h:
+        * icu/unicode/unistr.h:
+        * icu/unicode/unum.h:
+        * icu/unicode/unumberformatter.h:
+        * icu/unicode/unumsys.h:
+        * icu/unicode/uobject.h:
+        * icu/unicode/upluralrules.h:
+        * icu/unicode/uregex.h:
+        * icu/unicode/ureldatefmt.h:
+        * icu/unicode/urename.h:
+        * icu/unicode/ures.h:
+        * icu/unicode/uscript.h:
+        * icu/unicode/usearch.h:
+        * icu/unicode/uset.h:
+        * icu/unicode/uspoof.h:
+        * icu/unicode/ustring.h:
+        * icu/unicode/utext.h:
+        * icu/unicode/utf16.h:
+        * icu/unicode/utf8.h:
+        * icu/unicode/utypes.h:
+        * icu/unicode/uvernum.h:
+
 2021-10-01  Chris Dumez  <cdumez@apple.com>
 
         Drop support for macOS < 10.15
