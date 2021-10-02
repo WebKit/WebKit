@@ -316,7 +316,7 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
 
         // Top layer elements are always position: absolute; unless the position is set to fixed.
         // https://fullscreen.spec.whatwg.org/#new-stacking-layer
-        bool isInTopLayer = style.styleType() == PseudoId::Backdrop || (m_element && m_element->isInTopLayer());
+        bool isInTopLayer = isInTopLayerOrBackdrop(style, m_element);
         if (style.position() != PositionType::Absolute && style.position() != PositionType::Fixed && isInTopLayer)
             style.setPosition(PositionType::Absolute);
 
@@ -596,7 +596,7 @@ static bool hasEffectiveDisplayNoneForDisplayContents(const Element& element)
 
 void Adjuster::adjustDisplayContentsStyle(RenderStyle& style) const
 {
-    bool isInTopLayer = style.styleType() == PseudoId::Backdrop || (m_element && m_element->isInTopLayer());
+    bool isInTopLayer = isInTopLayerOrBackdrop(style, m_element);
     if (isInTopLayer || m_document.documentElement() == m_element) {
         style.setEffectiveDisplay(DisplayType::Block);
         return;

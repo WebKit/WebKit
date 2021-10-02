@@ -3981,10 +3981,7 @@ Element* RenderLayer::enclosingElement() const
 
 bool RenderLayer::establishesTopLayer() const
 {
-    if (!renderer().element())
-        return renderer().style().styleType() == PseudoId::Backdrop;
-
-    return renderer().element()->isInTopLayer();
+    return isInTopLayerOrBackdrop(renderer().style(), renderer().element());
 }
 
 void RenderLayer::establishesTopLayerWillChange()

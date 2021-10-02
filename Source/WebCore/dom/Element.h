@@ -29,6 +29,7 @@
 #include "ElementData.h"
 #include "FocusOptions.h"
 #include "HTMLNames.h"
+#include "RenderStyle.h"
 #include "ScrollTypes.h"
 #include "ShadowRootInit.h"
 #include "ShadowRootMode.h"
@@ -869,6 +870,11 @@ inline const AtomString& Element::getAttribute(const QualifiedName& name, const 
     if (!value.isNull())
         return value;
     return getAttribute(names...);
+}
+
+inline bool isInTopLayerOrBackdrop(const RenderStyle& style, const Element* element)
+{
+    return (element && element->isInTopLayer()) || style.styleType() == PseudoId::Backdrop;
 }
 
 } // namespace WebCore
