@@ -13,8 +13,6 @@ silentTestPass = false;
 didPassSomeTestsSilently = false;
 didFailSomeTests = false;
 
-print = legacyPrint;
-
 function description(msg)
 {
     print(msg);

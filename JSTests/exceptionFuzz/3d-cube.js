@@ -358,5 +358,5 @@ DisplArea = null;
 
 })();
 } catch (e) {
-    legacyPrint("JSC EXCEPTION FUZZ: Caught exception: " + e);
+    print("JSC EXCEPTION FUZZ: Caught exception: " + e);
 }

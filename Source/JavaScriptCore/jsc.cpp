@@ -278,7 +278,6 @@ static JSC_DECLARE_HOST_FUNCTION(functionIsHeapBigInt);
 
 static JSC_DECLARE_HOST_FUNCTION(functionPrintStdOut);
 static JSC_DECLARE_HOST_FUNCTION(functionPrintStdErr);
-static JSC_DECLARE_HOST_FUNCTION(functionLegacyPrint);
 static JSC_DECLARE_HOST_FUNCTION(functionDebug);
 static JSC_DECLARE_HOST_FUNCTION(functionDescribe);
 static JSC_DECLARE_HOST_FUNCTION(functionDescribeArray);
@@ -528,7 +527,6 @@ private:
         addFunction(vm, "describeArray", functionDescribeArray, 1);
         addFunction(vm, "print", functionPrintStdOut, 1);
         addFunction(vm, "printErr", functionPrintStdErr, 1);
-        addFunction(vm, "legacyPrint", functionLegacyPrint, 1);
         addFunction(vm, "quit", functionQuit, 0);
         addFunction(vm, "gc", functionGCAndSweep, 0);
         addFunction(vm, "fullGC", functionFullGC, 0);
@@ -1240,10 +1238,9 @@ JSObject* GlobalObject::moduleLoaderCreateImportMetaProperties(JSGlobalObject* g
     return metaProperties;
 }
 
-template <typename T>
-static CString toCString(JSGlobalObject* globalObject, ThrowScope& scope, T& string)
+static CString cStringFromViewWithString(JSGlobalObject* globalObject, ThrowScope& scope, StringViewWithUnderlyingString& viewWithString)
 {
-    Expected<CString, UTF8ConversionError> expectedString = string.tryGetUtf8();
+    Expected<CString, UTF8ConversionError> expectedString = viewWithString.view.tryGetUtf8();
     if (expectedString)
         return expectedString.value();
     switch (expectedString.error()) {
@@ -1262,7 +1259,7 @@ static CString toCString(JSGlobalObject* globalObject, ThrowScope& scope, T& str
     return { };
 }
 
-static EncodedJSValue printInternal(JSGlobalObject* globalObject, CallFrame* callFrame, FILE* out, bool legacy)
+static EncodedJSValue printInternal(JSGlobalObject* globalObject, CallFrame* callFrame, FILE* out)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -1280,11 +1277,13 @@ static EncodedJSValue printInternal(JSGlobalObject* globalObject, CallFrame* cal
             if (EOF == fputc(' ', out))
                 goto fail;
 
-        String string = legacy ? callFrame->uncheckedArgument(i).toWTFString(globalObject) : callFrame->uncheckedArgument(i).toWTFStringForConsole(globalObject);
+        auto* jsString = callFrame->uncheckedArgument(i).toString(globalObject);
         RETURN_IF_EXCEPTION(scope, { });
-        auto cString = toCString(globalObject, scope, string);
+        auto viewWithString = jsString->viewWithUnderlyingString(globalObject);
         RETURN_IF_EXCEPTION(scope, { });
-        fwrite(cString.data(), sizeof(char), cString.length(), out);
+        auto string = cStringFromViewWithString(globalObject, scope, viewWithString);
+        RETURN_IF_EXCEPTION(scope, { });
+        fwrite(string.data(), sizeof(char), string.length(), out);
         if (ferror(out))
             goto fail;
     }
@@ -1297,17 +1296,12 @@ fail:
 
 JSC_DEFINE_HOST_FUNCTION(functionPrintStdOut, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
-    return printInternal(globalObject, callFrame, stdout, false);
+    return printInternal(globalObject, callFrame, stdout);
 }
 
 JSC_DEFINE_HOST_FUNCTION(functionPrintStdErr, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
-    return printInternal(globalObject, callFrame, stderr, false);
-}
-
-JSC_DEFINE_HOST_FUNCTION(functionLegacyPrint, (JSGlobalObject* globalObject, CallFrame* callFrame))
-{
-    return printInternal(globalObject, callFrame, stdout, true);
+    return printInternal(globalObject, callFrame, stderr);
 }
 
 JSC_DEFINE_HOST_FUNCTION(functionDebug, (JSGlobalObject* globalObject, CallFrame* callFrame))
@@ -1318,7 +1312,7 @@ JSC_DEFINE_HOST_FUNCTION(functionDebug, (JSGlobalObject* globalObject, CallFrame
     RETURN_IF_EXCEPTION(scope, { });
     auto viewWithString = jsString->viewWithUnderlyingString(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
-    auto string = toCString(globalObject, scope, viewWithString.view);
+    auto string = cStringFromViewWithString(globalObject, scope, viewWithString);
     RETURN_IF_EXCEPTION(scope, { });
     fputs("--> ", stderr);
     fwrite(string.data(), sizeof(char), string.length(), stderr);
@@ -3277,7 +3271,7 @@ static void runInteractive(GlobalObject* globalObject)
             fputs("Exception: ", stdout);
             utf8 = evaluationException->value().toWTFString(globalObject).tryGetUtf8();
         } else
-            utf8 = returnValue.toWTFStringForConsole(globalObject).tryGetUtf8();
+            utf8 = returnValue.toWTFString(globalObject).tryGetUtf8();
 
         CString result;
         if (utf8)

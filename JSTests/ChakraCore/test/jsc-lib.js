@@ -1,5 +1,3 @@
-print = legacyPrint;
-
 WScript = {
     _jscGC: gc,
     _jscLoad: load,
