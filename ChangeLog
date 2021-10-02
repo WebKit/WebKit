@@ -1,3 +1,13 @@
+2021-10-02  Philippe Normand  <pnormand@igalia.com>
+
+        [GTK][WPE] Enable bwrap launcher build on bots
+        https://bugs.webkit.org/show_bug.cgi?id=230969
+
+        Reviewed by Michael Catanzaro.
+
+        * Source/cmake/OptionsGTK.cmake:
+        * Source/cmake/OptionsWPE.cmake:
+
 2021-09-30  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Upgrade GCC requirement to 8.3.0
