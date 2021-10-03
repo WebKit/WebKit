@@ -35,16 +35,16 @@
 namespace WebCore {
 namespace InlineIterator {
 
-class BoxIteratorLegacyPath {
+class BoxLegacyPath {
 public:
-    BoxIteratorLegacyPath(const LegacyInlineBox* inlineBox, Vector<const LegacyInlineBox*>&& sortedInlineBoxes = { }, size_t sortedInlineBoxIndex = 0)
+    BoxLegacyPath(const LegacyInlineBox* inlineBox, Vector<const LegacyInlineBox*>&& sortedInlineBoxes = { }, size_t sortedInlineBoxIndex = 0)
         : m_inlineBox(inlineBox)
         , m_logicalOrderCache(WTFMove(sortedInlineBoxes))
         , m_logicalOrderCacheIndex(sortedInlineBoxIndex)
     { }
 
     enum class LogicalOrder { Start, End };
-    BoxIteratorLegacyPath(const LegacyRootInlineBox& root, LogicalOrder order)
+    BoxLegacyPath(const LegacyRootInlineBox& root, LogicalOrder order)
         : m_logicalOrderCache(inlineBoxesInLogicalOrder(root))
     {
         if (!m_logicalOrderCache.isEmpty()) {
@@ -84,15 +84,15 @@ public:
         return m_inlineBox->renderer();
     }
 
-    void traverseNextTextRun() { m_inlineBox = inlineTextBox()->nextTextBox(); }
-    void traverseNextTextRunInTextOrder()
+    void traverseNextTextBox() { m_inlineBox = inlineTextBox()->nextTextBox(); }
+    void traverseNextTextBoxInTextOrder()
     {
         if (!m_logicalOrderCache.isEmpty()) {
             traverseNextInlineBoxInCacheOrder();
             ASSERT(!m_inlineBox || is<LegacyInlineTextBox>(m_inlineBox));
             return;
         }
-        traverseNextTextRun();
+        traverseNextTextBox();
     }
 
     void traverseNextOnLine()
@@ -117,7 +117,7 @@ public:
         traversePreviousInlineBoxInCacheOrder();
     }
 
-    bool operator==(const BoxIteratorLegacyPath& other) const { return m_inlineBox == other.m_inlineBox; }
+    bool operator==(const BoxLegacyPath& other) const { return m_inlineBox == other.m_inlineBox; }
 
     bool atEnd() const { return !m_inlineBox; }
 
@@ -154,14 +154,14 @@ private:
 };
 
 
-inline void BoxIteratorLegacyPath::traverseNextInlineBoxInCacheOrder()
+inline void BoxLegacyPath::traverseNextInlineBoxInCacheOrder()
 {
     ASSERT(!m_logicalOrderCache.isEmpty());
     ++m_logicalOrderCacheIndex;
     m_inlineBox = m_logicalOrderCacheIndex < m_logicalOrderCache.size() ? m_logicalOrderCache[m_logicalOrderCacheIndex] : nullptr;
 }
 
-inline void BoxIteratorLegacyPath::traversePreviousInlineBoxInCacheOrder()
+inline void BoxLegacyPath::traversePreviousInlineBoxInCacheOrder()
 {
     ASSERT(!m_logicalOrderCache.isEmpty());
     if (!m_logicalOrderCacheIndex) {

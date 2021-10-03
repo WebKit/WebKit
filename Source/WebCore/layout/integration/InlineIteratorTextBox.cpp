@@ -1,0 +1,155 @@
+/*
+ * Copyright (C) 2019-2021 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include "config.h"
+#include "InlineIteratorTextBox.h"
+
+#include "InlineIteratorLine.h"
+#include "LayoutIntegrationLineLayout.h"
+#include "RenderCombineText.h"
+
+namespace WebCore {
+namespace InlineIterator {
+
+TextBoxIterator TextBox::nextTextBox() const
+{
+    return TextBoxIterator(*this).traverseNextTextBox();
+}
+
+TextBoxIterator TextBox::nextTextBoxInTextOrder() const
+{
+    return TextBoxIterator(*this).traverseNextTextBoxInTextOrder();
+}
+
+LayoutRect TextBox::selectionRect(unsigned rangeStart, unsigned rangeEnd) const
+{
+    auto [clampedStart, clampedEnd] = selectableRange().clamp(rangeStart, rangeEnd);
+
+    if (clampedStart >= clampedEnd && !(rangeStart == rangeEnd && rangeStart >= start() && rangeStart <= end()))
+        return { };
+
+    auto selectionTop = line()->selectionTop();
+    auto selectionHeight = line()->selectionHeight();
+
+    LayoutRect selectionRect { logicalLeft(), selectionTop, logicalWidth(), selectionHeight };
+
+    TextRun textRun = createTextRun();
+    if (clampedStart || clampedEnd != textRun.length())
+        fontCascade().adjustSelectionRectForText(textRun, selectionRect, clampedStart, clampedEnd);
+
+    return snappedSelectionRect(selectionRect, logicalRight(), selectionTop, selectionHeight, isHorizontal());
+}
+
+bool TextBox::isCombinedText() const
+{
+    auto& renderer = this->renderer();
+    return is<RenderCombineText>(renderer) && downcast<RenderCombineText>(renderer).isCombined();
+}
+
+const FontCascade& TextBox::fontCascade() const
+{
+    if (isCombinedText())
+        return downcast<RenderCombineText>(renderer()).textCombineFont();
+
+    return style().fontCascade();
+}
+
+TextBoxIterator::TextBoxIterator(Box::PathVariant&& pathVariant)
+    : BoxIterator(WTFMove(pathVariant))
+{
+}
+
+TextBoxIterator::TextBoxIterator(const Box& box)
+    : BoxIterator(box)
+{
+}
+
+TextBoxIterator& TextBoxIterator::traverseNextTextBox()
+{
+    WTF::switchOn(m_box.m_pathVariant, [](auto& path) {
+        path.traverseNextTextBox();
+    });
+    return *this;
+}
+
+TextBoxIterator& TextBoxIterator::traverseNextTextBoxInTextOrder()
+{
+    WTF::switchOn(m_box.m_pathVariant, [](auto& path) {
+        path.traverseNextTextBoxInTextOrder();
+    });
+    return *this;
+}
+
+TextBoxIterator firstTextBoxFor(const RenderText& text)
+{
+#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
+    if (auto* lineLayout = LayoutIntegration::LineLayout::containing(text))
+        return lineLayout->textBoxesFor(text);
+#endif
+
+    return { BoxLegacyPath { text.firstTextBox() } };
+}
+
+TextBoxIterator firstTextBoxInTextOrderFor(const RenderText& text)
+{
+    if (text.firstTextBox() && text.containsReversedText()) {
+        Vector<const LegacyInlineBox*> sortedTextBoxes;
+        for (auto* textBox = text.firstTextBox(); textBox; textBox = textBox->nextTextBox())
+            sortedTextBoxes.append(textBox);
+        std::sort(sortedTextBoxes.begin(), sortedTextBoxes.end(), [](auto* a, auto* b) {
+            return LegacyInlineTextBox::compareByStart(downcast<LegacyInlineTextBox>(a), downcast<LegacyInlineTextBox>(b));
+        });
+        auto* first = sortedTextBoxes[0];
+        return { BoxLegacyPath { first, WTFMove(sortedTextBoxes), 0 } };
+    }
+
+    return firstTextBoxFor(text);
+}
+
+TextBoxIterator textBoxFor(const LegacyInlineTextBox* legacyInlineTextBox)
+{
+    return { BoxLegacyPath { legacyInlineTextBox } };
+}
+
+#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
+TextBoxIterator textBoxFor(const LayoutIntegration::InlineContent& content, const InlineDisplay::Box& box)
+{
+    return textBoxFor(content, content.indexForBox(box));
+}
+
+TextBoxIterator textBoxFor(const LayoutIntegration::InlineContent& content, size_t boxIndex)
+{
+    ASSERT(content.boxes[boxIndex].text());
+    return { BoxModernPath { content, boxIndex } };
+}
+#endif
+
+TextBoxRange textBoxesFor(const RenderText& text)
+{
+    return { firstTextBoxFor(text) };
+}
+
+}
+}

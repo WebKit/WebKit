@@ -391,7 +391,7 @@ InlineContent& LineLayout::ensureInlineContent()
     return *m_inlineContent;
 }
 
-InlineIterator::TextBoxIterator LineLayout::textRunsFor(const RenderText& renderText) const
+InlineIterator::TextBoxIterator LineLayout::textBoxesFor(const RenderText& renderText) const
 {
     if (!m_inlineContent)
         return { };
@@ -401,10 +401,10 @@ InlineIterator::TextBoxIterator LineLayout::textRunsFor(const RenderText& render
     if (!firstIndex)
         return { };
 
-    return InlineIterator::textRunFor(*m_inlineContent, *firstIndex);
+    return InlineIterator::textBoxFor(*m_inlineContent, *firstIndex);
 }
 
-InlineIterator::BoxIterator LineLayout::runFor(const RenderElement& renderElement) const
+InlineIterator::BoxIterator LineLayout::boxFor(const RenderElement& renderElement) const
 {
     if (!m_inlineContent)
         return { };
@@ -414,7 +414,7 @@ InlineIterator::BoxIterator LineLayout::runFor(const RenderElement& renderElemen
     if (!firstIndex)
         return { };
 
-    return InlineIterator::runFor(*m_inlineContent, *firstIndex);
+    return InlineIterator::boxFor(*m_inlineContent, *firstIndex);
 }
 
 InlineIterator::LineIterator LineLayout::firstLine() const

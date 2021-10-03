@@ -32,7 +32,7 @@ namespace WebCore {
 class RenderCombineText;
 
 namespace InlineIterator {
-class BoxIteratorLegacyPath;
+class BoxLegacyPath;
 }
 
 class LegacyInlineTextBox : public LegacyInlineBox {
@@ -154,7 +154,7 @@ public:
     bool hasMarkers() const;
 
 private:
-    friend class InlineIterator::BoxIteratorLegacyPath;
+    friend class InlineIterator::BoxLegacyPath;
     friend class TextBoxPainter;
 
     const RenderCombineText* combinedText() const;

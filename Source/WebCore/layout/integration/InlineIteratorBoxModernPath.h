@@ -34,14 +34,14 @@
 namespace WebCore {
 namespace InlineIterator {
 
-class BoxIteratorModernPath {
+class BoxModernPath {
 public:
-    BoxIteratorModernPath(const LayoutIntegration::InlineContent& inlineContent)
+    BoxModernPath(const LayoutIntegration::InlineContent& inlineContent)
         : m_inlineContent(&inlineContent)
     {
         setAtEnd();
     }
-    BoxIteratorModernPath(const LayoutIntegration::InlineContent& inlineContent, size_t startIndex)
+    BoxModernPath(const LayoutIntegration::InlineContent& inlineContent, size_t startIndex)
         : m_inlineContent(&inlineContent)
         , m_boxIndex(startIndex)
     {
@@ -119,7 +119,7 @@ public:
         return m_inlineContent->rendererForLayoutBox(box().layoutBox());
     }
 
-    void traverseNextTextRun()
+    void traverseNextTextBox()
     {
         ASSERT(!atEnd());
         ASSERT(box().text());
@@ -134,10 +134,10 @@ public:
         ASSERT(atEnd() || box().text());
     }
 
-    void traverseNextTextRunInTextOrder()
+    void traverseNextTextBoxInTextOrder()
     {
         // FIXME: No RTL in LFC.
-        traverseNextTextRun();
+        traverseNextTextBox();
     }
 
     void traverseNextOnLine()
@@ -174,7 +174,7 @@ public:
         traversePreviousOnLine();
     }
 
-    bool operator==(const BoxIteratorModernPath& other) const { return m_inlineContent == other.m_inlineContent && m_boxIndex == other.m_boxIndex; }
+    bool operator==(const BoxModernPath& other) const { return m_inlineContent == other.m_inlineContent && m_boxIndex == other.m_boxIndex; }
 
     bool atEnd() const { return m_boxIndex == boxes().size(); }
     const InlineDisplay::Box& box() const { return boxes()[m_boxIndex]; }

@@ -28,8 +28,8 @@
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 #include "FloatRect.h"
-#include "InlineIteratorBox.h"
 #include "InlineIteratorLine.h"
+#include "InlineIteratorTextBox.h"
 #include "LayoutIntegrationBoxTree.h"
 #include "LayoutPoint.h"
 #include "LayoutState.h"
@@ -96,8 +96,8 @@ public:
     void paint(PaintInfo&, const LayoutPoint& paintOffset);
     bool hitTest(const HitTestRequest&, HitTestResult&, const HitTestLocation&, const LayoutPoint& accumulatedOffset, HitTestAction);
 
-    InlineIterator::TextBoxIterator textRunsFor(const RenderText&) const;
-    InlineIterator::BoxIterator runFor(const RenderElement&) const;
+    InlineIterator::TextBoxIterator textBoxesFor(const RenderText&) const;
+    InlineIterator::BoxIterator boxFor(const RenderElement&) const;
     InlineIterator::LineIterator firstLine() const;
     InlineIterator::LineIterator lastLine() const;
 

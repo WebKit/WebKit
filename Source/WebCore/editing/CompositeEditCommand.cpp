@@ -1016,7 +1016,7 @@ void CompositeEditCommand::deleteInsignificantText(Text& textNode, unsigned star
         if (!textRenderer)
             return;
 
-        auto run = InlineIterator::firstTextRunInTextOrderFor(*textRenderer);
+        auto run = InlineIterator::firstTextBoxInTextOrderFor(*textRenderer);
         if (!run) {
             wholeTextNodeIsEmpty = true;
             return;
@@ -1051,7 +1051,7 @@ void CompositeEditCommand::deleteInsignificantText(Text& textNode, unsigned star
 
             previousRun = run;
             if (run)
-                run.traverseNextTextRunInTextOrder();
+                run.traverseNextTextBoxInTextOrder();
         }
     };
     determineRemovalMode();

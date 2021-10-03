@@ -580,7 +580,7 @@ bool TextIterator::handleTextNode()
         return true;
     }
 
-    m_textRun = InlineIterator::firstTextRunInTextOrderFor(renderer);
+    m_textRun = InlineIterator::firstTextBoxInTextOrderFor(renderer);
 
     bool shouldHandleFirstLetter = !m_handledFirstLetter && is<RenderTextFragment>(renderer) && !m_offset;
     if (shouldHandleFirstLetter)
@@ -607,7 +607,7 @@ void TextIterator::handleTextRun()
         return;
     }
 
-    auto firstTextRun = InlineIterator::firstTextRunInTextOrderFor(renderer);
+    auto firstTextRun = InlineIterator::firstTextBoxInTextOrderFor(renderer);
 
     String rendererText = renderer.text();
     unsigned start = m_offset;
@@ -633,7 +633,7 @@ void TextIterator::handleTextRun()
         
         // Determine what the next text run will be, but don't advance yet
         auto nextTextRun = m_textRun;
-        nextTextRun.traverseNextTextRunInTextOrder();
+        nextTextRun.traverseNextTextBoxInTextOrder();
 
         if (runStart < runEnd) {
             auto isNewlineOrTab = [&](UChar character) {
@@ -701,7 +701,7 @@ void TextIterator::handleTextNodeFirstLetter(RenderTextFragment& renderer)
         if (auto* firstLetterText = firstRenderTextInFirstLetter(firstLetter)) {
             m_handledFirstLetter = true;
             m_remainingTextRun = m_textRun;
-            m_textRun = InlineIterator::firstTextRunInTextOrderFor(*firstLetterText);
+            m_textRun = InlineIterator::firstTextBoxInTextOrderFor(*firstLetterText);
             m_firstLetterText = firstLetterText;
         }
     }

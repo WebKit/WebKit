@@ -33,6 +33,7 @@
 namespace WebCore {
 
 class RenderBlockFlow;
+class RenderInline;
 
 namespace LayoutIntegration {
 

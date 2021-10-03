@@ -35,8 +35,8 @@
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
 #include "HTMLTableElement.h"
-#include "InlineIteratorBox.h"
 #include "InlineIteratorLine.h"
+#include "InlineIteratorTextBox.h"
 #include "InlineRunAndOffset.h"
 #include "LegacyInlineTextBox.h"
 #include "Logging.h"
@@ -69,11 +69,11 @@ using namespace HTMLNames;
 
 static bool hasInlineRun(RenderObject& renderer)
 {
-    if (is<RenderBox>(renderer) && InlineIterator::runFor(downcast<RenderBox>(renderer)))
+    if (is<RenderBox>(renderer) && InlineIterator::boxFor(downcast<RenderBox>(renderer)))
         return true;
-    if (is<RenderText>(renderer) && InlineIterator::firstTextRunFor(downcast<RenderText>(renderer)))
+    if (is<RenderText>(renderer) && InlineIterator::firstTextBoxFor(downcast<RenderText>(renderer)))
         return true;
-    if (is<RenderLineBreak>(renderer) && InlineIterator::runFor(downcast<RenderLineBreak>(renderer)))
+    if (is<RenderLineBreak>(renderer) && InlineIterator::boxFor(downcast<RenderLineBreak>(renderer)))
         return true;
     return false;
 }
@@ -739,7 +739,7 @@ Position Position::upstream(EditingBoundaryCrossingRule rule) const
         if (is<RenderText>(*renderer)) {
             auto& textRenderer = downcast<RenderText>(*renderer);
 
-            auto firstTextRun = InlineIterator::firstTextRunInTextOrderFor(textRenderer);
+            auto firstTextRun = InlineIterator::firstTextBoxInTextOrderFor(textRenderer);
             if (!firstTextRun)
                 continue;
 
@@ -757,7 +757,7 @@ Position Position::upstream(EditingBoundaryCrossingRule rule) const
                 if (textOffset > run->start() && textOffset <= run->end())
                     return currentPosition;
 
-                auto nextRun = run->nextTextRunInTextOrder();
+                auto nextRun = run->nextTextBoxInTextOrder();
                 if (textOffset == run->end() + 1 && nextRun && run->line() != nextRun->line())
                     return currentPosition;
 
@@ -846,7 +846,7 @@ Position Position::downstream(EditingBoundaryCrossingRule rule) const
         if (is<RenderText>(*renderer)) {
             auto& textRenderer = downcast<RenderText>(*renderer);
 
-            auto firstTextRun = InlineIterator::firstTextRunInTextOrderFor(textRenderer);
+            auto firstTextRun = InlineIterator::firstTextBoxInTextOrderFor(textRenderer);
             if (!firstTextRun)
                 continue;
 
@@ -863,7 +863,7 @@ Position Position::downstream(EditingBoundaryCrossingRule rule) const
                 if (textOffset >= run->start() && textOffset < run->end())
                     return currentPosition;
 
-                auto nextRun = run->nextTextRunInTextOrder();
+                auto nextRun = run->nextTextBoxInTextOrder();
                 if (textOffset == run->end() && nextRun && run->line() != nextRun->line())
                     return currentPosition;
 
@@ -1172,7 +1172,7 @@ static InlineIterator::TextBoxIterator searchAheadForBetterMatch(RenderText& ren
         if (isNonTextLeafChild(*next))
             return { };
         if (is<RenderText>(*next)) {
-            if (auto run = InlineIterator::firstTextRunInTextOrderFor(downcast<RenderText>(*next)))
+            if (auto run = InlineIterator::firstTextBoxInTextOrderFor(downcast<RenderText>(*next)))
                 return run;
         }
     }
@@ -1215,11 +1215,11 @@ InlineRunAndOffset Position::inlineRunAndOffset(Affinity affinity, TextDirection
     if (renderer->isBR()) {
         auto& lineBreakRenderer = downcast<RenderLineBreak>(*renderer);
         if (!caretOffset)
-            run = InlineIterator::runFor(lineBreakRenderer);
+            run = InlineIterator::boxFor(lineBreakRenderer);
     } else if (is<RenderText>(*renderer)) {
         auto& textRenderer = downcast<RenderText>(*renderer);
 
-        auto textRun = InlineIterator::firstTextRunFor(textRenderer);
+        auto textRun = InlineIterator::firstTextBoxFor(textRenderer);
         InlineIterator::TextBoxIterator candidate;
 
         for (; textRun; ++textRun) {
@@ -1247,7 +1247,7 @@ InlineRunAndOffset Position::inlineRunAndOffset(Affinity affinity, TextDirection
             candidate = textRun;
         }
 
-        if (candidate && !candidate->nextTextRun() && affinity == Affinity::Downstream) {
+        if (candidate && !candidate->nextTextBox() && affinity == Affinity::Downstream) {
             textRun = searchAheadForBetterMatch(textRenderer);
             if (textRun)
                 caretOffset = textRun->minimumCaretOffset();
@@ -1270,7 +1270,7 @@ InlineRunAndOffset Position::inlineRunAndOffset(Affinity affinity, TextDirection
             return equivalent.inlineRunAndOffset(Affinity::Upstream, primaryDirection);
         }
         if (is<RenderBox>(*renderer)) {
-            run = InlineIterator::runFor(downcast<RenderBox>(*renderer));
+            run = InlineIterator::boxFor(downcast<RenderBox>(*renderer));
             if (run && caretOffset > run->minimumCaretOffset() && caretOffset < run->maximumCaretOffset())
                 return { run, caretOffset };
         }

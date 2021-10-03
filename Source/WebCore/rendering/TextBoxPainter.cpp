@@ -29,7 +29,6 @@
 #include "Editor.h"
 #include "EventRegion.h"
 #include "GraphicsContext.h"
-#include "InlineIteratorBox.h"
 #include "InlineIteratorLine.h"
 #include "LegacyInlineTextBox.h"
 #include "PaintInfo.h"
@@ -45,14 +44,14 @@
 namespace WebCore {
 
 TextBoxPainter::TextBoxPainter(const LegacyInlineTextBox& textBox, PaintInfo& paintInfo, const LayoutPoint& paintOffset)
-    : TextBoxPainter(InlineIterator::textRunFor(&textBox), paintInfo, paintOffset)
+    : TextBoxPainter(InlineIterator::textBoxFor(&textBox), paintInfo, paintOffset)
 {
     m_emphasisMarkExistsAndIsAbove = textBox.emphasisMarkExistsAndIsAbove(m_style);
 }
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 TextBoxPainter::TextBoxPainter(const LayoutIntegration::InlineContent& inlineContent, const InlineDisplay::Box& box, PaintInfo& paintInfo, const LayoutPoint& paintOffset)
-    : TextBoxPainter(InlineIterator::textRunFor(inlineContent, box), paintInfo, paintOffset)
+    : TextBoxPainter(InlineIterator::textBoxFor(inlineContent, box), paintInfo, paintOffset)
 {
 }
 #endif
@@ -372,7 +371,7 @@ void TextBoxPainter::paintDecoration(const StyledMarkedText& markedText, const F
     auto textDecorations = m_style.textDecorationsInEffect();
     textDecorations.add(TextDecorationPainter::textDecorationsInEffectForStyle(markedText.style.textDecorationStyles));
     TextDecorationPainter decorationPainter { context, textDecorations, m_renderer, m_isFirstLine, font, markedText.style.textDecorationStyles };
-    decorationPainter.setTextBoxIterator(m_textBox);
+    decorationPainter.setTextBox(m_textBox);
     decorationPainter.setWidth(snappedSelectionRect.width());
     decorationPainter.setIsHorizontal(textBox().isHorizontal());
     if (markedText.style.textShadow) {
@@ -495,7 +494,7 @@ FloatRect TextBoxPainter::calculateUnionOfAllDocumentMarkerBounds(const LegacyIn
     FloatRect result;
     auto markedTexts = MarkedText::collectForDocumentMarkers(textBox.renderer(), textBox.selectableRange(), MarkedText::PaintPhase::Decoration);
     for (auto& markedText : MarkedText::subdivide(markedTexts, MarkedText::OverlapStrategy::Frontmost))
-        result = unionRect(result, calculateDocumentMarkerBounds(InlineIterator::textRunFor(&textBox), markedText));
+        result = unionRect(result, calculateDocumentMarkerBounds(InlineIterator::textBoxFor(&textBox), markedText));
     return result;
 }
 

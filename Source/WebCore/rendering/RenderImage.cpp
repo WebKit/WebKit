@@ -91,7 +91,7 @@ void RenderImage::collectSelectionGeometries(Vector<SelectionGeometry>& geometri
     bool isFirstOnLine = false;
     bool isLastOnLine = false;
 
-    auto run = InlineIterator::runFor(*this);
+    auto run = InlineIterator::boxFor(*this);
     if (!run) {
         // This is a block image.
         imageRect = IntRect(0, 0, width(), height());

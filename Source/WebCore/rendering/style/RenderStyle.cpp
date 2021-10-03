@@ -33,6 +33,7 @@
 #include "FloatRoundedRect.h"
 #include "FontCascade.h"
 #include "FontSelector.h"
+#include "InlineIteratorTextBox.h"
 #include "InlineTextBoxStyle.h"
 #include "Pagination.h"
 #include "QuotesData.h"

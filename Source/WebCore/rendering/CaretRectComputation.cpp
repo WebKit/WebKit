@@ -27,8 +27,8 @@
 #include "CaretRectComputation.h"
 
 #include "Editing.h"
-#include "InlineIteratorBox.h"
 #include "InlineIteratorLine.h"
+#include "InlineIteratorTextBox.h"
 #include "RenderBlockFlow.h"
 #include "RenderInline.h"
 #include "RenderLineBreak.h"

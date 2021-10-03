@@ -75,25 +75,25 @@ public:
 
     bool atEnd() const { return !m_rootInlineBox; }
 
-    BoxIteratorLegacyPath firstRun() const
+    BoxLegacyPath firstRun() const
     {
         return { m_rootInlineBox->firstLeafDescendant() };
     }
 
-    BoxIteratorLegacyPath lastRun() const
+    BoxLegacyPath lastRun() const
     {
         return { m_rootInlineBox->lastLeafDescendant() };
     }
 
 
-    BoxIteratorLegacyPath logicalStartRun() const
+    BoxLegacyPath logicalStartRun() const
     {
-        return { *m_rootInlineBox, BoxIteratorLegacyPath::LogicalOrder::Start };
+        return { *m_rootInlineBox, BoxLegacyPath::LogicalOrder::Start };
     }
 
-    BoxIteratorLegacyPath logicalEndRun() const
+    BoxLegacyPath logicalEndRun() const
     {
-        return { *m_rootInlineBox, BoxIteratorLegacyPath::LogicalOrder::End };
+        return { *m_rootInlineBox, BoxLegacyPath::LogicalOrder::End };
     }
 
 private:

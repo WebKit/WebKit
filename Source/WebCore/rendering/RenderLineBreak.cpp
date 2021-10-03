@@ -144,7 +144,7 @@ VisiblePosition RenderLineBreak::positionForPoint(const LayoutPoint&, const Rend
 
 IntRect RenderLineBreak::linesBoundingBox() const
 {
-    auto run = InlineIterator::runFor(*this);
+    auto run = InlineIterator::boxFor(*this);
     if (!run)
         return { };
 
@@ -153,7 +153,7 @@ IntRect RenderLineBreak::linesBoundingBox() const
 
 void RenderLineBreak::absoluteRects(Vector<IntRect>& rects, const LayoutPoint& accumulatedOffset) const
 {
-    auto box = InlineIterator::runFor(*this);
+    auto box = InlineIterator::boxFor(*this);
     if (!box)
         return;
 
@@ -163,7 +163,7 @@ void RenderLineBreak::absoluteRects(Vector<IntRect>& rects, const LayoutPoint& a
 
 void RenderLineBreak::absoluteQuads(Vector<FloatQuad>& quads, bool* wasFixed) const
 {
-    auto box = InlineIterator::runFor(*this);
+    auto box = InlineIterator::boxFor(*this);
     if (!box)
         return;
 
@@ -180,7 +180,7 @@ void RenderLineBreak::updateFromStyle()
 #if PLATFORM(IOS_FAMILY)
 void RenderLineBreak::collectSelectionGeometries(Vector<SelectionGeometry>& rects, unsigned, unsigned)
 {
-    auto run = InlineIterator::runFor(*this);
+    auto run = InlineIterator::boxFor(*this);
 
     if (!run)
         return;

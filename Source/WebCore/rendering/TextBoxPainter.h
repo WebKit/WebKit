@@ -25,7 +25,7 @@
 #pragma once
 
 #include "FloatRect.h"
-#include "InlineIteratorBox.h"
+#include "InlineIteratorTextBox.h"
 #include "RenderObject.h"
 #include "TextBoxSelectableRange.h"
 #include "TextRun.h"

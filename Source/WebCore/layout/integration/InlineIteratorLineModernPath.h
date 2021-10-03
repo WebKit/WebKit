@@ -34,7 +34,7 @@
 namespace WebCore {
 namespace InlineIterator {
 
-class BoxIteratorModernPath;
+class BoxModernPath;
 
 class LineIteratorModernPath {
 public:
@@ -95,33 +95,33 @@ public:
 
     bool atEnd() const { return m_lineIndex == lines().size(); }
 
-    BoxIteratorModernPath firstRun() const
+    BoxModernPath firstRun() const
     {
         if (!line().boxCount())
             return { *m_inlineContent };
-        auto runIterator = BoxIteratorModernPath { *m_inlineContent, line().firstBoxIndex() };
+        auto runIterator = BoxModernPath { *m_inlineContent, line().firstBoxIndex() };
         if (runIterator.box().isInlineBox())
             runIterator.traverseNextOnLine();
         return runIterator;
     }
 
-    BoxIteratorModernPath lastRun() const
+    BoxModernPath lastRun() const
     {
         auto boxCount = line().boxCount();
         if (!boxCount)
             return { *m_inlineContent };
-        auto runIterator = BoxIteratorModernPath { *m_inlineContent, line().firstBoxIndex() + boxCount - 1 };
+        auto runIterator = BoxModernPath { *m_inlineContent, line().firstBoxIndex() + boxCount - 1 };
         if (runIterator.box().isInlineBox())
             runIterator.traversePreviousOnLine();
         return runIterator;
     }
 
-    BoxIteratorModernPath logicalStartRun() const
+    BoxModernPath logicalStartRun() const
     {
         return firstRun();
     }
 
-    BoxIteratorModernPath logicalEndRun() const
+    BoxModernPath logicalEndRun() const
     {
         return lastRun();
     }

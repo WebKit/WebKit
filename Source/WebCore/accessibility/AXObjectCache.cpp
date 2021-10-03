@@ -2945,7 +2945,7 @@ LayoutRect AXObjectCache::localCaretRectForCharacterOffset(RenderObject*& render
     if (runAndOffset.run)
         renderer = const_cast<RenderObject*>(&runAndOffset.run->renderer());
 
-    if (is<RenderLineBreak>(renderer) && InlineIterator::runFor(downcast<RenderLineBreak>(*renderer)) != runAndOffset.run)
+    if (is<RenderLineBreak>(renderer) && InlineIterator::boxFor(downcast<RenderLineBreak>(*renderer)) != runAndOffset.run)
         return IntRect();
 
     return computeLocalCaretRect(*renderer, runAndOffset);

@@ -27,7 +27,7 @@
 
 #include "CharacterRange.h"
 #include "FindOptions.h"
-#include "InlineIteratorBox.h"
+#include "InlineIteratorTextBox.h"
 #include "SimpleRange.h"
 #include "TextIteratorBehavior.h"
 #include <wtf/Vector.h>
