@@ -4551,6 +4551,9 @@ void RenderBlockFlow::computeInlinePreferredLogicalWidths(LayoutUnit& minLogical
                     inlineMax = widths.endMax;
                     addedTextIndent = true;
                     addedStartPunctuationHang = true;
+                    if (widths.endsWithBreak)
+                        stripFrontSpaces = true;
+
                 } else
                     inlineMax += std::max<float>(0, childMax);
             }

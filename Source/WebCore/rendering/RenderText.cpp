@@ -815,6 +815,7 @@ RenderText::Widths RenderText::trimmedPreferredWidths(float leadWidth, bool& str
 
     widths.hasBreakableChar = m_hasBreakableChar;
     widths.hasBreak = m_hasBreak;
+    widths.endsWithBreak = m_hasBreak && text()[length - 1] == '\n';
 
     if (text()[0] == ' ' || (text()[0] == '\n' && !style.preserveNewline()) || text()[0] == '\t') {
         auto& font = style.fontCascade(); // FIXME: This ignores first-line.

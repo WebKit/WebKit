@@ -107,6 +107,7 @@ public:
         bool endWS { false };
         bool hasBreakableChar { false };
         bool hasBreak { false };
+        bool endsWithBreak { false };
     };
     Widths trimmedPreferredWidths(float leadWidth, bool& stripFrontSpaces);
 
