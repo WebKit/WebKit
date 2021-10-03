@@ -53,6 +53,8 @@ public:
     InlineLayoutUnit trimmableTrailingWidth() const { return m_trimmableTrailingContent.width(); }
     bool isTrailingRunFullyTrimmable() const { return m_trimmableTrailingContent.isTrailingRunFullyTrimmable(); }
 
+    InlineLayoutUnit hangingWhitespaceWidth() const { return m_hangingTrailingContent.width(); }
+
     std::optional<InlineLayoutUnit> trailingSoftHyphenWidth() const { return m_trailingSoftHyphenWidth; }
     void addTrailingHyphen(InlineLayoutUnit hyphenLogicalWidth);
 
@@ -87,7 +89,7 @@ public:
         bool hasTrailingWhitespace() const { return m_trailingWhitespaceType != TrailingWhitespace::None; }
         InlineLayoutUnit trailingWhitespaceWidth() const { return m_trailingWhitespaceWidth; }
 
-        bool isOverflowWhitespaceHanging() const;
+        bool shouldTrailingWhitespaceHang() const;
         TextDirection inlineDirection() const;
         InlineLayoutUnit letterSpacing() const;
         bool hasTextCombine() const;
@@ -131,7 +133,7 @@ public:
         std::optional<Text> m_textContent;
         InlineDisplay::Box::Expansion m_expansion;
         struct Style {
-            bool isOverflowWhitespaceHanging { false };
+            bool shouldTrailingWhitespaceHang { false };
             TextDirection inlineDirection { TextDirection::RTL };
             InlineLayoutUnit letterSpacing { 0 };
             bool hasTextCombine { false };
@@ -179,9 +181,19 @@ private:
         InlineLayoutUnit m_partiallyTrimmableWidth { 0 };
     };
 
+    struct HangingTrailingContent {
+        HangingTrailingContent(const RunList&);
+
+        InlineLayoutUnit width() const;
+
+    private:
+        const RunList& m_runs;
+    };
+
     const InlineFormattingContext& m_inlineFormattingContext;
     RunList m_runs;
     TrimmableTrailingContent m_trimmableTrailingContent;
+    HangingTrailingContent m_hangingTrailingContent;
     InlineLayoutUnit m_contentLogicalWidth { 0 };
     size_t m_nonSpanningInlineLevelBoxCount { 0 };
     std::optional<InlineLayoutUnit> m_trailingSoftHyphenWidth { 0 };
@@ -213,9 +225,9 @@ inline void Line::Run::setNeedsHyphen(InlineLayoutUnit hyphenLogicalWidth)
     m_logicalWidth += hyphenLogicalWidth;
 }
 
-inline bool Line::Run::isOverflowWhitespaceHanging() const
+inline bool Line::Run::shouldTrailingWhitespaceHang() const
 {
-    return m_style.isOverflowWhitespaceHanging;
+    return m_style.shouldTrailingWhitespaceHang;
 }
 
 inline TextDirection Line::Run::inlineDirection() const

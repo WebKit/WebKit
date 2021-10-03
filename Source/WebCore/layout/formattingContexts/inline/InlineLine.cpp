@@ -43,6 +43,7 @@ namespace Layout {
 Line::Line(const InlineFormattingContext& inlineFormattingContext)
     : m_inlineFormattingContext(inlineFormattingContext)
     , m_trimmableTrailingContent(m_runs)
+    , m_hangingTrailingContent(m_runs)
 {
 }
 
@@ -175,7 +176,7 @@ void Line::visuallyCollapseHangingOverflow(InlineLayoutUnit extraHorizontalSpace
     // different set of white-space values and decide if the in-between pre-wrap content should be collapsed as well.)
     auto trimmedContentWidth = InlineLayoutUnit { };
     for (auto& run : WTF::makeReversedRange(m_runs)) {
-        if (!run.isOverflowWhitespaceHanging())
+        if (!run.shouldTrailingWhitespaceHang())
             break;
         auto visuallyCollapsibleInlineItem = run.isInlineBoxStart() || run.isInlineBoxEnd() || run.hasTrailingWhitespace();
         if (!visuallyCollapsibleInlineItem)
@@ -439,6 +440,29 @@ InlineLayoutUnit Line::TrimmableTrailingContent::removePartiallyTrimmableContent
     // We can't just trim spacing in the middle.
     ASSERT(!m_fullyTrimmableWidth);
     return remove();
+}
+
+Line::HangingTrailingContent::HangingTrailingContent(const RunList& runs)
+    : m_runs(runs)
+{
+}
+
+InlineLayoutUnit Line::HangingTrailingContent::width() const
+{
+    // When a glyph at the start or end edge of a line hangs, it is not considered when measuring the line’s contents for fit, alignment, or justification.
+    // Depending on the line’s alignment/justification, this can result in the mark being placed outside the line box.
+    // https://drafts.csswg.org/css-text-3/#hanging
+    auto hangingWidth = InlineLayoutUnit { };
+    for (auto& run : WTF::makeReversedRange(m_runs)) {
+        if (run.isBox() || run.isLineBreak())
+            break;
+        if (run.isInlineBoxStart() || run.isInlineBoxEnd())
+            continue;
+        if (!run.hasTrailingWhitespace() || !run.shouldTrailingWhitespaceHang())
+            break;
+        hangingWidth += run.trailingWhitespaceWidth();
+    }
+    return hangingWidth;
 }
 
 Line::Run::Run(const InlineItem& inlineItem, const RenderStyle& style, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth)

@@ -56,8 +56,9 @@ public:
         const FloatList& floats;
         bool hasIntrusiveFloat { false };
         InlineLayoutPoint logicalTopLeft;
-        InlineLayoutUnit lineLogicalWidth;
-        InlineLayoutUnit contentLogicalWidth;
+        InlineLayoutUnit lineLogicalWidth { 0 };
+        InlineLayoutUnit contentLogicalWidth { 0 };
+        InlineLayoutUnit hangingWhitespaceWidth { 0 };
         bool isLastLineWithInlineContent { true };
         size_t nonSpanningInlineLevelBoxCount { 0 };
         const Line::RunList& runs;
