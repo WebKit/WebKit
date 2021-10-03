@@ -1,3 +1,13 @@
+2021-10-03  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (r283335): rubber-banding no longer locks to an axis
+        https://bugs.webkit.org/show_bug.cgi?id=231131
+
+        Reviewed by Tim Horton.
+
+        * fast/scrolling/mac/rubberband-axis-locking-expected.txt: Added.
+        * fast/scrolling/mac/rubberband-axis-locking.html: Added.
+
 2021-10-02  Youenn Fablet  <youenn@apple.com>
 
         Add support for ServiceWorkerGlobalScope push event handler

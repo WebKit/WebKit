@@ -113,16 +113,6 @@ static std::optional<BoxSide> affectedSideOnDominantAxis(FloatSize delta)
     return ScrollableArea::targetSideForScrollDelta(delta, dominantAxis);
 }
 
-static bool isHorizontalSide(std::optional<BoxSide> side)
-{
-    return side && (*side == BoxSide::Left || *side == BoxSide::Right);
-}
-
-static bool isVerticalSide(std::optional<BoxSide> side)
-{
-    return side && (*side == BoxSide::Top || *side == BoxSide::Bottom);
-}
-
 bool ScrollingEffectsController::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
 {
     if (processWheelEventForScrollSnap(wheelEvent))
@@ -244,7 +234,7 @@ bool ScrollingEffectsController::modifyScrollDeltaForStretching(const PlatformWh
 {
     auto affectedSide = affectedSideOnDominantAxis(delta);
     if (isVerticallyStretched) {
-        if (!isHorizontallyStretched && isHorizontalSide(affectedSide) && m_client.isPinnedOnSide(*affectedSide)) {
+        if (!isHorizontallyStretched && affectedSide && m_client.isPinnedOnSide(*affectedSide)) {
             // Stretching only in the vertical.
             if (delta.height() && (fabsf(delta.width() / delta.height()) < rubberbandDirectionLockStretchRatio))
                 delta.setWidth(0);
@@ -260,7 +250,7 @@ bool ScrollingEffectsController::modifyScrollDeltaForStretching(const PlatformWh
 
     if (isHorizontallyStretched) {
         // Stretching only in the horizontal.
-        if (isVerticalSide(affectedSide) && m_client.isPinnedOnSide(*affectedSide)) {
+        if (affectedSide && m_client.isPinnedOnSide(*affectedSide)) {
             if (delta.width() && (fabsf(delta.height() / delta.width()) < rubberbandDirectionLockStretchRatio))
                 delta.setHeight(0);
             else if (fabsf(delta.height()) < rubberbandMinimumRequiredDeltaBeforeStretch) {
