@@ -102,7 +102,7 @@ EOF
 for my $i (0 .. $#names) {
   my $id = $names[$i];
   $id =~ s/(^[^-])|-(.)/uc($1||$2)/ge;
-  if($lower_names[$i]=="-infinity") {
+  if($lower_names[$i] eq "-infinity") {
     print GPERF $lower_names[$i] . ", CSSValueNegativeInfinity" . "\n";
   } else {
     print GPERF $lower_names[$i] . ", CSSValue" . $id . "\n";
@@ -183,7 +183,7 @@ my $maxLen = 0;
 foreach my $name (@names) {
   my $id = $name;
   $id =~ s/(^[^-])|-(.)/uc($1||$2)/ge;
-  if($name=="-infinity") {
+  if($name eq "-infinity") {
     print HEADER "    CSSValueNegativeInfinity = " . $i . ",\n";
   } else {
     print HEADER "    CSSValue" . $id . " = " . $i . ",\n";
