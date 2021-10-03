@@ -1,3 +1,15 @@
+2021-10-03  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Some layout tests with Japanese glyphs fail if Japanese is included in the system "Preferred Languages" settings
+        https://bugs.webkit.org/show_bug.cgi?id=231112
+
+        Reviewed by Simon Fraser.
+
+        Simply set the default locale to en-US. Tests can still override it.
+
+        * WebKitTestRunner/TestOptions.cpp:
+        (WTR::TestOptions::defaults):
+
 2021-10-02  Alex Christensen  <achristensen@webkit.org>
 
         Migrate some tests from TCPServer to HTTPServer

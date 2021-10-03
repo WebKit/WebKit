@@ -179,7 +179,7 @@ const TestFeatures& TestOptions::defaults()
             { "standaloneWebApplicationURL", { } },
         };
         features.stringVectorTestRunnerFeatures = {
-            { "language", { } },
+            { "language", { "en-US" } },
         };
     }
     
