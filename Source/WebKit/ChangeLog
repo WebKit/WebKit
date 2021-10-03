@@ -1,3 +1,15 @@
+2021-10-02  David Kilzer  <ddkilzer@apple.com>
+
+        Replace WKProcessPoolWeakObserver (Direct) category with (direct) property attribute
+        <https://webkit.org/b/231119>
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (-[WKProcessPoolWeakObserver initWithWeakPtr:]):
+        - Merge WKProcessPoolWeakObserver (Direct) category into primary
+          interface, and use the (direct) property attribute instead.
+
 2021-10-02  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION (r275455): ASSERTION FAILED: process->hasOneRef() seen with TestWebKitAPI.WKProcessPool.WarmInitialProcess

@@ -139,15 +139,12 @@ SOFT_LINK(BackBoardServices, BKSDisplayBrightnessGetCurrent, float, (), ());
 @interface WKProcessPoolWeakObserver : NSObject {
     WeakPtr<WebKit::WebProcessPool> m_weakPtr;
 }
+@property (nonatomic, readonly, direct) RefPtr<WebKit::WebProcessPool> pool;
 - (instancetype)init NS_UNAVAILABLE;
 - (instancetype)initWithWeakPtr:(WeakPtr<WebKit::WebProcessPool>&&)weakPtr NS_DESIGNATED_INITIALIZER;
 @end
 
 NS_DIRECT_MEMBERS
-@interface WKProcessPoolWeakObserver (Direct)
-@property (nonatomic, readonly) RefPtr<WebKit::WebProcessPool> pool;
-@end
-
 @implementation WKProcessPoolWeakObserver
 - (instancetype)initWithWeakPtr:(WeakPtr<WebKit::WebProcessPool>&&)weakPtr
 {
@@ -155,10 +152,7 @@ NS_DIRECT_MEMBERS
         m_weakPtr = WTFMove(weakPtr);
     return self;
 }
-@end
 
-NS_DIRECT_MEMBERS
-@implementation WKProcessPoolWeakObserver (Direct)
 - (RefPtr<WebKit::WebProcessPool>)pool
 {
     return m_weakPtr.get();
