@@ -1,3 +1,18 @@
+2021-10-03  Basuke Suzuki  <basuke.suzuki@sony.com>
+
+        [PlayStation] Pass logging channel parameter to WebProcess from environment variable
+        https://bugs.webkit.org/show_bug.cgi?id=230726
+        <rdar://problem/83740947>
+
+        Reviewed by Fujii Hironori.
+
+        Added release log configuration environment variables to PlayStation port.
+
+        * UIProcess/playstation/WebProcessPoolPlayStation.cpp:
+        (WebKit::WebProcessPool::platformInitializeWebProcess):
+        * WebProcess/playstation/WebProcessPlayStation.cpp:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+
 2021-10-03  David Kilzer  <ddkilzer@apple.com>
 
         WTF::RetainPtr<> allows assignment of two pointer types that are not assignable

@@ -26,6 +26,8 @@
 #include "config.h"
 #include "WebProcessPool.h"
 
+#include "WebProcessCreationParameters.h"
+
 namespace WebKit {
 
 void WebProcessPool::platformInitialize()
@@ -38,9 +40,19 @@ void WebProcessPool::platformInitializeNetworkProcess(NetworkProcessCreationPara
     notImplemented();
 }
 
-void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy&, WebProcessCreationParameters&)
+void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy&, WebProcessCreationParameters& parameters)
 {
-    notImplemented();
+#if !LOG_DISABLED || !RELEASE_LOG_DISABLED
+    char buf[2048];
+    if (getenv_np("WTFLogging", buf, sizeof(buf)))
+        parameters.wtfLoggingChannels = buf;
+    if (getenv_np("WebCoreLogging", buf, sizeof(buf)))
+        parameters.webCoreLoggingChannels = buf;
+    if (getenv_np("WebKitLogging", buf, sizeof(buf)))
+        parameters.webKitLoggingChannels = buf;
+#else
+    UNUSED_PARAM(parameters);
+#endif
 }
 
 void WebProcessPool::platformInvalidateContext()

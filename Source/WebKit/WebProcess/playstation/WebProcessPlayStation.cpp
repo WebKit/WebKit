@@ -26,10 +26,21 @@
 #include "config.h"
 #include "WebProcess.h"
 
+#include "LogInitialization.h"
+#include <WebCore/LogInitialization.h>
+#include <wtf/LogInitialization.h>
+
 namespace WebKit {
 
-void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters&)
+void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& parameters)
 {
+#if !LOG_DISABLED || !RELEASE_LOG_DISABLED
+    WTF::logChannels().initializeLogChannelsIfNecessary(parameters.wtfLoggingChannels);
+    WebCore::logChannels().initializeLogChannelsIfNecessary(parameters.webCoreLoggingChannels);
+    WebKit::logChannels().initializeLogChannelsIfNecessary(parameters.webKitLoggingChannels);
+#else
+    UNUSED_PARAM(parameters);
+#endif
 }
 
 void WebProcess::platformSetWebsiteDataStoreParameters(WebProcessDataStoreParameters&&)
