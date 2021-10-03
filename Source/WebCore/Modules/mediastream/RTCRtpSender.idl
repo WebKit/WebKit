@@ -31,7 +31,7 @@
 
 [
     Conditional=WEB_RTC,
-    EnabledBySetting=PeerConnection,
+    EnabledBySetting=PeerConnectionEnabled,
     Exposed=Window
 ] interface RTCRtpSender {
     readonly attribute MediaStreamTrack? track;
@@ -44,5 +44,5 @@
     undefined setStreams(MediaStream... streams);
     Promise<RTCStatsReport> getStats();
 
-    [Conditional=WEB_RTC, EnabledAtRuntime=WebRTCDTMF] readonly attribute RTCDTMFSender? dtmf;
+    [Conditional=WEB_RTC, EnabledAtRuntime=WebRTCDTMFEnabled] readonly attribute RTCDTMFSender? dtmf;
 };

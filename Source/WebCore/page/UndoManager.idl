@@ -24,7 +24,7 @@
  */
 
 [
-    EnabledBySetting=UndoManagerAPI,
+    EnabledBySetting=UndoManagerAPIEnabled,
     ImplementationLacksVTable,
     GenerateIsReachable=ImplDocument,
     Exposed=Window

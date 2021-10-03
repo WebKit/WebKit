@@ -851,7 +851,7 @@
         "additive-symbols": {
             "codegen-properties": {
                 "descriptor-only": true,
-                "settings-flag": "cssCounterStyleAtRules",
+                "settings-flag": "cssCounterStyleAtRulesEnabled",
                 "skip-builder": true
             },
             "specification": {
@@ -2672,7 +2672,7 @@
         "fallback": {
             "codegen-properties": {
                 "descriptor-only": true,
-                "settings-flag": "cssCounterStyleAtRules",
+                "settings-flag": "cssCounterStyleAtRulesEnabled",
                 "skip-builder": true
             },
             "specification": {
@@ -3688,7 +3688,7 @@
                     "overscroll-behavior-x",
                     "overscroll-behavior-y"
                 ],
-                "settings-flag": "overscrollBehavior"
+                "settings-flag": "overscrollBehaviorEnabled"
             },
             "status": {
                 "status": "in development"
@@ -3704,7 +3704,7 @@
                 "auto"
             ],
             "codegen-properties": {
-                "settings-flag": "overscrollBehavior"
+                "settings-flag": "overscrollBehaviorEnabled"
             },
             "status": {
                 "status": "in development"
@@ -3720,7 +3720,7 @@
                 "auto"
             ],
             "codegen-properties": {
-                "settings-flag": "overscrollBehavior"
+                "settings-flag": "overscrollBehaviorEnabled"
             },
             "status": {
                 "status": "in development"
@@ -3732,7 +3732,7 @@
         "pad": {
             "codegen-properties": {
                 "descriptor-only": true,
-                "settings-flag": "cssCounterStyleAtRules",
+                "settings-flag": "cssCounterStyleAtRulesEnabled",
                 "skip-builder": true
             },
             "specification": {
@@ -4276,7 +4276,7 @@
         "symbols": {
             "codegen-properties": {
                 "descriptor-only": true,
-                "settings-flag": "cssCounterStyleAtRules",
+                "settings-flag": "cssCounterStyleAtRulesEnabled",
                 "skip-builder": true
             },
             "specification": {
@@ -5001,7 +5001,7 @@
         "aspect-ratio": {
             "codegen-properties": {
                 "custom": "All",
-                "settings-flag": "aspectRatio"
+                "settings-flag": "aspectRatioEnabled"
             },
             "status": {
                 "status": "experimental"
@@ -5014,7 +5014,7 @@
         "contain": {
             "codegen-properties": {
                 "custom": "All",
-                "settings-flag": "cssContainment"
+                "settings-flag": "cssContainmentEnabled"
             },
             "status": {
                 "status": "experimental"
@@ -6507,7 +6507,7 @@
         "negative": {
             "codegen-properties": {
                 "descriptor-only": true,
-                "settings-flag": "cssCounterStyleAtRules",
+                "settings-flag": "cssCounterStyleAtRulesEnabled",
                 "skip-builder": true
             },
             "specification": {
@@ -6603,7 +6603,7 @@
         "prefix": {
             "codegen-properties": {
                 "descriptor-only": true,
-                "settings-flag": "cssCounterStyleAtRules",
+                "settings-flag": "cssCounterStyleAtRulesEnabled",
                 "skip-builder": true
             },
             "specification": {
@@ -6622,7 +6622,7 @@
         "range": {
             "codegen-properties": {
                 "descriptor-only": true,
-                "settings-flag": "cssCounterStyleAtRules",
+                "settings-flag": "cssCounterStyleAtRulesEnabled",
                 "skip-builder": true
             },
             "specification": {
@@ -6645,7 +6645,7 @@
         "suffix": {
             "codegen-properties": {
                 "descriptor-only": true,
-                "settings-flag": "cssCounterStyleAtRules",
+                "settings-flag": "cssCounterStyleAtRulesEnabled",
                 "skip-builder": true
             },
             "specification": {
@@ -7087,7 +7087,7 @@
         },
         "translate": {
             "codegen-properties": {
-                "settings-flag": "cssIndividualTransformProperties",
+                "settings-flag": "cssIndividualTransformPropertiesEnabled",
                 "converter": "Translate"
             },
             "specification": {
@@ -7097,7 +7097,7 @@
         },
         "scale": {
             "codegen-properties": {
-                "settings-flag": "cssIndividualTransformProperties",
+                "settings-flag": "cssIndividualTransformPropertiesEnabled",
                 "converter": "Scale"
             },
             "specification": {
@@ -7108,7 +7108,7 @@
         },
         "rotate": {
             "codegen-properties": {
-                "settings-flag": "cssIndividualTransformProperties",
+                "settings-flag": "cssIndividualTransformPropertiesEnabled",
                 "converter": "Rotate"
             },
             "specification": {
@@ -7152,7 +7152,7 @@
                 "smooth"
             ],
             "codegen-properties": {
-                "settings-flag": "CSSOMViewSmoothScrolling",
+                "settings-flag": "CSSOMViewSmoothScrollingEnabled",
                 "converter": "SmoothScrolling",
                 "name-for-methods": "UseSmoothScrolling"
             },
@@ -7536,7 +7536,7 @@
         "system": {
             "codegen-properties": {
                 "descriptor-only": true,
-                "settings-flag": "cssCounterStyleAtRules",
+                "settings-flag": "cssCounterStyleAtRulesEnabled",
                 "skip-builder": true
             },
             "specification": {

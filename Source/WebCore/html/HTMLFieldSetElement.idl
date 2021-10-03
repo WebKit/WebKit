@@ -32,6 +32,6 @@
     readonly attribute ValidityState   validity;
     readonly attribute DOMString       validationMessage;
     boolean  checkValidity();
-    [EnabledBySetting=InteractiveFormValidation] boolean reportValidity();
+    [EnabledBySetting=InteractiveFormValidationEnabled] boolean reportValidity();
     undefined setCustomValidity(DOMString error);
 };

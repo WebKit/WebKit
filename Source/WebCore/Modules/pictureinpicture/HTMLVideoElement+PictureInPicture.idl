@@ -26,7 +26,7 @@
 
 [
     Conditional=PICTURE_IN_PICTURE_API,
-    EnabledBySetting=PictureInPictureAPI,
+    EnabledBySetting=PictureInPictureAPIEnabled,
     ImplementedBy=HTMLVideoElementPictureInPicture
 ] partial interface HTMLVideoElement {
     [NewObject] Promise<PictureInPictureWindow> requestPictureInPicture();

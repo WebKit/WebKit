@@ -27,7 +27,7 @@ typedef double DOMHighResTimeStamp;
 
 [
     Conditional=WEB_RTC,
-    EnabledBySetting=PeerConnection,
+    EnabledBySetting=PeerConnectionEnabled,
     JSGenerateToJSObject,
 ] dictionary RTCRtpContributingSource {
     required DOMHighResTimeStamp timestamp;

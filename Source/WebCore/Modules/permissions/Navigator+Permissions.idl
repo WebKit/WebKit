@@ -26,7 +26,7 @@
 // https://w3c.github.io/permissions/#navigator-and-workernavigator-extension
 
 [
-    EnabledBySetting=PermissionsAPI,
+    EnabledBySetting=PermissionsAPIEnabled,
     ImplementedBy=NavigatorPermissions
 ] partial interface Navigator {
     [SameObject] readonly attribute Permissions permissions;

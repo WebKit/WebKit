@@ -25,7 +25,7 @@
 [
     ActiveDOMObject,
     Conditional=WEB_RTC,
-    EnabledBySetting=PeerConnection,
+    EnabledBySetting=PeerConnectionEnabled,
     Exposed=(Window),
 ] interface RTCSctpTransport : EventTarget {
   readonly attribute RTCDtlsTransport transport;

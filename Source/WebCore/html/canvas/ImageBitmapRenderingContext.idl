@@ -24,7 +24,7 @@
  */
 
 [
-    EnabledAtRuntime=ImageBitmap,
+    EnabledAtRuntime=ImageBitmapEnabled,
     Exposed=(Window,Worker),
     CallTracer=InspectorCanvasCallTracer,
 ] interface ImageBitmapRenderingContext {

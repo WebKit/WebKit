@@ -43,7 +43,7 @@ dictionary RTCRtpSFrameTransformOptions {
 [
     ActiveDOMObject,
     Conditional=WEB_RTC,
-    EnabledBySetting=WebRTCSFrameTransform,
+    EnabledBySetting=WebRTCSFrameTransformEnabled,
     ExportMacro=WEBCORE_EXPORT,
     Exposed=(Window,DedicatedWorker),
     InterfaceName=SFrameTransform,

@@ -35,4 +35,4 @@
     readonly attribute double testAttr;
 };
 
-[Conditional=Condition12, EnabledBySetting=TestSetting2] TestConditionalIncludes includes TestMixinInterface;
+[Conditional=Condition12, EnabledBySetting=TestSetting2Enabled] TestConditionalIncludes includes TestMixinInterface;

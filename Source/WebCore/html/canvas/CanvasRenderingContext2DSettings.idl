@@ -30,5 +30,5 @@
     // FIXME: Add support for 'alpha'.
     // boolean alpha = true;
     boolean desynchronized = false;
-    [EnabledBySetting=CanvasColorSpace] PredefinedColorSpace colorSpace = "srgb";
+    [EnabledBySetting=CanvasColorSpaceEnabled] PredefinedColorSpace colorSpace = "srgb";
 };

@@ -49,7 +49,7 @@ typedef (
 
     DOMString toDataURL(optional DOMString type, optional any quality);
     [CallWith=ScriptExecutionContext] undefined toBlob(BlobCallback callback, optional DOMString type, optional any quality);
-    [Conditional=OFFSCREEN_CANVAS, EnabledAtRuntime=OffscreenCanvas, CallWith=ScriptExecutionContext] OffscreenCanvas transferControlToOffscreen();
+    [Conditional=OFFSCREEN_CANVAS, EnabledAtRuntime=OffscreenCanvasEnabled, CallWith=ScriptExecutionContext] OffscreenCanvas transferControlToOffscreen();
 
     [Conditional=MEDIA_STREAM, CallWith=Document, NewObject] MediaStream captureStream(optional double frameRequestRate);
 };

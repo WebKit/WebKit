@@ -27,7 +27,7 @@
 [
     Conditional=FULLSCREEN_API,
     DisabledByQuirk=shouldDisableElementFullscreen,
-    EnabledBySetting=FullScreen
+    EnabledBySetting=FullScreenEnabled
 ] partial interface Element {
     // FIXME: Implement unprefixed 'requestFullscreen'.
     // Promise<undefined> requestFullscreen(optional FullscreenOptions options);

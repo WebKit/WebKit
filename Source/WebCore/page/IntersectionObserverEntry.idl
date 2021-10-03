@@ -29,7 +29,7 @@ typedef double DOMHighResTimeStamp;
 
 [
     ImplementationLacksVTable,
-    EnabledBySetting=IntersectionObserver,
+    EnabledBySetting=IntersectionObserverEnabled,
     JSCustomMarkFunction,
     Exposed=Window
 ] interface IntersectionObserverEntry {

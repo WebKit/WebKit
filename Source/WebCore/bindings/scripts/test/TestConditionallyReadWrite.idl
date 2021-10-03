@@ -29,13 +29,13 @@
     [ConditionallyReadWrite=CONDITION] attribute Node conditionallyReadWriteAttribute;
     [Conditional=CONDITION2, ConditionallyReadWrite=CONDITION] attribute Node conditionalAndConditionallyReadWriteAttribute;
 
-    [RuntimeConditionallyReadWrite=TestFeature] attribute Node runtimeConditionallyReadWriteAttribute;
-    [RuntimeConditionallyReadWrite=TestFeature, LegacyUnforgeable] attribute Node runtimeConditionallyReadWriteAttributeUnforgeable;
-    [RuntimeConditionallyReadWrite=TestFeature, PrivateIdentifier, LegacyUnforgeable] attribute Node runtimeConditionallyReadWriteAttributeUnforgeablePrivate;
-    [RuntimeConditionallyReadWrite=TestFeature] attribute Promise<double> runtimeConditionallyReadWriteAttributePromise;
+    [RuntimeConditionallyReadWrite=TestFeatureEnabled] attribute Node runtimeConditionallyReadWriteAttribute;
+    [RuntimeConditionallyReadWrite=TestFeatureEnabled, LegacyUnforgeable] attribute Node runtimeConditionallyReadWriteAttributeUnforgeable;
+    [RuntimeConditionallyReadWrite=TestFeatureEnabled, PrivateIdentifier, LegacyUnforgeable] attribute Node runtimeConditionallyReadWriteAttributeUnforgeablePrivate;
+    [RuntimeConditionallyReadWrite=TestFeatureEnabled] attribute Promise<double> runtimeConditionallyReadWriteAttributePromise;
 
-    [SettingsConditionallyReadWrite=TestFeature] attribute Node settingsConditionallyReadWriteAttribute;
-    [SettingsConditionallyReadWrite=TestFeature, LegacyUnforgeable] attribute Node settingsConditionallyReadWriteAttributeUnforgeable;
-    [SettingsConditionallyReadWrite=TestFeature, PrivateIdentifier, LegacyUnforgeable] attribute Node settingsConditionallyReadWriteAttributeUnforgeablePrivate;
-    [SettingsConditionallyReadWrite=TestFeature] attribute Promise<double> settingsConditionallyReadWriteAttributePromise;
+    [SettingsConditionallyReadWrite=TestFeatureEnabled] attribute Node settingsConditionallyReadWriteAttribute;
+    [SettingsConditionallyReadWrite=TestFeatureEnabled, LegacyUnforgeable] attribute Node settingsConditionallyReadWriteAttributeUnforgeable;
+    [SettingsConditionallyReadWrite=TestFeatureEnabled, PrivateIdentifier, LegacyUnforgeable] attribute Node settingsConditionallyReadWriteAttributeUnforgeablePrivate;
+    [SettingsConditionallyReadWrite=TestFeatureEnabled] attribute Promise<double> settingsConditionallyReadWriteAttributePromise;
 };

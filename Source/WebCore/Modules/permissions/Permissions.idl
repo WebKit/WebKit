@@ -26,7 +26,7 @@
 // https://w3c.github.io/permissions/#permissions-interface
 
 [
-    EnabledBySetting=PermissionsAPI,
+    EnabledBySetting=PermissionsAPIEnabled,
     GenerateIsReachable=ReachableFromNavigator,
     ImplementationLacksVTable,
     Exposed=(Window,Worker)

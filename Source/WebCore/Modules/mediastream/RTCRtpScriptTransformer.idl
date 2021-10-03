@@ -26,7 +26,7 @@
 [
     ActiveDOMObject,
     Conditional=WEB_RTC,
-    EnabledBySetting=WebRTCEncodedTransform,
+    EnabledBySetting=WebRTCEncodedTransformEnabled,
     Exposed=DedicatedWorker,
     JSGenerateToNativeObject,
 ] interface RTCRtpScriptTransformer {

@@ -39,6 +39,6 @@ interface mixin CanvasPath {
     undefined arc(unrestricted double x, unrestricted double y, unrestricted double radius, unrestricted double startAngle, unrestricted double endAngle, optional boolean anticlockwise = false);
     undefined ellipse(unrestricted double x, unrestricted double y, unrestricted double radiusX, unrestricted double radiusY, unrestricted double rotation, unrestricted double startAngle, unrestricted double endAngle, optional boolean anticlockwise = false);
 
-    [EnabledAtRuntime=InspectorAdditions] readonly attribute float currentX;
-    [EnabledAtRuntime=InspectorAdditions] readonly attribute float currentY;
+    [EnabledAtRuntime=InspectorAdditionsEnabled] readonly attribute float currentX;
+    [EnabledAtRuntime=InspectorAdditionsEnabled] readonly attribute float currentY;
 };

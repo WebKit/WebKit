@@ -35,7 +35,7 @@
     ReportExtraMemoryCost,
     Exposed=Window
 ] interface AudioBuffer {
-    [EnabledBySetting=WebAudio] constructor(AudioBufferOptions options);
+    [EnabledBySetting=WebAudioEnabled] constructor(AudioBufferOptions options);
     [ImplementedAs=originalLength] readonly attribute unsigned long length; // in sample-frames
     [ImplementedAs=originalDuration] readonly attribute double duration; // in seconds
     readonly attribute float sampleRate; // in sample-frames per second

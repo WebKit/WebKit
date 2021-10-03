@@ -26,7 +26,7 @@
 [
     ActiveDOMObject,
     Conditional=APPLE_PAY,
-    EnabledBySetting=ApplePay,
+    EnabledBySetting=ApplePayEnabled,
     EnabledForContext,
     Exposed=Window
 ] interface ApplePaySession : EventTarget {

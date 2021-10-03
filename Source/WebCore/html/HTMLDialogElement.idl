@@ -25,7 +25,7 @@
 
 [
     Exposed=Window,
-    EnabledAtRuntime=DialogElement,
+    EnabledAtRuntime=DialogElementEnabled,
 ] interface HTMLDialogElement : HTMLElement {
     [CEReactions, Reflect] attribute boolean open;
     attribute DOMString returnValue;

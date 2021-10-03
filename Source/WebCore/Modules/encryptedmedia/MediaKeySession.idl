@@ -29,7 +29,7 @@
 [
     ActiveDOMObject,
     Conditional=ENCRYPTED_MEDIA,
-    EnabledBySetting=EncryptedMediaAPI,
+    EnabledBySetting=EncryptedMediaAPIEnabled,
     ExportToWrappedFunction,
     DisabledByQuirk=hasBrokenEncryptedMediaAPISupport,
     Exposed=Window

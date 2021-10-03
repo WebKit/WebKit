@@ -24,7 +24,7 @@
  */
 
 [
-    EnabledBySetting=MediaCapabilities,
+    EnabledBySetting=MediaCapabilitiesEnabled,
     JSGenerateToJSObject,
 ] dictionary VideoConfiguration {
   required DOMString contentType;
@@ -32,8 +32,8 @@
   required unsigned long height;
   required unsigned long long bitrate;
   required double framerate;
-  [EnabledBySetting=MediaCapabilitiesExtensions] boolean alphaChannel;
-  [EnabledBySetting=HDRMediaCapabilities] HdrMetadataType hdrMetadataType;
-  [EnabledBySetting=HDRMediaCapabilities] ColorGamut colorGamut;
-  [EnabledBySetting=HDRMediaCapabilities] TransferFunction transferFunction;
+  [EnabledBySetting=MediaCapabilitiesExtensionsEnabled] boolean alphaChannel;
+  [EnabledBySetting=HDRMediaCapabilitiesEnabled] HdrMetadataType hdrMetadataType;
+  [EnabledBySetting=HDRMediaCapabilitiesEnabled] ColorGamut colorGamut;
+  [EnabledBySetting=HDRMediaCapabilitiesEnabled] TransferFunction transferFunction;
 };

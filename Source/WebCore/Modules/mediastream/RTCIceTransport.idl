@@ -29,7 +29,7 @@ typedef RTCIceGatheringState IceGatheringState;
 [
     ActiveDOMObject,
     Conditional=WEB_RTC,
-    EnabledBySetting=PeerConnection,
+    EnabledBySetting=PeerConnectionEnabled,
     Exposed=Window,
     SkipVTableValidation
 ] interface RTCIceTransport : EventTarget {

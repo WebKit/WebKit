@@ -63,7 +63,7 @@
     VoidCallback partialCallbackMember;
     [ImplementedAs=partialUnsignedLongMember] unsigned long partialUnsignedLongMemberWithImplementedAs;
     [Conditional=Conditional15] boolean partialBooleanMemberWithIgnoredConditional;
-    [EnabledBySetting=TestSetting] DOMString partialStringMemberWithEnabledBySetting;
+    [EnabledBySetting=TestSettingEnabled] DOMString partialStringMemberWithEnabledBySetting;
 };
 
 partial dictionary TestInheritedDictionary {
@@ -73,5 +73,5 @@ partial dictionary TestInheritedDictionary {
     VoidCallback partialCallbackMember;
     [ImplementedAs=partialUnsignedLongMember] unsigned long partialUnsignedLongMemberWithImplementedAs;
     [Conditional=Conditional15] boolean partialBooleanMemberWithConditional;
-    [EnabledBySetting=TestSetting] DOMString partialStringMemberWithEnabledBySetting;
+    [EnabledBySetting=TestSettingEnabled] DOMString partialStringMemberWithEnabledBySetting;
 };

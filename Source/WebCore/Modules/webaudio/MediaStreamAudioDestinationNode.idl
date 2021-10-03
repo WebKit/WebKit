@@ -27,6 +27,6 @@
     JSGenerateToJSObject,
     Exposed=Window
 ] interface MediaStreamAudioDestinationNode : AudioNode {
-    [EnabledBySetting=WebAudio] constructor (AudioContext context, optional AudioNodeOptions options);
+    [EnabledBySetting=WebAudioEnabled] constructor (AudioContext context, optional AudioNodeOptions options);
     readonly attribute MediaStream stream;
 };

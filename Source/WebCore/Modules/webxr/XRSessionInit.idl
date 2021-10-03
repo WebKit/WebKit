@@ -24,7 +24,7 @@
  */
 
 [
-    EnabledBySetting=WebXR,
+    EnabledBySetting=WebXREnabled,
     Conditional=WEBXR,
 ] dictionary XRSessionInit {
     sequence<any> requiredFeatures;

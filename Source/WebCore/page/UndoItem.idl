@@ -24,7 +24,7 @@
  */
 
 [
-    EnabledBySetting=UndoManagerAPI,
+    EnabledBySetting=UndoManagerAPIEnabled,
 ] dictionary UndoItemInit {
     required DOMString label;
     required VoidCallback undo;
@@ -32,7 +32,7 @@
 };
 
 [
-    EnabledBySetting=UndoManagerAPI,
+    EnabledBySetting=UndoManagerAPIEnabled,
     ImplementationLacksVTable,
     JSCustomMarkFunction,
     CustomIsReachable,

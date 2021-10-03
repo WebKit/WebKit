@@ -25,7 +25,7 @@
 
 [
     Conditional=WEB_RTC,
-    EnabledBySetting=PeerConnection,
+    EnabledBySetting=PeerConnectionEnabled,
     Exposed=Window
 ] interface RTCErrorEvent : Event {
     constructor(DOMString type, RTCErrorEventInit eventInitDict);

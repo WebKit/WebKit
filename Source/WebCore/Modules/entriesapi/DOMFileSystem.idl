@@ -24,7 +24,7 @@
  */
 
 [
-    EnabledAtRuntime=DirectoryUpload,
+    EnabledAtRuntime=DirectoryUploadEnabled,
     ImplementationLacksVTable,
     InterfaceName=FileSystem,
     Exposed=Window

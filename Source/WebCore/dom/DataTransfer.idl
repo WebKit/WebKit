@@ -35,7 +35,7 @@
     attribute DOMString dropEffect;
     attribute DOMString effectAllowed;
 
-    [SameObject, EnabledBySetting=DataTransferItems, CallWith=Document] readonly attribute DataTransferItemList items;
+    [SameObject, EnabledBySetting=DataTransferItemsEnabled, CallWith=Document] readonly attribute DataTransferItemList items;
 
     undefined setDragImage(Element image, long x, long y);
 

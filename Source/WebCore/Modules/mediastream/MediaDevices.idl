@@ -39,7 +39,7 @@
 
     MediaTrackSupportedConstraints getSupportedConstraints();
     [PrivateIdentifier, PublicIdentifier] Promise<MediaStream> getUserMedia(optional MediaStreamConstraints constraints);
-    [EnabledBySetting=ScreenCapture] Promise<MediaStream> getDisplayMedia(optional DisplayMediaStreamConstraints constraints);
+    [EnabledBySetting=ScreenCaptureEnabled] Promise<MediaStream> getDisplayMedia(optional DisplayMediaStreamConstraints constraints);
 };
 
 [
@@ -58,7 +58,7 @@
 
 [
     Conditional=MEDIA_STREAM,
-    EnabledBySetting=ScreenCapture
+    EnabledBySetting=ScreenCaptureEnabled
 ] enum DisplayCaptureSurfaceType {
     "monitor",
     "window",

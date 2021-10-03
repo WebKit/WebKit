@@ -30,7 +30,7 @@
  */
 
 [
-    EnabledBySetting=DataTransferItems,
+    EnabledBySetting=DataTransferItemsEnabled,
     ImplementationLacksVTable,
     Exposed=Window
 ] interface DataTransferItem {

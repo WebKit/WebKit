@@ -32,5 +32,5 @@
     readonly attribute unsigned long namespaceAttribute;
     boolean overloadedNamespaceOperation(TestObj? objArg, DOMString strArg);
     boolean overloadedNamespaceOperation(TestObj? objArg, optional long longArg);
-    [EnabledBySetting=TestSetting2] DOMString enabledBySettingNamespaceOperation(optional any arg);
+    [EnabledBySetting=TestSetting2Enabled] DOMString enabledBySettingNamespaceOperation(optional any arg);
 };

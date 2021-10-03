@@ -25,7 +25,7 @@
 
 // https://w3c.github.io/requestidlecallback/#window_extensions
 [
-    EnabledBySetting=requestIdleCallback
+    EnabledBySetting=requestIdleCallbackEnabled
 ] partial interface DOMWindow {
     unsigned long requestIdleCallback(IdleRequestCallback callback, optional IdleRequestOptions options);
     undefined cancelIdleCallback(unsigned long handle);

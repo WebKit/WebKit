@@ -47,7 +47,7 @@ enum AnimationReplaceState {
 
     attribute DOMString id;
     [ImplementedAs=bindingsEffect] attribute AnimationEffect? effect;
-    [SettingsConditionallyReadWrite=WebAnimationsMutableTimelines] attribute AnimationTimeline? timeline;
+    [SettingsConditionallyReadWrite=WebAnimationsMutableTimelinesEnabled] attribute AnimationTimeline? timeline;
     [ImplementedAs=bindingsStartTime] attribute double? startTime;
     [ImplementedAs=bindingsCurrentTime] attribute double? currentTime;
     attribute double playbackRate;

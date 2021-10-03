@@ -27,7 +27,7 @@ typedef (USVString or CSSOMVariableReferenceValue) CSSUnparsedSegment;
 
 [
     InterfaceName=CSSUnparsedValue,
-    EnabledAtRuntime=CSSTypedOM,
+    EnabledAtRuntime=CSSTypedOMEnabled,
     Conditional=CSS_TYPED_OM,
     Exposed=(Window,Worker,PaintWorklet),
     JSGenerateToNativeObject

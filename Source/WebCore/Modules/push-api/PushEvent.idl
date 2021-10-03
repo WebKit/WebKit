@@ -25,7 +25,7 @@
 
 [
     Conditional=SERVICE_WORKER,
-    EnabledAtRuntime=PushAPI,
+    EnabledAtRuntime=PushAPIEnabled,
     ExportMacro=WEBCORE_EXPORT,
     Exposed=ServiceWorker,
     JSGenerateToNativeObject,

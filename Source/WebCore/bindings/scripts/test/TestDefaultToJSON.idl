@@ -28,8 +28,8 @@ typedef double TestTimeStamp;
 [
     Exposed=Window
 ] interface TestDefaultToJSON {
-    [EnabledAtRuntime=TestRuntimeEnabled]readonly attribute long longAttribute;
-    [EnabledBySetting=TestSetting] readonly attribute unsigned short enabledBySettingsAttribute;
+    [EnabledAtRuntime=TestRuntimeEnabledEnabled]readonly attribute long longAttribute;
+    [EnabledBySetting=TestSettingEnabled] readonly attribute unsigned short enabledBySettingsAttribute;
     [Conditional=TEST_CONDITIONAL] readonly attribute TestDefaultToJSONEnum enabledByConditionalAttribute;
     attribute EventHandler eventHandlerAttribute;
 

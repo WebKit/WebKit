@@ -47,7 +47,7 @@ interface mixin WindowOrWorkerGlobalScope {
     [Replaceable] readonly attribute USVString origin;
     readonly attribute boolean isSecureContext;
 
-    [EnabledBySetting=CrossOriginOpenerPolicy] readonly attribute boolean crossOriginIsolated;
+    [EnabledBySetting=CrossOriginOpenerPolicyEnabled] readonly attribute boolean crossOriginIsolated;
 
     [CallWith=GlobalObject] undefined reportError(any error);
 
@@ -67,8 +67,8 @@ interface mixin WindowOrWorkerGlobalScope {
     [Custom] undefined queueMicrotask(VoidCallback callback);
 
     // ImageBitmap.
-    [EnabledAtRuntime=ImageBitmap] Promise<ImageBitmap> createImageBitmap(ImageBitmapSource image, optional ImageBitmapOptions options);
-    [EnabledAtRuntime=ImageBitmap] Promise<ImageBitmap> createImageBitmap(ImageBitmapSource image, long sx, long sy, long sw, long sh, optional ImageBitmapOptions options);
+    [EnabledAtRuntime=ImageBitmapEnabled] Promise<ImageBitmap> createImageBitmap(ImageBitmapSource image, optional ImageBitmapOptions options);
+    [EnabledAtRuntime=ImageBitmapEnabled] Promise<ImageBitmap> createImageBitmap(ImageBitmapSource image, long sx, long sy, long sw, long sh, optional ImageBitmapOptions options);
 
     // structured cloning
     [CallWith=GlobalObject] any structuredClone(any value, optional StructuredSerializeOptions options);

@@ -26,7 +26,7 @@
 typedef (double or CSSNumericValue) CSSNumberish;
 
 [
-    EnabledAtRuntime=CSSTypedOM,
+    EnabledAtRuntime=CSSTypedOMEnabled,
     Conditional=CSS_TYPED_OM,
     Exposed=(Window,Worker,PaintWorklet)
 ] interface CSSMathSum : CSSMathValue {

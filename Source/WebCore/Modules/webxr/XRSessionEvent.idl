@@ -24,14 +24,14 @@
  */
 
 [
-    EnabledBySetting=WebXR,
+    EnabledBySetting=WebXREnabled,
     Conditional=WEBXR,
 ] dictionary XRSessionEventInit : EventInit {
     required WebXRSession session;
 };
 
 [
-    EnabledBySetting=WebXR,
+    EnabledBySetting=WebXREnabled,
     Conditional=WEBXR,
     SecureContext,
     Exposed=Window

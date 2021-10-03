@@ -32,7 +32,7 @@
 
 [
     Conditional=WEB_RTC,
-    EnabledBySetting=PeerConnection,
+    EnabledBySetting=PeerConnectionEnabled,
     ImplementationLacksVTable,
     Exposed=Window
 ] interface RTCIceCandidate {

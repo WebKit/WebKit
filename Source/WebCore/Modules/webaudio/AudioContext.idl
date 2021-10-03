@@ -26,7 +26,7 @@
 [
     ActiveDOMObject,
     Conditional=WEB_AUDIO,
-    EnabledBySetting=WebAudio,
+    EnabledBySetting=WebAudioEnabled,
     ExportMacro=WEBCORE_EXPORT,
     JSGenerateToNativeObject,
     Exposed=Window

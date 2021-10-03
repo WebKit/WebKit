@@ -24,7 +24,7 @@
  */
 
 [
-    EnabledBySetting=Gamepads,
+    EnabledBySetting=GamepadsEnabled,
     Conditional=GAMEPAD,
     ImplementationLacksVTable,
     Exposed=Window

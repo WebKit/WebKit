@@ -53,7 +53,7 @@ typedef (ImageBitmap or ImageData or HTMLImageElement or HTMLCanvasElement) TexI
 [
     ActiveDOMObject,
     Conditional=WEBGL2,
-    EnabledBySetting=WebGL2,
+    EnabledBySetting=WebGL2Enabled,
     GenerateIsReachable=ImplCanvasBase,
     JSCustomMarkFunction,
     JSGenerateToJSObject,

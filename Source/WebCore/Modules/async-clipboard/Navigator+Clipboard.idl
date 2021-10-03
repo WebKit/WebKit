@@ -25,7 +25,7 @@
 
 // https://w3c.github.io/clipboard-apis/#navigator-interface
 [
-    EnabledBySetting=AsyncClipboardAPI,
+    EnabledBySetting=AsyncClipboardAPIEnabled,
     ImplementedBy=NavigatorClipboard
 ] partial interface Navigator {
     [SecureContext, SameObject] readonly attribute Clipboard clipboard;

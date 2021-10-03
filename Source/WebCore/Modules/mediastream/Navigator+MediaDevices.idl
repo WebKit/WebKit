@@ -32,7 +32,7 @@
 // https://w3c.github.io/mediacapture-main/#legacy-interface-extensions
 [
     Conditional=MEDIA_STREAM,
-    EnabledBySetting=MediaDevices,
+    EnabledBySetting=MediaDevicesEnabled,
     ImplementedBy=NavigatorMediaDevices
 ] partial interface Navigator {
     [SameObject, SecureContext, ContextAllowsMediaDevices] readonly attribute MediaDevices mediaDevices;

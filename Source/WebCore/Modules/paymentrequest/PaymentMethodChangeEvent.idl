@@ -25,7 +25,7 @@
 
 [
     Conditional=PAYMENT_REQUEST,
-    EnabledBySetting=PaymentRequest,
+    EnabledBySetting=PaymentRequestEnabled,
     Exposed=Window,
     JSCustomMarkFunction,
     SecureContext,

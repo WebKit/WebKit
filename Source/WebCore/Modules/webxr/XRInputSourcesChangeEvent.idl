@@ -24,7 +24,7 @@
  */
 
 [
-    EnabledBySetting=WebXR,
+    EnabledBySetting=WebXREnabled,
     Conditional=WEBXR,
 ] dictionary XRInputSourcesChangeEventInit : EventInit {
     required WebXRSession session;
@@ -33,7 +33,7 @@
 };
 
 [
-    EnabledBySetting=WebXR,
+    EnabledBySetting=WebXREnabled,
     Conditional=WEBXR,
     SecureContext,
     Exposed=Window

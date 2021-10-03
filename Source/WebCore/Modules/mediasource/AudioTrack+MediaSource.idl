@@ -26,7 +26,7 @@
 // https://w3c.github.io/media-source/#audio-track-extensions
 [
     Conditional=MEDIA_SOURCE,
-    EnabledBySetting=MediaSource,
+    EnabledBySetting=MediaSourceEnabled,
     ImplementedBy=AudioTrackMediaSource
 ] partial interface AudioTrack {
     readonly attribute SourceBuffer? sourceBuffer;

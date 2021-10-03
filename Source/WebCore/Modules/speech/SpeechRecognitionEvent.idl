@@ -24,7 +24,7 @@
  */
 
 [
-    EnabledBySetting=SpeechRecognition,
+    EnabledBySetting=SpeechRecognitionEnabled,
     Exposed=Window
 ] interface SpeechRecognitionEvent : Event {
     constructor(DOMString type, SpeechRecognitionEventInit eventInitDict);

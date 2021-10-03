@@ -24,7 +24,7 @@
  */
 
 [
-    EnabledBySetting=SpeechRecognition,
+    EnabledBySetting=SpeechRecognitionEnabled,
     ImplementationLacksVTable,
     Exposed=Window
 ] interface SpeechRecognitionResult {

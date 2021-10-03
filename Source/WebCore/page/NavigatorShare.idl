@@ -25,7 +25,7 @@
 
 // https://w3c.github.io/web-share/#extensions-to-the-navigator-interface
 [
-    EnabledBySetting=WebShare
+    EnabledBySetting=WebShareEnabled
 ] interface mixin NavigatorShare {
     [CallWith=Document, SecureContext] boolean canShare(optional ShareData shareData);
     [CallWith=Document, SecureContext] Promise<undefined> share(optional ShareData shareData);

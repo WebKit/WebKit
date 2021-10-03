@@ -26,7 +26,7 @@
 // https://storage.spec.whatwg.org/#storagemanager
 
 [
-    EnabledBySetting=StorageAPI,
+    EnabledBySetting=StorageAPIEnabled,
     ImplementationLacksVTable,
     SecureContext,
     Exposed=(Window,Worker)

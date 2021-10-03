@@ -34,7 +34,7 @@ dictionary ClipboardItemOptions {
 
 [
     Exposed=Window,
-    EnabledBySetting=AsyncClipboardAPI,
+    EnabledBySetting=AsyncClipboardAPIEnabled,
     ImplementationLacksVTable,
     GenerateIsReachable=ReachableFromNavigator
 ] interface ClipboardItem {

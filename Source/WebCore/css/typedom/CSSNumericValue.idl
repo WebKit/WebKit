@@ -27,7 +27,7 @@ typedef (double or CSSNumericValue) CSSNumberish;
 
 [
     InterfaceName=CSSNumericValue,
-    EnabledAtRuntime=CSSTypedOM,
+    EnabledAtRuntime=CSSTypedOMEnabled,
     Conditional=CSS_TYPED_OM,
     JSGenerateToNativeObject,
     Exposed=(Window,Worker,PaintWorklet)

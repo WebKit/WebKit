@@ -74,8 +74,8 @@
     undefined clearShadow();
 
     // Inspector-only.
-    [EnabledAtRuntime=InspectorAdditions] undefined setPath(Path2D path);
-    [EnabledAtRuntime=InspectorAdditions, NewObject] Path2D getPath();
+    [EnabledAtRuntime=InspectorAdditionsEnabled] undefined setPath(Path2D path);
+    [EnabledAtRuntime=InspectorAdditionsEnabled, NewObject] Path2D getPath();
 };
 
 CanvasRenderingContext2D includes CanvasState;

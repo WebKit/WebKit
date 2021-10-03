@@ -26,15 +26,15 @@
 [
     Exposed=Window
 ] interface TestEnabledBySetting {
-    [EnabledBySetting=TestSetting] attribute TestSubObjConstructor TestSubObjEnabledBySetting;
-    [EnabledBySetting=TestSetting, PrivateIdentifier] attribute TestSubObjConstructor TestSubObjEnabledBySettingPrivate;
-    [EnabledBySetting=TestSetting, PrivateIdentifier, PublicIdentifier] attribute TestSubObjConstructor TestSubObjEnabledBySettingPrivatePublic;
+    [EnabledBySetting=TestSettingEnabled] attribute TestSubObjConstructor TestSubObjEnabledBySetting;
+    [EnabledBySetting=TestSettingEnabled, PrivateIdentifier] attribute TestSubObjConstructor TestSubObjEnabledBySettingPrivate;
+    [EnabledBySetting=TestSettingEnabled, PrivateIdentifier, PublicIdentifier] attribute TestSubObjConstructor TestSubObjEnabledBySettingPrivatePublic;
 
     // [EnabledBySetting] attributes and operations.
-    [Conditional=TEST_FEATURE, EnabledBySetting=TestSetting] attribute DOMString enabledBySettingAttribute;
-    [Conditional=TEST_FEATURE, EnabledBySetting=TestSetting] undefined enabledBySettingOperation(DOMString testParam);
+    [Conditional=TEST_FEATURE, EnabledBySetting=TestSettingEnabled] attribute DOMString enabledBySettingAttribute;
+    [Conditional=TEST_FEATURE, EnabledBySetting=TestSettingEnabled] undefined enabledBySettingOperation(DOMString testParam);
 
-    [Conditional=TEST_FEATURE, EnabledBySetting=TestSetting&OtherTestSetting] attribute DOMString enabledByTwoSettingsAttribute;
+    [Conditional=TEST_FEATURE, EnabledBySetting=TestSettingEnabled&OtherTestSettingEnabled] attribute DOMString enabledByTwoSettingsAttribute;
 
-    [EnabledBySetting=TestSetting] const unsigned short enabledBySettingConstant = 0;
+    [EnabledBySetting=TestSettingEnabled] const unsigned short enabledBySettingConstant = 0;
 };

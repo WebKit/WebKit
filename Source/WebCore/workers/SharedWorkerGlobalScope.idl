@@ -24,7 +24,7 @@
  */
 
 [
-    EnabledBySetting=SharedWorker,
+    EnabledBySetting=SharedWorkerEnabled,
     Global=(Worker,SharedWorker),
     Exposed=SharedWorker,
     JSGenerateToNativeObject,

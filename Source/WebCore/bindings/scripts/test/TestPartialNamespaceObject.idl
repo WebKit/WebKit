@@ -27,7 +27,7 @@
 // changes in its output.
 [
     Conditional=Condition1,
-    EnabledBySetting=TestSetting1,
+    EnabledBySetting=TestSetting1Enabled,
     ImplementedBy=TestNamespaceObjectImpl,
 ] partial namespace TestNamespaceObject {
     readonly attribute double namespaceAttributeFromPartial;

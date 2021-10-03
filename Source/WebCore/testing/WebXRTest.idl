@@ -24,7 +24,7 @@
  */ 
 
 [
-    EnabledBySetting=WebXR,
+    EnabledBySetting=WebXREnabled,
     Conditional=WEBXR,
     Exposed=Window,
     InterfaceName=XRTest,
@@ -44,7 +44,7 @@
 };
 
 [
-    EnabledBySetting=WebXR,
+    EnabledBySetting=WebXREnabled,
     Conditional=WEBXR,
 ] dictionary FakeXRDeviceInit {
     // Deprecated - use `supportedModes` instead.

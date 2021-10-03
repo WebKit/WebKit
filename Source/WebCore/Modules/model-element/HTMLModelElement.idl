@@ -25,7 +25,7 @@
 
 [
     Conditional=MODEL_ELEMENT,
-    EnabledBySetting=ModelElement,
+    EnabledBySetting=ModelElementEnabled,
     Exposed=Window,
 ] interface HTMLModelElement : HTMLElement {
     [URL] readonly attribute USVString currentSrc;

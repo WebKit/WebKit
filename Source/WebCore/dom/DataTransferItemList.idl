@@ -30,7 +30,7 @@
  */
 
 [
-    EnabledBySetting=DataTransferItems,
+    EnabledBySetting=DataTransferItemsEnabled,
     JSGenerateToNativeObject,
     JSGenerateToJSObject,
     Exposed=Window

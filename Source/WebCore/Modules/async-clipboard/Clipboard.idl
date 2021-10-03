@@ -28,7 +28,7 @@ typedef sequence<ClipboardItem> ClipboardItems;
 [
     SecureContext,
     Exposed=Window,
-    EnabledBySetting=AsyncClipboardAPI,
+    EnabledBySetting=AsyncClipboardAPIEnabled,
     GenerateIsReachable=ReachableFromNavigator
 ] interface Clipboard : EventTarget {
     [NewObject] Promise<ClipboardItems> read();

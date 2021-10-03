@@ -27,7 +27,7 @@
     ActiveDOMObject,
     Conditional=WEB_AUDIO,
     CustomToJSObject,
-    EnabledBySetting=WebAudio,
+    EnabledBySetting=WebAudioEnabled,
     ExportMacro=WEBCORE_EXPORT,
     Exposed=Window
 ] interface BaseAudioContext : EventTarget {

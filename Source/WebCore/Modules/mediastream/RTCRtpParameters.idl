@@ -25,7 +25,7 @@
 
 [
     Conditional=WEB_RTC,
-    EnabledBySetting=PeerConnection,
+    EnabledBySetting=PeerConnectionEnabled,
     JSGenerateToJSObject,
 ] dictionary RTCRtpParameters {
     required sequence<RTCRtpHeaderExtensionParameters> headerExtensions;

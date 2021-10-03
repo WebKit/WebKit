@@ -25,7 +25,7 @@
 
 [
     ImplementationLacksVTable,
-    EnabledBySetting=SpeechRecognition,
+    EnabledBySetting=SpeechRecognitionEnabled,
     Exposed=Window
 ] interface SpeechRecognitionAlternative {
     readonly attribute DOMString transcript;

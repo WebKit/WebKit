@@ -27,7 +27,7 @@
 
 [
     ActiveDOMObject,
-    EnabledBySetting=PermissionsAPI,
+    EnabledBySetting=PermissionsAPIEnabled,
     Exposed=(Window,Worker)
 ] interface PermissionStatus : EventTarget {
     readonly attribute PermissionState state;

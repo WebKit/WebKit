@@ -27,7 +27,7 @@
     Global=(Worker,ServiceWorker),
     Exposed=ServiceWorker,
     Conditional=SERVICE_WORKER,
-    EnabledAtRuntime=ServiceWorker,
+    EnabledAtRuntime=ServiceWorkerEnabled,
     JSCustomMarkFunction,
     IsImmutablePrototypeExoticObject,
     IsImmutablePrototypeExoticObjectOnPrototype,

@@ -28,7 +28,7 @@
 
 [
     Conditional=ENCRYPTED_MEDIA,
-    EnabledBySetting=EncryptedMediaAPI,
+    EnabledBySetting=EncryptedMediaAPIEnabled,
     DisabledByQuirk=hasBrokenEncryptedMediaAPISupport,
     ImplementationLacksVTable,
     Exposed=Window

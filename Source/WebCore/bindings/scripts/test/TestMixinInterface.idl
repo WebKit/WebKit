@@ -41,7 +41,7 @@
     [CallWith=ScriptExecutionContext] TestObj mixinComplexOperation(DOMString strArg, TestObj objArg);
     [Custom] undefined mixinCustomOperation();
     [Conditional=Condition11] undefined mixinConditionalOperation();
-    [EnabledBySetting=TestSetting] undefined mixinSettingsConditionalOperation();
+    [EnabledBySetting=TestSettingEnabled] undefined mixinSettingsConditionalOperation();
     [ResultField=nodes] sequence<Node> mixinResultFieldOperation();
 
     const unsigned short MIXIN_CONSTANT = 1;

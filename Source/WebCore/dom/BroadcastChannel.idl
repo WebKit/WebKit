@@ -25,7 +25,7 @@
 
 [
     ActiveDOMObject,
-    EnabledBySetting=BroadcastChannel,
+    EnabledBySetting=BroadcastChannelEnabled,
     Exposed=(Window,Worker)
 ] interface BroadcastChannel : EventTarget {
     [CallWith=ScriptExecutionContext] constructor(DOMString name);

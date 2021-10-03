@@ -39,5 +39,5 @@
     readonly attribute unrestricted double? speed;
     
     // Non standard.
-    [EnabledBySetting=GeolocationFloorLevel] readonly attribute unrestricted double? floorLevel;
+    [EnabledBySetting=GeolocationFloorLevelEnabled] readonly attribute unrestricted double? floorLevel;
 };

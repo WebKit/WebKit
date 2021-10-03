@@ -24,7 +24,7 @@
 */
 
 [
-    EnabledBySetting=InputEvents,
+    EnabledBySetting=InputEventsEnabled,
     Exposed=Window
 ] interface InputEvent : UIEvent {
     constructor(DOMString type, optional InputEventInit eventInitDict);

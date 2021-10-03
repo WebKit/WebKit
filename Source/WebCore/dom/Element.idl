@@ -86,7 +86,7 @@
     [NotEnumerable] attribute EventHandler onbeforeload;
 
     // Non-standard: https://developer.apple.com/reference/webkitjs/element/1634205-onwebkitneedkey.
-    [NotEnumerable, Conditional=LEGACY_ENCRYPTED_MEDIA, EnabledBySetting=LegacyEncryptedMediaAPI] attribute EventHandler onwebkitneedkey;
+    [NotEnumerable, Conditional=LEGACY_ENCRYPTED_MEDIA, EnabledBySetting=LegacyEncryptedMediaAPIEnabled] attribute EventHandler onwebkitneedkey;
 
     // Non-standard: https://developer.apple.com/reference/webkitjs/element/1633943-onwebkitpresentationmodechanged.
     [NotEnumerable, Conditional=VIDEO_PRESENTATION_MODE] attribute EventHandler onwebkitpresentationmodechanged;

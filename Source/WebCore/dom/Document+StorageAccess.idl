@@ -26,7 +26,7 @@
 // https://privacycg.github.io/storage-access/#the-document-object
 [
     Conditional=INTELLIGENT_TRACKING_PREVENTION,
-    EnabledBySetting=storageAccessAPI,
+    EnabledBySetting=storageAccessAPIEnabled,
     ImplementedBy=DocumentStorageAccess
 ] partial interface Document {
     Promise<boolean> hasStorageAccess();

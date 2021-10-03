@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 [
-    EnabledBySetting=SharedWorker,
+    EnabledBySetting=SharedWorkerEnabled,
     Exposed=Window
 ]
 interface SharedWorker : EventTarget {
