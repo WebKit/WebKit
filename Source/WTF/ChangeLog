@@ -1,3 +1,20 @@
+2021-10-03  Basuke Suzuki  <basuke.suzuki@sony.com>
+
+        Enable release log to stderr
+        https://bugs.webkit.org/show_bug.cgi?id=230725
+        <rdar://problem/83740529>
+
+        Reviewed by Michael Catanzaro.
+
+        Define new compiler definitions, USE_LOG_STDERR for release logging. We don't have
+        modern logging backend so that dumping out to stdout/stderr is still very valuable. 
+
+        * wtf/Assertions.cpp:
+        * wtf/Assertions.h:
+        * wtf/Logger.h:
+        (WTF::Logger::log):
+        (WTF::Logger::logVerbose):
+
 2021-10-02  Philippe Normand  <pnormand@igalia.com>
 
         [GLib] Media session manager unable to handle more than one session

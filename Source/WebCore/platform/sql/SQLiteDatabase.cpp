@@ -261,7 +261,7 @@ void SQLiteDatabase::close(ShouldSetErrorState shouldSetErrorState)
             closeResult = sqlite3_close(db);
 
         if (closeResult != SQLITE_OK)
-            RELEASE_LOG_ERROR(SQLDatabase, "SQLiteDatabase::close: Failed to close database (%d) - %{public}s", closeResult, lastErrorMsg());
+            RELEASE_LOG_ERROR(SQLDatabase, "SQLiteDatabase::close: Failed to close database (%d) - %" PUBLIC_LOG_STRING, closeResult, lastErrorMsg());
     }
 
     if (shouldSetErrorState == ShouldSetErrorState::Yes) {
@@ -717,7 +717,7 @@ Expected<SQLiteStatement, int> SQLiteDatabase::prepareStatementSlow(const String
     CString query = queryString.stripWhiteSpace().utf8();
     auto sqlStatement = constructAndPrepareStatement(*this, query.data(), query.length());
     if (!sqlStatement) {
-        RELEASE_LOG_ERROR(SQLDatabase, "SQLiteDatabase::prepareStatement: Failed to prepare statement %{public}s", query.data());
+        RELEASE_LOG_ERROR(SQLDatabase, "SQLiteDatabase::prepareStatement: Failed to prepare statement %" PUBLIC_LOG_STRING, query.data());
         return makeUnexpected(sqlStatement.error());
     }
     return SQLiteStatement { *this, sqlStatement.value() };
@@ -727,7 +727,7 @@ Expected<SQLiteStatement, int> SQLiteDatabase::prepareStatement(ASCIILiteral que
 {
     auto sqlStatement = constructAndPrepareStatement(*this, query.characters(), query.length());
     if (!sqlStatement) {
-        RELEASE_LOG_ERROR(SQLDatabase, "SQLiteDatabase::prepareStatement: Failed to prepare statement %{public}s", query.characters());
+        RELEASE_LOG_ERROR(SQLDatabase, "SQLiteDatabase::prepareStatement: Failed to prepare statement %" PUBLIC_LOG_STRING, query.characters());
         return makeUnexpected(sqlStatement.error());
     }
     return SQLiteStatement { *this, sqlStatement.value() };
@@ -738,7 +738,7 @@ Expected<UniqueRef<SQLiteStatement>, int> SQLiteDatabase::prepareHeapStatementSl
     CString query = queryString.stripWhiteSpace().utf8();
     auto sqlStatement = constructAndPrepareStatement(*this, query.data(), query.length());
     if (!sqlStatement) {
-        RELEASE_LOG_ERROR(SQLDatabase, "SQLiteDatabase::prepareHeapStatement: Failed to prepare statement %{public}s", query.data());
+        RELEASE_LOG_ERROR(SQLDatabase, "SQLiteDatabase::prepareHeapStatement: Failed to prepare statement %" PUBLIC_LOG_STRING, query.data());
         return makeUnexpected(sqlStatement.error());
     }
     return UniqueRef<SQLiteStatement>(*new SQLiteStatement(*this, sqlStatement.value()));
@@ -748,7 +748,7 @@ Expected<UniqueRef<SQLiteStatement>, int> SQLiteDatabase::prepareHeapStatement(A
 {
     auto sqlStatement = constructAndPrepareStatement(*this, query.characters(), query.length());
     if (!sqlStatement) {
-        RELEASE_LOG_ERROR(SQLDatabase, "SQLiteDatabase::prepareHeapStatement: Failed to prepare statement %{public}s", query.characters());
+        RELEASE_LOG_ERROR(SQLDatabase, "SQLiteDatabase::prepareHeapStatement: Failed to prepare statement %" PUBLIC_LOG_STRING, query.characters());
         return makeUnexpected(sqlStatement.error());
     }
     return UniqueRef<SQLiteStatement>(*new SQLiteStatement(*this, sqlStatement.value()));

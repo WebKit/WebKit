@@ -59,7 +59,7 @@
 #include <unistd.h>
 #endif
 
-#if USE(JOURNALD)
+#if !RELEASE_LOG_DISABLED && !USE(OS_LOG)
 #include <wtf/StringPrintStream.h>
 #endif
 
@@ -601,7 +601,7 @@ void WTFReleaseLogStackTrace(WTFLogChannel* channel)
                 os_log(channel->osLogChannel, "%-3d %p %{public}s", frameNumber, stackFrame, demangled->mangledName());
             else
                 os_log(channel->osLogChannel, "%-3d %p", frameNumber, stackFrame);
-#elif USE(JOURNALD)
+#else
             StringPrintStream out;
             if (demangled && demangled->demangledName())
                 out.printf("%-3d %p %s", frameNumber, stackFrame, demangled->demangledName());
@@ -609,7 +609,11 @@ void WTFReleaseLogStackTrace(WTFLogChannel* channel)
                 out.printf("%-3d %p %s", frameNumber, stackFrame, demangled->mangledName());
             else
                 out.printf("%-3d %p", frameNumber, stackFrame);
+#if USE(JOURNALD)
             sd_journal_send("WEBKIT_SUBSYSTEM=%s", channel->subsystem, "WEBKIT_CHANNEL=%s", channel->name, "MESSAGE=%s", out.toCString().data(), nullptr);
+#else
+            fprintf(stderr, "[%s:%s:-] %s\n", channel->subsystem, channel->name, out.toCString().data());
+#endif
 #endif
         }
     }

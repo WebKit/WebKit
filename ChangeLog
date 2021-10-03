@@ -1,3 +1,15 @@
+2021-10-03  Basuke Suzuki  <basuke.suzuki@sony.com>
+
+        Enable release log to stderr
+        https://bugs.webkit.org/show_bug.cgi?id=230725
+        <rdar://problem/83740529>
+
+        Reviewed by Michael Catanzaro.
+
+        Introduced new flags, USE_LOG_STDERR for release logging to stderr.
+
+        * Source/cmake/WebKitFeatures.cmake:
+
 2021-10-02  Philippe Normand  <pnormand@igalia.com>
 
         [GTK][WPE] Enable bwrap launcher build on bots
