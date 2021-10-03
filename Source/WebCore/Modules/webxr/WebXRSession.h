@@ -126,8 +126,8 @@ private:
     void onFrame(PlatformXR::Device::FrameData&&);
     void applyPendingRenderState();
 
-    XREnvironmentBlendMode m_environmentBlendMode;
-    XRInteractionMode m_interactionMode;
+    XREnvironmentBlendMode m_environmentBlendMode { XREnvironmentBlendMode::Opaque };
+    XRInteractionMode m_interactionMode { XRInteractionMode::WorldSpace };
     XRVisibilityState m_visibilityState { XRVisibilityState::Visible };
     UniqueRef<WebXRInputSourceArray> m_inputSources;
     bool m_ended { false };
