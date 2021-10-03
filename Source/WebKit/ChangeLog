@@ -1,3 +1,27 @@
+2021-10-03  David Kilzer  <ddkilzer@apple.com>
+
+        WTF::RetainPtr<> allows assignment of two pointer types that are not assignable
+        <https://webkit.org/b/230406>
+        <rdar://problem/83241893>
+
+        Reviewed by Darin Adler.
+
+        * Shared/API/Cocoa/WKRemoteObjectCoder.mm:
+        (transformTrustToData):
+        - Change return type to match object.
+        (encodeError):
+        - Use bridge_cast() to fix assignment.
+        (transformDataToTrust):
+        - Change return type to match object.
+        (decodeError):
+        - Use bridge_id_cast() to fix assignment.
+        * Shared/RemoteLayerTree/RemoteLayerBackingStore.mm:
+        (WebKit::RemoteLayerBackingStore::applyBackingStoreToLayer):
+        - Use bridge_id_cast() to fix assignment.
+
+        * UIProcess/mac/WebDataListSuggestionsDropdownMac.h:
+        - Use correct name of class that actually exists.
+
 2021-10-03  Simon Fraser  <simon.fraser@apple.com>
 
         WebCore::Length incorrectly uses memcpy() for copy constructors/operator and IPC encoding/decoding

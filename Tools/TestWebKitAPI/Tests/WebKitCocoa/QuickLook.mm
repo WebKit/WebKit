@@ -44,7 +44,7 @@
 #import <WebKit/_WKDownload.h>
 #import <WebKit/_WKDownloadDelegate.h>
 #import <wtf/NeverDestroyed.h>
-#import <wtf/RetainPtr.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 
 using namespace TestWebKitAPI;
 
@@ -97,8 +97,8 @@ static void readFile(NSURL *fileURL, NSUInteger& fileSize, RetainPtr<NSString>& 
     if ([fileURL getResourceValue:&typeIdentifier forKey:NSURLTypeIdentifierKey error:nil])
         fileType = typeIdentifier;
 
-    mimeType = adoptCF(UTTypeCopyPreferredTagWithClass((__bridge CFStringRef)typeIdentifier, kUTTagClassMIMEType));
-    fileData = [NSData dataWithContentsOfURL:fileURL];
+    mimeType = bridge_cast(adoptCF(UTTypeCopyPreferredTagWithClass(bridge_cast(typeIdentifier), kUTTagClassMIMEType)));
+    fileData = adoptNS([[NSData alloc] initWithContentsOfURL:fileURL]);
 }
 
 - (instancetype)initWithExpectedFileURL:(NSURL *)fileURL responsePolicy:(WKNavigationResponsePolicy)responsePolicy

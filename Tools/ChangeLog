@@ -1,3 +1,43 @@
+2021-10-03  David Kilzer  <ddkilzer@apple.com>
+
+        WTF::RetainPtr<> allows assignment of two pointer types that are not assignable
+        <https://webkit.org/b/230406>
+        <rdar://problem/83241893>
+
+        Reviewed by Darin Adler.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (dump):
+        - Use bridge_cast() to fix assignment.
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        - Add RetainPtrARC.mm and TypeCastsCocoaARC.mm to the project.
+        * TestWebKitAPI/Tests/WTF/cocoa/TypeCastsCocoa.mm:
+        - Update for dual compilation with MRR and with ARC.  Change
+          -retainCount methods to CFGetRetainCount().
+        - Add @autoreleasepool blocks around groups of tests to find
+          over-released bugs sooner (for future changes).
+        - Add more CFGetRetainCount() to catch unexpected auto-released
+          objects as well as leaks.
+        (TestWebKitAPI::helloWorldCStringLength): Add.
+        (TestWebKitAPI::TEST):
+        - Add tests for bridge_cast() and bridge_id_cast().
+        - Remove invalid tests after changing RetainPtr<> move
+          constructor to check types.
+        * TestWebKitAPI/Tests/WTF/cocoa/TypeCastsCocoaARC.mm: Add.
+        - Run tests in TypeCastsCocoa.mm with ARC enabled.
+        * TestWebKitAPI/Tests/WTF/ns/RetainPtr.mm:
+        (TestWebKitAPI::TEST):
+        - Update for dual compilation with MRR and with ARC.  Change
+          -retainCount methods to CFGetRetainCount().
+        - Make it possible to name tests differently for MRR vs. ARC
+          using RETAIN_PTR_TEST_NAME macro.
+        * TestWebKitAPI/Tests/WTF/ns/RetainPtrARC.mm: Add.
+        - Run tests in RetainPtr.mm with ARC enabled.
+        * TestWebKitAPI/Tests/WebKitCocoa/QuickLook.mm:
+        (readFile):
+        - Use bridge_cast() to fix assignment.
+        - Drive-by fix to keep NSData out of autoreleasePool.
+
 2021-10-03  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Some layout tests with Japanese glyphs fail if Japanese is included in the system "Preferred Languages" settings

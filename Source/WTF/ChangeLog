@@ -1,3 +1,39 @@
+2021-10-03  David Kilzer  <ddkilzer@apple.com>
+
+        WTF::RetainPtr<> allows assignment of two pointer types that are not assignable
+        <https://webkit.org/b/230406>
+        <rdar://problem/83241893>
+
+        Reviewed by Darin Adler.
+
+        * wtf/RetainPtr.h:
+        (WTF::RetainPtr::RetainPtr):
+        (WTF::RetainPtr::checkType): Add.
+        - Add type check for move constructor.
+
+        * wtf/cocoa/TypeCastsCocoa.h:
+        - Change #include to #import.
+        (WTF_CF_TO_NS_BRIDGE_TRANSFER): Add.
+        (WTF_CF_TO_NS_BRIDGE_TRANSFER): Add.
+        - Helper macros for bridge_cast() and bridge_id_cast().
+        (WTF_DECLARE_CF_NS_BRIDGE_CAST): Add.
+        - Macro used to define bridge_cast() functions for all known
+          toll-free-bridged types.
+        (WTF::bridge_cast): Add.
+        - Helper macro for toll-free-bridge casting from a known CF type
+          to and from their Objective-C NS type.  Prevents ref churn for
+          rvale RetainPtr<> objects.
+        (WTF::bridge_id_cast): Add.
+        - Helper macro for casting from any CFTypeRef to id.  Prevents
+          ref churn for rvalue RetainPtr<> objects.
+        (WTF::checked_objc_cast):
+        - Simplified to match dynamic_objc_cast<> implementation in
+          RetainPtr.h.
+
+        * wtf/cocoa/VectorCocoa.h:
+        (WTF::createNSArray):
+        - Change return type to match object.
+
 2021-10-03  Basuke Suzuki  <basuke.suzuki@sony.com>
 
         Enable release log to stderr

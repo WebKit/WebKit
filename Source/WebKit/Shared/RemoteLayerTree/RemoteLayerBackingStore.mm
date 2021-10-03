@@ -47,6 +47,7 @@
 #import <WebCore/WebLayer.h>
 #import <mach/mach_port.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 
 #if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
 #import <WebKitAdditions/CGDisplayListImageBufferAdditions.h>
@@ -432,8 +433,7 @@ void RemoteLayerBackingStore::applyBackingStoreToLayer(CALayer *layer, LayerCont
     WTF::switchOn(*m_bufferHandle,
         [&] (ShareableBitmap::Handle& handle) {
             ASSERT(m_type == Type::Bitmap);
-            auto bitmap = ShareableBitmap::create(handle);
-            contents = bitmap->makeCGImageCopy();
+            contents = bridge_id_cast(ShareableBitmap::create(handle)->makeCGImageCopy());
         },
         [&] (MachSendRight& machSendRight) {
             ASSERT(m_type == Type::IOSurface);
@@ -444,7 +444,7 @@ void RemoteLayerBackingStore::applyBackingStoreToLayer(CALayer *layer, LayerCont
                 break;
             }
             case RemoteLayerBackingStore::LayerContentsType::CAMachPort:
-                contents = adoptCF(CAMachPortCreate(machSendRight.leakSendRight()));
+                contents = bridge_id_cast(adoptCF(CAMachPortCreate(machSendRight.leakSendRight())));
                 break;
             }
         }

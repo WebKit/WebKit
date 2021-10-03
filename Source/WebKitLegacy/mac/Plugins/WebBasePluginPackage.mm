@@ -67,8 +67,7 @@
 
 + (WebBasePluginPackage *)pluginWithPath:(NSString *)pluginPath
 {
-    
-    auto pluginPackage = adoptNS([[WebPluginPackage alloc] initWithPath:pluginPath]);
+    RetainPtr<WebBasePluginPackage> pluginPackage = adoptNS([[WebPluginPackage alloc] initWithPath:pluginPath]);
 
     if (!pluginPackage) {
 #if ENABLE(NETSCAPE_PLUGIN_API)
