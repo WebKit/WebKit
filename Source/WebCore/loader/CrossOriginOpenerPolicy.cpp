@@ -37,6 +37,7 @@
 #include "PingLoader.h"
 #include "ResourceResponse.h"
 #include "ScriptExecutionContext.h"
+#include "SecurityPolicy.h"
 #include <wtf/JSONValues.h>
 
 namespace WebCore {

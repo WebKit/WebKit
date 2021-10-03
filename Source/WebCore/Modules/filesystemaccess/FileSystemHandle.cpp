@@ -26,6 +26,7 @@
 #include "config.h"
 #include "FileSystemHandle.h"
 
+#include "FileSystemStorageConnection.h"
 #include "JSDOMPromiseDeferred.h"
 #include <wtf/IsoMallocInlines.h>
 

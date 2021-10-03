@@ -1,3 +1,15 @@
+2021-10-03  Don Olmstead  <don.olmstead@sony.com>
+
+        Non-unified build fixes, early October 2021 edition
+        https://bugs.webkit.org/show_bug.cgi?id=231143
+
+        Unreviewed non-unified build fixes.
+
+        * NetworkProcess/NetworkResourceLoadParameters.h:
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextTerminateGPUProcess):
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.cpp:
+
 2021-10-03  Basuke Suzuki  <basuke.suzuki@sony.com>
 
         [PlayStation] Pass logging channel parameter to WebProcess from environment variable

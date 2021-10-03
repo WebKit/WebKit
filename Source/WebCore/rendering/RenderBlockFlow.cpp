@@ -35,6 +35,7 @@
 #include "HitTestLocation.h"
 #include "InlineIteratorBox.h"
 #include "InlineIteratorLine.h"
+#include "InlineWalker.h"
 #include "LayoutIntegrationLineLayout.h"
 #include "LayoutRepainter.h"
 #include "LegacyInlineTextBox.h"

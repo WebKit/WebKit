@@ -1,3 +1,12 @@
+2021-10-03  Don Olmstead  <don.olmstead@sony.com>
+
+        Non-unified build fixes, early October 2021 edition
+        https://bugs.webkit.org/show_bug.cgi?id=231143
+
+        Unreviewed non-unified build fixes.
+
+        * jit/BaselineJITCode.cpp:
+
 2021-10-03  Lauro Moura  <lmoura@igalia.com>
 
         Remove control reaches end of non-void function warning

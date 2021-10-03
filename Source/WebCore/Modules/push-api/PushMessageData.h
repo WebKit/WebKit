@@ -30,6 +30,7 @@
 #include "ExceptionOr.h"
 #include <JavaScriptCore/ArrayBuffer.h>
 #include <JavaScriptCore/JSCJSValue.h>
+#include <wtf/IsoMalloc.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {

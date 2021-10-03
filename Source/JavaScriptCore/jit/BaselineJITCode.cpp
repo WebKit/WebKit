@@ -30,6 +30,7 @@
 
 #include "JITMathIC.h"
 #include "JumpTable.h"
+#include "PCToCodeOriginMap.h"
 #include "StructureStubInfo.h"
 
 namespace JSC {

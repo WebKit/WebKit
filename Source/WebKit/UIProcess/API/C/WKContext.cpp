@@ -549,7 +549,7 @@ void WKContextSetFontAllowList(WKContextRef contextRef, WKArrayRef arrayRef)
 void WKContextTerminateGPUProcess(WKContextRef)
 {
 #if ENABLE(GPU_PROCESS)
-    if (auto* gpuProcess = GPUProcessProxy::singletonIfCreated())
+    if (auto* gpuProcess = WebKit::GPUProcessProxy::singletonIfCreated())
         gpuProcess->terminateForTesting();
 #endif
 }

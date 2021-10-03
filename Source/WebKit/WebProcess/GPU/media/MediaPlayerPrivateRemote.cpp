@@ -46,6 +46,7 @@
 #include <WebCore/MediaPlayer.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/PlatformLayer.h>
+#include <WebCore/PlatformScreen.h>
 #include <WebCore/PlatformTimeRanges.h>
 #include <WebCore/ResourceError.h>
 #include <WebCore/RuntimeEnabledFeatures.h>
@@ -1313,7 +1314,7 @@ void MediaPlayerPrivateRemote::applicationDidBecomeActive()
     connection().send(Messages::RemoteMediaPlayerProxy::ApplicationDidBecomeActive(), m_id);
 }
 
-void MediaPlayerPrivateRemote::setPreferredDynamicRangeMode(DynamicRangeMode mode)
+void MediaPlayerPrivateRemote::setPreferredDynamicRangeMode(WebCore::DynamicRangeMode mode)
 {
     connection().send(Messages::RemoteMediaPlayerProxy::SetPreferredDynamicRangeMode(mode), m_id);
 }

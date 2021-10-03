@@ -31,6 +31,7 @@
 #include "FloatingObjects.h"
 #include "HTMLParserIdioms.h"
 #include "InlineIteratorBox.h"
+#include "InlineIteratorTextBox.h"
 #include "InlineTextBoxStyle.h"
 #include "InlineWalker.h"
 #include "LegacyInlineElementBox.h"
