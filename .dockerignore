@@ -1,0 +1,12 @@
+node_modules
+**/node_modules
+LayoutTests
+zig-out
+zig-build
+**/*.o
+**/*.a
+**/.next
+.git
+**/CMakeCache.txt
+CMakeCache.txt
+WebKitBuild

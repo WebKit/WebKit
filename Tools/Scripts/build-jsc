@@ -61,6 +61,7 @@ my @cmakeArgs;
 my $buildDir = "";
 my $startTime = time();
 my $useCCache = -1;
+my $systemMallocSupport = 0;
 
 my @features = getFeatureOptionList();
 
@@ -75,6 +76,8 @@ foreach (@ARGV) {
 foreach (@features) {
     ${$_->{value}} = ($minimal ? 0 : $_->{default});
 }
+
+
 
 # Additional environment parameters
 push @ARGV, parse_line('\s+', 0, $ENV{'BUILD_JSC_ARGS'}) if ($ENV{'BUILD_JSC_ARGS'});
@@ -105,7 +108,8 @@ my %options = (
     'makeargs=s' => \$makeArgs,
     'cmakeargs=s' => \@cmakeArgs,
     'build-dir=s' => \$buildDir,
-    'use-ccache!' => \$useCCache
+    'use-ccache!' => \$useCCache,
+    'system-malloc' => \$systemMallocSupport
 );
 
 foreach (@features) {
@@ -176,7 +180,22 @@ if (isCMakeBuild()) {
         setBaseProductDir($buildDir);
     }
 
+    if ($systemMallocSupport) {
+        foreach (@features) {
+            if ($_->{option} eq 'system-malloc') {
+                ${$_->{value}} = 1;
+            }
+
+            # sampling-profiler must be off when using system-malloc
+            if ($_->{option} eq 'sampling-profiler') {
+                ${$_->{value}} = 0;
+            }
+        }
+    } 
+
     my @featureArgs = cmakeArgsFromFeatures(@features);
+
+  
 
     my $buildTarget = "";
     unless (isAnyWindows()) {

@@ -116,3 +116,4 @@ find_package(ICU 60.2 REQUIRED COMPONENTS data i18n uc)
 if (APPLE)
     add_definitions(-DU_DISABLE_RENAMING=1)
 endif ()
+
