@@ -153,6 +153,7 @@ namespace JSC {
   getCanonicalLocales   intlObjectFuncGetCanonicalLocales            DontEnum|Function 1
   Collator              createCollatorConstructor                    DontEnum|PropertyCallback
   DateTimeFormat        createDateTimeFormatConstructor              DontEnum|PropertyCallback
+  DisplayNames          createDisplayNamesConstructor                DontEnum|PropertyCallback
   Locale                createLocaleConstructor                      DontEnum|PropertyCallback
   NumberFormat          createNumberFormatConstructor                DontEnum|PropertyCallback
   PluralRules           createPluralRulesConstructor                 DontEnum|PropertyCallback
@@ -238,11 +239,6 @@ void IntlObject::finishCreation(VM& vm, JSGlobalObject* globalObject)
     Base::finishCreation(vm);
     ASSERT(inherits(vm, info()));
     JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
-#if HAVE(ICU_U_LOCALE_DISPLAY_NAMES)
-    putDirectWithoutTransition(vm, vm.propertyNames->DisplayNames, createDisplayNamesConstructor(vm, this), static_cast<unsigned>(PropertyAttribute::DontEnum));
-#else
-    UNUSED_PARAM(&createDisplayNamesConstructor);
-#endif
 #if HAVE(ICU_U_LIST_FORMATTER)
     putDirectWithoutTransition(vm, vm.propertyNames->ListFormat, createListFormatConstructor(vm, this), static_cast<unsigned>(PropertyAttribute::DontEnum));
 #else
