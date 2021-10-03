@@ -2150,22 +2150,19 @@ TEST(ServiceWorkers, ContentRuleList)
     [[configuration userContentController] addContentRuleList:contentRuleList.get()];
 
     using namespace TestWebKitAPI;
-    TCPServer server([] (int socket) {
-        auto respond = [socket] (const char* body, const char* mimeType) {
-            NSString *format = @"HTTP/1.1 200 OK\r\n"
-            "Content-Type: %s\r\n"
-            "Content-Length: %d\r\n\r\n"
-            "%s";
-            NSString *response = [NSString stringWithFormat:format, mimeType, strlen(body), body];
-            TCPServer::write(socket, response.UTF8String, response.length);
-        };
-        TCPServer::read(socket);
-        respond(mainBytes, "text/html");
-        TCPServer::read(socket);
-        respond(contentRuleListWorkerScript, "application/javascript");
-        auto lastRequest = TCPServer::read(socket);
-        EXPECT_TRUE(strnstr((const char*)lastRequest.data(), "allowedsubresource", lastRequest.size()));
-        respond("successful fetch", "application/octet-stream");
+    HTTPServer server([] (Connection connection) {
+        connection.receiveHTTPRequest([=](Vector<char>&&) {
+            connection.send(HTTPResponse({{ "Content-Type", "text/html" }}, mainBytes).serialize(), [=] {
+                connection.receiveHTTPRequest([=](Vector<char>&&) {
+                    connection.send(HTTPResponse({{ "Content-Type", "application/javascript" }}, contentRuleListWorkerScript).serialize(), [=] {
+                        connection.receiveHTTPRequest([=](Vector<char>&& lastRequest) {
+                            EXPECT_TRUE(strnstr((const char*)lastRequest.data(), "allowedsubresource", lastRequest.size()));
+                            connection.send(HTTPResponse("successful fetch").serialize());
+                        });
+                    });
+                });
+            });
+        });
     });
 
     expectedMessage = @"Message from worker: PASS - blocked first request, allowed second";

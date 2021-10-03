@@ -28,7 +28,6 @@
 
 #import "HTTPServer.h"
 #import "PlatformUtilities.h"
-#import "TCPServer.h"
 #import "Test.h"
 #import "TestNavigationDelegate.h"
 #import "TestURLSchemeHandler.h"
@@ -338,14 +337,14 @@ TEST(WebKit, EvaluateJavaScriptInAttachments)
     // Evaluating JavaScript in such a document should fail and result in an error.
 
     using namespace TestWebKitAPI;
-    TCPServer server([](int socket) {
-        NSString *response = @"HTTP/1.1 200 OK\r\n"
-            "Content-Length: 12\r\n"
-            "Content-Disposition: attachment; filename=fromHeader.txt;\r\n\r\n"
-            "Hello world!";
-
-        TCPServer::read(socket);
-        TCPServer::write(socket, response.UTF8String, response.length);
+    HTTPServer server([](Connection connection) {
+        connection.receiveHTTPRequest([=](Vector<char>&&) {
+            constexpr auto response = "HTTP/1.1 200 OK\r\n"
+                "Content-Length: 12\r\n"
+                "Content-Disposition: attachment; filename=fromHeader.txt;\r\n\r\n"
+                "Hello world!";
+            connection.send(response);
+        });
     });
     auto webView = adoptNS([TestWKWebView new]);
     [webView synchronouslyLoadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://127.0.0.1:%d/", server.port()]]]];

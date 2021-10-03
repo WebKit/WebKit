@@ -27,7 +27,6 @@
 
 #import "HTTPServer.h"
 #import "PlatformUtilities.h"
-#import "TCPServer.h"
 #import "Test.h"
 #import "TestNavigationDelegate.h"
 #import "TestWKWebView.h"
@@ -609,14 +608,15 @@ TEST(WebKit, WebsiteDataStoreRenameOrigin)
 TEST(WebKit, NetworkCacheDirectory)
 {
     using namespace TestWebKitAPI;
-    TCPServer server([] (int socket) {
-        TCPServer::read(socket);
-        const char* response =
-        "HTTP/1.1 200 OK\r\n"
-        "Cache-Control: max-age=1000000\r\n"
-        "Content-Length: 6\r\n\r\n"
-        "Hello!";
-        TCPServer::write(socket, response, strlen(response));
+    HTTPServer server([] (Connection connection) {
+        connection.receiveHTTPRequest([=] (Vector<char>&&) {
+            const char* response =
+            "HTTP/1.1 200 OK\r\n"
+            "Cache-Control: max-age=1000000\r\n"
+            "Content-Length: 6\r\n\r\n"
+            "Hello!";
+            connection.send(response);
+        });
     });
     
     NSURL *tempDir = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingPathComponent:@"CustomPathsTest"] isDirectory:YES];
@@ -740,52 +740,54 @@ TEST(WebKit, DISABLED_AlternativeService)
 
 #endif // HAVE(CFNETWORK_ALTERNATIVE_SERVICE)
 
+static void respondToRangeRequests(const TestWebKitAPI::Connection& connection, const RetainPtr<NSData>& data)
+{
+    connection.receiveHTTPRequest([=] (Vector<char>&& bytes) {
+        StringView request(reinterpret_cast<const LChar*>(bytes.data()), bytes.size());
+        auto rangeBytes = "Range: bytes="_s;
+        auto begin = request.find(StringView(rangeBytes), 0);
+        ASSERT(begin != notFound);
+        auto dash = request.find('-', begin);
+        ASSERT(dash != notFound);
+        auto end = request.find('\r', dash);
+        ASSERT(end != notFound);
+
+        auto rangeBegin = parseInteger<uint64_t>(request.substring(begin + rangeBytes.length(), dash - begin - rangeBytes.length())).value();
+        auto rangeEnd = parseInteger<uint64_t>(request.substring(dash + 1, end - dash - 1)).value();
+
+        NSString *responseHeaderString = [NSString stringWithFormat:
+            @"HTTP/1.1 206 Partial Content\r\n"
+            "Content-Range: bytes %llu-%llu/%llu\r\n"
+            "Content-Length: %llu\r\n\r\n",
+            rangeBegin, rangeEnd, static_cast<uint64_t>(data.get().length), rangeEnd - rangeBegin];
+        NSData *responseHeader = [responseHeaderString dataUsingEncoding:NSUTF8StringEncoding];
+        NSData *responseBody = [data subdataWithRange:NSMakeRange(rangeBegin, rangeEnd - rangeBegin)];
+        Vector<uint8_t> response { static_cast<const uint8_t*>(responseHeader.bytes), responseHeader.length };
+        response.append(static_cast<const uint8_t*>(responseBody.bytes), responseBody.length);
+        connection.send(WTFMove(response), [=] {
+            respondToRangeRequests(connection, data);
+        });
+    });
+}
+
 TEST(WebKit, MediaCache)
 {
     JSC::Config::configureForTesting();
 
-    std::atomic<bool> done = false;
     using namespace TestWebKitAPI;
     RetainPtr<NSData> data = [NSData dataWithContentsOfURL:[[NSBundle mainBundle] URLForResource:@"test" withExtension:@"mp4" subdirectory:@"TestWebKitAPI.resources"]];
-    uint64_t dataLength = [data length];
 
-    TCPServer server([&] (int socket) {
-        TCPServer::read(socket);
-        const char* firstResponse =
-        "HTTP/1.1 200 OK\r\n"
-        "Content-Type: text/html\r\n"
-        "Content-Length: 55\r\n\r\n"
-        "<video><source src='test.mp4' type='video/mp4'></video>";
-        TCPServer::write(socket, firstResponse, strlen(firstResponse));
-
-        while (!done) {
-            auto bytes = TCPServer::read(socket);
-            if (done || bytes.isEmpty())
-                break;
-            StringView request(static_cast<const LChar*>(bytes.data()), bytes.size());
-            String rangeBytes = "Range: bytes="_s;
-            auto begin = request.find(StringView(rangeBytes), 0);
-            ASSERT(begin != notFound);
-            auto dash = request.find('-', begin);
-            ASSERT(dash != notFound);
-            auto end = request.find('\r', dash);
-            ASSERT(end != notFound);
-
-            auto rangeBegin = parseInteger<uint64_t>(request.substring(begin + rangeBytes.length(), dash - begin - rangeBytes.length())).value();
-            auto rangeEnd = parseInteger<uint64_t>(request.substring(dash + 1, end - dash - 1)).value();
-
-            NSString *responseHeaderString = [NSString stringWithFormat:
-                @"HTTP/1.1 206 Partial Content\r\n"
-                "Content-Range: bytes %llu-%llu/%llu\r\n"
-                "Content-Length: %llu\r\n\r\n",
-                rangeBegin, rangeEnd, dataLength, rangeEnd - rangeBegin];
-            NSData *responseHeader = [responseHeaderString dataUsingEncoding:NSUTF8StringEncoding];
-            NSData *responseBody = [data subdataWithRange:NSMakeRange(rangeBegin, rangeEnd - rangeBegin)];
-            NSMutableData *response = [NSMutableData dataWithCapacity:responseHeader.length + responseBody.length];
-            [response appendData:responseHeader];
-            [response appendData:responseBody];
-            TCPServer::write(socket, response.bytes, response.length);
-        }
+    HTTPServer server([&] (Connection connection) {
+        connection.receiveHTTPRequest([=] (Vector<char>&&) {
+            const char* firstResponse =
+            "HTTP/1.1 200 OK\r\n"
+            "Content-Type: text/html\r\n"
+            "Content-Length: 55\r\n\r\n"
+            "<video><source src='test.mp4' type='video/mp4'></video>";
+            connection.send(firstResponse, [=] {
+                respondToRangeRequests(connection, data);
+            });
+        });
     });
 
     NSURL *tempDir = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingPathComponent:@"CustomPathsTest"] isDirectory:YES];
@@ -807,7 +809,6 @@ TEST(WebKit, MediaCache)
         Util::spinRunLoop();
     EXPECT_FALSE(error);
 
-    done = true;
     [[webView configuration].websiteDataStore _terminateNetworkProcess];
 
     [fileManager removeItemAtPath:path error:&error];

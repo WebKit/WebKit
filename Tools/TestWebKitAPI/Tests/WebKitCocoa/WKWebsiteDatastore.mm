@@ -27,7 +27,6 @@
 
 #import "HTTPServer.h"
 #import "PlatformUtilities.h"
-#import "TCPServer.h"
 #import "Test.h"
 #import "TestWKWebView.h"
 #import <WebKit/WKProcessPoolPrivate.h>
@@ -120,7 +119,7 @@ TEST(WKWebsiteDataStore, RemoveEphemeralData)
 
 TEST(WKWebsiteDataStore, FetchNonPersistentCredentials)
 {
-    TCPServer server(TCPServer::respondWithChallengeThenOK);
+    HTTPServer server(HTTPServer::respondWithChallengeThenOK);
     
     usePersistentCredentialStorage = false;
     auto configuration = adoptNS([WKWebViewConfiguration new]);
@@ -145,7 +144,7 @@ TEST(WKWebsiteDataStore, FetchNonPersistentCredentials)
 
 TEST(WKWebsiteDataStore, FetchPersistentCredentials)
 {
-    TCPServer server(TCPServer::respondWithChallengeThenOK);
+    HTTPServer server(HTTPServer::respondWithChallengeThenOK);
 
     usePersistentCredentialStorage = true;
     auto websiteDataStore = [WKWebsiteDataStore defaultDataStore];
@@ -174,7 +173,7 @@ TEST(WKWebsiteDataStore, FetchPersistentCredentials)
 
 TEST(WKWebsiteDataStore, RemoveNonPersistentCredentials)
 {
-    TCPServer server(TCPServer::respondWithChallengeThenOK);
+    HTTPServer server(HTTPServer::respondWithChallengeThenOK);
 
     usePersistentCredentialStorage = false;
     auto configuration = adoptNS([WKWebViewConfiguration new]);

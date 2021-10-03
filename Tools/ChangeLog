@@ -1,3 +1,31 @@
+2021-10-02  Alex Christensen  <achristensen@webkit.org>
+
+        Migrate some tests from TCPServer to HTTPServer
+        https://bugs.webkit.org/show_bug.cgi?id=231130
+
+        Reviewed by Chris Dumez.
+
+        The former runs logic on a non-main thread and has a destructor that waits for all threads to join,
+        which often causes timeouts in tests.  This is progress towards removing TCPServer, which has been
+        replaced by HTTPServer.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/DisplayName.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/PDFLinkReferrer.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/ResourceLoadDelegate.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/ServiceWorkerBasic.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/UploadDirectory.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/WKNavigationResponse.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/WKWebViewEvaluateJavaScript.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/WKWebsiteDatastore.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/WebsiteDataStoreCustomPaths.mm:
+        (TEST):
+        (respondToRangeRequests):
+
 2021-10-01  Chris Dumez  <cdumez@apple.com>
 
         Drop support for macOS < 10.15

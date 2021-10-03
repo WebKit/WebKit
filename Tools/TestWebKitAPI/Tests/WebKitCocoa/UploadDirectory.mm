@@ -28,7 +28,7 @@
 #if PLATFORM(MAC)
 
 #import "DragAndDropSimulator.h"
-#import "TCPServer.h"
+#import "HTTPServer.h"
 #import "TestNavigationDelegate.h"
 #import "TestWKWebView.h"
 #import "Utilities.h"
@@ -80,25 +80,26 @@ TEST(WebKit, UploadDirectory)
 
     {
         using namespace TestWebKitAPI;
-        TCPServer server([] (int socket) {
-            TCPServer::read(socket);
-            const char* response =
-            "HTTP/1.1 200 OK\r\n"
-            "Content-Type: text/html\r\n"
-            "Content-Length: 123\r\n\r\n"
-            "<form id='form' action='/upload.php' method='post' enctype='multipart/form-data'><input type='file' name='testname'></form>";
-            TCPServer::write(socket, response, strlen(response));
-
-            auto header = TCPServer::read(socket);
-            EXPECT_TRUE(String(header.data(), header.size()).contains("Content-Length: 543"));
-            size_t bodyBytesRead = 0;
-            while (bodyBytesRead < 543)
-                bodyBytesRead += TCPServer::read(socket).size();
-            EXPECT_EQ(bodyBytesRead, 543ull);
-            const char* secondResponse =
-            "HTTP/1.1 200 OK\r\n"
-            "Content-Length: 0\r\n\r\n";
-            TCPServer::write(socket, secondResponse, strlen(secondResponse));
+        HTTPServer server([] (Connection connection) {
+            connection.receiveHTTPRequest([=](Vector<char>&&) {
+                const char* response =
+                "HTTP/1.1 200 OK\r\n"
+                "Content-Type: text/html\r\n"
+                "Content-Length: 123\r\n\r\n"
+                "<form id='form' action='/upload.php' method='post' enctype='multipart/form-data'><input type='file' name='testname'></form>";
+                connection.send(response, [=] {
+                    connection.receiveHTTPRequest([=](Vector<char>&& request) {
+                        EXPECT_TRUE(strnstr(request.data(), "Content-Length: 543\r\n", request.size()));
+                        auto* headerEnd = strnstr(request.data(), "\r\n\r\n", request.size());
+                        EXPECT_TRUE(headerEnd);
+                        EXPECT_EQ(request.end() - (headerEnd + + strlen("\r\n\r\n")), 543);
+                        const char* secondResponse =
+                        "HTTP/1.1 200 OK\r\n"
+                        "Content-Length: 0\r\n\r\n";
+                        connection.send(secondResponse);
+                    });
+                });
+            });
         });
 
         auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600)]);
