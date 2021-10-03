@@ -1,3 +1,5 @@
+# BuildKit is required to build this
+# Enable via DOCKER_BUILDKIT=1 
 FROM ubuntu:latest
 
 ARG DEBIAN_FRONTEND=noninteractive
@@ -7,35 +9,39 @@ RUN wget https://apt.llvm.org/llvm.sh --no-check-certificate
 RUN chmod +x llvm.sh
 RUN ./llvm.sh 12
 
-
-RUN apt-get update && apt-get install --no-install-recommends -y make gcc g++ build-essential perl rsync unzip wget git file cpio bc python \
-    cmake \
+# Use the same version of LLVM/clang used to build Zig
+# This prevents the allocation failure
+RUN apt-get update && apt-get install --no-install-recommends -y 
+    bc \
     build-essential \
-    git \
-    libssl-dev \
-    ruby \
-    libicu-dev \
-    icu-devtools \ 
     ca-certificates \
-    curl \
-    gnupg2 \
-    software-properties-common \
-    cmake \
-    build-essential \
-    git \
-    libssl-dev \
-    ruby \
-    liblld-12-dev \
-    libclang-12-dev \
-    gcc \
-    g++ \
     clang-12 \
     clang-format-12 \
+    cmake \
+    cpio \
+    curl \
+    file \
+    g++ \
+    gcc \
+    git \
+    gnupg2 \
+    icu-devtools \ 
     libc++-12-dev \
     libc++abi-12-dev \
-    lld-12 \
+    libclang-12-dev \
     libicu-dev \
-    ninja-build
+    liblld-12-dev \
+    libssl-dev \
+    lld-12 \
+    make \
+    ninja-build \
+    perl \
+    python \
+    rsync \
+    ruby \
+    software-properties-common \
+    unzip \
+    wget
 
 RUN update-alternatives --install /usr/bin/ld ld /usr/bin/lld-12 90 && \
     update-alternatives --install /usr/bin/cc cc /usr/bin/clang-12 90 && \
@@ -55,11 +61,15 @@ RUN mkdir -p /output/lib /output/include /output/include/JavaScriptCore /output/
 
 # | Explanation                                                                                    |                                                Flag 
 # -----------------------------------------------------------------------------------------------------------------------------------------------------
+# | Use the "JSCOnly" WebKit port                                                                  |                                  -DPORT="JSCOnly" |
 # | Build JavaScriptCore as a static library                                                       |                            -DENABLE_STATIC_JSC=ON |
-# | Build for release mode (faster)                                                                |                        -DCMAKE_BUILD_TYPE=Release |            
+# | Build for release mode but include debug symbols                                               |               -DCMAKE_BUILD_TYPE=relwithdebuginfo |            
 # | The .a files shouldn't be symlinks to UnifiedSource.cpp files or else you can't move the files |                           -DUSE_THIN_ARCHIVES=OFF |        
-# | Edit: turns out, this flag is ignored. On Linux, bmalloc seems to not work and it's hard to understand why.                           |                            -DUSE_SYSTEM_MALLOC=ON |        
+# | Enable the FTL Just-In-Time Compiler                                                           |                               -DENABLE_FTL_JIT=ON |        
 # -----------------------------------------------------------------------------------------------------------------------------------------------------
+
+# Using tmpfs this way makes it compile 2x faster
+# But means everything has to be one "RUN" statement
 RUN --mount=type=tmpfs,target=/webkitbuild \
     cd /webkitbuild && \
     cmake \
@@ -73,7 +83,8 @@ RUN --mount=type=tmpfs,target=/webkitbuild \
     -DCMAKE_CXX_COMPILER=$(which clang++-12) \
     -DCMAKE_C_COMPILER=$(which clang-12) \ 
     /webkit && \
-    cmake --config relwithdebuginfo --build $WEBKIT_OUT_DIR -- jsc -j$(nproc) && \
+    cd /webkitbuild && \
+    cmake --build /webkitbuild --config relwithdebuginfo -- "jsc" -j$(nproc) && \
     cp -r $WEBKIT_OUT_DIR/lib/*.a /output/lib && \
     cp $WEBKIT_OUT_DIR/*.h /output/include && \
     find $WEBKIT_OUT_DIR/JavaScriptCore/Headers/JavaScriptCore/ -name "*.h" -exec cp {} /output/include/JavaScriptCore/ \; && \
