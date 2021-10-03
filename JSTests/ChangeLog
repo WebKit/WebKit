@@ -1,5 +1,17 @@
 2021-10-02  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] DateTimeFormat.resolvedOptions shouldn't return an object with other date/time properties if dateStyle or timeStyle are set
+        https://bugs.webkit.org/show_bug.cgi?id=231041
+
+        Reviewed by Ross Kirsling.
+
+        * stress/intl-date-time-format-date-time-style-basic.js:
+        (shouldBe.JSON.stringify.o.resolvedOptions):
+        (shouldBe):
+        (shouldBe.o.format): Deleted.
+
+2021-10-02  Yusuke Suzuki  <ysuzuki@apple.com>
+
         Unreviewed, add reported test to our stress tests
         https://bugs.webkit.org/show_bug.cgi?id=230827
 
