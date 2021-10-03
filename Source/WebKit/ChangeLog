@@ -1,3 +1,19 @@
+2021-10-03  Simon Fraser  <simon.fraser@apple.com>
+
+        WebCore::Length incorrectly uses memcpy() for copy constructors/operator and IPC encoding/decoding
+        https://bugs.webkit.org/show_bug.cgi?id=230744
+
+        Reviewed by David Kilzer.
+        
+        Safe encoding/decoding of Length requires that we encode the enum and fields separately,
+        and don't allow calc types (there isn't enough context in the receiving process to resolve
+        calc).
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<Length>::encode):
+        (IPC::ArgumentCoder<Length>::decode):
+        * Shared/WebCoreArgumentCoders.h:
+
 2021-10-02  David Kilzer  <ddkilzer@apple.com>
 
         Replace WKProcessPoolWeakObserver (Direct) category with (direct) property attribute

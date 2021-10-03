@@ -842,12 +842,82 @@ std::optional<RecentSearch> ArgumentCoder<RecentSearch>::decode(Decoder& decoder
 
 void ArgumentCoder<Length>::encode(Encoder& encoder, const Length& length)
 {
-    SimpleArgumentCoder<Length>::encode(encoder, length);
+    encoder << length.type() << length.hasQuirk();
+
+    switch (length.type()) {
+    case LengthType::Auto:
+    case LengthType::Undefined:
+        break;
+    case LengthType::Fixed:
+    case LengthType::Relative:
+    case LengthType::Intrinsic:
+    case LengthType::MinIntrinsic:
+    case LengthType::MinContent:
+    case LengthType::MaxContent:
+    case LengthType::FillAvailable:
+    case LengthType::FitContent:
+    case LengthType::Percent:
+        encoder << length.isFloat();
+        if (length.isFloat())
+            encoder << length.value();
+        else
+            encoder << length.intValue();
+        break;
+    case LengthType::Calculated:
+        ASSERT_NOT_REACHED();
+        break;
+    }
 }
 
 bool ArgumentCoder<Length>::decode(Decoder& decoder, Length& length)
 {
-    return SimpleArgumentCoder<Length>::decode(decoder, length);
+    LengthType type;
+    if (!decoder.decode(type))
+        return false;
+
+    bool hasQuirk;
+    if (!decoder.decode(hasQuirk))
+        return false;
+
+    switch (type) {
+    case LengthType::Auto:
+    case LengthType::Undefined:
+        length = Length(type);
+        return true;
+    case LengthType::Fixed:
+    case LengthType::Relative:
+    case LengthType::Intrinsic:
+    case LengthType::MinIntrinsic:
+    case LengthType::MinContent:
+    case LengthType::MaxContent:
+    case LengthType::FillAvailable:
+    case LengthType::FitContent:
+    case LengthType::Percent: {
+        bool isFloat;
+        if (!decoder.decode(isFloat))
+            return false;
+
+        if (isFloat) {
+            float value;
+            if (!decoder.decode(value))
+                return false;
+
+            length = Length(value, type, hasQuirk);
+        } else {
+            int value;
+            if (!decoder.decode(value))
+                return false;
+
+            length = Length(value, type, hasQuirk);
+        }
+        return true;
+    }
+    case LengthType::Calculated:
+        ASSERT_NOT_REACHED();
+        return false;
+    }
+
+    return false;
 }
 
 void ArgumentCoder<VelocityData>::encode(Encoder& encoder, const VelocityData& velocityData)

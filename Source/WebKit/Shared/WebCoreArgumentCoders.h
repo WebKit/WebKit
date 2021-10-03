@@ -1060,4 +1060,22 @@ template<> struct EnumTraits<WebCore::ScrollSnapStrictness> {
     >;
 };
 
+template<> struct EnumTraits<WebCore::LengthType> {
+    using values = EnumValues<
+        WebCore::LengthType,
+        WebCore::LengthType::Auto,
+        WebCore::LengthType::Relative,
+        WebCore::LengthType::Percent,
+        WebCore::LengthType::Fixed,
+        WebCore::LengthType::Intrinsic,
+        WebCore::LengthType::MinIntrinsic,
+        WebCore::LengthType::MinContent,
+        WebCore::LengthType::MaxContent,
+        WebCore::LengthType::FillAvailable,
+        WebCore::LengthType::FitContent,
+        WebCore::LengthType::Calculated,
+        WebCore::LengthType::Undefined
+    >;
+};
+
 } // namespace WTF

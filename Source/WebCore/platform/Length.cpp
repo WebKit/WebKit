@@ -243,9 +243,7 @@ static CalculationValueMap& calculationValues()
 }
 
 Length::Length(Ref<CalculationValue>&& value)
-    : m_hasQuirk(false)
-    , m_type(LengthType::Calculated)
-    , m_isFloat(false)
+    : m_type(LengthType::Calculated)
 {
     m_calculationValueHandle = calculationValues().insert(WTFMove(value));
 }
