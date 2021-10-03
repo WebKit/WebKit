@@ -1,5 +1,14 @@
 2021-10-02  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] Update test262 config.yaml since OSS WebKit now uses ICU 64.2 header
+        https://bugs.webkit.org/show_bug.cgi?id=231121
+
+        Reviewed by Mark Lam.
+
+        * test262/config.yaml:
+
+2021-10-02  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] DateTimeFormat.resolvedOptions shouldn't return an object with other date/time properties if dateStyle or timeStyle are set
         https://bugs.webkit.org/show_bug.cgi?id=231041
 
