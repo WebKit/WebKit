@@ -60,13 +60,13 @@ void Line::initialize()
     m_trimmableTrailingContent.reset();
 }
 
-void Line::removeCollapsibleContent(InlineLayoutUnit extraHorizontalSpace)
+void Line::removeCollapsibleContent(InlineLayoutUnit horizontalAvailableSpace)
 {
     removeTrailingTrimmableContent();
-    visuallyCollapseHangingOverflow(extraHorizontalSpace);
+    visuallyCollapseHangingOverflow(horizontalAvailableSpace);
 }
 
-void Line::applyRunExpansion(InlineLayoutUnit extraHorizontalSpace)
+void Line::applyRunExpansion(InlineLayoutUnit horizontalAvailableSpace)
 {
     ASSERT(formattingContext().root().style().textAlign() == TextAlignMode::Justify);
     // Text is justified according to the method specified by the text-justify property,
@@ -75,7 +75,8 @@ void Line::applyRunExpansion(InlineLayoutUnit extraHorizontalSpace)
     if (m_runs.isEmpty() || m_runs.last().isLineBreak())
         return;
     // Anything to distribute?
-    if (!extraHorizontalSpace)
+    auto spaceToDistribute = horizontalAvailableSpace - contentLogicalWidth();
+    if (spaceToDistribute <= 0)
         return;
 
     // Collect and distribute the expansion opportunities.
@@ -125,7 +126,7 @@ void Line::applyRunExpansion(InlineLayoutUnit extraHorizontalSpace)
     if (!lineExpansionOpportunities)
         return;
     // Distribute the extra space.
-    auto expansionToDistribute = extraHorizontalSpace / lineExpansionOpportunities;
+    auto expansionToDistribute = spaceToDistribute / lineExpansionOpportunities;
     auto accumulatedExpansion = InlineLayoutUnit { };
     for (size_t runIndex = 0; runIndex < m_runs.size(); ++runIndex) {
         auto& run = m_runs[runIndex];
@@ -163,13 +164,13 @@ void Line::removeTrailingTrimmableContent()
     m_contentLogicalWidth -= m_trimmableTrailingContent.remove();
 }
 
-void Line::visuallyCollapseHangingOverflow(InlineLayoutUnit extraHorizontalSpace)
+void Line::visuallyCollapseHangingOverflow(InlineLayoutUnit horizontalAvailableSpace)
 {
     ASSERT(m_trimmableTrailingContent.isEmpty());
     // If white-space is set to pre-wrap, the UA must
     // ...
     // It may also visually collapse the character advance widths of any that would otherwise overflow.
-    auto overflowWidth = -extraHorizontalSpace;
+    auto overflowWidth = contentLogicalWidth() - horizontalAvailableSpace;
     if (overflowWidth <= 0)
         return;
     // Let's just find the trailing pre-wrap whitespace content for now (e.g check if there are multiple trailing runs with

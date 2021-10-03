@@ -58,8 +58,8 @@ public:
     std::optional<InlineLayoutUnit> trailingSoftHyphenWidth() const { return m_trailingSoftHyphenWidth; }
     void addTrailingHyphen(InlineLayoutUnit hyphenLogicalWidth);
 
-    void removeCollapsibleContent(InlineLayoutUnit extraHorizontalSpace);
-    void applyRunExpansion(InlineLayoutUnit extraHorizontalSpace);
+    void removeCollapsibleContent(InlineLayoutUnit horizontalAvailableSpace);
+    void applyRunExpansion(InlineLayoutUnit horizontalAvailableSpace);
 
     struct Run {
         bool isText() const { return m_type == InlineItem::Type::Text; }
@@ -154,7 +154,7 @@ private:
     void appendWordBreakOpportunity(const InlineItem&);
 
     void removeTrailingTrimmableContent();
-    void visuallyCollapseHangingOverflow(InlineLayoutUnit extraHorizontalSpace);
+    void visuallyCollapseHangingOverflow(InlineLayoutUnit horizontalAvailableSpace);
 
     const InlineFormattingContext& formattingContext() const;
 

@@ -372,12 +372,12 @@ LineBuilder::InlineItemRange LineBuilder::close(const InlineItemRange& needsLayo
         // Line is empty, we only managed to place float boxes.
         return lineRange;
     }
-    auto availableWidth = m_lineLogicalRect.width() - m_line.contentLogicalRight();
-    m_line.removeCollapsibleContent(availableWidth);
+    auto horizontalAvailableSpace = m_lineLogicalRect.width();
+    m_line.removeCollapsibleContent(horizontalAvailableSpace);
     auto horizontalAlignment = root().style().textAlign();
     auto runsExpandHorizontally = horizontalAlignment == TextAlignMode::Justify && !isLastLineWithInlineContent(lineRange, needsLayoutRange.end, committedContent.partialTrailingContentLength);
     if (runsExpandHorizontally)
-        m_line.applyRunExpansion(m_lineLogicalRect.width() - m_line.contentLogicalRight());
+        m_line.applyRunExpansion(horizontalAvailableSpace);
     auto lineEndsWithHyphen = false;
     if (!m_line.runs().isEmpty()) {
         auto& lastTextContent = m_line.runs().last().textContent();
