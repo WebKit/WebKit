@@ -938,6 +938,8 @@ bool CodeBlock::isConstantOwnedByUnlinkedCodeBlock(VirtualRegister reg) const
     }
     case SourceCodeRepresentation::LinkTimeConstant:
         return false;
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
     }
 }
 

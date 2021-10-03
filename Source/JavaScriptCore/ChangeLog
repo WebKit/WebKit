@@ -1,3 +1,12 @@
+2021-10-03  Lauro Moura  <lmoura@igalia.com>
+
+        Remove control reaches end of non-void function warning
+
+        Unreviewed. Warning introduced in r283139.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::isConstantOwnedByUnlinkedCodeBlock const):
+
 2021-10-02  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] DateTimeFormat.resolvedOptions shouldn't return an object with other date/time properties if dateStyle or timeStyle are set
