@@ -1,3 +1,21 @@
+2021-10-02  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION (r275455): ASSERTION FAILED: process->hasOneRef() seen with TestWebKitAPI.WKProcessPool.WarmInitialProcess
+        https://bugs.webkit.org/show_bug.cgi?id=231106
+
+        Reviewed by Geoffrey Garen.
+
+        r275455 added a dispatch_async() which captures a Ref<> to a WebProcessProxy. This may cause the WebProcessProxy to
+        outlive its WebProcessPool (prewarmed WebProcessProxies to not ref their WebProcessPool), which is not supported.
+        We could fix the crash by also capturing a Ref<> to the WebProcessPool in the lambda. However, in this particular
+        instance, it does not seem useful to extend the lifetime of the WebProcessProxy / WebProcessPool so I opted to use
+        a WeakPtr.
+
+        No new tests, covered by existing API test crashing in debug.
+
+        * UIProcess/Cocoa/WebProcessProxyCocoa.mm:
+        (WebKit::WebProcessProxy::sendAudioComponentRegistrations):
+
 2021-10-01  Chris Dumez  <cdumez@apple.com>
 
         Drop support for macOS < 10.15
