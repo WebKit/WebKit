@@ -90,7 +90,7 @@ WTF_EXTERN_C_END
 
 WTF_EXTERN_C_BEGIN
 
-#if HAVE(IOSURFACE_SET_OWNERSHIP)
+#if HAVE(IOSURFACE_SET_OWNERSHIP) || HAVE(IOSURFACE_SET_OWNERSHIP_IDENTITY)
 typedef CF_ENUM(int, IOSurfaceMemoryLedgerTags) {
     kIOSurfaceMemoryLedgerTagDefault     = 0x00000001,
     kIOSurfaceMemoryLedgerTagNetwork     = 0x00000002,
@@ -98,9 +98,11 @@ typedef CF_ENUM(int, IOSurfaceMemoryLedgerTags) {
     kIOSurfaceMemoryLedgerTagGraphics    = 0x00000004,
     kIOSurfaceMemoryLedgerTagNeural      = 0x00000005,
 };
+#endif
 
+#if HAVE(IOSURFACE_SET_OWNERSHIP)
 IOReturn IOSurfaceSetOwnership(IOSurfaceRef buffer, task_t newOwner, int newLedgerTag, uint32_t newLedgerOptions);
-#endif // HAVE(IOSURFACE_SET_OWNERSHIP)
+#endif
 
 #if HAVE(IOSURFACE_SET_OWNERSHIP_IDENTITY)
 kern_return_t IOSurfaceSetOwnershipIdentity(IOSurfaceRef buffer, mach_port_t task_id_token, int newLedgerTag, uint32_t newLedgerOptions);

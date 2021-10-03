@@ -1,5 +1,18 @@
 2021-10-03  David Kilzer  <ddkilzer@apple.com>
 
+        Build fix: Attribute IOSurfaces created by camera and decoders to responsible WebProcess
+        <https://bugs.webkit.org/show_bug.cgi?id=231075>
+        <rdar://problem/83767168>
+
+        Unreviewed build fix.
+
+        * pal/spi/cocoa/IOSurfaceSPI.h:
+        (IOSurfaceMemoryLedgerTags):
+        - Define enums for both HAVE(IOSURFACE_SET_OWNERSHIP)
+          and HAVE(IOSURFACE_SET_OWNERSHIP_IDENTITY).
+
+2021-10-03  David Kilzer  <ddkilzer@apple.com>
+
         Build fix: GPU Process microphone attribution SPI adoption
         <https://bugs.webkit.org/show_bug.cgi?id=231034>
         <rdar://problem/83732537>

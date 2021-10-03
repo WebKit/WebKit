@@ -35,7 +35,6 @@
 #import "Logging.h"
 #import "PlatformScreen.h"
 #import <pal/spi/cg/CoreGraphicsSPI.h>
-#import <pal/spi/cocoa/IOSurfaceSPI.h>
 #import <wtf/Assertions.h>
 #import <wtf/MachSendRight.h>
 #import <wtf/MathExtras.h>
