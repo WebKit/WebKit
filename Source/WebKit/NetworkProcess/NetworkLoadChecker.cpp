@@ -98,7 +98,7 @@ void NetworkLoadChecker::check(ResourceRequest&& request, ContentSecurityPolicyC
         m_loadInformation.request = request;
 
     m_firstRequestHeaders = request.httpHeaderFields();
-    checkRequest(WTFMove(request), client, WTFMove(handler));
+    checkRequest(WTFMove(request), client, URL(), WTFMove(handler));
 }
 
 static inline NetworkLoadChecker::RedirectionRequestOrError redirectionError(const ResourceResponse& redirectResponse, String&& errorMessage)
@@ -148,7 +148,7 @@ void NetworkLoadChecker::checkRedirection(ResourceRequest&& request, ResourceReq
     m_previousURL = WTFMove(m_url);
     m_url = redirectRequest.url();
 
-    checkRequest(WTFMove(redirectRequest), client, [handler = WTFMove(handler), request = WTFMove(request), redirectResponse = WTFMove(redirectResponse)](auto&& result) mutable {
+    checkRequest(WTFMove(redirectRequest), client, redirectResponse.url(), [handler = WTFMove(handler), request = WTFMove(request), redirectResponse](auto&& result) mutable {
         WTF::switchOn(result,
             [&handler] (ResourceError& error) mutable {
                 handler(makeUnexpected(WTFMove(error)));
@@ -247,11 +247,11 @@ void NetworkLoadChecker::applyHTTPSUpgradeIfNeeded(ResourceRequest&& request, Co
 #endif
 }
 
-void NetworkLoadChecker::checkRequest(ResourceRequest&& request, ContentSecurityPolicyClient* client, ValidationHandler&& handler)
+void NetworkLoadChecker::checkRequest(ResourceRequest&& request, ContentSecurityPolicyClient* client, const URL& preRedirectURL, ValidationHandler&& handler)
 {
     ResourceRequest originalRequest = request;
 
-    applyHTTPSUpgradeIfNeeded(WTFMove(request), [this, weakThis = makeWeakPtr(*this), client, handler = WTFMove(handler), originalRequest = WTFMove(originalRequest)](auto&& request) mutable {
+    applyHTTPSUpgradeIfNeeded(WTFMove(request), [this, weakThis = makeWeakPtr(*this), client, handler = WTFMove(handler), originalRequest = WTFMove(originalRequest), preRedirectURL](auto&& request) mutable {
         if (!weakThis)
             return handler({ ResourceError { ResourceError::Type::Cancellation }});
 
@@ -260,7 +260,7 @@ void NetworkLoadChecker::checkRequest(ResourceRequest&& request, ContentSecurity
                 auto type = m_options.mode == FetchOptions::Mode::Navigate ? ContentSecurityPolicy::InsecureRequestType::Navigation : ContentSecurityPolicy::InsecureRequestType::Load;
                 contentSecurityPolicy->upgradeInsecureRequestIfNeeded(request, type);
             }
-            if (!this->isAllowedByContentSecurityPolicy(request, client)) {
+            if (!this->isAllowedByContentSecurityPolicy(request, client, preRedirectURL)) {
                 handler(this->accessControlErrorForValidationHandler("Blocked by Content Security Policy."_s));
                 return;
             }
@@ -299,7 +299,7 @@ void NetworkLoadChecker::continueCheckingRequestOrDoSyntheticRedirect(ResourceRe
     this->continueCheckingRequest(WTFMove(currentRequest), WTFMove(handler));
 }
 
-bool NetworkLoadChecker::isAllowedByContentSecurityPolicy(const ResourceRequest& request, WebCore::ContentSecurityPolicyClient* client)
+bool NetworkLoadChecker::isAllowedByContentSecurityPolicy(const ResourceRequest& request, WebCore::ContentSecurityPolicyClient* client, const URL& preRedirectURL)
 {
     auto* contentSecurityPolicy = this->contentSecurityPolicy();
     contentSecurityPolicy->setClient(client);
@@ -321,7 +321,7 @@ bool NetworkLoadChecker::isAllowedByContentSecurityPolicy(const ResourceRequest&
         // FIXME: Check CSP for non-importScripts() initiated loads.
         return true;
     case FetchOptions::Destination::EmptyString:
-        return contentSecurityPolicy->allowConnectToSource(request.url(), redirectResponseReceived);
+        return contentSecurityPolicy->allowConnectToSource(request.url(), redirectResponseReceived, preRedirectURL);
     case FetchOptions::Destination::Audio:
     case FetchOptions::Destination::Document:
     case FetchOptions::Destination::Embed:
