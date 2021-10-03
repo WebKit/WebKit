@@ -397,6 +397,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (readonly) NSString* routingContextUID;
 @property (readonly) BOOL eligibleForBTSmartRoutingConsideration;
 - (BOOL)setEligibleForBTSmartRoutingConsideration:(BOOL)inValue error:(NSError **)outError;
+- (BOOL)setHostProcessAttribution:(NSArray<NSString *>*)inHostProcessInfo error:(NSError **)outError SPI_AVAILABLE(ios(15.0), watchos(8.0), tvos(15.0)) API_UNAVAILABLE(macCatalyst, macos);
 @end
 
 NS_ASSUME_NONNULL_END

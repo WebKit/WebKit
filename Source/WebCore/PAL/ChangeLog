@@ -1,3 +1,13 @@
+2021-10-03  David Kilzer  <ddkilzer@apple.com>
+
+        Build fix: GPU Process microphone attribution SPI adoption
+        <https://bugs.webkit.org/show_bug.cgi?id=231034>
+        <rdar://problem/83732537>
+
+        * pal/spi/cocoa/AVFoundationSPI.h:
+        (-[AVAudioSession setHostProcessAttribution:error:]):
+        - Add SPI declaration for open source bots.
+
 2021-10-01  Chris Dumez  <cdumez@apple.com>
 
         Drop support for macOS < 10.15
