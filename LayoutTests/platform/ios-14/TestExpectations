@@ -99,8 +99,6 @@ media/modern-media-controls/overflow-support/chapters.html [ Pass ]
 fast/events/ios/key-events-comprehensive/key-events-control-option.html [ Pass Timeout ]
 [ Debug ] fast/events/ios/key-events-comprehensive/key-events-control-shift.html [ Pass Timeout ]
 
-fast/events/ios/keydown-keyup-keypress-keys-in-non-editable-using-chinese-keyboard.html [ Pass Failure ]
-
 imported/w3c/web-platform-tests/css/css-text/line-breaking/line-breaking-atomic-nowrap-001.html [ Pass Timeout ]
 
 # These tests occasionally crash with debug assertions in iOS 14 simulator
