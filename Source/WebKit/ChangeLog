@@ -1,3 +1,15 @@
+2021-10-04  Youenn Fablet  <youenn@apple.com>
+
+        Send necessary sandbox extensions to WebProcess in case WebRTC codecs run in WebProcess
+        https://bugs.webkit.org/show_bug.cgi?id=231073
+
+        Reviewed by Eric Carlson.
+
+        Manually tested, make sure to send extensions like if audio/video capture happens in WebProcess.
+        This allows validating regressions due or not to GPUProcess.
+
+        * UIProcess/WebPageProxy.cpp:
+
 2021-10-04  Chris Dumez  <cdumez@apple.com>
 
         Use isolated NSURLSessions for each first party registrable domain
