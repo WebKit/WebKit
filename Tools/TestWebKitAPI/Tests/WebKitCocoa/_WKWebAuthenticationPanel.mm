@@ -2032,6 +2032,32 @@ TEST(WebAuthenticationPanel, GetAllCredential)
     cleanUpKeychain("example.com");
 }
 
+TEST(WebAuthenticationPanel, UpdateCredentialUsername)
+{
+    reset();
+    cleanUpKeychain("example.com");
+
+    ASSERT_TRUE(addKeyToKeychain(testES256PrivateKeyBase64, "example.com", testUserEntityBundleBase64));
+
+    auto *credentials = [_WKWebAuthenticationPanel getAllLocalAuthenticatorCredentialsWithAccessGroup:@"com.apple.TestWebKitAPI"];
+    EXPECT_NOT_NULL(credentials);
+    EXPECT_EQ([credentials count], 1lu);
+
+    EXPECT_NOT_NULL([credentials firstObject]);
+    EXPECT_WK_STREQ([credentials firstObject][_WKLocalAuthenticatorCredentialNameKey], "John");
+
+    [_WKWebAuthenticationPanel setUsernameForLocalCredentialWithID:[credentials firstObject][_WKLocalAuthenticatorCredentialIDKey] username: @"Saffron"];
+
+    credentials = [_WKWebAuthenticationPanel getAllLocalAuthenticatorCredentialsWithAccessGroup:@"com.apple.TestWebKitAPI"];
+    EXPECT_NOT_NULL(credentials);
+    EXPECT_EQ([credentials count], 1lu);
+
+    EXPECT_NOT_NULL([credentials firstObject]);
+    EXPECT_WK_STREQ([credentials firstObject][_WKLocalAuthenticatorCredentialNameKey], "Saffron");
+
+    cleanUpKeychain("example.com");
+}
+
 TEST(WebAuthenticationPanel, DeleteOneCredential)
 {
     reset();

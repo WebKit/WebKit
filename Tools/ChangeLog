@@ -1,3 +1,16 @@
+2021-10-04  John Pascoe  <j_pascoe@apple.com>
+
+        [WebAuthn] Add SPI to change username of credential
+        https://bugs.webkit.org/show_bug.cgi?id=230956
+        <rdar://problem/83471755>
+
+        Reviewed by Brent Fulgham.
+
+        API test coverage for updating the username of a webauthn credential.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/_WKWebAuthenticationPanel.mm:
+        (TestWebKitAPI::TEST):
+
 2021-10-04  Aakash Jain  <aakash_jain@apple.com>
 
         Send EWS exception emails to bot watchers instead of Aakash

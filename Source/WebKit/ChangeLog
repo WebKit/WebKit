@@ -1,3 +1,19 @@
+2021-10-04  John Pascoe  <j_pascoe@apple.com>
+
+        [WebAuthn] Add SPI to change username of credential
+        https://bugs.webkit.org/show_bug.cgi?id=230956
+        <rdar://problem/83471755>
+
+        Reviewed by Brent Fulgham.
+
+        Adds a new method for changing the username of a given stored webauthn credential.
+
+        New API test: TestWebKitAPI.WebAuthenticationPanel.UpdateCredentialUsername
+
+        * UIProcess/API/Cocoa/_WKWebAuthenticationPanel.h:
+        * UIProcess/API/Cocoa/_WKWebAuthenticationPanel.mm:
+        (+[_WKWebAuthenticationPanel setUsernameForLocalCredentialWithID:username:]):
+
 2021-10-04  Youenn Fablet  <youenn@apple.com>
 
         Send necessary sandbox extensions to WebProcess in case WebRTC codecs run in WebProcess

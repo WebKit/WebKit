@@ -106,6 +106,7 @@ WK_CLASS_AVAILABLE(macos(10.15.4), ios(13.4))
 + (NSArray<NSDictionary *> *)getAllLocalAuthenticatorCredentials WK_API_AVAILABLE(macos(12.0), ios(15.0));
 + (void)deleteLocalAuthenticatorCredentialWithID:(NSData *)credentialID WK_API_AVAILABLE(macos(12.0), ios(15.0));
 + (void)clearAllLocalAuthenticatorCredentials WK_API_AVAILABLE(macos(12.0), ios(15.0));
++ (void)setUsernameForLocalCredentialWithID:(NSData *)credentialID username: (NSString *)username WK_API_AVAILABLE(macos(12.0), ios(15.0));
 
 + (BOOL)isUserVerifyingPlatformAuthenticatorAvailable WK_API_AVAILABLE(macos(12.0), ios(15.0));
 
