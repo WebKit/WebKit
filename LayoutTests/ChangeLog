@@ -1,3 +1,17 @@
+2021-10-04  Lauro Moura  <lmoura@igalia.com>
+
+        Make preload referrer-img.py compatible with Python 3.9
+        https://bugs.webkit.org/show_bug.cgi?id=231099
+
+        Reviewed by Jonathan Bedard.
+
+        Python 3.9 removed[1] the deprecated `base64.decodestring`. We should use
+        `base64.decodebytes` instead (available since 3.1).
+
+        [1] https://bugs.python.org/issue39351
+
+        * http/wpt/preload/resources/referrer-img.py: Replace deprecated method.
+
 2021-10-04  Alan Bujtas  <zalan@apple.com>
 
         'overflow-wrap: anywhere' should be considered when calculating min-content intrinsic sizes.
