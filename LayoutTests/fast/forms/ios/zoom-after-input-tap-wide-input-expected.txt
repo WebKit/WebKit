@@ -2,5 +2,5 @@ Tests zooming to an offset in a wide text input on tap.
 
 
 tap location	{ x: 328.000, y: 862.000 }
-scale	1.455
-visibleRect	{ left: 381.527, top: 689.842, width: 219.980, height: 376.715 }
+scale	1.454
+visibleRect	{ left: 433.267, top: 689.789, width: 220.072, height: 376.874 }

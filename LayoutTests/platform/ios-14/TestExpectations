@@ -103,3 +103,17 @@ imported/w3c/web-platform-tests/css/css-text/line-breaking/line-breaking-atomic-
 
 # These tests occasionally crash with debug assertions in iOS 14 simulator
 fast/events/ios/rotation [ Skip ]
+
+# These tests fail or are flaky in non-internal iOS 14 simulator
+fast/forms/ios/accessory-bar-navigation.html [ Pass Failure Timeout ]
+fast/forms/ios/autocapitalize-words.html [ Pass Failure ]
+fast/forms/ios/focus-input-in-fixed.html [ Pass Failure Timeout Crash ]
+fast/forms/ios/focus-input-in-iframe.html [ Pass Failure Crash Timeout ]
+fast/forms/ios/focus-input-via-button-no-scaling.html [ Pass Failure Timeout Crash ]
+fast/forms/ios/focus-input-via-button.html [ Pass Failure Timeout Crash ]
+fast/forms/ios/focus-long-textarea.html [ Pass Failure Timeout Crash ]
+fast/forms/ios/inputmode-none-with-hardware-keyboard.html [ Pass Failure ]
+fast/forms/ios/zoom-after-input-tap-wide-input.html [ Pass Failure Timeout Crash ]
+fast/forms/ios/zoom-after-input-tap.html [ Pass Failure Timeout Crash ]
+
+fast/events/ios/keydown-keyup-keypress-keys-in-non-editable-using-chinese-keyboard.html [ Pass Failure ]
