@@ -5,4 +5,5 @@ three
 FAIL Opening the popup and clicking an option should change the selectmenu's value assert_equals: expected (string) "one" but got (undefined) undefined
 FAIL With custom button and popup: opening the popup and clicking an option should change the selectmenu's value assert_equals: expected (string) "one" but got (undefined) undefined
 FAIL Clicking a popup with no listbox part does nothing assert_equals: expected (string) "" but got (undefined) undefined
+FAIL Clicking a popup with a listbox that was removed does nothing assert_equals: expected (string) "" but got (undefined) undefined
 

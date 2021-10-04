@@ -3,8 +3,19 @@ five
 Custom button
 Custom button
 This is some text. More text.
+button0
+button0
+button0
+Test 10
+Test
 
 FAIL To receive option part controller code, an element labeled as an option must be a descendant of the listbox part in a flat tree traversal assert_equals: expected (string) "one" but got (undefined) undefined
 FAIL To receive button part controller code, an element labeled as a button must not be a descendant of the listbox part in a flat tree traversal assert_false: expected false got undefined
 FAIL To receive listbox part controller code, an element labeled as a listbox must not be a descendant of the button part in a flat tree traversal assert_false: expected false got undefined
+FAIL Button controller code should be applied in flat tree traversal order regardless of dynamic insertion order assert_false: expected false got undefined
+FAIL Listbox controller code should be applied in flat tree traversal order regardless of dynamic insertion order assert_false: expected false got undefined
+FAIL selected-value controller code should be applied in flat tree traversal order regardless of dynamic insertion order assert_false: expected false got undefined
+FAIL Ensure that option controller code is updated when listbox changes assert_equals: Initial value should be the first option expected (string) "one" but got (undefined) undefined
+FAIL Ensure that controller code is applied after updating the slot attribute assert_false: Controller code not applied due to part attribute missing expected false got undefined
+FAIL Ensure that controller code is applied when slot and part attributes are different assert_false: Controller code not applied due to part attribute not being button expected false got undefined
 

@@ -3086,9 +3086,6 @@
     "imported/w3c/web-platform-tests/html/semantics/forms/form-submission-0/submit-entity-body.html": [
         "slow"
     ],
-    "imported/w3c/web-platform-tests/html/semantics/forms/textfieldselection/select-event.html": [
-        "slow"
-    ],
     "imported/w3c/web-platform-tests/html/semantics/forms/textfieldselection/selection.html": [
         "slow"
     ],

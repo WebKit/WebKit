@@ -1,3 +1,15 @@
+2021-10-04  Tim Nguyen  <ntim@apple.com>
+
+        Re-import html/semantics/forms/ WPT
+        https://bugs.webkit.org/show_bug.cgi?id=231168
+
+        Reviewed by Youenn Fablet.
+
+        https://github.com/web-platform-tests/wpt/commit/dc29fc4ff101c1c216494a88a1f8a31a0f21d0aa
+
+        * TestExpectations:
+        * tests-options.json:
+
 2021-10-04  Ayumi Kojima  <ayumi_kojima@apple.com>
 
         Cleaning up expectations for iOS 15.

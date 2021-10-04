@@ -312,6 +312,7 @@
     "web-platform-tests/html/semantics/embedded-content/the-img-element/relevant-mutations.html": "skip", 
     "web-platform-tests/html/semantics/embedded-content/the-img-element/update-the-image-data": "skip", 
     "web-platform-tests/html/semantics/embedded-content/the-object-element/object-events.html": "skip", 
+    "web-platform-tests/html/semantics/forms/": "import", 
     "web-platform-tests/html/semantics/forms/textfieldselection/select-event.html": "skip", 
     "web-platform-tests/html/semantics/forms/textfieldselection/textfieldselection-setRangeText.html": "skip", 
     "web-platform-tests/html/semantics/forms/the-textarea-element": "import", 

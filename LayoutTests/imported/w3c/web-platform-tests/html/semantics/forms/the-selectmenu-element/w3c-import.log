@@ -14,6 +14,8 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-selectmenu-element/selectmenu-keyboard.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-selectmenu-element/selectmenu-nested.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-selectmenu-element/selectmenu-option-arbitrary-content-displayed.tentative-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-selectmenu-element/selectmenu-option-arbitrary-content-displayed.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-selectmenu-element/selectmenu-option-arbitrary-content-not-displayed.tentative-expected.html
@@ -21,4 +23,5 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-selectmenu-element/selectmenu-parts-structure.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-selectmenu-element/selectmenu-popup-position.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-selectmenu-element/selectmenu-popup.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-selectmenu-element/selectmenu-shadow-root-replacement.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-selectmenu-element/selectmenu-value.tentative.html

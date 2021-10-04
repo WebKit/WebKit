@@ -1,3 +1,91 @@
+2021-10-04  Tim Nguyen  <ntim@apple.com>
+
+        Re-import html/semantics/forms/ WPT
+        https://bugs.webkit.org/show_bug.cgi?id=231168
+
+        Reviewed by Youenn Fablet.
+
+        https://github.com/web-platform-tests/wpt/commit/dc29fc4ff101c1c216494a88a1f8a31a0f21d0aa
+
+        * resources/import-expectations.json:
+        * resources/resource-files.json:
+        * web-platform-tests/html/semantics/forms/autofocus/autofocus-on-stable-document-expected.txt: Removed.
+        * web-platform-tests/html/semantics/forms/autofocus/autofocus-on-stable-document.html: Removed.
+        * web-platform-tests/html/semantics/forms/autofocus/first-reconnected-expected.txt: Removed.
+        * web-platform-tests/html/semantics/forms/autofocus/first-reconnected.html: Removed.
+        * web-platform-tests/html/semantics/forms/autofocus/first-when-later-but-before-expected.txt: Removed.
+        * web-platform-tests/html/semantics/forms/autofocus/first-when-later-but-before.html: Removed.
+        * web-platform-tests/html/semantics/forms/autofocus/first-when-later-expected.txt: Removed.
+        * web-platform-tests/html/semantics/forms/autofocus/first-when-later.html: Removed.
+        * web-platform-tests/html/semantics/forms/autofocus/first-expected.txt: Removed.
+        * web-platform-tests/html/semantics/forms/autofocus/first.html: Removed.
+        * web-platform-tests/html/semantics/forms/autofocus/focusable-area-in-top-document-expected.txt: Removed.
+        * web-platform-tests/html/semantics/forms/autofocus/focusable-area-in-top-document.html: Removed.
+        * web-platform-tests/html/semantics/forms/autofocus/no-cross-origin-autofocus-expected.txt: Removed.
+        * web-platform-tests/html/semantics/forms/autofocus/no-cross-origin-autofocus.html: Removed.
+        * web-platform-tests/html/semantics/forms/autofocus/no-sandboxed-automatic-features-expected.txt: Removed.
+        * web-platform-tests/html/semantics/forms/autofocus/no-sandboxed-automatic-features.html: Removed.
+        * web-platform-tests/html/semantics/forms/autofocus/not-on-first-task-expected.txt: Removed.
+        * web-platform-tests/html/semantics/forms/autofocus/not-on-first-task.html: Removed.
+        * web-platform-tests/html/semantics/forms/autofocus/queue-non-focusable-expected.txt: Removed.
+        * web-platform-tests/html/semantics/forms/autofocus/queue-non-focusable.html: Removed.
+        * web-platform-tests/html/semantics/forms/autofocus/resources/child-autofocus.html: Removed.
+        * web-platform-tests/html/semantics/forms/autofocus/resources/erase-first.css: Removed.
+        * web-platform-tests/html/semantics/forms/autofocus/resources/frame-with-autofocus-element.html: Removed.
+        * web-platform-tests/html/semantics/forms/autofocus/resources/moving-autofocus-to-parent.html: Removed.
+        * web-platform-tests/html/semantics/forms/autofocus/resources/utils.js: Removed.
+        * web-platform-tests/html/semantics/forms/autofocus/resources/w3c-import.log: Removed.
+        * web-platform-tests/html/semantics/forms/autofocus/skip-another-top-level-browsing-context-expected.txt: Removed.
+        * web-platform-tests/html/semantics/forms/autofocus/skip-another-top-level-browsing-context.html: Removed.
+        * web-platform-tests/html/semantics/forms/autofocus/skip-document-with-fragment-expected.txt: Removed.
+        * web-platform-tests/html/semantics/forms/autofocus/skip-document-with-fragment.html: Removed.
+        * web-platform-tests/html/semantics/forms/autofocus/skip-non-focusable-expected.txt: Removed.
+        * web-platform-tests/html/semantics/forms/autofocus/skip-non-focusable.html: Removed.
+        * web-platform-tests/html/semantics/forms/autofocus/skip-not-fully-active-expected.txt: Removed.
+        * web-platform-tests/html/semantics/forms/autofocus/skip-not-fully-active.html: Removed.
+        * web-platform-tests/html/semantics/forms/autofocus/spin-by-blocking-style-sheet-expected.txt: Removed.
+        * web-platform-tests/html/semantics/forms/autofocus/spin-by-blocking-style-sheet.html: Removed.
+        * web-platform-tests/html/semantics/forms/autofocus/supported-elements-expected.txt: Removed.
+        * web-platform-tests/html/semantics/forms/autofocus/supported-elements.html: Removed.
+        * web-platform-tests/html/semantics/forms/autofocus/update-the-rendering-expected.txt: Removed.
+        * web-platform-tests/html/semantics/forms/autofocus/update-the-rendering.html: Removed.
+        * web-platform-tests/html/semantics/forms/autofocus/w3c-import.log: Removed.
+        * web-platform-tests/html/semantics/forms/introduction-1/contains.json: Removed.
+        * web-platform-tests/html/semantics/forms/introduction-1/w3c-import.log: Removed.
+        * web-platform-tests/html/semantics/forms/textfieldselection/select-event-expected.txt: Removed.
+        * web-platform-tests/html/semantics/forms/textfieldselection/select-event.html: Removed.
+        * web-platform-tests/html/semantics/forms/textfieldselection/textfieldselection-setRangeText-expected.txt: Removed.
+        * web-platform-tests/html/semantics/forms/textfieldselection/textfieldselection-setRangeText.html: Removed.
+        * web-platform-tests/html/semantics/forms/textfieldselection/w3c-import.log:
+        * web-platform-tests/html/semantics/forms/the-button-element/w3c-import.log:
+        * web-platform-tests/html/semantics/forms/the-button-element/active-onblur-expected.txt: Added.
+        * web-platform-tests/html/semantics/forms/the-button-element/active-onblur.html: Added.
+        * web-platform-tests/html/semantics/forms/the-button-element/button-submit-remove-jssubmit-expected.txt: Added.
+        * web-platform-tests/html/semantics/forms/the-button-element/button-submit-remove-jssubmit.html: Added.
+        * web-platform-tests/html/semantics/forms/the-form-element/form-requestsubmit-autofocus-expected.txt: Removed.
+        * web-platform-tests/html/semantics/forms/the-form-element/form-requestsubmit-autofocus.html: Removed.
+        * web-platform-tests/html/semantics/forms/the-input-element/w3c-import.log:
+        * web-platform-tests/html/semantics/forms/the-input-element/input-submit-remove-jssubmit-expected.txt: Added.
+        * web-platform-tests/html/semantics/forms/the-input-element/input-submit-remove-jssubmit.html: Added.
+        * web-platform-tests/html/semantics/forms/the-option-element/dynamic-content-change-rendering.html:
+        * web-platform-tests/html/semantics/forms/the-select-element/select-validity-expected.txt:
+        * web-platform-tests/html/semantics/forms/the-select-element/select-validity.html:
+        * web-platform-tests/html/semantics/forms/the-selectmenu-element/selectmenu-keyboard.tentative-expected.txt: Added.
+        * web-platform-tests/html/semantics/forms/the-selectmenu-element/selectmenu-keyboard.tentative.html: Added.
+        * web-platform-tests/html/semantics/forms/the-selectmenu-element/selectmenu-nested.tentative-expected.txt: Added.
+        * web-platform-tests/html/semantics/forms/the-selectmenu-element/selectmenu-nested.tentative.html: Added.
+        * web-platform-tests/html/semantics/forms/the-selectmenu-element/selectmenu-shadow-root-replacement.tentative-expected.txt: Added.
+        * web-platform-tests/html/semantics/forms/the-selectmenu-element/selectmenu-shadow-root-replacement.tentative.html: Added.
+        * web-platform-tests/html/semantics/forms/the-selectmenu-element/selectmenu-parts-structure.tentative-expected.txt:
+        * web-platform-tests/html/semantics/forms/the-selectmenu-element/selectmenu-parts-structure.tentative.html:
+        * web-platform-tests/html/semantics/forms/the-selectmenu-element/selectmenu-popup.tentative-expected.txt:
+        * web-platform-tests/html/semantics/forms/the-selectmenu-element/selectmenu-popup.tentative.html:
+        * web-platform-tests/html/semantics/forms/the-selectmenu-element/w3c-import.log:
+        * web-platform-tests/html/semantics/forms/the-textarea-element/w3c-import.log:
+        * web-platform-tests/html/semantics/forms/the-textarea-element/placeholder-white-space-notref.html: Added.
+        * web-platform-tests/html/semantics/forms/the-textarea-element/placeholder-white-space.tentative-expected.html: Added.
+        * web-platform-tests/html/semantics/forms/the-textarea-element/placeholder-white-space.tentative.html: Added.
+
 2021-10-04  Chris Dumez  <cdumez@apple.com>
 
         Use isolated NSURLSessions for each first party registrable domain

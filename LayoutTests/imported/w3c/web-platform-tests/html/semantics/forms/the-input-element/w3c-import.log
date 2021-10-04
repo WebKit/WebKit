@@ -44,6 +44,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/input-setcustomvalidity.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/input-stepdown.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/input-stepup.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/input-submit-remove-jssubmit.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/input-type-button.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/input-type-checkbox.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/input-types.js

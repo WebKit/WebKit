@@ -1,0 +1,5 @@
+button
+
+FAIL Validate Enter, Up/Down Arrow, and Space keyboard accessibility support for <selecmenu> assert_false: selectmenu should not be initially open expected false got undefined
+PASS Firing a synthetic event at a selectmenu's option doesn't crash
+

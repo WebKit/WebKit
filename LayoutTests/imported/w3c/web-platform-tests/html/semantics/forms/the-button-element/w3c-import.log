@@ -14,6 +14,7 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-button-element/active-onblur.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-button-element/button-activate-frame.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-button-element/button-activate-keyup-prevented.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-button-element/button-activate.html
@@ -26,6 +27,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-button-element/button-submit-children.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-button-element/button-submit-remove-children-jssubmit.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-button-element/button-submit-remove-children.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-button-element/button-submit-remove-jssubmit.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-button-element/button-type-enumerated-ascii-case-insensitive.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-button-element/button-type.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-button-element/button-validation.html

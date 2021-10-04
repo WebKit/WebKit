@@ -21,6 +21,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-textarea-element/multiline-placeholder-crlf.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-textarea-element/multiline-placeholder-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-textarea-element/multiline-placeholder.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-textarea-element/placeholder-white-space-notref.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-textarea-element/placeholder-white-space.tentative-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-textarea-element/placeholder-white-space.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-textarea-element/textarea-maxlength.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-textarea-element/textarea-minlength.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-textarea-element/textarea-newline-bidi-expected.html

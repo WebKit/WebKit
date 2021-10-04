@@ -1,5 +1,0 @@
-
-
-PASS Due to autofocus an event handler can run that changes submitter type, so verify that it is processed before the requestSubmit checks.
-PASS Due to autofocus an event handler can run that removes the submitter, so verify that it is processed before the requestSubmit checks.
-

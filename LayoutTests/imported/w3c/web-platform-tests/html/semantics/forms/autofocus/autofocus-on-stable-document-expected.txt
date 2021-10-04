@@ -1,4 +1,0 @@
-
-
-PASS Autofocus should work if an element with autofocus is inserted into a document which was loaded some time ago.
-
