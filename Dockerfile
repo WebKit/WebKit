@@ -11,7 +11,7 @@ RUN ./llvm.sh 12
 
 # Use the same version of LLVM/clang used to build Zig
 # This prevents the allocation failure
-RUN apt-get update && apt-get install --no-install-recommends -y 
+RUN apt-get update && apt-get install --no-install-recommends -y \
     bc \
     build-essential \
     ca-certificates \
