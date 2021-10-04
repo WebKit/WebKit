@@ -156,6 +156,8 @@ private:
     void removeTrailingTrimmableContent();
     void visuallyCollapseHangingOverflow(InlineLayoutUnit horizontalAvailableSpace);
 
+    void resetTrailingContent();
+
     const InlineFormattingContext& formattingContext() const;
 
     struct TrimmableTrailingContent {
@@ -182,12 +184,15 @@ private:
     };
 
     struct HangingTrailingContent {
-        HangingTrailingContent(const RunList&);
+        void add(const InlineTextItem& trailingWhitespace, InlineLayoutUnit logicalWidth);
+        void reset();
 
-        InlineLayoutUnit width() const;
+        size_t length() const { return m_length; }
+        InlineLayoutUnit width() const { return m_width; }
 
     private:
-        const RunList& m_runs;
+        size_t m_length { 0 };
+        InlineLayoutUnit m_width { 0 };
     };
 
     const InlineFormattingContext& m_inlineFormattingContext;
@@ -205,6 +210,12 @@ inline void Line::TrimmableTrailingContent::reset()
     m_firstTrimmableRunIndex = { };
     m_fullyTrimmableWidth = { };
     m_partiallyTrimmableWidth = { };
+}
+
+inline void Line::HangingTrailingContent::reset()
+{
+    m_width = { };
+    m_length = { };
 }
 
 inline Line::Run::TrailingWhitespace Line::Run::trailingWhitespaceType(const InlineTextItem& inlineTextItem) const
