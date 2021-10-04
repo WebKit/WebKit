@@ -29,7 +29,7 @@ function mac_process_webcontent_entitlements()
         fi
         if (( "${TARGET_MAC_OS_X_VERSION_MAJOR}" >= 120000 ))
         then
-            plistbuddy add :com.apple.coreaudio.allow-vorbis-decode YES
+            plistbuddy add :com.apple.coreaudio.allow-vorbis-decode bool YES
         fi
     fi
 

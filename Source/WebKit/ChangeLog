@@ -1,3 +1,32 @@
+2021-10-04  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r283490. rdar://problem/83856664
+
+    Vorbis decoder can't be instantiated - follow up on Bug 230742
+    https://bugs.webkit.org/show_bug.cgi?id=231154
+    rdar://problem/83825162
+    
+    Fix typo in expression.
+    
+    Reviewed by Tim Horton.
+    
+    * Scripts/process-entitlements.sh: Add missing bool keyword.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@283490 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-10-04  Jean-Yves Avenard  <jya@apple.com>
+
+            Vorbis decoder can't be instantiated - follow up on Bug 230742
+            https://bugs.webkit.org/show_bug.cgi?id=231154
+            rdar://problem/83825162
+
+            Fix typo in expression.
+
+            Reviewed by Tim Horton.
+
+            * Scripts/process-entitlements.sh: Add missing bool keyword.
+
 2021-09-30  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r283294. rdar://problem/83733583
