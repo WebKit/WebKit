@@ -139,7 +139,7 @@ AudioSessionIOS::~AudioSessionIOS()
 
 void AudioSessionIOS::setHostProcessAttribution(audit_token_t auditToken)
 {
-#if ENABLE(APP_PRIVACY_REPORT)
+#if ENABLE(APP_PRIVACY_REPORT) && !PLATFORM(MACCATALYST)
     NSError *error = nil;
     auto bundleProxy = [LSBundleProxy bundleProxyWithAuditToken:auditToken error:&error];
     if (error) {
