@@ -1,3 +1,15 @@
+2021-10-04  Jean-Yves Avenard  <jya@apple.com>
+
+        Vorbis decoder can't be instantiated - follow up on Bug 230742
+        https://bugs.webkit.org/show_bug.cgi?id=231154
+        rdar://problem/83825162
+
+        Fix typo in expression.
+
+        Reviewed by Tim Horton.
+
+        * Scripts/process-entitlements.sh: Add missing bool keyword.
+
 2021-10-03  Lauro Moura  <lmoura@igalia.com>
 
         [GTK] REGRESSION(r283304): All GTK4 layout tests are aborting
