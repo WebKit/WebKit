@@ -25,6 +25,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/dynamic-grid-with-auto-fill.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/dynamic-grid-within-flexbox-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/dynamic-grid-within-flexbox.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/empty-grid-within-flexbox-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/empty-grid-within-flexbox.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-child-percent-basis-resize-1-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-child-percent-basis-resize-1.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-item-non-auto-height-stretch-001-expected.html
@@ -41,8 +43,14 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-item-percentage-quirk-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-layout-properties.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-tracks-stretched-with-different-flex-factors-sum.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-with-dynamic-img-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-with-dynamic-img.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-with-orthogonal-child-within-flexbox-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-with-orthogonal-child-within-flexbox.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-within-flexbox-definite-change-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-within-flexbox-definite-change.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-within-flexbox-indefinite-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-within-flexbox-indefinite.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/inheritance.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/relative-grandchild-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/relative-grandchild.html

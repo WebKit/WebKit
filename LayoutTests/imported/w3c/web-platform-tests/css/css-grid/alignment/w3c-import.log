@@ -280,6 +280,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/alignment/grid-inline-axis-alignment-auto-margins-007.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/alignment/grid-inline-axis-alignment-auto-margins-008-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/alignment/grid-inline-axis-alignment-auto-margins-008.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/alignment/grid-inline-baseline-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/alignment/grid-inline-baseline.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/alignment/grid-item-alignment-with-orthogonal-flows-vertical-lr.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/alignment/grid-item-alignment-with-orthogonal-flows-vertical-rl.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/alignment/grid-item-alignment-with-orthogonal-flows.html

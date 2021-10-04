@@ -1298,6 +1298,10 @@ webkit.org/b/210243 imported/w3c/web-platform-tests/css/css-flexbox/percentage-s
 webkit.org/b/136754 imported/w3c/web-platform-tests/css/css-flexbox/scrollbars-no-margin.html [ ImageOnlyFailure ]
 
 # grid layout tests
+webkit.org/b/231021 imported/w3c/web-platform-tests/css/css-grid/grid-with-dynamic-img.html [ ImageOnlyFailure ]
+webkit.org/b/231021 imported/w3c/web-platform-tests/css/css-grid/grid-with-orthogonal-child-within-flexbox.html [ ImageOnlyFailure ]
+webkit.org/b/231021 imported/w3c/web-platform-tests/css/css-grid/grid-within-flexbox-indefinite.html [ ImageOnlyFailure ]
+  
 imported/w3c/web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-img-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-img-last-baseline-001.html [ ImageOnlyFailure ]
@@ -1347,9 +1351,14 @@ imported/w3c/web-platform-tests/css/css-grid/grid-definition/grid-repeat-max-wid
 
 imported/w3c/web-platform-tests/css/css-grid/grid-items/aspect-ratio-004.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-inline-contribution-003.html [ ImageOnlyFailure ]
+webkit.org/b/231021 imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-size-with-orthogonal-child-dynamic.html [ ImageOnlyFailure ]
+webkit.org/b/231021 imported/w3c/web-platform-tests/css/css-grid/grid-items/percentage-margin-dynamic.html [ ImageOnlyFailure ]
+webkit.org/b/231021 imported/w3c/web-platform-tests/css/css-grid/grid-items/replaced-element-015.html [ ImageOnlyFailure ]
 
 imported/w3c/web-platform-tests/css/css-grid/grid-model/grid-areas-overflowing-grid-container-009.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-grid/layout-algorithm/flex-sizing-rows-indefinite-height.html [ ImageOnlyFailure ]
+webkit.org/b/231021 imported/w3c/web-platform-tests/css/css-grid/layout-algorithm/grid-intrinsic-size-dynamic-block-size.html [ ImageOnlyFailure ]
+webkit.org/b/231021 imported/w3c/web-platform-tests/css/css-grid/layout-algorithm/grid-template-flexible-rerun-track-sizing.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-grid/masonry/tentative/masonry-align-content-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-grid/masonry/tentative/masonry-align-content-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-grid/masonry/tentative/masonry-align-content-003.html [ ImageOnlyFailure ]
@@ -4291,6 +4300,7 @@ webkit.org/b/209460 imported/w3c/web-platform-tests/css/css-grid/abspos/descenda
 webkit.org/b/209460 imported/w3c/web-platform-tests/css/css-grid/abspos/descendant-static-position-003.html [ ImageOnlyFailure ]
 webkit.org/b/212201 imported/w3c/web-platform-tests/css/css-grid/grid-definition/grid-limits-001.html [ Skip ]
 webkit.org/b/212246 imported/w3c/web-platform-tests/css/css-grid/alignment/grid-baseline-align-cycles-001.html [ ImageOnlyFailure ]
+webkit.org/b/231021 imported/w3c/web-platform-tests/css/css-grid/alignment/grid-inline-baseline.html [ ImageOnlyFailure ]
 webkit.org/b/212246 imported/w3c/web-platform-tests/css/css-grid/alignment/grid-item-content-baseline-001.html [ ImageOnlyFailure ]
 webkit.org/b/212246 imported/w3c/web-platform-tests/css/css-grid/alignment/grid-item-content-baseline-002.html [ ImageOnlyFailure ]
 webkit.org/b/212246 imported/w3c/web-platform-tests/css/css-grid/alignment/grid-item-content-baseline-003.html [ ImageOnlyFailure ]

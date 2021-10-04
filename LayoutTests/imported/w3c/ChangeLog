@@ -1,3 +1,59 @@
+2021-10-04  Ziran Sun  <zsun@igalia.com>
+
+        [css-grid] Resync web-platform-tests/css/css-grid tests from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=231020
+
+        Reviewed by Sergio Villar Senin.
+
+        * web-platform-tests/css/css-grid/abspos/grid-positioned-item-dynamic-change-005-expected.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-positioned-item-dynamic-change-005.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-positioned-item-dynamic-change-006-expected.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-positioned-item-dynamic-change-006.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-positioned-item-dynamic-change-007-expected.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-positioned-item-dynamic-change-007.html: Added.
+        * web-platform-tests/css/css-grid/abspos/positioned-grid-descendants-017-expected.html: Added.
+        * web-platform-tests/css/css-grid/abspos/positioned-grid-descendants-017.html: Added.
+        * web-platform-tests/css/css-grid/abspos/positioned-grid-items-023-expected.html: Added.
+        * web-platform-tests/css/css-grid/abspos/positioned-grid-items-023.html: Added.
+        * web-platform-tests/css/css-grid/abspos/positioned-grid-items-024-expected.xht: Added.
+        * web-platform-tests/css/css-grid/abspos/positioned-grid-items-024.html: Added.
+        * web-platform-tests/css/css-grid/abspos/w3c-import.log:
+        * web-platform-tests/css/css-grid/alignment/grid-inline-baseline-expected.html: Added.
+        * web-platform-tests/css/css-grid/alignment/grid-inline-baseline.html: Added.
+        * web-platform-tests/css/css-grid/alignment/w3c-import.log:
+        * web-platform-tests/css/css-grid/empty-grid-within-flexbox-expected.xht: Added.
+        * web-platform-tests/css/css-grid/empty-grid-within-flexbox.html: Added.
+        * web-platform-tests/css/css-grid/grid-definition/grid-auto-repeat-minmax-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-item-percentage-quirk-001-expected.html.
+        * web-platform-tests/css/css-grid/grid-definition/grid-auto-repeat-minmax.html: Added.
+        * web-platform-tests/css/css-grid/grid-definition/w3c-import.log:
+        * web-platform-tests/css/css-grid/grid-items/grid-size-with-orthogonal-child-dynamic-expected.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-item-percentage-quirk-002-expected.html.
+        * web-platform-tests/css/css-grid/grid-items/grid-size-with-orthogonal-child-dynamic.html: Added.
+        * web-platform-tests/css/css-grid/grid-items/percentage-margin-dynamic-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-item-percentage-quirk-001-expected.html.
+        * web-platform-tests/css/css-grid/grid-items/percentage-margin-dynamic.html: Added.
+        * web-platform-tests/css/css-grid/grid-items/replaced-element-014-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-item-percentage-quirk-001-expected.html.
+        * web-platform-tests/css/css-grid/grid-items/replaced-element-014.html: Added.
+        * web-platform-tests/css/css-grid/grid-items/replaced-element-015-expected.html: Added.
+        * web-platform-tests/css/css-grid/grid-items/replaced-element-015.html: Added.
+        * web-platform-tests/css/css-grid/grid-items/w3c-import.log:
+        * web-platform-tests/css/css-grid/grid-model/grid-item-hit-test-expected.txt: Added.
+        * web-platform-tests/css/css-grid/grid-model/grid-item-hit-test.html: Added.
+        * web-platform-tests/css/css-grid/grid-model/w3c-import.log:
+        * web-platform-tests/css/css-grid/grid-with-dynamic-img-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-item-percentage-quirk-001-expected.html.
+        * web-platform-tests/css/css-grid/grid-with-dynamic-img.html: Added.
+        * web-platform-tests/css/css-grid/grid-with-orthogonal-child-within-flexbox-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-item-percentage-quirk-001-expected.html.
+        * web-platform-tests/css/css-grid/grid-with-orthogonal-child-within-flexbox.html: Added.
+        * web-platform-tests/css/css-grid/grid-within-flexbox-indefinite-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-item-percentage-quirk-001-expected.html.
+        * web-platform-tests/css/css-grid/grid-within-flexbox-indefinite.html: Added.
+        * web-platform-tests/css/css-grid/layout-algorithm/grid-intrinsic-size-dynamic-block-size-expected.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-item-percentage-quirk-001-expected.html.
+        * web-platform-tests/css/css-grid/layout-algorithm/grid-intrinsic-size-dynamic-block-size.html: Added.
+        * web-platform-tests/css/css-grid/layout-algorithm/grid-template-flexible-rerun-track-sizing-expected.xht: Added.
+        * web-platform-tests/css/css-grid/layout-algorithm/grid-template-flexible-rerun-track-sizing.html: Added.
+        * web-platform-tests/css/css-grid/layout-algorithm/w3c-import.log:
+        * web-platform-tests/css/css-grid/placement/grid-placement-items-spanning-multiple-rows-expected.xht: Added.
+        * web-platform-tests/css/css-grid/placement/grid-placement-items-spanning-multiple-rows.html: Added.
+        * web-platform-tests/css/css-grid/placement/w3c-import.log:
+        * web-platform-tests/css/css-grid/w3c-import.log:
+
 2021-10-02  Nikos Mouchtaris  <nmouchtaris@apple.com>
 
         WPTs for hypot,sqrt,pow calc functions

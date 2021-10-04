@@ -26,6 +26,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/placement/grid-layout-lines.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/placement/grid-layout-placement-shorthands-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/placement/grid-layout-placement-shorthands.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/placement/grid-placement-items-spanning-multiple-rows-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/placement/grid-placement-items-spanning-multiple-rows.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/placement/grid-placement-using-named-grid-lines-001-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/placement/grid-placement-using-named-grid-lines-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/placement/grid-placement-using-named-grid-lines-002-expected.xht

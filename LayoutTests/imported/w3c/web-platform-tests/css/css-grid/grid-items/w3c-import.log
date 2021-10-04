@@ -269,6 +269,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-order-property-painting-004.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-order-property-painting-005-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-order-property-painting-005.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-size-with-orthogonal-child-dynamic-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-size-with-orthogonal-child-dynamic.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-z-axis-ordering-001-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-z-axis-ordering-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-z-axis-ordering-002-expected.xht
@@ -293,6 +295,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-z-axis-ordering-overlapped-items-006.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/item-with-table-with-infinite-max-intrinsic-width-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/item-with-table-with-infinite-max-intrinsic-width.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/percentage-margin-dynamic-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/percentage-margin-dynamic.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/percentage-size-indefinite-replaced-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/percentage-size-indefinite-replaced.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/percentage-size-replaced-subitems-001-expected.html
@@ -318,6 +322,10 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/replaced-element-012.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/replaced-element-013-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/replaced-element-013.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/replaced-element-014-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/replaced-element-014.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/replaced-element-015-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/replaced-element-015.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/table-with-infinite-max-intrinsic-width-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/table-with-infinite-max-intrinsic-width.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/whitespace-in-grid-item-001-expected.html
