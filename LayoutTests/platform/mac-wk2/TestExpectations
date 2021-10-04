@@ -1677,7 +1677,7 @@ webkit.org/b/230588 [ BigSur Debug ] imported/w3c/web-platform-tests/html/render
 
 webkit.org/b/230865 [ BigSur Debug arm64 ] webrtc/video-mute.html [ Pass Failure ]
 
-webkit.org/b/230866 [ Catalina BigSur ] imported/w3c/web-platform-tests/mediacapture-streams/MediaStream-default-feature-policy.https.html [ Pass Failure Crash DumpJSConsoleLogInStdErr ]
+webkit.org/b/230866 [ Catalina BigSur ] imported/w3c/web-platform-tests/mediacapture-streams/MediaStream-default-feature-policy.https.html [ Pass Failure DumpJSConsoleLogInStdErr ]
 
 webkit.org/b/231083 [ Debug ] imported/w3c/web-platform-tests/content-security-policy/generic/policy-inherited-correctly-by-plznavigate.html [ Pass Failure ]
 

@@ -1424,11 +1424,7 @@ webkit.org/b/231102 [ BigSur ] printing/css2.1/page-break-after-000.html [ Pass 
 # webkit.org/b/214448 Web Share API is not implemented for mac-wk1
 http/tests/webshare/ [ Skip ]
 
-webkit.org/b/230701 [ Catalina Debug ] performance-api/performance-observer-callback-after-gc.html [ Pass Crash ]
-
 webkit.org/b/230729 [ Catalina Release ] imported/w3c/web-platform-tests/html/browsers/origin/cross-origin-objects/cross-origin-objects.html [ Pass Failure ]
-
-webkit.org/b/230765 [ Catalina Debug ] storage/indexeddb/mozilla/cursors-private.html [ Pass Crash ]
 
 #WebGL Tests Timing Out on Catalina Debug WK1 EWS webkit.org/b/230774
 [ Catalina Debug ] webgl/1.0.3/conformance/canvas/drawingbuffer-static-canvas-test.html [ Pass Timeout ]
