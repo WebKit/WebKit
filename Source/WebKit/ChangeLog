@@ -5,6 +5,13 @@
         * UIProcess/API/Cocoa/_WKWebAuthenticationPanel.mm:
         (+[_WKWebAuthenticationPanel setUsernameForLocalCredentialWithID:username:]):
 
+2021-10-04  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed build fix after r283431.
+
+        * UIProcess/API/Cocoa/_WKWebAuthenticationPanel.mm:
+        (+[_WKWebAuthenticationPanel setUsernameForLocalCredentialWithID:username:]):
+
 2021-10-04  John Pascoe  <j_pascoe@apple.com>
 
         [WebAuthn] Prefer internal user verification if available over pin entry.
