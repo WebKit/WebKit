@@ -53,7 +53,7 @@ void WebPageProxy::bindAccessibilityTree(const String& plugID, CompletionHandler
 {
 #if USE(GTK4)
     // FIXME: We need a way to override accessible interface of WebView and send the atspi reference to the web process.
-    RELEASE_ASSERT_NOT_REACHED();
+    ASSERT_NOT_IMPLEMENTED_YET();
 #else
     auto* accessible = gtk_widget_get_accessible(viewWidget());
     atk_socket_embed(ATK_SOCKET(accessible), const_cast<char*>(plugID.utf8().data()));

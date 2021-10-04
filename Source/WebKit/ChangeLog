@@ -1,3 +1,19 @@
+2021-10-03  Lauro Moura  <lmoura@igalia.com>
+
+        [GTK] REGRESSION(r283304): All GTK4 layout tests are aborting
+        https://bugs.webkit.org/show_bug.cgi?id=231153
+
+        Reviewed by Alexey Proskuryakov.
+
+        Revert back to the previous NOP behavior of bindAccessibilityTree()
+        for GTK4, leaving the assert for the debug mode with an informative
+        message in the log.
+
+        Covered by existing tests.
+
+        * UIProcess/gtk/WebPageProxyGtk.cpp:
+        (WebKit::WebPageProxy::bindAccessibilityTree):
+
 2021-10-03  Don Olmstead  <don.olmstead@sony.com>
 
         Non-unified build fixes, early October 2021 edition
