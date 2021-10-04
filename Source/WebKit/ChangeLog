@@ -1,3 +1,17 @@
+2021-10-04  Tim Horton  <timothy_horton@apple.com>
+
+        process-entitlements should fail if a subcommand fails
+        https://bugs.webkit.org/show_bug.cgi?id=231155
+
+        Reviewed by Anders Carlsson.
+
+        * Scripts/process-entitlements.sh:
+        See bug 231154, which fixes a mistake in r283156 which made one of the
+        PlistBuddy invocations from process-entitlements fail, but did not
+        result in a failing build. PlistBuddy does correctly return a non-zero
+        return value in this case, so we should just tell the shell to propagate
+        that upwards.
+
 2021-10-04  Alex Christensen  <achristensen@webkit.org>
 
         Enable PCM debug mode per WebsiteDataStore instead of process-global
