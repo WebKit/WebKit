@@ -1,5 +1,21 @@
 2021-10-04  John Pascoe  <j_pascoe@apple.com>
 
+        [WebAuthn] Prefer internal user verification if available over pin entry.
+        https://bugs.webkit.org/show_bug.cgi?id=213903
+        <rdar://problem/65359269>
+
+        Reviewed by Brent Fulgham.
+
+        * UIProcess/WebAuthentication/Mock/MockHidConnection.cpp:
+        (WebKit::MockHidConnection::feedReports):
+        * UIProcess/WebAuthentication/fido/CtapAuthenticator.cpp:
+        (WebKit::CtapAuthenticator::makeCredential):
+        (WebKit::CtapAuthenticator::getAssertion):
+        (WebKit::fido::toStatus): Deleted.
+        (WebKit::fido::isPinError): Deleted.
+
+2021-10-04  John Pascoe  <j_pascoe@apple.com>
+
         [WebAuthn] Add SPI to change username of credential
         https://bugs.webkit.org/show_bug.cgi?id=230956
         <rdar://problem/83471755>

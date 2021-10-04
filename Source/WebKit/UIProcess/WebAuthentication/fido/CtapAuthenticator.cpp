@@ -47,6 +47,8 @@ namespace WebKit {
 using namespace WebCore;
 using namespace fido;
 
+using UVAvailability = AuthenticatorSupportedOptions::UserVerificationAvailability;
+
 namespace {
 WebAuthenticationStatus toStatus(const CtapDeviceResponseCode& error)
 {
@@ -92,10 +94,14 @@ void CtapAuthenticator::makeCredential()
         return;
     Vector<uint8_t> cborCmd;
     auto& options = WTF::get<PublicKeyCredentialCreationOptions>(requestData().options);
-    if (m_info.options().clientPinAvailability() == AuthenticatorSupportedOptions::ClientPinAvailability::kSupportedAndPinSet)
-        cborCmd = encodeMakeCredenitalRequestAsCBOR(requestData().hash, options, m_info.options().userVerificationAvailability(), PinParameters { pin::kProtocolVersion, m_pinAuth });
+    auto internalUVAvailability = m_info.options().userVerificationAvailability();
+    // If UV is required, then either built-in uv or a pin will work.
+    if (internalUVAvailability == UVAvailability::kSupportedAndConfigured && (!options.authenticatorSelection || options.authenticatorSelection->userVerification != UserVerificationRequirement::Discouraged))
+        cborCmd = encodeMakeCredenitalRequestAsCBOR(requestData().hash, options, internalUVAvailability);
+    else if (m_info.options().clientPinAvailability() == AuthenticatorSupportedOptions::ClientPinAvailability::kSupportedAndPinSet)
+        cborCmd = encodeMakeCredenitalRequestAsCBOR(requestData().hash, options, internalUVAvailability, PinParameters { pin::kProtocolVersion, m_pinAuth });
     else
-        cborCmd = encodeMakeCredenitalRequestAsCBOR(requestData().hash, options, m_info.options().userVerificationAvailability());
+        cborCmd = encodeMakeCredenitalRequestAsCBOR(requestData().hash, options, internalUVAvailability);
     driver().transact(WTFMove(cborCmd), [weakThis = makeWeakPtr(*this)](Vector<uint8_t>&& data) {
         ASSERT(RunLoop::isMain());
         if (!weakThis)
@@ -133,10 +139,14 @@ void CtapAuthenticator::getAssertion()
     ASSERT(!m_isDowngraded);
     Vector<uint8_t> cborCmd;
     auto& options = WTF::get<PublicKeyCredentialRequestOptions>(requestData().options);
-    if (m_info.options().clientPinAvailability() == AuthenticatorSupportedOptions::ClientPinAvailability::kSupportedAndPinSet && options.userVerification != UserVerificationRequirement::Discouraged)
-        cborCmd = encodeGetAssertionRequestAsCBOR(requestData().hash, options, m_info.options().userVerificationAvailability(), PinParameters { pin::kProtocolVersion, m_pinAuth });
+    auto internalUVAvailability = m_info.options().userVerificationAvailability();
+    // If UV is required, then either built-in uv or a pin will work.
+    if (internalUVAvailability == UVAvailability::kSupportedAndConfigured && options.userVerification != UserVerificationRequirement::Discouraged)
+        cborCmd = encodeGetAssertionRequestAsCBOR(requestData().hash, options, internalUVAvailability);
+    else if (m_info.options().clientPinAvailability() == AuthenticatorSupportedOptions::ClientPinAvailability::kSupportedAndPinSet && options.userVerification != UserVerificationRequirement::Discouraged)
+        cborCmd = encodeGetAssertionRequestAsCBOR(requestData().hash, options, internalUVAvailability, PinParameters { pin::kProtocolVersion, m_pinAuth });
     else
-        cborCmd = encodeGetAssertionRequestAsCBOR(requestData().hash, options, m_info.options().userVerificationAvailability());
+        cborCmd = encodeGetAssertionRequestAsCBOR(requestData().hash, options, internalUVAvailability);
     driver().transact(WTFMove(cborCmd), [weakThis = makeWeakPtr(*this)](Vector<uint8_t>&& data) {
         ASSERT(RunLoop::isMain());
         if (!weakThis)
