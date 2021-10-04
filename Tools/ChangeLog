@@ -1,3 +1,11 @@
+2021-10-04  Aakash Jain  <aakash_jain@apple.com>
+
+        Send EWS exception emails to bot watchers instead of Aakash
+
+        Unreviewed.
+
+        * CISupport/ews-build/master.cfg:
+
 2021-10-03  David Kilzer  <ddkilzer@apple.com>
 
         WTF::RetainPtr<> allows assignment of two pointer types that are not assignable
