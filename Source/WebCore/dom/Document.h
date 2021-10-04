@@ -216,6 +216,7 @@ class SelectorQueryCache;
 class SerializedScriptValue;
 class Settings;
 class SpeechRecognition;
+class StorageConnection;
 class StringCallback;
 class StyleSheet;
 class StyleSheetContents;

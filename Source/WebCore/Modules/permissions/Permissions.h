@@ -46,6 +46,7 @@ class Permissions : public RefCounted<Permissions> {
     WTF_MAKE_ISO_ALLOCATED(Permissions);
 public:
     static Ref<Permissions> create(Navigator&);
+    ~Permissions();
 
     Navigator* navigator();
     void query(JSC::Strong<JSC::JSObject>, DOMPromiseDeferred<IDLInterface<PermissionStatus>>&&);

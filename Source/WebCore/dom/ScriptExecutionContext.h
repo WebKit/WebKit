@@ -30,14 +30,10 @@
 #include "ActiveDOMObject.h"
 #include "CrossOriginMode.h"
 #include "DOMTimer.h"
-#include "PermissionController.h"
-#include "RTCDataChannelRemoteHandlerConnection.h"
-#include "ResourceLoaderOptions.h"
 #include "ScriptExecutionContextIdentifier.h"
 #include "SecurityContext.h"
-#include "ServiceWorkerTypes.h"
+#include "ServiceWorkerIdentifier.h"
 #include "Settings.h"
-#include "StorageConnection.h"
 #include <JavaScriptCore/ConsoleTypes.h>
 #include <JavaScriptCore/HandleTypes.h>
 #include <wtf/CrossThreadTask.h>
@@ -73,10 +69,13 @@ class EventTarget;
 class FontCache;
 class FontLoadRequest;
 class MessagePort;
+class PermissionController;
 class PublicURLManager;
 class RejectedPromiseTracker;
+class RTCDataChannelRemoteHandlerConnection;
 class ResourceRequest;
 class SocketProvider;
+enum class LoadedFromOpaqueSource : uint8_t;
 enum class ReferrerPolicy : uint8_t;
 enum class TaskSource : uint8_t;
 
@@ -117,11 +116,11 @@ public:
     virtual void disableWebAssembly(const String& errorMessage) = 0;
 
     virtual IDBClient::IDBConnectionProxy* idbConnectionProxy() = 0;
-    virtual RefPtr<PermissionController> permissionController() { return nullptr; }
+    virtual RefPtr<PermissionController> permissionController();
 
     virtual SocketProvider* socketProvider() = 0;
 
-    virtual RefPtr<RTCDataChannelRemoteHandlerConnection> createRTCDataChannelRemoteHandlerConnection() { return nullptr; }
+    virtual RefPtr<RTCDataChannelRemoteHandlerConnection> createRTCDataChannelRemoteHandlerConnection();
 
     virtual String resourceRequestIdentifier() const { return String(); };
 

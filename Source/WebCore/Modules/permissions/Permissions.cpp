@@ -58,6 +58,8 @@ Navigator* Permissions::navigator()
     return m_navigator.get();
 }
 
+Permissions::~Permissions() = default;
+
 void Permissions::query(JSC::Strong<JSC::JSObject> permissionDescriptorValue, DOMPromiseDeferred<IDLInterface<PermissionStatus>>&& promise)
 {
     // FIXME: support permissions in WorkerNavigator.

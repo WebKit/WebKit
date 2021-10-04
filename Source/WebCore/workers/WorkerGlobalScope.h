@@ -52,6 +52,7 @@ class CSSFontSelector;
 class CSSValuePool;
 class ContentSecurityPolicyResponseHeaders;
 class Crypto;
+class FileSystemStorageConnection;
 class FontFaceSet;
 class Performance;
 class ScheduledAction;
