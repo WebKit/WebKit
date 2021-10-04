@@ -289,10 +289,7 @@ static RetainPtr<NSArray> getAllLocalAuthenticatorCredentialsImpl(NSString *acce
         (__bridge id)kSecReturnAttributes: @YES,
         (__bridge id)kSecAttrApplicationLabel: credentialID,
         (__bridge id)kSecReturnPersistentRef : (__bridge id)kCFBooleanTrue,
-#if HAVE(DATA_PROTECTION_KEYCHAIN)
         (__bridge id)kSecUseDataProtectionKeychain: @YES
-#else
-        (__bridge id)kSecAttrNoLegacy: @YES
 #endif
     };
     CFTypeRef attributesArrayRef = nullptr;
