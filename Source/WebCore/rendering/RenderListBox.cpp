@@ -90,11 +90,6 @@ const int baselineAdjustment = 7;
 
 RenderListBox::RenderListBox(HTMLSelectElement& element, RenderStyle&& style)
     : RenderBlockFlow(element, WTFMove(style))
-    , m_optionsChanged(true)
-    , m_scrollToRevealSelectionAfterLayout(false)
-    , m_inAutoscroll(false)
-    , m_optionsWidth(0)
-    , m_indexOffset(0)
 {
     view().frameView().addScrollableArea(this);
 }

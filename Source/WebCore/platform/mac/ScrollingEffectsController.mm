@@ -315,7 +315,7 @@ bool ScrollingEffectsController::applyScrollDeltaWithStretching(const PlatformWh
     }
 
     if (!deltaToScroll.isZero())
-        m_client.immediateScrollByWithoutContentEdgeConstraints(deltaToScroll);
+        m_client.immediateScrollBy(deltaToScroll, ScrollClamping::Unclamped);
 
     bool canStartAnimation = false;
     if (m_momentumScrollInProgress) {
@@ -333,7 +333,7 @@ bool ScrollingEffectsController::applyScrollDeltaWithStretching(const PlatformWh
     LOG_WITH_STREAM(ScrollAnimations, stream << "ScrollingEffectsController::applyScrollDeltaWithStretching() - stretchScrollForce " << m_stretchScrollForce << " move delta " << delta << " dampedDelta " << dampedDelta);
 
     auto stretchAmount = m_client.stretchAmount();
-    m_client.immediateScrollByWithoutContentEdgeConstraints(dampedDelta - stretchAmount);
+    m_client.immediateScrollBy(dampedDelta - stretchAmount, ScrollClamping::Unclamped);
 
     return canStartAnimation;
 }
@@ -402,7 +402,7 @@ void ScrollingEffectsController::updateRubberBandAnimatingState(MonotonicTime cu
 
             LOG_WITH_STREAM(ScrollAnimations, stream << "ScrollingEffectsController::updateRubberBandAnimatingState() - rubberBandDelta " << rubberBandDelta << " stretched " << m_client.stretchAmount() << " moving by " << stretchDelta);
 
-            m_client.immediateScrollByWithoutContentEdgeConstraints(stretchDelta);
+            m_client.immediateScrollBy(stretchDelta, ScrollClamping::Unclamped);
 
             FloatSize newStretch = m_client.stretchAmount();
 

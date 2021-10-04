@@ -320,14 +320,9 @@ bool ScrollingTreeScrollingNodeDelegateMac::shouldRubberBandOnSide(BoxSide side)
     return true;
 }
 
-void ScrollingTreeScrollingNodeDelegateMac::immediateScrollBy(const FloatSize& delta)
+void ScrollingTreeScrollingNodeDelegateMac::immediateScrollBy(const FloatSize& delta, ScrollClamping clamping)
 {
-    scrollingNode().scrollBy(delta);
-}
-
-void ScrollingTreeScrollingNodeDelegateMac::immediateScrollByWithoutContentEdgeConstraints(const FloatSize& offset)
-{
-    scrollingNode().scrollBy(offset, ScrollClamping::Unclamped);
+    scrollingNode().scrollBy(delta, clamping);
 }
 
 void ScrollingTreeScrollingNodeDelegateMac::didStopRubberbandSnapAnimation()

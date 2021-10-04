@@ -85,8 +85,7 @@ private:
     ScrollBehaviorStatus scrollBehaviorStatus() const final { return m_scrollBehaviorStatus; }
 
     bool shouldRubberBandOnSide(BoxSide) const final;
-    void immediateScrollBy(const FloatSize&) final;
-    void immediateScrollByWithoutContentEdgeConstraints(const FloatSize&) final;
+    void immediateScrollBy(const FloatSize&, ScrollClamping = ScrollClamping::Clamped) final;
     void didStopRubberbandSnapAnimation() final;
     void rubberBandingStateChanged(bool) final;
     void adjustScrollPositionToBoundsIfNecessary() final;

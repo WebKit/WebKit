@@ -411,9 +411,9 @@ void AsyncScrollingCoordinator::reconcileScrollingState(FrameView& frameView, co
         }
     );
 
-    frameView.setConstrainsScrollingToContentEdge(false);
+    frameView.setScrollClamping(ScrollClamping::Unclamped);
     frameView.notifyScrollPositionChanged(roundedIntPoint(scrollPosition));
-    frameView.setConstrainsScrollingToContentEdge(true);
+    frameView.setScrollClamping(ScrollClamping::Clamped);
 
     frameView.setCurrentScrollType(previousScrollType);
 

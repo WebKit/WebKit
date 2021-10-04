@@ -68,8 +68,8 @@ public:
     virtual bool isListBox() const { return false; }
     virtual bool isPDFPlugin() const { return false; }
 
-    ScrollBehaviorStatus currentScrollBehaviorStatus() { return static_cast<ScrollBehaviorStatus>(m_currentScrollBehaviorStatus); }
-    void setScrollBehaviorStatus(ScrollBehaviorStatus status) { m_currentScrollBehaviorStatus = static_cast<unsigned>(status); }
+    ScrollBehaviorStatus currentScrollBehaviorStatus() { return m_currentScrollBehaviorStatus; }
+    void setScrollBehaviorStatus(ScrollBehaviorStatus status) { m_currentScrollBehaviorStatus = status; }
 
     WEBCORE_EXPORT bool scroll(ScrollDirection, ScrollGranularity, float multiplier = 1);
     WEBCORE_EXPORT void scrollToPositionWithAnimation(const FloatPoint&, ScrollClamping = ScrollClamping::Clamped);
@@ -111,15 +111,14 @@ public:
     virtual void didUpdateScroll() { }
 #endif
 
-    // Functions for controlling if you can scroll past the end of the document.
-    bool constrainsScrollingToContentEdge() const { return m_constrainsScrollingToContentEdge; }
-    void setConstrainsScrollingToContentEdge(bool constrainsScrollingToContentEdge) { m_constrainsScrollingToContentEdge = constrainsScrollingToContentEdge; }
+    ScrollClamping scrollClamping() const { return m_scrollClamping; }
+    void setScrollClamping(ScrollClamping clamping) { m_scrollClamping = clamping; }
 
     void setVerticalScrollElasticity(ScrollElasticity scrollElasticity) { m_verticalScrollElasticity = scrollElasticity; }
-    ScrollElasticity verticalScrollElasticity() const { return static_cast<ScrollElasticity>(m_verticalScrollElasticity); }
+    ScrollElasticity verticalScrollElasticity() const { return m_verticalScrollElasticity; }
 
     void setHorizontalScrollElasticity(ScrollElasticity scrollElasticity) { m_horizontalScrollElasticity = scrollElasticity; }
-    ScrollElasticity horizontalScrollElasticity() const { return static_cast<ScrollElasticity>(m_horizontalScrollElasticity); }
+    ScrollElasticity horizontalScrollElasticity() const { return m_horizontalScrollElasticity; }
 
     virtual ScrollbarMode horizontalScrollbarMode() const { return ScrollbarAuto; }
     virtual ScrollbarMode verticalScrollbarMode() const { return ScrollbarAuto; }
@@ -167,7 +166,7 @@ public:
 
     bool hasOverlayScrollbars() const;
     WEBCORE_EXPORT virtual void setScrollbarOverlayStyle(ScrollbarOverlayStyle);
-    ScrollbarOverlayStyle scrollbarOverlayStyle() const { return static_cast<ScrollbarOverlayStyle>(m_scrollbarOverlayStyle); }
+    ScrollbarOverlayStyle scrollbarOverlayStyle() const { return m_scrollbarOverlayStyle; }
     void invalidateScrollbars();
     bool useDarkAppearanceForScrollbars() const;
 
@@ -250,8 +249,8 @@ public:
     WEBCORE_EXPORT virtual bool scrolledToLeft() const;
     WEBCORE_EXPORT virtual bool scrolledToRight() const;
 
-    ScrollType currentScrollType() const { return static_cast<ScrollType>(m_currentScrollType); }
-    void setCurrentScrollType(ScrollType scrollType) { m_currentScrollType = static_cast<unsigned>(scrollType); }
+    ScrollType currentScrollType() const { return m_currentScrollType; }
+    void setCurrentScrollType(ScrollType scrollType) { m_currentScrollType = scrollType; }
 
     bool scrollShouldClearLatchedState() const { return m_scrollShouldClearLatchedState; }
     void setScrollShouldClearLatchedState(bool shouldClear) { m_scrollShouldClearLatchedState = shouldClear; }
@@ -396,19 +395,19 @@ private:
     // vertical-rl / rtl            YES                     YES
     IntPoint m_scrollOrigin;
 
-    unsigned m_constrainsScrollingToContentEdge : 1;
+    ScrollClamping m_scrollClamping { ScrollClamping::Clamped };
 
-    unsigned m_inLiveResize : 1;
+    ScrollElasticity m_verticalScrollElasticity { ScrollElasticityNone };
+    ScrollElasticity m_horizontalScrollElasticity { ScrollElasticityNone };
 
-    unsigned m_verticalScrollElasticity : 2; // ScrollElasticity
-    unsigned m_horizontalScrollElasticity : 2; // ScrollElasticity
+    ScrollbarOverlayStyle m_scrollbarOverlayStyle { ScrollbarOverlayStyle::ScrollbarOverlayStyleDefault };
 
-    unsigned m_scrollbarOverlayStyle : 2; // ScrollbarOverlayStyle
+    ScrollType m_currentScrollType { ScrollType::User };
+    ScrollBehaviorStatus m_currentScrollBehaviorStatus { ScrollBehaviorStatus::NotInAnimation };
 
-    unsigned m_scrollOriginChanged : 1;
-    unsigned m_currentScrollType : 1; // ScrollType
-    unsigned m_scrollShouldClearLatchedState : 1;
-    unsigned m_currentScrollBehaviorStatus : 1;
+    bool m_inLiveResize { false };
+    bool m_scrollOriginChanged { false };
+    bool m_scrollShouldClearLatchedState { false };
 };
 
 WTF::TextStream& operator<<(WTF::TextStream&, const ScrollableArea&);

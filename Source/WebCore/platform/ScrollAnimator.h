@@ -147,8 +147,7 @@ private:
     void setScrollBehaviorStatus(ScrollBehaviorStatus) final;
     ScrollBehaviorStatus scrollBehaviorStatus() const final;
 
-    void immediateScrollByWithoutContentEdgeConstraints(const FloatSize&) final;
-    void immediateScrollBy(const FloatSize&) final;
+    void immediateScrollBy(const FloatSize&, ScrollClamping = ScrollClamping::Clamped) final;
     void adjustScrollPositionToBoundsIfNecessary() final;
 
 #if HAVE(RUBBER_BANDING)

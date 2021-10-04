@@ -412,12 +412,12 @@ ScrollPosition ScrollView::maximumScrollPosition() const
     return maximumPosition;
 }
 
-ScrollPosition ScrollView::adjustScrollPositionWithinRange(const ScrollPosition& scrollPoint) const
+ScrollPosition ScrollView::adjustScrollPositionWithinRange(const ScrollPosition& scrollPosition) const
 {
-    if (!constrainsScrollingToContentEdge() || m_allowsUnclampedScrollPosition)
-        return scrollPoint;
+    if (scrollClamping() == ScrollClamping::Unclamped || m_allowsUnclampedScrollPosition)
+        return scrollPosition;
 
-    return scrollPoint.constrainedBetween(minimumScrollPosition(), maximumScrollPosition());
+    return scrollPosition.constrainedBetween(minimumScrollPosition(), maximumScrollPosition());
 }
 
 ScrollPosition ScrollView::documentScrollPositionRelativeToViewOrigin() const
@@ -434,10 +434,10 @@ ScrollPosition ScrollView::documentScrollPositionRelativeToScrollableAreaOrigin(
 
 void ScrollView::setScrollOffset(const ScrollOffset& offset)
 {
-    LOG_WITH_STREAM(Scrolling, stream << "\nScrollView::setScrollOffset " << offset << " constrains " << constrainsScrollingToContentEdge());
+    LOG_WITH_STREAM(Scrolling, stream << "\nScrollView::setScrollOffset " << offset << " clamping " << scrollClamping());
 
-    IntPoint constrainedOffset = offset;
-    if (constrainsScrollingToContentEdge())
+    auto constrainedOffset = offset;
+    if (scrollClamping() == ScrollClamping::Clamped)
         constrainedOffset = constrainedOffset.constrainedBetween(minimumScrollOffset(), maximumScrollOffset());
 
     scrollTo(scrollPositionFromOffset(constrainedOffset));

@@ -1849,14 +1849,14 @@ ExceptionOr<void> Internals::setScrollViewPosition(int x, int y)
         return Exception { InvalidAccessError };
 
     auto& frameView = *document->view();
-    bool constrainsScrollingToContentEdgeOldValue = frameView.constrainsScrollingToContentEdge();
+    auto oldClamping = frameView.scrollClamping();
     bool scrollbarsSuppressedOldValue = frameView.scrollbarsSuppressed();
 
-    frameView.setConstrainsScrollingToContentEdge(false);
+    frameView.setScrollClamping(ScrollClamping::Unclamped);
     frameView.setScrollbarsSuppressed(false);
     frameView.setScrollOffsetFromInternals({ x, y });
     frameView.setScrollbarsSuppressed(scrollbarsSuppressedOldValue);
-    frameView.setConstrainsScrollingToContentEdge(constrainsScrollingToContentEdgeOldValue);
+    frameView.setScrollClamping(oldClamping);
 
     return { };
 }

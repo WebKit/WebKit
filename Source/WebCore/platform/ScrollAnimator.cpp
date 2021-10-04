@@ -317,39 +317,35 @@ bool ScrollAnimator::isPinnedOnSide(BoxSide side) const
 
 void ScrollAnimator::adjustScrollPositionToBoundsIfNecessary()
 {
-    bool currentlyConstrainsToContentEdge = m_scrollableArea.constrainsScrollingToContentEdge();
-    m_scrollableArea.setConstrainsScrollingToContentEdge(true);
+    auto previousClamping = m_scrollableArea.scrollClamping();
+    m_scrollableArea.setScrollClamping(ScrollClamping::Clamped);
 
     auto currentScrollPosition = m_scrollableArea.scrollPosition();
     auto constrainedPosition = m_scrollableArea.constrainScrollPosition(currentScrollPosition);
     immediateScrollBy(constrainedPosition - currentScrollPosition);
 
-    m_scrollableArea.setConstrainsScrollingToContentEdge(currentlyConstrainsToContentEdge);
+    m_scrollableArea.setScrollClamping(previousClamping);
 }
 
 FloatPoint ScrollAnimator::adjustScrollPositionIfNecessary(const FloatPoint& position) const
 {
-    if (!m_scrollableArea.constrainsScrollingToContentEdge())
+    if (m_scrollableArea.scrollClamping() == ScrollClamping::Unclamped)
         return position;
 
     return m_scrollableArea.constrainScrollPosition(ScrollPosition(position));
 }
 
-void ScrollAnimator::immediateScrollByWithoutContentEdgeConstraints(const FloatSize& delta)
+void ScrollAnimator::immediateScrollBy(const FloatSize& delta, ScrollClamping clamping)
 {
-    m_scrollableArea.setConstrainsScrollingToContentEdge(false);
-    immediateScrollBy(delta);
-    m_scrollableArea.setConstrainsScrollingToContentEdge(true);
-}
+    auto previousClamping = m_scrollableArea.scrollClamping();
+    m_scrollableArea.setScrollClamping(clamping);
 
-void ScrollAnimator::immediateScrollBy(const FloatSize& delta)
-{
-    FloatPoint currentPosition = this->currentPosition();
-    FloatPoint newPosition = adjustScrollPositionIfNecessary(currentPosition + delta);
-    if (newPosition == currentPosition)
-        return;
+    auto currentPosition = this->currentPosition();
+    auto newPosition = adjustScrollPositionIfNecessary(currentPosition + delta);
+    if (newPosition != currentPosition)
+        setCurrentPosition(newPosition, NotifyScrollableArea::Yes);
 
-    setCurrentPosition(newPosition, NotifyScrollableArea::Yes);
+    m_scrollableArea.setScrollClamping(previousClamping);
 }
 
 ScrollExtents ScrollAnimator::scrollExtents() const

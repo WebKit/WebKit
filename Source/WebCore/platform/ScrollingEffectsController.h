@@ -85,9 +85,7 @@ public:
     virtual void setScrollBehaviorStatus(ScrollBehaviorStatus) = 0;
     virtual ScrollBehaviorStatus scrollBehaviorStatus() const = 0;
 
-    // FIXME: use ScrollClamping to collapse these to one.
-    virtual void immediateScrollBy(const FloatSize&) = 0;
-    virtual void immediateScrollByWithoutContentEdgeConstraints(const FloatSize&) = 0;
+    virtual void immediateScrollBy(const FloatSize&, ScrollClamping = ScrollClamping::Clamped) = 0;
 
     // If the current scroll position is within the overhang area, this function will cause
     // the page to scroll to the nearest boundary point.
@@ -212,7 +210,6 @@ private:
 #endif
 
     void startOrStopAnimationCallbacks();
-    void scrollToOffsetForAnimation(const FloatPoint& scrollOffset);
 
     // ScrollAnimationClient
     void scrollAnimationDidUpdate(ScrollAnimation&, const FloatPoint& /* currentOffset */) final;

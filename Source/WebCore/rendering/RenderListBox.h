@@ -173,16 +173,18 @@ private:
 
     bool shouldPlaceVerticalScrollbarOnLeft() const final { return RenderBlockFlow::shouldPlaceVerticalScrollbarOnLeft(); }
 
-    bool m_optionsChanged;
-    bool m_scrollToRevealSelectionAfterLayout;
-    bool m_inAutoscroll;
-    int m_optionsWidth;
-    int m_indexOffset;
+    bool m_optionsChanged { true };
+    bool m_scrollToRevealSelectionAfterLayout { false };
+    bool m_inAutoscroll { false };
+    int m_optionsWidth { 0 };
+
+    RefPtr<Scrollbar> m_vBar;
+
+    int m_indexOffset { 0 };
 
     std::optional<int> m_indexOfFirstVisibleItemInsidePaddingTopArea;
     std::optional<int> m_indexOfFirstVisibleItemInsidePaddingBottomArea;
 
-    RefPtr<Scrollbar> m_vBar;
 };
 
 } // namepace WebCore

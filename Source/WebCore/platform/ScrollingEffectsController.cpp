@@ -307,19 +307,14 @@ void ScrollingEffectsController::updateKeyboardScrollingAnimatingState(Monotonic
     m_client.keyboardScrollingAnimator()->updateKeyboardScrollPosition(currentTime);
 }
 
-void ScrollingEffectsController::scrollToOffsetForAnimation(const FloatPoint& scrollOffset)
-{
-    auto currentOffset = m_client.scrollOffset();
-    auto scrollDelta = scrollOffset - currentOffset;
-    m_client.immediateScrollBy(scrollDelta);
-}
-
 void ScrollingEffectsController::scrollAnimationDidUpdate(ScrollAnimation& animation, const FloatPoint& currentOffset)
 {
-    LOG_WITH_STREAM(ScrollAnimations, stream << "ScrollingEffectsController " << this << " scrollAnimationDidUpdate " << animation << " (main thread " << isMainThread() << ")");
+    auto scrollDelta = currentOffset - m_client.scrollOffset();
+
+    LOG_WITH_STREAM(ScrollAnimations, stream << "ScrollingEffectsController " << this << " scrollAnimationDidUpdate " << animation << " (main thread " << isMainThread() << ") scrolling by " << scrollDelta);
     UNUSED_PARAM(animation);
 
-    scrollToOffsetForAnimation(currentOffset);
+    m_client.immediateScrollBy(scrollDelta);
 }
 
 void ScrollingEffectsController::scrollAnimationWillStart(ScrollAnimation& animation)

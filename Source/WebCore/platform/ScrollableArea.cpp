@@ -52,24 +52,12 @@ struct SameSizeAsScrollableArea {
 #endif
     void* pointer[3];
     IntPoint origin;
-    unsigned bitfields : 16;
+    bool bytes[9];
 };
 
 COMPILE_ASSERT(sizeof(ScrollableArea) == sizeof(SameSizeAsScrollableArea), ScrollableArea_should_stay_small);
 
-ScrollableArea::ScrollableArea()
-    : m_constrainsScrollingToContentEdge(true)
-    , m_inLiveResize(false)
-    , m_verticalScrollElasticity(ScrollElasticityNone)
-    , m_horizontalScrollElasticity(ScrollElasticityNone)
-    , m_scrollbarOverlayStyle(ScrollbarOverlayStyleDefault)
-    , m_scrollOriginChanged(false)
-    , m_currentScrollType(static_cast<unsigned>(ScrollType::User))
-    , m_scrollShouldClearLatchedState(false)
-    , m_currentScrollBehaviorStatus(static_cast<unsigned>(ScrollBehaviorStatus::NotInAnimation))
-{
-}
-
+ScrollableArea::ScrollableArea() = default;
 ScrollableArea::~ScrollableArea() = default;
 
 ScrollAnimator& ScrollableArea::scrollAnimator() const
