@@ -31,6 +31,15 @@
 #error This tests TypeCastsCocoa.h with ARC disabled.
 #endif
 
+#if !__has_feature(objc_arc) && PLATFORM(IOS_FAMILY_SIMULATOR)
+// FIXME: checked_objc_cast<> on iOS Simulator creates autoreleased objects in these tests under MRR.
+#define TEST_WTF_BEGIN_AUTORELEASEPOOL @autoreleasepool {
+#define TEST_WTF_END_AUTORELEASEPOOL }
+#else
+#define TEST_WTF_BEGIN_AUTORELEASEPOOL
+#define TEST_WTF_END_AUTORELEASEPOOL
+#endif
+
 @interface MyObjectSubtype : NSObject
 @end
 
@@ -116,22 +125,28 @@ TEST(TypeCastsCocoa, checked_objc_cast)
     @autoreleasepool {
         auto objectNS = adoptNS((id)[[NSString alloc] initWithFormat:@"%s", helloWorldCString]);
         auto objectNSPtr = reinterpret_cast<uintptr_t>(objectNS.get());
+TEST_WTF_BEGIN_AUTORELEASEPOOL
         EXPECT_EQ(objectNS.get(), checked_objc_cast<NSString>((__bridge id)(CFTypeRef)objectNSPtr));
         EXPECT_EQ(objectNS.get(), checked_objc_cast<NSObject>((__bridge id)(CFTypeRef)objectNSPtr));
+TEST_WTF_END_AUTORELEASEPOOL
         EXPECT_EQ(1L, CFGetRetainCount((CFTypeRef)objectNSPtr));
     }
 
     @autoreleasepool {
         auto objectNS = adoptNS((NSObject *)[[NSString alloc] initWithFormat:@"%s", helloWorldCString]);
         auto objectNSPtr = reinterpret_cast<uintptr_t>(objectNS.get());
+TEST_WTF_BEGIN_AUTORELEASEPOOL
         EXPECT_EQ(objectNS.get(), checked_objc_cast<NSString>((__bridge NSObject *)(CFTypeRef)objectNSPtr));
+TEST_WTF_END_AUTORELEASEPOOL
         EXPECT_EQ(1L, CFGetRetainCount((CFTypeRef)objectNSPtr));
     }
 
     @autoreleasepool {
         auto objectNS = adoptNS([[NSString alloc] initWithFormat:@"%s", helloWorldCString]);
         auto objectNSPtr = reinterpret_cast<uintptr_t>(objectNS.get());
+TEST_WTF_BEGIN_AUTORELEASEPOOL
         EXPECT_EQ(objectNS.get(), checked_objc_cast<NSObject>((__bridge NSString *)(CFTypeRef)objectNSPtr));
+TEST_WTF_END_AUTORELEASEPOOL
         EXPECT_EQ(1L, CFGetRetainCount((CFTypeRef)objectNSPtr));
     }
 }

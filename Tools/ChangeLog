@@ -1,3 +1,16 @@
+2021-10-04  David Kilzer  <ddkilzer@apple.com>
+
+        Follow-up: WTF::RetainPtr<> allows assignment of two pointer types that are not assignable
+        <https://webkit.org/b/230406>
+        <rdar://problem/83241893>
+
+        Unreviewed attempt to fix api-ios tests.
+
+        * TestWebKitAPI/Tests/WTF/cocoa/TypeCastsCocoa.mm:
+        (TestWebKitAPI::TEST):
+        - Work around TestWTF.TypeCastsCocoa.checked_objc_cast test
+          failures on iOS Simulator by using @autoreleasepool.
+
 2021-10-04  John Pascoe  <j_pascoe@apple.com>
 
         [WebAuthn] Prefer internal user verification if available over pin entry.
