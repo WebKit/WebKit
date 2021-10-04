@@ -1,3 +1,15 @@
+2021-10-04  Chris Dumez  <cdumez@apple.com>
+
+        Use isolated NSURLSessions for each first party registrable domain
+        https://bugs.webkit.org/show_bug.cgi?id=230750
+        <rdar://83159358>
+
+        Reviewed by Alex Christensen.
+
+        Rebaseline WPT test that is now passing more checks.
+
+        * web-platform-tests/fetch/connection-pool/network-partition-key-expected.txt:
+
 2021-10-04  Sergio Villar Senin  <svillar@igalia.com>
 
         [css-flexbox] Resync WPT tests

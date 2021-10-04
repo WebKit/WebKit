@@ -1,3 +1,24 @@
+2021-10-04  Chris Dumez  <cdumez@apple.com>
+
+        Use isolated NSURLSessions for each first party registrable domain
+        https://bugs.webkit.org/show_bug.cgi?id=230750
+        <rdar://83159358>
+
+        Reviewed by Alex Christensen.
+
+        Previously would use up to 10 isolated NSURLSessions only for domains marked as prevalent
+        by ITP *and* that the user interacts with as first party website. We now use different
+        isolated NSURLSession for each top-level registrable domain, not matter their ITP status.
+        This significantly improves privacy.
+
+        To avoid having too many NSURLSession, we clear the ones that haven't been used in the
+        last 10 minutes, every time we add a new one.
+
+        * NetworkProcess/cocoa/NetworkSessionCocoa.h:
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (WebKit::NetworkSessionCocoa::sessionWrapperForTask):
+        (WebKit::SessionSet::isolatedSession):
+
 2021-10-04  Tim Horton  <timothy_horton@apple.com>
 
         process-entitlements should fail if a subcommand fails
