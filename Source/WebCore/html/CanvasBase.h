@@ -28,6 +28,7 @@
 #include "IntSize.h"
 #include <wtf/HashSet.h>
 #include <wtf/TypeCasts.h>
+#include <wtf/WeakHashSet.h>
 
 namespace WebCore {
 
@@ -52,6 +53,13 @@ public:
     virtual void canvasChanged(CanvasBase&, const std::optional<FloatRect>& changedRect) = 0;
     virtual void canvasResized(CanvasBase&) = 0;
     virtual void canvasDestroyed(CanvasBase&) = 0;
+};
+
+class CanvasDisplayBufferObserver : public CanMakeWeakPtr<CanvasDisplayBufferObserver> {
+public:
+    virtual ~CanvasDisplayBufferObserver() = default;
+
+    virtual void canvasDisplayBufferPrepared(CanvasBase&) = 0;
 };
 
 class CanvasBase {
@@ -92,6 +100,10 @@ public:
     void notifyObserversCanvasChanged(const std::optional<FloatRect>&);
     void notifyObserversCanvasResized();
     void notifyObserversCanvasDestroyed(); // Must be called in destruction before clearing m_context.
+    void addDisplayBufferObserver(CanvasDisplayBufferObserver&);
+    void removeDisplayBufferObserver(CanvasDisplayBufferObserver&);
+    void notifyObserversCanvasDisplayBufferPrepared();
+    bool hasDisplayBufferObservers() const { return !m_displayBufferObservers.computesEmpty(); }
 
     HashSet<Element*> cssCanvasClients() const;
 
@@ -132,6 +144,7 @@ private:
     bool m_didNotifyObserversCanvasDestroyed { false };
 #endif
     HashSet<CanvasObserver*> m_observers;
+    WeakHashSet<CanvasDisplayBufferObserver> m_displayBufferObservers;
 };
 
 } // namespace WebCore

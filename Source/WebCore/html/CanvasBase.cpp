@@ -162,6 +162,22 @@ void CanvasBase::notifyObserversCanvasDestroyed()
 #endif
 }
 
+void CanvasBase::addDisplayBufferObserver(CanvasDisplayBufferObserver& observer)
+{
+    m_displayBufferObservers.add(&observer);
+}
+
+void CanvasBase::removeDisplayBufferObserver(CanvasDisplayBufferObserver& observer)
+{
+    m_displayBufferObservers.remove(observer);
+}
+
+void CanvasBase::notifyObserversCanvasDisplayBufferPrepared()
+{
+    for (auto& observer : m_displayBufferObservers)
+        observer.canvasDisplayBufferPrepared(*this);
+}
+
 HashSet<Element*> CanvasBase::cssCanvasClients() const
 {
     HashSet<Element*> cssCanvasClients;
