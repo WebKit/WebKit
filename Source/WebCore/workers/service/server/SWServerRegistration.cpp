@@ -42,12 +42,13 @@ static ServiceWorkerRegistrationIdentifier generateServiceWorkerRegistrationIden
     return ServiceWorkerRegistrationIdentifier::generate();
 }
 
-SWServerRegistration::SWServerRegistration(SWServer& server, const ServiceWorkerRegistrationKey& key, ServiceWorkerUpdateViaCache updateViaCache, const URL& scopeURL, const URL& scriptURL)
+SWServerRegistration::SWServerRegistration(SWServer& server, const ServiceWorkerRegistrationKey& key, ServiceWorkerUpdateViaCache updateViaCache, const URL& scopeURL, const URL& scriptURL, std::optional<ServiceWorkerClientIdentifier> serviceWorkerPageIdentifier)
     : m_identifier(generateServiceWorkerRegistrationIdentifier())
     , m_registrationKey(key)
     , m_updateViaCache(updateViaCache)
     , m_scopeURL(scopeURL)
     , m_scriptURL(scriptURL)
+    , m_serviceWorkerPageIdentifier(serviceWorkerPageIdentifier)
     , m_server(server)
     , m_creationTime(MonotonicTime::now())
     , m_softUpdateTimer { *this, &SWServerRegistration::softUpdate }

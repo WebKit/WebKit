@@ -229,6 +229,7 @@ private:
     void dispatchDidClearWindowObjectInWorld(WebCore::DOMWrapperWorld&) final;
     
     void dispatchGlobalObjectAvailable(WebCore::DOMWrapperWorld&) final;
+    void dispatchServiceWorkerGlobalObjectAvailable(WebCore::DOMWrapperWorld&) final;
     void dispatchWillDisconnectDOMWindowExtensionFromGlobalObject(WebCore::DOMWindowExtension*) final;
     void dispatchDidReconnectDOMWindowExtensionToGlobalObject(WebCore::DOMWindowExtension*) final;
     void dispatchWillDestroyGlobalObjectForDOMWindowExtension(WebCore::DOMWindowExtension*) final;

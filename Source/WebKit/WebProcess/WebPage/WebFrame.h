@@ -115,6 +115,7 @@ public:
     Ref<API::Array> childFrames();
     JSGlobalContextRef jsContext();
     JSGlobalContextRef jsContextForWorld(InjectedBundleScriptWorld*);
+    JSGlobalContextRef jsContextForServiceWorkerWorld(InjectedBundleScriptWorld*);
     WebCore::IntRect contentBounds() const;
     WebCore::IntRect visibleContentBounds() const;
     WebCore::IntRect visibleContentBoundsExcludingScrollbars() const;

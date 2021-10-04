@@ -6402,6 +6402,8 @@ bool Document::isSecureContext() const
         return true;
     if (!RuntimeEnabledFeatures::sharedFeatures().secureContextChecksEnabled())
         return true;
+    if (page() && page()->isServiceWorkerPage())
+        return true;
 
     for (auto* frame = m_frame->tree().parent(); frame; frame = frame->tree().parent()) {
         if (!isDocumentSecure(*frame->document()))

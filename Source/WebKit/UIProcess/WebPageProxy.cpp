@@ -1534,6 +1534,7 @@ void WebPageProxy::loadDataWithNavigationShared(Ref<WebProcessProxy>&& process, 
     loadParameters.websitePolicies = WTFMove(websitePolicies);
     loadParameters.shouldOpenExternalURLsPolicy = shouldOpenExternalURLsPolicy;
     loadParameters.isNavigatingToAppBoundDomain = isNavigatingToAppBoundDomain;
+    loadParameters.isServiceWorkerLoad = m_isServiceWorkerPage;
     addPlatformLoadParameters(process, loadParameters);
 
     process->markProcessAsRecentlyUsed();
@@ -7961,6 +7962,7 @@ void WebPageProxy::resetStateAfterProcessExited(ProcessTerminationReason termina
 
     m_hasRunningProcess = false;
     m_areActiveDOMObjectsAndAnimationsSuspended = false;
+    m_isServiceWorkerPage = false;
 
     m_userScriptsNotified = false;
 
@@ -10691,6 +10693,19 @@ void WebPageProxy::setIsTakingSnapshotsForApplicationSuspension(bool isTakingSna
 void WebPageProxy::setNeedsDOMWindowResizeEvent()
 {
     send(Messages::WebPage::SetNeedsDOMWindowResizeEvent());
+}
+
+void WebPageProxy::loadServiceWorker(const URL& url)
+{
+    if (m_isClosed)
+        return;
+
+    WEBPAGEPROXY_RELEASE_LOG(Loading, "loadServiceWorker:");
+
+    m_isServiceWorkerPage = true;
+    auto securityOriginURL = SecurityOriginData::fromURL(url).toString();
+    CString html = makeString("<script>navigator.serviceWorker.register('", url.string().utf8().data(), "');</script>").utf8();
+    loadData({ reinterpret_cast<const uint8_t*>(html.data()), html.length() }, "text/html"_s, "UTF-8"_s, securityOriginURL);
 }
 
 #if !PLATFORM(IOS_FAMILY)

@@ -323,6 +323,7 @@ public:
     virtual bool shouldPaintBrokenImage(const URL&) const { return true; }
 
     virtual void dispatchGlobalObjectAvailable(DOMWrapperWorld&) { }
+    virtual void dispatchServiceWorkerGlobalObjectAvailable(DOMWrapperWorld&) { }
     virtual void dispatchWillDisconnectDOMWindowExtensionFromGlobalObject(DOMWindowExtension*) { }
     virtual void dispatchDidReconnectDOMWindowExtensionToGlobalObject(DOMWindowExtension*) { }
     virtual void dispatchWillDestroyGlobalObjectForDOMWindowExtension(DOMWindowExtension*) { }

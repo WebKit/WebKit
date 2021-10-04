@@ -101,6 +101,7 @@
 #include "markup.h"
 #include "npruntime_impl.h"
 #include "runtime_root.h"
+#include <JavaScriptCore/APICast.h>
 #include <JavaScriptCore/RegularExpression.h>
 #include <wtf/HexNumber.h>
 #include <wtf/RefCountedLeakCounter.h>
@@ -110,6 +111,11 @@
 
 #if ENABLE(DATA_DETECTION)
 #include "DataDetectionResultsStorage.h"
+#endif
+
+#if ENABLE(SERVICE_WORKER)
+#include "JSServiceWorkerGlobalScope.h"
+#include "ServiceWorkerGlobalScope.h"
 #endif
 
 #define FRAME_RELEASE_LOG_ERROR(channel, fmt, ...) RELEASE_LOG_ERROR(channel, "%p - Frame::" fmt, this, ##__VA_ARGS__)
@@ -1136,6 +1142,18 @@ void Frame::resetScript()
 {
     resetWindowProxy();
     m_script = makeUniqueRef<ScriptController>(*this);
+}
+
+Frame* Frame::fromJSContext(JSContextRef context)
+{
+    JSC::JSGlobalObject* globalObjectObj = toJS(context);
+    if (auto* window = JSC::jsDynamicCast<JSDOMWindow*>(globalObjectObj->vm(), globalObjectObj))
+        return window->wrapped().frame();
+#if ENABLE(SERVICE_WORKER)
+    if (auto* serviceWorkerGlobalScope = JSC::jsDynamicCast<JSServiceWorkerGlobalScope*>(globalObjectObj->vm(), globalObjectObj))
+        return serviceWorkerGlobalScope->wrapped().serviceWorkerPage() ? &serviceWorkerGlobalScope->wrapped().serviceWorkerPage()->mainFrame() : nullptr;
+#endif
+    return nullptr;
 }
 
 #if ENABLE(DATA_DETECTION)

@@ -556,6 +556,8 @@ public:
     void remoteInspectorInformationDidChange();
 #endif
 
+    void loadServiceWorker(const URL&);
+
 #if ENABLE(FULLSCREEN_API)
     WebFullScreenManagerProxy* fullScreenManager();
 
@@ -1934,6 +1936,8 @@ public:
     bool acceptsFirstMouse(int eventNumber, const WebMouseEvent&);
 #endif
 
+    bool isServiceWorkerPage() const { return m_isServiceWorkerPage; }
+
     void dispatchWheelEventWithoutScrolling(const WebWheelEvent&, CompletionHandler<void(bool)>&&);
 
 #if ENABLE(IMAGE_ANALYSIS) && ENABLE(CONTEXT_MENUS)
@@ -3005,6 +3009,7 @@ private:
 
     bool m_needsFontAttributes { false };
     bool m_mayHaveUniversalFileReadSandboxExtension { false };
+    bool m_isServiceWorkerPage { false };
 
     RunLoop::Timer<WebPageProxy> m_tryCloseTimeoutTimer;
 

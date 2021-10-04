@@ -719,12 +719,17 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
 - (WKNavigation *)loadRequest:(NSURLRequest *)request
 {
     THROW_IF_SUSPENDED;
+    if (_page->isServiceWorkerPage())
+        [NSException raise:NSInternalInconsistencyException format:@"The WKWebView was used to load a service worker"];
     return wrapper(_page->loadRequest(request));
 }
 
 - (WKNavigation *)loadFileURL:(NSURL *)URL allowingReadAccessToURL:(NSURL *)readAccessURL
 {
     THROW_IF_SUSPENDED;
+    if (_page->isServiceWorkerPage())
+        [NSException raise:NSInternalInconsistencyException format:@"The WKWebView was used to load a service worker"];
+
     if (![URL isFileURL])
         [NSException raise:NSInvalidArgumentException format:@"%@ is not a file URL", URL];
 
@@ -745,6 +750,9 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
 - (WKNavigation *)loadData:(NSData *)data MIMEType:(NSString *)MIMEType characterEncodingName:(NSString *)characterEncodingName baseURL:(NSURL *)baseURL
 {
     THROW_IF_SUSPENDED;
+    if (_page->isServiceWorkerPage())
+        [NSException raise:NSInternalInconsistencyException format:@"The WKWebView was used to load a service worker"];
+
     return wrapper(_page->loadData({ static_cast<const uint8_t*>(data.bytes), data.length }, MIMEType, characterEncodingName, baseURL.absoluteString));
 }
 
@@ -2385,6 +2393,15 @@ static void convertAndAddHighlight(Vector<Ref<WebKit::SharedMemory>>& buffers, N
         break;
     }
     return wrapper(_page->loadRequest(request, policy));
+}
+
+- (void)_loadServiceWorker:(NSURL *)url
+{
+    THROW_IF_SUSPENDED;
+    if (_page->isServiceWorkerPage())
+        [NSException raise:NSInternalInconsistencyException format:@"The WKWebView was already used to load a service worker"];
+
+    _page->loadServiceWorker(url);
 }
 
 - (void)_grantAccessToAssetServices

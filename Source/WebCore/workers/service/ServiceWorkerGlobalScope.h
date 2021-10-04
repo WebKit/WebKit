@@ -37,6 +37,7 @@ namespace WebCore {
 
 class DeferredPromise;
 class ExtendableEvent;
+class Page;
 struct ServiceWorkerClientData;
 class ServiceWorkerClient;
 class ServiceWorkerClients;
@@ -76,9 +77,12 @@ public:
     const CertificateInfo& certificateInfo() const { return m_contextData.certificateInfo; }
 
     FetchOptions::Destination destination() const final { return FetchOptions::Destination::Serviceworker; }
+
+    WEBCORE_EXPORT Page* serviceWorkerPage();
     
 private:
     ServiceWorkerGlobalScope(ServiceWorkerContextData&&, ServiceWorkerData&&, const WorkerParameters&, Ref<SecurityOrigin>&&, ServiceWorkerThread&, Ref<SecurityOrigin>&& topOrigin, IDBClient::IDBConnectionProxy*, SocketProvider*);
+    void notifyServiceWorkerPageOfCreationIfNecessary();
 
     bool hasPendingEvents() const { return !m_extendedEvents.isEmpty(); }
 

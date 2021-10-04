@@ -1,3 +1,25 @@
+2021-10-04  Chris Dumez  <cdumez@apple.com>
+
+        Add SPI to launch a service service worker in a WKWebView and expose service worker to injected bundle
+        https://bugs.webkit.org/show_bug.cgi?id=231045
+        <rdar://problem/83744069>
+
+        Reviewed by Geoff Garen.
+
+        Add API test coverage.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/ServiceWorkerBasic.mm:
+        (-[ServiceWorkerSchemeHandler initWithBytes:]):
+        (-[ServiceWorkerSchemeHandler addMappingFromURLString:toData:]):
+        (-[ServiceWorkerSchemeHandler webView:startURLSchemeTask:]):
+        (-[ServiceWorkerSchemeHandler webView:stopURLSchemeTask:]):
+        (-[ServiceWorkerPageRemoteObject serviceWorkerGlobalObjectIsAvailable]):
+        * TestWebKitAPI/Tests/WebKitCocoa/ServiceWorkerPagePlugIn.mm: Added.
+        (-[ServiceWorkerPagePlugIn webProcessPlugInBrowserContextController:serviceWorkerGlobalObjectIsAvailableForFrame:inScriptWorld:]):
+        (-[ServiceWorkerPagePlugIn webProcessPlugIn:didCreateBrowserContextController:]):
+        * TestWebKitAPI/Tests/WebKitCocoa/ServiceWorkerPageProtocol.h: Added.
+
 2021-10-04  David Kilzer  <ddkilzer@apple.com>
 
         Follow-up: WTF::RetainPtr<> allows assignment of two pointer types that are not assignable

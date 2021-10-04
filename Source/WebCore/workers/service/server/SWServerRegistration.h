@@ -52,7 +52,7 @@ enum class IsAppInitiated : bool { No, Yes };
 class SWServerRegistration : public CanMakeWeakPtr<SWServerRegistration> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    SWServerRegistration(SWServer&, const ServiceWorkerRegistrationKey&, ServiceWorkerUpdateViaCache, const URL& scopeURL, const URL& scriptURL);
+    SWServerRegistration(SWServer&, const ServiceWorkerRegistrationKey&, ServiceWorkerUpdateViaCache, const URL& scopeURL, const URL& scriptURL, std::optional<ServiceWorkerClientIdentifier> serviceWorkerPageIdentifier);
     ~SWServerRegistration();
 
     const ServiceWorkerRegistrationKey& key() const { return m_registrationKey; }
@@ -108,6 +108,7 @@ public:
     URL scriptURL() const { return m_scriptURL; }
 
     bool isAppInitiated() const { return m_isAppInitiated; }
+    std::optional<ServiceWorkerClientIdentifier> serviceWorkerPageIdentifier() const { return m_serviceWorkerPageIdentifier; }
 
 private:
     void activate();
@@ -119,6 +120,7 @@ private:
     ServiceWorkerUpdateViaCache m_updateViaCache;
     URL m_scopeURL;
     URL m_scriptURL;
+    std::optional<ServiceWorkerClientIdentifier> m_serviceWorkerPageIdentifier;
 
     RefPtr<SWServerWorker> m_preInstallationWorker; // Implementation detail, not part of the specification.
     RefPtr<SWServerWorker> m_installingWorker;

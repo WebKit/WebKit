@@ -84,6 +84,7 @@ public:
     virtual void didHandleOnloadEventsForFrame(WebKit::WebPage&, WebKit::WebFrame&) { }
 
     virtual void globalObjectIsAvailableForFrame(WebKit::WebPage&, WebKit::WebFrame&, WebCore::DOMWrapperWorld&) { }
+    virtual void serviceWorkerGlobalObjectIsAvailableForFrame(WebKit::WebPage&, WebKit::WebFrame&, WebCore::DOMWrapperWorld&) { }
     virtual void willDisconnectDOMWindowExtensionFromGlobalObject(WebKit::WebPage&, WebCore::DOMWindowExtension*) { }
     virtual void didReconnectDOMWindowExtensionToGlobalObject(WebKit::WebPage&, WebCore::DOMWindowExtension*) { }
     virtual void willDestroyGlobalObjectForDOMWindowExtension(WebKit::WebPage&, WebCore::DOMWindowExtension*) { }

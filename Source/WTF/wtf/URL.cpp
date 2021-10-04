@@ -737,13 +737,13 @@ bool protocolHostAndPortAreEqual(const URL& a, const URL& b)
 
     // Check the scheme
     for (unsigned i = 0; i < a.m_schemeEnd; ++i) {
-        if (a.string()[i] != b.string()[i])
+        if (toASCIILower(a.string()[i]) != toASCIILower(b.string()[i]))
             return false;
     }
 
     // And the host
     for (unsigned i = 0; i < hostLengthA; ++i) {
-        if (a.string()[hostStartA + i] != b.string()[hostStartB + i])
+        if (toASCIILower(a.string()[hostStartA + i]) != toASCIILower(b.string()[hostStartB + i]))
             return false;
     }
 

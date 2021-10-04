@@ -58,6 +58,13 @@ ServiceWorkerRegistrationKey ServiceWorkerJobData::registrationKey() const
     return { SecurityOriginData { topOrigin }, WTFMove(scope) };
 }
 
+std::optional<ServiceWorkerClientIdentifier> ServiceWorkerJobData::serviceWorkerPageIdentifier() const
+{
+    if (isFromServiceWorkerPage && WTF::holds_alternative<ServiceWorkerClientIdentifier>(sourceContext))
+        return WTF::get<ServiceWorkerClientIdentifier>(sourceContext);
+    return std::nullopt;
+}
+
 ServiceWorkerJobData ServiceWorkerJobData::isolatedCopy() const
 {
     ServiceWorkerJobData result;
@@ -65,6 +72,7 @@ ServiceWorkerJobData ServiceWorkerJobData::isolatedCopy() const
     result.sourceContext = sourceContext;
     result.workerType = workerType;
     result.type = type;
+    result.isFromServiceWorkerPage = isFromServiceWorkerPage;
 
     result.scriptURL = scriptURL.isolatedCopy();
     result.clientCreationURL = clientCreationURL.isolatedCopy();

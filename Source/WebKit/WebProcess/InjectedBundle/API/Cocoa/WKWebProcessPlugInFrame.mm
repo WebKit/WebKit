@@ -71,6 +71,11 @@
     return [JSContext contextWithJSGlobalContextRef:_frame->jsContextForWorld(&[world _scriptWorld])];
 }
 
+- (JSContext *)jsContextForServiceWorkerWorld:(WKWebProcessPlugInScriptWorld *)world
+{
+    return [JSContext contextWithJSGlobalContextRef:_frame->jsContextForServiceWorkerWorld(&[world _scriptWorld])];
+}
+
 - (WKWebProcessPlugInHitTestResult *)hitTest:(CGPoint)point
 {
     return wrapper(_frame->hitTest(WebCore::IntPoint(point)));

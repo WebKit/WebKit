@@ -29,6 +29,7 @@
 #include "ContentSecurityPolicyResponseHeaders.h"
 #include "CrossOriginEmbedderPolicy.h"
 #include "ScriptBuffer.h"
+#include "ServiceWorkerClientIdentifier.h"
 #include "ServiceWorkerIdentifier.h"
 #include "ServiceWorkerJobDataIdentifier.h"
 #include "ServiceWorkerRegistrationData.h"
@@ -93,6 +94,7 @@ struct ServiceWorkerContextData {
     bool loadedFromDisk;
     std::optional<LastNavigationWasAppInitiated> lastNavigationWasAppInitiated;
     HashMap<URL, ImportedScript> scriptResourceMap;
+    std::optional<ServiceWorkerClientIdentifier> serviceWorkerPageIdentifier;
 
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static std::optional<ServiceWorkerContextData> decode(Decoder&);
@@ -105,7 +107,7 @@ template<class Encoder>
 void ServiceWorkerContextData::encode(Encoder& encoder) const
 {
     encoder << jobDataIdentifier << registration << serviceWorkerIdentifier << script << contentSecurityPolicy << crossOriginEmbedderPolicy << referrerPolicy
-        << scriptURL << workerType << loadedFromDisk << lastNavigationWasAppInitiated << scriptResourceMap << certificateInfo;
+        << scriptURL << workerType << loadedFromDisk << lastNavigationWasAppInitiated << scriptResourceMap << certificateInfo << serviceWorkerPageIdentifier;
 }
 
 template<class Decoder>
@@ -168,6 +170,11 @@ std::optional<ServiceWorkerContextData> ServiceWorkerContextData::decode(Decoder
     if (!certificateInfo)
         return std::nullopt;
 
+    std::optional<std::optional<ServiceWorkerClientIdentifier>> serviceWorkerPageIdentifier;
+    decoder >> serviceWorkerPageIdentifier;
+    if (!serviceWorkerPageIdentifier)
+        return std::nullopt;
+
     return {{
         WTFMove(*jobDataIdentifier),
         WTFMove(*registration),
@@ -181,7 +188,8 @@ std::optional<ServiceWorkerContextData> ServiceWorkerContextData::decode(Decoder
         workerType,
         loadedFromDisk,
         WTFMove(lastNavigationWasAppInitiated),
-        WTFMove(scriptResourceMap)
+        WTFMove(scriptResourceMap),
+        WTFMove(*serviceWorkerPageIdentifier)
     }};
 }
 

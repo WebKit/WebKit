@@ -531,6 +531,19 @@ JSGlobalContextRef WebFrame::jsContextForWorld(InjectedBundleScriptWorld* world)
     return toGlobalRef(m_coreFrame->script().globalObject(world->coreWorld()));
 }
 
+JSGlobalContextRef WebFrame::jsContextForServiceWorkerWorld(InjectedBundleScriptWorld* world)
+{
+#if ENABLE(SERVICE_WORKER)
+    if (!m_coreFrame || !m_coreFrame->page())
+        return nullptr;
+
+    return toGlobalRef(m_coreFrame->page()->serviceWorkerGlobalObject(world->coreWorld()));
+#else
+    UNUSED_PARAM(world);
+    return nullptr;
+#endif
+}
+
 bool WebFrame::handlesPageScaleGesture() const
 {
     auto* pluginView = WebPage::pluginViewForFrame(m_coreFrame.get());
@@ -700,14 +713,8 @@ void WebFrame::stopLoading()
 
 WebFrame* WebFrame::frameForContext(JSContextRef context)
 {
-    JSC::JSGlobalObject* globalObjectObj = toJS(context);
-    JSDOMWindow* window = jsDynamicCast<JSDOMWindow*>(globalObjectObj->vm(), globalObjectObj);
-    if (!window)
-        return nullptr;
-    auto* coreFrame = window->wrapped().frame();
-    if (!coreFrame)
-        return nullptr;
-    return WebFrame::fromCoreFrame(*coreFrame);
+    auto* coreFrame = Frame::fromJSContext(context);
+    return coreFrame ? WebFrame::fromCoreFrame(*coreFrame) : nullptr;
 }
 
 JSValueRef WebFrame::jsWrapperForWorld(InjectedBundleNodeHandle* nodeHandle, InjectedBundleScriptWorld* world)

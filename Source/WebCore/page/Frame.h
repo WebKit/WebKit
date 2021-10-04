@@ -56,6 +56,8 @@ OBJC_CLASS NSArray;
 typedef struct HBITMAP__* HBITMAP;
 #endif
 
+typedef const struct OpaqueJSContext* JSContextRef;
+
 namespace JSC { namespace Yarr {
 class RegularExpression;
 } }
@@ -177,6 +179,8 @@ public:
     bool requestDOMPasteAccess();
 
     String debugDescription() const;
+
+    WEBCORE_EXPORT static Frame* fromJSContext(JSContextRef);
 
 // ======== All public functions below this point are candidates to move out of Frame into another class. ========
 

@@ -227,6 +227,10 @@ private:
             frame.jsContextForWorld(injectedWorld.ptr());
     }
 
+    void serviceWorkerGlobalObjectIsAvailableForFrame(WebPage&, WebFrame&, DOMWrapperWorld&) override
+    {
+    }
+
     WebKitWebPage* m_webPage;
 };
 

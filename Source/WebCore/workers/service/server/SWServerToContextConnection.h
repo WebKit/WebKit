@@ -76,16 +76,18 @@ public:
     WEBCORE_EXPORT void didFailHeartBeatCheck(ServiceWorkerIdentifier);
 
     const RegistrableDomain& registrableDomain() const { return m_registrableDomain; }
+    std::optional<ServiceWorkerClientIdentifier> serviceWorkerPageIdentifier() const { return m_serviceWorkerPageIdentifier; }
 
     virtual void connectionIsNoLongerNeeded() = 0;
     virtual void terminateDueToUnresponsiveness() = 0;
 
 protected:
-    WEBCORE_EXPORT explicit SWServerToContextConnection(RegistrableDomain&&);
+    WEBCORE_EXPORT SWServerToContextConnection(RegistrableDomain&&, std::optional<ServiceWorkerClientIdentifier> serviceWorkerPageIdentifier);
 
 private:
     SWServerToContextConnectionIdentifier m_identifier;
     RegistrableDomain m_registrableDomain;
+    std::optional<ServiceWorkerClientIdentifier> m_serviceWorkerPageIdentifier;
 };
 
 } // namespace WebCore

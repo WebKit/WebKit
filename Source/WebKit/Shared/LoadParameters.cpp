@@ -58,6 +58,7 @@ void LoadParameters::encode(IPC::Encoder& encoder) const
     encoder << clientRedirectSourceForHistory;
     encoder << isNavigatingToAppBoundDomain;
     encoder << existingNetworkResourceLoadIdentifierToResume;
+    encoder << isServiceWorkerLoad;
     encoder << sessionHistoryVisibility;
 
     platformEncode(encoder);
@@ -140,6 +141,9 @@ bool LoadParameters::decode(IPC::Decoder& decoder, LoadParameters& data)
         return false;
 
     if (!decoder.decode(data.existingNetworkResourceLoadIdentifierToResume))
+        return false;
+
+    if (!decoder.decode(data.isServiceWorkerLoad))
         return false;
     
     if (!decoder.decode(data.sessionHistoryVisibility))

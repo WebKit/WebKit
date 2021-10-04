@@ -52,6 +52,7 @@ struct ServiceWorkerClientIdentifier;
 struct ServiceWorkerClientQueryOptions;
 struct ServiceWorkerContextData;
 struct ServiceWorkerJobDataIdentifier;
+enum class WorkerThreadMode : bool;
 enum class WorkerType : uint8_t;
 
 class SWServerWorker : public RefCounted<SWServerWorker> {
@@ -117,6 +118,7 @@ public:
 
     const ClientOrigin& origin() const;
     const RegistrableDomain& registrableDomain() const { return m_registrableDomain; }
+    WEBCORE_EXPORT std::optional<ServiceWorkerClientIdentifier> serviceWorkerPageIdentifier() const;
 
     WEBCORE_EXPORT SWServerToContextConnection* contextConnection();
     String userAgent() const;
@@ -129,6 +131,8 @@ public:
     bool hasTimedOutAnyFetchTasks() const { return m_hasTimedOutAnyFetchTasks; }
     void didFailHeartBeatCheck();
     void updateAppInitiatedValue(LastNavigationWasAppInitiated);
+
+    WorkerThreadMode workerThreadMode() const;
 
 private:
     SWServerWorker(SWServer&, SWServerRegistration&, const URL&, const ScriptBuffer&, const CertificateInfo&, const ContentSecurityPolicyResponseHeaders&, const CrossOriginEmbedderPolicy&, String&& referrerPolicy, WorkerType, ServiceWorkerIdentifier, HashMap<URL, ServiceWorkerContextData::ImportedScript>&&);

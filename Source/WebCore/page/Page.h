@@ -147,6 +147,7 @@ class RenderingUpdateScheduler;
 class ScrollLatchingController;
 class ScrollingCoordinator;
 class ServicesOverlayController;
+class ServiceWorkerGlobalScope;
 class Settings;
 class SocketProvider;
 class SpeechRecognitionProvider;
@@ -541,6 +542,15 @@ public:
     MediaSessionCoordinatorPrivate* mediaSessionCoordinator() { return m_mediaSessionCoordinator.get(); }
     WEBCORE_EXPORT void setMediaSessionCoordinator(Ref<MediaSessionCoordinatorPrivate>&&);
     WEBCORE_EXPORT void invalidateMediaSessionCoordinator();
+#endif
+
+    bool isServiceWorkerPage() const { return m_isServiceWorkerPage; }
+    void markAsServiceWorkerPage() { m_isServiceWorkerPage = true; }
+
+#if ENABLE(SERVICE_WORKER)
+    // Service worker pages have an associated ServiceWorkerGlobalScope on the main thread.
+    void setServiceWorkerGlobalScope(ServiceWorkerGlobalScope&);
+    WEBCORE_EXPORT JSC::JSGlobalObject* serviceWorkerGlobalObject(DOMWrapperWorld&);
 #endif
 
     // Notifications when the Page starts and stops being presented via a native window.
@@ -1094,6 +1104,10 @@ private:
     RefPtr<WheelEventTestMonitor> m_wheelEventTestMonitor;
     WeakHashSet<ActivityStateChangeObserver> m_activityStateChangeObservers;
 
+#if ENABLE(SERVICE_WORKER)
+    WeakPtr<ServiceWorkerGlobalScope> m_serviceWorkerGlobalScope;
+#endif
+
 #if ENABLE(RESOURCE_USAGE)
     std::unique_ptr<ResourceUsageOverlay> m_resourceUsageOverlay;
 #endif
@@ -1187,6 +1201,7 @@ private:
     ShouldRelaxThirdPartyCookieBlocking m_shouldRelaxThirdPartyCookieBlocking { ShouldRelaxThirdPartyCookieBlocking::No };
     LoadSchedulingMode m_loadSchedulingMode { LoadSchedulingMode::Direct };
     bool m_hasBeenNotifiedToInjectUserScripts { false };
+    bool m_isServiceWorkerPage { false };
 
     MonotonicTime m_lastRenderingUpdateTimestamp;
 

@@ -40,9 +40,10 @@ static SWServerToContextConnectionIdentifier generateServerToContextConnectionId
     return SWServerToContextConnectionIdentifier::generate();
 }
 
-SWServerToContextConnection::SWServerToContextConnection(RegistrableDomain&& registrableDomain)
+SWServerToContextConnection::SWServerToContextConnection(RegistrableDomain&& registrableDomain, std::optional<ServiceWorkerClientIdentifier> serviceWorkerPageIdentifier)
     : m_identifier(generateServerToContextConnectionIdentifier())
     , m_registrableDomain(WTFMove(registrableDomain))
+    , m_serviceWorkerPageIdentifier(serviceWorkerPageIdentifier)
 {
 }
 

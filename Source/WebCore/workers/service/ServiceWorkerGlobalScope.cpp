@@ -28,8 +28,12 @@
 
 #if ENABLE(SERVICE_WORKER)
 
+#include "Document.h"
 #include "EventLoop.h"
 #include "ExtendableEvent.h"
+#include "Frame.h"
+#include "FrameLoader.h"
+#include "FrameLoaderClient.h"
 #include "JSDOMPromiseDeferred.h"
 #include "SWContextManager.h"
 #include "ServiceWorker.h"
@@ -38,6 +42,7 @@
 #include "ServiceWorkerContainer.h"
 #include "ServiceWorkerThread.h"
 #include "ServiceWorkerWindowClient.h"
+#include "WebCoreJSClientData.h"
 #include "WorkerNavigator.h"
 #include <wtf/IsoMallocInlines.h>
 
@@ -49,6 +54,7 @@ Ref<ServiceWorkerGlobalScope> ServiceWorkerGlobalScope::create(ServiceWorkerCont
 {
     auto scope = adoptRef(*new ServiceWorkerGlobalScope { WTFMove(contextData), WTFMove(workerData), params, WTFMove(origin), thread, WTFMove(topOrigin), connectionProxy, socketProvider });
     scope->applyContentSecurityPolicyResponseHeaders(params.contentSecurityPolicyResponseHeaders);
+    scope->notifyServiceWorkerPageOfCreationIfNecessary();
     return scope;
 }
 
@@ -62,6 +68,31 @@ ServiceWorkerGlobalScope::ServiceWorkerGlobalScope(ServiceWorkerContextData&& co
 }
 
 ServiceWorkerGlobalScope::~ServiceWorkerGlobalScope() = default;
+
+void ServiceWorkerGlobalScope::notifyServiceWorkerPageOfCreationIfNecessary()
+{
+    auto serviceWorkerPage = this->serviceWorkerPage();
+    if (!serviceWorkerPage)
+        return;
+
+    ASSERT(isMainThread());
+    serviceWorkerPage->setServiceWorkerGlobalScope(*this);
+
+    Vector<Ref<DOMWrapperWorld>> worlds;
+    static_cast<JSVMClientData*>(vm().clientData)->getAllWorlds(worlds);
+    for (auto& world : worlds)
+        serviceWorkerPage->mainFrame().loader().client().dispatchServiceWorkerGlobalObjectAvailable(world);
+}
+
+Page* ServiceWorkerGlobalScope::serviceWorkerPage()
+{
+    if (!m_contextData.serviceWorkerPageIdentifier)
+        return nullptr;
+
+    RELEASE_ASSERT(isMainThread());
+    auto* serviceWorkerPageDocument = Document::allDocumentsMap().get(m_contextData.serviceWorkerPageIdentifier->contextIdentifier);
+    return serviceWorkerPageDocument ? serviceWorkerPageDocument->page() : nullptr;
+}
 
 void ServiceWorkerGlobalScope::skipWaiting(Ref<DeferredPromise>&& promise)
 {

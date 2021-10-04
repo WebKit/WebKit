@@ -1,3 +1,16 @@
+2021-10-04  Chris Dumez  <cdumez@apple.com>
+
+        Add SPI to launch a service service worker in a WKWebView and expose service worker to injected bundle
+        https://bugs.webkit.org/show_bug.cgi?id=231045
+        <rdar://problem/83744069>
+
+        Reviewed by Geoff Garen.
+
+        * wtf/URL.cpp:
+        (WTF::protocolHostAndPortAreEqual):
+        Fix issue where protocolHostAndPortAreEqual() was doing a case-sensitive check. My new service worker
+        API test was initially failing because of this since it is using an upper-case domain name.
+
 2021-10-04  Sam Weinig  <weinig@apple.com>
 
         Split WebXR extension module IDLs into their own files and settings
