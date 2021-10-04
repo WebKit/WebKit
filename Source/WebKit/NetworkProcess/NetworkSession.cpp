@@ -117,6 +117,7 @@ NetworkSession::NetworkSession(NetworkProcess& networkProcess, const NetworkSess
     , m_standaloneApplicationDomain(parameters.resourceLoadStatisticsParameters.standaloneApplicationDomain)
 #endif
     , m_privateClickMeasurement(managerOrProxy(*this, networkProcess, parameters))
+    , m_privateClickMeasurementDebugModeEnabled(parameters.enablePrivateClickMeasurementDebugMode)
     , m_broadcastChannelRegistry(makeUniqueRef<NetworkBroadcastChannelRegistry>())
     , m_testSpeedMultiplier(parameters.testSpeedMultiplier)
     , m_allowsServerPreconnect(parameters.allowsServerPreconnect)
@@ -418,6 +419,17 @@ void NetworkSession::setPrivateClickMeasurementEphemeralMeasurementForTesting(bo
 void NetworkSession::setPCMFraudPreventionValuesForTesting(String&& unlinkableToken, String&& secretToken, String&& signature, String&& keyID)
 {
     privateClickMeasurement().setPCMFraudPreventionValuesForTesting(WTFMove(unlinkableToken), WTFMove(secretToken), WTFMove(signature), WTFMove(keyID));
+}
+
+void NetworkSession::setPrivateClickMeasurementDebugMode(bool enabled)
+{
+    if (m_privateClickMeasurementDebugModeEnabled == enabled)
+        return;
+
+    m_privateClickMeasurementDebugModeEnabled = enabled;
+
+    auto message = enabled ? "[Private Click Measurement] Turned Debug Mode on."_s : "[Private Click Measurement] Turned Debug Mode off."_s;
+    m_networkProcess->broadcastConsoleMessage(sessionID(), MessageSource::PrivateClickMeasurement, MessageLevel::Info, message);
 }
 
 void NetworkSession::firePrivateClickMeasurementTimerImmediatelyForTesting()

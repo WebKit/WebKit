@@ -285,8 +285,7 @@ public:
 
     void setPrivateClickMeasurementEnabled(bool);
     bool privateClickMeasurementEnabled() const;
-    void setPrivateClickMeasurementDebugMode(bool);
-    bool privateClickMeasurementDebugModeEnabled() const;
+    void setPrivateClickMeasurementDebugMode(PAL::SessionID, bool);
 
     using CacheStorageRootPathCallback = CompletionHandler<void(String&&)>;
     void cacheStorageRootPath(PAL::SessionID, CacheStorageRootPathCallback&&);
@@ -620,7 +619,6 @@ private:
     HashMap<WebCore::PageIdentifier, Vector<WebCore::UserContentURLPattern>> m_extensionCORSDisablingPatterns;
 
     bool m_privateClickMeasurementEnabled { true };
-    bool m_privateClickMeasurementDebugModeEnabled { false };
     bool m_ftpEnabled { false };
 
     HashMap<PAL::SessionID, Ref<NetworkStorageManager>> m_storageManagers;

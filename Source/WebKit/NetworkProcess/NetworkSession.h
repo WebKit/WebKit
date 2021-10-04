@@ -175,6 +175,8 @@ public:
 
     NetworkLoadScheduler& networkLoadScheduler();
     PCM::ManagerInterface& privateClickMeasurement() { return m_privateClickMeasurement.get(); }
+    void setPrivateClickMeasurementDebugMode(bool);
+    bool privateClickMeasurementDebugModeEnabled() const { return m_privateClickMeasurementDebugModeEnabled; }
 
 #if PLATFORM(COCOA)
     AppPrivacyReportTestingData& appPrivacyReportTestingData() { return m_appPrivacyReportTestingData; }
@@ -215,6 +217,7 @@ protected:
 #endif
     bool m_isStaleWhileRevalidateEnabled { false };
     UniqueRef<PCM::ManagerInterface> m_privateClickMeasurement;
+    bool m_privateClickMeasurementDebugModeEnabled { false };
     std::optional<WebCore::PrivateClickMeasurement> m_ephemeralMeasurement;
     bool m_isRunningEphemeralMeasurementTest { false };
 

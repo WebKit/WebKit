@@ -205,7 +205,7 @@ public:
     void setDomainsWithCrossPageStorageAccess(HashMap<TopFrameDomain, SubResourceDomain>&&, CompletionHandler<void()>&&);
 #endif
 
-    void setPrivateClickMeasurementDebugMode(bool);
+    void setPrivateClickMeasurementDebugMode(PAL::SessionID, bool);
     
     void synthesizeAppIsBackground(bool background);
 

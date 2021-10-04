@@ -55,7 +55,7 @@ bool ClientImpl::featureEnabled() const
 bool ClientImpl::debugModeEnabled() const
 {
     return m_networkSession
-        && m_networkProcess->privateClickMeasurementDebugModeEnabled()
+        && m_networkSession->privateClickMeasurementDebugModeEnabled()
         && !m_networkSession->sessionID().isEphemeral();
 }
 

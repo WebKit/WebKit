@@ -557,13 +557,6 @@ void WebProcessPool::platformInitializeNetworkProcess(NetworkProcessCreationPara
 #endif
 
     parameters.enablePrivateClickMeasurement = ![defaults objectForKey:WebPreferencesKey::privateClickMeasurementEnabledKey()] || [defaults boolForKey:WebPreferencesKey::privateClickMeasurementEnabledKey()];
-#if PLATFORM(MAC)
-    NSString *format = @"Experimental%@";
-#else
-    NSString *format = @"WebKitExperimental%@";
-#endif
-    parameters.enablePrivateClickMeasurementDebugMode = [defaults boolForKey:[NSString stringWithFormat:format, WebPreferencesKey::privateClickMeasurementDebugModeEnabledKey().createCFString().get()]];
-    
     parameters.ftpEnabled = [defaults objectForKey:WebPreferencesKey::ftpEnabledKey()] && [defaults boolForKey:WebPreferencesKey::ftpEnabledKey()];
 }
 

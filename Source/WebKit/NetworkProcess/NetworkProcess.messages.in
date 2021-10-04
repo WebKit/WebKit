@@ -146,7 +146,7 @@ messages -> NetworkProcess LegacyReceiver {
     SetThirdPartyCNAMEDomainForTesting(PAL::SessionID sessionID, WebCore::RegistrableDomain domain) -> () Async
 #endif
 
-    SetPrivateClickMeasurementDebugMode(bool debugMode)
+    SetPrivateClickMeasurementDebugMode(PAL::SessionID sessionID, bool debugMode)
 
     SetSessionIsControlledByAutomation(PAL::SessionID sessionID, bool controlled);
 
