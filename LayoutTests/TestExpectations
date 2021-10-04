@@ -4447,7 +4447,6 @@ webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/white-space/eol
 webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/white-space/seg-break-transformation-018.html [ ImageOnlyFailure ]
 webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/white-space/seg-break-transformation-019.html [ ImageOnlyFailure ]
 webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/white-space/textarea-pre-wrap-012.html [ ImageOnlyFailure ]
-webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/white-space/textarea-pre-wrap-014.html [ ImageOnlyFailure ]
 webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/white-space/trailing-other-space-separators-001.html [ ImageOnlyFailure ]
 webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/white-space/trailing-other-space-separators-002.html [ ImageOnlyFailure ]
 webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/white-space/trailing-other-space-separators-003.html [ ImageOnlyFailure ]

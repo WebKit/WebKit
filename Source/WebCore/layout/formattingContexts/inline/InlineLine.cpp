@@ -79,11 +79,12 @@ void Line::applyRunExpansion(InlineLayoutUnit horizontalAvailableSpace)
     // the last line before a forced break or the end of the block is start-aligned.
     if (m_runs.isEmpty() || m_runs.last().isLineBreak())
         return;
-    // Anything to distribute?
-    auto spaceToDistribute = horizontalAvailableSpace - contentLogicalWidth();
+    // A hanging glyph is still enclosed inside its parent inline box and still participates in text justification:
+    // its character advance is just not measured when determining how much content fits on the line, how much the line’s contents
+    // need to be expanded or compressed for justification, or how to position the content within the line box for text alignment.
+    auto spaceToDistribute = horizontalAvailableSpace - contentLogicalWidth() + m_hangingTrailingContent.width();
     if (spaceToDistribute <= 0)
         return;
-
     // Collect and distribute the expansion opportunities.
     size_t lineExpansionOpportunities = 0;
     Vector<size_t> runsExpansionOpportunities(m_runs.size());
@@ -92,17 +93,24 @@ void Line::applyRunExpansion(InlineLayoutUnit horizontalAvailableSpace)
 
     // Line start behaves as if we had an expansion here (i.e. fist runs should not start with allowing left expansion).
     auto runIsAfterExpansion = true;
+    auto hangingTrailingContentLength = m_hangingTrailingContent.length();
     for (size_t runIndex = 0; runIndex < m_runs.size(); ++runIndex) {
         auto& run = m_runs[runIndex];
         int expansionBehavior = DefaultExpansion;
         size_t expansionOpportunitiesInRun = 0;
 
-        if (run.isText() && !TextUtil::shouldPreserveSpacesAndTabs(run.layoutBox())) {
+        // FIXME: Check why we don't apply expansion when whitespace is preserved.
+        if (run.isText() && (!TextUtil::shouldPreserveSpacesAndTabs(run.layoutBox()) || hangingTrailingContentLength)) {
             if (run.hasTextCombine())
                 expansionBehavior = ForbidLeftExpansion | ForbidRightExpansion;
             else {
                 expansionBehavior = (runIsAfterExpansion ? ForbidLeftExpansion : AllowLeftExpansion) | AllowRightExpansion;
-                std::tie(expansionOpportunitiesInRun, runIsAfterExpansion) = FontCascade::expansionOpportunityCount(StringView(downcast<InlineTextBox>(run.layoutBox()).content()).substring(run.textContent()->start, run.textContent()->length), run.inlineDirection(), expansionBehavior);
+                auto& textContent = *run.textContent();
+                // Trailing hanging whitespace sequence is ignored when computing the expansion opportunities.
+                auto hangingTrailingContentInCurrentRun = std::min(textContent.length, hangingTrailingContentLength);
+                auto length = textContent.length - hangingTrailingContentInCurrentRun;
+                hangingTrailingContentLength -= hangingTrailingContentInCurrentRun;
+                std::tie(expansionOpportunitiesInRun, runIsAfterExpansion) = FontCascade::expansionOpportunityCount(StringView(downcast<InlineTextBox>(run.layoutBox()).content()).substring(textContent.start, length), run.inlineDirection(), expansionBehavior);
             }
         } else if (run.isBox())
             runIsAfterExpansion = false;
