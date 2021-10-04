@@ -489,13 +489,15 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/webxr/Navigator+WebXR.idl \
     $(WebCore)/Modules/webxr/WebXRBoundedReferenceSpace.idl \
     $(WebCore)/Modules/webxr/WebXRFrame.idl \
-    $(WebCore)/Modules/webxr/WebXRInputSourceArray.idl \
+    $(WebCore)/Modules/webxr/WebXRInputSource+Gamepad.idl \
     $(WebCore)/Modules/webxr/WebXRInputSource.idl \
+    $(WebCore)/Modules/webxr/WebXRInputSourceArray.idl \
     $(WebCore)/Modules/webxr/WebXRLayer.idl \
     $(WebCore)/Modules/webxr/WebXRPose.idl \
     $(WebCore)/Modules/webxr/WebXRReferenceSpace.idl \
     $(WebCore)/Modules/webxr/WebXRRenderState.idl \
     $(WebCore)/Modules/webxr/WebXRRigidTransform.idl \
+    $(WebCore)/Modules/webxr/WebXRSession+AR.idl \
     $(WebCore)/Modules/webxr/WebXRSession.idl \
     $(WebCore)/Modules/webxr/WebXRSpace.idl \
     $(WebCore)/Modules/webxr/WebXRSystem.idl \

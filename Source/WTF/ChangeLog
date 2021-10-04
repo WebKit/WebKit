@@ -1,3 +1,14 @@
+2021-10-04  Sam Weinig  <weinig@apple.com>
+
+        Split WebXR extension module IDLs into their own files and settings
+        https://bugs.webkit.org/show_bug.cgi?id=231149
+
+        Reviewed by Dean Jackson.
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml:
+        Adds WebXRAugmentedRealityModuleEnabled and WebXRGamepadsModuleEnabled
+        to gate enabling the WebXR AR Module and the WebXR Gamepads Module on.
+
 2021-10-03  David Kilzer  <ddkilzer@apple.com>
 
         WTF::RetainPtr<> allows assignment of two pointer types that are not assignable

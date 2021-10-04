@@ -23,6 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// https://immersive-web.github.io/webxr/#dictdef-xrsessioneventinit
 [
     EnabledBySetting=WebXREnabled,
     Conditional=WEBXR,
@@ -30,6 +31,7 @@
     required WebXRSession session;
 };
 
+// https://immersive-web.github.io/webxr/#xrsessionevent
 [
     EnabledBySetting=WebXREnabled,
     Conditional=WEBXR,
@@ -37,6 +39,5 @@
     Exposed=Window
 ] interface XRSessionEvent : Event {
     constructor(DOMString type, XRSessionEventInit eventInitDict);
-
     [SameObject] readonly attribute WebXRSession session;
 };

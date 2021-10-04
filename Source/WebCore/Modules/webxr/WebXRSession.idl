@@ -23,6 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// https://immersive-web.github.io/webxr/#xrsession
 [
     EnabledBySetting=WebXREnabled,
     Conditional=WEBXR,
@@ -32,8 +33,6 @@
     InterfaceName=XRSession
 ] interface WebXRSession : EventTarget {
     // Attributes
-    readonly attribute XRInteractionMode interactionMode;
-    readonly attribute XREnvironmentBlendMode environmentBlendMode;
     readonly attribute XRVisibilityState visibilityState;
     [SameObject] readonly attribute WebXRRenderState renderState;
     [SameObject] readonly attribute WebXRInputSourceArray inputSources;

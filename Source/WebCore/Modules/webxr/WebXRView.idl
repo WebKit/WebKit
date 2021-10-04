@@ -23,6 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// https://immersive-web.github.io/webxr/#xrview
 [
     EnabledBySetting=WebXREnabled,
     Conditional=WEBXR,
@@ -36,5 +37,6 @@
     [CustomGetter] readonly attribute Float32Array projectionMatrix;
     [SameObject] readonly attribute WebXRRigidTransform transform;
     readonly attribute double? recommendedViewportScale;
+
     undefined requestViewportScale(double? scale);
 };

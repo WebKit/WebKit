@@ -588,6 +588,7 @@ $(PROJECT_DIR)/Modules/websockets/WebSocket.idl
 $(PROJECT_DIR)/Modules/webxr/Navigator+WebXR.idl
 $(PROJECT_DIR)/Modules/webxr/WebXRBoundedReferenceSpace.idl
 $(PROJECT_DIR)/Modules/webxr/WebXRFrame.idl
+$(PROJECT_DIR)/Modules/webxr/WebXRInputSource+Gamepad.idl
 $(PROJECT_DIR)/Modules/webxr/WebXRInputSource.idl
 $(PROJECT_DIR)/Modules/webxr/WebXRInputSourceArray.idl
 $(PROJECT_DIR)/Modules/webxr/WebXRLayer.idl
@@ -595,6 +596,7 @@ $(PROJECT_DIR)/Modules/webxr/WebXRPose.idl
 $(PROJECT_DIR)/Modules/webxr/WebXRReferenceSpace.idl
 $(PROJECT_DIR)/Modules/webxr/WebXRRenderState.idl
 $(PROJECT_DIR)/Modules/webxr/WebXRRigidTransform.idl
+$(PROJECT_DIR)/Modules/webxr/WebXRSession+AR.idl
 $(PROJECT_DIR)/Modules/webxr/WebXRSession.idl
 $(PROJECT_DIR)/Modules/webxr/WebXRSpace.idl
 $(PROJECT_DIR)/Modules/webxr/WebXRSystem.idl

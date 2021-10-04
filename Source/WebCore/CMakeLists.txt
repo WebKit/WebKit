@@ -1406,6 +1406,7 @@ list(APPEND WebCore_NON_SVG_IDL_FILES
     Modules/webxr/Navigator+WebXR.idl
     Modules/webxr/WebXRBoundedReferenceSpace.idl
     Modules/webxr/WebXRFrame.idl
+    Modules/webxr/WebXRInputSource+Gamepad.idl
     Modules/webxr/WebXRInputSource.idl
     Modules/webxr/WebXRInputSourceArray.idl
     Modules/webxr/WebXRLayer.idl
@@ -1413,6 +1414,7 @@ list(APPEND WebCore_NON_SVG_IDL_FILES
     Modules/webxr/WebXRReferenceSpace.idl
     Modules/webxr/WebXRRenderState.idl
     Modules/webxr/WebXRRigidTransform.idl
+    Modules/webxr/WebXRSession+AR.idl
     Modules/webxr/WebXRSession.idl
     Modules/webxr/WebXRSpace.idl
     Modules/webxr/WebXRSystem.idl

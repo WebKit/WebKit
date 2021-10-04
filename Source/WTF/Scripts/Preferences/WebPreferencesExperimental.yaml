@@ -1575,10 +1575,36 @@ WebShareFileAPIEnabled:
     WebCore:
       default: false
 
+WebXRAugmentedRealityModuleEnabled:
+  type: bool
+  humanReadableName: "WebXR Augmented Reality Module"
+  humanReadableDescription: "Adds support for the WebXR Augmented Reality Module"
+  condition: ENABLE(WEBXR)
+  defaultValue:
+    WebKitLegacy:
+      default: WebKit::defaultWebXREnabled()
+    WebKit:
+      default: WebKit::defaultWebXREnabled()
+    WebCore:
+      default: false
+
 WebXREnabled:
   type: bool
   humanReadableName: "WebXR Device API"
   humanReadableDescription: "Adds support for accessing virtual reality (VR) and augmented reality (AR) devices, including sensors and head-mounted displays, on the Web"
+  condition: ENABLE(WEBXR)
+  defaultValue:
+    WebKitLegacy:
+      default: WebKit::defaultWebXREnabled()
+    WebKit:
+      default: WebKit::defaultWebXREnabled()
+    WebCore:
+      default: false
+
+WebXRGamepadsModuleEnabled:
+  type: bool
+  humanReadableName: "WebXR Gamepads Module"
+  humanReadableDescription: "Adds support for the WebXR Gamepads Module"
   condition: ENABLE(WEBXR)
   defaultValue:
     WebKitLegacy:

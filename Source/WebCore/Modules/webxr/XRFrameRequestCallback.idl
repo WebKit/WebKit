@@ -25,6 +25,7 @@
 
 typedef double DOMHighResTimeStamp;
 
+// https://immersive-web.github.io/webxr/#callbackdef-xrframerequestcallback
 [
     Conditional=WEBXR
 ] callback XRFrameRequestCallback = undefined (DOMHighResTimeStamp time, WebXRFrame frame);
