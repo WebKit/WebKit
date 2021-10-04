@@ -1014,11 +1014,11 @@ void RenderText::computePreferredLogicalWidths(float leadWidth, HashSet<const Fo
 
     bool breakNBSP = style.autoWrap() && style.nbspMode() == NBSPMode::Space;
     
-    // Note the deliberate omission of word-wrap and overflow-wrap from this breakAll check. Those
-    // do not affect minimum preferred sizes. Note that break-word is a non-standard value for
-    // word-break, but we support it as though it means break-all.
     bool breakAnywhere = style.lineBreak() == LineBreak::Anywhere && style.autoWrap();
-    bool breakAll = (style.wordBreak() == WordBreak::BreakAll || style.wordBreak() == WordBreak::BreakWord) && style.autoWrap();
+    // Note the deliberate omission of word-wrap/overflow-wrap's break-word value from this breakAll check.
+    // Those do not affect minimum preferred sizes. Note that break-word is a non-standard value for
+    // word-break, but we support it as though it means break-all.
+    bool breakAll = (style.wordBreak() == WordBreak::BreakAll || style.wordBreak() == WordBreak::BreakWord || style.overflowWrap() == OverflowWrap::Anywhere) && style.autoWrap();
     bool keepAllWords = style.wordBreak() == WordBreak::KeepAll;
     bool canUseLineBreakShortcut = iteratorMode == LineBreakIteratorMode::Default;
 

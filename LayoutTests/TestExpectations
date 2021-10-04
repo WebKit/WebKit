@@ -2642,9 +2642,7 @@ webkit.org/b/186045 imported/w3c/web-platform-tests/css/css-animations/animation
 
 # overflow-wrap:anywhere feature is not implemented in legacy line layout.
 webkit.org/b/195345 imported/w3c/web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-anywhere-003.html [ ImageOnlyFailure ]
-webkit.org/b/195345 imported/w3c/web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-min-content-size-001.html [ ImageOnlyFailure ]
 webkit.org/b/195345 imported/w3c/web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-min-content-size-002.html [ ImageOnlyFailure ]
-webkit.org/b/195345 imported/w3c/web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-min-content-size-003.html [ ImageOnlyFailure ]
 webkit.org/b/195345 imported/w3c/web-platform-tests/css/css-text/white-space/break-spaces-before-first-char-006.html [ ImageOnlyFailure ]
 
 webkit.org/b/197277 imported/w3c/web-platform-tests/css/css-text/white-space/break-spaces-008.html [ ImageOnlyFailure ]
@@ -4391,8 +4389,6 @@ webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/line-break/line
 webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/line-breaking/line-breaking-014.html [ ImageOnlyFailure ]
 webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/line-breaking/line-breaking-016.html [ ImageOnlyFailure ]
 webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/line-breaking/line-breaking-017.html [ ImageOnlyFailure ]
-webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-min-content-size-005.html [ ImageOnlyFailure ]
-webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-min-content-size-007.html [ ImageOnlyFailure ]
 webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-normal-keep-all-001.html [ ImageOnlyFailure ]
 webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-shaping-001.html [ ImageOnlyFailure ]
 webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-shaping-002.html [ ImageOnlyFailure ]
