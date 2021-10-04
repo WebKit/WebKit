@@ -96,24 +96,8 @@ imported/w3c/web-platform-tests/service-workers/service-worker/http-to-https-red
 # rdar://79084756 ((r278618) media/modern-media-controls /overflow-support/chapters.html is timing out since introduction (226828))
 media/modern-media-controls/overflow-support/chapters.html [ Pass ]
 
-# These tests fail or are flaky in non-internal iOS 14 simulator
-fast/forms/ios/accessory-bar-navigation.html [ Pass Failure Timeout ]
-fast/forms/ios/autocapitalize-words.html [ Pass Failure ]
-fast/forms/ios/focus-input-in-fixed.html [ Pass Failure Timeout Crash ]
-fast/forms/ios/focus-input-in-iframe.html [ Pass Failure Crash Timeout ]
-fast/forms/ios/focus-input-via-button-no-scaling.html [ Pass Failure Timeout Crash ]
-fast/forms/ios/focus-input-via-button.html [ Pass Failure Timeout Crash ]
-fast/forms/ios/focus-long-textarea.html [ Pass Failure Timeout Crash ]
-fast/forms/ios/inputmode-none-with-hardware-keyboard.html [ Pass Failure ]
-fast/forms/ios/zoom-after-input-tap-wide-input.html [ Pass Failure Timeout Crash ]
-fast/forms/ios/zoom-after-input-tap.html [ Pass Failure Timeout Crash ]
 fast/events/ios/key-events-comprehensive/key-events-control-option.html [ Pass Timeout ]
 [ Debug ] fast/events/ios/key-events-comprehensive/key-events-control-shift.html [ Pass Timeout ]
-
-fast/forms/ios/dismiss-picker-using-keyboard.html [ Pass Timeout ]
-fast/forms/ios/drag-range-thumb.html [ Pass Timeout Crash Timeout ]
-fast/forms/ios/inputmode-change-update-keyboard.html [ Pass Timeout ]
-fast/forms/ios/ipad/open-picker-using-keyboard.html [ Pass Timeout ]
 
 fast/events/ios/keydown-keyup-keypress-keys-in-non-editable-using-chinese-keyboard.html [ Pass Failure ]
 

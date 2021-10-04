@@ -27,6 +27,15 @@ fast/events/ios/ipad [ Skip ]
 fast/forms/ios [ Pass ]
 fast/forms/ios/ipad [ Skip ]
 
+# These tests fail or are flaky in non-internal iOS 14 simulator
+fast/forms/ios/autocapitalize-words.html [ Pass Failure ]
+fast/forms/ios/inputmode-none-with-hardware-keyboard.html [ Pass Failure ]
+
+fast/forms/ios/dismiss-picker-using-keyboard.html [ Pass Timeout ]
+fast/forms/ios/drag-range-thumb.html [ Pass Timeout Timeout ]
+fast/forms/ios/inputmode-change-update-keyboard.html [ Pass Timeout ]
+fast/forms/ios/ipad/open-picker-using-keyboard.html [ Pass Timeout ]
+
 fast/css/appearance-apple-pay-button.html [ Pass ]
 fast/css/appearance-apple-pay-button-border-radius.html [ Pass ]
 fast/css/appearance-apple-pay-button-default-corners.html [ Pass ]
