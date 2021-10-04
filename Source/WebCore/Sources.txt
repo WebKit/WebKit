@@ -2480,6 +2480,7 @@ style/PseudoClassChangeInvalidation.cpp
 style/RuleData.cpp
 style/RuleFeature.cpp
 style/RuleSet.cpp
+style/RuleSetBuilder.cpp
 style/StyleAdjuster.cpp
 style/StyleBuilder.cpp
 style/StyleBuilderState.cpp

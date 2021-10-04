@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2003-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2021 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -42,6 +42,7 @@ namespace Style {
 
 class Resolver;
 class RuleSet;
+struct RuleSetMediaQueryCollector;
 
 using InvalidationRuleSetVector = Vector<RefPtr<const RuleSet>, 1>;
 
@@ -85,33 +86,10 @@ public:
         }
     };
 
-    struct MediaQueryCollector {
-        ~MediaQueryCollector();
-
-        const MediaQueryEvaluator& evaluator;
-        const bool collectDynamic { false };
-
-        struct DynamicContext {
-            Ref<const MediaQuerySet> set;
-            Vector<size_t> affectedRulePositions { };
-            RuleFeatureVector ruleFeatures { };
-        };
-        Vector<DynamicContext> dynamicContextStack { };
-
-        Vector<DynamicMediaQueryRules> dynamicMediaQueryRules { };
-        bool didMutateResolverWithinDynamicMediaQuery { false };
-        bool hasViewportDependentMediaQueries { false };
-
-        bool pushAndEvaluate(const MediaQuerySet*);
-        void pop(const MediaQuerySet*);
-        void didMutateResolver();
-        void addRuleIfNeeded(const RuleData&);
-    };
-
     void addRulesFromSheet(const StyleSheetContents&, const MediaQueryEvaluator&);
     void addRulesFromSheet(const StyleSheetContents&, const MediaQuerySet* sheetQuery, const MediaQueryEvaluator&, Style::Resolver&);
 
-    void addRule(const StyleRule&, unsigned selectorIndex, unsigned selectorListIndex, unsigned cascadeLayerOrder = 0, MediaQueryCollector* = nullptr);
+    void addRule(const StyleRule&, unsigned selectorIndex, unsigned selectorListIndex, unsigned cascadeLayerOrder = 0, RuleSetMediaQueryCollector* = nullptr);
     void addPageRule(StyleRulePage&);
 
     void addToRuleSet(const AtomString& key, AtomRuleMap&, const RuleData&);
@@ -148,6 +126,8 @@ public:
     unsigned cascadeLayerOrderFor(const RuleData&) const;
 
 private:
+    friend struct RuleSetBuilder;
+
     RuleSet();
 
     using CascadeLayerIdentifier = unsigned;
@@ -155,33 +135,6 @@ private:
     struct ResolverMutatingRule {
         Ref<StyleRuleBase> rule;
         CascadeLayerIdentifier layerIdentifier;
-    };
-
-    struct Builder {
-        enum class Mode { Normal, ResolverMutationScan };
-
-        Ref<RuleSet> ruleSet;
-        MediaQueryCollector mediaQueryCollector;
-        Style::Resolver* resolver { nullptr };
-        Mode mode { Mode::Normal };
-        CascadeLayerName resolvedCascadeLayerName { };
-        HashMap<CascadeLayerName, CascadeLayerIdentifier> cascadeLayerIdentifierMap { };
-        CascadeLayerIdentifier currentCascadeLayerIdentifier { 0 };
-        Vector<ResolverMutatingRule> collectedResolverMutatingRules { };
-
-        void addRulesFromSheet(const StyleSheetContents&);
-
-        ~Builder();
-        
-    private:
-        void addChildRules(const Vector<RefPtr<StyleRuleBase>>&);
-        void addStyleRule(const StyleRule&);
-
-        void registerLayers(const Vector<CascadeLayerName>&);
-        void pushCascadeLayer(const CascadeLayerName&);
-        void popCascadeLayer(const CascadeLayerName&);
-        void updateCascadeLayerOrder();
-        void addMutatingRulesToResolver();
     };
 
     struct CollectedMediaQueryChanges {
