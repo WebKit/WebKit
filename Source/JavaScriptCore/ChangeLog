@@ -1,3 +1,30 @@
+2021-10-04  Saam Barati  <sbarati@apple.com>
+
+        IntrinsicGetterAccessCase implementation of __proto__ needs to handle get_by_id_with_this
+        https://bugs.webkit.org/show_bug.cgi?id=229951
+        <rdar://problem/82787527>
+
+        Reviewed by Yusuke Suzuki.
+
+        The whole point of get_by_id_with_this is to have different
+        slot base values for |this| vs the slot base when invoking
+        getters. However, our intrinsic getter inlining wasn't respecting
+        this. This patch makes the __proto__ intrinsic getter do the right
+        thing. For typed array intrinsic getters, if they have different
+        |this| value vs slot base, we chose not to inline them, because
+        the type checks are not on the |this| value, so they're not guaranteed
+        to be typed arrays. We can improve upon this in the future.
+
+        * bytecode/IntrinsicGetterAccessCase.h:
+        * jit/AssemblyHelpers.cpp:
+        (JSC::AssemblyHelpers::emitLoadPrototypeWithoutCheck):
+        * jit/AssemblyHelpers.h:
+        * jit/IntrinsicEmitter.cpp:
+        (JSC::IntrinsicGetterAccessCase::canEmitIntrinsicGetter):
+        (JSC::IntrinsicGetterAccessCase::emitIntrinsicGetter):
+        * jit/Repatch.cpp:
+        (JSC::tryCacheGetBy):
+
 2021-10-03  Don Olmstead  <don.olmstead@sony.com>
 
         Non-unified build fixes, early October 2021 edition

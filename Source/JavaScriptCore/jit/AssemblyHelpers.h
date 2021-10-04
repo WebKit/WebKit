@@ -1528,6 +1528,7 @@ public:
     
     void emitLoadStructure(VM&, RegisterID source, RegisterID dest, RegisterID scratch);
     void emitLoadPrototype(VM&, GPRReg objectGPR, JSValueRegs resultRegs, GPRReg scratchGPR, JumpList& slowPath);
+    void emitLoadPrototypeWithoutCheck(VM&, GPRReg objectGPR, JSValueRegs resultRegs, GPRReg scratchGPR, GPRReg scratch2GPR);
 
     void emitStoreStructureWithTypeInfo(TrustedImmPtr structure, RegisterID dest, RegisterID)
     {
