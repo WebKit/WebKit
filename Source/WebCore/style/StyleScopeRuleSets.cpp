@@ -36,6 +36,7 @@
 #include "FrameLoaderClient.h"
 #include "MediaQueryEvaluator.h"
 #include "Page.h"
+#include "RuleSetBuilder.h"
 #include "StyleResolver.h"
 #include "StyleScope.h"
 #include "StyleSheetContents.h"
@@ -73,9 +74,11 @@ void ScopeRuleSets::updateUserAgentMediaQueryStyleIfNeeded() const
 
     // Media queries on user agent sheet need to evaluated in document context. They behave like author sheets in this respect.
     auto& mediaQueryEvaluator = m_styleResolver.mediaQueryEvaluator();
+
     m_userAgentMediaQueryStyle = RuleSet::create();
-    
-    m_userAgentMediaQueryStyle->addRulesFromSheet(*UserAgentStyle::mediaQueryStyleSheet, nullptr, mediaQueryEvaluator, m_styleResolver);
+
+    RuleSetBuilder builder(*m_userAgentMediaQueryStyle, mediaQueryEvaluator, &m_styleResolver);
+    builder.addRulesFromSheet(*UserAgentStyle::mediaQueryStyleSheet);
 }
 
 RuleSet* ScopeRuleSets::userStyle() const
@@ -89,31 +92,38 @@ void ScopeRuleSets::initializeUserStyle()
 {
     auto& extensionStyleSheets = m_styleResolver.document().extensionStyleSheets();
     auto& mediaQueryEvaluator = m_styleResolver.mediaQueryEvaluator();
-    auto tempUserStyle = RuleSet::create();
-    if (CSSStyleSheet* pageUserSheet = extensionStyleSheets.pageUserSheet())
-        tempUserStyle->addRulesFromSheet(pageUserSheet->contents(), nullptr, mediaQueryEvaluator, m_styleResolver);
+
+    auto userStyle = RuleSet::create();
+
+    if (auto* pageUserSheet = extensionStyleSheets.pageUserSheet()) {
+        RuleSetBuilder builder(userStyle, mediaQueryEvaluator, &m_styleResolver);
+        builder.addRulesFromSheet(pageUserSheet->contents());
+    }
+
 #if ENABLE(APP_BOUND_DOMAINS)
     auto* page = m_styleResolver.document().page();
     if (!extensionStyleSheets.injectedUserStyleSheets().isEmpty() && page && page->mainFrame().loader().client().shouldEnableInAppBrowserPrivacyProtections())
         m_styleResolver.document().addConsoleMessage(MessageSource::Security, MessageLevel::Warning, "Ignoring user style sheet for non-app bound domain."_s);
     else {
-        collectRulesFromUserStyleSheets(extensionStyleSheets.injectedUserStyleSheets(), tempUserStyle.get(), mediaQueryEvaluator);
+        collectRulesFromUserStyleSheets(extensionStyleSheets.injectedUserStyleSheets(), userStyle, mediaQueryEvaluator);
         if (page && !extensionStyleSheets.injectedUserStyleSheets().isEmpty())
             page->mainFrame().loader().client().notifyPageOfAppBoundBehavior();
     }
 #else
-    collectRulesFromUserStyleSheets(extensionStyleSheets.injectedUserStyleSheets(), tempUserStyle.get(), mediaQueryEvaluator);
+    collectRulesFromUserStyleSheets(extensionStyleSheets.injectedUserStyleSheets(), userStyle, mediaQueryEvaluator);
 #endif
-    collectRulesFromUserStyleSheets(extensionStyleSheets.documentUserStyleSheets(), tempUserStyle.get(), mediaQueryEvaluator);
-    if (tempUserStyle->ruleCount() > 0 || tempUserStyle->pageRules().size() > 0)
-        m_userStyle = WTFMove(tempUserStyle);
+    collectRulesFromUserStyleSheets(extensionStyleSheets.documentUserStyleSheets(), userStyle, mediaQueryEvaluator);
+
+    if (userStyle->ruleCount() > 0 || userStyle->pageRules().size() > 0)
+        m_userStyle = WTFMove(userStyle);
 }
 
-void ScopeRuleSets::collectRulesFromUserStyleSheets(const Vector<RefPtr<CSSStyleSheet>>& userSheets, RuleSet& userStyle, const MediaQueryEvaluator& medium)
+void ScopeRuleSets::collectRulesFromUserStyleSheets(const Vector<RefPtr<CSSStyleSheet>>& userSheets, RuleSet& userStyle, const MediaQueryEvaluator& mediaQueryEvaluator)
 {
-    for (unsigned i = 0; i < userSheets.size(); ++i) {
-        ASSERT(userSheets[i]->contents().isUserStyleSheet());
-        userStyle.addRulesFromSheet(userSheets[i]->contents(), nullptr, medium, m_styleResolver);
+    RuleSetBuilder builder(userStyle, mediaQueryEvaluator, &m_styleResolver);
+    for (auto& sheet : userSheets) {
+        ASSERT(sheet->contents().isUserStyleSheet());
+        builder.addRulesFromSheet(sheet->contents());
     }
 }
 
@@ -175,11 +185,13 @@ std::optional<DynamicMediaQueryEvaluationChanges> ScopeRuleSets::evaluateDynamic
     return evaluationChanges;
 }
 
-void ScopeRuleSets::appendAuthorStyleSheets(const Vector<RefPtr<CSSStyleSheet>>& styleSheets, MediaQueryEvaluator* medium, InspectorCSSOMWrappers& inspectorCSSOMWrappers)
+void ScopeRuleSets::appendAuthorStyleSheets(const Vector<RefPtr<CSSStyleSheet>>& styleSheets, MediaQueryEvaluator* mediaQueryEvaluator, InspectorCSSOMWrappers& inspectorCSSOMWrappers)
 {
+    RuleSetBuilder builder(*m_authorStyle, *mediaQueryEvaluator, &m_styleResolver);
+
     for (auto& cssSheet : styleSheets) {
         ASSERT(!cssSheet->disabled());
-        m_authorStyle->addRulesFromSheet(cssSheet->contents(), cssSheet->mediaQueries(), *medium, m_styleResolver);
+        builder.addRulesFromSheet(cssSheet->contents(), cssSheet->mediaQueries());
         inspectorCSSOMWrappers.collectFromStyleSheetIfNeeded(cssSheet.get());
     }
 

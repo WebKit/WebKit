@@ -35,7 +35,6 @@
 #include "CSSSelectorList.h"
 #include "HTMLNames.h"
 #include "MediaQueryEvaluator.h"
-#include "RuleSetBuilder.h"
 #include "SecurityOrigin.h"
 #include "SelectorChecker.h"
 #include "SelectorFilter.h"
@@ -84,9 +83,17 @@ static bool isHostSelectorMatchingInShadowTree(const CSSSelector& startSelector)
     return leftmostSelector->match() == CSSSelector::PseudoClass && leftmostSelector->pseudoClassType() == CSSSelector::PseudoClassHost;
 }
 
-void RuleSet::addRule(const StyleRule& rule, unsigned selectorIndex, unsigned selectorListIndex, unsigned cascadeLayerIdentifier, RuleSetMediaQueryCollector* mediaQueryCollector)
+void RuleSet::addRule(const StyleRule& rule, unsigned selectorIndex, unsigned selectorListIndex)
 {
-    RuleData ruleData(rule, selectorIndex, selectorListIndex, m_ruleCount++);
+    RuleData ruleData(rule, selectorIndex, selectorListIndex, m_ruleCount);
+    addRule(WTFMove(ruleData), 0);
+}
+
+void RuleSet::addRule(RuleData&& ruleData, CascadeLayerIdentifier cascadeLayerIdentifier)
+{
+    ASSERT(ruleData.position() == m_ruleCount);
+
+    ++m_ruleCount;
 
     if (cascadeLayerIdentifier) {
         auto oldSize = m_cascadeLayerIdentifierForRulePosition.size();
@@ -96,9 +103,6 @@ void RuleSet::addRule(const StyleRule& rule, unsigned selectorIndex, unsigned se
     }
 
     m_features.collectFeatures(ruleData);
-
-    if (mediaQueryCollector)
-        mediaQueryCollector->addRuleIfNeeded(ruleData);
 
     unsigned classBucketSize = 0;
     const CSSSelector* idSelector = nullptr;
@@ -272,45 +276,6 @@ void RuleSet::addPageRule(StyleRulePage& rule)
     m_pageRules.append(&rule);
 }
 
-void RuleSet::addRulesFromSheet(const StyleSheetContents& sheet, const MediaQueryEvaluator& evaluator)
-{
-    RuleSetBuilder builder { *this, RuleSetMediaQueryCollector { evaluator } };
-    builder.addRulesFromSheet(sheet);
-
-    if (m_autoShrinkToFitEnabled)
-        shrinkToFit();
-}
-
-void RuleSet::addRulesFromSheet(const StyleSheetContents& sheet, const MediaQuerySet* sheetQuery, const MediaQueryEvaluator& evaluator, Style::Resolver& resolver)
-{
-    auto canUseDynamicMediaQueryResolution = [&] {
-        RuleSetBuilder builder { *this, RuleSetMediaQueryCollector { evaluator, true }, nullptr, RuleSetBuilder::Mode::ResolverMutationScan };
-        if (builder.mediaQueryCollector.pushAndEvaluate(sheetQuery))
-            builder.addRulesFromSheet(sheet);
-        builder.mediaQueryCollector.pop(sheetQuery);
-        return !builder.mediaQueryCollector.didMutateResolverWithinDynamicMediaQuery;
-    }();
-
-    RuleSetBuilder builder { *this, RuleSetMediaQueryCollector { evaluator, canUseDynamicMediaQueryResolution }, &resolver };
-
-    if (builder.mediaQueryCollector.pushAndEvaluate(sheetQuery))
-        builder.addRulesFromSheet(sheet);
-    builder.mediaQueryCollector.pop(sheetQuery);
-
-    m_hasViewportDependentMediaQueries = builder.mediaQueryCollector.hasViewportDependentMediaQueries;
-
-    if (!builder.mediaQueryCollector.dynamicMediaQueryRules.isEmpty()) {
-        auto firstNewIndex = m_dynamicMediaQueryRules.size();
-        m_dynamicMediaQueryRules.appendVector(WTFMove(builder.mediaQueryCollector.dynamicMediaQueryRules));
-
-        // Set the initial values.
-        evaluateDynamicMediaQueryRules(evaluator, firstNewIndex);
-    }
-
-    if (m_autoShrinkToFitEnabled)
-        shrinkToFit();
-}
-
 template<typename Function>
 void RuleSet::traverseRuleDatas(Function&& function)
 {
@@ -414,14 +379,6 @@ static inline void shrinkMapVectorsToFit(RuleSet::AtomRuleMap& map)
         vector->shrinkToFit();
 }
 
-static inline void shrinkDynamicRules(Vector<RuleSet::DynamicMediaQueryRules>& dynamicRules)
-{
-    for (auto& rule : dynamicRules)
-        rule.shrinkToFit();
-
-    dynamicRules.shrinkToFit();
-}
-
 void RuleSet::shrinkToFit()
 {
     shrinkMapVectorsToFit(m_idRules);
@@ -443,7 +400,9 @@ void RuleSet::shrinkToFit()
     m_pageRules.shrinkToFit();
     m_features.shrinkToFit();
 
-    shrinkDynamicRules(m_dynamicMediaQueryRules);
+    for (auto& rule : m_dynamicMediaQueryRules)
+        rule.shrinkToFit();
+    m_dynamicMediaQueryRules.shrinkToFit();
 
     m_cascadeLayers.shrinkToFit();
     m_cascadeLayerIdentifierForRulePosition.shrinkToFit();

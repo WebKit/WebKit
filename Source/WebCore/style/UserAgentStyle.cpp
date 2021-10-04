@@ -50,7 +50,7 @@
 #include "Page.h"
 #include "Quirks.h"
 #include "RenderTheme.h"
-#include "RuleSet.h"
+#include "RuleSetBuilder.h"
 #include "RuntimeEnabledFeatures.h"
 #include "SVGElement.h"
 #include "StyleSheetContents.h"
@@ -107,8 +107,11 @@ static StyleSheetContents* parseUASheet(const String& str)
 
 void UserAgentStyle::addToDefaultStyle(StyleSheetContents& sheet)
 {
-    defaultStyle->addRulesFromSheet(sheet, screenEval());
-    defaultPrintStyle->addRulesFromSheet(sheet, printEval());
+    RuleSetBuilder screenBuilder(*defaultStyle, screenEval());
+    screenBuilder.addRulesFromSheet(sheet);
+
+    RuleSetBuilder printBuilder(*defaultPrintStyle, printEval());
+    printBuilder.addRulesFromSheet(sheet);
 
     // Build a stylesheet consisting of non-trivial media queries seen in default style.
     // Rulesets for these can't be global and need to be built in document context.
@@ -145,7 +148,9 @@ void UserAgentStyle::initDefaultStyleSheet()
     // Quirks-mode rules.
     String quirksRules = String(StringImpl::createWithoutCopying(quirksUserAgentStyleSheet, sizeof(quirksUserAgentStyleSheet))) + RenderTheme::singleton().extraQuirksStyleSheet();
     quirksStyleSheet = parseUASheet(quirksRules);
-    defaultQuirksStyle->addRulesFromSheet(*quirksStyleSheet, screenEval());
+
+    RuleSetBuilder quirkBuilder(*defaultQuirksStyle, screenEval());
+    quirkBuilder.addRulesFromSheet(*quirksStyleSheet);
 
     ++defaultStyleVersion;
 }

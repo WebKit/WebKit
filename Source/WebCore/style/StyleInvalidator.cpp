@@ -31,7 +31,7 @@
 #include "ElementIterator.h"
 #include "ElementRuleCollector.h"
 #include "HTMLSlotElement.h"
-#include "RuleSet.h"
+#include "RuleSetBuilder.h"
 #include "RuntimeEnabledFeatures.h"
 #include "SelectorFilter.h"
 #include "ShadowRoot.h"
@@ -92,8 +92,10 @@ Invalidator::Invalidator(const Vector<StyleSheetContents*>& sheets, const MediaQ
         return;
 
     m_ownedRuleSet->disableAutoShrinkToFit();
+
+    RuleSetBuilder ruleSetBuilder(*m_ownedRuleSet, mediaQueryEvaluator);
     for (auto& sheet : sheets)
-        m_ownedRuleSet->addRulesFromSheet(*sheet, mediaQueryEvaluator);
+        ruleSetBuilder.addRulesFromSheet(*sheet);
 
     m_ruleInformation = collectRuleInformation();
 }
