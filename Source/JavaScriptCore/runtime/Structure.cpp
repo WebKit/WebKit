@@ -1229,9 +1229,15 @@ void Structure::visitChildrenImpl(JSCell* cell, Visitor& visitor)
     ConcurrentJSLocker locker(thisObject->m_lock);
     
     visitor.append(thisObject->m_globalObject);
-    if (!thisObject->isObject())
+    if (!thisObject->isObject()) {
+        // We do not need to clear JSPropertyNameEnumerator since it is never cached for non-object Structure.
+        // We do not have code clearing JSPropertyNameEnumerator since this function can be called concurrently.
         thisObject->m_cachedPrototypeChain.clear();
-    else {
+#if ASSERT_ENABLED
+        if (auto* rareData = thisObject->tryRareData())
+            ASSERT(!rareData->cachedPropertyNameEnumerator());
+#endif
+    } else {
         visitor.append(thisObject->m_prototype);
         visitor.append(thisObject->m_cachedPrototypeChain);
     }
@@ -1394,12 +1400,14 @@ bool ClassInfo::hasStaticSetterOrReadonlyProperties() const
     return false;
 }
 
-void Structure::setCachedPropertyNameEnumerator(VM& vm, JSPropertyNameEnumerator* enumerator)
+void Structure::setCachedPropertyNameEnumerator(VM& vm, JSPropertyNameEnumerator* enumerator, StructureChain* chain)
 {
+    ASSERT(typeInfo().isObject());
     ASSERT(!isDictionary());
     if (!hasRareData())
         allocateRareData(vm);
-    rareData()->setCachedPropertyNameEnumerator(vm, enumerator);
+    ASSERT(chain == m_cachedPrototypeChain.get());
+    rareData()->setCachedPropertyNameEnumerator(vm, this, enumerator, chain);
 }
 
 JSPropertyNameEnumerator* Structure::cachedPropertyNameEnumerator() const
@@ -1407,6 +1415,13 @@ JSPropertyNameEnumerator* Structure::cachedPropertyNameEnumerator() const
     if (!hasRareData())
         return nullptr;
     return rareData()->cachedPropertyNameEnumerator();
+}
+
+uintptr_t Structure::cachedPropertyNameEnumeratorAndFlag() const
+{
+    if (!hasRareData())
+        return 0;
+    return rareData()->cachedPropertyNameEnumeratorAndFlag();
 }
 
 bool Structure::canCachePropertyNameEnumerator(VM& vm) const
