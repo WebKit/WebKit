@@ -5,5 +5,5 @@ Title 2
 Title 3
 
 
-FAIL scrolling a sticky element into view should use its unshifted position assert_approx_equals: expected 1122 +/- 1 but got 561
+PASS scrolling a sticky element into view should use its unshifted position
 

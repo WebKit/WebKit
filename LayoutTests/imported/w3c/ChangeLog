@@ -1,3 +1,13 @@
+2021-10-05  Martin Robinson  <mrobinson@webkit.org>
+
+        [css-position-sticky] scrollIntoView should not take into account sticky positioning offsets
+        https://bugs.webkit.org/show_bug.cgi?id=230689
+
+        Reviewed by Simon Fraser.
+
+        * web-platform-tests/css/css-position/sticky/position-sticky-scrollIntoView-expected.txt: Update results to show newly
+        passing test.
+
 2021-10-05  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Test a font palette identifier of just "--"
