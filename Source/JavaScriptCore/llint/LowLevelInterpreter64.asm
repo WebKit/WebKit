@@ -3119,9 +3119,9 @@ llintOpWithReturn(op_get_property_enumerator, OpGetPropertyEnumerator, macro (si
     btpz t1, .slowPath
     bbeq JSCell::m_type[t1], StructureType, .slowPath
 
-    loadp StructureRareData::m_cachedPropertyNameEnumerator[t1], t1
+    loadp StructureRareData::m_cachedPropertyNameEnumeratorAndFlag[t1], t1
     btpz t1, .slowPath
-    btiz JSPropertyNameEnumerator::m_flags[t1], (constexpr JSPropertyNameEnumerator::ValidatedViaWatchpoint), .slowPath
+    btpnz t1, (constexpr StructureRareData::cachedPropertyNameEnumeratorIsValidatedViaTraversingFlag), .slowPath
 
     return(t1)
 

@@ -1,3 +1,21 @@
+2021-10-05  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] JSPropertyNameEnumerator should not have cached prototype chain since empty JSPropertyNameEnumerator is shared
+        https://bugs.webkit.org/show_bug.cgi?id=231202
+
+        Reviewed by Keith Miller.
+
+        * stress/for-in-validation-poly-proto.js: Added.
+        (shouldBe):
+        (test):
+        (factory.Test):
+        (factory):
+        * stress/for-in-validation-watchpoint.js: Added.
+        (shouldBe):
+        (test):
+        (Test):
+        (factory):
+
 2021-10-04  Saam Barati  <sbarati@apple.com>
 
         IntrinsicGetterAccessCase implementation of __proto__ needs to handle get_by_id_with_this
