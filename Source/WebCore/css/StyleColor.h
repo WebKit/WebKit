@@ -46,8 +46,16 @@ struct StyleColor {
     };
 
     static Color colorFromKeyword(CSSValueID, OptionSet<Options>);
-    static bool isColorKeyword(CSSValueID);
-    WEBCORE_EXPORT static bool isSystemColor(CSSValueID);
+    static bool isAbsoluteColorKeyword(CSSValueID);
+    WEBCORE_EXPORT static bool isSystemColorKeyword(CSSValueID);
+
+    enum class CSSColorType : uint8_t {
+        Absolute = 1 << 0,
+        Current = 1 << 1,
+        System = 1 << 2,
+    };
+    // https://drafts.csswg.org/css-color-4/#typedef-color
+    static bool isColorKeyword(CSSValueID, OptionSet<CSSColorType> = { CSSColorType::Absolute, CSSColorType::Current, CSSColorType::System });
 };
 
 } // namespace WebCore

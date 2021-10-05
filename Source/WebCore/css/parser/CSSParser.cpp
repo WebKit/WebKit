@@ -111,7 +111,7 @@ Color CSSParser::parseColor(const String& string, bool strict)
 Color CSSParser::parseSystemColor(StringView string)
 {
     auto keyword = cssValueKeywordID(string);
-    if (!StyleColor::isSystemColor(keyword))
+    if (!StyleColor::isSystemColorKeyword(keyword))
         return { };
     return RenderTheme::singleton().systemColor(keyword, { });
 }

@@ -23,6 +23,7 @@ struct NamedColor;
 %enum
 %%
 aliceblue, 0xfff0f8ff
+alpha, 0x00000000
 antiquewhite, 0xfffaebd7
 aqua, 0xff00ffff
 aquamarine, 0xff7fffd4

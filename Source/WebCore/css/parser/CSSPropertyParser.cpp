@@ -4867,7 +4867,7 @@ static RefPtr<CSSValueList> consumeOverrideColorsDescriptor(CSSParserTokenRange&
         if (!key)
             return nullptr;
 
-        auto color = consumeColor(range, context);
+        auto color = consumeColor(range, context, false, { StyleColor::CSSColorType::Absolute });
         if (!color)
             return nullptr;
 

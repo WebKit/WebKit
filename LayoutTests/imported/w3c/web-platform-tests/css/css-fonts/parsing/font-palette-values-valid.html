@@ -89,6 +89,11 @@
 @font-palette-values --N {
     override-colors: 0 color(display-p3 100% 100% 100%);
 }
+
+/* 14 */
+@font-palette-values --O {
+    override-colors: 0 transparent;
+}
 </style>
 </head>
 <body>
@@ -320,6 +325,19 @@ test(function() {
     assert_equals(rule.basePalette, "");
     assert_equals(rule.overrideColors.indexOf("),"), -1);
     assert_not_equals(rule.overrideColors.indexOf("display-p3"), -1);
+});
+
+test(function() {
+    let text = rules[14].cssText;
+    assert_not_equals(text.indexOf("override-colors"), -1);
+});
+
+test(function() {
+    let rule = rules[14];
+    assert_equals(rule.name, "--O");
+    assert_equals(rule.fontFamily, "");
+    assert_equals(rule.basePalette, "");
+    assert_not_equals(rule.overrideColors, "");
 });
 </script>
 </body>

@@ -1424,7 +1424,7 @@ static Color consumeOriginColor(CSSParserTokenRange& args, const CSSParserContex
     // FIXME: We don't have enough context in the parser to resolving a system keyword
     // correctly. We should package up the relative color parameters and resolve the
     // whole thing at the appropriate time when the origin color is a system keyword.
-    if (StyleColor::isSystemColor(keyword))
+    if (StyleColor::isSystemColorKeyword(keyword))
         return { };
 
     return StyleColor::colorFromKeyword(keyword, { });
@@ -2580,7 +2580,7 @@ Color consumeColorWorkerSafe(CSSParserTokenRange& range, const CSSParserContext&
     if (StyleColor::isColorKeyword(keyword)) {
         // FIXME: Need a worker-safe way to compute the system colors.
         //        For now, we detect the system color, but then intentionally fail parsing.
-        if (StyleColor::isSystemColor(keyword))
+        if (StyleColor::isSystemColorKeyword(keyword))
             return { };
         if (!isValueAllowedInMode(keyword, context.mode))
             return { };
@@ -2599,10 +2599,10 @@ Color consumeColorWorkerSafe(CSSParserTokenRange& range, const CSSParserContext&
     return result;
 }
 
-RefPtr<CSSPrimitiveValue> consumeColor(CSSParserTokenRange& range, const CSSParserContext& context, bool acceptQuirkyColors)
+RefPtr<CSSPrimitiveValue> consumeColor(CSSParserTokenRange& range, const CSSParserContext& context, bool acceptQuirkyColors, OptionSet<StyleColor::CSSColorType> allowedColorTypes)
 {
     auto keyword = range.peek().id();
-    if (StyleColor::isColorKeyword(keyword)) {
+    if (StyleColor::isColorKeyword(keyword, allowedColorTypes)) {
         if (!isValueAllowedInMode(keyword, context.mode))
             return nullptr;
         return consumeIdent(range);
