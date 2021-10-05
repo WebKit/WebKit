@@ -1,3 +1,12 @@
+2021-10-05  Ayumi Kojima  <ayumi_kojima@apple.com>
+
+        [ iOS15 WK2 ] http/tests/media/modern-media-controls/overflow-support/playback-speed-live-broadcast.html is a constant timeout.
+        <rdar://80393995>
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+
 2021-10-05  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION (r283335): Momentum scrolling is no longer locked to an axis
