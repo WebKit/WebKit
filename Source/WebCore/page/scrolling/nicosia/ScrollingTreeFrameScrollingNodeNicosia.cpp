@@ -82,6 +82,8 @@ void ScrollingTreeFrameScrollingNodeNicosia::commitStateBeforeChildren(const Scr
         auto* layer = static_cast<Nicosia::PlatformLayer*>(scrollingStateNode.footerLayer());
         m_footerLayer = downcast<Nicosia::CompositionLayer>(layer);
     }
+
+    m_delegate.updateFromStateNode(scrollingStateNode);
 }
 
 void ScrollingTreeFrameScrollingNodeNicosia::commitStateAfterChildren(const ScrollingStateNode& stateNode)
@@ -95,7 +97,6 @@ void ScrollingTreeFrameScrollingNodeNicosia::commitStateAfterChildren(const Scro
         stopScrollAnimations();
         const auto& requestedScrollData = scrollingStateNode.requestedScrollData();
         scrollTo(requestedScrollData.scrollPosition, requestedScrollData.scrollType, requestedScrollData.clamping);
-        m_delegate.resetCurrentPosition();
     }
 }
 

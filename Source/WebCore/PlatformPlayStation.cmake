@@ -36,7 +36,6 @@ list(APPEND WebCore_SOURCES
 
     platform/generic/KeyedDecoderGeneric.cpp
     platform/generic/KeyedEncoderGeneric.cpp
-    platform/generic/ScrollAnimatorGeneric.cpp
 
     platform/graphics/GLContext.cpp
     platform/graphics/PlatformDisplay.cpp

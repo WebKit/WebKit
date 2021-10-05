@@ -41,16 +41,17 @@ public:
     bool startAnimatedScrollToDestination(const FloatPoint& fromOffset, const FloatPoint& destinationOffset);
     bool retargetActiveAnimation(const FloatPoint& newOffset) final;
 
-    // FIXME: only public for ScrollingTreeScrollingNodeDelegateNicosia.
-    void updateScrollExtents() final;
-    void serviceAnimation(MonotonicTime) final;
+    const FloatPoint& destinationOffset() const { return m_destinationOffset; }
 
 private:
 
     bool startOrRetargetAnimation(const ScrollExtents&, const FloatPoint& destinationOffset);
-    
+
+    void updateScrollExtents() final;
+    void serviceAnimation(MonotonicTime) final;
+
     Seconds durationFromDistance(const FloatSize&) const;
-    
+
     bool animateScroll(MonotonicTime);
 
     Seconds m_duration;

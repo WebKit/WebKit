@@ -161,6 +161,10 @@ private:
     void removeWheelEventTestCompletionDeferralForReason(WheelEventTestMonitor::ScrollableAreaIdentifier, WheelEventTestMonitor::DeferReason) const final;
 #endif
 
+#if PLATFORM(GTK) || USE(NICOSIA)
+    bool scrollAnimationEnabled() const final;
+#endif
+
     static FloatSize deltaFromStep(ScrollbarOrientation, float step, float multiplier);
 
 protected:

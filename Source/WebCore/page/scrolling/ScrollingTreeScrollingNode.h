@@ -44,6 +44,9 @@ class WEBCORE_EXPORT ScrollingTreeScrollingNode : public ScrollingTreeNode {
 #if PLATFORM(MAC)
     friend class ScrollingTreeScrollingNodeDelegateMac;
 #endif
+#if USE(NICOSIA)
+    friend class ScrollingTreeScrollingNodeDelegateNicosia;
+#endif
     friend class ScrollingTree;
 
 public:

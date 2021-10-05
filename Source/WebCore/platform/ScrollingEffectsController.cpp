@@ -30,12 +30,15 @@
 #include "LayoutSize.h"
 #include "Logging.h"
 #include "PlatformWheelEvent.h"
-#include "ScrollAnimationKinetic.h"
 #include "ScrollAnimationMomentum.h"
 #include "ScrollAnimationSmooth.h"
 #include "ScrollableArea.h"
 #include "WheelEventTestMonitor.h"
 #include <wtf/text/TextStream.h>
+
+#if ENABLE(KINETIC_SCROLLING) && !PLATFORM(MAC)
+#include "ScrollAnimationKinetic.h"
+#endif
 
 namespace WebCore {
 
@@ -99,12 +102,12 @@ bool ScrollingEffectsController::startAnimatedScrollToDestination(FloatPoint sta
     return downcast<ScrollAnimationSmooth>(*m_currentAnimation).startAnimatedScrollToDestination(startOffset, destinationOffset);
 }
 
-bool ScrollingEffectsController::regargetAnimatedScroll(FloatPoint newDestinationOffset)
+bool ScrollingEffectsController::retargetAnimatedScroll(FloatPoint newDestinationOffset)
 {
     if (!is<ScrollAnimationSmooth>(m_currentAnimation.get()))
         return false;
     
-    LOG_WITH_STREAM(ScrollAnimations, stream << "ScrollingEffectsController " << this << " regargetAnimatedScroll to " << newDestinationOffset);
+    LOG_WITH_STREAM(ScrollAnimations, stream << "ScrollingEffectsController " << this << " retargetAnimatedScroll to " << newDestinationOffset);
 
     ASSERT(m_currentAnimation->isActive());
     return downcast<ScrollAnimationSmooth>(*m_currentAnimation).retargetActiveAnimation(newDestinationOffset);
@@ -116,35 +119,6 @@ void ScrollingEffectsController::stopAnimatedScroll()
 
     if (m_currentAnimation)
         m_currentAnimation->stop();
-}
-
-bool ScrollingEffectsController::processWheelEventForKineticScrolling(const PlatformWheelEvent& event)
-{
-#if ENABLE(KINETIC_SCROLLING)
-    if (m_currentAnimation && !is<ScrollAnimationKinetic>(m_currentAnimation.get())) {
-        m_currentAnimation->stop();
-        m_currentAnimation = nullptr;
-    }
-
-    if (!m_currentAnimation)
-        m_currentAnimation = makeUnique<ScrollAnimationKinetic>(*this);
-
-    auto& kineticAnimation = downcast<ScrollAnimationKinetic>(*m_currentAnimation);
-    kineticAnimation.appendToScrollHistory(event);
-
-    if (event.isEndOfNonMomentumScroll()) {
-        kineticAnimation.startAnimatedScrollWithInitialVelocity(m_client.scrollOffset(), kineticAnimation.computeVelocity(), m_client.allowsHorizontalScrolling(), m_client.allowsVerticalScrolling());
-        return true;
-    }
-    if (event.isTransitioningToMomentumScroll()) {
-        kineticAnimation.clearScrollHistory();
-        kineticAnimation.startAnimatedScrollWithInitialVelocity(m_client.scrollOffset(), event.swipeVelocity(), m_client.allowsHorizontalScrolling(), m_client.allowsVerticalScrolling());
-        return true;
-    }
-#else
-    UNUSED_PARAM(event);
-#endif
-    return false;
 }
 
 bool ScrollingEffectsController::startMomentumScrollWithInitialVelocity(const FloatPoint& initialOffset, const FloatSize& initialVelocity, const FloatSize& initialDelta, const Function<FloatPoint(const FloatPoint&)>& destinationModifier)
@@ -248,6 +222,121 @@ float ScrollingEffectsController::adjustedScrollDestination(ScrollEventAxis axis
 
     return m_scrollSnapState->adjustedScrollDestination(axis, destinationOffset, velocity, originalOffset, m_client.scrollExtents(), m_client.pageScaleFactor());
 }
+
+#if !PLATFORM(MAC)
+#if ENABLE(KINETIC_SCROLLING)
+bool ScrollingEffectsController::processWheelEventForKineticScrolling(const PlatformWheelEvent& event)
+{
+    if (is<ScrollAnimationKinetic>(m_currentAnimation.get()))
+        m_currentAnimation->stop();
+
+    if (!event.hasPreciseScrollingDeltas()) {
+        m_scrollHistory.clear();
+        return false;
+    }
+
+    m_scrollHistory.append(event);
+
+    if (!event.isEndOfNonMomentumScroll() && !event.isTransitioningToMomentumScroll())
+        return false;
+
+    if (m_currentAnimation && !is<ScrollAnimationKinetic>(m_currentAnimation.get())) {
+        m_currentAnimation->stop();
+        m_currentAnimation = nullptr;
+    }
+
+    if (!m_currentAnimation)
+        m_currentAnimation = makeUnique<ScrollAnimationKinetic>(*this);
+
+    auto& kineticAnimation = downcast<ScrollAnimationKinetic>(*m_currentAnimation);
+    while (!m_scrollHistory.isEmpty())
+        kineticAnimation.appendToScrollHistory(m_scrollHistory.takeFirst());
+
+    if (event.isEndOfNonMomentumScroll()) {
+        kineticAnimation.startAnimatedScrollWithInitialVelocity(m_client.scrollOffset(), kineticAnimation.computeVelocity(), m_client.allowsHorizontalScrolling(), m_client.allowsVerticalScrolling());
+        return true;
+    }
+    if (event.isTransitioningToMomentumScroll()) {
+        kineticAnimation.clearScrollHistory();
+        kineticAnimation.startAnimatedScrollWithInitialVelocity(m_client.scrollOffset(), event.swipeVelocity(), m_client.allowsHorizontalScrolling(), m_client.allowsVerticalScrolling());
+        return true;
+    }
+
+    ASSERT_NOT_REACHED();
+    return false;
+}
+#endif
+
+bool ScrollingEffectsController::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
+{
+#if ENABLE(KINETIC_SCROLLING)
+    if (processWheelEventForKineticScrolling(wheelEvent))
+        return true;
+#endif
+
+    auto scrollOffset = m_client.scrollOffset();
+    float deltaX = m_client.allowsHorizontalScrolling() ? wheelEvent.deltaX() : 0;
+    float deltaY = m_client.allowsVerticalScrolling() ? wheelEvent.deltaY() : 0;
+    auto extents = m_client.scrollExtents();
+    auto minPosition = extents.minimumScrollOffset();
+    auto maxPosition = extents.maximumScrollOffset();
+
+    if ((deltaX < 0 && scrollOffset.x() >= maxPosition.x())
+        || (deltaX > 0 && scrollOffset.x() <= minPosition.x()))
+        deltaX = 0;
+    if ((deltaY < 0 && scrollOffset.y() >= maxPosition.y())
+        || (deltaY > 0 && scrollOffset.y() <= minPosition.y()))
+        deltaY = 0;
+
+    if (!deltaX && !deltaY)
+        return false;
+
+    if (wheelEvent.granularity() == ScrollByPageWheelEvent) {
+        if (deltaX) {
+            bool negative = deltaX < 0;
+            deltaX = Scrollbar::pageStepDelta(extents.contentsSize.width());
+            if (negative)
+                deltaX = -deltaX;
+        }
+        if (deltaY) {
+            bool negative = deltaY < 0;
+            deltaY = Scrollbar::pageStepDelta(extents.contentsSize.height());
+            if (negative)
+                deltaY = -deltaY;
+        }
+    }
+
+    deltaX = -deltaX;
+    deltaY = -deltaY;
+
+    if (snapOffsetsInfo() && !snapOffsetsInfo()->isEmpty()) {
+        float scale = m_client.pageScaleFactor();
+        auto originalOffset = LayoutPoint(scrollOffset.x() / scale, scrollOffset.y() / scale);
+        auto newOffset = LayoutPoint((scrollOffset.x() + deltaX) / scale, (scrollOffset.y() + deltaY) / scale);
+
+        auto offsetX = snapOffsetsInfo()->closestSnapOffset(ScrollEventAxis::Horizontal, LayoutSize(extents.contentsSize), newOffset, deltaX, originalOffset.x()).first;
+        auto offsetY = snapOffsetsInfo()->closestSnapOffset(ScrollEventAxis::Vertical, LayoutSize(extents.contentsSize), newOffset, deltaY, originalOffset.y()).first;
+
+        deltaX = (offsetX - originalOffset.x()) * scale;
+        deltaY = (offsetY - originalOffset.y()) * scale;
+    }
+
+#if ENABLE(SMOOTH_SCROLLING)
+    if (m_client.scrollAnimationEnabled() && !wheelEvent.hasPreciseScrollingDeltas()) {
+        if (is<ScrollAnimationSmooth>(m_currentAnimation.get())) {
+            auto lastDestinationOffset = downcast<ScrollAnimationSmooth>(*m_currentAnimation).destinationOffset();
+            retargetAnimatedScroll(lastDestinationOffset + FloatSize { deltaX, deltaY });
+        } else
+            startAnimatedScrollToDestination(scrollOffset, scrollOffset + FloatSize { deltaX, deltaY });
+        return true;
+    }
+#endif
+
+    m_client.immediateScrollBy({ deltaX, deltaY });
+
+    return true;
+}
+#endif
 
 void ScrollingEffectsController::updateActiveScrollSnapIndexForClientOffset()
 {

@@ -32,68 +32,57 @@
 
 #include "NicosiaPlatformLayer.h"
 #include "ScrollAnimation.h"
+#include "ScrollingEffectsController.h"
 #include "ScrollingStateOverflowScrollingNode.h"
 #include "ThreadedScrollingTree.h"
-
-#if ENABLE(KINETIC_SCROLLING)
-#include "ScrollAnimationKinetic.h"
-#endif
-
-#if ENABLE(SMOOTH_SCROLLING)
-#include "ScrollAnimationSmooth.h"
-#endif
-
-#if ENABLE(KINETIC_SCROLLING) || ENABLE(SMOOTH_SCROLLING)
 #include <wtf/RunLoop.h>
-#endif
 
 namespace WebCore {
 
 // FIXME: This should not be a ScrollAnimationClient.
-class ScrollingTreeScrollingNodeDelegateNicosia : public ScrollingTreeScrollingNodeDelegate, public ScrollAnimationClient {
+class ScrollingTreeScrollingNodeDelegateNicosia : public ScrollingTreeScrollingNodeDelegate, public ScrollingEffectsControllerClient {
 public:
     explicit ScrollingTreeScrollingNodeDelegateNicosia(ScrollingTreeScrollingNode&, bool scrollAnimatorEnabled);
     virtual ~ScrollingTreeScrollingNodeDelegateNicosia();
 
+    void updateFromStateNode(const ScrollingStateScrollingNode&);
     std::unique_ptr<Nicosia::SceneIntegration::UpdateScope> createUpdateScope();
-    void resetCurrentPosition();
     void updateVisibleLengths();
     WheelEventHandlingResult handleWheelEvent(const PlatformWheelEvent&, EventTargeting);
     void stopScrollAnimations();
 
 private:
-    bool m_scrollAnimatorEnabled { false };
-    float pageScaleFactor();
-
-#if ENABLE(KINETIC_SCROLLING)
-    void ensureScrollAnimationKinetic();
-#endif
-#if ENABLE(SMOOTH_SCROLLING)
-    void ensureScrollAnimationSmooth();
-#endif
-
     void animationTimerFired();
-    void startTimerIfNecessary();
 
-    // ScrollAnimationClient
-    void scrollAnimationDidUpdate(ScrollAnimation&, const FloatPoint& currentPosition) final;
-    void scrollAnimationDidEnd(ScrollAnimation&) final;
-    ScrollExtents scrollExtentsForAnimation(ScrollAnimation&) final;
+    // ScrollingEffectsControllerClient.
+    std::unique_ptr<ScrollingEffectsControllerTimer> createTimer(Function<void()>&&) final;
 
-    // FIXME: These animations should not live here. They need to be managed by ScrollingEffectsController,
-    // to be coordinated with other kinds of scroll animations, and be referenced by ScrollingEffectsController::m_currentAnimation.
-    
-#if ENABLE(KINETIC_SCROLLING)
-    std::unique_ptr<ScrollAnimationKinetic> m_kineticAnimation;
-#endif
-#if ENABLE(SMOOTH_SCROLLING)
-    std::unique_ptr<ScrollAnimationSmooth> m_smoothAnimation;
-#endif
+    void startAnimationCallback(ScrollingEffectsController&) final;
+    void stopAnimationCallback(ScrollingEffectsController&) final;
 
-#if ENABLE(KINETIC_SCROLLING) || ENABLE(SMOOTH_SCROLLING)
-    // FIXME: When the above two animations are removed, this timer can be removed.
-    RunLoop::Timer<ScrollingTreeScrollingNodeDelegateNicosia> m_animationTimer;
-#endif
+    bool allowsHorizontalScrolling() const final;
+    bool allowsVerticalScrolling() const final;
+
+    void setScrollBehaviorStatus(ScrollBehaviorStatus status) final { m_scrollBehaviorStatus = status; }
+    ScrollBehaviorStatus scrollBehaviorStatus() const final { return m_scrollBehaviorStatus; }
+
+    void immediateScrollBy(const FloatSize&, ScrollClamping = ScrollClamping::Clamped) final;
+
+    void adjustScrollPositionToBoundsIfNecessary() final;
+
+    FloatPoint scrollOffset() const final;
+    void willStartScrollSnapAnimation() final;
+    void didStopScrollSnapAnimation() final;
+    float pageScaleFactor() const final;
+    ScrollExtents scrollExtents() const final;
+
+    bool scrollAnimationEnabled() const final { return m_scrollAnimatorEnabled; }
+
+    ScrollingEffectsController m_scrollController;
+    std::unique_ptr<RunLoop::Timer<ScrollingTreeScrollingNodeDelegateNicosia>> m_animationTimer;
+    ScrollBehaviorStatus m_scrollBehaviorStatus { ScrollBehaviorStatus::NotInAnimation };
+
+    bool m_scrollAnimatorEnabled { false };
 };
 
 } // namespace WebCore

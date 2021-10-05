@@ -43,7 +43,7 @@
 
 namespace WebCore {
 
-#if !ENABLE(SMOOTH_SCROLLING) && !PLATFORM(IOS_FAMILY) && !PLATFORM(MAC) && !PLATFORM(WPE)
+#if !PLATFORM(IOS_FAMILY) && !PLATFORM(MAC)
 std::unique_ptr<ScrollAnimator> ScrollAnimator::create(ScrollableArea& scrollableArea)
 {
     return makeUnique<ScrollAnimator>(scrollableArea);
@@ -127,7 +127,7 @@ bool ScrollAnimator::scrollToPositionWithAnimation(const FloatPoint& newPosition
 void ScrollAnimator::retargetRunningAnimation(const FloatPoint& newPosition)
 {
     ASSERT(scrollableArea().currentScrollBehaviorStatus() == ScrollBehaviorStatus::InNonNativeAnimation);
-    m_scrollController.regargetAnimatedScroll(offsetFromPosition(newPosition));
+    m_scrollController.retargetAnimatedScroll(offsetFromPosition(newPosition));
 }
 
 FloatPoint ScrollAnimator::offsetFromPosition(const FloatPoint& position) const
@@ -185,6 +185,8 @@ bool ScrollAnimator::handleWheelEvent(const PlatformWheelEvent& e)
         return true;
 #endif
 
+#if PLATFORM(MAC)
+    // FIXME: We should be able to remove this code, but Mac's handleWheelEvent relies on this somehow.
     Scrollbar* horizontalScrollbar = m_scrollableArea.horizontalScrollbar();
     Scrollbar* verticalScrollbar = m_scrollableArea.verticalScrollbar();
 
@@ -228,6 +230,9 @@ bool ScrollAnimator::handleWheelEvent(const PlatformWheelEvent& e)
         }
     }
     return handled;
+#else
+    return m_scrollController.handleWheelEvent(e);
+#endif
 }
 
 #if ENABLE(TOUCH_EVENTS)
@@ -403,6 +408,13 @@ void ScrollAnimator::removeWheelEventTestCompletionDeferralForReason(WheelEventT
         return;
     
     m_wheelEventTestMonitor->removeDeferralForReason(identifier, reason);
+}
+#endif
+
+#if PLATFORM(GTK) || USE(NICOSIA)
+bool ScrollAnimator::scrollAnimationEnabled() const
+{
+    return m_scrollableArea.scrollAnimatorEnabled() && platformAllowsScrollAnimation();
 }
 #endif
 

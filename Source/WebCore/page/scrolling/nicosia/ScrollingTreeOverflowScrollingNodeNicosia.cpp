@@ -56,7 +56,6 @@ void ScrollingTreeOverflowScrollingNodeNicosia::commitStateAfterChildren(const S
         stopScrollAnimations();
         const auto& requestedScrollData = overflowStateNode.requestedScrollData();
         scrollTo(requestedScrollData.scrollPosition, requestedScrollData.scrollType, requestedScrollData.clamping);
-        m_delegate.resetCurrentPosition();
     }
 }
 

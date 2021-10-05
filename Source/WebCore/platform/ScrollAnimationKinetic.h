@@ -63,15 +63,14 @@ public:
     bool startAnimatedScrollWithInitialVelocity(const FloatPoint& initialOffset, const FloatSize& velocity, bool mayHScroll, bool mayVScroll);
     bool retargetActiveAnimation(const FloatPoint& newOffset) final;
 
-    // FIXME: only public for ScrollingTreeScrollingNodeDelegateNicosia.
-    void serviceAnimation(MonotonicTime) final;
-
     void appendToScrollHistory(const PlatformWheelEvent&);
     void clearScrollHistory();
 
     FloatSize computeVelocity();
 
 private:
+    void serviceAnimation(MonotonicTime) final;
+
     std::optional<PerAxisData> m_horizontalData;
     std::optional<PerAxisData> m_verticalData;
 

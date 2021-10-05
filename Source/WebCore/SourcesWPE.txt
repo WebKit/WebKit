@@ -63,7 +63,6 @@ platform/UserAgentQuirks.cpp
 platform/adwaita/ScrollbarThemeAdwaita.cpp
 platform/adwaita/ThemeAdwaita.cpp
 
-platform/generic/ScrollAnimatorGeneric.cpp
 platform/generic/ScrollbarsControllerGeneric.cpp
 
 platform/graphics/ANGLEWebKitBridge.cpp
