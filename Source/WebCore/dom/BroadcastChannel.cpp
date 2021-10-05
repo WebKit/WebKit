@@ -72,7 +72,7 @@ static bool shouldPartitionOrigin(Document& document)
     if (!page)
         return true;
 
-    return !page->chrome().client().hasPageLevelStorageAccess(RegistrableDomain::uncheckedCreateFromHost(document.topDocument().securityOrigin().host()), RegistrableDomain::uncheckedCreateFromHost(document.securityOrigin().host()));
+    return !page->chrome().client().hasPageLevelStorageAccess(RegistrableDomain::uncheckedCreateFromHost(document.topOrigin().host()), RegistrableDomain::uncheckedCreateFromHost(document.securityOrigin().host()));
 #else
     return true;
 #endif

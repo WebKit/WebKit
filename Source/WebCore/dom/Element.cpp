@@ -3097,7 +3097,7 @@ void Element::focus(const FocusOptions& options)
 
     if (Page* page = document->page()) {
         auto& frame = *document->frame();
-        if (!frame.hasHadUserInteraction() && !frame.isMainFrame() && !document->topDocument().securityOrigin().isSameOriginDomain(document->securityOrigin()))
+        if (!frame.hasHadUserInteraction() && !frame.isMainFrame() && !document->topOrigin().isSameOriginDomain(document->securityOrigin()))
             return;
 
         FocusOptions optionsWithVisibility = options;

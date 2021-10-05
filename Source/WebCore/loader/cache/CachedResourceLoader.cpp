@@ -950,7 +950,7 @@ ResourceErrorOr<CachedResourceHandle<CachedResource>> CachedResourceLoader::requ
             else if (auto* topDocument = frame.mainFrame().document())
                 sameOriginRequest = topDocument->securityOrigin().isSameSchemeHostPort(requestedOrigin.get());
         } else if (document()) {
-            sameOriginRequest = document()->topDocument().securityOrigin().isSameSchemeHostPort(requestedOrigin.get())
+            sameOriginRequest = document()->topOrigin().isSameSchemeHostPort(requestedOrigin.get())
                 && document()->securityOrigin().isSameSchemeHostPort(requestedOrigin.get());
         }
         for (auto& fields : m_documentLoader->customHeaderFields()) {
