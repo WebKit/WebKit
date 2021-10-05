@@ -217,10 +217,8 @@ InlineLayoutUnit LineBuilder::inlineItemWidth(const InlineItem& inlineItem, Inli
 {
     if (is<InlineTextItem>(inlineItem)) {
         auto& inlineTextItem = downcast<InlineTextItem>(inlineItem);
-        if (auto contentWidth = inlineTextItem.width()) {
-            ASSERT(&inlineTextItem.firstLineStyle() == &inlineTextItem.style());
+        if (auto contentWidth = inlineTextItem.width())
             return *contentWidth;
-        }
         auto& fontCascade = m_isFirstLine ? inlineTextItem.firstLineStyle().fontCascade() : inlineTextItem.style().fontCascade();
         if (!inlineTextItem.isWhitespace() || InlineTextItem::shouldPreserveSpacesAndTabs(inlineTextItem))
             return TextUtil::width(inlineTextItem, fontCascade, contentLogicalLeft);
