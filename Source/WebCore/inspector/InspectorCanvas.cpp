@@ -821,12 +821,12 @@ static RefPtr<Inspector::Protocol::Canvas::ContextAttributes> buildObjectForCanv
             .release();
         switch (attributes.colorSpace) {
         case PredefinedColorSpace::SRGB:
-            contextAttributesPayload->setColorSpace("srgb"_s);
+            contextAttributesPayload->setColorSpace(Protocol::Canvas::ColorSpace::SRGB);
             break;
 
 #if ENABLE(PREDEFINED_COLOR_SPACE_DISPLAY_P3)
         case PredefinedColorSpace::DisplayP3:
-            contextAttributesPayload->setColorSpace("display-p3"_s);
+            contextAttributesPayload->setColorSpace(Protocol::Canvas::ColorSpace::DisplayP3);
             break;
 #endif
         }

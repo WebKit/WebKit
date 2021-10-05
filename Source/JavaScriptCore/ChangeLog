@@ -1,3 +1,15 @@
+2021-10-05  Patrick Angle  <pangle@apple.com>
+
+        Web Inspector: Show color space for canvases in the Graphics tab on the overview cards
+        https://bugs.webkit.org/show_bug.cgi?id=231205
+
+        Reviewed by Devin Rousso.
+
+        Use an enum instead of strings for color space values sent to the frontend.
+
+        * inspector/protocol/Canvas.json:
+        * inspector/scripts/codegen/generator.py:
+
 2021-10-05  Mark Lam  <mark.lam@apple.com>
 
         CodeBlock should not add/remove LoopHintExecutionCounters.

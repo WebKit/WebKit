@@ -1,3 +1,21 @@
+2021-10-05  Patrick Angle  <pangle@apple.com>
+
+        Web Inspector: Show color space for canvases in the Graphics tab on the overview cards
+        https://bugs.webkit.org/show_bug.cgi?id=231205
+
+        Reviewed by Devin Rousso.
+
+        For canvas context's with a color space attribute, show the color space next to the context type in the header
+        of each context card in the Graphics tab.
+
+        * UserInterface/Models/Canvas.js:
+        (WI.Canvas.displayNameForColorSpace):
+        * UserInterface/Views/CanvasContentView.js:
+        (WI.CanvasContentView.prototype.initialLayout):
+        * UserInterface/Views/CanvasOverviewContentView.css:
+        (.content-view.canvas-overview > .content-view.canvas > header > .titles > :matches(.subtitle, .color-space),):
+        (.content-view.canvas-overview > .content-view.canvas > header .color-space::before):
+
 2021-09-29  BJ Burg  <bburg@apple.com>
 
         [Cocoa] add _WKInspectorExtension SPI to evaluate script on an extension tab
