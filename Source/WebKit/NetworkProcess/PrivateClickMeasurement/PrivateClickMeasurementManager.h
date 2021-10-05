@@ -52,6 +52,7 @@ public:
     void clear(CompletionHandler<void()>&&) final;
     void clearForRegistrableDomain(const RegistrableDomain&, CompletionHandler<void()>&&) final;
     void migratePrivateClickMeasurementFromLegacyStorage(PrivateClickMeasurement&&, PrivateClickMeasurementAttributionType) final;
+    void setDebugModeIsEnabled(bool) final;
 
     void toStringForTesting(CompletionHandler<void(String)>&&) const final;
     void setOverrideTimerForTesting(bool value) final { m_isRunningTest = value; }

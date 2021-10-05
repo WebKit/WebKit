@@ -32,12 +32,14 @@
 
 namespace WebKit {
 
+class NetworkSession;
+
 namespace PCM {
 
 class ManagerProxy : public ManagerInterface {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    ManagerProxy(const String& machServiceName);
+    ManagerProxy(const String& machServiceName, NetworkSession&);
 
     using ApplicationBundleIdentifier = String;
 
@@ -46,6 +48,7 @@ public:
     void clear(CompletionHandler<void()>&&) final;
     void clearForRegistrableDomain(const WebCore::RegistrableDomain&, CompletionHandler<void()>&&) final;
     void migratePrivateClickMeasurementFromLegacyStorage(WebCore::PrivateClickMeasurement&&, PrivateClickMeasurementAttributionType) final;
+    void setDebugModeIsEnabled(bool) final;
 
     void toStringForTesting(CompletionHandler<void(String)>&&) const final;
     void setOverrideTimerForTesting(bool) final;
@@ -66,7 +69,7 @@ private:
     template<MessageType messageType, typename... Args, typename... ReplyArgs>
     void sendMessageWithReply(CompletionHandler<void(ReplyArgs...)>&&, Args&&...) const;
 
-    Connection m_connection;
+    ConnectionToMachService m_connection;
 };
 
 } // namespace PCM

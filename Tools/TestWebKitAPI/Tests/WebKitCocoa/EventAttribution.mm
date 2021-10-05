@@ -29,12 +29,19 @@
 #import "PlatformUtilities.h"
 #import "Test.h"
 #import "TestNavigationDelegate.h"
+#import "TestUIDelegate.h"
 #import "TestWKWebView.h"
 #import "Utilities.h"
+#import "WKWebViewConfigurationExtras.h"
 #import <WebKit/WKMain.h>
+#import <WebKit/WKPage.h>
+#import <WebKit/WKPageInjectedBundleClient.h>
+#import <WebKit/WKPreferencesPrivate.h>
+#import <WebKit/WKString.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WKWebViewPrivateForTesting.h>
 #import <WebKit/WKWebsiteDataStorePrivate.h>
+#import <WebKit/_WKInspector.h>
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 #import <mach-o/dyld.h>
 #import <wtf/OSObjectPtr.h>
@@ -48,6 +55,10 @@
 #include <wtf/spi/cocoa/SecuritySPI.h>
 
 #endif // HAVE(RSA_BSSA)
+
+@interface WKWebView ()
+- (WKPageRef)_pageForTesting;
+@end
 
 @interface MockEventAttribution : NSObject
 
@@ -110,7 +121,7 @@ static void clearState()
     [[NSFileManager defaultManager] removeItemAtURL:adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]).get()._resourceLoadStatisticsDirectory error:nil];
 }
 
-void runBasicEventAttributionTest(WKWebViewConfiguration *configuration, Function<void(WKWebView *, const HTTPServer&)>&& addAttributionToWebView)
+void runBasicPCMTest(WKWebViewConfiguration *configuration, Function<void(WKWebView *, const HTTPServer&)>&& addAttributionToWebView)
 {
     clearState();
     [WKWebsiteDataStore _setNetworkProcessSuspensionAllowedForTesting:NO];
@@ -163,7 +174,7 @@ void runBasicEventAttributionTest(WKWebViewConfiguration *configuration, Functio
 }
 
 #if HAVE(RSA_BSSA)
-TEST(EventAttribution, FraudPrevention)
+TEST(PrivateClickMeasurement, FraudPrevention)
 {
     [WKWebsiteDataStore _setNetworkProcessSuspensionAllowedForTesting:NO];
     bool done = false;
@@ -317,14 +328,14 @@ TEST(EventAttribution, FraudPrevention)
 }
 #endif
 
-TEST(EventAttribution, Basic)
+TEST(PrivateClickMeasurement, Basic)
 {
-    runBasicEventAttributionTest(nil, [](WKWebView *webView, const HTTPServer& server) {
+    runBasicPCMTest(nil, [](WKWebView *webView, const HTTPServer& server) {
         [webView _addEventAttributionWithSourceID:42 destinationURL:exampleURL() sourceDescription:@"test source description" purchaser:@"test purchaser" reportEndpoint:server.request().URL optionalNonce:nil applicationBundleID:@"test.bundle.id"];
     });
 }
 
-TEST(EventAttribution, DatabaseLocation)
+TEST(PrivateClickMeasurement, DatabaseLocation)
 {
     NSFileManager *fileManager = [NSFileManager defaultManager];
     NSURL *tempDir = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingPathComponent:@"EventAttributionDatabaseLocationTest"] isDirectory:YES];
@@ -341,7 +352,7 @@ TEST(EventAttribution, DatabaseLocation)
         auto viewConfiguration = adoptNS([WKWebViewConfiguration new]);
         auto dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:dataStoreConfiguration.get()]);
         viewConfiguration.get().websiteDataStore = dataStore.get();
-        runBasicEventAttributionTest(viewConfiguration.get(), [](WKWebView *webView, const HTTPServer& server) {
+        runBasicPCMTest(viewConfiguration.get(), [](WKWebView *webView, const HTTPServer& server) {
             [webView _addEventAttributionWithSourceID:42 destinationURL:exampleURL() sourceDescription:@"test source description" purchaser:@"test purchaser" reportEndpoint:server.request().URL optionalNonce:nil applicationBundleID:@"test.bundle.id"];
         });
         originalNetworkProcessPid = [dataStore _networkProcessIdentifier];
@@ -400,6 +411,7 @@ static OSObjectPtr<xpc_object_t> testDaemonPList(NSURL *storageLocation)
     xpc_dictionary_set_string(plist.get(), "_ManagedBy", "TestWebKitAPI");
     xpc_dictionary_set_string(plist.get(), "Label", "org.webkit.pcmtestdaemon");
     xpc_dictionary_set_bool(plist.get(), "LaunchOnlyOnce", true);
+    xpc_dictionary_set_string(plist.get(), "StandardErrorPath", [storageLocation URLByAppendingPathComponent:@"daemon_stderr"].path.fileSystemRepresentation);
 
     {
         auto environmentVariables = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
@@ -431,6 +443,7 @@ static RetainPtr<NSDictionary> testDaemonPList(NSURL *storageLocation)
     return @{
         @"Label" : @"org.webkit.pcmtestdaemon",
         @"LaunchOnlyOnce" : @YES,
+        @"StandardErrorPath" : [storageLocation URLByAppendingPathComponent:@"daemon_stderr"].path,
         @"EnvironmentVariables" : @{ @"DYLD_FRAMEWORK_PATH" : currentExecutableDirectory().get().path },
         @"MachServices" : @{ @"org.webkit.pcmtestdaemon.service" : @YES },
         @"ProgramArguments" : @[
@@ -445,7 +458,7 @@ static RetainPtr<NSDictionary> testDaemonPList(NSURL *storageLocation)
 
 #endif
 
-TEST(EventAttribution, Daemon)
+static std::pair<NSURL *, WKWebViewConfiguration *> setUpDaemon(WKWebViewConfiguration *viewConfiguration)
 {
     NSFileManager *fileManager = [NSFileManager defaultManager];
     NSURL *tempDir = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingPathComponent:@"EventAttributionDaemonTest"] isDirectory:YES];
@@ -467,32 +480,99 @@ TEST(EventAttribution, Daemon)
     EXPECT_NULL(error);
     success = [plist writeToURL:plistLocation error:&error];
     EXPECT_TRUE(success);
-    system([NSString stringWithFormat:@"launchctl load %@", plistLocation.path].UTF8String);
+    system([NSString stringWithFormat:@"launchctl load %@", plistLocation.path].fileSystemRepresentation);
 #endif
     EXPECT_NULL(error);
 
     auto dataStoreConfiguration = adoptNS([_WKWebsiteDataStoreConfiguration new]);
     dataStoreConfiguration.get().pcmMachServiceName = @"org.webkit.pcmtestdaemon.service";
-    auto viewConfiguration = adoptNS([WKWebViewConfiguration new]);
-    viewConfiguration.get().websiteDataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:dataStoreConfiguration.get()]).get();
-    runBasicEventAttributionTest(viewConfiguration.get(), [](WKWebView *webView, const HTTPServer& server) {
-        [webView _addEventAttributionWithSourceID:42 destinationURL:exampleURL() sourceDescription:@"test source description" purchaser:@"test purchaser" reportEndpoint:server.request().URL optionalNonce:nil applicationBundleID:@"test.bundle.id"];
-    });
+    viewConfiguration.websiteDataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:dataStoreConfiguration.get()]).get();
 
+    return std::make_pair(tempDir, viewConfiguration);
+}
+
+static void cleanUpDaemon(NSURL *tempDir)
+{
     system("killall AdAttributionDaemon -9");
 
-    EXPECT_TRUE([fileManager fileExistsAtPath:tempDir.path]);
-    [fileManager removeItemAtURL:tempDir error:&error];
+    EXPECT_TRUE([[NSFileManager defaultManager] fileExistsAtPath:tempDir.path]);
+    NSError *error = nil;
+    [[NSFileManager defaultManager] removeItemAtURL:tempDir error:&error];
     EXPECT_NULL(error);
+}
+
+TEST(PrivateClickMeasurement, DaemonBasicFunctionality)
+{
+    auto [tempDir, configuration] = setUpDaemon(adoptNS([WKWebViewConfiguration new]).autorelease());
+    runBasicPCMTest(configuration, [](WKWebView *webView, const HTTPServer& server) {
+        [webView _addEventAttributionWithSourceID:42 destinationURL:exampleURL() sourceDescription:@"test source description" purchaser:@"test purchaser" reportEndpoint:server.request().URL optionalNonce:nil applicationBundleID:@"test.bundle.id"];
+    });
+    cleanUpDaemon(tempDir);
+}
+
+static void setInjectedBundleClient(WKWebView *webView, Vector<String>& consoleMessages)
+{
+    WKPageInjectedBundleClientV0 injectedBundleClient = {
+        { 0, &consoleMessages },
+        [] (WKPageRef, WKStringRef messageName, WKTypeRef message, const void* clientInfo) {
+            auto& consoleMessages = *reinterpret_cast<Vector<String>*>(const_cast<void*>(clientInfo));
+            if (WKStringIsEqualToUTF8CString(messageName, "ConsoleMessage"))
+                consoleMessages.append(Util::toNS((WKStringRef)message));
+        },
+        nullptr,
+    };
+    WKPageSetPageInjectedBundleClient(webView._pageForTesting, &injectedBundleClient.base);
+};
+
+static RetainPtr<TestWKWebView> webViewWithOpenInspector(WKWebViewConfiguration *configuration)
+{
+    configuration.preferences._developerExtrasEnabled = YES;
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSZeroRect configuration:configuration]);
+    [webView synchronouslyLoadHTMLString:@"start processes"];
+    [[webView _inspector] show];
+    [webView _test_waitForInspectorToShow];
+    return webView;
+}
+
+TEST(PrivateClickMeasurement, DaemonDebugMode)
+{
+    auto [tempDir, configuration] = setUpDaemon([WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"BundlePageConsoleMessage"]);
+    Vector<String> consoleMessages;
+    auto webView = webViewWithOpenInspector(configuration);
+    setInjectedBundleClient(webView.get(), consoleMessages);
+    [configuration.websiteDataStore _setPrivateClickMeasurementDebugModeEnabledForTesting:YES];
+    while (consoleMessages.isEmpty())
+        Util::spinRunLoop();
+    EXPECT_WK_STREQ(consoleMessages[0], "[Private Click Measurement] Turned Debug Mode on.");
+    [configuration.websiteDataStore _setPrivateClickMeasurementDebugModeEnabledForTesting:NO];
+    while (consoleMessages.size() < 2)
+        Util::spinRunLoop();
+    EXPECT_WK_STREQ(consoleMessages[1], "[Private Click Measurement] Turned Debug Mode off.");
+}
+
+TEST(PrivateClickMeasurement, NetworkProcessDebugMode)
+{
+    auto configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"BundlePageConsoleMessage"];
+    Vector<String> consoleMessages;
+    auto webView = webViewWithOpenInspector(configuration);
+    setInjectedBundleClient(webView.get(), consoleMessages);
+    [configuration.websiteDataStore _setPrivateClickMeasurementDebugModeEnabledForTesting:YES];
+    while (consoleMessages.isEmpty())
+        Util::spinRunLoop();
+    EXPECT_WK_STREQ(consoleMessages[0], "[Private Click Measurement] Turned Debug Mode on.");
+    [configuration.websiteDataStore _setPrivateClickMeasurementDebugModeEnabledForTesting:NO];
+    while (consoleMessages.size() < 2)
+        Util::spinRunLoop();
+    EXPECT_WK_STREQ(consoleMessages[1], "[Private Click Measurement] Turned Debug Mode off.");
 }
 
 #endif // PLATFORM(MAC)
 
 #if HAVE(UI_EVENT_ATTRIBUTION)
 
-TEST(EventAttribution, BasicWithIOSSPI)
+TEST(PrivateClickMeasurement, BasicWithIOSSPI)
 {
-    runBasicEventAttributionTest(nil, [](WKWebView *webView, const HTTPServer& server) {
+    runBasicPCMTest(nil, [](WKWebView *webView, const HTTPServer& server) {
         auto attribution = adoptNS([[MockEventAttribution alloc] initWithReportEndpoint:server.request().URL destinationURL:exampleURL()]);
         webView._uiEventAttribution = (UIEventAttribution *)attribution.get();
         EXPECT_WK_STREQ(webView._uiEventAttribution.sourceDescription, "test source description");
@@ -500,9 +580,9 @@ TEST(EventAttribution, BasicWithIOSSPI)
     });
 }
 
-TEST(EventAttribution, BasicWithEphemeralIOSSPI)
+TEST(PrivateClickMeasurement, BasicWithEphemeralIOSSPI)
 {
-    runBasicEventAttributionTest(nil, [](WKWebView *webView, const HTTPServer& server) {
+    runBasicPCMTest(nil, [](WKWebView *webView, const HTTPServer& server) {
         auto attribution = adoptNS([[MockEventAttribution alloc] initWithReportEndpoint:server.request().URL destinationURL:exampleURL()]);
         webView._ephemeralUIEventAttribution = (UIEventAttribution *)attribution.get();
     });

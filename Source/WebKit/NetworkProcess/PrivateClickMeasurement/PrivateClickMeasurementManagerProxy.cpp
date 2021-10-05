@@ -72,8 +72,8 @@ void ManagerProxy::sendMessageWithReply(CompletionHandler<void(ReplyArgs...)>&& 
     });
 }
 
-ManagerProxy::ManagerProxy(const String& machServiceName)
-    : m_connection(machServiceName.utf8()) { }
+ManagerProxy::ManagerProxy(const String& machServiceName, NetworkSession& networkSession)
+    : m_connection(machServiceName.utf8(), networkSession) { }
 
 void ManagerProxy::storeUnattributed(WebCore::PrivateClickMeasurement&& pcm, CompletionHandler<void()>&& completionHandler)
 {
@@ -93,6 +93,11 @@ void ManagerProxy::clear(CompletionHandler<void()>&& completionHandler)
 void ManagerProxy::clearForRegistrableDomain(const WebCore::RegistrableDomain& domain, CompletionHandler<void()>&& completionHandler)
 {
     sendMessageWithReply<MessageType::ClearForRegistrableDomain>(WTFMove(completionHandler), domain);
+}
+
+void ManagerProxy::setDebugModeIsEnabled(bool enabled)
+{
+    sendMessage<MessageType::SetDebugModeIsEnabled>(enabled);
 }
 
 void ManagerProxy::migratePrivateClickMeasurementFromLegacyStorage(WebCore::PrivateClickMeasurement&& pcm, PrivateClickMeasurementAttributionType type)

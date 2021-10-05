@@ -1,3 +1,68 @@
+2021-10-05  Alex Christensen  <achristensen@webkit.org>
+
+        Implement missing functions in PrivateClickMeasurementDaemonClient
+        https://bugs.webkit.org/show_bug.cgi?id=231060
+
+        Reviewed by Chris Dumez.
+
+        Enable debug mode in the daemon if any connected clients have debug mode enabled.
+        Broadcast debug messages to all clients, which will then broadcast them to all web processes.
+        Add an API test that turns it on then off and checks that the debug messages make it all the way to the inspector.
+
+        * NetworkProcess/NetworkSession.cpp:
+        (WebKit::managerOrProxy):
+        (WebKit::NetworkSession::setPrivateClickMeasurementDebugMode):
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementConnection.cpp:
+        (WebKit::PCM::ConnectionToMachService::ConnectionToMachService):
+        (WebKit::PCM::ConnectionToMachService::send const):
+        (WebKit::PCM::ConnectionToMachService::sendWithReply const):
+        (WebKit::PCM::Connection::Connection): Deleted.
+        (WebKit::PCM::Connection::send const): Deleted.
+        (WebKit::PCM::Connection::sendWithReply const): Deleted.
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementConnection.h:
+        (WebKit::PCM::Connection::Connection):
+        (WebKit::PCM::Connection::get const):
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementDaemonClient.cpp:
+        (WebKit::PCM::DaemonClient::broadcastConsoleMessage):
+        (WebKit::PCM::DaemonClient::debugModeEnabled const):
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementManager.cpp:
+        (WebKit::PrivateClickMeasurementManager::setDebugModeIsEnabled):
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementManager.h:
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementManagerInterface.cpp:
+        (WebKit::PCM::messageTypeSendsReply):
+        (WebKit::PCM::handlePCMMessageSetDebugModeIsEnabled):
+        (WebKit::PCM::decodeMessageAndSendToManager):
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementManagerInterface.h:
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementManagerProxy.cpp:
+        (WebKit::PCM::ManagerProxy::ManagerProxy):
+        (WebKit::PCM::ManagerProxy::setDebugModeIsEnabled):
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementManagerProxy.h:
+        * NetworkProcess/PrivateClickMeasurement/cocoa/PrivateClickMeasurementConnectionCocoa.mm: Renamed from Source/WebKit/NetworkProcess/PrivateClickMeasurement/cocoa/PrivateClickMeasurementDaemonConnectionCocoa.mm.
+        (WebKit::PCM::ConnectionToMachService::initializeConnectionIfNeeded const):
+        (WebKit::PCM::ConnectionToMachService::sendDebugModeIsEnabledMessageIfNecessary const):
+        (WebKit::PCM::ConnectionToMachService::checkForDebugMessageBroadcast const):
+        (WebKit::PCM::Connection::send const):
+        (WebKit::PCM::Connection::sendWithReply const):
+        (WebKit::PCM::ConnectionToMachService::send const):
+        (WebKit::PCM::ConnectionToMachService::sendWithReply const):
+        * Shared/EntryPointUtilities/Cocoa/Daemon/PCMDaemonConnectionSet.h: Copied from Source/WebKit/NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementConnection.h.
+        * Shared/EntryPointUtilities/Cocoa/Daemon/PCMDaemonConnectionSet.mm: Added.
+        (WebKit::PCM::DaemonConnectionSet::singleton):
+        (WebKit::PCM::DaemonConnectionSet::add):
+        (WebKit::PCM::DaemonConnectionSet::remove):
+        (WebKit::PCM::DaemonConnectionSet::setConnectedNetworkProcessHasDebugModeEnabled):
+        (WebKit::PCM::DaemonConnectionSet::debugModeEnabled const):
+        (WebKit::PCM::DaemonConnectionSet::broadcastConsoleMessage):
+        * Shared/EntryPointUtilities/Cocoa/Daemon/PCMDaemonEntryPoint.mm:
+        (WebKit::connectionEventHandler):
+        (WebKit::startListeningForMachServiceConnections):
+        (WebKit::peers): Deleted.
+        * SourcesCocoa.txt:
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.mm:
+        (-[WKWebsiteDataStore _setPrivateClickMeasurementDebugModeEnabledForTesting:]):
+        * UIProcess/API/Cocoa/WKWebsiteDataStorePrivate.h:
+        * WebKit.xcodeproj/project.pbxproj:
+
 2021-10-04  Chris Dumez  <cdumez@apple.com>
 
         Add SPI to launch a service service worker in a WKWebView and expose service worker to injected bundle

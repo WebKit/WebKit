@@ -658,6 +658,11 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
     _websiteDataStore->allowTLSCertificateChainForLocalPCMTesting(WebCore::CertificateInfo(serverTrust));
 }
 
+- (void)_setPrivateClickMeasurementDebugModeEnabledForTesting:(BOOL)enabled
+{
+    _websiteDataStore->setPrivateClickMeasurementDebugMode(enabled);
+}
+
 - (void)_appBoundDomains:(void (^)(NSArray<NSString *> *))completionHandler
 {
 #if ENABLE(APP_BOUND_DOMAINS)

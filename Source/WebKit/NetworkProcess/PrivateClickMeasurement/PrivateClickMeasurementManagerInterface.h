@@ -41,6 +41,8 @@ class PrivateClickMeasurementManager;
 
 namespace PCM {
 
+class Connection;
+
 class ManagerInterface {
 public:
     virtual ~ManagerInterface() { };
@@ -57,6 +59,7 @@ public:
     virtual void clear(CompletionHandler<void()>&&) = 0;
     virtual void clearForRegistrableDomain(const RegistrableDomain&, CompletionHandler<void()>&&) = 0;
     virtual void migratePrivateClickMeasurementFromLegacyStorage(PrivateClickMeasurement&&, PrivateClickMeasurementAttributionType) = 0;
+    virtual void setDebugModeIsEnabled(bool) = 0;
 
     virtual void toStringForTesting(CompletionHandler<void(String)>&&) const = 0;
     virtual void setOverrideTimerForTesting(bool value) = 0;
@@ -75,6 +78,9 @@ public:
 constexpr const char* protocolVersionKey { "version" };
 constexpr uint64_t protocolVersionValue { 1 };
 
+constexpr const char* protocolDebugMessageLevelKey { "debug message level" };
+constexpr const char* protocolDebugMessageKey { "debug message" };
+
 constexpr const char* protocolMessageTypeKey { "message type" };
 enum class MessageType : uint8_t {
     StoreUnattributed,
@@ -82,6 +88,7 @@ enum class MessageType : uint8_t {
     Clear,
     ClearForRegistrableDomain,
     MigratePrivateClickMeasurementFromLegacyStorage,
+    SetDebugModeIsEnabled,
     ToStringForTesting,
     SetOverrideTimerForTesting,
     SetTokenPublicKeyURLForTesting,
@@ -99,7 +106,7 @@ enum class MessageType : uint8_t {
 constexpr const char* protocolEncodedMessageKey { "encoded message" };
 using EncodedMessage = Vector<uint8_t>;
 
-void decodeMessageAndSendToManager(MessageType, Vector<uint8_t>&& message, CompletionHandler<void(Vector<uint8_t>&&)>&&);
+void decodeMessageAndSendToManager(const Connection&, MessageType, Vector<uint8_t>&& message, CompletionHandler<void(Vector<uint8_t>&&)>&&);
 bool messageTypeSendsReply(MessageType);
 
 void initializePCMStorageInDirectory(const String&);
@@ -118,6 +125,7 @@ template<> struct EnumTraits<WebKit::PCM::MessageType> {
         WebKit::PCM::MessageType::Clear,
         WebKit::PCM::MessageType::ClearForRegistrableDomain,
         WebKit::PCM::MessageType::MigratePrivateClickMeasurementFromLegacyStorage,
+        WebKit::PCM::MessageType::SetDebugModeIsEnabled,
         WebKit::PCM::MessageType::ToStringForTesting,
         WebKit::PCM::MessageType::SetOverrideTimerForTesting,
         WebKit::PCM::MessageType::SetTokenPublicKeyURLForTesting,

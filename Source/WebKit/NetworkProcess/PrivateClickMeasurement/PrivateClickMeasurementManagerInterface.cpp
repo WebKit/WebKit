@@ -34,6 +34,10 @@
 #include "PrivateClickMeasurementManager.h"
 #include "WebCoreArgumentCoders.h"
 
+#if PLATFORM(COCOA)
+#include "PCMDaemonConnectionSet.h"
+#endif
+
 namespace WebKit {
 
 namespace PCM {
@@ -67,6 +71,10 @@ END
 
 FUNCTION(migratePrivateClickMeasurementFromLegacyStorage)
 ARGUMENTS(WebCore::PrivateClickMeasurement, PrivateClickMeasurementAttributionType)
+END
+
+FUNCTION(setDebugModeIsEnabled)
+ARGUMENTS(bool)
 END
 
 FUNCTION(toStringForTesting)
@@ -147,6 +155,7 @@ bool messageTypeSendsReply(MessageType messageType)
     switch (messageType) {
     case MessageType::HandleAttribution:
     case MessageType::MigratePrivateClickMeasurementFromLegacyStorage:
+    case MessageType::SetDebugModeIsEnabled:
     case MessageType::SetOverrideTimerForTesting:
     case MessageType::SetTokenPublicKeyURLForTesting:
     case MessageType::SetTokenSignatureURLForTesting:
@@ -200,6 +209,26 @@ void handlePCMMessage(PCM::EncodedMessage&& encodedMessage)
     IPC::callMemberFunction(WTFMove(*arguments), &daemonManager(), Info::MemberFunction);
 }
 
+static void handlePCMMessageSetDebugModeIsEnabled(const Connection& connection, PCM::EncodedMessage&& encodedMessage)
+{
+#if PLATFORM(COCOA)
+    PCM::Decoder decoder(WTFMove(encodedMessage));
+    std::optional<bool> enabled;
+    decoder >> enabled;
+    if (UNLIKELY(!enabled))
+        return;
+
+    auto& connectionSet = DaemonConnectionSet::singleton();
+    bool debugModeWasEnabled = connectionSet.debugModeEnabled();
+    connectionSet.setConnectedNetworkProcessHasDebugModeEnabled(connection, *enabled);
+    if (debugModeWasEnabled != connectionSet.debugModeEnabled())
+        daemonManager().setDebugModeIsEnabled(*enabled);
+#else
+    UNUSED_PARAM(connection);
+    UNUSED_PARAM(encodedMessage);
+#endif
+}
+
 template<typename Info>
 void handlePCMMessageWithReply(PCM::EncodedMessage&& encodedMessage, CompletionHandler<void(PCM::EncodedMessage&&)>&& replySender)
 {
@@ -217,7 +246,7 @@ void handlePCMMessageWithReply(PCM::EncodedMessage&& encodedMessage, CompletionH
     IPC::callMemberFunction(WTFMove(*arguments), WTFMove(completionHandler), &daemonManager(), Info::MemberFunction);
 }
 
-void decodeMessageAndSendToManager(MessageType messageType, Vector<uint8_t>&& encodedMessage, CompletionHandler<void(Vector<uint8_t>&&)>&& replySender)
+void decodeMessageAndSendToManager(const Connection& connection, MessageType messageType, Vector<uint8_t>&& encodedMessage, CompletionHandler<void(Vector<uint8_t>&&)>&& replySender)
 {
     ASSERT(messageTypeSendsReply(messageType) == !!replySender);
     switch (messageType) {
@@ -232,6 +261,9 @@ void decodeMessageAndSendToManager(MessageType messageType, Vector<uint8_t>&& en
         break;
     case PCM::MessageType::ClearForRegistrableDomain:
         handlePCMMessageWithReply<MessageInfo::clearForRegistrableDomain>(WTFMove(encodedMessage), WTFMove(replySender));
+        break;
+    case PCM::MessageType::SetDebugModeIsEnabled:
+        handlePCMMessageSetDebugModeIsEnabled(connection, WTFMove(encodedMessage));
         break;
     case PCM::MessageType::MigratePrivateClickMeasurementFromLegacyStorage:
         handlePCMMessage<MessageInfo::migratePrivateClickMeasurementFromLegacyStorage>(WTFMove(encodedMessage));

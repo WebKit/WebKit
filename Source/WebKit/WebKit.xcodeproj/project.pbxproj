@@ -4537,6 +4537,8 @@
 		5C5D2388227A1892000B9BDA /* _WKCustomHeaderFields.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKCustomHeaderFields.mm; sourceTree = "<group>"; };
 		5C5D2389227A1892000B9BDA /* _WKCustomHeaderFields.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKCustomHeaderFields.h; sourceTree = "<group>"; };
 		5C5D238A227A1D9B000B9BDA /* APICustomHeaderFields.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APICustomHeaderFields.h; sourceTree = "<group>"; };
+		5C6289A827068EC000CF5EC6 /* PCMDaemonConnectionSet.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PCMDaemonConnectionSet.h; sourceTree = "<group>"; };
+		5C6289A927068EC000CF5EC6 /* PCMDaemonConnectionSet.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PCMDaemonConnectionSet.mm; sourceTree = "<group>"; };
 		5C62FDF81EFC263C00CE072E /* WKURLSchemeTaskPrivate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKURLSchemeTaskPrivate.h; sourceTree = "<group>"; };
 		5C66A4B32320961300EA4D44 /* WKHTTPCookieStoreRef.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKHTTPCookieStoreRef.cpp; sourceTree = "<group>"; };
 		5C66A4B42320961400EA4D44 /* WKHTTPCookieStoreRef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKHTTPCookieStoreRef.h; sourceTree = "<group>"; };
@@ -4600,7 +4602,7 @@
 		5CB930C026E0542F0032B1C0 /* PrivateClickMeasurementClientImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PrivateClickMeasurementClientImpl.cpp; sourceTree = "<group>"; };
 		5CB930C126E054B80032B1C0 /* PrivateClickMeasurementClientImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrivateClickMeasurementClientImpl.h; sourceTree = "<group>"; };
 		5CB930F226E7EEE00032B1C0 /* PrivateClickMeasurementNetworkLoaderCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PrivateClickMeasurementNetworkLoaderCocoa.mm; sourceTree = "<group>"; };
-		5CB930F426E801E80032B1C0 /* PrivateClickMeasurementDaemonConnectionCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PrivateClickMeasurementDaemonConnectionCocoa.mm; sourceTree = "<group>"; };
+		5CB930F426E801E80032B1C0 /* PrivateClickMeasurementConnectionCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PrivateClickMeasurementConnectionCocoa.mm; sourceTree = "<group>"; };
 		5CB930F526E802150032B1C0 /* PrivateClickMeasurementManagerProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrivateClickMeasurementManagerProxy.h; sourceTree = "<group>"; };
 		5CB930F626E802150032B1C0 /* PrivateClickMeasurementDaemonClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrivateClickMeasurementDaemonClient.h; sourceTree = "<group>"; };
 		5CB930F726E802150032B1C0 /* PrivateClickMeasurementDaemonClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PrivateClickMeasurementDaemonClient.cpp; sourceTree = "<group>"; };
@@ -9468,7 +9470,7 @@
 		5CB930F126E7EE890032B1C0 /* cocoa */ = {
 			isa = PBXGroup;
 			children = (
-				5CB930F426E801E80032B1C0 /* PrivateClickMeasurementDaemonConnectionCocoa.mm */,
+				5CB930F426E801E80032B1C0 /* PrivateClickMeasurementConnectionCocoa.mm */,
 				5CB930F226E7EEE00032B1C0 /* PrivateClickMeasurementNetworkLoaderCocoa.mm */,
 				5CB9310726E841CB0032B1C0 /* PrivateClickMeasurementXPCUtilities.h */,
 				5CB9310826E841CB0032B1C0 /* PrivateClickMeasurementXPCUtilities.mm */,
@@ -9480,6 +9482,8 @@
 			isa = PBXGroup;
 			children = (
 				5CAF7AA526F93A950003F19E /* AdAttributionDaemon.c */,
+				5C6289A827068EC000CF5EC6 /* PCMDaemonConnectionSet.h */,
+				5C6289A927068EC000CF5EC6 /* PCMDaemonConnectionSet.mm */,
 				5CB9310426E837FC0032B1C0 /* PCMDaemonEntryPoint.h */,
 				5CB9310526E837FD0032B1C0 /* PCMDaemonEntryPoint.mm */,
 			);

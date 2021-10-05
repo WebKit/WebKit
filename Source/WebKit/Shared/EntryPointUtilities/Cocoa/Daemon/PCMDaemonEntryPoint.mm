@@ -26,7 +26,9 @@
 #import "config.h"
 #import "PCMDaemonEntryPoint.h"
 
+#import "PCMDaemonConnectionSet.h"
 #import "PrivateClickMeasurementConnection.h"
+#import "PrivateClickMeasurementDecoder.h"
 #import "PrivateClickMeasurementManagerInterface.h"
 #import "PrivateClickMeasurementXPCUtilities.h"
 #import <Foundation/Foundation.h>
@@ -42,13 +44,6 @@
 // FIXME: Add daemon plist to repository.
 
 namespace WebKit {
-
-static HashSet<RetainPtr<xpc_connection_t>>& peers()
-{
-    ASSERT(RunLoop::isMain());
-    static NeverDestroyed<HashSet<RetainPtr<xpc_connection_t>>> set;
-    return set.get();
-}
 
 static CompletionHandler<void(PCM::EncodedMessage&&)> replySender(PCM::MessageType messageType, OSObjectPtr<xpc_object_t>&& request)
 {
@@ -74,7 +69,7 @@ static void connectionEventHandler(xpc_object_t request)
     size_t dataSize { 0 };
     const void* data = xpc_dictionary_get_data(request, PCM::protocolEncodedMessageKey, &dataSize);
     PCM::EncodedMessage encodedMessage { static_cast<const uint8_t*>(data), dataSize };
-    decodeMessageAndSendToManager(messageType, WTFMove(encodedMessage), replySender(messageType, request));
+    decodeMessageAndSendToManager(PCM::Connection(xpc_dictionary_get_remote_connection(request)), messageType, WTFMove(encodedMessage), replySender(messageType, request));
 }
 
 static void startListeningForMachServiceConnections(const char* serviceName)
@@ -91,7 +86,7 @@ static void startListeningForMachServiceConnections(const char* serviceName)
                 NSLog(@"Failed to start listening for connections to mach service %s, likely because it is not registered with launchd", serviceName);
             if (event == XPC_ERROR_CONNECTION_INTERRUPTED) {
                 NSLog(@"removing peer connection %p", peer);
-                peers().remove(peer);
+                PCM::DaemonConnectionSet::singleton().remove(peer);
                 return;
             }
             connectionEventHandler(event);
@@ -100,7 +95,7 @@ static void startListeningForMachServiceConnections(const char* serviceName)
         xpc_connection_activate(peer);
 
         NSLog(@"adding peer connection %p", peer);
-        peers().add(peer);
+        PCM::DaemonConnectionSet::singleton().add(peer);
     });
     xpc_connection_activate(listener.get().get());
 }

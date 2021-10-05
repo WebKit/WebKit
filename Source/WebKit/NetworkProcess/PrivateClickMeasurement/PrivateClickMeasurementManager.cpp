@@ -227,6 +227,16 @@ void PrivateClickMeasurementManager::migratePrivateClickMeasurementFromLegacySto
     store().insertPrivateClickMeasurement(WTFMove(measurement), type, [] { });
 }
 
+void PrivateClickMeasurementManager::setDebugModeIsEnabled(bool enabled)
+{
+    // This doesn't maintain global state, it just broadcasts a message when debug mode enabled changes.
+    // The state is either stored in NetworkSession when not using the daemon
+    // or in DaemonConnectionSet per-connection when using the daemon.
+
+    auto message = enabled ? "[Private Click Measurement] Turned Debug Mode on."_s : "[Private Click Measurement] Turned Debug Mode off."_s;
+    m_client->broadcastConsoleMessage(MessageLevel::Info, message);
+}
+
 void PrivateClickMeasurementManager::handleAttribution(AttributionTriggerData&& attributionTriggerData, const URL& requestURL, WebCore::RegistrableDomain&& redirectDomain, const URL& firstPartyURL, const ApplicationBundleIdentifier& applicationBundleIdentifier)
 {
     if (!featureEnabled())

@@ -32,19 +32,18 @@ namespace WebKit {
 
 namespace PCM {
 
+ConnectionToMachService::ConnectionToMachService(CString&& machServiceName, NetworkSession& networkSession)
+    : m_machServiceName(WTFMove(machServiceName))
+    , m_networkSession(makeWeakPtr(networkSession)) { }
+
 #if !PLATFORM(COCOA)
 
-Connection::Connection(CString&&)
+void ConnectionToMachService::send(MessageType, EncodedMessage&&) const
 {
     notImplemented();
 }
 
-void Connection::send(MessageType, EncodedMessage&&) const
-{
-    notImplemented();
-}
-
-void Connection::sendWithReply(MessageType, EncodedMessage&&, CompletionHandler<void(EncodedMessage&&)>&& completionHandler) const
+void ConnectionToMachService::sendWithReply(MessageType, EncodedMessage&&, CompletionHandler<void(EncodedMessage&&)>&& completionHandler) const
 {
     notImplemented();
     completionHandler({ });

@@ -40,4 +40,5 @@
 
 @interface WKWebView (TestUIDelegateExtras)
 - (NSString *)_test_waitForAlert;
+- (void)_test_waitForInspectorToShow;
 @end

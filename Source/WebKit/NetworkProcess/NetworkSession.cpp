@@ -98,7 +98,7 @@ static String pcmStoreDirectory(const NetworkSession& session, const String& res
 static UniqueRef<PCM::ManagerInterface> managerOrProxy(NetworkSession& networkSession, NetworkProcess& networkProcess, const NetworkSessionCreationParameters& parameters)
 {
     if (!parameters.pcmMachServiceName.isEmpty())
-        return makeUniqueRef<PCM::ManagerProxy>(parameters.pcmMachServiceName);
+        return makeUniqueRef<PCM::ManagerProxy>(parameters.pcmMachServiceName, networkSession);
     return makeUniqueRef<PrivateClickMeasurementManager>(makeUniqueRef<PCM::ClientImpl>(networkSession, networkProcess), pcmStoreDirectory(networkSession, parameters.resourceLoadStatisticsParameters.directory, parameters.resourceLoadStatisticsParameters.privateClickMeasurementStorageDirectory));
 }
 
@@ -427,9 +427,7 @@ void NetworkSession::setPrivateClickMeasurementDebugMode(bool enabled)
         return;
 
     m_privateClickMeasurementDebugModeEnabled = enabled;
-
-    auto message = enabled ? "[Private Click Measurement] Turned Debug Mode on."_s : "[Private Click Measurement] Turned Debug Mode off."_s;
-    m_networkProcess->broadcastConsoleMessage(sessionID(), MessageSource::PrivateClickMeasurement, MessageLevel::Info, message);
+    m_privateClickMeasurement->setDebugModeIsEnabled(enabled);
 }
 
 void NetworkSession::firePrivateClickMeasurementTimerImmediatelyForTesting()

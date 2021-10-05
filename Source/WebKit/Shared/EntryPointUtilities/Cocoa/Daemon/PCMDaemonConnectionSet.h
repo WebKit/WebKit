@@ -25,57 +25,35 @@
 
 #pragma once
 
-#include <wtf/CompletionHandler.h>
-#include <wtf/Vector.h>
-#include <wtf/WeakPtr.h>
-#include <wtf/text/CString.h>
-
-#if PLATFORM(COCOA)
+#include <wtf/HashMap.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/spi/darwin/XPCSPI.h>
-#endif
+
+namespace JSC {
+enum class MessageLevel : uint8_t;
+}
 
 namespace WebKit {
-
-class NetworkSession;
-
 namespace PCM {
 
-enum class MessageType : uint8_t;
-using EncodedMessage = Vector<uint8_t>;
+class Connection;
 
-class Connection : public CanMakeWeakPtr<Connection> {
+class DaemonConnectionSet {
 public:
-    Connection() = default;
-#if PLATFORM(COCOA)
-    explicit Connection(RetainPtr<xpc_connection_t>&& connection)
-        : m_connection(WTFMove(connection)) { }
-    xpc_connection_t get() const { return m_connection.get(); }
-    void send(xpc_object_t) const;
-    void sendWithReply(xpc_object_t, CompletionHandler<void(xpc_object_t)>&&) const;
-protected:
-    mutable RetainPtr<xpc_connection_t> m_connection;
-#endif
-};
+    static DaemonConnectionSet& singleton();
+    
+    void add(xpc_connection_t);
+    void remove(xpc_connection_t);
 
-class ConnectionToMachService : public Connection {
-public:
-    ConnectionToMachService(CString&& machServiceName, NetworkSession&);
-
-    void send(MessageType, EncodedMessage&&) const;
-    void sendWithReply(MessageType, EncodedMessage&&, CompletionHandler<void(EncodedMessage&&)>&&) const;
-
+    void setConnectedNetworkProcessHasDebugModeEnabled(const Connection&, bool);
+    bool debugModeEnabled() const;
+    void broadcastConsoleMessage(JSC::MessageLevel, const String&);
+    
 private:
-    void initializeConnectionIfNeeded() const;
-#if PLATFORM(COCOA)
-    void checkForDebugMessageBroadcast(xpc_object_t) const;
-#endif
-    void sendDebugModeIsEnabledMessageIfNecessary() const;
-
-    const CString m_machServiceName;
-    WeakPtr<NetworkSession> m_networkSession;
+    enum class DebugModeEnabled : bool { No, Yes };
+    HashMap<RetainPtr<xpc_connection_t>, DebugModeEnabled> m_connections;
+    size_t m_connectionsWithDebugModeEnabled { 0 };
 };
 
 } // namespace PCM
-
 } // namespace WebKit
