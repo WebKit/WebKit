@@ -962,7 +962,7 @@ LLINT_SLOW_PATH_DECL(slow_path_put_by_id)
                             metadata.m_offset = slot.cachedOffset();
                             metadata.m_newStructureID = newStructure->id();
                             if (!(bytecode.m_flags.isDirect())) {
-                                StructureChain* chain = newStructure->prototypeChain(globalObject, asObject(baseCell));
+                                StructureChain* chain = newStructure->prototypeChain(vm, globalObject, asObject(baseCell));
                                 ASSERT(chain);
                                 metadata.m_structureChain.set(vm, codeBlock, chain);
                             }

@@ -13300,12 +13300,12 @@ private:
             m_out.branch(isRareData, unsure(rareDataCase), unsure(genericCase));
 
             m_out.appendTo(rareDataCase, validationCase);
-            LValue cached = m_out.loadPtr(previousOrRareData, m_heaps.StructureRareData_cachedPropertyNameEnumerator);
-            m_out.branch(m_out.notNull(cached), unsure(validationCase), unsure(genericCase));
+            LValue cachedAndFlag = m_out.loadPtr(previousOrRareData, m_heaps.StructureRareData_cachedPropertyNameEnumeratorAndFlag);
+            m_out.branch(m_out.notNull(cachedAndFlag), unsure(validationCase), unsure(genericCase));
 
             m_out.appendTo(validationCase, genericCase);
-            results.append(m_out.anchor(cached));
-            m_out.branch(m_out.testNonZero32(m_out.load32(cached, m_heaps.JSPropertyNameEnumerator_flags), m_out.constInt32(JSPropertyNameEnumerator::ValidatedViaWatchpoint)), unsure(continuation), unsure(genericCase));
+            results.append(m_out.anchor(cachedAndFlag));
+            m_out.branch(m_out.testIsZeroPtr(cachedAndFlag, m_out.constIntPtr(StructureRareData::cachedPropertyNameEnumeratorIsValidatedViaTraversingFlag)), unsure(continuation), unsure(genericCase));
 
             m_out.appendTo(genericCase, continuation);
             results.append(m_out.anchor(vmCall(pointerType(), operationGetPropertyEnumeratorCell, weakPointer(globalObject), base)));
