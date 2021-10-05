@@ -86,7 +86,6 @@ void JSPropertyNameEnumerator::visitChildrenImpl(JSCell* cell, Visitor& visitor)
         visitor.markAuxiliary(propertyNames);
         visitor.append(propertyNames, propertyNames + thisObject->sizeOfPropertyNames());
     }
-    visitor.append(thisObject->m_prototypeChain);
 
     if (thisObject->cachedStructureID()) {
         VM& vm = visitor.vm();
