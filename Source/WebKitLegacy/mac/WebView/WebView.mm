@@ -719,6 +719,10 @@ WebDragSourceAction kit(std::optional<WebCore::DragSourceAction> action)
     case WebCore::DragSourceAction::Color:
         break;
 #endif
+#if ENABLE(MODEL_ELEMENT)
+    case WebCore::DragSourceAction::Model:
+        break;
+#endif
     }
 
     ASSERT_NOT_REACHED();

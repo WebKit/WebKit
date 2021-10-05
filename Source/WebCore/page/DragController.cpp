@@ -58,12 +58,14 @@
 #include "HTMLAttachmentElement.h"
 #include "HTMLImageElement.h"
 #include "HTMLInputElement.h"
+#include "HTMLModelElement.h"
 #include "HTMLParserIdioms.h"
 #include "HTMLPlugInElement.h"
 #include "HitTestRequest.h"
 #include "HitTestResult.h"
 #include "Image.h"
 #include "ImageOrientation.h"
+#include "Model.h"
 #include "MoveSelectionCommand.h"
 #include "Page.h"
 #include "Pasteboard.h"
@@ -752,6 +754,15 @@ static bool imageElementIsDraggable(const HTMLImageElement& image, const Frame& 
     return cachedImage && !cachedImage->errorOccurred() && cachedImage->imageForRenderer(renderer);
 }
 
+#if ENABLE(MODEL_ELEMENT)
+
+static bool modelElementIsDraggable(const HTMLModelElement& modelElement)
+{
+    return !!modelElement.model();
+}
+
+#endif
+
 #if ENABLE(ATTACHMENT_ELEMENT)
 
 static RefPtr<HTMLAttachmentElement> enclosingAttachmentElement(Element& element)
@@ -821,6 +832,12 @@ Element* DragController::draggableElement(const Frame* sourceFrame, Element* sta
 #if ENABLE(INPUT_TYPE_COLOR)
             if (m_dragSourceAction.contains(DragSourceAction::Color) && isEnabledColorInput(*element)) {
                 state.type.add(DragSourceAction::Color);
+                return element;
+            }
+#endif
+#if ENABLE(MODEL_ELEMENT)
+            if (m_dragSourceAction.contains(DragSourceAction::Model) && is<HTMLModelElement>(*element) && modelElementIsDraggable(downcast<HTMLModelElement>(*element))) {
+                state.type.add(DragSourceAction::Model);
                 return element;
             }
 #endif
@@ -1234,6 +1251,27 @@ bool DragController::startDrag(Frame& src, const DragState& state, OptionSet<Dra
         dragLoc = dragLocForDHTMLDrag(mouseDraggedPoint, dragOrigin, dragImageOffset, false);
 
         client().willPerformDragSourceAction(DragSourceAction::Color, dragOrigin, dataTransfer);
+        doSystemDrag(WTFMove(dragImage), dragLoc, dragOrigin, src, state, { });
+        return true;
+    }
+#endif
+
+#if ENABLE(MODEL_ELEMENT)
+    bool isModel = is<HTMLModelElement>(state.source);
+    if (isModel && m_dragSourceAction.contains(DragSourceAction::Model)) {
+        auto& modelElement = downcast<HTMLModelElement>(*state.source);
+        dragImage = DragImage { createDragImageForNode(src, modelElement) };
+
+        PasteboardImage pasteboardImage;
+        pasteboardImage.suggestedName = modelElement.currentSrc().lastPathComponent().toString();
+        pasteboardImage.resourceMIMEType = modelElement.model()->mimeType();
+        pasteboardImage.resourceData = modelElement.model()->data();
+        dataTransfer.pasteboard().write(pasteboardImage);
+
+        dragImageOffset = IntPoint { dragImageSize(dragImage.get()) };
+        dragLoc = dragLocForDHTMLDrag(mouseDraggedPoint, dragOrigin, dragImageOffset, false);
+
+        client().willPerformDragSourceAction(DragSourceAction::Model, dragOrigin, dataTransfer);
         doSystemDrag(WTFMove(dragImage), dragLoc, dragOrigin, src, state, { });
         return true;
     }

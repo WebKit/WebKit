@@ -1,3 +1,17 @@
+2021-10-05  Tim Horton  <timothy_horton@apple.com>
+
+        <model> should be draggable, similar to <img>
+        https://bugs.webkit.org/show_bug.cgi?id=229246
+
+        Reviewed by Wenson Hsieh.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit/cube.usdz: Added.
+        * TestWebKitAPI/Tests/ios/DragAndDropTestsIOS.mm:
+        (-[ModelLoadingMessageHandler userContentController:didReceiveScriptMessage:]):
+        (TestWebKitAPI::TEST):
+        Add a test that ensures that dragging a <model> works.
+
 2021-10-05  Alex Christensen  <achristensen@webkit.org>
 
         Implement missing functions in PrivateClickMeasurementDaemonClient

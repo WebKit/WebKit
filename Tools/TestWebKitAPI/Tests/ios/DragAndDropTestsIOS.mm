@@ -31,6 +31,7 @@
 #import "DragAndDropSimulator.h"
 #import "NSItemProviderAdditions.h"
 #import "PlatformUtilities.h"
+#import "TestURLSchemeHandler.h"
 #import "TestWKWebView.h"
 #import "UIKitSPI.h"
 #import "WKWebViewConfigurationExtras.h"
@@ -43,6 +44,7 @@
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WebItemProviderPasteboard.h>
+#import <WebKit/_WKExperimentalFeature.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
 #import <wtf/Seconds.h>
 #import <wtf/SoftLinking.h>
@@ -91,6 +93,21 @@ static NSData *testZIPArchive()
 }
 
 @end
+
+@interface ModelLoadingMessageHandler : NSObject <WKScriptMessageHandler>
+
+@property (nonatomic) BOOL didLoadModel;
+
+@end
+
+@implementation ModelLoadingMessageHandler
+- (void)userContentController:(WKUserContentController *)userContentController didReceiveScriptMessage:(WKScriptMessage *)message
+{
+    EXPECT_WK_STREQ(@"READY", [message body]);
+    _didLoadModel = true;
+}
+@end
+
 
 static void loadTestPageAndEnsureInputSession(DragAndDropSimulator *simulator, NSString *testPageName)
 {
@@ -2154,6 +2171,42 @@ TEST(DragAndDropTests, SuggestedNameContainsDot)
     [simulator runFrom:CGPointMake(0, 0) to:CGPointMake(100, 300)];
 
     EXPECT_WK_STREQ("one.foo.png (image/png)\ntwo.foo.PNG (image/png)", [webView stringByEvaluatingJavaScript:@"output.innerText"]);
+}
+
+TEST(DragAndDropTests, CanStartDragOnModel)
+{
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    for (_WKExperimentalFeature *feature in [WKPreferences _experimentalFeatures]) {
+        if ([feature.key isEqualToString:@"ModelElementEnabled"])
+            [[configuration preferences] _setEnabled:YES forFeature:feature];
+    }
+
+    // FIXME: Remove this after <rdar://problem/83863149> is fixed.
+    // It should not be necessary to use WKURLSchemeHandler here, but CFNetwork does not correctly identify USDZ files.
+    auto handler = adoptNS([TestURLSchemeHandler new]);
+    RetainPtr<NSData> modelData = [NSData dataWithContentsOfURL:[NSBundle.mainBundle URLForResource:@"cube" withExtension:@"usdz" subdirectory:@"TestWebKitAPI.resources"]];
+    [handler setStartURLSchemeTaskHandler:^(WKWebView *, id<WKURLSchemeTask> task) {
+        NSURLResponse *response = [[[NSURLResponse alloc] initWithURL:task.request.URL MIMEType:@"model/vnd.usdz+zip" expectedContentLength:[modelData length] textEncodingName:nil] autorelease];
+        [task didReceiveResponse:response];
+        [task didReceiveData:modelData.get()];
+        [task didFinish];
+    }];
+
+    auto messageHandler = adoptNS([[ModelLoadingMessageHandler alloc] init]);
+    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"modelLoading"];
+    [configuration setURLSchemeHandler:handler.get() forURLScheme:@"model"];
+    
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration.get()]);
+    [webView synchronouslyLoadHTMLString:@"<model><source src='model://cube.usdz'></model><script>document.getElementsByTagName('model')[0].ready.then(() => { window.webkit.messageHandlers.modelLoading.postMessage('READY') });</script>"];
+
+    while (![messageHandler didLoadModel])
+        Util::spinRunLoop();
+
+    auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
+    [simulator runFrom:CGPointMake(20, 20) to:CGPointMake(100, 100)];
+
+    NSArray *registeredTypes = [[simulator sourceItemProviders].firstObject registeredTypeIdentifiers];
+    EXPECT_WK_STREQ("com.pixar.universal-scene-description-mobile", [registeredTypes firstObject]);
 }
 
 } // namespace TestWebKitAPI

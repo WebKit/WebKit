@@ -3886,6 +3886,9 @@ bool EventHandler::dragHysteresisExceeded(const FloatPoint& dragViewportLocation
 #if ENABLE(ATTACHMENT_ELEMENT)
         case DragSourceAction::Attachment:
 #endif
+#if ENABLE(MODEL_ELEMENT)
+        case DragSourceAction::Model:
+#endif
             threshold = ImageDragHysteresis;
             break;
         case DragSourceAction::Link:

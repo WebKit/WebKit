@@ -1,5 +1,16 @@
 2021-10-05  Tim Horton  <timothy_horton@apple.com>
 
+        <model> should be draggable, similar to <img>
+        https://bugs.webkit.org/show_bug.cgi?id=229246
+
+        Reviewed by Wenson Hsieh.
+
+        * UIProcess/ios/DragDropInteractionState.mm:
+        (WebKit::shouldUseDragImageToCreatePreviewForDragSource):
+        For now, use the Web-Content-process-painted node-snapshot DragImage for the targeted preview on iOS.
+
+2021-10-05  Tim Horton  <timothy_horton@apple.com>
+
         Add an alternate style for form controls, and implement it for checkboxes and radio buttons
         https://bugs.webkit.org/show_bug.cgi?id=231160
 

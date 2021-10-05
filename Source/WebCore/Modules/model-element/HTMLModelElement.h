@@ -73,6 +73,8 @@ public:
 
     void enterFullscreen();
 
+    bool isDraggableIgnoringAttributes() const final { return true; }
+
 private:
     HTMLModelElement(const QualifiedName&, Document&);
 

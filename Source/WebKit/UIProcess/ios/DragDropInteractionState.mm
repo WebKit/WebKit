@@ -103,6 +103,11 @@ static bool shouldUseDragImageToCreatePreviewForDragSource(const DragSourceState
         return true;
 #endif
 
+#if ENABLE(MODEL_ELEMENT)
+    if (source.action.contains(DragSourceAction::Model))
+        return true;
+#endif
+
     return source.action.containsAny({ DragSourceAction::DHTML, DragSourceAction::Image });
 }
 
