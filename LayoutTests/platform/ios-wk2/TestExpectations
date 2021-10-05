@@ -2066,6 +2066,8 @@ webkit.org/b/229561 http/tests/navigation/page-cache-video.html [ Pass Failure ]
 
 webkit.org/b/222563 [ Release ] http/tests/loading/basic-auth-load-URL-with-consecutive-slashes.html [ Pass Failure ]
 
+webkit.org/b/231255 http/tests/privateClickMeasurement/attribution-conversion-through-cross-site-image-redirect.html [ Pass Crash ]
+
 webkit.org/b/229563 imported/w3c/web-platform-tests/css/css-display/display-contents-blockify-dynamic.html [ Pass Timeout ]
 
 webkit.org/b/229567 [ Release ] imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/image-loading-subpixel-clip.html [ Pass ImageOnlyFailure ]

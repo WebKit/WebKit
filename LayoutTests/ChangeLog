@@ -1,3 +1,12 @@
+2021-10-05  Ayumi Kojima  <ayumi_kojima@apple.com>
+
+        [ iOS 15 ] ASSERTION FAILED: isRunningTest(WebCore::applicationBundleIdentifier()).
+        https://bugs.webkit.org/show_bug.cgi?id=231255
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+
 2021-10-05  Gabriel Nava Marino  <gnavamarino@apple.com>
 
         Incorrect Length constructor used after blending negative Length
