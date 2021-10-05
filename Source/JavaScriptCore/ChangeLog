@@ -1,5 +1,32 @@
 2021-10-04  Saam Barati  <sbarati@apple.com>
 
+        Display return values in nicer way in the jsc REPL and add a prettyPrint function
+        https://bugs.webkit.org/show_bug.cgi?id=230931
+        <rdar://problem/83698777>
+
+        Reviewed by Tadeu Zagallo.
+
+        Currently, print(1), print("1"), and print([1]) all print to stdout
+        simply as "1" (without the quotes). Same for values when running the
+        REPL. This isn't super helpful. Let's print quotes for strings, and
+        brackets for arrays. This patch adds a prettyPrint function to do
+        that, since we have a lot of tests that depend on the old print behavior.
+        
+        This patch also makes values printed in the REPL the new pretty style.
+
+
+        * jsc.cpp:
+        (toCString):
+        (printInternal):
+        (JSC_DEFINE_HOST_FUNCTION):
+        (runInteractive):
+        (cStringFromViewWithString): Deleted.
+        * runtime/JSCJSValue.cpp:
+        (JSC::JSValue::toWTFStringForConsole const):
+        * runtime/JSCJSValue.h:
+
+2021-10-04  Saam Barati  <sbarati@apple.com>
+
         IntrinsicGetterAccessCase implementation of __proto__ needs to handle get_by_id_with_this
         https://bugs.webkit.org/show_bug.cgi?id=229951
         <rdar://problem/82787527>

@@ -289,6 +289,7 @@ public:
     Identifier toPropertyKey(JSGlobalObject*) const;
     JSValue toPropertyKeyValue(JSGlobalObject*) const;
     WTF::String toWTFString(JSGlobalObject*) const;
+    JS_EXPORT_PRIVATE WTF::String toWTFStringForConsole(JSGlobalObject*) const;
     JSObject* toObject(JSGlobalObject*) const;
 
     // Integer conversions.
