@@ -1,3 +1,23 @@
+2021-10-05  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Test a font palette identifier of just "--"
+        https://bugs.webkit.org/show_bug.cgi?id=230975
+        <rdar://problem/83681811>
+
+        Reviewed by Tim Horton.
+
+        It's a valid <dashed-ident>:
+        "The <dashed-ident> production is a <custom-ident>, with all the case-sensitivity
+        that implies, with the additional restriction that it must start with two dashes
+        (U+002D HYPHEN-MINUS)."
+
+        This is being upstreamed at https://github.com/web-platform-tests/wpt/pull/30963.
+
+        * web-platform-tests/css/css-fonts/parsing/font-palette-valid-expected.txt:
+        * web-platform-tests/css/css-fonts/parsing/font-palette-valid.html:
+        * web-platform-tests/css/css-fonts/parsing/font-palette-values-valid-expected.txt:
+        * web-platform-tests/css/css-fonts/parsing/font-palette-values-valid.html:
+
 2021-10-04  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Stop parsing context-sensitive colors in override-color
