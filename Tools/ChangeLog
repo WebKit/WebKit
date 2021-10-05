@@ -1,5 +1,20 @@
 2021-10-05  David Kilzer  <ddkilzer@apple.com>
 
+        REGRESSION (r283476): [ iOS macOS Debug ] TestWTF failures in RetainPtrARC and TypeCastsCocoaARC
+        <https://webkit.org/b/231172>
+        <rdar://problem/83836549>
+
+        Unreviewed partial revert of r283476.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        - Remove RetainPtrARC.mm and TypeCastsCocoaARC.mm from the
+          project.
+        * TestWebKitAPI/Tests/WTF/cocoa/TypeCastsCocoaARC.mm: Delete.
+        * TestWebKitAPI/Tests/WTF/ns/RetainPtrARC.mm: Delete.
+        - Remove these tests until issues can be fixed.
+
+2021-10-05  David Kilzer  <ddkilzer@apple.com>
+
         Follow-up #2: WTF::RetainPtr<> allows assignment of two pointer types that are not assignable
         <https://webkit.org/b/230406>
         <rdar://problem/83241893>
