@@ -48,6 +48,11 @@ ImageDrawResult SVGImageForContainer::draw(GraphicsContext& context, const Float
     return m_image->drawForContainer(context, m_containerSize, m_containerZoom, m_initialFragmentURL, dstRect, srcRect, options);
 }
 
+ImageDrawResult SVGImageForContainer::drawForCanvas(GraphicsContext& context, const FloatRect& dstRect, const FloatRect& srcRect, const ImagePaintingOptions& options, DestinationColorSpace canvasColorSpace)
+{
+    return m_image->drawForCanvasForContainer(context, m_containerSize, m_containerZoom, m_initialFragmentURL, dstRect, srcRect, options, canvasColorSpace);
+}
+
 void SVGImageForContainer::drawPattern(GraphicsContext& context, const FloatRect& dstRect, const FloatRect& srcRect, const AffineTransform& patternTransform,
     const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& options)
 {

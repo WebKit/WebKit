@@ -88,14 +88,18 @@ private:
 
     RefPtr<NativeImage> nativeImageForCurrentFrame(const GraphicsContext* = nullptr) final;
     RefPtr<NativeImage> nativeImage(const GraphicsContext* = nullptr) final;
-    RefPtr<NativeImage> nativeImage(const FloatSize& imageSize, const FloatRect& sourceRect);
+    RefPtr<NativeImage> nativeImage(const FloatSize& imageSize, const FloatRect& sourceRect, DestinationColorSpace);
 
     void startAnimationTimerFired();
 
     WEBCORE_EXPORT explicit SVGImage(ImageObserver&);
     ImageDrawResult draw(GraphicsContext&, const FloatRect& destination, const FloatRect& source, const ImagePaintingOptions& = { }) final;
-    ImageDrawResult drawAsNativeImage(GraphicsContext&, const FloatRect& destination, const FloatRect& source, const ImagePaintingOptions& = { });
+    ImageDrawResult drawForCanvas(GraphicsContext&, const FloatRect& destination, const FloatRect& source, const ImagePaintingOptions&, DestinationColorSpace) final;
+    ImageDrawResult drawAsNativeImage(GraphicsContext&, const FloatRect& destination, const FloatRect& source, const ImagePaintingOptions&, DestinationColorSpace);
     ImageDrawResult drawForContainer(GraphicsContext&, const FloatSize containerSize, float containerZoom, const URL& initialFragmentURL, const FloatRect& dstRect, const FloatRect& srcRect, const ImagePaintingOptions& = { });
+    ImageDrawResult drawForContainerInternal(GraphicsContext&, const FloatSize containerSize, float containerZoom, const URL& initialFragmentURL, const FloatRect& dstRect, const FloatRect& srcRect, const ImagePaintingOptions&, DestinationColorSpace);
+    ImageDrawResult drawInternal(GraphicsContext&, const FloatRect& destination, const FloatRect& source, const ImagePaintingOptions&, DestinationColorSpace);
+    ImageDrawResult drawForCanvasForContainer(GraphicsContext&, const FloatSize containerSize, float containerZoom, const URL& initialFragmentURL, const FloatRect& dstRect, const FloatRect& srcRect, const ImagePaintingOptions&, DestinationColorSpace);
     void drawPatternForContainer(GraphicsContext&, const FloatSize& containerSize, float containerZoom, const URL& initialFragmentURL, const FloatRect& srcRect, const AffineTransform&, const FloatPoint& phase, const FloatSize& spacing, const FloatRect&, const ImagePaintingOptions& = { });
 
     RefPtr<SVGSVGElement> rootElement() const;

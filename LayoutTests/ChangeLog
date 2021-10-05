@@ -1,5 +1,18 @@
 2021-10-04  Cameron McCormack  <heycam@apple.com>
 
+        Choose an appropriate color space when converting an SVG image into a NativeImage for canvas drawImage
+        https://bugs.webkit.org/show_bug.cgi?id=231062
+        <rdar://problem/83752451>
+
+        Reviewed by Simon Fraser.
+
+        * TestExpectations:
+        * platform/ios-14/TestExpectations:
+        * platform/ios/TestExpectations:
+        * platform/mac/TestExpectations:
+
+2021-10-04  Cameron McCormack  <heycam@apple.com>
+
         Update test expectations for canvas color space tests in simulator
         https://bugs.webkit.org/show_bug.cgi?id=231204
         <rdar://problem/83865405>

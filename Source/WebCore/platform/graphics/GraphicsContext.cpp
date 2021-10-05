@@ -545,6 +545,12 @@ ImageDrawResult GraphicsContext::drawImage(Image& image, const FloatRect& destin
     return image.draw(*this, destination, source, options);
 }
 
+ImageDrawResult GraphicsContext::drawImageForCanvas(Image& image, const FloatRect& destination, const FloatRect& source, const ImagePaintingOptions& options, DestinationColorSpace canvasColorSpace)
+{
+    InterpolationQualityMaintainer interpolationQualityForThisScope(*this, options.interpolationQuality());
+    return image.drawForCanvas(*this, destination, source, options, canvasColorSpace);
+}
+
 ImageDrawResult GraphicsContext::drawTiledImage(Image& image, const FloatRect& destination, const FloatPoint& source, const FloatSize& tileSize, const FloatSize& spacing, const ImagePaintingOptions& options)
 {
     InterpolationQualityMaintainer interpolationQualityForThisScope(*this, options.interpolationQuality());

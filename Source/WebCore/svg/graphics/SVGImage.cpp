@@ -176,8 +176,17 @@ IntSize SVGImage::containerSize() const
     return IntSize(currentSize);
 }
 
-ImageDrawResult SVGImage::drawForContainer(GraphicsContext& context, const FloatSize containerSize, float containerZoom, const URL& initialFragmentURL, const FloatRect& dstRect,
-    const FloatRect& srcRect, const ImagePaintingOptions& options)
+ImageDrawResult SVGImage::drawForCanvasForContainer(GraphicsContext& context, const FloatSize containerSize, float containerZoom, const URL& initialFragmentURL, const FloatRect& dstRect, const FloatRect& srcRect, const ImagePaintingOptions& options, DestinationColorSpace canvasColorSpace)
+{
+    return drawForContainerInternal(context, containerSize, containerZoom, initialFragmentURL, dstRect, srcRect, options, canvasColorSpace);
+}
+
+ImageDrawResult SVGImage::drawForContainer(GraphicsContext& context, const FloatSize containerSize, float containerZoom, const URL& initialFragmentURL, const FloatRect& dstRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
+{
+    return drawForContainerInternal(context, containerSize, containerZoom, initialFragmentURL, dstRect, srcRect, options, DestinationColorSpace::SRGB());
+}
+
+ImageDrawResult SVGImage::drawForContainerInternal(GraphicsContext& context, const FloatSize containerSize, float containerZoom, const URL& initialFragmentURL, const FloatRect& dstRect, const FloatRect& srcRect, const ImagePaintingOptions& options, DestinationColorSpace intermediateColorSpace)
 {
     if (!m_page)
         return ImageDrawResult::DidNothing;
@@ -201,7 +210,7 @@ ImageDrawResult SVGImage::drawForContainer(GraphicsContext& context, const Float
 
     frameView()->scrollToFragment(initialFragmentURL);
 
-    ImageDrawResult result = draw(context, dstRect, scaledSrc, options);
+    ImageDrawResult result = drawInternal(context, dstRect, scaledSrc, options, intermediateColorSpace);
 
     setImageObserver(observer);
     return result;
@@ -214,15 +223,15 @@ RefPtr<NativeImage> SVGImage::nativeImageForCurrentFrame(const GraphicsContext* 
 
 RefPtr<NativeImage> SVGImage::nativeImage(const GraphicsContext*)
 {
-    return nativeImage(size(), FloatRect(FloatPoint(), size()));
+    return nativeImage(size(), FloatRect(FloatPoint(), size()), DestinationColorSpace::SRGB());
 }
 
-RefPtr<NativeImage> SVGImage::nativeImage(const FloatSize& imageSize, const FloatRect& sourceRect)
+RefPtr<NativeImage> SVGImage::nativeImage(const FloatSize& imageSize, const FloatRect& sourceRect, DestinationColorSpace colorSpace)
 {
     if (!m_page)
         return nullptr;
 
-    auto imageBuffer = ImageBuffer::create(imageSize, RenderingMode::Unaccelerated, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
+    auto imageBuffer = ImageBuffer::create(imageSize, RenderingMode::Unaccelerated, 1, colorSpace, PixelFormat::BGRA8);
     if (!imageBuffer)
         return nullptr;
 
@@ -275,7 +284,17 @@ void SVGImage::drawPatternForContainer(GraphicsContext& context, const FloatSize
     image->drawPattern(context, dstRect, scaledSrcRect, unscaledPatternTransform, phase, spacing, options);
 }
 
+ImageDrawResult SVGImage::drawForCanvas(GraphicsContext& context, const FloatRect& dstRect, const FloatRect& srcRect, const ImagePaintingOptions& options, DestinationColorSpace canvasColorSpace)
+{
+    return drawInternal(context, dstRect, srcRect, options, canvasColorSpace);
+}
+
 ImageDrawResult SVGImage::draw(GraphicsContext& context, const FloatRect& dstRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
+{
+    return drawInternal(context, dstRect, srcRect, options, DestinationColorSpace::SRGB());
+}
+
+ImageDrawResult SVGImage::drawInternal(GraphicsContext& context, const FloatRect& dstRect, const FloatRect& srcRect, const ImagePaintingOptions& options, DestinationColorSpace intermediateColorSpace)
 {
     if (!m_page)
         return ImageDrawResult::DidNothing;
@@ -283,7 +302,7 @@ ImageDrawResult SVGImage::draw(GraphicsContext& context, const FloatRect& dstRec
     if (!context.hasPlatformContext()) {
         // Display list drawing can't handle arbitrary DOM content.
         // FIXME https://bugs.webkit.org/show_bug.cgi?id=227748: Remove this when it can.
-        return drawAsNativeImage(context, dstRect, srcRect, options);
+        return drawAsNativeImage(context, dstRect, srcRect, options, intermediateColorSpace);
     }
 
     RefPtr view = frameView();
@@ -336,12 +355,12 @@ ImageDrawResult SVGImage::draw(GraphicsContext& context, const FloatRect& dstRec
 }
 
 
-ImageDrawResult SVGImage::drawAsNativeImage(GraphicsContext& context, const FloatRect& destination, const FloatRect& source, const ImagePaintingOptions& options)
+ImageDrawResult SVGImage::drawAsNativeImage(GraphicsContext& context, const FloatRect& destination, const FloatRect& source, const ImagePaintingOptions& options, DestinationColorSpace colorSpace)
 {
     ASSERT(!context.hasPlatformContext());
 
     auto rectInNativeImage = FloatRect { { }, destination.size() };
-    auto nativeImage = this->nativeImage(rectInNativeImage.size(), source);
+    auto nativeImage = this->nativeImage(rectInNativeImage.size(), source, colorSpace);
     if (!nativeImage)
         return ImageDrawResult::DidNothing;
 

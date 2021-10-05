@@ -65,6 +65,7 @@ class AudioSourceProvider;
 class AudioTrackPrivate;
 class CDMInstance;
 class CachedResourceLoader;
+class DestinationColorSpace;
 class GraphicsContextGL;
 class GraphicsContext;
 class InbandTextTrackPrivate;
