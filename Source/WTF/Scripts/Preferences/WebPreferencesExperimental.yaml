@@ -288,8 +288,10 @@ CanvasColorSpaceEnabled:
   humanReadableDescription: "Enable use of predefined canvas color spaces"
   defaultValue:
     WebKitLegacy:
+      "PLATFORM(COCOA)": true
       default: false
     WebKit:
+      "PLATFORM(COCOA)": true
       default: false
     WebCore:
       default: false
