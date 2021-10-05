@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2021 Apple Inc. All rights reserved.
  *           (C) 2006 Alexey Proskuryakov (ap@nypop.com)
  *
  * This library is free software; you can redistribute it and/or
@@ -201,40 +201,40 @@ void HTMLFormControlElement::requiredStateChanged()
     invalidateStyleForSubtree();
 }
 
-static bool shouldAutofocus(HTMLFormControlElement* element)
+static bool shouldAutofocus(const HTMLFormControlElement& element)
 {
-    if (!element->renderer())
+    if (!element.renderer())
         return false;
-    if (!element->hasAttributeWithoutSynchronization(autofocusAttr))
+    if (!element.hasAttributeWithoutSynchronization(autofocusAttr))
         return false;
-    if (!element->isConnected() || !element->document().renderView())
+
+    auto& document = element.document();
+    if (!element.isConnected() || !document.renderView())
         return false;
-    if (element->document().isSandboxed(SandboxAutomaticFeatures)) {
+    if (document.isSandboxed(SandboxAutomaticFeatures)) {
         // FIXME: This message should be moved off the console once a solution to https://bugs.webkit.org/show_bug.cgi?id=103274 exists.
-        element->document().addConsoleMessage(MessageSource::Security, MessageLevel::Error, "Blocked autofocusing on a form control because the form's frame is sandboxed and the 'allow-scripts' permission is not set."_s);
+        document.addConsoleMessage(MessageSource::Security, MessageLevel::Error, "Blocked autofocusing on a form control because the form's frame is sandboxed and the 'allow-scripts' permission is not set."_s);
         return false;
     }
-
-    auto& document = element->document();
-    if (!document.frame()->isMainFrame() && !document.topDocument().securityOrigin().isSameOriginDomain(document.securityOrigin())) {
+    if (!document.frame()->isMainFrame() && !document.topOrigin().isSameOriginDomain(document.securityOrigin())) {
         document.addConsoleMessage(MessageSource::Security, MessageLevel::Error, "Blocked autofocusing on a form control in a cross-origin subframe."_s);
         return false;
     }
 
-    if (element->hasAutofocused())
+    if (element.hasAutofocused())
         return false;
 
     // FIXME: Should this set of hasTagName checks be replaced by a
     // virtual member function?
-    if (is<HTMLInputElement>(*element))
-        return !downcast<HTMLInputElement>(*element).isInputTypeHidden();
-    if (element->hasTagName(selectTag))
+    if (is<HTMLInputElement>(element))
+        return !downcast<HTMLInputElement>(element).isInputTypeHidden();
+    if (element.hasTagName(selectTag))
         return true;
-    if (element->hasTagName(keygenTag))
+    if (element.hasTagName(keygenTag))
         return true;
-    if (element->hasTagName(buttonTag))
+    if (element.hasTagName(buttonTag))
         return true;
-    if (is<HTMLTextAreaElement>(*element))
+    if (is<HTMLTextAreaElement>(element))
         return true;
 
     return false;
@@ -248,7 +248,7 @@ void HTMLFormControlElement::didAttachRenderers()
     if (renderer())
         renderer()->updateFromElement();
 
-    if (shouldAutofocus(this)) {
+    if (shouldAutofocus(*this)) {
         setAutofocused();
 
         RefPtr<HTMLFormControlElement> element = this;
