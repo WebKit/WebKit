@@ -155,21 +155,6 @@ InlineContentBreaker::Result InlineContentBreaker::processInlineContent(const Co
     return result;
 }
 
-struct OverflowingTextContent {
-    size_t runIndex { 0 }; // Overflowing run index. There's always an overflowing run.
-    struct BreakingPosition {
-        size_t runIndex { 0 };
-        struct TrailingContent {
-            // Trailing content is either the run's left side (when we break the run somewhere in the middle) or the previous run.
-            // Sometimes the breaking position is at the very beginning of the first run, so there's no trailing run at all.
-            bool overflows { false };
-            std::optional<InlineContentBreaker::PartialRun> partialRun { };
-        };
-        std::optional<TrailingContent> trailingContent { };
-    };
-    std::optional<BreakingPosition> breakingPosition { }; // Where we actually break this overflowing content.
-};
-
 InlineContentBreaker::Result InlineContentBreaker::processOverflowingContent(const ContinuousContent& overflowContent, const LineStatus& lineStatus) const
 {
     auto continuousContent = ContinuousContent { overflowContent };
@@ -275,130 +260,140 @@ InlineContentBreaker::Result InlineContentBreaker::processOverflowingContent(con
     return { Result::Action::Keep, IsEndOfLine::No };
 }
 
-OverflowingTextContent InlineContentBreaker::processOverflowingContentWithText(const ContinuousContent& continuousContent, const LineStatus& lineStatus) const
+static std::optional<size_t> findTrailingRunIndex(const InlineContentBreaker::ContinuousContent::RunList& runs, size_t breakableRunIndex)
+{
+    // When the breaking position is at the beginning of the run, the trailing run is the previous one.
+    if (!breakableRunIndex)
+        return { };
+    // Try not break content at inline box boundary
+    // e.g. <span>fits</span><span>overflows</span>
+    // when the text "overflows" completely overflows, let's break the content right before the '<span>'.
+    // FIXME: Add support for subsequent empty inline boxes e.g.
+    auto trailingCandidateIndex = breakableRunIndex - 1;
+    auto isAtInlineBox = runs[trailingCandidateIndex].inlineItem.isInlineBoxStart();
+    return !isAtInlineBox ? trailingCandidateIndex : trailingCandidateIndex ? std::make_optional(trailingCandidateIndex - 1) : std::nullopt;
+}
+
+static bool isWrappableRun(const InlineContentBreaker::ContinuousContent::Run& run)
+{
+    ASSERT(run.inlineItem.isText() || run.inlineItem.isInlineBoxStart() || run.inlineItem.isInlineBoxEnd() || run.inlineItem.layoutBox().isImage());
+    if (!run.inlineItem.isText()) {
+        // Can't break horizontal spacing -> e.g. <span style="padding-right: 100px;">textcontent</span>, if the [inline box end] is the overflown inline item
+        // we need to check if there's another inline item beyond the [inline box end] to split.
+        return false;
+    }
+    // Check if this text run needs to stay on the current line.
+    return InlineContentBreaker::isWrappingAllowed(run);
+}
+
+std::optional<InlineContentBreaker::OverflowingTextContent::BreakingPosition> InlineContentBreaker::tryBreakingOverflowingRun(const LineStatus& lineStatus, const ContinuousContent::RunList& runs, size_t overflowingRunIndex, InlineLayoutUnit nonOverflowingContentWidth) const
+{
+    auto overflowingRun = runs[overflowingRunIndex];
+    if (!isWrappableRun(overflowingRun))
+        return { };
+    auto partialOverflowingRun = tryBreakingTextRun(overflowingRun, lineStatus.contentLogicalRight + nonOverflowingContentWidth, std::max(0.0f, lineStatus.availableWidth - nonOverflowingContentWidth), lineStatus.hasWrapOpportunityAtPreviousPosition);
+    if (!partialOverflowingRun)
+        return { };
+    if (partialOverflowingRun->length)
+        return OverflowingTextContent::BreakingPosition { overflowingRunIndex, OverflowingTextContent::BreakingPosition::TrailingContent { false, partialOverflowingRun } };
+    // When the breaking position is at the beginning of the run, the trailing run is the previous one.
+    if (auto trailingRunIndex = findTrailingRunIndex(runs, overflowingRunIndex))
+        return OverflowingTextContent::BreakingPosition { *trailingRunIndex, OverflowingTextContent::BreakingPosition::TrailingContent { } };
+    // Sometimes we can't accommodate even the very first character.
+    // Note that this is different from when there's no breakable run in this set.
+    return OverflowingTextContent::BreakingPosition { };
+}
+
+std::optional<InlineContentBreaker::OverflowingTextContent::BreakingPosition> InlineContentBreaker::tryBreakingPreviousNonOverflowingRuns(const LineStatus& lineStatus, const ContinuousContent::RunList& runs, size_t overflowingRunIndex, InlineLayoutUnit nonOverflowingContentWidth) const
+{
+    auto previousContentWidth = nonOverflowingContentWidth;
+    for (auto index = overflowingRunIndex; index--;) {
+        auto& run = runs[index];
+        previousContentWidth -= run.logicalWidth;
+        if (!isWrappableRun(run))
+            continue;
+        ASSERT(run.inlineItem.isText());
+        if (auto partialRun = tryBreakingTextRun(run, lineStatus.contentLogicalRight + previousContentWidth, { }, lineStatus.hasWrapOpportunityAtPreviousPosition)) {
+            // We know this run fits, so if breaking is allowed on the run, it should return a non-empty left-side
+            // since it's either at hyphen position or the entire run is returned.
+            ASSERT(partialRun->length);
+            auto runIsFullyAccommodated = partialRun->length == downcast<InlineTextItem>(run.inlineItem).length();
+            return OverflowingTextContent::BreakingPosition { index, OverflowingTextContent::BreakingPosition::TrailingContent { false, runIsFullyAccommodated ? std::nullopt : partialRun } };
+        }
+    }
+    return { };
+}
+
+std::optional<InlineContentBreaker::OverflowingTextContent::BreakingPosition> InlineContentBreaker::tryBreakingNextOverflowingRuns(const LineStatus& lineStatus, const ContinuousContent::RunList& runs, size_t overflowingRunIndex, InlineLayoutUnit nonOverflowingContentWidth) const
+{
+    auto nextContentWidth = nonOverflowingContentWidth + runs[overflowingRunIndex].logicalWidth;
+    for (auto index = overflowingRunIndex + 1; index < runs.size(); ++index) {
+        auto& run = runs[index];
+        if (!isWrappableRun(run)) {
+            nextContentWidth += run.logicalWidth;
+            continue;
+        }
+        ASSERT(run.inlineItem.isText());
+        // We know that this run does not fit the available space. If we can break it at any position, let's just use the start of the run.
+        if (wordBreakBehavior(run.style, lineStatus.hasWrapOpportunityAtPreviousPosition) == WordBreakRule::AtArbitraryPosition) {
+            // We must be on an inline box boundary. Let's go back to the run in front of the inline box start run.
+            // e.g. <span>unbreakable_and_overflow<span style="word-break: break-all">breakable</span>
+            // We are at "breakable", <span> is at index - 1 and the trailing run is at index - 2.
+            ASSERT(runs[index - 1].inlineItem.isInlineBoxStart());
+            auto trailingRunIndex = findTrailingRunIndex(runs, index);
+            if (!trailingRunIndex) {
+                // This continuous content did not fit from the get-go. No trailing run.
+                return OverflowingTextContent::BreakingPosition { };
+            }
+            // At worst we are back to the overflowing run, like in the example above.
+            ASSERT(*trailingRunIndex >= overflowingRunIndex);
+            return OverflowingTextContent::BreakingPosition { *trailingRunIndex, OverflowingTextContent::BreakingPosition::TrailingContent { true } };
+        }
+        if (auto partialRun = tryBreakingTextRun(run, lineStatus.contentLogicalRight + nextContentWidth, { }, lineStatus.hasWrapOpportunityAtPreviousPosition)) {
+            ASSERT(partialRun->length);
+            // We managed to break this text run mid content. It has to be a hyphen break.
+            return OverflowingTextContent::BreakingPosition { index, OverflowingTextContent::BreakingPosition::TrailingContent { true, partialRun } };
+        }
+        nextContentWidth += run.logicalWidth;
+    }
+    return { };
+}
+
+InlineContentBreaker::OverflowingTextContent InlineContentBreaker::processOverflowingContentWithText(const ContinuousContent& continuousContent, const LineStatus& lineStatus) const
 {
     auto& runs = continuousContent.runs();
     ASSERT(!runs.isEmpty());
 
-    auto isBreakableRun = [] (auto& run) {
-        ASSERT(run.inlineItem.isText() || run.inlineItem.isInlineBoxStart() || run.inlineItem.isInlineBoxEnd() || run.inlineItem.layoutBox().isImage());
-        if (!run.inlineItem.isText()) {
-            // Can't break horizontal spacing -> e.g. <span style="padding-right: 100px;">textcontent</span>, if the [inline box end] is the overflown inline item
-            // we need to check if there's another inline item beyond the [inline box end] to split.
-            return false;
-        }
-        // Check if this text run needs to stay on the current line.  
-        return isWrappingAllowed(run);
-    };
-
-    auto findTrailingRunIndex = [&] (auto breakableRunIndex) -> std::optional<size_t> {
-        // When the breaking position is at the beginning of the run, the trailing run is the previous one.
-        if (!breakableRunIndex)
-            return { };
-        // Try not break content at inline box boundary
-        // e.g. <span>fits</span><span>overflows</span>
-        // when the text "overflows" completely overflows, let's break the content right before the '<span>'.
-        // FIXME: Add support for subsequent empty inline boxes e.g.
-        auto trailingCandidateIndex = breakableRunIndex - 1;
-        auto isAtInlineBox = runs[trailingCandidateIndex].inlineItem.isInlineBoxStart();
-        return !isAtInlineBox ? trailingCandidateIndex : trailingCandidateIndex ? std::make_optional(trailingCandidateIndex - 1) : std::nullopt;
-    };
-
-    // Check where the overflow occurs and use the corresponding style to figure out the breaking behaviour.
+    // Check where the overflow occurs and use the corresponding style to figure out the breaking behavior.
     // <span style="word-break: normal">first</span><span style="word-break: break-all">second</span><span style="word-break: normal">third</span>
 
     // First find the overflowing run. 
-    auto accumulatedContentWidth = InlineLayoutUnit { };
+    auto nonOverflowingContentWidth = InlineLayoutUnit { };
     auto overflowingRunIndex = runs.size(); 
     for (size_t index = 0; index < runs.size(); ++index) {
         auto runLogicalWidth = runs[index].logicalWidth;
-        if (accumulatedContentWidth + runLogicalWidth  > lineStatus.availableWidth) {
+        if (nonOverflowingContentWidth + runLogicalWidth  > lineStatus.availableWidth) {
             overflowingRunIndex = index;
             break;
         }
-        accumulatedContentWidth += runLogicalWidth;
+        nonOverflowingContentWidth += runLogicalWidth;
     }
     // We have to have an overflowing run.
     RELEASE_ASSERT(overflowingRunIndex < runs.size());
 
-    auto tryBreakingOverflowingRun = [&]() -> std::optional<OverflowingTextContent::BreakingPosition> {
-        auto overflowingRun = runs[overflowingRunIndex];
-        if (!isBreakableRun(overflowingRun))
-            return { };
-        if (auto partialRun = tryBreakingTextRun(overflowingRun, lineStatus.contentLogicalRight + accumulatedContentWidth, std::max(0.0f, lineStatus.availableWidth - accumulatedContentWidth), lineStatus.hasWrapOpportunityAtPreviousPosition)) {
-            if (partialRun->length)
-                return OverflowingTextContent::BreakingPosition { overflowingRunIndex, OverflowingTextContent::BreakingPosition::TrailingContent { false, partialRun } };
-            // When the breaking position is at the beginning of the run, the trailing run is the previous one.
-            if (auto trailingRunIndex = findTrailingRunIndex(overflowingRunIndex))
-                return OverflowingTextContent::BreakingPosition { *trailingRunIndex, OverflowingTextContent::BreakingPosition::TrailingContent { } };
-            // Sometimes we can't accommodate even the very first character. 
-            // Note that this is different from when there's no breakable run in this set.
-            return OverflowingTextContent::BreakingPosition { };
-        }
-        return { };
-    };
     // Check if we actually break this run.
-    if (auto breakingPosition = tryBreakingOverflowingRun())
+    if (auto breakingPosition = tryBreakingOverflowingRun(lineStatus, runs, overflowingRunIndex, nonOverflowingContentWidth))
         return { overflowingRunIndex, breakingPosition };
 
-    auto tryBreakingPreviousNonOverflowingRuns = [&]() -> std::optional<OverflowingTextContent::BreakingPosition> {
-        auto previousContentWidth = accumulatedContentWidth;
-        for (auto index = overflowingRunIndex; index--;) {
-            auto& run = runs[index];
-            previousContentWidth -= run.logicalWidth;
-            if (!isBreakableRun(run))
-                continue;
-            ASSERT(run.inlineItem.isText());
-            if (auto partialRun = tryBreakingTextRun(run, lineStatus.contentLogicalRight + previousContentWidth, { }, lineStatus.hasWrapOpportunityAtPreviousPosition)) {
-                // We know this run fits, so if breaking is allowed on the run, it should return a non-empty left-side
-                // since it's either at hyphen position or the entire run is returned.
-                ASSERT(partialRun->length);
-                auto runIsFullyAccommodated = partialRun->length == downcast<InlineTextItem>(run.inlineItem).length();
-                return OverflowingTextContent::BreakingPosition { index, OverflowingTextContent::BreakingPosition::TrailingContent { false, runIsFullyAccommodated ? std::nullopt : partialRun } };
-            }
-        }
-        return { };
-    };
     // We did not manage to break the run that actually overflows the line.
     // Let's try to find a previous breaking position starting from the overflowing run. It surely fits.
-    if (auto breakingPosition = tryBreakingPreviousNonOverflowingRuns())
+    if (auto breakingPosition = tryBreakingPreviousNonOverflowingRuns(lineStatus, runs, overflowingRunIndex, nonOverflowingContentWidth))
         return { overflowingRunIndex, breakingPosition };
 
-    auto tryBreakingNextOverflowingRuns = [&]() -> std::optional<OverflowingTextContent::BreakingPosition> {
-        auto nextContentWidth = accumulatedContentWidth + runs[overflowingRunIndex].logicalWidth;
-        for (auto index = overflowingRunIndex + 1; index < runs.size(); ++index) {
-            auto& run = runs[index];
-            if (isBreakableRun(run)) {
-                ASSERT(run.inlineItem.isText());
-                // We know that this run does not fit the available space. If we can break it at any position, let's just use the start of the run.
-                if (wordBreakBehavior(run.style, lineStatus.hasWrapOpportunityAtPreviousPosition) == WordBreakRule::AtArbitraryPosition) {
-                    // We must be on an inline box boundary. Let's go back to the run in front of the inline box start run.
-                    // e.g. <span>unbreakable_and_overflow<span style="word-break: break-all">breakable</span>
-                    // We are at "breakable", <span> is at index - 1 and the trailing run is at index - 2.
-                    ASSERT(runs[index - 1].inlineItem.isInlineBoxStart());
-                    auto trailingRunIndex = findTrailingRunIndex(index);
-                    if (!trailingRunIndex) {
-                        // This continuous content did not fit from the get-go. No trailing run.
-                        return OverflowingTextContent::BreakingPosition { };
-                    }
-                    // At worst we are back to the overflowing run, like in the example above.
-                    ASSERT(*trailingRunIndex >= overflowingRunIndex);
-                    return OverflowingTextContent::BreakingPosition { *trailingRunIndex, OverflowingTextContent::BreakingPosition::TrailingContent { true } };
-                }
-                if (auto partialRun = tryBreakingTextRun(run, lineStatus.contentLogicalRight + nextContentWidth, { }, lineStatus.hasWrapOpportunityAtPreviousPosition)) {
-                    ASSERT(partialRun->length);
-                    // We managed to break this text run mid content. It has to be a hyphen break.
-                    return OverflowingTextContent::BreakingPosition { index, OverflowingTextContent::BreakingPosition::TrailingContent { true, partialRun } };
-                }
-            }
-            nextContentWidth += run.logicalWidth;
-        }
-        return { };
-    };
     // At this point we know that there's no breakable run all the way to the overflowing run.
     // Now we need to check if any run after the overflowing content can break.
     // e.g. <span>this_content_overflows_but_not_breakable<span><span style="word-break: break-all">but_this_is_breakable</span>
-    if (auto breakingPosition = tryBreakingNextOverflowingRuns())
+    if (auto breakingPosition = tryBreakingNextOverflowingRuns(lineStatus, runs, overflowingRunIndex, nonOverflowingContentWidth))
         return { overflowingRunIndex, breakingPosition };
 
     // Give up, there's no breakable run in here.

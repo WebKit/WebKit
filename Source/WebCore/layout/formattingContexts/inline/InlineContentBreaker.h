@@ -34,7 +34,6 @@ namespace WebCore {
 namespace Layout {
 
 class InlineItem;
-struct OverflowingTextContent;
 
 class InlineContentBreaker {
 public:
@@ -119,8 +118,26 @@ public:
 
 private:
     Result processOverflowingContent(const ContinuousContent&, const LineStatus&) const;
+
+    struct OverflowingTextContent {
+        size_t runIndex { 0 }; // Overflowing run index. There's always an overflowing run.
+        struct BreakingPosition {
+            size_t runIndex { 0 };
+            struct TrailingContent {
+                // Trailing content is either the run's left side (when we break the run somewhere in the middle) or the previous run.
+                // Sometimes the breaking position is at the very beginning of the first run, so there's no trailing run at all.
+                bool overflows { false };
+                std::optional<InlineContentBreaker::PartialRun> partialRun { };
+            };
+            std::optional<TrailingContent> trailingContent { };
+        };
+        std::optional<BreakingPosition> breakingPosition { }; // Where we actually break this overflowing content.
+    };
     OverflowingTextContent processOverflowingContentWithText(const ContinuousContent&, const LineStatus&) const;
     std::optional<PartialRun> tryBreakingTextRun(const ContinuousContent::Run& overflowRun, InlineLayoutUnit logicalLeft, std::optional<InlineLayoutUnit> availableWidth, bool hasWrapOpportunityAtPreviousPosition) const;
+    std::optional<OverflowingTextContent::BreakingPosition> tryBreakingOverflowingRun(const LineStatus&, const ContinuousContent::RunList&, size_t overflowingRunIndex, InlineLayoutUnit nonOverflowingContentWidth) const;
+    std::optional<OverflowingTextContent::BreakingPosition> tryBreakingPreviousNonOverflowingRuns(const LineStatus&, const ContinuousContent::RunList&, size_t overflowingRunIndex, InlineLayoutUnit nonOverflowingContentWidth) const;
+    std::optional<OverflowingTextContent::BreakingPosition> tryBreakingNextOverflowingRuns(const LineStatus&, const ContinuousContent::RunList&, size_t overflowingRunIndex, InlineLayoutUnit nonOverflowingContentWidth) const;
 
     enum class WordBreakRule {
         AtArbitraryPosition        = 1 << 0,
