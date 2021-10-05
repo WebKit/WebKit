@@ -13995,7 +13995,7 @@ void SpeculativeJIT::compileGetPropertyEnumerator(Node* node)
         if (rareData) {
             FrozenValue* frozenRareData = m_graph.freeze(rareData);
             m_jit.move(TrustedImmPtr(frozenRareData), scratch1GPR);
-            m_jit.loadPtr(CCallHelpers::Address(scratch1GPR, StructureRareData::offsetOfCachedPropertyNameEnumerator()), scratch1GPR);
+            m_jit.loadPtr(CCallHelpers::Address(scratch1GPR, StructureRareData::offsetOfCachedPropertyNameEnumeratorAndFlag()), scratch1GPR);
         } else {
             if (onlyStructure)
                 m_jit.move(TrustedImmPtr(onlyStructure), scratch1GPR);
@@ -14004,11 +14004,11 @@ void SpeculativeJIT::compileGetPropertyEnumerator(Node* node)
             m_jit.loadPtr(CCallHelpers::Address(scratch1GPR, Structure::previousOrRareDataOffset()), scratch1GPR);
             slowCases.append(m_jit.branchTestPtr(CCallHelpers::Zero, scratch1GPR));
             slowCases.append(m_jit.branchIfStructure(scratch1GPR));
-            m_jit.loadPtr(CCallHelpers::Address(scratch1GPR, StructureRareData::offsetOfCachedPropertyNameEnumerator()), scratch1GPR);
+            m_jit.loadPtr(CCallHelpers::Address(scratch1GPR, StructureRareData::offsetOfCachedPropertyNameEnumeratorAndFlag()), scratch1GPR);
         }
 
         slowCases.append(m_jit.branchTestPtr(CCallHelpers::Zero, scratch1GPR));
-        slowCases.append(m_jit.branchTest32(CCallHelpers::Zero, CCallHelpers::Address(scratch1GPR, JSPropertyNameEnumerator::flagsOffset()), CCallHelpers::TrustedImm32(JSPropertyNameEnumerator::ValidatedViaWatchpoint)));
+        slowCases.append(m_jit.branchTestPtr(CCallHelpers::NonZero, scratch1GPR, CCallHelpers::TrustedImm32(StructureRareData::cachedPropertyNameEnumeratorIsValidatedViaTraversingFlag)));
         doneCases.append(m_jit.jump());
 
         slowCases.link(&m_jit);

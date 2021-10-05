@@ -90,15 +90,20 @@ inline JSValue StructureRareData::cachedSpecialProperty(CachedSpecialPropertyKey
 
 inline JSPropertyNameEnumerator* StructureRareData::cachedPropertyNameEnumerator() const
 {
-    return m_cachedPropertyNameEnumerator.get();
+    return bitwise_cast<JSPropertyNameEnumerator*>(m_cachedPropertyNameEnumeratorAndFlag & cachedPropertyNameEnumeratorMask);
 }
 
-inline void StructureRareData::setCachedPropertyNameEnumerator(VM& vm, JSPropertyNameEnumerator* enumerator)
+inline uintptr_t StructureRareData::cachedPropertyNameEnumeratorAndFlag() const
 {
-    m_cachedPropertyNameEnumerator.set(vm, this, enumerator);
+    return m_cachedPropertyNameEnumeratorAndFlag;
+}
+
+inline void StructureRareData::setCachedPropertyNameEnumerator(VM& vm, Structure* baseStructure, JSPropertyNameEnumerator* enumerator, StructureChain* chain)
+{
     m_cachedPropertyNameEnumeratorWatchpoints = FixedVector<StructureChainInvalidationWatchpoint>();
-    bool validatedViaWatchpoint = tryCachePropertyNameEnumeratorViaWatchpoint(vm, enumerator->cachedPrototypeChain());
-    enumerator->setValidatedViaWatchpoint(validatedViaWatchpoint);
+    bool validatedViaWatchpoint = tryCachePropertyNameEnumeratorViaWatchpoint(vm, baseStructure, chain);
+    m_cachedPropertyNameEnumeratorAndFlag = ((validatedViaWatchpoint ? 0 : cachedPropertyNameEnumeratorIsValidatedViaTraversingFlag) | bitwise_cast<uintptr_t>(enumerator));
+    vm.heap.writeBarrier(this, enumerator);
 }
 
 inline JSImmutableButterfly* StructureRareData::cachedPropertyNames(CachedPropertyNamesKind kind) const
@@ -169,11 +174,14 @@ inline void StructureChainInvalidationWatchpoint::fireInternal(VM&, const FireDe
 {
     if (!m_structureRareData->isLive())
         return;
-    m_structureRareData->invalidateWatchpointBasedValidation();
+    m_structureRareData->clearCachedPropertyNameEnumerator();
 }
 
-inline bool StructureRareData::tryCachePropertyNameEnumeratorViaWatchpoint(VM& vm, StructureChain* chain)
+inline bool StructureRareData::tryCachePropertyNameEnumeratorViaWatchpoint(VM& vm, Structure* baseStructure, StructureChain* chain)
 {
+    if (baseStructure->hasPolyProto())
+        return false;
+
     unsigned size = 0;
     for (auto* current = chain->head(); *current; ++current) {
         ++size;
@@ -193,9 +201,9 @@ inline bool StructureRareData::tryCachePropertyNameEnumeratorViaWatchpoint(VM& v
     return true;
 }
 
-inline void StructureRareData::invalidateWatchpointBasedValidation()
+inline void StructureRareData::clearCachedPropertyNameEnumerator()
 {
-    m_cachedPropertyNameEnumerator.clear();
+    m_cachedPropertyNameEnumeratorAndFlag = 0;
     m_cachedPropertyNameEnumeratorWatchpoints = FixedVector<StructureChainInvalidationWatchpoint>();
 }
 
