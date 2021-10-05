@@ -44,7 +44,7 @@ namespace LayoutIntegration {
 static constexpr size_t smallTreeThreshold = 8;
 
 // FIXME: see webkit.org/b/230964
-#define CAN_USE_FIRST_LINE_STYLE_RESOLVE 0
+#define CAN_USE_FIRST_LINE_STYLE_RESOLVE 1
 
 static RenderStyle rootBoxStyle(const RenderStyle& style)
 {

@@ -1429,22 +1429,29 @@ bool RenderText::computeCanUseSimplifiedTextMeasuring() const
     if (!m_canUseSimpleFontCodePath)
         return false;
     
-    auto& font = style().fontCascade();
-    if (font.wordSpacing() || font.letterSpacing())
+    // FIXME: All these checks should be more fine-grained at the inline item level.
+    auto& style = this->style();
+    if (&style != &firstLineStyle()) {
+        auto& firstLineStyle = this->firstLineStyle();
+        if (style.fontCascade() != firstLineStyle.fontCascade() || style.collapseWhiteSpace() != firstLineStyle.collapseWhiteSpace())
+            return false;
+    }
+
+    auto& fontCascade = style.fontCascade();
+    if (fontCascade.wordSpacing() || fontCascade.letterSpacing())
         return false;
 
     // Additional check on the font codepath.
     TextRun run(m_text);
     run.setCharacterScanForCodePath(false);
-    if (font.codePath(run) != FontCascade::CodePath::Simple)
+    if (fontCascade.codePath(run) != FontCascade::CodePath::Simple)
         return false;
 
-    auto& fontCascade = style().fontCascade();
     auto& primaryFont = fontCascade.primaryFont();
     if (primaryFont.syntheticBoldOffset())
         return false;
 
-    auto whitespaceIsCollapsed = style().collapseWhiteSpace();
+    auto whitespaceIsCollapsed = style.collapseWhiteSpace();
     for (unsigned i = 0; i < text().length(); ++i) {
         auto character = text()[i];
         if (!WidthIterator::characterCanUseSimplifiedTextMeasuring(character, whitespaceIsCollapsed))
