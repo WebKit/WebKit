@@ -90,7 +90,7 @@ public:
     Document* document() const override;
 
     bool canSetFocusAttribute() const override;
-    int headingLevel() const override;
+    unsigned headingLevel() const override;
 
     bool canSetValueAttribute() const override;
 

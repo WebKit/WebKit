@@ -766,12 +766,12 @@ bool AccessibilityNodeObject::supportsRequiredAttribute() const
     }
 }
 
-int AccessibilityNodeObject::headingLevel() const
+unsigned AccessibilityNodeObject::headingLevel() const
 {
     // headings can be in block flow and non-block flow
     Node* node = this->node();
     if (!node)
-        return false;
+        return 0;
 
     if (isHeading()) {
         if (auto level = getIntegralAttribute(aria_levelAttr); level > 0)

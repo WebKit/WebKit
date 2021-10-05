@@ -189,7 +189,39 @@ bool AccessibilityObject::accessibleNameDerivesFromContent() const
     
     return true;
 }
-    
+
+AXCoreObject::AXValue AccessibilityObject::value()
+{
+    if (supportsRangeValue())
+        return valueForRange();
+
+    if (roleValue() == AccessibilityRole::SliderThumb)
+        return parentObject()->valueForRange();
+
+    if (isHeading())
+        return headingLevel();
+
+    if (supportsCheckedState())
+        return checkboxOrRadioValue();
+
+    // Radio groups return the selected radio button as the AXValue.
+    if (isRadioGroup())
+        return selectedRadioButton();
+
+    if (isTabList())
+        return selectedTabItem();
+
+    if (isTabItem())
+        return isSelected();
+
+    if (isColorWell()) {
+        auto color = convertColor<SRGBA<float>>(colorValue());
+        return makeString("rgb ", String::numberToStringFixedPrecision(color.red, 6, KeepTrailingZeros), " ", String::numberToStringFixedPrecision(color.green, 6, KeepTrailingZeros), " ", String::numberToStringFixedPrecision(color.blue, 6, KeepTrailingZeros), " 1");
+    }
+
+    return stringValue();
+}
+
 String AccessibilityObject::computedLabel()
 {
     // This method is being called by WebKit inspector, which may happen at any time, so we need to update our backing store now.

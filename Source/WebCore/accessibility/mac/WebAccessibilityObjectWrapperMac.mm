@@ -2291,48 +2291,17 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
             if ([[[self attachmentView] accessibilityAttributeNames] containsObject:NSAccessibilityValueAttribute])
                 return [[self attachmentView] accessibilityAttributeValue:NSAccessibilityValueAttribute];
         }
-        if (backingObject->supportsRangeValue())
-            return [NSNumber numberWithFloat:backingObject->valueForRange()];
-        if (backingObject->roleValue() == AccessibilityRole::SliderThumb)
-            return [NSNumber numberWithFloat:backingObject->parentObject()->valueForRange()];
-        if (backingObject->isHeading())
-            return @(backingObject->headingLevel());
 
-        if (backingObject->supportsCheckedState()) {
-            switch (backingObject->checkboxOrRadioValue()) {
-            case AccessibilityButtonState::Off:
-                return @(0);
-            case AccessibilityButtonState::On:
-                return @(1);
-            case AccessibilityButtonState::Mixed:
-                return @(2);
-            }
-        }
-
-        // radio groups return the selected radio button as the AXValue
-        if (backingObject->isRadioGroup()) {
-            AXCoreObject* radioButton = backingObject->selectedRadioButton();
-            if (!radioButton)
-                return nil;
-            return radioButton->wrapper();
-        }
-
-        if (backingObject->isTabList()) {
-            AXCoreObject* tabItem = backingObject->selectedTabItem();
-            if (!tabItem)
-                return nil;
-            return tabItem->wrapper();
-        }
-
-        if (backingObject->isTabItem())
-            return @(backingObject->isSelected());
-
-        if (backingObject->isColorWell()) {
-            auto color = convertColor<SRGBA<float>>(backingObject->colorValue());
-            return [NSString stringWithFormat:@"rgb %7.5f %7.5f %7.5f 1", color.red, color.green, color.blue];
-        }
-
-        return backingObject->stringValue();
+        auto value = backingObject->value();
+        return WTF::switchOn(value,
+            [] (bool& typedValue) { return @(typedValue); },
+            [] (unsigned& typedValue) { return @(typedValue); },
+            [] (float& typedValue) { return @(typedValue); },
+            [] (String& typedValue) { return (id)(NSString *)typedValue; },
+            [] (AccessibilityButtonState& typedValue) { return @((unsigned)typedValue); },
+            [] (AXCoreObject*& typedValue) { return typedValue ? (id)typedValue->wrapper() : nil; },
+            [] (auto&) { return nil; }
+        );
     }
 
     if ([attributeName isEqualToString:(NSString *)kAXMenuItemMarkCharAttribute]) {

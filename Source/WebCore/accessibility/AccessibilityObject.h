@@ -263,7 +263,7 @@ public:
     String validationMessage() const override;
 
     unsigned blockquoteLevel() const override;
-    int headingLevel() const override { return 0; }
+    unsigned headingLevel() const override { return 0; }
     AccessibilityButtonState checkboxOrRadioValue() const override;
     String valueDescription() const override { return String(); }
     float valueForRange() const override { return 0.0f; }
@@ -372,6 +372,8 @@ public:
     bool isPresentationalChildOfAriaRole() const override { return false; }
     bool ariaRoleHasPresentationalChildren() const override { return false; }
     bool inheritsPresentationalRole() const override { return false; }
+
+    AXValue value() override;
 
     // Accessibility Text
     void accessibilityText(Vector<AccessibilityText>&) const override { };

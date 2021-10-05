@@ -1010,7 +1010,7 @@ public:
     virtual String validationMessage() const = 0;
 
     virtual unsigned blockquoteLevel() const = 0;
-    virtual int headingLevel() const = 0;
+    virtual unsigned headingLevel() const = 0;
     virtual AccessibilityButtonState checkboxOrRadioValue() const = 0;
     virtual String valueDescription() const = 0;
     virtual float valueForRange() const = 0;
@@ -1118,6 +1118,9 @@ public:
     virtual bool isPresentationalChildOfAriaRole() const = 0;
     virtual bool ariaRoleHasPresentationalChildren() const = 0;
     virtual bool inheritsPresentationalRole() const = 0;
+
+    using AXValue = Variant<bool, unsigned, float, String, AccessibilityButtonState, AXCoreObject*>;
+    virtual AXValue value() = 0;
 
     // Accessibility Text
     virtual void accessibilityText(Vector<AccessibilityText>&) const = 0;
