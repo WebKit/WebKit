@@ -1,3 +1,17 @@
+2021-10-05  David Kilzer  <ddkilzer@apple.com>
+
+        Follow-up #2: WTF::RetainPtr<> allows assignment of two pointer types that are not assignable
+        <https://webkit.org/b/230406>
+        <rdar://problem/83241893>
+
+        Unreviewed attempt to fix API tests.
+
+        * wtf/cocoa/TypeCastsCocoa.h:
+        (WTF::checked_objc_cast):
+        - Rename checked_objc_cast<> to checked_objc_castARC<> when
+          compiling with ARC enabled.
+        - Also mark as `inline` function to allow for optimization.
+
 2021-10-05  Cameron McCormack  <heycam@apple.com>
 
         Enable 2D canvas color space support on Apple platforms

@@ -108,7 +108,13 @@ inline RetainPtr<id> bridge_id_cast(RetainPtr<CFTypeRef>&& object)
 
 // Use checked_objc_cast<> instead of dynamic_objc_cast<> when a specific NS type is required.
 
-template<typename T> T* checked_objc_cast(id object)
+// Because ARC enablement is a compile-time choice, and we compile this header
+// both ways, we need a separate copy of our code when ARC is enabled.
+#if __has_feature(objc_arc)
+#define checked_objc_cast checked_objc_castARC
+#endif
+
+template<typename T> inline T* checked_objc_cast(id object)
 {
     if (!object)
         return nullptr;
