@@ -1,3 +1,19 @@
+2021-10-05  Tim Nguyen  <ntim@apple.com>
+
+        Remove unnecessary autofocus attribute dependencies in tests
+        https://bugs.webkit.org/show_bug.cgi?id=231219
+
+        Reviewed by Antti Koivisto.
+
+        The new autofocus behaviour timing happens asynchronously with the page "update rendering" steps.
+
+        Some tests are using it solely to focus synchronously on elements. We should just use HTMLElement.focus()
+        there so they don't rely on the current synchronous timing of autofocus.
+
+        * fast/forms/number/number-placeholder-with-unacceptable-value-expected.html:
+        * fast/forms/number/number-placeholder-with-unacceptable-value.html:
+        * fast/forms/range/range-type-change-onchange.html:
+
 2021-10-04  Tim Nguyen  <ntim@apple.com>
 
         Update ios-wk2 test expectations for select-validity.html WPT
