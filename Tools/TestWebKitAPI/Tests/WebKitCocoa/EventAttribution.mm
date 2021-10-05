@@ -502,9 +502,26 @@ static void cleanUpDaemon(NSURL *tempDir)
     EXPECT_NULL(error);
 }
 
+static void attemptConnectionInProcessWithoutEntitlement()
+{
+#if USE(APPLE_INTERNAL_SDK)
+    __block bool done = false;
+    auto connection = adoptNS(xpc_connection_create_mach_service("org.webkit.pcmtestdaemon.service", dispatch_get_main_queue(), 0));
+    xpc_connection_set_event_handler(connection.get(), ^(xpc_object_t event) {
+        EXPECT_EQ(event, XPC_ERROR_CONNECTION_INTERRUPTED);
+        done = true;
+    });
+    xpc_connection_activate(connection.get());
+    auto dictionary = adoptNS(xpc_dictionary_create(nullptr, nullptr, 0));
+    xpc_connection_send_message(connection.get(), dictionary.get());
+    TestWebKitAPI::Util::run(&done);
+#endif
+}
+
 TEST(PrivateClickMeasurement, DaemonBasicFunctionality)
 {
     auto [tempDir, configuration] = setUpDaemon(adoptNS([WKWebViewConfiguration new]).autorelease());
+    attemptConnectionInProcessWithoutEntitlement();
     runBasicPCMTest(configuration, [](WKWebView *webView, const HTTPServer& server) {
         [webView _addEventAttributionWithSourceID:42 destinationURL:exampleURL() sourceDescription:@"test source description" purchaser:@"test purchaser" reportEndpoint:server.request().URL optionalNonce:nil applicationBundleID:@"test.bundle.id"];
     });

@@ -1,5 +1,21 @@
 2021-10-05  Alex Christensen  <achristensen@webkit.org>
 
+        Add an entitlement check to only allow AdAttributionDaemon to be connected to by the network process
+        https://bugs.webkit.org/show_bug.cgi?id=231248
+
+        Reviewed by Alexey Proskuryakov.
+
+        Also add a system call to "launchctl unload" to clear any residual state in launchd before starting the unit test.
+        Otherwise we could get into a state where the plist is registered with launchd from an old test that registered it
+        but didn't start the daemon, causing the test to time out until you reboot the machine.  This makes it recover nicely.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/EventAttribution.mm:
+        (TestWebKitAPI::attemptConnectionInProcessWithoutEntitlement):
+        (TestWebKitAPI::setInjectedBundleClient): Deleted.
+        (TestWebKitAPI::webViewWithOpenInspector): Deleted.
+
+2021-10-05  Alex Christensen  <achristensen@webkit.org>
+
         TestWebKitAPI.PrivateClickMeasurement.DaemonBasicFunctionality is timing out
         https://bugs.webkit.org/show_bug.cgi?id=231257
 

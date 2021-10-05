@@ -61,7 +61,7 @@ static void connectionEventHandler(xpc_object_t request)
     if (xpc_get_type(request) != XPC_TYPE_DICTIONARY)
         return;
     if (xpc_dictionary_get_uint64(request, PCM::protocolVersionKey) != PCM::protocolVersionValue) {
-        NSLog(@"received request that was not the current protocol version");
+        NSLog(@"Received request that was not the current protocol version");
         return;
     }
 
@@ -79,13 +79,19 @@ static void startListeningForMachServiceConnections(const char* serviceName)
         if (xpc_get_type(peer) != XPC_TYPE_CONNECTION)
             return;
 
-        // FIXME: Add an entitlement check here so that only the network process can successfully connect.
+#if USE(APPLE_INTERNAL_SDK)
+        if (!WTF::hasEntitlement(peer, "com.apple.private.webkit.adattributiondaemon")) {
+            NSLog(@"Connection attempted without required entitlement");
+            xpc_connection_cancel(peer);
+            return;
+        }
+#endif
 
         xpc_connection_set_event_handler(peer, ^(xpc_object_t event) {
             if (event == XPC_ERROR_CONNECTION_INVALID)
                 NSLog(@"Failed to start listening for connections to mach service %s, likely because it is not registered with launchd", serviceName);
             if (event == XPC_ERROR_CONNECTION_INTERRUPTED) {
-                NSLog(@"removing peer connection %p", peer);
+                NSLog(@"Removing peer connection %p", peer);
                 PCM::DaemonConnectionSet::singleton().remove(peer);
                 return;
             }
@@ -94,7 +100,7 @@ static void startListeningForMachServiceConnections(const char* serviceName)
         xpc_connection_set_target_queue(peer, dispatch_get_main_queue());
         xpc_connection_activate(peer);
 
-        NSLog(@"adding peer connection %p", peer);
+        NSLog(@"Adding peer connection %p", peer);
         PCM::DaemonConnectionSet::singleton().add(peer);
     });
     xpc_connection_activate(listener.get().get());

@@ -1,3 +1,17 @@
+2021-10-05  Alex Christensen  <achristensen@webkit.org>
+
+        Add an entitlement check to only allow AdAttributionDaemon to be connected to by the network process
+        https://bugs.webkit.org/show_bug.cgi?id=231248
+
+        Reviewed by Alexey Proskuryakov.
+
+        Adding a restricted entitlement on macOS when using a non-internal SDK causes the network process to not start,
+        so in open source builds (in which the daemon is only used for unit tests) just skip the entitlement check.
+
+        * Scripts/process-entitlements.sh:
+        * Shared/EntryPointUtilities/Cocoa/Daemon/PCMDaemonEntryPoint.mm:
+        (WebKit::startListeningForMachServiceConnections):
+
 2021-10-05  Chris Dumez  <cdumez@apple.com>
 
         Authorization header lost on 30x redirects
