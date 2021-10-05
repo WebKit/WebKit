@@ -1,3 +1,13 @@
+2021-10-05  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (r283335): Momentum scrolling is no longer locked to an axis
+        https://bugs.webkit.org/show_bug.cgi?id=231206
+
+        Reviewed by Wenson Hsieh.
+
+        * fast/scrolling/mac/momentum-axis-locking-expected.txt: Added.
+        * fast/scrolling/mac/momentum-axis-locking.html: Added.
+
 2021-10-05  Alan Bujtas  <zalan@apple.com>
 
         [IFC][Integration] Enable first-line style for modern line layout

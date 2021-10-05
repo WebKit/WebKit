@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            height: 2000px;
+            width: 200%;
+        }
+    </style>
+    <script src="../../../resources/js-test-pre.js"></script>
+    <script src="../../../resources/ui-helper.js"></script>
+    <script>
+        var jsTestIsAsync = true;
+        
+        var initialScrollX;
+        var initialScrollY;
+
+        async function resetScrollPositions(x, y)
+        {
+            window.scrollTo(x, y);
+            // Wait for scroll events to fire.
+            await UIHelper.renderingUpdate();
+        }
+        
+        async function testVerticalRubberband()
+        {
+            await resetScrollPositions(100, 0);
+            initialScrollX = window.scrollX;
+            
+            let scrollListener = () => {
+                if (window.scrollX != initialScrollX)
+                    testFailed('Horizontal scroll position ' + window.scrollX + ' is not ' + initialScrollX);
+            }
+
+            window.addEventListener('scroll', scrollListener);
+
+            eventSender.monitorWheelEvents();
+            eventSender.mouseMoveTo(100, 100);
+            // Scroll up with some sideways drift.
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -2, "began", "none");
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(1, -2, "changed", "none");
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(1, -2, "changed", "none");
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, "ended", "none");
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(1, -2, "none", "begin");
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(1, -2, "none", "continue");
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(2, -3, "none", "continue");
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(1, -2, "none", "continue");
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, "none", "end");
+            await UIHelper.waitForScrollCompletion();
+
+            window.removeEventListener('scroll', scrollListener);
+        }
+
+        async function testHorizontalRubberband()
+        {
+            await resetScrollPositions(0, 100);
+            initialScrollY = window.scrollY;
+
+            let scrollListener = () => {
+                if (window.scrollY != initialScrollY)
+                    testFailed('Vertical scroll position ' + window.scrollY + ' is not ' + initialScrollY);
+            }
+
+            window.addEventListener('scroll', scrollListener);
+
+            eventSender.monitorWheelEvents();
+            eventSender.mouseMoveTo(100, 100);
+            // Scroll right with some upwards drift.
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(-2, 0, "began", "none");
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(-2, -1, "changed", "none");
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(-2, -1, "changed", "none");
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, "ended", "none");
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(-2, 0, "none", "begin");
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(-2, 1, "none", "continue");
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(-3, 2, "none", "continue");
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(-2, 1, "none", "continue");
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, "none", "end");
+            await UIHelper.waitForScrollCompletion();
+
+            window.removeEventListener('scroll', scrollListener);
+        }
+
+        async function scrollTest()
+        {
+            debug('');
+            debug('Tests axis locking in the momentum wheel gesture phase');
+
+            await testVerticalRubberband();
+            await testHorizontalRubberband();
+
+            finishJSTest();
+        }
+
+        window.addEventListener('load', () => {
+            setTimeout(scrollTest, 0);
+        }, false);
+    </script>
+</head>
+<body>
+    <script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>
