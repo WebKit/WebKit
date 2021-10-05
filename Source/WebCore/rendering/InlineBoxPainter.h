@@ -26,6 +26,7 @@
 
 #include "FloatRect.h"
 #include "GraphicsTypes.h"
+#include "InlineIteratorInlineBox.h"
 #include "LayoutRect.h"
 #include "ShadowData.h"
 
@@ -59,7 +60,7 @@ private:
     RenderBoxModelObject& renderer() const { return const_cast<RenderBoxModelObject&>(m_renderer); }
     bool isHorizontal() const { return m_isHorizontal; }
 
-    const LegacyInlineFlowBox& m_inlineBox;
+    const InlineIterator::InlineBox m_inlineBox;
     PaintInfo& m_paintInfo;
     const LayoutPoint m_paintOffset;
     const RenderBoxModelObject& m_renderer;

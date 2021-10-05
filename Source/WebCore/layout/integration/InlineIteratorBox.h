@@ -57,6 +57,8 @@ public:
     Box(PathVariant&&);
 
     bool isText() const;
+    bool isInlineBox() const;
+    bool isRootInlineBox() const;
 
     FloatRect rect() const;
 
@@ -100,6 +102,7 @@ public:
 
 protected:
     friend class BoxIterator;
+    friend class InlineBoxIterator;
     friend class LeafBoxIterator;
     friend class TextBoxIterator;
 
@@ -166,6 +169,20 @@ inline bool Box::isText() const
 {
     return WTF::switchOn(m_pathVariant, [](auto& path) {
         return path.isText();
+    });
+}
+
+inline bool Box::isInlineBox() const
+{
+    return WTF::switchOn(m_pathVariant, [](auto& path) {
+        return path.isInlineBox();
+    });
+}
+
+inline bool Box::isRootInlineBox() const
+{
+    return WTF::switchOn(m_pathVariant, [](auto& path) {
+        return path.isRootInlineBox();
     });
 }
 

@@ -54,6 +54,8 @@ public:
     }
 
     bool isText() const { return m_inlineBox->isInlineTextBox(); }
+    bool isInlineBox() const { return m_inlineBox->isInlineFlowBox(); }
+    bool isRootInlineBox() const { return m_inlineBox->isRootInlineBox(); }
 
     FloatRect rect() const { return m_inlineBox->frameRect(); }
 
@@ -117,6 +119,16 @@ public:
         traversePreviousInlineBoxInCacheOrder();
     }
 
+    void traverseNextInlineBox()
+    {
+        m_inlineBox = inlineFlowBox()->nextLineBox();
+    }
+
+    void traversePreviousInlineBox()
+    {
+        m_inlineBox = inlineFlowBox()->prevLineBox();
+    }
+
     bool operator==(const BoxLegacyPath& other) const { return m_inlineBox == other.m_inlineBox; }
 
     bool atEnd() const { return !m_inlineBox; }
@@ -126,6 +138,7 @@ public:
 
 private:
     const LegacyInlineTextBox* inlineTextBox() const { return downcast<LegacyInlineTextBox>(m_inlineBox); }
+    const LegacyInlineFlowBox* inlineFlowBox() const { return downcast<LegacyInlineFlowBox>(m_inlineBox); }
 
     static Vector<const LegacyInlineBox*> inlineBoxesInLogicalOrder(const LegacyRootInlineBox& root)
     {

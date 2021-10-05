@@ -1511,6 +1511,7 @@ layout/formattingContexts/inline/InlineTextItem.cpp
 layout/formattingContexts/inline/invalidation/InlineInvalidation.cpp
 layout/formattingContexts/inline/text/TextUtil.cpp
 layout/integration/InlineIteratorBox.cpp
+layout/integration/InlineIteratorInlineBox.cpp
 layout/integration/InlineIteratorLine.cpp
 layout/integration/InlineIteratorTextBox.cpp
 layout/integration/LayoutIntegrationBoxTree.cpp

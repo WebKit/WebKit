@@ -48,6 +48,8 @@ public:
     }
 
     bool isText() const { return !!box().text(); }
+    bool isInlineBox() const { return box().isInlineBox(); }
+    bool isRootInlineBox() const { return box().isRootInlineBox(); }
 
     FloatRect rect() const { return box().logicalRect(); }
 
@@ -174,6 +176,32 @@ public:
         traversePreviousOnLine();
     }
 
+    void traverseNextInlineBox()
+    {
+        ASSERT(box().isInlineBox());
+
+        // FIXME: This always searches to the end.
+        auto& layoutBox = box().layoutBox();
+        do {
+            traverseNextBox();
+        } while (!atEnd() && &box().layoutBox() != &layoutBox);
+
+        ASSERT(atEnd() || box().isInlineBox());
+    }
+
+    void traversePreviousInlineBox()
+    {
+        ASSERT(box().isInlineBox());
+
+        // FIXME: This always searches to the beginning.
+        auto& layoutBox = box().layoutBox();
+        do {
+            traversePreviousBox();
+        } while (!atEnd() && &box().layoutBox() != &layoutBox);
+
+        ASSERT(atEnd() || box().isInlineBox());
+    }
+
     bool operator==(const BoxModernPath& other) const { return m_inlineContent == other.m_inlineContent && m_boxIndex == other.m_boxIndex; }
 
     bool atEnd() const { return m_boxIndex == boxes().size(); }
@@ -181,19 +209,29 @@ public:
     auto& inlineContent() const { return *m_inlineContent; }
 
 private:
-    void traverseNextLeaf()
+    void traverseNextBox()
     {
         ASSERT(!atEnd());
+        ++m_boxIndex;
+    }
+
+    void traversePreviousBox()
+    {
+        ASSERT(!atEnd());
+        m_boxIndex = m_boxIndex ? m_boxIndex - 1 : boxes().size();
+    }
+
+    void traverseNextLeaf()
+    {
         do {
-            ++m_boxIndex;
+            traverseNextBox();
         } while (!atEnd() && box().isInlineBox());
     }
 
     void traversePreviousLeaf()
     {
-        ASSERT(!atEnd());
         do {
-            m_boxIndex = m_boxIndex ? m_boxIndex - 1 : boxes().size();
+            traversePreviousBox();
         } while (!atEnd() && box().isInlineBox());
     }
 
