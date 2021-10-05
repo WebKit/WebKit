@@ -247,7 +247,6 @@ static NSArray *assetMetadataKeyNames();
 static NSArray *itemKVOProperties();
 static NSArray *assetTrackMetadataKeyNames();
 static NSArray *playerKVOProperties();
-static AVAssetTrack* firstEnabledTrack(NSArray* tracks);
 
 static dispatch_queue_t globalLoaderDelegateQueue()
 {
@@ -1168,7 +1167,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
 #if ENABLE(WEB_AUDIO) && USE(MEDIATOOLBOX)
     if (m_provider) {
         m_provider->setPlayerItem(m_avPlayerItem.get());
-        m_provider->setAudioTrack(firstEnabledTrack(safeAVAssetTracksForAudibleMedia()));
+        m_provider->setAudioTrack(firstEnabledAudibleTrack());
     }
 #endif
 
@@ -2086,16 +2085,6 @@ void MediaPlayerPrivateAVFoundationObjC::updateVideoLayerGravity()
     [CATransaction commit];
 }
 
-static AVAssetTrack* firstEnabledTrack(NSArray* tracks)
-{
-    NSUInteger index = [tracks indexOfObjectPassingTest:^(id obj, NSUInteger, BOOL *) {
-        return [static_cast<AVAssetTrack*>(obj) isEnabled];
-    }];
-    if (index == NSNotFound)
-        return nil;
-    return [tracks objectAtIndex:index];
-}
-
 void MediaPlayerPrivateAVFoundationObjC::metadataLoaded()
 {
     MediaPlayerPrivateAVFoundation::metadataLoaded();
@@ -2141,9 +2130,9 @@ void MediaPlayerPrivateAVFoundationObjC::tracksChanged()
     if (!m_avPlayerItem) {
         // We don't have a player item yet, so check with the asset because some assets support inspection
         // prior to becoming ready to play.
-        AVAssetTrack* firstEnabledVideoTrack = firstEnabledTrack(safeAVAssetTracksForVisualMedia());
+        auto* firstEnabledVideoTrack = firstEnabledVisibleTrack();
         setHasVideo(firstEnabledVideoTrack);
-        setHasAudio(firstEnabledTrack(safeAVAssetTracksForAudibleMedia()));
+        setHasAudio(firstEnabledAudibleTrack());
         auto size = firstEnabledVideoTrack ? FloatSize(CGSizeApplyAffineTransform([firstEnabledVideoTrack naturalSize], [firstEnabledVideoTrack preferredTransform])) : FloatSize();
         // For videos with rotation tag set, the transformation above might return a CGSize instance with negative width or height.
         // See https://bugs.webkit.org/show_bug.cgi?id=172648.
@@ -2214,7 +2203,7 @@ void MediaPlayerPrivateAVFoundationObjC::tracksChanged()
 
 #if ENABLE(WEB_AUDIO) && USE(MEDIATOOLBOX)
     if (m_provider)
-        m_provider->setAudioTrack(firstEnabledTrack(safeAVAssetTracksForAudibleMedia()));
+        m_provider->setAudioTrack(firstEnabledAudibleTrack());
 #endif
 
     setDelayCharacteristicsChangedNotification(false);
@@ -2227,7 +2216,7 @@ void MediaPlayerPrivateAVFoundationObjC::updateRotationSession()
 
     AffineTransform finalTransform = m_avAsset.get().preferredTransform;
     FloatSize naturalSize;
-    if (auto* firstEnabledVideoTrack = firstEnabledTrack(safeAVAssetTracksForVisualMedia())) {
+    if (auto* firstEnabledVideoTrack = firstEnabledVisibleTrack()) {
         naturalSize = FloatSize(firstEnabledVideoTrack.naturalSize);
         finalTransform *= firstEnabledVideoTrack.preferredTransform;
     }
@@ -2417,7 +2406,7 @@ AudioSourceProvider* MediaPlayerPrivateAVFoundationObjC::audioSourceProvider()
 {
     if (!m_provider) {
         m_provider = AudioSourceProviderAVFObjC::create(m_avPlayerItem.get());
-        m_provider->setAudioTrack(firstEnabledTrack(safeAVAssetTracksForAudibleMedia()));
+        m_provider->setAudioTrack(firstEnabledAudibleTrack());
     }
     return m_provider.get();
 }
@@ -2545,6 +2534,10 @@ void MediaPlayerPrivateAVFoundationObjC::updateLastImage(UpdateType type)
     if (!m_avPlayerItem || readyState() < MediaPlayer::ReadyState::HaveCurrentData)
         return;
 
+    auto* firstEnabledVideoTrack = firstEnabledVisibleTrack();
+    if (!firstEnabledVideoTrack)
+        return;
+
     if (type == UpdateType::UpdateSynchronously && !m_lastImage && !videoOutputHasAvailableFrame())
         waitForVideoOutputMediaDataWillChange();
 
@@ -2570,10 +2563,6 @@ void MediaPlayerPrivateAVFoundationObjC::paintWithVideoOutput(GraphicsContext& c
 {
     updateLastImage(UpdateType::UpdateSynchronously);
     if (!m_lastImage)
-        return;
-
-    AVAssetTrack* firstEnabledVideoTrack = firstEnabledTrack(safeAVAssetTracksForVisualMedia());
-    if (!firstEnabledVideoTrack)
         return;
 
     INFO_LOG(LOGIDENTIFIER);
@@ -2750,26 +2739,42 @@ void MediaPlayerPrivateAVFoundationObjC::setWaitingForKey(bool waitingForKey)
 }
 #endif
 
-NSArray* MediaPlayerPrivateAVFoundationObjC::safeAVAssetTracksForAudibleMedia()
+AVAssetTrack* MediaPlayerPrivateAVFoundationObjC::firstEnabledTrack(AVMediaCharacteristic characteristic) const
 {
+    if (m_avPlayerItem) {
+        for (AVPlayerItemTrack* track in [m_avPlayerItem tracks]) {
+            if (!track.enabled)
+                continue;
+            if (!track.assetTrack)
+                continue;
+            if ([track.assetTrack hasMediaCharacteristic:characteristic])
+                return track.assetTrack;
+        }
+    }
     if (!m_avAsset)
         return nil;
 
     if ([m_avAsset.get() statusOfValueForKey:@"tracks" error:NULL] != AVKeyValueStatusLoaded)
         return nil;
 
-    return [m_avAsset tracksWithMediaCharacteristic:AVMediaCharacteristicAudible];
+    return [] (NSArray* tracks) -> AVAssetTrack* {
+        NSUInteger index = [tracks indexOfObjectPassingTest:^(id obj, NSUInteger, BOOL *) {
+            return [static_cast<AVAssetTrack*>(obj) isEnabled];
+        }];
+        if (index == NSNotFound)
+            return nil;
+        return [tracks objectAtIndex:index];
+    }([m_avAsset tracksWithMediaCharacteristic:characteristic]);
 }
 
-NSArray* MediaPlayerPrivateAVFoundationObjC::safeAVAssetTracksForVisualMedia()
+AVAssetTrack* MediaPlayerPrivateAVFoundationObjC::firstEnabledAudibleTrack() const
 {
-    if (!m_avAsset)
-        return nil;
+    return firstEnabledTrack(AVMediaCharacteristicAudible);
+}
 
-    if ([m_avAsset.get() statusOfValueForKey:@"tracks" error:NULL] != AVKeyValueStatusLoaded)
-        return nil;
-
-    return [m_avAsset tracksWithMediaCharacteristic:AVMediaCharacteristicVisual];
+AVAssetTrack* MediaPlayerPrivateAVFoundationObjC::firstEnabledVisibleTrack() const
+{
+    return firstEnabledTrack(AVMediaCharacteristicVisual);
 }
 
 bool MediaPlayerPrivateAVFoundationObjC::hasLoadedMediaSelectionGroups()

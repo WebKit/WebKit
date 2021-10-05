@@ -1,3 +1,14 @@
+2021-10-05  Jean-Yves Avenard  <jya@apple.com>
+
+        createImageBitmap using a HLS video as source always return a black image.
+        https://bugs.webkit.org/show_bug.cgi?id=231225
+        rdar://83884031
+
+        Reviewed by Eric Carlson.
+
+        * http/tests/media/video-hls-copy-into-canvas-expected.txt: Added.
+        * http/tests/media/video-hls-copy-into-canvas.html: Added.
+
 2021-10-05  Ayumi Kojima  <ayumi_kojima@apple.com>
 
         [ iOS 15 ] fast/events/ios/rotation/layout-viewport-during-rotation.html is failing.

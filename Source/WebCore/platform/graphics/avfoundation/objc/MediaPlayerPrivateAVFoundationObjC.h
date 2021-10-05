@@ -32,6 +32,7 @@
 #include <wtf/HashMap.h>
 
 OBJC_CLASS AVAssetImageGenerator;
+OBJC_CLASS AVAssetTrack;
 OBJC_CLASS AVAssetResourceLoadingRequest;
 OBJC_CLASS AVMediaSelectionGroup;
 OBJC_CLASS AVOutputContext;
@@ -50,6 +51,7 @@ OBJC_CLASS WebCoreAVFPullDelegate;
 
 typedef struct CGImage *CGImageRef;
 typedef struct __CVBuffer *CVPixelBufferRef;
+typedef NSString *AVMediaCharacteristic;
 
 namespace WebCore {
 
@@ -275,8 +277,9 @@ private:
     AVMediaSelectionGroup *safeMediaSelectionGroupForAudibleMedia();
     AVMediaSelectionGroup *safeMediaSelectionGroupForVisualMedia();
 
-    NSArray *safeAVAssetTracksForAudibleMedia();
-    NSArray *safeAVAssetTracksForVisualMedia();
+    AVAssetTrack* firstEnabledAudibleTrack() const;
+    AVAssetTrack* firstEnabledVisibleTrack() const;
+    AVAssetTrack* firstEnabledTrack(AVMediaCharacteristic) const;
 
 #if ENABLE(DATACUE_VALUE)
     void processMetadataTrack();
