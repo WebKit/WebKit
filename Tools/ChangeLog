@@ -1,3 +1,17 @@
+2021-10-05  Alex Christensen  <achristensen@webkit.org>
+
+        TestWebKitAPI.PrivateClickMeasurement.DaemonBasicFunctionality is timing out
+        https://bugs.webkit.org/show_bug.cgi?id=231257
+
+        * TestWebKitAPI/Tests/WebKitCocoa/EventAttribution.mm:
+        Originally reviewed as part of https://bugs.webkit.org/show_bug.cgi?id=231248
+        this should fix the error that happens when a previous test run has registered
+        the test AdAttributionDaemon but then failed before it was started, which leaves
+        launchd in a state of having already loaded a plist for the mach service named
+        "org.webkit.pcmtestdaemon.service" so it refuses to load another.  The solution is
+        just to try unloading any previously loaded plist before loading another to clear
+        state in launchd.
+
 2021-10-05  Tim Horton  <timothy_horton@apple.com>
 
         <model> should be draggable, similar to <img>

@@ -480,6 +480,7 @@ static std::pair<NSURL *, WKWebViewConfiguration *> setUpDaemon(WKWebViewConfigu
     EXPECT_NULL(error);
     success = [plist writeToURL:plistLocation error:&error];
     EXPECT_TRUE(success);
+    system([NSString stringWithFormat:@"launchctl unload %@ 2> /dev/null", plistLocation.path].fileSystemRepresentation);
     system([NSString stringWithFormat:@"launchctl load %@", plistLocation.path].fileSystemRepresentation);
 #endif
     EXPECT_NULL(error);
