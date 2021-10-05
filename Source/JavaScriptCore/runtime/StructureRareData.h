@@ -89,7 +89,9 @@ public:
     void cacheSpecialProperty(JSGlobalObject*, VM&, Structure* baseStructure, JSValue, CachedSpecialPropertyKey, const PropertySlot&);
 
     JSPropertyNameEnumerator* cachedPropertyNameEnumerator() const;
-    void setCachedPropertyNameEnumerator(VM&, JSPropertyNameEnumerator*);
+    uintptr_t cachedPropertyNameEnumeratorAndFlag() const;
+    void setCachedPropertyNameEnumerator(VM&, Structure*, JSPropertyNameEnumerator*, StructureChain*);
+    void clearCachedPropertyNameEnumerator();
 
     JSImmutableButterfly* cachedPropertyNames(CachedPropertyNamesKind) const;
     JSImmutableButterfly* cachedPropertyNamesIgnoringSentinel(CachedPropertyNamesKind) const;
@@ -108,16 +110,17 @@ public:
         return OBJECT_OFFSETOF(StructureRareData, m_cachedPropertyNames) + sizeof(WriteBarrier<JSImmutableButterfly>) * static_cast<unsigned>(kind);
     }
 
-    static ptrdiff_t offsetOfCachedPropertyNameEnumerator()
+    static ptrdiff_t offsetOfCachedPropertyNameEnumeratorAndFlag()
     {
-        return OBJECT_OFFSETOF(StructureRareData, m_cachedPropertyNameEnumerator);
+        return OBJECT_OFFSETOF(StructureRareData, m_cachedPropertyNameEnumeratorAndFlag);
     }
 
     DECLARE_EXPORT_INFO;
 
     void finalizeUnconditionally(VM&);
 
-    void invalidateWatchpointBasedValidation();
+    static constexpr uintptr_t cachedPropertyNameEnumeratorIsValidatedViaTraversingFlag = 1;
+    static constexpr uintptr_t cachedPropertyNameEnumeratorMask = ~static_cast<uintptr_t>(1);
 
 private:
     friend class LLIntOffsetsExtractor;
@@ -135,12 +138,12 @@ private:
     bool canCacheSpecialProperty(CachedSpecialPropertyKey);
     void giveUpOnSpecialPropertyCache(CachedSpecialPropertyKey);
 
-    bool tryCachePropertyNameEnumeratorViaWatchpoint(VM&, StructureChain*);
+    bool tryCachePropertyNameEnumeratorViaWatchpoint(VM&, Structure*, StructureChain*);
 
     WriteBarrier<Structure> m_previous;
     // FIXME: We should have some story for clearing these property names caches in GC.
     // https://bugs.webkit.org/show_bug.cgi?id=192659
-    WriteBarrier<JSPropertyNameEnumerator> m_cachedPropertyNameEnumerator;
+    uintptr_t m_cachedPropertyNameEnumeratorAndFlag { 0 };
     FixedVector<StructureChainInvalidationWatchpoint> m_cachedPropertyNameEnumeratorWatchpoints;
     WriteBarrier<JSImmutableButterfly> m_cachedPropertyNames[numberOfCachedPropertyNames] { };
 
