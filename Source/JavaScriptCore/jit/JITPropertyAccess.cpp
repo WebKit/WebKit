@@ -2806,10 +2806,10 @@ void JIT::emit_op_get_property_enumerator(const Instruction* currentInstruction)
     loadPtr(Address(regT1, Structure::previousOrRareDataOffset()), regT1);
     genericCases.append(branchTestPtr(Zero, regT1));
     genericCases.append(branchIfStructure(regT1));
-    loadPtr(Address(regT1, StructureRareData::offsetOfCachedPropertyNameEnumerator()), regT1);
+    loadPtr(Address(regT1, StructureRareData::offsetOfCachedPropertyNameEnumeratorAndFlag()), regT1);
 
     genericCases.append(branchTestPtr(Zero, regT1));
-    genericCases.append(branchTest32(Zero, Address(regT1, JSPropertyNameEnumerator::flagsOffset()), TrustedImm32(JSPropertyNameEnumerator::ValidatedViaWatchpoint)));
+    genericCases.append(branchTestPtr(NonZero, regT1, TrustedImm32(StructureRareData::cachedPropertyNameEnumeratorIsValidatedViaTraversingFlag)));
     emitPutVirtualRegister(dst, regT1);
     doneCases.append(jump());
 
