@@ -79,7 +79,7 @@ void StructureRareData::visitChildrenImpl(JSCell* cell, Visitor& visitor)
         for (unsigned index = 0; index < numberOfCachedSpecialPropertyKeys; ++index)
             visitor.appendUnbarriered(thisObject->cachedSpecialProperty(static_cast<CachedSpecialPropertyKey>(index)));
     }
-    visitor.append(thisObject->m_cachedPropertyNameEnumerator);
+    visitor.appendUnbarriered(thisObject->cachedPropertyNameEnumerator());
     for (unsigned index = 0; index < numberOfCachedPropertyNames; ++index) {
         auto* cached = thisObject->m_cachedPropertyNames[index].unvalidatedGet();
         if (cached != cachedPropertyNamesSentinel())
