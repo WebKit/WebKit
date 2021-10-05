@@ -1,3 +1,152 @@
+2021-10-05  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r283556. rdar://problem/83900126
+
+    [JSC] JSPropertyNameEnumerator should not have cached prototype chain since empty JSPropertyNameEnumerator is shared
+    https://bugs.webkit.org/show_bug.cgi?id=231202
+    JSTests:
+    
+    Reviewed by Keith Miller.
+    
+    * stress/for-in-validation-poly-proto.js: Added.
+    (shouldBe):
+    (test):
+    (factory.Test):
+    (factory):
+    * stress/for-in-validation-watchpoint.js: Added.
+    (shouldBe):
+    (test):
+    (Test):
+    (factory):
+    
+    Source/JavaScriptCore:
+    
+    rdar://83815122
+    
+    Reviewed by Keith Miller.
+    
+    r282014 assumed an invariant that JSPropertyNameEnumerator's StructureChain is immutable.
+    This invariant is also used in validation of JSPropertyNameEnumerator. However, this
+    invariant was broken since we now have shared empty sentinel JSPropertyNameEnumerator, which can
+    be used for different structures having different prototype chain.
+    
+    Since now we have shared JSPropertyNameEnumerator, JSPropertyNameEnumerator should not have
+    StructureChain in its member. When invalidating StructureChain in Structure, we also clear
+    cached JSPropertyNameEnumerator so that we do not get a stale JSPropertyNameEnumerator from
+    Structure even though watchpoint-based validation is not used.
+    
+    This patch also removes ValidatedViaWatchpoint flag in JSPropertyNameEnumerator due to the same
+    reason. We should not modify JSPropertyNameEnumerator once it is instantiated. Instead, we encode
+    this flag as a lowest bit of m_cachedPropertyNameEnumerator. If it is validated via traversing (not watchpoints),
+    then this bit is set. So when loading that pointer from StructureRareData, we can quickly detect
+    it without even accessing to the enumerator. This fixes the issue, and it is even cleaner.
+    We rename m_cachedPropertyNameEnumerator to m_cachedPropertyNameEnumeratorAndFlag since it now
+    includes this flag.
+    
+    While reviewing the code, we also found that watchpoint-based validation didn't care about PolyProto.
+    We should disable watchpoint-based validation if PolyProto is used.
+    
+    * dfg/DFGSpeculativeJIT.cpp:
+    (JSC::DFG::SpeculativeJIT::compileGetPropertyEnumerator):
+    * ftl/FTLAbstractHeapRepository.h:
+    * ftl/FTLLowerDFGToB3.cpp:
+    (JSC::FTL::DFG::LowerDFGToB3::compileCompareStrictEq):
+    * jit/JITPropertyAccess.cpp:
+    (JSC::JIT::emit_op_get_property_enumerator):
+    * llint/LLIntSlowPaths.cpp:
+    (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+    * llint/LowLevelInterpreter64.asm:
+    * runtime/JSPropertyNameEnumerator.cpp:
+    (JSC::JSPropertyNameEnumerator::visitChildrenImpl):
+    * runtime/JSPropertyNameEnumerator.h:
+    (JSC::propertyNameEnumerator):
+    * runtime/Structure.cpp:
+    (JSC::Structure::visitChildrenImpl):
+    (JSC::Structure::setCachedPropertyNameEnumerator):
+    (JSC::Structure::cachedPropertyNameEnumeratorAndFlag const):
+    * runtime/Structure.h:
+    (JSC::Structure::propertyNameEnumeratorShouldWatch const):
+    * runtime/StructureInlines.h:
+    (JSC::Structure::prototypeChain const):
+    (JSC::Structure::clearCachedPrototypeChain):
+    * runtime/StructureRareData.cpp:
+    (JSC::StructureRareData::visitChildrenImpl):
+    * runtime/StructureRareData.h:
+    * runtime/StructureRareDataInlines.h:
+    (JSC::StructureRareData::cachedPropertyNameEnumerator const):
+    (JSC::StructureRareData::cachedPropertyNameEnumeratorAndFlag const):
+    (JSC::StructureRareData::setCachedPropertyNameEnumerator):
+    (JSC::StructureChainInvalidationWatchpoint::fireInternal):
+    (JSC::StructureRareData::tryCachePropertyNameEnumeratorViaWatchpoint):
+    (JSC::StructureRareData::clearCachedPropertyNameEnumerator):
+    (JSC::StructureRareData::invalidateWatchpointBasedValidation): Deleted.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@283556 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-10-05  Yusuke Suzuki  <ysuzuki@apple.com>
+
+            [JSC] JSPropertyNameEnumerator should not have cached prototype chain since empty JSPropertyNameEnumerator is shared
+            https://bugs.webkit.org/show_bug.cgi?id=231202
+            rdar://83815122
+
+            Reviewed by Keith Miller.
+
+            r282014 assumed an invariant that JSPropertyNameEnumerator's StructureChain is immutable.
+            This invariant is also used in validation of JSPropertyNameEnumerator. However, this
+            invariant was broken since we now have shared empty sentinel JSPropertyNameEnumerator, which can
+            be used for different structures having different prototype chain.
+
+            Since now we have shared JSPropertyNameEnumerator, JSPropertyNameEnumerator should not have
+            StructureChain in its member. When invalidating StructureChain in Structure, we also clear
+            cached JSPropertyNameEnumerator so that we do not get a stale JSPropertyNameEnumerator from
+            Structure even though watchpoint-based validation is not used.
+
+            This patch also removes ValidatedViaWatchpoint flag in JSPropertyNameEnumerator due to the same
+            reason. We should not modify JSPropertyNameEnumerator once it is instantiated. Instead, we encode
+            this flag as a lowest bit of m_cachedPropertyNameEnumerator. If it is validated via traversing (not watchpoints),
+            then this bit is set. So when loading that pointer from StructureRareData, we can quickly detect
+            it without even accessing to the enumerator. This fixes the issue, and it is even cleaner.
+            We rename m_cachedPropertyNameEnumerator to m_cachedPropertyNameEnumeratorAndFlag since it now
+            includes this flag.
+
+            While reviewing the code, we also found that watchpoint-based validation didn't care about PolyProto.
+            We should disable watchpoint-based validation if PolyProto is used.
+
+            * dfg/DFGSpeculativeJIT.cpp:
+            (JSC::DFG::SpeculativeJIT::compileGetPropertyEnumerator):
+            * ftl/FTLAbstractHeapRepository.h:
+            * ftl/FTLLowerDFGToB3.cpp:
+            (JSC::FTL::DFG::LowerDFGToB3::compileCompareStrictEq):
+            * jit/JITPropertyAccess.cpp:
+            (JSC::JIT::emit_op_get_property_enumerator):
+            * llint/LLIntSlowPaths.cpp:
+            (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+            * llint/LowLevelInterpreter64.asm:
+            * runtime/JSPropertyNameEnumerator.cpp:
+            (JSC::JSPropertyNameEnumerator::visitChildrenImpl):
+            * runtime/JSPropertyNameEnumerator.h:
+            (JSC::propertyNameEnumerator):
+            * runtime/Structure.cpp:
+            (JSC::Structure::visitChildrenImpl):
+            (JSC::Structure::setCachedPropertyNameEnumerator):
+            (JSC::Structure::cachedPropertyNameEnumeratorAndFlag const):
+            * runtime/Structure.h:
+            (JSC::Structure::propertyNameEnumeratorShouldWatch const):
+            * runtime/StructureInlines.h:
+            (JSC::Structure::prototypeChain const):
+            (JSC::Structure::clearCachedPrototypeChain):
+            * runtime/StructureRareData.cpp:
+            (JSC::StructureRareData::visitChildrenImpl):
+            * runtime/StructureRareData.h:
+            * runtime/StructureRareDataInlines.h:
+            (JSC::StructureRareData::cachedPropertyNameEnumerator const):
+            (JSC::StructureRareData::cachedPropertyNameEnumeratorAndFlag const):
+            (JSC::StructureRareData::setCachedPropertyNameEnumerator):
+            (JSC::StructureChainInvalidationWatchpoint::fireInternal):
+            (JSC::StructureRareData::tryCachePropertyNameEnumeratorViaWatchpoint):
+            (JSC::StructureRareData::clearCachedPropertyNameEnumerator):
+            (JSC::StructureRareData::invalidateWatchpointBasedValidation): Deleted.
+
 2021-10-02  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r283444. rdar://problem/83784757
