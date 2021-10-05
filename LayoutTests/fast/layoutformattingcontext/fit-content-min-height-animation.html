@@ -1,0 +1,25 @@
+<style>
+  @keyframes a0 {
+    from {
+      min-height: fit-content;
+    }
+  }
+  div {
+    animation-fill-mode: forwards;
+    animation-name: a0;
+    display: table;
+    min-height: calc(1px + 1%);
+  }
+</style>
+<script>
+  onload = () => {
+    document.execCommand('SelectAll');
+    document.execCommand('Copy');
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+    }
+  };
+</script>
+<div>
+PASS
+</div>

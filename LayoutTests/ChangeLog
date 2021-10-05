@@ -1,3 +1,13 @@
+2021-10-05  Gabriel Nava Marino  <gnavamarino@apple.com>
+
+        Unsupported blending of mixed length types leads to nullptr deref when accessing m_value.calc in CSSPrimitiveValue::primitiveType()
+        https://bugs.webkit.org/show_bug.cgi?id=230929
+
+        Reviewed by Reviewed by Darin Adler.
+
+        * fast/layoutformattingcontext/fit-content-min-height-animation-expected.txt: Added.
+        * fast/layoutformattingcontext/fit-content-min-height-animation.html: Added.
+
 2021-10-05  Nikos Mouchtaris  <nmouchtaris@apple.com>
 
         radial-gradient does not accept calc values that combine length and percent

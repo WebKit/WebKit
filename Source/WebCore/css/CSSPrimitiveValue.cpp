@@ -431,6 +431,9 @@ void CSSPrimitiveValue::init(Ref<CSSBasicShape>&& shape)
 
 void CSSPrimitiveValue::init(RefPtr<CSSCalcValue>&& c)
 {
+    // FIXME (231111): This init should take Ref<CSSCalcValue> instead.
+    if (!c)
+        return;
     setPrimitiveUnitType(CSSUnitType::CSS_CALC);
     m_hasCachedCSSText = false;
     m_value.calc = c.leakRef();

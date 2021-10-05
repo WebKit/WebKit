@@ -302,6 +302,9 @@ static Length blendMixedTypes(const Length& from, const Length& to, const Blendi
     if (!from.isCalculated() && !to.isPercent() && (!context.progress || to.isZero()))
         return blend(from, Length(0, from.type()), context);
 
+    if (from.isIntrinsicOrAuto() || to.isIntrinsicOrAuto() || from.isRelative() || to.isRelative())
+        return { 0, LengthType::Fixed };
+
     auto blend = makeUnique<CalcExpressionBlendLength>(from, to, context.progress);
     return Length(CalculationValue::create(WTFMove(blend), ValueRange::All));
 }
