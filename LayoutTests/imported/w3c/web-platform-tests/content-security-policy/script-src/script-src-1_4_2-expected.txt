@@ -1,8 +1,6 @@
 Function() called as a constructor should throw without 'unsafe-eval' script-src directive.
 
 
-Harness Error (TIMEOUT), message = null
-
-NOTRUN Test that securitypolicyviolation event is fired
+PASS Test that securitypolicyviolation event is fired
 PASS Unsafe eval ran in Function() constructor.
 

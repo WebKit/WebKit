@@ -1,3 +1,39 @@
+2021-10-05  Kate Cheney  <katherine_cheney@apple.com>
+
+        CSP: unsafe-eval tests timing out or failing
+        https://bugs.webkit.org/show_bug.cgi?id=231113
+        <rdar://problem/83425041>
+
+        Reviewed by Brent Fulgham.
+
+        Many imported unsafe-eval tests are failing because we don't report
+        violations to the DOM or report URI when an eval is blocked. This
+        patch adds support for that by calling
+        ContentSecurityPolicy::allowEval() when eval is disabled.
+
+        Eventually I think we can remove the evalEnabled() code and check the
+        CSP policy instead, but I will save that for another patch.
+
+        * API/JSAPIGlobalObject.cpp:
+        * API/JSAPIGlobalObject.mm:
+        * interpreter/Interpreter.cpp:
+        (JSC::eval):
+        * jsc.cpp:
+        * runtime/DirectEvalExecutable.cpp:
+        (JSC::DirectEvalExecutable::create):
+        * runtime/FunctionConstructor.cpp:
+        (JSC::constructFunction):
+        * runtime/IndirectEvalExecutable.cpp:
+        (JSC::IndirectEvalExecutable::create):
+        * runtime/JSGlobalObject.cpp:
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::reportViolationForUnsafeEval):
+        Per the spec we should send the report to the element's document and
+        bubble it up to the window.
+
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+
 2021-10-05  Xan López  <xan@igalia.com>
 
         [JSC][32bit] Fix bugs after unlinked baseline jit

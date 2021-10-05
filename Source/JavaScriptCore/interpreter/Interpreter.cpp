@@ -98,6 +98,7 @@ JSValue eval(JSGlobalObject* globalObject, CallFrame* callFrame, ECMAMode ecmaMo
 
     TopCallFrameSetter topCallFrame(vm, callFrame);
     if (!globalObject->evalEnabled()) {
+        globalObject->globalObjectMethodTable()->reportViolationForUnsafeEval(globalObject);
         throwException(globalObject, scope, createEvalError(globalObject, globalObject->evalDisabledErrorMessage()));
         return jsUndefined();
     }

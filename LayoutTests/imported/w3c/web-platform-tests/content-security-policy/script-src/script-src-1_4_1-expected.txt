@@ -3,5 +3,5 @@ setTimeout() and setInterval() should not run without 'unsafe-eval' script-src d
 
 PASS window.setTimeout()
 PASS window.setInterval()
-FAIL Test that securitypolicyviolation event is fired assert_equals: expected "script-src" but got "script-src 'self' 'unsafe-inline'"
+PASS Test that securitypolicyviolation event is fired
 

@@ -1799,7 +1799,7 @@ ExceptionOr<int> DOMWindow::setTimeout(JSC::JSGlobalObject& state, std::unique_p
 
     // FIXME: Should this check really happen here? Or should it happen when code is about to eval?
     if (action->type() == ScheduledAction::Type::Code) {
-        if (!context->contentSecurityPolicy()->allowEval(&state))
+        if (!context->contentSecurityPolicy()->allowEval(&state, LogToConsole::Yes))
             return 0;
     }
 
@@ -1824,7 +1824,7 @@ ExceptionOr<int> DOMWindow::setInterval(JSC::JSGlobalObject& state, std::unique_
 
     // FIXME: Should this check really happen here? Or should it happen when code is about to eval?
     if (action->type() == ScheduledAction::Type::Code) {
-        if (!context->contentSecurityPolicy()->allowEval(&state))
+        if (!context->contentSecurityPolicy()->allowEval(&state, LogToConsole::Yes))
             return 0;
     }
 

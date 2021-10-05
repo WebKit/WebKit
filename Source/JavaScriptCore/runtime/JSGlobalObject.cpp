@@ -522,6 +522,7 @@ const GlobalObjectMethodTable JSGlobalObject::s_globalObjectMethodTable = {
     &reportUncaughtExceptionAtEventLoop,
     &currentScriptExecutionOwner,
     &scriptExecutionStatus,
+    &reportViolationForUnsafeEval,
     nullptr, // defaultLanguage
     nullptr, // compileStreaming
     nullptr, // instantiateStreaming

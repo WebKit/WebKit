@@ -40,6 +40,7 @@ IndirectEvalExecutable* IndirectEvalExecutable::create(JSGlobalObject* globalObj
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (!globalObject->evalEnabled()) {
+        globalObject->globalObjectMethodTable()->reportViolationForUnsafeEval(globalObject);
         throwException(globalObject, scope, createEvalError(globalObject, globalObject->evalDisabledErrorMessage()));
         return nullptr;
     }

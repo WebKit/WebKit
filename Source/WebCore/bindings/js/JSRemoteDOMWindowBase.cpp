@@ -49,6 +49,7 @@ const GlobalObjectMethodTable JSRemoteDOMWindowBase::s_globalObjectMethodTable =
     nullptr, // reportUncaughtExceptionAtEventLoop
     &currentScriptExecutionOwner,
     &scriptExecutionStatus,
+    &reportViolationForUnsafeEval,
     nullptr, // defaultLanguage
     nullptr, // compileStreaming
     nullptr, // instantiateStreaming

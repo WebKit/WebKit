@@ -60,6 +60,7 @@ class TextEncoding;
 struct ContentSecurityPolicyClient;
 
 enum class ParserInserted : bool { No, Yes };
+enum class LogToConsole : bool { No, Yes };
 
 typedef Vector<std::unique_ptr<ContentSecurityPolicyDirectiveList>> CSPDirectiveListVector;
 
@@ -98,7 +99,7 @@ public:
     bool allowNonParserInsertedScripts(const URL&, const String&, const StringView&, ParserInserted) const;
     bool allowInlineStyle(const String& contextURL, const WTF::OrdinalNumber& contextLine, StringView styleContent, bool overrideContentSecurityPolicy = false) const;
 
-    bool allowEval(JSC::JSGlobalObject*, bool overrideContentSecurityPolicy = false) const;
+    bool allowEval(JSC::JSGlobalObject*, LogToConsole, bool overrideContentSecurityPolicy = false) const;
 
     bool allowPluginType(const String& type, const String& typeAttribute, const URL&, bool overrideContentSecurityPolicy = false) const;
 
@@ -216,10 +217,10 @@ private:
     using HashInEnforcedAndReportOnlyPoliciesPair = std::pair<bool, bool>;
     template<typename Predicate> HashInEnforcedAndReportOnlyPoliciesPair findHashOfContentInPolicies(Predicate&&, StringView content, OptionSet<ContentSecurityPolicyHashAlgorithm>) const WARN_UNUSED_RETURN;
 
-    void reportViolation(const String& effectiveViolatedDirective, const ContentSecurityPolicyDirective& violatedDirective, const URL& blockedURL, const String& consoleMessage, JSC::JSGlobalObject*) const;
+    void reportViolation(const String& effectiveViolatedDirective, const ContentSecurityPolicyDirective& violatedDirective, const String& blockedURL, const String& consoleMessage, JSC::JSGlobalObject*) const;
     void reportViolation(const String& effectiveViolatedDirective, const String& violatedDirective, const ContentSecurityPolicyDirectiveList&, const URL& blockedURL, const String& consoleMessage, JSC::JSGlobalObject* = nullptr) const;
     void reportViolation(const String& effectiveViolatedDirective, const ContentSecurityPolicyDirective& violatedDirective, const URL& blockedURL, const String& consoleMessage, const String& sourceURL, const TextPosition& sourcePosition, const URL& preRedirectURL = URL(), JSC::JSGlobalObject* = nullptr) const;
-    void reportViolation(const String& effectiveViolatedDirective, const String& violatedDirective, const ContentSecurityPolicyDirectiveList& violatedDirectiveList, const URL& blockedURL, const String& consoleMessage, const String& sourceURL, const TextPosition& sourcePosition, JSC::JSGlobalObject*, const URL& preRedirectURL = URL()) const;
+    void reportViolation(const String& effectiveViolatedDirective, const String& violatedDirective, const ContentSecurityPolicyDirectiveList& violatedDirectiveList, const String& blockedURL, const String& consoleMessage, const String& sourceURL, const TextPosition& sourcePosition, JSC::JSGlobalObject*, const URL& preRedirectURL = URL()) const;
     void reportBlockedScriptExecutionToInspector(const String& directiveText) const;
 
     // We can never have both a script execution context and a ContentSecurityPolicyClient.

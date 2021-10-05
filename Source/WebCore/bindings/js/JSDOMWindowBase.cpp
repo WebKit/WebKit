@@ -26,8 +26,10 @@
 
 #include "Chrome.h"
 #include "CommonVM.h"
+#include "ContentSecurityPolicy.h"
 #include "DOMWindow.h"
 #include "Document.h"
+#include "Element.h"
 #include "EventLoop.h"
 #include "FetchResponse.h"
 #include "Frame.h"
@@ -83,6 +85,7 @@ const GlobalObjectMethodTable JSDOMWindowBase::s_globalObjectMethodTable = {
     &reportUncaughtExceptionAtEventLoop,
     &currentScriptExecutionOwner,
     &scriptExecutionStatus,
+    &reportViolationForUnsafeEval,
     [] { return defaultLanguage(); },
 #if ENABLE(WEBASSEMBLY)
     &compileStreaming,
@@ -247,6 +250,24 @@ JSC::JSObject* JSDOMWindowBase::currentScriptExecutionOwner(JSGlobalObject* obje
 JSC::ScriptExecutionStatus JSDOMWindowBase::scriptExecutionStatus(JSC::JSGlobalObject*, JSC::JSObject* owner)
 {
     return jsCast<JSDocument*>(owner)->wrapped().jscScriptExecutionStatus();
+}
+
+void JSDOMWindowBase::reportViolationForUnsafeEval(JSGlobalObject* object)
+{
+    const JSDOMWindowBase* thisObject = static_cast<const JSDOMWindowBase*>(object);
+    ContentSecurityPolicy* contentSecurityPolicy = nullptr;
+    if (auto* element = thisObject->wrapped().frameElement())
+        contentSecurityPolicy = element->document().contentSecurityPolicy();
+
+    if (!contentSecurityPolicy) {
+        if (auto *document = thisObject->wrapped().document())
+            contentSecurityPolicy = document->contentSecurityPolicy();
+    }
+
+    if (!contentSecurityPolicy)
+        return;
+
+    contentSecurityPolicy->allowEval(object, LogToConsole::No, false);
 }
 
 void JSDOMWindowBase::willRemoveFromWindowProxy()

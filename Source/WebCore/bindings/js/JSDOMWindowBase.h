@@ -80,7 +80,8 @@ public:
     static void queueMicrotaskToEventLoop(JSC::JSGlobalObject&, Ref<JSC::Microtask>&&);
     static JSC::JSObject* currentScriptExecutionOwner(JSC::JSGlobalObject*);
     static JSC::ScriptExecutionStatus scriptExecutionStatus(JSC::JSGlobalObject*, JSC::JSObject*);
-
+    static void reportViolationForUnsafeEval(JSC::JSGlobalObject*);
+    
     void printErrorMessage(const String&) const;
 
     JSWindowProxy& proxy() const;

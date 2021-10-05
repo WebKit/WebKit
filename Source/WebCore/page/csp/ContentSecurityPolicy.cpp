@@ -507,14 +507,14 @@ bool ContentSecurityPolicy::allowInlineStyle(const String& contextURL, const WTF
     return foundHashInEnforcedPolicies || allPoliciesWithDispositionAllow(ContentSecurityPolicy::Disposition::Enforce, handleViolatedDirective, &ContentSecurityPolicyDirectiveList::violatedDirectiveForUnsafeInlineStyle);
 }
 
-bool ContentSecurityPolicy::allowEval(JSC::JSGlobalObject* state, bool overrideContentSecurityPolicy) const
+bool ContentSecurityPolicy::allowEval(JSC::JSGlobalObject* state, LogToConsole shouldLogToConsole, bool overrideContentSecurityPolicy) const
 {
     if (overrideContentSecurityPolicy)
         return true;
     bool didNotifyInspector = false;
     auto handleViolatedDirective = [&] (const ContentSecurityPolicyDirective& violatedDirective) {
-        String consoleMessage = consoleMessageForViolation(ContentSecurityPolicyDirectiveNames::scriptSrc, violatedDirective, URL(), "Refused to execute a script", "'unsafe-eval'");
-        reportViolation(ContentSecurityPolicyDirectiveNames::scriptSrc, violatedDirective, URL(), consoleMessage, state);
+        String consoleMessage = shouldLogToConsole == LogToConsole::Yes ?consoleMessageForViolation(ContentSecurityPolicyDirectiveNames::scriptSrc, violatedDirective, URL(), "Refused to execute a script", "'unsafe-eval'") : String();
+        reportViolation(ContentSecurityPolicyDirectiveNames::scriptSrc, violatedDirective, "eval", consoleMessage, state);
         if (!didNotifyInspector && !violatedDirective.directiveList().isReportOnly()) {
             reportBlockedScriptExecutionToInspector(violatedDirective.text());
             didNotifyInspector = true;
@@ -710,24 +710,24 @@ String ContentSecurityPolicy::deprecatedURLForReporting(const URL& url) const
     return static_cast<SecurityOriginData>(*m_selfSource).securityOrigin()->canRequest(url) ? url.strippedForUseAsReferrer() : SecurityOrigin::create(url)->toString();
 }
 
-void ContentSecurityPolicy::reportViolation(const String& violatedDirective, const ContentSecurityPolicyDirective& effectiveViolatedDirective, const URL& blockedURL, const String& consoleMessage, JSC::JSGlobalObject* state) const
+void ContentSecurityPolicy::reportViolation(const String& violatedDirective, const ContentSecurityPolicyDirective& effectiveViolatedDirective, const String& blockedURL, const String& consoleMessage, JSC::JSGlobalObject* state) const
 {
     // FIXME: Extract source file and source position from JSC::ExecState.
-    return reportViolation(violatedDirective, effectiveViolatedDirective.text(), effectiveViolatedDirective.directiveList(), blockedURL, consoleMessage, String(), TextPosition(WTF::OrdinalNumber::beforeFirst(), WTF::OrdinalNumber::beforeFirst()), state);
+    return reportViolation(violatedDirective, effectiveViolatedDirective.name().convertToASCIILowercase(), effectiveViolatedDirective.directiveList(), blockedURL, consoleMessage, String(), TextPosition(WTF::OrdinalNumber::beforeFirst(), WTF::OrdinalNumber::beforeFirst()), state);
 }
 
 void ContentSecurityPolicy::reportViolation(const String& effectiveViolatedDirective, const String& violatedDirective, const ContentSecurityPolicyDirectiveList& violatedDirectiveList, const URL& blockedURL, const String& consoleMessage, JSC::JSGlobalObject* state) const
 {
     // FIXME: Extract source file and source position from JSC::ExecState.
-    return reportViolation(effectiveViolatedDirective, violatedDirective, violatedDirectiveList, blockedURL, consoleMessage, String(), TextPosition(WTF::OrdinalNumber::beforeFirst(), WTF::OrdinalNumber::beforeFirst()), state);
+    return reportViolation(effectiveViolatedDirective, violatedDirective, violatedDirectiveList, blockedURL.string(), consoleMessage, String(), TextPosition(WTF::OrdinalNumber::beforeFirst(), WTF::OrdinalNumber::beforeFirst()), state);
 }
 
 void ContentSecurityPolicy::reportViolation(const String& effectiveViolatedDirective, const ContentSecurityPolicyDirective& violatedDirective, const URL& blockedURL, const String& consoleMessage, const String& sourceURL, const TextPosition& sourcePosition, const URL& preRedirectURL, JSC::JSGlobalObject* state) const
 {
-    return reportViolation(effectiveViolatedDirective, violatedDirective.name().convertToASCIILowercase(), violatedDirective.directiveList(), blockedURL, consoleMessage, sourceURL, sourcePosition, state, preRedirectURL);
+    return reportViolation(effectiveViolatedDirective, violatedDirective.name().convertToASCIILowercase(), violatedDirective.directiveList(), blockedURL.string(), consoleMessage, sourceURL, sourcePosition, state, preRedirectURL);
 }
 
-void ContentSecurityPolicy::reportViolation(const String& effectiveViolatedDirective, const String& violatedDirective, const ContentSecurityPolicyDirectiveList& violatedDirectiveList, const URL& blockedURL, const String& consoleMessage, const String& sourceURL, const TextPosition& sourcePosition, JSC::JSGlobalObject* state, const URL& preRedirectURL) const
+void ContentSecurityPolicy::reportViolation(const String& effectiveViolatedDirective, const String& violatedDirective, const ContentSecurityPolicyDirectiveList& violatedDirectiveList, const String& blockedURLString, const String& consoleMessage, const String& sourceURL, const TextPosition& sourcePosition, JSC::JSGlobalObject* state, const URL& preRedirectURL) const
 {
     logToConsole(consoleMessage, sourceURL, sourcePosition.m_line, sourcePosition.m_column, state);
 
@@ -737,6 +737,7 @@ void ContentSecurityPolicy::reportViolation(const String& effectiveViolatedDirec
     // FIXME: Support sending reports from worker.
     CSPInfo info;
 
+    auto blockedURL = URL(URL(), blockedURLString);
     info.documentURI = m_documentURL ? m_documentURL.value().strippedForUseAsReferrer() : deprecatedURLForReporting(blockedURL);
 
     if (m_client)
@@ -763,7 +764,9 @@ void ContentSecurityPolicy::reportViolation(const String& effectiveViolatedDirec
     ASSERT(m_client || is<Document>(m_scriptExecutionContext));
 
     String blockedURI;
-    if (preRedirectURL.isNull())
+    if (blockedURLString == "eval")
+        blockedURI = blockedURLString;
+    else if (preRedirectURL.isNull())
         blockedURI = deprecatedURLForReporting(blockedURL);
     else
         blockedURI = deprecatedURLForReporting(preRedirectURL);
@@ -914,6 +917,9 @@ void ContentSecurityPolicy::reportMissingReportURI(const String& policy) const
 
 void ContentSecurityPolicy::logToConsole(const String& message, const String& contextURL, const WTF::OrdinalNumber& contextLine, const WTF::OrdinalNumber& contextColumn, JSC::JSGlobalObject* state) const
 {
+    if (message.isEmpty())
+        return;
+
     if (!m_isReportingEnabled)
         return;
 

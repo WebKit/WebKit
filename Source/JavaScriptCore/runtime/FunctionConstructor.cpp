@@ -71,6 +71,7 @@ JSObject* constructFunction(JSGlobalObject* globalObject, const ArgList& args, c
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (UNLIKELY(!globalObject->evalEnabled())) {
+        globalObject->globalObjectMethodTable()->reportViolationForUnsafeEval(globalObject);
         throwException(globalObject, scope, createEvalError(globalObject, globalObject->evalDisabledErrorMessage()));
         return nullptr;
     }

@@ -959,8 +959,6 @@ imported/w3c/web-platform-tests/content-security-policy/unsafe-hashes/style_attr
 imported/w3c/web-platform-tests/content-security-policy/embedded-enforcement
 
 # Skip some Content Security Policy script-dynamic tests as we do not fully support the feature
-imported/w3c/web-platform-tests/content-security-policy/script-src/script-src-strict_dynamic_eval.html [ Skip ]
-imported/w3c/web-platform-tests/content-security-policy/script-src/script-src-strict_dynamic_new_function.html [ Skip ]
 imported/w3c/web-platform-tests/content-security-policy/script-src/script-src-strict_dynamic_parser_inserted.html [ Skip ]
 
 # Skip Content Security Policy shared workers tests as we do not support shared workers

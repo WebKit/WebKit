@@ -289,7 +289,7 @@ ExceptionOr<int> WorkerGlobalScope::setTimeout(JSC::JSGlobalObject& state, std::
 {
     // FIXME: Should this check really happen here? Or should it happen when code is about to eval?
     if (action->type() == ScheduledAction::Type::Code) {
-        if (!contentSecurityPolicy()->allowEval(&state))
+        if (!contentSecurityPolicy()->allowEval(&state, LogToConsole::Yes))
             return 0;
     }
 
@@ -307,7 +307,7 @@ ExceptionOr<int> WorkerGlobalScope::setInterval(JSC::JSGlobalObject& state, std:
 {
     // FIXME: Should this check really happen here? Or should it happen when code is about to eval?
     if (action->type() == ScheduledAction::Type::Code) {
-        if (!contentSecurityPolicy()->allowEval(&state))
+        if (!contentSecurityPolicy()->allowEval(&state, LogToConsole::Yes))
             return 0;
     }
 
