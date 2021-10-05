@@ -63,7 +63,7 @@ public:
     TextBoxIterator nextTextBoxInTextOrder() const;
 };
 
-class TextBoxIterator : public BoxIterator {
+class TextBoxIterator : public LeafBoxIterator {
 public:
     TextBoxIterator() { }
     TextBoxIterator(Box::PathVariant&&);

@@ -30,7 +30,7 @@
 namespace WebCore {
 
 struct InlineRunAndOffset {
-    InlineIterator::BoxIterator run { };
+    InlineIterator::LeafBoxIterator run { };
     unsigned offset { 0 };
 };
 

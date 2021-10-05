@@ -124,12 +124,12 @@ static Position nextLineCandidatePosition(Node* node, const VisiblePosition& vis
     return Position();
 }
 
-static bool isTextOrLineBreakRun(InlineIterator::BoxIterator run)
+static bool isTextOrLineBreakRun(InlineIterator::LeafBoxIterator run)
 {
     return run && (run->isText() || run->renderer().isBR());
 }
 
-static InlineIterator::BoxIterator previousTextOrLineBreakRun(InlineIterator::BoxIterator run)
+static InlineIterator::LeafBoxIterator previousTextOrLineBreakRun(InlineIterator::LeafBoxIterator run)
 {
     while (run) {
         run.traversePreviousOnLineInLogicalOrder();
@@ -139,7 +139,7 @@ static InlineIterator::BoxIterator previousTextOrLineBreakRun(InlineIterator::Bo
     return { };
 }
 
-static InlineIterator::BoxIterator nextTextOrLineBreakRun(InlineIterator::BoxIterator run)
+static InlineIterator::LeafBoxIterator nextTextOrLineBreakRun(InlineIterator::LeafBoxIterator run)
 {
     while (run) {
         run.traverseNextOnLineInLogicalOrder();
@@ -149,7 +149,7 @@ static InlineIterator::BoxIterator nextTextOrLineBreakRun(InlineIterator::BoxIte
     return { };
 }
 
-static InlineIterator::BoxIterator startTextOrLineBreakRun(InlineIterator::LineIterator line)
+static InlineIterator::LeafBoxIterator startTextOrLineBreakRun(InlineIterator::LineIterator line)
 {
     auto run = line->logicalStartRun();
     if (isTextOrLineBreakRun(run))
@@ -157,7 +157,7 @@ static InlineIterator::BoxIterator startTextOrLineBreakRun(InlineIterator::LineI
     return nextTextOrLineBreakRun(run);
 }
 
-static InlineIterator::BoxIterator endTextOrLineBreakRun(InlineIterator::LineIterator line)
+static InlineIterator::LeafBoxIterator endTextOrLineBreakRun(InlineIterator::LineIterator line)
 {
     auto run = line->logicalEndRun();
     if (isTextOrLineBreakRun(run))
@@ -165,7 +165,7 @@ static InlineIterator::BoxIterator endTextOrLineBreakRun(InlineIterator::LineIte
     return previousTextOrLineBreakRun(run);
 }
 
-static const InlineIterator::BoxIterator logicallyPreviousRun(const VisiblePosition& visiblePosition, InlineIterator::BoxIterator startRun, bool& previousBoxInDifferentLine)
+static const InlineIterator::LeafBoxIterator logicallyPreviousRun(const VisiblePosition& visiblePosition, InlineIterator::LeafBoxIterator startRun, bool& previousBoxInDifferentLine)
 {
     if (auto previousRun = previousTextOrLineBreakRun(startRun))
         return previousRun;
@@ -203,7 +203,7 @@ static const InlineIterator::BoxIterator logicallyPreviousRun(const VisiblePosit
 }
 
 
-static const InlineIterator::BoxIterator logicallyNextRun(const VisiblePosition& visiblePosition, InlineIterator::BoxIterator startRun, bool& nextBoxInDifferentLine)
+static const InlineIterator::LeafBoxIterator logicallyNextRun(const VisiblePosition& visiblePosition, InlineIterator::LeafBoxIterator startRun, bool& nextBoxInDifferentLine)
 {
     if (auto nextRun = nextTextOrLineBreakRun(startRun))
         return nextRun;
@@ -315,7 +315,7 @@ static VisiblePosition visualWordPosition(const VisiblePosition& visiblePosition
     visiblePosition.deepEquivalent().document()->updateLayoutIgnorePendingStylesheets();
 
     TextDirection blockDirection = directionOfEnclosingBlock(visiblePosition.deepEquivalent());
-    InlineIterator::BoxIterator previouslyVisitedRun;
+    InlineIterator::LeafBoxIterator previouslyVisitedRun;
     VisiblePosition current = visiblePosition;
     std::optional<VisiblePosition> previousPosition;
     UBreakIterator* iter = nullptr;

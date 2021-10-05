@@ -35,7 +35,7 @@ namespace InlineIterator {
 
 class LineIterator;
 class PathIterator;
-class BoxIterator;
+class LeafBoxIterator;
 
 struct EndLineIterator { };
 
@@ -81,22 +81,22 @@ public:
 
     bool isFirst() const;
 
-    BoxIterator firstRun() const;
-    BoxIterator lastRun() const;
+    LeafBoxIterator firstRun() const;
+    LeafBoxIterator lastRun() const;
 
     LineIterator next() const;
     LineIterator previous() const;
 
-    BoxIterator closestRunForPoint(const IntPoint& pointInContents, bool editableOnly) const;
-    BoxIterator closestRunForLogicalLeftPosition(int position, bool editableOnly = false) const;
+    LeafBoxIterator closestRunForPoint(const IntPoint& pointInContents, bool editableOnly) const;
+    LeafBoxIterator closestRunForLogicalLeftPosition(int position, bool editableOnly = false) const;
 
-    BoxIterator logicalStartRun() const;
-    BoxIterator logicalEndRun() const;
-    BoxIterator logicalStartRunWithNode() const;
-    BoxIterator logicalEndRunWithNode() const;
+    LeafBoxIterator logicalStartRun() const;
+    LeafBoxIterator logicalEndRun() const;
+    LeafBoxIterator logicalStartRunWithNode() const;
+    LeafBoxIterator logicalEndRunWithNode() const;
     
-    BoxIterator firstSelectedBox() const;
-    BoxIterator lastSelectedBox() const;
+    LeafBoxIterator firstSelectedBox() const;
+    LeafBoxIterator lastSelectedBox() const;
 
 private:
     friend class LineIterator;

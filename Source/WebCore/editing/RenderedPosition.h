@@ -72,21 +72,21 @@ public:
 
 private:
     bool operator==(const RenderedPosition&) const { return false; }
-    explicit RenderedPosition(const RenderObject*, InlineIterator::BoxIterator, unsigned offset);
+    explicit RenderedPosition(const RenderObject*, InlineIterator::LeafBoxIterator, unsigned offset);
 
-    InlineIterator::BoxIterator previousLeafOnLine() const;
-    InlineIterator::BoxIterator nextLeafOnLine() const;
+    InlineIterator::LeafBoxIterator previousLeafOnLine() const;
+    InlineIterator::LeafBoxIterator nextLeafOnLine() const;
     bool atLeftmostOffsetInBox() const { return m_run && m_offset == m_run->leftmostCaretOffset(); }
     bool atRightmostOffsetInBox() const { return m_run && m_offset == m_run->rightmostCaretOffset(); }
     bool atLeftBoundaryOfBidiRun(ShouldMatchBidiLevel, unsigned char bidiLevelOfRun) const;
     bool atRightBoundaryOfBidiRun(ShouldMatchBidiLevel, unsigned char bidiLevelOfRun) const;
 
     const RenderObject* m_renderer { nullptr };
-    InlineIterator::BoxIterator m_run;
+    InlineIterator::LeafBoxIterator m_run;
     unsigned m_offset { 0 };
 
-    mutable std::optional<InlineIterator::BoxIterator> m_previousLeafOnLine;
-    mutable std::optional<InlineIterator::BoxIterator> m_nextLeafOnLine;
+    mutable std::optional<InlineIterator::LeafBoxIterator> m_previousLeafOnLine;
+    mutable std::optional<InlineIterator::LeafBoxIterator> m_nextLeafOnLine;
 };
 
 bool renderObjectContainsPosition(const RenderObject*, const Position&);

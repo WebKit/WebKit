@@ -3550,7 +3550,7 @@ VisiblePosition RenderBlockFlow::positionForPointWithInlineChildren(const Layout
     bool blocksAreFlipped = style().isFlippedBlocksWritingMode();
 
     // look for the closest line box in the root box which is at the passed-in y coordinate
-    InlineIterator::BoxIterator closestRun;
+    InlineIterator::LeafBoxIterator closestRun;
     InlineIterator::LineIterator firstLineWithChildren;
     InlineIterator::LineIterator lastLineWithChildren;
     for (auto line = firstLine; line; line.traverseNext()) {

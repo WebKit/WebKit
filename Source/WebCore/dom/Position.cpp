@@ -1210,7 +1210,7 @@ InlineRunAndOffset Position::inlineRunAndOffset(Affinity affinity, TextDirection
     if (!renderer)
         return { { }, caretOffset };
 
-    InlineIterator::BoxIterator run;
+    InlineIterator::LeafBoxIterator run;
 
     if (renderer->isBR()) {
         auto& lineBreakRenderer = downcast<RenderLineBreak>(*renderer);

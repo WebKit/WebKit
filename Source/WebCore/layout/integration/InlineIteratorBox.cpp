@@ -58,24 +58,24 @@ bool BoxIterator::atEnd() const
     });
 }
 
-BoxIterator Box::nextOnLine() const
+LeafBoxIterator Box::nextOnLine() const
 {
-    return BoxIterator(*this).traverseNextOnLine();
+    return LeafBoxIterator(*this).traverseNextOnLine();
 }
 
-BoxIterator Box::previousOnLine() const
+LeafBoxIterator Box::previousOnLine() const
 {
-    return BoxIterator(*this).traversePreviousOnLine();
+    return LeafBoxIterator(*this).traversePreviousOnLine();
 }
 
-BoxIterator Box::nextOnLineIgnoringLineBreak() const
+LeafBoxIterator Box::nextOnLineIgnoringLineBreak() const
 {
-    return BoxIterator(*this).traverseNextOnLineIgnoringLineBreak();
+    return LeafBoxIterator(*this).traverseNextOnLineIgnoringLineBreak();
 }
 
-BoxIterator Box::previousOnLineIgnoringLineBreak() const
+LeafBoxIterator Box::previousOnLineIgnoringLineBreak() const
 {
-    return BoxIterator(*this).traversePreviousOnLineIgnoringLineBreak();
+    return LeafBoxIterator(*this).traversePreviousOnLineIgnoringLineBreak();
 }
 
 LineIterator Box::line() const
@@ -106,7 +106,17 @@ RenderObject::HighlightState Box::selectionState() const
     return renderer().selectionState();
 }
 
-BoxIterator& BoxIterator::traverseNextOnLine()
+LeafBoxIterator::LeafBoxIterator(Box::PathVariant&& pathVariant)
+    : BoxIterator(WTFMove(pathVariant))
+{
+}
+
+LeafBoxIterator::LeafBoxIterator(const Box& run)
+    : BoxIterator(run)
+{
+}
+
+LeafBoxIterator& LeafBoxIterator::traverseNextOnLine()
 {
     WTF::switchOn(m_box.m_pathVariant, [](auto& path) {
         path.traverseNextOnLine();
@@ -114,7 +124,7 @@ BoxIterator& BoxIterator::traverseNextOnLine()
     return *this;
 }
 
-BoxIterator& BoxIterator::traversePreviousOnLine()
+LeafBoxIterator& LeafBoxIterator::traversePreviousOnLine()
 {
     WTF::switchOn(m_box.m_pathVariant, [](auto& path) {
         path.traversePreviousOnLine();
@@ -122,7 +132,7 @@ BoxIterator& BoxIterator::traversePreviousOnLine()
     return *this;
 }
 
-BoxIterator& BoxIterator::traverseNextOnLineIgnoringLineBreak()
+LeafBoxIterator& LeafBoxIterator::traverseNextOnLineIgnoringLineBreak()
 {
     do {
         traverseNextOnLine();
@@ -130,7 +140,7 @@ BoxIterator& BoxIterator::traverseNextOnLineIgnoringLineBreak()
     return *this;
 }
 
-BoxIterator& BoxIterator::traversePreviousOnLineIgnoringLineBreak()
+LeafBoxIterator& LeafBoxIterator::traversePreviousOnLineIgnoringLineBreak()
 {
     do {
         traversePreviousOnLine();
@@ -138,7 +148,7 @@ BoxIterator& BoxIterator::traversePreviousOnLineIgnoringLineBreak()
     return *this;
 }
 
-BoxIterator& BoxIterator::traverseNextOnLineInLogicalOrder()
+LeafBoxIterator& LeafBoxIterator::traverseNextOnLineInLogicalOrder()
 {
     WTF::switchOn(m_box.m_pathVariant, [](auto& path) {
         path.traverseNextOnLineInLogicalOrder();
@@ -146,7 +156,7 @@ BoxIterator& BoxIterator::traverseNextOnLineInLogicalOrder()
     return *this;
 }
 
-BoxIterator& BoxIterator::traversePreviousOnLineInLogicalOrder()
+LeafBoxIterator& LeafBoxIterator::traversePreviousOnLineInLogicalOrder()
 {
     WTF::switchOn(m_box.m_pathVariant, [](auto& path) {
         path.traversePreviousOnLineInLogicalOrder();
@@ -154,7 +164,7 @@ BoxIterator& BoxIterator::traversePreviousOnLineInLogicalOrder()
     return *this;
 }
 
-BoxIterator boxFor(const RenderLineBreak& renderer)
+LeafBoxIterator boxFor(const RenderLineBreak& renderer)
 {
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
     if (auto* lineLayout = LayoutIntegration::LineLayout::containing(renderer))
@@ -163,7 +173,7 @@ BoxIterator boxFor(const RenderLineBreak& renderer)
     return { BoxLegacyPath(renderer.inlineBoxWrapper()) };
 }
 
-BoxIterator boxFor(const RenderBox& renderer)
+LeafBoxIterator boxFor(const RenderBox& renderer)
 {
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
     if (auto* lineLayout = LayoutIntegration::LineLayout::containing(renderer))
@@ -173,7 +183,7 @@ BoxIterator boxFor(const RenderBox& renderer)
 }
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-BoxIterator boxFor(const LayoutIntegration::InlineContent& content, size_t boxIndex)
+LeafBoxIterator boxFor(const LayoutIntegration::InlineContent& content, size_t boxIndex)
 {
     return { BoxModernPath { content, boxIndex } };
 }

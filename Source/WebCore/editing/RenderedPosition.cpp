@@ -69,7 +69,7 @@ RenderedPosition::RenderedPosition()
 {
 }
 
-RenderedPosition::RenderedPosition(const RenderObject* renderer, InlineIterator::BoxIterator run, unsigned offset)
+RenderedPosition::RenderedPosition(const RenderObject* renderer, InlineIterator::LeafBoxIterator run, unsigned offset)
     : m_renderer(renderer)
     , m_run(run)
     , m_offset(offset)
@@ -95,14 +95,14 @@ RenderedPosition::RenderedPosition(const Position& position, Affinity affinity)
         m_renderer = rendererFromPosition(position);
 }
 
-InlineIterator::BoxIterator RenderedPosition::previousLeafOnLine() const
+InlineIterator::LeafBoxIterator RenderedPosition::previousLeafOnLine() const
 {
     if (!m_previousLeafOnLine)
         m_previousLeafOnLine = m_run->previousOnLineIgnoringLineBreak();
     return *m_previousLeafOnLine;
 }
 
-InlineIterator::BoxIterator RenderedPosition::nextLeafOnLine() const
+InlineIterator::LeafBoxIterator RenderedPosition::nextLeafOnLine() const
 {
     if (!m_nextLeafOnLine)
         m_nextLeafOnLine = m_run->nextOnLineIgnoringLineBreak();

@@ -97,7 +97,7 @@ public:
     bool hitTest(const HitTestRequest&, HitTestResult&, const HitTestLocation&, const LayoutPoint& accumulatedOffset, HitTestAction);
 
     InlineIterator::TextBoxIterator textBoxesFor(const RenderText&) const;
-    InlineIterator::BoxIterator boxFor(const RenderElement&) const;
+    InlineIterator::LeafBoxIterator boxFor(const RenderElement&) const;
     InlineIterator::LineIterator firstLine() const;
     InlineIterator::LineIterator lastLine() const;
 

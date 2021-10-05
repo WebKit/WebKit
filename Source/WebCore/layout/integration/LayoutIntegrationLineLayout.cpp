@@ -404,7 +404,7 @@ InlineIterator::TextBoxIterator LineLayout::textBoxesFor(const RenderText& rende
     return InlineIterator::textBoxFor(*m_inlineContent, *firstIndex);
 }
 
-InlineIterator::BoxIterator LineLayout::boxFor(const RenderElement& renderElement) const
+InlineIterator::LeafBoxIterator LineLayout::boxFor(const RenderElement& renderElement) const
 {
     if (!m_inlineContent)
         return { };

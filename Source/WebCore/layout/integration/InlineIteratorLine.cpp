@@ -101,35 +101,35 @@ LineIterator Line::previous() const
     return LineIterator(*this).traversePrevious();
 }
 
-BoxIterator Line::firstRun() const
+LeafBoxIterator Line::firstRun() const
 {
-    return WTF::switchOn(m_pathVariant, [](auto& path) -> BoxIterator {
+    return WTF::switchOn(m_pathVariant, [](auto& path) -> LeafBoxIterator {
         return { path.firstRun() };
     });
 }
 
-BoxIterator Line::lastRun() const
+LeafBoxIterator Line::lastRun() const
 {
-    return WTF::switchOn(m_pathVariant, [](auto& path) -> BoxIterator {
+    return WTF::switchOn(m_pathVariant, [](auto& path) -> LeafBoxIterator {
         return { path.lastRun() };
     });
 }
 
-BoxIterator Line::logicalStartRun() const
+LeafBoxIterator Line::logicalStartRun() const
 {
-    return WTF::switchOn(m_pathVariant, [](auto& path) -> BoxIterator {
+    return WTF::switchOn(m_pathVariant, [](auto& path) -> LeafBoxIterator {
         return { path.logicalStartRun() };
     });
 }
 
-BoxIterator Line::logicalEndRun() const
+LeafBoxIterator Line::logicalEndRun() const
 {
-    return WTF::switchOn(m_pathVariant, [](auto& path) -> BoxIterator {
+    return WTF::switchOn(m_pathVariant, [](auto& path) -> LeafBoxIterator {
         return { path.logicalEndRun() };
     });
 }
 
-BoxIterator Line::logicalStartRunWithNode() const
+LeafBoxIterator Line::logicalStartRunWithNode() const
 {
     for (auto run = logicalStartRun(); run; run.traverseNextOnLineInLogicalOrder()) {
         if (run->renderer().node())
@@ -138,7 +138,7 @@ BoxIterator Line::logicalStartRunWithNode() const
     return { };
 }
 
-BoxIterator Line::logicalEndRunWithNode() const
+LeafBoxIterator Line::logicalEndRunWithNode() const
 {
     for (auto run = logicalEndRun(); run; run.traversePreviousOnLineInLogicalOrder()) {
         if (run->renderer().node())
@@ -147,12 +147,12 @@ BoxIterator Line::logicalEndRunWithNode() const
     return { };
 }
 
-BoxIterator Line::closestRunForPoint(const IntPoint& pointInContents, bool editableOnly) const
+LeafBoxIterator Line::closestRunForPoint(const IntPoint& pointInContents, bool editableOnly) const
 {
     return closestRunForLogicalLeftPosition(isHorizontal() ? pointInContents.x() : pointInContents.y(), editableOnly);
 }
 
-BoxIterator Line::closestRunForLogicalLeftPosition(int leftPosition, bool editableOnly) const
+LeafBoxIterator Line::closestRunForLogicalLeftPosition(int leftPosition, bool editableOnly) const
 {
     auto isEditable = [&](auto run) {
         return run && run->renderer().node() && run->renderer().node()->hasEditableStyle();
@@ -229,7 +229,7 @@ RenderObject::HighlightState Line::selectionState() const
     return state;
 }
 
-BoxIterator Line::firstSelectedBox() const
+LeafBoxIterator Line::firstSelectedBox() const
 {
     for (auto box = firstRun(); box; box.traverseNextOnLine()) {
         if (box->selectionState() != RenderObject::HighlightState::None)
@@ -238,7 +238,7 @@ BoxIterator Line::firstSelectedBox() const
     return { };
 }
 
-BoxIterator Line::lastSelectedBox() const
+LeafBoxIterator Line::lastSelectedBox() const
 {
     for (auto box = lastRun(); box; box.traversePreviousOnLine()) {
         if (box->selectionState() != RenderObject::HighlightState::None)

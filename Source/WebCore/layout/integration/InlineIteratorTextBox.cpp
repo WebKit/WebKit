@@ -77,12 +77,12 @@ const FontCascade& TextBox::fontCascade() const
 }
 
 TextBoxIterator::TextBoxIterator(Box::PathVariant&& pathVariant)
-    : BoxIterator(WTFMove(pathVariant))
+    : LeafBoxIterator(WTFMove(pathVariant))
 {
 }
 
 TextBoxIterator::TextBoxIterator(const Box& box)
-    : BoxIterator(box)
+    : LeafBoxIterator(box)
 {
 }
 
