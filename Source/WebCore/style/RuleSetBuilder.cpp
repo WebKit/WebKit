@@ -32,10 +32,11 @@
 namespace WebCore {
 namespace Style {
 
-RuleSetBuilder::RuleSetBuilder(RuleSet& ruleSet, const MediaQueryEvaluator& evaluator, Resolver* resolver)
+RuleSetBuilder::RuleSetBuilder(RuleSet& ruleSet, const MediaQueryEvaluator& evaluator, Resolver* resolver, ShrinkToFit shrinkToFit)
     : m_ruleSet(&ruleSet)
     , m_mediaQueryCollector({ evaluator })
     , m_resolver(resolver)
+    , m_shrinkToFit(shrinkToFit)
 {
 }
 
@@ -53,7 +54,7 @@ RuleSetBuilder::~RuleSetBuilder()
     updateDynamicMediaQueries();
     addMutatingRulesToResolver();
 
-    if (m_ruleSet->m_autoShrinkToFitEnabled)
+    if (m_shrinkToFit == ShrinkToFit::Enable)
         m_ruleSet->shrinkToFit();
 }
 

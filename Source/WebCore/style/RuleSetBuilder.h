@@ -28,7 +28,8 @@ namespace Style {
 
 class RuleSetBuilder {
 public:
-    RuleSetBuilder(RuleSet&, const MediaQueryEvaluator&, Resolver* = nullptr);
+    enum class ShrinkToFit { Enable, Disable };
+    RuleSetBuilder(RuleSet&, const MediaQueryEvaluator&, Resolver* = nullptr, ShrinkToFit = ShrinkToFit::Enable);
     ~RuleSetBuilder();
 
     void addRulesFromSheet(const StyleSheetContents&, const MediaQuerySet* sheetQuery = nullptr);
@@ -71,9 +72,12 @@ private:
     RefPtr<RuleSet> m_ruleSet;
     MediaQueryCollector m_mediaQueryCollector;
     Resolver* m_resolver { nullptr };
+    const ShrinkToFit m_shrinkToFit { ShrinkToFit::Enable };
+
     CascadeLayerName m_resolvedCascadeLayerName { };
     HashMap<CascadeLayerName, RuleSet::CascadeLayerIdentifier> m_cascadeLayerIdentifierMap { };
     RuleSet::CascadeLayerIdentifier m_currentCascadeLayerIdentifier { 0 };
+
     Vector<RuleSet::ResolverMutatingRule> m_collectedResolverMutatingRules { };
     bool didSeeResolverMutationWithinDynamicMediaQuery { false };
 };

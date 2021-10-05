@@ -75,7 +75,6 @@ public:
 
     void addToRuleSet(const AtomString& key, AtomRuleMap&, const RuleData&);
     void shrinkToFit();
-    void disableAutoShrinkToFit() { m_autoShrinkToFitEnabled = false; }
 
     bool hasViewportDependentMediaQueries() const { return m_hasViewportDependentMediaQueries; }
 
@@ -180,7 +179,6 @@ private:
     Vector<ResolverMutatingRule> m_resolverMutatingRulesInLayers;
 
     bool m_hasHostPseudoClassRulesMatchingInShadowTree { false };
-    bool m_autoShrinkToFitEnabled { true };
     bool m_hasViewportDependentMediaQueries { false };
 };
 

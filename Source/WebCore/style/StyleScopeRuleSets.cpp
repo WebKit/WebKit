@@ -48,7 +48,6 @@ ScopeRuleSets::ScopeRuleSets(Resolver& styleResolver)
     : m_styleResolver(styleResolver)
 {
     m_authorStyle = RuleSet::create();
-    m_authorStyle->disableAutoShrinkToFit();
 }
 
 ScopeRuleSets::~ScopeRuleSets()
@@ -143,7 +142,6 @@ void ScopeRuleSets::resetAuthorStyle()
 {
     m_isAuthorStyleDefined = true;
     m_authorStyle = RuleSet::create();
-    m_authorStyle->disableAutoShrinkToFit();
 }
 
 void ScopeRuleSets::resetUserAgentMediaQueryStyle()
@@ -195,7 +193,6 @@ void ScopeRuleSets::appendAuthorStyleSheets(const Vector<RefPtr<CSSStyleSheet>>&
         inspectorCSSOMWrappers.collectFromStyleSheetIfNeeded(cssSheet.get());
     }
 
-    m_authorStyle->shrinkToFit();
     collectFeatures();
 }
 

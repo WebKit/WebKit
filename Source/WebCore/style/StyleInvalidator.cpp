@@ -91,9 +91,8 @@ Invalidator::Invalidator(const Vector<StyleSheetContents*>& sheets, const MediaQ
     if (m_dirtiesAllStyle)
         return;
 
-    m_ownedRuleSet->disableAutoShrinkToFit();
+    RuleSetBuilder ruleSetBuilder(*m_ownedRuleSet, mediaQueryEvaluator, nullptr, RuleSetBuilder::ShrinkToFit::Disable);
 
-    RuleSetBuilder ruleSetBuilder(*m_ownedRuleSet, mediaQueryEvaluator);
     for (auto& sheet : sheets)
         ruleSetBuilder.addRulesFromSheet(*sheet);
 
