@@ -686,7 +686,7 @@ RefPtr<StyleRuleFontPaletteValues> CSSParserImpl::consumeFontPaletteValuesRule(C
         if (primitiveValue.isString())
             basePalette = FontPaletteIndex(primitiveValue.stringValue());
         else if (primitiveValue.isNumber())
-            basePalette = FontPaletteIndex(primitiveValue.value<int64_t>());
+            basePalette = FontPaletteIndex(primitiveValue.value<unsigned>());
         else if (primitiveValue.valueID() == CSSValueLight)
             basePalette = FontPaletteIndex(FontPaletteIndex::Type::Light);
         else if (primitiveValue.valueID() == CSSValueDark)
