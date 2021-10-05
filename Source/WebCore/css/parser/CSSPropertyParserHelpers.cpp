@@ -3105,9 +3105,6 @@ static RefPtr<CSSValue> consumeRadialGradient(CSSParserTokenRange& args, const C
     // If there's only one size, it must be a length.
     if (!verticalSize && horizontalSize && horizontalSize->isPercentage())
         return nullptr;
-    if ((horizontalSize && horizontalSize->isCalculatedPercentageWithLength())
-        || (verticalSize && verticalSize->isCalculatedPercentageWithLength()))
-        return nullptr;
 
     RefPtr<CSSPrimitiveValue> centerX;
     RefPtr<CSSPrimitiveValue> centerY;
