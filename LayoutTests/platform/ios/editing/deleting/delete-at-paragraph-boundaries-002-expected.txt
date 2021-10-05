@@ -17,14 +17,14 @@ layer at (0,0) size 800x600
         RenderBlock {DIV} at (14,14) size 756x90
           RenderText {#text} at (0,1) size 66x28
             text run at (0,1) width 66: "Tests: "
-          RenderBR {BR} at (0,0) size 0x0
+          RenderBR {BR} at (65,1) size 1x28
           RenderText {#text} at (0,31) size 731x58
             text run at (0,31) width 731: "Deleting when a selection starts in a blank line created by a BR element and"
             text run at (0,61) width 282: "extends to the end of a block."
         RenderBlock {DIV} at (14,120) size 756x120
           RenderText {#text} at (0,1) size 190x28
             text run at (0,1) width 190: "Expected Results: "
-          RenderBR {BR} at (189,0) size 1x28
+          RenderBR {BR} at (189,1) size 1x28
           RenderText {#text} at (0,31) size 726x88
             text run at (0,31) width 725: "Should see the three lines in the red box. First line should be \"A\". Next two"
             text run at (0,61) width 726: "lines should be empty. Insertion point should be blinking on the second line"

@@ -20,7 +20,7 @@ layer at (0,0) size 800x600
         RenderBlock {DIV} at (14,14) size 756x112
           RenderText {#text} at (0,0) size 66x28
             text run at (0,0) width 66: "Tests: "
-          RenderBR {BR} at (0,0) size 0x0
+          RenderBR {BR} at (65,0) size 1x28
           RenderText {#text} at (0,28) size 747x56
             text run at (0,28) width 747: "Pasting styles we should not remove during the \"smoosh styles\" process. This"
             text run at (0,56) width 150: "tests the fix for "

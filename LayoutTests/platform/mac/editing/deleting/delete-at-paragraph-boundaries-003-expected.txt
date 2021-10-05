@@ -18,7 +18,7 @@ layer at (0,0) size 800x600
         RenderBlock {DIV} at (14,14) size 756x112
           RenderText {#text} at (0,0) size 66x28
             text run at (0,0) width 66: "Tests: "
-          RenderBR {BR} at (0,0) size 0x0
+          RenderBR {BR} at (65,0) size 1x28
           RenderText {#text} at (0,28) size 733x84
             text run at (0,28) width 733: "Deleting when a selection starts in a blank line created by a block with a BR"
             text run at (0,56) width 720: "placeholder in it and extends to a character that is not at the end of a block."

@@ -20,7 +20,7 @@ layer at (0,0) size 800x600
         RenderBlock {DIV} at (0,28) size 784x82
           RenderText {#text} at (0,0) size 190x28
             text run at (0,0) width 190: "Expected Results: "
-          RenderBR {BR} at (189,8) size 1x18
+          RenderBR {BR} at (189,0) size 1x28
           RenderText {#text} at (0,28) size 374x18
             text run at (0,28) width 374: "Two blockquotes, with an unquoted blank line in between."
           RenderBR {BR} at (373,28) size 1x18
