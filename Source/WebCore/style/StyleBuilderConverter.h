@@ -1555,8 +1555,6 @@ inline FontPalette BuilderConverter::convertFontPalette(BuilderState&, const CSS
     ASSERT(is<CSSPrimitiveValue>(value));
     const auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
     switch (primitiveValue.valueID()) {
-    case CSSValueNone:
-        return { FontPalette::Type::None, nullAtom() };
     case CSSValueNormal:
         return { FontPalette::Type::Normal, nullAtom() };
     case CSSValueLight:

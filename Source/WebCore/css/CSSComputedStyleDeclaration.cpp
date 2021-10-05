@@ -1841,8 +1841,6 @@ static Ref<CSSPrimitiveValue> fontPaletteFromStyle(const RenderStyle& style)
 {
     auto fontPalette = style.fontDescription().fontPalette();
     switch (fontPalette.type) {
-    case FontPalette::Type::None:
-        return CSSValuePool::singleton().createIdentifierValue(CSSValueNone);
     case FontPalette::Type::Normal:
         return CSSValuePool::singleton().createIdentifierValue(CSSValueNormal);
     case FontPalette::Type::Light:

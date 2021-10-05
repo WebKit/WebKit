@@ -499,9 +499,6 @@ static void addAttributesForCustomFontPalettes(CFMutableDictionaryRef attributes
 static void addAttributesForFontPalettes(CFMutableDictionaryRef attributes, const FontPalette& fontPalette, const FontPaletteValues* fontPaletteValues)
 {
     switch (fontPalette.type) {
-    case FontPalette::Type::None:
-        // This is unimplementable in Core Text.
-        break;
     case FontPalette::Type::Normal:
         break;
     case FontPalette::Type::Light:

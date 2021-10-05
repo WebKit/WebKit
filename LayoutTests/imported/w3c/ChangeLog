@@ -1,5 +1,18 @@
 2021-10-04  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        Remove the "none" value from font-palette
+        https://bugs.webkit.org/show_bug.cgi?id=231050
+        <rdar://problem/83745650>
+
+        Reviewed by Wenson Hsieh.
+
+        This is being upstreamed at https://github.com/web-platform-tests/wpt/pull/31077.
+
+        * web-platform-tests/css/css-fonts/parsing/font-palette-invalid.html:
+        * web-platform-tests/css/css-fonts/parsing/font-palette-valid.html:
+
+2021-10-04  Myles C. Maxfield  <mmaxfield@apple.com>
+
         Test gardening for font-palette WPT tests
         https://bugs.webkit.org/show_bug.cgi?id=231208
 

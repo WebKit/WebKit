@@ -46,7 +46,6 @@ struct FontPalette {
     }
 
     enum class Type : uint8_t {
-        None,
         Normal,
         Light,
         Dark,
@@ -66,9 +65,6 @@ inline void add(Hasher& hasher, const FontPalette& request)
 inline TextStream& operator<<(TextStream& ts, const FontPalette& fontPalette)
 {
     switch (fontPalette.type) {
-    case FontPalette::Type::None:
-        ts << "none";
-        break;
     case FontPalette::Type::Normal:
         ts << "normal";
         break;
