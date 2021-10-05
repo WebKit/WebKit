@@ -83,6 +83,16 @@ UnlinkedCodeBlock::UnlinkedCodeBlock(VM& vm, Structure* structure, CodeType code
     m_llintExecuteCounter.setNewThreshold(thresholdForJIT(Options::thresholdForJITAfterWarmUp()));
 }
 
+void UnlinkedCodeBlock::initializeLoopHintExecutionCounter()
+{
+    ASSERT(Options::returnEarlyFromInfiniteLoopsForFuzzing());
+    VM& vm = this->vm();
+    for (const auto& instruction : instructions()) {
+        if (instruction->is<OpLoopHint>())
+            vm.addLoopHintExecutionCounter(instruction.ptr());
+    }
+}
+
 template<typename Visitor>
 void UnlinkedCodeBlock::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
@@ -273,6 +283,13 @@ bool UnlinkedCodeBlock::typeProfilerExpressionInfoForBytecodeOffset(unsigned byt
 
 UnlinkedCodeBlock::~UnlinkedCodeBlock()
 {
+    if (UNLIKELY(Options::returnEarlyFromInfiniteLoopsForFuzzing())) {
+        VM& vm = this->vm();
+        for (const auto& instruction : instructions()) {
+            if (instruction->is<OpLoopHint>())
+                vm.removeLoopHintExecutionCounter(instruction.ptr());
+        }
+    }
 }
 
 const InstructionStream& UnlinkedCodeBlock::instructions() const

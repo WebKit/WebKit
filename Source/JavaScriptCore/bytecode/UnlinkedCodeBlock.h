@@ -141,6 +141,8 @@ public:
 
     enum { CallFunction, ApplyFunction };
 
+    void initializeLoopHintExecutionCounter();
+
     bool isConstructor() const { return m_isConstructor; }
     bool usesCallEval() const { return m_usesCallEval; }
     void setUsesCallEval() { m_usesCallEval = true; }

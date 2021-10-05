@@ -1,3 +1,25 @@
+2021-10-05  Mark Lam  <mark.lam@apple.com>
+
+        CodeBlock should not add/remove LoopHintExecutionCounters.
+        https://bugs.webkit.org/show_bug.cgi?id=231209
+        rdar://83571235
+
+        Reviewed by Saam Barati.
+
+        This is because cached unlinked baseline JIT code would retain a pointer to those
+        counters.  Hence, the UnlinkedCodeBlock should do the add /remove of the counters
+        instead.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::finishCreation):
+        (JSC::CodeBlock::~CodeBlock):
+        * bytecode/UnlinkedCodeBlock.cpp:
+        (JSC::UnlinkedCodeBlock::initializeLoopHintExecutionCounter):
+        (JSC::UnlinkedCodeBlock::~UnlinkedCodeBlock):
+        * bytecode/UnlinkedCodeBlock.h:
+        * bytecode/UnlinkedCodeBlockGenerator.cpp:
+        (JSC::UnlinkedCodeBlockGenerator::finalize):
+
 2021-10-05  Kate Cheney  <katherine_cheney@apple.com>
 
         CSP: unsafe-eval tests timing out or failing

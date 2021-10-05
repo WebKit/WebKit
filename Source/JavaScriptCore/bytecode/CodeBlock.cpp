@@ -722,12 +722,6 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
             break;
         }
 
-        case op_loop_hint: {
-            if (UNLIKELY(Options::returnEarlyFromInfiniteLoopsForFuzzing()))
-                vm.addLoopHintExecutionCounter(instruction.ptr());
-            break;
-        }
-        
         default:
             break;
         }
@@ -849,13 +843,6 @@ CodeBlock::~CodeBlock()
     // But for CodeBlock, we are ensuring the order: CodeBlock gets destroyed before UnlinkedCodeBlock gets destroyed.
     // So, we can access member UnlinkedCodeBlock safely here. We bypass the assertion by using unvalidatedGet.
     UnlinkedCodeBlock* unlinkedCodeBlock = m_unlinkedCode.unvalidatedGet();
-
-    if (UNLIKELY(Options::returnEarlyFromInfiniteLoopsForFuzzing() && JITCode::isBaselineCode(jitType()))) {
-        for (const auto& instruction : unlinkedCodeBlock->instructions()) {
-            if (instruction->is<OpLoopHint>())
-                vm.removeLoopHintExecutionCounter(instruction.ptr());
-        }
-    }
 
     if (JITCode::isBaselineCode(jitType())) {
         if (m_metadata) {

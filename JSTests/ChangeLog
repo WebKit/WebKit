@@ -1,3 +1,13 @@
+2021-10-05  Mark Lam  <mark.lam@apple.com>
+
+        CodeBlock should not add/remove LoopHintExecutionCounters.
+        https://bugs.webkit.org/show_bug.cgi?id=231209
+        rdar://83571235
+
+        Reviewed by Saam Barati.
+
+        * stress/codeBlock-should-not-add-remove-loop-hint-execution-counters-due-to-cached-unlinked-baseline-code.js: Added.
+
 2021-10-05  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] JSPropertyNameEnumerator should not have cached prototype chain since empty JSPropertyNameEnumerator is shared
