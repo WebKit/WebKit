@@ -1,3 +1,14 @@
+2021-10-05  Tim Horton  <timothy_horton@apple.com>
+
+        Add an alternate style for form controls, and implement it for checkboxes and radio buttons
+        https://bugs.webkit.org/show_bug.cgi?id=231160
+
+        Reviewed by Sam Weinig.
+
+        * Shared/WebPreferencesDefaultValues.cpp:
+        (WebKit::defaultAlternateFormControlDesignEnabled):
+        * Shared/WebPreferencesDefaultValues.h:
+
 2021-10-05  Alex Christensen  <achristensen@webkit.org>
 
         Implement missing functions in PrivateClickMeasurementDaemonClient

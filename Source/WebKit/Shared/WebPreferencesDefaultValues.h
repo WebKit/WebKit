@@ -40,6 +40,7 @@ bool isFeatureFlagEnabled(const char*, bool defaultValue = false);
 #if PLATFORM(IOS_FAMILY)
 bool defaultPassiveTouchListenersAsDefaultOnDocument();
 bool defaultCSSOMViewScrollingAPIEnabled();
+bool defaultAlternateFormControlDesignEnabled();
 #if ENABLE(TEXT_AUTOSIZING)
 bool defaultTextAutosizingUsesIdempotentMode();
 #endif

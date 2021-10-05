@@ -232,6 +232,17 @@ AllowsPictureInPictureMediaPlayback:
     WebCore:
       default: true
 
+AlternateFormControlDesignEnabled:
+  type: bool
+  condition: PLATFORM(IOS_FAMILY)
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: WebKit::defaultAlternateFormControlDesignEnabled()
+    WebCore:
+      default: false
+
 AlwaysUseAcceleratedOverflowScroll:
   type: bool
   defaultValue:

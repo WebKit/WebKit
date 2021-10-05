@@ -116,11 +116,14 @@ private:
 
 #if ENABLE(IOS_FORM_CONTROL_REFRESH)
     Color checkboxRadioBorderColor(OptionSet<ControlStates::States>, OptionSet<StyleColor::Options>);
-    Color checkboxRadioBackgroundColor(OptionSet<ControlStates::States>, OptionSet<StyleColor::Options>);
+    Color checkboxRadioBackgroundColor(bool useAlternateDesign, OptionSet<ControlStates::States>, OptionSet<StyleColor::Options>);
+    RefPtr<Gradient> checkboxRadioBackgroundGradient(const FloatRect&, OptionSet<ControlStates::States>);
     Color checkboxRadioIndicatorColor(OptionSet<ControlStates::States>, OptionSet<StyleColor::Options>);
 
     bool paintCheckbox(const RenderObject&, const PaintInfo&, const FloatRect&) override;
     bool paintRadio(const RenderObject&, const PaintInfo&, const FloatRect&) override;
+
+    void paintCheckboxRadioInnerShadow(const PaintInfo&, const FloatRoundedRect&, OptionSet<ControlStates::States>);
 
     Seconds animationRepeatIntervalForProgressBar(const RenderProgress&) const final;
 

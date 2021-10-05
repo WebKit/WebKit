@@ -62,6 +62,13 @@ bool defaultCSSOMViewScrollingAPIEnabled()
     return !result;
 }
 
+#if !USE(APPLE_INTERNAL_SDK)
+bool defaultAlternateFormControlDesignEnabled()
+{
+    return false;
+}
+#endif
+
 #endif
 
 #if PLATFORM(MAC)
