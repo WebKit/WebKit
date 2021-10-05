@@ -320,7 +320,10 @@ inline Length BuilderConverter::convertToRadiusLength(CSSToLengthConversionData&
         return Length(value.doubleValue(), LengthType::Percent);
     if (value.isCalculatedPercentageWithLength())
         return Length(value.cssCalcValue()->createCalculationValue(conversionData));
-    return value.computeLength<Length>(conversionData);
+    auto length = value.computeLength<Length>(conversionData);
+    if (length.isNegative())
+        return { 0, LengthType::Fixed };
+    return length;
 }
 
 inline LengthSize BuilderConverter::convertRadius(BuilderState& builderState, const CSSValue& value)

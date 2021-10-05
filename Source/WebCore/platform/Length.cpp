@@ -341,8 +341,12 @@ Length blend(const Length& from, const Length& to, const BlendingContext& contex
 Length blend(const Length& from, const Length& to, const BlendingContext& context, ValueRange valueRange)
 {
     auto blended = blend(from, to, context);
-    if (valueRange == ValueRange::NonNegative && blended.isNegative())
-        return { 0, from.isZero () ? to.type() : from.type() };
+    if (valueRange == ValueRange::NonNegative && blended.isNegative()) {
+        auto type = from.isZero() ? to.type() : from.type();
+        if (type != LengthType::Calculated)
+            return { 0, type };
+        return { 0, LengthType::Fixed };
+    }
     return blended;
 }
 
