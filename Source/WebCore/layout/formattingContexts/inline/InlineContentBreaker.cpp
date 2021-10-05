@@ -413,6 +413,10 @@ OptionSet<InlineContentBreaker::WordBreakRule> InlineContentBreaker::wordBreakBe
     if (style.lineBreak() == LineBreak::Anywhere)
         return { WordBreakRule::AtArbitraryPosition };
 
+    // Breaking is allowed within “words”.
+    if (style.wordBreak() == WordBreak::BreakAll)
+        return { WordBreakRule::AtArbitraryPosition };
+
     auto includeHyphenationIfAllowed = [&](std::optional<InlineContentBreaker::WordBreakRule> wordBreakRule) -> OptionSet<InlineContentBreaker::WordBreakRule> {
         auto hyphenationIsAllowed = !n_hyphenationIsDisabled && style.hyphens() == Hyphens::Auto && canHyphenate(style.computedLocale());
         if (hyphenationIsAllowed) {
@@ -424,9 +428,6 @@ OptionSet<InlineContentBreaker::WordBreakRule> InlineContentBreaker::wordBreakBe
             return *wordBreakRule;
         return { };
     };
-    // Breaking is allowed within “words”.
-    if (style.wordBreak() == WordBreak::BreakAll)
-        return includeHyphenationIfAllowed(WordBreakRule::AtArbitraryPosition);
     // For compatibility with legacy content, the word-break property also supports a deprecated break-word keyword.
     // When specified, this has the same effect as word-break: normal and overflow-wrap: anywhere, regardless of the actual value of the overflow-wrap property.
     if (style.wordBreak() == WordBreak::BreakWord && !hasWrapOpportunityAtPreviousPosition)
