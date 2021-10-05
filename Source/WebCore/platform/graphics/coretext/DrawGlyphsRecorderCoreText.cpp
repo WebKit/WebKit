@@ -31,7 +31,6 @@
 #include "FloatPoint.h"
 #include "Font.h"
 #include "FontCascade.h"
-#include "FontPlatformData.h"
 #include "GlyphBuffer.h"
 #include "GraphicsContextCG.h"
 
@@ -85,10 +84,9 @@ UniqueRef<GraphicsContext> DrawGlyphsRecorder::createInternalContext()
     return makeUniqueRef<GraphicsContextCG>(context.get());
 }
 
-DrawGlyphsRecorder::DrawGlyphsRecorder(GraphicsContext& owner, DeconstructDrawGlyphs deconstructDrawGlyphs, DeriveFontFromContext deriveFontFromContext)
+DrawGlyphsRecorder::DrawGlyphsRecorder(GraphicsContext& owner, DrawGlyphsDeconstruction drawGlyphsDeconstruction)
     : m_owner(owner)
-    , m_deconstructDrawGlyphs(deconstructDrawGlyphs)
-    , m_deriveFontFromContext(deriveFontFromContext)
+    , m_drawGlyphsDeconstruction(drawGlyphsDeconstruction)
     , m_internalContext(createInternalContext())
 {
 }
@@ -291,13 +289,11 @@ static Vector<CGSize> computeAdvancesFromPositions(const CGPoint positions[], si
 
 void DrawGlyphsRecorder::recordDrawGlyphs(CGRenderingStateRef, CGGStateRef gstate, const CGAffineTransform*, const CGGlyph glyphs[], const CGPoint positions[], size_t count)
 {
-    ASSERT_IMPLIES(m_deriveFontFromContext == DeriveFontFromContext::No, m_originalFont);
-
     if (!count)
         return;
 
     CGFontRef usedFont = CGGStateGetFont(gstate);
-    if (m_deriveFontFromContext == DeriveFontFromContext::No && usedFont != adoptCF(CTFontCopyGraphicsFont(m_originalFont->platformData().ctFont(), nullptr)).get())
+    if (usedFont != adoptCF(CTFontCopyGraphicsFont(m_originalFont->platformData().ctFont(), nullptr)).get())
         return;
 
 #if ASSERT_ENABLED
@@ -337,9 +333,7 @@ void DrawGlyphsRecorder::recordDrawGlyphs(CGRenderingStateRef, CGGStateRef gstat
     updateStrokeColor(Color::createAndPreserveColorSpace(strokeColor));
     updateShadow(CGGStateGetStyle(gstate));
 
-    auto fontSize = CGGStateGetFontSize(gstate);
-    Ref font = m_deriveFontFromContext == DeriveFontFromContext::No ? *m_originalFont : Font::create(FontPlatformData(adoptCF(CTFontCreateWithGraphicsFont(usedFont, fontSize, nullptr, nullptr)), fontSize));
-    m_owner.drawGlyphsAndCacheFont(font, glyphs, computeAdvancesFromPositions(positions, count, currentTextMatrix).data(), count, currentTextMatrix.mapPoint(positions[0]), m_smoothingMode);
+    m_owner.drawGlyphsAndCacheFont(*m_originalFont, glyphs, computeAdvancesFromPositions(positions, count, currentTextMatrix).data(), count, currentTextMatrix.mapPoint(positions[0]), m_smoothingMode);
 
     m_owner.concatCTM(inverseCTMFixup);
 }
@@ -416,12 +410,12 @@ static GlyphsAndAdvances filterOutOTSVGGlyphs(const Font& font, const GlyphBuffe
 
 void DrawGlyphsRecorder::drawGlyphs(const Font& font, const GlyphBufferGlyph* glyphs, const GlyphBufferAdvance* advances, unsigned numGlyphs, const FloatPoint& startPoint, FontSmoothingMode smoothingMode)
 {
-    if (m_deconstructDrawGlyphs == DeconstructDrawGlyphs::No) {
+    if (m_drawGlyphsDeconstruction == DrawGlyphsDeconstruction::DontDeconstruct) {
         m_owner.drawGlyphsAndCacheFont(font, glyphs, advances, numGlyphs, startPoint, smoothingMode);
         return;
     }
 
-    ASSERT(m_deconstructDrawGlyphs == DeconstructDrawGlyphs::Yes);
+    ASSERT(m_drawGlyphsDeconstruction == DrawGlyphsDeconstruction::Deconstruct);
 
     // FIXME: <rdar://problem/70166552> Record OTSVG glyphs.
     GlyphsAndAdvances glyphsAndAdvancesWithoutOTSVGGlyphs = filterOutOTSVGGlyphs(font, glyphs, advances, numGlyphs);
@@ -430,21 +424,6 @@ void DrawGlyphsRecorder::drawGlyphs(const Font& font, const GlyphBufferGlyph* gl
 
     prepareInternalContext(font, smoothingMode);
     FontCascade::drawGlyphs(m_internalContext, font, glyphsAndAdvancesWithoutOTSVGGlyphs.glyphs, glyphsAndAdvancesWithoutOTSVGGlyphs.advances, glyphsAndAdvancesWithoutOTSVGGlyphs.numGlyphs, startPoint + size(glyphsAndAdvancesWithoutOTSVGGlyphs.initialAdvance), smoothingMode);
-    concludeInternalContext();
-}
-
-void DrawGlyphsRecorder::drawNativeText(CTFontRef font, CGFloat fontSize, CTLineRef line, CGRect lineRect)
-{
-    ASSERT(m_deconstructDrawGlyphs == DeconstructDrawGlyphs::Yes);
-
-    GraphicsContextStateSaver saver(m_owner);
-
-    m_owner.translate(lineRect.origin.x, lineRect.origin.y + lineRect.size.height);
-    m_owner.scale(FloatSize(1, -1));
-
-    prepareInternalContext(Font::create(FontPlatformData(font, fontSize)), FontSmoothingMode::SubpixelAntialiased);
-    CGContextSetTextPosition(m_internalContext->platformContext(), 0, 0);
-    CTLineDraw(line, m_internalContext->platformContext());
     concludeInternalContext();
 }
 

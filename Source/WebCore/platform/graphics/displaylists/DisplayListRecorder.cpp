@@ -40,11 +40,11 @@
 namespace WebCore {
 namespace DisplayList {
 
-Recorder::Recorder(DisplayList& displayList, const GraphicsContextState& state, const FloatRect& initialClip, const AffineTransform& initialCTM, Delegate* delegate, DrawGlyphsRecorder::DeconstructDrawGlyphs deconstructDrawGlyphs)
+Recorder::Recorder(DisplayList& displayList, const GraphicsContextState& state, const FloatRect& initialClip, const AffineTransform& initialCTM, Delegate* delegate, DrawGlyphsRecorder::DrawGlyphsDeconstruction drawGlyphsDeconstruction)
     : m_displayList(displayList)
     , m_delegate(delegate)
     , m_isNested(false)
-    , m_drawGlyphsRecorder(*this, deconstructDrawGlyphs)
+    , m_drawGlyphsRecorder(*this, drawGlyphsDeconstruction)
 {
     LOG_WITH_STREAM(DisplayLists, stream << "\nRecording with clip " << initialClip);
     m_stateStack.append({ state, initialCTM, initialClip });
@@ -54,7 +54,7 @@ Recorder::Recorder(Recorder& parent, const GraphicsContextState& state, const Fl
     : m_displayList(parent.m_displayList)
     , m_delegate(parent.m_delegate)
     , m_isNested(true)
-    , m_drawGlyphsRecorder(*this, parent.m_drawGlyphsRecorder.deconstructDrawGlyphs())
+    , m_drawGlyphsRecorder(*this, parent.m_drawGlyphsRecorder.drawGlyphsDeconstruction())
 {
     m_stateStack.append({ state, initialCTM, initialClip });
 }

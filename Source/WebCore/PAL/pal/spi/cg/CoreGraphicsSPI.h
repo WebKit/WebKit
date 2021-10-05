@@ -270,7 +270,6 @@ void* CGContextDelegateGetInfo(CGContextDelegateRef);
 void CGContextDelegateRelease(CGContextDelegateRef);
 CGFloat CGGStateGetAlpha(CGGStateRef);
 CGFontRef CGGStateGetFont(CGGStateRef);
-CGFloat CGGStateGetFontSize(CGGStateRef);
 const CGAffineTransform *CGGStateGetCTM(CGGStateRef);
 CGColorRef CGGStateGetFillColor(CGGStateRef);
 CGColorRef CGGStateGetStrokeColor(CGGStateRef);

@@ -55,7 +55,7 @@ class Recorder : public GraphicsContext {
     WTF_MAKE_NONCOPYABLE(Recorder);
 public:
     class Delegate;
-    WEBCORE_EXPORT Recorder(DisplayList&, const GraphicsContextState&, const FloatRect& initialClip, const AffineTransform&, Delegate* = nullptr, DrawGlyphsRecorder::DeconstructDrawGlyphs = DrawGlyphsRecorder::DeconstructDrawGlyphs::Yes);
+    WEBCORE_EXPORT Recorder(DisplayList&, const GraphicsContextState&, const FloatRect& initialClip, const AffineTransform&, Delegate* = nullptr, DrawGlyphsRecorder::DrawGlyphsDeconstruction = DrawGlyphsRecorder::DrawGlyphsDeconstruction::Deconstruct);
     WEBCORE_EXPORT virtual ~Recorder();
 
     WEBCORE_EXPORT void getPixelBuffer(const PixelBufferFormat& outputFormat, const IntRect& sourceRect);

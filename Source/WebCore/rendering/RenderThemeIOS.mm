@@ -37,7 +37,6 @@
 #import "ColorIOS.h"
 #import "DateComponents.h"
 #import "Document.h"
-#import "DrawGlyphsRecorder.h"
 #import "File.h"
 #import "FloatRoundedRect.h"
 #import "FontCache.h"
@@ -1537,7 +1536,6 @@ struct RenderAttachmentInfo {
     struct LabelLine {
         FloatRect rect;
         RetainPtr<CTLineRef> line;
-        RetainPtr<CTFontRef> font;
     };
     Vector<LabelLine> lines;
 
@@ -1547,10 +1545,10 @@ private:
     void buildWrappedLines(const String&, CTFontRef, UIColor *, unsigned maximumLineCount);
     void buildSingleLine(const String&, CTFontRef, UIColor *);
 
-    void addLine(CTFontRef, CTLineRef);
+    void addLine(CTLineRef);
 };
 
-void RenderAttachmentInfo::addLine(CTFontRef font, CTLineRef line)
+void RenderAttachmentInfo::addLine(CTLineRef line)
 {
     CGRect lineBounds = CTLineGetBoundsWithOptions(line, kCTLineBoundsExcludeTypographicLeading);
     CGFloat trailingWhitespaceWidth = CTLineGetTrailingWhitespaceWidth(line);
@@ -1559,7 +1557,6 @@ void RenderAttachmentInfo::addLine(CTFontRef font, CTLineRef line)
 
     CGFloat xOffset = (attachmentRect.width() / 2) - (lineWidthIgnoringTrailingWhitespace / 2);
     LabelLine labelLine;
-    labelLine.font = font;
     labelLine.line = line;
     labelLine.rect = FloatRect(xOffset, 0, lineWidthIgnoringTrailingWhitespace, lineHeight);
 
@@ -1594,7 +1591,7 @@ void RenderAttachmentInfo::buildWrappedLines(const String& text, CTFontRef font,
     CFIndex lineIndex = 0;
     CFIndex nonTruncatedLineCount = std::min<CFIndex>(maximumLineCount - 1, lineCount);
     for (; lineIndex < nonTruncatedLineCount; ++lineIndex)
-        addLine(font, (CTLineRef)CFArrayGetValueAtIndex(ctLines, lineIndex));
+        addLine((CTLineRef)CFArrayGetValueAtIndex(ctLines, lineIndex));
 
     if (lineIndex == lineCount)
         return;
@@ -1614,7 +1611,7 @@ void RenderAttachmentInfo::buildWrappedLines(const String& text, CTFontRef font,
     if (!truncatedLine)
         truncatedLine = remainingLine;
 
-    addLine(font, truncatedLine.get());
+    addLine(truncatedLine.get());
 }
 
 void RenderAttachmentInfo::buildSingleLine(const String& text, CTFontRef font, UIColor *color)
@@ -1628,7 +1625,7 @@ void RenderAttachmentInfo::buildSingleLine(const String& text, CTFontRef font, U
     };
     RetainPtr<NSAttributedString> attributedText = adoptNS([[NSAttributedString alloc] initWithString:text attributes:textAttributes]);
 
-    addLine(font, adoptCF(CTLineCreateWithAttributedString((CFAttributedStringRef)attributedText.get())).get());
+    addLine(adoptCF(CTLineCreateWithAttributedString((CFAttributedStringRef)attributedText.get())).get());
 }
 
 static BOOL getAttachmentProgress(const RenderAttachment& attachment, float& progress)
@@ -1769,10 +1766,15 @@ static void paintAttachmentIcon(GraphicsContext& context, RenderAttachmentInfo& 
 
 static void paintAttachmentText(GraphicsContext& context, RenderAttachmentInfo& info)
 {
-    DrawGlyphsRecorder recorder(context, DrawGlyphsRecorder::DeconstructDrawGlyphs::Yes, DrawGlyphsRecorder::DeriveFontFromContext::Yes);
+    for (const auto& line : info.lines) {
+        GraphicsContextStateSaver saver(context);
 
-    for (const auto& line : info.lines)
-        recorder.drawNativeText(line.font.get(), CTFontGetSize(line.font.get()), line.line.get(), line.rect);
+        context.translate(toFloatSize(line.rect.minXMaxYCorner()));
+        context.scale(FloatSize(1, -1));
+
+        CGContextSetTextPosition(context.platformContext(), 0, 0);
+        CTLineDraw(line.line.get(), context.platformContext());
+    }
 }
 
 static void paintAttachmentProgress(GraphicsContext& context, RenderAttachmentInfo& info)

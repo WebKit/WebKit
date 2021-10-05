@@ -35,12 +35,6 @@
 
 #if USE(CORE_TEXT)
 #include <CoreGraphics/CoreGraphics.h>
-#include <CoreText/CoreText.h>
-#if PLATFORM(WIN)
-#include <pal/spi/win/CoreTextSPIWin.h>
-#else
-#include <pal/spi/cf/CoreTextSPI.h>
-#endif
 #include <pal/spi/cg/CoreGraphicsSPI.h>
 #endif
 
@@ -53,22 +47,22 @@ class GraphicsContext;
 
 class DrawGlyphsRecorder {
 public:
-    enum class DeconstructDrawGlyphs : bool { No, Yes };
-    enum class DeriveFontFromContext : bool { No, Yes };
-    explicit DrawGlyphsRecorder(GraphicsContext&, DeconstructDrawGlyphs = DeconstructDrawGlyphs::No, DeriveFontFromContext = DeriveFontFromContext::No);
+    enum class DrawGlyphsDeconstruction {
+        Deconstruct,
+        DontDeconstruct
+    };
+    explicit DrawGlyphsRecorder(GraphicsContext&, DrawGlyphsDeconstruction);
 
     void drawGlyphs(const Font&, const GlyphBufferGlyph*, const GlyphBufferAdvance*, unsigned numGlyphs, const FloatPoint& anchorPoint, FontSmoothingMode);
 
 #if USE(CORE_TEXT) && !PLATFORM(WIN)
-    void drawNativeText(CTFontRef, CGFloat fontSize, CTLineRef, CGRect lineRect);
-
     void recordBeginLayer(CGRenderingStateRef, CGGStateRef, CGRect);
     void recordEndLayer(CGRenderingStateRef, CGGStateRef);
     void recordDrawGlyphs(CGRenderingStateRef, CGGStateRef, const CGAffineTransform*, const CGGlyph[], const CGPoint positions[], size_t count);
     void recordDrawImage(CGRenderingStateRef, CGGStateRef, CGRect, CGImageRef);
 #endif
 
-    DeconstructDrawGlyphs deconstructDrawGlyphs() const { return m_deconstructDrawGlyphs; }
+    DrawGlyphsDeconstruction drawGlyphsDeconstruction() const { return m_drawGlyphsDeconstruction; }
 
 private:
 #if USE(CORE_TEXT) && !PLATFORM(WIN)
@@ -95,8 +89,7 @@ private:
 #endif
 
     GraphicsContext& m_owner;
-    DeconstructDrawGlyphs m_deconstructDrawGlyphs;
-    DeriveFontFromContext m_deriveFontFromContext;
+    DrawGlyphsDeconstruction m_drawGlyphsDeconstruction;
 
 #if USE(CORE_TEXT) && !PLATFORM(WIN)
     UniqueRef<GraphicsContext> m_internalContext;

@@ -1,3 +1,16 @@
+2021-10-05  Ayumi Kojima  <ayumi_kojima@apple.com>
+
+        Unreviewed, reverting r283339.
+
+        Reverting because this commit may have caused fast/attachment
+        tests to crash
+
+        Reverted changeset:
+
+        "[iOS][GPU Process] support `<attachment>`"
+        https://bugs.webkit.org/show_bug.cgi?id=230781
+        https://commits.webkit.org/r283339
+
 2021-10-03  David Kilzer  <ddkilzer@apple.com>
 
         Build fix: Attribute IOSurfaces created by camera and decoders to responsible WebProcess
