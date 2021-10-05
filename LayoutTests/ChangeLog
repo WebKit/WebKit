@@ -1,3 +1,12 @@
+2021-10-04  Tim Nguyen  <ntim@apple.com>
+
+        Update ios-wk2 test expectations for select-validity.html WPT
+        https://bugs.webkit.org/show_bug.cgi?id=231217
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/select-validity-expected.txt:
+
 2021-10-04  Cameron McCormack  <heycam@apple.com>
 
         Choose an appropriate color space when converting an SVG image into a NativeImage for canvas drawImage
