@@ -2060,6 +2060,8 @@ fast/events/ios/rotation/basic-rotation.html [ Pass Crash Failure ]
 
 webkit.org/b/231262 fast/events/ios/rotation/resize-iframe-after-orientation-change.html [ Pass Failure Crash ]
 
+webkit.org/b/231264 fast/events/ios/rotation/layout-viewport-during-rotation.html [ Failure ]
+
 webkit.org/b/230987 fast/events/ios/viewport-shrink-to-fit-allows-double-tap.html [ Pass Timeout ]
 
 webkit.org/b/229558 http/tests/navigation/page-cache-getUserMedia-pending-promise.html [ Pass Failure ]
