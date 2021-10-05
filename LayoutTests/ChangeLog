@@ -1,3 +1,19 @@
+2021-10-05  Chris Dumez  <cdumez@apple.com>
+
+        Authorization header lost on 30x redirects
+        https://bugs.webkit.org/show_bug.cgi?id=230935
+        <rdar://problem/83689955>
+
+        Reviewed by Darin Adler.
+
+        * http/tests/fetch/fetch-redirect-same-origin-authorization-expected.txt: Added.
+        * http/tests/fetch/fetch-redirect-same-origin-authorization.html: Added.
+        * http/tests/fetch/resources/dump-authorization-header.py: Added.
+        Add layout test coverage.
+
+        * http/tests/xmlhttprequest/redirections-and-user-headers.html:
+        Update existing test to reflect behavior change.
+
 2021-10-05  Gabriel Nava Marino  <gnavamarino@apple.com>
 
         Unsupported blending of mixed length types leads to nullptr deref when accessing m_value.calc in CSSPrimitiveValue::primitiveType()

@@ -288,6 +288,9 @@ void ResourceHandle::willSendRequest(ResourceRequest&& request, ResourceResponse
         request.clearHTTPAuthorization();
         request.clearHTTPOrigin();
     } else {
+        if (auto authorization = d->m_firstRequest.httpHeaderField(HTTPHeaderName::Authorization); !authorization.isNull())
+            request.setHTTPHeaderField(HTTPHeaderName::Authorization, authorization);
+
         // Only consider applying authentication credentials if this is actually a redirect and the redirect
         // URL didn't include credentials of its own.
         if (d->m_user.isEmpty() && d->m_password.isEmpty() && !redirectResponse.isNull()) {

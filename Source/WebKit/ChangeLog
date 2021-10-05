@@ -1,3 +1,21 @@
+2021-10-05  Chris Dumez  <cdumez@apple.com>
+
+        Authorization header lost on 30x redirects
+        https://bugs.webkit.org/show_bug.cgi?id=230935
+        <rdar://problem/83689955>
+
+        Reviewed by Darin Adler.
+
+        CFNetwork drops the Authorization request header in cases of same-origin redirects, which is not as per
+        the fetch specification [1] and doesn't match the behavior of other browsers.
+
+        To address the issue, WebKit adds the Authorization request back in case of a same-origin redirect.
+
+        [1] https://fetch.spec.whatwg.org/#concept-http-redirect-fetch
+
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+        (WebKit::NetworkDataTaskCocoa::willPerformHTTPRedirection):
+
 2021-10-05  Tim Horton  <timothy_horton@apple.com>
 
         <model> should be draggable, similar to <img>
