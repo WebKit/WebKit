@@ -444,6 +444,7 @@ private:
 #endif
     bool m_runningModalPaint { false };
     bool m_haveProcessedChapterTracks { false };
+    bool m_waitForVideoOutputMediaDataWillChangeTimedOut { false };
 };
 
 }
