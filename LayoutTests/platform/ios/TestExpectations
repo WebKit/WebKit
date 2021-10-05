@@ -1366,7 +1366,6 @@ webkit.org/b/181752 storage/indexeddb/modern/transaction-scheduler-6.html [ Skip
 webkit.org/b/181752 storage/indexeddb/odd-strings.html [ Skip ]
 webkit.org/b/181752 storage/indexeddb/transaction-coordination-within-database.html [ Skip ]
 webkit.org/b/181752 storage/indexeddb/transaction-starvation.html [ Skip ]
-webkit.org/b/176078 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-onnegotiationneeded.html [ Pass Failure ]
 
 # SVG tests that fail:
 svg/W3C-SVG-1.1-SE/text-intro-02-b.svg [ Failure ]
@@ -2693,10 +2692,6 @@ imported/w3c/web-platform-tests/xhr/send-blob-with-no-mime-type.html [ Failure ]
 # <rdar://problem/33630526> http/tests/websocket/tests/hybi/deflate-frame-parameter.html is failing on iOS 11
 http/tests/websocket/tests/hybi/deflate-frame-parameter.html [ Failure ]
 
-# <rdar://problem/34051745>
-imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-setLocalDescription.html [ Failure ]
-imported/w3c/web-platform-tests/webrtc/getstats.html [ Failure ]
-
 # <rdar://problem/34209038>
 webgl/1.0.3/conformance/ogles/GL/log/log_001_to_008.html [ Skip ]
 webgl/1.0.3/conformance/ogles/GL/log2/log2_001_to_008.html [ Skip ]
@@ -3466,10 +3461,6 @@ http/wpt/webxr [ Skip ]
 
 # WebM is not supported on iOS
 http/tests/media/video-webm-stall.html [ Skip ]
-
-# webkit.org/b/223385 Two imported webrtc tests are flakey text failing on Release for BigSur+ and iOS 14
-[ Release ] imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-addIceCandidate-connectionSetup.html [ Pass Failure ]
-[ Release ] imported/w3c/web-platform-tests/webrtc/RTCDtlsTransport-state.html [ Pass Failure ]
 
 webkit.org/b/229291 imported/w3c/web-platform-tests/html/rendering/replaced-elements/images/revoked-blob-print.html [ Pass ImageOnlyFailure ]
 

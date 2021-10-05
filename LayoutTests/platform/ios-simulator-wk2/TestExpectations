@@ -88,8 +88,6 @@ webkit.org/b/214730 [ Debug ] imported/w3c/web-platform-tests/webrtc/RTCPeerConn
 webkit.org/b/214730 [ Debug ] imported/w3c/web-platform-tests/webrtc/RTCSctpTransport-constructor.html [ Skip ]
 webkit.org/b/214661 [ Debug ] imported/w3c/web-platform-tests/webrtc/RTCSctpTransport-events.html [ Skip ]
 webkit.org/b/214730 [ Debug ] webrtc/simulcast-h264.html [ Skip ]
-imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-candidate-in-sdp.https.html [ Pass Failure ]
-imported/w3c/web-platform-tests/webrtc/protocol/crypto-suite.https.html [ Failure ]
 
 webkit.org/b/214358 fast/scrolling/ios/programmatic-scroll-while-zoomed.html [ Pass Failure ]
 
@@ -110,8 +108,6 @@ webkit.org/b/214755 http/tests/navigation/subframe-pagehide-handler-starts-load2
 webkit.org/b/214757 imported/w3c/web-platform-tests/css/css-fonts/crash-font-face-invalid-descriptor.html [ Pass Timeout ]
 
 webkit.org/b/214824 [ Debug ] js/throw-large-string-oom.html [ Skip ]
-
-webkit.org/b/215025 imported/w3c/web-platform-tests/webrtc/RTCSctpTransport-maxChannels.html [ Pass Crash ]
 
 webkit.org/b/215033 imported/w3c/web-platform-tests/websockets/cookies/third-party-cookie-accepted.https.html [ Pass Failure ]
 
@@ -148,8 +144,6 @@ webkit.org/b/217687 accessibility/ios-simulator/accessibility-aria-table-childre
 webkit.org/b/217759 media/now-playing-status-without-media.html [ Pass Failure ]
 
 webkit.org/b/217268 imported/w3c/web-platform-tests/mathml/relations/html5-tree/dynamic-childlist-001.html [ Failure ]
-
-webkit.org/b/222808 imported/w3c/web-platform-tests/webrtc/protocol/candidate-exchange.https.html [ Pass Failure ]
 
 # webkit.org/b/209139 fast/canvas/webgl/webgl-clear-composited-notshowing.html [ Failure ]
 
