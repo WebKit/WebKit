@@ -8,18 +8,18 @@
 <link rel="mismatch" href="palette-values-rule-delete-notref.html">
 <style id="style">
 @font-face {
-    font-family: "Ahem-COLR";
-    src: url("resources/Ahem-COLR-palettes.ttf") format("truetype");
+    font-family: "COLR-test-font";
+    src: url("resources/COLR-palettes-test-font.ttf") format("truetype");
 }
 
 @font-palette-values --MyPalette {
-    font-family: "Ahem-COLR";
+    font-family: "COLR-test-font";
     base-palette: 1;
 }
 </style>
 </head>
 <body>
-<div style="font: 48px 'Ahem-COLR'; font-palette: --MyPalette;">A</div>
+<div style="font: 48px 'COLR-test-font'; font-palette: --MyPalette;">A</div>
 <script>
 let count = 0;
 function tick() {

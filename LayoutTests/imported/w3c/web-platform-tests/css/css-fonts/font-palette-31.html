@@ -9,28 +9,28 @@
 <link rel="match" href="font-palette-31-ref.html">
 <style>
 @font-face {
-    font-family: "Ahem-COLR1";
-    src: url("resources/Ahem-COLR-palettes.ttf") format("truetype");
+    font-family: "COLR-test-font1";
+    src: url("resources/COLR-palettes-test-font.ttf") format("truetype");
     unicode-range: U+41;
 }
 
 @font-face {
-    font-family: "Ahem-COLR2";
-    src: url("resources/Ahem-COLR-palettes.ttf") format("truetype");
+    font-family: "COLR-test-font2";
+    src: url("resources/COLR-palettes-test-font.ttf") format("truetype");
 }
 
 @font-palette-values --MyPalette {
-    font-family: "Ahem-COLR1";
+    font-family: "COLR-test-font1";
     base-palette: 5;
 }
 
 @font-palette-values --MyPalette {
-    font-family: "Ahem-COLR2";
+    font-family: "COLR-test-font2";
     base-palette: 2;
 }
 </style>
 </head>
 <body>
-<div style="font: 48px 'Ahem-COLR1', 'Ahem-COLR2', Helvetica; font-palette: --MyPalette;">ABCDEF</div>
+<div style="font: 48px 'COLR-test-font1', 'COLR-test-font2', Helvetica; font-palette: --MyPalette;">ABCDEF</div>
 </body>
 </html>
