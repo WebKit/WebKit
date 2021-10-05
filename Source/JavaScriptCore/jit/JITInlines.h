@@ -65,8 +65,12 @@ ALWAYS_INLINE bool JIT::isKnownCell(VirtualRegister src)
 ALWAYS_INLINE JSValue JIT::getConstantOperand(VirtualRegister src)
 {
     ASSERT(src.isConstant());
+#if USE(JSVALUE32_64)
+    return m_profiledCodeBlock->getConstant(src);
+#else
     RELEASE_ASSERT(m_unlinkedCodeBlock->constantSourceCodeRepresentation(src) != SourceCodeRepresentation::LinkTimeConstant);
     return m_unlinkedCodeBlock->getConstant(src);
+#endif
 }
 
 ALWAYS_INLINE void JIT::emitPutIntToCallFrameHeader(RegisterID from, VirtualRegister entry)
@@ -328,7 +332,8 @@ ALWAYS_INLINE bool JIT::isOperandConstantChar(VirtualRegister src)
 #if USE(JSVALUE32_64)
 inline void JIT::emitValueProfilingSite(ValueProfile& valueProfile, JSValueRegs value)
 {
-    ASSERT(shouldEmitProfiling());
+    if (!shouldEmitProfiling())
+        return;
 
     EncodedValueDescriptor* descriptor = bitwise_cast<EncodedValueDescriptor*>(valueProfile.m_buckets);
     store32(value.payloadGPR(), &descriptor->asBits.payload);
@@ -735,7 +740,7 @@ ALWAYS_INLINE void JIT::materializePointerIntoMetadata(const Bytecode& bytecode,
 
 ALWAYS_INLINE void JIT::loadConstant(JITConstantPool::Constant constantIndex, GPRReg result)
 {
-    loadPtr(Address(s_constantsGPR, static_cast<uintptr_t>(constantIndex) * 8), result);
+    loadPtr(Address(s_constantsGPR, static_cast<uintptr_t>(constantIndex) * sizeof(void*)), result);
 }
 
 ALWAYS_INLINE void JIT::loadGlobalObject(GPRReg result)

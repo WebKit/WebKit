@@ -1123,12 +1123,12 @@ macro binaryOpCustomStore(opcodeName, opcodeStruct, integerOperationAndStore, do
         bia t2, LowestTag, .slow
         bib t3, LowestTag, .op1NotIntOp2Double
         bineq t3, Int32Tag, .slow
-        updateBinaryArithProfile(size, opcodeStruct, ArithProfileNumberInt, t5, t4)
         ci2ds t1, ft1
+        updateBinaryArithProfile(size, opcodeStruct, ArithProfileNumberInt, t5, t1)
         jmp .op1NotIntReady
     .op1NotIntOp2Double:
         fii2d t1, t3, ft1
-        updateBinaryArithProfile(size, opcodeStruct, ArithProfileNumberNumber, t5, t4)
+        updateBinaryArithProfile(size, opcodeStruct, ArithProfileNumberNumber, t5, t1)
     .op1NotIntReady:
         get(m_dst, t1)
         fii2d t0, t2, ft0
@@ -1138,9 +1138,9 @@ macro binaryOpCustomStore(opcodeName, opcodeStruct, integerOperationAndStore, do
 
     .op2NotInt:
         # First operand is definitely an int, the second operand is definitely not.
-        get(m_dst, t2)
         bia t3, LowestTag, .slow
-        updateBinaryArithProfile(size, opcodeStruct, ArithProfileIntNumber, t5, t4)
+        updateBinaryArithProfile(size, opcodeStruct, ArithProfileIntNumber, t5, t2)
+        get(m_dst, t2)
         ci2ds t0, ft0
         fii2d t1, t3, ft1
         doubleOperation(ft1, ft0)

@@ -1,3 +1,39 @@
+2021-10-05  Xan López  <xan@igalia.com>
+
+        [JSC][32bit] Fix bugs after unlinked baseline jit
+        https://bugs.webkit.org/show_bug.cgi?id=231232
+
+        Reviewed by Yusuke Suzuki.
+
+        Fix a bunch of bugs introduced with unlinked baseline jit. As of
+        now we are disabling DataIC on baseline JIT to get things working
+        ASAP, making that work will be the next step. This makes us almost
+        go back to green bots.
+
+        (Patch co-authored with Geza Lore)
+
+        * bytecode/CallLinkInfo.cpp:
+        (JSC::CallLinkInfo::emitDataICFastPath): ASSERT we are not using DataIC on 32-bit.
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::hasDebuggerRequests const):
+        (JSC::CodeBlock::debuggerRequestsAddress): Deleted.
+        * jit/JITCall32_64.cpp:
+        (JSC::JIT::compileOpCall): don't use DataIC.
+        (JSC::JIT::compileOpCallSlowCase): set missing label.
+        * jit/JITCode.h:
+        (JSC::JITCode::useDataIC): disable DataIC on baseline JIT for 32-bit.
+        * jit/JITInlines.h:
+        (JSC::JIT::getConstantOperand): get constants from the CodeBlock,
+        since we don't do sharing on 32-bit.
+        (JSC::JIT::emitValueProfilingSite): remove an overzealous ASSERT.
+        (JSC::JIT::loadConstant): use sizeof(void*) instead of '8', makes
+        things work on 32-bit.
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_debug): share this with 32-bit.
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_debug): Deleted.
+        * llint/LowLevelInterpreter32_64.asm: do not thrash the PC register.
+
 2021-10-05  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] JSPropertyNameEnumerator should not have cached prototype chain since empty JSPropertyNameEnumerator is shared

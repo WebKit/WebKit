@@ -310,7 +310,7 @@ void JIT::compileOpCall(const Instruction* instruction, unsigned callLinkInfoInd
 
     checkStackPointerAlignment();
     if (opcodeID == op_tail_call || opcodeID == op_tail_call_varargs || opcodeID == op_tail_call_forward_arguments) {
-        auto slowPaths = info->emitTailCallDataICFastPath(*this, regT0, regT2, [&] {
+        auto slowPaths = info->emitTailCallFastPath(*this, regT0, [&] {
             emitRestoreCalleeSaves();
             prepareForTailCallSlow(regT2);
         });
@@ -341,6 +341,8 @@ void JIT::compileOpCallSlowCase(const Instruction* instruction, Vector<SlowCaseE
     }
 
     linkAllSlowCases(iter);
+
+    m_callCompilationInfo[callLinkInfoIndex].slowPathStart = label();
 
     if (opcodeID == op_tail_call || opcodeID == op_tail_call_varargs || opcodeID == op_tail_call_forward_arguments)
         emitRestoreCalleeSaves();

@@ -1076,16 +1076,6 @@ void JIT::emit_op_switch_string(const Instruction* currentInstruction)
     farJump(returnValueGPR, NoPtrTag);
 }
 
-void JIT::emit_op_debug(const Instruction* currentInstruction)
-{
-    auto bytecode = currentInstruction->as<OpDebug>();
-    load32(codeBlock()->debuggerRequestsAddress(), regT0);
-    Jump noDebuggerRequests = branchTest32(Zero, regT0);
-    callOperation(operationDebug, &vm(), static_cast<int>(bytecode.m_debugHookType));
-    noDebuggerRequests.link(this);
-}
-
-
 void JIT::emit_op_enter(const Instruction* currentInstruction)
 {
     emitEnterOptimizationCheck();

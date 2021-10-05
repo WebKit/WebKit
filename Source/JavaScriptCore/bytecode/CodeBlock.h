@@ -757,7 +757,6 @@ public:
     bool hasOpDebugForLineAndColumn(unsigned line, std::optional<unsigned> column);
 
     bool hasDebuggerRequests() const { return m_debuggerRequests; }
-    void* debuggerRequestsAddress() { return &m_debuggerRequests; }
     static ptrdiff_t offsetOfDebuggerRequests() { return OBJECT_OFFSETOF(CodeBlock, m_debuggerRequests); }
 
     void addBreakpoint(unsigned numBreakpoints);

@@ -1135,16 +1135,6 @@ void JIT::emit_op_switch_string(const Instruction* currentInstruction)
     farJump(returnValueGPR, JSSwitchPtrTag);
 }
 
-void JIT::emit_op_debug(const Instruction* currentInstruction)
-{
-    auto bytecode = currentInstruction->as<OpDebug>();
-    loadPtr(addressFor(CallFrameSlot::codeBlock), regT0);
-    load32(Address(regT0, CodeBlock::offsetOfDebuggerRequests()), regT0);
-    Jump noDebuggerRequests = branchTest32(Zero, regT0);
-    callOperation(operationDebug, &vm(), static_cast<int>(bytecode.m_debugHookType));
-    noDebuggerRequests.link(this);
-}
-
 void JIT::emit_op_eq_null(const Instruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpEqNull>();
@@ -1456,6 +1446,16 @@ void JIT::emitSlow_op_instanceof_custom(const Instruction* currentInstruction, V
 }
 
 #endif // USE(JSVALUE64)
+
+void JIT::emit_op_debug(const Instruction* currentInstruction)
+{
+    auto bytecode = currentInstruction->as<OpDebug>();
+    loadPtr(addressFor(CallFrameSlot::codeBlock), regT0);
+    load32(Address(regT0, CodeBlock::offsetOfDebuggerRequests()), regT0);
+    Jump noDebuggerRequests = branchTest32(Zero, regT0);
+    callOperation(operationDebug, &vm(), static_cast<int>(bytecode.m_debugHookType));
+    noDebuggerRequests.link(this);
+}
 
 void JIT::emit_op_loop_hint(const Instruction* instruction)
 {

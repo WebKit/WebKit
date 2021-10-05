@@ -365,6 +365,9 @@ MacroAssembler::JumpList CallLinkInfo::emitTailCallFastPath(CCallHelpers& jit, G
 MacroAssembler::JumpList CallLinkInfo::emitDataICFastPath(CCallHelpers& jit, GPRReg calleeGPR, GPRReg callLinkInfoGPR)
 {
     RELEASE_ASSERT(callLinkInfoGPR != InvalidGPRReg);
+#if USE(JSVALUE32_64)
+    RELEASE_ASSERT_NOT_REACHED(); // Uses DataIC
+#endif
     return emitFastPathImpl(nullptr, jit, calleeGPR, callLinkInfoGPR, UseDataIC::Yes, false, nullptr);
 }
 
