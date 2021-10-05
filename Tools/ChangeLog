@@ -1,3 +1,17 @@
+2021-10-04  Jonathan Bedard  <jbedard@apple.com>
+
+        [ews-build.webkit.org] check-patch-relevance can get stuck
+        https://bugs.webkit.org/show_bug.cgi?id=231190
+        <rdar://problem/77327168>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * CISupport/ews-build/steps.py:
+        (CheckPatchRelevance): Compute all regexes in advance.
+        (CheckPatchRelevance._patch_is_relevant): Rely on pre-computed regexes,
+        limit the number of characters to check in a line to 250 and include a
+        hard-timeout so that a patch can never get EWS stuck.
+
 2021-10-04  Chris Dumez  <cdumez@apple.com>
 
         Add SPI to launch a service service worker in a WKWebView and expose service worker to injected bundle
