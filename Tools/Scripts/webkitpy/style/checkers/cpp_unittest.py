@@ -1844,7 +1844,7 @@ class CppStyleTest(CppStyleTestBase):
         self.assert_lint(
             '''\
             const int foo[] =
-                {1, 2, 3 };''',
+                { 1, 2, 3 };''',
             '')
         # For single line, unmatched '}' with a ';' is ignored (not enough context)
         self.assert_multi_line_lint(
@@ -2150,6 +2150,24 @@ class CppStyleTest(CppStyleTestBase):
         self.assert_lint('    { }', '')
         self.assert_lint('    {}', 'Missing space inside { }.  [whitespace/braces] [5]')
         self.assert_lint('    {   }', 'Too many spaces inside { }.  [whitespace/braces] [5]')
+        self.assert_lint('    }', '')  # closing brace by itself is fine
+        self.assert_lint('    int64_t {0xffffffff }', 'Missing space after {.  [whitespace/braces] [5]')
+        self.assert_lint('    int64_t { 0xffffffff}', 'Missing space before }.  [whitespace/braces] [5]')
+        self.assert_lint('    int64_t { 0xffffffff }', '')
+        self.assert_lint('    IntTuple {1, 2 }', 'Missing space after {.  [whitespace/braces] [5]')
+        self.assert_lint('    IntTuple { 1, 2}', 'Missing space before }.  [whitespace/braces] [5]')
+        self.assert_lint('    IntTuple { 1, 2 }', '')
+        self.assert_lint('    int a[2][2] = {{ 1, 2 }, { 3, 4 } };', 'Missing space after {.  [whitespace/braces] [5]')
+        self.assert_lint('    int a[2][2] = { {1, 2 }, { 3, 4 } };', 'Missing space after {.  [whitespace/braces] [5]')
+        self.assert_lint('    int a[2][2] = { { 1, 2 }, {3, 4 } };', 'Missing space after {.  [whitespace/braces] [5]')
+        self.assert_lint('    int a[2][2] = { { 1, 2}, { 3, 4 } };', 'Missing space before }.  [whitespace/braces] [5]')
+        self.assert_lint('    int a[2][2] = { { 1, 2 }, { 3, 4} };', 'Missing space before }.  [whitespace/braces] [5]')
+        self.assert_lint('    int a[2][2] = { { 1, 2 }, { 3, 4 }};', 'Missing space before }.  [whitespace/braces] [5]')
+        self.assert_lint('    int a[2][2] = { { 1, 2 }, { 3, 4 } };', '')
+        self.assert_lint('    StrPair {"strings", "inside" }', 'Missing space after {.  [whitespace/braces] [5]')
+        self.assert_lint('    StrPair { "strings", "inside"}', 'Missing space before }.  [whitespace/braces] [5]')
+        self.assert_lint('    StrPair { "strings", "inside" }', '')
+        self.assert_lint('    foo("{braces in a string}");', '')
 
     def test_spacing_before_brackets(self):
         self.assert_lint('delete [] base;', '')
@@ -4058,7 +4076,7 @@ class NoNonVirtualDestructorsTest(CppStyleTestBase):
                     FOO_TWO
                 };
                 enum { FOO_ONE };
-                enum {FooOne, fooTwo};
+                enum { FooOne, fooTwo };
                 enum {
                     FOO_ONE
                 };''',
@@ -4110,7 +4128,7 @@ class NoNonVirtualDestructorsTest(CppStyleTestBase):
                     FOO_TWO
                 };
                 enum class Foo { FOO_ONE };
-                enum class Foo {FooOne, fooTwo};
+                enum class Foo { FooOne, fooTwo };
                 enum class Foo {
                     FOO_ONE
                 };''',
@@ -4486,7 +4504,7 @@ class WebKitStyleTest(CppStyleTestBase):
             'namespace WebCore {\n'
             '#define abc(x) x; \\\n'
             '    x\n'
-            '    void* x;'
+            '    void* x;\n'
             '}',
             'Code inside a namespace should not be indented.  [whitespace/indent] [4]',
             'foo.cpp')

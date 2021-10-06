@@ -1,3 +1,25 @@
+2021-10-06  Philip Chimento  <pchimento@igalia.com>
+
+        Style checker should check spacing inside braces with elements in them
+        https://bugs.webkit.org/show_bug.cgi?id=231199
+
+        In order to automate this and prevent reviewers from having to comment
+        on it, ensure that spaces are required by webkit-check-style inside of
+        braces with elements in them (e.g., initializer lists.)
+
+        In order to avoid false positives, ignore brace spacing if the braces
+        are surrounded by double-quotes on the same line, assuming that means
+        it's likely the braces are inside a string.
+
+        Reviewed by Jonathan Bedard.
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (check_spacing):
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py:
+        (CppStyleTest):
+        (NoNonVirtualDestructorsTest):
+        (WebKitStyleTest.test_indentation):
+
 2021-10-06  Youenn Fablet  <youenn@apple.com>
 
         Implement https://w3c.github.io/push-api/#receiving-a-push-message

@@ -2334,11 +2334,25 @@ def check_spacing(file_extension, clean_lines, line_number, file_state, error):
             error(line_number, 'whitespace/brackets', 5,
                   'Extra space before [.')
 
-    # There should always be a single space in between braces on the same line.
-    if search(r'\{\}', line):
-        error(line_number, 'whitespace/braces', 5, 'Missing space inside { }.')
-    if search(r'\{\s\s+\}', line):
-        error(line_number, 'whitespace/braces', 5, 'Too many spaces inside { }.')
+    # Try to avoid false positives when braces are inside of a string
+    if not search(r'"[^"]*\{.*\}[^"]*"', line):
+        # There should always be a single space in between braces on the same
+        # line.
+        if search(r'\{\}', line):
+            error(line_number, 'whitespace/braces', 5, 'Missing space inside { }.')
+        if search(r'\{\s\s+\}', line):
+            error(line_number, 'whitespace/braces', 5, 'Too many spaces inside { }.')
+
+        # Also a single space inside of braces with an initializer value inside
+        # of them.
+        if search(r'\{[^\s\}]', line):
+            error(line_number, 'whitespace/braces', 5, 'Missing space after {.')
+        if search(r'[^\s\{]\}', line):
+            error(line_number, 'whitespace/braces', 5, 'Missing space before }.')
+        if search(r'\{\s\s+[^\s\}]', line):
+            error(line_number, 'whitespace/braces', 5, 'Too many spaces after {.')
+        if search(r'[^\s\{]\s\+\}', line):
+            error(line_number, 'whitespace/braces', 5, 'Too many spaces before }.')
 
     # You shouldn't have a space before a semicolon at the end of the line.
     # There's a special case for "for" since the style guide allows space before
