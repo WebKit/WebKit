@@ -1,0 +1,55 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <script src="resources/util.js"></script>
+    <script src="/js-test-resources/ui-helper.js"></script>
+</head>
+<body onload="setTimeout(runTest, 0)">
+<div id="description">Tests storage of private click measurement with nested links.</div>
+<div id="output"></div>
+<script>
+    prepareTest();
+
+    function activateLink() {
+        let element = document.getElementById("targetFrame");
+        let centerX = element.offsetLeft + element.offsetWidth / 2;
+        let centerY = element.offsetTop + element.offsetHeight / 2;
+        if (!UIHelper) {
+            document.getElementById("output").innerText = "FAIL No UIHelper.";
+            tearDownAndFinish();
+        }
+        UIHelper.activateAt(centerX, centerY).then(
+            function () {
+            },
+            function () {
+                document.getElementById("output").innerText = "FAIL Promise rejected.";
+            }
+        );
+    }
+
+    function runTest() {
+        if (window.testRunner) {
+            if (window.location.search === "?stepTwo") {
+                testRunner.dumpPrivateClickMeasurement();
+                testRunner.setPrivateClickMeasurementAppBundleIDForTesting("");
+                tearDownAndFinish();
+            } else {
+                testRunner.setPrivateClickMeasurementAppBundleIDForTesting("testBundleID");
+                let iframeElement = document.createElement("iframe");
+                iframeElement.setAttribute("sandbox", "allow-scripts allow-top-navigation");
+                iframeElement.id = "targetFrame";
+                iframeElement.width = "50px";
+                iframeElement.height = "50px";
+                iframeElement.onload = activateLink;
+                iframeElement.src = "http://localhost:8000/privateClickMeasurement/resources/nestedTargetLink.html";
+                document.body.appendChild(iframeElement);
+            }
+        } else {
+            document.getElementById("output").innerText = "FAIL No testRunner.";
+        }
+    }
+</script>
+</body>
+</html>

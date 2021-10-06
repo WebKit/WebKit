@@ -1,3 +1,24 @@
+2021-10-05  John Wilander  <wilander@apple.com>
+
+        PCM: Allow measurement of links in nested, cross-site iframes
+        https://bugs.webkit.org/show_bug.cgi?id=229204
+        <rdar://problem/82310386>
+
+        Reviewed by Alex Christensen.
+
+        Developers have said it would be great to allow measurement of links served in
+        nested, cross-site iframes on the click source. The click still count as if it
+        happened on the first party click source site, and any attribution report still
+        goes to that first party. This change enables the *serving* of measurable links
+        in nested, cross-site iframes.
+
+        The standards issue where this was discussed:
+        https://github.com/privacycg/private-click-measurement/issues/7
+
+        * http/tests/privateClickMeasurement/resources/nestedTargetLink.html: Added.
+        * http/tests/privateClickMeasurement/store-private-click-measurement-nested-expected.txt: Added.
+        * http/tests/privateClickMeasurement/store-private-click-measurement-nested.html: Added.
+
 2021-10-05  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WinCairo] Unreviewed test gardening after r283550
