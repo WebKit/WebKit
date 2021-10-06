@@ -4980,7 +4980,7 @@ template <class TreeBuilder> TreeArguments Parser<LexerType>::parseArguments(Tre
     consumeOrFailWithFlags(OPENPAREN, TreeBuilder::DontBuildStrings, "Expected opening '(' at start of argument list");
     JSTokenLocation location(tokenLocation());
     if (match(CLOSEPAREN)) {
-        next(TreeBuilder::DontBuildStrings);
+        next();
         return context.createArguments();
     }
     auto argumentsStart = m_token.m_startPosition;
