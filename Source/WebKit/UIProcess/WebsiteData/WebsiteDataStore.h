@@ -82,7 +82,6 @@ struct MockWebAuthenticationConfiguration;
 namespace WebKit {
 
 class AuthenticatorManager;
-class AuxiliaryProcessProxy;
 class SecKeyProxyStore;
 class DeviceIdHashSaltStorage;
 class NetworkProcessProxy;
@@ -279,8 +278,8 @@ public:
     void dispatchOnQueue(Function<void()>&&);
 
 #if PLATFORM(COCOA)
-    void sendNetworkProcessXPCEndpointToProcess(AuxiliaryProcessProxy&) const;
-    void sendNetworkProcessXPCEndpointToAllProcesses();
+    void sendNetworkProcessXPCEndpointToWebProcess(WebProcessProxy&);
+    void sendNetworkProcessXPCEndpointToAllWebProcesses();
     
     static bool useNetworkLoader();
 #endif

@@ -54,7 +54,7 @@ bool NetworkProcessProxy::XPCEventHandler::handleXPCEvent(xpc_object_t event) co
     if (messageName == LaunchServicesDatabaseXPCConstants::xpcLaunchServicesDatabaseXPCEndpointMessageName) {
         m_networkProcess->m_endpointMessage = event;
         for (auto& dataStore : copyToVectorOf<Ref<WebsiteDataStore>>(m_networkProcess->m_websiteDataStores))
-            dataStore->sendNetworkProcessXPCEndpointToAllProcesses();
+            dataStore->sendNetworkProcessXPCEndpointToAllWebProcesses();
     }
 
     return true;

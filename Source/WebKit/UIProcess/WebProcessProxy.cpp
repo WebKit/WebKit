@@ -338,11 +338,7 @@ void WebProcessProxy::setWebsiteDataStore(WebsiteDataStore& dataStore)
     WEBPROCESSPROXY_RELEASE_LOG(Process, "setWebsiteDataStore() dataStore=%p, sessionID=%" PRIu64, &dataStore, dataStore.sessionID().toUInt64());
     m_websiteDataStore = &dataStore;
 #if PLATFORM(COCOA)
-    dataStore.sendNetworkProcessXPCEndpointToProcess(*this);
-#if ENABLE(GPU_PROCESS)
-    if (GPUProcessProxy::singletonIfCreated())
-        dataStore.sendNetworkProcessXPCEndpointToProcess(*GPUProcessProxy::singletonIfCreated());
-#endif
+    dataStore.sendNetworkProcessXPCEndpointToWebProcess(*this);
 #endif
     updateRegistrationWithDataStore();
     send(Messages::WebProcess::SetWebsiteDataStoreParameters(processPool().webProcessDataStoreParameters(*this, dataStore)), 0);
@@ -1071,7 +1067,7 @@ void WebProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Connect
 
 #if PLATFORM(COCOA)
     if (m_websiteDataStore)
-        m_websiteDataStore->sendNetworkProcessXPCEndpointToProcess(*this);
+        m_websiteDataStore->sendNetworkProcessXPCEndpointToWebProcess(*this);
 #endif
 
     RELEASE_ASSERT(!m_webConnection);

@@ -1,3 +1,7 @@
+2021-10-06  Alan Coon  <alancoon@apple.com>
+
+        Revert r283374. rdar://problem/83847918
+
 2021-10-04  Jean-Yves Avenard  <jya@apple.com>
 
         Vorbis decoder can't be instantiated - follow up on Bug 230742
