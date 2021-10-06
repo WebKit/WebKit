@@ -1,3 +1,19 @@
+2021-10-06  Tim Nguyen  <ntim@apple.com>
+
+        Reset m_isModal flag when removing <dialog> from document
+        https://bugs.webkit.org/show_bug.cgi?id=231290
+
+        Reviewed by Alan Bujtas.
+
+        m_isModal triggers the :-internal-modal-dialog pseudo class, which changes position from absolute to fixed.
+
+        When removing a modal <dialog> from the document, it is also removed from the top layer, so it makes sense
+        to reset the m_isModal flag as well as a result.
+
+        Updated test expectations to reflect new passing tests.
+
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/abspos-dialog-layout-expected.txt:
+
 2021-10-05  Kate Cheney  <katherine_cheney@apple.com>
 
         CSP: unsafe-eval tests timing out or failing

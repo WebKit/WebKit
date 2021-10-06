@@ -50,6 +50,8 @@ public:
 private:
     HTMLDialogElement(const QualifiedName&, Document&);
 
+    void removedFromAncestor(RemovalType, ContainerNode& oldParentOfRemovedTree) final;
+
     String m_returnValue;
     bool m_isModal { false };
 };

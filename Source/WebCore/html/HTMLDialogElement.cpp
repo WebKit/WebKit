@@ -105,4 +105,10 @@ void HTMLDialogElement::queueCancelTask()
     });
 }
 
+void HTMLDialogElement::removedFromAncestor(RemovalType removalType, ContainerNode& oldParentOfRemovedTree)
+{
+    HTMLElement::removedFromAncestor(removalType, oldParentOfRemovedTree);
+    m_isModal = false;
+}
+
 }
