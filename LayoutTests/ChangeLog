@@ -1,5 +1,30 @@
 2021-10-06  Tim Nguyen  <ntim@apple.com>
 
+        Replace setTimeout(x, 0) with requestAnimationFrame(x) in some autofocus tests
+        https://bugs.webkit.org/show_bug.cgi?id=231323
+
+        Reviewed by Chris Dumez.
+
+        Reason being the new autofocus behavior will happen asynchronously during "update rendering"
+        steps which is caught by the first, but not the second method.
+
+        Other minor changes:
+        - Remove "in XHTML", because the file extensions aren't actually XHTML...
+        - Remove not needed attributes from <script> tag
+        - Remove unneeded whitespace
+
+        * fast/forms/autofocus-opera-001.html:
+        * fast/forms/autofocus-opera-002.html:
+        * fast/forms/autofocus-opera-003.html:
+        * fast/forms/autofocus-opera-004.html:
+        * fast/forms/autofocus-opera-005.html:
+        * fast/forms/autofocus-opera-006.html:
+        * fast/forms/autofocus-opera-007.html:
+        * fast/forms/autofocus-opera-008.html:
+        * fast/forms/textarea/textarea-autofocus-removal-while-focusing.html:
+
+2021-10-06  Tim Nguyen  <ntim@apple.com>
+
         Rewrite plugins/object-onfocus-mutation-crash.html to stop relying on autofocus
         https://bugs.webkit.org/show_bug.cgi?id=231327
 

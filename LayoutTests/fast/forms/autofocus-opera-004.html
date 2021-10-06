@@ -1,11 +1,11 @@
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
 <head>
-<title>testing "autofocus" in XHTML combined with dynamic changes</title>
+<title>testing "autofocus" combined with dynamic changes</title>
 <style>
  input { background:red }
  input:focus { background:lime }
 </style>
-<script language="JavaScript" type="text/javascript">
+<script>
     function log(message) {
         document.getElementById("console").innerHTML += "<li>"+message+"</li>";
     }
@@ -18,12 +18,12 @@
         var input = document.getElementsByTagName('input')[0];
         var p = document.getElementsByTagName('p')[0];
         var input = p.removeChild(input);
-        input.setAttribute('autofocus','false');
+        input.setAttribute('autofocus', 'false');
         p.appendChild(input);
 
-        setTimeout(check, 0);
+        requestAnimationFrame(check);
     }
-    
+
     function check() {
         if (document.activeElement == document.getElementsByTagName("input")[0])
             log("SUCCESS");
