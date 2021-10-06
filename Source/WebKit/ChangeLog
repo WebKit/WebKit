@@ -1,3 +1,28 @@
+2021-10-06  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Move FlushIdentifier out of the DisplayList namespace
+        https://bugs.webkit.org/show_bug.cgi?id=231263
+
+        Reviewed by Simon Fraser.
+
+        In a future patch, I plan to use `DisplayList::FlushIdentifier` in code that is not specific to WebCore display
+        lists. As such, move this out into a separate header (`GraphicsContextFlushIdentifier.h`), and rename the enum
+        class accordingly.
+
+        * GPUProcess/graphics/RemoteRenderingBackend.cpp:
+        (WebKit::RemoteRenderingBackend::didFlush):
+        * GPUProcess/graphics/RemoteRenderingBackend.h:
+        * Scripts/webkit/messages.py:
+        (types_that_cannot_be_forward_declared):
+        (headers_for_type):
+        * WebProcess/GPU/graphics/RemoteImageBufferProxy.h:
+        (WebKit::RemoteImageBufferProxy::lastSentFlushIdentifier const):
+        (WebKit::RemoteImageBufferProxy::waitForDidFlushOnSecondaryThread):
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.cpp:
+        (WebKit::RemoteRenderingBackendProxy::didFlush):
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.h:
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.messages.in:
+
 2021-10-06  Aditya Keerthi  <akeerthi@apple.com>
 
         Fix watchOS, tvOS, and macCatalyst builds after r283592

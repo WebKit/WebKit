@@ -281,7 +281,7 @@ void RemoteRenderingBackendProxy::didCreateImageBufferBackend(ImageBufferBackend
         imageBuffer->setBackend(AcceleratedImageBufferShareableBackend::create(imageBuffer->parameters(), WTFMove(handle)));
 }
 
-void RemoteRenderingBackendProxy::didFlush(DisplayList::FlushIdentifier flushIdentifier, RenderingResourceIdentifier renderingResourceIdentifier)
+void RemoteRenderingBackendProxy::didFlush(GraphicsContextFlushIdentifier flushIdentifier, RenderingResourceIdentifier renderingResourceIdentifier)
 {
     if (auto imageBuffer = m_remoteResourceCacheProxy.cachedImageBuffer(renderingResourceIdentifier))
         imageBuffer->didFlush(flushIdentifier);

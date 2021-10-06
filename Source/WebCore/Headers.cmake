@@ -1291,6 +1291,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/GlyphPage.h
     platform/graphics/Gradient.h
     platform/graphics/GraphicsContext.h
+    platform/graphics/GraphicsContextFlushIdentifier.h
     platform/graphics/GraphicsContextGL.h
     platform/graphics/GraphicsContextGLAttributes.h
     platform/graphics/GraphicsLayer.h
@@ -1388,7 +1389,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     platform/graphics/displaylists/DisplayList.h
     platform/graphics/displaylists/DisplayListDrawingContext.h
-    platform/graphics/displaylists/DisplayListFlushIdentifier.h
     platform/graphics/displaylists/DisplayListImageBuffer.h
     platform/graphics/displaylists/DisplayListItemBuffer.h
     platform/graphics/displaylists/DisplayListItemBufferIdentifier.h

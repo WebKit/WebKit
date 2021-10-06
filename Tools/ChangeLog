@@ -1,3 +1,13 @@
+2021-10-06  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Move FlushIdentifier out of the DisplayList namespace
+        https://bugs.webkit.org/show_bug.cgi?id=231263
+
+        Reviewed by Simon Fraser.
+
+        * TestWebKitAPI/Tests/WebCore/cg/DisplayListTestsCG.cpp:
+        (TestWebKitAPI::TEST):
+
 2021-10-06  Alex Christensen  <achristensen@webkit.org>
 
         [ iOS15 Release ] TestWebKitAPI.WebSocket.CloseCode

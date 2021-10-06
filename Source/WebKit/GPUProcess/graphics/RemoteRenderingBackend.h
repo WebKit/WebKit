@@ -82,7 +82,7 @@ public:
 
     // Messages to be sent.
     void didCreateImageBufferBackend(ImageBufferBackendHandle, WebCore::RenderingResourceIdentifier);
-    void didFlush(WebCore::DisplayList::FlushIdentifier, WebCore::RenderingResourceIdentifier);
+    void didFlush(WebCore::GraphicsContextFlushIdentifier, WebCore::RenderingResourceIdentifier);
 
     void setNextItemBufferToRead(WebCore::DisplayList::ItemBufferIdentifier, WebCore::RenderingResourceIdentifier destination);
 

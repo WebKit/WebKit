@@ -26,7 +26,6 @@
 #pragma once
 
 #include "AlphaPremultiplication.h"
-#include "DisplayListFlushIdentifier.h"
 #include "DisplayListItemBufferIdentifier.h"
 #include "DisplayListItemType.h"
 #include "FloatRoundedRect.h"
@@ -34,6 +33,7 @@
 #include "GlyphBuffer.h"
 #include "Gradient.h"
 #include "GraphicsContext.h"
+#include "GraphicsContextFlushIdentifier.h"
 #include "Image.h"
 #include "MediaPlayerIdentifier.h"
 #include "Pattern.h"
@@ -2402,18 +2402,18 @@ public:
     static constexpr bool isInlineItem = true;
     static constexpr bool isDrawingItem = false;
 
-    explicit FlushContext(FlushIdentifier identifier)
+    explicit FlushContext(GraphicsContextFlushIdentifier identifier)
         : m_identifier(identifier)
     {
     }
 
-    FlushIdentifier identifier() const { return m_identifier; }
+    GraphicsContextFlushIdentifier identifier() const { return m_identifier; }
     bool isValid() const { return m_identifier.isValid(); }
 
     void apply(GraphicsContext&) const;
 
 private:
-    FlushIdentifier m_identifier;
+    GraphicsContextFlushIdentifier m_identifier;
 };
 
 // FIXME: This should be refactored so that the command to "switch to the next item buffer"

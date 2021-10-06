@@ -27,7 +27,7 @@
 
 #pragma once
 
-#include "DisplayListFlushIdentifier.h"
+#include "GraphicsContextFlushIdentifier.h"
 #include "ImageBufferBackend.h"
 #include "RenderingMode.h"
 #include "RenderingResourceIdentifier.h"
@@ -80,7 +80,7 @@ public:
     virtual bool prefersPreparationForDisplay() { return false; }
     virtual void flushDrawingContext() { }
     virtual void flushDrawingContextAsync() { }
-    virtual void didFlush(DisplayList::FlushIdentifier) { }
+    virtual void didFlush(GraphicsContextFlushIdentifier) { }
 
     virtual void changeDestinationImageBuffer(RenderingResourceIdentifier) { }
     virtual void prepareToAppendDisplayListItems(DisplayList::ItemBufferHandle&&) { }

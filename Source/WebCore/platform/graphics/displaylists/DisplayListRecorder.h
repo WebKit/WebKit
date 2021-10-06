@@ -74,7 +74,7 @@ public:
         virtual RenderingMode renderingMode() const { return RenderingMode::Unaccelerated; }
     };
 
-    void flushContext(FlushIdentifier identifier) { append<FlushContext>(identifier); }
+    void flushContext(GraphicsContextFlushIdentifier identifier) { append<FlushContext>(identifier); }
 
 private:
     Recorder(Recorder& parent, const GraphicsContextState&, const FloatRect& initialClip, const AffineTransform& initialCTM);
