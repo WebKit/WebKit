@@ -120,6 +120,7 @@ private:
     Vector<WeakPtr<Element>> m_observationTargets;
     Vector<GCReachableRef<Element>> m_pendingTargets;
     Vector<Ref<IntersectionObserverEntry>> m_queuedEntries;
+    Vector<GCReachableRef<Element>> m_targetsWaitingForFirstObservation;
 };
 
 

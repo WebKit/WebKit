@@ -1,3 +1,18 @@
+2021-10-05  Chris Dumez  <cdumez@apple.com>
+
+        ASSERT(m_callback->hasCallback()) under IntersectionObserver::notify()
+        https://bugs.webkit.org/show_bug.cgi?id=231235
+        <rdar://80837616>
+
+        Reviewed by Ryosuke Niwa.
+
+        Add layout test coverage both for the crash and the Web facing behavior.
+
+        * intersection-observer/observe-disconnected-target-crash-expected.txt: Added.
+        * intersection-observer/observe-disconnected-target-crash.html: Added.
+        * intersection-observer/observe-disconnected-target-expected.txt: Added.
+        * intersection-observer/observe-disconnected-target.html: Added.
+
 2021-10-05  Ayumi Kojima  <ayumi_kojima@apple.com>
 
         [ iOS Release ] fast/events/ios/rotation/layout-viewport-during-safari-type-rotation.html is flaky failing.
