@@ -1,3 +1,54 @@
+2021-10-06  Sihui Liu  <sihui_liu@apple.com>
+
+        Add support for FileSystemSyncAccessHandle
+        https://bugs.webkit.org/show_bug.cgi?id=231185
+        <rdar://problem/83847859>
+
+        Reviewed by Youenn Fablet.
+
+        Currently we only allow one open access handle on one file. Second access handle can be created after the first
+        is closed.
+
+        * NetworkProcess/storage/FileSystemStorageError.h:
+        (WebKit::convertToException):
+        (WebKit::convertToExceptionOr):
+        (WebKit::convertToExceptionCode): Deleted.
+        * NetworkProcess/storage/FileSystemStorageHandle.cpp:
+        (WebKit::FileSystemStorageHandle::createSyncAccessHandle):
+        (WebKit::FileSystemStorageHandle::getSize):
+        (WebKit::FileSystemStorageHandle::truncate):
+        (WebKit::FileSystemStorageHandle::flush):
+        (WebKit::FileSystemStorageHandle::close):
+        * NetworkProcess/storage/FileSystemStorageHandle.h:
+        * NetworkProcess/storage/FileSystemStorageManager.cpp:
+        (WebKit::FileSystemStorageManager::connectionClosed):
+        (WebKit::FileSystemStorageManager::acquireLockForFile):
+        (WebKit::FileSystemStorageManager::releaseLockForFile):
+        * NetworkProcess/storage/FileSystemStorageManager.h:
+        * NetworkProcess/storage/NetworkStorageManager.cpp:
+        (WebKit::NetworkStorageManager::createSyncAccessHandle):
+        (WebKit::NetworkStorageManager::getSizeForAccessHandle):
+        (WebKit::NetworkStorageManager::truncateForAccessHandle):
+        (WebKit::NetworkStorageManager::flushForAccessHandle):
+        (WebKit::NetworkStorageManager::closeAccessHandle):
+        * NetworkProcess/storage/NetworkStorageManager.h:
+        * NetworkProcess/storage/NetworkStorageManager.messages.in:
+        * Scripts/webkit/messages.py:
+        (types_that_cannot_be_forward_declared):
+        * WebProcess/WebCoreSupport/WebFileSystemStorageConnection.cpp:
+        (WebKit::WebFileSystemStorageConnection::getFileHandle):
+        (WebKit::WebFileSystemStorageConnection::getDirectoryHandle):
+        (WebKit::WebFileSystemStorageConnection::removeEntry):
+        (WebKit::WebFileSystemStorageConnection::resolve):
+        (WebKit::WebFileSystemStorageConnection::createSyncAccessHandle):
+        (WebKit::WebFileSystemStorageConnection::getSize):
+        (WebKit::WebFileSystemStorageConnection::truncate):
+        (WebKit::WebFileSystemStorageConnection::flush):
+        (WebKit::WebFileSystemStorageConnection::close):
+        * WebProcess/WebCoreSupport/WebFileSystemStorageConnection.h:
+        * WebProcess/WebCoreSupport/WebStorageConnection.cpp:
+        (WebKit::WebStorageConnection::fileSystemGetDirectory):
+
 2021-10-06  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Move FlushIdentifier out of the DisplayList namespace

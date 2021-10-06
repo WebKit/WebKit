@@ -281,6 +281,7 @@ def types_that_cannot_be_forward_declared():
         'WebCore::DragApplicationFlags',
         'WebCore::FetchIdentifier',
         'WebCore::FileSystemHandleIdentifier',
+        'WebCore::FileSystemSyncAccessHandleIdentifier',
         'WebCore::FrameIdentifier',
         'WebCore::GraphicsContextFlushIdentifier',
         'WebCore::GraphicsContextGLAttributes',

@@ -1,4 +1,4 @@
 
-FAIL There can only be one open access handle at any given time promise_test: Unhandled rejection with value: object "TypeError: fileHandle.createSyncAccessHandle is not a function. (In 'fileHandle.createSyncAccessHandle()', 'fileHandle.createSyncAccessHandle' is undefined)"
-FAIL An access handle from one file does not interfere with the creation of an access handle on another file promise_test: Unhandled rejection with value: object "TypeError: fooFileHandle.createSyncAccessHandle is not a function. (In 'fooFileHandle.createSyncAccessHandle()', 'fooFileHandle.createSyncAccessHandle' is undefined)"
+PASS There can only be one open access handle at any given time
+PASS An access handle from one file does not interfere with the creation of an access handle on another file
 

@@ -1,3 +1,20 @@
+2021-10-06  Sihui Liu  <sihui_liu@apple.com>
+
+        Add support for FileSystemSyncAccessHandle
+        https://bugs.webkit.org/show_bug.cgi?id=231185
+        <rdar://problem/83847859>
+
+        Reviewed by Youenn Fablet.
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml:
+        * wtf/FileSystem.h:
+        * wtf/glib/FileSystemGlib.cpp:
+        (WTF::FileSystemImpl::flushFile):
+        * wtf/posix/FileSystemPOSIX.cpp:
+        (WTF::FileSystemImpl::flushFile):
+        * wtf/win/FileSystemWin.cpp:
+        (WTF::FileSystemImpl::flushFile):
+
 2021-10-06  Aditya Keerthi  <akeerthi@apple.com>
 
         Fix watchOS, tvOS, and macCatalyst builds after r283592

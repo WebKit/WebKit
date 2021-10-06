@@ -124,6 +124,7 @@ namespace WebCore {
     macro(FileSystemFileEntry) \
     macro(FileSystemFileHandle) \
     macro(FileSystemHandle) \
+    macro(FileSystemSyncAccessHandle) \
     macro(Gamepad) \
     macro(GamepadButton) \
     macro(GamepadEvent) \

@@ -154,6 +154,7 @@ WTF_EXPORT_PRIVATE void closeFile(PlatformFileHandle&);
 // Returns the resulting offset from the beginning of the file if successful, -1 otherwise.
 WTF_EXPORT_PRIVATE long long seekFile(PlatformFileHandle, long long offset, FileSeekOrigin);
 WTF_EXPORT_PRIVATE bool truncateFile(PlatformFileHandle, long long offset);
+WTF_EXPORT_PRIVATE bool flushFile(PlatformFileHandle);
 // Returns number of bytes actually read if successful, -1 otherwise.
 WTF_EXPORT_PRIVATE int writeToFile(PlatformFileHandle, const void* data, int length);
 // Returns number of bytes actually written if successful, -1 otherwise.

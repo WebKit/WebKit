@@ -1,0 +1,18 @@
+[Worker] This test checks basic funtionalities of FileSystemSyncAccessHandle.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Starting worker: resources/sync-access-handle-basics.js
+PASS [Worker] fileHandle.name is "sync-access-handle.txt"
+PASS [Worker] fileHandle.kind is "file"
+[Worker] accessHandle1 is created
+PASS [Worker] size is 0
+[Worker] accessHandle2 cannot be created
+PASS [Worker] createError.toString() is "InvalidStateError: The object is in an invalid state."
+[Worker] accessHandle1 is closed
+[Worker] accessHandle2 is created
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -27,6 +27,7 @@
 
 #include "Connection.h"
 #include <WebCore/FileSystemHandleIdentifier.h>
+#include <WebCore/FileSystemSyncAccessHandleIdentifier.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebKit {
@@ -49,6 +50,12 @@ public:
     std::optional<FileSystemStorageError> removeEntry(const String& name, bool deleteRecursively);
     Expected<Vector<String>, FileSystemStorageError> resolve(WebCore::FileSystemHandleIdentifier);
 
+    Expected<WebCore::FileSystemSyncAccessHandleIdentifier, FileSystemStorageError> createSyncAccessHandle();
+    Expected<uint64_t, FileSystemStorageError> getSize(WebCore::FileSystemSyncAccessHandleIdentifier);
+    std::optional<FileSystemStorageError> truncate(WebCore::FileSystemSyncAccessHandleIdentifier, uint64_t size);
+    std::optional<FileSystemStorageError> flush(WebCore::FileSystemSyncAccessHandleIdentifier);
+    std::optional<FileSystemStorageError> close(WebCore::FileSystemSyncAccessHandleIdentifier);
+
 private:
     Expected<WebCore::FileSystemHandleIdentifier, FileSystemStorageError> requestCreateHandle(IPC::Connection::UniqueID, Type, String&& name, bool createIfNecessary);
 
@@ -57,6 +64,7 @@ private:
     Type m_type;
     String m_path;
     String m_name;
+    std::optional<WebCore::FileSystemSyncAccessHandleIdentifier> m_activeSyncAccessHandle;
 };
 
 } // namespace WebKit

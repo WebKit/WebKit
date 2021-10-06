@@ -26,6 +26,18 @@
 # They must include a humanReadableName and humanReadableDescription. This is
 #   the text exposed to the user from the WebKit client.
 
+AccessHandleEnabled:
+  type: bool
+  humanReadableName: "AccessHandle API"
+  humanReadableDescription: "Enable AccessHandle API"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 AccessibilityObjectModelEnabled:
   type: bool
   humanReadableName: "Accessibility Object Model"

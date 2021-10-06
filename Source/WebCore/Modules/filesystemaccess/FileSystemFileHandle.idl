@@ -23,11 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// https://wicg.github.io/file-system-access/#api-filesystemhandle
+
 [
     EnabledBySetting=FileSystemAccessEnabled,
     Exposed=(Window,Worker),
     SecureContext
 ] interface FileSystemFileHandle : FileSystemHandle {
     Promise<File> getFile();
-    // FIXME: add Promise<FileSystemWritableFileStream> createWritable(optional FileSystemCreateWritableOptions options);
+    [EnabledBySetting=AccessHandleEnabled, Exposed=Worker] Promise<FileSystemSyncAccessHandle> createSyncAccessHandle();
 };
