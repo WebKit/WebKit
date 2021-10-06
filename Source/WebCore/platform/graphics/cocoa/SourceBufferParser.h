@@ -29,10 +29,11 @@
 
 #include "MediaPlayerEnums.h"
 #include "SourceBufferPrivateClient.h"
-#include <JavaScriptCore/Uint8Array.h>
+#include <JavaScriptCore/Forward.h>
 #include <pal/spi/cocoa/MediaToolboxSPI.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/RefCounted.h>
+#include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/Variant.h>
 
 namespace WTF {

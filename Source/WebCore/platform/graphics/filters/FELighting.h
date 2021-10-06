@@ -30,7 +30,7 @@
 #include "Filter.h"
 #include "FilterEffect.h"
 #include "LightSource.h"
-#include <JavaScriptCore/Uint8ClampedArray.h>
+#include <JavaScriptCore/Forward.h>
 
 // Common base class for FEDiffuseLighting and FESpecularLighting
 

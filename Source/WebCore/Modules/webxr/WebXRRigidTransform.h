@@ -30,7 +30,7 @@
 #include "ExceptionOr.h"
 #include "JSValueInWrappedObject.h"
 #include "TransformationMatrix.h"
-#include <JavaScriptCore/Float32Array.h>
+#include <JavaScriptCore/Forward.h>
 #include <wtf/IsoMalloc.h>
 #include <wtf/RefCounted.h>
 #include <wtf/WeakPtr.h>

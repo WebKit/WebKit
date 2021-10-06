@@ -28,6 +28,7 @@
 
 #if ENABLE(WEB_AUTHN)
 
+#import <JavaScriptCore/ArrayBuffer.h>
 #import <Security/SecItem.h>
 #import <WebCore/AuthenticatorAssertionResponse.h>
 #import <WebCore/ExceptionData.h>

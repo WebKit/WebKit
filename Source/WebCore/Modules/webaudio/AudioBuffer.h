@@ -32,7 +32,7 @@
 #include "AudioBufferOptions.h"
 #include "ExceptionOr.h"
 #include "JSValueInWrappedObject.h"
-#include <JavaScriptCore/Float32Array.h>
+#include <JavaScriptCore/Forward.h>
 #include <wtf/Lock.h>
 #include <wtf/Vector.h>
 

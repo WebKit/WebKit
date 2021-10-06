@@ -114,6 +114,11 @@ bool CDMSessionAVFoundationObjC::update(Uint8Array* key, RefPtr<Uint8Array>& nex
     return true;
 }
 
+RefPtr<ArrayBuffer> CDMSessionAVFoundationObjC::cachedKeyForKeyID(const String&) const
+{
+    return nullptr;
+}
+
 void CDMSessionAVFoundationObjC::playerDidReceiveError(NSError *error)
 {
     if (!m_client)

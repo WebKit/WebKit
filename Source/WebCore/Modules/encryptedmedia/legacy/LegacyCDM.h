@@ -28,7 +28,6 @@
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
 
 #include "LegacyCDMSession.h"
-#include <JavaScriptCore/Uint8Array.h>
 #include <wtf/Forward.h>
 #include <wtf/Function.h>
 #include <wtf/text/WTFString.h>

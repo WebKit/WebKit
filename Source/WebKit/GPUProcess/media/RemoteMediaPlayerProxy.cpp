@@ -48,6 +48,7 @@
 #include "TextTrackPrivateRemoteConfiguration.h"
 #include "TrackPrivateRemoteConfiguration.h"
 #include "WebCoreArgumentCoders.h"
+#include <JavaScriptCore/Uint8Array.h>
 #include <WebCore/LayoutRect.h>
 #include <WebCore/MediaPlayer.h>
 #include <WebCore/MediaPlayerPrivate.h>

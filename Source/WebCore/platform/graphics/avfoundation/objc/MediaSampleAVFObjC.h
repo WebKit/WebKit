@@ -26,7 +26,7 @@
 #pragma once
 
 #include "MediaSample.h"
-#include <JavaScriptCore/Uint8ClampedArray.h>
+#include <JavaScriptCore/Forward.h>
 #include <pal/avfoundation/MediaTimeAVFoundation.h>
 #include <wtf/Forward.h>
 

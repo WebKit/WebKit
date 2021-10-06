@@ -48,6 +48,7 @@ public:
     RefPtr<Uint8Array> generateKeyRequest(const String& mimeType, Uint8Array* initData, String& destinationURL, unsigned short& errorCode, uint32_t& systemCode) override;
     void releaseKeys() override;
     bool update(Uint8Array*, RefPtr<Uint8Array>& nextMessage, unsigned short& errorCode, uint32_t& systemCode) override;
+    RefPtr<ArrayBuffer> cachedKeyForKeyID(const String&) const override { return nullptr; }
 
 protected:
     LegacyCDMSessionClient* m_client;

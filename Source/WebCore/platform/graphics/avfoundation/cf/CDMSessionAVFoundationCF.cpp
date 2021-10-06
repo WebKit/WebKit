@@ -34,6 +34,8 @@
 #include "MediaPlayerPrivateAVFoundationCF.h"
 #include "NotImplemented.h"
 #include <AVFoundationCF/AVFoundationCF.h>
+#include <JavaScriptCore/ArrayBuffer.h>
+#include <JavaScriptCore/Uint8Array.h>
 #include <wtf/SoftLinking.h>
 #include <wtf/UUID.h>
 #include <wtf/text/CString.h>
@@ -118,6 +120,11 @@ bool CDMSessionAVFoundationCF::update(Uint8Array* key, RefPtr<Uint8Array>& nextM
     systemCode = 0;
     nextMessage = nullptr;
     return true;
+}
+
+RefPtr<ArrayBuffer> CDMSessionAVFoundationCF::cachedKeyForKeyID(const String&) const
+{
+    return nullptr;
 }
 
 }

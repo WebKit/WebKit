@@ -43,6 +43,7 @@
 #include "WebGLStateTracker.h"
 #include "WebGLTexture.h"
 #include "WebGLVertexArrayObjectOES.h"
+#include <JavaScriptCore/ArrayBufferView.h>
 #include <JavaScriptCore/ConsoleTypes.h>
 #include <limits>
 #include <memory>

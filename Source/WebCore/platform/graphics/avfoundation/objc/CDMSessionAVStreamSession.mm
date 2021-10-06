@@ -269,6 +269,11 @@ bool CDMSessionAVStreamSession::update(Uint8Array* key, RefPtr<Uint8Array>& next
     return true;
 }
 
+RefPtr<ArrayBuffer> CDMSessionAVStreamSession::cachedKeyForKeyID(const String&) const
+{
+    return nullptr;
+}
+
 void CDMSessionAVStreamSession::setStreamSession(AVStreamSession *streamSession)
 {
     if (m_streamSession)

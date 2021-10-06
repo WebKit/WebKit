@@ -41,6 +41,7 @@
 #include "PixelBuffer.h"
 #include "TemporaryANGLESetting.h"
 #include <JavaScriptCore/RegularExpression.h>
+#include <JavaScriptCore/Uint8ClampedArray.h>
 #include <algorithm>
 #include <cstring>
 #include <wtf/HexNumber.h>

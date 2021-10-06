@@ -27,7 +27,7 @@
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
 
-#include <JavaScriptCore/Uint8Array.h>
+#include <JavaScriptCore/Forward.h>
 #include <wtf/Forward.h>
 
 namespace WebCore {
@@ -71,7 +71,7 @@ public:
     virtual RefPtr<Uint8Array> generateKeyRequest(const String& mimeType, Uint8Array* initData, String& destinationURL, unsigned short& errorCode, uint32_t& systemCode) = 0;
     virtual void releaseKeys() = 0;
     virtual bool update(Uint8Array*, RefPtr<Uint8Array>& nextMessage, unsigned short& errorCode, uint32_t& systemCode) = 0;
-    virtual RefPtr<ArrayBuffer> cachedKeyForKeyID(const String&) const { return nullptr; }
+    virtual RefPtr<ArrayBuffer> cachedKeyForKeyID(const String&) const = 0;
 };
 
 }

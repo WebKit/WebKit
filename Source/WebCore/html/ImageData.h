@@ -33,7 +33,7 @@
 #include "IntSize.h"
 #include "PixelBuffer.h"
 #include "PredefinedColorSpace.h"
-#include <JavaScriptCore/Uint8ClampedArray.h>
+#include <JavaScriptCore/Forward.h>
 #include <wtf/Forward.h>
 
 namespace WebCore {

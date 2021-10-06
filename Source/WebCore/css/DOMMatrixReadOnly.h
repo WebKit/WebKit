@@ -29,8 +29,7 @@
 #include "ExceptionOr.h"
 #include "ScriptWrappable.h"
 #include "TransformationMatrix.h"
-#include <JavaScriptCore/Float32Array.h>
-#include <JavaScriptCore/Float64Array.h>
+#include <JavaScriptCore/Forward.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Variant.h>
 #include <wtf/Vector.h>

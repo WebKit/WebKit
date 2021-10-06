@@ -26,6 +26,7 @@
 #pragma once
 
 #include "WebGLExtension.h"
+#include <JavaScriptCore/TypedArrays.h>
 
 namespace WebCore {
 

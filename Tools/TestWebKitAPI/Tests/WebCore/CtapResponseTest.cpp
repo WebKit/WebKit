@@ -32,6 +32,7 @@
 #if ENABLE(WEB_AUTHN)
 
 #include "FidoTestData.h"
+#include <JavaScriptCore/ArrayBuffer.h>
 #include <WebCore/AuthenticatorAttachment.h>
 #include <WebCore/CBORReader.h>
 #include <WebCore/CBORValue.h>

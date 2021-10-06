@@ -236,6 +236,11 @@ GCGLsizeiptr WebGLBuffer::byteLength() const
     return m_byteLength;
 }
 
+const RefPtr<JSC::ArrayBuffer> WebGLBuffer::elementArrayBuffer() const
+{
+    return m_elementArrayBuffer;
+}
+
 std::optional<unsigned> WebGLBuffer::getCachedMaxIndex(GCGLenum type)
 {
     for (auto& cache : m_maxIndexCache) {

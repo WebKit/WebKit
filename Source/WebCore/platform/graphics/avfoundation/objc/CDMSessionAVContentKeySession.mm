@@ -316,6 +316,11 @@ bool CDMSessionAVContentKeySession::update(Uint8Array* key, RefPtr<Uint8Array>& 
     return true;
 }
 
+RefPtr<ArrayBuffer> CDMSessionAVContentKeySession::cachedKeyForKeyID(const String&) const
+{
+    return nullptr;
+}
+
 void CDMSessionAVContentKeySession::addParser(AVStreamDataParser* parser)
 {
     if ([contentKeySession() respondsToSelector:@selector(addContentKeyRecipient:)])

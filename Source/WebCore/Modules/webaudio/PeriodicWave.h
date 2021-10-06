@@ -31,7 +31,7 @@
 #include "AudioArray.h"
 #include "ExceptionOr.h"
 #include "PeriodicWaveOptions.h"
-#include <JavaScriptCore/Float32Array.h>
+#include <JavaScriptCore/Forward.h>
 #include <memory>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>

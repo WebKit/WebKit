@@ -28,7 +28,7 @@
 #include "AudioBasicProcessorNode.h"
 #include "IIRFilterOptions.h"
 #include "IIRProcessor.h"
-#include <JavaScriptCore/Float32Array.h>
+#include <JavaScriptCore/Forward.h>
 #include <wtf/IsoMalloc.h>
 
 namespace WebCore {

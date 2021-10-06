@@ -30,6 +30,7 @@
 
 #include "HTMLMediaElement.h"
 #include "WebKitMediaKeySession.h"
+#include <JavaScriptCore/Uint8Array.h>
 
 namespace WebCore {
 

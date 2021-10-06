@@ -1,3 +1,19 @@
+2021-10-06  Jer Noble  <jer.noble@apple.com>
+
+        [Build-time perf] Forward declare JS TypedArrays
+        https://bugs.webkit.org/show_bug.cgi?id=231196
+
+        Reviewed by Tim Horton.
+
+        Add a new file, Forward.h, containing forward declarations of commonly used JavaScriptCore types. Removed duplicate declarations
+        of TypedArray classes from TypedArrayAdapters.h and TypedArrays.h.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * runtime/Forward.h: Added.
+        * runtime/TypedArrayAdaptors.h:
+        * runtime/TypedArrayAdaptersForwardDeclarations.h: Added.
+        * runtime/TypedArrays.h:
+
 2021-10-06  Mikhail R. Gadelha  <mikhail@igalia.com>
 
         Fix wrong edge type from get-by-val in 32 bits

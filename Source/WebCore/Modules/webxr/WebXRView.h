@@ -30,7 +30,7 @@
 #include "JSValueInWrappedObject.h"
 #include "WebXRRigidTransform.h"
 #include "XREye.h"
-#include <JavaScriptCore/Float32Array.h>
+#include <JavaScriptCore/Forward.h>
 #include <wtf/IsoMalloc.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>

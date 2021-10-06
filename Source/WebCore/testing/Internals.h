@@ -38,7 +38,7 @@
 #include "SleepDisabler.h"
 #include "TextIndicator.h"
 #include "VP9Utilities.h"
-#include <JavaScriptCore/Float32Array.h>
+#include <JavaScriptCore/Forward.h>
 
 #if ENABLE(VIDEO)
 #include "MediaElementSession.h"

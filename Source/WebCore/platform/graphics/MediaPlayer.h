@@ -37,14 +37,14 @@
 #include "SecurityOriginData.h"
 #include "Timer.h"
 #include "VideoPlaybackQualityMetrics.h"
-#include <wtf/URL.h>
-#include <JavaScriptCore/Uint8Array.h>
+#include <JavaScriptCore/Forward.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Function.h>
 #include <wtf/HashSet.h>
 #include <wtf/Logger.h>
 #include <wtf/MediaTime.h>
 #include <wtf/ThreadSafeRefCounted.h>
+#include <wtf/URL.h>
 #include <wtf/WallTime.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/StringHash.h>

@@ -34,6 +34,7 @@
 #include <cstdint>
 #include <wtf/Condition.h>
 #include <wtf/DataMutex.h>
+#include <wtf/PrintStream.h>
 #include <wtf/RunLoop.h>
 #include <wtf/Scope.h>
 #include <wtf/glib/WTFGType.h>

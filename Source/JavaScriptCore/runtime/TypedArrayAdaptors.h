@@ -28,6 +28,7 @@
 #include "JSBigInt.h"
 #include "JSCJSValue.h"
 #include "MathCommon.h"
+#include "TypedArrayAdaptersForwardDeclarations.h"
 #include "TypedArrayType.h"
 #include <wtf/MathExtras.h>
 
@@ -207,31 +208,6 @@ struct BigIntTypedArrayAdaptor {
         return static_cast<typename OtherAdaptor::Type>(value);
     }
 };
-
-struct Int8Adaptor;
-struct Int16Adaptor;
-struct Int32Adaptor;
-struct Uint8Adaptor;
-struct Uint8ClampedAdaptor;
-struct Uint16Adaptor;
-struct Uint32Adaptor;
-struct Float32Adaptor;
-struct Float64Adaptor;
-struct BigInt64Adaptor;
-struct BigUint64Adaptor;
-
-template<typename Adaptor> class GenericTypedArrayView;
-typedef GenericTypedArrayView<Int8Adaptor> Int8Array;
-typedef GenericTypedArrayView<Int16Adaptor> Int16Array;
-typedef GenericTypedArrayView<Int32Adaptor> Int32Array;
-typedef GenericTypedArrayView<Uint8Adaptor> Uint8Array;
-typedef GenericTypedArrayView<Uint8ClampedAdaptor> Uint8ClampedArray;
-typedef GenericTypedArrayView<Uint16Adaptor> Uint16Array;
-typedef GenericTypedArrayView<Uint32Adaptor> Uint32Array;
-typedef GenericTypedArrayView<Float32Adaptor> Float32Array;
-typedef GenericTypedArrayView<Float64Adaptor> Float64Array;
-typedef GenericTypedArrayView<BigInt64Adaptor> BigInt64Array;
-typedef GenericTypedArrayView<BigUint64Adaptor> BigUint64Array;
 
 template<typename Adaptor> class JSGenericTypedArrayView;
 using JSInt8Array = JSGenericTypedArrayView<Int8Adaptor>;

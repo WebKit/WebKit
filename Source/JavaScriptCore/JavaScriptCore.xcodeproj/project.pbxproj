@@ -1785,6 +1785,8 @@
 		C4F4B6F41A05C944005CAB76 /* cpp_generator.py in Headers */ = {isa = PBXBuildFile; fileRef = C4F4B6D01A05C76F005CAB76 /* cpp_generator.py */; settings = {ATTRIBUTES = (Private, ); }; };
 		C4F4B6F51A05C984005CAB76 /* generate_objc_protocol_types_implementation.py in Headers */ = {isa = PBXBuildFile; fileRef = C4F4B6D71A05C76F005CAB76 /* generate_objc_protocol_types_implementation.py */; settings = {ATTRIBUTES = (Private, ); }; };
 		C4F4B6F61A05C984005CAB76 /* objc_generator_templates.py in Headers */ = {isa = PBXBuildFile; fileRef = C4F4B6D81A05C76F005CAB76 /* objc_generator_templates.py */; settings = {ATTRIBUTES = (Private, ); }; };
+		CD1F9B3A270B9AAD00617EB6 /* Forward.h in Headers */ = {isa = PBXBuildFile; fileRef = CD1F9B39270B9AAD00617EB6 /* Forward.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		CD1F9B3C270C0C1A00617EB6 /* TypedArrayAdaptersForwardDeclarations.h in Headers */ = {isa = PBXBuildFile; fileRef = CD1F9B3B270C0C1A00617EB6 /* TypedArrayAdaptersForwardDeclarations.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CE20BD05237D3E230046E520 /* FileBasedFuzzerAgentBase.h in Headers */ = {isa = PBXBuildFile; fileRef = CE20BD03237D3AD40046E520 /* FileBasedFuzzerAgentBase.h */; };
 		CE20BD07237D3E480046E520 /* PredictionFileCreatingFuzzerAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = CE20BD01237D3AD40046E520 /* PredictionFileCreatingFuzzerAgent.h */; };
 		CEAE7D7B889B477BA93ABA6C /* ScriptFetcher.h in Headers */ = {isa = PBXBuildFile; fileRef = 8852151A9C3842389B3215B7 /* ScriptFetcher.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -5022,6 +5024,8 @@
 		C4F4B6D61A05C76F005CAB76 /* generate_cpp_protocol_types_implementation.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = generate_cpp_protocol_types_implementation.py; sourceTree = "<group>"; };
 		C4F4B6D71A05C76F005CAB76 /* generate_objc_protocol_types_implementation.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = generate_objc_protocol_types_implementation.py; sourceTree = "<group>"; };
 		C4F4B6D81A05C76F005CAB76 /* objc_generator_templates.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = objc_generator_templates.py; sourceTree = "<group>"; };
+		CD1F9B39270B9AAD00617EB6 /* Forward.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Forward.h; sourceTree = "<group>"; };
+		CD1F9B3B270C0C1A00617EB6 /* TypedArrayAdaptersForwardDeclarations.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TypedArrayAdaptersForwardDeclarations.h; sourceTree = "<group>"; };
 		CE20BD01237D3AD40046E520 /* PredictionFileCreatingFuzzerAgent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PredictionFileCreatingFuzzerAgent.h; sourceTree = "<group>"; };
 		CE20BD02237D3AD40046E520 /* PredictionFileCreatingFuzzerAgent.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PredictionFileCreatingFuzzerAgent.cpp; sourceTree = "<group>"; };
 		CE20BD03237D3AD40046E520 /* FileBasedFuzzerAgentBase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FileBasedFuzzerAgentBase.h; sourceTree = "<group>"; };
@@ -6277,10 +6281,10 @@
 				0F24E53B17EA9F5900ABB217 /* AssemblyHelpers.cpp */,
 				0F24E53C17EA9F5900ABB217 /* AssemblyHelpers.h */,
 				6B767E7A26791F270017F8D1 /* AssemblyHelpersSpoolers.h */,
-				723998F6265DBCDB0057867F /* BaselineJITPlan.cpp */,
-				723998F5265DBCDB0057867F /* BaselineJITPlan.h */,
 				52DD000726E039B40054E408 /* BaselineJITCode.cpp */,
 				52DD000626E039B30054E408 /* BaselineJITCode.h */,
+				723998F6265DBCDB0057867F /* BaselineJITPlan.cpp */,
+				723998F5265DBCDB0057867F /* BaselineJITPlan.h */,
 				0F64B26F1A784BAF006E4E66 /* BinarySwitch.cpp */,
 				0F64B2701A784BAF006E4E66 /* BinarySwitch.h */,
 				65B8392D1BACA9D30044E824 /* CachedRecovery.cpp */,
@@ -7482,6 +7486,7 @@
 				531EE7B922DE6BBB0030DA81 /* FinalizationRegistryPrototype.h */,
 				A7A8AF2917ADB5F3005AB174 /* Float32Array.h */,
 				A7A8AF2A17ADB5F3005AB174 /* Float64Array.h */,
+				CD1F9B39270B9AAD00617EB6 /* Forward.h */,
 				BC2680C00E16D4E900A06E92 /* FunctionConstructor.cpp */,
 				BC2680C10E16D4E900A06E92 /* FunctionConstructor.h */,
 				147341DC1DC2CE9600AA29BA /* FunctionExecutable.cpp */,
@@ -8040,6 +8045,7 @@
 				FE2E6A7A1D6EA5FE0060F896 /* ThrowScope.cpp */,
 				FE3422111D6B818C0032BE88 /* ThrowScope.h */,
 				0F55989717C86C5600A1E543 /* ToNativeFromValue.h */,
+				CD1F9B3B270C0C1A00617EB6 /* TypedArrayAdaptersForwardDeclarations.h */,
 				0F2B66D817B6B5AB00A7AE3F /* TypedArrayAdaptors.h */,
 				0F2B66D917B6B5AB00A7AE3F /* TypedArrayController.cpp */,
 				0F2B66DA17B6B5AB00A7AE3F /* TypedArrayController.h */,
@@ -9496,6 +9502,7 @@
 				53D444DC1DAF08AB00B92784 /* B3WasmAddressValue.h in Headers */,
 				5341FC721DAC343C00E7E4D7 /* B3WasmBoundsCheckValue.h in Headers */,
 				0F2C63B21E60AE4700C13839 /* B3Width.h in Headers */,
+				52DD000826E039B90054E408 /* BaselineJITCode.h in Headers */,
 				723998F7265DBCDB0057867F /* BaselineJITPlan.h in Headers */,
 				52678F8F1A031009006A306D /* BasicBlockLocation.h in Headers */,
 				147B83AC0E6DB8C9004775A4 /* BatchedTransitionOptimizer.h in Headers */,
@@ -9631,7 +9638,6 @@
 				5DE6E5B30E1728EC00180407 /* create_hash_table in Headers */,
 				535C24611F78928E006EC40E /* create_regex_tables in Headers */,
 				9959E92B1BD17FA4001AA413 /* cssmin.py in Headers */,
-				E386FD7B26E867B800E4C28B /* TemporalPlainTimeConstructor.h in Headers */,
 				2A111246192FCE79005EE18D /* CustomGetterSetter.h in Headers */,
 				0F426A4B1460CD6E00131F8F /* DataFormat.h in Headers */,
 				0F2B66DF17B6B5AB00A7AE3F /* DataView.h in Headers */,
@@ -9735,10 +9741,8 @@
 				0F2017821DCADD4200EA5950 /* DFGFlowMap.h in Headers */,
 				0F9D339717FFC4E60073C2BC /* DFGFlushedAt.h in Headers */,
 				A7D89CF817A0B8CC00773AD8 /* DFGFlushFormat.h in Headers */,
-				52DD000826E039B90054E408 /* BaselineJITCode.h in Headers */,
 				0F2DD8151AB3D8BE00BBB8E8 /* DFGForAllKills.h in Headers */,
 				0F69CC89193AC60A0045759E /* DFGFrozenValue.h in Headers */,
-				E386FD7E26E867B800E4C28B /* TemporalPlainTime.h in Headers */,
 				86EC9DC61328DF82002B2AD7 /* DFGGenerationInfo.h in Headers */,
 				86EC9DC81328DF82002B2AD7 /* DFGGraph.h in Headers */,
 				0F2FCCFA18A60070001A27F8 /* DFGGraphSafepoint.h in Headers */,
@@ -9895,6 +9899,7 @@
 				531EE7BA22DE6BBB0030DA81 /* FinalizationRegistryPrototype.h in Headers */,
 				A7A8AF3817ADB5F3005AB174 /* Float32Array.h in Headers */,
 				A7A8AF3917ADB5F3005AB174 /* Float64Array.h in Headers */,
+				CD1F9B3A270B9AAD00617EB6 /* Forward.h in Headers */,
 				0F24E54317EA9F5900ABB217 /* FPRInfo.h in Headers */,
 				E34EDBF71DB5FFC900DC87A5 /* FrameTracers.h in Headers */,
 				0F5513A61D5A682C00C32BD8 /* FreeList.h in Headers */,
@@ -10281,7 +10286,6 @@
 				0F2B66F217B6B5AB00A7AE3F /* JSGenericTypedArrayViewConstructor.h in Headers */,
 				0F2B66F317B6B5AB00A7AE3F /* JSGenericTypedArrayViewConstructorInlines.h in Headers */,
 				0F2B66F417B6B5AB00A7AE3F /* JSGenericTypedArrayViewInlines.h in Headers */,
-				E386FD7F26E867B800E4C28B /* TemporalPlainTimePrototype.h in Headers */,
 				0F2B66F517B6B5AB00A7AE3F /* JSGenericTypedArrayViewPrototype.h in Headers */,
 				53917E7B1B7906FA000EBD33 /* JSGenericTypedArrayViewPrototypeFunctions.h in Headers */,
 				0F2B66F617B6B5AB00A7AE3F /* JSGenericTypedArrayViewPrototypeInlines.h in Headers */,
@@ -10743,6 +10747,9 @@
 				A3C7EDBA26B0DB38004C34C5 /* TemporalDurationConstructor.h in Headers */,
 				A3C7EDB626B0DB38004C34C5 /* TemporalDurationPrototype.h in Headers */,
 				F6F150212693D450004B98EF /* TemporalObject.lut.h in Headers */,
+				E386FD7E26E867B800E4C28B /* TemporalPlainTime.h in Headers */,
+				E386FD7B26E867B800E4C28B /* TemporalPlainTimeConstructor.h in Headers */,
+				E386FD7F26E867B800E4C28B /* TemporalPlainTimePrototype.h in Headers */,
 				E30E8A5626DE2E4800DA4915 /* TemporalTimeZone.h in Headers */,
 				E30E8A5726DE2E4800DA4915 /* TemporalTimeZoneConstructor.h in Headers */,
 				E30E8A5426DE2E4800DA4915 /* TemporalTimeZonePrototype.h in Headers */,
@@ -10756,6 +10763,7 @@
 				0F55989817C86C5800A1E543 /* ToNativeFromValue.h in Headers */,
 				0F2D4DE919832DAC007D4B19 /* ToThisStatus.h in Headers */,
 				0F952ABD1B487A7700C367C5 /* TrackedReferences.h in Headers */,
+				CD1F9B3C270C0C1A00617EB6 /* TypedArrayAdaptersForwardDeclarations.h in Headers */,
 				0F2B670617B6B5AB00A7AE3F /* TypedArrayAdaptors.h in Headers */,
 				0F2B670817B6B5AB00A7AE3F /* TypedArrayController.h in Headers */,
 				0F4B94DC17B9F07500DD03A4 /* TypedArrayInlines.h in Headers */,

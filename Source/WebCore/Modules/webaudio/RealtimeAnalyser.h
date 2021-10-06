@@ -25,8 +25,7 @@
 #pragma once
 
 #include "AudioArray.h"
-#include <JavaScriptCore/Float32Array.h>
-#include <JavaScriptCore/Uint8Array.h>
+#include <JavaScriptCore/Forward.h>
 #include <memory>
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>

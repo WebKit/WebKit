@@ -27,6 +27,7 @@
 #include "DOMMatrix.h"
 
 #include "ScriptExecutionContext.h"
+#include <JavaScriptCore/Float32Array.h>
 #include <cmath>
 #include <limits>
 

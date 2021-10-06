@@ -987,6 +987,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/ExecutableBaseInlines.h
     runtime/Float32Array.h
     runtime/Float64Array.h
+    runtime/Forward.h
     runtime/FunctionConstructor.h
     runtime/FunctionExecutable.h
     runtime/FunctionHasExecutedCache.h
@@ -1178,6 +1179,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/ToNativeFromValue.h
     runtime/TypeError.h
     runtime/TypeSet.h
+    runtime/TypedArrayAdaptersForwardDeclarations.h
     runtime/TypedArrayAdaptors.h
     runtime/TypedArrayController.h
     runtime/TypedArrayInlines.h

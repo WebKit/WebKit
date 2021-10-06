@@ -37,6 +37,7 @@
 #include "LoadableTextTrack.h"
 #include "Logging.h"
 #include <wtf/IsoMallocInlines.h>
+#include <wtf/SetForScope.h>
 #include <wtf/text/CString.h>
 
 namespace WebCore {

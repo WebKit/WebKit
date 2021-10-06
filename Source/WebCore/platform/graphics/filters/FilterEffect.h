@@ -28,7 +28,7 @@
 #include "IntRect.h"
 #include "IntRectExtent.h"
 #include "PixelBuffer.h"
-#include <JavaScriptCore/Uint8ClampedArray.h>
+#include <JavaScriptCore/Forward.h>
 #include <wtf/MathExtras.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
