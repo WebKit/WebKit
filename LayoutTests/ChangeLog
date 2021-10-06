@@ -1,3 +1,18 @@
+2021-10-06  Kyle Piddington  <kpiddington@apple.com>
+
+        Shadertoy "truchet district" fails to compile with error: Internal error compiling shader with Metal backend"
+        https://bugs.webkit.org/show_bug.cgi?id=229378
+        <rdar://problem/82299053>
+
+        Reviewed by Kenneth Russell.
+
+        Add a test testing Metal reserved words and standard library macros.
+
+        * webgl/pending/conformance/glsl/misc/shader-with-reserved-words-2-expected.txt: Added.
+        * webgl/pending/conformance/glsl/misc/shader-with-reserved-words-2.html: Added.
+        * webgl/pending/resources/webgl_test_files/conformance/glsl/misc/shader-with-reserved-words-2.html: Added.
+
+
 2021-10-06  Ayumi Kojima  <ayumi_kojima@apple.com>
 
         [ iOS 15 ] http/tests/websocket/tests/hybi/close-code-and-reason.html is failing.

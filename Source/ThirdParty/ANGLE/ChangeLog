@@ -1,3 +1,26 @@
+2021-10-06  Kyle Piddington  <kpiddington@apple.com>
+
+        Shadertoy "truchet district" fails to compile with error: Internal error compiling shader with Metal backend"
+        https://bugs.webkit.org/show_bug.cgi?id=229378
+        <rdar://problem/82299053>
+
+        Reviewed by Kenneth Russell.
+
+        Change TranslatorMetalDirect to prefix '_u' to all user defined variables.
+        Clean up builtins like samplers and ANGLE structs that were being
+        accidently promoted to userDefined variables.
+
+        * src/compiler/translator/TranslatorMetalDirect.cpp:
+        (sh::GetMslKeywords):
+        * src/compiler/translator/TranslatorMetalDirect/Name.cpp:
+        (Name::emit const):
+        * src/compiler/translator/TranslatorMetalDirect/SymbolEnv.cpp:
+        (SymbolEnv::getTextureEnv):
+        (SymbolEnv::getSamplerStruct):
+        (sh::GetTextureTypeName):
+        * src/libANGLE/renderer/metal/mtl_glslang_mtl_utils.mm:
+        (rx::mtl::GenerateTransformFeedbackVaryingOutput):
+
 2021-09-28  Alex Christensen  <achristensen@webkit.org>
 
         Mostly fix Mac CMake build
