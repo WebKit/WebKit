@@ -1,3 +1,40 @@
+2021-10-06  Saam Barati  <sbarati@apple.com>
+
+        Run backwards propagation before we prune the graph after ForceOSRExit nodes in BytecodeParser
+        https://bugs.webkit.org/show_bug.cgi?id=230823
+        <rdar://problem/83565088>
+
+        Reviewed by Robin Morisset.
+
+        We've found yet another bug where pruning code after OSR exits
+        before running backwards propagation leads to us breaking the spec
+        in weird IR situations. In the particular test case here, we end
+        up not thinking we care about negative zero for an ArithNegate,
+        and we exit the program while recovering the value 0 instead of -0.
+        
+        Fundamentally, backwards propagation wants to see all bytecode uses.
+        Therefore, it seems like a more sound strategy to run backwards propagation
+        before we end up mucking with the graph. This patch makes it so we run
+        backwards propagation inside bytecode parser before we prune the IR.
+        That way, the phase sees the graph as if it's an IR over the whole bytecode
+        graph.
+
+        * bytecode/Operands.h:
+        (JSC::Operands::operator!= const):
+        * dfg/DFGBackwardsPropagationPhase.cpp:
+        (JSC::DFG::BackwardsPropagationPhase::BackwardsPropagationPhase):
+        (JSC::DFG::BackwardsPropagationPhase::run):
+        (JSC::DFG::BackwardsPropagationPhase::mergeFlags):
+        (JSC::DFG::BackwardsPropagationPhase::propagate):
+        (JSC::DFG::performBackwardsPropagation):
+        * dfg/DFGBackwardsPropagationPhase.h:
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parse):
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::compileInThreadImpl):
+        * dfg/DFGUnificationPhase.cpp:
+        (JSC::DFG::UnificationPhase::run):
+
 2021-10-06  Xan López  <xan@igalia.com>
 
         [JSC][32bit] Remove a bunch of compiler warnings

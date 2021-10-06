@@ -34,22 +34,48 @@
 
 namespace JSC { namespace DFG {
 
-class BackwardsPropagationPhase : public Phase {
+// This phase is run at the end of BytecodeParsing, so the graph isn't in a fully formed state.
+// For example, we can't access the predecessor list of any basic blocks yet.
+
+class BackwardsPropagationPhase {
 public:
     BackwardsPropagationPhase(Graph& graph)
-        : Phase(graph, "backwards propagation")
+        : m_graph(graph)
+        , m_flagsAtHead(graph)
     {
     }
     
     bool run()
     {
-        m_changed = true;
-        while (m_changed) {
-            m_changed = false;
+        for (BasicBlock* block : m_graph.blocksInNaturalOrder()) {
+            m_flagsAtHead[block] = Operands<NodeFlags>(OperandsLike, m_graph.block(0)->variablesAtHead);
+            m_flagsAtHead[block].fill(0);
+        }
+
+        bool changed;
+        do {
+            changed = false;
+
             for (BlockIndex blockIndex = m_graph.numBlocks(); blockIndex--;) {
                 BasicBlock* block = m_graph.block(blockIndex);
                 if (!block)
                     continue;
+
+                {
+                    unsigned numSuccessors = block->numSuccessors();
+                    if (!numSuccessors) {
+                        m_currentFlags = Operands<NodeFlags>(OperandsLike, m_graph.block(0)->variablesAtHead);
+                        m_currentFlags.fill(0);
+                    } else {
+                        m_currentFlags = m_flagsAtHead[block->successor(0)];
+                        for (unsigned i = 1; i < numSuccessors; ++i) {
+                            BasicBlock* successor = block->successor(i);
+                            for (size_t i = 0; i < m_currentFlags.size(); ++i)
+                                m_currentFlags[i] |= m_flagsAtHead[successor][i];
+                        }
+                    }
+                }
+
             
                 // Prevent a tower of overflowing additions from creating a value that is out of the
                 // safe 2^48 range.
@@ -57,8 +83,13 @@ public:
             
                 for (unsigned indexInBlock = block->size(); indexInBlock--;)
                     propagate(block->at(indexInBlock));
+
+                if (m_flagsAtHead[block] != m_currentFlags) {
+                    m_flagsAtHead[block] = m_currentFlags;
+                    changed = true;
+                }
             }
-        }
+        } while (changed);
         
         return true;
     }
@@ -153,6 +184,11 @@ private:
         return isWithinPowerOfTwo<power>(edge.node());
     }
 
+    static bool mergeFlags(NodeFlags& flagsRef, NodeFlags newFlags)
+    {
+        return checkAndSet(flagsRef, flagsRef | newFlags);
+    }
+
     bool mergeDefaultFlags(Node* node)
     {
         bool changed = false;
@@ -184,25 +220,36 @@ private:
         switch (node->op()) {
         case GetLocal: {
             VariableAccessData* variableAccessData = node->variableAccessData();
-            flags &= ~NodeBytecodeUsesAsInt; // We don't care about cross-block uses-as-int.
-            m_changed |= variableAccessData->mergeFlags(flags);
+            NodeFlags& flagsRef = m_currentFlags.operand(variableAccessData->operand());
+            mergeFlags(flagsRef, flags);
+            variableAccessData->mergeFlags(flagsRef & ~NodeBytecodeUsesAsInt); // We don't care about cross-block uses-as-int for this.
             break;
         }
             
         case SetLocal: {
             VariableAccessData* variableAccessData = node->variableAccessData();
-            if (!variableAccessData->isLoadedFrom())
+
+            Operand operand = variableAccessData->operand();
+            NodeFlags flags = m_currentFlags.operand(operand);
+            if (!flags)
                 break;
-            flags = variableAccessData->flags();
+
             RELEASE_ASSERT(!(flags & ~NodeBytecodeBackPropMask));
-            flags |= NodeBytecodeUsesAsNumber; // Account for the fact that control flow may cause overflows that our modeling can't handle.
-            node->child1()->mergeFlags(flags);
+
+            variableAccessData->mergeFlags(flags);
+            // We union with NodeBytecodeUsesAsNumber to account for the fact that control flow may cause overflows that our modeling can't handle.
+            // For example, a loop where we always add a constant value.
+            node->child1()->mergeFlags(flags | NodeBytecodeUsesAsNumber); 
+
+            m_currentFlags.operand(operand) = 0;
             break;
         }
             
         case Flush: {
             VariableAccessData* variableAccessData = node->variableAccessData();
-            m_changed |= variableAccessData->mergeFlags(NodeBytecodeUsesAsValue);
+            NodeFlags& flagsRef = m_currentFlags.operand(variableAccessData->operand());
+            mergeFlags(flagsRef, NodeBytecodeUsesAsValue);
+            variableAccessData->mergeFlags(flagsRef);
             break;
         }
             
@@ -491,13 +538,16 @@ private:
         }
     }
     
+    Graph& m_graph;
     bool m_allowNestedOverflowingAdditions;
-    bool m_changed;
+
+    BlockMap<Operands<NodeFlags>> m_flagsAtHead;
+    Operands<NodeFlags> m_currentFlags;
 };
 
-bool performBackwardsPropagation(Graph& graph)
+void performBackwardsPropagation(Graph& graph)
 {
-    return runPhase<BackwardsPropagationPhase>(graph);
+    BackwardsPropagationPhase(graph).run();
 }
 
 } } // namespace JSC::DFG

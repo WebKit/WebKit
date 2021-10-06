@@ -43,6 +43,7 @@
 #include "CommonSlowPaths.h"
 #include "DFGAbstractHeap.h"
 #include "DFGArrayMode.h"
+#include "DFGBackwardsPropagationPhase.h"
 #include "DFGBlockSet.h"
 #include "DFGCapabilities.h"
 #include "DFGClobberize.h"
@@ -9018,6 +9019,13 @@ void ByteCodeParser::parse()
     parseCodeBlock();
     linkBlocks(inlineStackEntry.m_unlinkedBlocks, inlineStackEntry.m_blockLinkingTargets);
 
+    // We run backwards propagation now because the soundness of that phase
+    // relies on seeing the graph as if it were an IR over bytecode, since
+    // the spec-correctness of that phase relies on seeing all bytecode uses.
+    // Therefore, we run this pass before we do any pruning of the graph
+    // after ForceOSRExit sites.
+    performBackwardsPropagation(m_graph);
+
     if (m_hasAnyForceOSRExits) {
         BlockSet blocksToIgnore;
         for (BasicBlock* block : m_graph.blocksInNaturalOrder()) {
@@ -9076,15 +9084,17 @@ void ByteCodeParser::parse()
 
                 ++nodeIndex;
 
-                {
-                    if (validationEnabled()) {
-                        // This verifies that we don't need to change any of the successors's predecessor
-                        // list after planting the Unreachable below. At this point in the bytecode
-                        // parser, we haven't linked up the predecessor lists yet.
-                        for (BasicBlock* successor : block->successors())
-                            RELEASE_ASSERT(successor->predecessors.isEmpty());
-                    }
+                if (validationEnabled()) {
+                    // This verifies that we don't need to change any of the successors's predecessor
+                    // list after planting the Unreachable below. At this point in the bytecode
+                    // parser, we haven't linked up the predecessor lists yet.
+                    for (BasicBlock* successor : block->successors())
+                        RELEASE_ASSERT(successor->predecessors.isEmpty());
+                }
 
+                block->resize(nodeIndex);
+
+                {
                     auto insertLivenessPreservingOp = [&] (InlineCallFrame* inlineCallFrame, NodeType op, Operand operand) {
                         VariableAccessData* variable = mapping.operand(operand);
                         if (!variable) {
@@ -9108,41 +9118,9 @@ void ByteCodeParser::parse()
                     flushForTerminalImpl(origin.semantic, addFlushDirect, addPhantomLocalDirect);
                 }
 
-                while (true) {
-                    RELEASE_ASSERT(nodeIndex < block->size());
-
-                    Node* node = block->at(nodeIndex);
-
-                    node->origin = origin;
-                    m_graph.doToChildren(node, [&] (Edge edge) {
-                        // We only need to keep data flow edges to nodes defined prior to the ForceOSRExit. The reason
-                        // for this is we rely on backwards propagation being able to see the "full" bytecode. To model
-                        // this, we preserve uses of a node in a generic way so that backwards propagation can reason
-                        // about them. Therefore, we can't remove uses of a node which is defined before the ForceOSRExit
-                        // even when we're at a point in the program after the ForceOSRExit, because that would break backwards
-                        // propagation's analysis over the uses of a node. However, we don't need this same preservation for
-                        // nodes defined after ForceOSRExit, as we've already exitted before those defs.
-                        if (edge->hasResult())
-                            insertionSet.insertNode(nodeIndex, SpecNone, Phantom, origin, Edge(edge.node(), UntypedUse));
-                    });
-
-                    bool isTerminal = node->isTerminal();
-
-                    node->removeWithoutChecks();
-
-                    if (isTerminal) {
-                        insertionSet.insertNode(nodeIndex, SpecNone, Unreachable, origin);
-                        break;
-                    }
-
-                    ++nodeIndex;
-                }
-
+                insertionSet.insertNode(nodeIndex, SpecNone, Unreachable, origin);
                 insertionSet.execute(block);
 
-                auto nodeAndIndex = block->findTerminal();
-                DFG_ASSERT(m_graph, nodeAndIndex.node, nodeAndIndex.node->op() == Unreachable);
-                block->resize(nodeAndIndex.index + 1);
                 break;
             }
         }

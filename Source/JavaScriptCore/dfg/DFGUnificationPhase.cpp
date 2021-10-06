@@ -75,6 +75,7 @@ public:
             data->find()->mergeShouldNeverUnbox(data->shouldNeverUnbox());
             data->find()->mergeIsLoadedFrom(data->isLoadedFrom());
             data->find()->mergeIsProfitableToUnbox(data->isProfitableToUnbox());
+            data->find()->mergeFlags(data->flags());
         }
         
         m_graph.m_unificationState = GloballyUnified;

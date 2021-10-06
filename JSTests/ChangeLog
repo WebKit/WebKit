@@ -1,3 +1,16 @@
+2021-10-06  Saam Barati  <sbarati@apple.com>
+
+        Run backwards propagation before we prune the graph after ForceOSRExit nodes in BytecodeParser
+        https://bugs.webkit.org/show_bug.cgi?id=230823
+        <rdar://problem/83565088>
+
+        Reviewed by Robin Morisset.
+
+        * run-backwards-propagation-before-osr-exit-pruning.js: Added.
+        (assert):
+        (main.async v24):
+        (main):
+
 2021-10-05  Saam Barati  <sbarati@apple.com>
 
         Don't pass DontBuildStrings to next token after parsing an empty parameter list

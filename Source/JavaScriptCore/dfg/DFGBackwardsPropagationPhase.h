@@ -35,7 +35,7 @@ class Graph;
 // Infer basic information about how nodes are used by doing a block-local
 // backwards flow analysis.
 
-bool performBackwardsPropagation(Graph&);
+void performBackwardsPropagation(Graph&);
 
 } } // namespace JSC::DFG
 

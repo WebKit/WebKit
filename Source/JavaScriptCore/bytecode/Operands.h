@@ -400,6 +400,11 @@ public:
         
         return m_values == other.m_values;
     }
+
+    bool operator!=(const Operands& other) const
+    {
+        return !(*this == other);
+    }
     
     void dumpInContext(PrintStream& out, DumpContext* context) const;
     void dump(PrintStream& out) const;
