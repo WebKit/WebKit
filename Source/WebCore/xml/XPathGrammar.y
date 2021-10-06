@@ -48,9 +48,6 @@
 #define YYDEBUG 0
 #define YYMAXDEPTH 10000
 
-using namespace WebCore;
-using namespace XPath;
-
 %}
 
 %pure-parser

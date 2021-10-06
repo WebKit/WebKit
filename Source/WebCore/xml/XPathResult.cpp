@@ -32,8 +32,6 @@
 
 namespace WebCore {
 
-using namespace XPath;
-
 XPathResult::XPathResult(Document& document, const Value& value)
     : m_value(value)
 {
