@@ -1,5 +1,34 @@
 2021-10-05  Alex Christensen  <achristensen@webkit.org>
 
+        [ iOS15 ] TestWebKitAPI.ResourceLoadStatistics.DataTaskIdentifierCollision is a constant crash
+        https://bugs.webkit.org/show_bug.cgi?id=231246
+
+        Reviewed by Chris Dumez.
+
+        For a reason that is mysterious to me, this test was timing out on iOS
+        in the call to synchronouslyLoadHTMLString unless I added "addToWindow:NO"
+        to the TestWKWebView initialization.
+
+        For a reason that is also mysterious to me, the test was crashing when closing
+        because of something in the autoreleasepool, but using Vector<String> instead of
+        RetainPtr<NSArray<NSString *>> in DataTaskIdentifierCollisionDelegate makes that
+        stop crashing.
+
+        I've looked quite closely and don't see why this fixes it, but I verified that it does.
+
+        While I was at it, I migrated from TCPServer to HTTPServer to be more robust against timeouts,
+        because the TCPServer destructor waits forever for threads to join, and if not everything is
+        perfect it will make the tests time out, which isn't great.  HTTPServer does everything on the
+        main thread with callbacks instead.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ResourceLoadStatistics.mm:
+        (-[DataTaskIdentifierCollisionDelegate webView:runJavaScriptAlertPanelWithMessage:initiatedByFrame:completionHandler:]):
+        (-[DataTaskIdentifierCollisionDelegate waitForMessages:]):
+        (waitUntilTwoServersConnected):
+        (TEST):
+
+2021-10-05  Alex Christensen  <achristensen@webkit.org>
+
         Add an entitlement check to only allow AdAttributionDaemon to be connected to by the network process
         https://bugs.webkit.org/show_bug.cgi?id=231248
 

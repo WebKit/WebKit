@@ -25,8 +25,8 @@
 
 #import "config.h"
 
+#import "HTTPServer.h"
 #import "PlatformUtilities.h"
-#import "TCPServer.h"
 #import "TestNavigationDelegate.h"
 #import "TestWKWebView.h"
 #import <WebKit/WKFoundation.h>
@@ -37,6 +37,7 @@
 #import <WebKit/WKWebsiteDataStorePrivate.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
+#import <wtf/BlockPtr.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/text/StringConcatenateNumbers.h>
 
@@ -481,25 +482,24 @@ TEST(ResourceLoadStatistics, NetworkProcessRestart)
 }
 
 @interface DataTaskIdentifierCollisionDelegate : NSObject <WKNavigationDelegate, WKUIDelegate>
-- (NSArray<NSString *> *)waitForMessages:(size_t)count;
+- (Vector<String>)waitForMessages:(size_t)count;
 @end
 
 @implementation DataTaskIdentifierCollisionDelegate {
-    RetainPtr<NSMutableArray<NSString *>> _messages;
+    Vector<String> _messages;
 }
 
 - (void)webView:(WKWebView *)webView runJavaScriptAlertPanelWithMessage:(NSString *)message initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(void))completionHandler
 {
-    [_messages addObject:message];
+    _messages.append(message);
     completionHandler();
 }
 
-- (NSArray<NSString *> *)waitForMessages:(size_t)messageCount
+- (Vector<String>)waitForMessages:(size_t)messageCount
 {
-    _messages = adoptNS([NSMutableArray arrayWithCapacity:messageCount]);
-    while ([_messages count] < messageCount)
+    while (_messages.size() < messageCount)
         TestWebKitAPI::Util::spinRunLoop();
-    return _messages.autorelease();
+    return std::exchange(_messages, { });
 }
 
 - (void)webView:(WKWebView *)webView didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge completionHandler:(void (^)(NSURLSessionAuthChallengeDisposition disposition, NSURLCredential * credential))completionHandler
@@ -509,32 +509,40 @@ TEST(ResourceLoadStatistics, NetworkProcessRestart)
 
 @end
 
-#if HAVE(SSL)
+void waitUntilTwoServersConnected(const unsigned& serversConnected, CompletionHandler<void()>&& completionHandler)
+{
+    if (serversConnected >= 2) {
+        completionHandler();
+        return;
+    }
+    dispatch_async(dispatch_get_main_queue(), makeBlockPtr([&serversConnected, completionHandler = WTFMove(completionHandler)] () mutable {
+        waitUntilTwoServersConnected(serversConnected, WTFMove(completionHandler));
+    }).get());
+}
+
 TEST(ResourceLoadStatistics, DataTaskIdentifierCollision)
 {
     using namespace TestWebKitAPI;
 
-    std::atomic<unsigned> serversConnected { 0 };
+    unsigned serversConnected { 0 };
     const char* header = "HTTP/1.1 200 OK\r\nContent-Length: 27\r\n\r\n";
 
-    TCPServer httpsServer(TCPServer::Protocol::HTTPSProxy, [&] (SSL* ssl) {
+    HTTPServer httpsServer([&] (const Connection& connection) {
         serversConnected++;
-        while (serversConnected < 2)
-            usleep(100000);
-        TCPServer::read(ssl);
-        TCPServer::write(ssl, header, strlen(header));
-        const char* body = "<script>alert('1')</script>";
-        TCPServer::write(ssl, body, strlen(body));
-    });
+        waitUntilTwoServersConnected(serversConnected, [=] {
+            connection.receiveHTTPRequest([=](Vector<char>&&) {
+                connection.send(makeString(header, "<script>alert('1')</script>"));
+            });
+        });
+    }, HTTPServer::Protocol::HttpsProxy);
 
-    TCPServer httpServer([&] (int socket) {
+    HTTPServer httpServer([&] (const Connection& connection) {
         serversConnected++;
-        while (serversConnected < 2)
-            usleep(100000);
-        TCPServer::read(socket);
-        TCPServer::write(socket, header, strlen(header));
-        const char* body = "<script>alert('2')</script>";
-        TCPServer::write(socket, body, strlen(body));
+        waitUntilTwoServersConnected(serversConnected, [=] {
+            connection.receiveHTTPRequest([=](Vector<char>&&) {
+                connection.send(makeString(header, "<script>alert('2')</script>"));
+            });
+        });
     });
 
     auto storeConfiguration = adoptNS([_WKWebsiteDataStoreConfiguration new]);
@@ -544,10 +552,10 @@ TEST(ResourceLoadStatistics, DataTaskIdentifierCollision)
     auto viewConfiguration = adoptNS([WKWebViewConfiguration new]);
     [viewConfiguration setWebsiteDataStore:dataStore.get()];
 
-    auto webView1 = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 100, 100) configuration:viewConfiguration.get()]);
+    auto webView1 = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 100, 100) configuration:viewConfiguration.get() addToWindow:NO]);
     [webView1 synchronouslyLoadHTMLString:@"start network process and initialize data store"];
     auto delegate = adoptNS([DataTaskIdentifierCollisionDelegate new]);
-    auto webView2 = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 100, 100) configuration:viewConfiguration.get()]);
+    auto webView2 = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 100, 100) configuration:viewConfiguration.get() addToWindow:NO]);
     [webView1 setUIDelegate:delegate.get()];
     [webView1 setNavigationDelegate:delegate.get()];
     [webView2 setUIDelegate:delegate.get()];
@@ -569,18 +577,17 @@ TEST(ResourceLoadStatistics, DataTaskIdentifierCollision)
     [webView1 loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://127.0.0.1:%d/", httpServer.port()]]]];
     [webView2 loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://prevalent-example.com/"]]];
 
-    NSArray<NSString *> *messages = [delegate waitForMessages:2];
-    auto contains = [] (NSArray<NSString *> *array, NSString *expected) {
-        for (NSString *s in array) {
-            if ([s isEqualToString:expected])
+    auto messages = [delegate waitForMessages:2];
+    auto contains = [] (const Vector<String>& array, const char* expected) {
+        for (auto& s : array) {
+            if (s == expected)
                 return true;
         }
         return false;
     };
-    EXPECT_TRUE(contains(messages, @"1"));
-    EXPECT_TRUE(contains(messages, @"2"));
+    EXPECT_TRUE(contains(messages, "1"));
+    EXPECT_TRUE(contains(messages, "2"));
 }
-#endif // HAVE(SSL)
 
 TEST(ResourceLoadStatistics, NoMessagesWhenNotTesting)
 {
