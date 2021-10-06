@@ -1,3 +1,21 @@
+2021-10-06  Alex Christensen  <achristensen@webkit.org>
+
+        [ iOS15 Release ] TestWebKitAPI.WebSocket.CloseCode
+        https://bugs.webkit.org/show_bug.cgi?id=231306
+
+        Reviewed by Chris Dumez.
+
+        This test starts by navigating, opening a websocket connection, then navigating away.
+        Sometimes in release builds we only get one didFinishNavigation callback.
+        The important thing about this test is that the server receives the expected close code
+        whenever the page is navigated away from, so drop the two didFinishNavigation checks.
+
+        I manually verified that on iOS15 simulator release builds the test would time out here,
+        and that it doesn't any more.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WebSocket.mm:
+        (TestWebKitAPI::TEST):
+
 2021-10-06  Philip Chimento  <pchimento@igalia.com>
 
         Style checker should check spacing inside braces with elements in them

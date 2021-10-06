@@ -181,8 +181,6 @@ TEST(WebSocket, CloseCode)
 
     auto webView = adoptNS([WKWebView new]);
     [webView loadRequest:httpServer.request("/navigateAway")];
-    [webView _test_waitForDidFinishNavigation];
-    [webView _test_waitForDidFinishNavigation];
     Util::run(&receivedWebSocketClose);
     Vector<uint8_t> expected { 0x3, 0xe9 }; // NSURLSessionWebSocketCloseCodeGoingAway
     appendString(expected, "WebSocket is closed due to suspension.");
