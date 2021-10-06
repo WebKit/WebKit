@@ -3,6 +3,17 @@
         [JSC] Update test262
         https://bugs.webkit.org/show_bug.cgi?id=231201
 
+        Add tests that were somehow cut off in the previous patch.
+
+        Reviewed by Ross Kirsling.
+
+        * test262/test/built-ins/Temporal/Now/*: Added.
+
+2021-10-06  Philip Chimento  <pchimento@igalia.com>
+
+        [JSC] Update test262
+        https://bugs.webkit.org/show_bug.cgi?id=231201
+
         Reviewed by Ross Kirsling.
 
         Update test262 to latest, to bring in Temporal tests.
