@@ -1,3 +1,16 @@
+2021-10-05  Aditya Keerthi  <akeerthi@apple.com>
+
+        [iOS] Transcode videos selected from UIImagePickerController
+        https://bugs.webkit.org/show_bug.cgi?id=230639
+        rdar://79665678
+
+        Reviewed by Tim Horton.
+
+        Add AVFoundation API needed to transcode video.
+
+        * pal/cocoa/AVFoundationSoftLink.h:
+        * pal/cocoa/AVFoundationSoftLink.mm:
+
 2021-10-05  Ayumi Kojima  <ayumi_kojima@apple.com>
 
         Unreviewed, reverting r283339.
