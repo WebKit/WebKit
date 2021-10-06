@@ -1,3 +1,24 @@
+2021-10-06  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Adopt WTF::ApproximateTime in IPC::Timeout
+        https://bugs.webkit.org/show_bug.cgi?id=231301
+
+        Reviewed by Simon Fraser.
+
+        When computing time out deadlines for IPC messages, the time granularities (on the order of hundreds of
+        milliseconds) are many, many orders of magnitude greater than the granularity of ApproximateTime; this makes it
+        much cheaper to use ApproximateTime instead of MonotonicTime when computing these deadlines, which significantly
+        improves performance in the case where we're streaming high volumes of IPC messages.
+
+        Additionally, in the case where the timeout duration is infinite, we can avoid asking for the current time
+        altogether, and simply use `ApproximateTime::infinity()`.
+
+        * Platform/IPC/Timeout.h:
+        (IPC::Timeout::Timeout):
+        (IPC::Timeout::secondsUntilDeadline const):
+        (IPC::Timeout::deadline const):
+        (IPC::Timeout::didTimeOut const):
+
 2021-10-06  Sihui Liu  <sihui_liu@apple.com>
 
         Add support for FileSystemSyncAccessHandle

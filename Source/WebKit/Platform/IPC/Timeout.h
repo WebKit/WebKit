@@ -26,7 +26,7 @@
 #pragma once
 
 #include <algorithm>
-#include <wtf/MonotonicTime.h>
+#include <wtf/ApproximateTime.h>
 #include <wtf/TimeWithDynamicClockType.h>
 
 namespace IPC {
@@ -34,24 +34,24 @@ namespace IPC {
 class Timeout {
 public:
     Timeout(Seconds timeDelta)
-        : m_deadline(MonotonicTime::now() + timeDelta)
+        : m_deadline(std::isinf(timeDelta) ? ApproximateTime::infinity() : ApproximateTime::now() + timeDelta)
     {
     }
 
     static constexpr Timeout infinity() { return Timeout { }; }
     bool isInfinity() const { return std::isinf(m_deadline); }
     static Timeout now() { return 0_s; }
-    Seconds secondsUntilDeadline() const { return std::max(m_deadline - MonotonicTime::now(), 0_s ); }
-    constexpr MonotonicTime deadline() const { return m_deadline; }
-    bool didTimeOut() const { return MonotonicTime::now() >= m_deadline; }
+    Seconds secondsUntilDeadline() const { return std::max(m_deadline - ApproximateTime::now(), 0_s ); }
+    constexpr ApproximateTime deadline() const { return m_deadline; }
+    bool didTimeOut() const { return ApproximateTime::now() >= m_deadline; }
 
 private:
     explicit constexpr Timeout()
-        : m_deadline(MonotonicTime::infinity())
+        : m_deadline(ApproximateTime::infinity())
     {
     }
 
-    MonotonicTime m_deadline;
+    ApproximateTime m_deadline;
 };
 
 }
