@@ -163,11 +163,11 @@ public:
     // Returns true if handled.
     bool handleWheelEvent(const PlatformWheelEvent&);
 
-#if PLATFORM(MAC)
-    static FloatSize wheelDeltaBiasingTowardsVertical(const PlatformWheelEvent&);
-
     bool isScrollSnapInProgress() const;
     bool isUserScrollInProgress() const;
+
+#if PLATFORM(MAC)
+    static FloatSize wheelDeltaBiasingTowardsVertical(const PlatformWheelEvent&);
 
     // Returns true if handled.
     bool processWheelEventForScrollSnap(const PlatformWheelEvent&);
@@ -216,6 +216,8 @@ private:
     void scrollAnimationDidEnd(ScrollAnimation&) final;
     ScrollExtents scrollExtentsForAnimation(ScrollAnimation&) final;
 
+    void adjustDeltaForSnappingIfNeeded(float& deltaX, float& deltaY);
+
 #if ENABLE(KINETIC_SCROLLING) && !PLATFORM(MAC)
     // Returns true if handled.
     bool processWheelEventForKineticScrolling(const PlatformWheelEvent&);
@@ -234,6 +236,7 @@ private:
     bool m_isAnimatingRubberBand { false };
     bool m_isAnimatingScrollSnap { false };
     bool m_isAnimatingKeyboardScrolling { false };
+    bool m_inScrollGesture { false };
 
 #if PLATFORM(MAC)
     WallTime m_lastMomentumScrollTimestamp;
@@ -241,7 +244,6 @@ private:
     FloatSize m_stretchScrollForce;
     FloatSize m_momentumVelocity;
 
-    bool m_inScrollGesture { false };
     bool m_momentumScrollInProgress { false };
     bool m_ignoreMomentumScrolls { false };
     bool m_isRubberBanding { false };

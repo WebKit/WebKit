@@ -19,6 +19,7 @@
 # Platform-specific directories.
 accessibility/gtk [ Pass ]
 editing/pasteboard/gtk [ Pass ]
+fast/scrolling/gtk [ Pass ]
 swipe [ Pass ]
 
 ietestcenter/css3/flexbox/flexbox-layout-001.htm [ Pass ]

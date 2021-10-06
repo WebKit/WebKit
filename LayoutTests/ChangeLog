@@ -1,3 +1,18 @@
+2021-10-06  Chris Lord  <clord@igalia.com>
+
+        [GTK][WPE] CSS scroll snapping interacts badly with smooth scrolling
+        https://bugs.webkit.org/show_bug.cgi?id=229037
+
+        Reviewed by Simon Fraser.
+
+        Add a GTK-only test to verify CSS scroll snapping and kinetic/touchpad
+        scrolling behave correctly.
+
+        * TestExpectations:
+        * fast/scrolling/gtk/user-scroll-snapping-interaction-expected.txt: Added.
+        * fast/scrolling/gtk/user-scroll-snapping-interaction.html: Added.
+        * platform/gtk/TestExpectations:
+
 2021-10-06  Ayumi Kojima  <ayumi_kojima@apple.com>
 
         [ iOS 15 ] 2 http/tests/app-privacy-report tests are timing out.

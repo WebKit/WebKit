@@ -49,10 +49,8 @@ private:
     bool platformAllowsScrollAnimation() const;
 
     void handleWheelEventPhase(PlatformWheelEventPhase) final;
-    
-    bool isUserScrollInProgress() const final;
+
     bool isRubberBandInProgress() const final;
-    bool isScrollSnapInProgress() const final;
 
     bool processWheelEventForScrollSnap(const PlatformWheelEvent&) final;
 

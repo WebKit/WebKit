@@ -73,19 +73,9 @@ static bool rubberBandingEnabledForSystem()
     return enabled;
 }
 
-bool ScrollAnimatorMac::isUserScrollInProgress() const
-{
-    return m_scrollController.isUserScrollInProgress();
-}
-
 bool ScrollAnimatorMac::isRubberBandInProgress() const
 {
     return m_scrollController.isRubberBandInProgress();
-}
-
-bool ScrollAnimatorMac::isScrollSnapInProgress() const
-{
-    return m_scrollController.isScrollSnapInProgress();
 }
 
 void ScrollAnimatorMac::handleWheelEventPhase(PlatformWheelEventPhase phase)

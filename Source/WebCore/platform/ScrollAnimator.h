@@ -93,9 +93,10 @@ public:
 
     virtual void cancelAnimations();
 
-    virtual bool isUserScrollInProgress() const { return false; }
     virtual bool isRubberBandInProgress() const { return false; }
-    virtual bool isScrollSnapInProgress() const { return false; }
+
+    bool isUserScrollInProgress() const { return m_scrollController.isUserScrollInProgress(); }
+    bool isScrollSnapInProgress() const { return m_scrollController.isScrollSnapInProgress(); }
 
     void contentsSizeChanged();
 
