@@ -1,3 +1,15 @@
+2021-10-06  Youenn Fablet  <youenn@apple.com>
+
+        Close NetworkRTCProvider sockets explicitly when closing NetworkRTCProvider
+        https://bugs.webkit.org/show_bug.cgi?id=231228
+        <rdar://83237496>
+
+        Reviewed by Eric Carlson.
+
+        * NetworkProcess/webrtc/NetworkRTCProvider.cpp:
+        (WebKit::NetworkRTCProvider::close):
+        Make sure to explictly closing the socket before deleting it.
+
 2021-10-05  Alex Christensen  <achristensen@webkit.org>
 
         Do daily activity in AdAttributionDaemon based off of when the xpc activity happens
