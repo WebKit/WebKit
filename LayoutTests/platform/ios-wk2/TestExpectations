@@ -1282,6 +1282,8 @@ webkit.org/b/184783 compositing/ios/overflow-scroll-touch-tiles.html [ Pass Fail
 
 webkit.org/b/179853 [ Debug ] imported/blink/fast/text/international-iteration-simple-text.html [ Pass Failure ]
 
+webkit.org/b/231316 fast/text/accessibility-bold-system-font-2.html [ Pass ImageOnlyFailure ]
+
 webkit.org/b/189087 svg/animations/animate-end-attribute-numeric-precision.html [ Pass Failure ]
 
 webkit.org/b/190847 [ Debug ] imported/w3c/web-platform-tests/service-workers/service-worker/unregister-then-register-new-script.https.html [ Pass Failure ] 
