@@ -29,7 +29,7 @@
 #include "WaveShaperProcessor.h"
 
 #include "WaveShaperDSPKernel.h"
-#include <JavaScriptCore/ArrayBuffer.h>
+#include <JavaScriptCore/JSTypedArrays.h>
 
 namespace WebCore {
     
