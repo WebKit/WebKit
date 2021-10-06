@@ -1,5 +1,14 @@
 2021-10-06  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed. [GTK] Fix /webkit/WebKitAccessibility/accessible/state with ATSPI
+
+        Add missing #else I didn't add by mistake in r283361.
+
+        * TestWebKitAPI/Tests/WebKitGtk/TestWebKitAccessibility.cpp:
+        (testAccessibleState):
+
+2021-10-06  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [WPE][GTK] TestJSC incorrectly expects garbage collector to collect variables still on the stack
         https://bugs.webkit.org/show_bug.cgi?id=222972
 

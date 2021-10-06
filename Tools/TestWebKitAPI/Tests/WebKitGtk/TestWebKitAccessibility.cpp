@@ -493,6 +493,7 @@ static void testAccessibleState(AccessibilityTest* test, gconstpointer)
     stateSet = adoptGRef(atspi_accessible_get_state_set(buttonDisabled.get()));
 #if USE(ATSPI)
     g_assert_cmpuint(AccessibilityTest::stateSetSize(stateSet.get()), ==, 2);
+#else
     // FIXME: ATK includes orientation state in every element.
     g_assert_cmpuint(AccessibilityTest::stateSetSize(stateSet.get()), ==, 3);
     g_assert_true(atspi_state_set_contains(stateSet.get(), ATSPI_STATE_HORIZONTAL));
