@@ -1,3 +1,30 @@
+2021-10-06  Megan Gardner  <megan_gardner@apple.com>
+
+        Allow text selection to flip.
+        https://bugs.webkit.org/show_bug.cgi?id=231234
+        rdar://83889188
+
+        Reviewed by Wenson Hsieh.
+
+        In order to bring webkit more in line with UIKit, allow text selection to flip.
+        This also requires a UIKit change tracked in rdar://83788439
+        This is currently guarded behind an off-by-default flag so that we can
+        test this new behavior before turning it on by default.
+
+        * Platform/spi/ios/UIKitSPI.h:
+        * Shared/ios/GestureTypes.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (toUIWKSelectionFlags):
+        (toSelectionFlags):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::selectionFlippingEnabled const):
+        (WebKit::WebPage::setSelectionFlippingEnabled):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::rangeForPointInRootViewCoordinates):
+        (WebKit::WebPage::updateSelectionWithTouches):
+
 2021-10-06  Chris Dumez  <cdumez@apple.com>
 
         IPC SimpleArgumentEncoder should static_assert(std::is_trivially_copyable<T>)

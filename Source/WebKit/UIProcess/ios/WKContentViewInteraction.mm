@@ -4273,6 +4273,8 @@ static inline UIWKSelectionFlags toUIWKSelectionFlags(OptionSet<WebKit::Selectio
     NSInteger uiFlags = UIWKNone;
     if (flags.contains(WebKit::WordIsNearTap))
         uiFlags |= UIWKWordIsNearTap;
+    if (flags.contains(WebKit::SelectionFlipped))
+        uiFlags |= UIWKSelectionFlipped;
     if (flags.contains(WebKit::PhraseBoundaryChanged))
         uiFlags |= UIWKPhraseBoundaryChanged;
 
@@ -4284,6 +4286,8 @@ static inline OptionSet<WebKit::SelectionFlags> toSelectionFlags(UIWKSelectionFl
     OptionSet<WebKit::SelectionFlags> flags;
     if (uiFlags & UIWKWordIsNearTap)
         flags.add(WebKit::WordIsNearTap);
+    if (uiFlags & UIWKSelectionFlipped)
+        flags.add(WebKit::SelectionFlipped);
     if (uiFlags & UIWKPhraseBoundaryChanged)
         flags.add(WebKit::PhraseBoundaryChanged);
     return flags;

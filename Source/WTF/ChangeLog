@@ -1,3 +1,16 @@
+2021-10-06  Megan Gardner  <megan_gardner@apple.com>
+
+        Allow text selection to flip.
+        https://bugs.webkit.org/show_bug.cgi?id=231234
+        rdar://83889188
+
+        Reviewed by Wenson Hsieh.
+
+        Add an internal flag to guard text selection flipping while
+        we test to make sure this is reasonable to turn on everywhere.
+
+        * Scripts/Preferences/WebPreferencesInternal.yaml:
+
 2021-10-05  Tim Horton  <timothy_horton@apple.com>
 
         Add an alternate style for form controls, and implement it for checkboxes and radio buttons

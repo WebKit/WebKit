@@ -1133,6 +1133,9 @@ public:
 #if PLATFORM(COCOA)
     bool pdfPluginEnabled() const { return m_pdfPluginEnabled; }
     void setPDFPluginEnabled(bool enabled) { m_pdfPluginEnabled = enabled; }
+    
+    bool selectionFlippingEnabled() const { return m_selectionFlippingEnabled; }
+    void setSelectionFlippingEnabled(bool enabled) { m_selectionFlippingEnabled = enabled; }
 
     NSDictionary *dataDetectionContext() const { return m_dataDetectionContext.get(); }
 #endif
@@ -1996,6 +1999,7 @@ private:
 #if PLATFORM(COCOA)
     bool m_pdfPluginEnabled { false };
     bool m_hasCachedWindowFrame { false };
+    bool m_selectionFlippingEnabled { false };
 
     // The frame of the containing window in screen coordinates.
     WebCore::FloatRect m_windowFrameInScreenCoordinates;

@@ -65,7 +65,8 @@ enum class SheetAction : bool {
 
 enum SelectionFlags : uint8_t {
     WordIsNearTap = 1 << 0,
-    PhraseBoundaryChanged = 1 << 1,
+    SelectionFlipped = 1 << 1,
+    PhraseBoundaryChanged = 1 << 2,
 };
 
 enum class RespectSelectionAnchor : bool {
@@ -107,6 +108,7 @@ template<> struct EnumTraits<WebKit::SelectionFlags> {
     using values = EnumValues<
         WebKit::SelectionFlags,
         WebKit::SelectionFlags::WordIsNearTap,
+        WebKit::SelectionFlags::SelectionFlipped,
         WebKit::SelectionFlags::PhraseBoundaryChanged
     >;
 };

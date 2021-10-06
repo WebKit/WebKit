@@ -681,6 +681,15 @@ SelectionAcrossShadowBoundariesEnabled:
       default: true
     WebCore:
       default: true
+      
+SelectionFlippingEnabled:
+  type: bool
+  humanReadableName: "Selection Flipping"
+  humanReadableDescription: "Enable Selection Flipping"
+  webcoreBinding: none
+  defaultValue:
+    WebKit:
+      default: false
 
 # FIXME: This is not implemented for WebKitLegacy, so should be excluded from WebKitLegacy entirely.
 ServiceWorkersEnabled:

@@ -3981,6 +3981,8 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
 
 #if PLATFORM(COCOA)
     m_pdfPluginEnabled = store.getBoolValueForKey(WebPreferencesKey::pdfPluginEnabledKey());
+    
+    m_selectionFlippingEnabled = store.getBoolValueForKey(WebPreferencesKey::selectionFlippingEnabledKey());
 #endif
 #if ENABLE(PAYMENT_REQUEST)
     settings.setPaymentRequestEnabled(store.getBoolValueForKey(WebPreferencesKey::applePayEnabledKey()));

@@ -161,6 +161,8 @@
 
 namespace WebKit {
 
+enum class SelectionWasFlipped : bool { No, Yes };
+
 // FIXME: Unclear if callers in this file are correctly choosing which of these two functions to use.
 
 static String plainTextForContext(const SimpleRange& range)
@@ -1503,7 +1505,7 @@ void WebPage::selectWithGesture(const IntPoint& point, GestureType gestureType, 
     completionHandler(point, gestureType, gestureState, flags);
 }
 
-static std::optional<SimpleRange> rangeForPointInRootViewCoordinates(Frame& frame, const IntPoint& pointInRootViewCoordinates, bool baseIsStart)
+static std::pair<std::optional<SimpleRange>, SelectionWasFlipped> rangeForPointInRootViewCoordinates(Frame& frame, const IntPoint& pointInRootViewCoordinates, bool baseIsStart, bool selectionFlippingEnabled)
 {
     VisibleSelection existingSelection = frame.selection().selection();
     VisiblePosition selectionStart = existingSelection.visibleStart();
@@ -1511,26 +1513,28 @@ static std::optional<SimpleRange> rangeForPointInRootViewCoordinates(Frame& fram
 
     auto pointInDocument = frame.view()->rootViewToContents(pointInRootViewCoordinates);
 
-    auto node = selectionStart.deepEquivalent().containerNode();
-    if (node && node->renderStyle() && node->renderStyle()->isVerticalWritingMode()) {
-        if (baseIsStart) {
-            int startX = selectionStart.absoluteCaretBounds().center().x();
-            if (pointInDocument.x() > startX)
-                pointInDocument.setX(startX);
+    if (!selectionFlippingEnabled) {
+        auto node = selectionStart.deepEquivalent().containerNode();
+        if (node && node->renderStyle() && node->renderStyle()->isVerticalWritingMode()) {
+            if (baseIsStart) {
+                int startX = selectionStart.absoluteCaretBounds().center().x();
+                if (pointInDocument.x() > startX)
+                    pointInDocument.setX(startX);
+            } else {
+                int endX = selectionEnd.absoluteCaretBounds().center().x();
+                if (pointInDocument.x() < endX)
+                    pointInDocument.setX(endX);
+            }
         } else {
-            int endX = selectionEnd.absoluteCaretBounds().center().x();
-            if (pointInDocument.x() < endX)
-                pointInDocument.setX(endX);
-        }
-    } else {
-        if (baseIsStart) {
-            int startY = selectionStart.absoluteCaretBounds().center().y();
-            if (pointInDocument.y() < startY)
-                pointInDocument.setY(startY);
-        } else {
-            int endY = selectionEnd.absoluteCaretBounds().center().y();
-            if (pointInDocument.y() > endY)
-                pointInDocument.setY(endY);
+            if (baseIsStart) {
+                int startY = selectionStart.absoluteCaretBounds().center().y();
+                if (pointInDocument.y() < startY)
+                    pointInDocument.setY(startY);
+            } else {
+                int endY = selectionEnd.absoluteCaretBounds().center().y();
+                if (pointInDocument.y() > endY)
+                    pointInDocument.setY(endY);
+            }
         }
     }
 
@@ -1542,10 +1546,11 @@ static std::optional<SimpleRange> rangeForPointInRootViewCoordinates(Frame& fram
 
     RefPtr targetNode = hitTest.targetNode();
     if (targetNode && !HTMLElement::shouldExtendSelectionToTargetNode(*targetNode, existingSelection))
-        return std::nullopt;
+        return { std::nullopt, SelectionWasFlipped::No };
 
-    std::optional<SimpleRange> range;
     VisiblePosition result;
+    std::optional<SimpleRange> range;
+    SelectionWasFlipped selectionFlipped = SelectionWasFlipped::No;
 
     if (targetNode)
         result = frame.eventHandler().selectionExtentRespectingEditingBoundary(frame.selection().selection(), hitTest.localPoint(), targetNode.get()).deepEquivalent();
@@ -1553,25 +1558,37 @@ static std::optional<SimpleRange> rangeForPointInRootViewCoordinates(Frame& fram
         result = frame.visiblePositionForPoint(pointInDocument).deepEquivalent();
     
     if (baseIsStart) {
-        if (result <= selectionStart)
+        bool flipSelection = result < selectionStart;
+
+        if ((flipSelection && !selectionFlippingEnabled) || result == selectionStart)
             result = selectionStart.next();
         else if (RefPtr containerNode = selectionStart.deepEquivalent().containerNode(); containerNode && targetNode && &containerNode->treeScope() != &targetNode->treeScope())
             result = VisibleSelection::adjustPositionForEnd(result.deepEquivalent(), containerNode.get());
-
-        range = makeSimpleRange(selectionStart, result);
+        
+        if (selectionFlippingEnabled && flipSelection) {
+            range = makeSimpleRange(result, selectionStart);
+            selectionFlipped = SelectionWasFlipped::Yes;
+        } else
+            range = makeSimpleRange(selectionStart, result);
     } else {
-        if (selectionEnd <= result)
+        bool flipSelection = selectionEnd < result;
+        
+        if ((flipSelection && !selectionFlippingEnabled) || result == selectionEnd)
             result = selectionEnd.previous();
         else if (RefPtr containerNode = selectionEnd.deepEquivalent().containerNode(); containerNode && targetNode && &containerNode->treeScope() != &targetNode->treeScope())
             result = VisibleSelection::adjustPositionForStart(result.deepEquivalent(), containerNode.get());
 
-        range = makeSimpleRange(result, selectionEnd);
+        if (selectionFlippingEnabled && flipSelection) {
+            range = makeSimpleRange(selectionEnd, result);
+            selectionFlipped = SelectionWasFlipped::Yes;
+        } else
+            range = makeSimpleRange(result, selectionEnd);
     }
     
     if (range && HTMLElement::isInsideImageOverlay(*range))
-        return expandForImageOverlay(*range);
+        return { expandForImageOverlay(*range), SelectionWasFlipped::No };
 
-    return range;
+    return { range, selectionFlipped };
 }
 
 static std::optional<SimpleRange> rangeAtWordBoundaryForPosition(Frame* frame, const VisiblePosition& position, bool baseIsStart)
@@ -1743,6 +1760,7 @@ void WebPage::updateSelectionWithTouches(const IntPoint& point, SelectionTouch s
 
     std::optional<SimpleRange> range;
     OptionSet<SelectionFlags> flags;
+    SelectionWasFlipped selectionFlipped = SelectionWasFlipped::No;
 
     switch (selectionTouch) {
     case SelectionTouch::Started:
@@ -1753,7 +1771,7 @@ void WebPage::updateSelectionWithTouches(const IntPoint& point, SelectionTouch s
         if (frame->selection().selection().isContentEditable())
             range = makeSimpleRange(closestWordBoundaryForPosition(position));
         else
-            range = rangeForPointInRootViewCoordinates(frame, point, baseIsStart);
+            std::tie(range, selectionFlipped) = rangeForPointInRootViewCoordinates(frame, point, baseIsStart, selectionFlippingEnabled());
         break;
 
     case SelectionTouch::EndedMovingForward:
@@ -1762,12 +1780,15 @@ void WebPage::updateSelectionWithTouches(const IntPoint& point, SelectionTouch s
         break;
 
     case SelectionTouch::Moved:
-        range = rangeForPointInRootViewCoordinates(frame, point, baseIsStart);
+        std::tie(range, selectionFlipped) = rangeForPointInRootViewCoordinates(frame, point, baseIsStart, selectionFlippingEnabled());
         break;
     }
 
     if (range)
         frame->selection().setSelectedRange(range, position.affinity(), WebCore::FrameSelection::ShouldCloseTyping::Yes, UserTriggered);
+    
+    if (selectionFlipped == SelectionWasFlipped::Yes)
+        flags = SelectionFlipped;
 
     completionHandler(point, selectionTouch, flags);
 }

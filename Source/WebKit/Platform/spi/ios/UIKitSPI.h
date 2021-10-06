@@ -139,6 +139,9 @@
 #import <UIKit/UIPointerStyle_Private.h>
 #endif
 
+// FIXME: STAGING for rdar://75546704 Remove later.
+#define UIWKSelectionFlipped 2
+
 #else // USE(APPLE_INTERNAL_SDK)
 
 #if ENABLE(DRAG_SUPPORT)
@@ -682,6 +685,7 @@ typedef NS_ENUM(NSInteger, UIWKSelectionTouch) {
 typedef NS_ENUM(NSInteger, UIWKSelectionFlags) {
     UIWKNone = 0,
     UIWKWordIsNearTap = 1,
+    UIWKSelectionFlipped = 2,
     UIWKPhraseBoundaryChanged = 4,
 };
 
