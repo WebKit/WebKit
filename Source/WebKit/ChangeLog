@@ -1,3 +1,15 @@
+2021-10-06  Chris Dumez  <cdumez@apple.com>
+
+        IPC SimpleArgumentEncoder should static_assert(std::is_trivially_copyable<T>)
+        https://bugs.webkit.org/show_bug.cgi?id=230743
+        <rdar://problem/83757335>
+
+        Reviewed by Kimmo Kinnunen.
+
+        Add static_assert(std::is_trivially_copyable<T>) to IPC SimpleArgumentEncoder to avoid misuses.
+
+        * Platform/IPC/ArgumentCoders.h:
+
 2021-10-06  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [WebKit2] Refactor some IPC argument encoder logic to work with StreamConnectionEncoder
