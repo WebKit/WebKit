@@ -1,3 +1,14 @@
+2021-10-06  Aditya Keerthi  <akeerthi@apple.com>
+
+        Fix watchOS, tvOS, and macCatalyst builds after r283592
+        https://bugs.webkit.org/show_bug.cgi?id=231300
+        rdar://83936867
+
+        Reviewed by Wenson Hsieh.
+
+        * wtf/PlatformEnableCocoa.h:
+        * wtf/PlatformHave.h:
+
 2021-10-06  Megan Gardner  <megan_gardner@apple.com>
 
         Allow text selection to flip.
