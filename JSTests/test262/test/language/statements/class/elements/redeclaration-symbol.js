@@ -52,4 +52,4 @@ verifyProperty(c, y, {
   configurable: true
 });
 
-assert(compareArray(x, ["a", "b", "c"]));
+assert.compareArray(x, ["a", "b", "c"]);

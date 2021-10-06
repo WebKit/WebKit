@@ -7,6 +7,4 @@ description: >
 includes: [compareArray.js]
 ---*/
 
-if (compareArray([], []) !== true) {
-  throw new Error('Empty arrays are equivalent.');
-}
+assert.compareArray([], [], 'Empty arrays are equivalent.');

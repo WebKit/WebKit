@@ -34,6 +34,6 @@ info: |
 ---*/
 
 
-var result = eval('function fn() {}{x: 42};;');
+var result = eval('function fn() {}{x: 42};');
 
 assert.sameValue(result, 42, 'it does not evaluate to an Object with the property x');

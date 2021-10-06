@@ -21,8 +21,6 @@ info: |
 features: [BigInt]
 ---*/
 
-function ToString(x) { return x + ""; }
-
 assert.sameValue(-1n + "", "-1");
 assert.sameValue("" + -1n, "-1");
 assert.sameValue(0n + "", "0");

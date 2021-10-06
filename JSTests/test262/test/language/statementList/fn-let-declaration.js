@@ -32,4 +32,4 @@ info: |
 ---*/
 
 
-function fn() {}let a, b = 42, c;b;;
+function fn() {}let a, b = 42, c;b;

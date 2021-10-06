@@ -29,14 +29,14 @@ testWithBigIntTypedArrayConstructors(TA => {
   } catch (_) {}
 
   // no error following grow:
-  array.indexOf(0);
+  array.indexOf(0n);
 
   try {
     ab.resize(BPE * 3);
   } catch (_) {}
 
   // no error following shrink (within bounds):
-  array.indexOf(0);
+  array.indexOf(0n);
 
   var expectedError;
   try {
@@ -53,7 +53,7 @@ testWithBigIntTypedArrayConstructors(TA => {
   }
 
   assert.throws(expectedError, () => {
-    array.indexOf(0);
+    array.indexOf(0n);
     throw new Test262Error('indexOf completed successfully');
   });
 });

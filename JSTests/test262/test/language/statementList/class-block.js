@@ -33,4 +33,4 @@ info: |
 ---*/
 
 
-class C {}{};
+class C {}{}

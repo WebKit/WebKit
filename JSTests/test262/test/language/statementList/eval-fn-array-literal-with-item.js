@@ -38,7 +38,7 @@ info: |
 ---*/
 
 
-var result = eval('function fn() {}[42];;');
+var result = eval('function fn() {}[42];');
 
 assert.sameValue(Object.getPrototypeOf(result), Array.prototype);
 assert.sameValue(result.length, 1);

@@ -36,7 +36,7 @@ var map = new Map(iterable);
 
 assert.sameValue(counter, 2, "`Map.prototype.set` called twice.");
 
-assert(compareArray(results[0], iterable[0]));
-assert(compareArray(results[1], iterable[1]));
+assert.compareArray(results[0], iterable[0]);
+assert.compareArray(results[1], iterable[1]);
 assert.sameValue(_this[0], map);
 assert.sameValue(_this[1], map);

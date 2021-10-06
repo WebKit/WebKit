@@ -40,7 +40,7 @@ info: |
 
 
 // length is a label!
-var result = eval('{length: 3000}/1/g;;');
+var result = eval('{length: 3000}/1/g;');
 
 // Reuse this value for items with empty completions
 var expected = 3000;

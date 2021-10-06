@@ -29,14 +29,14 @@ testWithBigIntTypedArrayConstructors(TA => {
   } catch (_) {}
 
   // no error following grow:
-  array.includes(0);
+  array.includes(0n);
 
   try {
     ab.resize(BPE * 3);
   } catch (_) {}
 
   // no error following shrink (within bounds):
-  array.includes(0);
+  array.includes(0n);
 
   var expectedError;
   try {
@@ -53,7 +53,7 @@ testWithBigIntTypedArrayConstructors(TA => {
   }
 
   assert.throws(expectedError, () => {
-    array.includes(0);
+    array.includes(0n);
     throw new Test262Error('includes completed successfully');
   });
 });

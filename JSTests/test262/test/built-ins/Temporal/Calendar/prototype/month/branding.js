@@ -11,12 +11,14 @@ const month = Temporal.Calendar.prototype.month;
 
 assert.sameValue(typeof month, "function");
 
-assert.throws(TypeError, () => month.call(undefined), "undefined");
-assert.throws(TypeError, () => month.call(null), "null");
-assert.throws(TypeError, () => month.call(true), "true");
-assert.throws(TypeError, () => month.call(""), "empty string");
-assert.throws(TypeError, () => month.call(Symbol()), "symbol");
-assert.throws(TypeError, () => month.call(1), "1");
-assert.throws(TypeError, () => month.call({}), "plain object");
-assert.throws(TypeError, () => month.call(Temporal.Calendar), "Temporal.Calendar");
-assert.throws(TypeError, () => month.call(Temporal.Calendar.prototype), "Temporal.Calendar.prototype");
+const args = [new Temporal.PlainDate(2000, 1, 1)];
+
+assert.throws(TypeError, () => month.apply(undefined, args), "undefined");
+assert.throws(TypeError, () => month.apply(null, args), "null");
+assert.throws(TypeError, () => month.apply(true, args), "true");
+assert.throws(TypeError, () => month.apply("", args), "empty string");
+assert.throws(TypeError, () => month.apply(Symbol(), args), "symbol");
+assert.throws(TypeError, () => month.apply(1, args), "1");
+assert.throws(TypeError, () => month.apply({}, args), "plain object");
+assert.throws(TypeError, () => month.apply(Temporal.Calendar, args), "Temporal.Calendar");
+assert.throws(TypeError, () => month.apply(Temporal.Calendar.prototype, args), "Temporal.Calendar.prototype");

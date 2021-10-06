@@ -29,14 +29,14 @@ testWithBigIntTypedArrayConstructors(TA => {
   } catch (_) {}
 
   // no error following grow:
-  array.lastIndexOf(0);
+  array.lastIndexOf(0n);
 
   try {
     ab.resize(BPE * 3);
   } catch (_) {}
 
   // no error following shrink (within bounds):
-  array.lastIndexOf(0);
+  array.lastIndexOf(0n);
 
   var expectedError;
   try {
@@ -53,7 +53,7 @@ testWithBigIntTypedArrayConstructors(TA => {
   }
 
   assert.throws(expectedError, () => {
-    array.lastIndexOf(0);
+    array.lastIndexOf(0n);
     throw new Test262Error('lastIndexOf completed successfully');
   });
 });

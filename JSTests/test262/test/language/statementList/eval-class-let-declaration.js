@@ -31,6 +31,6 @@ info: |
 ---*/
 
 
-var result = eval('class C {}let a, b = 42, c;b;;');
+var result = eval('class C {}let a, b = 42, c;b;');
 
 assert.sameValue(result, 42);

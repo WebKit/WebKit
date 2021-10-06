@@ -1,3 +1,18 @@
+2021-10-06  Philip Chimento  <pchimento@igalia.com>
+
+        [JSC] Update test262
+        https://bugs.webkit.org/show_bug.cgi?id=231201
+
+        Reviewed by Ross Kirsling.
+
+        Update test262 to latest, to bring in Temporal tests.
+
+        * test262/config.yaml: Ignore tests that depend on unimplemented parts
+        of Temporal.
+        * test262/expectations.yaml: Add new failures.
+        * test262/*: Update from upstream.
+        * test262/test262-Revision.txt:
+
 2021-10-06  Saam Barati  <sbarati@apple.com>
 
         Run backwards propagation before we prune the graph after ForceOSRExit nodes in BytecodeParser

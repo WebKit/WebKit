@@ -53,7 +53,7 @@ info: |
 
 
 // length is a label!
-var result = eval('{length: 3000}() => 42;;');
+var result = eval('{length: 3000}() => 42;');
 
 // Reuse this value for items with empty completions
 var expected = 3000;

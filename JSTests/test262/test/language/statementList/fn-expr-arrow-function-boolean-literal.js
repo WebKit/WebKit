@@ -51,4 +51,4 @@ info: |
 ---*/
 
 
-function fn() {}() => 1, 42;;
+function fn() {}() => 1, 42;

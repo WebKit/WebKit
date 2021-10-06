@@ -34,14 +34,13 @@ testWithTypedArrayConstructors(function(TA) {
 
   assert.sameValue(array.byteOffset, BPE, "following shrink (within bounds)");
 
-  var expected = BPE;
   try {
     ab.resize(BPE);
-    expected = 0;
   } catch (_) {}
 
-  assert.sameValue(array.byteOffset, expected, "following shrink (on boundary)");
+  assert.sameValue(array.byteOffset, BPE, "following shrink (on boundary)");
 
+  var expected = BPE;
   try {
     ab.resize(0);
     expected = 0;

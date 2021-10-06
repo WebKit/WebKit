@@ -810,6 +810,324 @@ test/built-ins/Proxy/construct/return-not-object-throws-undefined-realm.js:
 test/built-ins/Proxy/construct/trap-is-not-callable-realm.js:
   default: 'Test262Error: Expected a TypeError but got a different error constructor with the same name'
   strict mode: 'Test262Error: Expected a TypeError but got a different error constructor with the same name'
+test/built-ins/RegExp/property-escapes/generated/Alphabetic.js:
+  default: 'Test262Error: `\p{Alphabetic}` should match U+000C5D (`ౝ`)'
+  strict mode: 'Test262Error: `\p{Alphabetic}` should match U+000C5D (`ౝ`)'
+test/built-ins/RegExp/property-escapes/generated/Assigned.js:
+  default: 'Test262Error: `\p{Assigned}` should match U+000C5D (`ౝ`)'
+  strict mode: 'Test262Error: `\p{Assigned}` should match U+000C5D (`ౝ`)'
+test/built-ins/RegExp/property-escapes/generated/Bidi_Mirrored.js:
+  default: 'Test262Error: `\p{Bidi_Mirrored}` should match U+002E55 (`⹕`)'
+  strict mode: 'Test262Error: `\p{Bidi_Mirrored}` should match U+002E55 (`⹕`)'
+test/built-ins/RegExp/property-escapes/generated/Case_Ignorable.js:
+  default: 'Test262Error: `\p{Case_Ignorable}` should match U+000888 (`࢈`)'
+  strict mode: 'Test262Error: `\p{Case_Ignorable}` should match U+000888 (`࢈`)'
+test/built-ins/RegExp/property-escapes/generated/Cased.js:
+  default: 'Test262Error: `\p{Cased}` should match U+00A7D3 (`ꟓ`)'
+  strict mode: 'Test262Error: `\p{Cased}` should match U+00A7D3 (`ꟓ`)'
+test/built-ins/RegExp/property-escapes/generated/Changes_When_Casefolded.js:
+  default: 'Test262Error: `\p{Changes_When_Casefolded}` should match U+00A7C0 (`Ꟁ`)'
+  strict mode: 'Test262Error: `\p{Changes_When_Casefolded}` should match U+00A7C0 (`Ꟁ`)'
+test/built-ins/RegExp/property-escapes/generated/Changes_When_Casemapped.js:
+  default: 'Test262Error: `\p{Changes_When_Casemapped}` should match U+002C2F (`Ⱟ`)'
+  strict mode: 'Test262Error: `\p{Changes_When_Casemapped}` should match U+002C2F (`Ⱟ`)'
+test/built-ins/RegExp/property-escapes/generated/Changes_When_Lowercased.js:
+  default: 'Test262Error: `\p{Changes_When_Lowercased}` should match U+00A7C0 (`Ꟁ`)'
+  strict mode: 'Test262Error: `\p{Changes_When_Lowercased}` should match U+00A7C0 (`Ꟁ`)'
+test/built-ins/RegExp/property-escapes/generated/Changes_When_NFKC_Casefolded.js:
+  default: 'Test262Error: `\p{Changes_When_NFKC_Casefolded}` should match U+00A7C0 (`Ꟁ`)'
+  strict mode: 'Test262Error: `\p{Changes_When_NFKC_Casefolded}` should match U+00A7C0 (`Ꟁ`)'
+test/built-ins/RegExp/property-escapes/generated/Changes_When_Titlecased.js:
+  default: 'Test262Error: `\p{Changes_When_Titlecased}` should match U+00A7C1 (`ꟁ`)'
+  strict mode: 'Test262Error: `\p{Changes_When_Titlecased}` should match U+00A7C1 (`ꟁ`)'
+test/built-ins/RegExp/property-escapes/generated/Changes_When_Uppercased.js:
+  default: 'Test262Error: `\p{Changes_When_Uppercased}` should match U+00A7C1 (`ꟁ`)'
+  strict mode: 'Test262Error: `\p{Changes_When_Uppercased}` should match U+00A7C1 (`ꟁ`)'
+test/built-ins/RegExp/property-escapes/generated/Dash.js:
+  default: 'Test262Error: `\p{Dash}` should match U+002E5D (`⹝`)'
+  strict mode: 'Test262Error: `\p{Dash}` should match U+002E5D (`⹝`)'
+test/built-ins/RegExp/property-escapes/generated/Default_Ignorable_Code_Point.js:
+  default: 'Test262Error: `\p{Default_Ignorable_Code_Point}` should match U+00180F (`᠏`)'
+  strict mode: 'Test262Error: `\p{Default_Ignorable_Code_Point}` should match U+00180F (`᠏`)'
+test/built-ins/RegExp/property-escapes/generated/Diacritic.js:
+  default: 'Test262Error: `\p{Diacritic}` should match U+000C3C (`఼`)'
+  strict mode: 'Test262Error: `\p{Diacritic}` should match U+000C3C (`఼`)'
+test/built-ins/RegExp/property-escapes/generated/Emoji.js:
+  default: 'Test262Error: `\p{Emoji}` should match U+01F7F0 (`🟰`)'
+  strict mode: 'Test262Error: `\p{Emoji}` should match U+01F7F0 (`🟰`)'
+test/built-ins/RegExp/property-escapes/generated/Emoji_Modifier_Base.js:
+  default: 'Test262Error: `\p{Emoji_Modifier_Base}` should match U+01FAC3 (`🫃`)'
+  strict mode: 'Test262Error: `\p{Emoji_Modifier_Base}` should match U+01FAC3 (`🫃`)'
+test/built-ins/RegExp/property-escapes/generated/Emoji_Presentation.js:
+  default: 'Test262Error: `\p{Emoji_Presentation}` should match U+01F7F0 (`🟰`)'
+  strict mode: 'Test262Error: `\p{Emoji_Presentation}` should match U+01F7F0 (`🟰`)'
+test/built-ins/RegExp/property-escapes/generated/Extender.js:
+  default: 'Test262Error: `\p{Extender}` should match U+010781 (`𐞁`)'
+  strict mode: 'Test262Error: `\p{Extender}` should match U+010781 (`𐞁`)'
+test/built-ins/RegExp/property-escapes/generated/General_Category_-_Cased_Letter.js:
+  default: 'Test262Error: `\p{General_Category=Cased_Letter}` should match U+00A7D3 (`ꟓ`)'
+  strict mode: 'Test262Error: `\p{General_Category=Cased_Letter}` should match U+00A7D3 (`ꟓ`)'
+test/built-ins/RegExp/property-escapes/generated/General_Category_-_Close_Punctuation.js:
+  default: 'Test262Error: `\p{General_Category=Close_Punctuation}` should match U+002E56 (`⹖`)'
+  strict mode: 'Test262Error: `\p{General_Category=Close_Punctuation}` should match U+002E56 (`⹖`)'
+test/built-ins/RegExp/property-escapes/generated/General_Category_-_Currency_Symbol.js:
+  default: 'Test262Error: `\p{General_Category=Currency_Symbol}` should match U+0020C0 (`⃀`)'
+  strict mode: 'Test262Error: `\p{General_Category=Currency_Symbol}` should match U+0020C0 (`⃀`)'
+test/built-ins/RegExp/property-escapes/generated/General_Category_-_Dash_Punctuation.js:
+  default: 'Test262Error: `\p{General_Category=Dash_Punctuation}` should match U+002E5D (`⹝`)'
+  strict mode: 'Test262Error: `\p{General_Category=Dash_Punctuation}` should match U+002E5D (`⹝`)'
+test/built-ins/RegExp/property-escapes/generated/General_Category_-_Decimal_Number.js:
+  default: 'Test262Error: `\p{General_Category=Decimal_Number}` should match U+016AC0 (`𖫀`)'
+  strict mode: 'Test262Error: `\p{General_Category=Decimal_Number}` should match U+016AC0 (`𖫀`)'
+test/built-ins/RegExp/property-escapes/generated/General_Category_-_Format.js:
+  default: 'Test262Error: `\p{General_Category=Format}` should match U+000890 (`࢐`)'
+  strict mode: 'Test262Error: `\p{General_Category=Format}` should match U+000890 (`࢐`)'
+test/built-ins/RegExp/property-escapes/generated/General_Category_-_Letter.js:
+  default: 'Test262Error: `\p{General_Category=Letter}` should match U+000C5D (`ౝ`)'
+  strict mode: 'Test262Error: `\p{General_Category=Letter}` should match U+000C5D (`ౝ`)'
+test/built-ins/RegExp/property-escapes/generated/General_Category_-_Lowercase_Letter.js:
+  default: 'Test262Error: `\p{General_Category=Lowercase_Letter}` should match U+00A7C1 (`ꟁ`)'
+  strict mode: 'Test262Error: `\p{General_Category=Lowercase_Letter}` should match U+00A7C1 (`ꟁ`)'
+test/built-ins/RegExp/property-escapes/generated/General_Category_-_Mark.js:
+  default: 'Test262Error: `\p{General_Category=Mark}` should match U+000C3C (`఼`)'
+  strict mode: 'Test262Error: `\p{General_Category=Mark}` should match U+000C3C (`఼`)'
+test/built-ins/RegExp/property-escapes/generated/General_Category_-_Modifier_Letter.js:
+  default: 'Test262Error: `\p{General_Category=Modifier_Letter}` should match U+0008C9 (`ࣉ`)'
+  strict mode: 'Test262Error: `\p{General_Category=Modifier_Letter}` should match U+0008C9 (`ࣉ`)'
+test/built-ins/RegExp/property-escapes/generated/General_Category_-_Modifier_Symbol.js:
+  default: 'Test262Error: `\p{General_Category=Modifier_Symbol}` should match U+000888 (`࢈`)'
+  strict mode: 'Test262Error: `\p{General_Category=Modifier_Symbol}` should match U+000888 (`࢈`)'
+test/built-ins/RegExp/property-escapes/generated/General_Category_-_Nonspacing_Mark.js:
+  default: 'Test262Error: `\p{General_Category=Nonspacing_Mark}` should match U+000C3C (`఼`)'
+  strict mode: 'Test262Error: `\p{General_Category=Nonspacing_Mark}` should match U+000C3C (`఼`)'
+test/built-ins/RegExp/property-escapes/generated/General_Category_-_Number.js:
+  default: 'Test262Error: `\p{General_Category=Number}` should match U+016AC0 (`𖫀`)'
+  strict mode: 'Test262Error: `\p{General_Category=Number}` should match U+016AC0 (`𖫀`)'
+test/built-ins/RegExp/property-escapes/generated/General_Category_-_Open_Punctuation.js:
+  default: 'Test262Error: `\p{General_Category=Open_Punctuation}` should match U+002E55 (`⹕`)'
+  strict mode: 'Test262Error: `\p{General_Category=Open_Punctuation}` should match U+002E55 (`⹕`)'
+test/built-ins/RegExp/property-escapes/generated/General_Category_-_Other.js:
+  default: 'Test262Error: `\P{General_Category=Other}` should match U+000C5D (`ౝ`)'
+  strict mode: 'Test262Error: `\P{General_Category=Other}` should match U+000C5D (`ౝ`)'
+test/built-ins/RegExp/property-escapes/generated/General_Category_-_Other_Letter.js:
+  default: 'Test262Error: `\p{General_Category=Other_Letter}` should match U+000C5D (`ౝ`)'
+  strict mode: 'Test262Error: `\p{General_Category=Other_Letter}` should match U+000C5D (`ౝ`)'
+test/built-ins/RegExp/property-escapes/generated/General_Category_-_Other_Punctuation.js:
+  default: 'Test262Error: `\p{General_Category=Other_Punctuation}` should match U+0116B9 (`𑚹`)'
+  strict mode: 'Test262Error: `\p{General_Category=Other_Punctuation}` should match U+0116B9 (`𑚹`)'
+test/built-ins/RegExp/property-escapes/generated/General_Category_-_Other_Symbol.js:
+  default: 'Test262Error: `\p{General_Category=Other_Symbol}` should match U+00FDCF (`﷏`)'
+  strict mode: 'Test262Error: `\p{General_Category=Other_Symbol}` should match U+00FDCF (`﷏`)'
+test/built-ins/RegExp/property-escapes/generated/General_Category_-_Punctuation.js:
+  default: 'Test262Error: `\p{General_Category=Punctuation}` should match U+0116B9 (`𑚹`)'
+  strict mode: 'Test262Error: `\p{General_Category=Punctuation}` should match U+0116B9 (`𑚹`)'
+test/built-ins/RegExp/property-escapes/generated/General_Category_-_Spacing_Mark.js:
+  default: 'Test262Error: `\p{General_Category=Spacing_Mark}` should match U+001715 (`᜕`)'
+  strict mode: 'Test262Error: `\p{General_Category=Spacing_Mark}` should match U+001715 (`᜕`)'
+test/built-ins/RegExp/property-escapes/generated/General_Category_-_Symbol.js:
+  default: 'Test262Error: `\p{General_Category=Symbol}` should match U+000888 (`࢈`)'
+  strict mode: 'Test262Error: `\p{General_Category=Symbol}` should match U+000888 (`࢈`)'
+test/built-ins/RegExp/property-escapes/generated/General_Category_-_Unassigned.js:
+  default: 'Test262Error: `\P{General_Category=Unassigned}` should match U+000C5D (`ౝ`)'
+  strict mode: 'Test262Error: `\P{General_Category=Unassigned}` should match U+000C5D (`ౝ`)'
+test/built-ins/RegExp/property-escapes/generated/General_Category_-_Uppercase_Letter.js:
+  default: 'Test262Error: `\p{General_Category=Uppercase_Letter}` should match U+00A7C0 (`Ꟁ`)'
+  strict mode: 'Test262Error: `\p{General_Category=Uppercase_Letter}` should match U+00A7C0 (`Ꟁ`)'
+test/built-ins/RegExp/property-escapes/generated/Grapheme_Base.js:
+  default: 'Test262Error: `\p{Grapheme_Base}` should match U+000C5D (`ౝ`)'
+  strict mode: 'Test262Error: `\p{Grapheme_Base}` should match U+000C5D (`ౝ`)'
+test/built-ins/RegExp/property-escapes/generated/Grapheme_Extend.js:
+  default: 'Test262Error: `\p{Grapheme_Extend}` should match U+000C3C (`఼`)'
+  strict mode: 'Test262Error: `\p{Grapheme_Extend}` should match U+000C3C (`఼`)'
+test/built-ins/RegExp/property-escapes/generated/ID_Continue.js:
+  default: 'Test262Error: `\p{ID_Continue}` should match U+000C5D (`ౝ`)'
+  strict mode: 'Test262Error: `\p{ID_Continue}` should match U+000C5D (`ౝ`)'
+test/built-ins/RegExp/property-escapes/generated/ID_Start.js:
+  default: 'Test262Error: `\p{ID_Start}` should match U+000C5D (`ౝ`)'
+  strict mode: 'Test262Error: `\p{ID_Start}` should match U+000C5D (`ౝ`)'
+test/built-ins/RegExp/property-escapes/generated/Ideographic.js:
+  default: 'Test262Error: `\p{Ideographic}` should match U+009FFD (`鿽`)'
+  strict mode: 'Test262Error: `\p{Ideographic}` should match U+009FFD (`鿽`)'
+test/built-ins/RegExp/property-escapes/generated/Lowercase.js:
+  default: 'Test262Error: `\p{Lowercase}` should match U+00A7C1 (`ꟁ`)'
+  strict mode: 'Test262Error: `\p{Lowercase}` should match U+00A7C1 (`ꟁ`)'
+test/built-ins/RegExp/property-escapes/generated/Script_-_Ahom.js:
+  default: 'Test262Error: `\p{Script=Ahom}` should match U+011740 (`𑝀`)'
+  strict mode: 'Test262Error: `\p{Script=Ahom}` should match U+011740 (`𑝀`)'
+test/built-ins/RegExp/property-escapes/generated/Script_-_Arabic.js:
+  default: 'Test262Error: `\p{Script=Arabic}` should match U+00FDCF (`﷏`)'
+  strict mode: 'Test262Error: `\p{Script=Arabic}` should match U+00FDCF (`﷏`)'
+test/built-ins/RegExp/property-escapes/generated/Script_-_Balinese.js:
+  default: 'Test262Error: `\p{Script=Balinese}` should match U+001B4C (`ᭌ`)'
+  strict mode: 'Test262Error: `\p{Script=Balinese}` should match U+001B4C (`ᭌ`)'
+test/built-ins/RegExp/property-escapes/generated/Script_-_Brahmi.js:
+  default: 'Test262Error: `\p{Script=Brahmi}` should match U+011070 (`𑁰`)'
+  strict mode: 'Test262Error: `\p{Script=Brahmi}` should match U+011070 (`𑁰`)'
+test/built-ins/RegExp/property-escapes/generated/Script_-_Canadian_Aboriginal.js:
+  default: 'Test262Error: `\p{Script=Canadian_Aboriginal}` should match U+011AB0 (`𑪰`)'
+  strict mode: 'Test262Error: `\p{Script=Canadian_Aboriginal}` should match U+011AB0 (`𑪰`)'
+test/built-ins/RegExp/property-escapes/generated/Script_-_Common.js:
+  default: 'Test262Error: `\p{Script=Common}` should match U+01F7F0 (`🟰`)'
+  strict mode: 'Test262Error: `\p{Script=Common}` should match U+01F7F0 (`🟰`)'
+test/built-ins/RegExp/property-escapes/generated/Script_-_Cypro_Minoan.js:
+  default: 'SyntaxError: Invalid regular expression: invalid property expression'
+  strict mode: 'SyntaxError: Invalid regular expression: invalid property expression'
+test/built-ins/RegExp/property-escapes/generated/Script_-_Ethiopic.js:
+  default: 'Test262Error: `\p{Script=Ethiopic}` should match U+01E7E0 (`𞟠`)'
+  strict mode: 'Test262Error: `\p{Script=Ethiopic}` should match U+01E7E0 (`𞟠`)'
+test/built-ins/RegExp/property-escapes/generated/Script_-_Glagolitic.js:
+  default: 'Test262Error: `\p{Script=Glagolitic}` should match U+002C2F (`Ⱟ`)'
+  strict mode: 'Test262Error: `\p{Script=Glagolitic}` should match U+002C2F (`Ⱟ`)'
+test/built-ins/RegExp/property-escapes/generated/Script_-_Han.js:
+  default: 'Test262Error: `\p{Script=Han}` should match U+009FFD (`鿽`)'
+  strict mode: 'Test262Error: `\p{Script=Han}` should match U+009FFD (`鿽`)'
+test/built-ins/RegExp/property-escapes/generated/Script_-_Hiragana.js:
+  default: 'Test262Error: `\p{Script=Hiragana}` should match U+01B11F (`𛄟`)'
+  strict mode: 'Test262Error: `\p{Script=Hiragana}` should match U+01B11F (`𛄟`)'
+test/built-ins/RegExp/property-escapes/generated/Script_-_Inherited.js:
+  default: 'Test262Error: `\p{Script=Inherited}` should match U+001AC1 (`᫁`)'
+  strict mode: 'Test262Error: `\p{Script=Inherited}` should match U+001AC1 (`᫁`)'
+test/built-ins/RegExp/property-escapes/generated/Script_-_Kaithi.js:
+  default: 'Test262Error: `\p{Script=Kaithi}` should match U+0110C2 (`𑃂`)'
+  strict mode: 'Test262Error: `\p{Script=Kaithi}` should match U+0110C2 (`𑃂`)'
+test/built-ins/RegExp/property-escapes/generated/Script_-_Kannada.js:
+  default: 'Test262Error: `\p{Script=Kannada}` should match U+000CDD (`ೝ`)'
+  strict mode: 'Test262Error: `\p{Script=Kannada}` should match U+000CDD (`ೝ`)'
+test/built-ins/RegExp/property-escapes/generated/Script_-_Katakana.js:
+  default: 'Test262Error: `\p{Script=Katakana}` should match U+01AFF0 (`𚿰`)'
+  strict mode: 'Test262Error: `\p{Script=Katakana}` should match U+01AFF0 (`𚿰`)'
+test/built-ins/RegExp/property-escapes/generated/Script_-_Latin.js:
+  default: 'Test262Error: `\p{Script=Latin}` should match U+00A7D3 (`ꟓ`)'
+  strict mode: 'Test262Error: `\p{Script=Latin}` should match U+00A7D3 (`ꟓ`)'
+test/built-ins/RegExp/property-escapes/generated/Script_-_Mongolian.js:
+  default: 'Test262Error: `\p{Script=Mongolian}` should match U+00180F (`᠏`)'
+  strict mode: 'Test262Error: `\p{Script=Mongolian}` should match U+00180F (`᠏`)'
+test/built-ins/RegExp/property-escapes/generated/Script_-_Old_Uyghur.js:
+  default: 'SyntaxError: Invalid regular expression: invalid property expression'
+  strict mode: 'SyntaxError: Invalid regular expression: invalid property expression'
+test/built-ins/RegExp/property-escapes/generated/Script_-_Tagalog.js:
+  default: 'Test262Error: `\p{Script=Tagalog}` should match U+00171F (`ᜟ`)'
+  strict mode: 'Test262Error: `\p{Script=Tagalog}` should match U+00171F (`ᜟ`)'
+test/built-ins/RegExp/property-escapes/generated/Script_-_Takri.js:
+  default: 'Test262Error: `\p{Script=Takri}` should match U+0116B9 (`𑚹`)'
+  strict mode: 'Test262Error: `\p{Script=Takri}` should match U+0116B9 (`𑚹`)'
+test/built-ins/RegExp/property-escapes/generated/Script_-_Tangsa.js:
+  default: 'SyntaxError: Invalid regular expression: invalid property expression'
+  strict mode: 'SyntaxError: Invalid regular expression: invalid property expression'
+test/built-ins/RegExp/property-escapes/generated/Script_-_Telugu.js:
+  default: 'Test262Error: `\p{Script=Telugu}` should match U+000C5D (`ౝ`)'
+  strict mode: 'Test262Error: `\p{Script=Telugu}` should match U+000C5D (`ౝ`)'
+test/built-ins/RegExp/property-escapes/generated/Script_-_Toto.js:
+  default: 'SyntaxError: Invalid regular expression: invalid property expression'
+  strict mode: 'SyntaxError: Invalid regular expression: invalid property expression'
+test/built-ins/RegExp/property-escapes/generated/Script_-_Vithkuqi.js:
+  default: 'SyntaxError: Invalid regular expression: invalid property expression'
+  strict mode: 'SyntaxError: Invalid regular expression: invalid property expression'
+test/built-ins/RegExp/property-escapes/generated/Script_Extensions_-_Adlam.js:
+  default: 'Test262Error: `\p{Script_Extensions=Adlam}` should match U+00061F (`؟`)'
+  strict mode: 'Test262Error: `\p{Script_Extensions=Adlam}` should match U+00061F (`؟`)'
+test/built-ins/RegExp/property-escapes/generated/Script_Extensions_-_Ahom.js:
+  default: 'Test262Error: `\p{Script_Extensions=Ahom}` should match U+011740 (`𑝀`)'
+  strict mode: 'Test262Error: `\p{Script_Extensions=Ahom}` should match U+011740 (`𑝀`)'
+test/built-ins/RegExp/property-escapes/generated/Script_Extensions_-_Arabic.js:
+  default: 'Test262Error: `\p{Script_Extensions=Arabic}` should match U+00FDCF (`﷏`)'
+  strict mode: 'Test262Error: `\p{Script_Extensions=Arabic}` should match U+00FDCF (`﷏`)'
+test/built-ins/RegExp/property-escapes/generated/Script_Extensions_-_Balinese.js:
+  default: 'Test262Error: `\p{Script_Extensions=Balinese}` should match U+001B4C (`ᭌ`)'
+  strict mode: 'Test262Error: `\p{Script_Extensions=Balinese}` should match U+001B4C (`ᭌ`)'
+test/built-ins/RegExp/property-escapes/generated/Script_Extensions_-_Brahmi.js:
+  default: 'Test262Error: `\p{Script_Extensions=Brahmi}` should match U+011070 (`𑁰`)'
+  strict mode: 'Test262Error: `\p{Script_Extensions=Brahmi}` should match U+011070 (`𑁰`)'
+test/built-ins/RegExp/property-escapes/generated/Script_Extensions_-_Canadian_Aboriginal.js:
+  default: 'Test262Error: `\p{Script_Extensions=Canadian_Aboriginal}` should match U+011AB0 (`𑪰`)'
+  strict mode: 'Test262Error: `\p{Script_Extensions=Canadian_Aboriginal}` should match U+011AB0 (`𑪰`)'
+test/built-ins/RegExp/property-escapes/generated/Script_Extensions_-_Common.js:
+  default: 'Test262Error: `\p{Script_Extensions=Common}` should match U+01F7F0 (`🟰`)'
+  strict mode: 'Test262Error: `\p{Script_Extensions=Common}` should match U+01F7F0 (`🟰`)'
+test/built-ins/RegExp/property-escapes/generated/Script_Extensions_-_Cypro_Minoan.js:
+  default: 'SyntaxError: Invalid regular expression: invalid property expression'
+  strict mode: 'SyntaxError: Invalid regular expression: invalid property expression'
+test/built-ins/RegExp/property-escapes/generated/Script_Extensions_-_Ethiopic.js:
+  default: 'Test262Error: `\p{Script_Extensions=Ethiopic}` should match U+01E7E0 (`𞟠`)'
+  strict mode: 'Test262Error: `\p{Script_Extensions=Ethiopic}` should match U+01E7E0 (`𞟠`)'
+test/built-ins/RegExp/property-escapes/generated/Script_Extensions_-_Glagolitic.js:
+  default: 'Test262Error: `\p{Script_Extensions=Glagolitic}` should match U+002C2F (`Ⱟ`)'
+  strict mode: 'Test262Error: `\p{Script_Extensions=Glagolitic}` should match U+002C2F (`Ⱟ`)'
+test/built-ins/RegExp/property-escapes/generated/Script_Extensions_-_Han.js:
+  default: 'Test262Error: `\p{Script_Extensions=Han}` should match U+009FFD (`鿽`)'
+  strict mode: 'Test262Error: `\p{Script_Extensions=Han}` should match U+009FFD (`鿽`)'
+test/built-ins/RegExp/property-escapes/generated/Script_Extensions_-_Hiragana.js:
+  default: 'Test262Error: `\p{Script_Extensions=Hiragana}` should match U+01B11F (`𛄟`)'
+  strict mode: 'Test262Error: `\p{Script_Extensions=Hiragana}` should match U+01B11F (`𛄟`)'
+test/built-ins/RegExp/property-escapes/generated/Script_Extensions_-_Inherited.js:
+  default: 'Test262Error: `\p{Script_Extensions=Inherited}` should match U+001AC1 (`᫁`)'
+  strict mode: 'Test262Error: `\p{Script_Extensions=Inherited}` should match U+001AC1 (`᫁`)'
+test/built-ins/RegExp/property-escapes/generated/Script_Extensions_-_Kaithi.js:
+  default: 'Test262Error: `\p{Script_Extensions=Kaithi}` should match U+0110C2 (`𑃂`)'
+  strict mode: 'Test262Error: `\p{Script_Extensions=Kaithi}` should match U+0110C2 (`𑃂`)'
+test/built-ins/RegExp/property-escapes/generated/Script_Extensions_-_Kannada.js:
+  default: 'Test262Error: `\p{Script_Extensions=Kannada}` should match U+000CDD (`ೝ`)'
+  strict mode: 'Test262Error: `\p{Script_Extensions=Kannada}` should match U+000CDD (`ೝ`)'
+test/built-ins/RegExp/property-escapes/generated/Script_Extensions_-_Katakana.js:
+  default: 'Test262Error: `\p{Script_Extensions=Katakana}` should match U+01AFF0 (`𚿰`)'
+  strict mode: 'Test262Error: `\p{Script_Extensions=Katakana}` should match U+01AFF0 (`𚿰`)'
+test/built-ins/RegExp/property-escapes/generated/Script_Extensions_-_Latin.js:
+  default: 'Test262Error: `\p{Script_Extensions=Latin}` should match U+00A7D3 (`ꟓ`)'
+  strict mode: 'Test262Error: `\p{Script_Extensions=Latin}` should match U+00A7D3 (`ꟓ`)'
+test/built-ins/RegExp/property-escapes/generated/Script_Extensions_-_Mongolian.js:
+  default: 'Test262Error: `\p{Script_Extensions=Mongolian}` should match U+00180F (`᠏`)'
+  strict mode: 'Test262Error: `\p{Script_Extensions=Mongolian}` should match U+00180F (`᠏`)'
+test/built-ins/RegExp/property-escapes/generated/Script_Extensions_-_Nko.js:
+  default: 'Test262Error: `\p{Script_Extensions=Nko}` should match U+00060C (`،`)'
+  strict mode: 'Test262Error: `\p{Script_Extensions=Nko}` should match U+00060C (`،`)'
+test/built-ins/RegExp/property-escapes/generated/Script_Extensions_-_Old_Uyghur.js:
+  default: 'SyntaxError: Invalid regular expression: invalid property expression'
+  strict mode: 'SyntaxError: Invalid regular expression: invalid property expression'
+test/built-ins/RegExp/property-escapes/generated/Script_Extensions_-_Syriac.js:
+  default: 'Test262Error: `\p{Script_Extensions=Syriac}` should match U+001DFA (`᷺`)'
+  strict mode: 'Test262Error: `\p{Script_Extensions=Syriac}` should match U+001DFA (`᷺`)'
+test/built-ins/RegExp/property-escapes/generated/Script_Extensions_-_Tagalog.js:
+  default: 'Test262Error: `\p{Script_Extensions=Tagalog}` should match U+00171F (`ᜟ`)'
+  strict mode: 'Test262Error: `\p{Script_Extensions=Tagalog}` should match U+00171F (`ᜟ`)'
+test/built-ins/RegExp/property-escapes/generated/Script_Extensions_-_Takri.js:
+  default: 'Test262Error: `\p{Script_Extensions=Takri}` should match U+0116B9 (`𑚹`)'
+  strict mode: 'Test262Error: `\p{Script_Extensions=Takri}` should match U+0116B9 (`𑚹`)'
+test/built-ins/RegExp/property-escapes/generated/Script_Extensions_-_Tangsa.js:
+  default: 'SyntaxError: Invalid regular expression: invalid property expression'
+  strict mode: 'SyntaxError: Invalid regular expression: invalid property expression'
+test/built-ins/RegExp/property-escapes/generated/Script_Extensions_-_Telugu.js:
+  default: 'Test262Error: `\p{Script_Extensions=Telugu}` should match U+000C5D (`ౝ`)'
+  strict mode: 'Test262Error: `\p{Script_Extensions=Telugu}` should match U+000C5D (`ౝ`)'
+test/built-ins/RegExp/property-escapes/generated/Script_Extensions_-_Toto.js:
+  default: 'SyntaxError: Invalid regular expression: invalid property expression'
+  strict mode: 'SyntaxError: Invalid regular expression: invalid property expression'
+test/built-ins/RegExp/property-escapes/generated/Script_Extensions_-_Vithkuqi.js:
+  default: 'SyntaxError: Invalid regular expression: invalid property expression'
+  strict mode: 'SyntaxError: Invalid regular expression: invalid property expression'
+test/built-ins/RegExp/property-escapes/generated/Sentence_Terminal.js:
+  default: 'Test262Error: `\p{Sentence_Terminal}` should match U+00061D (`؝`)'
+  strict mode: 'Test262Error: `\p{Sentence_Terminal}` should match U+00061D (`؝`)'
+test/built-ins/RegExp/property-escapes/generated/Soft_Dotted.js:
+  default: 'Test262Error: `\p{Soft_Dotted}` should match U+01DF1A (`𝼚`)'
+  strict mode: 'Test262Error: `\p{Soft_Dotted}` should match U+01DF1A (`𝼚`)'
+test/built-ins/RegExp/property-escapes/generated/Terminal_Punctuation.js:
+  default: 'Test262Error: `\p{Terminal_Punctuation}` should match U+00061D (`؝`)'
+  strict mode: 'Test262Error: `\p{Terminal_Punctuation}` should match U+00061D (`؝`)'
+test/built-ins/RegExp/property-escapes/generated/Unified_Ideograph.js:
+  default: 'Test262Error: `\p{Unified_Ideograph}` should match U+009FFD (`鿽`)'
+  strict mode: 'Test262Error: `\p{Unified_Ideograph}` should match U+009FFD (`鿽`)'
+test/built-ins/RegExp/property-escapes/generated/Uppercase.js:
+  default: 'Test262Error: `\p{Uppercase}` should match U+00A7C0 (`Ꟁ`)'
+  strict mode: 'Test262Error: `\p{Uppercase}` should match U+00A7C0 (`Ꟁ`)'
+test/built-ins/RegExp/property-escapes/generated/Variation_Selector.js:
+  default: 'Test262Error: `\p{Variation_Selector}` should match U+00180F (`᠏`)'
+  strict mode: 'Test262Error: `\p{Variation_Selector}` should match U+00180F (`᠏`)'
+test/built-ins/RegExp/property-escapes/generated/XID_Continue.js:
+  default: 'Test262Error: `\p{XID_Continue}` should match U+000C5D (`ౝ`)'
+  strict mode: 'Test262Error: `\p{XID_Continue}` should match U+000C5D (`ౝ`)'
+test/built-ins/RegExp/property-escapes/generated/XID_Start.js:
+  default: 'Test262Error: `\p{XID_Start}` should match U+000C5D (`ౝ`)'
+  strict mode: 'Test262Error: `\p{XID_Start}` should match U+000C5D (`ౝ`)'
 test/built-ins/RegExp/prototype/Symbol.match/builtin-infer-unicode.js:
   default: 'Test262Error: Expected SameValue(«�», «null») to be true'
   strict mode: 'Test262Error: Expected SameValue(«�», «null») to be true'
@@ -825,6 +1143,48 @@ test/built-ins/RegExp/prototype/exec/u-lastindex-adv.js:
 test/built-ins/RegExp/quantifier-integer-limit.js:
   default: 'SyntaxError: Invalid regular expression: number too large in {} quantifier'
   strict mode: 'SyntaxError: Invalid regular expression: number too large in {} quantifier'
+test/built-ins/Temporal/Duration/prototype/round/calendar-fields-iterable.js:
+  default: 'Bad exit code: 134'
+  strict mode: 'Bad exit code: 134'
+test/built-ins/Temporal/Duration/prototype/round/read-time-fields-before-datefromfields.js:
+  default: 'Bad exit code: 134'
+  strict mode: 'Bad exit code: 134'
+test/built-ins/Temporal/Duration/prototype/round/timezone-getpossibleinstantsfor-iterable.js:
+  default: 'Bad exit code: 134'
+  strict mode: 'Bad exit code: 134'
+test/built-ins/Temporal/PlainTime/from/argument-string-with-calendar.js:
+  default: 'RangeError: invalid time string'
+  strict mode: 'RangeError: invalid time string'
+test/built-ins/Temporal/PlainTime/from/options-undefined.js:
+  default: 'TypeError: "second" field is missing'
+  strict mode: 'TypeError: "second" field is missing'
+test/built-ins/Temporal/PlainTime/from/order-of-operations.js:
+  default: 'Test262Error: Expected [get calendar, get hour, get hour.valueOf, call hour.valueOf, get minute, get minute.valueOf, call minute.valueOf, get second, get second.valueOf, call second.valueOf, get millisecond, get millisecond.valueOf, call millisecond.valueOf, get microsecond, get microsecond.valueOf, call microsecond.valueOf, get nanosecond, get nanosecond.valueOf, call nanosecond.valueOf] and [get calendar, get hour, get hour.valueOf, call hour.valueOf, get microsecond, get microsecond.valueOf, call microsecond.valueOf, get millisecond, get millisecond.valueOf, call millisecond.valueOf, get minute, get minute.valueOf, call minute.valueOf, get nanosecond, get nanosecond.valueOf, call nanosecond.valueOf, get second, get second.valueOf, call second.valueOf] to have the same contents. order of operations'
+  strict mode: 'Test262Error: Expected [get calendar, get hour, get hour.valueOf, call hour.valueOf, get minute, get minute.valueOf, call minute.valueOf, get second, get second.valueOf, call second.valueOf, get millisecond, get millisecond.valueOf, call millisecond.valueOf, get microsecond, get microsecond.valueOf, call microsecond.valueOf, get nanosecond, get nanosecond.valueOf, call nanosecond.valueOf] and [get calendar, get hour, get hour.valueOf, call hour.valueOf, get microsecond, get microsecond.valueOf, call microsecond.valueOf, get millisecond, get millisecond.valueOf, call millisecond.valueOf, get minute, get minute.valueOf, call minute.valueOf, get nanosecond, get nanosecond.valueOf, call nanosecond.valueOf, get second, get second.valueOf, call second.valueOf] to have the same contents. order of operations'
+test/built-ins/Temporal/PlainTime/from/overflow-undefined.js:
+  default: 'TypeError: "minute" field is missing'
+  strict mode: 'TypeError: "minute" field is missing'
+test/built-ins/Temporal/PlainTime/from/overflow-wrong-type.js:
+  default: 'TypeError: "minute" field is missing'
+  strict mode: 'TypeError: "minute" field is missing'
+test/built-ins/Temporal/PlainTime/prototype/equals/argument-wrong-type.js:
+  default: 'TypeError: "hour" field is missing'
+  strict mode: 'TypeError: "hour" field is missing'
+test/built-ins/Temporal/PlainTime/prototype/toLocaleString/locales-undefined.js:
+  default: 'TypeError: Temporal.PlainTime.prototype.valueOf must not be called. To compare PlainTime values, use Temporal.PlainTime.compare'
+  strict mode: 'TypeError: Temporal.PlainTime.prototype.valueOf must not be called. To compare PlainTime values, use Temporal.PlainTime.compare'
+test/built-ins/Temporal/PlainTime/prototype/toLocaleString/options-conflict.js:
+  default: 'Test262Error: time.toLocaleString("en", { hour: "numeric",  timeStyle: "short" }) throws TypeError Expected a TypeError to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: time.toLocaleString("en", { hour: "numeric",  timeStyle: "short" }) throws TypeError Expected a TypeError to be thrown but no exception was thrown at all'
+test/built-ins/Temporal/PlainTime/prototype/toLocaleString/options-undefined.js:
+  default: 'TypeError: Temporal.PlainTime.prototype.valueOf must not be called. To compare PlainTime values, use Temporal.PlainTime.compare'
+  strict mode: 'TypeError: Temporal.PlainTime.prototype.valueOf must not be called. To compare PlainTime values, use Temporal.PlainTime.compare'
+test/built-ins/Temporal/PlainTime/prototype/with/order-of-operations.js:
+  default: 'Test262Error: Expected [get calendar, get timeZone, get hour, get hour.valueOf, call hour.valueOf, get minute, get minute.valueOf, call minute.valueOf, get second, get second.valueOf, call second.valueOf, get millisecond, get millisecond.valueOf, call millisecond.valueOf, get microsecond, get microsecond.valueOf, call microsecond.valueOf, get nanosecond, get nanosecond.valueOf, call nanosecond.valueOf] and [get calendar, get timeZone, get hour, get hour.valueOf, call hour.valueOf, get microsecond, get microsecond.valueOf, call microsecond.valueOf, get millisecond, get millisecond.valueOf, call millisecond.valueOf, get minute, get minute.valueOf, call minute.valueOf, get nanosecond, get nanosecond.valueOf, call nanosecond.valueOf, get second, get second.valueOf, call second.valueOf] to have the same contents. order of operations'
+  strict mode: 'Test262Error: Expected [get calendar, get timeZone, get hour, get hour.valueOf, call hour.valueOf, get minute, get minute.valueOf, call minute.valueOf, get second, get second.valueOf, call second.valueOf, get millisecond, get millisecond.valueOf, call millisecond.valueOf, get microsecond, get microsecond.valueOf, call microsecond.valueOf, get nanosecond, get nanosecond.valueOf, call nanosecond.valueOf] and [get calendar, get timeZone, get hour, get hour.valueOf, call hour.valueOf, get microsecond, get microsecond.valueOf, call microsecond.valueOf, get millisecond, get millisecond.valueOf, call millisecond.valueOf, get minute, get minute.valueOf, call minute.valueOf, get nanosecond, get nanosecond.valueOf, call nanosecond.valueOf, get second, get second.valueOf, call second.valueOf] to have the same contents. order of operations'
+test/built-ins/Temporal/getOwnPropertyNames.js:
+  default: 'Test262Error: length Expected SameValue(«6», «11») to be true'
+  strict mode: 'Test262Error: length Expected SameValue(«6», «11») to be true'
 test/intl402/DateTimeFormat/prototype/formatRange/en-US.js:
   default: 'Test262Error: Expected SameValue(«1/3/2019 – 1/5/2019», «1/3/2019 – 1/5/2019») to be true'
   strict mode: 'Test262Error: Expected SameValue(«1/3/2019 – 1/5/2019», «1/3/2019 – 1/5/2019») to be true'
@@ -858,36 +1218,9 @@ test/intl402/Locale/likely-subtags-grandfathered.js:
 test/intl402/Locale/prototype/minimize/removing-likely-subtags-first-adds-likely-subtags.js:
   default: 'Test262Error: "und".minimize() should be "en" Expected SameValue(«en-u-va-posix», «en») to be true'
   strict mode: 'Test262Error: "und".minimize() should be "en" Expected SameValue(«en-u-va-posix», «en») to be true'
-test/intl402/Temporal/Calendar/prototype/era/branding.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «function») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «function») to be true'
-test/intl402/Temporal/Calendar/prototype/eraYear/branding.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «function») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «function») to be true'
-test/intl402/Temporal/PlainDate/prototype/era/branding.js:
-  default: "TypeError: undefined is not an object (evaluating 'Temporal.PlainDate.prototype')"
-  strict mode: "TypeError: undefined is not an object (evaluating 'Temporal.PlainDate.prototype')"
-test/intl402/Temporal/PlainDate/prototype/eraYear/branding.js:
-  default: "TypeError: undefined is not an object (evaluating 'Temporal.PlainDate.prototype')"
-  strict mode: "TypeError: undefined is not an object (evaluating 'Temporal.PlainDate.prototype')"
-test/intl402/Temporal/PlainDateTime/prototype/era/branding.js:
-  default: "TypeError: undefined is not an object (evaluating 'Temporal.PlainDateTime.prototype')"
-  strict mode: "TypeError: undefined is not an object (evaluating 'Temporal.PlainDateTime.prototype')"
-test/intl402/Temporal/PlainDateTime/prototype/eraYear/branding.js:
-  default: "TypeError: undefined is not an object (evaluating 'Temporal.PlainDateTime.prototype')"
-  strict mode: "TypeError: undefined is not an object (evaluating 'Temporal.PlainDateTime.prototype')"
-test/intl402/Temporal/PlainYearMonth/prototype/era/branding.js:
-  default: "TypeError: undefined is not an object (evaluating 'Temporal.PlainYearMonth.prototype')"
-  strict mode: "TypeError: undefined is not an object (evaluating 'Temporal.PlainYearMonth.prototype')"
-test/intl402/Temporal/PlainYearMonth/prototype/eraYear/branding.js:
-  default: "TypeError: undefined is not an object (evaluating 'Temporal.PlainYearMonth.prototype')"
-  strict mode: "TypeError: undefined is not an object (evaluating 'Temporal.PlainYearMonth.prototype')"
-test/intl402/Temporal/ZonedDateTime/prototype/era/branding.js:
-  default: "TypeError: undefined is not an object (evaluating 'Temporal.ZonedDateTime.prototype')"
-  strict mode: "TypeError: undefined is not an object (evaluating 'Temporal.ZonedDateTime.prototype')"
-test/intl402/Temporal/ZonedDateTime/prototype/eraYear/branding.js:
-  default: "TypeError: undefined is not an object (evaluating 'Temporal.ZonedDateTime.prototype')"
-  strict mode: "TypeError: undefined is not an object (evaluating 'Temporal.ZonedDateTime.prototype')"
+test/intl402/Temporal/PlainTime/prototype/toLocaleString/resolved-time-zone.js:
+  default: 'Test262Error: Expected SameValue(«00:30:45.123456789», «12:30:45 AM») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«00:30:45.123456789», «12:30:45 AM») to be true'
 test/language/block-scope/syntax/redeclaration/async-function-name-redeclaration-attempt-with-async-function.js:
   default: 'Test262: This statement should not be evaluated.'
 test/language/block-scope/syntax/redeclaration/async-function-name-redeclaration-attempt-with-async-generator.js:
@@ -1462,6 +1795,12 @@ test/language/expressions/call/tco-non-eval-global.js:
   default: 'RangeError: Maximum call stack size exceeded.'
 test/language/expressions/call/tco-non-eval-with.js:
   default: 'RangeError: Maximum call stack size exceeded.'
+test/language/expressions/class/cpn-class-expr-fields-computed-property-name-from-yield-expression.js:
+  default: "SyntaxError: Unexpected keyword 'yield'. Cannot use yield expression out of generator."
+  strict mode: "SyntaxError: Unexpected keyword 'yield'. Cannot use yield expression out of generator."
+test/language/expressions/class/cpn-class-expr-fields-methods-computed-property-name-from-yield-expression.js:
+  default: "SyntaxError: Unexpected keyword 'yield'. Cannot use yield expression out of generator."
+  strict mode: "SyntaxError: Unexpected keyword 'yield'. Cannot use yield expression out of generator."
 test/language/expressions/class/elements/arrow-body-direct-eval-err-contains-arguments.js:
   default: 'Test262Error: Expected a SyntaxError but got a ReferenceError'
   strict mode: 'Test262Error: Expected a SyntaxError but got a ReferenceError'
@@ -1707,6 +2046,12 @@ test/language/statements/async-generator/generator-created-after-decl-inst.js:
 test/language/statements/async-generator/return-undefined-implicit-and-explicit.js:
   default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected [tick 1, g1 ret, tick 2, g2 ret, g3 ret, g4 ret] and [tick 1, g1 ret, g2 ret, tick 2, g3 ret, g4 ret] to have the same contents. Ticks for implicit and explicit return undefined'
   strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected [tick 1, g1 ret, tick 2, g2 ret, g3 ret, g4 ret] and [tick 1, g1 ret, g2 ret, tick 2, g3 ret, g4 ret] to have the same contents. Ticks for implicit and explicit return undefined'
+test/language/statements/class/cpn-class-decl-fields-computed-property-name-from-yield-expression.js:
+  default: "SyntaxError: Unexpected keyword 'yield'. Cannot use yield expression out of generator."
+  strict mode: "SyntaxError: Unexpected keyword 'yield'. Cannot use yield expression out of generator."
+test/language/statements/class/cpn-class-decl-fields-methods-computed-property-name-from-yield-expression.js:
+  default: "SyntaxError: Unexpected keyword 'yield'. Cannot use yield expression out of generator."
+  strict mode: "SyntaxError: Unexpected keyword 'yield'. Cannot use yield expression out of generator."
 test/language/statements/class/definition/fn-length-static-precedence-order.js:
   default: 'Test262Error: Expected true but got false'
   strict mode: 'Test262Error: Expected true but got false'

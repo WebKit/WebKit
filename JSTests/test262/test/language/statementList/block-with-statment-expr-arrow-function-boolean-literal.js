@@ -55,4 +55,4 @@ info: |
 
 
 // length is a label!
-{length: 3000}() => 1, 42;;
+{length: 3000}() => 1, 42;

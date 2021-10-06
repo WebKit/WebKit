@@ -34,4 +34,4 @@ info: |
 ---*/
 
 
-function fn() {}{};
+function fn() {}{}

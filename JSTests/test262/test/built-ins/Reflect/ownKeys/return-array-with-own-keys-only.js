@@ -23,7 +23,4 @@ var o = Object.create(proto);
 o.p1 = 42;
 o.p2 = 43;
 o.p3 = 44;
-assert(
-  compareArray(Reflect.ownKeys(o), ['p1', 'p2', 'p3']),
-  'return object own keys'
-);
+assert.compareArray(Reflect.ownKeys(o), ['p1', 'p2', 'p3'], 'return object own keys');

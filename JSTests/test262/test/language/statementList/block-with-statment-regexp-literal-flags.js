@@ -40,4 +40,4 @@ info: |
 
 
 // length is a label!
-{length: 3000}/1/g;;
+{length: 3000}/1/g;

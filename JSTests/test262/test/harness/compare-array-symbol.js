@@ -11,7 +11,7 @@ features: [Symbol]
 var threw = false;
 
 try {
-	assert.compareArray([Symbol()], [Symbol('desc')]);
+  assert.compareArray([Symbol()], [Symbol('desc')]);
 } catch (err) {
   threw = true;
 

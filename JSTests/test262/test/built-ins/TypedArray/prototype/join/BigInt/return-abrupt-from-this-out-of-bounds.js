@@ -29,14 +29,14 @@ testWithBigIntTypedArrayConstructors(TA => {
   } catch (_) {}
 
   // no error following grow:
-  array.join(0);
+  array.join(',');
 
   try {
     ab.resize(BPE * 3);
   } catch (_) {}
 
   // no error following shrink (within bounds):
-  array.join(0);
+  array.join(',');
 
   var expectedError;
   try {
@@ -53,7 +53,7 @@ testWithBigIntTypedArrayConstructors(TA => {
   }
 
   assert.throws(expectedError, () => {
-    array.join(0);
+    array.join(',');
     throw new Test262Error('join completed successfully');
   });
 });

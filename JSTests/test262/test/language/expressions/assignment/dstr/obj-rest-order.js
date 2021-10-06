@@ -27,7 +27,7 @@ var vals = o;
 
 result = {...rest} = vals;
 
-assert(compareArray(calls, [1, 'z', 'a', "Symbol(foo)"]));
+assert.compareArray(calls, [1, 'z', 'a', "Symbol(foo)"]);
 assert.sameValue(Object.keys(rest).length, 3);
 
 assert.sameValue(result, vals);

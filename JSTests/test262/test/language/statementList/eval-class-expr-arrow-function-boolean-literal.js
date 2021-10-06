@@ -49,6 +49,6 @@ info: |
 ---*/
 
 
-var result = eval('class C {}() => 1, 42;;');
+var result = eval('class C {}() => 1, 42;');
 
 assert.sameValue(result, 42);

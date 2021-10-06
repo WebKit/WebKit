@@ -22,14 +22,14 @@ testWithBigIntTypedArrayConstructors(function(TA) {
   var target = new TA(ab);
   var expected = [10, 20, 30, 40];
 
-  source[0] = 10;
-  source[1] = 20;
-  source[2] = 30;
-  source[3] = 40;
+  source[0] = 10n;
+  source[1] = 20n;
+  source[2] = 30n;
+  source[3] = 40n;
 
   try {
     ab.resize(BPE * 5);
-    expected = [10, 20, 30, 40, 0];
+    expected = [10n, 20n, 30n, 40n, 0n];
   } catch (_) {}
 
   target.set(source);
@@ -37,7 +37,7 @@ testWithBigIntTypedArrayConstructors(function(TA) {
 
   try {
     ab.resize(BPE * 3);
-    expected = [10, 20, 30];
+    expected = [10n, 20n, 30n];
   } catch (_) {}
 
   target.set(source);

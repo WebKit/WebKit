@@ -34,13 +34,17 @@ testWithBigIntTypedArrayConstructors(function(TA) {
 
   assert.sameValue(array.byteOffset, BPE, "following shrink (within bounds)");
 
-  var expected;
   try {
     ab.resize(BPE);
+  } catch (_) {}
+
+  assert.sameValue(array.byteOffset, BPE, "following shrink (on boundary)");
+
+  var expected = BPE;
+  try {
+    ab.resize(0);
     expected = 0;
-  } catch (_) {
-    expected = BPE;
-  }
+  } catch (_) {}
 
   assert.sameValue(array.byteOffset, expected, "following shrink (out of bounds)");
 });

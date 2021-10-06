@@ -35,4 +35,4 @@ info: |
 ---*/
 
 
-class C {}/1/;;
+class C {}/1/;
