@@ -2380,11 +2380,8 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         }
     }
 
-    if ([attributeName isEqualToString:NSAccessibilityContentsAttribute]) {
-        AccessibilityObject::AccessibilityChildrenVector contents;
-        backingObject->contents(contents);
-        return convertToNSArray(contents);
-    }
+    if ([attributeName isEqualToString:NSAccessibilityContentsAttribute])
+        return convertToNSArray(backingObject->contents());
 
     if (backingObject->isTable() && backingObject->isExposable()) {
         if ([attributeName isEqualToString:NSAccessibilityRowsAttribute])

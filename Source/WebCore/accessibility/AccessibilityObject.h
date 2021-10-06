@@ -640,7 +640,7 @@ public:
 
     bool scrollByPage(ScrollByPageDirection) const override;
     IntPoint scrollPosition() const override;
-    void contents(AccessibilityChildrenVector&) override;
+    AccessibilityChildrenVector contents() override;
     IntSize scrollContentsSize() const override;
     IntRect scrollVisibleContentRect() const override;
     void scrollToMakeVisible(const ScrollRectToVisibleOptions&) const override;

@@ -348,7 +348,7 @@ private:
     void setSelectedChildren(const AccessibilityChildrenVector&) override;
     void visibleChildren(AccessibilityChildrenVector& children) override { fillChildrenVectorForProperty(AXPropertyName::VisibleChildren, children); }
     void tabChildren(AccessibilityChildrenVector& children) override { fillChildrenVectorForProperty(AXPropertyName::TabChildren, children); }
-    void contents(AccessibilityChildrenVector& children) override { fillChildrenVectorForProperty(AXPropertyName::Contents, children); }
+    AccessibilityChildrenVector contents() override;
     bool hasARIAValueNow() const override { return boolAttributeValue(AXPropertyName::HasARIAValueNow); }
     String tagName() const override { return stringAttributeValue(AXPropertyName::TagName); }
     const AccessibilityChildrenVector& children(bool updateChildrenIfNeeded = true) override;

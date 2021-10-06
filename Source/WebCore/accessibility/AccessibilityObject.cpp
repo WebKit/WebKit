@@ -3150,18 +3150,24 @@ IntRect AccessibilityObject::scrollVisibleContentRect() const
     return IntRect();
 }
 
-void AccessibilityObject::contents(AccessibilityChildrenVector& result)
+AXCoreObject::AccessibilityChildrenVector AccessibilityObject::contents()
 {
-    if (isTabList())
-        tabChildren(result);
-    else if (isScrollView()) {
+    if (isTabList()) {
+        AccessibilityChildrenVector tabs;
+        tabChildren(tabs);
+        return tabs;
+    }
+    
+    if (isScrollView()) {
         // A scroll view's contents are everything except the scroll bars.
         AccessibilityChildrenVector nonScrollbarChildren;
-        for (RefPtr<AccessibilityObject> child = firstChild(); child; child = child->nextSibling()) {
+        for (auto* child = firstChild(); child; child = child->nextSibling()) {
             if (child && !child->isScrollbar())
-                result.append(child);
+                nonScrollbarChildren.append(child);
         }
+        return nonScrollbarChildren;
     }
+    return { };
 }
     
 IntSize AccessibilityObject::scrollContentsSize() const

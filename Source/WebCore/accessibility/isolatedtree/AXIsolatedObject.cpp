@@ -298,9 +298,7 @@ void AXIsolatedObject::initializeAttributeData(AXCoreObject& object, bool isRoot
     if (object.isImage())
         setProperty(AXPropertyName::EmbeddedImageDescription, object.embeddedImageDescription().isolatedCopy());
 
-    AccessibilityChildrenVector contents;
-    object.contents(contents);
-    setObjectVectorProperty(AXPropertyName::Contents, contents);
+    setObjectVectorProperty(AXPropertyName::Contents, object.contents());
 
     AccessibilityChildrenVector visibleChildren;
     object.visibleChildren(visibleChildren);
@@ -558,6 +556,13 @@ void AXIsolatedObject::setSelectedChildren(const AccessibilityChildrenVector& se
         auto axSelectedChildren = axObjectCache->objectsForIDs(axIDs);
         object->setSelectedChildren(axSelectedChildren);
     });
+}
+
+AXCoreObject::AccessibilityChildrenVector AXIsolatedObject::contents()
+{
+    AccessibilityChildrenVector result;
+    fillChildrenVectorForProperty(AXPropertyName::Contents, result);
+    return result;
 }
 
 bool AXIsolatedObject::isDetachedFromParent()
