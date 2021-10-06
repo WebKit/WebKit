@@ -178,15 +178,15 @@ using namespace XPath;
 typedef union YYSTYPE
 #line 60 "WebCore/xml/XPathGrammar.y"
 { 
-    NumericOp::Opcode numericOpcode; 
-    EqTestOp::Opcode equalityTestOpcode;
+    WebCore::XPath::NumericOp::Opcode numericOpcode;
+    WebCore::XPath::EqTestOp::Opcode equalityTestOpcode;
     StringImpl* string;
-    Step::Axis axis;
-    LocationPath* locationPath;
-    Step::NodeTest* nodeTest;
-    Vector<std::unique_ptr<Expression>>* expressionVector;
-    Step* step;
-    Expression* expression; 
+    WebCore::XPath::Step::Axis axis;
+    WebCore::XPath::LocationPath* locationPath;
+    WebCore::XPath::Step::NodeTest* nodeTest;
+    Vector<std::unique_ptr<WebCore::XPath::Expression>>* expressionVector;
+    WebCore::XPath::Step* step;
+    WebCore::XPath::Expression* expression;
 }
 /* Line 193 of yacc.c.  */
 #line 190 "./XPathGrammar.cpp"
