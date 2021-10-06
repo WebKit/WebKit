@@ -1,3 +1,49 @@
+2021-10-05  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo] Unreviewed test gardening after r283550
+
+        * platform/wincairo/editing/deleting/delete-at-paragraph-boundaries-002-expected.txt:
+        * platform/wincairo/editing/deleting/delete-at-paragraph-boundaries-003-expected.txt:
+        * platform/wincairo/editing/deleting/delete-at-paragraph-boundaries-004-expected.txt:
+        * platform/wincairo/editing/deleting/delete-at-paragraph-boundaries-005-expected.txt:
+        * platform/wincairo/editing/deleting/delete-at-paragraph-boundaries-006-expected.txt:
+        * platform/wincairo/editing/deleting/delete-at-paragraph-boundaries-007-expected.txt:
+        * platform/wincairo/editing/deleting/delete-at-paragraph-boundaries-008-expected.txt:
+        * platform/wincairo/editing/deleting/delete-at-paragraph-boundaries-009-expected.txt:
+        * platform/wincairo/editing/deleting/delete-at-paragraph-boundaries-010-expected.txt:
+        * platform/wincairo/editing/deleting/delete-at-paragraph-boundaries-011-expected.txt:
+        * platform/wincairo/editing/deleting/non-smart-delete-expected.txt:
+        * platform/wincairo/editing/input/emacs-ctrl-o-expected.txt:
+        * platform/wincairo/editing/inserting/insert-br-quoted-001-expected.txt:
+        * platform/wincairo/editing/inserting/insert-br-quoted-002-expected.txt:
+        * platform/wincairo/editing/inserting/insert-br-quoted-003-expected.txt:
+        * platform/wincairo/editing/inserting/insert-br-quoted-004-expected.txt:
+        * platform/wincairo/editing/inserting/insert-br-quoted-005-expected.txt:
+        * platform/wincairo/editing/inserting/insert-br-quoted-006-expected.txt:
+        * platform/wincairo/editing/inserting/insert-div-026-expected.txt:
+        * platform/wincairo/editing/inserting/return-key-with-selection-001-expected.txt:
+        * platform/wincairo/editing/inserting/return-key-with-selection-002-expected.txt:
+        * platform/wincairo/editing/inserting/return-key-with-selection-003-expected.txt:
+        * platform/wincairo/editing/style/block-styles-007-expected.txt:
+        * platform/wincairo/editing/style/smoosh-styles-001-expected.txt:
+        * platform/wincairo/editing/style/smoosh-styles-003-expected.txt:
+        * platform/wincairo/editing/style/style-3998892-fix-expected.txt:
+        * platform/wincairo/editing/style/style-boundary-001-expected.txt:
+        * platform/wincairo/editing/style/style-boundary-002-expected.txt:
+        * platform/wincairo/editing/style/style-boundary-003-expected.txt:
+        * platform/wincairo/editing/style/style-boundary-004-expected.txt:
+        * platform/wincairo/editing/style/style-boundary-005-expected.txt:
+        * platform/wincairo/editing/unsupported-content/list-delete-001-expected.txt:
+        * platform/wincairo/editing/unsupported-content/list-delete-003-expected.txt:
+        * platform/wincairo/editing/unsupported-content/list-type-after-expected.txt:
+        * platform/wincairo/editing/unsupported-content/list-type-before-expected.txt:
+        * platform/wincairo/editing/unsupported-content/table-delete-002-expected.txt:
+        * platform/wincairo/editing/unsupported-content/table-type-after-expected.txt:
+        * platform/wincairo/editing/unsupported-content/table-type-before-expected.txt:
+        * platform/wincairo/fast/css/first-line-text-decoration-expected.txt:
+        * platform/wincairo/fast/css/first-line-text-decoration-inherited-from-parent-expected.txt:
+        * platform/wincairo/fast/text/firstline/001-expected.txt:
+
 2021-10-05  Chris Dumez  <cdumez@apple.com>
 
         ASSERT(m_callback->hasCallback()) under IntersectionObserver::notify()

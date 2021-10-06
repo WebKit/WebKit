@@ -13,13 +13,13 @@ layer at (0,0) size 800x600
         RenderBlock {DIV} at (0,0) size 784x55
           RenderText {#text} at (0,0) size 60x26
             text run at (0,0) width 60: "Tests:"
-          RenderBR {BR} at (60,0) size 0x27
+          RenderBR {BR} at (60,0) size 0x26
           RenderText {#text} at (0,27) size 250x27
             text run at (0,27) width 250: "Key binding for control-O"
         RenderBlock {DIV} at (0,71) size 784x83
           RenderText {#text} at (0,0) size 177x26
             text run at (0,0) width 177: "Expected results:"
-          RenderBR {BR} at (177,0) size 0x27
+          RenderBR {BR} at (177,0) size 0x26
           RenderText {#text} at (0,27) size 89x27
             text run at (0,27) width 89: "one five |"
           RenderBR {BR} at (89,27) size 0x27

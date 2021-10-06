@@ -16,17 +16,17 @@ layer at (0,0) size 800x600
         RenderBlock {DIV} at (14,14) size 756x55
           RenderText {#text} at (0,0) size 66x26
             text run at (0,0) width 66: "Tests: "
-          RenderBR {BR} at (0,0) size 0x0
+          RenderBR {BR} at (66,0) size 0x26
           RenderText {#text} at (0,27) size 594x27
             text run at (0,27) width 594: "Style checks performed on boundaries between style changes."
         RenderBlock {DIV} at (14,85) size 756x109
           RenderBlock (anonymous) at (0,0) size 756x55
             RenderText {#text} at (0,0) size 189x26
               text run at (0,0) width 189: "Expected Results: "
-            RenderBR {BR} at (189,0) size 0x27
+            RenderBR {BR} at (189,0) size 0x26
             RenderText {#text} at (0,27) size 430x27
               text run at (0,27) width 430: "Should see this content in the red box below:"
-            RenderInline {B} at (0,0) size 0x0
+            RenderInline {B} at (0,0) size 0x26
           RenderBlock (anonymous) at (0,55) size 756x54
             RenderBlock {DIV} at (0,0) size 756x27
               RenderText {#text} at (0,0) size 12x26
