@@ -657,8 +657,9 @@ void RenderObject::setLayerNeedsFullRepaintForPositionedMovementLayout()
 
 RenderBlock* RenderObject::containingBlock() const
 {
-    auto containingBlockForRenderer = [](const RenderElement& renderer)
-    {
+    auto containingBlockForRenderer = [](const auto& renderer) -> RenderBlock* {
+        if (isInTopLayerOrBackdrop(renderer.style(), renderer.element()))
+            return &renderer.view();
         if (renderer.isAbsolutelyPositioned())
             return renderer.containingBlockForAbsolutePosition();
         if (renderer.isFixedPositioned())
@@ -1468,6 +1469,8 @@ static inline RenderElement* containerForElement(const RenderObject& renderer, c
     // This does mean that computePositionedLogicalWidth and computePositionedLogicalHeight have to use container().
     if (!is<RenderElement>(renderer))
         return renderer.parent();
+    if (isInTopLayerOrBackdrop(renderer.style(), downcast<RenderElement>(renderer).element()))
+        return &renderer.view();
     auto position = renderer.style().position();
     if (position == PositionType::Static || position == PositionType::Relative || position == PositionType::Sticky)
         return renderer.parent();
