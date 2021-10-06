@@ -1,3 +1,12 @@
+2021-10-06  Ayumi Kojima  <ayumi_kojima@apple.com>
+
+        [ iOS ] fast/events/ios/fast-click-double-tap-to-zoom-in-on-text-and-then-again-to-zoom-out.html is a flaky failure.
+        https://bugs.webkit.org/show_bug.cgi?id=231311
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+
 2021-10-06  Tim Nguyen  <ntim@apple.com>
 
         Reset m_isModal flag when removing <dialog> from document
