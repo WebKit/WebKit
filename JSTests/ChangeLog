@@ -1,3 +1,9 @@
+2021-10-06  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Unreviewed, ensure test262 expectations reflect BigSur release mode.
+
+        * test262/expectations.yaml:
+
 2021-10-06  Philip Chimento  <pchimento@igalia.com>
 
         [JSC] Update test262
