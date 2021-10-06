@@ -1,3 +1,15 @@
+2021-10-06  Ryan Haddad  <ryanhaddad@apple.com>
+
+        [ iOS 15 ]2 fast/dom/HTMLAnchorElement tests are failing
+        https://bugs.webkit.org/show_bug.cgi?id=231293
+
+        Unreviewed test gardening.
+
+        Add iOS 14 baselines.
+
+        * platform/ios-14/fast/dom/HTMLAnchorElement/anchor-file-blob-convert-to-download-async-delegate-expected.txt: Added.
+        * platform/ios-14/fast/dom/HTMLAnchorElement/anchor-file-blob-convert-to-download-expected.txt: Added.
+
 2021-10-06  Kyle Piddington  <kpiddington@apple.com>
 
         Shadertoy "truchet district" fails to compile with error: Internal error compiling shader with Metal backend"
