@@ -1,3 +1,68 @@
+2021-10-06  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r283293. rdar://problem/83951351
+
+    Print values in a nicer way in the jsc shell
+    https://bugs.webkit.org/show_bug.cgi?id=230931
+    
+    Reviewed by Tadeu Zagallo.
+    
+    JSTests:
+    
+    * ChakraCore/test/jsc-lib.js:
+    
+    Source/JavaScriptCore:
+    
+    Currently, print(1), print("1"), and print([1]) all print to stdout
+    simply as "1" (without the quotes). Same for values when running the
+    REPL. This isn't super helpful. Let's print quotes for strings, and
+    brackets for arrays.
+    
+    Some tests rely on the old print behavior. Those tests now use the legacyPrint
+    instead.
+    
+    * jsc.cpp:
+    (toCString):
+    (printInternal):
+    (JSC_DEFINE_HOST_FUNCTION):
+    (runInteractive):
+    (cStringFromViewWithString): Deleted.
+    * runtime/JSCJSValue.cpp:
+    (JSC::JSValue::toWTFStringForConsole const):
+    * runtime/JSCJSValue.h:
+    
+    LayoutTests:
+    
+    * resources/standalone-pre.js:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@283293 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-09-29  Saam Barati  <sbarati@apple.com>
+
+            Print values in a nicer way in the jsc shell
+            https://bugs.webkit.org/show_bug.cgi?id=230931
+
+            Reviewed by Tadeu Zagallo.
+
+            Currently, print(1), print("1"), and print([1]) all print to stdout
+            simply as "1" (without the quotes). Same for values when running the
+            REPL. This isn't super helpful. Let's print quotes for strings, and
+            brackets for arrays.
+
+            Some tests rely on the old print behavior. Those tests now use the legacyPrint
+            instead.
+
+            * jsc.cpp:
+            (toCString):
+            (printInternal):
+            (JSC_DEFINE_HOST_FUNCTION):
+            (runInteractive):
+            (cStringFromViewWithString): Deleted.
+            * runtime/JSCJSValue.cpp:
+            (JSC::JSValue::toWTFStringForConsole const):
+            * runtime/JSCJSValue.h:
+
 2021-10-03  Don Olmstead  <don.olmstead@sony.com>
 
         Non-unified build fixes, early October 2021 edition

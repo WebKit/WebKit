@@ -424,5 +424,5 @@ for (i = 0; i < 4000; ++i) {
 
 })();
 } catch (e) {
-    print("JSC EXCEPTION FUZZ: Caught exception: " + e);
+    legacyPrint("JSC EXCEPTION FUZZ: Caught exception: " + e);
 }

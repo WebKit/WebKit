@@ -471,4 +471,19 @@ NEVER_INLINE void ensureStillAliveHere(JSValue)
 }
 #endif
 
+WTF::String JSValue::toWTFStringForConsole(JSGlobalObject* globalObject) const
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    JSString* string = toString(globalObject);
+    RETURN_IF_EXCEPTION(scope, { });
+    String result = string->value(globalObject);
+    RETURN_IF_EXCEPTION(scope, { });
+    if (isString())
+        return makeString("\"", result, "\"");
+    if (jsDynamicCast<JSArray*>(vm, *this))
+        return makeString("[", result, "]");
+    return result;
+}
+
 } // namespace JSC
