@@ -76,7 +76,7 @@ public:
     virtual GraphicsContext& context() const = 0;
     virtual void flushContext() = 0;
 
-    virtual DisplayList::DrawingContext* drawingContext() { return nullptr; }
+    virtual GraphicsContext* drawingContext() { return nullptr; }
     virtual bool prefersPreparationForDisplay() { return false; }
     virtual void flushDrawingContext() { }
     virtual void flushDrawingContextAsync() { }

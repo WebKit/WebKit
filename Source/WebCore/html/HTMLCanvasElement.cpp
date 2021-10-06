@@ -840,42 +840,6 @@ void HTMLCanvasElement::setUsesDisplayListDrawing(bool usesDisplayListDrawing)
     m_usesDisplayListDrawing = usesDisplayListDrawing;
 }
 
-void HTMLCanvasElement::setTracksDisplayListReplay(bool tracksDisplayListReplay)
-{
-    m_tracksDisplayListReplay = tracksDisplayListReplay;
-
-    if (!buffer())
-        return;
-
-    auto& buffer = *this->buffer();
-    if (buffer.drawingContext())
-        buffer.drawingContext()->setTracksDisplayListReplay(m_tracksDisplayListReplay);
-}
-
-String HTMLCanvasElement::displayListAsText(DisplayList::AsTextFlags flags) const
-{
-    if (!buffer())
-        return String();
-
-    auto& buffer = *this->buffer();
-    if (buffer.drawingContext())
-        return buffer.drawingContext()->displayList().asText(flags);
-
-    return String();
-}
-
-String HTMLCanvasElement::replayDisplayListAsText(DisplayList::AsTextFlags flags) const
-{
-    if (!buffer())
-        return String();
-
-    auto& buffer = *this->buffer();
-    if (buffer.drawingContext() && buffer.drawingContext()->replayedDisplayList())
-        return buffer.drawingContext()->replayedDisplayList()->asText(flags);
-
-    return String();
-}
-
 void HTMLCanvasElement::createImageBuffer() const
 {
     ASSERT(!hasCreatedImageBuffer());
@@ -916,9 +880,6 @@ void HTMLCanvasElement::createImageBuffer() const
     }();
 
     setImageBuffer(ImageBuffer::create(size(), renderingMode, useDisplayList, RenderingPurpose::Canvas, 1, colorSpace, pixelFormat, hostWindow));
-
-    if (buffer() && buffer()->drawingContext())
-        buffer()->drawingContext()->setTracksDisplayListReplay(m_tracksDisplayListReplay);
 
 #if USE(IOSURFACE_CANVAS_BACKING_STORE)
     if (m_context && m_context->is2d()) {

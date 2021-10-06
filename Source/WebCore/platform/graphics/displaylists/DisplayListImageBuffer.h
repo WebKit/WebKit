@@ -79,7 +79,7 @@ public:
         return m_drawingContext.context();
     }
 
-    DrawingContext* drawingContext() override { return &m_drawingContext; }
+    GraphicsContext* drawingContext() override { return &m_drawingContext.context(); }
 
     void flushDrawingContext() override
     {

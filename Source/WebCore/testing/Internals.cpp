@@ -3112,11 +3112,6 @@ ExceptionOr<void> Internals::setElementTracksDisplayListReplay(Element& element,
     if (!element.renderer())
         return Exception { InvalidAccessError };
 
-    if (is<HTMLCanvasElement>(element)) {
-        downcast<HTMLCanvasElement>(element).setTracksDisplayListReplay(isTrackingReplay);
-        return { };
-    }
-
     if (!element.renderer()->hasLayer())
         return Exception { InvalidAccessError };
 
@@ -3143,9 +3138,6 @@ ExceptionOr<String> Internals::displayListForElement(Element& element, unsigned 
     if (flags & DISPLAY_LIST_INCLUDES_PLATFORM_OPERATIONS)
         displayListFlags |= DisplayList::AsTextFlag::IncludesPlatformOperations;
 
-    if (is<HTMLCanvasElement>(element))
-        return downcast<HTMLCanvasElement>(element).displayListAsText(displayListFlags);
-
     if (!element.renderer()->hasLayer())
         return Exception { InvalidAccessError };
 
@@ -3170,9 +3162,6 @@ ExceptionOr<String> Internals::replayDisplayListForElement(Element& element, uns
     DisplayList::AsTextFlags displayListFlags = 0;
     if (flags & DISPLAY_LIST_INCLUDES_PLATFORM_OPERATIONS)
         displayListFlags |= DisplayList::AsTextFlag::IncludesPlatformOperations;
-
-    if (is<HTMLCanvasElement>(element))
-        return downcast<HTMLCanvasElement>(element).replayDisplayListAsText(displayListFlags);
 
     if (!element.renderer()->hasLayer())
         return Exception { InvalidAccessError };

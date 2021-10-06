@@ -120,9 +120,6 @@ public:
     bool shouldAccelerate(unsigned area) const;
 
     WEBCORE_EXPORT void setUsesDisplayListDrawing(bool);
-    WEBCORE_EXPORT void setTracksDisplayListReplay(bool);
-    WEBCORE_EXPORT String displayListAsText(DisplayList::AsTextFlags) const;
-    WEBCORE_EXPORT String replayDisplayListAsText(DisplayList::AsTextFlags) const;
 
     // FIXME: Only some canvas rendering contexts need an ImageBuffer.
     // It would be better to have the contexts own the buffers.
@@ -183,7 +180,6 @@ private:
     mutable RefPtr<Image> m_copiedImage; // FIXME: This is temporary for platforms that have to copy the image buffer to render (and for CSSCanvasValue).
 
     std::optional<bool> m_usesDisplayListDrawing;
-    bool m_tracksDisplayListReplay { false };
 
     bool m_ignoreReset { false };
     // m_hasCreatedImageBuffer means we tried to malloc the buffer. We didn't necessarily get it.
