@@ -140,16 +140,16 @@ public:
     bool isInternalRubyBox() const { return false; }
 
     const ContainerBox& parent() const { return *m_parent; }
-    const Box* nextSibling() const { return m_nextSibling; }
+    const Box* nextSibling() const { return m_nextSibling.get(); }
     const Box* nextInFlowSibling() const;
     const Box* nextInFlowOrFloatingSibling() const;
-    const Box* previousSibling() const { return m_previousSibling; }
+    const Box* previousSibling() const { return m_previousSibling.get(); }
     const Box* previousInFlowSibling() const;
     const Box* previousInFlowOrFloatingSibling() const;
     bool isDescendantOf(const ContainerBox&) const;
 
     // FIXME: This is currently needed for style updates.
-    Box* nextSibling() { return m_nextSibling; }
+    Box* nextSibling() { return m_nextSibling.get(); }
 
     bool isContainerBox() const { return baseTypeFlags().contains(ContainerBoxFlag); }
     bool isInlineTextBox() const { return baseTypeFlags().contains(InlineTextBoxFlag); }
@@ -173,10 +173,6 @@ public:
     void setColumnWidth(LayoutUnit);
     std::optional<LayoutUnit> columnWidth() const;
 
-    void setParent(ContainerBox& parent) { m_parent = &parent; }
-    void setNextSibling(Box& nextSibling) { m_nextSibling = &nextSibling; }
-    void setPreviousSibling(Box& previousSibling) { m_previousSibling = &previousSibling; }
-
     void setIsAnonymous() { m_isAnonymous = true; }
 
     bool canCacheForLayoutState(const LayoutState&) const;
@@ -187,6 +183,12 @@ protected:
     Box(std::optional<ElementAttributes>, RenderStyle&&, std::unique_ptr<RenderStyle>&& firstLineStyle, OptionSet<BaseTypeFlag>);
 
 private:
+    friend class ContainerBox;
+
+    void setParent(ContainerBox*);
+    void setNextSibling(Box*);
+    void setPreviousSibling(Box*);
+
     class BoxRareData {
         WTF_MAKE_FAST_ALLOCATED;
     public:
@@ -212,9 +214,9 @@ private:
     RenderStyle m_style;
     std::optional<ElementAttributes> m_elementAttributes;
 
-    ContainerBox* m_parent { nullptr };
-    Box* m_previousSibling { nullptr };
-    Box* m_nextSibling { nullptr };
+    CheckedPtr<ContainerBox> m_parent;
+    CheckedPtr<Box> m_previousSibling;
+    CheckedPtr<Box> m_nextSibling;
     
     // First LayoutState gets a direct cache.
     mutable WeakPtr<LayoutState> m_cachedLayoutState;

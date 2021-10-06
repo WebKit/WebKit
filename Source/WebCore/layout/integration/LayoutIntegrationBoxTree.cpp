@@ -153,9 +153,10 @@ void BoxTree::buildTree()
 void BoxTree::appendChild(UniqueRef<Layout::Box> childBox, RenderObject& childRenderer)
 {
     auto& parentBox = downcast<Layout::ContainerBox>(layoutBoxForRenderer(*childRenderer.parent()));
-    parentBox.appendChild(childBox.get());
 
-    m_boxes.append({ WTFMove(childBox), &childRenderer });
+    m_boxes.append({ childBox.get(), &childRenderer });
+
+    parentBox.appendChild(WTFMove(childBox));
 
     if (m_boxes.size() > smallTreeThreshold) {
         if (m_rendererToBoxMap.isEmpty()) {

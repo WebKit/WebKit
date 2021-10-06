@@ -60,7 +60,7 @@ public:
     size_t boxCount() const { return m_boxes.size(); }
 
     struct BoxAndRenderer {
-        UniqueRef<Layout::Box> box;
+        CheckedRef<Layout::Box> box;
         RenderObject* renderer { nullptr };
     };
     const auto& boxAndRendererList() const { return m_boxes; }

@@ -59,6 +59,21 @@ Box::~Box()
         removeRareData();
 }
 
+void Box::setParent(ContainerBox* parent)
+{
+    m_parent = parent;
+}
+
+void Box::setNextSibling(Box* nextSibling)
+{
+    m_nextSibling = nextSibling;
+}
+
+void Box::setPreviousSibling(Box* previousSibling)
+{
+    m_previousSibling = previousSibling;
+}
+
 void Box::updateStyle(const RenderStyle& newStyle, std::unique_ptr<RenderStyle>&& newFirstLineStyle)
 {
     m_style = RenderStyle::clone(newStyle);
