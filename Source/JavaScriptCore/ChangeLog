@@ -1,3 +1,16 @@
+2021-10-06  Xan López  <xan@igalia.com>
+
+        [JSC][32bit] Remove a bunch of compiler warnings
+        https://bugs.webkit.org/show_bug.cgi?id=231091
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        * dfg/DFGOSRExit.cpp:
+        (JSC::DFG::OSRExit::compileExit): silence warning about unused
+        variable, it's not used in 32-bit.
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_enter): use an unsigned int for the loop count.
+
 2021-10-06  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [WPE][GTK] TestJSC incorrectly expects garbage collector to collect variables still on the stack

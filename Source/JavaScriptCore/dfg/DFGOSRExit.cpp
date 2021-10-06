@@ -606,6 +606,7 @@ void OSRExit::compileExit(CCallHelpers& jit, VM& vm, const OSRExit& exit, const 
                 jit.store64(GPRInfo::regT0, scratch + index);
             }
 #else // not USE(JSVALUE64)
+            UNUSED_VARIABLE(firstTmpToRestoreEarly);
             jit.store32(
                 AssemblyHelpers::TrustedImm32(recovery.constant().tag()),
                 &bitwise_cast<EncodedValueDescriptor*>(scratch + index)->asBits.tag);

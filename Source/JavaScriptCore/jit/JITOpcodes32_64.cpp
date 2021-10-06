@@ -1083,7 +1083,7 @@ void JIT::emit_op_enter(const Instruction* currentInstruction)
     // Even though JIT code doesn't use them, we initialize our constant
     // registers to zap stale pointers, to avoid unnecessarily prolonging
     // object lifetime and increasing GC pressure.
-    for (int i = CodeBlock::llintBaselineCalleeSaveSpaceAsVirtualRegisters(); i < m_profiledCodeBlock->numVars(); ++i)
+    for (unsigned i = CodeBlock::llintBaselineCalleeSaveSpaceAsVirtualRegisters(); i < m_profiledCodeBlock->numVars(); ++i)
         emitStore(virtualRegisterForLocal(i), jsUndefined());
 
     JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_enter);
