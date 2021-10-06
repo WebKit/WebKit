@@ -1,3 +1,16 @@
+2021-10-06  Aditya Keerthi  <akeerthi@apple.com>
+
+        Fix serialization of CSSMediaRule
+        https://bugs.webkit.org/show_bug.cgi?id=231249
+
+        Reviewed by Chris Dumez.
+
+        Rebaseline tests to account for the correct serialization.
+
+        * css3/supports-cssom-expected.txt:
+        * css3/supports-cssom.html:
+        * fast/css/resources/insertRule-media.js:
+
 2021-10-06  Ayumi Kojima  <ayumi_kojima@apple.com>
 
         [ iOS ] fast/events/ios/fast-click-double-tap-to-zoom-in-on-text-and-then-again-to-zoom-out.html is a flaky failure.

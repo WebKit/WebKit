@@ -104,7 +104,7 @@
     shouldEvaluateTo("rules[0].cssRules[1].cssRules.length", 1);
     shouldBe("rules[2].cssRules[0].cssRules[0].type", "CSSRule.PAGE_RULE");
     shouldBeEqualToString("rules[2].cssText",
-                          "@media all { \n" +
+                          "@media all {\n" +
                           "  @supports ( padding: 0) {\n" +
                           "  @page :left { top: 0px; }\n" +
                           "}\n" +
