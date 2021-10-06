@@ -2062,6 +2062,8 @@ webkit.org/b/231262 fast/events/ios/rotation/resize-iframe-after-orientation-cha
 
 webkit.org/b/231264 fast/events/ios/rotation/layout-viewport-during-rotation.html [ Failure ]
 
+webkit.org/b/231269 fast/events/ios/rotation/safari-like-rotation.html [ Failure ]
+
 webkit.org/b/231266 [ Release ] fast/events/ios/rotation/layout-viewport-during-safari-type-rotation.html [ Pass Failure ]
 
 webkit.org/b/230987 fast/events/ios/viewport-shrink-to-fit-allows-double-tap.html [ Pass Timeout ]
