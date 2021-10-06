@@ -109,6 +109,12 @@
   return _i420Buffer;
 }
 
+#if defined(WEBRTC_WEBKIT_BUILD)
+- (void)close {
+  _i420Buffer = nullptr;
+}
+#endif
+
 #pragma mark - Debugging
 
 #if !defined(NDEBUG) && defined(WEBRTC_IOS)

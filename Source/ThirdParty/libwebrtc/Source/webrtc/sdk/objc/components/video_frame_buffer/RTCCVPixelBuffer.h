@@ -48,6 +48,9 @@ __attribute__((objc_runtime_name("WK_RTCCVPixelBuffer")))
 - (BOOL)cropAndScaleTo:(CVPixelBufferRef)outputPixelBuffer
         withTempBuffer:(nullable uint8_t *)tmpBuffer;
 
+#if defined(WEBRTC_WEBKIT_BUILD)
+- (void)close;
+#endif
 @end
 
 NS_ASSUME_NONNULL_END

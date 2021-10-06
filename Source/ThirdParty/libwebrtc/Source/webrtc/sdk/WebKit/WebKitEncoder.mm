@@ -370,7 +370,8 @@ void encodeLocalEncoderFrame(LocalEncoder localEncoder, CVPixelBufferRef pixelBu
     if (isKeyframeRequired)
         [rtcFrameTypes addObject:@(RTCFrameType(RTCFrameTypeVideoFrameKey))];
 
-    auto *videoFrame = [[RTCVideoFrame alloc] initWithBuffer:ToObjCVideoFrameBuffer(pixelBufferToFrame(pixelBuffer)) rotation:RTCVideoRotation(rotation) timeStampNs:timeStampNs];
+    auto videoFrameBuffer = pixelBufferToFrame(pixelBuffer);
+    auto *videoFrame = [[RTCVideoFrame alloc] initWithBuffer:ToObjCVideoFrameBuffer(videoFrameBuffer) rotation:RTCVideoRotation(rotation) timeStampNs:timeStampNs];
     videoFrame.timeStamp = timeStamp;
     auto *encoder = (__bridge WK_RTCLocalVideoH264H265Encoder *)(localEncoder);
     [encoder encode:videoFrame codecSpecificInfo:nil frameTypes:rtcFrameTypes];

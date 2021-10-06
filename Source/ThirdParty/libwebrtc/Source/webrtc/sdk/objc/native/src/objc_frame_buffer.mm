@@ -22,7 +22,11 @@ class ObjCI420FrameBuffer : public I420BufferInterface {
  public:
   explicit ObjCI420FrameBuffer(id<RTCI420Buffer> frame_buffer)
       : frame_buffer_(frame_buffer), width_(frame_buffer.width), height_(frame_buffer.height) {}
-  ~ObjCI420FrameBuffer() override {}
+  ~ObjCI420FrameBuffer() override {
+#if defined(WEBRTC_WEBKIT_BUILD)
+    [frame_buffer_ close];
+#endif
+  }
 
   int width() const override { return width_; }
 
@@ -51,7 +55,11 @@ class ObjCI420FrameBuffer : public I420BufferInterface {
 ObjCFrameBuffer::ObjCFrameBuffer(id<RTCVideoFrameBuffer> frame_buffer)
     : frame_buffer_(frame_buffer), width_(frame_buffer.width), height_(frame_buffer.height) {}
 
-ObjCFrameBuffer::~ObjCFrameBuffer() {}
+ObjCFrameBuffer::~ObjCFrameBuffer() {
+#if defined(WEBRTC_WEBKIT_BUILD)
+  [frame_buffer_ close];
+#endif
+}
 
 VideoFrameBuffer::Type ObjCFrameBuffer::type() const {
   return Type::kNative;

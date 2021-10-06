@@ -1,3 +1,22 @@
+2021-10-06  Youenn Fablet  <youenn@apple.com>
+
+        ObjectiveC WebRTC frame buffers are autoreleased late, especially on Debug builds
+        https://bugs.webkit.org/show_bug.cgi?id=231162
+
+        Reviewed by David Kilzer.
+
+        Instead of waiting for the autorelease pool to release these objects, we explicitly release them by calling close.
+        This ensures that pixel buffers get released very quickly.
+
+        * Source/webrtc/sdk/WebKit/WebKitEncoder.mm:
+        * Source/webrtc/sdk/objc/api/video_frame_buffer/RTCNativeI420Buffer+Private.h:
+        * Source/webrtc/sdk/objc/api/video_frame_buffer/RTCNativeI420Buffer.mm:
+        * Source/webrtc/sdk/objc/base/RTCI420Buffer.h:
+        * Source/webrtc/sdk/objc/base/RTCVideoFrameBuffer.h:
+        * Source/webrtc/sdk/objc/components/video_frame_buffer/RTCCVPixelBuffer.h:
+        * Source/webrtc/sdk/objc/components/video_frame_buffer/RTCCVPixelBuffer.mm:
+        * Source/webrtc/sdk/objc/native/src/objc_frame_buffer.mm:
+
 2021-10-01  Chris Dumez  <cdumez@apple.com>
 
         Drop support for macOS < 10.15
