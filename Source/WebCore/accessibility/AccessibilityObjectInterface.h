@@ -1374,6 +1374,7 @@ public:
     enum class ScrollByPageDirection { Up, Down, Left, Right };
     virtual bool scrollByPage(ScrollByPageDirection) const = 0;
     virtual IntPoint scrollPosition() const = 0;
+    virtual void contents(AccessibilityChildrenVector&) = 0;
     virtual IntSize scrollContentsSize() const = 0;
     virtual IntRect scrollVisibleContentRect() const = 0;
     virtual void scrollToMakeVisible(const ScrollRectToVisibleOptions&) const = 0;

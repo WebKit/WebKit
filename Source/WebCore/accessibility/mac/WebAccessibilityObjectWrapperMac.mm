@@ -2381,34 +2381,9 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     }
 
     if ([attributeName isEqualToString:NSAccessibilityContentsAttribute]) {
-        // The contents of a tab list are all the children except the tabs.
-        if (backingObject->isTabList()) {
-            auto children = self.childrenVectorArray;
-            AccessibilityObject::AccessibilityChildrenVector tabs;
-            backingObject->tabChildren(tabs);
-            auto tabsChildren = convertToNSArray(tabs);
-
-            NSMutableArray *contents = [NSMutableArray array];
-            for (id childWrapper in children) {
-                if ([tabsChildren containsObject:childWrapper])
-                    [contents addObject:childWrapper];
-            }
-            return contents;
-        }
-
-        if (backingObject->isScrollView()) {
-            // A scrollView's contents are everything except the scroll bars.
-            auto children = self.childrenVectorArray;
-            NSMutableArray *contents = [NSMutableArray array];
-
-            for (WebAccessibilityObjectWrapper *childWrapper in children) {
-                if (auto backingObject = [childWrapper axBackingObject]) {
-                    if (!backingObject->isScrollbar())
-                        [contents addObject:childWrapper];
-                }
-            }
-            return contents;
-        }
+        AccessibilityObject::AccessibilityChildrenVector contents;
+        backingObject->contents(contents);
+        return convertToNSArray(contents);
     }
 
     if (backingObject->isTable() && backingObject->isExposable()) {
