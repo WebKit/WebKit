@@ -60,8 +60,9 @@ PrivateClickMeasurementManager::PrivateClickMeasurementManager(UniqueRef<PCM::Cl
 {
     // We should send any pending attributions on session-start in case their
     // send delay has expired while the session was closed. Waiting 5 seconds accounts for the
-    // delay in database startup.
-    startTimer(5_s);
+    // delay in database startup. When running in the daemon, the xpc activity does this instead.
+    if (!m_client->runningInDaemon())
+        startTimer(5_s);
 }
 
 PrivateClickMeasurementManager::~PrivateClickMeasurementManager()

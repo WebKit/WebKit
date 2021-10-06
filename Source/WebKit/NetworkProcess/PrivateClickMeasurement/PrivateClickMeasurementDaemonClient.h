@@ -38,6 +38,7 @@ class DaemonClient : public Client, public CanMakeWeakPtr<DaemonClient> {
     void broadcastConsoleMessage(JSC::MessageLevel, const String&) final;
     bool featureEnabled() const final;
     bool debugModeEnabled() const final;
+    bool runningInDaemon() const final { return true; }
 };
 
 } // namespace PCM

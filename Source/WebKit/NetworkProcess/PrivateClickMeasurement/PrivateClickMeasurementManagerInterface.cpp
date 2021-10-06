@@ -246,6 +246,11 @@ void handlePCMMessageWithReply(PCM::EncodedMessage&& encodedMessage, CompletionH
     IPC::callMemberFunction(WTFMove(*arguments), WTFMove(completionHandler), &daemonManager(), Info::MemberFunction);
 }
 
+void doDailyActivityInManager()
+{
+    daemonManager().firePendingAttributionRequests();
+}
+
 void decodeMessageAndSendToManager(const Connection& connection, MessageType messageType, Vector<uint8_t>&& encodedMessage, CompletionHandler<void(Vector<uint8_t>&&)>&& replySender)
 {
     ASSERT(messageTypeSendsReply(messageType) == !!replySender);

@@ -107,6 +107,7 @@ constexpr const char* protocolEncodedMessageKey { "encoded message" };
 using EncodedMessage = Vector<uint8_t>;
 
 void decodeMessageAndSendToManager(const Connection&, MessageType, Vector<uint8_t>&& message, CompletionHandler<void(Vector<uint8_t>&&)>&&);
+void doDailyActivityInManager();
 bool messageTypeSendsReply(MessageType);
 
 void initializePCMStorageInDirectory(const String&);

@@ -119,7 +119,7 @@ static void registerScheduledActivityHandler()
             return;
         }
 
-        // FIXME: Add code here that does daily tasks of PrivateClickMeasurementManager.
+        PCM::doDailyActivityInManager();
     });
 }
 

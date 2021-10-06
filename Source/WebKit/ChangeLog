@@ -1,3 +1,25 @@
+2021-10-05  Alex Christensen  <achristensen@webkit.org>
+
+        Do daily activity in AdAttributionDaemon based off of when the xpc activity happens
+        https://bugs.webkit.org/show_bug.cgi?id=231254
+
+        Reviewed by Kate Cheney.
+
+        Before this change, we did the activity 5 seconds after startup of the daemon, which can be started
+        by sending an attribution to it or by the daily xpc activity.  We want to do it only because of the xpc activity.
+
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementClient.h:
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementClientImpl.h:
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementDaemonClient.h:
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementManager.cpp:
+        (WebKit::PrivateClickMeasurementManager::PrivateClickMeasurementManager):
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementManager.h:
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementManagerInterface.cpp:
+        (WebKit::PCM::doDailyActivityInManager):
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementManagerInterface.h:
+        * Shared/EntryPointUtilities/Cocoa/Daemon/PCMDaemonEntryPoint.mm:
+        (WebKit::registerScheduledActivityHandler):
+
 2021-10-05  Aditya Keerthi  <akeerthi@apple.com>
 
         [iOS] Transcode videos selected from UIImagePickerController
