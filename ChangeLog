@@ -1,3 +1,9 @@
+2021-10-06  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, mark Kimmo Kinnunen as reviewer in the right contributors.json file this time.
+
+        * metadata/contributors.json:
+
 2021-10-03  Basuke Suzuki  <basuke.suzuki@sony.com>
 
         Enable release log to stderr
