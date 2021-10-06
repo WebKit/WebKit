@@ -47,7 +47,7 @@ public:
     ~RemoteResourceCacheProxy();
 
     void cacheImageBuffer(WebCore::ImageBuffer&);
-    WebCore::ImageBuffer* cachedImageBuffer(WebCore::RenderingResourceIdentifier);
+    WebCore::ImageBuffer* cachedImageBuffer(WebCore::RenderingResourceIdentifier) const;
     void releaseImageBuffer(WebCore::RenderingResourceIdentifier);
 
     void recordNativeImageUse(WebCore::NativeImage&);

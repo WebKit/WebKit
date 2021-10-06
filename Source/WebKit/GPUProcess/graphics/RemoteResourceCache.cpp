@@ -49,7 +49,7 @@ void RemoteResourceCache::cacheImageBuffer(Ref<ImageBuffer>&& imageBuffer)
     ensureResourceUseCounter(renderingResourceIdentifier);
 }
 
-ImageBuffer* RemoteResourceCache::cachedImageBuffer(RenderingResourceIdentifier renderingResourceIdentifier)
+ImageBuffer* RemoteResourceCache::cachedImageBuffer(RenderingResourceIdentifier renderingResourceIdentifier) const
 {
     return m_imageBuffers.get(renderingResourceIdentifier);
 }
@@ -63,12 +63,22 @@ void RemoteResourceCache::cacheNativeImage(Ref<NativeImage>&& image)
     ensureResourceUseCounter(renderingResourceIdentifier);
 }
 
+NativeImage* RemoteResourceCache::cachedNativeImage(RenderingResourceIdentifier renderingResourceIdentifier) const
+{
+    return m_nativeImages.get(renderingResourceIdentifier);
+}
+
 void RemoteResourceCache::cacheFont(Ref<Font>&& font)
 {
     auto renderingResourceIdentifier = font->renderingResourceIdentifier();
     m_fonts.add(renderingResourceIdentifier, WTFMove(font));
 
     ensureResourceUseCounter(renderingResourceIdentifier);
+}
+
+Font* RemoteResourceCache::cachedFont(RenderingResourceIdentifier renderingResourceIdentifier) const
+{
+    return m_fonts.get(renderingResourceIdentifier);
 }
 
 void RemoteResourceCache::ensureResourceUseCounter(RenderingResourceIdentifier renderingResourceIdentifier)

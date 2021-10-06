@@ -43,9 +43,11 @@ public:
     RemoteResourceCache(RemoteResourceCache&&);
 
     void cacheImageBuffer(Ref<WebCore::ImageBuffer>&&);
-    WebCore::ImageBuffer* cachedImageBuffer(WebCore::RenderingResourceIdentifier);
+    WebCore::ImageBuffer* cachedImageBuffer(WebCore::RenderingResourceIdentifier) const;
     void cacheNativeImage(Ref<WebCore::NativeImage>&&);
+    WebCore::NativeImage* cachedNativeImage(WebCore::RenderingResourceIdentifier) const;
     void cacheFont(Ref<WebCore::Font>&&);
+    WebCore::Font* cachedFont(WebCore::RenderingResourceIdentifier) const;
     void deleteAllFonts();
     bool releaseRemoteResource(WebCore::RenderingResourceIdentifier, uint64_t useCount);
     void recordResourceUse(WebCore::RenderingResourceIdentifier);

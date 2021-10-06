@@ -50,7 +50,7 @@ void RemoteResourceCacheProxy::cacheImageBuffer(WebCore::ImageBuffer& imageBuffe
     ASSERT_UNUSED(addResult, addResult.isNewEntry);
 }
 
-ImageBuffer* RemoteResourceCacheProxy::cachedImageBuffer(RenderingResourceIdentifier renderingResourceIdentifier)
+ImageBuffer* RemoteResourceCacheProxy::cachedImageBuffer(RenderingResourceIdentifier renderingResourceIdentifier) const
 {
     return m_imageBuffers.get(renderingResourceIdentifier).imageBuffer.get();
 }
