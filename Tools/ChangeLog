@@ -1,3 +1,16 @@
+2021-10-06  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [WPE][GTK] TestJSC incorrectly expects garbage collector to collect variables still on the stack
+        https://bugs.webkit.org/show_bug.cgi?id=222972
+
+        Reviewed by Michael Catanzaro.
+
+        Include JSCContextInternal.h instead of JSCContextPrivate.h and remove the jscContextGarbageCollect() implementation.
+
+        * TestWebKitAPI/Tests/JavaScriptCore/glib/TestJSC.cpp:
+        (testJSCWeakValue): Call sanitizeStackForVM() before the garbage collection.
+        (jscContextGarbageCollect): Deleted.
+
 2021-10-06  Jer Noble  <jer.noble@apple.com>
 
         [Build-time perf] Forward declare JS TypedArrays

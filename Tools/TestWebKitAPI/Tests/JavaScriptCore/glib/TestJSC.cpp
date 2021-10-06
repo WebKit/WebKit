@@ -19,9 +19,9 @@
 
 #include "config.h"
 
-// Include JSCContextPrivate.h to be able to run garbage collector for testing.
+// Include JSCContextInternal.h to be able to run garbage collector for testing.
 #define JSC_COMPILATION 1
-#include "jsc/JSCContextPrivate.h"
+#include "jsc/JSCContextInternal.h"
 #undef JSC_COMPILATION
 
 #include <JavaScriptCore/JSContextRef.h>
@@ -101,13 +101,6 @@ private:
     handler.pop(); \
     g_assert_true(didThrow); \
     didThrow = false;
-
-extern "C" void JSSynchronousGarbageCollectForDebugging(JSContextRef);
-
-static void jscContextGarbageCollect(JSCContext* context)
-{
-    JSSynchronousGarbageCollectForDebugging(jscContextGetJSContext(context));
-}
 
 static void testJSCBasic()
 {
@@ -3363,7 +3356,7 @@ static void testJSCWeakValue()
         g_assert_true(jsc_value_is_object(weakFoo.get()));
         weakFoo = nullptr;
 
-        jscContextGarbageCollect(context.get());
+        jscContextGarbageCollect(context.get(), true);
         g_assert_true(weakValueCleared);
         g_assert_null(jsc_weak_value_get_value(weak.get()));
     }

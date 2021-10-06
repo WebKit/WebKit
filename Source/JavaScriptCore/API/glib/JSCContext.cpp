@@ -22,6 +22,7 @@
 
 #include "APICast.h"
 #include "JSCClassPrivate.h"
+#include "JSCContextInternal.h"
 #include "JSCContextPrivate.h"
 #include "JSCExceptionPrivate.h"
 #include "JSCInlines.h"
@@ -581,6 +582,19 @@ void jscContextJSValueToGValue(JSCContext* context, JSValueRef jsValue, GType ty
         *exception = toRef(JSC::createTypeError(globalObject, makeString("unsupported type ", g_type_name(G_VALUE_TYPE(value)))));
         break;
     }
+}
+
+void jscContextGarbageCollect(JSCContext* context, bool sanitizeStack)
+{
+    auto* jsContext = context->priv->jsContext.get();
+    JSC::JSGlobalObject* globalObject = toJS(jsContext);
+    JSC::VM& vm = globalObject->vm();
+    JSC::JSLockHolder locker(vm);
+
+    if (sanitizeStack)
+        sanitizeStackForVM(vm);
+
+    vm.heap.collectNow(JSC::Sync, JSC::CollectionScope::Full);
 }
 
 /**
