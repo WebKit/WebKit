@@ -1,11 +1,16 @@
 <!DOCTYPE html>
 <html>
 <body>
+<object data="a">
+    <input id="input" onfocus="crash()">
+</object>
 <script>
 if (window.testRunner) {
     testRunner.dumpAsText();
     testRunner.waitUntilDone();
 }
+
+input.focus();
 
 function finish() {
     if (window.testRunner)
@@ -17,8 +22,5 @@ function crash() {
     setTimeout("finish()", 0);
 }
 </script>
-<object data="a">
-<input autofocus="" onfocus="crash()">
-</object>
 </body>
 </html>

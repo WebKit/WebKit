@@ -1,3 +1,16 @@
+2021-10-06  Tim Nguyen  <ntim@apple.com>
+
+        Rewrite plugins/object-onfocus-mutation-crash.html to stop relying on autofocus
+        https://bugs.webkit.org/show_bug.cgi?id=231327
+
+        Reviewed by Chris Dumez.
+
+        This test mostly tests onfocus and <object>, we don't need it to use autofocus.
+        The new autofocus timing will be async so we don't want this test to break with the new
+        behavior implemented. Use input.focus() instead.
+
+        * plugins/object-onfocus-mutation-crash.html:
+
 2021-10-06  Ayumi Kojima  <ayumi_kojima@apple.com>
 
         [ iOS macOS wk2 ] http/tests/preload/onload_event.html is flaky failing.
