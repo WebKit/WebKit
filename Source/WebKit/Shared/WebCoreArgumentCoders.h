@@ -26,12 +26,24 @@
 #pragma once
 
 #include "ArgumentCoders.h"
+#include <WebCore/AffineTransform.h>
 #include <WebCore/AutoplayEvent.h>
 #include <WebCore/ColorSpace.h>
 #include <WebCore/DiagnosticLoggingClient.h>
+#include <WebCore/FloatPoint.h>
+#include <WebCore/FloatPoint3D.h>
+#include <WebCore/FloatRect.h>
+#include <WebCore/FloatRoundedRect.h>
+#include <WebCore/FloatSize.h>
 #include <WebCore/FrameLoaderTypes.h>
 #include <WebCore/IndexedDB.h>
 #include <WebCore/InputMode.h>
+#include <WebCore/IntPoint.h>
+#include <WebCore/IntRect.h>
+#include <WebCore/IntSize.h>
+#include <WebCore/LayoutPoint.h>
+#include <WebCore/LayoutSize.h>
+#include <WebCore/LengthBox.h>
 #include <WebCore/MediaSelectionOption.h>
 #include <WebCore/NativeImage.h>
 #include <WebCore/NetworkLoadMetrics.h>
@@ -96,7 +108,6 @@ typedef struct __CVBuffer* CVPixelBufferRef;
 namespace WebCore {
 
 class AbsolutePositionConstraints;
-class AffineTransform;
 class AuthenticationChallenge;
 class BlobPart;
 class CertificateInfo;
@@ -109,21 +120,11 @@ class DragData;
 class File;
 class FilterOperation;
 class FilterOperations;
-class FloatPoint;
-class FloatPoint3D;
-class FloatRect;
-class FloatRoundedRect;
-class FloatSize;
 class FixedPositionViewportConstraints;
 class Font;
 class FontPlatformData;
 class HTTPHeaderMap;
-class IntPoint;
-class IntRect;
-class IntSize;
 class KeyframeValueList;
-class LayoutSize;
-class LayoutPoint;
 class LinearTimingFunction;
 class Notification;
 class PasteboardCustomData;
@@ -174,9 +175,7 @@ struct TouchActionData;
 struct VelocityData;
 struct ViewportAttributes;
 struct WindowFeatures;
-    
-template<typename> class RectEdges;
-using FloatBoxExtent = RectEdges<float>;
+
 using IDBKeyPath = Variant<String, Vector<String>>;
 
 #if PLATFORM(COCOA)
@@ -227,10 +226,34 @@ struct Record;
 
 namespace IPC {
 
-template<> struct ArgumentCoder<WebCore::AffineTransform> {
-    static void encode(Encoder&, const WebCore::AffineTransform&);
-    static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::AffineTransform&);
-};
+#define DEFINE_SIMPLE_ARGUMENT_CODER_FOR_HEADER(Type) \
+    template<> struct ArgumentCoder<Type> { \
+        template<typename Encoder> static void encode(Encoder&, const Type&); \
+        static WARN_UNUSED_RETURN bool decode(Decoder&, Type&); \
+        static std::optional<Type> decode(Decoder&); \
+    };
+
+DEFINE_SIMPLE_ARGUMENT_CODER_FOR_HEADER(WebCore::AffineTransform)
+DEFINE_SIMPLE_ARGUMENT_CODER_FOR_HEADER(WebCore::FloatBoxExtent)
+DEFINE_SIMPLE_ARGUMENT_CODER_FOR_HEADER(WebCore::FloatPoint)
+DEFINE_SIMPLE_ARGUMENT_CODER_FOR_HEADER(WebCore::FloatPoint3D)
+DEFINE_SIMPLE_ARGUMENT_CODER_FOR_HEADER(WebCore::FloatRect)
+DEFINE_SIMPLE_ARGUMENT_CODER_FOR_HEADER(WebCore::FloatRoundedRect)
+DEFINE_SIMPLE_ARGUMENT_CODER_FOR_HEADER(WebCore::FloatSize)
+DEFINE_SIMPLE_ARGUMENT_CODER_FOR_HEADER(WebCore::IntPoint)
+DEFINE_SIMPLE_ARGUMENT_CODER_FOR_HEADER(WebCore::IntRect)
+DEFINE_SIMPLE_ARGUMENT_CODER_FOR_HEADER(WebCore::IntSize)
+DEFINE_SIMPLE_ARGUMENT_CODER_FOR_HEADER(WebCore::LayoutPoint)
+DEFINE_SIMPLE_ARGUMENT_CODER_FOR_HEADER(WebCore::LayoutSize)
+
+#if USE(CG)
+DEFINE_SIMPLE_ARGUMENT_CODER_FOR_HEADER(CGRect)
+DEFINE_SIMPLE_ARGUMENT_CODER_FOR_HEADER(CGSize)
+DEFINE_SIMPLE_ARGUMENT_CODER_FOR_HEADER(CGPoint)
+DEFINE_SIMPLE_ARGUMENT_CODER_FOR_HEADER(CGAffineTransform)
+#endif
+
+#undef DEFINE_SIMPLE_ARGUMENT_CODER_FOR_HEADER
 
 template<> struct ArgumentCoder<WebCore::AttributedString> {
     static void encode(Encoder&, const WebCore::AttributedString&);
@@ -268,6 +291,7 @@ template<> struct ArgumentCoder<WebCore::EventTrackingRegions> {
 };
 
 template<> struct ArgumentCoder<WebCore::TransformationMatrix> {
+    template<typename Encoder>
     static void encode(Encoder&, const WebCore::TransformationMatrix&);
     static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::TransformationMatrix&);
 };
@@ -299,41 +323,9 @@ template<> struct ArgumentCoder<WebCore::CertificateInfo> {
     static std::optional<WebCore::CertificateInfo> decode(Decoder&);
 };
 
-template<> struct ArgumentCoder<WebCore::FloatPoint> {
-    static void encode(Encoder&, const WebCore::FloatPoint&);
-    static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::FloatPoint&);
-    static std::optional<WebCore::FloatPoint> decode(Decoder&);
-};
-
-template<> struct ArgumentCoder<WebCore::FloatPoint3D> {
-    static void encode(Encoder&, const WebCore::FloatPoint3D&);
-    static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::FloatPoint3D&);
-};
-
-template<> struct ArgumentCoder<WebCore::FloatRect> {
-    static void encode(Encoder&, const WebCore::FloatRect&);
-    static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::FloatRect&);
-    static std::optional<WebCore::FloatRect> decode(Decoder&);
-};
-    
-template<> struct ArgumentCoder<WebCore::FloatBoxExtent> {
-    static void encode(Encoder&, const WebCore::FloatBoxExtent&);
-    static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::FloatBoxExtent&);
-};
-
 template<> struct ArgumentCoder<WebCore::RectEdges<bool>> {
     static void encode(Encoder&, const WebCore::RectEdges<bool>&);
     static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::RectEdges<bool>&);
-};
-
-template<> struct ArgumentCoder<WebCore::FloatSize> {
-    static void encode(Encoder&, const WebCore::FloatSize&);
-    static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::FloatSize&);
-};
-
-template<> struct ArgumentCoder<WebCore::FloatRoundedRect> {
-    static void encode(Encoder&, const WebCore::FloatRoundedRect&);
-    static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::FloatRoundedRect&);
 };
 
 #if ENABLE(META_VIEWPORT)
@@ -348,35 +340,6 @@ template<> struct ArgumentCoder<WebCore::ViewportArguments> {
 template<> struct ArgumentCoder<WebCore::ViewportAttributes> {
     static void encode(Encoder&, const WebCore::ViewportAttributes&);
     static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::ViewportAttributes&);
-};
-
-template<> struct ArgumentCoder<WebCore::IntPoint> {
-    static void encode(Encoder&, const WebCore::IntPoint&);
-    static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::IntPoint&);
-    static std::optional<WebCore::IntPoint> decode(Decoder&);
-};
-
-template<> struct ArgumentCoder<WebCore::IntRect> {
-    static void encode(Encoder&, const WebCore::IntRect&);
-    static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::IntRect&);
-    static std::optional<WebCore::IntRect> decode(Decoder&);
-};
-
-template<> struct ArgumentCoder<WebCore::IntSize> {
-    template<typename Encoder>
-    static void encode(Encoder&, const WebCore::IntSize&);
-    static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::IntSize&);
-    static std::optional<WebCore::IntSize> decode(Decoder&);
-};
-
-template<> struct ArgumentCoder<WebCore::LayoutSize> {
-    static void encode(Encoder&, const WebCore::LayoutSize&);
-    static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::LayoutSize&);
-};
-
-template<> struct ArgumentCoder<WebCore::LayoutPoint> {
-    static void encode(Encoder&, const WebCore::LayoutPoint&);
-    static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::LayoutPoint&);
 };
 
 template<> struct ArgumentCoder<WebCore::Length> {
@@ -457,6 +420,7 @@ template<> struct ArgumentCoder<WebCore::DragData> {
 #endif
 
 #if PLATFORM(COCOA)
+
 template<> struct ArgumentCoder<WTF::MachSendRight> {
     static void encode(Encoder&, const WTF::MachSendRight&);
     static void encode(Encoder&, WTF::MachSendRight&&);
@@ -468,26 +432,7 @@ template<> struct ArgumentCoder<WebCore::KeypressCommand> {
     static std::optional<WebCore::KeypressCommand> decode(Decoder&);
 };
 
-template<> struct ArgumentCoder<CGPoint> {
-    static void encode(Encoder&, CGPoint);
-    static std::optional<CGPoint> decode(Decoder&);
-};
-
-template<> struct ArgumentCoder<CGSize> {
-    static void encode(Encoder&, CGSize);
-    static std::optional<CGSize> decode(Decoder&);
-};
-
-template<> struct ArgumentCoder<CGRect> {
-    static void encode(Encoder&, CGRect);
-    static std::optional<CGRect> decode(Decoder&);
-};
-
-template<> struct ArgumentCoder<CGAffineTransform> {
-    static void encode(Encoder&, CGAffineTransform);
-    static std::optional<CGAffineTransform> decode(Decoder&);
-};
-#endif
+#endif // PLATFORM(COCOA)
 
 #if PLATFORM(IOS_FAMILY)
 template<> struct ArgumentCoder<WebCore::SelectionGeometry> {

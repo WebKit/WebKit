@@ -108,12 +108,14 @@ template<typename T> struct ArgumentCoder<ArrayReference<T, arrayReferenceDynami
 };
 
 template<typename T> struct ArgumentCoder<OptionSet<T>> {
+    template<typename Encoder>
     static void encode(Encoder& encoder, const OptionSet<T>& optionSet)
     {
         ASSERT(WTF::isValidOptionSet(optionSet));
         encoder << optionSet.toRaw();
     }
 
+    template<typename Decoder>
     static WARN_UNUSED_RETURN bool decode(Decoder& decoder, OptionSet<T>& optionSet)
     {
         typename OptionSet<T>::StorageType value;
@@ -125,6 +127,7 @@ template<typename T> struct ArgumentCoder<OptionSet<T>> {
         return true;
     }
 
+    template<typename Decoder>
     static std::optional<OptionSet<T>> decode(Decoder& decoder)
     {
         std::optional<typename OptionSet<T>::StorageType> value;
@@ -188,6 +191,7 @@ template<typename T> struct ArgumentCoder<std::optional<T>> {
 };
 
 template<typename T> struct ArgumentCoder<Box<T>> {
+    template<typename Encoder>
     static void encode(Encoder& encoder, const Box<T>& box)
     {
         if (!box) {
@@ -199,6 +203,7 @@ template<typename T> struct ArgumentCoder<Box<T>> {
         encoder << *box.get();
     }
 
+    template<typename Decoder>
     static WARN_UNUSED_RETURN bool decode(Decoder& decoder, Box<T>& box)
     {
         bool isEngaged;
@@ -218,6 +223,7 @@ template<typename T> struct ArgumentCoder<Box<T>> {
         return true;
     }
 
+    template<typename Decoder>
     static std::optional<Box<T>> decode(Decoder& decoder)
     {
         std::optional<bool> isEngaged;
@@ -236,11 +242,13 @@ template<typename T> struct ArgumentCoder<Box<T>> {
 };
 
 template<typename T, typename U> struct ArgumentCoder<std::pair<T, U>> {
+    template<typename Encoder>
     static void encode(Encoder& encoder, const std::pair<T, U>& pair)
     {
         encoder << pair.first << pair.second;
     }
 
+    template<typename Decoder>
     static WARN_UNUSED_RETURN bool decode(Decoder& decoder, std::pair<T, U>& pair)
     {
         T first;
@@ -256,6 +264,7 @@ template<typename T, typename U> struct ArgumentCoder<std::pair<T, U>> {
         return true;
     }
 
+    template<typename Decoder>
     static std::optional<std::pair<T, U>> decode(Decoder& decoder)
     {
         std::optional<T> first;
@@ -366,11 +375,13 @@ template<typename... Elements> struct ArgumentCoder<std::tuple<Elements...>> {
 };
 
 template<typename KeyType, typename ValueType> struct ArgumentCoder<WTF::KeyValuePair<KeyType, ValueType>> {
+    template<typename Encoder>
     static void encode(Encoder& encoder, const WTF::KeyValuePair<KeyType, ValueType>& pair)
     {
         encoder << pair.key << pair.value;
     }
 
+    template<typename Decoder>
     static WARN_UNUSED_RETURN bool decode(Decoder& decoder, WTF::KeyValuePair<KeyType, ValueType>& pair)
     {
         KeyType key;
@@ -398,6 +409,7 @@ template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t min
             encoder << vector[i];
     }
 
+    template<typename Decoder>
     static WARN_UNUSED_RETURN bool decode(Decoder& decoder, Vector<T, inlineCapacity, OverflowHandler, minCapacity>& vector)
     {
         std::optional<Vector<T, inlineCapacity, OverflowHandler, minCapacity>> optional;
@@ -437,6 +449,7 @@ template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t min
         encoder.encodeFixedLengthData(reinterpret_cast<const uint8_t*>(vector.data()), vector.size() * sizeof(T), alignof(T));
     }
     
+    template<typename Decoder>
     static WARN_UNUSED_RETURN bool decode(Decoder& decoder, Vector<T, inlineCapacity, OverflowHandler, minCapacity>& vector)
     {
         uint64_t decodedSize;
@@ -451,7 +464,7 @@ template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t min
         // Since we know the total size of the elements, we can allocate the vector in
         // one fell swoop. Before allocating we must however make sure that the decoder buffer
         // is big enough.
-        if (!decoder.bufferIsLargeEnoughToContain<T>(size))
+        if (!decoder.template bufferIsLargeEnoughToContain<T>(size))
             return false;
 
         Vector<T, inlineCapacity, OverflowHandler, minCapacity> temp;
@@ -498,6 +511,7 @@ template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t min
 template<typename KeyArg, typename MappedArg, typename HashArg, typename KeyTraitsArg, typename MappedTraitsArg, typename HashTableTraits> struct ArgumentCoder<HashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg, HashTableTraits>> {
     typedef HashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg, HashTableTraits> HashMapType;
 
+    template<typename Encoder>
     static void encode(Encoder& encoder, const HashMapType& hashMap)
     {
         encoder << static_cast<uint32_t>(hashMap.size());
@@ -505,6 +519,7 @@ template<typename KeyArg, typename MappedArg, typename HashArg, typename KeyTrai
             encoder << *it;
     }
 
+    template<typename Decoder>
     static std::optional<HashMapType> decode(Decoder& decoder)
     {
         uint32_t hashMapSize;
@@ -535,6 +550,7 @@ template<typename KeyArg, typename MappedArg, typename HashArg, typename KeyTrai
         return hashMap;
     }
 
+    template<typename Decoder>
     static WARN_UNUSED_RETURN bool decode(Decoder& decoder, HashMapType& hashMap)
     {
         std::optional<HashMapType> tempHashMap;
@@ -549,6 +565,7 @@ template<typename KeyArg, typename MappedArg, typename HashArg, typename KeyTrai
 template<typename KeyArg, typename HashArg, typename KeyTraitsArg, typename HashTableTraits> struct ArgumentCoder<HashSet<KeyArg, HashArg, KeyTraitsArg, HashTableTraits>> {
     typedef HashSet<KeyArg, HashArg, KeyTraitsArg, HashTableTraits> HashSetType;
 
+    template<typename Encoder>
     static void encode(Encoder& encoder, const HashSetType& hashSet)
     {
         encoder << static_cast<uint64_t>(hashSet.size());
@@ -556,6 +573,7 @@ template<typename KeyArg, typename HashArg, typename KeyTraitsArg, typename Hash
             encoder << *it;
     }
 
+    template<typename Decoder>
     static WARN_UNUSED_RETURN bool decode(Decoder& decoder, HashSetType& hashSet)
     {
         std::optional<HashSetType> tempHashSet;
@@ -567,6 +585,7 @@ template<typename KeyArg, typename HashArg, typename KeyTraitsArg, typename Hash
         return true;
     }
 
+    template<typename Decoder>
     static std::optional<HashSetType> decode(Decoder& decoder)
     {
         uint64_t hashSetSize;
@@ -596,6 +615,7 @@ template<typename KeyArg, typename HashArg, typename KeyTraitsArg, typename Hash
 template<typename KeyArg, typename HashArg, typename KeyTraitsArg> struct ArgumentCoder<HashCountedSet<KeyArg, HashArg, KeyTraitsArg>> {
     typedef HashCountedSet<KeyArg, HashArg, KeyTraitsArg> HashCountedSetType;
     
+    template<typename Encoder>
     static void encode(Encoder& encoder, const HashCountedSetType& hashCountedSet)
     {
         encoder << static_cast<uint64_t>(hashCountedSet.size());
@@ -606,6 +626,7 @@ template<typename KeyArg, typename HashArg, typename KeyTraitsArg> struct Argume
         }
     }
     
+    template<typename Decoder>
     static WARN_UNUSED_RETURN bool decode(Decoder& decoder, HashCountedSetType& hashCountedSet)
     {
         uint64_t hashCountedSetSize;
@@ -637,6 +658,7 @@ template<typename KeyArg, typename HashArg, typename KeyTraitsArg> struct Argume
 };
 
 template<typename ValueType, typename ErrorType> struct ArgumentCoder<Expected<ValueType, ErrorType>> {
+    template<typename Encoder>
     static void encode(Encoder& encoder, const Expected<ValueType, ErrorType>& expected)
     {
         if (!expected.has_value()) {
@@ -648,6 +670,7 @@ template<typename ValueType, typename ErrorType> struct ArgumentCoder<Expected<V
         encoder << expected.value();
     }
 
+    template<typename Decoder>
     static std::optional<Expected<ValueType, ErrorType>> decode(Decoder& decoder)
     {
         std::optional<bool> hasValue;
@@ -704,6 +727,7 @@ template<typename ErrorType> struct ArgumentCoder<Expected<void, ErrorType>> {
 
 template<size_t index, typename... Types>
 struct VariantCoder {
+    template<typename Encoder>
     static void encode(Encoder& encoder, const WTF::Variant<Types...>& variant, unsigned i)
     {
         if (i == index) {
@@ -713,6 +737,7 @@ struct VariantCoder {
         VariantCoder<index - 1, Types...>::encode(encoder, variant, i);
     }
     
+    template<typename Decoder>
     static std::optional<WTF::Variant<Types...>> decode(Decoder& decoder, unsigned i)
     {
         if (i == index) {
@@ -728,12 +753,14 @@ struct VariantCoder {
 
 template<typename... Types>
 struct VariantCoder<0, Types...> {
+    template<typename Encoder>
     static void encode(Encoder& encoder, const WTF::Variant<Types...>& variant, unsigned i)
     {
         ASSERT_UNUSED(i, !i);
         encoder << WTF::get<0>(variant);
     }
     
+    template<typename Decoder>
     static std::optional<WTF::Variant<Types...>> decode(Decoder& decoder, unsigned i)
     {
         ASSERT_UNUSED(i, !i);
@@ -746,6 +773,7 @@ struct VariantCoder<0, Types...> {
 };
 
 template<typename... Types> struct ArgumentCoder<WTF::Variant<Types...>> {
+    template<typename Encoder>
     static void encode(Encoder& encoder, const WTF::Variant<Types...>& variant)
     {
         unsigned i = variant.index();
@@ -753,6 +781,7 @@ template<typename... Types> struct ArgumentCoder<WTF::Variant<Types...>> {
         VariantCoder<sizeof...(Types) - 1, Types...>::encode(encoder, variant, i);
     }
     
+    template<typename Decoder>
     static std::optional<WTF::Variant<Types...>> decode(Decoder& decoder)
     {
         std::optional<unsigned> i;
@@ -804,8 +833,14 @@ template<> struct ArgumentCoder<audit_token_t> {
 #endif
 
 template<> struct ArgumentCoder<Monostate> {
-    static void encode(Encoder&, const Monostate&);
-    static std::optional<Monostate> decode(Decoder&);
+    template<typename Encoder>
+    static void encode(Encoder&, const Monostate&) { }
+
+    template<typename Decoder>
+    static std::optional<Monostate> decode(Decoder&)
+    {
+        return Monostate { };
+    }
 };
 
 } // namespace IPC

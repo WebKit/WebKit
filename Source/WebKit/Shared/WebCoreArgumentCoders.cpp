@@ -125,6 +125,42 @@ namespace IPC {
 using namespace WebCore;
 using namespace WebKit;
 
+#define DEFINE_SIMPLE_ARGUMENT_CODER_FOR_SOURCE(Type) \
+    template<typename Encoder> \
+    void ArgumentCoder<Type>::encode(Encoder& encoder, const Type& value) { SimpleArgumentCoder<Type>::encode(encoder, value); } \
+    bool ArgumentCoder<Type>::decode(Decoder& decoder, Type& value) { return SimpleArgumentCoder<Type>::decode(decoder, value); } \
+    std::optional<Type> ArgumentCoder<Type>::decode(Decoder& decoder) \
+    { \
+        Type value; \
+        if (!decode(decoder, value)) \
+            return std::nullopt; \
+        return value; \
+    } \
+    template void ArgumentCoder<Type>::encode<Encoder>(Encoder&, const Type&); \
+    template void ArgumentCoder<Type>::encode<StreamConnectionEncoder>(StreamConnectionEncoder&, const Type&);
+
+DEFINE_SIMPLE_ARGUMENT_CODER_FOR_SOURCE(AffineTransform)
+DEFINE_SIMPLE_ARGUMENT_CODER_FOR_SOURCE(FloatBoxExtent)
+DEFINE_SIMPLE_ARGUMENT_CODER_FOR_SOURCE(FloatPoint)
+DEFINE_SIMPLE_ARGUMENT_CODER_FOR_SOURCE(FloatPoint3D)
+DEFINE_SIMPLE_ARGUMENT_CODER_FOR_SOURCE(FloatRect)
+DEFINE_SIMPLE_ARGUMENT_CODER_FOR_SOURCE(FloatRoundedRect)
+DEFINE_SIMPLE_ARGUMENT_CODER_FOR_SOURCE(FloatSize)
+DEFINE_SIMPLE_ARGUMENT_CODER_FOR_SOURCE(IntPoint)
+DEFINE_SIMPLE_ARGUMENT_CODER_FOR_SOURCE(IntRect)
+DEFINE_SIMPLE_ARGUMENT_CODER_FOR_SOURCE(IntSize)
+DEFINE_SIMPLE_ARGUMENT_CODER_FOR_SOURCE(LayoutPoint)
+DEFINE_SIMPLE_ARGUMENT_CODER_FOR_SOURCE(LayoutSize)
+
+#if USE(CG)
+DEFINE_SIMPLE_ARGUMENT_CODER_FOR_SOURCE(CGRect)
+DEFINE_SIMPLE_ARGUMENT_CODER_FOR_SOURCE(CGSize)
+DEFINE_SIMPLE_ARGUMENT_CODER_FOR_SOURCE(CGPoint)
+DEFINE_SIMPLE_ARGUMENT_CODER_FOR_SOURCE(CGAffineTransform)
+#endif
+
+#undef DEFINE_SIMPLE_ARGUMENT_CODER_FOR_SOURCE
+
 static void encodeSharedBuffer(Encoder& encoder, const SharedBuffer* buffer)
 {
     bool isNull = !buffer;
@@ -229,16 +265,6 @@ static WARN_UNUSED_RETURN bool decodeTypesAndData(Decoder& decoder, Vector<Strin
     }
 
     return true;
-}
-
-void ArgumentCoder<AffineTransform>::encode(Encoder& encoder, const AffineTransform& affineTransform)
-{
-    SimpleArgumentCoder<AffineTransform>::encode(encoder, affineTransform);
-}
-
-bool ArgumentCoder<AffineTransform>::decode(Decoder& decoder, AffineTransform& affineTransform)
-{
-    return SimpleArgumentCoder<AffineTransform>::decode(decoder, affineTransform);
 }
 
 void ArgumentCoder<CacheQueryOptions>::encode(Encoder& encoder, const CacheQueryOptions& options)
@@ -425,6 +451,7 @@ bool ArgumentCoder<EventTrackingRegions>::decode(Decoder& decoder, EventTracking
     return true;
 }
 
+template<typename Encoder>
 void ArgumentCoder<TransformationMatrix>::encode(Encoder& encoder, const TransformationMatrix& transformationMatrix)
 {
     encoder << transformationMatrix.m11();
@@ -505,6 +532,9 @@ bool ArgumentCoder<TransformationMatrix>::decode(Decoder& decoder, Transformatio
     transformationMatrix.setMatrix(m11, m12, m13, m14, m21, m22, m23, m24, m31, m32, m33, m34, m41, m42, m43, m44);
     return true;
 }
+
+template void ArgumentCoder<TransformationMatrix>::encode<Encoder>(Encoder&, const TransformationMatrix&);
+template void ArgumentCoder<TransformationMatrix>::encode<StreamConnectionEncoder>(StreamConnectionEncoder&, const TransformationMatrix&);
 
 void ArgumentCoder<LinearTimingFunction>::encode(Encoder& encoder, const LinearTimingFunction& timingFunction)
 {
@@ -617,65 +647,6 @@ bool ArgumentCoder<SpringTimingFunction>::decode(Decoder& decoder, SpringTimingF
     return true;
 }
 
-void ArgumentCoder<FloatPoint>::encode(Encoder& encoder, const FloatPoint& floatPoint)
-{
-    SimpleArgumentCoder<FloatPoint>::encode(encoder, floatPoint);
-}
-
-bool ArgumentCoder<FloatPoint>::decode(Decoder& decoder, FloatPoint& floatPoint)
-{
-    return SimpleArgumentCoder<FloatPoint>::decode(decoder, floatPoint);
-}
-
-std::optional<FloatPoint> ArgumentCoder<FloatPoint>::decode(Decoder& decoder)
-{
-    FloatPoint floatPoint;
-    if (!SimpleArgumentCoder<FloatPoint>::decode(decoder, floatPoint))
-        return std::nullopt;
-    return floatPoint;
-}
-
-void ArgumentCoder<FloatPoint3D>::encode(Encoder& encoder, const FloatPoint3D& floatPoint)
-{
-    SimpleArgumentCoder<FloatPoint3D>::encode(encoder, floatPoint);
-}
-
-bool ArgumentCoder<FloatPoint3D>::decode(Decoder& decoder, FloatPoint3D& floatPoint)
-{
-    return SimpleArgumentCoder<FloatPoint3D>::decode(decoder, floatPoint);
-}
-
-
-void ArgumentCoder<FloatRect>::encode(Encoder& encoder, const FloatRect& floatRect)
-{
-    SimpleArgumentCoder<FloatRect>::encode(encoder, floatRect);
-}
-
-bool ArgumentCoder<FloatRect>::decode(Decoder& decoder, FloatRect& floatRect)
-{
-    return SimpleArgumentCoder<FloatRect>::decode(decoder, floatRect);
-}
-
-std::optional<FloatRect> ArgumentCoder<FloatRect>::decode(Decoder& decoder)
-{
-    FloatRect floatRect;
-    if (!SimpleArgumentCoder<FloatRect>::decode(decoder, floatRect))
-        return std::nullopt;
-    return floatRect;
-}
-
-
-void ArgumentCoder<FloatBoxExtent>::encode(Encoder& encoder, const FloatBoxExtent& floatBoxExtent)
-{
-    SimpleArgumentCoder<FloatBoxExtent>::encode(encoder, floatBoxExtent);
-}
-    
-bool ArgumentCoder<FloatBoxExtent>::decode(Decoder& decoder, FloatBoxExtent& floatBoxExtent)
-{
-    return SimpleArgumentCoder<FloatBoxExtent>::decode(decoder, floatBoxExtent);
-}
-
-
 void ArgumentCoder<RectEdges<bool>>::encode(Encoder& encoder, const RectEdges<bool>& boxEdges)
 {
     SimpleArgumentCoder<RectEdges<bool>>::encode(encoder, boxEdges);
@@ -684,28 +655,6 @@ void ArgumentCoder<RectEdges<bool>>::encode(Encoder& encoder, const RectEdges<bo
 bool ArgumentCoder<RectEdges<bool>>::decode(Decoder& decoder, RectEdges<bool>& boxEdges)
 {
     return SimpleArgumentCoder<RectEdges<bool>>::decode(decoder, boxEdges);
-}
-
-
-void ArgumentCoder<FloatSize>::encode(Encoder& encoder, const FloatSize& floatSize)
-{
-    SimpleArgumentCoder<FloatSize>::encode(encoder, floatSize);
-}
-
-bool ArgumentCoder<FloatSize>::decode(Decoder& decoder, FloatSize& floatSize)
-{
-    return SimpleArgumentCoder<FloatSize>::decode(decoder, floatSize);
-}
-
-
-void ArgumentCoder<FloatRoundedRect>::encode(Encoder& encoder, const FloatRoundedRect& roundedRect)
-{
-    SimpleArgumentCoder<FloatRoundedRect>::encode(encoder, roundedRect);
-}
-
-bool ArgumentCoder<FloatRoundedRect>::decode(Decoder& decoder, FloatRoundedRect& roundedRect)
-{
-    return SimpleArgumentCoder<FloatRoundedRect>::decode(decoder, roundedRect);
 }
 
 #if ENABLE(META_VIEWPORT)
@@ -737,87 +686,6 @@ void ArgumentCoder<ViewportAttributes>::encode(Encoder& encoder, const ViewportA
 bool ArgumentCoder<ViewportAttributes>::decode(Decoder& decoder, ViewportAttributes& viewportAttributes)
 {
     return SimpleArgumentCoder<ViewportAttributes>::decode(decoder, viewportAttributes);
-}
-
-void ArgumentCoder<IntPoint>::encode(Encoder& encoder, const IntPoint& intPoint)
-{
-    SimpleArgumentCoder<IntPoint>::encode(encoder, intPoint);
-}
-
-bool ArgumentCoder<IntPoint>::decode(Decoder& decoder, IntPoint& intPoint)
-{
-    return SimpleArgumentCoder<IntPoint>::decode(decoder, intPoint);
-}
-
-std::optional<WebCore::IntPoint> ArgumentCoder<IntPoint>::decode(Decoder& decoder)
-{
-    IntPoint intPoint;
-    if (!SimpleArgumentCoder<IntPoint>::decode(decoder, intPoint))
-        return std::nullopt;
-    return intPoint;
-}
-
-void ArgumentCoder<IntRect>::encode(Encoder& encoder, const IntRect& intRect)
-{
-    SimpleArgumentCoder<IntRect>::encode(encoder, intRect);
-}
-
-bool ArgumentCoder<IntRect>::decode(Decoder& decoder, IntRect& intRect)
-{
-    return SimpleArgumentCoder<IntRect>::decode(decoder, intRect);
-}
-
-std::optional<IntRect> ArgumentCoder<IntRect>::decode(Decoder& decoder)
-{
-    IntRect rect;
-    if (!decode(decoder, rect))
-        return std::nullopt;
-    return rect;
-}
-
-template<typename Encoder>
-void ArgumentCoder<IntSize>::encode(Encoder& encoder, const IntSize& intSize)
-{
-    SimpleArgumentCoder<IntSize>::encode(encoder, intSize);
-}
-
-template
-void ArgumentCoder<IntSize>::encode<Encoder>(Encoder&, const IntSize&);
-template
-void ArgumentCoder<IntSize>::encode<StreamConnectionEncoder>(StreamConnectionEncoder&, const IntSize&);
-
-bool ArgumentCoder<IntSize>::decode(Decoder& decoder, IntSize& intSize)
-{
-    return SimpleArgumentCoder<IntSize>::decode(decoder, intSize);
-}
-
-std::optional<IntSize> ArgumentCoder<IntSize>::decode(Decoder& decoder)
-{
-    IntSize intSize;
-    if (!SimpleArgumentCoder<IntSize>::decode(decoder, intSize))
-        return std::nullopt;
-    return intSize;
-}
-
-void ArgumentCoder<LayoutSize>::encode(Encoder& encoder, const LayoutSize& layoutSize)
-{
-    SimpleArgumentCoder<LayoutSize>::encode(encoder, layoutSize);
-}
-
-bool ArgumentCoder<LayoutSize>::decode(Decoder& decoder, LayoutSize& layoutSize)
-{
-    return SimpleArgumentCoder<LayoutSize>::decode(decoder, layoutSize);
-}
-
-
-void ArgumentCoder<LayoutPoint>::encode(Encoder& encoder, const LayoutPoint& layoutPoint)
-{
-    SimpleArgumentCoder<LayoutPoint>::encode(encoder, layoutPoint);
-}
-
-bool ArgumentCoder<LayoutPoint>::decode(Decoder& decoder, LayoutPoint& layoutPoint)
-{
-    return SimpleArgumentCoder<LayoutPoint>::decode(decoder, layoutPoint);
 }
 
 void ArgumentCoder<RecentSearch>::encode(Encoder& encoder, const RecentSearch& recentSearch)

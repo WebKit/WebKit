@@ -1,3 +1,71 @@
+2021-10-06  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [WebKit2] Refactor some IPC argument encoder logic to work with StreamConnectionEncoder
+        https://bugs.webkit.org/show_bug.cgi?id=230714
+        rdar://83477591
+
+        Reviewed by Tim Horton.
+
+        Make it possible to use `IPC::StreamConnectionEncoder` to encode display list items (and their members) in an
+        IPC stream. This patch comprises two main sets of changes in `ArgumentCoders`, and `WebCoreArgumentCoders`. See
+        below for more details.
+
+        * Platform/IPC/ArgumentCoders.cpp:
+        (IPC::ArgumentCoder<audit_token_t>::decode):
+        (IPC::ArgumentCoder<Monostate>::encode): Deleted.
+        (IPC::ArgumentCoder<Monostate>::decode): Deleted.
+        * Platform/IPC/ArgumentCoders.h:
+        (IPC::ArgumentCoder<Monostate>::encode):
+        (IPC::ArgumentCoder<Monostate>::decode):
+
+        Many of these `encode()` methods are currently non-templated, which means that Encoder and Decoder used here
+        refer solely to IPC::Encoder and IPC::Decoder (respectively) instead of other types of encoders (namely,
+        StreamConnectionEncoder). Make these use templated `encode` methods intead, so that they work with generic
+        encoders.
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<AffineTransform>::encode): Deleted.
+        (IPC::ArgumentCoder<AffineTransform>::decode): Deleted.
+        (IPC::ArgumentCoder<FloatPoint>::encode): Deleted.
+        (IPC::ArgumentCoder<FloatPoint>::decode): Deleted.
+        (IPC::ArgumentCoder<FloatPoint3D>::encode): Deleted.
+        (IPC::ArgumentCoder<FloatPoint3D>::decode): Deleted.
+        (IPC::ArgumentCoder<FloatRect>::encode): Deleted.
+        (IPC::ArgumentCoder<FloatRect>::decode): Deleted.
+        (IPC::ArgumentCoder<FloatBoxExtent>::encode): Deleted.
+        (IPC::ArgumentCoder<FloatBoxExtent>::decode): Deleted.
+        (IPC::ArgumentCoder<FloatSize>::encode): Deleted.
+        (IPC::ArgumentCoder<FloatSize>::decode): Deleted.
+        (IPC::ArgumentCoder<FloatRoundedRect>::encode): Deleted.
+        (IPC::ArgumentCoder<FloatRoundedRect>::decode): Deleted.
+        (IPC::ArgumentCoder<IntPoint>::encode): Deleted.
+        (IPC::ArgumentCoder<IntPoint>::decode): Deleted.
+        (IPC::ArgumentCoder<IntRect>::encode): Deleted.
+        (IPC::ArgumentCoder<IntRect>::decode): Deleted.
+        (IPC::ArgumentCoder<IntSize>::encode): Deleted.
+        (IPC::ArgumentCoder<IntSize>::decode): Deleted.
+        (IPC::ArgumentCoder<LayoutSize>::encode): Deleted.
+        (IPC::ArgumentCoder<LayoutSize>::decode): Deleted.
+        (IPC::ArgumentCoder<LayoutPoint>::encode): Deleted.
+        (IPC::ArgumentCoder<LayoutPoint>::decode): Deleted.
+
+        These WebCore argument coders are also currently incompatible with StreamConnectionEncoder, since they are non-
+        templated (and thus only work with IPC::Encoder). Since these are all encodable as POD types, we can just use
+        SimpleArgumentCoder for all of these. We also add new `DEFINE_SIMPLE_ARGUMENT_CODER_FOR_(HEADER|SOURCE)` macros
+        to make this code a bit easier to read, which adds SimpleArgumentCoder for the given type, for both standard
+        IPC::Encoder as well as IPC::StreamConnectionEncoder.
+
+        * Shared/WebCoreArgumentCoders.h:
+        * Shared/mac/WebCoreArgumentCodersMac.mm:
+        (IPC::ArgumentCoder<CGRect>::encode): Deleted.
+        (IPC::ArgumentCoder<CGRect>::decode): Deleted.
+        (IPC::ArgumentCoder<CGSize>::encode): Deleted.
+        (IPC::ArgumentCoder<CGSize>::decode): Deleted.
+        (IPC::ArgumentCoder<CGPoint>::encode): Deleted.
+        (IPC::ArgumentCoder<CGPoint>::decode): Deleted.
+        (IPC::ArgumentCoder<CGAffineTransform>::encode): Deleted.
+        (IPC::ArgumentCoder<CGAffineTransform>::decode): Deleted.
+
 2021-10-06  Youenn Fablet  <youenn@apple.com>
 
         Implement https://w3c.github.io/push-api/#receiving-a-push-message
