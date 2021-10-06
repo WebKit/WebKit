@@ -1842,7 +1842,7 @@ webkit.org/b/231295 http/tests/app-privacy-report/user-attribution-ping-load.htm
 
 webkit.org/b/212219 media/track/track-cue-missing.html [ Pass Failure ]
 
-webkit.org/b/228334 media/track/track-forced-subtitles-in-band.html [ Pass Timeout ]
+webkit.org/b/231333 media/track/track-forced-subtitles-in-band.html [ Pass Timeout Failure ]
 
 webkit.org/b/228364 media/track/track-in-band-duplicate-tracks-when-source-changes.html [ Pass Timeout ]
 
