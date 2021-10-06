@@ -471,7 +471,6 @@ void CoreAudioSharedUnit::cleanupAudioUnit()
 
     m_microphoneSampleBuffer = nullptr;
     m_speakerSampleBuffer = nullptr;
-    m_persistentID = emptyString();
 #if !LOG_DISABLED
     m_ioUnitName = emptyString();
 #endif
