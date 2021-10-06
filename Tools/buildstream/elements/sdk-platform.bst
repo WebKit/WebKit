@@ -9,6 +9,7 @@ depends:
 
 # replaced (patched) elements:
 - sdk/adwaita-icon-theme.bst
+- sdk/apitrace.bst
 - sdk/bubblewrap.bst
 - sdk/capnp.bst
 - sdk/cargo-c.bst

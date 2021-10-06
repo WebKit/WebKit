@@ -1,3 +1,15 @@
+2021-10-06  Philippe Normand  <pnormand@igalia.com>
+
+        [Flatpak SDK] Add apitrace
+        https://bugs.webkit.org/show_bug.cgi?id=230967
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        APITrace can be used to debug GL calls.
+
+        * elements/sdk-platform.bst:
+        * elements/sdk/apitrace.bst: Added.
+
 2021-09-29  Philippe Normand  <pnormand@igalia.com>
 
         [Flatpak SDK] Add bwrap and xdg-dbus-proxy
