@@ -1247,6 +1247,8 @@ webkit.org/b/231329 http/tests/websocket/tests/hybi/close-code-and-reason.html [
 
 webkit.org/b/169637 imported/w3c/web-platform-tests/xhr/timeout-multiple-fetches.html [ Pass Failure ]
 
+webkit.org/b/231337 [ Debug ] imported/w3c/web-platform-tests/xhr/send-timeout-events.htm [ Pass Failure ]
+
 webkit.org/b/171957 fast/animation/request-animation-frame-time-unit.html [ Pass Failure ]
 
 webkit.org/b/172454 http/tests/navigation/statistics.html [ Pass Failure ]
