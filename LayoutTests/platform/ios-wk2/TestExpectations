@@ -1083,9 +1083,6 @@ webkit.org/b/153503 http/tests/appcache/404-resource-with-slow-main-resource.py 
 # Uses WK1 TestRunner.setUseDeferredFramLoading
 http/tests/appcache/load-from-appcache-defer-resume-crash.html [ Skip ]
 
-webkit.org/b/231293 fast/dom/HTMLAnchorElement/anchor-file-blob-convert-to-download-async-delegate.html [ Failure ]
-webkit.org/b/231293 fast/dom/HTMLAnchorElement/anchor-file-blob-convert-to-download.html [ Failure ]
-
 webkit.org/b/227891 http/tests/appcache/fail-on-update.html [ Pass Timeout DumpJSConsoleLogInStdErr ]
 
 webkit.org/b/225665 http/tests/appcache/fail-on-update-2.html [ DumpJSConsoleLogInStdErr Slow ]

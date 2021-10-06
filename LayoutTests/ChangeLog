@@ -1,3 +1,15 @@
+2021-10-06  Chris Dumez  <cdumez@apple.com>
+
+        [ iOS 15 ]2 fast/dom/HTMLAnchorElement tests are failing
+        https://bugs.webkit.org/show_bug.cgi?id=231293
+        <rdar://problem/83935262>
+
+        Unreviewed, land iOS15 baselines for those tests.
+
+        * platform/ios-wk2/TestExpectations:
+        * platform/ios/fast/dom/HTMLAnchorElement/anchor-file-blob-convert-to-download-async-delegate-expected.txt: Added.
+        * platform/ios/fast/dom/HTMLAnchorElement/anchor-file-blob-convert-to-download-expected.txt: Added.
+
 2021-10-06  Kiet Ho  <tho22@apple.com>
 
         Import css/motion tests from WPT
