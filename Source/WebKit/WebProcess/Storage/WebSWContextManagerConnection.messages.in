@@ -31,6 +31,8 @@ messages -> WebSWContextManagerConnection NotRefCounted {
     PostMessageToServiceWorker(WebCore::ServiceWorkerIdentifier destinationIdentifier, struct WebCore::MessageWithMessagePorts message, WebCore::ServiceWorkerOrClientData sourceData)
     FireInstallEvent(WebCore::ServiceWorkerIdentifier identifier)
     FireActivateEvent(WebCore::ServiceWorkerIdentifier identifier)
+    FirePushEvent(WebCore::ServiceWorkerIdentifier identifier, std::optional<IPC::DataReference> data) -> (bool result) Async
+
     TerminateWorker(WebCore::ServiceWorkerIdentifier identifier)
 #if ENABLE(SHAREABLE_RESOURCE) && PLATFORM(COCOA)
     DidSaveScriptsToDisk(WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier, WebCore::ScriptBuffer script, HashMap<URL, WebCore::ScriptBuffer> importedScripts);

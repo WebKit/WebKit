@@ -753,4 +753,16 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
     });
 }
 
+-(void)_processPushMessage:(NSData*) message registration:(NSURL *)registration completionHandler:(void(^)(bool wasProcessed))completionHandler
+{
+#if ENABLE(SERVICE_WORKER)
+    std::optional<Span<const uint8_t>> data;
+    if (message)
+        data = Span<const uint8_t> { reinterpret_cast<const uint8_t*>(message.bytes), message.length };
+    _websiteDataStore->networkProcess().processPushMessage(_websiteDataStore->sessionID(), data, registration, [completionHandler = makeBlockPtr(completionHandler)] (bool wasProcessed) {
+        completionHandler(wasProcessed);
+    });
+#endif
+}
+
 @end

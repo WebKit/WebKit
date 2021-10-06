@@ -221,6 +221,11 @@ public:
     LastNavigationWasAppInitiated clientIsAppInitiatedForRegistrableDomain(const RegistrableDomain&);
     bool shouldRunServiceWorkersOnMainThreadForTesting() const { return m_shouldRunServiceWorkersOnMainThreadForTesting; }
 
+    WEBCORE_EXPORT void processPushMessage(std::optional<Vector<uint8_t>>&&, URL&&, CompletionHandler<void(bool)>&&);
+
+    enum class ShouldSkipEvent : bool { No, Yes };
+    void fireFunctionalEvent(SWServerRegistration&, CompletionHandler<void(Expected<SWServerToContextConnection*, ShouldSkipEvent>)>&&);
+
 private:
     void validateRegistrationDomain(WebCore::RegistrableDomain, ServiceWorkerJobType, CompletionHandler<void(bool)>&&);
 
@@ -247,6 +252,7 @@ private:
     void contextConnectionCreated(SWServerToContextConnection&);
 
     void updateAppInitiatedValueForWorkers(const ClientOrigin&, LastNavigationWasAppInitiated);
+    void whenImportIsCompletedIfNeeded(CompletionHandler<void()>&&);
 
     HashMap<SWServerConnectionIdentifier, std::unique_ptr<Connection>> m_connections;
     HashMap<ServiceWorkerRegistrationKey, WeakPtr<SWServerRegistration>> m_scopeToRegistrationMap;

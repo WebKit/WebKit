@@ -2516,6 +2516,14 @@ void NetworkProcess::addServiceWorkerSession(PAL::SessionID sessionID, bool proc
     if (addResult.isNewEntry)
         SandboxExtension::consumePermanently(handle);
 }
+
+void NetworkProcess::processPushMessage(PAL::SessionID sessionID, const std::optional<IPC::DataReference>& ipcData, URL&& registrationURL, CompletionHandler<void(bool)>&& callback)
+{
+    std::optional<Vector<uint8_t>> data;
+    if (ipcData)
+        data = Vector<uint8_t> { ipcData->data(), ipcData->size() };
+    swServerForSession(sessionID).processPushMessage(WTFMove(data), WTFMove(registrationURL), WTFMove(callback));
+}
 #endif // ENABLE(SERVICE_WORKER)
 
 void NetworkProcess::requestStorageSpace(PAL::SessionID sessionID, const ClientOrigin& origin, uint64_t quota, uint64_t currentSize, uint64_t spaceRequired, CompletionHandler<void(std::optional<uint64_t>)>&& callback)

@@ -60,6 +60,7 @@ public:
     virtual void didSaveScriptsToDisk(ServiceWorkerIdentifier, const ScriptBuffer&, const HashMap<URL, ScriptBuffer>& importedScripts) = 0;
     virtual void findClientByIdentifierCompleted(uint64_t requestIdentifier, const std::optional<ServiceWorkerClientData>&, bool hasSecurityError) = 0;
     virtual void matchAllCompleted(uint64_t requestIdentifier, const Vector<ServiceWorkerClientData>&) = 0;
+    virtual void firePushEvent(ServiceWorkerIdentifier, const std::optional<Vector<uint8_t>>&, CompletionHandler<void(bool)>&& callback) = 0;
 
     // Messages back from the SW host process
     WEBCORE_EXPORT void scriptContextFailedToStart(const std::optional<ServiceWorkerJobDataIdentifier>&, ServiceWorkerIdentifier, const String& message);

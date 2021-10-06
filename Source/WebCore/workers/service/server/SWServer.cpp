@@ -146,6 +146,14 @@ void SWServer::whenImportIsCompleted(CompletionHandler<void()>&& callback)
     m_importCompletedCallbacks.append(WTFMove(callback));
 }
 
+void SWServer::whenImportIsCompletedIfNeeded(CompletionHandler<void()>&& callback)
+{
+    if (m_importCompleted) {
+        callback();
+        return;
+    }
+    whenImportIsCompleted(WTFMove(callback));
+}
 
 void SWServer::registrationStoreDatabaseFailedToOpen()
 {
@@ -1183,6 +1191,80 @@ void SWServer::softUpdate(SWServerRegistration& registration)
     jobData.workerType = newestWorker->type();
     jobData.type = ServiceWorkerJobType::Update;
     scheduleJob(WTFMove(jobData));
+}
+
+void SWServer::processPushMessage(std::optional<Vector<uint8_t>>&& data, URL&& registrationURL, CompletionHandler<void(bool)>&& callback)
+{
+    whenImportIsCompletedIfNeeded([this, weakThis = makeWeakPtr(this), data = WTFMove(data), registrationURL = WTFMove(registrationURL), callback = WTFMove(callback)]() mutable {
+        if (!weakThis) {
+            callback(false);
+            return;
+        }
+        auto origin = SecurityOriginData::fromURL(registrationURL);
+        ServiceWorkerRegistrationKey registrationKey { WTFMove(origin), WTFMove(registrationURL) };
+        auto registration = m_scopeToRegistrationMap.get(registrationKey);
+        if (!registration) {
+            callback(true);
+            return;
+        }
+
+        auto* worker = registration->activeWorker();
+        if (!worker) {
+            callback(true);
+            return;
+        }
+
+        fireFunctionalEvent(*registration, [serviceWorkerIdentifier = worker->identifier(), data = WTFMove(data), callback = WTFMove(callback)](auto&& connectionOrStatus) mutable {
+            if (!connectionOrStatus.has_value()) {
+                callback(connectionOrStatus.error() == ShouldSkipEvent::Yes);
+                return;
+            }
+            connectionOrStatus.value()->firePushEvent(serviceWorkerIdentifier, data, WTFMove(callback));
+        });
+    });
+}
+
+// https://w3c.github.io/ServiceWorker/#fire-functional-event-algorithm, just for push right now.
+void SWServer::fireFunctionalEvent(SWServerRegistration& registration, CompletionHandler<void(Expected<SWServerToContextConnection*, ShouldSkipEvent>)>&& callback)
+{
+    auto* worker = registration.activeWorker();
+    if (!worker) {
+        callback(makeUnexpected(ShouldSkipEvent::Yes));
+        return;
+    }
+
+    // FIXME: we should check whether we can skip the event and if skipping do a soft-update.
+
+    worker->whenActivated([this, weakThis = makeWeakPtr(this), callback = WTFMove(callback), registrationIdentifier = registration.identifier(), serviceWorkerIdentifier = worker->identifier()](bool success) mutable {
+        if (!weakThis) {
+            callback(makeUnexpected(ShouldSkipEvent::No));
+            return;
+        }
+
+        if (!success) {
+            if (auto* registration = m_registrations.get(registrationIdentifier))
+                softUpdate(*registration);
+            callback(makeUnexpected(ShouldSkipEvent::No));
+            return;
+        }
+
+        auto* worker = workerByID(serviceWorkerIdentifier);
+        if (!worker) {
+            callback(makeUnexpected(ShouldSkipEvent::No));
+            return;
+        }
+
+        if (!worker->contextConnection())
+            createContextConnection(worker->registrableDomain(), worker->serviceWorkerPageIdentifier());
+
+        runServiceWorkerIfNecessary(serviceWorkerIdentifier, [callback = WTFMove(callback)](auto* contextConnection) mutable {
+            if (!contextConnection) {
+                callback(makeUnexpected(ShouldSkipEvent::No));
+                return;
+            }
+            callback(contextConnection);
+        });
+    });
 }
 
 } // namespace WebCore

@@ -1631,6 +1631,16 @@ void NetworkProcessProxy::didExceedMemoryLimit()
 }
 #endif
 
+#if ENABLE(SERVICE_WORKER)
+void NetworkProcessProxy::processPushMessage(PAL::SessionID sessionID, std::optional<Span<const uint8_t>> data, const URL& registrationURL, CompletionHandler<void(bool wasProcessed)>&& callback)
+{
+    std::optional<IPC::DataReference> ipcData;
+    if (data)
+        ipcData = IPC::DataReference { data->data(), data->size() };
+    sendWithAsyncReply(Messages::NetworkProcess::ProcessPushMessage { sessionID, ipcData, registrationURL }, WTFMove(callback));
+}
+#endif // ENABLE(SERVICE_WORKER)
+
 } // namespace WebKit
 
 #undef MESSAGE_CHECK

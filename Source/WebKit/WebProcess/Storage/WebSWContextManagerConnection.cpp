@@ -272,6 +272,14 @@ void WebSWContextManagerConnection::fireActivateEvent(ServiceWorkerIdentifier id
     SWContextManager::singleton().fireActivateEvent(identifier);
 }
 
+void WebSWContextManagerConnection::firePushEvent(ServiceWorkerIdentifier identifier, const std::optional<IPC::DataReference>& ipcData, CompletionHandler<void(bool)>&& callback)
+{
+    std::optional<Vector<uint8_t>> data;
+    if (ipcData)
+        data = Vector<uint8_t> { ipcData->data(), ipcData->size() };
+    SWContextManager::singleton().firePushEvent(identifier, WTFMove(data), WTFMove(callback));
+}
+
 void WebSWContextManagerConnection::terminateWorker(ServiceWorkerIdentifier identifier)
 {
     SWContextManager::singleton().terminateWorker(identifier, SWContextManager::workerTerminationTimeout, nullptr);

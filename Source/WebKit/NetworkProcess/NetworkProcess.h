@@ -396,6 +396,10 @@ public:
 
     bool ftpEnabled() const { return m_ftpEnabled; }
 
+#if ENABLE(SERVICE_WORKER)
+    void processPushMessage(PAL::SessionID, const std::optional<IPC::DataReference>&, URL&&, CompletionHandler<void(bool)>&&);
+#endif
+
 private:
     void platformInitializeNetworkProcess(const NetworkProcessCreationParameters&);
 

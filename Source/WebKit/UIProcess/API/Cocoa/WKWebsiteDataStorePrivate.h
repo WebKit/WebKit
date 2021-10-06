@@ -106,6 +106,8 @@ typedef NS_OPTIONS(NSUInteger, _WKWebsiteDataStoreFetchOptions) {
 + (BOOL)_defaultNetworkProcessExists WK_API_AVAILABLE(macos(12.0), ios(15.0));
 - (void)_countNonDefaultSessionSets:(void(^)(size_t))completionHandler;
 
+-(void)_processPushMessage:(NSData*)data registration:(NSURL *)registration completionHandler:(void(^)(bool))completionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+
 @end
 
 NS_ASSUME_NONNULL_END

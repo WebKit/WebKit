@@ -271,6 +271,10 @@ public:
     xpc_object_t xpcEndpointMessage() const { return m_endpointMessage.get(); }
 #endif
 
+#if ENABLE(SERVICE_WORKER)
+    void processPushMessage(PAL::SessionID, std::optional<Span<const uint8_t>>, const URL&, CompletionHandler<void(bool wasProcessed)>&&);
+#endif
+
 private:
     explicit NetworkProcessProxy();
 

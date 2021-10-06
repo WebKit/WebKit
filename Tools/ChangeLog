@@ -1,3 +1,14 @@
+2021-10-06  Youenn Fablet  <youenn@apple.com>
+
+        Implement https://w3c.github.io/push-api/#receiving-a-push-message
+        https://bugs.webkit.org/show_bug.cgi?id=231070
+        <rdar://problem/83759574>
+
+        Reviewed by Chris Dumez.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/PushAPI.mm: Added.
+
 2021-10-06  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. [GTK] Fix /webkit/WebKitAccessibility/accessible/state with ATSPI

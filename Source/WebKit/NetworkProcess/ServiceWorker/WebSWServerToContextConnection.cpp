@@ -107,6 +107,14 @@ void WebSWServerToContextConnection::fireActivateEvent(ServiceWorkerIdentifier s
     send(Messages::WebSWContextManagerConnection::FireActivateEvent(serviceWorkerIdentifier));
 }
 
+void WebSWServerToContextConnection::firePushEvent(WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier, const std::optional<Vector<uint8_t>>& data, CompletionHandler<void(bool)>&& callback)
+{
+    std::optional<IPC::DataReference> ipcData;
+    if (data)
+        ipcData = IPC::DataReference { data->data(), data->size() };
+    sendWithAsyncReply(Messages::WebSWContextManagerConnection::FirePushEvent(serviceWorkerIdentifier, ipcData), WTFMove(callback));
+}
+
 void WebSWServerToContextConnection::terminateWorker(ServiceWorkerIdentifier serviceWorkerIdentifier)
 {
     send(Messages::WebSWContextManagerConnection::TerminateWorker(serviceWorkerIdentifier));

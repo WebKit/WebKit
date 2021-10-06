@@ -28,6 +28,7 @@
 #if ENABLE(SERVICE_WORKER)
 
 #include "Connection.h"
+#include "DataReference.h"
 #include "IdentifierTypes.h"
 #include "MessageReceiver.h"
 #include "NavigatingToAppBoundDomain.h"
@@ -95,6 +96,7 @@ private:
     void postMessageToServiceWorker(WebCore::ServiceWorkerIdentifier destinationIdentifier, WebCore::MessageWithMessagePorts&&, WebCore::ServiceWorkerOrClientData&& sourceData);
     void fireInstallEvent(WebCore::ServiceWorkerIdentifier);
     void fireActivateEvent(WebCore::ServiceWorkerIdentifier);
+    void firePushEvent(WebCore::ServiceWorkerIdentifier, const std::optional<IPC::DataReference>&, CompletionHandler<void(bool)>&&);
     void terminateWorker(WebCore::ServiceWorkerIdentifier);
 #if ENABLE(SHAREABLE_RESOURCE) && PLATFORM(COCOA)
     void didSaveScriptsToDisk(WebCore::ServiceWorkerIdentifier, WebCore::ScriptBuffer&&, HashMap<URL, WebCore::ScriptBuffer>&& importedScripts);
