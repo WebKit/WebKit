@@ -37,21 +37,7 @@ namespace WebCore {
 
 MGDeviceClass deviceClass()
 {
-    static MGDeviceClass deviceClass = [] {
-        int deviceClassNumber = MGGetSInt32Answer(kMGQDeviceClassNumber, MGDeviceClassInvalid);
-        switch (deviceClassNumber) {
-        case MGDeviceClassInvalid:
-        case MGDeviceClassiPhone:
-        case MGDeviceClassiPod:
-        case MGDeviceClassiPad:
-        case MGDeviceClassAppleTV:
-        case MGDeviceClassWatch:
-            break;
-        default:
-            ASSERT_NOT_REACHED();
-        }
-        return static_cast<MGDeviceClass>(deviceClassNumber);
-    }();
+    static MGDeviceClass deviceClass = static_cast<MGDeviceClass>(MGGetSInt32Answer(kMGQDeviceClassNumber, MGDeviceClassInvalid));
     return deviceClass;
 }
 
