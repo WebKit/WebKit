@@ -1466,11 +1466,13 @@ static inline RenderElement* containerForElement(const RenderObject& renderer, c
     // (2) For absolute positioned elements, it will return a relative positioned inline, while
     // containingBlock() skips to the non-anonymous containing block.
     // This does mean that computePositionedLogicalWidth and computePositionedLogicalHeight have to use container().
-    auto pos = renderer.style().position();
+    if (!is<RenderElement>(renderer))
+        return renderer.parent();
+    auto position = renderer.style().position();
+    if (position == PositionType::Static || position == PositionType::Relative || position == PositionType::Sticky)
+        return renderer.parent();
     auto* parent = renderer.parent();
-    if (is<RenderText>(renderer) || (pos != PositionType::Fixed && pos != PositionType::Absolute))
-        return parent;
-    for (; parent && (pos == PositionType::Absolute ? !parent->canContainAbsolutelyPositionedObjects() : !parent->canContainFixedPositionObjects()); parent = parent->parent()) {
+    for (; parent && (position == PositionType::Absolute ? !parent->canContainAbsolutelyPositionedObjects() : !parent->canContainFixedPositionObjects()); parent = parent->parent()) {
         if (repaintContainerSkipped && repaintContainer == parent)
             *repaintContainerSkipped = true;
     }
