@@ -145,6 +145,9 @@ const Vector<size_t>& InlineContent::nonRootInlineBoxIndexesForLayoutBox(const L
 
 void InlineContent::clearAndDetach()
 {
+    for (auto& box : boxes)
+        TextPainter::removeGlyphDisplayList(box);
+
     releaseCaches();
     boxes.clear();
     lines.clear();
