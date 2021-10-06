@@ -188,6 +188,7 @@ void CoreAudioSharedUnit::devicesChanged(const Vector<CaptureDevice>& devices)
     if (WTF::anyOf(devices, [this] (auto& device) { return m_persistentID == device.persistentId(); }))
         return;
 
+    RELEASE_LOG_ERROR(WebRTC, "CoreAudioSharedUnit::devicesChanged - failing capture");
     captureFailed();
 }
 
