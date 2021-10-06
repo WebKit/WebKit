@@ -1,3 +1,23 @@
+2021-10-06  Mikhail R. Gadelha  <mikhail@igalia.com>
+
+        Fix wrong edge type from get-by-val in 32 bits
+        https://bugs.webkit.org/show_bug.cgi?id=231179
+
+        Reviewed by Yusuke Suzuki.
+
+        After https://bugs.webkit.org/show_bug.cgi?id=230801, a different type
+        can be set in DFG nodes, however, in 32 bits jsc was always setting the
+        type to Cell. This caused jsc to abort when verify the type of the edge:
+
+        DFG ASSERTION FAILED: Edge verification error: D@64->Check:Object:D@60 was expected to have type Object but has type Cell (43984760078335)
+
+        This patch changes the 32 bits version of the compileEnumeratorGetByVal
+        to manually speculate the edge if it is a Cell, since a differente Kind
+        could've been during Fixup.
+
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compileEnumeratorGetByVal):
+
 2021-10-05  Saam Barati  <sbarati@apple.com>
 
         Don't pass DontBuildStrings to next token after parsing an empty parameter list

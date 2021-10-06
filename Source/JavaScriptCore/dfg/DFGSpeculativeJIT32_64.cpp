@@ -4487,25 +4487,39 @@ void SpeculativeJIT::compileArithRandom(Node* node)
 // FIXME: we are always taking the slow path here, we should be able to do the equivalent to the 64bit version if we add more available (callee-save registers) to ARMv7 and/or if we reduce the number of registers compileEnumeratorGetByVal uses. See bug #230189.
 void SpeculativeJIT::compileEnumeratorGetByVal(Node* node)
 {
-    SpeculateCellOperand baseOperand(this, m_graph.varArgChild(node, 0));
-    JSValueOperand property(this, m_graph.varArgChild(node, 1));
-    SpeculateStrictInt32Operand index(this, m_graph.varArgChild(node, 3));
-    SpeculateStrictInt32Operand mode(this, m_graph.varArgChild(node, 4));
-    SpeculateCellOperand enumerator(this, m_graph.varArgChild(node, 5));
-    GPRReg baseOperandGPR = baseOperand.gpr();
-    JSValueRegs propertyRegs = property.jsValueRegs();
-    GPRReg indexGPR = index.gpr();
-    GPRReg modeGPR = mode.gpr();
-    GPRReg enumeratorGPR = enumerator.gpr();
+    Edge baseEdge = m_graph.varArgChild(node, 0);
+    auto generate = [&] (JSValueRegs baseRegs) {
+        JSValueOperand property(this, m_graph.varArgChild(node, 1), ManualOperandSpeculation);
+        SpeculateStrictInt32Operand index(this, m_graph.varArgChild(node, 3));
+        SpeculateStrictInt32Operand mode(this, m_graph.varArgChild(node, 4));
+        SpeculateCellOperand enumerator(this, m_graph.varArgChild(node, 5));
+        JSValueRegs propertyRegs = property.jsValueRegs();
+        GPRReg indexGPR = index.gpr();
+        GPRReg modeGPR = mode.gpr();
+        GPRReg enumeratorGPR = enumerator.gpr();
 
-    flushRegisters();
+        flushRegisters();
 
-    JSValueRegsFlushedCallResult result(this);
-    JSValueRegs resultRegs = result.regs();
+        JSValueRegsFlushedCallResult result(this);
+        JSValueRegs resultRegs = result.regs();
 
-    callOperation(operationEnumeratorGetByValGeneric, resultRegs, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), baseOperandGPR, propertyRegs, indexGPR, modeGPR, enumeratorGPR);
-    m_jit.exceptionCheck();
-    jsValueResult(resultRegs, node);
+        if (baseRegs.tagGPR() == InvalidGPRReg)
+            callOperation(operationEnumeratorGetByValGeneric, resultRegs, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), CCallHelpers::CellValue(baseRegs.payloadGPR()), propertyRegs, indexGPR, modeGPR, enumeratorGPR);
+        else
+            callOperation(operationEnumeratorGetByValGeneric, resultRegs, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), baseRegs, propertyRegs, indexGPR, modeGPR, enumeratorGPR);
+        m_jit.exceptionCheck();
+        jsValueResult(resultRegs, node);
+    };
+
+    if (isCell(baseEdge.useKind())) {
+        // Use manual operand speculation since Fixup may have picked a UseKind more restrictive than CellUse.
+        speculate(node, baseEdge);
+        SpeculateCellOperand base(this, baseEdge, ManualOperandSpeculation);
+        generate(JSValueRegs::payloadOnly(base.gpr()));
+    } else {
+        JSValueOperand base(this, baseEdge);
+        generate(base.regs());
+    }
 }
 #endif
 

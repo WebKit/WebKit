@@ -2538,7 +2538,7 @@ JSC_DEFINE_JIT_OPERATION(operationEnumeratorInByVal, EncodedJSValue, (JSGlobalOb
     RELEASE_AND_RETURN(scope, JSValue::encode(jsBoolean(CommonSlowPaths::opInByVal(globalObject, base, propertyName))));
 }
 
-JSC_DEFINE_JIT_OPERATION(operationEnumeratorGetByValGeneric, EncodedJSValue, (JSGlobalObject* globalObject, JSCell* baseCell, EncodedJSValue propertyNameValue, uint32_t index, int32_t modeNumber, JSPropertyNameEnumerator* enumerator))
+JSC_DEFINE_JIT_OPERATION(operationEnumeratorGetByValGeneric, EncodedJSValue, (JSGlobalObject* globalObject, EncodedJSValue baseValue, EncodedJSValue propertyNameValue, uint32_t index, int32_t modeNumber, JSPropertyNameEnumerator* enumerator))
 {
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
@@ -2547,7 +2547,8 @@ JSC_DEFINE_JIT_OPERATION(operationEnumeratorGetByValGeneric, EncodedJSValue, (JS
 
     JSValue property = JSValue::decode(propertyNameValue);
     JSPropertyNameEnumerator::Flag mode = static_cast<JSPropertyNameEnumerator::Flag>(modeNumber);
-    RELEASE_AND_RETURN(scope, JSValue::encode(CommonSlowPaths::opEnumeratorGetByVal(globalObject, baseCell, property, index, mode, enumerator)));
+    JSValue base = JSValue::decode(baseValue);
+    RELEASE_AND_RETURN(scope, JSValue::encode(CommonSlowPaths::opEnumeratorGetByVal(globalObject, base, property, index, mode, enumerator)));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationEnumeratorHasOwnProperty, EncodedJSValue, (JSGlobalObject* globalObject, EncodedJSValue baseValue, EncodedJSValue propertyNameValue, uint32_t index, int32_t modeNumber))

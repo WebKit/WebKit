@@ -112,7 +112,7 @@ JSC_DECLARE_JIT_OPERATION(operationEnumeratorNextUpdatePropertyName, JSString*, 
 JSC_DECLARE_JIT_OPERATION(operationEnumeratorInByVal, EncodedJSValue, (JSGlobalObject*, EncodedJSValue, EncodedJSValue, uint32_t, int32_t));
 JSC_DECLARE_JIT_OPERATION(operationEnumeratorHasOwnProperty, EncodedJSValue, (JSGlobalObject*, EncodedJSValue, EncodedJSValue, uint32_t, int32_t));
 JSC_DECLARE_JIT_OPERATION(operationEnumeratorRecoverNameAndGetByVal, EncodedJSValue, (JSGlobalObject*, JSCell*, uint32_t, JSPropertyNameEnumerator*));
-JSC_DECLARE_JIT_OPERATION(operationEnumeratorGetByValGeneric, EncodedJSValue, (JSGlobalObject*, JSCell*, EncodedJSValue, uint32_t, int32_t, JSPropertyNameEnumerator*));
+JSC_DECLARE_JIT_OPERATION(operationEnumeratorGetByValGeneric, EncodedJSValue, (JSGlobalObject*, EncodedJSValue, EncodedJSValue, uint32_t, int32_t, JSPropertyNameEnumerator*));
 
 JSC_DECLARE_JIT_OPERATION(operationNewRegexpWithLastIndex, JSCell*, (JSGlobalObject*, JSCell*, EncodedJSValue));
 JSC_DECLARE_JIT_OPERATION(operationNewArray, char*, (JSGlobalObject*, Structure*, void*, size_t));
