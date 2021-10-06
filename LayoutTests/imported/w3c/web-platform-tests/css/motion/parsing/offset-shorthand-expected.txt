@@ -1,0 +1,20 @@
+
+FAIL e.style['offset'] = "left bottom ray(0rad closest-side) 10px auto 30deg / right bottom" should set offset-anchor assert_equals: offset-anchor should be canonical expected (string) "right bottom" but got (undefined) undefined
+FAIL e.style['offset'] = "left bottom ray(0rad closest-side) 10px auto 30deg / right bottom" should set offset-distance assert_equals: offset-distance should be canonical expected (string) "10px" but got (undefined) undefined
+FAIL e.style['offset'] = "left bottom ray(0rad closest-side) 10px auto 30deg / right bottom" should set offset-path assert_equals: offset-path should be canonical expected (string) "ray(0rad closest-side)" but got (undefined) undefined
+FAIL e.style['offset'] = "left bottom ray(0rad closest-side) 10px auto 30deg / right bottom" should set offset-position assert_equals: offset-position should be canonical expected (string) "left bottom" but got (undefined) undefined
+FAIL e.style['offset'] = "left bottom ray(0rad closest-side) 10px auto 30deg / right bottom" should set offset-rotate assert_equals: offset-rotate should be canonical expected (string) "auto 30deg" but got (undefined) undefined
+FAIL e.style['offset'] = "left bottom ray(0rad closest-side) 10px auto 30deg / right bottom" should not set unrelated longhands assert_true: expected true got false
+FAIL e.style['offset'] = "top right / top left" should set offset-anchor assert_equals: offset-anchor should be canonical expected (string) "left top" but got (undefined) undefined
+FAIL e.style['offset'] = "top right / top left" should set offset-distance assert_equals: offset-distance should be canonical expected (string) "0px" but got (undefined) undefined
+FAIL e.style['offset'] = "top right / top left" should set offset-path assert_equals: offset-path should be canonical expected (string) "none" but got (undefined) undefined
+FAIL e.style['offset'] = "top right / top left" should set offset-position assert_equals: offset-position should be canonical expected (string) "right top" but got (undefined) undefined
+FAIL e.style['offset'] = "top right / top left" should set offset-rotate assert_equals: offset-rotate should be canonical expected (string) "auto" but got (undefined) undefined
+FAIL e.style['offset'] = "top right / top left" should not set unrelated longhands assert_true: expected true got false
+FAIL e.style['offset'] = "path(\"M 0 0 H 2\") reverse 50%" should set offset-anchor assert_equals: offset-anchor should be canonical expected (string) "auto" but got (undefined) undefined
+FAIL e.style['offset'] = "path(\"M 0 0 H 2\") reverse 50%" should set offset-distance assert_equals: offset-distance should be canonical expected (string) "50%" but got (undefined) undefined
+FAIL e.style['offset'] = "path(\"M 0 0 H 2\") reverse 50%" should set offset-path assert_equals: offset-path should be canonical expected (string) "path(\"M 0 0 H 2\")" but got (undefined) undefined
+FAIL e.style['offset'] = "path(\"M 0 0 H 2\") reverse 50%" should set offset-position assert_equals: offset-position should be canonical expected (string) "auto" but got (undefined) undefined
+FAIL e.style['offset'] = "path(\"M 0 0 H 2\") reverse 50%" should set offset-rotate assert_equals: offset-rotate should be canonical expected (string) "reverse" but got (undefined) undefined
+FAIL e.style['offset'] = "path(\"M 0 0 H 2\") reverse 50%" should not set unrelated longhands assert_true: expected true got false
+

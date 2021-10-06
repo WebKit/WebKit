@@ -1,0 +1,12 @@
+
+FAIL Property offset-anchor has initial value auto assert_true: offset-anchor doesn't seem to be supported in the computed style expected true got false
+FAIL Property offset-anchor does not inherit assert_true: expected true got false
+FAIL Property offset-distance has initial value 0px assert_true: offset-distance doesn't seem to be supported in the computed style expected true got false
+FAIL Property offset-distance does not inherit assert_true: expected true got false
+FAIL Property offset-path has initial value none assert_true: offset-path doesn't seem to be supported in the computed style expected true got false
+FAIL Property offset-path does not inherit assert_true: expected true got false
+FAIL Property offset-position has initial value auto assert_true: offset-position doesn't seem to be supported in the computed style expected true got false
+FAIL Property offset-position does not inherit assert_true: expected true got false
+FAIL Property offset-rotate has initial value ['auto 0deg' or 'auto'] assert_true: offset-rotate doesn't seem to be supported in the computed style expected true got false
+FAIL Property offset-rotate does not inherit assert_true: expected true got false
+

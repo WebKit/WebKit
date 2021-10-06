@@ -1,3 +1,12 @@
+2021-10-06  Kiet Ho  <tho22@apple.com>
+
+        Import css/motion tests from WPT
+        https://bugs.webkit.org/show_bug.cgi?id=231195
+
+        Reviewed by Myles C. Maxfield.
+
+        * TestExpectations: Added ImageOnlyFailure expectations for css/motion reftests.
+
 2021-10-06  Ayumi Kojima  <ayumi_kojima@apple.com>
 
         [ iOS 15 ] fast/text/accessibility-bold-system-font-2.html is image failing.

@@ -1,0 +1,38 @@
+
+FAIL Compositing: property <offset-rotate> underlying [20deg] from add [10deg] to add [20deg] at (-0.3) should be [27deg] assert_true: 'from' value should be supported expected true got false
+FAIL Compositing: property <offset-rotate> underlying [20deg] from add [10deg] to add [20deg] at (0) should be [30deg] assert_true: 'from' value should be supported expected true got false
+FAIL Compositing: property <offset-rotate> underlying [20deg] from add [10deg] to add [20deg] at (0.3) should be [33deg] assert_true: 'from' value should be supported expected true got false
+FAIL Compositing: property <offset-rotate> underlying [20deg] from add [10deg] to add [20deg] at (0.6) should be [36deg] assert_true: 'from' value should be supported expected true got false
+FAIL Compositing: property <offset-rotate> underlying [20deg] from add [10deg] to add [20deg] at (1) should be [40deg] assert_true: 'from' value should be supported expected true got false
+FAIL Compositing: property <offset-rotate> underlying [20deg] from add [10deg] to add [20deg] at (1.5) should be [45deg] assert_true: 'from' value should be supported expected true got false
+FAIL Compositing: property <offset-rotate> underlying [auto 20deg] from add [10deg] to add [20deg] at (-0.3) should be [7deg] assert_true: 'from' value should be supported expected true got false
+FAIL Compositing: property <offset-rotate> underlying [auto 20deg] from add [10deg] to add [20deg] at (0) should be [10deg] assert_true: 'from' value should be supported expected true got false
+FAIL Compositing: property <offset-rotate> underlying [auto 20deg] from add [10deg] to add [20deg] at (0.3) should be [13deg] assert_true: 'from' value should be supported expected true got false
+FAIL Compositing: property <offset-rotate> underlying [auto 20deg] from add [10deg] to add [20deg] at (0.6) should be [16deg] assert_true: 'from' value should be supported expected true got false
+FAIL Compositing: property <offset-rotate> underlying [auto 20deg] from add [10deg] to add [20deg] at (1) should be [20deg] assert_true: 'from' value should be supported expected true got false
+FAIL Compositing: property <offset-rotate> underlying [auto 20deg] from add [10deg] to add [20deg] at (1.5) should be [25deg] assert_true: 'from' value should be supported expected true got false
+FAIL Compositing: property <offset-rotate> underlying [auto 20deg] from add [reverse 10deg] to add [auto 20deg] at (-0.3) should be [auto 261deg] assert_true: 'from' value should be supported expected true got false
+FAIL Compositing: property <offset-rotate> underlying [auto 20deg] from add [reverse 10deg] to add [auto 20deg] at (0) should be [auto 210deg] assert_true: 'from' value should be supported expected true got false
+FAIL Compositing: property <offset-rotate> underlying [auto 20deg] from add [reverse 10deg] to add [auto 20deg] at (0.3) should be [auto 159deg] assert_true: 'from' value should be supported expected true got false
+FAIL Compositing: property <offset-rotate> underlying [auto 20deg] from add [reverse 10deg] to add [auto 20deg] at (0.6) should be [auto 108deg] assert_true: 'from' value should be supported expected true got false
+FAIL Compositing: property <offset-rotate> underlying [auto 20deg] from add [reverse 10deg] to add [auto 20deg] at (1) should be [auto 40deg] assert_true: 'from' value should be supported expected true got false
+FAIL Compositing: property <offset-rotate> underlying [auto 20deg] from add [reverse 10deg] to add [auto 20deg] at (1.5) should be [auto -45deg] assert_true: 'from' value should be supported expected true got false
+FAIL Compositing: property <offset-rotate> underlying [20deg] from add [reverse 10deg] to add [20deg] at (-0.3) should be [auto 190deg] assert_true: 'from' value should be supported expected true got false
+FAIL Compositing: property <offset-rotate> underlying [20deg] from add [reverse 10deg] to add [20deg] at (0) should be [auto 190deg] assert_true: 'from' value should be supported expected true got false
+FAIL Compositing: property <offset-rotate> underlying [20deg] from add [reverse 10deg] to add [20deg] at (0.3) should be [auto 190deg] assert_true: 'from' value should be supported expected true got false
+FAIL Compositing: property <offset-rotate> underlying [20deg] from add [reverse 10deg] to add [20deg] at (0.6) should be [40deg] assert_true: 'from' value should be supported expected true got false
+FAIL Compositing: property <offset-rotate> underlying [20deg] from add [reverse 10deg] to add [20deg] at (1) should be [40deg] assert_true: 'from' value should be supported expected true got false
+FAIL Compositing: property <offset-rotate> underlying [20deg] from add [reverse 10deg] to add [20deg] at (1.5) should be [40deg] assert_true: 'from' value should be supported expected true got false
+FAIL Compositing: property <offset-rotate> underlying [20deg] from replace [reverse 10deg] to add [20deg] at (-0.3) should be [auto 190deg] assert_true: 'from' value should be supported expected true got false
+FAIL Compositing: property <offset-rotate> underlying [20deg] from replace [reverse 10deg] to add [20deg] at (0) should be [auto 190deg] assert_true: 'from' value should be supported expected true got false
+FAIL Compositing: property <offset-rotate> underlying [20deg] from replace [reverse 10deg] to add [20deg] at (0.3) should be [auto 190deg] assert_true: 'from' value should be supported expected true got false
+FAIL Compositing: property <offset-rotate> underlying [20deg] from replace [reverse 10deg] to add [20deg] at (0.6) should be [40deg] assert_true: 'from' value should be supported expected true got false
+FAIL Compositing: property <offset-rotate> underlying [20deg] from replace [reverse 10deg] to add [20deg] at (1) should be [40deg] assert_true: 'from' value should be supported expected true got false
+FAIL Compositing: property <offset-rotate> underlying [20deg] from replace [reverse 10deg] to add [20deg] at (1.5) should be [40deg] assert_true: 'from' value should be supported expected true got false
+FAIL Compositing: property <offset-rotate> underlying [20deg] from add [10deg] to replace [10deg] at (-0.3) should be [36deg] assert_true: 'from' value should be supported expected true got false
+FAIL Compositing: property <offset-rotate> underlying [20deg] from add [10deg] to replace [10deg] at (0) should be [30deg] assert_true: 'from' value should be supported expected true got false
+FAIL Compositing: property <offset-rotate> underlying [20deg] from add [10deg] to replace [10deg] at (0.3) should be [24deg] assert_true: 'from' value should be supported expected true got false
+FAIL Compositing: property <offset-rotate> underlying [20deg] from add [10deg] to replace [10deg] at (0.6) should be [18deg] assert_true: 'from' value should be supported expected true got false
+FAIL Compositing: property <offset-rotate> underlying [20deg] from add [10deg] to replace [10deg] at (1) should be [10deg] assert_true: 'from' value should be supported expected true got false
+FAIL Compositing: property <offset-rotate> underlying [20deg] from add [10deg] to replace [10deg] at (1.5) should be [0deg] assert_true: 'from' value should be supported expected true got false
+

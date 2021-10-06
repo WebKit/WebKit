@@ -1,0 +1,89 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/motion/META.yml
+/LayoutTests/imported/w3c/web-platform-tests/css/motion/inheritance.html
+/LayoutTests/imported/w3c/web-platform-tests/css/motion/offset-anchor-transform-box-fill-box-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/motion/offset-anchor-transform-box-fill-box-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/motion/offset-anchor-transform-box-fill-box-002-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/motion/offset-anchor-transform-box-fill-box-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/motion/offset-anchor-transform-box-fill-box-003-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/motion/offset-anchor-transform-box-fill-box-003.html
+/LayoutTests/imported/w3c/web-platform-tests/css/motion/offset-distance-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/motion/offset-distance-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/motion/offset-distance-002-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/motion/offset-distance-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/motion/offset-distance-003-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/motion/offset-distance-003.html
+/LayoutTests/imported/w3c/web-platform-tests/css/motion/offset-distance-004-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/motion/offset-distance-004.html
+/LayoutTests/imported/w3c/web-platform-tests/css/motion/offset-distance-005-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/motion/offset-distance-005.html
+/LayoutTests/imported/w3c/web-platform-tests/css/motion/offset-distance-006-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/motion/offset-distance-006.html
+/LayoutTests/imported/w3c/web-platform-tests/css/motion/offset-distance-007-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/motion/offset-distance-007.html
+/LayoutTests/imported/w3c/web-platform-tests/css/motion/offset-distance-008-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/motion/offset-distance-008.html
+/LayoutTests/imported/w3c/web-platform-tests/css/motion/offset-distance-009-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/motion/offset-distance-009.html
+/LayoutTests/imported/w3c/web-platform-tests/css/motion/offset-path-huge-angle-deg-001-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/motion/offset-path-huge-angle-grad-001-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/motion/offset-path-huge-angle-turn-001-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/motion/offset-path-ray-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/motion/offset-path-ray-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/motion/offset-path-ray-002-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/motion/offset-path-ray-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/motion/offset-path-ray-003-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/motion/offset-path-ray-003.html
+/LayoutTests/imported/w3c/web-platform-tests/css/motion/offset-path-ray-004-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/motion/offset-path-ray-004.html
+/LayoutTests/imported/w3c/web-platform-tests/css/motion/offset-path-ray-005-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/motion/offset-path-ray-005.html
+/LayoutTests/imported/w3c/web-platform-tests/css/motion/offset-path-ray-006-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/motion/offset-path-ray-006.html
+/LayoutTests/imported/w3c/web-platform-tests/css/motion/offset-path-ray-007-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/motion/offset-path-ray-007.html
+/LayoutTests/imported/w3c/web-platform-tests/css/motion/offset-path-ray-008-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/motion/offset-path-ray-008.html
+/LayoutTests/imported/w3c/web-platform-tests/css/motion/offset-path-ray-009-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/motion/offset-path-ray-009.html
+/LayoutTests/imported/w3c/web-platform-tests/css/motion/offset-path-ray-contain-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/motion/offset-path-ray-contain-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/motion/offset-path-ray-contain-002-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/motion/offset-path-ray-contain-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/motion/offset-path-ray-contain-003-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/motion/offset-path-ray-contain-003.html
+/LayoutTests/imported/w3c/web-platform-tests/css/motion/offset-path-ray-contain-004-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/motion/offset-path-ray-contain-004.html
+/LayoutTests/imported/w3c/web-platform-tests/css/motion/offset-path-ray-contain-005-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/motion/offset-path-ray-contain-005.html
+/LayoutTests/imported/w3c/web-platform-tests/css/motion/offset-path-serialization.html
+/LayoutTests/imported/w3c/web-platform-tests/css/motion/offset-path-string-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/motion/offset-path-string-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/motion/offset-path-string-002-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/motion/offset-path-string-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/motion/offset-rotate-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/motion/offset-rotate-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/motion/offset-rotate-002-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/motion/offset-rotate-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/motion/offset-rotate-003-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/motion/offset-rotate-003.html
+/LayoutTests/imported/w3c/web-platform-tests/css/motion/offset-rotate-004-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/motion/offset-rotate-004.html
+/LayoutTests/imported/w3c/web-platform-tests/css/motion/offset-rotate-005-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/motion/offset-rotate-005.html
+/LayoutTests/imported/w3c/web-platform-tests/css/motion/offset-supports-calc.html

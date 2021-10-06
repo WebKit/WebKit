@@ -148,6 +148,7 @@
     "web-platform-tests/css/cssom-view/": "import", 
     "web-platform-tests/css/geometry/": "import", 
     "web-platform-tests/css/mediaqueries": "import", 
+    "web-platform-tests/css/motion": "import", 
     "web-platform-tests/css/reference": "import", 
     "web-platform-tests/css/resources": "import", 
     "web-platform-tests/css/scroll-snap": "import", 

@@ -1,0 +1,34 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/motion/parsing/offset-anchor-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/motion/parsing/offset-anchor-parsing-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/motion/parsing/offset-anchor-parsing-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/motion/parsing/offset-distance-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/motion/parsing/offset-distance-parsing-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/motion/parsing/offset-distance-parsing-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/motion/parsing/offset-parsing-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/motion/parsing/offset-parsing-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/motion/parsing/offset-path-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/motion/parsing/offset-path-parsing-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/motion/parsing/offset-path-parsing-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/motion/parsing/offset-position-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/motion/parsing/offset-position-parsing-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/motion/parsing/offset-position-parsing-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/motion/parsing/offset-rotate-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/motion/parsing/offset-rotate-parsing-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/motion/parsing/offset-rotate-parsing-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/motion/parsing/offset-shorthand.html
