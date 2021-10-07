@@ -1670,4 +1670,5 @@ webkit.org/b/231083 [ Debug ] imported/w3c/web-platform-tests/content-security-p
 
 webkit.org/b/231379 [ BigSur Release ] http/tests/resourceLoadStatistics/sandboxed-nesting-iframe-with-non-sandboxed-iframe-redirect-ip-to-localhost-to-ip.html [ Pass Failure ]
 
+webkit.org/b/231386 [ BigSur ] http/tests/resourceLoadStatistics/website-data-removal-for-site-with-user-interaction.html [ Pass Timeout ]
 
