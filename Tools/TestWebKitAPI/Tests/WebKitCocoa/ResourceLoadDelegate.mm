@@ -248,6 +248,12 @@ TEST(ResourceLoadDelegate, ResourceType)
 
 TEST(ResourceLoadDelegate, LoadInfo)
 {
+    __block bool clearedStore = false;
+    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
+        clearedStore = true;
+    }];
+    TestWebKitAPI::Util::run(&clearedStore);
+
     TestWebKitAPI::HTTPServer server({
         { "/", { "<iframe src='iframeSrc'></iframe>" } },
         { "/iframeSrc", { "<script>fetch('fetchTarget', { body: 'a=b&c=d', method: 'post'})</script>" } },

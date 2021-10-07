@@ -94,6 +94,15 @@ self.addEventListener("push", (event) => {
 });
 )SWRESOURCE";
 
+static void clearWebsiteDataStore(WKWebsiteDataStore *store)
+{
+    __block bool clearedStore = false;
+    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
+        clearedStore = true;
+    }];
+    TestWebKitAPI::Util::run(&clearedStore);
+}
+
 static bool pushMessageProcessed = false;
 static bool pushMessageSuccessful = false;
 TEST(PushAPI, firePushEvent)
@@ -110,11 +119,7 @@ TEST(PushAPI, firePushEvent)
     auto messageHandler = adoptNS([[PushAPIMessageHandlerWithExpectedMessage alloc] init]);
     [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
 
-    [[configuration websiteDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
-        done = true;
-    }];
-    TestWebKitAPI::Util::run(&done);
-    done = false;
+    clearWebsiteDataStore([configuration websiteDataStore]);
 
     expectedMessage = "Ready";
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
@@ -149,4 +154,6 @@ TEST(PushAPI, firePushEvent)
 
     TestWebKitAPI::Util::run(&pushMessageProcessed);
     EXPECT_FALSE(pushMessageSuccessful);
+
+    clearWebsiteDataStore([configuration websiteDataStore]);
 }

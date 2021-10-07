@@ -1,3 +1,16 @@
+2021-10-07  Youenn Fablet  <youenn@apple.com>
+
+        REGRESSION (r283613): [ macOS ] TestWebKitAPI.ResourceLoadDelegate.LoadInfo is failing
+        https://bugs.webkit.org/show_bug.cgi?id=231303
+        <rdar://problem/83940067>
+
+        Reviewed by Chris Dumez.
+
+        Make sure to clear all data store at the end of PushAPI test, as well as at the beginning of ResourceLoadDelegate test.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/PushAPI.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/ResourceLoadDelegate.mm:
+
 2021-10-07  David Kilzer  <ddkilzer@apple.com>
 
         Add back RetainPtrARC and TypeCastsCocoaARC tests to TestWTF
