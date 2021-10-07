@@ -314,7 +314,7 @@
                     },
                     {
                       "name": "Apple-tvOS-Simulator-15-Release-Build", "factory": "BuildFactory", "builddir": "tvos-simulator-15-release",
-                      "platform": "tvos-simulator-15", "configuration": "release", "architectures": ["x86_64"],
+                      "platform": "tvos-simulator-15", "configuration": "release", "architectures": ["arm64"],
                       "workernames": ["bot608"]
                     },
                     {

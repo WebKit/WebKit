@@ -1,3 +1,14 @@
+2021-10-07  Jonathan Bedard  <jbedard@apple.com>
+
+        [tvOS] Build simulator for arm64
+        https://bugs.webkit.org/show_bug.cgi?id=231390
+        <rdar://problem/83998448>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * CISupport/build-webkit-org/config.json: Change tvOS simulator build to arm64.
+        * CISupport/ews-build/config.json: Ditto.
+
 2021-10-07  Tim Horton  <timothy_horton@apple.com>
 
         BifurcatedGraphicsContext doesn't bifurcate draw{Tiled}Image

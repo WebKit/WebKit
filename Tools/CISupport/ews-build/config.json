@@ -214,7 +214,7 @@
     {
       "name": "tvOS-14-Simulator-Build-EWS", "shortname": "tv-sim", "icon": "buildOnly",
       "factory": "tvOSBuildFactory", "platform": "tvos-simulator-14",
-      "configuration": "release", "architectures": ["x86_64"],
+      "configuration": "release", "architectures": ["arm64"],
       "workernames": ["ews168", "ews170"]
     },
     {
