@@ -1,3 +1,18 @@
+2021-10-07  Chris Dumez  <cdumez@apple.com>
+
+        ASSERTION FAILED: This HTTPServer does not know how to respond to a request for /popup-after-redirection.html
+        https://bugs.webkit.org/show_bug.cgi?id=231256
+        <rdar://problem/83904937>
+
+        Reviewed by Alex Christensen.
+
+        Stop hardcoding the HTTPServer port in COOP API tests to address flakiness.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+        * TestWebKitAPI/cocoa/HTTPServer.h:
+        * TestWebKitAPI/cocoa/HTTPServer.mm:
+        (TestWebKitAPI::HTTPServer::addResponse):
+
 2021-10-07  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Reenable -fvisibility=hidden

@@ -48,7 +48,7 @@ struct HTTPServer::RequestData : public ThreadSafeRefCounted<RequestData, WTF::D
     }(responses)) { }
     
     size_t requestCount { 0 };
-    const HashMap<String, HTTPResponse> requestMap;
+    HashMap<String, HTTPResponse> requestMap;
     Vector<Connection> connections;
 };
 
@@ -171,6 +171,12 @@ HTTPServer::HTTPServer(Function<void(Connection)>&& connectionHandler, Protocol 
 }
 
 HTTPServer::~HTTPServer() = default;
+
+void HTTPServer::addResponse(String&& path, HTTPResponse&& response)
+{
+    RELEASE_ASSERT(!m_requestData->requestMap.contains(path));
+    m_requestData->requestMap.add(WTFMove(path), WTFMove(response));
+}
 
 void HTTPServer::respondWithChallengeThenOK(Connection connection)
 {

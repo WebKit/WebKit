@@ -7168,22 +7168,6 @@ TEST(WebProcessCache, ClearWhenEnteringCache)
     [processPool _clearWebProcessCache];
 }
 
-static const char* windowOpenCrossOriginCOOPTestBytes = R"PSONRESOURCE(
-<script>
-window.onload = function() {
-    w = window.open("https://localhost:8181/popup.html", "foo");
-}
-</script>
-)PSONRESOURCE";
-
-static const char* windowOpenSameOriginCOOPTestBytes = R"PSONRESOURCE(
-<script>
-window.onload = function() {
-    w = window.open("popup.html", "foo");
-}
-</script>
-)PSONRESOURCE";
-
 enum class IsSameOrigin : bool { No, Yes };
 enum class DoServerSideRedirect : bool { No, Yes };
 static void runCOOPProcessSwapTest(const char* sourceCOOP, const char* sourceCOEP, const char* destinationCOOP, const char* destinationCOEP, IsSameOrigin isSameOrigin, DoServerSideRedirect doServerSideRedirect, ExpectSwap expectSwap)
@@ -7196,7 +7180,6 @@ static void runCOOPProcessSwapTest(const char* sourceCOOP, const char* sourceCOE
         sourceHeaders.add("Cross-Origin-Opener-Policy"_s, String(sourceCOOP));
     if (sourceCOEP)
         sourceHeaders.add("Cross-Origin-Embedder-Policy"_s, String(sourceCOEP));
-    HTTPResponse sourceResponse(WTFMove(sourceHeaders), isSameOrigin == IsSameOrigin::Yes ? windowOpenSameOriginCOOPTestBytes : windowOpenCrossOriginCOOPTestBytes);
 
     HashMap<String, String> destinationHeaders;
     destinationHeaders.add("Content-Type"_s, "text/html"_s);
@@ -7206,23 +7189,22 @@ static void runCOOPProcessSwapTest(const char* sourceCOOP, const char* sourceCOE
         destinationHeaders.add("Cross-Origin-Embedder-Policy"_s, String(destinationCOEP));
     HTTPResponse destinationResponse(WTFMove(destinationHeaders), "popup"_s);
 
-    std::unique_ptr<HTTPServer> server;
+    HTTPServer server(std::initializer_list<std::pair<String, HTTPResponse>> { }, HTTPServer::Protocol::Https);
+
+    auto popupURL = isSameOrigin == IsSameOrigin::Yes ? "popup.html"_str : makeString("https://localhost:", server.port(), "/popup.html");
+    auto popupSource = makeString("<script>onload = () => { w = open('", popupURL, "', 'foo'); };</script>");
+    server.addResponse("/main.html"_s, HTTPResponse { WTFMove(sourceHeaders), WTFMove(popupSource) });
+
     if (doServerSideRedirect == DoServerSideRedirect::Yes) {
         HashMap<String, String> redirectHeaders;
-        redirectHeaders.add("location"_s, isSameOrigin == IsSameOrigin::Yes ? "https://127.0.0.1:8181/popup-after-redirection.html"_s : "https://localhost:8181/popup-after-redirection.html"_s);
+        String redirectionURL = isSameOrigin == IsSameOrigin::Yes ? makeString("https://127.0.0.1:", server.port(), "/popup-after-redirection.html") : makeString("https://localhost:", server.port(), "/popup-after-redirection.html");
+        redirectHeaders.add("location"_s, WTFMove(redirectionURL));
         HTTPResponse redirectResponse(301, WTFMove(redirectHeaders));
 
-        server = makeUnique<HTTPServer>(std::initializer_list<std::pair<String, HTTPResponse>> {
-            { "/main.html", WTFMove(sourceResponse) },
-            { "/popup.html", WTFMove(redirectResponse) },
-            { "/popup-after-redirection.html", WTFMove(destinationResponse) }
-        }, HTTPServer::Protocol::Https, nullptr, nullptr, 8181);
-    } else {
-        server = makeUnique<HTTPServer>(std::initializer_list<std::pair<String, HTTPResponse>> {
-            { "/main.html", WTFMove(sourceResponse) },
-            { "/popup.html", WTFMove(destinationResponse) }
-        }, HTTPServer::Protocol::Https, nullptr, nullptr, 8181);
-    }
+        server.addResponse("/popup.html"_s, WTFMove(redirectResponse));
+        server.addResponse("/popup-after-redirection.html"_s, WTFMove(destinationResponse));
+    } else
+        server.addResponse("/popup.html"_s, WTFMove(destinationResponse));
 
     auto processPoolConfiguration = psonProcessPoolConfiguration();
     auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
@@ -7255,8 +7237,7 @@ static void runCOOPProcessSwapTest(const char* sourceCOOP, const char* sourceCOE
     failed = false;
     serverRedirected = false;
     numberOfDecidePolicyCalls = 0;
-    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"https://127.0.0.1:8181/main.html"]];
-    [webView loadRequest:request];
+    [webView loadRequest:server.request("/main.html")];
 
     TestWebKitAPI::Util::run(&done);
     done = false;

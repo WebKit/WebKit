@@ -52,6 +52,8 @@ public:
     size_t totalRequests() const;
     void cancel();
 
+    void addResponse(String&& path, HTTPResponse&&);
+
     static void respondWithOK(Connection);
     static void respondWithChallengeThenOK(Connection);
     static String parsePath(const Vector<char>& request);
