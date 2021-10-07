@@ -1,3 +1,17 @@
+2021-10-07  Jonathan Bedard  <jbedard@apple.com>
+
+        [WebKitBot] Land local changes on production host
+        https://bugs.webkit.org/show_bug.cgi?id=231388
+        <rdar://problem/83996428>
+
+        Reviewed by Yusuke Suzuki.
+
+        * WebKitBot/src/Commit.mjs: Add Slack ID integration.
+        * WebKitBot/src/Contributors.mjs: Ditto.
+        * WebKitBot/src/Utility.mjs:
+        * WebKitBot/src/WebKitBot.mjs: Add "hi" and "yt" commands.
+        * WebKitBot/src/index.mjs: 
+
 2021-10-07  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         Misc compiler warning fixes, October 2021

@@ -31,11 +31,9 @@ export function escapeForSlackText(text)
     return text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;");
 }
 
-const DEBUG = false;
-
 export function dataLogLn(message)
 {
-    if (DEBUG)
+    if (process.env.DEBUG)
         console.log(message);
 }
 
