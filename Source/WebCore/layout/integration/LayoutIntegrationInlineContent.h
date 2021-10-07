@@ -66,7 +66,20 @@ struct InlineContent : public RefCounted<InlineContent> {
     bool hasContent() const;
     
     const Line& lineForBox(const InlineDisplay::Box& box) const { return lines[box.lineIndex()]; }
-    WTF::IteratorRange<const InlineDisplay::Box*> boxesForRect(const LayoutRect&) const;
+
+    struct BoxRange {
+        using reverse_iterator = std::reverse_iterator<const InlineDisplay::Box*>;
+
+        const InlineDisplay::Box* rangeBegin;
+        const InlineDisplay::Box* rangeEnd;
+
+        auto begin() const { return rangeBegin; }
+        auto end() const { return rangeEnd; }
+        auto rbegin() const { return reverse_iterator { rangeEnd  }; }
+        auto rend() const { return reverse_iterator { rangeBegin }; }
+    };
+    BoxRange boxesForRect(const LayoutRect&) const;
+
     void shrinkToFit();
 
     const LineLayout& lineLayout() const { return *m_lineLayout; }

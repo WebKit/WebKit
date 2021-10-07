@@ -47,7 +47,7 @@ bool InlineContent::hasContent() const
     return boxes.size() > 1;
 };
 
-WTF::IteratorRange<const InlineDisplay::Box*> InlineContent::boxesForRect(const LayoutRect& rect) const
+auto InlineContent::boxesForRect(const LayoutRect& rect) const -> BoxRange
 {
     if (boxes.isEmpty())
         return { nullptr, nullptr };

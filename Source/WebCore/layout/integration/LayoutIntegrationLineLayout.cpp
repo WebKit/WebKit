@@ -533,10 +533,11 @@ bool LineLayout::hitTest(const HitTestRequest& request, HitTestResult& result, c
     if (!m_inlineContent)
         return false;
 
-    auto& inlineContent = *m_inlineContent;
+    auto hitTestBoundingBox = locationInContainer.boundingBox();
+    hitTestBoundingBox.moveBy(-accumulatedOffset);
+    auto boxRange = m_inlineContent->boxesForRect(hitTestBoundingBox);
 
-    // FIXME: This should do something efficient to find the box range.
-    for (auto& box : WTF::makeReversedRange(inlineContent.boxes)) {
+    for (auto& box : WTF::makeReversedRange(boxRange)) {
         auto& renderer = m_boxTree.rendererForLayoutBox(box.layoutBox());
 
         if (!box.isRootInlineBox() && is<RenderLayerModelObject>(renderer) && downcast<RenderLayerModelObject>(renderer).hasSelfPaintingLayer())
