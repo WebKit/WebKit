@@ -1,3 +1,13 @@
+2021-10-07  Jonathan Bedard  <jbedard@apple.com>
+
+        [build.webkit.org] Build iOS 15 as universal binary
+        https://bugs.webkit.org/show_bug.cgi?id=231389
+        <rdar://problem/83997697>
+
+        Reviewed by Ryan Haddad.
+
+        * CISupport/build-webkit-org/config.json: Make iOS 15 Simulator Release build universal.
+
 2021-10-07  Stephan Szabo  <stephan.szabo@sony.com>
 
         [WinCairo] Support run-jsc-stress-tests without posix commands

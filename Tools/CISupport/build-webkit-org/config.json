@@ -57,18 +57,17 @@
                     { "name": "bot612", "platform": "*" },
                     { "name": "bot613", "platform": "*" },
                     { "name": "bot600", "platform": "*" },
-                    { "name": "bot614", "platform": "*" },
                     { "name": "bot684", "platform": "*" },
-                    { "name": "bot685", "platform": "*" },
-
 
                     { "name": "bot673", "platform": "ios-15" },
+                    { "name": "bot614", "platform": "ios-simulator-15" },
                     { "name": "bot651", "platform": "ios-simulator-15" },
                     { "name": "bot652", "platform": "ios-simulator-15" },
                     { "name": "bot653", "platform": "ios-simulator-15" },
                     { "name": "bot654", "platform": "ios-simulator-15" },
                     { "name": "bot641", "platform": "ios-simulator-15" },
                     { "name": "bot682", "platform": "ios-simulator-15" },
+                    { "name": "bot685", "platform": "ios-simulator-15" },
                     { "name": "bot694", "platform": "ios-simulator-15" },
                     { "name": "bot695", "platform": "ios-simulator-15" },
                     { "name": "bot667", "platform": "ios-simulator-15"},
@@ -274,9 +273,9 @@
                     },
                     {
                       "name": "Apple-iOS-15-Simulator-Release-Build", "factory": "BuildFactory", "builddir": "ios-simulator-15-release",
-                      "platform": "ios-simulator-15", "configuration": "release", "architectures": ["x86_64"],
+                      "platform": "ios-simulator-15", "configuration": "release", "architectures": ["x86_64", "arm64"],
                       "triggers": ["ios-simulator-15-release-tests-wk2", "ipados-simulator-15-release-tests-wk2"],
-                      "workernames": ["bot641", "bot682"]
+                      "workernames": ["bot614", "bot641", "bot682", "bot685"]
                     },
                     {
                       "name": "Apple-iOS-15-Simulator-Debug-Build", "factory": "BuildFactory", "builddir": "ios-simulator-15-debug",
