@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -93,12 +93,12 @@ bool defaultWebXREnabled()
 
 bool defaultAllowsInlineMediaPlayback()
 {
-    return WebCore::deviceClass() == MGDeviceClassiPad;
+    return !WebCore::deviceClassIsSmallScreen();
 }
 
 bool defaultAllowsInlineMediaPlaybackAfterFullscreen()
 {
-    return WebCore::deviceClass() != MGDeviceClassiPad;
+    return WebCore::deviceClassIsSmallScreen();
 }
 
 bool defaultAllowsPictureInPictureMediaPlayback()
@@ -115,7 +115,7 @@ bool defaultJavaScriptCanOpenWindowsAutomatically()
 
 bool defaultInlineMediaPlaybackRequiresPlaysInlineAttribute()
 {
-    return WebCore::deviceClass() != MGDeviceClassiPad;
+    return WebCore::deviceClassIsSmallScreen();
 }
 
 bool defaultPassiveTouchListenersAsDefaultOnDocument()
@@ -272,25 +272,22 @@ bool defaultWheelEventGesturesBecomeNonBlocking()
 #endif
 
 #if ENABLE(MEDIA_SOURCE) && PLATFORM(IOS_FAMILY)
+
 bool defaultMediaSourceEnabled()
 {
-#if PLATFORM(MACCATALYST)
-    return true;
-#elif PLATFORM(IOS)
-    return WebCore::deviceClass() != MGDeviceClassiPhone
-        && WebCore::deviceClass() != MGDeviceClassiPod;
-#else
-    return false;
-#endif
+    return !WebCore::deviceClassIsSmallScreen();
 }
+
 #endif
 
 #if ENABLE(MEDIA_SOURCE)
+
 bool defaultWebMParserEnabled()
 {
     return isFeatureFlagEnabled("webm_parser", true);
 }
-#endif // ENABLE(MEDIA_SOURCE)
+
+#endif
 
 #if ENABLE(VP9)
 

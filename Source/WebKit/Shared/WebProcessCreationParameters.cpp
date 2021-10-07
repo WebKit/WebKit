@@ -183,7 +183,7 @@ void WebProcessCreationParameters::encode(IPC::Encoder& encoder) const
 #endif
 
 #if PLATFORM(IOS_FAMILY)
-    encoder << currentUserInterfaceIdiomIsPhoneOrWatch;
+    encoder << currentUserInterfaceIdiomIsSmallScreen;
     encoder << supportsPictureInPicture;
     encoder << cssValueToSystemColorMap;
     encoder << focusRingColor;
@@ -526,7 +526,7 @@ bool WebProcessCreationParameters::decode(IPC::Decoder& decoder, WebProcessCreat
 #endif
 
 #if PLATFORM(IOS_FAMILY)
-    if (!decoder.decode(parameters.currentUserInterfaceIdiomIsPhoneOrWatch))
+    if (!decoder.decode(parameters.currentUserInterfaceIdiomIsSmallScreen))
         return false;
 
     if (!decoder.decode(parameters.supportsPictureInPicture))

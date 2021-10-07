@@ -313,7 +313,7 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
     setEnhancedAccessibility(parameters.accessibilityEnhancedUserInterfaceEnabled);
 
 #if PLATFORM(IOS_FAMILY)
-    setCurrentUserInterfaceIdiomIsPhoneOrWatch(parameters.currentUserInterfaceIdiomIsPhoneOrWatch);
+    setCurrentUserInterfaceIdiomIsSmallScreen(parameters.currentUserInterfaceIdiomIsSmallScreen);
     setLocalizedDeviceModel(parameters.localizedDeviceModel);
     RenderThemeIOS::setContentSizeCategory(parameters.contentSizeCategory);
 #if ENABLE(VIDEO_PRESENTATION_MODE)
@@ -930,9 +930,10 @@ void WebProcess::destroyRenderingResources()
 }
 
 #if PLATFORM(IOS_FAMILY)
-void WebProcess::userInterfaceIdiomDidChange(bool isPhoneOrWatch)
+
+void WebProcess::userInterfaceIdiomDidChange(bool isSmallScreen)
 {
-    WebKit::setCurrentUserInterfaceIdiomIsPhoneOrWatch(isPhoneOrWatch);
+    WebKit::setCurrentUserInterfaceIdiomIsSmallScreen(isSmallScreen);
 }
 
 bool WebProcess::shouldFreezeOnSuspension() const
@@ -965,6 +966,7 @@ void WebProcess::updateFreezerStatus()
     else
         WEBPROCESS_RELEASE_LOG(ProcessSuspension, "updateFreezerStatus: isFreezable=%d, success", isFreezable);
 }
+
 #endif
 
 #if PLATFORM(MAC)

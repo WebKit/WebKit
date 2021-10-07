@@ -62,7 +62,6 @@
 using namespace WebCore;
 
 #if PLATFORM(IOS_FAMILY)
-#import <WebCore/Device.h>
 #import <WebCore/GraphicsContext.h>
 #import <WebCore/WebCoreThreadMessage.h>
 #endif

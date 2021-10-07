@@ -1,3 +1,21 @@
+2021-10-07  Darin Adler  <darin@apple.com>
+
+        Get rid of the deviceClass function, up-leveling to deviceClassIsSmallScreen
+        https://bugs.webkit.org/show_bug.cgi?id=231344
+
+        Reviewed by Tim Horton.
+
+        * WebView/WebPreferences.mm: Removed uneeded Device.h include.
+
+        * WebView/WebPreferencesDefaultValues.mm:
+        (WebKit::defaultAllowsInlineMediaPlayback): Use !deviceClassIsSmallScreen
+        instead of deviceClass == iPad.
+        (WebKit::defaultAllowsInlineMediaPlaybackAfterFullscreen): Use
+        deviceClassIsSmallScreen instead of deviceClass != iPad.
+        (WebKit::defaultInlineMediaPlaybackRequiresPlaysInlineAttribute): Ditto.
+        (WebKit::defaultMediaSourceEnabled): Use !deviceClassIsSmallScreen instead of
+        deviceClass != iPhone and != iPod, and also remove unneeded compile time conditionals.
+
 2021-10-05  Tim Horton  <timothy_horton@apple.com>
 
         <model> should be draggable, similar to <img>

@@ -85,7 +85,7 @@ CGFloat adjustedFontSize(CGFloat textWidth, UIFont *font, CGFloat initialFontSiz
     }
 #endif
 
-    if (!currentUserInterfaceIdiomIsPhoneOrWatch())
+    if (!currentUserInterfaceIdiomIsSmallScreen())
         control = adoptNS([[WKSelectPopover alloc] initWithView:view hasGroups:hasGroups]);
     else if (view.focusedElementInformation.isMultiSelect || hasGroups)
         control = adoptNS([[WKMultipleSelectPicker alloc] initWithView:view]);

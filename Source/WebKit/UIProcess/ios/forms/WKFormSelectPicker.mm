@@ -1176,7 +1176,7 @@ static NSString *optionCellReuseIdentifier = @"WKSelectPickerTableViewCell";
 
 - (void)configurePresentation
 {
-    if (WebKit::currentUserInterfaceIdiomIsPhoneOrWatch()) {
+    if (WebKit::currentUserInterfaceIdiomIsSmallScreen()) {
         [[_navigationController navigationBar] setBarTintColor:UIColor.systemGroupedBackgroundColor];
 
         UIPresentationController *presentationController = [_navigationController presentationController];

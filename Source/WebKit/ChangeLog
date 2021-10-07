@@ -1,3 +1,63 @@
+2021-10-07  Darin Adler  <darin@apple.com>
+
+        Get rid of the deviceClass function, up-leveling to deviceClassIsSmallScreen
+        https://bugs.webkit.org/show_bug.cgi?id=231344
+
+        Reviewed by Tim Horton.
+
+        * Shared/UserInterfaceIdiom.h:
+        * Shared/UserInterfaceIdiom.mm:
+        (WebKit::currentUserInterfaceIdiomIsSmallScreen): Renamed to say "is small screen"
+        instead of "is phone or watch", the same concept. Also switched to TriState instead
+        of using a unique enumeration.
+        (WebKit::setCurrentUserInterfaceIdiomIsSmallScreen): Ditto.
+        (WebKit::updateCurrentUserInterfaceIdiom): Updated for name change.
+
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode const): Updated for name change.
+        (WebKit::WebProcessCreationParameters::decode): Ditto.
+        * Shared/WebProcessCreationParameters.h: Ditto.
+
+        * Shared/ios/WebPreferencesDefaultValuesIOS.mm:
+        (WebKit::defaultTextAutosizingUsesIdempotentMode): Updated for name change.
+        (WebKit::defaultMediaSourceEnabled): Use !deviceClassIsSmallScreen instead of
+        deviceClass != iPhone and != iPod, and also remove unneeded compile time conditionals.
+
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm: Removed uneeded Device.h include.
+        (-[WKWebViewConfiguration init]): Updated for name change.
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitializeWebProcess): Ditto.
+        (WebKit::WebProcessPool::registerNotificationObservers): Ditto, also got rid of
+        local variable.
+
+        * UIProcess/ios/SmartMagnificationController.mm:
+        (WebKit::SmartMagnificationController::didCollectGeometryForSmartMagnificationGesture):
+        Updated for name change.
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKFormInputSession setAccessoryViewCustomButtonTitle:]): Ditto.
+        (-[WKContentView endEditingAndUpdateFocusAppearanceWithReason:]): Ditto.
+        (-[WKContentView _shouldShowAutomaticKeyboardUIIgnoringInputMode]): Ditto.
+        (-[WKContentView _zoomToRevealFocusedElement]): Ditto.
+        (-[WKContentView _elementTypeRequiresAccessoryView:]): Ditto.
+        (-[WKContentView _updateAccessory]): Ditto.
+        (-[WKContentView _shouldUseLegacySelectPopoverDismissalBehavior]): Ditto.
+        * UIProcess/ios/WebDataListSuggestionsDropdownIOS.mm:
+        (WebKit::WebDataListSuggestionsDropdownIOS::show): Ditto.
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::desktopClassBrowsingSupported): Ditto.
+        * UIProcess/ios/forms/WKAirPlayRoutePicker.mm:
+        (-[WKAirPlayRoutePicker show:fromRect:]): Ditto.
+        * UIProcess/ios/forms/WKFileUploadPanel.mm:
+        (-[WKFileUploadPanel _showPhotoPickerWithSourceType:]): Ditto.
+        (-[WKFileUploadPanel _presentMenuOptionForCurrentInterfaceIdiom:]): Ditto.
+        * UIProcess/ios/forms/WKFormSelectControl.mm:
+        (-[WKFormSelectControl initWithView:]): Ditto.
+        * UIProcess/ios/forms/WKFormSelectPicker.mm:
+        (-[WKSelectMultiplePicker configurePresentation]): Ditto.
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::platformInitializeWebProcess): Ditto.
+        (WebKit::WebProcess::userInterfaceIdiomDidChange): Ditto.
+
 2021-10-07  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Add the ability to dispatch messages to multiple receiver types in IPC::StreamServerConnection

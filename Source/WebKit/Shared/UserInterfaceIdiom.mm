@@ -1,5 +1,5 @@
 /*
-* Copyright (C) 2019 Apple Inc. All rights reserved.
+* Copyright (C) 2019-2021 Apple Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions
@@ -30,52 +30,43 @@
 
 #import "UIKitSPI.h"
 #import <WebCore/Device.h>
+#import <wtf/TriState.h>
 
 namespace WebKit {
 
-enum class UserInterfaceIdiomState : uint8_t {
-    IsPhoneOrWatch,
-    IsNotPhoneOrWatch,
-    Unknown,
-};
+static TriState idiomIsSmallScreen = TriState::Indeterminate;
 
-static UserInterfaceIdiomState userInterfaceIdiomState = UserInterfaceIdiomState::Unknown;
-
-bool currentUserInterfaceIdiomIsPhoneOrWatch()
+bool currentUserInterfaceIdiomIsSmallScreen()
 {
-    // FIXME: We should get rid of this function and have callers make explicit decisions for all of iPhone/iPad/macOS.
-
-    if (userInterfaceIdiomState == UserInterfaceIdiomState::Unknown)
+    if (idiomIsSmallScreen == TriState::Indeterminate)
         updateCurrentUserInterfaceIdiom();
-
-    return userInterfaceIdiomState == UserInterfaceIdiomState::IsPhoneOrWatch;
+    return idiomIsSmallScreen == TriState::True;
 }
 
-void setCurrentUserInterfaceIdiomIsPhoneOrWatch(bool isPhoneOrWatch)
+void setCurrentUserInterfaceIdiomIsSmallScreen(bool isSmallScreen)
 {
-    userInterfaceIdiomState = isPhoneOrWatch ? UserInterfaceIdiomState::IsPhoneOrWatch : UserInterfaceIdiomState::IsNotPhoneOrWatch;
+    idiomIsSmallScreen = TriState(isSmallScreen);
 }
 
 bool updateCurrentUserInterfaceIdiom()
 {
-    bool wasPhoneOrWatch = userInterfaceIdiomState == UserInterfaceIdiomState::IsPhoneOrWatch;
-    bool isPhoneOrWatch = false;
+    bool wasSmallScreen = idiomIsSmallScreen == TriState::True;
 
     // If we are in a daemon, we cannot use UIDevice. Fall back to checking the hardware itself.
     // Since daemons don't ever run in an iPhone-app-on-iPad jail, this will be accurate in the daemon case,
     // but is not sufficient in the application case.
-    if (![UIApplication sharedApplication]) {
-        auto deviceClass = WebCore::deviceClass();
-        isPhoneOrWatch = deviceClass == MGDeviceClassiPhone || deviceClass == MGDeviceClassiPod || deviceClass == MGDeviceClassWatch;
-    } else {
+    bool isSmallScreen;
+    if (![UIApplication sharedApplication])
+        isSmallScreen = WebCore::deviceClassIsSmallScreen();
+    else {
         auto idiom = [[UIDevice currentDevice] userInterfaceIdiom];
-        isPhoneOrWatch = idiom == UIUserInterfaceIdiomPhone || idiom == UIUserInterfaceIdiomWatch;
+        isSmallScreen = idiom == UIUserInterfaceIdiomPhone || idiom == UIUserInterfaceIdiomWatch;
     }
 
-    if (wasPhoneOrWatch == isPhoneOrWatch)
+    if (wasSmallScreen == isSmallScreen)
         return false;
 
-    setCurrentUserInterfaceIdiomIsPhoneOrWatch(isPhoneOrWatch);
+    setCurrentUserInterfaceIdiomIsSmallScreen(isSmallScreen);
     return true;
 }
 

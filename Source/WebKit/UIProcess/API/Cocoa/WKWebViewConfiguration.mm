@@ -52,7 +52,6 @@
 
 #if PLATFORM(IOS_FAMILY)
 #import "UIKitSPI.h"
-#import <WebCore/Device.h>
 #endif
 
 template<typename T> class LazyInitialized {
@@ -197,7 +196,7 @@ static bool defaultShouldDecidePolicyBeforeLoadingQuickLookPreview()
     _allowsPictureInPictureMediaPlayback = YES;
 #endif
 
-    _allowsInlineMediaPlayback = !WebKit::currentUserInterfaceIdiomIsPhoneOrWatch();
+    _allowsInlineMediaPlayback = !WebKit::currentUserInterfaceIdiomIsSmallScreen();
     _inlineMediaPlaybackRequiresPlaysInlineAttribute = !_allowsInlineMediaPlayback;
     _allowsInlineMediaPlaybackAfterFullscreen = !_allowsInlineMediaPlayback;
     _mediaDataLoadsAutomatically = _allowsInlineMediaPlayback;
