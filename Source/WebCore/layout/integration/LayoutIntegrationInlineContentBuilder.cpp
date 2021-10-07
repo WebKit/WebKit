@@ -105,6 +105,13 @@ void InlineContentBuilder::createDisplayLines(Layout::InlineFormattingState& inl
                 scrollableOverflowRect.unite(childScrollableOverflow);
             }
         }
+
+        if (!inlineContent.lines.isEmpty()) {
+            auto& lastInkOverflow = inlineContent.lines.last().inkOverflow();
+            if (lineInkOverflowRect.y() <= lastInkOverflow.y() || lastInkOverflow.maxY() >= lineInkOverflowRect.maxY())
+                inlineContent.hasMultilinePaintOverlap = true;
+        }
+
         auto lineBoxLogicalRect = FloatRect { line.lineBoxLogicalRect() };
         auto boxCount = boxIndex - firstBoxIndex;
         inlineContent.lines.append({ firstBoxIndex, boxCount, lineBoxLogicalRect, line.enclosingTopAndBottom().top, line.enclosingTopAndBottom().bottom, scrollableOverflowRect, lineInkOverflowRect, line.baseline(), line.contentLogicalLeft(), line.contentLogicalWidth() });

@@ -61,6 +61,7 @@ struct InlineContent : public RefCounted<InlineContent> {
     Lines lines;
 
     float clearGapAfterLastLine { 0 };
+    bool hasMultilinePaintOverlap { false };
 
     bool hasContent() const;
     

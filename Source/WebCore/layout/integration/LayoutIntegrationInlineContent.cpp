@@ -47,12 +47,42 @@ bool InlineContent::hasContent() const
     return boxes.size() > 1;
 };
 
-WTF::IteratorRange<const InlineDisplay::Box*> InlineContent::boxesForRect(const LayoutRect&) const
+WTF::IteratorRange<const InlineDisplay::Box*> InlineContent::boxesForRect(const LayoutRect& rect) const
 {
-    // FIXME: Do something efficient e.g. using line boxes.
     if (boxes.isEmpty())
         return { nullptr, nullptr };
-    return { &boxes.first(), &boxes.last() + 1 };
+
+    if (lines.first().inkOverflow().maxY() > rect.y() && lines.last().inkOverflow().y() < rect.maxY())
+        return { &boxes.first(), &boxes.last() + 1 };
+
+    // The optimization below relies on line paint bounds not exeeding those of the neighboring lines
+    if (hasMultilinePaintOverlap)
+        return { &boxes.first(), &boxes.last() + 1 };
+
+    auto height = lines.last().lineBoxBottom() - lines.first().lineBoxTop();
+    auto averageLineHeight = height / lines.size();
+
+    auto approximateLine = [&](LayoutUnit y) {
+        y = std::max(y, 0_lu);
+        return std::min(static_cast<size_t>(y / averageLineHeight), lines.size() - 1);
+    };
+
+    auto startLine = approximateLine(rect.y());
+    for (; startLine; --startLine) {
+        if (lines[startLine - 1].inkOverflow().maxY() < rect.y())
+            break;
+    }
+
+    auto endLine = approximateLine(rect.maxY());
+    for (; endLine < lines.size() - 1; ++endLine) {
+        if (lines[endLine + 1].inkOverflow().y() > rect.maxY())
+            break;
+    }
+
+    auto firstBox = lines[startLine].firstBoxIndex();
+    auto lastBox = lines[endLine].firstBoxIndex() + lines[endLine].boxCount() - 1;
+
+    return { &boxes[firstBox], &boxes[lastBox] + 1 };
 }
 
 InlineContent::~InlineContent()
