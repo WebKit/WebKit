@@ -1,3 +1,27 @@
+2021-10-07  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        ScopedEGLDefaultDisplay should be removed
+        https://bugs.webkit.org/show_bug.cgi?id=231011
+
+        Reviewed by Kenneth Russell.
+
+        Implement the release of WebGL resources with the amended
+        GraphicsContextGLOpenGL::releaseResources() instead of
+        previous separate function GraphicsContextGLOpenGL::releaseAllResources().
+
+        Use the resource release code path universally, as
+        GraphicsContextGLOpenGL::releaseResources() is now common code.
+
+        * GPUProcess/graphics/ScopedWebGLRenderingResourcesRequest.cpp:
+        (WebKit::ScopedWebGLRenderingResourcesRequest::scheduleFreeWebGLRenderingResources):
+        (WebKit::ScopedWebGLRenderingResourcesRequest::freeWebGLRenderingResources):
+        * GPUProcess/graphics/ScopedWebGLRenderingResourcesRequest.h:
+        * GPUProcess/graphics/ScopedWebGLRenderingResourcesRequestCocoa.cpp: Removed.
+        (WebKit::ScopedWebGLRenderingResourcesRequest::scheduleFreeWebGLRenderingResources): Deleted.
+        (WebKit::ScopedWebGLRenderingResourcesRequest::freeWebGLRenderingResources): Deleted.
+        * SourcesCocoa.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+
 2021-10-07  Basuke Suzuki  <basuke.suzuki@sony.com>
 
         Change the confusing feature name for testing purpose

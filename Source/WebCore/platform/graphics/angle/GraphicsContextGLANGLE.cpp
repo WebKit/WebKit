@@ -30,8 +30,8 @@
 #include "GraphicsContextGL.h"
 
 #include "ANGLEHeaders.h"
+#include "ANGLEUtilities.h"
 #include "ExtensionsGLANGLE.h"
-#include "GraphicsContextGLANGLEUtilities.h"
 #include "GraphicsContextGLOpenGL.h"
 #include "ImageBuffer.h"
 #include "IntRect.h"
@@ -73,6 +73,49 @@ static void wipeAlphaChannelFromPixels(int width, int height, unsigned char* pix
     int totalBytes = width * height * 4;
     for (int i = 0; i < totalBytes; i += 4)
         pixels[i + 3] = 255;
+}
+#endif
+
+bool GraphicsContextGLOpenGL::releaseThreadResources(ReleaseThreadResourceBehavior releaseBehavior)
+{
+    platformReleaseThreadResources();
+
+    if (!platformIsANGLEAvailable())
+        return false;
+
+    // Unset the EGL current context, since the next access might be from another thread, and the
+    // context cannot be current on multiple threads.
+    if (releaseBehavior == ReleaseThreadResourceBehavior::ReleaseCurrentContext) {
+        if (EGL_GetCurrentContext() == EGL_NO_CONTEXT)
+            return true;
+        // At the time of writing, ANGLE does not flush on MakeCurrent. Since we are
+        // potentially switching threads, we should flush.
+        // Note: Here we assume also that ANGLE has only one platform context -- otherwise
+        // we would need to flush each EGL context that has been used.
+        gl::Flush();
+        EGLDisplay display = EGL_GetDisplay(EGL_DEFAULT_DISPLAY);
+        if (display == EGL_NO_DISPLAY)
+            return true;
+        return EGL_MakeCurrent(display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
+    }
+    if (releaseBehavior == ReleaseThreadResourceBehavior::TerminateAndReleaseThreadResources) {
+        EGLDisplay display = EGL_GetDisplay(EGL_DEFAULT_DISPLAY);
+        if (display != EGL_NO_DISPLAY) {
+            if (EGL_GetCurrentContext() != EGL_NO_CONTEXT) {
+                ASSERT_NOT_REACHED(); // All resources must have been destroyed.
+                EGL_MakeCurrent(display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
+            }
+            EGL_Terminate(display);
+        }
+    }
+    // Called when we do not know if we will ever see another call from this thread again.
+    // Unset the EGL current context by releasing whole EGL thread state.
+    return EGL_ReleaseThread();
+}
+
+#if !PLATFORM(COCOA)
+void GraphicsContextGLOpenGL::platformReleaseThreadResources()
+{
 }
 #endif
 

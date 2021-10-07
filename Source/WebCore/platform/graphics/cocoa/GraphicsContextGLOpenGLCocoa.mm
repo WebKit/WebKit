@@ -28,10 +28,10 @@
 #if ENABLE(WEBGL)
 #import "GraphicsContextGLOpenGL.h"
 
+#import "ANGLEUtilities.h"
 #import "ANGLEUtilitiesCocoa.h"
 #import "CVUtilities.h"
 #import "ExtensionsGLANGLE.h"
-#import "GraphicsContextGLANGLEUtilities.h"
 #import "GraphicsContextGLIOSurfaceSwapChain.h"
 #import "GraphicsContextGLOpenGLManager.h"
 #import "Logging.h"
@@ -60,8 +60,10 @@ WTF_WEAK_LINK_FORCE_IMPORT(EGL_Initialize);
 
 namespace WebCore {
 
-static bool isANGLEAvailable()
+bool platformIsANGLEAvailable()
 {
+    // The ANGLE is weak linked in full, and the EGL_Initialize is explicitly weak linked above
+    // so that we can detect the case where ANGLE is not present.
     return !!EGL_Initialize;
 }
 
@@ -119,11 +121,11 @@ static bool platformSupportsMetal(bool isWebGL2)
     return false;
 }
 
-static ScopedEGLDefaultDisplay initializeEGLDisplay(const GraphicsContextGLAttributes& attrs)
+static EGLDisplay initializeEGLDisplay(const GraphicsContextGLAttributes& attrs)
 {
-    if (!isANGLEAvailable()) {
+    if (!platformIsANGLEAvailable()) {
         WTFLogAlways("Failed to load ANGLE shared library.");
-        return { };
+        return EGL_NO_DISPLAY;
     }
 
     EGLint majorVersion = 0;
@@ -166,7 +168,7 @@ static ScopedEGLDefaultDisplay initializeEGLDisplay(const GraphicsContextGLAttri
 
     if (EGL_Initialize(display, &majorVersion, &minorVersion) == EGL_FALSE) {
         LOG(WebGL, "EGLDisplay Initialization failed.");
-        return { };
+        return EGL_NO_DISPLAY;
     }
     LOG(WebGL, "ANGLE initialised Major: %d Minor: %d", majorVersion, minorVersion);
     if (shouldInitializeWithVolatileContextSupport) {
@@ -175,7 +177,7 @@ static ScopedEGLDefaultDisplay initializeEGLDisplay(const GraphicsContextGLAttri
         ASSERT(checkVolatileContextSupportIfDeviceExists(display, "EGL_ANGLE_platform_device_context_volatile_eagl", "EGL_ANGLE_device_eagl", EGL_EAGL_CONTEXT_ANGLE));
         ASSERT(checkVolatileContextSupportIfDeviceExists(display, "EGL_ANGLE_platform_device_context_volatile_cgl", "EGL_ANGLE_device_cgl", EGL_CGL_CONTEXT_ANGLE));
     }
-    return ScopedEGLDefaultDisplay::adoptInitializedDisplay(display);
+    return display;
 }
 
 static const unsigned statusCheckThreshold = 5;
@@ -508,45 +510,6 @@ bool GraphicsContextGLOpenGL::makeContextCurrent()
     return true;
 }
 
-#if PLATFORM(IOS_FAMILY)
-bool GraphicsContextGLOpenGL::releaseCurrentContext(ReleaseBehavior releaseBehavior)
-{
-    if (!isANGLEAvailable())
-        return true;
-
-    // At the moment this function is relevant only when web thread lock owns the GraphicsContextGLOpenGL current context.
-    ASSERT(!isCurrentContextPredictable());
-
-    if (!EGL_BindAPI(EGL_OPENGL_ES_API))
-        return false;
-    if (EGL_GetCurrentContext() == EGL_NO_CONTEXT)
-        return true;
-
-    // At the time of writing, ANGLE does not flush on MakeCurrent. Since we are
-    // potentially switching threads, we should flush.
-    // Note: Here we assume also that ANGLE has only one platform context -- otherwise
-    // we would need to flush each EGL context that has been used.
-    gl::Flush();
-
-    // Unset the EGL current context, since the next access might be from another thread, and the
-    // context cannot be current on multiple threads.
-
-    if (releaseBehavior == ReleaseBehavior::ReleaseThreadResources) {
-        // Called when we do not know if we will ever see another call from this thread again.
-        // Unset the EGL current context by releasing whole EGL thread state.
-        // Theoretically ReleaseThread can reset the bound API, so the rest of the code mentions BindAPI/QueryAPI.
-        return EGL_ReleaseThread();
-    }
-    // On WebKit owned threads, WebKit is able to choose the time for the EGL cleanup.
-    // This is why we only unset the context.
-    // Note: At the time of writing the EGL cleanup is chosen to be not done at all.
-    EGLDisplay display = EGL_GetDisplay(EGL_DEFAULT_DISPLAY);
-    if (display == EGL_NO_DISPLAY)
-        return false;
-    return EGL_MakeCurrent(display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
-}
-#endif
-
 void GraphicsContextGLOpenGL::checkGPUStatus()
 {
     if (m_failNextStatusCheck) {
@@ -827,11 +790,6 @@ std::optional<PixelBuffer> GraphicsContextGLOpenGL::readCompositedResults()
     return result;
 }
 
-void GraphicsContextGLOpenGL::releaseAllResourcesIfUnused()
-{
-    ScopedEGLDefaultDisplay::releaseAllResourcesIfUnused();
-}
-
 #if ENABLE(MEDIA_STREAM)
 RefPtr<MediaSample> GraphicsContextGLOpenGL::paintCompositedResultsToMediaSample()
 {
@@ -847,6 +805,12 @@ RefPtr<MediaSample> GraphicsContextGLOpenGL::paintCompositedResultsToMediaSample
     return MediaSampleAVFObjC::createImageSample(WTFMove(*pixelBuffer), MediaSampleAVFObjC::VideoRotation::UpsideDown, true);
 }
 #endif
+
+void GraphicsContextGLOpenGL::platformReleaseThreadResources()
+{
+    currentContext = nullptr;
+}
+
 }
 
 #endif // ENABLE(WEBGL)

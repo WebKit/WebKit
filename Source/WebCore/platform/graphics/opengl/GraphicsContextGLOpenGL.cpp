@@ -76,6 +76,16 @@ GCGLbitfield GraphicsContextGLOpenGL::getBuffersToAutoClear() const
 }
 
 #if !USE(ANGLE)
+bool GraphicsContextGLOpenGL::releaseThreadResources(ReleaseThreadResourceBehavior)
+{
+}
+
+void GraphicsContextGLOpenGL::platformReleaseThreadResources()
+{
+}
+#endif
+
+#if !USE(ANGLE)
 bool GraphicsContextGLOpenGL::texImage2DResourceSafe(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLint border, GCGLenum format, GCGLenum type, GCGLint unpackAlignment)
 {
     ASSERT(unpackAlignment == 1 || unpackAlignment == 2 || unpackAlignment == 4 || unpackAlignment == 8);

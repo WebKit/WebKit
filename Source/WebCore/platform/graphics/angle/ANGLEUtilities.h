@@ -240,6 +240,8 @@ private:
     GLsync m_object { };
 };
 
+bool platformIsANGLEAvailable();
+
 }
 
 #endif

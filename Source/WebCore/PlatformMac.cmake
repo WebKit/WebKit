@@ -614,7 +614,7 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/MIMETypeCache.h
     platform/graphics/Model.h
 
-    platform/graphics/angle/GraphicsContextGLANGLEEGLUtilities.h
+    platform/graphics/angle/ANGLEUtilities.h
 
     platform/graphics/avfoundation/AudioSourceProviderAVFObjC.h
     platform/graphics/avfoundation/MediaPlaybackTargetCocoa.h
