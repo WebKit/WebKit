@@ -1,3 +1,28 @@
+2021-10-07  Basuke Suzuki  <basuke.suzuki@sony.com>
+
+        Change the confusing feature name for testing purpose
+        https://bugs.webkit.org/show_bug.cgi?id=231259
+
+        Reviewed by Tim Horton.
+
+        ENABLE(EXPERIMENTAL_FEATURE) was used in the test, but that is very confusing with
+        ENABLE_EXPERIMENTAL_FEATURES. Change them to more obvious ENABLE(FEATURE_FOR_TESTING).
+
+        * Scripts/webkit/parser_unittest.py:
+        * Scripts/webkit/tests/MessageArgumentDescriptions.cpp:
+        (IPC::jsValueForArguments):
+        (IPC::messageArgumentDescriptions):
+        * Scripts/webkit/tests/MessageNames.cpp:
+        (IPC::isValidMessageName):
+        * Scripts/webkit/tests/TestWithLegacyReceiver.messages.in:
+        * Scripts/webkit/tests/TestWithLegacyReceiverMessageReceiver.cpp:
+        (WebKit::TestWithLegacyReceiver::didReceiveTestWithLegacyReceiverMessage):
+        * Scripts/webkit/tests/TestWithLegacyReceiverMessages.h:
+        * Scripts/webkit/tests/TestWithoutAttributes.messages.in:
+        * Scripts/webkit/tests/TestWithoutAttributesMessageReceiver.cpp:
+        (WebKit::TestWithoutAttributes::didReceiveMessage):
+        * Scripts/webkit/tests/TestWithoutAttributesMessages.h:
+
 2021-10-06  Timothy Hatcher  <timothy@apple.com>
 
         _WKRemoteObjectRegistry's ReplyBlockCallChecker should always dealloc on the main thread

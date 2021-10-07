@@ -68,7 +68,7 @@ messages -> TestWithLegacyReceiver LegacyReceiver {
     DeprecatedOperation(IPC::DummyType dummy)
 #endif
 
-#if ENABLE(EXPERIMENTAL_FEATURE)
+#if ENABLE(FEATURE_FOR_TESTING)
     ExperimentalOperation(IPC::DummyType dummy)
 #endif
 }

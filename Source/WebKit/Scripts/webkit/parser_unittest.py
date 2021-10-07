@@ -218,7 +218,7 @@ _expected_model_base = {
             'parameters': (
                 ('IPC::DummyType', 'dummy'),
             ),
-            'conditions': ('ENABLE(EXPERIMENTAL_FEATURE)'),
+            'conditions': ('ENABLE(FEATURE_FOR_TESTING)'),
         }
     ),
 }

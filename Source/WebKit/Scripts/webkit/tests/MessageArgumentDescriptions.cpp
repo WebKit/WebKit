@@ -39,7 +39,7 @@
 #if (ENABLE(WEBKIT2) && (NESTED_MASTER_CONDITION || MASTER_OR && MASTER_AND))
 #include "ArgumentCoders.h"
 #include "Connection.h"
-#if ENABLE(DEPRECATED_FEATURE) || ENABLE(EXPERIMENTAL_FEATURE)
+#if ENABLE(DEPRECATED_FEATURE) || ENABLE(FEATURE_FOR_TESTING)
 #include "DummyType.h"
 #endif
 #if PLATFORM(MAC)
@@ -71,7 +71,7 @@
 #if (ENABLE(WEBKIT2) && (NESTED_MASTER_CONDITION || MASTER_OR && MASTER_AND))
 #include "ArgumentCoders.h"
 #include "Connection.h"
-#if ENABLE(DEPRECATED_FEATURE) || ENABLE(EXPERIMENTAL_FEATURE)
+#if ENABLE(DEPRECATED_FEATURE) || ENABLE(FEATURE_FOR_TESTING)
 #include "DummyType.h"
 #endif
 #if PLATFORM(MAC)
@@ -208,7 +208,7 @@ std::optional<JSC::JSValue> jsValueForArguments(JSC::JSGlobalObject* globalObjec
     case MessageName::TestWithLegacyReceiver_DeprecatedOperation:
         return jsValueForDecodedArguments<Messages::TestWithLegacyReceiver::DeprecatedOperation::Arguments>(globalObject, decoder);
 #endif
-#if ENABLE(EXPERIMENTAL_FEATURE)
+#if ENABLE(FEATURE_FOR_TESTING)
     case MessageName::TestWithLegacyReceiver_ExperimentalOperation:
         return jsValueForDecodedArguments<Messages::TestWithLegacyReceiver::ExperimentalOperation::Arguments>(globalObject, decoder);
 #endif
@@ -268,7 +268,7 @@ std::optional<JSC::JSValue> jsValueForArguments(JSC::JSGlobalObject* globalObjec
     case MessageName::TestWithoutAttributes_DeprecatedOperation:
         return jsValueForDecodedArguments<Messages::TestWithoutAttributes::DeprecatedOperation::Arguments>(globalObject, decoder);
 #endif
-#if ENABLE(EXPERIMENTAL_FEATURE)
+#if ENABLE(FEATURE_FOR_TESTING)
     case MessageName::TestWithoutAttributes_ExperimentalOperation:
         return jsValueForDecodedArguments<Messages::TestWithoutAttributes::ExperimentalOperation::Arguments>(globalObject, decoder);
 #endif
@@ -483,7 +483,7 @@ std::optional<Vector<ArgumentDescription>> messageArgumentDescriptions(MessageNa
             {"dummy", "IPC::DummyType", nullptr, false},
         };
 #endif
-#if ENABLE(EXPERIMENTAL_FEATURE)
+#if ENABLE(FEATURE_FOR_TESTING)
     case MessageName::TestWithLegacyReceiver_ExperimentalOperation:
         return Vector<ArgumentDescription> {
             {"dummy", "IPC::DummyType", nullptr, false},
@@ -592,7 +592,7 @@ std::optional<Vector<ArgumentDescription>> messageArgumentDescriptions(MessageNa
             {"dummy", "IPC::DummyType", nullptr, false},
         };
 #endif
-#if ENABLE(EXPERIMENTAL_FEATURE)
+#if ENABLE(FEATURE_FOR_TESTING)
     case MessageName::TestWithoutAttributes_ExperimentalOperation:
         return Vector<ArgumentDescription> {
             {"dummy", "IPC::DummyType", nullptr, false},

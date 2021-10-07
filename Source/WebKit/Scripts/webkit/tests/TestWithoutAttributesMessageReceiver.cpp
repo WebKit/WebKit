@@ -29,7 +29,7 @@
 #include "ArgumentCoders.h"
 #include "Connection.h"
 #include "Decoder.h"
-#if ENABLE(DEPRECATED_FEATURE) || ENABLE(EXPERIMENTAL_FEATURE)
+#if ENABLE(DEPRECATED_FEATURE) || ENABLE(FEATURE_FOR_TESTING)
 #include "DummyType.h"
 #endif
 #if PLATFORM(MAC)
@@ -125,7 +125,7 @@ void TestWithoutAttributes::didReceiveMessage(IPC::Connection& connection, IPC::
     if (decoder.messageName() == Messages::TestWithoutAttributes::DeprecatedOperation::name())
         return IPC::handleMessage<Messages::TestWithoutAttributes::DeprecatedOperation>(connection, decoder, this, &TestWithoutAttributes::deprecatedOperation);
 #endif
-#if ENABLE(EXPERIMENTAL_FEATURE)
+#if ENABLE(FEATURE_FOR_TESTING)
     if (decoder.messageName() == Messages::TestWithoutAttributes::ExperimentalOperation::name())
         return IPC::handleMessage<Messages::TestWithoutAttributes::ExperimentalOperation>(connection, decoder, this, &TestWithoutAttributes::experimentalOperation);
 #endif

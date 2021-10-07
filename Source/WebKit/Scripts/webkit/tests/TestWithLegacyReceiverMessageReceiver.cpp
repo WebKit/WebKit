@@ -29,7 +29,7 @@
 #include "ArgumentCoders.h"
 #include "Connection.h"
 #include "Decoder.h"
-#if ENABLE(DEPRECATED_FEATURE) || ENABLE(EXPERIMENTAL_FEATURE)
+#if ENABLE(DEPRECATED_FEATURE) || ENABLE(FEATURE_FOR_TESTING)
 #include "DummyType.h"
 #endif
 #if PLATFORM(MAC)
@@ -125,7 +125,7 @@ void TestWithLegacyReceiver::didReceiveTestWithLegacyReceiverMessage(IPC::Connec
     if (decoder.messageName() == Messages::TestWithLegacyReceiver::DeprecatedOperation::name())
         return IPC::handleMessage<Messages::TestWithLegacyReceiver::DeprecatedOperation>(connection, decoder, this, &TestWithLegacyReceiver::deprecatedOperation);
 #endif
-#if ENABLE(EXPERIMENTAL_FEATURE)
+#if ENABLE(FEATURE_FOR_TESTING)
     if (decoder.messageName() == Messages::TestWithLegacyReceiver::ExperimentalOperation::name())
         return IPC::handleMessage<Messages::TestWithLegacyReceiver::ExperimentalOperation>(connection, decoder, this, &TestWithLegacyReceiver::experimentalOperation);
 #endif
