@@ -209,6 +209,9 @@ void addCrossOriginOpenerPolicyHeaders(ResourceResponse& response, const CrossOr
 // https://html.spec.whatwg.org/multipage/origin.html#coop-violation-navigation-to
 void sendViolationReportWhenNavigatingToCOOPResponse(Frame& frame, CrossOriginOpenerPolicy coop, COOPDisposition disposition, const URL& coopURL, const URL& previousResponseURL, const SecurityOrigin& coopOrigin, const SecurityOrigin& previousResponseOrigin, const String& referrer, const String& userAgent)
 {
+    if (!frame.settings().coopCoepViolationReportingEnabled())
+        return;
+
     auto& endpoint = coop.reportingEndpointForDisposition(disposition);
     if (endpoint.isEmpty())
         return;
@@ -225,6 +228,9 @@ void sendViolationReportWhenNavigatingToCOOPResponse(Frame& frame, CrossOriginOp
 // https://html.spec.whatwg.org/multipage/origin.html#coop-violation-navigation-from
 void sendViolationReportWhenNavigatingAwayFromCOOPResponse(Frame& frame, CrossOriginOpenerPolicy coop, COOPDisposition disposition, const URL& coopURL, const URL& nextResponseURL, const SecurityOrigin& coopOrigin, const SecurityOrigin& nextResponseOrigin, bool isCOOPResponseNavigationSource, const String& userAgent)
 {
+    if (!frame.settings().coopCoepViolationReportingEnabled())
+        return;
+
     auto& endpoint = coop.reportingEndpointForDisposition(disposition);
     if (endpoint.isEmpty())
         return;

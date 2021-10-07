@@ -1,3 +1,15 @@
+2021-10-07  Chris Dumez  <cdumez@apple.com>
+
+        Add feature flag for COOP / COEP violation reporting and turn off by default
+        https://bugs.webkit.org/show_bug.cgi?id=231371
+
+        Reviewed by Youenn Fablet.
+
+        Add feature flag for COOP / COEP violation reporting and turn off by default since our
+        implementation doesn't match the latest specification.
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml:
+
 2021-10-06  Sihui Liu  <sihui_liu@apple.com>
 
         Add support for FileSystemSyncAccessHandle

@@ -113,6 +113,9 @@ void addCrossOriginEmbedderPolicyHeaders(ResourceResponse& response, const Cross
 // https://html.spec.whatwg.org/multipage/origin.html#queue-a-cross-origin-embedder-policy-inheritance-violation
 void sendCOEPPolicyInheritenceViolation(Frame& frame, const WebCore::SecurityOriginData& embedderOrigin, const String& endpoint, COEPDisposition disposition, const String& type, const URL& blockedURL)
 {
+    if (!frame.settings().coopCoepViolationReportingEnabled())
+        return;
+
     ASSERT(!endpoint.isEmpty());
     PingLoader::sendReportToEndpoint(frame, embedderOrigin, endpoint, "coep"_s, contextURLForReport(frame), frame.loader().userAgent(blockedURL), [&](auto& body) {
         body.setString("disposition"_s, disposition == COEPDisposition::Reporting ? "reporting"_s : "enforce"_s);
@@ -125,6 +128,9 @@ void sendCOEPPolicyInheritenceViolation(Frame& frame, const WebCore::SecurityOri
 void sendCOEPCORPViolation(Frame& frame, const SecurityOriginData& embedderOrigin, const String& endpoint, COEPDisposition disposition, FetchOptions::Destination destination, const URL& blockedURL)
 {
     ASSERT(!endpoint.isEmpty());
+    if (!frame.settings().coopCoepViolationReportingEnabled())
+        return;
+
     PingLoader::sendReportToEndpoint(frame, embedderOrigin, endpoint, "coep"_s, contextURLForReport(frame), frame.loader().userAgent(blockedURL), [&](auto& body) {
         body.setString("disposition"_s, disposition == COEPDisposition::Reporting ? "reporting"_s : "enforce"_s);
         body.setString("type"_s, "corp");
