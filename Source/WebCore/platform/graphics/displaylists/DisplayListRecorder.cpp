@@ -82,7 +82,6 @@ static bool containsOnlyInlineStateChanges(const GraphicsContextStateChange& cha
         GraphicsContextState::StrokeThicknessChange,
         GraphicsContextState::StrokeColorChange,
         GraphicsContextState::FillColorChange,
-        GraphicsContextState::FillGradientChange,
     };
 
     if (changeFlags != (changeFlags & inlineStateChangeFlags))
@@ -92,10 +91,6 @@ static bool containsOnlyInlineStateChanges(const GraphicsContextStateChange& cha
         return false;
 
     if (changeFlags.contains(GraphicsContextState::FillColorChange) && !changes.m_state.fillColor.tryGetAsSRGBABytes())
-        return false;
-
-    if (changeFlags.contains(GraphicsContextState::FillGradientChange)
-        && (!changes.m_state.fillGradient || !SetInlineFillGradient::isInline(*changes.m_state.fillGradient)))
         return false;
 
     return true;
@@ -127,9 +122,6 @@ void Recorder::appendStateChangeItem(const GraphicsContextStateChange& changes, 
 
     if (changeFlags.contains(GraphicsContextState::FillColorChange))
         append<SetInlineFillColor>(*changes.m_state.fillColor.tryGetAsSRGBABytes());
-
-    if (changeFlags.contains(GraphicsContextState::FillGradientChange))
-        append<SetInlineFillGradient>(*changes.m_state.fillGradient, changes.m_state.fillGradientSpaceTransform);
 }
 
 bool Recorder::canAppendItemOfType(ItemType type) const

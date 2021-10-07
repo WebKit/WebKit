@@ -1,5 +1,17 @@
 2021-10-06  Wenson Hsieh  <wenson_hsieh@apple.com>
 
+        Delete WebCore::DisplayList::SetInlineFillGradient
+        https://bugs.webkit.org/show_bug.cgi?id=231326
+
+        Reviewed by Simon Fraser.
+
+        See WebCore/ChangeLog for more details.
+
+        * GPUProcess/graphics/RemoteRenderingBackend.cpp:
+        (WebKit::RemoteRenderingBackend::decodeItem):
+
+2021-10-06  Wenson Hsieh  <wenson_hsieh@apple.com>
+
         Add a configurable wake up message hysteresis to IPC::StreamClientConnection
         https://bugs.webkit.org/show_bug.cgi?id=231304
 

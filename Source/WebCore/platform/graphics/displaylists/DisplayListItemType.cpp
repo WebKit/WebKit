@@ -48,8 +48,6 @@ static size_t sizeOfItemInBytes(ItemType type)
         return sizeof(ConcatenateCTM);
     case ItemType::SetCTM:
         return sizeof(SetCTM);
-    case ItemType::SetInlineFillGradient:
-        return sizeof(SetInlineFillGradient);
     case ItemType::SetInlineFillColor:
         return sizeof(SetInlineFillColor);
     case ItemType::SetInlineStrokeColor:
@@ -210,7 +208,6 @@ bool isDrawingItem(ItemType type)
     case ItemType::Scale:
     case ItemType::SetCTM:
     case ItemType::SetInlineFillColor:
-    case ItemType::SetInlineFillGradient:
     case ItemType::SetInlineStrokeColor:
     case ItemType::SetLineCap:
     case ItemType::SetLineDash:
@@ -357,7 +354,6 @@ bool isInlineItem(ItemType type)
     case ItemType::Scale:
     case ItemType::SetCTM:
     case ItemType::SetInlineFillColor:
-    case ItemType::SetInlineFillGradient:
     case ItemType::SetInlineStrokeColor:
     case ItemType::SetLineCap:
     case ItemType::SetLineJoin:

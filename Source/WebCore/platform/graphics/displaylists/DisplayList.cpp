@@ -214,8 +214,6 @@ void DisplayList::append(ItemHandle item)
         return append<ConcatenateCTM>(item.get<ConcatenateCTM>());
     case ItemType::SetCTM:
         return append<SetCTM>(item.get<SetCTM>());
-    case ItemType::SetInlineFillGradient:
-        return append<SetInlineFillGradient>(item.get<SetInlineFillGradient>());
     case ItemType::SetInlineFillColor:
         return append<SetInlineFillColor>(item.get<SetInlineFillColor>());
     case ItemType::SetInlineStrokeColor:

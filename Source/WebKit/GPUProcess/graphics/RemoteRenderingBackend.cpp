@@ -647,7 +647,6 @@ std::optional<DisplayList::ItemHandle> WARN_UNUSED_RETURN RemoteRenderingBackend
     case DisplayList::ItemType::Scale:
     case DisplayList::ItemType::SetCTM:
     case DisplayList::ItemType::SetInlineFillColor:
-    case DisplayList::ItemType::SetInlineFillGradient:
     case DisplayList::ItemType::SetInlineStrokeColor:
     case DisplayList::ItemType::SetLineCap:
     case DisplayList::ItemType::SetLineJoin:

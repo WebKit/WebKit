@@ -36,7 +36,6 @@ enum class ItemType : uint8_t {
     Scale,
     ConcatenateCTM,
     SetCTM,
-    SetInlineFillGradient,
     SetInlineFillColor,
     SetInlineStrokeColor,
     SetStrokeThickness,

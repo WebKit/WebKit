@@ -114,83 +114,6 @@ static TextStream& operator<<(TextStream& ts, const ConcatenateCTM& item)
     return ts;
 }
 
-SetInlineFillGradient::SetInlineFillGradient(const Gradient& gradient, const AffineTransform& gradientSpaceTransform)
-    : m_data(gradient.data())
-    , m_gradientSpaceTransform(gradientSpaceTransform)
-    , m_spreadMethod(gradient.spreadMethod())
-    , m_colorStopCount(static_cast<uint8_t>(gradient.stops().size()))
-{
-    RELEASE_ASSERT(m_colorStopCount <= maxColorStopCount);
-    for (uint8_t i = 0; i < m_colorStopCount; ++i) {
-        m_offsets[i] = gradient.stops()[i].offset;
-        m_colors[i] = *gradient.stops()[i].color.tryGetAsSRGBABytes();
-    }
-}
-
-SetInlineFillGradient::SetInlineFillGradient(float offsets[maxColorStopCount], SRGBA<uint8_t> colors[maxColorStopCount], const Gradient::Data& data, const AffineTransform& gradientSpaceTransform, GradientSpreadMethod spreadMethod, uint8_t colorStopCount)
-    : m_data(data)
-    , m_gradientSpaceTransform(gradientSpaceTransform)
-    , m_spreadMethod(spreadMethod)
-    , m_colorStopCount(colorStopCount)
-{
-    RELEASE_ASSERT(m_colorStopCount <= maxColorStopCount);
-    for (uint8_t i = 0; i < m_colorStopCount; ++i) {
-        m_offsets[i] = offsets[i];
-        m_colors[i] = colors[i];
-    }
-}
-
-SetInlineFillGradient::SetInlineFillGradient(const SetInlineFillGradient& other)
-{
-    if (WTF::holds_alternative<Gradient::RadialData>(other.m_data) || WTF::holds_alternative<Gradient::LinearData>(other.m_data) || WTF::holds_alternative<Gradient::ConicData>(other.m_data)) {
-        m_data = other.m_data;
-        m_gradientSpaceTransform = other.m_gradientSpaceTransform;
-        m_spreadMethod = other.m_spreadMethod;
-        m_colorStopCount = other.m_colorStopCount;
-        if (m_colorStopCount > maxColorStopCount)
-            m_colorStopCount = 0;
-        for (uint8_t i = 0; i < m_colorStopCount; ++i) {
-            m_offsets[i] = other.m_offsets[i];
-            m_colors[i] = other.m_colors[i];
-        }
-    } else
-        m_isValid = false;
-}
-
-Ref<Gradient> SetInlineFillGradient::gradient() const
-{
-    auto gradient = Gradient::create(Gradient::Data(m_data));
-    for (uint8_t i = 0; i < m_colorStopCount; ++i)
-        gradient->addColorStop({ m_offsets[i], Color(m_colors[i]) });
-    gradient->setSpreadMethod(m_spreadMethod);
-    return gradient;
-}
-
-void SetInlineFillGradient::apply(GraphicsContext& context) const
-{
-    if (m_colorStopCount <= maxColorStopCount)
-        context.setFillGradient(gradient(), m_gradientSpaceTransform);
-}
-
-bool SetInlineFillGradient::isInline(const Gradient& gradient)
-{
-    if (gradient.stops().size() > SetInlineFillGradient::maxColorStopCount)
-        return false;
-
-    for (auto& colorStop : gradient.stops()) {
-        if (!colorStop.color.tryGetAsSRGBABytes())
-            return false;
-    }
-
-    return true;
-}
-
-static TextStream& operator<<(TextStream& ts, const SetInlineFillGradient&)
-{
-    // FIXME: Dump gradient data.
-    return ts;
-}
-
 void SetInlineFillColor::apply(GraphicsContext& context) const
 {
     context.setFillColor(color());
@@ -1133,7 +1056,6 @@ static TextStream& operator<<(TextStream& ts, ItemType type)
     case ItemType::Scale: ts << "scale"; break;
     case ItemType::SetCTM: ts << "set-ctm"; break;
     case ItemType::ConcatenateCTM: ts << "concatentate-ctm"; break;
-    case ItemType::SetInlineFillGradient: ts << "set-inline-fill-gradient"; break;
     case ItemType::SetInlineFillColor: ts << "set-inline-fill-color"; break;
     case ItemType::SetInlineStrokeColor: ts << "set-inline-stroke-color"; break;
     case ItemType::SetStrokeThickness: ts << "set-stroke-thickness"; break;
@@ -1224,9 +1146,6 @@ TextStream& operator<<(TextStream& ts, ItemHandle item)
         break;
     case ItemType::ConcatenateCTM:
         ts << item.get<ConcatenateCTM>();
-        break;
-    case ItemType::SetInlineFillGradient:
-        ts << item.get<SetInlineFillGradient>();
         break;
     case ItemType::SetInlineFillColor:
         ts << item.get<SetInlineFillColor>();
