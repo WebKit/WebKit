@@ -50,7 +50,7 @@ RuleSetBuilder::~RuleSetBuilder()
     if (!m_ruleSet)
         return;
 
-    updateCascadeLayerOrder();
+    updateCascadeLayerPriorities();
     updateDynamicMediaQueries();
     addMutatingRulesToResolver();
 
@@ -222,7 +222,7 @@ void RuleSetBuilder::popCascadeLayer(const CascadeLayerName& name)
     }
 }
 
-void RuleSetBuilder::updateCascadeLayerOrder()
+void RuleSetBuilder::updateCascadeLayerPriorities()
 {
     if (m_cascadeLayerIdentifierMap.isEmpty())
         return;
@@ -244,16 +244,17 @@ void RuleSetBuilder::updateCascadeLayerOrder()
         return a < b;
     };
 
-    Vector<RuleSet::CascadeLayerIdentifier> orderVector;
     auto layerCount = m_ruleSet->m_cascadeLayers.size();
-    orderVector.reserveInitialCapacity(layerCount);
+
+    Vector<RuleSet::CascadeLayerIdentifier> layersInPriorityOrder;
+    layersInPriorityOrder.reserveInitialCapacity(layerCount);
     for (RuleSet::CascadeLayerIdentifier identifier = 1; identifier <= layerCount; ++identifier)
-        orderVector.uncheckedAppend(identifier);
+        layersInPriorityOrder.uncheckedAppend(identifier);
 
-    std::sort(orderVector.begin(), orderVector.end(), compare);
+    std::sort(layersInPriorityOrder.begin(), layersInPriorityOrder.end(), compare);
 
-    for (unsigned i = 0; i < orderVector.size(); ++i)
-        m_ruleSet->cascadeLayerForIdentifier(orderVector[i]).order = i + 1;
+    for (unsigned priority = 0; priority < layerCount; ++priority)
+        m_ruleSet->cascadeLayerForIdentifier(layersInPriorityOrder[priority]).priority = priority;
 }
 
 void RuleSetBuilder::addMutatingRulesToResolver()
@@ -262,9 +263,9 @@ void RuleSetBuilder::addMutatingRulesToResolver()
         return;
 
     auto compareLayers = [&](const auto& a, const auto& b) {
-        auto aOrder = m_ruleSet->cascadeLayerOrderForIdentifier(a.layerIdentifier);
-        auto bOrder = m_ruleSet->cascadeLayerOrderForIdentifier(b.layerIdentifier);
-        return aOrder < bOrder;
+        auto aPriority = m_ruleSet->cascadeLayerPriorityForIdentifier(a.layerIdentifier);
+        auto bPriority = m_ruleSet->cascadeLayerPriorityForIdentifier(b.layerIdentifier);
+        return aPriority < bPriority;
     };
 
     // The order may change so we need to reprocess resolver mutating rules from earlier stylesheets.

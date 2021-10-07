@@ -1,6 +1,6 @@
 Test
 
-PASS @font-face layered overrides unlayered
+PASS @font-face unlayered overrides layered
 PASS @font-face override between layers
 PASS @font-face override update with appended sheet 1
 PASS @font-face override update with appended sheet 2

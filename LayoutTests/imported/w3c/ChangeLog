@@ -1,3 +1,20 @@
+2021-10-07  Antti Koivisto  <antti@apple.com>
+
+        Cascade layer styles should be lower priority than unlayered styles
+        https://bugs.webkit.org/show_bug.cgi?id=231342
+
+        Reviewed by Simon Fraser.
+
+        Update from the WPT repo.
+
+        * web-platform-tests/css/css-cascade/layer-basic.html:
+        * web-platform-tests/css/css-cascade/layer-font-face-override-expected.txt:
+        * web-platform-tests/css/css-cascade/layer-font-face-override.html:
+        * web-platform-tests/css/css-cascade/layer-import.html:
+        * web-platform-tests/css/css-cascade/layer-keyframes-override-expected.txt:
+        * web-platform-tests/css/css-cascade/layer-keyframes-override.html:
+        * web-platform-tests/css/css-cascade/layer-stylesheet-sharing.html:
+
 2021-10-07  Rob Buis  <rbuis@igalia.com>
 
         Resync the-img-element WPT tests from upstream

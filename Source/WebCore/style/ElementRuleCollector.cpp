@@ -113,8 +113,8 @@ const Vector<RefPtr<const StyleRule>>& ElementRuleCollector::matchedRuleList() c
 
 inline void ElementRuleCollector::addMatchedRule(const RuleData& ruleData, unsigned specificity, const MatchRequest& matchRequest)
 {
-    auto cascadeLayerOrder = matchRequest.ruleSet ? matchRequest.ruleSet->cascadeLayerOrderFor(ruleData) : 0;
-    m_matchedRules.append({ &ruleData, specificity, matchRequest.styleScopeOrdinal, cascadeLayerOrder });
+    auto cascadeLayerPriority = matchRequest.ruleSet ? matchRequest.ruleSet->cascadeLayerPriorityFor(ruleData) : RuleSet::cascadeLayerPriorityForUnlayered;
+    m_matchedRules.append({ &ruleData, specificity, matchRequest.styleScopeOrdinal, cascadeLayerPriority });
 }
 
 void ElementRuleCollector::clearMatchedRules()
@@ -546,8 +546,8 @@ static inline bool compareRules(MatchedRule r1, MatchedRule r2)
     if (r1.styleScopeOrdinal != r2.styleScopeOrdinal)
         return r1.styleScopeOrdinal > r2.styleScopeOrdinal;
 
-    if (r1.cascadeLayerOrder != r2.cascadeLayerOrder)
-        return r1.cascadeLayerOrder < r2.cascadeLayerOrder;
+    if (r1.cascadeLayerPriority != r2.cascadeLayerPriority)
+        return r1.cascadeLayerPriority < r2.cascadeLayerPriority;
 
     if (r1.specificity != r2.specificity)
         return r1.specificity < r2.specificity;

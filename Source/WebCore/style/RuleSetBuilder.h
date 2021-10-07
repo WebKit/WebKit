@@ -44,7 +44,7 @@ private:
     void registerLayers(const Vector<CascadeLayerName>&);
     void pushCascadeLayer(const CascadeLayerName&);
     void popCascadeLayer(const CascadeLayerName&);
-    void updateCascadeLayerOrder();
+    void updateCascadeLayerPriorities();
     void addMutatingRulesToResolver();
     void updateDynamicMediaQueries();
 

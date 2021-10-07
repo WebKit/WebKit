@@ -1,5 +1,5 @@
 
-PASS @keyframes layered overrides unlayered
+PASS @keyframes unlayered overrides layered
 PASS @keyframes override between layers
 PASS @keyframes override update with appended sheet 1
 PASS @keyframes override update with appended sheet 2

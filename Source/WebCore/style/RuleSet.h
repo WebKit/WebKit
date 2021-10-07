@@ -103,7 +103,8 @@ public:
     bool hasShadowPseudoElementRules() const { return !m_shadowPseudoElementRules.isEmpty(); }
     bool hasHostPseudoClassRulesMatchingInShadowTree() const { return m_hasHostPseudoClassRulesMatchingInShadowTree; }
 
-    unsigned cascadeLayerOrderFor(const RuleData&) const;
+    static constexpr auto cascadeLayerPriorityForUnlayered = std::numeric_limits<unsigned>::max();
+    unsigned cascadeLayerPriorityFor(const RuleData&) const;
 
 private:
     friend class RuleSetBuilder;
@@ -131,11 +132,11 @@ private:
     struct CascadeLayer {
         CascadeLayerName resolvedName;
         CascadeLayerIdentifier parentIdentifier;
-        unsigned order { 0 };
+        unsigned priority { 0 };
     };
     CascadeLayer& cascadeLayerForIdentifier(CascadeLayerIdentifier identifier) { return m_cascadeLayers[identifier - 1]; }
     const CascadeLayer& cascadeLayerForIdentifier(CascadeLayerIdentifier identifier) const { return m_cascadeLayers[identifier - 1]; }
-    unsigned cascadeLayerOrderForIdentifier(CascadeLayerIdentifier) const;
+    unsigned cascadeLayerPriorityForIdentifier(CascadeLayerIdentifier) const;
 
     struct DynamicMediaQueryRules {
         Vector<Ref<const MediaQuerySet>> mediaQuerySets;
@@ -192,19 +193,19 @@ inline const RuleSet::RuleDataVector* RuleSet::tagRules(const AtomString& key, b
     return tagRules->get(key);
 }
 
-inline unsigned RuleSet::cascadeLayerOrderForIdentifier(CascadeLayerIdentifier identifier) const
+inline unsigned RuleSet::cascadeLayerPriorityForIdentifier(CascadeLayerIdentifier identifier) const
 {
     if (!identifier)
-        return 0;
-    return cascadeLayerForIdentifier(identifier).order;
+        return cascadeLayerPriorityForUnlayered;
+    return cascadeLayerForIdentifier(identifier).priority;
 }
 
-inline unsigned RuleSet::cascadeLayerOrderFor(const RuleData& ruleData) const
+inline unsigned RuleSet::cascadeLayerPriorityFor(const RuleData& ruleData) const
 {
     if (m_cascadeLayerIdentifierForRulePosition.size() <= ruleData.position())
-        return 0;
+        return cascadeLayerPriorityForUnlayered;
     auto identifier = m_cascadeLayerIdentifierForRulePosition[ruleData.position()];
-    return cascadeLayerOrderForIdentifier(identifier);
+    return cascadeLayerPriorityForIdentifier(identifier);
 }
 
 } // namespace Style
