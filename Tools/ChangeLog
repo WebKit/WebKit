@@ -1,5 +1,29 @@
 2021-10-07  Jonathan Bedard  <jbedard@apple.com>
 
+        [webkitscmpy] Share cache between processes
+        https://bugs.webkit.org/show_bug.cgi?id=231176
+        <rdar://problem/83841221>
+
+        Reviewed by Dewei Zhu.
+
+        Generating the identifier cache is more expensive than reading a file with
+        that cache in it. This is particularly relevant for webservers, which are
+        likely running multiple processes.
+
+        Reviewed by Dewei Zhu.
+
+        * Scripts/libraries/webkitscmpy/setup.py: Bump version.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/__init__.py: Ditto.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/local/git.py:
+        (Git.Cache.__init__): Move cache loading into "load" function.
+        (Git.Cache.load): Open cache file.
+        (Git.Cache.to_hash): If we fail to find a match, attempt to load the file
+        before populating the file.
+        (Git.Cache.to_revision): Ditto.
+        (Git.Cache.to_identifier): Ditto.
+
+2021-10-07  Jonathan Bedard  <jbedard@apple.com>
+
         [contributors.json] Relocation (Part 7)
         https://bugs.webkit.org/show_bug.cgi?id=229690
         <rdar://problem/82552403>

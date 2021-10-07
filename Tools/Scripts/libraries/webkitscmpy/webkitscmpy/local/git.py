@@ -49,6 +49,9 @@ class Git(Scm):
             self._last_populated = {}
             self._guranteed_for = guranteed_for
 
+            self.load()
+
+        def load(self):
             if not os.path.exists(self.path):
                 return
 
@@ -204,12 +207,16 @@ class Git(Scm):
             _, b_count, branch = parts
             if b_count < 0:
                 return None
-            if branch not in self._ordered_commits or len(self._ordered_commits[branch]) <= b_count:
-                if populate:
-                    self.populate(branch=branch)
-                    return self.to_hash(identifier=identifier, populate=False)
-                return None
-            return self._ordered_commits[branch][b_count]
+            if branch in self._ordered_commits and len(self._ordered_commits[branch]) > b_count:
+                return self._ordered_commits[branch][b_count]
+
+            self.load()
+            if branch in self._ordered_commits and len(self._ordered_commits[branch]) > b_count:
+                return self._ordered_commits[branch][b_count]
+            if populate:
+                self.populate(branch=branch)
+                return self.to_hash(identifier=identifier, populate=False)
+            return None
 
         def to_revision(self, hash=None, identifier=None, populate=True, branch=None):
             if hash:
@@ -221,16 +228,24 @@ class Git(Scm):
             _, b_count, branch = parts
             if b_count < 0:
                 return None
-            if branch not in self._ordered_revisions or len(self._ordered_revisions[branch]) <= b_count:
-                if populate:
-                    self.populate(branch=branch)
-                    return self.to_revision(identifier=identifier, populate=False)
-                return None
-            return self._ordered_revisions[branch][b_count]
+            if branch in self._ordered_revisions and len(self._ordered_revisions[branch]) > b_count:
+                return self._ordered_revisions[branch][b_count]
+
+            self.load()
+            if branch in self._ordered_revisions and len(self._ordered_revisions[branch]) > b_count:
+                return self._ordered_revisions[branch][b_count]
+            if populate:
+                self.populate(branch=branch)
+                return self.to_revision(identifier=identifier, populate=False)
+            return None
 
         def to_identifier(self, hash=None, revision=None, populate=True, branch=None):
             revision = Commit._parse_revision(revision, do_assert=False)
             if revision:
+                if revision in self._revisions_to_identifiers:
+                    return self._revisions_to_identifiers[revision]
+
+                self.load()
                 if revision in self._revisions_to_identifiers:
                     return self._revisions_to_identifiers[revision]
                 if populate:
@@ -244,7 +259,11 @@ class Git(Scm):
                     candidate = self._hash_to_identifiers.get(hash)
                 except KeyError:  # Means the hash wasn't specific enough
                     return None
+                if candidate:
+                    return candidate
 
+                self.load()
+                candidate = self._hash_to_identifiers.get(hash)
                 if candidate:
                     return candidate
                 if populate:
