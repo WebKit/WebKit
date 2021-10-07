@@ -2444,7 +2444,7 @@ void RenderLayer::scrollRectToVisible(const LayoutRect& absoluteRect, bool insid
     {
         auto scrollPositionOptions = ScrollPositionChangeOptions::createProgrammatic();
         if (!renderer().frame().eventHandler().autoscrollInProgress() && element && useSmoothScrolling(options.behavior, element))
-            scrollPositionOptions.animated = AnimatedScroll::Yes;
+            scrollPositionOptions.animated = ScrollIsAnimated::Yes;
         return scrollPositionOptions;
     };
 

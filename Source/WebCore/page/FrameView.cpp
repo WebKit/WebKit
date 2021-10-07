@@ -2321,7 +2321,7 @@ void FrameView::setScrollPosition(const ScrollPosition& scrollPosition, const Sc
     ScrollOffset snappedOffset = ceiledIntPoint(scrollAnimator().scrollOffsetAdjustedForSnapping(scrollOffsetFromPosition(scrollPosition), options.snapPointSelectionMethod));
     auto snappedPosition = scrollPositionFromOffset(snappedOffset);
 
-    if (options.animated == AnimatedScroll::Yes)
+    if (options.animated == ScrollIsAnimated::Yes)
         scrollToPositionWithAnimation(snappedPosition, currentScrollType(), options.clamping);
     else
         ScrollView::setScrollPosition(snappedPosition, options);

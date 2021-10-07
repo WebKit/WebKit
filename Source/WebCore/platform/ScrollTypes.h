@@ -74,7 +74,7 @@ enum class ScrollBehaviorStatus : uint8_t {
     InNonNativeAnimation,
 };
 
-enum class AnimatedScroll : uint8_t {
+enum class ScrollIsAnimated : uint8_t {
     No,
     Yes
 };
@@ -279,7 +279,7 @@ struct ScrollExtents {
 struct ScrollPositionChangeOptions {
     ScrollType type;
     ScrollClamping clamping = ScrollClamping::Clamped;
-    AnimatedScroll animated = AnimatedScroll::No;
+    ScrollIsAnimated animated = ScrollIsAnimated::No;
     ScrollSnapPointSelectionMethod snapPointSelectionMethod = ScrollSnapPointSelectionMethod::Closest;
 
     static ScrollPositionChangeOptions createProgrammatic()
@@ -287,7 +287,7 @@ struct ScrollPositionChangeOptions {
         return { ScrollType::Programmatic };
     }
 
-    static ScrollPositionChangeOptions createProgrammaticWithOptions(ScrollClamping clamping, AnimatedScroll animated, ScrollSnapPointSelectionMethod snapPointSelectionMethod)
+    static ScrollPositionChangeOptions createProgrammaticWithOptions(ScrollClamping clamping, ScrollIsAnimated animated, ScrollSnapPointSelectionMethod snapPointSelectionMethod)
     {
         return { ScrollType::Programmatic, clamping, animated, snapPointSelectionMethod };
     }
