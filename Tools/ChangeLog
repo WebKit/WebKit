@@ -1,3 +1,25 @@
+2021-10-07  David Kilzer  <ddkilzer@apple.com>
+
+        Add back RetainPtrARC and TypeCastsCocoaARC tests to TestWTF
+        <https://webkit.org/b/231251>
+        <rdar://problem/83902809>
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        - Add RetainPtrARC.mm and TypeCastsCocoaARC.mm to the project.
+
+        * TestWebKitAPI/Tests/WTF/cocoa/TypeCastsCocoa.mm:
+        (TestWebKitAPI::TEST):
+        - Modify tests to clean up autoreleased objects in Debug builds
+          that are optimized out of Release builds.
+        * TestWebKitAPI/Tests/WTF/cocoa/TypeCastsCocoaARC.mm: Add.
+        * TestWebKitAPI/Tests/WTF/ns/RetainPtr.mm:
+        (TestWebKitAPI::TEST):
+        - Modify tests to clean up autoreleased objects in Debug builds
+          that are optimized out of Release builds.
+        * TestWebKitAPI/Tests/WTF/ns/RetainPtrARC.mm: Add.
+
 2021-10-07  Chris Dumez  <cdumez@apple.com>
 
         ASSERTION FAILED: This HTTPServer does not know how to respond to a request for /popup-after-redirection.html
