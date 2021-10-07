@@ -1,3 +1,14 @@
+2021-10-06  Timothy Hatcher  <timothy@apple.com>
+
+        _WKRemoteObjectRegistry's ReplyBlockCallChecker should always dealloc on the main thread
+        https://bugs.webkit.org/show_bug.cgi?id=231346
+        rdar://problem/83965481
+
+        Reviewed by Chris Dumez.
+
+        * Shared/API/Cocoa/_WKRemoteObjectRegistry.mm:
+        (-[_WKRemoteObjectRegistry _invokeMethod:]): Added WTF::DestructionThread::MainRunLoop to ReplyBlockCallChecker.
+
 2021-10-06  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Delete WebCore::DisplayList::SetInlineFillGradient
