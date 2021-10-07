@@ -1,3 +1,12 @@
+2021-10-07  Ayumi Kojima  <ayumi_kojima@apple.com>
+
+        [ iOS 15 ] Rebaselining platform/ios/ios/fast/text/opticalFontWithWeight.html.
+        https://bugs.webkit.org/show_bug.cgi?id=231380
+
+        Unreviewed test gardening.
+
+        * platform/ios/ios/fast/text/opticalFontWithWeight-expected.txt: 
+
 2021-10-07  Eric Hutchison  <ehutchison@apple.com>
 
         [ BigSur wk2 Release ] http/tests/resourceLoadStatistics/sandboxed-nesting-iframe-with-non-sandboxed-iframe-redirect-ip-to-localhost-to-ip.html is a flaky failure.
