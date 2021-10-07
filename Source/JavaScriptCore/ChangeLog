@@ -1,3 +1,67 @@
+2021-10-06  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r281647. rdar://problem/83782432
+
+    [AppleWin] JSC build failure
+    https://bugs.webkit.org/show_bug.cgi?id=229578
+    
+    Reviewed by Don Olmstead.
+    
+    Add new build dependency between LLIntOffsetsExtractor and JSCBuiltins targets.
+    
+    * CMakeLists.txt:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@281647 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-08-26  Per Arne Vollan  <pvollan@apple.com>
+
+            [AppleWin] JSC build failure
+            https://bugs.webkit.org/show_bug.cgi?id=229578
+
+            Reviewed by Don Olmstead.
+
+            Add new build dependency between LLIntOffsetsExtractor and JSCBuiltins targets.
+
+            * CMakeLists.txt:
+
+2021-10-06  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r283632. rdar://problem/83943156
+
+    Speculative fix for a null pointer dereference in ByteCodeParser::handlePutByVal.
+    https://bugs.webkit.org/show_bug.cgi?id=231252
+    rdar://83310320
+    
+    Reviewed by Yusuke Suzuki.
+    
+    We're seeing a null pointer dereference in ByteCodeParser::handlePutByVal().
+    Adding a null check here as a speculative fix to mitigate crashes while we
+    investigate further.
+    
+    * dfg/DFGByteCodeParser.cpp:
+    (JSC::DFG::ByteCodeParser::parseBlock):
+    (JSC::DFG::ByteCodeParser::handlePutByVal):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@283632 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-10-06  Mark Lam  <mark.lam@apple.com>
+
+            Speculative fix for a null pointer dereference in ByteCodeParser::handlePutByVal.
+            https://bugs.webkit.org/show_bug.cgi?id=231252
+            rdar://83310320
+
+            Reviewed by Yusuke Suzuki.
+
+            We're seeing a null pointer dereference in ByteCodeParser::handlePutByVal().
+            Adding a null check here as a speculative fix to mitigate crashes while we
+            investigate further.
+
+            * dfg/DFGByteCodeParser.cpp:
+            (JSC::DFG::ByteCodeParser::parseBlock):
+            (JSC::DFG::ByteCodeParser::handlePutByVal):
+
 2021-10-05  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r283556. rdar://problem/83900153
