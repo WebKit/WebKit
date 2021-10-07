@@ -56,6 +56,10 @@ OBJC_CLASS WebAVSampleBufferErrorListener;
 typedef struct opaqueCMSampleBuffer *CMSampleBufferRef;
 typedef const struct opaqueCMFormatDescription *CMFormatDescriptionRef;
 
+namespace WTF {
+class WorkQueue;
+}
+
 namespace WebCore {
 
 class CDMInstance;
@@ -206,7 +210,7 @@ private:
     RetainPtr<NSError> m_hdcpError;
     Box<BinarySemaphore> m_hasSessionSemaphore;
     Box<Semaphore> m_abortSemaphore;
-    OSObjectPtr<dispatch_group_t> m_isAppendingGroup;
+    const Ref<WTF::WorkQueue> m_appendQueue;
     RefPtr<WebCoreDecompressionSession> m_decompressionSession;
 
     MediaSourcePrivateAVFObjC* m_mediaSource;
