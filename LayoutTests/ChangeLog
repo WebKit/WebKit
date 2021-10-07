@@ -1,3 +1,12 @@
+2021-10-07  Truitt Savell  <tsavell@apple.com>
+
+        Remove expectation for accessibility/misspelling-range.html from ios-simulator
+        https://bugs.webkit.org/show_bug.cgi?id=231261
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator/TestExpectations:
+
 2021-10-07  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
 
         [GTK][WPE] Disable privateClickMeasurement when creating the network process

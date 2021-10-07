@@ -4,7 +4,6 @@
 #
 
 accessibility/insert-newline.html [ Pass ]
-accessibility/misspelling-range.html [ Pass ]
 accessibility/url-test.html [ Pass ]
 accessibility/keyevents-posted-for-dismiss-action.html [ Pass ]
 accessibility/embedded-image-description.html [ Pass ]
