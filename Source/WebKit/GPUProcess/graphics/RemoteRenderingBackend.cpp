@@ -32,6 +32,7 @@
 #include "GPUConnectionToWebProcess.h"
 #include "Logging.h"
 #include "PlatformRemoteImageBuffer.h"
+#include "QualifiedRenderingResourceIdentifier.h"
 #include "RemoteMediaPlayerManagerProxy.h"
 #include "RemoteMediaPlayerProxy.h"
 #include "RemoteRenderingBackendCreationParameters.h"
@@ -154,13 +155,20 @@ void RemoteRenderingBackend::didFlush(GraphicsContextFlushIdentifier flushIdenti
 
 void RemoteRenderingBackend::createImageBuffer(const FloatSize& logicalSize, RenderingMode renderingMode, float resolutionScale, const DestinationColorSpace& colorSpace, PixelFormat pixelFormat, RenderingResourceIdentifier imageBufferResourceIdentifier)
 {
+    // Immediately turn the RenderingResourceIdentifier (which is error-prone) to a QualifiedRenderingResourceIdentifier,
+    // and use a helper function to make sure that don't accidentally use the RenderingResourceIdentifier (because the helper function can't see it).
+    createImageBufferWithQualifiedIdentifier(logicalSize, renderingMode, resolutionScale, colorSpace, pixelFormat, { imageBufferResourceIdentifier, m_gpuConnectionToWebProcess->webProcessIdentifier() });
+}
+
+void RemoteRenderingBackend::createImageBufferWithQualifiedIdentifier(const FloatSize& logicalSize, RenderingMode renderingMode, float resolutionScale, const DestinationColorSpace& colorSpace, PixelFormat pixelFormat, QualifiedRenderingResourceIdentifier imageBufferResourceIdentifier)
+{
     ASSERT(!RunLoop::isMain());
     ASSERT(renderingMode == RenderingMode::Accelerated || renderingMode == RenderingMode::Unaccelerated);
 
     RefPtr<ImageBuffer> imageBuffer;
 
     if (renderingMode == RenderingMode::Accelerated) {
-        if (auto acceleratedImageBuffer = AcceleratedRemoteImageBuffer::create(logicalSize, resolutionScale, colorSpace, pixelFormat, *this, imageBufferResourceIdentifier)) {
+        if (auto acceleratedImageBuffer = AcceleratedRemoteImageBuffer::create(logicalSize, resolutionScale, colorSpace, pixelFormat, *this, imageBufferResourceIdentifier.object())) {
 #if HAVE(IOSURFACE_SET_OWNERSHIP_IDENTITY)
             // Mark the IOSurface as being owned by the WebProcess even though it was constructed by the GPUProcess so that Jetsam knows which process to kill.
             acceleratedImageBuffer->setProcessOwnership(m_gpuConnectionToWebProcess->webProcessIdentityToken());
@@ -170,7 +178,7 @@ void RemoteRenderingBackend::createImageBuffer(const FloatSize& logicalSize, Ren
     }
 
     if (!imageBuffer)
-        imageBuffer = UnacceleratedRemoteImageBuffer::create(logicalSize, resolutionScale, colorSpace, pixelFormat, *this, imageBufferResourceIdentifier);
+        imageBuffer = UnacceleratedRemoteImageBuffer::create(logicalSize, resolutionScale, colorSpace, pixelFormat, *this, imageBufferResourceIdentifier.object());
 
     if (!imageBuffer) {
         ASSERT_NOT_REACHED();
@@ -180,7 +188,7 @@ void RemoteRenderingBackend::createImageBuffer(const FloatSize& logicalSize, Ren
     m_remoteResourceCache.cacheImageBuffer(*imageBuffer);
     updateRenderingResourceRequest();
 
-    if (m_pendingWakeupInfo && m_pendingWakeupInfo->shouldPerformWakeup(imageBufferResourceIdentifier))
+    if (m_pendingWakeupInfo && m_pendingWakeupInfo->shouldPerformWakeup(imageBufferResourceIdentifier.object()))
         wakeUpAndApplyDisplayList(std::exchange(m_pendingWakeupInfo, std::nullopt)->arguments);
 }
 
@@ -434,31 +442,52 @@ void RemoteRenderingBackend::populateGetPixelBufferSharedMemory(std::optional<We
 
 void RemoteRenderingBackend::getDataURLForImageBuffer(const String& mimeType, std::optional<double> quality, WebCore::PreserveResolution preserveResolution, WebCore::RenderingResourceIdentifier renderingResourceIdentifier, CompletionHandler<void(String&&)>&& completionHandler)
 {
+    // Immediately turn the RenderingResourceIdentifier (which is error-prone) to a QualifiedRenderingResourceIdentifier,
+    // and use a helper function to make sure that don't accidentally use the RenderingResourceIdentifier (because the helper function can't see it).
+    getDataURLForImageBufferWithQualifiedIdentifier(mimeType, quality, preserveResolution, { renderingResourceIdentifier, m_gpuConnectionToWebProcess->webProcessIdentifier() }, WTFMove(completionHandler));
+}
+
+void RemoteRenderingBackend::getDataURLForImageBufferWithQualifiedIdentifier(const String& mimeType, std::optional<double> quality, WebCore::PreserveResolution preserveResolution, QualifiedRenderingResourceIdentifier renderingResourceIdentifier, CompletionHandler<void(String&&)>&& completionHandler)
+{
     ASSERT(!RunLoop::isMain());
 
     String urlString;
-    if (auto imageBuffer = m_remoteResourceCache.cachedImageBuffer(renderingResourceIdentifier))
+    if (auto imageBuffer = m_remoteResourceCache.cachedImageBuffer(renderingResourceIdentifier.object()))
         urlString = imageBuffer->toDataURL(mimeType, quality, preserveResolution);
     completionHandler(WTFMove(urlString));
 }
 
 void RemoteRenderingBackend::getDataForImageBuffer(const String& mimeType, std::optional<double> quality, WebCore::RenderingResourceIdentifier renderingResourceIdentifier, CompletionHandler<void(Vector<uint8_t>&&)>&& completionHandler)
 {
+    // Immediately turn the RenderingResourceIdentifier (which is error-prone) to a QualifiedRenderingResourceIdentifier,
+    // and use a helper function to make sure that don't accidentally use the RenderingResourceIdentifier (because the helper function can't see it).
+    getDataForImageBufferWithQualifiedIdentifier(mimeType, quality, { renderingResourceIdentifier, m_gpuConnectionToWebProcess->webProcessIdentifier() }, WTFMove(completionHandler));
+}
+
+void RemoteRenderingBackend::getDataForImageBufferWithQualifiedIdentifier(const String& mimeType, std::optional<double> quality, QualifiedRenderingResourceIdentifier renderingResourceIdentifier, CompletionHandler<void(Vector<uint8_t>&&)>&& completionHandler)
+{
     ASSERT(!RunLoop::isMain());
 
     Vector<uint8_t> data;
-    if (auto imageBuffer = m_remoteResourceCache.cachedImageBuffer(renderingResourceIdentifier))
+    if (auto imageBuffer = m_remoteResourceCache.cachedImageBuffer(renderingResourceIdentifier.object()))
         data = imageBuffer->toData(mimeType, quality);
     completionHandler(WTFMove(data));
 }
 
 void RemoteRenderingBackend::getShareableBitmapForImageBuffer(WebCore::RenderingResourceIdentifier identifier, WebCore::PreserveResolution preserveResolution, CompletionHandler<void(ShareableBitmap::Handle&&)>&& completionHandler)
 {
+    // Immediately turn the RenderingResourceIdentifier (which is error-prone) to a QualifiedRenderingResourceIdentifier,
+    // and use a helper function to make sure that don't accidentally use the RenderingResourceIdentifier (because the helper function can't see it).
+    getShareableBitmapForImageBufferWithQualifiedIdentifier({ identifier, m_gpuConnectionToWebProcess->webProcessIdentifier() }, preserveResolution, WTFMove(completionHandler));
+}
+
+void RemoteRenderingBackend::getShareableBitmapForImageBufferWithQualifiedIdentifier(QualifiedRenderingResourceIdentifier identifier, WebCore::PreserveResolution preserveResolution, CompletionHandler<void(ShareableBitmap::Handle&&)>&& completionHandler)
+{
     ASSERT(!RunLoop::isMain());
 
     ShareableBitmap::Handle handle;
     [&]() {
-        auto imageBuffer = m_remoteResourceCache.cachedImageBuffer(identifier);
+        auto imageBuffer = m_remoteResourceCache.cachedImageBuffer(identifier.object());
         if (!imageBuffer)
             return;
         auto image = imageBuffer->copyNativeImage(WebCore::BackingStoreCopy::DontCopyBackingStore);
@@ -480,29 +509,43 @@ void RemoteRenderingBackend::getShareableBitmapForImageBuffer(WebCore::Rendering
 
 void RemoteRenderingBackend::cacheNativeImage(const ShareableBitmap::Handle& handle, RenderingResourceIdentifier nativeImageResourceIdentifier)
 {
+    // Immediately turn the RenderingResourceIdentifier (which is error-prone) to a QualifiedRenderingResourceIdentifier,
+    // and use a helper function to make sure that don't accidentally use the RenderingResourceIdentifier (because the helper function can't see it).
+    cacheNativeImageWithQualifiedIdentifier(handle, { nativeImageResourceIdentifier, m_gpuConnectionToWebProcess->webProcessIdentifier() });
+}
+
+void RemoteRenderingBackend::cacheNativeImageWithQualifiedIdentifier(const ShareableBitmap::Handle& handle, QualifiedRenderingResourceIdentifier nativeImageResourceIdentifier)
+{
     ASSERT(!RunLoop::isMain());
 
     auto bitmap = ShareableBitmap::create(handle);
     if (!bitmap)
         return;
 
-    auto image = NativeImage::create(bitmap->createPlatformImage(), nativeImageResourceIdentifier);
+    auto image = NativeImage::create(bitmap->createPlatformImage(), nativeImageResourceIdentifier.object());
     if (!image)
         return;
 
     m_remoteResourceCache.cacheNativeImage(*image);
 
-    if (m_pendingWakeupInfo && m_pendingWakeupInfo->shouldPerformWakeup(nativeImageResourceIdentifier))
+    if (m_pendingWakeupInfo && m_pendingWakeupInfo->shouldPerformWakeup(nativeImageResourceIdentifier.object()))
         wakeUpAndApplyDisplayList(std::exchange(m_pendingWakeupInfo, std::nullopt)->arguments);
 }
 
-void RemoteRenderingBackend::cacheFont(Ref<Font>&& font)
+void RemoteRenderingBackend::cacheFont(Ref<WebCore::Font>&& font)
+{
+    // Immediately turn the RenderingResourceIdentifier (which is error-prone) to a QualifiedRenderingResourceIdentifier,
+    // and use a helper function to make sure that don't accidentally use the RenderingResourceIdentifier (because the helper function can't see it).
+    auto renderingResourceIdentifier = font->renderingResourceIdentifier();
+    cacheFontWithQualifiedIdentifier(WTFMove(font), { renderingResourceIdentifier, m_gpuConnectionToWebProcess->webProcessIdentifier() });
+}
+
+void RemoteRenderingBackend::cacheFontWithQualifiedIdentifier(Ref<Font>&& font, QualifiedRenderingResourceIdentifier fontResourceIdentifier)
 {
     ASSERT(!RunLoop::isMain());
 
-    auto fontResourceIdentifier = font->renderingResourceIdentifier();
     m_remoteResourceCache.cacheFont(WTFMove(font));
-    if (m_pendingWakeupInfo && m_pendingWakeupInfo->shouldPerformWakeup(fontResourceIdentifier))
+    if (m_pendingWakeupInfo && m_pendingWakeupInfo->shouldPerformWakeup(fontResourceIdentifier.object()))
         wakeUpAndApplyDisplayList(std::exchange(m_pendingWakeupInfo, std::nullopt)->arguments);
 }
 
@@ -514,8 +557,15 @@ void RemoteRenderingBackend::deleteAllFonts()
 
 void RemoteRenderingBackend::releaseRemoteResource(RenderingResourceIdentifier renderingResourceIdentifier, uint64_t useCount)
 {
+    // Immediately turn the RenderingResourceIdentifier (which is error-prone) to a QualifiedRenderingResourceIdentifier,
+    // and use a helper function to make sure that don't accidentally use the RenderingResourceIdentifier (because the helper function can't see it).
+    releaseRemoteResourceWithQualifiedIdentifier({ renderingResourceIdentifier, m_gpuConnectionToWebProcess->webProcessIdentifier() }, useCount);
+}
+
+void RemoteRenderingBackend::releaseRemoteResourceWithQualifiedIdentifier(QualifiedRenderingResourceIdentifier renderingResourceIdentifier, uint64_t useCount)
+{
     ASSERT(!RunLoop::isMain());
-    auto success = m_remoteResourceCache.releaseRemoteResource(renderingResourceIdentifier, useCount);
+    auto success = m_remoteResourceCache.releaseRemoteResource(renderingResourceIdentifier.object(), useCount);
     MESSAGE_CHECK(success, "Resource is being released before being cached.");
     updateRenderingResourceRequest();
 }
@@ -533,6 +583,13 @@ void RemoteRenderingBackend::finalizeRenderingUpdate(RenderingUpdateID rendering
 }
 
 void RemoteRenderingBackend::didCreateSharedDisplayListHandle(DisplayList::ItemBufferIdentifier itemBufferIdentifier, const SharedMemory::IPCHandle& handle, RenderingResourceIdentifier destinationBufferIdentifier)
+{
+    // Immediately turn the RenderingResourceIdentifier (which is error-prone) to a QualifiedRenderingResourceIdentifier,
+    // and use a helper function to make sure that don't accidentally use the RenderingResourceIdentifier (because the helper function can't see it).
+    didCreateSharedDisplayListHandleWithQualifiedIdentifier(itemBufferIdentifier, handle, { destinationBufferIdentifier, m_gpuConnectionToWebProcess->webProcessIdentifier() });
+}
+
+void RemoteRenderingBackend::didCreateSharedDisplayListHandleWithQualifiedIdentifier(DisplayList::ItemBufferIdentifier itemBufferIdentifier, const SharedMemory::IPCHandle& handle, QualifiedRenderingResourceIdentifier)
 {
     ASSERT(!RunLoop::isMain());
     MESSAGE_CHECK(!m_sharedDisplayListHandles.contains(itemBufferIdentifier), "Duplicate shared display list handle");

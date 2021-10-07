@@ -30,6 +30,7 @@
 #include "Connection.h"
 #include "GPUConnectionToWebProcess.h"
 #include "GraphicsContextGLIdentifier.h"
+#include "QualifiedRenderingResourceIdentifier.h"
 #include "RemoteRenderingBackend.h"
 #include "ScopedWebGLRenderingResourcesRequest.h"
 #include "StreamMessageReceiver.h"
@@ -105,8 +106,12 @@ protected:
 
 #include "RemoteGraphicsContextGLFunctionsGenerated.h" // NOLINT
 
-    void paintPixelBufferToImageBuffer(std::optional<WebCore::PixelBuffer>&&, WebCore::RenderingResourceIdentifier, CompletionHandler<void()>&&);
+private:
+    void paintRenderingResultsToCanvasWithQualifiedIdentifier(QualifiedRenderingResourceIdentifier, CompletionHandler<void()>&&);
+    void paintCompositedResultsToCanvasWithQualifiedIdentifier(QualifiedRenderingResourceIdentifier, CompletionHandler<void()>&&);
+    void paintPixelBufferToImageBuffer(std::optional<WebCore::PixelBuffer>&&, QualifiedRenderingResourceIdentifier, CompletionHandler<void()>&&);
 
+protected:
     WeakPtr<GPUConnectionToWebProcess> m_gpuConnectionToWebProcess;
     RefPtr<IPC::StreamServerConnection> m_streamConnection;
     RefPtr<WebCore::GraphicsContextGLOpenGL> m_context WTF_GUARDED_BY_LOCK(m_streamThread);
@@ -114,6 +119,7 @@ protected:
     Ref<RemoteRenderingBackend> m_renderingBackend;
     ScopedWebGLRenderingResourcesRequest m_renderingResourcesRequest;
     NO_UNIQUE_ADDRESS ThreadAssertion m_streamThread;
+    WebCore::ProcessIdentifier m_webProcessIdentifier;
 };
 
 IPC::StreamConnectionWorkQueue& remoteGraphicsContextGLStreamWorkQueue();

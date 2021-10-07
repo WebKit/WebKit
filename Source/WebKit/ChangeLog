@@ -1,3 +1,66 @@
+2021-10-07  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [GPU Process] Unique RenderingResourceIdentifiers Part 1: Uniquify at entry points
+        https://bugs.webkit.org/show_bug.cgi?id=231281
+        <rdar://problem/83920780>
+
+        Reviewed by Chris Dumez.
+
+        Each web process creates its own RenderingResourceIdentifiers. Because the GPU process
+        can service multiple web processes, these identifiers can collide in the GPU process.
+        This is somewhat error prone, and might cause us to make a mistake in the future and
+        introduce a bug which lets one web process see another web process's resources (which
+        would be mega bad).
+
+        The goal of this project is to treat RenderingResourceIdentifiers in the GPU process
+        as a tuple of (the identifer we got from the web process, the process identifier of
+        the web process). This way, the tuples uniquely identify a resource across the entire
+        GPU process. Doing it this way makes it less likely that we'll make a mega bad mistake
+        in the future.
+
+        This patch is the first step: It introduces the QualifiedRenderingResourceIdentifier
+        type, which holds the tuple described above, and makes all the GPU process message
+        receivers immediately turn any RenderingResourceIdentifiers they received from the
+        web processes into QualifiedRenderingResourceIdentifiers. Not only do the identifiers
+        immediately get packed, but each message receiver now has an implementation function
+        which only accepts the QualifiedRenderingResourceIdentifier, so we can't make a
+        mistake and use the unpacked one accidentally.
+
+        Because this patch is just the first step, the QualifiedRenderingResourceIdentifiers
+        get unpacked eagerly, and the inner logic of the GPU process is unaffected. The
+        subsequent two patches will push the QualifiedRenderingResourceIdentifiers deeper
+        into the guts of the GPU process, eventually to the point where
+        RenderingResourceIdentifiers are never used there.
+
+        * GPUProcess/graphics/QualifiedRenderingResourceIdentifier.h: Added.
+        * GPUProcess/graphics/RemoteGraphicsContextGL.cpp:
+        (WebKit::RemoteGraphicsContextGL::RemoteGraphicsContextGL):
+        (WebKit::RemoteGraphicsContextGL::paintRenderingResultsToCanvas):
+        (WebKit::RemoteGraphicsContextGL::paintRenderingResultsToCanvasWithQualifiedIdentifier):
+        (WebKit::RemoteGraphicsContextGL::paintCompositedResultsToCanvas):
+        (WebKit::RemoteGraphicsContextGL::paintCompositedResultsToCanvasWithQualifiedIdentifier):
+        (WebKit::RemoteGraphicsContextGL::paintPixelBufferToImageBuffer):
+        * GPUProcess/graphics/RemoteGraphicsContextGL.h:
+        * GPUProcess/graphics/RemoteRenderingBackend.cpp:
+        (WebKit::RemoteRenderingBackend::createImageBuffer):
+        (WebKit::RemoteRenderingBackend::createImageBufferWithQualifiedIdentifier):
+        (WebKit::RemoteRenderingBackend::getDataURLForImageBuffer):
+        (WebKit::RemoteRenderingBackend::getDataURLForImageBufferWithQualifiedIdentifier):
+        (WebKit::RemoteRenderingBackend::getDataForImageBuffer):
+        (WebKit::RemoteRenderingBackend::getDataForImageBufferWithQualifiedIdentifier):
+        (WebKit::RemoteRenderingBackend::getShareableBitmapForImageBuffer):
+        (WebKit::RemoteRenderingBackend::getShareableBitmapForImageBufferWithQualifiedIdentifier):
+        (WebKit::RemoteRenderingBackend::cacheNativeImage):
+        (WebKit::RemoteRenderingBackend::cacheNativeImageWithQualifiedIdentifier):
+        (WebKit::RemoteRenderingBackend::cacheFont):
+        (WebKit::RemoteRenderingBackend::cacheFontWithQualifiedIdentifier):
+        (WebKit::RemoteRenderingBackend::releaseRemoteResource):
+        (WebKit::RemoteRenderingBackend::releaseRemoteResourceWithQualifiedIdentifier):
+        (WebKit::RemoteRenderingBackend::didCreateSharedDisplayListHandle):
+        (WebKit::RemoteRenderingBackend::didCreateSharedDisplayListHandleWithQualifiedIdentifier):
+        * GPUProcess/graphics/RemoteRenderingBackend.h:
+        * WebKit.xcodeproj/project.pbxproj:
+
 2021-10-07  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
 
         [GTK][WPE] Disable privateClickMeasurement when creating the network process

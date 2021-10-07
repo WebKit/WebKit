@@ -33,6 +33,7 @@
 #include "ImageBufferBackendHandle.h"
 #include "MessageReceiver.h"
 #include "MessageSender.h"
+#include "QualifiedRenderingResourceIdentifier.h"
 #include "RemoteRenderingBackendState.h"
 #include "RemoteResourceCache.h"
 #include "RenderingBackendIdentifier.h"
@@ -148,6 +149,16 @@ private:
     void releaseRemoteResource(WebCore::RenderingResourceIdentifier, uint64_t useCount);
     void finalizeRenderingUpdate(RenderingUpdateID);
     void didCreateSharedDisplayListHandle(WebCore::DisplayList::ItemBufferIdentifier, const SharedMemory::IPCHandle&, WebCore::RenderingResourceIdentifier destinationBufferIdentifier);
+
+    // Received messages translated to use QualifiedRenderingResourceIdentifier.
+    void createImageBufferWithQualifiedIdentifier(const WebCore::FloatSize& logicalSize, WebCore::RenderingMode, float resolutionScale, const WebCore::DestinationColorSpace&, WebCore::PixelFormat, QualifiedRenderingResourceIdentifier);
+    void getDataURLForImageBufferWithQualifiedIdentifier(const String& mimeType, std::optional<double> quality, WebCore::PreserveResolution, QualifiedRenderingResourceIdentifier, CompletionHandler<void(String&&)>&&);
+    void getDataForImageBufferWithQualifiedIdentifier(const String& mimeType, std::optional<double> quality, QualifiedRenderingResourceIdentifier, CompletionHandler<void(Vector<uint8_t>&&)>&&);
+    void getShareableBitmapForImageBufferWithQualifiedIdentifier(QualifiedRenderingResourceIdentifier, WebCore::PreserveResolution, CompletionHandler<void(ShareableBitmap::Handle&&)>&&);
+    void cacheNativeImageWithQualifiedIdentifier(const ShareableBitmap::Handle&, QualifiedRenderingResourceIdentifier);
+    void didCreateSharedDisplayListHandleWithQualifiedIdentifier(WebCore::DisplayList::ItemBufferIdentifier, const SharedMemory::IPCHandle&, QualifiedRenderingResourceIdentifier destinationBufferIdentifier);
+    void releaseRemoteResourceWithQualifiedIdentifier(QualifiedRenderingResourceIdentifier, uint64_t useCount);
+    void cacheFontWithQualifiedIdentifier(Ref<WebCore::Font>&&, QualifiedRenderingResourceIdentifier);
 
     class ReplayerDelegate : public WebCore::DisplayList::Replayer::Delegate {
     public:

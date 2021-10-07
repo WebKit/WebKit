@@ -3095,6 +3095,7 @@
 		1CA8B944127C882A00576C2B /* WebInspectorUIProxyMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebInspectorUIProxyMessages.h; path = DerivedSources/WebKit2/WebInspectorUIProxyMessages.h; sourceTree = BUILT_PRODUCTS_DIR; };
 		1CBBE49E19B66C53006B7D81 /* WebInspectorUIMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebInspectorUIMessageReceiver.cpp; path = DerivedSources/WebKit2/WebInspectorUIMessageReceiver.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
 		1CBBE49F19B66C53006B7D81 /* WebInspectorUIMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebInspectorUIMessages.h; path = DerivedSources/WebKit2/WebInspectorUIMessages.h; sourceTree = BUILT_PRODUCTS_DIR; };
+		1CC54AFD270F9654005BF8BE /* QualifiedRenderingResourceIdentifier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = QualifiedRenderingResourceIdentifier.h; sourceTree = "<group>"; };
 		1CF18F3E26BB5D90004B1722 /* LogInitialization.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LogInitialization.cpp; sourceTree = "<group>"; };
 		1D0530C9258EAB4400E436F7 /* combine-feature-flags-plist.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; path = "combine-feature-flags-plist.py"; sourceTree = "<group>"; };
 		1D0530D1259162C800E436F7 /* WebKit-ios.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "WebKit-ios.plist"; sourceTree = "<group>"; };
@@ -9092,6 +9093,7 @@
 				F4094CBC255304AF003D73E3 /* DisplayListReaderHandle.cpp */,
 				F4094CBB255304AF003D73E3 /* DisplayListReaderHandle.h */,
 				55AD09432408A0E600DE4D2F /* PlatformRemoteImageBuffer.h */,
+				1CC54AFD270F9654005BF8BE /* QualifiedRenderingResourceIdentifier.h */,
 				7B904169254AFEA7006EEB8C /* RemoteGraphicsContextGL.cpp */,
 				7B90416A254AFEA7006EEB8C /* RemoteGraphicsContextGL.h */,
 				7B904168254AFEA7006EEB8C /* RemoteGraphicsContextGL.messages.in */,
@@ -12485,7 +12487,7 @@
 				5C298DA01C3DF02100470AFE /* PendingDownload.h in Headers */,
 				832ED18C1E2FE157006BA64A /* PerActivityStateCPUUsageSampler.h in Headers */,
 				7AFBD36F21E546F8005DBACB /* PersistencyUtils.h in Headers */,
-                            E5DEFA6826F8F42600AB68DB /* PhotosUISPI.h in Headers */,
+				E5DEFA6826F8F42600AB68DB /* PhotosUISPI.h in Headers */,
 				5CE85B201C88E64B0070BFCE /* PingLoad.h in Headers */,
 				0F5E200418E77051003EC3E5 /* PlatformCAAnimationRemote.h in Headers */,
 				2DA049B4180CCCD300AAFA9E /* PlatformCALayerRemote.h in Headers */,

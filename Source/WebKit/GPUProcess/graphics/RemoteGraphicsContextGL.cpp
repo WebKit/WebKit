@@ -29,6 +29,7 @@
 #if ENABLE(GPU_PROCESS) && ENABLE(WEBGL)
 
 #include "GPUConnectionToWebProcess.h"
+#include "QualifiedRenderingResourceIdentifier.h"
 #include "RemoteGraphicsContextGLMessages.h"
 #include "RemoteGraphicsContextGLProxyMessages.h"
 #include "StreamConnectionWorkQueue.h"
@@ -68,6 +69,7 @@ RemoteGraphicsContextGL::RemoteGraphicsContextGL(GPUConnectionToWebProcess& gpuC
     , m_graphicsContextGLIdentifier(graphicsContextGLIdentifier)
     , m_renderingBackend(renderingBackend)
     , m_renderingResourcesRequest(ScopedWebGLRenderingResourcesRequest::acquire())
+    , m_webProcessIdentifier(gpuConnectionToWebProcess.webProcessIdentifier())
 {
     assertIsMainRunLoop();
 }
@@ -197,17 +199,31 @@ void RemoteGraphicsContextGL::notifyMarkContextChanged()
 
 void RemoteGraphicsContextGL::paintRenderingResultsToCanvas(WebCore::RenderingResourceIdentifier imageBuffer, CompletionHandler<void()>&& completionHandler)
 {
+    // Immediately turn the RenderingResourceIdentifier (which is error-prone) to a QualifiedRenderingResourceIdentifier,
+    // and use a helper function to make sure that don't accidentally use the RenderingResourceIdentifier (because the helper function can't see it).
+    paintRenderingResultsToCanvasWithQualifiedIdentifier({ imageBuffer, m_webProcessIdentifier }, WTFMove(completionHandler));
+}
+
+void RemoteGraphicsContextGL::paintRenderingResultsToCanvasWithQualifiedIdentifier(QualifiedRenderingResourceIdentifier imageBuffer, CompletionHandler<void()>&& completionHandler)
+{
     assertIsCurrent(m_streamThread);
     paintPixelBufferToImageBuffer(m_context->readRenderingResultsForPainting(), imageBuffer, WTFMove(completionHandler));
 }
 
 void RemoteGraphicsContextGL::paintCompositedResultsToCanvas(WebCore::RenderingResourceIdentifier imageBuffer, CompletionHandler<void()>&& completionHandler)
 {
+    // Immediately turn the RenderingResourceIdentifier (which is error-prone) to a QualifiedRenderingResourceIdentifier,
+    // and use a helper function to make sure that don't accidentally use the RenderingResourceIdentifier (because the helper function can't see it).
+    paintCompositedResultsToCanvasWithQualifiedIdentifier({ imageBuffer, m_webProcessIdentifier }, WTFMove(completionHandler));
+}
+
+void RemoteGraphicsContextGL::paintCompositedResultsToCanvasWithQualifiedIdentifier(QualifiedRenderingResourceIdentifier imageBuffer, CompletionHandler<void()>&& completionHandler)
+{
     assertIsCurrent(m_streamThread);
     paintPixelBufferToImageBuffer(m_context->readCompositedResultsForPainting(), imageBuffer, WTFMove(completionHandler));
 }
 
-void RemoteGraphicsContextGL::paintPixelBufferToImageBuffer(std::optional<WebCore::PixelBuffer>&& pixelBuffer, WebCore::RenderingResourceIdentifier target, CompletionHandler<void()>&& completionHandler)
+void RemoteGraphicsContextGL::paintPixelBufferToImageBuffer(std::optional<WebCore::PixelBuffer>&& pixelBuffer, QualifiedRenderingResourceIdentifier target, CompletionHandler<void()>&& completionHandler)
 {
     assertIsCurrent(m_streamThread);
     // FIXME: We do not have functioning read/write fences in RemoteRenderingBackend. Thus this is synchronous,
@@ -216,7 +232,7 @@ void RemoteGraphicsContextGL::paintPixelBufferToImageBuffer(std::optional<WebCor
     Condition conditionVariable;
     bool isFinished = false;
     m_renderingBackend->dispatch([&, contextAttributes = m_context->contextAttributes()]() mutable {
-        if (auto imageBuffer = m_renderingBackend->remoteResourceCache().cachedImageBuffer(target)) {
+        if (auto imageBuffer = m_renderingBackend->remoteResourceCache().cachedImageBuffer(target.object())) {
             // Here we do not try to play back pending commands for imageBuffer. Currently this call is only made for empty
             // image buffers and there's no good way to add display lists.
             if (pixelBuffer)
