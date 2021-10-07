@@ -1,3 +1,10 @@
+2021-10-07  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Unreviewed, build fix for non-unified JSC.
+
+        * dfg/DFGBackwardsPropagationPhase.cpp:
+        Add missing include.
+
 2021-10-07  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Reenable -fvisibility=hidden
