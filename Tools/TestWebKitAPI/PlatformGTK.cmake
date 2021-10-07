@@ -28,9 +28,6 @@ list(APPEND TestWTF_LIBRARIES
     GTK::GTK
 )
 
-# FIXME: Remove when turning on hidden visibility https://bugs.webkit.org/show_bug.cgi?id=181916
-list(APPEND TestJavaScriptCore_LIBRARIES WTF)
-
 # TestWebCore
 list(APPEND TestWebCore_SOURCES
     ${test_main_SOURCES}

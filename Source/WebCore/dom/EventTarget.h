@@ -103,7 +103,7 @@ public:
     const EventTargetData* eventTargetData() const;
 
 protected:
-    virtual ~EventTarget() = default;
+    WEBCORE_EXPORT virtual ~EventTarget();
     
     virtual EventTargetData* eventTargetData() = 0;
     virtual EventTargetData* eventTargetDataConcurrently() = 0;

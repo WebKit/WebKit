@@ -1,3 +1,12 @@
+2021-10-07  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Reenable -fvisibility=hidden
+        https://bugs.webkit.org/show_bug.cgi?id=181916
+
+        Reviewed by Michael Catanzaro.
+
+        * TestWebKitAPI/PlatformGTK.cmake:
+
 2021-10-06  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         Python 3: run-inspector-generator-tests and generate-inspector-protocol-bindings.py

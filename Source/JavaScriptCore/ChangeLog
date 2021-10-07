@@ -1,3 +1,12 @@
+2021-10-07  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Reenable -fvisibility=hidden
+        https://bugs.webkit.org/show_bug.cgi?id=181916
+
+        Reviewed by Michael Catanzaro.
+
+        * shell/PlatformGTK.cmake:
+
 2021-10-07  Philip Chimento  <pchimento@igalia.com>
 
         [JSC] Temporal tweaks to pass more test262 tests
