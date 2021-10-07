@@ -1,5 +1,18 @@
 2021-10-06  Wenson Hsieh  <wenson_hsieh@apple.com>
 
+        Fix unified source-related build failures in RemoteSourceBufferProxy.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=231335
+
+        Reviewed by Tim Horton.
+
+        We directly use WebCore::AudioTrackPrivate and WebCore::VideoTrackPrivate in RemoteSourceBufferProxy.cpp, but we
+        don't import their respective WebCore headers; this causes the build to break when shifting around unified
+        source groupings. Resolve this via the usual means (by importing these headers).
+
+        * GPUProcess/media/RemoteSourceBufferProxy.cpp:
+
+2021-10-06  Wenson Hsieh  <wenson_hsieh@apple.com>
+
         Add some helper functions to RemoteResourceCache and RemoteResourceCacheProxy
         https://bugs.webkit.org/show_bug.cgi?id=231319
 
