@@ -1,3 +1,12 @@
+2021-10-07  Ayumi Kojima  <ayumi_kojima@apple.com>
+
+        [ iOS 15 Debug ] fast/selectors/is-complex.html is timing out.
+        https://bugs.webkit.org/show_bug.cgi?id=231391
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+
 2021-10-07  Aditya Keerthi  <akeerthi@apple.com>
 
         [css-ui] Parsing support for accent-color
