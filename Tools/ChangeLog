@@ -1,3 +1,17 @@
+2021-10-07  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        Misc compiler warning fixes, October 2021
+        https://bugs.webkit.org/show_bug.cgi?id=231377
+
+        Reviewed by Adrian Perez de Castro.
+
+        Stop testing the default value of the XSS auditor setting. I could have used
+        IGNORE_DEPRECATED_DECLARATIONS_BEGIN instead, but I see no point in testing the default
+        value of a setting that no longer does anything.
+
+        * TestWebKitAPI/Tests/WebKit/WKPreferences.cpp:
+        (TestWebKitAPI::TEST):
+
 2021-10-07  BJ Burg  <bburg@apple.com>
 
         Web Inspector: WebInspectorExtensionTabContentView should not reload its iframe when detached

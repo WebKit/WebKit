@@ -1850,6 +1850,7 @@ static Ref<CSSPrimitiveValue> fontPaletteFromStyle(const RenderStyle& style)
     case FontPalette::Type::Custom:
         return CSSValuePool::singleton().createCustomIdent(fontPalette.identifier);
     }
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 Ref<CSSPrimitiveValue> ComputedStyleExtractor::fontNonKeywordWeightFromStyleValue(FontSelectionValue weight)

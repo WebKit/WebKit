@@ -78,6 +78,7 @@ GCGLbitfield GraphicsContextGLOpenGL::getBuffersToAutoClear() const
 #if !USE(ANGLE)
 bool GraphicsContextGLOpenGL::releaseThreadResources(ReleaseThreadResourceBehavior)
 {
+    return false;
 }
 
 void GraphicsContextGLOpenGL::platformReleaseThreadResources()

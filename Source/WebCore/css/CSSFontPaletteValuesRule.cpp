@@ -70,6 +70,7 @@ String CSSFontPaletteValuesRule::basePalette() const
             return m_fontPaletteValuesRule->basePalette().string;
         return StringImpl::empty();
     }
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 String CSSFontPaletteValuesRule::overrideColors() const
