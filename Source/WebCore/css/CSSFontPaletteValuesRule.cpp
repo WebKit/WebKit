@@ -58,17 +58,16 @@ String CSSFontPaletteValuesRule::fontFamily() const
 
 String CSSFontPaletteValuesRule::basePalette() const
 {
-    switch (m_fontPaletteValuesRule->basePalette().type) {
+    if (!m_fontPaletteValuesRule->basePalette())
+        return StringImpl::empty();
+
+    switch (m_fontPaletteValuesRule->basePalette()->type) {
     case FontPaletteIndex::Type::Light:
         return "light"_s;
     case FontPaletteIndex::Type::Dark:
         return "dark"_s;
     case FontPaletteIndex::Type::Integer:
-        return makeString(m_fontPaletteValuesRule->basePalette().integer);
-    case FontPaletteIndex::Type::String:
-        if (!m_fontPaletteValuesRule->basePalette().string.isNull())
-            return m_fontPaletteValuesRule->basePalette().string;
-        return StringImpl::empty();
+        return makeString(m_fontPaletteValuesRule->basePalette()->integer);
     }
     RELEASE_ASSERT_NOT_REACHED();
 }
@@ -80,12 +79,7 @@ String CSSFontPaletteValuesRule::overrideColors() const
         if (i)
             result.append(", ");
         const auto& item = m_fontPaletteValuesRule->overrideColors()[i];
-        WTF::switchOn(item.first, [&] (const AtomString& string) {
-            result.append(serializeString(string));
-        }, [&] (int64_t index) {
-            result.append(index);
-        });
-        result.append(' ', serializationForCSS(item.second));
+        result.append(item.first, ' ', serializationForCSS(item.second));
     }
     return result.toString();
 }
@@ -97,20 +91,18 @@ String CSSFontPaletteValuesRule::cssText() const
     if (!m_fontPaletteValuesRule->fontFamily().isNull())
         builder.append("font-family: ", m_fontPaletteValuesRule->fontFamily(), "; ");
 
-    switch (m_fontPaletteValuesRule->basePalette().type) {
-    case FontPaletteIndex::Type::Light:
-        builder.append("base-palette: light; ");
-        break;
-    case FontPaletteIndex::Type::Dark:
-        builder.append("base-palette: dark; ");
-        break;
-    case FontPaletteIndex::Type::Integer:
-        builder.append("base-palette: ", m_fontPaletteValuesRule->basePalette().integer, "; ");
-        break;
-    case FontPaletteIndex::Type::String:
-        if (!m_fontPaletteValuesRule->basePalette().string.isNull())
-            builder.append("base-palette: ", serializeString(m_fontPaletteValuesRule->basePalette().string), "; ");
-        break;
+    if (m_fontPaletteValuesRule->basePalette()) {
+        switch (m_fontPaletteValuesRule->basePalette()->type) {
+        case FontPaletteIndex::Type::Light:
+            builder.append("base-palette: light; ");
+            break;
+        case FontPaletteIndex::Type::Dark:
+            builder.append("base-palette: dark; ");
+            break;
+        case FontPaletteIndex::Type::Integer:
+            builder.append("base-palette: ", m_fontPaletteValuesRule->basePalette()->integer, "; ");
+            break;
+        }
     }
 
     if (!m_fontPaletteValuesRule->overrideColors().isEmpty()) {
@@ -118,13 +110,7 @@ String CSSFontPaletteValuesRule::cssText() const
         for (size_t i = 0; i < m_fontPaletteValuesRule->overrideColors().size(); ++i) {
             if (i)
                 builder.append(',');
-            builder.append(' ');
-            WTF::switchOn(m_fontPaletteValuesRule->overrideColors()[i].first, [&] (const AtomString& name) {
-                builder.append(serializeString(name.string()));
-            }, [&] (unsigned index) {
-                builder.append(index);
-            });
-            builder.append(' ', serializationForCSS(m_fontPaletteValuesRule->overrideColors()[i].second));
+            builder.append(' ', m_fontPaletteValuesRule->overrideColors()[i].first, ' ', serializationForCSS(m_fontPaletteValuesRule->overrideColors()[i].second));
         }
         builder.append("; ");
     }

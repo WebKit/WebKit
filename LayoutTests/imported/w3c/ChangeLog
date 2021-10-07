@@ -1,3 +1,13 @@
+2021-10-07  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Stop parsing font palette things that we can't implement
+        https://bugs.webkit.org/show_bug.cgi?id=230799
+        <rdar://problem/83537772>
+
+        Reviewed by Simon Fraser.
+
+        * web-platform-tests/css/css-fonts/parsing/font-palette-values-valid.html:
+
 2021-10-07  Aditya Keerthi  <akeerthi@apple.com>
 
         [css-ui] Parsing support for accent-color

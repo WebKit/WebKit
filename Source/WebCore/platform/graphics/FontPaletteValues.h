@@ -51,15 +51,9 @@ struct FontPaletteIndex {
     {
     }
 
-    FontPaletteIndex(const AtomString& string)
-        : type(Type::String)
-        , string(string)
-    {
-    }
-
     operator bool() const
     {
-        return type != Type::String || !string.isNull();
+        return type != Type::Integer || integer;
     }
 
     bool operator==(const FontPaletteIndex& other) const
@@ -68,8 +62,6 @@ struct FontPaletteIndex {
             return false;
         if (type == Type::Integer)
             return integer == other.integer;
-        if (type == Type::String)
-            return string == other.string;
         return true;
     }
 
@@ -81,12 +73,11 @@ struct FontPaletteIndex {
     enum class Type : uint8_t {
         Light,
         Dark,
-        Integer,
-        String
-    } type { Type::String };
+        Integer
+    };
+    Type type { Type::Integer };
 
     unsigned integer { 0 };
-    AtomString string;
 };
 
 inline void add(Hasher& hasher, const FontPaletteIndex& paletteIndex)
@@ -94,24 +85,21 @@ inline void add(Hasher& hasher, const FontPaletteIndex& paletteIndex)
     add(hasher, paletteIndex.type);
     if (paletteIndex.type == FontPaletteIndex::Type::Integer)
         add(hasher, paletteIndex.integer);
-    else if (paletteIndex.type == FontPaletteIndex::Type::String)
-        add(hasher, paletteIndex.string);
 }
 
 class FontPaletteValues {
 public:
-    using PaletteColorIndex = Variant<AtomString, unsigned>;
-    using OverriddenColor = std::pair<PaletteColorIndex, Color>;
+    using OverriddenColor = std::pair<unsigned, Color>;
 
     FontPaletteValues() = default;
 
-    FontPaletteValues(const FontPaletteIndex& basePalette, Vector<OverriddenColor>&& overrideColors)
+    FontPaletteValues(std::optional<FontPaletteIndex> basePalette, Vector<OverriddenColor>&& overrideColors)
         : m_basePalette(basePalette)
         , m_overrideColors(WTFMove(overrideColors))
     {
     }
 
-    const FontPaletteIndex& basePalette() const
+    std::optional<FontPaletteIndex> basePalette() const
     {
         return m_basePalette;
     }
@@ -137,7 +125,7 @@ public:
     }
 
 private:
-    FontPaletteIndex m_basePalette;
+    std::optional<FontPaletteIndex> m_basePalette;
     Vector<OverriddenColor> m_overrideColors;
 };
 

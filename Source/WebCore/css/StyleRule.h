@@ -159,7 +159,7 @@ private:
 
 class StyleRuleFontPaletteValues final : public StyleRuleBase {
 public:
-    static Ref<StyleRuleFontPaletteValues> create(const AtomString& name, const AtomString& fontFamily, const FontPaletteIndex& basePalette, Vector<FontPaletteValues::OverriddenColor>&& overrideColors)
+    static Ref<StyleRuleFontPaletteValues> create(const AtomString& name, const AtomString& fontFamily, std::optional<FontPaletteIndex> basePalette, Vector<FontPaletteValues::OverriddenColor>&& overrideColors)
     {
         return adoptRef(*new StyleRuleFontPaletteValues(name, fontFamily, basePalette, WTFMove(overrideColors)));
     }
@@ -181,7 +181,7 @@ public:
         return m_fontPaletteValues;
     }
 
-    const FontPaletteIndex& basePalette() const
+    std::optional<FontPaletteIndex> basePalette() const
     {
         return m_fontPaletteValues.basePalette();
     }
@@ -194,7 +194,7 @@ public:
     Ref<StyleRuleFontPaletteValues> copy() const { return adoptRef(*new StyleRuleFontPaletteValues(*this)); }
 
 private:
-    StyleRuleFontPaletteValues(const AtomString& name, const AtomString& fontFamily, const FontPaletteIndex& basePalette, Vector<FontPaletteValues::OverriddenColor>&& overrideColors);
+    StyleRuleFontPaletteValues(const AtomString& name, const AtomString& fontFamily, std::optional<FontPaletteIndex> basePalette, Vector<FontPaletteValues::OverriddenColor>&& overrideColors);
     StyleRuleFontPaletteValues(const StyleRuleFontPaletteValues&);
 
     AtomString m_name;
