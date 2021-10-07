@@ -599,10 +599,10 @@ public:
     bool isArrowFunction() { return m_isArrowFunction; }
 
     bool hasDirectSuper() const { return m_hasDirectSuper; }
-    bool setHasDirectSuper() { return std::exchange(m_hasDirectSuper, true); }
+    void setHasDirectSuper() { m_hasDirectSuper = true; }
 
     bool needsSuperBinding() const { return m_needsSuperBinding; }
-    bool setNeedsSuperBinding() { return std::exchange(m_needsSuperBinding, true); }
+    void setNeedsSuperBinding() { m_needsSuperBinding = true; }
     
     void setEvalContextType(EvalContextType evalContextType) { m_evalContextType = evalContextType; }
     EvalContextType evalContextType() { return m_evalContextType; }

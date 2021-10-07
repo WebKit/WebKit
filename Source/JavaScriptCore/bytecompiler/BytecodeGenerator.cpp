@@ -152,68 +152,69 @@ ParserError BytecodeGenerator::generate()
     if (UNLIKELY(m_outOfMemoryDuringConstruction))
         return ParserError(ParserError::OutOfMemory);
 
+    bool callingNonCallableConstructor = false;
+    switch (constructorKind()) {
+    case ConstructorKind::None:
+        break;
+    case ConstructorKind::Naked:
+    case ConstructorKind::Base:
+    case ConstructorKind::Extends:
+        callingNonCallableConstructor = !isConstructor();
+        break;
+    }
+
     m_codeBlock->setThisRegister(m_thisRegister.virtualRegister());
 
     emitLogShadowChickenPrologueIfNecessary();
     
-    // If we have declared a variable named "arguments" and we are using arguments then we should
-    // perform that assignment now.
-    if (m_needToInitializeArguments)
-        initializeVariable(variable(propertyNames().arguments), m_argumentsRegister);
+    if (!callingNonCallableConstructor) {
+        // If we have declared a variable named "arguments" and we are using arguments then we should
+        // perform that assignment now.
+        if (m_needToInitializeArguments)
+            initializeVariable(variable(propertyNames().arguments), m_argumentsRegister);
 
-    if (m_restParameter)
-        m_restParameter->emit(*this);
+        if (m_restParameter)
+            m_restParameter->emit(*this);
 
-    {
-        RefPtr<RegisterID> temp = newTemporary();
-        RefPtr<RegisterID> tolLevelScope;
-        for (auto functionPair : m_functionsToInitialize) {
-            FunctionMetadataNode* metadata = functionPair.first;
-            FunctionVariableType functionType = functionPair.second;
-            emitNewFunction(temp.get(), metadata);
-            if (functionType == NormalFunctionVariable)
-                initializeVariable(variable(metadata->ident()), temp.get());
-            else if (functionType == TopLevelFunctionVariable) {
-                if (!tolLevelScope) {
-                    // We know this will resolve to the top level scope or global object because our parser/global initialization code 
-                    // doesn't allow let/const/class variables to have the same names as functions.
-                    // This is a top level function, and it's an error to ever create a top level function
-                    // name that would resolve to a lexical variable. E.g:
-                    // ```
-                    //     function f() {
-                    //         {
-                    //             let x;
-                    //             {
-                    //             //// error thrown here
-                    //                  eval("function x(){}");
-                    //             }
-                    //         }
-                    //     }
-                    // ```
-                    // Therefore, we're guaranteed to have this resolve to a top level variable.
-                    RefPtr<RegisterID> tolLevelObjectScope = emitResolveScope(nullptr, Variable(metadata->ident()));
-                    tolLevelScope = newBlockScopeVariable();
-                    move(tolLevelScope.get(), tolLevelObjectScope.get());
-                }
-                emitPutToScope(tolLevelScope.get(), Variable(metadata->ident()), temp.get(), ThrowIfNotFound, InitializationMode::NotInitialization);
-            } else
-                RELEASE_ASSERT_NOT_REACHED();
+        {
+            RefPtr<RegisterID> temp = newTemporary();
+            RefPtr<RegisterID> tolLevelScope;
+            for (auto functionPair : m_functionsToInitialize) {
+                FunctionMetadataNode* metadata = functionPair.first;
+                FunctionVariableType functionType = functionPair.second;
+                emitNewFunction(temp.get(), metadata);
+                if (functionType == NormalFunctionVariable)
+                    initializeVariable(variable(metadata->ident()), temp.get());
+                else if (functionType == TopLevelFunctionVariable) {
+                    if (!tolLevelScope) {
+                        // We know this will resolve to the top level scope or global object because our parser/global initialization code 
+                        // doesn't allow let/const/class variables to have the same names as functions.
+                        // This is a top level function, and it's an error to ever create a top level function
+                        // name that would resolve to a lexical variable. E.g:
+                        // ```
+                        //     function f() {
+                        //         {
+                        //             let x;
+                        //             {
+                        //             //// error thrown here
+                        //                  eval("function x(){}");
+                        //             }
+                        //         }
+                        //     }
+                        // ```
+                        // Therefore, we're guaranteed to have this resolve to a top level variable.
+                        RefPtr<RegisterID> tolLevelObjectScope = emitResolveScope(nullptr, Variable(metadata->ident()));
+                        tolLevelScope = newBlockScopeVariable();
+                        move(tolLevelScope.get(), tolLevelObjectScope.get());
+                    }
+                    emitPutToScope(tolLevelScope.get(), Variable(metadata->ident()), temp.get(), ThrowIfNotFound, InitializationMode::NotInitialization);
+                } else
+                    RELEASE_ASSERT_NOT_REACHED();
+            }
         }
-    }
     
-    bool callingClassConstructor = false;
-    switch (constructorKind()) {
-    case ConstructorKind::None:
-    case ConstructorKind::Naked:
-        break;
-    case ConstructorKind::Base:
-    case ConstructorKind::Extends:
-        callingClassConstructor = !isConstructor();
-        break;
-    }
-    if (!callingClassConstructor)
         m_scopeNode->emitBytecode(*this);
-    else {
+    } else {
         // At this point we would have emitted an unconditional throw followed by some nonsense that's
         // just an artifact of how this generator is structured. That code never runs, but it confuses
         // bytecode analyses because it constitutes an unterminated basic block. So, we terminate the
@@ -437,6 +438,24 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
     allocateAndEmitScope();
 
     emitCheckTraps();
+
+    switch (constructorKind()) {
+    case ConstructorKind::None:
+        break;
+    case ConstructorKind::Naked:
+        if (!isConstructor()) {
+            emitThrowTypeError("Cannot call a constructor without |new|");
+            return;
+        }
+        break;
+    case ConstructorKind::Base:
+    case ConstructorKind::Extends:
+        if (!isConstructor()) {
+            emitThrowTypeError("Cannot call a class constructor without |new|");
+            return;
+        }
+        break;
+    }
     
     if (functionNameIsInScope(functionNode->ident(), functionNode->functionMode())) {
         ASSERT(parseMode != SourceParseMode::GeneratorBodyMode);
@@ -695,57 +714,56 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
         break;
     }
 
-    default: {
-        if (SourceParseMode::ArrowFunctionMode != parseMode) {
-            if (isConstructor()) {
-                if (m_newTargetRegister)
-                    move(m_newTargetRegister, &m_thisRegister);
-                switch (constructorKind()) {
-                case ConstructorKind::Naked:
-                    // Naked constructor not create |this| automatically.
-                    break;
-                case ConstructorKind::None:
-                case ConstructorKind::Base:
-                    emitCreateThis(&m_thisRegister);
-                    emitInstanceFieldInitializationIfNeeded(&m_thisRegister, &m_calleeRegister, m_scopeNode->position(), m_scopeNode->position(), m_scopeNode->position());
-                    break;
-                case ConstructorKind::Extends:
-                    moveEmptyValue(&m_thisRegister);
-                    break;
-                }
-            } else {
-                switch (constructorKind()) {
-                case ConstructorKind::None: {
-                    bool shouldEmitToThis = false;
-                    if (functionNode->usesThis() || codeBlock->usesEval() || m_scopeNode->doAnyInnerArrowFunctionsUseThis() || m_scopeNode->doAnyInnerArrowFunctionsUseEval())
-                        shouldEmitToThis = true;
-                    else if ((functionNode->usesSuperProperty() || m_scopeNode->doAnyInnerArrowFunctionsUseSuperProperty()) && !ecmaMode.isStrict()) {
-                        // We must emit to_this when we're not in strict mode because we
-                        // will convert |this| to an object, and that object may be passed
-                        // to a strict function as |this|. This is observable because that
-                        // strict function's to_this will just return the object.
-                        //
-                        // We don't need to emit this for strict-mode code because
-                        // strict-mode code may call another strict function, which will
-                        // to_this if it directly uses this; this is OK, because we defer
-                        // to_this until |this| is used directly. Strict-mode code might
-                        // also call a sloppy mode function, and that will to_this, which
-                        // will defer the conversion, again, until necessary.
-                        shouldEmitToThis = true;
-                    }
+    case SourceParseMode::ArrowFunctionMode:
+        break;
 
-                    if (shouldEmitToThis)
-                        emitToThis();
-                    break;
+    default: {
+        if (isConstructor()) {
+            if (m_newTargetRegister)
+                move(m_newTargetRegister, &m_thisRegister);
+            switch (constructorKind()) {
+            case ConstructorKind::Naked:
+                // Naked constructor not create |this| automatically.
+                break;
+            case ConstructorKind::None:
+            case ConstructorKind::Base:
+                emitCreateThis(&m_thisRegister);
+                emitInstanceFieldInitializationIfNeeded(&m_thisRegister, &m_calleeRegister, m_scopeNode->position(), m_scopeNode->position(), m_scopeNode->position());
+                break;
+            case ConstructorKind::Extends:
+                moveEmptyValue(&m_thisRegister);
+                break;
+            }
+        } else {
+            switch (constructorKind()) {
+            case ConstructorKind::None: {
+                bool shouldEmitToThis = false;
+                if (functionNode->usesThis() || codeBlock->usesEval() || m_scopeNode->doAnyInnerArrowFunctionsUseThis() || m_scopeNode->doAnyInnerArrowFunctionsUseEval())
+                    shouldEmitToThis = true;
+                else if ((functionNode->usesSuperProperty() || m_scopeNode->doAnyInnerArrowFunctionsUseSuperProperty()) && !ecmaMode.isStrict()) {
+                    // We must emit to_this when we're not in strict mode because we
+                    // will convert |this| to an object, and that object may be passed
+                    // to a strict function as |this|. This is observable because that
+                    // strict function's to_this will just return the object.
+                    //
+                    // We don't need to emit this for strict-mode code because
+                    // strict-mode code may call another strict function, which will
+                    // to_this if it directly uses this; this is OK, because we defer
+                    // to_this until |this| is used directly. Strict-mode code might
+                    // also call a sloppy mode function, and that will to_this, which
+                    // will defer the conversion, again, until necessary.
+                    shouldEmitToThis = true;
                 }
-                case ConstructorKind::Naked:
-                    emitThrowTypeError("Cannot call a constructor without |new|");
-                    break;
-                case ConstructorKind::Base:
-                case ConstructorKind::Extends:
-                    emitThrowTypeError("Cannot call a class constructor without |new|");
-                    break;
-                }
+
+                if (shouldEmitToThis)
+                    emitToThis();
+                break;
+            }
+            case ConstructorKind::Naked:
+            case ConstructorKind::Base:
+            case ConstructorKind::Extends:
+                RELEASE_ASSERT_NOT_REACHED();
+                break;
             }
         }
         break;

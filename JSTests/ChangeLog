@@ -1,3 +1,22 @@
+2021-10-07  Russell Epstein  <repstein@apple.com>
+
+        Apply patch. rdar://problem/83512725
+
+    2021-10-07  Mark Lam  <mark.lam@apple.com>
+
+            Cherry picked r279448. rdar://problem/83512725
+
+        2021-06-30  Yusuke Suzuki  <ysuzuki@apple.com>
+
+                [JSC] Stop generating default parameter code if class constructor is called without 'new'
+                https://bugs.webkit.org/show_bug.cgi?id=227547
+                rdar://78821453
+
+                Reviewed by Mark Lam.
+
+                * stress/calling-non-callable-constructors.js: Added.
+                (shouldThrow):
+
 2021-08-10  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r280507. rdar://problem/79730568
