@@ -499,9 +499,14 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/pictureinpicture/HTMLVideoElement+PictureInPicture.idl
     Modules/pictureinpicture/PictureInPictureWindow.idl
 
+    Modules/push-api/PushEncryptionKeyName.idl
     Modules/push-api/PushEvent.idl
     Modules/push-api/PushEventInit.idl
     Modules/push-api/PushMessageData.idl
+    Modules/push-api/PushSubscription.idl
+    Modules/push-api/PushSubscriptionJSON.idl
+    Modules/push-api/PushSubscriptionOptions.idl
+    Modules/push-api/PushSubscriptionOptionsInit.idl
     Modules/push-api/ServiceWorkerGlobalScope+PushAPI.idl
 
     Modules/remoteplayback/RemotePlayback.idl

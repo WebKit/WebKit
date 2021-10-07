@@ -222,6 +222,8 @@ Modules/pictureinpicture/HTMLVideoElementPictureInPicture.cpp
 Modules/pictureinpicture/PictureInPictureWindow.cpp
 Modules/push-api/PushEvent.cpp
 Modules/push-api/PushMessageData.cpp
+Modules/push-api/PushSubscription.cpp
+Modules/push-api/PushSubscriptionOptions.cpp
 Modules/remoteplayback/RemotePlayback.cpp
 Modules/speech/SpeechRecognition.cpp
 Modules/speech/SpeechRecognitionAlternative.cpp
@@ -3360,9 +3362,14 @@ JSPublicKeyCredentialCreationOptions.cpp
 JSPublicKeyCredentialDescriptor.cpp
 JSPublicKeyCredentialRequestOptions.cpp
 JSPublicKeyCredentialType.cpp
+JSPushEncryptionKeyName.cpp
 JSPushEvent.cpp
 JSPushEventInit.cpp
 JSPushMessageData.cpp
+JSPushSubscription.cpp
+JSPushSubscriptionJSON.cpp
+JSPushSubscriptionOptions.cpp
+JSPushSubscriptionOptionsInit.cpp
 JSRTCAnswerOptions.cpp
 JSRTCCertificate.cpp
 JSRTCConfiguration.cpp

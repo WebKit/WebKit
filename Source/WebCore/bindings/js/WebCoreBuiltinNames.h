@@ -210,6 +210,8 @@ namespace WebCore {
     macro(PublicKeyCredential) \
     macro(PushEvent) \
     macro(PushMessageData) \
+    macro(PushSubscription) \
+    macro(PushSubscriptionOptions) \
     macro(ResizeObserver) \
     macro(ResizeObserverEntry) \
     macro(RTCCertificate) \

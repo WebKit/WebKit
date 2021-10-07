@@ -347,9 +347,14 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/pictureinpicture/HTMLVideoElement+PictureInPicture.idl \
     $(WebCore)/Modules/pictureinpicture/PictureInPictureWindow.idl \
     $(WebCore)/Modules/plugins/QuickTimePluginReplacement.idl \
+    $(WebCore)/Modules/push-api/PushEncryptionKeyName.idl \
     $(WebCore)/Modules/push-api/PushEvent.idl \
     $(WebCore)/Modules/push-api/PushEventInit.idl \
     $(WebCore)/Modules/push-api/PushMessageData.idl \
+    $(WebCore)/Modules/push-api/PushSubscription.idl \
+    $(WebCore)/Modules/push-api/PushSubscriptionJSON.idl \
+    $(WebCore)/Modules/push-api/PushSubscriptionOptions.idl \
+    $(WebCore)/Modules/push-api/PushSubscriptionOptionsInit.idl \
     $(WebCore)/Modules/push-api/ServiceWorkerGlobalScope+PushAPI.idl \
     $(WebCore)/Modules/remoteplayback/HTMLMediaElement+RemotePlayback.idl \
     $(WebCore)/Modules/remoteplayback/RemotePlayback.idl \

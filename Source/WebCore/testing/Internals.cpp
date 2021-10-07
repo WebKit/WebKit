@@ -161,6 +161,8 @@
 #include "PluginData.h"
 #include "PrintContext.h"
 #include "PseudoElement.h"
+#include "PushSubscription.h"
+#include "PushSubscriptionOptions.h"
 #include "RTCRtpSFrameTransform.h"
 #include "Range.h"
 #include "ReadableStream.h"
@@ -6536,5 +6538,16 @@ void Internals::retainTextIteratorForDocumentContent()
     m_textIterator = makeUnique<TextIterator>(range);
 }
 
+#if ENABLE(SERVICE_WORKER)
+RefPtr<PushSubscription> Internals::createPushSubscription(const String& endpoint, std::optional<DOMTimeStamp> expirationTime, bool userVisibleOnly, const ArrayBuffer& serverVAPIDPublicKey, const ArrayBuffer& clientECDHPublicKey, const ArrayBuffer& auth)
+{
+    auto myEndpoint = endpoint;
+    Vector<uint8_t> myServerVAPIDPublicKey { static_cast<const uint8_t*>(serverVAPIDPublicKey.data()), serverVAPIDPublicKey.byteLength() };
+    Vector<uint8_t> myClientECDHPublicKey { static_cast<const uint8_t*>(clientECDHPublicKey.data()), clientECDHPublicKey.byteLength() };
+    Vector<uint8_t> myAuth { static_cast<const uint8_t*>(auth.data()), auth.byteLength() };
+
+    return PushSubscription::create(WTFMove(myEndpoint), expirationTime, PushSubscriptionOptions::create(userVisibleOnly, WTFMove(myServerVAPIDPublicKey)), WTFMove(myClientECDHPublicKey), WTFMove(myAuth));
+}
+#endif
 
 } // namespace WebCore

@@ -1,3 +1,21 @@
+2021-10-06  Ben Nham  <nham@apple.com>
+
+        Add PushSubscription stubs
+        https://bugs.webkit.org/show_bug.cgi?id=231278
+
+        Reviewed Alex Christensen.
+
+        Added a basic test for PushSubscription. Right now the test only runs in the window global
+        scope because it relies on a constructor called via window.internals. I'll add more test
+        cases and test it in the worker scope as well once we change the test to create a
+        subscription via a mocked PushManager.subscribe call instead.
+
+        * http/wpt/push-api/pushSubscription.https.any-expected.txt: Added.
+        * http/wpt/push-api/pushSubscription.https.any.html: Added.
+        * http/wpt/push-api/pushSubscription.https.any.js: Added.
+        (bytesFrom):
+        (test):
+
 2021-10-06  Ayumi Kojima  <ayumi_kojima@apple.com>
 
         [ iOS 15 Debug ] imported/w3c/web-platform-tests/xhr/send-timeout-events.htm is a flaky failure.

@@ -422,9 +422,14 @@ $(PROJECT_DIR)/Modules/pictureinpicture/PictureInPictureWindow.idl
 $(PROJECT_DIR)/Modules/plugins/QuickTimePluginReplacement.css
 $(PROJECT_DIR)/Modules/plugins/QuickTimePluginReplacement.idl
 $(PROJECT_DIR)/Modules/plugins/QuickTimePluginReplacement.js
+$(PROJECT_DIR)/Modules/push-api/PushEncryptionKeyName.idl
 $(PROJECT_DIR)/Modules/push-api/PushEvent.idl
 $(PROJECT_DIR)/Modules/push-api/PushEventInit.idl
 $(PROJECT_DIR)/Modules/push-api/PushMessageData.idl
+$(PROJECT_DIR)/Modules/push-api/PushSubscription.idl
+$(PROJECT_DIR)/Modules/push-api/PushSubscriptionJSON.idl
+$(PROJECT_DIR)/Modules/push-api/PushSubscriptionOptions.idl
+$(PROJECT_DIR)/Modules/push-api/PushSubscriptionOptionsInit.idl
 $(PROJECT_DIR)/Modules/push-api/ServiceWorkerGlobalScope+PushAPI.idl
 $(PROJECT_DIR)/Modules/remoteplayback/HTMLMediaElement+RemotePlayback.idl
 $(PROJECT_DIR)/Modules/remoteplayback/RemotePlayback.idl
