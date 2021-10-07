@@ -55,6 +55,7 @@ struct CSSParserContext {
     bool useSystemAppearance { false };
 
     // Settings.
+    bool accentColorEnabled { false };
     bool aspectRatioEnabled { false };
     bool colorContrastEnabled { false };
     bool colorFilterEnabled { false };

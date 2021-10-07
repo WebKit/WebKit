@@ -1,12 +1,9 @@
-CONSOLE MESSAGE: Error: assert_equals: expected (string) "auto" but got (undefined) undefined
 
-Harness Error (FAIL), message = Error: assert_equals: expected (string) "auto" but got (undefined) undefined
-
-FAIL Property accent-color value 'initial' assert_true: accent-color doesn't seem to be supported in the computed style expected true got false
-FAIL Property accent-color value 'inherit' assert_true: accent-color doesn't seem to be supported in the computed style expected true got false
-FAIL Property accent-color value 'red' assert_true: accent-color doesn't seem to be supported in the computed style expected true got false
-FAIL Property accent-color value 'blue' assert_true: accent-color doesn't seem to be supported in the computed style expected true got false
-FAIL Property accent-color value 'auto' assert_true: accent-color doesn't seem to be supported in the computed style expected true got false
-FAIL Property accent-color value 'currentcolor' assert_true: accent-color doesn't seem to be supported in the computed style expected true got false
-FAIL Property accent-color value '#fff' assert_true: accent-color doesn't seem to be supported in the computed style expected true got false
+PASS Property accent-color value 'initial'
+PASS Property accent-color value 'inherit'
+PASS Property accent-color value 'red'
+PASS Property accent-color value 'blue'
+PASS Property accent-color value 'auto'
+PASS Property accent-color value 'currentcolor'
+PASS Property accent-color value '#fff'
 

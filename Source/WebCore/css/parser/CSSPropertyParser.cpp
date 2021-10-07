@@ -1729,7 +1729,7 @@ static RefPtr<CSSValue> consumeTextEmphasisStyle(CSSParserTokenRange& range)
     return nullptr;
 }
 
-static RefPtr<CSSPrimitiveValue> consumeCaretColor(CSSParserTokenRange& range, const CSSParserContext& context)
+static RefPtr<CSSPrimitiveValue> consumeColorWithAuto(CSSParserTokenRange& range, const CSSParserContext& context)
 {
     if (range.peek().id() == CSSValueAuto)
         return consumeIdent(range);
@@ -4218,8 +4218,13 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSS
     case CSSPropertyLightingColor:
     case CSSPropertyColumnRuleColor:
         return consumeColor(m_range, m_context);
+    case CSSPropertyAccentColor: {
+        if (!m_context.accentColorEnabled)
+            return nullptr;
+        return consumeColorWithAuto(m_range, m_context);
+    }
     case CSSPropertyCaretColor:
-        return consumeCaretColor(m_range, m_context);
+        return consumeColorWithAuto(m_range, m_context);
     case CSSPropertyColor:
     case CSSPropertyBackgroundColor:
         return consumeColor(m_range, m_context, inQuirksMode());

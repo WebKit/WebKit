@@ -87,6 +87,8 @@ public:
     Color caretColor;
     Color visitedLinkCaretColor;
 
+    Color accentColor;
+
     std::unique_ptr<ShadowData> textShadow; // Our text shadow information for shadowed text drawing.
     
     RefPtr<CursorList> cursorData;
@@ -161,7 +163,10 @@ public:
     unsigned hasAutoCaretColor : 1;
     unsigned hasVisitedLinkAutoCaretColor : 1;
 
+    unsigned hasAutoAccentColor : 1;
+
     unsigned effectiveInert : 1;
+
     unsigned isInSubtreeWithBlendMode : 1;
 
     OptionSet<TouchAction> effectiveTouchActions;

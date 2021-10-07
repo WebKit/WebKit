@@ -1067,6 +1067,7 @@ static bool rareInheritedDataChangeRequiresRepaint(const StyleRareInheritedData&
         || first.userSelect != second.userSelect
         || first.appleColorFilter != second.appleColorFilter
         || first.imageRendering != second.imageRendering
+        || first.accentColor != second.accentColor
 #if ENABLE(DARK_MODE_CSS)
         || first.colorScheme != second.colorScheme
 #endif
@@ -2030,6 +2031,8 @@ void RenderStyle::getShadowVerticalExtent(const ShadowData* shadow, LayoutUnit &
 Color RenderStyle::unresolvedColorForProperty(CSSPropertyID colorProperty, bool visitedLink) const
 {
     switch (colorProperty) {
+    case CSSPropertyAccentColor:
+        return accentColor();
     case CSSPropertyColor:
         return visitedLink ? visitedLinkColor() : color();
     case CSSPropertyBackgroundColor:

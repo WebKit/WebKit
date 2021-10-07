@@ -68,6 +68,7 @@ CSSParserContext::CSSParserContext(const Document& document, const URL& sheetBas
     , isHTMLDocument { document.isHTMLDocument() }
     , hasDocumentSecurityOrigin { sheetBaseURL.isNull() || document.securityOrigin().canRequest(baseURL) }
     , useSystemAppearance { document.page() ? document.page()->useSystemAppearance() : false }
+    , accentColorEnabled { document.settings().accentColorEnabled() }
     , aspectRatioEnabled { document.settings().aspectRatioEnabled() }
     , colorContrastEnabled { document.settings().cssColorContrastEnabled() }
     , colorFilterEnabled { document.settings().colorFilterEnabled() }
@@ -113,6 +114,7 @@ bool operator==(const CSSParserContext& a, const CSSParserContext& b)
         && a.hasDocumentSecurityOrigin == b.hasDocumentSecurityOrigin
         && a.isContentOpaque == b.isContentOpaque
         && a.useSystemAppearance == b.useSystemAppearance
+        && a.accentColorEnabled == b.accentColorEnabled
         && a.aspectRatioEnabled == b.aspectRatioEnabled
         && a.colorContrastEnabled == b.colorContrastEnabled
         && a.colorFilterEnabled == b.colorFilterEnabled
@@ -184,7 +186,8 @@ void add(Hasher& hasher, const CSSParserContext& context)
         | context.attachmentEnabled                         << 24
 #endif
         | context.overflowClipEnabled                       << 25
-        | context.mode                                      << 26; // This is multiple bits, so keep it last.
+        | context.accentColorEnabled                        << 26
+        | context.mode                                      << 27; // This is multiple bits, so keep it last.
     add(hasher, context.baseURL, context.charset, bits);
 }
 
@@ -201,6 +204,8 @@ bool CSSParserContext::isPropertyRuntimeDisabled(CSSPropertyID property) const
     case CSSPropertySuffix:
     case CSSPropertySystem:
         return !counterStyleAtRulesEnabled;
+    case CSSPropertyAccentColor:
+        return !accentColorEnabled;
     case CSSPropertyAspectRatio:
         return !aspectRatioEnabled;
     case CSSPropertyContain:

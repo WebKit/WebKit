@@ -216,6 +216,21 @@
         "to true is chosen for code generation."
     ],
     "properties": {
+        "accent-color": {
+            "inherited": true,
+            "codegen-properties": {
+                "color-property": true,
+                "custom": "All",
+                "settings-flag": "accentColorEnabled"
+            },
+            "status": {
+                "status": "experimental"
+            },
+            "specification": {
+                "category": "css-ui",
+                "url": "https://www.w3.org/TR/css-ui-4/#widget-accent"
+            }
+        },
         "caret-color": {
             "inherited": true,
             "codegen-properties": {

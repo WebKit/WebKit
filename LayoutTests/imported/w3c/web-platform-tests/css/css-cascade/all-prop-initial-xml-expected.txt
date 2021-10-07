@@ -2,6 +2,7 @@
 
 PASS setup
 PASS stylesheet takes effect
+PASS accent-color
 PASS align-content
 PASS align-items
 PASS align-self

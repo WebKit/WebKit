@@ -40,7 +40,7 @@ struct GreaterThanOrSameSizeAsStyleRareInheritedData : public RefCounted<Greater
     void* styleImage;
     Color firstColor;
     float firstFloat;
-    Color colors[9];
+    Color colors[10];
     void* ownPtrs[1];
     AtomString atomStrings[6];
     void* refPtrs[3];
@@ -49,7 +49,7 @@ struct GreaterThanOrSameSizeAsStyleRareInheritedData : public RefCounted<Greater
     TextUnderlineOffset offset;
     TextDecorationThickness thickness;
     void* customPropertyDataRefs[1];
-    unsigned bitfields[6];
+    unsigned bitfields[7];
     short pagedMediaShorts[2];
     TabSize tabSize;
     short hyphenationShorts[3];
@@ -135,6 +135,7 @@ StyleRareInheritedData::StyleRareInheritedData()
     , mathStyle(static_cast<unsigned>(RenderStyle::initialMathStyle()))
     , hasAutoCaretColor(true)
     , hasVisitedLinkAutoCaretColor(true)
+    , hasAutoAccentColor(true)
     , effectiveInert(false)
     , isInSubtreeWithBlendMode(false)
     , effectiveTouchActions(RenderStyle::initialTouchActions())
@@ -175,6 +176,7 @@ inline StyleRareInheritedData::StyleRareInheritedData(const StyleRareInheritedDa
     , visitedLinkTextEmphasisColor(o.visitedLinkTextEmphasisColor)
     , caretColor(o.caretColor)
     , visitedLinkCaretColor(o.visitedLinkCaretColor)
+    , accentColor(o.accentColor)
     , textShadow(o.textShadow ? makeUnique<ShadowData>(*o.textShadow) : nullptr)
     , cursorData(o.cursorData)
     , indent(o.indent)
@@ -233,6 +235,7 @@ inline StyleRareInheritedData::StyleRareInheritedData(const StyleRareInheritedDa
     , mathStyle(o.mathStyle)
     , hasAutoCaretColor(o.hasAutoCaretColor)
     , hasVisitedLinkAutoCaretColor(o.hasVisitedLinkAutoCaretColor)
+    , hasAutoAccentColor(o.hasAutoAccentColor)
     , effectiveInert(o.effectiveInert)
     , isInSubtreeWithBlendMode(o.isInSubtreeWithBlendMode)
     , effectiveTouchActions(o.effectiveTouchActions)
@@ -282,6 +285,7 @@ bool StyleRareInheritedData::operator==(const StyleRareInheritedData& o) const
         && visitedLinkTextEmphasisColor == o.visitedLinkTextEmphasisColor
         && caretColor == o.caretColor
         && visitedLinkCaretColor == o.visitedLinkCaretColor
+        && accentColor == o.accentColor
 #if ENABLE(TOUCH_EVENTS)
         && tapHighlightColor == o.tapHighlightColor
 #endif
@@ -358,6 +362,7 @@ bool StyleRareInheritedData::operator==(const StyleRareInheritedData& o) const
         && mathStyle == o.mathStyle
         && hasAutoCaretColor == o.hasAutoCaretColor
         && hasVisitedLinkAutoCaretColor == o.hasVisitedLinkAutoCaretColor
+        && hasAutoAccentColor == o.hasAutoAccentColor
         && isInSubtreeWithBlendMode == o.isInSubtreeWithBlendMode
         && effectiveTouchActions == o.effectiveTouchActions
         && eventListenerRegionTypes == o.eventListenerRegionTypes

@@ -1,12 +1,12 @@
 
-FAIL e.style['accent-color'] = "initial" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['accent-color'] = "inherit" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['accent-color'] = "unset" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['accent-color'] = "revert" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['accent-color'] = "auto" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['accent-color'] = "red" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['accent-color'] = "blue" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['accent-color'] = "currentcolor" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['accent-color'] = "#fff" should set the property value assert_not_equals: property should be set got disallowed value ""
+PASS e.style['accent-color'] = "initial" should set the property value
+PASS e.style['accent-color'] = "inherit" should set the property value
+PASS e.style['accent-color'] = "unset" should set the property value
+PASS e.style['accent-color'] = "revert" should set the property value
+PASS e.style['accent-color'] = "auto" should set the property value
+PASS e.style['accent-color'] = "red" should set the property value
+PASS e.style['accent-color'] = "blue" should set the property value
+PASS e.style['accent-color'] = "currentcolor" should set the property value
+PASS e.style['accent-color'] = "#fff" should set the property value
 PASS e.style['accent-color'] = "auto auto" should not set the property value
 

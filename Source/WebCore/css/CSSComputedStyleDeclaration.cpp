@@ -2626,7 +2626,13 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         case CSSPropertyInternalTextAutosizingStatus:
 #endif
             break;
-
+        case CSSPropertyAccentColor: {
+            if (!m_element->document().settings().accentColorEnabled())
+                return nullptr;
+            if (style.hasAutoAccentColor())
+                return cssValuePool.createIdentifierValue(CSSValueAuto);
+            return currentColorOrValidColor(&style, style.accentColor());
+        }
         case CSSPropertyBackgroundColor:
             return m_allowVisitedStyle ? cssValuePool.createColorValue(style.visitedDependentColor(CSSPropertyBackgroundColor)) : currentColorOrValidColor(&style, style.backgroundColor());
         case CSSPropertyBackgroundImage:

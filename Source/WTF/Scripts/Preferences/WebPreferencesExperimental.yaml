@@ -26,6 +26,18 @@
 # They must include a humanReadableName and humanReadableDescription. This is
 #   the text exposed to the user from the WebKit client.
 
+AccentColorEnabled:
+  type: bool
+  humanReadableName: "CSS Accent Color"
+  humanReadableDescription: "Enable accent-color CSS property"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 AccessHandleEnabled:
   type: bool
   humanReadableName: "AccessHandle API"
