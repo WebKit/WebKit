@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2015 University of Washington.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -150,7 +151,9 @@ WI.runBootstrapOperations = function() {
 
         // Simulates the steps taken by WebInspectorUIExtensionController to create an extension tab in WebInspectorUI.
         if (!WI.settings.engineeringShowMockWebExtensionTab.value) {
-            InspectorFrontendAPI.unregisterExtension(mockData.extensionID);
+            if (WI.sharedApp.extensionController.registeredExtensionIDs.has(mockData.extensionID))
+                InspectorFrontendAPI.unregisterExtension(mockData.extensionID);
+
             return;
         }
 

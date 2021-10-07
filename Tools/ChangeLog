@@ -1,3 +1,17 @@
+2021-10-07  BJ Burg  <bburg@apple.com>
+
+        Web Inspector: WebInspectorExtensionTabContentView should not reload its iframe when detached
+        https://bugs.webkit.org/show_bug.cgi?id=230758
+        <rdar://74714861>
+
+        Reviewed by Timothy Hatcher.
+
+        Add a new test to verify that re-selecting an extension tab does not cause it to reload.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/InspectorExtension-basic-tab.html:
+        * TestWebKitAPI/Tests/WebKitCocoa/WKInspectorExtension.mm:
+        (TEST):
+
 2021-10-07  Youenn Fablet  <youenn@apple.com>
 
         REGRESSION (r283613): [ macOS ] TestWebKitAPI.ResourceLoadDelegate.LoadInfo is failing

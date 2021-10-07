@@ -1,3 +1,44 @@
+2021-10-07  BJ Burg  <bburg@apple.com>
+
+        Web Inspector: WebInspectorExtensionTabContentView should not reload its iframe when detached
+        https://bugs.webkit.org/show_bug.cgi?id=230758
+        <rdar://74714861>
+
+        Reviewed by Timothy Hatcher.
+
+        When an <iframe> element detaches from the DOM, the script context is destroyed, which we don't
+        want to happen for _WKInspectorExtension tabs. Fix this by teaching ContentViewContainer to
+        'hide' such content views by setting `display:none` rather than detaching from the DOM.
+
+        * UserInterface/Views/ContentViewContainer.js:
+        (WI.ContentViewContainer.prototype._showEntry):
+        (WI.ContentViewContainer.prototype._hideEntry):
+        Set and unset 'display:none' instead of calling addSubview() / removeSubview().
+
+        * UserInterface/Views/ContentViewContainer.css:
+        (.content-view-container > .content-view.hidden-for-detach): Added.
+
+        (WI.ContentViewContainer.prototype._disassociateFromContentView):
+        Clean up any remaining content views that were not detached due to overriding shouldNotRemoveFromDOMWhenHidden.
+
+        * UserInterface/Views/ContentView.js:
+        (WI.ContentView.prototype.get shouldNotRemoveFromDOMWhenHidden): Added.
+
+        * UserInterface/Views/WebInspectorExtensionTabContentView.js:
+        (WI.WebInspectorExtensionTabContentView):
+        (WI.WebInspectorExtensionTabContentView.prototype.get shouldNotRemoveFromDOMWhenHidden):
+        Override this to opt into the alternate behavior that does not detach from the DOM. It is still
+        necessary to call attached() and detached() so that WebInpectorExtensionTabContentView can generate
+        didShowExtensionTab/didHideExtensionTab event callbacks.
+
+        * UserInterface/Controllers/WebInspectorExtensionController.js:
+        (WI.WebInspectorExtensionController.prototype.get registeredExtensionIDs):
+        * UserInterface/Debug/Bootstrap.js:
+        (updateMockWebExtensionTab):
+        (WI.runBootstrapOperations):
+        This is a drive-by fix to address a console assertion seen while developing the API test.
+        Don't unregister the mock extension if it is not registered in the first place.
+
 2021-10-07  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Styles: format style declarations after editing

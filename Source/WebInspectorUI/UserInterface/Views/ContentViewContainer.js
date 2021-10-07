@@ -421,6 +421,11 @@ WI.ContentViewContainer = class ContentViewContainer extends WI.View
             return;
         }
 
+        // Deselected extension tabs are still attached to the DOM via `this.element`,
+        // so this is the last chance to actually remove the subview and detach from the DOM.
+        if (contentView.constructor.shouldNotRemoveFromDOMWhenHidden() && contentView.isAttached)
+            this.removeSubview(contentView);
+
         console.assert(!contentView.isAttached);
 
         if (!contentView._parentContainer)
@@ -457,6 +462,10 @@ WI.ContentViewContainer = class ContentViewContainer extends WI.View
 
         if (!this.subviews.includes(entry.contentView))
             this.addSubview(entry.contentView);
+        else if (entry.contentView.constructor.shouldNotRemoveFromDOMWhenHidden()) {
+            entry.contentView.element.classList.remove("hidden-simulating-dom-detached");
+            entry.contentView._didMoveToParent(this);
+        }
 
         entry.prepareToShow();
     }
@@ -471,8 +480,13 @@ WI.ContentViewContainer = class ContentViewContainer extends WI.View
             return;
 
         entry.prepareToHide();
-        if (this.subviews.includes(entry.contentView))
-            this.removeSubview(entry.contentView);
+        if (this.subviews.includes(entry.contentView)) {
+            if (entry.contentView.constructor.shouldNotRemoveFromDOMWhenHidden()) {
+                entry.contentView.element.classList.add("hidden-simulating-dom-detached");
+                entry.contentView._didMoveToParent(null);
+            } else
+                this.removeSubview(entry.contentView);
+        }
     }
 
     _tombstoneContentViewContainersForContentView(contentView)

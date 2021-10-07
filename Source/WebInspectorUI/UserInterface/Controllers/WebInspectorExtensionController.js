@@ -37,6 +37,11 @@ WI.WebInspectorExtensionController = class WebInspectorExtensionController exten
 
     // Public
 
+    get registeredExtensionIDs()
+    {
+        return new Set(this._extensionForExtensionIDMap.keys());
+    }
+
     registerExtension(extensionID, displayName)
     {
         if (this._extensionForExtensionIDMap.has(extensionID)) {
