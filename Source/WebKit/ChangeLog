@@ -1,3 +1,13 @@
+2021-10-07  Aditya Keerthi  <akeerthi@apple.com>
+
+        Fix the macCatalyst build
+        https://bugs.webkit.org/show_bug.cgi?id=231373
+        rdar://83984197
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/API/ios/WKWebViewIOS.mm: Add missing import.
+
 2021-10-07  Darin Adler  <darin@apple.com>
 
         Get rid of the deviceClass function, up-leveling to deviceClassIsSmallScreen
