@@ -2142,3 +2142,11 @@ webkit.org/b/230905 imported/w3c/web-platform-tests/css/css-cascade/layer-counte
 
 webkit.org/b/231083 [ Debug ] imported/w3c/web-platform-tests/content-security-policy/generic/policy-inherited-correctly-by-plznavigate.html [ Pass Failure ]
 
+webkit.org/b/231397 [ Debug ] fast/canvas/webgl/multisample-resolve-consistency.html [ Slow ]
+webkit.org/b/231397 [ Debug ] fast/selectors/slow-style-sharing-with-long-cousin-list.html [ Slow ]
+webkit.org/b/231397 [ Debug ] fast/selectors/matches-complex.html [ Slow ]
+webkit.org/b/231397 imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/pbkdf2.https.any.worker.html [ Slow ]
+webkit.org/b/231397 [ Debug ] imported/w3c/web-platform-tests/selection/collapse-00.html [ Slow ]
+webkit.org/b/231397 [ Debug ] js/error-should-not-strong-reference-global-object.html [ Slow ]
+webkit.org/b/231397 webgl/1.0.3/conformance/glsl/bugs/long-expressions-should-not-crash.html [ Slow ]
+webkit.org/b/231397 webgl/1.0.3/conformance/uniforms/uniform-default-values.html [ Slow ]
