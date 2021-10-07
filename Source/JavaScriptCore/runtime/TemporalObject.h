@@ -52,6 +52,8 @@ static constexpr unsigned numberOfTemporalUnits = 0 JSC_TEMPORAL_UNITS(JSC_COUNT
 static constexpr unsigned numberOfTemporalPlainTimeUnits = 0 JSC_TEMPORAL_PLAIN_TIME_UNITS(JSC_COUNT_TEMPORAL_UNITS);
 #undef JSC_COUNT_TEMPORAL_UNITS
 
+extern const TemporalUnit temporalUnitsInTableOrder[numberOfTemporalUnits];
+
 class TemporalObject final : public JSNonFinalObject {
 public:
     using Base = JSNonFinalObject;
@@ -94,7 +96,8 @@ struct PrecisionData {
 };
 
 WTF::String ellipsizeAt(unsigned maxLength, const WTF::String&);
-PropertyName temporalUnitPropertyName(VM&, TemporalUnit);
+PropertyName temporalUnitPluralPropertyName(VM&, TemporalUnit);
+PropertyName temporalUnitSingularPropertyName(VM&, TemporalUnit);
 std::optional<TemporalUnit> temporalUnitType(StringView);
 std::optional<TemporalUnit> temporalLargestUnit(JSGlobalObject*, JSObject* options, std::initializer_list<TemporalUnit> disallowedUnits, TemporalUnit autoValue);
 std::optional<TemporalUnit> temporalSmallestUnit(JSGlobalObject*, JSObject* options, std::initializer_list<TemporalUnit> disallowedUnits);

@@ -88,20 +88,20 @@ ISO8601::Duration TemporalDuration::fromDurationLike(JSGlobalObject* globalObjec
 
     ISO8601::Duration result;
     auto hasRelevantProperty = false;
-    for (size_t i = 0; i < numberOfTemporalUnits; i++) {
-        JSValue value = durationLike->get(globalObject, temporalUnitPropertyName(vm, static_cast<TemporalUnit>(i)));
+    for (TemporalUnit unit : temporalUnitsInTableOrder) {
+        JSValue value = durationLike->get(globalObject, temporalUnitPluralPropertyName(vm, unit));
         RETURN_IF_EXCEPTION(scope, { });
 
         if (value.isUndefined()) {
-            result[i] = 0;
+            result[unit] = 0;
             continue;
         }
 
         hasRelevantProperty = true;
-        result[i] = value.toNumber(globalObject);
+        result[unit] = value.toNumber(globalObject);
         RETURN_IF_EXCEPTION(scope, { });
 
-        if (!isInteger(result[i])) {
+        if (!isInteger(result[unit])) {
             throwRangeError(globalObject, scope, "Temporal.Duration properties must be integers"_s);
             return { };
         }
@@ -230,20 +230,20 @@ ISO8601::Duration TemporalDuration::with(JSGlobalObject* globalObject, JSObject*
 
     ISO8601::Duration result;
     auto hasRelevantProperty = false;
-    for (size_t i = 0; i < numberOfTemporalUnits; i++) {
-        JSValue value = durationLike->get(globalObject, temporalUnitPropertyName(vm, static_cast<TemporalUnit>(i)));
+    for (TemporalUnit unit : temporalUnitsInTableOrder) {
+        JSValue value = durationLike->get(globalObject, temporalUnitPluralPropertyName(vm, unit));
         RETURN_IF_EXCEPTION(scope, { });
 
         if (value.isUndefined()) {
-            result[i] = m_duration[i];
+            result[unit] = m_duration[unit];
             continue;
         }
 
         hasRelevantProperty = true;
-        result[i] = value.toNumber(globalObject);
+        result[unit] = value.toNumber(globalObject);
         RETURN_IF_EXCEPTION(scope, { });
 
-        if (!isInteger(result[i])) {
+        if (!isInteger(result[unit])) {
             throwRangeError(globalObject, scope, "Temporal.Duration properties must be integers"_s);
             return { };
         }
@@ -467,6 +467,10 @@ ISO8601::Duration TemporalDuration::round(JSGlobalObject* globalObject, JSValue 
     // FIXME: Implement relativeTo parameter after PlainDateTime / ZonedDateTime.
     if (largestUnit > TemporalUnit::Year && (years() || months() || weeks() || (days() && largestUnit < TemporalUnit::Day))) {
         throwRangeError(globalObject, scope, "Cannot round a duration of years, months, or weeks without a relativeTo option"_s);
+        return { };
+    }
+    if (largestUnit <= TemporalUnit::Week) {
+        throwVMError(globalObject, scope, "FIXME: years, months, or weeks rounding with relativeTo not implemented yet"_s);
         return { };
     }
 

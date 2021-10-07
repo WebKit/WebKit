@@ -277,28 +277,16 @@ String TemporalPlainTime::toString(JSGlobalObject* globalObject, JSValue options
     return ISO8601::temporalTimeToString(plainTime, data.precision);
 }
 
-
-static PropertyName propertyName(VM& vm, unsigned index)
-{
-    ASSERT(index < numberOfTemporalUnits);
-    switch (static_cast<TemporalUnit>(index)) {
-#define JSC_TEMPORAL_DURATION_PROPERTY_NAME(name, capitalizedName) case TemporalUnit::capitalizedName: return vm.propertyNames->name;
-        JSC_TEMPORAL_UNITS(JSC_TEMPORAL_DURATION_PROPERTY_NAME)
-#undef JSC_TEMPORAL_DURATION_PROPERTY_NAME
-    }
-
-    RELEASE_ASSERT_NOT_REACHED();
-}
-
 static ISO8601::Duration toTemporalTimeRecord(JSGlobalObject* globalObject, JSObject* temporalTimeLike)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     ISO8601::Duration duration { };
-    for (unsigned index = 0; index < numberOfTemporalPlainTimeUnits; ++index) {
-        unsigned durationIndex = index + static_cast<unsigned>(TemporalUnit::Hour);
-        auto name = propertyName(vm, durationIndex);
+    for (TemporalUnit unit : temporalUnitsInTableOrder) {
+        if (unit < TemporalUnit::Hour)
+            continue;
+        auto name = temporalUnitSingularPropertyName(vm, unit);
         JSValue value = temporalTimeLike->get(globalObject, name);
         RETURN_IF_EXCEPTION(scope, { });
 
@@ -315,7 +303,7 @@ static ISO8601::Duration toTemporalTimeRecord(JSGlobalObject* globalObject, JSOb
             throwRangeError(globalObject, scope, "Temporal.PlainTime properties must be finite"_s);
             return { };
         }
-        duration[durationIndex] = integer;
+        duration[unit] = integer;
     }
     return duration;
 }
@@ -327,9 +315,10 @@ static std::array<std::optional<double>, numberOfTemporalPlainTimeUnits> toParti
 
     bool hasAnyFields = false;
     std::array<std::optional<double>, numberOfTemporalPlainTimeUnits> partialTime { };
-    for (unsigned index = 0; index < numberOfTemporalPlainTimeUnits; ++index) {
-        unsigned durationIndex = index + static_cast<unsigned>(TemporalUnit::Hour);
-        auto name = propertyName(vm, durationIndex);
+    for (TemporalUnit unit : temporalUnitsInTableOrder) {
+        if (unit < TemporalUnit::Hour)
+            continue;
+        auto name = temporalUnitSingularPropertyName(vm, unit);
         JSValue value = temporalTimeLike->get(globalObject, name);
         RETURN_IF_EXCEPTION(scope, { });
 
@@ -341,7 +330,7 @@ static std::array<std::optional<double>, numberOfTemporalPlainTimeUnits> toParti
                 throwRangeError(globalObject, scope, "toPartialTime properties must be finite"_s);
                 return { };
             }
-            partialTime[index] = doubleValue;
+            partialTime[static_cast<unsigned>(unit) - static_cast<unsigned>(TemporalUnit::Hour)] = doubleValue;
         }
     }
     if (!hasAnyFields) {

@@ -1,3 +1,14 @@
+2021-10-07  Philip Chimento  <pchimento@igalia.com>
+
+        [JSC] Temporal tweaks to pass more test262 tests
+        https://bugs.webkit.org/show_bug.cgi?id=231331
+
+        Reviewed by Yusuke Suzuki.
+
+        * test262/config.yaml: Three tests no longer crash, but they still
+          depend on unimplemented functionality, so skip them.
+        * test262/expectations.yaml:
+
 2021-10-06  Ross Kirsling  <ross.kirsling@sony.com>
 
         Unreviewed, ensure test262 expectations reflect BigSur release mode.

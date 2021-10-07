@@ -138,16 +138,41 @@ WTF::String ellipsizeAt(unsigned maxLength, const WTF::String& string)
     return copy;
 }
 
-PropertyName temporalUnitPropertyName(VM& vm, TemporalUnit unit)
+PropertyName temporalUnitPluralPropertyName(VM& vm, TemporalUnit unit)
 {
     switch (unit) {
-#define JSC_TEMPORAL_DURATION_PROPERTY_NAME(name, capitalizedName) case TemporalUnit::capitalizedName: return vm.propertyNames->name##s; 
-        JSC_TEMPORAL_UNITS(JSC_TEMPORAL_DURATION_PROPERTY_NAME)
-#undef JSC_TEMPORAL_DURATION_PROPERTY_NAME
+#define JSC_TEMPORAL_UNIT_PLURAL_PROPERTY_NAME(name, capitalizedName) case TemporalUnit::capitalizedName: return vm.propertyNames->name##s;
+        JSC_TEMPORAL_UNITS(JSC_TEMPORAL_UNIT_PLURAL_PROPERTY_NAME)
+#undef JSC_TEMPORAL_UNIT_PLURAL_PROPERTY_NAME
     }
 
     RELEASE_ASSERT_NOT_REACHED();
 }
+
+PropertyName temporalUnitSingularPropertyName(VM& vm, TemporalUnit unit)
+{
+    switch (unit) {
+#define JSC_TEMPORAL_UNIT_SINGULAR_PROPERTY_NAME(name, capitalizedName) case TemporalUnit::capitalizedName: return vm.propertyNames->name;
+        JSC_TEMPORAL_UNITS(JSC_TEMPORAL_UNIT_SINGULAR_PROPERTY_NAME)
+#undef JSC_TEMPORAL_UNIT_SINGULAR_PROPERTY_NAME
+    }
+
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+// https://tc39.es/proposal-temporal/#table-temporal-temporaldurationlike-properties
+const TemporalUnit temporalUnitsInTableOrder[numberOfTemporalUnits] = {
+    TemporalUnit::Day,
+    TemporalUnit::Hour,
+    TemporalUnit::Microsecond,
+    TemporalUnit::Millisecond,
+    TemporalUnit::Minute,
+    TemporalUnit::Month,
+    TemporalUnit::Nanosecond,
+    TemporalUnit::Second,
+    TemporalUnit::Week,
+    TemporalUnit::Year,
+};
 
 std::optional<TemporalUnit> temporalUnitType(StringView unit)
 {
