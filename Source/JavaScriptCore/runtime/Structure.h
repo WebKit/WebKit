@@ -307,7 +307,6 @@ public:
     JSValue prototypeForLookup(JSGlobalObject*) const;
     JSValue prototypeForLookup(JSGlobalObject*, JSCell* base) const;
     StructureChain* prototypeChain(VM&, JSGlobalObject*, JSObject* base) const;
-    StructureChain* prototypeChain(JSGlobalObject*, JSObject* base) const;
     DECLARE_VISIT_CHILDREN;
     
     // A Structure is cheap to mark during GC if doing so would only add a small and bounded amount
@@ -530,8 +529,9 @@ public:
             setHasReadOnlyOrGetterSetterPropertiesExcludingProto(true);
     }
 
-    void setCachedPropertyNameEnumerator(VM&, JSPropertyNameEnumerator*);
+    void setCachedPropertyNameEnumerator(VM&, JSPropertyNameEnumerator*, StructureChain*);
     JSPropertyNameEnumerator* cachedPropertyNameEnumerator() const;
+    uintptr_t cachedPropertyNameEnumeratorAndFlag() const;
     bool canCachePropertyNameEnumerator(VM&) const;
     bool canAccessPropertiesQuicklyForEnumeration() const;
 
@@ -637,7 +637,7 @@ public:
 
     bool propertyNameEnumeratorShouldWatch() const
     {
-        return dfgShouldWatch();
+        return dfgShouldWatch() && !hasPolyProto();
     }
         
     void addTransitionWatchpoint(Watchpoint* watchpoint) const
@@ -848,6 +848,8 @@ private:
     JS_EXPORT_PRIVATE void allocateRareData(VM&);
     
     void startWatchingInternalProperties(VM&);
+
+    void clearCachedPrototypeChain();
 
     static constexpr int s_maxTransitionLength = 64;
     static constexpr int s_maxTransitionLengthForNonEvalPutById = 512;
