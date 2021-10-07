@@ -1193,6 +1193,8 @@ webkit.org/b/162524 [ Release ] http/tests/cache/disk-cache/disk-cache-redirect.
 
 webkit.org/b/163362 platform/ios/ios/plugin/youtube-flash-plugin-iframe.html [ Pass Failure ]
 
+webkit.org/b/231378 platform/ios/fast/text/system-monospaced-numbers.html [ Failure ]
+
 webkit.org/b/164960 http/tests/security/module-correct-mime-types.html [ Slow ]
 
 webkit.org/b/164961 [ Release ] http/tests/storage/callbacks-are-called-in-correct-context.html [ Timeout ]

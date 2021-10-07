@@ -1,5 +1,14 @@
 2021-10-07  Ayumi Kojima  <ayumi_kojima@apple.com>
 
+        [ iOS 15 ] platform/ios/fast/text/system-monospaced-numbers.html is failing.
+        https://bugs.webkit.org/show_bug.cgi?id=231378
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+
+2021-10-07  Ayumi Kojima  <ayumi_kojima@apple.com>
+
         [ iOS ] CSS Flexbox tests are constant failure (fixed-table-layout-with-percentage-width-in-flex-item.html and flex-item-compressible-001.html).
         https://bugs.webkit.org/show_bug.cgi?id=230773
 
