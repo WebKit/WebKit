@@ -34,6 +34,7 @@
 #include <WebCore/DisplayListIterator.h>
 #include <WebCore/DisplayListRecorder.h>
 #include <WebCore/FontCascade.h>
+#include <WebCore/GradientImage.h>
 #include <WebCore/GraphicsContextCG.h>
 #include <WebCore/InMemoryDisplayList.h>
 
@@ -127,6 +128,70 @@ TEST(BifurcatedGraphicsContextTests, TextInBifurcatedContext)
     // Ensure that both contexts have text painting commands.
     runTest(primaryDisplayList);
     runTest(secondaryDisplayList);
+}
+
+TEST(BifurcatedGraphicsContextTests, DrawTiledGradientImage)
+{
+    auto colorSpace = DestinationColorSpace::SRGB();
+    auto primaryCGContext = adoptCF(CGBitmapContextCreate(nullptr, contextWidth, contextHeight, 8, 4 * contextWidth, colorSpace.platformColorSpace(), kCGImageAlphaPremultipliedLast));
+    auto secondaryCGContext = adoptCF(CGBitmapContextCreate(nullptr, contextWidth, contextHeight, 8, 4 * contextWidth, colorSpace.platformColorSpace(), kCGImageAlphaPremultipliedLast));
+
+    GraphicsContextCG primaryContext(primaryCGContext.get());
+    GraphicsContextCG secondaryContext(secondaryCGContext.get());
+    BifurcatedGraphicsContext ctx(primaryContext, secondaryContext);
+
+    auto gradient = Gradient::create(Gradient::LinearData { { 0, 0 }, { 1, 1 } });
+    gradient->addColorStop({ 0, Color::red });
+
+    auto gradientImage = GradientImage::create(gradient, FloatSize { 1, 1 });
+
+    ctx.drawTiledImage(gradientImage.get(), FloatRect { 0, 0, 100, 100 }, FloatRect { 0, 0, 1, 1 }, FloatSize { 1, 1 }, Image::RepeatTile, Image::RepeatTile);
+
+    // The primary context should be red.
+    CGContextFlush(primaryCGContext.get());
+    uint8_t* primaryData = static_cast<uint8_t*>(CGBitmapContextGetData(primaryCGContext.get()));
+    EXPECT_EQ(primaryData[0], 255);
+    EXPECT_EQ(primaryData[1], 0);
+    EXPECT_EQ(primaryData[2], 0);
+
+    // The secondary context should be red.
+    CGContextFlush(secondaryCGContext.get());
+    uint8_t* secondaryData = static_cast<uint8_t*>(CGBitmapContextGetData(secondaryCGContext.get()));
+    EXPECT_EQ(secondaryData[0], 255);
+    EXPECT_EQ(secondaryData[1], 0);
+    EXPECT_EQ(secondaryData[2], 0);
+}
+
+TEST(BifurcatedGraphicsContextTests, DrawGradientImage)
+{
+    auto colorSpace = DestinationColorSpace::SRGB();
+    auto primaryCGContext = adoptCF(CGBitmapContextCreate(nullptr, contextWidth, contextHeight, 8, 4 * contextWidth, colorSpace.platformColorSpace(), kCGImageAlphaPremultipliedLast));
+    auto secondaryCGContext = adoptCF(CGBitmapContextCreate(nullptr, contextWidth, contextHeight, 8, 4 * contextWidth, colorSpace.platformColorSpace(), kCGImageAlphaPremultipliedLast));
+
+    GraphicsContextCG primaryContext(primaryCGContext.get());
+    GraphicsContextCG secondaryContext(secondaryCGContext.get());
+    BifurcatedGraphicsContext ctx(primaryContext, secondaryContext);
+
+    auto gradient = Gradient::create(Gradient::LinearData { { 0, 0 }, { 1, 1 } });
+    gradient->addColorStop({ 0, Color::red });
+
+    auto gradientImage = GradientImage::create(gradient, FloatSize { 1, 1 });
+
+    ctx.drawImage(gradientImage.get(), FloatRect { 0, 0, 100, 100 }, FloatRect { 0, 0, 1, 1 });
+
+    // The primary context should be red.
+    CGContextFlush(primaryCGContext.get());
+    uint8_t* primaryData = static_cast<uint8_t*>(CGBitmapContextGetData(primaryCGContext.get()));
+    EXPECT_EQ(primaryData[0], 255);
+    EXPECT_EQ(primaryData[1], 0);
+    EXPECT_EQ(primaryData[2], 0);
+
+    // The secondary context should be red.
+    CGContextFlush(secondaryCGContext.get());
+    uint8_t* secondaryData = static_cast<uint8_t*>(CGBitmapContextGetData(secondaryCGContext.get()));
+    EXPECT_EQ(secondaryData[0], 255);
+    EXPECT_EQ(secondaryData[1], 0);
+    EXPECT_EQ(secondaryData[2], 0);
 }
 
 } // namespace TestWebKitAPI

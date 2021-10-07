@@ -1,3 +1,15 @@
+2021-10-07  Tim Horton  <timothy_horton@apple.com>
+
+        BifurcatedGraphicsContext doesn't bifurcate draw{Tiled}Image
+        https://bugs.webkit.org/show_bug.cgi?id=231385
+        <rdar://problem/83922633>
+
+        Reviewed by Devin Rousso.
+
+        * TestWebKitAPI/Tests/WebCore/cg/BifurcatedGraphicsContextTestsCG.cpp:
+        (TestWebKitAPI::TEST):
+        Add some test.
+
 2021-10-07  Jonathan Bedard  <jbedard@apple.com>
 
         [build.webkit.org] Build iOS 15 as universal binary

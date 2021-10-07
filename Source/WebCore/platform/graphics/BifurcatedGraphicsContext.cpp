@@ -269,6 +269,34 @@ void BifurcatedGraphicsContext::drawPattern(NativeImage& nativeImage, const Floa
     m_secondaryContext.drawPattern(nativeImage, imageSize, destRect, tileRect, patternTransform, phase, spacing, options);
 }
 
+ImageDrawResult BifurcatedGraphicsContext::drawImage(Image& image, const FloatRect& destination, const FloatRect& source, const ImagePaintingOptions& options)
+{
+    auto result = m_primaryContext.drawImage(image, destination, source, options);
+    m_secondaryContext.drawImage(image, destination, source, options);
+    return result;
+}
+
+ImageDrawResult BifurcatedGraphicsContext::drawImageForCanvas(Image& image, const FloatRect& destination, const FloatRect& source, const ImagePaintingOptions& options, DestinationColorSpace canvasColorSpace)
+{
+    auto result = m_primaryContext.drawImageForCanvas(image, destination, source, options, canvasColorSpace);
+    m_secondaryContext.drawImageForCanvas(image, destination, source, options, canvasColorSpace);
+    return result;
+}
+
+ImageDrawResult BifurcatedGraphicsContext::drawTiledImage(Image& image, const FloatRect& destination, const FloatPoint& source, const FloatSize& tileSize, const FloatSize& spacing, const ImagePaintingOptions& options)
+{
+    auto result = m_primaryContext.drawTiledImage(image, destination, source, tileSize, spacing, options);
+    m_secondaryContext.drawTiledImage(image, destination, source, tileSize, spacing, options);
+    return result;
+}
+
+ImageDrawResult BifurcatedGraphicsContext::drawTiledImage(Image& image, const FloatRect& destination, const FloatRect& source, const FloatSize& tileScaleFactor, Image::TileRule hRule, Image::TileRule vRule, const ImagePaintingOptions& options)
+{
+    auto result = m_primaryContext.drawTiledImage(image, destination, source, tileScaleFactor, hRule, vRule, options);
+    m_secondaryContext.drawTiledImage(image, destination, source, tileScaleFactor, hRule, vRule, options);
+    return result;
+}
+
 void BifurcatedGraphicsContext::paintFrameForMedia(MediaPlayer& player, const FloatRect& destination)
 {
     m_primaryContext.paintFrameForMedia(player, destination);
