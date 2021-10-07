@@ -1,10 +1,11 @@
-<script>
-onload = function() {
-    document.execCommand('selectAll');
-}
-</script>
-<textarea autofocus >
+<textarea id="textarea">
 text
 text2
 text3</textarea>
 <iframe srcdoc="foo"></iframe>
+<script>
+textarea.focus();
+onload = function() {
+    document.execCommand('selectAll');
+}
+</script>

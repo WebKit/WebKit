@@ -1,3 +1,15 @@
+2021-10-07  Tim Nguyen  <ntim@apple.com>
+
+        Stop relying on autofocus for deleteFromDocument-crash.html
+        https://bugs.webkit.org/show_bug.cgi?id=231357
+
+        Reviewed by Antti Koivisto.
+
+        Stop relying on current autofocus sync timing which will become async.
+
+        * imported/blink/editing/selection/deleteFromDocument-crash-expected.html:
+        * imported/blink/editing/selection/deleteFromDocument-crash.html:
+
 2021-10-07  Rob Buis  <rbuis@igalia.com>
 
         Resync the-img-element WPT tests from upstream
