@@ -6482,9 +6482,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
                         FrozenValue* frozen = m_graph.freezeStrong(symbol);
                         addToGraph(CheckIsConstant, OpInfo(frozen), property);
                     } else if (auto* string = property->dynamicCastConstant<JSString*>(*m_vm)) {
-                        auto* impl = string->tryGetValueImpl();
-                        ASSERT(impl); // FIXME: rdar://83902782
-                        if (impl && impl->isAtom() && !parseIndex(*const_cast<StringImpl*>(impl))) {
+                        if (auto* impl = string->tryGetValueImpl(); impl->isAtom() && !parseIndex(*const_cast<StringImpl*>(impl))) {
                             uid = bitwise_cast<UniquedStringImpl*>(impl);
                             propertyCell = string;
                             m_graph.freezeStrong(string);
@@ -8878,9 +8876,7 @@ void ByteCodeParser::handlePutByVal(Bytecode bytecode, BytecodeIndex osrExitInde
                 FrozenValue* frozen = m_graph.freezeStrong(symbol);
                 addToGraph(CheckIsConstant, OpInfo(frozen), property);
             } else if (auto* string = property->dynamicCastConstant<JSString*>(*m_vm)) {
-                auto* impl = string->tryGetValueImpl();
-                ASSERT(impl); // FIXME: rdar://83902782
-                if (impl && impl->isAtom() && !parseIndex(*const_cast<StringImpl*>(impl))) {
+                if (auto* impl = string->tryGetValueImpl(); impl->isAtom() && !parseIndex(*const_cast<StringImpl*>(impl))) {
                     uid = bitwise_cast<UniquedStringImpl*>(impl);
                     propertyCell = string;
                     m_graph.freezeStrong(string);
