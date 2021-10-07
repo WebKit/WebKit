@@ -1,3 +1,16 @@
+2021-10-06  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        Python 3: run-inspector-generator-tests and generate-inspector-protocol-bindings.py
+        https://bugs.webkit.org/show_bug.cgi?id=231055
+
+        Reviewed by Jonathan Bedard.
+
+        * Scripts/run-inspector-generator-tests:
+        * Scripts/webkitpy/inspector/main.py:
+        (InspectorGeneratorTests.generate_from_json): Use sys.executable
+        to invoke generate-inspector-protocol-bindings.py because 'python'
+        is python2.
+
 2021-10-06  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Move FlushIdentifier out of the DisplayList namespace

@@ -268,6 +268,6 @@ if __name__ == '__main__':
         generate_from_specification(**options)
     except (ParseException, TypecheckException) as e:
         if arg_options.test:
-            log.error(e.message)
+            log.error(str(e))
         else:
             raise  # Force the build to fail.

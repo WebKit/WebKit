@@ -87,8 +87,8 @@ _FRAMEWORK_CONFIG_MAP = {
     }
 }
 
-_ALLOWED_DEBUGGABLE_TYPE_STRINGS = frozenset(['itml', 'javascript', 'page', 'service-worker', 'web-page'])
-_ALLOWED_TARGET_TYPE_STRINGS = frozenset(['itml', 'javascript', 'page', 'service-worker', 'web-page', 'worker'])
+_ALLOWED_DEBUGGABLE_TYPE_STRINGS = ['itml', 'javascript', 'page', 'service-worker', 'web-page']
+_ALLOWED_TARGET_TYPE_STRINGS = ['itml', 'javascript', 'page', 'service-worker', 'web-page', 'worker']
 
 
 class ParseException(Exception):

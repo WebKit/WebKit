@@ -1,1 +1,1 @@
-ERROR: Malformed domain specification: event Event has an item in targetTypes "[u'worker']" that is not supported by any value in debuggableTypes "[u'javascript']".
+ERROR: Malformed domain specification: event Event has an item in targetTypes "['worker']" that is not supported by any value in debuggableTypes "['javascript']".

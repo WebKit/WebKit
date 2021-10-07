@@ -1,3 +1,30 @@
+2021-10-06  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        Python 3: run-inspector-generator-tests and generate-inspector-protocol-bindings.py
+        https://bugs.webkit.org/show_bug.cgi?id=231055
+
+        Reviewed by Jonathan Bedard.
+
+        BaseException.message has been deprecated as of Python 2.6. Use
+        str(e) instead.
+
+        It seems that using frozenset causes flaky test failures in Python
+        3. Stopped using frozenset.
+
+        Rebaselined test expected results with Python 3. This change is
+        not Python 2 compatible because Python 2 represent a unicode text
+        as u'pagee' while Python 3 does 'pagee'.
+
+        * inspector/scripts/codegen/models.py:
+        * inspector/scripts/generate-inspector-protocol-bindings.py:
+        * inspector/scripts/tests/expected/fail-on-command-targetType-matching-domain-debuggableType.json-error:
+        * inspector/scripts/tests/expected/fail-on-command-targetTypes-value.json-error:
+        * inspector/scripts/tests/expected/fail-on-domain-debuggableTypes-value.json-error:
+        * inspector/scripts/tests/expected/fail-on-domain-targetType-matching-domain-debuggableType.json-error:
+        * inspector/scripts/tests/expected/fail-on-domain-targetTypes-value.json-error:
+        * inspector/scripts/tests/expected/fail-on-event-targetType-matching-domain-debuggableType.json-error:
+        * inspector/scripts/tests/expected/fail-on-event-targetTypes-value.json-error:
+
 2021-10-06  Mark Lam  <mark.lam@apple.com>
 
         Speculative fix for a null pointer dereference in ByteCodeParser::handlePutByVal.
