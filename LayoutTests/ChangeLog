@@ -1,3 +1,15 @@
+2021-10-07  Alan Bujtas  <zalan@apple.com>
+
+        Do not check for firstLineStyle while constructing RenderText
+        https://bugs.webkit.org/show_bug.cgi?id=231370
+        <rdar://83973189>
+
+        Reviewed by Antti Koivisto.
+
+        * TestExpectations: existing bug surfaced by this change.
+        * fast/inline/first-line-style-too-early-crash-expected.txt: Added.
+        * fast/inline/first-line-style-too-early-crash.html: Added.
+
 2021-10-07  Ayumi Kojima  <ayumi_kojima@apple.com>
 
         [ iOS ] Marking expectations as slow for the tests that are flaky timing out.

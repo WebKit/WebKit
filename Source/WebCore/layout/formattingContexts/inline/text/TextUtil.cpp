@@ -241,6 +241,11 @@ LineBreakIteratorMode TextUtil::lineBreakIteratorMode(LineBreak lineBreak)
     return LineBreakIteratorMode::Default;
 }
 
+bool TextUtil::canUseSimplifiedTextMeasuringForFirstLine(const RenderStyle& style, const RenderStyle& firstLineStyle)
+{
+    return style.collapseWhiteSpace() == firstLineStyle.collapseWhiteSpace() && style.fontCascade() == firstLineStyle.fontCascade();
+}
+
 }
 }
 #endif

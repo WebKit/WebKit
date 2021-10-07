@@ -1431,12 +1431,6 @@ bool RenderText::computeCanUseSimplifiedTextMeasuring() const
     
     // FIXME: All these checks should be more fine-grained at the inline item level.
     auto& style = this->style();
-    if (&style != &firstLineStyle()) {
-        auto& firstLineStyle = this->firstLineStyle();
-        if (style.fontCascade() != firstLineStyle.fontCascade() || style.collapseWhiteSpace() != firstLineStyle.collapseWhiteSpace())
-            return false;
-    }
-
     auto& fontCascade = style.fontCascade();
     if (fontCascade.wordSpacing() || fontCascade.letterSpacing())
         return false;
