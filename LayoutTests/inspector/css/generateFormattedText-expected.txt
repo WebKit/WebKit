@@ -1,0 +1,192 @@
+Testing that generated CSS rule strings have proper formatting.
+
+
+== Running test suite: WI.CSSStyelDeclaration.prototype.generateFormattedText
+-- Running test case: CSS.generateFormattedText.InlineStyle
+a: 1; b: 2; c: 3;
+
+-- Running test case: CSS.generateFormattedText.InlineStyle.includeGroupingsAndSelectors
+#test-node {a: 1; b: 2; c: 3;}
+
+-- Running test case: CSS.generateFormattedText.InlineStyle.Multiline
+
+    a: 1;
+    b: 2;
+    c: 3;
+
+
+-- Running test case: CSS.generateFormattedText.InlineStyle.Multiline.includeGroupingsAndSelectors
+#test-node {
+    a: 1;
+    b: 2;
+    c: 3;
+}
+
+-- Running test case: CSS.generateFormattedText.InlineStyle.WithCommentedProperty
+a: 1; /* b: 2; */ c: 3;
+
+-- Running test case: CSS.generateFormattedText.InlineStyle.WithCommentedProperty.includeGroupingsAndSelectors
+#test-node {a: 1; /* b: 2; */ c: 3;}
+
+-- Running test case: CSS.generateFormattedText.InlineStyle.WithCommentedProperty.Multiline
+
+    a: 1;
+    /* b: 2; */
+    c: 3;
+
+
+-- Running test case: CSS.generateFormattedText.InlineStyle.WithCommentedProperty.includeGroupingsAndSelectors.Multiline
+#test-node {
+    a: 1;
+    /* b: 2; */
+    c: 3;
+}
+
+-- Running test case: CSS.generateFormattedText.MatchedRules
+a: 1; b: 2; c: 3;
+a: 1; b: 2; c: 3;
+a: 1; b: 2; c: 3;
+a: 1; b: 2; c: 3;
+a: 1; b: 2; c: 3;
+
+-- Running test case: CSS.generateFormattedText.MatchedRules.includeGroupingsAndSelectors
+@media only screen and (min-width: 0px) {@media only screen and (min-height: 0px) {body > div#test-node {a: 1; b: 2; c: 3;}}}
+@media only screen and (min-width: 0px) {body > #test-node {a: 1; b: 2; c: 3;}}
+body > div {a: 1; b: 2; c: 3;}
+body > * {a: 1; b: 2; c: 3;}
+* {a: 1; b: 2; c: 3;}
+
+-- Running test case: CSS.generateFormattedText.MatchedRules.Multiline
+
+            a: 1;
+            b: 2;
+            c: 3;
+
+
+        a: 1;
+        b: 2;
+        c: 3;
+
+
+    a: 1;
+    b: 2;
+    c: 3;
+
+
+    a: 1;
+    b: 2;
+    c: 3;
+
+
+    a: 1;
+    b: 2;
+    c: 3;
+
+
+-- Running test case: CSS.generateFormattedText.MatchedRules.includeGroupingsAndSelectors.Multiline
+@media only screen and (min-width: 0px) {
+    @media only screen and (min-height: 0px) {
+        body > div#test-node {
+            a: 1;
+            b: 2;
+            c: 3;
+        }
+    }
+}
+@media only screen and (min-width: 0px) {
+    body > #test-node {
+        a: 1;
+        b: 2;
+        c: 3;
+    }
+}
+body > div {
+    a: 1;
+    b: 2;
+    c: 3;
+}
+body > * {
+    a: 1;
+    b: 2;
+    c: 3;
+}
+* {
+    a: 1;
+    b: 2;
+    c: 3;
+}
+
+-- Running test case: CSS.generateFormattedText.MatchedRules.WithCommentedProperties
+a: 1; /* b: 2; */ c: 3;
+a: 1; /* b: 2; */ c: 3;
+a: 1; /* b: 2; */ c: 3;
+a: 1; /* b: 2; */ c: 3;
+a: 1; /* b: 2; */ c: 3;
+
+-- Running test case: CSS.generateFormattedText.MatchedRules.WithCommentedProperties.includeGroupingsAndSelectors
+@media only screen and (min-width: 0px) {@media only screen and (min-height: 0px) {body > div#test-node {a: 1; /* b: 2; */ c: 3;}}}
+@media only screen and (min-width: 0px) {body > #test-node {a: 1; /* b: 2; */ c: 3;}}
+body > div {a: 1; /* b: 2; */ c: 3;}
+body > * {a: 1; /* b: 2; */ c: 3;}
+* {a: 1; /* b: 2; */ c: 3;}
+
+-- Running test case: CSS.generateFormattedText.MatchedRules.WithCommentedProperties.Multiline
+
+            a: 1;
+            /* b: 2; */
+            c: 3;
+
+
+        a: 1;
+        /* b: 2; */
+        c: 3;
+
+
+    a: 1;
+    /* b: 2; */
+    c: 3;
+
+
+    a: 1;
+    /* b: 2; */
+    c: 3;
+
+
+    a: 1;
+    /* b: 2; */
+    c: 3;
+
+
+-- Running test case: CSS.generateFormattedText.MatchedRules.WithCommentedProperties.includeGroupingsAndSelectors.Multiline
+@media only screen and (min-width: 0px) {
+    @media only screen and (min-height: 0px) {
+        body > div#test-node {
+            a: 1;
+            /* b: 2; */
+            c: 3;
+        }
+    }
+}
+@media only screen and (min-width: 0px) {
+    body > #test-node {
+        a: 1;
+        /* b: 2; */
+        c: 3;
+    }
+}
+body > div {
+    a: 1;
+    /* b: 2; */
+    c: 3;
+}
+body > * {
+    a: 1;
+    /* b: 2; */
+    c: 3;
+}
+* {
+    a: 1;
+    /* b: 2; */
+    c: 3;
+}
+

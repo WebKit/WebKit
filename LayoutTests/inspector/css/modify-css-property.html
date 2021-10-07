@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+<link rel="stylesheet" href="resources/modify-css-property.css">
 <script src="../../http/tests/inspector/resources/inspector-test.js"></script>
 <script>
 function makeNarrow() {
@@ -39,14 +40,22 @@ function test() {
 
             let styleDeclaration = getMatchedStyleDeclaration();
             styleDeclaration.locked = false;
+
+            styleDeclaration.singleFireEventListener(WI.CSSStyleDeclaration.Event.PropertiesChanged, function(event) {
+                let fontProperty = getProperty("font-size");
+                let relativeRange = fontProperty.styleSheetTextRange.relativeTo(fontProperty.ownerStyle.styleSheetTextRange.startLine, fontProperty.ownerStyle.styleSheetTextRange.startOffset);
+                relativeRange.resolveOffsets(fontProperty.ownerStyle.text);
+                let propertyText = fontProperty.ownerStyle.text.slice(relativeRange.startOffset, relativeRange.endOffset);
+                InspectorTest.expectEqual(propertyText, "font-size: 10px;", `styleSheetTextRange should correspond to "font-size: 10px;"`);
+                resolve();
+            });
+
             getProperty("font-size").rawValue = "11px";
             getProperty("font-size").rawValue = "10px";
 
             InspectorTest.expectEqual(getProperty("font-size").rawValue, "10px", `"font-size" property value should update immediately.`);
 
-            InspectorTest.expectEqual(styleDeclaration.text, `font-size: 10px; color: antiquewhite`, `Style declaration text should update immediately.`);
-
-            resolve();
+            InspectorTest.expectEqual(styleDeclaration.text, `\n    font-size: 10px;\n    color: antiquewhite;\n`, `Style declaration text should update immediately.`);
         }
     });
 
@@ -80,12 +89,11 @@ function test() {
             InspectorTest.expectEqual(getProperty("font-size").rawValue, "16px", `"font-size" property value should update immediately.`);
 
             InspectorTest.expectEqual(styleDeclaration.text, `
-        font-size: 16px;
-        color: #333;
-
-        margin-left: 0;
-        margin-top: 1em;
-    `, `Style declaration text should update immediately.`);
+    font-size: 16px;
+    color: #333;
+    margin-left: 0;
+    margin-top: 1em;
+`, `Style declaration text should update immediately.`);
 
             styleDeclaration.locked = false;
 
@@ -243,7 +251,7 @@ function test() {
             let disabled = false;
             getProperty("padding-right").commentOut(disabled);
 
-            let expectedStyleText = `\n        /* padding-left: 2em; */\n        padding-right: 0px;\n    `;
+            let expectedStyleText = `\n    /* padding-left: 2em; */\n    padding-right: 0px;\n`;
             InspectorTest.expectEqual(styleDeclaration.text, expectedStyleText, `Style declaration text should update immediately with uncommented property.`);
 
             InspectorTest.expectThat(getProperty("padding-right").enabled, `Uncommented property should be enabled.`);
@@ -251,7 +259,7 @@ function test() {
             disabled = true;
             getProperty("padding-right").commentOut(disabled);
 
-            expectedStyleText = `\n        /* padding-left: 2em; */\n        /* padding-right: 0px; */\n    `;
+            expectedStyleText = `\n    /* padding-left: 2em; */\n    /* padding-right: 0px; */\n`;
             InspectorTest.expectEqual(styleDeclaration.text, expectedStyleText, `Style declaration text should update immediately with commented out property.`);
 
             InspectorTest.expectThat(!getProperty("padding-right").enabled, `Commented out property should be disabled.`);
@@ -290,7 +298,7 @@ function test() {
             let disabled = false;
             getProperty("font-size").commentOut(disabled);
 
-            let expectedStyleText = `font-size: 13px;/*border: 2px solid brown*/`;
+            let expectedStyleText = `\n    font-size: 13px;\n    /* border: 2px solid brown; */\n`;
             InspectorTest.expectEqual(styleDeclaration.text, expectedStyleText, `Style declaration text should update immediately with uncommented property.`);
 
             InspectorTest.expectThat(getProperty("font-size").enabled, `Uncommented property should be enabled.`);
@@ -299,7 +307,7 @@ function test() {
             disabled = false;
             getProperty("border").commentOut(disabled);
 
-            expectedStyleText = `font-size: 13px;border: 2px solid brown`;
+            expectedStyleText = `\n    font-size: 13px;\n    border: 2px solid brown\n`;
             InspectorTest.expectEqual(styleDeclaration.text, expectedStyleText, `Style declaration text should update immediately with commented out property.`);
 
             InspectorTest.expectThat(getProperty("border").enabled, `Uncommented property should be enabled.`);
@@ -331,22 +339,6 @@ function test() {
 </head>
 <body onload="runTest()">
     <p>Testing that CSSStyleDeclaration update immediately after modifying its properties when it is not locked.</p>
-
-    <style>
-    .rule-a {
-        font-size: 14px;
-        color: #333;
-
-        margin-left: 0;
-        margin-top: 1em;
-    }
-    .rule-b {font-size: 12px; color: antiquewhite}
-    .rule-c {
-        /* padding-left: 2em; */
-        /* padding-right: 0px; */
-    }
-    .rule-d {/*font-size: 13px;*//*border: 2px solid brown*/}
-    </style>
     <div id="x" class="test-node rule-a rule-b rule-c rule-d" style="width: 100px"></div>
 </body>
 </html>

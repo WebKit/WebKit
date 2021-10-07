@@ -445,32 +445,14 @@ WI.CSSStyleDeclaration = class CSSStyleDeclaration extends WI.Object
         WI.cssManager.addModifiedStyle(this);
     }
 
-    shiftPropertiesAfter(cssProperty, lineDelta, columnDelta, propertyWasRemoved)
+    removeProperty(cssProperty)
     {
         // cssProperty.index could be set to NaN by WI.CSSStyleDeclaration.prototype.update.
         let realIndex = this._properties.indexOf(cssProperty);
         if (realIndex === -1)
             return;
 
-        let endLine = cssProperty.styleSheetTextRange.endLine;
-
-        for (let i = realIndex + 1; i < this._properties.length; i++) {
-            let property = this._properties[i];
-
-            if (property._styleSheetTextRange) {
-                if (property.styleSheetTextRange.startLine === endLine) {
-                    // Only update column data if it's on the same line.
-                    property._styleSheetTextRange = property._styleSheetTextRange.cloneAndModify(lineDelta, columnDelta, lineDelta, columnDelta);
-                } else
-                    property._styleSheetTextRange = property._styleSheetTextRange.cloneAndModify(lineDelta, 0, lineDelta, 0);
-            }
-
-            if (propertyWasRemoved && !isNaN(property._index))
-                property._index--;
-        }
-
-        if (propertyWasRemoved)
-            this._properties.splice(realIndex, 1);
+        this._properties.splice(realIndex, 1);
 
         // Invalidate cached properties.
         this._enabledProperties = null;
@@ -507,24 +489,59 @@ WI.CSSStyleDeclaration = class CSSStyleDeclaration extends WI.Object
             WI.cssManager.removeModifiedStyle(this);
     }
 
-    generateCSSRuleString()
+    generateFormattedText(options = {})
     {
         let indentString = WI.indentString();
         let styleText = "";
         let groupings = this.groupings.filter((grouping) => grouping.text !== "all");
         let groupingsCount = groupings.length;
-        for (let i = groupingsCount - 1; i >= 0; --i)
-            styleText += indentString.repeat(groupingsCount - i - 1) + groupings[i].prefix + " " + groupings[i].text + " {\n";
 
-        styleText += indentString.repeat(groupingsCount) + this.selectorText + " {\n";
+        if (options.includeGroupingsAndSelectors) {
+            for (let i = groupingsCount - 1; i >= 0; --i) {
+                if (options.multiline)
+                    styleText += indentString.repeat(groupingsCount - i - 1);
 
-        for (let property of (this._styleSheetTextRange ? this.visibleProperties : this._properties))
-            styleText += indentString.repeat(groupingsCount + 1) + property.formattedText + "\n";
+                styleText += groupings[i].prefix + " " + groupings[i].text + " {";
 
-        for (let i = groupingsCount; i > 0; --i)
-            styleText += indentString.repeat(i) + "}\n";
+                if (options.multiline)
+                    styleText += "\n";
+            }
 
-        styleText += "}";
+            if (options.multiline)
+                styleText += indentString.repeat(groupingsCount);
+
+            styleText += this.selectorText + " {";
+        }
+
+        let properties = this._styleSheetTextRange ? this.visibleProperties : this._properties;
+        if (properties.length) {
+            if (options.multiline) {
+                let propertyIndent = indentString.repeat(groupingsCount + 1);
+                for (let property of properties)
+                    styleText += "\n" + propertyIndent + property.formattedText;
+
+                styleText += "\n";
+                if (!options.includeGroupingsAndSelectors) {
+                    // Indent the closing "}" for nested rules.
+                    styleText += indentString.repeat(groupingsCount);
+                }
+            } else
+                styleText += properties.map((property) => property.formattedText).join(" ");
+        }
+
+        if (options.includeGroupingsAndSelectors) {
+            for (let i = groupingsCount; i > 0; --i) {
+                if (options.multiline)
+                    styleText += indentString.repeat(i);
+
+                styleText += "}";
+
+                if (options.multiline)
+                    styleText += "\n";
+            }
+
+            styleText += "}";
+        }
 
         return styleText;
     }

@@ -27,7 +27,7 @@ function test() {
             newProperty.name = "color";
             newProperty.rawValue = "green";
 
-            InspectorTest.expectEqual(styleDeclaration.text, `font-size: 14px;color: green;`, "`color: green` property should be appended.");
+            InspectorTest.expectEqual(styleDeclaration.text, `\n    font-size: 14px;\n    color: green;\n`, "`color: green` property should be appended.");
 
             styleDeclaration.locked = false;
             resolve();
@@ -43,7 +43,7 @@ function test() {
             newProperty.name = "color";
             newProperty.rawValue = "green";
 
-            let expected = `color: green;\n    outline: 2px solid brown;\n`;
+            let expected = `\n    color: green;\n    outline: 2px solid brown;\n`;
             InspectorTest.expectEqual(styleDeclaration.text, expected, "`color: green` property should be inserted before the first property.");
 
             styleDeclaration = getMatchedStyle(".rule-b", resolve);
@@ -51,7 +51,7 @@ function test() {
             newProperty.name = "display";
             newProperty.rawValue = "block";
 
-            expected = `color: green;\n    outline: 2px solid brown;display: block;\n`;
+            expected = `\n    color: green;\n    outline: 2px solid brown;\n    display: block;\n`;
             InspectorTest.expectEqual(styleDeclaration.text, expected, "`display: block` property should be appended at the end.");
 
             styleDeclaration.locked = false;
@@ -68,7 +68,7 @@ function test() {
             newProperty.name = "font-family";
             newProperty.rawValue = "fantasy";
 
-            let expected = `\n    background-color: peachpuff;font-family: fantasy;\n    color: burlywood\n`;
+            let expected = `\n    background-color: peachpuff;\n    font-family: fantasy;\n    color: burlywood;\n`;
             InspectorTest.expectEqual(styleDeclaration.text, expected, "`font-family: fantasy` property should be inserted after the first property.");
 
             styleDeclaration.locked = false;
@@ -85,7 +85,7 @@ function test() {
             newProperty.name = "display";
             newProperty.rawValue = "inline";
 
-            const expected = `\n    font-size: 14px;\n    /* color: red; */display: inline;\n`;
+            const expected = `\n    font-size: 14px;\n    /* color: red; */\n    display: inline;\n`;
             InspectorTest.expectEqual(styleDeclaration.text, expected, "`display: inline` property should be appended.");
 
             styleDeclaration.locked = false;
@@ -102,7 +102,7 @@ function test() {
             newProperty.name = "display";
             newProperty.rawValue = "inline";
 
-            const expected = `\n    font-size: 14px;\n    /* color: red */display: inline;\n`;
+            const expected = `\n    font-size: 14px;\n    /* color: red; */\n    display: inline;\n`;
             InspectorTest.expectEqual(styleDeclaration.text, expected, "`display: inline` property should be appended.");
 
             styleDeclaration.locked = false;

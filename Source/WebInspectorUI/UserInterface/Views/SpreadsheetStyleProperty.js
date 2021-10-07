@@ -144,7 +144,7 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
         this.element.remove();
 
         if (replacement)
-            this._property.replaceWithText(replacement);
+            this._property.text = replacement;
         else
             this._property.remove();
 

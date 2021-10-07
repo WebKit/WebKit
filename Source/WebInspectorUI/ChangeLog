@@ -1,3 +1,44 @@
+2021-10-07  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Styles: format style declarations after editing
+        https://bugs.webkit.org/show_bug.cgi?id=178835
+        <rdar://problem/35185060>
+
+        Reviewed by Devin Rousso.
+
+        Indent CSS properties with spaces/tabs set in Web Inspector settings. Increse indentation level when CSS rules are
+        inside of at-rules (e.g. @media, @keyframes, @supports).
+
+        Don't indent CSS properties in style attributes. Keep them on the single line, separated by a space character:
+
+            style="font-size: 12px; color: black;"
+
+        * UserInterface/Models/CSSProperty.js:
+        (WI.CSSProperty.prototype.set text):
+        Introduce `_isTextPendingSave` flag. It's needed when saving pasted text, and saving commented out or uncommented CSS properties.
+
+        (WI.CSSProperty.prototype.get formattedText):
+
+        (WI.CSSProperty.prototype.replaceWithText): Deleted.
+        This is redundant - setting `text` works the same.
+
+        (WI.CSSProperty.prototype._updateStyleText):
+        (WI.CSSProperty.prototype._updateOwnerStyleText):
+        (WI.CSSProperty.prototype._prependSemicolonIfNeeded): Deleted.
+        Greatly simplify the logic now that we save formatted text and don't modify styleText.
+
+        * UserInterface/Models/CSSStyleDeclaration.js:
+        (WI.CSSStyleDeclaration.prototype.removeProperty):
+        Remode unnecessary code that modifies `_styleSheetTextRange`. The backend sends new `_styleSheetTextRange` data
+        upon a change.
+
+        (WI.CSSStyleDeclaration.prototype.generateFormattedText): Renamed from 'generateCSSRuleString'.
+
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationSection.js:
+        (WI.SpreadsheetCSSStyleDeclarationSection.prototype._populateIconElementContextMenu):
+        * UserInterface/Views/SpreadsheetStyleProperty.js:
+        (WI.SpreadsheetStyleProperty.prototype.remove):
+
 2021-10-05  Patrick Angle  <pangle@apple.com>
 
         Web Inspector: Show color space for canvases in the Graphics tab on the overview cards

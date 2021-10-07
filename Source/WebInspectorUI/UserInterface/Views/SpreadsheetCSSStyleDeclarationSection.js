@@ -481,7 +481,7 @@ WI.SpreadsheetCSSStyleDeclarationSection = class SpreadsheetCSSStyleDeclarationS
     _populateIconElementContextMenu(contextMenu)
     {
         contextMenu.appendItem(WI.UIString("Copy Rule"), () => {
-            InspectorFrontendHost.copyText(this._style.generateCSSRuleString());
+            InspectorFrontendHost.copyText(this._style.generateFormattedText({includeGroupingsAndSelectors: true, multiline: true}));
         });
 
         if (this._style.editable && this._style.properties.length) {

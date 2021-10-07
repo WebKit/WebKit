@@ -5,6 +5,7 @@ Testing that CSSStyleDeclaration update immediately after modifying its properti
 -- Running test case: Update value when CSSStyleDeclaration is not locked
 PASS: "font-size" property value should update immediately.
 PASS: Style declaration text should update immediately.
+PASS: styleSheetTextRange should correspond to "font-size: 10px;"
 
 -- Running test case: Update value when CSSStyleDeclaration is locked
 PASS: "font-size" property value should update immediately.

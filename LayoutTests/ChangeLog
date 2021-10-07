@@ -1,3 +1,29 @@
+2021-10-07  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Styles: format style declarations after editing
+        https://bugs.webkit.org/show_bug.cgi?id=178835
+        <rdar://problem/35185060>
+
+        Reviewed by Devin Rousso.
+
+        - Indent text of expected CSS properties.
+        - Test generateFormattedText with all permutations of its options.
+        - Add a basic test ensuring styleSheetTextRange updates correctly from the backend.
+
+        * inspector/css/add-css-property.html:
+        * inspector/css/generateCSSRuleString-expected.txt: Removed.
+        * inspector/css/generateCSSRuleString.html: Removed.
+        * inspector/css/generateFormattedText-expected.txt: Added.
+        * inspector/css/generateFormattedText.html: Added.
+        * inspector/css/modify-css-property-expected.txt:
+        * inspector/css/modify-css-property.html:
+        * inspector/css/modify-inline-style-expected.txt:
+        * inspector/css/resources/modify-css-property.css: Added.
+        (.rule-a):
+        (.rule-b):
+        (.rule-c):
+        (.rule-d):
+
 2021-10-07  Ayumi Kojima  <ayumi_kojima@apple.com>
 
         [ BigSur AS EWS ] http/tests/xmlhttprequest/access-control-response-with-body.html is flaky crashing.
