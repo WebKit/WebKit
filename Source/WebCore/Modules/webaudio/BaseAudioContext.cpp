@@ -549,6 +549,8 @@ void BaseAudioContext::handlePreRenderTasks(const AudioIOPosition& outputPositio
 
         updateAutomaticPullNodes();
         m_outputPosition = outputPosition;
+
+        m_listener->updateDirtyState();
     }
 }
 

@@ -37,7 +37,7 @@ namespace WebCore {
 
 ConeEffect::ConeEffect() = default;
 
-double ConeEffect::gain(FloatPoint3D sourcePosition, FloatPoint3D sourceOrientation, FloatPoint3D listenerPosition)
+double ConeEffect::gain(FloatPoint3D sourcePosition, FloatPoint3D sourceOrientation, FloatPoint3D listenerPosition) const
 {
     if (sourceOrientation.isZero() || ((m_innerAngle == 360.0) && (m_outerAngle == 360.0)))
         return 1.0; // no cone specified - unity gain

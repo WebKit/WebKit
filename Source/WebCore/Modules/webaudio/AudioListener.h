@@ -87,6 +87,11 @@ public:
 
     void updateValuesIfNeeded(size_t framesToProcess);
 
+    void updateDirtyState();
+    bool isPositionDirty() const { return m_isPositionDirty; }
+    bool isOrientationDirty() const { return m_isOrientationDirty; }
+    bool isUpVectorDirty() const { return m_isUpVectorDirty; }
+
 protected:
     explicit AudioListener(BaseAudioContext&);
 
@@ -116,6 +121,13 @@ private:
     AudioFloatArray m_upXValues;
     AudioFloatArray m_upYValues;
     AudioFloatArray m_upZValues;
+
+    FloatPoint3D m_lastPosition;
+    FloatPoint3D m_lastOrientation;
+    FloatPoint3D m_lastUpVector;
+    bool m_isPositionDirty { false };
+    bool m_isOrientationDirty { false };
+    bool m_isUpVectorDirty { false };
 };
 
 } // namespace WebCore
