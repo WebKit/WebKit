@@ -45,6 +45,7 @@
 #include "NodeTraversal.h"
 #include "RenderVTTCue.h"
 #include "ScriptDisallowedScope.h"
+#include "ShadowPseudoIds.h"
 #include "Text.h"
 #include "TextTrack.h"
 #include "TextTrackCueGeneric.h"
@@ -1008,9 +1009,9 @@ RefPtr<TextTrackCueBox> VTTCue::getDisplayTree(const IntSize& videoSize, int fon
     // background box.
 
     // Note: This is contained by default in m_cueHighlightBox.
-    m_cueHighlightBox->setPseudo(cueShadowPseudoId());
+    m_cueHighlightBox->setPseudo(ShadowPseudoIds::cue());
 
-    m_cueBackdropBox->setPseudo(cueBackdropShadowPseudoId());
+    m_cueBackdropBox->setPseudo(ShadowPseudoIds::webkitMediaTextTrackDisplayBackdrop());
     m_cueBackdropBox->appendChild(*m_cueHighlightBox);
     displayTree->appendChild(*m_cueBackdropBox);
 

@@ -46,6 +46,7 @@
 #include "RenderSlider.h"
 #include "RuntimeEnabledFeatures.h"
 #include "ScopedEventQueue.h"
+#include "ShadowPseudoIds.h"
 #include "ShadowRoot.h"
 #include "SliderThumbElement.h"
 #include "StepRange.h"
@@ -249,10 +250,9 @@ void RangeInputType::createShadowSubtreeAndUpdateInnerTextElementEditability(Con
     ASSERT(element());
     ASSERT(element()->userAgentShadowRoot());
 
-    static MainThreadNeverDestroyed<const AtomString> webkitSliderRunnableTrackName("-webkit-slider-runnable-track", AtomString::ConstructFromLiteral);
     Document& document = element()->document();
     auto track = HTMLDivElement::create(document);
-    track->setPseudo(webkitSliderRunnableTrackName);
+    track->setPseudo(ShadowPseudoIds::webkitSliderRunnableTrack());
     track->appendChild(source, SliderThumbElement::create(document));
     auto container = SliderContainerElement::create(document);
     container->appendChild(source, track);

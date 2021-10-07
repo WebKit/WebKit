@@ -45,6 +45,7 @@
 #include "RenderFlexibleBox.h"
 #include "RenderSlider.h"
 #include "RenderTheme.h"
+#include "ShadowPseudoIds.h"
 #include "ShadowRoot.h"
 #include "StepRange.h"
 #include "StyleResolver.h"
@@ -589,9 +590,6 @@ std::optional<Style::ElementStyle> SliderThumbElement::resolveCustomStyle(const 
 {
     // This doesn't actually compute style. This is just a hack to pick shadow pseudo id when host style is known.
 
-    static MainThreadNeverDestroyed<const AtomString> sliderThumbShadowPseudoId("-webkit-slider-thumb", AtomString::ConstructFromLiteral);
-    static MainThreadNeverDestroyed<const AtomString> mediaSliderThumbShadowPseudoId("-webkit-media-slider-thumb", AtomString::ConstructFromLiteral);
-
     if (!hostStyle)
         return std::nullopt;
 
@@ -602,10 +600,10 @@ std::optional<Style::ElementStyle> SliderThumbElement::resolveCustomStyle(const 
     case MediaVolumeSliderThumbPart:
     case MediaFullScreenVolumeSliderPart:
     case MediaFullScreenVolumeSliderThumbPart:
-        m_shadowPseudoId = mediaSliderThumbShadowPseudoId;
+        m_shadowPseudoId = ShadowPseudoIds::webkitMediaSliderThumb();
         break;
     default:
-        m_shadowPseudoId = sliderThumbShadowPseudoId;
+        m_shadowPseudoId = ShadowPseudoIds::webkitSliderThumb();
     }
 
     return std::nullopt;
@@ -643,9 +641,6 @@ std::optional<Style::ElementStyle> SliderContainerElement::resolveCustomStyle(co
 {
     // This doesn't actually compute style. This is just a hack to pick shadow pseudo id when host style is known.
 
-    static MainThreadNeverDestroyed<const AtomString> mediaSliderContainer("-webkit-media-slider-container", AtomString::ConstructFromLiteral);
-    static MainThreadNeverDestroyed<const AtomString> sliderContainer("-webkit-slider-container", AtomString::ConstructFromLiteral);
-
     if (!hostStyle)
         return std::nullopt;
 
@@ -656,10 +651,10 @@ std::optional<Style::ElementStyle> SliderContainerElement::resolveCustomStyle(co
     case MediaVolumeSliderThumbPart:
     case MediaFullScreenVolumeSliderPart:
     case MediaFullScreenVolumeSliderThumbPart:
-        m_shadowPseudoId = mediaSliderContainer;
+        m_shadowPseudoId = ShadowPseudoIds::webkitMediaSliderContainer();
         break;
     default:
-        m_shadowPseudoId = sliderContainer;
+        m_shadowPseudoId = ShadowPseudoIds::webkitSliderContainer();
     }
 
     return std::nullopt;

@@ -41,6 +41,7 @@
 #include "RenderTextControl.h"
 #include "RenderView.h"
 #include "ScriptController.h"
+#include "ShadowPseudoIds.h"
 #include "ShadowRoot.h"
 #include "StyleResolver.h"
 #include "TextEvent.h"
@@ -204,8 +205,7 @@ inline TextControlPlaceholderElement::TextControlPlaceholderElement(Document& do
 Ref<TextControlPlaceholderElement> TextControlPlaceholderElement::create(Document& document)
 {
     auto element = adoptRef(*new TextControlPlaceholderElement(document));
-    static MainThreadNeverDestroyed<const AtomString> placeholderName("placeholder", AtomString::ConstructFromLiteral);
-    element->setPseudo(placeholderName);
+    element->setPseudo(ShadowPseudoIds::placeholder());
     return element;
 }
 
@@ -296,9 +296,9 @@ inline SearchFieldCancelButtonElement::SearchFieldCancelButtonElement(Document& 
 Ref<SearchFieldCancelButtonElement> SearchFieldCancelButtonElement::create(Document& document)
 {
     auto element = adoptRef(*new SearchFieldCancelButtonElement(document));
-    static MainThreadNeverDestroyed<const AtomString> webkitSearchCancelButtonName("-webkit-search-cancel-button", AtomString::ConstructFromLiteral);
+
     static MainThreadNeverDestroyed<const AtomString> buttonName("button", AtomString::ConstructFromLiteral);
-    element->setPseudo(webkitSearchCancelButtonName);
+    element->setPseudo(ShadowPseudoIds::webkitSearchCancelButton());
 #if !PLATFORM(IOS_FAMILY)
     element->setAttributeWithoutSynchronization(aria_labelAttr, AXSearchFieldCancelButtonText());
 #endif

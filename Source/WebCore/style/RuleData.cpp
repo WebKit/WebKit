@@ -38,14 +38,11 @@
 #include "SecurityOrigin.h"
 #include "SelectorChecker.h"
 #include "SelectorFilter.h"
+#include "ShadowPseudoIds.h"
 #include "StyleResolver.h"
 #include "StyleRule.h"
 #include "StyleRuleImport.h"
 #include "StyleSheetContents.h"
-
-#if ENABLE(VIDEO)
-#include "TextTrackCue.h"
-#endif
 
 namespace WebCore {
 namespace Style {
@@ -141,7 +138,7 @@ static inline PropertyAllowlistType determinePropertyAllowlistType(const CSSSele
 {
     for (const CSSSelector* component = selector; component; component = component->tagHistory()) {
 #if ENABLE(VIDEO)
-        if (component->match() == CSSSelector::PseudoElement && (component->pseudoElementType() == CSSSelector::PseudoElementCue || component->value() == TextTrackCue::cueShadowPseudoId()))
+        if (component->match() == CSSSelector::PseudoElement && (component->pseudoElementType() == CSSSelector::PseudoElementCue || component->value() == ShadowPseudoIds::cue()))
             return PropertyAllowlistCue;
 #endif
         if (component->match() == CSSSelector::PseudoElement && component->pseudoElementType() == CSSSelector::PseudoElementMarker)

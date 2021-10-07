@@ -37,6 +37,7 @@
 #include "RenderBox.h"
 #include "RenderTheme.h"
 #include "ScrollbarTheme.h"
+#include "ShadowPseudoIds.h"
 #include "WheelEvent.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/Ref.h>
@@ -61,8 +62,7 @@ inline SpinButtonElement::SpinButtonElement(Document& document, SpinButtonOwner&
 Ref<SpinButtonElement> SpinButtonElement::create(Document& document, SpinButtonOwner& spinButtonOwner)
 {
     auto element = adoptRef(*new SpinButtonElement(document, spinButtonOwner));
-    static MainThreadNeverDestroyed<const AtomString> webkitInnerSpinButtonName("-webkit-inner-spin-button", AtomString::ConstructFromLiteral);
-    element->setPseudo(webkitInnerSpinButtonName);
+    element->setPseudo(ShadowPseudoIds::webkitInnerSpinButton());
     return element;
 }
 

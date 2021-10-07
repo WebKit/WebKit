@@ -50,6 +50,7 @@
 #include "Page.h"
 #include "PlatformLocale.h"
 #include "Settings.h"
+#include "ShadowPseudoIds.h"
 #include "ShadowRoot.h"
 #include "StepRange.h"
 #include "Text.h"
@@ -317,9 +318,8 @@ void BaseDateAndTimeInputType::createShadowSubtreeAndUpdateInnerTextElementEdita
         m_dateTimeEditElement = DateTimeEditElement::create(document, *this);
         element.userAgentShadowRoot()->appendChild(source, *m_dateTimeEditElement);
     } else {
-        static MainThreadNeverDestroyed<const AtomString> valueContainerPseudo("-webkit-date-and-time-value", AtomString::ConstructFromLiteral);
         auto valueContainer = HTMLDivElement::create(document);
-        valueContainer->setPseudo(valueContainerPseudo);
+        valueContainer->setPseudo(ShadowPseudoIds::webkitDateAndTimeValue());
         element.userAgentShadowRoot()->appendChild(source, valueContainer);
     }
     updateInnerTextValue();

@@ -51,6 +51,7 @@
 #include "RenderVideo.h"
 #include "RenderView.h"
 #include "Settings.h"
+#include "ShadowPseudoIds.h"
 #include "ShadowRoot.h"
 #include "StyleProperties.h"
 #include "TextTrackCueGeneric.h"
@@ -68,8 +69,7 @@ using namespace HTMLNames;
 Ref<MediaControlTextTrackContainerElement> MediaControlTextTrackContainerElement::create(Document& document, HTMLMediaElement& mediaElement)
 {
     auto element = adoptRef(*new MediaControlTextTrackContainerElement(document, mediaElement));
-    static MainThreadNeverDestroyed<const AtomString> webkitMediaTextTrackContainerName("-webkit-media-text-track-container", AtomString::ConstructFromLiteral);
-    element->setPseudo(webkitMediaTextTrackContainerName);
+    element->setPseudo(ShadowPseudoIds::webkitMediaTextTrackContainer());
     element->hide();
     return element;
 }

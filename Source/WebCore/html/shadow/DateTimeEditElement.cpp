@@ -36,6 +36,7 @@
 #include "DateTimeSymbolicFieldElement.h"
 #include "HTMLNames.h"
 #include "PlatformLocale.h"
+#include "ShadowPseudoIds.h"
 #include "Text.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/text/StringBuilder.h>
@@ -167,9 +168,9 @@ void DateTimeEditBuilder::visitField(DateTimeFormat::FieldType fieldType, int co
 void DateTimeEditBuilder::visitLiteral(const String& text)
 {
     ASSERT(text.length());
-    static MainThreadNeverDestroyed<const AtomString> textPseudoId("-webkit-datetime-edit-text", AtomString::ConstructFromLiteral);
+
     auto element = HTMLDivElement::create(m_editElement.document());
-    element->setPseudo(textPseudoId);
+    element->setPseudo(ShadowPseudoIds::webkitDatetimeEditText());
 
     // If the literal begins/ends with a space, the gap between two fields will appear
     // exaggerated due to the presence of a 1px padding around each field. This can
@@ -233,18 +234,15 @@ DateTimeFieldElement* DateTimeEditElement::focusedFieldElement() const
 Ref<DateTimeEditElement> DateTimeEditElement::create(Document& document, EditControlOwner& editControlOwner)
 {
     auto element = adoptRef(*new DateTimeEditElement(document, editControlOwner));
-    static MainThreadNeverDestroyed<const AtomString> dateTimeEditPseudoId("-webkit-datetime-edit", AtomString::ConstructFromLiteral);
-    element->setPseudo(dateTimeEditPseudoId);
+    element->setPseudo(ShadowPseudoIds::webkitDatetimeEdit());
     return element;
 }
 
 void DateTimeEditElement::layout(const LayoutParameters& layoutParameters)
 {
-    static MainThreadNeverDestroyed<const AtomString> fieldsWrapperPseudoId("-webkit-datetime-edit-fields-wrapper", AtomString::ConstructFromLiteral);
-
     if (!firstChild()) {
         auto element = HTMLDivElement::create(document());
-        element->setPseudo(fieldsWrapperPseudoId);
+        element->setPseudo(ShadowPseudoIds::webkitDatetimeEditFieldsWrapper());
         appendChild(element);
     }
 

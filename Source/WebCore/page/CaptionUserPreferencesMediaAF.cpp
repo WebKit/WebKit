@@ -37,6 +37,7 @@
 #include "HTMLMediaElement.h"
 #include "LocalizedStrings.h"
 #include "Logging.h"
+#include "ShadowPseudoIds.h"
 #include "TextTrackList.h"
 #include "UserStyleSheetTypes.h"
 #include <algorithm>
@@ -608,12 +609,12 @@ String CaptionUserPreferencesMediaAF::captionsStyleSheetOverride() const
     String fontName = captionsDefaultFontCSS();
     String background = captionsBackgroundCSS();
     if (!background.isEmpty() || !captionsColor.isEmpty() || !edgeStyle.isEmpty() || !fontName.isEmpty())
-        captionsOverrideStyleSheet.append(" ::", TextTrackCue::cueShadowPseudoId(), '{', background, captionsColor, edgeStyle, fontName, '}');
+        captionsOverrideStyleSheet.append(" ::", ShadowPseudoIds::cue(), '{', background, captionsColor, edgeStyle, fontName, '}');
 
     String windowColor = captionsWindowCSS();
     String windowCornerRadius = windowRoundedCornerRadiusCSS();
     if (!windowColor.isEmpty() || !windowCornerRadius.isEmpty())
-        captionsOverrideStyleSheet.append(" ::", TextTrackCue::cueBackdropShadowPseudoId(), '{', windowColor, windowCornerRadius, '}');
+        captionsOverrideStyleSheet.append(" ::", ShadowPseudoIds::webkitMediaTextTrackDisplayBackdrop(), '{', windowColor, windowCornerRadius, '}');
 #endif // HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
 
     LOG(Media, "CaptionUserPreferencesMediaAF::captionsStyleSheetOverrideSetting style to:\n%s", captionsOverrideStyleSheet.toString().utf8().data());

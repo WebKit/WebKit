@@ -118,9 +118,7 @@ private:
 
     void parseSettingValue(RegionSetting, VTTScanner&);
 
-    static const AtomString& textTrackCueContainerShadowPseudoId();
     static const AtomString& textTrackCueContainerScrollingClass();
-    static const AtomString& textTrackRegionShadowPseudoId();
 
     String m_id;
     String m_settings;

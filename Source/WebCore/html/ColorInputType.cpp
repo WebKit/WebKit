@@ -47,6 +47,7 @@
 #include "InputTypeNames.h"
 #include "RenderView.h"
 #include "ScopedEventQueue.h"
+#include "ShadowPseudoIds.h"
 #include "ShadowRoot.h"
 #include "UserGestureIndicator.h"
 
@@ -140,14 +141,11 @@ void ColorInputType::createShadowSubtreeAndUpdateInnerTextElementEditability(Con
     ASSERT(element());
     ASSERT(element()->shadowRoot());
 
-    static MainThreadNeverDestroyed<const AtomString> webkitColorSwatchName("-webkit-color-swatch", AtomString::ConstructFromLiteral);
-    static MainThreadNeverDestroyed<const AtomString> webkitColorSwatchWrapperName("-webkit-color-swatch-wrapper", AtomString::ConstructFromLiteral);
-
     Document& document = element()->document();
     auto wrapperElement = HTMLDivElement::create(document);
-    wrapperElement->setPseudo(webkitColorSwatchWrapperName);
+    wrapperElement->setPseudo(ShadowPseudoIds::webkitColorSwatchWrapper());
     auto colorSwatch = HTMLDivElement::create(document);
-    colorSwatch->setPseudo(webkitColorSwatchName);
+    colorSwatch->setPseudo(ShadowPseudoIds::webkitColorSwatch());
     wrapperElement->appendChild(source, colorSwatch);
     element()->userAgentShadowRoot()->appendChild(source, wrapperElement);
 
