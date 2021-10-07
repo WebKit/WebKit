@@ -308,6 +308,7 @@
     "web-platform-tests/html/semantics/embedded-content/the-canvas-element/size.attributes.parse.whitespace.html": "skip", 
     "web-platform-tests/html/semantics/embedded-content/the-embed-element/embed-represent-nothing-04.html": "skip", 
     "web-platform-tests/html/semantics/embedded-content/the-iframe-element": "import", 
+    "web-platform-tests/html/semantics/embedded-content/the-img-element": "import", 
     "web-platform-tests/html/semantics/embedded-content/the-img-element/": "import", 
     "web-platform-tests/html/semantics/embedded-content/the-img-element/decode": "skip", 
     "web-platform-tests/html/semantics/embedded-content/the-img-element/relevant-mutations.html": "skip", 

@@ -1,3 +1,14 @@
+2021-10-07  Rob Buis  <rbuis@igalia.com>
+
+        Resync the-img-element WPT tests from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=231297
+
+        Reviewed by Youenn Fablet.
+
+        No lazy image loading available on wk1.
+
+        * platform/mac-wk1/TestExpectations:
+
 2021-10-06  Ben Nham  <nham@apple.com>
 
         Add PushSubscription stubs
