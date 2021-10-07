@@ -3768,9 +3768,10 @@ void FrameView::scrollToPositionWithAnimation(const ScrollPosition& position, Sc
     auto previousScrollType = currentScrollType();
     setCurrentScrollType(scrollType);
 
-    if (currentScrollBehaviorStatus() == ScrollBehaviorStatus::InNonNativeAnimation)
+    if (scrollAnimationStatus() == ScrollAnimationStatus::Animating)
         scrollAnimator().cancelAnimations();
-    if (position != this->scrollPosition())
+
+    if (position != scrollPosition())
         ScrollableArea::scrollToPositionWithAnimation(position);
 
     setCurrentScrollType(previousScrollType);

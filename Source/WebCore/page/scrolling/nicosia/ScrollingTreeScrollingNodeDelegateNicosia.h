@@ -63,9 +63,6 @@ private:
     bool allowsHorizontalScrolling() const final;
     bool allowsVerticalScrolling() const final;
 
-    void setScrollBehaviorStatus(ScrollBehaviorStatus status) final { m_scrollBehaviorStatus = status; }
-    ScrollBehaviorStatus scrollBehaviorStatus() const final { return m_scrollBehaviorStatus; }
-
     void immediateScrollBy(const FloatSize&, ScrollClamping = ScrollClamping::Clamped) final;
 
     void adjustScrollPositionToBoundsIfNecessary() final;
@@ -80,7 +77,6 @@ private:
 
     ScrollingEffectsController m_scrollController;
     std::unique_ptr<RunLoop::Timer<ScrollingTreeScrollingNodeDelegateNicosia>> m_animationTimer;
-    ScrollBehaviorStatus m_scrollBehaviorStatus { ScrollBehaviorStatus::NotInAnimation };
 
     bool m_scrollAnimatorEnabled { false };
 };

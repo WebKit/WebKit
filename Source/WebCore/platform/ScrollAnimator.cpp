@@ -119,14 +119,12 @@ bool ScrollAnimator::scrollToPositionWithAnimation(const FloatPoint& newPosition
     if (!positionChanged && !scrollableArea().scrollOriginChanged())
         return false;
 
-    m_scrollController.startAnimatedScrollToDestination(offsetFromPosition(m_currentPosition), offsetFromPosition(newPosition));
-    setScrollBehaviorStatus(ScrollBehaviorStatus::InNonNativeAnimation);
-    return true;
+    return m_scrollController.startAnimatedScrollToDestination(offsetFromPosition(m_currentPosition), offsetFromPosition(newPosition));
 }
 
 void ScrollAnimator::retargetRunningAnimation(const FloatPoint& newPosition)
 {
-    ASSERT(scrollableArea().currentScrollBehaviorStatus() == ScrollBehaviorStatus::InNonNativeAnimation);
+    ASSERT(scrollableArea().scrollAnimationStatus() == ScrollAnimationStatus::Animating);
     m_scrollController.retargetAnimatedScroll(offsetFromPosition(newPosition));
 }
 
@@ -292,14 +290,14 @@ bool ScrollAnimator::allowsVerticalScrolling() const
     return m_scrollableArea.allowsVerticalScrolling();
 }
 
-void ScrollAnimator::setScrollBehaviorStatus(ScrollBehaviorStatus status)
+void ScrollAnimator::willStartAnimatedScroll()
 {
-    m_scrollableArea.setScrollBehaviorStatus(status);
+    m_scrollableArea.setScrollAnimationStatus(ScrollAnimationStatus::Animating);
 }
 
-ScrollBehaviorStatus ScrollAnimator::scrollBehaviorStatus() const
+void ScrollAnimator::didStopAnimatedScroll()
 {
-    return m_scrollableArea.currentScrollBehaviorStatus();
+    m_scrollableArea.setScrollAnimationStatus(ScrollAnimationStatus::NotAnimating);
 }
 
 #if HAVE(RUBBER_BANDING)

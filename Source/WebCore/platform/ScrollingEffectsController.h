@@ -82,10 +82,6 @@ public:
     virtual bool allowsHorizontalScrolling() const = 0;
     virtual bool allowsVerticalScrolling() const = 0;
 
-    // FIXME: Maybe ScrollBehaviorStatus should be stored on ScrollingEffectsController.
-    virtual void setScrollBehaviorStatus(ScrollBehaviorStatus) = 0;
-    virtual ScrollBehaviorStatus scrollBehaviorStatus() const = 0;
-
     virtual void immediateScrollBy(const FloatSize&, ScrollClamping = ScrollClamping::Clamped) = 0;
 
     // If the current scroll position is within the overhang area, this function will cause
@@ -113,8 +109,13 @@ public:
     virtual void removeWheelEventTestCompletionDeferralForReason(WheelEventTestMonitor::ScrollableAreaIdentifier, WheelEventTestMonitor::DeferReason) const { /* Do nothing */ }
 
     virtual FloatPoint scrollOffset() const = 0;
+
+    virtual void willStartAnimatedScroll() { }
+    virtual void didStopAnimatedScroll() { }
+
     virtual void willStartScrollSnapAnimation() { }
     virtual void didStopScrollSnapAnimation() { }
+
     virtual float pageScaleFactor() const = 0;
     virtual ScrollExtents scrollExtents() const = 0;
     virtual bool scrollAnimationEnabled() const { return true; }

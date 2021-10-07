@@ -1712,7 +1712,7 @@ void DOMWindow::scrollTo(const ScrollToOptions& options, ScrollClamping clamping
 
     // This is an optimization for the common case of scrolling to (0, 0) when the scroller is already at the origin.
     // If an animated scroll is in progress, this optimization is skipped to ensure that the animated scroll is really stopped.
-    if (view->currentScrollBehaviorStatus() == ScrollBehaviorStatus::NotInAnimation && !scrollToOptions.left.value() && !scrollToOptions.top.value() && view->contentsScrollPosition() == IntPoint(0, 0))
+    if (view->scrollAnimationStatus() == ScrollAnimationStatus::NotAnimating && !scrollToOptions.left.value() && !scrollToOptions.top.value() && view->contentsScrollPosition().isZero())
         return;
 
     document()->updateLayoutIgnorePendingStylesheets();

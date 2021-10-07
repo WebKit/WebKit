@@ -81,8 +81,6 @@ private:
     RectEdges<bool> edgePinnedState() const final;
     bool allowsHorizontalScrolling() const final;
     bool allowsVerticalScrolling() const final;
-    void setScrollBehaviorStatus(ScrollBehaviorStatus status) final { m_scrollBehaviorStatus = status; }
-    ScrollBehaviorStatus scrollBehaviorStatus() const final { return m_scrollBehaviorStatus; }
 
     bool shouldRubberBandOnSide(BoxSide) const final;
     void immediateScrollBy(const FloatSize&, ScrollClamping = ScrollClamping::Clamped) final;
@@ -108,7 +106,6 @@ private:
 
     std::unique_ptr<RunLoop::Timer<ScrollingTreeScrollingNodeDelegateMac>> m_scrollControllerAnimationTimer;
 
-    ScrollBehaviorStatus m_scrollBehaviorStatus { ScrollBehaviorStatus::NotInAnimation };
     bool m_inMomentumPhase { false };
 };
 

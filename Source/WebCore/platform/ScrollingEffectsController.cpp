@@ -456,7 +456,8 @@ void ScrollingEffectsController::scrollAnimationDidEnd(ScrollAnimation& animatio
         stopScrollSnapAnimation();
     }
 
-    m_client.setScrollBehaviorStatus(ScrollBehaviorStatus::NotInAnimation);
+    // FIXME: Need to track state better and only call this when the running animation is for CSS smooth scrolling. Calling should be harmless, though.
+    m_client.didStopAnimatedScroll();
     startOrStopAnimationCallbacks();
 }
 

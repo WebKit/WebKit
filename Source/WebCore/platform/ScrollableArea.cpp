@@ -143,7 +143,8 @@ void ScrollableArea::scrollToPositionWithoutAnimation(const FloatPoint& position
 void ScrollableArea::scrollToPositionWithAnimation(const FloatPoint& position, ScrollClamping)
 {
     LOG_WITH_STREAM(Scrolling, stream << "ScrollableArea " << this << " scrollToPositionWithAnimation " << position);
-    scrollAnimator().scrollToPositionWithAnimation(position);
+    if (scrollAnimator().scrollToPositionWithAnimation(position))
+        setScrollAnimationStatus(ScrollAnimationStatus::Animating);
 }
 
 void ScrollableArea::scrollToOffsetWithoutAnimation(const FloatPoint& offset, ScrollClamping clamping)
@@ -539,7 +540,7 @@ void ScrollableArea::resnapAfterLayout()
     if (correctedOffset != currentOffset) {
         LOG_WITH_STREAM(ScrollSnap, stream << " adjusting offset from " << currentOffset << " to " << correctedOffset);
         auto position = scrollPositionFromOffset(correctedOffset);
-        if (currentScrollBehaviorStatus() == ScrollBehaviorStatus::NotInAnimation)
+        if (scrollAnimationStatus() == ScrollAnimationStatus::NotAnimating)
             scrollToOffsetWithoutAnimation(correctedOffset);
         else
             scrollAnimator->retargetRunningAnimation(position);

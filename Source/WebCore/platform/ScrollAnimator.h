@@ -145,8 +145,8 @@ private:
     bool allowsHorizontalScrolling() const final;
     bool allowsVerticalScrolling() const final;
 
-    void setScrollBehaviorStatus(ScrollBehaviorStatus) final;
-    ScrollBehaviorStatus scrollBehaviorStatus() const final;
+    void willStartAnimatedScroll() final;
+    void didStopAnimatedScroll() final;
 
     void immediateScrollBy(const FloatSize&, ScrollClamping = ScrollClamping::Clamped) final;
     void adjustScrollPositionToBoundsIfNecessary() final;
