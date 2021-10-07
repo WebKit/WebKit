@@ -1,3 +1,47 @@
+2021-10-07  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Add the ability to dispatch messages to multiple receiver types in IPC::StreamServerConnection
+        https://bugs.webkit.org/show_bug.cgi?id=231305
+
+        Reviewed by Kimmo Kinnunen.
+
+        In preparation for using streamable IPC for display list rendering in the GPU process (i.e. 2D canvas and DOM
+        rendering), refactor StreamServerConnection such that it is capable of dispatching stream messages to generic
+        StreamMessageReceivers. This has the disadvantage of performing a vtable lookup with each message dispatch, but
+        I did not measure this to be a significant performance regression on any of the canvas subtests in MotionMark.
+
+        * GPUProcess/graphics/RemoteGraphicsContextGL.cpp:
+        (WebKit::RemoteGraphicsContextGL::RemoteGraphicsContextGL):
+        * GPUProcess/graphics/RemoteGraphicsContextGL.h:
+
+        Make RemoteGraphicsContextGL subclass StreamMessageReceiver.
+
+        * Platform/IPC/StreamMessageReceiver.h: Added.
+        (IPC::StreamMessageReceiver::~StreamMessageReceiver):
+        * Platform/IPC/StreamServerConnection.cpp:
+        (IPC::StreamServerConnection::startReceivingMessages):
+        (IPC::StreamServerConnection::stopReceivingMessages):
+        (IPC::StreamServerConnection::dispatchStreamMessages):
+        (IPC::StreamServerConnection::processSetStreamDestinationID):
+        (IPC::StreamServerConnection::dispatchStreamMessage):
+        (IPC::StreamServerConnection::dispatchOutOfStreamMessage):
+
+        Now that these methods are no longer templated, we can move their implementations from the header to the
+        implementation file.
+
+        * Platform/IPC/StreamServerConnection.h:
+
+        Remove the template argument from StreamServerConnection, and instead make this start and stop receiving
+        messages for generic StreamMessageReceiver objects.
+
+        (IPC::StreamServerConnection<Receiver>::startReceivingMessages): Deleted.
+        (IPC::StreamServerConnection<Receiver>::stopReceivingMessages): Deleted.
+        (IPC::StreamServerConnection<Receiver>::dispatchStreamMessages): Deleted.
+        (IPC::StreamServerConnection<Receiver>::processSetStreamDestinationID): Deleted.
+        (IPC::StreamServerConnection<Receiver>::dispatchStreamMessage): Deleted.
+        (IPC::StreamServerConnection<Receiver>::dispatchOutOfStreamMessage): Deleted.
+        * WebKit.xcodeproj/project.pbxproj:
+
 2021-10-07  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         ScopedEGLDefaultDisplay should be removed
