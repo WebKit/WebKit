@@ -772,8 +772,6 @@ webkit.org/b/207723 http/tests/contentextensions/hide-on-ping-with-ping-that-red
 
 webkit.org/b/217961 http/tests/images/mp4-partial-load.html [ Timeout Pass ]
 
-webkit.org/b/224109 http/tests/privateClickMeasurement/store-private-click-measurement-with-source-nonce.html [ Failure Pass ]
-
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of HTTP-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1864,6 +1862,9 @@ webkit.org/b/120844 fast/images/pdf-as-image-with-annotations.html [ Skip ]
 
 http/tests/webshare [ Skip ]
 
+# privateClickMeasurement is disabled on glib
+http/tests/privateClickMeasurement [ Skip ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of UNSUPPORTED tests.
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -2490,9 +2491,6 @@ webkit.org/b/229764 animations/background-position.html [ ImageOnlyFailure Pass 
 webkit.org/b/229979 media/media-source/media-source-stalled-holds-sleep-assertion.html [ Timeout ]
 
 webkit.org/b/230315 imported/w3c/web-platform-tests/mathml/presentation-markup/direction/direction-006.html [ ImageOnlyFailure ]
-
-webkit.org/b/230317 http/tests/privateClickMeasurement/expired-attribution-report-gets-sent-on-session-start.html [ Failure ]
-webkit.org/b/230317 http/tests/privateClickMeasurement/send-attribution-conversion-request.html [ Failure ]
 
 # End: Common failures between GTK and WPE.
 

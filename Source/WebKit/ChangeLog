@@ -1,3 +1,13 @@
+2021-10-07  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
+
+        [GTK][WPE] Disable privateClickMeasurement when creating the network process
+        https://bugs.webkit.org/show_bug.cgi?id=231175
+
+        Reviewed by Adrian Perez de Castro.
+
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::sendCreationParametersToNewProcess):
+
 2021-10-07  Aditya Keerthi  <akeerthi@apple.com>
 
         Fix the macCatalyst build

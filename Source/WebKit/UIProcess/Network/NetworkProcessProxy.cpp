@@ -174,6 +174,10 @@ void NetworkProcessProxy::sendCreationParametersToNewProcess()
     });
 #endif
 
+#if PLATFORM(GTK) || PLATFORM(WPE)
+    parameters.enablePrivateClickMeasurement = false;
+#endif
+
     WebProcessPool::platformInitializeNetworkProcess(parameters);
     send(Messages::NetworkProcess::InitializeNetworkProcess(parameters), 0);
 }

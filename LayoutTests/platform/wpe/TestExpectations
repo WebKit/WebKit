@@ -220,7 +220,6 @@ webkit.org/b/132262 [ Debug ] http/tests/media/video-redirect.html [ Pass ]
 webkit.org/b/221377 [ Debug ] fast/text/hyphenation-unknown-locale.html [ Skip ]
 
 # Link target
-webkit.org/b/218553 http/tests/privateClickMeasurement/attribution-conversion-through-image-redirect-in-new-window.html [ Timeout ]
 webkit.org/b/212083 loader/navigation-policy/should-open-external-urls/user-gesture-target-blank-with-flag-from-subframe.html
 webkit.org/b/212083 loader/navigation-policy/should-open-external-urls/user-gesture-target-blank-with-flag.html
 webkit.org/b/212083 loader/navigation-policy/should-open-external-urls/user-gesture-target-blank-without-flag-from-subframe.html
