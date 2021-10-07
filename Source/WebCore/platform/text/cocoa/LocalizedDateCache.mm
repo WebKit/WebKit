@@ -146,12 +146,12 @@ float LocalizedDateCache::calculateMaximumWidth(DateComponentsType type, const M
     // date doesn't adjust for the current timezone. This is an arbitrary date
     // (x-27-2007) and time (10:45 PM).
     RetainPtr<NSCalendar> gregorian = adoptNS([[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian]);
-    [gregorian.get() setTimeZone:[NSTimeZone timeZoneForSecondsFromGMT:0]];
+    [gregorian setTimeZone:[NSTimeZone timeZoneForSecondsFromGMT:0]];
     RetainPtr<NSDateComponents> components = adoptNS([[NSDateComponents alloc] init]);
-    [components.get() setDay:27];
-    [components.get() setYear:2007];
-    [components.get() setHour:22];
-    [components.get() setMinute:45];
+    [components setDay:27];
+    [components setYear:2007];
+    [components setHour:22];
+    [components setMinute:45];
 
     static const NSUInteger numberOfGregorianMonths = [[dateFormatter monthSymbols] count];
     ASSERT(numberOfGregorianMonths == 12);
@@ -163,8 +163,8 @@ float LocalizedDateCache::calculateMaximumWidth(DateComponentsType type, const M
         || type == DateComponentsType::Month)
         totalMonthsToTest = numberOfGregorianMonths;
     for (NSUInteger i = 0; i < totalMonthsToTest; ++i) {
-        [components.get() setMonth:(i + 1)];
-        NSDate *date = [gregorian.get() dateFromComponents:components.get()];
+        [components setMonth:(i + 1)];
+        NSDate *date = [gregorian dateFromComponents:components.get()];
         NSString *formattedDate = [dateFormatter stringFromDate:date];
         maximumWidth = max(maximumWidth, measurer.measureText(String(formattedDate)));
     }

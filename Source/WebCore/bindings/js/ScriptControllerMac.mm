@@ -125,7 +125,7 @@ void ScriptController::updatePlatformScriptObjects()
 {
     if (m_windowScriptObject) {
         JSC::Bindings::RootObject* root = bindingRootObject();
-        [m_windowScriptObject.get() _setOriginRootObject:root andRootObject:root];
+        [m_windowScriptObject _setOriginRootObject:root andRootObject:root];
     }
 }
 

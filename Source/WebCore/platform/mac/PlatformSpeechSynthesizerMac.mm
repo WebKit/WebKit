@@ -211,7 +211,7 @@ PlatformSpeechSynthesizer::PlatformSpeechSynthesizer(PlatformSpeechSynthesizerCl
 
 PlatformSpeechSynthesizer::~PlatformSpeechSynthesizer()
 {
-    [m_platformSpeechWrapper.get() invalidate];
+    [m_platformSpeechWrapper invalidate];
 }
 
 static RetainPtr<CFArrayRef> speechSynthesisGetVoiceIdentifiers()
@@ -258,12 +258,12 @@ void PlatformSpeechSynthesizer::initializeVoiceList()
 
 void PlatformSpeechSynthesizer::pause()
 {
-    [m_platformSpeechWrapper.get() pause];
+    [m_platformSpeechWrapper pause];
 }
 
 void PlatformSpeechSynthesizer::resume()
 {
-    [m_platformSpeechWrapper.get() resume];
+    [m_platformSpeechWrapper resume];
 }
 
 void PlatformSpeechSynthesizer::speak(RefPtr<PlatformSpeechSynthesisUtterance>&& utterance)
@@ -271,17 +271,17 @@ void PlatformSpeechSynthesizer::speak(RefPtr<PlatformSpeechSynthesisUtterance>&&
     if (!m_platformSpeechWrapper)
         m_platformSpeechWrapper = adoptNS([[WebSpeechSynthesisWrapper alloc] initWithSpeechSynthesizer:this]);
 
-    [m_platformSpeechWrapper.get() speakUtterance:utterance.get()];
+    [m_platformSpeechWrapper speakUtterance:utterance.get()];
 }
 
 void PlatformSpeechSynthesizer::cancel()
 {
-    [m_platformSpeechWrapper.get() cancel];
+    [m_platformSpeechWrapper cancel];
 }
 
 void PlatformSpeechSynthesizer::resetState()
 {
-    [m_platformSpeechWrapper.get() cancel];
+    [m_platformSpeechWrapper cancel];
 }
 
 } // namespace WebCore

@@ -67,10 +67,10 @@ LocaleCocoa::LocaleCocoa(const AtomString& locale)
 {
     NSArray* availableLanguages = [NSLocale ISOLanguageCodes];
     // NSLocale returns a lower case NSLocaleLanguageCode so we don't have care about case.
-    NSString* language = [m_locale.get() objectForKey:NSLocaleLanguageCode];
+    NSString* language = [m_locale objectForKey:NSLocaleLanguageCode];
     if ([availableLanguages indexOfObject:language] == NSNotFound)
         m_locale = adoptNS([[NSLocale alloc] initWithLocaleIdentifier:defaultLanguage()]);
-    [m_gregorianCalendar.get() setLocale:m_locale.get()];
+    [m_gregorianCalendar setLocale:m_locale.get()];
 }
 
 LocaleCocoa::~LocaleCocoa()
@@ -248,8 +248,8 @@ const Vector<String>& LocaleCocoa::timeAMPMLabels()
         return m_timeAMPMLabels;
     m_timeAMPMLabels.reserveCapacity(2);
     RetainPtr<NSDateFormatter> formatter = shortTimeFormatter();
-    m_timeAMPMLabels.append([formatter.get() AMSymbol]);
-    m_timeAMPMLabels.append([formatter.get() PMSymbol]);
+    m_timeAMPMLabels.append([formatter AMSymbol]);
+    m_timeAMPMLabels.append([formatter PMSymbol]);
     return m_timeAMPMLabels;
 }
 
@@ -284,27 +284,27 @@ void LocaleCocoa::initializeLocaleData()
     m_didInitializeNumberData = true;
 
     RetainPtr<NSNumberFormatter> formatter = adoptNS([[NSNumberFormatter alloc] init]);
-    [formatter.get() setLocale:m_locale.get()];
-    [formatter.get() setNumberStyle:NSNumberFormatterDecimalStyle];
-    [formatter.get() setUsesGroupingSeparator:NO];
+    [formatter setLocale:m_locale.get()];
+    [formatter setNumberStyle:NSNumberFormatterDecimalStyle];
+    [formatter setUsesGroupingSeparator:NO];
 
     RetainPtr<NSNumber> sampleNumber = adoptNS([[NSNumber alloc] initWithDouble:9876543210]);
-    String nineToZero([formatter.get() stringFromNumber:sampleNumber.get()]);
+    String nineToZero([formatter stringFromNumber:sampleNumber.get()]);
     if (nineToZero.length() != 10)
         return;
     Vector<String, DecimalSymbolsSize> symbols;
     for (unsigned i = 0; i < 10; ++i)
         symbols.append(nineToZero.substring(9 - i, 1));
     ASSERT(symbols.size() == DecimalSeparatorIndex);
-    symbols.append([formatter.get() decimalSeparator]);
+    symbols.append([formatter decimalSeparator]);
     ASSERT(symbols.size() == GroupSeparatorIndex);
-    symbols.append([formatter.get() groupingSeparator]);
+    symbols.append([formatter groupingSeparator]);
     ASSERT(symbols.size() == DecimalSymbolsSize);
 
-    String positivePrefix([formatter.get() positivePrefix]);
-    String positiveSuffix([formatter.get() positiveSuffix]);
-    String negativePrefix([formatter.get() negativePrefix]);
-    String negativeSuffix([formatter.get() negativeSuffix]);
+    String positivePrefix([formatter positivePrefix]);
+    String positiveSuffix([formatter positiveSuffix]);
+    String negativePrefix([formatter negativePrefix]);
+    String negativeSuffix([formatter negativeSuffix]);
     setLocaleData(symbols, positivePrefix, positiveSuffix, negativePrefix, negativeSuffix);
 }
 

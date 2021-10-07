@@ -284,7 +284,7 @@ void WebCoreAVFResourceLoader::startLoading()
     if (m_dataURLMediaLoader || m_resourceMediaLoader || m_platformMediaLoader || !m_parent)
         return;
 
-    NSURLRequest *nsRequest = [m_avRequest.get() request];
+    NSURLRequest *nsRequest = [m_avRequest request];
 
     ResourceRequest request(nsRequest);
     request.setPriority(ResourceLoadPriority::Low);
@@ -314,7 +314,7 @@ void WebCoreAVFResourceLoader::startLoading()
     }
 
     LOG_ERROR("Failed to start load for media at url %s", [[[nsRequest URL] absoluteString] UTF8String]);
-    [m_avRequest.get() finishLoadingWithError:0];
+    [m_avRequest finishLoadingWithError:0];
 }
 
 void WebCoreAVFResourceLoader::stopLoading()
@@ -346,7 +346,7 @@ void WebCoreAVFResourceLoader::responseReceived(const ResourceResponse& response
 {
     int status = response.httpStatusCode();
     if (status && (status < 200 || status > 299)) {
-        [m_avRequest.get() finishLoadingWithError:0];
+        [m_avRequest finishLoadingWithError:0];
         return;
     }
 
@@ -354,7 +354,7 @@ void WebCoreAVFResourceLoader::responseReceived(const ResourceResponse& response
     if (contentRange.isValid())
         m_responseOffset = static_cast<NSUInteger>(contentRange.firstBytePosition());
 
-    if (AVAssetResourceLoadingContentInformationRequest* contentInfo = [m_avRequest.get() contentInformationRequest]) {
+    if (AVAssetResourceLoadingContentInformationRequest* contentInfo = [m_avRequest contentInformationRequest]) {
         String uti = UTIFromMIMEType(response.mimeType());
 
         [contentInfo setContentType:uti];
@@ -366,7 +366,7 @@ void WebCoreAVFResourceLoader::responseReceived(const ResourceResponse& response
             [contentInfo setEntireLengthAvailableOnDemand:YES];
 
         if (![m_avRequest dataRequest]) {
-            [m_avRequest.get() finishLoading];
+            [m_avRequest finishLoading];
             stopLoading();
         }
     }
@@ -376,16 +376,16 @@ void WebCoreAVFResourceLoader::loadFailed(const ResourceError& error)
 {
     // <rdar://problem/13987417> Set the contentType of the contentInformationRequest to an empty
     // string to trigger AVAsset's playable value to complete loading.
-    if ([m_avRequest.get() contentInformationRequest] && ![[m_avRequest.get() contentInformationRequest] contentType])
-        [[m_avRequest.get() contentInformationRequest] setContentType:@""];
+    if ([m_avRequest contentInformationRequest] && ![[m_avRequest contentInformationRequest] contentType])
+        [[m_avRequest contentInformationRequest] setContentType:@""];
 
-    [m_avRequest.get() finishLoadingWithError:error.nsError()];
+    [m_avRequest finishLoadingWithError:error.nsError()];
     stopLoading();
 }
 
 void WebCoreAVFResourceLoader::loadFinished()
 {
-    [m_avRequest.get() finishLoading];
+    [m_avRequest finishLoading];
     stopLoading();
 }
 
@@ -430,7 +430,7 @@ void WebCoreAVFResourceLoader::newDataStoredInSharedBuffer(SharedBuffer& data)
         return;
 
     if (dataRequest.currentOffset + dataRequest.requestedLength >= dataRequest.requestedOffset) {
-        [m_avRequest.get() finishLoading];
+        [m_avRequest finishLoading];
         stopLoading();
     }
 }

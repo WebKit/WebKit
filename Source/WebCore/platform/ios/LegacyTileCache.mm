@@ -75,7 +75,7 @@ LegacyTileCache::LegacyTileCache(WAKWindow* window)
 
 LegacyTileCache::~LegacyTileCache()
 {
-    [m_tombstone.get() setDead:true];
+    [m_tombstone setDead:true];
 }
 
 CGFloat LegacyTileCache::screenScale() const

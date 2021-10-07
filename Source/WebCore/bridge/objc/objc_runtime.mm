@@ -170,12 +170,12 @@ bool ObjcArray::setValueAt(JSGlobalObject* lexicalGlobalObject, unsigned int ind
     JSC::VM& vm = lexicalGlobalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    if (![_array.get() respondsToSelector:@selector(insertObject:atIndex:)]) {
+    if (![_array respondsToSelector:@selector(insertObject:atIndex:)]) {
         throwTypeError(lexicalGlobalObject, scope, "Array is not mutable."_s);
         return false;
     }
 
-    if (index > [_array.get() count]) {
+    if (index > [_array count]) {
         throwException(lexicalGlobalObject, scope, createRangeError(lexicalGlobalObject, "Index exceeds array size."));
         return false;
     }
@@ -185,7 +185,7 @@ bool ObjcArray::setValueAt(JSGlobalObject* lexicalGlobalObject, unsigned int ind
     ObjcValue oValue = convertValueToObjcValue (lexicalGlobalObject, aValue, ObjcObjectType);
 
     @try {
-        [_array.get() insertObject:(__bridge id)oValue.objectValue atIndex:index];
+        [_array insertObject:(__bridge id)oValue.objectValue atIndex:index];
         return true;
     } @catch(NSException* localException) {
         throwException(lexicalGlobalObject, scope, createError(lexicalGlobalObject, "Objective-C exception."));
@@ -198,10 +198,10 @@ JSValue ObjcArray::valueAt(JSGlobalObject* lexicalGlobalObject, unsigned int ind
     JSC::VM& vm = lexicalGlobalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    if (index > [_array.get() count])
+    if (index > [_array count])
         return throwException(lexicalGlobalObject, scope, createRangeError(lexicalGlobalObject, "Index exceeds array size."));
     @try {
-        id obj = [_array.get() objectAtIndex:index];
+        id obj = [_array objectAtIndex:index];
         if (obj)
             return convertObjcValueToValue (lexicalGlobalObject, &obj, ObjcObjectType, m_rootObject.get());
     } @catch(NSException* localException) {
@@ -212,7 +212,7 @@ JSValue ObjcArray::valueAt(JSGlobalObject* lexicalGlobalObject, unsigned int ind
 
 unsigned int ObjcArray::getLength() const
 {
-    return [_array.get() count];
+    return [_array count];
 }
 
 const ClassInfo ObjcFallbackObjectImp::s_info = { "ObjcFallbackObject", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(ObjcFallbackObjectImp) };

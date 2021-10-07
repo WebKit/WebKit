@@ -67,7 +67,7 @@ void ResourceResponse::initNSURLResponse() const
     m_nsResponse = adoptNS([[NSHTTPURLResponse alloc] initWithURL:m_url statusCode:m_httpStatusCode HTTPVersion:(NSString*)kCFHTTPVersion1_1 headerFields:headerDictionary]);
 
     // Mime type sniffing doesn't work with a synthesized response.
-    [m_nsResponse.get() _setMIMEType:(NSString *)m_mimeType];
+    [m_nsResponse _setMIMEType:(NSString *)m_mimeType];
 }
 
 void ResourceResponse::disableLazyInitialization()
@@ -160,14 +160,14 @@ void ResourceResponse::platformLazyInit(InitLevel initLevel)
     
     @autoreleasepool {
 
-        auto messageRef = [m_nsResponse.get() isKindOfClass:[NSHTTPURLResponse class]] ? CFURLResponseGetHTTPResponse([ (NSHTTPURLResponse *)m_nsResponse.get() _CFURLResponse]) : nullptr;
+        auto messageRef = [m_nsResponse isKindOfClass:[NSHTTPURLResponse class]] ? CFURLResponseGetHTTPResponse([ (NSHTTPURLResponse *)m_nsResponse.get() _CFURLResponse]) : nullptr;
 
         if (m_initLevel < CommonFieldsOnly) {
-            m_url = [m_nsResponse.get() URL];
-            m_mimeType = [m_nsResponse.get() MIMEType];
-            m_expectedContentLength = [m_nsResponse.get() expectedContentLength];
+            m_url = [m_nsResponse URL];
+            m_mimeType = [m_nsResponse MIMEType];
+            m_expectedContentLength = [m_nsResponse expectedContentLength];
             // Stripping double quotes as a workaround for <rdar://problem/8757088>, can be removed once that is fixed.
-            m_textEncodingName = stripLeadingAndTrailingDoubleQuote([m_nsResponse.get() textEncodingName]);
+            m_textEncodingName = stripLeadingAndTrailingDoubleQuote([m_nsResponse textEncodingName]);
             m_httpStatusCode = messageRef ? CFHTTPMessageGetResponseStatusCode(messageRef) : 0;
             if (messageRef)
                 m_httpHeaderFields = initializeHTTPHeaders(messageRef);

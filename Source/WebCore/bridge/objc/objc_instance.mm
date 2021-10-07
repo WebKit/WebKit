@@ -132,8 +132,8 @@ ObjcInstance::~ObjcInstance()
         ASSERT(_instance);
         wrapperCache().remove((__bridge CFTypeRef)_instance.get());
 
-        if ([_instance.get() respondsToSelector:@selector(finalizeForWebScript)])
-            [_instance.get() performSelector:@selector(finalizeForWebScript)];
+        if ([_instance respondsToSelector:@selector(finalizeForWebScript)])
+            [_instance performSelector:@selector(finalizeForWebScript)];
         _instance = 0;
     }
 }
@@ -167,7 +167,7 @@ Bindings::Class* ObjcInstance::getClass() const
 
 bool ObjcInstance::supportsInvokeDefaultMethod() const
 {
-    return [_instance.get() respondsToSelector:@selector(invokeDefaultMethodWithArguments:)];
+    return [_instance respondsToSelector:@selector(invokeDefaultMethodWithArguments:)];
 }
 
 class ObjCRuntimeMethod final : public RuntimeMethod {
@@ -353,10 +353,10 @@ JSC::JSValue ObjcInstance::invokeDefaultMethod(JSGlobalObject* lexicalGlobalObje
     setGlobalException(nil);
     
 @try {
-    if (![_instance.get() respondsToSelector:@selector(invokeDefaultMethodWithArguments:)])
+    if (![_instance respondsToSelector:@selector(invokeDefaultMethodWithArguments:)])
         return result;
 
-    NSMethodSignature* signature = [_instance.get() methodSignatureForSelector:@selector(invokeDefaultMethodWithArguments:)];
+    NSMethodSignature* signature = [_instance methodSignatureForSelector:@selector(invokeDefaultMethodWithArguments:)];
     NSInvocation* invocation = [NSInvocation invocationWithMethodSignature:signature];
     [invocation setSelector:@selector(invokeDefaultMethodWithArguments:)];
     [invocation setTarget:_instance.get()];
@@ -467,9 +467,9 @@ JSC::JSValue ObjcInstance::defaultValue(JSGlobalObject* lexicalGlobalObject, Pre
         return stringValue(lexicalGlobalObject);
     if (hint == PreferNumber)
         return numberValue(lexicalGlobalObject);
-    if ([_instance.get() isKindOfClass:[NSString class]])
+    if ([_instance isKindOfClass:[NSString class]])
         return stringValue(lexicalGlobalObject);
-    if ([_instance.get() isKindOfClass:[NSNumber class]])
+    if ([_instance isKindOfClass:[NSNumber class]])
         return numberValue(lexicalGlobalObject);
     return valueOf(lexicalGlobalObject);
 }

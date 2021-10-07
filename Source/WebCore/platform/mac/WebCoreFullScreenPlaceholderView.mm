@@ -66,7 +66,7 @@
     _exitWarning.get().textColor = [NSColor tertiaryLabelColor];
     [_exitWarning sizeToFit];
 
-    NSRect warningFrame = [_exitWarning.get() frame];
+    NSRect warningFrame = [_exitWarning frame];
     warningFrame.origin = NSMakePoint((frameRect.size.width - warningFrame.size.width) / 2, frameRect.size.height / 2);
     _exitWarning.get().frame = warningFrame;
     [_effectView addSubview:_exitWarning.get()];

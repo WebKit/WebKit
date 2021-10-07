@@ -2124,8 +2124,8 @@ NSPopUpButtonCell* RenderThemeMac::popupButton() const
 {
     if (!m_popupButton) {
         m_popupButton = adoptNS([[NSPopUpButtonCell alloc] initTextCell:@"" pullsDown:NO]);
-        [m_popupButton.get() setUsesItemFromMenu:NO];
-        [m_popupButton.get() setFocusRingType:NSFocusRingTypeExterior];
+        [m_popupButton setUsesItemFromMenu:NO];
+        [m_popupButton setFocusRingType:NSFocusRingTypeExterior];
         [m_popupButton setUserInterfaceLayoutDirection:NSUserInterfaceLayoutDirectionLeftToRight];
     }
 
@@ -2136,11 +2136,11 @@ NSSearchFieldCell* RenderThemeMac::search() const
 {
     if (!m_search) {
         m_search = adoptNS([[NSSearchFieldCell alloc] initTextCell:@""]);
-        [m_search.get() setBezelStyle:NSTextFieldRoundedBezel];
-        [m_search.get() setBezeled:YES];
-        [m_search.get() setEditable:YES];
-        [m_search.get() setFocusRingType:NSFocusRingTypeExterior];
-        [m_search.get() setCenteredLook:NO];
+        [m_search setBezelStyle:NSTextFieldRoundedBezel];
+        [m_search setBezeled:YES];
+        [m_search setEditable:YES];
+        [m_search setFocusRingType:NSFocusRingTypeExterior];
+        [m_search setCenteredLook:NO];
     }
 
     return m_search.get();
@@ -2158,9 +2158,9 @@ NSSliderCell* RenderThemeMac::sliderThumbHorizontal() const
 {
     if (!m_sliderThumbHorizontal) {
         m_sliderThumbHorizontal = adoptNS([[NSSliderCell alloc] init]);
-        [m_sliderThumbHorizontal.get() setSliderType:NSSliderTypeLinear];
-        [m_sliderThumbHorizontal.get() setControlSize:NSControlSizeSmall];
-        [m_sliderThumbHorizontal.get() setFocusRingType:NSFocusRingTypeExterior];
+        [m_sliderThumbHorizontal setSliderType:NSSliderTypeLinear];
+        [m_sliderThumbHorizontal setControlSize:NSControlSizeSmall];
+        [m_sliderThumbHorizontal setFocusRingType:NSFocusRingTypeExterior];
     }
 
     return m_sliderThumbHorizontal.get();
@@ -2170,9 +2170,9 @@ NSSliderCell* RenderThemeMac::sliderThumbVertical() const
 {
     if (!m_sliderThumbVertical) {
         m_sliderThumbVertical = adoptNS([[NSSliderCell alloc] init]);
-        [m_sliderThumbVertical.get() setSliderType:NSSliderTypeLinear];
-        [m_sliderThumbVertical.get() setControlSize:NSControlSizeSmall];
-        [m_sliderThumbVertical.get() setFocusRingType:NSFocusRingTypeExterior];
+        [m_sliderThumbVertical setSliderType:NSSliderTypeLinear];
+        [m_sliderThumbVertical setControlSize:NSControlSizeSmall];
+        [m_sliderThumbVertical setFocusRingType:NSFocusRingTypeExterior];
     }
 
     return m_sliderThumbVertical.get();
@@ -2182,13 +2182,13 @@ NSTextFieldCell* RenderThemeMac::textField() const
 {
     if (!m_textField) {
         m_textField = adoptNS([[WebCoreTextFieldCell alloc] initTextCell:@""]);
-        [m_textField.get() setBezeled:YES];
-        [m_textField.get() setEditable:YES];
-        [m_textField.get() setFocusRingType:NSFocusRingTypeExterior];
+        [m_textField setBezeled:YES];
+        [m_textField setEditable:YES];
+        [m_textField setFocusRingType:NSFocusRingTypeExterior];
         // Post-Lion, WebCore can be in charge of paintinng the background thanks to
         // the workaround in place for <rdar://problem/11385461>, which is implemented
         // above as _coreUIDrawOptionsWithFrame.
-        [m_textField.get() setDrawsBackground:NO];
+        [m_textField setDrawsBackground:NO];
     }
 
     return m_textField.get();

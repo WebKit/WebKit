@@ -228,7 +228,7 @@ String RenderThemeCocoa::mediaControlsFormattedStringForDuration(const double du
         m_durationFormatter.get().formattingContext = NSFormattingContextStandalone;
         m_durationFormatter.get().maximumUnitCount = 2;
     }
-    return [m_durationFormatter.get() stringFromTimeInterval:durationInSeconds];
+    return [m_durationFormatter stringFromTimeInterval:durationInSeconds];
     END_BLOCK_OBJC_EXCEPTIONS
 }
 

@@ -140,7 +140,7 @@ void GameControllerGamepad::setupAsExtendedGamepad()
     // Thumbstick buttons are only in macOS 10.14.1 / iOS 12.1
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wunguarded-availability"
-    if ([m_extendedGamepad.get() respondsToSelector:@selector(leftThumbstickButton)]) {
+    if ([m_extendedGamepad respondsToSelector:@selector(leftThumbstickButton)]) {
         bindButton(m_extendedGamepad.get().leftThumbstickButton, GamepadButtonRole::LeftStick);
         bindButton(m_extendedGamepad.get().rightThumbstickButton, GamepadButtonRole::RightStick);
     }

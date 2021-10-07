@@ -112,11 +112,11 @@ void AVCaptureDeviceManager::updateCachedAVCaptureDevices()
         if (![device hasMediaType:AVMediaTypeVideo] && ![device hasMediaType:AVMediaTypeMuxed])
             continue;
 
-        if ([m_avCaptureDevices.get() containsObject:device])
+        if ([m_avCaptureDevices containsObject:device])
             continue;
 
         [device addObserver:m_objcObserver.get() forKeyPath:@"suspended" options:NSKeyValueObservingOptionNew context:(void *)nil];
-        [m_avCaptureDevices.get() addObject:device];
+        [m_avCaptureDevices addObject:device];
     }
 
 }

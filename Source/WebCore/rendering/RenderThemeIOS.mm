@@ -2009,10 +2009,10 @@ void RenderThemeIOS::paintSystemPreviewBadge(Image& image, const PaintInfo& pain
             m_largeBadgeSurface = IOSurface::create({ largeBadgeDimension, largeBadgeDimension }, DestinationColorSpace::SRGB());
         surface = m_largeBadgeSurface->surface();
     }
-    [m_ciContext.get() render:translatedImage toIOSurface:surface bounds:badgeRect colorSpace:sRGBColorSpaceRef()];
+    [m_ciContext render:translatedImage toIOSurface:surface bounds:badgeRect colorSpace:sRGBColorSpaceRef()];
     cgImage = useSmallBadge ? m_smallBadgeSurface->createImage() : m_largeBadgeSurface->createImage();
 #else
-    cgImage = adoptCF([m_ciContext.get() createCGImage:sourceOverFilter.outputImage fromRect:flippedInsetBadgeRect]);
+    cgImage = adoptCF([m_ciContext createCGImage:sourceOverFilter.outputImage fromRect:flippedInsetBadgeRect]);
 #endif
 
     // Before we render the result, we should clip to a circle around the badge rectangle.

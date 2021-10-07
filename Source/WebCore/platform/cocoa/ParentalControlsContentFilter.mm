@@ -96,15 +96,15 @@ void ParentalControlsContentFilter::responseReceived(const ResourceResponse& res
 
 void ParentalControlsContentFilter::addData(const uint8_t* data, int length)
 {
-    ASSERT(![m_replacementData.get() length]);
+    ASSERT(![m_replacementData length]);
     m_replacementData = [m_webFilterEvaluator addData:[NSData dataWithBytesNoCopy:(void*)data length:length freeWhenDone:NO]];
     updateFilterState();
-    ASSERT(needsMoreData() || [m_replacementData.get() length]);
+    ASSERT(needsMoreData() || [m_replacementData length]);
 }
 
 void ParentalControlsContentFilter::finishedAddingData()
 {
-    ASSERT(![m_replacementData.get() length]);
+    ASSERT(![m_replacementData length]);
     m_replacementData = [m_webFilterEvaluator dataComplete];
     updateFilterState();
 }

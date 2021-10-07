@@ -65,12 +65,12 @@ PlatformPasteboard::PlatformPasteboard(const String& pasteboardName)
 
 void PlatformPasteboard::getTypes(Vector<String>& types)
 {
-    types = makeVector<String>([m_pasteboard.get() types]);
+    types = makeVector<String>([m_pasteboard types]);
 }
 
 RefPtr<SharedBuffer> PlatformPasteboard::bufferForType(const String& pasteboardType)
 {
-    NSData *data = [m_pasteboard.get() dataForType:pasteboardType];
+    NSData *data = [m_pasteboard dataForType:pasteboardType];
     if (!data)
         return nullptr;
     return SharedBuffer::create(adoptNS([data copy]).get());
@@ -100,7 +100,7 @@ int PlatformPasteboard::numberOfFiles() const
 
 void PlatformPasteboard::getPathnamesForType(Vector<String>& pathnames, const String& pasteboardType) const
 {
-    id paths = [m_pasteboard.get() propertyListForType:pasteboardType];
+    id paths = [m_pasteboard propertyListForType:pasteboardType];
     if ([paths isKindOfClass:[NSString class]]) {
         pathnames.append((NSString *)paths);
         return;
@@ -283,7 +283,7 @@ int64_t PlatformPasteboard::write(const PasteboardCustomData& data)
 
 int64_t PlatformPasteboard::changeCount() const
 {
-    return [m_pasteboard.get() changeCount];
+    return [m_pasteboard changeCount];
 }
 
 String PlatformPasteboard::platformPasteboardTypeForSafeTypeForDOMToReadAndWrite(const String& domType, IncludeImageTypes includeImageTypes)
@@ -318,10 +318,10 @@ int64_t PlatformPasteboard::copy(const String& fromPasteboard)
     NSPasteboard* pasteboard = [NSPasteboard pasteboardWithName:fromPasteboard];
     NSArray* types = [pasteboard types];
 
-    [m_pasteboard.get() addTypes:types owner:nil];
+    [m_pasteboard addTypes:types owner:nil];
     for (NSUInteger i = 0; i < [types count]; i++) {
         NSString* type = [types objectAtIndex:i];
-        if (![m_pasteboard.get() setData:[pasteboard dataForType:type] forType:type])
+        if (![m_pasteboard setData:[pasteboard dataForType:type] forType:type])
             return 0;
     }
     return changeCount();
@@ -329,7 +329,7 @@ int64_t PlatformPasteboard::copy(const String& fromPasteboard)
 
 int64_t PlatformPasteboard::addTypes(const Vector<String>& pasteboardTypes)
 {
-    return [m_pasteboard.get() addTypes:createNSArray(pasteboardTypes).get() owner:nil];
+    return [m_pasteboard addTypes:createNSArray(pasteboardTypes).get() owner:nil];
 }
 
 int64_t PlatformPasteboard::setTypes(const Vector<String>& pasteboardTypes)
@@ -360,7 +360,7 @@ int64_t PlatformPasteboard::setURL(const PasteboardURL& pasteboardURL)
 
     NSArray *urlWithTitle = @[ @[ urlString ], @[ pasteboardURL.title ] ];
     NSString *pasteboardType = [NSString stringWithUTF8String:WebURLsWithTitlesPboardType];
-    BOOL didWriteData = [m_pasteboard.get() setPropertyList:urlWithTitle forType:pasteboardType];
+    BOOL didWriteData = [m_pasteboard setPropertyList:urlWithTitle forType:pasteboardType];
     if (!didWriteData)
         return 0;
 
@@ -384,35 +384,35 @@ int64_t PlatformPasteboard::setStringForType(const String& string, const String&
     if (pasteboardType == String(legacyURLPasteboardType())) {
         // We cannot just use -NSPasteboard writeObjects:], because -declareTypes has been already called, implicitly creating an item.
         NSURL *url = [NSURL URLWithString:string];
-        if ([[m_pasteboard.get() types] containsObject:legacyURLPasteboardType()]) {
+        if ([[m_pasteboard types] containsObject:legacyURLPasteboardType()]) {
             NSURL *base = [url baseURL];
             if (base)
-                didWriteData = [m_pasteboard.get() setPropertyList:@[[url relativeString], [base absoluteString]] forType:legacyURLPasteboardType()];
+                didWriteData = [m_pasteboard setPropertyList:@[[url relativeString], [base absoluteString]] forType:legacyURLPasteboardType()];
             else if (url)
-                didWriteData = [m_pasteboard.get() setPropertyList:@[[url absoluteString], @""] forType:legacyURLPasteboardType()];
+                didWriteData = [m_pasteboard setPropertyList:@[[url absoluteString], @""] forType:legacyURLPasteboardType()];
             else
-                didWriteData = [m_pasteboard.get() setPropertyList:@[@"", @""] forType:legacyURLPasteboardType()];
+                didWriteData = [m_pasteboard setPropertyList:@[@"", @""] forType:legacyURLPasteboardType()];
 
             if (!didWriteData)
                 return 0;
         }
 
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-        if ([[m_pasteboard.get() types] containsObject:(NSString *)kUTTypeURL]) {
-            didWriteData = [m_pasteboard.get() setString:[url absoluteString] forType:(NSString *)kUTTypeURL];
+        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+        if ([[m_pasteboard types] containsObject:(NSString *)kUTTypeURL]) {
+            didWriteData = [m_pasteboard setString:[url absoluteString] forType:(NSString *)kUTTypeURL];
             if (!didWriteData)
                 return 0;
         }
 
-        if ([[m_pasteboard.get() types] containsObject:(NSString *)kUTTypeFileURL] && [url isFileURL]) {
-            didWriteData = [m_pasteboard.get() setString:[url absoluteString] forType:(NSString *)kUTTypeFileURL];
+        if ([[m_pasteboard types] containsObject:(NSString *)kUTTypeFileURL] && [url isFileURL]) {
+            didWriteData = [m_pasteboard setString:[url absoluteString] forType:(NSString *)kUTTypeFileURL];
             if (!didWriteData)
                 return 0;
         }
-ALLOW_DEPRECATED_DECLARATIONS_END
+        ALLOW_DEPRECATED_DECLARATIONS_END
 
     } else {
-        didWriteData = [m_pasteboard.get() setString:string forType:pasteboardType];
+        didWriteData = [m_pasteboard setString:string forType:pasteboardType];
         if (!didWriteData)
             return 0;
     }

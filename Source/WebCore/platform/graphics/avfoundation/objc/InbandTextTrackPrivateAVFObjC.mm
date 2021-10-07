@@ -136,7 +136,7 @@ AtomString InbandTextTrackPrivateAVFObjC::label() const
 
     NSString *title = 0;
 
-    NSArray *titles = [PAL::getAVMetadataItemClass() metadataItemsFromArray:[m_mediaSelectionOption.get() commonMetadata] withKey:AVMetadataCommonKeyTitle keySpace:AVMetadataKeySpaceCommon];
+    NSArray *titles = [PAL::getAVMetadataItemClass() metadataItemsFromArray:[m_mediaSelectionOption commonMetadata] withKey:AVMetadataCommonKeyTitle keySpace:AVMetadataKeySpaceCommon];
     if ([titles count]) {
         // If possible, return a title in one of the user's preferred languages.
         NSArray *titlesForPreferredLanguages = [PAL::getAVMetadataItemClass() metadataItemsFromArray:titles filteredAndSortedAccordingToPreferredLanguages:[NSLocale preferredLanguages]];
@@ -155,7 +155,7 @@ AtomString InbandTextTrackPrivateAVFObjC::language() const
     if (!m_mediaSelectionOption)
         return emptyAtom();
 
-    return [[m_mediaSelectionOption.get() locale] localeIdentifier];
+    return [[m_mediaSelectionOption locale] localeIdentifier];
 }
 
 bool InbandTextTrackPrivateAVFObjC::isDefault() const

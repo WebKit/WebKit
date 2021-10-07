@@ -95,7 +95,7 @@ bool SerializedPlatformDataCueMac::isEqual(const SerializedPlatformDataCue& othe
     if (!m_nativeValue || !otherObjC->nativeValue())
         return false;
 
-    return [m_nativeValue.get() isEqual:otherObjC->nativeValue()];
+    return [m_nativeValue isEqual:otherObjC->nativeValue()];
 }
 
 SerializedPlatformDataCueMac* toSerializedPlatformDataCueMac(SerializedPlatformDataCue* rep)
@@ -117,7 +117,7 @@ NSArray *SerializedPlatformDataCueMac::allowedClassesForNativeValues()
 
 SerializedPlatformDataCueValue SerializedPlatformDataCueMac::encodableValue() const
 {
-    if ([m_nativeValue.get() isKindOfClass:PAL::getAVMetadataItemClass()])
+    if ([m_nativeValue isKindOfClass:PAL::getAVMetadataItemClass()])
         return { SerializedPlatformDataCueValue::PlatformType::ObjC, NSDictionaryWithAVMetadataItem(m_nativeValue.get()).get() };
 
     return { SerializedPlatformDataCueValue::PlatformType::ObjC, m_nativeValue.get() };

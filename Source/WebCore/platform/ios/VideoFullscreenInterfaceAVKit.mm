@@ -360,7 +360,7 @@ static VideoFullscreenInterfaceAVKit::ExitFullScreenReason convertToExitFullScre
         videoGravity = AVLayerVideoGravityResizeAspect;
 #endif
 
-    if ([_videoGravity.get() isEqualToString:videoGravity])
+    if ([_videoGravity isEqualToString:videoGravity])
         return;
 
     _previousVideoGravity = _videoGravity;
@@ -647,7 +647,7 @@ NS_ASSUME_NONNULL_END
             completionHandler(YES, nil);
     }];
 #else
-    [_avPlayerViewController.get() enterFullScreenAnimated:animated completionHandler:completionHandler];
+    [_avPlayerViewController enterFullScreenAnimated:animated completionHandler:completionHandler];
 #endif
 }
 
@@ -663,7 +663,7 @@ NS_ASSUME_NONNULL_END
             completionHandler(YES, nil);
     }];
 #else
-    [_avPlayerViewController.get() exitFullScreenAnimated:animated completionHandler:completionHandler];
+    [_avPlayerViewController exitFullScreenAnimated:animated completionHandler:completionHandler];
 #endif
 }
 
@@ -704,7 +704,7 @@ static const NSTimeInterval startPictureInPictureTimeInterval = 0.5;
 #if PLATFORM(WATCHOS)
     ASSERT_NOT_REACHED();
 #else
-    [_avPlayerViewController.get() startPictureInPicture];
+    [_avPlayerViewController startPictureInPicture];
 #endif
 }
 
@@ -713,7 +713,7 @@ static const NSTimeInterval startPictureInPictureTimeInterval = 0.5;
 #if PLATFORM(WATCHOS)
     ASSERT_NOT_REACHED();
 #else
-    [_avPlayerViewController.get() stopPictureInPicture];
+    [_avPlayerViewController stopPictureInPicture];
 #endif
 }
 
@@ -807,7 +807,7 @@ static const NSTimeInterval startPictureInPictureTimeInterval = 0.5;
 
 - (void)removeFromParentViewController
 {
-    [_avPlayerViewController.get() removeFromParentViewController];
+    [_avPlayerViewController removeFromParentViewController];
 }
 @end
 

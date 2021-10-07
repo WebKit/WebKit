@@ -143,7 +143,7 @@ static bool scheduledWithCustomRunLoopMode(const std::optional<SchedulePairHashS
 
         ResourceResponse response(redirectResponse.get());
         ResourceRequest redirectRequest = newRequest.get();
-        if ([newRequest.get() HTTPBodyStream]) {
+        if ([newRequest HTTPBodyStream]) {
             ASSERT(m_handle->firstRequest().httpBody());
             redirectRequest.setHTTPBody(m_handle->firstRequest().httpBody());
         }
