@@ -36,6 +36,16 @@
 namespace WebCore {
 namespace Layout {
 
+static inline OptionSet<InlineDisplay::Box::PositionWithinInlineLevelBox> isFirstLastBox(const InlineLevelBox& inlineBox)
+{
+    auto positionWithinInlineLevelBox = OptionSet<InlineDisplay::Box::PositionWithinInlineLevelBox> { };
+    if (inlineBox.isFirstBox())
+        positionWithinInlineLevelBox.add(InlineDisplay::Box::PositionWithinInlineLevelBox::First);
+    if (inlineBox.isLastBox())
+        positionWithinInlineLevelBox.add(InlineDisplay::Box::PositionWithinInlineLevelBox::Last);
+    return positionWithinInlineLevelBox;
+}
+
 InlineDisplayContentBuilder::InlineDisplayContentBuilder(const ContainerBox& formattingContextRoot, InlineFormattingState& formattingState)
     : m_formattingContextRoot(formattingContextRoot)
     , m_formattingState(formattingState)
@@ -50,7 +60,7 @@ DisplayBoxes InlineDisplayContentBuilder::build(const LineBuilder::LineContent& 
     // Every line starts with a root box, even the empty ones.
     auto rootInlineBoxRect = lineBox.logicalRectForRootInlineBox();
     rootInlineBoxRect.moveBy(lineBoxLogicalTopLeft);
-    boxes.append({ lineIndex, InlineDisplay::Box::Type::RootInlineBox, root(), rootInlineBoxRect, rootInlineBoxRect, { }, { },  lineBox.rootInlineBox().hasContent()});
+    boxes.append({ lineIndex, InlineDisplay::Box::Type::RootInlineBox, root(), rootInlineBoxRect, rootInlineBoxRect, { }, { }, lineBox.rootInlineBox().hasContent() });
 
     createBoxesAndUpdateGeometryForLineSpanningInlineBoxes(lineBox, lineBoxLogicalTopLeft, lineIndex, boxes);
     createBoxesAndUpdateGeometryForLineContent(lineContent, lineBox, lineBoxLogicalTopLeft, lineIndex, boxes);
@@ -161,7 +171,11 @@ void InlineDisplayContentBuilder::createBoxesAndUpdateGeometryForLineContent(con
             if (lineBox.hasContent()) {
                 // FIXME: It's expected to not have any boxes on empty lines. We should reconsider this.
                 m_inlineBoxIndexMap.add(&layoutBox, boxes.size());
-                boxes.append({ lineIndex, InlineDisplay::Box::Type::NonRootInlineBox, layoutBox, inlineBoxBorderBox, inlineBoxBorderBox, { }, { }, lineBox.inlineLevelBoxForLayoutBox(layoutBox).hasContent() });
+
+                auto& inlineBox = lineBox.inlineLevelBoxForLayoutBox(layoutBox);
+                ASSERT(inlineBox.isInlineBox());
+                ASSERT(inlineBox.isFirstBox());
+                boxes.append({ lineIndex, InlineDisplay::Box::Type::NonRootInlineBox, layoutBox, inlineBoxBorderBox, inlineBoxBorderBox, { }, { }, inlineBox.hasContent(), isFirstLastBox(inlineBox) });
             }
 
             auto inlineBoxSize = LayoutSize { LayoutUnit::fromFloatCeil(inlineBoxBorderBox.width()), LayoutUnit::fromFloatCeil(inlineBoxBorderBox.height()) };
@@ -193,6 +207,8 @@ void InlineDisplayContentBuilder::createBoxesAndUpdateGeometryForLineSpanningInl
     for (auto& inlineLevelBox : lineBox.nonRootInlineLevelBoxes()) {
         if (!inlineLevelBox.isLineSpanningInlineBox())
             continue;
+        ASSERT(inlineLevelBox.isInlineBox());
+
         auto& layoutBox = inlineLevelBox.layoutBox();
         auto& boxGeometry = formattingState.boxGeometry(layoutBox);
         // Inline boxes may or may not be wrapped and have boxes on multiple lines (e.g. <span>first line<br>second line<br>third line</span>)
@@ -200,7 +216,9 @@ void InlineDisplayContentBuilder::createBoxesAndUpdateGeometryForLineSpanningInl
         inlineBoxBorderBox.moveBy(lineBoxLogicalTopLeft);
 
         m_inlineBoxIndexMap.add(&layoutBox, boxes.size());
-        boxes.append({ lineIndex, InlineDisplay::Box::Type::NonRootInlineBox, layoutBox, inlineBoxBorderBox, inlineBoxBorderBox, { }, { }, inlineLevelBox.hasContent() });
+
+        ASSERT(!inlineLevelBox.isFirstBox());
+        boxes.append({ lineIndex, InlineDisplay::Box::Type::NonRootInlineBox, layoutBox, inlineBoxBorderBox, inlineBoxBorderBox, { }, { }, inlineLevelBox.hasContent(), isFirstLastBox(inlineLevelBox) });
 
         auto inlineBoxSize = LayoutSize { LayoutUnit::fromFloatCeil(inlineBoxBorderBox.width()), LayoutUnit::fromFloatCeil(inlineBoxBorderBox.height()) };
         auto logicalRect = Rect { LayoutPoint { inlineBoxBorderBox.topLeft() }, inlineBoxSize };

@@ -30,6 +30,7 @@
 #include "InlineRect.h"
 #include "LayoutBox.h"
 #include "TextFlags.h"
+#include <wtf/OptionSet.h>
 
 namespace WebCore {
 namespace InlineDisplay {
@@ -67,7 +68,11 @@ struct Box {
         GenericInlineLevelBox
     };
     struct Expansion;
-    Box(size_t lineIndex, Type, const Layout::Box&, const Layout::InlineRect&, const Layout::InlineRect& inkOverflow, Expansion, std::optional<Text> = std::nullopt, bool hasContent = true);
+    enum class PositionWithinInlineLevelBox {
+        First = 1 << 0,
+        Last  = 1 << 1
+    };
+    Box(size_t lineIndex, Type, const Layout::Box&, const Layout::InlineRect&, const Layout::InlineRect& inkOverflow, Expansion, std::optional<Text> = std::nullopt, bool hasContent = true, OptionSet<PositionWithinInlineLevelBox> = { PositionWithinInlineLevelBox::First, PositionWithinInlineLevelBox::Last });
 
     bool isText() const { return m_type == Type::Text; }
     bool isSoftLineBreak() const { return m_type == Type::SoftLineBreak; }
@@ -111,6 +116,10 @@ struct Box {
     const RenderStyle& style() const { return !lineIndex() ? layoutBox().firstLineStyle() : layoutBox().style(); }
 
     size_t lineIndex() const { return m_lineIndex; }
+    // These functions tell you whether this display box is the first/last for the associated inline level box (Layout::Box) and not whether it's the first/last box on the line.
+    // (e.g. always true for atomic boxes, but inline boxes spanning over multiple lines can produce individual first/last boxes).
+    bool isFirstBox() const { return m_isFirstWithinInlineLevelBox; }
+    bool isLastBox() const { return m_isLastWithinInlineLevelBox; }
 
 private:
     const size_t m_lineIndex { 0 };
@@ -118,18 +127,22 @@ private:
     CheckedRef<const Layout::Box> m_layoutBox;
     Layout::InlineRect m_logicalRect;
     Layout::InlineRect m_inkOverflow;
-    bool m_hasContent { true };
+    bool m_hasContent : 1;
+    bool m_isFirstWithinInlineLevelBox : 1;
+    bool m_isLastWithinInlineLevelBox : 1;
     Expansion m_expansion;
     std::optional<Text> m_text;
 };
 
-inline Box::Box(size_t lineIndex, Type type, const Layout::Box& layoutBox, const Layout::InlineRect& logicalRect, const Layout::InlineRect& inkOverflow, Expansion expansion, std::optional<Text> text, bool hasContent)
+inline Box::Box(size_t lineIndex, Type type, const Layout::Box& layoutBox, const Layout::InlineRect& logicalRect, const Layout::InlineRect& inkOverflow, Expansion expansion, std::optional<Text> text, bool hasContent, OptionSet<PositionWithinInlineLevelBox> positionWithinInlineLevelBox)
     : m_lineIndex(lineIndex)
     , m_type(type)
     , m_layoutBox(layoutBox)
     , m_logicalRect(logicalRect)
     , m_inkOverflow(inkOverflow)
     , m_hasContent(hasContent)
+    , m_isFirstWithinInlineLevelBox(positionWithinInlineLevelBox.contains(PositionWithinInlineLevelBox::First))
+    , m_isLastWithinInlineLevelBox(positionWithinInlineLevelBox.contains(PositionWithinInlineLevelBox::Last))
     , m_expansion(expansion)
     , m_text(text)
 {

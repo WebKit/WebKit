@@ -31,6 +31,7 @@
 #include "InlineRect.h"
 #include "LayoutBox.h"
 #include "LayoutUnits.h"
+#include <wtf/OptionSet.h>
 
 namespace WebCore {
 namespace Layout {
@@ -91,9 +92,16 @@ public:
 
     const Box& layoutBox() const { return m_layoutBox; }
 
-    InlineLevelBox(const Box&, const RenderStyle&, InlineLayoutUnit logicalLeft, InlineLayoutSize, Type);
+    bool isFirstBox() const { return m_isFirstWithinLayoutBox; }
+    bool isLastBox() const { return m_isLastWithinLayoutBox; }
 
 private:
+    enum class PositionWithinLayoutBox {
+        First = 1 << 0,
+        Last  = 1 << 1
+    };
+    InlineLevelBox(const Box&, const RenderStyle&, InlineLayoutUnit logicalLeft, InlineLayoutSize, Type, OptionSet<PositionWithinLayoutBox> = { PositionWithinLayoutBox::First, PositionWithinLayoutBox::Last });
+
     friend class LineBox;
     friend class LineBoxBuilder;
     friend class LineBoxVerticalAligner;
@@ -113,6 +121,9 @@ private:
     void setDescent(InlineLayoutUnit descent) { m_descent = roundToInt(descent); }
     void setLayoutBounds(const LayoutBounds& layoutBounds) { m_layoutBounds = { InlineLayoutUnit(roundToInt(layoutBounds.ascent)), InlineLayoutUnit(roundToInt(layoutBounds.descent)) }; }
 
+    void setIsFirstBox() { m_isFirstWithinLayoutBox = true; }
+    void setIsLastBox() { m_isLastWithinLayoutBox = true; }
+
 private:
     CheckedRef<const Box> m_layoutBox;
     // This is the combination of margin and border boxes. Inline level boxes are vertically aligned using their margin boxes.
@@ -121,6 +132,10 @@ private:
     InlineLayoutUnit m_baseline { 0 };
     std::optional<InlineLayoutUnit> m_descent;
     bool m_hasContent { false };
+    // These bits are about whether this inline level box is the first/last generated box of the associated Layout::Box
+    // (e.g. always true for atomic inline level boxes, but inline boxes spanning over multiple lines can produce separate first/last boxes).
+    bool m_isFirstWithinLayoutBox { false };
+    bool m_isLastWithinLayoutBox { false };
     Type m_type { Type::InlineBox };
 
     struct Style {
@@ -132,9 +147,11 @@ private:
     Style m_style;
 };
 
-inline InlineLevelBox::InlineLevelBox(const Box& layoutBox, const RenderStyle& style, InlineLayoutUnit logicalLeft, InlineLayoutSize logicalSize, Type type)
+inline InlineLevelBox::InlineLevelBox(const Box& layoutBox, const RenderStyle& style, InlineLayoutUnit logicalLeft, InlineLayoutSize logicalSize, Type type, OptionSet<PositionWithinLayoutBox> positionWithinLayoutBox)
     : m_layoutBox(layoutBox)
     , m_logicalRect({ }, logicalLeft, logicalSize.width(), logicalSize.height())
+    , m_isFirstWithinLayoutBox(positionWithinLayoutBox.contains(PositionWithinLayoutBox::First))
+    , m_isLastWithinLayoutBox(positionWithinLayoutBox.contains(PositionWithinLayoutBox::Last))
     , m_type(type)
     , m_style({ style.fontCascade().primaryFont().fontMetrics(), style.lineHeight(), InlineLayoutUnit(style.fontCascade().fontDescription().computedPixelSize()), { } })
 {
@@ -194,7 +211,7 @@ inline InlineLevelBox InlineLevelBox::createAtomicInlineLevelBox(const Box& layo
 
 inline InlineLevelBox InlineLevelBox::createInlineBox(const Box& layoutBox, const RenderStyle& style, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth, LineSpanningInlineBox isLineSpanning)
 {
-    return InlineLevelBox { layoutBox, style, logicalLeft, InlineLayoutSize { logicalWidth, { } }, isLineSpanning == LineSpanningInlineBox::Yes ? Type::LineSpanningInlineBox : Type::InlineBox };
+    return InlineLevelBox { layoutBox, style, logicalLeft, InlineLayoutSize { logicalWidth, { } }, isLineSpanning == LineSpanningInlineBox::Yes ? Type::LineSpanningInlineBox : Type::InlineBox, { } };
 }
 
 inline InlineLevelBox InlineLevelBox::createLineBreakBox(const Box& layoutBox, const RenderStyle& style, InlineLayoutUnit logicalLeft)

@@ -350,6 +350,7 @@ InlineLayoutUnit LineBoxBuilder::constructAndAlignInlineLevelBoxes(LineBox& line
             auto initialLogicalWidth = rootInlineBox.logicalWidth() - (run.logicalLeft() + marginStart);
             ASSERT(initialLogicalWidth >= 0);
             auto inlineBox = InlineLevelBox::createInlineBox(layoutBox, style, logicalLeft + marginStart, initialLogicalWidth);
+            inlineBox.setIsFirstBox();
             setInitialVerticalGeometryForInlineBox(inlineBox);
             updateCanUseSimplifiedAlignment(inlineBox);
             lineBox.addInlineLevelBox(WTFMove(inlineBox));
@@ -368,6 +369,7 @@ InlineLayoutUnit LineBoxBuilder::constructAndAlignInlineLevelBoxes(LineBox& line
             // When the content pulls the </span> to the logical left direction (e.g. negative letter space)
             // make sure we don't end up with negative logical width on the inline box.
             inlineBox.setLogicalWidth(std::max(0.f, inlineBoxLogicalRight - inlineBox.logicalLeft()));
+            inlineBox.setIsLastBox();
             updateCanUseSimplifiedAlignment(inlineBox);
             continue;
         }
