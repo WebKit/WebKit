@@ -1,3 +1,12 @@
+2021-10-07  Ayumi Kojima  <ayumi_kojima@apple.com>
+
+        [ iOS 15 Debug ] imported/w3c/web-platform-tests/IndexedDB/interleaved-cursors-small.html is a flaky failure.
+        https://bugs.webkit.org/show_bug.cgi?id=231387
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+
 2021-10-07  Eric Hutchison  <ehutchison@apple.com>
 
         [ BigSur wk2 ] http/tests/resourceLoadStatistics/website-data-removal-for-site-with-user-interaction.html is a flaky timeout.
