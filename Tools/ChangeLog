@@ -1,3 +1,17 @@
+2021-10-07  Stephan Szabo  <stephan.szabo@sony.com>
+
+        [WinCairo] Support run-jsc-stress-tests without posix commands
+        https://bugs.webkit.org/show_bug.cgi?id=231101
+
+        Reviewed by Adrian Perez de Castro.
+
+        Add support for collecting the test result files when not on
+        a posix host platform by roughly emulating the find command
+        current used in ruby code when using the ruby-runner or
+        for playstation.
+
+        * Scripts/run-jsc-stress-tests:
+
 2021-10-07  Jonathan Bedard  <jbedard@apple.com>
 
         [WebKitBot] Land local changes on production host

@@ -2349,10 +2349,12 @@ def getStatusMap(map={})
         }
     else
         Dir.chdir($runnerDir) {
-            IO.popen(find_cmd).each_line {
-                | line |
-                processStatusLine(map, line)
-            }
+            Dir.glob("#{STATUS_FILE_PREFIX}*").each do |name|
+                if File.size(name) > 0
+                    line = File.open(name).first
+                    processStatusLine(map, "./#{name} #{line}")
+                end
+            end
         }
     end
     map
