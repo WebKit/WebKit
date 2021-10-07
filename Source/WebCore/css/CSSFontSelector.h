@@ -128,7 +128,7 @@ private:
     Ref<CSSFontFaceSet> m_cssFontFaceSet;
     HashSet<FontSelectorClient*> m_clients;
 
-    HashMap<std::pair<AtomString, AtomString>, FontPaletteValues> m_paletteFamilyMap;
+    HashMap<std::pair<AtomString, AtomString>, FontPaletteValues> m_paletteMap;
 
     HashSet<RefPtr<CSSFontFace>> m_cssConnectionsPossiblyToRemove;
     HashSet<RefPtr<StyleRuleFontFace>> m_cssConnectionsEncounteredDuringBuild;

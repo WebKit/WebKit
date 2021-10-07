@@ -1,5 +1,16 @@
 2021-10-07  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        Shadowing of @font-palette-values rules doesn't work
+        https://bugs.webkit.org/show_bug.cgi?id=231218
+        <rdar://problem/83872258>
+
+        Reviewed by Wenson Hsieh.
+
+        * web-platform-tests/css/css-fonts/font-palette-32-expected.html: Added.
+        * web-platform-tests/css/css-fonts/font-palette-32.html: Added.
+
+2021-10-07  Myles C. Maxfield  <mmaxfield@apple.com>
+
         Stop parsing font palette things that we can't implement
         https://bugs.webkit.org/show_bug.cgi?id=230799
         <rdar://problem/83537772>

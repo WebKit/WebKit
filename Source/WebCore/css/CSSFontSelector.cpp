@@ -136,7 +136,7 @@ void CSSFontSelector::buildStarted()
             m_cssConnectionsPossiblyToRemove.add(&face);
     }
 
-    m_paletteFamilyMap.clear();
+    m_paletteMap.clear();
 }
 
 void CSSFontSelector::buildCompleted()
@@ -235,9 +235,7 @@ void CSSFontSelector::addFontPaletteValuesRule(StyleRuleFontPaletteValues& fontP
 {
     AtomString fontFamily = fontPaletteValuesRule.fontFamily().isNull() ? emptyAtom() : fontPaletteValuesRule.fontFamily();
     AtomString name = fontPaletteValuesRule.name().isNull() ? emptyAtom() : fontPaletteValuesRule.name();
-    m_paletteFamilyMap.ensure(std::make_pair(fontFamily, name), [&] () {
-        return fontPaletteValuesRule.fontPaletteValues();
-    });
+    m_paletteMap.set(std::make_pair(fontFamily, name), fontPaletteValuesRule.fontPaletteValues());
 
     ++m_version;
 }
@@ -325,8 +323,8 @@ const FontPaletteValues& CSSFontSelector::lookupFontPaletteValues(const AtomStri
 
     const AtomString paletteName = fontDescription.fontPalette().identifier;
 
-    auto iterator = m_paletteFamilyMap.find(std::make_pair(familyName, paletteName));
-    if (iterator == m_paletteFamilyMap.end())
+    auto iterator = m_paletteMap.find(std::make_pair(familyName, paletteName));
+    if (iterator == m_paletteMap.end())
         return emptyFontPaletteValues.get();
     return iterator->value;
 }
