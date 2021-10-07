@@ -173,3 +173,13 @@ class TestContributor(unittest.TestCase):
         self.assertEqual(mapping_a['jbedard@apple.com'], mapping_b['jbedard@apple.com'])
         self.assertEqual(mapping_a['jbedard@apple.com'], mapping_b['JonWBedard'])
         self.assertEqual(mapping_a['slewis@apple.com'], mapping_b['slewis@apple.com'])
+
+    def test_iteration(self):
+        mapping = Contributor.Mapping()
+        mapping.create('Jonathan Bedard', 'jbedard@apple.com')
+        mapping.create('Stephanie Lewis', 'slewis@apple.com')
+
+        self.assertEqual(
+            sorted(['jbedard@apple.com', 'slewis@apple.com']),
+            sorted([contributor.email for contributor in mapping]),
+        )

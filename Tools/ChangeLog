@@ -1,5 +1,32 @@
 2021-10-07  Jonathan Bedard  <jbedard@apple.com>
 
+        [webkitscmpy] Library should own contributors.json loading
+        https://bugs.webkit.org/show_bug.cgi?id=231310
+        <rdar://problem/83941327>
+
+        Reviewed by Dewei Zhu.
+
+        * Scripts/git-webkit: Do not load contributors from webkitpy.
+        * Scripts/libraries/webkitscmpy/setup.py: Bump version.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/__init__.py: Ditto.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/contributor.py:
+        (Contributor.Encoder.default): Save contributor status to json.
+        (Contributor.Mapping.load): contributors.json is a list, may include
+        status, aliases and nicks.
+        (Contributor.Mapping.save): Save contributors to json file.
+        (Contributor.Mapping.__iter__): Iterate through all contributors.
+        (Contributor.__init__): Add status to contributor.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/local/scm.py:
+        (Scm.__init__): Attempt to load contributors.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/local/svn.py:
+        (Svn.__init__): Set root_path before constructing base class.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/scm_base.py:
+        (ScmBase.__init__): Only reset path if it's not already defined.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/contributor_unittest.py:
+        (TestContributor.test_iteration):
+
+2021-10-07  Jonathan Bedard  <jbedard@apple.com>
+
         [webkitscmpy] Share cache between processes
         https://bugs.webkit.org/show_bug.cgi?id=231176
         <rdar://problem/83841221>

@@ -43,7 +43,7 @@ class ScmBase(object):
     def __init__(self, dev_branches=None, prod_branches=None, contributors=None, id=None):
         self.dev_branches = dev_branches or self.DEV_BRANCHES
         self.prod_branches = prod_branches or self.PROD_BRANCHES
-        self.path = None
+        self.path = getattr(self, 'path', None)
         self.contributors = Contributor.Mapping() if contributors is None else contributors
 
         if id and not isinstance(id, six.string_types):

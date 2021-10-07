@@ -25,7 +25,6 @@
 import os
 import sys
 
-from webkitpy.common.config.committers import CommitterList
 from webkitscmpy import local, program, remote, Contributor
 
 
@@ -46,21 +45,8 @@ def is_webkit_filter(to_return):
 
 
 if '__main__' == __name__:
-    contributors = Contributor.Mapping()
-    for contributor in CommitterList().contributors():
-        c = contributors.create(contributor.full_name, *contributor.emails)
-        if not c:
-            continue
-        for alias in contributor.aliases or []:
-            if alias not in contributors:
-                contributors[alias] = c
-        for nick in contributor.irc_nicknames or []:
-            if nick not in contributors:
-                contributors[nick] = c
-
     sys.exit(program.main(
         path=os.path.dirname(__file__),
-        contributors=is_webkit_filter(contributors),
         identifier_template=is_webkit_filter('Canonical link: https://commits.webkit.org/{}'),
         subversion=is_webkit_filter('https://svn.webkit.org/repository/webkit'),
     ))
