@@ -1,5 +1,42 @@
 2021-10-06  Wenson Hsieh  <wenson_hsieh@apple.com>
 
+        Add a configurable wake up message hysteresis to IPC::StreamClientConnection
+        https://bugs.webkit.org/show_bug.cgi?id=231304
+
+        Reviewed by Simon Fraser.
+
+        Make it possible to avoid sending the wakeup message in StreamClientConnection, until some configurable number
+        of messages have been queued up. This allows us to avoid triggering excessive wakeups in the GPU Process when
+        using streaming IPC for display lists in the Canvas Lines subtest in MotionMark, which exercises sending a
+        massive, constant stream of cheap drawing commands to the GPUP.
+
+        By default, this hysteresis remains at 0, which means that we'll continue to immediately send GL commands to the
+        GPU Process when using GPU Process for WebGL. In a future patch, I intend on defaulting to a small hysteresis
+        (i.e. ~256) for 2D canvas and DOM rendering.
+
+        * Platform/IPC/StreamClientConnection.cpp:
+        (IPC::StreamClientConnection::wakeUpServer):
+        (IPC::StreamClientConnection::deferredWakeUpServer):
+        (IPC::StreamClientConnection::decrementRemainingMessageCountBeforeSendingWakeUp):
+        (IPC::StreamClientConnection::sendDeferredWakeUpMessageIfNeeded):
+        * Platform/IPC/StreamClientConnection.h:
+
+        Also mark StreamClientConnection with `WTF_MAKE_FAST_ALLOCATED`, so that we can wrap the client connection in a
+        `std::unique_ptr` in a future patch.
+
+        (IPC::StreamClientConnection::trySendStream):
+
+        When sending a normal (non-blocking) stream message, if the wakeup hysteresis count is non-zero, avoid
+        immediately signaling the semaphore and instead just set the hysteresis count to the client's specified count
+        (`m_wakeUpMessageHysteresis`).
+
+        (IPC::StreamClientConnection::trySendSyncStream):
+
+        When sending a sync message, we always want to immediately flush out any pending wakeup message regardless of
+        the current hysteresis, since we're waiting for the server to process a reply.
+
+2021-10-06  Wenson Hsieh  <wenson_hsieh@apple.com>
+
         Fix unified source-related build failures in RemoteSourceBufferProxy.cpp
         https://bugs.webkit.org/show_bug.cgi?id=231335
 

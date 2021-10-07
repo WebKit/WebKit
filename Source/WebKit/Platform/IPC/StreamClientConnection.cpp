@@ -46,8 +46,36 @@ void StreamClientConnection::setWakeUpSemaphore(IPC::Semaphore&& semaphore)
 
 void StreamClientConnection::wakeUpServer()
 {
-    if (m_wakeUpSemaphore)
-        m_wakeUpSemaphore->signal();
+    if (!m_wakeUpSemaphore)
+        return;
+
+    m_wakeUpSemaphore->signal();
+    m_remainingMessageCountBeforeSendingWakeUp = 0;
+}
+
+void StreamClientConnection::deferredWakeUpServer()
+{
+    if (m_wakeUpMessageHysteresis)
+        m_remainingMessageCountBeforeSendingWakeUp = m_wakeUpMessageHysteresis;
+    else
+        wakeUpServer();
+}
+
+void StreamClientConnection::decrementRemainingMessageCountBeforeSendingWakeUp()
+{
+    if (!m_remainingMessageCountBeforeSendingWakeUp)
+        return;
+
+    if (!--m_remainingMessageCountBeforeSendingWakeUp)
+        wakeUpServer();
+}
+
+void StreamClientConnection::sendDeferredWakeUpMessageIfNeeded()
+{
+    if (!m_remainingMessageCountBeforeSendingWakeUp)
+        return;
+
+    wakeUpServer();
 }
 
 }

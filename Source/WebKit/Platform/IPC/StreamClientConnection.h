@@ -47,12 +47,20 @@ namespace IPC {
 //
 // The StreamClientConnection trusts the StreamServerConnection.
 class StreamClientConnection final {
+    WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(StreamClientConnection);
 public:
     StreamClientConnection(Connection&, size_t bufferSize);
 
     StreamConnectionBuffer& streamBuffer() { return m_buffer; }
     void setWakeUpSemaphore(IPC::Semaphore&&);
+
+    void setWakeUpMessageHysteresis(unsigned hysteresis)
+    {
+        ASSERT(!m_remainingMessageCountBeforeSendingWakeUp);
+        m_wakeUpMessageHysteresis = hysteresis;
+    }
+    void sendDeferredWakeUpMessageIfNeeded();
 
     template<typename T, typename U> bool send(T&& message, ObjectIdentifier<U> destinationID, Timeout);
 
@@ -83,6 +91,8 @@ private:
     };
     WakeUpServer release(size_t writeSize);
     void wakeUpServer();
+    void deferredWakeUpServer();
+    void decrementRemainingMessageCountBeforeSendingWakeUp();
 
     Span alignedSpan(size_t offset, size_t limit);
     size_t size(size_t offset, size_t limit);
@@ -103,6 +113,8 @@ private:
     size_t m_clientOffset { 0 };
     StreamConnectionBuffer m_buffer;
     std::optional<Semaphore> m_wakeUpSemaphore;
+    unsigned m_remainingMessageCountBeforeSendingWakeUp { 0 };
+    unsigned m_wakeUpMessageHysteresis { 0 };
 };
 
 template<typename T, typename U>
@@ -131,7 +143,9 @@ bool StreamClientConnection::trySendStream(T& message, Span& span)
     if (messageEncoder << message.arguments()) {
         auto wakeupResult = release(messageEncoder.size());
         if (wakeupResult == StreamClientConnection::WakeUpServer::Yes)
-            wakeUpServer();
+            deferredWakeUpServer();
+        else
+            decrementRemainingMessageCountBeforeSendingWakeUp();
         return true;
     }
     return false;
@@ -172,6 +186,8 @@ std::optional<StreamClientConnection::SendSyncResult> StreamClientConnection::tr
 
         if (wakeupResult == StreamClientConnection::WakeUpServer::Yes)
             wakeUpServer();
+        else
+            sendDeferredWakeUpMessageIfNeeded();
         if constexpr(T::isReplyStreamEncodable) {
             auto replySpan = tryAcquireAll(timeout);
             if (!replySpan)
