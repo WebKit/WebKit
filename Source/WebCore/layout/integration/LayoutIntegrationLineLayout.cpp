@@ -509,6 +509,8 @@ void LineLayout::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
     paintRect.moveBy(-paintOffset);
 
     for (auto& box : m_inlineContent->boxesForRect(paintRect)) {
+        if (box.isLineBreak())
+            continue;
         if (box.isInlineBox())
             continue;
         if (box.text()) {

@@ -1,3 +1,14 @@
+2021-10-07  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION (IFC selections): Overlapping selection rectangles when selecting preformatted text
+        https://bugs.webkit.org/show_bug.cgi?id=231291
+        <rdar://problem/83939949>
+
+        Reviewed by Alan Bujtas.
+
+        * editing/selection/soft-line-break-no-paint-expected.html: Added.
+        * editing/selection/soft-line-break-no-paint.html: Added.
+
 2021-10-07  Tim Nguyen  <ntim@apple.com>
 
         Stop relying on autofocus for deleteFromDocument-crash.html
