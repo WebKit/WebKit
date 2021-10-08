@@ -143,12 +143,12 @@ void PannerNode::process(size_t framesToProcess)
         }
     }
 
+    invalidateCachedPropertiesIfNecessary();
+
     if ((hasSampleAccurateValues() || listener().hasSampleAccurateValues()) && (shouldUseARate() || listener().shouldUseARate())) {
         processSampleAccurateValues(destination, source, framesToProcess);
         return;
     }
-
-    invalidateCachedPropertiesIfNecessary();
 
     // Apply the panning effect.
     auto [azimuth, elevation] = azimuthElevation();

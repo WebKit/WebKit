@@ -19,21 +19,21 @@ PASS   Stereo: Left channel, pan = 1:  equals [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0..
 PASS   Stereo: Right channel, pan = 1: contains only the constant 3.
 PASS < [test stereo input] All assertions passed. (total 4 assertions)
 PASS > [test mono input setValue] Test StereoPanner with mono input value setter vs setValueAtTime
-PASS   Mono Left .value setter output is identical to the array [expected array].
+PASS   Mono Left .value setter output equals [expected array] with an element-wise tolerance of {"absoluteThreshold":1.192094e-7,"relativeThreshold":0}.
 PASS   Mono Left .value setter output matches setValueAtTime output is true.
-PASS   Mono Right .value setter output is identical to the array [expected array].
+PASS   Mono Right .value setter output equals [expected array] with an element-wise tolerance of {"absoluteThreshold":1.192094e-7,"relativeThreshold":0}.
 PASS   Mono Right .value setter output matches setValueAtTime output is true.
 PASS < [test mono input setValue] All assertions passed. (total 4 assertions)
 PASS > [test stereo input setValue] Test StereoPanner with mono input value setter  vs setValueAtTime
-PASS   Stereo Left .value setter output is identical to the array [expected array].
+PASS   Stereo Left .value setter output equals [expected array] with an element-wise tolerance of {"absoluteThreshold":1.192094e-7,"relativeThreshold":0}.
 PASS   Stereo Left .value setter output matches setValueAtTime output is true.
-PASS   Stereo Right .value setter output is identical to the array [expected array].
+PASS   Stereo Right .value setter output equals [expected array] with an element-wise tolerance of {"absoluteThreshold":1.192094e-7,"relativeThreshold":0}.
 PASS   Stereo Right .value setter output matches setValueAtTime output is true.
 PASS < [test stereo input setValue] All assertions passed. (total 4 assertions)
 PASS > [test mono input automation] Test StereoPanner with mono input and automation
-PASS   Modulated Stereo Left .value setter output is identical to the array [expected array].
+PASS   Modulated Stereo Left .value setter output equals [expected array] with an element-wise tolerance of {"absoluteThreshold":1.192094e-7,"relativeThreshold":0}.
 PASS   Modulated Stereo Left .value setter output matches setValueAtTime output is true.
-PASS   Modulated Stereo Right .value setter output is identical to the array [expected array].
+PASS   Modulated Stereo Right .value setter output equals [expected array] with an element-wise tolerance of {"absoluteThreshold":1.192094e-7,"relativeThreshold":0}.
 PASS   Modulated Stereo Right .value setter output matches setValueAtTime output is true.
 PASS < [test mono input automation] All assertions passed. (total 4 assertions)
 PASS # AUDIT TASK RUNNER FINISHED: 5 tasks ran successfully.

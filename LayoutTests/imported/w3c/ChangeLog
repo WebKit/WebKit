@@ -1,3 +1,22 @@
+2021-10-08  Chris Dumez  <cdumez@apple.com>
+
+        Merge optimizations to AudioParamTimeline::hasValues() from Blink
+        https://bugs.webkit.org/show_bug.cgi?id=231428
+
+        Reviewed by Eric Carlson.
+
+        Merge https://github.com/web-platform-tests/wpt/pull/31165. Thanks to the new optimizations, we are now
+        using K-Rate processing in more cases. For some of the StereoPannerNode tests, we went from A-Rate processing
+        to K-Rate. Because our K-Rate processing implementation is vectorized (and doing all operations as float), it
+        does not have the same precision as the A-Rate one which does operations of double variables and only casts
+        to float at the end.
+
+        * web-platform-tests/webaudio/resources/stereopanner-testing.js:
+        (Test):
+        * web-platform-tests/webaudio/the-audio-api/the-stereopanner-interface/no-dezippering-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-stereopanner-interface/no-dezippering.html:
+        * web-platform-tests/webaudio/the-audio-api/the-stereopanner-interface/stereopannernode-panning-expected.txt:
+
 2021-10-08  Tim Nguyen  <ntim@apple.com>
 
         Re-sync the-dialog-element and inert WPT from upstream

@@ -1005,11 +1005,44 @@ bool AudioParamTimeline::hasValues(size_t startFrame, double sampleRate) const
 {
     if (!m_eventsLock.tryLock())
         return true;
+
     Locker locker { AdoptLock, m_eventsLock };
 
-    // Return false if there are no events in the time range.
-    auto endFrame = startFrame + AudioUtilities::renderQuantumSize;
-    return !m_events.isEmpty() && endFrame / sampleRate > m_events[0].time().value();
+    if (m_events.isEmpty())
+        return false;
+
+    if (m_events[0].time().value() > (startFrame + AudioUtilities::renderQuantumSize) / sampleRate) {
+        // The first event starts after the end of this rendering quantum so no automation is needed.
+        auto eventType = m_events[0].type();
+        if (eventType == ParamEvent::SetTarget || eventType == ParamEvent::SetValue || eventType == ParamEvent::SetValueCurve)
+            return false;
+    }
+
+    // Don't try and optimize when there is more than one event in the timeline as it gets complicated.
+    if (m_events.size() > 1)
+        return true;
+
+    switch (m_events[0].type()) {
+    case ParamEvent::SetTarget:
+        // Need automation if the event starts somewhere before the end of the current render quantum.
+        return m_events[0].time().value() <= (startFrame + AudioUtilities::renderQuantumSize) / sampleRate;
+    case ParamEvent::SetValue:
+    case ParamEvent::LinearRampToValue:
+    case ParamEvent::ExponentialRampToValue:
+    case ParamEvent::CancelValues:
+        // If these events are in the past, we don't need any automation; the value is a constant.
+        return m_events[0].time().value() >= startFrame / sampleRate;
+    case ParamEvent::SetValueCurve: {
+        auto curveEndTime = m_events[0].time() + m_events[0].duration();
+        double startTime = startFrame / sampleRate;
+        return m_events[0].time().value() <= startTime && startTime < curveEndTime.value();
+    }
+    case ParamEvent::LastType:
+        ASSERT_NOT_REACHED();
+        break;
+    }
+
+    return true;
 }
 
 } // namespace WebCore
