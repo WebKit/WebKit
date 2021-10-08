@@ -1,3 +1,36 @@
+2021-10-08  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [GPU Process] Unique RenderingResourceIdentifiers Part 4: Migrate PendingWakeupInformation to QualifiedRenderingResourceIdentifier
+        https://bugs.webkit.org/show_bug.cgi?id=231406
+        <rdar://problem/84009999>
+
+        Reviewed by Wenson Hsieh.
+
+        This starts pushing QualifiedRenderingResourceIdentifier into a few more places. It's being pushed into
+        PendingWakeupInformation and RemoteImageBuffer. (I can't split this patch up any further because the
+        pieces intermingle.)
+
+        The next step is to push QualifiedRenderingResourceIdentifier down into RemoteResourceCache.
+
+        No new tests because there is no behavior change.
+
+        * GPUProcess/graphics/RemoteImageBuffer.h:
+        (WebKit::RemoteImageBuffer::create):
+        (WebKit::RemoteImageBuffer::RemoteImageBuffer):
+        * GPUProcess/graphics/RemoteRenderingBackend.cpp:
+        (WebKit::RemoteRenderingBackend::didCreateImageBufferBackend):
+        (WebKit::RemoteRenderingBackend::didFlush):
+        (WebKit::RemoteRenderingBackend::createImageBufferWithQualifiedIdentifier):
+        (WebKit::RemoteRenderingBackend::nextDestinationImageBufferAfterApplyingDisplayLists):
+        (WebKit::RemoteRenderingBackend::wakeUpAndApplyDisplayListWithQualifiedIdentifier):
+        (WebKit::RemoteRenderingBackend::setNextItemBufferToRead):
+        (WebKit::RemoteRenderingBackend::cacheNativeImageWithQualifiedIdentifier):
+        (WebKit::RemoteRenderingBackend::cacheFontWithQualifiedIdentifier):
+        (WebKit::RemoteRenderingBackend::finalizeRenderingUpdate):
+        (WebKit::RemoteRenderingBackend::resumeFromPendingWakeupInformation):
+        * GPUProcess/graphics/RemoteRenderingBackend.h:
+        (WebKit::RemoteRenderingBackend::PendingWakeupInformation::shouldPerformWakeup const):
+
 2021-10-08  Tim Horton  <timothy_horton@apple.com>
 
         defaultAlternateFormControlDesignEnabled() can't read UIUserInterfaceIdiom in the Web Content process

@@ -45,13 +45,13 @@ class RemoteImageBuffer : public WebCore::ConcreteImageBuffer<BackendType> {
     using BaseConcreteImageBuffer::putPixelBuffer;
 
 public:
-    static auto create(const WebCore::FloatSize& size, float resolutionScale, const WebCore::DestinationColorSpace& colorSpace, WebCore::PixelFormat pixelFormat, RemoteRenderingBackend& remoteRenderingBackend, WebCore::RenderingResourceIdentifier renderingResourceIdentifier)
+    static auto create(const WebCore::FloatSize& size, float resolutionScale, const WebCore::DestinationColorSpace& colorSpace, WebCore::PixelFormat pixelFormat, RemoteRenderingBackend& remoteRenderingBackend, QualifiedRenderingResourceIdentifier renderingResourceIdentifier)
     {
         return BaseConcreteImageBuffer::template create<RemoteImageBuffer>(size, resolutionScale, colorSpace, pixelFormat, nullptr, remoteRenderingBackend, renderingResourceIdentifier);
     }
 
-    RemoteImageBuffer(const WebCore::ImageBufferBackend::Parameters& parameters, std::unique_ptr<BackendType>&& backend, RemoteRenderingBackend& remoteRenderingBackend, WebCore::RenderingResourceIdentifier renderingResourceIdentifier)
-        : BaseConcreteImageBuffer(parameters, WTFMove(backend), renderingResourceIdentifier)
+    RemoteImageBuffer(const WebCore::ImageBufferBackend::Parameters& parameters, std::unique_ptr<BackendType>&& backend, RemoteRenderingBackend& remoteRenderingBackend, QualifiedRenderingResourceIdentifier renderingResourceIdentifier)
+        : BaseConcreteImageBuffer(parameters, WTFMove(backend), renderingResourceIdentifier.object())
         , m_remoteRenderingBackend(remoteRenderingBackend)
         , m_renderingResourceIdentifier(renderingResourceIdentifier)
     {
@@ -111,7 +111,7 @@ private:
     }
 
     RemoteRenderingBackend& m_remoteRenderingBackend;
-    WebCore::RenderingResourceIdentifier m_renderingResourceIdentifier;
+    QualifiedRenderingResourceIdentifier m_renderingResourceIdentifier;
 };
 
 } // namespace WebKit

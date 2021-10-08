@@ -82,10 +82,10 @@ public:
     bool applyMediaItem(WebCore::DisplayList::ItemHandle, WebCore::GraphicsContext&);
 
     // Messages to be sent.
-    void didCreateImageBufferBackend(ImageBufferBackendHandle, WebCore::RenderingResourceIdentifier);
-    void didFlush(WebCore::GraphicsContextFlushIdentifier, WebCore::RenderingResourceIdentifier);
+    void didCreateImageBufferBackend(ImageBufferBackendHandle, QualifiedRenderingResourceIdentifier);
+    void didFlush(WebCore::GraphicsContextFlushIdentifier, QualifiedRenderingResourceIdentifier);
 
-    void setNextItemBufferToRead(WebCore::DisplayList::ItemBufferIdentifier, WebCore::RenderingResourceIdentifier destination);
+    void setNextItemBufferToRead(WebCore::DisplayList::ItemBufferIdentifier, QualifiedRenderingResourceIdentifier destination);
 
     void didCreateMaskImageBuffer(WebCore::ImageBuffer&);
     void didResetMaskImageBuffer();
@@ -118,7 +118,7 @@ private:
     }
 
     WebCore::DisplayList::ReplayResult submit(const WebCore::DisplayList::DisplayList&, WebCore::ImageBuffer& destination);
-    RefPtr<WebCore::ImageBuffer> nextDestinationImageBufferAfterApplyingDisplayLists(WebCore::ImageBuffer& initialDestination, size_t initialOffset, DisplayListReaderHandle&, GPUProcessWakeupReason);
+    RefPtr<WebCore::ImageBuffer> nextDestinationImageBufferAfterApplyingDisplayLists(WebCore::ImageBuffer& initialDestination, size_t initialOffset, DisplayListReaderHandle&, GPUProcessWakeupReason, WebCore::ProcessIdentifier webProcessIdentifier);
 
     std::optional<SharedMemory::IPCHandle> updateSharedMemoryForGetPixelBufferHelper(size_t byteCount);
     void updateRenderingResourceRequest();
@@ -180,12 +180,12 @@ private:
     struct PendingWakeupInformation {
         WebCore::DisplayList::ItemBufferIdentifier itemBufferIdentifier;
         uint64_t offset { 0 };
-        WebCore::RenderingResourceIdentifier destinationImageBufferIdentifier;
+        QualifiedRenderingResourceIdentifier destinationImageBufferIdentifier;
         GPUProcessWakeupReason reason { GPUProcessWakeupReason::Unspecified };
-        std::optional<WebCore::RenderingResourceIdentifier> missingCachedResourceIdentifier;
+        std::optional<QualifiedRenderingResourceIdentifier> missingCachedResourceIdentifier;
         RemoteRenderingBackendState state { RemoteRenderingBackendState::Initialized };
 
-        bool shouldPerformWakeup(WebCore::RenderingResourceIdentifier identifier) const
+        bool shouldPerformWakeup(QualifiedRenderingResourceIdentifier identifier) const
         {
             return destinationImageBufferIdentifier == identifier
                 || missingCachedResourceIdentifier == identifier;
