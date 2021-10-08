@@ -150,7 +150,7 @@ void Database::insertPrivateClickMeasurement(WebCore::PrivateClickMeasurement&& 
         auto destinationEarliestTimeToSend = attribution.timesToSend().destinationEarliestTimeToSend ? attribution.timesToSend().destinationEarliestTimeToSend.value().secondsSinceEpoch().value() : -1;
 
         // We should never be inserting an attributed private click measurement value into the database without valid report times.
-        ASSERT(sourceEarliestTimeToSend != -1 && destinationEarliestTimeToSend != -1);
+        ASSERT(sourceEarliestTimeToSend != -1 || destinationEarliestTimeToSend != -1);
 
         auto statement = m_database.prepareStatement(insertAttributedPrivateClickMeasurementQuery);
         if (!statement
@@ -226,11 +226,11 @@ std::pair<std::optional<Database::UnattributedPrivateClickMeasurement>, std::opt
 
     std::optional<UnattributedPrivateClickMeasurement> unattributedPrivateClickMeasurement;
     if (findUnattributedScopedStatement->step() == SQLITE_ROW)
-        unattributedPrivateClickMeasurement = buildPrivateClickMeasurementFromDatabase(findUnattributedScopedStatement.get(), PrivateClickMeasurementAttributionType::Unattributed);
+        unattributedPrivateClickMeasurement = buildPrivateClickMeasurementFromDatabase(*findUnattributedScopedStatement.get(), PrivateClickMeasurementAttributionType::Unattributed);
 
     std::optional<AttributedPrivateClickMeasurement> attributedPrivateClickMeasurement;
     if (findAttributedScopedStatement->step() == SQLITE_ROW)
-        attributedPrivateClickMeasurement = buildPrivateClickMeasurementFromDatabase(findAttributedScopedStatement.get(), PrivateClickMeasurementAttributionType::Attributed);
+        attributedPrivateClickMeasurement = buildPrivateClickMeasurementFromDatabase(*findAttributedScopedStatement.get(), PrivateClickMeasurementAttributionType::Attributed);
 
     return std::make_pair(unattributedPrivateClickMeasurement, attributedPrivateClickMeasurement);
 }
@@ -300,46 +300,6 @@ std::pair<std::optional<PrivateClickMeasurement::AttributionSecondsUntilSendData
     return { secondsUntilSend, WTFMove(debugInfo) };
 }
 
-WebCore::PrivateClickMeasurement Database::buildPrivateClickMeasurementFromDatabase(WebCore::SQLiteStatement* statement, PrivateClickMeasurementAttributionType attributionType)
-{
-    ASSERT(!RunLoop::isMain());
-    auto sourceSiteDomain = getDomainStringFromDomainID(statement->columnInt(0));
-    auto destinationSiteDomain = getDomainStringFromDomainID(statement->columnInt(1));
-    auto sourceID = statement->columnInt(2);
-    auto timeOfAdClick = attributionType == PrivateClickMeasurementAttributionType::Attributed ? statement->columnDouble(5) : statement->columnDouble(3);
-    auto token = attributionType == PrivateClickMeasurementAttributionType::Attributed ? statement->columnText(7) : statement->columnText(4);
-    auto signature = attributionType == PrivateClickMeasurementAttributionType::Attributed ? statement->columnText(8) : statement->columnText(5);
-    auto keyID = attributionType == PrivateClickMeasurementAttributionType::Attributed ? statement->columnText(9) : statement->columnText(6);
-
-    WebCore::PrivateClickMeasurement attribution(WebCore::PrivateClickMeasurement::SourceID(sourceID), WebCore::PrivateClickMeasurement::SourceSite(RegistrableDomain::uncheckedCreateFromRegistrableDomainString(sourceSiteDomain)), WebCore::PrivateClickMeasurement::AttributionDestinationSite(RegistrableDomain::uncheckedCreateFromRegistrableDomainString(destinationSiteDomain)), { }, { }, WallTime::fromRawSeconds(timeOfAdClick));
-    
-    if (attributionType == PrivateClickMeasurementAttributionType::Attributed) {
-        auto attributionTriggerData = statement->columnInt(3);
-        auto priority = statement->columnInt(4);
-        auto sourceEarliestTimeToSendValue = statement->columnDouble(6);
-        auto destinationEarliestTimeToSendValue = statement->columnDouble(10);
-
-        if (attributionTriggerData != -1)
-            attribution.setAttribution(WebCore::PrivateClickMeasurement::AttributionTriggerData { static_cast<uint32_t>(attributionTriggerData), WebCore::PrivateClickMeasurement::Priority(priority) });
-
-        std::optional<WallTime> sourceEarliestTimeToSend;
-        std::optional<WallTime> destinationEarliestTimeToSend;
-        
-        // A value of 0.0 indicates that the report has been sent to the respective site.
-        if (sourceEarliestTimeToSendValue > 0.0)
-            sourceEarliestTimeToSend = WallTime::fromRawSeconds(sourceEarliestTimeToSendValue);
-
-        if (destinationEarliestTimeToSendValue > 0.0)
-            destinationEarliestTimeToSend = WallTime::fromRawSeconds(destinationEarliestTimeToSendValue);
-
-        attribution.setTimesToSend({ sourceEarliestTimeToSend, destinationEarliestTimeToSend });
-    }
-
-    attribution.setSourceSecretToken({ token, signature, keyID });
-
-    return attribution;
-}
-
 void Database::removeUnattributed(PrivateClickMeasurement& attribution)
 {
     ASSERT(!RunLoop::isMain());
@@ -372,7 +332,7 @@ Vector<WebCore::PrivateClickMeasurement> Database::allAttributedPrivateClickMeas
 
     Vector<WebCore::PrivateClickMeasurement> attributions;
     while (attributedScopedStatement->step() == SQLITE_ROW)
-        attributions.append(buildPrivateClickMeasurementFromDatabase(attributedScopedStatement.get(), PrivateClickMeasurementAttributionType::Attributed));
+        attributions.append(buildPrivateClickMeasurementFromDatabase(*attributedScopedStatement.get(), PrivateClickMeasurementAttributionType::Attributed));
 
     return attributions;
 }
@@ -641,7 +601,7 @@ std::optional<Database::DomainID> Database::domainID(const WebCore::RegistrableD
     return scopedStatement->columnInt(0);
 }
 
-String Database::getDomainStringFromDomainID(DomainID domainID)
+String Database::getDomainStringFromDomainID(DomainID domainID) const
 {
     ASSERT(!RunLoop::isMain());
     auto result = emptyString();

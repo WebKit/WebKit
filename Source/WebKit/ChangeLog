@@ -1,5 +1,112 @@
 2021-10-07  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r281779. rdar://problem/83957360
+
+    Migrate PrivateClickMeasurements from ResourceLoadStatistics database to new database
+    https://bugs.webkit.org/show_bug.cgi?id=229646
+    
+    Patch by Alex Christensen <achristensen@webkit.org> on 2021-08-30
+    Reviewed by Kate Cheney.
+    
+    Source/WebKit:
+    
+    In r281721 I moved the PCM database to be separate from the ResourceLoadStatistics database.
+    This patch extracts data from the old database and sends it to the new database.
+    
+    I added some tests that create databases in each of the 3 historical schemas then verify that
+    data is successfully migrated to the new database.
+    
+    * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.cpp:
+    (WebKit::ResourceLoadStatisticsDatabaseStore::checkForMissingTablesInSchema):
+    (WebKit::ResourceLoadStatisticsDatabaseStore::tableExists):
+    (WebKit::ResourceLoadStatisticsDatabaseStore::deleteTable):
+    (WebKit::ResourceLoadStatisticsDatabaseStore::migrateDataToPCMDatabaseIfNecessary):
+    (WebKit::ResourceLoadStatisticsDatabaseStore::openAndUpdateSchemaIfNecessary):
+    (WebKit::ResourceLoadStatisticsDatabaseStore::destroyStatements):
+    * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.h:
+    * NetworkProcess/DatabaseUtilities.cpp:
+    (WebKit::DatabaseUtilities::buildPrivateClickMeasurementFromDatabase):
+    * NetworkProcess/DatabaseUtilities.h:
+    * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementDatabase.cpp:
+    (WebKit::PCM::Database::insertPrivateClickMeasurement):
+    (WebKit::PCM::Database::findPrivateClickMeasurement):
+    (WebKit::PCM::Database::allAttributedPrivateClickMeasurement):
+    (WebKit::PCM::Database::getDomainStringFromDomainID const):
+    (WebKit::PCM::Database::buildPrivateClickMeasurementFromDatabase): Deleted.
+    (WebKit::PCM::Database::getDomainStringFromDomainID): Deleted.
+    * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementDatabase.h:
+    * UIProcess/API/Cocoa/WKWebViewPrivateForTesting.h:
+    * UIProcess/API/Cocoa/WKWebViewTesting.mm:
+    (-[WKWebView _dumpPrivateClickMeasurement:]):
+    
+    Tools:
+    
+    * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+    * TestWebKitAPI/Tests/WebKitCocoa/EventAttribution.mm:
+    * TestWebKitAPI/Tests/WebKitCocoa/PrivateClickMeasurement.mm:
+    (webViewWithResourceLoadStatisticsEnabledInNetworkProcess):
+    (addValuesToTable):
+    (earliestTimeToSend):
+    (addAttributedPCMv1):
+    (addUnattributedPCMv1):
+    (addAttributedPCMv2):
+    (addUnattributedPCMv2):
+    (addAttributedPCMv3):
+    (addUnattributedPCMv3):
+    (dumpedPCM):
+    (pollUntilPCMIsMigrated):
+    (emptyObservationsDBPath):
+    (cleanUp):
+    (createAndPopulateObservedDomainTable):
+    (setUp):
+    (TEST):
+    * TestWebKitAPI/Tests/WebKitCocoa/pcmWithoutFraudPreventionDatabase.db: Removed.
+    * TestWebKitAPI/Tests/WebKitCocoa/pcmWithoutFraudPreventionDatabase.db-shm: Removed.
+    * TestWebKitAPI/Tests/WebKitCocoa/pcmWithoutFraudPreventionDatabase.db-wal: Removed.
+    * TestWebKitAPI/Tests/WebKitCocoa/pcmWithoutReportingColumns.db: Removed.
+    * TestWebKitAPI/Tests/WebKitCocoa/pcmWithoutReportingColumns.db-shm: Removed.
+    * TestWebKitAPI/Tests/WebKitCocoa/pcmWithoutReportingColumns.db-wal: Removed.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@281779 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-08-30  Alex Christensen  <achristensen@webkit.org>
+
+            Migrate PrivateClickMeasurements from ResourceLoadStatistics database to new database
+            https://bugs.webkit.org/show_bug.cgi?id=229646
+
+            Reviewed by Kate Cheney.
+
+            In r281721 I moved the PCM database to be separate from the ResourceLoadStatistics database.
+            This patch extracts data from the old database and sends it to the new database.
+
+            I added some tests that create databases in each of the 3 historical schemas then verify that
+            data is successfully migrated to the new database.
+
+            * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.cpp:
+            (WebKit::ResourceLoadStatisticsDatabaseStore::checkForMissingTablesInSchema):
+            (WebKit::ResourceLoadStatisticsDatabaseStore::tableExists):
+            (WebKit::ResourceLoadStatisticsDatabaseStore::deleteTable):
+            (WebKit::ResourceLoadStatisticsDatabaseStore::migrateDataToPCMDatabaseIfNecessary):
+            (WebKit::ResourceLoadStatisticsDatabaseStore::openAndUpdateSchemaIfNecessary):
+            (WebKit::ResourceLoadStatisticsDatabaseStore::destroyStatements):
+            * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.h:
+            * NetworkProcess/DatabaseUtilities.cpp:
+            (WebKit::DatabaseUtilities::buildPrivateClickMeasurementFromDatabase):
+            * NetworkProcess/DatabaseUtilities.h:
+            * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementDatabase.cpp:
+            (WebKit::PCM::Database::insertPrivateClickMeasurement):
+            (WebKit::PCM::Database::findPrivateClickMeasurement):
+            (WebKit::PCM::Database::allAttributedPrivateClickMeasurement):
+            (WebKit::PCM::Database::getDomainStringFromDomainID const):
+            (WebKit::PCM::Database::buildPrivateClickMeasurementFromDatabase): Deleted.
+            (WebKit::PCM::Database::getDomainStringFromDomainID): Deleted.
+            * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementDatabase.h:
+            * UIProcess/API/Cocoa/WKWebViewPrivateForTesting.h:
+            * UIProcess/API/Cocoa/WKWebViewTesting.mm:
+            (-[WKWebView _dumpPrivateClickMeasurement:]):
+
+2021-10-07  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r281723. rdar://problem/83957360
 
     Add UIEventAttribution SPI that uses PrivateClickMeasurementAttributionEphemeral::Yes

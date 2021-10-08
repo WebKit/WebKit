@@ -27,6 +27,8 @@
 #include "DatabaseUtilities.h"
 
 #include "Logging.h"
+#include "PrivateClickMeasurementManager.h"
+#include <WebCore/PrivateClickMeasurement.h>
 #include <WebCore/SQLiteStatement.h>
 #include <WebCore/SQLiteStatementAutoResetScope.h>
 #include <wtf/FileSystem.h>
@@ -133,6 +135,46 @@ void DatabaseUtilities::interrupt()
     ASSERT(!RunLoop::isMain());
     if (m_database.isOpen())
         m_database.interrupt();
+}
+
+WebCore::PrivateClickMeasurement DatabaseUtilities::buildPrivateClickMeasurementFromDatabase(WebCore::SQLiteStatement& statement, PrivateClickMeasurementAttributionType attributionType)
+{
+    ASSERT(!RunLoop::isMain());
+    auto sourceSiteDomain = getDomainStringFromDomainID(statement.columnInt(0));
+    auto destinationSiteDomain = getDomainStringFromDomainID(statement.columnInt(1));
+    auto sourceID = statement.columnInt(2);
+    auto timeOfAdClick = attributionType == PrivateClickMeasurementAttributionType::Attributed ? statement.columnDouble(5) : statement.columnDouble(3);
+    auto token = attributionType == PrivateClickMeasurementAttributionType::Attributed ? statement.columnText(7) : statement.columnText(4);
+    auto signature = attributionType == PrivateClickMeasurementAttributionType::Attributed ? statement.columnText(8) : statement.columnText(5);
+    auto keyID = attributionType == PrivateClickMeasurementAttributionType::Attributed ? statement.columnText(9) : statement.columnText(6);
+
+    WebCore::PrivateClickMeasurement attribution(WebCore::PrivateClickMeasurement::SourceID(sourceID), WebCore::PrivateClickMeasurement::SourceSite(WebCore::RegistrableDomain::uncheckedCreateFromRegistrableDomainString(sourceSiteDomain)), WebCore::PrivateClickMeasurement::AttributionDestinationSite(WebCore::RegistrableDomain::uncheckedCreateFromRegistrableDomainString(destinationSiteDomain)), { }, { }, WallTime::fromRawSeconds(timeOfAdClick));
+
+    if (attributionType == PrivateClickMeasurementAttributionType::Attributed) {
+        auto attributionTriggerData = statement.columnInt(3);
+        auto priority = statement.columnInt(4);
+        auto sourceEarliestTimeToSendValue = statement.columnDouble(6);
+        auto destinationEarliestTimeToSendValue = statement.columnDouble(10);
+
+        if (attributionTriggerData != -1)
+            attribution.setAttribution(WebCore::PrivateClickMeasurement::AttributionTriggerData { static_cast<uint32_t>(attributionTriggerData), WebCore::PrivateClickMeasurement::Priority(priority) });
+
+        std::optional<WallTime> sourceEarliestTimeToSend;
+        std::optional<WallTime> destinationEarliestTimeToSend;
+
+        // A value of 0.0 indicates that the report has been sent to the respective site.
+        if (sourceEarliestTimeToSendValue > 0.0)
+            sourceEarliestTimeToSend = WallTime::fromRawSeconds(sourceEarliestTimeToSendValue);
+
+        if (destinationEarliestTimeToSendValue > 0.0)
+            destinationEarliestTimeToSend = WallTime::fromRawSeconds(destinationEarliestTimeToSendValue);
+
+        attribution.setTimesToSend({ sourceEarliestTimeToSend, destinationEarliestTimeToSend });
+    }
+
+    attribution.setSourceSecretToken({ token, signature, keyID });
+
+    return attribution;
 }
 
 } // namespace WebKit

@@ -330,27 +330,40 @@ void ResourceLoadStatisticsDatabaseStore::openITPDatabase()
 std::optional<Vector<String>> ResourceLoadStatisticsDatabaseStore::checkForMissingTablesInSchema()
 {
     Vector<String> missingTables;
-    auto statement = m_database.prepareStatement("SELECT 1 from sqlite_master WHERE type='table' and tbl_name=?"_s);
-    if (!statement) {
-        RELEASE_LOG_ERROR(Network, "%p - ResourceLoadStatisticsDatabaseStore::checkForMissingTablesInSchema failed to prepare, error message: %" PUBLIC_LOG_STRING, this, m_database.lastErrorMsg());
-        return std::nullopt;
-    }
-
     for (auto& table : expectedTableAndIndexQueries().keys()) {
-        if (statement->bindText(1, table) != SQLITE_OK) {
-            RELEASE_LOG_ERROR(Network, "%p - ResourceLoadStatisticsDatabaseStore::checkForMissingTablesInSchema failed to bind, error message: %" PUBLIC_LOG_STRING, this, m_database.lastErrorMsg());
-            return std::nullopt;
-        }
-        if (statement->step() != SQLITE_ROW) {
-            RELEASE_LOG_ERROR(Network, "%p - ResourceLoadStatisticsDatabaseStore::checkForMissingTablesInSchema schema is missing table: %s", this, table.ascii().data());
+        if (!this->tableExists(table))
             missingTables.append(String(table));
-        }
-        statement->reset();
     }
     if (missingTables.isEmpty())
         return std::nullopt;
 
     return missingTables;
+}
+
+bool ResourceLoadStatisticsDatabaseStore::tableExists(StringView tableName)
+{
+    constexpr auto checkIfTableExistsQuery = "SELECT 1 from sqlite_master WHERE type='table' and tbl_name=?"_s;
+    auto scopedStatement = this->scopedStatement(m_checkIfTableExistsStatement, checkIfTableExistsQuery, "tableExists"_s);
+    if (!scopedStatement) {
+        RELEASE_LOG_ERROR(Network, "%p - ResourceLoadStatisticsDatabaseStore::tableExists failed to prepare, error message: %" PUBLIC_LOG_STRING, this, m_database.lastErrorMsg());
+        return false;
+    }
+    if (scopedStatement->bindText(1, tableName) != SQLITE_OK) {
+        RELEASE_LOG_ERROR(Network, "%p - ResourceLoadStatisticsDatabaseStore::tableExists failed to bind, error message: %" PUBLIC_LOG_STRING, this, m_database.lastErrorMsg());
+        return false;
+    }
+    return scopedStatement->step() == SQLITE_ROW;
+}
+
+void ResourceLoadStatisticsDatabaseStore::deleteTable(StringView tableName)
+{
+    ASSERT(tableExists(tableName));
+    auto dropTableQuery = m_database.prepareStatementSlow(makeString("DROP TABLE ", tableName));
+    ASSERT(dropTableQuery);
+    if (!dropTableQuery || dropTableQuery->step() != SQLITE_DONE) {
+        RELEASE_LOG_ERROR(Network, "%p - ResourceLoadStatisticsDatabaseStore::deleteTable failed to drop temporary tables, error message: %s", this, m_database.lastErrorMsg());
+        ASSERT_NOT_REACHED();
+    }
 }
 
 TableAndIndexPair ResourceLoadStatisticsDatabaseStore::currentTableAndIndexQueries(const String& tableName)
@@ -504,6 +517,54 @@ void ResourceLoadStatisticsDatabaseStore::migrateDataToNewTablesIfNecessary()
     }
 }
 
+void ResourceLoadStatisticsDatabaseStore::migrateDataToPCMDatabaseIfNecessary()
+{
+    if (!tableExists("UnattributedPrivateClickMeasurement")
+        && !tableExists("AttributedPrivateClickMeasurement"))
+        return;
+
+    Vector<WebCore::PrivateClickMeasurement> unattributed;
+    {
+        constexpr auto allUnattributedPrivateClickMeasurementAttributionsQuery = "SELECT * FROM UnattributedPrivateClickMeasurement"_s;
+        auto unattributedScopedStatement = m_database.prepareStatement(allUnattributedPrivateClickMeasurementAttributionsQuery);
+        if (!unattributedScopedStatement) {
+            RELEASE_LOG_ERROR(Network, "%p - ResourceLoadStatisticsDatabaseStore::migrateDataToPCMDatabaseIfNecessary failed to prepare unattributed statement, error message: %s", this, m_database.lastErrorMsg());
+            ASSERT_NOT_REACHED();
+            return;
+        }
+        while (unattributedScopedStatement->step() == SQLITE_ROW)
+            unattributed.append(buildPrivateClickMeasurementFromDatabase(unattributedScopedStatement.value(), PrivateClickMeasurementAttributionType::Unattributed));
+    }
+
+    Vector<WebCore::PrivateClickMeasurement> attributed;
+    {
+        constexpr auto allAttributedPrivateClickMeasurementQuery = "SELECT * FROM AttributedPrivateClickMeasurement"_s;
+        auto attributedScopedStatement = m_database.prepareStatement(allAttributedPrivateClickMeasurementQuery);
+        if (!attributedScopedStatement) {
+            RELEASE_LOG_ERROR(Network, "%p - ResourceLoadStatisticsDatabaseStore::migrateDataToPCMDatabaseIfNecessary failed to prepare attributed statement, error message: %s", this, m_database.lastErrorMsg());
+            ASSERT_NOT_REACHED();
+            return;
+        }
+        while (attributedScopedStatement->step() == SQLITE_ROW)
+            attributed.append(buildPrivateClickMeasurementFromDatabase(attributedScopedStatement.value(), PrivateClickMeasurementAttributionType::Attributed));
+    }
+
+    if (!unattributed.isEmpty() || !attributed.isEmpty()) {
+        RunLoop::main().dispatch([store = makeRef(store()), unattributed = unattributed.isolatedCopy(), attributed = attributed.isolatedCopy()] () mutable {
+            auto& pcmStore = store->privateClickMeasurementStore();
+            for (auto& pcm : WTFMove(attributed))
+                pcmStore.insertPrivateClickMeasurement(WTFMove(pcm), PrivateClickMeasurementAttributionType::Attributed);
+            for (auto& pcm : WTFMove(unattributed))
+                pcmStore.insertPrivateClickMeasurement(WTFMove(pcm), PrivateClickMeasurementAttributionType::Unattributed);
+        });
+
+    }
+
+    auto transactionScope = beginTransactionIfNecessary();
+    deleteTable("UnattributedPrivateClickMeasurement");
+    deleteTable("AttributedPrivateClickMeasurement");
+}
+
 Vector<String> ResourceLoadStatisticsDatabaseStore::columnsForTable(const String& tableName)
 {
     auto statement = m_database.prepareStatementSlow(makeString("PRAGMA table_info(", tableName, ")"));
@@ -582,7 +643,7 @@ void ResourceLoadStatisticsDatabaseStore::openAndUpdateSchemaIfNecessary()
         return;
     }
 
-    // Renaming and adding columns should be done before migrating to avoid mismatched or missing columns.
+    migrateDataToPCMDatabaseIfNecessary();
     migrateDataToNewTablesIfNecessary();
 }
 
@@ -743,6 +804,7 @@ void ResourceLoadStatisticsDatabaseStore::destroyStatements()
     m_uniqueRedirectExistsStatement = nullptr;
     m_observedDomainsExistsStatement = nullptr;
     m_removeAllDataStatement = nullptr;
+    m_checkIfTableExistsStatement = nullptr;
 }
 
 bool ResourceLoadStatisticsDatabaseStore::insertObservedDomain(const ResourceLoadStatistics& loadStatistics)
