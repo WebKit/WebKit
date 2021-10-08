@@ -55,7 +55,7 @@ static void resolvedName(CFHostRef hostRef, CFHostInfoType typeInfo, const CFStr
 
     for (size_t index = 0; index < count; ++index) {
         CFDataRef data = (CFDataRef)CFArrayGetValueAtIndex(resolvedAddresses, index);
-        if (auto address = IPAddress::fromSockAddrIn6(*reinterpret_cast<const struct sockaddr_in6*>(CFDataGetBytePtr(data))))
+        if (auto address = WebCore::IPAddress::fromSockAddrIn6(*reinterpret_cast<const struct sockaddr_in6*>(CFDataGetBytePtr(data))))
             addresses.uncheckedAppend(*address);
     }
     if (addresses.isEmpty()) {

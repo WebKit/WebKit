@@ -42,6 +42,8 @@ public:
     using Callback = CompletionHandler<void(const WebCore::ResourceError&, const WebCore::ResourceResponse&, const RefPtr<JSON::Object>&)>;
     static void start(NetworkSession&, NetworkLoadParameters&&, Callback&&);
 
+    ~PrivateClickMeasurementNetworkLoader();
+
 private:
     PrivateClickMeasurementNetworkLoader(NetworkSession&, NetworkLoadParameters&&, Callback&&);
 
@@ -56,6 +58,7 @@ private:
     void didFailLoading(const WebCore::ResourceError&) final;
 
     void fail(WebCore::ResourceError&&);
+    void cancel();
     void didComplete();
 
     WeakPtr<NetworkSession> m_session;

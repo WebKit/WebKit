@@ -56,9 +56,9 @@ public:
 
     void storeUnattributed(PrivateClickMeasurement&&);
     void handleAttribution(AttributionTriggerData&&, const URL& requestURL, const WebCore::ResourceRequest& redirectRequest);
-    void clear();
-    void clearForRegistrableDomain(const RegistrableDomain&);
-    void toString(CompletionHandler<void(String)>&&) const;
+    void clear(CompletionHandler<void()>&&);
+    void clearForRegistrableDomain(const RegistrableDomain&, CompletionHandler<void()>&&);
+    void toStringForTesting(CompletionHandler<void(String)>&&) const;
     void setOverrideTimerForTesting(bool value) { m_isRunningTest = value; }
     void setTokenPublicKeyURLForTesting(URL&&);
     void setTokenSignatureURLForTesting(URL&&);

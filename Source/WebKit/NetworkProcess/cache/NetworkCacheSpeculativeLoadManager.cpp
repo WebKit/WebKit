@@ -32,6 +32,7 @@
 #include "NetworkCacheEntry.h"
 #include "NetworkCacheSpeculativeLoad.h"
 #include "NetworkCacheSubresourcesEntry.h"
+#include "NetworkLoadParameters.h"
 #include "NetworkProcess.h"
 #include "PreconnectTask.h"
 #include <WebCore/DiagnosticLoggingKeys.h>

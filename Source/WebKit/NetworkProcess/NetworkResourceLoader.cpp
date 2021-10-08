@@ -891,9 +891,9 @@ void NetworkResourceLoader::willSendRedirectedRequest(ResourceRequest&& request,
     ++m_redirectCount;
     m_redirectResponse = redirectResponse;
 
-    std::optional<PrivateClickMeasurement::AttributionTriggerData> privateClickMeasurementAttributionTriggerData;
+    std::optional<WebCore::PrivateClickMeasurement::AttributionTriggerData> privateClickMeasurementAttributionTriggerData;
     if (!sessionID().isEphemeral()) {
-        if (auto result = PrivateClickMeasurement::parseAttributionRequest(redirectRequest.url()))
+        if (auto result = WebCore::PrivateClickMeasurement::parseAttributionRequest(redirectRequest.url()))
             privateClickMeasurementAttributionTriggerData = result.value();
         else if (!result.error().isEmpty())
             addConsoleMessage(MessageSource::PrivateClickMeasurement, MessageLevel::Error, result.error());
@@ -954,7 +954,7 @@ void NetworkResourceLoader::willSendRedirectedRequest(ResourceRequest&& request,
     continueWillSendRedirectedRequest(WTFMove(request), WTFMove(redirectRequest), WTFMove(redirectResponse), WTFMove(privateClickMeasurementAttributionTriggerData));
 }
 
-void NetworkResourceLoader::continueWillSendRedirectedRequest(ResourceRequest&& request, ResourceRequest&& redirectRequest, ResourceResponse&& redirectResponse, std::optional<PrivateClickMeasurement::AttributionTriggerData>&& privateClickMeasurementAttributionTriggerData)
+void NetworkResourceLoader::continueWillSendRedirectedRequest(ResourceRequest&& request, ResourceRequest&& redirectRequest, ResourceResponse&& redirectResponse, std::optional<WebCore::PrivateClickMeasurement::AttributionTriggerData>&& privateClickMeasurementAttributionTriggerData)
 {
     redirectRequest.setIsAppInitiated(request.isAppInitiated());
 

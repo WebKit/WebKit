@@ -28,6 +28,7 @@
 
 #include "Logging.h"
 #include "NetworkSession.h"
+#include "PrivateClickMeasurementDebugInfo.h"
 #include <JavaScriptCore/ConsoleTypes.h>
 #include <WebCore/FetchOptions.h>
 #include <WebCore/FormData.h>
@@ -250,7 +251,7 @@ void PrivateClickMeasurementManager::insertPrivateClickMeasurement(PrivateClickM
     }
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
         if (auto* resourceLoadStatistics = m_networkSession->resourceLoadStatistics())
-            resourceLoadStatistics->insertPrivateClickMeasurement(WTFMove(measurement), type);
+            resourceLoadStatistics->privateClickMeasurementStore().insertPrivateClickMeasurement(WTFMove(measurement), type);
 #endif
 }
 
@@ -297,12 +298,17 @@ void PrivateClickMeasurementManager::attribute(const SourceSite& sourceSite, con
     }
         
     if (auto* resourceLoadStatistics = m_networkSession->resourceLoadStatistics()) {
-        resourceLoadStatistics->attributePrivateClickMeasurement(sourceSite, destinationSite, WTFMove(attributionTriggerData), std::exchange(m_ephemeralMeasurement, std::nullopt), [this, weakThis = makeWeakPtr(*this)] (auto attributionSecondsUntilSendData) {
+        resourceLoadStatistics->privateClickMeasurementStore().attributePrivateClickMeasurement(sourceSite, destinationSite, WTFMove(attributionTriggerData), std::exchange(m_ephemeralMeasurement, std::nullopt), [this, weakThis = makeWeakPtr(*this)] (auto attributionSecondsUntilSendData, auto debugInfo) {
             if (!weakThis)
                 return;
             
             if (!attributionSecondsUntilSendData)
                 return;
+
+            if (UNLIKELY(debugModeEnabled())) {
+                for (auto& message : debugInfo.messages)
+                    m_networkProcess->broadcastConsoleMessage(m_sessionID, MessageSource::PrivateClickMeasurement, message.messageLevel, message.message);
+            }
 
             if (attributionSecondsUntilSendData.value().hasValidSecondsUntilSendValues()) {
                 auto minSecondsUntilSend = attributionSecondsUntilSendData.value().minSecondsUntilSend();
@@ -395,7 +401,7 @@ void PrivateClickMeasurementManager::clearSentAttribution(PrivateClickMeasuremen
         return;
 
     if (auto* resourceLoadStatistics = m_networkSession->resourceLoadStatistics())
-        resourceLoadStatistics->clearSentAttribution(WTFMove(sentConversion), attributionReportEndpoint);
+        resourceLoadStatistics->privateClickMeasurementStore().clearSentAttribution(WTFMove(sentConversion), attributionReportEndpoint);
 #endif
 }
 
@@ -409,7 +415,7 @@ void PrivateClickMeasurementManager::firePendingAttributionRequests()
     if (!resourceLoadStatistics)
         return;
 
-    resourceLoadStatistics->allAttributedPrivateClickMeasurement([this, weakThis = makeWeakPtr(*this)] (auto&& attributions) {
+    resourceLoadStatistics->privateClickMeasurementStore().allAttributedPrivateClickMeasurement([this, weakThis = makeWeakPtr(*this)] (auto&& attributions) {
         if (!weakThis)
             return;
         auto nextTimeToFire = Seconds::infinity();
@@ -462,7 +468,7 @@ void PrivateClickMeasurementManager::firePendingAttributionRequests()
 #endif
 }
 
-void PrivateClickMeasurementManager::clear()
+void PrivateClickMeasurementManager::clear(CompletionHandler<void()>&& completionHandler)
 {
     m_firePendingAttributionRequestsTimer.stop();
     m_ephemeralMeasurement = std::nullopt;
@@ -470,22 +476,24 @@ void PrivateClickMeasurementManager::clear()
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     if (!featureEnabled())
-        return;
+        return completionHandler();
 
     if (auto* resourceLoadStatistics = m_networkSession->resourceLoadStatistics())
-        resourceLoadStatistics->clearPrivateClickMeasurement();
+        return resourceLoadStatistics->privateClickMeasurementStore().clearPrivateClickMeasurement(WTFMove(completionHandler));
 #endif
+    completionHandler();
 }
 
-void PrivateClickMeasurementManager::clearForRegistrableDomain(const RegistrableDomain& domain)
+void PrivateClickMeasurementManager::clearForRegistrableDomain(const RegistrableDomain& domain, CompletionHandler<void()>&& completionHandler)
 {
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     if (!featureEnabled())
-        return;
+        return completionHandler();
 
     if (auto* resourceLoadStatistics = m_networkSession->resourceLoadStatistics())
-        resourceLoadStatistics->clearPrivateClickMeasurementForRegistrableDomain(domain);
+        return resourceLoadStatistics->privateClickMeasurementStore().clearPrivateClickMeasurementForRegistrableDomain(domain, WTFMove(completionHandler));
 #endif
+    completionHandler();
 }
 
 void PrivateClickMeasurementManager::clearExpired()
@@ -495,11 +503,11 @@ void PrivateClickMeasurementManager::clearExpired()
         return;
 
     if (auto* resourceLoadStatistics = m_networkSession->resourceLoadStatistics())
-        resourceLoadStatistics->clearExpiredPrivateClickMeasurement();
+        resourceLoadStatistics->privateClickMeasurementStore().clearExpiredPrivateClickMeasurement();
 #endif
 }
 
-void PrivateClickMeasurementManager::toString(CompletionHandler<void(String)>&& completionHandler) const
+void PrivateClickMeasurementManager::toStringForTesting(CompletionHandler<void(String)>&& completionHandler) const
 {
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     if (!featureEnabled()) {
@@ -508,7 +516,7 @@ void PrivateClickMeasurementManager::toString(CompletionHandler<void(String)>&& 
     }
 
     if (auto* resourceLoadStatistics = m_networkSession->resourceLoadStatistics()) {
-        resourceLoadStatistics->privateClickMeasurementToString(WTFMove(completionHandler));
+        resourceLoadStatistics->privateClickMeasurementStore().privateClickMeasurementToStringForTesting(WTFMove(completionHandler));
         return;
     }
 #endif
@@ -545,7 +553,7 @@ void PrivateClickMeasurementManager::markAllUnattributedAsExpiredForTesting()
         return;
 
     if (auto* resourceLoadStatistics = m_networkSession->resourceLoadStatistics())
-        resourceLoadStatistics->markAllUnattributedPrivateClickMeasurementAsExpiredForTesting();
+        resourceLoadStatistics->privateClickMeasurementStore().markAllUnattributedPrivateClickMeasurementAsExpiredForTesting();
 #endif
 }
 
@@ -575,7 +583,7 @@ void PrivateClickMeasurementManager::markAttributedPrivateClickMeasurementsAsExp
     }
 
     if (auto* resourceLoadStatistics = m_networkSession->resourceLoadStatistics()) {
-        resourceLoadStatistics->markAttributedPrivateClickMeasurementsAsExpiredForTesting(WTFMove(completionHandler));
+        resourceLoadStatistics->privateClickMeasurementStore().markAttributedPrivateClickMeasurementsAsExpiredForTesting(WTFMove(completionHandler));
         return;
     }
 #endif

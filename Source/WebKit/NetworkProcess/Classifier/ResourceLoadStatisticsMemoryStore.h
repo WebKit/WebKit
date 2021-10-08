@@ -107,17 +107,6 @@ public:
     Vector<RegistrableDomain> allDomains() const final;
     void insertExpiredStatisticForTesting(const RegistrableDomain&, unsigned numberOfOperatingDaysPassed, bool hasUserInteraction, bool isScheduledForAllButCookieDataRemoval, bool isPrevalent) override;
 
-    // Private Click Measurement is not implemented in the ITP memory store.
-    void insertPrivateClickMeasurement(WebCore::PrivateClickMeasurement&&, PrivateClickMeasurementAttributionType) override { };
-    void markAllUnattributedPrivateClickMeasurementAsExpiredForTesting() override { };
-    std::optional<WebCore::PrivateClickMeasurement::AttributionSecondsUntilSendData>attributePrivateClickMeasurement(const WebCore::PrivateClickMeasurement::SourceSite&, const WebCore::PrivateClickMeasurement::AttributionDestinationSite&, WebCore::PrivateClickMeasurement::AttributionTriggerData&&) override { return { }; };
-    Vector<WebCore::PrivateClickMeasurement> allAttributedPrivateClickMeasurement() override { return { }; };
-    void clearPrivateClickMeasurement(std::optional<RegistrableDomain>) override { };
-    void clearExpiredPrivateClickMeasurement() override { };
-    String privateClickMeasurementToString() override { return String(); };
-    void clearSentAttribution(WebCore::PrivateClickMeasurement&&, WebCore::PrivateClickMeasurement::AttributionReportEndpoint) override { };
-    void markAttributedPrivateClickMeasurementsAsExpiredForTesting() override { };
-
 private:
     void includeTodayAsOperatingDateIfNecessary() override;
     const Vector<OperatingDate>& operatingDates() const { return m_operatingDates; }

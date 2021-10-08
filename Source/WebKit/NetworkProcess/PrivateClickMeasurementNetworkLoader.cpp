@@ -51,6 +51,11 @@ PrivateClickMeasurementNetworkLoader::PrivateClickMeasurementNetworkLoader(Netwo
     m_networkLoad->start();
 }
 
+PrivateClickMeasurementNetworkLoader::~PrivateClickMeasurementNetworkLoader()
+{
+    cancel();
+}
+
 void PrivateClickMeasurementNetworkLoader::fail(ResourceError&& error)
 {
     if (!m_completionHandler)
@@ -60,9 +65,14 @@ void PrivateClickMeasurementNetworkLoader::fail(ResourceError&& error)
     didComplete();
 }
 
-void PrivateClickMeasurementNetworkLoader::willSendRedirectedRequest(ResourceRequest&&, ResourceRequest&&, ResourceResponse&&)
+void PrivateClickMeasurementNetworkLoader::cancel()
 {
     fail(ResourceError { ResourceError::Type::Cancellation });
+}
+
+void PrivateClickMeasurementNetworkLoader::willSendRedirectedRequest(ResourceRequest&&, ResourceRequest&&, ResourceResponse&&)
+{
+    cancel();
 }
 
 void PrivateClickMeasurementNetworkLoader::didReceiveResponse(ResourceResponse&& response, ResponseCompletionHandler&& completionHandler)

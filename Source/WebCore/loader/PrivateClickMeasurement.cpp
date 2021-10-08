@@ -59,6 +59,50 @@ bool PrivateClickMeasurement::isValid() const
         && (m_timesToSend.sourceEarliestTimeToSend || m_timesToSend.destinationEarliestTimeToSend);
 }
 
+PrivateClickMeasurement::SourceSecretToken PrivateClickMeasurement::SourceSecretToken::isolatedCopy() const
+{
+    return {
+        tokenBase64URL.isolatedCopy(),
+        signatureBase64URL.isolatedCopy(),
+        keyIDBase64URL.isolatedCopy(),
+    };
+}
+
+PrivateClickMeasurement::EphemeralSourceNonce PrivateClickMeasurement::EphemeralSourceNonce::isolatedCopy() const
+{
+    return { nonce.isolatedCopy() };
+}
+
+PrivateClickMeasurement::SourceUnlinkableToken PrivateClickMeasurement::SourceUnlinkableToken::isolatedCopy() const
+{
+    return {
+#if PLATFORM(COCOA)
+        blinder,
+        waitingToken,
+        readyToken,
+#endif
+        valueBase64URL.isolatedCopy()
+    };
+}
+
+PrivateClickMeasurement PrivateClickMeasurement::isolatedCopy() const
+{
+    PrivateClickMeasurement copy;
+    copy.m_sourceID = m_sourceID;
+    copy.m_sourceSite = m_sourceSite.isolatedCopy();
+    copy.m_destinationSite = m_destinationSite.isolatedCopy();
+    copy.m_sourceDescription = m_sourceDescription.isolatedCopy();
+    copy.m_purchaser = m_purchaser.isolatedCopy();
+    copy.m_timeOfAdClick = m_timeOfAdClick.isolatedCopy();
+    copy.m_isEphemeral = m_isEphemeral;
+    copy.m_attributionTriggerData = m_attributionTriggerData;
+    copy.m_timesToSend = m_timesToSend;
+    copy.m_ephemeralSourceNonce = crossThreadCopy(m_ephemeralSourceNonce);
+    copy.m_sourceUnlinkableToken = m_sourceUnlinkableToken.isolatedCopy();
+    copy.m_sourceSecretToken = crossThreadCopy(m_sourceSecretToken);
+    return copy;
+}
+
 Expected<PrivateClickMeasurement::AttributionTriggerData, String> PrivateClickMeasurement::parseAttributionRequest(const URL& redirectURL)
 {
     auto path = StringView(redirectURL.string()).substring(redirectURL.pathStart(), redirectURL.pathEnd() - redirectURL.pathStart());

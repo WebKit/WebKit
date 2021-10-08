@@ -57,6 +57,7 @@ GPUProcess/webrtc/RemoteMediaRecorderManager.cpp
 GPUProcess/webrtc/RemoteSampleBufferDisplayLayer.cpp
 GPUProcess/webrtc/RemoteSampleBufferDisplayLayerManager.cpp
 
+NetworkProcess/DatabaseUtilities.cpp
 NetworkProcess/PrivateClickMeasurementManager.cpp
 NetworkProcess/PrivateClickMeasurementNetworkLoader.cpp
 NetworkProcess/NetworkActivityTracker.cpp
@@ -97,6 +98,10 @@ NetworkProcess/Downloads/PendingDownload.cpp
 
 NetworkProcess/IndexedDB/WebIDBConnectionToClient.cpp
 NetworkProcess/IndexedDB/WebIDBServer.cpp
+
+NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementDatabase.cpp
+NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementDebugInfo.cpp
+NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementStore.cpp
 
 NetworkProcess/ServiceWorker/ServiceWorkerFetchTask.cpp @no-unify
 NetworkProcess/ServiceWorker/ServiceWorkerSoftUpdateLoader.cpp
