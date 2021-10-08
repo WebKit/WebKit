@@ -1,0 +1,10 @@
+Tests that XMLHttpRequest.document is valid for large HTML documents
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS parsedDocument.body.lastChild.nodeName is "SCRIPT"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

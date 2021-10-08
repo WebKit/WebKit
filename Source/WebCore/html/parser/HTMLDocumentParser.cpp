@@ -394,6 +394,16 @@ void HTMLDocumentParser::insert(SegmentedString&& source)
 
 void HTMLDocumentParser::append(RefPtr<StringImpl>&& inputSource)
 {
+    append(WTFMove(inputSource), AllowYield);
+}
+
+void HTMLDocumentParser::appendSynchronously(RefPtr<StringImpl>&& inputSource)
+{
+    append(WTFMove(inputSource), ForceSynchronous);
+}
+
+void HTMLDocumentParser::append(RefPtr<StringImpl>&& inputSource, SynchronousMode synchronousMode)
+{
     if (isStopped())
         return;
 
@@ -424,7 +434,7 @@ void HTMLDocumentParser::append(RefPtr<StringImpl>&& inputSource)
         return;
     }
 
-    pumpTokenizerIfPossible(AllowYield);
+    pumpTokenizerIfPossible(synchronousMode);
 
     endIfDelayed();
 }

@@ -1,3 +1,17 @@
+2021-10-08  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION (r277818): XHR with requestType document broken for larger HTML files
+        https://bugs.webkit.org/show_bug.cgi?id=231138
+        <rdar://problem/83823282>
+
+        Reviewed by Darin Adler.
+
+        * http/tests/xmlhttprequest/resources/large-html-with-script-tags.py: Added.
+        * http/tests/xmlhttprequest/xhr-and-parse-large-document-expected.txt: Added.
+        * http/tests/xmlhttprequest/xhr-and-parse-large-document.html: Added.
+        * http/tests/xmlhttprequest/xhr-large-document-expected.txt: Added.
+        * http/tests/xmlhttprequest/xhr-large-document.html: Added.
+
 2021-10-08  Sergio Villar Senin  <svillar@igalia.com>
 
         [GTK] web-platform-tests/css/css-flexbox/text-as-flexitem-size-001.html is failing
