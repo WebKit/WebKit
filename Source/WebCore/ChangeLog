@@ -1,5 +1,36 @@
 2021-10-07  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r281495. rdar://problem/83954155
+
+    ThreadSanitizer: data race in WTF::StringImpl::deref() for WebCore::FormDataElement::EncodedFileData::filename
+    https://bugs.webkit.org/show_bug.cgi?id=229432
+    
+    Patch by Alex Christensen <achristensen@webkit.org> on 2021-08-24
+    Reviewed by Darin Adler.
+    
+    Call the FormDataElement destructor on the main thread in advanceCurrentStream.
+    
+    * platform/network/cf/FormDataStreamCFNet.cpp:
+    (WebCore::advanceCurrentStream):
+    (WebCore::createHTTPBodyCFReadStream):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@281495 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-08-24  Alex Christensen  <achristensen@webkit.org>
+
+            ThreadSanitizer: data race in WTF::StringImpl::deref() for WebCore::FormDataElement::EncodedFileData::filename
+            https://bugs.webkit.org/show_bug.cgi?id=229432
+
+            Reviewed by Darin Adler.
+
+            Call the FormDataElement destructor on the main thread in advanceCurrentStream.
+
+            * platform/network/cf/FormDataStreamCFNet.cpp:
+            (WebCore::advanceCurrentStream):
+            (WebCore::createHTTPBodyCFReadStream):
+
+2021-10-07  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r281488. rdar://problem/83952981
 
     Avoid unnecessary CGColor creation in Gradient::createCGGradient for common sRGB-only cases

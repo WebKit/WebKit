@@ -170,7 +170,9 @@ static bool advanceCurrentStream(FormStreamFields* form)
     if (!success)
         return false;
 
-    form->remainingElements.removeLast();
+    callOnMainThread([lastElement = form->remainingElements.takeLast()] {
+        // Ensure FormDataElement destructor happens on main thread.
+    });
 
     // Set up the callback.
     CFStreamClientContext context = { 0, form, 0, 0, 0 };
@@ -178,9 +180,8 @@ static bool advanceCurrentStream(FormStreamFields* form)
         formEventCallback, &context);
 
     // Schedule with the current set of run loops.
-    SchedulePairHashSet::iterator end = form->scheduledRunLoopPairs.end();
-    for (SchedulePairHashSet::iterator it = form->scheduledRunLoopPairs.begin(); it != end; ++it)
-        CFReadStreamScheduleWithRunLoop(form->currentStream.get(), (*it)->runLoop(), (*it)->mode());
+    for (auto& pair : form->scheduledRunLoopPairs)
+        CFReadStreamScheduleWithRunLoop(form->currentStream.get(), pair->runLoop(), pair->mode());
 
     return true;
 }
@@ -382,6 +383,7 @@ RetainPtr<CFReadStreamRef> createHTTPBodyCFReadStream(FormData& formData)
             return blobRegistry().blobRegistryImpl()->blobSize(url);
         });
     }
+    ASSERT(isMainThread());
     FormCreationContext* formContext = new FormCreationContext { WTFMove(dataForUpload), length };
     CFReadStreamCallBacksV1 callBacks = { 1, formCreate, formFinalize, nullptr, formOpen, nullptr, formRead, nullptr, formCanRead, formClose, formCopyProperty, nullptr, nullptr, formSchedule, formUnschedule };
     return adoptCF(CFReadStreamCreate(nullptr, static_cast<const void*>(&callBacks), formContext));
