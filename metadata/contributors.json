@@ -780,6 +780,7 @@
          "graouts@webkit.org",
          "graouts@apple.com"
       ],
+      "github" : "graouts",
       "name" : "Antoine Quint",
       "nicks" : [
          "graouts"
@@ -843,6 +844,7 @@
          "antti.j.koivisto@nokia.com"
       ],
       "expertise" : "HTML DOM, Core DOM, Loader, Cache, CSS OM, style resolve, performance",
+      "github" : "anttijk",
       "name" : "Antti Koivisto",
       "nicks" : [
          "anttik"
@@ -1386,6 +1388,7 @@
          "christophe.dumez@intel.com"
       ],
       "expertise" : "Performance, DOM, HTML, Bindings generator, EFLWebKit Port",
+      "github" : "cdumez",
       "name" : "Chris Dumez",
       "nicks" : [
          "cdumez"
@@ -4842,6 +4845,7 @@
          "mmaxfield@apple.com"
       ],
       "expertise" : "Text layout and rendering",
+      "github" : "litherum",
       "name" : "Myles C. Maxfield",
       "nicks" : [
          "litherum"
@@ -5618,6 +5622,7 @@
          "rniwa@webkit.org"
       ],
       "expertise" : "HTML Editing, Core DOM, HTML DOM, Event Handling",
+      "github" : "rniwa",
       "name" : "Ryosuke Niwa",
       "nicks" : [
          "rniwa"
@@ -5676,6 +5681,7 @@
          "me@gsnedders.com"
       ],
       "expertise" : "Web Standards, WPT, webkitpy",
+      "github" : "gsnedders",
       "name" : "Sam Sneddon",
       "nicks" : [
          "gsnedders"
@@ -5875,6 +5881,7 @@
          "simon.fraser@apple.com"
       ],
       "expertise" : "Accelerated Compositing, Transitions and Animations, CSS Transforms",
+      "github" : "smfr",
       "name" : "Simon Fraser",
       "nicks" : [
          "smfr"
@@ -6232,6 +6239,7 @@
          "ntim@apple.com",
          "ntim.bugs@gmail.com"
       ],
+      "github" : "nt1m",
       "name" : "Tim Nguyen",
       "nicks" : [
          "ntim"
@@ -6733,6 +6741,7 @@
          "youenn@apple.com",
          "yfablet@apple.com"
       ],
+      "github" : "youennf",
       "name" : "Youenn Fablet",
       "nicks" : [
          "youenn"
