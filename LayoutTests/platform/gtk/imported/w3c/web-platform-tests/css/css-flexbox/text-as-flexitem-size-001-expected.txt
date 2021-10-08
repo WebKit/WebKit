@@ -1,0 +1,122 @@
+xx xxx
+
+xx
+
+xx xxx
+
+xx
+
+xx xxx
+
+xx
+
+
+xx xxx
+
+xx
+
+xx xxx
+
+xx
+
+xx xxx
+
+xx
+
+
+xx xxx
+
+xx
+
+xx xxx
+
+xx
+
+xx xxx
+
+xx
+
+
+xx xxx
+
+xx
+
+xx xxx
+
+xx
+
+xx xxx
+
+xx
+
+
+xx xxx
+
+xx
+
+xx xxx
+
+xx
+
+
+xx xxx
+
+xx
+
+xx xxx
+
+xx
+
+xx xxx
+
+xx
+
+xx xxx
+
+xx
+
+
+FAIL .flexbox > div 1 assert_equals:
+<div data-expected-width="70" data-expected-height="35">
+        <p>xx xxx</p>
+        <p>xx</p>
+      </div>
+width expected 70 but got 46
+FAIL .flexbox > div 2 assert_equals:
+<div data-expected-width="50" data-expected-height="45">
+        <p>xx xxx</p>
+        <p>xx</p>
+      </div>
+width expected 50 but got 46
+PASS .flexbox > div 3
+PASS .flexbox > div 4
+FAIL .flexbox > div 5 assert_equals:
+<div style="height: 30px" data-expected-width="70" data-expected-height="30">
+        <p>xx xxx</p>
+        <p>xx</p>
+      </div>
+width expected 70 but got 46
+PASS .flexbox > div 6
+PASS .flexbox > div 7
+FAIL .flexbox > div 8 assert_equals:
+<div style="min-height: 40px" data-expected-width="70" data-expected-height="40">
+        <p>xx xxx</p>
+        <p>xx</p>
+      </div>
+width expected 70 but got 46
+PASS .flexbox > div 9
+PASS .flexbox > div 10
+FAIL .flexbox > div 11 assert_equals:
+<div style="max-height: 20px" data-expected-width="70" data-expected-height="20">
+        <p>xx xxx</p>
+        <p>xx</p>
+      </div>
+width expected 70 but got 46
+PASS .flexbox > div 12
+PASS .flexbox > div 13
+PASS .flexbox > div 14
+PASS .flexbox > div 15
+PASS .flexbox > div 16
+PASS .flexbox > div 17
+PASS .flexbox > div 18
+

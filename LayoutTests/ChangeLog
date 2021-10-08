@@ -1,3 +1,12 @@
+2021-10-08  Sergio Villar Senin  <svillar@igalia.com>
+
+        [GTK] web-platform-tests/css/css-flexbox/text-as-flexitem-size-001.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=231429
+
+        Unreviewed gardening. Adding GTK expectations for a test that has been failing since it was imported.
+
+        * platform/gtk/imported/w3c/web-platform-tests/css/css-flexbox/text-as-flexitem-size-001-expected.txt: Added.
+
 2021-10-08  Tyler Wilcock  <tyler_w@apple.com>
 
         AX: Expose the URL attribute of <video> elements
