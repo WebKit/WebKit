@@ -1,3 +1,29 @@
+2021-10-08  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r281611. rdar://problem/83955924
+
+    REGRESSION (r281516): [AppleSilicon WK2] fast/loader/reload-zero-byte-plugin.html is timing out
+    https://bugs.webkit.org/show_bug.cgi?id=229532
+    <rdar://problem/82370692>
+    
+    Unreviewed, temporarily skip the test on macOS WK2 while I investigate, so that the bots don't
+    complain.
+    
+    * platform/mac-wk2/TestExpectations:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@281611 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-08-25  Chris Dumez  <cdumez@apple.com>
+
+            REGRESSION (r281516): [AppleSilicon WK2] fast/loader/reload-zero-byte-plugin.html is timing out
+            https://bugs.webkit.org/show_bug.cgi?id=229532
+            <rdar://problem/82370692>
+
+            Unreviewed, temporarily skip the test on macOS WK2 while I investigate, so that the bots don't
+            complain.
+
+            * platform/mac-wk2/TestExpectations:
+
 2021-10-07  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r283238. rdar://problem/83955650
