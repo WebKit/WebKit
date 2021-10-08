@@ -223,7 +223,7 @@ WI.NavigationBar = class NavigationBar extends WI.View
         let visibleNavigationItems = this._visibleNavigationItems;
 
         function calculateVisibleItemWidth() {
-            return visibleNavigationItems.reduce((total, item) => total + Math.ceil(item.width), 0);
+            return visibleNavigationItems.reduce((total, item) => total + item.width, 0);
         }
 
         let totalItemWidth = calculateVisibleItemWidth();
@@ -252,7 +252,7 @@ WI.NavigationBar = class NavigationBar extends WI.View
 
             while (totalItemWidth > barWidth && visibleNavigationItems.length) {
                 let navigationItem = visibleNavigationItems.shift();
-                totalItemWidth -= Math.ceil(navigationItem.width);
+                totalItemWidth -= navigationItem.width;
                 forceItemHidden(navigationItem, true);
             }
 
