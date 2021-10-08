@@ -3424,9 +3424,6 @@ http/tests/media/modern-media-controls/overflow-support/playback-speed-live-broa
 # rdar://80384564 ([ iOS15 ] editing/selection/ios/persist-selection-after-tapping-on-element-with-mousedown-handler.html is failing)
 editing/selection/ios/persist-selection-after-tapping-on-element-with-mousedown-handler.html [ Failure ]
 
-# rdar://77070325 (REGRESSION: [ iOS15 ] imported/w3c/web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-flipY.html is flaky failling)
-imported/w3c/web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-flipY.html [ Pass Failure ]
-
 # rdar://79084756 ((r278618) media/modern-media-controls /overflow-support/chapters.html is timing out since introduction (226828))
 media/modern-media-controls/overflow-support/chapters.html [ Timeout ]
 

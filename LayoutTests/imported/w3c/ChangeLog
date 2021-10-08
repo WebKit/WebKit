@@ -1,5 +1,281 @@
 2021-10-08  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r283099. rdar://problem/83957623
+
+    Remove old test files from canvas WPTs that were moved
+    https://bugs.webkit.org/show_bug.cgi?id=230811
+    <rdar://problem/83554404>
+    
+    Reviewed by Tim Horton.
+    
+    LayoutTests/imported/w3c:
+    
+    A bunch of canvas test moved directories in
+    https://github.com/web-platform-tests/wpt/pull/23996. When we re-
+    imported canvas WPTs in bug 229750, these old files were left behind.
+    We can remove them since they all now live under
+    html/canvas/element/manual/.
+    
+    * web-platform-tests/html/canvas/element/building-paths/canvas_complexshapes_arcto_001.htm: Removed.
+    * web-platform-tests/html/canvas/element/building-paths/canvas_complexshapes_beziercurveto_001.htm: Removed.
+    * web-platform-tests/html/canvas/element/context-attributes/getContextAttributes-expected.txt: Removed.
+    * web-platform-tests/html/canvas/element/context-attributes/getContextAttributes.html: Removed.
+    * web-platform-tests/html/canvas/element/drawing-images-to-the-canvas/image-orientation/drawImage-from-bitmap-orientation-none.tentative-expected.html: Removed.
+    * web-platform-tests/html/canvas/element/drawing-images-to-the-canvas/image-orientation/drawImage-from-bitmap-orientation-none.tentative.html: Removed.
+    * web-platform-tests/html/canvas/element/drawing-images-to-the-canvas/image-orientation/drawImage-from-bitmap-swap-width-height-orientation-none.tentative-expected.html: Removed.
+    * web-platform-tests/html/canvas/element/drawing-images-to-the-canvas/image-orientation/drawImage-from-bitmap-swap-width-height-orientation-none.tentative.html: Removed.
+    * web-platform-tests/html/canvas/element/drawing-images-to-the-canvas/image-orientation/drawImage-from-bitmap-swap-width-height.tentative-expected.html: Removed.
+    * web-platform-tests/html/canvas/element/drawing-images-to-the-canvas/image-orientation/drawImage-from-bitmap-swap-width-height.tentative.html: Removed.
+    * web-platform-tests/html/canvas/element/drawing-images-to-the-canvas/image-orientation/drawImage-from-bitmap.tentative-expected.html: Removed.
+    * web-platform-tests/html/canvas/element/drawing-images-to-the-canvas/image-orientation/drawImage-from-bitmap.tentative.html: Removed.
+    * web-platform-tests/html/canvas/element/drawing-images-to-the-canvas/image-orientation/drawImage-from-blob.tentative-expected.html: Removed.
+    * web-platform-tests/html/canvas/element/drawing-images-to-the-canvas/image-orientation/drawImage-from-blob.tentative.html: Removed.
+    * web-platform-tests/html/canvas/element/drawing-images-to-the-canvas/image-orientation/drawImage-from-element-orientation-none.tentative-expected.html: Removed.
+    * web-platform-tests/html/canvas/element/drawing-images-to-the-canvas/image-orientation/drawImage-from-element-orientation-none.tentative.html: Removed.
+    * web-platform-tests/html/canvas/element/drawing-images-to-the-canvas/image-orientation/drawImage-from-element-swap-width-height-orientation-none.tentative-expected.html: Removed.
+    * web-platform-tests/html/canvas/element/drawing-images-to-the-canvas/image-orientation/drawImage-from-element-swap-width-height-orientation-none.tentative.html: Removed.
+    * web-platform-tests/html/canvas/element/drawing-images-to-the-canvas/image-orientation/drawImage-from-element-swap-width-height.tentative-expected.html: Removed.
+    * web-platform-tests/html/canvas/element/drawing-images-to-the-canvas/image-orientation/drawImage-from-element-swap-width-height.tentative.html: Removed.
+    * web-platform-tests/html/canvas/element/drawing-images-to-the-canvas/image-orientation/drawImage-from-element.tentative-expected.html: Removed.
+    * web-platform-tests/html/canvas/element/drawing-images-to-the-canvas/image-orientation/drawImage-from-element.tentative.html: Removed.
+    * web-platform-tests/html/canvas/element/drawing-images-to-the-canvas/image-orientation/drawImage-with-src-rect.tentative-expected.html: Removed.
+    * web-platform-tests/html/canvas/element/drawing-images-to-the-canvas/image-orientation/drawImage-with-src-rect.tentative.html: Removed.
+    * web-platform-tests/html/canvas/element/drawing-paths-to-the-canvas/canvas_complexshapes_ispointInpath_001.htm: Removed.
+    * web-platform-tests/html/canvas/element/drawing-paths-to-the-canvas/drawFocusIfNeeded_001-expected.txt: Removed.
+    * web-platform-tests/html/canvas/element/drawing-paths-to-the-canvas/drawFocusIfNeeded_001.html: Removed.
+    * web-platform-tests/html/canvas/element/drawing-paths-to-the-canvas/drawFocusIfNeeded_002-expected.txt: Removed.
+    * web-platform-tests/html/canvas/element/drawing-paths-to-the-canvas/drawFocusIfNeeded_002.html: Removed.
+    * web-platform-tests/html/canvas/element/drawing-paths-to-the-canvas/drawFocusIfNeeded_003-expected.txt: Removed.
+    * web-platform-tests/html/canvas/element/drawing-paths-to-the-canvas/drawFocusIfNeeded_003.html: Removed.
+    * web-platform-tests/html/canvas/element/drawing-paths-to-the-canvas/drawFocusIfNeeded_004-expected.txt: Removed.
+    * web-platform-tests/html/canvas/element/drawing-paths-to-the-canvas/drawFocusIfNeeded_004.html: Removed.
+    * web-platform-tests/html/canvas/element/drawing-paths-to-the-canvas/drawFocusIfNeeded_005-expected.txt: Removed.
+    * web-platform-tests/html/canvas/element/drawing-paths-to-the-canvas/drawFocusIfNeeded_005.html: Removed.
+    * web-platform-tests/html/canvas/element/image-smoothing/imagesmoothing-expected.txt: Removed.
+    * web-platform-tests/html/canvas/element/image-smoothing/imagesmoothing.html: Removed.
+    * web-platform-tests/html/canvas/element/imagebitmap/canvas-createImageBitmap-resize-expected.txt: Removed.
+    * web-platform-tests/html/canvas/element/imagebitmap/canvas-createImageBitmap-resize.html: Removed.
+    * web-platform-tests/html/canvas/element/imagebitmap/canvas-createImageBitmap-video-resize-expected.txt: Removed.
+    * web-platform-tests/html/canvas/element/imagebitmap/canvas-createImageBitmap-video-resize.html: Removed.
+    * web-platform-tests/html/canvas/element/imagebitmap/common.sub.js: Removed.
+    * web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-blob-invalidtype-expected.txt: Removed.
+    * web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-blob-invalidtype.html: Removed.
+    * web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-bounds-expected.txt: Removed.
+    * web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-bounds.html: Removed.
+    * web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-drawImage-closed-expected.txt: Removed.
+    * web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-drawImage-closed.html: Removed.
+    * web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-drawImage-expected.txt: Removed.
+    * web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-drawImage.html: Removed.
+    * web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-flipY-expected.txt: Removed.
+    * web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-flipY.html: Removed.
+    * web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-in-worker-transfer-expected.txt: Removed.
+    * web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-in-worker-transfer.html: Removed.
+    * web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-invalid-args-expected.txt: Removed.
+    * web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-invalid-args.html: Removed.
+    * web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-origin.sub-expected.txt: Removed.
+    * web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-origin.sub.html: Removed.
+    * web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-serializable-expected.txt: Removed.
+    * web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-serializable.html: Removed.
+    * web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-sizeOverflow-expected.txt: Removed.
+    * web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-sizeOverflow.html: Removed.
+    * web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-transfer-expected.txt: Removed.
+    * web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-transfer.html: Removed.
+    * web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-worker.js: Removed.
+    * web-platform-tests/html/canvas/element/imagebitmap/transfer-worker.js: Removed.
+    * web-platform-tests/html/canvas/element/wide-gamut-canvas/resources/pattern-semitransparent-p3d65.png: Removed.
+    * web-platform-tests/html/canvas/element/wide-gamut-canvas/resources/pattern-semitransparent-rec2020.png: Removed.
+    * web-platform-tests/html/canvas/element/wide-gamut-canvas/resources/pattern-semitransparent-srgb.png: Removed.
+    * web-platform-tests/html/canvas/element/wide-gamut-canvas/resources/pattern-srgb-fullcolor.ogv: Removed.
+    * web-platform-tests/html/canvas/element/wide-gamut-canvas/resources/pattern-srgb-transparent.bmp: Removed.
+    * web-platform-tests/html/canvas/element/wide-gamut-canvas/resources/pattern-srgb-transparent.ico: Removed.
+    * web-platform-tests/html/canvas/element/wide-gamut-canvas/resources/pattern-srgb-transparent.png: Removed.
+    * web-platform-tests/html/canvas/element/wide-gamut-canvas/resources/pattern-srgb-transparent.webp: Removed.
+    * web-platform-tests/html/canvas/element/wide-gamut-canvas/resources/pattern-srgb.bmp: Removed.
+    * web-platform-tests/html/canvas/element/wide-gamut-canvas/resources/pattern-srgb.gif: Removed.
+    * web-platform-tests/html/canvas/element/wide-gamut-canvas/resources/pattern-srgb.ico: Removed.
+    * web-platform-tests/html/canvas/element/wide-gamut-canvas/resources/pattern-srgb.jpg: Removed.
+    * web-platform-tests/html/canvas/element/wide-gamut-canvas/resources/pattern-srgb.png: Removed.
+    * web-platform-tests/html/canvas/element/wide-gamut-canvas/resources/pattern-srgb.svg: Removed.
+    * web-platform-tests/html/canvas/element/wide-gamut-canvas/resources/pattern-srgb.webp: Removed.
+    * web-platform-tests/html/canvas/element/wide-gamut-canvas/resources/png-16bit/2x2_16bit_AdobeRGB_opaque.png: Removed.
+    * web-platform-tests/html/canvas/element/wide-gamut-canvas/resources/png-16bit/2x2_16bit_AdobeRGB_transparent.png: Removed.
+    * web-platform-tests/html/canvas/element/wide-gamut-canvas/resources/png-16bit/2x2_16bit_DisplayP3_opaque.png: Removed.
+    * web-platform-tests/html/canvas/element/wide-gamut-canvas/resources/png-16bit/2x2_16bit_DisplayP3_transparent.png: Removed.
+    * web-platform-tests/html/canvas/element/wide-gamut-canvas/resources/png-16bit/2x2_16bit_ProPhoto_opaque.png: Removed.
+    * web-platform-tests/html/canvas/element/wide-gamut-canvas/resources/png-16bit/2x2_16bit_ProPhoto_transparent.png: Removed.
+    * web-platform-tests/html/canvas/element/wide-gamut-canvas/resources/png-16bit/2x2_16bit_Rec2020_opaque.png: Removed.
+    * web-platform-tests/html/canvas/element/wide-gamut-canvas/resources/png-16bit/2x2_16bit_Rec2020_transparent.png: Removed.
+    * web-platform-tests/html/canvas/element/wide-gamut-canvas/resources/png-16bit/2x2_16bit_interlaced_AdobeRGB_opaque.png: Removed.
+    * web-platform-tests/html/canvas/element/wide-gamut-canvas/resources/png-16bit/2x2_16bit_interlaced_AdobeRGB_transparent.png: Removed.
+    * web-platform-tests/html/canvas/element/wide-gamut-canvas/resources/png-16bit/2x2_16bit_interlaced_DisplayP3_opaque.png: Removed.
+    * web-platform-tests/html/canvas/element/wide-gamut-canvas/resources/png-16bit/2x2_16bit_interlaced_DisplayP3_transparent.png: Removed.
+    * web-platform-tests/html/canvas/element/wide-gamut-canvas/resources/png-16bit/2x2_16bit_interlaced_ProPhoto_opaque.png: Removed.
+    * web-platform-tests/html/canvas/element/wide-gamut-canvas/resources/png-16bit/2x2_16bit_interlaced_ProPhoto_transparent.png: Removed.
+    * web-platform-tests/html/canvas/element/wide-gamut-canvas/resources/png-16bit/2x2_16bit_interlaced_Rec2020_opaque.png: Removed.
+    * web-platform-tests/html/canvas/element/wide-gamut-canvas/resources/png-16bit/2x2_16bit_interlaced_Rec2020_transparent.png: Removed.
+    * web-platform-tests/html/canvas/element/wide-gamut-canvas/resources/png-16bit/2x2_16bit_interlaced_sRGB_opaque.png: Removed.
+    * web-platform-tests/html/canvas/element/wide-gamut-canvas/resources/png-16bit/2x2_16bit_interlaced_sRGB_transparent.png: Removed.
+    * web-platform-tests/html/canvas/element/wide-gamut-canvas/resources/png-16bit/2x2_16bit_sRGB_opaque.png: Removed.
+    * web-platform-tests/html/canvas/element/wide-gamut-canvas/resources/png-16bit/2x2_16bit_sRGB_transparent.png: Removed.
+    * web-platform-tests/html/canvas/element/wide-gamut-canvas/resources/png-16bit/2x2_8bit_AdobeRGB_opaque.png: Removed.
+    * web-platform-tests/html/canvas/element/wide-gamut-canvas/resources/png-16bit/2x2_8bit_AdobeRGB_transparent.png: Removed.
+    * web-platform-tests/html/canvas/element/wide-gamut-canvas/resources/png-16bit/2x2_8bit_DisplayP3_opaque.png: Removed.
+    * web-platform-tests/html/canvas/element/wide-gamut-canvas/resources/png-16bit/2x2_8bit_DisplayP3_transparent.png: Removed.
+    * web-platform-tests/html/canvas/element/wide-gamut-canvas/resources/png-16bit/2x2_8bit_ProPhoto_opaque.png: Removed.
+    * web-platform-tests/html/canvas/element/wide-gamut-canvas/resources/png-16bit/2x2_8bit_ProPhoto_transparent.png: Removed.
+    * web-platform-tests/html/canvas/element/wide-gamut-canvas/resources/png-16bit/2x2_8bit_Rec2020_opaque.png: Removed.
+    * web-platform-tests/html/canvas/element/wide-gamut-canvas/resources/png-16bit/2x2_8bit_Rec2020_transparent.png: Removed.
+    * web-platform-tests/html/canvas/element/wide-gamut-canvas/resources/png-16bit/2x2_8bit_sRGB_opaque.png: Removed.
+    * web-platform-tests/html/canvas/element/wide-gamut-canvas/resources/png-16bit/2x2_8bit_sRGB_transparent.png: Removed.
+    
+    LayoutTests:
+    
+    * TestExpectations:
+    * platform/glib/TestExpectations:
+    * platform/glib/imported/w3c/web-platform-tests/html/canvas/element/image-smoothing/imagesmoothing-expected.txt: Removed.
+    * platform/glib/imported/w3c/web-platform-tests/html/canvas/element/imagebitmap/canvas-createImageBitmap-resize-expected.txt: Removed.
+    * platform/glib/imported/w3c/web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-drawImage-expected.txt: Removed.
+    * platform/glib/imported/w3c/web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-flipY-expected.txt: Removed.
+    * platform/glib/imported/w3c/web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-invalid-args-expected.txt: Removed.
+    * platform/glib/imported/w3c/web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-serializable-expected.txt: Removed.
+    * platform/glib/imported/w3c/web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-transfer-expected.txt: Removed.
+    * platform/ios-14/TestExpectations:
+    * platform/ios-simulator-wk2/TestExpectations:
+    * platform/ios-wk2/TestExpectations:
+    * platform/ios/TestExpectations:
+    * platform/mac-wk1/imported/w3c/web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-flipY-expected.txt: Removed.
+    * platform/mac/TestExpectations:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@283099 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-09-26  Cameron McCormack  <heycam@apple.com>
+
+            Remove old test files from canvas WPTs that were moved
+            https://bugs.webkit.org/show_bug.cgi?id=230811
+            <rdar://problem/83554404>
+
+            Reviewed by Tim Horton.
+
+            A bunch of canvas test moved directories in
+            https://github.com/web-platform-tests/wpt/pull/23996. When we re-
+            imported canvas WPTs in bug 229750, these old files were left behind.
+            We can remove them since they all now live under
+            html/canvas/element/manual/.
+
+            * web-platform-tests/html/canvas/element/building-paths/canvas_complexshapes_arcto_001.htm: Removed.
+            * web-platform-tests/html/canvas/element/building-paths/canvas_complexshapes_beziercurveto_001.htm: Removed.
+            * web-platform-tests/html/canvas/element/context-attributes/getContextAttributes-expected.txt: Removed.
+            * web-platform-tests/html/canvas/element/context-attributes/getContextAttributes.html: Removed.
+            * web-platform-tests/html/canvas/element/drawing-images-to-the-canvas/image-orientation/drawImage-from-bitmap-orientation-none.tentative-expected.html: Removed.
+            * web-platform-tests/html/canvas/element/drawing-images-to-the-canvas/image-orientation/drawImage-from-bitmap-orientation-none.tentative.html: Removed.
+            * web-platform-tests/html/canvas/element/drawing-images-to-the-canvas/image-orientation/drawImage-from-bitmap-swap-width-height-orientation-none.tentative-expected.html: Removed.
+            * web-platform-tests/html/canvas/element/drawing-images-to-the-canvas/image-orientation/drawImage-from-bitmap-swap-width-height-orientation-none.tentative.html: Removed.
+            * web-platform-tests/html/canvas/element/drawing-images-to-the-canvas/image-orientation/drawImage-from-bitmap-swap-width-height.tentative-expected.html: Removed.
+            * web-platform-tests/html/canvas/element/drawing-images-to-the-canvas/image-orientation/drawImage-from-bitmap-swap-width-height.tentative.html: Removed.
+            * web-platform-tests/html/canvas/element/drawing-images-to-the-canvas/image-orientation/drawImage-from-bitmap.tentative-expected.html: Removed.
+            * web-platform-tests/html/canvas/element/drawing-images-to-the-canvas/image-orientation/drawImage-from-bitmap.tentative.html: Removed.
+            * web-platform-tests/html/canvas/element/drawing-images-to-the-canvas/image-orientation/drawImage-from-blob.tentative-expected.html: Removed.
+            * web-platform-tests/html/canvas/element/drawing-images-to-the-canvas/image-orientation/drawImage-from-blob.tentative.html: Removed.
+            * web-platform-tests/html/canvas/element/drawing-images-to-the-canvas/image-orientation/drawImage-from-element-orientation-none.tentative-expected.html: Removed.
+            * web-platform-tests/html/canvas/element/drawing-images-to-the-canvas/image-orientation/drawImage-from-element-orientation-none.tentative.html: Removed.
+            * web-platform-tests/html/canvas/element/drawing-images-to-the-canvas/image-orientation/drawImage-from-element-swap-width-height-orientation-none.tentative-expected.html: Removed.
+            * web-platform-tests/html/canvas/element/drawing-images-to-the-canvas/image-orientation/drawImage-from-element-swap-width-height-orientation-none.tentative.html: Removed.
+            * web-platform-tests/html/canvas/element/drawing-images-to-the-canvas/image-orientation/drawImage-from-element-swap-width-height.tentative-expected.html: Removed.
+            * web-platform-tests/html/canvas/element/drawing-images-to-the-canvas/image-orientation/drawImage-from-element-swap-width-height.tentative.html: Removed.
+            * web-platform-tests/html/canvas/element/drawing-images-to-the-canvas/image-orientation/drawImage-from-element.tentative-expected.html: Removed.
+            * web-platform-tests/html/canvas/element/drawing-images-to-the-canvas/image-orientation/drawImage-from-element.tentative.html: Removed.
+            * web-platform-tests/html/canvas/element/drawing-images-to-the-canvas/image-orientation/drawImage-with-src-rect.tentative-expected.html: Removed.
+            * web-platform-tests/html/canvas/element/drawing-images-to-the-canvas/image-orientation/drawImage-with-src-rect.tentative.html: Removed.
+            * web-platform-tests/html/canvas/element/drawing-paths-to-the-canvas/canvas_complexshapes_ispointInpath_001.htm: Removed.
+            * web-platform-tests/html/canvas/element/drawing-paths-to-the-canvas/drawFocusIfNeeded_001-expected.txt: Removed.
+            * web-platform-tests/html/canvas/element/drawing-paths-to-the-canvas/drawFocusIfNeeded_001.html: Removed.
+            * web-platform-tests/html/canvas/element/drawing-paths-to-the-canvas/drawFocusIfNeeded_002-expected.txt: Removed.
+            * web-platform-tests/html/canvas/element/drawing-paths-to-the-canvas/drawFocusIfNeeded_002.html: Removed.
+            * web-platform-tests/html/canvas/element/drawing-paths-to-the-canvas/drawFocusIfNeeded_003-expected.txt: Removed.
+            * web-platform-tests/html/canvas/element/drawing-paths-to-the-canvas/drawFocusIfNeeded_003.html: Removed.
+            * web-platform-tests/html/canvas/element/drawing-paths-to-the-canvas/drawFocusIfNeeded_004-expected.txt: Removed.
+            * web-platform-tests/html/canvas/element/drawing-paths-to-the-canvas/drawFocusIfNeeded_004.html: Removed.
+            * web-platform-tests/html/canvas/element/drawing-paths-to-the-canvas/drawFocusIfNeeded_005-expected.txt: Removed.
+            * web-platform-tests/html/canvas/element/drawing-paths-to-the-canvas/drawFocusIfNeeded_005.html: Removed.
+            * web-platform-tests/html/canvas/element/image-smoothing/imagesmoothing-expected.txt: Removed.
+            * web-platform-tests/html/canvas/element/image-smoothing/imagesmoothing.html: Removed.
+            * web-platform-tests/html/canvas/element/imagebitmap/canvas-createImageBitmap-resize-expected.txt: Removed.
+            * web-platform-tests/html/canvas/element/imagebitmap/canvas-createImageBitmap-resize.html: Removed.
+            * web-platform-tests/html/canvas/element/imagebitmap/canvas-createImageBitmap-video-resize-expected.txt: Removed.
+            * web-platform-tests/html/canvas/element/imagebitmap/canvas-createImageBitmap-video-resize.html: Removed.
+            * web-platform-tests/html/canvas/element/imagebitmap/common.sub.js: Removed.
+            * web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-blob-invalidtype-expected.txt: Removed.
+            * web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-blob-invalidtype.html: Removed.
+            * web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-bounds-expected.txt: Removed.
+            * web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-bounds.html: Removed.
+            * web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-drawImage-closed-expected.txt: Removed.
+            * web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-drawImage-closed.html: Removed.
+            * web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-drawImage-expected.txt: Removed.
+            * web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-drawImage.html: Removed.
+            * web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-flipY-expected.txt: Removed.
+            * web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-flipY.html: Removed.
+            * web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-in-worker-transfer-expected.txt: Removed.
+            * web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-in-worker-transfer.html: Removed.
+            * web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-invalid-args-expected.txt: Removed.
+            * web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-invalid-args.html: Removed.
+            * web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-origin.sub-expected.txt: Removed.
+            * web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-origin.sub.html: Removed.
+            * web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-serializable-expected.txt: Removed.
+            * web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-serializable.html: Removed.
+            * web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-sizeOverflow-expected.txt: Removed.
+            * web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-sizeOverflow.html: Removed.
+            * web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-transfer-expected.txt: Removed.
+            * web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-transfer.html: Removed.
+            * web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-worker.js: Removed.
+            * web-platform-tests/html/canvas/element/imagebitmap/transfer-worker.js: Removed.
+            * web-platform-tests/html/canvas/element/wide-gamut-canvas/resources/pattern-semitransparent-p3d65.png: Removed.
+            * web-platform-tests/html/canvas/element/wide-gamut-canvas/resources/pattern-semitransparent-rec2020.png: Removed.
+            * web-platform-tests/html/canvas/element/wide-gamut-canvas/resources/pattern-semitransparent-srgb.png: Removed.
+            * web-platform-tests/html/canvas/element/wide-gamut-canvas/resources/pattern-srgb-fullcolor.ogv: Removed.
+            * web-platform-tests/html/canvas/element/wide-gamut-canvas/resources/pattern-srgb-transparent.bmp: Removed.
+            * web-platform-tests/html/canvas/element/wide-gamut-canvas/resources/pattern-srgb-transparent.ico: Removed.
+            * web-platform-tests/html/canvas/element/wide-gamut-canvas/resources/pattern-srgb-transparent.png: Removed.
+            * web-platform-tests/html/canvas/element/wide-gamut-canvas/resources/pattern-srgb-transparent.webp: Removed.
+            * web-platform-tests/html/canvas/element/wide-gamut-canvas/resources/pattern-srgb.bmp: Removed.
+            * web-platform-tests/html/canvas/element/wide-gamut-canvas/resources/pattern-srgb.gif: Removed.
+            * web-platform-tests/html/canvas/element/wide-gamut-canvas/resources/pattern-srgb.ico: Removed.
+            * web-platform-tests/html/canvas/element/wide-gamut-canvas/resources/pattern-srgb.jpg: Removed.
+            * web-platform-tests/html/canvas/element/wide-gamut-canvas/resources/pattern-srgb.png: Removed.
+            * web-platform-tests/html/canvas/element/wide-gamut-canvas/resources/pattern-srgb.svg: Removed.
+            * web-platform-tests/html/canvas/element/wide-gamut-canvas/resources/pattern-srgb.webp: Removed.
+            * web-platform-tests/html/canvas/element/wide-gamut-canvas/resources/png-16bit/2x2_16bit_AdobeRGB_opaque.png: Removed.
+            * web-platform-tests/html/canvas/element/wide-gamut-canvas/resources/png-16bit/2x2_16bit_AdobeRGB_transparent.png: Removed.
+            * web-platform-tests/html/canvas/element/wide-gamut-canvas/resources/png-16bit/2x2_16bit_DisplayP3_opaque.png: Removed.
+            * web-platform-tests/html/canvas/element/wide-gamut-canvas/resources/png-16bit/2x2_16bit_DisplayP3_transparent.png: Removed.
+            * web-platform-tests/html/canvas/element/wide-gamut-canvas/resources/png-16bit/2x2_16bit_ProPhoto_opaque.png: Removed.
+            * web-platform-tests/html/canvas/element/wide-gamut-canvas/resources/png-16bit/2x2_16bit_ProPhoto_transparent.png: Removed.
+            * web-platform-tests/html/canvas/element/wide-gamut-canvas/resources/png-16bit/2x2_16bit_Rec2020_opaque.png: Removed.
+            * web-platform-tests/html/canvas/element/wide-gamut-canvas/resources/png-16bit/2x2_16bit_Rec2020_transparent.png: Removed.
+            * web-platform-tests/html/canvas/element/wide-gamut-canvas/resources/png-16bit/2x2_16bit_interlaced_AdobeRGB_opaque.png: Removed.
+            * web-platform-tests/html/canvas/element/wide-gamut-canvas/resources/png-16bit/2x2_16bit_interlaced_AdobeRGB_transparent.png: Removed.
+            * web-platform-tests/html/canvas/element/wide-gamut-canvas/resources/png-16bit/2x2_16bit_interlaced_DisplayP3_opaque.png: Removed.
+            * web-platform-tests/html/canvas/element/wide-gamut-canvas/resources/png-16bit/2x2_16bit_interlaced_DisplayP3_transparent.png: Removed.
+            * web-platform-tests/html/canvas/element/wide-gamut-canvas/resources/png-16bit/2x2_16bit_interlaced_ProPhoto_opaque.png: Removed.
+            * web-platform-tests/html/canvas/element/wide-gamut-canvas/resources/png-16bit/2x2_16bit_interlaced_ProPhoto_transparent.png: Removed.
+            * web-platform-tests/html/canvas/element/wide-gamut-canvas/resources/png-16bit/2x2_16bit_interlaced_Rec2020_opaque.png: Removed.
+            * web-platform-tests/html/canvas/element/wide-gamut-canvas/resources/png-16bit/2x2_16bit_interlaced_Rec2020_transparent.png: Removed.
+            * web-platform-tests/html/canvas/element/wide-gamut-canvas/resources/png-16bit/2x2_16bit_interlaced_sRGB_opaque.png: Removed.
+            * web-platform-tests/html/canvas/element/wide-gamut-canvas/resources/png-16bit/2x2_16bit_interlaced_sRGB_transparent.png: Removed.
+            * web-platform-tests/html/canvas/element/wide-gamut-canvas/resources/png-16bit/2x2_16bit_sRGB_opaque.png: Removed.
+            * web-platform-tests/html/canvas/element/wide-gamut-canvas/resources/png-16bit/2x2_16bit_sRGB_transparent.png: Removed.
+            * web-platform-tests/html/canvas/element/wide-gamut-canvas/resources/png-16bit/2x2_8bit_AdobeRGB_opaque.png: Removed.
+            * web-platform-tests/html/canvas/element/wide-gamut-canvas/resources/png-16bit/2x2_8bit_AdobeRGB_transparent.png: Removed.
+            * web-platform-tests/html/canvas/element/wide-gamut-canvas/resources/png-16bit/2x2_8bit_DisplayP3_opaque.png: Removed.
+            * web-platform-tests/html/canvas/element/wide-gamut-canvas/resources/png-16bit/2x2_8bit_DisplayP3_transparent.png: Removed.
+            * web-platform-tests/html/canvas/element/wide-gamut-canvas/resources/png-16bit/2x2_8bit_ProPhoto_opaque.png: Removed.
+            * web-platform-tests/html/canvas/element/wide-gamut-canvas/resources/png-16bit/2x2_8bit_ProPhoto_transparent.png: Removed.
+            * web-platform-tests/html/canvas/element/wide-gamut-canvas/resources/png-16bit/2x2_8bit_Rec2020_opaque.png: Removed.
+            * web-platform-tests/html/canvas/element/wide-gamut-canvas/resources/png-16bit/2x2_8bit_Rec2020_transparent.png: Removed.
+            * web-platform-tests/html/canvas/element/wide-gamut-canvas/resources/png-16bit/2x2_8bit_sRGB_opaque.png: Removed.
+            * web-platform-tests/html/canvas/element/wide-gamut-canvas/resources/png-16bit/2x2_8bit_sRGB_transparent.png: Removed.
+
+2021-10-08  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r282634. rdar://problem/83957287
 
     Preserve canvas color space when producing JPEGs from toDataURL/toBlob
