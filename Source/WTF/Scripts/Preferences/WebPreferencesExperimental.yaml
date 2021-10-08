@@ -329,7 +329,7 @@ CrossOriginEmbedderPolicyEnabled:
     WebKitLegacy:
       default: false
     WebKit:
-      default: false
+      default: true
     WebCore:
       default: false
 
@@ -393,7 +393,7 @@ ExposeSpeakersEnabled:
     WebKitLegacy:
       default: false
     WebKit:
-      default: true
+      default: false
     WebCore:
       default: false
 

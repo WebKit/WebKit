@@ -1,5 +1,25 @@
 2021-10-07  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r282245. rdar://problem/83956084
+
+    Unreviewed, follow-up after r282007
+    
+    Somehow, the wrong settings got enabled by the patch landed.
+    
+    * Scripts/Preferences/WebPreferencesExperimental.yaml:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@282245 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-09-09  Chris Dumez  <cdumez@apple.com>
+
+            Unreviewed, follow-up after r282007
+
+            Somehow, the wrong settings got enabled by the patch landed.
+
+            * Scripts/Preferences/WebPreferencesExperimental.yaml:
+
+2021-10-07  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r282007. rdar://problem/83957048
 
     [WK2] Turn on support for Cross-Origin-Opener-Policy / Cross-Origin-Embedder-Policy
