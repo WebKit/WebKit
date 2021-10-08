@@ -1,3 +1,16 @@
+2021-10-08  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        font-families inside @font-palette-values need to be case insensitive
+        https://bugs.webkit.org/show_bug.cgi?id=231215
+        <rdar://problem/83871643>
+
+        Reviewed by Antti Koivisto.
+
+        * web-platform-tests/css/css-fonts/font-palette-33-expected.html: Added.
+        * web-platform-tests/css/css-fonts/font-palette-33.html: Added.
+        * web-platform-tests/css/css-fonts/font-palette-34-expected.html: Added.
+        * web-platform-tests/css/css-fonts/font-palette-34.html: Added.
+
 2021-10-07  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         `highWaterMark` should be a readonly WebIDL attribute of queuing strategies
