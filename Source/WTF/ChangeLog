@@ -1,5 +1,30 @@
 2021-10-07  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r283541. rdar://problem/83956057
+
+    Enable 2D canvas color space support on Apple platforms
+    https://bugs.webkit.org/show_bug.cgi?id=231145
+    <rdar://82948394>
+    
+    Reviewed by Simon Fraser.
+    
+    * Scripts/Preferences/WebPreferencesExperimental.yaml:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@283541 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-10-05  Cameron McCormack  <heycam@apple.com>
+
+            Enable 2D canvas color space support on Apple platforms
+            https://bugs.webkit.org/show_bug.cgi?id=231145
+            <rdar://82948394>
+
+            Reviewed by Simon Fraser.
+
+            * Scripts/Preferences/WebPreferencesExperimental.yaml:
+
+2021-10-07  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r282245. rdar://problem/83956084
 
     Unreviewed, follow-up after r282007
