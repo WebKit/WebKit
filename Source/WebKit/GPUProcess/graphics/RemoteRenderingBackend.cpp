@@ -337,20 +337,27 @@ RefPtr<ImageBuffer> RemoteRenderingBackend::nextDestinationImageBufferAfterApply
 
 void RemoteRenderingBackend::wakeUpAndApplyDisplayList(const GPUProcessWakeupMessageArguments& arguments)
 {
+    // Immediately turn the RenderingResourceIdentifier (which is error-prone) to a QualifiedRenderingResourceIdentifier,
+    // and use a helper function to make sure that don't accidentally use the RenderingResourceIdentifier (because the helper function can't see it).
+    wakeUpAndApplyDisplayListWithQualifiedIdentifier(arguments.itemBufferIdentifier, arguments.offset, { arguments.destinationImageBufferIdentifier, m_gpuConnectionToWebProcess->webProcessIdentifier() }, arguments.reason);
+}
+
+void RemoteRenderingBackend::wakeUpAndApplyDisplayListWithQualifiedIdentifier(WebCore::DisplayList::ItemBufferIdentifier itemBufferIdentifier, uint64_t offset, QualifiedRenderingResourceIdentifier destinationImageBufferIdentifier, GPUProcessWakeupReason reason)
+{
     ASSERT(!RunLoop::isMain());
 
     TraceScope tracingScope(WakeUpAndApplyDisplayListStart, WakeUpAndApplyDisplayListEnd);
 
     updateLastKnownState(RemoteRenderingBackendState::BeganReplayingDisplayList);
 
-    RefPtr destinationImageBuffer = m_remoteResourceCache.cachedImageBuffer(arguments.destinationImageBufferIdentifier);
+    RefPtr destinationImageBuffer = m_remoteResourceCache.cachedImageBuffer(destinationImageBufferIdentifier.object());
     MESSAGE_CHECK(destinationImageBuffer, "Missing destination image buffer");
 
-    auto initialHandle = m_sharedDisplayListHandles.get(arguments.itemBufferIdentifier);
+    auto initialHandle = m_sharedDisplayListHandles.get(itemBufferIdentifier);
     MESSAGE_CHECK(initialHandle, "Missing initial shared display list handle");
 
-    LOG_WITH_STREAM(SharedDisplayLists, stream << "Waking up to Items[" << arguments.itemBufferIdentifier << "] => Image(" << arguments.destinationImageBufferIdentifier << ") at " << arguments.offset);
-    destinationImageBuffer = nextDestinationImageBufferAfterApplyingDisplayLists(*destinationImageBuffer, arguments.offset, *initialHandle, arguments.reason);
+    LOG_WITH_STREAM(SharedDisplayLists, stream << "Waking up to Items[" << itemBufferIdentifier << "] => Image(" << destinationImageBufferIdentifier.object() << ") at " << offset);
+    destinationImageBuffer = nextDestinationImageBufferAfterApplyingDisplayLists(*destinationImageBuffer, offset, *initialHandle, reason);
 
     // FIXME: All the callers pass m_pendingWakeupInfo's fields so the body of this function should just be this loop.
     while (destinationImageBuffer && m_pendingWakeupInfo) {
@@ -617,9 +624,12 @@ void RemoteRenderingBackend::didCreateSharedDisplayListHandleWithQualifiedIdenti
 
 void RemoteRenderingBackend::resumeFromPendingWakeupInformation()
 {
-    auto arguments = m_pendingWakeupInfo->arguments();
+    auto itemBufferIdentifier = m_pendingWakeupInfo->itemBufferIdentifier;
+    auto offset = m_pendingWakeupInfo->offset;
+    QualifiedRenderingResourceIdentifier destinationImageBufferIdentifier { m_pendingWakeupInfo->destinationImageBufferIdentifier, m_gpuConnectionToWebProcess->webProcessIdentifier() };
+    auto reason = m_pendingWakeupInfo->reason;
     m_pendingWakeupInfo = std::nullopt;
-    wakeUpAndApplyDisplayList(arguments);
+    wakeUpAndApplyDisplayListWithQualifiedIdentifier(itemBufferIdentifier, offset, destinationImageBufferIdentifier, reason);
 }
 
 void RemoteRenderingBackend::didCreateMaskImageBuffer(ImageBuffer& imageBuffer)

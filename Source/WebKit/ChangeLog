@@ -1,3 +1,24 @@
+2021-10-08  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [GPU Process] Unique RenderingResourceIdentifiers Part 3: Uniquify in wakeUpAndApplyDisplayList
+        https://bugs.webkit.org/show_bug.cgi?id=231405
+        <rdar://problem/84008003>
+
+        Reviewed by Chris Dumez.
+
+        This simply applies the same treatment in https://commits.webkit.org/242676@main to
+        RemoteRenderingBackend::wakeUpAndApplyDisplayList(). This is being done in a follow-up
+        patch because it relies on https://bugs.webkit.org/show_bug.cgi?id=231403.
+
+        No new tests because there is no behavior change.
+
+        * GPUProcess/graphics/RemoteRenderingBackend.cpp:
+        (WebKit::RemoteRenderingBackend::wakeUpAndApplyDisplayList):
+        (WebKit::RemoteRenderingBackend::wakeUpAndApplyDisplayListWithQualifiedIdentifier):
+        (WebKit::RemoteRenderingBackend::resumeFromPendingWakeupInformation):
+        * GPUProcess/graphics/RemoteRenderingBackend.h:
+        (WebKit::RemoteRenderingBackend::PendingWakeupInformation::arguments const): Deleted.
+
 2021-10-08  Philippe Normand  <pnormand@igalia.com>
 
         [WPE][Qt] API export fixes

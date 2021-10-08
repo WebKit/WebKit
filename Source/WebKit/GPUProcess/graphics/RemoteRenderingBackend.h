@@ -151,6 +151,7 @@ private:
     void didCreateSharedDisplayListHandle(WebCore::DisplayList::ItemBufferIdentifier, const SharedMemory::IPCHandle&, WebCore::RenderingResourceIdentifier destinationBufferIdentifier);
 
     // Received messages translated to use QualifiedRenderingResourceIdentifier.
+    void wakeUpAndApplyDisplayListWithQualifiedIdentifier(WebCore::DisplayList::ItemBufferIdentifier, uint64_t offset, QualifiedRenderingResourceIdentifier, GPUProcessWakeupReason);
     void createImageBufferWithQualifiedIdentifier(const WebCore::FloatSize& logicalSize, WebCore::RenderingMode, float resolutionScale, const WebCore::DestinationColorSpace&, WebCore::PixelFormat, QualifiedRenderingResourceIdentifier);
     void getDataURLForImageBufferWithQualifiedIdentifier(const String& mimeType, std::optional<double> quality, WebCore::PreserveResolution, QualifiedRenderingResourceIdentifier, CompletionHandler<void(String&&)>&&);
     void getDataForImageBufferWithQualifiedIdentifier(const String& mimeType, std::optional<double> quality, QualifiedRenderingResourceIdentifier, CompletionHandler<void(Vector<uint8_t>&&)>&&);
@@ -183,11 +184,6 @@ private:
         GPUProcessWakeupReason reason { GPUProcessWakeupReason::Unspecified };
         std::optional<WebCore::RenderingResourceIdentifier> missingCachedResourceIdentifier;
         RemoteRenderingBackendState state { RemoteRenderingBackendState::Initialized };
-
-        GPUProcessWakeupMessageArguments arguments() const
-        {
-            return { itemBufferIdentifier, offset, destinationImageBufferIdentifier, reason };
-        }
 
         bool shouldPerformWakeup(WebCore::RenderingResourceIdentifier identifier) const
         {
