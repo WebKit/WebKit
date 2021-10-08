@@ -8,7 +8,7 @@
 
 // Top level key is the image filename. Second level key is the pair of
 // CanvasRenderingContext2DSettings.colorSpace and ImageDataSettings.colorSpace.
-const tests = {
+const imageTests = {
     // 8 bit source images
 
     "sRGB-FF0000FF.png": {
@@ -175,6 +175,20 @@ const tests = {
         "display-p3 srgb": [219, 0, 1, 204],
         "display-p3 display-p3": [201, 42, 29, 204],
     },
+};
+
+const fromSRGBToDisplayP3 = {
+    "255,0,0,255": [234, 51, 35, 255],
+    "255,0,0,204": [234, 51, 35, 204],
+    "187,0,0,255": [171, 35, 23, 255],
+    "187,0,0,204": [171, 35, 23, 204],
+};
+
+const fromDisplayP3ToSRGB = {
+    "255,0,0,255": [255, 0, 0, 255],
+    "255,0,0,204": [255, 0, 0, 204],
+    "187,0,0,255": [205, 0, 0, 255],
+    "187,0,0,204": [205, 0, 0, 204],
 };
 
 function pixelsApproximatelyEqual(p1, p2) {
