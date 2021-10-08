@@ -47,6 +47,11 @@ elif sys.version_info >= (2, 7) and sys.version_info < (3,):
 else:
     raise ImportError("Unsupported Python version! (%s)" % sys.version)
 
+if sys.version_info >= (3, 6):
+    AutoInstall.register(Package('importlib_metadata', Version(4, 8, 1)))
+else:
+    AutoInstall.register(Package('importlib_metadata', Version(1, 7, 0)))
+
 AutoInstall.register(Package('atomicwrites', Version(1, 1, 5)))
 AutoInstall.register(Package('attr', Version(18, 1, 0), pypi_name='attrs'))
 AutoInstall.register(Package('bs4', Version(4, 9, 3), pypi_name='beautifulsoup4'))
@@ -54,7 +59,6 @@ AutoInstall.register(Package('configparser', Version(4, 0, 2)))
 AutoInstall.register(Package('contextlib2', Version(0, 6, 0)))
 AutoInstall.register(Package('coverage', Version(5, 2, 1)))
 AutoInstall.register(Package('funcsigs', Version(1, 0, 2)))
-AutoInstall.register(Package('importlib_metadata', Version(1, 7, 0)))
 AutoInstall.register(Package('genshi', Version(0, 7, 3), pypi_name='Genshi'))
 AutoInstall.register(Package('html5lib', Version(1, 1)))
 AutoInstall.register(Package('iniconfig', Version(1, 1, 1)))

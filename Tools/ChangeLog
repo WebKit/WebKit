@@ -1,3 +1,26 @@
+2021-10-08  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        Ensure webkitpy secret storage works successfully on Linux using only autoinstalled libraries
+        https://bugs.webkit.org/show_bug.cgi?id=231381
+
+        Reviewed by Jonathan Bedard.
+
+        Update to the latest python-keyring and python-secretstorage when using python 3.6 or newer.
+        Otherwise, use the latest version that still supports python2. This version is broken on
+        Linux, but that's OK because we do not care about python2 or python 3.5 anymore. I'm just
+        trying to avoid gratuitous breakage.
+
+        Autoinstall python-jeepey, a D-Bus library required by python-secretstorage.
+
+        Update to a newer version of importlib_metadata when using python 3.6 or newer. For older
+        versions of python, stick to the older version. There are some API breaks in this library
+        that I hope only affect python-keyring. We have other software that depends on this library,
+        but I think it's OK with either version. test-webkitpy will be the arbiter of that.
+
+        * Scripts/libraries/webkitcorepy/setup.py:
+        * Scripts/libraries/webkitcorepy/webkitcorepy/__init__.py:
+        * Scripts/webkitpy/__init__.py:
+
 2021-10-08  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Win][MiniBrowser][WK2] Implement Show Layer Tree to dump the GraphicsLayer tree
