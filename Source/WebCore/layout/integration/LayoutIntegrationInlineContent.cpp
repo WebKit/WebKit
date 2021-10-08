@@ -47,7 +47,7 @@ bool InlineContent::hasContent() const
     return boxes.size() > 1;
 };
 
-auto InlineContent::boxesForRect(const LayoutRect& rect) const -> BoxRange
+IteratorRange<const InlineDisplay::Box*> InlineContent::boxesForRect(const LayoutRect& rect) const
 {
     if (boxes.isEmpty())
         return { nullptr, nullptr };

@@ -537,7 +537,7 @@ bool LineLayout::hitTest(const HitTestRequest& request, HitTestResult& result, c
     hitTestBoundingBox.moveBy(-accumulatedOffset);
     auto boxRange = m_inlineContent->boxesForRect(hitTestBoundingBox);
 
-    for (auto& box : WTF::makeReversedRange(boxRange)) {
+    for (auto& box : makeReversedRange(boxRange)) {
         auto& renderer = m_boxTree.rendererForLayoutBox(box.layoutBox());
 
         if (!box.isRootInlineBox() && is<RenderLayerModelObject>(renderer) && downcast<RenderLayerModelObject>(renderer).hasSelfPaintingLayer())

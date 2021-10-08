@@ -1,3 +1,16 @@
+2021-10-08  Antti Koivisto  <antti@apple.com>
+
+        Make WTF::IteratorRange reversible
+        https://bugs.webkit.org/show_bug.cgi?id=231415
+
+        Reviewed by Darin Adler.
+
+        Also export some names out of the WTF namespace.
+
+        * wtf/IteratorRange.h:
+        (WTF::IteratorRange::rbegin const):
+        (WTF::IteratorRange::rend const):
+
 2021-10-07  Aditya Keerthi  <akeerthi@apple.com>
 
         [css-ui] Parsing support for accent-color
