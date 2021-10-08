@@ -38,6 +38,9 @@ public:
 
     ScrollingTreeScrollingNode& scrollingNode() { return m_scrollingNode; }
     const ScrollingTreeScrollingNode& scrollingNode() const { return m_scrollingNode; }
+    
+    virtual bool startAnimatedScrollToPosition(FloatPoint) = 0;
+    virtual void stopAnimatedScroll() = 0;
 
 protected:
     WEBCORE_EXPORT ScrollingTree& scrollingTree() const;

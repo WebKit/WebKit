@@ -49,7 +49,9 @@ private:
     FloatPoint adjustedScrollPosition(const FloatPoint&, ScrollClamping) const override;
     void repositionScrollingLayers() override;
     WheelEventHandlingResult handleWheelEvent(const PlatformWheelEvent&, EventTargeting) override;
-    void stopScrollAnimations() override;
+
+    bool startAnimatedScrollToPosition(FloatPoint) override;
+    void stopAnimatedScroll() override;
 
     ScrollingTreeScrollingNodeDelegateNicosia m_delegate;
 };

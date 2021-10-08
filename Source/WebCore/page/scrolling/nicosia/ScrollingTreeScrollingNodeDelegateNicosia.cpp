@@ -86,11 +86,6 @@ WheelEventHandlingResult ScrollingTreeScrollingNodeDelegateNicosia::handleWheelE
     return WheelEventHandlingResult::handled();
 }
 
-void ScrollingTreeScrollingNodeDelegateNicosia::stopScrollAnimations()
-{
-    m_scrollController.stopAnimatedScroll();
-}
-
 void ScrollingTreeScrollingNodeDelegateNicosia::animationTimerFired()
 {
     m_scrollController.animationCallback(MonotonicTime::now());
@@ -180,6 +175,19 @@ ScrollExtents ScrollingTreeScrollingNodeDelegateNicosia::scrollExtents() const
         scrollingNode().totalContentsSize(),
         scrollingNode().scrollableAreaSize()
     };
+}
+
+bool ScrollingTreeScrollingNodeDelegateNicosia::startAnimatedScrollToPosition(FloatPoint destinationPosition)
+{
+    auto currentOffset = ScrollableArea::scrollOffsetFromPosition(currentScrollPosition(), scrollOrigin());
+    auto destinationOffset = ScrollableArea::scrollOffsetFromPosition(destinationPosition, scrollOrigin());
+    
+    return m_scrollController.startAnimatedScrollToDestination(currentOffset, destinationOffset);
+}
+
+void ScrollingTreeScrollingNodeDelegateNicosia::stopAnimatedScroll()
+{
+    m_scrollController.stopAnimatedScroll();
 }
 
 } // namespace WebCore

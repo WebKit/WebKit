@@ -297,6 +297,9 @@ void ScrollingStateScrollingNode::dumpProperties(TextStream& ts, ScrollingStateT
     if (m_requestedScrollData.clamping == ScrollClamping::Unclamped)
         ts.dumpProperty("requested scroll position clamping", m_requestedScrollData.clamping);
 
+    if (m_requestedScrollData.animated == ScrollIsAnimated::Yes)
+        ts.dumpProperty("requested scroll position is animated", true);
+
     if (m_scrollOrigin != IntPoint())
         ts.dumpProperty("scroll origin", m_scrollOrigin);
 

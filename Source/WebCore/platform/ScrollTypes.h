@@ -305,6 +305,14 @@ struct ScrollPositionChangeOptions {
 
 namespace WTF {
 
+template<> struct EnumTraits<WebCore::ScrollIsAnimated> {
+    using values = EnumValues<
+        WebCore::ScrollIsAnimated,
+        WebCore::ScrollIsAnimated::No,
+        WebCore::ScrollIsAnimated::Yes
+    >;
+};
+
 template<> struct EnumTraits<WebCore::ScrollbarMode> {
     using values = EnumValues<
         WebCore::ScrollbarMode,

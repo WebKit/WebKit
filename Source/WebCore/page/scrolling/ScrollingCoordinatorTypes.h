@@ -102,6 +102,20 @@ enum class ViewportRectStability {
     ChangingObscuredInsetsInteractively // This implies Unstable.
 };
 
+struct RequestedScrollData {
+    FloatPoint scrollPosition;
+    ScrollType scrollType { ScrollType::User };
+    ScrollClamping clamping { ScrollClamping::Clamped };
+    ScrollIsAnimated animated { ScrollIsAnimated::No };
+
+    bool operator==(const RequestedScrollData& other) const
+    {
+        return scrollPosition == other.scrollPosition
+            && scrollType == other.scrollType
+            && clamping == other.clamping;
+    }
+};
+
 struct ScrollUpdate {
     ScrollingNodeID nodeID { 0 };
     FloatPoint scrollPosition;

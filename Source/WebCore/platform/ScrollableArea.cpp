@@ -140,10 +140,15 @@ void ScrollableArea::scrollToPositionWithoutAnimation(const FloatPoint& position
     scrollAnimator().scrollToPositionWithoutAnimation(position, clamping);
 }
 
-void ScrollableArea::scrollToPositionWithAnimation(const FloatPoint& position, ScrollClamping)
+void ScrollableArea::scrollToPositionWithAnimation(const FloatPoint& position, ScrollClamping clamping)
 {
     LOG_WITH_STREAM(Scrolling, stream << "ScrollableArea " << this << " scrollToPositionWithAnimation " << position);
-    if (scrollAnimator().scrollToPositionWithAnimation(position))
+
+    bool startedAnimation = requestAnimatedScrollToPosition(roundedIntPoint(position), clamping);
+    if (!startedAnimation)
+        startedAnimation = scrollAnimator().scrollToPositionWithAnimation(position);
+
+    if (startedAnimation)
         setScrollAnimationStatus(ScrollAnimationStatus::Animating);
 }
 

@@ -239,7 +239,7 @@ void AsyncScrollingCoordinator::frameViewRootLayerDidChange(FrameView& frameView
     node->setHorizontalScrollbarLayer(frameView.layerForHorizontalScrollbar());
 }
 
-bool AsyncScrollingCoordinator::requestScrollPositionUpdate(ScrollableArea& scrollableArea, const IntPoint& scrollPosition, ScrollType scrollType, ScrollClamping clamping)
+bool AsyncScrollingCoordinator::requestScrollPositionUpdate(ScrollableArea& scrollableArea, const ScrollPosition& scrollPosition, ScrollType scrollType, ScrollClamping clamping)
 {
     ASSERT(isMainThread());
     ASSERT(m_page);
@@ -275,9 +275,21 @@ bool AsyncScrollingCoordinator::requestScrollPositionUpdate(ScrollableArea& scro
     if (!stateNode)
         return false;
 
-    stateNode->setRequestedScrollData({ scrollPosition, scrollType, clamping });
+    stateNode->setRequestedScrollData({ scrollPosition, scrollType, clamping, ScrollIsAnimated::No });
+    // FIXME: This should schedule a rendering update
     commitTreeStateIfNeeded();
     return true;
+}
+
+bool AsyncScrollingCoordinator::requestAnimatedScrollToPosition(ScrollableArea&, const ScrollPosition&, ScrollClamping)
+{
+    // FIXME: Implement.
+    return false;
+}
+
+void AsyncScrollingCoordinator::stopAnimatedScroll(ScrollableArea&)
+{
+    // FIXME: Implement.
 }
 
 void AsyncScrollingCoordinator::applyScrollingTreeLayerPositions()

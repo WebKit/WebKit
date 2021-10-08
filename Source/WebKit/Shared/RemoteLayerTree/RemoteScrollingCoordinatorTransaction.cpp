@@ -507,6 +507,7 @@ void ArgumentCoder<RequestedScrollData>::encode(Encoder& encoder, const Requeste
     encoder << scrollData.scrollPosition;
     encoder << scrollData.scrollType;
     encoder << scrollData.clamping;
+    encoder << scrollData.animated;
 }
 
 bool ArgumentCoder<RequestedScrollData>::decode(Decoder& decoder, RequestedScrollData& scrollData)
@@ -518,6 +519,9 @@ bool ArgumentCoder<RequestedScrollData>::decode(Decoder& decoder, RequestedScrol
         return false;
 
     if (!decoder.decode(scrollData.clamping))
+        return false;
+
+    if (!decoder.decode(scrollData.animated))
         return false;
 
     return true;

@@ -2306,7 +2306,7 @@ void FrameView::scrollElementToRect(const Element& element, const IntRect& rect)
 
 void FrameView::setScrollPosition(const ScrollPosition& scrollPosition, const ScrollPositionChangeOptions& options)
 {
-    LOG_WITH_STREAM(Scrolling, stream << "FrameView::setScrollPosition " << scrollPosition << " , clearing anchor");
+    LOG_WITH_STREAM(Scrolling, stream << "FrameView::setScrollPosition " << scrollPosition << " animated " << (options.animated == ScrollIsAnimated::Yes) << ", clearing anchor");
 
     auto oldScrollType = currentScrollType();
     setCurrentScrollType(options.type);
@@ -2685,6 +2685,30 @@ bool FrameView::requestScrollPositionUpdate(const ScrollPosition& position, Scro
 #endif
 
     return false;
+}
+
+bool FrameView::requestAnimatedScrollToPosition(const ScrollPosition& destinationPosition, ScrollClamping clamping)
+{
+    LOG_WITH_STREAM(Scrolling, stream << "FrameView::requestAnimatedScrollToPosition " << destinationPosition);
+
+#if ENABLE(ASYNC_SCROLLING)
+    if (auto scrollingCoordinator = this->scrollingCoordinator())
+        return scrollingCoordinator->requestAnimatedScrollToPosition(*this, destinationPosition, clamping);
+#else
+    UNUSED_PARAM(destinationPosition);
+#endif
+
+    return false;
+}
+
+void FrameView::stopAsyncAnimatedScroll()
+{
+#if ENABLE(ASYNC_SCROLLING)
+    LOG_WITH_STREAM(Scrolling, stream << "FrameView::stopAsyncAnimatedScroll");
+
+    if (auto scrollingCoordinator = this->scrollingCoordinator())
+        return scrollingCoordinator->stopAnimatedScroll(*this);
+#endif
 }
 
 HostWindow* FrameView::hostWindow() const

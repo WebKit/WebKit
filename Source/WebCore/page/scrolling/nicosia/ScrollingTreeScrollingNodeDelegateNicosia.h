@@ -31,7 +31,6 @@
 #if ENABLE(ASYNC_SCROLLING) && USE(NICOSIA)
 
 #include "NicosiaPlatformLayer.h"
-#include "ScrollAnimation.h"
 #include "ScrollingEffectsController.h"
 #include "ScrollingStateOverflowScrollingNode.h"
 #include "ThreadedScrollingTree.h"
@@ -39,7 +38,6 @@
 
 namespace WebCore {
 
-// FIXME: This should not be a ScrollAnimationClient.
 class ScrollingTreeScrollingNodeDelegateNicosia : public ScrollingTreeScrollingNodeDelegate, public ScrollingEffectsControllerClient {
 public:
     explicit ScrollingTreeScrollingNodeDelegateNicosia(ScrollingTreeScrollingNode&, bool scrollAnimatorEnabled);
@@ -49,7 +47,10 @@ public:
     std::unique_ptr<Nicosia::SceneIntegration::UpdateScope> createUpdateScope();
     void updateVisibleLengths();
     WheelEventHandlingResult handleWheelEvent(const PlatformWheelEvent&, EventTargeting);
-    void stopScrollAnimations();
+
+    // ScrollingTreeScrollingNodeDelegate
+    bool startAnimatedScrollToPosition(FloatPoint) final;
+    void stopAnimatedScroll() final;
 
 private:
     void animationTimerFired();

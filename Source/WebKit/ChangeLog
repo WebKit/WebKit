@@ -1,3 +1,21 @@
+2021-10-07  Simon Fraser  <simon.fraser@apple.com>
+
+        Add some plumbing for running smooth scroll animations in the scrolling thread/UI process
+        https://bugs.webkit.org/show_bug.cgi?id=231402
+
+        Reviewed by Tim Horton.
+
+        * Shared/RemoteLayerTree/RemoteScrollingCoordinatorTransaction.cpp:
+        (ArgumentCoder<RequestedScrollData>::encode):
+        (ArgumentCoder<RequestedScrollData>::decode):
+        * UIProcess/RemoteLayerTree/ios/ScrollingTreeFrameScrollingNodeRemoteIOS.mm:
+        (WebKit::ScrollingTreeFrameScrollingNodeRemoteIOS::commitStateAfterChildren):
+        * UIProcess/RemoteLayerTree/ios/ScrollingTreeScrollingNodeDelegateIOS.h:
+        * UIProcess/RemoteLayerTree/ios/ScrollingTreeScrollingNodeDelegateIOS.mm:
+        (WebKit::ScrollingTreeScrollingNodeDelegateIOS::commitStateAfterChildren):
+        (WebKit::ScrollingTreeScrollingNodeDelegateIOS::startAnimatedScrollToPosition):
+        (WebKit::ScrollingTreeScrollingNodeDelegateIOS::stopAnimatedScroll):
+
 2021-10-07  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [GPU Process] Unique RenderingResourceIdentifiers Part 2: Unroll PendingWakeupInformation::arguments

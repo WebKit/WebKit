@@ -113,6 +113,19 @@ bool ScrollingTreeScrollingNodeDelegateMac::handleWheelEvent(const PlatformWheel
     return m_scrollController.handleWheelEvent(wheelEvent);
 }
 
+bool ScrollingTreeScrollingNodeDelegateMac::startAnimatedScrollToPosition(FloatPoint destinationPosition)
+{
+    auto currentOffset = ScrollableArea::scrollOffsetFromPosition(currentScrollPosition(), scrollOrigin());
+    auto destinationOffset = ScrollableArea::scrollOffsetFromPosition(destinationPosition, scrollOrigin());
+    
+    return m_scrollController.startAnimatedScrollToDestination(currentOffset, destinationOffset);
+}
+
+void ScrollingTreeScrollingNodeDelegateMac::stopAnimatedScroll()
+{
+    m_scrollController.stopAnimatedScroll();
+}
+
 void ScrollingTreeScrollingNodeDelegateMac::willDoProgrammaticScroll(const FloatPoint& targetPosition)
 {
     if (scrollPositionIsNotRubberbandingEdge(targetPosition)) {

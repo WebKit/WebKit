@@ -93,11 +93,8 @@ void ScrollingTreeFrameScrollingNodeNicosia::commitStateAfterChildren(const Scro
     const auto& scrollingStateNode = downcast<ScrollingStateScrollingNode>(stateNode);
 
     // Update the scroll position after child nodes have been updated, because they need to have updated their constraints before any scrolling happens.
-    if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::RequestedScrollPosition)) {
-        stopScrollAnimations();
-        const auto& requestedScrollData = scrollingStateNode.requestedScrollData();
-        scrollTo(requestedScrollData.scrollPosition, requestedScrollData.scrollType, requestedScrollData.clamping);
-    }
+    if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::RequestedScrollPosition))
+        handleScrollPositionRequest(scrollingStateNode.requestedScrollData());
 }
 
 WheelEventHandlingResult ScrollingTreeFrameScrollingNodeNicosia::handleWheelEvent(const PlatformWheelEvent& wheelEvent, EventTargeting eventTargeting)
@@ -105,9 +102,14 @@ WheelEventHandlingResult ScrollingTreeFrameScrollingNodeNicosia::handleWheelEven
     return m_delegate.handleWheelEvent(wheelEvent, eventTargeting);
 }
 
-void ScrollingTreeFrameScrollingNodeNicosia::stopScrollAnimations()
+bool ScrollingTreeFrameScrollingNodeNicosia::startAnimatedScrollToPosition(FloatPoint destinationPosition)
 {
-    m_delegate.stopScrollAnimations();
+    return m_delegate.startAnimatedScrollToPosition(destinationPosition);
+}
+
+void ScrollingTreeFrameScrollingNodeNicosia::stopAnimatedScroll()
+{
+    m_delegate.stopAnimatedScroll();
 }
 
 FloatPoint ScrollingTreeFrameScrollingNodeNicosia::adjustedScrollPosition(const FloatPoint& position, ScrollClamping clamping) const

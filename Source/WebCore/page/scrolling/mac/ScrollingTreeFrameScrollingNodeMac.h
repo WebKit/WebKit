@@ -66,6 +66,9 @@ private:
     void willBeDestroyed() final;
     void willDoProgrammaticScroll(const FloatPoint&) final;
 
+    bool startAnimatedScrollToPosition(FloatPoint) final;
+    void stopAnimatedScroll() final;
+
     FloatPoint adjustedScrollPosition(const FloatPoint&, ScrollClamping) const final;
 
     void currentScrollPositionChanged(ScrollType, ScrollingLayerPositionAction) final;

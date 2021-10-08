@@ -38,19 +38,6 @@ OBJC_CLASS NSScrollerImp;
 
 namespace WebCore {
 
-struct RequestedScrollData {
-    FloatPoint scrollPosition;
-    ScrollType scrollType { ScrollType::User };
-    ScrollClamping clamping { ScrollClamping::Clamped };
-    
-    bool operator==(const RequestedScrollData& other) const
-    {
-        return scrollPosition == other.scrollPosition
-            && scrollType == other.scrollType
-            && clamping == other.clamping;
-    }
-};
-
 class ScrollingStateScrollingNode : public ScrollingStateNode {
 public:
     virtual ~ScrollingStateScrollingNode();
