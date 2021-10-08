@@ -20,19 +20,23 @@
 from abc import ABCMeta
 import base64
 import copy
-from contextlib import contextmanager
+from contextlib import (contextmanager, asynccontextmanager)
+import importlib
 import pkgutil
 import warnings
+import sys
 
 from .command import Command
 from .errorhandler import ErrorHandler
 from .file_detector import FileDetector, LocalFileDetector
 from .mobile import Mobile
 from .remote_connection import RemoteConnection
+from .script_key import ScriptKey
 from .switch_to import SwitchTo
 from .webelement import WebElement
 
 from selenium.common.exceptions import (InvalidArgumentException,
+                                        JavascriptException,
                                         WebDriverException,
                                         NoSuchCookieException,
                                         UnknownMethodException)
@@ -47,6 +51,14 @@ try:
     str = basestring
 except NameError:
     pass
+
+cdp = None
+
+
+def import_cdp():
+    global cdp
+    if cdp is None:
+        cdp = importlib.import_module("selenium.webdriver.common.bidi.cdp")
 
 
 _W3C_CAPABILITY_NAMES = frozenset([
@@ -67,6 +79,8 @@ _OSS_W3C_CONVERSION = {
     'version': 'browserVersion',
     'platform': 'platformName'
 }
+
+devtools = None
 
 
 def _make_w3c_caps(caps):
@@ -102,7 +116,7 @@ def _make_w3c_caps(caps):
     return {"firstMatch": [{}], "alwaysMatch": always_match}
 
 
-def get_remote_connection(capabilities, command_executor, keep_alive):
+def get_remote_connection(capabilities, command_executor, keep_alive, ignore_local_proxy=False):
     from selenium.webdriver.safari.remote_connection import SafariRemoteConnection
 
     candidates = [RemoteConnection] + [SafariRemoteConnection]
@@ -111,7 +125,7 @@ def get_remote_connection(capabilities, command_executor, keep_alive):
         RemoteConnection
     )
 
-    return handler(command_executor, keep_alive=keep_alive)
+    return handler(command_executor, keep_alive=keep_alive, ignore_proxy=ignore_local_proxy)
 
 
 @add_metaclass(ABCMeta)
@@ -163,8 +177,10 @@ class WebDriver(BaseWebDriver):
          - options - instance of a driver options.Options class
         """
         capabilities = {}
+        _ignore_local_proxy = False
         if options is not None:
             capabilities = options.to_capabilities()
+            _ignore_local_proxy = options._ignore_local_proxy
         if desired_capabilities is not None:
             if not isinstance(desired_capabilities, dict):
                 raise WebDriverException("Desired Capabilities must be a dictionary")
@@ -172,10 +188,13 @@ class WebDriver(BaseWebDriver):
                 capabilities.update(desired_capabilities)
         self.command_executor = command_executor
         if isinstance(self.command_executor, (str, bytes)):
-            self.command_executor = get_remote_connection(capabilities, command_executor=command_executor, keep_alive=keep_alive)
+            self.command_executor = get_remote_connection(capabilities, command_executor=command_executor,
+                                                          keep_alive=keep_alive,
+                                                          ignore_local_proxy=_ignore_local_proxy)
         self._is_remote = True
         self.session_id = None
-        self.capabilities = {}
+        self.caps = {}
+        self.pinned_scripts = {}
         self.error_handler = ErrorHandler()
         self.start_client()
         self.start_session(capabilities, browser_profile)
@@ -235,8 +254,8 @@ class WebDriver(BaseWebDriver):
 
                 name = driver.name
         """
-        if 'browserName' in self.capabilities:
-            return self.capabilities['browserName']
+        if 'browserName' in self.caps:
+            return self.caps['browserName']
         else:
             raise KeyError('browserName not specified in session capabilities')
 
@@ -279,12 +298,12 @@ class WebDriver(BaseWebDriver):
         if 'sessionId' not in response:
             response = response['value']
         self.session_id = response['sessionId']
-        self.capabilities = response.get('value')
+        self.caps = response.get('value')
 
         # if capabilities is none we are probably speaking to
         # a W3C endpoint
-        if self.capabilities is None:
-            self.capabilities = response.get('capabilities')
+        if self.caps is None:
+            self.caps = response.get('capabilities')
 
         # Double check to see if we have a W3C Compliant browser
         self.w3c = response.get('status') is None
@@ -689,6 +708,26 @@ class WebDriver(BaseWebDriver):
         warnings.warn("find_elements_by_* commands are deprecated. Please use find_elements() instead")
         return self.find_elements(by=By.CSS_SELECTOR, value=css_selector)
 
+    def pin_script(self, script):
+        """
+
+        """
+        script_key = ScriptKey()
+        self.pinned_scripts[script_key.id] = script
+        return script_key
+
+    def unpin(self, script_key):
+        """
+
+        """
+        self.pinned_scripts.pop(script_key.id)
+
+    def get_pinned_scripts(self):
+        """
+
+        """
+        return list(self.pinned_scripts.keys())
+
     def execute_script(self, script, *args):
         """
         Synchronously Executes JavaScript in the current window/frame.
@@ -702,6 +741,12 @@ class WebDriver(BaseWebDriver):
 
                 driver.execute_script('return document.title;')
         """
+        if isinstance(script, ScriptKey):
+            try:
+                script = self.pinned_scripts[script.id]
+            except KeyError:
+                raise JavascriptException("Pinned script could not be found")
+
         converted_args = list(args)
         command = None
         if self.w3c:
@@ -1067,8 +1112,7 @@ class WebDriver(BaseWebDriver):
 
     def find_element(self, by=By.ID, value=None):
         """
-        Find an element given a By strategy and locator. Prefer the find_element_by_* methods when
-        possible.
+        Find an element given a By strategy and locator.
 
         :Usage:
             ::
@@ -1095,8 +1139,7 @@ class WebDriver(BaseWebDriver):
 
     def find_elements(self, by=By.ID, value=None):
         """
-        Find elements given a By strategy and locator. Prefer the find_elements_by_* methods when
-        possible.
+        Find elements given a By strategy and locator.
 
         :Usage:
             ::
@@ -1108,7 +1151,7 @@ class WebDriver(BaseWebDriver):
         if isinstance(by, RelativeBy):
             _pkg = '.'.join(__name__.split('.')[:-1])
             raw_function = pkgutil.get_data(_pkg, 'findElements.js').decode('utf8')
-            find_element_js = "return (%s).apply(null, arguments);" % raw_function
+            find_element_js = "return ({}).apply(null, arguments);".format(raw_function)
             return self.execute_script(find_element_js, by.to_dict())
 
         if self.w3c:
@@ -1135,7 +1178,16 @@ class WebDriver(BaseWebDriver):
         """
         returns the drivers current desired capabilities being used
         """
-        return self.capabilities
+        warnings.warn("desired_capabilities is deprecated. Please call capabilities.",
+                      DeprecationWarning, stacklevel=2)
+        return self.caps
+
+    @property
+    def capabilities(self):
+        """
+        returns the drivers current capabilities being used.
+        """
+        return self.caps
 
     def get_screenshot_as_file(self, filename):
         """
@@ -1417,3 +1469,110 @@ class WebDriver(BaseWebDriver):
                 driver.get_log('server')
         """
         return self.execute(Command.GET_LOG, {'type': log_type})['value']
+
+    @asynccontextmanager
+    async def add_js_error_listener(self):
+        """
+        Listens for JS errors and when the contextmanager exits check if there were JS Errors
+
+        :Usage:
+             ::
+
+                async with driver.add_js_error_listener() as error:
+                    driver.find_element(By.ID, "throwing-mouseover").click()
+                assert error is not None
+                assert error.exception_details.stack_trace.call_frames[0].function_name == "onmouseover"
+        """
+        assert sys.version_info >= (3, 7)
+        global cdp
+        async with self._get_bidi_connection():
+            global devtools
+            session = cdp.get_session_context('page.enable')
+            await session.execute(devtools.page.enable())
+            session = cdp.get_session_context('runtime.enable')
+            await session.execute(devtools.runtime.enable())
+            js_exception = devtools.runtime.ExceptionThrown(None, None)
+            async with session.wait_for(devtools.runtime.ExceptionThrown) as exception:
+                yield js_exception
+            js_exception.timestamp = exception.value.timestamp
+            js_exception.exception_details = exception.value.exception_details
+
+    @asynccontextmanager
+    async def add_listener(self, event_type):
+        '''
+        Listens for certain events that are passed in.
+
+        :Args:
+         - event_type: The type of event that we want to look at.
+
+         :Usage:
+             ::
+
+                async with driver.add_listener(Console.log) as messages:
+                    driver.execute_script("console.log('I like cheese')")
+                assert messages["message"] == "I love cheese"
+
+        '''
+        assert sys.version_info >= (3, 7)
+        global cdp
+        from selenium.webdriver.common.bidi.console import Console
+
+        async with self._get_bidi_connection():
+            global devtools
+            session = cdp.get_session_context('page.enable')
+            await session.execute(devtools.page.enable())
+            session = cdp.get_session_context('console.enable')
+            await session.execute(devtools.console.enable())
+            console = {
+                "message": None,
+                "level": None
+            }
+            async with session.wait_for(devtools.console.MessageAdded) as messages:
+                yield console
+            if event_type == Console.ERROR:
+                if messages.value.message.level == "error":
+                    console["message"] = messages.value.message.text
+                    console["level"] = messages.value.message.level
+            elif event_type == Console.ALL:
+                console["message"] = messages.value.message.text
+                console["level"] = messages.value.message.level
+
+    @asynccontextmanager
+    async def _get_bidi_connection(self):
+        global cdp
+        import_cdp()
+        ws_url = None
+        if self.caps.get("se:options"):
+            ws_url = self.caps.get("se:options").get("cdp")
+        else:
+            version, ws_url = self._get_cdp_details()
+
+        if ws_url is None:
+            raise WebDriverException("Unable to find url to connect to from capabilities")
+
+        cdp.import_devtools(version)
+
+        global devtools
+        devtools = importlib.import_module("selenium.webdriver.common.devtools.v{}".format(version))
+        async with cdp.open_cdp(ws_url) as conn:
+            targets = await conn.execute(devtools.target.get_targets())
+            target_id = targets[0].target_id
+            async with conn.open_session(target_id) as session:
+                yield session
+
+    def _get_cdp_details(self):
+        import json
+        import urllib3
+
+        http = urllib3.PoolManager()
+        debugger_address = self.caps.get("{0}:chromeOptions".format(self.vendor_prefix)).get("debuggerAddress")
+        res = http.request('GET', "http://{0}/json/version".format(debugger_address))
+        data = json.loads(res.data)
+
+        browser_version = data.get("Browser")
+        websocket_url = data.get("webSocketDebuggerUrl")
+
+        import re
+        version = re.search(r".*/(\d+)\.", browser_version).group(1)
+
+        return version, websocket_url

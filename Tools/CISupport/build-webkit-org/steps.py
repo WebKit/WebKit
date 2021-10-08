@@ -957,7 +957,7 @@ class RunWebDriverTests(shell.Test):
     description = ["webdriver-tests running"]
     descriptionDone = ["webdriver-tests"]
     jsonFileName = "webdriver_tests.json"
-    command = ["python", "Tools/Scripts/run-webdriver-tests", "--json-output={0}".format(jsonFileName), WithProperties("--%(configuration)s")]
+    command = ["python3", "Tools/Scripts/run-webdriver-tests", "--json-output={0}".format(jsonFileName), WithProperties("--%(configuration)s")]
     logfiles = {"json": jsonFileName}
 
     def start(self):

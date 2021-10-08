@@ -165,5 +165,5 @@ class WebDriverTestRunner(object):
         if directory and not os.path.exists(directory):
             os.makedirs(directory)
 
-        with open(output_path, 'wb') as fp:
+        with open(output_path, 'w') as fp:
             json.dump(json_results, fp)

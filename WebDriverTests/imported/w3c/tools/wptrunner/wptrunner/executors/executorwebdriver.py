@@ -1,4 +1,3 @@
-from __future__ import absolute_import
 import json
 import os
 import socket
@@ -6,7 +5,7 @@ import threading
 import time
 import traceback
 import uuid
-from six.moves.urllib.parse import urljoin
+from urllib.parse import urljoin
 
 from .base import (CallbackHandler,
                    CrashtestExecutor,
@@ -20,22 +19,23 @@ from .protocol import (BaseProtocolPart,
                        Protocol,
                        SelectorProtocolPart,
                        ClickProtocolPart,
+                       CookiesProtocolPart,
                        SendKeysProtocolPart,
                        ActionSequenceProtocolPart,
                        TestDriverProtocolPart,
                        GenerateTestReportProtocolPart,
                        SetPermissionProtocolPart,
-                       VirtualAuthenticatorProtocolPart)
-from ..testrunner import Stop
+                       VirtualAuthenticatorProtocolPart,
+                       DebugProtocolPart)
 
-import webdriver as client
+from webdriver.client import Session
 from webdriver import error
 
 here = os.path.dirname(__file__)
 
 
 class WebDriverCallbackHandler(CallbackHandler):
-    unimplemented_exc = (NotImplementedError, client.UnknownCommandException)
+    unimplemented_exc = (NotImplementedError, error.UnknownCommandException)
 
 
 class WebDriverBaseProtocolPart(BaseProtocolPart):
@@ -49,7 +49,7 @@ class WebDriverBaseProtocolPart(BaseProtocolPart):
     def set_timeout(self, timeout):
         try:
             self.webdriver.timeouts.script = timeout
-        except client.WebDriverException:
+        except error.WebDriverException:
             # workaround https://bugs.chromium.org/p/chromedriver/issues/detail?id=2057
             body = {"type": "script", "ms": timeout * 1000}
             self.webdriver.send_session_command("POST", "timeouts", body)
@@ -71,16 +71,16 @@ class WebDriverBaseProtocolPart(BaseProtocolPart):
         while True:
             try:
                 self.webdriver.execute_async_script("")
-            except (client.TimeoutException,
-                    client.ScriptTimeoutException,
-                    client.JavascriptErrorException):
+            except (error.TimeoutException,
+                    error.ScriptTimeoutException,
+                    error.JavascriptErrorException):
                 # A JavascriptErrorException will happen when we navigate;
                 # by ignoring it it's possible to reload the test whilst the
                 # harness remains paused
                 pass
             except (socket.timeout,
-                    client.NoSuchWindowException,
-                    client.UnknownErrorException,
+                    error.NoSuchWindowException,
+                    error.UnknownErrorException,
                     IOError):
                 break
             except Exception:
@@ -116,7 +116,7 @@ class WebDriverTestharnessProtocolPart(TestharnessProtocolPart):
             try:
                 self.webdriver.window_handle = handle
                 self.webdriver.window.close()
-            except client.NoSuchWindowException:
+            except error.NoSuchWindowException:
                 pass
         self.webdriver.window_handle = self.runner_handle
         return self.runner_handle
@@ -190,6 +190,15 @@ class WebDriverClickProtocolPart(ClickProtocolPart):
         return element.click()
 
 
+class WebDriverCookiesProtocolPart(CookiesProtocolPart):
+    def setup(self):
+        self.webdriver = self.parent.webdriver
+
+    def delete_all_cookies(self):
+        self.logger.info("Deleting all cookies")
+        return self.webdriver.send_session_command("DELETE", "cookie")
+
+
 class WebDriverSendKeysProtocolPart(SendKeysProtocolPart):
     def setup(self):
         self.webdriver = self.parent.webdriver
@@ -197,7 +206,7 @@ class WebDriverSendKeysProtocolPart(SendKeysProtocolPart):
     def send_keys(self, element, keys):
         try:
             return element.send_keys(keys)
-        except client.UnknownErrorException as e:
+        except error.UnknownErrorException as e:
             # workaround https://bugs.chromium.org/p/chromedriver/issues/detail?id=1999
             if (e.http_status != 500 or
                 e.status_code != "unknown error"):
@@ -227,8 +236,12 @@ class WebDriverTestDriverProtocolPart(TestDriverProtocolPart):
             obj["message"] = str(message)
         self.webdriver.execute_script("window.postMessage(%s, '*')" % json.dumps(obj))
 
-    def _switch_to_frame(self, frame_number):
-        self.webdriver.switch_frame(frame_number)
+    def _switch_to_frame(self, index_or_elem):
+        try:
+            self.webdriver.switch_frame(index_or_elem)
+        except (error.StaleElementReferenceException,
+                error.NoSuchFrameException) as e:
+            raise ValueError from e
 
     def _switch_to_parent_frame(self):
         self.webdriver.switch_frame("parent")
@@ -283,17 +296,24 @@ class WebDriverVirtualAuthenticatorProtocolPart(VirtualAuthenticatorProtocolPart
         return self.webdriver.send_session_command("POST", "webauthn/authenticator/%s/uv" % authenticator_id, uv)
 
 
+class WebDriverDebugProtocolPart(DebugProtocolPart):
+    def load_devtools(self):
+        raise NotImplementedError()
+
+
 class WebDriverProtocol(Protocol):
     implements = [WebDriverBaseProtocolPart,
                   WebDriverTestharnessProtocolPart,
                   WebDriverSelectorProtocolPart,
                   WebDriverClickProtocolPart,
+                  WebDriverCookiesProtocolPart,
                   WebDriverSendKeysProtocolPart,
                   WebDriverActionSequenceProtocolPart,
                   WebDriverTestDriverProtocolPart,
                   WebDriverGenerateTestReportProtocolPart,
                   WebDriverSetPermissionProtocolPart,
-                  WebDriverVirtualAuthenticatorProtocolPart]
+                  WebDriverVirtualAuthenticatorProtocolPart,
+                  WebDriverDebugProtocolPart]
 
     def __init__(self, executor, browser, capabilities, **kwargs):
         super(WebDriverProtocol, self).__init__(executor, browser)
@@ -308,7 +328,7 @@ class WebDriverProtocol(Protocol):
         host, port = self.url.split(":")[1].strip("/"), self.url.split(':')[-1].strip("/")
 
         capabilities = {"alwaysMatch": self.capabilities}
-        self.webdriver = client.Session(host, port, capabilities=capabilities)
+        self.webdriver = Session(host, port, capabilities=capabilities)
         self.webdriver.start()
 
     def teardown(self):
@@ -331,7 +351,7 @@ class WebDriverProtocol(Protocol):
             # 5 seconds of extra_timeout we have as maximum to end the test before
             # the external timeout from testrunner triggers.
             self.webdriver.send_session_command("GET", "window", timeout=2)
-        except (socket.timeout, client.UnknownErrorException, client.InvalidSessionIdException):
+        except (socket.timeout, error.UnknownErrorException, error.InvalidSessionIdException):
             return False
         return True
 
@@ -343,19 +363,20 @@ class WebDriverRun(TimedRunner):
     def set_timeout(self):
         try:
             self.protocol.base.set_timeout(self.timeout + self.extra_timeout)
-        except client.UnknownErrorException:
-            self.logger.error("Lost WebDriver connection")
-            return Stop
+        except error.UnknownErrorException:
+            msg = "Lost WebDriver connection"
+            self.logger.error(msg)
+            return ("INTERNAL-ERROR", msg)
 
     def run_func(self):
         try:
             self.result = True, self.func(self.protocol, self.url, self.timeout)
-        except (client.TimeoutException, client.ScriptTimeoutException):
+        except (error.TimeoutException, error.ScriptTimeoutException):
             self.result = False, ("EXTERNAL-TIMEOUT", None)
-        except (socket.timeout, client.UnknownErrorException):
+        except (socket.timeout, error.UnknownErrorException):
             self.result = False, ("CRASH", None)
         except Exception as e:
-            if (isinstance(e, client.WebDriverException) and
+            if (isinstance(e, error.WebDriverException) and
                     e.http_status == 408 and
                     e.status_code == "asynchronous script timeout"):
                 # workaround for https://bugs.chromium.org/p/chromedriver/issues/detail?id=2001
@@ -449,7 +470,7 @@ class WebDriverTestharnessExecutor(TestharnessExecutor):
             if not isinstance(result, list) or len(result) != 2:
                 try:
                     is_alive = self.is_alive()
-                except client.WebDriverException:
+                except error.WebDriverException:
                     is_alive = False
 
                 if not is_alive:
@@ -483,7 +504,7 @@ if (location.href === "about:blank") {
 } else {
   document.addEventListener("readystatechange", () => {if (document.readyState !== "loading") {callback(true)}});
 }""", asynchronous=True)
-            except client.JavascriptErrorException:
+            except error.JavascriptErrorException:
                 # We can get an error here if the script runs in the initial about:blank
                 # document before it has navigated, with the driver returning an error
                 # indicating that the document was unloaded
@@ -497,7 +518,7 @@ class WebDriverRefTestExecutor(RefTestExecutor):
 
     def __init__(self, logger, browser, server_config, timeout_multiplier=1,
                  screenshot_cache=None, close_after_done=True,
-                 debug_info=None, capabilities=None, **kwargs):
+                 debug_info=None, capabilities=None, debug_test=False, **kwargs):
         """WebDriver-based executor for reftests"""
         RefTestExecutor.__init__(self,
                                  logger,
@@ -512,6 +533,7 @@ class WebDriverRefTestExecutor(RefTestExecutor):
         self.implementation = RefTestImplementation(self)
         self.close_after_done = close_after_done
         self.has_window = False
+        self.debug_test = debug_test
 
         with open(os.path.join(here, "test-wait.js")) as f:
             self.wait_script = f.read() % {"classname": "reftest-wait"}
@@ -529,12 +551,15 @@ class WebDriverRefTestExecutor(RefTestExecutor):
         )
         try:
             self.protocol.webdriver.window.position = (0, 0)
-        except client.InvalidArgumentException:
+        except error.InvalidArgumentException:
             # Safari 12 throws with 0 or 1, treating them as bools; fixed in STP
             self.protocol.webdriver.window.position = (2, 2)
         self.protocol.webdriver.window.size = (800 + width_offset, 600 + height_offset)
 
         result = self.implementation.run_test(test)
+
+        if self.debug_test and result["status"] in ["PASS", "FAIL", "ERROR"] and "extra" in result:
+            self.protocol.debug.load_reftest_analyzer(test, result)
 
         return self.convert_result(test, result)
 

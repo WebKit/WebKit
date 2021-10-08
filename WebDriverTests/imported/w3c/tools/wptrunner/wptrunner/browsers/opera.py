@@ -1,4 +1,5 @@
 from .base import Browser, ExecutorBrowser, require_arg
+from .base import NullBrowser  # noqa: F401
 from .base import get_timeout_multiplier   # noqa: F401
 from ..webdriver_server import OperaDriverServer
 from ..executors import executor_kwargs as base_executor_kwargs
@@ -9,7 +10,8 @@ from ..executors.executoropera import OperaDriverWdspecExecutor  # noqa: F401
 
 __wptrunner__ = {"product": "opera",
                  "check_args": "check_args",
-                 "browser": "OperaBrowser",
+                 "browser": {None: "OperaBrowser",
+                             "wdspec": "NullBrowser"},
                  "executor": {"testharness": "SeleniumTestharnessExecutor",
                               "reftest": "SeleniumRefTestExecutor",
                               "wdspec": "OperaDriverWdspecExecutor"},
@@ -24,18 +26,17 @@ def check_args(**kwargs):
     require_arg(kwargs, "webdriver_binary")
 
 
-def browser_kwargs(test_type, run_info_data, config, **kwargs):
+def browser_kwargs(logger, test_type, run_info_data, config, **kwargs):
     return {"binary": kwargs["binary"],
             "webdriver_binary": kwargs["webdriver_binary"],
             "webdriver_args": kwargs.get("webdriver_args")}
 
 
-def executor_kwargs(test_type, server_config, cache_manager, run_info_data,
+def executor_kwargs(logger, test_type, test_environment, run_info_data,
                     **kwargs):
     from selenium.webdriver import DesiredCapabilities
 
-    executor_kwargs = base_executor_kwargs(test_type, server_config,
-                                           cache_manager, run_info_data, **kwargs)
+    executor_kwargs = base_executor_kwargs(test_type, test_environment, run_info_data, **kwargs)
     executor_kwargs["close_after_done"] = True
     capabilities = dict(DesiredCapabilities.OPERA.items())
     capabilities.setdefault("operaOptions", {})["prefs"] = {
@@ -71,7 +72,7 @@ class OperaBrowser(Browser):
     """
 
     def __init__(self, logger, binary, webdriver_binary="operadriver",
-                 webdriver_args=None):
+                 webdriver_args=None, **kwargs):
         """Creates a new representation of Opera.  The `binary` argument gives
         the browser binary to use for testing."""
         Browser.__init__(self, logger)

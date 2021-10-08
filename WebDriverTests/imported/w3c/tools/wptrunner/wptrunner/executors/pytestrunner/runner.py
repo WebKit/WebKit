@@ -24,7 +24,7 @@ def do_delayed_imports():
     import pytest
 
 
-def run(path, server_config, session_config, timeout=0):
+def run(path, server_config, session_config, timeout=0, environ=None):
     """
     Run Python test at ``path`` in pytest.  The provided ``session``
     is exposed as a fixture available in the scope of the test functions.
@@ -41,28 +41,40 @@ def run(path, server_config, session_config, timeout=0):
     if pytest is None:
         do_delayed_imports()
 
-    os.environ["WD_HOST"] = session_config["host"]
-    os.environ["WD_PORT"] = str(session_config["port"])
-    os.environ["WD_CAPABILITIES"] = json.dumps(session_config["capabilities"])
-    os.environ["WD_SERVER_CONFIG"] = json.dumps(server_config.as_dict_for_wd_env_variable())
+    old_environ = os.environ.copy()
+    try:
+        with TemporaryDirectory() as cache:
+            os.environ["WD_HOST"] = session_config["host"]
+            os.environ["WD_PORT"] = str(session_config["port"])
+            os.environ["WD_CAPABILITIES"] = json.dumps(session_config["capabilities"])
 
-    harness = HarnessResultRecorder()
-    subtests = SubtestResultRecorder()
+            config_path = os.path.join(cache, "wd_server_config.json")
+            os.environ["WD_SERVER_CONFIG_FILE"] = config_path
+            with open(config_path, "w") as f:
+                json.dump(server_config.as_dict(), f)
 
-    with TemporaryDirectory() as cache:
-        try:
-            pytest.main(["--strict",  # turn warnings into errors
-                         "-vv",  # show each individual subtest and full failure logs
-                         "--capture", "no",  # enable stdout/stderr from tests
-                         "--basetemp", cache,  # temporary directory
-                         "--showlocals",  # display contents of variables in local scope
-                         "-p", "no:mozlog",  # use the WPT result recorder
-                         "-p", "no:cacheprovider",  # disable state preservation across invocations
-                         "-o=console_output_style=classic",  # disable test progress bar
-                         path],
-                        plugins=[harness, subtests])
-        except Exception as e:
-            harness.outcome = ("INTERNAL-ERROR", str(e))
+            if environ:
+                os.environ.update(environ)
+
+            harness = HarnessResultRecorder()
+            subtests = SubtestResultRecorder()
+
+            try:
+                pytest.main(["--strict",  # turn warnings into errors
+                             "-vv",  # show each individual subtest and full failure logs
+                             "--capture", "no",  # enable stdout/stderr from tests
+                             "--basetemp", cache,  # temporary directory
+                             "--showlocals",  # display contents of variables in local scope
+                             "-p", "no:mozlog",  # use the WPT result recorder
+                             "-p", "no:cacheprovider",  # disable state preservation across invocations
+                             "-o=console_output_style=classic",  # disable test progress bar
+                             path],
+                            plugins=[harness, subtests])
+            except Exception as e:
+                harness.outcome = ("INTERNAL-ERROR", str(e))
+
+    finally:
+        os.environ = old_environ
 
     return (harness.outcome, subtests.results)
 

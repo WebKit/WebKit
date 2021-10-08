@@ -1,3 +1,28 @@
+2021-10-08  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [WebDriver] Update w3c and selenium tests
+        https://bugs.webkit.org/show_bug.cgi?id=230551
+        <rdar://problem/83620518>
+
+        Reviewed by Jonathan Bedard.
+
+        * CISupport/build-webkit-org/steps.py:
+        (RunWebDriverTests): Run run-webdriver-tests with python3.
+        * Scripts/run-webdriver-tests: Run with python3.
+        * Scripts/webkitpy/__init__.py: Use a newer version of pytest and its dependencies to match what tests expect.
+        * Scripts/webkitpy/webdriver_tests/pytest_runner.py:
+        (collect): Use contextlib to redirect stdout to /dev/null while collecting tests.
+        (run): Use ExitCode new enum added to pytest.
+        * Scripts/webkitpy/webdriver_tests/webdriver_selenium_executor.py:
+        (WebDriverSeleniumExecutor.__init__): Do not encode paths.
+        * Scripts/webkitpy/webdriver_tests/webdriver_test_runner_selenium.py:
+        (WebDriverTestRunnerSelenium.collect_tests): Use items() instead of iteritems() that doesn't exist in python3.
+        * Scripts/webkitpy/webdriver_tests/webdriver_w3c_executor.py:
+        (WebKitDriverServer.__init__):
+        (WebDriverW3CExecutor.__init__):
+        (WebDriverW3CExecutor.setup):
+        (WebDriverW3CExecutor._runner):
+
 2021-10-08  Youenn Fablet  <youenn@apple.com>
 
         Add support for processing push events without service worker clients

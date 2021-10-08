@@ -20,6 +20,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import contextlib
 import errno
 import os
 import shutil
@@ -29,7 +30,7 @@ import tempfile
 from webkitpy.common.system.filesystem import FileSystem
 from webkitpy.common.webkit_finder import WebKitFinder
 import pytest
-from _pytest.main import EXIT_INTERNALERROR
+from _pytest.config import ExitCode
 
 
 class TemporaryDirectory(object):
@@ -168,16 +169,14 @@ class TestExpectationsMarker(object):
 
 def collect(directory, args, ignore_param=None):
     collect_recorder = CollectRecorder(ignore_param)
-    stdout = sys.stdout
-    with open(os.devnull, 'wb') as devnull:
-        sys.stdout = devnull
-        with TemporaryDirectory() as cache_directory:
-            cmd = ['--collect-only',
-                   '--basetemp=%s' % cache_directory]
-            cmd.extend(args)
-            cmd.append(directory)
-            pytest.main(cmd, plugins=[collect_recorder])
-    sys.stdout = stdout
+    with open(os.devnull, 'w') as f:
+        with contextlib.redirect_stdout(f):
+            with TemporaryDirectory() as cache_directory:
+                cmd = ['--collect-only',
+                       '--basetemp', cache_directory]
+                cmd.extend(args)
+                cmd.append(directory)
+                pytest.main(cmd, plugins=[collect_recorder])
     return collect_recorder.tests
 
 
@@ -192,16 +191,16 @@ def run(path, args, timeout, env, expectations, ignore_param=None):
     with TemporaryDirectory() as cache_directory:
         try:
             cmd = ['-vv',
-                   '--capture=no',
-                   '--basetemp=%s' % cache_directory,
+                   '--capture', 'no',
+                   '--basetemp', cache_directory,
                    '--showlocals',
-                   '--timeout=%s' % timeout,
+                   '--timeout', str(timeout),
                    '-p', 'no:cacheprovider']
             cmd.extend(args)
             cmd.append(path)
             result = pytest.main(cmd, plugins=[harness_recorder, subtests_recorder, expectations_marker])
 
-            if result == EXIT_INTERNALERROR:
+            if result == ExitCode.INTERNAL_ERROR:
                 harness_recorder.outcome = ('ERROR', None)
         except Exception as e:
             harness_recorder.outcome = ('ERROR', str(e))

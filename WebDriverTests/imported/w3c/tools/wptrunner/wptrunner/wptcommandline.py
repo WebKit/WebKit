@@ -1,11 +1,9 @@
-from __future__ import absolute_import, print_function
 import argparse
 import os
 import sys
 from collections import OrderedDict
 from distutils.spawn import find_executable
 from datetime import timedelta
-from six import ensure_text, iterkeys, itervalues, iteritems
 
 from . import config
 from . import wpttest
@@ -16,7 +14,7 @@ def abs_path(path):
 
 
 def url_or_path(path):
-    from six.moves.urllib.parse import urlparse
+    from urllib.parse import urlparse
 
     parsed = urlparse(path)
     if len(parsed.scheme) > 2:
@@ -72,6 +70,10 @@ scheme host and port.""")
                         default=True,
                         dest="fail_on_unexpected",
                         help="Exit with status code 0 when test expectations are violated")
+    parser.add_argument("--no-fail-on-unexpected-pass", action="store_false",
+                        default=True,
+                        dest="fail_on_unexpected_pass",
+                        help="Exit with status code 0 when all unexpected results are PASS")
 
     mode_group = parser.add_argument_group("Mode")
     mode_group.add_argument("--list-test-groups", action="store_true",
@@ -131,6 +133,8 @@ scheme host and port.""")
                                       help="Test types to run")
     test_selection_group.add_argument("--include", action="append",
                                       help="URL prefix to include")
+    test_selection_group.add_argument("--include-file", action="store",
+                                      help="A file listing URL prefix for tests")
     test_selection_group.add_argument("--exclude", action="append",
                                       help="URL prefix to exclude")
     test_selection_group.add_argument("--include-manifest", type=abs_path,
@@ -170,6 +174,8 @@ scheme host and port.""")
                                  help="Halt the test runner after each test (this happens by default if only a single test is run)")
     debugging_group.add_argument('--no-pause-after-test', dest="pause_after_test", action="store_false",
                                  help="Don't halt the test runner irrespective of the number of tests run")
+    debugging_group.add_argument('--debug-test', dest="debug_test", action="store_true",
+                                 help="Run tests with additional debugging features enabled")
 
     debugging_group.add_argument('--pause-on-unexpected', action="store_true",
                                  help="Halt the test runner when an unexpected result is encountered")
@@ -181,7 +187,6 @@ scheme host and port.""")
                                  help="Path or url to symbols file used to analyse crash minidumps.")
     debugging_group.add_argument("--stackwalk-binary", action="store", type=abs_path,
                                  help="Path to stackwalker program used to analyse minidumps.")
-
     debugging_group.add_argument("--pdb", action="store_true",
                                  help="Drop into pdb on python exception")
 
@@ -196,6 +201,8 @@ scheme host and port.""")
     config_group.add_argument('--webdriver-arg',
                               default=[], action="append", dest="webdriver_args",
                               help="Extra argument for the WebDriver binary")
+    config_group.add_argument("--adb-binary", action="store",
+                              help="Path to adb binary to use")
     config_group.add_argument("--package-name", action="store",
                               help="Android package name to run tests against")
     config_group.add_argument("--device-serial", action="store",
@@ -284,6 +291,8 @@ scheme host and port.""")
                              help="Disable fission in Gecko.")
     gecko_group.add_argument("--stackfix-dir", dest="stackfix_dir", action="store",
                              help="Path to directory containing assertion stack fixing scripts")
+    gecko_group.add_argument("--specialpowers-path", action="store",
+                             help="Path to specialPowers extension xpi file")
     gecko_group.add_argument("--setpref", dest="extra_prefs", action='append',
                              default=[], metavar="PREF=VALUE",
                              help="Defines an extra user preference (overrides those in prefs_root)")
@@ -312,14 +321,17 @@ scheme host and port.""")
                              default=[], action="append", dest="user_stylesheets",
                              help="Inject a user CSS stylesheet into every test.")
 
-    servo_group = parser.add_argument_group("Chrome-specific")
-    servo_group.add_argument("--enable-mojojs", action="store_true", default=False,
+    chrome_group = parser.add_argument_group("Chrome-specific")
+    chrome_group.add_argument("--enable-mojojs", action="store_true", default=False,
                              help="Enable MojoJS for testing. Note that this flag is usally "
                              "enabled automatically by `wpt run`, if it succeeds in downloading "
                              "the right version of mojojs.zip or if --mojojs-path is specified.")
-    servo_group.add_argument("--mojojs-path",
+    chrome_group.add_argument("--mojojs-path",
                              help="Path to mojojs gen/ directory. If it is not specified, `wpt run` "
                              "will download and extract mojojs.zip into _venv2/mojojs/gen.")
+    chrome_group.add_argument("--enable-swiftshader", action="store_true", default=False,
+                             help="Enable SwiftShader for CPU-based 3D graphics. This can be used "
+                             "in environments with no hardware GPU available.")
 
     sauce_group = parser.add_argument_group("Sauce Labs-specific")
     sauce_group.add_argument("--sauce-browser", dest="sauce_browser",
@@ -354,12 +366,16 @@ scheme host and port.""")
 
     taskcluster_group = parser.add_argument_group("Taskcluster-specific")
     taskcluster_group.add_argument("--github-checks-text-file",
-                                   type=ensure_text,
+                                   type=str,
                                    help="Path to GitHub checks output file")
 
     webkit_group = parser.add_argument_group("WebKit-specific")
     webkit_group.add_argument("--webkit-port", dest="webkit_port",
                               help="WebKit port")
+
+    safari_group = parser.add_argument_group("Safari-specific")
+    safari_group.add_argument("--kill-safari", dest="kill_safari", action="store_true", default=False,
+                              help="Kill Safari when stopping the browser")
 
     parser.add_argument("test_list", nargs="*",
                         help="List of URLs for tests to run, or paths including tests to run. "
@@ -402,7 +418,7 @@ def set_from_config(kwargs):
                     ("host_cert_path", "host_cert_path", True),
                     ("host_key_path", "host_key_path", True)]}
 
-    for section, values in iteritems(keys):
+    for section, values in keys.items():
         for config_value, kw_value, is_path in values:
             if kw_value in kwargs and kwargs[kw_value] is None:
                 if not is_path:
@@ -438,7 +454,7 @@ def get_test_paths(config):
     # Set up test_paths
     test_paths = OrderedDict()
 
-    for section in iterkeys(config):
+    for section in config.keys():
         if section.startswith("manifest:"):
             manifest_opts = config.get(section)
             url_base = manifest_opts.get("url_base", "/")
@@ -464,7 +480,7 @@ def exe_path(name):
 
 
 def check_paths(kwargs):
-    for test_paths in itervalues(kwargs["test_paths"]):
+    for test_paths in kwargs["test_paths"].values():
         if not ("tests_path" in test_paths and
                 "metadata_path" in test_paths):
             print("Fatal: must specify both a test path and metadata path")
@@ -472,7 +488,7 @@ def check_paths(kwargs):
         if "manifest_path" not in test_paths:
             test_paths["manifest_path"] = os.path.join(test_paths["metadata_path"],
                                                        "MANIFEST.json")
-        for key, path in iteritems(test_paths):
+        for key, path in test_paths.items():
             name = key.split("_", 1)[0]
 
             if name == "manifest":
@@ -588,7 +604,7 @@ def check_args(kwargs):
         kwargs["reftest_internal"] = True
 
     if kwargs["reftest_screenshot"] is None:
-        kwargs["reftest_screenshot"] = "unexpected"
+        kwargs["reftest_screenshot"] = "unexpected" if not kwargs["debug_test"] else "always"
 
     if kwargs["enable_webrender"] is None:
         kwargs["enable_webrender"] = False

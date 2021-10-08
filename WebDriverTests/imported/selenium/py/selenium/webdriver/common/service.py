@@ -46,6 +46,8 @@ class Service(object):
 
         self.start_error_message = start_error_message
         self.log_file = log_file
+        # Default value for every python subprocess: subprocess.Popen(..., creationflags=0)
+        self.creationflags = 0
         self.env = env or os.environ
 
     @property
@@ -73,7 +75,8 @@ class Service(object):
                                             close_fds=platform.system() != 'Windows',
                                             stdout=self.log_file,
                                             stderr=self.log_file,
-                                            stdin=PIPE)
+                                            stdin=PIPE,
+                                            creationflags=self.creationflags)
         except TypeError:
             raise
         except OSError as err:
@@ -98,9 +101,10 @@ class Service(object):
             self.assert_process_still_running()
             if self.is_connectable():
                 break
+
             count += 1
-            time.sleep(1)
-            if count == 30:
+            time.sleep(0.5)
+            if count == 60:
                 raise WebDriverException("Can not connect to the Service %s" % self.path)
 
     def assert_process_still_running(self):

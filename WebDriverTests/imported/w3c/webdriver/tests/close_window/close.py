@@ -2,7 +2,6 @@ import pytest
 from webdriver import error
 
 from tests.support.asserts import assert_error, assert_success
-from tests.support.inline import inline
 
 
 def close(session):
@@ -46,7 +45,7 @@ def test_close_browsing_context(session):
     assert new_handle not in handles
 
 
-def test_close_browsing_context_with_dismissed_beforeunload_prompt(session):
+def test_close_browsing_context_with_dismissed_beforeunload_prompt(session, inline):
     original_handles = session.handles
 
     new_handle = session.new_window()
@@ -81,3 +80,23 @@ def test_close_last_browsing_context(session):
 
     # With no more open top-level browsing contexts, the session is closed.
     session.session_id = None
+
+
+def test_element_usage_after_closing_browsing_context(session, inline):
+    session.url = inline("<p id='a'>foo")
+    a = session.find.css("p", all=False)
+    first = session.window_handle
+
+    second = session.new_window(type_hint="tab")
+    session.window_handle = second
+
+    session.url = inline("<p id='b'>other")
+    b = session.find.css("p", all=False)
+
+    session.window_handle = first
+    response = close(session)
+    assert_success(response)
+    assert len(session.handles) == 1
+
+    session.window_handle = second
+    assert b.attribute("id") == "b"

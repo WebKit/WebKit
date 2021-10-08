@@ -2,8 +2,6 @@ import json
 
 import webdriver
 
-from six import iteritems
-
 
 """WebDriver wire protocol codecs."""
 
@@ -22,6 +20,8 @@ class Encoder(json.JSONEncoder):
             return {webdriver.Frame.identifier: obj.id}
         elif isinstance(obj, webdriver.Window):
             return {webdriver.Frame.identifier: obj.id}
+        elif isinstance(obj, webdriver.ShadowRoot):
+            return {webdriver.ShadowRoot.identifier: obj.id}
         return super(Encoder, self).default(obj)
 
 
@@ -40,6 +40,8 @@ class Decoder(json.JSONDecoder):
             return webdriver.Frame.from_json(payload, self.session)
         elif isinstance(payload, dict) and webdriver.Window.identifier in payload:
             return webdriver.Window.from_json(payload, self.session)
+        elif isinstance(payload, dict) and webdriver.ShadowRoot.identifier in payload:
+            return webdriver.ShadowRoot.from_json(payload, self.session)
         elif isinstance(payload, dict):
-            return {k: self.object_hook(v) for k, v in iteritems(payload)}
+            return {k: self.object_hook(v) for k, v in payload.items()}
         return payload

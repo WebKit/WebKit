@@ -1,3 +1,18 @@
+2021-10-08  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [WebDriver] Update w3c and selenium tests
+        https://bugs.webkit.org/show_bug.cgi?id=230551
+        <rdar://problem/83620518>
+
+        Reviewed by Jonathan Bedard.
+
+        * imported/selenium/common/src/web/javascriptPage.html:
+        * imported/selenium/importer.json:
+        * imported/selenium/py/:
+        * imported/w3c/importer.json:
+        * imported/w3c/tools/:
+        * imported/w3c/webdriver/:
+
 2021-08-22  Lauro Moura  <lmoura@igalia.com>
 
         [WPE][WebDriver] Basic fullscreen support for the headless backend

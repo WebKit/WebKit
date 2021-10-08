@@ -50,7 +50,7 @@ class WebDriverTestRunnerSelenium(object):
         # Collected tests are relative to test directory.
         base_dir = os.path.join(self._tests_dir, os.path.dirname(relative_tests_dir))
         collected_tests = {}
-        for test, subtests in executor.collect(os.path.join(self._tests_dir, relative_tests_dir)).iteritems():
+        for test, subtests in executor.collect(os.path.join(self._tests_dir, relative_tests_dir)).items():
             collected_tests[os.path.join(base_dir, test)] = subtests
         selenium_tests = []
         if not tests:

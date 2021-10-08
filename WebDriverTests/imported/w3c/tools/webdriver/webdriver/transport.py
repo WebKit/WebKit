@@ -1,10 +1,9 @@
 import json
 import select
 
-from six import text_type, PY3
-from six.moves.collections_abc import Mapping
-from six.moves.http_client import HTTPConnection
-from six.moves.urllib import parse as urlparse
+from http.client import HTTPConnection
+from typing import Dict, List, Mapping, Sequence, Tuple
+from urllib import parse as urlparse
 
 from . import error
 
@@ -14,7 +13,7 @@ from . import error
 missing = object()
 
 
-class ResponseHeaders(Mapping):
+class ResponseHeaders(Mapping[str, str]):
     """Read-only dictionary-like API for accessing response headers.
 
     This class:
@@ -23,11 +22,9 @@ class ResponseHeaders(Mapping):
       * Has case-insensitive header lookup.
       * Always returns all header values that have the same name, separated by
         commas.
-
-    It does not ensure header types (e.g. binary vs string).
     """
-    def __init__(self, items):
-        self.headers_dict = {}
+    def __init__(self, items: Sequence[Tuple[str, str]]):
+        self.headers_dict: Dict[str, List[str]] = {}
         for key, value in items:
             key = key.lower()
             if key not in self.headers_dict:
@@ -145,15 +142,18 @@ class HTTPWireProtocol(object):
     def close(self):
         """Closes the current HTTP connection, if there is one."""
         if self._conn:
-            self._conn.close()
+            try:
+                self._conn.close()
+            except OSError:
+                # The remote closed the connection
+                pass
+        self._conn = None
 
     @property
     def connection(self):
         """Gets the current HTTP connection, or lazily creates one."""
         if not self._conn:
             conn_kwargs = {}
-            if not PY3:
-                conn_kwargs["strict"] = True
             # We are not setting an HTTP timeout other than the default when the
             # connection its created. The send method has a timeout value if needed.
             self._conn = HTTPConnection(self.host, self.port, **conn_kwargs)
@@ -235,7 +235,7 @@ class HTTPWireProtocol(object):
         return Response.from_http(response, decoder=decoder, **codec_kwargs)
 
     def _request(self, method, uri, payload, headers=None, timeout=None):
-        if isinstance(payload, text_type):
+        if isinstance(payload, str):
             payload = payload.encode("utf-8")
 
         if headers is None:
