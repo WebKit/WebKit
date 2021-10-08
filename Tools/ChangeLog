@@ -1,3 +1,20 @@
+2021-10-08  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitscmpy] Allow caller to differentiate remote branches
+        https://bugs.webkit.org/show_bug.cgi?id=231450
+        <rdar://problem/84042400>
+
+        Reviewed by Dewei Zhu.
+
+        * Scripts/libraries/webkitscmpy/setup.py: Bump version.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/__init__.py: Ditto.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/local/git.py:
+        (Git.branches): Change _branches_for to branches_for.
+        (Git.branches_for): Allow call to differentiate remote branches
+        to be returned, or return dictionary of all remotes.
+        (Git.commit): Change _branches_for to branches_for.
+        (Git._branches_for): Renamed branches_for.
+
 2021-10-08  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         Ensure webkitpy secret storage works successfully on Linux using only autoinstalled libraries
