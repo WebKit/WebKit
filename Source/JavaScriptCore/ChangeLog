@@ -1,3 +1,450 @@
+2021-10-08  Tadeu Zagallo  <tzagallo@apple.com> and Keith Miller  <keith_miller@apple.com>
+
+        Implement the WebAssembly exception handling proposal
+        https://bugs.webkit.org/show_bug.cgi?id=229681
+        <rdar://81603387>
+
+        Reviewed by Keith Miller.
+
+        Add support for the WebAssembly exception handling proposal, as per
+        the WIP spec: https://github.com/WebAssembly/exception-handling
+
+        The proposal includes 6 new instructions: try, catch, catch_all,
+        delegate, throw and rethrow. All the instructions are supported by
+        the LLInt and B3 generators, but not yet supported in Air. Any
+        functions use exceptions will use B3 in BBQ.
+
+        A few important notes about the implementation:
+        - In B3, since we can now have multiple entrypoints (one for the
+        function entry + 1 for each catch/catch_all), we can no longer just
+        replace every value in the stack with a Phi when we find a new
+        entrypoint. This worked so far because of the assumption that any
+        block couldn't access its enclosing stack, and since the enclosing stack
+        would only be accessible when we exited the current block, we added Phis
+        at the end of each block when we had a new entrypoint. Now, since we have to capture all
+        live values at any point that might throw (calls, throw and rethrow),
+        we break that assumption. To simplify all the possible ways we might
+        have to merge the state from multiple entrypoints we now use B3
+        Variables to represent stack slots.
+        - Some extra information is required to be able to properly restore
+        the state when catching an exception:
+            - We added a field VM::calleeForWasmCatch. This field is necessary
+            because whenever we throw, we might end up in JavaScript, which
+            assumes the callee is a cell and uses it to get the VM and restore
+            callee saves. The issue is when catching exceptions in wasm we
+            still need the original callee, and if throwing and catching from
+            the same frame, that call frame slot has now been overwritten, so
+            we store its original value in the VM field.
+            - We also need to store the current Wasm Instance into the call
+            frame's slot for the `this` argument. The instance is used both by
+            the unwinder, to check if the exception being thrown matches the
+            exceptions handled by catch candidates, and by the catch implementation,
+            which is necessary when throwing from a cross instance call where both
+            the callee save or TLS will have the callee's instance.
+            - We store the current opcode for the llint, or the
+            call site index for B3, in the call frame slot for the argument
+            count tag. The call site index is used by the unwinder to check
+            if a given catch can handle the exception being thrown.
+
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * bytecode/BytecodeList.rb:
+        * bytecode/HandlerInfo.h:
+        * bytecode/Instruction.h:
+        (JSC::BaseInstruction::name const):
+        * interpreter/CallFrame.cpp:
+        (JSC::CallFrame::bytecodeIndex const):
+        * interpreter/CallFrame.h:
+        (JSC::CallSiteIndex::CallSiteIndex):
+        (JSC::CallSiteIndex::hash const):
+        (JSC::CallSiteIndex::deletedValue):
+        (JSC::CallSiteIndex::isHashTableDeletedValue const):
+        (JSC::CallSiteIndexHash::hash):
+        (JSC::CallSiteIndexHash::equal):
+        * interpreter/Interpreter.cpp:
+        (JSC::CatchInfo::CatchInfo):
+        (JSC::UnwindFunctor::UnwindFunctor):
+        (JSC::UnwindFunctor::operator() const):
+        (JSC::Interpreter::unwind):
+        * interpreter/Interpreter.h:
+        (JSC::CatchInfo::CatchInfo):
+        * interpreter/StackVisitor.cpp:
+        (JSC::StackVisitor::readNonInlinedFrame):
+        * jit/AssemblyHelpers.cpp:
+        (JSC::AssemblyHelpers::restoreCalleeSavesFromEntryFrameCalleeSavesBuffer):
+        (JSC::AssemblyHelpers::restoreCalleeSavesFromVMEntryFrameCalleeSavesBuffer):
+        (JSC::AssemblyHelpers::restoreCalleeSavesFromVMEntryFrameCalleeSavesBufferImpl):
+        * jit/AssemblyHelpers.h:
+        * jit/JITExceptions.cpp:
+        (JSC::genericUnwind):
+        * jit/JSInterfaceJIT.h:
+        (JSC::JSInterfaceJIT::convertCalleeToVM):
+        * llint/LLIntData.h:
+        (JSC::LLInt::getCodeRef):
+        (JSC::LLInt::getWide16CodeRef):
+        (JSC::LLInt::getWide32CodeRef):
+        * llint/LLIntExceptions.cpp:
+        (JSC::LLInt::wasmReturnToThrow):
+        (JSC::LLInt::handleWasmCatch):
+        (JSC::LLInt::handleWasmCatchAll):
+        * llint/LLIntExceptions.h:
+        * llint/LLIntOffsetsExtractor.cpp:
+        * llint/WebAssembly.asm:
+        * runtime/ErrorInstance.cpp:
+        (JSC::ErrorInstance::ErrorInstance):
+        * runtime/ErrorInstance.h:
+        (JSC::ErrorInstance::setCatchableFromWasm):
+        (JSC::ErrorInstance::isCatchableFromWasm const):
+        * runtime/JSGlobalObject.cpp:
+        * runtime/JSGlobalObject.h:
+        * runtime/OptionsList.h:
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+        (JSC::VM::calleeForWasmCatchOffset):
+        * wasm/WasmAirIRGenerator.cpp:
+        (JSC::Wasm::AirIRGenerator::ControlData::isTry):
+        (JSC::Wasm::AirIRGenerator::ControlData::isCatch):
+        (JSC::Wasm::AirIRGenerator::ControlData::isAnyCatch):
+        (JSC::Wasm::AirIRGenerator::ControlData::isLoop):
+        (JSC::Wasm::AirIRGenerator::ControlData::isBlock):
+        (JSC::Wasm::AirIRGenerator::ControlData::dump const):
+        (JSC::Wasm::AirIRGenerator::addTry):
+        (JSC::Wasm::AirIRGenerator::addCatch):
+        (JSC::Wasm::AirIRGenerator::addCatchToUnreachable):
+        (JSC::Wasm::AirIRGenerator::addCatchAll):
+        (JSC::Wasm::AirIRGenerator::addCatchAllToUnreachable):
+        (JSC::Wasm::AirIRGenerator::addDelegate):
+        (JSC::Wasm::AirIRGenerator::addDelegateToUnreachable):
+        (JSC::Wasm::AirIRGenerator::addThrow):
+        (JSC::Wasm::AirIRGenerator::addRethrow):
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::B3IRGenerator::ControlData::ControlData):
+        (JSC::Wasm::B3IRGenerator::ControlData::isTry):
+        (JSC::Wasm::B3IRGenerator::ControlData::isAnyCatch):
+        (JSC::Wasm::B3IRGenerator::ControlData::isLoop):
+        (JSC::Wasm::B3IRGenerator::ControlData::isBlock):
+        (JSC::Wasm::B3IRGenerator::ControlData::isCatch):
+        (JSC::Wasm::B3IRGenerator::ControlData::dump const):
+        (JSC::Wasm::B3IRGenerator::ControlData::convertTryToCatch):
+        (JSC::Wasm::B3IRGenerator::ControlData::convertTryToCatchAll):
+        (JSC::Wasm::B3IRGenerator::ControlData::tryStart const):
+        (JSC::Wasm::B3IRGenerator::ControlData::tryEnd const):
+        (JSC::Wasm::B3IRGenerator::ControlData::tryDepth const):
+        (JSC::Wasm::B3IRGenerator::ControlData::catchKind const):
+        (JSC::Wasm::B3IRGenerator::ControlData::exception const):
+        (JSC::Wasm::B3IRGenerator::ControlData::stackSize const):
+        (JSC::Wasm::B3IRGenerator::didPopValueFromStack):
+        (JSC::Wasm::B3IRGenerator::addStackMap):
+        (JSC::Wasm::B3IRGenerator::takeStackmaps):
+        (JSC::Wasm::B3IRGenerator::takeExceptionHandlers):
+        (JSC::Wasm::B3IRGenerator::push):
+        (JSC::Wasm::B3IRGenerator::get):
+        (JSC::Wasm::B3IRGenerator::set):
+        (JSC::Wasm::PatchpointExceptionHandle::generate const):
+        (JSC::Wasm::B3IRGenerator::fixupPointerPlusOffset):
+        (JSC::Wasm::B3IRGenerator::B3IRGenerator):
+        (JSC::Wasm::B3IRGenerator::restoreWebAssemblyGlobalState):
+        (JSC::Wasm::B3IRGenerator::insertEntrySwitch):
+        (JSC::Wasm::B3IRGenerator::insertConstants):
+        (JSC::Wasm::B3IRGenerator::addRefIsNull):
+        (JSC::Wasm::B3IRGenerator::addTableGet):
+        (JSC::Wasm::B3IRGenerator::addTableSet):
+        (JSC::Wasm::B3IRGenerator::addRefFunc):
+        (JSC::Wasm::B3IRGenerator::addTableInit):
+        (JSC::Wasm::B3IRGenerator::addTableSize):
+        (JSC::Wasm::B3IRGenerator::addTableGrow):
+        (JSC::Wasm::B3IRGenerator::addTableFill):
+        (JSC::Wasm::B3IRGenerator::addTableCopy):
+        (JSC::Wasm::B3IRGenerator::getLocal):
+        (JSC::Wasm::B3IRGenerator::emitIndirectCall):
+        (JSC::Wasm::B3IRGenerator::addGrowMemory):
+        (JSC::Wasm::B3IRGenerator::addCurrentMemory):
+        (JSC::Wasm::B3IRGenerator::addMemoryFill):
+        (JSC::Wasm::B3IRGenerator::addMemoryInit):
+        (JSC::Wasm::B3IRGenerator::addMemoryCopy):
+        (JSC::Wasm::B3IRGenerator::setLocal):
+        (JSC::Wasm::B3IRGenerator::getGlobal):
+        (JSC::Wasm::B3IRGenerator::setGlobal):
+        (JSC::Wasm::B3IRGenerator::emitCheckAndPreparePointer):
+        (JSC::Wasm::B3IRGenerator::emitLoadOp):
+        (JSC::Wasm::B3IRGenerator::load):
+        (JSC::Wasm::B3IRGenerator::emitStoreOp):
+        (JSC::Wasm::B3IRGenerator::store):
+        (JSC::Wasm::B3IRGenerator::sanitizeAtomicResult):
+        (JSC::Wasm::B3IRGenerator::fixupPointerPlusOffsetForAtomicOps):
+        (JSC::Wasm::B3IRGenerator::emitAtomicLoadOp):
+        (JSC::Wasm::B3IRGenerator::atomicLoad):
+        (JSC::Wasm::B3IRGenerator::emitAtomicStoreOp):
+        (JSC::Wasm::B3IRGenerator::atomicStore):
+        (JSC::Wasm::B3IRGenerator::emitAtomicBinaryRMWOp):
+        (JSC::Wasm::B3IRGenerator::atomicBinaryRMW):
+        (JSC::Wasm::B3IRGenerator::emitAtomicCompareExchange):
+        (JSC::Wasm::B3IRGenerator::atomicCompareExchange):
+        (JSC::Wasm::B3IRGenerator::atomicWait):
+        (JSC::Wasm::B3IRGenerator::atomicNotify):
+        (JSC::Wasm::B3IRGenerator::truncSaturated):
+        (JSC::Wasm::B3IRGenerator::addSelect):
+        (JSC::Wasm::B3IRGenerator::addConstant):
+        (JSC::Wasm::B3IRGenerator::emitLoopTierUpCheck):
+        (JSC::Wasm::B3IRGenerator::loadFromScratchBuffer):
+        (JSC::Wasm::B3IRGenerator::connectControlEntry):
+        (JSC::Wasm::B3IRGenerator::addLoop):
+        (JSC::Wasm::B3IRGenerator::addTopLevel):
+        (JSC::Wasm::B3IRGenerator::addBlock):
+        (JSC::Wasm::B3IRGenerator::addIf):
+        (JSC::Wasm::B3IRGenerator::addElse):
+        (JSC::Wasm::B3IRGenerator::addElseToUnreachable):
+        (JSC::Wasm::B3IRGenerator::addTry):
+        (JSC::Wasm::B3IRGenerator::addCatch):
+        (JSC::Wasm::B3IRGenerator::preparePatchpointForExceptions):
+        (JSC::Wasm::B3IRGenerator::addCatchToUnreachable):
+        (JSC::Wasm::B3IRGenerator::addCatchAll):
+        (JSC::Wasm::B3IRGenerator::addCatchAllToUnreachable):
+        (JSC::Wasm::B3IRGenerator::emitCatchImpl):
+        (JSC::Wasm::B3IRGenerator::addDelegate):
+        (JSC::Wasm::B3IRGenerator::addDelegateToUnreachable):
+        (JSC::Wasm::B3IRGenerator::addThrow):
+        (JSC::Wasm::B3IRGenerator::addRethrow):
+        (JSC::Wasm::B3IRGenerator::addReturn):
+        (JSC::Wasm::B3IRGenerator::addBranch):
+        (JSC::Wasm::B3IRGenerator::addSwitch):
+        (JSC::Wasm::B3IRGenerator::endBlock):
+        (JSC::Wasm::B3IRGenerator::addEndToUnreachable):
+        (JSC::Wasm::B3IRGenerator::createCallPatchpoint):
+        (JSC::Wasm::B3IRGenerator::addCall):
+        (JSC::Wasm::B3IRGenerator::addCallIndirect):
+        (JSC::Wasm::B3IRGenerator::addCallRef):
+        (JSC::Wasm::B3IRGenerator::unify):
+        (JSC::Wasm::B3IRGenerator::unifyValuesWithBlock):
+        (JSC::Wasm::parseAndCompile):
+        (JSC::Wasm::computeExceptionHandlerLocations):
+        (JSC::Wasm::B3IRGenerator::emitChecksForModOrDiv):
+        (JSC::Wasm::B3IRGenerator::addOp<OpType::I32DivS>):
+        (JSC::Wasm::B3IRGenerator::addOp<OpType::I32RemS>):
+        (JSC::Wasm::B3IRGenerator::addOp<OpType::I32DivU>):
+        (JSC::Wasm::B3IRGenerator::addOp<OpType::I32RemU>):
+        (JSC::Wasm::B3IRGenerator::addOp<OpType::I64DivS>):
+        (JSC::Wasm::B3IRGenerator::addOp<OpType::I64RemS>):
+        (JSC::Wasm::B3IRGenerator::addOp<OpType::I64DivU>):
+        (JSC::Wasm::B3IRGenerator::addOp<OpType::I64RemU>):
+        (JSC::Wasm::B3IRGenerator::addOp<OpType::I32Ctz>):
+        (JSC::Wasm::B3IRGenerator::addOp<OpType::I64Ctz>):
+        (JSC::Wasm::B3IRGenerator::addOp<OpType::I32Popcnt>):
+        (JSC::Wasm::B3IRGenerator::addOp<OpType::I64Popcnt>):
+        (JSC::Wasm::B3IRGenerator::addOp<F64ConvertUI64>):
+        (JSC::Wasm::B3IRGenerator::addOp<OpType::F32ConvertUI64>):
+        (JSC::Wasm::B3IRGenerator::addOp<OpType::F64Nearest>):
+        (JSC::Wasm::B3IRGenerator::addOp<OpType::F32Nearest>):
+        (JSC::Wasm::B3IRGenerator::addOp<OpType::F64Trunc>):
+        (JSC::Wasm::B3IRGenerator::addOp<OpType::F32Trunc>):
+        (JSC::Wasm::B3IRGenerator::addOp<OpType::I32TruncSF64>):
+        (JSC::Wasm::B3IRGenerator::addOp<OpType::I32TruncSF32>):
+        (JSC::Wasm::B3IRGenerator::addOp<OpType::I32TruncUF64>):
+        (JSC::Wasm::B3IRGenerator::addOp<OpType::I32TruncUF32>):
+        (JSC::Wasm::B3IRGenerator::addOp<OpType::I64TruncSF64>):
+        (JSC::Wasm::B3IRGenerator::addOp<OpType::I64TruncUF64>):
+        (JSC::Wasm::B3IRGenerator::addOp<OpType::I64TruncSF32>):
+        (JSC::Wasm::B3IRGenerator::addOp<OpType::I64TruncUF32>):
+        * wasm/WasmB3IRGenerator.h:
+        * wasm/WasmBBQPlan.cpp:
+        (JSC::Wasm::BBQPlan::prepareImpl):
+        (JSC::Wasm::BBQPlan::work):
+        (JSC::Wasm::BBQPlan::compileFunction):
+        (JSC::Wasm::BBQPlan::didCompleteCompilation):
+        (JSC::Wasm::BBQPlan::initializeCallees):
+        * wasm/WasmBBQPlan.h:
+        * wasm/WasmCallee.cpp:
+        (JSC::Wasm::Callee::handlerForIndex):
+        (JSC::Wasm::LLIntCallee::LLIntCallee):
+        (JSC::Wasm::LLIntCallee::linkExceptionHandlers):
+        (JSC::Wasm::OptimizingJITCallee::linkExceptionHandlers):
+        (JSC::Wasm::OptimizingJITCallee::stackmap const):
+        * wasm/WasmCallee.h:
+        (JSC::Wasm::Callee::hasExceptionHandlers const):
+        (JSC::Wasm::Callee::functionCodeBlock const):
+        (JSC::Wasm::OptimizingJITCallee::OptimizingJITCallee):
+        * wasm/WasmCallingConvention.h:
+        (JSC::Wasm::WasmCallingConvention::callInformationFor const):
+        * wasm/WasmFormat.h:
+        (JSC::Wasm::typeToString):
+        (JSC::Wasm::isValidExternalKind):
+        (JSC::Wasm::makeString):
+        * wasm/WasmFunctionCodeBlock.h:
+        (JSC::Wasm::FunctionCodeBlock::numberOfExceptionHandlers const):
+        (JSC::Wasm::FunctionCodeBlock::exceptionHandler):
+        (JSC::Wasm::FunctionCodeBlock::addExceptionHandler):
+        * wasm/WasmFunctionParser.h:
+        (JSC::Wasm::isTryOrCatch):
+        (JSC::Wasm::FunctionParser<Context>::parseExceptionIndex):
+        (JSC::Wasm::FunctionParser<Context>::parseExpression):
+        (JSC::Wasm::FunctionParser<Context>::parseUnreachableExpression):
+        * wasm/WasmHandlerInfo.cpp: Added.
+        (JSC::Wasm::HandlerInfo::initialize):
+        (JSC::Wasm::HandlerInfo::handlerForIndex):
+        * wasm/WasmHandlerInfo.h: Added.
+        (JSC::Wasm::UnlinkedHandlerInfo::UnlinkedHandlerInfo):
+        (JSC::Wasm::HandlerInfo::tag const):
+        (JSC::Wasm::HandlerInfo::delegateTarget const):
+        * wasm/WasmInstance.cpp:
+        (JSC::Wasm::Instance::~Instance):
+        * wasm/WasmInstance.h:
+        (JSC::Wasm::Instance::addTag):
+        (JSC::Wasm::Instance::tag const):
+        * wasm/WasmLLIntGenerator.cpp:
+        (JSC::Wasm::LLIntGenerator::ControlType::try_):
+        (JSC::Wasm::LLIntGenerator::ControlType::catch_):
+        (JSC::Wasm::LLIntGenerator::ControlType::isLoop):
+        (JSC::Wasm::LLIntGenerator::ControlType::isBlock):
+        (JSC::Wasm::LLIntGenerator::ControlType::isIf):
+        (JSC::Wasm::LLIntGenerator::ControlType::isTry):
+        (JSC::Wasm::LLIntGenerator::ControlType::isAnyCatch):
+        (JSC::Wasm::LLIntGenerator::ControlType::isCatch):
+        (JSC::Wasm::LLIntGenerator::unifyValuesWithBlock):
+        (JSC::Wasm::LLIntGenerator::walkExpressionStack):
+        (JSC::Wasm::LLIntGenerator::materializeConstantsAndLocals):
+        (JSC::Wasm::parseAndCompileBytecode):
+        (JSC::Wasm::LLIntGenerator::LLIntGenerator):
+        (JSC::Wasm::LLIntGenerator::repatch):
+        (JSC::Wasm::LLIntGenerator::finalize):
+        (JSC::Wasm::LLIntGenerator::callInformationForCaller):
+        (JSC::Wasm::LLIntGenerator::callInformationForCallee):
+        (JSC::Wasm::LLIntGenerator::addArguments):
+        (JSC::Wasm::LLIntGenerator::addLoop):
+        (JSC::Wasm::LLIntGenerator::addTry):
+        (JSC::Wasm::LLIntGenerator::finalizePreviousBlockForCatch):
+        (JSC::Wasm::LLIntGenerator::addCatch):
+        (JSC::Wasm::LLIntGenerator::addCatchToUnreachable):
+        (JSC::Wasm::LLIntGenerator::addCatchAll):
+        (JSC::Wasm::LLIntGenerator::addCatchAllToUnreachable):
+        (JSC::Wasm::LLIntGenerator::addDelegate):
+        (JSC::Wasm::LLIntGenerator::addDelegateToUnreachable):
+        (JSC::Wasm::LLIntGenerator::addThrow):
+        (JSC::Wasm::LLIntGenerator::addRethrow):
+        (JSC::Wasm::LLIntGenerator::endBlock):
+        (JSC::Wasm::LLIntGenerator::addEndToUnreachable):
+        * wasm/WasmLLIntGenerator.h:
+        * wasm/WasmLimits.h:
+        * wasm/WasmModuleInformation.cpp:
+        * wasm/WasmModuleInformation.h:
+        (JSC::Wasm::ModuleInformation::exceptionIndexSpaceSize const):
+        (JSC::Wasm::ModuleInformation::isImportedExceptionFromExceptionIndexSpace const):
+        (JSC::Wasm::ModuleInformation::signatureIndexFromExceptionIndexSpace const):
+        (JSC::Wasm::ModuleInformation::importExceptionCount const):
+        (JSC::Wasm::ModuleInformation::isDeclaredException const):
+        (JSC::Wasm::ModuleInformation::addDeclaredException):
+        * wasm/WasmOMGForOSREntryPlan.cpp:
+        (JSC::Wasm::OMGForOSREntryPlan::work):
+        * wasm/WasmOMGPlan.cpp:
+        (JSC::Wasm::OMGPlan::work):
+        * wasm/WasmOSREntryData.h:
+        (JSC::Wasm::OSREntryData::values):
+        * wasm/WasmOperations.cpp:
+        (JSC::Wasm::loadValuesIntoBuffer):
+        (JSC::Wasm::doOSREntry):
+        (JSC::Wasm::JSC_DEFINE_JIT_OPERATION):
+        * wasm/WasmOperations.h:
+        * wasm/WasmSectionParser.cpp:
+        (JSC::Wasm::SectionParser::parseImport):
+        (JSC::Wasm::SectionParser::parseExport):
+        (JSC::Wasm::SectionParser::parseException):
+        * wasm/WasmSections.h:
+        (JSC::Wasm::validateOrder):
+        * wasm/WasmSignature.cpp:
+        (JSC::Wasm::SignatureInformation::SignatureInformation):
+        (JSC::Wasm::SignatureInformation::signatureFor):
+        * wasm/WasmSlowPaths.cpp:
+        (JSC::LLInt::WASM_SLOW_PATH_DECL):
+        * wasm/WasmSlowPaths.h:
+        * wasm/WasmStreamingParser.cpp:
+        (JSC::Wasm::StreamingParser::parseCodeSectionSize):
+        * wasm/WasmTag.cpp: Copied from Source/JavaScriptCore/wasm/js/JSWebAssemblyRuntimeError.h.
+        * wasm/WasmTag.h: Copied from Source/JavaScriptCore/wasm/WasmLLIntGenerator.h.
+        (JSC::Wasm::Tag::create):
+        (JSC::Wasm::Tag::parameterCount const):
+        (JSC::Wasm::Tag::parameter const):
+        (JSC::Wasm::Tag::operator== const):
+        (JSC::Wasm::Tag::operator!= const):
+        (JSC::Wasm::Tag::signature const):
+        (JSC::Wasm::Tag::Tag):
+        * wasm/WasmThunks.cpp:
+        * wasm/WasmThunks.h:
+        * wasm/generateWasmB3IRGeneratorInlinesHeader.py:
+        (CodeGenerator.generateOpcode):
+        (CodeGenerator.makeResult):
+        (CodeGenerator.generate):
+        * wasm/generateWasmOpsHeader.py:
+        (typeMacroizer):
+        * wasm/js/JSWebAssembly.cpp:
+        * wasm/js/JSWebAssemblyException.cpp: Added.
+        (JSC::JSWebAssemblyException::JSWebAssemblyException):
+        (JSC::JSWebAssemblyException::finishCreation):
+        (JSC::JSWebAssemblyException::visitChildrenImpl):
+        (JSC::JSWebAssemblyException::destroy):
+        (JSC::JSWebAssemblyException::getArg const):
+        * wasm/js/JSWebAssemblyException.h: Added.
+        (JSC::JSWebAssemblyException::subspaceFor):
+        (JSC::JSWebAssemblyException::createStructure):
+        (JSC::JSWebAssemblyException::create):
+        (JSC::JSWebAssemblyException::tag const):
+        (JSC::JSWebAssemblyException::payload const):
+        * wasm/js/JSWebAssemblyHelpers.h:
+        (JSC::toJSValue):
+        (JSC::fromJSValue):
+        * wasm/js/JSWebAssemblyInstance.cpp:
+        (JSC::JSWebAssemblyInstance::tryCreate):
+        * wasm/js/JSWebAssemblyInstance.h:
+        * wasm/js/JSWebAssemblyRuntimeError.cpp:
+        (JSC::createJSWebAssemblyRuntimeError):
+        * wasm/js/JSWebAssemblyRuntimeError.h:
+        * wasm/js/JSWebAssemblyTag.cpp: Copied from Source/JavaScriptCore/wasm/js/JSWebAssemblyRuntimeError.cpp.
+        (JSC::JSWebAssemblyTag::create):
+        (JSC::JSWebAssemblyTag::createStructure):
+        (JSC::JSWebAssemblyTag::JSWebAssemblyTag):
+        * wasm/js/JSWebAssemblyTag.h: Copied from Source/JavaScriptCore/wasm/js/JSWebAssemblyRuntimeError.h.
+        * wasm/js/WasmToJS.cpp:
+        (JSC::Wasm::wasmToJS):
+        * wasm/js/WebAssemblyExceptionConstructor.cpp: Added.
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::WebAssemblyExceptionConstructor::create):
+        (JSC::WebAssemblyExceptionConstructor::createStructure):
+        (JSC::WebAssemblyExceptionConstructor::finishCreation):
+        (JSC::WebAssemblyExceptionConstructor::WebAssemblyExceptionConstructor):
+        * wasm/js/WebAssemblyExceptionConstructor.h: Copied from Source/JavaScriptCore/wasm/js/JSWebAssemblyRuntimeError.h.
+        * wasm/js/WebAssemblyExceptionPrototype.cpp: Added.
+        (JSC::WebAssemblyExceptionPrototype::create):
+        (JSC::WebAssemblyExceptionPrototype::createStructure):
+        (JSC::WebAssemblyExceptionPrototype::finishCreation):
+        (JSC::WebAssemblyExceptionPrototype::WebAssemblyExceptionPrototype):
+        (JSC::getException):
+        (JSC::getTag):
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * wasm/js/WebAssemblyExceptionPrototype.h: Copied from Source/JavaScriptCore/wasm/js/JSWebAssemblyRuntimeError.h.
+        * wasm/js/WebAssemblyFunction.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * wasm/js/WebAssemblyModuleRecord.cpp:
+        (JSC::WebAssemblyModuleRecord::linkImpl):
+        * wasm/js/WebAssemblyTagConstructor.cpp: Added.
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::WebAssemblyTagConstructor::createTag):
+        (JSC::WebAssemblyTagConstructor::create):
+        (JSC::WebAssemblyTagConstructor::createStructure):
+        (JSC::WebAssemblyTagConstructor::finishCreation):
+        (JSC::WebAssemblyTagConstructor::WebAssemblyTagConstructor):
+        * wasm/js/WebAssemblyTagConstructor.h: Copied from Source/JavaScriptCore/wasm/js/JSWebAssemblyRuntimeError.h.
+        * wasm/js/WebAssemblyTagPrototype.cpp: Added.
+        (JSC::WebAssemblyTagPrototype::create):
+        (JSC::WebAssemblyTagPrototype::createStructure):
+        (JSC::WebAssemblyTagPrototype::finishCreation):
+        (JSC::WebAssemblyTagPrototype::WebAssemblyTagPrototype):
+        (JSC::getTag):
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * wasm/js/WebAssemblyTagPrototype.h: Copied from Source/JavaScriptCore/wasm/js/JSWebAssemblyRuntimeError.h.
+        * wasm/wasm.json:
+
 2021-10-08  Jer Noble  <jer.noble@apple.com>
 
         [Build-time perf] Forward-declare more things in Element.h

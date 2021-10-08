@@ -82,6 +82,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/WasmLLIntGeneratorInlines.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/WasmOps.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/WebAssemblyCompileErrorConstructor.lut.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/WebAssemblyCompileErrorPrototype.lut.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/WebAssemblyExceptionConstructor.lut.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/WebAssemblyExceptionPrototype.lut.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/WebAssemblyGlobalConstructor.lut.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/WebAssemblyGlobalPrototype.lut.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/WebAssemblyInstanceConstructor.lut.h
@@ -96,6 +98,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/WebAssemblyRuntimeErrorConst
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/WebAssemblyRuntimeErrorPrototype.lut.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/WebAssemblyTableConstructor.lut.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/WebAssemblyTablePrototype.lut.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/WebAssemblyTagConstructor.lut.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/WebAssemblyTagPrototype.lut.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/inspector/InspectorAlternateBackendDispatchers.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/inspector/InspectorBackendCommands.js
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/inspector/InspectorBackendDispatchers.cpp

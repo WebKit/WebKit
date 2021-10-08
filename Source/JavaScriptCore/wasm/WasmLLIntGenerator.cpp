@@ -62,8 +62,26 @@ public:
         Ref<Label> m_alternate;
     };
 
-    struct ControlType : public Variant<ControlLoop, ControlTopLevel, ControlBlock, ControlIf> {
-        using Base = Variant<ControlLoop, ControlTopLevel, ControlBlock, ControlIf>;
+    struct ControlTry {
+        Ref<Label> m_try;
+        unsigned m_tryDepth;
+    };
+
+    struct ControlCatch {
+        CatchKind m_kind;
+        Ref<Label> m_tryStart;
+        Ref<Label> m_tryEnd;
+        unsigned m_tryDepth;
+        VirtualRegister m_exception;
+    };
+
+    struct CatchRewriteInfo {
+        unsigned m_instructionOffset;
+        unsigned m_tryDepth;
+    };
+
+    struct ControlType : public Variant<ControlLoop, ControlTopLevel, ControlBlock, ControlIf, ControlTry, ControlCatch> {
+        using Base = Variant<ControlLoop, ControlTopLevel, ControlBlock, ControlIf, ControlTry, ControlCatch>;
 
         ControlType()
             : Base(ControlBlock { })
@@ -90,8 +108,29 @@ public:
             return ControlType(signature, stackSize - signature->argumentCount(), WTFMove(continuation), ControlIf { WTFMove(alternate) });
         }
 
-        static bool isIf(const ControlType& control) { return WTF::holds_alternative<ControlIf>(control); }
+        static ControlType createTry(BlockSignature signature, unsigned stackSize, Ref<Label>&& tryLabel, RefPtr<Label>&& continuation, unsigned tryDepth)
+        {
+            return ControlType(signature, stackSize - signature->argumentCount(), WTFMove(continuation), ControlTry { WTFMove(tryLabel), tryDepth });
+        }
+
+        static ControlType createCatch(BlockSignature signature, unsigned stackSize, Ref<Label>&& tryStart, RefPtr<Label>&& continuation, Ref<Label> tryEnd, unsigned tryDepth, VirtualRegister exception)
+        {
+            return ControlType(signature, stackSize - signature->argumentCount(), WTFMove(continuation), ControlCatch { CatchKind::Catch, WTFMove(tryStart), WTFMove(tryEnd), tryDepth, exception });
+        }
+
+        static bool isLoop(const ControlType& control) { return WTF::holds_alternative<ControlLoop>(control); }
         static bool isTopLevel(const ControlType& control) { return WTF::holds_alternative<ControlTopLevel>(control); }
+        static bool isBlock(const ControlType& control) { return WTF::holds_alternative<ControlBlock>(control); }
+        static bool isIf(const ControlType& control) { return WTF::holds_alternative<ControlIf>(control); }
+        static bool isTry(const ControlType& control) { return WTF::holds_alternative<ControlTry>(control); }
+        static bool isAnyCatch(const ControlType& control) { return WTF::holds_alternative<ControlCatch>(control); }
+        static bool isCatch(const ControlType& control)
+        {
+            if (!WTF::holds_alternative<ControlCatch>(control))
+                return false;
+            ControlCatch catchData = WTF::get<ControlCatch>(control);
+            return catchData.m_kind == CatchKind::Catch;
+        }
 
         unsigned stackSize() const { return m_stackSize; }
         BlockSignature signature() const { return m_signature; }
@@ -152,17 +191,24 @@ public:
         return UnexpectedResult(makeString("WebAssembly.Module failed compiling: "_s, makeString(args)...));
     }
 
-    LLIntGenerator(const ModuleInformation&, unsigned functionIndex, const Signature&);
+    LLIntGenerator(ModuleInformation&, unsigned functionIndex, const Signature&);
 
     std::unique_ptr<FunctionCodeBlock> finalize();
+
+    template<typename Opcode>
+    void repatch(const CatchRewriteInfo&);
 
     template<typename ExpressionListA, typename ExpressionListB>
     void unifyValuesWithBlock(const ExpressionListA& destinations, const ExpressionListB& values)
     {
         ASSERT(destinations.size() <= values.size());
         auto offset = values.size() - destinations.size();
-        for (size_t i = 0; i < destinations.size(); ++i)
-            WasmMov::emit(this, destinations[i], values[offset + i]);
+        for (size_t i = 0; i < destinations.size(); ++i) {
+            auto& src = values[offset + i];
+            auto& dst = destinations[i];
+            if ((VirtualRegister)src != (VirtualRegister)dst)
+                WasmMov::emit(this, dst, src);
+        }
     }
 
     enum NoConsistencyCheckTag { NoConsistencyCheck };
@@ -243,11 +289,21 @@ public:
     PartialResult WARN_UNUSED_RETURN addElse(ControlType&, Stack&);
     PartialResult WARN_UNUSED_RETURN addElseToUnreachable(ControlType&);
 
+    PartialResult WARN_UNUSED_RETURN addTry(BlockSignature, Stack& enclosingStack, ControlType& result, Stack& newStack);
+    PartialResult WARN_UNUSED_RETURN addCatch(unsigned exceptionIndex, const Signature&, Stack&, ControlType&, ResultList&);
+    PartialResult WARN_UNUSED_RETURN addCatchToUnreachable(unsigned exceptionIndex, const Signature&, ControlType&, ResultList&);
+    PartialResult WARN_UNUSED_RETURN addCatchAll(Stack&, ControlType&);
+    PartialResult WARN_UNUSED_RETURN addCatchAllToUnreachable(ControlType&);
+    PartialResult WARN_UNUSED_RETURN addDelegate(ControlType&, ControlType&);
+    PartialResult WARN_UNUSED_RETURN addDelegateToUnreachable(ControlType&, ControlType&);
+    PartialResult WARN_UNUSED_RETURN addThrow(unsigned exceptionIndex, Vector<ExpressionType>& args, Stack&);
+    PartialResult WARN_UNUSED_RETURN addRethrow(unsigned, ControlType&);
+
     PartialResult WARN_UNUSED_RETURN addReturn(const ControlType&, Stack& returnValues);
     PartialResult WARN_UNUSED_RETURN addBranch(ControlType&, ExpressionType condition, Stack& returnValues);
     PartialResult WARN_UNUSED_RETURN addSwitch(ExpressionType condition, const Vector<ControlType*>& targets, ControlType& defaultTargets, Stack& expressionStack);
     PartialResult WARN_UNUSED_RETURN endBlock(ControlEntry&, Stack& expressionStack);
-    PartialResult WARN_UNUSED_RETURN addEndToUnreachable(ControlEntry&, const Stack& expressionStack = { }, bool unreachable = true);
+    PartialResult WARN_UNUSED_RETURN addEndToUnreachable(ControlEntry&, Stack& expressionStack, bool unreachable = true);
     PartialResult WARN_UNUSED_RETURN endTopLevel(BlockSignature, const Stack&);
 
     // Calls
@@ -337,7 +393,7 @@ private:
             WasmDropKeep::emit(this, startOffset, drop, keep);
     }
 
-    template<typename Functor>
+    template<typename Stack, typename Functor>
     void walkExpressionStack(Stack& expressionStack, unsigned stackSize, const Functor& functor)
     {
         for (unsigned i = expressionStack.size(); i > 0; --i) {
@@ -346,7 +402,7 @@ private:
         }
     }
 
-    template<typename Functor>
+    template<typename Stack, typename Functor>
     void walkExpressionStack(Stack& expressionStack, const Functor& functor)
     {
         walkExpressionStack(expressionStack, m_stackSize, functor);
@@ -355,7 +411,8 @@ private:
     template<typename Functor>
     void walkExpressionStack(ControlEntry& entry, const Functor& functor)
     {
-        walkExpressionStack(entry.enclosedExpressionStack, entry.controlData.stackSize(), functor);
+        unsigned stackSize = entry.controlData.stackSize();
+        walkExpressionStack(entry.enclosedExpressionStack, stackSize, functor);
     }
 
     void checkConsistency()
@@ -381,7 +438,7 @@ private:
 
     void materializeConstantsAndLocals(Stack& expressionStack, NoConsistencyCheckTag)
     {
-        walkExpressionStack(expressionStack, [&](TypedExpression& expression, VirtualRegister slot) {
+        walkExpressionStack(expressionStack, [&](auto& expression, VirtualRegister slot) {
             ASSERT(expression.value() == slot || expression.value().isConstant() || expression.value().isArgument() || static_cast<unsigned>(expression.value().toLocal()) < m_codeBlock->m_numVars);
             if (expression.value() == slot)
                 return;
@@ -417,6 +474,8 @@ private:
         m_stackSize += newStack.size();
     }
 
+    void finalizePreviousBlockForCatch(ControlType&, Stack&);
+
     struct SwitchEntry {
         InstructionStream::Offset offset;
         int* jumpTarget;
@@ -429,7 +488,7 @@ private:
     };
 
     FunctionParser<LLIntGenerator>* m_parser { nullptr };
-    const ModuleInformation& m_info;
+    ModuleInformation& m_info;
     const unsigned m_functionIndex { UINT_MAX };
     Vector<VirtualRegister> m_normalizedArguments;
     HashMap<Label*, Vector<SwitchEntry>> m_switches;
@@ -440,9 +499,12 @@ private:
     Vector<VirtualRegister, 2> m_results;
     Checked<unsigned> m_stackSize { 0 };
     Checked<unsigned> m_maxStackSize { 0 };
+    Checked<unsigned> m_tryDepth { 0 };
+    Checked<unsigned> m_maxTryDepth { 0 };
+    bool m_usesExceptions { false };
 };
 
-Expected<std::unique_ptr<FunctionCodeBlock>, String> parseAndCompileBytecode(const uint8_t* functionStart, size_t functionLength, const Signature& signature, const ModuleInformation& info, uint32_t functionIndex)
+Expected<std::unique_ptr<FunctionCodeBlock>, String> parseAndCompileBytecode(const uint8_t* functionStart, size_t functionLength, const Signature& signature, ModuleInformation& info, uint32_t functionIndex)
 {
     LLIntGenerator llintGenerator(info, functionIndex, signature);
     FunctionParser<LLIntGenerator> parser(llintGenerator, functionStart, functionLength, signature, info);
@@ -466,7 +528,7 @@ static ThreadSpecific<Buffer>& threadSpecificBuffer()
     return *threadSpecificBufferPtr;
 }
 
-LLIntGenerator::LLIntGenerator(const ModuleInformation& info, unsigned functionIndex, const Signature&)
+LLIntGenerator::LLIntGenerator(ModuleInformation& info, unsigned functionIndex, const Signature&)
     : BytecodeGeneratorBase(makeUnique<FunctionCodeBlock>(functionIndex), 0)
     , m_info(info)
     , m_functionIndex(functionIndex)
@@ -485,9 +547,22 @@ LLIntGenerator::LLIntGenerator(const ModuleInformation& info, unsigned functionI
     WasmEnter::emit(this);
 }
 
+template<typename Opcode>
+void LLIntGenerator::repatch(const CatchRewriteInfo& info)
+{
+    auto ref = m_writer.ref(info.m_instructionOffset);
+    Opcode* instruction = ref->cast<Opcode, WasmOpcodeTraits>();
+    VirtualRegister exceptionRegister = virtualRegisterForLocal(m_maxStackSize + info.m_tryDepth - 1);
+    instruction->setException(exceptionRegister, []() {
+        RELEASE_ASSERT_NOT_REACHED();
+        return VirtualRegister();
+    });
+}
+
 std::unique_ptr<FunctionCodeBlock> LLIntGenerator::finalize()
 {
     RELEASE_ASSERT(m_codeBlock);
+
     size_t numCalleeLocals = WTF::roundUpToMultipleOf(stackAlignmentRegisters(), m_maxStackSize);
     m_codeBlock->m_numCalleeLocals = numCalleeLocals;
     RELEASE_ASSERT(numCalleeLocals == m_codeBlock->m_numCalleeLocals);
@@ -499,6 +574,9 @@ std::unique_ptr<FunctionCodeBlock> LLIntGenerator::finalize()
     usedBuffer.resize(0);
     RELEASE_ASSERT(usedBuffer.capacity() == oldCapacity);
     *threadSpecific = WTFMove(usedBuffer);
+
+    if (!m_usesExceptions)
+        m_info.m_functionDoesNotUseExceptions.quickSet(m_functionIndex);
 
     return WTFMove(m_codeBlock);
 }
@@ -580,7 +658,7 @@ auto LLIntGenerator::callInformationForCaller(const Signature& signature) -> LLI
 
     // FIXME: we are allocating the extra space for the argument/return count in order to avoid interference, but we could do better
     // NOTE: We increase arg count by 1 for the case of indirect calls
-    m_stackSize += std::max(signature.argumentCount() + 1, signature.returnCount()) + gprCount + fprCount + stackCount + CallFrame::headerSizeInRegisters;
+    m_stackSize += std::max(signature.argumentCount() + 1, signature.returnCount()) + gprCount + fprCount + stackCount + CallFrame::headerSizeInRegisters + 1;
     if (m_stackSize.value() % stackAlignmentRegisters())
         ++m_stackSize;
     if (m_maxStackSize < m_stackSize)
@@ -591,7 +669,7 @@ auto LLIntGenerator::callInformationForCaller(const Signature& signature) -> LLI
     ResultList temporaryResults(signature.returnCount());
 
     const unsigned stackOffset = m_stackSize;
-    const unsigned base = stackOffset - CallFrame::headerSizeInRegisters;
+    const unsigned base = stackOffset - CallFrame::headerSizeInRegisters - 1;
 
     const uint32_t gprLimit = base - stackCount - gprCount;
     const uint32_t fprLimit = gprLimit - fprCount;
@@ -683,7 +761,7 @@ auto LLIntGenerator::callInformationForCallee(const Signature& signature) -> Vec
 
     uint32_t gprIndex = 0;
     uint32_t fprIndex = gprCount;
-    uint32_t stackIndex = 0;
+    uint32_t stackIndex = 1;
     const uint32_t maxGPRIndex = gprCount;
     const uint32_t maxFPRIndex = maxGPRIndex + fprCount;
 
@@ -731,7 +809,7 @@ auto LLIntGenerator::addArguments(const Signature& signature) -> PartialResult
     const uint32_t maxFPRIndex = gprCount + fprCount;
     uint32_t gprIndex = 0;
     uint32_t fprIndex = maxGPRIndex;
-    uint32_t stackIndex = 0;
+    uint32_t stackIndex = 1;
 
     Vector<VirtualRegister> registerArguments(gprCount + fprCount);
     for (uint32_t i = 0; i < gprCount + fprCount; i++)
@@ -906,6 +984,7 @@ auto LLIntGenerator::addLoop(BlockSignature signature, Stack& enclosingStack, Co
 
     block = ControlType::loop(signature, m_stackSize, WTFMove(body), WTFMove(continuation));
 
+    Vector<unsigned> unresolvedOffsets;
     Vector<VirtualRegister> osrEntryData;
     for (uint32_t i = 0; i < m_codeBlock->m_numArguments; i++)
         osrEntryData.append(m_normalizedArguments[i]);
@@ -916,9 +995,12 @@ auto LLIntGenerator::addLoop(BlockSignature signature, Stack& enclosingStack, Co
     for (uint32_t i = gprCount + fprCount + numberOfLLIntCalleeSaveRegisters; i < m_codeBlock->m_numVars; i++)
         osrEntryData.append(virtualRegisterForLocal(i));
     for (unsigned controlIndex = 0; controlIndex < m_parser->controlStack().size(); ++controlIndex) {
+        ControlType& data = m_parser->controlStack()[controlIndex].controlData;
         Stack& expressionStack = m_parser->controlStack()[controlIndex].enclosedExpressionStack;
         for (TypedExpression expression : expressionStack)
             osrEntryData.append(expression);
+        if (ControlType::isAnyCatch(data))
+            osrEntryData.append(WTF::get<ControlCatch>(data).m_exception);
     }
     for (TypedExpression expression : enclosingStack)
         osrEntryData.append(expression);
@@ -972,6 +1054,159 @@ auto LLIntGenerator::addElseToUnreachable(ControlType& data) -> PartialResult
     ControlIf& control = WTF::get<ControlIf>(data);
     emitLabel(control.m_alternate.get());
     data = ControlType::block(data.m_signature, m_stackSize, WTFMove(data.m_continuation));
+    return { };
+}
+
+auto LLIntGenerator::addTry(BlockSignature signature, Stack& enclosingStack, ControlType& result, Stack& newStack) -> PartialResult
+{
+    m_usesExceptions = true;
+    ++m_tryDepth;
+    if (m_maxTryDepth < m_tryDepth)
+        m_maxTryDepth = m_tryDepth;
+
+    splitStack(signature, enclosingStack, newStack);
+    Ref<Label> tryLabel = newEmittedLabel();
+    Ref<Label> continuation = newLabel();
+    result = ControlType::createTry(signature, m_stackSize, WTFMove(tryLabel), WTFMove(continuation), m_tryDepth);
+    return { };
+}
+
+void LLIntGenerator::finalizePreviousBlockForCatch(ControlType& data, Stack& expressionStack)
+{
+    if (!ControlType::isAnyCatch(data))
+        materializeConstantsAndLocals(expressionStack);
+    else {
+        checkConsistency();
+        VirtualRegister dst = virtualRegisterForLocal(data.stackSize());
+        for (TypedExpression& value : expressionStack) {
+            WasmMov::emit(this, dst, value);
+            value = TypedExpression { value.type(), dst };
+            dst -= 1;
+        }
+    }
+    WasmJmp::emit(this, data.m_continuation->bind(this));
+}
+
+auto LLIntGenerator::addCatch(unsigned exceptionIndex, const Signature& exceptionSignature, Stack& expressionStack, ControlType& data, ResultList& results) -> PartialResult
+{
+    finalizePreviousBlockForCatch(data, expressionStack);
+    return addCatchToUnreachable(exceptionIndex, exceptionSignature, data, results);
+}
+
+auto LLIntGenerator::addCatchToUnreachable(unsigned exceptionIndex, const Signature& exceptionSignature, ControlType& data, ResultList& results) -> PartialResult
+{
+    m_usesExceptions = true;
+    Ref<Label> catchLabel = newEmittedLabel();
+
+    m_stackSize = data.stackSize();
+    VirtualRegister exception = push();
+    if (WTF::holds_alternative<ControlTry>(data)) {
+        ControlTry& tryData = WTF::get<ControlTry>(data);
+        data = ControlType::createCatch(data.m_signature, data.stackSize(), WTFMove(tryData.m_try), WTFMove(data.m_continuation), catchLabel, tryData.m_tryDepth, exception);
+    }
+    for (unsigned i = 0; i < exceptionSignature.argumentCount(); ++i)
+        results.append(push());
+
+    if (Context::useFastTLS())
+        WasmCatch::emit(this, exceptionIndex, exception, exceptionSignature.argumentCount(), results.isEmpty() ? 0 : -results[0].offset());
+    else
+        WasmCatchNoTls::emit(this, exceptionIndex, exception, exceptionSignature.argumentCount(), results.isEmpty() ? 0 : -results[0].offset());
+
+    for (unsigned i = 0; i < exceptionSignature.argumentCount(); ++i) {
+        VirtualRegister dst = results[i];
+        Type type = exceptionSignature.argument(i);
+        switch (type.kind) {
+        case Wasm::TypeKind::F32:
+            WasmF32ReinterpretI32::emit(this, dst, dst);
+            break;
+        case Wasm::TypeKind::F64:
+            WasmF64ReinterpretI64::emit(this, dst, dst);
+            break;
+        case Wasm::TypeKind::I32:
+        case Wasm::TypeKind::I64:
+        case Wasm::TypeKind::Externref:
+        case Wasm::TypeKind::Funcref:
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+            break;
+        }
+    }
+
+    ControlCatch& catchData = WTF::get<ControlCatch>(data);
+    catchData.m_kind = CatchKind::Catch;
+    m_codeBlock->addExceptionHandler({ HandlerType::Catch, catchData.m_tryStart->location(), catchData.m_tryEnd->location(), catchLabel->location(), m_tryDepth, exceptionIndex });
+
+    return { };
+}
+
+auto LLIntGenerator::addCatchAll(Stack& expressionStack, ControlType& data) -> PartialResult
+{
+    finalizePreviousBlockForCatch(data, expressionStack);
+    WasmJmp::emit(this, data.m_continuation->bind(this));
+    return addCatchAllToUnreachable(data);
+}
+
+auto LLIntGenerator::addCatchAllToUnreachable(ControlType& data) -> PartialResult
+{
+    m_usesExceptions = true;
+    Ref<Label> catchLabel = newEmittedLabel();
+    m_stackSize = data.stackSize();
+    VirtualRegister exception = push();
+    if (WTF::holds_alternative<ControlTry>(data)) {
+        ControlTry& tryData = WTF::get<ControlTry>(data);
+        data = ControlType::createCatch(data.m_signature, data.stackSize(), WTFMove(tryData.m_try), WTFMove(data.m_continuation), catchLabel, tryData.m_tryDepth, exception);
+    }
+    ControlCatch& catchData = WTF::get<ControlCatch>(data);
+    catchData.m_kind = CatchKind::CatchAll;
+
+    if (Context::useFastTLS())
+        WasmCatchAll::emit(this, exception);
+    else
+        WasmCatchAllNoTls::emit(this, exception);
+
+    m_codeBlock->addExceptionHandler({ HandlerType::CatchAll, catchData.m_tryStart->location(), catchData.m_tryEnd->location(), catchLabel->location(), m_tryDepth, 0 });
+    return { };
+}
+
+auto LLIntGenerator::addDelegate(ControlType& target, ControlType& data) -> PartialResult
+{
+    return addDelegateToUnreachable(target, data);
+}
+
+auto LLIntGenerator::addDelegateToUnreachable(ControlType& target, ControlType& data) -> PartialResult
+{
+    m_usesExceptions = true;
+    Ref<Label> delegateLabel = newEmittedLabel();
+
+    ASSERT(ControlType::isTry(target) || ControlType::isTopLevel(target));
+    unsigned targetDepth = ControlType::isTry(target) ? WTF::get<ControlTry>(target).m_tryDepth : 0;
+
+    ControlTry& tryData = WTF::get<ControlTry>(data);
+    m_codeBlock->addExceptionHandler({ HandlerType::Delegate, tryData.m_try->location(), delegateLabel->location(), 0, m_tryDepth, targetDepth });
+    checkConsistency();
+    return { };
+}
+
+auto LLIntGenerator::addThrow(unsigned exceptionIndex, Vector<ExpressionType>& args, Stack&) -> PartialResult
+{
+    m_usesExceptions = true;
+    walkExpressionStack(args, [&](VirtualRegister& arg, VirtualRegister slot) {
+        if (arg == slot)
+            return;
+        WasmMov::emit(this, slot, arg);
+        arg = slot;
+    });
+    WasmThrow::emit(this, exceptionIndex, args.isEmpty() ? virtualRegisterForLocal(0) : args[0]);
+    return { };
+}
+
+auto LLIntGenerator::addRethrow(unsigned, ControlType& data) -> PartialResult
+{
+    m_usesExceptions = true;
+    ASSERT(WTF::holds_alternative<ControlCatch>(data));
+    ControlCatch catchData = WTF::get<ControlCatch>(data);
+    WasmRethrow::emit(this, catchData.m_exception);
     return { };
 }
 
@@ -1049,18 +1284,24 @@ auto LLIntGenerator::endBlock(ControlEntry& entry, Stack& expressionStack) -> Pa
 {
     // FIXME: We only need to materialize constants here if there exists a jump to this label
     // https://bugs.webkit.org/show_bug.cgi?id=203657
-    materializeConstantsAndLocals(expressionStack);
+    finalizePreviousBlockForCatch(entry.controlData, expressionStack);
     return addEndToUnreachable(entry, expressionStack, false);
 }
 
 
-auto LLIntGenerator::addEndToUnreachable(ControlEntry& entry, const Stack& expressionStack, bool unreachable) -> PartialResult
+auto LLIntGenerator::addEndToUnreachable(ControlEntry& entry, Stack& expressionStack, bool unreachable) -> PartialResult
 {
     ControlType& data = entry.controlData;
 
-    RELEASE_ASSERT(unreachable || m_stackSize == data.stackSize() + data.m_signature->returnCount());
+    unsigned stackSize = data.stackSize();
+    if (ControlType::isAnyCatch(entry.controlData))
+        ++stackSize; // Account for the caught exception
+    RELEASE_ASSERT(unreachable || m_stackSize ==  stackSize + data.m_signature->returnCount());
 
     m_stackSize = data.stackSize();
+
+    if (ControlType::isTry(data) || WTF::holds_alternative<ControlCatch>(data))
+        --m_tryDepth;
 
     for (unsigned i = 0; i < data.m_signature->returnCount(); ++i) {
         // We don't want to do a consistency check here because we just reset the stack size

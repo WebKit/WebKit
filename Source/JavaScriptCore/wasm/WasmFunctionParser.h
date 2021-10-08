@@ -37,7 +37,14 @@ enum class BlockType {
     If,
     Block,
     Loop,
-    TopLevel
+    TopLevel,
+    Try,
+    Catch,
+};
+
+enum class CatchKind {
+    Catch,
+    CatchAll,
 };
 
 template<typename EnclosingStack, typename NewStack>
@@ -147,6 +154,7 @@ private:
     PartialResult WARN_UNUSED_RETURN parseIndexForLocal(uint32_t&);
     PartialResult WARN_UNUSED_RETURN parseIndexForGlobal(uint32_t&);
     PartialResult WARN_UNUSED_RETURN parseFunctionIndex(uint32_t&);
+    PartialResult WARN_UNUSED_RETURN parseExceptionIndex(uint32_t&);
     PartialResult WARN_UNUSED_RETURN parseBranchTarget(uint32_t&);
 
     struct TableInitImmediates {
@@ -210,6 +218,12 @@ private:
     unsigned m_unreachableBlocks { 0 };
     unsigned m_loopIndex { 0 };
 };
+
+template<typename ControlType>
+static bool isTryOrCatch(ControlType& data)
+{
+    return ControlType::isTry(data) || ControlType::isCatch(data);
+}
 
 template<typename Context>
 FunctionParser<Context>::FunctionParser(Context& context, const uint8_t* functionStart, size_t functionLength, const Signature& signature, const ModuleInformation& info)
@@ -572,6 +586,16 @@ auto FunctionParser<Context>::parseFunctionIndex(uint32_t& resultIndex) -> Parti
     WASM_PARSER_FAIL_IF(!parseVarUInt32(functionIndex), "can't parse function index");
     WASM_PARSER_FAIL_IF(functionIndex >= m_info.functionIndexSpaceSize(), "function index ", functionIndex, " exceeds function index space ", m_info.functionIndexSpaceSize());
     resultIndex = functionIndex;
+    return { };
+}
+
+template<typename Context>
+auto FunctionParser<Context>::parseExceptionIndex(uint32_t& result) -> PartialResult
+{
+    uint32_t exceptionIndex;
+    WASM_PARSER_FAIL_IF(!parseVarUInt32(exceptionIndex), "can't parse exception index");
+    WASM_VALIDATOR_FAIL_IF(exceptionIndex >= m_info.exceptionIndexSpaceSize(), "exception index ", exceptionIndex, " is invalid, limit is ", m_info.exceptionIndexSpaceSize());
+    result = exceptionIndex;
     return { };
 }
 
@@ -1333,6 +1357,131 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         return { };
     }
 
+    case Try: {
+        WASM_PARSER_FAIL_IF(!Options::useWebAssemblyExceptions(), "wasm exceptions are not enabled");
+
+        BlockSignature inlineSignature;
+        WASM_PARSER_FAIL_IF(!parseBlockSignature(m_info, inlineSignature), "can't get try's signature");
+
+        WASM_VALIDATOR_FAIL_IF(m_expressionStack.size() < inlineSignature->argumentCount(), "Too few arguments on stack for try block. Trye expects ", inlineSignature->argumentCount(), ", but only ", m_expressionStack.size(), " were present. Try block has signature: ", inlineSignature->toString());
+        unsigned offset = m_expressionStack.size() - inlineSignature->argumentCount();
+        for (unsigned i = 0; i < inlineSignature->argumentCount(); ++i)
+            WASM_VALIDATOR_FAIL_IF(m_expressionStack[offset + i].type() != inlineSignature->argument(i), "Try expects the argument at index", i, " to be ", inlineSignature->argument(i).kind, " but argument has type ", m_expressionStack[i].type().kind);
+
+        int64_t oldSize = m_expressionStack.size();
+        Stack newStack;
+        ControlType control;
+        WASM_TRY_ADD_TO_CONTEXT(addTry(inlineSignature, m_expressionStack, control, newStack));
+        ASSERT_UNUSED(oldSize, oldSize - m_expressionStack.size() == inlineSignature->argumentCount());
+        ASSERT(newStack.size() == inlineSignature->argumentCount());
+
+        m_controlStack.append({ WTFMove(m_expressionStack), { }, WTFMove(control) });
+        m_expressionStack = WTFMove(newStack);
+        return { };
+    }
+
+    case Catch: {
+        WASM_PARSER_FAIL_IF(!Options::useWebAssemblyExceptions(), "wasm exceptions are not enabled");
+
+        WASM_PARSER_FAIL_IF(m_controlStack.size() == 1, "can't use catch block at the top-level of a function");
+
+        uint32_t exceptionIndex;
+        WASM_FAIL_IF_HELPER_FAILS(parseExceptionIndex(exceptionIndex));
+        SignatureIndex signatureIndex = m_info.signatureIndexFromExceptionIndexSpace(exceptionIndex);
+        const Signature& exceptionSignature = SignatureInformation::get(signatureIndex);
+
+        ControlEntry& controlEntry = m_controlStack.last();
+        WASM_VALIDATOR_FAIL_IF(!isTryOrCatch(controlEntry.controlData), "catch block isn't associated to a try");
+        WASM_FAIL_IF_HELPER_FAILS(unify(controlEntry.controlData));
+
+        ResultList results;
+        Stack preCatchStack;
+        m_expressionStack.swap(preCatchStack);
+        WASM_TRY_ADD_TO_CONTEXT(addCatch(exceptionIndex, exceptionSignature, preCatchStack, controlEntry.controlData, results));
+
+        RELEASE_ASSERT(exceptionSignature.argumentCount() == results.size());
+        for (unsigned i = 0; i < exceptionSignature.argumentCount(); ++i)
+            m_expressionStack.constructAndAppend(exceptionSignature.argument(i), results[i]);
+        return { };
+    }
+
+    case CatchAll: {
+        WASM_PARSER_FAIL_IF(!Options::useWebAssemblyExceptions(), "wasm exceptions are not enabled");
+
+        WASM_PARSER_FAIL_IF(m_controlStack.size() == 1, "can't use catch block at the top-level of a function");
+
+        ControlEntry& controlEntry = m_controlStack.last();
+
+        WASM_VALIDATOR_FAIL_IF(!isTryOrCatch(controlEntry.controlData), "catch block isn't associated to a try");
+        WASM_FAIL_IF_HELPER_FAILS(unify(controlEntry.controlData));
+
+        ResultList results;
+        Stack preCatchStack;
+        m_expressionStack.swap(preCatchStack);
+        WASM_TRY_ADD_TO_CONTEXT(addCatchAll(preCatchStack, controlEntry.controlData));
+        return { };
+    }
+
+    case Delegate: {
+        WASM_PARSER_FAIL_IF(!Options::useWebAssemblyExceptions(), "wasm exceptions are not enabled");
+
+        WASM_PARSER_FAIL_IF(m_controlStack.size() == 1, "can't use delegate at the top-level of a function");
+
+        uint32_t target;
+        WASM_FAIL_IF_HELPER_FAILS(parseBranchTarget(target));
+
+        ControlEntry controlEntry = m_controlStack.takeLast();
+        WASM_VALIDATOR_FAIL_IF(!ControlType::isTry(controlEntry.controlData), "delegate isn't associated to a try");
+
+        ControlType& targetData = m_controlStack[m_controlStack.size() - 1 - target].controlData;
+        WASM_VALIDATOR_FAIL_IF(!ControlType::isTry(targetData) && !ControlType::isTopLevel(targetData), "delegate target isn't a try or the top level block");
+
+        WASM_TRY_ADD_TO_CONTEXT(addDelegate(targetData, controlEntry.controlData));
+        WASM_FAIL_IF_HELPER_FAILS(unify(controlEntry.controlData));
+        WASM_TRY_ADD_TO_CONTEXT(endBlock(controlEntry, m_expressionStack));
+        m_expressionStack.swap(controlEntry.enclosedExpressionStack);
+        return { };
+    }
+
+    case Throw: {
+        WASM_PARSER_FAIL_IF(!Options::useWebAssemblyExceptions(), "wasm exceptions are not enabled");
+
+        uint32_t exceptionIndex;
+        WASM_FAIL_IF_HELPER_FAILS(parseExceptionIndex(exceptionIndex));
+        SignatureIndex signatureIndex = m_info.signatureIndexFromExceptionIndexSpace(exceptionIndex);
+        const Signature& exceptionSignature = SignatureInformation::get(signatureIndex);
+
+        WASM_VALIDATOR_FAIL_IF(m_expressionStack.size() < exceptionSignature.argumentCount(), "Too few arguments on stack for the exception being thrown. The exception expects ", exceptionSignature.argumentCount(), ", but only ", m_expressionStack.size(), " were present. Exception has signature: ", exceptionSignature.toString());
+        unsigned offset = m_expressionStack.size() - exceptionSignature.argumentCount();
+        Vector<ExpressionType> args;
+        WASM_PARSER_FAIL_IF(!args.tryReserveCapacity(exceptionSignature.argumentCount()), "can't allocate enough memory for throw's ", exceptionSignature.argumentCount(), " arguments");
+        for (unsigned i = 0; i < exceptionSignature.argumentCount(); ++i) {
+            TypedExpression arg = m_expressionStack.at(offset + i);
+            WASM_VALIDATOR_FAIL_IF(arg.type() != exceptionSignature.argument(i), "The exception being thrown expects the argument at index ", i, " to be ", exceptionSignature.argument(i).kind, " but argument has type ", arg.type().kind);
+            args.uncheckedAppend(arg);
+            m_context.didPopValueFromStack();
+        }
+        m_expressionStack.shrink(offset);
+
+        WASM_TRY_ADD_TO_CONTEXT(addThrow(exceptionIndex, args, m_expressionStack));
+        m_unreachableBlocks = 1;
+        return { };
+    }
+
+    case Rethrow: {
+        WASM_PARSER_FAIL_IF(!Options::useWebAssemblyExceptions(), "wasm exceptions are not enabled");
+
+        uint32_t target;
+        WASM_FAIL_IF_HELPER_FAILS(parseBranchTarget(target));
+
+        ControlType& data = m_controlStack[m_controlStack.size() - 1 - target].controlData;
+        WASM_VALIDATOR_FAIL_IF(!ControlType::isAnyCatch(data), "rethrow doesn't refer to a catch block");
+
+        WASM_TRY_ADD_TO_CONTEXT(addRethrow(target, data));
+        m_unreachableBlocks = 1;
+        return { };
+    }
+
     case Br:
     case BrIf: {
         uint32_t target;
@@ -1487,6 +1636,66 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
         return { };
     }
 
+    case Catch: {
+        WASM_PARSER_FAIL_IF(!Options::useWebAssemblyExceptions(), "wasm exceptions are not enabled");
+
+        uint32_t exceptionIndex;
+        WASM_FAIL_IF_HELPER_FAILS(parseExceptionIndex(exceptionIndex));
+        SignatureIndex signatureIndex = m_info.signatureIndexFromExceptionIndexSpace(exceptionIndex);
+        const Signature& exceptionSignature = SignatureInformation::get(signatureIndex);
+
+        if (m_unreachableBlocks > 1)
+            return { };
+
+        ControlEntry& data = m_controlStack.last();
+        WASM_VALIDATOR_FAIL_IF(!isTryOrCatch(data.controlData), "catch block isn't associated to a try");
+
+        m_unreachableBlocks = 0;
+        m_expressionStack = { };
+        ResultList results;
+        WASM_TRY_ADD_TO_CONTEXT(addCatchToUnreachable(exceptionIndex, exceptionSignature, data.controlData, results));
+
+        RELEASE_ASSERT(exceptionSignature.argumentCount() == results.size());
+        for (unsigned i = 0; i < exceptionSignature.argumentCount(); ++i)
+            m_expressionStack.constructAndAppend(exceptionSignature.argument(i), results[i]);
+        return { };
+    }
+
+    case CatchAll: {
+        WASM_PARSER_FAIL_IF(!Options::useWebAssemblyExceptions(), "wasm exceptions are not enabled");
+
+        if (m_unreachableBlocks > 1)
+            return { };
+
+        ControlEntry& data = m_controlStack.last();
+        m_unreachableBlocks = 0;
+        m_expressionStack = { };
+        WASM_VALIDATOR_FAIL_IF(!isTryOrCatch(data.controlData), "catch block isn't associated to a try");
+        WASM_TRY_ADD_TO_CONTEXT(addCatchAllToUnreachable(data.controlData));
+        return { };
+    }
+
+    case Delegate: {
+        WASM_PARSER_FAIL_IF(!Options::useWebAssemblyExceptions(), "wasm exceptions are not enabled");
+
+        WASM_PARSER_FAIL_IF(m_controlStack.size() == 1, "can't use delegate at the top-level of a function");
+
+        uint32_t target;
+        WASM_FAIL_IF_HELPER_FAILS(parseBranchTarget(target));
+
+        ControlEntry controlEntry = m_controlStack.takeLast();
+        WASM_VALIDATOR_FAIL_IF(!ControlType::isTry(controlEntry.controlData), "delegate isn't associated to a try");
+
+        ControlType& data = m_controlStack[m_controlStack.size() - 1 - target].controlData;
+        WASM_VALIDATOR_FAIL_IF(!ControlType::isTry(data) && !ControlType::isTopLevel(data), "delegate target isn't a try block");
+
+        WASM_TRY_ADD_TO_CONTEXT(addDelegateToUnreachable(data, controlEntry.controlData));
+        Stack emptyStack;
+        WASM_TRY_ADD_TO_CONTEXT(addEndToUnreachable(controlEntry, emptyStack));
+        m_expressionStack.swap(controlEntry.enclosedExpressionStack);
+        return { };
+    }
+
     case End: {
         if (m_unreachableBlocks == 1) {
             ControlEntry data = m_controlStack.takeLast();
@@ -1495,14 +1704,20 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
                 m_expressionStack = WTFMove(data.elseBlockStack);
                 WASM_FAIL_IF_HELPER_FAILS(unify(data.controlData));
                 WASM_TRY_ADD_TO_CONTEXT(endBlock(data, m_expressionStack));
-            } else
-                WASM_TRY_ADD_TO_CONTEXT(addEndToUnreachable(data));
+            } else {
+                Stack emptyStack;
+                WASM_TRY_ADD_TO_CONTEXT(addEndToUnreachable(data, emptyStack));
+            }
 
             m_expressionStack.swap(data.enclosedExpressionStack);
         }
         m_unreachableBlocks--;
         return { };
     }
+
+    case Try:
+        WASM_PARSER_FAIL_IF(!Options::useWebAssemblyExceptions(), "wasm exceptions are not enabled");
+        FALLTHROUGH;
 
     case Loop:
     case If:
@@ -1576,10 +1791,29 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
         return { };
     }
 
+    case Rethrow: {
+        WASM_PARSER_FAIL_IF(!Options::useWebAssemblyExceptions(), "wasm exceptions are not enabled");
+        uint32_t target;
+        WASM_FAIL_IF_HELPER_FAILS(parseBranchTarget(target));
+
+        ControlType& data = m_controlStack[m_controlStack.size() - 1 - target].controlData;
+        WASM_VALIDATOR_FAIL_IF(!ControlType::isAnyCatch(data), "rethrow doesn't refer to a catch block");
+        return { };
+    }
+
     case Br:
     case BrIf: {
         uint32_t target;
         WASM_FAIL_IF_HELPER_FAILS(parseBranchTarget(target));
+        return { };
+    }
+
+    case Throw: {
+        WASM_PARSER_FAIL_IF(!Options::useWebAssemblyExceptions(), "wasm exceptions are not enabled");
+
+        uint32_t exceptionIndex;
+        WASM_FAIL_IF_HELPER_FAILS(parseExceptionIndex(exceptionIndex));
+
         return { };
     }
 

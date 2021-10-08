@@ -53,7 +53,7 @@ def cppMacro(wasmOpcode, value, b3, inc, *extraArgs):
 def typeMacroizer():
     inc = 0
     for ty in wasm.types:
-        yield cppMacro(ty, wasm.types[ty]["value"], wasm.types[ty]["b3type"], inc)
+        yield cppMacro(ty, wasm.types[ty]["value"], wasm.types[ty]["b3type"], inc, ty)
         inc += 1
 
 type_definitions = ["#define FOR_EACH_WASM_TYPE(macro)"]

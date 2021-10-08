@@ -543,6 +543,7 @@ bool canUseWebAssemblyFastMemory();
     v(Bool, useTemporal, false, Normal, "Expose the Temporal object.") \
     v(Bool, useWebAssemblyThreading, true, Normal, "Allow instructions from the wasm threading spec.") \
     v(Bool, useWebAssemblyTypedFunctionReferences, false, Normal, "Allow function types from the wasm typed function references spec.") \
+    v(Bool, useWebAssemblyExceptions, true, Normal, "Allow the new section and instructions from the wasm exception handling spec.") \
 
 
 enum OptionEquivalence {

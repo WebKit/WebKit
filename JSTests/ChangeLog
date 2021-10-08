@@ -1,3 +1,336 @@
+2021-10-08  Tadeu Zagallo  <tzagallo@apple.com>
+
+        Implement the WebAssembly exception handling proposal
+        https://bugs.webkit.org/show_bug.cgi?id=229681
+        <rdar://81603387>
+
+        Reviewed by Keith Miller.
+
+        Add new tests for the exception handling and import a set of tests used by V8 into wasm/v8.
+
+        * wasm.yaml:
+        * wasm/Builder.js:
+        (const._importExceptionContinuation.type.Import.field):
+        (export.default.Builder.prototype._registerSectionBuilders.const.section.in.WASM.description.section.switch.section.case.string_appeared_here.this.section):
+        (const._exportFunctionContinuation.type.Export.field): Deleted.
+        (const._exportFunctionContinuation): Deleted.
+        * wasm/Builder_WebAssemblyBinary.js:
+        (const.emitters.Import):
+        (const.emitters.Export):
+        (const.emitters.Exception):
+        * wasm/assert.js:
+        * wasm/self-test/test_BuilderJSON.js:
+        (ImportBeforeTypeSections): Deleted.
+        * wasm/stress/catch-with-delegate.js: Added.
+        (import.Builder.from.string_appeared_here.import.as.assert.from.string_appeared_here.callback):
+        (assert.throws):
+        * wasm/stress/create-tag-from.js: Added.
+        * wasm/stress/exception-cross-instance-2.js: Added.
+        (test):
+        (assert.eq):
+        * wasm/stress/exception-cross-instance-3.js: Added.
+        (test):
+        (assert.eq):
+        * wasm/stress/exception-cross-instance.js: Added.
+        (test):
+        (assert.throws):
+        (instB.new.WebAssembly.Instance):
+        * wasm/stress/exception-liveness-tier-up.js: Added.
+        (import.Builder.from.string_appeared_here.import.as.assert.from.string_appeared_here.catch):
+        (assert.eq.):
+        (assert.eq):
+        * wasm/stress/exception-multiple-instances.js: Added.
+        (import.Builder.from.string_appeared_here.import.as.assert.from.string_appeared_here.const.module.new.WebAssembly.Module):
+        (import.Builder.from.string_appeared_here.import.as.assert.from.string_appeared_here.inst.exports.throw):
+        * wasm/stress/exception-simple-delegate.js: Added.
+        (import.Builder.from.string_appeared_here.import.as.assert.from.string_appeared_here.testSimpleThrowDelegate):
+        (testThrowDelegateSkip):
+        (testDelegateCaller):
+        (testSimpleDelegateMerge):
+        * wasm/stress/exception-simple-throw-catch.js: Added.
+        (import.Builder.from.string_appeared_here.import.as.assert.from.string_appeared_here.testSimpleTryCatch):
+        (testSimpleTryCatchAll):
+        (testCallTryCatch):
+        (testCallTryCatchAll):
+        (testSimpleTryCatchValue):
+        (testCallTryCatchValue):
+        (testStackTryCatch):
+        (testLiveAfterTryCatch):
+        (testLiveAfterTryCatchAll):
+        (testUnifyTryCatchCatch):
+        (testUnifyTryCatchCatchAll):
+        (testUnifyTryNoThrow):
+        (testUnifyTryNoCatch):
+        (testNestedCatch):
+        * wasm/stress/exception-thrown-from-js-to-wasm-catchall-rethrow.js: Added.
+        (import.Builder.from.string_appeared_here.import.as.assert.from.string_appeared_here.callback):
+        * wasm/stress/exception-thrown-from-js-to-wasm-catchall.js: Added.
+        (import.Builder.from.string_appeared_here.import.as.assert.from.string_appeared_here.callback):
+        * wasm/stress/exception-thrown-from-js-to-wasm.js: Added.
+        (import.Builder.from.string_appeared_here.import.as.assert.from.string_appeared_here.callback):
+        * wasm/stress/exception-thrown-out-of-wasm.js: Added.
+        * wasm/stress/exception-thrown-over-wasm.js: Added.
+        (import.Builder.from.string_appeared_here.import.as.assert.from.string_appeared_here.callback):
+        * wasm/stress/exception-trap.js: Added.
+        (import.Builder.from.string_appeared_here.import.as.assert.from.string_appeared_here.testCannotCatchUnreachable):
+        (testCannotCatchOOB):
+        (testWasmAPIThrow):
+        (testJSCatchAndRethrow):
+        * wasm/stress/rethrow-from-catch-to-catch.js: Added.
+        (import.Builder.from.string_appeared_here.import.as.assert.from.string_appeared_here.callback):
+        * wasm/stress/rethrow-to-catch.js: Added.
+        (import.Builder.from.string_appeared_here.import.as.assert.from.string_appeared_here.callback):
+        (assert.throws.callback):
+        (assert.throws):
+        * wasm/stress/rethrow-to-delegate-to-catch.js: Added.
+        (import.Builder.from.string_appeared_here.import.as.assert.from.string_appeared_here):
+        (assert.eq.exn.getArg):
+        (assert.throws):
+        (assert.throws.callback):
+        (assert.eq):
+        * wasm/stress/simple-export-exception.js: Added.
+        * wasm/v8/LICENSE: Added.
+        * wasm/v8/exceptions-api.js: Added.
+        (TestImport):
+        (TestImportExport):
+        (TestExceptionConstructor):
+        (TestExceptionConstructorWithPayload):
+        (TestCatchJSException.js_func):
+        (js_func):
+        (TestCatchJS):
+        (TestCatchJSExceptionWithPayload):
+        (TestGetArg):
+        * wasm/v8/exceptions-export.js: Added.
+        (TestExportMultiple):
+        (TestExportOutOfBounds):
+        * wasm/v8/exceptions-externref.js: Added.
+        (TestThrowRefNull):
+        (TestThrowRefParam):
+        * wasm/v8/exceptions-import.js: Added.
+        (NewExportedTag):
+        (TestImportSimple):
+        (TestImportMissing):
+        * wasm/v8/exceptions-rethrow.js: Added.
+        (TestRethrowInCatch):
+        (TestRethrowInCatchAll):
+        (TestRethrowNested):
+        (TestRethrowRecatch):
+        * wasm/v8/exceptions-shared.js: Added.
+        (NewExportedException):
+        (TestSingleInstance.let.instance.builder.instantiate.):
+        (TestSingleInstance):
+        (TestMultiInstanceNonShared.let.instance2.builder.instantiate.):
+        (TestMultiInstanceShared.let.instance2.builder.instantiate.):
+        (TestMultiModuleShared.let.instance2.builder2.instantiate.):
+        * wasm/v8/exceptions-type-reflection.js: Added.
+        (TestExport):
+        (TestImportExport):
+        * wasm/v8/exceptions-utils.js: Added.
+        (assertWasmThrows):
+        * wasm/v8/exceptions.js: Added.
+        (TestThrowSimple):
+        (TestCatchSimple):
+        (TestTrapNotCaught):
+        (TestTrapViaJSNotCaught.js_import):
+        (TestManuallyThrownRuntimeErrorCaught.throw_exc):
+        (TestManuallyThrownRuntimeErrorCaught):
+        (TestExnWithWasmProtoNotCaught.js_import):
+        (TestExnWithWasmProtoNotCaught):
+        (TestStackOverflowNotCaught.stack_overflow):
+        (TestStackOverflowNotCaught):
+        (TestThrowParamI):
+        (TestThrowParamF):
+        (TestThrowParamL):
+        (TestThrowParamD):
+        (TestCatchCrossFunctions.throw_value):
+        (TestCatchCrossFunctions.throw_string):
+        (TestCatchCrossFunctions.throw_undefined):
+        (TestCatchCrossFunctions.throw_fp):
+        (TestCatchCrossFunctions.throw_large):
+        (TestDelegateNoThrow):
+        (TestDelegateThrow):
+        (TestDelegateThrowNoCatch):
+        (TestDelegateMerge):
+        (TestDelegate1):
+        (TestDelegateUnreachable):
+        (TestDelegateToCaller):
+        (TestUnreachableInCatchAll):
+        (TestThrowWithLocal):
+        (TestCatchlessTry):
+        * wasm/v8/mjsunit.js: Added.
+        (MjsUnitAssertionError):
+        (MjsUnitAssertionError.prototype.toString):
+        (catch):
+        (classOf):
+        (ValueOf):
+        (prettyPrinted):
+        (prettyPrintedArrayElement):
+        (failWithMessage):
+        (formatFailureText):
+        (fail):
+        (deepObjectEquals):
+        (deepEquals):
+        (assertSame):
+        (assertNotSame):
+        (assertEquals):
+        (assertNotEquals):
+        (assertEqualsDelta):
+        (assertArrayEquals):
+        (assertPropertiesEqual):
+        (assertToStringEquals):
+        (assertTrue):
+        (assertFalse):
+        (assertNull):
+        (assertNotNull):
+        (executeCode):
+        (checkException):
+        (assertThrows):
+        (assertThrowsEquals):
+        (assertThrowsAsync):
+        (assertInstanceof):
+        (assertDoesNotThrow):
+        (assertUnreachable):
+        (assertContains):
+        (assertMatches):
+        (concatenateErrors):
+        (assertPromiseResult):
+        (OptimizationStatus):
+        (assertUnoptimized):
+        (assertOptimized):
+        (isNeverOptimizeLiteMode):
+        (isNeverOptimize):
+        (isAlwaysOptimize):
+        (isInterpreted):
+        (isBaseline):
+        (isUnoptimized):
+        (isOptimized):
+        (isTurboFanned):
+        (MjsUnitAssertionError.prepareStackTrace):
+        * wasm/v8/wasm-module-builder.js: Added.
+        (bytes):
+        (wasmOptRefType):
+        (wasmRefType):
+        (wasmRtt):
+        (wasmRttNoDepth):
+        (makeSig):
+        (makeSig_v_x):
+        (makeSig_x_v):
+        (makeSig_v_xx):
+        (makeSig_r_v):
+        (makeSig_r_x):
+        (makeSig_r_xx):
+        (defineWasmOpcode):
+        (assertTraps):
+        (Binary):
+        (Binary.prototype.ensure_space):
+        (Binary.prototype.trunc_buffer):
+        (Binary.prototype.reset):
+        (Binary.prototype.emit_u8):
+        (Binary.prototype.emit_u16):
+        (Binary.prototype.emit_u32):
+        (Binary.prototype.emit_leb_u):
+        (Binary.prototype.emit_u32v):
+        (Binary.prototype.emit_u64v):
+        (Binary.prototype.emit_bytes):
+        (Binary.prototype.emit_string):
+        (Binary.prototype.emit_heap_type):
+        (Binary.prototype.emit_type):
+        (Binary.prototype.emit_init_expr_recursive):
+        (Binary.prototype.emit_init_expr):
+        (Binary.prototype.emit_header):
+        (Binary.prototype.emit_section):
+        (WasmFunctionBuilder):
+        (WasmFunctionBuilder.prototype.numLocalNames):
+        (WasmFunctionBuilder.prototype.exportAs):
+        (WasmFunctionBuilder.prototype.exportFunc):
+        (WasmFunctionBuilder.prototype.setCompilationHint):
+        (WasmFunctionBuilder.prototype.addBody):
+        (WasmFunctionBuilder.prototype.addBodyWithEnd):
+        (WasmFunctionBuilder.prototype.getNumLocals):
+        (WasmFunctionBuilder.prototype.addLocals):
+        (WasmFunctionBuilder.prototype.end):
+        (WasmInitExpr.I32Const):
+        (WasmInitExpr.I64Const):
+        (WasmInitExpr.F32Const):
+        (WasmInitExpr.F64Const):
+        (WasmInitExpr.S128Const):
+        (WasmInitExpr.GlobalGet):
+        (WasmInitExpr.RefFunc):
+        (WasmInitExpr.RefNull):
+        (WasmInitExpr.StructNewWithRtt):
+        (WasmInitExpr.StructNew):
+        (WasmInitExpr.StructNewDefaultWithRtt):
+        (WasmInitExpr.StructNewDefault):
+        (WasmInitExpr.ArrayInit):
+        (WasmInitExpr.ArrayInitStatic):
+        (WasmInitExpr.RttCanon):
+        (WasmInitExpr.RttSub):
+        (WasmInitExpr.RttFreshSub):
+        (WasmInitExpr.defaultFor):
+        (WasmInitExpr):
+        (WasmGlobalBuilder):
+        (WasmGlobalBuilder.prototype.exportAs):
+        (WasmTableBuilder):
+        (WasmTableBuilder.prototype.exportAs):
+        (makeField):
+        (WasmStruct):
+        (WasmStructSubtype):
+        (WasmArray):
+        (WasmArraySubtype):
+        (WasmElemSegment):
+        (WasmElemSegment.prototype.is_active):
+        (WasmElemSegment.prototype.is_passive):
+        (WasmElemSegment.prototype.is_declarative):
+        (WasmElemSegment.prototype.expressions_as_elements):
+        (WasmModuleBuilder):
+        (WasmModuleBuilder.prototype.addStart):
+        (WasmModuleBuilder.prototype.addMemory):
+        (WasmModuleBuilder.prototype.addMemory64):
+        (WasmModuleBuilder.prototype.addExplicitSection):
+        (WasmModuleBuilder.prototype.stringToBytes):
+        (WasmModuleBuilder.prototype.createCustomSection):
+        (WasmModuleBuilder.prototype.addCustomSection):
+        (WasmModuleBuilder.prototype.addType):
+        (WasmModuleBuilder.prototype.addStruct):
+        (WasmModuleBuilder.prototype.addStructSubtype):
+        (WasmModuleBuilder.prototype.addArray):
+        (WasmModuleBuilder.prototype.addArraySubtype):
+        (WasmModuleBuilder.prototype.addGlobal):
+        (WasmModuleBuilder.prototype.addTable):
+        (WasmModuleBuilder.prototype.addTag):
+        (WasmModuleBuilder.prototype.addFunction):
+        (WasmModuleBuilder.prototype.addImport):
+        (WasmModuleBuilder.prototype.addImportedGlobal):
+        (WasmModuleBuilder.prototype.addImportedMemory):
+        (WasmModuleBuilder.prototype.addImportedTable):
+        (WasmModuleBuilder.prototype.addImportedTag):
+        (WasmModuleBuilder.prototype.addExport):
+        (WasmModuleBuilder.prototype.addExportOfKind):
+        (WasmModuleBuilder.prototype.setCompilationHint):
+        (WasmModuleBuilder.prototype.addDataSegment):
+        (WasmModuleBuilder.prototype.addPassiveDataSegment):
+        (WasmModuleBuilder.prototype.exportMemoryAs):
+        (WasmModuleBuilder.prototype.addActiveElementSegment):
+        (WasmModuleBuilder.prototype.addPassiveElementSegment):
+        (WasmModuleBuilder.prototype.addDeclarativeElementSegment):
+        (WasmModuleBuilder.prototype.appendToTable):
+        (WasmModuleBuilder.prototype.setTableBounds):
+        (WasmModuleBuilder.prototype.setName):
+        (WasmModuleBuilder.prototype.toBuffer):
+        (WasmModuleBuilder.prototype.toArray):
+        (WasmModuleBuilder.prototype.instantiate):
+        (WasmModuleBuilder.prototype.asyncInstantiate):
+        (WasmModuleBuilder.prototype.toModule):
+        (wasmSignedLeb):
+        (wasmUnsignedLeb):
+        (wasmI32Const):
+        (wasmI64Const):
+        (wasmF32Const):
+        (wasmF64Const):
+        (wasmS128Const):
+        (getOpcodeName):
+        * wasm/wasm.json:
+
 2021-10-08  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] UnlinkedCodeBlock::m_instructions can be nullptr

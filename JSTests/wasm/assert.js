@@ -124,7 +124,7 @@ const _throws = (func, type, message, ...args) => {
     try {
         func(...args);
     } catch (e) {
-        if (e instanceof type && e.message.indexOf(message) >= 0)
+        if (e instanceof type && (typeof(e.message) == "undefined" || e.message.indexOf(message) >= 0))
             return e;
         _fail(`Expected to throw a ${type.name} with message "${message}", got ${e.name} with message "${e.message}"`);
     }

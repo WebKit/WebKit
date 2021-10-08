@@ -80,6 +80,11 @@ public:
     void setNativeGetterTypeError() { m_nativeGetterTypeError = true; }
     bool isNativeGetterTypeError() const { return m_nativeGetterTypeError; }
 
+#if ENABLE(WEBASSEMBLY)
+    void setCatchableFromWasm(bool flag) { m_catchableFromWasm = flag; }
+    bool isCatchableFromWasm() const { return m_catchableFromWasm; }
+#endif
+
     JS_EXPORT_PRIVATE String sanitizedToString(JSGlobalObject*);
     JS_EXPORT_PRIVATE String sanitizedMessageString(JSGlobalObject*);
     JS_EXPORT_PRIVATE String sanitizedNameString(JSGlobalObject*);
@@ -116,6 +121,9 @@ protected:
     bool m_outOfMemoryError : 1;
     bool m_errorInfoMaterialized : 1;
     bool m_nativeGetterTypeError : 1;
+#if ENABLE(WEBASSEMBLY)
+    bool m_catchableFromWasm : 1;
+#endif
 };
 
 } // namespace JSC

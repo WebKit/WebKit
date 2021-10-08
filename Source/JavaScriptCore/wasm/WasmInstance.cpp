@@ -34,6 +34,7 @@
 #include "Register.h"
 #include "WasmModuleInformation.h"
 #include "WasmSignatureInlines.h"
+#include "WasmTag.h"
 #include <wtf/CheckedArithmetic.h>
 
 namespace JSC { namespace Wasm {
@@ -90,7 +91,9 @@ Ref<Instance> Instance::create(Context* context, Ref<Module>&& module, EntryFram
     return adoptRef(*new (NotNull, fastMalloc(allocationSize(module->moduleInformation().importFunctionCount(), module->moduleInformation().tableCount()))) Instance(context, WTFMove(module), pointerToTopEntryFrame, pointerToActualStackLimit, WTFMove(storeTopCallFrame)));
 }
 
-Instance::~Instance() { }
+Instance::~Instance()
+{
+}
 
 size_t Instance::extraMemoryAllocated() const
 {
@@ -295,6 +298,16 @@ void Instance::linkGlobal(unsigned i, Ref<Global>&& global)
 {
     m_globals.get()[i].m_pointer = global->valuePointer();
     m_linkedGlobals.set(i, WTFMove(global));
+}
+
+void Instance::addTag(const Tag& tag)
+{
+    m_tags.append(Ref { tag });
+}
+
+void Instance::addTag(Ref<Tag>&& tag)
+{
+    m_tags.append(WTFMove(tag));
 }
 
 } } // namespace JSC::Wasm

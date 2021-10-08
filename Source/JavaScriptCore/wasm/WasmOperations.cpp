@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,6 +34,7 @@
 #include "JITExceptions.h"
 #include "JSCJSValueInlines.h"
 #include "JSGlobalObjectInlines.h"
+#include "JSWebAssemblyException.h"
 #include "JSWebAssemblyHelpers.h"
 #include "JSWebAssemblyInstance.h"
 #include "JSWebAssemblyRuntimeError.h"
@@ -105,24 +106,10 @@ static void triggerOMGReplacementCompile(TierUpCount& tierUp, OMGCallee* replace
     }
 }
 
-SUPPRESS_ASAN
-static void doOSREntry(Instance* instance, Probe::Context& context, BBQCallee& callee, OMGForOSREntryCallee& osrEntryCallee, OSREntryData& osrEntryData)
+void loadValuesIntoBuffer(Probe::Context& context, const StackMap& values, uint64_t* buffer)
 {
-    auto returnWithoutOSREntry = [&] {
-        context.gpr(GPRInfo::argumentGPR0) = 0;
-    };
-
-    RELEASE_ASSERT(osrEntryCallee.osrEntryScratchBufferSize() == osrEntryData.values().size());
-
-    uint64_t* buffer = instance->context()->scratchBufferForSize(osrEntryCallee.osrEntryScratchBufferSize());
-    if (!buffer)
-        return returnWithoutOSREntry();
-
-    dataLogLnIf(Options::verboseOSR(), osrEntryData.functionIndex(), ":OMG OSR entry: got entry callee ", RawPointer(&osrEntryCallee));
-
-    // 1. Place required values in scratch buffer.
-    for (unsigned index = 0; index < osrEntryData.values().size(); ++index) {
-        const OSREntryValue& value = osrEntryData.values()[index];
+    for (unsigned index = 0; index < values.size(); ++index) {
+        const OSREntryValue& value = values[index];
         dataLogLnIf(Options::verboseOSR(), "OMG OSR entry values[", index, "] ", value.type(), " ", value);
         if (value.isGPR()) {
             switch (value.type().kind()) {
@@ -164,21 +151,28 @@ static void doOSREntry(Instance* instance, Probe::Context& context, BBQCallee& c
                 *bitwise_cast<uint64_t*>(buffer + index) = *bitwise_cast<uint64_t*>(bitwise_cast<uint8_t*>(context.fp()) + value.offsetFromFP());
                 break;
             }
-        } else if (value.isStackArgument()) {
-            switch (value.type().kind()) {
-            case B3::Float:
-                *bitwise_cast<float*>(buffer + index) = *bitwise_cast<float*>(bitwise_cast<uint8_t*>(context.sp()) + value.offsetFromSP());
-                break;
-            case B3::Double:
-                *bitwise_cast<double*>(buffer + index) = *bitwise_cast<double*>(bitwise_cast<uint8_t*>(context.sp()) + value.offsetFromSP());
-                break;
-            default:
-                *bitwise_cast<uint64_t*>(buffer + index) = *bitwise_cast<uint64_t*>(bitwise_cast<uint8_t*>(context.sp()) + value.offsetFromSP());
-                break;
-            }
         } else
             RELEASE_ASSERT_NOT_REACHED();
     }
+}
+
+SUPPRESS_ASAN
+static void doOSREntry(Instance* instance, Probe::Context& context, BBQCallee& callee, OMGForOSREntryCallee& osrEntryCallee, OSREntryData& osrEntryData)
+{
+    auto returnWithoutOSREntry = [&] {
+        context.gpr(GPRInfo::argumentGPR0) = 0;
+    };
+
+    RELEASE_ASSERT(osrEntryCallee.osrEntryScratchBufferSize() == osrEntryData.values().size());
+
+    uint64_t* buffer = instance->context()->scratchBufferForSize(osrEntryCallee.osrEntryScratchBufferSize());
+    if (!buffer)
+        return returnWithoutOSREntry();
+
+    dataLogLnIf(Options::verboseOSR(), osrEntryData.functionIndex(), ":OMG OSR entry: got entry callee ", RawPointer(&osrEntryCallee));
+
+    // 1. Place required values in scratch buffer.
+    loadValuesIntoBuffer(context, osrEntryData.values(), buffer);
 
     // 2. Restore callee saves.
     RegisterSet dontRestoreRegisters = RegisterSet::stackRegisters();
@@ -658,12 +652,12 @@ JSC_DEFINE_JIT_OPERATION(operationGrowMemory, int32_t, (void* callFrame, Instanc
     return grown.value().pageCount();
 }
 
-JSC_DEFINE_JIT_OPERATION(operationWasmMemoryFill, bool, (Instance* instance, uint32_t dstAddress, uint32_t targetValue, uint32_t count))
+JSC_DEFINE_JIT_OPERATION(operationWasmMemoryFill, size_t, (Instance* instance, uint32_t dstAddress, uint32_t targetValue, uint32_t count))
 {
     return instance->memory()->fill(dstAddress, static_cast<uint8_t>(targetValue), count);
 }
 
-JSC_DEFINE_JIT_OPERATION(operationWasmMemoryCopy, bool, (Instance* instance, uint32_t dstAddress, uint32_t srcAddress, uint32_t count))
+JSC_DEFINE_JIT_OPERATION(operationWasmMemoryCopy, size_t, (Instance* instance, uint32_t dstAddress, uint32_t srcAddress, uint32_t count))
 {
     return instance->memory()->copy(dstAddress, srcAddress, count);
 }
@@ -711,12 +705,12 @@ static bool setWasmTableElement(Instance* instance, unsigned tableIndex, uint32_
     return true;
 }
 
-JSC_DEFINE_JIT_OPERATION(operationSetWasmTableElement, bool, (Instance* instance, unsigned tableIndex, uint32_t signedIndex, EncodedJSValue encValue))
+JSC_DEFINE_JIT_OPERATION(operationSetWasmTableElement, size_t, (Instance* instance, unsigned tableIndex, uint32_t signedIndex, EncodedJSValue encValue))
 {
     return setWasmTableElement(instance, tableIndex, signedIndex, encValue);
 }
 
-JSC_DEFINE_JIT_OPERATION(operationWasmTableInit, bool, (Instance* instance, unsigned elementIndex, unsigned tableIndex, uint32_t dstOffset, uint32_t srcOffset, uint32_t length))
+JSC_DEFINE_JIT_OPERATION(operationWasmTableInit, size_t, (Instance* instance, unsigned elementIndex, unsigned tableIndex, uint32_t dstOffset, uint32_t srcOffset, uint32_t length))
 {
     ASSERT(elementIndex < instance->module().moduleInformation().elementCount());
     ASSERT(tableIndex < instance->module().moduleInformation().tableCount());
@@ -761,7 +755,7 @@ JSC_DEFINE_JIT_OPERATION(operationWasmTableGrow, int32_t, (Instance* instance, u
     return oldSize;
 }
 
-JSC_DEFINE_JIT_OPERATION(operationWasmTableFill, bool, (Instance* instance, unsigned tableIndex, uint32_t offset, EncodedJSValue fill, uint32_t count))
+JSC_DEFINE_JIT_OPERATION(operationWasmTableFill, size_t, (Instance* instance, unsigned tableIndex, uint32_t offset, EncodedJSValue fill, uint32_t count))
 {
     ASSERT(tableIndex < instance->module().moduleInformation().tableCount());
 
@@ -777,7 +771,7 @@ JSC_DEFINE_JIT_OPERATION(operationWasmTableFill, bool, (Instance* instance, unsi
     return true;
 }
 
-JSC_DEFINE_JIT_OPERATION(operationWasmTableCopy, bool, (Instance* instance, unsigned dstTableIndex, unsigned srcTableIndex, int32_t dstOffset, int32_t srcOffset, int32_t length))
+JSC_DEFINE_JIT_OPERATION(operationWasmTableCopy, size_t, (Instance* instance, unsigned dstTableIndex, unsigned srcTableIndex, int32_t dstOffset, int32_t srcOffset, int32_t length))
 {
     ASSERT(dstTableIndex < instance->module().moduleInformation().tableCount());
     ASSERT(srcTableIndex < instance->module().moduleInformation().tableCount());
@@ -904,7 +898,7 @@ JSC_DEFINE_JIT_OPERATION(operationMemoryAtomicNotify, int32_t, (Instance* instan
     return ParkingLot::unparkCount(pointer, count);
 }
 
-JSC_DEFINE_JIT_OPERATION(operationWasmMemoryInit, bool, (Instance* instance, unsigned dataSegmentIndex, uint32_t dstAddress, uint32_t srcAddress, uint32_t length))
+JSC_DEFINE_JIT_OPERATION(operationWasmMemoryInit, size_t, (Instance* instance, unsigned dataSegmentIndex, uint32_t dstAddress, uint32_t srcAddress, uint32_t length))
 {
     ASSERT(dataSegmentIndex < instance->module().moduleInformation().dataSegmentsCount());
     return instance->memoryInit(dstAddress, srcAddress, length, dataSegmentIndex);
@@ -914,6 +908,65 @@ JSC_DEFINE_JIT_OPERATION(operationWasmDataDrop, void, (Instance* instance, unsig
 {
     ASSERT(dataSegmentIndex < instance->module().moduleInformation().dataSegmentsCount());
     instance->dataDrop(dataSegmentIndex);
+}
+
+JSC_DEFINE_JIT_OPERATION(operationWasmThrow, void*, (Instance* instance, CallFrame* callFrame, unsigned exceptionIndex, EncodedJSValue* arguments))
+{
+    instance->storeTopCallFrame(callFrame);
+
+    JSWebAssemblyInstance* jsInstance = instance->owner<JSWebAssemblyInstance>();
+    JSGlobalObject* globalObject = jsInstance->globalObject();
+    VM& vm = globalObject->vm();
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+
+    const Wasm::Tag& tag = instance->tag(exceptionIndex);
+
+    FixedVector<uint64_t> values(tag.parameterCount());
+    for (unsigned i = 0; i < tag.parameterCount(); ++i)
+        values[i] = arguments[i];
+
+    JSWebAssemblyException* exception = JSWebAssemblyException::create(vm, globalObject->webAssemblyExceptionStructure(), tag, WTFMove(values));
+    throwException(globalObject, throwScope, exception);
+
+    genericUnwind(vm, callFrame);
+    ASSERT(!!vm.callFrameForCatch);
+    ASSERT(!!vm.targetMachinePCForThrow);
+    // FIXME: We could make this better:
+    // This is a total hack, but the llint (both op_catch and llint_handle_uncaught_exception)
+    // require a cell in the callee field to load the VM. (The baseline JIT does not require
+    // this since it is compiled with a constant VM pointer.) We could make the calling convention
+    // for exceptions first load callFrameForCatch info call frame register before jumping
+    // to the exception handler. If we did this, we could remove this terrible hack.
+    // https://bugs.webkit.org/show_bug.cgi?id=170440
+    vm.calleeForWasmCatch = callFrame->callee();
+    bitwise_cast<uint64_t*>(callFrame)[static_cast<int>(CallFrameSlot::callee)] = bitwise_cast<uint64_t>(jsInstance->module());
+    return vm.targetMachinePCForThrow;
+}
+
+JSC_DEFINE_JIT_OPERATION(operationWasmRethrow, void*, (Instance* instance, CallFrame* callFrame, EncodedJSValue thrownValue))
+{
+    instance->storeTopCallFrame(callFrame);
+
+    JSWebAssemblyInstance* jsInstance = instance->owner<JSWebAssemblyInstance>();
+    JSGlobalObject* globalObject = jsInstance->globalObject();
+    VM& vm = globalObject->vm();
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+
+    throwException(globalObject, throwScope, JSValue::decode(thrownValue));
+
+    genericUnwind(vm, callFrame);
+    ASSERT(!!vm.callFrameForCatch);
+    ASSERT(!!vm.targetMachinePCForThrow);
+    // FIXME: We could make this better:
+    // This is a total hack, but the llint (both op_catch and llint_handle_uncaught_exception)
+    // require a cell in the callee field to load the VM. (The baseline JIT does not require
+    // this since it is compiled with a constant VM pointer.) We could make the calling convention
+    // for exceptions first load callFrameForCatch info call frame register before jumping
+    // to the exception handler. If we did this, we could remove this terrible hack.
+    // https://bugs.webkit.org/show_bug.cgi?id=170440
+    vm.calleeForWasmCatch = callFrame->callee();
+    bitwise_cast<uint64_t*>(callFrame)[static_cast<int>(CallFrameSlot::callee)] = bitwise_cast<uint64_t>(jsInstance->module());
+    return vm.targetMachinePCForThrow;
 }
 
 JSC_DEFINE_JIT_OPERATION(operationWasmToJSException, void*, (CallFrame* callFrame, Wasm::ExceptionType type, Instance* wasmInstance))
@@ -932,7 +985,7 @@ JSC_DEFINE_JIT_OPERATION(operationWasmToJSException, void*, (CallFrame* callFram
         if (type == ExceptionType::StackOverflow)
             error = createStackOverflowError(globalObject);
         else
-            error = createJSWebAssemblyRuntimeError(globalObject, vm, Wasm::errorMessageForExceptionType(type));
+            error = createJSWebAssemblyRuntimeError(globalObject, vm, type);
         throwException(globalObject, throwScope, error);
     }
 
@@ -946,8 +999,32 @@ JSC_DEFINE_JIT_OPERATION(operationWasmToJSException, void*, (CallFrame* callFram
     // for exceptions first load callFrameForCatch info call frame register before jumping
     // to the exception handler. If we did this, we could remove this terrible hack.
     // https://bugs.webkit.org/show_bug.cgi?id=170440
+    vm.calleeForWasmCatch = callFrame->callee();
     bitwise_cast<uint64_t*>(callFrame)[static_cast<int>(CallFrameSlot::callee)] = bitwise_cast<uint64_t>(instance->module());
     return vm.targetMachinePCForThrow;
+}
+
+JSC_DEFINE_JIT_OPERATION(operationWasmRetrieveAndClearExceptionIfCatchable, PointerPair, (Instance* instance))
+{
+    JSWebAssemblyInstance* jsInstance = instance->owner<JSWebAssemblyInstance>();
+    JSGlobalObject* globalObject = jsInstance->globalObject();
+    VM& vm = globalObject->vm();
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+
+    RELEASE_ASSERT(!!throwScope.exception());
+
+    Exception* exception = throwScope.exception();
+    JSValue thrownValue = exception->value();
+
+    // We want to clear the exception here rather than in the catch prologue
+    // JIT code because clearing it also entails clearing a bit in an Atomic
+    // bit field in VMTraps.
+    throwScope.clearException();
+
+    void* payload = nullptr;
+    if (JSWebAssemblyException* wasmException = jsDynamicCast<JSWebAssemblyException*>(vm, thrownValue))
+        payload = bitwise_cast<void*>(wasmException->payload().data());
+    return PointerPair { bitwise_cast<void*>(JSValue::encode(thrownValue)), payload };
 }
 
 } } // namespace JSC::Wasm

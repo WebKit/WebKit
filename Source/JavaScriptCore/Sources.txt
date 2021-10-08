@@ -1079,6 +1079,7 @@ wasm/WasmFaultSignalHandler.cpp
 wasm/WasmFormat.cpp
 wasm/WasmFunctionCodeBlock.cpp
 wasm/WasmGlobal.cpp
+wasm/WasmHandlerInfo.cpp
 wasm/WasmIndexOrName.cpp
 wasm/WasmInstance.cpp
 wasm/WasmInstance.h
@@ -1105,6 +1106,7 @@ wasm/WasmStreamingCompiler.cpp
 wasm/WasmStreamingParser.cpp
 wasm/WasmStreamingPlan.cpp
 wasm/WasmTable.cpp
+wasm/WasmTag.cpp
 wasm/WasmThunks.cpp
 wasm/WasmTierUpCount.cpp
 wasm/WasmValueLocation.cpp
@@ -1116,6 +1118,7 @@ wasm/js/JSToWasmICCallee.cpp
 wasm/js/JSWebAssembly.cpp
 wasm/js/JSWebAssemblyCodeBlock.cpp
 wasm/js/JSWebAssemblyCompileError.cpp
+wasm/js/JSWebAssemblyException.cpp
 wasm/js/JSWebAssemblyGlobal.cpp
 wasm/js/JSWebAssemblyInstance.cpp
 wasm/js/JSWebAssemblyLinkError.cpp
@@ -1123,10 +1126,13 @@ wasm/js/JSWebAssemblyMemory.cpp
 wasm/js/JSWebAssemblyModule.cpp
 wasm/js/JSWebAssemblyRuntimeError.cpp
 wasm/js/JSWebAssemblyTable.cpp
+wasm/js/JSWebAssemblyTag.cpp
 wasm/js/WasmToJS.cpp
 wasm/js/WasmToJS.h
 wasm/js/WebAssemblyCompileErrorConstructor.cpp
 wasm/js/WebAssemblyCompileErrorPrototype.cpp
+wasm/js/WebAssemblyExceptionConstructor.cpp
+wasm/js/WebAssemblyExceptionPrototype.cpp
 wasm/js/WebAssemblyFunction.cpp
 wasm/js/WebAssemblyFunctionBase.cpp
 wasm/js/WebAssemblyGlobalConstructor.cpp
@@ -1144,6 +1150,8 @@ wasm/js/WebAssemblyRuntimeErrorConstructor.cpp
 wasm/js/WebAssemblyRuntimeErrorPrototype.cpp
 wasm/js/WebAssemblyTableConstructor.cpp
 wasm/js/WebAssemblyTablePrototype.cpp
+wasm/js/WebAssemblyTagConstructor.cpp
+wasm/js/WebAssemblyTagPrototype.cpp
 wasm/js/WebAssemblyWrapperFunction.cpp
 
 yarr/RegularExpression.cpp

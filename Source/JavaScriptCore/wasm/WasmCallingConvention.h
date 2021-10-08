@@ -125,7 +125,7 @@ public:
         bool resultsIncludeI64 = false;
         size_t gpArgumentCount = 0;
         size_t fpArgumentCount = 0;
-        size_t argStackOffset = headerSizeInBytes;
+        size_t argStackOffset = headerSizeInBytes + sizeof(Register);
         if (role == CallRole::Caller)
             argStackOffset -= sizeof(CallerFrameAndPC);
 
@@ -136,7 +136,7 @@ public:
         }
         gpArgumentCount = 0;
         fpArgumentCount = 0;
-        size_t resultStackOffset = headerSizeInBytes;
+        size_t resultStackOffset = headerSizeInBytes + sizeof(Register);
         if (role == CallRole::Caller)
             resultStackOffset -= sizeof(CallerFrameAndPC);
 

@@ -48,6 +48,8 @@ class CodeBlock;
 }
 
 class JSWebAssemblyInstance final : public JSNonFinalObject {
+    friend class LLIntOffsetsExtractor;
+
 public:
     using Base = JSNonFinalObject;
     static constexpr bool needsDestruction = true;

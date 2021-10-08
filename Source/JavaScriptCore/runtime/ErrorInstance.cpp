@@ -40,6 +40,9 @@ ErrorInstance::ErrorInstance(VM& vm, Structure* structure, ErrorType errorType)
     , m_outOfMemoryError(false)
     , m_errorInfoMaterialized(false)
     , m_nativeGetterTypeError(false)
+#if ENABLE(WEBASSEMBLY)
+    , m_catchableFromWasm(true)
+#endif // ENABLE(WEBASSEMBLY)
 {
 }
 

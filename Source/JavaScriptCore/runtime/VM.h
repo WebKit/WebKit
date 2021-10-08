@@ -29,6 +29,7 @@
 #pragma once
 
 #include "CallData.h"
+#include "CalleeBits.h"
 #include "CodeSpecializationKind.h"
 #include "CompleteSubspace.h"
 #include "ConcurrentJSLock.h"
@@ -450,6 +451,7 @@ public:
     std::unique_ptr<IsoHeapCellType> intlSegmentsHeapCellType;
 #if ENABLE(WEBASSEMBLY)
     std::unique_ptr<IsoHeapCellType> webAssemblyCodeBlockHeapCellType;
+    std::unique_ptr<IsoHeapCellType> webAssemblyExceptionHeapCellType;
     std::unique_ptr<IsoHeapCellType> webAssemblyFunctionHeapCellType;
     std::unique_ptr<IsoHeapCellType> webAssemblyGlobalHeapCellType;
     std::unique_ptr<IsoHeapCellType> webAssemblyInstanceHeapCellType;
@@ -457,6 +459,7 @@ public:
     std::unique_ptr<IsoHeapCellType> webAssemblyModuleHeapCellType;
     std::unique_ptr<IsoHeapCellType> webAssemblyModuleRecordHeapCellType;
     std::unique_ptr<IsoHeapCellType> webAssemblyTableHeapCellType;
+    std::unique_ptr<IsoHeapCellType> webAssemblyTagHeapCellType;
 #endif
 
 #if ENABLE(JIT)
@@ -626,6 +629,7 @@ public:
 #if ENABLE(WEBASSEMBLY)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(jsToWasmICCalleeSpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(webAssemblyCodeBlockSpace)
+    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(webAssemblyExceptionSpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(webAssemblyFunctionSpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(webAssemblyGlobalSpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(webAssemblyInstanceSpace)
@@ -633,6 +637,7 @@ public:
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(webAssemblyModuleSpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(webAssemblyModuleRecordSpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(webAssemblyTableSpace)
+    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(webAssemblyTagSpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(webAssemblyWrapperFunctionSpace)
 #endif
 
@@ -896,6 +901,11 @@ public:
         return OBJECT_OFFSETOF(VM, callFrameForCatch);
     }
 
+    static ptrdiff_t calleeForWasmCatchOffset()
+    {
+        return OBJECT_OFFSETOF(VM, calleeForWasmCatch);
+    }
+
     static ptrdiff_t topEntryFrameOffset()
     {
         return OBJECT_OFFSETOF(VM, topEntryFrame);
@@ -990,6 +1000,7 @@ public:
     unsigned varargsLength;
     CallFrame* newCallFrameReturnValue;
     CallFrame* callFrameForCatch;
+    CalleeBits calleeForWasmCatch;
     void* targetMachinePCForThrow;
     const Instruction* targetInterpreterPCForThrow;
     uint32_t osrExitIndex;

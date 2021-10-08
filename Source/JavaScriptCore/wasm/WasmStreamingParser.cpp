@@ -117,6 +117,7 @@ auto StreamingParser::parseCodeSectionSize(uint32_t functionCount) -> State
     m_functionCount = functionCount;
     m_functionIndex = 0;
     m_codeOffset = m_offset;
+    m_info->m_functionDoesNotUseExceptions.ensureSize(functionCount);
 
     WASM_PARSER_FAIL_IF(functionCount == std::numeric_limits<uint32_t>::max(), "Code section's count is too big ", functionCount);
     WASM_PARSER_FAIL_IF(functionCount != m_info->functions.size(), "Code section count ", functionCount, " exceeds the declared number of functions ", m_info->functions.size());

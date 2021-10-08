@@ -89,7 +89,7 @@ public:
     template<typename Traits = JSOpcodeTraits>
     const char* name() const
     {
-        return Traits::opcodeNames[opcodeID()];
+        return Traits::opcodeNames[opcodeID<Traits>()];
     }
 
     template<typename Traits = JSOpcodeTraits>

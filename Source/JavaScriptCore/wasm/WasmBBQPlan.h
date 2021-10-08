@@ -83,6 +83,7 @@ private:
     std::unique_ptr<InternalFunction> compileFunction(uint32_t functionIndex, CompilationContext&, Vector<UnlinkedWasmToWasmCall>&, TierUpCount*);
 
     Vector<std::unique_ptr<InternalFunction>> m_wasmInternalFunctions;
+    Vector<Vector<CodeLocationLabel<ExceptionHandlerPtrTag>>> m_exceptionHandlerLocations;
     HashMap<uint32_t, std::unique_ptr<InternalFunction>, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_embedderToWasmInternalFunctions;
     Vector<CompilationContext> m_compilationContexts;
     Vector<std::unique_ptr<TierUpCount>> m_tierUpCounts;

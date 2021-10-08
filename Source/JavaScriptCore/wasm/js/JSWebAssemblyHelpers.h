@@ -32,6 +32,7 @@
 #include "JSArrayBufferView.h"
 #include "JSCJSValue.h"
 #include "JSSourceCode.h"
+#include "JSWebAssemblyRuntimeError.h"
 #include "WasmFormat.h"
 #include "WebAssemblyFunction.h"
 #include "WebAssemblyWrapperFunction.h"
@@ -142,6 +143,75 @@ ALWAYS_INLINE JSValue defaultValueForReferenceType(const Wasm::Type type)
         return jsUndefined();
     ASSERT(type.isFuncref());
     return jsNull();
+}
+
+ALWAYS_INLINE JSValue toJSValue(JSGlobalObject* globalObject, const Wasm::Type type, uint64_t bits)
+{
+    switch (type.kind) {
+    case Wasm::TypeKind::Void:
+        return jsUndefined();
+    case Wasm::TypeKind::I32:
+        return jsNumber(static_cast<int32_t>(bits));
+    case Wasm::TypeKind::F32:
+        return jsNumber(bitwise_cast<float>(static_cast<int32_t>(bits)));
+    case Wasm::TypeKind::F64:
+        return jsNumber(bitwise_cast<double>(bits));
+    case Wasm::TypeKind::I64:
+        return JSBigInt::createFrom(globalObject, static_cast<int64_t>(bits));
+    case Wasm::TypeKind::Externref:
+    case Wasm::TypeKind::Funcref:
+        return bitwise_cast<JSValue>(bits);
+    default:
+        break;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+    return JSValue();
+}
+
+ALWAYS_INLINE uint64_t fromJSValue(JSGlobalObject* globalObject, const Wasm::Type type, JSValue value)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    switch (type.kind) {
+    case Wasm::TypeKind::TypeIdx:
+    case Wasm::TypeKind::Funcref: {
+        bool isNullable = type.isNullable();
+        WebAssemblyFunction* wasmFunction = nullptr;
+        WebAssemblyWrapperFunction* wasmWrapperFunction = nullptr;
+        if (!isWebAssemblyHostFunction(vm, value, wasmFunction, wasmWrapperFunction) && (!isNullable || !value.isNull()))
+            return throwVMException(globalObject, scope, createJSWebAssemblyRuntimeError(globalObject, vm, "Funcref must be an exported wasm function"));
+        if (type.kind == Wasm::TypeKind::TypeIdx && (wasmFunction || wasmWrapperFunction)) {
+            Wasm::SignatureIndex paramIndex = type.index;
+            Wasm::SignatureIndex argIndex;
+            if (wasmFunction)
+                argIndex = wasmFunction->signatureIndex();
+            else
+                argIndex = wasmWrapperFunction->signatureIndex();
+            if (paramIndex != argIndex)
+                return throwVMException(globalObject, scope, createJSWebAssemblyRuntimeError(globalObject, vm, "Argument function did not match the reference type"));
+        }
+        break;
+    }
+    case Wasm::TypeKind::Externref:
+        if (!type.isNullable() && value.isNull())
+            return throwVMException(globalObject, scope, createJSWebAssemblyRuntimeError(globalObject, vm, "Non-null Externref cannot be null"));
+        break;
+    case Wasm::TypeKind::I32:
+        RELEASE_AND_RETURN(scope, value.toInt32(globalObject));
+    case Wasm::TypeKind::I64:
+        RELEASE_AND_RETURN(scope, bitwise_cast<uint64_t>(value.toBigInt64(globalObject)));
+    case Wasm::TypeKind::F32:
+        RELEASE_AND_RETURN(scope, bitwise_cast<uint32_t>(value.toFloat(globalObject)));
+    case Wasm::TypeKind::F64:
+        RELEASE_AND_RETURN(scope, bitwise_cast<uint64_t>(value.toNumber(globalObject)));
+    case Wasm::TypeKind::Void:
+    case Wasm::TypeKind::Func:
+    case Wasm::TypeKind::RefNull:
+    case Wasm::TypeKind::Ref:
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+
+    RELEASE_AND_RETURN(scope, JSValue::encode(value));
 }
 
 } // namespace JSC

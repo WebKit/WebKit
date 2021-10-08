@@ -78,6 +78,7 @@ const ClassInfo JSWebAssembly::s_info = { "WebAssembly", &Base::s_info, &webAsse
 /* Source for JSWebAssembly.lut.h
 @begin webAssemblyTable
   CompileError    createWebAssemblyCompileError  DontEnum|PropertyCallback
+  Exception       createWebAssemblyException     DontEnum|PropertyCallback
   Global          createWebAssemblyGlobal        DontEnum|PropertyCallback
   Instance        createWebAssemblyInstance      DontEnum|PropertyCallback
   LinkError       createWebAssemblyLinkError     DontEnum|PropertyCallback
@@ -85,6 +86,7 @@ const ClassInfo JSWebAssembly::s_info = { "WebAssembly", &Base::s_info, &webAsse
   Module          createWebAssemblyModule        DontEnum|PropertyCallback
   RuntimeError    createWebAssemblyRuntimeError  DontEnum|PropertyCallback
   Table           createWebAssemblyTable         DontEnum|PropertyCallback
+  Tag             createWebAssemblyTag           DontEnum|PropertyCallback
   compile         webAssemblyCompileFunc         Function 1
   instantiate     webAssemblyInstantiateFunc     Function 1
   validate        webAssemblyValidateFunc        Function 1
