@@ -1571,6 +1571,12 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         [tempArray addObject:NSAccessibilityURLAttribute];
         return tempArray;
     }());
+    static auto videoAttrs = makeNeverDestroyed([] {
+        auto tempArray = adoptNS([[NSMutableArray alloc] initWithArray:attributes.get().get()]);
+        // This should represent the URL of the video content, not the poster.
+        [tempArray addObject:NSAccessibilityURLAttribute];
+        return tempArray;
+    }());
 
     NSArray *objectAttributes = attributes.get().get();
 
@@ -1636,6 +1642,8 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         objectAttributes = menuButtonAttrs.get().get();
     else if (backingObject->isMenuItem())
         objectAttributes = menuItemAttrs.get().get();
+    else if (backingObject->isVideo())
+        objectAttributes = videoAttrs.get().get();
 
     NSArray *additionalAttributes = [self additionalAccessibilityAttributeNames];
     if ([additionalAttributes count])

@@ -1,0 +1,14 @@
+This test ensures video accessibility elements return URL attribute values when appropriate.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+baseVideoPath = "resources/test.mp4"
+PASS video.url.includes(baseVideoPath) is true
+PASS video.url.includes(baseVideoPath) is true
+PASS !video.url is true
+PASS !video.url is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

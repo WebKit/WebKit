@@ -815,6 +815,7 @@ public:
     virtual bool isLink() const = 0;
     bool isImage() const { return roleValue() == AccessibilityRole::Image; }
     bool isImageMap() const { return roleValue() == AccessibilityRole::ImageMap; }
+    bool isVideo() const { return roleValue() == AccessibilityRole::Video; }
     virtual bool isNativeImage() const = 0;
     virtual bool isImageButton() const = 0;
     virtual bool isPasswordField() const = 0;

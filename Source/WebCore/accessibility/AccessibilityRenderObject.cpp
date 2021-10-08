@@ -1767,6 +1767,11 @@ URL AccessibilityRenderObject::url() const
     if (isInputImage() && is<HTMLInputElement>(node))
         return downcast<HTMLInputElement>(node)->src();
 
+#if ENABLE(VIDEO)
+    if (isVideo() && is<HTMLVideoElement>(node))
+        return downcast<HTMLVideoElement>(node)->currentSrc();
+#endif
+
     return URL();
 }
 

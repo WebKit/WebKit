@@ -1,3 +1,20 @@
+2021-10-08  Tyler Wilcock  <tyler_w@apple.com>
+
+        AX: Expose the URL attribute of <video> elements
+        https://bugs.webkit.org/show_bug.cgi?id=231384
+
+        Reviewed by Chris Fleizach.
+
+        Add test ensuring <video> accessibility elements return
+        a URL attribute when appropriate.
+
+        * accessibility/resources/test.mp4: Added.
+        * accessibility/video-element-url-attribute-expected.txt: Added.
+        * accessibility/video-element-url-attribute.html: Added.
+        * platform/ios/TestExpectations: Enable new test.
+        * platform/win/TestExpectations: Skip new test due to lack of mp4
+        support.
+
 2021-10-08  Tim Nguyen  <ntim@apple.com>
 
         Re-sync the-dialog-element and inert WPT from upstream

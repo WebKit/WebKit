@@ -2939,8 +2939,9 @@ fast/history/page-cache-geolocation-active-watcher.html [ Skip ]
 fast/forms/indeterminate-progress-inline-height.html [ Failure ]
 fast/forms/listbox-scrollbar-hit-test.html [ Failure ]
 
-# This test uses an MPEG-4 video
+# These tests use an MPEG-4 video
 media/video-seek-to-current-time.html [ Skip ]
+accessibility/video-element-url-attribute.html [ Skip ]
 
 # Weird black image sometimes
 webkit.org/b/148144 fast/css/will-change/will-change-creates-stacking-context.html [ ImageOnlyFailure ]
