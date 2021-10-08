@@ -241,8 +241,7 @@ void LibWebRTCCodecs::setCallbacks(bool useGPUProcess)
     WebProcess::singleton().libWebRTCCodecs();
 
 #if ENABLE(VP9)
-    // FIMXE: We should disable VP9VTB if VP9 hardware decoding is enabled but there is no support for it.
-    WebProcess::singleton().libWebRTCCodecs().setVP9VTBSupport(PlatformMediaSessionManager::shouldEnableVP9Decoder() || PlatformMediaSessionManager::shouldEnableVP9SWDecoder());
+    WebProcess::singleton().libWebRTCCodecs().setVP9VTBSupport(WebProcess::singleton().ensureGPUProcessConnection().hasVP9HardwareDecoder());
 #endif
 
     webrtc::setVideoDecoderCallbacks(createVideoDecoder, releaseVideoDecoder, decodeVideoFrame, registerDecodeCompleteCallback);

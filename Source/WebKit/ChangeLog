@@ -1,5 +1,91 @@
 2021-10-07  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r283116. rdar://problem/83954304
+
+    iPadOS 15 / iOS 15 unable to decode VP9 stream
+    https://bugs.webkit.org/show_bug.cgi?id=230604
+    <rdar://problem/83391595>
+    
+    Reviewed by Eric Carlson.
+    
+    Source/WebCore:
+    
+    Export a utility function to know whether HW VP9 is supported by VTB.
+    No change of behavior.
+    
+    * platform/graphics/cocoa/VP9UtilitiesCocoa.h:
+    * platform/graphics/cocoa/VP9UtilitiesCocoa.mm:
+    (WebCore::vp9HardwareDecoderAvailable):
+    
+    Source/WebKit:
+    
+    Update code to retrieve some parameters when synchronously creating the GPU process connection.
+    The sole parameter is currently to know the HW VP9 decoder availability.
+    If HW VP9 decoder is not supported by GPUProcess code, we fallback to SW libvpx.
+    
+    Manually tested.
+    
+    * GPUProcess/GPUProcess.cpp:
+    (WebKit::GPUProcess::createGPUConnectionToWebProcess):
+    * GPUProcess/GPUProcess.h:
+    * GPUProcess/GPUProcess.messages.in:
+    * Shared/GPUProcessConnectionInitializationParameters.h: Added.
+    * UIProcess/GPU/GPUProcessProxy.cpp:
+    (WebKit::GPUProcessProxy::getGPUProcessConnection):
+    * WebKit.xcodeproj/project.pbxproj:
+    * WebProcess/GPU/GPUProcessConnection.cpp:
+    (WebKit::GPUProcessConnection::GPUProcessConnection):
+    * WebProcess/GPU/GPUProcessConnection.h:
+    (WebKit::GPUProcessConnection::create):
+    (WebKit::GPUProcessConnection::hasVP9HardwareDecoder const):
+    * WebProcess/GPU/GPUProcessConnectionInfo.h:
+    (WebKit::GPUProcessConnectionInfo::encode const):
+    (WebKit::GPUProcessConnectionInfo::decode):
+    * WebProcess/GPU/webrtc/LibWebRTCCodecs.cpp:
+    (WebKit::LibWebRTCCodecs::setCallbacks):
+    * WebProcess/WebProcess.cpp:
+    (WebKit::WebProcess::ensureGPUProcessConnection):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@283116 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-09-27  Youenn Fablet  <youenn@apple.com>
+
+            iPadOS 15 / iOS 15 unable to decode VP9 stream
+            https://bugs.webkit.org/show_bug.cgi?id=230604
+            <rdar://problem/83391595>
+
+            Reviewed by Eric Carlson.
+
+            Update code to retrieve some parameters when synchronously creating the GPU process connection.
+            The sole parameter is currently to know the HW VP9 decoder availability.
+            If HW VP9 decoder is not supported by GPUProcess code, we fallback to SW libvpx.
+
+            Manually tested.
+
+            * GPUProcess/GPUProcess.cpp:
+            (WebKit::GPUProcess::createGPUConnectionToWebProcess):
+            * GPUProcess/GPUProcess.h:
+            * GPUProcess/GPUProcess.messages.in:
+            * Shared/GPUProcessConnectionInitializationParameters.h: Added.
+            * UIProcess/GPU/GPUProcessProxy.cpp:
+            (WebKit::GPUProcessProxy::getGPUProcessConnection):
+            * WebKit.xcodeproj/project.pbxproj:
+            * WebProcess/GPU/GPUProcessConnection.cpp:
+            (WebKit::GPUProcessConnection::GPUProcessConnection):
+            * WebProcess/GPU/GPUProcessConnection.h:
+            (WebKit::GPUProcessConnection::create):
+            (WebKit::GPUProcessConnection::hasVP9HardwareDecoder const):
+            * WebProcess/GPU/GPUProcessConnectionInfo.h:
+            (WebKit::GPUProcessConnectionInfo::encode const):
+            (WebKit::GPUProcessConnectionInfo::decode):
+            * WebProcess/GPU/webrtc/LibWebRTCCodecs.cpp:
+            (WebKit::LibWebRTCCodecs::setCallbacks):
+            * WebProcess/WebProcess.cpp:
+            (WebKit::WebProcess::ensureGPUProcessConnection):
+
+2021-10-07  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r283114. rdar://problem/83954017
 
     Make sure to reset presenting application pid in case of mediaserverd crash

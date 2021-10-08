@@ -25,7 +25,7 @@
 messages -> GPUProcess LegacyReceiver {
     InitializeGPUProcess(struct WebKit::GPUProcessCreationParameters processCreationParameters)
 
-    CreateGPUConnectionToWebProcess(WebCore::ProcessIdentifier processIdentifier, PAL::SessionID sessionID, struct WebKit::GPUProcessConnectionParameters parameters) -> (std::optional<IPC::Attachment> connectionIdentifier) Async
+    CreateGPUConnectionToWebProcess(WebCore::ProcessIdentifier processIdentifier, PAL::SessionID sessionID, struct WebKit::GPUProcessConnectionParameters parameters) -> (std::optional<IPC::Attachment> connectionIdentifier, struct WebKit::GPUProcessConnectionInitializationParameters parameters) Async
 
     PrepareToSuspend(bool isSuspensionImminent) -> () Async
     ProcessDidResume()

@@ -30,6 +30,7 @@
 
 #include "DataReference.h"
 #include "GPUConnectionToWebProcessMessages.h"
+#include "GPUProcessConnectionInitializationParameters.h"
 #include "LibWebRTCCodecs.h"
 #include "LibWebRTCCodecsMessages.h"
 #include "Logging.h"
@@ -98,8 +99,11 @@ static void languagesChanged(void* context)
     static_cast<GPUProcessConnection*>(context)->connection().send(Messages::GPUConnectionToWebProcess::SetUserPreferredLanguages(userPreferredLanguages()), { });
 }
 
-GPUProcessConnection::GPUProcessConnection(IPC::Connection::Identifier connectionIdentifier)
+GPUProcessConnection::GPUProcessConnection(IPC::Connection::Identifier connectionIdentifier, const GPUProcessConnectionInitializationParameters& parameters)
     : m_connection(IPC::Connection::createClientConnection(connectionIdentifier, *this))
+#if ENABLE(VP9)
+    , m_hasVP9HardwareDecoder(parameters.hasVP9HardwareDecoder)
+#endif
 {
     m_connection->open();
 
