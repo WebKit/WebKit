@@ -2154,3 +2154,5 @@ webkit.org/b/231397 [ Debug ] imported/w3c/web-platform-tests/selection/collapse
 webkit.org/b/231397 [ Debug ] js/error-should-not-strong-reference-global-object.html [ Slow ]
 webkit.org/b/231397 webgl/1.0.3/conformance/glsl/bugs/long-expressions-should-not-crash.html [ Slow ]
 webkit.org/b/231397 webgl/1.0.3/conformance/uniforms/uniform-default-values.html [ Slow ]
+
+webkit.org/b/231444 imported/blink/fast/dom/shadow/shadowdom-for-keygen-only-shadow.html [ Pass Crash ]
