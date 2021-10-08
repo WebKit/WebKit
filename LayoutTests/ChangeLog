@@ -1,5 +1,56 @@
 2021-10-08  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r282634. rdar://problem/83957287
+
+    Preserve canvas color space when producing JPEGs from toDataURL/toBlob
+    https://bugs.webkit.org/show_bug.cgi?id=230209
+    <rdar://82948457>
+    
+    Reviewed by Sam Weinig.
+    
+    LayoutTests/imported/w3c:
+    
+    * web-platform-tests/html/canvas/element/wide-gamut-canvas/2d.color.space.p3.toDataURL.jpeg.p3.canvas-expected.txt: Added.
+    * web-platform-tests/html/canvas/element/wide-gamut-canvas/2d.color.space.p3.toDataURL.jpeg.p3.canvas.html: Copied from LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/2d.color.space.p3.toDataURL.p3.canvas.html.
+    * web-platform-tests/html/canvas/element/wide-gamut-canvas/2d.color.space.p3.toDataURL.p3.canvas-expected.txt:
+    * web-platform-tests/html/canvas/element/wide-gamut-canvas/2d.color.space.p3.toDataURL.p3.canvas.html:
+    * web-platform-tests/html/canvas/tools/yaml/element/color_space.yaml:
+    
+    Source/WebCore:
+    
+    Test: imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/2d.color.space.p3.toDataURL.jpeg.p3.canvas.html
+    
+    * platform/graphics/cg/ImageBufferCGBackend.cpp:
+    (WebCore::colorSpaceForBitmap): Return an appropriate color space for
+    performing any graphics operations on ImageBuffers (such as scaling or
+    cropping, or compositing on top of solid colors) becore encoding.
+    (WebCore::createBitmapImageAfterScalingIfNeeded):
+    (WebCore::ImageBufferCGBackend::copyCGImageForEncoding const):
+    
+    LayoutTests:
+    
+    * TestExpectations:
+    * platform/ios-14/TestExpectations:
+    * platform/ios/TestExpectations:
+    * platform/mac/TestExpectations:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@282634 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-09-16  Cameron McCormack  <heycam@apple.com>
+
+            Preserve canvas color space when producing JPEGs from toDataURL/toBlob
+            https://bugs.webkit.org/show_bug.cgi?id=230209
+            <rdar://82948457>
+
+            Reviewed by Sam Weinig.
+
+            * TestExpectations:
+            * platform/ios-14/TestExpectations:
+            * platform/ios/TestExpectations:
+            * platform/mac/TestExpectations:
+
+2021-10-08  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r282626. rdar://problem/83956767
 
     Support drawImage with a wide gamut image painting into a display-p3 canvas

@@ -1,6 +1,6 @@
 2d.color.space.p3.toDataURL.p3.canvas
-test if toblob returns p3 data from canvas with p3 color space
+test if toDataURL returns p3 data from canvas with p3 color space
 Actual output:
 
-PASS test if toblob returns p3 data from canvas with p3 color space
+PASS test if toDataURL returns p3 data from canvas with p3 color space
 
