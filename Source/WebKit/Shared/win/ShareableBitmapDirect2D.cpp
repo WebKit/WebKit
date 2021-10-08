@@ -47,6 +47,10 @@
 namespace WebKit {
 using namespace WebCore;
 
+void ShareableBitmap::validateConfiguration(Configuration&)
+{
+}
+
 static unsigned strideForWidth(unsigned width)
 {
     static unsigned bitsPerPixel = Direct2D::bitsPerPixel(Direct2D::wicBitmapFormat());

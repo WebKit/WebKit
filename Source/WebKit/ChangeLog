@@ -1,3 +1,141 @@
+2021-10-08  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r282626. rdar://problem/83956767
+
+    Support drawImage with a wide gamut image painting into a display-p3 canvas
+    https://bugs.webkit.org/show_bug.cgi?id=229021
+    <rdar://problem/81828450>
+    
+    Reviewed by Sam Weinig.
+    
+    LayoutTests/imported/w3c:
+    
+    Adding a new WPT for drawImage() using images with various embedded
+    color profiles.
+    
+    * web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-drawImage-expected.txt: Added.
+    * web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-drawImage.html: Added.
+    * web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-settings-expected.txt: Added.
+    * web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-settings.html: Added.
+    * web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3.js: Added.
+    (pixelsApproximatelyEqual):
+    * web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/resources/Adobe-RGB-BB0000CC.png: Added.
+    * web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/resources/Adobe-RGB-BB0000FF.png: Added.
+    * web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/resources/Adobe-RGB-BBBC00000000CCCC.png: Added.
+    * web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/resources/Adobe-RGB-BBBC00000000FFFF.png: Added.
+    * web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/resources/Adobe-RGB-FF0000CC.png: Added.
+    * web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/resources/Adobe-RGB-FF0000FF.png: Added.
+    * web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/resources/Adobe-RGB-FFFF00000000CCCC.png: Added.
+    * web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/resources/Adobe-RGB-FFFF00000000FFFF.png: Added.
+    * web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/resources/Display-P3-BB0000CC.png: Added.
+    * web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/resources/Display-P3-BB0000FF.png: Added.
+    * web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/resources/Display-P3-BBBC00000000CCCC.png: Added.
+    * web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/resources/Display-P3-BBBC00000000FFFF.png: Added.
+    * web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/resources/Display-P3-FF0000CC.png: Added.
+    * web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/resources/Display-P3-FF0000FF.png: Added.
+    * web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/resources/Display-P3-FFFF00000000CCCC.png: Added.
+    * web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/resources/Display-P3-FFFF00000000FFFF.png: Added.
+    * web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/resources/Generic-CMYK-BE000000.jpg: Added.
+    * web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/resources/Generic-CMYK-FF000000.jpg: Added.
+    * web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/resources/sRGB-BB0000CC.png: Added.
+    * web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/resources/sRGB-BB0000FF.png: Added.
+    * web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/resources/sRGB-BBBC00000000CCCC.png: Added.
+    * web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/resources/sRGB-BBBC00000000FFFF.png: Added.
+    * web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/resources/sRGB-FF0000CC.png: Added.
+    * web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/resources/sRGB-FF0000FF.png: Added.
+    * web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/resources/sRGB-FFFF00000000CCCC.png: Added.
+    * web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/resources/sRGB-FFFF00000000FFFF.png: Added.
+    
+    * web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-draw-high-bit-depth-images-expected.txt:
+    Results changing for an existing test. It's designed to test canvas
+    with a float16 backing store, which is (at the moment) non-standard,
+    and unsupported by us. The sub-tests changing from PASS to FAIL are
+    notable; they are drawing semi-transparent 16 bit wide gamut images
+    and comparing the results to drawing 8 bit equivalent images. Might
+    be accuracy issues due to pre-multiplied alpha?
+    
+    Source/WebCore:
+    
+    Expose the color space of a NativeImage.
+    
+    Tests: imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-drawImage.html
+           imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-settings.html
+    
+    * platform/graphics/NativeImage.h:
+    * platform/graphics/cairo/NativeImageCairo.cpp:
+    (WebCore::NativeImage::colorSpace const):
+    * platform/graphics/cg/NativeImageCG.cpp:
+    (WebCore::NativeImage::colorSpace const):
+    * platform/graphics/win/NativeImageDirect2D.cpp:
+    (WebCore::NativeImage::colorSpace const):
+    
+    Source/WebKit:
+    
+    ShareableBitmap is used to share image data used by drawImage() calls,
+    from the Web process to the GPU process. This change makes
+    ShareableBitmap create a CGBitmap with a color space matching the
+    source NativeImage, if that is an RGB-based color space, or extended
+    sRGB otherwise. This allows us to pass Adobe RGB, Display P3, etc.
+    images to the GPU process without needing to convert color space,
+    while still allowing for example CMYK JPEGs to be drawn correctly.
+    
+    * Shared/ShareableBitmap.cpp:
+    (WebKit::ShareableBitmap::create):
+    (WebKit::ShareableBitmap::createShareable):
+    * Shared/ShareableBitmap.h:
+    * Shared/cairo/ShareableBitmapCairo.cpp:
+    (WebKit::ShareableBitmap::validateConfiguration):
+    * Shared/cg/ShareableBitmapCG.cpp:
+    (WebKit::ShareableBitmap::validateConfiguration): Map the requested
+    color space into one appropriate for the CGBitmap.
+    (WebKit::colorSpace):
+    * Shared/win/ShareableBitmapDirect2D.cpp:
+    (WebKit::ShareableBitmap::validateConfiguration):
+    * WebProcess/GPU/graphics/RemoteResourceCacheProxy.cpp:
+    (WebKit::createShareableBitmapFromNativeImage): Pass in the color
+    space of the NativeImage.
+    
+    LayoutTests:
+    
+    * TestExpectations:
+    * platform/ios-14/TestExpectations:
+    * platform/ios/TestExpectations:
+    * platform/mac/TestExpectations:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@282626 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-09-16  Cameron McCormack  <heycam@apple.com>
+
+            Support drawImage with a wide gamut image painting into a display-p3 canvas
+            https://bugs.webkit.org/show_bug.cgi?id=229021
+            <rdar://problem/81828450>
+
+            Reviewed by Sam Weinig.
+
+            ShareableBitmap is used to share image data used by drawImage() calls,
+            from the Web process to the GPU process. This change makes
+            ShareableBitmap create a CGBitmap with a color space matching the
+            source NativeImage, if that is an RGB-based color space, or extended
+            sRGB otherwise. This allows us to pass Adobe RGB, Display P3, etc.
+            images to the GPU process without needing to convert color space,
+            while still allowing for example CMYK JPEGs to be drawn correctly.
+
+            * Shared/ShareableBitmap.cpp:
+            (WebKit::ShareableBitmap::create):
+            (WebKit::ShareableBitmap::createShareable):
+            * Shared/ShareableBitmap.h:
+            * Shared/cairo/ShareableBitmapCairo.cpp:
+            (WebKit::ShareableBitmap::validateConfiguration):
+            * Shared/cg/ShareableBitmapCG.cpp:
+            (WebKit::ShareableBitmap::validateConfiguration): Map the requested
+            color space into one appropriate for the CGBitmap.
+            (WebKit::colorSpace):
+            * Shared/win/ShareableBitmapDirect2D.cpp:
+            (WebKit::ShareableBitmap::validateConfiguration):
+            * WebProcess/GPU/graphics/RemoteResourceCacheProxy.cpp:
+            (WebKit::createShareableBitmapFromNativeImage): Pass in the color
+            space of the NativeImage.
+
 2021-10-07  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r283116. rdar://problem/83954304

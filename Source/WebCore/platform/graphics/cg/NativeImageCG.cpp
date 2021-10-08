@@ -64,6 +64,11 @@ Color NativeImage::singlePixelSolidColor() const
     return makeFromComponentsClampingExceptAlpha<SRGBA<uint8_t>>(pixel[0] * 255 / pixel[3], pixel[1] * 255 / pixel[3], pixel[2] * 255 / pixel[3], pixel[3]);
 }
 
+DestinationColorSpace NativeImage::colorSpace() const
+{
+    return DestinationColorSpace(CGImageGetColorSpace(m_platformImage.get()));
+}
+
 void NativeImage::clearSubimages()
 {
 #if CACHE_SUBIMAGES

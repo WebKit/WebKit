@@ -93,5 +93,9 @@ imported/w3c/web-platform-tests/html/canvas/element/imagebitmap/createImageBitma
 # Privacy Transparency tests are iOS15 only.
 http/tests/app-privacy-report/ [ Skip ]
 
+# display-p3 canvas and ImageData are iOS 15+.
+imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-drawImage.html [ Failure ]
+imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-settings.html [ Failure ]
+
 # rdar://79084756 ((r278618) media/modern-media-controls /overflow-support/chapters.html is timing out since introduction (226828))
 media/modern-media-controls/overflow-support/chapters.html [ Pass ]

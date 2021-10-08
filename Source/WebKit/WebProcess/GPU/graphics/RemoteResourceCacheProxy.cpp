@@ -72,7 +72,7 @@ inline static RefPtr<ShareableBitmap> createShareableBitmapFromNativeImage(Nativ
 {
     auto imageSize = image.size();
 
-    auto bitmap = ShareableBitmap::createShareable(image.size(), { });
+    auto bitmap = ShareableBitmap::createShareable(image.size(), { image.colorSpace() });
     if (!bitmap)
         return nullptr;
 
