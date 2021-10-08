@@ -1,3 +1,18 @@
+2021-10-08  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] UnlinkedCodeBlock::m_instructions can be nullptr
+        https://bugs.webkit.org/show_bug.cgi?id=231445
+        rdar://83975933
+
+        Reviewed by Mark Lam.
+
+        UnlinkedCodeBlock is first created with m_instructions = nullptr.
+        If BytecodeGenerator failed (due to OOM error etc.), then we keep it nullptr.
+        So, when destroying UnlinkedCodeBlock, we should have nullptr check.
+
+        * bytecode/UnlinkedCodeBlock.cpp:
+        (JSC::UnlinkedCodeBlock::~UnlinkedCodeBlock):
+
 2021-10-08  Saam Barati  <sbarati@apple.com>
 
         RegExpExec can't statically prove which of the two structures it will get in AI by just looking at the RegExp*

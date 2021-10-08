@@ -1,3 +1,17 @@
+2021-10-08  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] UnlinkedCodeBlock::m_instructions can be nullptr
+        https://bugs.webkit.org/show_bug.cgi?id=231445
+        rdar://83975933
+
+        Reviewed by Mark Lam.
+
+        * stress/unlinked-code-block-destructor.js: Added.
+        (useAllMemory.get Object):
+        (useAllMemory.foo):
+        (useAllMemory):
+        (try.bar):
+
 2021-10-08  Saam Barati  <sbarati@apple.com>
 
         RegExpExec can't statically prove which of the two structures it will get in AI by just looking at the RegExp*

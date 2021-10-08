@@ -284,10 +284,12 @@ bool UnlinkedCodeBlock::typeProfilerExpressionInfoForBytecodeOffset(unsigned byt
 UnlinkedCodeBlock::~UnlinkedCodeBlock()
 {
     if (UNLIKELY(Options::returnEarlyFromInfiniteLoopsForFuzzing())) {
-        VM& vm = this->vm();
-        for (const auto& instruction : instructions()) {
-            if (instruction->is<OpLoopHint>())
-                vm.removeLoopHintExecutionCounter(instruction.ptr());
+        if (auto* instructions = m_instructions.get()) {
+            VM& vm = this->vm();
+            for (const auto& instruction : *instructions) {
+                if (instruction->is<OpLoopHint>())
+                    vm.removeLoopHintExecutionCounter(instruction.ptr());
+            }
         }
     }
 }
