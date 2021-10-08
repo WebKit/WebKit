@@ -1,3 +1,16 @@
+2021-10-08  Tim Nguyen  <ntim@apple.com>
+
+        Re-sync the-dialog-element and inert WPT from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=231392
+
+        Reviewed by Youenn Fablet.
+
+        Upstream commit: https://github.com/web-platform-tests/wpt/commit/a44515b7c7774abf1256f488bf0e9dc02459fced
+
+        * TestExpectations:
+        * platform/gtk/imported/w3c/web-platform-tests/inert/inert-retargeting-iframe.tentative-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/inert/inert-retargeting-iframe.tentative-expected.txt: Removed.
+
 2021-10-07  Alan Bujtas  <zalan@apple.com>
 
         Do not check for firstLineStyle while constructing RenderText

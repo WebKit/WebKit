@@ -41,6 +41,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-enabled.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-focusing-steps-prevent-autofocus.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-form-submission.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-inert.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-keydown-preventDefault.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-not-in-tree-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-open.html
@@ -80,6 +81,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/top-layer-display-none.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/top-layer-nesting-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/top-layer-nesting.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/top-layer-parent-opacity-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/top-layer-parent-opacity.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/top-layer-stacking-correct-order-remove-readd-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/top-layer-stacking-correct-order-remove-readd.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/top-layer-stacking-dynamic-expected.html

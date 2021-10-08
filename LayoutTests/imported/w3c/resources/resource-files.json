@@ -2856,7 +2856,6 @@
         "web-platform-tests/html/webappapis/scripting/events/onerroreventhandler-frame.html",
         "web-platform-tests/html/webappapis/user-prompts/cannot-show-simple-dialogs/support/confirm.html",
         "web-platform-tests/html/webappapis/user-prompts/cannot-show-simple-dialogs/support/prompt.html",
-        "web-platform-tests/inert/frame/button.html",
         "web-platform-tests/infrastructure/assumptions/ahem-notref.html",
         "web-platform-tests/infrastructure/reftest/red.html",
         "web-platform-tests/intersection-observer/observer-in-iframe.html",

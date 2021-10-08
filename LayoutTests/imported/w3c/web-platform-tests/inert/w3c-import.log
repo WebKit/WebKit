@@ -14,6 +14,7 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/inert/inert-computed-style.html
 /LayoutTests/imported/w3c/web-platform-tests/inert/inert-does-not-match-disabled-selector.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/inert/inert-in-shadow-dom.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/inert/inert-inlines.tentative.html
@@ -23,5 +24,3 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/inert/inert-node-is-unselectable.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/inert/inert-on-non-html.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/inert/inert-on-slots.tentative.html
-/LayoutTests/imported/w3c/web-platform-tests/inert/inert-retargeting-iframe.tentative.html
-/LayoutTests/imported/w3c/web-platform-tests/inert/inert-retargeting.tentative.html
