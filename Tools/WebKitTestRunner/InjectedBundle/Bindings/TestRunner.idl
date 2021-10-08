@@ -411,6 +411,7 @@ interface TestRunner {
     undefined clearPrivateClickMeasurementsThroughWebsiteDataRemoval();
     undefined setPrivateClickMeasurementOverrideTimerForTesting(boolean value);
     undefined markAttributedPrivateClickMeasurementsAsExpiredForTesting();
+    undefined setPrivateClickMeasurementEphemeralMeasurementForTesting(boolean value);
     undefined simulateResourceLoadStatisticsSessionRestart();
     undefined setPrivateClickMeasurementTokenPublicKeyURLForTesting(DOMString url);
     undefined setPrivateClickMeasurementTokenSignatureURLForTesting(DOMString url);

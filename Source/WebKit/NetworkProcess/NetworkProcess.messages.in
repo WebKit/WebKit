@@ -164,6 +164,7 @@ messages -> NetworkProcess LegacyReceiver {
     ClearPrivateClickMeasurement(PAL::SessionID sessionID) -> () Async
     SetPrivateClickMeasurementOverrideTimerForTesting(PAL::SessionID sessionID, bool value) -> () Async
     MarkAttributedPrivateClickMeasurementsAsExpiredForTesting(PAL::SessionID sessionID) -> () Async
+    SetPrivateClickMeasurementEphemeralMeasurementForTesting(PAL::SessionID sessionID, bool value) -> () Async
     SimulateResourceLoadStatisticsSessionRestart(PAL::SessionID sessionID) -> () Async
     SetPrivateClickMeasurementTokenPublicKeyURLForTesting(PAL::SessionID sessionID, URL url) -> () Async
     SetPrivateClickMeasurementTokenSignatureURLForTesting(PAL::SessionID sessionID, URL url) -> () Async

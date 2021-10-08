@@ -3667,6 +3667,13 @@ void TestController::markAttributedPrivateClickMeasurementsAsExpiredForTesting()
     runUntil(callbackContext.done, noTimeout);
 }
 
+void TestController::setPrivateClickMeasurementEphemeralMeasurementForTesting(bool value)
+{
+    PrivateClickMeasurementVoidCallbackContext callbackContext(*this);
+    WKPageSetPrivateClickMeasurementEphemeralMeasurementForTesting(m_mainWebView->page(), value, privateClickMeasurementVoidCallback, &callbackContext);
+    runUntil(callbackContext.done, noTimeout);
+}
+
 void TestController::simulateResourceLoadStatisticsSessionRestart()
 {
     PrivateClickMeasurementVoidCallbackContext callbackContext(*this);

@@ -133,6 +133,7 @@ public:
     void setPrivateClickMeasurementTokenSignatureURLForTesting(URL&&);
     void setPrivateClickMeasurementAttributionReportURLsForTesting(URL&& sourceURL, URL&& destinationURL);
     void markPrivateClickMeasurementsAsExpiredForTesting();
+    void setPrivateClickMeasurementEphemeralMeasurementForTesting(bool);
     void setPCMFraudPreventionValuesForTesting(String&& unlinkableToken, String&& secretToken, String&& signature, String&& keyID);
     void firePrivateClickMeasurementTimerImmediately();
 

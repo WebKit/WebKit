@@ -2618,6 +2618,15 @@ void NetworkProcess::markAttributedPrivateClickMeasurementsAsExpiredForTesting(P
     completionHandler();
 }
 
+void NetworkProcess::setPrivateClickMeasurementEphemeralMeasurementForTesting(PAL::SessionID sessionID, bool value, CompletionHandler<void()>&& completionHandler)
+{
+    if (auto* session = networkSession(sessionID))
+        session->setPrivateClickMeasurementEphemeralMeasurementForTesting(value);
+    
+    completionHandler();
+}
+
+
 void NetworkProcess::setPrivateClickMeasurementTokenPublicKeyURLForTesting(PAL::SessionID sessionID, URL&& url, CompletionHandler<void()>&& completionHandler)
 {
     if (auto* session = networkSession(sessionID))

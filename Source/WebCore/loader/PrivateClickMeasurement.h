@@ -47,6 +47,8 @@ OBJC_CLASS RSABSSATokenBlinder;
 
 namespace WebCore {
 
+enum class PrivateClickMeasurementAttributionEphemeral : bool { No, Yes };
+
 class PrivateClickMeasurement {
 public:
     using PriorityValue = uint32_t;
@@ -90,6 +92,11 @@ public:
             return registrableDomain == other.registrableDomain;
         }
 
+        bool operator!=(const SourceSite& other) const
+        {
+            return registrableDomain != other.registrableDomain;
+        }
+
         bool matches(const URL& url) const
         {
             return registrableDomain.matches(url);
@@ -129,6 +136,11 @@ public:
         bool operator==(const AttributionDestinationSite& other) const
         {
             return registrableDomain == other.registrableDomain;
+        }
+
+        bool operator!=(const AttributionDestinationSite& other) const
+        {
+            return registrableDomain != other.registrableDomain;
         }
 
         bool matches(const URL& url) const
@@ -300,13 +312,14 @@ public:
     };
 
     PrivateClickMeasurement() = default;
-    PrivateClickMeasurement(SourceID sourceID, const SourceSite& sourceSite, const AttributionDestinationSite& destinationSite, String&& sourceDescription = { }, String&& purchaser = { }, WallTime timeOfAdClick = WallTime::now())
+    PrivateClickMeasurement(SourceID sourceID, const SourceSite& sourceSite, const AttributionDestinationSite& destinationSite, String&& sourceDescription = { }, String&& purchaser = { }, WallTime timeOfAdClick = WallTime::now(), PrivateClickMeasurementAttributionEphemeral isEphemeral = PrivateClickMeasurementAttributionEphemeral::No)
         : m_sourceID { sourceID }
         , m_sourceSite { sourceSite }
         , m_destinationSite { destinationSite }
         , m_sourceDescription { WTFMove(sourceDescription) }
         , m_purchaser { WTFMove(purchaser) }
         , m_timeOfAdClick { timeOfAdClick }
+        , m_isEphemeral { isEphemeral }
     {
     }
 
@@ -329,6 +342,8 @@ public:
 
     const String& sourceDescription() const { return m_sourceDescription; }
     const String& purchaser() const { return m_purchaser; }
+    bool isEphemeral() const { return m_isEphemeral == PrivateClickMeasurementAttributionEphemeral::Yes; }
+    void setEphemeral(PrivateClickMeasurementAttributionEphemeral isEphemeral) { m_isEphemeral = isEphemeral; }
 
     // MARK: - Fraud Prevention
     WEBCORE_EXPORT URL tokenPublicKeyURL() const;
@@ -378,6 +393,7 @@ private:
     String m_sourceDescription;
     String m_purchaser;
     WallTime m_timeOfAdClick;
+    PrivateClickMeasurementAttributionEphemeral m_isEphemeral;
 
     std::optional<AttributionTriggerData> m_attributionTriggerData;
     AttributionTimeToSendData m_timesToSend;
@@ -406,6 +422,7 @@ void PrivateClickMeasurement::encode(Encoder& encoder) const
         << m_purchaser
         << m_timeOfAdClick
         << m_ephemeralSourceNonce
+        << m_isEphemeral
         << m_attributionTriggerData
         << m_timesToSend;
 }
@@ -448,6 +465,11 @@ std::optional<PrivateClickMeasurement> PrivateClickMeasurement::decode(Decoder& 
     if (!ephemeralSourceNonce)
         return std::nullopt;
 
+    std::optional<PrivateClickMeasurementAttributionEphemeral> isEphemeral;
+    decoder >> isEphemeral;
+    if (!isEphemeral)
+        return std::nullopt;
+
     std::optional<std::optional<AttributionTriggerData>> attributionTriggerData;
     decoder >> attributionTriggerData;
     if (!attributionTriggerData)
@@ -464,7 +486,8 @@ std::optional<PrivateClickMeasurement> PrivateClickMeasurement::decode(Decoder& 
         AttributionDestinationSite { WTFMove(*destinationRegistrableDomain) },
         WTFMove(*sourceDescription),
         WTFMove(*purchaser),
-        WTFMove(*timeOfAdClick)
+        WTFMove(*timeOfAdClick),
+        WTFMove(*isEphemeral)
     };
     attribution.m_ephemeralSourceNonce = WTFMove(*ephemeralSourceNonce);
     attribution.m_attributionTriggerData = WTFMove(*attributionTriggerData);

@@ -3082,6 +3082,14 @@ void WKPageMarkAttributedPrivateClickMeasurementsAsExpiredForTesting(WKPageRef p
     });
 }
 
+void WKPageSetPrivateClickMeasurementEphemeralMeasurementForTesting(WKPageRef pageRef, bool value, WKPageSetPrivateClickMeasurementEphemeralMeasurementForTestingFunction callback, void* callbackContext)
+{
+    CRASH_IF_SUSPENDED;
+    toImpl(pageRef)->setPrivateClickMeasurementEphemeralMeasurementForTesting(value, [callbackContext, callback] () {
+        callback(callbackContext);
+    });
+}
+
 void WKPageSimulateResourceLoadStatisticsSessionRestart(WKPageRef pageRef, WKPageSimulateResourceLoadStatisticsSessionRestartFunction callback, void* callbackContext)
 {
     CRASH_IF_SUSPENDED;

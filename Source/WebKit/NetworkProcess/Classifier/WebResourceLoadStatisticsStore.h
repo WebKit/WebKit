@@ -242,7 +242,7 @@ public:
     // Private Click Measurement.
     void insertPrivateClickMeasurement(WebCore::PrivateClickMeasurement&&, PrivateClickMeasurementAttributionType);
     void markAllUnattributedPrivateClickMeasurementAsExpiredForTesting();
-    void attributePrivateClickMeasurement(const WebCore::PrivateClickMeasurement::SourceSite&, const WebCore::PrivateClickMeasurement::AttributionDestinationSite&, WebCore::PrivateClickMeasurement::AttributionTriggerData&&, CompletionHandler<void(std::optional<WebCore::PrivateClickMeasurement::AttributionSecondsUntilSendData>)>&&);
+    void attributePrivateClickMeasurement(const WebCore::PrivateClickMeasurement::SourceSite&, const WebCore::PrivateClickMeasurement::AttributionDestinationSite&, WebCore::PrivateClickMeasurement::AttributionTriggerData&&, std::optional<WebCore::PrivateClickMeasurement>&& ephemeralMeasurement, CompletionHandler<void(std::optional<WebCore::PrivateClickMeasurement::AttributionSecondsUntilSendData>)>&&);
     void allAttributedPrivateClickMeasurement(CompletionHandler<void(Vector<WebCore::PrivateClickMeasurement>&&)>&&);
     void clearPrivateClickMeasurement();
     void clearPrivateClickMeasurementForRegistrableDomain(const WebCore::RegistrableDomain&);

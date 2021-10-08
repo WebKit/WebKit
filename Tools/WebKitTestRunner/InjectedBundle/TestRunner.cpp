@@ -2071,6 +2071,11 @@ void TestRunner::markAttributedPrivateClickMeasurementsAsExpiredForTesting()
     postSynchronousPageMessage("MarkAttributedPrivateClickMeasurementsAsExpiredForTesting");
 }
 
+void TestRunner::setPrivateClickMeasurementEphemeralMeasurementForTesting(bool value)
+{
+    postSynchronousPageMessage("SetPrivateClickMeasurementEphemeralMeasurementForTesting", value);
+}
+
 void TestRunner::simulateResourceLoadStatisticsSessionRestart()
 {
     postSynchronousPageMessage("SimulateResourceLoadStatisticsSessionRestart");
