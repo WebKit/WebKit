@@ -1,5 +1,30 @@
 2021-10-07  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r282117. rdar://problem/83954734
+
+    Ensure ImageBuffers are destroyed on the main thread
+    https://bugs.webkit.org/show_bug.cgi?id=229906
+    <rdar://problem/82745925>
+    
+    Reviewed by Ryosuke Niwa.
+    
+    * platform/graphics/ImageBuffer.h:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@282117 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-09-07  Cameron McCormack  <heycam@apple.com>
+
+            Ensure ImageBuffers are destroyed on the main thread
+            https://bugs.webkit.org/show_bug.cgi?id=229906
+            <rdar://problem/82745925>
+
+            Reviewed by Ryosuke Niwa.
+
+            * platform/graphics/ImageBuffer.h:
+
+2021-10-07  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r281721. rdar://problem/83957360
 
     Separate PrivateClickMeasurement database from ResourceLoadStatistics database and add SPI to set its location
