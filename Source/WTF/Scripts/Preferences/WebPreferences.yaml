@@ -239,7 +239,7 @@ AlternateFormControlDesignEnabled:
     WebKitLegacy:
       default: false
     WebKit:
-      default: WebKit::defaultAlternateFormControlDesignEnabled()
+      default: false
     WebCore:
       default: false
 
