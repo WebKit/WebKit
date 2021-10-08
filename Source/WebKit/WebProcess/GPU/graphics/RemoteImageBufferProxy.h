@@ -47,7 +47,7 @@ class RemoteRenderingBackend;
 template<typename BackendType> class ThreadSafeRemoteImageBufferFlusher;
 
 template<typename BackendType>
-class RemoteImageBufferProxy : public WebCore::DisplayList::ImageBuffer<BackendType>, public WebCore::DisplayList::Recorder::Delegate, public WebCore::DisplayList::ItemBufferWritingClient {
+class RemoteImageBufferProxy : public WebCore::DisplayList::ImageBuffer<BackendType>, public WebCore::DisplayList::RecorderImpl::Delegate, public WebCore::DisplayList::ItemBufferWritingClient {
     using BaseDisplayListImageBuffer = WebCore::DisplayList::ImageBuffer<BackendType>;
     using BaseDisplayListImageBuffer::m_backend;
     using BaseDisplayListImageBuffer::m_drawingContext;

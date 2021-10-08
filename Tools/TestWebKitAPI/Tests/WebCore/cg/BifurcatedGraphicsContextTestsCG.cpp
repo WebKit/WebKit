@@ -32,7 +32,7 @@
 #include <WebCore/DisplayList.h>
 #include <WebCore/DisplayListItems.h>
 #include <WebCore/DisplayListIterator.h>
-#include <WebCore/DisplayListRecorder.h>
+#include <WebCore/DisplayListRecorderImpl.h>
 #include <WebCore/FontCascade.h>
 #include <WebCore/GradientImage.h>
 #include <WebCore/GraphicsContextCG.h>
@@ -55,7 +55,7 @@ TEST(BifurcatedGraphicsContextTests, BasicBifurcatedContext)
     GraphicsContextCG primaryContext(primaryCGContext.get());
 
     InMemoryDisplayList displayList;
-    Recorder secondaryContext(displayList, { }, FloatRect(0, 0, contextWidth, contextHeight), { });
+    RecorderImpl secondaryContext(displayList, { }, FloatRect(0, 0, contextWidth, contextHeight), { });
 
     BifurcatedGraphicsContext ctx(primaryContext, secondaryContext);
 
@@ -91,10 +91,10 @@ TEST(BifurcatedGraphicsContextTests, BasicBifurcatedContext)
 TEST(BifurcatedGraphicsContextTests, TextInBifurcatedContext)
 {
     InMemoryDisplayList primaryDisplayList;
-    Recorder primaryContext(primaryDisplayList, { }, FloatRect(0, 0, contextWidth, contextHeight), { });
+    RecorderImpl primaryContext(primaryDisplayList, { }, FloatRect(0, 0, contextWidth, contextHeight), { });
 
     InMemoryDisplayList secondaryDisplayList;
-    Recorder secondaryContext(secondaryDisplayList, { }, FloatRect(0, 0, contextWidth, contextHeight), { });
+    RecorderImpl secondaryContext(secondaryDisplayList, { }, FloatRect(0, 0, contextWidth, contextHeight), { });
 
     BifurcatedGraphicsContext ctx(primaryContext, secondaryContext);
 

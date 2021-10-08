@@ -26,7 +26,7 @@
 
 #include "CharacterProperties.h"
 #include "ComplexTextController.h"
-#include "DisplayListRecorder.h"
+#include "DisplayListRecorderImpl.h"
 #include "FloatRect.h"
 #include "FontCache.h"
 #include "GlyphBuffer.h"
@@ -213,7 +213,7 @@ std::unique_ptr<DisplayList::InMemoryDisplayList> FontCascade::displayListForTex
         return nullptr;
     
     std::unique_ptr<DisplayList::InMemoryDisplayList> displayList = makeUnique<DisplayList::InMemoryDisplayList>();
-    DisplayList::Recorder recordingContext(*displayList, context.state(), FloatRect(), AffineTransform(), nullptr, DrawGlyphsRecorder::DrawGlyphsDeconstruction::DontDeconstruct);
+    DisplayList::RecorderImpl recordingContext(*displayList, context.state(), FloatRect(), AffineTransform(), nullptr, DrawGlyphsRecorder::DrawGlyphsDeconstruction::DontDeconstruct);
     
     FloatPoint startPoint = toFloatPoint(WebCore::size(glyphBuffer.initialAdvance()));
     drawGlyphBuffer(recordingContext, glyphBuffer, startPoint, customFontNotReadyAction);

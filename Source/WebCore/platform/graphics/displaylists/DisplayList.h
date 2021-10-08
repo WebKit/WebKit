@@ -54,7 +54,7 @@ typedef unsigned AsTextFlags;
 
 class DisplayList {
     WTF_MAKE_NONCOPYABLE(DisplayList); WTF_MAKE_FAST_ALLOCATED;
-    friend class Recorder;
+    friend class RecorderImpl;
     friend class Replayer;
 public:
     WEBCORE_EXPORT DisplayList();

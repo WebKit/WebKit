@@ -1,3 +1,15 @@
+2021-10-08  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Split DisplayList::Recorder into an abstract base class and a concrete implementation
+        https://bugs.webkit.org/show_bug.cgi?id=231404
+
+        Reviewed by Myles Maxfield.
+
+        See WebCore/ChangeLog for more details.
+
+        * TestWebKitAPI/Tests/WebCore/cg/BifurcatedGraphicsContextTestsCG.cpp:
+        (TestWebKitAPI::TEST):
+
 2021-10-08  Jonathan Bedard  <jbedard@apple.com>
 
         [webkitscmpy] Allow caller to differentiate remote branches

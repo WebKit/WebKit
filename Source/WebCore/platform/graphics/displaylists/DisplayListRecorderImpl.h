@@ -1,0 +1,173 @@
+/*
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#pragma once
+
+#include "DisplayListRecorder.h"
+
+namespace WebCore {
+
+namespace DisplayList {
+
+class RecorderImpl : public Recorder {
+    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_NONCOPYABLE(RecorderImpl);
+public:
+    class Delegate;
+    WEBCORE_EXPORT RecorderImpl(DisplayList&, const GraphicsContextState&, const FloatRect& initialClip, const AffineTransform&, Delegate* = nullptr, DrawGlyphsRecorder::DrawGlyphsDeconstruction = DrawGlyphsRecorder::DrawGlyphsDeconstruction::Deconstruct);
+    RecorderImpl(RecorderImpl& parent, const GraphicsContextState&, const FloatRect& initialClip, const AffineTransform& initialCTM);
+
+    WEBCORE_EXPORT virtual ~RecorderImpl();
+
+    bool isEmpty() const { return m_displayList.isEmpty(); }
+
+    class Delegate {
+    public:
+        virtual ~Delegate() { }
+        virtual bool canAppendItemOfType(ItemType) { return false; }
+        virtual void recordNativeImageUse(NativeImage&) { }
+        virtual bool isCachedImageBuffer(const ImageBuffer&) const { return false; }
+        virtual void recordFontUse(Font&) { }
+        virtual void recordImageBufferUse(ImageBuffer&) { }
+        virtual RenderingMode renderingMode() const { return RenderingMode::Unaccelerated; }
+    };
+
+    WEBCORE_EXPORT void getPixelBuffer(const PixelBufferFormat& outputFormat, const IntRect& sourceRect) final;
+    WEBCORE_EXPORT void putPixelBuffer(const PixelBuffer&, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat) final;
+    void flushContext(GraphicsContextFlushIdentifier identifier) final { append<FlushContext>(identifier); }
+
+private:
+    // FIXME: Maybe remove this?
+    bool canDrawImageBuffer(const ImageBuffer&) const final;
+    RenderingMode renderingMode() const final;
+
+    void recordSave() final;
+    void recordRestore() final;
+    void recordTranslate(float x, float y) final;
+    void recordRotate(float angle) final;
+    void recordScale(const FloatSize&) final;
+    void recordSetCTM(const AffineTransform&) final;
+    void recordConcatenateCTM(const AffineTransform&) final;
+    void recordSetInlineFillColor(SRGBA<uint8_t>) final;
+    void recordSetInlineStrokeColor(SRGBA<uint8_t>) final;
+    void recordSetStrokeThickness(float) final;
+    void recordSetState(const GraphicsContextState&, GraphicsContextState::StateChangeFlags) final;
+    void recordSetLineCap(LineCap) final;
+    void recordSetLineDash(const DashArray&, float dashOffset) final;
+    void recordSetLineJoin(LineJoin) final;
+    void recordSetMiterLimit(float) final;
+    void recordClearShadow() final;
+    void recordClip(const FloatRect&) final;
+    void recordClipOut(const FloatRect&) final;
+    void recordClipToImageBuffer(RenderingResourceIdentifier imageBufferIdentifier, const FloatRect& destinationRect) final;
+    void recordClipOutToPath(const Path&) final;
+    void recordClipPath(const Path&, WindRule) final;
+    void recordBeginClipToDrawingCommands(const FloatRect& destination, DestinationColorSpace) final;
+    void recordEndClipToDrawingCommands(const FloatRect& destination) final;
+    void recordDrawGlyphs(const Font&, const GlyphBufferGlyph*, const GlyphBufferAdvance*, unsigned count, const FloatPoint& localAnchor, FontSmoothingMode) final;
+    void recordDrawImageBuffer(RenderingResourceIdentifier imageBufferIdentifier, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions&) final;
+    void recordDrawNativeImage(RenderingResourceIdentifier imageIdentifier, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions&) final;
+    void recordDrawPattern(RenderingResourceIdentifier, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform&, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& = { }) final;
+    void recordBeginTransparencyLayer(float) final;
+    void recordEndTransparencyLayer() final;
+    void recordDrawRect(const FloatRect&, float) final;
+    void recordDrawLine(const FloatPoint& point1, const FloatPoint& point2) final;
+    void recordDrawLinesForText(const FloatPoint& blockLocation, const FloatSize& localAnchor, float thickness, const DashArray& widths, bool printing, bool doubleLines) final;
+    void recordDrawDotsForDocumentMarker(const FloatRect&, const DocumentMarkerLineStyle&) final;
+    void recordDrawEllipse(const FloatRect&) final;
+    void recordDrawPath(const Path&) final;
+    void recordDrawFocusRingPath(const Path&, float width, float offset, const Color&) final;
+    void recordDrawFocusRingRects(const Vector<FloatRect>&, float width, float offset, const Color&) final;
+    void recordFillRect(const FloatRect&) final;
+    void recordFillRectWithColor(const FloatRect&, const Color&) final;
+    void recordFillRectWithGradient(const FloatRect&, Gradient&) final;
+    void recordFillCompositedRect(const FloatRect&, const Color&, CompositeOperator, BlendMode) final;
+    void recordFillRoundedRect(const FloatRoundedRect&, const Color&, BlendMode) final;
+    void recordFillRectWithRoundedHole(const FloatRect&, const FloatRoundedRect&, const Color&) final;
+#if ENABLE(INLINE_PATH_DATA)
+    void recordFillLine(const LineData&) final;
+    void recordFillArc(const ArcData&) final;
+    void recordFillQuadCurve(const QuadCurveData&) final;
+    void recordFillBezierCurve(const BezierCurveData&) final;
+#endif
+    void recordFillPath(const Path&) final;
+    void recordFillEllipse(const FloatRect&) final;
+    void recordGetPixelBuffer(PixelBufferFormat outputFormat, const IntRect&) final;
+    void recordPutPixelBuffer(const PixelBuffer&, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication) final;
+    void recordPaintFrameForMedia(MediaPlayer&, const FloatRect& destination) final;
+    void recordStrokeRect(const FloatRect&, float) final;
+#if ENABLE(INLINE_PATH_DATA)
+    void recordStrokeLine(const LineData&) final;
+    void recordStrokeArc(const ArcData&) final;
+    void recordStrokeQuadCurve(const QuadCurveData&) final;
+    void recordStrokeBezierCurve(const BezierCurveData&) final;
+#endif
+    void recordStrokePath(const Path&) final;
+    void recordStrokeEllipse(const FloatRect&) final;
+    void recordClearRect(const FloatRect&) final;
+#if USE(CG)
+    void recordApplyStrokePattern() final;
+    void recordApplyFillPattern() final;
+#endif
+    void recordApplyDeviceScaleFactor(float) final;
+
+    void recordResourceUse(NativeImage&) final;
+    void recordResourceUse(Font&) final;
+    void recordResourceUse(ImageBuffer&) final;
+
+    std::unique_ptr<GraphicsContext> createNestedContext(const FloatRect& initialClip, const AffineTransform& initialCTM) final;
+
+    template<typename T, class... Args>
+    void append(Args&&... args)
+    {
+        if (UNLIKELY(!canAppendItemOfType(T::itemType)))
+            return;
+
+        m_displayList.append<T>(std::forward<Args>(args)...);
+
+        if constexpr (T::isDrawingItem) {
+            if (LIKELY(!m_displayList.tracksDrawingItemExtents()))
+                return;
+
+            auto item = T(std::forward<Args>(args)...);
+            if (auto rect = item.localBounds(*this))
+                m_displayList.addDrawingItemExtent(extentFromLocalBounds(*rect));
+            else if (auto rect = item.globalBounds())
+                m_displayList.addDrawingItemExtent(*rect);
+            else
+                m_displayList.addDrawingItemExtent(std::nullopt);
+        }
+    }
+
+    FloatRect extentFromLocalBounds(const FloatRect&) const;
+    WEBCORE_EXPORT bool canAppendItemOfType(ItemType) const;
+
+    DisplayList& m_displayList;
+    Delegate* m_delegate { nullptr };
+    bool m_isNested { false };
+};
+
+}
+}

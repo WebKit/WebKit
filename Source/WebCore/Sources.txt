@@ -2031,6 +2031,7 @@ platform/graphics/displaylists/DisplayListItemBuffer.cpp
 platform/graphics/displaylists/DisplayListItemType.cpp
 platform/graphics/displaylists/DisplayListIterator.cpp
 platform/graphics/displaylists/DisplayListRecorder.cpp
+platform/graphics/displaylists/DisplayListRecorderImpl.cpp
 platform/graphics/displaylists/DisplayListReplayer.cpp
 platform/graphics/displaylists/InMemoryDisplayList.cpp
 platform/graphics/filters/DistantLightSource.cpp
