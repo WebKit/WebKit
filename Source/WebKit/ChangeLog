@@ -1,3 +1,70 @@
+2021-10-07  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r281349. rdar://problem/83957360
+
+    Make UIEventAttribution tests less platform dependent
+    https://bugs.webkit.org/show_bug.cgi?id=229323
+    
+    Reviewed by John Wilander.
+    
+    Source/WebKit:
+    
+    This allows me to run the UIEventAttribution tests on macOS.
+    It also makes them not time out, which they were doing since r277447.
+    To accomplish this, I added more test SPI to prevent the network process
+    suspension message, which was causing the test to time out on the iOS simulator.
+    
+    * UIProcess/API/Cocoa/WKWebViewPrivateForTesting.h:
+    * UIProcess/API/Cocoa/WKWebViewTesting.mm:
+    (-[WKWebView _addEventAttributionWithSourceID:destinationURL:sourceDescription:purchaser:reportEndpoint:optionalNonce:]):
+    * UIProcess/API/Cocoa/WKWebsiteDataStore.mm:
+    (+[WKWebsiteDataStore _preventNetworkProcessSuspensionForTesting]):
+    * UIProcess/API/Cocoa/WKWebsiteDataStorePrivate.h:
+    * UIProcess/API/ios/WKWebViewPrivateForTestingIOS.h:
+    * UIProcess/API/ios/WKWebViewTestingIOS.mm:
+    (-[WKWebView _setUIEventAttributionForTesting:withNonce:]): Deleted.
+    * UIProcess/Network/NetworkProcessProxy.cpp:
+    (WebKit::NetworkProcessProxy::preventSuspensionForTesting):
+    (WebKit::NetworkProcessProxy::sendPrepareToSuspend):
+    * UIProcess/Network/NetworkProcessProxy.h:
+    
+    Tools:
+    
+    * TestWebKitAPI/Tests/WebKitCocoa/EventAttribution.mm:
+    (TestWebKitAPI::exampleURL):
+    (TestWebKitAPI::runBasicEventAttributionTest):
+    (TestWebKitAPI::TEST):
+    
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@281349 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-08-20  Alex Christensen  <achristensen@webkit.org>
+
+            Make UIEventAttribution tests less platform dependent
+            https://bugs.webkit.org/show_bug.cgi?id=229323
+
+            Reviewed by John Wilander.
+
+            This allows me to run the UIEventAttribution tests on macOS.
+            It also makes them not time out, which they were doing since r277447.
+            To accomplish this, I added more test SPI to prevent the network process
+            suspension message, which was causing the test to time out on the iOS simulator.
+
+            * UIProcess/API/Cocoa/WKWebViewPrivateForTesting.h:
+            * UIProcess/API/Cocoa/WKWebViewTesting.mm:
+            (-[WKWebView _addEventAttributionWithSourceID:destinationURL:sourceDescription:purchaser:reportEndpoint:optionalNonce:]):
+            * UIProcess/API/Cocoa/WKWebsiteDataStore.mm:
+            (+[WKWebsiteDataStore _preventNetworkProcessSuspensionForTesting]):
+            * UIProcess/API/Cocoa/WKWebsiteDataStorePrivate.h:
+            * UIProcess/API/ios/WKWebViewPrivateForTestingIOS.h:
+            * UIProcess/API/ios/WKWebViewTestingIOS.mm:
+            (-[WKWebView _setUIEventAttributionForTesting:withNonce:]): Deleted.
+            * UIProcess/Network/NetworkProcessProxy.cpp:
+            (WebKit::NetworkProcessProxy::preventSuspensionForTesting):
+            (WebKit::NetworkProcessProxy::sendPrepareToSuspend):
+            * UIProcess/Network/NetworkProcessProxy.h:
+
 2021-10-06  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r283490. rdar://problem/83954408

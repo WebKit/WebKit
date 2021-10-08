@@ -25,8 +25,6 @@
 
 #import "config.h"
 
-#if HAVE(UI_EVENT_ATTRIBUTION)
-
 #import "HTTPServer.h"
 #import "PlatformUtilities.h"
 #import "TestNavigationDelegate.h"
@@ -75,8 +73,14 @@
 
 namespace TestWebKitAPI {
 
-TEST(EventAttribution, Basic)
+static NSURL *exampleURL()
 {
+    return [NSURL URLWithString:@"https://example.com/"];
+}
+
+void runBasicEventAttributionTest(Function<void(WKWebView *, const HTTPServer&)>&& addAttributionToWebView)
+{
+    [WKWebsiteDataStore _preventNetworkProcessSuspensionForTesting];
     bool done = false;
     HTTPServer server([&done, connectionCount = 0] (Connection connection) mutable {
         switch (++connectionCount) {
@@ -109,16 +113,14 @@ TEST(EventAttribution, Basic)
     }, HTTPServer::Protocol::Https);
     NSURL *serverURL = server.request().URL;
 
-    auto exampleURL = [NSURL URLWithString:@"https://example.com/"];
-    auto attribution = adoptNS([[MockEventAttribution alloc] initWithReportEndpoint:server.request().URL destinationURL:exampleURL]);
     auto webView = adoptNS([WKWebView new]);
-    webView.get()._uiEventAttribution = (UIEventAttribution *)attribution.get();
+    addAttributionToWebView(webView.get(), server);
     [[webView configuration].websiteDataStore _setResourceLoadStatisticsEnabled:YES];
     [[webView configuration].websiteDataStore _allowTLSCertificateChain:@[(id)testCertificate().get()] forHost:serverURL.host];
-    [webView _setPrivateClickMeasurementAttributionReportURLsForTesting:serverURL destinationURL:exampleURL completionHandler:^{
+    [webView _setPrivateClickMeasurementAttributionReportURLsForTesting:serverURL destinationURL:exampleURL() completionHandler:^{
         [webView _setPrivateClickMeasurementOverrideTimerForTesting:YES completionHandler:^{
             NSString *html = [NSString stringWithFormat:@"<script>fetch('%@conversionRequestBeforeRedirect',{mode:'no-cors'})</script>", serverURL];
-            [webView loadHTMLString:html baseURL:exampleURL];
+            [webView loadHTMLString:html baseURL:exampleURL()];
         }];
     }];
     Util::run(&done);
@@ -127,6 +129,7 @@ TEST(EventAttribution, Basic)
 #if HAVE(RSA_BSSA)
 TEST(EventAttribution, FraudPrevention)
 {
+    [WKWebsiteDataStore _preventNetworkProcessSuspensionForTesting];
     bool done = false;
 
     // Generate the server key pair.
@@ -258,19 +261,17 @@ TEST(EventAttribution, FraudPrevention)
     }, HTTPServer::Protocol::Https);
     NSURL *serverURL = server.request().URL;
 
-    auto exampleURL = [NSURL URLWithString:@"https://example.com/"];
-    auto attribution = adoptNS([[MockEventAttribution alloc] initWithReportEndpoint:serverURL destinationURL:exampleURL]);
     auto webView = adoptNS([WKWebView new]);
-    [webView _setUIEventAttributionForTesting:(UIEventAttribution *)attribution.get() withNonce:@"ABCDEFabcdef0123456789"];
+    [webView _addEventAttributionWithSourceID:42 destinationURL:exampleURL() sourceDescription:@"test source description" purchaser:@"test purchaser" reportEndpoint:serverURL optionalNonce:@"ABCDEFabcdef0123456789"];
     [[webView configuration].websiteDataStore _setResourceLoadStatisticsEnabled:YES];
     [[webView configuration].websiteDataStore _allowTLSCertificateChain:@[(id)testCertificate().get()] forHost:serverURL.host];
 
-    [webView _setPrivateClickMeasurementAttributionReportURLsForTesting:serverURL destinationURL:exampleURL completionHandler:^{
+    [webView _setPrivateClickMeasurementAttributionReportURLsForTesting:serverURL destinationURL:exampleURL() completionHandler:^{
         [webView _setPrivateClickMeasurementOverrideTimerForTesting:YES completionHandler:^{
             [webView _setPrivateClickMeasurementAttributionTokenPublicKeyURLForTesting:serverURL completionHandler:^{
                 [webView _setPrivateClickMeasurementAttributionTokenSignatureURLForTesting:serverURL completionHandler:^{
                     NSString *html = [NSString stringWithFormat:@"<script>setTimeout(function(){ fetch('%@conversionRequestBeforeRedirect',{mode:'no-cors'}); }, 100);</script>", serverURL];
-                    [webView loadHTMLString:html baseURL:exampleURL];
+                    [webView loadHTMLString:html baseURL:exampleURL()];
                 }];
             }];
         }];
@@ -279,6 +280,23 @@ TEST(EventAttribution, FraudPrevention)
 }
 #endif
 
-} // namespace TestWebKitAPI
+TEST(EventAttribution, Basic)
+{
+    runBasicEventAttributionTest([](WKWebView *webView, const HTTPServer& server) {
+        [webView _addEventAttributionWithSourceID:42 destinationURL:exampleURL() sourceDescription:@"test source description" purchaser:@"test purchaser" reportEndpoint:server.request().URL optionalNonce:nil];
+    });
+}
 
-#endif // PLATFORM(IOS_FAMILY)
+#if HAVE(UI_EVENT_ATTRIBUTION)
+
+TEST(EventAttribution, BasicWithIOSSPI)
+{
+    runBasicEventAttributionTest([](WKWebView *webView, const HTTPServer& server) {
+        auto attribution = adoptNS([[MockEventAttribution alloc] initWithReportEndpoint:server.request().URL destinationURL:exampleURL()]);
+        webView._uiEventAttribution = (UIEventAttribution *)attribution.get();
+    });
+}
+
+#endif // HAVE(UI_EVENT_ATTRIBUTION)
+
+} // namespace TestWebKitAPI

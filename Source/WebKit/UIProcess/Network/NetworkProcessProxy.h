@@ -231,6 +231,7 @@ public:
     void sendProcessDidResume() final;
     ASCIILiteral clientName() const final { return "NetworkProcess"_s; }
     
+    static void preventSuspensionForTesting();
     void sendProcessWillSuspendImminentlyForTesting();
 
     void registerSchemeForLegacyCustomProtocol(const String&);

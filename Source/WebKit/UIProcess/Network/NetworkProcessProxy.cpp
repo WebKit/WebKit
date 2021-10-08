@@ -1251,9 +1251,17 @@ void NetworkProcessProxy::sendProcessWillSuspendImminentlyForTesting()
     if (canSendMessage())
         sendSync(Messages::NetworkProcess::ProcessWillSuspendImminentlyForTestingSync(), Messages::NetworkProcess::ProcessWillSuspendImminentlyForTestingSync::Reply(), 0);
 }
-    
+
+static bool s_suspensionPreventedForTesting { false };
+void NetworkProcessProxy::preventSuspensionForTesting()
+{
+    s_suspensionPreventedForTesting = true;
+}
+
 void NetworkProcessProxy::sendPrepareToSuspend(IsSuspensionImminent isSuspensionImminent, CompletionHandler<void()>&& completionHandler)
 {
+    if (s_suspensionPreventedForTesting)
+        return completionHandler();
     sendWithAsyncReply(Messages::NetworkProcess::PrepareToSuspend(isSuspensionImminent == IsSuspensionImminent::Yes), WTFMove(completionHandler), 0, { }, ShouldStartProcessThrottlerActivity::No);
 }
 
