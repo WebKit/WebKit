@@ -1,3 +1,18 @@
+2021-10-08  Ross Kirsling  <ross.kirsling@sony.com> and Stephan Szabo  <stephan.szabo@sony.com>
+
+        [JSC] Add private C API for JSGlobalObject::setEvalEnabled
+        https://bugs.webkit.org/show_bug.cgi?id=231448
+
+        Reviewed by Yusuke Suzuki.
+
+        WebCore can prohibit eval (and Function constructor) usage in JS execution based on content security policy;
+        this patch gives embedders the ability to do similarly.
+
+        * API/JSContextRef.cpp:
+        (JSGlobalContextSetEvalEnabled): Added.
+        * API/JSContextRefPrivate.h:
+        * API/tests/testapi.c:
+
 2021-10-08  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] UnlinkedCodeBlock::m_instructions can be nullptr

@@ -33,6 +33,7 @@
 #endif
 
 #include "JSBasePrivate.h"
+#include "JSContextRefPrivate.h"
 #include "JSHeapFinalizerPrivate.h"
 #include "JSMarkingConstraintPrivate.h"
 #include "JSObjectRefPrivate.h"
@@ -1991,6 +1992,19 @@ int main(int argc, char* argv[])
     JSStringRelease(script);
     JSStringRelease(sourceURL);
     JSStringRelease(sourceURLKey);
+
+    JSGlobalContextSetEvalEnabled(context, false, jsOneIString);
+    exception = NULL;
+    script = JSStringCreateWithUTF8CString("eval(\"3\");");
+    JSEvaluateScript(context, script, NULL, NULL, 1, &exception);
+    ASSERT(exception);
+    JSStringRelease(script);
+    exception = NULL;
+    script = JSStringCreateWithUTF8CString("Function(\"return 3;\");");
+    JSEvaluateScript(context, script, NULL, NULL, 1, &exception);
+    ASSERT(exception);
+    JSStringRelease(script);
+    JSGlobalContextSetEvalEnabled(context, true, NULL);
 
     // Verify that creating a constructor for a class with no static functions does not trigger
     // an assert inside putDirect or lead to a crash during GC. <https://bugs.webkit.org/show_bug.cgi?id=25785>

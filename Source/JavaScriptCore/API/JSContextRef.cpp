@@ -268,6 +268,20 @@ void JSGlobalContextSetUnhandledRejectionCallback(JSGlobalContextRef ctx, JSObje
     globalObject->setUnhandledRejectionCallback(vm, object);
 }
 
+void JSGlobalContextSetEvalEnabled(JSGlobalContextRef ctx, bool enabled, JSStringRef message)
+{
+    if (!ctx) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    JSGlobalObject* globalObject = toJS(ctx);
+    VM& vm = globalObject->vm();
+    JSLockHolder locker(vm);
+
+    globalObject->setEvalEnabled(enabled, message ? message->string() : String());
+}
+
 class BacktraceFunctor {
 public:
     BacktraceFunctor(StringBuilder& builder, unsigned remainingCapacityForFrameCapture)
