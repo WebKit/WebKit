@@ -1224,8 +1224,7 @@ struct ANGLE_SwizzleRef
 template <typename T, int N>
 ANGLE_ALWAYS_INLINE ANGLE_VectorElemRef<T, N> ANGLE_swizzle_ref(thread metal::vec<T, N> &vec, int i0)
 {
-    const int is[] = { i0 };
-    return ANGLE_VectorElemRef<T, N>(vec, is);
+    return ANGLE_VectorElemRef<T, N>(vec, i0);
 }
 template <typename T, int N>
 ANGLE_ALWAYS_INLINE ANGLE_SwizzleRef<T, N, 2> ANGLE_swizzle_ref(thread metal::vec<T, N> &vec, int i0, int i1)

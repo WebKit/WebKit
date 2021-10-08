@@ -1,5 +1,51 @@
 2021-10-07  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r282800. rdar://problem/83955324
+
+    ANGLE Metal: single-component swizzles do not compile
+    https://bugs.webkit.org/show_bug.cgi?id=230472
+    <rdar://problem/83310780>
+    
+    Patch by Kimmo Kinnunen <kkinnunen@apple.com> on 2021-09-20
+    Reviewed by Dean Jackson.
+    
+    Source/ThirdParty/ANGLE:
+    
+    Fix metal compiler compile errors when using
+    single value swizles (glslvariable.r) in position where lvalues would
+    be needed. Use the variable instead of single element array
+    (copy-paste typo).
+    
+    * src/compiler/translator/TranslatorMetalDirect/ProgramPrelude.cpp:
+    
+    LayoutTests:
+    
+    Add a test for testing the swizzles as lvalues.
+    
+    * webgl/pending/conformance/glsl/misc/swizzle-as-lvalue-expected.txt: Added.
+    * webgl/pending/conformance/glsl/misc/swizzle-as-lvalue.html: Added.
+    * webgl/pending/resources/webgl_test_files/conformance/glsl/misc/swizzle-as-lvalue.html: Added.
+    * webgl/pending/resources/webgl_test_files/resources/glsl-feature-tests.css: Added.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@282800 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-09-20  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+            ANGLE Metal: single-component swizzles do not compile
+            https://bugs.webkit.org/show_bug.cgi?id=230472
+            <rdar://problem/83310780>
+
+            Reviewed by Dean Jackson.
+
+            Add a test for testing the swizzles as lvalues.
+
+            * webgl/pending/conformance/glsl/misc/swizzle-as-lvalue-expected.txt: Added.
+            * webgl/pending/conformance/glsl/misc/swizzle-as-lvalue.html: Added.
+            * webgl/pending/resources/webgl_test_files/conformance/glsl/misc/swizzle-as-lvalue.html: Added.
+            * webgl/pending/resources/webgl_test_files/resources/glsl-feature-tests.css: Added.
+
+2021-10-07  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r281699. rdar://problem/83953557
 
     REGRESSION (r281516): imported/w3c/web-platform-tests/IndexedDB/serialize-sharedarraybuffer-throws.https.html is failing
