@@ -52,10 +52,10 @@ class VersionTestCase(unittest.TestCase):
     def test_int_constructor(self):
         v = Version(1)
         self.assertEqual(v.major, 1)
-        self.assertEqual(v.minor, None)
-        self.assertEqual(v.tiny, None)
-        self.assertEqual(v.micro, None)
-        self.assertEqual(v.nano, None)
+        self.assertEqual(v.minor, 0)
+        self.assertEqual(v.tiny, 0)
+        self.assertEqual(v.micro, 0)
+        self.assertEqual(v.nano, 0)
 
     def test_len(self):
         self.assertEqual(len(Version(1, 2, 3, 4, 5)), 5)

@@ -1,3 +1,20 @@
+2021-10-08  Truitt Savell  <tsavell@apple.com>
+
+        Reverting r283824 becasue it broke baseline search paths
+        https://bugs.webkit.org/show_bug.cgi?id=230540
+
+        Unreviewed revert.
+
+        * Scripts/libraries/webkitcorepy/webkitcorepy/tests/version_unittest.py:
+        (VersionTestCase.test_int_constructor):
+        * Scripts/libraries/webkitcorepy/webkitcorepy/version.py:
+        (Version.from_iterable):
+        (Version.__init__):
+        (Version.__setitem__):
+        (Version.__contains__):
+        (Version.__hash__):
+        (Version.__cmp__):
+
 2021-10-08  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Split DisplayList::Recorder into an abstract base class and a concrete implementation
