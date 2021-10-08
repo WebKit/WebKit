@@ -48,7 +48,7 @@ private:
 
     Type type() const override { return PlatformDisplay::Type::WPE; }
 
-    struct wpe_renderer_backend_egl* m_backend;
+    struct wpe_renderer_backend_egl* m_backend { nullptr };
 };
 
 } // namespace WebCore
