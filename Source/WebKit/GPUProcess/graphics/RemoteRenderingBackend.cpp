@@ -189,7 +189,7 @@ void RemoteRenderingBackend::createImageBufferWithQualifiedIdentifier(const Floa
     updateRenderingResourceRequest();
 
     if (m_pendingWakeupInfo && m_pendingWakeupInfo->shouldPerformWakeup(imageBufferResourceIdentifier.object()))
-        wakeUpAndApplyDisplayList(std::exchange(m_pendingWakeupInfo, std::nullopt)->arguments);
+        resumeFromPendingWakeupInformation();
 }
 
 RemoteRenderingBackend::ReplayerDelegate::ReplayerDelegate(WebCore::ImageBuffer& destination, RemoteRenderingBackend& remoteRenderingBackend)
@@ -281,7 +281,10 @@ RefPtr<ImageBuffer> RemoteRenderingBackend::nextDestinationImageBufferAfterApply
             if (!destination) {
                 ASSERT(!m_pendingWakeupInfo);
                 m_pendingWakeupInfo = {{
-                    { handle.identifier(), offset, *result.nextDestinationImageBuffer, reason },
+                    handle.identifier(),
+                    offset,
+                    *result.nextDestinationImageBuffer,
+                    reason,
                     std::nullopt,
                     RemoteRenderingBackendState::WaitingForDestinationImageBuffer
                 }};
@@ -290,7 +293,10 @@ RefPtr<ImageBuffer> RemoteRenderingBackend::nextDestinationImageBufferAfterApply
 
         if (result.reasonForStopping == DisplayList::StopReplayReason::MissingCachedResource) {
             m_pendingWakeupInfo = {{
-                { handle.identifier(), offset, destination->renderingResourceIdentifier(), reason },
+                handle.identifier(),
+                offset,
+                destination->renderingResourceIdentifier(),
+                reason,
                 result.missingCachedResourceIdentifier,
                 RemoteRenderingBackendState::WaitingForCachedResource
             }};
@@ -346,12 +352,12 @@ void RemoteRenderingBackend::wakeUpAndApplyDisplayList(const GPUProcessWakeupMes
     LOG_WITH_STREAM(SharedDisplayLists, stream << "Waking up to Items[" << arguments.itemBufferIdentifier << "] => Image(" << arguments.destinationImageBufferIdentifier << ") at " << arguments.offset);
     destinationImageBuffer = nextDestinationImageBufferAfterApplyingDisplayLists(*destinationImageBuffer, arguments.offset, *initialHandle, arguments.reason);
 
-    // FIXME: All the callers pass m_pendingWakeupInfo.arguments so the body of this function should just be this loop.
+    // FIXME: All the callers pass m_pendingWakeupInfo's fields so the body of this function should just be this loop.
     while (destinationImageBuffer && m_pendingWakeupInfo) {
         if (m_pendingWakeupInfo->missingCachedResourceIdentifier)
             break;
 
-        auto nextHandle = m_sharedDisplayListHandles.get(m_pendingWakeupInfo->arguments.itemBufferIdentifier);
+        auto nextHandle = m_sharedDisplayListHandles.get(m_pendingWakeupInfo->itemBufferIdentifier);
         if (!nextHandle) {
             // If the handle identifier is currently unknown, wait until the GPU process receives an
             // IPC message with a shared memory handle to the next item buffer.
@@ -359,8 +365,10 @@ void RemoteRenderingBackend::wakeUpAndApplyDisplayList(const GPUProcessWakeupMes
         }
 
         // Otherwise, continue reading the next display list item buffer from the start.
-        auto arguments = std::exchange(m_pendingWakeupInfo, std::nullopt)->arguments;
-        destinationImageBuffer = nextDestinationImageBufferAfterApplyingDisplayLists(*destinationImageBuffer, arguments.offset, *nextHandle, arguments.reason);
+        auto offset = m_pendingWakeupInfo->offset;
+        auto reason = m_pendingWakeupInfo->reason;
+        m_pendingWakeupInfo = std::nullopt;
+        destinationImageBuffer = nextDestinationImageBufferAfterApplyingDisplayLists(*destinationImageBuffer, offset, *nextHandle, reason);
     }
     LOG_WITH_STREAM(SharedDisplayLists, stream << "Going back to sleep.");
 
@@ -373,7 +381,10 @@ void RemoteRenderingBackend::wakeUpAndApplyDisplayList(const GPUProcessWakeupMes
 void RemoteRenderingBackend::setNextItemBufferToRead(DisplayList::ItemBufferIdentifier identifier, WebCore::RenderingResourceIdentifier destinationIdentifier)
 {
     m_pendingWakeupInfo = {{
-        { identifier, SharedDisplayListHandle::headerSize(), destinationIdentifier, GPUProcessWakeupReason::Unspecified },
+        identifier,
+        SharedDisplayListHandle::headerSize(),
+        destinationIdentifier,
+        GPUProcessWakeupReason::Unspecified,
         std::nullopt,
         RemoteRenderingBackendState::WaitingForItemBuffer
     }};
@@ -529,7 +540,7 @@ void RemoteRenderingBackend::cacheNativeImageWithQualifiedIdentifier(const Share
     m_remoteResourceCache.cacheNativeImage(*image);
 
     if (m_pendingWakeupInfo && m_pendingWakeupInfo->shouldPerformWakeup(nativeImageResourceIdentifier.object()))
-        wakeUpAndApplyDisplayList(std::exchange(m_pendingWakeupInfo, std::nullopt)->arguments);
+        resumeFromPendingWakeupInformation();
 }
 
 void RemoteRenderingBackend::cacheFont(Ref<WebCore::Font>&& font)
@@ -546,7 +557,7 @@ void RemoteRenderingBackend::cacheFontWithQualifiedIdentifier(Ref<Font>&& font, 
 
     m_remoteResourceCache.cacheFont(WTFMove(font));
     if (m_pendingWakeupInfo && m_pendingWakeupInfo->shouldPerformWakeup(fontResourceIdentifier.object()))
-        wakeUpAndApplyDisplayList(std::exchange(m_pendingWakeupInfo, std::nullopt)->arguments);
+        resumeFromPendingWakeupInformation();
 }
 
 void RemoteRenderingBackend::deleteAllFonts()
@@ -572,12 +583,12 @@ void RemoteRenderingBackend::releaseRemoteResourceWithQualifiedIdentifier(Qualif
 
 void RemoteRenderingBackend::finalizeRenderingUpdate(RenderingUpdateID renderingUpdateID)
 {
-    auto shouldPerformWakeup = [&](const GPUProcessWakeupMessageArguments& arguments) {
-        return m_remoteResourceCache.cachedImageBuffer(arguments.destinationImageBufferIdentifier) && m_sharedDisplayListHandles.contains(arguments.itemBufferIdentifier);
+    auto shouldPerformWakeup = [&] {
+        return m_remoteResourceCache.cachedImageBuffer(m_pendingWakeupInfo->destinationImageBufferIdentifier) && m_sharedDisplayListHandles.contains(m_pendingWakeupInfo->itemBufferIdentifier);
     };
 
-    if (m_pendingWakeupInfo && shouldPerformWakeup(m_pendingWakeupInfo->arguments))
-        wakeUpAndApplyDisplayList(std::exchange(m_pendingWakeupInfo, std::nullopt)->arguments);
+    if (m_pendingWakeupInfo && shouldPerformWakeup())
+        resumeFromPendingWakeupInformation();
 
     send(Messages::RemoteRenderingBackendProxy::DidFinalizeRenderingUpdate(renderingUpdateID), m_renderingBackendIdentifier);
 }
@@ -601,7 +612,14 @@ void RemoteRenderingBackend::didCreateSharedDisplayListHandleWithQualifiedIdenti
     }
 
     if (m_pendingWakeupInfo && m_pendingWakeupInfo->shouldPerformWakeup(itemBufferIdentifier))
-        wakeUpAndApplyDisplayList(std::exchange(m_pendingWakeupInfo, std::nullopt)->arguments);
+        resumeFromPendingWakeupInformation();
+}
+
+void RemoteRenderingBackend::resumeFromPendingWakeupInformation()
+{
+    auto arguments = m_pendingWakeupInfo->arguments();
+    m_pendingWakeupInfo = std::nullopt;
+    wakeUpAndApplyDisplayList(arguments);
 }
 
 void RemoteRenderingBackend::didCreateMaskImageBuffer(ImageBuffer& imageBuffer)

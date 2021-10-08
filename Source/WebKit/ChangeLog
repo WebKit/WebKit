@@ -1,3 +1,39 @@
+2021-10-07  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [GPU Process] Unique RenderingResourceIdentifiers Part 2: Unroll PendingWakeupInformation::arguments
+        https://bugs.webkit.org/show_bug.cgi?id=231403
+
+        Reviewed by Wenson Hsieh.
+
+        We're in the process of replacing RenderingResourceIdentifiers in the GPU process with
+        QualifiedRenderingResourceIdentifier. Unfortunately, PendingWakeupInformation holds
+        a GPUProcessWakeupMessageArguments which itself holds a RenderingResourceIdentifiers.
+        PendingWakeupInformation is part of the GPU process, so it needs to migrate to 
+        QualifiedRenderingResourceIdentifier, but GPUProcessWakeupMessageArguments is the type
+        of the arguments to the WakeUpAndApplyDisplayList message, so it can't hold a
+        QualifiedRenderingResourceIdentifier.
+
+        So, the solution is to unroll PendingWakeupInformation::arguments, and hoist its fields
+        directly into the PendingWakeupInformation. That way, PendingWakeupInformation can be
+        updated to use QualifiedRenderingResourceIdentifier, without affecting
+        the WakeUpAndApplyDisplayList message.
+
+        No new tests because there is no behavior change.
+
+        * GPUProcess/graphics/RemoteRenderingBackend.cpp:
+        (WebKit::RemoteRenderingBackend::createImageBufferWithQualifiedIdentifier):
+        (WebKit::RemoteRenderingBackend::nextDestinationImageBufferAfterApplyingDisplayLists):
+        (WebKit::RemoteRenderingBackend::wakeUpAndApplyDisplayList):
+        (WebKit::RemoteRenderingBackend::setNextItemBufferToRead):
+        (WebKit::RemoteRenderingBackend::cacheNativeImageWithQualifiedIdentifier):
+        (WebKit::RemoteRenderingBackend::cacheFontWithQualifiedIdentifier):
+        (WebKit::RemoteRenderingBackend::finalizeRenderingUpdate):
+        (WebKit::RemoteRenderingBackend::didCreateSharedDisplayListHandleWithQualifiedIdentifier):
+        (WebKit::RemoteRenderingBackend::resumeFromPendingWakeupInformation):
+        * GPUProcess/graphics/RemoteRenderingBackend.h:
+        (WebKit::RemoteRenderingBackend::PendingWakeupInformation::arguments const):
+        (WebKit::RemoteRenderingBackend::PendingWakeupInformation::shouldPerformWakeup const):
+
 2021-10-07  Simon Fraser  <simon.fraser@apple.com>
 
         Minor refactoring to use ScrollUpdate in more places

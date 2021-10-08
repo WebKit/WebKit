@@ -160,6 +160,8 @@ private:
     void releaseRemoteResourceWithQualifiedIdentifier(QualifiedRenderingResourceIdentifier, uint64_t useCount);
     void cacheFontWithQualifiedIdentifier(Ref<WebCore::Font>&&, QualifiedRenderingResourceIdentifier);
 
+    void resumeFromPendingWakeupInformation();
+
     class ReplayerDelegate : public WebCore::DisplayList::Replayer::Delegate {
     public:
         ReplayerDelegate(WebCore::ImageBuffer&, RemoteRenderingBackend&);
@@ -175,19 +177,27 @@ private:
     };
 
     struct PendingWakeupInformation {
-        GPUProcessWakeupMessageArguments arguments;
+        WebCore::DisplayList::ItemBufferIdentifier itemBufferIdentifier;
+        uint64_t offset { 0 };
+        WebCore::RenderingResourceIdentifier destinationImageBufferIdentifier;
+        GPUProcessWakeupReason reason { GPUProcessWakeupReason::Unspecified };
         std::optional<WebCore::RenderingResourceIdentifier> missingCachedResourceIdentifier;
         RemoteRenderingBackendState state { RemoteRenderingBackendState::Initialized };
 
+        GPUProcessWakeupMessageArguments arguments() const
+        {
+            return { itemBufferIdentifier, offset, destinationImageBufferIdentifier, reason };
+        }
+
         bool shouldPerformWakeup(WebCore::RenderingResourceIdentifier identifier) const
         {
-            return arguments.destinationImageBufferIdentifier == identifier
+            return destinationImageBufferIdentifier == identifier
                 || missingCachedResourceIdentifier == identifier;
         }
 
         bool shouldPerformWakeup(WebCore::DisplayList::ItemBufferIdentifier identifier) const
         {
-            return arguments.itemBufferIdentifier == identifier;
+            return itemBufferIdentifier == identifier;
         }
     };
 
