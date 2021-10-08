@@ -1,5 +1,54 @@
 2021-10-07  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r283093. rdar://problem/83955562
+
+    Remove canvas HitRegions tests
+    https://bugs.webkit.org/show_bug.cgi?id=230809
+    <rdar://problem/83553485>
+    
+    Reviewed by Alan Bujtas.
+    
+    These were removed upstream in
+    https://github.com/web-platform-tests/wpt/pull/30850.
+    
+    * web-platform-tests/html/canvas/element/hit-regions/addHitRegions-NotSupportedError-01-expected.txt: Removed.
+    * web-platform-tests/html/canvas/element/hit-regions/addHitRegions-NotSupportedError-01.html: Removed.
+    * web-platform-tests/html/canvas/element/hit-regions/hitregions-members-exist-expected.txt: Removed.
+    * web-platform-tests/html/canvas/element/hit-regions/hitregions-members-exist.html: Removed.
+    * web-platform-tests/html/canvas/element/hit-regions/w3c-import.log: Removed.
+    * web-platform-tests/html/canvas/element/manual/hit-regions/addHitRegions-NotSupportedError-01-expected.txt: Removed.
+    * web-platform-tests/html/canvas/element/manual/hit-regions/addHitRegions-NotSupportedError-01.html: Removed.
+    * web-platform-tests/html/canvas/element/manual/hit-regions/hitregions-members-exist-expected.txt: Removed.
+    * web-platform-tests/html/canvas/element/manual/hit-regions/hitregions-members-exist.html: Removed.
+    * web-platform-tests/html/canvas/element/manual/hit-regions/w3c-import.log: Removed.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@283093 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-09-26  Cameron McCormack  <heycam@apple.com>
+
+            Remove canvas HitRegions tests
+            https://bugs.webkit.org/show_bug.cgi?id=230809
+            <rdar://problem/83553485>
+
+            Reviewed by Alan Bujtas.
+
+            These were removed upstream in
+            https://github.com/web-platform-tests/wpt/pull/30850.
+
+            * web-platform-tests/html/canvas/element/hit-regions/addHitRegions-NotSupportedError-01-expected.txt: Removed.
+            * web-platform-tests/html/canvas/element/hit-regions/addHitRegions-NotSupportedError-01.html: Removed.
+            * web-platform-tests/html/canvas/element/hit-regions/hitregions-members-exist-expected.txt: Removed.
+            * web-platform-tests/html/canvas/element/hit-regions/hitregions-members-exist.html: Removed.
+            * web-platform-tests/html/canvas/element/hit-regions/w3c-import.log: Removed.
+            * web-platform-tests/html/canvas/element/manual/hit-regions/addHitRegions-NotSupportedError-01-expected.txt: Removed.
+            * web-platform-tests/html/canvas/element/manual/hit-regions/addHitRegions-NotSupportedError-01.html: Removed.
+            * web-platform-tests/html/canvas/element/manual/hit-regions/hitregions-members-exist-expected.txt: Removed.
+            * web-platform-tests/html/canvas/element/manual/hit-regions/hitregions-members-exist.html: Removed.
+            * web-platform-tests/html/canvas/element/manual/hit-regions/w3c-import.log: Removed.
+
+2021-10-07  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r281470. rdar://problem/83957311
 
     LayoutTests/imported/w3c:
