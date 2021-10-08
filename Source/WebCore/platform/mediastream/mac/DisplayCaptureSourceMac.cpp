@@ -151,6 +151,7 @@ void DisplayCaptureSourceMac::startProducingData()
     m_startTime = MonotonicTime::now();
     m_timer.startRepeating(1_s / frameRate());
 
+    commitConfiguration();
     if (!m_capturer->start())
         captureFailed();
 }

@@ -124,14 +124,14 @@ private:
     void stop() final  { m_source->stop(); }
     DisplayCaptureSourceMac::DisplayFrameType generateFrame() final;
     RealtimeMediaSourceSettings::DisplaySurfaceType surfaceType() const final { return RealtimeMediaSourceSettings::DisplaySurfaceType::Monitor; }
-    void commitConfiguration(const RealtimeMediaSourceSettings&) final { }
+    void commitConfiguration(const RealtimeMediaSourceSettings&) final;
     CaptureDevice::DeviceType deviceType() const final { return CaptureDevice::DeviceType::Screen; }
     IntSize intrinsicSize() const final;
 #if !RELEASE_LOG_DISABLED
     const char* logClassName() const final { return "MockDisplayCapturer"; }
 #endif
-    
     Ref<MockRealtimeVideoSource> m_source;
+    RealtimeMediaSourceSettings m_settings;
 };
 
 MockDisplayCapturer::MockDisplayCapturer(const CaptureDevice& device)
@@ -141,8 +141,15 @@ MockDisplayCapturer::MockDisplayCapturer(const CaptureDevice& device)
 
 bool MockDisplayCapturer::start()
 {
+    ASSERT(m_settings.frameRate());
     m_source->start();
     return true;
+}
+
+void MockDisplayCapturer::commitConfiguration(const RealtimeMediaSourceSettings& settings)
+{
+    // FIXME: Update m_source width, height and frameRate according settings
+    m_settings = settings;
 }
 
 DisplayCaptureSourceMac::DisplayFrameType MockDisplayCapturer::generateFrame()

@@ -118,7 +118,19 @@ RetainPtr<CGDisplayStreamRef> CGDisplayStreamScreenCaptureSource::createDisplayS
     ASSERT(!displayStream());
     ASSERT(m_displayID == updateDisplayID(m_displayID));
 
-    ALWAYS_LOG_IF(loggerPtr(), LOGIDENTIFIER, "frame rate ", frameRate(), ", size ", width(), "x", height());
+    auto width = this->width();
+    auto height = this->height();
+    if (!width || !height) {
+        auto displayMode = adoptCF(CGDisplayCopyDisplayMode(m_displayID));
+        width = CGDisplayModeGetPixelsWide(displayMode.get());
+        height = CGDisplayModeGetPixelsHigh(displayMode.get());
+    }
+    if (!width || !height) {
+        ERROR_LOG_IF(loggerPtr(), LOGIDENTIFIER, "unable to get screen width/height");
+        return nullptr;
+    }
+    ASSERT(frameRate());
+    ALWAYS_LOG_IF(loggerPtr(), LOGIDENTIFIER, "frame rate ", frameRate(), ", size ", width, "x", height);
 
     NSDictionary* streamOptions = @{
         (__bridge NSString *)kCGDisplayStreamMinimumFrameTime : @(1 / frameRate()),
@@ -127,7 +139,7 @@ RetainPtr<CGDisplayStreamRef> CGDisplayStreamScreenCaptureSource::createDisplayS
         (__bridge NSString *)kCGDisplayStreamShowCursor : @YES,
     };
 
-    return adoptCF(CGDisplayStreamCreateWithDispatchQueue(m_displayID, width(), height(), preferedPixelBufferFormat(), (__bridge CFDictionaryRef)streamOptions, queue, frameAvailableHandler));
+    return adoptCF(CGDisplayStreamCreateWithDispatchQueue(m_displayID, width, height, preferedPixelBufferFormat(), (__bridge CFDictionaryRef)streamOptions, queue, frameAvailableHandler));
 }
 
 IntSize CGDisplayStreamScreenCaptureSource::intrinsicSize() const
