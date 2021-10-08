@@ -657,6 +657,11 @@ void BitmapImage::imageFrameAvailableAtIndex(size_t index)
         imageObserver()->imageFrameAvailable(*this, ImageAnimatingState::No, nullptr, decodingStatus);
 }
 
+DestinationColorSpace BitmapImage::colorSpace()
+{
+    return nativeImage()->colorSpace();
+}
+
 unsigned BitmapImage::decodeCountForTesting() const
 {
     return m_decodeCountForTesting;

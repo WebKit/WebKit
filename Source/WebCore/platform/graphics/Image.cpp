@@ -352,6 +352,11 @@ void Image::startAnimationAsynchronously()
     m_animationStartTimer->startOneShot(0_s);
 }
 
+DestinationColorSpace Image::colorSpace()
+{
+    return DestinationColorSpace::SRGB();
+}
+
 void Image::dump(TextStream& ts) const
 {
     if (isAnimated())

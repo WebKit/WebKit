@@ -1082,6 +1082,7 @@ private:
             return;
         }
 
+        // FIXME: Cloned ImageBitmaps should preserve their color space.
         PixelBufferFormat format { AlphaPremultiplication::Premultiplied, PixelFormat::RGBA8, DestinationColorSpace::SRGB() };
         const IntSize& logicalSize = buffer->logicalSize();
         auto pixelBuffer = buffer->getPixelBuffer(format, { IntPoint::zero(), logicalSize });
@@ -3173,7 +3174,7 @@ private:
         auto imageDataSize = logicalSize;
         imageDataSize.scale(resolutionScale);
 
-        auto buffer = ImageBitmap::createImageBuffer(*scriptExecutionContextFromExecState(m_lexicalGlobalObject), logicalSize, RenderingMode::Unaccelerated, resolutionScale);
+        auto buffer = ImageBitmap::createImageBuffer(*scriptExecutionContextFromExecState(m_lexicalGlobalObject), logicalSize, RenderingMode::Unaccelerated, DestinationColorSpace::SRGB(), resolutionScale);
         if (!buffer) {
             fail();
             return JSValue();

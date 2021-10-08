@@ -1,5 +1,122 @@
 2021-10-08  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r282696. rdar://problem/83954782
+
+    Preserve color space when creating ImageBuffers for ImageBitmaps
+    https://bugs.webkit.org/show_bug.cgi?id=229022
+    <rdar://problem/81828459>
+    
+    Reviewed by Sam Weinig.
+    
+    LayoutTests/imported/w3c:
+    
+    * web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-drawImage-ImageBitmap-Blob-expected.txt: Added.
+    * web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-drawImage-ImageBitmap-Blob.html: Added.
+    * web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-drawImage-ImageBitmap-ImageBitmap-expected.txt: Added.
+    * web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-drawImage-ImageBitmap-ImageBitmap.html: Added.
+    * web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-drawImage-ImageBitmap-ImageData-expected.txt: Added.
+    * web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-drawImage-ImageBitmap-ImageData.html: Added.
+    * web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-drawImage-ImageBitmap-canvas-expected.txt: Added.
+    * web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-drawImage-ImageBitmap-canvas.html: Added.
+    * web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-drawImage-ImageBitmap-cloned-expected.txt: Added.
+    * web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-drawImage-ImageBitmap-cloned.html: Added.
+    * web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-drawImage-ImageBitmap-image-expected.txt: Added.
+    * web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-drawImage-ImageBitmap-image.html: Added.
+    
+    Source/WebCore:
+    
+    ImageBitmaps can be created with various sources of image data.
+    Currently, they always create an sRGB ImageBuffer to copy the
+    image data into. This patch tries to preserve the color space
+    of the source image data. Because ImageBuffer only works with 8 bit
+    RGBA data, other color space models (such as CMYK) get converted
+    to Display P3 if available, or sRGB otherwise. The rationale for
+    this is that ImageBitmaps are designed to be drawn into canvases,
+    and we currently only support sRGB and Display P3 for canvas backing
+    stores.
+    
+    It's not ideal that we do the color space conversion, since it would
+    be better to delay the conversion until it's needed when drawing onto
+    the canvas. It's also not ideal that we can't preserve the pixel
+    format of the image data, which might be 16 bit color or floats. We
+    could support these only if ImageBuffer were extended to support them.
+    A different design for ImageBitmap where it can hold on to the image
+    data source directly (and support for structured cloning and worker
+    thread transferrance added) could also work. For now, we don't worry,
+    and accept the loss of color fidelity when downsampling or converting
+    from non-RGB color space models.
+    
+    Support for structured cloning of ImageBitmaps with non-sRGB data
+    isn't added, but a test for this is. (This will need a way to
+    serialize the DestinationColorSpace.)
+    
+    Tests: imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-drawImage-ImageBitmap-Blob.html
+           imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-drawImage-ImageBitmap-ImageBitmap.html
+           imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-drawImage-ImageBitmap-ImageData.html
+           imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-drawImage-ImageBitmap-canvas.html
+           imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-drawImage-ImageBitmap-cloned.html
+           imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-drawImage-ImageBitmap-image.html
+    
+    * bindings/js/SerializedScriptValue.cpp:
+    (WebCore::CloneSerializer::dumpImageBitmap):
+    (WebCore::CloneDeserializer::readImageBitmap):
+    * html/ImageBitmap.cpp:
+    (WebCore::ImageBitmap::create):
+    (WebCore::ImageBitmap::createImageBuffer):
+    (WebCore::ImageBitmap::resolveWithBlankImageBuffer):
+    (WebCore::ImageBitmap::createPromise):
+    (WebCore::ImageBitmap::createFromBuffer):
+    * html/ImageBitmap.h:
+    * html/OffscreenCanvas.cpp:
+    (WebCore::OffscreenCanvas::transferToImageBitmap):
+    (WebCore::OffscreenCanvas::createImageBuffer const):
+    * platform/graphics/BitmapImage.cpp:
+    (WebCore::BitmapImage::colorSpace):
+    * platform/graphics/BitmapImage.h:
+    * platform/graphics/DestinationColorSpace.cpp:
+    (WebCore::DestinationColorSpace::asRGB const): New function that
+    abstracts out the behavior "tell me whether the color space is
+    appropriate for use with an 8 bit RGB buffer", which is common
+    to ImageBitmap and ShareableBitmapCG.
+    * platform/graphics/DestinationColorSpace.h:
+    * platform/graphics/Image.cpp:
+    (WebCore::Image::colorSpace):
+    * platform/graphics/Image.h:
+    
+    Source/WebKit:
+    
+    * Shared/cg/ShareableBitmapCG.cpp:
+    (WebKit::ShareableBitmap::validateConfiguration): Factor out some
+    loging into DestinationColorSpace::asRGB.
+    
+    Source/WTF:
+    
+    * wtf/PlatformHave.h:
+    
+    LayoutTests:
+    
+    * TestExpectations:
+    * platform/ios-14/TestExpectations:
+    * platform/ios/TestExpectations:
+    * platform/mac/TestExpectations:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@282696 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-09-17  Cameron McCormack  <heycam@apple.com>
+
+            Preserve color space when creating ImageBuffers for ImageBitmaps
+            https://bugs.webkit.org/show_bug.cgi?id=229022
+            <rdar://problem/81828459>
+
+            Reviewed by Sam Weinig.
+
+            * TestExpectations:
+            * platform/ios-14/TestExpectations:
+            * platform/ios/TestExpectations:
+            * platform/mac/TestExpectations:
+
+2021-10-08  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r283099. rdar://problem/83957623
 
     Remove old test files from canvas WPTs that were moved

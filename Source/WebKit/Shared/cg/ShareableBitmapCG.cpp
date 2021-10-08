@@ -43,19 +43,15 @@ void ShareableBitmap::validateConfiguration(Configuration& configuration)
     if (!configuration.colorSpace)
         return;
 
-    CGColorSpaceRef colorSpace = configuration.colorSpace->platformColorSpace();
-    if (CGColorSpaceGetModel(colorSpace) == kCGColorSpaceModelIndexed)
-        colorSpace = CGColorSpaceGetBaseColorSpace(colorSpace);
+    configuration.colorSpace = configuration.colorSpace->asRGB();
 
-    if (CGColorSpaceGetModel(colorSpace) != kCGColorSpaceModelRGB) {
+    if (!configuration.colorSpace) {
 #if HAVE(CORE_GRAPHICS_EXTENDED_SRGB_COLOR_SPACE)
-        colorSpace = extendedSRGBColorSpaceRef();
+        configuration.colorSpace = DestinationColorSpace(extendedSRGBColorSpaceRef());
 #else
-        colorSpace = sRGBColorSpaceRef();
+        configuration.colorSpace = DestinationColorSpace::SRGB();
 #endif
     }
-
-    configuration.colorSpace = DestinationColorSpace(colorSpace);
 }
 
 static CGColorSpaceRef colorSpace(const ShareableBitmap::Configuration& configuration)
