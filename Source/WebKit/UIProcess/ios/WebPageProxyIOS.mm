@@ -1565,9 +1565,9 @@ Color WebPageProxy::platformUnderPageBackgroundColor() const
         return contentViewBackgroundColor;
 
 #if HAVE(OS_DARK_MODE_SUPPORT)
-    return UIColor.systemBackgroundColor.CGColor;
+    return WebCore::roundAndClampToSRGBALossy(UIColor.systemBackgroundColor.CGColor);
 #else
-    return UIColor.whiteColor.CGColor;
+    return WebCore::Color::white;
 #endif
 }
 

@@ -317,7 +317,7 @@ String CaptionUserPreferencesMediaAF::captionsWindowCSS() const
     MACaptionAppearanceBehavior behavior;
     RetainPtr<CGColorRef> color = adoptCF(MACaptionAppearanceCopyWindowColor(kMACaptionAppearanceDomainUser, &behavior));
 
-    Color windowColor(color.get());
+    Color windowColor(roundAndClampToSRGBALossy(color.get()));
     if (!windowColor.isValid())
         windowColor = Color::transparentBlack;
 
@@ -342,7 +342,7 @@ String CaptionUserPreferencesMediaAF::captionsBackgroundCSS() const
     MACaptionAppearanceBehavior behavior;
 
     RetainPtr<CGColorRef> color = adoptCF(MACaptionAppearanceCopyBackgroundColor(kMACaptionAppearanceDomainUser, &behavior));
-    Color backgroundColor(color.get());
+    Color backgroundColor(roundAndClampToSRGBALossy(color.get()));
     if (!backgroundColor.isValid())
         backgroundColor = defaultBackgroundColor;
 
@@ -356,7 +356,8 @@ String CaptionUserPreferencesMediaAF::captionsBackgroundCSS() const
 Color CaptionUserPreferencesMediaAF::captionsTextColor(bool& important) const
 {
     MACaptionAppearanceBehavior behavior;
-    Color textColor = adoptCF(MACaptionAppearanceCopyForegroundColor(kMACaptionAppearanceDomainUser, &behavior)).get();
+    RetainPtr<CGColorRef> color = adoptCF(MACaptionAppearanceCopyForegroundColor(kMACaptionAppearanceDomainUser, &behavior)).get();
+    Color textColor(roundAndClampToSRGBALossy(color.get()));
     if (!textColor.isValid()) {
         // This default value must be the same as the one specified in mediaControls.css for -webkit-media-text-track-container.
         textColor = Color::white;

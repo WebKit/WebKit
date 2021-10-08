@@ -1362,7 +1362,7 @@ static const Vector<CSSValueSystemColorInformation>& cssValueSystemColorInformat
 static inline std::optional<Color> systemColorFromCSSValueSystemColorInformation(CSSValueSystemColorInformation systemColorInformation, bool useDarkAppearance)
 {
     if (auto color = wtfObjCMsgSend<UIColor *>(PAL::getUIColorClass(), systemColorInformation.selector)) {
-        Color systemColor = { color.CGColor, Color::Flags::Semantic };
+        Color systemColor(roundAndClampToSRGBALossy(color.CGColor), Color::Flags::Semantic);
 
         if (systemColorInformation.opacity < 1.0f)
             systemColor = systemColor.colorWithAlphaMultipliedBy(systemColorInformation.opacity);

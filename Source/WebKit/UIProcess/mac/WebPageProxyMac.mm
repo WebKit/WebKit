@@ -728,9 +728,9 @@ void WebPageProxy::changeUniversalAccessZoomFocus(const WebCore::IntRect& viewRe
 Color WebPageProxy::platformUnderPageBackgroundColor() const
 {
 #if ENABLE(DARK_MODE_CSS)
-    return NSColor.controlBackgroundColor.CGColor;
+    return WebCore::roundAndClampToSRGBALossy(NSColor.controlBackgroundColor.CGColor);
 #else
-    return NSColor.whiteColor.CGColor;
+    return WebCore::Color::white;
 #endif
 }
 

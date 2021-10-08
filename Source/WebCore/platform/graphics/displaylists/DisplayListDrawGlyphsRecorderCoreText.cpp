@@ -261,7 +261,8 @@ void DrawGlyphsRecorder::updateShadow(CGStyleRef style)
     const auto& shadowStyle = *static_cast<const CGShadowStyle*>(CGStyleGetData(style));
     auto rad = deg2rad(shadowStyle.azimuth - 180);
     auto shadowOffset = FloatSize(std::cos(rad), std::sin(rad)) * shadowStyle.height;
-    updateShadow(shadowOffset, shadowStyle.radius, CGStyleGetColor(style), ShadowsIgnoreTransforms::Yes);
+    auto shadowColor = CGStyleGetColor(style);
+    updateShadow(shadowOffset, shadowStyle.radius, Color::createAndPreserveColorSpace(shadowColor), ShadowsIgnoreTransforms::Yes);
 }
 
 void DrawGlyphsRecorder::recordBeginLayer(CGRenderingStateRef, CGGStateRef gstate, CGRect)
@@ -330,8 +331,10 @@ void DrawGlyphsRecorder::recordDrawGlyphs(CGRenderingStateRef, CGGStateRef gstat
         ctmFixup = AffineTransform();
     m_owner.concatCTM(ctmFixup);
 
-    updateFillColor(CGGStateGetFillColor(gstate));
-    updateStrokeColor(CGGStateGetStrokeColor(gstate));
+    auto fillColor = CGGStateGetFillColor(gstate);
+    auto strokeColor = CGGStateGetStrokeColor(gstate);
+    updateFillColor(Color::createAndPreserveColorSpace(fillColor));
+    updateStrokeColor(Color::createAndPreserveColorSpace(strokeColor));
     updateShadow(CGGStateGetStyle(gstate));
 
     m_owner.appendDrawGlyphsItemWithCachedFont(*m_originalFont, glyphs, computeAdvancesFromPositions(positions, count, currentTextMatrix).data(), count, currentTextMatrix.mapPoint(positions[0]), m_smoothingMode);

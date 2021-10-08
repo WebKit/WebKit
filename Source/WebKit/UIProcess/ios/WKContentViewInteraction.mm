@@ -3623,7 +3623,8 @@ WEBCORE_COMMAND_FOR_WEBVIEW(pasteAndMatchStyle);
 
 - (void)_setTextColorForWebView:(UIColor *)color sender:(id)sender
 {
-    _page->executeEditCommand("ForeColor"_s, WebCore::serializationForHTML(WebCore::Color(color.CGColor)));
+    WebCore::Color textColor(WebCore::roundAndClampToSRGBALossy(color.CGColor));
+    _page->executeEditCommand("ForeColor"_s, WebCore::serializationForHTML(textColor));
 }
 
 - (void)toggleStrikeThroughForWebView:(id)sender
@@ -4864,7 +4865,7 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 
 - (void)updateFocusedElementValueAsColor:(UIColor *)value
 {
-    WebCore::Color color(value.CGColor);
+    WebCore::Color color(WebCore::roundAndClampToSRGBALossy(value.CGColor));
     String valueAsString = WebCore::serializationForHTML(color);
 
     _page->setFocusedElementValue(_focusedElementInformation.elementContext, valueAsString);

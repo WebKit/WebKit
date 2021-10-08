@@ -1020,7 +1020,7 @@ void PageClientImpl::runModalJavaScriptDialog(CompletionHandler<void()>&& callba
 
 WebCore::Color PageClientImpl::contentViewBackgroundColor()
 {
-    return [m_contentView backgroundColor].CGColor;
+    return WebCore::roundAndClampToSRGBALossy([m_contentView backgroundColor].CGColor);
 }
 
 void PageClientImpl::requestScrollToRect(const FloatRect& targetRect, const FloatPoint& origin)
