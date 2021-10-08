@@ -1,3 +1,9 @@
+2021-10-08  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Unreviewed, add GitHub usernames for Sony contributors.
+
+        * metadata/contributors.json:
+
 2021-10-08  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Unreviewed, add my GitHub username

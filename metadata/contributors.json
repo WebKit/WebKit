@@ -968,6 +968,7 @@
       "emails" : [
          "basuke.suzuki@sony.com"
       ],
+      "github" : "basuke",
       "name" : "Basuke Suzuki",
       "nicks" : [
          "basuke"
@@ -1517,6 +1518,7 @@
          "chris.reid@sony.com",
          "christopher.reid@am.sony.com"
       ],
+      "github" : "c29reid",
       "name" : "Christopher Reid",
       "nicks" : [
          "creid"
@@ -2063,6 +2065,7 @@
          "don.olmstead@sony.com",
          "don.olmstead@am.sony.com"
       ],
+      "github" : "donny-dont",
       "name" : "Don Olmstead",
       "nicks" : [
          "dolmstead"
@@ -2428,6 +2431,7 @@
          "Hironori.Fujii@sony.com",
          "fujii.hironori@gmail.com"
       ],
+      "github" : "fujii",
       "name" : "Fujii Hironori",
       "nicks" : [
          "fujihiro"
@@ -5573,9 +5577,11 @@
    },
    {
       "emails" : [
-         "ross.kirsling@sony.com"
+         "ross.kirsling@sony.com",
+         "rkirsling@gmail.com"
       ],
       "expertise" : "JavaScript/ECMAScript, PlayStation port, WinCairo port",
+      "github" : "rkirsling",
       "name" : "Ross Kirsling",
       "nicks" : [
          "rkirsling"
@@ -5915,6 +5921,7 @@
       "emails" : [
          "stephan.szabo@sony.com"
       ],
+      "github" : "foopoiuyt",
       "name" : "Stephan Szabo",
       "nicks" : [
          "szabos1"
@@ -6057,6 +6064,7 @@
       "emails" : [
          "Takashi.Komori@sony.com"
       ],
+      "github" : "tKnmori",
       "name" : "Takashi Komori",
       "nicks" : [
          "takashi_knmori_j"
@@ -6319,6 +6327,7 @@
       "emails" : [
          "Tomoki.Imai@sony.com"
       ],
+      "github" : "tomoki",
       "name" : "Tomoki Imai",
       "nicks" : [
          "tomoki_imai"
@@ -6719,6 +6728,7 @@
       "emails" : [
          "yoshiaki.jitsukawa@sony.com"
       ],
+      "github" : "unicodon",
       "name" : "Yoshiaki Jitsukawa",
       "nicks" : [
          "yjitsukawa"
@@ -6752,6 +6762,7 @@
       "emails" : [
          "yousuke.kimoto@sony.com"
       ],
+      "github" : "ykimot",
       "name" : "Yousuke Kimoto",
       "nicks" : [
          "ykimoto"
