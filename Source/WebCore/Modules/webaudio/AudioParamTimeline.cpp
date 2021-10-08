@@ -324,6 +324,16 @@ void AudioParamTimeline::removeCancelledEvents(size_t firstEventToRemove)
     m_events.remove(firstEventToRemove, m_events.size() - firstEventToRemove);
 }
 
+void AudioParamTimeline::removeOldEvents(size_t eventCount)
+{
+    ASSERT(eventCount <= m_events.size());
+    if (m_events.isEmpty())
+        return;
+
+    // Always leave at least one event in the list.
+    m_events.remove(0, std::min(eventCount, m_events.size() - 1));
+}
+
 std::optional<float> AudioParamTimeline::valueForContextTime(BaseAudioContext& context, float defaultValue, float minValue, float maxValue)
 {
     {
@@ -397,6 +407,7 @@ float AudioParamTimeline::valuesForFrameRangeImpl(size_t startFrame, size_t endF
     }
 
     float value = defaultValue;
+    size_t numberOfSkippedEvents = 0;
 
     // Go through each event and render the value buffer where the times overlap,
     // stopping when we've rendered all the requested values.
@@ -408,8 +419,10 @@ float AudioParamTimeline::valuesForFrameRangeImpl(size_t startFrame, size_t endF
         auto* nextEvent = i < n - 1 ? &m_events[i + 1] : nullptr;
 
         // Wait until we get a more recent event.
-        if (!isEventCurrent(*event, nextEvent, currentFrame, sampleRate))
+        if (!isEventCurrent(*event, nextEvent, currentFrame, sampleRate)) {
+            ++numberOfSkippedEvents;
             continue;
+        }
 
         auto nextEventType = nextEvent ? static_cast<ParamEvent::Type>(nextEvent->type()) : ParamEvent::LastType /* unknown */;
 
@@ -481,6 +494,10 @@ float AudioParamTimeline::valuesForFrameRangeImpl(size_t startFrame, size_t endF
             }
         }
     }
+
+    // Drop outdated events that we skipped so we don't have to go through them again in the future.
+    if (numberOfSkippedEvents > 0)
+        removeOldEvents(numberOfSkippedEvents);
 
     // If there's any time left after processing the last event then just propagate the last value
     // to the end of the values buffer.

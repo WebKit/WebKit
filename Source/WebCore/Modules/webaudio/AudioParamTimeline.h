@@ -190,6 +190,7 @@ private:
     };
 
     void removeCancelledEvents(size_t firstEventToRemove) WTF_REQUIRES_LOCK(m_eventsLock);
+    void removeOldEvents(size_t eventCount) WTF_REQUIRES_LOCK(m_eventsLock);
     ExceptionOr<void> insertEvent(ParamEvent&&) WTF_REQUIRES_LOCK(m_eventsLock);
     float valuesForFrameRangeImpl(size_t startFrame, size_t endFrame, float defaultValue, float* values, unsigned numberOfValues, double sampleRate, double controlRate) WTF_REQUIRES_LOCK(m_eventsLock);
     float linearRampAtTime(Seconds t, float value1, Seconds time1, float value2, Seconds time2);
