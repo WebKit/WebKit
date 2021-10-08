@@ -1,3 +1,4 @@
+CONSOLE MESSAGE: Turning drawing buffer preservation for the WebGL canvas being captured
 
 
 

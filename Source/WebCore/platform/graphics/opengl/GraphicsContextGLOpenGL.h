@@ -460,15 +460,13 @@ public:
     void resetBuffersToAutoClear();
     void setBuffersToAutoClear(GCGLbitfield) final;
     GCGLbitfield getBuffersToAutoClear() const final;
+    void enablePreserveDrawingBuffer() final;
 
     void dispatchContextChangedNotification();
 
     void paintRenderingResultsToCanvas(ImageBuffer&) final;
     std::optional<PixelBuffer> paintRenderingResultsToPixelBuffer() final;
     void paintCompositedResultsToCanvas(ImageBuffer&) final;
-#if ENABLE(MEDIA_STREAM)
-    RefPtr<MediaSample> paintCompositedResultsToMediaSample() final;
-#endif
 
     std::optional<PixelBuffer> readRenderingResultsForPainting();
     std::optional<PixelBuffer> readCompositedResultsForPainting();

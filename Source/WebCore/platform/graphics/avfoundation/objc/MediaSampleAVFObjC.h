@@ -30,8 +30,6 @@
 #include <pal/avfoundation/MediaTimeAVFoundation.h>
 #include <wtf/Forward.h>
 
-using CVPixelBufferRef = struct __CVBuffer*;
-
 namespace WebCore {
 
 class PixelBuffer;
@@ -42,7 +40,6 @@ public:
     static Ref<MediaSampleAVFObjC> create(CMSampleBufferRef sample, AtomString trackID) { return adoptRef(*new MediaSampleAVFObjC(sample, trackID)); }
     static Ref<MediaSampleAVFObjC> create(CMSampleBufferRef sample, VideoRotation rotation = VideoRotation::None, bool mirrored = false) { return adoptRef(*new MediaSampleAVFObjC(sample, rotation, mirrored)); }
     static RefPtr<MediaSampleAVFObjC> createImageSample(PixelBuffer&&);
-    static RefPtr<MediaSampleAVFObjC> createImageSample(RetainPtr<CVPixelBufferRef>&&, VideoRotation, bool mirrored);
 
     WEBCORE_EXPORT static void setAsDisplayImmediately(MediaSample&);
     static RetainPtr<CMSampleBufferRef> cloneSampleBufferAndSetAsDisplayImmediately(CMSampleBufferRef);

@@ -1,5 +1,9 @@
 2021-10-08  Russell Epstein  <repstein@apple.com>
 
+        Revert r283238. rdar://problem/83955650
+
+2021-10-08  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r283531. rdar://problem/83956741
 
     Choose an appropriate color space when converting an SVG image into a NativeImage for canvas drawImage

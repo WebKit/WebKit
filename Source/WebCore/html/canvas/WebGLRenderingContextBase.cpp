@@ -134,10 +134,6 @@
 #include "OffscreenCanvas.h"
 #endif
 
-#if ENABLE(MEDIA_STREAM)
-#include "MediaSample.h"
-#endif
-
 namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(WebGLRenderingContextBase);
@@ -1257,15 +1253,6 @@ std::optional<PixelBuffer> WebGLRenderingContextBase::paintRenderingResultsToPix
     clearIfComposited(ClearCallerOther);
     return m_context->paintRenderingResultsToPixelBuffer();
 }
-
-#if ENABLE(MEDIA_STREAM)
-RefPtr<MediaSample> WebGLRenderingContextBase::paintCompositedResultsToMediaSample()
-{
-    if (isContextLostOrPending())
-        return nullptr;
-    return m_context->paintCompositedResultsToMediaSample();
-}
-#endif
 
 WebGLTexture::TextureExtensionFlag WebGLRenderingContextBase::textureExtensionFlags() const
 {
@@ -3834,6 +3821,14 @@ bool WebGLRenderingContextBase::extensionIsEnabled(const String& name)
     CHECK_EXTENSION(m_extColorBufferFloat, "EXT_color_buffer_float");
     CHECK_EXTENSION(m_webglMultiDraw, "WEBGL_multi_draw");
     return false;
+}
+
+void WebGLRenderingContextBase::enablePreserveDrawingBuffer()
+{
+    ASSERT(!m_attributes.preserveDrawingBuffer);
+    m_attributes.preserveDrawingBuffer = true;
+    // Must send this notification down to the GraphicsContextGL as well.
+    m_context->enablePreserveDrawingBuffer();
 }
 
 void WebGLRenderingContextBase::hint(GCGLenum target, GCGLenum mode)

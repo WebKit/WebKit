@@ -34,16 +34,13 @@
 #include "ImageBuffer.h"
 #include "MediaPlayerPrivate.h"
 #include "PixelBuffer.h"
-#include <memory>
 #include <wtf/UniqueArray.h>
 
 #if USE(AVFOUNDATION)
 #include "GraphicsContextGLCV.h"
 #endif
 
-#if !PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
-#include "MediaSample.h"
-#endif
+#include <memory>
 
 namespace WebCore {
 
@@ -73,6 +70,14 @@ void GraphicsContextGLOpenGL::setBuffersToAutoClear(GCGLbitfield buffers)
 GCGLbitfield GraphicsContextGLOpenGL::getBuffersToAutoClear() const
 {
     return m_buffersToAutoClear;
+}
+
+void GraphicsContextGLOpenGL::enablePreserveDrawingBuffer()
+{
+    GraphicsContextGL::enablePreserveDrawingBuffer();
+    // After dynamically transitioning to preserveDrawingBuffer:true
+    // for canvas capture, clear out any buffer auto-clearing state.
+    m_buffersToAutoClear = 0;
 }
 
 #if !USE(ANGLE)
@@ -246,13 +251,6 @@ std::optional<PixelBuffer> GraphicsContextGLOpenGL::paintRenderingResultsToPixel
     }
     return results;
 }
-
-#if !PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
-RefPtr<MediaSample> GraphicsContextGLOpenGL::paintCompositedResultsToMediaSample()
-{
-    return nullptr;
-}
-#endif
 
 std::optional<PixelBuffer> GraphicsContextGLOpenGL::readRenderingResultsForPainting()
 {

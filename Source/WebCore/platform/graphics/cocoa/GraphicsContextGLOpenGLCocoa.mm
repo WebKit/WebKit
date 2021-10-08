@@ -28,7 +28,6 @@
 #if ENABLE(WEBGL)
 #import "GraphicsContextGLOpenGL.h"
 
-#import "CVUtilities.h"
 #import "ExtensionsGLANGLE.h"
 #import "GraphicsContextGLANGLEUtilities.h"
 #import "GraphicsContextGLIOSurfaceSwapChain.h"
@@ -49,10 +48,6 @@
 
 #if ENABLE(VIDEO) && USE(AVFOUNDATION)
 #include "GraphicsContextGLCV.h"
-#endif
-
-#if ENABLE(MEDIA_STREAM)
-#include "MediaSampleAVFObjC.h"
 #endif
 
 WTF_WEAK_LINK_FORCE_IMPORT(EGL_Initialize);
@@ -881,21 +876,6 @@ void GraphicsContextGLOpenGL::releaseAllResourcesIfUnused()
     ScopedEGLDefaultDisplay::releaseAllResourcesIfUnused();
 }
 
-#if ENABLE(MEDIA_STREAM)
-RefPtr<MediaSample> GraphicsContextGLOpenGL::paintCompositedResultsToMediaSample()
-{
-    auto &displayBuffer = m_swapChain->displayBuffer();
-    if (!displayBuffer.surface || !displayBuffer.handle)
-        return nullptr;
-    if (displayBuffer.surface->size() != getInternalFramebufferSize())
-        return nullptr;
-    m_swapChain->markDisplayBufferInUse();
-    auto pixelBuffer = createCVPixelBuffer(displayBuffer.surface->surface());
-    if (!pixelBuffer)
-        return nullptr;
-    return MediaSampleAVFObjC::createImageSample(WTFMove(*pixelBuffer), MediaSampleAVFObjC::VideoRotation::UpsideDown, true);
-}
-#endif
 }
 
 #endif // ENABLE(WEBGL)

@@ -67,9 +67,6 @@ public:
     // next present, recycleBuffer or detachClient call.
     virtual const Buffer& displayBuffer() const;
 
-    // Marks the current display buffer to be in use and not eligble to recycling.
-    void markDisplayBufferInUse();
-
     // Detaches the client and returns the current contents buffer metadata handle.
     // The if multiple buffers have been submitted, recycleBuffer must have been called before calling
     // this.
@@ -78,7 +75,6 @@ public:
 protected:
     Buffer m_displayBuffer;
     Buffer m_spareBuffer;
-    bool m_displayBufferInUse = false;
 };
 
 }
