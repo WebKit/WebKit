@@ -145,6 +145,7 @@ private:
 
 #if USE(CG)
     void createCGGradient();
+    bool hasOnlyBoundedSRGBColorStops() const;
 #endif
 
     Data m_data;
