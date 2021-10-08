@@ -1,3 +1,32 @@
+2021-10-07  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r282007. rdar://problem/83957048
+
+    [WK2] Turn on support for Cross-Origin-Opener-Policy / Cross-Origin-Embedder-Policy
+    https://bugs.webkit.org/show_bug.cgi?id=229818
+    
+    Reviewed by Sam Weinig.
+    
+    Turn on support for Cross-Origin-Opener-Policy / Cross-Origin-Embedder-Policy on WebKit2 now that
+    the feature is complete and all known issues have been fixed.
+    
+    * Scripts/Preferences/WebPreferencesExperimental.yaml:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@282007 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-09-03  Chris Dumez  <cdumez@apple.com>
+
+            [WK2] Turn on support for Cross-Origin-Opener-Policy / Cross-Origin-Embedder-Policy
+            https://bugs.webkit.org/show_bug.cgi?id=229818
+
+            Reviewed by Sam Weinig.
+
+            Turn on support for Cross-Origin-Opener-Policy / Cross-Origin-Embedder-Policy on WebKit2 now that
+            the feature is complete and all known issues have been fixed.
+
+            * Scripts/Preferences/WebPreferencesExperimental.yaml:
+
 2021-10-01  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r281725. rdar://problem/83776284
