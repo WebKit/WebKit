@@ -2112,6 +2112,8 @@ webkit.org/b/222563 [ Release ] http/tests/loading/basic-auth-load-URL-with-cons
 
 webkit.org/b/231255 http/tests/privateClickMeasurement/attribution-conversion-through-cross-site-image-redirect.html [ Pass Crash ]
 
+webkit.org/b/231431 http/tests/privateClickMeasurement/attribution-conversion-through-fetch-keepalive.html [ Pass Crash ]
+
 webkit.org/b/229563 imported/w3c/web-platform-tests/css/css-display/display-contents-blockify-dynamic.html [ Pass Timeout ]
 
 webkit.org/b/229567 [ Release ] imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/image-loading-subpixel-clip.html [ Pass ImageOnlyFailure ]
