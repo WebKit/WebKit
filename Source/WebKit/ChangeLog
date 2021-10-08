@@ -1,3 +1,13 @@
+2021-10-08  Basuke Suzuki  <basuke.suzuki@sony.com>
+
+        Fix build break after r283796 when ENABLE_SERVICE_WORKER is off
+        https://bugs.webkit.org/show_bug.cgi?id=231440
+
+        Unreviewed build fix.
+
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::hasServiceWorkerBackgroundActivityForTesting const):
+
 2021-10-08  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [GPU Process] Unique RenderingResourceIdentifiers Part 4: Migrate PendingWakeupInformation to QualifiedRenderingResourceIdentifier

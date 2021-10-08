@@ -1009,7 +1009,11 @@ void WebsiteDataStore::resetServiceWorkerTimeoutForTesting()
 
 bool WebsiteDataStore::hasServiceWorkerBackgroundActivityForTesting() const
 {
+#if ENABLE(SERVICE_WORKER)
     return WTF::anyOf(WebProcessPool::allProcessPools(), [](auto& pool) { return pool->hasServiceWorkerBackgroundActivityForTesting(); });
+#else
+    return false;
+#endif
 }
 
 #if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
