@@ -87,15 +87,8 @@ void ScrollingTreeFrameScrollingNodeRemoteIOS::commitStateAfterChildren(const Sc
     ScrollingTreeFrameScrollingNode::commitStateAfterChildren(stateNode);
 
     const auto& scrollingStateNode = downcast<ScrollingStateFrameScrollingNode>(stateNode);
-
-    if (m_scrollingNodeDelegate) {
+    if (m_scrollingNodeDelegate)
         m_scrollingNodeDelegate->commitStateAfterChildren(scrollingStateNode);
-        return;
-    }
-
-    // Update the scroll position after child nodes have been updated, because they need to have updated their constraints before any scrolling happens.
-    if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::RequestedScrollPosition))
-        handleScrollPositionRequest(scrollingStateNode.requestedScrollData());
 }
 
 FloatPoint ScrollingTreeFrameScrollingNodeRemoteIOS::minimumScrollPosition() const

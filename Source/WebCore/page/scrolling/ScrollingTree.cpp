@@ -320,6 +320,8 @@ void ScrollingTree::commitTreeState(std::unique_ptr<ScrollingStateTree>&& scroll
         if (auto node = m_nodeMap.take(nodeID))
             node->willBeDestroyed();
     }
+    
+    didCommitTree();
 
     LOG_WITH_STREAM(ScrollingTree, stream << "committed ScrollingTree" << scrollingTreeAsText(ScrollingStateTreeAsTextBehaviorDebug));
 }

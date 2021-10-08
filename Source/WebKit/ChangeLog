@@ -1,3 +1,33 @@
+2021-10-08  Simon Fraser  <simon.fraser@apple.com>
+
+        Ensure that animated scrolls will run on the scrolling thread
+        https://bugs.webkit.org/show_bug.cgi?id=231441
+
+        Reviewed by Tim Horton.
+
+        On macOS, scrolling tree commits run on the main thread (holding a lock), so we can't start
+        scroll animations directly inside the commit because then they will run on the main thread.
+
+        Fix by adding ScrollingTree::didCommitTree(), and having ThreadedScrollingTree override it
+        to bounce to the scrolling tree to start animations. We also have to intercept requested scroll
+        position updates via ScrollingTree::scrollingTreeNodeRequestsScroll(); ThreadedScrollingTree
+        uses this to put pending animations into m_nodesWithPendingScrollAnimations.
+
+        Now that ScrollingTreeScrollingNode::commitStateAfterChildren() responds to
+        RequestedScrollPosition changes by calling handleScrollPositionRequest(), we can remove code
+        in derived classes that did the same thing.
+
+        Not yet tested because animated scrolls don't yet get to the scrolling tree.
+
+        * UIProcess/RemoteLayerTree/RemoteScrollingCoordinatorProxy.cpp:
+        (WebKit::RemoteScrollingCoordinatorProxy::scrollingTreeNodeRequestsScroll):
+        * UIProcess/RemoteLayerTree/RemoteScrollingCoordinatorProxy.h:
+        * UIProcess/RemoteLayerTree/RemoteScrollingTree.cpp:
+        (WebKit::RemoteScrollingTree::scrollingTreeNodeRequestsScroll):
+        * UIProcess/RemoteLayerTree/RemoteScrollingTree.h:
+        * UIProcess/RemoteLayerTree/ios/ScrollingTreeFrameScrollingNodeRemoteIOS.mm:
+        (WebKit::ScrollingTreeFrameScrollingNodeRemoteIOS::commitStateAfterChildren):
+
 2021-10-08  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Split DisplayList::Recorder into an abstract base class and a concrete implementation

@@ -152,6 +152,39 @@ void ThreadedScrollingTree::invalidate()
     });
 }
 
+void ThreadedScrollingTree::didCommitTree()
+{
+    ScrollingThread::dispatch([protectedThis = Ref { *this }]() {
+        Locker treeLocker { protectedThis->m_treeLock };
+        protectedThis->didCommitTreeOnScrollingThread();
+    });
+}
+
+void ThreadedScrollingTree::didCommitTreeOnScrollingThread()
+{
+    ASSERT(ScrollingThread::isCurrentThread());
+
+    auto nodesWithPendingScrollAnimations = std::exchange(m_nodesWithPendingScrollAnimations, { });
+    for (const auto& it : nodesWithPendingScrollAnimations) {
+        RefPtr targetNode = nodeForID(it.key);
+        if (!is<ScrollingTreeScrollingNode>(targetNode))
+            continue;
+
+        downcast<ScrollingTreeScrollingNode>(*targetNode).startAnimatedScrollToPosition(it.value.scrollPosition);
+    }
+
+    m_nodesWithPendingScrollAnimations.clear();
+}
+
+bool ThreadedScrollingTree::scrollingTreeNodeRequestsScroll(ScrollingNodeID nodeID, const RequestedScrollData& request)
+{
+    if (request.animated == ScrollIsAnimated::Yes) {
+        m_nodesWithPendingScrollAnimations.add(nodeID, request);
+        return true;
+    }
+    return false;
+}
+
 void ThreadedScrollingTree::propagateSynchronousScrollingReasons(const HashSet<ScrollingNodeID>& synchronousScrollingNodes)
 {
     auto propagateStateToAncestors = [&](ScrollingTreeNode& node) {

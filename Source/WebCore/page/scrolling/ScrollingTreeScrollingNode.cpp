@@ -101,10 +101,8 @@ void ScrollingTreeScrollingNode::commitStateBeforeChildren(const ScrollingStateN
 void ScrollingTreeScrollingNode::commitStateAfterChildren(const ScrollingStateNode& stateNode)
 {
     const ScrollingStateScrollingNode& scrollingStateNode = downcast<ScrollingStateScrollingNode>(stateNode);
-    if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::RequestedScrollPosition)) {
-        const auto& requestedScrollData = scrollingStateNode.requestedScrollData();
-        scrollingTree().scrollingTreeNodeRequestsScroll(scrollingNodeID(), requestedScrollData.scrollPosition, requestedScrollData.scrollType, requestedScrollData.clamping);
-    }
+    if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::RequestedScrollPosition))
+        handleScrollPositionRequest(scrollingStateNode.requestedScrollData());
 
     // This synthetic bit is added back in ScrollingTree::propagateSynchronousScrollingReasons().
 #if ENABLE(SCROLLING_THREAD)
@@ -238,11 +236,9 @@ void ScrollingTreeScrollingNode::handleScrollPositionRequest(const RequestedScro
     LOG_WITH_STREAM(Scrolling, stream << "ScrollingTreeScrollingNode " << scrollingNodeID() << " handleScrollPositionRequest() - position " << requestedScrollData.scrollPosition << " animated " << (requestedScrollData.animated == ScrollIsAnimated::Yes));
 
     stopAnimatedScroll();
-    
-    if (requestedScrollData.animated == ScrollIsAnimated::Yes) {
-        if (startAnimatedScrollToPosition(requestedScrollData.scrollPosition))
-            return;
-    }
+
+    if (scrollingTree().scrollingTreeNodeRequestsScroll(scrollingNodeID(), requestedScrollData))
+        return;
 
     scrollTo(requestedScrollData.scrollPosition, requestedScrollData.scrollType, requestedScrollData.clamping);
 }

@@ -241,13 +241,17 @@ void RemoteScrollingCoordinatorProxy::scrollingTreeNodeDidStopAnimatedScroll(Scr
     m_webPageProxy.send(Messages::RemoteScrollingCoordinator::AnimatedScrollDidEndForNode(scrolledNodeID));
 }
 
-void RemoteScrollingCoordinatorProxy::scrollingTreeNodeRequestsScroll(ScrollingNodeID scrolledNodeID, const FloatPoint& scrollPosition, ScrollType scrollType, ScrollClamping)
+bool RemoteScrollingCoordinatorProxy::scrollingTreeNodeRequestsScroll(ScrollingNodeID scrolledNodeID, const FloatPoint& scrollPosition, ScrollType scrollType, ScrollClamping)
 {
     if (scrolledNodeID == rootScrollingNodeID() && m_requestedScrollInfo) {
+        // FIXME: Handle animated scrolls.
         m_requestedScrollInfo->requestsScrollPositionUpdate = true;
         m_requestedScrollInfo->requestIsProgrammaticScroll = scrollType == ScrollType::Programmatic;
         m_requestedScrollInfo->requestedScrollPosition = scrollPosition;
+        return true;
     }
+    
+    return false;
 }
 
 String RemoteScrollingCoordinatorProxy::scrollingTreeAsText() const

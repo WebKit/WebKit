@@ -61,16 +61,6 @@ void ScrollingTreeOverflowScrollingNodeMac::commitStateBeforeChildren(const Scro
     m_delegate.updateFromStateNode(downcast<ScrollingStateOverflowScrollingNode>(stateNode));
 }
 
-void ScrollingTreeOverflowScrollingNodeMac::commitStateAfterChildren(const ScrollingStateNode& stateNode)
-{
-    ScrollingTreeOverflowScrollingNode::commitStateAfterChildren(stateNode);
-
-    const auto& overflowStateNode = downcast<ScrollingStateOverflowScrollingNode>(stateNode);
-
-    if (overflowStateNode.hasChangedProperty(ScrollingStateNode::Property::RequestedScrollPosition))
-        handleScrollPositionRequest(overflowStateNode.requestedScrollData());
-}
-
 WheelEventHandlingResult ScrollingTreeOverflowScrollingNodeMac::handleWheelEvent(const PlatformWheelEvent& wheelEvent, EventTargeting eventTargeting)
 {
 #if ENABLE(SCROLLING_THREAD)
