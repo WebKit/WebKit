@@ -1938,6 +1938,14 @@ void WebProcessProxy::updateServiceWorkerProcessAssertion()
             m_serviceWorkerInformation->activity = m_throttler.backgroundActivity("Service Worker for background view(s)"_s);
         return;
     }
+
+    if (m_hasServiceWorkerBackgroundProcessing) {
+        WEBPROCESSPROXY_RELEASE_LOG(ProcessSuspension, "Service Worker for background processing");
+        if (!ProcessThrottler::isValidBackgroundActivity(m_serviceWorkerInformation->activity))
+            m_serviceWorkerInformation->activity = m_throttler.backgroundActivity("Service Worker for background processing"_s);
+        return;
+    }
+
     m_serviceWorkerInformation->activity = nullptr;
 }
 
@@ -1969,6 +1977,26 @@ bool WebProcessProxy::hasServiceWorkerForegroundActivityForTesting() const
 bool WebProcessProxy::hasServiceWorkerBackgroundActivityForTesting() const
 {
     return m_serviceWorkerInformation ? ProcessThrottler::isValidBackgroundActivity(m_serviceWorkerInformation->activity) : false;
+}
+
+void WebProcessProxy::startServiceWorkerBackgroundProcessing()
+{
+    if (!m_serviceWorkerInformation)
+        return;
+
+    WEBPROCESSPROXY_RELEASE_LOG(ProcessSuspension, "startServiceWorkerBackgroundProcessing");
+    m_hasServiceWorkerBackgroundProcessing = true;
+    updateServiceWorkerProcessAssertion();
+}
+
+void WebProcessProxy::endServiceWorkerBackgroundProcessing()
+{
+    if (!m_serviceWorkerInformation)
+        return;
+
+    WEBPROCESSPROXY_RELEASE_LOG(ProcessSuspension, "endServiceWorkerBackgroundProcessing");
+    m_hasServiceWorkerBackgroundProcessing = false;
+    updateServiceWorkerProcessAssertion();
 }
 #endif // ENABLE(SERVICE_WORKER)
 

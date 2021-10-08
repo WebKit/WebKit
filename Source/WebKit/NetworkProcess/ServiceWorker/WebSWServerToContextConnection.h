@@ -105,6 +105,7 @@ private:
     HashMap<WebCore::FetchIdentifier, WeakPtr<ServiceWorkerFetchTask>> m_ongoingFetches;
     bool m_isThrottleable { true };
     WebPageProxyIdentifier m_webPageProxyID;
+    size_t m_processingPushEventsCount { 0 };
 }; // class WebSWServerToContextConnection
 
 } // namespace WebKit

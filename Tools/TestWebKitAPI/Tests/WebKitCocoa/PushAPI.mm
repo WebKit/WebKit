@@ -29,7 +29,9 @@
 #import "PlatformUtilities.h"
 #import "Test.h"
 #import "TestWKWebView.h"
+#import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WKWebsiteDataStorePrivate.h>
+#import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 
 static bool done;
 static String expectedMessage;
@@ -105,6 +107,18 @@ static void clearWebsiteDataStore(WKWebsiteDataStore *store)
 
 static bool pushMessageProcessed = false;
 static bool pushMessageSuccessful = false;
+
+static bool waitUntilEvaluatesToTrue(const Function<bool()>& f)
+{
+    unsigned timeout = 0;
+    do {
+        if (f())
+            return true;
+        TestWebKitAPI::Util::sleep(0.1);
+    } while (++timeout < 100);
+    return false;
+}
+
 TEST(PushAPI, firePushEvent)
 {
     TestWebKitAPI::HTTPServer server({
@@ -154,6 +168,180 @@ TEST(PushAPI, firePushEvent)
 
     TestWebKitAPI::Util::run(&pushMessageProcessed);
     EXPECT_FALSE(pushMessageSuccessful);
+
+    clearWebsiteDataStore([configuration websiteDataStore]);
+}
+
+static const char* waitOneSecondScriptBytes = R"SWRESOURCE(
+let port;
+self.addEventListener("message", (event) => {
+    port = event.data.port;
+    port.postMessage("Ready");
+});
+self.addEventListener("push", (event) => {
+    if (!event.data)
+        return;
+    const value = event.data.text();
+    if (value === 'Sweet Potatoes')
+        event.waitUntil(new Promise(resolve => setTimeout(resolve, 1000)));
+    else if (value === 'Rotten Potatoes')
+        event.waitUntil(new Promise((resolve, reject) => setTimeout(reject, 1000)));
+    else if (value === 'Timeless Potatoes')
+        event.waitUntil(new Promise(resolve => { }));
+});
+)SWRESOURCE";
+
+static void terminateNetworkProcessWhileRegistrationIsStored(WKWebViewConfiguration *configuration)
+{
+    auto path = configuration.websiteDataStore._configuration._serviceWorkerRegistrationDirectory.path;
+    NSURL* directory = [NSURL fileURLWithPath:path isDirectory:YES];
+    NSURL *swDBPath = [directory URLByAppendingPathComponent:@"ServiceWorkerRegistrations-7.sqlite3"];
+    unsigned timeout = 0;
+    while (![[NSFileManager defaultManager] fileExistsAtPath:swDBPath.path] && ++timeout < 100)
+        TestWebKitAPI::Util::sleep(0.1);
+    // Let's close the SQL database.
+    [configuration.websiteDataStore _sendNetworkProcessWillSuspendImminently];
+    [configuration.websiteDataStore _terminateNetworkProcess];
+}
+
+TEST(PushAPI, firePushEventWithNoPagesSuccessful)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/", { mainBytes } },
+        { "/sw.js", { {{ "Content-Type", "application/javascript" }}, waitOneSecondScriptBytes } }
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    clearWebsiteDataStore([configuration websiteDataStore]);
+
+    auto messageHandler = adoptNS([[PushAPIMessageHandlerWithExpectedMessage alloc] init]);
+    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
+
+    expectedMessage = "Ready";
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    [webView loadRequest:server.request()];
+
+    TestWebKitAPI::Util::run(&done);
+
+    [webView _close];
+    webView = nullptr;
+
+    terminateNetworkProcessWhileRegistrationIsStored(configuration.get());
+
+    // Push event for service worker without any related page, should succeed.
+    pushMessageProcessed = false;
+    pushMessageSuccessful = false;
+    NSString *message = @"Sweet Potatoes";
+    [[configuration websiteDataStore] _processPushMessage:[message dataUsingEncoding:NSUTF8StringEncoding] registration:[server.request() URL] completionHandler:^(bool result) {
+        pushMessageSuccessful = result;
+        pushMessageProcessed = true;
+    }];
+
+    EXPECT_TRUE(waitUntilEvaluatesToTrue([&] { return [[configuration websiteDataStore] _hasServiceWorkerBackgroundActivityForTesting]; }));
+
+    TestWebKitAPI::Util::run(&pushMessageProcessed);
+    EXPECT_TRUE(pushMessageSuccessful);
+
+    EXPECT_TRUE(waitUntilEvaluatesToTrue([&] { return ![[configuration websiteDataStore] _hasServiceWorkerBackgroundActivityForTesting]; }));
+
+    clearWebsiteDataStore([configuration websiteDataStore]);
+}
+
+TEST(PushAPI, firePushEventWithNoPagesFail)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/", { mainBytes } },
+        { "/sw.js", { {{ "Content-Type", "application/javascript" }}, waitOneSecondScriptBytes } }
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    clearWebsiteDataStore([configuration websiteDataStore]);
+
+    auto messageHandler = adoptNS([[PushAPIMessageHandlerWithExpectedMessage alloc] init]);
+    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
+
+    expectedMessage = "Ready";
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    [webView loadRequest:server.request()];
+
+    TestWebKitAPI::Util::run(&done);
+
+    [webView _close];
+    webView = nullptr;
+
+    terminateNetworkProcessWhileRegistrationIsStored(configuration.get());
+
+    // Push event for service worker without any related page, should fail.
+    pushMessageProcessed = false;
+    pushMessageSuccessful = false;
+    NSString *message = @"Rotten Potatoes";
+    [[configuration websiteDataStore] _processPushMessage:[message dataUsingEncoding:NSUTF8StringEncoding] registration:[server.request() URL] completionHandler:^(bool result) {
+        pushMessageSuccessful = result;
+        pushMessageProcessed = true;
+    }];
+
+    EXPECT_TRUE(waitUntilEvaluatesToTrue([&] { return [[configuration websiteDataStore] _hasServiceWorkerBackgroundActivityForTesting]; }));
+
+    TestWebKitAPI::Util::run(&pushMessageProcessed);
+    EXPECT_FALSE(pushMessageSuccessful);
+    EXPECT_TRUE(waitUntilEvaluatesToTrue([&] { return ![[configuration websiteDataStore] _hasServiceWorkerBackgroundActivityForTesting]; }));
+
+    clearWebsiteDataStore([configuration websiteDataStore]);
+}
+
+TEST(PushAPI, firePushEventWithNoPagesTimeout)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/", { mainBytes } },
+        { "/sw.js", { {{ "Content-Type", "application/javascript" }}, waitOneSecondScriptBytes } }
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
+
+    // Disable service worker delay for the purpose of testing, push event should timeout after 1 second.
+    auto dataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]);
+    auto dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:dataStoreConfiguration.get()]);
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    configuration.get().websiteDataStore = dataStore.get();
+    clearWebsiteDataStore([configuration websiteDataStore]);
+
+    auto messageHandler = adoptNS([[PushAPIMessageHandlerWithExpectedMessage alloc] init]);
+    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
+
+    expectedMessage = "Ready";
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    [webView loadRequest:server.request()];
+
+    TestWebKitAPI::Util::run(&done);
+
+    [webView _close];
+    webView = nullptr;
+
+    [dataStoreConfiguration setServiceWorkerProcessTerminationDelayEnabled:NO];
+    dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:dataStoreConfiguration.get()]);
+    configuration.get().websiteDataStore = dataStore.get();
+
+    terminateNetworkProcessWhileRegistrationIsStored(configuration.get());
+
+    // Push event for service worker without any related page, should timeout so fail.
+    pushMessageProcessed = false;
+    pushMessageSuccessful = false;
+    NSString *message = @"Timeless Potatoes";
+    [[configuration websiteDataStore] _processPushMessage:[message dataUsingEncoding:NSUTF8StringEncoding] registration:[server.request() URL] completionHandler:^(bool result) {
+        pushMessageSuccessful = result;
+        pushMessageProcessed = true;
+    }];
+
+    EXPECT_TRUE(waitUntilEvaluatesToTrue([&] { return [[configuration websiteDataStore] _hasServiceWorkerBackgroundActivityForTesting]; }));
+
+    TestWebKitAPI::Util::run(&pushMessageProcessed);
+    EXPECT_FALSE(pushMessageSuccessful);
+    EXPECT_TRUE(waitUntilEvaluatesToTrue([&] { return ![[configuration websiteDataStore] _hasServiceWorkerBackgroundActivityForTesting]; }));
 
     clearWebsiteDataStore([configuration websiteDataStore]);
 }

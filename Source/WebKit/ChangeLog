@@ -1,3 +1,25 @@
+2021-10-08  Youenn Fablet  <youenn@apple.com>
+
+        Add support for processing push events without service worker clients
+        https://bugs.webkit.org/show_bug.cgi?id=231285
+
+        Reviewed by Chris Dumez.
+
+        When firing a push event, ask UIProcess to take a background assertion for the process running the service worker.
+        We use a counter based approach to take/dispose of the backgorund assertion.
+
+        * NetworkProcess/ServiceWorker/WebSWServerToContextConnection.cpp:
+        * NetworkProcess/ServiceWorker/WebSWServerToContextConnection.h:
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.mm:
+        * UIProcess/API/Cocoa/WKWebsiteDataStorePrivate.h:
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/Network/NetworkProcessProxy.messages.in:
+        * UIProcess/WebProcessProxy.cpp:
+        * UIProcess/WebProcessProxy.h:
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+
 2021-10-07  Simon Fraser  <simon.fraser@apple.com>
 
         Plumb "animated scroll did end" back from the scrolling tree

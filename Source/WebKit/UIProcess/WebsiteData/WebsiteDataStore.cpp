@@ -1007,6 +1007,11 @@ void WebsiteDataStore::resetServiceWorkerTimeoutForTesting()
     networkProcess().sendSync(Messages::NetworkProcess::ResetServiceWorkerFetchTimeoutForTesting(), Messages::NetworkProcess::ResetServiceWorkerFetchTimeoutForTesting::Reply(), 0);
 }
 
+bool WebsiteDataStore::hasServiceWorkerBackgroundActivityForTesting() const
+{
+    return WTF::anyOf(WebProcessPool::allProcessPools(), [](auto& pool) { return pool->hasServiceWorkerBackgroundActivityForTesting(); });
+}
+
 #if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
 void WebsiteDataStore::setMaxStatisticsEntries(size_t maximumEntryCount, CompletionHandler<void()>&& completionHandler)
 {

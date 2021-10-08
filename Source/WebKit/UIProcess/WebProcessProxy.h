@@ -366,6 +366,8 @@ public:
     void unregisterServiceWorkerClientProcess(WebProcessProxy&);
     bool hasServiceWorkerForegroundActivityForTesting() const;
     bool hasServiceWorkerBackgroundActivityForTesting() const;
+    void startServiceWorkerBackgroundProcessing();
+    void endServiceWorkerBackgroundProcessing();
 #endif
     void setAssertionTypeForTesting(ProcessAssertionType type) { didSetAssertionType(type); }
 
@@ -657,6 +659,7 @@ private:
         WeakHashSet<WebProcessProxy> clientProcesses;
     };
     std::optional<ServiceWorkerInformation> m_serviceWorkerInformation;
+    bool m_hasServiceWorkerBackgroundProcessing { false };
 
     HashMap<WebCore::SleepDisablerIdentifier, std::unique_ptr<WebCore::SleepDisabler>> m_sleepDisablers;
 

@@ -57,6 +57,8 @@ messages -> NetworkProcessProxy LegacyReceiver {
     WorkerContextConnectionNoLongerNeeded(WebCore::ProcessIdentifier identifier)
     RegisterServiceWorkerClientProcess(WebCore::ProcessIdentifier webProcessIdentifier, WebCore::ProcessIdentifier serviceWorkerProcessIdentifier)
     UnregisterServiceWorkerClientProcess(WebCore::ProcessIdentifier webProcessIdentifier, WebCore::ProcessIdentifier serviceWorkerProcessIdentifier)
+    StartServiceWorkerBackgroundProcessing(WebCore::ProcessIdentifier serviceWorkerProcessIdentifier)
+    EndServiceWorkerBackgroundProcessing(WebCore::ProcessIdentifier serviceWorkerProcessIdentifier)
 #endif
 
     SetWebProcessHasUploads(WebCore::ProcessIdentifier processID, bool hasUpload)

@@ -753,6 +753,11 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
     });
 }
 
+-(bool)_hasServiceWorkerBackgroundActivityForTesting
+{
+    return _websiteDataStore->hasServiceWorkerBackgroundActivityForTesting();
+}
+
 -(void)_processPushMessage:(NSData*) message registration:(NSURL *)registration completionHandler:(void(^)(bool wasProcessed))completionHandler
 {
 #if ENABLE(SERVICE_WORKER)

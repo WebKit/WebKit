@@ -1400,6 +1400,18 @@ void NetworkProcessProxy::unregisterServiceWorkerClientProcess(WebCore::ProcessI
 
     serviceWorkerProcess->unregisterServiceWorkerClientProcess(*webProcess);
 }
+
+void NetworkProcessProxy::startServiceWorkerBackgroundProcessing(WebCore::ProcessIdentifier serviceWorkerProcessIdentifier)
+{
+    if (auto* serviceWorkerProcess = WebProcessProxy::processForIdentifier(serviceWorkerProcessIdentifier))
+        serviceWorkerProcess->startServiceWorkerBackgroundProcessing();
+}
+
+void NetworkProcessProxy::endServiceWorkerBackgroundProcessing(WebCore::ProcessIdentifier serviceWorkerProcessIdentifier)
+{
+    if (auto* serviceWorkerProcess = WebProcessProxy::processForIdentifier(serviceWorkerProcessIdentifier))
+        serviceWorkerProcess->endServiceWorkerBackgroundProcessing();
+}
 #endif
 
 void NetworkProcessProxy::requestStorageSpace(PAL::SessionID sessionID, const WebCore::ClientOrigin& origin, uint64_t currentQuota, uint64_t currentSize, uint64_t spaceRequired, CompletionHandler<void(std::optional<uint64_t> quota)>&& completionHandler)

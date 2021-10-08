@@ -1214,12 +1214,24 @@ void SWServer::processPushMessage(std::optional<Vector<uint8_t>>&& data, URL&& r
             return;
         }
 
-        fireFunctionalEvent(*registration, [serviceWorkerIdentifier = worker->identifier(), data = WTFMove(data), callback = WTFMove(callback)](auto&& connectionOrStatus) mutable {
+        fireFunctionalEvent(*registration, [worker = Ref { *worker }, weakThis = WTFMove(weakThis), data = WTFMove(data), callback = WTFMove(callback)](auto&& connectionOrStatus) mutable {
             if (!connectionOrStatus.has_value()) {
                 callback(connectionOrStatus.error() == ShouldSkipEvent::Yes);
                 return;
             }
-            connectionOrStatus.value()->firePushEvent(serviceWorkerIdentifier, data, WTFMove(callback));
+
+            auto serviceWorkerIdentifier = worker->identifier();
+            auto terminateWorkerTimer = makeUnique<Timer>([worker = WTFMove(worker)] {
+                RELEASE_LOG_ERROR(ServiceWorker, "Terminating service worker as processing push event took too much time");
+                worker->terminate();
+            });
+            terminateWorkerTimer->startOneShot(weakThis && weakThis->m_isProcessTerminationDelayEnabled ? defaultTerminationDelay : 2_s);
+            connectionOrStatus.value()->firePushEvent(serviceWorkerIdentifier, data, [callback = WTFMove(callback), terminateWorkerTimer = WTFMove(terminateWorkerTimer)](bool succeeded) mutable {
+                if (terminateWorkerTimer->isActive())
+                    terminateWorkerTimer->stop();
+
+                callback(succeeded);
+            });
         });
     });
 }

@@ -109,10 +109,17 @@ void WebSWServerToContextConnection::fireActivateEvent(ServiceWorkerIdentifier s
 
 void WebSWServerToContextConnection::firePushEvent(WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier, const std::optional<Vector<uint8_t>>& data, CompletionHandler<void(bool)>&& callback)
 {
+    if (!m_processingPushEventsCount++)
+        m_connection.networkProcess().parentProcessConnection()->send(Messages::NetworkProcessProxy::StartServiceWorkerBackgroundProcessing { webProcessIdentifier() }, 0);
+
     std::optional<IPC::DataReference> ipcData;
     if (data)
         ipcData = IPC::DataReference { data->data(), data->size() };
-    sendWithAsyncReply(Messages::WebSWContextManagerConnection::FirePushEvent(serviceWorkerIdentifier, ipcData), WTFMove(callback));
+    sendWithAsyncReply(Messages::WebSWContextManagerConnection::FirePushEvent(serviceWorkerIdentifier, ipcData), [weakThis = makeWeakPtr(this), callback = WTFMove(callback)](bool wasProcessed) mutable {
+        if (weakThis && !--weakThis->m_processingPushEventsCount)
+            weakThis->m_connection.networkProcess().parentProcessConnection()->send(Messages::NetworkProcessProxy::EndServiceWorkerBackgroundProcessing { weakThis->webProcessIdentifier() }, 0);
+        callback(wasProcessed);
+    });
 }
 
 void WebSWServerToContextConnection::terminateWorker(ServiceWorkerIdentifier serviceWorkerIdentifier)
