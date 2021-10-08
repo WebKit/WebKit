@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "StrongForward.h"
 #include "TypedArrayAdaptersForwardDeclarations.h"
 
 namespace JSC {

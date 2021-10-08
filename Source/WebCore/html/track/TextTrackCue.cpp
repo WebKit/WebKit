@@ -37,6 +37,7 @@
 #include "CSSPropertyNames.h"
 #include "CSSValueKeywords.h"
 #include "DOMRect.h"
+#include "ElementInlines.h"
 #include "Event.h"
 #include "EventNames.h"
 #include "HTMLDivElement.h"

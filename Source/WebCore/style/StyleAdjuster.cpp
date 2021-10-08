@@ -33,7 +33,7 @@
 #include "CSSFontSelector.h"
 #include "DOMTokenList.h"
 #include "DOMWindow.h"
-#include "Element.h"
+#include "ElementInlines.h"
 #include "EventNames.h"
 #include "FrameView.h"
 #include "HTMLDialogElement.h"

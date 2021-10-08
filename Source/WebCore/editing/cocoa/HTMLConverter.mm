@@ -38,7 +38,7 @@
 #import "Document.h"
 #import "DocumentLoader.h"
 #import "Editing.h"
-#import "Element.h"
+#import "ElementInlines.h"
 #import "ElementTraversal.h"
 #import "File.h"
 #import "FontCascade.h"

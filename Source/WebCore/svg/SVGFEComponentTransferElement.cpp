@@ -24,6 +24,7 @@
 
 #include "ElementIterator.h"
 #include "FilterEffect.h"
+#include "SVGElementTypeHelpers.h"
 #include "SVGFEFuncAElement.h"
 #include "SVGFEFuncBElement.h"
 #include "SVGFEFuncGElement.h"

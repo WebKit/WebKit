@@ -22,6 +22,7 @@
 #include "config.h"
 #include "SVGHKernElement.h"
 
+#include "ElementInlines.h"
 #include "SVGFontElement.h"
 #include "SVGFontFaceElement.h"
 #include "SVGNames.h"

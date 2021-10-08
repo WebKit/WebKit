@@ -682,6 +682,11 @@ AutofillData HTMLFormControlElement::autofillData() const
     return AutofillData::createFromHTMLFormControlElement(*this);
 }
 
+String HTMLFormControlElement::resultForDialogSubmit() const
+{
+    return attributeWithoutSynchronization(HTMLNames::valueAttr);
+}
+
 // FIXME: We should remove the quirk once <rdar://problem/47334655> is fixed.
 bool HTMLFormControlElement::needsMouseFocusableQuirk() const
 {

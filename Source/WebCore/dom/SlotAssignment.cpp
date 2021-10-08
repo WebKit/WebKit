@@ -26,7 +26,7 @@
 #include "config.h"
 #include "SlotAssignment.h"
 
-
+#include "ElementInlines.h"
 #include "HTMLSlotElement.h"
 #include "ShadowRoot.h"
 #include "TypedElementDescendantIterator.h"

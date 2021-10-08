@@ -22,6 +22,7 @@
 #include "config.h"
 #include "RenderSVGResourceRadialGradient.h"
 
+#include "RenderSVGResourceRadialGradientInlines.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {

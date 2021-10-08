@@ -38,6 +38,7 @@
 #include "RenderSVGResourceFilter.h"
 #include "RenderTreeBuilder.h"
 #include "RenderView.h"
+#include "SVGElementTypeHelpers.h"
 #include "SVGImage.h"
 #include "SVGRenderingContext.h"
 #include "SVGResources.h"

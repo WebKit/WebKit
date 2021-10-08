@@ -35,6 +35,7 @@ namespace WebCore {
 
 class FloatPoint;
 class ScrollAnimation;
+struct ScrollExtents;
 
 class ScrollAnimationClient {
 public:

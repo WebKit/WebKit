@@ -35,6 +35,7 @@
 #include "RenderText.h"
 #include "SVGAElement.h"
 #include "SVGDescElement.h"
+#include "SVGElementTypeHelpers.h"
 #include "SVGGElement.h"
 #include "SVGTitleElement.h"
 #include "SVGUseElement.h"

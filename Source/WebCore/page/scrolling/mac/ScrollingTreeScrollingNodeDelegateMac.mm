@@ -29,6 +29,7 @@
 #if ENABLE(ASYNC_SCROLLING) && PLATFORM(MAC)
 
 #import "Logging.h"
+#import "ScrollExtents.h"
 #import "ScrollingStateScrollingNode.h"
 #import "ScrollingTree.h"
 #import "ScrollingTreeFrameScrollingNode.h"

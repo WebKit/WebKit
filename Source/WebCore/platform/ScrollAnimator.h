@@ -49,6 +49,8 @@ class ScrollableArea;
 class Scrollbar;
 class WheelEventTestMonitor;
 
+struct ScrollExtents;
+
 class ScrollingEffectsControllerTimer;
 
 class ScrollAnimator : private ScrollingEffectsControllerClient {

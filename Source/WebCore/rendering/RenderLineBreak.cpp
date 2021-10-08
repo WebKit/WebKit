@@ -34,6 +34,7 @@
 #include "LogicalSelectionOffsetCaches.h"
 #include "RenderBlock.h"
 #include "RenderView.h"
+#include "SVGElementTypeHelpers.h"
 #include "SVGInlineTextBox.h"
 #include "VisiblePosition.h"
 #include <wtf/IsoMallocInlines.h>

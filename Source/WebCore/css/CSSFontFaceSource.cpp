@@ -39,6 +39,7 @@
 #include "FontDescription.h"
 #include "ResourceLoadObserver.h"
 #include "RuntimeEnabledFeatures.h"
+#include "SVGElementTypeHelpers.h"
 #include "SVGFontElement.h"
 #include "SVGFontFaceElement.h"
 #include "SVGToOTFFontConversion.h"

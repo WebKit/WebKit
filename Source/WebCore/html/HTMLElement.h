@@ -22,6 +22,7 @@
 
 #pragma once
 
+#include "HTMLNames.h"
 #include "InputMode.h"
 #include "StyledElement.h"
 

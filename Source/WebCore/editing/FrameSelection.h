@@ -31,6 +31,7 @@
 #include "Element.h"
 #include "IntRect.h"
 #include "LayoutRect.h"
+#include "Range.h"
 #include "ScrollAlignment.h"
 #include "ScrollBehavior.h"
 #include "Timer.h"

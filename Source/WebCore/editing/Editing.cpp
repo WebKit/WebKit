@@ -30,6 +30,7 @@
 #include "CachedImage.h"
 #include "Document.h"
 #include "Editor.h"
+#include "ElementInlines.h"
 #include "Frame.h"
 #include "HTMLBodyElement.h"
 #include "HTMLDListElement.h"

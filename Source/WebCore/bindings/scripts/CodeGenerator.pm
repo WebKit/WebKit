@@ -1115,6 +1115,7 @@ sub GetterExpression
         } elsif ($generator->IsSVGAnimatedType($attributeType)) {
             $functionName = "getAttribute";
         } else {
+            $implIncludes->{"ElementInlines.h"} = 1;
             $functionName = "attributeWithoutSynchronization";
         }
     }

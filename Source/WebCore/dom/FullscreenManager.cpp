@@ -30,6 +30,7 @@
 
 #include "Chrome.h"
 #include "ChromeClient.h"
+#include "ElementInlines.h"
 #include "EventLoop.h"
 #include "EventNames.h"
 #include "Frame.h"

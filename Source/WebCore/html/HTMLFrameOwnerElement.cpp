@@ -25,9 +25,10 @@
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "RenderWidget.h"
+#include "SVGDocument.h"
+#include "SVGElementTypeHelpers.h"
 #include "ScriptController.h"
 #include "ShadowRoot.h"
-#include "SVGDocument.h"
 #include "StyleTreeResolver.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/Ref.h>

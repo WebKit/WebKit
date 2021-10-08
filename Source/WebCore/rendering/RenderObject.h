@@ -29,6 +29,7 @@
 #include "Element.h"
 #include "FloatQuad.h"
 #include "Frame.h"
+#include "HTMLNames.h"
 #include "LayoutRect.h"
 #include "Page.h"
 #include "RenderObjectEnums.h"

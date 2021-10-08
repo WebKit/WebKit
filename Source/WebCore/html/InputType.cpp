@@ -38,6 +38,7 @@
 #include "DateInputType.h"
 #include "DateTimeLocalInputType.h"
 #include "Decimal.h"
+#include "ElementInlines.h"
 #include "EmailInputType.h"
 #include "EventNames.h"
 #include "FileInputType.h"

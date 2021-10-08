@@ -37,6 +37,7 @@
 #import "Logging.h"
 #import "RenderObject.h"
 #import "SVGDocument.h"
+#import "SVGElementTypeHelpers.h"
 #import <pal/Logging.h>
 
 #if PLATFORM(IOS_FAMILY)

@@ -27,6 +27,7 @@
 #include "DOMWindow.h"
 #include "DOMWrapperWorld.h"
 #include "Document.h"
+#include "ElementInlines.h"
 #include "EventNames.h"
 #include "HTMLNames.h"
 #include "IDLTypes.h"

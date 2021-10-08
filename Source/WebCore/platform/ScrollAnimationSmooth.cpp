@@ -30,6 +30,7 @@
 
 #include "FloatPoint.h"
 #include "GeometryUtilities.h"
+#include "ScrollExtents.h"
 #include "ScrollableArea.h"
 #include "TimingFunction.h"
 

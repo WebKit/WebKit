@@ -33,6 +33,7 @@
 
 #if ENABLE(VIDEO)
 
+#include "ActiveDOMObject.h"
 #include "DocumentFragment.h"
 #include "HTMLElement.h"
 #include <wtf/JSONValues.h>

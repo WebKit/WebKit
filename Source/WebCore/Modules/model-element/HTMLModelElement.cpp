@@ -31,6 +31,7 @@
 #include "CachedResourceLoader.h"
 #include "DOMPromiseProxy.h"
 #include "ElementChildIterator.h"
+#include "ElementInlines.h"
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
 #include "HTMLSourceElement.h"

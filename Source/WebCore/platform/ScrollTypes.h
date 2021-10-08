@@ -25,10 +25,6 @@
 
 #pragma once
 
-#include "FloatPoint.h"
-#include "IntPoint.h"
-#include <cstdint>
-#include <wtf/Assertions.h>
 #include <wtf/EnumTraits.h>
 
 namespace WTF {
@@ -36,6 +32,8 @@ class TextStream;
 }
 
 namespace WebCore {
+
+class IntPoint;
 
 // scrollPosition is in content coordinates (0,0 is at scrollOrigin), so may have negative components.
 using ScrollPosition = IntPoint;
@@ -128,9 +126,6 @@ inline ScrollDirection logicalToPhysical(ScrollLogicalDirection direction, bool 
         }
         break;
     }
-    default:
-        ASSERT_NOT_REACHED();
-        break;
     }
     return ScrollUp;
 }
@@ -265,14 +260,6 @@ using ScrollingNodeID = uint64_t;
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, ScrollType);
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, ScrollClamping);
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, ScrollBehaviorForFixedElements);
-
-struct ScrollExtents {
-    FloatSize contentsSize;
-    FloatSize viewportSize;
-
-    FloatPoint minimumScrollOffset() const { return { }; }
-    FloatPoint maximumScrollOffset() const { return toFloatPoint(contentsSize - viewportSize).expandedTo({ 0, 0 }); }
-};
 
 struct ScrollPositionChangeOptions {
     ScrollType type;

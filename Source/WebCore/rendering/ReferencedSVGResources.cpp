@@ -32,6 +32,8 @@
 #include "RenderSVGResourceFilter.h"
 #include "RenderStyle.h"
 #include "SVGClipPathElement.h"
+#include "SVGElementTypeHelpers.h"
+#include "SVGFilterElement.h"
 #include "SVGResourceElementClient.h"
 
 #include <wtf/IsoMallocInlines.h>

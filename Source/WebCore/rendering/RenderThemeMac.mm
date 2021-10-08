@@ -28,7 +28,7 @@
 #import "Color.h"
 #import "ColorMac.h"
 #import "Document.h"
-#import "Element.h"
+#import "ElementInlines.h"
 #import "FileList.h"
 #import "FloatRoundedRect.h"
 #import "FocusController.h"

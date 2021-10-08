@@ -29,6 +29,7 @@
 #include "IntersectionObserverCallback.h"
 #include "IntersectionObserverEntry.h"
 #include "LengthBox.h"
+#include "ReducedResolutionSeconds.h"
 #include <wtf/RefCounted.h>
 #include <wtf/Variant.h>
 #include <wtf/WeakPtr.h>

@@ -27,7 +27,9 @@
 #include "config.h"
 #include "RenderSVGEllipse.h"
 
+#include "RenderSVGShapeInlines.h"
 #include "SVGCircleElement.h"
+#include "SVGElementTypeHelpers.h"
 #include "SVGEllipseElement.h"
 #include <wtf/IsoMallocInlines.h>
 

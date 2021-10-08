@@ -47,6 +47,7 @@ class ScrollSnapAnimatorState;
 class ScrollingEffectsController;
 class ScrollableArea;
 class WheelEventTestMonitor;
+struct ScrollExtents;
 
 class ScrollingEffectsControllerTimer : public RunLoop::TimerBase {
 public:

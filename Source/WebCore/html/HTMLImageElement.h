@@ -42,6 +42,7 @@ class HTMLMapElement;
 
 struct ImageCandidate;
 
+enum class ReferrerPolicy : uint8_t;
 enum class RelevantMutation : bool;
 
 class HTMLImageElement : public HTMLElement, public FormNamedItem {

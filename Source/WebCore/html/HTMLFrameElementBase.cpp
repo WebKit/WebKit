@@ -25,6 +25,7 @@
 #include "HTMLFrameElementBase.h"
 
 #include "Document.h"
+#include "ElementInlines.h"
 #include "FocusController.h"
 #include "Frame.h"
 #include "FrameLoader.h"

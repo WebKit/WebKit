@@ -29,6 +29,7 @@
 #include "ShadowRoot.h"
 
 #include "CSSStyleSheet.h"
+#include "ElementInlines.h"
 #include "ElementTraversal.h"
 #include "HTMLParserIdioms.h"
 #include "HTMLSlotElement.h"

@@ -27,6 +27,7 @@
 #include "GraphicsContext.h"
 #include "RenderSVGText.h"
 #include "RenderSVGTextPath.h"
+#include "SVGElementTypeHelpers.h"
 #include "SVGInlineFlowBox.h"
 #include "SVGInlineTextBox.h"
 #include "SVGNames.h"

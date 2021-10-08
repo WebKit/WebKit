@@ -25,29 +25,37 @@
 #pragma once
 
 #include "AXTextStateChangeIntent.h"
-#include "Document.h"
-#include "ElementData.h"
+#include "ContainerNode.h"
+#include "ElementIdentifier.h"
+#include "EventOptions.h"
 #include "FocusOptions.h"
-#include "HTMLNames.h"
-#include "RenderStyle.h"
+#include "QualifiedName.h"
+#include "RenderPtr.h"
 #include "ScrollTypes.h"
-#include "ShadowRootInit.h"
 #include "ShadowRootMode.h"
 #include "SimulatedClickOptions.h"
-#include "StyleChange.h"
 #include "WebAnimationTypes.h"
-#include <JavaScriptCore/Strong.h>
+#include <JavaScriptCore/Forward.h>
 
 #define DUMP_NODE_STATISTICS 0
 
+namespace JSC {
+class JSGlobalObject;
+}
+
 namespace WebCore {
 
+class Attr;
+class Attribute;
+class AttributeIteratorAccessor;
 class CustomElementReactionQueue;
 class DatasetDOMStringMap;
 class DOMRect;
 class DOMRectList;
 class DOMTokenList;
+class Document;
 class ElementAnimationRareData;
+class ElementData;
 class ElementRareData;
 class Frame;
 class HTMLDocument;
@@ -60,11 +68,16 @@ class PlatformKeyboardEvent;
 class PlatformMouseEvent;
 class PlatformWheelEvent;
 class PseudoElement;
+class RenderStyle;
 class RenderTreePosition;
+class SpaceSplitString;
 class StylePropertyMap;
+class Text;
+class UniqueElementData;
 class WebAnimation;
 
 enum class AnimationImpact;
+enum class EventHandling : uint8_t;
 enum class EventProcessing : uint8_t;
 enum class IsSyntheticClick : bool { No, Yes };
 enum class SelectionRestorationMode : uint8_t;
@@ -75,8 +88,11 @@ struct KeyframeAnimationOptions;
 struct ResizeObserverData;
 struct ScrollIntoViewOptions;
 struct ScrollToOptions;
+struct ShadowRootInit;
 
 namespace Style {
+class Resolver;
+enum class Change : uint8_t;
 struct ElementStyle;
 }
 
@@ -89,7 +105,7 @@ public:
     WEBCORE_EXPORT bool hasAttribute(const QualifiedName&) const;
     WEBCORE_EXPORT const AtomString& getAttribute(const QualifiedName&) const;
     template<typename... QualifiedNames>
-    const AtomString& getAttribute(const QualifiedName&, const QualifiedNames&...) const;
+    inline const AtomString& getAttribute(const QualifiedName&, const QualifiedNames&...) const;
     WEBCORE_EXPORT void setAttribute(const QualifiedName&, const AtomString& value);
     WEBCORE_EXPORT void setAttributeWithoutSynchronization(const QualifiedName&, const AtomString& value);
     void setSynchronizedLazyAttribute(const QualifiedName&, const AtomString& value);
@@ -104,8 +120,8 @@ public:
 
     // Call this to get the value of an attribute that is known not to be the style
     // attribute or one of the SVG animatable attributes.
-    bool hasAttributeWithoutSynchronization(const QualifiedName&) const;
-    const AtomString& attributeWithoutSynchronization(const QualifiedName&) const;
+    inline bool hasAttributeWithoutSynchronization(const QualifiedName&) const;
+    inline const AtomString& attributeWithoutSynchronization(const QualifiedName&) const;
 
 #if DUMP_NODE_STATISTICS
     bool hasNamedNodeMap() const;
@@ -129,24 +145,24 @@ public:
 
     ExceptionOr<bool> toggleAttribute(const AtomString& qualifiedName, std::optional<bool> force);
 
-    const AtomString& getIdAttribute() const;
-    void setIdAttribute(const AtomString&);
+    inline const AtomString& getIdAttribute() const;
+    inline void setIdAttribute(const AtomString&);
 
-    const AtomString& getNameAttribute() const;
+    inline const AtomString& getNameAttribute() const;
 
     // Call this to get the value of the id attribute for style resolution purposes.
     // The value will already be lowercased if the document is in compatibility mode,
     // so this function is not suitable for non-style uses.
-    const AtomString& idForStyleResolution() const;
+    inline const AtomString& idForStyleResolution() const;
 
     // Internal methods that assume the existence of attribute storage, one should use hasAttributes()
     // before calling them.
-    AttributeIteratorAccessor attributesIterator() const { return elementData()->attributesIterator(); }
-    unsigned attributeCount() const;
-    const Attribute& attributeAt(unsigned index) const;
-    const Attribute* findAttributeByName(const QualifiedName&) const;
-    unsigned findAttributeIndexByName(const QualifiedName& name) const { return elementData()->findAttributeIndexByName(name); }
-    unsigned findAttributeIndexByName(const AtomString& name, bool shouldIgnoreAttributeCase) const { return elementData()->findAttributeIndexByName(name, shouldIgnoreAttributeCase); }
+    inline AttributeIteratorAccessor attributesIterator() const;
+    inline unsigned attributeCount() const;
+    inline const Attribute& attributeAt(unsigned index) const;
+    inline const Attribute* findAttributeByName(const QualifiedName&) const;
+    inline unsigned findAttributeIndexByName(const QualifiedName&) const;
+    inline unsigned findAttributeIndexByName(const AtomString&, bool shouldIgnoreAttributeCase) const;
 
     WEBCORE_EXPORT void scrollIntoView(std::optional<Variant<bool, ScrollIntoViewOptions>>&& arg);
     WEBCORE_EXPORT void scrollIntoView(bool alignToTop = true);
@@ -174,7 +190,7 @@ public:
     // to the render layer and merge bindingsOffsetParent and offsetParent.
     WEBCORE_EXPORT Element* offsetParentForBindings();
 
-    const Element* rootElement() const;
+    inline const Element* rootElement() const;
 
     Element* offsetParent();
     WEBCORE_EXPORT int clientLeft();
@@ -231,7 +247,7 @@ public:
     bool hasTagName(const QualifiedName& tagName) const { return m_tagName.matches(tagName); }
     bool hasTagName(const HTMLQualifiedName& tagName) const { return ContainerNode::hasTagName(tagName); }
     bool hasTagName(const MathMLQualifiedName& tagName) const { return ContainerNode::hasTagName(tagName); }
-    bool hasTagName(const SVGQualifiedName& tagName) const { return ContainerNode::hasTagName(tagName); }
+    inline bool hasTagName(const SVGQualifiedName& tagName) const;
 
     bool hasLocalName(const AtomString& other) const { return m_tagName.localName() == other; }
 
@@ -274,7 +290,7 @@ public:
 
     const ElementData* elementData() const { return m_elementData.get(); }
     static ptrdiff_t elementDataMemoryOffset() { return OBJECT_OFFSETOF(Element, m_elementData); }
-    UniqueElementData& ensureUniqueElementData();
+    inline UniqueElementData& ensureUniqueElementData();
 
     void synchronizeAllAttributes() const;
 
@@ -527,16 +543,16 @@ public:
 
     bool isSpellCheckingEnabled() const;
 
-    bool hasID() const;
-    bool hasClass() const;
-    bool hasName() const;
-    const SpaceSplitString& classNames() const;
+    inline bool hasID() const;
+    inline bool hasClass() const;
+    inline bool hasName() const;
+    inline const SpaceSplitString& classNames() const;
 
     IntPoint savedLayerScrollPosition() const;
     void setSavedLayerScrollPosition(const IntPoint&);
 
     bool dispatchMouseEvent(const PlatformMouseEvent&, const AtomString& eventType, int clickCount = 0, Element* relatedTarget = nullptr, IsSyntheticClick isSyntethicClick = IsSyntheticClick::No);
-    bool dispatchWheelEvent(const PlatformWheelEvent&, OptionSet<EventHandling>&, Event::IsCancelable = Event::IsCancelable::Yes);
+    bool dispatchWheelEvent(const PlatformWheelEvent&, OptionSet<EventHandling>&, EventIsCancelable = EventIsCancelable::Yes);
     bool dispatchKeyEvent(const PlatformKeyboardEvent&);
     bool dispatchSimulatedClick(Event* underlyingEvent, SimulatedClickMouseEventOptions = SendNoEvents, SimulatedClickVisualOptions = ShowPressedLook);
     void dispatchFocusInEvent(const AtomString& eventType, RefPtr<Element>&& oldFocusedElement);
@@ -739,143 +755,6 @@ private:
     QualifiedName m_tagName;
     RefPtr<ElementData> m_elementData;
 };
-
-inline bool Node::hasAttributes() const
-{
-    return is<Element>(*this) && downcast<Element>(*this).hasAttributes();
-}
-
-inline NamedNodeMap* Node::attributes() const
-{
-    return is<Element>(*this) ? &downcast<Element>(*this).attributes() : nullptr;
-}
-
-inline Element* Node::parentElement() const
-{
-    ContainerNode* parent = parentNode();
-    return is<Element>(parent) ? downcast<Element>(parent) : nullptr;
-}
-
-inline const Element* Element::rootElement() const
-{
-    if (isConnected())
-        return document().documentElement();
-
-    const Element* highest = this;
-    while (highest->parentElement())
-        highest = highest->parentElement();
-    return highest;
-}
-
-inline bool Element::hasAttributeWithoutSynchronization(const QualifiedName& name) const
-{
-    ASSERT(fastAttributeLookupAllowed(name));
-    return elementData() && findAttributeByName(name);
-}
-
-inline const AtomString& Element::attributeWithoutSynchronization(const QualifiedName& name) const
-{
-    if (elementData()) {
-        if (const Attribute* attribute = findAttributeByName(name))
-            return attribute->value();
-    }
-    return nullAtom();
-}
-
-inline bool Element::hasAttributesWithoutUpdate() const
-{
-    return elementData() && !elementData()->isEmpty();
-}
-
-inline const AtomString& Element::idForStyleResolution() const
-{
-    return hasID() ? elementData()->idForStyleResolution() : nullAtom();
-}
-
-inline const AtomString& Element::getIdAttribute() const
-{
-    if (hasID())
-        return elementData()->findAttributeByName(HTMLNames::idAttr)->value();
-    return nullAtom();
-}
-
-inline const AtomString& Element::getNameAttribute() const
-{
-    if (hasName())
-        return elementData()->findAttributeByName(HTMLNames::nameAttr)->value();
-    return nullAtom();
-}
-
-inline void Element::setIdAttribute(const AtomString& value)
-{
-    setAttributeWithoutSynchronization(HTMLNames::idAttr, value);
-}
-
-inline const SpaceSplitString& Element::classNames() const
-{
-    ASSERT(hasClass());
-    ASSERT(elementData());
-    return elementData()->classNames();
-}
-
-inline unsigned Element::attributeCount() const
-{
-    ASSERT(elementData());
-    return elementData()->length();
-}
-
-inline const Attribute& Element::attributeAt(unsigned index) const
-{
-    ASSERT(elementData());
-    return elementData()->attributeAt(index);
-}
-
-inline const Attribute* Element::findAttributeByName(const QualifiedName& name) const
-{
-    ASSERT(elementData());
-    return elementData()->findAttributeByName(name);
-}
-
-inline bool Element::hasID() const
-{
-    return elementData() && elementData()->hasID();
-}
-
-inline bool Element::hasClass() const
-{
-    return elementData() && elementData()->hasClass();
-}
-
-inline bool Element::hasName() const
-{
-    return elementData() && elementData()->hasName();
-}
-
-inline UniqueElementData& Element::ensureUniqueElementData()
-{
-    if (!elementData() || !elementData()->isUnique())
-        createUniqueElementData();
-    return static_cast<UniqueElementData&>(*m_elementData);
-}
-
-inline bool shouldIgnoreAttributeCase(const Element& element)
-{
-    return element.isHTMLElement() && element.document().isHTMLDocument();
-}
-
-template<typename... QualifiedNames>
-inline const AtomString& Element::getAttribute(const QualifiedName& name, const QualifiedNames&... names) const
-{
-    const AtomString& value = getAttribute(name);
-    if (!value.isNull())
-        return value;
-    return getAttribute(names...);
-}
-
-inline bool isInTopLayerOrBackdrop(const RenderStyle& style, const Element* element)
-{
-    return (element && element->isInTopLayer()) || style.styleType() == PseudoId::Backdrop;
-}
 
 } // namespace WebCore
 

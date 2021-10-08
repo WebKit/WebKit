@@ -26,6 +26,7 @@
 #include "config.h"
 #include "Autofill.h"
 
+#include "ElementInlines.h"
 #include "HTMLFormControlElement.h"
 #include "HTMLFormElement.h"
 #include "HTMLNames.h"

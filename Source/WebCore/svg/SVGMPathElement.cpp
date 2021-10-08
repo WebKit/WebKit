@@ -24,6 +24,7 @@
 #include "Document.h"
 #include "SVGAnimateMotionElement.h"
 #include "SVGDocumentExtensions.h"
+#include "SVGElementTypeHelpers.h"
 #include "SVGNames.h"
 #include "SVGPathElement.h"
 #include <wtf/IsoMallocInlines.h>

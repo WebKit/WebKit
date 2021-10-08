@@ -27,6 +27,7 @@
 #include "CSSFontSelector.h"
 #include "CSSValueKeywords.h"
 #include "Chrome.h"
+#include "ElementInlines.h"
 #include "Font.h"
 #include "Frame.h"
 #include "FrameSelection.h"

@@ -41,6 +41,7 @@
 #include "RenderLayer.h"
 #include "SVGElement.h"
 #include "SVGFilterBuilder.h"
+#include "SVGFilterElement.h"
 #include "SVGFilterPrimitiveStandardAttributes.h"
 #include "SourceAlpha.h"
 #include "SourceGraphic.h"

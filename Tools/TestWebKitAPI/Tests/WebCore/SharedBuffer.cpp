@@ -29,6 +29,7 @@
 
 #include "SharedBufferTest.h"
 #include "Test.h"
+#include <JavaScriptCore/ArrayBuffer.h>
 #include <WebCore/SharedBuffer.h>
 #include <wtf/MainThread.h>
 #include <wtf/StringExtras.h>

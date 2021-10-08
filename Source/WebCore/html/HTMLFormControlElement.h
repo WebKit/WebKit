@@ -128,7 +128,7 @@ public:
 
     virtual bool isSubmitButton() const { return false; }
 
-    virtual String resultForDialogSubmit() const { return attributeWithoutSynchronization(HTMLNames::valueAttr); }
+    virtual String resultForDialogSubmit() const;
 
     using Node::ref;
     using Node::deref;

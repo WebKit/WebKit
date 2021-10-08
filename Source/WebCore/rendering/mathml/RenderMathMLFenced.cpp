@@ -28,6 +28,7 @@
 
 #if ENABLE(MATHML)
 
+#include "ElementInlines.h"
 #include "FontSelector.h"
 #include "MathMLNames.h"
 #include "MathMLRowElement.h"

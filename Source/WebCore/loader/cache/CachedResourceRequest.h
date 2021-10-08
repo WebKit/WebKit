@@ -40,6 +40,7 @@ namespace WebCore {
 struct ContentRuleListResults;
 class Document;
 class FrameLoader;
+class Page;
 struct ServiceWorkerRegistrationData;
 enum class ReferrerPolicy : uint8_t;
 

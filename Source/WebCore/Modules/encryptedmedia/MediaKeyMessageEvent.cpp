@@ -31,6 +31,8 @@
 
 #if ENABLE(ENCRYPTED_MEDIA)
 
+#include "MediaKeyMessageEventInit.h"
+#include <JavaScriptCore/ArrayBuffer.h>
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -49,6 +51,11 @@ MediaKeyMessageEvent::~MediaKeyMessageEvent() = default;
 EventInterface MediaKeyMessageEvent::eventInterface() const
 {
     return MediaKeyMessageEventInterfaceType;
+}
+
+RefPtr<JSC::ArrayBuffer> MediaKeyMessageEvent::message() const
+{
+    return m_message;
 }
 
 } // namespace WebCore

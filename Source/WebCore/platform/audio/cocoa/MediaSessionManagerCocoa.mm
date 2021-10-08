@@ -40,6 +40,7 @@
 #import "PlatformStrategies.h"
 #import "SharedBuffer.h"
 #import "VP9UtilitiesCocoa.h"
+#import <pal/SessionID.h>
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/Function.h>
 

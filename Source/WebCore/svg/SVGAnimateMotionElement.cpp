@@ -26,6 +26,7 @@
 #include "ElementIterator.h"
 #include "PathTraversalState.h"
 #include "RenderSVGResource.h"
+#include "SVGElementTypeHelpers.h"
 #include "SVGImageElement.h"
 #include "SVGMPathElement.h"
 #include "SVGNames.h"

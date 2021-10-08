@@ -3220,6 +3220,8 @@ JSMediaError.cpp
 JSMediaImage.cpp
 JSMediaKeyEncryptionScheme.cpp
 JSMediaKeyMessageEvent.cpp
+JSMediaKeyMessageEventInit.cpp
+JSMediaKeyMessageType.cpp
 JSMediaKeySession.cpp
 JSMediaKeySessionType.cpp
 JSMediaKeyStatusMap.cpp

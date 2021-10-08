@@ -22,7 +22,7 @@
 #include "InlineStyleSheetOwner.h"
 
 #include "ContentSecurityPolicy.h"
-#include "Element.h"
+#include "ElementInlines.h"
 #include "Logging.h"
 #include "MediaList.h"
 #include "MediaQueryEvaluator.h"

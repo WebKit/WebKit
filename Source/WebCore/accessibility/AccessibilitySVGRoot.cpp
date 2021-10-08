@@ -29,8 +29,10 @@
 #include "config.h"
 #include "AccessibilitySVGRoot.h"
 
+#include "ElementInlines.h"
 #include "RenderObject.h"
 #include "SVGDescElement.h"
+#include "SVGElementTypeHelpers.h"
 #include "SVGTitleElement.h"
 #include "TypedElementDescendantIterator.h"
 

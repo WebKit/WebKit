@@ -26,6 +26,7 @@
 #include "config.h"
 #include "StyleSharingResolver.h"
 
+#include "ElementInlines.h"
 #include "ElementRuleCollector.h"
 #include "FullscreenManager.h"
 #include "HTMLDialogElement.h"

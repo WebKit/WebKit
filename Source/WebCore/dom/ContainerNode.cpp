@@ -53,7 +53,7 @@
 #include "RenderTreeUpdater.h"
 #include "RenderWidget.h"
 #include "SVGDocumentExtensions.h"
-#include "SVGElement.h"
+#include "SVGElementTypeHelpers.h"
 #include "SVGNames.h"
 #include "SVGUseElement.h"
 #include "ScriptDisallowedScope.h"

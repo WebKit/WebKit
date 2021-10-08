@@ -39,6 +39,7 @@
 #include "ColorSerialization.h"
 #include "Editing.h"
 #include "Editor.h"
+#include "ElementInlines.h"
 #include "FontCache.h"
 #include "FontCascade.h"
 #include "Frame.h"

@@ -29,6 +29,7 @@
 #include "CSSValueKeywords.h"
 #include "DOMWindow.h"
 #include "DOMWrapperWorld.h"
+#include "ElementInlines.h"
 #include "EventNames.h"
 #include "HTMLFrameElement.h"
 #include "HTMLIFrameElement.h"

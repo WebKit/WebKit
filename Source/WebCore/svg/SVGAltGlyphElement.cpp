@@ -23,9 +23,11 @@
 #include "config.h"
 #include "SVGAltGlyphElement.h"
 
+#include "ElementInlines.h"
 #include "RenderInline.h"
 #include "RenderSVGTSpan.h"
 #include "SVGAltGlyphDefElement.h"
+#include "SVGElementTypeHelpers.h"
 #include "SVGGlyphElement.h"
 #include "SVGNames.h"
 #include "XLinkNames.h"

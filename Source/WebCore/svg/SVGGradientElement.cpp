@@ -27,7 +27,7 @@
 #include "RenderSVGHiddenContainer.h"
 #include "RenderSVGResourceLinearGradient.h"
 #include "RenderSVGResourceRadialGradient.h"
-#include "SVGNames.h"
+#include "SVGElementTypeHelpers.h"
 #include "SVGStopElement.h"
 #include "SVGTransformable.h"
 #include "StyleResolver.h"

@@ -20,7 +20,6 @@
 #pragma once
 
 #include "RenderSVGResourceContainer.h"
-#include "SVGClipPathElement.h"
 #include "SVGUnitTypes.h"
 
 #include <wtf/HashMap.h>
@@ -29,6 +28,7 @@ namespace WebCore {
 
 class GraphicsContext;
 class ImageBuffer;
+class SVGClipPathElement;
 
 class RenderSVGResourceClipper final : public RenderSVGResourceContainer {
     WTF_MAKE_ISO_ALLOCATED(RenderSVGResourceClipper);
@@ -36,7 +36,7 @@ public:
     RenderSVGResourceClipper(SVGClipPathElement&, RenderStyle&&);
     virtual ~RenderSVGResourceClipper();
 
-    SVGClipPathElement& clipPathElement() const { return downcast<SVGClipPathElement>(nodeForNonAnonymous()); }
+    inline SVGClipPathElement& clipPathElement() const;
 
     void removeAllClientsFromCache(bool markForInvalidation = true) override;
     void removeClientFromCache(RenderElement&, bool markForInvalidation = true) override;
@@ -52,7 +52,7 @@ public:
     
     bool hitTestClipContent(const FloatRect&, const FloatPoint&);
 
-    SVGUnitTypes::SVGUnitType clipPathUnits() const { return clipPathElement().clipPathUnits(); }
+    inline SVGUnitTypes::SVGUnitType clipPathUnits() const;
 
 private:
     bool selfNeedsClientInvalidation() const override { return (everHadLayout() || m_clipper.size()) && selfNeedsLayout(); }

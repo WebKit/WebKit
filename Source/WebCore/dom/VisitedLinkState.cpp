@@ -31,9 +31,10 @@
 
 #include "ElementIterator.h"
 #include "Frame.h"
-#include "HTMLAnchorElement.h"
+#include "HTMLAnchorElementInlines.h"
 #include "Page.h"
 #include "SVGAElement.h"
+#include "SVGElementTypeHelpers.h"
 #include "SVGNames.h"
 #include "VisitedLinkStore.h"
 #include "XLinkNames.h"

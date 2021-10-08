@@ -31,6 +31,7 @@
 #include "Logging.h"
 #include "MediaList.h"
 #include "Node.h"
+#include "SVGElementTypeHelpers.h"
 #include "SVGStyleElement.h"
 #include "SecurityOrigin.h"
 #include "StyleResolver.h"

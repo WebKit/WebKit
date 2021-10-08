@@ -59,6 +59,14 @@
 #include <wtf/StringPrintStream.h>
 #endif
 
+namespace JSC {
+class JSValue;
+}
+
+namespace PAL {
+class SessionID;
+}
+
 namespace WebCore {
 
 class AudioSourceProvider;

@@ -31,6 +31,7 @@
 #include "FontDescription.h"
 #include "FontPlatformData.h"
 #include "SVGDocument.h"
+#include "SVGElementTypeHelpers.h"
 #include "SVGFontElement.h"
 #include "SVGFontFaceElement.h"
 #include "SVGToOTFFontConversion.h"

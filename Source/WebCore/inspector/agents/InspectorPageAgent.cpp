@@ -39,6 +39,7 @@
 #include "DOMWrapperWorld.h"
 #include "Document.h"
 #include "DocumentLoader.h"
+#include "ElementInlines.h"
 #include "Frame.h"
 #include "FrameLoadRequest.h"
 #include "FrameLoader.h"

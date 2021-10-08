@@ -26,6 +26,7 @@
 #include "ElementIterator.h"
 #include "RenderObject.h"
 #include "RenderSVGResource.h"
+#include "SVGElementTypeHelpers.h"
 #include "SVGFEDiffuseLightingElement.h"
 #include "SVGFEDistantLightElement.h"
 #include "SVGFEPointLightElement.h"

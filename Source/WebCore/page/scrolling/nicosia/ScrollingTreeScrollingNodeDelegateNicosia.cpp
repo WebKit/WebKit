@@ -30,6 +30,7 @@
 #if ENABLE(ASYNC_SCROLLING) && USE(NICOSIA)
 
 #include "NicosiaPlatformLayer.h"
+#include "ScrollExtents.h"
 #include "ScrollingTreeFrameScrollingNode.h"
 
 #if USE(GLIB_EVENT_LOOP)

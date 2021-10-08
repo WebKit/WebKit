@@ -32,6 +32,7 @@
 #include "PlatformWheelEvent.h"
 #include "ScrollAnimationMomentum.h"
 #include "ScrollAnimationSmooth.h"
+#include "ScrollExtents.h"
 #include "ScrollableArea.h"
 #include "WheelEventTestMonitor.h"
 #include <wtf/text/TextStream.h>

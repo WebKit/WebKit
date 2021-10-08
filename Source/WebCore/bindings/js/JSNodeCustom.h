@@ -26,6 +26,7 @@
 
 #pragma once
 
+#include "ElementInlines.h"
 #include "JSDOMBinding.h"
 #include "JSNode.h"
 

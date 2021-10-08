@@ -29,6 +29,7 @@
 
 #if ENABLE(MATHML)
 
+#include "ElementInlines.h"
 #include "HTMLParserIdioms.h"
 #include "MathMLNames.h"
 #include "RenderMathMLMenclose.h"

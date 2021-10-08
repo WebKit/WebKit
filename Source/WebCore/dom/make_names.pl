@@ -705,6 +705,10 @@ sub printTypeHelpersHeaderFile
     print F "#pragma once\n\n";
     print F "#include \"".$parameters{namespace}."Names.h\"\n\n";
 
+    # FIXME: Remove `if` condition below once HTMLElementTypeHeaders.h is made inline.
+    if ($parameters{namespace} eq "SVG") {
+        print F "#include \"".$parameters{namespace}."ElementInlines.h\"\n\n";
+    }
     printTypeHelpers($F, \%allTags);
 
     close F;

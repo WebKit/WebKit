@@ -26,7 +26,7 @@
 
 #pragma once
 
-#include <JavaScriptCore/ArrayBuffer.h>
+#include <JavaScriptCore/Forward.h>
 #include <wtf/FileSystem.h>
 #include <wtf/Forward.h>
 #include <wtf/Function.h>

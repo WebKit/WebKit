@@ -28,6 +28,7 @@
 
 #include "DOMWindow.h"
 #include "Document.h"
+#include "ElementInlines.h"
 #include "HTMLIFrameElement.h"
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"

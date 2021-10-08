@@ -36,6 +36,7 @@
 #include "ContextDestructionObserver.h"
 #include "FloatPoint.h"
 #include "TextTrack.h"
+#include "Timer.h"
 
 namespace WebCore {
 

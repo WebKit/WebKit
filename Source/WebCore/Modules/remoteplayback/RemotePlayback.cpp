@@ -28,6 +28,7 @@
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
 
+#include "ElementInlines.h"
 #include "Event.h"
 #include "EventNames.h"
 #include "HTMLMediaElement.h"

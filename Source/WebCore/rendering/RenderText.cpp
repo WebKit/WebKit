@@ -47,6 +47,7 @@
 #include "RenderLayer.h"
 #include "RenderView.h"
 #include "RenderedDocumentMarker.h"
+#include "SVGElementTypeHelpers.h"
 #include "SVGInlineTextBox.h"
 #include "Settings.h"
 #include "Text.h"

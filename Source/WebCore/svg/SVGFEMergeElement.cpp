@@ -24,6 +24,7 @@
 #include "ElementIterator.h"
 #include "FEMerge.h"
 #include "FilterEffect.h"
+#include "SVGElementTypeHelpers.h"
 #include "SVGFEMergeNodeElement.h"
 #include "SVGFilterBuilder.h"
 #include "SVGNames.h"

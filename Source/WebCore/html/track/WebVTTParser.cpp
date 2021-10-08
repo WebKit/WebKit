@@ -35,6 +35,7 @@
 
 #if ENABLE(VIDEO)
 
+#include "Document.h"
 #include "HTMLParserIdioms.h"
 #include "ISOVTTCue.h"
 #include "ProcessingInstruction.h"

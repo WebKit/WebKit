@@ -22,6 +22,7 @@
 #pragma once
 
 #include "CSSSelector.h"
+#include "Document.h"
 #include "ElementRuleCollector.h"
 #include "InspectorCSSOMWrappers.h"
 #include "MatchedDeclarationsCache.h"

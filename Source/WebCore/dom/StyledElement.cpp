@@ -36,6 +36,7 @@
 #include "CachedResource.h"
 #include "ContentSecurityPolicy.h"
 #include "DOMTokenList.h"
+#include "ElementInlines.h"
 #include "ElementRareData.h"
 #include "HTMLElement.h"
 #include "HTMLImageElement.h"

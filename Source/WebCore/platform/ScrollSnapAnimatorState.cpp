@@ -26,6 +26,7 @@
 #include "config.h"
 #include "ScrollSnapAnimatorState.h"
 
+#include "ScrollExtents.h"
 #include "ScrollingEffectsController.h"
 #include <wtf/MathExtras.h>
 #include <wtf/text/TextStream.h>

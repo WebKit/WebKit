@@ -733,6 +733,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     heap/GCSegmentedArray.h
     heap/Handle.h
     heap/HandleBlock.h
+    heap/HandleForward.h
     heap/HandleSet.h
     heap/HandleTypes.h
     heap/Heap.h
@@ -771,6 +772,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     heap/SlotVisitorInlines.h
     heap/SlotVisitorMacros.h
     heap/Strong.h
+    heap/StrongForward.h
     heap/StrongInlines.h
     heap/Subspace.h
     heap/SubspaceInlines.h

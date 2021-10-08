@@ -30,9 +30,11 @@
 
 #include "CDMKeySystemConfiguration.h"
 #include "CDMMediaCapability.h"
+#include "CDMMessageType.h"
 #include "CDMRestrictions.h"
 #include "JSMediaKeyEncryptionScheme.h"
 #include "JSMediaKeyMessageEvent.h"
+#include "JSMediaKeyMessageType.h"
 #include "JSMediaKeySessionType.h"
 #include "JSMediaKeyStatusMap.h"
 #include "JSMediaKeysRequirement.h"

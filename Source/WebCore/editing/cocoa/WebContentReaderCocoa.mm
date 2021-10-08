@@ -36,6 +36,7 @@
 #import "DocumentLoader.h"
 #import "Editor.h"
 #import "EditorClient.h"
+#import "ElementInlines.h"
 #import "File.h"
 #import "Frame.h"
 #import "FrameLoader.h"

@@ -34,7 +34,7 @@
 #include "Document.h"
 #include "DocumentFragment.h"
 #include "Editor.h"
-#include "Element.h"
+#include "ElementInlines.h"
 #include "Frame.h"
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"

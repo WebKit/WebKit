@@ -39,6 +39,7 @@
 #include "EventNames.h"
 #include "Logging.h"
 #include "MediaKeyMessageEvent.h"
+#include "MediaKeyMessageEventInit.h"
 #include "MediaKeyMessageType.h"
 #include "MediaKeyStatusMap.h"
 #include "MediaKeys.h"

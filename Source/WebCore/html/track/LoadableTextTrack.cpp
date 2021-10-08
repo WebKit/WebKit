@@ -29,6 +29,8 @@
 
 #if ENABLE(VIDEO)
 
+#include "Document.h"
+#include "ElementInlines.h"
 #include "HTMLTrackElement.h"
 #include "TextTrackCueList.h"
 #include "VTTCue.h"

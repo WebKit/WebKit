@@ -26,6 +26,7 @@
 #include "RenderTableCell.h"
 
 #include "CollapsedBorderValue.h"
+#include "ElementInlines.h"
 #include "FloatQuad.h"
 #include "GraphicsContext.h"
 #include "HTMLNames.h"

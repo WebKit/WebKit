@@ -48,6 +48,7 @@
 #include "RenderRubyText.h"
 #include "RenderSVGText.h"
 #include "RenderView.h"
+#include "SVGElementTypeHelpers.h"
 #include "SVGRootInlineBox.h"
 #include "Settings.h"
 #include "VerticalPositionCache.h"

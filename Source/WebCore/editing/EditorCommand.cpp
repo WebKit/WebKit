@@ -35,6 +35,7 @@
 #include "DocumentFragment.h"
 #include "Editing.h"
 #include "EditorClient.h"
+#include "ElementInlines.h"
 #include "Event.h"
 #include "EventHandler.h"
 #include "FormatBlockCommand.h"

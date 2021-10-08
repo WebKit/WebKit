@@ -45,6 +45,7 @@ class RemoteLegacyCDMSession final
     , public IPC::MessageReceiver {
 public:
     static std::unique_ptr<RemoteLegacyCDMSession> create(WeakPtr<RemoteLegacyCDMFactory>, RemoteLegacyCDMSessionIdentifier&&);
+    ~RemoteLegacyCDMSession();
 
     // MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;

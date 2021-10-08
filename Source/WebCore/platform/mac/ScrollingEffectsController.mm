@@ -28,6 +28,7 @@
 
 #import "Logging.h"
 #import "PlatformWheelEvent.h"
+#import "ScrollExtents.h"
 #import "WheelEventTestMonitor.h"
 #import <pal/spi/mac/NSScrollViewSPI.h>
 #import <sys/sysctl.h>

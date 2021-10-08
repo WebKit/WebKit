@@ -30,6 +30,7 @@
 #include "ElementChildIterator.h"
 #include "Glyph.h"
 #include "HTMLParserIdioms.h"
+#include "SVGElementTypeHelpers.h"
 #include "SVGFontElement.h"
 #include "SVGFontFaceElement.h"
 #include "SVGGlyphElement.h"

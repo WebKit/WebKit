@@ -31,6 +31,7 @@
 
 #include "AXObjectCache.h"
 #include "AccessibilityListBox.h"
+#include "ElementInlines.h"
 #include "HTMLNames.h"
 #include "HTMLOptGroupElement.h"
 #include "HTMLOptionElement.h"

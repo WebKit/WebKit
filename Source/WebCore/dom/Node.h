@@ -113,7 +113,7 @@ public:
 
     bool hasTagName(const HTMLQualifiedName&) const;
     bool hasTagName(const MathMLQualifiedName&) const;
-    bool hasTagName(const SVGQualifiedName&) const;
+    inline bool hasTagName(const SVGQualifiedName&) const;
     virtual String nodeName() const = 0;
     virtual String nodeValue() const;
     virtual ExceptionOr<void> setNodeValue(const String&);
@@ -121,7 +121,7 @@ public:
     virtual size_t approximateMemoryCost() const { return sizeof(*this); }
     ContainerNode* parentNode() const;
     static ptrdiff_t parentNodeMemoryOffset() { return OBJECT_OFFSETOF(Node, m_parentNode); }
-    Element* parentElement() const;
+    inline Element* parentElement() const;
     Node* previousSibling() const { return m_previous; }
     static ptrdiff_t previousSiblingMemoryOffset() { return OBJECT_OFFSETOF(Node, m_previous); }
     Node* nextSibling() const { return m_next; }
@@ -129,8 +129,8 @@ public:
     WEBCORE_EXPORT RefPtr<NodeList> childNodes();
     Node* firstChild() const;
     Node* lastChild() const;
-    bool hasAttributes() const;
-    NamedNodeMap* attributes() const;
+    inline bool hasAttributes() const;
+    inline NamedNodeMap* attributes() const;
     Node* pseudoAwareNextSibling() const;
     Node* pseudoAwarePreviousSibling() const;
     Node* pseudoAwareFirstChild() const;

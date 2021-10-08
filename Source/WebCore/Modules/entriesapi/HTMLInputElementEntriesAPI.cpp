@@ -27,6 +27,7 @@
 #include "HTMLInputElementEntriesAPI.h"
 
 #include "DOMFileSystem.h"
+#include "ElementInlines.h"
 #include "FileList.h"
 #include "HTMLInputElement.h"
 

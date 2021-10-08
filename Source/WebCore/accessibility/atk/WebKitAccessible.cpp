@@ -42,6 +42,7 @@
 #include "AccessibilityTableRow.h"
 #include "Document.h"
 #include "Editing.h"
+#include "ElementInlines.h"
 #include "Frame.h"
 #include "FrameView.h"
 #include "HTMLNames.h"

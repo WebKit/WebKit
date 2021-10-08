@@ -33,6 +33,7 @@
 #include "ChromeClient.h"
 #include "Document.h"
 #include "DocumentLoader.h"
+#include "ElementInlines.h"
 #include "Frame.h"
 #include "FrameView.h"
 #include "FullscreenManager.h"

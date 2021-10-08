@@ -36,6 +36,7 @@
 namespace WebCore {
 
 class HTMLMediaElement;
+class Page;
 class PageGroup;
 class AudioTrackList;
 class TextTrackList;

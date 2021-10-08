@@ -28,6 +28,7 @@
 
 #if ENABLE(VIDEO)
 
+#include "Document.h"
 #include "HTMLMediaElement.h"
 #include "InbandTextTrackPrivate.h"
 #include "Logging.h"

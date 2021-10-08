@@ -23,6 +23,7 @@
 #include "RenderSVGBlock.h"
 
 #include "RenderSVGResource.h"
+#include "SVGGraphicsElement.h"
 #include "SVGResourcesCache.h"
 #include "StyleInheritedData.h"
 #include <wtf/IsoMallocInlines.h>

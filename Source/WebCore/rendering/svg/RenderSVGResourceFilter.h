@@ -27,12 +27,13 @@
 #include "RenderSVGResourceContainer.h"
 #include "SVGFilter.h"
 #include "SVGFilterBuilder.h"
-#include "SVGFilterElement.h"
 #include "SVGUnitTypes.h"
 #include <wtf/IsoMalloc.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
+
+class SVGFilterElement;
 
 struct FilterData {
     WTF_MAKE_ISO_ALLOCATED(FilterData);
@@ -61,7 +62,7 @@ public:
     RenderSVGResourceFilter(SVGFilterElement&, RenderStyle&&);
     virtual ~RenderSVGResourceFilter();
 
-    SVGFilterElement& filterElement() const { return downcast<SVGFilterElement>(RenderSVGResourceContainer::element()); }
+    inline SVGFilterElement& filterElement() const;
 
     void removeAllClientsFromCache(bool markForInvalidation = true) override;
     void removeClientFromCache(RenderElement&, bool markForInvalidation = true) override;
@@ -73,8 +74,8 @@ public:
 
     std::unique_ptr<SVGFilterBuilder> buildPrimitives(SVGFilter&) const;
 
-    SVGUnitTypes::SVGUnitType filterUnits() const { return filterElement().filterUnits(); }
-    SVGUnitTypes::SVGUnitType primitiveUnits() const { return filterElement().primitiveUnits(); }
+    inline SVGUnitTypes::SVGUnitType filterUnits() const;
+    inline SVGUnitTypes::SVGUnitType primitiveUnits() const;
 
     void primitiveAttributeChanged(RenderObject*, const QualifiedName&);
 

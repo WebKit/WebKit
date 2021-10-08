@@ -28,6 +28,8 @@
 #include "config.h"
 #include "RenderSVGRect.h"
 
+#include "RenderSVGShapeInlines.h"
+#include "SVGElementTypeHelpers.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {

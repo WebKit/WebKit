@@ -31,6 +31,7 @@
 #import "DataDetection.h"
 #import "DataDetectionResultsStorage.h"
 #import "DataDetectorElementInfo.h"
+#import "ElementInlines.h"
 #import "FrameView.h"
 #import "HTMLElement.h"
 #import "HTMLNames.h"

@@ -95,6 +95,7 @@
 #include "ResizeObserver.h"
 #include "RuntimeEnabledFeatures.h"
 #include "SVGDocument.h"
+#include "SVGElementTypeHelpers.h"
 #include "SVGSVGElement.h"
 #include "ScriptRunner.h"
 #include "ScriptedAnimationController.h"

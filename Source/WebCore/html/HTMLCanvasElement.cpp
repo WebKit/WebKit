@@ -36,6 +36,7 @@
 #include "CanvasRenderingContext2DSettings.h"
 #include "DisplayListDrawingContext.h"
 #include "Document.h"
+#include "ElementInlines.h"
 #include "EventNames.h"
 #include "Frame.h"
 #include "FrameLoaderClient.h"

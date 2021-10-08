@@ -28,7 +28,8 @@
 #include "config.h"
 #include "XPathFunctions.h"
 
-#include "Element.h"
+#include "Attribute.h"
+#include "ElementInlines.h"
 #include "ProcessingInstruction.h"
 #include "TreeScope.h"
 #include "XMLNames.h"

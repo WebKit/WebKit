@@ -29,6 +29,7 @@
 #include "DOMRect.h"
 #include "DOMRectList.h"
 #include "DocumentFragment.h"
+#include "ElementInlines.h"
 #include "Event.h"
 #include "Frame.h"
 #include "FrameSelection.h"

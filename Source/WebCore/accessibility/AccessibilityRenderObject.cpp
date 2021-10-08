@@ -105,6 +105,7 @@
 #include "RenderWidget.h"
 #include "RenderedPosition.h"
 #include "SVGDocument.h"
+#include "SVGElementTypeHelpers.h"
 #include "SVGImage.h"
 #include "SVGSVGElement.h"
 #include "Text.h"

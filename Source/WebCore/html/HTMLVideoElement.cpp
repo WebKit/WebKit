@@ -32,6 +32,7 @@
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "Document.h"
+#include "ElementInlines.h"
 #include "EventNames.h"
 #include "Frame.h"
 #include "HTMLImageLoader.h"

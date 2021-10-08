@@ -27,6 +27,7 @@
 #include "HTMLButtonElement.h"
 
 #include "DOMFormData.h"
+#include "ElementInlines.h"
 #include "EventNames.h"
 #include "HTMLFormElement.h"
 #include "HTMLNames.h"

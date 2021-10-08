@@ -20,16 +20,16 @@
 #pragma once
 
 #include "RenderBlockFlow.h"
-#include "SVGGraphicsElement.h"
 
 namespace WebCore {
 
 class SVGElement;
+class SVGGraphicsElement;
 
 class RenderSVGBlock : public RenderBlockFlow {
     WTF_MAKE_ISO_ALLOCATED(RenderSVGBlock);
 public:
-    SVGGraphicsElement& graphicsElement() const { return downcast<SVGGraphicsElement>(nodeForNonAnonymous()); }
+    inline SVGGraphicsElement& graphicsElement() const;
 
 protected:
     RenderSVGBlock(SVGGraphicsElement&, RenderStyle&&);

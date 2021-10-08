@@ -25,9 +25,11 @@
 #include "SVGImageElement.h"
 
 #include "CSSPropertyNames.h"
+#include "ElementInlines.h"
 #include "RenderImageResource.h"
 #include "RenderSVGImage.h"
 #include "RenderSVGResource.h"
+#include "SVGElementInlines.h"
 #include "SVGNames.h"
 #include "XLinkNames.h"
 #include <wtf/IsoMallocInlines.h>

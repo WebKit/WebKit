@@ -1787,6 +1787,8 @@
 		C4F4B6F61A05C984005CAB76 /* objc_generator_templates.py in Headers */ = {isa = PBXBuildFile; fileRef = C4F4B6D81A05C76F005CAB76 /* objc_generator_templates.py */; settings = {ATTRIBUTES = (Private, ); }; };
 		CD1F9B3A270B9AAD00617EB6 /* Forward.h in Headers */ = {isa = PBXBuildFile; fileRef = CD1F9B39270B9AAD00617EB6 /* Forward.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CD1F9B3C270C0C1A00617EB6 /* TypedArrayAdaptersForwardDeclarations.h in Headers */ = {isa = PBXBuildFile; fileRef = CD1F9B3B270C0C1A00617EB6 /* TypedArrayAdaptersForwardDeclarations.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		CD1F9B49270CFDCC00617EB6 /* HandleForward.h in Headers */ = {isa = PBXBuildFile; fileRef = CD1F9B48270CFDCC00617EB6 /* HandleForward.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		CD1F9B4B270CFE0F00617EB6 /* StrongForward.h in Headers */ = {isa = PBXBuildFile; fileRef = CD1F9B4A270CFE0F00617EB6 /* StrongForward.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CE20BD05237D3E230046E520 /* FileBasedFuzzerAgentBase.h in Headers */ = {isa = PBXBuildFile; fileRef = CE20BD03237D3AD40046E520 /* FileBasedFuzzerAgentBase.h */; };
 		CE20BD07237D3E480046E520 /* PredictionFileCreatingFuzzerAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = CE20BD01237D3AD40046E520 /* PredictionFileCreatingFuzzerAgent.h */; };
 		CEAE7D7B889B477BA93ABA6C /* ScriptFetcher.h in Headers */ = {isa = PBXBuildFile; fileRef = 8852151A9C3842389B3215B7 /* ScriptFetcher.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -5026,6 +5028,8 @@
 		C4F4B6D81A05C76F005CAB76 /* objc_generator_templates.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = objc_generator_templates.py; sourceTree = "<group>"; };
 		CD1F9B39270B9AAD00617EB6 /* Forward.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Forward.h; sourceTree = "<group>"; };
 		CD1F9B3B270C0C1A00617EB6 /* TypedArrayAdaptersForwardDeclarations.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TypedArrayAdaptersForwardDeclarations.h; sourceTree = "<group>"; };
+		CD1F9B48270CFDCC00617EB6 /* HandleForward.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HandleForward.h; sourceTree = "<group>"; };
+		CD1F9B4A270CFE0F00617EB6 /* StrongForward.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StrongForward.h; sourceTree = "<group>"; };
 		CE20BD01237D3AD40046E520 /* PredictionFileCreatingFuzzerAgent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PredictionFileCreatingFuzzerAgent.h; sourceTree = "<group>"; };
 		CE20BD02237D3AD40046E520 /* PredictionFileCreatingFuzzerAgent.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PredictionFileCreatingFuzzerAgent.cpp; sourceTree = "<group>"; };
 		CE20BD03237D3AD40046E520 /* FileBasedFuzzerAgentBase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FileBasedFuzzerAgentBase.h; sourceTree = "<group>"; };
@@ -6508,6 +6512,7 @@
 				142E312B134FF0A600AFADB5 /* Handle.h */,
 				C28318FF16FE4B7D00157BFD /* HandleBlock.h */,
 				C283190116FE533E00157BFD /* HandleBlockInlines.h */,
+				CD1F9B48270CFDCC00617EB6 /* HandleForward.h */,
 				142E312C134FF0A600AFADB5 /* HandleSet.cpp */,
 				142E312D134FF0A600AFADB5 /* HandleSet.h */,
 				146FA5A81378F6B0003627A3 /* HandleTypes.h */,
@@ -6600,6 +6605,7 @@
 				0F7CF9501DC027D70098CC12 /* StopIfNecessaryTimer.cpp */,
 				0F7CF9511DC027D70098CC12 /* StopIfNecessaryTimer.h */,
 				142E3132134FF0A600AFADB5 /* Strong.h */,
+				CD1F9B4A270CFE0F00617EB6 /* StrongForward.h */,
 				145722851437E140005FDE26 /* StrongInlines.h */,
 				0F7DF1311E2970D50095951B /* Subspace.cpp */,
 				0F7DF1321E2970D50095951B /* Subspace.h */,
@@ -10030,6 +10036,7 @@
 				142E3134134FF0A600AFADB5 /* Handle.h in Headers */,
 				C283190016FE4B7D00157BFD /* HandleBlock.h in Headers */,
 				C283190216FE533E00157BFD /* HandleBlockInlines.h in Headers */,
+				CD1F9B49270CFDCC00617EB6 /* HandleForward.h in Headers */,
 				0F0B83A914BCF56200885B4F /* HandlerInfo.h in Headers */,
 				142E3136134FF0A600AFADB5 /* HandleSet.h in Headers */,
 				1478297B1379E8A800A7C2A3 /* HandleTypes.h in Headers */,
@@ -10704,6 +10711,7 @@
 				BC18C46A0E16F5CD00B34460 /* StringPrototype.h in Headers */,
 				E325A36022211590007349A1 /* StringPrototypeInlines.h in Headers */,
 				142E313B134FF0A600AFADB5 /* Strong.h in Headers */,
+				CD1F9B4B270CFE0F00617EB6 /* StrongForward.h in Headers */,
 				145722861437E140005FDE26 /* StrongInlines.h in Headers */,
 				BCDE3AB80E6C82F5001453A7 /* Structure.h in Headers */,
 				7986943B1F8C0ACC009232AE /* StructureCache.h in Headers */,

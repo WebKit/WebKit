@@ -20,6 +20,7 @@
 #include "config.h"
 #include "SVGVKernElement.h"
 
+#include "ElementInlines.h"
 #include "SVGFontElement.h"
 #include "SVGFontFaceElement.h"
 #include "SVGNames.h"

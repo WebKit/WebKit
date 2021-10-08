@@ -30,6 +30,7 @@
 #if ENABLE(VIDEO)
 
 #include "ContentSecurityPolicy.h"
+#include "ElementInlines.h"
 #include "Event.h"
 #include "EventNames.h"
 #include "HTMLMediaElement.h"

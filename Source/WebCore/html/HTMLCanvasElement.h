@@ -29,6 +29,7 @@
 
 #include "ActiveDOMObject.h"
 #include "CanvasBase.h"
+#include "Document.h"
 #include "FloatRect.h"
 #include "HTMLElement.h"
 #include <memory>

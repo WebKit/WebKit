@@ -73,6 +73,7 @@
 #include "RenderView.h"
 #include "RuntimeApplicationChecks.h"
 #include "SVGClipPathElement.h"
+#include "SVGElementTypeHelpers.h"
 #include "ScrollAnimator.h"
 #include "ScrollbarTheme.h"
 #include "Settings.h"

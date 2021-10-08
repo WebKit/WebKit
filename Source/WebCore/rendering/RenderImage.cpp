@@ -55,6 +55,7 @@
 #include "RenderTheme.h"
 #include "RenderView.h"
 #include "RuntimeEnabledFeatures.h"
+#include "SVGElementTypeHelpers.h"
 #include "SVGImage.h"
 #include "Settings.h"
 #include <wtf/IsoMallocInlines.h>

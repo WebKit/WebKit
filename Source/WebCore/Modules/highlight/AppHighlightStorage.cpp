@@ -34,6 +34,7 @@
 #include "Document.h"
 #include "DocumentMarkerController.h"
 #include "Editor.h"
+#include "ElementInlines.h"
 #include "HTMLBodyElement.h"
 #include "HighlightRegister.h"
 #include "Node.h"

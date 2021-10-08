@@ -32,6 +32,7 @@
 #include "RenderInline.h"
 #include "RenderSVGResourceSolidColor.h"
 #include "RenderView.h"
+#include "SVGInlineTextBoxInlines.h"
 #include "SVGRenderingContext.h"
 #include "SVGResourcesCache.h"
 #include "SVGRootInlineBox.h"

@@ -24,6 +24,7 @@
 #include "HTMLBaseElement.h"
 
 #include "Document.h"
+#include "ElementInlines.h"
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
 #include "TextResourceDecoder.h"

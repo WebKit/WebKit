@@ -31,6 +31,7 @@
 #include "DOMURL.h"
 #include "Document.h"
 #include "Editor.h"
+#include "ElementInlines.h"
 #include "File.h"
 #include "Frame.h"
 #include "HTMLImageElement.h"

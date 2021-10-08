@@ -24,6 +24,7 @@
 #include "HTMLScriptElement.h"
 
 #include "Document.h"
+#include "ElementInlines.h"
 #include "Event.h"
 #include "EventNames.h"
 #include "HTMLNames.h"

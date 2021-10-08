@@ -29,11 +29,13 @@
 
 #if ENABLE(MATHML)
 
+#include "ElementInlines.h"
 #include "HTMLHtmlElement.h"
 #include "MathMLMathElement.h"
 #include "MathMLNames.h"
 #include "MathMLSelectElement.h"
 #include "RenderMathMLBlock.h"
+#include "SVGElementTypeHelpers.h"
 #include "SVGSVGElement.h"
 #include <wtf/IsoMallocInlines.h>
 

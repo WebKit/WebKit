@@ -28,6 +28,7 @@
 
 #if ENABLE(MATHML)
 
+#include "ElementInlines.h"
 #include "Event.h"
 #include "EventNames.h"
 #include "HTMLElement.h"

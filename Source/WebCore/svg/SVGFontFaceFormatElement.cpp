@@ -20,6 +20,7 @@
 #include "config.h"
 #include "SVGFontFaceFormatElement.h"
 
+#include "SVGElementTypeHelpers.h"
 #include "SVGFontFaceElement.h"
 #include "SVGNames.h"
 #include <wtf/IsoMallocInlines.h>

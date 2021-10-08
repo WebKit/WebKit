@@ -26,6 +26,7 @@
 #pragma once
 
 #include "PlatformWheelEvent.h"
+#include "ScrollExtents.h"
 #include "ScrollTypes.h"
 #include <wtf/Seconds.h>
 

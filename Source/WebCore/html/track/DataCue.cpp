@@ -30,6 +30,7 @@
 
 #include "DataCue.h"
 
+#include "Document.h"
 #include "Logging.h"
 #include "TextTrack.h"
 #include "TextTrackCueList.h"

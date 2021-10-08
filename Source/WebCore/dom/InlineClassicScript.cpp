@@ -26,7 +26,8 @@
 #include "config.h"
 #include "InlineClassicScript.h"
 
-#include "Element.h"
+#include "ElementInlines.h"
+#include "HTMLNames.h"
 #include "ScriptElement.h"
 
 namespace WebCore {

@@ -24,11 +24,12 @@
 #include <WebCore/DOMException.h>
 #include <WebCore/DOMRect.h>
 #include <WebCore/Document.h>
-#include "GObjectEventListener.h"
+#include <WebCore/ElementInlines.h>
 #include <WebCore/HTMLNames.h>
 #include <WebCore/JSExecState.h>
 #include <WebCore/ScrollIntoViewOptions.h>
 #include <WebCore/StyledElement.h>
+#include "GObjectEventListener.h"
 #include "WebKitDOMAttrPrivate.h"
 #include "WebKitDOMCSSStyleDeclarationPrivate.h"
 #include "WebKitDOMClientRectListPrivate.h"

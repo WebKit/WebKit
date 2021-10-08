@@ -26,6 +26,7 @@
 #include "config.h"
 #include "HTMLSlotElement.h"
 
+#include "ElementInlines.h"
 #include "Event.h"
 #include "EventNames.h"
 #include "HTMLNames.h"

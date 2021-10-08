@@ -21,6 +21,7 @@
 #include "SVGFontFaceNameElement.h"
 
 #include "CSSFontFaceSrcValue.h"
+#include "ElementInlines.h"
 #include "SVGNames.h"
 #include <wtf/IsoMallocInlines.h>
 

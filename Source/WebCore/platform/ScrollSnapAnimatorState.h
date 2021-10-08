@@ -40,7 +40,9 @@ class TextStream;
 
 namespace WebCore {
 
+class Page;
 class ScrollingEffectsController;
+struct ScrollExtents;
 
 enum class ScrollSnapState {
     Snapping,

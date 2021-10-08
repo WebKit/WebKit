@@ -76,6 +76,8 @@ RemoteLegacyCDMSession::RemoteLegacyCDMSession(WeakPtr<RemoteLegacyCDMFactory> f
 {
 }
 
+RemoteLegacyCDMSession::~RemoteLegacyCDMSession() = default;
+
 RefPtr<Uint8Array> RemoteLegacyCDMSession::generateKeyRequest(const String& mimeType, Uint8Array* initData, String& destinationURL, unsigned short& errorCode, uint32_t& systemCode)
 {
     if (!m_factory || !initData)

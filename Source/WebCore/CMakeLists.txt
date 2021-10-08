@@ -260,7 +260,9 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/credentialmanagement/Navigator+Credentials.idl
 
     Modules/encryptedmedia/MediaKeyEncryptionScheme.idl
+    Modules/encryptedmedia/MediaKeyMessageEventInit.idl
     Modules/encryptedmedia/MediaKeyMessageEvent.idl
+    Modules/encryptedmedia/MediaKeyMessageType.idl
     Modules/encryptedmedia/MediaKeySession.idl
     Modules/encryptedmedia/MediaKeySessionType.idl
     Modules/encryptedmedia/MediaKeyStatusMap.idl

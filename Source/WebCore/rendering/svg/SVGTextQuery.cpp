@@ -24,8 +24,10 @@
 #include "LegacyInlineFlowBox.h"
 #include "RenderBlockFlow.h"
 #include "RenderInline.h"
+#include "RenderSVGInlineText.h"
 #include "RenderSVGText.h"
-#include "SVGInlineTextBox.h"
+#include "SVGElementTypeHelpers.h"
+#include "SVGInlineTextBoxInlines.h"
 #include "VisiblePosition.h"
 
 #include <wtf/MathExtras.h>

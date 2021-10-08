@@ -76,6 +76,7 @@
 #include "RenderTheme.h"
 #include "RenderTreeBuilder.h"
 #include "RenderView.h"
+#include "SVGElementTypeHelpers.h"
 #include "SVGImage.h"
 #include "SVGRenderSupport.h"
 #include "Settings.h"

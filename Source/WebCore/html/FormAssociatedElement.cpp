@@ -27,6 +27,7 @@
 
 #include "EditorClient.h"
 #include "ElementAncestorIterator.h"
+#include "ElementInlines.h"
 #include "FormController.h"
 #include "Frame.h"
 #include "HTMLFormControlElement.h"

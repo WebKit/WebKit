@@ -30,6 +30,7 @@
 #include "ComposedTreeIterator.h"
 #include "Document.h"
 #include "Editing.h"
+#include "ElementInlines.h"
 #include "FontCascade.h"
 #include "Frame.h"
 #include "HTMLBodyElement.h"

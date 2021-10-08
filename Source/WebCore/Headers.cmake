@@ -487,6 +487,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     dom/ElementContext.h
     dom/ElementData.h
     dom/ElementIdentifier.h
+    dom/ElementInlines.h
     dom/ElementIterator.h
     dom/ElementIteratorAssertions.h
     dom/ElementTraversal.h
@@ -498,6 +499,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     dom/EventLoop.h
     dom/EventModifierInit.h
     dom/EventNames.h
+    dom/EventOptions.h
     dom/EventQueue.h
     dom/EventTarget.h
     dom/EventTargetConcrete.h
@@ -660,6 +662,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     html/FormAssociatedElement.h
     html/FormNamedItem.h
     html/HTMLAnchorElement.h
+    html/HTMLAnchorElementInlines.h
     html/HTMLAreaElement.h
     html/HTMLAttachmentElement.h
     html/HTMLAudioElement.h

@@ -28,7 +28,6 @@
 #include "AffineTransform.h"
 #include "FloatRect.h"
 #include "RenderSVGModelObject.h"
-#include "SVGGraphicsElement.h"
 #include "SVGMarkerData.h"
 #include <memory>
 #include <wtf/Vector.h>
@@ -52,7 +51,7 @@ public:
     RenderSVGShape(SVGGraphicsElement&, RenderStyle&&);
     virtual ~RenderSVGShape();
 
-    SVGGraphicsElement& graphicsElement() const { return downcast<SVGGraphicsElement>(RenderSVGModelObject::element()); }
+    inline SVGGraphicsElement& graphicsElement() const;
 
     void setNeedsShapeUpdate() { m_needsShapeUpdate = true; }
     void setNeedsBoundariesUpdate() final { m_needsBoundariesUpdate = true; }

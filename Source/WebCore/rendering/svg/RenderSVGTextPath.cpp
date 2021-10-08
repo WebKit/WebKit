@@ -22,6 +22,8 @@
 
 #include "FloatQuad.h"
 #include "RenderBlock.h"
+#include "RenderSVGInlineInlines.h"
+#include "SVGElementTypeHelpers.h"
 #include "SVGGeometryElement.h"
 #include "SVGInlineTextBox.h"
 #include "SVGNames.h"

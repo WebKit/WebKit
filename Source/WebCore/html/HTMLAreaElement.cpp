@@ -23,6 +23,7 @@
 #include "HTMLAreaElement.h"
 
 #include "AffineTransform.h"
+#include "ElementInlines.h"
 #include "Frame.h"
 #include "HTMLImageElement.h"
 #include "HTMLMapElement.h"

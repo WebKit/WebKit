@@ -25,6 +25,7 @@
 
 #include "CachedImage.h"
 #include "DOMFormData.h"
+#include "ElementInlines.h"
 #include "HTMLFormElement.h"
 #include "HTMLImageLoader.h"
 #include "HTMLInputElement.h"

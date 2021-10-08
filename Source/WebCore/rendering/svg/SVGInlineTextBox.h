@@ -22,12 +22,12 @@
 #pragma once
 
 #include "LegacyInlineTextBox.h"
-#include "RenderSVGInlineText.h"
 #include "RenderSVGResource.h"
 #include "SVGTextFragment.h"
 
 namespace WebCore {
 
+class RenderSVGInlineText;
 class RenderSVGResource;
 class SVGRootInlineBox;
 
@@ -36,7 +36,7 @@ class SVGInlineTextBox final : public LegacyInlineTextBox {
 public:
     explicit SVGInlineTextBox(RenderSVGInlineText&);
 
-    RenderSVGInlineText& renderer() const { return downcast<RenderSVGInlineText>(LegacyInlineTextBox::renderer()); }
+    inline RenderSVGInlineText& renderer() const;
 
     float virtualLogicalHeight() const override { return m_logicalHeight; }
     void setLogicalHeight(float height) { m_logicalHeight = height; }
@@ -70,7 +70,7 @@ public:
     OptionSet<RenderSVGResourceMode> paintingResourceMode() const { return OptionSet<RenderSVGResourceMode>::fromRaw(m_paintingResourceMode); }
     void setPaintingResourceMode(OptionSet<RenderSVGResourceMode> mode) { m_paintingResourceMode = mode.toRaw(); }
 
-    SVGInlineTextBox* nextTextBox() const { return downcast<SVGInlineTextBox>(LegacyInlineTextBox::nextTextBox()); }
+    inline SVGInlineTextBox* nextTextBox() const;
     
 private:
     bool isSVGInlineTextBox() const override { return true; }

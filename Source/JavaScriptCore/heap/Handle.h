@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "HandleForward.h"
 #include "HandleTypes.h"
 
 namespace JSC {
@@ -36,10 +37,6 @@ namespace JSC {
     The base Handle class represents a temporary reference to a pointer whose
     lifetime is guaranteed by something else.
 */
-
-enum class ShouldStrongDestructorGrabLock : bool { No, Yes };
-
-template <class T> class Handle;
 
 // Creating a JSValue Handle is invalid
 template <> class Handle<JSValue>;

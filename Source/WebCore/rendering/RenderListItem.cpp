@@ -25,6 +25,7 @@
 #include "RenderListItem.h"
 
 #include "CSSFontSelector.h"
+#include "ElementInlines.h"
 #include "ElementTraversal.h"
 #include "HTMLNames.h"
 #include "HTMLOListElement.h"

@@ -29,6 +29,7 @@
 
 #include "CachedImage.h"
 #include "DocumentFragment.h"
+#include "ElementInlines.h"
 #include "Frame.h"
 #include "HTMLEmbedElement.h"
 #include "HTMLImageElement.h"
@@ -38,7 +39,7 @@
 #include "HTMLParserIdioms.h"
 #include "Pasteboard.h"
 #include "RenderImage.h"
-#include "SVGElement.h"
+#include "SVGElementTypeHelpers.h"
 #include "SVGImageElement.h"
 #include "SelectionData.h"
 #include "Settings.h"

@@ -48,7 +48,7 @@
 #include "HTMLUnknownElement.h"
 #include "JSCustomElementInterface.h"
 #include "NotImplemented.h"
-#include "SVGElement.h"
+#include "SVGElementInlines.h"
 #include "Text.h"
 
 namespace WebCore {

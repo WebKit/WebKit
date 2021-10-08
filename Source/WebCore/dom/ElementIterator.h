@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "ElementInlines.h"
 #include "ElementTraversal.h"
 
 #if ASSERT_ENABLED

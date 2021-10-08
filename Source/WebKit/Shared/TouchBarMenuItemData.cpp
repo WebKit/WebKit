@@ -32,6 +32,7 @@
 #include "Decoder.h"
 #include "Encoder.h"
 #include "WebCoreArgumentCoders.h"
+#include <WebCore/ElementInlines.h>
 #include <WebCore/HTMLMenuItemElement.h>
 #include <WebCore/HTMLNames.h>
 

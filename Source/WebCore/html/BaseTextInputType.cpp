@@ -25,6 +25,7 @@
 #include "config.h"
 #include "BaseTextInputType.h"
 
+#include "ElementInlines.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include <JavaScriptCore/RegularExpression.h>

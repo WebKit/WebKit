@@ -29,6 +29,7 @@
 #include "ClipRect.h"
 #include "ColorSerialization.h"
 #include "Document.h"
+#include "ElementInlines.h"
 #include "Frame.h"
 #include "FrameSelection.h"
 #include "FrameView.h"

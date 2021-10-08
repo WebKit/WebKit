@@ -25,6 +25,7 @@
 
 #include "GraphicsContext.h"
 #include "RenderView.h"
+#include "SVGElementTypeHelpers.h"
 #include "SVGSVGElement.h"
 #include <wtf/IsoMallocInlines.h>
 

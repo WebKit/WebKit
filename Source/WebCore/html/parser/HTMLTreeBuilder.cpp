@@ -41,6 +41,7 @@
 #include "JSCustomElementInterface.h"
 #include "LocalizedStrings.h"
 #include "NotImplemented.h"
+#include "SVGElementTypeHelpers.h"
 #include "SVGScriptElement.h"
 #include "XLinkNames.h"
 #include "XMLNSNames.h"

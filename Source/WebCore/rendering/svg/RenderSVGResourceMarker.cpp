@@ -23,6 +23,7 @@
 #include "RenderSVGResourceMarker.h"
 
 #include "GraphicsContext.h"
+#include "RenderSVGResourceMarkerInlines.h"
 #include "RenderSVGRoot.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/StackStats.h>

@@ -37,6 +37,7 @@
 #include "SMILTimeContainer.h"
 #include "SVGAngle.h"
 #include "SVGDocumentExtensions.h"
+#include "SVGElementTypeHelpers.h"
 #include "SVGLength.h"
 #include "SVGMatrix.h"
 #include "SVGNumber.h"

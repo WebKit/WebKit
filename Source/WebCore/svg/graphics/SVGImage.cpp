@@ -49,6 +49,7 @@
 #include "RenderSVGRoot.h"
 #include "RenderStyle.h"
 #include "RenderView.h"
+#include "SVGElementTypeHelpers.h"
 #include "SVGFEImageElement.h"
 #include "SVGForeignObjectElement.h"
 #include "SVGImageClients.h"

@@ -41,6 +41,7 @@
 #include "PlatformScreen.h"
 #include "PlatformTextTrack.h"
 #include "PlatformTimeRanges.h"
+#include <JavaScriptCore/ArrayBuffer.h>
 #include <wtf/Lock.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/CString.h>

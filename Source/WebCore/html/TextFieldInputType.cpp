@@ -37,6 +37,7 @@
 #include "ChromeClient.h"
 #include "DOMFormData.h"
 #include "Editor.h"
+#include "ElementInlines.h"
 #include "EventNames.h"
 #include "Frame.h"
 #include "FrameSelection.h"

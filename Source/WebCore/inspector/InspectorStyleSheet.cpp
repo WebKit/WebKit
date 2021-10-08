@@ -51,7 +51,7 @@
 #include "InspectorPageAgent.h"
 #include "MediaList.h"
 #include "Node.h"
-#include "SVGElement.h"
+#include "SVGElementTypeHelpers.h"
 #include "SVGStyleElement.h"
 #include "StyleProperties.h"
 #include "StyleResolver.h"

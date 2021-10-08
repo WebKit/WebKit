@@ -24,6 +24,7 @@
 #include "ActiveDOMObject.h"
 #include "CustomElementReactionQueue.h"
 #include "DOMIsoSubspaces.h"
+#include "ElementInlines.h"
 #include "HTMLNames.h"
 #include "IDLTypes.h"
 #include "JSDOMAttribute.h"

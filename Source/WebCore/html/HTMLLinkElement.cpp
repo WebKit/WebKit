@@ -36,6 +36,7 @@
 #include "DefaultResourceLoadPriority.h"
 #include "Document.h"
 #include "DocumentLoader.h"
+#include "ElementInlines.h"
 #include "Event.h"
 #include "EventNames.h"
 #include "EventSender.h"

@@ -28,6 +28,7 @@
 #include "ScrollAnimationKinetic.h"
 
 #include "PlatformWheelEvent.h"
+#include "ScrollExtents.h"
 
 /*
  * PerAxisData is a port of GtkKineticScrolling as of GTK+ 3.20,

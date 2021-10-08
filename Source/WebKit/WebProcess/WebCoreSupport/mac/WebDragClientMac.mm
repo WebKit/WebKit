@@ -37,7 +37,7 @@
 #import <WebCore/Document.h>
 #import <WebCore/DragController.h>
 #import <WebCore/Editor.h>
-#import <WebCore/Element.h>
+#import <WebCore/ElementInlines.h>
 #import <WebCore/Frame.h>
 #import <WebCore/FrameDestructionObserver.h>
 #import <WebCore/FrameView.h>

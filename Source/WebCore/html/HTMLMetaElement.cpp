@@ -26,6 +26,7 @@
 #include "Attribute.h"
 #include "Color.h"
 #include "Document.h"
+#include "ElementInlines.h"
 #include "Frame.h"
 #include "FrameView.h"
 #include "HTMLHeadElement.h"

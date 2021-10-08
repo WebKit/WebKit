@@ -28,6 +28,7 @@
 
 #if ENABLE(VIDEO)
 
+#include "ElementInlines.h"
 #include "HTMLSpanElement.h"
 #include "RubyElement.h"
 #include "RubyTextElement.h"

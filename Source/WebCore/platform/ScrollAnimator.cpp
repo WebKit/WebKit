@@ -36,6 +36,7 @@
 #include "KeyboardScrollingAnimator.h"
 #include "LayoutSize.h"
 #include "PlatformWheelEvent.h"
+#include "ScrollExtents.h"
 #include "ScrollableArea.h"
 #include "ScrollbarsController.h"
 #include "ScrollingEffectsController.h"

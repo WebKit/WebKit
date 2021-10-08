@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "FloatSize.h"
 #include "ScrollTypes.h"
 
 namespace WebCore {

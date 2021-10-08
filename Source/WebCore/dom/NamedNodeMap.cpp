@@ -26,6 +26,7 @@
 #include "NamedNodeMap.h"
 
 #include "Attr.h"
+#include "ElementInlines.h"
 #include "HTMLElement.h"
 #include <wtf/IsoMallocInlines.h>
 

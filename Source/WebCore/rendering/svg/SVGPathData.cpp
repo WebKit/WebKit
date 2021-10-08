@@ -24,6 +24,7 @@
 #include "RenderElement.h"
 #include "RenderStyle.h"
 #include "SVGCircleElement.h"
+#include "SVGElementTypeHelpers.h"
 #include "SVGEllipseElement.h"
 #include "SVGLengthContext.h"
 #include "SVGLineElement.h"

@@ -23,6 +23,7 @@
 
 #pragma once
 
+#include "Document.h"
 #include "HTMLElement.h"
 #include "HTMLNames.h"
 #include "SharedStringHash.h"
@@ -33,6 +34,8 @@ namespace WebCore {
 
 class PrivateClickMeasurement;
 class DOMTokenList;
+
+enum class ReferrerPolicy : uint8_t;
 
 // Link relation bitmask values.
 enum class Relation : uint8_t {
@@ -65,7 +68,7 @@ public:
 
     bool hasRel(Relation) const;
     
-    SharedStringHash visitedLinkHash() const;
+    inline SharedStringHash visitedLinkHash() const;
 
     WEBCORE_EXPORT DOMTokenList& relList();
 
@@ -128,14 +131,6 @@ private:
 
     std::unique_ptr<DOMTokenList> m_relList;
 };
-
-inline SharedStringHash HTMLAnchorElement::visitedLinkHash() const
-{
-    ASSERT(isLink());
-    if (!m_storedVisitedLinkHash)
-        m_storedVisitedLinkHash = computeVisitedLinkHash(document().baseURL(), attributeWithoutSynchronization(HTMLNames::hrefAttr));
-    return *m_storedVisitedLinkHash;
-}
 
 // Functions shared with the other anchor elements (i.e., SVG).
 

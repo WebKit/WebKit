@@ -25,6 +25,7 @@
 #include "FrameView.h"
 #include "GraphicsContext.h"
 #include "RenderSVGRoot.h"
+#include "SVGElementTypeHelpers.h"
 #include "SVGFitToViewBox.h"
 #include "SVGRenderingContext.h"
 #include "SVGResources.h"

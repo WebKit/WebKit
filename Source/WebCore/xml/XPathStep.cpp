@@ -30,6 +30,7 @@
 
 #include "Attr.h"
 #include "Document.h"
+#include "ElementInlines.h"
 #include "HTMLElement.h"
 #include "NodeTraversal.h"
 #include "XMLNSNames.h"

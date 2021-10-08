@@ -26,6 +26,7 @@
 #include "config.h"
 #include "HTMLSourceElement.h"
 
+#include "ElementInlines.h"
 #include "Event.h"
 #include "EventNames.h"
 #include "HTMLImageElement.h"

@@ -32,6 +32,7 @@
 #include "CSSSelector.h"
 #include "CSSSelectorList.h"
 #include "Document.h"
+#include "ElementInlines.h"
 #include "ElementTraversal.h"
 #include "Frame.h"
 #include "FrameSelection.h"
