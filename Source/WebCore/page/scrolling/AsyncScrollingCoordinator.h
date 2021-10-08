@@ -54,7 +54,7 @@ public:
 
     void applyPendingScrollUpdates();
 
-    WEBCORE_EXPORT void applyScrollUpdate(ScrollUpdate&&, ScrollType);
+    WEBCORE_EXPORT void applyScrollUpdate(ScrollUpdate&&, ScrollType = ScrollType::User);
 
 #if PLATFORM(COCOA)
     WEBCORE_EXPORT void handleWheelEventPhase(ScrollingNodeID, PlatformWheelEventPhase) final;
@@ -155,7 +155,8 @@ private:
     
     void applyScrollPositionUpdate(ScrollUpdate&&, ScrollType);
     void updateScrollPositionAfterAsyncScroll(ScrollingNodeID, const FloatPoint&, std::optional<FloatPoint> layoutViewportOrigin, ScrollingLayerPositionAction, ScrollType);
-    
+    void animatedScrollDidEndForNode(ScrollingNodeID);
+
     FrameView* frameViewForScrollingNode(ScrollingNodeID) const;
 
     std::unique_ptr<ScrollingStateTree> m_scrollingStateTree;

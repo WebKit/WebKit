@@ -1,5 +1,42 @@
 2021-10-07  Simon Fraser  <simon.fraser@apple.com>
 
+        Plumb "animated scroll did end" back from the scrolling tree
+        https://bugs.webkit.org/show_bug.cgi?id=231412
+
+        Reviewed by Tim Horton.
+
+        Before we can enable async animated scrolls, we have to get the "did end" notification back
+        from the scrolling thread/UI process in order to clear the ScrollAnimationStatus on
+        ScrollableArea.
+
+        The scroll animations are run by the ScrollingEffectsController owned by
+        ScrollingTreeScrollingNodeDelegateMac/ScrollingTreeScrollingNodeDelegateNicosia. Their
+        didStopAnimatedScroll() implementations call through the ScrollingTreeScrollingNde to the
+        ScrollingTree, which enqueues ScrollUpdate just as we do for scroll position changes.
+
+        ScrollUpdate is enhanced to contain an 'updateType' with a AnimatedScrollDidEnd value. When
+        this is received by AsyncScrollingCoordinator it clears the ScrollAnimationStatus on the
+        relevant FrameView/RenderLayerScrollableArea.
+
+        With UI-side compositing, AnimatedScrollDidEndForNode is an IPC message back to
+        RemoteScrollingCoordinator.
+
+        Not yet tested because async animated scrolls are not enabled.
+
+        * UIProcess/RemoteLayerTree/RemoteScrollingCoordinatorProxy.cpp:
+        (WebKit::RemoteScrollingCoordinatorProxy::scrollingTreeNodeDidStopAnimatedScroll):
+        * UIProcess/RemoteLayerTree/RemoteScrollingCoordinatorProxy.h:
+        * UIProcess/RemoteLayerTree/RemoteScrollingTree.cpp:
+        (WebKit::RemoteScrollingTree::scrollingTreeNodeDidStopAnimatedScroll):
+        * UIProcess/RemoteLayerTree/RemoteScrollingTree.h:
+        * WebProcess/WebPage/RemoteLayerTree/RemoteScrollingCoordinator.h:
+        * WebProcess/WebPage/RemoteLayerTree/RemoteScrollingCoordinator.messages.in:
+        * WebProcess/WebPage/RemoteLayerTree/RemoteScrollingCoordinator.mm:
+        (WebKit::RemoteScrollingCoordinator::scrollPositionChangedForNode):
+        (WebKit::RemoteScrollingCoordinator::animatedScrollDidEndForNode):
+
+2021-10-07  Simon Fraser  <simon.fraser@apple.com>
+
         Add some plumbing for running smooth scroll animations in the scrolling thread/UI process
         https://bugs.webkit.org/show_bug.cgi?id=231402
 

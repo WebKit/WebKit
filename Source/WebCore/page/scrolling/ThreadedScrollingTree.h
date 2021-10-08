@@ -68,6 +68,8 @@ protected:
     explicit ThreadedScrollingTree(AsyncScrollingCoordinator&);
 
     void scrollingTreeNodeDidScroll(ScrollingTreeScrollingNode&, ScrollingLayerPositionAction = ScrollingLayerPositionAction::Sync) override;
+    void scrollingTreeNodeDidStopAnimatedScroll(ScrollingTreeScrollingNode&) override;
+
 #if PLATFORM(MAC)
     void handleWheelEventPhase(ScrollingNodeID, PlatformWheelEventPhase) override;
     void setActiveScrollSnapIndices(ScrollingNodeID, std::optional<unsigned> horizontalIndex, std::optional<unsigned> verticalIndex) override;

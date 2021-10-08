@@ -69,8 +69,12 @@ private:
     void adjustScrollPositionToBoundsIfNecessary() final;
 
     FloatPoint scrollOffset() const final;
+
     void willStartScrollSnapAnimation() final;
     void didStopScrollSnapAnimation() final;
+
+    void didStopAnimatedScroll() final;
+
     float pageScaleFactor() const final;
     ScrollExtents scrollExtents() const final;
 

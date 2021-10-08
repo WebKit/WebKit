@@ -96,8 +96,12 @@ private:
 
     FloatPoint scrollOffset() const final;
     float pageScaleFactor() const final;
+
+    void didStopAnimatedScroll() final;
+
     void willStartScrollSnapAnimation() final;
     void didStopScrollSnapAnimation() final;
+
     ScrollExtents scrollExtents() const final;
 
     void releaseReferencesToScrollerImpsOnTheMainThread();

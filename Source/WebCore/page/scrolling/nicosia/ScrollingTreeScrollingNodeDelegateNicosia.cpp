@@ -161,6 +161,11 @@ void ScrollingTreeScrollingNodeDelegateNicosia::didStopScrollSnapAnimation()
     scrollingNode().setScrollSnapInProgress(false);
 }
 
+void ScrollingTreeScrollingNodeDelegateNicosia::didStopAnimatedScroll()
+{
+    scrollingNode().didStopAnimatedScroll();
+}
+
 float ScrollingTreeScrollingNodeDelegateNicosia::pageScaleFactor() const
 {
     // FIXME: What should this return for non-root frames, and overflow?

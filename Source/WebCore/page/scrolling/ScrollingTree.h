@@ -129,6 +129,7 @@ public:
     // Called after a scrolling tree node has handled a scroll and updated its layers.
     // Updates FrameView/RenderLayer scrolling state and GraphicsLayers.
     virtual void scrollingTreeNodeDidScroll(ScrollingTreeScrollingNode&, ScrollingLayerPositionAction = ScrollingLayerPositionAction::Sync) = 0;
+    virtual void scrollingTreeNodeDidStopAnimatedScroll(ScrollingTreeScrollingNode&) { }
 
     // Called for requested scroll position updates.
     virtual void scrollingTreeNodeRequestsScroll(ScrollingNodeID, const FloatPoint& /*scrollPosition*/, ScrollType, ScrollClamping) { }

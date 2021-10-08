@@ -60,6 +60,7 @@ public:
     // Inform the web process that the scroll position changed (called from the scrolling tree)
     void scrollingTreeNodeDidScroll(WebCore::ScrollingNodeID, const WebCore::FloatPoint& newScrollPosition, const std::optional<WebCore::FloatPoint>& layoutViewportOrigin, WebCore::ScrollingLayerPositionAction);
     void scrollingTreeNodeRequestsScroll(WebCore::ScrollingNodeID, const WebCore::FloatPoint& scrollPosition, WebCore::ScrollType, WebCore::ScrollClamping);
+    void scrollingTreeNodeDidStopAnimatedScroll(WebCore::ScrollingNodeID);
 
     WebCore::TrackingType eventTrackingTypeForPoint(const AtomString& eventName, WebCore::IntPoint) const;
 

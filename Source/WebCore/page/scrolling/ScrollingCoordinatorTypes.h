@@ -116,15 +116,21 @@ struct RequestedScrollData {
     }
 };
 
+enum ScrollUpdateType : uint8_t {
+    PositionUpdate,
+    AnimatedScrollDidEnd
+};
+
 struct ScrollUpdate {
     ScrollingNodeID nodeID { 0 };
     FloatPoint scrollPosition;
     std::optional<FloatPoint> layoutViewportOrigin;
+    ScrollUpdateType updateType { ScrollUpdateType::PositionUpdate };
     ScrollingLayerPositionAction updateLayerPositionAction { ScrollingLayerPositionAction::Sync };
     
     bool canMerge(const ScrollUpdate& other) const
     {
-        return nodeID == other.nodeID && updateLayerPositionAction == other.updateLayerPositionAction;
+        return nodeID == other.nodeID && updateLayerPositionAction == other.updateLayerPositionAction && updateType == other.updateType;
     }
     
     void merge(ScrollUpdate&& other)

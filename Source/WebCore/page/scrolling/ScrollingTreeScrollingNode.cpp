@@ -230,7 +230,7 @@ void ScrollingTreeScrollingNode::setScrollSnapInProgress(bool isSnapping)
 void ScrollingTreeScrollingNode::didStopAnimatedScroll()
 {
     LOG_WITH_STREAM(Scrolling, stream << "ScrollingTreeScrollingNode " << scrollingNodeID() << " didStopAnimatedScroll");
-    // FIXME: Propagate state back to the main thread.
+    scrollingTree().scrollingTreeNodeDidStopAnimatedScroll(*this);
 }
 
 void ScrollingTreeScrollingNode::handleScrollPositionRequest(const RequestedScrollData& requestedScrollData)

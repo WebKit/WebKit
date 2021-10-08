@@ -260,7 +260,7 @@ bool AsyncScrollingCoordinator::requestScrollPositionUpdate(ScrollableArea& scro
     bool isSnapshotting = m_page->isTakingSnapshotsForApplicationSuspension();
     bool inProgrammaticScroll = scrollableArea.currentScrollType() == ScrollType::Programmatic;
     if (inProgrammaticScroll || inBackForwardCache) {
-        auto scrollUpdate = ScrollUpdate { scrollingNodeID, scrollPosition, { }, ScrollingLayerPositionAction::Set };
+        auto scrollUpdate = ScrollUpdate { scrollingNodeID, scrollPosition, { }, ScrollUpdateType::PositionUpdate, ScrollingLayerPositionAction::Set };
         applyScrollUpdate(WTFMove(scrollUpdate), ScrollType::Programmatic);
     }
 
@@ -367,7 +367,34 @@ void AsyncScrollingCoordinator::applyScrollUpdate(ScrollUpdate&& update, ScrollT
 
 void AsyncScrollingCoordinator::applyScrollPositionUpdate(ScrollUpdate&& update, ScrollType scrollType)
 {
+    if (update.updateType == ScrollUpdateType::AnimatedScrollDidEnd) {
+        animatedScrollDidEndForNode(update.nodeID);
+        return;
+    }
+
     updateScrollPositionAfterAsyncScroll(update.nodeID, update.scrollPosition, update.layoutViewportOrigin, update.updateLayerPositionAction, scrollType);
+}
+
+void AsyncScrollingCoordinator::animatedScrollDidEndForNode(ScrollingNodeID scrollingNodeID)
+{
+    ASSERT(isMainThread());
+
+    if (!m_page)
+        return;
+
+    auto* frameView = frameViewForScrollingNode(scrollingNodeID);
+    if (!frameView)
+        return;
+
+    LOG_WITH_STREAM(Scrolling, stream << "AsyncScrollingCoordinator::animatedScrollDidEndForNode node " << scrollingNodeID);
+
+    if (scrollingNodeID == frameView->scrollingNodeID()) {
+        frameView->setScrollAnimationStatus(ScrollAnimationStatus::NotAnimating);
+        return;
+    }
+
+    if (auto* scrollableArea = frameView->scrollableAreaForScrollingNodeID(scrollingNodeID))
+        scrollableArea->setScrollAnimationStatus(ScrollAnimationStatus::NotAnimating);
 }
 
 void AsyncScrollingCoordinator::updateScrollPositionAfterAsyncScroll(ScrollingNodeID scrollingNodeID, const FloatPoint& scrollPosition, std::optional<FloatPoint> layoutViewportOrigin, ScrollingLayerPositionAction scrollingLayerPositionAction, ScrollType scrollType)

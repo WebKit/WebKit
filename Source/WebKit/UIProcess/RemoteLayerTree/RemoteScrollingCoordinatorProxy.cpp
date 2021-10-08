@@ -236,6 +236,11 @@ void RemoteScrollingCoordinatorProxy::scrollingTreeNodeDidScroll(ScrollingNodeID
     m_webPageProxy.send(Messages::RemoteScrollingCoordinator::ScrollPositionChangedForNode(scrolledNodeID, newScrollPosition, scrollingLayerPositionAction == ScrollingLayerPositionAction::Sync));
 }
 
+void RemoteScrollingCoordinatorProxy::scrollingTreeNodeDidStopAnimatedScroll(ScrollingNodeID scrolledNodeID)
+{
+    m_webPageProxy.send(Messages::RemoteScrollingCoordinator::AnimatedScrollDidEndForNode(scrolledNodeID));
+}
+
 void RemoteScrollingCoordinatorProxy::scrollingTreeNodeRequestsScroll(ScrollingNodeID scrolledNodeID, const FloatPoint& scrollPosition, ScrollType scrollType, ScrollClamping)
 {
     if (scrolledNodeID == rootScrollingNodeID() && m_requestedScrollInfo) {

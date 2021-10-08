@@ -94,6 +94,11 @@ void RemoteScrollingTree::scrollingTreeNodeDidScroll(ScrollingTreeScrollingNode&
     m_scrollingCoordinatorProxy.scrollingTreeNodeDidScroll(node.scrollingNodeID(), node.currentScrollPosition(), layoutViewportOrigin, scrollingLayerPositionAction);
 }
 
+void RemoteScrollingTree::scrollingTreeNodeDidStopAnimatedScroll(ScrollingTreeScrollingNode& node)
+{
+    m_scrollingCoordinatorProxy.scrollingTreeNodeDidStopAnimatedScroll(node.scrollingNodeID());
+}
+
 void RemoteScrollingTree::scrollingTreeNodeRequestsScroll(ScrollingNodeID nodeID, const FloatPoint& scrollPosition, ScrollType scrollType, ScrollClamping clamping)
 {
     m_scrollingCoordinatorProxy.scrollingTreeNodeRequestsScroll(nodeID, scrollPosition, scrollType, clamping);

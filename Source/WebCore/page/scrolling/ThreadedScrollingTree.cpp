@@ -207,10 +207,10 @@ void ThreadedScrollingTree::scrollingTreeNodeDidScroll(ScrollingTreeScrollingNod
     if (is<ScrollingTreeFrameScrollingNode>(node))
         layoutViewportOrigin = downcast<ScrollingTreeFrameScrollingNode>(node).layoutViewport().location();
 
-    auto scrollUpdate = ScrollUpdate { node.scrollingNodeID(), scrollPosition, layoutViewportOrigin, scrollingLayerPositionAction };
+    auto scrollUpdate = ScrollUpdate { node.scrollingNodeID(), scrollPosition, layoutViewportOrigin, ScrollUpdateType::PositionUpdate, scrollingLayerPositionAction };
 
     if (RunLoop::isMain()) {
-        m_scrollingCoordinator->applyScrollUpdate(WTFMove(scrollUpdate), ScrollType::User);
+        m_scrollingCoordinator->applyScrollUpdate(WTFMove(scrollUpdate));
         return;
     }
 
@@ -220,6 +220,28 @@ void ThreadedScrollingTree::scrollingTreeNodeDidScroll(ScrollingTreeScrollingNod
 
     auto deferrer = WheelEventTestMonitorCompletionDeferrer { wheelEventTestMonitor(), reinterpret_cast<WheelEventTestMonitor::ScrollableAreaIdentifier>(node.scrollingNodeID()), WheelEventTestMonitor::ScrollingThreadSyncNeeded };
     RunLoop::main().dispatch([strongThis = Ref { *this }, deferrer = WTFMove(deferrer)] {
+        if (auto* scrollingCoordinator = strongThis->m_scrollingCoordinator.get())
+            scrollingCoordinator->scrollingThreadAddedPendingUpdate();
+    });
+}
+
+void ThreadedScrollingTree::scrollingTreeNodeDidStopAnimatedScroll(ScrollingTreeScrollingNode& node)
+{
+    if (!m_scrollingCoordinator)
+        return;
+
+    LOG_WITH_STREAM(Scrolling, stream << "ThreadedScrollingTree::scrollingTreeNodeDidStopAnimatedScroll " << node.scrollingNodeID());
+
+    auto scrollUpdate = ScrollUpdate { node.scrollingNodeID(), { }, { }, ScrollUpdateType::AnimatedScrollDidEnd };
+
+    if (RunLoop::isMain()) {
+        m_scrollingCoordinator->applyScrollUpdate(WTFMove(scrollUpdate));
+        return;
+    }
+
+    addPendingScrollUpdate(WTFMove(scrollUpdate));
+
+    RunLoop::main().dispatch([strongThis = Ref { *this }] {
         if (auto* scrollingCoordinator = strongThis->m_scrollingCoordinator.get())
             scrollingCoordinator->scrollingThreadAddedPendingUpdate();
     });

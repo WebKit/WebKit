@@ -371,6 +371,11 @@ float ScrollingTreeScrollingNodeDelegateMac::pageScaleFactor() const
     return 1;
 }
 
+void ScrollingTreeScrollingNodeDelegateMac::didStopAnimatedScroll()
+{
+    scrollingNode().didStopAnimatedScroll();
+}
+
 void ScrollingTreeScrollingNodeDelegateMac::willStartScrollSnapAnimation()
 {
     scrollingNode().setScrollSnapInProgress(true);
