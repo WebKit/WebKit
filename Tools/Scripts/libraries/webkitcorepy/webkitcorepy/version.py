@@ -37,7 +37,7 @@ class Version(object):
     def from_iterable(val):
         result = Version()
         for i in range(len(val)):
-            result[i] = int(val[i])
+            result[i] = None if val[i] is None else int(val[i])
         return result
 
     @staticmethod
@@ -45,12 +45,12 @@ class Version(object):
         from webkitpy.common.version_name_map import VersionNameMap
         return VersionNameMap.map().from_name(name)[1]
 
-    def __init__(self, major=0, minor=0, tiny=0, micro=0, nano=0):
+    def __init__(self, major=0, minor=None, tiny=None, micro=None, nano=None):
         self.major = int(major)
-        self.minor = int(minor)
-        self.tiny = int(tiny)
-        self.micro = int(micro)
-        self.nano = int(nano)
+        self.minor = None if minor is None else int(minor)
+        self.tiny = None if tiny is None else int(tiny)
+        self.micro = None if micro is None else int(micro)
+        self.nano = None if nano is None else int(nano)
 
     def __len__(self):
         return 5
@@ -75,21 +75,22 @@ class Version(object):
         raise ValueError('Expected version key to be string or integer')
 
     def __setitem__(self, key, value):
+        value = None if value is None else int(value)
         if isinstance(key, int):
             if key == 0:
-                self.major = int(value)
+                self.major = value
                 return self.major
             elif key == 1:
-                self.minor = int(value)
+                self.minor = value
                 return self.minor
             elif key == 2:
-                self.tiny = int(value)
+                self.tiny = value
                 return self.tiny
             elif key == 3:
-                self.micro = int(value)
+                self.micro = value
                 return self.micro
             elif key == 4:
-                self.nano = int(value)
+                self.nano = value
                 return self.nano
             raise ValueError('Version key must be between 0 and 4')
         elif isinstance(key, str):
@@ -136,9 +137,9 @@ class Version(object):
         assert isinstance(version, Version)
         does_match = True
         for i in range(len(version)):
-            if self[i] != version[i]:
+            if (self[i] or 0) != (version[i] or 0):
                 does_match = False
-            if not does_match and self[i] != 0:
+            if not does_match and self[i] is not None:
                 return False
         return True
 
@@ -156,14 +157,14 @@ class Version(object):
         result = 0
         for index in range(len(self)):
             result *= 1000
-            result += self[index]
+            result += -1 if self[index] is None else self[index]
         return result
 
     def __cmp__(self, other):
         if other is None:
             return 1
         for i in range(len(self)):
-            diff = self[i] - other[i]
+            diff = (self[i] or 0) - (other[i] or 0)
             if diff:
                 return diff
         return 0

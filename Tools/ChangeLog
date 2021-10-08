@@ -1,3 +1,23 @@
+2021-10-08  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitcorepy] Not possible to autoinstall a package with micro version 0
+        https://bugs.webkit.org/show_bug.cgi?id=230540
+        <rdar://problem/83613371>
+
+        Reviewed by Michael Catanzaro.
+
+        * Scripts/libraries/webkitcorepy/setup.py: Bump version.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/__init__.py: Ditto.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/tests/version_unittest.py:
+        (VersionTestCase.test_int_constructor): Default values are 'None.'
+        * Scripts/libraries/webkitcorepy/webkitcorepy/version.py:
+        (Version.from_iterable):
+        (Version.__init__): Use 'None' as the default value instead of 0.
+        (Version.__setitem__): Support 'None' as a version value.
+        (Version.__contains__): Ditto.
+        (Version.__hash__): Ditto.
+        (Version.__cmp__): Ditto.
+
 2021-10-08  Andres Gonzalez  <andresg_22@apple.com>
 
         AX: AXMathRootRadicand should return an array of elements, not just the first
