@@ -582,15 +582,14 @@ void InlineContentBreaker::ContinuousContent::append(const InlineItem& inlineIte
         m_collapsibleLogicalWidth = { };
         return;
     }
+    ASSERT(*collapsibleWidth <= logicalWidth);
     if (*collapsibleWidth == logicalWidth) {
         // Fully collapsible run.
         m_collapsibleLogicalWidth += logicalWidth;
-        ASSERT(m_collapsibleLogicalWidth <= m_logicalWidth);
         return;
     }
     // Partially collapsible run.
     m_collapsibleLogicalWidth = *collapsibleWidth;
-    ASSERT(m_collapsibleLogicalWidth <= m_logicalWidth);
 }
 
 void InlineContentBreaker::ContinuousContent::reset()
