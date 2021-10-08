@@ -1,5 +1,49 @@
 2021-10-07  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r281699. rdar://problem/83953557
+
+    REGRESSION (r281516): imported/w3c/web-platform-tests/IndexedDB/serialize-sharedarraybuffer-throws.https.html is failing
+    https://bugs.webkit.org/show_bug.cgi?id=229501
+    <rdar://problem/82346152>
+    
+    Reviewed by Darin Adler.
+    
+    Tools:
+    
+    In case of a COOP process-swap, the old process gets a didFailProvisionalLoadWithErrorForFrame delegate call. We want to ignore
+    this call in WKTR's injected bundle since it causes the test to dump its output too eagerly, before the test has had a chance
+    to run in the new process.
+    
+    * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+    (WTR::InjectedBundlePage::didFailProvisionalLoadWithErrorForFrame):
+    (WTR::InjectedBundlePage::didCommitLoadForFrame):
+    * WebKitTestRunner/InjectedBundle/InjectedBundlePage.h:
+    
+    LayoutTests:
+    
+    Unskip tests now that they should no longer be flaky.
+    
+    * platform/ios/TestExpectations:
+    * platform/mac/TestExpectations:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@281699 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-08-27  Chris Dumez  <cdumez@apple.com>
+
+            REGRESSION (r281516): imported/w3c/web-platform-tests/IndexedDB/serialize-sharedarraybuffer-throws.https.html is failing
+            https://bugs.webkit.org/show_bug.cgi?id=229501
+            <rdar://problem/82346152>
+
+            Reviewed by Darin Adler.
+
+            Unskip tests now that they should no longer be flaky.
+
+            * platform/ios/TestExpectations:
+            * platform/mac/TestExpectations:
+
+2021-10-07  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r281480. rdar://problem/83957360
 
     PCM: Support ephemeral measurement with non-persistent WebCore::PrivateClickMeasurement
