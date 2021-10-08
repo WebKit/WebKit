@@ -1,5 +1,46 @@
 2021-10-07  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r283272. rdar://problem/83955254
+
+    Migrate _WKDownload tests from TCPServer to HTTPServer
+    https://bugs.webkit.org/show_bug.cgi?id=230980
+    <rdar://82100878>
+    
+    Patch by Alex Christensen <achristensen@webkit.org> on 2021-09-29
+    Reviewed by Chris Dumez.
+    
+    The former is very picky when it comes to numbers of TCP connections, and causes tests to time out when
+    the number of connections changes.  The latter is more forgiving and runs code on the main thread.
+    
+    * TestWebKitAPI/Tests/WebKitCocoa/Download.mm:
+    (TestWebKitAPI::respondSlowly):
+    (TestWebKitAPI::downloadAtRate):
+    (TEST):
+    * TestWebKitAPI/cocoa/HTTPServer.mm:
+    (TestWebKitAPI::Connection::send const):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@283272 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-09-29  Alex Christensen  <achristensen@webkit.org>
+
+            Migrate _WKDownload tests from TCPServer to HTTPServer
+            https://bugs.webkit.org/show_bug.cgi?id=230980
+            <rdar://82100878>
+
+            Reviewed by Chris Dumez.
+
+            The former is very picky when it comes to numbers of TCP connections, and causes tests to time out when
+            the number of connections changes.  The latter is more forgiving and runs code on the main thread.
+
+            * TestWebKitAPI/Tests/WebKitCocoa/Download.mm:
+            (TestWebKitAPI::respondSlowly):
+            (TestWebKitAPI::downloadAtRate):
+            (TEST):
+            * TestWebKitAPI/cocoa/HTTPServer.mm:
+            (TestWebKitAPI::Connection::send const):
+
+2021-10-07  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r283114. rdar://problem/83954017
 
     Make sure to reset presenting application pid in case of mediaserverd crash

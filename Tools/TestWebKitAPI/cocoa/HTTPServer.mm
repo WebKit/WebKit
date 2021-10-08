@@ -321,7 +321,6 @@ void Connection::send(Vector<uint8_t>&& message, CompletionHandler<void()>&& com
 void Connection::send(RetainPtr<dispatch_data_t>&& message, CompletionHandler<void()>&& completionHandler) const
 {
     nw_connection_send(m_connection.get(), message.get(), NW_CONNECTION_DEFAULT_MESSAGE_CONTEXT, true, makeBlockPtr([completionHandler = WTFMove(completionHandler)](nw_error_t error) mutable {
-        ASSERT(!error);
         if (completionHandler)
             completionHandler();
     }).get());

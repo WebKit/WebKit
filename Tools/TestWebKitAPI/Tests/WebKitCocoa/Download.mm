@@ -26,11 +26,8 @@
 #import "config.h"
 #import <WebKit/WKFoundation.h>
 
-#if PLATFORM(MAC) || PLATFORM(IOS)
-
 #import "HTTPServer.h"
 #import "PlatformUtilities.h"
-#import "TCPServer.h"
 #import "Test.h"
 #import "TestDownloadDelegate.h"
 #import "TestLegacyDownloadDelegate.h"
@@ -858,31 +855,20 @@ static RetainPtr<NSString> destination;
 
 namespace TestWebKitAPI {
 
-void respondSlowly(int socket, double kbps, bool& terminateServer)
+void respondSlowly(const Connection& connection, double kbps)
 {
-    EXPECT_FALSE(isMainThread());
-    char readBuffer[1000];
-    auto bytesRead = ::read(socket, readBuffer, sizeof(readBuffer));
-    EXPECT_GT(bytesRead, 0);
-    EXPECT_TRUE(static_cast<size_t>(bytesRead) < sizeof(readBuffer));
-    
-    const char* responseHeader =
-    "HTTP/1.1 200 OK\r\n"
-    "Content-Disposition: attachment; filename=\"filename.dat\"\r\n"
-    "Content-Length: 100000000\r\n\r\n";
-    auto bytesWritten = ::write(socket, responseHeader, strlen(responseHeader));
-    EXPECT_EQ(static_cast<size_t>(bytesWritten), strlen(responseHeader));
-    
+    EXPECT_TRUE(isMainThread());
+
     const double writesPerSecond = 100;
-    Vector<char> writeBuffer(static_cast<size_t>(1024 * kbps / writesPerSecond));
-    while (!terminateServer) {
-        auto before = MonotonicTime::now();
-        ::write(socket, writeBuffer.data(), writeBuffer.size());
+    Vector<uint8_t> writeBuffer(static_cast<size_t>(1024 * kbps / writesPerSecond));
+    auto before = MonotonicTime::now();
+    connection.send(WTFMove(writeBuffer), [=] {
         double writeDuration = (MonotonicTime::now() - before).seconds();
         double desiredSleep = 1.0 / writesPerSecond;
         if (writeDuration < desiredSleep)
             usleep(USEC_PER_SEC * (desiredSleep - writeDuration));
-    }
+        respondSlowly(connection, kbps);
+    });
 }
 
 static RetainPtr<DownloadMonitorTestDelegate> monitorDelegate()
@@ -910,9 +896,16 @@ enum class AppReturnsToForeground { No, Yes };
     
 void downloadAtRate(double desiredKbps, unsigned speedMultiplier, AppReturnsToForeground returnToForeground = AppReturnsToForeground::No)
 {
-    bool terminateServer = false;
-    TCPServer server([&](int socket) {
-        respondSlowly(socket, desiredKbps, terminateServer);
+    HTTPServer server([=](const Connection& connection) {
+        connection.receiveHTTPRequest([=](Vector<char>&&) {
+            const char* responseHeader =
+            "HTTP/1.1 200 OK\r\n"
+            "Content-Disposition: attachment; filename=\"filename.dat\"\r\n"
+            "Content-Length: 100000000\r\n\r\n";
+            connection.send(responseHeader, [=] {
+                respondSlowly(connection, desiredKbps);
+            });
+        });
     });
     
     auto webView = webViewWithDownloadMonitorSpeedMultiplier(speedMultiplier);
@@ -924,7 +917,6 @@ void downloadAtRate(double desiredKbps, unsigned speedMultiplier, AppReturnsToFo
     if (returnToForeground == AppReturnsToForeground::Yes)
         [[webView configuration].websiteDataStore _synthesizeAppIsBackground:NO];
     [monitorDelegate() waitForDidFail];
-    terminateServer = true;
     [[NSFileManager defaultManager] removeItemAtURL:[NSURL fileURLWithPath:destination.get() isDirectory:NO] error:nil];
 }
 
@@ -1126,64 +1118,56 @@ TEST(_WKDownload, ResumedDownloadCanHandleAuthenticationChallenge)
 {
     using namespace TestWebKitAPI;
 
-    std::atomic<bool> receivedFirstConnection { false };
-
-    TCPServer server([&](int socket) {
-        if (!receivedFirstConnection.exchange(true)) {
-            TCPServer::read(socket);
-
-            const char* responseHeader =
-            "HTTP/1.1 200 OK\r\n"
-            "ETag: test\r\n"
-            "Content-Length: 10000\r\n\r\n";
-            TCPServer::write(socket, responseHeader, strlen(responseHeader));
-
-            char data[5000];
-            memset(data, 0, 5000);
-            TCPServer::write(socket, data, 5000);
-
-            // Wait for the client to cancel the download before closing the connection.
-            Util::run(&isDone);
-        } else {
-            TCPServer::read(socket);
+    HTTPServer server([receivedFirstConnection = false] (Connection connection) mutable {
+        if (!std::exchange(receivedFirstConnection, true)) {
+            connection.receiveHTTPRequest([=](Vector<char>&&) {
+                const char* responseHeader =
+                "HTTP/1.1 200 OK\r\n"
+                "ETag: test\r\n"
+                "Content-Length: 10000\r\n\r\n";
+                connection.send(responseHeader, [=] {
+                    connection.send(Vector<uint8_t>(5000, 0));
+                });
+            });
+            return;
+        }
+        connection.receiveHTTPRequest([=](Vector<char>&&) {
             const char* challengeHeader =
             "HTTP/1.1 401 Unauthorized\r\n"
             "Date: Sat, 23 Mar 2019 06:29:01 GMT\r\n"
             "Content-Length: 0\r\n"
             "WWW-Authenticate: Basic realm=\"testrealm\"\r\n\r\n";
-            TCPServer::write(socket, challengeHeader, strlen(challengeHeader));
-
-            TCPServer::read(socket);
-
-            const char* responseHeader =
-            "HTTP/1.1 206 Partial Content\r\n"
-            "ETag: test\r\n"
-            "Content-Range: bytes 5000-9999/10000\r\n"
-            "Content-Length: 5000\r\n\r\n";
-            TCPServer::write(socket, responseHeader, strlen(responseHeader));
-
-            char data[5000];
-            memset(data, 1, 5000);
-            TCPServer::write(socket, data, 5000);
-        }
-    }, 2);
+            connection.send(challengeHeader, [=] {
+                connection.receiveHTTPRequest([=](Vector<char>&&) {
+                    const char* responseHeader =
+                    "HTTP/1.1 206 Partial Content\r\n"
+                    "ETag: test\r\n"
+                    "Content-Range: bytes 5000-9999/10000\r\n"
+                    "Content-Length: 5000\r\n\r\n";
+                    connection.send(responseHeader, [=] {
+                        connection.send(Vector<uint8_t>(5000, 1));
+                    });
+                });
+            });
+        });
+    });
 
     auto processPool = adoptNS([[WKProcessPool alloc] init]);
-    auto websiteDataStore = adoptNS([WKWebsiteDataStore defaultDataStore]);
+    auto websiteDataStore = [WKWebsiteDataStore defaultDataStore];
 
     auto delegate1 = adoptNS([[DownloadCancelingDelegate alloc] init]);
     [processPool _setDownloadDelegate:delegate1.get()];
 
     isDone = false;
     NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://127.0.0.1:%d/", server.port()]]];
-    [processPool _downloadURLRequest:request websiteDataStore:websiteDataStore.get() originatingWebView:nil];
+    [processPool _downloadURLRequest:request websiteDataStore:websiteDataStore originatingWebView:nil];
 
     Util::run(&isDone);
 
     isDone = false;
     auto delegate2 = adoptNS([[AuthenticationChallengeHandlingDelegate alloc] init]);
     [processPool _setDownloadDelegate:delegate2.get()];
-    [processPool _resumeDownloadFromData:[delegate1 resumeData].get() websiteDataStore:websiteDataStore.get() path:[delegate1 path].get() originatingWebView:nil];
+    [processPool _resumeDownloadFromData:[delegate1 resumeData].get() websiteDataStore:websiteDataStore path:[delegate1 path].get() originatingWebView:nil];
 
     Util::run(&isDone);
 }
@@ -2635,5 +2619,3 @@ TEST(WKDownload, SubframeOriginator)
 }
 
 }
-
-#endif // PLATFORM(MAC) || PLATFORM(IOS)
