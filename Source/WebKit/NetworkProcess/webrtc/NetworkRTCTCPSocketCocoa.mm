@@ -136,9 +136,8 @@ NetworkRTCTCPSocketCocoa::NetworkRTCTCPSocketCocoa(LibWebRTCSocketIdentifier ide
 
 void NetworkRTCTCPSocketCocoa::close()
 {
-    if (!m_nwConnection)
-        return;
-    nw_connection_cancel(m_nwConnection.get());
+    if (m_nwConnection)
+        nw_connection_cancel(m_nwConnection.get());
     m_rtcProvider.takeSocket(m_identifier);
 }
 

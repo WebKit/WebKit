@@ -1,5 +1,22 @@
 2021-10-08  Youenn Fablet  <youenn@apple.com>
 
+        Bind the number of WebRTC sockets opened per process
+        https://bugs.webkit.org/show_bug.cgi?id=231171
+
+        Reviewed by Alex Christensen.
+
+        Migrate from HashMap to StdMap so that we can keep the order based on socket identifiers.
+        Take benefit of the ordering so that, above a certain size, we get the oldest socket, close it and remove it from the map.
+        We set the maximum size to 256 sockets per process.
+        Fix a potential bug in NetworkRTCTCPSocketCocoa to ensure we remove the socket from the map even if the nw connection is not live.
+        Manually tested.
+
+        * NetworkProcess/webrtc/NetworkRTCProvider.cpp:
+        * NetworkProcess/webrtc/NetworkRTCProvider.h:
+        * NetworkProcess/webrtc/NetworkRTCTCPSocketCocoa.mm:
+
+2021-10-08  Youenn Fablet  <youenn@apple.com>
+
         Add support for processing push events without service worker clients
         https://bugs.webkit.org/show_bug.cgi?id=231285
 

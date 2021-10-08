@@ -127,9 +127,9 @@ void NetworkRTCProvider::close()
 
     callOnRTCNetworkThread([this]() {
         auto sockets = WTFMove(m_sockets);
-        for (auto& socket : m_sockets.values())
-            socket->close();
-        ASSERT(sockets.isEmpty());
+        for (auto& socket : m_sockets)
+            socket.second->close();
+        ASSERT(sockets.empty());
 #if PLATFORM(COCOA)
         m_attributedBundleIdentifiers.clear();
 #endif
@@ -140,7 +140,7 @@ void NetworkRTCProvider::createSocket(LibWebRTCSocketIdentifier identifier, std:
 {
     ASSERT(m_rtcNetworkThread.IsCurrent());
     if (!socket) {
-        RTC_RELEASE_LOG_ERROR("createSocket with %u sockets is unable to create a new socket", m_sockets.size());
+        RTC_RELEASE_LOG_ERROR("createSocket with %lu sockets is unable to create a new socket", m_sockets.size());
         connection->send(Messages::LibWebRTCNetwork::SignalClose(identifier, 1), 0);
         return;
     }
@@ -249,49 +249,62 @@ void NetworkRTCProvider::wrapNewTCPConnection(LibWebRTCSocketIdentifier identifi
 void NetworkRTCProvider::sendToSocket(LibWebRTCSocketIdentifier identifier, const IPC::DataReference& data, RTCNetwork::SocketAddress&& address, RTCPacketOptions&& options)
 {
     ASSERT(m_rtcNetworkThread.IsCurrent());
-    auto* socket = m_sockets.get(identifier);
-    if (!socket)
+    auto iterator = m_sockets.find(identifier);
+    if (iterator == m_sockets.end())
         return;
-
-    socket->sendTo(data.data(), data.size(), address.value, options.options);
+    iterator->second->sendTo(data.data(), data.size(), address.value, options.options);
 }
 
 void NetworkRTCProvider::closeSocket(LibWebRTCSocketIdentifier identifier)
 {
     ASSERT(m_rtcNetworkThread.IsCurrent());
-    auto* socket = m_sockets.get(identifier);
-    if (!socket)
+    auto iterator = m_sockets.find(identifier);
+    if (iterator == m_sockets.end())
         return;
-    socket->close();
+    iterator->second->close();
 }
 
 void NetworkRTCProvider::doSocketTaskOnRTCNetworkThread(LibWebRTCSocketIdentifier identifier, Function<void(Socket&)>&& callback)
 {
     callOnRTCNetworkThread([this, identifier, callback = WTFMove(callback)]() mutable {
-        if (auto* socket = m_sockets.get(identifier))
-            callback(*socket);
+        auto iterator = m_sockets.find(identifier);
+        if (iterator == m_sockets.end())
+            return;
+        callback(*iterator->second);
     });
 }
 
 void NetworkRTCProvider::setSocketOption(LibWebRTCSocketIdentifier identifier, int option, int value)
 {
     ASSERT(m_rtcNetworkThread.IsCurrent());
-    auto* socket = m_sockets.get(identifier);
-    if (!socket)
+    auto iterator = m_sockets.find(identifier);
+    if (iterator == m_sockets.end())
         return;
-    socket->setOption(option, value);
+    iterator->second->setOption(option, value);
 }
 
 void NetworkRTCProvider::addSocket(LibWebRTCSocketIdentifier identifier, std::unique_ptr<Socket>&& socket)
 {
     ASSERT(m_rtcNetworkThread.IsCurrent());
-    m_sockets.add(identifier, WTFMove(socket));
+    ASSERT(socket);
+    m_sockets.emplace(identifier, WTFMove(socket));
+    if (m_sockets.size() > maxSockets) {
+        auto socketIdentifierToClose = m_sockets.begin()->first;
+        closeSocket(socketIdentifierToClose);
+        ASSERT(m_sockets.find(socketIdentifierToClose) == m_sockets.end());
+    }
 }
 
 std::unique_ptr<NetworkRTCProvider::Socket> NetworkRTCProvider::takeSocket(LibWebRTCSocketIdentifier identifier)
 {
     ASSERT(m_rtcNetworkThread.IsCurrent());
-    return m_sockets.take(identifier);
+    auto iterator = m_sockets.find(identifier);
+    if (iterator == m_sockets.end())
+        return nullptr;
+
+    auto socket = WTFMove(iterator->second);
+    m_sockets.erase(iterator);
+    return socket;
 }
 
 void NetworkRTCProvider::newConnection(Socket& serverSocket, std::unique_ptr<rtc::AsyncPacketSocket>&& newSocket)
@@ -375,11 +388,11 @@ void NetworkRTCProvider::closeListeningSockets(Function<void()>&& completionHand
     callOnRTCNetworkThread([this, completionHandler = WTFMove(completionHandler)]() mutable {
         Vector<LibWebRTCSocketIdentifier> listeningSocketIdentifiers;
         for (auto& keyValue : m_sockets) {
-            if (keyValue.value->type() == Socket::Type::ServerTCP)
-                listeningSocketIdentifiers.append(keyValue.key);
+            if (keyValue.second->type() == Socket::Type::ServerTCP)
+                listeningSocketIdentifiers.append(keyValue.first);
         }
         for (auto id : listeningSocketIdentifiers)
-            m_sockets.get(id)->close();
+            m_sockets[id]->close();
 
         callOnMainRunLoop([provider = Ref { *this }, listeningSocketIdentifiers = WTFMove(listeningSocketIdentifiers), completionHandler = WTFMove(completionHandler)] {
             if (provider->m_connection) {

@@ -38,6 +38,7 @@
 #include <webrtc/p2p/base/basic_packet_socket_factory.h>
 #include <webrtc/rtc_base/third_party/sigslot/sigslot.h>
 #include <wtf/HashMap.h>
+#include <wtf/StdMap.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/text/WTFString.h>
@@ -62,6 +63,13 @@ class NetworkConnectionToWebProcess;
 class NetworkRTCResolver;
 class NetworkSession;
 struct RTCPacketOptions;
+
+struct SocketComparator {
+    bool operator()(const WebCore::LibWebRTCSocketIdentifier& a, const WebCore::LibWebRTCSocketIdentifier& b) const
+    {
+        return a.toUInt64() < b.toUInt64();
+    }
+};
 
 class NetworkRTCProvider : public rtc::MessageHandler, public IPC::Connection::ThreadMessageReceiverRefCounted {
 public:
@@ -142,8 +150,10 @@ private:
     const String& attributedBundleIdentifierFromPageIdentifier(WebPageProxyIdentifier);
 #endif
 
+    static constexpr size_t maxSockets { 256 };
+
     HashMap<LibWebRTCResolverIdentifier, std::unique_ptr<NetworkRTCResolver>> m_resolvers;
-    HashMap<WebCore::LibWebRTCSocketIdentifier, std::unique_ptr<Socket>> m_sockets;
+    StdMap<WebCore::LibWebRTCSocketIdentifier, std::unique_ptr<Socket>, SocketComparator> m_sockets;
     NetworkConnectionToWebProcess* m_connection;
     Ref<IPC::Connection> m_ipcConnection;
     bool m_isStarted { true };
