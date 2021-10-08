@@ -266,6 +266,7 @@
     readonly attribute DOMString supportedActions;
     readonly attribute DOMString mathPostscriptsDescription;
     readonly attribute DOMString mathPrescriptsDescription;
+    readonly attribute object mathRootRadicand;
 
     readonly attribute DOMString pathDescription;
 

@@ -1,15 +1,24 @@
-8
-3
-This tests ensures that both root index and radicand work in this case.
+This tests ensures that root index and radicand work as expected for square root and generic root elements.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
+PASS sqrt.role is 'AXRole: AXGroup'
+PASS sqrt.subrole is 'AXSubrole: AXMathSquareRoot'
+PASS sqrt.mathRootRadicand.length is 2
+PASS sqrt.mathRootRadicand[0].childAtIndex(0).stringValue is 'AXValue: x'
+PASS sqrt.mathRootRadicand[1].childAtIndex(0).stringValue is 'AXValue: y'
 PASS root.role is 'AXRole: AXGroup'
 PASS root.subrole is 'AXSubrole: AXMathRoot'
-PASS rootRadicand.childAtIndex(0).stringValue is 'AXValue: 8'
 PASS rootIndex.childAtIndex(0).stringValue is 'AXValue: 3'
+PASS root.mathRootRadicand.length is 1
+PASS root.mathRootRadicand[0].childAtIndex(0).stringValue is 'AXValue: 8'
 PASS successfullyParsed is true
 
 TEST COMPLETE
+x
+y
+
+8
+3
 

@@ -241,7 +241,7 @@ enum class AXPropertyName : uint16_t {
     MathLineThickness,
     MathPrescripts,
     MathPostscripts,
-    MathRadicandObject,
+    MathRadicand,
     MathRootIndexObject,
     MathUnderObject,
     MathOverObject,

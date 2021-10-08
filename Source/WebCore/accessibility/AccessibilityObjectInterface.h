@@ -1410,7 +1410,7 @@ public:
     virtual bool isMathMultiscriptObject(AccessibilityMathMultiscriptObjectType) const = 0;
 
     // Root components.
-    virtual AXCoreObject* mathRadicandObject() = 0;
+    virtual std::optional<AccessibilityChildrenVector> mathRadicand() = 0;
     virtual AXCoreObject* mathRootIndexObject() = 0;
 
     // Under over components.

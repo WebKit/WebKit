@@ -88,7 +88,8 @@ if (window.testRunner && window.accessibilityController) {
    var sqrt = accessibilityController.accessibleElementById("sqrt").childAtIndex(0);
    shouldBe("sqrt.role", "'AXRole: AXGroup'");
    shouldBe("sqrt.subrole", "'AXSubrole: AXMathSquareRoot'");
-   var sqrtRadicand = sqrt.uiElementAttributeValue("AXMathRootRadicand");
+   shouldBe("sqrt.mathRootRadicand.length", "1");
+   var sqrtRadicand = sqrt.mathRootRadicand[0];
    shouldBe("sqrtRadicand.subrole", "'AXSubrole: AXMathIdentifier'");
    shouldBe("sqrtRadicand.childAtIndex(0).stringValue", "'AXValue: a'");
    shouldBeTrue("sqrtRadicand.isEqual(accessibilityController.accessibleElementById('sqrtRadicand'))");
@@ -98,7 +99,8 @@ if (window.testRunner && window.accessibilityController) {
    shouldBe("root.role", "'AXRole: AXGroup'");
    shouldBe("root.subrole", "'AXSubrole: AXMathRoot'");
    var rootIndex = root.uiElementAttributeValue("AXMathRootIndex");
-   var rootRadicand = root.uiElementAttributeValue("AXMathRootRadicand");
+   shouldBe("root.mathRootRadicand.length", "1");
+   var rootRadicand = root.mathRootRadicand[0];
    shouldBeTrue("rootIndex.isEqual(accessibilityController.accessibleElementById('rootIndex'))");
    shouldBeTrue("rootRadicand.isEqual(accessibilityController.accessibleElementById('rootRadicand'))");
 

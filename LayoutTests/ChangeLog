@@ -1,3 +1,24 @@
+2021-10-08  Andres Gonzalez  <andresg_22@apple.com>
+
+        AX: AXMathRootRadicand should return an array of elements, not just the first
+        https://bugs.webkit.org/show_bug.cgi?id=230986
+        <rdar://83688829>
+
+        Reviewed by Chris Fleizach.
+
+        Instead of getting the root radicand as the first child of the root
+        element, use the readonly property mathRootRadicand.
+        Added a check for the length of the mathRootRadicand array.
+
+        * accessibility/mac/mathml-elements-expected.txt:
+        * accessibility/mac/mathml-elements.html:
+        * accessibility/mac/mathml-root-expected.txt:
+        * accessibility/mac/mathml-root.html:
+        Added the test case where the square root element has a radicand
+        consisting of more than one AX object.
+        
+        * platform/mac-wk1/TestExpectations:
+
 2021-10-08  Ayumi Kojima  <ayumi_kojima@apple.com>
 
         [ iOS 15 ] Rebaselining platform/ios/ios/fast/text/opticalFontWithWeight.html.

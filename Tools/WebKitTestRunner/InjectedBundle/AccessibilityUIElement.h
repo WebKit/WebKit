@@ -357,6 +357,7 @@ public:
     JSRetainPtr<JSStringRef> supportedActions() const;
     JSRetainPtr<JSStringRef> mathPostscriptsDescription() const;
     JSRetainPtr<JSStringRef> mathPrescriptsDescription() const;
+    JSValueRef mathRootRadicand() const;
 
     JSRetainPtr<JSStringRef> pathDescription() const;
     

@@ -1,29 +1,42 @@
 <!DOCTYPE HTML>
 <html>
+<head>
+<script src="../../resources/js-test.js"></script>
+</head>
 <body>
-<script src="../../resources/js-test-pre.js"></script>
 
-<math id="root"><mroot><mn>8</mn> <mn>3</mn></mroot></math>
+<math id="sqrt">
+    <msqrt><mi>x</mi><mi>y</mi></msqrt>
+</math>
 
-<div id="console"></div>
+<math id="root">
+    <mroot><mn>8</mn> <mn>3</mn></mroot>
+</math>
+
 <script>
+    description("This tests ensures that root index and radicand work as expected for square root and generic root elements.")
 
-description("This tests ensures that both root index and radicand work in this case.")
+    if (window.testRunner && window.accessibilityController) {
+        // Square root.
+        var sqrt = accessibilityController.accessibleElementById("sqrt").childAtIndex(0);
+        shouldBe("sqrt.role", "'AXRole: AXGroup'");
+        shouldBe("sqrt.subrole", "'AXSubrole: AXMathSquareRoot'");
 
-if (window.testRunner && window.accessibilityController) {
+        shouldBe("sqrt.mathRootRadicand.length", "2");
+        shouldBe("sqrt.mathRootRadicand[0].childAtIndex(0).stringValue", "'AXValue: x'");
+        shouldBe("sqrt.mathRootRadicand[1].childAtIndex(0).stringValue", "'AXValue: y'");
 
-   // Generic root
-   var root = accessibilityController.accessibleElementById("root").childAtIndex(0);
-   shouldBe("root.role", "'AXRole: AXGroup'");
-   shouldBe("root.subrole", "'AXSubrole: AXMathRoot'");
-   var rootIndex = root.uiElementAttributeValue("AXMathRootIndex");
-   var rootRadicand = root.uiElementAttributeValue("AXMathRootRadicand");
-   shouldBe("rootRadicand.childAtIndex(0).stringValue", "'AXValue: 8'");
-   shouldBe("rootIndex.childAtIndex(0).stringValue", "'AXValue: 3'");
-}
+        // Generic root
+        var root = accessibilityController.accessibleElementById("root").childAtIndex(0);
+        shouldBe("root.role", "'AXRole: AXGroup'");
+        shouldBe("root.subrole", "'AXSubrole: AXMathRoot'");
 
+        var rootIndex = root.uiElementAttributeValue("AXMathRootIndex");
+        shouldBe("rootIndex.childAtIndex(0).stringValue", "'AXValue: 3'");
+
+        shouldBe("root.mathRootRadicand.length", "1");
+        shouldBe("root.mathRootRadicand[0].childAtIndex(0).stringValue", "'AXValue: 8'");
+    }
 </script>
-
-<script src="../../resources/js-test-post.js"></script>
 </body>
 </html>

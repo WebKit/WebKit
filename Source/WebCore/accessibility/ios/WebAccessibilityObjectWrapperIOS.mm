@@ -2911,12 +2911,13 @@ static RenderObject* rendererForView(WAKView* view)
     return self.axBackingObject->mathRootIndexObject() ? self.axBackingObject->mathRootIndexObject()->wrapper() : 0;
 }
 
-- (WebAccessibilityObjectWrapper *)accessibilityMathRadicandObject
+- (NSArray *)accessibilityMathRadicand
 {
     if (![self _prepareAccessibilityCall])
         return nil;
 
-    return self.axBackingObject->mathRadicandObject() ? self.axBackingObject->mathRadicandObject()->wrapper() : 0;
+    auto radicand = self.axBackingObject->mathRadicand();
+    return radicand ? convertToNSArray(*radicand) : nil;
 }
 
 - (WebAccessibilityObjectWrapper *)accessibilityMathNumeratorObject

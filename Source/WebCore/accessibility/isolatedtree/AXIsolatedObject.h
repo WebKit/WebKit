@@ -312,7 +312,7 @@ private:
     bool isMathTableCell() const override { return boolAttributeValue(AXPropertyName::IsMathTableCell); }
     bool isMathMultiscript() const override { return boolAttributeValue(AXPropertyName::IsMathMultiscript); }
     bool isMathToken() const override { return boolAttributeValue(AXPropertyName::IsMathToken); }
-    AXCoreObject* mathRadicandObject() override { return objectAttributeValue(AXPropertyName::MathRadicandObject); }
+    std::optional<AccessibilityChildrenVector> mathRadicand() override;
     AXCoreObject* mathRootIndexObject() override { return objectAttributeValue(AXPropertyName::MathRootIndexObject); }
     AXCoreObject* mathUnderObject() override { return objectAttributeValue(AXPropertyName::MathUnderObject); }
     AXCoreObject* mathOverObject() override { return objectAttributeValue(AXPropertyName::MathOverObject); }

@@ -365,7 +365,7 @@ void AXIsolatedObject::initializeAttributeData(AXCoreObject& object, bool isRoot
     setProperty(AXPropertyName::ClassList, combinedClassList);
 
     setProperty(AXPropertyName::ColorValue, object.colorValue());
-    
+
     if (bool isMathElement = object.isMathElement()) {
         setProperty(AXPropertyName::IsMathElement, isMathElement);
         setProperty(AXPropertyName::IsAnonymousMathOperator, object.isAnonymousMathOperator());
@@ -374,8 +374,6 @@ void AXIsolatedObject::initializeAttributeData(AXCoreObject& object, bool isRoot
         setProperty(AXPropertyName::IsMathSubscriptSuperscript, object.isMathSubscriptSuperscript());
         setProperty(AXPropertyName::IsMathRow, object.isMathRow());
         setProperty(AXPropertyName::IsMathUnderOver, object.isMathUnderOver());
-        setProperty(AXPropertyName::IsMathRoot, object.isMathRoot());
-        setProperty(AXPropertyName::IsMathSquareRoot, object.isMathSquareRoot());
         setProperty(AXPropertyName::IsMathText, object.isMathText());
         setProperty(AXPropertyName::IsMathNumber, object.isMathNumber());
         setProperty(AXPropertyName::IsMathOperator, object.isMathOperator());
@@ -390,8 +388,17 @@ void AXIsolatedObject::initializeAttributeData(AXCoreObject& object, bool isRoot
         setProperty(AXPropertyName::MathFencedOpenString, object.mathFencedOpenString().isolatedCopy());
         setProperty(AXPropertyName::MathFencedCloseString, object.mathFencedCloseString().isolatedCopy());
         setProperty(AXPropertyName::MathLineThickness, object.mathLineThickness());
-        setObjectProperty(AXPropertyName::MathRadicandObject, object.mathRadicandObject());
-        setObjectProperty(AXPropertyName::MathRootIndexObject, object.mathRootIndexObject());
+
+        bool isMathRoot = object.isMathRoot();
+        setProperty(AXPropertyName::IsMathRoot, isMathRoot);
+        setProperty(AXPropertyName::IsMathSquareRoot, object.isMathSquareRoot());
+        if (isMathRoot) {
+            if (auto radicand = object.mathRadicand())
+                setObjectVectorProperty(AXPropertyName::MathRadicand, *radicand);
+
+            setObjectProperty(AXPropertyName::MathRootIndexObject, object.mathRootIndexObject());
+        }
+
         setObjectProperty(AXPropertyName::MathUnderObject, object.mathUnderObject());
         setObjectProperty(AXPropertyName::MathOverObject, object.mathOverObject());
         setObjectProperty(AXPropertyName::MathNumeratorObject, object.mathNumeratorObject());
@@ -643,6 +650,16 @@ void AXIsolatedObject::mathPostscripts(AccessibilityMathMultiscriptPairs& pairs)
 {
     auto isolatedPairs = vectorAttributeValue<std::pair<AXID, AXID>>(AXPropertyName::MathPostscripts);
     insertMathPairs(isolatedPairs, pairs);
+}
+
+std::optional<AXCoreObject::AccessibilityChildrenVector> AXIsolatedObject::mathRadicand()
+{
+    if (m_propertyMap.contains(AXPropertyName::MathRadicand)) {
+        Vector<RefPtr<AXCoreObject>> radicand;
+        fillChildrenVectorForProperty(AXPropertyName::MathRadicand, radicand);
+        return { radicand };
+    }
+    return std::nullopt;
 }
 
 AXCoreObject* AXIsolatedObject::focusedUIElement() const

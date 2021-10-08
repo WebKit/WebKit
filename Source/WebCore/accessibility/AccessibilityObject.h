@@ -675,7 +675,7 @@ public:
     bool isMathMultiscriptObject(AccessibilityMathMultiscriptObjectType) const override { return false; }
 
     // Root components.
-    AXCoreObject* mathRadicandObject() override { return nullptr; }
+    std::optional<AccessibilityChildrenVector> mathRadicand() override { return std::nullopt; }
     AXCoreObject* mathRootIndexObject() override { return nullptr; }
 
     // Under over components.

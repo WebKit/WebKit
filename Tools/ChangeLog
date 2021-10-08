@@ -1,3 +1,19 @@
+2021-10-08  Andres Gonzalez  <andresg_22@apple.com>
+
+        AX: AXMathRootRadicand should return an array of elements, not just the first
+        https://bugs.webkit.org/show_bug.cgi?id=230986
+        <rdar://83688829>
+
+        Reviewed by Chris Fleizach.
+
+        Added AccessibilityUIElement::mathRootRadicand as a readonly property to
+        be used in LayoutTests.
+
+        * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.h:
+        * WebKitTestRunner/InjectedBundle/Bindings/AccessibilityUIElement.idl:
+        * WebKitTestRunner/InjectedBundle/mac/AccessibilityUIElementMac.mm:
+        (WTR::AccessibilityUIElement::mathRootRadicand const):
+
 2021-10-08  Antti Koivisto  <antti@apple.com>
 
         Make WTF::IteratorRange reversible
