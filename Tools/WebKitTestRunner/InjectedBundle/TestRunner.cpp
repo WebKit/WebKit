@@ -1076,6 +1076,11 @@ void TestRunner::setShouldAllowDeviceOrientationAndMotionAccess(bool value)
     postPageMessage("SetShouldAllowDeviceOrientationAndMotionAccess", value);
 }
 
+void TestRunner::terminateGPUProcess()
+{
+    postSynchronousPageMessage("TerminateGPUProcess");
+}
+
 void TestRunner::terminateNetworkProcess()
 {
     postSynchronousPageMessage("TerminateNetworkProcess");

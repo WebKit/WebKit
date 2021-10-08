@@ -147,6 +147,8 @@ PlatformLayer* SampleBufferDisplayLayer::rootLayer()
 void SampleBufferDisplayLayer::setDidFail(bool value)
 {
     m_didFail = value;
+    if (m_client && m_didFail)
+        m_client->sampleBufferDisplayLayerStatusDidFail();
 }
 
 void SampleBufferDisplayLayer::gpuProcessConnectionDidClose(GPUProcessConnection&)

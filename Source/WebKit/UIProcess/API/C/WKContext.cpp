@@ -35,6 +35,7 @@
 #include "APIURLRequest.h"
 #include "AuthenticationChallengeProxy.h"
 #include "DownloadProxy.h"
+#include "GPUProcessProxy.h"
 #include "LegacyGlobalSettings.h"
 #include "WKAPICast.h"
 #include "WKArray.h"
@@ -543,6 +544,14 @@ void WKContextSetMemoryCacheDisabled(WKContextRef contextRef, bool disabled)
 void WKContextSetFontAllowList(WKContextRef contextRef, WKArrayRef arrayRef)
 {
     WebKit::toImpl(contextRef)->setFontAllowList(WebKit::toImpl(arrayRef));
+}
+
+void WKContextTerminateGPUProcess(WKContextRef)
+{
+#if ENABLE(GPU_PROCESS)
+    if (auto* gpuProcess = GPUProcessProxy::singletonIfCreated())
+        gpuProcess->terminateForTesting();
+#endif
 }
 
 void WKContextTerminateServiceWorkers(WKContextRef context)

@@ -265,10 +265,10 @@ void MediaPlayerPrivateMediaStreamAVFObjC::enqueueVideoSample(MediaSample& sampl
     if (sample.videoRotation() != m_videoRotation || sample.videoMirrored() != m_videoMirrored) {
         m_videoRotation = sample.videoRotation();
         m_videoMirrored = sample.videoMirrored();
-        m_sampleBufferDisplayLayer->updateAffineTransform(videoTransformationMatrix(sample));
         m_shouldUpdateDisplayLayer = true;
     }
     if (m_shouldUpdateDisplayLayer) {
+        m_sampleBufferDisplayLayer->updateAffineTransform(videoTransformationMatrix(sample));
         m_sampleBufferDisplayLayer->updateBoundsAndPosition(m_sampleBufferDisplayLayer->rootLayer().bounds, m_videoRotation);
         m_shouldUpdateDisplayLayer = false;
     }

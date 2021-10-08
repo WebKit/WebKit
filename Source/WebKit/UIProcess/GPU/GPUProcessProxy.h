@@ -92,6 +92,8 @@ public:
 
     void updatePreferences();
 
+    void terminateForTesting();
+
 private:
     explicit GPUProcessProxy();
 

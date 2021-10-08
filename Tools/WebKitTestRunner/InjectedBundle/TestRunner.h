@@ -478,6 +478,7 @@ public:
     void setShouldDismissJavaScriptAlertsAsynchronously(bool);
     void abortModal();
 
+    void terminateGPUProcess();
     void terminateNetworkProcess();
     void terminateServiceWorkers();
     void setUseSeparateServiceWorkerProcess(bool);

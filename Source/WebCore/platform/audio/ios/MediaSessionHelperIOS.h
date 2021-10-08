@@ -42,7 +42,6 @@ public:
     virtual void applicationDidEnterBackground(SuspendedUnderLock) = 0;
     virtual void applicationWillBecomeInactive() = 0;
     virtual void applicationDidBecomeActive() = 0;
-    virtual void mediaServerConnectionDied() { };
 
     enum class HasAvailableTargets : bool { No, Yes };
     virtual void externalOutputDeviceAvailableDidChange(HasAvailableTargets) = 0;
@@ -95,7 +94,6 @@ public:
     void applicationDidEnterBackground(SuspendedUnderLock);
     void applicationWillBecomeInactive();
     void applicationDidBecomeActive();
-    void mediaServerConnectionDied();
 
 protected:
     void externalOutputDeviceAvailableDidChange(HasAvailableTargets);

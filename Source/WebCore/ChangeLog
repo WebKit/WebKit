@@ -1,5 +1,109 @@
 2021-10-07  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r283114. rdar://problem/83954017
+
+    Make sure to reset presenting application pid in case of mediaserverd crash
+    https://bugs.webkit.org/show_bug.cgi?id=230822
+    <rdar://83474184>
+    
+    Reviewed by Eric Carlson.
+    
+    Source/WebCore:
+    
+    Before the patch, we were asking MediaSessionHelper client to set the pid in case of mediaserverd crash.
+    Given GPUProcess is the only one receiving the notification now, only the GPUProcess client could do it,
+    which was not the case as MediaSessionManager in WebProcess was responsible to do so.
+    
+    Instead of relying on MediaSessionHelper client to do the setup, we now let MediaSessionHelper do it on its own.
+    Everything will happen in GPUProcess which should also be faster.
+    
+    We also make sure to reset the affine transform of m_sampleBufferDisplayLayer so that rotation is applied correctly
+    after mediaserverd crash.
+    
+    Manually tested by crashing mediaserverd.
+    Test: fast/mediastream/video-rotation-gpu-process-crash.html (covers affine transform change).
+    
+    * platform/audio/ios/MediaSessionHelperIOS.h:
+    * platform/audio/ios/MediaSessionHelperIOS.mm:
+    (MediaSessionHelperiOS::providePresentingApplicationPID):
+    (MediaSessionHelperiOS::mediaServerConnectionDied):
+    * platform/audio/ios/MediaSessionManagerIOS.h:
+    * platform/audio/ios/MediaSessionManagerIOS.mm:
+    * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.mm:
+    (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::enqueueVideoSample):
+    
+    Source/WebKit:
+    
+    Add API to crash GPUProcess from WebKitTestRunner.
+    
+    Make sure to forward to MediaPlayer the fact that the layer failed.
+    This was handled for GPUProcess crash but not for other cases like mediaserverd crashes.
+    
+    * UIProcess/API/C/WKContext.cpp:
+    (WKContextTerminateGPUProcess):
+    * UIProcess/API/C/WKContextPrivate.h:
+    * UIProcess/GPU/GPUProcessProxy.cpp:
+    (WebKit::GPUProcessProxy::terminateForTesting):
+    * UIProcess/GPU/GPUProcessProxy.h:
+    * WebProcess/GPU/webrtc/SampleBufferDisplayLayer.cpp:
+    (WebKit::SampleBufferDisplayLayer::setDidFail):
+    
+    Tools:
+    
+    Add test runner API to crash GPUProcess.
+    
+    * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+    * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+    (WTR::TestRunner::terminateGPUProcess):
+    * WebKitTestRunner/InjectedBundle/TestRunner.h:
+    * WebKitTestRunner/TestController.cpp:
+    (WTR::TestController::terminateGPUProcess):
+    * WebKitTestRunner/TestController.h:
+    * WebKitTestRunner/TestInvocation.cpp:
+    (WTR::TestInvocation::didReceiveSynchronousMessageFromInjectedBundle):
+    
+    LayoutTests:
+    
+    * fast/mediastream/video-rotation-gpu-process-crash-expected.txt: Added.
+    * fast/mediastream/video-rotation-gpu-process-crash.html: Added.
+    * platform/ios-simulator/fast/mediastream/video-rotation-gpu-process-crash-expected.png: Added.
+    * platform/mac/fast/mediastream/video-rotation-gpu-process-crash-expected.png: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@283114 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-09-27  Youenn Fablet  <youenn@apple.com>
+
+            Make sure to reset presenting application pid in case of mediaserverd crash
+            https://bugs.webkit.org/show_bug.cgi?id=230822
+            <rdar://83474184>
+
+            Reviewed by Eric Carlson.
+
+            Before the patch, we were asking MediaSessionHelper client to set the pid in case of mediaserverd crash.
+            Given GPUProcess is the only one receiving the notification now, only the GPUProcess client could do it,
+            which was not the case as MediaSessionManager in WebProcess was responsible to do so.
+
+            Instead of relying on MediaSessionHelper client to do the setup, we now let MediaSessionHelper do it on its own.
+            Everything will happen in GPUProcess which should also be faster.
+
+            We also make sure to reset the affine transform of m_sampleBufferDisplayLayer so that rotation is applied correctly
+            after mediaserverd crash.
+
+            Manually tested by crashing mediaserverd.
+            Test: fast/mediastream/video-rotation-gpu-process-crash.html (covers affine transform change).
+
+            * platform/audio/ios/MediaSessionHelperIOS.h:
+            * platform/audio/ios/MediaSessionHelperIOS.mm:
+            (MediaSessionHelperiOS::providePresentingApplicationPID):
+            (MediaSessionHelperiOS::mediaServerConnectionDied):
+            * platform/audio/ios/MediaSessionManagerIOS.h:
+            * platform/audio/ios/MediaSessionManagerIOS.mm:
+            * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.mm:
+            (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::enqueueVideoSample):
+
+2021-10-07  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r282117. rdar://problem/83954734
 
     Ensure ImageBuffers are destroyed on the main thread

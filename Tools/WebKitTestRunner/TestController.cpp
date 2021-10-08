@@ -2698,6 +2698,11 @@ void TestController::setIgnoresViewportScaleLimits(bool ignoresViewportScaleLimi
     WKPageSetIgnoresViewportScaleLimits(m_mainWebView->page(), ignoresViewportScaleLimits);
 }
 
+void TestController::terminateGPUProcess()
+{
+    WKContextTerminateGPUProcess(platformContext());
+}
+
 void TestController::terminateNetworkProcess()
 {
     WKWebsiteDataStoreTerminateNetworkProcess(websiteDataStore());
