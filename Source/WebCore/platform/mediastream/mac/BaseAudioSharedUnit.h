@@ -37,6 +37,7 @@
 namespace WebCore {
 
 class AudioStreamDescription;
+class CaptureDevice;
 class CoreAudioCaptureSource;
 class PlatformAudioData;
 
@@ -72,9 +73,11 @@ public:
     void clearClients();
 
     virtual bool hasAudioUnit() const = 0;
-    virtual void setCaptureDevice(String&&, uint32_t) = 0;
+    void setCaptureDevice(String&&, uint32_t);
 
     virtual CapabilityValueOrRange sampleRateCapacities() const = 0;
+
+    void devicesChanged(const Vector<CaptureDevice>&);
 
 protected:
     void forEachClient(const Function<void(CoreAudioCaptureSource&)>&) const;
@@ -86,10 +89,14 @@ protected:
     virtual void stopInternal() = 0;
     virtual OSStatus reconfigureAudioUnit() = 0;
     virtual void resetSampleRate();
+    virtual void captureDeviceChanged() = 0;
 
     void setSuspended(bool value) { m_suspended = value; }
 
     void audioSamplesAvailable(const MediaTime&, const PlatformAudioData&, const AudioStreamDescription&, size_t /*numberOfFrames*/);
+
+    const String& persistentID() const { return m_capturingDevice ? m_capturingDevice->first : emptyString(); }
+    uint32_t captureDeviceID() const { return m_capturingDevice ? m_capturingDevice->second : 0; }
 
 private:
     OSStatus startUnit();
@@ -101,6 +108,8 @@ private:
     bool m_needsReconfiguration { false };
 
     int32_t m_producingCount { 0 };
+
+    std::optional<std::pair<String, uint32_t>> m_capturingDevice;
 
     HashSet<CoreAudioCaptureSource*> m_clients;
     Vector<CoreAudioCaptureSource*> m_audioThreadClients WTF_GUARDED_BY_LOCK(m_audioThreadClientsLock);

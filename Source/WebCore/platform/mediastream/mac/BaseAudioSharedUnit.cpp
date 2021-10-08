@@ -128,13 +128,35 @@ void BaseAudioSharedUnit::prepareForNewCapture()
     if (!m_producingCount)
         return;
 
-    RELEASE_LOG_ERROR(WebRTC, "CoreAudioSharedUnit::prepareForNewCapture, notifying suspended sources of capture failure");
+    RELEASE_LOG_ERROR(WebRTC, "BaseAudioSharedUnit::prepareForNewCapture, notifying suspended sources of capture failure");
+    captureFailed();
+}
+
+void BaseAudioSharedUnit::setCaptureDevice(String&& persistentID, uint32_t captureDeviceID)
+{
+    bool hasChanged = this->persistentID() != persistentID || this->captureDeviceID() != captureDeviceID;
+    m_capturingDevice = { WTFMove(persistentID), captureDeviceID };
+
+    if (hasChanged)
+        captureDeviceChanged();
+}
+
+void BaseAudioSharedUnit::devicesChanged(const Vector<CaptureDevice>& devices)
+{
+    if (!m_producingCount)
+        return;
+
+    auto persistentID = this->persistentID();
+    if (WTF::anyOf(devices, [&persistentID] (auto& device) { return persistentID == device.persistentId(); }))
+        return;
+
+    RELEASE_LOG_ERROR(WebRTC, "BaseAudioSharedUnit::devicesChanged - failing capture, capturing device is missing");
     captureFailed();
 }
 
 void BaseAudioSharedUnit::captureFailed()
 {
-    RELEASE_LOG_ERROR(WebRTC, "CoreAudioSharedUnit::captureFailed - capture failed");
+    RELEASE_LOG_ERROR(WebRTC, "BaseAudioSharedUnit::captureFailed");
     forEachClient([](auto& client) {
         client.captureFailed();
     });

@@ -47,11 +47,11 @@ public:
     WEBCORE_EXPORT static MockAudioSharedUnit& singleton();
     MockAudioSharedUnit();
 
-    void setDeviceID(const String& deviceID) { m_deviceID = deviceID; }
+    void setDeviceID(const String& deviceID) { setCaptureDevice(String { deviceID }, 0); }
 
 private:
     bool hasAudioUnit() const final;
-    void setCaptureDevice(String&&, uint32_t) final;
+    void captureDeviceChanged() final;
     OSStatus reconfigureAudioUnit() final;
     void resetSampleRate() final;
 
@@ -90,7 +90,6 @@ private:
 
     Ref<WorkQueue> m_workQueue;
     unsigned m_channelCount { 2 };
-    String m_deviceID;
 };
 
 } // namespace WebCore

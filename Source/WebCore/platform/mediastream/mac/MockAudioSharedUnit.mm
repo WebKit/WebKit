@@ -108,7 +108,7 @@ MockAudioSharedUnit::MockAudioSharedUnit()
 
 void MockAudioSharedUnit::resetSampleRate()
 {
-    if (auto device = MockRealtimeMediaSourceCenter::mockDeviceWithPersistentID(m_deviceID))
+    if (auto device = MockRealtimeMediaSourceCenter::mockDeviceWithPersistentID(persistentID()))
         setSampleRate(WTF::get<MockMicrophoneProperties>(device->properties).defaultSampleRate);
 }
 
@@ -117,9 +117,8 @@ bool MockAudioSharedUnit::hasAudioUnit() const
     return m_hasAudioUnit;
 }
 
-void MockAudioSharedUnit::setCaptureDevice(String&& deviceID, uint32_t)
+void MockAudioSharedUnit::captureDeviceChanged()
 {
-    m_deviceID = WTFMove(deviceID);
     reconfigureAudioUnit();
 }
 

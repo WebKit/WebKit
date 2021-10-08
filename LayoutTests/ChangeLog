@@ -1,3 +1,13 @@
+2021-10-08  Youenn Fablet  <youenn@apple.com>
+
+        Move deviceChange handling from CoreAudioSharedUnit to BaseAudioSharedUnit
+        https://bugs.webkit.org/show_bug.cgi?id=231284
+
+        Reviewed by Eric Carlson.
+
+        * fast/mediastream/microphone-change-while-capturing-expected.txt: Added.
+        * fast/mediastream/microphone-change-while-capturing.html: Added.
+
 2021-10-08  Ayumi Kojima  <ayumi_kojima@apple.com>
 
         [ iOS14 EWS ] http/tests/privateClickMeasurement/attribution-conversion-through-fetch-keepalive.html is a flaky crash.
