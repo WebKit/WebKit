@@ -1,3 +1,14 @@
+2021-10-08  Saam Barati  <sbarati@apple.com>
+
+        RegExpExec can't statically prove which of the two structures it will get in AI by just looking at the RegExp*
+        https://bugs.webkit.org/show_bug.cgi?id=231382
+        <rdar://83722151>
+
+        Reviewed by Mark Lam.
+
+        * stress/reg-exp-exec-cant-prove-which-structure-it-produces-in-ai.js: Added.
+        (foo):
+
 2021-10-07  Philip Chimento  <pchimento@igalia.com>
 
         [JSC] Temporal tweaks to pass more test262 tests

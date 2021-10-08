@@ -1,3 +1,19 @@
+2021-10-08  Saam Barati  <sbarati@apple.com>
+
+        RegExpExec can't statically prove which of the two structures it will get in AI by just looking at the RegExp*
+        https://bugs.webkit.org/show_bug.cgi?id=231382
+        <rdar://83722151>
+
+        Reviewed by Mark Lam.
+
+        Because of the RegExp.prototype.compile API, we don't know if the RegExp
+        produced by RegExpExec will have indices or not, because that bit of
+        information can be reset by the RegExp.prototype.compile API. So, we
+        conservatively say that it can produce either structure. 
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+
 2021-10-07  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         `highWaterMark` should be a readonly WebIDL attribute of queuing strategies
