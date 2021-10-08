@@ -61,6 +61,15 @@
 #import <wtf/text/Base64.h>
 
 #if ENABLE(WEB_AUTHN)
+
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/LocalAuthenticatorAdditions.h>
+#else
+static void updateQueryIfNecessary(NSMutableDictionary *)
+{
+}
+#endif
+
 static RetainPtr<NSData> produceClientDataJson(_WKWebAuthenticationType type, NSData *challenge, NSString *origin)
 {
     auto dictionary = adoptNS([[NSMutableDictionary alloc] init]);
@@ -203,16 +212,19 @@ static _WKWebAuthenticationType wkWebAuthenticationType(WebCore::ClientDataType 
 #if ENABLE(WEB_AUTHN)
 static RetainPtr<NSArray> getAllLocalAuthenticatorCredentialsImpl(NSString *accessGroup)
 {
-    NSDictionary *query = @{
+    auto query = adoptNS([[NSMutableDictionary alloc] init]);
+    [query setDictionary:@{
         (__bridge id)kSecClass: (__bridge id)kSecClassKey,
         (__bridge id)kSecAttrKeyClass: (__bridge id)kSecAttrKeyClassPrivate,
         (__bridge id)kSecAttrAccessGroup: accessGroup,
         (__bridge id)kSecReturnAttributes: @YES,
         (__bridge id)kSecMatchLimit: (__bridge id)kSecMatchLimitAll,
         (__bridge id)kSecUseDataProtectionKeychain: @YES
-    };
+    }];
+    updateQueryIfNecessary(query.get());
+
     CFTypeRef attributesArrayRef = nullptr;
-    OSStatus status = SecItemCopyMatching((__bridge CFDictionaryRef)query, &attributesArrayRef);
+    OSStatus status = SecItemCopyMatching((__bridge CFDictionaryRef)query.get(), &attributesArrayRef);
     if (status && status != errSecItemNotFound)
         return nullptr;
     auto retainAttributesArray = adoptCF(attributesArrayRef);

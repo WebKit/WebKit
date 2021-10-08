@@ -1,3 +1,17 @@
+2021-10-08  John Pascoe  <j_pascoe@apple.com>
+
+        Update getAllLocalAuthenticatorCredentials query according to internal needs
+        https://bugs.webkit.org/show_bug.cgi?id=231439
+        rdar://84032359
+
+        Reviewed by Tim Horton.
+
+        Covered by manual tests.
+
+        * UIProcess/API/Cocoa/_WKWebAuthenticationPanel.mm:
+        (updateQueryIfNecessary):
+        (getAllLocalAuthenticatorCredentialsImpl):
+
 2021-10-08  Basuke Suzuki  <basuke.suzuki@sony.com>
 
         Fix build break after r283796 when ENABLE_SERVICE_WORKER is off
