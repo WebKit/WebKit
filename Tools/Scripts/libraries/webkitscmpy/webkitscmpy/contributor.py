@@ -1,4 +1,4 @@
-# Copyright (C) 2020 Apple Inc. All rights reserved.
+# Copyright (C) 2020, 2021 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -47,6 +47,10 @@ class Contributor(object):
                 result['status'] = obj.status
             if obj.emails:
                 result['emails'] = [str(email) for email in obj.emails]
+            if obj.github:
+                result['github'] = obj.github
+            if obj.bitbucket:
+                result['bitbucket'] = obj.bitbucket
 
             return result
 
@@ -61,6 +65,13 @@ class Contributor(object):
                     continue
                 created = result.create(name, *contributor.get('emails', []))
                 created.status = contributor.get('status', created.status)
+                created.github = contributor.get('github', created.github)
+                created.bitbucket = contributor.get('bitbucket', created.bitbucket)
+
+                if created.github:
+                    result[created.github] = created
+                if created.bitbucket:
+                    result[created.bitbucket] = created
 
             for contributor in contents:
                 constructed = result.get(contributor.get('name'))
@@ -94,7 +105,18 @@ class Contributor(object):
         def add(self, contributor):
             if not isinstance(contributor, Contributor):
                 raise ValueError("'{}' is not a Contributor object".format(type(contributor)))
-            return self.create(contributor.name, *contributor.emails)
+
+            result = self.create(contributor.name, *contributor.emails)
+            result.status = contributor.status or result.status
+            result.github = contributor.github or result.github
+            result.bitbucket = contributor.bitbucket or result.bitbucket
+
+            if result.github:
+                self[result.github] = result
+            if result.bitbucket:
+                self[result.bitbucket] = result
+
+            return result
 
         def create(self, name=None, *emails):
             emails = [email for email in emails or []]
@@ -168,10 +190,12 @@ class Contributor(object):
             return contributors.create(author, email)
         return cls(author or email, emails=[email])
 
-    def __init__(self, name, emails=None, status=None):
+    def __init__(self, name, emails=None, status=None, github=None, bitbucket=None):
         self.name = string_utils.decode(name)
         self.emails = list(filter(string_utils.decode, emails or []))
         self.status = status
+        self.github = github
+        self.bitbucket = bitbucket
 
     @property
     def email(self):

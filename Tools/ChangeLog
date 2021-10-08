@@ -1,5 +1,32 @@
 2021-10-08  Jonathan Bedard  <jbedard@apple.com>
 
+        [contributors.json] Support GitHub usernames
+        https://bugs.webkit.org/show_bug.cgi?id=231400
+        <rdar://problem/84005266>
+
+        Reviewed by Dewei Zhu.
+
+        * Scripts/libraries/webkitscmpy/setup.py: Bump version.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/__init__.py: Ditto.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/contributor.py:
+        (Contributor.Encoder.default): Add GitHub and BitBucket username.
+        (Contributor.Mapping.load): Ditto.
+        (Contributor.Mapping.add): Ditto.
+        (Contributor.__init__): Ditto.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/contributor_unittest.py:
+        (TestContributor):
+        (TestContributor.test_github):
+        (TestContributor.test_bitbucket):
+        * Scripts/webkitpy/common/config/committers.py:
+        (Contributor.__init__): Add GitHub username.
+        (Contributor.as_dict): Ditto.
+        (Committer.__init__): Ditto.
+        (Reviewer.__init__): Ditto.
+        (Bot.__init__): Ditto.
+        (CommitterList.load_json): Ditto.
+
+2021-10-08  Jonathan Bedard  <jbedard@apple.com>
+
         [webkitcorepy] Not possible to autoinstall a package with micro version 0
         https://bugs.webkit.org/show_bug.cgi?id=230540
         <rdar://problem/83613371>

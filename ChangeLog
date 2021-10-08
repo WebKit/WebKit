@@ -1,3 +1,13 @@
+2021-10-08  Jonathan Bedard  <jbedard@apple.com>
+
+        [contributors.json] Support GitHub usernames
+        https://bugs.webkit.org/show_bug.cgi?id=231400
+        <rdar://problem/84005266>
+
+        Reviewed by Dewei Zhu.
+
+        * metadata/contributors.json: Add some GitHub usernames.
+
 2021-10-07  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Reenable -fvisibility=hidden

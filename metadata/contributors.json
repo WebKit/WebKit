@@ -229,6 +229,7 @@
       "emails" : [
          "alancoon@apple.com"
       ],
+      "github" : "alancoon",
       "name" : "Alan Coon",
       "nicks" : [
          "alancoon"
@@ -400,6 +401,7 @@
          "ap@webkit.org",
          "ap@apple.com"
       ],
+      "github" : "aproskuryakov",
       "name" : "Alexey Proskuryakov",
       "nicks" : [
          "ap"
@@ -3529,6 +3531,7 @@
          "jbedard@webkit.org"
       ],
       "expertise" : "webkitpy, Python, testing",
+      "github" : "JonWBedard",
       "name" : "Jonathan Bedard",
       "nicks" : [
          "jbedard",
@@ -4020,6 +4023,7 @@
       "emails" : [
          "kocsen_chung@apple.com"
       ],
+      "github" : "kocsenc",
       "name" : "Kocsen Chung",
       "status" : "committer"
    },
@@ -4527,6 +4531,7 @@
       "emails" : [
          "jlewis3@apple.com"
       ],
+      "github" : "rancored-mongoose",
       "name" : "Matt Lewis",
       "nicks" : [
          "mattlewis"
@@ -5601,6 +5606,7 @@
       "emails" : [
          "ryanhaddad@apple.com"
       ],
+      "github" : "ryanhaddad",
       "name" : "Ryan Haddad",
       "nicks" : [
          "ryanhaddad"
