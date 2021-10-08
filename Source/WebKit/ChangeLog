@@ -1,5 +1,36 @@
 2021-10-07  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r281661. rdar://problem/83955525
+
+    Manually release SharedBitmap if CGBitmapContextCreateWithData fails and doesn't do it
+    https://bugs.webkit.org/show_bug.cgi?id=229428
+    <rdar://problem/82264138>
+    
+    Reviewed by Darin Adler.
+    
+    * Shared/ShareableBitmap.h:
+    * Shared/cg/ShareableBitmapCG.cpp:
+    (WebKit::ShareableBitmap::createGraphicsContext):
+    (WebKit::ShareableBitmap::releaseBitmapContextData):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@281661 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-08-26  Cameron McCormack  <heycam@apple.com>
+
+            Manually release SharedBitmap if CGBitmapContextCreateWithData fails and doesn't do it
+            https://bugs.webkit.org/show_bug.cgi?id=229428
+            <rdar://problem/82264138>
+
+            Reviewed by Darin Adler.
+
+            * Shared/ShareableBitmap.h:
+            * Shared/cg/ShareableBitmapCG.cpp:
+            (WebKit::ShareableBitmap::createGraphicsContext):
+            (WebKit::ShareableBitmap::releaseBitmapContextData):
+
+2021-10-07  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r281480. rdar://problem/83957360
 
     PCM: Support ephemeral measurement with non-persistent WebCore::PrivateClickMeasurement
