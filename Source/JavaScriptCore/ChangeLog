@@ -1,3 +1,16 @@
+2021-10-07  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        `highWaterMark` should be a readonly WebIDL attribute of queuing strategies
+        https://bugs.webkit.org/show_bug.cgi?id=231355
+
+        Reviewed by Youenn Fablet.
+
+        Removes now unused @Object.@defineProperty private method.
+        In most cases, property descriptor merging is unnecessary and @putDirect should be used instead.
+
+        * runtime/ObjectConstructor.cpp:
+        (JSC::ObjectConstructor::finishCreation):
+
 2021-10-07  Ross Kirsling  <ross.kirsling@sony.com>
 
         Unreviewed, build fix for non-unified JSC.
