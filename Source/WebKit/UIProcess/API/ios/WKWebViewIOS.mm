@@ -2645,6 +2645,31 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
     return nil;
 #endif
 }
+
+- (void)_setEphemeralUIEventAttribution:(UIEventAttribution *)attribution
+{
+#if HAVE(UI_EVENT_ATTRIBUTION)
+    if (attribution) {
+        WebCore::PrivateClickMeasurement measurement(
+            WebCore::PrivateClickMeasurement::SourceID(attribution.sourceIdentifier),
+            WebCore::PrivateClickMeasurement::SourceSite(attribution.reportEndpoint),
+            WebCore::PrivateClickMeasurement::AttributionDestinationSite(attribution.destinationURL),
+            attribution.sourceDescription,
+            attribution.purchaser,
+            WallTime::now(),
+            WebCore::PrivateClickMeasurementAttributionEphemeral::Yes
+        );
+        _page->setPrivateClickMeasurement(WTFMove(measurement));
+    } else
+        _page->setPrivateClickMeasurement(std::nullopt);
+#endif
+}
+
+- (UIEventAttribution *)_ephemeralUIEventAttribution
+{
+    return self._uiEventAttribution;
+}
+
 #endif // !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
 
 - (CGRect)_contentVisibleRect
