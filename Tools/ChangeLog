@@ -4,6 +4,16 @@
         https://bugs.webkit.org/show_bug.cgi?id=231310
         <rdar://problem/83941327>
 
+        Unreviewed follow-up fix.
+
+        * Scripts/git-webkit: Fix imports.
+
+2021-10-07  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitscmpy] Library should own contributors.json loading
+        https://bugs.webkit.org/show_bug.cgi?id=231310
+        <rdar://problem/83941327>
+
         Reviewed by Dewei Zhu.
 
         * Scripts/git-webkit: Do not load contributors from webkitpy.
