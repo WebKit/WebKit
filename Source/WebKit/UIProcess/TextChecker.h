@@ -28,7 +28,6 @@
 #include "TextCheckerCompletion.h"
 #include <WebCore/EditorClient.h>
 #include <WebCore/TextCheckerClient.h>
-#include <WebKit/WKDeclarationSpecifiers.h>
 
 namespace WebKit {
 
@@ -42,7 +41,7 @@ public:
     static const TextCheckerState& state();
     static bool isContinuousSpellCheckingAllowed();
 
-    WK_EXPORT static bool setContinuousSpellCheckingEnabled(bool);
+    static bool setContinuousSpellCheckingEnabled(bool);
     static void setGrammarCheckingEnabled(bool);
     
     static void setTestingMode(bool);

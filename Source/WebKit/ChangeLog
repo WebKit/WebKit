@@ -1,3 +1,12 @@
+2021-10-08  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        REGRESSION(r283802): broke Apple ports
+        https://bugs.webkit.org/show_bug.cgi?id=231434
+
+        Unreviewed, revert changes to TextChecker.h that broke the iOS build.
+
+        * UIProcess/TextChecker.h:
+
 2021-10-08  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [GPU Process] Unique RenderingResourceIdentifiers Part 3: Uniquify in wakeUpAndApplyDisplayList
