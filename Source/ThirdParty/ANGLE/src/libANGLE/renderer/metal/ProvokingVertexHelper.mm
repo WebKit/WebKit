@@ -216,7 +216,9 @@ mtl::BufferRef  ProvokingVertexHelper::preconditionIndexBuffer(ContextMtl * cont
     uint newIndexCount = indexCountForPrimCount(indexBufferKey, primCount);
     size_t indexSize = gl::GetDrawElementsTypeSize(elementsType);
     mtl::BufferRef newBuffer;
-    if(mIndexBuffers.allocate(context, newIndexCount * indexSize,nullptr,&newBuffer) == angle::Result::Stop)
+    // To simplify draw loop code, we allocate space for the offset. This could be optimized to reduce
+    // memory, if needed.
+    if(mIndexBuffers.allocate(context, indexOffset + newIndexCount * indexSize, nullptr, &newBuffer) == angle::Result::Stop)
     {
         return nullptr;
     }
@@ -229,7 +231,8 @@ mtl::BufferRef  ProvokingVertexHelper::preconditionIndexBuffer(ContextMtl * cont
     encoder->setBuffer(indexBuffer, (uint32_t)indexOffset, 0);
     encoder->setBufferForWrite(newBuffer,(uint32_t) indexOffset, 1);
     encoder->setData(&indexCountEncoded, 2);
-    encoder->dispatch(MTLSizeMake(primCount, 1, 1), threadsPerThreadgroup);
+    encoder->setData(&primCount, 3);
+    encoder->dispatch(MTLSizeMake((primCount + threadsPerThreadgroup.width - 1)/ threadsPerThreadgroup.width, 1, 1), threadsPerThreadgroup);
     outIndexcount = newIndexCount;
     outPrimitiveMode = getNewPrimitiveMode(indexBufferKey);
     return newBuffer;
