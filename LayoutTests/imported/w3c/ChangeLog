@@ -1,5 +1,105 @@
 2021-10-08  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r283531. rdar://problem/83956741
+
+    Choose an appropriate color space when converting an SVG image into a NativeImage for canvas drawImage
+    https://bugs.webkit.org/show_bug.cgi?id=231062
+    <rdar://problem/83752451>
+    
+    Reviewed by Simon Fraser.
+    
+    LayoutTests/imported/w3c:
+    
+    Add a test for drawImage() with an SVG image that has sRGB and Display
+    P3 colors.
+    
+    Not adding tests for patterns pointing to SVG images for now, since
+    WebKit currently always taints the canvas in that case, or for
+    ImageBitmaps wrapping SVG images, since we always flatten them to sRGB
+    (and we don't track what content is inside the SVG to make a better
+    decision about what color space ImageBuffer to use).
+    
+    * web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-drawImage.https-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-drawImage-expected.txt.
+    * web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-drawImage.https.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-drawImage.html.
+    * web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3.js:
+    * web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/resources/Display-P3-0.7333-0-0.svg: Added.
+    * web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/resources/Display-P3-1-0-0.svg: Added.
+    * web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/resources/sRGB-BB0000.svg: Added.
+    * web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/resources/sRGB-FF0000.svg: Added.
+    
+    Source/WebCore:
+    
+    When GPUP canvas is enabled, drawImage() with an SVG image is handled
+    by drawing into a NativeImage and then sending that to the GPUP. We
+    need to choose a color space for the NativeImage's ImageBuffer that
+    matches the canvas.
+    
+    Once full SVG rendering is supported by the GPU process, we can undo
+    this code, as we'll no longer be using a NativeImage.
+    
+    Test: imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-drawImage.https.html
+    
+    * html/canvas/CanvasRenderingContext2DBase.cpp:
+    (WebCore::CanvasRenderingContext2DBase::drawImage):
+    (WebCore::drawImageToContext):
+    (WebCore::CanvasRenderingContext2DBase::fullCanvasCompositedDrawImage):
+    * platform/graphics/GraphicsContext.cpp:
+    (WebCore::GraphicsContext::drawImageForCanvas):
+    * platform/graphics/GraphicsContext.h:
+    * platform/graphics/Image.cpp:
+    (WebCore::Image::drawForCanvas):
+    * platform/graphics/Image.h:
+    * platform/graphics/MediaPlayer.h:
+    * svg/graphics/SVGImage.cpp:
+    (WebCore::SVGImage::drawForCanvasForContainer):
+    (WebCore::SVGImage::drawForContainer):
+    (WebCore::SVGImage::drawForContainerInternal):
+    (WebCore::SVGImage::nativeImage):
+    (WebCore::SVGImage::drawForCanvas):
+    (WebCore::SVGImage::draw):
+    (WebCore::SVGImage::drawInternal):
+    (WebCore::SVGImage::drawAsNativeImage):
+    * svg/graphics/SVGImage.h:
+    * svg/graphics/SVGImageForContainer.cpp:
+    (WebCore::SVGImageForContainer::drawForCanvas):
+    * svg/graphics/SVGImageForContainer.h:
+    
+    LayoutTests:
+    
+    * TestExpectations:
+    * platform/ios-14/TestExpectations:
+    * platform/ios/TestExpectations:
+    * platform/mac/TestExpectations:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@283531 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-10-04  Cameron McCormack  <heycam@apple.com>
+
+            Choose an appropriate color space when converting an SVG image into a NativeImage for canvas drawImage
+            https://bugs.webkit.org/show_bug.cgi?id=231062
+            <rdar://problem/83752451>
+
+            Reviewed by Simon Fraser.
+
+            Add a test for drawImage() with an SVG image that has sRGB and Display
+            P3 colors.
+
+            Not adding tests for patterns pointing to SVG images for now, since
+            WebKit currently always taints the canvas in that case, or for
+            ImageBitmaps wrapping SVG images, since we always flatten them to sRGB
+            (and we don't track what content is inside the SVG to make a better
+            decision about what color space ImageBuffer to use).
+
+            * web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-drawImage.https-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-drawImage-expected.txt.
+            * web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-drawImage.https.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-drawImage.html.
+            * web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3.js:
+            * web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/resources/Display-P3-0.7333-0-0.svg: Added.
+            * web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/resources/Display-P3-1-0-0.svg: Added.
+            * web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/resources/sRGB-BB0000.svg: Added.
+            * web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/resources/sRGB-FF0000.svg: Added.
+
+2021-10-08  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r283193. rdar://problem/83954782
 
     Preserve color space when structured cloning ImageBitmaps

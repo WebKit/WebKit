@@ -72,6 +72,7 @@ namespace WebCore {
 class AudioSourceProvider;
 class CDMInstance;
 class CachedResourceLoader;
+class DestinationColorSpace;
 class GraphicsContextGL;
 class GraphicsContext;
 class InbandTextTrackPrivate;
