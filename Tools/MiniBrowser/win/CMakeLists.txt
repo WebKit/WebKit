@@ -48,11 +48,19 @@ endif ()
 if (ENABLE_WEBKIT)
     list(APPEND MiniBrowser_PRIVATE_DEFINITIONS ENABLE_WEBKIT)
     list(APPEND MiniBrowser_SOURCES
+        Common2.cpp
         WebKitBrowserWindow.cpp
     )
     list(APPEND MiniBrowser_PRIVATE_LIBRARIES
         WebKit::WebKit
     )
+
+    add_library(MiniBrowserInjectedBundle SHARED
+        Common2.cpp
+        InjectedBundle.cpp
+    )
+    target_link_libraries(MiniBrowserInjectedBundle WebKit::WebKit)
+    target_include_directories(MiniBrowserInjectedBundle PRIVATE ${CMAKE_BINARY_DIR})
 endif ()
 
 WEBKIT_EXECUTABLE_DECLARE(MiniBrowser)

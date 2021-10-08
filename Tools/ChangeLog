@@ -1,3 +1,31 @@
+2021-10-08  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win][MiniBrowser][WK2] Implement Show Layer Tree to dump the GraphicsLayer tree
+        https://bugs.webkit.org/show_bug.cgi?id=231409
+
+        Reviewed by Don Olmstead.
+
+        MiniBrower has Show Layer Tree to dump the GraphicsLayer tree.
+        It's useful, but worked only in WebKit1. It should work for
+        WebKit2.
+
+        The layer tree are dumped to the debug console of WebProcess by
+        using OutputDebugString. You need to attach a debugger to it to
+        see the message. I'd like to recommend to install Child Process
+        Debugging Power Tool to your Visual Studio.
+
+        * MiniBrowser/win/CMakeLists.txt:
+        * MiniBrowser/win/Common2.cpp: Added.
+        (createString):
+        * MiniBrowser/win/Common2.h: Added.
+        * MiniBrowser/win/InjectedBundle.cpp: Added.
+        (didReceiveMessageToPage):
+        (WKBundleInitialize):
+        * MiniBrowser/win/WebKitBrowserWindow.cpp:
+        (injectedBundlePath):
+        (WebKitBrowserWindow::create):
+        (WebKitBrowserWindow::showLayerTree):
+
 2021-10-08  Jonathan Bedard  <jbedard@apple.com>
 
         [contributors.json] Support GitHub usernames
