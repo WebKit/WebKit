@@ -1,5 +1,65 @@
 2021-10-08  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r283193. rdar://problem/83954782
+
+    Preserve color space when structured cloning ImageBitmaps
+    https://bugs.webkit.org/show_bug.cgi?id=230429
+    <rdar://problem/83293533>
+    
+    Reviewed by Sam Weinig.
+    
+    LayoutTests/imported/w3c:
+    
+    The test added in https://bugs.webkit.org/show_bug.cgi?id=230429 was
+    buggy, in that by the time the "message" event handler ran, the
+    values for the various test configuration variables had changed. The
+    key bugfix here is checking for the right testID value in the message
+    event handler, but the test is rewritten more substantially to be a bit
+    clearer and less indented.
+    
+    * web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-drawImage-ImageBitmap-cloned-expected.txt:
+    * web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-drawImage-ImageBitmap-cloned.html:
+    
+    Source/WebCore:
+    
+    The logic for serializing the CGColorSpace is copied and adapted from
+    the ArgumentCoder<CGColorSpaceRef> specialization, which we cannot
+    easily re-use.
+    
+    * bindings/js/SerializedScriptValue.cpp:
+    (WebCore::CloneSerializer::dumpImageBitmap):
+    (WebCore::CloneSerializer::write):
+    (WebCore::CloneDeserializer::read):
+    (WebCore::CloneDeserializer::readImageBitmap):
+    
+    LayoutTests:
+    
+    * fast/storage/serialized-script-value.html: Bump the current version
+    number.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@283193 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-09-28  Cameron McCormack  <heycam@apple.com>
+
+            Preserve color space when structured cloning ImageBitmaps
+            https://bugs.webkit.org/show_bug.cgi?id=230429
+            <rdar://problem/83293533>
+
+            Reviewed by Sam Weinig.
+
+            The logic for serializing the CGColorSpace is copied and adapted from
+            the ArgumentCoder<CGColorSpaceRef> specialization, which we cannot
+            easily re-use.
+
+            * bindings/js/SerializedScriptValue.cpp:
+            (WebCore::CloneSerializer::dumpImageBitmap):
+            (WebCore::CloneSerializer::write):
+            (WebCore::CloneDeserializer::read):
+            (WebCore::CloneDeserializer::readImageBitmap):
+
+2021-10-08  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r282696. rdar://problem/83954782
 
     Preserve color space when creating ImageBuffers for ImageBitmaps
