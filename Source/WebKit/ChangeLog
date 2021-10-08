@@ -1,5 +1,60 @@
 2021-10-07  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r282754. rdar://problem/83953303
+
+    Fix race in RemoteRenderingBackend::allowsExitUnderMemoryPressure()
+    https://bugs.webkit.org/show_bug.cgi?id=229870
+    <rdar://82459484>
+    
+    Reviewed by Simon Fraser.
+    
+    RemoteRenderingBackend::allowsExitUnderMemoryPressure() gets called on the main thread while
+    RemoteResourceCache is always modified on a work queue. Introduce a std::atomic<bool> on
+    the RemoteResourceCache that RemoteRenderingBackend::allowsExitUnderMemoryPressure() can
+    safely query from the main thread.
+    
+    * GPUProcess/graphics/RemoteRenderingBackend.cpp:
+    (WebKit::RemoteRenderingBackend::updateRenderingResourceRequest):
+    (WebKit::RemoteRenderingBackend::allowsExitUnderMemoryPressure const):
+    * GPUProcess/graphics/RemoteResourceCache.cpp:
+    (WebKit::RemoteResourceCache::RemoteResourceCache):
+    (WebKit::RemoteResourceCache::cacheImageBuffer):
+    (WebKit::RemoteResourceCache::cacheNativeImage):
+    (WebKit::RemoteResourceCache::maybeRemoveResource):
+    (WebKit::RemoteResourceCache::updateHasActiveDrawables):
+    * GPUProcess/graphics/RemoteResourceCache.h:
+    (WebKit::RemoteResourceCache::hasActiveDrawables const):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@282754 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-09-20  Chris Dumez  <cdumez@apple.com>
+
+            Fix race in RemoteRenderingBackend::allowsExitUnderMemoryPressure()
+            https://bugs.webkit.org/show_bug.cgi?id=229870
+            <rdar://82459484>
+
+            Reviewed by Simon Fraser.
+
+            RemoteRenderingBackend::allowsExitUnderMemoryPressure() gets called on the main thread while
+            RemoteResourceCache is always modified on a work queue. Introduce a std::atomic<bool> on
+            the RemoteResourceCache that RemoteRenderingBackend::allowsExitUnderMemoryPressure() can
+            safely query from the main thread.
+
+            * GPUProcess/graphics/RemoteRenderingBackend.cpp:
+            (WebKit::RemoteRenderingBackend::updateRenderingResourceRequest):
+            (WebKit::RemoteRenderingBackend::allowsExitUnderMemoryPressure const):
+            * GPUProcess/graphics/RemoteResourceCache.cpp:
+            (WebKit::RemoteResourceCache::RemoteResourceCache):
+            (WebKit::RemoteResourceCache::cacheImageBuffer):
+            (WebKit::RemoteResourceCache::cacheNativeImage):
+            (WebKit::RemoteResourceCache::maybeRemoveResource):
+            (WebKit::RemoteResourceCache::updateHasActiveDrawables):
+            * GPUProcess/graphics/RemoteResourceCache.h:
+            (WebKit::RemoteResourceCache::hasActiveDrawables const):
+
+2021-10-07  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r281779. rdar://problem/83957360
 
     Migrate PrivateClickMeasurements from ResourceLoadStatistics database to new database

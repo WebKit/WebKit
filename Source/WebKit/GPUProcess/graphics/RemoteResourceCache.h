@@ -40,6 +40,7 @@ class RemoteRenderingBackend;
 class RemoteResourceCache {
 public:
     RemoteResourceCache() = default;
+    RemoteResourceCache(RemoteResourceCache&&);
 
     void cacheImageBuffer(Ref<WebCore::ImageBuffer>&&);
     WebCore::ImageBuffer* cachedImageBuffer(WebCore::RenderingResourceIdentifier);
@@ -52,6 +53,8 @@ public:
     const WebCore::ImageBufferHashMap& imageBuffers() const { return m_imageBuffers; }
     const WebCore::NativeImageHashMap& nativeImages() const { return m_nativeImages; }
     const WebCore::FontRenderingResourceMap& fonts() const { return m_fonts; }
+
+    bool hasActiveDrawables() const { return m_hasActiveDrawables; }
 
 private:
     // Because the cache/release messages are sent asynchronously from the display list items which
@@ -78,9 +81,12 @@ private:
     bool maybeRemoveResource(WebCore::RenderingResourceIdentifier, ResourceUseCountersMap::iterator&);
     void ensureResourceUseCounter(WebCore::RenderingResourceIdentifier);
 
+    void updateHasActiveDrawables();
+
     WebCore::ImageBufferHashMap m_imageBuffers;
     WebCore::NativeImageHashMap m_nativeImages;
     WebCore::FontRenderingResourceMap m_fonts;
+    std::atomic<bool> m_hasActiveDrawables { false };
 
     ResourceUseCountersMap m_resourceUseCounters;
 };

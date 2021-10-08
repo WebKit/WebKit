@@ -671,7 +671,7 @@ std::optional<DisplayList::ItemHandle> WARN_UNUSED_RETURN RemoteRenderingBackend
 
 void RemoteRenderingBackend::updateRenderingResourceRequest()
 {
-    bool hasActiveDrawables = !m_remoteResourceCache.imageBuffers().isEmpty() || !m_remoteResourceCache.nativeImages().isEmpty();
+    bool hasActiveDrawables = m_remoteResourceCache.hasActiveDrawables();
     bool hasActiveRequest = m_renderingResourcesRequest.isRequested();
     if (hasActiveDrawables && !hasActiveRequest)
         m_renderingResourcesRequest = ScopedRenderingResourcesRequest::acquire();
@@ -681,7 +681,8 @@ void RemoteRenderingBackend::updateRenderingResourceRequest()
 
 bool RemoteRenderingBackend::allowsExitUnderMemoryPressure() const
 {
-    return m_remoteResourceCache.imageBuffers().isEmpty() && m_remoteResourceCache.nativeImages().isEmpty();
+    ASSERT(isMainRunLoop());
+    return !m_remoteResourceCache.hasActiveDrawables();
 }
 
 RemoteRenderingBackendState RemoteRenderingBackend::lastKnownState() const
