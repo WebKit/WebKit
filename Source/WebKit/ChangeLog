@@ -1,3 +1,13 @@
+2021-10-07  Simon Fraser  <simon.fraser@apple.com>
+
+        Minor refactoring to use ScrollUpdate in more places
+        https://bugs.webkit.org/show_bug.cgi?id=231395
+
+        Reviewed by Myles C. Maxfield.
+
+        * WebProcess/WebPage/RemoteLayerTree/RemoteScrollingCoordinator.mm:
+        (WebKit::RemoteScrollingCoordinator::scrollPositionChangedForNode):
+
 2021-10-07  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [GPU Process] Unique RenderingResourceIdentifiers Part 1: Uniquify at entry points

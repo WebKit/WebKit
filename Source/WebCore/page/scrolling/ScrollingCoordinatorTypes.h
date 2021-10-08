@@ -102,6 +102,24 @@ enum class ViewportRectStability {
     ChangingObscuredInsetsInteractively // This implies Unstable.
 };
 
+struct ScrollUpdate {
+    ScrollingNodeID nodeID { 0 };
+    FloatPoint scrollPosition;
+    std::optional<FloatPoint> layoutViewportOrigin;
+    ScrollingLayerPositionAction updateLayerPositionAction { ScrollingLayerPositionAction::Sync };
+    
+    bool canMerge(const ScrollUpdate& other) const
+    {
+        return nodeID == other.nodeID && updateLayerPositionAction == other.updateLayerPositionAction;
+    }
+    
+    void merge(ScrollUpdate&& other)
+    {
+        scrollPosition = other.scrollPosition;
+        layoutViewportOrigin = other.layoutViewportOrigin;
+    }
+};
+
 } // namespace WebCore
 
 namespace WTF {

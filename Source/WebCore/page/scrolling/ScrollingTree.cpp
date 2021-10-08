@@ -614,7 +614,7 @@ void ScrollingTree::addPendingScrollUpdate(ScrollUpdate&& update)
     m_pendingScrollUpdates.append(WTFMove(update));
 }
 
-Vector<ScrollingTree::ScrollUpdate> ScrollingTree::takePendingScrollUpdates()
+Vector<ScrollUpdate> ScrollingTree::takePendingScrollUpdates()
 {
     Locker locker { m_pendingScrollUpdatesLock };
     return std::exchange(m_pendingScrollUpdates, { });

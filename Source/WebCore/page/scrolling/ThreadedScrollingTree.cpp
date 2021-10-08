@@ -207,14 +207,15 @@ void ThreadedScrollingTree::scrollingTreeNodeDidScroll(ScrollingTreeScrollingNod
     if (is<ScrollingTreeFrameScrollingNode>(node))
         layoutViewportOrigin = downcast<ScrollingTreeFrameScrollingNode>(node).layoutViewport().location();
 
+    auto scrollUpdate = ScrollUpdate { node.scrollingNodeID(), scrollPosition, layoutViewportOrigin, scrollingLayerPositionAction };
+
     if (RunLoop::isMain()) {
-        m_scrollingCoordinator->applyScrollUpdate(node.scrollingNodeID(), scrollPosition, layoutViewportOrigin, ScrollType::User, scrollingLayerPositionAction);
+        m_scrollingCoordinator->applyScrollUpdate(WTFMove(scrollUpdate), ScrollType::User);
         return;
     }
 
     LOG_WITH_STREAM(Scrolling, stream << "ThreadedScrollingTree::scrollingTreeNodeDidScroll " << node.scrollingNodeID() << " to " << scrollPosition << " triggering main thread rendering update");
 
-    auto scrollUpdate = ScrollUpdate { node.scrollingNodeID(), scrollPosition, layoutViewportOrigin, scrollingLayerPositionAction };
     addPendingScrollUpdate(WTFMove(scrollUpdate));
 
     auto deferrer = WheelEventTestMonitorCompletionDeferrer { wheelEventTestMonitor(), reinterpret_cast<WheelEventTestMonitor::ScrollableAreaIdentifier>(node.scrollingNodeID()), WheelEventTestMonitor::ScrollingThreadSyncNeeded };
