@@ -1,3 +1,57 @@
+2021-10-07  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r281463. rdar://problem/83955719
+
+    Pre-formatted content gets distorted when attempting to select content
+    https://bugs.webkit.org/show_bug.cgi?id=228655
+    <rdar://81288187>
+    
+    Reviewed by Simon Fraser.
+    
+    Source/WebCore:
+    
+    https://drafts.csswg.org/css-text/#overflow-wrap-property
+    
+    "This property specifies whether the UA may break at otherwise disallowed points within
+    a line to prevent overflow, when an otherwise-unbreakable string is too long to fit within the line box.
+    It only has an effect when white-space allows wrapping."
+    
+    (also see https://trac.webkit.org/changeset/10095/webkit where the wrapping behavior was introduced)
+    
+    Test: fast/text/no-wrap-in-pre-with-word-wrap.html
+    
+    * rendering/line/BreakingContext.h:
+    (WebCore::BreakingContext::handleText):
+    
+    LayoutTests:
+    
+    * fast/text/no-wrap-in-pre-with-word-wrap-expected.html: Added.
+    * fast/text/no-wrap-in-pre-with-word-wrap.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@281463 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-08-23  Alan Bujtas  <zalan@apple.com>
+
+            Pre-formatted content gets distorted when attempting to select content
+            https://bugs.webkit.org/show_bug.cgi?id=228655
+            <rdar://81288187>
+
+            Reviewed by Simon Fraser.
+
+            https://drafts.csswg.org/css-text/#overflow-wrap-property
+
+            "This property specifies whether the UA may break at otherwise disallowed points within
+            a line to prevent overflow, when an otherwise-unbreakable string is too long to fit within the line box.
+            It only has an effect when white-space allows wrapping."
+
+            (also see https://trac.webkit.org/changeset/10095/webkit where the wrapping behavior was introduced)
+
+            Test: fast/text/no-wrap-in-pre-with-word-wrap.html
+
+            * rendering/line/BreakingContext.h:
+            (WebCore::BreakingContext::handleText):
+
 2021-10-06  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r283444. rdar://problem/83960033

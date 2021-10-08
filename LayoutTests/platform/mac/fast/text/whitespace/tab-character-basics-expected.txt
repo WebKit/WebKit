@@ -1,8 +1,8 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x502
-  RenderBlock {HTML} at (0,0) size 800x502
-    RenderBody {BODY} at (8,8) size 646x486 [border: (3px solid #FF0000)]
+layer at (0,0) size 800x481
+  RenderBlock {HTML} at (0,0) size 800x481
+    RenderBody {BODY} at (8,8) size 646x465 [border: (3px solid #FF0000)]
       RenderBlock {P} at (3,19) size 640x21 [color=#0000FF]
         RenderText {#text} at (0,0) size 509x20
           text run at (0,0) width 509: "-- Following text and list are whitespace:NORMAL only"
@@ -41,22 +41,20 @@ layer at (0,0) size 800x502
           RenderListMarker at (-34,0) size 29x20: "3"
           RenderText {#text} at (0,0) size 87x20
             text run at (0,0) width 87: "ccc\x{9}X"
-      RenderBlock {P} at (3,309) size 640x63
+      RenderBlock {P} at (3,309) size 640x42
         RenderText {#text} at (0,0) size 490x20
           text run at (0,0) width 490: "012345678901234567890123456789012345678901234567890"
         RenderBR {BR} at (489,0) size 1x20
-        RenderText {#text} at (0,21) size 634x41
-          text run at (0,21) width 634: "X\x{9}\x{9}XX\x{9}\x{9}XXX\x{9}\x{9}XXXX\x{9}\x{9}XX"
-          text run at (0,42) width 29: "XXX"
-      RenderBlock {P} at (3,388) size 640x21 [color=#0000FF]
+        RenderText {#text} at (0,21) size 663x20
+          text run at (0,21) width 663: "X\x{9}\x{9}XX\x{9}\x{9}XXX\x{9}\x{9}XXXX\x{9}\x{9}XXXXX"
+      RenderBlock {P} at (3,367) size 640x21 [color=#0000FF]
         RenderText {#text} at (0,0) size 577x20
           text run at (0,0) width 577: "-- Following text mixes whitespace:NORMAL and whitespace:PRE"
-      RenderBlock {P} at (3,425) size 640x42
+      RenderBlock {P} at (3,404) size 640x42
         RenderText {#text} at (0,0) size 471x20
           text run at (0,0) width 471: "AAAA BBBB CCCC DDDD EEEE FFFF GGGG HHHH IIII JJJJ"
-        RenderInline {SPAN} at (0,0) size 615x41
-          RenderText {#text} at (470,0) size 615x41
-            text run at (470,0) width 145: "\x{9}\x{9}"
-            text run at (0,21) width 154: "\x{9}\x{9}"
-        RenderText {#text} at (153,21) size 40x20
-          text run at (153,21) width 40: "KKKK"
+        RenderInline {SPAN} at (0,0) size 299x20
+          RenderText {#text} at (470,0) size 299x20
+            text run at (470,0) width 299: "\x{9}\x{9}\x{9}\x{9}"
+        RenderText {#text} at (0,21) size 39x20
+          text run at (0,21) width 39: "KKKK"

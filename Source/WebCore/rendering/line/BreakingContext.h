@@ -701,7 +701,8 @@ inline bool BreakingContext::handleText(WordMeasurements& wordMeasurements, bool
     bool breakNBSP = m_autoWrap && style.nbspMode() == NBSPMode::Space;
     // Auto-wrapping text should wrap in the middle of a word only if it could not wrap before the word,
     // which is only possible if the word is the first thing on the line.
-    bool breakWords = style.breakWords() && ((m_autoWrap && (!m_width.committedWidth() && !m_width.hasCommittedReplaced())) || m_currWS == WhiteSpace::Pre);
+    auto isWrappingAllowed = !(m_currWS == WhiteSpace::Pre || m_currWS == WhiteSpace::NoWrap);
+    bool breakWords = isWrappingAllowed && style.breakWords() && !m_width.committedWidth() && !m_width.hasCommittedReplaced();
     bool midWordBreak = false;
     bool breakAnywhere = style.lineBreak() == LineBreak::Anywhere && m_autoWrap;
     bool breakAll = (style.wordBreak() == WordBreak::BreakAll || breakAnywhere) && m_autoWrap;
