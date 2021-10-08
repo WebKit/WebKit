@@ -1,3 +1,37 @@
+2021-10-08  Philippe Normand  <pnormand@igalia.com>
+
+        [WPE][Qt] API export fixes
+        https://bugs.webkit.org/show_bug.cgi?id=231430
+
+        Reviewed by Michael Catanzaro.
+
+        Remove internal WebKit API (GRefPtr) from the public QtWPE API, and export classes exposing
+        the public QtWPE API.
+
+        * UIProcess/API/wpe/qt/WPEQtView.cpp:
+        (WPEQtView::~WPEQtView):
+        (WPEQtView::createWebView):
+        (WPEQtView::url const):
+        (WPEQtView::setUrl):
+        (WPEQtView::loadProgress const):
+        (WPEQtView::title const):
+        (WPEQtView::canGoBack const):
+        (WPEQtView::isLoading const):
+        (WPEQtView::canGoForward const):
+        (WPEQtView::goBack):
+        (WPEQtView::goForward):
+        (WPEQtView::reload):
+        (WPEQtView::stop):
+        (WPEQtView::loadHtml):
+        (WPEQtView::runJavaScript):
+        * UIProcess/API/wpe/qt/WPEQtView.h:
+        (): Deleted.
+        (WPEQtView::triggerUpdate): Deleted.
+        (WPEQtView::errorOccured const): Deleted.
+        (WPEQtView::setErrorOccured): Deleted.
+        * UIProcess/API/wpe/qt/WPEQtViewLoadRequest.h:
+        * UIProcess/TextChecker.h:
+
 2021-10-08  Youenn Fablet  <youenn@apple.com>
 
         Bind the number of WebRTC sockets opened per process

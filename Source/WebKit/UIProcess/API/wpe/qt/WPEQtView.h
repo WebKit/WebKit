@@ -32,7 +32,7 @@
 class WPEQtViewBackend;
 class WPEQtViewLoadRequest;
 
-class WPEQtView : public QQuickItem {
+class Q_DECL_EXPORT WPEQtView : public QQuickItem {
     Q_OBJECT
     Q_DISABLE_COPY(WPEQtView)
     Q_PROPERTY(QUrl url READ url WRITE setUrl NOTIFY urlChanged)
@@ -110,7 +110,7 @@ private:
     static void notifyLoadChangedCallback(WebKitWebView*, WebKitLoadEvent, WPEQtView*);
     static void notifyLoadFailedCallback(WebKitWebView*, WebKitLoadEvent, const gchar* failingURI, GError*, WPEQtView*);
 
-    GRefPtr<WebKitWebView> m_webView;
+    WebKitWebView* m_webView { nullptr };
     QUrl m_url;
     QString m_html;
     QUrl m_baseUrl;

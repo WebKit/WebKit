@@ -26,7 +26,7 @@
 
 class WPEQtViewLoadRequestPrivate;
 
-class WPEQtViewLoadRequest : public QObject {
+class Q_DECL_EXPORT WPEQtViewLoadRequest : public QObject {
     Q_OBJECT
     Q_PROPERTY(QUrl url READ url)
     Q_PROPERTY(WPEQtView::LoadStatus status READ status)
