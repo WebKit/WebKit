@@ -34,9 +34,14 @@
 #include "Frame.h"
 #include "FrameSelection.h"
 #include "GraphicsContext.h"
+#include "HTMLAttachmentElement.h"
+#include "HTMLButtonElement.h"
 #include "HTMLInputElement.h"
 #include "HTMLMeterElement.h"
 #include "HTMLNames.h"
+#include "HTMLProgressElement.h"
+#include "HTMLSelectElement.h"
+#include "HTMLTextAreaElement.h"
 #include "LocalizedStrings.h"
 #include "Page.h"
 #include "PaintInfo.h"
@@ -44,6 +49,7 @@
 #include "RenderStyle.h"
 #include "RenderView.h"
 #include "RuntimeEnabledFeatures.h"
+#include "ShadowPseudoIds.h"
 #include "SpinButtonElement.h"
 #include "StringTruncator.h"
 #include "TextControlInnerElements.h"
@@ -77,8 +83,16 @@ RenderTheme::RenderTheme()
 
 void RenderTheme::adjustStyle(RenderStyle& style, const Element* element, const RenderStyle* userAgentAppearanceStyle)
 {
+    auto part = style.appearance();
+    if (part == AutoPart) {
+        part = autoAppearanceForElement(element);
+        if (part == NoControlPart) {
+            style.setEffectiveAppearance(NoControlPart);
+            return;
+        }
+    }
+
     // Force inline and table display styles to be inline-block (except for table- which is block)
-    ControlPart part = style.appearance();
     if (style.display() == DisplayType::Inline || style.display() == DisplayType::InlineTable || style.display() == DisplayType::TableRowGroup
         || style.display() == DisplayType::TableHeaderGroup || style.display() == DisplayType::TableFooterGroup
         || style.display() == DisplayType::TableRow || style.display() == DisplayType::TableColumnGroup || style.display() == DisplayType::TableColumn
@@ -90,14 +104,16 @@ void RenderTheme::adjustStyle(RenderStyle& style, const Element* element, const 
     if (userAgentAppearanceStyle && isControlStyled(style, *userAgentAppearanceStyle)) {
         switch (part) {
         case MenulistPart:
-            style.setEffectiveAppearance(MenulistButtonPart);
             part = MenulistButtonPart;
             break;
         default:
-            style.setEffectiveAppearance(NoControlPart);
+            part = NoControlPart;
             break;
         }
     }
+
+    ASSERT(part != AutoPart);
+    style.setEffectiveAppearance(part);
 
     if (!style.hasEffectiveAppearance())
         return;
@@ -191,7 +207,7 @@ void RenderTheme::adjustStyle(RenderStyle& style, const Element* element, const 
 #endif
 
     // Call the appropriate style adjustment method based off the appearance value.
-    switch (style.effectiveAppearance()) {
+    switch (part) {
 #if !USE(NEW_THEME)
     case CheckboxPart:
         return adjustCheckboxStyle(style, element);
@@ -268,6 +284,110 @@ void RenderTheme::adjustStyle(RenderStyle& style, const Element* element, const 
     default:
         break;
     }
+}
+
+ControlPart RenderTheme::autoAppearanceForElement(const Element* elementPtr) const
+{
+    if (!elementPtr)
+        return NoControlPart;
+
+    Ref element = *elementPtr;
+
+    if (is<HTMLInputElement>(element)) {
+        auto& input = downcast<HTMLInputElement>(element.get());
+
+        if (input.isTextButton() || input.isUploadButton())
+            return PushButtonPart;
+
+        if (input.isCheckbox())
+            return CheckboxPart;
+
+        if (input.isRadioButton())
+            return RadioPart;
+
+        if (input.isSearchField())
+            return SearchFieldPart;
+
+        if (input.isDateField() || input.isDateTimeLocalField() || input.isMonthField() || input.isTimeField() || input.isWeekField()) {
+#if PLATFORM(IOS_FAMILY)
+            return MenulistButtonPart;
+#else
+            return TextFieldPart;
+#endif
+        }
+
+#if ENABLE(INPUT_TYPE_COLOR)
+        if (input.isColorControl())
+            return ColorWellPart;
+#endif
+
+        if (input.isRangeControl())
+            return SliderHorizontalPart;
+
+        if (input.isTextField())
+            return TextFieldPart;
+
+        // <input type=hidden|image|file>
+        return NoControlPart;
+    }
+
+    if (is<HTMLButtonElement>(element))
+        return ButtonPart;
+
+    if (is<HTMLSelectElement>(element)) {
+#if PLATFORM(IOS_FAMILY)
+        return MenulistButtonPart;
+#else
+        auto& select = downcast<HTMLSelectElement>(element.get());
+        return select.usesMenuList() ? MenulistPart : ListboxPart;
+#endif
+    }
+
+    if (is<HTMLTextAreaElement>(element))
+        return TextAreaPart;
+
+    if (is<HTMLMeterElement>(element))
+        return MeterPart;
+
+    if (is<HTMLProgressElement>(element))
+        return ProgressBarPart;
+
+#if ENABLE(ATTACHMENT_ELEMENT)
+    if (is<HTMLAttachmentElement>(element))
+        return AttachmentPart;
+#endif
+
+    if (element->isInUserAgentShadowTree()) {
+        auto& pseudo = element->shadowPseudoId();
+
+#if ENABLE(DATALIST_ELEMENT)
+        if (pseudo == ShadowPseudoIds::webkitListButton())
+            return ListButtonPart;
+#endif
+
+        if (pseudo == ShadowPseudoIds::webkitCapsLockIndicator())
+            return CapsLockIndicatorPart;
+
+        if (pseudo == ShadowPseudoIds::webkitSearchCancelButton())
+            return SearchFieldCancelButtonPart;
+
+        if (pseudo == ShadowPseudoIds::webkitSearchDecoration())
+            return SearchFieldDecorationPart;
+
+        if (pseudo == ShadowPseudoIds::webkitSearchResultsDecoration())
+            return SearchFieldResultsDecorationPart;
+
+        if (pseudo == ShadowPseudoIds::webkitSearchResultsButton())
+            return SearchFieldResultsButtonPart;
+
+        if (pseudo == ShadowPseudoIds::webkitSliderThumb() || pseudo == ShadowPseudoIds::webkitMediaSliderThumb())
+            return SliderThumbHorizontalPart;
+
+        if (pseudo == ShadowPseudoIds::webkitInnerSpinButton())
+            return InnerSpinButtonPart;
+    }
+
+    return NoControlPart;
 }
 
 void RenderTheme::adjustSearchFieldDecorationStyle(RenderStyle& style, const Element* element) const

@@ -1,7 +1,7 @@
 Test
 
 PASS -webkit-appearance: none
-FAIL -webkit-appearance: auto assert_equals: style.WebkitAppearance (uppercase W) expected "auto" but got ""
+PASS -webkit-appearance: auto
 PASS -webkit-appearance: button
 PASS -webkit-appearance: checkbox
 PASS -webkit-appearance: listbox

@@ -1,3 +1,15 @@
+2021-10-08  Aditya Keerthi  <akeerthi@apple.com>
+
+        Add support for '-webkit-appearance: auto'
+        https://bugs.webkit.org/show_bug.cgi?id=231203
+        rdar://83696133
+
+        Reviewed by Wenson Hsieh.
+
+        * web-platform-tests/css/css-ui/appearance-cssom-001-expected.txt:
+
+        Mark progression.
+
 2021-10-08  Chris Dumez  <cdumez@apple.com>
 
         Merge optimizations to AudioParamTimeline::hasValues() from Blink

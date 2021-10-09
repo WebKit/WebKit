@@ -423,6 +423,9 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ControlPart e)
     case NoControlPart:
         m_value.valueID = CSSValueNone;
         break;
+    case AutoPart:
+        m_value.valueID = CSSValueAuto;
+        break;
     case CheckboxPart:
         m_value.valueID = CSSValueCheckbox;
         break;
@@ -629,7 +632,11 @@ template<> inline CSSPrimitiveValue::operator ControlPart() const
 
     if (m_value.valueID == CSSValueNone)
         return NoControlPart;
-    return ControlPart(m_value.valueID - CSSValueCheckbox + 1);
+
+    if (m_value.valueID == CSSValueAuto)
+        return AutoPart;
+
+    return ControlPart(m_value.valueID - CSSValueCheckbox + CheckboxPart);
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(BackfaceVisibility e)

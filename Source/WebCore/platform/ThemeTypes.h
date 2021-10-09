@@ -34,6 +34,7 @@ namespace WebCore {
 // Must follow CSSValueKeywords.in order
 enum ControlPart {
     NoControlPart,
+    AutoPart,
     CheckboxPart,
     RadioPart,
     PushButtonPart,

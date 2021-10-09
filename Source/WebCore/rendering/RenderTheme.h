@@ -454,6 +454,8 @@ protected:
     virtual ColorCache& colorCache(OptionSet<StyleColor::Options>) const;
 
 private:
+    ControlPart autoAppearanceForElement(const Element*) const;
+
     void adjustSearchFieldDecorationStyle(RenderStyle&, const Element*) const;
 
     mutable HashMap<uint8_t, ColorCache, DefaultHash<uint8_t>, WTF::UnsignedWithZeroKeyHashTraits<uint8_t>> m_colorCacheMap;

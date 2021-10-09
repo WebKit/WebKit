@@ -5003,6 +5003,7 @@
                 "caps-lock-indicator",
                 "color-well",
                 "list-button",
+                "auto",
                 "none"
             ],
             "status": {

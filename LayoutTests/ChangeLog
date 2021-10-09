@@ -1,3 +1,15 @@
+2021-10-08  Aditya Keerthi  <akeerthi@apple.com>
+
+        Add support for '-webkit-appearance: auto'
+        https://bugs.webkit.org/show_bug.cgi?id=231203
+        rdar://83696133
+
+        Reviewed by Wenson Hsieh.
+
+        * platform/gtk/imported/w3c/web-platform-tests/css/css-ui/appearance-cssom-001-expected.txt:
+        * platform/ios-wk2/imported/w3c/web-platform-tests/css/css-ui/appearance-cssom-001-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/css/css-ui/appearance-cssom-001-expected.txt:
+
 2021-10-08  Ayumi Kojima  <ayumi_kojima@apple.com>
 
         [ iOS 15 Debug ] ASSERTION FAILED: sockets.empty().

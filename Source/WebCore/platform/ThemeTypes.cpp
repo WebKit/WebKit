@@ -34,6 +34,7 @@ TextStream& operator<<(TextStream& ts, ControlPart controlPart)
 {
     switch (controlPart) {
     case NoControlPart: ts << "no-control-part"; break;
+    case AutoPart: ts << "auto-part"; break;
     case CheckboxPart: ts << "checkbox-part"; break;
     case RadioPart: ts << "radio-part"; break;
     case PushButtonPart: ts << "push-button-part"; break;
