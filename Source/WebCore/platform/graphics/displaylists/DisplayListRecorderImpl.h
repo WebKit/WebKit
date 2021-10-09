@@ -36,7 +36,7 @@ class RecorderImpl : public Recorder {
     WTF_MAKE_NONCOPYABLE(RecorderImpl);
 public:
     class Delegate;
-    WEBCORE_EXPORT RecorderImpl(DisplayList&, const GraphicsContextState&, const FloatRect& initialClip, const AffineTransform&, Delegate* = nullptr, DrawGlyphsRecorder::DrawGlyphsDeconstruction = DrawGlyphsRecorder::DrawGlyphsDeconstruction::Deconstruct);
+    WEBCORE_EXPORT RecorderImpl(DisplayList&, const GraphicsContextState&, const FloatRect& initialClip, const AffineTransform&, Delegate* = nullptr, DrawGlyphsRecorder::DeconstructDrawGlyphs = DrawGlyphsRecorder::DeconstructDrawGlyphs::Yes);
     RecorderImpl(RecorderImpl& parent, const GraphicsContextState&, const FloatRect& initialClip, const AffineTransform& initialCTM);
 
     WEBCORE_EXPORT virtual ~RecorderImpl();

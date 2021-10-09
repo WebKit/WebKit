@@ -40,14 +40,14 @@
 namespace WebCore {
 namespace DisplayList {
 
-Recorder::Recorder(const GraphicsContextState& state, const FloatRect& initialClip, const AffineTransform& initialCTM, DrawGlyphsRecorder::DrawGlyphsDeconstruction drawGlyphsDeconstruction)
-    : m_drawGlyphsRecorder(*this, drawGlyphsDeconstruction)
+Recorder::Recorder(const GraphicsContextState& state, const FloatRect& initialClip, const AffineTransform& initialCTM, DrawGlyphsRecorder::DeconstructDrawGlyphs deconstructDrawGlyphs)
+    : m_drawGlyphsRecorder(*this, deconstructDrawGlyphs)
 {
     m_stateStack.append({ state, initialCTM, initialClip });
 }
 
 Recorder::Recorder(Recorder& parent, const GraphicsContextState& state, const FloatRect& initialClip, const AffineTransform& initialCTM)
-    : m_drawGlyphsRecorder(*this, parent.m_drawGlyphsRecorder.drawGlyphsDeconstruction())
+    : m_drawGlyphsRecorder(*this, parent.m_drawGlyphsRecorder.deconstructDrawGlyphs())
 {
     m_stateStack.append({ state, initialCTM, initialClip });
 }
