@@ -1,3 +1,23 @@
+2021-10-09  Simon Fraser  <simon.fraser@apple.com>
+
+        Run smooth scroll animations on the scrolling thread
+        https://bugs.webkit.org/show_bug.cgi?id=231481
+
+        Reviewed by Tim Horton.
+
+        Implement AsyncScrollingCoordinator::requestAnimatedScrollToPosition() and stopAnimatedScroll()
+        so that smooth scroll animations are dispatched to the scrolling thread.
+
+        RequestedScrollData gains a requestType field so that we can indicate the need
+        to cancel a running animation on the scrolling thread.
+        
+        Tested by tests in imported/w3c/web-platform-tests/css/cssom-view.
+
+        * Shared/RemoteLayerTree/RemoteScrollingCoordinatorTransaction.cpp:
+        (ArgumentCoder<RequestedScrollData>::encode):
+        (ArgumentCoder<RequestedScrollData>::decode):
+        (WebKit::dump):
+
 2021-10-08  BJ Burg  <bburg@apple.com>
 
         [Cocoa] Web Inspector: provide a way for _WKInspectorExtension clients to be notified when the inspected page navigates
@@ -43245,3 +43265,4 @@
         Tested by imported/w3c/web-platform-tests/xhr/responsexml-document-properties.htm.
 
 == Rolled over to ChangeLog-2021-03-18 ==
+

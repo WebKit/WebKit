@@ -275,21 +275,55 @@ bool AsyncScrollingCoordinator::requestScrollPositionUpdate(ScrollableArea& scro
     if (!stateNode)
         return false;
 
-    stateNode->setRequestedScrollData({ scrollPosition, scrollType, clamping, ScrollIsAnimated::No });
+    stateNode->setRequestedScrollData({ ScrollRequestType::PositionUpdate, scrollPosition, scrollType, clamping, ScrollIsAnimated::No });
     // FIXME: This should schedule a rendering update
     commitTreeStateIfNeeded();
     return true;
 }
 
-bool AsyncScrollingCoordinator::requestAnimatedScrollToPosition(ScrollableArea&, const ScrollPosition&, ScrollClamping)
+bool AsyncScrollingCoordinator::requestAnimatedScrollToPosition(ScrollableArea& scrollableArea, const ScrollPosition& scrollPosition, ScrollClamping clamping)
 {
-    // FIXME: Implement.
-    return false;
+    ASSERT(isMainThread());
+    ASSERT(m_page);
+    auto scrollingNodeID = scrollableArea.scrollingNodeID();
+    if (!scrollingNodeID)
+        return false;
+
+    auto* frameView = frameViewForScrollingNode(scrollingNodeID);
+    if (!frameView || !coordinatesScrollingForFrameView(*frameView))
+        return false;
+
+    auto* stateNode = downcast<ScrollingStateScrollingNode>(m_scrollingStateTree->stateNodeForID(scrollingNodeID));
+    if (!stateNode)
+        return false;
+
+    // Animated scrolls are always programmatic.
+    stateNode->setRequestedScrollData({ ScrollRequestType::PositionUpdate, scrollPosition, ScrollType::Programmatic, clamping, ScrollIsAnimated::Yes });
+    // FIXME: This should schedule a rendering update
+    commitTreeStateIfNeeded();
+    return true;
 }
 
-void AsyncScrollingCoordinator::stopAnimatedScroll(ScrollableArea&)
+void AsyncScrollingCoordinator::stopAnimatedScroll(ScrollableArea& scrollableArea)
 {
-    // FIXME: Implement.
+    ASSERT(isMainThread());
+    ASSERT(m_page);
+    auto scrollingNodeID = scrollableArea.scrollingNodeID();
+    if (!scrollingNodeID)
+        return;
+
+    auto* frameView = frameViewForScrollingNode(scrollingNodeID);
+    if (!frameView || !coordinatesScrollingForFrameView(*frameView))
+        return;
+
+    auto* stateNode = downcast<ScrollingStateScrollingNode>(m_scrollingStateTree->stateNodeForID(scrollingNodeID));
+    if (!stateNode)
+        return;
+
+    // Animated scrolls are always programmatic.
+    stateNode->setRequestedScrollData({ ScrollRequestType::CancelAnimatedScroll, { } });
+    // FIXME: This should schedule a rendering update
+    commitTreeStateIfNeeded();
 }
 
 void AsyncScrollingCoordinator::applyScrollingTreeLayerPositions()

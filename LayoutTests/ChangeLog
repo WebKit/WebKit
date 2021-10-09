@@ -1,3 +1,19 @@
+2021-10-09  Simon Fraser  <simon.fraser@apple.com>
+
+        Run smooth scroll animations on the scrolling thread
+        https://bugs.webkit.org/show_bug.cgi?id=231481
+
+        Reviewed by Tim Horton.
+
+        imported/w3c/web-platform-tests/css/cssom-view/idlharness.html seems to pass just fine.
+        imported/w3c/web-platform-tests/css/cssom-view/scroll-behavior-smooth.html has some problems
+        indicated by the github issue.
+        
+        Three tests pass now on iOS (but they are not yet scrolling in the UI process).
+
+        * TestExpectations:
+        * platform/ios/TestExpectations:
+
 2021-10-09  Rob Buis  <rbuis@igalia.com>
 
         Remove scrollbars explicitly when destroying render tree

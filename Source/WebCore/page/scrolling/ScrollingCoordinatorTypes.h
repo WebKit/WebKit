@@ -102,7 +102,13 @@ enum class ViewportRectStability {
     ChangingObscuredInsetsInteractively // This implies Unstable.
 };
 
+enum class ScrollRequestType : uint8_t {
+    PositionUpdate,
+    CancelAnimatedScroll
+};
+
 struct RequestedScrollData {
+    ScrollRequestType requestType { ScrollRequestType::PositionUpdate };
     FloatPoint scrollPosition;
     ScrollType scrollType { ScrollType::User };
     ScrollClamping clamping { ScrollClamping::Clamped };
@@ -110,13 +116,15 @@ struct RequestedScrollData {
 
     bool operator==(const RequestedScrollData& other) const
     {
-        return scrollPosition == other.scrollPosition
+        return requestType == other.requestType
+            && scrollPosition == other.scrollPosition
             && scrollType == other.scrollType
-            && clamping == other.clamping;
+            && clamping == other.clamping
+            && animated == other.animated;
     }
 };
 
-enum ScrollUpdateType : uint8_t {
+enum class ScrollUpdateType : uint8_t {
     PositionUpdate,
     AnimatedScrollDidEnd
 };
@@ -143,6 +151,14 @@ struct ScrollUpdate {
 } // namespace WebCore
 
 namespace WTF {
+
+template<> struct EnumTraits<WebCore::ScrollRequestType> {
+    using values = EnumValues<
+        WebCore::ScrollRequestType,
+        WebCore::ScrollRequestType::PositionUpdate,
+        WebCore::ScrollRequestType::CancelAnimatedScroll
+    >;
+};
 
 template<> struct EnumTraits<WebCore::ScrollingNodeType> {
     using values = EnumValues<

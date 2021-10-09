@@ -999,7 +999,6 @@ imported/w3c/web-platform-tests/payment-request [ Skip ]
 webkit.org/b/184066 imported/w3c/web-platform-tests/IndexedDB/nested-cloning-large-multiple.html [ Skip ]
 webkit.org/b/184066 imported/w3c/web-platform-tests/IndexedDB/nested-cloning-large.html [ Skip ]
 webkit.org/b/184066 imported/w3c/web-platform-tests/IndexedDB/nested-cloning-small.html [ Skip ]
-[ Debug ] imported/w3c/web-platform-tests/css/cssom-view/idlharness.html [ Skip ]
 webkit.org/b/182292 imported/w3c/web-platform-tests/css/cssom-view/scrollingElement-quirks-dynamic-001.html [ ImageOnlyFailure ]
 webkit.org/b/182292 imported/w3c/web-platform-tests/css/cssom-view/scrollingElement-quirks-dynamic-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-ui/text-overflow-010.html [ ImageOnlyFailure ]
@@ -3002,13 +3001,16 @@ imported/w3c/web-platform-tests/css/css-ui/text-overflow-026.html [ ImageOnlyFai
 imported/w3c/web-platform-tests/css/css-ui/text-overflow-027.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-ui/text-overflow-028.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-ui/text-overflow-029.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/cssom-view/scroll-behavior-smooth.html [ Skip ]
+
 imported/w3c/web-platform-tests/css/mediaqueries/viewport-script-dynamic.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/selectors/selection-image-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/selectors/selection-image-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/selectors/selector-structural-pseudo-root.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_RSA-OAEP.https.any.html [ Pass Failure ]
 imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_RSA-OAEP.https.any.worker.html [ Pass Failure ]
+
+# https://github.com/web-platform-tests/wpt/issues/31174
+imported/w3c/web-platform-tests/css/cssom-view/scroll-behavior-smooth.html [ Skip ]
 
 webkit.org/b/224104 imported/w3c/web-platform-tests/css/css-logical/logical-values-float-clear-reftest.html [ ImageOnlyFailure ]
 
