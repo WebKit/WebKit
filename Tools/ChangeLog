@@ -1,3 +1,26 @@
+2021-10-09  Beth Dakin  <bdakin@apple.com>
+
+        Pull modifier key extraction into TestRunnerShared
+        https://bugs.webkit.org/show_bug.cgi?id=231267
+
+        Reviewed by Tim Horton.
+
+        This patch pulls the code to extract modifier key information is pulled into a little class 
+        called ModifierKeys in TestRunnerShared. That code is now shared between DRT and WKTR 
+        for the existing implementations of keyDown.
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+        * DumpRenderTree/mac/EventSendingController.mm:
+        (-[EventSendingController keyDown:withModifiers:withLocation:]):
+        * TestRunnerShared/cocoa/ModifierKeys.h: Added.
+        * TestRunnerShared/cocoa/ModifierKeys.mm: Added.
+        (-[ModifierKeys init]):
+        (-[ModifierKeys dealloc]):
+        (+[ModifierKeys modifierKeysWithKey:modifiers:keyLocation:]):
+        * WebKitTestRunner/WebKitTestRunner.xcodeproj/project.pbxproj:
+        * WebKitTestRunner/mac/EventSenderProxy.mm:
+        (WTR::EventSenderProxy::keyDown):
+
 2021-10-08  BJ Burg  <bburg@apple.com>
 
         [Cocoa] Web Inspector: provide a way for _WKInspectorExtension clients to be notified when the inspected page navigates

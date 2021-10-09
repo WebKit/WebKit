@@ -37,6 +37,7 @@
 #import "DumpRenderTreeDraggingInfo.h"
 #import "DumpRenderTreeFileDraggingSource.h"
 #import "DumpRenderTreePasteboard.h"
+#import "ModifierKeys.h"
 #import "WebCoreTestSupport.h"
 #import <WebKit/DOMPrivate.h>
 #import <WebKit/WebViewPrivate.h>
@@ -79,13 +80,6 @@ enum MouseButton {
     MiddleMouseButton = 1,
     RightMouseButton = 2,
     NoMouseButton = -2
-};
-
-struct KeyMappingEntry {
-    int macKeyCode;
-    int macNumpadKeyCode;
-    unichar character;
-    NSString* characterName;
 };
 
 NSPoint lastMousePosition;
@@ -972,204 +966,23 @@ static NSUInteger swizzledEventPressedMouseButtons()
 
 - (void)keyDown:(NSString *)character withModifiers:(WebScriptObject *)modifiers withLocation:(unsigned long)location
 {
-    NSString *eventCharacter = character;
-    unsigned short keyCode = 0;
-    if ([character isEqualToString:@"leftArrow"]) {
-        const unichar ch = NSLeftArrowFunctionKey;
-        eventCharacter = [NSString stringWithCharacters:&ch length:1];
-        keyCode = 0x7B;
-    } else if ([character isEqualToString:@"rightArrow"]) {
-        const unichar ch = NSRightArrowFunctionKey;
-        eventCharacter = [NSString stringWithCharacters:&ch length:1];
-        keyCode = 0x7C;
-    } else if ([character isEqualToString:@"upArrow"]) {
-        const unichar ch = NSUpArrowFunctionKey;
-        eventCharacter = [NSString stringWithCharacters:&ch length:1];
-        keyCode = 0x7E;
-    } else if ([character isEqualToString:@"downArrow"]) {
-        const unichar ch = NSDownArrowFunctionKey;
-        eventCharacter = [NSString stringWithCharacters:&ch length:1];
-        keyCode = 0x7D;
-    } else if ([character isEqualToString:@"pageUp"]) {
-        const unichar ch = NSPageUpFunctionKey;
-        eventCharacter = [NSString stringWithCharacters:&ch length:1];
-        keyCode = 0x74;
-    } else if ([character isEqualToString:@"pageDown"]) {
-        const unichar ch = NSPageDownFunctionKey;
-        eventCharacter = [NSString stringWithCharacters:&ch length:1];
-        keyCode = 0x79;
-    } else if ([character isEqualToString:@"home"]) {
-        const unichar ch = NSHomeFunctionKey;
-        eventCharacter = [NSString stringWithCharacters:&ch length:1];
-        keyCode = 0x73;
-    } else if ([character isEqualToString:@"end"]) {
-        const unichar ch = NSEndFunctionKey;
-        eventCharacter = [NSString stringWithCharacters:&ch length:1];
-        keyCode = 0x77;
-    } else if ([character isEqualToString:@"insert"]) {
-        const unichar ch = NSInsertFunctionKey;
-        eventCharacter = [NSString stringWithCharacters:&ch length:1];
-        keyCode = 0x72;
-    } else if ([character isEqualToString:@"delete"]) {
-        const unichar ch = NSDeleteFunctionKey;
-        eventCharacter = [NSString stringWithCharacters:&ch length:1];
-        keyCode = 0x75;
-    } else if ([character isEqualToString:@"escape"]) {
-        const unichar ch = 0x1B;
-        eventCharacter = [NSString stringWithCharacters:&ch length:1];
-        keyCode = 0x35;
-    } else if ([character isEqualToString:@"printScreen"]) {
-        const unichar ch = NSPrintScreenFunctionKey;
-        eventCharacter = [NSString stringWithCharacters:&ch length:1];
-        keyCode = 0x0; // There is no known virtual key code for PrintScreen.
-    } else if ([character isEqualToString:@"cyrillicSmallLetterA"]) {
-        const unichar ch = 0x0430;
-        eventCharacter = [NSString stringWithCharacters:&ch length:1];
-        keyCode = 0x3; // Shares key with "F" on Russian layout.
-    } else if ([character isEqualToString:@"leftControl"]) {
-        const unichar ch = 0xFFE3;
-        eventCharacter = [NSString stringWithCharacters:&ch length:1];
-        keyCode = 0x3B;
-    } else if ([character isEqualToString:@"leftShift"]) {
-        const unichar ch = 0xFFE1;
-        eventCharacter = [NSString stringWithCharacters:&ch length:1];
-        keyCode = 0x38;
-    } else if ([character isEqualToString:@"leftAlt"]) {
-        const unichar ch = 0xFFE7;
-        eventCharacter = [NSString stringWithCharacters:&ch length:1];
-        keyCode = 0x3A;
-    } else if ([character isEqualToString:@"rightControl"]) {
-        const unichar ch = 0xFFE4;
-        eventCharacter = [NSString stringWithCharacters:&ch length:1];
-        keyCode = 0x3E;
-    } else if ([character isEqualToString:@"rightShift"]) {
-        const unichar ch = 0xFFE2;
-        eventCharacter = [NSString stringWithCharacters:&ch length:1];
-        keyCode = 0x3C;
-    } else if ([character isEqualToString:@"rightAlt"]) {
-        const unichar ch = 0xFFE8;
-        eventCharacter = [NSString stringWithCharacters:&ch length:1];
-        keyCode = 0x3D;
-    }
-
-    // Compare the input string with the function-key names defined by the DOM spec (i.e. "F1",...,"F24").
-    // If the input string is a function-key name, set its key code.
-    for (unsigned i = 1; i <= 24; i++) {
-        if ([character isEqualToString:[NSString stringWithFormat:@"F%u", i]]) {
-            const unichar ch = NSF1FunctionKey + (i - 1);
-            eventCharacter = [NSString stringWithCharacters:&ch length:1];
-            switch (i) {
-                case 1: keyCode = 0x7A; break;
-                case 2: keyCode = 0x78; break;
-                case 3: keyCode = 0x63; break;
-                case 4: keyCode = 0x76; break;
-                case 5: keyCode = 0x60; break;
-                case 6: keyCode = 0x61; break;
-                case 7: keyCode = 0x62; break;
-                case 8: keyCode = 0x64; break;
-                case 9: keyCode = 0x65; break;
-                case 10: keyCode = 0x6D; break;
-                case 11: keyCode = 0x67; break;
-                case 12: keyCode = 0x6F; break;
-                case 13: keyCode = 0x69; break;
-                case 14: keyCode = 0x6B; break;
-                case 15: keyCode = 0x71; break;
-                case 16: keyCode = 0x6A; break;
-                case 17: keyCode = 0x40; break;
-                case 18: keyCode = 0x4F; break;
-                case 19: keyCode = 0x50; break;
-                case 20: keyCode = 0x5A; break;
-            }
-        }
-    }
-
-    // FIXME: No keyCode is set for most keys.
-    if ([character isEqualToString:@"\t"])
-        keyCode = 0x30;
-    else if ([character isEqualToString:@" "])
-        keyCode = 0x31;
-    else if ([character isEqualToString:@"\r"])
-        keyCode = 0x24;
-    else if ([character isEqualToString:@"\n"])
-        keyCode = 0x4C;
-    else if ([character isEqualToString:@"\x8"])
-        keyCode = 0x33;
-    else if ([character isEqualToString:@"a"])
-        keyCode = 0x00;
-    else if ([character isEqualToString:@"b"])
-        keyCode = 0x0B;
-    else if ([character isEqualToString:@"d"])
-        keyCode = 0x02;
-    else if ([character isEqualToString:@"e"])
-        keyCode = 0x0E;
-    else if ([character isEqualToString:@"\x1b"])
-        keyCode = 0x1B;
-
-    KeyMappingEntry table[] = {
-        {0x2F, 0x41, '.', nil},
-        {0,    0x43, '*', nil},
-        {0,    0x45, '+', nil},
-        {0,    0x47, NSClearLineFunctionKey, @"clear"},
-        {0x2C, 0x4B, '/', nil},
-        {0,    0x4C, 3, @"enter" },
-        {0x1B, 0x4E, '-', nil},
-        {0x18, 0x51, '=', nil},
-        {0x1D, 0x52, '0', nil},
-        {0x12, 0x53, '1', nil},
-        {0x13, 0x54, '2', nil},
-        {0x14, 0x55, '3', nil},
-        {0x15, 0x56, '4', nil},
-        {0x17, 0x57, '5', nil},
-        {0x16, 0x58, '6', nil},
-        {0x1A, 0x59, '7', nil},
-        {0x1C, 0x5B, '8', nil},
-        {0x19, 0x5C, '9', nil},
-    };
-    for (unsigned i = 0; i < WTF_ARRAY_LENGTH(table); ++i) {
-        NSString* currentCharacterString = [NSString stringWithCharacters:&table[i].character length:1];
-        if ([character isEqualToString:currentCharacterString] || [character isEqualToString:table[i].characterName]) {
-            if (location == DOM_KEY_LOCATION_NUMPAD)
-                keyCode = table[i].macNumpadKeyCode;
-            else
-                keyCode = table[i].macKeyCode;
-            eventCharacter = currentCharacterString;
-            break;
-        }
-    }
-
-    NSString *charactersIgnoringModifiers = eventCharacter;
-
-    int modifierFlags = 0;
-
-    if ([character length] == 1 && [character characterAtIndex:0] >= 'A' && [character characterAtIndex:0] <= 'Z') {
-#if !PLATFORM(IOS_FAMILY)
-        modifierFlags |= NSEventModifierFlagShift;
-#else
-        modifierFlags |= WebEventFlagMaskLeftShiftKey;
-#endif
-        charactersIgnoringModifiers = [character lowercaseString];
-    }
-
-    modifierFlags |= buildModifierFlags(modifiers);
-
-    if (location == DOM_KEY_LOCATION_NUMPAD)
-        modifierFlags |= NSEventModifierFlagNumericPad;
+    RetainPtr<ModifierKeys> modifierKeys = [ModifierKeys modifierKeysWithKey:character modifiers:buildModifierFlags(modifiers) keyLocation:location];
 
     [[[mainFrame frameView] documentView] layout];
 
 #if !PLATFORM(IOS_FAMILY)
     auto event = retainPtr([NSEvent keyEventWithType:NSEventTypeKeyDown
                         location:NSMakePoint(5, 5)
-                        modifierFlags:modifierFlags
+                        modifierFlags:modifierKeys->modifierFlags
                         timestamp:[self currentEventTime]
                         windowNumber:[[[mainFrame webView] window] windowNumber]
                         context:[NSGraphicsContext currentContext]
-                        characters:eventCharacter
-                        charactersIgnoringModifiers:charactersIgnoringModifiers
+                        characters:modifierKeys->eventCharacter.get()
+                        charactersIgnoringModifiers:modifierKeys->charactersIgnoringModifiers.get()
                         isARepeat:NO
-                        keyCode:keyCode]);
+                        keyCode:modifierKeys->keyCode]);
 #else
-    auto event = adoptNS([[WebEvent alloc] initWithKeyEventType:WebEventKeyDown timeStamp:[self currentEventTime] characters:eventCharacter charactersIgnoringModifiers:charactersIgnoringModifiers modifiers:(WebEventFlags)modifierFlags isRepeating:NO withFlags:0 withInputManagerHint:nil keyCode:[character characterAtIndex:0] isTabKey:([character characterAtIndex:0] == '\t')]);
+    auto event = adoptNS([[WebEvent alloc] initWithKeyEventType:WebEventKeyDown timeStamp:[self currentEventTime] characters:modifierKeys->eventCharacter.get() charactersIgnoringModifiers:modifierKeys->charactersIgnoringModifiers.get() modifiers:(WebEventFlags)modifierKeys->modifierFlags isRepeating:NO withFlags:0 withInputManagerHint:nil keyCode:[character characterAtIndex:0] isTabKey:([character characterAtIndex:0] == '\t')]);
 #endif
 
 #if !PLATFORM(IOS_FAMILY)
@@ -1183,16 +996,16 @@ static NSUInteger swizzledEventPressedMouseButtons()
 #if !PLATFORM(IOS_FAMILY)
     event = retainPtr([NSEvent keyEventWithType:NSEventTypeKeyUp
                         location:NSMakePoint(5, 5)
-                        modifierFlags:modifierFlags
+                        modifierFlags:modifierKeys->modifierFlags
                         timestamp:[self currentEventTime]
                         windowNumber:[[[mainFrame webView] window] windowNumber]
                         context:[NSGraphicsContext currentContext]
-                        characters:eventCharacter
-                        charactersIgnoringModifiers:charactersIgnoringModifiers
+                        characters:modifierKeys->eventCharacter.get()
+                        charactersIgnoringModifiers:modifierKeys->charactersIgnoringModifiers.get()
                         isARepeat:NO
-                        keyCode:keyCode]);
+                        keyCode:modifierKeys->keyCode]);
 #else
-    event = adoptNS([[WebEvent alloc] initWithKeyEventType:WebEventKeyUp timeStamp:[self currentEventTime] characters:eventCharacter charactersIgnoringModifiers:charactersIgnoringModifiers modifiers:(WebEventFlags)modifierFlags isRepeating:NO withFlags:0 withInputManagerHint:nil keyCode:[character characterAtIndex:0] isTabKey:([character characterAtIndex:0] == '\t')]);
+    event = adoptNS([[WebEvent alloc] initWithKeyEventType:WebEventKeyUp timeStamp:[self currentEventTime] characters:modifierKeys->eventCharacter.get() charactersIgnoringModifiers:modifierKeys->charactersIgnoringModifiers.get() modifiers:(WebEventFlags)modifierKeys->modifierFlags isRepeating:NO withFlags:0 withInputManagerHint:nil keyCode:[character characterAtIndex:0] isTabKey:([character characterAtIndex:0] == '\t')]);
 #endif
 
 #if !PLATFORM(IOS_FAMILY)

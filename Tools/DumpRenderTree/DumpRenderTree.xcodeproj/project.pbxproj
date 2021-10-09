@@ -114,6 +114,7 @@
 		7CFF9BC22533BC160008009F /* TestCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CFF9BC12533BC160008009F /* TestCommand.cpp */; };
 		80045AEE147718E7008290A8 /* AccessibilityNotificationHandler.mm in Sources */ = {isa = PBXBuildFile; fileRef = 80045AEC147718E7008290A8 /* AccessibilityNotificationHandler.mm */; };
 		8465E2C70FFA8DF2003B8342 /* PixelDumpSupport.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8465E2C60FFA8DF2003B8342 /* PixelDumpSupport.cpp */; };
+		932BB9C3270E273C0094CC33 /* ModifierKeys.mm in Sources */ = {isa = PBXBuildFile; fileRef = 932BB9C2270E273C0094CC33 /* ModifierKeys.mm */; };
 		93C78826250C6D3A00C0AA24 /* ReftestFunctions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93C78824250C6D3900C0AA24 /* ReftestFunctions.cpp */; };
 		93C7882E250C717200C0AA24 /* JSBasics.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93C78829250C713400C0AA24 /* JSBasics.cpp */; };
 		A1158D581892740C0088C17B /* DumpRenderTreeBrowserView.mm in Sources */ = {isa = PBXBuildFile; fileRef = A1158D56189273EB0088C17B /* DumpRenderTreeBrowserView.mm */; };
@@ -345,6 +346,8 @@
 		80045AEB147718E7008290A8 /* AccessibilityNotificationHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AccessibilityNotificationHandler.h; path = mac/AccessibilityNotificationHandler.h; sourceTree = "<group>"; };
 		80045AEC147718E7008290A8 /* AccessibilityNotificationHandler.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AccessibilityNotificationHandler.mm; path = mac/AccessibilityNotificationHandler.mm; sourceTree = "<group>"; };
 		8465E2C60FFA8DF2003B8342 /* PixelDumpSupport.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = PixelDumpSupport.cpp; sourceTree = "<group>"; };
+		932BB9C1270E273C0094CC33 /* ModifierKeys.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModifierKeys.h; sourceTree = "<group>"; };
+		932BB9C2270E273C0094CC33 /* ModifierKeys.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ModifierKeys.mm; sourceTree = "<group>"; };
 		9335435F03D75502008635CE /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = WebKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		9340995408540CAF007F3BC8 /* DumpRenderTree */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = DumpRenderTree; sourceTree = BUILT_PRODUCTS_DIR; };
 		93C78824250C6D3900C0AA24 /* ReftestFunctions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ReftestFunctions.cpp; sourceTree = "<group>"; };
@@ -940,6 +943,8 @@
 				F44A531C21B89A4500DBB99C /* InstanceMethodSwizzler.mm */,
 				F4C3578920E8442700FA0748 /* LayoutTestSpellChecker.h */,
 				F4C3578820E8442700FA0748 /* LayoutTestSpellChecker.mm */,
+				932BB9C1270E273C0094CC33 /* ModifierKeys.h */,
+				932BB9C2270E273C0094CC33 /* ModifierKeys.mm */,
 				F4010B7A24DA200E00A876E2 /* PoseAsClass.h */,
 				F4010B7924DA200E00A876E2 /* PoseAsClass.mm */,
 			);
@@ -1284,6 +1289,7 @@
 				F4FED32023582158003C139C /* NSPasteboardAdditions.mm in Sources */,
 				BCA18B320C9B01B400114369 /* ObjCController.m in Sources */,
 				BCA18B7E0C9B08F100114369 /* ObjCPlugin.m in Sources */,
+				932BB9C3270E273C0094CC33 /* ModifierKeys.mm in Sources */,
 				BCA18B800C9B08F100114369 /* ObjCPluginFunction.m in Sources */,
 				8465E2C70FFA8DF2003B8342 /* PixelDumpSupport.cpp in Sources */,
 				BCB284CD0CFA83C8007E533E /* PixelDumpSupportCG.cpp in Sources */,
