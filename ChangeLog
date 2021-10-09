@@ -1,3 +1,11 @@
+2021-10-09  Alberto Garcia  <berto@igalia.com>
+
+        Add GitHub account to contributors.json
+
+        Unreviewed.
+
+        * metadata/contributors.json:
+
 2021-10-09  Jean-Yves Avenard  <jya@apple.com>
 
         Unreviewed, add my GitHub username
