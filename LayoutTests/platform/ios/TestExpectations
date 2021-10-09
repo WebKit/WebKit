@@ -39,6 +39,8 @@ fast/forms/ios/ipad/open-picker-using-keyboard.html [ Pass Timeout ]
 fast/css/appearance-apple-pay-button.html [ Pass ]
 fast/css/appearance-apple-pay-button-border-radius.html [ Pass ]
 fast/css/appearance-apple-pay-button-default-corners.html [ Pass ]
+fast/css/webkit-named-image/apple-pay-logo-black [ Pass ]
+fast/css/webkit-named-image/apple-pay-logo-white [ Pass ]
 fast/css/getComputedStyle/computed-style-apple-pay-button.html [ Pass ]
 
 fast/css/ios [ Pass ]

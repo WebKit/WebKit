@@ -1,3 +1,41 @@
+2021-10-08  Devin Rousso  <drousso@apple.com>
+
+        [GPU Process] support rendering Apple Pay logos
+        https://bugs.webkit.org/show_bug.cgi?id=230664
+        <rdar://problem/83187282>
+
+        Reviewed by Tim Horton.
+
+        * fast/css/webkit-named-image/apple-pay-logo-black/background-size-centered.html: Added.
+        * fast/css/webkit-named-image/apple-pay-logo-black/background-size-centered-expected-mismatch.html: Added.
+        * fast/css/webkit-named-image/apple-pay-logo-black/background-size.html: Added.
+        * fast/css/webkit-named-image/apple-pay-logo-black/background-size-expected-mismatch.html: Added.
+        * fast/css/webkit-named-image/apple-pay-logo-black/basic.html: Added.
+        * fast/css/webkit-named-image/apple-pay-logo-black/basic-expected-mismatch.html: Added.
+        * fast/css/webkit-named-image/apple-pay-logo-black/container-larger-height.html: Added.
+        * fast/css/webkit-named-image/apple-pay-logo-black/container-larger-height-expected-mismatch.html: Added.
+        * fast/css/webkit-named-image/apple-pay-logo-black/container-larger-width.html: Added.
+        * fast/css/webkit-named-image/apple-pay-logo-black/container-larger-width-expected-mismatch.html: Added.
+        * fast/css/webkit-named-image/apple-pay-logo-black/mask.html: Added.
+        * fast/css/webkit-named-image/apple-pay-logo-black/mask-expected-mismatch.html: Added.
+        * fast/css/webkit-named-image/apple-pay-logo-white/background-size-centered.html: Added.
+        * fast/css/webkit-named-image/apple-pay-logo-white/background-size-centered-expected-mismatch.html: Added.
+        * fast/css/webkit-named-image/apple-pay-logo-white/background-size.html: Added.
+        * fast/css/webkit-named-image/apple-pay-logo-white/background-size-expected-mismatch.html: Added.
+        * fast/css/webkit-named-image/apple-pay-logo-white/basic.html: Added.
+        * fast/css/webkit-named-image/apple-pay-logo-white/basic-expected-mismatch.html: Added.
+        * fast/css/webkit-named-image/apple-pay-logo-white/container-larger-height.html: Added.
+        * fast/css/webkit-named-image/apple-pay-logo-white/container-larger-height-expected-mismatch.html: Added.
+        * fast/css/webkit-named-image/apple-pay-logo-white/container-larger-width.html: Added.
+        * fast/css/webkit-named-image/apple-pay-logo-white/container-larger-width-expected-mismatch.html: Added.
+        * fast/css/webkit-named-image/apple-pay-logo-white/mask.html: Added.
+        * fast/css/webkit-named-image/apple-pay-logo-white/mask-expected-mismatch.html: Added.
+
+        * TestExpectations:
+        * platform/ios/TestExpectations:
+        * platform/mac/TestExpectations:
+        Skip the above tests everywhere except iOS and macOS.
+
 2021-10-08  Simon Fraser  <simon.fraser@apple.com>
 
         Unreviewed. Fix up some TestExpectations errors.

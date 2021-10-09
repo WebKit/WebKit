@@ -28,6 +28,7 @@
 
 #import "FontCascade.h"
 #import "GraphicsContext.h"
+#import "ImageBuffer.h"
 #import <dlfcn.h>
 
 namespace WebCore {
@@ -109,14 +110,19 @@ static CGPDFPageRef applePayButtonLogoWhite()
 
 static void drawApplePayButton(GraphicsContext& context, CGPDFPageRef page, const FloatRect& rect)
 {
+    auto imageBuffer = ImageBuffer::createCompatibleBuffer(rect.size(), context);
+    if (!imageBuffer)
+        return;
+
     CGSize pdfSize = CGPDFPageGetBoxRect(page, kCGPDFMediaBox).size;
-    GraphicsContextStateSaver stateSaver(context);
-    fitContextToBox(context, FloatSize(pdfSize), rect.size());
 
-    CGContextTranslateCTM(context.platformContext(), 0, pdfSize.height);
-    CGContextScaleCTM(context.platformContext(), 1, -1);
+    auto& imageContext = imageBuffer->context();
+    fitContextToBox(imageContext, FloatSize(pdfSize), rect.size());
+    imageContext.translate(0, pdfSize.height);
+    imageContext.scale(FloatSize(1, -1));
+    CGContextDrawPDFPage(imageContext.platformContext(), page);
 
-    CGContextDrawPDFPage(context.platformContext(), page);
+    context.drawConsumingImageBuffer(WTFMove(imageBuffer), rect);
 };
 
 #endif

@@ -254,6 +254,8 @@ fast/css/appearance-apple-pay-button.html [ Skip ]
 fast/css/appearance-apple-pay-button-border-radius.html [ Skip ]
 fast/css/appearance-apple-pay-button-default-corners.html [ Skip ]
 fast/css/getComputedStyle/computed-style-apple-pay-button.html [ Skip ]
+fast/css/webkit-named-image/apple-pay-logo-black [ Skip ]
+fast/css/webkit-named-image/apple-pay-logo-white [ Skip ]
 http/tests/ssl/applepay/ [ Skip ]
 
 # Only WK2 allows unconstrained scrolling
