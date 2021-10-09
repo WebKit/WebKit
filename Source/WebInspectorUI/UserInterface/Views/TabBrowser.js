@@ -210,8 +210,9 @@ WI.TabBrowser = class TabBrowser extends WI.View
 
         this._tabBar.removeTabBarItem(tabContentView.tabBarItem, options);
 
+        let shouldSaveTab = this.selectedTabContentView?.constructor.shouldSaveTab() || this.selectedTabContentView?.constructor.shouldPinTab();
         console.assert(this._recentTabContentViews.length === this._tabBar.tabCount);
-        console.assert(!this.selectedTabContentView || this.selectedTabContentView === this._recentTabContentViews[0]);
+        console.assert(!this.selectedTabContentView || this.selectedTabContentView === this._recentTabContentViews[0] || !shouldSaveTab);
 
         return true;
     }
@@ -296,8 +297,9 @@ WI.TabBrowser = class TabBrowser extends WI.View
 
         this._contentViewContainer.closeContentView(tabContentView);
 
+        let shouldSaveTab = this.selectedTabContentView?.constructor.shouldSaveTab() || this.selectedTabContentView?.constructor.shouldPinTab();
         console.assert(this._recentTabContentViews.length === this._tabBar.tabCount);
-        console.assert(!this.selectedTabContentView || this.selectedTabContentView === this._recentTabContentViews[0]);
+        console.assert(!this.selectedTabContentView || this.selectedTabContentView === this._recentTabContentViews[0] || !shouldSaveTab);
     }
 
     _handleSidebarPanelSelected(event)

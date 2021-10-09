@@ -47,6 +47,16 @@ WI.WebInspectorExtensionTabContentView = class WebInspectorExtensionTabContentVi
         this._frameContentDidLoad = false;
     }
 
+    // Static
+
+    static shouldSaveTab() { return false; }
+    static shouldNotRemoveFromDOMWhenHidden() { return true; }
+
+    static isTabAllowed()
+    {
+        return InspectorFrontendHost.supportsWebExtensions;
+    }
+
     // Public
 
     get extensionTabID() { return this._extensionTabID; }

@@ -672,6 +672,10 @@ WI._createTabContentViewForType = function(tabType)
         return null;
     }
 
+    console.assert(tabClass !== WI.WebInspectorExtensionTabContentView, "Extension tabs must be created via WebInspectorExtensionController.createTabForExtension().");
+    if (tabClass === WI.WebInspectorExtensionTabContentView)
+        return null;
+
     console.assert(WI.TabContentView.isPrototypeOf(tabClass));
     return new tabClass;
 };

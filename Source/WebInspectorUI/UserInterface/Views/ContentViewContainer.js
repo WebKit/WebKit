@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2013–2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -421,10 +421,11 @@ WI.ContentViewContainer = class ContentViewContainer extends WI.View
             return;
         }
 
-        // Deselected extension tabs are still attached to the DOM via `this.element`,
-        // so this is the last chance to actually remove the subview and detach from the DOM.
-        if (contentView.constructor.shouldNotRemoveFromDOMWhenHidden() && contentView.isAttached)
-            this.removeSubview(contentView);
+        // Hidden/non-visible extension tabs must remain attached to the DOM to avoid reloading.
+        if (contentView.constructor.shouldNotRemoveFromDOMWhenHidden() && !contentView.visible)
+            return;
+
+        this.removeSubview(contentView);
 
         console.assert(!contentView.isAttached);
 
@@ -463,7 +464,7 @@ WI.ContentViewContainer = class ContentViewContainer extends WI.View
         if (!this.subviews.includes(entry.contentView))
             this.addSubview(entry.contentView);
         else if (entry.contentView.constructor.shouldNotRemoveFromDOMWhenHidden()) {
-            entry.contentView.element.classList.remove("hidden-simulating-dom-detached");
+            entry.contentView.visible = true;
             entry.contentView._didMoveToParent(this);
         }
 
@@ -482,7 +483,7 @@ WI.ContentViewContainer = class ContentViewContainer extends WI.View
         entry.prepareToHide();
         if (this.subviews.includes(entry.contentView)) {
             if (entry.contentView.constructor.shouldNotRemoveFromDOMWhenHidden()) {
-                entry.contentView.element.classList.add("hidden-simulating-dom-detached");
+                entry.contentView.visible = false;
                 entry.contentView._didMoveToParent(null);
             } else
                 this.removeSubview(entry.contentView);

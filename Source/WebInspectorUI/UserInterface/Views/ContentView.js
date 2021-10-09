@@ -38,6 +38,7 @@ WI.ContentView = class ContentView extends WI.View
 
         this._parentContainer = null;
         this._isClosed = false;
+        this._visible = false;
     }
 
     // Static
@@ -347,6 +348,17 @@ WI.ContentView = class ContentView extends WI.View
     // Public
 
     get isClosed() { return this._isClosed; }
+
+    get visible()
+    {
+        return !this.isClosed && this._visible;
+    }
+
+    set visible(value)
+    {
+        this._visible = !!value;
+        this.element.classList.toggle("not-visible", !this._visible);
+    }
 
     get representedObject()
     {

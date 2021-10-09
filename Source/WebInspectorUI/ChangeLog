@@ -1,5 +1,81 @@
 2021-10-08  BJ Burg  <bburg@apple.com>
 
+        Web Inspector: add TabBar context menu support for WI.WebInspectorExtensionTabContentView
+        https://bugs.webkit.org/show_bug.cgi?id=231181
+        <rdar://74698241>
+
+        Reviewed by Devin Rousso.
+
+        The existing TabBar/TabBrowser system relies on the fact that each tab class can
+        be instantiated once. This is no longer true with extension tabs, as all of them
+        are instances of the same WI.WebInspectorExtensionTabContentView class.
+
+        The new approach builds on bug 230758 by introducing a 'visible' property on ContentView.
+        This is necessary to mark extension tabs as "attached by not showing" due to the
+        override of shouldNotRemoveFromDOMWhenHidden().
+
+        * UserInterface/Base/Main.js:
+        (WI._createTabContentViewForType):
+        (WI.isNewTabWithTypeAllowed):
+        List WebInspectorExtensionTabContentView as a known tab class. But do not allow
+        this tab class to be instantiated directly. Extension tabs are intended to be
+        created using WebInspectorExtensionController.createTabForExtension().
+
+        * UserInterface/Controllers/WebInspectorExtensionController.js:
+        (WI.WebInspectorExtensionController.prototype.unregisterExtension):
+        (WI.WebInspectorExtensionController.prototype.createTabForExtension):
+        Drive-by, suppress animations when extension tabs are created and destroyed. Otherwise
+        there is a lot of unnecessary and glitchy animation when multiple extension tabs are 
+        created upon loading Web Inspector the first time.
+
+        (WI.WebInspectorExtensionController.prototype.showExtensionTab):
+        (WI.WebInspectorExtensionController.prototype.hideExtensionTab): Added.
+        These methods are counterparts. They toggle tabContentView.visible to make the tab
+        visible and not visible. Note that 'hiding' does not actually close/destroy the
+        extension tab. Extension tabs are hidden by setting .not-visible ('display:none') and
+        removing the tab's TabBarItem from the TabBar.
+
+        (WI.WebInspectorExtensionController.prototype.addContextMenuItemsForClosedExtensionTabs):
+        (WI.WebInspectorExtensionController.prototype.addContextMenuItemsForAllExtensionTabs):
+        Added. TabBar delegates the creation of extension tab context menu items to this class.
+        The first method only shows hidden extension tabs (for the Reopen Closed Tabs + item).
+        The second method shows visible and not visible extension tabs and feeds the main context menu.
+
+        * UserInterface/Views/ContentView.css:
+        (.content-view.not-visible):
+        * UserInterface/Views/ContentViewContainer.css:
+        (.content-view-container > .content-view):
+        (.content-view-container > .content-view.not-visible): Deleted.
+        This style class is now managed by ContentView.js. So, move the style declaration.
+
+        * UserInterface/Views/ContentView.js:
+        (WI.ContentView):
+        (WI.ContentView.prototype.get visible):
+        (WI.ContentView.prototype.set visible):
+        Add a flag so that clients can determine when the content view is not visible and not closed.
+        This can be true if a subclass overrides shouldNotRemoveFromDOMWhenHidden() to return true.
+
+        * UserInterface/Views/ContentViewContainer.js:
+        (WI.ContentViewContainer.prototype._disassociateFromContentView):
+        Fix this code to not detach extension tabs that are hidden.
+
+        (WI.ContentViewContainer.prototype._showEntry):
+        (WI.ContentViewContainer.prototype._hideEntry):
+        Adopt new setter for ContentView.prototype.hidden.
+
+        * UserInterface/Views/TabBar.js:
+        (WI.TabBar.prototype._handleAddClosedTabsTabBarItemMouseDown):
+        Don't add generic context menu items for WebInspectorExtensionTabContentView. Call out
+        to WebInspectorExtensionController to create the appropriate extension tab context menu items.
+        (WI.TabBar.prototype._handleTabContainerContextMenu):
+        (WI.TabBar):
+
+        * UserInterface/Views/WebInspectorExtensionTabContentView.js:
+        (WI.WebInspectorExtensionTabContentView.isTabAllowed): Drive-by, gate creation of this class
+        on Web Extensions being enabled (InspectorFrontendHost.supportsWebExtensions).
+
+2021-10-08  BJ Burg  <bburg@apple.com>
+
         [Cocoa] Web Inspector: provide a way for _WKInspectorExtension clients to be notified when the inspected page navigates
         https://bugs.webkit.org/show_bug.cgi?id=231338
         <rdar://71200338>
