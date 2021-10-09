@@ -56,6 +56,7 @@ private:
         // API::InspectorExtensionClient
         void didShowExtensionTab(const Inspector::ExtensionTabID&) override;
         void didHideExtensionTab(const Inspector::ExtensionTabID&) override;
+        void inspectedPageDidNavigate(const URL&) override;
 
         InspectorExtensionDelegate& m_inspectorExtensionDelegate;
     };
@@ -66,6 +67,7 @@ private:
     struct {
         bool inspectorExtensionDidShowTabWithIdentifier : 1;
         bool inspectorExtensionDidHideTabWithIdentifier : 1;
+        bool inspectorExtensionInspectedPageDidNavigate : 1;
     } m_delegateMethods;
 };
 

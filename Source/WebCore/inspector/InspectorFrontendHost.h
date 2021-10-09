@@ -143,6 +143,7 @@ public:
 #if ENABLE(INSPECTOR_EXTENSIONS)
     void didShowExtensionTab(const String& extensionID, const String& extensionTabID);
     void didHideExtensionTab(const String& extensionID, const String& extensionTabID);
+    void inspectedPageDidNavigate(const String& url);
     ExceptionOr<JSC::JSValue> evaluateScriptInExtensionTab(HTMLIFrameElement& extensionFrame, const String& scriptSource);
 #endif
 

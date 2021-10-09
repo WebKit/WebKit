@@ -1,3 +1,20 @@
+2021-10-08  BJ Burg  <bburg@apple.com>
+
+        [Cocoa] Web Inspector: provide a way for _WKInspectorExtension clients to be notified when the inspected page navigates
+        https://bugs.webkit.org/show_bug.cgi?id=231338
+        <rdar://71200338>
+
+        Reviewed by Devin Rousso.
+
+        Add a new test to verify that triggering a navigation on the inspected WKWebView
+        causes the -extension:inspectedPageDidNavigate: method of _WKInspectorExtensionDelegate
+        to fire.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKInspectorExtensionDelegate.mm:
+        (resetGlobalState):
+        (-[InspectorExtensionDelegateForTesting inspectorExtension:inspectedPageDidNavigate:]):
+        (TEST):
+
 2021-10-08  Tadeu Zagallo  <tzagallo@apple.com>
 
         Implement the WebAssembly exception handling proposal

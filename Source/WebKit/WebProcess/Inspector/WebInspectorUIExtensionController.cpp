@@ -437,6 +437,11 @@ void WebInspectorUIExtensionController::didHideExtensionTab(const Inspector::Ext
     WebProcess::singleton().parentProcessConnection()->send(Messages::WebInspectorUIExtensionControllerProxy::DidHideExtensionTab { extensionID, extensionTabID }, m_inspectorPageIdentifier);
 }
 
+void WebInspectorUIExtensionController::inspectedPageDidNavigate(const URL& newURL)
+{
+    WebProcess::singleton().parentProcessConnection()->send(Messages::WebInspectorUIExtensionControllerProxy::InspectedPageDidNavigate { newURL }, m_inspectorPageIdentifier);
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(INSPECTOR_EXTENSIONS)

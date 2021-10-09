@@ -25,6 +25,7 @@
 messages -> WebInspectorUIExtensionControllerProxy {
     DidShowExtensionTab(String extensionID, String extensionTabID)
     DidHideExtensionTab(String extensionID, String extensionTabID)
+    InspectedPageDidNavigate(URL newURL)
 }
 
 #endif // ENABLE(INSPECTOR_EXTENSIONS)

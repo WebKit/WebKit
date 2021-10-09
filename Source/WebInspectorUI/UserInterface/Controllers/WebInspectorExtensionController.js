@@ -33,6 +33,8 @@ WI.WebInspectorExtensionController = class WebInspectorExtensionController exten
         this._extensionTabContentViewForExtensionTabIDMap = new Map;
         this._tabIDsForExtensionIDMap = new Multimap;
         this._nextExtensionTabID = 1;
+
+        WI.Frame.addEventListener(WI.Frame.Event.MainResourceDidChange, this._handleMainResourceDidChange, this);
     }
 
     // Public
@@ -195,6 +197,20 @@ WI.WebInspectorExtensionController = class WebInspectorExtensionController exten
         } catch (error) {
             return {error: error.message};
         }
+    }
+
+    // Private
+
+    _handleMainResourceDidChange(event)
+    {
+        if (!event.target.isMainFrame())
+            return;
+
+        // Don't fire the event unless one or more extensions are registered.
+        if (!this._extensionForExtensionIDMap.size)
+            return;
+
+        InspectorFrontendHost.inspectedPageDidNavigate(WI.networkManager.mainFrame.url);
     }
 };
 

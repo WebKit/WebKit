@@ -1,3 +1,41 @@
+2021-10-08  BJ Burg  <bburg@apple.com>
+
+        [Cocoa] Web Inspector: provide a way for _WKInspectorExtension clients to be notified when the inspected page navigates
+        https://bugs.webkit.org/show_bug.cgi?id=231338
+        <rdar://71200338>
+
+        Reviewed by Devin Rousso.
+
+        Add plumbing for a new event to pass from WebInspectorUI out to _WKInspectorExtensionDelegate.
+
+        * UIProcess/API/APIInspectorExtensionClient.h:
+        (API::InspectorExtensionClient::inspectedPageDidNavigate):
+
+        * UIProcess/API/Cocoa/_WKInspectorExtensionDelegate.h:
+        * UIProcess/Inspector/Cocoa/InspectorExtensionDelegate.h:
+        * UIProcess/Inspector/Cocoa/InspectorExtensionDelegate.mm:
+        (WebKit::InspectorExtensionDelegate::InspectorExtensionDelegate):
+        (WebKit::InspectorExtensionDelegate::InspectorExtensionClient::inspectedPageDidNavigate):
+
+        * UIProcess/Inspector/WebInspectorUIExtensionControllerProxy.h:
+        * UIProcess/Inspector/WebInspectorUIExtensionControllerProxy.messages.in:
+        * UIProcess/Inspector/WebInspectorUIExtensionControllerProxy.cpp:
+        (WebKit::WebInspectorUIExtensionControllerProxy::inspectedPageDidNavigate):
+        Call the delegate method for all _WKInspectorExtensions associated with this
+        id<_WKInspectorExtensionHost>. Clients can map from extension to inspector if needed.
+
+        * WebProcess/Inspector/RemoteWebInspectorUI.h:
+        * WebProcess/Inspector/RemoteWebInspectorUI.cpp:
+        (WebKit::RemoteWebInspectorUI::inspectedPageDidNavigate):
+
+        * WebProcess/Inspector/WebInspectorUI.h:
+        * WebProcess/Inspector/WebInspectorUI.cpp:
+        (WebKit::WebInspectorUI::inspectedPageDidNavigate):
+
+        * WebProcess/Inspector/WebInspectorUIExtensionController.h:
+        * WebProcess/Inspector/WebInspectorUIExtensionController.cpp:
+        (WebKit::WebInspectorUIExtensionController::inspectedPageDidNavigate):
+
 2021-10-08  Jer Noble  <jer.noble@apple.com>
 
         [Build-time perf] Forward-declare more things in Element.h

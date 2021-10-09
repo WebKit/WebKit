@@ -895,6 +895,7 @@
 		958B70E126C46EDC00B2022B /* NSAttributedStringWebKitAdditions.mm in Sources */ = {isa = PBXBuildFile; fileRef = 958B70E026C46EDC00B2022B /* NSAttributedStringWebKitAdditions.mm */; };
 		95A524952581A10D00461FE9 /* WKWebViewThemeColor.mm in Sources */ = {isa = PBXBuildFile; fileRef = 95A524942581A10D00461FE9 /* WKWebViewThemeColor.mm */; };
 		95B6B3B7251EBF2F00FC4382 /* MediaDocument.mm in Sources */ = {isa = PBXBuildFile; fileRef = 95B6B3B6251EBF2F00FC4382 /* MediaDocument.mm */; };
+		996EDCCB270E70D7006DF175 /* InspectorExtension-basic-page.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 996EDCCA270E70AB006DF175 /* InspectorExtension-basic-page.html */; };
 		9984FACC1CFFAF60008D198C /* WKWebViewTextInput.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9984FACA1CFFAEEE008D198C /* WKWebViewTextInput.mm */; };
 		9984FACE1CFFB090008D198C /* editable-body.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 9984FACD1CFFB038008D198C /* editable-body.html */; };
 		9999108B1F393C96008AD455 /* Copying.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9999108A1F393C8B008AD455 /* Copying.mm */; };
@@ -1584,6 +1585,7 @@
 				2EFF06CD1D8A429A0004BB30 /* input-field-in-scrollable-document.html in Copy Resources */,
 				CE3524FA1B1443890028A7C5 /* input-focus-blur.html in Copy Resources */,
 				CE6D0EE32426B932002AD901 /* insert-text.html in Copy Resources */,
+				996EDCCB270E70D7006DF175 /* InspectorExtension-basic-page.html in Copy Resources */,
 				99E2846826F941540003F1FA /* InspectorExtension-basic-tab.html in Copy Resources */,
 				99E2846626F93DB50003F1FA /* InspectorExtension-TabIcon-30x30.png in Copy Resources */,
 				074994421EA5034B000DA44D /* invalidDeviceIDHashSalts in Copy Resources */,
@@ -2638,6 +2640,7 @@
 		958B70E026C46EDC00B2022B /* NSAttributedStringWebKitAdditions.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = NSAttributedStringWebKitAdditions.mm; sourceTree = "<group>"; };
 		95A524942581A10D00461FE9 /* WKWebViewThemeColor.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebViewThemeColor.mm; sourceTree = "<group>"; };
 		95B6B3B6251EBF2F00FC4382 /* MediaDocument.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MediaDocument.mm; sourceTree = "<group>"; };
+		996EDCCA270E70AB006DF175 /* InspectorExtension-basic-page.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "InspectorExtension-basic-page.html"; sourceTree = "<group>"; };
 		9984FACA1CFFAEEE008D198C /* WKWebViewTextInput.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebViewTextInput.mm; sourceTree = "<group>"; };
 		9984FACD1CFFB038008D198C /* editable-body.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "editable-body.html"; sourceTree = "<group>"; };
 		9999108A1F393C8B008AD455 /* Copying.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Copying.mm; sourceTree = "<group>"; };
@@ -4129,6 +4132,7 @@
 				93A274A1252163D600A1B6D4 /* IndexUpgradeWithMultipleIndices.sqlite3 */,
 				93A274A4252241D000A1B6D4 /* IndexUpgradeWithMultipleIndicesHaveSameID.sqlite3 */,
 				2EFF06CC1D8A42910004BB30 /* input-field-in-scrollable-document.html */,
+				996EDCCA270E70AB006DF175 /* InspectorExtension-basic-page.html */,
 				99E2846726F9413B0003F1FA /* InspectorExtension-basic-tab.html */,
 				99E2846526F93D760003F1FA /* InspectorExtension-TabIcon-30x30.png */,
 				937A6C8824357BF300C3A6B0 /* KillWebProcessWithOpenConnection-1.html */,

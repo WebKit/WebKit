@@ -76,6 +76,7 @@ public:
     // Callbacks from the frontend.
     void didShowExtensionTab(const Inspector::ExtensionID&, const Inspector::ExtensionTabID&);
     void didHideExtensionTab(const Inspector::ExtensionID&, const Inspector::ExtensionTabID&);
+    void inspectedPageDidNavigate(const URL&);
 
 private:
     JSC::JSObject* unwrapEvaluationResultAsObject(WebCore::InspectorFrontendAPIDispatcher::EvaluationResult) const;

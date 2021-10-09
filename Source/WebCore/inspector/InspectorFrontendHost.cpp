@@ -707,6 +707,14 @@ void InspectorFrontendHost::didHideExtensionTab(const String& extensionID, const
     m_client->didHideExtensionTab(extensionID, extensionTabID);
 }
 
+void InspectorFrontendHost::inspectedPageDidNavigate(const String& newURLString)
+{
+    if (!m_client)
+        return;
+    
+    m_client->inspectedPageDidNavigate({ URL(), newURLString });
+}
+
 ExceptionOr<JSC::JSValue> InspectorFrontendHost::evaluateScriptInExtensionTab(HTMLIFrameElement& extensionFrameElement, const String& scriptSource)
 {
     Frame* frame = extensionFrameElement.contentFrame();

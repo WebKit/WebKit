@@ -122,6 +122,7 @@ public:
     virtual bool supportsWebExtensions() { return false; }
     virtual void didShowExtensionTab(const Inspector::ExtensionID&, const Inspector::ExtensionTabID&) { }
     virtual void didHideExtensionTab(const Inspector::ExtensionID&, const Inspector::ExtensionTabID&) { }
+    virtual void inspectedPageDidNavigate(const URL&) { }
 #endif
 
     WEBCORE_EXPORT virtual void sendMessageToBackend(const String&) = 0;

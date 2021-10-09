@@ -1,3 +1,23 @@
+2021-10-08  BJ Burg  <bburg@apple.com>
+
+        [Cocoa] Web Inspector: provide a way for _WKInspectorExtension clients to be notified when the inspected page navigates
+        https://bugs.webkit.org/show_bug.cgi?id=231338
+        <rdar://71200338>
+
+        Reviewed by Devin Rousso.
+
+        Pass along an onNavigated event to InspectorFrontendHost when the WI.Frame.MainResourceDidChange
+        event fires at a main frame target.
+
+        * UserInterface/Controllers/WebInspectorExtensionController.js:
+        (WI.WebInspectorExtensionController):
+        (WI.WebInspectorExtensionController.prototype.registerExtension):
+        (WI.WebInspectorExtensionController.prototype.unregisterExtension):
+        Do not add this global listener unless at least one WI.WebInspectorExtension
+        is currently registered.
+
+        (WI.WebInspectorExtensionController.prototype._handleMainResourceDidChange):
+
 2021-10-07  BJ Burg  <bburg@apple.com>
 
         Web Inspector: WebInspectorExtensionTabContentView should not reload its iframe when detached

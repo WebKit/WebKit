@@ -29,6 +29,7 @@
 #if ENABLE(INSPECTOR_EXTENSIONS)
 
 #include "APIInspectorExtension.h"
+#include "APIURL.h"
 #include "WebInspectorUIExtensionControllerMessages.h"
 #include "WebInspectorUIExtensionControllerProxyMessages.h"
 #include "WebPageProxy.h"
@@ -253,6 +254,17 @@ void WebInspectorUIExtensionControllerProxy::didHideExtensionTab(const Inspector
         return;
 
     extensionClient->didHideExtensionTab(extensionTabID);
+}
+
+void WebInspectorUIExtensionControllerProxy::inspectedPageDidNavigate(const URL& newURL)
+{
+    for (auto& extension : copyToVector(m_extensionAPIObjectMap.values())) {
+        auto extensionClient = extension->client();
+        if (!extensionClient)
+            continue;
+
+        extensionClient->inspectedPageDidNavigate(newURL);
+    }
 }
 
 } // namespace WebKit

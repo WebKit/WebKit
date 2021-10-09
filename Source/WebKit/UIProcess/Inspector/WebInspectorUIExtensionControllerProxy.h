@@ -68,6 +68,7 @@ public:
     // WebInspectorUIExtensionControllerProxy IPC messages.
     void didShowExtensionTab(const Inspector::ExtensionID&, const Inspector::ExtensionTabID&);
     void didHideExtensionTab(const Inspector::ExtensionID&, const Inspector::ExtensionTabID&);
+    void inspectedPageDidNavigate(const URL&);
 
     // Notifications.
     void inspectorFrontendLoaded();
