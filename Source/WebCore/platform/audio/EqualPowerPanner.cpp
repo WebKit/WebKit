@@ -30,6 +30,7 @@
 
 #include "AudioBus.h"
 #include "AudioUtilities.h"
+#include "VectorMath.h"
 #include <algorithm>
 #include <wtf/MathExtras.h>
 
@@ -126,33 +127,18 @@ void EqualPowerPanner::pan(double azimuth, double /*elevation*/, const AudioBus*
         }
     }
 
-    double desiredGainL = cos(piOverTwoDouble * desiredPanPosition);
-    double desiredGainR = sin(piOverTwoDouble * desiredPanPosition);
-    
-    int n = framesToProcess;
-
-    // FIXME: We should vectorize this.
+    double desiredGainL = std::cos(piOverTwoDouble * desiredPanPosition);
+    double desiredGainR = std::sin(piOverTwoDouble * desiredPanPosition);
     if (numberOfInputChannels == 1) { // For mono source case.
-        while (n--) {
-            float inputL = *sourceL++;
-            *destinationL++ = static_cast<float>(inputL * desiredGainL);
-            *destinationR++ = static_cast<float>(inputL * desiredGainR);
-        }
+        VectorMath::multiplyByScalar(sourceL, desiredGainL, destinationL, framesToProcess);
+        VectorMath::multiplyByScalar(sourceL, desiredGainR, destinationR, framesToProcess);
     } else { // For stereo source case.
         if (azimuth <= 0) { // from -90 -> 0
-            while (n--) {
-                float inputL = *sourceL++;
-                float inputR = *sourceR++;
-                *destinationL++ = static_cast<float>(inputL + inputR * desiredGainL);
-                *destinationR++ = static_cast<float>(inputR * desiredGainR);
-            }
+            VectorMath::multiplyByScalarThenAddToVector(sourceR, desiredGainL, sourceL, destinationL, framesToProcess);
+            VectorMath::multiplyByScalar(sourceR, desiredGainR, destinationR, framesToProcess);
         } else { // from 0 -> +90
-            while (n--) {
-                float inputL = *sourceL++;
-                float inputR = *sourceR++;
-                *destinationL++ = static_cast<float>(inputL * desiredGainL);
-                *destinationR++ = static_cast<float>(inputR + inputL * desiredGainR);
-            }
+            VectorMath::multiplyByScalar(sourceL, desiredGainL, destinationL, framesToProcess);
+            VectorMath::multiplyByScalarThenAddToVector(sourceL, desiredGainR, sourceR, destinationR, framesToProcess);
         }
     }
 }
