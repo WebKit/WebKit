@@ -4372,7 +4372,8 @@
       "emails" : [
          "rego@igalia.com"
       ],
-      "expertise" : "Layout, CSS, Selection, WebKitGTK port",
+      "expertise" : "Layout, CSS",
+      "github" : "mrego",
       "name" : "Manuel Rego Casasnovas",
       "nicks" : [
          "rego",

@@ -1,3 +1,12 @@
+2021-10-09  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        Add GitHub account to contributors.json and update expertise field
+        https://bugs.webkit.org/show_bug.cgi?id=231476
+
+        Unreviewed.
+
+        * metadata/contributors.json:
+
 2021-10-08  Joonghun Park  <jh718.park@samsung.com>
 
         Unreviewed. Add github username for Joonghun Park.
