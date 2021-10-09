@@ -1,3 +1,12 @@
+2021-10-08  Kenneth Russell  <kbr@chromium.org>
+
+        Add github username for kbr
+        https://bugs.webkit.org/show_bug.cgi?id=231462
+
+        Reviewed by Dean Jackson.
+
+        * metadata/contributors.json:
+
 2021-10-08  Ross Kirsling  <ross.kirsling@sony.com>
 
         Unreviewed, add GitHub usernames for Sony contributors.

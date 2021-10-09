@@ -3910,7 +3910,8 @@
          "kbr@google.com",
          "kbr@chromium.org"
       ],
-      "expertise" : " WebGL (Chromium and Safari ports), Canvas",
+      "expertise" : " WebGL (Chromium and Safari ports), ANGLE, Canvas",
+      "github" : "kenrussell",
       "name" : "Kenneth Russell",
       "nicks" : [
          "kbr_google",
