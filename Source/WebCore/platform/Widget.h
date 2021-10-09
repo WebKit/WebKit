@@ -175,6 +175,8 @@ public:
     // the frame rects be the same no matter what transforms are applied.
     virtual bool transformsAffectFrameRect() { return true; }
 
+    virtual void willBeDestroyed() { }
+
 #if PLATFORM(COCOA)
     virtual id accessibilityHitTest(const IntPoint&) const { return nil; }
     virtual id accessibilityObject() const { return nil; }
