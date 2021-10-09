@@ -1,3 +1,11 @@
+2021-10-08  Jonathan Bedard  <jbedard@apple.com>
+
+        Add github username for Michael Catanzaro
+
+        Unreviewed.
+
+        * metadata/contributors.json:
+
 2021-10-08  Kenneth Russell  <kbr@chromium.org>
 
         Add github username for kbr

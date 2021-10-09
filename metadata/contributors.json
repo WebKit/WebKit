@@ -4640,6 +4640,7 @@
          "mcatanzaro@igalia.com"
       ],
       "expertise" : "The WebKitGTK Port, Epiphany, Soup HTTP Backend",
+      "github" : "mcatanzaro",
       "name" : "Michael Catanzaro",
       "nicks" : [
          "mcatanzaro"
