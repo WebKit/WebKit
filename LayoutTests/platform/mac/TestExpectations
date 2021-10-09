@@ -2393,7 +2393,7 @@ webkit.org/b/230327 imported/w3c/web-platform-tests/css/css-transforms/crashtest
 [ Monterey+ ] editing/selection/context-menu-on-text.html [ Crash ]
 [ Monterey+ ] editing/selection/context-menu-text-selection-lookup.html [ Crash ]
 
-rdar://83592102
+# rdar://83592102
 [ Monterey+ ] editing/mac/selection/context-menu-select-editability.html [ Crash ]
 [ Monterey+ ] editing/mac/spelling/advance-to-next-misspelling.html [ Crash ]
 [ Monterey+ ] editing/selection/5354455-1.html [ Crash ]

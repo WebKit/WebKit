@@ -3391,7 +3391,7 @@ http/wpt/mediarecorder/mute-tracks.html [ Pass Failure ]
 http/wpt/mediarecorder/pause-recording.html [ Pass Crash ]
 
 # rdar://80383672 ([ iOS15 ] accessibility/misspelling-range.html is failing)
-accessibility/misspelling-range.html  [ Failure ]
+webkit.org/b/231261 accessibility/misspelling-range.html  [ Failure ]
 
 # rdar://80386523 ([ iOS15 ] fast/events/touch/ios/long-press-then-drag-to-select-text.html is failing)
 fast/events/touch/ios/long-press-then-drag-to-select-text.html  [ Failure ]
@@ -3559,5 +3559,3 @@ webkit.org/b/229832 [ Release ] imported/w3c/web-platform-tests/beacon/beacon-re
 # rdar://83207621 ([ BigSur wk2 Release ] 2 fast/canvas/ tests are flaky failing (230366))
 [ Release ] fast/canvas/canvas-composite-text-alpha.html [ Pass Timeout Failure ]
 fast/canvas/canvas-blending-text.html [ Pass Failure ]
-
-webkit.org/b/231261 accessibility/misspelling-range.html [ Failure ]
