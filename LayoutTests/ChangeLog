@@ -1,3 +1,12 @@
+2021-10-10  Alan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Do no bail out on boundary neutral characters
+        https://bugs.webkit.org/show_bug.cgi?id=231485
+
+        Reviewed by Antti Koivisto.
+
+        * TestExpectations:
+
 2021-10-09  Alan Bujtas  <zalan@apple.com>
 
         Ideographic space behaves as breaking space

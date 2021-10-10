@@ -20,7 +20,7 @@ decimal	hexadecimal	entity name	&#nnn;	&#xhhh;	&entity;
 170	AA	ordf	ª	ª	ª
 171	AB	laquo	«	«	«
 172	AC	not	¬	¬	¬
-173	AD	shy			
+173	AD	shy	­	­	­
 174	AE	reg	®	®	®
 175	AF	macr	¯	¯	¯
 176	B0	deg	°	°	°
