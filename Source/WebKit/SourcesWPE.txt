@@ -108,6 +108,8 @@ UIProcess/WebViewportAttributes.cpp
 UIProcess/API/C/WKGrammarDetail.cpp
 UIProcess/API/C/WKViewportAttributes.cpp
 
+UIProcess/API/C/glib/WKTextCheckerGLib.cpp
+
 UIProcess/API/C/wpe/WKView.cpp
 
 UIProcess/API/glib/APIContentRuleListStoreGLib.cpp @no-unify

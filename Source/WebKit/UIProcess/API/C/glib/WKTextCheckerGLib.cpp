@@ -24,14 +24,19 @@
  */
 
 #include "config.h"
-#include "WKTextCheckerGtk.h"
+#include "WKTextCheckerGLib.h"
 
 #include "TextChecker.h"
 #include "WKAPICast.h"
 #include "WebPageProxy.h"
+
+#if PLATFORM(GTK)
 #include "WebTextChecker.h"
+#endif
 
 using namespace WebKit;
+
+#if PLATFORM(GTK)
 
 void WKTextCheckerSetClient(const WKTextCheckerClientBase* wkClient)
 {
@@ -69,6 +74,8 @@ void WKTextCheckerSetSpellCheckingLanguages(const char* const* languages)
     WebKit::TextChecker::setSpellCheckingLanguages(spellCheckingLanguages);
 #endif
 }
+
+#endif // PLATFORM(GTK)
 
 void WKTextCheckerSetContinuousSpellCheckingEnabled(bool enabled)
 {

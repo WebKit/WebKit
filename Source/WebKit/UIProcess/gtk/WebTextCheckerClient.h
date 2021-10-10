@@ -26,7 +26,7 @@
 #pragma once
 
 #include "APIClient.h"
-#include "WKTextCheckerGtk.h"
+#include "WKTextCheckerGLib.h"
 #include <WebCore/TextCheckerClient.h>
 #include <wtf/Forward.h>
 

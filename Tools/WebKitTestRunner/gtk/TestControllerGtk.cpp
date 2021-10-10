@@ -28,7 +28,7 @@
 #include "TestController.h"
 
 #include "PlatformWebView.h"
-#include <WebKit/WKTextCheckerGtk.h>
+#include <WebKit/WKTextCheckerGLib.h>
 #include <gtk/gtk.h>
 #include <wtf/Platform.h>
 #include <wtf/RunLoop.h>

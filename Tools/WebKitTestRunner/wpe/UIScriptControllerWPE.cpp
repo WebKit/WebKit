@@ -29,9 +29,9 @@
 #include "EventSenderProxy.h"
 #include "PlatformWebView.h"
 #include "TestController.h"
-#include "TextChecker.h"
 #include "UIScriptContext.h"
 #include <JavaScriptCore/OpaqueJSString.h>
+#include <WebKit/WKTextCheckerGLib.h>
 #include <wtf/RunLoop.h>
 
 namespace WTR {
@@ -53,7 +53,7 @@ void UIScriptControllerWPE::doAsyncTask(JSValueRef callback)
 
 void UIScriptControllerWPE::setContinuousSpellCheckingEnabled(bool enabled)
 {
-    WebKit::TextChecker::setContinuousSpellCheckingEnabled(enabled);
+    WKTextCheckerSetContinuousSpellCheckingEnabled(enabled);
 }
 
 void UIScriptControllerWPE::copyText(JSStringRef)

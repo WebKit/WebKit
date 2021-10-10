@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WKTextCheckerGtk_h
-#define WKTextCheckerGtk_h
+#pragma once
 
 #include <WebKit/WKBase.h>
 #include <WebKit/WKTextChecker.h>
@@ -34,6 +33,8 @@ extern "C" {
 #endif
 
 WK_EXPORT void WKTextCheckerSetTestingMode(bool enabled);
+
+#if PLATFORM(GTK)
 
 // TextChecker Client
 typedef bool (*WKTextCheckerContinousSpellCheckingAllowed)(const void *clientInfo);
@@ -88,10 +89,11 @@ WK_EXPORT void WKTextCheckerCheckSpelling(WKPageRef page, bool startBeforeSelect
 WK_EXPORT void WKTextCheckerChangeSpellingToWord(WKPageRef page, WKStringRef word);
 
 WK_EXPORT void WKTextCheckerSetSpellCheckingLanguages(const char* const* languages);
+
+#endif // PLATFORM(GTK)
+
 WK_EXPORT void WKTextCheckerSetContinuousSpellCheckingEnabled(bool);
 
 #ifdef __cplusplus
 }
-#endif
-
 #endif

@@ -1,3 +1,16 @@
+2021-10-10  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        [WPE] Expose WKTextCheckerSetContinuousSpellCheckingEnabled and use it from WKTR
+        https://bugs.webkit.org/show_bug.cgi?id=231446
+
+        Reviewed by Philippe Normand.
+
+        * WebKitTestRunner/gtk/TestControllerGtk.cpp:
+        * WebKitTestRunner/gtk/UIScriptControllerGtk.cpp:
+        * WebKitTestRunner/gtk/main.cpp:
+        * WebKitTestRunner/wpe/UIScriptControllerWPE.cpp:
+        (WTR::UIScriptControllerWPE::setContinuousSpellCheckingEnabled):
+
 2021-10-09  Beth Dakin  <bdakin@apple.com>
 
         Pull modifier key extraction into TestRunnerShared

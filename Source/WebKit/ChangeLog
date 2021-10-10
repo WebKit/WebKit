@@ -1,3 +1,28 @@
+2021-10-10  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        [WPE] Expose WKTextCheckerSetContinuousSpellCheckingEnabled and use it from WKTR
+        https://bugs.webkit.org/show_bug.cgi?id=231446
+
+        Reviewed by Philippe Normand.
+
+        This is to avoid WKTR needing to poke WebKit internals to turn on spellchecking.
+
+        * PlatformGTK.cmake:
+        * PlatformWPE.cmake:
+        * SourcesGTK.txt:
+        * SourcesWPE.txt:
+        * UIProcess/API/C/glib/WKTextCheckerGLib.cpp: Renamed from Source/WebKit/UIProcess/API/C/gtk/WKTextCheckerGtk.cpp.
+        (WKTextCheckerSetClient):
+        (WKTextCheckerContinuousSpellCheckingEnabledStateChanged):
+        (WKTextCheckerGrammarCheckingEnabledStateChanged):
+        (WKTextCheckerCheckSpelling):
+        (WKTextCheckerChangeSpellingToWord):
+        (WKTextCheckerSetSpellCheckingLanguages):
+        (WKTextCheckerSetContinuousSpellCheckingEnabled):
+        * UIProcess/API/C/glib/WKTextCheckerGLib.h: Renamed from Source/WebKit/UIProcess/API/C/gtk/WKTextCheckerGtk.h.
+        * UIProcess/gtk/WebTextChecker.h:
+        * UIProcess/gtk/WebTextCheckerClient.h:
+
 2021-10-09  Simon Fraser  <simon.fraser@apple.com>
 
         Run smooth scroll animations on the scrolling thread
