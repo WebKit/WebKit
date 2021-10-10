@@ -1890,7 +1890,8 @@ JSC_DEFINE_JIT_OPERATION(operationNewRegexp, JSCell*, (JSGlobalObject* globalObj
 
     RegExp* regexp = static_cast<RegExp*>(regexpPtr);
     ASSERT(regexp->isValid());
-    return RegExpObject::create(vm, globalObject->regExpStructure(), regexp);
+    static constexpr bool areLegacyFeaturesEnabled = true;
+    return RegExpObject::create(vm, globalObject->regExpStructure(), regexp, areLegacyFeaturesEnabled);
 }
 
 // The only reason for returning an UnusedPtr (instead of void) is so that we can reuse the

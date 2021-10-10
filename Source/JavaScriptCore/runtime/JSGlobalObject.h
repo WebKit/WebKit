@@ -487,6 +487,7 @@ public:
     RefPtr<WatchpointSet> m_havingABadTimeWatchpoint;
     RefPtr<WatchpointSet> m_varInjectionWatchpoint;
     RefPtr<WatchpointSet> m_varReadOnlyWatchpoint;
+    RefPtr<WatchpointSet> m_regExpRecompiledWatchpoint;
 
     std::unique_ptr<JSGlobalObjectRareData> m_rareData;
 
@@ -1025,6 +1026,7 @@ public:
     WatchpointSet* havingABadTimeWatchpoint() { return m_havingABadTimeWatchpoint.get(); }
     WatchpointSet* varInjectionWatchpoint() { return m_varInjectionWatchpoint.get(); }
     WatchpointSet* varReadOnlyWatchpoint() { return m_varReadOnlyWatchpoint.get(); }
+    WatchpointSet* regExpRecompiledWatchpoint() { return m_regExpRecompiledWatchpoint.get(); }
         
     bool isHavingABadTime() const
     {
@@ -1036,6 +1038,11 @@ public:
     bool objectPrototypeIsSane();
     bool arrayPrototypeChainIsSane();
     bool stringPrototypeChainIsSane();
+
+    bool isRegExpRecompiled() const
+    {
+        return m_regExpRecompiledWatchpoint->hasBeenInvalidated();
+    }
 
     void setProfileGroup(unsigned value) { createRareDataIfNeeded(); m_rareData->profileGroup = value; }
     unsigned profileGroup() const

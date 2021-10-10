@@ -1,3 +1,16 @@
+2021-10-09  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Refine RegExp#compile based on regexp-legacy-features proposal
+        https://bugs.webkit.org/show_bug.cgi?id=231486
+
+        Reviewed by Alexey Shvayka.
+
+        * stress/regexp-recompile.js: Added.
+        (shouldBe):
+        (recompile):
+        (target):
+        * test262/expectations.yaml:
+
 2021-10-08  Tadeu Zagallo  <tzagallo@apple.com>
 
         Implement the WebAssembly exception handling proposal

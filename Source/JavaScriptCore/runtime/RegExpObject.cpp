@@ -32,9 +32,9 @@ const ClassInfo RegExpObject::s_info = { "RegExp", &Base::s_info, nullptr, nullp
 static JSC_DECLARE_CUSTOM_SETTER(regExpObjectSetLastIndexStrict);
 static JSC_DECLARE_CUSTOM_SETTER(regExpObjectSetLastIndexNonStrict);
 
-RegExpObject::RegExpObject(VM& vm, Structure* structure, RegExp* regExp)
+RegExpObject::RegExpObject(VM& vm, Structure* structure, RegExp* regExp, bool areLegacyFeaturesEnabled)
     : JSNonFinalObject(vm, structure)
-    , m_regExpAndLastIndexIsNotWritableFlag(bitwise_cast<uintptr_t>(regExp)) // lastIndexIsNotWritableFlag is not set.
+    , m_regExpAndFlags(bitwise_cast<uintptr_t>(regExp) | (areLegacyFeaturesEnabled ? 0 : legacyFeaturesDisabledFlag)) // lastIndexIsNotWritableFlag is not set.
 {
     m_lastIndex.setWithoutWriteBarrier(jsNumber(0));
 }

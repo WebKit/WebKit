@@ -689,7 +689,8 @@ JSC_DEFINE_JIT_OPERATION(operationMaterializeObjectInOSR, JSCell*, (JSGlobalObje
         RELEASE_ASSERT(regExp);
         CodeBlock* codeBlock = baselineCodeBlockForOriginAndBaselineCodeBlock(materialization->origin(), callFrame->codeBlock()->baselineAlternative());
         Structure* structure = codeBlock->globalObject()->regExpStructure();
-        return RegExpObject::create(vm, structure, regExp);
+        static constexpr bool areLegacyFeaturesEnabled = true;
+        return RegExpObject::create(vm, structure, regExp, areLegacyFeaturesEnabled);
     }
 
     default:

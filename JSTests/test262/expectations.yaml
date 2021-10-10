@@ -5,12 +5,6 @@ test/annexB/built-ins/Function/createdynfn-html-close-comment-params.js:
 test/annexB/built-ins/Function/createdynfn-html-open-comment-params.js:
   default: "SyntaxError: Unexpected token '}'. Expected a parameter pattern or a ')' in parameter list."
   strict mode: "SyntaxError: Unexpected token '}'. Expected a parameter pattern or a ')' in parameter list."
-test/annexB/built-ins/RegExp/prototype/compile/this-cross-realm-instance.js:
-  default: 'Test262Error: `RegExp.prototype.compile.call(otherRealm_regexp)` throws TypeError Expected a TypeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: `RegExp.prototype.compile.call(otherRealm_regexp)` throws TypeError Expected a TypeError to be thrown but no exception was thrown at all'
-test/annexB/built-ins/RegExp/prototype/compile/this-subclass-instance.js:
-  default: 'Test262Error: `subclass_regexp.compile()` throws TypeError Expected a TypeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: `subclass_regexp.compile()` throws TypeError Expected a TypeError to be thrown but no exception was thrown at all'
 test/annexB/language/eval-code/direct/func-block-decl-eval-func-skip-early-err-block.js:
   default: 'Test262Error: An initialized binding is not created prior to evaluation Expected a ReferenceError to be thrown but no exception was thrown at all'
 test/annexB/language/eval-code/direct/func-block-decl-eval-func-skip-early-err-for-in.js:

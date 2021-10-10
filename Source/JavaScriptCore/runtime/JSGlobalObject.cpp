@@ -608,6 +608,7 @@ JSGlobalObject::JSGlobalObject(VM& vm, Structure* structure, const GlobalObjectM
     , m_havingABadTimeWatchpoint(WatchpointSet::create(IsWatched))
     , m_varInjectionWatchpoint(WatchpointSet::create(IsWatched))
     , m_varReadOnlyWatchpoint(WatchpointSet::create(IsWatched))
+    , m_regExpRecompiledWatchpoint(WatchpointSet::create(IsWatched))
     , m_weakRandom(Options::forceWeakRandomSeed() ? Options::forcedWeakRandomSeed() : static_cast<unsigned>(randomNumber() * (std::numeric_limits<unsigned>::max() + 1.0)))
     , m_arrayIteratorProtocolWatchpointSet(IsWatched)
     , m_mapIteratorProtocolWatchpointSet(IsWatched)

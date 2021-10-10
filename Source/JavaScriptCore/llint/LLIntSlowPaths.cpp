@@ -612,7 +612,8 @@ LLINT_SLOW_PATH_DECL(slow_path_new_regexp)
     auto bytecode = pc->as<OpNewRegexp>();
     RegExp* regExp = jsCast<RegExp*>(getOperand(callFrame, bytecode.m_regexp));
     ASSERT(regExp->isValid());
-    LLINT_RETURN(RegExpObject::create(vm, globalObject->regExpStructure(), regExp));
+    static constexpr bool areLegacyFeaturesEnabled = true;
+    LLINT_RETURN(RegExpObject::create(vm, globalObject->regExpStructure(), regExp, areLegacyFeaturesEnabled));
 }
 
 LLINT_SLOW_PATH_DECL(slow_path_instanceof)
