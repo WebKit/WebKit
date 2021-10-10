@@ -39,17 +39,17 @@ class DOMPointReadOnly;
 class WebXRBoundedReferenceSpace final : public WebXRReferenceSpace {
     WTF_MAKE_ISO_ALLOCATED(WebXRBoundedReferenceSpace);
 public:
-    static Ref<WebXRBoundedReferenceSpace> create(Document&, Ref<WebXRSession>&&, XRReferenceSpaceType);
-    static Ref<WebXRBoundedReferenceSpace> create(Document&, Ref<WebXRSession>&&, Ref<WebXRRigidTransform>&&, XRReferenceSpaceType);
+    static Ref<WebXRBoundedReferenceSpace> create(Document&, WebXRSession&, XRReferenceSpaceType);
+    static Ref<WebXRBoundedReferenceSpace> create(Document&, WebXRSession&, Ref<WebXRRigidTransform>&&, XRReferenceSpaceType);
 
     virtual ~WebXRBoundedReferenceSpace();
 
-    TransformationMatrix nativeOrigin() const final;
+    std::optional<TransformationMatrix> nativeOrigin() const final;
     const Vector<Ref<DOMPointReadOnly>>& boundsGeometry();
     ExceptionOr<Ref<WebXRReferenceSpace>> getOffsetReferenceSpace(const WebXRRigidTransform&) final;
 
 private:
-    WebXRBoundedReferenceSpace(Document&, Ref<WebXRSession>&&, Ref<WebXRRigidTransform>&&, XRReferenceSpaceType);
+    WebXRBoundedReferenceSpace(Document&, WebXRSession&, Ref<WebXRRigidTransform>&&, XRReferenceSpaceType);
 
     bool isBoundedReferenceSpace() const final { return true; }
 

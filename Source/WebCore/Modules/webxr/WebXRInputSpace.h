@@ -44,18 +44,18 @@ public:
     using RefCounted<WebXRInputSpace>::ref;
     using RefCounted<WebXRInputSpace>::deref;
 
-    bool isPositionEmulated() const final { return m_pose.isPositionEmulated; }
+    std::optional<bool> isPositionEmulated() const final { return m_pose.isPositionEmulated; }
     void setPose(const PlatformXR::Device::FrameData::InputSourcePose& pose) { m_pose = pose; }
 
 private:
     WebXRInputSpace(Document&, WebXRSession&, const PlatformXR::Device::FrameData::InputSourcePose&);
-    WebXRSession& session() const final { return m_session.get(); }
-    TransformationMatrix nativeOrigin() const final;
+    WebXRSession* session() const final { return m_session.get(); }
+    std::optional<TransformationMatrix> nativeOrigin() const final;
 
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
 
-    Ref<WebXRSession> m_session;
+    WeakPtr<WebXRSession> m_session;
     PlatformXR::Device::FrameData::InputSourcePose m_pose;
 };
 
