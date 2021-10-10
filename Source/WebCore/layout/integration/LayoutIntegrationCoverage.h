@@ -71,7 +71,7 @@ enum class AvoidanceReason : uint64_t {
     // Unused                                    = 1LLU  << 30,
     FlowHasSVGFont                               = 1LLU  << 31,
     FlowTextHasDirectionCharacter                = 1LLU  << 32,
-    FlowIsMissingPrimaryFont                     = 1LLU  << 33,
+    // Unused                                    = 1LLU  << 33,
     // Unused                                    = 1LLU  << 34,
     FlowTextIsCombineText                        = 1LLU  << 35,
     FlowTextIsRenderCounter                      = 1LLU  << 36,
