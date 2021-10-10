@@ -2619,7 +2619,6 @@ webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/white-space/tex
 webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/white-space/line-edge-white-space-collapse-002.html [ ImageOnlyFailure ]
 webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/word-break/word-break-break-all-020.html [ ImageOnlyFailure ]
 webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/word-break/word-break-keep-all-006.html [ ImageOnlyFailure ]
-webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/word-break/word-break-keep-all-005.html [ ImageOnlyFailure ]
 webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/writing-system/writing-system-segment-break-001.html [ ImageOnlyFailure ]
 webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/writing-system/writing-system-line-break-002.html [ ImageOnlyFailure ]
 webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/writing-system/writing-system-text-transform-001.html [ ImageOnlyFailure ]
@@ -4483,8 +4482,6 @@ webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/word-boundary/w
 webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/word-boundary/word-boundary-128.html [ ImageOnlyFailure ]
 webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/word-boundary/word-boundary-129.html [ ImageOnlyFailure ]
 webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/word-break/word-break-break-all-inline-008.html [ ImageOnlyFailure ]
-webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/word-break/word-break-keep-all-007.html [ ImageOnlyFailure ]
-webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/word-break/word-break-keep-all-008.html [ ImageOnlyFailure ]
 webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/word-break/word-break-min-content-003.html [ ImageOnlyFailure ]
 webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/word-break/word-break-min-content-006.html [ ImageOnlyFailure ]
 
