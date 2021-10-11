@@ -1,3 +1,11 @@
+2021-10-10  Pablo Saavedra  <psaavedra@igalia.com>
+
+        Add GitHub username for Pablo Saavedra
+
+        Unreviewed.
+
+        * metadata/contributors.json:
+
 2021-10-10  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         Unreviewed. Add GitHub username for Xabier Rodriguez Calvar
