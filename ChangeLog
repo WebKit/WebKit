@@ -1,3 +1,12 @@
+2021-10-10  Cameron McCormack  <heycam@apple.com>
+
+        Add GitHub account to contributors.json
+        https://bugs.webkit.org/show_bug.cgi?id=231497
+
+        Unreviewed.
+
+        * metadata/contributors.json:
+
 2021-10-10  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         [WPE] Reenable -fvisibility=hidden and -fvisibility-inlines-hidden
