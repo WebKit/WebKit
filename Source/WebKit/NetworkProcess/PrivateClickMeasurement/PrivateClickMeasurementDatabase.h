@@ -76,6 +76,11 @@ private:
     String getDomainStringFromDomainID(DomainID) const final;
 
     void addBundleIDColumnIfNecessary();
+    bool needsUpdatedSchema() final;
+    bool createUniqueIndices() final;
+    const MemoryCompactLookupOnlyRobinHoodHashMap<String, TableAndIndexPair>& expectedTableAndIndexQueries() final;
+    const Vector<String>& sortedTables() final;
+
     Vector<String> columnsForTable(const String& tableName);
     void addMissingColumnToTable(const String& tableName, const String& columnName);
 

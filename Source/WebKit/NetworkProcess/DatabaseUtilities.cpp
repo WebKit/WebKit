@@ -187,4 +187,119 @@ WebCore::PrivateClickMeasurement DatabaseUtilities::buildPrivateClickMeasurement
     return attribution;
 }
 
+String DatabaseUtilities::stripIndexQueryToMatchStoredValue(const char* originalQuery)
+{
+    return String(originalQuery).replace("CREATE UNIQUE INDEX IF NOT EXISTS", "CREATE UNIQUE INDEX");
+}
+
+TableAndIndexPair DatabaseUtilities::currentTableAndIndexQueries(const String& tableName)
+{
+    auto getTableStatement = m_database.prepareStatement("SELECT sql FROM sqlite_master WHERE tbl_name=? AND type = 'table'"_s);
+    if (!getTableStatement) {
+        RELEASE_LOG_ERROR(PrivateClickMeasurement, "%p - DatabaseUtilities::currentTableAndIndexQueries Unable to prepare statement to fetch schema for the table, error message: %" PRIVATE_LOG_STRING, this, m_database.lastErrorMsg());
+        ASSERT_NOT_REACHED();
+        return { };
+    }
+
+    if (getTableStatement->bindText(1, tableName) != SQLITE_OK) {
+        RELEASE_LOG_ERROR(PrivateClickMeasurement, "%p - DatabaseUtilities::currentTableAndIndexQueries Unable to bind statement to fetch schema for the table, error message: %" PRIVATE_LOG_STRING, this, m_database.lastErrorMsg());
+        ASSERT_NOT_REACHED();
+        return { };
+    }
+
+    if (getTableStatement->step() != SQLITE_ROW) {
+        RELEASE_LOG_ERROR(PrivateClickMeasurement, "%p - DatabaseUtilities::currentTableAndIndexQueries error executing statement to fetch table schema, error message: %" PRIVATE_LOG_STRING, this, m_database.lastErrorMsg());
+        ASSERT_NOT_REACHED();
+        return { };
+    }
+
+    String createTableQuery = getTableStatement->columnText(0);
+
+    auto getIndexStatement = m_database.prepareStatement("SELECT sql FROM sqlite_master WHERE tbl_name=? AND type = 'index'"_s);
+    if (!getIndexStatement) {
+        RELEASE_LOG_ERROR(PrivateClickMeasurement, "%p - DatabaseUtilities::currentTableAndIndexQueries Unable to prepare statement to fetch index for the table, error message: %" PRIVATE_LOG_STRING, this, m_database.lastErrorMsg());
+        ASSERT_NOT_REACHED();
+        return { };
+    }
+
+    if (getIndexStatement->bindText(1, tableName) != SQLITE_OK) {
+        RELEASE_LOG_ERROR(PrivateClickMeasurement, "%p - DatabaseUtilities::currentTableAndIndexQueries Unable to bind statement to fetch index for the table, error message: %" PRIVATE_LOG_STRING, this, m_database.lastErrorMsg());
+        ASSERT_NOT_REACHED();
+        return { };
+    }
+
+    std::optional<String> index;
+    if (getIndexStatement->step() == SQLITE_ROW) {
+        auto rawIndex = String(getIndexStatement->columnText(0));
+        if (!rawIndex.isEmpty())
+            index = rawIndex;
+    }
+
+    return std::make_pair<String, std::optional<String>>(WTFMove(createTableQuery), WTFMove(index));
+}
+
+static Expected<WebCore::SQLiteStatement, int> insertDistinctValuesInTableStatement(WebCore::SQLiteDatabase& database, const String& table)
+{
+    if (table == "SubframeUnderTopFrameDomains")
+        return database.prepareStatement("INSERT INTO SubframeUnderTopFrameDomains SELECT subFrameDomainID, MAX(lastUpdated), topFrameDomainID FROM _SubframeUnderTopFrameDomains GROUP BY subFrameDomainID, topFrameDomainID"_s);
+
+    if (table == "SubresourceUnderTopFrameDomains")
+        return database.prepareStatement("INSERT INTO SubresourceUnderTopFrameDomains SELECT subresourceDomainID, MAX(lastUpdated), topFrameDomainID FROM _SubresourceUnderTopFrameDomains GROUP BY subresourceDomainID, topFrameDomainID"_s);
+
+    if (table == "SubresourceUniqueRedirectsTo")
+        return database.prepareStatement("INSERT INTO SubresourceUniqueRedirectsTo SELECT subresourceDomainID, MAX(lastUpdated), toDomainID FROM _SubresourceUniqueRedirectsTo GROUP BY subresourceDomainID, toDomainID"_s);
+
+    if (table == "TopFrameLinkDecorationsFrom")
+        return database.prepareStatement("INSERT INTO TopFrameLinkDecorationsFrom SELECT toDomainID, MAX(lastUpdated), fromDomainID FROM _TopFrameLinkDecorationsFrom GROUP BY toDomainID, fromDomainID"_s);
+
+    return database.prepareStatementSlow(makeString("INSERT INTO ", table, " SELECT DISTINCT * FROM _", table));
+}
+
+void DatabaseUtilities::migrateDataToNewTablesIfNecessary()
+{
+    if (!needsUpdatedSchema())
+        return;
+
+    auto transactionScope = beginTransactionIfNecessary();
+
+    for (auto& table : expectedTableAndIndexQueries().keys()) {
+        auto alterTable = m_database.prepareStatementSlow(makeString("ALTER TABLE ", table, " RENAME TO _", table));
+        if (!alterTable || alterTable->step() != SQLITE_DONE) {
+            RELEASE_LOG_ERROR(PrivateClickMeasurement, "%p - DatabaseUtilities::migrateDataToNewTablesIfNecessary failed to rename table, error message: %s", this, m_database.lastErrorMsg());
+            ASSERT_NOT_REACHED();
+            return;
+        }
+    }
+
+    if (!createSchema()) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    // Maintain the order of tables to make sure the ObservedDomains table is created first. Other tables have foreign key constraints referencing it.
+    for (auto& table : sortedTables()) {
+        auto migrateTableData = insertDistinctValuesInTableStatement(m_database, table);
+        if (!migrateTableData || migrateTableData->step() != SQLITE_DONE) {
+            RELEASE_LOG_ERROR(PrivateClickMeasurement, "%p - DatabaseUtilities::migrateDataToNewTablesIfNecessary (table %s) failed to migrate schema, error message: %s", this, table.utf8().data(), m_database.lastErrorMsg());
+            ASSERT_NOT_REACHED();
+            return;
+        }
+    }
+
+    // Drop all tables at the end to avoid trashing data that references data in other tables.
+    for (auto& table : sortedTables()) {
+        auto dropTableQuery = m_database.prepareStatementSlow(makeString("DROP TABLE _", table));
+        if (!dropTableQuery || dropTableQuery->step() != SQLITE_DONE) {
+            RELEASE_LOG_ERROR(PrivateClickMeasurement, "%p - DatabaseUtilities::migrateDataToNewTablesIfNecessary failed to drop temporary tables, error message: %s", this, m_database.lastErrorMsg());
+            ASSERT_NOT_REACHED();
+            return;
+        }
+    }
+
+    if (!createUniqueIndices()) {
+        RELEASE_LOG_ERROR(PrivateClickMeasurement, "%p - DatabaseUtilities::migrateDataToNewTablesIfNecessary failed to create unique indices, error message: %s", this, m_database.lastErrorMsg());
+        ASSERT_NOT_REACHED();
+    }
+}
+
 } // namespace WebKit

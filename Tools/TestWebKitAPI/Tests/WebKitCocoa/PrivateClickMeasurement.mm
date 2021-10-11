@@ -167,6 +167,49 @@ static void addUnattributedPCMv3(WebCore::SQLiteDatabase& database)
     addValuesToTable<7>(database, insertUnattributedPrivateClickMeasurementQueryV3, { 2, 3, 43, 1.0, "test token", "test signature", "test key id" });
 }
 
+static void addUnattributedPCMv4(WebCore::SQLiteDatabase& database)
+{
+    constexpr auto createUnattributedPrivateClickMeasurementV4 = "CREATE TABLE UnattributedPrivateClickMeasurement ("
+        "sourceSiteDomainID INTEGER NOT NULL, destinationSiteDomainID INTEGER NOT NULL, sourceID INTEGER NOT NULL, "
+        "timeOfAdClick REAL NOT NULL, token TEXT, signature TEXT, keyID TEXT, sourceApplicationBundleID TEXT, FOREIGN KEY(sourceSiteDomainID) "
+        "REFERENCES PCMObservedDomains(domainID) ON DELETE CASCADE, FOREIGN KEY(destinationSiteDomainID) REFERENCES "
+        "PCMObservedDomains(domainID) ON DELETE CASCADE)"_s;
+
+    EXPECT_TRUE(database.executeCommand(createUnattributedPrivateClickMeasurementV4));
+
+    constexpr auto insertUnattributedPrivateClickMeasurementQueryV4 = "INSERT OR REPLACE INTO UnattributedPrivateClickMeasurement (sourceSiteDomainID, destinationSiteDomainID, "
+        "sourceID, timeOfAdClick, token, signature, keyID, sourceApplicationBundleID) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"_s;
+    
+#if PLATFORM(MAC)
+    auto bundleID = "com.apple.Safari";
+#else
+    auto bundleID = "com.apple.mobilesafari";
+#endif
+    addValuesToTable<8>(database, insertUnattributedPrivateClickMeasurementQueryV4, { 2, 3, 43, 1.0, "test token", "test signature", "test key id", bundleID });
+}
+
+static void addAttributedPCMv4(WebCore::SQLiteDatabase& database)
+{
+    constexpr auto createAttributedPrivateClickMeasurementV4 = "CREATE TABLE AttributedPrivateClickMeasurement ("
+        "sourceSiteDomainID INTEGER NOT NULL, destinationSiteDomainID INTEGER NOT NULL, sourceID INTEGER NOT NULL, "
+        "attributionTriggerData INTEGER NOT NULL, priority INTEGER NOT NULL, timeOfAdClick REAL NOT NULL, "
+        "earliestTimeToSendToSource REAL, token TEXT, signature TEXT, keyID TEXT, earliestTimeToSendToDestination REAL, sourceApplicationBundleID TEXT,"
+        "FOREIGN KEY(sourceSiteDomainID) REFERENCES PCMObservedDomains(domainID) ON DELETE CASCADE, FOREIGN KEY(destinationSiteDomainID) REFERENCES "
+        "PCMObservedDomains(domainID) ON DELETE CASCADE)"_s;
+
+    EXPECT_TRUE(database.executeCommand(createAttributedPrivateClickMeasurementV4));
+
+    constexpr auto insertAttributedPrivateClickMeasurementQueryV4 = "INSERT OR REPLACE INTO AttributedPrivateClickMeasurement (sourceSiteDomainID, destinationSiteDomainID, "
+        "sourceID, attributionTriggerData, priority, timeOfAdClick, earliestTimeToSendToSource, token, signature, keyID, earliestTimeToSendToDestination, sourceApplicationBundleID) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"_s;
+
+#if PLATFORM(MAC)
+    auto bundleID = "com.apple.Safari";
+#else
+    auto bundleID = "com.apple.mobilesafari";
+#endif
+    addValuesToTable<12>(database, insertAttributedPrivateClickMeasurementQueryV4, { 1, 2, 42, 14, 7, 1.0, earliestTimeToSend(), "test token", "test signature", "test key id", earliestTimeToSend(), bundleID });
+}
+
 static RetainPtr<NSString> dumpedPCM(WKWebView *webView)
 {
     __block RetainPtr<NSString> pcm;
@@ -175,14 +218,18 @@ static RetainPtr<NSString> dumpedPCM(WKWebView *webView)
     }];
     while (!pcm)
         TestWebKitAPI::Util::spinRunLoop();
+    
     return pcm;
 }
 
-static void pollUntilPCMIsMigrated(WKWebView *webView)
+enum class MigratingFromResourceLoadStatistics : bool { No, Yes };
+static void pollUntilPCMIsMigrated(WKWebView *webView, MigratingFromResourceLoadStatistics migratingFromResourceLoadStatistics)
 {
-    // This query is the first thing to open the old database, so migration has not happened yet.
-    const char* emptyPCMDatabase = "\nNo stored Private Click Measurement data.\n";
-    EXPECT_WK_STREQ(dumpedPCM(webView).get(), emptyPCMDatabase);
+    if (migratingFromResourceLoadStatistics == MigratingFromResourceLoadStatistics::Yes) {
+        // This query is the first thing to open the old database, so migration has not happened yet.
+        const char* emptyPCMDatabase = "\nNo stored Private Click Measurement data.\n";
+        EXPECT_WK_STREQ(dumpedPCM(webView).get(), emptyPCMDatabase);
+    }
 
     NSString *expectedMigratedPCMDatabase = @""
         "Unattributed Private Click Measurements:\n"
@@ -227,6 +274,17 @@ static NSString *emptyObservationsDBPath()
     return fileURL.path;
 }
 
+static NSString *emptyPcmDBPath()
+{
+    NSFileManager *defaultFileManager = NSFileManager.defaultManager;
+    NSURL *itpRootURL = WKWebsiteDataStore.defaultDataStore._configuration._resourceLoadStatisticsDirectory;
+    NSURL *fileURL = [itpRootURL URLByAppendingPathComponent:@"pcm.db"];
+    [defaultFileManager removeItemAtPath:itpRootURL.path error:nil];
+    EXPECT_FALSE([defaultFileManager fileExistsAtPath:itpRootURL.path]);
+    [defaultFileManager createDirectoryAtURL:itpRootURL withIntermediateDirectories:YES attributes:nil error:nil];
+    return fileURL.path;
+}
+
 static void cleanUp()
 {
     NSFileManager *defaultFileManager = NSFileManager.defaultManager;
@@ -257,7 +315,23 @@ static void createAndPopulateObservedDomainTable(WebCore::SQLiteDatabase& databa
     addObservedDomain("www.webkit.org");
 }
 
-void setUp(void(*addUnattributedPCM)(WebCore::SQLiteDatabase&), void(*addAttributedPCM)(WebCore::SQLiteDatabase&))
+static void createAndPopulatePCMObservedDomainTable(WebCore::SQLiteDatabase& database)
+{
+    auto addObservedDomain = [&](const char* domain) {
+        constexpr auto insertObservedDomainQuery = "INSERT INTO PCMObservedDomains (registrableDomain) VALUES (?)"_s;
+        addValuesToTable<1>(database, insertObservedDomainQuery, { domain });
+    };
+
+    constexpr auto createPCMObservedDomain = "CREATE TABLE PCMObservedDomains ("
+        "domainID INTEGER PRIMARY KEY, registrableDomain TEXT NOT NULL UNIQUE ON CONFLICT FAIL)"_s;
+
+    EXPECT_TRUE(database.executeCommand(createPCMObservedDomain));
+    addObservedDomain("example.com");
+    addObservedDomain("webkit.org");
+    addObservedDomain("www.webkit.org");
+}
+
+void setUpFromResourceLoadStatisticsDatabase(void(*addUnattributedPCM)(WebCore::SQLiteDatabase&), void(*addAttributedPCM)(WebCore::SQLiteDatabase&))
 {
     WebCore::SQLiteDatabase database;
     EXPECT_TRUE(database.open(emptyObservationsDBPath()));
@@ -267,26 +341,44 @@ void setUp(void(*addUnattributedPCM)(WebCore::SQLiteDatabase&), void(*addAttribu
     database.close();
 }
 
+void setUpFromPCMDatabase(void(*addUnattributedPCM)(WebCore::SQLiteDatabase&), void(*addAttributedPCM)(WebCore::SQLiteDatabase&))
+{
+    WebCore::SQLiteDatabase database;
+    EXPECT_TRUE(database.open(emptyPcmDBPath()));
+    createAndPopulatePCMObservedDomainTable(database);
+    addUnattributedPCM(database);
+    addAttributedPCM(database);
+    database.close();
+}
+
 TEST(PrivateClickMeasurement, MigrateFromResourceLoadStatistics1)
 {
-    setUp(addUnattributedPCMv1, addAttributedPCMv1);
+    setUpFromResourceLoadStatisticsDatabase(addUnattributedPCMv1, addAttributedPCMv1);
     auto webView = webViewWithResourceLoadStatisticsEnabledInNetworkProcess();
-    pollUntilPCMIsMigrated(webView.get());
+    pollUntilPCMIsMigrated(webView.get(), MigratingFromResourceLoadStatistics::Yes);
     cleanUp();
 }
 
 TEST(PrivateClickMeasurement, MigrateFromResourceLoadStatistics2)
 {
-    setUp(addUnattributedPCMv2, addAttributedPCMv2);
+    setUpFromResourceLoadStatisticsDatabase(addUnattributedPCMv2, addAttributedPCMv2);
     auto webView = webViewWithResourceLoadStatisticsEnabledInNetworkProcess();
-    pollUntilPCMIsMigrated(webView.get());
+    pollUntilPCMIsMigrated(webView.get(), MigratingFromResourceLoadStatistics::Yes);
     cleanUp();
 }
 
 TEST(PrivateClickMeasurement, MigrateFromResourceLoadStatistics3)
 {
-    setUp(addUnattributedPCMv3, addAttributedPCMv3);
+    setUpFromResourceLoadStatisticsDatabase(addUnattributedPCMv3, addAttributedPCMv3);
     auto webView = webViewWithResourceLoadStatisticsEnabledInNetworkProcess();
-    pollUntilPCMIsMigrated(webView.get());
+    pollUntilPCMIsMigrated(webView.get(), MigratingFromResourceLoadStatistics::Yes);
+    cleanUp();
+}
+
+TEST(PrivateClickMeasurement, MigrateFromPCM1)
+{
+    setUpFromPCMDatabase(addUnattributedPCMv4, addAttributedPCMv4);
+    auto webView = webViewWithResourceLoadStatisticsEnabledInNetworkProcess();
+    pollUntilPCMIsMigrated(webView.get(), MigratingFromResourceLoadStatistics::No);
     cleanUp();
 }
