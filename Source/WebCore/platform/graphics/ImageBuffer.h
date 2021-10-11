@@ -50,7 +50,7 @@ public:
 
     // Create an image buffer compatible with the context, with suitable resolution for drawing into the buffer and then into this context.
     static RefPtr<ImageBuffer> createCompatibleBuffer(const FloatSize&, const GraphicsContext&);
-    static RefPtr<ImageBuffer> createCompatibleBuffer(const FloatSize&, const DestinationColorSpace&, const GraphicsContext&);
+    WEBCORE_EXPORT static RefPtr<ImageBuffer> createCompatibleBuffer(const FloatSize&, const DestinationColorSpace&, const GraphicsContext&);
     static RefPtr<ImageBuffer> createCompatibleBuffer(const FloatSize&, float resolutionScale, const DestinationColorSpace&, const GraphicsContext&);
 
     // These functions are used when clamping the ImageBuffer which is created for filter, masker or clipper.

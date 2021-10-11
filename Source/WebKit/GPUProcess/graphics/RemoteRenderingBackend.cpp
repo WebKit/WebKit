@@ -783,6 +783,14 @@ void RemoteRenderingBackend::updateLastKnownState(RemoteRenderingBackendState st
     m_lastKnownState.storeRelaxed(state);
 }
 
+void RemoteRenderingBackend::performWithMediaPlayerOnMainThread(MediaPlayerIdentifier identifier, Function<void(MediaPlayer&)>&& callback)
+{
+    callOnMainRunLoopAndWait([&, gpuConnectionToWebProcess = m_gpuConnectionToWebProcess, identifier] {
+        if (auto player = gpuConnectionToWebProcess->remoteMediaPlayerManagerProxy().mediaPlayer(identifier))
+            callback(*player);
+    });
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(GPU_PROCESS)

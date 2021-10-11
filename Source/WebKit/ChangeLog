@@ -1,3 +1,215 @@
+2021-10-11  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Introduce RemoteDisplayListRecorderProxy and RemoteDisplayListRecorder
+        https://bugs.webkit.org/show_bug.cgi?id=231484
+
+        Reviewed by Simon Fraser.
+
+        Introduce two new classes that house most of the logic for propagating display list items from the web content
+        process to the GPU process. RemoteDisplayListRecorderProxy is a subclass of DisplayList::Recorder that records
+        each item by sending it to the GPU process through a stream connection, which will be added to
+        RemoteRenderingBackendProxy in a subsequent patch. The RemoteDisplayListRecorderProxy will be managed by
+        RemoteImageBufferProxy in the web process. RemoteDisplayListRecorder acts as the streaming IPC destination in
+        the GPU process, and handles the incoming display list items by applying them to the platform graphics context.
+
+        For most of these display list items, we can propagate them to the GPU process by sending each display list
+        item's constructor arguments as separate IPC arguments. In a future patch, we should add support for encoding
+        the following display list items in the same way:
+
+        - SetInlineFillColor
+        - SetInlineStrokeColor
+        - SetState
+        - SetLineDash
+        - DrawGlyphs
+        - DrawLinesForText
+        - FillRectWithGradient
+
+        For now, the above display list items are encoded and decoded as whole items. While there's no practical
+        disadvantage to implementing it this way, it would be nice to make it consistent.
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * GPUProcess/graphics/RemoteDisplayListRecorder.cpp: Added.
+        (WebKit::RemoteDisplayListRecorder::RemoteDisplayListRecorder):
+        (WebKit::RemoteDisplayListRecorder::resourceCache):
+        (WebKit::RemoteDisplayListRecorder::drawingContext):
+        (WebKit::RemoteDisplayListRecorder::startListeningForIPC):
+        (WebKit::RemoteDisplayListRecorder::stopListeningForIPC):
+        (WebKit::RemoteDisplayListRecorder::save):
+        (WebKit::RemoteDisplayListRecorder::restore):
+        (WebKit::RemoteDisplayListRecorder::translate):
+        (WebKit::RemoteDisplayListRecorder::rotate):
+        (WebKit::RemoteDisplayListRecorder::scale):
+        (WebKit::RemoteDisplayListRecorder::setCTM):
+        (WebKit::RemoteDisplayListRecorder::concatenateCTM):
+        (WebKit::RemoteDisplayListRecorder::setInlineFillColor):
+        (WebKit::RemoteDisplayListRecorder::setInlineStrokeColor):
+        (WebKit::RemoteDisplayListRecorder::setStrokeThickness):
+        (WebKit::RemoteDisplayListRecorder::setState):
+        (WebKit::RemoteDisplayListRecorder::setLineCap):
+        (WebKit::RemoteDisplayListRecorder::setLineDash):
+        (WebKit::RemoteDisplayListRecorder::setLineJoin):
+        (WebKit::RemoteDisplayListRecorder::setMiterLimit):
+        (WebKit::RemoteDisplayListRecorder::clearShadow):
+        (WebKit::RemoteDisplayListRecorder::clip):
+        (WebKit::RemoteDisplayListRecorder::clipOut):
+        (WebKit::RemoteDisplayListRecorder::clipToImageBuffer):
+        (WebKit::RemoteDisplayListRecorder::clipOutToPath):
+        (WebKit::RemoteDisplayListRecorder::clipPath):
+        (WebKit::RemoteDisplayListRecorder::beginClipToDrawingCommands):
+        (WebKit::RemoteDisplayListRecorder::endClipToDrawingCommands):
+        (WebKit::RemoteDisplayListRecorder::drawGlyphs):
+        (WebKit::RemoteDisplayListRecorder::drawImageBuffer):
+        (WebKit::RemoteDisplayListRecorder::drawNativeImage):
+        (WebKit::RemoteDisplayListRecorder::drawPattern):
+        (WebKit::RemoteDisplayListRecorder::beginTransparencyLayer):
+        (WebKit::RemoteDisplayListRecorder::endTransparencyLayer):
+        (WebKit::RemoteDisplayListRecorder::drawRect):
+        (WebKit::RemoteDisplayListRecorder::drawLine):
+        (WebKit::RemoteDisplayListRecorder::drawLinesForText):
+        (WebKit::RemoteDisplayListRecorder::drawDotsForDocumentMarker):
+        (WebKit::RemoteDisplayListRecorder::drawEllipse):
+        (WebKit::RemoteDisplayListRecorder::drawPath):
+        (WebKit::RemoteDisplayListRecorder::drawFocusRingPath):
+        (WebKit::RemoteDisplayListRecorder::drawFocusRingRects):
+        (WebKit::RemoteDisplayListRecorder::fillRect):
+        (WebKit::RemoteDisplayListRecorder::fillRectWithColor):
+        (WebKit::RemoteDisplayListRecorder::fillRectWithGradient):
+        (WebKit::RemoteDisplayListRecorder::fillCompositedRect):
+        (WebKit::RemoteDisplayListRecorder::fillRoundedRect):
+        (WebKit::RemoteDisplayListRecorder::fillRectWithRoundedHole):
+        (WebKit::RemoteDisplayListRecorder::fillLine):
+        (WebKit::RemoteDisplayListRecorder::fillArc):
+        (WebKit::RemoteDisplayListRecorder::fillQuadCurve):
+        (WebKit::RemoteDisplayListRecorder::fillBezierCurve):
+        (WebKit::RemoteDisplayListRecorder::fillPath):
+        (WebKit::RemoteDisplayListRecorder::fillEllipse):
+        (WebKit::RemoteDisplayListRecorder::getPixelBuffer):
+        (WebKit::RemoteDisplayListRecorder::putPixelBuffer):
+        (WebKit::RemoteDisplayListRecorder::paintFrameForMedia):
+        (WebKit::RemoteDisplayListRecorder::strokeRect):
+        (WebKit::RemoteDisplayListRecorder::strokeLine):
+        (WebKit::RemoteDisplayListRecorder::strokeArc):
+        (WebKit::RemoteDisplayListRecorder::strokeQuadCurve):
+        (WebKit::RemoteDisplayListRecorder::strokeBezierCurve):
+        (WebKit::RemoteDisplayListRecorder::strokePath):
+        (WebKit::RemoteDisplayListRecorder::strokeEllipse):
+        (WebKit::RemoteDisplayListRecorder::clearRect):
+        (WebKit::RemoteDisplayListRecorder::applyStrokePattern):
+        (WebKit::RemoteDisplayListRecorder::applyFillPattern):
+        (WebKit::RemoteDisplayListRecorder::applyDeviceScaleFactor):
+        (WebKit::RemoteDisplayListRecorder::flushContext):
+        * GPUProcess/graphics/RemoteDisplayListRecorder.h: Added.
+        (WebKit::RemoteDisplayListRecorder::create):
+        (WebKit::RemoteDisplayListRecorder::handleItem):
+        * GPUProcess/graphics/RemoteDisplayListRecorder.messages.in: Added.
+        * GPUProcess/graphics/RemoteRenderingBackend.cpp:
+        (WebKit::RemoteRenderingBackend::performWithMediaPlayerOnMainThread):
+        * GPUProcess/graphics/RemoteRenderingBackend.h:
+
+        Add helper methods to RemoteRenderingBackend that are called from RemoteDisplayListRecorder.
+
+        * Scripts/webkit/messages.py:
+        (headers_for_type):
+        * Shared/WebCoreArgumentCoders.cpp:
+        * Shared/WebCoreArgumentCoders.h:
+
+        Make it possible to encode and decode SetInlineFillColor and SetInlineStrokeColor using simple argument coder.
+
+        * Sources.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/GPU/graphics/RemoteDisplayListRecorderProxy.cpp: Added.
+        (WebKit::RemoteDisplayListRecorderProxy::RemoteDisplayListRecorderProxy):
+        (WebKit::m_renderingBackend):
+        (WebKit::RemoteDisplayListRecorderProxy::getPixelBuffer):
+        (WebKit::RemoteDisplayListRecorderProxy::putPixelBuffer):
+        (WebKit::RemoteDisplayListRecorderProxy::canDrawImageBuffer const):
+        (WebKit::RemoteDisplayListRecorderProxy::renderingMode const):
+        (WebKit::RemoteDisplayListRecorderProxy::recordSave):
+        (WebKit::RemoteDisplayListRecorderProxy::recordRestore):
+        (WebKit::RemoteDisplayListRecorderProxy::recordTranslate):
+        (WebKit::RemoteDisplayListRecorderProxy::recordRotate):
+        (WebKit::RemoteDisplayListRecorderProxy::recordScale):
+        (WebKit::RemoteDisplayListRecorderProxy::recordSetCTM):
+        (WebKit::RemoteDisplayListRecorderProxy::recordConcatenateCTM):
+        (WebKit::RemoteDisplayListRecorderProxy::recordSetInlineFillColor):
+        (WebKit::RemoteDisplayListRecorderProxy::recordSetInlineStrokeColor):
+        (WebKit::RemoteDisplayListRecorderProxy::recordSetStrokeThickness):
+        (WebKit::RemoteDisplayListRecorderProxy::recordSetState):
+        (WebKit::RemoteDisplayListRecorderProxy::recordSetLineCap):
+        (WebKit::RemoteDisplayListRecorderProxy::recordSetLineDash):
+        (WebKit::RemoteDisplayListRecorderProxy::recordSetLineJoin):
+        (WebKit::RemoteDisplayListRecorderProxy::recordSetMiterLimit):
+        (WebKit::RemoteDisplayListRecorderProxy::recordClearShadow):
+        (WebKit::RemoteDisplayListRecorderProxy::recordClip):
+        (WebKit::RemoteDisplayListRecorderProxy::recordClipOut):
+        (WebKit::RemoteDisplayListRecorderProxy::recordClipToImageBuffer):
+        (WebKit::RemoteDisplayListRecorderProxy::recordClipOutToPath):
+        (WebKit::RemoteDisplayListRecorderProxy::recordClipPath):
+        (WebKit::RemoteDisplayListRecorderProxy::recordBeginClipToDrawingCommands):
+        (WebKit::RemoteDisplayListRecorderProxy::recordEndClipToDrawingCommands):
+        (WebKit::RemoteDisplayListRecorderProxy::recordDrawGlyphs):
+        (WebKit::RemoteDisplayListRecorderProxy::recordDrawImageBuffer):
+        (WebKit::RemoteDisplayListRecorderProxy::recordDrawNativeImage):
+        (WebKit::RemoteDisplayListRecorderProxy::recordDrawPattern):
+        (WebKit::RemoteDisplayListRecorderProxy::recordBeginTransparencyLayer):
+        (WebKit::RemoteDisplayListRecorderProxy::recordEndTransparencyLayer):
+        (WebKit::RemoteDisplayListRecorderProxy::recordDrawRect):
+        (WebKit::RemoteDisplayListRecorderProxy::recordDrawLine):
+        (WebKit::RemoteDisplayListRecorderProxy::recordDrawLinesForText):
+        (WebKit::RemoteDisplayListRecorderProxy::recordDrawDotsForDocumentMarker):
+        (WebKit::RemoteDisplayListRecorderProxy::recordDrawEllipse):
+        (WebKit::RemoteDisplayListRecorderProxy::recordDrawPath):
+        (WebKit::RemoteDisplayListRecorderProxy::recordDrawFocusRingPath):
+        (WebKit::RemoteDisplayListRecorderProxy::recordDrawFocusRingRects):
+        (WebKit::RemoteDisplayListRecorderProxy::recordFillRect):
+        (WebKit::RemoteDisplayListRecorderProxy::recordFillRectWithColor):
+        (WebKit::RemoteDisplayListRecorderProxy::recordFillRectWithGradient):
+        (WebKit::RemoteDisplayListRecorderProxy::recordFillCompositedRect):
+        (WebKit::RemoteDisplayListRecorderProxy::recordFillRoundedRect):
+        (WebKit::RemoteDisplayListRecorderProxy::recordFillRectWithRoundedHole):
+        (WebKit::RemoteDisplayListRecorderProxy::recordFillLine):
+        (WebKit::RemoteDisplayListRecorderProxy::recordFillArc):
+        (WebKit::RemoteDisplayListRecorderProxy::recordFillQuadCurve):
+        (WebKit::RemoteDisplayListRecorderProxy::recordFillBezierCurve):
+        (WebKit::RemoteDisplayListRecorderProxy::recordFillPath):
+        (WebKit::RemoteDisplayListRecorderProxy::recordFillEllipse):
+        (WebKit::RemoteDisplayListRecorderProxy::recordGetPixelBuffer):
+        (WebKit::RemoteDisplayListRecorderProxy::recordPutPixelBuffer):
+        (WebKit::RemoteDisplayListRecorderProxy::recordPaintFrameForMedia):
+        (WebKit::RemoteDisplayListRecorderProxy::recordStrokeRect):
+        (WebKit::RemoteDisplayListRecorderProxy::recordStrokeLine):
+        (WebKit::RemoteDisplayListRecorderProxy::recordStrokeArc):
+        (WebKit::RemoteDisplayListRecorderProxy::recordStrokeQuadCurve):
+        (WebKit::RemoteDisplayListRecorderProxy::recordStrokeBezierCurve):
+        (WebKit::RemoteDisplayListRecorderProxy::recordStrokePath):
+        (WebKit::RemoteDisplayListRecorderProxy::recordStrokeEllipse):
+        (WebKit::RemoteDisplayListRecorderProxy::recordClearRect):
+        (WebKit::RemoteDisplayListRecorderProxy::recordApplyStrokePattern):
+        (WebKit::RemoteDisplayListRecorderProxy::recordApplyFillPattern):
+        (WebKit::RemoteDisplayListRecorderProxy::recordApplyDeviceScaleFactor):
+        (WebKit::RemoteDisplayListRecorderProxy::recordResourceUse):
+        (WebKit::RemoteDisplayListRecorderProxy::flushContext):
+        (WebKit::RemoteDisplayListRecorderProxy::createNestedContext):
+        * WebProcess/GPU/graphics/RemoteDisplayListRecorderProxy.h: Added.
+        (WebKit::RemoteDisplayListRecorderProxy::~RemoteDisplayListRecorderProxy):
+        (WebKit::RemoteDisplayListRecorderProxy::resetNeedsFlush):
+        (WebKit::RemoteDisplayListRecorderProxy::needsFlush const):
+        (WebKit::RemoteDisplayListRecorderProxy::send):
+        (WebKit::RemoteDisplayListRecorderProxy::recordDrawPattern):
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.cpp:
+        (WebKit::RemoteRenderingBackendProxy::recordNativeImageUse):
+        (WebKit::RemoteRenderingBackendProxy::recordFontUse):
+        (WebKit::RemoteRenderingBackendProxy::recordImageBufferUse):
+        (WebKit::RemoteRenderingBackendProxy::isCached const):
+
+        Add helper methods to RemoteRenderingBackendProxy that are called from RemoteDisplayListRecorderProxy.
+
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.h:
+        (WebKit::RemoteRenderingBackendProxy::sendToStream):
+
 2021-10-11  Dean Jackson  <dino@apple.com>
 
         Disable SystemPreview in WKContentProviderRegistry

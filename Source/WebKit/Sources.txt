@@ -25,6 +25,7 @@ GPUProcess/GPUProcess.cpp
 GPUProcess/GPUConnectionToWebProcess.cpp
 GPUProcess/GPUProcessCreationParameters.cpp
 GPUProcess/graphics/DisplayListReaderHandle.cpp
+GPUProcess/graphics/RemoteDisplayListRecorder.cpp
 GPUProcess/graphics/RemoteRenderingBackend.cpp
 GPUProcess/graphics/RemoteGraphicsContextGL.cpp
 GPUProcess/graphics/RemoteResourceCache.cpp
@@ -611,6 +612,7 @@ WebProcess/GPU/graphics/DisplayListWriterHandle.cpp
 WebProcess/GPU/graphics/ImageBufferShareableBitmapBackend.cpp
 WebProcess/GPU/graphics/RemoteGraphicsContextGLProxyFunctionsGenerated.cpp
 WebProcess/GPU/graphics/RemoteGraphicsContextGLProxy.cpp
+WebProcess/GPU/graphics/RemoteDisplayListRecorderProxy.cpp
 WebProcess/GPU/graphics/RemoteRenderingBackendProxy.cpp
 WebProcess/GPU/graphics/RemoteResourceCacheProxy.cpp
 WebProcess/GPU/media/AudioTrackPrivateRemote.cpp
@@ -755,6 +757,7 @@ NetworkBroadcastChannelRegistryMessageReceiver.cpp
 RTCDataChannelRemoteManagerMessageReceiver.cpp
 RTCDataChannelRemoteManagerProxyMessageReceiver.cpp
 RemoteAudioMediaStreamTrackRendererInternalUnitManagerMessageReceiver.cpp
+RemoteDisplayListRecorderMessageReceiver.cpp
 RemoteGraphicsContextGLMessageReceiver.cpp
 RemoteGraphicsContextGLProxyMessageReceiver.cpp
 PlatformXRSystemMessageReceiver.cpp

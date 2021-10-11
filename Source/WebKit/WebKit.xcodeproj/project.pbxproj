@@ -2053,6 +2053,9 @@
 		F44291961FA5942A002CC93E /* _WKAttachmentInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = F44291951FA5942A002CC93E /* _WKAttachmentInternal.h */; };
 		F44815642387820000982657 /* WKDeferringGestureRecognizer.h in Headers */ = {isa = PBXBuildFile; fileRef = F44815622387820000982657 /* WKDeferringGestureRecognizer.h */; };
 		F44DFEB21E9E752F0038D196 /* WebIconUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = F44DFEB01E9E752F0038D196 /* WebIconUtilities.h */; };
+		F4517D7B26FBCD39004C8475 /* RemoteRenderingBackendMessagesReplies.h in Headers */ = {isa = PBXBuildFile; fileRef = F4517D7926FBCD38004C8475 /* RemoteRenderingBackendMessagesReplies.h */; };
+		F4517D7C26FBCD39004C8475 /* RemoteRenderingBackendMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = F4517D7A26FBCD38004C8475 /* RemoteRenderingBackendMessages.h */; };
+		F451C0FE2703B263002BA03B /* RemoteDisplayListRecorderProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = F48BB8DD26F9635D001C1C40 /* RemoteDisplayListRecorderProxy.h */; };
 		F4660BC225DEF08100E86598 /* PasteboardAccessIntent.h in Headers */ = {isa = PBXBuildFile; fileRef = F4660BC125DEF08100E86598 /* PasteboardAccessIntent.h */; };
 		F48570A32644BEC500C05F71 /* Timeout.h in Headers */ = {isa = PBXBuildFile; fileRef = F48570A22644BEC400C05F71 /* Timeout.h */; };
 		F48D2A8521583A7E00C6752B /* AppKitSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = F48D2A8421583A0200C6752B /* AppKitSPI.h */; };
@@ -6130,9 +6133,17 @@
 		F44815632387820000982657 /* WKDeferringGestureRecognizer.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = WKDeferringGestureRecognizer.mm; path = ios/WKDeferringGestureRecognizer.mm; sourceTree = "<group>"; };
 		F44DFEB01E9E752F0038D196 /* WebIconUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebIconUtilities.h; path = ios/WebIconUtilities.h; sourceTree = "<group>"; };
 		F44DFEB11E9E752F0038D196 /* WebIconUtilities.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WebIconUtilities.mm; path = ios/WebIconUtilities.mm; sourceTree = "<group>"; };
+		F4517D7726FBCCE4004C8475 /* RemoteRenderingBackendMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RemoteRenderingBackendMessageReceiver.cpp; path = DerivedSources/WebKit2/RemoteRenderingBackendMessageReceiver.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
+		F4517D7926FBCD38004C8475 /* RemoteRenderingBackendMessagesReplies.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RemoteRenderingBackendMessagesReplies.h; path = DerivedSources/WebKit2/RemoteRenderingBackendMessagesReplies.h; sourceTree = BUILT_PRODUCTS_DIR; };
+		F4517D7A26FBCD38004C8475 /* RemoteRenderingBackendMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RemoteRenderingBackendMessages.h; path = DerivedSources/WebKit2/RemoteRenderingBackendMessages.h; sourceTree = BUILT_PRODUCTS_DIR; };
+		F451C1002703D853002BA03B /* RemoteDisplayListRecorder.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = RemoteDisplayListRecorder.messages.in; sourceTree = "<group>"; };
 		F4660BC125DEF08100E86598 /* PasteboardAccessIntent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PasteboardAccessIntent.h; sourceTree = "<group>"; };
 		F47A051626827A09007E5CF2 /* QuickLookPreviewActivity.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = QuickLookPreviewActivity.h; sourceTree = "<group>"; };
 		F48570A22644BEC400C05F71 /* Timeout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Timeout.h; sourceTree = "<group>"; };
+		F48BB8DD26F9635D001C1C40 /* RemoteDisplayListRecorderProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteDisplayListRecorderProxy.h; sourceTree = "<group>"; };
+		F48BB8DE26F9635D001C1C40 /* RemoteDisplayListRecorderProxy.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteDisplayListRecorderProxy.cpp; sourceTree = "<group>"; };
+		F48BB8DF26F96392001C1C40 /* RemoteDisplayListRecorder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteDisplayListRecorder.h; sourceTree = "<group>"; };
+		F48BB8E026F96392001C1C40 /* RemoteDisplayListRecorder.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteDisplayListRecorder.cpp; sourceTree = "<group>"; };
 		F48D2A8421583A0200C6752B /* AppKitSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppKitSPI.h; sourceTree = "<group>"; };
 		F496A42F1F58A272004C1757 /* DragDropInteractionState.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = DragDropInteractionState.h; path = ios/DragDropInteractionState.h; sourceTree = "<group>"; };
 		F496A4301F58A272004C1757 /* DragDropInteractionState.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = DragDropInteractionState.mm; path = ios/DragDropInteractionState.mm; sourceTree = "<group>"; };
@@ -9073,6 +9084,8 @@
 				727A7F36240788F0004D2931 /* ImageBufferShareableBitmapBackend.h */,
 				727A7F38240788F0004D2931 /* PlatformImageBufferShareableBackend.h */,
 				7227800B2408BD7D007D376B /* PlatformRemoteImageBufferProxy.h */,
+				F48BB8DE26F9635D001C1C40 /* RemoteDisplayListRecorderProxy.cpp */,
+				F48BB8DD26F9635D001C1C40 /* RemoteDisplayListRecorderProxy.h */,
 				7B904165254AFDEA006EEB8C /* RemoteGraphicsContextGLProxy.cpp */,
 				7B904166254AFDEB006EEB8C /* RemoteGraphicsContextGLProxy.h */,
 				7B904167254AFE17006EEB8C /* RemoteGraphicsContextGLProxy.messages.in */,
@@ -9095,6 +9108,9 @@
 				F4094CBB255304AF003D73E3 /* DisplayListReaderHandle.h */,
 				55AD09432408A0E600DE4D2F /* PlatformRemoteImageBuffer.h */,
 				1CC54AFD270F9654005BF8BE /* QualifiedRenderingResourceIdentifier.h */,
+				F48BB8E026F96392001C1C40 /* RemoteDisplayListRecorder.cpp */,
+				F48BB8DF26F96392001C1C40 /* RemoteDisplayListRecorder.h */,
+				F451C1002703D853002BA03B /* RemoteDisplayListRecorder.messages.in */,
 				7B904169254AFEA7006EEB8C /* RemoteGraphicsContextGL.cpp */,
 				7B90416A254AFEA7006EEB8C /* RemoteGraphicsContextGL.h */,
 				7B904168254AFEA7006EEB8C /* RemoteGraphicsContextGL.messages.in */,
@@ -11467,6 +11483,9 @@
 				CD8252DA25D4915400862FD8 /* RemoteRemoteCommandListenerProxyMessageReceiver.cpp */,
 				CD8252D925D4915400862FD8 /* RemoteRemoteCommandListenerProxyMessages.h */,
 				CD8252D825D4915300862FD8 /* RemoteRemoteCommandListenerProxyMessagesReplies.h */,
+				F4517D7726FBCCE4004C8475 /* RemoteRenderingBackendMessageReceiver.cpp */,
+				F4517D7A26FBCD38004C8475 /* RemoteRenderingBackendMessages.h */,
+				F4517D7926FBCD38004C8475 /* RemoteRenderingBackendMessagesReplies.h */,
 				0F5947A5187B517600437857 /* RemoteScrollingCoordinatorMessageReceiver.cpp */,
 				0F5947A6187B517600437857 /* RemoteScrollingCoordinatorMessages.h */,
 				1DD2A66B2562021E00FF7B6F /* RemoteSourceBufferProxyMessageReceiver.cpp */,
@@ -12562,6 +12581,7 @@
 				CDAC20B423FB58F20021DEE3 /* RemoteCDMInstanceProxy.h in Headers */,
 				CDAC20CA23FC2F750021DEE3 /* RemoteCDMInstanceSession.h in Headers */,
 				CDAC20C923FC2F750021DEE3 /* RemoteCDMInstanceSessionIdentifier.h in Headers */,
+				F451C0FE2703B263002BA03B /* RemoteDisplayListRecorderProxy.h in Headers */,
 				2D47B56D1810714E003A3AEE /* RemoteLayerBackingStore.h in Headers */,
 				2DDF731518E95060004F5A66 /* RemoteLayerBackingStoreCollection.h in Headers */,
 				1AB16AEA164B3A8800290D62 /* RemoteLayerTreeContext.h in Headers */,
@@ -12590,6 +12610,8 @@
 				1AC1338618590C4600F3EC05 /* RemoteObjectRegistryMessages.h in Headers */,
 				46088A00261FA8BC00E2500D /* RemoteRenderingBackend.h in Headers */,
 				46088A01261FA8C400E2500D /* RemoteRenderingBackendCreationParameters.h in Headers */,
+				F4517D7C26FBCD39004C8475 /* RemoteRenderingBackendMessages.h in Headers */,
+				F4517D7B26FBCD39004C8475 /* RemoteRenderingBackendMessagesReplies.h in Headers */,
 				F414CE2D269DE6EA00BD216A /* RemoteRenderingBackendState.h in Headers */,
 				0F594790187B3B3A00437857 /* RemoteScrollingCoordinator.h in Headers */,
 				0F5947A8187B517600437857 /* RemoteScrollingCoordinatorMessages.h in Headers */,

@@ -88,6 +88,7 @@ public:
     void destroyGetPixelBufferSharedMemory();
 
     void createRemoteImageBuffer(WebCore::ImageBuffer&);
+    bool isCached(const WebCore::ImageBuffer&) const;
         
     // IPC::MessageSender.
     IPC::Connection* messageSenderConnection() const override;
@@ -123,6 +124,22 @@ public:
     RenderingBackendIdentifier ensureBackendCreated();
 
     bool isGPUProcessConnectionClosed() const { return !m_gpuProcessConnection; }
+
+    template<typename T, typename U>
+    void sendToStream(T&& message, ObjectIdentifier<U> identifier)
+    {
+        // FIXME: Not yet implemented.
+    }
+
+    template<typename T>
+    void sendToStream(T&& message)
+    {
+        sendToStream(WTFMove(message), renderingBackendIdentifier());
+    }
+
+    void recordNativeImageUse(WebCore::NativeImage&);
+    void recordFontUse(WebCore::Font&);
+    void recordImageBufferUse(WebCore::ImageBuffer&);
 
 private:
     explicit RemoteRenderingBackendProxy(WebPage&);

@@ -247,6 +247,7 @@ MESSAGE_RECEIVERS = \
 	PluginProcess/PluginControllerProxy \
 	PluginProcess/PluginProcess \
 	GPUProcess/GPUConnectionToWebProcess \
+	GPUProcess/graphics/RemoteDisplayListRecorder \
 	GPUProcess/graphics/RemoteRenderingBackend \
 	GPUProcess/graphics/RemoteGraphicsContextGL \
 	GPUProcess/webrtc/LibWebRTCCodecsProxy \

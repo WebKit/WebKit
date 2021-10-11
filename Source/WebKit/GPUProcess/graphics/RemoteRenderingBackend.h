@@ -99,6 +99,8 @@ public:
 
     RemoteRenderingBackendState lastKnownState() const;
 
+    void performWithMediaPlayerOnMainThread(WebCore::MediaPlayerIdentifier, Function<void(WebCore::MediaPlayer&)>&&);
+
 private:
     RemoteRenderingBackend(GPUConnectionToWebProcess&, RemoteRenderingBackendCreationParameters&&);
     void startListeningForIPC();

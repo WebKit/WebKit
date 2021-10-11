@@ -30,6 +30,7 @@
 #include <WebCore/AutoplayEvent.h>
 #include <WebCore/ColorSpace.h>
 #include <WebCore/DiagnosticLoggingClient.h>
+#include <WebCore/DisplayListItems.h>
 #include <WebCore/FloatPoint.h>
 #include <WebCore/FloatPoint3D.h>
 #include <WebCore/FloatRect.h>
@@ -252,6 +253,9 @@ DEFINE_SIMPLE_ARGUMENT_CODER_FOR_HEADER(CGSize)
 DEFINE_SIMPLE_ARGUMENT_CODER_FOR_HEADER(CGPoint)
 DEFINE_SIMPLE_ARGUMENT_CODER_FOR_HEADER(CGAffineTransform)
 #endif
+
+DEFINE_SIMPLE_ARGUMENT_CODER_FOR_HEADER(WebCore::DisplayList::SetInlineFillColor)
+DEFINE_SIMPLE_ARGUMENT_CODER_FOR_HEADER(WebCore::DisplayList::SetInlineStrokeColor)
 
 #undef DEFINE_SIMPLE_ARGUMENT_CODER_FOR_HEADER
 

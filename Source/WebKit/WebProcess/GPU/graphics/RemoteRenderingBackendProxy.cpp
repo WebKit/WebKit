@@ -447,6 +447,30 @@ RenderingBackendIdentifier RemoteRenderingBackendProxy::ensureBackendCreated()
     return renderingBackendIdentifier();
 }
 
+void RemoteRenderingBackendProxy::recordNativeImageUse(NativeImage& image)
+{
+    m_remoteResourceCacheProxy.recordNativeImageUse(image);
+}
+
+void RemoteRenderingBackendProxy::recordFontUse(Font& font)
+{
+    m_remoteResourceCacheProxy.recordFontUse(font);
+}
+
+void RemoteRenderingBackendProxy::recordImageBufferUse(ImageBuffer& imageBuffer)
+{
+    m_remoteResourceCacheProxy.recordImageBufferUse(imageBuffer);
+}
+
+bool RemoteRenderingBackendProxy::isCached(const ImageBuffer& imageBuffer) const
+{
+    if (auto cachedImageBuffer = m_remoteResourceCacheProxy.cachedImageBuffer(imageBuffer.renderingResourceIdentifier())) {
+        ASSERT(cachedImageBuffer == &imageBuffer);
+        return true;
+    }
+    return false;
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(GPU_PROCESS)

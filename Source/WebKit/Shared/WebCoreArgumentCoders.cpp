@@ -159,6 +159,9 @@ DEFINE_SIMPLE_ARGUMENT_CODER_FOR_SOURCE(CGPoint)
 DEFINE_SIMPLE_ARGUMENT_CODER_FOR_SOURCE(CGAffineTransform)
 #endif
 
+DEFINE_SIMPLE_ARGUMENT_CODER_FOR_SOURCE(DisplayList::SetInlineFillColor)
+DEFINE_SIMPLE_ARGUMENT_CODER_FOR_SOURCE(DisplayList::SetInlineStrokeColor)
+
 #undef DEFINE_SIMPLE_ARGUMENT_CODER_FOR_SOURCE
 
 static void encodeSharedBuffer(Encoder& encoder, const SharedBuffer* buffer)

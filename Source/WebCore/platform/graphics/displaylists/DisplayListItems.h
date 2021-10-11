@@ -188,6 +188,7 @@ public:
     static constexpr bool isInlineItem = true;
     static constexpr bool isDrawingItem = false;
 
+    SetInlineFillColor() = default;
     SetInlineFillColor(SRGBA<uint8_t> colorData)
         : m_colorData(colorData)
     {
@@ -206,6 +207,7 @@ public:
     static constexpr bool isInlineItem = true;
     static constexpr bool isDrawingItem = false;
 
+    SetInlineStrokeColor() = default;
     SetInlineStrokeColor(SRGBA<uint8_t> colorData)
         : m_colorData(colorData)
     {
