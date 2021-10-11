@@ -329,32 +329,15 @@ ALWAYS_INLINE bool JIT::isOperandConstantChar(VirtualRegister src)
     return getConstantOperand(src).isString() && asString(getConstantOperand(src).asCell())->length() == 1;
 }
 
-#if USE(JSVALUE32_64)
-inline void JIT::emitValueProfilingSite(ValueProfile& valueProfile, JSValueRegs value)
-{
-    if (!shouldEmitProfiling())
-        return;
-
-    EncodedValueDescriptor* descriptor = bitwise_cast<EncodedValueDescriptor*>(valueProfile.m_buckets);
-    store32(value.payloadGPR(), &descriptor->asBits.payload);
-    store32(value.tagGPR(), &descriptor->asBits.tag);
-}
-
-template<typename Metadata>
-std::enable_if_t<std::is_same<decltype(Metadata::m_profile), ValueProfile>::value, void> JIT::emitValueProfilingSite(Metadata& metadata, JSValueRegs value)
-{
-    emitValueProfilingSite(valueProfileFor(metadata, m_bytecodeIndex.checkpoint()), value);
-}
-#endif
-
 template<typename Op>
 inline std::enable_if_t<std::is_same<decltype(Op::Metadata::m_profile), ValueProfile>::value, void> JIT::emitValueProfilingSiteIfProfiledOpcode(Op bytecode)
 {
 #if USE(JSVALUE64)
-    emitValueProfilingSite(bytecode, regT0);
+    JSValueRegs result { regT0 };
 #else
-    emitValueProfilingSite(bytecode, JSValueRegs(regT1, regT0));
+    JSValueRegs result { regT1, regT0 };
 #endif
+    emitValueProfilingSite(bytecode, result);
 }
 
 inline void JIT::emitValueProfilingSiteIfProfiledOpcode(...) { }
@@ -365,27 +348,28 @@ inline void JIT::emitValueProfilingSite(const Bytecode& bytecode, JSValueRegs va
     if (!shouldEmitProfiling())
         return;
 
-#if USE(JSVALUE64)
     ptrdiff_t offset = m_unlinkedCodeBlock->metadata().offsetInMetadataTable(bytecode) + valueProfileOffsetFor<Bytecode>(m_bytecodeIndex.checkpoint()) + ValueProfile::offsetOfFirstBucket();
+#if USE(JSVALUE64)
     store64(value.gpr(), Address(s_metadataGPR, offset));
 #else
-    UNUSED_PARAM(value);
-    UNUSED_PARAM(bytecode);
-    // FIXME.
+    store32(value.payloadGPR(), Address(s_metadataGPR, offset + PayloadOffset));
+    store32(value.tagGPR(), Address(s_metadataGPR, offset + TagOffset));
 #endif
 }
 
+#if USE(JSVALUE64)
 template<typename Bytecode>
 inline void JIT::emitValueProfilingSite(const Bytecode& bytecode, GPRReg resultReg)
 {
     emitValueProfilingSite(bytecode, JSValueRegs(resultReg));
 }
+#endif
 
 template <typename Bytecode>
 inline void JIT::emitArrayProfilingSiteWithCell(const Bytecode& bytecode, ptrdiff_t offsetOfArrayProfile, RegisterID cellGPR, RegisterID scratchGPR)
 {
     if (shouldEmitProfiling()) {
-        load32(MacroAssembler::Address(cellGPR, JSCell::structureIDOffset()), scratchGPR);
+        load32(Address(cellGPR, JSCell::structureIDOffset()), scratchGPR);
         store32ToMetadata(scratchGPR, bytecode, offsetOfArrayProfile);
     }
 }
@@ -395,24 +379,6 @@ inline void JIT::emitArrayProfilingSiteWithCell(const Bytecode& bytecode, Regist
 {
     emitArrayProfilingSiteWithCell(bytecode, Bytecode::Metadata::offsetOfArrayProfile() + ArrayProfile::offsetOfLastSeenStructureID(), cellGPR, scratchGPR);
 }
-
-#if USE(JSVALUE32_64)
-inline void JIT::emitArrayProfilingSiteWithCell(RegisterID cellGPR, ArrayProfile* arrayProfile, RegisterID scratchGPR)
-{
-    if (shouldEmitProfiling()) {
-        load32(MacroAssembler::Address(cellGPR, JSCell::structureIDOffset()), scratchGPR);
-        store32(scratchGPR, arrayProfile->addressOfLastSeenStructureID());
-    }
-}
-
-inline void JIT::emitArrayProfilingSiteWithCell(RegisterID cellGPR, RegisterID arrayProfileGPR, RegisterID scratchGPR)
-{
-    if (shouldEmitProfiling()) {
-        load32(MacroAssembler::Address(cellGPR, JSCell::structureIDOffset()), scratchGPR);
-        store32(scratchGPR, Address(arrayProfileGPR, ArrayProfile::offsetOfLastSeenStructureID()));
-    }
-}
-#endif
 
 ALWAYS_INLINE int32_t JIT::getOperandConstantInt(VirtualRegister src)
 {

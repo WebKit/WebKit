@@ -343,17 +343,12 @@ namespace JSC {
         void emitWriteBarrier(JSCell* owner);
         void emitWriteBarrier(GPRReg owner);
 
-        // This assumes that the value to profile is in regT0 and that regT3 is available for
-        // scratch.
+#if USE(JSVALUE64)
         template<typename Bytecode> void emitValueProfilingSite(const Bytecode&, GPRReg);
-        template<typename Bytecode> void emitValueProfilingSite(const Bytecode&, JSValueRegs);
-#if USE(JSVALUE32_64)
-        void emitValueProfilingSite(ValueProfile&, JSValueRegs);
-        template<typename Metadata>
-        std::enable_if_t<std::is_same<decltype(Metadata::m_profile), ValueProfile>::value, void>
-        emitValueProfilingSite(Metadata&, JSValueRegs);
 #endif
+        template<typename Bytecode> void emitValueProfilingSite(const Bytecode&, JSValueRegs);
 
+        // This assumes that the value to profile is in regT0 (regT1/regT0 on JSVALUE32_64).
         void emitValueProfilingSiteIfProfiledOpcode(...);
         template<typename Op>
         std::enable_if_t<std::is_same<decltype(Op::Metadata::m_profile), ValueProfile>::value, void>
@@ -363,11 +358,6 @@ namespace JSC {
         void emitArrayProfilingSiteWithCell(const Bytecode&, RegisterID cellGPR, RegisterID scratchGPR);
         template <typename Bytecode>
         void emitArrayProfilingSiteWithCell(const Bytecode&, ptrdiff_t, RegisterID cellGPR, RegisterID scratchGPR);
-
-#if USE(JSVALUE32_64)
-        void emitArrayProfilingSiteWithCell(RegisterID, ArrayProfile* , RegisterID);
-        void emitArrayProfilingSiteWithCell(RegisterID, RegisterID , RegisterID);
-#endif
 
         template<typename Op>
         ECMAMode ecmaMode(Op);

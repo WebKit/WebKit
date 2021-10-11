@@ -518,7 +518,6 @@ void JIT::emit_op_jeq_ptr(const Instruction* currentInstruction)
 void JIT::emit_op_jneq_ptr(const Instruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpJneqPtr>();
-    auto& metadata = bytecode.metadata(m_profiledCodeBlock);
     VirtualRegister src = bytecode.m_value;
     JSValue specialPointer = getConstantOperand(bytecode.m_specialPointer);
     ASSERT(specialPointer.isCell());
@@ -528,7 +527,7 @@ void JIT::emit_op_jneq_ptr(const Instruction* currentInstruction)
     Jump notCell = branchIfNotCell(regT1);
     Jump equal = branchPtr(Equal, regT0, TrustedImmPtr(specialPointer.asCell()));
     notCell.link(this);
-    store8(TrustedImm32(1), &metadata.m_hasJumped);
+    store8ToMetadata(TrustedImm32(1), bytecode, OpJneqPtr::Metadata::offsetOfHasJumped());
     addJump(jump(), target);
     equal.link(this);
 }
@@ -876,7 +875,7 @@ void JIT::emit_op_to_number(const Instruction* currentInstruction)
     addSlowCase(branch32(AboveOrEqual, regT1, TrustedImm32(JSValue::LowestTag)));
     isInt32.link(this);
 
-    emitValueProfilingSite(bytecode.metadata(m_profiledCodeBlock), JSValueRegs(regT1, regT0));
+    emitValueProfilingSite(bytecode, JSValueRegs(regT1, regT0));
     if (src != dst)
         emitStore(dst, regT1, regT0);
 }
@@ -898,7 +897,7 @@ void JIT::emit_op_to_numeric(const Instruction* currentInstruction)
     addSlowCase(branchIfNotNumber(argumentValueRegs, regT2));
     isBigInt.link(this);
 
-    emitValueProfilingSite(bytecode.metadata(m_profiledCodeBlock), JSValueRegs(regT1, regT0));
+    emitValueProfilingSite(bytecode, JSValueRegs(regT1, regT0));
     if (src != dst)
         emitStore(dst, regT1, regT0);
 }
@@ -929,7 +928,7 @@ void JIT::emit_op_to_object(const Instruction* currentInstruction)
     addSlowCase(branchIfNotCell(regT1));
     addSlowCase(branchIfNotObject(regT0));
 
-    emitValueProfilingSite(bytecode.metadata(m_profiledCodeBlock), JSValueRegs(regT1, regT0));
+    emitValueProfilingSite(bytecode, JSValueRegs(regT1, regT0));
     if (src != dst)
         emitStore(dst, regT1, regT0);
 }
@@ -979,23 +978,11 @@ void JIT::emit_op_catch(const Instruction* currentInstruction)
     // argument type proofs, storing locals to the buffer, etc
     // https://bugs.webkit.org/show_bug.cgi?id=175598
 
-    auto& metadata = bytecode.metadata(m_profiledCodeBlock);
-    ValueProfileAndVirtualRegisterBuffer* buffer = metadata.m_buffer;
-    if (buffer || !shouldEmitProfiling())
-        callOperationNoExceptionCheck(operationTryOSREnterAtCatch, &vm(), m_bytecodeIndex.asBits());
-    else
-        callOperationNoExceptionCheck(operationTryOSREnterAtCatchAndValueProfile, &vm(), m_bytecodeIndex.asBits());
+    callOperationNoExceptionCheck(operationTryOSREnterAtCatchAndValueProfile, &vm(), m_bytecodeIndex.asBits());
     auto skipOSREntry = branchTestPtr(Zero, returnValueGPR);
     emitRestoreCalleeSaves();
     farJump(returnValueGPR, NoPtrTag);
     skipOSREntry.link(this);
-    if (buffer && shouldEmitProfiling()) {
-        buffer->forEach([&] (ValueProfileAndVirtualRegister& profile) {
-            JSValueRegs regs(regT1, regT0);
-            emitGetVirtualRegister(profile.m_operand, regs);
-            emitValueProfilingSite(static_cast<ValueProfile&>(profile), regs);
-        });
-    }
 #endif // ENABLE(DFG_JIT)
 }
 

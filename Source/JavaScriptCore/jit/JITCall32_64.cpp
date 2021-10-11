@@ -52,7 +52,7 @@ namespace JSC {
 template<typename Op>
 void JIT::emitPutCallResult(const Op& bytecode)
 {
-    emitValueProfilingSite(bytecode.metadata(m_profiledCodeBlock), JSValueRegs(regT1, regT0));
+    emitValueProfilingSite(bytecode, JSValueRegs(regT1, regT0));
     emitStore(destinationFor(bytecode, m_bytecodeIndex.checkpoint()).virtualRegister(), regT1, regT0);
 }
 
@@ -157,15 +157,14 @@ std::enable_if_t<
 JIT::compileSetupFrame(const Op& bytecode, CallLinkInfo*)
 {
     unsigned checkpoint = m_bytecodeIndex.checkpoint();
-    auto& metadata = bytecode.metadata(m_profiledCodeBlock);
     int argCount = argumentCountIncludingThisFor(bytecode, checkpoint);
     int registerOffset = -static_cast<int>(stackOffsetInRegistersForCall(bytecode, checkpoint));
 
     if (Op::opcodeID == op_call && shouldEmitProfiling()) {
         emitLoad(VirtualRegister(registerOffset + CallFrame::argumentOffsetIncludingThis(0)), regT0, regT1);
         Jump done = branchIfNotCell(regT0);
-        load32(Address(regT1, JSCell::structureIDOffset()), regT1);
-        store32(regT1, metadata.m_callLinkInfo.m_arrayProfile.addressOfLastSeenStructureID());
+        load32(Address(regT1, JSCell::structureIDOffset()), regT0);
+        store32ToMetadata(regT0, bytecode, OpCall::Metadata::offsetOfCallLinkInfo() + LLIntCallLinkInfo::offsetOfArrayProfile() + ArrayProfile::offsetOfLastSeenStructureID());
         done.link(this);
     }
 
@@ -320,7 +319,7 @@ void JIT::compileOpCall(const Instruction* instruction, unsigned callLinkInfoInd
         return;
     }
 
-    auto slowPaths = info->emitFastPath(*this, regT0, regT2, CallLinkInfo::UseDataIC::Yes);
+    auto slowPaths = info->emitFastPath(*this, regT0, regT2, CallLinkInfo::UseDataIC::No);
     addSlowCase(slowPaths);
     m_callCompilationInfo[callLinkInfoIndex].doneLocation = label();
 
@@ -411,7 +410,7 @@ void JIT::emit_op_iterator_open(const Instruction* instruction)
     addSlowCase(gen.slowPathJump());
     m_getByIds.append(gen);
 
-    emitValueProfilingSite(bytecode.metadata(m_profiledCodeBlock), nextRegs);
+    emitValueProfilingSite(bytecode, nextRegs);
     emitPutVirtualRegister(bytecode.m_next, nextRegs);
 
     fastCase.link(this);
@@ -441,7 +440,7 @@ void JIT::emitSlow_op_iterator_open(const Instruction* instruction, Vector<SlowC
     Label coldPathBegin = label();
 
     Call call = callOperationWithProfile(
-        bytecode.metadata(m_profiledCodeBlock), // metadata
+        bytecode,
         operationGetByIdOptimize, // operation
         nextVReg, // result
         TrustedImmPtr(m_profiledCodeBlock->globalObject()), // arg1
@@ -461,7 +460,6 @@ void JIT::emitSlow_op_iterator_open(const Instruction* instruction, Vector<SlowC
 void JIT::emit_op_iterator_next(const Instruction* instruction)
 {
     auto bytecode = instruction->as<OpIteratorNext>();
-    auto& metadata = bytecode.metadata(m_profiledCodeBlock);
     auto* tryFastFunction = ([&] () {
         switch (instruction->width()) {
         case Narrow: return iterator_next_try_fast_narrow;
@@ -480,7 +478,9 @@ void JIT::emit_op_iterator_next(const Instruction* instruction)
     Jump fastCase = branch32(NotEqual, GPRInfo::returnValueGPR2, TrustedImm32(static_cast<uint32_t>(IterationMode::Generic)));
 
     genericCase.link(this);
-    or8(TrustedImm32(static_cast<uint8_t>(IterationMode::Generic)), AbsoluteAddress(&metadata.m_iterationMetadata.seenModes));
+    load8FromMetadata(bytecode, OpIteratorNext::Metadata::offsetOfIterationMetadata() + IterationModeMetadata::offsetOfSeenModes(), regT0);
+    or32(TrustedImm32(static_cast<uint8_t>(IterationMode::Generic)), regT0);
+    store8ToMetadata(regT0, bytecode, OpIteratorNext::Metadata::offsetOfIterationMetadata() + IterationModeMetadata::offsetOfSeenModes());
     compileOpCall<OpIteratorNext>(instruction, m_callLinkInfoIndex++);
     advanceToNextCheckpoint();
     // call result ({ done, value } JSObject) in regT1, regT0
@@ -521,7 +521,7 @@ void JIT::emit_op_iterator_next(const Instruction* instruction)
         addSlowCase(gen.slowPathJump());
         m_getByIds.append(gen);
 
-        emitValueProfilingSite(metadata, doneRegs);
+        emitValueProfilingSite(bytecode, doneRegs);
         emitPutVirtualRegister(bytecode.m_done, doneRegs);
         advanceToNextCheckpoint();
     }
@@ -551,7 +551,7 @@ void JIT::emit_op_iterator_next(const Instruction* instruction)
         addSlowCase(gen.slowPathJump());
         m_getByIds.append(gen);
 
-        emitValueProfilingSite(metadata, resultRegs);
+        emitValueProfilingSite(bytecode, resultRegs);
         emitPutVirtualRegister(bytecode.m_value, resultRegs);
 
         iterationDone.link(this);
@@ -589,7 +589,7 @@ void JIT::emitSlow_op_iterator_next(const Instruction* instruction, Vector<SlowC
         Label coldPathBegin = label();
 
         Call call = callOperationWithProfile(
-            bytecode.metadata(m_profiledCodeBlock), // metadata
+            bytecode,
             operationGetByIdOptimize, // operation
             doneVReg, // result
             TrustedImmPtr(m_profiledCodeBlock->globalObject()), // arg1
@@ -619,7 +619,7 @@ void JIT::emitSlow_op_iterator_next(const Instruction* instruction, Vector<SlowC
         Label coldPathBegin = label();
 
         Call call = callOperationWithProfile(
-            bytecode.metadata(m_profiledCodeBlock), // metadata
+            bytecode,
             operationGetByIdOptimize, // operation
             valueVReg, // result
             TrustedImmPtr(m_profiledCodeBlock->globalObject()), // arg1
