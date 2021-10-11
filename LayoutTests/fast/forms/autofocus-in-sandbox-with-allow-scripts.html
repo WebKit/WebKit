@@ -1,8 +1,19 @@
 <script>
-if (window.testRunner)
+if (window.testRunner) {
     testRunner.dumpAsText();
+    testRunner.dumpChildFramesAsText();
+}
 </script>
-This test passes if the activeElement is the input element rather than the body
-(which it would be if the sandbox didn't allow autofocus although allow-scripts flag is set).
-<iframe sandbox="allow-scripts allow-modals"
-    src="data:text/html,<input autofocus onfocus><script>window.onload = function() { console.log(document.activeElement.tagName) }</script>"></iframe>
+This tests having an input element with autofocus content attribute inside a sandboxed iframe.<br>
+The input element should be autofocused since scripts are allowed.
+<iframe sandbox="allow-scripts"
+    src="data:text/html,<input id=input autofocus onfocus><script>
+    if (window.testRunner)
+        testRunner.waitUntilDone();
+    window.onload = function () {
+        requestAnimationFrame(() => {
+            document.body.append(document.activeElement == input ? 'PASS' : 'FAIL');
+            if (window.testRunner)
+                testRunner.notifyDone();
+        });
+    }</script>"></iframe>

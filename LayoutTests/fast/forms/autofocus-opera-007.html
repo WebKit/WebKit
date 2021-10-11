@@ -17,13 +17,19 @@
     }
 
     function test() {
-        if (window.testRunner)
+        if (window.testRunner) {
             testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
 
-        if (gotBlur)
-            log("SUCCESS");
-        else
-            log("FAILURE");
+        requestAnimationFrame(() => {
+            if (gotBlur)
+                log("SUCCESS");
+            else
+                log("FAILURE");
+            if (window.testRunner)
+                testRunner.notifyDone();
+        });
     }
 </script>
 </head>

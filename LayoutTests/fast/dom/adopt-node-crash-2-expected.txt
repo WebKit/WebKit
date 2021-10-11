@@ -1,2 +1,4 @@
-Tests for a crash due to adopting a DOM node during DOMFocusOut event. Test passes if it doesn't crash.
+Tests for a crash due to adopting a DOM node when unfocusing. Test passes if it doesn't crash.
 
+PASS: Focused node should be keygen
+PASS: Focused node should no longer be keygen

@@ -6,9 +6,11 @@
 window.jsTestIsAsync = true;
 
 function onLoad() {
-    shouldBe('document.activeElement', 'document.querySelector("keygen")');
-    shouldBe('document.activeElement.autofocus', 'true');
-    finishJSTest();
+    requestAnimationFrame(() => {
+        shouldBe('document.activeElement', 'document.querySelector("keygen")');
+        shouldBe('document.activeElement.autofocus', 'true');
+        finishJSTest();
+    });
 }
 </script>
 </head>

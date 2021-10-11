@@ -4470,6 +4470,40 @@ void Document::adjustFocusedNodeOnNodeRemoval(Node& node, NodeRemoval nodeRemova
     }
 }
 
+void Document::appendAutofocusCandidate(Element& candidate)
+{
+    ASSERT(isTopDocument());
+    ASSERT(!m_isAutofocusProcessed);
+    auto it = m_autofocusCandidates.findIf([&candidate](auto& c) {
+        return c == &candidate;
+    });
+    if (it != m_autofocusCandidates.end())
+        m_autofocusCandidates.remove(it);
+    m_autofocusCandidates.append(makeWeakPtr(candidate));
+}
+
+void Document::flushAutofocusCandidates()
+{
+    ASSERT(isTopDocument());
+    if (m_isAutofocusProcessed)
+        return;
+    while (!m_autofocusCandidates.isEmpty()) {
+        RefPtr element = m_autofocusCandidates.takeFirst().get();
+        if (!element || !element->document().isFullyActive() || &element->document().topDocument() != this)
+            continue;
+        if (auto* parser = scriptableDocumentParser(); parser && parser->hasScriptsWaitingForStylesheets())
+            break;
+        // FIXME: Need to ignore if the inclusive ancestor documents has a target element.
+        // FIXME: Use the result of getting the focusable area for element if element is not focusable.
+        if (element->isFocusable()) {
+            m_autofocusCandidates.clear();
+            setAutofocusProcessed();
+            element->runFocusingStepsForAutofocus();
+            return;
+        }
+    }
+}
+
 void Document::hoveredElementDidDetach(Element& element)
 {
     if (!m_hoveredElement || &element != m_hoveredElement)

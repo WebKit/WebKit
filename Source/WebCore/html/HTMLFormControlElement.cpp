@@ -72,7 +72,6 @@ HTMLFormControlElement::HTMLFormControlElement(const QualifiedName& tagName, Doc
     , m_willValidate(true)
     , m_isValid(true)
     , m_wasChangedSinceLastFormControlChangeEvent(false)
-    , m_hasAutofocused(false)
 {
     setHasCustomStyleResolveCallbacks();
 }
@@ -203,13 +202,11 @@ void HTMLFormControlElement::requiredStateChanged()
 
 static bool shouldAutofocus(const HTMLFormControlElement& element)
 {
-    if (!element.renderer())
-        return false;
     if (!element.hasAttributeWithoutSynchronization(autofocusAttr))
         return false;
 
     auto& document = element.document();
-    if (!element.isConnected() || !document.renderView())
+    if (!element.isConnected() || !document.hasBrowsingContext())
         return false;
     if (document.isSandboxed(SandboxAutomaticFeatures)) {
         // FIXME: This message should be moved off the console once a solution to https://bugs.webkit.org/show_bug.cgi?id=103274 exists.
@@ -221,11 +218,10 @@ static bool shouldAutofocus(const HTMLFormControlElement& element)
         return false;
     }
 
-    if (element.hasAutofocused())
+    if (document.topDocument().isAutofocusProcessed())
         return false;
 
-    // FIXME: Should this set of hasTagName checks be replaced by a
-    // virtual member function?
+    // FIXME: autofocus is a global attribute.
     if (is<HTMLInputElement>(element))
         return !downcast<HTMLInputElement>(element).isInputTypeHidden();
     if (element.hasTagName(selectTag))
@@ -247,22 +243,6 @@ void HTMLFormControlElement::didAttachRenderers()
     // on the renderer.
     if (renderer())
         renderer()->updateFromElement();
-
-    if (shouldAutofocus(*this)) {
-        setAutofocused();
-
-        RefPtr<HTMLFormControlElement> element = this;
-        RefPtr frameView = document().view();
-        if (frameView && frameView->layoutContext().isInLayout()) {
-            frameView->queuePostLayoutCallback([element] {
-                element->focus({ SelectionRestorationMode::PlaceCaretAtStart });
-            });
-        } else {
-            Style::deprecatedQueuePostResolutionCallback([element] {
-                element->focus({ SelectionRestorationMode::PlaceCaretAtStart });
-            });
-        }
-    }
 }
 
 void HTMLFormControlElement::didMoveToNewDocument(Document& oldDocument, Document& newDocument)
@@ -301,6 +281,10 @@ Node::InsertedIntoAncestorResult HTMLFormControlElement::insertedIntoAncestor(In
         setAncestorDisabled(computeIsDisabledByFieldsetAncestor());
     HTMLElement::insertedIntoAncestor(insertionType, parentOfInsertedTree);
     FormAssociatedElement::insertedIntoAncestor(insertionType, parentOfInsertedTree);
+
+    if (shouldAutofocus(*this))
+        document().topDocument().appendAutofocusCandidate(*this);
+
     return InsertedIntoAncestorResult::NeedsPostInsertionCallback;
 }
 
@@ -394,6 +378,11 @@ bool HTMLFormControlElement::isMouseFocusable() const
         return HTMLElement::isMouseFocusable();
     return false;
 #endif
+}
+
+void HTMLFormControlElement::runFocusingStepsForAutofocus()
+{
+    focus({ SelectionRestorationMode::PlaceCaretAtStart });
 }
 
 bool HTMLFormControlElement::matchesValidPseudoClass() const

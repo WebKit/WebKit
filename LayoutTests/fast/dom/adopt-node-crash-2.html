@@ -1,6 +1,6 @@
 <!DOCTYPE html><!-- webkit-test-runner [ KeygenElementEnabled=true ] -->
 <html>
-<div>Tests for a crash due to adopting a DOM node during DOMFocusOut event. Test passes if it doesn't crash.</div>
+<div>Tests for a crash due to adopting a DOM node when unfocusing. Test passes if it doesn't crash.</div>
 <script>
 if (window.testRunner) {
     testRunner.dumpAsText();
@@ -14,29 +14,32 @@ if (window.testRunner) {
     </iframe>
   </applet>
   <header id="header1">
-    <keygen autofocus>
+    <keygen id="keygen" autofocus>
   </header>
 </div>
+<div id="logs"></div>
 <script>
-function doit()
-{
-    div2.addEventListener("DOMFocusOut", function () {
-        document.implementation.createDocument("", "", null).adoptNode(div2);
-        setTimeout(() => {
-            if (window.internals)
-                internals.updateLayoutIgnorePendingStylesheetsAndRunPostLayoutTasks();
-            if (window.testRunner)
-                testRunner.notifyDone();
-        }, 0);
-    }, false);
-    div1.outerHTML = header1.outerHTML;
+function assert_true(assert, text) {
+    const div = document.createElement("div");
+    if (assert)
+        div.textContent = "PASS: " + text;
+    else
+        div.textContent = "FAIL: " + text;
+    logs.append(div);
 }
-window.onload = function() {
+
+function doit() {
+    assert_true(document.activeElement == keygen, "Focused node should be keygen");
+    div1.outerHTML = header1.outerHTML;
+    assert_true(document.activeElement != keygen, "Focused node should no longer be keygen");
+    document.implementation.createDocument("", "", null).adoptNode(div2);
     if (window.internals)
         internals.updateLayoutIgnorePendingStylesheetsAndRunPostLayoutTasks();
-    else
-        div2.getBoundingClientRect();
-    setTimeout("doit()", 1);
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
+window.onload = function() {
+    requestAnimationFrame(doit);
+};
 </script>
 </html>

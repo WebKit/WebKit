@@ -3176,6 +3176,11 @@ void Element::blur()
     }
 }
 
+void Element::runFocusingStepsForAutofocus()
+{
+    focus();
+}
+
 void Element::dispatchFocusInEvent(const AtomString& eventType, RefPtr<Element>&& oldFocusedElement)
 {
     RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(ScriptDisallowedScope::InMainThread::isScriptAllowed() || !isInWebProcess());

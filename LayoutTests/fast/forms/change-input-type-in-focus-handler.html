@@ -10,16 +10,25 @@
 function focused() {
     if (input.autofocus) {
         input.type = "checkbox";
-        document.body.innerHTML = "<code style='color: green'>PASS</code>";
+        document.body.innerHTML = "FAIL - focus event handler called for autofocus";
+        if (window.testRunner)
+            testRunner.notifyDone();
         return;
     }
 
     document.body.appendChild(input);
     input.autofocus = true;
+    requestAnimationFrame(() => {
+        document.body.textContent = document.activeElement == document.body ? "PASS" : "FAIL";
+        if (window.testRunner)
+            testRunner.notifyDone();
+    });
 }
 
-if (window.testRunner)
+if (window.testRunner) {
     testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
 
 input.focus();
 </script>

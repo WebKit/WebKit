@@ -1,3 +1,30 @@
+2021-10-11  Tim Nguyen  <ntim@apple.com>
+
+        Implement new autofocus behavior
+        https://bugs.webkit.org/show_bug.cgi?id=203139
+        <rdar://problem/56397019>
+
+        Reviewed by Wenson Hsieh.
+
+        Make WebKit match the new autofocus spec:
+        - https://html.spec.whatwg.org/multipage/interaction.html#the-autofocus-attribute
+        - https://html.spec.whatwg.org/multipage/interaction.html#focusing-steps
+
+        The new autofocus behavior queues up all autofocusable elements (visible or not), then
+        fires autofocus asynchronously during the "update rendering" steps, unlike the old behavior
+        which runs focus synchronously whenever it finds a visible autofocusable element.
+
+        Original patch by Ryosuke Niwa.
+
+        * web-platform-tests/html/interaction/focus/the-autofocus-attribute/document-with-fragment-empty-expected.txt:
+        * web-platform-tests/html/interaction/focus/the-autofocus-attribute/document-with-fragment-nonexistent-expected.txt:
+        * web-platform-tests/html/interaction/focus/the-autofocus-attribute/document-with-fragment-top-expected.txt:
+        * web-platform-tests/html/interaction/focus/the-autofocus-attribute/first-expected.txt:
+        * web-platform-tests/html/interaction/focus/the-autofocus-attribute/first-when-later-expected.txt:
+        * web-platform-tests/html/interaction/focus/the-autofocus-attribute/queue-non-focusable-expected.txt:
+        * web-platform-tests/html/interaction/focus/the-autofocus-attribute/update-the-rendering-expected.txt:
+        * web-platform-tests/selection/selection-select-all-move-input-crash-expected.txt: Expected change since input autofocus now places caret at start
+
 2021-10-11  Ben Nham  <nham@apple.com>
 
         Add push registration stubs

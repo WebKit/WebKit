@@ -1,5 +1,5 @@
 
 
-FAIL Autofocus elements in iframed documents with empty fragments should work. assert_not_equals: got disallowed value Element node <input autofocus=""></input>
+PASS Autofocus elements in iframed documents with empty fragments should work.
 PASS Autofocus elements in top-level browsing context's documents with empty fragments should work.
 

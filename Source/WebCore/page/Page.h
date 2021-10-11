@@ -208,9 +208,11 @@ enum class RenderingUpdateStep : uint16_t {
 #if ENABLE(ASYNC_SCROLLING)
     ScrollingTreeUpdate             = 1 << 13,
 #endif
+    FlushAutofocusCandidates        = 1 << 14,
 };
 
 constexpr OptionSet<RenderingUpdateStep> updateRenderingSteps = {
+    RenderingUpdateStep::FlushAutofocusCandidates,
     RenderingUpdateStep::Resize,
     RenderingUpdateStep::Scroll,
     RenderingUpdateStep::MediaQueryEvaluation,

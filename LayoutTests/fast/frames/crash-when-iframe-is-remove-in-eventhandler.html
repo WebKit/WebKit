@@ -6,13 +6,20 @@ PASS if no crash.
 <span id=wrapper></span>
 <textarea id=textarea onfocus="eventhandler()"></textarea>
 <script>
-if (window.testRunner)
+if (window.testRunner) {
     testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
 document.offsetHeight;
 textarea.autofocus = true;
 var iframe = document.createElement("iframe");
 span.appendChild(iframe);
 wrapper.appendChild(textarea);
+requestAnimationFrame(() => {
+    if (window.testRunner)
+        testRunner.notifyDone();
+});
 iframe.contentDocument.caretRangeFromPoint();
 
 function eventhandler() {

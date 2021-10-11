@@ -1,4 +1,3 @@
 
-
-FAIL "Flush autofocus candidates" should be happen after the first animation frame callbacks, and before a resize event in the next iteration of window event loop. assert_array_equals: lengths differ, expected 3 got 4
+PASS "Flush autofocus candidates" should be happen before a scroll event and animation frame callbacks
 

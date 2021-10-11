@@ -1,3 +1,43 @@
+2021-10-11  Tim Nguyen  <ntim@apple.com>
+
+        Implement new autofocus behavior
+        https://bugs.webkit.org/show_bug.cgi?id=203139
+        <rdar://problem/56397019>
+
+        Reviewed by Wenson Hsieh.
+
+        Make WebKit match the new autofocus spec:
+        - https://html.spec.whatwg.org/multipage/interaction.html#the-autofocus-attribute
+        - https://html.spec.whatwg.org/multipage/interaction.html#focusing-steps
+
+        The new autofocus behavior queues up all autofocusable elements (visible or not), then
+        fires autofocus asynchronously during the "update rendering" steps, unlike the old behavior
+        which runs focus synchronously whenever it finds a visible autofocusable element.
+
+        Original patch by Ryosuke Niwa.
+
+        * TestExpectations:
+        * fast/dom/Window/window-scroll-ignore-null-frame.html:
+        * fast/dom/adopt-node-crash-2-expected.txt:
+        * fast/dom/adopt-node-crash-2.html:
+        * fast/dom/window-inner-width-crash.html:
+        * fast/forms/autofocus-in-sandbox-with-allow-scripts-expected.txt:
+        * fast/forms/autofocus-in-sandbox-with-allow-scripts.html:
+        * fast/forms/autofocus-keygen.html:
+        * fast/forms/autofocus-opera-001.html:
+        * fast/forms/autofocus-opera-002.html:
+        * fast/forms/autofocus-opera-003.html:
+        * fast/forms/autofocus-opera-006.html:
+        * fast/forms/autofocus-opera-007.html:
+        * fast/forms/change-input-type-in-focus-handler.html:
+        * fast/frames/crash-when-iframe-is-remove-in-eventhandler.html:
+        * fast/history/page-cache-execute-script-during-restore.html:
+        * platform/ios-wk2/TestExpectations:
+        * platform/ios-wk2/imported/w3c/web-platform-tests/html/interaction/focus/the-autofocus-attribute/update-the-rendering-expected.txt:
+        * platform/ios/imported/w3c/web-platform-tests/selection/selection-select-all-move-input-crash-expected.txt:
+        * platform/mac-wk1/imported/w3c/web-platform-tests/html/interaction/focus/the-autofocus-attribute/update-the-rendering-expected.txt:
+        * platform/win/TestExpectations:
+
 2021-10-11  Ayumi Kojima  <ayumi_kojima@apple.com>
 
         [ iOS BigSur wk1 ] webgl/1.0.3/conformance/uniforms/uniform-default-values.html is flaky timing out.

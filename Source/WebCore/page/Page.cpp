@@ -1560,7 +1560,10 @@ void Page::updateRendering()
         forEachDocument(perDocumentFunction);
     };
 
-    // FIXME: Flush autofocus candidates.
+    runProcessingStep(RenderingUpdateStep::FlushAutofocusCandidates, [] (Document& document) {
+        if (document.isTopDocument())
+            document.flushAutofocusCandidates();
+    });
 
     runProcessingStep(RenderingUpdateStep::Resize, [] (Document& document) {
         document.runResizeSteps();
@@ -3605,6 +3608,7 @@ SpeechRecognitionConnection& Page::speechRecognitionConnection()
 WTF::TextStream& operator<<(WTF::TextStream& ts, RenderingUpdateStep step)
 {
     switch (step) {
+    case RenderingUpdateStep::FlushAutofocusCandidates: ts << "FlushAutofocusCandidates"; break;
     case RenderingUpdateStep::Resize: ts << "Resize"; break;
     case RenderingUpdateStep::Scroll: ts << "Scroll"; break;
     case RenderingUpdateStep::MediaQueryEvaluation: ts << "MediaQueryEvaluation"; break;

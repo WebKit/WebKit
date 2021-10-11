@@ -788,6 +788,11 @@ public:
     void adjustFocusedNodeOnNodeRemoval(Node&, NodeRemoval = NodeRemoval::Node);
     void adjustFocusNavigationNodeOnNodeRemoval(Node&, NodeRemoval = NodeRemoval::Node);
 
+    bool isAutofocusProcessed() const { return m_isAutofocusProcessed; }
+    void setAutofocusProcessed() { m_isAutofocusProcessed = true; }
+    void appendAutofocusCandidate(Element&);
+    void flushAutofocusCandidates();
+
     void hoveredElementDidDetach(Element&);
     void elementInActiveChainDidDetach(Element&);
 
@@ -1801,6 +1806,7 @@ private:
     std::unique_ptr<DOMImplementation> m_implementation;
 
     RefPtr<Node> m_focusNavigationStartingNode;
+    Deque<WeakPtr<Element>> m_autofocusCandidates;
     RefPtr<Element> m_focusedElement;
     RefPtr<Element> m_hoveredElement;
     RefPtr<Element> m_activeElement;
@@ -2112,6 +2118,8 @@ private:
 
     bool m_isSynthesized { false };
     bool m_isNonRenderedPlaceholder { false };
+
+    bool m_isAutofocusProcessed { false };
 
     bool m_sawElementsInKnownNamespaces { false };
     bool m_isSrcdocDocument { false };
