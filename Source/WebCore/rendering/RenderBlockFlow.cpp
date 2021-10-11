@@ -690,7 +690,7 @@ void RenderBlockFlow::layoutInlineChildren(bool relayoutChildren, LayoutUnit& re
         if (LayoutIntegration::LineLayout::canUseFor(*this))
             return ModernPath;
 #endif
-        return LineBoxesPath;
+        return LegacyPath;
     };
 
     if (lineLayoutPath() == UndeterminedPath)
@@ -3728,9 +3728,9 @@ void RenderBlockFlow::invalidateLineLayoutPath()
 {
     switch (lineLayoutPath()) {
     case UndeterminedPath:
-    case ForceLineBoxesPath:
+    case ForcedLegacyPath:
         return;
-    case LineBoxesPath:
+    case LegacyPath:
         setLineLayoutPath(UndeterminedPath);
         return;
     case ModernPath: {
@@ -3738,7 +3738,7 @@ void RenderBlockFlow::invalidateLineLayoutPath()
         auto path = UndeterminedPath;
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
         if (modernLineLayout() && modernLineLayout()->shouldSwitchToLegacyOnInvalidation())
-            path = ForceLineBoxesPath;
+            path = ForcedLegacyPath;
 #endif
         m_lineLayout = WTF::Monostate();
         setLineLayoutPath(path);

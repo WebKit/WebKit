@@ -345,7 +345,7 @@ public:
     bool hasLines() const;
     void invalidateLineLayoutPath() final;
 
-    enum LineLayoutPath { UndeterminedPath = 0, LineBoxesPath, ModernPath, ForceLineBoxesPath };
+    enum LineLayoutPath { UndeterminedPath = 0, ModernPath, LegacyPath, ForcedLegacyPath };
     LineLayoutPath lineLayoutPath() const { return static_cast<LineLayoutPath>(renderBlockFlowLineLayoutPath()); }
     void setLineLayoutPath(LineLayoutPath path) { setRenderBlockFlowLineLayoutPath(path); }
 

@@ -334,7 +334,7 @@ static void printModernLineLayoutCoverage(void)
         textLength += flowLength;
         auto reasons = canUseForLineLayoutWithReason(*flow, IncludeReasons::All);
         if (reasons.isEmpty()) {
-            if (flow->lineLayoutPath() == RenderBlockFlow::ForceLineBoxesPath) {
+            if (flow->lineLayoutPath() == RenderBlockFlow::ForcedLegacyPath) {
                 supportedButForcedToLineLayoutTextLength += flowLength;
                 ++numberOfSupportedButForcedToLineLayoutLeafBlocks;
             }
