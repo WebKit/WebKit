@@ -3671,6 +3671,12 @@ void SpeculativeJIT::compile(Node* node)
         GPRReg oldValueGPR = oldValue.gpr();
         resultGPR = result.gpr();
         GPRReg newValueGPR = newValue.gpr();
+        std::optional<FPRTemporary> fprTemp;
+        FPRReg resultFPR = InvalidFPRReg;
+        if (elementSize(type) == 4 && !isSigned(type)) {
+            fprTemp.emplace(this);
+            resultFPR = fprTemp->fpr();
+        }
         
         // FIXME: It shouldn't be necessary to nop-pad between register allocation and a jump label.
         // https://bugs.webkit.org/show_bug.cgi?id=170974
@@ -3774,7 +3780,7 @@ void SpeculativeJIT::compile(Node* node)
         }
         constexpr bool canSpeculate = false;
         constexpr bool shouldBox = false;
-        setIntTypedArrayLoadResult(node, JSValueRegs(resultGPR), type, canSpeculate, shouldBox);
+        setIntTypedArrayLoadResult(node, JSValueRegs(resultGPR), type, canSpeculate, shouldBox, resultFPR);
         break;
     }
         

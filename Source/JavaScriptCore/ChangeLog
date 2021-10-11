@@ -1,3 +1,20 @@
+2021-10-11  Saam Barati  <sbarati@apple.com>
+
+        Don't branch around register allocation in DFG enumerator get by val and pass in the right LValue type to strictInt52ToJSValue
+        https://bugs.webkit.org/show_bug.cgi?id=231465
+        <rdar://83876470>
+
+        Reviewed by Yusuke Suzuki.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::setIntTypedArrayLoadResult):
+        (JSC::DFG::SpeculativeJIT::compileGetByValOnIntTypedArray):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileCompareStrictEq):
+
 2021-10-11  Geza Lore  <glore@igalia.com>
 
         [JSC][ARMv7] Make LLInt CSR save/restore order match the JITs
