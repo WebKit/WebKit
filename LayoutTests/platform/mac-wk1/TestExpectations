@@ -677,6 +677,8 @@ webkit.org/b/170877 [ Debug ] webgl/1.0.3/conformance/glsl/misc/shader-with-rese
 
 webkit.org/b/231514 [ BigSur+ ] webgl/1.0.3/conformance/uniforms/uniform-default-values.html [ Pass Timeout ]
 
+webkit.org/b/231541 [ BigSur+ Debug ] webgl/1.0.3/conformance/glsl/bugs/long-expressions-should-not-crash.html [ Pass Timeout ]
+
 # This was a WK2-only fix.
 http/tests/css/filters-on-iframes.html [ Skip ]
 

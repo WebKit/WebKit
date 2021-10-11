@@ -1283,6 +1283,8 @@ webkit.org/b/182144 [ Debug ] webgl/1.0.3/conformance/rendering/many-draw-calls.
 
 webkit.org/b/231514 webgl/1.0.3/conformance/uniforms/uniform-default-values.html [ Pass Timeout ]
 
+webkit.org/b/231541 webgl/1.0.3/conformance/glsl/bugs/long-expressions-should-not-crash.html [ Pass Timeout ]
+
 webkit.org/b/183860 http/wpt/service-workers/third-party-registration.html [ Pass Timeout ]
 
 webkit.org/b/184245 http/tests/workers/service/service-worker-cache-api.https.html [ Pass Failure Timeout ]
@@ -2156,6 +2158,5 @@ webkit.org/b/231397 [ Debug ] fast/selectors/matches-complex.html [ Slow ]
 webkit.org/b/231397 imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/pbkdf2.https.any.worker.html [ Slow ]
 webkit.org/b/231397 [ Debug ] imported/w3c/web-platform-tests/selection/collapse-00.html [ Slow ]
 webkit.org/b/231397 [ Debug ] js/error-should-not-strong-reference-global-object.html [ Slow ]
-webkit.org/b/231397 webgl/1.0.3/conformance/glsl/bugs/long-expressions-should-not-crash.html [ Slow ]
 
 webkit.org/b/231444 imported/blink/fast/dom/shadow/shadowdom-for-keygen-only-shadow.html [ Pass Crash ]

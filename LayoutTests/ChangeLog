@@ -1,3 +1,13 @@
+2021-10-11  Ayumi Kojima  <ayumi_kojima@apple.com>
+
+        [ iOS macOS Debug ] webgl/1.0.3/conformance/glsl/bugs/long-expressions-should-not-crash.html is a flaky timeout.
+        https://bugs.webkit.org/show_bug.cgi?id=231541
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+        * platform/mac-wk1/TestExpectations:
+
 2021-10-11  Tim Nguyen  <ntim@apple.com>
 
         Implement new autofocus behavior
