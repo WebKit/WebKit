@@ -170,7 +170,7 @@ using SharedStringHash = uint32_t;
 enum class CanWrap : bool;
 enum class DidWrap : bool;
 enum class RouteSharingPolicy : uint8_t;
-enum class ShouldTreatAsContinuingLoad : bool;
+enum class ShouldTreatAsContinuingLoad : uint8_t;
 
 enum class EventThrottlingBehavior : bool { Responsive, Unresponsive };
 
