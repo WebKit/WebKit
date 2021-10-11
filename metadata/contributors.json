@@ -6145,13 +6145,14 @@
    },
    {
       "aliases" : [
-         "Edward O'Connor",
-         "Ted O'Connor",
          "Tess O'Connor"
       ],
       "emails" : [
-         "eoconnor@apple.com"
+         "eoconnor@apple.com",
+         "hober@apple.com"
       ],
+      "expertise" : "Web Standards",
+      "github" : "hober",
       "name" : "Theresa O'Connor",
       "nicks" : [
          "hober"
