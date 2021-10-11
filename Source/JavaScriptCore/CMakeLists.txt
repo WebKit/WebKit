@@ -922,6 +922,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/ArrayPrototype.h
     runtime/ArrayStorage.h
     runtime/ArrayStorageInlines.h
+    runtime/AsyncIteratorPrototype.h
     runtime/AuxiliaryBarrier.h
     runtime/AuxiliaryBarrierInlines.h
     runtime/BasicBlockLocation.h

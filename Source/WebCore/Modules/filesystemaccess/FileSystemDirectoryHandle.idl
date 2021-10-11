@@ -44,4 +44,9 @@ dictionary FileSystemRemoveOptions {
     Promise<FileSystemDirectoryHandle> getDirectoryHandle(USVString name, optional FileSystemGetDirectoryOptions options);
     Promise<undefined> removeEntry(USVString name, optional FileSystemRemoveOptions options);
     Promise<sequence<USVString>?> resolve(FileSystemHandle possibleDescendant);
+    
+    // FIXME: This interface should be AsyncIterable, which is not supported by bindings code generator yet.
+    [Custom] any entries();
+    [Custom] any keys();
+    [Custom] any values();
 };

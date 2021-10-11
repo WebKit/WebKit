@@ -46,6 +46,8 @@ public:
     using GetAccessHandleCallback = CompletionHandler<void(ExceptionOr<FileSystemSyncAccessHandleIdentifier>&&)>;
     using VoidCallback = CompletionHandler<void(ExceptionOr<void>&&)>;
     using IntegerCallback = CompletionHandler<void(ExceptionOr<uint64_t>&&)>;
+    using GetHandleNamesCallback = CompletionHandler<void(ExceptionOr<Vector<String>>&&)>;
+    using GetHandleWithTypeCallback = CompletionHandler<void(ExceptionOr<std::pair<FileSystemHandleIdentifier, bool>>&&)>;
 
     virtual void isSameEntry(FileSystemHandleIdentifier, FileSystemHandleIdentifier, SameEntryCallback&&) = 0;
     virtual void getFileHandle(FileSystemHandleIdentifier, const String& name, bool createIfNecessary, GetHandleCallback&&) = 0;
@@ -57,6 +59,8 @@ public:
     virtual void truncate(FileSystemHandleIdentifier, FileSystemSyncAccessHandleIdentifier, uint64_t size, VoidCallback&&) = 0;
     virtual void flush(FileSystemHandleIdentifier, FileSystemSyncAccessHandleIdentifier, VoidCallback&&) = 0;
     virtual void close(FileSystemHandleIdentifier, FileSystemSyncAccessHandleIdentifier, VoidCallback&&) = 0;
+    virtual void getHandleNames(FileSystemHandleIdentifier, GetHandleNamesCallback&&) = 0;
+    virtual void getHandle(FileSystemHandleIdentifier, const String& name, GetHandleWithTypeCallback&&) = 0;
 };
 
 } // namespace WebCore

@@ -1,3 +1,33 @@
+2021-10-10  Sihui Liu  <sihui_liu@apple.com>
+
+        Add support for iterating FileSystemDirectoryHandle
+        https://bugs.webkit.org/show_bug.cgi?id=231142
+        <rdar://problem/83848092>
+
+        Reviewed by Youenn Fablet and Yusuke Suzuki.
+
+        * NetworkProcess/storage/FileSystemStorageHandle.cpp:
+        (WebKit::FileSystemStorageHandle::FileSystemStorageHandle):
+        (WebKit::FileSystemStorageHandle::getHandleNames):
+        (WebKit::FileSystemStorageHandle::getHandle):
+        * NetworkProcess/storage/FileSystemStorageHandle.h:
+        (WebKit::FileSystemStorageHandle::type const):
+        * NetworkProcess/storage/FileSystemStorageManager.cpp:
+        (WebKit::FileSystemStorageManager::createHandle):
+        (WebKit::FileSystemStorageManager::getType):
+        * NetworkProcess/storage/FileSystemStorageManager.h:
+        * NetworkProcess/storage/NetworkStorageManager.cpp:
+        (WebKit::NetworkStorageManager::getHandleNames):
+        (WebKit::NetworkStorageManager::getHandle):
+        * NetworkProcess/storage/NetworkStorageManager.h:
+        * NetworkProcess/storage/NetworkStorageManager.messages.in:
+        * WebProcess/WebCoreSupport/WebFileSystemStorageConnection.cpp:
+        (WebKit::WebFileSystemStorageConnection::getFileHandle):
+        (WebKit::WebFileSystemStorageConnection::getDirectoryHandle):
+        (WebKit::WebFileSystemStorageConnection::getHandleNames):
+        (WebKit::WebFileSystemStorageConnection::getHandle):
+        * WebProcess/WebCoreSupport/WebFileSystemStorageConnection.h:
+
 2021-10-10  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         [WPE] Expose WKTextCheckerSetContinuousSpellCheckingEnabled and use it from WKTR

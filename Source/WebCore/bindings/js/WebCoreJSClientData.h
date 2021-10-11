@@ -71,6 +71,8 @@ public:
     JSC::IsoSubspace& runtimeObjectSpace() { return m_runtimeObjectSpace; }
     JSC::IsoSubspace& windowProxySpace() { return m_windowProxySpace; }
     JSC::IsoSubspace& idbSerializationSpace() { return m_idbSerializationSpace; }
+    JSC::IsoSubspace* fileSystemDirectoryHandleIteratorSpace() { return m_fileSystemDirectoryHandleIteratorSpace.get(); }
+    void setFileSystemDirectoryHandleIteratorSpace(std::unique_ptr<JSC::IsoSubspace> space) { m_fileSystemDirectoryHandleIteratorSpace = std::exchange(space, nullptr); }
 
     Vector<JSC::IsoSubspace*>& outputConstraintSpaces() { return m_outputConstraintSpaces; }
 
@@ -121,6 +123,7 @@ private:
     JSC::IsoSubspace m_runtimeObjectSpace;
     JSC::IsoSubspace m_windowProxySpace;
     JSC::IsoSubspace m_idbSerializationSpace;
+    std::unique_ptr<JSC::IsoSubspace> m_fileSystemDirectoryHandleIteratorSpace;
     std::unique_ptr<DOMIsoSubspaces> m_subspaces;
     Vector<JSC::IsoSubspace*> m_outputConstraintSpaces;
 };

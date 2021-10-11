@@ -1,12 +1,20 @@
 
-FAIL getDirectoryHandle(create=false) rejects for non-existing directories promise_test: Unhandled rejection with value: object "TypeError: dir.values is not a function. (In 'dir.values()', 'dir.values' is undefined)"
-FAIL getDirectoryHandle(create=true) creates an empty directory promise_test: Unhandled rejection with value: object "TypeError: dir.values is not a function. (In 'dir.values()', 'dir.values' is undefined)"
-FAIL getDirectoryHandle(create=false) returns existing directories promise_test: Unhandled rejection with value: object "TypeError: dir.values is not a function. (In 'dir.values()', 'dir.values' is undefined)"
-FAIL getDirectoryHandle(create=true) returns existing directories without erasing promise_test: Unhandled rejection with value: object "TypeError: dir.values is not a function. (In 'dir.values()', 'dir.values' is undefined)"
-FAIL getDirectoryHandle() when a file already exists with the same name promise_test: Unhandled rejection with value: object "TypeError: dir.values is not a function. (In 'dir.values()', 'dir.values' is undefined)"
-FAIL getDirectoryHandle() with empty name promise_test: Unhandled rejection with value: object "TypeError: dir.values is not a function. (In 'dir.values()', 'dir.values' is undefined)"
-FAIL getDirectoryHandle() with "." name promise_test: Unhandled rejection with value: object "TypeError: dir.values is not a function. (In 'dir.values()', 'dir.values' is undefined)"
-FAIL getDirectoryHandle() with ".." name promise_test: Unhandled rejection with value: object "TypeError: dir.values is not a function. (In 'dir.values()', 'dir.values' is undefined)"
-FAIL getDirectoryHandle(create=false) with a path separator when the directory exists promise_test: Unhandled rejection with value: object "TypeError: dir.values is not a function. (In 'dir.values()', 'dir.values' is undefined)"
-FAIL getDirectoryHandle(create=true) with a path separator promise_test: Unhandled rejection with value: object "TypeError: dir.values is not a function. (In 'dir.values()', 'dir.values' is undefined)"
+PASS getDirectoryHandle(create=false) rejects for non-existing directories
+FAIL getDirectoryHandle(create=true) creates an empty directory promise_test: Unhandled rejection with value: object "TypeError: undefined is not a function (near '...entry of handle...')"
+FAIL getDirectoryHandle(create=false) returns existing directories promise_test: Unhandled rejection with value: object "NotSupportedError: getFile is not implemented"
+PASS getDirectoryHandle(create=true) returns existing directories without erasing
+FAIL getDirectoryHandle() when a file already exists with the same name promise_test: Unhandled rejection with value: object "NotSupportedError: getFile is not implemented"
+FAIL getDirectoryHandle() with empty name assert_unreached: Should have rejected: undefined Reached unreachable code
+FAIL getDirectoryHandle() with "." name promise_rejects_js: function "function () { throw e }" threw object "UnknownError: Name is invalid" ("UnknownError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL getDirectoryHandle() with ".." name promise_rejects_js: function "function () { throw e }" threw object "UnknownError: Name is invalid" ("UnknownError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL getDirectoryHandle(create=false) with a path separator when the directory exists promise_rejects_js: getDirectoryHandle() must reject names containing "/" function "function () { throw e }" threw object "UnknownError: Name is invalid" ("UnknownError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL getDirectoryHandle(create=true) with a path separator promise_rejects_js: getDirectoryHandle(true) must reject names containing "/" function "function () { throw e }" threw object "UnknownError: Name is invalid" ("UnknownError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
 

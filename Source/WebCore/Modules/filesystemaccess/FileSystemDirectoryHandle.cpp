@@ -86,6 +86,88 @@ void FileSystemDirectoryHandle::resolve(const FileSystemHandle& handle, DOMPromi
     });
 }
 
+void FileSystemDirectoryHandle::getHandleNames(CompletionHandler<void(ExceptionOr<Vector<String>>&&)>&& completionHandler)
+{
+    connection().getHandleNames(identifier(), WTFMove(completionHandler));
+}
+
+void FileSystemDirectoryHandle::getHandle(const String& name, CompletionHandler<void(ExceptionOr<Ref<FileSystemHandle>>&&)>&& completionHandler)
+{
+    connection().getHandle(identifier(), name, [name, connection = Ref { connection() }, completionHandler = WTFMove(completionHandler)](auto result) mutable {
+        if (result.hasException())
+            return completionHandler(result.releaseException());
+
+        auto [identifier, isDirectory] = result.releaseReturnValue();
+        if (isDirectory) {
+            Ref<FileSystemHandle> handle = FileSystemDirectoryHandle::create(String { name }, identifier, WTFMove(connection));
+            return completionHandler(WTFMove(handle));
+        }
+
+        Ref<FileSystemHandle> handle = FileSystemFileHandle::create(String { name }, identifier, WTFMove(connection));
+        completionHandler(WTFMove(handle));
+    });
+}
+
+using FileSystemDirectoryHandleIterator = FileSystemDirectoryHandle::Iterator;
+
+Ref<FileSystemDirectoryHandleIterator> FileSystemDirectoryHandle::createIterator()
+{
+    return Iterator::create(*this);
+}
+
+Ref<FileSystemDirectoryHandleIterator> FileSystemDirectoryHandleIterator::create(FileSystemDirectoryHandle& source)
+{
+    return adoptRef(*new FileSystemDirectoryHandle::Iterator(source));
+}
+
+void FileSystemDirectoryHandleIterator::next(CompletionHandler<void(ExceptionOr<Result>&&)>&& completionHandler)
+{
+    ASSERT(!m_isWaitingForResult);
+    m_isWaitingForResult = true;
+
+    auto wrappedCompletionHandler = [this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](auto result) mutable {
+        m_isWaitingForResult = false;
+        completionHandler(WTFMove(result));
+    };
+
+    if (!m_isInitialized) {
+        m_source->getHandleNames([this, protectedThis = Ref { *this }, completionHandler = WTFMove(wrappedCompletionHandler)](auto result) mutable {
+            m_isInitialized = true;
+            if (result.hasException())
+                return completionHandler(result.releaseException());
+
+            m_keys = result.releaseReturnValue();
+            advance(WTFMove(completionHandler));
+        });
+        return;
+    }
+
+    advance(WTFMove(wrappedCompletionHandler));
+}
+
+void FileSystemDirectoryHandleIterator::advance(CompletionHandler<void(ExceptionOr<Result>&&)>&& completionHandler)
+{
+    ASSERT(m_isInitialized);
+
+    if (m_index >= m_keys.size()) {
+        Result result = std::nullopt;
+        return completionHandler(Result { });
+    }
+
+    auto key = m_keys[m_index++];
+    m_source->getHandle(key, [this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler), key](auto result) mutable {
+        if (result.hasException()) {
+            if (result.exception().code() == ExceptionCode::NotFoundError)
+                return advance(WTFMove(completionHandler));
+
+            return completionHandler(result.releaseException());
+        }
+
+        Result resultValue = WTF::KeyValuePair<String, Ref<FileSystemHandle>> { WTFMove(key), result.releaseReturnValue() };
+        completionHandler(WTFMove(resultValue));
+    });
+}
+
 } // namespace WebCore
 
 

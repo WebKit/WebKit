@@ -48,7 +48,7 @@ FileSystemFileHandle::FileSystemFileHandle(String&& name, FileSystemHandleIdenti
 
 void FileSystemFileHandle::getFile(DOMPromiseDeferred<IDLInterface<File>>&& promise)
 {
-    promise.reject(Exception { NotSupportedError, "Not implemented"_s });
+    promise.reject(Exception { NotSupportedError, "getFile is not implemented"_s });
 }
 
 void FileSystemFileHandle::createSyncAccessHandle(DOMPromiseDeferred<IDLInterface<FileSystemSyncAccessHandle>>&& promise)

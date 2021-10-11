@@ -1,4 +1,4 @@
 
-FAIL getFile() provides a file that can be sliced promise_test: Unhandled rejection with value: object "TypeError: dir.values is not a function. (In 'dir.values()', 'dir.values' is undefined)"
-FAIL getFile() returns last modified time promise_test: Unhandled rejection with value: object "TypeError: dir.values is not a function. (In 'dir.values()', 'dir.values' is undefined)"
+FAIL getFile() provides a file that can be sliced promise_test: Unhandled rejection with value: object "NotSupportedError: getFile is not implemented"
+FAIL getFile() returns last modified time promise_test: Unhandled rejection with value: object "NotSupportedError: getFile is not implemented"
 

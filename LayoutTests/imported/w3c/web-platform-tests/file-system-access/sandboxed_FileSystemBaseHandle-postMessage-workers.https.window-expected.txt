@@ -1,5 +1,5 @@
 
-FAIL Send and receive messages using a dedicated worker. promise_test: Unhandled rejection with value: object "TypeError: dir.values is not a function. (In 'dir.values()', 'dir.values' is undefined)"
-FAIL Send and receive messages using a service worker. promise_test: Unhandled rejection with value: object "TypeError: dir.values is not a function. (In 'dir.values()', 'dir.values' is undefined)"
-FAIL Send and receive messages using a shared worker. promise_test: Unhandled rejection with value: object "TypeError: dir.values is not a function. (In 'dir.values()', 'dir.values' is undefined)"
+FAIL Send and receive messages using a dedicated worker. promise_test: Unhandled rejection with value: object "NotSupportedError: getFile is not implemented"
+FAIL Send and receive messages using a service worker. promise_test: Unhandled rejection with value: object "NotSupportedError: getFile is not implemented"
+FAIL Send and receive messages using a shared worker. promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'shared_worker.port.start')"
 

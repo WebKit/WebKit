@@ -1,10 +1,10 @@
 
-FAIL isSameEntry for identical directory handles returns true promise_test: Unhandled rejection with value: object "TypeError: dir.values is not a function. (In 'dir.values()', 'dir.values' is undefined)"
-FAIL isSameEntry for different directories returns false promise_test: Unhandled rejection with value: object "TypeError: dir.values is not a function. (In 'dir.values()', 'dir.values' is undefined)"
-FAIL isSameEntry for different handles for the same directory promise_test: Unhandled rejection with value: object "TypeError: dir.values is not a function. (In 'dir.values()', 'dir.values' is undefined)"
-FAIL isSameEntry for identical file handles returns true promise_test: Unhandled rejection with value: object "TypeError: dir.values is not a function. (In 'dir.values()', 'dir.values' is undefined)"
-FAIL isSameEntry for different files returns false promise_test: Unhandled rejection with value: object "TypeError: dir.values is not a function. (In 'dir.values()', 'dir.values' is undefined)"
-FAIL isSameEntry for different handles for the same file promise_test: Unhandled rejection with value: object "TypeError: dir.values is not a function. (In 'dir.values()', 'dir.values' is undefined)"
-FAIL isSameEntry comparing a file to a file in a different directory returns false promise_test: Unhandled rejection with value: object "TypeError: dir.values is not a function. (In 'dir.values()', 'dir.values' is undefined)"
-FAIL isSameEntry comparing a file to a directory returns false promise_test: Unhandled rejection with value: object "TypeError: dir.values is not a function. (In 'dir.values()', 'dir.values' is undefined)"
+PASS isSameEntry for identical directory handles returns true
+PASS isSameEntry for different directories returns false
+PASS isSameEntry for different handles for the same directory
+FAIL isSameEntry for identical file handles returns true promise_test: Unhandled rejection with value: object "NotSupportedError: getFile is not implemented"
+FAIL isSameEntry for different files returns false promise_test: Unhandled rejection with value: object "NotSupportedError: getFile is not implemented"
+FAIL isSameEntry for different handles for the same file promise_test: Unhandled rejection with value: object "NotSupportedError: getFile is not implemented"
+FAIL isSameEntry comparing a file to a file in a different directory returns false promise_test: Unhandled rejection with value: object "NotSupportedError: getFile is not implemented"
+FAIL isSameEntry comparing a file to a directory returns false promise_test: Unhandled rejection with value: object "NotSupportedError: getFile is not implemented"
 

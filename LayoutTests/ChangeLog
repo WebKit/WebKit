@@ -1,3 +1,22 @@
+2021-10-10  Sihui Liu  <sihui_liu@apple.com>
+
+        Add support for iterating FileSystemDirectoryHandle
+        https://bugs.webkit.org/show_bug.cgi?id=231142
+        <rdar://problem/83848092>
+
+        Reviewed by Youenn Fablet and Yusuke Suzuki.
+
+        * platform/wk2/TestExpectations: mark some tests as flaky failure on release builds. They were flaky at import,
+        but they didn't get to run due to missing directory iteration support.
+        * storage/filesystemaccess/directory-handle-iteration-expected.txt: Added.
+        * storage/filesystemaccess/directory-handle-iteration-worker-expected.txt: Added.
+        * storage/filesystemaccess/directory-handle-iteration-worker.html: Added.
+        * storage/filesystemaccess/directory-handle-iteration.html: Added.
+        * storage/filesystemaccess/resources/directory-handle-iteration.js: Added.
+        (testPrototype):
+        (async testNext):
+        (async test):
+
 2021-10-10  Alan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Do no bail out on boundary neutral characters

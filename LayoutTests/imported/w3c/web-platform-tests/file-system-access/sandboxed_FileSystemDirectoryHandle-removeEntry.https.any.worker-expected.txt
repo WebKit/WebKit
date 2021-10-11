@@ -1,11 +1,15 @@
 
-FAIL removeEntry() to remove a file promise_test: Unhandled rejection with value: object "TypeError: dir.values is not a function. (In 'dir.values()', 'dir.values' is undefined)"
-FAIL removeEntry() on an already removed file should fail promise_test: Unhandled rejection with value: object "TypeError: dir.values is not a function. (In 'dir.values()', 'dir.values' is undefined)"
-FAIL removeEntry() to remove an empty directory promise_test: Unhandled rejection with value: object "TypeError: dir.values is not a function. (In 'dir.values()', 'dir.values' is undefined)"
-FAIL removeEntry() on a non-empty directory should fail promise_test: Unhandled rejection with value: object "TypeError: dir.values is not a function. (In 'dir.values()', 'dir.values' is undefined)"
-FAIL removeEntry() on a directory recursively should delete all sub-items promise_test: Unhandled rejection with value: object "TypeError: dir.values is not a function. (In 'dir.values()', 'dir.values' is undefined)"
-FAIL removeEntry() with empty name should fail promise_test: Unhandled rejection with value: object "TypeError: dir.values is not a function. (In 'dir.values()', 'dir.values' is undefined)"
-FAIL removeEntry() with "." name should fail promise_test: Unhandled rejection with value: object "TypeError: dir.values is not a function. (In 'dir.values()', 'dir.values' is undefined)"
-FAIL removeEntry() with ".." name should fail promise_test: Unhandled rejection with value: object "TypeError: dir.values is not a function. (In 'dir.values()', 'dir.values' is undefined)"
-FAIL removeEntry() with a path separator should fail. promise_test: Unhandled rejection with value: object "TypeError: dir.values is not a function. (In 'dir.values()', 'dir.values' is undefined)"
+FAIL removeEntry() to remove a file promise_test: Unhandled rejection with value: object "NotSupportedError: getFile is not implemented"
+FAIL removeEntry() on an already removed file should fail promise_test: Unhandled rejection with value: object "NotSupportedError: getFile is not implemented"
+FAIL removeEntry() to remove an empty directory promise_test: Unhandled rejection with value: object "NotSupportedError: getFile is not implemented"
+FAIL removeEntry() on a non-empty directory should fail promise_test: Unhandled rejection with value: object "NotSupportedError: getFile is not implemented"
+FAIL removeEntry() on a directory recursively should delete all sub-items promise_test: Unhandled rejection with value: object "NotSupportedError: getFile is not implemented"
+FAIL removeEntry() with empty name should fail assert_unreached: Should have rejected: undefined Reached unreachable code
+FAIL removeEntry() with "." name should fail promise_rejects_js: function "function () { throw e }" threw object "UnknownError: The operation failed for an unknown transient reason (e.g. out of memory)." ("UnknownError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL removeEntry() with ".." name should fail promise_rejects_js: function "function () { throw e }" threw object "UnknownError: The operation failed for an unknown transient reason (e.g. out of memory)." ("UnknownError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL removeEntry() with a path separator should fail. promise_test: Unhandled rejection with value: object "NotSupportedError: getFile is not implemented"
 

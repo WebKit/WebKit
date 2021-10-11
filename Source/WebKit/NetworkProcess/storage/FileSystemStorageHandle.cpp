@@ -52,10 +52,13 @@ FileSystemStorageHandle::FileSystemStorageHandle(FileSystemStorageManager& manag
         FileSystem::makeAllDirectories(m_path);
         return;
     case FileSystemStorageHandle::Type::File:
-        if (FileSystem::fileExists(m_path))
-            return;
-        auto handle = FileSystem::openFile(m_path, FileSystem::FileOpenMode::Write);
-        FileSystem::closeFile(handle);
+        if (!FileSystem::fileExists(m_path)) {
+            auto handle = FileSystem::openFile(m_path, FileSystem::FileOpenMode::Write);
+            FileSystem::closeFile(handle);
+        }
+        return;
+    case FileSystemStorageHandle::Type::Any:
+        ASSERT_NOT_REACHED();
     }
 }
 
@@ -213,6 +216,26 @@ std::optional<FileSystemStorageError> FileSystemStorageHandle::close(WebCore::Fi
     m_activeSyncAccessHandle = std::nullopt;
 
     return std::nullopt;
+}
+
+Expected<Vector<String>, FileSystemStorageError> FileSystemStorageHandle::getHandleNames()
+{
+    if (m_type != Type::Directory)
+        return makeUnexpected(FileSystemStorageError::TypeMismatch);
+
+    return FileSystem::listDirectory(m_path);
+}
+
+Expected<std::pair<WebCore::FileSystemHandleIdentifier, bool>, FileSystemStorageError> FileSystemStorageHandle::getHandle(IPC::Connection::UniqueID connection, String&& name)
+{
+    bool createIfNecessary = false;
+    auto result = requestCreateHandle(connection, FileSystemStorageHandle::Type::Any, WTFMove(name), createIfNecessary);
+    if (!result)
+        return makeUnexpected(result.error());
+
+    auto resultType = m_manager->getType(result.value());
+    ASSERT(resultType != FileSystemStorageHandle::Type::Any);
+    return std::pair { result.value(), resultType == FileSystemStorageHandle::Type::Directory };
 }
 
 } // namespace WebKit

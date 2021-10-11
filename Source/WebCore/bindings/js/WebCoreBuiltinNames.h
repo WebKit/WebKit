@@ -119,6 +119,7 @@ namespace WebCore {
     macro(FileSystem) \
     macro(FileSystemDirectoryEntry) \
     macro(FileSystemDirectoryHandle) \
+    macro(FileSystemDirectoryHandleIterator) \
     macro(FileSystemDirectoryReader) \
     macro(FileSystemEntry) \
     macro(FileSystemFileEntry) \

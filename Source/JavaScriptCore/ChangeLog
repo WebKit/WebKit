@@ -1,3 +1,23 @@
+2021-10-10  Sihui Liu  <sihui_liu@apple.com>
+
+        Add support for iterating FileSystemDirectoryHandle
+        https://bugs.webkit.org/show_bug.cgi?id=231142
+        <rdar://problem/83848092>
+
+        Reviewed by Youenn Fablet and Yusuke Suzuki.
+
+        * CMakeLists.txt:
+        * runtime/JSBoundFunction.h:
+        * runtime/JSGlobalObject.h:
+        * runtime/JSGlobalObjectInlines.h:
+        (JSC::JSGlobalObject::performPromiseThenFunction const):
+        * runtime/JSPromise.cpp:
+        (JSC::JSPromise::createNewPromiseCapability):
+        (JSC::JSPromise::convertCapabilityToDeferredData):
+        (JSC::JSPromise::createDeferredData):
+        (JSC::JSPromise::performPromiseThen):
+        * runtime/JSPromise.h:
+
 2021-10-09  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Refine RegExp#compile based on regexp-legacy-features proposal

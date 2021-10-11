@@ -1,5 +1,5 @@
 
-FAIL Send and receive messages using a same origin window. promise_test: Unhandled rejection with value: object "TypeError: dir.values is not a function. (In 'dir.values()', 'dir.values' is undefined)"
-FAIL Send and receive messages using a blob window. promise_test: Unhandled rejection with value: object "TypeError: dir.values is not a function. (In 'dir.values()', 'dir.values' is undefined)"
-FAIL Send and receive messages using a sandboxed same origin window. promise_test: Unhandled rejection with value: object "TypeError: dir.values is not a function. (In 'dir.values()', 'dir.values' is undefined)"
+FAIL Send and receive messages using a same origin window. promise_test: Unhandled rejection with value: object "NotSupportedError: getFile is not implemented"
+FAIL Send and receive messages using a blob window. promise_test: Unhandled rejection with value: object "NotSupportedError: getFile is not implemented"
+FAIL Send and receive messages using a sandboxed same origin window. promise_test: Unhandled rejection with value: object "NotSupportedError: getFile is not implemented"
 

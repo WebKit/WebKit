@@ -38,4 +38,6 @@
     TruncateForAccessHandle(WebCore::FileSystemHandleIdentifier identifier, WebCore::FileSystemSyncAccessHandleIdentifier accessHandleIdentifier, uint64_t size) -> (std::optional<WebKit::FileSystemStorageError> result) Async
     FlushForAccessHandle(WebCore::FileSystemHandleIdentifier identifier, WebCore::FileSystemSyncAccessHandleIdentifier accessHandleIdentifier) -> (std::optional<WebKit::FileSystemStorageError> result) Async
     CloseAccessHandle(WebCore::FileSystemHandleIdentifier identifier, WebCore::FileSystemSyncAccessHandleIdentifier accessHandleIdentifier) -> (std::optional<WebKit::FileSystemStorageError> result) Async
+    GetHandleNames(WebCore::FileSystemHandleIdentifier identifier) -> (Expected<Vector<String>, WebKit::FileSystemStorageError> result) Async
+    GetHandle(WebCore::FileSystemHandleIdentifier identifier, String name) -> (Expected<std::pair<WebCore::FileSystemHandleIdentifier, bool>, WebKit::FileSystemStorageError> result) Async WantsConnection
 }

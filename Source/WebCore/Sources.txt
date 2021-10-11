@@ -496,6 +496,8 @@ bindings/js/JSExecState.cpp
 bindings/js/JSExtendableMessageEventCustom.cpp
 bindings/js/JSFetchEventCustom.cpp
 bindings/js/JSFileSystemEntryCustom.cpp
+bindings/js/JSFileSystemDirectoryHandleCustom.cpp
+bindings/js/JSFileSystemDirectoryHandleIterator.cpp
 bindings/js/JSFileSystemHandleCustom.cpp
 bindings/js/JSHTMLAllCollectionCustom.cpp
 bindings/js/JSHTMLCanvasElementCustom.cpp

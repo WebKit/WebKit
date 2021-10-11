@@ -1,6 +1,6 @@
 
-FAIL Resolve returns empty array for same directory promise_test: Unhandled rejection with value: object "TypeError: dir.values is not a function. (In 'dir.values()', 'dir.values' is undefined)"
-FAIL Resolve returns correct path promise_test: Unhandled rejection with value: object "TypeError: dir.values is not a function. (In 'dir.values()', 'dir.values' is undefined)"
-FAIL Resolve returns correct path with non-ascii characters promise_test: Unhandled rejection with value: object "TypeError: dir.values is not a function. (In 'dir.values()', 'dir.values' is undefined)"
-FAIL Resolve returns null when entry is not a child promise_test: Unhandled rejection with value: object "TypeError: dir.values is not a function. (In 'dir.values()', 'dir.values' is undefined)"
+PASS Resolve returns empty array for same directory
+FAIL Resolve returns correct path promise_test: Unhandled rejection with value: object "NotSupportedError: getFile is not implemented"
+FAIL Resolve returns correct path with non-ascii characters promise_test: Unhandled rejection with value: object "NotSupportedError: getFile is not implemented"
+FAIL Resolve returns null when entry is not a child promise_test: Unhandled rejection with value: object "NotSupportedError: getFile is not implemented"
 
