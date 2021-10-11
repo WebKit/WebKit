@@ -34,6 +34,7 @@
 #include "HitTestResult.h"
 #include "HTMLNames.h"
 #include "HTMLTableElement.h"
+#include "InlineIteratorInlineBox.h"
 #include "LayoutRepainter.h"
 #include "RenderBlockFlow.h"
 #include "RenderChildIterator.h"
@@ -787,7 +788,7 @@ void RenderTable::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint& p
     adjustBorderBoxRectForPainting(rect);
     
     BackgroundBleedAvoidance bleedAvoidance = determineBackgroundBleedAvoidance(paintInfo.context());
-    if (!boxShadowShouldBeAppliedToBackground(rect.location(), bleedAvoidance))
+    if (!boxShadowShouldBeAppliedToBackground(rect.location(), bleedAvoidance, { }))
         paintBoxShadow(paintInfo, rect, style(), ShadowStyle::Normal);
     paintBackground(paintInfo, rect, bleedAvoidance);
     paintBoxShadow(paintInfo, rect, style(), ShadowStyle::Inset);

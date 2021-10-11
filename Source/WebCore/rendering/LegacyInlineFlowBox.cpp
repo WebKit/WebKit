@@ -1134,15 +1134,6 @@ void LegacyInlineFlowBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOf
     }
 }
 
-bool LegacyInlineFlowBox::boxShadowCanBeAppliedToBackground(const FillLayer& lastBackgroundLayer) const
-{
-    // The checks here match how paintFillLayer() decides whether to clip (if it does, the shadow
-    // would be clipped out, so it has to be drawn separately).
-    StyleImage* image = lastBackgroundLayer.image();
-    bool hasFillImage = image && image->canRender(&renderer(), renderer().style().effectiveZoom());
-    return (!hasFillImage && !renderer().style().hasBorderRadius()) || (!prevLineBox() && !nextLineBox()) || !parent();
-}
-
 LegacyInlineBox* LegacyInlineFlowBox::firstLeafDescendant() const
 {
     LegacyInlineBox* leaf = nullptr;

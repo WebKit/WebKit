@@ -31,6 +31,7 @@
 namespace WebCore {
 
 class HitTestResult;
+class LegacyInlineFlowBox;
 class LegacyRootInlineBox;
 
 // LegacyInlineBox represents a rectangle that occurs on a line. It corresponds to

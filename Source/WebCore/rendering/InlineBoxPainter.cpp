@@ -100,23 +100,24 @@ static LayoutRect clipRectForNinePieceImageStrip(const InlineIterator::InlineBox
     LayoutRect clipRect(paintRect);
     auto& style = box.renderer().style();
     LayoutBoxExtent outsets = style.imageOutsets(image);
+    auto [hasClosedLeftEdge, hasClosedRightEdge] = box.hasClosedLeftAndRightEdge();
     if (box.isHorizontal()) {
         clipRect.setY(paintRect.y() - outsets.top());
         clipRect.setHeight(paintRect.height() + outsets.top() + outsets.bottom());
-        if (box.legacyInlineBox()->includeLogicalLeftEdge()) {
+        if (hasClosedLeftEdge) {
             clipRect.setX(paintRect.x() - outsets.left());
             clipRect.setWidth(paintRect.width() + outsets.left());
         }
-        if (box.legacyInlineBox()->includeLogicalRightEdge())
+        if (hasClosedRightEdge)
             clipRect.setWidth(clipRect.width() + outsets.right());
     } else {
         clipRect.setX(paintRect.x() - outsets.left());
         clipRect.setWidth(paintRect.width() + outsets.left() + outsets.right());
-        if (box.legacyInlineBox()->includeLogicalLeftEdge()) {
+        if (hasClosedLeftEdge) {
             clipRect.setY(paintRect.y() - outsets.top());
             clipRect.setHeight(paintRect.height() + outsets.top());
         }
-        if (box.legacyInlineBox()->includeLogicalRightEdge())
+        if (hasClosedRightEdge)
             clipRect.setHeight(clipRect.height() + outsets.bottom());
     }
     return clipRect;
@@ -218,7 +219,7 @@ void InlineBoxPainter::paintDecorations()
     GraphicsContext& context = m_paintInfo.context();
     LayoutRect paintRect = LayoutRect(adjustedPaintoffset, frameRect.size());
     // Shadow comes first and is behind the background and border.
-    if (!renderer().boxShadowShouldBeAppliedToBackground(adjustedPaintoffset, BackgroundBleedNone, m_inlineBox.legacyInlineBox()))
+    if (!renderer().boxShadowShouldBeAppliedToBackground(adjustedPaintoffset, BackgroundBleedNone, m_inlineBox))
         paintBoxShadow(ShadowStyle::Normal, paintRect);
 
     auto color = style.visitedDependentColor(CSSPropertyBackgroundColor);
@@ -242,7 +243,8 @@ void InlineBoxPainter::paintDecorations()
 
     bool hasSingleLine = !m_inlineBox.previousInlineBox() && !m_inlineBox.nextInlineBox();
     if (!hasBorderImage || hasSingleLine) {
-        renderer().paintBorder(m_paintInfo, paintRect, style, BackgroundBleedNone, m_inlineBox.legacyInlineBox()->includeLogicalLeftEdge(), m_inlineBox.legacyInlineBox()->includeLogicalRightEdge());
+        auto [hasClosedLeftEdge, hasClosedRightEdge] = m_inlineBox.hasClosedLeftAndRightEdge();
+        renderer().paintBorder(m_paintInfo, paintRect, style, BackgroundBleedNone, hasClosedLeftEdge, hasClosedRightEdge);
         return;
     }
 
@@ -290,7 +292,7 @@ void InlineBoxPainter::paintFillLayer(const Color& color, const FillLayer& fillL
     bool hasSingleLine = !m_inlineBox.previousInlineBox() && !m_inlineBox.nextInlineBox();
 
     if (!hasFillImageOrBorderRadious || hasSingleLine || m_isRootInlineBox) {
-        renderer().paintFillLayerExtended(m_paintInfo, color, fillLayer, rect, BackgroundBleedNone, m_inlineBox.legacyInlineBox(), rect.size(), op);
+        renderer().paintFillLayerExtended(m_paintInfo, color, fillLayer, rect, BackgroundBleedNone, m_inlineBox, rect.size(), op);
         return;
     }
 
@@ -298,7 +300,7 @@ void InlineBoxPainter::paintFillLayer(const Color& color, const FillLayer& fillL
     if (renderer().style().boxDecorationBreak() == BoxDecorationBreak::Clone) {
         GraphicsContextStateSaver stateSaver(m_paintInfo.context());
         m_paintInfo.context().clip({ rect.x(), rect.y(), LayoutUnit(m_inlineBox.rect().width()), LayoutUnit(m_inlineBox.rect().height()) });
-        renderer().paintFillLayerExtended(m_paintInfo, color, fillLayer, rect, BackgroundBleedNone, m_inlineBox.legacyInlineBox(), rect.size(), op);
+        renderer().paintFillLayerExtended(m_paintInfo, color, fillLayer, rect, BackgroundBleedNone, m_inlineBox, rect.size(), op);
         return;
     }
 #endif
@@ -331,7 +333,7 @@ void InlineBoxPainter::paintFillLayer(const Color& color, const FillLayer& fillL
 
     GraphicsContextStateSaver stateSaver(m_paintInfo.context());
     m_paintInfo.context().clip({ rect.x(), rect.y(), LayoutUnit(m_inlineBox.rect().width()), LayoutUnit(m_inlineBox.rect().height()) });
-    renderer().paintFillLayerExtended(m_paintInfo, color, fillLayer, LayoutRect(stripX, stripY, stripWidth, stripHeight), BackgroundBleedNone, m_inlineBox.legacyInlineBox(), rect.size(), op);
+    renderer().paintFillLayerExtended(m_paintInfo, color, fillLayer, LayoutRect(stripX, stripY, stripWidth, stripHeight), BackgroundBleedNone, m_inlineBox, rect.size(), op);
 }
 
 void InlineBoxPainter::paintBoxShadow(ShadowStyle shadowStyle, const LayoutRect& paintRect)
@@ -344,7 +346,8 @@ void InlineBoxPainter::paintBoxShadow(ShadowStyle shadowStyle, const LayoutRect&
 
     // FIXME: We can do better here in the multi-line case. We want to push a clip so that the shadow doesn't
     // protrude incorrectly at the edges, and we want to possibly include shadows cast from the previous/following lines
-    renderer().paintBoxShadow(m_paintInfo, paintRect, style(), shadowStyle, m_inlineBox.legacyInlineBox()->includeLogicalLeftEdge(), m_inlineBox.legacyInlineBox()->includeLogicalRightEdge());
+    auto [hasClosedLeftEdge, hasClosedRightEdge] = m_inlineBox.hasClosedLeftAndRightEdge();
+    renderer().paintBoxShadow(m_paintInfo, paintRect, style(), shadowStyle, hasClosedLeftEdge, hasClosedRightEdge);
 }
 
 void InlineBoxPainter::constrainToLineTopAndBottomIfNeeded(LayoutRect& rect) const
