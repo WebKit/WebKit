@@ -1,0 +1,117 @@
+; Copyright (C) 2021 Apple Inc. All rights reserved.
+;
+; Redistribution and use in source and binary forms, with or without
+; modification, are permitted provided that the following conditions
+; are met:
+; 1. Redistributions of source code must retain the above copyright
+; notice, this list of conditions and the following disclaimer.
+; 2. Redistributions in binary form must reproduce the above copyright
+; notice, this list of conditions and the following disclaimer in the
+; documentation and/or other materials provided with the distribution.
+;
+; THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+; AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+; THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+; PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+; BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+; CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+; SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+; INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+; CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+; ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+; THE POSSIBILITY OF SUCH DAMAGE.
+
+(version 1)
+(deny default (with partial-symbolication))
+(allow system-audit file-read-metadata)
+
+(import "system.sb")
+
+(define (allow-read-write-directory-contents path)
+    (if path
+        (begin
+            (allow file-read* (subpath path))
+            (allow file-read* file-write*
+                (regex (string-append "^" (regex-quote path) "/")))
+            (allow file-write-create
+                file-write-data
+                (require-all (vnode-type DIRECTORY) (literal path))))))
+
+(define (allow-read-directory-and-issue-read-extensions path)
+    (if path
+        (begin
+            (allow file-read* (subpath path))
+            (allow file-issue-extension (require-all (extension-class "com.apple.app-sandbox.read") (subpath path))))))
+
+;; Utility functions for home directory relative path filters
+(define (home-regex home-relative-regex)
+    (regex (string-append "^" (regex-quote (param "HOME_DIR")) home-relative-regex)))
+
+(define (home-subpath home-relative-subpath)
+    (subpath (string-append (param "HOME_DIR") home-relative-subpath)))
+
+(define (home-literal home-relative-literal)
+    (literal (string-append (param "HOME_DIR") home-relative-literal)))
+
+(allow file-read* file-write* (home-subpath "/var/mobile/Library/com.apple.webkit.addattributiond/Version1"))
+
+(allow-read-write-directory-contents (param "DARWIN_USER_CACHE_DIR"))
+(allow-read-write-directory-contents (param "DARWIN_USER_TEMP_DIR"))
+
+(allow-read-directory-and-issue-read-extensions (param "FRAMEWORKS_DIR"))
+
+;; AWD
+(allow mach-lookup
+    (global-name
+        "com.apple.analyticsd"
+        "com.apple.awdd"))
+
+;; Various services required by CFNetwork and other frameworks
+(allow mach-lookup
+    (global-name
+        "com.apple.usymptomsd"
+        "com.apple.cookied"
+        "com.apple.distributed_notifications@Uv3"
+        "com.apple.CoreServices.coreservicesd"
+        "com.apple.lsd.mapdb"
+        "com.apple.lsd.modifydb"))
+
+;; Security framework
+(allow mach-lookup (global-name "com.apple.SecurityServer")
+(global-name "com.apple.ocspd"))
+(allow file-read*
+    (subpath "/Library/Keychains")
+    (subpath "/private/var/db/mds")
+    (literal "/Library/Preferences/com.apple.security.plist")
+    (home-literal "/Library/Preferences/com.apple.security.plist"))
+
+(allow file-read* (subpath "/usr/share/zoneinfo"))
+
+(allow file-read* (literal "/Library/Application Support/CrashReporter/SubmitDiagInfo.domains"))
+
+(allow ipc-posix-shm-read-data
+    (ipc-posix-name "com.apple.AppleDatabaseChanged"))
+(allow ipc-posix-shm-write-data
+    (ipc-posix-name "com.apple.AppleDatabaseChanged"))
+
+;; Read-only preferences and data
+(allow file-read*
+    ;; Basic system paths
+    (subpath "/Library/Managed Preferences")
+
+    ;; System and user preferences
+    (literal "/Library/Preferences/.GlobalPreferences.plist")
+    (home-literal "/Library/Preferences/.GlobalPreferences.plist")
+    (home-regex #"/Library/Preferences/ByHost/\.GlobalPreferences\."))
+
+(allow system-fsctl (fsctl-command (_IO "h" 47)))
+
+(system-network)
+(allow network-outbound
+    ;; Local mDNSResponder for DNS, arbitrary outbound TCP
+    (literal "/private/var/run/mDNSResponder")
+    (remote tcp))
+
+;; Needed for CFNetworkAgent, see 33386291
+(allow mach-lookup
+    (global-name "com.apple.cfnetwork.cfnetworkagent"))

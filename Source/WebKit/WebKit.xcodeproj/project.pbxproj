@@ -4505,6 +4505,7 @@
 		5C1427141C23F8B000D41183 /* LegacyCustomProtocolManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LegacyCustomProtocolManager.h; sourceTree = "<group>"; };
 		5C1427151C23F8B000D41183 /* LegacyCustomProtocolManager.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LegacyCustomProtocolManager.messages.in; sourceTree = "<group>"; };
 		5C14271B1C23F8CC00D41183 /* LegacyCustomProtocolManagerCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LegacyCustomProtocolManagerCocoa.mm; sourceTree = "<group>"; };
+		5C1578E5270E0DBC00ED5280 /* com.apple.WebKit.AdAttributionDaemon.sb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = com.apple.WebKit.AdAttributionDaemon.sb; sourceTree = "<group>"; };
 		5C19A51E1FD0B14600EEA323 /* URLSchemeTaskParameters.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = URLSchemeTaskParameters.cpp; sourceTree = "<group>"; };
 		5C19A51F1FD0B14700EEA323 /* URLSchemeTaskParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = URLSchemeTaskParameters.h; sourceTree = "<group>"; };
 		5C1B38DF2667140700B1545B /* WebPageNetworkParameters.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebPageNetworkParameters.h; sourceTree = "<group>"; };
@@ -9994,6 +9995,7 @@
 		A78CCDD6193AC9E3005ECC25 /* ios */ = {
 			isa = PBXGroup;
 			children = (
+				5C1578E5270E0DBC00ED5280 /* com.apple.WebKit.AdAttributionDaemon.sb */,
 				2DB96052239886B900102791 /* com.apple.WebKit.GPU.sb */,
 				A78CCDD8193AC9E3005ECC25 /* com.apple.WebKit.Networking.sb */,
 				57EFC77D2550EB8500F9477D /* com.apple.WebKit.WebAuthn.sb */,
@@ -13505,6 +13507,7 @@
 				5CAF7A9C26F93A750003F19E /* Headers */,
 				5CAF7A9D26F93A750003F19E /* Sources */,
 				5CAF7A9F26F93A750003F19E /* Frameworks */,
+				5C1578E6270E129400ED5280 /* Process AdAttributionDaemon Entitlements */,
 			);
 			buildRules = (
 			);
@@ -14011,6 +14014,7 @@
 				"$(SRCROOT)/Resources/SandboxProfiles/ios/com.apple.WebKit.Networking.sb",
 				"$(SRCROOT)/Resources/SandboxProfiles/ios/com.apple.WebKit.GPU.sb",
 				"$(SRCROOT)/Resources/SandboxProfiles/ios/com.apple.WebKit.WebAuthn.sb",
+				"$(SRCROOT)/Resources/SandboxProfiles/ios/com.apple.WebKit.AdAttributionDaemon.sb",
 			);
 			name = "Copy iOS Sandbox Profiles for Manual Sandboxing";
 			outputPaths = (
@@ -14125,6 +14129,26 @@
 				"$(SRCROOT)/Scripts/process-entitlements.sh",
 			);
 			name = "Process WebAuthentication entitlements";
+			outputPaths = (
+				"$(WK_PROCESSED_XCENT_FILE)",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "Scripts/process-entitlements.sh\n";
+		};
+		5C1578E6270E129400ED5280 /* Process AdAttributionDaemon Entitlements */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/Scripts/process-entitlements.sh",
+			);
+			name = "Process AdAttributionDaemon Entitlements";
+			outputFileListPaths = (
+			);
 			outputPaths = (
 				"$(WK_PROCESSED_XCENT_FILE)",
 			);

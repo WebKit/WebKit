@@ -1,3 +1,19 @@
+2021-10-11  Alex Christensen  <achristensen@webkit.org>
+
+        Add AdAttributionDaemon sandbox on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=231308
+
+        Reviewed by Brent Fulgham.
+
+        This makes it so that AdAttributionDaemon has enough permission to access the network and its storage file and not much else.
+
+        * Configurations/AdAttributionDaemon.xcconfig:
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.AdAttributionDaemon.sb: Added.
+        * Scripts/process-entitlements.sh:
+        * Shared/EntryPointUtilities/Cocoa/Daemon/PCMDaemonEntryPoint.mm:
+        (WebKit::enterSandbox):
+        * WebKit.xcodeproj/project.pbxproj:
+
 2021-10-11  Per Arne Vollan <pvollan@apple.com>
 
         [iOS] Sort syscall filters in the WebContent process' sandbox
