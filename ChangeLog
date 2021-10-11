@@ -1,3 +1,11 @@
+2021-10-10  Noam Rosenthal  <noam@webkit.org>
+
+        Add my github username to contributors.json
+
+        Unreviewed.
+
+        * metadata/contributors.json:
+
 2021-10-11 Emilio Cobos Álvarez  <emilio@crisal.io>
 
         Add my GitHub username to contributors.json.

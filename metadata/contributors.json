@@ -5022,7 +5022,8 @@
          "noam@webkit.org",
          "noam.rosenthal@nokia.com"
       ],
-      "expertise" : "TextureMapper, coordinated graphics, images",
+      "github" : "noamr",
+      "expertise" : "TextureMapper, coordinated graphics, images, paint timing API",
       "name" : "Noam Rosenthal",
       "nicks" : [
          "noamr"
