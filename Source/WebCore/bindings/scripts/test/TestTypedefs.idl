@@ -70,7 +70,7 @@
 
     // Builtin Typedefs
     attribute BufferSource bufferSourceAttr;
-    attribute DOMTimeStamp domTimeStampAttr;
+    attribute EpochTimeStamp epochTimeStampAttr;
 };
 
 typedef unrestricted float         DOUBLE;

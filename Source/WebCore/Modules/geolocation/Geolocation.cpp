@@ -62,7 +62,7 @@ static RefPtr<GeolocationPosition> createGeolocationPosition(std::optional<Geolo
     if (!position)
         return nullptr;
     
-    DOMTimeStamp timestamp = convertSecondsToDOMTimeStamp(position->timestamp);
+    EpochTimeStamp timestamp = convertSecondsToEpochTimeStamp(position->timestamp);
     return GeolocationPosition::create(GeolocationCoordinates::create(WTFMove(position.value())), timestamp);
 }
 
@@ -479,7 +479,7 @@ bool Geolocation::haveSuitableCachedPosition(const PositionOptions& options)
         return false;
     if (!options.maximumAge)
         return false;
-    DOMTimeStamp currentTimeMillis = convertSecondsToDOMTimeStamp(WallTime::now().secondsSinceEpoch());
+    EpochTimeStamp currentTimeMillis = convertSecondsToEpochTimeStamp(WallTime::now().secondsSinceEpoch());
     return cachedPosition->timestamp() > currentTimeMillis - options.maximumAge;
 }
 

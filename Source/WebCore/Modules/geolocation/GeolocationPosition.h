@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "DOMTimeStamp.h"
+#include "EpochTimeStamp.h"
 #include "GeolocationCoordinates.h"
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
@@ -34,7 +34,7 @@ namespace WebCore {
 
 class GeolocationPosition : public RefCounted<GeolocationPosition> {
 public:
-    static Ref<GeolocationPosition> create(Ref<GeolocationCoordinates>&& coordinates, DOMTimeStamp timestamp)
+    static Ref<GeolocationPosition> create(Ref<GeolocationCoordinates>&& coordinates, EpochTimeStamp timestamp)
     {
         return adoptRef(*new GeolocationPosition(WTFMove(coordinates), timestamp));
     }
@@ -44,18 +44,18 @@ public:
         return create(m_coordinates->isolatedCopy(), m_timestamp);
     }
 
-    DOMTimeStamp timestamp() const { return m_timestamp; }
+    EpochTimeStamp timestamp() const { return m_timestamp; }
     const GeolocationCoordinates& coords() const { return m_coordinates.get(); }
     
 private:
-    GeolocationPosition(Ref<GeolocationCoordinates>&& coordinates, DOMTimeStamp timestamp)
+    GeolocationPosition(Ref<GeolocationCoordinates>&& coordinates, EpochTimeStamp timestamp)
         : m_coordinates(WTFMove(coordinates))
         , m_timestamp(timestamp)
     {
     }
 
     Ref<GeolocationCoordinates> m_coordinates;
-    DOMTimeStamp m_timestamp;
+    EpochTimeStamp m_timestamp;
 };
     
 } // namespace WebCore

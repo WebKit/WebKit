@@ -1,3 +1,21 @@
+2021-10-11  Chris Dumez  <cdumez@apple.com>
+
+        DOMTimeStamp is now EpochTimeStamp
+        https://bugs.webkit.org/show_bug.cgi?id=231496
+
+        Reviewed by Sam Weinig.
+
+        * DOMEventsClasses.cpp:
+        (DOMEvent::timeStamp):
+        * DOMEventsClasses.h:
+        (DOMUIEvent::timeStamp):
+        (DOMKeyboardEvent::timeStamp):
+        (DOMMouseEvent::timeStamp):
+        (DOMMutationEvent::timeStamp):
+        (DOMOverflowEvent::timeStamp):
+        (DOMWheelEvent::timeStamp):
+        * Interfaces/DOMEvents.idl:
+
 2021-09-28  Chris Dumez  <cdumez@apple.com>
 
         Move Cross-Origin-Opener-Policy handling to the NetworkProcess

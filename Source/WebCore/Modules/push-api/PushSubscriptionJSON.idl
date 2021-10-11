@@ -30,6 +30,6 @@
     JSGenerateToJSObject,
 ] dictionary PushSubscriptionJSON {
     USVString endpoint;
-    DOMTimeStamp? expirationTime;
+    EpochTimeStamp? expirationTime;
     record<DOMString, USVString> keys;
 };

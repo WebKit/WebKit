@@ -467,7 +467,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     dom/DOMRectInit.h
     dom/DOMRectList.h
     dom/DOMRectReadOnly.h
-    dom/DOMTimeStamp.h
     dom/DataTransfer.h
     dom/DeviceOrientationClient.h
     dom/DeviceOrientationData.h
@@ -491,6 +490,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     dom/ElementIterator.h
     dom/ElementIteratorAssertions.h
     dom/ElementTraversal.h
+    dom/EpochTimeStamp.h
     dom/Event.h
     dom/EventInit.h
     dom/EventListener.h

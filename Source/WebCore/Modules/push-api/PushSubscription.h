@@ -27,7 +27,7 @@
 
 #if ENABLE(SERVICE_WORKER)
 
-#include "DOMTimeStamp.h"
+#include "EpochTimeStamp.h"
 #include "ExceptionOr.h"
 #include "JSDOMPromiseDeferred.h"
 #include "PushEncryptionKeyName.h"
@@ -49,7 +49,7 @@ public:
     WEBCORE_EXPORT ~PushSubscription();
 
     const String& endpoint() const;
-    std::optional<DOMTimeStamp> expirationTime() const;
+    std::optional<EpochTimeStamp> expirationTime() const;
     PushSubscriptionOptions& options() const;
     ExceptionOr<RefPtr<JSC::ArrayBuffer>> getKey(PushEncryptionKeyName) const;
     void unsubscribe(DOMPromiseDeferred<IDLBoolean>&&);
@@ -57,10 +57,10 @@ public:
     PushSubscriptionJSON toJSON() const;
 
 private:
-    WEBCORE_EXPORT PushSubscription(String&& endpoint, std::optional<DOMTimeStamp> expirationTime, Ref<PushSubscriptionOptions>&&, Vector<uint8_t>&& clientECDHPublicKey, Vector<uint8_t>&& auth);
+    WEBCORE_EXPORT PushSubscription(String&& endpoint, std::optional<EpochTimeStamp> expirationTime, Ref<PushSubscriptionOptions>&&, Vector<uint8_t>&& clientECDHPublicKey, Vector<uint8_t>&& auth);
 
     String m_endpoint;
-    std::optional<DOMTimeStamp> m_expirationTime;
+    std::optional<EpochTimeStamp> m_expirationTime;
     Ref<PushSubscriptionOptions> m_options;
     Vector<uint8_t> m_clientECDHPublicKey;
     Vector<uint8_t> m_sharedAuthenticationSecret;

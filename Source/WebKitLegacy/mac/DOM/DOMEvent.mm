@@ -94,7 +94,7 @@
     return IMPL->composed();
 }
 
-- (DOMTimeStamp)timeStamp
+- (EpochTimeStamp)timeStamp
 {
     WebCore::JSMainThreadNullState state;
     return IMPL->timeStamp().approximateWallTime().secondsSinceEpoch().milliseconds();

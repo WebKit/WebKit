@@ -1,3 +1,15 @@
+2021-10-11  Chris Dumez  <cdumez@apple.com>
+
+        DOMTimeStamp is now EpochTimeStamp
+        https://bugs.webkit.org/show_bug.cgi?id=231496
+
+        Reviewed by Sam Weinig.
+
+        * DOM/DOMEvent.h:
+        * DOM/DOMEvent.mm:
+        (-[DOMEvent timeStamp]):
+        * DOM/DOMObject.h:
+
 2021-10-08  Jer Noble  <jer.noble@apple.com>
 
         [Build-time perf] Forward-declare more things in Element.h

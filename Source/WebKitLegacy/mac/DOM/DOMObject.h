@@ -29,7 +29,7 @@
 
 @class DOMStyleSheet;
 
-typedef unsigned long long DOMTimeStamp;
+typedef unsigned long long EpochTimeStamp;
 
 typedef struct DOMObjectInternal DOMObjectInternal;
 

@@ -42,7 +42,7 @@ interface IDOMUIEvent;
 interface IDOMWheelEvent;
 interface IDOMWindow;
 
-typedef long long DOMTimeStamp;
+typedef long long EpochTimeStamp;
 
 [
     object,
@@ -105,8 +105,8 @@ interface IDOMEvent : IDOMObject
     //readonly attribute boolean          cancelable;
     HRESULT cancelable([out, retval] BOOL* result);
 
-    //readonly attribute DOMTimeStamp     timeStamp;
-    HRESULT timeStamp([out, retval] DOMTimeStamp* result);
+    //readonly attribute EpochTimeStamp     timeStamp;
+    HRESULT timeStamp([out, retval] EpochTimeStamp* result);
 
     //void               stopPropagation();
     HRESULT stopPropagation();

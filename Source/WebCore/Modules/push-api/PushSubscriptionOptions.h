@@ -27,7 +27,7 @@
 
 #if ENABLE(SERVICE_WORKER)
 
-#include "DOMTimeStamp.h"
+#include "EpochTimeStamp.h"
 #include "ExceptionOr.h"
 
 #include <JavaScriptCore/ArrayBuffer.h>

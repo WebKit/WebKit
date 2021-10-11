@@ -6539,7 +6539,7 @@ void Internals::retainTextIteratorForDocumentContent()
 }
 
 #if ENABLE(SERVICE_WORKER)
-RefPtr<PushSubscription> Internals::createPushSubscription(const String& endpoint, std::optional<DOMTimeStamp> expirationTime, bool userVisibleOnly, const ArrayBuffer& serverVAPIDPublicKey, const ArrayBuffer& clientECDHPublicKey, const ArrayBuffer& auth)
+RefPtr<PushSubscription> Internals::createPushSubscription(const String& endpoint, std::optional<EpochTimeStamp> expirationTime, bool userVisibleOnly, const ArrayBuffer& serverVAPIDPublicKey, const ArrayBuffer& clientECDHPublicKey, const ArrayBuffer& auth)
 {
     auto myEndpoint = endpoint;
     Vector<uint8_t> myServerVAPIDPublicKey { static_cast<const uint8_t*>(serverVAPIDPublicKey.data()), serverVAPIDPublicKey.byteLength() };

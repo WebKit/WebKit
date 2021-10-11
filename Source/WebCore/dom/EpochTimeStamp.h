@@ -34,19 +34,19 @@
 
 namespace WebCore {
 
-typedef unsigned long long DOMTimeStamp;
+typedef uint64_t EpochTimeStamp;
 
-inline DOMTimeStamp convertSecondsToDOMTimeStamp(double seconds)
+inline EpochTimeStamp convertSecondsToEpochTimeStamp(double seconds)
 {
-    return static_cast<DOMTimeStamp>(seconds * 1000.0);
+    return static_cast<EpochTimeStamp>(seconds * 1000.0);
 }
 
-inline DOMTimeStamp convertSecondsToDOMTimeStamp(Seconds seconds)
+inline EpochTimeStamp convertSecondsToEpochTimeStamp(Seconds seconds)
 {
-    return static_cast<DOMTimeStamp>(seconds.milliseconds());
+    return static_cast<EpochTimeStamp>(seconds.milliseconds());
 }
 
-inline double convertDOMTimeStampToSeconds(DOMTimeStamp milliseconds)
+inline double convertEpochTimeStampToSeconds(EpochTimeStamp milliseconds)
 {
     return milliseconds / 1000.0;
 }

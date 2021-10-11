@@ -43,7 +43,7 @@ WEBKIT_CLASS_DEPRECATED_MAC(10_4, 10_14)
 @property (readonly) unsigned short eventPhase;
 @property (readonly) BOOL bubbles;
 @property (readonly) BOOL cancelable;
-@property (readonly) DOMTimeStamp timeStamp;
+@property (readonly) EpochTimeStamp timeStamp;
 @property (readonly, strong) id <DOMEventTarget> srcElement WEBKIT_AVAILABLE_MAC(10_6);
 @property BOOL returnValue WEBKIT_AVAILABLE_MAC(10_6);
 @property BOOL cancelBubble WEBKIT_AVAILABLE_MAC(10_6);

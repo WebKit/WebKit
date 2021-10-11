@@ -208,7 +208,7 @@ HRESULT DOMEvent::cancelable(_Out_ BOOL* /*result*/)
     return E_NOTIMPL;
 }
 
-HRESULT DOMEvent::timeStamp(_Out_ DOMTimeStamp* /*result*/)
+HRESULT DOMEvent::timeStamp(_Out_ EpochTimeStamp* /*result*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;

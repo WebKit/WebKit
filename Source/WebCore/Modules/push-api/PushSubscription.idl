@@ -34,7 +34,7 @@
     Exposed=(Window,Worker),
 ] interface PushSubscription {
     readonly attribute USVString endpoint;
-    readonly attribute DOMTimeStamp? expirationTime;
+    readonly attribute EpochTimeStamp? expirationTime;
     [SameObject] readonly attribute PushSubscriptionOptions options;
     ArrayBuffer? getKey(PushEncryptionKeyName name);
     Promise<boolean> unsubscribe();

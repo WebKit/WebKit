@@ -27,7 +27,7 @@
 
 #if ENABLE(SERVICE_WORKER)
 
-#include "DOMTimeStamp.h"
+#include "EpochTimeStamp.h"
 
 #include <optional>
 #include <wtf/KeyValuePair.h>
@@ -37,7 +37,7 @@ namespace WebCore {
 
 struct PushSubscriptionJSON {
     String endpoint;
-    std::optional<DOMTimeStamp> expirationTime;
+    std::optional<EpochTimeStamp> expirationTime;
     Vector<WTF::KeyValuePair<String, String>> keys;
 };
 

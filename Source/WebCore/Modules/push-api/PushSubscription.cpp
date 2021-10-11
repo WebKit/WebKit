@@ -37,7 +37,7 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(PushSubscription);
 
-PushSubscription::PushSubscription(String&& endpoint, std::optional<DOMTimeStamp> expirationTime, Ref<PushSubscriptionOptions>&& options, Vector<uint8_t>&& clientECDHPublicKey, Vector<uint8_t>&& sharedAuthenticationSecret)
+PushSubscription::PushSubscription(String&& endpoint, std::optional<EpochTimeStamp> expirationTime, Ref<PushSubscriptionOptions>&& options, Vector<uint8_t>&& clientECDHPublicKey, Vector<uint8_t>&& sharedAuthenticationSecret)
     : m_endpoint(WTFMove(endpoint))
     , m_expirationTime(expirationTime)
     , m_options(WTFMove(options))
@@ -53,7 +53,7 @@ const String& PushSubscription::endpoint() const
     return m_endpoint;
 }
 
-std::optional<DOMTimeStamp> PushSubscription::expirationTime() const
+std::optional<EpochTimeStamp> PushSubscription::expirationTime() const
 {
     return m_expirationTime;
 }

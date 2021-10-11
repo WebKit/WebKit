@@ -597,10 +597,10 @@ sub addBuiltinTypedefs()
     push(@{$bufferSourceType->subtypes}, makeSimpleType("ArrayBuffer"));
     $typedefs{"BufferSource"} = IDLTypedef->new(type => $bufferSourceType);
 
-    # typedef unsigned long long DOMTimeStamp;
+    # typedef unsigned long long EpochTimeStamp;
 
-    my $DOMTimeStampType = IDLType->new(name => "unsigned long long");
-    $typedefs{"DOMTimeStamp"} = IDLTypedef->new(type => $DOMTimeStampType);
+    my $EpochTimeStampType = IDLType->new(name => "unsigned long long");
+    $typedefs{"EpochTimeStamp"} = IDLTypedef->new(type => $EpochTimeStampType);
 }
 
 my $nextOptionallyReadonlyAttribute_1 = '^(readonly|attribute)$';

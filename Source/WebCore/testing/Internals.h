@@ -29,7 +29,7 @@
 #include "CSSComputedStyleDeclaration.h"
 #include "ContextDestructionObserver.h"
 #include "Cookie.h"
-#include "DOMTimeStamp.h"
+#include "EpochTimeStamp.h"
 #include "ExceptionOr.h"
 #include "HEVCUtilities.h"
 #include "IDLTypes.h"
@@ -1199,7 +1199,7 @@ public:
     void retainTextIteratorForDocumentContent();
 
 #if ENABLE(SERVICE_WORKER)
-    RefPtr<PushSubscription> createPushSubscription(const String& endpoint, std::optional<DOMTimeStamp> expirationTime, bool userVisibleOnly, const ArrayBuffer& serverVAPIDPublicKey, const ArrayBuffer& clientECDHPublicKey, const ArrayBuffer& auth);
+    RefPtr<PushSubscription> createPushSubscription(const String& endpoint, std::optional<EpochTimeStamp> expirationTime, bool userVisibleOnly, const ArrayBuffer& serverVAPIDPublicKey, const ArrayBuffer& clientECDHPublicKey, const ArrayBuffer& auth);
 #endif
 
 private:
