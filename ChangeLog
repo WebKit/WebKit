@@ -1,3 +1,11 @@
+2021-10-11  Diego Pino Garcia  <dpino@igalia.com>
+
+        Add GitHub username for Diego Pino Garcia
+
+        Unreviewed.
+
+        * metadata/contributors.json:
+
 2021-10-10  Pablo Saavedra  <psaavedra@igalia.com>
 
         Add GitHub username for Pablo Saavedra
