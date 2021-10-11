@@ -1,3 +1,14 @@
+2021-10-11  Tim Nguyen  <ntim@apple.com>
+
+        Import new top layer WPTs
+        https://bugs.webkit.org/show_bug.cgi?id=229318
+
+        Reviewed by Youenn Fablet.
+
+        Sync html/semantics/interactive-elements/the-dialog-element/ WPTs from https://github.com/web-platform-tests/wpt/commit/023d5aa5d338569ae12988190705e1d570930d61
+
+        * TestExpectations:
+
 2021-10-10  Sihui Liu  <sihui_liu@apple.com>
 
         Add support for iterating FileSystemDirectoryHandle
