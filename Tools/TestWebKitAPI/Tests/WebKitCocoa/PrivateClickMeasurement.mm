@@ -191,6 +191,11 @@ static void pollUntilPCMIsMigrated(WKWebView *webView)
         "Attribute on site: www.webkit.org\n"
         "Source ID: 43\n"
         "No attribution trigger data.\n"
+#if PLATFORM(MAC)
+        "Application bundle identifier: com.apple.Safari\n"
+#else
+        "Application bundle identifier: com.apple.mobilesafari\n"
+#endif
         "\n"
         "Attributed Private Click Measurements:\n"
         "WebCore::PrivateClickMeasurement 2\n"
@@ -199,7 +204,13 @@ static void pollUntilPCMIsMigrated(WKWebView *webView)
         "Source ID: 42\n"
         "Attribution trigger data: 14\n"
         "Attribution priority: 7\n"
-        "Attribution earliest time to send: Outside 24-48 hours\n";
+        "Attribution earliest time to send: Outside 24-48 hours\n"
+#if PLATFORM(MAC)
+        "Application bundle identifier: com.apple.Safari\n"
+#else
+        "Application bundle identifier: com.apple.mobilesafari\n"
+#endif
+        "";
 
     while (![dumpedPCM(webView) isEqualToString:expectedMigratedPCMDatabase])
         usleep(10000);

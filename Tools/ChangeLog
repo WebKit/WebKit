@@ -1,3 +1,99 @@
+2021-10-11  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r282884. rdar://problem/83954926
+
+    PCM should include the bundle ID of the app from which it originated
+    https://bugs.webkit.org/show_bug.cgi?id=230576
+    <rdar://83065221>
+    
+    Patch by Alex Christensen <achristensen@webkit.org> on 2021-09-22
+    Reviewed by Kate Cheney.
+    
+    Source/WebCore:
+    
+    This adds infrastructure to store the bundle ID of the application.
+    In another patch I'm going to use that to prevent PCMs from one app from overwriting PCMs from another app during attribution.
+    
+    * html/HTMLAnchorElement.cpp:
+    (WebCore::HTMLAnchorElement::parsePrivateClickMeasurement const):
+    * loader/PrivateClickMeasurement.cpp:
+    (WebCore::PrivateClickMeasurement::isolatedCopy const):
+    * loader/PrivateClickMeasurement.h:
+    (WebCore::PrivateClickMeasurement::PrivateClickMeasurement):
+    (WebCore::PrivateClickMeasurement::attributionTriggerData const):
+    (WebCore::PrivateClickMeasurement::sourceApplicationBundleID const):
+    (WebCore::PrivateClickMeasurement::encode const):
+    (WebCore::PrivateClickMeasurement::decode):
+    (WebCore::PrivateClickMeasurement::attributionTriggerData): Deleted.
+    
+    Source/WebKit:
+    
+    * NetworkProcess/DatabaseUtilities.cpp:
+    (WebKit::DatabaseUtilities::buildPrivateClickMeasurementFromDatabase const):
+    (WebKit::DatabaseUtilities::buildPrivateClickMeasurementFromDatabase): Deleted.
+    * NetworkProcess/DatabaseUtilities.h:
+    * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementDatabase.cpp:
+    (WebKit::PCM::Database::Database):
+    (WebKit::PCM::Database::insertPrivateClickMeasurement):
+    (WebKit::PCM::Database::privateClickMeasurementToStringForTesting const):
+    (WebKit::PCM::Database::attributionToStringForTesting const):
+    (WebKit::PCM::Database::addBundleIDColumnIfNecessary):
+    (WebKit::PCM::Database::columnsForTable):
+    (WebKit::PCM::Database::addMissingColumnToTable):
+    * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementDatabase.h:
+    * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+    * UIProcess/API/Cocoa/WKWebViewPrivateForTesting.h:
+    * UIProcess/API/Cocoa/WKWebViewTesting.mm:
+    (-[WKWebView _addEventAttributionWithSourceID:destinationURL:sourceDescription:purchaser:reportEndpoint:optionalNonce:applicationBundleID:]):
+    (-[WKWebView _addEventAttributionWithSourceID:destinationURL:sourceDescription:purchaser:reportEndpoint:optionalNonce:]): Deleted.
+    * UIProcess/API/ios/WKWebViewIOS.mm:
+    (-[WKWebView _setEphemeralUIEventAttribution:]):
+    (-[WKWebView _setEphemeralUIEventAttribution:forApplicationWithBundleID:]):
+    
+    Tools:
+    
+    * TestWebKitAPI/Tests/WebCore/PrivateClickMeasurement.cpp:
+    (TestWebKitAPI::TEST):
+    * TestWebKitAPI/Tests/WebKitCocoa/EventAttribution.mm:
+    (TestWebKitAPI::TEST):
+    * TestWebKitAPI/Tests/WebKitCocoa/PrivateClickMeasurement.mm:
+    (pollUntilPCMIsMigrated):
+    
+    LayoutTests:
+    
+    * http/tests/contentextensions/block-private-click-measurement-expected.txt:
+    * http/tests/privateClickMeasurement/attribution-conversion-through-cross-site-image-redirect-expected.txt:
+    * http/tests/privateClickMeasurement/attribution-conversion-through-fetch-keepalive-expected.txt:
+    * http/tests/privateClickMeasurement/attribution-conversion-through-image-redirect-ephemeral-expected.txt:
+    * http/tests/privateClickMeasurement/attribution-conversion-through-image-redirect-in-new-window-expected.txt:
+    * http/tests/privateClickMeasurement/attribution-conversion-through-image-redirect-with-priority-expected.txt:
+    * http/tests/privateClickMeasurement/attribution-conversion-through-image-redirect-without-priority-expected.txt:
+    * http/tests/privateClickMeasurement/conversion-disabled-in-ephemeral-session-expected.txt:
+    * http/tests/privateClickMeasurement/private-click-measurement-with-source-nonce-null-content-expected.txt:
+    * http/tests/privateClickMeasurement/private-click-measurement-with-source-nonce-wrong-content-type-expected.txt:
+    * http/tests/privateClickMeasurement/second-attribution-converted-with-higher-priority-expected.txt:
+    * http/tests/privateClickMeasurement/second-attribution-converted-with-lower-priority-expected.txt:
+    * http/tests/privateClickMeasurement/second-conversion-with-higher-priority-expected.txt:
+    * http/tests/privateClickMeasurement/second-conversion-with-lower-priority-expected.txt:
+    * http/tests/privateClickMeasurement/store-private-click-measurement-expected.txt:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@282884 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-09-22  Alex Christensen  <achristensen@webkit.org>
+
+            PCM should include the bundle ID of the app from which it originated
+            https://bugs.webkit.org/show_bug.cgi?id=230576
+            <rdar://83065221>
+
+            Reviewed by Kate Cheney.
+
+            * TestWebKitAPI/Tests/WebCore/PrivateClickMeasurement.cpp:
+            (TestWebKitAPI::TEST):
+            * TestWebKitAPI/Tests/WebKitCocoa/EventAttribution.mm:
+            (TestWebKitAPI::TEST):
+            * TestWebKitAPI/Tests/WebKitCocoa/PrivateClickMeasurement.mm:
+            (pollUntilPCMIsMigrated):
+
 2021-09-28  Chris Dumez  <cdumez@apple.com>
 
         Move Cross-Origin-Opener-Policy handling to the NetworkProcess

@@ -57,6 +57,7 @@
 #import <WebCore/IOSurface.h>
 #import <WebCore/LocalCurrentTraitCollection.h>
 #import <WebCore/MIMETypeRegistry.h>
+#import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/VersionChecks.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <pal/spi/ios/GraphicsServicesSPI.h>
@@ -2623,6 +2624,7 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
             WebCore::PrivateClickMeasurement::SourceID(attribution.sourceIdentifier),
             WebCore::PrivateClickMeasurement::SourceSite(attribution.reportEndpoint),
             WebCore::PrivateClickMeasurement::AttributionDestinationSite(attribution.destinationURL),
+            WebCore::applicationBundleIdentifier(),
             attribution.sourceDescription,
             attribution.purchaser
         );
@@ -2648,12 +2650,19 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
 
 - (void)_setEphemeralUIEventAttribution:(UIEventAttribution *)attribution
 {
+    // FIXME: Deprecate and remove this version without a bundle ID.
+    [self _setEphemeralUIEventAttribution:attribution forApplicationWithBundleID:@"com.apple.mobilesafari"];
+}
+
+- (void)_setEphemeralUIEventAttribution:(UIEventAttribution *)attribution forApplicationWithBundleID:(NSString *)bundleID
+{
 #if HAVE(UI_EVENT_ATTRIBUTION)
     if (attribution) {
         WebCore::PrivateClickMeasurement measurement(
             WebCore::PrivateClickMeasurement::SourceID(attribution.sourceIdentifier),
             WebCore::PrivateClickMeasurement::SourceSite(attribution.reportEndpoint),
             WebCore::PrivateClickMeasurement::AttributionDestinationSite(attribution.destinationURL),
+            bundleID,
             attribution.sourceDescription,
             attribution.purchaser,
             WallTime::now(),

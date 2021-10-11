@@ -15,4 +15,4 @@ Source site: 127.0.0.1
 Attribute on site: localhost
 Source ID: 3
 No attribution trigger data.
-Application bundle identifier: com.apple.WebKit.WebKitTestRunner
+Application bundle identifier: org.webkit.WebKitTestRunnerApp

@@ -137,7 +137,7 @@ void DatabaseUtilities::interrupt()
         m_database.interrupt();
 }
 
-WebCore::PrivateClickMeasurement DatabaseUtilities::buildPrivateClickMeasurementFromDatabase(WebCore::SQLiteStatement& statement, PrivateClickMeasurementAttributionType attributionType)
+WebCore::PrivateClickMeasurement DatabaseUtilities::buildPrivateClickMeasurementFromDatabase(WebCore::SQLiteStatement& statement, PrivateClickMeasurementAttributionType attributionType) const
 {
     ASSERT(!RunLoop::isMain());
     auto sourceSiteDomain = getDomainStringFromDomainID(statement.columnInt(0));
@@ -147,8 +147,18 @@ WebCore::PrivateClickMeasurement DatabaseUtilities::buildPrivateClickMeasurement
     auto token = attributionType == PrivateClickMeasurementAttributionType::Attributed ? statement.columnText(7) : statement.columnText(4);
     auto signature = attributionType == PrivateClickMeasurementAttributionType::Attributed ? statement.columnText(8) : statement.columnText(5);
     auto keyID = attributionType == PrivateClickMeasurementAttributionType::Attributed ? statement.columnText(9) : statement.columnText(6);
+    auto bundleID = attributionType == PrivateClickMeasurementAttributionType::Attributed ? statement.columnText(11) : statement.columnText(7);
 
-    WebCore::PrivateClickMeasurement attribution(WebCore::PrivateClickMeasurement::SourceID(sourceID), WebCore::PrivateClickMeasurement::SourceSite(WebCore::RegistrableDomain::uncheckedCreateFromRegistrableDomainString(sourceSiteDomain)), WebCore::PrivateClickMeasurement::AttributionDestinationSite(WebCore::RegistrableDomain::uncheckedCreateFromRegistrableDomainString(destinationSiteDomain)), { }, { }, WallTime::fromRawSeconds(timeOfAdClick));
+    // Safari was the only application that used PCM when it was stored with ResourceLoadStatistics.
+#if PLATFORM(MAC)
+    constexpr auto safariBundleID = "com.apple.Safari"_s;
+#else
+    constexpr auto safariBundleID = "com.apple.mobilesafari"_s;
+#endif
+    if (bundleID.isEmpty())
+        bundleID = safariBundleID;
+
+    WebCore::PrivateClickMeasurement attribution(WebCore::PrivateClickMeasurement::SourceID(sourceID), WebCore::PrivateClickMeasurement::SourceSite(WebCore::RegistrableDomain::uncheckedCreateFromRegistrableDomainString(sourceSiteDomain)), WebCore::PrivateClickMeasurement::AttributionDestinationSite(WebCore::RegistrableDomain::uncheckedCreateFromRegistrableDomainString(destinationSiteDomain)), bundleID, { }, { }, WallTime::fromRawSeconds(timeOfAdClick));
 
     if (attributionType == PrivateClickMeasurementAttributionType::Attributed) {
         auto attributionTriggerData = statement.columnInt(3);

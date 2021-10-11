@@ -1,12 +1,12 @@
-Tests that a second attribution with higher priority replaces an older with lower priority.
+Tests triggering of private click measurement attributions with priority.
 
 
 Attributed Private Click Measurements:
 WebCore::PrivateClickMeasurement 1
 Source site: 127.0.0.1
 Attribute on site: localhost
-Source ID: 4
+Source ID: 3
 Attribution trigger data: 12
-Attribution priority: 4
+Attribution priority: 3
 Attribution earliest time to send: Within 24-48 hours
-Application bundle identifier: com.apple.WebKit.WebKitTestRunner
+Application bundle identifier: org.webkit.WebKitTestRunnerApp
