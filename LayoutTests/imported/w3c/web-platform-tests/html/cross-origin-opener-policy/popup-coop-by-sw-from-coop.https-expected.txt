@@ -1,6 +1,0 @@
-
-PASS sw_normal, popup_normal
-PASS sw_normal, popup_coop
-PASS sw_coop, popup_normal
-PASS sw_coop, popup_coop
-

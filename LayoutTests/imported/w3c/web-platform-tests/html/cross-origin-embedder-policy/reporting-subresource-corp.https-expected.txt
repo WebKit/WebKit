@@ -1,3 +1,11 @@
+CONSOLE MESSAGE: Cancelled load to https://127.0.0.1:9443/html/cross-origin-embedder-policy/resources/nothing-same-origin-corp.txt because it violates the resource's Cross-Origin-Resource-Policy response header.
+CONSOLE MESSAGE: Fetch API cannot load https://127.0.0.1:9443/html/cross-origin-embedder-policy/resources/nothing-same-origin-corp.txt due to access control checks.
+CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: undefined is not a constructor (evaluating 'new global.ReportingObserver')
+CONSOLE MESSAGE: Cancelled load to https://127.0.0.1:9443/common/text-plain.txt because it violates the resource's Cross-Origin-Resource-Policy response header.
+CONSOLE MESSAGE: Fetch API cannot load https://127.0.0.1:9443/common/text-plain.txt due to access control checks.
+CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: undefined is not a constructor (evaluating 'new global.ReportingObserver')
+CONSOLE MESSAGE: Cancelled load to https://127.0.0.1:9443/common/text-plain.txt because it violates the resource's Cross-Origin-Resource-Policy response header.
+CONSOLE MESSAGE: Fetch API cannot load https://127.0.0.1:9443/common/text-plain.txt due to access control checks.
 CONSOLE MESSAGE: ReferenceError: Can't find variable: ReportingObserver
 CONSOLE MESSAGE: ReferenceError: Can't find variable: ReportingObserver
 CONSOLE MESSAGE: ReferenceError: Can't find variable: ReportingObserver
@@ -5,26 +13,10 @@ CONSOLE MESSAGE: ReferenceError: Can't find variable: ReportingObserver
 
 Harness Error (FAIL), message = ReferenceError: Can't find variable: ReportingObserver
 
-FAIL [document] same-origin promise_test: Unhandled rejection with value: object "TypeError: undefined is not a constructor (evaluating 'new frame.contentWindow.ReportingObserver((rs) => {
-    for (const report of rs) {
-      reports.push(report.toJSON());
-    }
-  })')"
-FAIL [document] blocked by CORP: same-origin promise_test: Unhandled rejection with value: object "TypeError: undefined is not a constructor (evaluating 'new frame.contentWindow.ReportingObserver((rs) => {
-    for (const report of rs) {
-      reports.push(report.toJSON());
-    }
-  })')"
-FAIL [document] blocked due to COEP promise_test: Unhandled rejection with value: object "TypeError: undefined is not a constructor (evaluating 'new frame.contentWindow.ReportingObserver((rs) => {
-    for (const report of rs) {
-      reports.push(report.toJSON());
-    }
-  })')"
-FAIL [document] blocked during redirect promise_test: Unhandled rejection with value: object "TypeError: undefined is not a constructor (evaluating 'new frame.contentWindow.ReportingObserver((rs) => {
-    for (const report of rs) {
-      reports.push(report.toJSON());
-    }
-  })')"
+PASS [document] same-origin
+PASS [document] blocked by CORP: same-origin
+FAIL [document] blocked due to COEP promise_test: Unhandled rejection with value: object "TypeError: undefined is not a constructor (evaluating 'new global.ReportingObserver')"
+FAIL [document] blocked during redirect promise_test: Unhandled rejection with value: object "TypeError: undefined is not a constructor (evaluating 'new global.ReportingObserver')"
 FAIL [dedicated worker] same-origin assert_unreached: Worker.onerror Reached unreachable code
 FAIL [dedicated worker] blocked by CORP: same-origin assert_unreached: Worker.onerror Reached unreachable code
 FAIL [dedicated worker] blocked due to COEP assert_unreached: Worker.onerror Reached unreachable code

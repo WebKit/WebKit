@@ -16,6 +16,8 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/META.yml
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/README.md
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/about-blank-popup.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/about-blank-popup.https.html.headers
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/blob.https.html
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/blob.https.html.headers
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/cache-storage-reporting-dedicated-worker.https.html
@@ -31,6 +33,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/dedicated-worker-cache-storage.https.html
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/dedicated-worker.https.html
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/header-parsing.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/iframe-history-none-require-corp.https.html
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/javascript.https.html
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/javascript.https.html.headers
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/meta-http-equiv.https.html
@@ -70,3 +73,5 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/shared-workers.https.html
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/srcdoc.https.html
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/srcdoc.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/worker-inheritance.sub.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/worker-inheritance.sub.https.html.headers
