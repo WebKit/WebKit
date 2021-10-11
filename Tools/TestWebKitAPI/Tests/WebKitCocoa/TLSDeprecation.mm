@@ -25,11 +25,8 @@
 
 #import "config.h"
 
-#if HAVE(SSL)
-
 #import "HTTPServer.h"
 #import "PlatformUtilities.h"
-#import "TCPServer.h"
 #import "TestNavigationDelegate.h"
 #import "TestWKWebView.h"
 #import "WebCoreTestSupport.h"
@@ -239,10 +236,9 @@ TEST(TLSVersion, ShouldAllowDeprecatedTLS)
 TEST(TLSVersion, Preconnect)
 {
     bool connectionAttempted = false;
-    TCPServer server(TCPServer::Protocol::HTTPS, [&](SSL *ssl) {
-        EXPECT_FALSE(ssl);
+    HTTPServer server([&](const Connection&) {
         connectionAttempted = true;
-    }, tls1_1);
+    }, HTTPServer::Protocol::HttpsWithLegacyTLS);
 
     auto webView = adoptNS([WKWebView new]);
     [webView loadHTMLString:makeString("<head><link rel='preconnect' href='https://127.0.0.1:", server.port(), "/'></link></head>") baseURL:nil];
@@ -494,5 +490,3 @@ TEST(TLSVersion, LegacySubresources)
 #endif // HAVE(TLS_VERSION_DURING_CHALLENGE)
 
 }
-
-#endif // HAVE(SSL)

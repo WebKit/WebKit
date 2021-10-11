@@ -28,8 +28,8 @@
 
 #if ENABLE(WEB_AUTHN)
 
+#import "HTTPServer.h"
 #import "PlatformUtilities.h"
-#import "TCPServer.h"
 #import "TestWKWebView.h"
 #import "WKWebViewConfigurationExtras.h"
 #import <LocalAuthentication/LocalAuthentication.h>
@@ -655,26 +655,28 @@ TEST(WebAuthenticationPanel, CloseHidCancel)
 
 TEST(WebAuthenticationPanel, SubFrameChangeLocationHidCancel)
 {
-    TCPServer server([parentFrame = String(parentFrame), subFrame = String(subFrame)] (int socket) {
-        NSString *firstResponse = [NSString stringWithFormat:
+    HTTPServer server([parentFrame = String(parentFrame), subFrame = String(subFrame)] (const Connection& connection) {
+        RetainPtr<NSString> firstResponse = [NSString stringWithFormat:
             @"HTTP/1.1 200 OK\r\n"
             "Content-Length: %d\r\n\r\n"
             "%@",
             parentFrame.length(),
             (id)parentFrame
         ];
-        NSString *secondResponse = [NSString stringWithFormat:
+        RetainPtr<NSString> secondResponse = [NSString stringWithFormat:
             @"HTTP/1.1 200 OK\r\n"
             "Content-Length: %d\r\n\r\n"
             "%@",
             subFrame.length(),
             (id)subFrame
         ];
-
-        TCPServer::read(socket);
-        TCPServer::write(socket, firstResponse.UTF8String, firstResponse.length);
-        TCPServer::read(socket);
-        TCPServer::write(socket, secondResponse.UTF8String, secondResponse.length);
+        connection.receiveHTTPRequest([=] (Vector<char>&&) {
+            connection.send(firstResponse.get(), [=] {
+                connection.receiveHTTPRequest([=] (Vector<char>&&) {
+                    connection.send(secondResponse.get());
+                });
+            });
+        });
     });
 
     auto *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
@@ -700,15 +702,15 @@ TEST(WebAuthenticationPanel, SubFrameChangeLocationHidCancel)
 
 TEST(WebAuthenticationPanel, SubFrameDestructionHidCancel)
 {
-    TCPServer server([parentFrame = String(parentFrame), subFrame = String(subFrame)] (int socket) {
-        NSString *firstResponse = [NSString stringWithFormat:
+    HTTPServer server([parentFrame = String(parentFrame), subFrame = String(subFrame)] (const Connection& connection) {
+        RetainPtr<NSString> firstResponse = [NSString stringWithFormat:
             @"HTTP/1.1 200 OK\r\n"
             "Content-Length: %d\r\n\r\n"
             "%@",
             parentFrame.length(),
             (id)parentFrame
         ];
-        NSString *secondResponse = [NSString stringWithFormat:
+        RetainPtr<NSString> secondResponse = [NSString stringWithFormat:
             @"HTTP/1.1 200 OK\r\n"
             "Content-Length: %d\r\n\r\n"
             "%@",
@@ -716,10 +718,13 @@ TEST(WebAuthenticationPanel, SubFrameDestructionHidCancel)
             (id)subFrame
         ];
 
-        TCPServer::read(socket);
-        TCPServer::write(socket, firstResponse.UTF8String, firstResponse.length);
-        TCPServer::read(socket);
-        TCPServer::write(socket, secondResponse.UTF8String, secondResponse.length);
+        connection.receiveHTTPRequest([=] (Vector<char>&&) {
+            connection.send(firstResponse.get(), [=] {
+                connection.receiveHTTPRequest([=] (Vector<char>&&) {
+                    connection.send(secondResponse.get());
+                });
+            });
+        });
     });
 
     auto *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];

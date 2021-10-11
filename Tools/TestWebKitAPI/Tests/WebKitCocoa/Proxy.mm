@@ -27,7 +27,6 @@
 
 #import "HTTPServer.h"
 #import "PlatformUtilities.h"
-#import "TCPServer.h"
 #import "TestNavigationDelegate.h"
 #import "TestUIDelegate.h"
 #import "TestWKWebView.h"
@@ -158,36 +157,12 @@ TEST(WebKit, SOCKS5)
     EXPECT_WK_STREQ([webView _test_waitForAlert], "success!");
 }
 
-static TCPServer proxyAuthenticationServer()
+static HTTPServer proxyAuthenticationServer()
 {
-    return TCPServer([] (int socket) {
-        auto requestShouldContain = [] (const auto& request, const char* str) {
-            EXPECT_TRUE(strnstr(reinterpret_cast<const char*>(request.data()), str, request.size()));
-        };
-
-        auto connectRequest = TCPServer::read(socket);
-        requestShouldContain(connectRequest, "CONNECT example.com:443");
-        const char* response1 =
-            "HTTP/1.1 407 Proxy Authentication Required\r\n"
-            "Proxy-Authenticate: Basic realm=\"testrealm\"\r\n"
-            "Content-Length: 0\r\n"
-            "\r\n";
-        TCPServer::write(socket, response1, strlen(response1));
-
-        auto connectRequestWithCredentials = TCPServer::read(socket);
-        requestShouldContain(connectRequestWithCredentials, "CONNECT example.com:443");
-        requestShouldContain(connectRequestWithCredentials, "Proxy-Authorization: Basic dGVzdHVzZXI6dGVzdHBhc3N3b3Jk");
-        const char* response2 =
-            "HTTP/1.1 200 Connection Established\r\n"
-            "Connection: close\r\n"
-            "\r\n";
-        TCPServer::write(socket, response2, strlen(response2));
-
-        TCPServer::startSecureConnection(socket, TCPServer::respondWithOK);
-    });
+    return HTTPServer(HTTPServer::respondWithOK, HTTPServer::Protocol::HttpsProxyWithAuthentication);
 }
 
-static std::pair<RetainPtr<WKWebView>, RetainPtr<ProxyDelegate>> webViewAndDelegate(const TCPServer& server)
+static std::pair<RetainPtr<WKWebView>, RetainPtr<ProxyDelegate>> webViewAndDelegate(const HTTPServer& server)
 {
     auto storeConfiguration = adoptNS([_WKWebsiteDataStoreConfiguration new]);
     [storeConfiguration setProxyConfiguration:@{
@@ -226,26 +201,27 @@ TEST(WebKit, HTTPProxyAuthenticationCrossOrigin)
 
 TEST(WebKit, SecureProxyConnection)
 {
-    std::atomic<bool> receivedValidClientHello = false;
-    TCPServer server([&] (int socket) {
-        // Check that the client sends what looks like the beginning of a TLS handshake.
-        // We can't test more than this because CFNetwork requires a certificate chain signed by a trusted CA,
-        // and we wouldn't want to include such a certificate's private key in this repository.
-        auto clientHelloBytes = TCPServer::read(socket);
+    bool receivedValidClientHello = false;
+    HTTPServer server([&] (const Connection& connection) {
+        connection.receiveBytes([&](Vector<uint8_t>&& clientHelloBytes) {
+            // Check that the client sends what looks like the beginning of a TLS handshake.
+            // We can't test more than this because CFNetwork requires a certificate chain signed by a trusted CA,
+            // and we wouldn't want to include such a certificate's private key in this repository.
 
-        // https://tools.ietf.org/html/rfc5246#section-6.2.1
-        enum class ContentType : uint8_t { Handshake = 22 };
-        EXPECT_EQ(clientHelloBytes[0], static_cast<uint8_t>(ContentType::Handshake));
-        uint16_t tlsPlaintextLength = clientHelloBytes[3] * 256u + clientHelloBytes[4];
-        uint32_t clientHelloBytesLength = clientHelloBytes[6] * 65536u + clientHelloBytes[7] * 256u + clientHelloBytes[8];
-        EXPECT_EQ(clientHelloBytes.size(), tlsPlaintextLength + sizeof(ContentType) + 2 * sizeof(uint8_t) + sizeof(uint16_t));
-        
-        // https://tools.ietf.org/html/rfc5246#section-7.4
-        enum class HandshakeType : uint8_t { ClientHello = 1 };
-        EXPECT_EQ(clientHelloBytes[5], static_cast<uint8_t>(HandshakeType::ClientHello));
-        EXPECT_EQ(tlsPlaintextLength, clientHelloBytesLength + sizeof(HandshakeType) + 3);
+            // https://tools.ietf.org/html/rfc5246#section-6.2.1
+            enum class ContentType : uint8_t { Handshake = 22 };
+            EXPECT_EQ(clientHelloBytes[0], static_cast<uint8_t>(ContentType::Handshake));
+            uint16_t tlsPlaintextLength = clientHelloBytes[3] * 256u + clientHelloBytes[4];
+            uint32_t clientHelloBytesLength = clientHelloBytes[6] * 65536u + clientHelloBytes[7] * 256u + clientHelloBytes[8];
+            EXPECT_EQ(clientHelloBytes.size(), tlsPlaintextLength + sizeof(ContentType) + 2 * sizeof(uint8_t) + sizeof(uint16_t));
+            
+            // https://tools.ietf.org/html/rfc5246#section-7.4
+            enum class HandshakeType : uint8_t { ClientHello = 1 };
+            EXPECT_EQ(clientHelloBytes[5], static_cast<uint8_t>(HandshakeType::ClientHello));
+            EXPECT_EQ(tlsPlaintextLength, clientHelloBytesLength + sizeof(HandshakeType) + 3);
 
-        receivedValidClientHello = true;
+            receivedValidClientHello = true;
+        });
     });
     
     auto storeConfiguration = adoptNS([_WKWebsiteDataStoreConfiguration new]);
@@ -260,8 +236,7 @@ TEST(WebKit, SecureProxyConnection)
     [viewConfiguration setWebsiteDataStore:adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:storeConfiguration.get()]).get()];
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 100, 100) configuration:viewConfiguration.get()]);
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/"]]];
-    while (!receivedValidClientHello)
-        TestWebKitAPI::Util::spinRunLoop();
+    TestWebKitAPI::Util::run(&receivedValidClientHello);
 }
 
 } // namespace TestWebKitAPI

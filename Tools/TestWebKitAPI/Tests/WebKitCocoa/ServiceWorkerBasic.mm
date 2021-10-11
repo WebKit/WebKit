@@ -662,10 +662,8 @@ TEST(ServiceWorkers, CacheStorageRestoreFromDisk)
     TestWebKitAPI::Util::run(&done);
     done = false;
 
-    ServiceWorkerTCPServer server({
-        { "text/html", mainCacheStorageBytes }
-    }, {
-        { "text/html", mainCacheStorageBytes }
+    TestWebKitAPI::HTTPServer server({
+        { "/", { mainCacheStorageBytes } }
     });
 
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
@@ -713,15 +711,12 @@ TEST(ServiceWorkers, FetchAfterRestoreFromDisk)
     RetainPtr<SWMessageHandlerForFetchTest> messageHandler = adoptNS([[SWMessageHandlerForFetchTest alloc] init]);
     [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
 
-    ServiceWorkerTCPServer server({
-        { "text/html", mainForFetchTestBytes },
-        { "application/javascript", scriptHandlingFetchBytes },
-    }, {
-        { "text/html", mainForFetchTestBytes },
-        { "application/javascript", scriptHandlingFetchBytes },
+    TestWebKitAPI::HTTPServer server({
+        { "/", { mainForFetchTestBytes } },
+        { "/sw.js", { { { "Content-Type", "application/javascript" } }, scriptHandlingFetchBytes } },
     });
 
-    RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
     [webView loadRequest:server.request()];
 

@@ -52,11 +52,26 @@ struct HTTPServer::RequestData : public ThreadSafeRefCounted<RequestData, WTF::D
     Vector<Connection> connections;
 };
 
-static RetainPtr<nw_protocol_definition_t> proxyDefinition()
+static RetainPtr<nw_protocol_definition_t> proxyDefinition(HTTPServer::Protocol protocol)
 {
-    return adoptNS(nw_framer_create_definition("HttpsProxy", NW_FRAMER_CREATE_FLAGS_DEFAULT, [] (nw_framer_t framer) -> nw_framer_start_result_t {
-        nw_framer_set_input_handler(framer, [] (nw_framer_t framer) -> size_t {
-            nw_framer_parse_input(framer, 1, std::numeric_limits<uint32_t>::max(), nullptr, [retainedFramer = retainPtr(framer)](uint8_t*, size_t bufferLength, bool) mutable -> size_t {
+    return adoptNS(nw_framer_create_definition("HttpsProxy", NW_FRAMER_CREATE_FLAGS_DEFAULT, [protocol] (nw_framer_t framer) -> nw_framer_start_result_t {
+        __block bool askedForCredentials = false;
+        nw_framer_set_input_handler(framer, ^size_t(nw_framer_t framer) {
+            __block RetainPtr<nw_framer_t> retainedFramer = framer;
+            nw_framer_parse_input(framer, 1, std::numeric_limits<uint32_t>::max(), nullptr, ^size_t(uint8_t* buffer, size_t bufferLength, bool) {
+                if (protocol == HTTPServer::Protocol::HttpsProxyWithAuthentication) {
+                    if (!std::exchange(askedForCredentials, true)) {
+                        const char* challengeResponse =
+                            "HTTP/1.1 407 Proxy Authentication Required\r\n"
+                            "Proxy-Authenticate: Basic realm=\"testrealm\"\r\n"
+                            "Content-Length: 0\r\n"
+                            "\r\n";
+                        auto response = adoptNS(dispatch_data_create(challengeResponse, strlen(challengeResponse), nullptr, nullptr));
+                        nw_framer_write_output_data(retainedFramer.get(), response.get());
+                        return bufferLength;
+                    }
+                    EXPECT_TRUE(strnstr(reinterpret_cast<const char*>(buffer), "Proxy-Authorization: Basic dGVzdHVzZXI6dGVzdHBhc3N3b3Jk", bufferLength));
+                }
                 const char* negotiationResponse = ""
                     "HTTP/1.1 200 Connection Established\r\n"
                     "Connection: close\r\n\r\n";
@@ -72,6 +87,20 @@ static RetainPtr<nw_protocol_definition_t> proxyDefinition()
         });
         return nw_framer_start_result_will_mark_ready;
     }));
+}
+
+static bool shouldDisableTLS(HTTPServer::Protocol protocol)
+{
+    switch (protocol) {
+    case HTTPServer::Protocol::Http:
+    case HTTPServer::Protocol::HttpsProxy:
+    case HTTPServer::Protocol::HttpsProxyWithAuthentication:
+        return true;
+    case HTTPServer::Protocol::Https:
+    case HTTPServer::Protocol::HttpsWithLegacyTLS:
+    case HTTPServer::Protocol::Http2:
+        return false;
+    }
 }
 
 RetainPtr<nw_parameters_t> HTTPServer::listenerParameters(Protocol protocol, CertificateVerifier&& verifier, RetainPtr<SecIdentityRef>&& customTestIdentity, std::optional<uint16_t> port)
@@ -95,14 +124,14 @@ RetainPtr<nw_parameters_t> HTTPServer::listenerParameters(Protocol protocol, Cer
             sec_protocol_options_add_tls_application_protocol(options.get(), "h2");
     };
 
-    auto configureTLSBlock = protocol == Protocol::Http || protocol == Protocol::HttpsProxy ? makeBlockPtr(NW_PARAMETERS_DISABLE_PROTOCOL) : makeBlockPtr(WTFMove(configureTLS));
+    auto configureTLSBlock = shouldDisableTLS(protocol) ? makeBlockPtr(NW_PARAMETERS_DISABLE_PROTOCOL) : makeBlockPtr(WTFMove(configureTLS));
     auto parameters = adoptNS(nw_parameters_create_secure_tcp(configureTLSBlock.get(), NW_PARAMETERS_DEFAULT_CONFIGURATION));
     if (port)
         nw_parameters_set_local_endpoint(parameters.get(), nw_endpoint_create_host("::", makeString(*port).utf8().data()));
 
-    if (protocol == Protocol::HttpsProxy) {
+    if (protocol == Protocol::HttpsProxy || protocol == Protocol::HttpsProxyWithAuthentication) {
         auto stack = adoptNS(nw_parameters_copy_default_protocol_stack(parameters.get()));
-        auto options = adoptNS(nw_framer_create_options(proxyDefinition().get()));
+        auto options = adoptNS(nw_framer_create_options(proxyDefinition(protocol).get()));
         nw_protocol_stack_prepend_application_protocol(stack.get(), options.get());
 
         auto tlsOptions = adoptNS(nw_tls_create_options());
@@ -208,7 +237,7 @@ size_t HTTPServer::totalRequests() const
     return m_requestData->requestCount;
 }
 
-static String statusText(unsigned statusCode)
+static ASCIILiteral statusText(unsigned statusCode)
 {
     switch (statusCode) {
     case 101:
@@ -217,11 +246,13 @@ static String statusText(unsigned statusCode)
         return "OK"_s;
     case 301:
         return "Moved Permanently"_s;
+    case 302:
+        return "Found"_s;
     case 404:
         return "Not Found"_s;
     }
     ASSERT_NOT_REACHED();
-    return { };
+    return "Unknown Status Code"_s;
 }
 
 static RetainPtr<dispatch_data_t> dataFromString(String&& s)
@@ -316,6 +347,7 @@ NSURLRequest *HTTPServer::request(const String& path) const
         format = @"https://127.0.0.1:%d%s";
         break;
     case Protocol::HttpsProxy:
+    case Protocol::HttpsProxyWithAuthentication:
         RELEASE_ASSERT_NOT_REACHED();
     }
     return [NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:format, port(), path.utf8().data()]]];

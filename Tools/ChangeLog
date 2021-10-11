@@ -1,3 +1,41 @@
+2021-10-11  Alex Christensen  <achristensen@webkit.org>
+
+        Reduce use of TCPServer
+        https://bugs.webkit.org/show_bug.cgi?id=231518
+
+        Reviewed by Chris Dumez.
+
+        HTTPServer runs its logic on the main thread and doesn't hang in its destructor
+        when the number of connections and requests isn't exactly what was expected.
+
+        verifyCertificateAndPublicKey needed its expected bytes to be changed because it is
+        using the identity from TCPServer::testCertificate instead of TCPServer::startSecureConnection now.
+
+        I also moved the proxy basic authentication check from proxyAuthenticationServer to proxyDefinition.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/Challenge.mm:
+        (TEST):
+        (verifyCertificateAndPublicKey):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/Proxy.mm:
+        (TestWebKitAPI::proxyAuthenticationServer):
+        (TestWebKitAPI::webViewAndDelegate):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/ServiceWorkerBasic.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/TLSDeprecation.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/TestSOAuthorization.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/_WKWebAuthenticationPanel.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/cocoa/HTTPServer.h:
+        * TestWebKitAPI/cocoa/HTTPServer.mm:
+        (TestWebKitAPI::proxyDefinition):
+        (TestWebKitAPI::shouldDisableTLS):
+        (TestWebKitAPI::HTTPServer::listenerParameters):
+        (TestWebKitAPI::statusText):
+        (TestWebKitAPI::HTTPServer::request const):
+
 2021-10-11  Ryan Haddad  <ryanhaddad@apple.com>
 
         Bring up an iOS GPU Process tester

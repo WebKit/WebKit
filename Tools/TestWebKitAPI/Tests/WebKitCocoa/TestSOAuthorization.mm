@@ -29,9 +29,9 @@
 #if HAVE(APP_SSO)
 
 #import "ClassMethodSwizzler.h"
+#import "HTTPServer.h"
 #import "InstanceMethodSwizzler.h"
 #import "PlatformUtilities.h"
-#import "TCPServer.h"
 #import "TestWKWebView.h"
 #import <WebKit/WKNavigationActionPrivate.h>
 #import <WebKit/WKNavigationDelegatePrivate.h>
@@ -2643,15 +2643,15 @@ TEST(SOAuthorizationSubFrame, InterceptionErrorWithReferrer)
     ClassMethodSwizzler swizzler4([AKAuthorizationController class], @selector(isURLFromAppleOwnedDomain:), reinterpret_cast<IMP>(overrideIsURLFromAppleOwnedDomain));
     InstanceMethodSwizzler swizzler5(PAL::getSOAuthorizationClass(), @selector(getAuthorizationHintsWithURL:responseCode:completion:), reinterpret_cast<IMP>(overrideGetAuthorizationHintsWithURL));
 
-    TCPServer server([parentHtml = generateHtml(parentTemplate, "simple.html"), frameHtml = generateHtml(iframeTemplate, "parent.postMessage('Referrer: ' + document.referrer, '*');")] (int socket) {
-        NSString *firstResponse = [NSString stringWithFormat:
+    HTTPServer server([parentHtml = generateHtml(parentTemplate, "simple.html"), frameHtml = generateHtml(iframeTemplate, "parent.postMessage('Referrer: ' + document.referrer, '*');")] (const Connection& connection) {
+        RetainPtr<NSString> firstResponse = [NSString stringWithFormat:
             @"HTTP/1.1 200 OK\r\n"
             "Content-Length: %d\r\n\r\n"
             "%@",
             parentHtml.length(),
             (id)parentHtml
         ];
-        NSString *secondResponse = [NSString stringWithFormat:
+        RetainPtr<NSString> secondResponse = [NSString stringWithFormat:
             @"HTTP/1.1 200 OK\r\n"
             "Content-Length: %d\r\n\r\n"
             "%@",
@@ -2659,10 +2659,13 @@ TEST(SOAuthorizationSubFrame, InterceptionErrorWithReferrer)
             (id)frameHtml
         ];
 
-        TCPServer::read(socket);
-        TCPServer::write(socket, firstResponse.UTF8String, firstResponse.length);
-        TCPServer::read(socket);
-        TCPServer::write(socket, secondResponse.UTF8String, secondResponse.length);
+        connection.receiveHTTPRequest([=](Vector<char>&&) {
+            connection.send(firstResponse.get(), [=] {
+                connection.receiveHTTPRequest([=](Vector<char>&&) {
+                    connection.send(secondResponse.get());
+                });
+            });
+        });
     });
 
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
