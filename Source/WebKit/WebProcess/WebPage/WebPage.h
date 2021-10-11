@@ -46,6 +46,7 @@
 #include "LayerTreeContext.h"
 #include "MessageReceiver.h"
 #include "MessageSender.h"
+#include "NetworkResourceLoadIdentifier.h"
 #include "OptionalCallbackID.h"
 #include "PDFPluginIdentifier.h"
 #include "Plugin.h"

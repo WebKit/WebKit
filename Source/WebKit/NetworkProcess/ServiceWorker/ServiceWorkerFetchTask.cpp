@@ -78,7 +78,7 @@ template<typename Message> bool ServiceWorkerFetchTask::sendToServiceWorker(Mess
 
 template<typename Message> bool ServiceWorkerFetchTask::sendToClient(Message&& message)
 {
-    return m_loader.connectionToWebProcess().connection().send(std::forward<Message>(message), m_loader.identifier());
+    return m_loader.connectionToWebProcess().connection().send(std::forward<Message>(message), m_loader.coreIdentifier());
 }
 
 void ServiceWorkerFetchTask::start(WebSWServerToContextConnection& serviceWorkerConnection)
@@ -162,6 +162,8 @@ void ServiceWorkerFetchTask::didReceiveResponse(ResourceResponse&& response, boo
 
     response.setSource(ResourceResponse::Source::ServiceWorker);
     sendToClient(Messages::WebResourceLoader::DidReceiveResponse { response, needsContinueDidReceiveResponseMessage });
+    if (needsContinueDidReceiveResponseMessage)
+        m_loader.setResponse(WTFMove(response));
 }
 
 void ServiceWorkerFetchTask::didReceiveData(const IPC::DataReference& data, int64_t encodedDataLength)

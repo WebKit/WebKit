@@ -51,7 +51,7 @@ public:
 
     RefPtr<WebCore::SecurityOrigin> parentOrigin() const;
 
-    ResourceLoadIdentifier identifier { 0 };
+    mutable ResourceLoadIdentifier identifier { 0 };
     Vector<RefPtr<SandboxExtension>> requestBodySandboxExtensions; // Created automatically for the sender.
     RefPtr<SandboxExtension> resourceSandboxExtension; // Created automatically for the sender.
     mutable Seconds maximumBufferingTime;

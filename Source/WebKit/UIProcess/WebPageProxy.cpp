@@ -1381,7 +1381,7 @@ RefPtr<API::Navigation> WebPageProxy::loadRequest(ResourceRequest&& request, Sho
     return navigation;
 }
 
-void WebPageProxy::loadRequestWithNavigationShared(Ref<WebProcessProxy>&& process, WebCore::PageIdentifier webPageID, API::Navigation& navigation, ResourceRequest&& request, ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy, API::Object* userData, ShouldTreatAsContinuingLoad shouldTreatAsContinuingLoad, std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain, std::optional<WebsitePoliciesData>&& websitePolicies)
+void WebPageProxy::loadRequestWithNavigationShared(Ref<WebProcessProxy>&& process, WebCore::PageIdentifier webPageID, API::Navigation& navigation, ResourceRequest&& request, ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy, API::Object* userData, ShouldTreatAsContinuingLoad shouldTreatAsContinuingLoad, std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain, std::optional<WebsitePoliciesData>&& websitePolicies, std::optional<NetworkResourceLoadIdentifier> existingNetworkResourceLoadIdentifierToResume)
 {
     ASSERT(!m_isClosed);
 
@@ -1404,6 +1404,7 @@ void WebPageProxy::loadRequestWithNavigationShared(Ref<WebProcessProxy>&& proces
     loadParameters.lockBackForwardList = navigation.lockBackForwardList();
     loadParameters.clientRedirectSourceForHistory = navigation.clientRedirectSourceForHistory();
     loadParameters.isNavigatingToAppBoundDomain = isNavigatingToAppBoundDomain;
+    loadParameters.existingNetworkResourceLoadIdentifierToResume = existingNetworkResourceLoadIdentifierToResume;
     maybeInitializeSandboxExtensionHandle(process, url, m_pageLoadState.resourceDirectoryURL(), loadParameters.sandboxExtensionHandle);
 
     addPlatformLoadParameters(process, loadParameters);
@@ -3629,7 +3630,7 @@ void WebPageProxy::commitProvisionalPage(FrameIdentifier frameID, FrameInfoData&
     m_inspectorController->didCommitProvisionalPage(oldWebPageID, m_webPageID);
 }
 
-void WebPageProxy::continueNavigationInNewProcess(API::Navigation& navigation, std::unique_ptr<SuspendedPageProxy>&& suspendedPage, Ref<WebProcessProxy>&& newProcess, ProcessSwapRequestedByClient processSwapRequestedByClient, ShouldTreatAsContinuingLoad shouldTreatAsContinuingLoad, RefPtr<API::WebsitePolicies>&& websitePolicies)
+void WebPageProxy::continueNavigationInNewProcess(API::Navigation& navigation, std::unique_ptr<SuspendedPageProxy>&& suspendedPage, Ref<WebProcessProxy>&& newProcess, ProcessSwapRequestedByClient processSwapRequestedByClient, ShouldTreatAsContinuingLoad shouldTreatAsContinuingLoad, RefPtr<API::WebsitePolicies>&& websitePolicies, std::optional<NetworkResourceLoadIdentifier> existingNetworkResourceLoadIdentifierToResume)
 {
     WEBPAGEPROXY_RELEASE_LOG(Loading, "continueNavigationInNewProcess: newProcessPID=%i, hasSuspendedPage=%i", newProcess->processIdentifier(), !!suspendedPage);
     LOG(Loading, "Continuing navigation %" PRIu64 " '%s' in a new web process", navigation.navigationID(), navigation.loggingString());
@@ -3646,7 +3647,7 @@ void WebPageProxy::continueNavigationInNewProcess(API::Navigation& navigation, s
     bool isServerSideRedirect = shouldTreatAsContinuingLoad == ShouldTreatAsContinuingLoad::YesAfterNavigationPolicyDecision && navigation.currentRequestIsRedirect();
     bool shouldClosePreviousPageAfterCommit = shouldTreatAsContinuingLoad == ShouldTreatAsContinuingLoad::YesAfterResponsePolicyDecision;
     m_provisionalPage = makeUnique<ProvisionalPageProxy>(*this, WTFMove(newProcess), WTFMove(suspendedPage), navigation.navigationID(), isServerSideRedirect, navigation.currentRequest(), processSwapRequestedByClient, shouldClosePreviousPageAfterCommit, websitePolicies.get());
-    auto continuation = [this, protectedThis = makeRef(*this), navigation = makeRef(navigation), shouldTreatAsContinuingLoad, websitePolicies = WTFMove(websitePolicies)]() mutable {
+    auto continuation = [this, protectedThis = makeRef(*this), navigation = makeRef(navigation), shouldTreatAsContinuingLoad, websitePolicies = WTFMove(websitePolicies), existingNetworkResourceLoadIdentifierToResume]() mutable {
         if (auto* item = navigation->targetItem()) {
             LOG(Loading, "WebPageProxy %p continueNavigationInNewProcess to back item URL %s", this, item->url().utf8().data());
 
@@ -3669,10 +3670,11 @@ void WebPageProxy::continueNavigationInNewProcess(API::Navigation& navigation, s
 
         // FIXME: Work out timing of responding with the last policy delegate, etc
         ASSERT(!navigation->currentRequest().isEmpty());
+        ASSERT(!existingNetworkResourceLoadIdentifierToResume || !navigation->substituteData());
         if (auto& substituteData = navigation->substituteData())
             m_provisionalPage->loadData(navigation, { substituteData->content.data(), substituteData->content.size() }, substituteData->MIMEType, substituteData->encoding, substituteData->baseURL, substituteData->userData.get(), shouldTreatAsContinuingLoad, isNavigatingToAppBoundDomain(), WTFMove(websitePoliciesData), substituteData->sessionHistoryVisibility);
         else
-            m_provisionalPage->loadRequest(navigation, ResourceRequest { navigation->currentRequest() }, nullptr, shouldTreatAsContinuingLoad, isNavigatingToAppBoundDomain(), WTFMove(websitePoliciesData));
+            m_provisionalPage->loadRequest(navigation, ResourceRequest { navigation->currentRequest() }, nullptr, shouldTreatAsContinuingLoad, isNavigatingToAppBoundDomain(), WTFMove(websitePoliciesData), existingNetworkResourceLoadIdentifierToResume);
     };
     if (m_inspectorController->shouldPauseLoading(*m_provisionalPage))
         m_inspectorController->setContinueLoadingCallback(*m_provisionalPage, WTFMove(continuation));
@@ -5628,12 +5630,12 @@ void WebPageProxy::decidePolicyForNewWindowAction(FrameIdentifier frameID, Frame
 
 void WebPageProxy::decidePolicyForResponse(FrameIdentifier frameID, FrameInfoData&& frameInfo, PolicyCheckIdentifier identifier,
     uint64_t navigationID, const ResourceResponse& response, const ResourceRequest& request, bool canShowMIMEType, const String& downloadAttribute,
-    bool wasAllowedByInjectedBundle, bool needsBrowsingContextGroupSwitch, uint64_t listenerID, const UserData& userData)
+    bool wasAllowedByInjectedBundle, bool needsBrowsingContextGroupSwitch, uint64_t mainResourceLoadIdentifier, uint64_t listenerID, const UserData& userData)
 {
-    decidePolicyForResponseShared(m_process.copyRef(), m_webPageID, frameID, WTFMove(frameInfo), identifier, navigationID, response, request, canShowMIMEType, downloadAttribute, wasAllowedByInjectedBundle, needsBrowsingContextGroupSwitch, listenerID, userData);
+    decidePolicyForResponseShared(m_process.copyRef(), m_webPageID, frameID, WTFMove(frameInfo), identifier, navigationID, response, request, canShowMIMEType, downloadAttribute, wasAllowedByInjectedBundle, needsBrowsingContextGroupSwitch, mainResourceLoadIdentifier, listenerID, userData);
 }
 
-void WebPageProxy::decidePolicyForResponseShared(Ref<WebProcessProxy>&& process, PageIdentifier webPageID, FrameIdentifier frameID, FrameInfoData&& frameInfo, PolicyCheckIdentifier identifier, uint64_t navigationID, const ResourceResponse& response, const ResourceRequest& request, bool canShowMIMEType, const String& downloadAttribute, bool wasAllowedByInjectedBundle, bool needsBrowsingContextGroupSwitch, uint64_t listenerID, const UserData& userData)
+void WebPageProxy::decidePolicyForResponseShared(Ref<WebProcessProxy>&& process, PageIdentifier webPageID, FrameIdentifier frameID, FrameInfoData&& frameInfo, PolicyCheckIdentifier identifier, uint64_t navigationID, const ResourceResponse& response, const ResourceRequest& request, bool canShowMIMEType, const String& downloadAttribute, bool wasAllowedByInjectedBundle, bool needsBrowsingContextGroupSwitch, uint64_t mainResourceLoadIdentifier, uint64_t listenerID, const UserData& userData)
 {
     PageClientProtector protector(pageClient());
 
@@ -5646,13 +5648,13 @@ void WebPageProxy::decidePolicyForResponseShared(Ref<WebProcessProxy>&& process,
     RefPtr<API::Navigation> navigation = navigationID ? m_navigationState->navigation(navigationID) : nullptr;
     auto navigationResponse = API::NavigationResponse::create(API::FrameInfo::create(WTFMove(frameInfo), this).get(), request, response, canShowMIMEType, downloadAttribute);
 
-    auto listener = makeRef(frame->setUpPolicyListenerProxy([this, protectedThis = makeRef(*this), webPageID, frameID, needsBrowsingContextGroupSwitch, identifier, listenerID, navigation = WTFMove(navigation),
+    auto listener = makeRef(frame->setUpPolicyListenerProxy([this, protectedThis = makeRef(*this), webPageID, frameID, needsBrowsingContextGroupSwitch, mainResourceLoadIdentifier, identifier, listenerID, navigation = WTFMove(navigation),
         process, navigationResponse] (PolicyAction policyAction, API::WebsitePolicies*, ProcessSwapRequestedByClient processSwapRequestedByClient, RefPtr<SafeBrowsingWarning>&& safeBrowsingWarning, std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain) mutable {
         // FIXME: Assert the API::WebsitePolicies* is nullptr here once clients of WKFramePolicyListenerUseWithPolicies go away.
         RELEASE_ASSERT(processSwapRequestedByClient == ProcessSwapRequestedByClient::No);
         ASSERT_UNUSED(safeBrowsingWarning, !safeBrowsingWarning);
 
-        auto sender = PolicyDecisionSender::create(identifier, [webPageID, frameID, listenerID, process = WTFMove(process)] (const auto& policyDecision) {
+        auto sender = PolicyDecisionSender::create(identifier, [webPageID, frameID, listenerID, process] (const auto& policyDecision) {
             process->send(Messages::WebPage::DidReceivePolicyDecision(frameID, listenerID, policyDecision, createNetworkExtensionsSandboxExtensions(process)), webPageID);
         });
 
@@ -5660,12 +5662,15 @@ void WebPageProxy::decidePolicyForResponseShared(Ref<WebProcessProxy>&& process,
         if (policyAction == PolicyAction::Use && needsBrowsingContextGroupSwitch && navigation) {
             RegistrableDomain responseDomain { navigationResponse->response().url() };
             // Avoid process-swapping in cases where the process only contains a single page and is origin-clean.
-            if (this->process().pageCount() > 1 || (this->process().optionalRegistrableDomain() && *this->process().optionalRegistrableDomain() != responseDomain)) {
+            if (process->pageCount() > 1 || (process->optionalRegistrableDomain() && *process->optionalRegistrableDomain() != responseDomain)) {
                 WEBPAGEPROXY_RELEASE_LOG(ProcessSwapping, "decidePolicyForResponseShared: Process-swapping due to Cross-Origin-Opener-Policy");
-                policyAction = PolicyAction::Ignore;
-                auto processForNavigation = m_process->processPool().processForRegistrableDomain(websiteDataStore(), this, responseDomain);
-                continueNavigationInNewProcess(*navigation, nullptr, WTFMove(processForNavigation), ProcessSwapRequestedByClient::No, ShouldTreatAsContinuingLoad::YesAfterResponsePolicyDecision, nullptr);
-                willContinueLoadInNewProcess = WillContinueLoadInNewProcess::Yes;
+                websiteDataStore().networkProcess().prepareLoadForWebProcessTransfer(process->coreProcessIdentifier(), mainResourceLoadIdentifier, [this, protectedThis = WTFMove(protectedThis), responseDomain = WTFMove(responseDomain), navigation, navigationResponse = WTFMove(navigationResponse), sender = WTFMove(sender)](auto existingNetworkResourceLoadIdentifierToResume) mutable {
+                    auto processForNavigation = m_process->processPool().processForRegistrableDomain(websiteDataStore(), this, responseDomain);
+                    continueNavigationInNewProcess(*navigation, nullptr, WTFMove(processForNavigation), ProcessSwapRequestedByClient::No, ShouldTreatAsContinuingLoad::YesAfterResponsePolicyDecision, nullptr, existingNetworkResourceLoadIdentifierToResume);
+
+                    receivedPolicyDecision(PolicyAction::Ignore, navigation.get(), nullptr, WTFMove(navigationResponse), WTFMove(sender), { }, WillContinueLoadInNewProcess::Yes);
+                });
+                return;
             }
         }
         

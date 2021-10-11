@@ -195,6 +195,8 @@ messages -> NetworkProcess LegacyReceiver {
     ClearAppPrivacyReportTestingData(PAL::SessionID sessionID) -> () Async
 #endif
 
+    PrepareLoadForWebProcessTransfer(WebCore::ProcessIdentifier sourceProcessIdentifier, uint64_t resourceLoadIdentifier) -> (std::optional<WebKit::NetworkResourceLoadIdentifier> networkResourceLoadIdentifier) Async
+
     AddWebPageNetworkParameters(PAL::SessionID sessionID, WebKit::WebPageProxyIdentifier pageID, WebKit::WebPageNetworkParameters parameters)
     RemoveWebPageNetworkParameters(PAL::SessionID sessionID, WebKit::WebPageProxyIdentifier pageID)
     CountNonDefaultSessionSets(PAL::SessionID sessionID) -> (size_t count) Async

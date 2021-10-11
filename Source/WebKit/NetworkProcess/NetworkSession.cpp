@@ -56,6 +56,8 @@
 namespace WebKit {
 using namespace WebCore;
 
+constexpr Seconds cachedNetworkResourceLoaderLifetime { 30_s };
+
 std::unique_ptr<NetworkSession> NetworkSession::create(NetworkProcess& networkProcess, NetworkSessionCreationParameters&& parameters)
 {
 #if PLATFORM(COCOA)
@@ -392,6 +394,43 @@ void NetworkSession::removeKeptAliveLoad(NetworkResourceLoader& loader)
     ASSERT(m_sessionID == loader.sessionID());
     ASSERT(m_keptAliveLoads.contains(loader));
     m_keptAliveLoads.remove(loader);
+}
+
+NetworkSession::CachedNetworkResourceLoader::CachedNetworkResourceLoader(Ref<NetworkResourceLoader>&& loader)
+    : m_expirationTimer(*this, &CachedNetworkResourceLoader::expirationTimerFired)
+    , m_loader(WTFMove(loader))
+{
+    m_expirationTimer.startOneShot(cachedNetworkResourceLoaderLifetime);
+}
+
+RefPtr<NetworkResourceLoader> NetworkSession::CachedNetworkResourceLoader::takeLoader()
+{
+    return std::exchange(m_loader, nullptr);
+}
+
+void NetworkSession::CachedNetworkResourceLoader::expirationTimerFired()
+{
+    auto session = m_loader->connectionToWebProcess().networkSession();
+    ASSERT(session);
+    if (!session)
+        return;
+
+    auto loader = session->takeLoaderAwaitingWebProcessTransfer(m_loader->identifier());
+    ASSERT_UNUSED(loader, loader);
+}
+
+void NetworkSession::addLoaderAwaitingWebProcessTransfer(Ref<NetworkResourceLoader>&& loader)
+{
+    ASSERT(m_sessionID == loader->sessionID());
+    auto identifier = loader->identifier();
+    ASSERT(!m_loadersAwaitingWebProcessTransfer.contains(identifier));
+    m_loadersAwaitingWebProcessTransfer.add(identifier, makeUnique<CachedNetworkResourceLoader>(WTFMove(loader)));
+}
+
+RefPtr<NetworkResourceLoader> NetworkSession::takeLoaderAwaitingWebProcessTransfer(NetworkResourceLoadIdentifier identifier)
+{
+    auto cachedResourceLoader = m_loadersAwaitingWebProcessTransfer.take(identifier);
+    return cachedResourceLoader ? cachedResourceLoader->takeLoader() : nullptr;
 }
 
 std::unique_ptr<WebSocketTask> NetworkSession::createWebSocketTask(WebPageProxyIdentifier, NetworkSocketChannel&, const WebCore::ResourceRequest&, const String& protocol)

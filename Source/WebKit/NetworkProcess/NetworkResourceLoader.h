@@ -85,19 +85,23 @@ public:
     void start();
     void abort();
 
+    void transferToNewWebProcess(NetworkConnectionToWebProcess&, ResourceLoadIdentifier);
+
     // Message handlers.
     void didReceiveNetworkResourceLoaderMessage(IPC::Connection&, IPC::Decoder&);
 
     void continueWillSendRequest(WebCore::ResourceRequest&& newRequest, bool isAllowedToAskUserForCredentials);
 
+    void setResponse(WebCore::ResourceResponse&& response) { m_response = WTFMove(response); }
     const WebCore::ResourceResponse& response() const { return m_response; }
 
     NetworkConnectionToWebProcess& connectionToWebProcess() const { return m_connection; }
     PAL::SessionID sessionID() const { return m_connection->sessionID(); }
-    ResourceLoadIdentifier identifier() const { return m_parameters.identifier; }
+    ResourceLoadIdentifier coreIdentifier() const { return m_parameters.identifier; }
     WebCore::FrameIdentifier frameID() const { return m_parameters.webFrameID; }
     WebCore::PageIdentifier pageID() const { return m_parameters.webPageID; }
     const NetworkResourceLoadParameters& parameters() const { return m_parameters; }
+    NetworkResourceLoadIdentifier identifier() const { return m_resourceLoadID; }
 
     NetworkCache::GlobalFrameID globalFrameID() { return { m_parameters.webPageProxyID, pageID(), frameID() }; }
 

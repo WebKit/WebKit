@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "NetworkResourceLoadIdentifier.h"
 #include "WebResourceLoader.h"
 #include <WebCore/LoaderStrategy.h>
 #include <WebCore/ResourceError.h>
@@ -93,6 +94,8 @@ public:
 
     static constexpr Seconds mediaMaximumBufferingTime { 50_ms };
 
+    void setExistingNetworkResourceLoadIdentifierToResume(std::optional<NetworkResourceLoadIdentifier> existingNetworkResourceLoadIdentifierToResume) { m_existingNetworkResourceLoadIdentifierToResume = existingNetworkResourceLoadIdentifierToResume; }
+
 private:
     void scheduleLoad(WebCore::ResourceLoader&, WebCore::CachedResource*, bool shouldClearReferrerOnHTTPSToHTTPRedirect);
     void scheduleInternallyFailedLoad(WebCore::ResourceLoader&);
@@ -135,6 +138,7 @@ private:
     HashMap<unsigned long, PingLoadCompletionHandler> m_pingLoadCompletionHandlers;
     HashMap<unsigned long, PreconnectCompletionHandler> m_preconnectCompletionHandlers;
     Vector<Function<void(bool)>> m_onlineStateChangeListeners;
+    std::optional<NetworkResourceLoadIdentifier> m_existingNetworkResourceLoadIdentifierToResume;
     bool m_isOnLine { true };
 };
 

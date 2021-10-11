@@ -29,6 +29,7 @@
 #include "AuxiliaryProcessProxy.h"
 #include "CallbackID.h"
 #include "NetworkProcessProxyMessagesReplies.h"
+#include "NetworkResourceLoadIdentifier.h"
 #include "ProcessLauncher.h"
 #include "ProcessThrottler.h"
 #include "ProcessThrottlerClient.h"
@@ -213,6 +214,8 @@ public:
 
     void testProcessIncomingSyncMessagesWhenWaitingForSyncReply(WebPageProxyIdentifier, Messages::NetworkProcessProxy::TestProcessIncomingSyncMessagesWhenWaitingForSyncReplyDelayedReply&&);
     void terminateUnresponsiveServiceWorkerProcesses(WebCore::ProcessIdentifier);
+
+    void prepareLoadForWebProcessTransfer(WebCore::ProcessIdentifier sourceProcessIdentifier, uint64_t resourceLoadIdentifier, CompletionHandler<void(std::optional<NetworkResourceLoadIdentifier>)>&&);
 
     ProcessThrottler& throttler() final { return m_throttler; }
     void updateProcessAssertion();

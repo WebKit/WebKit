@@ -171,9 +171,9 @@ void ProvisionalPageProxy::loadData(API::Navigation& navigation, const IPC::Data
     m_page.loadDataWithNavigationShared(m_process.copyRef(), m_webPageID, navigation, data, mimeType, encoding, baseURL, userData, shouldTreatAsContinuingLoad, isNavigatingToAppBoundDomain, WTFMove(websitePolicies), navigation.lastNavigationAction().shouldOpenExternalURLsPolicy, sessionHistoryVisibility);
 }
 
-void ProvisionalPageProxy::loadRequest(API::Navigation& navigation, WebCore::ResourceRequest&& request, API::Object* userData, WebCore::ShouldTreatAsContinuingLoad shouldTreatAsContinuingLoad, std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain, std::optional<WebsitePoliciesData>&& websitePolicies)
+void ProvisionalPageProxy::loadRequest(API::Navigation& navigation, WebCore::ResourceRequest&& request, API::Object* userData, WebCore::ShouldTreatAsContinuingLoad shouldTreatAsContinuingLoad, std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain, std::optional<WebsitePoliciesData>&& websitePolicies, std::optional<NetworkResourceLoadIdentifier> existingNetworkResourceLoadIdentifierToResume)
 {
-    PROVISIONALPAGEPROXY_RELEASE_LOG(ProcessSwapping, "loadRequest:");
+    PROVISIONALPAGEPROXY_RELEASE_LOG(ProcessSwapping, "loadRequest: existingNetworkResourceLoadIdentifierToResume=%" PRIu64, existingNetworkResourceLoadIdentifierToResume.value_or(NetworkResourceLoadIdentifier { }).toUInt64());
     ASSERT(shouldTreatAsContinuingLoad != WebCore::ShouldTreatAsContinuingLoad::No);
 
     // If this is a client-side redirect continuing in a new process, then the new process will overwrite the fromItem's URL. In this case,
@@ -182,7 +182,7 @@ void ProvisionalPageProxy::loadRequest(API::Navigation& navigation, WebCore::Res
     if (navigation.fromItem() && navigation.lockBackForwardList() == WebCore::LockBackForwardList::Yes)
         navigation.fromItem()->setLastProcessIdentifier(m_process->coreProcessIdentifier());
 
-    m_page.loadRequestWithNavigationShared(m_process.copyRef(), m_webPageID, navigation, WTFMove(request), navigation.lastNavigationAction().shouldOpenExternalURLsPolicy, userData, shouldTreatAsContinuingLoad, isNavigatingToAppBoundDomain, WTFMove(websitePolicies));
+    m_page.loadRequestWithNavigationShared(m_process.copyRef(), m_webPageID, navigation, WTFMove(request), navigation.lastNavigationAction().shouldOpenExternalURLsPolicy, userData, shouldTreatAsContinuingLoad, isNavigatingToAppBoundDomain, WTFMove(websitePolicies), existingNetworkResourceLoadIdentifierToResume);
 }
 
 void ProvisionalPageProxy::goToBackForwardItem(API::Navigation& navigation, WebBackForwardListItem& item, RefPtr<API::WebsitePolicies>&& websitePolicies)
@@ -330,12 +330,12 @@ void ProvisionalPageProxy::decidePolicyForNavigationActionAsync(FrameIdentifier 
     m_page.decidePolicyForNavigationActionAsyncShared(m_process.copyRef(), m_webPageID, frameID, WTFMove(frameInfo), identifier, navigationID, WTFMove(navigationActionData), WTFMove(originatingFrameInfo), originatingPageID, originalRequest, WTFMove(request), WTFMove(requestBody), WTFMove(redirectResponse), userData, listenerID);
 }
 
-void ProvisionalPageProxy::decidePolicyForResponse(FrameIdentifier frameID, FrameInfoData&& frameInfo, WebCore::PolicyCheckIdentifier identifier, uint64_t navigationID, const WebCore::ResourceResponse& response, const WebCore::ResourceRequest& request, bool canShowMIMEType, const String& downloadAttribute, bool wasAllowedByInjectedBundle, bool needsBrowsingContextGroupSwitch, uint64_t listenerID, const UserData& userData)
+void ProvisionalPageProxy::decidePolicyForResponse(FrameIdentifier frameID, FrameInfoData&& frameInfo, WebCore::PolicyCheckIdentifier identifier, uint64_t navigationID, const WebCore::ResourceResponse& response, const WebCore::ResourceRequest& request, bool canShowMIMEType, const String& downloadAttribute, bool wasAllowedByInjectedBundle, bool needsBrowsingContextGroupSwitch, uint64_t mainResourceLoadIdentifier, uint64_t listenerID, const UserData& userData)
 {
     if (!validateInput(frameID, navigationID))
         return;
 
-    m_page.decidePolicyForResponseShared(m_process.copyRef(), m_webPageID, frameID, WTFMove(frameInfo), identifier, navigationID, response, request, canShowMIMEType, downloadAttribute, wasAllowedByInjectedBundle, needsBrowsingContextGroupSwitch, listenerID, userData);
+    m_page.decidePolicyForResponseShared(m_process.copyRef(), m_webPageID, frameID, WTFMove(frameInfo), identifier, navigationID, response, request, canShowMIMEType, downloadAttribute, wasAllowedByInjectedBundle, needsBrowsingContextGroupSwitch, mainResourceLoadIdentifier, listenerID, userData);
 }
 
 void ProvisionalPageProxy::didPerformServerRedirect(const String& sourceURLString, const String& destinationURLString, FrameIdentifier frameID)
