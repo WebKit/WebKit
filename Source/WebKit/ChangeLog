@@ -1,5 +1,18 @@
 2021-10-11  Per Arne Vollan <pvollan@apple.com>
 
+        Block access in sandbox to capability which is allowed by default
+        https://bugs.webkit.org/show_bug.cgi?id=231079
+        <rdar://66586853>
+
+        Reviewed by Brent Fulgham.
+
+        Some capabilities are allowed by default, and needs to be explicitly denied in the sandbox.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb.in:
+        * WebProcess/com.apple.WebProcess.sb.in:
+
+2021-10-11  Per Arne Vollan <pvollan@apple.com>
+
         [iOS] Add message filter in the WebContent process' sandbox
         https://bugs.webkit.org/show_bug.cgi?id=231046
         <rdar://problem/83743661>

@@ -2289,3 +2289,5 @@
     )
 )
 #endif
+
+(deny dynamic-code-generation)
