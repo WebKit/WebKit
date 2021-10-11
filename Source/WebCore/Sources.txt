@@ -1524,6 +1524,7 @@ loader/NetscapePlugInStreamLoader.cpp
 loader/PingLoader.cpp
 loader/PolicyChecker.cpp
 loader/ProgressTracker.cpp
+loader/ReportingEndpointsCache.cpp
 loader/ResourceCryptographicDigest.cpp
 loader/ResourceLoadInfo.cpp
 loader/ResourceLoadNotifier.cpp

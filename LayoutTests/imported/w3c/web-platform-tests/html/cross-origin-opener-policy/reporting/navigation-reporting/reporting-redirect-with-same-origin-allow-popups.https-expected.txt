@@ -1,6 +1,4 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT Same origin openee redirected to same-origin with same-origin-allow-popups Test timed out
-NOTRUN Cross origin openee redirected to same-origin with same-origin-allow-popups
+PASS Same origin openee redirected to same-origin with same-origin-allow-popups
+PASS Cross origin openee redirected to same-origin with same-origin-allow-popups
 

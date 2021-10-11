@@ -1,3 +1,58 @@
+2021-09-10  Chris Dumez  <cdumez@apple.com>
+
+        Implement navigation reporting for Cross-Origin-Opener-Policy
+        https://bugs.webkit.org/show_bug.cgi?id=230046
+
+        Reviewed by Alex Christensen.
+
+        Implement navigation reporting for Cross-Origin-Opener-Policy as per:
+        - https://html.spec.whatwg.org/multipage/origin.html#coop-violation-navigation-to
+        - https://html.spec.whatwg.org/multipage/origin.html#coop-violation-navigation-from
+
+        With support for the Report-To HTTP header as documented here:
+        - https://www.w3.org/TR/reporting/#header
+
+        When adopting Cross-Origin-Opener-Policy or Cross-Origin-Opener-Policy-Report-Only HTTP headers,
+        developers can now specify a `report-to` directive with the name of the endpoint to report
+        COOP violations to. The mapping from endpoint name to URL is provided via teh Report-To HTTP
+        header, as is expected by the WPT tests.
+
+        No new tests, unskipped and rebaselined existing tests.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * loader/CrossOriginOpenerPolicy.cpp:
+        (WebCore::sanitizeReferrerForURLReport):
+        (WebCore::crossOriginOpenerPolicyValueToString):
+        (WebCore::sendCOOPViolationReport):
+        (WebCore::sendViolationReportWhenNavigatingToCOOPResponse):
+        (WebCore::sendViolationReportWhenNavigatingAwayFromCOOPResponse):
+        * loader/CrossOriginOpenerPolicy.h:
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::willSendRequest):
+        (WebCore::checkIfEnforcingReportOnlyCOOPWouldRequireBrowsingContextGroupSwitch):
+        (WebCore::DocumentLoader::enforceResponseCrossOriginOpenerPolicy):
+        (WebCore::DocumentLoader::responseReceived):
+        * loader/PingLoader.cpp:
+        (WebCore::PingLoader::sendViolationReport):
+        (WebCore::PingLoader::startPingLoad):
+        * loader/PingLoader.h:
+        * loader/ReportingEndpointsCache.cpp: Added.
+        (WebCore::ReportingEndpointsCache::singleton):
+        (WebCore::ReportingEndpointsCache::addEndPointsFromResponse):
+        (WebCore::ReportingEndpointsCache::addEndpointFromDictionary):
+        (WebCore::ReportingEndpointsCache::endpointURL const):
+        (WebCore::ReportingEndpointsCache::EndPoint::EndPoint):
+        (WebCore::ReportingEndpointsCache::EndPoint::hasExpired const):
+        * loader/ReportingEndpointsCache.h: Added.
+        * loader/ResourceLoaderOptions.h:
+        (WebCore::ResourceLoaderOptions::shouldOmitUserAgent):
+        (WebCore::ResourceLoaderOptions::ResourceLoaderOptions):
+        * loader/WorkerThreadableLoader.cpp:
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::updateHTTPRequestHeaders):
+        * platform/network/HTTPHeaderNames.in:
+
 2021-09-02  Chris Dumez  <cdumez@apple.com>
 
         [COOP] Cross origin isolation doesn't happen when going from an HTTP URL to a HTTPS one with COOP+COEP

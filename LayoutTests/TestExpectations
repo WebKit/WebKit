@@ -405,6 +405,8 @@ imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/anonymous-ifra
 imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/blob.https.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/navigate-to-aboutblank.https.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/navigate-top-to-aboutblank.https.html [ DumpJSConsoleLogInStdErr ]
+imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting/navigation-reporting/reporting-coop-navigated-opener.https.html [ DumpJSConsoleLogInStdErr ]
+imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting/navigation-reporting/reporting-coop-navigated-popup.https.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe-network-error.sub.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/css-module/integrity.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/css-module/import-css-module-basic.html [ DumpJSConsoleLogInStdErr ]
@@ -712,8 +714,8 @@ imported/w3c/web-platform-tests/html/semantics/document-metadata/the-link-elemen
 imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/form-controls/select-sizing-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/phrasing-content-0/font-element-text-decoration-color/001-x.xhtml [ ImageOnlyFailure ]
 
-# Cross-Origin Opener Policy reporting is not supported and it is causing those tests to time out.
-imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting [ Skip ]
+# Cross-Origin Opener Policy access reporting is not supported and it is causing those tests to time out.
+imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting/access-reporting [ Skip ]
 
 # Cross-Origin-Embedder-Policy: credentialless is not supported.
 imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/credentialless

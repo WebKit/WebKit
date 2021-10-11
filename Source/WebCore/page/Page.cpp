@@ -116,6 +116,7 @@
 #include "RenderView.h"
 #include "RenderWidget.h"
 #include "RenderingUpdateScheduler.h"
+#include "ReportingEndpointsCache.h"
 #include "ResizeObserver.h"
 #include "ResourceUsageOverlay.h"
 #include "RuntimeEnabledFeatures.h"
@@ -325,6 +326,7 @@ Page::Page(PageConfiguration&& pageConfiguration)
     , m_loadsSubresources(pageConfiguration.loadsSubresources)
     , m_shouldRelaxThirdPartyCookieBlocking(pageConfiguration.shouldRelaxThirdPartyCookieBlocking)
     , m_httpsUpgradeEnabled(pageConfiguration.httpsUpgradeEnabled)
+    , m_reportingEndpointsCache(WTFMove(pageConfiguration.reportingEndpointsCache))
 {
     updateTimerThrottlingState();
 

@@ -358,7 +358,7 @@ ResourceErrorOr<CachedResourceHandle<CachedRawResource>> CachedResourceLoader::r
 
 ResourceErrorOr<CachedResourceHandle<CachedRawResource>> CachedResourceLoader::requestPingResource(CachedResourceRequest&& request)
 {
-    ASSERT(request.options().destination == FetchOptions::Destination::EmptyString);
+    ASSERT(request.options().destination == FetchOptions::Destination::EmptyString || request.options().destination == FetchOptions::Destination::Report);
     return castCachedResourceTo<CachedRawResource>(requestResource(CachedResource::Type::Ping, WTFMove(request)));
 }
 

@@ -1,3 +1,23 @@
+2021-09-10  Chris Dumez  <cdumez@apple.com>
+
+        Implement navigation reporting for Cross-Origin-Opener-Policy
+        https://bugs.webkit.org/show_bug.cgi?id=230046
+
+        Reviewed by Alex Christensen.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::didCleanupResourceLoader):
+        Now that we may abort expired loaders that are cached on the NetworkSession
+        (because awaiting transfer to another web process connection), we would hit
+        this assertion because the loader is not associated with this connection
+        anymore at the point it is adopted. For this reason, I silenced this
+        assertion.
+
+        * NetworkProcess/NetworkSession.cpp:
+        (WebKit::NetworkSession::CachedNetworkResourceLoader::expirationTimerFired):
+        Abort the loader before destroying it to avoid hitting an assertion in the
+        destructor (loaders cannot be loading at the point they are destroyed).
+
 2021-09-02  Chris Dumez  <cdumez@apple.com>
 
         [COOP] Cross origin isolation doesn't happen when going from an HTTP URL to a HTTPS one with COOP+COEP

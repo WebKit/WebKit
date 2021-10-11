@@ -174,6 +174,9 @@ void PingLoader::sendViolationReport(Frame& frame, const URL& reportURL, Ref<For
     case ViolationReportType::XSSAuditor:
         request.setHTTPContentType("application/json"_s);
         break;
+    case ViolationReportType::StandardReportingAPIViolation:
+        request.setHTTPContentType("application/reports+json"_s);
+        break;
     }
 
     bool removeCookies = true;
@@ -184,16 +187,17 @@ void PingLoader::sendViolationReport(Frame& frame, const URL& reportURL, Ref<For
 
     HTTPHeaderMap originalRequestHeader = request.httpHeaderFields();
 
-    frame.loader().updateRequestAndAddExtraFields(request, IsMainResource::No);
+    if (reportType != ViolationReportType::StandardReportingAPIViolation)
+        frame.loader().updateRequestAndAddExtraFields(request, IsMainResource::No);
 
     String referrer = SecurityPolicy::generateReferrerHeader(document.referrerPolicy(), reportURL, frame.loader().outgoingReferrer());
     if (!referrer.isEmpty())
         request.setHTTPReferrer(referrer);
 
-    startPingLoad(frame, request, WTFMove(originalRequestHeader), ShouldFollowRedirects::No, ContentSecurityPolicyImposition::SkipPolicyCheck, ReferrerPolicy::EmptyString);
+    startPingLoad(frame, request, WTFMove(originalRequestHeader), ShouldFollowRedirects::No, ContentSecurityPolicyImposition::SkipPolicyCheck, ReferrerPolicy::EmptyString, reportType);
 }
 
-void PingLoader::startPingLoad(Frame& frame, ResourceRequest& request, HTTPHeaderMap&& originalRequestHeaders, ShouldFollowRedirects shouldFollowRedirects, ContentSecurityPolicyImposition policyCheck, ReferrerPolicy referrerPolicy)
+void PingLoader::startPingLoad(Frame& frame, ResourceRequest& request, HTTPHeaderMap&& originalRequestHeaders, ShouldFollowRedirects shouldFollowRedirects, ContentSecurityPolicyImposition policyCheck, ReferrerPolicy referrerPolicy, std::optional<ViolationReportType> violationReportType)
 {
     unsigned long identifier = frame.page()->progress().createUniqueIdentifier();
     // FIXME: Why activeDocumentLoader? I would have expected documentLoader().
@@ -210,6 +214,14 @@ void PingLoader::startPingLoad(Frame& frame, ResourceRequest& request, HTTPHeade
     options.referrerPolicy = referrerPolicy;
     options.sendLoadCallbacks = SendCallbackPolicy::SendCallbacks;
     options.cache = FetchOptions::Cache::NoCache;
+
+    // https://www.w3.org/TR/reporting/#try-delivery
+    if (violationReportType == ViolationReportType::StandardReportingAPIViolation) {
+        options.credentials = FetchOptions::Credentials::SameOrigin;
+        options.mode = FetchOptions::Mode::Cors;
+        options.serviceWorkersMode = ServiceWorkersMode::None;
+        options.destination = FetchOptions::Destination::Report;
+    }
 
     // FIXME: Deprecate the ping load code path.
     if (platformStrategies()->loaderStrategy()->usePingLoad()) {

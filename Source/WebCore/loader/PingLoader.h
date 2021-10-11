@@ -43,9 +43,10 @@ class Frame;
 class HTTPHeaderMap;
 class ResourceRequest;
 
-enum class ViolationReportType {
+enum class ViolationReportType : uint8_t {
     ContentSecurityPolicy,
     XSSAuditor,
+    StandardReportingAPIViolation // https://www.w3.org/TR/reporting/#try-delivery
 };
 
 enum class ContentSecurityPolicyImposition : uint8_t;
@@ -58,7 +59,7 @@ public:
 
 private:
     enum class ShouldFollowRedirects { No, Yes };
-    static void startPingLoad(Frame&, ResourceRequest&, HTTPHeaderMap&& originalRequestHeaders, ShouldFollowRedirects, ContentSecurityPolicyImposition, ReferrerPolicy);
+    static void startPingLoad(Frame&, ResourceRequest&, HTTPHeaderMap&& originalRequestHeaders, ShouldFollowRedirects, ContentSecurityPolicyImposition, ReferrerPolicy, std::optional<ViolationReportType> = std::nullopt);
 };
 
 } // namespace WebCore

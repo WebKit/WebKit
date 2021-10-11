@@ -29,12 +29,24 @@
 #include "CrossOriginEmbedderPolicy.h"
 #include "HTTPHeaderNames.h"
 #include "HTTPParsers.h"
+#include "PingLoader.h"
+#include "ReportingEndpointsCache.h"
 #include "ResourceResponse.h"
 #include "ScriptExecutionContext.h"
+#include <wtf/JSONValues.h>
 
 namespace WebCore {
 
-static String crossOriginOpenerPolicyToString(const CrossOriginOpenerPolicyValue& coop)
+// https://html.spec.whatwg.org/multipage/origin.html#sanitize-url-report
+static String sanitizeReferrerForURLReport(const URL& referrer)
+{
+    URL sanitizedReferrer = referrer;
+    sanitizedReferrer.removeCredentials();
+    sanitizedReferrer.removeFragmentIdentifier();
+    return sanitizedReferrer.string();
+}
+
+static ASCIILiteral crossOriginOpenerPolicyToString(const CrossOriginOpenerPolicyValue& coop)
 {
     switch (coop) {
     case CrossOriginOpenerPolicyValue::SameOrigin:
@@ -42,6 +54,21 @@ static String crossOriginOpenerPolicyToString(const CrossOriginOpenerPolicyValue
         return "same-origin"_s;
     case CrossOriginOpenerPolicyValue::SameOriginAllowPopups:
         return "same-origin-allow-popups"_s;
+    case CrossOriginOpenerPolicyValue::UnsafeNone:
+        break;
+    }
+    return "unsafe-none"_s;
+}
+
+static ASCIILiteral crossOriginOpenerPolicyValueToEffectivePolicyString(CrossOriginOpenerPolicyValue coop)
+{
+    switch (coop) {
+    case CrossOriginOpenerPolicyValue::SameOriginAllowPopups:
+        return "same-origin-allow-popups"_s;
+    case CrossOriginOpenerPolicyValue::SameOrigin:
+        return "same-origin"_s;
+    case CrossOriginOpenerPolicyValue::SameOriginPlusCOEP:
+        return "same-origin-plus-coep"_s;
     case CrossOriginOpenerPolicyValue::UnsafeNone:
         break;
     }
@@ -107,6 +134,58 @@ void addCrossOriginOpenerPolicyHeaders(ResourceResponse& response, const CrossOr
         else
             response.setHTTPHeaderField(HTTPHeaderName::CrossOriginOpenerPolicyReportOnly, makeString(crossOriginOpenerPolicyToString(coop.reportOnlyValue), "; report-to=\"", coop.reportOnlyReportingEndpoint, '\"'));
     }
+}
+
+// https://www.w3.org/TR/reporting/#try-delivery
+static void sendCOOPViolationReport(Frame& frame, CrossOriginOpenerPolicy coop, COOPDisposition disposition, const URL& coopURL, const SecurityOrigin& coopOrigin, const String& userAgent, Function<void(JSON::Object&)>&& populateBody)
+{
+    auto& reportingEndpoint = disposition == COOPDisposition::Reporting ? coop.reportOnlyReportingEndpoint : coop.reportingEndpoint;
+    if (reportingEndpoint.isEmpty())
+        return;
+
+    auto reportingEndpointsCache = frame.page() ? frame.page()->reportingEndpointsCache() : nullptr;
+    if (!reportingEndpointsCache)
+        return;
+    auto endpointURL = reportingEndpointsCache->endpointURL(coopOrigin.data(), reportingEndpoint);
+    if (!endpointURL.isValid())
+        return;
+
+    auto body = JSON::Object::create();
+    body->setString("disposition"_s, disposition == COOPDisposition::Reporting ? "reporting"_s : "enforce"_s);
+    body->setString("effectivePolicy"_s, crossOriginOpenerPolicyValueToEffectivePolicyString(disposition == COOPDisposition::Reporting ? coop.reportOnlyValue : coop.value));
+    populateBody(body);
+
+    auto reportObject = JSON::Object::create();
+    reportObject->setString("type"_s, "coop"_s);
+    reportObject->setString("url"_s, coopURL.string());
+    reportObject->setString("user_agent", userAgent);
+    reportObject->setInteger("age", 0); // We currently do not delay sending the reports.
+    reportObject->setObject("body"_s, WTFMove(body));
+
+    auto reportList = JSON::Array::create();
+    reportList->pushObject(reportObject);
+
+    auto report = FormData::create(reportList->toJSONString().utf8());
+    PingLoader::sendViolationReport(frame, endpointURL, WTFMove(report), ViolationReportType::StandardReportingAPIViolation);
+}
+
+// https://html.spec.whatwg.org/multipage/origin.html#coop-violation-navigation-to
+void sendViolationReportWhenNavigatingToCOOPResponse(Frame& frame, CrossOriginOpenerPolicy coop, COOPDisposition disposition, const URL& coopURL, const URL& previousResponseURL, const SecurityOrigin& coopOrigin, const SecurityOrigin& previousResponseOrigin, const String& referrer, const String& userAgent)
+{
+    sendCOOPViolationReport(frame, coop, disposition, coopURL, coopOrigin, userAgent, [&](auto& body) {
+        body.setString("previousResponseURL"_s, coopOrigin.isSameOriginAs(previousResponseOrigin) ? sanitizeReferrerForURLReport(previousResponseURL) : String());
+        body.setString("type"_s, "navigation-to-response"_s);
+        body.setString("referrer"_s, referrer);
+    });
+}
+
+// https://html.spec.whatwg.org/multipage/origin.html#coop-violation-navigation-from
+void sendViolationReportWhenNavigatingAwayFromCOOPResponse(Frame& frame, CrossOriginOpenerPolicy coop, COOPDisposition disposition, const URL& coopURL, const URL& nextResponseURL, const SecurityOrigin& coopOrigin, const SecurityOrigin& nextResponseOrigin, bool isCOOPResponseNavigationSource, const String& userAgent)
+{
+    sendCOOPViolationReport(frame, coop, disposition, coopURL, coopOrigin, userAgent, [&](auto& body) {
+        body.setString("nextResponseURL"_s, coopOrigin.isSameOriginAs(nextResponseOrigin) || isCOOPResponseNavigationSource ? sanitizeReferrerForURLReport(nextResponseURL) : String());
+        body.setString("type"_s, "navigation-from-response"_s);
+    });
 }
 
 } // namespace WebCore

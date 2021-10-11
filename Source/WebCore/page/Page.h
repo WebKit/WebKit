@@ -138,6 +138,7 @@ class PointerCaptureController;
 class PointerLockController;
 class ProgressTracker;
 class RenderObject;
+class ReportingEndpointsCache;
 class ResourceUsageOverlay;
 class RenderingUpdateScheduler;
 class ScrollLatchingController;
@@ -303,6 +304,8 @@ public:
     WEBCORE_EXPORT void setRemoteInspectionNameOverride(const String&);
     void remoteInspectorInformationDidChange() const;
 #endif
+
+    ReportingEndpointsCache* reportingEndpointsCache() { return m_reportingEndpointsCache.get(); }
 
     Chrome& chrome() const { return *m_chrome; }
     DragCaretController& dragCaretController() const { return *m_dragCaretController; }
@@ -1193,6 +1196,8 @@ private:
 
     const bool m_httpsUpgradeEnabled { true };
     mutable MediaSessionGroupIdentifier m_mediaSessionGroupIdentifier;
+
+    RefPtr<ReportingEndpointsCache> m_reportingEndpointsCache;
 
 #if ENABLE(IMAGE_ANALYSIS)
     // FIXME: These should be refactored to use a weak hash map of HTMLElement to std::pair<TextRecognitionResult, IntSize>.

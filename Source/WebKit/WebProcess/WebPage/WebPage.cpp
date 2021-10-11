@@ -229,6 +229,7 @@
 #include <WebCore/RenderTheme.h>
 #include <WebCore/RenderTreeAsText.h>
 #include <WebCore/RenderView.h>
+#include <WebCore/ReportingEndpointsCache.h>
 #include <WebCore/ResourceLoadStatistics.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/ResourceResponse.h>
@@ -603,6 +604,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     pageConfiguration.pluginInfoProvider = &WebPluginInfoProvider::singleton();
     pageConfiguration.storageNamespaceProvider = WebStorageNamespaceProvider::getOrCreate(*m_pageGroup);
     pageConfiguration.visitedLinkStore = VisitedLinkTableController::getOrCreate(parameters.visitedLinkTableID);
+    pageConfiguration.reportingEndpointsCache = &WebProcess::singleton().reportingEndpointsCache();
 
 #if ENABLE(APPLE_PAY)
     pageConfiguration.paymentCoordinatorClient = new WebPaymentCoordinator(*this);

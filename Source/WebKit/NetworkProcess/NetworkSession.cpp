@@ -416,7 +416,9 @@ void NetworkSession::CachedNetworkResourceLoader::expirationTimerFired()
         return;
 
     auto loader = session->takeLoaderAwaitingWebProcessTransfer(m_loader->identifier());
-    ASSERT_UNUSED(loader, loader);
+    ASSERT(loader);
+    if (loader)
+        loader->abort();
 }
 
 void NetworkSession::addLoaderAwaitingWebProcessTransfer(Ref<NetworkResourceLoader>&& loader)

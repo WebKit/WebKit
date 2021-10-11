@@ -175,7 +175,6 @@ void NetworkConnectionToWebProcess::didCleanupResourceLoader(NetworkResourceLoad
         return;
     }
 
-    ASSERT(m_networkResourceLoaders.get(loader.coreIdentifier()) == &loader);
     m_networkResourceLoaders.remove(loader.coreIdentifier());
 }
 

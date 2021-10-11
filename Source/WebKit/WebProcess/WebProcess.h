@@ -93,6 +93,7 @@ class CPUMonitor;
 class CertificateInfo;
 class PageGroup;
 class RegistrableDomain;
+class ReportingEndpointsCache;
 class ResourceRequest;
 class UserGestureToken;
 
@@ -339,6 +340,7 @@ public:
     WebBroadcastChannelRegistry& broadcastChannelRegistry() { return m_broadcastChannelRegistry.get(); }
     WebCookieJar& cookieJar() { return m_cookieJar.get(); }
     WebSocketChannelManager& webSocketChannelManager() { return m_webSocketChannelManager; }
+    WebCore::ReportingEndpointsCache& reportingEndpointsCache() { return m_reportingEndpointsCache.get(); }
 
 #if PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)
     float backlightLevel() const { return m_backlightLevel; }
@@ -661,6 +663,7 @@ private:
     Ref<WebCacheStorageProvider> m_cacheStorageProvider;
     Ref<WebBroadcastChannelRegistry> m_broadcastChannelRegistry;
     Ref<WebCookieJar> m_cookieJar;
+    Ref<WebCore::ReportingEndpointsCache> m_reportingEndpointsCache;
     WebSocketChannelManager m_webSocketChannelManager;
 
     std::unique_ptr<LibWebRTCNetwork> m_libWebRTCNetwork;

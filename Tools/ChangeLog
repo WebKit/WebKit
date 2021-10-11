@@ -1,3 +1,23 @@
+2021-09-10  Chris Dumez  <cdumez@apple.com>
+
+        Implement navigation reporting for Cross-Origin-Opener-Policy
+        https://bugs.webkit.org/show_bug.cgi?id=230046
+
+        Reviewed by Alex Christensen.
+
+        Fix issue where [DumpJSConsoleLogInStdErr] was not working for tests that process-swap
+        due to COOP. Some data members on InjectedBundle such as m_dumpJSConsoleLogInStdErr
+        were only set in didReceiveMessageToPage(), before calling beginTesting(). However, in
+        case of process-swap, beginTesting() gets called a second time in the new process, from
+        InjectedBundle::didCreatePage() with BegingTestingMode::Resume. As a result, the
+        m_dumpJSConsoleLogInStdErr flag was not getting set in the new process' injected bundle
+        after a process-swap. To address the issue, those data members now get initialized in
+        beginTesting() instead.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::didReceiveMessageToPage):
+        (WTR::InjectedBundle::beginTesting):
+
 2021-08-31  Chris Dumez  <cdumez@apple.com>
 
         Enable SharedArrayBuffer support when COOP/COEP headers are used

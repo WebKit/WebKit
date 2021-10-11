@@ -192,9 +192,6 @@ void InjectedBundle::didReceiveMessageToPage(WKBundlePageRef page, WKStringRef m
     if (WKStringIsEqualToUTF8CString(messageName, "BeginTest")) {
         ASSERT(messageBody);
         auto messageBodyDictionary = dictionaryValue(messageBody);
-        m_dumpPixels = booleanValue(messageBodyDictionary, "DumpPixels");
-        m_timeout = Seconds::fromMilliseconds(uint64Value(messageBodyDictionary, "Timeout"));
-        m_dumpJSConsoleLogInStdErr = booleanValue(messageBodyDictionary, "DumpJSConsoleLogInStdErr");
         WKBundlePagePostMessage(page, toWK("Ack").get(), toWK("BeginTest").get());
         beginTesting(messageBodyDictionary, BegingTestingMode::New);
         return;
@@ -504,6 +501,10 @@ void InjectedBundle::didReceiveMessageToPage(WKBundlePageRef page, WKStringRef m
 void InjectedBundle::beginTesting(WKDictionaryRef settings, BegingTestingMode testingMode)
 {
     m_state = Testing;
+
+    m_dumpPixels = booleanValue(settings, "DumpPixels");
+    m_timeout = Seconds::fromMilliseconds(uint64Value(settings, "Timeout"));
+    m_dumpJSConsoleLogInStdErr = booleanValue(settings, "DumpJSConsoleLogInStdErr");
 
     m_pixelResult.clear();
     m_repaintRects.clear();

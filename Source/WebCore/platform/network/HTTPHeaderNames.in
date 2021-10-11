@@ -83,6 +83,7 @@ Range
 Referer
 Referrer-Policy
 Refresh
+Report-To
 Sec-WebSocket-Accept
 Sec-WebSocket-Extensions
 Sec-WebSocket-Key

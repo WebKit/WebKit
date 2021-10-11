@@ -814,6 +814,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     loader/PrivateClickMeasurement.h
     loader/ProgressTracker.h
     loader/ProgressTrackerClient.h
+    loader/ReportingEndpointsCache.h
     loader/ResourceCryptographicDigest.h
     loader/ResourceLoadInfo.h
     loader/ResourceLoadNotifier.h

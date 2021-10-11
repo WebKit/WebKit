@@ -42,6 +42,7 @@
 #include "PerformanceLoggingClient.h"
 #include "PluginInfoProvider.h"
 #include "ProgressTrackerClient.h"
+#include "ReportingEndpointsCache.h"
 #include "SocketProvider.h"
 #include "SpeechRecognitionProvider.h"
 #include "SpeechSynthesisClient.h"
