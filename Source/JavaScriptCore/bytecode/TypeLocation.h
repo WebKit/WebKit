@@ -50,7 +50,7 @@ public:
     GlobalVariableID m_globalVariableID;
     RefPtr<TypeSet> m_instructionTypeSet;
     RefPtr<TypeSet> m_globalTypeSet;
-    intptr_t m_sourceID;
+    SourceID m_sourceID;
     unsigned m_divotStart;
     unsigned m_divotEnd;
     unsigned m_divotForFunctionOffsetIfReturnStatement;

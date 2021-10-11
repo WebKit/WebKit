@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2021 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,40 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-
-#include "config.h"
-#include "TypeLocationCache.h"
-
-#include "ControlFlowProfiler.h"
-#include "TypeProfiler.h"
-#include "VM.h"
+#pragma once
 
 namespace JSC {
 
-std::pair<TypeLocation*, bool> TypeLocationCache::getTypeLocation(GlobalVariableID globalVariableID, SourceID sourceID, unsigned start, unsigned end, RefPtr<TypeSet>&& globalTypeSet, VM* vm)
-{
-    LocationKey key;
-    key.m_globalVariableID = globalVariableID;
-    key.m_sourceID = sourceID;
-    key.m_start = start;
-    key.m_end = end;
-
-    bool isNewLocation = false;
-    if (m_locationMap.find(key) == m_locationMap.end()) {
-        ASSERT(vm->typeProfiler());
-        TypeLocation* location = vm->typeProfiler()->nextTypeLocation();
-        location->m_globalVariableID = globalVariableID;
-        location->m_sourceID = sourceID;
-        location->m_divotStart = start;
-        location->m_divotEnd = end;
-        location->m_globalTypeSet = WTFMove(globalTypeSet);
-
-        m_locationMap[key] = location;
-        isNewLocation = true;
-    }
-
-    TypeLocation* location = m_locationMap.find(key)->second;
-    return std::pair<TypeLocation*, bool>(location, isNewLocation);
-}
+using SourceID = uint32_t;
 
 } // namespace JSC

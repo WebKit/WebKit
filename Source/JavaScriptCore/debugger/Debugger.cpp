@@ -350,7 +350,7 @@ void Debugger::toggleBreakpoint(CodeBlock* codeBlock, Breakpoint& breakpoint, Br
 
     ScriptExecutable* executable = codeBlock->ownerExecutable();
 
-    SourceID sourceID = static_cast<SourceID>(executable->sourceID());
+    SourceID sourceID = executable->sourceID();
     if (breakpoint.sourceID() != sourceID)
         return;
 
@@ -875,7 +875,7 @@ void Debugger::pauseIfNeeded(JSGlobalObject* globalObject)
     if (m_suppressAllPauses)
         return;
 
-    intptr_t sourceID = DebuggerCallFrame::sourceIDForCallFrame(m_currentCallFrame);
+    SourceID sourceID = DebuggerCallFrame::sourceIDForCallFrame(m_currentCallFrame);
 
     auto blackboxTypeIterator = m_blackboxedScripts.find(sourceID);
     if (blackboxTypeIterator != m_blackboxedScripts.end() && blackboxTypeIterator->value == BlackboxType::Ignored)

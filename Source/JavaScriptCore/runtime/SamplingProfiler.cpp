@@ -918,7 +918,7 @@ unsigned SamplingProfiler::StackFrame::functionStartColumn()
     return std::numeric_limits<unsigned>::max();
 }
 
-intptr_t SamplingProfiler::StackFrame::sourceID()
+SourceID SamplingProfiler::StackFrame::sourceID()
 {
     switch (frameType) {
     case FrameType::Unknown:

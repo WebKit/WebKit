@@ -148,7 +148,7 @@ public:
         String displayNameForJSONTests(VM&); // Used for JSC stress tests because they want the "(anonymous function)" string for anonymous functions and they want "(eval)" for eval'd code.
         int functionStartLine();
         unsigned functionStartColumn();
-        intptr_t sourceID();
+        SourceID sourceID();
         String url();
     };
 

@@ -947,6 +947,7 @@
 		534E03541E53BD2900213F64 /* IntrinsicGetterAccessCase.h in Headers */ = {isa = PBXBuildFile; fileRef = 534E03531E53BD2900213F64 /* IntrinsicGetterAccessCase.h */; };
 		534E03561E53BEDE00213F64 /* ProxyableAccessCase.h in Headers */ = {isa = PBXBuildFile; fileRef = 534E03551E53BEDE00213F64 /* ProxyableAccessCase.h */; };
 		534E03581E53BF2F00213F64 /* GetterSetterAccessCase.h in Headers */ = {isa = PBXBuildFile; fileRef = 534E03571E53BF2F00213F64 /* GetterSetterAccessCase.h */; };
+		5350356527147E5A00EC1A7E /* SourceID.h in Headers */ = {isa = PBXBuildFile; fileRef = 5350356427147E5900EC1A7E /* SourceID.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		53529A4C1C457B75000B49C6 /* APIUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 53529A4B1C457B75000B49C6 /* APIUtils.h */; };
 		535557141D9D9EA5006D583B /* WasmMemory.h in Headers */ = {isa = PBXBuildFile; fileRef = 535557131D9D9EA5006D583B /* WasmMemory.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		535C24611F78928E006EC40E /* create_regex_tables in Headers */ = {isa = PBXBuildFile; fileRef = A718F8211178EB4B002465A7 /* create_regex_tables */; };
@@ -3765,6 +3766,7 @@
 		534E03531E53BD2900213F64 /* IntrinsicGetterAccessCase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IntrinsicGetterAccessCase.h; sourceTree = "<group>"; };
 		534E03551E53BEDE00213F64 /* ProxyableAccessCase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProxyableAccessCase.h; sourceTree = "<group>"; };
 		534E03571E53BF2F00213F64 /* GetterSetterAccessCase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GetterSetterAccessCase.h; sourceTree = "<group>"; };
+		5350356427147E5900EC1A7E /* SourceID.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SourceID.h; sourceTree = "<group>"; };
 		53529A4B1C457B75000B49C6 /* APIUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIUtils.h; sourceTree = "<group>"; };
 		535557131D9D9EA5006D583B /* WasmMemory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WasmMemory.h; sourceTree = "<group>"; };
 		535557151D9DFA32006D583B /* WasmMemory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WasmMemory.cpp; sourceTree = "<group>"; };
@@ -8822,6 +8824,7 @@
 				865DA0C725B8960C00875772 /* SetPrivateBrandStatus.h */,
 				865DA0C625B8959E00875772 /* SetPrivateBrandVariant.cpp */,
 				865DA0C425B8957400875772 /* SetPrivateBrandVariant.h */,
+				5350356427147E5900EC1A7E /* SourceID.h */,
 				0FD82E84141F3FDA00179C94 /* SpeculatedType.cpp */,
 				0FD82E4F141DAEA100179C94 /* SpeculatedType.h */,
 				0FB438A219270B1D00E1FBC9 /* StructureSet.cpp */,
@@ -10729,6 +10732,7 @@
 				E3F23A7F1ECF13EE00978D99 /* SnippetSlowPathCalls.h in Headers */,
 				14201D591DECF26A00904BD3 /* SourceCode.h in Headers */,
 				70B791911C024A13002481E2 /* SourceCodeKey.h in Headers */,
+				5350356527147E5A00EC1A7E /* SourceID.h in Headers */,
 				2D342F36F7244096804ADB24 /* SourceOrigin.h in Headers */,
 				BC18C4630E16F5CD00B34460 /* SourceProvider.h in Headers */,
 				E49DC16C12EF294E00184A1F /* SourceProviderCache.h in Headers */,

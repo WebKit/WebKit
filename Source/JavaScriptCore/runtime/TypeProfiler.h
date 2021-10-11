@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "SourceID.h"
 #include "TypeLocation.h"
 #include "TypeLocationCache.h"
 #include <wtf/Bag.h>
@@ -50,21 +51,21 @@ struct QueryKey {
         , m_searchDescriptor(TypeProfilerSearchDescriptorFunctionReturn)
     { }
 
-    QueryKey(intptr_t sourceID, unsigned divot, TypeProfilerSearchDescriptor searchDescriptor)
+    QueryKey(SourceID sourceID, unsigned divot, TypeProfilerSearchDescriptor searchDescriptor)
         : m_sourceID(sourceID)
         , m_divot(divot)
         , m_searchDescriptor(searchDescriptor)
     { }
 
     QueryKey(WTF::HashTableDeletedValueType)
-        : m_sourceID(INTPTR_MAX)
+        : m_sourceID(UINT_MAX)
         , m_divot(UINT_MAX)
         , m_searchDescriptor(TypeProfilerSearchDescriptorFunctionReturn)
     { }
 
     bool isHashTableDeletedValue() const 
     { 
-        return m_sourceID == INTPTR_MAX 
+        return m_sourceID == UINT_MAX
             && m_divot == UINT_MAX
             && m_searchDescriptor == TypeProfilerSearchDescriptorFunctionReturn;
     }
@@ -82,7 +83,7 @@ struct QueryKey {
         return hash;
     }
 
-    intptr_t m_sourceID;
+    SourceID m_sourceID;
     unsigned m_divot;
     TypeProfilerSearchDescriptor m_searchDescriptor;
 };
@@ -116,17 +117,17 @@ class TypeProfiler {
 public:
     TypeProfiler();
     void logTypesForTypeLocation(TypeLocation*, VM&);
-    JS_EXPORT_PRIVATE String typeInformationForExpressionAtOffset(TypeProfilerSearchDescriptor, unsigned offset, intptr_t sourceID, VM&);
+    JS_EXPORT_PRIVATE String typeInformationForExpressionAtOffset(TypeProfilerSearchDescriptor, unsigned offset, SourceID, VM&);
     void insertNewLocation(TypeLocation*);
     TypeLocationCache* typeLocationCache() { return &m_typeLocationCache; }
-    TypeLocation* findLocation(unsigned divot, intptr_t sourceID, TypeProfilerSearchDescriptor, VM&);
+    TypeLocation* findLocation(unsigned divot, SourceID, TypeProfilerSearchDescriptor, VM&);
     GlobalVariableID getNextUniqueVariableID() { return m_nextUniqueVariableID++; }
     TypeLocation* nextTypeLocation();
     void invalidateTypeSetCache(VM&);
     void dumpTypeProfilerData(VM&);
     
 private:
-    typedef HashMap<intptr_t, Vector<TypeLocation*>> SourceIDToLocationBucketMap;
+    typedef HashMap<SourceID, Vector<TypeLocation*>> SourceIDToLocationBucketMap;
     SourceIDToLocationBucketMap m_bucketMap;
     TypeLocationCache m_typeLocationCache;
     typedef HashMap<QueryKey, TypeLocation*> TypeLocationQueryCache;

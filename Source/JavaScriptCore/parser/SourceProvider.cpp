@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2013-2021 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,8 +26,6 @@
 #include "config.h"
 #include "SourceProvider.h"
 
-#include <wtf/Lock.h>
-
 namespace JSC {
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StringSourceProvider);
@@ -44,13 +42,10 @@ SourceProvider::~SourceProvider()
 {
 }
 
-static Lock providerIdLock;
-
 void SourceProvider::getID()
 {
-    Locker locker { providerIdLock };
     if (!m_id) {
-        static intptr_t nextProviderID = 0;
+        static std::atomic<SourceID> nextProviderID = nullID;
         m_id = ++nextProviderID;
         RELEASE_ASSERT(m_id);
     }

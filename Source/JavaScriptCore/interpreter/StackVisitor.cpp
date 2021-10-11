@@ -348,7 +348,7 @@ String StackVisitor::Frame::toString() const
     return makeString(functionName, separator, sourceURL, ':', line, ':', column);
 }
 
-intptr_t StackVisitor::Frame::sourceID()
+SourceID StackVisitor::Frame::sourceID()
 {
     if (CodeBlock* codeBlock = this->codeBlock())
         return codeBlock->ownerExecutable()->sourceID();

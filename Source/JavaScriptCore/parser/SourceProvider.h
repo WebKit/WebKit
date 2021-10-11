@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -79,7 +79,7 @@ class UnlinkedFunctionCodeBlock;
         TextPosition startPosition() const { return m_startPosition; }
         SourceProviderSourceType sourceType() const { return m_sourceType; }
 
-        intptr_t asID()
+        SourceID asID()
         {
             if (!m_id)
                 getID();
@@ -98,7 +98,7 @@ class UnlinkedFunctionCodeBlock;
         String m_sourceURLDirective;
         String m_sourceMappingURLDirective;
         TextPosition m_startPosition;
-        uintptr_t m_id { 0 };
+        SourceID m_id { 0 };
     };
 
     DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StringSourceProvider);

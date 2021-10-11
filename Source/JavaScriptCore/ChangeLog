@@ -1,3 +1,80 @@
+2021-10-11  Keith Miller  <keith_miller@apple.com>
+
+        SourceID should have a type name and only be 32-bits
+        https://bugs.webkit.org/show_bug.cgi?id=231436
+
+        Reviewed by Filip Pizlo.
+
+        This patch gives SourceID a proper type name and shrinks it to
+        32-bits on 64-bit systems. Shrinking the size makes room on
+        SourceProvider for metadata in a future patch I'm working on.
+        It's also pretty unlikely that any system has more than ~4 billion
+        script tags, evals, wasm modules so shinking the size is unlikely
+        to cause any debugger/profiling issues.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/TypeLocation.h:
+        * debugger/Debugger.cpp:
+        (JSC::Debugger::toggleBreakpoint):
+        (JSC::Debugger::pauseIfNeeded):
+        * debugger/DebuggerLocation.h:
+        (JSC::DebuggerLocation::DebuggerLocation):
+        * debugger/DebuggerPrimitives.h:
+        * inspector/JavaScriptCallFrame.h:
+        (Inspector::JavaScriptCallFrame::sourceID const):
+        * inspector/ScriptCallStackFactory.cpp:
+        (Inspector::CreateScriptCallStackFunctor::operator() const):
+        (Inspector::createScriptCallStackFromException):
+        * interpreter/StackVisitor.cpp:
+        (JSC::StackVisitor::Frame::sourceID):
+        * interpreter/StackVisitor.h:
+        * parser/Nodes.h:
+        (JSC::ScopeNode::sourceID const):
+        * parser/SourceCode.h:
+        (JSC::SourceCode::SourceCode):
+        (JSC::SourceCode::firstLine const):
+        (JSC::SourceCode::startColumn const):
+        (JSC::SourceCode::providerID const):
+        (JSC::SourceCode::provider const):
+        (JSC::SourceCode::operator== const):
+        (JSC::SourceCode::operator!= const):
+        (JSC::makeSource):
+        (JSC::SourceCode::subExpression const):
+        * parser/SourceProvider.cpp:
+        (JSC::SourceProvider::getID):
+        * parser/SourceProvider.h:
+        (JSC::SourceProvider::asID):
+        * runtime/ControlFlowProfiler.cpp:
+        (JSC::ControlFlowProfiler::getBasicBlockLocation):
+        (JSC::ControlFlowProfiler::getBasicBlocksForSourceID const):
+        (JSC::ControlFlowProfiler::hasBasicBlockAtTextOffsetBeenExecuted):
+        (JSC::ControlFlowProfiler::basicBlockExecutionCountAtTextOffset):
+        * runtime/ControlFlowProfiler.h:
+        * runtime/FunctionHasExecutedCache.cpp:
+        (JSC::FunctionHasExecutedCache::hasExecutedAtOffset):
+        (JSC::FunctionHasExecutedCache::insertUnexecutedRange):
+        (JSC::FunctionHasExecutedCache::removeUnexecutedRange):
+        (JSC::FunctionHasExecutedCache::getFunctionRanges):
+        * runtime/FunctionHasExecutedCache.h:
+        * runtime/SamplingProfiler.cpp:
+        (JSC::SamplingProfiler::StackFrame::sourceID):
+        * runtime/SamplingProfiler.h:
+        * runtime/ScriptExecutable.h:
+        (JSC::ScriptExecutable::sourceID const):
+        * runtime/StackFrame.cpp:
+        (JSC::StackFrame::sourceID const):
+        * runtime/StackFrame.h:
+        * runtime/TypeLocationCache.cpp:
+        (JSC::TypeLocationCache::getTypeLocation):
+        * runtime/TypeLocationCache.h:
+        * runtime/TypeProfiler.cpp:
+        (JSC::TypeProfiler::typeInformationForExpressionAtOffset):
+        (JSC::TypeProfiler::findLocation):
+        * runtime/TypeProfiler.h:
+        (JSC::QueryKey::QueryKey):
+        (JSC::QueryKey::isHashTableDeletedValue const):
+
 2021-10-11  Geza Lore  <glore@igalia.com>
 
         [JSC][32bit] Fix profiling in baseline

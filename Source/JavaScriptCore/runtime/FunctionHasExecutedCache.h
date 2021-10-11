@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "SourceID.h"
 #include <wtf/HashMethod.h>
 #include <wtf/StdUnorderedMap.h>
 #include <wtf/Vector.h>
@@ -48,10 +49,10 @@ public:
         unsigned m_end;
     };
 
-    bool hasExecutedAtOffset(intptr_t id, unsigned offset);
-    void insertUnexecutedRange(intptr_t id, unsigned start, unsigned end);
-    void removeUnexecutedRange(intptr_t id, unsigned start, unsigned end);
-    Vector<std::tuple<bool, unsigned, unsigned>> getFunctionRanges(intptr_t id);
+    bool hasExecutedAtOffset(SourceID, unsigned offset);
+    void insertUnexecutedRange(SourceID, unsigned start, unsigned end);
+    void removeUnexecutedRange(SourceID, unsigned start, unsigned end);
+    Vector<std::tuple<bool, unsigned, unsigned>> getFunctionRanges(SourceID);
 
 private:
     using RangeMap = StdUnorderedMap<FunctionRange, bool, HashMethod<FunctionRange>>;

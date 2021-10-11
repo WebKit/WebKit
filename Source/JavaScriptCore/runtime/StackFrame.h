@@ -47,7 +47,7 @@ public:
     
     void computeLineAndColumn(unsigned& line, unsigned& column) const;
     String functionName(VM&) const;
-    intptr_t sourceID() const;
+    SourceID sourceID() const;
     String sourceURL() const;
     String toString(VM&) const;
 

@@ -44,7 +44,7 @@ ControlFlowProfiler::~ControlFlowProfiler()
     }
 }
 
-BasicBlockLocation* ControlFlowProfiler::getBasicBlockLocation(intptr_t sourceID, int startOffset, int endOffset)
+BasicBlockLocation* ControlFlowProfiler::getBasicBlockLocation(SourceID sourceID, int startOffset, int endOffset)
 {
     auto addResult = m_sourceIDBuckets.add(sourceID, BlockLocationCache());
     BlockLocationCache& blockLocationCache = addResult.iterator->value;
@@ -66,7 +66,7 @@ void ControlFlowProfiler::dumpData() const
     }
 }
 
-Vector<BasicBlockRange> ControlFlowProfiler::getBasicBlocksForSourceID(intptr_t sourceID, VM& vm) const 
+Vector<BasicBlockRange> ControlFlowProfiler::getBasicBlocksForSourceID(SourceID sourceID, VM& vm) const
 {
     Vector<BasicBlockRange> result(0);
     auto bucketFindResult = m_sourceIDBuckets.find(sourceID);
@@ -120,14 +120,14 @@ static BasicBlockRange findBasicBlockAtTextOffset(int offset, const Vector<Basic
     return bestRange;
 }
 
-bool ControlFlowProfiler::hasBasicBlockAtTextOffsetBeenExecuted(int offset, intptr_t sourceID, VM& vm)
+bool ControlFlowProfiler::hasBasicBlockAtTextOffsetBeenExecuted(int offset, SourceID sourceID, VM& vm)
 {
     const Vector<BasicBlockRange>& blocks = getBasicBlocksForSourceID(sourceID, vm);
     BasicBlockRange range = findBasicBlockAtTextOffset(offset, blocks);
     return range.m_hasExecuted;
 }
 
-size_t ControlFlowProfiler::basicBlockExecutionCountAtTextOffset(int offset, intptr_t sourceID, VM& vm)
+size_t ControlFlowProfiler::basicBlockExecutionCountAtTextOffset(int offset, SourceID sourceID, VM& vm)
 {
     const Vector<BasicBlockRange>& blocks = getBasicBlocksForSourceID(sourceID, vm);
     BasicBlockRange range = findBasicBlockAtTextOffset(offset, blocks);

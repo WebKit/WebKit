@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "SourceID.h"
 #include "TypeLocation.h"
 #include <wtf/FastMalloc.h>
 #include <wtf/HashMethod.h>
@@ -52,12 +53,12 @@ public:
         }
 
         GlobalVariableID m_globalVariableID;
-        intptr_t m_sourceID;
+        SourceID m_sourceID;
         unsigned m_start;
         unsigned m_end;
     };
 
-    std::pair<TypeLocation*, bool> getTypeLocation(GlobalVariableID, intptr_t, unsigned start, unsigned end, RefPtr<TypeSet>&&, VM*);
+    std::pair<TypeLocation*, bool> getTypeLocation(GlobalVariableID, SourceID, unsigned start, unsigned end, RefPtr<TypeSet>&&, VM*);
 private:
     using LocationMap = StdUnorderedMap<LocationKey, TypeLocation*, HashMethod<LocationKey>>;
     LocationMap m_locationMap;

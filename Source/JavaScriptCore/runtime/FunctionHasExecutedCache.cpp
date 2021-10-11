@@ -30,7 +30,7 @@
 
 namespace JSC {
 
-bool FunctionHasExecutedCache::hasExecutedAtOffset(intptr_t id, unsigned offset)
+bool FunctionHasExecutedCache::hasExecutedAtOffset(SourceID id, unsigned offset)
 {
     if (m_rangeMap.find(id) == m_rangeMap.end())
         return false;
@@ -49,7 +49,7 @@ bool FunctionHasExecutedCache::hasExecutedAtOffset(intptr_t id, unsigned offset)
     return hasExecuted;
 }
 
-void FunctionHasExecutedCache::insertUnexecutedRange(intptr_t id, unsigned start, unsigned end) 
+void FunctionHasExecutedCache::insertUnexecutedRange(SourceID id, unsigned start, unsigned end)
 {
     if (m_rangeMap.find(id) == m_rangeMap.end()) {
         RangeMap map;
@@ -66,7 +66,7 @@ void FunctionHasExecutedCache::insertUnexecutedRange(intptr_t id, unsigned start
         map[range] = false;
 }
 
-void FunctionHasExecutedCache::removeUnexecutedRange(intptr_t id, unsigned start, unsigned end)
+void FunctionHasExecutedCache::removeUnexecutedRange(SourceID id, unsigned start, unsigned end)
 {
     // FIXME: We should never have an instance where we return here, but currently do in some situations. Find out why.
     if (m_rangeMap.find(id) == m_rangeMap.end())
@@ -80,7 +80,7 @@ void FunctionHasExecutedCache::removeUnexecutedRange(intptr_t id, unsigned start
     map[range] = true;
 }
 
-Vector<std::tuple<bool, unsigned, unsigned>> FunctionHasExecutedCache::getFunctionRanges(intptr_t id)
+Vector<std::tuple<bool, unsigned, unsigned>> FunctionHasExecutedCache::getFunctionRanges(SourceID id)
 {
     Vector<std::tuple<bool, unsigned, unsigned>> ranges(0);
     auto findResult = m_rangeMap.find(id);
