@@ -26,6 +26,9 @@
 #import "config.h"
 #import "PrivateClickMeasurementXPCUtilities.h"
 
+#import "PrivateClickMeasurementManagerInterface.h"
+#import <wtf/OSObjectPtr.h>
+
 namespace WebKit {
 
 namespace PCM {

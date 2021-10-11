@@ -30,6 +30,7 @@
 #import <WebCore/HTTPHeaderValues.h>
 #import <WebCore/MIMETypeRegistry.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
+#import <wtf/BlockPtr.h>
 #import <wtf/NeverDestroyed.h>
 
 static RetainPtr<SecTrustRef>& allowedLocalTestServerTrust()
@@ -59,7 +60,7 @@ static bool trustsServerForLocalTests(NSURLAuthenticationChallenge *challenge)
 
 - (void)URLSession:(NSURLSession *)session dataTask:(NSURLSessionDataTask *)dataTask didReceiveResponse:(NSURLResponse *)response completionHandler:(void (^)(NSURLSessionResponseDisposition disposition))completionHandler
 {
-    if (MIMETypeRegistry::isSupportedJSONMIMEType(response.MIMEType))
+    if (WebCore::MIMETypeRegistry::isSupportedJSONMIMEType(response.MIMEType))
         return completionHandler(NSURLSessionResponseAllow);
     completionHandler(NSURLSessionResponseCancel);
 }

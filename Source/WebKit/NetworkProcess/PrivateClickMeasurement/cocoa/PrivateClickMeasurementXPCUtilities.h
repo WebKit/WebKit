@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <wtf/Vector.h>
 #include <wtf/spi/darwin/XPCSPI.h>
 
 namespace WebKit {

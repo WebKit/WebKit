@@ -32,6 +32,7 @@
 #if ENABLE(ENCRYPTED_MEDIA)
 
 #include "Logging.h"
+#include "MediaPlayer.h"
 #include <wtf/HexNumber.h>
 #include <wtf/Scope.h>
 #include <wtf/StringPrintStream.h>

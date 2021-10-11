@@ -1,3 +1,18 @@
+2021-10-11  Alex Christensen  <achristensen@webkit.org>
+
+        Unified build fix
+        https://bugs.webkit.org/show_bug.cgi?id=231524
+
+        Reviewed by Chris Dumez.
+
+        This adds some missing includes and things to fix the build once I add some more files, making the unified build combine differently
+
+        * NetworkProcess/PrivateClickMeasurement/cocoa/PrivateClickMeasurementNetworkLoaderCocoa.mm:
+        (-[WKNetworkSessionDelegateAllowingOnlyNonRedirectedJSON URLSession:dataTask:didReceiveResponse:completionHandler:]):
+        * NetworkProcess/PrivateClickMeasurement/cocoa/PrivateClickMeasurementXPCUtilities.h:
+        * NetworkProcess/PrivateClickMeasurement/cocoa/PrivateClickMeasurementXPCUtilities.mm:
+        * Shared/EntryPointUtilities/Cocoa/Daemon/PCMDaemonEntryPoint.mm:
+
 2021-10-11  Per Arne Vollan <pvollan@apple.com>
 
         [macOS] Grant access in sandbox to 'system-privilege' for root
