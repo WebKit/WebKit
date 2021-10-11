@@ -24,12 +24,13 @@
 (version 1)
 (deny default (with partial-symbolication))
 (deny nvram*)
-(deny system-privilege)
 (allow system-audit file-read-metadata)
 
-;; Silence spurious logging due to rdar://20117923 and rdar://72366475
-(deny system-privilege (privilege-id PRIV_GLOBAL_PROC_INFO) (with no-report))
- 
+(with-filter (require-not (uid 0))
+    (deny system-privilege)
+    ;; Silence spurious logging due to rdar://20117923 and rdar://72366475
+    (deny system-privilege (privilege-id PRIV_GLOBAL_PROC_INFO) (with no-report)))
+
 #include "Shared/Sandbox/preferences.sb"
 
 ;;;

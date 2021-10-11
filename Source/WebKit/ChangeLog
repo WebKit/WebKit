@@ -1,3 +1,38 @@
+2021-10-11  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r283925. rdar://problem/84111635
+
+    [macOS] Grant access in sandbox to 'system-privilege' for root
+    https://bugs.webkit.org/show_bug.cgi?id=231501
+    <rdar://83959448>
+    
+    Reviewed by Brent Fulgham.
+    
+    When running as root, WebKit processes need access to 'system-privilege'.
+    
+    * GPUProcess/mac/com.apple.WebKit.GPUProcess.sb.in:
+    * NetworkProcess/mac/com.apple.WebKit.NetworkProcess.sb.in:
+    * WebAuthnProcess/mac/com.apple.WebKit.WebAuthnProcess.sb.in:
+    * WebProcess/com.apple.WebProcess.sb.in:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@283925 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-10-11  Per Arne Vollan <pvollan@apple.com>
+
+            [macOS] Grant access in sandbox to 'system-privilege' for root
+            https://bugs.webkit.org/show_bug.cgi?id=231501
+            <rdar://83959448>
+
+            Reviewed by Brent Fulgham.
+
+            When running as root, WebKit processes need access to 'system-privilege'.
+
+            * GPUProcess/mac/com.apple.WebKit.GPUProcess.sb.in:
+            * NetworkProcess/mac/com.apple.WebKit.NetworkProcess.sb.in:
+            * WebAuthnProcess/mac/com.apple.WebKit.WebAuthnProcess.sb.in:
+            * WebProcess/com.apple.WebProcess.sb.in:
+
 2021-10-06  Alan Coon  <alancoon@apple.com>
 
         Revert r283374. rdar://problem/83847918
