@@ -1,11 +1,7 @@
-CONSOLE MESSAGE: Cancelled load to https://127.0.0.1:9443/common/text-plain.txt?5770c451-7494-433b-8c09-b31f6ee4ffc8 because it violates the resource's Cross-Origin-Resource-Policy response header.
-CONSOLE MESSAGE: Fetch API cannot load https://127.0.0.1:9443/common/text-plain.txt?5770c451-7494-433b-8c09-b31f6ee4ffc8 due to access control checks.
-CONSOLE MESSAGE: Refused to display 'https://127.0.0.1:9443/common/blank.html?61cf891c-f480-4336-8e40-08917296c4b1' in a frame because of Cross-Origin-Embedder-Policy.
-CONSOLE MESSAGE: Refused to display 'https://localhost:9443/common/blank.html?99e6eced-bb02-418a-b988-2339189a16a2' in a frame because of Cross-Origin-Embedder-Policy.
-CONSOLE MESSAGE: Refused to display 'https://localhost:9443/common/blank.html?03fa3aa7-2433-4e5d-af85-f3b4581de86a' in a frame because of Cross-Origin-Embedder-Policy.
 
-FAIL subresource CORP assert_unreached: A report whose blockedURL is https://127.0.0.1:9443/common/text-plain.txt?5770c451-7494-433b-8c09-b31f6ee4ffc8 and url is https://localhost:9443/html/cross-origin-embedder-policy/resources/reporting-empty-frame.html?pipe=header(cross-origin-embedder-policy,require-corp;report-to=%22endpoint%22)|header(cross-origin-embedder-policy-report-only,require-corp;report-to=%22report-only-endpoint%22) is not found. Reached unreachable code
-FAIL navigation CORP assert_unreached: A report whose blockedURL is https://127.0.0.1:9443/common/blank.html?61cf891c-f480-4336-8e40-08917296c4b1 and url is https://localhost:9443/html/cross-origin-embedder-policy/resources/reporting-empty-frame.html?pipe=header(cross-origin-embedder-policy,require-corp;report-to=%22endpoint%22)|header(cross-origin-embedder-policy-report-only,require-corp;report-to=%22report-only-endpoint%22) is not found. Reached unreachable code
-FAIL COEP violation on nested frame navigation assert_unreached: A report whose blockedURL is https://localhost:9443/common/blank.html?99e6eced-bb02-418a-b988-2339189a16a2 and url is https://localhost:9443/html/cross-origin-embedder-policy/resources/reporting-empty-frame.html?pipe=header(cross-origin-embedder-policy,require-corp;report-to=%22endpoint%22)|header(cross-origin-embedder-policy-report-only,require-corp;report-to=%22report-only-endpoint%22) is not found. Reached unreachable code
-FAIL Two COEP headers, split inside report-to value assert_unreached: A report whose blockedURL is https://localhost:9443/common/blank.html?03fa3aa7-2433-4e5d-af85-f3b4581de86a and url is https://localhost:9443/html/cross-origin-embedder-policy/resources/reporting-empty-frame-multiple-headers.html.asis is not found. Reached unreachable code
+PASS subresource CORP
+PASS navigation CORP
+PASS COEP violation on nested frame navigation
+PASS Two COEP headers, split inside report-to value
+FAIL Shared worker fetch promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'worker.port.start')"
 

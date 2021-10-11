@@ -394,6 +394,7 @@ ResourceLoadInfo NetworkResourceLoader::resourceLoadInfo()
         case WebCore::FetchOptions::Destination::Audioworklet:
             return ResourceLoadInfo::Type::Other;
         case WebCore::FetchOptions::Destination::Document:
+        case WebCore::FetchOptions::Destination::Iframe:
             return ResourceLoadInfo::Type::Document;
         case WebCore::FetchOptions::Destination::Embed:
             return ResourceLoadInfo::Type::Object;
@@ -604,30 +605,47 @@ bool NetworkResourceLoader::shouldInterruptNavigationForCrossOriginEmbedderPolic
     ASSERT(isMainResource());
 
     // https://html.spec.whatwg.org/multipage/origin.html#check-a-navigation-response's-adherence-to-its-embedder-policy
-    if (m_parameters.parentCrossOriginEmbedderPolicy.value != WebCore::CrossOriginEmbedderPolicyValue::UnsafeNone && m_parameters.sourceOrigin) {
+    if (m_parameters.parentCrossOriginEmbedderPolicy.value == WebCore::CrossOriginEmbedderPolicyValue::RequireCORP || m_parameters.parentCrossOriginEmbedderPolicy.reportOnlyValue == WebCore::CrossOriginEmbedderPolicyValue::RequireCORP) {
         auto responseCOEP = WebCore::obtainCrossOriginEmbedderPolicy(response, nullptr);
-        if (responseCOEP.value != WebCore::CrossOriginEmbedderPolicyValue::RequireCORP) {
+        if (m_parameters.parentCrossOriginEmbedderPolicy.reportOnlyValue == WebCore::CrossOriginEmbedderPolicyValue::RequireCORP && responseCOEP.value != WebCore::CrossOriginEmbedderPolicyValue::RequireCORP) {
+            if (auto parentOrigin = m_parameters.parentOrigin(); parentOrigin && !m_parameters.parentCrossOriginEmbedderPolicy.reportOnlyReportingEndpoint.isEmpty())
+                send(Messages::WebPage::SendCOEPPolicyInheritenceViolation { m_parameters.webFrameID, parentOrigin->data(), m_parameters.parentCrossOriginEmbedderPolicy.reportOnlyReportingEndpoint, COEPDisposition::Reporting, "navigation"_s, m_firstResponseURL }, m_parameters.webPageID);
+        }
+
+        if (m_parameters.parentCrossOriginEmbedderPolicy.value != WebCore::CrossOriginEmbedderPolicyValue::UnsafeNone && responseCOEP.value != WebCore::CrossOriginEmbedderPolicyValue::RequireCORP) {
             String errorMessage = makeString("Refused to display '", response.url().stringCenterEllipsizedToLength(), "' in a frame because of Cross-Origin-Embedder-Policy.");
             send(Messages::WebPage::AddConsoleMessage { m_parameters.webFrameID,  MessageSource::Security, MessageLevel::Error, errorMessage, coreIdentifier() }, m_parameters.webPageID);
+            if (auto parentOrigin = m_parameters.parentOrigin(); parentOrigin && !m_parameters.parentCrossOriginEmbedderPolicy.reportingEndpoint.isEmpty())
+                send(Messages::WebPage::SendCOEPPolicyInheritenceViolation { m_parameters.webFrameID, parentOrigin->data(), m_parameters.parentCrossOriginEmbedderPolicy.reportingEndpoint, COEPDisposition::Enforce, "navigation"_s, m_firstResponseURL }, m_parameters.webPageID);
             return true;
         }
     }
+
     return false;
 }
 
+// https://html.spec.whatwg.org/multipage/origin.html#check-a-global-object's-embedder-policy
 bool NetworkResourceLoader::shouldInterruptWorkerLoadForCrossOriginEmbedderPolicy(const ResourceResponse& response)
 {
     if (m_parameters.options.destination != FetchOptions::Destination::Worker)
         return false;
 
-    if (m_parameters.crossOriginEmbedderPolicy.value != WebCore::CrossOriginEmbedderPolicyValue::UnsafeNone && m_parameters.sourceOrigin) {
+    if (m_parameters.crossOriginEmbedderPolicy.value == WebCore::CrossOriginEmbedderPolicyValue::RequireCORP || m_parameters.crossOriginEmbedderPolicy.reportOnlyValue == WebCore::CrossOriginEmbedderPolicyValue::RequireCORP) {
         auto responseCOEP = WebCore::obtainCrossOriginEmbedderPolicy(response, nullptr);
-        if (responseCOEP.value != WebCore::CrossOriginEmbedderPolicyValue::RequireCORP) {
+        if (m_parameters.crossOriginEmbedderPolicy.reportOnlyValue == WebCore::CrossOriginEmbedderPolicyValue::RequireCORP && responseCOEP.value == WebCore::CrossOriginEmbedderPolicyValue::UnsafeNone) {
+            if (m_parameters.sourceOrigin && !m_parameters.crossOriginEmbedderPolicy.reportOnlyReportingEndpoint.isEmpty())
+                send(Messages::WebPage::SendCOEPPolicyInheritenceViolation { m_parameters.webFrameID, m_parameters.sourceOrigin->data(), m_parameters.crossOriginEmbedderPolicy.reportOnlyReportingEndpoint, COEPDisposition::Reporting, "worker initialization"_s, m_firstResponseURL }, m_parameters.webPageID);
+        }
+
+        if (m_parameters.crossOriginEmbedderPolicy.value == WebCore::CrossOriginEmbedderPolicyValue::RequireCORP && responseCOEP.value == WebCore::CrossOriginEmbedderPolicyValue::UnsafeNone) {
             String errorMessage = makeString("Refused to load '", response.url().stringCenterEllipsizedToLength(), "' worker because of Cross-Origin-Embedder-Policy.");
             send(Messages::WebPage::AddConsoleMessage { m_parameters.webFrameID,  MessageSource::Security, MessageLevel::Error, errorMessage, coreIdentifier() }, m_parameters.webPageID);
+            if (m_parameters.sourceOrigin && !m_parameters.crossOriginEmbedderPolicy.reportingEndpoint.isEmpty())
+                send(Messages::WebPage::SendCOEPPolicyInheritenceViolation { m_parameters.webFrameID, m_parameters.sourceOrigin->data(), m_parameters.crossOriginEmbedderPolicy.reportingEndpoint, COEPDisposition::Enforce, "worker initialization"_s, m_firstResponseURL }, m_parameters.webPageID);
             return true;
         }
     }
+
     return false;
 }
 
@@ -639,6 +657,8 @@ void NetworkResourceLoader::didReceiveResponse(ResourceResponse&& receivedRespon
         didReceiveMainResourceResponse(receivedResponse);
 
     m_response = WTFMove(receivedResponse);
+    if (!m_firstResponseURL.isValid())
+        m_firstResponseURL = m_response.url();
 
     if (shouldCaptureExtraNetworkLoadMetrics() && m_networkLoadChecker) {
         auto information = m_networkLoadChecker->takeNetworkLoadInformation();
@@ -688,6 +708,18 @@ void NetworkResourceLoader::didReceiveResponse(ResourceResponse&& receivedRespon
     if (m_cacheEntryForValidation)
         return completionHandler(PolicyAction::Use);
 
+    if (m_networkLoadChecker) {
+        auto error = m_networkLoadChecker->validateResponse(m_networkLoad ? m_networkLoad->currentRequest() : originalRequest(), m_response);
+        if (!error.isNull()) {
+            LOADER_RELEASE_LOG_ERROR("didReceiveResponse: NetworkLoadChecker::validateResponse returned an error (error.domain=%" PUBLIC_LOG_STRING ", error.code=%d)", error.domain().utf8().data(), error.errorCode());
+            RunLoop::main().dispatch([protectedThis = makeRef(*this), error = WTFMove(error)] {
+                if (protectedThis->m_networkLoad)
+                    protectedThis->didFailLoading(error);
+            });
+            return completionHandler(PolicyAction::Ignore);
+        }
+    }
+
     if (isMainResource() && shouldInterruptLoadForCSPFrameAncestorsOrXFrameOptions(m_response)) {
         LOADER_RELEASE_LOG_ERROR("didReceiveResponse: Interrupting main resource load due to CSP frame-ancestors or X-Frame-Options");
         auto response = sanitizeResponseIfPossible(ResourceResponse { m_response }, ResourceResponse::SanitizationType::CrossOriginSafe);
@@ -703,18 +735,6 @@ void NetworkResourceLoader::didReceiveResponse(ResourceResponse&& receivedRespon
                 protectedThis->didFailLoading(ResourceError { errorDomainWebKitInternal, 0, url, "Worker load was blocked by Cross-Origin-Embedder-Policy"_s, ResourceError::Type::AccessControl });
         });
         return completionHandler(PolicyAction::Ignore);
-    }
-
-    if (m_networkLoadChecker) {
-        auto error = m_networkLoadChecker->validateResponse(m_networkLoad ? m_networkLoad->currentRequest() : originalRequest(), m_response);
-        if (!error.isNull()) {
-            LOADER_RELEASE_LOG_ERROR("didReceiveResponse: NetworkLoadChecker::validateResponse returned an error (error.domain=%" PUBLIC_LOG_STRING ", error.code=%d)", error.domain().utf8().data(), error.errorCode());
-            RunLoop::main().dispatch([protectedThis = makeRef(*this), error = WTFMove(error)] {
-                if (protectedThis->m_networkLoad)
-                    protectedThis->didFailLoading(error);
-            });
-            return completionHandler(PolicyAction::Ignore);
-        }
     }
 
     auto response = sanitizeResponseIfPossible(ResourceResponse { m_response }, ResourceResponse::SanitizationType::CrossOriginSafe);
@@ -900,6 +920,8 @@ void NetworkResourceLoader::willSendRedirectedRequest(ResourceRequest&& request,
     LOADER_RELEASE_LOG("willSendRedirectedRequest:");
     ++m_redirectCount;
     m_redirectResponse = redirectResponse;
+    if (!m_firstResponseURL.isValid())
+        m_firstResponseURL = redirectResponse.url();
 
     std::optional<WebCore::PrivateClickMeasurement::AttributionTriggerData> privateClickMeasurementAttributionTriggerData;
     if (!sessionID().isEphemeral()) {

@@ -36,7 +36,7 @@
 namespace WebCore {
 
 struct FetchOptions {
-    enum class Destination : uint8_t { EmptyString, Audio, Audioworklet, Document, Embed, Font, Image, Manifest, Model, Object, Paintworklet, Report, Script, Serviceworker, Sharedworker, Style, Track, Video, Worker, Xslt };
+    enum class Destination : uint8_t { EmptyString, Audio, Audioworklet, Document, Embed, Font, Image, Iframe, Manifest, Model, Object, Paintworklet, Report, Script, Serviceworker, Sharedworker, Style, Track, Video, Worker, Xslt };
     enum class Mode : uint8_t { Navigate, SameOrigin, NoCors, Cors };
     enum class Credentials : uint8_t { Omit, SameOrigin, Include };
     enum class Cache : uint8_t { Default, NoStore, Reload, NoCache, ForceCache, OnlyIfCached };
@@ -80,9 +80,11 @@ inline bool isPotentialNavigationOrSubresourceRequest(FetchOptions::Destination 
         || destination == FetchOptions::Destination::Embed;
 }
 
+// https://fetch.spec.whatwg.org/#non-subresource-request
 inline bool isNonSubresourceRequest(FetchOptions::Destination destination)
 {
     return destination == FetchOptions::Destination::Document
+        || destination == FetchOptions::Destination::Iframe
         || destination == FetchOptions::Destination::Report
         || destination == FetchOptions::Destination::Serviceworker
         || destination == FetchOptions::Destination::Sharedworker
@@ -112,6 +114,7 @@ template<> struct EnumTraits<WebCore::FetchOptions::Destination> {
         WebCore::FetchOptions::Destination::Embed,
         WebCore::FetchOptions::Destination::Font,
         WebCore::FetchOptions::Destination::Image,
+        WebCore::FetchOptions::Destination::Iframe,
         WebCore::FetchOptions::Destination::Manifest,
         WebCore::FetchOptions::Destination::Model,
         WebCore::FetchOptions::Destination::Object,

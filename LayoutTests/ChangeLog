@@ -1,3 +1,17 @@
+2021-09-16  Chris Dumez  <cdumez@apple.com>
+
+        Add violations reporting support for Cross-Origin-Embedder-Policy
+        https://bugs.webkit.org/show_bug.cgi?id=230269
+
+        Reviewed by Youenn Fablet.
+
+        * TestExpectations:
+        Unskip test that is now passing.
+
+        * http/wpt/service-workers/no-cors-css-worker.js:
+        (async doFetch):
+        Fix existing test now that I added support for Fetch destination="iframe".
+
 2021-09-10  Chris Dumez  <cdumez@apple.com>
 
         Implement navigation reporting for Cross-Origin-Opener-Policy
