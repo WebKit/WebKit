@@ -1,3 +1,18 @@
+2021-10-11  Geza Lore  <glore@igalia.com>
+
+        [JSC][ARMv7] Make LLInt CSR save/restore order match the JITs
+        https://bugs.webkit.org/show_bug.cgi?id=231517
+
+        Reviewed by Saam Barati.
+
+        Since the new unlinked baseline JIT was introduced, the baseline JIT
+        uses the metadata table GPR the same way as the LLInt does, and relies
+        on it being in a saved CSR in emit_op_catch. This unearthed an issue
+        in the order in which LLInt on ARMv7 stores and restores CSRs when
+        trying to handle exceptions. This patch fixes the mismatch.
+
+        * llint/LowLevelInterpreter.asm:
+
 2021-10-11  Alex Christensen  <achristensen@webkit.org>
 
         Prepare to switch from WTF::Variant to std::variant

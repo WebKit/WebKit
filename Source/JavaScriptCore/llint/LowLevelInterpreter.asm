@@ -934,7 +934,12 @@ macro copyCalleeSavesToEntryFrameCalleeSavesBuffer(entryFrame)
             storeq csr4, 32[entryFrame]
             storeq csr5, 40[entryFrame]
             storeq csr6, 48[entryFrame]
-        elsif ARMv7 or MIPS
+        # To understand why ARMv7 and MIPS differ in store order,
+        # see comment in preserveCalleeSavesUsedByLLInt
+        elsif ARMv7
+            storep csr1, [entryFrame]
+            storep csr0, 4[entryFrame]
+        elsif MIPS
             storep csr0, [entryFrame]
             storep csr1, 4[entryFrame]
         elsif RISCV64
@@ -1010,7 +1015,12 @@ macro restoreCalleeSavesFromVMEntryFrameCalleeSavesBuffer(vm, temp)
             loadq 32[temp], csr4
             loadq 40[temp], csr5
             loadq 48[temp], csr6
-        elsif ARMv7 or MIPS
+        # To understand why ARMv7 and MIPS differ in restore order,
+        # see comment in preserveCalleeSavesUsedByLLInt
+        elsif ARMv7
+            loadp [temp], csr1
+            loadp 4[temp], csr0
+        elsif MIPS
             loadp [temp], csr0
             loadp 4[temp], csr1
         elsif RISCV64
