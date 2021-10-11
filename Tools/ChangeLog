@@ -1,3 +1,13 @@
+2021-10-11  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Bring up an iOS GPU Process tester
+        https://bugs.webkit.org/show_bug.cgi?id=231515
+
+        Reviewed by Jonathan Bedard.
+
+        * CISupport/build-webkit-org/config.json:
+        * CISupport/build-webkit-org/factories_unittest.py:
+
 2021-10-11  Alex Christensen  <achristensen@webkit.org>
 
         Prepare to switch from WTF::Variant to std::variant

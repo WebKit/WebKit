@@ -45,20 +45,19 @@
                     { "name": "bot687", "platform": "mac-catalina" },
                     { "name": "bot688", "platform": "mac-catalina" },
 
-
                     { "name": "bot187", "platform": "*" },
                     { "name": "bot179", "platform": "*" },
                     { "name": "bot183", "platform": "*" },
                     { "name": "bot184", "platform": "*" },
                     { "name": "bot185", "platform": "*" },
                     { "name": "bot198", "platform": "*" },
-                    { "name": "bot210", "platform": "*" },
                     { "name": "bot611", "platform": "*" },
                     { "name": "bot612", "platform": "*" },
                     { "name": "bot613", "platform": "*" },
                     { "name": "bot600", "platform": "*" },
                     { "name": "bot684", "platform": "*" },
 
+                    { "name": "bot210", "platform": "ios-simulator-15" },
                     { "name": "bot673", "platform": "ios-15" },
                     { "name": "bot614", "platform": "ios-simulator-15" },
                     { "name": "bot651", "platform": "ios-simulator-15" },
@@ -274,7 +273,7 @@
                     {
                       "name": "Apple-iOS-15-Simulator-Release-Build", "factory": "BuildFactory", "builddir": "ios-simulator-15-release",
                       "platform": "ios-simulator-15", "configuration": "release", "architectures": ["x86_64", "arm64"],
-                      "triggers": ["ios-simulator-15-release-tests-wk2", "ipados-simulator-15-release-tests-wk2"],
+                      "triggers": ["ios-simulator-15-release-gpuprocess-arm64-tests-wk2", "ios-simulator-15-release-tests-wk2", "ipados-simulator-15-release-tests-wk2"],
                       "workernames": ["bot614", "bot641", "bot682", "bot685"]
                     },
                     {
@@ -282,6 +281,12 @@
                       "platform": "ios-simulator-15", "configuration": "debug", "architectures": ["x86_64"],
                       "triggers": ["ios-simulator-15-debug-tests-wk2", "ipados-simulator-15-debug-tests-wk2"],
                       "workernames": ["bot694", "bot695"]
+                    },
+                    {
+                      "name": "Apple-iOS-15-Simulator-Release-GPUProcess-arm64-WK2-Tests", "factory": "TestAllButJSCFactory", "builddir": "ios-simulator-15-release-gpuprocess-arm64-tests-wk2",
+                      "platform": "ios-simulator-15", "configuration": "release", "architectures": ["x86_64", "arm64"], "device_model": "iphone",
+                      "additionalArguments": ["--no-retry-failures", "--use-gpu-process"],
+                      "workernames": ["bot210"]
                     },
                     {
                       "name": "Apple-iOS-15-Simulator-Release-WK2-Tests", "factory": "TestAllButJSCFactory", "builddir": "ios-simulator-15-release-tests-wk2",
@@ -664,6 +669,9 @@
                     },
                     { "type": "PlatformSpecificScheduler", "platform": "win", "branch": "trunk", "treeStableTimer": 45.0,
                       "builderNames": ["Apple-Win-10-Release-Build", "Apple-Win-10-Debug-Build"]
+                    },
+                    { "type": "Triggerable", "name": "ios-simulator-15-release-gpuprocess-arm64-tests-wk2",
+                      "builderNames": ["Apple-iOS-15-Simulator-Release-GPUProcess-arm64-WK2-Tests"]
                     },
                     { "type": "Triggerable", "name": "ios-simulator-15-release-tests-wk2",
                       "builderNames": ["Apple-iOS-15-Simulator-Release-WK2-Tests"]
