@@ -1,3 +1,38 @@
+2021-10-11  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r283846. rdar://problem/84117075
+
+    Fix crash in NetworkProcess preconnect due to dereferencing deallocated session
+    https://bugs.webkit.org/show_bug.cgi?id=231456
+    <rdar://problem/83752148>
+    
+    Reviewed by Chris Dumez.
+    
+    We capture a raw NetworkSession reference in the preconnect completion handler. This
+    reference could point to a deallocated object if the NetworkSession dies before the
+    preconnect finishes.
+    
+    * NetworkProcess/NetworkProcess.cpp:
+    (WebKit::NetworkProcess::preconnectTo):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@283846 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-10-08  Ben Nham  <nham@apple.com>
+
+            Fix crash in NetworkProcess preconnect due to dereferencing deallocated session
+            https://bugs.webkit.org/show_bug.cgi?id=231456
+            <rdar://problem/83752148>
+
+            Reviewed by Chris Dumez.
+
+            We capture a raw NetworkSession reference in the preconnect completion handler. This
+            reference could point to a deallocated object if the NetworkSession dies before the
+            preconnect finishes.
+
+            * NetworkProcess/NetworkProcess.cpp:
+            (WebKit::NetworkProcess::preconnectTo):
+
 2021-09-30  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r283294. rdar://problem/83733571
