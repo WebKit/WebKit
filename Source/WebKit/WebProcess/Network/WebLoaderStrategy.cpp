@@ -33,6 +33,7 @@
 #include "NetworkResourceLoadParameters.h"
 #include "WebCompiledContentRuleList.h"
 #include "WebCoreArgumentCoders.h"
+#include "WebDocumentLoader.h"
 #include "WebErrors.h"
 #include "WebFrame.h"
 #include "WebFrameLoaderClient.h"
@@ -398,8 +399,24 @@ void WebLoaderStrategy::scheduleLoadFromNetworkProcess(ResourceLoader& resourceL
     loadParameters.shouldRestrictHTTPResponseAccess = shouldPerformSecurityChecks();
 
     loadParameters.isMainFrameNavigation = resourceLoader.frame() && resourceLoader.frame()->isMainFrame() && resourceLoader.options().mode == FetchOptions::Mode::Navigate;
+    if (loadParameters.isMainFrameNavigation && document)
+        loadParameters.sourceCrossOriginOpenerPolicy = document->crossOriginOpenerPolicy();
 
     loadParameters.isMainResourceNavigationForAnyFrame = resourceLoader.frame() && resourceLoader.options().mode == FetchOptions::Mode::Navigate;
+    if (loadParameters.isMainResourceNavigationForAnyFrame) {
+        if (auto documentLoader = resourceLoader.documentLoader()) {
+            loadParameters.navigationID = static_cast<WebDocumentLoader&>(*documentLoader).navigationID();
+            loadParameters.navigationRequester = documentLoader->triggeringAction().requester();
+        }
+    }
+    loadParameters.isCrossOriginOpenerPolicyEnabled = document && document->settings().crossOriginOpenerPolicyEnabled();
+    loadParameters.isDisplayingInitialEmptyDocument = frame && frame->loader().stateMachine().isDisplayingInitialEmptyDocument();
+    if (frame)
+        loadParameters.effectiveSandboxFlags = frame->loader().effectiveSandboxFlags();
+    if (auto openerFrame = frame ? frame->loader().opener() : nullptr) {
+        if (auto openerDocument = openerFrame->document())
+            loadParameters.openerURL = openerDocument->url();
+    }
 
     loadParameters.shouldEnableCrossOriginResourcePolicy = !loadParameters.isMainFrameNavigation;
 

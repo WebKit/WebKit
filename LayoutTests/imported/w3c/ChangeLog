@@ -1,3 +1,16 @@
+2021-09-28  Chris Dumez  <cdumez@apple.com>
+
+        Move Cross-Origin-Opener-Policy handling to the NetworkProcess
+        https://bugs.webkit.org/show_bug.cgi?id=230812
+        <rdar://83504842>
+
+        Reviewed by Youenn Fablet.
+
+        Rebaseline a couple of WPT tests due to some extra logging.
+
+        * web-platform-tests/html/cross-origin-opener-policy/coop-coep-sandbox.https-expected.txt:
+        * web-platform-tests/html/cross-origin-opener-policy/coop-sandbox.https-expected.txt:
+
 2021-09-16  Chris Dumez  <cdumez@apple.com>
 
         Add violations reporting support for Cross-Origin-Embedder-Policy

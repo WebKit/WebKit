@@ -25,6 +25,7 @@
 
 #import "config.h"
 
+#import "HTTPServer.h"
 #import "PlatformUtilities.h"
 #import "Test.h"
 #import "TestNavigationDelegate.h"
@@ -141,6 +142,12 @@ static RetainPtr<NSURL> clientRedirectDestinationURL;
     done = true;
 }
 
+- (void)webView:(WKWebView *)webView didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge completionHandler:(void (^)(NSURLSessionAuthChallengeDisposition disposition, NSURLCredential * _Nullable credential))completionHandler
+{
+    EXPECT_WK_STREQ(challenge.protectionSpace.authenticationMethod, NSURLAuthenticationMethodServerTrust);
+    completionHandler(NSURLSessionAuthChallengeUseCredential, [NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust]);
+}
+
 - (void)webView:(WKWebView *)webView didStartProvisionalNavigation:(null_unspecified WKNavigation *)navigation
 {
     didStartProvisionalLoad = true;
@@ -250,15 +257,12 @@ static RetainPtr<WKWebView> createdWebView;
     const char* _bytes;
     HashMap<String, String> _redirects;
     HashMap<String, RetainPtr<NSData>> _dataMappings;
-    HashMap<String, String> _coopValues;
-    HashMap<String, String> _coepValues;
     HashSet<id <WKURLSchemeTask>> _runningTasks;
     bool _shouldRespondAsynchronously;
 }
 - (instancetype)initWithBytes:(const char*)bytes;
 - (void)addRedirectFromURLString:(NSString *)sourceURLString toURLString:(NSString *)destinationURLString;
 - (void)addMappingFromURLString:(NSString *)urlString toData:(const char*)data;
-- (void)addMappingFromURLString:(NSString *)urlString toData:(const char*)data withCOOPValue:(const char*)coopValue withCOEPValue:(const char*)coepValue;
 @end
 
 @implementation PSONScheme
@@ -278,15 +282,6 @@ static RetainPtr<WKWebView> createdWebView;
 - (void)addMappingFromURLString:(NSString *)urlString toData:(const char*)data
 {
     _dataMappings.set(urlString, [NSData dataWithBytesNoCopy:(void*)data length:strlen(data) freeWhenDone:NO]);
-}
-
-- (void)addMappingFromURLString:(NSString *)urlString toData:(const char*)data withCOOPValue:(const char*)coopValue withCOEPValue:(const char*)coepValue
-{
-    [self addMappingFromURLString:urlString toData:data];
-    if (coopValue)
-        _coopValues.add(urlString, coopValue);
-    if (coepValue)
-        _coepValues.add(urlString, coepValue);
 }
 
 - (void)setShouldRespondAsynchronously:(BOOL)value
@@ -323,16 +318,10 @@ static RetainPtr<WKWebView> createdWebView;
         [(id<WKURLSchemeTaskPrivate>)task _didPerformRedirection:redirectResponse.get() newRequest:request.get()];
     }
 
-    doAsynchronouslyIfNecessary([self, finalURL = retainPtr(finalURL)](id <WKURLSchemeTask> task) {
+    doAsynchronouslyIfNecessary([finalURL = retainPtr(finalURL)](id <WKURLSchemeTask> task) {
         NSMutableDictionary* headerDictionary = [NSMutableDictionary dictionary];
         [headerDictionary setObject:@"text/html" forKey:@"Content-Type"];
         [headerDictionary setObject:@"1" forKey:@"Content-Length"];
-        auto coopValue = _coopValues.get([finalURL absoluteString]);
-        if (!coopValue.isEmpty())
-            [headerDictionary setObject:(NSString *)coopValue forKey:@"Cross-Origin-Opener-Policy"];
-        auto coepValue = _coepValues.get([finalURL absoluteString]);
-        if (!coepValue.isEmpty())
-            [headerDictionary setObject:(NSString *)coepValue forKey:@"Cross-Origin-Embedder-Policy"];
 
         auto response = adoptNS([[NSHTTPURLResponse alloc] initWithURL:finalURL.get() statusCode:200 HTTPVersion:@"HTTP/1.1" headerFields:headerDictionary]);
         [task didReceiveResponse:response.get()];
@@ -7178,7 +7167,7 @@ TEST(WebProcessCache, ClearWhenEnteringCache)
 static const char* windowOpenCrossOriginCOOPTestBytes = R"PSONRESOURCE(
 <script>
 window.onload = function() {
-    w = window.open("pson://www.apple.com/popup.html", "foo");
+    w = window.open("https://localhost:8181/popup.html", "foo");
 }
 </script>
 )PSONRESOURCE";
@@ -7195,6 +7184,42 @@ enum class IsSameOrigin : bool { No, Yes };
 enum class DoServerSideRedirect : bool { No, Yes };
 static void runCOOPProcessSwapTest(const char* sourceCOOP, const char* sourceCOEP, const char* destinationCOOP, const char* destinationCOEP, IsSameOrigin isSameOrigin, DoServerSideRedirect doServerSideRedirect, ExpectSwap expectSwap)
 {
+    using namespace TestWebKitAPI;
+
+    HashMap<String, String> sourceHeaders;
+    sourceHeaders.add("Content-Type"_s, "text/html"_s);
+    if (sourceCOOP)
+        sourceHeaders.add("Cross-Origin-Opener-Policy"_s, String(sourceCOOP));
+    if (sourceCOEP)
+        sourceHeaders.add("Cross-Origin-Embedder-Policy"_s, String(sourceCOEP));
+    HTTPResponse sourceResponse(WTFMove(sourceHeaders), isSameOrigin == IsSameOrigin::Yes ? windowOpenSameOriginCOOPTestBytes : windowOpenCrossOriginCOOPTestBytes);
+
+    HashMap<String, String> destinationHeaders;
+    destinationHeaders.add("Content-Type"_s, "text/html"_s);
+    if (destinationCOOP)
+        destinationHeaders.add("Cross-Origin-Opener-Policy"_s, String(destinationCOOP));
+    if (destinationCOEP)
+        destinationHeaders.add("Cross-Origin-Embedder-Policy"_s, String(destinationCOEP));
+    HTTPResponse destinationResponse(WTFMove(destinationHeaders), "popup"_s);
+
+    std::unique_ptr<HTTPServer> server;
+    if (doServerSideRedirect == DoServerSideRedirect::Yes) {
+        HashMap<String, String> redirectHeaders;
+        redirectHeaders.add("location"_s, isSameOrigin == IsSameOrigin::Yes ? "https://127.0.0.1:8181/popup-after-redirection.html"_s : "https://localhost:8181/popup-after-redirection.html"_s);
+        HTTPResponse redirectResponse(301, WTFMove(redirectHeaders));
+
+        server = makeUnique<HTTPServer>(std::initializer_list<std::pair<String, HTTPResponse>> {
+            { "/main.html", WTFMove(sourceResponse) },
+            { "/popup.html", WTFMove(redirectResponse) },
+            { "/popup-after-redirection.html", WTFMove(destinationResponse) }
+        }, HTTPServer::Protocol::Https, nullptr, nullptr, 8181);
+    } else {
+        server = makeUnique<HTTPServer>(std::initializer_list<std::pair<String, HTTPResponse>> {
+            { "/main.html", WTFMove(sourceResponse) },
+            { "/popup.html", WTFMove(destinationResponse) }
+        }, HTTPServer::Protocol::Https, nullptr, nullptr, 8181);
+    }
+
     auto processPoolConfiguration = psonProcessPoolConfiguration();
     auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
     bool sourceShouldBeCrossOriginIsolated = sourceCOOP && !strcmp(sourceCOOP, "same-origin") && sourceCOEP && !strcmp(sourceCOEP, "require-corp");
@@ -7211,24 +7236,6 @@ static void runCOOPProcessSwapTest(const char* sourceCOOP, const char* sourceCOE
             [[webViewConfiguration preferences] _setEnabled:YES forExperimentalFeature:feature];
     }
 
-    auto handler = adoptNS([[PSONScheme alloc] init]);
-    if (isSameOrigin == IsSameOrigin::Yes) {
-        [handler addMappingFromURLString:@"pson://www.webkit.org/main.html" toData:windowOpenSameOriginCOOPTestBytes withCOOPValue:sourceCOOP withCOEPValue:sourceCOEP];
-        if (doServerSideRedirect == DoServerSideRedirect::Yes) {
-            [handler addRedirectFromURLString:@"pson://www.webkit.org/popup.html" toURLString:@"pson://www.webkit.org/popup-after-redirect.html"];
-            [handler addMappingFromURLString:@"pson://www.webkit.org/popup-after-redirect.html" toData:"popup" withCOOPValue:destinationCOOP withCOEPValue:destinationCOEP];
-        } else
-            [handler addMappingFromURLString:@"pson://www.webkit.org/popup.html" toData:"popup" withCOOPValue:destinationCOOP withCOEPValue:destinationCOEP];
-    } else {
-        [handler addMappingFromURLString:@"pson://www.webkit.org/main.html" toData:windowOpenCrossOriginCOOPTestBytes withCOOPValue:sourceCOOP withCOEPValue:sourceCOEP];
-        if (doServerSideRedirect == DoServerSideRedirect::Yes) {
-            [handler addRedirectFromURLString:@"pson://www.apple.com/popup.html" toURLString:@"pson://www.apple.com/popup-after-redirect.html"];
-            [handler addMappingFromURLString:@"pson://www.apple.com/popup-after-redirect.html" toData:"popup" withCOOPValue:destinationCOOP withCOEPValue:destinationCOEP];
-        } else
-            [handler addMappingFromURLString:@"pson://www.apple.com/popup.html" toData:"popup" withCOOPValue:destinationCOOP withCOEPValue:destinationCOEP];
-    }
-    [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"PSON"];
-
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
     auto navigationDelegate = adoptNS([[PSONNavigationDelegate alloc] init]);
 
@@ -7244,7 +7251,7 @@ static void runCOOPProcessSwapTest(const char* sourceCOOP, const char* sourceCOE
     failed = false;
     serverRedirected = false;
     numberOfDecidePolicyCalls = 0;
-    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.webkit.org/main.html"]];
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"https://127.0.0.1:8181/main.html"]];
     [webView loadRequest:request];
 
     TestWebKitAPI::Util::run(&done);

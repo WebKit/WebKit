@@ -424,10 +424,10 @@ public:
     void setLastNavigationWasAppInitiated(bool lastNavigationWasAppInitiated) { m_lastNavigationWasAppInitiated = lastNavigationWasAppInitiated; }
 
     ContentSecurityPolicy* contentSecurityPolicy() const { return m_contentSecurityPolicy.get(); }
-    std::optional<CrossOriginOpenerPolicy> crossOriginOpenerPolicy() const { return m_currentCoopEnforcementResult ? std::make_optional(m_currentCoopEnforcementResult->crossOriginOpenerPolicy) : std::nullopt; }
+    const std::optional<CrossOriginOpenerPolicy>& crossOriginOpenerPolicy() const { return m_responseCOOP; }
 
-    bool isContinuingLoadAfterResponsePolicyCheck() const { return m_isContinuingLoadAfterResponsePolicyCheck; }
-    void setIsContinuingLoadAfterResponsePolicyCheck(bool isContinuingLoadAfterResponsePolicyCheck) { m_isContinuingLoadAfterResponsePolicyCheck = isContinuingLoadAfterResponsePolicyCheck; }
+    bool isContinuingLoadAfterProvisionalLoadStarted() const { return m_isContinuingLoadAfterProvisionalLoadStarted; }
+    void setIsContinuingLoadAfterProvisionalLoadStarted(bool isContinuingLoadAfterProvisionalLoadStarted) { m_isContinuingLoadAfterProvisionalLoadStarted = isContinuingLoadAfterProvisionalLoadStarted; }
 
 protected:
     WEBCORE_EXPORT DocumentLoader(const ResourceRequest&, const SubstituteData&);
@@ -449,8 +449,7 @@ private:
 #endif
     void unregisterTemporaryServiceWorkerClient();
 
-    bool doCrossOriginOpenerHandlingOfResponse(const ResourceResponse&);
-    CrossOriginOpenerPolicyEnforcementResult enforceResponseCrossOriginOpenerPolicy(const URL& responseURL, SecurityOrigin& responseOrigin, const CrossOriginOpenerPolicy& responseCOOP);
+    std::optional<CrossOriginOpenerPolicyEnforcementResult> doCrossOriginOpenerHandlingOfResponse(const ResourceResponse&);
 
     void loadMainResource(ResourceRequest&&);
 
@@ -565,7 +564,7 @@ private:
     bool m_gotFirstByte { false };
     bool m_isClientRedirect { false };
     bool m_isLoadingMultipartContent { false };
-    bool m_isContinuingLoadAfterResponsePolicyCheck { false };
+    bool m_isContinuingLoadAfterProvisionalLoadStarted { false };
 
     // FIXME: Document::m_processingLoadEvent and DocumentLoader::m_wasOnloadDispatched are roughly the same
     // and should be merged.
@@ -589,7 +588,7 @@ private:
     Vector<ResourceResponse> m_responses;
     bool m_stopRecordingResponses { false };
 
-    std::optional<CrossOriginOpenerPolicyEnforcementResult> m_currentCoopEnforcementResult;
+    std::optional<CrossOriginOpenerPolicy> m_responseCOOP;
     
     typedef HashMap<RefPtr<ResourceLoader>, RefPtr<SubstituteResource>> SubstituteResourceMap;
     SubstituteResourceMap m_pendingSubstituteResources;

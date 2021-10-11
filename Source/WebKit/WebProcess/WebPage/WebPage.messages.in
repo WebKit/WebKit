@@ -31,6 +31,8 @@ messages -> WebPage LegacyReceiver {
     SendCSPViolationReport(WebCore::FrameIdentifier frameID, URL reportURL, IPC::FormDataReference reportData)
     SendCOEPPolicyInheritenceViolation(WebCore::FrameIdentifier frameID, struct WebCore::SecurityOriginData embedderOrigin, String endpoint, enum:bool WebCore::COEPDisposition disposition, String type, URL blockedURL)
     SendCOEPCORPViolation(WebCore::FrameIdentifier frameID, struct WebCore::SecurityOriginData embedderOrigin, String endpoint, enum:bool WebCore::COEPDisposition disposition, enum:uint8_t WebCore::FetchOptions::Destination destination, URL blockedURL)
+    SendViolationReportWhenNavigatingToCOOPResponse(WebCore::FrameIdentifier frameID, struct WebCore::CrossOriginOpenerPolicy coop, enum:bool WebCore::COOPDisposition disposition, URL coopURL, URL previousResponseURL, struct WebCore::SecurityOriginData coopOrigin, struct WebCore::SecurityOriginData previousResponseOrigin, String referrer, String userAgent, String reportToHeaderValue)
+    SendViolationReportWhenNavigatingAwayFromCOOPResponse(WebCore::FrameIdentifier frameID, struct WebCore::CrossOriginOpenerPolicy coop, enum:bool WebCore::COOPDisposition disposition, URL coopURL, URL nextResponseURL, struct WebCore::SecurityOriginData coopOrigin, struct WebCore::SecurityOriginData nextResponseOrigin, bool isCOOPResponseNavigationSource, String userAgent)
     EnqueueSecurityPolicyViolationEvent(WebCore::FrameIdentifier frameID, WebCore::SecurityPolicyViolationEvent::Init eventInit)
 
     TestProcessIncomingSyncMessagesWhenWaitingForSyncReply() -> (bool handled) Synchronous

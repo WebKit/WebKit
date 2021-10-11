@@ -33,6 +33,7 @@
 #include <WebCore/CrossOriginAccessControl.h>
 #include <WebCore/CrossOriginEmbedderPolicy.h>
 #include <WebCore/FetchOptions.h>
+#include <WebCore/NavigationRequester.h>
 #include <wtf/Seconds.h>
 
 namespace IPC {
@@ -68,6 +69,14 @@ public:
     std::optional<WebCore::FrameIdentifier> parentFrameID;
     bool crossOriginAccessControlCheckEnabled { true };
     URL documentURL;
+
+    bool isCrossOriginOpenerPolicyEnabled { false };
+    bool isDisplayingInitialEmptyDocument { false };
+    WebCore::SandboxFlags effectiveSandboxFlags { WebCore::SandboxNone };
+    URL openerURL;
+    WebCore::CrossOriginOpenerPolicy sourceCrossOriginOpenerPolicy;
+    uint64_t navigationID { 0 };
+    std::optional<WebCore::NavigationRequester> navigationRequester;
     
 #if ENABLE(SERVICE_WORKER)
     WebCore::ServiceWorkersMode serviceWorkersMode { WebCore::ServiceWorkersMode::None };

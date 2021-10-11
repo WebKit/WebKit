@@ -1354,7 +1354,7 @@ public:
     bool isSameOriginAsTopDocument() const { return securityOrigin().isSameOriginAs(topOrigin()); }
     bool shouldForceNoOpenerBasedOnCOOP() const;
 
-    const CrossOriginOpenerPolicy& crossOriginOpenerPolicy() const final;
+    WEBCORE_EXPORT const CrossOriginOpenerPolicy& crossOriginOpenerPolicy() const final;
     void setCrossOriginOpenerPolicy(const CrossOriginOpenerPolicy&);
 
     void willLoadScriptElement(const URL&);

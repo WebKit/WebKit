@@ -65,13 +65,17 @@ ReportingEndpointsCache::ReportingEndpointsCache() = default;
 ReportingEndpointsCache::~ReportingEndpointsCache() = default;
 
 // https://www.w3.org/TR/reporting/#process-header
-void ReportingEndpointsCache::addEndPointsFromResponse(const ResourceResponse& response)
+void ReportingEndpointsCache::addEndpointsFromResponse(const ResourceResponse& response)
 {
-    auto reportToHeaderValue = response.httpHeaderField(HTTPHeaderName::ReportTo);
+    return addEndpointsFromReportToHeader(response.url(), response.httpHeaderField(HTTPHeaderName::ReportTo));
+}
+
+void ReportingEndpointsCache::addEndpointsFromReportToHeader(const URL& responseURL, const String& reportToHeaderValue)
+{
     if (reportToHeaderValue.isEmpty())
         return;
 
-    auto securityOrigin = SecurityOrigin::create(response.url());
+    auto securityOrigin = SecurityOrigin::create(responseURL);
     if (securityOrigin->isUnique() || !securityOrigin->isPotentiallyTrustworthy())
         return;
 
@@ -94,10 +98,10 @@ void ReportingEndpointsCache::addEndPointsFromResponse(const ResourceResponse& r
     while (dictionaryStart < reportToHeaderValue.length()) {
         auto indexOfNextTopLevelComma = findNextTopLevelComma(dictionaryStart);
         if (indexOfNextTopLevelComma == notFound) {
-            addEndpointFromDictionary(securityOrigin->data(), response.url(), reportToHeaderValue.substring(dictionaryStart));
+            addEndpointFromDictionary(securityOrigin->data(), responseURL, reportToHeaderValue.substring(dictionaryStart));
             break;
         }
-        addEndpointFromDictionary(securityOrigin->data(), response.url(), reportToHeaderValue.substring(dictionaryStart, indexOfNextTopLevelComma - dictionaryStart));
+        addEndpointFromDictionary(securityOrigin->data(), responseURL, reportToHeaderValue.substring(dictionaryStart, indexOfNextTopLevelComma - dictionaryStart));
         dictionaryStart = indexOfNextTopLevelComma + 1;
     }
 }

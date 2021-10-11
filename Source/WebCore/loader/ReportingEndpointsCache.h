@@ -42,7 +42,8 @@ public:
     WEBCORE_EXPORT static Ref<ReportingEndpointsCache> create();
     WEBCORE_EXPORT ~ReportingEndpointsCache();
 
-    void addEndPointsFromResponse(const ResourceResponse&);
+    WEBCORE_EXPORT void addEndpointsFromReportToHeader(const URL&, const String&);
+    void addEndpointsFromResponse(const ResourceResponse&);
     URL endpointURL(const SecurityOriginData&, const String& group) const;
 
 private:

@@ -160,6 +160,7 @@
 #include <WebCore/ContactsRequestData.h>
 #include <WebCore/ContextMenuController.h>
 #include <WebCore/CrossOriginEmbedderPolicy.h>
+#include <WebCore/CrossOriginOpenerPolicy.h>
 #include <WebCore/DOMPasteAccess.h>
 #include <WebCore/DataTransfer.h>
 #include <WebCore/DatabaseManager.h>
@@ -4337,6 +4338,29 @@ void WebPage::sendCOEPCORPViolation(FrameIdentifier frameID, const SecurityOrigi
 {
     if (auto* frame = WebProcess::singleton().webFrame(frameID); frame->coreFrame())
         WebCore::sendCOEPCORPViolation(*frame->coreFrame(), embedderOrigin, endpoint, disposition, destination, blockedURL);
+}
+
+void WebPage::sendViolationReportWhenNavigatingToCOOPResponse(FrameIdentifier frameID, const CrossOriginOpenerPolicy& coop, COOPDisposition disposition, const URL& coopURL, const URL& previousResponseURL, const SecurityOriginData& coopOrigin, const SecurityOriginData& previousResponseOrigin, const String& referrer, const String& userAgent, const String& reportToHeaderValue)
+{
+    if (!reportToHeaderValue.isEmpty())
+        WebProcess::singleton().reportingEndpointsCache().addEndpointsFromReportToHeader(coopURL, reportToHeaderValue);
+
+    // FIXME: Add the concept of browsing context group like in the specification instead of treating the whole process as a group.
+    if (Page::nonUtilityPageCount() <= 1)
+        return;
+
+    if (auto* frame = WebProcess::singleton().webFrame(frameID); frame->coreFrame())
+        WebCore::sendViolationReportWhenNavigatingToCOOPResponse(*frame->coreFrame(), coop, disposition, coopURL, previousResponseURL, coopOrigin.securityOrigin(), previousResponseOrigin.securityOrigin(), referrer, userAgent);
+}
+
+void WebPage::sendViolationReportWhenNavigatingAwayFromCOOPResponse(FrameIdentifier frameID, const CrossOriginOpenerPolicy& coop, COOPDisposition disposition, const URL& coopURL, const URL& nextResponseURL, const SecurityOriginData& coopOrigin, const SecurityOriginData& nextResponseOrigin, bool isCOOPResponseNavigationSource, const String& userAgent)
+{
+    // FIXME: Add the concept of browsing context group like in the specification instead of treating the whole process as a group.
+    if (Page::nonUtilityPageCount() <= 1)
+        return;
+
+    if (auto* frame = WebProcess::singleton().webFrame(frameID); frame->coreFrame())
+        WebCore::sendViolationReportWhenNavigatingAwayFromCOOPResponse(*frame->coreFrame(), coop, disposition, coopURL, nextResponseURL, coopOrigin.securityOrigin(), nextResponseOrigin.securityOrigin(), isCOOPResponseNavigationSource, userAgent);
 }
 
 void WebPage::enqueueSecurityPolicyViolationEvent(FrameIdentifier frameID, SecurityPolicyViolationEvent::Init&& eventInit)
