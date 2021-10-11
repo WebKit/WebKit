@@ -84,11 +84,11 @@ void ScrollingTreeFrameScrollingNodeRemoteIOS::commitStateBeforeChildren(const S
 
 void ScrollingTreeFrameScrollingNodeRemoteIOS::commitStateAfterChildren(const ScrollingStateNode& stateNode)
 {
-    ScrollingTreeFrameScrollingNode::commitStateAfterChildren(stateNode);
-
     const auto& scrollingStateNode = downcast<ScrollingStateFrameScrollingNode>(stateNode);
     if (m_scrollingNodeDelegate)
         m_scrollingNodeDelegate->commitStateAfterChildren(scrollingStateNode);
+
+    ScrollingTreeFrameScrollingNode::commitStateAfterChildren(stateNode);
 }
 
 FloatPoint ScrollingTreeFrameScrollingNodeRemoteIOS::minimumScrollPosition() const

@@ -243,6 +243,11 @@ void ScrollingTreeScrollingNode::handleScrollPositionRequest(const RequestedScro
     if (scrollingTree().scrollingTreeNodeRequestsScroll(scrollingNodeID(), requestedScrollData))
         return;
 
+    if (requestedScrollData.animated == ScrollIsAnimated::Yes) {
+        startAnimatedScrollToPosition(requestedScrollData.scrollPosition);
+        return;
+    }
+
     scrollTo(requestedScrollData.scrollPosition, requestedScrollData.scrollType, requestedScrollData.clamping);
 }
 

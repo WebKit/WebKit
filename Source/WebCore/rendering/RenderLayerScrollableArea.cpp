@@ -277,8 +277,10 @@ void RenderLayerScrollableArea::stopAsyncAnimatedScroll()
 
 ScrollOffset RenderLayerScrollableArea::scrollToOffset(const ScrollOffset& scrollOffset, const ScrollPositionChangeOptions& options)
 {
-    if (scrollAnimationStatus() == ScrollAnimationStatus::Animating)
+    if (scrollAnimationStatus() == ScrollAnimationStatus::Animating) {
         scrollAnimator().cancelAnimations();
+        stopAsyncAnimatedScroll();
+    }
 
     ScrollOffset clampedScrollOffset = options.clamping == ScrollClamping::Clamped ? clampScrollOffset(scrollOffset) : scrollOffset;
     if (clampedScrollOffset == this->scrollOffset())

@@ -52,7 +52,7 @@ private:
     void setViewNeedsDisplay(const WebCore::Region&) override;
 
     // Tell the view to scroll to the given position, and whether this was a programmatic scroll.
-    void requestScroll(const WebCore::FloatPoint& scrollPosition, const WebCore::IntPoint& scrollOrigin) override;
+    void requestScroll(const WebCore::FloatPoint& scrollPosition, const WebCore::IntPoint& scrollOrigin, WebCore::ScrollIsAnimated) override;
 
     // Return the current scroll position (not necessarily the same as the WebCore scroll position, because of scaling, insets etc.)
     WebCore::FloatPoint viewScrollPosition() override;

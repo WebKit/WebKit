@@ -45,7 +45,6 @@
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/SetForScope.h>
 
-
 @implementation WKScrollingNodeScrollViewDelegate
 
 - (instancetype)initWithScrollingTreeNodeDelegate:(WebKit::ScrollingTreeScrollingNodeDelegateIOS*)delegate
@@ -294,15 +293,21 @@ void ScrollingTreeScrollingNodeDelegateIOS::commitStateAfterChildren(const Scrol
     }
 }
 
-bool ScrollingTreeScrollingNodeDelegateIOS::startAnimatedScrollToPosition(FloatPoint)
+bool ScrollingTreeScrollingNodeDelegateIOS::startAnimatedScrollToPosition(FloatPoint scrollPosition)
 {
-    // FIXME: Implement.
-    return false;
+    auto scrollOffset = ScrollableArea::scrollOffsetFromPosition(scrollPosition, toFloatSize(scrollOrigin()));
+
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
+    [scrollView() setContentOffset:scrollOffset animated:YES];
+    END_BLOCK_OBJC_EXCEPTIONS
+    return true;
 }
 
 void ScrollingTreeScrollingNodeDelegateIOS::stopAnimatedScroll()
 {
-    // FIXME: Implement.
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
+    [scrollView() _stopScrollingAndZoomingAnimations];
+    END_BLOCK_OBJC_EXCEPTIONS
 }
 
 #if HAVE(UISCROLLVIEW_ASYNCHRONOUS_SCROLL_EVENT_HANDLING)

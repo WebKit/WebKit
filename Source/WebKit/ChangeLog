@@ -1,3 +1,81 @@
+2021-10-11  Simon Fraser  <simon.fraser@apple.com>
+
+        Smooth-scroll animations should run in the UI process on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=204936
+
+        Reviewed by Tim Horton.
+
+        Implement animated scrolls in the UI process for UI-side compositing. The scrolling tree
+        decoded in the UI process has a RequestedScrollData with the 'animated' flag. This is
+        processed by handleScrollPositionRequest() as normal.
+
+        ScrollingTreeOverflowScrollingNodeIOS::startAnimatedScrollToPosition() responds by calling
+        through to the delegate, which simply calls -[setContentOffset:animated:YES] on the
+        UIScrollView.
+
+        Main frame scrolls are a little different because the programmatic scroll needs to be
+        handled after layer tree commits; leverage the existing
+        RemoteScrollingCoordinatorProxy::scrollingTreeNodeRequestsScroll() code, but clean it up to
+        share the RequestedScrollData type, and have commitScrollingTreeState() return
+        std::optional<RequestedScrollData> instead of storing a pointer to a struct on the stack as
+        it did before. The various requestScroll() functions take a ScrollIsAnimated flag which
+        turns into  -[setContentOffset:animated:YES] in WKWebView.
+
+        * Shared/RemoteLayerTree/RemoteScrollingCoordinatorTransaction.cpp:
+        (WebKit::dump):
+        * UIProcess/API/gtk/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::requestScroll):
+        * UIProcess/API/gtk/PageClientImpl.h:
+        * UIProcess/API/ios/WKWebViewIOS.h:
+        * UIProcess/API/ios/WKWebViewIOS.mm:
+        (-[WKWebView _scrollToContentScrollPosition:scrollOrigin:animated:]):
+        (-[WKWebView _scrollToContentScrollPosition:scrollOrigin:]): Deleted.
+        * UIProcess/API/wpe/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::requestScroll):
+        * UIProcess/API/wpe/PageClientImpl.h:
+        * UIProcess/PageClient.h:
+        * UIProcess/RemoteLayerTree/RemoteLayerTreeDrawingAreaProxy.mm:
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::commitLayerTree):
+        * UIProcess/RemoteLayerTree/RemoteScrollingCoordinatorProxy.cpp:
+        (WebKit::RemoteScrollingCoordinatorProxy::commitScrollingTreeState):
+        (WebKit::RemoteScrollingCoordinatorProxy::scrollingTreeNodeRequestsScroll):
+        * UIProcess/RemoteLayerTree/RemoteScrollingCoordinatorProxy.h:
+        * UIProcess/RemoteLayerTree/RemoteScrollingTree.cpp:
+        (WebKit::RemoteScrollingTree::scrollingTreeNodeRequestsScroll):
+        * UIProcess/RemoteLayerTree/ios/ScrollingTreeFrameScrollingNodeRemoteIOS.mm:
+        (WebKit::ScrollingTreeFrameScrollingNodeRemoteIOS::commitStateAfterChildren): The delegate's
+        commitStateAfterChildren() has to run first to update UIScrollView state before the programmatic scroll
+        is handled in the base class.
+        * UIProcess/RemoteLayerTree/ios/ScrollingTreeOverflowScrollingNodeIOS.h:
+        * UIProcess/RemoteLayerTree/ios/ScrollingTreeOverflowScrollingNodeIOS.mm:
+        (WebKit::ScrollingTreeOverflowScrollingNodeIOS::commitStateAfterChildren): The delegate's
+        commitStateAfterChildren() has to run first to update UIScrollView state before the programmatic scroll
+        is handled in the base class.
+        (WebKit::ScrollingTreeOverflowScrollingNodeIOS::startAnimatedScrollToPosition):
+        (WebKit::ScrollingTreeOverflowScrollingNodeIOS::stopAnimatedScroll):
+        * UIProcess/RemoteLayerTree/ios/ScrollingTreeScrollingNodeDelegateIOS.h:
+        (WebKit::ScrollingTreeScrollingNodeDelegateIOS::scrollLayer const): Deleted.
+        (WebKit::ScrollingTreeScrollingNodeDelegateIOS::activeTouchActions const): Deleted.
+        (WebKit::ScrollingTreeScrollingNodeDelegateIOS::clearActiveTouchActions): Deleted.
+        * UIProcess/RemoteLayerTree/ios/ScrollingTreeScrollingNodeDelegateIOS.mm:
+        (WebKit::ScrollingTreeScrollingNodeDelegateIOS::startAnimatedScrollToPosition):
+        (WebKit::ScrollingTreeScrollingNodeDelegateIOS::stopAnimatedScroll):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::requestScroll):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::requestScroll):
+        * UIProcess/mac/PageClientImplMac.h:
+        * UIProcess/mac/PageClientImplMac.mm:
+        (WebKit::PageClientImpl::requestScroll):
+        * UIProcess/playstation/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::requestScroll):
+        * UIProcess/playstation/PageClientImpl.h:
+        * UIProcess/win/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::requestScroll):
+        * UIProcess/win/PageClientImpl.h:
+
 2021-10-11  Alex Christensen  <achristensen@webkit.org>
 
         Prepare to switch from WTF::Variant to std::variant

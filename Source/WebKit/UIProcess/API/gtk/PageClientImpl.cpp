@@ -92,7 +92,7 @@ void PageClientImpl::setViewNeedsDisplay(const WebCore::Region& region)
 #endif
 }
 
-void PageClientImpl::requestScroll(const WebCore::FloatPoint&, const WebCore::IntPoint&)
+void PageClientImpl::requestScroll(const WebCore::FloatPoint&, const WebCore::IntPoint&, WebCore::ScrollIsAnimated)
 {
     notImplemented();
 }

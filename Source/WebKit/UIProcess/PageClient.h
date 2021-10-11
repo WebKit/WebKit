@@ -112,6 +112,7 @@ enum class ScrollbarStyle : uint8_t;
 enum class TextIndicatorLifetime : uint8_t;
 enum class TextIndicatorDismissalAnimation : uint8_t;
 enum class DOMPasteAccessResponse : uint8_t;
+enum class ScrollIsAnimated : uint8_t;
 
 struct AppHighlight;
 struct DataDetectorElementInfo;
@@ -213,7 +214,7 @@ public:
     virtual void setViewNeedsDisplay(const WebCore::Region&) = 0;
 
     // Tell the view to scroll to the given position, and whether this was a programmatic scroll.
-    virtual void requestScroll(const WebCore::FloatPoint& scrollPosition, const WebCore::IntPoint& scrollOrigin) = 0;
+    virtual void requestScroll(const WebCore::FloatPoint& scrollPosition, const WebCore::IntPoint& scrollOrigin, WebCore::ScrollIsAnimated) = 0;
 
     // Return the current scroll position (not necessarily the same as the WebCore scroll position, because of scaling, insets etc.)
     virtual WebCore::FloatPoint viewScrollPosition() = 0;

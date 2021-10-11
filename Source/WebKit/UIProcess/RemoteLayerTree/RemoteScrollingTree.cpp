@@ -101,7 +101,7 @@ void RemoteScrollingTree::scrollingTreeNodeDidStopAnimatedScroll(ScrollingTreeSc
 
 bool RemoteScrollingTree::scrollingTreeNodeRequestsScroll(ScrollingNodeID nodeID, const RequestedScrollData& request)
 {
-    return m_scrollingCoordinatorProxy.scrollingTreeNodeRequestsScroll(nodeID, request.scrollPosition, request.scrollType, request.clamping);
+    return m_scrollingCoordinatorProxy.scrollingTreeNodeRequestsScroll(nodeID, request);
 }
 
 Ref<ScrollingTreeNode> RemoteScrollingTree::createScrollingTreeNode(ScrollingNodeType nodeType, ScrollingNodeID nodeID)

@@ -738,6 +738,7 @@ static void dump(TextStream& ts, const ScrollingStateScrollingNode& node, bool c
             ts.dumpProperty("requested-scroll-position", requestedScrollData.scrollPosition);
             ts.dumpProperty("requested-scroll-position-is-programatic", requestedScrollData.scrollType);
             ts.dumpProperty("requested-scroll-position-clamping", requestedScrollData.clamping);
+            ts.dumpProperty("requested-scroll-position-animated", requestedScrollData.animated == ScrollIsAnimated::Yes);
         }
     }
 
