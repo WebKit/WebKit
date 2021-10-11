@@ -6611,7 +6611,8 @@
          "calvaris@igalia.com",
          "xrcalvar@igalia.com"
       ],
-      "expertise" : "WebKitGTK, GStreamer, Streams API",
+      "expertise" : "WebKitGTK, WPE, GStreamer",
+      "github" : "calvaris",
       "name" : "Xabier Rodriguez-Calvar",
       "nicks" : [
          "calvaris"
