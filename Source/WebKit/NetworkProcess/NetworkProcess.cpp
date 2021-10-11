@@ -1395,8 +1395,9 @@ void NetworkProcess::preconnectTo(PAL::SessionID sessionID, WebPageProxyIdentifi
     parameters.shouldPreconnectOnly = PreconnectOnly::Yes;
 
     networkSession->networkLoadScheduler().startedPreconnectForMainResource(url, userAgent);
-    auto task = new PreconnectTask(*networkSession, WTFMove(parameters), [networkSession, url, userAgent](const WebCore::ResourceError& error) {
-        networkSession->networkLoadScheduler().finishedPreconnectForMainResource(url, userAgent, error);
+    auto task = new PreconnectTask(*networkSession, WTFMove(parameters), [weakNetworkSession = makeWeakPtr(*networkSession), url, userAgent](const WebCore::ResourceError& error) {
+        if (weakNetworkSession)
+            weakNetworkSession->networkLoadScheduler().finishedPreconnectForMainResource(url, userAgent, error);
     });
     task->setTimeout(10_s);
     task->start();
