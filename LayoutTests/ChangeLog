@@ -1,3 +1,22 @@
+2021-10-11  Ben Nham  <nham@apple.com>
+
+        Add push registration stubs
+        https://bugs.webkit.org/show_bug.cgi?id=231064
+
+        Reviewed by Youenn Fablet.
+
+        Add basic tests for PushManager.subscribe in both the window and service worker contexts.
+
+        * http/wpt/push-api/pushManager-worker.js: Added.
+        * http/wpt/push-api/pushManager.any-expected.txt: Added.
+        * http/wpt/push-api/pushManager.any.html: Added.
+        * http/wpt/push-api/pushManager.any.js: Added.
+        (isServiceWorker.promise_test.async test):
+        (else.promise_test.async test):
+        (promise_test.async test):
+        * http/wpt/push-api/pushManager.any.serviceworker-expected.txt: Added.
+        * http/wpt/push-api/pushManager.any.serviceworker.html: Added.
+
 2021-10-11  Antti Koivisto  <antti@apple.com>
 
         Remove inline box decoration painting quirk

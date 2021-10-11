@@ -1611,8 +1611,12 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPushEvent.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPushEvent.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPushEventInit.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPushEventInit.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPushManager.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPushManager.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPushMessageData.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPushMessageData.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPushPermissionState.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPushPermissionState.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPushSubscription.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPushSubscription.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPushSubscriptionJSON.cpp
@@ -2137,6 +2141,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSSecurityPolicyViolationEvent.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSSecurityPolicyViolationEvent.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSServiceWorker.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSServiceWorker.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSServiceWorkerRegistration+PushAPI.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSServiceWorkerRegistration+PushAPI.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSServiceWorkerClient.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSServiceWorkerClient.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSServiceWorkerClientType.cpp

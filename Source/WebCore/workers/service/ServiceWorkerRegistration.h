@@ -31,6 +31,7 @@
 #include "EventTarget.h"
 #include "SWClientConnection.h"
 #include "ServiceWorkerRegistrationData.h"
+#include "Supplementable.h"
 #include "Timer.h"
 
 namespace WebCore {
@@ -40,7 +41,7 @@ class ScriptExecutionContext;
 class ServiceWorker;
 class ServiceWorkerContainer;
 
-class ServiceWorkerRegistration final : public RefCounted<ServiceWorkerRegistration>, public EventTargetWithInlineData, public ActiveDOMObject {
+class ServiceWorkerRegistration final : public RefCounted<ServiceWorkerRegistration>, public Supplementable<ServiceWorkerRegistration>, public EventTargetWithInlineData, public ActiveDOMObject {
     WTF_MAKE_ISO_ALLOCATED(ServiceWorkerRegistration);
 public:
     static Ref<ServiceWorkerRegistration> getOrCreate(ScriptExecutionContext&, Ref<ServiceWorkerContainer>&&, ServiceWorkerRegistrationData&&);

@@ -210,6 +210,7 @@ namespace WebCore {
     macro(PointerEvent) \
     macro(PublicKeyCredential) \
     macro(PushEvent) \
+    macro(PushManager) \
     macro(PushMessageData) \
     macro(PushSubscription) \
     macro(PushSubscriptionOptions) \

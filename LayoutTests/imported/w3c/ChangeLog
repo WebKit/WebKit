@@ -1,3 +1,16 @@
+2021-10-11  Ben Nham  <nham@apple.com>
+
+        Add push registration stubs
+        https://bugs.webkit.org/show_bug.cgi?id=231064
+
+        Reviewed by Youenn Fablet.
+
+        Update test results after importing PushManager-related IDL.
+
+        * web-platform-tests/push-api/idlharness.https.any-expected.txt:
+        * web-platform-tests/push-api/idlharness.https.any.serviceworker-expected.txt:
+        * web-platform-tests/push-api/idlharness.https.any.worker-expected.txt:
+
 2021-10-11  Tim Nguyen  <ntim@apple.com>
 
         Import new top layer WPTs
