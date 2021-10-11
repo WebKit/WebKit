@@ -1,3 +1,11 @@
+2021-10-11  Patrick Griffis  <pgriffis@igalia.com>
+
+        Add my github username to contributors.json
+
+        Unreviewed.
+
+        * metadata/contributors.json:
+
 2021-10-11  Sam Weinig  <weinig@apple.com>
 
         Add my github username and keep my expertise where it is because, while not up to date, it is fun
