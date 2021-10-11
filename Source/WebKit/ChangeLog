@@ -1,3 +1,15 @@
+2021-10-11  Per Arne Vollan <pvollan@apple.com>
+
+        [iOS] Add message filter in the WebContent process' sandbox
+        https://bugs.webkit.org/show_bug.cgi?id=231046
+        <rdar://problem/83743661>
+
+        Reviewed by Brent Fulgham.
+
+        Add IOKit message filter in the WebContent process' sandbox on iOS.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb.in:
+
 2021-10-10  Sihui Liu  <sihui_liu@apple.com>
 
         Add support for iterating FileSystemDirectoryHandle
