@@ -220,7 +220,7 @@ public:
 
     void setDefersLoading(bool);
 
-    void checkContentPolicy(const ResourceResponse&, PolicyCheckIdentifier, bool needsBrowsingContextGroupSwitch, ContentPolicyDecisionFunction&&);
+    void checkContentPolicy(const ResourceResponse&, PolicyCheckIdentifier, BrowsingContextGroupSwitchDecision, ContentPolicyDecisionFunction&&);
 
     void didExplicitOpen();
 

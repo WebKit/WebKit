@@ -44,6 +44,7 @@
 #include "WebConnectionToWebProcess.h"
 #include "WebPageProxyIdentifier.h"
 #include "WebProcessProxyMessagesReplies.h"
+#include <WebCore/CrossOriginMode.h>
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/MediaProducer.h>
 #include <WebCore/PageIdentifier.h>
@@ -135,7 +136,7 @@ public:
 
     enum class ShouldLaunchProcess : bool { No, Yes };
 
-    static Ref<WebProcessProxy> create(WebProcessPool&, WebsiteDataStore*, IsPrewarmed, ShouldLaunchProcess = ShouldLaunchProcess::Yes);
+    static Ref<WebProcessProxy> create(WebProcessPool&, WebsiteDataStore*, IsPrewarmed, WebCore::CrossOriginMode = WebCore::CrossOriginMode::Shared, ShouldLaunchProcess = ShouldLaunchProcess::Yes);
     static Ref<WebProcessProxy> createForServiceWorkers(WebProcessPool&, WebCore::RegistrableDomain&&, WebsiteDataStore&);
 
     ~WebProcessProxy();
@@ -424,8 +425,10 @@ public:
     void setCaptionLanguage(const String&);
 #endif
 
+    WebCore::CrossOriginMode crossOriginMode() const { return m_crossOriginMode; }
+
 protected:
-    WebProcessProxy(WebProcessPool&, WebsiteDataStore*, IsPrewarmed);
+    WebProcessProxy(WebProcessPool&, WebsiteDataStore*, IsPrewarmed, WebCore::CrossOriginMode);
 
     // AuxiliaryProcessProxy
     ASCIILiteral processName() const final { return "WebContent"_s; }
@@ -445,6 +448,7 @@ protected:
 
     bool shouldConfigureJSCForTesting() const final;
     bool isJITEnabled() const final;
+    bool shouldEnableSharedArrayBuffer() const final { return m_crossOriginMode == WebCore::CrossOriginMode::Isolated; }
 
     void validateFreezerStatus();
 
@@ -625,6 +629,7 @@ private:
 
     bool m_hasCommittedAnyProvisionalLoads { false };
     bool m_isPrewarmed;
+    WebCore::CrossOriginMode m_crossOriginMode { WebCore::CrossOriginMode::Shared };
 #if ENABLE(ATTACHMENT_ELEMENT)
     bool m_hasIssuedAttachmentElementRelatedSandboxExtensions { false };
 #endif

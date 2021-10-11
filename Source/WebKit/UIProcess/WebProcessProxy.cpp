@@ -166,9 +166,9 @@ void WebProcessProxy::forWebPagesWithOrigin(PAL::SessionID sessionID, const Secu
     }
 }
 
-Ref<WebProcessProxy> WebProcessProxy::create(WebProcessPool& processPool, WebsiteDataStore* websiteDataStore, IsPrewarmed isPrewarmed, ShouldLaunchProcess shouldLaunchProcess)
+Ref<WebProcessProxy> WebProcessProxy::create(WebProcessPool& processPool, WebsiteDataStore* websiteDataStore, IsPrewarmed isPrewarmed, CrossOriginMode crossOriginMode, ShouldLaunchProcess shouldLaunchProcess)
 {
-    auto proxy = adoptRef(*new WebProcessProxy(processPool, websiteDataStore, isPrewarmed));
+    auto proxy = adoptRef(*new WebProcessProxy(processPool, websiteDataStore, isPrewarmed, crossOriginMode));
     if (shouldLaunchProcess == ShouldLaunchProcess::Yes) {
         if (liveProcessesLRU().size() >= s_maxProcessCount) {
             for (auto& processPool : WebProcessPool::allProcessPools())
@@ -186,7 +186,7 @@ Ref<WebProcessProxy> WebProcessProxy::create(WebProcessPool& processPool, Websit
 #if ENABLE(SERVICE_WORKER)
 Ref<WebProcessProxy> WebProcessProxy::createForServiceWorkers(WebProcessPool& processPool, RegistrableDomain&& registrableDomain, WebsiteDataStore& websiteDataStore)
 {
-    auto proxy = adoptRef(*new WebProcessProxy(processPool, &websiteDataStore, IsPrewarmed::No));
+    auto proxy = adoptRef(*new WebProcessProxy(processPool, &websiteDataStore, IsPrewarmed::No, CrossOriginMode::Shared));
     proxy->m_registrableDomain = WTFMove(registrableDomain);
     proxy->enableServiceWorkers(processPool.userContentControllerIdentifierForServiceWorkers());
     proxy->connect();
@@ -222,7 +222,7 @@ private:
 };
 #endif
 
-WebProcessProxy::WebProcessProxy(WebProcessPool& processPool, WebsiteDataStore* websiteDataStore, IsPrewarmed isPrewarmed)
+WebProcessProxy::WebProcessProxy(WebProcessPool& processPool, WebsiteDataStore* websiteDataStore, IsPrewarmed isPrewarmed, CrossOriginMode crossOriginMode)
     : AuxiliaryProcessProxy(processPool.alwaysRunsAtBackgroundPriority())
     , m_backgroundResponsivenessTimer(*this)
     , m_processPool(processPool, isPrewarmed == IsPrewarmed::Yes ? IsWeak::Yes : IsWeak::No)
@@ -239,6 +239,7 @@ WebProcessProxy::WebProcessProxy(WebProcessPool& processPool, WebsiteDataStore* 
     , m_userMediaCaptureManagerProxy(makeUnique<UserMediaCaptureManagerProxy>(makeUniqueRef<UIProxyForCapture>(*this)))
 #endif
     , m_isPrewarmed(isPrewarmed == IsPrewarmed::Yes)
+    , m_crossOriginMode(crossOriginMode)
     , m_shutdownPreventingScopeCounter([this](RefCounterEvent event) { if (event == RefCounterEvent::Decrement) maybeShutDown(); })
 {
     RELEASE_ASSERT(isMainThreadOrCheckDisabled());
@@ -1177,6 +1178,11 @@ bool WebProcessProxy::canBeAddedToWebProcessCache() const
 {
     if (isRunningServiceWorkers()) {
         WEBPROCESSPROXY_RELEASE_LOG(Process, "canBeAddedToWebProcessCache: Not adding to process cache because the process is running workers");
+        return false;
+    }
+
+    if (m_crossOriginMode == CrossOriginMode::Isolated) {
+        WEBPROCESSPROXY_RELEASE_LOG(Process, "canBeAddedToWebProcessCache: Not adding to process cache because the process is cross-origin isolated");
         return false;
     }
 

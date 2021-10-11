@@ -519,7 +519,7 @@ void WebFrameLoaderClient::dispatchShow()
         ui->webViewShow(webView);
 }
 
-void WebFrameLoaderClient::dispatchDecidePolicyForResponse(const ResourceResponse& response, const ResourceRequest& request, WebCore::PolicyCheckIdentifier identifier, const String&, bool needsBrowsingContextGroupSwitch, FramePolicyFunction&& function)
+void WebFrameLoaderClient::dispatchDecidePolicyForResponse(const ResourceResponse& response, const ResourceRequest& request, WebCore::PolicyCheckIdentifier identifier, const String&, BrowsingContextGroupSwitchDecision, FramePolicyFunction&& function)
 {
     WebView* webView = m_webFrame->webView();
     Frame* coreFrame = core(m_webFrame);

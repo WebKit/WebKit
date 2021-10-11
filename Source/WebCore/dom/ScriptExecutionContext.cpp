@@ -81,6 +81,8 @@
 namespace WebCore {
 using namespace Inspector;
 
+static std::atomic<CrossOriginMode> globalCrossOriginMode { CrossOriginMode::Shared };
+
 static Lock allScriptExecutionContextsMapLock;
 static HashMap<ScriptExecutionContextIdentifier, ScriptExecutionContext*>& allScriptExecutionContextsMap() WTF_REQUIRES_LOCK(allScriptExecutionContextsMapLock)
 {
@@ -622,6 +624,16 @@ ServiceWorkerContainer* ScriptExecutionContext::ensureServiceWorkerContainer()
 }
 
 #endif
+
+void ScriptExecutionContext::setCrossOriginMode(CrossOriginMode crossOriginMode)
+{
+    globalCrossOriginMode = crossOriginMode;
+}
+
+CrossOriginMode ScriptExecutionContext::crossOriginMode()
+{
+    return globalCrossOriginMode;
+}
 
 bool ScriptExecutionContext::postTaskTo(ScriptExecutionContextIdentifier identifier, Task&& task)
 {

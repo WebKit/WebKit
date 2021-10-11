@@ -92,6 +92,11 @@ void XPCServiceInitializer(OSObjectPtr<xpc_connection_t> connection, xpc_object_
             JSC::Config::configureForTesting();
         if (xpc_dictionary_get_bool(initializerMessage, "disable-jit"))
             JSC::ExecutableAllocator::setJITEnabled(false);
+        if (xpc_dictionary_get_bool(initializerMessage, "enable-shared-array-buffer")) {
+            JSC::Options::initialize();
+            JSC::Options::AllowUnfinalizedAccessScope scope;
+            JSC::Options::useSharedArrayBuffer() = true;
+        }
     }
 
     XPCServiceInitializerDelegateType delegate(WTFMove(connection), initializerMessage);

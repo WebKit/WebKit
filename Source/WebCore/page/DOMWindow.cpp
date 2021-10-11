@@ -1908,9 +1908,8 @@ bool DOMWindow::isSecureContext() const
 
 bool DOMWindow::crossOriginIsolated() const
 {
-    // FIXME: Implemented this. This should return true if COOP/COEP are used and the page is allowed to use APIs
-    // that require cross-origin isolation (e.g. SharedArrayBuffer).
-    return false;
+    ASSERT(ScriptExecutionContext::crossOriginMode() == CrossOriginMode::Shared || !document() || document()->topDocument().crossOriginOpenerPolicy().value == CrossOriginOpenerPolicyValue::SameOriginPlusCOEP);
+    return ScriptExecutionContext::crossOriginMode() == CrossOriginMode::Isolated;
 }
 
 static void didAddStorageEventListener(DOMWindow& window)

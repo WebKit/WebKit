@@ -79,8 +79,6 @@
     readonly attribute Navigator navigator;
     // FIXME: This is specified to be [SecureContext]
     readonly attribute DOMApplicationCache applicationCache;
-    // FIXME: Implement 'originIsolated'
-    // readonly attribute boolean originIsolated;
 
     // user prompts
     undefined alert();

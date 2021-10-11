@@ -167,6 +167,12 @@ enum class UnloadEventPolicy {
     UnloadAndPageHide
 };
 
+enum class BrowsingContextGroupSwitchDecision : uint8_t {
+    StayInGroup,
+    NewSharedGroup,
+    NewIsolatedGroup,
+};
+
 // Passed to FrameLoader::urlSelected() and ScriptController::executeIfJavaScriptURL()
 // to control whether, in the case of a JavaScript URL, executeIfJavaScriptURL() should
 // replace the document. It is a FIXME to eliminate this extra parameter from
@@ -273,6 +279,15 @@ template<> struct EnumTraits<WebCore::PolicyAction> {
         WebCore::PolicyAction::Download,
         WebCore::PolicyAction::Ignore,
         WebCore::PolicyAction::StopAllLoads
+    >;
+};
+
+template<> struct EnumTraits<WebCore::BrowsingContextGroupSwitchDecision> {
+    using values = EnumValues<
+        WebCore::BrowsingContextGroupSwitchDecision,
+        WebCore::BrowsingContextGroupSwitchDecision::StayInGroup,
+        WebCore::BrowsingContextGroupSwitchDecision::NewSharedGroup,
+        WebCore::BrowsingContextGroupSwitchDecision::NewIsolatedGroup
     >;
 };
 

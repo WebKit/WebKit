@@ -954,6 +954,15 @@ void DocumentLoader::responseReceived(CachedResource& resource, const ResourceRe
     responseReceived(response, WTFMove(completionHandler));
 }
 
+static BrowsingContextGroupSwitchDecision toBrowsingContextGroupSwitchDecision(const std::optional<CrossOriginOpenerPolicyEnforcementResult>& currentCoopEnforcementResult)
+{
+    if (!currentCoopEnforcementResult || !currentCoopEnforcementResult->needsBrowsingContextGroupSwitch)
+        return BrowsingContextGroupSwitchDecision::StayInGroup;
+    if (currentCoopEnforcementResult->crossOriginOpenerPolicy.value == CrossOriginOpenerPolicyValue::SameOriginPlusCOEP)
+        return BrowsingContextGroupSwitchDecision::NewIsolatedGroup;
+    return BrowsingContextGroupSwitchDecision::NewSharedGroup;
+}
+
 void DocumentLoader::responseReceived(const ResourceResponse& response, CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(response.certificateInfo());
@@ -1054,8 +1063,8 @@ void DocumentLoader::responseReceived(const ResourceResponse& response, Completi
     if (mainResourceLoader)
         mainResourceLoader->markInAsyncResponsePolicyCheck();
     auto requestIdentifier = PolicyCheckIdentifier::create();
-    bool needsBrowsingContextGroupSwitch = m_currentCoopEnforcementResult && m_currentCoopEnforcementResult->needsBrowsingContextGroupSwitch;
-    frameLoader()->checkContentPolicy(m_response, requestIdentifier, needsBrowsingContextGroupSwitch, [this, protectedThis = makeRef(*this), mainResourceLoader = WTFMove(mainResourceLoader),
+    auto browsingContextGroupSwitchDecision = toBrowsingContextGroupSwitchDecision(m_currentCoopEnforcementResult);
+    frameLoader()->checkContentPolicy(m_response, requestIdentifier, browsingContextGroupSwitchDecision, [this, protectedThis = makeRef(*this), mainResourceLoader = WTFMove(mainResourceLoader),
         completionHandler = completionHandlerCaller.release(), requestIdentifier] (PolicyAction policy, PolicyCheckIdentifier responseIdentifier) mutable {
         RELEASE_ASSERT(responseIdentifier.isValidFor(requestIdentifier));
         continueAfterContentPolicy(policy);

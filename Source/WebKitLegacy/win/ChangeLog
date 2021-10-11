@@ -1,3 +1,15 @@
+2021-08-31  Chris Dumez  <cdumez@apple.com>
+
+        Enable SharedArrayBuffer support when COOP/COEP headers are used
+        https://bugs.webkit.org/show_bug.cgi?id=229559
+        <rdar://problem/82391945>
+
+        Reviewed by Alex Christensen.
+
+        * WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebFrameLoaderClient::dispatchDecidePolicyForResponse):
+        * WebCoreSupport/WebFrameLoaderClient.h:
+
 2021-08-24  Chris Dumez  <cdumez@apple.com>
 
         [WK2] Implement process-swapping based on Cross-Origin-Opener-Policy HTTP header
