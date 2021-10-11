@@ -16,7 +16,7 @@ print('''<!DOCTYPE html>
 </head>
 <body onload="runTest()">
 <script>
-    description("Tests that the session is switched upon top frame navigation to a prevalent resource with user interaction.");
+    description("Tests that the session is switched upon top frame navigation to a prevalent resource without user interaction.");
     jsTestIsAsync = true;
 
     const prevalentOrigin = "http://127.0.0.1:8000";
@@ -66,6 +66,7 @@ print('''<!DOCTYPE html>
             case "":
                 if (document.location.origin !== prevalentOrigin)
                     testFailed("Test is not starting out on " + prevalentOrigin + ".");
+
                 setEnableFeature(true, function () {
                     if (testRunner.isStatisticsPrevalentResource(prevalentOrigin))
                         testFailed(prevalentOrigin + " was classified as prevalent resource before the test starts.");
@@ -74,17 +75,16 @@ print('''<!DOCTYPE html>
                 });
                 break;
             case "#step1":
-                testRunner.setStatisticsHasHadUserInteraction(prevalentOrigin, true, function() {
-                    setSessionCookie();
-                    setPersistentCookie();
-                    checkCookies(true, true);
-                    if (testRunner.hasStatisticsIsolatedSession(prevalentOrigin)) {
-                        testFailed("Origin has isolated session.");
-                        setEnableFeature(false, finishJSTest);
-                    } else
-                        testPassed("Origin has no isolated session.");
-                    document.location.href = nonPrevalentOrigin + "/resourceLoadStatistics/switch-session-on-navigation-to-prevalent-with-interaction.py#step2";
-                });
+                setSessionCookie();
+                setPersistentCookie();
+                checkCookies(true, true);
+                if (testRunner.hasStatisticsIsolatedSession(prevalentOrigin))
+                    testPassed("Origin has isolated session.");
+                else {
+                    testFailed("Origin has no isolated session.");
+                    setEnableFeature(false, finishJSTest);
+                }
+                document.location.href = nonPrevalentOrigin + "/resourceLoadStatistics/switch-session-on-navigation-to-prevalent-without-interaction.py#step2";
                 break;
             case "#step2":
                 document.location.hash = "step3";
@@ -99,7 +99,7 @@ print('''<!DOCTYPE html>
                 });
                 break;
             case "#step3":
-                document.location.href = prevalentOrigin + "/resourceLoadStatistics/switch-session-on-navigation-to-prevalent-with-interaction.py#step4";
+                document.location.href = prevalentOrigin + "/resourceLoadStatistics/switch-session-on-navigation-to-prevalent-without-interaction.py#step4";
                 break;
             case "#step4":
                 checkCookies(true, true);

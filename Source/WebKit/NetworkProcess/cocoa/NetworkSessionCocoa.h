@@ -69,7 +69,7 @@ struct IsolatedSession {
 public:
     SessionWrapper sessionWithCredentialStorage;
     SessionWrapper sessionWithoutCredentialStorage;
-    WallTime lastUsed;
+    MonotonicTime lastUsed;
 };
 
 struct SessionSet : public RefCounted<SessionSet>, public CanMakeWeakPtr<SessionSet> {

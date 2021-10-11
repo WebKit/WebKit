@@ -91,6 +91,8 @@ private:
 
     bool tryPasswordBasedAuthentication(const WebCore::AuthenticationChallenge&, ChallengeCompletionHandler&);
     void applySniffingPoliciesAndBindRequestToInferfaceIfNeeded(RetainPtr<NSURLRequest>&, bool shouldContentSniff, bool shouldContentEncodingSniff);
+    void swapSessionIfNecessary(WebCore::ResourceRequest&);
+    void initializeDataTask(const WebCore::ResourceRequest&);
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     static NSHTTPCookieStorage *statelessCookieStorage();
@@ -123,6 +125,10 @@ private:
     bool m_isAlwaysOnLoggingAllowed { false };
     WebCore::ShouldRelaxThirdPartyCookieBlocking m_shouldRelaxThirdPartyCookieBlocking { WebCore::ShouldRelaxThirdPartyCookieBlocking::No };
     RefPtr<WebCore::SecurityOrigin> m_sourceOrigin;
+    std::optional<NavigatingToAppBoundDomain> m_isNavigatingToAppBoundDomain;
+#if HAVE(NW_ACTIVITY)
+    RetainPtr<nw_activity_t> m_nwActivity;
+#endif
 };
 
 WebCore::Credential serverTrustCredential(const WebCore::AuthenticationChallenge&);

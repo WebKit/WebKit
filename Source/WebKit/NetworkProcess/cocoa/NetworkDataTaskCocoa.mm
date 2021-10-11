@@ -302,6 +302,10 @@ NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataT
     , m_isAlwaysOnLoggingAllowed(computeIsAlwaysOnLoggingAllowed(session))
     , m_shouldRelaxThirdPartyCookieBlocking(parameters.shouldRelaxThirdPartyCookieBlocking)
     , m_sourceOrigin(parameters.sourceOrigin)
+    , m_isNavigatingToAppBoundDomain(parameters.isNavigatingToAppBoundDomain)
+#if HAVE(NW_ACTIVITY)
+    , m_nwActivity(parameters.networkActivityTracker ? parameters.networkActivityTracker->getPlatformObject() : nullptr)
+#endif
 {
     auto request = parameters.request;
     auto url = request.url();
@@ -328,14 +332,6 @@ NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataT
     }
 #endif
 
-    bool shouldBlockCookies = false;
-#if ENABLE(RESOURCE_LOAD_STATISTICS)
-    shouldBlockCookies = m_storedCredentialsPolicy == WebCore::StoredCredentialsPolicy::EphemeralStateless;
-    if (auto* networkStorageSession = session.networkStorageSession()) {
-        if (!shouldBlockCookies)
-            shouldBlockCookies = networkStorageSession->shouldBlockCookies(request, frameID(), pageID(), m_shouldRelaxThirdPartyCookieBlocking);
-    }
-#endif
     restrictRequestReferrerToOriginIfNeeded(request);
 
     RetainPtr<NSURLRequest> nsRequest = request.nsURLRequest(WebCore::HTTPBodyUpdatePolicy::UpdateHTTPBody);
@@ -374,6 +370,20 @@ NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataT
 #endif
     }
 
+    initializeDataTask(request);
+}
+
+void NetworkDataTaskCocoa::initializeDataTask(const WebCore::ResourceRequest& request)
+{
+    bool shouldBlockCookies = false;
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
+    shouldBlockCookies = m_storedCredentialsPolicy == WebCore::StoredCredentialsPolicy::EphemeralStateless;
+    if (auto* networkStorageSession = m_session->networkStorageSession()) {
+        if (!shouldBlockCookies)
+            shouldBlockCookies = networkStorageSession->shouldBlockCookies(request, frameID(), pageID(), m_shouldRelaxThirdPartyCookieBlocking);
+    }
+#endif
+
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
 #if HAVE(CFNETWORK_CNAME_AND_COOKIE_TRANSFORM_SPI)
     applyCookiePolicyForThirdPartyCNAMECloaking(request);
@@ -381,7 +391,7 @@ NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataT
     if (shouldBlockCookies) {
 #if !RELEASE_LOG_DISABLED
         if (m_session->shouldLogCookieInformation())
-            RELEASE_LOG_IF(isAlwaysOnLoggingAllowed(), Network, "%p - NetworkDataTaskCocoa::logCookieInformation: pageID=%" PRIu64 ", frameID=%" PRIu64 ", taskID=%lu: Blocking cookies for URL %s", this, pageID().toUInt64(), frameID().toUInt64(), (unsigned long)[m_task taskIdentifier], [nsRequest URL].absoluteString.UTF8String);
+            RELEASE_LOG_IF(isAlwaysOnLoggingAllowed(), Network, "%p - NetworkDataTaskCocoa::logCookieInformation: pageID=%" PRIu64 ", frameID=%" PRIu64 ", taskID=%lu: Blocking cookies for URL %s", this, pageID().toUInt64(), frameID().toUInt64(), (unsigned long)[m_task taskIdentifier], request.url().string().utf8().data());
 #else
         LOG(NetworkSession, "%lu Blocking cookies for URL %s", (unsigned long)[m_task taskIdentifier], [nsRequest URL].absoluteString.UTF8String);
 #endif
@@ -395,8 +405,8 @@ NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataT
     updateTaskWithFirstPartyForSameSiteCookies(m_task.get(), request);
 
 #if HAVE(NW_ACTIVITY)
-    if (parameters.networkActivityTracker)
-        m_task.get()._nw_activity = parameters.networkActivityTracker->getPlatformObject();
+    if (m_nwActivity)
+        m_task.get()._nw_activity = m_nwActivity.get();
 #endif
 }
 
@@ -543,14 +553,39 @@ void NetworkDataTaskCocoa::willPerformHTTPRedirection(WebCore::ResourceResponse&
         m_client->willPerformHTTPRedirection(WTFMove(redirectResponse), WTFMove(request), [completionHandler = WTFMove(completionHandler), this, weakThis = makeWeakPtr(*this)] (auto&& request) mutable {
             if (!weakThis || !m_session)
                 return completionHandler({ });
-            if (!request.isNull())
+            if (!request.isNull()) {
                 restrictRequestReferrerToOriginIfNeeded(request);
+                swapSessionIfNecessary(request);
+            }
             completionHandler(WTFMove(request));
         });
     else {
         ASSERT_NOT_REACHED();
         completionHandler({ });
     }
+}
+
+void NetworkDataTaskCocoa::swapSessionIfNecessary(WebCore::ResourceRequest& request)
+{
+    // We only swap session based on first party registrable domain so only redirects of top level navigations may swap session (when redirecting cross-site).
+    if (!isTopLevelNavigation())
+        return;
+
+    auto& updatedSession = static_cast<NetworkSessionCocoa&>(*m_session).sessionWrapperForTask(m_webPageProxyID, request, m_storedCredentialsPolicy, m_isNavigatingToAppBoundDomain);
+    if (!m_sessionWrapper || m_sessionWrapper == &updatedSession)
+        return;
+
+    auto previousTask = std::exchange(m_task, nullptr);
+
+    m_sessionWrapper->dataTaskMap.remove([previousTask taskIdentifier]);
+    m_sessionWrapper = makeWeakPtr(updatedSession);
+
+    m_task = [m_sessionWrapper->session dataTaskWithRequest:request.nsURLRequest(WebCore::HTTPBodyUpdatePolicy::UpdateHTTPBody)];
+    m_sessionWrapper->dataTaskMap.add([m_task taskIdentifier], this);
+
+    initializeDataTask(request);
+    [m_task resume];
+    request = { };
 }
 
 void NetworkDataTaskCocoa::setPendingDownloadLocation(const WTF::String& filename, SandboxExtension::Handle&& sandboxExtensionHandle, bool allowOverwrite)
