@@ -1016,7 +1016,7 @@ void MediaPlayerPrivateGStreamer::notifyPlayerOfTrack()
     default:
         ASSERT_NOT_REACHED();
     }
-    HashMap<AtomString, RefPtr<TrackPrivateType>>& tracks = *get<HashMap<AtomString, RefPtr<TrackPrivateType>>*>(variantTracks);
+    HashMap<AtomString, RefPtr<TrackPrivateType>>& tracks = *WTF::get<HashMap<AtomString, RefPtr<TrackPrivateType>>*>(variantTracks);
 
     // Ignore notifications after a EOS. We don't want the tracks to disappear when the video is finished.
     if (m_isEndReached && (type == TrackType::Audio || type == TrackType::Video))
@@ -1071,16 +1071,16 @@ void MediaPlayerPrivateGStreamer::notifyPlayerOfTrack()
         ASSERT(streamId == track->id());
         tracks.add(streamId, track.copyRef());
 
-        Variant<AudioTrackPrivate&, VideoTrackPrivate&, InbandTextTrackPrivate&> variantTrack(track.get());
+        Variant<AudioTrackPrivate*, VideoTrackPrivate*, InbandTextTrackPrivate*> variantTrack(&track.get());
         switch (variantTrack.index()) {
         case TrackType::Audio:
-            m_player->addAudioTrack(get<AudioTrackPrivate&>(variantTrack));
+            m_player->addAudioTrack(*WTF::get<AudioTrackPrivate*>(variantTrack));
             break;
         case TrackType::Video:
-            m_player->addVideoTrack(get<VideoTrackPrivate&>(variantTrack));
+            m_player->addVideoTrack(*WTF::get<VideoTrackPrivate*>(variantTrack));
             break;
         case TrackType::Text:
-            m_player->addTextTrack(get<InbandTextTrackPrivate&>(variantTrack));
+            m_player->addTextTrack(*WTF::get<InbandTextTrackPrivate*>(variantTrack));
             break;
         }
     }

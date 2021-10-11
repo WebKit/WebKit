@@ -1550,7 +1550,7 @@ ALWAYS_INLINE auto Lexer<T>::parseHex() -> std::optional<NumberParseResult>
     } while (isASCIIHexDigitOrSeparator(m_current) && maximumDigits >= 0);
 
     if (LIKELY(maximumDigits >= 0 && m_current != 'n'))
-        return NumberParseResult { hexValue };
+        return NumberParseResult { static_cast<double>(hexValue) };
 
     // No more place in the hexValue buffer.
     // The values are shifted out and placed into the m_buffer8 vector.
@@ -1609,7 +1609,7 @@ ALWAYS_INLINE auto Lexer<T>::parseBinary() -> std::optional<NumberParseResult>
     } while (isASCIIBinaryDigitOrSeparator(m_current) && digit >= 0);
 
     if (LIKELY(!isASCIIDigitOrSeparator(m_current) && digit >= 0 && m_current != 'n'))
-        return NumberParseResult { binaryValue };
+        return NumberParseResult { static_cast<double>(binaryValue) };
 
     for (int i = maximumDigits - 1; i > digit; --i)
         record8(digits[i]);
@@ -1665,7 +1665,7 @@ ALWAYS_INLINE auto Lexer<T>::parseOctal() -> std::optional<NumberParseResult>
     } while (isASCIIOctalDigitOrSeparator(m_current) && digit >= 0);
 
     if (LIKELY(!isASCIIDigitOrSeparator(m_current) && digit >= 0 && m_current != 'n'))
-        return NumberParseResult { octalValue };
+        return NumberParseResult { static_cast<double>(octalValue) };
 
     for (int i = maximumDigits - 1; i > digit; --i)
          record8(digits[i]);
@@ -1724,7 +1724,7 @@ ALWAYS_INLINE auto Lexer<T>::parseDecimal() -> std::optional<NumberParseResult>
         } while (isASCIIDigitOrSeparator(m_current) && digit >= 0);
 
         if (digit >= 0 && m_current != '.' && !isASCIIAlphaCaselessEqual(m_current, 'e') && m_current != 'n')
-            return NumberParseResult { decimalValue };
+            return NumberParseResult { static_cast<double>(decimalValue) };
 
         for (int i = maximumDigits - 1; i > digit; --i)
             record8(digits[i]);

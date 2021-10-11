@@ -56,16 +56,16 @@ TEST(WTF_Variant, Basic)
     Variant<int, double> variant = 1;
     EXPECT_TRUE(variant.index() == 0);
     EXPECT_TRUE(WTF::get<int>(variant) == 1);
-    EXPECT_TRUE(*WTF::get_if<int>(variant) == 1);
-    EXPECT_TRUE(WTF::get_if<double>(variant) == nullptr);
+    EXPECT_EQ(*WTF::get_if<int>(&variant), 1);
+    EXPECT_EQ(WTF::get_if<double>(&variant), nullptr);
     EXPECT_TRUE(WTF::holds_alternative<int>(variant));
     EXPECT_FALSE(WTF::holds_alternative<double>(variant));
 
     variant = 1.0;
     EXPECT_TRUE(variant.index() == 1);
     EXPECT_TRUE(WTF::get<double>(variant) == 1);
-    EXPECT_TRUE(*WTF::get_if<double>(variant) == 1.0);
-    EXPECT_TRUE(WTF::get_if<int>(variant) == nullptr);
+    EXPECT_EQ(*WTF::get_if<double>(&variant), 1.0);
+    EXPECT_EQ(WTF::get_if<int>(&variant), nullptr);
     EXPECT_TRUE(WTF::holds_alternative<double>(variant));
     EXPECT_FALSE(WTF::holds_alternative<int>(variant));
 }

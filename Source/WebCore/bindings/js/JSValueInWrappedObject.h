@@ -82,7 +82,7 @@ inline JSValueInWrappedObject::operator JSC::JSValue() const
 {
     return WTF::switchOn(m_value, [] (JSC::JSValue value) {
         return value;
-    }, [] (const Weak& value) {
+    }, [] (const Weak& value) -> JSC::JSValue {
         return value.get();
     });
 }

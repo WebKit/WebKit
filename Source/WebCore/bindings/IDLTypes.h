@@ -31,6 +31,7 @@
 #include <wtf/Brigand.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/URL.h>
+#include <wtf/Variant.h>
 
 #if ENABLE(WEBGL)
 #include "WebGLAny.h"

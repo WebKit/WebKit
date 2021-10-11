@@ -127,7 +127,7 @@ unsigned FormData::imageOrMediaFilesCount() const
 {
     unsigned imageOrMediaFilesCount = 0;
     for (auto& element : m_elements) {
-        auto* encodedFileData = WTF::get_if<FormDataElement::EncodedFileData>(element.data);
+        auto* encodedFileData = WTF::get_if<FormDataElement::EncodedFileData>(&element.data);
         if (!encodedFileData)
             continue;
 
@@ -140,7 +140,7 @@ unsigned FormData::imageOrMediaFilesCount() const
 
 uint64_t FormDataElement::lengthInBytes(const Function<uint64_t(const URL&)>& blobSize) const
 {
-    return switchOn(data,
+    return WTF::switchOn(data,
         [] (const Vector<uint8_t>& bytes) {
             return static_cast<uint64_t>(bytes.size());
         }, [] (const FormDataElement::EncodedFileData& fileData) {
@@ -162,7 +162,7 @@ uint64_t FormDataElement::lengthInBytes() const
 
 FormDataElement FormDataElement::isolatedCopy() const
 {
-    return switchOn(data,
+    return WTF::switchOn(data,
         [] (const Vector<uint8_t>& bytes) {
             return FormDataElement(Vector { bytes.data(), bytes.size() });
         }, [] (const FormDataElement::EncodedFileData& fileData) {
@@ -177,7 +177,7 @@ void FormData::appendData(const void* data, size_t size)
 {
     m_lengthInBytes = std::nullopt;
     if (!m_elements.isEmpty()) {
-        if (auto* vector = WTF::get_if<Vector<uint8_t>>(m_elements.last().data)) {
+        if (auto* vector = WTF::get_if<Vector<uint8_t>>(&m_elements.last().data)) {
             vector->append(static_cast<const uint8_t*>(data), size);
             return;
         }
@@ -293,7 +293,7 @@ Vector<uint8_t> FormData::flatten() const
     // Concatenate all the byte arrays, but omit any files.
     Vector<uint8_t> data;
     for (auto& element : m_elements) {
-        if (auto* vector = WTF::get_if<Vector<uint8_t>>(element.data))
+        if (auto* vector = WTF::get_if<Vector<uint8_t>>(&element.data))
             data.append(vector->data(), vector->size());
     }
     return data;
@@ -367,7 +367,7 @@ FormDataForUpload FormData::prepareForUpload()
 {
     Vector<String> generatedFiles;
     for (auto& element : m_elements) {
-        auto* fileData = WTF::get_if<FormDataElement::EncodedFileData>(element.data);
+        auto* fileData = WTF::get_if<FormDataElement::EncodedFileData>(&element.data);
         if (!fileData)
             continue;
         if (FileSystem::fileTypeFollowingSymlinks(fileData->filename) != FileSystem::FileType::Directory)
@@ -425,7 +425,7 @@ URL FormData::asBlobURL() const
     if (m_elements.size() != 1)
         return { };
 
-    if (auto* blobData = WTF::get_if<FormDataElement::EncodedBlobData>(m_elements.first().data))
+    if (auto* blobData = WTF::get_if<FormDataElement::EncodedBlobData>(&m_elements.first().data))
         return blobData->url;
     return { };
 }

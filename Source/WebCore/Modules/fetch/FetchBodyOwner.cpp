@@ -388,9 +388,9 @@ ResourceError FetchBodyOwner::loadingError() const
 
 std::optional<Exception> FetchBodyOwner::loadingException() const
 {
-    return WTF::switchOn(m_loadingError, [](const ResourceError& error) {
+    return WTF::switchOn(m_loadingError, [](const ResourceError& error) -> std::optional<Exception> {
         return Exception { TypeError, error.sanitizedDescription() };
-    }, [](const Exception& exception) {
+    }, [](const Exception& exception) -> std::optional<Exception> {
         return Exception { exception };
     }, [](auto&&) -> std::optional<Exception> {
         return std::nullopt;

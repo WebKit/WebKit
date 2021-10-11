@@ -681,13 +681,13 @@ bool MediaControlsHost::showMediaControlsContextMenu(HTMLElement& target, String
 #endif // ENABLE(VIDEO_PRESENTATION_MODE)
             [&] (RefPtr<AudioTrack>& selectedAudioTrack) {
                 for (auto& track : idMap.values()) {
-                    if (auto* audioTrack = WTF::get_if<RefPtr<AudioTrack>>(track))
+                    if (auto* audioTrack = WTF::get_if<RefPtr<AudioTrack>>(&track))
                         (*audioTrack)->setEnabled(*audioTrack == selectedAudioTrack);
                 }
             },
             [&] (RefPtr<TextTrack>& selectedTextTrack) {
                 for (auto& track : idMap.values()) {
-                    if (auto* textTrack = WTF::get_if<RefPtr<TextTrack>>(track))
+                    if (auto* textTrack = WTF::get_if<RefPtr<TextTrack>>(&track))
                         (*textTrack)->setMode(TextTrack::Mode::Disabled);
                 }
                 mediaElement.setSelectedTextTrack(selectedTextTrack.get());

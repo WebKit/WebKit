@@ -66,7 +66,7 @@ InspectorShaderProgram::InspectorShaderProgram(WebGLProgram& program, InspectorC
 #if ENABLE(WEBGL)
 WebGLProgram* InspectorShaderProgram::program() const
 {
-    if (auto* programWrapper = WTF::get_if<std::reference_wrapper<WebGLProgram>>(m_program))
+    if (auto* programWrapper = WTF::get_if<std::reference_wrapper<WebGLProgram>>(&m_program))
         return &programWrapper->get();
     return nullptr;
 }

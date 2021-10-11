@@ -918,7 +918,7 @@ static RefPtr<CSSPrimitiveValue> consumeFontVariantCSS21(CSSParserTokenRange& ra
 static RefPtr<CSSPrimitiveValue> consumeFontWeight(CSSParserTokenRange& range)
 {
     if (auto result = consumeFontWeightRaw(range)) {
-        return switchOn(*result, [] (CSSValueID valueID) {
+        return WTF::switchOn(*result, [] (CSSValueID valueID) {
             return CSSValuePool::singleton().createIdentifierValue(valueID);
         }, [] (double weightNumber) {
             return CSSValuePool::singleton().createValue(weightNumber, CSSUnitType::CSS_NUMBER);

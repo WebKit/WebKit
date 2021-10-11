@@ -200,7 +200,7 @@ struct HasherAddCustom2 { };
 
 void add(Hasher& hasher, const HasherAddCustom2&)
 {
-    add(hasher, { 1, 2, 3, 4 });
+    add(hasher, std::initializer_list<int> { 1, 2, 3, 4 });
 }
 
 TEST(WTF, Hasher_custom)

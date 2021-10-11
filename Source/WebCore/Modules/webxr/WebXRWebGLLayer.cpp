@@ -273,7 +273,7 @@ HTMLCanvasElement* WebXRWebGLLayer::canvas() const
         auto canvas = baseContext->canvas();
         return WTF::switchOn(canvas, [](const RefPtr<HTMLCanvasElement>& canvas) {
             return canvas.get();
-        }, [](const RefPtr<OffscreenCanvas>) {
+        }, [](const RefPtr<OffscreenCanvas>) -> HTMLCanvasElement* {
             ASSERT_NOT_REACHED("baseLayer of a WebXRWebGLLayer must be an HTMLCanvasElement");
             return nullptr;
         });

@@ -51,9 +51,9 @@ ExceptionOr<Ref<URLSearchParams>> URLSearchParams::create(Variant<Vector<Vector<
             pairs.append({pair[0], pair[1]});
         }
         return adoptRef(*new URLSearchParams(WTFMove(pairs)));
-    }, [&](const Vector<WTF::KeyValuePair<String, String>>& pairs) {
+    }, [&](const Vector<WTF::KeyValuePair<String, String>>& pairs) -> ExceptionOr<Ref<URLSearchParams>> {
         return adoptRef(*new URLSearchParams(pairs));
-    }, [&](const String& string) {
+    }, [&](const String& string) -> ExceptionOr<Ref<URLSearchParams>> {
         return adoptRef(*new URLSearchParams(string, nullptr));
     });
     return WTF::visit(visitor, variant);

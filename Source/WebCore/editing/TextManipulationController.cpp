@@ -51,7 +51,7 @@ namespace WebCore {
 
 inline bool TextManipulationController::ExclusionRule::match(const Element& element) const
 {
-    return switchOn(rule, [&element] (ElementRule rule) {
+    return WTF::switchOn(rule, [&element] (ElementRule rule) {
         return rule.localName == element.localName();
     }, [&element] (AttributeRule rule) {
         return equalIgnoringASCIICase(element.getAttribute(rule.name), rule.value);

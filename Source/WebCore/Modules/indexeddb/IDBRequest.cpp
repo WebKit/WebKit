@@ -206,9 +206,9 @@ uint64_t IDBRequest::sourceObjectStoreIdentifier() const
         return 0;
 
     return WTF::switchOn(m_source.value(),
-        [] (const RefPtr<IDBObjectStore>& objectStore) { return objectStore->info().identifier(); },
-        [] (const RefPtr<IDBIndex>& index) { return index->info().objectStoreIdentifier(); },
-        [] (const RefPtr<IDBCursor>&) { return 0; }
+        [] (const RefPtr<IDBObjectStore>& objectStore) -> uint64_t { return objectStore->info().identifier(); },
+        [] (const RefPtr<IDBIndex>& index) -> uint64_t { return index->info().objectStoreIdentifier(); },
+        [] (const RefPtr<IDBCursor>&) -> uint64_t { return 0; }
     );
 }
 

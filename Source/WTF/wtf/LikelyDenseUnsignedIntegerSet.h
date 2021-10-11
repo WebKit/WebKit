@@ -205,8 +205,8 @@ public:
         IndexType operator*() const
         {
             return WTF::switchOn(m_underlying,
-                [&](const BitVector::iterator& it) { return *it + m_shift; },
-                [](const typename Set::iterator& it) { return *it; });
+                [&](const BitVector::iterator& it) -> IndexType { return *it + m_shift; },
+                [](const typename Set::iterator& it) -> IndexType { return *it; });
         }
 
         bool operator==(const iterator& other) const

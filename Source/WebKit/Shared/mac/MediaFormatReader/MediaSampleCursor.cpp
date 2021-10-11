@@ -153,13 +153,11 @@ std::optional<typename OrderedMap::iterator> MediaSampleCursor::locateIterator(O
             else
                 return std::nullopt;
             return locateIterator(samples, hasAllSamples);
-        },
-        [&](const auto& otherIterator) {
+        }, [&](const auto& otherIterator) -> std::optional<Iterator> {
             assertIsHeld(m_locatorLock);
             m_locator = otherIterator->second->presentationTime();
             return locateIterator(samples, hasAllSamples);
-        },
-        [&](const Iterator& iterator) {
+        }, [&](const Iterator& iterator) -> std::optional<Iterator> {
             return iterator;
         }
     );

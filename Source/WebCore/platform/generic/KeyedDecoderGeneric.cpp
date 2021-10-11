@@ -41,7 +41,7 @@ public:
     using Node = Variant<Vector<uint8_t>, bool, uint32_t, uint64_t, int32_t, int64_t, float, double, String, std::unique_ptr<Dictionary>, std::unique_ptr<Array>>;
 
     template <typename T>
-    void add(const String& key, T&& value) { m_map.add(key, makeUnique<Node>(std::forward<T>(value))); }
+    void add(const String& key, T&& value) { m_map.add(key, makeUniqueWithoutFastMallocCheck<Node>(std::forward<T>(value))); }
     Node* get(const String& key) { return m_map.get(key); }
 
 private:
@@ -223,7 +223,7 @@ const T* KeyedDecoderGeneric::getPointerFromDictionaryStack(const String& key)
     if (!node)
         return nullptr;
 
-    return WTF::get_if<T>(*node);
+    return WTF::get_if<T>(node);
 }
 
 template<typename T>

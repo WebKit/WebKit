@@ -201,7 +201,7 @@ struct MockMediaDevice {
     {
         encoder << persistentId;
         encoder << label;
-        switchOn(properties, [&](const MockMicrophoneProperties& properties) {
+        WTF::switchOn(properties, [&](const MockMicrophoneProperties& properties) {
             encoder << (uint8_t)1;
             encoder << properties;
         }, [&](const MockSpeakerProperties& properties) {

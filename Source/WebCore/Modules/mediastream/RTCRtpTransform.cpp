@@ -52,7 +52,7 @@ RTCRtpTransform::~RTCRtpTransform()
 
 bool RTCRtpTransform::isAttached() const
 {
-    return switchOn(m_transform, [&](const RefPtr<RTCRtpSFrameTransform>& sframeTransform) {
+    return WTF::switchOn(m_transform, [&](const RefPtr<RTCRtpSFrameTransform>& sframeTransform) {
         return sframeTransform->isAttached();
     }, [&](const RefPtr<RTCRtpScriptTransform>& scriptTransform) {
         return scriptTransform->isAttached();
@@ -131,14 +131,14 @@ void RTCRtpTransform::detachFromSender(RTCRtpSender&)
 
 bool operator==(const RTCRtpTransform& a, const RTCRtpTransform& b)
 {
-    return switchOn(a.m_transform, [&](const RefPtr<RTCRtpSFrameTransform>& sframeTransformA) {
-        return switchOn(b.m_transform, [&](const RefPtr<RTCRtpSFrameTransform>& sframeTransformB) {
+    return WTF::switchOn(a.m_transform, [&](const RefPtr<RTCRtpSFrameTransform>& sframeTransformA) {
+        return WTF::switchOn(b.m_transform, [&](const RefPtr<RTCRtpSFrameTransform>& sframeTransformB) {
             return sframeTransformA.get() == sframeTransformB.get();
         }, [&](const RefPtr<RTCRtpScriptTransform>&) {
             return false;
         });
     }, [&](const RefPtr<RTCRtpScriptTransform>& scriptTransformA) {
-        return switchOn(b.m_transform, [&](const RefPtr<RTCRtpSFrameTransform>&) {
+        return WTF::switchOn(b.m_transform, [&](const RefPtr<RTCRtpSFrameTransform>&) {
             return false;
         }, [&](const RefPtr<RTCRtpScriptTransform>& scriptTransformB) {
             return scriptTransformA.get() == scriptTransformB.get();

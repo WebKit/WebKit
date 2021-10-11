@@ -129,15 +129,15 @@ EventInterface MessageEvent::eventInterface() const
 
 size_t MessageEvent::memoryCost() const
 {
-    return WTF::switchOn(m_data, [] (const JSValueInWrappedObject&) {
+    return WTF::switchOn(m_data, [] (const JSValueInWrappedObject&) -> size_t {
         return 0;
-    }, [] (const Ref<SerializedScriptValue>& data) {
+    }, [] (const Ref<SerializedScriptValue>& data) -> size_t {
         return data->memoryCost();
-    }, [] (const String& string) {
+    }, [] (const String& string) -> size_t {
         return string.sizeInBytes();
-    }, [] (const Ref<Blob>& blob) {
+    }, [] (const Ref<Blob>& blob) -> size_t {
         return blob->size();
-    }, [] (const Ref<ArrayBuffer>& buffer) {
+    }, [] (const Ref<ArrayBuffer>& buffer) -> size_t {
         return buffer->byteLength();
     });
 }

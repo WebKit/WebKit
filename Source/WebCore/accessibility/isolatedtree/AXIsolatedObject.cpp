@@ -807,7 +807,7 @@ IntPoint AXIsolatedObject::intPointAttributeValue(AXPropertyName propertyName) c
 {
     auto value = m_propertyMap.get(propertyName);
     return WTF::switchOn(value,
-        [] (IntPoint& typedValue) { return typedValue; },
+        [] (IntPoint& typedValue) -> IntPoint { return typedValue; },
         [] (auto&) { return IntPoint(); }
     );
 }
@@ -816,7 +816,7 @@ AXCoreObject* AXIsolatedObject::objectAttributeValue(AXPropertyName propertyName
 {
     auto value = m_propertyMap.get(propertyName);
     AXID nodeID = WTF::switchOn(value,
-        [] (AXID& typedValue) { return typedValue; },
+        [] (AXID& typedValue) -> AXID { return typedValue; },
         [] (auto&) { return InvalidAXID; }
     );
 
@@ -828,7 +828,7 @@ T AXIsolatedObject::rectAttributeValue(AXPropertyName propertyName) const
 {
     auto value = m_propertyMap.get(propertyName);
     return WTF::switchOn(value,
-        [] (T& typedValue) { return typedValue; },
+        [] (T& typedValue) -> T { return typedValue; },
         [] (auto&) { return T { }; }
     );
 }
@@ -838,7 +838,7 @@ Vector<T> AXIsolatedObject::vectorAttributeValue(AXPropertyName propertyName) co
 {
     auto value = m_propertyMap.get(propertyName);
     return WTF::switchOn(value,
-        [] (Vector<T>& typedValue) { return typedValue; },
+        [] (Vector<T>& typedValue) -> Vector<T> { return typedValue; },
         [] (auto&) { return Vector<T>(); }
     );
 }
@@ -848,7 +848,7 @@ OptionSet<T> AXIsolatedObject::optionSetAttributeValue(AXPropertyName propertyNa
 {
     auto value = m_propertyMap.get(propertyName);
     return WTF::switchOn(value,
-        [] (T& typedValue) { return typedValue; },
+        [] (T& typedValue) -> OptionSet<T> { return typedValue; },
         [] (auto&) { return OptionSet<T>(); }
     );
 }
@@ -858,7 +858,7 @@ std::pair<T, T> AXIsolatedObject::pairAttributeValue(AXPropertyName propertyName
 {
     auto value = m_propertyMap.get(propertyName);
     return WTF::switchOn(value,
-        [] (std::pair<T, T>& typedValue) { return typedValue; },
+        [] (std::pair<T, T>& typedValue) -> std::pair<T, T> { return typedValue; },
         [] (auto&) { return std::pair<T, T>(0, 1); }
     );
 }
@@ -867,8 +867,8 @@ uint64_t AXIsolatedObject::uint64AttributeValue(AXPropertyName propertyName) con
 {
     auto value = m_propertyMap.get(propertyName);
     return WTF::switchOn(value,
-        [] (uint64_t& typedValue) { return typedValue; },
-        [] (auto&) { return 0; }
+        [] (uint64_t& typedValue) -> uint64_t { return typedValue; },
+        [] (auto&) -> uint64_t { return 0; }
     );
 }
 
@@ -876,7 +876,7 @@ URL AXIsolatedObject::urlAttributeValue(AXPropertyName propertyName) const
 {
     auto value = m_propertyMap.get(propertyName);
     return WTF::switchOn(value,
-        [] (URL& typedValue) { return typedValue; },
+        [] (URL& typedValue) -> URL { return typedValue; },
         [] (auto&) { return URL(); }
     );
 }
@@ -885,7 +885,7 @@ Path AXIsolatedObject::pathAttributeValue(AXPropertyName propertyName) const
 {
     auto value = m_propertyMap.get(propertyName);
     return WTF::switchOn(value,
-        [] (Path& typedValue) { return typedValue; },
+        [] (Path& typedValue) -> Path { return typedValue; },
         [] (auto&) { return Path(); }
     );
 }
@@ -894,7 +894,7 @@ Color AXIsolatedObject::colorAttributeValue(AXPropertyName propertyName) const
 {
     auto value = m_propertyMap.get(propertyName);
     return WTF::switchOn(value,
-        [] (Color& typedValue) { return typedValue; },
+        [] (Color& typedValue) -> Color { return typedValue; },
         [] (auto&) { return Color(); }
     );
 }
@@ -903,8 +903,8 @@ float AXIsolatedObject::floatAttributeValue(AXPropertyName propertyName) const
 {
     auto value = m_propertyMap.get(propertyName);
     return WTF::switchOn(value,
-        [] (float& typedValue) { return typedValue; },
-        [] (auto&) { return 0; }
+        [] (float& typedValue) -> float { return typedValue; },
+        [] (auto&) { return 0.0f; }
     );
 }
 
@@ -912,8 +912,8 @@ double AXIsolatedObject::doubleAttributeValue(AXPropertyName propertyName) const
 {
     auto value = m_propertyMap.get(propertyName);
     return WTF::switchOn(value,
-        [] (double& typedValue) { return typedValue; },
-        [] (auto&) { return 0; }
+        [] (double& typedValue) -> double { return typedValue; },
+        [] (auto&) { return 0.0; }
     );
 }
 
@@ -921,8 +921,8 @@ unsigned AXIsolatedObject::unsignedAttributeValue(AXPropertyName propertyName) c
 {
     auto value = m_propertyMap.get(propertyName);
     return WTF::switchOn(value,
-        [] (unsigned& typedValue) { return typedValue; },
-        [] (auto&) { return 0; }
+        [] (unsigned& typedValue) -> unsigned { return typedValue; },
+        [] (auto&) { return 0u; }
     );
 }
 

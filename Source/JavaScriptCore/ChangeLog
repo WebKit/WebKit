@@ -1,3 +1,23 @@
+2021-10-11  Alex Christensen  <achristensen@webkit.org>
+
+        Prepare to switch from WTF::Variant to std::variant
+        https://bugs.webkit.org/show_bug.cgi?id=231239
+
+        Reviewed by Chris Dumez.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileCallDOM):
+        * parser/Lexer.cpp:
+        (JSC::Lexer<T>::parseHex):
+        (JSC::Lexer<T>::parseBinary):
+        (JSC::Lexer<T>::parseOctal):
+        (JSC::Lexer<T>::parseDecimal):
+        * runtime/CachePayload.cpp:
+        (JSC::CachePayload::data const):
+        (JSC::CachePayload::size const):
+        * runtime/CacheUpdate.cpp:
+        (JSC::CacheUpdate::CacheUpdate):
+
 2021-10-11  Keith Miller  <keith_miller@apple.com>
 
         SourceID should have a type name and only be 32-bits

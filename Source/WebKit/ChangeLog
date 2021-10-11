@@ -1,5 +1,24 @@
 2021-10-11  Alex Christensen  <achristensen@webkit.org>
 
+        Prepare to switch from WTF::Variant to std::variant
+        https://bugs.webkit.org/show_bug.cgi?id=231239
+
+        Reviewed by Chris Dumez.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::resolveBlobReferences):
+        * NetworkProcess/NetworkResourceLoadParameters.cpp:
+        (WebKit::NetworkResourceLoadParameters::encode const):
+        * Platform/IPC/FormDataReference.h:
+        (IPC::FormDataReference::encode const):
+        * Shared/mac/MediaFormatReader/MediaSampleCursor.cpp:
+        (WebKit::MediaSampleCursor::locateIterator const):
+        * UIProcess/API/APIWebAuthenticationPanel.h:
+        * UIProcess/Automation/SimulatedInputDispatcher.h:
+        * UIProcess/Cocoa/WKSafeBrowsingWarning.h:
+
+2021-10-11  Alex Christensen  <achristensen@webkit.org>
+
         Add AdAttributionDaemon sandbox on iOS
         https://bugs.webkit.org/show_bug.cgi?id=231308
 

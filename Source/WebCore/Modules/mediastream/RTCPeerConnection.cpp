@@ -331,7 +331,7 @@ void RTCPeerConnection::addIceCandidate(Candidate&& rtcCandidate, Ref<DeferredPr
     std::optional<Exception> exception;
     RefPtr<RTCIceCandidate> candidate;
     if (rtcCandidate) {
-        candidate = switchOn(*rtcCandidate, [&exception](RTCIceCandidateInit& init) -> RefPtr<RTCIceCandidate> {
+        candidate = WTF::switchOn(*rtcCandidate, [&exception](RTCIceCandidateInit& init) -> RefPtr<RTCIceCandidate> {
             if (init.candidate.isEmpty())
                 return nullptr;
 

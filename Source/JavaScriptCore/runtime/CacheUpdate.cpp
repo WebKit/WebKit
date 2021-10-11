@@ -38,13 +38,7 @@ CacheUpdate::CacheUpdate(FunctionUpdate&& update)
 {
 }
 
-CacheUpdate::CacheUpdate(CacheUpdate&& other)
-{
-    if (WTF::holds_alternative<GlobalUpdate>(other.m_update))
-        new (this) CacheUpdate(WTFMove(WTF::get<GlobalUpdate>(other.m_update)));
-    else
-        new (this) CacheUpdate(WTFMove(WTF::get<FunctionUpdate>(other.m_update)));
-}
+CacheUpdate::CacheUpdate(CacheUpdate&&) = default;
 
 CacheUpdate& CacheUpdate::operator=(CacheUpdate&& other)
 {

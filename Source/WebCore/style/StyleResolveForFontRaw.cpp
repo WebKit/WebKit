@@ -158,7 +158,7 @@ std::optional<FontCascade> resolveForFontRaw(const FontRaw& fontRaw, FontCascade
     }
 
     if (fontRaw.weight) {
-        auto weight = switchOn(*fontRaw.weight, [&] (CSSValueID ident) {
+        auto weight = WTF::switchOn(*fontRaw.weight, [&] (CSSValueID ident) {
             switch (ident) {
             case CSSValueNormal:
                 return normalWeightValue();
@@ -179,7 +179,7 @@ std::optional<FontCascade> resolveForFontRaw(const FontRaw& fontRaw, FontCascade
     }
 
     fontDescription.setKeywordSizeFromIdentifier(CSSValueInvalid);
-    float size = switchOn(fontRaw.size, [&] (CSSValueID ident) {
+    float size = WTF::switchOn(fontRaw.size, [&] (CSSValueID ident) {
         switch (ident) {
         case CSSValueXxSmall:
         case CSSValueXSmall:
@@ -199,7 +199,7 @@ std::optional<FontCascade> resolveForFontRaw(const FontRaw& fontRaw, FontCascade
             return 0.f;
         }
     }, [&] (const CSSPropertyParserHelpers::LengthOrPercentRaw& lengthOrPercent) {
-        return switchOn(lengthOrPercent, [&] (const CSSPropertyParserHelpers::LengthRaw& length) {
+        return WTF::switchOn(lengthOrPercent, [&] (const CSSPropertyParserHelpers::LengthRaw& length) {
             auto fontCascade = FontCascade(FontCascadeDescription(fontDescription));
             fontCascade.update(context.cssFontSelector());
             // FIXME: Passing null for the RenderView parameter means that vw and vh units will evaluate to

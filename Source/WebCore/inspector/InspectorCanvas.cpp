@@ -111,7 +111,7 @@ InspectorCanvas::InspectorCanvas(CanvasRenderingContext& context)
 
 CanvasRenderingContext* InspectorCanvas::canvasContext() const
 {
-    if (auto* contextWrapper = WTF::get_if<std::reference_wrapper<CanvasRenderingContext>>(m_context))
+    if (auto* contextWrapper = WTF::get_if<std::reference_wrapper<CanvasRenderingContext>>(&m_context))
         return &contextWrapper->get();
     return nullptr;
 }
@@ -124,8 +124,7 @@ HTMLCanvasElement* InspectorCanvas::canvasElement() const
             if (is<HTMLCanvasElement>(context.canvasBase()))
                 return &downcast<HTMLCanvasElement>(context.canvasBase());
             return nullptr;
-        },
-        [] (Monostate) {
+        }, [] (Monostate) -> HTMLCanvasElement* {
             ASSERT_NOT_REACHED();
             return nullptr;
         }
@@ -139,8 +138,7 @@ ScriptExecutionContext* InspectorCanvas::scriptExecutionContext() const
         [] (std::reference_wrapper<CanvasRenderingContext> contextWrapper) {
             auto& context = contextWrapper.get();
             return context.canvasBase().scriptExecutionContext();
-        },
-        [] (Monostate) {
+        }, [] (Monostate) -> ScriptExecutionContext* {
             ASSERT_NOT_REACHED();
             return nullptr;
         }
@@ -893,8 +891,7 @@ Ref<Protocol::Canvas::Canvas> InspectorCanvas::buildObjectForCanvas(bool capture
                 return Protocol::Canvas::ContextType::WebGL2;
 #endif
             return std::nullopt;
-        },
-        [] (Monostate) {
+        }, [] (Monostate) -> ContextTypeType {
             ASSERT_NOT_REACHED();
             return std::nullopt;
         }
@@ -920,8 +917,7 @@ Ref<Protocol::Canvas::Canvas> InspectorCanvas::buildObjectForCanvas(bool capture
     auto contextAttributes = WTF::switchOn(m_context,
         [] (std::reference_wrapper<CanvasRenderingContext> contextWrapper) {
             return buildObjectForCanvasContextAttributes(contextWrapper);
-        },
-        [] (Monostate) {
+        }, [] (Monostate) -> RefPtr<Inspector::Protocol::Canvas::ContextAttributes> {
             ASSERT_NOT_REACHED();
             return nullptr;
         }
@@ -1040,8 +1036,8 @@ int InspectorCanvas::indexForData(DuplicateDataVariant data)
         if (data == item)
             return true;
 
-        auto traceA = WTF::get_if<RefPtr<ScriptCallStack>>(data);
-        auto traceB = WTF::get_if<RefPtr<ScriptCallStack>>(item);
+        auto traceA = WTF::get_if<RefPtr<ScriptCallStack>>(&data);
+        auto traceB = WTF::get_if<RefPtr<ScriptCallStack>>(&item);
         if (traceA && *traceA && traceB && *traceB)
             return (*traceA)->isEqual((*traceB).get());
 

@@ -200,7 +200,7 @@ ExceptionOr<RefPtr<WebXRViewerPose>> WebXRFrame::getViewerPose(const Document& d
         auto transform = WebXRRigidTransform::create(pose->transform().rawTransform() * offset);
 
         // Set projection matrix for each view
-        std::array<float, 16> projection = switchOn(frameData.views[index].projection, [&](const PlatformXR::Device::FrameData::Fov& fov) {
+        std::array<float, 16> projection = WTF::switchOn(frameData.views[index].projection, [&](const PlatformXR::Device::FrameData::Fov& fov) {
             double near = m_session->renderState().depthNear();
             double far = m_session->renderState().depthFar();
             return TransformationMatrix::fromProjection(fov.up, fov.down, fov.left, fov.right, near, far).toColumnMajorFloatArray();
