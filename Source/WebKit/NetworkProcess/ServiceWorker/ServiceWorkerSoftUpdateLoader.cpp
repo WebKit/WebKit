@@ -170,7 +170,7 @@ ResourceError ServiceWorkerSoftUpdateLoader::processResponse(const ResourceRespo
 
     m_contentSecurityPolicy = ContentSecurityPolicyResponseHeaders { response };
     // Service workers are always secure contexts.
-    m_crossOriginEmbedderPolicy = obtainCrossOriginEmbedderPolicy(response, IsSecureContext::Yes);
+    m_crossOriginEmbedderPolicy = obtainCrossOriginEmbedderPolicy(response, nullptr);
     m_referrerPolicy = response.httpHeaderField(HTTPHeaderName::ReferrerPolicy);
     m_responseEncoding = response.textEncodingName();
 

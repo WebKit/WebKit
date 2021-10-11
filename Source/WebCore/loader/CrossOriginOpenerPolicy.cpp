@@ -54,7 +54,7 @@ CrossOriginOpenerPolicy obtainCrossOriginOpenerPolicy(const ResourceResponse& re
     std::optional<CrossOriginEmbedderPolicy> coep;
     auto ensureCOEP = [&coep, &response, &context]() -> CrossOriginEmbedderPolicy& {
         if (!coep)
-            coep = obtainCrossOriginEmbedderPolicy(response, context);
+            coep = obtainCrossOriginEmbedderPolicy(response, &context);
         return *coep;
     };
     auto parseCOOP = [&response, &ensureCOEP](HTTPHeaderName headerName, auto& value, auto& reportingEndpoint) {
@@ -75,10 +75,7 @@ CrossOriginOpenerPolicy obtainCrossOriginOpenerPolicy(const ResourceResponse& re
     };
 
     CrossOriginOpenerPolicy policy;
-    if (!context.settingsValues().crossOriginOpenerPolicyEnabled)
-        return policy;
-    // FIXME: about:blank should be marked as secure as per https://w3c.github.io/webappsec-secure-contexts/#potentially-trustworthy-url.
-    if (!context.isSecureContext() && context.url() != aboutBlankURL() && !context.url().isEmpty())
+    if (!context.settingsValues().crossOriginOpenerPolicyEnabled || !SecurityOrigin::create(response.url())->isPotentiallyTrustworthy())
         return policy;
 
     parseCOOP(HTTPHeaderName::CrossOriginOpenerPolicy, policy.value, policy.reportingEndpoint);

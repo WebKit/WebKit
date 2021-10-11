@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+const urlParams = new URLSearchParams(location.search);
+const isSecureContext = urlParams.get("secure") == "1";
+if (window.internals && !isSecureContext)
+    internals.markContextAsInsecure();
+
+if (isSecureContext) {
+    let bc = new BroadcastChannel('non-secure-to-secure-context-navigation');
+    bc.postMessage(window.opener ? "has_opener" : "does_not_have_opener");
+}
+</script>
+</body>
+</html>
