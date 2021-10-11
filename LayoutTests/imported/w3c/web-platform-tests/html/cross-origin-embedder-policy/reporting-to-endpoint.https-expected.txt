@@ -3,5 +3,5 @@ PASS subresource CORP
 PASS navigation CORP
 PASS COEP violation on nested frame navigation
 PASS Two COEP headers, split inside report-to value
-FAIL Shared worker fetch promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'worker.port.start')"
+FAIL Shared worker fetch promise_test: Unhandled rejection with value: object "TypeError: undefined is not a constructor (evaluating 'new iframe.contentWindow.SharedWorker(WORKER_URL)')"
 

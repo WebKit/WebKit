@@ -1,3 +1,11 @@
+2021-10-11  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, minor test rebaseline on the branch.
+
+        Due to lack of SharedArrayBuffer stubs.
+
+        * web-platform-tests/html/cross-origin-embedder-policy/reporting-to-endpoint.https-expected.txt:
+
 2021-10-04  Chris Dumez  <cdumez@apple.com>
 
         Use isolated NSURLSessions for each first party registrable domain
