@@ -1,5 +1,18 @@
 2021-10-11  Per Arne Vollan <pvollan@apple.com>
 
+        [iOS] Sort syscall filters in the WebContent process' sandbox
+        https://bugs.webkit.org/show_bug.cgi?id=231509
+        <rdar://problem/84095366>
+
+        Unreviewed, this patch only sorts existing message filters.
+
+        Syscall filters should be sorted in the WebContent process' sandbox. This patch does not add or
+        remove items from the filters, so there should be no change in behavior.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb.in:
+
+2021-10-11  Per Arne Vollan <pvollan@apple.com>
+
         Block access in sandbox to capability which is allowed by default
         https://bugs.webkit.org/show_bug.cgi?id=231079
         <rdar://66586853>
