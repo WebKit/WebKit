@@ -1,3 +1,16 @@
+2021-10-11  Jonathan Bedard  <jbedard@apple.com>
+
+        [run-benchmark] Make Python 3 compatible
+        https://bugs.webkit.org/show_bug.cgi?id=231512
+        <rdar://problem/84098736>
+
+        Reviewed by Dewei Zhu.
+
+        * Scripts/webkitpy/benchmark_runner/browser_driver/linux_browser_driver.py:
+        (LinuxBrowserDriver.launch_url): Encode Popen call if Python 3.
+        * Scripts/webkitpy/benchmark_runner/browser_driver/osx_safari_driver.py:
+        (OSXSafariDriver.launch_url): Ditto.
+
 2021-10-11  Alex Christensen  <achristensen@webkit.org>
 
         Reduce use of TCPServer
