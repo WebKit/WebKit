@@ -5661,16 +5661,15 @@ void WebPageProxy::decidePolicyForResponseShared(Ref<WebProcessProxy>&& process,
         auto willContinueLoadInNewProcess = WillContinueLoadInNewProcess::No;
         if (policyAction == PolicyAction::Use && browsingContextGroupSwitchDecision != BrowsingContextGroupSwitchDecision::StayInGroup && navigation) {
             WEBPAGEPROXY_RELEASE_LOG(ProcessSwapping, "decidePolicyForResponseShared: Process-swapping due to Cross-Origin-Opener-Policy, newProcessIsCrossOriginIsolated=%d", browsingContextGroupSwitchDecision == BrowsingContextGroupSwitchDecision::NewIsolatedGroup);
-            websiteDataStore().networkProcess().prepareLoadForWebProcessTransfer(process->coreProcessIdentifier(), mainResourceLoadIdentifier, [this, protectedThis = WTFMove(protectedThis), navigation, navigationResponse = WTFMove(navigationResponse), sender = WTFMove(sender), browsingContextGroupSwitchDecision](auto existingNetworkResourceLoadIdentifierToResume) mutable {
-                RefPtr<WebProcessProxy> processForNavigation;
-                if (browsingContextGroupSwitchDecision == BrowsingContextGroupSwitchDecision::NewIsolatedGroup)
-                    processForNavigation = m_process->processPool().createNewWebProcess(&websiteDataStore(), WebProcessProxy::IsPrewarmed::No, CrossOriginMode::Isolated);
-                else {
-                    ASSERT(browsingContextGroupSwitchDecision == BrowsingContextGroupSwitchDecision::NewSharedGroup);
-                    RegistrableDomain responseDomain { navigationResponse->response().url() };
-                    processForNavigation = m_process->processPool().processForRegistrableDomain(websiteDataStore(), this, responseDomain);
-                }
-                continueNavigationInNewProcess(*navigation, nullptr, processForNavigation.releaseNonNull(), ProcessSwapRequestedByClient::No, ShouldTreatAsContinuingLoad::YesAfterResponsePolicyDecision, nullptr, existingNetworkResourceLoadIdentifierToResume);
+            RefPtr<WebProcessProxy> processForNavigation;
+            if (browsingContextGroupSwitchDecision == BrowsingContextGroupSwitchDecision::NewIsolatedGroup)
+                processForNavigation = m_process->processPool().createNewWebProcess(&websiteDataStore(), WebProcessProxy::IsPrewarmed::No, CrossOriginMode::Isolated);
+            else {
+                RegistrableDomain responseDomain { navigationResponse->response().url() };
+                processForNavigation = m_process->processPool().processForRegistrableDomain(websiteDataStore(), this, responseDomain);
+            }
+            websiteDataStore().networkProcess().prepareLoadForWebProcessTransfer(process->coreProcessIdentifier(), mainResourceLoadIdentifier, [this, protectedThis = WTFMove(protectedThis), navigation, navigationResponse = WTFMove(navigationResponse), sender = WTFMove(sender), processForNavigation = processForNavigation.releaseNonNull()](auto existingNetworkResourceLoadIdentifierToResume) mutable {
+                continueNavigationInNewProcess(*navigation, nullptr, WTFMove(processForNavigation), ProcessSwapRequestedByClient::No, ShouldTreatAsContinuingLoad::YesAfterResponsePolicyDecision, nullptr, existingNetworkResourceLoadIdentifierToResume);
 
                 receivedPolicyDecision(PolicyAction::Ignore, navigation.get(), nullptr, WTFMove(navigationResponse), WTFMove(sender), { }, WillContinueLoadInNewProcess::Yes);
             });

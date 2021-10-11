@@ -1,3 +1,15 @@
+2021-09-21  Chris Dumez  <cdumez@apple.com>
+
+        Launch the new process a bit earlier when doing a COOP process-swap
+        https://bugs.webkit.org/show_bug.cgi?id=230555
+
+        Reviewed by Alex Christensen.
+
+        Launch the new process a bit earlier when doing a COOP process-swap for better performance.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::decidePolicyForResponseShared):
+
 2021-09-16  Chris Dumez  <cdumez@apple.com>
 
         Add violations reporting support for Cross-Origin-Embedder-Policy
