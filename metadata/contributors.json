@@ -5714,6 +5714,7 @@
          "weinig@apple.com"
       ],
       "expertise" : "HTML DOM, Core DOM, DOM Bindings (JavaScript, Objective-C and COM), Security, DumpRenderTree",
+      "github" : "weinig",
       "name" : "Sam Weinig",
       "nicks" : [
          "weinig"
