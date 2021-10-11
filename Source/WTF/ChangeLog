@@ -1,3 +1,16 @@
+2021-10-11  Alex Christensen  <achristensen@webkit.org>
+
+        Only mark needed JSONImpl::ObjectBase functions with WTF_EXPORT_PRIVATE
+        https://bugs.webkit.org/show_bug.cgi?id=231521
+
+        Reviewed by Chris Dumez.
+
+        I'm trying some wild experiments with the linker, and when I do the weak symbol checker fails because
+        it is trying to export some of the inline functions at the bottom of JSONValues.h.
+        Moving WTF_EXPORT_PRIVATE from exporting the whole class to only exporting the non-inline functions fixes it.
+
+        * wtf/JSONValues.h:
+
 2021-10-11  Dean Jackson  <dino@apple.com>
 
         Disable SystemPreview in WKContentProviderRegistry
