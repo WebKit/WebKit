@@ -1,3 +1,20 @@
+2021-10-11  BJ Burg  <bburg@apple.com>
+
+        Web Inspector: add TabBar context menu support for WI.WebInspectorExtensionTabContentView
+        https://bugs.webkit.org/show_bug.cgi?id=231181
+        <rdar://74698241>
+
+        Unreviewed. Land parts of the previous patch which seem to have been mis-merged and not landed.
+
+        * UserInterface/Base/Main.js:
+        (WI.isNewTabWithTypeAllowed):
+        * UserInterface/Controllers/WebInspectorExtensionController.js:
+        (WI.WebInspectorExtensionController.prototype.showExtensionTab):
+        * UserInterface/Views/TabBar.js:
+        (WI.TabBar.prototype._handleAddClosedTabsTabBarItemMouseDown):
+        (WI.TabBar.prototype._handleTabContainerContextMenu):
+        (WI.TabBar):
+
 2021-10-11  Razvan Caliman  <rcaliman@apple.com>
 
         Web Inspector: Move CSS longhand and shorthand mapping away from WI.CSSCompletions

@@ -762,10 +762,16 @@ WI.TabBar = class TabBar extends WI.View
         });
 
         for (let closedTabClass of closedTabClasses) {
+            // Tab types that are not restorable (i.e., extension tab) should not be added in the generic code path.
+            if (!closedTabClass.shouldSaveTab())
+                continue;
+
             contextMenu.appendItem(closedTabClass.tabInfo().displayName, () => {
                 WI.createNewTabWithType(closedTabClass.Type, {shouldShowNewTab: true});
             });
         }
+
+        WI.sharedApp.extensionController.addContextMenuItemsForClosedExtensionTabs(contextMenu);
 
         contextMenu.show();
     }
@@ -941,6 +947,8 @@ WI.TabBar = class TabBar extends WI.View
                     WI.createNewTabWithType(tabClass.Type, {shouldShowNewTab: true});
             }, checked, disabled);
         }
+
+        WI.sharedApp.extensionController.addContextMenuItemsForAllExtensionTabs(contextMenu);
     }
 };
 

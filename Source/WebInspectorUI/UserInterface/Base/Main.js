@@ -742,6 +742,9 @@ WI._tryToRestorePendingTabs = function()
 
 WI.isNewTabWithTypeAllowed = function(tabType)
 {
+    if (tabType === WI.WebInspectorExtensionTabContentView.Type)
+        return false;
+
     let tabClass = WI._knownTabClassesByType.get(tabType);
     if (!tabClass || !tabClass.isTabAllowed())
         return false;
