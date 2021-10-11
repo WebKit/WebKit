@@ -1881,7 +1881,8 @@
          "dcrousso@apple.com",
          "webkit@devinrousso.com"
       ],
-      "expertise" : "Web Inspector",
+      "expertise" : "Web Inspector, Media Controls, Payment Request",
+      "github" : "dcrousso",
       "name" : "Devin Rousso",
       "nicks" : [
          "drousso",
