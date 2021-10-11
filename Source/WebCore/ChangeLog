@@ -1,3 +1,52 @@
+2021-08-31  Chris Dumez  <cdumez@apple.com>
+
+        [COOP] html/cross-origin-opener-policy/coop-same-origin-allow-popups-document-write.html WPT test is failing
+        https://bugs.webkit.org/show_bug.cgi?id=229692
+
+        Reviewed by Darin Adler.
+
+        The test does the following:
+        1. An opener document with `COOP=same-origin-allow-popups` opens a new window that shows the initial empty document.
+           Note that the openee inherits `COOP=same-origin-allow-popups` from its opener.
+        2. The opener document then calls document.write() on the openee.
+           Note that, as per the HTML specification, this clears the 'is displaying initial empty document' flag.
+        3. The openee is navigated cross-origin to a destination without COOP.
+
+        Normally, `COOP=same-origin-allow-popups` would allow the popup to be navigated cross-origin as per the logic here [1]:
+        """
+        If all of the following are true:
+            - isInitialAboutBlank,
+            - activeDocumentCOOPValue's value is "same-origin-allow-popups".
+            - responseCOOPValue is "unsafe-none",
+        then return false (meaning, no context group switch).
+        """
+
+        However, because of the document.write() call at step 2, the isInitialAboutBlank flag is no longer true
+        and the check should fail, thus causing a browsing context group switch.
+
+        [1] https://html.spec.whatwg.org/multipage/origin.html#check-browsing-context-group-switch-coop-value
+
+        No new tests, rebaselined existing test.
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::maybeLoadEmpty):
+        Replace the bad check to committedFirstRealDocumentLoad (which stays true after calling document.write()
+        on the initial empty document) with a check to !isDisplayingInitialEmptyDocument, which matches the
+        specification text. isDisplayingInitialEmptyDocument correctly becomes false after calling document.write()
+        on the initial empty document.
+
+        * loader/DocumentLoader.h:
+        (WebCore::DocumentLoader::crossOriginOpenerPolicy const):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::didBeginDocument):
+        Fix didBeginDocument() so that it doesn't overwrite the document's cross-origin-opener-policy when the
+        DocumentLoader does not know what the policy is. When opening a popup, Document::initSecurityContext()
+        will set the popup's cross-origin-opener-policy to the one of its opener. When didBeginDocument()
+        gets called later for the initial empty document, we don't want to overwrite the inherited policy
+        with a new default cross-origin-opener-policy of unsafe-none. The reason the DocumentLoader does not
+        have a policy for us is because this is the initial empty document and DocumentLoader's
+        doCrossOriginOpenerHandlingOfResponse() was thus never called with an actual network response.
+
 2021-08-24  Chris Dumez  <cdumez@apple.com>
 
         [WK2] Implement process-swapping based on Cross-Origin-Opener-Policy HTTP header

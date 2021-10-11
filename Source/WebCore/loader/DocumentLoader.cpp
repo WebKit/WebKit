@@ -2023,7 +2023,7 @@ bool DocumentLoader::maybeLoadEmpty()
     String mimeType = shouldLoadEmpty ? "text/html" : frameLoader()->client().generatedMIMETypeForURLScheme(m_request.url().protocol().toStringWithoutCopying());
     m_response = ResourceResponse(m_request.url(), mimeType, 0, "UTF-8"_s);
 
-    if (frameLoader()->stateMachine().committedFirstRealDocumentLoad()) {
+    if (!frameLoader()->stateMachine().isDisplayingInitialEmptyDocument()) {
         doCrossOriginOpenerHandlingOfResponse(m_response);
 
         // FIXME: Non-initial about:blank loads may cause a browsing context group switch. However, such load is synchronous and doesn't

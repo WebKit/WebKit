@@ -772,8 +772,10 @@ void FrameLoader::didBeginDocument(bool dispatch)
         }
 
         // https://html.spec.whatwg.org/multipage/browsing-the-web.html#initialise-the-document-object (Step 7)
-        if (m_frame.isMainFrame())
-            m_frame.document()->setCrossOriginOpenerPolicy(m_documentLoader->crossOriginOpenerPolicy());
+        if (m_frame.isMainFrame()) {
+            if (auto crossOriginOpenerPolicy = m_documentLoader->crossOriginOpenerPolicy())
+                m_frame.document()->setCrossOriginOpenerPolicy(WTFMove(*crossOriginOpenerPolicy));
+        }
     }
 
     history().restoreDocumentState();
