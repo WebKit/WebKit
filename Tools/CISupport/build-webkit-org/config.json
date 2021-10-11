@@ -285,7 +285,7 @@
                     },
                     {
                       "name": "Apple-iOS-15-Simulator-Release-WK2-Tests", "factory": "TestAllButJSCFactory", "builddir": "ios-simulator-15-release-tests-wk2",
-                      "platform": "ios-simulator-15", "configuration": "release", "architectures": ["x86_64"], "device_model": "iphone",
+                      "platform": "ios-simulator-15", "configuration": "release", "architectures": ["x86_64", "arm64"], "device_model": "iphone",
                       "additionalArguments": ["--no-retry-failures"],
                       "workernames": ["bot651", "bot652"]
                     },
@@ -297,7 +297,7 @@
                     },
                     {
                       "name": "Apple-iPadOS-15-Simulator-Release-WK2-Tests", "factory": "TestAllButJSCFactory", "builddir": "ipados-simulator-15-release-tests-wk2",
-                      "platform": "ios-simulator-15", "configuration": "release", "architectures": ["x86_64"], "device_model": "ipad",
+                      "platform": "ios-simulator-15", "configuration": "release", "architectures": ["x86_64", "arm64"], "device_model": "ipad",
                       "additionalArguments": ["--no-retry-failures"],
                       "workernames": ["bot667"]
                     },
