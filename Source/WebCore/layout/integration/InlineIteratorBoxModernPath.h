@@ -180,7 +180,11 @@ public:
     {
         ASSERT(box().isInlineBox());
 
-        // FIXME: This always searches to the end.
+        if (box().isLastBox()) {
+            setAtEnd();
+            return;
+        }
+
         auto& layoutBox = box().layoutBox();
         do {
             traverseNextBox();
@@ -193,7 +197,11 @@ public:
     {
         ASSERT(box().isInlineBox());
 
-        // FIXME: This always searches to the beginning.
+        if (box().isFirstBox()) {
+            setAtEnd();
+            return;
+        }
+
         auto& layoutBox = box().layoutBox();
         do {
             traversePreviousBox();
