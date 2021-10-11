@@ -903,7 +903,7 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
                 if (!property.valid)
                     continue;
 
-                if (!WI.CSSCompletions.cssNameCompletions.isShorthandPropertyName(property.name))
+                if (!WI.CSSKeywordCompletions.LonghandNamesForShorthandProperty.has(property.name))
                     continue;
 
                 if (knownShorthands[property.canonicalName] && !knownShorthands[property.canonicalName].overridden) {
@@ -923,7 +923,7 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
                 var shorthandProperty = null;
 
                 if (!isEmptyObject(knownShorthands)) {
-                    var possibleShorthands = WI.CSSCompletions.cssNameCompletions.shorthandsForLonghand(property.canonicalName);
+                    var possibleShorthands = WI.CSSKeywordCompletions.ShorthandNamesForLongHandProperty.get(property.canonicalName) || [];
                     for (var k = 0; k < possibleShorthands.length; ++k) {
                         if (possibleShorthands[k] in knownShorthands) {
                             shorthandProperty = knownShorthands[possibleShorthands[k]];

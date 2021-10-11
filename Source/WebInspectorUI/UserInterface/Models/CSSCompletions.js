@@ -36,7 +36,6 @@ WI.CSSCompletions = class CSSCompletions
     constructor(properties, acceptEmptyPrefix)
     {
         this._values = [];
-        this._shorthands = {};
 
         // The `properties` parameter can be either a list of objects with 'name' / 'longhand'
         // properties when initialized from the protocol for CSSCompletions.cssNameCompletions.
@@ -53,21 +52,6 @@ WI.CSSCompletions = class CSSCompletions
                 let aliases = property.aliases;
                 if (aliases)
                     this._values.pushAll(aliases);
-
-                var longhands = property.longhands;
-                if (longhands) {
-                    for (var j = 0; j < longhands.length; ++j) {
-                        var longhandName = longhands[j];
-
-                        var shorthands = this._shorthands[longhandName];
-                        if (!shorthands) {
-                            shorthands = [];
-                            this._shorthands[longhandName] = shorthands;
-                        }
-
-                        shorthands.push(propertyName);
-                    }
-                }
             }
         }
 
@@ -346,16 +330,6 @@ WI.CSSCompletions = class CSSCompletions
         var j = propertiesWithPrefix.indexOf(str);
         j = (j + propertiesWithPrefix.length + shift) % propertiesWithPrefix.length;
         return propertiesWithPrefix[j];
-    }
-
-    isShorthandPropertyName(shorthand)
-    {
-        return WI.CSSKeywordCompletions.LonghandNamesForShorthandProperty.has(shorthand);
-    }
-
-    shorthandsForLonghand(longhand)
-    {
-        return this._shorthands[longhand] || [];
     }
 
     isValidPropertyName(name)

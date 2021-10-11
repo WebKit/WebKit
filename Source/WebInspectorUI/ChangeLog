@@ -1,3 +1,33 @@
+2021-10-11  Razvan Caliman  <rcaliman@apple.com>
+
+        Web Inspector: Move CSS longhand and shorthand mapping away from WI.CSSCompletions
+        https://bugs.webkit.org/show_bug.cgi?id=231432
+        <rdar://problem/84029471>
+
+        Reviewed by Devin Rousso.
+
+        `WI.CSSCompletions` has scope creep. Beyond handling filtering for CSS completions,
+        it holds logic to deal with CSS property name longhand-to-shorthand mapping.
+
+        But it already relies heavily on metadata about properties set on `WI.CSSKeywordCompletions`
+        populated as a result of the one-time initialization from `WI.CSSCompletions.initializeCSSCompletions(target)` >
+        `WI.CSSKeywordCompletions.addCustomCompletions(properties)`.
+
+        This change moves the longhand-to-shorthand mapping from `WI.CSSCompletions` to
+        `WI.CSSKeywordCompletions.ShorthandNamesForLongHandProperty` and updates relevant consumers.
+
+        The aim is to gradually remove all specialized logic for property names from `WI.CSSCompletions`.
+
+        * UserInterface/Models/CSSCompletions.js:
+        (WI.CSSCompletions):
+        (WI.CSSCompletions.prototype.isShorthandPropertyName): Deleted.
+        (WI.CSSCompletions.prototype.shorthandsForLonghand): Deleted.
+        * UserInterface/Models/CSSKeywordCompletions.js:
+        * UserInterface/Models/CSSProperty.js:
+        (WI.CSSProperty):
+        * UserInterface/Models/DOMNodeStyles.js:
+        (WI.DOMNodeStyles.prototype._associateRelatedProperties):
+
 2021-10-08  BJ Burg  <bburg@apple.com>
 
         Web Inspector: add TabBar context menu support for WI.WebInspectorExtensionTabContentView

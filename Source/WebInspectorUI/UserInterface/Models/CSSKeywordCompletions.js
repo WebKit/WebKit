@@ -225,8 +225,15 @@ WI.CSSKeywordCompletions.addCustomCompletions = function(properties)
         if (property.inherited)
             WI.CSSKeywordCompletions.InheritedProperties.add(property.name);
 
-        if (property.longhands)
+        if (property.longhands) {
             WI.CSSKeywordCompletions.LonghandNamesForShorthandProperty.set(property.name, property.longhands);
+
+            for (let longhand of property.longhands) {
+                let shorthands = WI.CSSKeywordCompletions.ShorthandNamesForLongHandProperty.getOrInitialize(longhand, []);
+                shorthands.push(property.name);
+            }
+        }
+
     }
 };
 
@@ -252,6 +259,7 @@ WI.CSSKeywordCompletions.AllPropertyNamesPlaceholder = "__all-properties__";
 // Populated by CSS.getSupportedCSSProperties.
 WI.CSSKeywordCompletions.PropertyNameForAlias = new Map;
 WI.CSSKeywordCompletions.LonghandNamesForShorthandProperty = new Map;
+WI.CSSKeywordCompletions.ShorthandNamesForLongHandProperty = new Map;
 
 WI.CSSKeywordCompletions.InheritedProperties = new Set([
     // Compatibility (iOS 12): `inherited` didn't exist on `CSSPropertyInfo`

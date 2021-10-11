@@ -430,7 +430,7 @@ WI.CSSProperty = class CSSProperty extends WI.Object
     get isShorthand()
     {
         if (this._isShorthand === undefined) {
-            this._isShorthand = WI.CSSCompletions.cssNameCompletions.isShorthandPropertyName(this._name);
+            this._isShorthand = WI.CSSKeywordCompletions.LonghandNamesForShorthandProperty.has(this._name);
             if (this._isShorthand) {
                 let longhands = WI.CSSKeywordCompletions.LonghandNamesForShorthandProperty.get(this._name);
                 if (longhands && longhands.length === 1)
@@ -443,7 +443,7 @@ WI.CSSProperty = class CSSProperty extends WI.Object
     get shorthandPropertyNames()
     {
         if (!this._shorthandPropertyNames) {
-            this._shorthandPropertyNames = WI.CSSCompletions.cssNameCompletions.shorthandsForLonghand(this._name);
+            this._shorthandPropertyNames = WI.CSSKeywordCompletions.ShorthandNamesForLongHandProperty.get(this._name) || [];
             this._shorthandPropertyNames.remove("all");
         }
         return this._shorthandPropertyNames;
