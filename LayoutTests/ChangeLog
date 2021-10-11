@@ -1,3 +1,20 @@
+2021-10-11  Antti Koivisto  <antti@apple.com>
+
+        Remove inline box decoration painting quirk
+        https://bugs.webkit.org/show_bug.cgi?id=231510
+
+        Reviewed by Alan Bujtas.
+
+        * fast/backgrounds/quirks-mode-line-box-backgrounds-expected-mismatch.html: Added.
+        * fast/backgrounds/quirks-mode-line-box-backgrounds.html:
+        * platform/glib/fast/backgrounds/quirks-mode-line-box-backgrounds-expected.txt: Removed.
+        * platform/gtk/fast/backgrounds/quirks-mode-line-box-backgrounds-expected.png: Removed.
+        * platform/ios/fast/backgrounds/quirks-mode-line-box-backgrounds-expected.txt: Removed.
+        * platform/mac/fast/backgrounds/quirks-mode-line-box-backgrounds-expected.png: Removed.
+        * platform/mac/fast/backgrounds/quirks-mode-line-box-backgrounds-expected.txt: Removed.
+        * platform/win/fast/backgrounds/quirks-mode-line-box-backgrounds-expected.txt: Removed.
+        * platform/wincairo/fast/backgrounds/quirks-mode-line-box-backgrounds-expected.txt: Removed.
+
 2021-10-11  Tim Nguyen  <ntim@apple.com>
 
         Import new top layer WPTs

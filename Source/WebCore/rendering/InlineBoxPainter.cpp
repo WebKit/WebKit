@@ -128,11 +128,8 @@ void InlineBoxPainter::paintMask()
     if (!m_paintInfo.shouldPaintWithinRoot(renderer()) || renderer().style().visibility() != Visibility::Visible || m_paintInfo.phase != PaintPhase::Mask)
         return;
 
-    LayoutRect frameRect(m_inlineBox.rect());
-    constrainToLineTopAndBottomIfNeeded(frameRect);
-
     // Move x/y to our coordinates.
-    LayoutRect localRect(frameRect);
+    LayoutRect localRect(m_inlineBox.rect());
     m_inlineBox.line()->containingBlock().flipForWritingMode(localRect);
     LayoutPoint adjustedPaintOffset = m_paintOffset + localRect.location();
 
@@ -156,7 +153,7 @@ void InlineBoxPainter::paintMask()
         }
     }
 
-    LayoutRect paintRect = LayoutRect(adjustedPaintOffset, frameRect.size());
+    LayoutRect paintRect = LayoutRect(adjustedPaintOffset, localRect.size());
 
     paintFillLayers(Color(), renderer().style().maskLayers(), paintRect, compositeOp);
 
@@ -169,7 +166,7 @@ void InlineBoxPainter::paintMask()
 
     bool hasSingleLine = !m_inlineBox.previousInlineBox() && !m_inlineBox.nextInlineBox();
     if (hasSingleLine)
-        renderer().paintNinePieceImage(m_paintInfo.context(), LayoutRect(adjustedPaintOffset, frameRect.size()), renderer().style(), maskNinePieceImage, compositeOp);
+        renderer().paintNinePieceImage(m_paintInfo.context(), LayoutRect(adjustedPaintOffset, localRect.size()), renderer().style(), maskNinePieceImage, compositeOp);
     else {
         // We have a mask image that spans multiple lines.
         // We need to adjust _tx and _ty by the width of all previous lines.
@@ -181,8 +178,8 @@ void InlineBoxPainter::paintMask()
             totalLogicalWidth += box->logicalWidth();
         LayoutUnit stripX = adjustedPaintOffset.x() - (isHorizontal() ? logicalOffsetOnLine : 0_lu);
         LayoutUnit stripY = adjustedPaintOffset.y() - (isHorizontal() ? 0_lu : logicalOffsetOnLine);
-        LayoutUnit stripWidth = isHorizontal() ? totalLogicalWidth : frameRect.width();
-        LayoutUnit stripHeight = isHorizontal() ? frameRect.height() : totalLogicalWidth;
+        LayoutUnit stripWidth = isHorizontal() ? totalLogicalWidth : localRect.width();
+        LayoutUnit stripHeight = isHorizontal() ? localRect.height() : totalLogicalWidth;
 
         LayoutRect clipRect = clipRectForNinePieceImageStrip(m_inlineBox, maskNinePieceImage, paintRect);
         GraphicsContextStateSaver stateSaver(m_paintInfo.context());
@@ -208,16 +205,13 @@ void InlineBoxPainter::paintDecorations()
     if (m_isRootInlineBox && (!m_isFirstLine || &style == &renderer().style()))
         return;
 
-    LayoutRect frameRect(m_inlineBox.rect());
-    constrainToLineTopAndBottomIfNeeded(frameRect);
-
     // Move x/y to our coordinates.
-    LayoutRect localRect(frameRect);
+    LayoutRect localRect(m_inlineBox.rect());
     m_inlineBox.line()->containingBlock().flipForWritingMode(localRect);
 
     LayoutPoint adjustedPaintoffset = m_paintOffset + localRect.location();
     GraphicsContext& context = m_paintInfo.context();
-    LayoutRect paintRect = LayoutRect(adjustedPaintoffset, frameRect.size());
+    LayoutRect paintRect = LayoutRect(adjustedPaintoffset, localRect.size());
     // Shadow comes first and is behind the background and border.
     if (!renderer().boxShadowShouldBeAppliedToBackground(adjustedPaintoffset, BackgroundBleedNone, m_inlineBox))
         paintBoxShadow(ShadowStyle::Normal, paintRect);
@@ -265,8 +259,8 @@ void InlineBoxPainter::paintDecorations()
 
     LayoutUnit stripX = adjustedPaintoffset.x() - (isHorizontal() ? logicalOffsetOnLine : 0_lu);
     LayoutUnit stripY = adjustedPaintoffset.y() - (isHorizontal() ? 0_lu : logicalOffsetOnLine);
-    LayoutUnit stripWidth = isHorizontal() ? totalLogicalWidth : frameRect.width();
-    LayoutUnit stripHeight = isHorizontal() ? frameRect.height() : totalLogicalWidth;
+    LayoutUnit stripWidth = isHorizontal() ? totalLogicalWidth : localRect.width();
+    LayoutUnit stripHeight = isHorizontal() ? localRect.height() : totalLogicalWidth;
 
     LayoutRect clipRect = clipRectForNinePieceImageStrip(m_inlineBox, borderImage, paintRect);
     GraphicsContextStateSaver stateSaver(context);
@@ -348,30 +342,6 @@ void InlineBoxPainter::paintBoxShadow(ShadowStyle shadowStyle, const LayoutRect&
     // protrude incorrectly at the edges, and we want to possibly include shadows cast from the previous/following lines
     auto [hasClosedLeftEdge, hasClosedRightEdge] = m_inlineBox.hasClosedLeftAndRightEdge();
     renderer().paintBoxShadow(m_paintInfo, paintRect, style(), shadowStyle, hasClosedLeftEdge, hasClosedRightEdge);
-}
-
-void InlineBoxPainter::constrainToLineTopAndBottomIfNeeded(LayoutRect& rect) const
-{
-    if (renderer().document().inNoQuirksMode())
-        return;
-    if (m_inlineBox.legacyInlineBox()->hasTextChildren())
-        return;
-    if (m_inlineBox.legacyInlineBox()->descendantsHaveSameLineHeightAndBaseline() && m_inlineBox.legacyInlineBox()->hasTextDescendants())
-        return;
-
-    LayoutUnit logicalTop = isHorizontal() ? rect.y() : rect.x();
-    LayoutUnit logicalHeight = isHorizontal() ? rect.height() : rect.width();
-
-    LayoutUnit bottom = std::min(m_inlineBox.line()->bottom(), logicalTop + logicalHeight);
-    logicalTop = std::max(m_inlineBox.line()->top(), logicalTop);
-    logicalHeight = bottom - logicalTop;
-    if (isHorizontal()) {
-        rect.setY(logicalTop);
-        rect.setHeight(logicalHeight);
-    } else {
-        rect.setX(logicalTop);
-        rect.setWidth(logicalHeight);
-    }
 }
 
 const RenderStyle& InlineBoxPainter::style() const

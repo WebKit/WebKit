@@ -53,8 +53,6 @@ private:
     void paintFillLayer(const Color&, const FillLayer&, const LayoutRect& paintRect, CompositeOperator);
     void paintBoxShadow(ShadowStyle, const LayoutRect& paintRect);
 
-    void constrainToLineTopAndBottomIfNeeded(LayoutRect&) const;
-
     const RenderStyle& style() const;
     // FIXME: Make RenderBoxModelObject functions const.
     RenderBoxModelObject& renderer() const { return const_cast<RenderBoxModelObject&>(m_renderer); }
