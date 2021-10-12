@@ -2176,3 +2176,8 @@ webkit.org/b/231444 imported/blink/fast/dom/shadow/shadowdom-for-keygen-only-sha
 webkit.org/b/231612 imported/blink/fast/dom/importNode-cdata.html [ Pass Timeout ]
 
 webkit.org/b/231610 applicationmanifest/developer-warnings.html [ Pass Timeout ]
+
+webkit.org/b/231619 [ Debug ] editing/pasteboard/dom-paste/dom-paste-confirmation.html [ Pass Timeout ]
+webkit.org/b/231619 [ Debug ] editing/pasteboard/dom-paste/dom-paste-consecutive-confirmations.html [ Pass Timeout ]
+webkit.org/b/231619 [ Debug ] editing/pasteboard/dom-paste/dom-paste-rejection.html [ Pass Timeout ]
+webkit.org/b/231619 [ Debug ] editing/pasteboard/dom-paste/dom-paste-requires-user-gesture.html [ Pass Timeout ]
