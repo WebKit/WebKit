@@ -586,6 +586,12 @@ webkit.org/b/230926 imported/w3c/web-platform-tests/css/css-fonts/font-palette.h
 webkit.org/b/230926 imported/w3c/web-platform-tests/css/css-fonts/palette-values-rule-add.html [ ImageOnlyFailure ]
 webkit.org/b/230926 imported/w3c/web-platform-tests/css/css-fonts/palette-values-rule-delete.html [ ImageOnlyFailure ]
 
+webkit.org/b/230004 imported/w3c/web-platform-tests/css/css-pseudo/highlight-painting-004.html [ ImageOnlyFailure ]
+webkit.org/b/230004 imported/w3c/web-platform-tests/css/css-pseudo/highlight-painting-003.html [ ImageOnlyFailure ]
+
+webkit.org/b/231516 fast/css/calc-parsing.html [ Pass Failure ]
+webkit.org/b/231516 imported/w3c/web-platform-tests/css/css-values/hypot-pow-sqrt-invalid.html [ Pass Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of CSS-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////

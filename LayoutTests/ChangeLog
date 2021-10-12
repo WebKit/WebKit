@@ -1,3 +1,13 @@
+2021-10-11  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
+
+        [GLIB] Update test expectations for failing CSS tests.
+        https://bugs.webkit.org/show_bug.cgi?id=231547
+
+        Unreviewed test gardening.
+
+        * platform/glib/TestExpectations:
+        * platform/gtk/TestExpectations:
+
 2021-10-11  Chris Dumez  <cdumez@apple.com>
 
         [COOP] Crash under ReportingEndpointsCache::addEndpointFromDictionary()

@@ -142,6 +142,13 @@ webkit.org/b/215462 imported/w3c/web-platform-tests/html/canvas/offscreen/manual
 
 # CSS
 webkit.org/b/216161 imported/w3c/web-platform-tests/css/css-pseudo/text-selection.html [ Failure Pass ]
+webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/line-breaking/line-breaking-ic-002.html [ ImageOnlyFailure ]
+webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/line-breaking/line-breaking-002.html [ ImageOnlyFailure ]
+webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/line-breaking/line-breaking-004.html [ ImageOnlyFailure ]
+webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/line-breaking/line-breaking-006.html [ ImageOnlyFailure ]
+webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/line-breaking/line-breaking-007.html [ ImageOnlyFailure ]
+webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/line-breaking/line-breaking-009.html [ ImageOnlyFailure ]
+webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/line-breaking/line-breaking-011.html [ ImageOnlyFailure ]
 
 # Download
 
