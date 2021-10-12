@@ -31,7 +31,7 @@
 
 namespace WebCore {
 
-class WEBCORE_EXPORT ScrollingCoordinatorMac : public AsyncScrollingCoordinator {
+class ScrollingCoordinatorMac : public AsyncScrollingCoordinator {
 public:
     explicit ScrollingCoordinatorMac(Page*);
     virtual ~ScrollingCoordinatorMac();

@@ -117,10 +117,6 @@
 #include "RemoteGraphicsContextGLProxy.h"
 #endif
 
-#if PLATFORM(MAC)
-#include "TiledCoreAnimationScrollingCoordinator.h"
-#endif
-
 namespace WebKit {
 using namespace WebCore;
 using namespace HTMLNames;
@@ -1016,16 +1012,12 @@ RefPtr<ScrollingCoordinator> WebChromeClient::createScrollingCoordinator(Page& p
 {
     ASSERT_UNUSED(page, m_page.corePage() == &page);
 #if PLATFORM(COCOA)
-    switch (m_page.drawingArea()->type()) {
-#if PLATFORM(MAC)
-    case DrawingAreaType::TiledCoreAnimation:
-        return TiledCoreAnimationScrollingCoordinator::create(&m_page);
-#endif
-    case DrawingAreaType::RemoteLayerTree:
-        return RemoteScrollingCoordinator::create(&m_page);
-    }
-#endif
+    if (m_page.drawingArea()->type() != DrawingAreaType::RemoteLayerTree)
+        return nullptr;
+    return RemoteScrollingCoordinator::create(&m_page);
+#else
     return nullptr;
+#endif
 }
 
 #endif
