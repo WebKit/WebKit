@@ -1,3 +1,43 @@
+2021-10-12  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r283940. rdar://problem/84110761
+
+    Disable SystemPreview in WKContentProviderRegistry
+    https://bugs.webkit.org/show_bug.cgi?id=231538
+    rdar://84110761
+    
+    Reviewed by Tim Horton.
+    
+    Source/WebKit:
+    
+    Disable the WebViewContentProvider for System Previews
+    if UIKIT_WEBKIT_INTERNALS is true.
+    
+    * UIProcess/Cocoa/WKWebViewContentProviderRegistry.mm:
+    (-[WKWebViewContentProviderRegistry initWithConfiguration:]):
+    * UIProcess/ios/WKSystemPreviewView.h:
+    * UIProcess/ios/WKSystemPreviewView.mm:
+    
+    Source/WTF:
+    
+    Revert the change in r283811.
+    
+    * wtf/PlatformUse.h:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@283940 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-10-11  Dean Jackson  <dino@apple.com>
+
+            Disable SystemPreview in WKContentProviderRegistry
+            https://bugs.webkit.org/show_bug.cgi?id=231538
+            rdar://84110761
+
+            Reviewed by Tim Horton.
+
+            Revert the change in r283811.
+
+            * wtf/PlatformUse.h:
+
 2021-10-08  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r283811. rdar://problem/84037770
