@@ -92,8 +92,10 @@ private:
     void paintFileUploadIconDecorations(const RenderObject& inputRenderer, const RenderObject& buttonRenderer, const PaintInfo&, const IntRect&, Icon*, FileUploadDecorations) override;
 
     void adjustTextFieldStyle(RenderStyle&, const Element*) const final;
-    void paintTextFieldDecorations(const RenderObject&, const PaintInfo&, const FloatRect&) override;
-    void paintTextAreaDecorations(const RenderObject&, const PaintInfo&, const FloatRect&) override;
+    void paintTextFieldDecorations(const RenderBox&, const PaintInfo&, const FloatRect&) override;
+    void paintTextAreaDecorations(const RenderBox&, const PaintInfo&, const FloatRect&) override;
+
+    void paintTextFieldInnerShadow(const PaintInfo&, const FloatRoundedRect&);
 
     void adjustMenuListButtonStyle(RenderStyle&, const Element*) const override;
     void paintMenuListButtonDecorations(const RenderBox&, const PaintInfo&, const FloatRect&) override;
@@ -112,7 +114,7 @@ private:
 #endif
 
     void adjustSearchFieldStyle(RenderStyle&, const Element*) const override;
-    void paintSearchFieldDecorations(const RenderObject&, const PaintInfo&, const IntRect&) override;
+    void paintSearchFieldDecorations(const RenderBox&, const PaintInfo&, const IntRect&) override;
 
 #if ENABLE(IOS_FORM_CONTROL_REFRESH)
     Color checkboxRadioBorderColor(OptionSet<ControlStates::States>, OptionSet<StyleColor::Options>);

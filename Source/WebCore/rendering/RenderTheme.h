@@ -323,11 +323,11 @@ protected:
 
     virtual void adjustTextFieldStyle(RenderStyle&, const Element*) const;
     virtual bool paintTextField(const RenderObject&, const PaintInfo&, const FloatRect&) { return true; }
-    virtual void paintTextFieldDecorations(const RenderObject&, const PaintInfo&, const FloatRect&) { }
+    virtual void paintTextFieldDecorations(const RenderBox&, const PaintInfo&, const FloatRect&) { }
 
     virtual void adjustTextAreaStyle(RenderStyle&, const Element*) const;
     virtual bool paintTextArea(const RenderObject&, const PaintInfo&, const FloatRect&) { return true; }
-    virtual void paintTextAreaDecorations(const RenderObject&, const PaintInfo&, const FloatRect&) { }
+    virtual void paintTextAreaDecorations(const RenderBox&, const PaintInfo&, const FloatRect&) { }
 
     virtual void adjustMenuListStyle(RenderStyle&, const Element*) const;
     virtual bool paintMenuList(const RenderObject&, const PaintInfo&, const FloatRect&) { return true; }
@@ -371,7 +371,7 @@ protected:
 
     virtual void adjustSearchFieldStyle(RenderStyle&, const Element*) const;
     virtual bool paintSearchField(const RenderObject&, const PaintInfo&, const IntRect&) { return true; }
-    virtual void paintSearchFieldDecorations(const RenderObject&, const PaintInfo&, const IntRect&) { }
+    virtual void paintSearchFieldDecorations(const RenderBox&, const PaintInfo&, const IntRect&) { }
 
     virtual void adjustSearchFieldCancelButtonStyle(RenderStyle&, const Element*) const;
     virtual bool paintSearchFieldCancelButton(const RenderBox&, const PaintInfo&, const IntRect&) { return true; }

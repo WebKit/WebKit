@@ -880,7 +880,8 @@ public:
     void setMinHeight(Length&& length) { SET_VAR(m_boxData, m_minHeight, WTFMove(length)); }
     void setMaxHeight(Length&& length) { SET_VAR(m_boxData, m_maxHeight, WTFMove(length)); }
 
-    void resetBorder() { resetBorderImage(); resetBorderTop(); resetBorderRight(); resetBorderBottom(); resetBorderLeft(); resetBorderRadius(); }
+    void resetBorder() { resetBorderExceptRadius(); resetBorderRadius(); }
+    void resetBorderExceptRadius() { resetBorderImage(); resetBorderTop(); resetBorderRight(); resetBorderBottom(); resetBorderLeft(); }
     void resetBorderTop() { SET_VAR(m_surroundData, border.m_top, BorderValue()); }
     void resetBorderRight() { SET_VAR(m_surroundData, border.m_right, BorderValue()); }
     void resetBorderBottom() { SET_VAR(m_surroundData, border.m_bottom, BorderValue()); }

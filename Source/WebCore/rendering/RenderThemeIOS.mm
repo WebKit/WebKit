@@ -536,41 +536,101 @@ void RenderThemeIOS::adjustTextFieldStyle(RenderStyle& style, const Element* ele
     if (!element)
         return;
 
+    bool hasTextfieldAppearance = false;
     // Do not force a background color for elements that have a textfield
     // appearance by default, so that their background color can be styled.
     if (is<HTMLInputElement>(*element)) {
         auto& input = downcast<HTMLInputElement>(*element);
         // <input type=search> is the only TextFieldInputType that has a
         // non-textfield appearance value.
-        if (input.isTextField() && !input.isSearchField())
-            return;
+        hasTextfieldAppearance = input.isTextField() && !input.isSearchField();
     }
+
+    bool useAlternateDesign = element->document().settings().alternateFormControlDesignEnabled();
+    if (useAlternateDesign) {
+        if (hasTextfieldAppearance)
+            style.setBackgroundColor(Color::transparentBlack);
+        else
+            style.setBackgroundColor(systemColor(CSSValueWebkitControlBackground, element->document().styleColorOptions(&style)));
+        style.resetBorderExceptRadius();
+        return;
+    }
+
+    if (hasTextfieldAppearance)
+        return;
 
     style.setBackgroundColor(systemColor(CSSValueWebkitControlBackground, element->document().styleColorOptions(&style)));
 }
 
-void RenderThemeIOS::paintTextFieldDecorations(const RenderObject& box, const PaintInfo& paintInfo, const FloatRect& rect)
+void RenderThemeIOS::paintTextFieldInnerShadow(const PaintInfo& paintInfo, const FloatRoundedRect& roundedRect)
 {
-#if ENABLE(IOS_FORM_CONTROL_REFRESH)
-    if (box.settings().iOSFormControlRefreshEnabled())
-        return;
-#endif
+    auto& context = paintInfo.context();
+
+    const FloatSize innerShadowOffset { 0, 5 };
+    constexpr auto innerShadowBlur = 10.0f;
+    auto innerShadowColor = DisplayP3<float> { 0, 0, 0, 0.04f };
+    context.setShadow(innerShadowOffset, innerShadowBlur, innerShadowColor);
+    context.setFillColor(Color::black);
+
+    Path innerShadowPath;
+    FloatRect innerShadowRect = roundedRect.rect();
+    innerShadowRect.inflate(std::max<float>(innerShadowOffset.width(), innerShadowOffset.height()) + innerShadowBlur);
+    innerShadowPath.addRect(innerShadowRect);
+
+    FloatRoundedRect innerShadowHoleRect = roundedRect;
+    // FIXME: This is not from the spec; but without it we get antialiasing fringe from the fill; we need a better solution.
+    innerShadowHoleRect.inflate(0.5);
+    innerShadowPath.addRoundedRect(innerShadowHoleRect);
+
+    context.setFillRule(WindRule::EvenOdd);
+    context.fillPath(innerShadowPath);
+}
+
+void RenderThemeIOS::paintTextFieldDecorations(const RenderBox& box, const PaintInfo& paintInfo, const FloatRect& rect)
+{
+    auto& context = paintInfo.context();
+    GraphicsContextStateSaver stateSaver(context);
 
     auto& style = box.style();
-    FloatPoint point(rect.x() + style.borderLeftWidth(), rect.y() + style.borderTopWidth());
+    auto roundedRect = style.getRoundedBorderFor(LayoutRect(rect)).pixelSnappedRoundedRectForPainting(box.document().deviceScaleFactor());
 
-    GraphicsContextStateSaver stateSaver(paintInfo.context());
+#if ENABLE(IOS_FORM_CONTROL_REFRESH)
+    if (box.settings().iOSFormControlRefreshEnabled()) {
+        bool shouldPaintFillAndInnerShadow = false;
+        auto element = box.element();
+        if (is<HTMLInputElement>(*element)) {
+            auto& input = downcast<HTMLInputElement>(*element);
+            if (input.isTextField() && !input.isSearchField())
+                shouldPaintFillAndInnerShadow = true;
+        }
 
-    paintInfo.context().clipRoundedRect(style.getRoundedBorderFor(LayoutRect(rect)).pixelSnappedRoundedRectForPainting(box.document().deviceScaleFactor()));
+        bool useAlternateDesign = box.settings().alternateFormControlDesignEnabled();
+        if (useAlternateDesign && shouldPaintFillAndInnerShadow) {
+            Path path;
+            path.addRoundedRect(roundedRect);
+
+            context.setFillColor(Color::black.colorWithAlphaByte(10));
+            context.drawPath(path);
+            context.clipPath(path);
+            paintTextFieldInnerShadow(paintInfo, roundedRect);
+        }
+
+        return;
+    }
+#endif
+
+    context.clipRoundedRect(roundedRect);
 
     // This gradient gets drawn black when printing.
     // Do not draw the gradient if there is no visible top border.
     bool topBorderIsInvisible = !style.hasBorder() || !style.borderTopWidth() || style.borderTopIsTransparent();
-    if (!box.view().printing() && !topBorderIsInvisible)
-        drawAxialGradient(paintInfo.context().platformContext(), gradientWithName(InsetGradient), point, FloatPoint(CGPointMake(point.x(), point.y() + 3.0f)), LinearInterpolation);
+    if (!box.view().printing() && !topBorderIsInvisible) {
+        FloatPoint point(rect.x() + style.borderLeftWidth(), rect.y() + style.borderTopWidth());
+        drawAxialGradient(context.platformContext(), gradientWithName(InsetGradient), point, FloatPoint(CGPointMake(point.x(), point.y() + 3.0f)), LinearInterpolation);
+    }
 }
 
-void RenderThemeIOS::paintTextAreaDecorations(const RenderObject& box, const PaintInfo& paintInfo, const FloatRect& rect)
+void RenderThemeIOS::paintTextAreaDecorations(const RenderBox& box, const PaintInfo& paintInfo, const FloatRect& rect)
 {
     paintTextFieldDecorations(box, paintInfo, rect);
 }
@@ -1101,7 +1161,7 @@ void RenderThemeIOS::adjustSearchFieldStyle(RenderStyle& style, const Element* e
     adjustRoundBorderRadius(style, *box);
 }
 
-void RenderThemeIOS::paintSearchFieldDecorations(const RenderObject& box, const PaintInfo& paintInfo, const IntRect& rect)
+void RenderThemeIOS::paintSearchFieldDecorations(const RenderBox& box, const PaintInfo& paintInfo, const IntRect& rect)
 {
     paintTextFieldDecorations(box, paintInfo, rect);
 }
