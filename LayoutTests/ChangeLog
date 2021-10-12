@@ -1,5 +1,28 @@
 2021-10-12  Alan Coon  <alancoon@apple.com>
 
+        Apply patch. rdar://problem/83953336
+
+    Branch application of r282513.
+
+    2021-10-12  Cameron McCormack  <heycam@apple.com>
+
+            Disable display-p3 canvas and ImageData on platforms other than Monterey+ and iOS 15+
+            https://bugs.webkit.org/show_bug.cgi?id=230139
+            <rdar://81828819>
+
+            Reviewed by Sam Weinig.
+
+            * TestExpectations:
+            * platform/glib/imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-draw-high-bit-depth-images-expected.txt: Removed.
+            * platform/ios-14/TestExpectations:
+            * platform/ios/TestExpectations:
+            * platform/ios/imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-draw-high-bit-depth-images-expected.txt: Removed.
+            * platform/mac-bigsur/imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-draw-high-bit-depth-images-expected.txt: Removed.
+            * platform/mac-catalina/imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-draw-high-bit-depth-images-expected.txt: Removed.
+            * platform/mac/TestExpectations:
+
+2021-10-12  Alan Coon  <alancoon@apple.com>
+
         Apply patch. rdar://problem/83954451
 
     Branch application of r282203.
