@@ -1,3 +1,17 @@
+2021-10-12  Gabriel Nava Marino  <gnavamarino@apple.com>
+
+        ASSERT hit in surrogatePairAwareIndex and surrogatePairAwareStart lambdas for text with unpaired surrogates
+        https://bugs.webkit.org/show_bug.cgi?id=231606
+
+        Reviewed by Myles C. Maxfield.
+
+        * fast/text/word-break-column-gap-display-flex-utf16-surrogates-expected.txt: Added.
+        * fast/text/word-break-column-gap-display-flex-utf16-surrogates.html: Added.
+        * fast/text/word-break-letter-spacing-utf16-surrogates-expected.txt: Added.
+        * fast/text/word-break-letter-spacing-utf16-surrogates.html: Added.
+        * fast/text/word-break-max-width-utf16-surrogates-expected.txt: Added.
+        * fast/text/word-break-max-width-utf16-surrogates.html: Added.
+
 2021-10-12  Eric Hutchison  <ehutchison@apple.com>
 
         Update expectations for webgl/1.0.3/conformance/uniforms/uniform-default-values.html.
