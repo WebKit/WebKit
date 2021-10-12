@@ -1,3 +1,12 @@
+2021-10-12  Ayumi Kojima  <ayumi_kojima@apple.com>
+
+        [ iOS ] fast/scrolling/ios/scroll-snap-with-momentum-scroll-in-overflow-scroll-area.html is a flaky failure.
+        https://bugs.webkit.org/show_bug.cgi?id=231641
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+
 2021-10-12  Eric Hutchison  <ehutchison@apple.com>
 
         [ iOS15 iPad Debug ] webrtc/video-mute.html is a flaky timeout.
