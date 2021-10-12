@@ -1,3 +1,22 @@
+2021-10-12  Eric Hutchison  <ehutchison@apple.com>
+
+        media/track/track-cue-css.html is a flaky image failure and timeout.
+        https://bugs.webkit.org/show_bug.cgi?id=230070.
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+
+2021-10-12  Eric Hutchison  <ehutchison@apple.com>
+
+        [ iOS15 iPad Debug ] compositing/layer-creation/scale-rotation-transition-overlap.html is a flaky timeout.
+        https://bugs.webkit.org/show_bug.cgi?id=231616.
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+        * platform/ipad/TestExpectations:
+
 2021-10-12  Ayumi Kojima  <ayumi_kojima@apple.com>
 
         [ iOS ] imported/blink/fast/dom/importNode-cdata.html is a flaky timeout.

@@ -1860,7 +1860,7 @@ webkit.org/b/231333 media/track/track-forced-subtitles-in-band.html [ Pass Timeo
 
 webkit.org/b/228364 media/track/track-in-band-duplicate-tracks-when-source-changes.html [ Pass Timeout ]
 
-webkit.org/b/230070 media/track/track-cue-css.html [ Pass ImageOnlyFailure ]
+webkit.org/b/230070 media/track/track-cue-css.html [ Pass ImageOnlyFailure Timeout ]
 
 webkit.org/b/186045 [ Release ] imported/w3c/web-platform-tests/css/css-display/display-none-inline-img.html [ Pass ImageOnlyFailure ]
 
