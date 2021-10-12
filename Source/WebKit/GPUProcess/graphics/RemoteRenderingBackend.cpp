@@ -238,9 +238,7 @@ DisplayList::ReplayResult RemoteRenderingBackend::submit(const DisplayList::Disp
     return WebCore::DisplayList::Replayer {
         destination.context(),
         displayList,
-        &remoteResourceCache().imageBuffers(),
-        &remoteResourceCache().nativeImages(),
-        &remoteResourceCache().fonts(),
+        &remoteResourceCache().resourceHeap(),
         m_currentMaskImageBuffer.get(),
         &replayerDelegate
     }.replay();

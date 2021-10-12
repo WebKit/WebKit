@@ -1,5 +1,32 @@
 2021-10-11  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        [GPU Process] Unique RenderingResourceIdentifiers Part 8: Consolidate DisplayList::ResourceHeap
+        https://bugs.webkit.org/show_bug.cgi?id=231411
+        <rdar://problem/84013167>
+
+        Reviewed by Simon Fraser.
+
+        * GPUProcess/graphics/RemoteRenderingBackend.cpp:
+        (WebKit::RemoteRenderingBackend::submit):
+        * GPUProcess/graphics/RemoteResourceCache.cpp:
+        (WebKit::RemoteResourceCache::RemoteResourceCache):
+        (WebKit::RemoteResourceCache::cacheImageBuffer):
+        (WebKit::RemoteResourceCache::cachedImageBuffer const):
+        (WebKit::RemoteResourceCache::cacheNativeImage):
+        (WebKit::RemoteResourceCache::cachedNativeImage const):
+        (WebKit::RemoteResourceCache::cacheFont):
+        (WebKit::RemoteResourceCache::cachedFont const):
+        (WebKit::RemoteResourceCache::deleteAllFonts):
+        (WebKit::RemoteResourceCache::maybeRemoveResource):
+        (WebKit::RemoteResourceCache::updateHasActiveDrawables):
+        * GPUProcess/graphics/RemoteResourceCache.h:
+        (WebKit::RemoteResourceCache::resourceHeap const):
+        (WebKit::RemoteResourceCache::imageBuffers const): Deleted.
+        (WebKit::RemoteResourceCache::nativeImages const): Deleted.
+        (WebKit::RemoteResourceCache::fonts const): Deleted.
+
+2021-10-11  Myles C. Maxfield  <mmaxfield@apple.com>
+
         [GPU Process] Unique RenderingResourceIdentifiers Part 5: Migrate RemoteResourceCache to QualifiedRenderingResourceIdentifier
         https://bugs.webkit.org/show_bug.cgi?id=231407
         <rdar://problem/84010479>

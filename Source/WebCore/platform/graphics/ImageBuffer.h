@@ -142,6 +142,4 @@ protected:
     virtual void drawConsuming(GraphicsContext&, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions&) = 0;
 };
 
-using ImageBufferHashMap = HashMap<RenderingResourceIdentifier, Ref<ImageBuffer>>;
-
 } // namespace WebCore

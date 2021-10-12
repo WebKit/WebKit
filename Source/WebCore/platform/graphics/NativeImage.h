@@ -75,6 +75,4 @@ private:
     RenderingResourceIdentifier m_renderingResourceIdentifier;
 };
 
-using NativeImageHashMap = HashMap<RenderingResourceIdentifier, Ref<NativeImage>>;
-
 } // namespace WebCore

@@ -27,6 +27,7 @@
 
 #include "DisplayListItemBuffer.h"
 #include "DisplayListItemType.h"
+#include "DisplayListResourceHeap.h"
 #include "FloatRect.h"
 #include "Font.h"
 #include "GraphicsContext.h"
@@ -73,9 +74,7 @@ public:
 
     String asText(AsTextFlags) const;
 
-    const ImageBufferHashMap& imageBuffers() const { return m_imageBuffers; }
-    const NativeImageHashMap& nativeImages() const { return m_nativeImages; }
-    const FontRenderingResourceMap& fonts() const { return m_fonts; }
+    const ResourceHeap& resourceHeap() const { return m_resourceHeap; }
 
     WEBCORE_EXPORT void setItemBufferReadingClient(ItemBufferReadingClient*);
     WEBCORE_EXPORT void setItemBufferWritingClient(ItemBufferWritingClient*);
@@ -113,30 +112,22 @@ private:
 
     void cacheImageBuffer(WebCore::ImageBuffer& imageBuffer)
     {
-        m_imageBuffers.ensure(imageBuffer.renderingResourceIdentifier(), [&]() {
-            return Ref { imageBuffer };
-        });
+        m_resourceHeap.add(imageBuffer.renderingResourceIdentifier(), Ref { imageBuffer });
     }
 
     void cacheNativeImage(NativeImage& image)
     {
-        m_nativeImages.ensure(image.renderingResourceIdentifier(), [&]() {
-            return Ref { image };
-        });
+        m_resourceHeap.add(image.renderingResourceIdentifier(), Ref { image });
     }
 
     void cacheFont(Font& font)
     {
-        m_fonts.ensure(font.renderingResourceIdentifier(), [&]() {
-            return Ref { font };
-        });
+        m_resourceHeap.add(font.renderingResourceIdentifier(), Ref { font });
     }
 
     static bool shouldDumpForFlags(AsTextFlags, ItemHandle);
 
-    ImageBufferHashMap m_imageBuffers;
-    NativeImageHashMap m_nativeImages;
-    FontRenderingResourceMap m_fonts;
+    ResourceHeap m_resourceHeap;
     std::unique_ptr<ItemBuffer> m_items;
     Vector<std::optional<FloatRect>> m_drawingItemExtents;
     bool m_tracksDrawingItemExtents { true };

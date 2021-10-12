@@ -31,6 +31,7 @@
 #include <WebCore/DisplayList.h>
 #include <WebCore/DisplayListItems.h>
 #include <WebCore/DisplayListReplayer.h>
+#include <WebCore/DisplayListResourceHeap.h>
 #include <WebCore/Gradient.h>
 #include <WebCore/GraphicsContextCG.h>
 
@@ -72,10 +73,10 @@ TEST(DisplayListTests, ReplayWithMissingResource)
 
     {
         auto imageBuffer = ImageBuffer::create({ 100, 100 }, RenderingMode::Unaccelerated, 1, colorSpace, PixelFormat::BGRA8);
-        ImageBufferHashMap imageBufferMap;
-        imageBufferMap.set(imageBufferIdentifier, imageBuffer.releaseNonNull());
+        ResourceHeap resourceHeap;
+        resourceHeap.add(imageBufferIdentifier, imageBuffer.releaseNonNull());
 
-        Replayer replayer { context, list, &imageBufferMap };
+        Replayer replayer { context, list, &resourceHeap };
         auto result = replayer.replay();
         EXPECT_EQ(result.numberOfBytesRead, list.sizeInBytes());
         EXPECT_EQ(result.reasonForStopping, StopReplayReason::ReplayedAllItems);

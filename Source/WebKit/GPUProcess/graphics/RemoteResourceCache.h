@@ -54,9 +54,7 @@ public:
     bool releaseRemoteResource(QualifiedRenderingResourceIdentifier, uint64_t useCount);
     void recordResourceUse(QualifiedRenderingResourceIdentifier);
 
-    const WebCore::ImageBufferHashMap& imageBuffers() const { return m_imageBuffers; }
-    const WebCore::NativeImageHashMap& nativeImages() const { return m_nativeImages; }
-    const WebCore::FontRenderingResourceMap& fonts() const { return m_fonts; }
+    const WebCore::DisplayList::ResourceHeap& resourceHeap() const { return m_resourceHeap; }
 
     bool hasActiveDrawables() const { return m_hasActiveDrawables; }
 
@@ -89,9 +87,7 @@ private:
 
     WebCore::ProcessIdentifier m_webProcessIdentifier;
 
-    WebCore::ImageBufferHashMap m_imageBuffers;
-    WebCore::NativeImageHashMap m_nativeImages;
-    WebCore::FontRenderingResourceMap m_fonts;
+    WebCore::DisplayList::ResourceHeap m_resourceHeap;
     std::atomic<bool> m_hasActiveDrawables { false };
 
     ResourceUseCountersMap m_resourceUseCounters;

@@ -391,8 +391,6 @@ ALWAYS_INLINE float Font::widthForGlyph(Glyph glyph) const
     return width;
 }
 
-using FontRenderingResourceMap = HashMap<RenderingResourceIdentifier, Ref<Font>>;
-
 } // namespace WebCore
 
 namespace WTF {

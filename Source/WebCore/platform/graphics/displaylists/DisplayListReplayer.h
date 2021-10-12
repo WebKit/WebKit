@@ -37,6 +37,8 @@ class GraphicsContext;
 
 namespace DisplayList {
 
+class ResourceHeap;
+
 enum class StopReplayReason : uint8_t {
     ReplayedAllItems,
     MissingCachedResource,
@@ -57,7 +59,7 @@ class Replayer {
     WTF_MAKE_NONCOPYABLE(Replayer);
 public:
     class Delegate;
-    WEBCORE_EXPORT Replayer(GraphicsContext&, const DisplayList&, const ImageBufferHashMap* = nullptr, const NativeImageHashMap* = nullptr, const FontRenderingResourceMap* = nullptr, WebCore::ImageBuffer* maskImageBuffer = nullptr, Delegate* = nullptr);
+    WEBCORE_EXPORT Replayer(GraphicsContext&, const DisplayList&, const ResourceHeap* = nullptr, WebCore::ImageBuffer* maskImageBuffer = nullptr, Delegate* = nullptr);
     WEBCORE_EXPORT ~Replayer();
 
     WEBCORE_EXPORT ReplayResult replay(const FloatRect& initialClip = { }, bool trackReplayList = false);
@@ -78,9 +80,7 @@ private:
     GraphicsContext& m_context;
     RefPtr<WebCore::ImageBuffer> m_maskImageBuffer;
     const DisplayList& m_displayList;
-    const ImageBufferHashMap& m_imageBuffers;
-    const NativeImageHashMap& m_nativeImages;
-    const FontRenderingResourceMap& m_fonts;
+    const ResourceHeap& m_resourceHeap;
     Delegate* m_delegate;
 };
 
