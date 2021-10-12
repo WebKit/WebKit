@@ -1354,7 +1354,7 @@ private:
     void (RenderStyle::*m_setter)(std::unique_ptr<ShadowData>, bool);
 };
 
-class PropertyWrapperMaybeInvalidColor final : public AnimationPropertyWrapperBase {
+class PropertyWrapperMaybeInvalidColor : public AnimationPropertyWrapperBase {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     PropertyWrapperMaybeInvalidColor(CSSPropertyID property, const Color& (RenderStyle::*getter)() const, void (RenderStyle::*setter)(const Color&))
@@ -1364,8 +1364,8 @@ public:
     {
     }
 
-private:
-    bool equals(const RenderStyle& a, const RenderStyle& b) const final
+protected:
+    bool equals(const RenderStyle& a, const RenderStyle& b) const override
     {
         if (&a == &b)
             return true;
@@ -1384,7 +1384,7 @@ private:
         return fromColor == toColor;
     }
 
-    void blend(RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, const CSSPropertyBlendingContext& context) const final
+    void blend(RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, const CSSPropertyBlendingContext& context) const override
     {
         Color fromColor = value(from);
         Color toColor = value(to);
@@ -1399,6 +1399,7 @@ private:
         (destination.*m_setter)(blendFunc(fromColor, toColor, context));
     }
 
+private:
     Color value(const RenderStyle& style) const
     {
         return (style.*m_getter)();
@@ -1457,6 +1458,42 @@ private:
         m_visitedWrapper->logBlend(from, to, destination, progress);
     }
 #endif
+};
+
+class AccentColorPropertyWrapper final : public PropertyWrapperMaybeInvalidColor {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    AccentColorPropertyWrapper()
+        : PropertyWrapperMaybeInvalidColor(CSSPropertyAccentColor, &RenderStyle::accentColor, &RenderStyle::setAccentColor)
+    {
+    }
+
+private:
+    bool equals(const RenderStyle& a, const RenderStyle& b) const final
+    {
+        return a.hasAutoAccentColor() == b.hasAutoAccentColor()
+            && PropertyWrapperMaybeInvalidColor::equals(a, b);
+    }
+
+    bool canInterpolate(const RenderStyle& from, const RenderStyle& to) const final
+    {
+        return !from.hasAutoAccentColor() && !to.hasAutoAccentColor();
+    }
+
+    void blend(RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, const CSSPropertyBlendingContext& context) const final
+    {
+        if (canInterpolate(from, to)) {
+            PropertyWrapperMaybeInvalidColor::blend(destination, from, to, context);
+            return;
+        }
+
+        ASSERT(!context.progress || context.progress == 1.0);
+        auto& blendingRenderStyle = context.progress ? to : from;
+        if (blendingRenderStyle.hasAutoAccentColor())
+            destination.setHasAutoAccentColor();
+        else
+            destination.setAccentColor(blendingRenderStyle.accentColor());
+    }
 };
 
 static bool canInterpolateCaretColor(const RenderStyle& from, const RenderStyle& to, bool visited)
@@ -2308,6 +2345,8 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         new LengthPropertyWrapper(CSSPropertyPaddingRight, &RenderStyle::paddingRight, &RenderStyle::setPaddingRight, { LengthPropertyWrapper::Flags::NegativeLengthsAreInvalid }),
         new LengthPropertyWrapper(CSSPropertyPaddingTop, &RenderStyle::paddingTop, &RenderStyle::setPaddingTop, { LengthPropertyWrapper::Flags::NegativeLengthsAreInvalid }),
         new LengthPropertyWrapper(CSSPropertyPaddingBottom, &RenderStyle::paddingBottom, &RenderStyle::setPaddingBottom, { LengthPropertyWrapper::Flags::NegativeLengthsAreInvalid }),
+
+        new AccentColorPropertyWrapper,
 
         new CaretColorPropertyWrapper,
 

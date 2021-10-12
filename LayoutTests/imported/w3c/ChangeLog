@@ -1,3 +1,13 @@
+2021-10-12  Aditya Keerthi  <akeerthi@apple.com>
+
+        [css-ui] Fix interpolation of accent-color
+        https://bugs.webkit.org/show_bug.cgi?id=231443
+        rdar://84037162
+
+        Reviewed by Antoine Quint.
+
+        * web-platform-tests/css/css-ui/animation/accent-color-interpolation-expected.txt:
+
 2021-10-11  Tim Nguyen  <ntim@apple.com>
 
         Implement new autofocus behavior
