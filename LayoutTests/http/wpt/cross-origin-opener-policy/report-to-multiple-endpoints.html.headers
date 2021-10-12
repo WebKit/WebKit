@@ -1,0 +1,3 @@
+Cross-Origin-Opener-Policy: same-origin-allow-popups; report-to="coop-report-endpoint"
+Cross-Origin-Embedder-Policy: require-corp
+report-to: { "group": "coop-report-endpoint", "max_age": 10886400, "endpoints": [{ "url": "/reporting/resources/report.py?endpoint=coop-report-endpoint" }] }, { "group": "coop-report-only-endpoint", "max_age": 10886400, "endpoints": [{ "url": "/reporting/resources/report.py?endpoint=coop-report-only-endpoint" }, { "url": "/reporting/resources/report.py?endpoint=coop-report-only-endpoint2" }]}

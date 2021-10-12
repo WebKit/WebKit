@@ -1,3 +1,17 @@
+2021-10-11  Chris Dumez  <cdumez@apple.com>
+
+        [COOP] Crash under ReportingEndpointsCache::addEndpointFromDictionary()
+        https://bugs.webkit.org/show_bug.cgi?id=231537
+        <rdar://83530643>
+
+        Reviewed by Geoffrey Garen.
+
+        Add layout test coverage.
+
+        * http/wpt/cross-origin-opener-policy/report-to-multiple-endpoints-expected.txt: Added.
+        * http/wpt/cross-origin-opener-policy/report-to-multiple-endpoints.html: Added.
+        * http/wpt/cross-origin-opener-policy/report-to-multiple-endpoints.html.headers: Added.
+
 2021-10-11  Ayumi Kojima  <ayumi_kojima@apple.com>
 
         [ iOS 15 ] imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/pbkdf2.https.any.worker.html is flaky timing out.
