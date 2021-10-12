@@ -119,23 +119,30 @@ void RemoteDisplayListRecorder::setStrokeThickness(float thickness)
 
 void RemoteDisplayListRecorder::setState(DisplayList::SetState&& item)
 {
+    // Immediately turn the RenderingResourceIdentifier (which is error-prone) to a QualifiedRenderingResourceIdentifier,
+    // and use a helper function to make sure that don't accidentally use the RenderingResourceIdentifier (because the helper function can't see it).
     auto strokePatternImageIdentifier = item.strokePatternImageIdentifier();
+    auto fillPatternImageIdentifier = item.fillPatternImageIdentifier();
+    setStateWithQualifiedIdentifiers(WTFMove(item), { strokePatternImageIdentifier, m_webProcessIdentifier }, { fillPatternImageIdentifier, m_webProcessIdentifier });
+}
+
+void RemoteDisplayListRecorder::setStateWithQualifiedIdentifiers(DisplayList::SetState&& item, QualifiedRenderingResourceIdentifier strokePatternImageIdentifier, QualifiedRenderingResourceIdentifier fillPatternImageIdentifier)
+{
     RefPtr<NativeImage> strokePatternImage;
     if (strokePatternImageIdentifier)
-        strokePatternImage = resourceCache().cachedNativeImage(strokePatternImageIdentifier);
+        strokePatternImage = resourceCache().cachedNativeImage(strokePatternImageIdentifier.object());
 
-    auto fillPatternImageIdentifier = item.fillPatternImageIdentifier();
     RefPtr<NativeImage> fillPatternImage;
     if (fillPatternImageIdentifier)
-        fillPatternImage = resourceCache().cachedNativeImage(fillPatternImageIdentifier);
+        fillPatternImage = resourceCache().cachedNativeImage(fillPatternImageIdentifier.object());
 
     handleItem(WTFMove(item), strokePatternImage.get(), fillPatternImage.get());
 
     if (strokePatternImage)
-        resourceCache().recordResourceUse(strokePatternImageIdentifier);
+        resourceCache().recordResourceUse(strokePatternImageIdentifier.object());
 
     if (fillPatternImage)
-        resourceCache().recordResourceUse(fillPatternImageIdentifier);
+        resourceCache().recordResourceUse(fillPatternImageIdentifier.object());
 }
 
 void RemoteDisplayListRecorder::setLineCap(LineCap lineCap)
@@ -221,14 +228,19 @@ void RemoteDisplayListRecorder::endClipToDrawingCommands(const FloatRect& destin
 void RemoteDisplayListRecorder::drawGlyphs(DisplayList::DrawGlyphs&& item)
 {
     auto fontIdentifier = item.fontIdentifier();
-    RefPtr font = resourceCache().cachedFont(fontIdentifier);
+    drawGlyphsWithQualifiedIdentifier(WTFMove(item), { fontIdentifier, m_webProcessIdentifier });
+}
+
+void RemoteDisplayListRecorder::drawGlyphsWithQualifiedIdentifier(DisplayList::DrawGlyphs&& item, QualifiedRenderingResourceIdentifier fontIdentifier)
+{
+    RefPtr font = resourceCache().cachedFont(fontIdentifier.object());
     if (!font) {
         ASSERT_NOT_REACHED();
         return;
     }
 
     handleItem(WTFMove(item), *font);
-    resourceCache().recordResourceUse(fontIdentifier);
+    resourceCache().recordResourceUse(fontIdentifier.object());
 }
 
 void RemoteDisplayListRecorder::drawImageBuffer(RenderingResourceIdentifier imageBufferIdentifier, const FloatRect& destinationRect, const FloatRect& srcRect, const ImagePaintingOptions& options)

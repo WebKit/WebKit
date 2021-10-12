@@ -1,3 +1,21 @@
+2021-10-11  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [GPU Process] Unique RenderingResourceIdentifiers Part 6: Uniquify more of RemoteDisplayListRecorder at entry points
+        https://bugs.webkit.org/show_bug.cgi?id=231552
+        <rdar://problem/84130587>
+
+        This is an extension of https://bugs.webkit.org/show_bug.cgi?id=231548. It applies QualifiedRenderingResourceIdentifiers
+        at the rest of the entry points of RemoteDisplayListRecorder.
+
+        Reviewed by Wenson Hsieh.
+
+        * GPUProcess/graphics/RemoteDisplayListRecorder.cpp:
+        (WebKit::RemoteDisplayListRecorder::setState):
+        (WebKit::RemoteDisplayListRecorder::setStateWithQualifiedIdentifiers):
+        (WebKit::RemoteDisplayListRecorder::drawGlyphs):
+        (WebKit::RemoteDisplayListRecorder::drawGlyphsWithQualifiedIdentifier):
+        * GPUProcess/graphics/RemoteDisplayListRecorder.h:
+
 2021-10-11  Simon Fraser  <simon.fraser@apple.com>
 
         Make DrawingAreaType an enum class

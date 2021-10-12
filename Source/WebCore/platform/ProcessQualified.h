@@ -41,22 +41,27 @@ public:
     // ProcessIdentifier of the process which created them.
 
     ProcessQualified() = default;
-    
+
     ProcessQualified(T&& object, ProcessIdentifier processIdentifier)
         : m_object(WTFMove(object))
         , m_processIdentifier(processIdentifier)
     {
     }
-    
+
     ProcessQualified(const T& object, ProcessIdentifier processIdentifier)
         : m_object(object)
         , m_processIdentifier(processIdentifier)
     {
     }
-    
+
     ProcessQualified(WTF::HashTableDeletedValueType)
         : m_processIdentifier(WTF::HashTableDeletedValue)
     {
+    }
+
+    operator bool() const
+    {
+        return static_cast<bool>(m_object);
     }
 
     const T& object() const
