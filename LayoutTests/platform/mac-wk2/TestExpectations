@@ -1672,3 +1672,6 @@ webkit.org/b/231379 [ BigSur Release ] http/tests/resourceLoadStatistics/sandbox
 
 webkit.org/b/231386 [ BigSur ] http/tests/resourceLoadStatistics/website-data-removal-for-site-with-user-interaction.html [ Pass Timeout ]
 
+webkit.org/b/231600 [ Release ] imported/w3c/web-platform-tests/css/cssom-view/scroll-behavior-main-frame-window.html [ Pass Failure ]
+webkit.org/b/231600 [ Release ] imported/w3c/web-platform-tests/css/cssom-view/scroll-behavior-main-frame-root.html [ Failure ]
+
