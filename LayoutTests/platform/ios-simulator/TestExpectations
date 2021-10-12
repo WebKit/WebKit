@@ -43,9 +43,6 @@ webkit.org/b/170176 fast/inline-block/baseline-vertical-04.html [ ImageOnlyFailu
 # Imported w3c tests require fuzzy image comparison
 imported/w3c/web-platform-tests/density-size-correction/density-corrected-various-elements.html [ ImageOnlyFailure ]
 
-# # WebGL tests which need triaging https://bugs.webkit.org/b/174100
-webgl/1.0.3/conformance/uniforms/uniform-default-values.html [ Failure ]
-
 # This test requires Skia, which isn't available on iOS.
 webkit.org/b/174079 fast/text/variations/skia-postscript-name.html [ ImageOnlyFailure ]
 
