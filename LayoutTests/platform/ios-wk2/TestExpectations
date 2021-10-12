@@ -2183,3 +2183,6 @@ webkit.org/b/231619 [ Debug ] editing/pasteboard/dom-paste/dom-paste-confirmatio
 webkit.org/b/231619 [ Debug ] editing/pasteboard/dom-paste/dom-paste-consecutive-confirmations.html [ Pass Timeout ]
 webkit.org/b/231619 [ Debug ] editing/pasteboard/dom-paste/dom-paste-rejection.html [ Pass Timeout ]
 webkit.org/b/231619 [ Debug ] editing/pasteboard/dom-paste/dom-paste-requires-user-gesture.html [ Pass Timeout ]
+
+webkit.org/b/231622 fast/events/ios/rotation/orientationchange-event-listener-on.body.html [ Pass Timeout ]
+webkit.org/b/231622 fast/events/ios/rotation/do-not-shrink-to-fit-content-after-rotation.html [ Pass Timeout ]
