@@ -310,13 +310,55 @@ static JSObject* toDateTimeOptionsAnyDate(JSGlobalObject* globalObject, JSValue 
     return options;
 }
 
+template<typename Container>
+static inline unsigned skipLiteralText(const Container& container, unsigned start, unsigned length)
+{
+    // Skip literal text. We do not recognize '' single quote specially.
+    // `'ICU''s change'` is `ICU's change` literal text, but even if we split this text into two literal texts,
+    // we can anyway skip the same thing.
+    // This function returns the last character index which can be considered as a literal text.
+    ASSERT(length);
+    ASSERT(start < length);
+    ASSERT(container[start] == '\'');
+    unsigned index = start;
+    ++index;
+    if (!(index < length))
+        return length - 1;
+    for (; index < length; ++index) {
+        if (container[index] == '\'')
+            return index;
+    }
+    return length - 1;
+}
+
 void IntlDateTimeFormat::setFormatsFromPattern(const StringView& pattern)
 {
     // Get all symbols from the pattern, and set format fields accordingly.
     // http://unicode.org/reports/tr35/tr35-dates.html#Date_Field_Symbol_Table
+    //
+    // A date pattern is a character string consisting of two types of elements:
+    // 1. Pattern fields, which repeat a specific pattern character one or more times.
+    //    These fields are replaced with date and time data from a calendar when formatting,
+    //    or used to generate data for a calendar when parsing. Currently, A..Z and a..z are
+    //    reserved for use as pattern characters (unless they are quoted, see next item).
+    //    The pattern characters currently defined, and the meaning of different fields
+    //    lengths for then, are listed in the Date Field Symbol Table below.
+    // 2. Literal text, which is output as-is when formatting, and must closely match when
+    //    parsing. Literal text can include:
+    //      1. Any characters other than A..Z and a..z, including spaces and punctuation.
+    //      2. Any text between single vertical quotes ('xxxx'), which may include A..Z and
+    //         a..z as literal text.
+    //      3. Two adjacent single vertical quotes (''), which represent a literal single quote,
+    //         either inside or outside quoted text.
     unsigned length = pattern.length();
     for (unsigned i = 0; i < length; ++i) {
-        UChar currentCharacter = pattern[i];
+        auto currentCharacter = pattern[i];
+
+        if (currentCharacter == '\'') {
+            i = skipLiteralText(pattern, i, length);
+            continue;
+        }
+
         if (!isASCIIAlpha(currentCharacter))
             continue;
 
@@ -453,9 +495,16 @@ inline IntlDateTimeFormat::HourCycle IntlDateTimeFormat::hourCycleFromSymbol(UCh
     return HourCycle::None;
 }
 
-inline IntlDateTimeFormat::HourCycle IntlDateTimeFormat::hourCycleFromPattern(const Vector<UChar, 32>& pattern)
+IntlDateTimeFormat::HourCycle IntlDateTimeFormat::hourCycleFromPattern(const Vector<UChar, 32>& pattern)
 {
-    for (auto character : pattern) {
+    for (unsigned i = 0, length = pattern.size(); i < length; ++i) {
+        auto character = pattern[i];
+
+        if (character == '\'') {
+            i = skipLiteralText(pattern, i, length);
+            continue;
+        }
+
         switch (character) {
         case 'K':
         case 'h':
@@ -472,7 +521,16 @@ inline void IntlDateTimeFormat::replaceHourCycleInSkeleton(Vector<UChar, 32>& sk
     UChar skeletonCharacter = 'H';
     if (isHour12)
         skeletonCharacter = 'h';
-    for (auto& character : skeleton) {
+    for (unsigned i = 0, length = skeleton.size(); i < length; ++i) {
+        auto& character = skeleton[i];
+
+        // ICU DateTimeFormat skeleton also has single-quoted literal text.
+        // https://github.com/unicode-org/icu/blob/main/icu4c/source/i18n/dtptngen.cpp
+        if (character == '\'') {
+            i = skipLiteralText(skeleton, i, length);
+            continue;
+        }
+
         switch (character) {
         case 'h':
         case 'H':
@@ -503,7 +561,14 @@ inline void IntlDateTimeFormat::replaceHourCycleInPattern(Vector<UChar, 32>& pat
         return;
     }
 
-    for (auto& character : pattern) {
+    for (unsigned i = 0, length = pattern.size(); i < length; ++i) {
+        auto& character = pattern[i];
+
+        if (character == '\'') {
+            i = skipLiteralText(pattern, i, length);
+            continue;
+        }
+
         switch (character) {
         case 'K':
         case 'h':

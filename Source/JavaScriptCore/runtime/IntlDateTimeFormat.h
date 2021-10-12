@@ -83,6 +83,9 @@ public:
 
     static IntlDateTimeFormat* unwrapForOldFunctions(JSGlobalObject*, JSValue);
 
+    enum class HourCycle : uint8_t { None, H11, H12, H23, H24 };
+    static HourCycle hourCycleFromPattern(const Vector<UChar, 32>&);
+
 private:
     IntlDateTimeFormat(VM&, Structure*);
     void finishCreation(VM&);
@@ -92,7 +95,6 @@ private:
 
     UDateIntervalFormat* createDateIntervalFormatIfNecessary(JSGlobalObject*);
 
-    enum class HourCycle : uint8_t { None, H11, H12, H23, H24 };
     enum class Weekday : uint8_t { None, Narrow, Short, Long };
     enum class Era : uint8_t { None, Narrow, Short, Long };
     enum class Year : uint8_t { None, TwoDigit, Numeric };
@@ -121,7 +123,6 @@ private:
 
     static HourCycle hourCycleFromSymbol(UChar);
     static HourCycle parseHourCycle(const String&);
-    static HourCycle hourCycleFromPattern(const Vector<UChar, 32>&);
     static void replaceHourCycleInSkeleton(Vector<UChar, 32>&, bool hour12);
     static void replaceHourCycleInPattern(Vector<UChar, 32>&, HourCycle);
 

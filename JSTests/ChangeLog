@@ -1,3 +1,14 @@
+2021-08-26  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Intl.DateTimeFormat incorrectly parses patterns with 'h' literal
+        https://bugs.webkit.org/show_bug.cgi?id=229313
+        rdar://82414310
+
+        Reviewed by Ross Kirsling.
+
+        * stress/intl-date-pattern-includes-literal-text.js: Added.
+        (shouldBe):
+
 2021-10-06  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r283556. rdar://problem/83956477
