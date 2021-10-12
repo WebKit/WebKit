@@ -1,3 +1,12 @@
+2021-10-12  Eric Hutchison  <ehutchison@apple.com>
+
+        [ iOS15 Debug ] webgl/pending/conformance/glsl/misc/shader-with-reserved-words-2.html is a flaky timeout.
+        https://bugs.webkit.org/show_bug.cgi?id=231638.
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+
 2021-10-12  Gabriel Nava Marino  <gnavamarino@apple.com>
 
         ASSERT hit in surrogatePairAwareIndex and surrogatePairAwareStart lambdas for text with unpaired surrogates
