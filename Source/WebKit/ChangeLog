@@ -1,5 +1,18 @@
 2021-10-12  Per Arne Vollan <pvollan@apple.com>
 
+        [iOS] Add syscall telemetry in the WebContent process' sandbox
+        https://bugs.webkit.org/show_bug.cgi?id=231508
+        <rdar://83197060>
+
+        Reviewed by Brent Fulgham.
+
+        Add syscall telemetry in the WebContent process' sandbox to learn more about the context in which they are being used.
+        This patch also removes some telemetry with backtraces for other rules, since they are no longer needed.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb.in:
+
+2021-10-12  Per Arne Vollan <pvollan@apple.com>
+
         [GPUP] Add missing entitlement
         https://bugs.webkit.org/show_bug.cgi?id=231499
         <rdar://83847918>

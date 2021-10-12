@@ -475,7 +475,7 @@
         "com.apple.mt"
         "com.apple.preferences.sounds")
 
-    (deny mach-lookup (with telemetry-backtrace)
+    (deny mach-lookup (with telemetry)
         (global-name "com.apple.frontboard.systemappservices")                 ; -[UIViewServiceInterface _createProcessAssertion] -> SBSProcessIDForDisplayIdentifier()
     )
 
@@ -483,7 +483,7 @@
         (global-name "com.apple.CARenderServer"))
 
     ; UIKit-required IOKit nodes.
-    (deny iokit-open (with telemetry-backtrace)
+    (deny iokit-open (with telemetry)
         (iokit-user-client-class "IOSurfaceSendRight")
     )
 
@@ -643,7 +643,7 @@
     (global-name "com.apple.logd.events")
 )
 
-(deny mach-lookup (with telemetry-backtrace)
+(deny mach-lookup (with telemetry)
     (global-name "com.apple.distributed_notifications@1v3"))
 
 (allow ipc-posix-shm-read*
@@ -799,7 +799,7 @@
 ;; <rdar://problem/7344719&26323449> LaunchServices app icons
 (allow file-read*
     (well-known-system-group-container-subpath "/systemgroup.com.apple.lsd.iconscache"))
-(deny mach-lookup (with telemetry-backtrace)
+(deny mach-lookup (with telemetry)
     (xpc-service-name "com.apple.iconservices")
     (global-name "com.apple.iconservices"))
 
@@ -1002,7 +1002,7 @@
     (global-name "com.apple.fontservicesd")
 )
 
-(deny mach-lookup (with telemetry-backtrace)
+(deny mach-lookup (with telemetry)
     (global-name "com.apple.PowerManagement.control"))
 
 (deny file-write-create (vnode-type SYMLINK))
@@ -1023,11 +1023,11 @@
     (home-subpath "/Library/Preferences/")
     (with no-log))
 
-(deny mach-lookup (with telemetry-backtrace)
+(deny mach-lookup (with telemetry)
     (global-name "com.apple.containermanagerd")
 )
 
-(deny mach-lookup (with telemetry-backtrace)
+(deny mach-lookup (with telemetry)
     (global-name "com.apple.mobilegestalt.xpc")
 )
 
@@ -1035,7 +1035,7 @@
     (xpc-service-name "com.apple.audio.toolbox.reporting.service")
 )
 
-(allow iokit-open (with telemetry-backtrace)
+(allow iokit-open (with telemetry)
     (require-all
         (require-not (extension "com.apple.webkit.extension.iokit"))
         (iokit-user-client-class
@@ -1045,7 +1045,7 @@
     (IOSurfaceRootUserClientMethodFilter)
 )
 
-(deny iokit-open (with telemetry-backtrace)
+(deny iokit-open (with telemetry)
     (require-all
         (require-not (extension "com.apple.webkit.extension.iokit"))
         (iokit-user-client-class
@@ -1060,7 +1060,7 @@
     )
 )
 
-(allow iokit-open (with report) (with telemetry-backtrace)
+(allow iokit-open (with report) (with telemetry)
     (require-all
         (require-not (extension "com.apple.webkit.extension.iokit"))
         (iokit-connection "IOGPU")
@@ -1171,11 +1171,6 @@
     (allow syscall-unix
         (syscall-number SYS___disable_threadsignal)
         (syscall-number SYS___mac_syscall)
-        (syscall-number SYS___pthread_kill)
-        (syscall-number SYS___pthread_markcancel)
-        (syscall-number SYS___pthread_sigmask)
-        (syscall-number SYS___semwait_signal)
-        (syscall-number SYS___semwait_signal_nocancel)
         (syscall-number SYS_abort_with_payload) ;; <rdar://problem/50967271>
         (syscall-number SYS_access)
         (syscall-number SYS_bsdthread_create)
@@ -1184,61 +1179,36 @@
         (syscall-number SYS_bsdthread_terminate)
         (syscall-number SYS_change_fdguard_np)
         (syscall-number SYS_chdir)
-        (syscall-number SYS_chmod)
-        (syscall-number SYS_close)
-        (syscall-number SYS_close_nocancel)
-        (syscall-number SYS_connect)
-        (syscall-number SYS_connect_nocancel)
-        (syscall-number SYS_connectx)
-        (syscall-number SYS_csops) ;; used by Corefoundation initialization
-        (syscall-number SYS_csops_audittoken) ;; used by WK to get entitlments
-        (syscall-number SYS_csrctl)
-        (syscall-number SYS_dup)
-        (syscall-number SYS_dup2)
         (syscall-number SYS_exit)
         (syscall-number SYS_faccessat) ;; <rdar://problem/56998930>
-        (syscall-number SYS_fchmod)
         (syscall-number SYS_fcntl)
         (syscall-number SYS_fcntl_nocancel)
         (syscall-number SYS_fgetattrlist) ;; <rdar://problem/50266257>
-        (syscall-number SYS_fgetxattr)
-        (syscall-number SYS_fileport_makefd)
-        (syscall-number SYS_fileport_makeport)
         (syscall-number SYS_flock)
         (syscall-number SYS_fsetattrlist) ;; MTLCompilerFSCache::openSync
         (syscall-number SYS_fsetxattr) ;; <rdar://problem/49795964>
         (syscall-number SYS_fsgetpath)
         (syscall-number SYS_fstat64)
         (syscall-number SYS_fstat64_extended) ;; <rdar://problem/61310019>
-        (syscall-number SYS_fstatat64)
         (syscall-number SYS_fstatfs64)
-        (syscall-number SYS_fsync)
         (syscall-number SYS_ftruncate)
         (syscall-number SYS_getattrlist) ;; xpc_realpath and directory enumeration
-        (syscall-number SYS_getattrlistbulk) ;; xpc_realpath and directory enumeration
-        (syscall-number SYS_getaudit_addr)
         (syscall-number SYS_getdirentries64)
         (syscall-number SYS_getegid)
         (syscall-number SYS_getentropy)
         (syscall-number SYS_geteuid)
         (syscall-number SYS_getfsstat64)
-        (syscall-number SYS_getgid)
-        (syscall-number SYS_getpeername)
         (syscall-number SYS_getpid)
         (syscall-number SYS_getrlimit)
         (syscall-number SYS_getrusage)
-        (syscall-number SYS_getsockopt) ;; used by libwebrtc
         (syscall-number SYS_gettid)
         (syscall-number SYS_gettimeofday)
         (syscall-number SYS_getuid)
-        (syscall-number SYS_getxattr)
         (syscall-number SYS_guarded_close_np)
         (syscall-number SYS_guarded_open_dprotected_np) ; <rdar://problem/48166729>
         (syscall-number SYS_guarded_open_np)
         (syscall-number SYS_guarded_pwrite_np)
-        (syscall-number SYS_ioctl) ;; needed by tcgetattr (TIOCGETA) - debugging
         (syscall-number SYS_issetugid)
-        (syscall-number SYS_kdebug_trace)
         (syscall-number SYS_kdebug_trace64)
         (syscall-number SYS_kevent_id)
         (syscall-number SYS_kevent_qos)
@@ -1250,30 +1220,13 @@
         (syscall-number SYS_madvise)
         (syscall-number SYS_memorystatus_control)
         (syscall-number SYS_mkdir)
-        (syscall-number SYS_mkdirat)
-        (syscall-number SYS_mlock)
         (syscall-number SYS_mmap)
         (syscall-number SYS_mprotect)
-        (syscall-number SYS_mremap_encrypted)
         (syscall-number SYS_msync)
-        (syscall-number SYS_munlock)
         (syscall-number SYS_munmap)
-        (syscall-number SYS_necp_client_action)
-        (syscall-number SYS_necp_open)
-        (syscall-number SYS_open)
-        (syscall-number SYS_open_dprotected_np)
-        (syscall-number SYS_open_nocancel)
-        (syscall-number SYS_openat)
-        (syscall-number SYS_openat_nocancel)
         (syscall-number SYS_os_fault_with_payload)
         (syscall-number SYS_pathconf)
-        (syscall-number SYS_persona)
-        (syscall-number SYS_pipe)
         (syscall-number SYS_pread)
-        (syscall-number SYS_pread_nocancel)
-        (syscall-number SYS_proc_info)
-        (syscall-number SYS_proc_rlimit_control)
-        (syscall-number SYS_process_policy)
         (syscall-number SYS_psynch_cvbroad)
         (syscall-number SYS_psynch_cvclrprepost)
         (syscall-number SYS_psynch_cvsignal)
@@ -1282,14 +1235,75 @@
         (syscall-number SYS_psynch_mutexwait)
         (syscall-number SYS_psynch_rw_rdlock) ;; <rdar://problem/51134351>
         (syscall-number SYS_psynch_rw_unlock)
-        (syscall-number SYS_psynch_rw_wrlock)
-        (syscall-number SYS_pwrite)
         (syscall-number SYS_read)
         (syscall-number SYS_read_nocancel)
         (syscall-number SYS_readlink)
+        (syscall-number SYS_rename)
+        (syscall-number SYS_shared_region_check_np)
+        (syscall-number SYS_shared_region_map_and_slide_2_np) ;; <rdar://problem/60294880>
+        (syscall-number SYS_sigaction)
+        (syscall-number SYS_stat64)
+        (syscall-number SYS_statfs64)
+        (syscall-number SYS_thread_selfid)
+        (syscall-number SYS_ulock_wait)
+        (syscall-number SYS_ulock_wait2) ;; <rdar://problem/58743778>
+        (syscall-number SYS_ulock_wake)
+        (syscall-number SYS_workq_kernreturn)
+        (syscall-number SYS_workq_open))
+    
+    (allow syscall-unix (with telemetry-backtrace)
+        (syscall-number SYS___pthread_kill)
+        (syscall-number SYS___pthread_markcancel)
+        (syscall-number SYS___pthread_sigmask)
+        (syscall-number SYS___semwait_signal)
+        (syscall-number SYS___semwait_signal_nocancel)
+        (syscall-number SYS_chmod)
+        (syscall-number SYS_close)
+        (syscall-number SYS_close_nocancel)
+        (syscall-number SYS_connect)
+        (syscall-number SYS_connect_nocancel)
+        (syscall-number SYS_connectx)
+        (syscall-number SYS_csops) ;; used by Corefoundation initialization
+        (syscall-number SYS_csops_audittoken) ;; used by WK to get entitlments
+        (syscall-number SYS_csrctl)
+        (syscall-number SYS_dup)
+        (syscall-number SYS_dup2)
+        (syscall-number SYS_fchmod)
+        (syscall-number SYS_fgetxattr)
+        (syscall-number SYS_fileport_makefd)
+        (syscall-number SYS_fileport_makeport)
+        (syscall-number SYS_fstatat64)
+        (syscall-number SYS_fsync)
+        (syscall-number SYS_getattrlistbulk) ;; xpc_realpath and directory enumeration
+        (syscall-number SYS_getaudit_addr)
+        (syscall-number SYS_getgid)
+        (syscall-number SYS_getpeername)
+        (syscall-number SYS_getsockopt) ;; used by libwebrtc
+        (syscall-number SYS_getxattr)
+        (syscall-number SYS_ioctl) ;; needed by tcgetattr (TIOCGETA) - debugging
+        (syscall-number SYS_kdebug_trace)
+        (syscall-number SYS_mkdirat)
+        (syscall-number SYS_mlock)
+        (syscall-number SYS_mremap_encrypted)
+        (syscall-number SYS_munlock)
+        (syscall-number SYS_necp_client_action)
+        (syscall-number SYS_necp_open)
+        (syscall-number SYS_objc_bp_assist_cfg_np)
+        (syscall-number SYS_open)
+        (syscall-number SYS_open_dprotected_np)
+        (syscall-number SYS_open_nocancel)
+        (syscall-number SYS_openat)
+        (syscall-number SYS_openat_nocancel)
+        (syscall-number SYS_persona)
+        (syscall-number SYS_pipe)
+        (syscall-number SYS_pread_nocancel)
+        (syscall-number SYS_proc_info)
+        (syscall-number SYS_proc_rlimit_control)
+        (syscall-number SYS_process_policy)
+        (syscall-number SYS_psynch_rw_wrlock)
+        (syscall-number SYS_pwrite)
         (syscall-number SYS_recvfrom)
         (syscall-number SYS_recvfrom_nocancel)
-        (syscall-number SYS_rename)
         (syscall-number SYS_rmdir)
         (syscall-number SYS_select)
         (syscall-number SYS_select_nocancel)
@@ -1303,36 +1317,22 @@
         (syscall-number SYS_setpriority)
         (syscall-number SYS_setrlimit)
         (syscall-number SYS_setsockopt)
-        (syscall-number SYS_shared_region_check_np)
-        (syscall-number SYS_shared_region_map_and_slide_2_np) ;; <rdar://problem/60294880>
         (syscall-number SYS_shm_open)
         (syscall-number SYS_shutdown)
-        (syscall-number SYS_sigaction)
         (syscall-number SYS_sigaltstack)
         (syscall-number SYS_sigprocmask)
         (syscall-number SYS_sigreturn)
         (syscall-number SYS_socket)
         (syscall-number SYS_socketpair)
-        (syscall-number SYS_stat64)
-        (syscall-number SYS_statfs64)
         (syscall-number SYS_sysctl)
         (syscall-number SYS_sysctlbyname)
-        (syscall-number SYS_thread_selfid)
         (syscall-number SYS_thread_selfusage)
-        (syscall-number SYS_ulock_wait)
-        (syscall-number SYS_ulock_wait2) ;; <rdar://problem/58743778>
-        (syscall-number SYS_ulock_wake)
         (syscall-number SYS_umask)
         (syscall-number SYS_unlink)
         (syscall-number SYS_work_interval_ctl)
-        (syscall-number SYS_workq_kernreturn)
-        (syscall-number SYS_workq_open)
         (syscall-number SYS_write)
         (syscall-number SYS_write_nocancel)
-        (syscall-number SYS_writev)
-    )
-    (if (defined? 'SYS_objc_bp_assist_cfg_np)
-        (allow syscall-unix (syscall-number SYS_objc_bp_assist_cfg_np)))
+        (syscall-number SYS_writev))
 )
 
 (with-filter (system-attribute apple-internal)
@@ -1477,13 +1477,11 @@
         (machtrap-number MSC_host_create_mach_voucher_trap)
         (machtrap-number MSC_host_self_trap)
         (machtrap-number MSC_mach_generate_activity_id)
-        (machtrap-number MSC_mach_msg_overwrite_trap)
         (machtrap-number MSC_mach_msg_trap)
         (machtrap-number MSC_mach_reply_port)
         (machtrap-number MSC_mach_timebase_info_trap)
         (machtrap-number MSC_mach_voucher_extract_attr_recipe_trap)
         (machtrap-number MSC_mk_timer_arm)
-        (machtrap-number MSC_mk_timer_arm_leeway)
         (machtrap-number MSC_mk_timer_cancel)
         (machtrap-number MSC_mk_timer_create)
         (machtrap-number MSC_mk_timer_destroy)
@@ -1491,57 +1489,69 @@
         (machtrap-number MSC_semaphore_signal_trap)
         (machtrap-number MSC_semaphore_timedwait_trap)
         (machtrap-number MSC_semaphore_wait_trap)
-        (machtrap-number MSC_swtch_pri)
         (machtrap-number MSC_syscall_thread_switch)
         (machtrap-number MSC_task_name_for_pid)
         (machtrap-number MSC_task_self_trap)
-        (machtrap-number MSC_thread_get_special_reply_port)
-        (machtrap-number MSC_thread_self_trap)
-    )
+        (machtrap-number MSC_thread_get_special_reply_port))
+
+    (allow syscall-mach (with telemetry-backtrace)
+        (machtrap-number MSC_mach_msg_overwrite_trap)
+        (machtrap-number MSC_mk_timer_arm_leeway)
+        (machtrap-number MSC_swtch_pri)
+        (machtrap-number MSC_thread_self_trap))
 )
 
 (when (defined? 'mach-kernel-endpoint)
     (allow mach-kernel-endpoint
         (apply-message-filter
             (deny mach-message-send (with telemetry))
-            (allow mach-message-send (kernel-mig-routine
-                (when (defined? '_mach_make_memory_entry) _mach_make_memory_entry)
+            (allow mach-message-send (with telemetry-backtrace) (kernel-mig-routine
                 clock_get_time
-                host_get_clock_service
-                host_get_io_master
-                host_get_special_port
-                host_info
                 host_request_notification
                 io_connect_add_client
-                io_connect_async_method
                 io_connect_map_memory_into_task
-                io_connect_method
                 (when (defined? 'io_connect_set_notification_port) io_connect_set_notification_port)
-                io_connect_set_notification_port_64
-                io_iterator_next
-                io_registry_entry_from_path
                 io_registry_entry_get_parent_iterator
-                io_registry_entry_get_property_bin_buf
-                io_registry_entry_get_property_bytes
-                io_registry_entry_get_registry_entry_id
-                io_server_version
                 io_service_add_notification_bin
                 io_service_add_notification_bin_64
                 io_service_close
-                io_service_get_matching_service_bin
-                io_service_get_matching_services_bin
-                io_service_open_extended
                 mach_exception_raise
                 (when (defined? 'mach_make_memory_entry) mach_make_memory_entry)
                 (when (defined? 'mach_make_memory_entry_64) mach_make_memory_entry_64)
                 mach_memory_entry_ownership
-                mach_port_get_context_from_user
                 mach_port_request_notification
+                mach_vm_region
+                mach_vm_region_recurse
+                task_set_exc_guard_behavior
+                task_threads_from_user
+                thread_info
+                thread_policy
+                thread_policy_set
+                (when (defined? 'vm_copy) vm_copy)
+                (when (defined? 'vm_remap_external) vm_remap_external)))
+
+            (allow mach-message-send (kernel-mig-routine
+                (when (defined? '_mach_make_memory_entry) _mach_make_memory_entry)
+                host_get_clock_service
+                host_get_io_master
+                host_get_special_port
+                host_info
+                io_connect_async_method
+                io_connect_method
+                io_connect_set_notification_port_64
+                io_iterator_next
+                io_registry_entry_from_path
+                io_registry_entry_get_property_bin_buf
+                io_registry_entry_get_property_bytes
+                io_registry_entry_get_registry_entry_id
+                io_server_version
+                io_service_get_matching_service_bin
+                io_service_get_matching_services_bin
+                io_service_open_extended
+                mach_port_get_context_from_user
                 mach_port_set_attributes
                 mach_vm_copy
                 mach_vm_map_external
-                mach_vm_region
-                mach_vm_region_recurse
                 mach_vm_remap_external
                 semaphore_create
                 semaphore_destroy
@@ -1550,20 +1560,12 @@
                 task_info_from_user
                 task_restartable_ranges_register
                 task_restartable_ranges_synchronize
-                task_set_exc_guard_behavior
                 task_set_special_port
-                task_threads_from_user
                 thread_get_state_to_user
-                thread_info
-                thread_policy
-                thread_policy_set
                 thread_resume
                 thread_set_exception_ports
-                thread_suspend
-                (when (defined? 'vm_copy) vm_copy)
-                (when (defined? 'vm_remap_external) vm_remap_external)
-                )
-            )
+                thread_suspend))
+
             (when (defined? 'mach_port_is_connection_for_service)
                 (allow mach-message-send (kernel-mig-routine mach_port_is_connection_for_service))
             )
