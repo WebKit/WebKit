@@ -107,7 +107,7 @@ bool MediaDevices::computeUserGesturePriviledge(GestureAllowedRequest requestTyp
 {
     auto* currentGestureToken = UserGestureIndicator::currentUserGesture().get();
     if (m_currentGestureToken.get() != currentGestureToken) {
-        m_currentGestureToken = makeWeakPtr(currentGestureToken);
+        m_currentGestureToken = currentGestureToken;
         m_requestTypesForCurrentGesture = { };
     }
 
@@ -242,7 +242,7 @@ void MediaDevices::enumerateDevices(EnumerateDevicesPromise&& promise)
         return;
     }
 
-    controller->enumerateMediaDevices(*document, [this, weakThis = makeWeakPtr(this), promise = WTFMove(promise)](const auto& newDevices, const auto& deviceIDHashSalt) mutable {
+    controller->enumerateMediaDevices(*document, [this, weakThis = WeakPtr { *this }, promise = WTFMove(promise)](const auto& newDevices, const auto& deviceIDHashSalt) mutable {
         if (!weakThis)
             return;
         exposeDevices(newDevices, deviceIDHashSalt, WTFMove(promise));

@@ -46,7 +46,7 @@ Ref<WebXRInputSpace> WebXRInputSpace::create(Document& document, WebXRSession& s
 
 WebXRInputSpace::WebXRInputSpace(Document& document, WebXRSession& session, const PlatformXR::Device::FrameData::InputSourcePose& pose)
     : WebXRSpace(document, WebXRRigidTransform::create())
-    , m_session(makeWeakPtr(&session))
+    , m_session(session)
     , m_pose(pose)
 {
 }

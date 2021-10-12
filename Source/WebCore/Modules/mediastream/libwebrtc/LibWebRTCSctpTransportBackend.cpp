@@ -76,7 +76,7 @@ private:
 
 LibWebRTCSctpTransportBackendObserver::LibWebRTCSctpTransportBackendObserver(RTCSctpTransportBackend::Client& client, rtc::scoped_refptr<webrtc::SctpTransportInterface>& backend)
     : m_backend(backend)
-    , m_client(makeWeakPtr(client))
+    , m_client(client)
 {
     ASSERT(m_backend);
 }

@@ -40,7 +40,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(RTCIceTransport);
 RTCIceTransport::RTCIceTransport(ScriptExecutionContext& context, UniqueRef<RTCIceTransportBackend>&& backend, RTCPeerConnection& connection)
     : ActiveDOMObject(&context)
     , m_backend(WTFMove(backend))
-    , m_connection(makeWeakPtr(connection))
+    , m_connection(connection)
 {
     suspendIfNeeded();
     m_backend->registerClient(*this);

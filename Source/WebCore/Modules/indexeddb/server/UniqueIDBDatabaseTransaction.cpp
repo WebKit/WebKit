@@ -41,7 +41,7 @@ Ref<UniqueIDBDatabaseTransaction> UniqueIDBDatabaseTransaction::create(UniqueIDB
 }
 
 UniqueIDBDatabaseTransaction::UniqueIDBDatabaseTransaction(UniqueIDBDatabaseConnection& connection, const IDBTransactionInfo& info)
-    : m_databaseConnection(makeWeakPtr(&connection))
+    : m_databaseConnection(connection)
     , m_transactionInfo(info)
 {
     auto database = databaseConnection().database();

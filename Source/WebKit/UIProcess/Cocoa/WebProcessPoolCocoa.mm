@@ -719,7 +719,7 @@ void WebProcessPool::registerNotificationObservers()
     m_weakObserver = adoptNS([[WKProcessPoolWeakObserver alloc] initWithWeakPtr:makeWeakPtr(*this)]);
 
 #if !PLATFORM(IOS_FAMILY)
-    m_powerObserver = makeUnique<WebCore::PowerObserver>([weakThis = makeWeakPtr(this)] {
+    m_powerObserver = makeUnique<WebCore::PowerObserver>([weakThis = WeakPtr { *this }] {
         if (weakThis)
             weakThis->sendToAllProcesses(Messages::WebProcess::SystemWillPowerOn());
     });

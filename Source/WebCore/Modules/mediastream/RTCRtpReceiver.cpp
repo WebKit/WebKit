@@ -52,7 +52,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(RTCRtpReceiver);
 RTCRtpReceiver::RTCRtpReceiver(PeerConnectionBackend& connection, Ref<MediaStreamTrack>&& track, std::unique_ptr<RTCRtpReceiverBackend>&& backend)
     : m_track(WTFMove(track))
     , m_backend(WTFMove(backend))
-    , m_connection(makeWeakPtr(&connection))
+    , m_connection(connection)
 #if !RELEASE_LOG_DISABLED
     , m_logger(connection.logger())
     , m_logIdentifier(connection.logIdentifier())

@@ -70,7 +70,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(WebXRViewerSpace);
 
 WebXRViewerSpace::WebXRViewerSpace(Document& document, WebXRSession& session)
     : WebXRSpace(document, WebXRRigidTransform::create())
-    , m_session(makeWeakPtr(&session))
+    , m_session(session)
 {
 }
 

@@ -453,7 +453,7 @@ void MediaRecorderPrivateWriter::stopRecording()
 
     m_isStopping = true;
     // We hop to the main thread since finishing the video compressor might trigger starting the writer asynchronously.
-    callOnMainThread([this, weakThis = makeWeakPtr(this)]() mutable {
+    callOnMainThread([this, weakThis = WeakPtr { *this }]() mutable {
         if (!weakThis)
             return;
 
@@ -507,7 +507,7 @@ void MediaRecorderPrivateWriter::fetchData(CompletionHandler<void(RefPtr<SharedB
         return;
     }
 
-    flushCompressedSampleBuffers([weakThis = makeWeakPtr(this)]() mutable {
+    flushCompressedSampleBuffers([weakThis = WeakPtr { *this }]() mutable {
         if (!weakThis)
             return;
 

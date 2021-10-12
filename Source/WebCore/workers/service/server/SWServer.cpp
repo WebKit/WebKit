@@ -168,7 +168,7 @@ void SWServer::addRegistrationFromStore(ServiceWorkerContextData&& data)
     ASSERT(!m_scopeToRegistrationMap.contains(data.registration.key));
 
     auto registrableDomain = WebCore::RegistrableDomain(data.scriptURL);
-    validateRegistrationDomain(registrableDomain, ServiceWorkerJobType::Register, [this, weakThis = makeWeakPtr(this), data = WTFMove(data)] (bool isValid) mutable {
+    validateRegistrationDomain(registrableDomain, ServiceWorkerJobType::Register, [this, weakThis = WeakPtr { *this }, data = WTFMove(data)] (bool isValid) mutable {
         if (!weakThis)
             return;
         if (m_hasServiceWorkerEntitlement || isValid) {
@@ -368,7 +368,7 @@ void SWServer::validateRegistrationDomain(WebCore::RegistrableDomain domain, Ser
         return;
     }
 
-    m_appBoundDomainsCallback([this, weakThis = makeWeakPtr(this), domain = WTFMove(domain), type, completionHandler = WTFMove(completionHandler)](auto&& appBoundDomains) mutable {
+    m_appBoundDomainsCallback([this, weakThis = WeakPtr { *this }, domain = WTFMove(domain), type, completionHandler = WTFMove(completionHandler)](auto&& appBoundDomains) mutable {
         if (!weakThis)
             return;
         m_hasReceivedAppBoundDomains = true;
@@ -382,7 +382,7 @@ void SWServer::scheduleJob(ServiceWorkerJobData&& jobData)
 {
     ASSERT(m_connections.contains(jobData.connectionIdentifier()) || jobData.connectionIdentifier() == Process::identifier());
 
-    validateRegistrationDomain(WebCore::RegistrableDomain(jobData.scriptURL), jobData.type, [this, weakThis = makeWeakPtr(this), jobData = WTFMove(jobData)] (bool isValid) mutable {
+    validateRegistrationDomain(WebCore::RegistrableDomain(jobData.scriptURL), jobData.type, [this, weakThis = WeakPtr { *this }, jobData = WTFMove(jobData)] (bool isValid) mutable {
         if (!weakThis)
             return;
         if (m_hasServiceWorkerEntitlement || isValid) {
@@ -493,7 +493,7 @@ void SWServer::startScriptFetch(const ServiceWorkerJobData& jobData, SWServerReg
         request.setPriority(ResourceLoadPriority::Low);
         request.setIsAppInitiated(registration.isAppInitiated());
 
-        m_softUpdateCallback(ServiceWorkerJobData { jobData }, shouldRefreshCache, WTFMove(request), [this, weakThis = makeWeakPtr(this)](auto& result) {
+        m_softUpdateCallback(ServiceWorkerJobData { jobData }, shouldRefreshCache, WTFMove(request), [this, weakThis = WeakPtr { *this }](auto& result) {
             if (!weakThis)
                 return;
             scriptFetchFinished(result);
@@ -765,7 +765,7 @@ void SWServer::runServiceWorkerIfNecessary(ServiceWorkerIdentifier identifier, R
     }
 
     if (worker->isTerminating()) {
-        worker->whenTerminated([this, weakThis = makeWeakPtr(this), identifier, callback = WTFMove(callback)]() mutable {
+        worker->whenTerminated([this, weakThis = WeakPtr { *this }, identifier, callback = WTFMove(callback)]() mutable {
             if (!weakThis)
                 return callback(nullptr);
             runServiceWorkerIfNecessary(identifier, WTFMove(callback));
@@ -1147,7 +1147,7 @@ void SWServer::createContextConnection(const RegistrableDomain& registrableDomai
     RELEASE_LOG(ServiceWorker, "SWServer::createContextConnection will create a connection");
 
     m_pendingConnectionDomains.add(registrableDomain);
-    m_createContextConnectionCallback(registrableDomain, serviceWorkerPageIdentifier, [this, weakThis = makeWeakPtr(this), registrableDomain, serviceWorkerPageIdentifier] {
+    m_createContextConnectionCallback(registrableDomain, serviceWorkerPageIdentifier, [this, weakThis = WeakPtr { *this }, registrableDomain, serviceWorkerPageIdentifier] {
         if (!weakThis)
             return;
 
@@ -1195,7 +1195,7 @@ void SWServer::softUpdate(SWServerRegistration& registration)
 
 void SWServer::processPushMessage(std::optional<Vector<uint8_t>>&& data, URL&& registrationURL, CompletionHandler<void(bool)>&& callback)
 {
-    whenImportIsCompletedIfNeeded([this, weakThis = makeWeakPtr(this), data = WTFMove(data), registrationURL = WTFMove(registrationURL), callback = WTFMove(callback)]() mutable {
+    whenImportIsCompletedIfNeeded([this, weakThis = WeakPtr { *this }, data = WTFMove(data), registrationURL = WTFMove(registrationURL), callback = WTFMove(callback)]() mutable {
         if (!weakThis) {
             callback(false);
             return;
@@ -1247,7 +1247,7 @@ void SWServer::fireFunctionalEvent(SWServerRegistration& registration, Completio
 
     // FIXME: we should check whether we can skip the event and if skipping do a soft-update.
 
-    worker->whenActivated([this, weakThis = makeWeakPtr(this), callback = WTFMove(callback), registrationIdentifier = registration.identifier(), serviceWorkerIdentifier = worker->identifier()](bool success) mutable {
+    worker->whenActivated([this, weakThis = WeakPtr { *this }, callback = WTFMove(callback), registrationIdentifier = registration.identifier(), serviceWorkerIdentifier = worker->identifier()](bool success) mutable {
         if (!weakThis) {
             callback(makeUnexpected(ShouldSkipEvent::No));
             return;

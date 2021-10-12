@@ -47,7 +47,7 @@ Ref<Permissions> Permissions::create(Navigator& navigator)
 }
 
 Permissions::Permissions(Navigator& navigator)
-    : m_navigator(makeWeakPtr(navigator))
+    : m_navigator(navigator)
 {
     if (auto context = navigator.scriptExecutionContext())
         m_controller = context->permissionController();

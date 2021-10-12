@@ -108,7 +108,7 @@ bool QuickTimePluginReplacement::isEnabledBySettings(const Settings& settings)
 }
 
 QuickTimePluginReplacement::QuickTimePluginReplacement(HTMLPlugInElement& plugin, const Vector<String>& paramNames, const Vector<String>& paramValues)
-    : m_parentElement(makeWeakPtr(plugin))
+    : m_parentElement(plugin)
     , m_names(paramNames)
     , m_values(paramValues)
 {

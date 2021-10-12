@@ -74,7 +74,7 @@ public:
 
     const IDBCursorInfo& info() const { return m_info; }
 
-    void setRequest(IDBRequest& request) { m_request = makeWeakPtr(&request); }
+    void setRequest(IDBRequest& request) { m_request = request; }
     void clearRequest() { m_request.clear(); }
     void clearWrappers();
     IDBRequest* request() { return m_request.get(); }

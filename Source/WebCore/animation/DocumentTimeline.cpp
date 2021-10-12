@@ -58,7 +58,7 @@ Ref<DocumentTimeline> DocumentTimeline::create(Document& document, DocumentTimel
 DocumentTimeline::DocumentTimeline(Document& document, Seconds originTime)
     : AnimationTimeline()
     , m_tickScheduleTimer(*this, &DocumentTimeline::scheduleAnimationResolution)
-    , m_document(makeWeakPtr(document))
+    , m_document(document)
     , m_originTime(originTime)
 {
     if (auto* controller = this->controller())

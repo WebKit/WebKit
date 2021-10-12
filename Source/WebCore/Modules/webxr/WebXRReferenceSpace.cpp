@@ -56,7 +56,7 @@ Ref<WebXRReferenceSpace> WebXRReferenceSpace::create(Document& document, WebXRSe
 
 WebXRReferenceSpace::WebXRReferenceSpace(Document& document, WebXRSession& session, Ref<WebXRRigidTransform>&& offset, XRReferenceSpaceType type)
     : WebXRSpace(document, WTFMove(offset))
-    , m_session(makeWeakPtr(session))
+    , m_session(session)
     , m_type(type)
 {
 }

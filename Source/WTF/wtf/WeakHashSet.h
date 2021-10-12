@@ -133,7 +133,7 @@ public:
     {
         auto items = map(m_set, [](const Ref<WeakPtrImpl<Counter>>& item) {
             auto* pointer = static_cast<T*>(item->template get<T>());
-            return makeWeakPtr(pointer);
+            return WeakPtr { pointer };
         });
         for (auto& item : items) {
             if (item && m_set.contains(*item.m_impl))

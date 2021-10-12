@@ -5429,7 +5429,7 @@ void Internals::grabNextMediaStreamTrackFrame(TrackFramePromise&& promise)
 
 void Internals::videoSampleAvailable(MediaSample& sample)
 {
-    callOnMainThread([this, weakThis = makeWeakPtr(this), sample = Ref { sample }] {
+    callOnMainThread([this, weakThis = WeakPtr { *this }, sample = Ref { sample }] {
         if (!weakThis)
             return;
         m_trackVideoSampleCount++;

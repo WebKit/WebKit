@@ -38,7 +38,7 @@ Ref<WorkerFileSystemStorageConnection> WorkerFileSystemStorageConnection::create
 }
 
 WorkerFileSystemStorageConnection::WorkerFileSystemStorageConnection(WorkerGlobalScope& scope, Ref<FileSystemStorageConnection>&& connection)
-    : m_scope(makeWeakPtr(scope))
+    : m_scope(scope)
     , m_mainThreadConnection(WTFMove(connection))
 {
 }

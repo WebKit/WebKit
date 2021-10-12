@@ -48,7 +48,7 @@ Ref<WebXRInputSource> WebXRInputSource::create(Document& document, WebXRSession&
 }
 
 WebXRInputSource::WebXRInputSource(Document& document, WebXRSession& session, double timestamp, const PlatformXR::Device::FrameData::InputSource& source)
-    : m_session(makeWeakPtr(session))
+    : m_session(session)
     , m_targetRaySpace(WebXRInputSpace::create(document, session, source.pointerOrigin))
     , m_connectTime(timestamp)
 #if ENABLE(GAMEPAD)

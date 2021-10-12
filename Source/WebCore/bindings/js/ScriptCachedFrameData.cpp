@@ -91,7 +91,7 @@ void ScriptCachedFrameData::restore(Frame& frame)
         }
 
         if (page)
-            windowProxy->window()->setConsoleClient(makeWeakPtr(page->console()));
+            windowProxy->window()->setConsoleClient(page->console());
     }
 }
 

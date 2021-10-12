@@ -101,7 +101,7 @@ void RTCRtpTransceiver::disableSendingDirection()
 void RTCRtpTransceiver::setConnection(RTCPeerConnection& connection)
 {
     ASSERT(!m_connection);
-    m_connection = makeWeakPtr(connection);
+    m_connection = connection;
 }
 
 ExceptionOr<void> RTCRtpTransceiver::stop()

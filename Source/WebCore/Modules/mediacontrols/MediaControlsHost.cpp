@@ -103,7 +103,7 @@ Ref<MediaControlsHost> MediaControlsHost::create(HTMLMediaElement& mediaElement)
 }
 
 MediaControlsHost::MediaControlsHost(HTMLMediaElement& mediaElement)
-    : m_mediaElement(makeWeakPtr(mediaElement))
+    : m_mediaElement(mediaElement)
 {
 }
 
@@ -652,7 +652,7 @@ bool MediaControlsHost::showMediaControlsContextMenu(HTMLElement& target, String
 
     m_showMediaControlsContextMenuCallback = WTFMove(callback);
 
-    auto handleItemSelected = [weakThis = makeWeakPtr(this), idMap = WTFMove(idMap)] (MenuItemIdentifier selectedItemID) {
+    auto handleItemSelected = [weakThis = WeakPtr { *this }, idMap = WTFMove(idMap)] (MenuItemIdentifier selectedItemID) {
         if (!weakThis)
             return;
         Ref strongThis = *weakThis;

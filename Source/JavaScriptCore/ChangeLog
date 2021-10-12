@@ -1,3 +1,17 @@
+2021-10-12  Chris Dumez  <cdumez@apple.com>
+
+        Decrease use of makeWeakPtr()
+        https://bugs.webkit.org/show_bug.cgi?id=231615
+
+        Reviewed by Alex Christensen.
+
+        Decrease use of makeWeakPtr() and use WeakPtr { } directly instead.
+
+        * inspector/JSGlobalObjectInspectorController.cpp:
+        (Inspector::JSGlobalObjectInspectorController::consoleClient const):
+        * wasm/WasmMemory.cpp:
+        (JSC::Wasm::Memory::registerInstance):
+
 2021-10-12  Saam Barati  <sbarati@apple.com>
 
         Fix spec-correctness when inlining __proto__ intrinsic using get_by_id_with_this

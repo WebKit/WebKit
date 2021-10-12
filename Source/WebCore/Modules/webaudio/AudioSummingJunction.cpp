@@ -35,7 +35,7 @@
 namespace WebCore {
 
 AudioSummingJunction::AudioSummingJunction(BaseAudioContext& context)
-    : m_context(makeWeakPtr(context, EnableWeakPtrThreadingAssertions::No)) // WebAudio code uses locking when accessing the context.
+    : m_context(context, EnableWeakPtrThreadingAssertions::No) // WebAudio code uses locking when accessing the context.
 {
 }
 

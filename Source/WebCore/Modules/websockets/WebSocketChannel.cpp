@@ -62,8 +62,8 @@ namespace WebCore {
 const Seconds TCPMaximumSegmentLifetime { 2_min };
 
 WebSocketChannel::WebSocketChannel(Document& document, WebSocketChannelClient& client, SocketProvider& provider)
-    : m_document(makeWeakPtr(document))
-    , m_client(makeWeakPtr(client))
+    : m_document(document)
+    , m_client(client)
     , m_resumeTimer(*this, &WebSocketChannel::resumeTimerFired)
     , m_closingTimer(*this, &WebSocketChannel::closingTimerFired)
     , m_progressIdentifier(WebSocketChannelIdentifier::generateThreadSafe())

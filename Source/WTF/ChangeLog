@@ -1,3 +1,20 @@
+2021-10-12  Chris Dumez  <cdumez@apple.com>
+
+        Decrease use of makeWeakPtr()
+        https://bugs.webkit.org/show_bug.cgi?id=231615
+
+        Reviewed by Alex Christensen.
+
+        Decrease use of makeWeakPtr() and use WeakPtr { } directly instead.
+
+        * wtf/CancellableTask.h:
+        (WTF::TaskCancellationGroup::Handle::Handle):
+        * wtf/ListHashSet.h:
+        (WTF::ListHashSetConstIterator::ListHashSetConstIterator):
+        (WTF::ListHashSetConstIterator::operator++):
+        (WTF::ListHashSetConstIterator::operator--):
+        * wtf/WeakHashSet.h:
+
 2021-10-12  David Kilzer  <ddkilzer@apple.com>
 
         Switch WTF::bridge_cast to use type traits

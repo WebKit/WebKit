@@ -61,7 +61,7 @@ static WorkletParameters generateWorkletParameters(AudioWorklet& worklet)
 }
 
 AudioWorkletMessagingProxy::AudioWorkletMessagingProxy(AudioWorklet& worklet)
-    : m_worklet(makeWeakPtr(worklet))
+    : m_worklet(worklet)
     , m_document(*worklet.document())
     , m_workletThread(AudioWorkletThread::create(*this, generateWorkletParameters(worklet)))
 {

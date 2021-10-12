@@ -111,7 +111,7 @@ MediaMetadata::~MediaMetadata() = default;
 
 void MediaMetadata::setMediaSession(MediaSession& session)
 {
-    m_session = makeWeakPtr(session);
+    m_session = session;
     refreshArtworkImage();
 }
 

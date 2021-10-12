@@ -86,7 +86,7 @@ void RTCRtpScriptTransform::setTransformer(RTCRtpScriptTransformer& transformer)
         Locker locker { m_transformerLock };
         ASSERT(!m_isTransformerInitialized);
         m_isTransformerInitialized = true;
-        m_transformer = makeWeakPtr(transformer);
+        m_transformer = transformer;
     }
     transformer.startPendingActivity();
     callOnMainThread([this, protectedThis = Ref { *this }]() mutable {

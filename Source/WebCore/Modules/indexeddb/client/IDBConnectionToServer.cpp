@@ -51,7 +51,7 @@ Ref<IDBConnectionToServer> IDBConnectionToServer::create(IDBConnectionToServerDe
 }
 
 IDBConnectionToServer::IDBConnectionToServer(IDBConnectionToServerDelegate& delegate)
-    : m_delegate(makeWeakPtr(delegate))
+    : m_delegate(delegate)
     , m_proxy(makeUnique<IDBConnectionProxy>(*this))
 {
 }

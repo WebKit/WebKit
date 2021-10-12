@@ -44,7 +44,7 @@ void AudioMediaStreamTrackRendererCocoa::start(CompletionHandler<void()>&& callb
 {
     clear();
 
-    AudioMediaStreamTrackRendererUnit::singleton().retrieveFormatDescription([weakThis = makeWeakPtr(this), callback = WTFMove(callback)](auto* formatDescription) mutable {
+    AudioMediaStreamTrackRendererUnit::singleton().retrieveFormatDescription([weakThis = WeakPtr { *this }, callback = WTFMove(callback)](auto* formatDescription) mutable {
         if (weakThis && formatDescription)
             weakThis->m_outputDescription = makeUnique<CAAudioStreamDescription>(*formatDescription);
         callback();
@@ -109,7 +109,7 @@ void AudioMediaStreamTrackRendererCocoa::pushSamples(const MediaTime& sampleTime
             return;
         }
 
-        callOnMainThread([this, weakThis = makeWeakPtr(this), oldSource = m_dataSource, newSource = dataSource]() mutable {
+        callOnMainThread([this, weakThis = WeakPtr { *this }, oldSource = m_dataSource, newSource = dataSource]() mutable {
             if (!weakThis)
                 return;
 

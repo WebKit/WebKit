@@ -102,7 +102,7 @@ Ref<CSSFontFace> CSSFontFace::create(CSSFontSelector& fontSelector, StyleRuleFon
 
 CSSFontFace::CSSFontFace(const Settings::Values* settings, StyleRuleFontFace* cssConnection, FontFace* wrapper, bool isLocalFallback)
     : m_cssConnection(cssConnection)
-    , m_wrapper(makeWeakPtr(wrapper))
+    , m_wrapper(wrapper)
     , m_isLocalFallback(isLocalFallback)
     , m_mayBePurged(!wrapper)
     , m_shouldIgnoreFontLoadCompletions(settings && settings->shouldIgnoreFontLoadCompletions)
@@ -457,14 +457,14 @@ Ref<FontFace> CSSFontFace::wrapper(ScriptExecutionContext* context)
     }
 
     auto wrapper = FontFace::create(context, *this);
-    m_wrapper = makeWeakPtr(wrapper.get());
+    m_wrapper = wrapper;
     initializeWrapper();
     return wrapper;
 }
 
 void CSSFontFace::setWrapper(FontFace& newWrapper)
 {
-    m_wrapper = makeWeakPtr(newWrapper);
+    m_wrapper = newWrapper;
     initializeWrapper();
 }
 

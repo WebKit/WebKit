@@ -227,7 +227,7 @@ void ServiceWorkerFetchTask::cannotHandle()
 {
     SWFETCH_RELEASE_LOG("cannotHandle:");
     // Make sure we call didNotHandle asynchronously because failing synchronously would get the NetworkResourceLoader in a bad state.
-    RunLoop::main().dispatch([weakThis = makeWeakPtr(this)] {
+    RunLoop::main().dispatch([weakThis = WeakPtr { *this }] {
         if (weakThis)
             weakThis->didNotHandle();
     });

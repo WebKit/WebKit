@@ -93,7 +93,7 @@ void LibWebRTCDataChannelHandler::setClient(RTCDataChannelHandlerClient& client,
     ASSERT(!m_client);
     ASSERT(!m_hasClient);
     m_hasClient = true;
-    m_client = makeWeakPtr(client);
+    m_client = client;
     m_contextIdentifier = contextIdentifier;
 
     for (auto& message : m_bufferedMessages) {

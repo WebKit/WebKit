@@ -81,7 +81,7 @@ bool ImageSource::ensureDecoderAvailable(SharedBuffer* data)
     if (!isDecoderAvailable())
         return false;
 
-    m_decoder->setEncodedDataStatusChangeCallback([weakThis = makeWeakPtr(this)] (auto status) {
+    m_decoder->setEncodedDataStatusChangeCallback([weakThis = WeakPtr { *this }] (auto status) {
         if (weakThis)
             weakThis->encodedDataStatusChanged(status);
     });

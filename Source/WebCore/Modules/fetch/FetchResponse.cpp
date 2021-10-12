@@ -197,7 +197,7 @@ ExceptionOr<Ref<FetchResponse>> FetchResponse::clone(ScriptExecutionContext& con
 void FetchResponse::addAbortSteps(Ref<AbortSignal>&& signal)
 {
     m_abortSignal = WTFMove(signal);
-    m_abortSignal->addAlgorithm([this, weakThis = makeWeakPtr(this)] {
+    m_abortSignal->addAlgorithm([this, weakThis = WeakPtr { *this }] {
         // FIXME: Cancel request body if it is a stream.
         if (!weakThis)
             return;

@@ -67,7 +67,7 @@ Ref<RTCRtpSender> RTCRtpSender::create(RTCPeerConnection& connection, String&& t
 RTCRtpSender::RTCRtpSender(RTCPeerConnection& connection, String&& trackKind, std::unique_ptr<RTCRtpSenderBackend>&& backend)
     : m_trackKind(WTFMove(trackKind))
     , m_backend(WTFMove(backend))
-    , m_connection(makeWeakPtr(connection))
+    , m_connection(connection)
 #if !RELEASE_LOG_DISABLED
     , m_logger(connection.logger())
     , m_logIdentifier(connection.logIdentifier())
@@ -119,7 +119,7 @@ void RTCRtpSender::replaceTrack(RefPtr<MediaStreamTrack>&& withTrack, Ref<Deferr
         return;
     }
 
-    m_connection->chainOperation(WTFMove(promise), [this, weakThis = makeWeakPtr(this), withTrack = WTFMove(withTrack)](auto&& promise) mutable {
+    m_connection->chainOperation(WTFMove(promise), [this, weakThis = WeakPtr { *this }, withTrack = WTFMove(withTrack)](auto&& promise) mutable {
         if (!weakThis)
             return;
         if (isStopped()) {

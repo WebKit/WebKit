@@ -41,7 +41,7 @@ Ref<WorkerStorageConnection> WorkerStorageConnection::create(WorkerGlobalScope& 
 }
 
 WorkerStorageConnection::WorkerStorageConnection(WorkerGlobalScope& scope)
-    : m_scope(makeWeakPtr(scope))
+    : m_scope(scope)
 {
 }
 

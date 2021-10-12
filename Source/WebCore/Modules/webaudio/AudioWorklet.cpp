@@ -52,7 +52,7 @@ Ref<AudioWorklet> AudioWorklet::create(BaseAudioContext& audioContext)
 
 AudioWorklet::AudioWorklet(BaseAudioContext& audioContext)
     : Worklet(*audioContext.document())
-    , m_audioContext(makeWeakPtr(audioContext))
+    , m_audioContext(audioContext)
 {
 }
 

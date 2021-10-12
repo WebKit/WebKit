@@ -61,10 +61,10 @@ Ref<WebXRSystem> WebXRSystem::create(Navigator& navigator)
 
 WebXRSystem::WebXRSystem(Navigator& navigator)
     : ActiveDOMObject(navigator.scriptExecutionContext())
-    , m_navigator(makeWeakPtr(navigator))
+    , m_navigator(navigator)
     , m_defaultInlineDevice(*navigator.scriptExecutionContext())
 {
-    m_inlineXRDevice = makeWeakPtr(m_defaultInlineDevice);
+    m_inlineXRDevice = m_defaultInlineDevice;
     suspendIfNeeded();
 }
 
@@ -111,7 +111,7 @@ void WebXRSystem::ensureImmersiveXRDeviceIsSelected(CompletionHandler<void()>&& 
             return;
         }
         if (immersiveXRDevices.size() == 1) {
-            m_activeImmersiveDevice = makeWeakPtr(immersiveXRDevices.first().get());
+            m_activeImmersiveDevice = immersiveXRDevices.first().get();
             return;
         }
 
@@ -119,7 +119,7 @@ void WebXRSystem::ensureImmersiveXRDeviceIsSelected(CompletionHandler<void()>&& 
             ASSERT(m_activeImmersiveDevice.get() == oldDevice);
         else {
             // FIXME: implement a better UA selection mechanism if required.
-            m_activeImmersiveDevice = makeWeakPtr(immersiveXRDevices.first().get());
+            m_activeImmersiveDevice = immersiveXRDevices.first().get();
         }
 
         if (isFirstXRDevicesEnumeration || m_activeImmersiveDevice.get() == oldDevice) {
@@ -475,10 +475,10 @@ void WebXRSystem::registerSimulatedXRDeviceForTesting(PlatformXR::Device& device
     m_testingDevices++;
     if (device.supports(XRSessionMode::ImmersiveVr) || device.supports(XRSessionMode::ImmersiveAr)) {
         m_immersiveDevices.add(device);
-        m_activeImmersiveDevice = makeWeakPtr(device);
+        m_activeImmersiveDevice = device;
     }
     if (device.supports(XRSessionMode::Inline))
-        m_inlineXRDevice = makeWeakPtr(device);
+        m_inlineXRDevice = device;
 }
 
 void WebXRSystem::unregisterSimulatedXRDeviceForTesting(PlatformXR::Device& device)
@@ -493,7 +493,7 @@ void WebXRSystem::unregisterSimulatedXRDeviceForTesting(PlatformXR::Device& devi
     if (m_activeImmersiveDevice == &device)
         m_activeImmersiveDevice = nullptr;
     if (m_inlineXRDevice == &device)
-        m_inlineXRDevice = makeWeakPtr(m_defaultInlineDevice);
+        m_inlineXRDevice = m_defaultInlineDevice;
     m_testingDevices--;
 }
 

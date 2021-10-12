@@ -77,7 +77,7 @@ CSSFontFaceSource::CSSFontFaceSource(CSSFontFace& owner, const String& familyNam
 CSSFontFaceSource::CSSFontFaceSource(CSSFontFace& owner, const String& familyNameOrURI, CSSFontSelector& fontSelector, UniqueRef<FontLoadRequest>&& request)
     : m_familyNameOrURI(familyNameOrURI)
     , m_face(owner)
-    , m_fontSelector(makeWeakPtr(fontSelector))
+    , m_fontSelector(fontSelector)
     , m_fontRequest(request.moveToUniquePtr())
 {
     // This may synchronously call fontLoaded().
@@ -97,7 +97,7 @@ CSSFontFaceSource::CSSFontFaceSource(CSSFontFace& owner, const String& familyNam
 CSSFontFaceSource::CSSFontFaceSource(CSSFontFace& owner, const String& familyNameOrURI, SVGFontFaceElement& fontFace)
     : m_familyNameOrURI(familyNameOrURI)
     , m_face(owner)
-    , m_svgFontFaceElement(makeWeakPtr(fontFace))
+    , m_svgFontFaceElement(fontFace)
     , m_hasSVGFontFaceElement(true)
 {
 }

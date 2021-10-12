@@ -311,7 +311,7 @@ void PeerConnectionBackend::addIceCandidate(RTCIceCandidate* iceCandidate, Funct
         return;
     }
 
-    doAddIceCandidate(*iceCandidate, [weakThis = makeWeakPtr(this), callback = WTFMove(callback)](auto&& result) mutable {
+    doAddIceCandidate(*iceCandidate, [weakThis = WeakPtr { *this }, callback = WTFMove(callback)](auto&& result) mutable {
         if (!weakThis)
             return;
 

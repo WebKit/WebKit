@@ -64,7 +64,7 @@ static unsigned fontSelectorId;
 
 CSSFontSelector::CSSFontSelector(ScriptExecutionContext& context)
     : ActiveDOMObject(&context)
-    , m_context(makeWeakPtr(context))
+    , m_context(context)
     , m_fontCache(context.fontCache())
     , m_cssFontFaceSet(CSSFontFaceSet::create(this))
     , m_fontModifiedObserver([this] { fontModified(); })

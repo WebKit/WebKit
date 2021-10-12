@@ -185,7 +185,7 @@ void SpeechRecognitionPermissionManager::requestSpeechRecognitionServiceAccess()
     ASSERT(m_speechRecognitionServiceCheck == CheckResult::Unknown);
 
 #if HAVE(SPEECHRECOGNIZER)
-    requestSpeechRecognitionAccess([this, weakThis = makeWeakPtr(this)](bool authorized) mutable {
+    requestSpeechRecognitionAccess([this, weakThis = WeakPtr { *this }](bool authorized) mutable {
         if (!weakThis)
             return;
 
@@ -205,7 +205,7 @@ void SpeechRecognitionPermissionManager::requestMicrophoneAccess()
     ASSERT(m_microphoneCheck == CheckResult::Unknown);
 
 #if HAVE(AVCAPTUREDEVICE)
-    requestAVCaptureAccessForType(MediaPermissionType::Audio, [this, weakThis = makeWeakPtr(this)](bool authorized) {
+    requestAVCaptureAccessForType(MediaPermissionType::Audio, [this, weakThis = WeakPtr { *this }](bool authorized) {
         if (!weakThis)
             return;
 

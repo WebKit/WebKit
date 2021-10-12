@@ -1,5 +1,96 @@
 2021-10-12  Chris Dumez  <cdumez@apple.com>
 
+        Decrease use of makeWeakPtr()
+        https://bugs.webkit.org/show_bug.cgi?id=231615
+
+        Reviewed by Alex Christensen.
+
+        Decrease use of makeWeakPtr() and use WeakPtr { } directly instead.
+
+        * GPUProcess/media/RemoteMediaPlayerProxy.cpp:
+        (WebKit::RemoteMediaPlayerProxy::getConfiguration):
+        (WebKit::RemoteMediaPlayerProxy::performTaskAtMediaTime):
+        * GPUProcess/webrtc/RemoteAudioMediaStreamTrackRendererInternalUnitManager.cpp:
+        (WebKit::RemoteAudioMediaStreamTrackRendererInternalUnitManager::Unit::Unit):
+        * GPUProcess/webrtc/RemoteSampleBufferDisplayLayer.cpp:
+        (WebKit::RemoteSampleBufferDisplayLayer::initialize):
+        * NetworkProcess/NetworkLoadChecker.cpp:
+        (WebKit::NetworkLoadChecker::processContentRuleListsForLoad):
+        * NetworkProcess/ServiceWorker/ServiceWorkerFetchTask.cpp:
+        (WebKit::ServiceWorkerFetchTask::cannotHandle):
+        * NetworkProcess/ServiceWorker/WebSWServerConnection.cpp:
+        (WebKit::WebSWServerConnection::controlClient):
+        (WebKit::WebSWServerConnection::startFetch):
+        * NetworkProcess/ServiceWorker/WebSWServerToContextConnection.cpp:
+        (WebKit::WebSWServerToContextConnection::firePushEvent):
+        * NetworkProcess/cache/CacheStorageEngine.cpp:
+        (WebKit::CacheStorage::Engine::initialize):
+        (WebKit::CacheStorage::Engine::writeFile):
+        (WebKit::CacheStorage::Engine::readFile):
+        (WebKit::CacheStorage::Engine::fetchEntries):
+        (WebKit::CacheStorage::Engine::clearCachesForOriginFromDisk):
+        * NetworkProcess/cocoa/WebSocketTaskCocoa.mm:
+        (WebKit::WebSocketTask::readNextMessage):
+        * UIProcess/API/Cocoa/WKWebViewTesting.mm:
+        (-[WKWebView _createMediaSessionCoordinatorForTesting:completionHandler:]):
+        * UIProcess/Cocoa/GroupActivities/GroupActivitiesSessionNotifier.mm:
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::registerNotificationObservers):
+        * UIProcess/Inspector/WebInspectorUIExtensionControllerProxy.cpp:
+        (WebKit::WebInspectorUIExtensionControllerProxy::registerExtension):
+        (WebKit::WebInspectorUIExtensionControllerProxy::unregisterExtension):
+        (WebKit::WebInspectorUIExtensionControllerProxy::createTabForExtension):
+        (WebKit::WebInspectorUIExtensionControllerProxy::evaluateScriptForExtension):
+        (WebKit::WebInspectorUIExtensionControllerProxy::reloadForExtension):
+        (WebKit::WebInspectorUIExtensionControllerProxy::showExtensionTab):
+        (WebKit::WebInspectorUIExtensionControllerProxy::evaluateScriptInExtensionTab):
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::didReceiveAuthenticationChallenge):
+        * UIProcess/SpeechRecognitionPermissionManager.cpp:
+        (WebKit::SpeechRecognitionPermissionManager::requestSpeechRecognitionServiceAccess):
+        (WebKit::SpeechRecognitionPermissionManager::requestMicrophoneAccess):
+        * UIProcess/SpeechRecognitionServer.cpp:
+        (WebKit::SpeechRecognitionServer::requestPermissionForRequest):
+        (WebKit::SpeechRecognitionServer::handleRequest):
+        * UIProcess/UserMediaPermissionRequestManagerProxy.cpp:
+        (WebKit::UserMediaPermissionRequestManagerProxy::finishGrantingRequest):
+        (WebKit::UserMediaPermissionRequestManagerProxy::processUserMediaPermissionValidRequest):
+        (WebKit::UserMediaPermissionRequestManagerProxy::computeFilteredDeviceList):
+        * UIProcess/WebsiteData/WebDeviceOrientationAndMotionAccessController.cpp:
+        (WebKit::WebDeviceOrientationAndMotionAccessController::shouldAllowAccess):
+        * WebProcess/GPU/media/RemoteLegacyCDMFactory.cpp:
+        (WebKit::RemoteLegacyCDMFactory::registerFactory):
+        * WebProcess/GPU/media/RemoteMediaEngineConfigurationFactory.cpp:
+        (WebKit::RemoteMediaEngineConfigurationFactory::registerFactory):
+        * WebProcess/GPU/webrtc/AudioMediaStreamTrackRendererInternalUnitManager.cpp:
+        (WebKit::AudioMediaStreamTrackRendererInternalUnitManager::Proxy::createRemoteUnit):
+        * WebProcess/GPU/webrtc/MediaRecorderPrivate.cpp:
+        (WebKit::MediaRecorderPrivate::startRecording):
+        * WebProcess/GPU/webrtc/SampleBufferDisplayLayer.cpp:
+        (WebKit::SampleBufferDisplayLayer::initialize):
+        * WebProcess/Inspector/WebInspectorUIExtensionController.cpp:
+        (WebKit::WebInspectorUIExtensionController::registerExtension):
+        (WebKit::WebInspectorUIExtensionController::unregisterExtension):
+        (WebKit::WebInspectorUIExtensionController::createTabForExtension):
+        (WebKit::WebInspectorUIExtensionController::evaluateScriptForExtension):
+        (WebKit::WebInspectorUIExtensionController::reloadForExtension):
+        (WebKit::WebInspectorUIExtensionController::showExtensionTab):
+        (WebKit::WebInspectorUIExtensionController::evaluateScriptInExtensionTab):
+        * WebProcess/MediaSession/RemoteMediaSessionCoordinator.cpp:
+        (WebKit::RemoteMediaSessionCoordinator::join):
+        (WebKit::RemoteMediaSessionCoordinator::seekTo):
+        (WebKit::RemoteMediaSessionCoordinator::play):
+        (WebKit::RemoteMediaSessionCoordinator::pause):
+        (WebKit::RemoteMediaSessionCoordinator::setTrack):
+        * WebProcess/Network/webrtc/LibWebRTCNetworkManager.cpp:
+        (WebKit::LibWebRTCNetworkManager::StartUpdating):
+        (WebKit::LibWebRTCNetworkManager::StopUpdating):
+        (WebKit::LibWebRTCNetworkManager::CreateNameForAddress):
+        * WebProcess/XR/PlatformXRSystemProxy.cpp:
+        (WebKit::PlatformXRSystemProxy::enumerateImmersiveXRDevices):
+
+2021-10-12  Chris Dumez  <cdumez@apple.com>
+
         Stop passing RegistrableDomain by value in NetworkSessionCocoa
         https://bugs.webkit.org/show_bug.cgi?id=231633
 

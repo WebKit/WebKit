@@ -60,7 +60,7 @@ bool YouTubePluginReplacement::supportsFileExtension(const String& extension)
 }
 
 YouTubePluginReplacement::YouTubePluginReplacement(HTMLPlugInElement& plugin, const Vector<String>& paramNames, const Vector<String>& paramValues)
-    : m_parentElement(makeWeakPtr(plugin))
+    : m_parentElement(plugin)
 {
     ASSERT(paramNames.size() == paramValues.size());
     for (size_t i = 0; i < paramNames.size(); ++i)

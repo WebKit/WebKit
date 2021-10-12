@@ -71,7 +71,7 @@ void LibWebRTCNetworkManager::unregisterMDNSNames()
 
 void LibWebRTCNetworkManager::StartUpdating()
 {
-    callOnMainRunLoop([this, weakThis = makeWeakPtr(this)] {
+    callOnMainRunLoop([this, weakThis = WeakPtr { *this }] {
         if (!weakThis)
             return;
 
@@ -88,7 +88,7 @@ void LibWebRTCNetworkManager::StartUpdating()
 
 void LibWebRTCNetworkManager::StopUpdating()
 {
-    callOnMainRunLoop([weakThis = makeWeakPtr(this)] {
+    callOnMainRunLoop([weakThis = WeakPtr { *this }] {
         if (!weakThis)
             return;
         WebProcess::singleton().libWebRTCNetwork().monitor().stopUpdating();
@@ -133,7 +133,7 @@ void LibWebRTCNetworkManager::networkProcessCrashed()
 
 void LibWebRTCNetworkManager::CreateNameForAddress(const rtc::IPAddress& address, NameCreatedCallback callback)
 {
-    callOnMainRunLoop([weakThis = makeWeakPtr(this), address, callback = WTFMove(callback)]() mutable {
+    callOnMainRunLoop([weakThis = WeakPtr { *this }, address, callback = WTFMove(callback)]() mutable {
         if (!weakThis)
             return;
 

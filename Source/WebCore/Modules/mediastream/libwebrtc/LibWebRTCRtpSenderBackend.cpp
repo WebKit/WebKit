@@ -41,13 +41,13 @@
 namespace WebCore {
 
 LibWebRTCRtpSenderBackend::LibWebRTCRtpSenderBackend(LibWebRTCPeerConnectionBackend& backend, rtc::scoped_refptr<webrtc::RtpSenderInterface>&& rtcSender)
-    : m_peerConnectionBackend(makeWeakPtr(&backend))
+    : m_peerConnectionBackend(backend)
     , m_rtcSender(WTFMove(rtcSender))
 {
 }
 
 LibWebRTCRtpSenderBackend::LibWebRTCRtpSenderBackend(LibWebRTCPeerConnectionBackend& backend, rtc::scoped_refptr<webrtc::RtpSenderInterface>&& rtcSender, Source&& source)
-    : m_peerConnectionBackend(makeWeakPtr(&backend))
+    : m_peerConnectionBackend(backend)
     , m_rtcSender(WTFMove(rtcSender))
     , m_source(WTFMove(source))
 {
@@ -62,7 +62,7 @@ LibWebRTCRtpSenderBackend::~LibWebRTCRtpSenderBackend()
 void LibWebRTCRtpSenderBackend::startSource()
 {
     // We asynchronously start the sources to guarantee media goes through the transform if a transform is set when creating the track.
-    callOnMainThread([weakThis = makeWeakPtr(this), source = m_source]() mutable {
+    callOnMainThread([weakThis = WeakPtr { *this }, source = m_source]() mutable {
         if (!weakThis || weakThis->m_source != source)
             return;
         switchOn(source, [](Ref<RealtimeOutgoingAudioSource>& source) {

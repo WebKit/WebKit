@@ -34,7 +34,7 @@ namespace WebCore {
 using namespace HTMLNames;
 
 StyleSheetList::StyleSheetList(Document& document)
-    : m_document(makeWeakPtr(document))
+    : m_document(document)
 {
 }
 

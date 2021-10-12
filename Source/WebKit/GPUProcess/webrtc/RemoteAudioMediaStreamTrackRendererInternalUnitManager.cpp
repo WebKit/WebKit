@@ -128,7 +128,7 @@ RemoteAudioMediaStreamTrackRendererInternalUnitManager::Unit::Unit(AudioMediaStr
     , m_connection(WTFMove(connection))
     , m_localUnit(WebCore::AudioMediaStreamTrackRendererInternalUnit::createLocalInternalUnit(renderCallback(*this)))
 {
-    m_localUnit->retrieveFormatDescription([weakThis = makeWeakPtr(this), this, callback = WTFMove(callback)](auto&& description) mutable {
+    m_localUnit->retrieveFormatDescription([weakThis = WeakPtr { *this }, this, callback = WTFMove(callback)](auto&& description) mutable {
         if (!weakThis || !description) {
             RELEASE_LOG_IF(!description, WebRTC, "RemoteAudioMediaStreamTrackRendererInternalUnitManager::Unit unable to get format description");
             callback({ }, 0);

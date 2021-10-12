@@ -66,7 +66,7 @@ MediaKeys::MediaKeys(Document& document, bool useDistinctiveIdentifier, bool per
 #else
     UNUSED_PARAM(document);
 #endif
-    m_instance->setClient(makeWeakPtr(this));
+    m_instance->setClient(*this);
 }
 
 MediaKeys::~MediaKeys() = default;
@@ -100,7 +100,7 @@ ExceptionOr<Ref<MediaKeySession>> MediaKeys::createSession(Document& document, M
     // 3. Let session be a new MediaKeySession object, and initialize it as follows:
     // NOTE: Continued in MediaKeySession.
     // 4. Return session.
-    auto session = MediaKeySession::create(document, makeWeakPtr(*this), sessionType, m_useDistinctiveIdentifier, m_implementation.copyRef(), instanceSession.releaseNonNull());
+    auto session = MediaKeySession::create(document, *this, sessionType, m_useDistinctiveIdentifier, m_implementation.copyRef(), instanceSession.releaseNonNull());
     INFO_LOG(identifier, "Created session");
     m_sessions.append(session.copyRef());
     return session;

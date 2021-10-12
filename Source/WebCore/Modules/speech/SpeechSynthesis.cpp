@@ -60,7 +60,7 @@ SpeechSynthesis::SpeechSynthesis(WeakPtr<SpeechSynthesisClient> client, Document
 #endif
 
     if (m_speechSynthesisClient)
-        m_speechSynthesisClient->setObserver(makeWeakPtr(this));
+        m_speechSynthesisClient->setObserver(*this);
 }
 
 void SpeechSynthesis::setPlatformSynthesizer(std::unique_ptr<PlatformSpeechSynthesizer> synthesizer)

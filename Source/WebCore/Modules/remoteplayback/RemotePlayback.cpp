@@ -50,7 +50,7 @@ Ref<RemotePlayback> RemotePlayback::create(HTMLMediaElement& element)
 
 RemotePlayback::RemotePlayback(HTMLMediaElement& element)
     : WebCore::ActiveDOMObject(element.scriptExecutionContext())
-    , m_mediaElement(makeWeakPtr(element))
+    , m_mediaElement(element)
 {
     suspendIfNeeded();
 }

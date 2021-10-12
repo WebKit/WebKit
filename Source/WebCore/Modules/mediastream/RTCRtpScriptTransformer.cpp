@@ -122,7 +122,7 @@ void RTCRtpScriptTransformer::start(Ref<RTCRtpTransformBackend>&& backend)
     m_backend = WTFMove(backend);
 
     auto& context = downcast<WorkerGlobalScope>(*scriptExecutionContext());
-    m_backend->setTransformableFrameCallback([readableSource = makeWeakPtr(m_readableSource.get()), isAudio = m_backend->mediaType() == RTCRtpTransformBackend::MediaType::Audio, thread = Ref { context.thread() }](auto&& frame) mutable {
+    m_backend->setTransformableFrameCallback([readableSource = WeakPtr { m_readableSource }, isAudio = m_backend->mediaType() == RTCRtpTransformBackend::MediaType::Audio, thread = Ref { context.thread() }](auto&& frame) mutable {
         thread->runLoop().postTaskForMode([readableSource, isAudio, frame = WTFMove(frame)](auto& context) mutable {
             if (!readableSource)
                 return;

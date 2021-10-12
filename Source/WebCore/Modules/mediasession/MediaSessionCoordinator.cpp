@@ -70,7 +70,7 @@ void MediaSessionCoordinator::setMediaSessionCoordinatorPrivate(Ref<MediaSession
         m_privateCoordinator->leave();
     m_privateCoordinator = WTFMove(privateCoordinator);
     m_privateCoordinator->setLogger(m_logger.copyRef(), m_logIdentifier);
-    m_privateCoordinator->setClient(makeWeakPtr(this));
+    m_privateCoordinator->setClient(*this);
     coordinatorStateChanged(MediaSessionCoordinatorState::Waiting);
 }
 
@@ -274,7 +274,7 @@ void MediaSessionCoordinator::setTrack(const String& track, DOMPromiseDeferred<v
 void MediaSessionCoordinator::setMediaSession(MediaSession* session)
 {
     ALWAYS_LOG(LOGIDENTIFIER);
-    m_session = makeWeakPtr(session);
+    m_session = session;
 
     if (m_session)
         m_session->addObserver(*this);

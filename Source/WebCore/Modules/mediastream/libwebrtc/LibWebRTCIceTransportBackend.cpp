@@ -95,7 +95,7 @@ private:
 
 LibWebRTCIceTransportBackendObserver::LibWebRTCIceTransportBackendObserver(RTCIceTransportBackend::Client& client, rtc::scoped_refptr<webrtc::IceTransportInterface>&& backend)
     : m_backend(WTFMove(backend))
-    , m_client(makeWeakPtr(client))
+    , m_client(client)
 {
     ASSERT(m_backend);
 }

@@ -218,7 +218,7 @@ static AppHighlightRangeData createAppHighlightRangeData(const StaticRange& rang
 }
 
 AppHighlightStorage::AppHighlightStorage(Document& document)
-    : m_document(makeWeakPtr(document))
+    : m_document(document)
 {
 }
 

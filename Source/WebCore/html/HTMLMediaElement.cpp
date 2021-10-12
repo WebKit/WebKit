@@ -1725,7 +1725,7 @@ void HTMLMediaElement::updateActiveTextTrackCues(const MediaTime& movieTime)
     INFO_LOG(LOGIDENTIFIER, "nextInterestingTime:", nextInterestingTime);
 
     if (nextInterestingTime.isValid() && m_player) {
-        m_player->performTaskAtMediaTime([this, weakThis = makeWeakPtr(this)] {
+        m_player->performTaskAtMediaTime([this, weakThis = WeakPtr { *this }] {
             if (!weakThis)
                 return;
 
@@ -2941,7 +2941,7 @@ void HTMLMediaElement::progressEventTimerFired()
     if (!m_player->supportsProgressMonitoring())
         return;
 
-    m_player->didLoadingProgress([this, weakThis = makeWeakPtr(this)](bool progress) {
+    m_player->didLoadingProgress([this, weakThis = WeakPtr { *this }](bool progress) {
         if (!weakThis)
             return;
         MonotonicTime time = MonotonicTime::now();

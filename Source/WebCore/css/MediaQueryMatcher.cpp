@@ -39,7 +39,7 @@
 namespace WebCore {
 
 MediaQueryMatcher::MediaQueryMatcher(Document& document)
-    : m_document(makeWeakPtr(document))
+    : m_document(document)
 {
 }
 
@@ -86,7 +86,7 @@ bool MediaQueryMatcher::evaluate(const MediaQuerySet& media)
 void MediaQueryMatcher::addMediaQueryList(MediaQueryList& list)
 {
     ASSERT(!m_mediaQueryLists.contains(&list));
-    m_mediaQueryLists.append(makeWeakPtr(&list));
+    m_mediaQueryLists.append(list);
 }
 
 void MediaQueryMatcher::removeMediaQueryList(MediaQueryList& list)

@@ -52,15 +52,15 @@ void RemoteLegacyCDMFactory::registerFactory()
 {
     LegacyCDM::clearFactories();
     LegacyCDM::registerCDMFactory(
-        [weakThis = makeWeakPtr(this)] (LegacyCDM* privateCDM) -> std::unique_ptr<WebCore::CDMPrivateInterface> {
+        [weakThis = WeakPtr { *this }] (LegacyCDM* privateCDM) -> std::unique_ptr<WebCore::CDMPrivateInterface> {
             if (weakThis)
                 return weakThis->createCDM(privateCDM);
             return nullptr;
         },
-        [weakThis = makeWeakPtr(this)] (const String& keySystem) {
+        [weakThis = WeakPtr { *this }] (const String& keySystem) {
             return weakThis ? weakThis->supportsKeySystem(keySystem) : false;
         },
-        [weakThis = makeWeakPtr(this)] (const String& keySystem, const String& mimeType) {
+        [weakThis = WeakPtr { *this }] (const String& keySystem, const String& mimeType) {
             return weakThis ? weakThis->supportsKeySystemAndMimeType(keySystem, mimeType) : false;
         }
     );

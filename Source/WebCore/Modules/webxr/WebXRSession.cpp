@@ -55,14 +55,14 @@ WebXRSession::WebXRSession(Document& document, WebXRSystem& system, XRSessionMod
     , m_inputSources(WebXRInputSourceArray::create(*this))
     , m_xrSystem(system)
     , m_mode(mode)
-    , m_device(makeWeakPtr(device))
+    , m_device(device)
     , m_requestedFeatures(WTFMove(requestedFeatures))
     , m_activeRenderState(WebXRRenderState::create(mode))
     , m_viewerReferenceSpace(makeUnique<WebXRViewerSpace>(document, *this))
     , m_timeOrigin(MonotonicTime::now())
     , m_views(device.views(mode))
 {
-    m_device->setTrackingAndRenderingClient(makeWeakPtr(*this));
+    m_device->setTrackingAndRenderingClient(*this);
     m_device->initializeTrackingAndRendering(mode);
 
     // https://immersive-web.github.io/webxr/#ref-for-dom-xrreferencespacetype-viewer%E2%91%A2

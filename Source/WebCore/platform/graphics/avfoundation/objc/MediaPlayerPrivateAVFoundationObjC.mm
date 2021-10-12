@@ -788,7 +788,7 @@ void MediaPlayerPrivateAVFoundationObjC::createAVAssetForURL(const URL& url)
         return;
     }
 
-    player()->getRawCookies(url, [this, weakThis = makeWeakPtr(this), options = WTFMove(options), url] (auto cookies) mutable {
+    player()->getRawCookies(url, [this, weakThis = WeakPtr { *this }, options = WTFMove(options), url] (auto cookies) mutable {
         if (!weakThis)
             return;
         

@@ -40,7 +40,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(PaymentResponse);
 
 PaymentResponse::PaymentResponse(ScriptExecutionContext* context, PaymentRequest& request)
     : ActiveDOMObject { context }
-    , m_request { makeWeakPtr(request) }
+    , m_request { request }
 {
     suspendIfNeeded();
 }

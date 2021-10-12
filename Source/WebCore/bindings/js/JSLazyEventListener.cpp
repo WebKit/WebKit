@@ -204,14 +204,14 @@ RefPtr<JSLazyEventListener> JSLazyEventListener::create(CreationArguments&& argu
 
 RefPtr<JSLazyEventListener> JSLazyEventListener::create(Element& element, const QualifiedName& attributeName, const AtomString& attributeValue)
 {
-    return create({ attributeName, attributeValue, element.document(), makeWeakPtr(element), nullptr, element.isSVGElement() });
+    return create({ attributeName, attributeValue, element.document(), element, nullptr, element.isSVGElement() });
 }
 
 RefPtr<JSLazyEventListener> JSLazyEventListener::create(Document& document, const QualifiedName& attributeName, const AtomString& attributeValue)
 {
     // FIXME: This always passes false for "shouldUseSVGEventName". Is that correct for events dispatched to SVG documents?
     // This has been this way for a long time, but became more obvious when refactoring to separate the Element and Document code paths.
-    return create({ attributeName, attributeValue, document, makeWeakPtr(document), nullptr, false });
+    return create({ attributeName, attributeValue, document, document, nullptr, false });
 }
 
 RefPtr<JSLazyEventListener> JSLazyEventListener::create(DOMWindow& window, const QualifiedName& attributeName, const AtomString& attributeValue)

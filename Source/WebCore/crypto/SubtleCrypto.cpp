@@ -503,10 +503,10 @@ static bool isSupportedExportKey(CryptoAlgorithmIdentifier identifier)
     }
 }
 
-RefPtr<DeferredPromise> getPromise(DeferredPromise* index, WeakPtr<SubtleCrypto> subtleCryptoWeakPointer)
+RefPtr<DeferredPromise> getPromise(DeferredPromise* index, WeakPtr<SubtleCrypto> weakThis)
 {
-    if (subtleCryptoWeakPointer)
-        return subtleCryptoWeakPointer->m_pendingPromises.take(index);
+    if (weakThis)
+        return weakThis->m_pendingPromises.take(index);
     return nullptr;
 }
 
@@ -565,13 +565,13 @@ void SubtleCrypto::encrypt(JSC::JSGlobalObject& state, AlgorithmIdentifier&& alg
 
     auto index = promise.ptr();
     m_pendingPromises.add(index, WTFMove(promise));
-    auto subtleCryptoWeakPointer = makeWeakPtr(*this);
-    auto callback = [index, subtleCryptoWeakPointer](const Vector<uint8_t>& cipherText) mutable {
-        if (auto promise = getPromise(index, subtleCryptoWeakPointer))
+    WeakPtr weakThis { *this };
+    auto callback = [index, weakThis](const Vector<uint8_t>& cipherText) mutable {
+        if (auto promise = getPromise(index, weakThis))
             fulfillPromiseWithArrayBuffer(promise.releaseNonNull(), cipherText.data(), cipherText.size());
     };
-    auto exceptionCallback = [index, subtleCryptoWeakPointer](ExceptionCode ec) mutable {
-        if (auto promise = getPromise(index, subtleCryptoWeakPointer))
+    auto exceptionCallback = [index, weakThis](ExceptionCode ec) mutable {
+        if (auto promise = getPromise(index, weakThis))
             rejectWithException(promise.releaseNonNull(), ec);
     };
 
@@ -605,13 +605,13 @@ void SubtleCrypto::decrypt(JSC::JSGlobalObject& state, AlgorithmIdentifier&& alg
 
     auto index = promise.ptr();
     m_pendingPromises.add(index, WTFMove(promise));
-    auto subtleCryptoWeakPointer = makeWeakPtr(*this);
-    auto callback = [index, subtleCryptoWeakPointer](const Vector<uint8_t>& plainText) mutable {
-        if (auto promise = getPromise(index, subtleCryptoWeakPointer))
+    WeakPtr weakThis { *this };
+    auto callback = [index, weakThis](const Vector<uint8_t>& plainText) mutable {
+        if (auto promise = getPromise(index, weakThis))
             fulfillPromiseWithArrayBuffer(promise.releaseNonNull(), plainText.data(), plainText.size());
     };
-    auto exceptionCallback = [index, subtleCryptoWeakPointer](ExceptionCode ec) mutable {
-        if (auto promise = getPromise(index, subtleCryptoWeakPointer))
+    auto exceptionCallback = [index, weakThis](ExceptionCode ec) mutable {
+        if (auto promise = getPromise(index, weakThis))
             rejectWithException(promise.releaseNonNull(), ec);
     };
 
@@ -643,13 +643,13 @@ void SubtleCrypto::sign(JSC::JSGlobalObject& state, AlgorithmIdentifier&& algori
 
     auto index = promise.ptr();
     m_pendingPromises.add(index, WTFMove(promise));
-    auto subtleCryptoWeakPointer = makeWeakPtr(*this);
-    auto callback = [index, subtleCryptoWeakPointer](const Vector<uint8_t>& signature) mutable {
-        if (auto promise = getPromise(index, subtleCryptoWeakPointer))
+    WeakPtr weakThis { *this };
+    auto callback = [index, weakThis](const Vector<uint8_t>& signature) mutable {
+        if (auto promise = getPromise(index, weakThis))
             fulfillPromiseWithArrayBuffer(promise.releaseNonNull(), signature.data(), signature.size());
     };
-    auto exceptionCallback = [index, subtleCryptoWeakPointer](ExceptionCode ec) mutable {
-        if (auto promise = getPromise(index, subtleCryptoWeakPointer))
+    auto exceptionCallback = [index, weakThis](ExceptionCode ec) mutable {
+        if (auto promise = getPromise(index, weakThis))
             rejectWithException(promise.releaseNonNull(), ec);
     };
 
@@ -682,13 +682,13 @@ void SubtleCrypto::verify(JSC::JSGlobalObject& state, AlgorithmIdentifier&& algo
 
     auto index = promise.ptr();
     m_pendingPromises.add(index, WTFMove(promise));
-    auto subtleCryptoWeakPointer = makeWeakPtr(*this);
-    auto callback = [index, subtleCryptoWeakPointer](bool result) mutable {
-        if (auto promise = getPromise(index, subtleCryptoWeakPointer))
+    WeakPtr weakThis { *this };
+    auto callback = [index, weakThis](bool result) mutable {
+        if (auto promise = getPromise(index, weakThis))
             promise->resolve<IDLBoolean>(result);
     };
-    auto exceptionCallback = [index, subtleCryptoWeakPointer](ExceptionCode ec) mutable {
-        if (auto promise = getPromise(index, subtleCryptoWeakPointer))
+    auto exceptionCallback = [index, weakThis](ExceptionCode ec) mutable {
+        if (auto promise = getPromise(index, weakThis))
             rejectWithException(promise.releaseNonNull(), ec);
     };
 
@@ -710,13 +710,13 @@ void SubtleCrypto::digest(JSC::JSGlobalObject& state, AlgorithmIdentifier&& algo
 
     auto index = promise.ptr();
     m_pendingPromises.add(index, WTFMove(promise));
-    auto subtleCryptoWeakPointer = makeWeakPtr(*this);
-    auto callback = [index, subtleCryptoWeakPointer](const Vector<uint8_t>& digest) mutable {
-        if (auto promise = getPromise(index, subtleCryptoWeakPointer))
+    WeakPtr weakThis { *this };
+    auto callback = [index, weakThis](const Vector<uint8_t>& digest) mutable {
+        if (auto promise = getPromise(index, weakThis))
             fulfillPromiseWithArrayBuffer(promise.releaseNonNull(), digest.data(), digest.size());
     };
-    auto exceptionCallback = [index, subtleCryptoWeakPointer](ExceptionCode ec) mutable {
-        if (auto promise = getPromise(index, subtleCryptoWeakPointer))
+    auto exceptionCallback = [index, weakThis](ExceptionCode ec) mutable {
+        if (auto promise = getPromise(index, weakThis))
             rejectWithException(promise.releaseNonNull(), ec);
     };
 
@@ -738,9 +738,9 @@ void SubtleCrypto::generateKey(JSC::JSGlobalObject& state, AlgorithmIdentifier&&
 
     auto index = promise.ptr();
     m_pendingPromises.add(index, WTFMove(promise));
-    auto subtleCryptoWeakPointer = makeWeakPtr(*this);
-    auto callback = [index, subtleCryptoWeakPointer](KeyOrKeyPair&& keyOrKeyPair) mutable {
-        if (auto promise = getPromise(index, subtleCryptoWeakPointer)) {
+    WeakPtr weakThis { *this };
+    auto callback = [index, weakThis](KeyOrKeyPair&& keyOrKeyPair) mutable {
+        if (auto promise = getPromise(index, weakThis)) {
             WTF::switchOn(keyOrKeyPair,
                 [&promise] (RefPtr<CryptoKey>& key) {
                     if ((key->type() == CryptoKeyType::Private || key->type() == CryptoKeyType::Secret) && !key->usagesBitmap()) {
@@ -759,8 +759,8 @@ void SubtleCrypto::generateKey(JSC::JSGlobalObject& state, AlgorithmIdentifier&&
             );
         }
     };
-    auto exceptionCallback = [index, subtleCryptoWeakPointer](ExceptionCode ec) mutable {
-        if (auto promise = getPromise(index, subtleCryptoWeakPointer))
+    auto exceptionCallback = [index, weakThis](ExceptionCode ec) mutable {
+        if (auto promise = getPromise(index, weakThis))
             rejectWithException(promise.releaseNonNull(), ec);
     };
 
@@ -819,12 +819,12 @@ void SubtleCrypto::deriveKey(JSC::JSGlobalObject& state, AlgorithmIdentifier&& a
 
     auto index = promise.ptr();
     m_pendingPromises.add(index, WTFMove(promise));
-    auto subtleCryptoWeakPointer = makeWeakPtr(*this);
-    auto callback = [index, subtleCryptoWeakPointer, importAlgorithm = WTFMove(importAlgorithm), importParams = crossThreadCopyImportParams(*importParams), extractable, keyUsagesBitmap](const Vector<uint8_t>& derivedKey) mutable {
+    WeakPtr weakThis { *this };
+    auto callback = [index, weakThis, importAlgorithm = WTFMove(importAlgorithm), importParams = crossThreadCopyImportParams(*importParams), extractable, keyUsagesBitmap](const Vector<uint8_t>& derivedKey) mutable {
         // FIXME: https://bugs.webkit.org/show_bug.cgi?id=169395
         KeyData data = derivedKey;
-        auto callback = [index, subtleCryptoWeakPointer](CryptoKey& key) mutable {
-            if (auto promise = getPromise(index, subtleCryptoWeakPointer)) {
+        auto callback = [index, weakThis](CryptoKey& key) mutable {
+            if (auto promise = getPromise(index, weakThis)) {
                 if ((key.type() == CryptoKeyType::Private || key.type() == CryptoKeyType::Secret) && !key.usagesBitmap()) {
                     rejectWithException(promise.releaseNonNull(), SyntaxError);
                     return;
@@ -832,15 +832,15 @@ void SubtleCrypto::deriveKey(JSC::JSGlobalObject& state, AlgorithmIdentifier&& a
                 promise->resolve<IDLInterface<CryptoKey>>(key);
             }
         };
-        auto exceptionCallback = [index, subtleCryptoWeakPointer](ExceptionCode ec) mutable {
-            if (auto promise = getPromise(index, subtleCryptoWeakPointer))
+        auto exceptionCallback = [index, weakThis](ExceptionCode ec) mutable {
+            if (auto promise = getPromise(index, weakThis))
                 rejectWithException(promise.releaseNonNull(), ec);
         };
 
         importAlgorithm->importKey(SubtleCrypto::KeyFormat::Raw, WTFMove(data), *importParams, extractable, keyUsagesBitmap, WTFMove(callback), WTFMove(exceptionCallback));
     };
-    auto exceptionCallback = [index, subtleCryptoWeakPointer](ExceptionCode ec) mutable {
-        if (auto promise = getPromise(index, subtleCryptoWeakPointer))
+    auto exceptionCallback = [index, weakThis](ExceptionCode ec) mutable {
+        if (auto promise = getPromise(index, weakThis))
             rejectWithException(promise.releaseNonNull(), ec);
     };
 
@@ -870,13 +870,13 @@ void SubtleCrypto::deriveBits(JSC::JSGlobalObject& state, AlgorithmIdentifier&& 
 
     auto index = promise.ptr();
     m_pendingPromises.add(index, WTFMove(promise));
-    auto subtleCryptoWeakPointer = makeWeakPtr(*this);
-    auto callback = [index, subtleCryptoWeakPointer](const Vector<uint8_t>& derivedKey) mutable {
-        if (auto promise = getPromise(index, subtleCryptoWeakPointer))
+    WeakPtr weakThis { *this };
+    auto callback = [index, weakThis](const Vector<uint8_t>& derivedKey) mutable {
+        if (auto promise = getPromise(index, weakThis))
             fulfillPromiseWithArrayBuffer(promise.releaseNonNull(), derivedKey.data(), derivedKey.size());
     };
-    auto exceptionCallback = [index, subtleCryptoWeakPointer](ExceptionCode ec) mutable {
-        if (auto promise = getPromise(index, subtleCryptoWeakPointer))
+    auto exceptionCallback = [index, weakThis](ExceptionCode ec) mutable {
+        if (auto promise = getPromise(index, weakThis))
             rejectWithException(promise.releaseNonNull(), ec);
     };
 
@@ -905,9 +905,9 @@ void SubtleCrypto::importKey(JSC::JSGlobalObject& state, KeyFormat format, KeyDa
 
     auto index = promise.ptr();
     m_pendingPromises.add(index, WTFMove(promise));
-    auto subtleCryptoWeakPointer = makeWeakPtr(*this);
-    auto callback = [index, subtleCryptoWeakPointer](CryptoKey& key) mutable {
-        if (auto promise = getPromise(index, subtleCryptoWeakPointer)) {
+    WeakPtr weakThis { *this };
+    auto callback = [index, weakThis](CryptoKey& key) mutable {
+        if (auto promise = getPromise(index, weakThis)) {
             if ((key.type() == CryptoKeyType::Private || key.type() == CryptoKeyType::Secret) && !key.usagesBitmap()) {
                 rejectWithException(promise.releaseNonNull(), SyntaxError);
                 return;
@@ -915,8 +915,8 @@ void SubtleCrypto::importKey(JSC::JSGlobalObject& state, KeyFormat format, KeyDa
             promise->resolve<IDLInterface<CryptoKey>>(key);
         }
     };
-    auto exceptionCallback = [index, subtleCryptoWeakPointer](ExceptionCode ec) mutable {
-        if (auto promise = getPromise(index, subtleCryptoWeakPointer))
+    auto exceptionCallback = [index, weakThis](ExceptionCode ec) mutable {
+        if (auto promise = getPromise(index, weakThis))
             rejectWithException(promise.releaseNonNull(), ec);
     };
 
@@ -942,9 +942,9 @@ void SubtleCrypto::exportKey(KeyFormat format, CryptoKey& key, Ref<DeferredPromi
 
     auto index = promise.ptr();
     m_pendingPromises.add(index, WTFMove(promise));
-    auto subtleCryptoWeakPointer = makeWeakPtr(*this);
-    auto callback = [index, subtleCryptoWeakPointer](SubtleCrypto::KeyFormat format, KeyData&& key) mutable {
-        if (auto promise = getPromise(index, subtleCryptoWeakPointer)) {
+    WeakPtr weakThis { *this };
+    auto callback = [index, weakThis](SubtleCrypto::KeyFormat format, KeyData&& key) mutable {
+        if (auto promise = getPromise(index, weakThis)) {
             switch (format) {
             case SubtleCrypto::KeyFormat::Spki:
             case SubtleCrypto::KeyFormat::Pkcs8:
@@ -960,8 +960,8 @@ void SubtleCrypto::exportKey(KeyFormat format, CryptoKey& key, Ref<DeferredPromi
             ASSERT_NOT_REACHED();
         }
     };
-    auto exceptionCallback = [index, subtleCryptoWeakPointer](ExceptionCode ec) mutable {
-        if (auto promise = getPromise(index, subtleCryptoWeakPointer))
+    auto exceptionCallback = [index, weakThis](ExceptionCode ec) mutable {
+        if (auto promise = getPromise(index, weakThis))
             rejectWithException(promise.releaseNonNull(), ec);
     };
 
@@ -1016,10 +1016,10 @@ void SubtleCrypto::wrapKey(JSC::JSGlobalObject& state, KeyFormat format, CryptoK
 
     auto index = promise.ptr();
     m_pendingPromises.add(index, WTFMove(promise));
-    auto subtleCryptoWeakPointer = makeWeakPtr(*this);
-    auto callback = [index, subtleCryptoWeakPointer, wrapAlgorithm, wrappingKey = Ref { wrappingKey }, wrapParams = WTFMove(wrapParams), isEncryption, context, workQueue = m_workQueue](SubtleCrypto::KeyFormat format, KeyData&& key) mutable {
-        if (subtleCryptoWeakPointer) {
-            if (auto promise = subtleCryptoWeakPointer->m_pendingPromises.get(index)) {
+    WeakPtr weakThis { *this };
+    auto callback = [index, weakThis, wrapAlgorithm, wrappingKey = Ref { wrappingKey }, wrapParams = WTFMove(wrapParams), isEncryption, context, workQueue = m_workQueue](SubtleCrypto::KeyFormat format, KeyData&& key) mutable {
+        if (weakThis) {
+            if (auto promise = weakThis->m_pendingPromises.get(index)) {
                 Vector<uint8_t> bytes;
                 switch (format) {
                 case SubtleCrypto::KeyFormat::Spki:
@@ -1036,12 +1036,12 @@ void SubtleCrypto::wrapKey(JSC::JSGlobalObject& state, KeyFormat format, CryptoK
                 }
                 }
 
-                auto callback = [index, subtleCryptoWeakPointer](const Vector<uint8_t>& wrappedKey) mutable {
-                    if (auto promise = getPromise(index, subtleCryptoWeakPointer))
+                auto callback = [index, weakThis](const Vector<uint8_t>& wrappedKey) mutable {
+                    if (auto promise = getPromise(index, weakThis))
                         fulfillPromiseWithArrayBuffer(promise.releaseNonNull(), wrappedKey.data(), wrappedKey.size());
                 };
-                auto exceptionCallback = [index, subtleCryptoWeakPointer](ExceptionCode ec) mutable {
-                    if (auto promise = getPromise(index, subtleCryptoWeakPointer))
+                auto exceptionCallback = [index, weakThis](ExceptionCode ec) mutable {
+                    if (auto promise = getPromise(index, weakThis))
                         rejectWithException(promise.releaseNonNull(), ec);
                 };
 
@@ -1057,8 +1057,8 @@ void SubtleCrypto::wrapKey(JSC::JSGlobalObject& state, KeyFormat format, CryptoK
             }
         }
     };
-    auto exceptionCallback = [index, subtleCryptoWeakPointer](ExceptionCode ec) mutable {
-        if (auto promise = getPromise(index, subtleCryptoWeakPointer))
+    auto exceptionCallback = [index, weakThis](ExceptionCode ec) mutable {
+        if (auto promise = getPromise(index, weakThis))
             rejectWithException(promise.releaseNonNull(), ec);
     };
 
@@ -1117,10 +1117,10 @@ void SubtleCrypto::unwrapKey(JSC::JSGlobalObject& state, KeyFormat format, Buffe
 
     auto index = promise.ptr();
     m_pendingPromises.add(index, WTFMove(promise));
-    auto subtleCryptoWeakPointer = makeWeakPtr(*this);
-    auto callback = [index, subtleCryptoWeakPointer, format, importAlgorithm, unwrappedKeyAlgorithm = crossThreadCopyImportParams(*unwrappedKeyAlgorithm), extractable, keyUsagesBitmap](const Vector<uint8_t>& bytes) mutable {
-        if (subtleCryptoWeakPointer) {
-            if (auto promise = subtleCryptoWeakPointer->m_pendingPromises.get(index)) {
+    WeakPtr weakThis { *this };
+    auto callback = [index, weakThis, format, importAlgorithm, unwrappedKeyAlgorithm = crossThreadCopyImportParams(*unwrappedKeyAlgorithm), extractable, keyUsagesBitmap](const Vector<uint8_t>& bytes) mutable {
+        if (weakThis) {
+            if (auto promise = weakThis->m_pendingPromises.get(index)) {
                 KeyData keyData;
                 switch (format) {
                 case SubtleCrypto::KeyFormat::Spki:
@@ -1149,8 +1149,8 @@ void SubtleCrypto::unwrapKey(JSC::JSGlobalObject& state, KeyFormat format, Buffe
                 }
                 }
 
-                auto callback = [index, subtleCryptoWeakPointer](CryptoKey& key) mutable {
-                    if (auto promise = getPromise(index, subtleCryptoWeakPointer)) {
+                auto callback = [index, weakThis](CryptoKey& key) mutable {
+                    if (auto promise = getPromise(index, weakThis)) {
                         if ((key.type() == CryptoKeyType::Private || key.type() == CryptoKeyType::Secret) && !key.usagesBitmap()) {
                             rejectWithException(promise.releaseNonNull(), SyntaxError);
                             return;
@@ -1158,8 +1158,8 @@ void SubtleCrypto::unwrapKey(JSC::JSGlobalObject& state, KeyFormat format, Buffe
                         promise->resolve<IDLInterface<CryptoKey>>(key);
                     }
                 };
-                auto exceptionCallback = [index, subtleCryptoWeakPointer](ExceptionCode ec) mutable {
-                    if (auto promise = getPromise(index, subtleCryptoWeakPointer))
+                auto exceptionCallback = [index, weakThis](ExceptionCode ec) mutable {
+                    if (auto promise = getPromise(index, weakThis))
                         rejectWithException(promise.releaseNonNull(), ec);
                 };
 
@@ -1168,8 +1168,8 @@ void SubtleCrypto::unwrapKey(JSC::JSGlobalObject& state, KeyFormat format, Buffe
             }
         }
     };
-    auto exceptionCallback = [index, subtleCryptoWeakPointer](ExceptionCode ec) mutable {
-        if (auto promise = getPromise(index, subtleCryptoWeakPointer))
+    auto exceptionCallback = [index, weakThis](ExceptionCode ec) mutable {
+        if (auto promise = getPromise(index, weakThis))
             rejectWithException(promise.releaseNonNull(), ec);
     };
 

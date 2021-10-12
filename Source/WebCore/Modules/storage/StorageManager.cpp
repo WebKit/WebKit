@@ -49,7 +49,7 @@ Ref<StorageManager> StorageManager::create(NavigatorBase& navigator)
 }
 
 StorageManager::StorageManager(NavigatorBase& navigator)
-    : m_navigator(makeWeakPtr(navigator))
+    : m_navigator(navigator)
 {
 }
 

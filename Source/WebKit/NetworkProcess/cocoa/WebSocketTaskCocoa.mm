@@ -57,7 +57,7 @@ WebSocketTask::~WebSocketTask()
 
 void WebSocketTask::readNextMessage()
 {
-    [m_task receiveMessageWithCompletionHandler: makeBlockPtr([this, weakThis = makeWeakPtr(this)](NSURLSessionWebSocketMessage* _Nullable message, NSError * _Nullable error) {
+    [m_task receiveMessageWithCompletionHandler: makeBlockPtr([this, weakThis = WeakPtr { *this }](NSURLSessionWebSocketMessage* _Nullable message, NSError * _Nullable error) {
         if (!weakThis)
             return;
 

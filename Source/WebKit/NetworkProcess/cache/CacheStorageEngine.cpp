@@ -368,7 +368,7 @@ void Engine::initialize(CompletionCallback&& callback)
     if (!shouldComputeSalt)
         return;
 
-    m_ioQueue->dispatch([this, weakThis = makeWeakPtr(this), rootPath = m_rootPath.isolatedCopy()] () mutable {
+    m_ioQueue->dispatch([this, weakThis = WeakPtr { *this }, rootPath = m_rootPath.isolatedCopy()] () mutable {
         FileSystem::makeAllDirectories(rootPath);
         String saltPath = FileSystem::pathByAppendingComponent(rootPath, "salt"_s);
         RunLoop::main().dispatch([this, weakThis = WTFMove(weakThis), salt = FileSystem::readOrMakeSalt(saltPath)]() mutable {
@@ -458,7 +458,7 @@ void Engine::writeFile(const String& filename, NetworkCache::Data&& data, WebCor
     }
 
     m_pendingWriteCallbacks.add(++m_pendingCallbacksCounter, WTFMove(callback));
-    m_ioQueue->dispatch([this, weakThis = makeWeakPtr(this), identifier = m_pendingCallbacksCounter, data = WTFMove(data), filename = filename.isolatedCopy()]() mutable {
+    m_ioQueue->dispatch([this, weakThis = WeakPtr { *this }, identifier = m_pendingCallbacksCounter, data = WTFMove(data), filename = filename.isolatedCopy()]() mutable {
 
         String directoryPath = FileSystem::parentPath(filename);
         if (!FileSystem::fileExists(directoryPath))
@@ -490,7 +490,7 @@ void Engine::readFile(const String& filename, CompletionHandler<void(const Netwo
     }
 
     m_pendingReadCallbacks.add(++m_pendingCallbacksCounter, WTFMove(callback));
-    m_ioQueue->dispatch([this, weakThis = makeWeakPtr(this), identifier = m_pendingCallbacksCounter, filename = filename.isolatedCopy()]() mutable {
+    m_ioQueue->dispatch([this, weakThis = WeakPtr { *this }, identifier = m_pendingCallbacksCounter, filename = filename.isolatedCopy()]() mutable {
         auto channel = IOChannel::open(filename, IOChannel::Type::Read);
         if (!channel->isOpened()) {
             RunLoop::main().dispatch([this, weakThis = WTFMove(weakThis), identifier]() mutable {
@@ -633,7 +633,7 @@ void Engine::fetchEntries(bool shouldComputeSize, CompletionHandler<void(Vector<
         return;
     }
 
-    getDirectories([this, weakThis = makeWeakPtr(this), path = m_rootPath.isolatedCopy(), shouldComputeSize, completionHandler = WTFMove(completionHandler)](const auto& folderPaths) mutable {
+    getDirectories([this, weakThis = WeakPtr { *this }, path = m_rootPath.isolatedCopy(), shouldComputeSize, completionHandler = WTFMove(completionHandler)](const auto& folderPaths) mutable {
         if (!weakThis)
             return completionHandler({ });
         fetchDirectoryEntries(shouldComputeSize, folderPaths, WTFMove(completionHandler));
@@ -730,7 +730,7 @@ void Engine::clearCachesForOrigin(const WebCore::SecurityOriginData& origin, Com
 void Engine::clearCachesForOriginFromDisk(const WebCore::SecurityOriginData& origin, CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
-    getDirectories([this, weakThis = makeWeakPtr(this), origin, completionHandler = WTFMove(completionHandler)](const auto& folderPaths) mutable {
+    getDirectories([this, weakThis = WeakPtr { *this }, origin, completionHandler = WTFMove(completionHandler)](const auto& folderPaths) mutable {
         if (!weakThis)
             return completionHandler();
         clearCachesForOriginFromDirectories(folderPaths, origin, WTFMove(completionHandler));

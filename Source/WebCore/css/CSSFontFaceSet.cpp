@@ -44,7 +44,7 @@
 namespace WebCore {
 
 CSSFontFaceSet::CSSFontFaceSet(CSSFontSelector* owningFontSelector)
-    : m_owningFontSelector(makeWeakPtr(owningFontSelector))
+    : m_owningFontSelector(owningFontSelector)
 {
 }
 
