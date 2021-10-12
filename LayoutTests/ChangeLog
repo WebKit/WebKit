@@ -1,3 +1,12 @@
+2021-10-12  Eric Hutchison  <ehutchison@apple.com>
+
+        [ iOS15 iPad Debug ] imported/w3c/web-platform-tests/webmessaging/MessagePort_onmessage_start.any.worker.html is a flaky failure (reached unreachable code).
+        https://bugs.webkit.org/show_bug.cgi?id=231609.
+
+        Unreviewed test gardening.
+
+        * platform/ipad/TestExpectations:
+
 2021-10-12  Ayumi Kojima  <ayumi_kojima@apple.com>
 
         [ iOS ] applicationmanifest/developer-warnings.html is a flaky timeout.
