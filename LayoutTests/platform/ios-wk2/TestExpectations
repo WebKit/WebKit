@@ -2186,3 +2186,5 @@ webkit.org/b/231619 [ Debug ] editing/pasteboard/dom-paste/dom-paste-requires-us
 
 webkit.org/b/231622 fast/events/ios/rotation/orientationchange-event-listener-on.body.html [ Pass Timeout ]
 webkit.org/b/231622 fast/events/ios/rotation/do-not-shrink-to-fit-content-after-rotation.html [ Pass Timeout ]
+
+webkit.org/b/231623 [ Debug ] fast/scrolling/ios/click-events-during-momentum-scroll-in-main-frame.html [ Pass Timeout ]
