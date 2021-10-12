@@ -1,3 +1,80 @@
+2021-10-12  Alan Coon  <alancoon@apple.com>
+
+        Apply patch. rdar://problem/84130892
+
+    2021-10-12  John Wilander  <wilander@apple.com>
+
+            Cherry-picking of:
+            - https://trac.webkit.org/changeset/283316/webkit, <rdar://problem/83516528>
+            - https://trac.webkit.org/changeset/282109/webkit, <rdar://problem/82841844>
+
+            Plus a fix of an API test that was timing out (EventAttribution.FraudPrevention).
+
+        Patch by John Wilander.
+        Reviewed by Alex Christensen and Kate Cheney.
+
+        Test: http/tests/privateClickMeasurement/multiple-app-bundle-ids.html
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::setPrivateClickMeasurementAppBundleIDForTesting):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * NetworkProcess/NetworkSession.cpp:
+        (WebKit::NetworkSession::handlePrivateClickMeasurementConversion):
+        (WebKit::NetworkSession::setPrivateClickMeasurementAppBundleIDForTesting):
+        * NetworkProcess/NetworkSession.h:
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementDatabase.cpp:
+        (WebKit::PCM::Database::findPrivateClickMeasurement):
+            Now takes an app bundle ID supplied from the network session and
+            includes it in the database query to find matching entries. If and
+            attribution was saved with app bundle ID XYZ, it should only be
+            be converted in an application with app bundle ID XYZ.
+        (WebKit::PCM::Database::attributePrivateClickMeasurement):
+            This function calls PCM::Database::findPrivateClickMeasurement()
+            which needs the app bundle ID so that ID is forwarded through.
+        (WebKit::PCM::Database::removeUnattributed):
+            Also needs to take the app bundle ID into consideration.
+        (WebKit::PCM::Database::clearSentAttribution):
+            Also needs to take the app bundle ID into consideration.
+        (WebKit::PCM::Database::markReportAsSentToDestination):
+            Also needs to take the app bundle ID into consideration.
+        (WebKit::PCM::Database::markReportAsSentToSource):
+            Also needs to take the app bundle ID into consideration.
+        (WebKit::PCM::Database::earliestTimesToSend):
+            Also needs to take the app bundle ID into consideration.
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementDatabase.h:
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementManager.cpp:
+        (WebKit::PrivateClickMeasurementManager::storeUnattributed):
+        (WebKit::PrivateClickMeasurementManager::handleAttribution):
+            Now takes a RegistrableDomain and a URL instead of a ResourceRequest (r282109).
+            Now takes an ApplicationBundleIdentifier (r283316).
+        (WebKit::PrivateClickMeasurementManager::setPrivateClickMeasurementAppBundleIDForTesting):
+        (WebKit::PrivateClickMeasurementManager::attribute):
+        (WebKit::PrivateClickMeasurementManager::clear):
+            Clears the test setting for app bundle ID.
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementManager.h:
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementManagerInterface.cpp:
+        (WebKit::PCM::messageTypeSendsReply):
+        (WebKit::PCM::decodeMessageAndSendToManager):
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementManagerInterface.h:
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementManagerProxy.cpp:
+        (WebKit::PCM::ManagerProxy::handleAttribution):
+        (WebKit::PCM::ManagerProxy::setPrivateClickMeasurementAppBundleIDForTesting):
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementManagerProxy.h:
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementStore.cpp:
+        (WebKit::PCM::Store::attributePrivateClickMeasurement):
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementStore.h:
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPCMFraudPreventionValuesForTesting):
+        (WKPageSetPrivateClickMeasurementAppBundleIDForTesting):
+        * UIProcess/API/C/WKPagePrivate.h:
+        * UIProcess/API/Cocoa/WKWebViewPrivateForTesting.h:
+        * UIProcess/API/Cocoa/WKWebViewTesting.mm:
+        (-[WKWebView _setPrivateClickMeasurementAppBundleIDForTesting:completionHandler:]):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::setPrivateClickMeasurementAppBundleIDForTesting):
+        * UIProcess/WebPageProxy.h:
+
 2021-10-11  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r283194. rdar://problem/83953433

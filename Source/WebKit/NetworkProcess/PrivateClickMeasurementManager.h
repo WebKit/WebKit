@@ -52,10 +52,11 @@ public:
     using PrivateClickMeasurement = WebCore::PrivateClickMeasurement;
     using RegistrableDomain = WebCore::RegistrableDomain;
     using SourceSite = WebCore::PrivateClickMeasurement::SourceSite;
+    using ApplicationBundleIdentifier = String;
     explicit PrivateClickMeasurementManager(NetworkSession&, NetworkProcess&, PAL::SessionID, Function<void(NetworkLoadParameters&&, NetworkLoadCallback&&)>&&);
 
     void storeUnattributed(PrivateClickMeasurement&&);
-    void handleAttribution(AttributionTriggerData&&, const URL& requestURL, const WebCore::ResourceRequest& redirectRequest);
+    void handleAttribution(AttributionTriggerData&&, const URL& requestURL, WebCore::RegistrableDomain&& redirectDomain, const URL& firstPartyURL, const ApplicationBundleIdentifier&);
     void clear(CompletionHandler<void()>&&);
     void clearForRegistrableDomain(const RegistrableDomain&, CompletionHandler<void()>&&);
     void toStringForTesting(CompletionHandler<void(String)>&&) const;
@@ -67,6 +68,7 @@ public:
     void markAttributedPrivateClickMeasurementsAsExpiredForTesting(CompletionHandler<void()>&&);
     void setEphemeralMeasurementForTesting(bool value) { m_isRunningEphemeralMeasurementTest = value; }
     void setPCMFraudPreventionValuesForTesting(String&& unlinkableToken, String&& secretToken, String&& signature, String&& keyID);
+    void setPrivateClickMeasurementAppBundleIDForTesting(ApplicationBundleIdentifier&&);
     void startTimer(Seconds);
 
 private:
@@ -74,7 +76,7 @@ private:
     void getSignedUnlinkableToken(PrivateClickMeasurement&&);
     void insertPrivateClickMeasurement(PrivateClickMeasurement&&, PrivateClickMeasurementAttributionType);
     void clearSentAttribution(PrivateClickMeasurement&&, PrivateClickMeasurement::AttributionReportEndpoint);
-    void attribute(const SourceSite&, const AttributionDestinationSite&, AttributionTriggerData&&);
+    void attribute(const SourceSite&, const AttributionDestinationSite&, AttributionTriggerData&&, const ApplicationBundleIdentifier&);
     void fireConversionRequest(const PrivateClickMeasurement&, PrivateClickMeasurement::AttributionReportEndpoint);
     void fireConversionRequestImpl(const PrivateClickMeasurement&, PrivateClickMeasurement::AttributionReportEndpoint);
     void firePendingAttributionRequests();
@@ -88,6 +90,7 @@ private:
     bool m_isRunningEphemeralMeasurementTest { false };
     std::optional<URL> m_tokenPublicKeyURLForTesting;
     std::optional<URL> m_tokenSignatureURLForTesting;
+    std::optional<ApplicationBundleIdentifier> m_privateClickMeasurementAppBundleIDForTesting;
     WeakPtr<NetworkSession> m_networkSession;
     Ref<NetworkProcess> m_networkProcess;
     PAL::SessionID m_sessionID;

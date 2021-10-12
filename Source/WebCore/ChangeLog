@@ -1,3 +1,24 @@
+2021-10-12  Alan Coon  <alancoon@apple.com>
+
+        Apply patch. rdar://problem/84130892
+
+    2021-10-12  John Wilander  <wilander@apple.com>
+
+            Cherry-picking of:
+            - https://trac.webkit.org/changeset/283316/webkit, <rdar://problem/83516528>
+            - https://trac.webkit.org/changeset/282109/webkit, <rdar://problem/82841844>
+
+            Plus a fix of an API test that was timing out (EventAttribution.FraudPrevention).
+
+        Patch by John Wilander.
+        Reviewed by Alex Christensen and Kate Cheney.
+
+        Test: http/tests/privateClickMeasurement/multiple-app-bundle-ids.html
+
+        * loader/PrivateClickMeasurement.cpp:
+        (WebCore::PrivateClickMeasurement::setSourceApplicationBundleIDForTesting):
+        * loader/PrivateClickMeasurement.h:
+
 2021-10-11  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r282884. rdar://problem/83954926

@@ -354,6 +354,13 @@
     });
 }
 
+- (void)_setPrivateClickMeasurementAppBundleIDForTesting:(NSString *)appBundleID completionHandler:(void(^)(void))completionHandler
+{
+    _page->setPrivateClickMeasurementAppBundleIDForTesting(appBundleID, [completionHandler = makeBlockPtr(completionHandler)] {
+        completionHandler();
+    });
+}
+
 - (void)_dumpPrivateClickMeasurement:(void(^)(NSString *))completionHandler
 {
     _page->dumpPrivateClickMeasurement([completionHandler = makeBlockPtr(completionHandler)](const String& privateClickMeasurement) {

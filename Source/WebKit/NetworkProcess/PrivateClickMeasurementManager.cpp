@@ -75,6 +75,9 @@ void PrivateClickMeasurementManager::storeUnattributed(PrivateClickMeasurement&&
 
     clearExpired();
 
+    if (m_privateClickMeasurementAppBundleIDForTesting)
+        measurement.setSourceApplicationBundleIDForTesting(*m_privateClickMeasurementAppBundleIDForTesting);
+
     if (measurement.ephemeralSourceNonce()) {
         auto measurementCopy = measurement;
         // This is guaranteed to be close in time to the navigational click which makes it likely to be personally identifiable.
@@ -255,13 +258,10 @@ void PrivateClickMeasurementManager::insertPrivateClickMeasurement(PrivateClickM
 #endif
 }
 
-void PrivateClickMeasurementManager::handleAttribution(AttributionTriggerData&& attributionTriggerData, const URL& requestURL, const WebCore::ResourceRequest& redirectRequest)
+void PrivateClickMeasurementManager::handleAttribution(AttributionTriggerData&& attributionTriggerData, const URL& requestURL, WebCore::RegistrableDomain&& redirectDomain, const URL& firstPartyURL, const ApplicationBundleIdentifier& applicationBundleIdentifier)
 {
     if (!featureEnabled())
         return;
-
-    RegistrableDomain redirectDomain { redirectRequest.url() };
-    auto& firstPartyURL = redirectRequest.firstPartyForCookies();
 
     if (!redirectDomain.matches(requestURL)) {
         m_networkProcess->broadcastConsoleMessage(m_sessionID, MessageSource::PrivateClickMeasurement, MessageLevel::Warning, "[Private Click Measurement] Triggering event was not accepted because the HTTP redirect was not same-site."_s);
@@ -275,7 +275,15 @@ void PrivateClickMeasurementManager::handleAttribution(AttributionTriggerData&& 
 
     m_networkProcess->broadcastConsoleMessage(m_sessionID, MessageSource::PrivateClickMeasurement, MessageLevel::Log, "[Private Click Measurement] Triggering event accepted."_s);
 
-    attribute(SourceSite { WTFMove(redirectDomain) }, AttributionDestinationSite { firstPartyURL }, WTFMove(attributionTriggerData));
+    attribute(SourceSite { WTFMove(redirectDomain) }, AttributionDestinationSite { firstPartyURL }, WTFMove(attributionTriggerData), m_privateClickMeasurementAppBundleIDForTesting ? *m_privateClickMeasurementAppBundleIDForTesting : applicationBundleIdentifier);
+}
+
+void PrivateClickMeasurementManager::setPrivateClickMeasurementAppBundleIDForTesting(ApplicationBundleIdentifier&& appBundleID)
+{
+    if (appBundleID.isEmpty())
+        m_privateClickMeasurementAppBundleIDForTesting = std::nullopt;
+    else
+        m_privateClickMeasurementAppBundleIDForTesting = WTFMove(appBundleID);
 }
 
 void PrivateClickMeasurementManager::startTimer(Seconds seconds)
@@ -283,7 +291,7 @@ void PrivateClickMeasurementManager::startTimer(Seconds seconds)
     m_firePendingAttributionRequestsTimer.startOneShot(m_isRunningTest ? 0_s : seconds);
 }
 
-void PrivateClickMeasurementManager::attribute(const SourceSite& sourceSite, const AttributionDestinationSite& destinationSite, AttributionTriggerData&& attributionTriggerData)
+void PrivateClickMeasurementManager::attribute(const SourceSite& sourceSite, const AttributionDestinationSite& destinationSite, AttributionTriggerData&& attributionTriggerData, const ApplicationBundleIdentifier& applicationBundleIdentifier)
 {
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     if (!featureEnabled())
@@ -298,7 +306,7 @@ void PrivateClickMeasurementManager::attribute(const SourceSite& sourceSite, con
     }
         
     if (auto* resourceLoadStatistics = m_networkSession->resourceLoadStatistics()) {
-        resourceLoadStatistics->privateClickMeasurementStore().attributePrivateClickMeasurement(sourceSite, destinationSite, WTFMove(attributionTriggerData), std::exchange(m_ephemeralMeasurement, std::nullopt), [this, weakThis = makeWeakPtr(*this)] (auto attributionSecondsUntilSendData, auto debugInfo) {
+        resourceLoadStatistics->privateClickMeasurementStore().attributePrivateClickMeasurement(sourceSite, destinationSite, applicationBundleIdentifier, WTFMove(attributionTriggerData), std::exchange(m_ephemeralMeasurement, std::nullopt), [this, weakThis = makeWeakPtr(*this)] (auto attributionSecondsUntilSendData, auto debugInfo) {
             if (!weakThis)
                 return;
             
@@ -473,6 +481,7 @@ void PrivateClickMeasurementManager::clear(CompletionHandler<void()>&& completio
     m_firePendingAttributionRequestsTimer.stop();
     m_ephemeralMeasurement = std::nullopt;
     m_isRunningEphemeralMeasurementTest = false;
+    m_privateClickMeasurementAppBundleIDForTesting = std::nullopt;
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     if (!featureEnabled())

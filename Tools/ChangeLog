@@ -1,3 +1,34 @@
+2021-10-12  Alan Coon  <alancoon@apple.com>
+
+        Apply patch. rdar://problem/84130892
+
+    2021-10-12  John Wilander  <wilander@apple.com>
+
+            Cherry-picking of:
+            - https://trac.webkit.org/changeset/283316/webkit, <rdar://problem/83516528>
+            - https://trac.webkit.org/changeset/282109/webkit, <rdar://problem/82841844>
+
+            Plus a fix of an API test that was timing out (EventAttribution.FraudPrevention).
+
+        Patch by John Wilander.
+        Reviewed by Alex Christensen and Kate Cheney.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/EventAttribution.mm:
+        (TestWebKitAPI::runBasicEventAttributionTest):
+        (TestWebKitAPI::TEST):
+            EventAttribution.FraudPrevention fixed. It was missing a call to
+            _setPrivateClickMeasurementAppBundleIDForTesting() so that the app bundle ID
+            for the triggering event matches the app bundle ID where the click happened.
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::setPrivateClickMeasurementAppBundleIDForTesting):
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::setPrivateClickMeasurementAppBundleIDForTesting):
+        * WebKitTestRunner/TestController.h:
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::didReceiveSynchronousMessageFromInjectedBundle):
+
 2021-10-11  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r283194. rdar://problem/83953433

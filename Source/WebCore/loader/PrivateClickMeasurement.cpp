@@ -143,6 +143,11 @@ bool PrivateClickMeasurement::hasPreviouslyBeenReported()
     return !m_timesToSend.sourceEarliestTimeToSend || !m_timesToSend.destinationEarliestTimeToSend;
 }
 
+void PrivateClickMeasurement::setSourceApplicationBundleIDForTesting(const String& appBundleIDForTesting)
+{
+    m_sourceApplicationBundleID = appBundleIDForTesting;
+}
+
 static Seconds randomlyBetweenTwentyFourAndFortyEightHours()
 {
     return 24_h + Seconds(randomNumber() * (24_h).value());

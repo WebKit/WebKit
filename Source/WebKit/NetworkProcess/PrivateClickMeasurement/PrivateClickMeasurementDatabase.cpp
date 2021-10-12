@@ -42,18 +42,18 @@ constexpr auto insertUnattributedPrivateClickMeasurementQuery = "INSERT OR REPLA
     "sourceID, timeOfAdClick, token, signature, keyID, sourceApplicationBundleID) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"_s;
 constexpr auto insertAttributedPrivateClickMeasurementQuery = "INSERT OR REPLACE INTO AttributedPrivateClickMeasurement (sourceSiteDomainID, destinationSiteDomainID, "
     "sourceID, attributionTriggerData, priority, timeOfAdClick, earliestTimeToSendToSource, token, signature, keyID, earliestTimeToSendToDestination, sourceApplicationBundleID) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"_s;
-constexpr auto findUnattributedQuery = "SELECT * FROM UnattributedPrivateClickMeasurement WHERE sourceSiteDomainID = ? AND destinationSiteDomainID = ?"_s;
-constexpr auto findAttributedQuery = "SELECT * FROM AttributedPrivateClickMeasurement WHERE sourceSiteDomainID = ? AND destinationSiteDomainID = ?"_s;
-constexpr auto removeUnattributedQuery = "DELETE FROM UnattributedPrivateClickMeasurement WHERE sourceSiteDomainID = ? AND destinationSiteDomainID = ?"_s;
+constexpr auto findUnattributedQuery = "SELECT * FROM UnattributedPrivateClickMeasurement WHERE sourceSiteDomainID = ? AND destinationSiteDomainID = ? AND sourceApplicationBundleID = ?"_s;
+constexpr auto findAttributedQuery = "SELECT * FROM AttributedPrivateClickMeasurement WHERE sourceSiteDomainID = ? AND destinationSiteDomainID = ? AND sourceApplicationBundleID = ?"_s;
+constexpr auto removeUnattributedQuery = "DELETE FROM UnattributedPrivateClickMeasurement WHERE sourceSiteDomainID = ? AND destinationSiteDomainID = ? AND sourceApplicationBundleID = ?"_s;
 constexpr auto allAttributedPrivateClickMeasurementQuery = "SELECT *, MIN(earliestTimeToSendToSource, earliestTimeToSendToDestination) as minVal "
     "FROM AttributedPrivateClickMeasurement WHERE earliestTimeToSendToSource IS NOT NULL AND earliestTimeToSendToDestination IS NOT NULL "
     "UNION ALL SELECT *, earliestTimeToSendToSource as minVal FROM AttributedPrivateClickMeasurement WHERE earliestTimeToSendToDestination IS NULL "
     "UNION ALL SELECT *, earliestTimeToSendToDestination as minVal FROM AttributedPrivateClickMeasurement WHERE earliestTimeToSendToSource IS NULL ORDER BY minVal"_s;
 constexpr auto allUnattributedPrivateClickMeasurementAttributionsQuery = "SELECT * FROM UnattributedPrivateClickMeasurement"_s;
 constexpr auto clearExpiredPrivateClickMeasurementQuery = "DELETE FROM UnattributedPrivateClickMeasurement WHERE ? > timeOfAdClick"_s;
-constexpr auto markReportAsSentToSourceQuery = "UPDATE AttributedPrivateClickMeasurement SET earliestTimeToSendToSource = null WHERE sourceSiteDomainID = ? AND destinationSiteDomainID = ?"_s;
-constexpr auto markReportAsSentToDestinationQuery = "UPDATE AttributedPrivateClickMeasurement SET earliestTimeToSendToDestination = null WHERE sourceSiteDomainID = ? AND destinationSiteDomainID = ?"_s;
-constexpr auto earliestTimesToSendQuery = "SELECT earliestTimeToSendToSource, earliestTimeToSendToDestination FROM AttributedPrivateClickMeasurement WHERE sourceSiteDomainID = ? AND destinationSiteDomainID = ?"_s;
+constexpr auto markReportAsSentToSourceQuery = "UPDATE AttributedPrivateClickMeasurement SET earliestTimeToSendToSource = null WHERE sourceSiteDomainID = ? AND destinationSiteDomainID = ? AND sourceApplicationBundleID = ?"_s;
+constexpr auto markReportAsSentToDestinationQuery = "UPDATE AttributedPrivateClickMeasurement SET earliestTimeToSendToDestination = null WHERE sourceSiteDomainID = ? AND destinationSiteDomainID = ? AND sourceApplicationBundleID = ?"_s;
+constexpr auto earliestTimesToSendQuery = "SELECT earliestTimeToSendToSource, earliestTimeToSendToDestination FROM AttributedPrivateClickMeasurement WHERE sourceSiteDomainID = ? AND destinationSiteDomainID = ? AND sourceApplicationBundleID = ?"_s;
 constexpr auto domainIDFromStringQuery = "SELECT domainID FROM PCMObservedDomains WHERE registrableDomain = ?"_s;
 constexpr auto domainStringFromDomainIDQuery = "SELECT registrableDomain FROM PCMObservedDomains WHERE domainID = ?"_s;
 constexpr auto createUnattributedPrivateClickMeasurement = "CREATE TABLE UnattributedPrivateClickMeasurement ("
@@ -236,7 +236,7 @@ void Database::markAllUnattributedPrivateClickMeasurementAsExpiredForTesting()
     }
 }
 
-std::pair<std::optional<Database::UnattributedPrivateClickMeasurement>, std::optional<Database::AttributedPrivateClickMeasurement>> Database::findPrivateClickMeasurement(const WebCore::PrivateClickMeasurement::SourceSite& sourceSite, const WebCore::PrivateClickMeasurement::AttributionDestinationSite& destinationSite)
+std::pair<std::optional<Database::UnattributedPrivateClickMeasurement>, std::optional<Database::AttributedPrivateClickMeasurement>> Database::findPrivateClickMeasurement(const WebCore::PrivateClickMeasurement::SourceSite& sourceSite, const WebCore::PrivateClickMeasurement::AttributionDestinationSite& destinationSite, const ApplicationBundleIdentifier& applicationBundleIdentifier)
 {
     ASSERT(!RunLoop::isMain());
     auto sourceSiteDomainID = domainID(sourceSite.registrableDomain);
@@ -247,7 +247,8 @@ std::pair<std::optional<Database::UnattributedPrivateClickMeasurement>, std::opt
     auto findUnattributedScopedStatement = this->scopedStatement(m_findUnattributedStatement, findUnattributedQuery, "findPrivateClickMeasurement"_s);
     if (!findUnattributedScopedStatement
         || findUnattributedScopedStatement->bindInt(1, *sourceSiteDomainID) != SQLITE_OK
-        || findUnattributedScopedStatement->bindInt(2, *destinationSiteDomainID) != SQLITE_OK) {
+        || findUnattributedScopedStatement->bindInt(2, *destinationSiteDomainID) != SQLITE_OK
+        || findUnattributedScopedStatement->bindText(3, applicationBundleIdentifier) != SQLITE_OK) {
         RELEASE_LOG_ERROR(PrivateClickMeasurement, "%p - Database::findPrivateClickMeasurement findUnattributedQuery, error message: %" PRIVATE_LOG_STRING, this, m_database.lastErrorMsg());
         ASSERT_NOT_REACHED();
     }
@@ -255,7 +256,8 @@ std::pair<std::optional<Database::UnattributedPrivateClickMeasurement>, std::opt
     auto findAttributedScopedStatement = this->scopedStatement(m_findAttributedStatement, findAttributedQuery, "findPrivateClickMeasurement"_s);
     if (!findAttributedScopedStatement
         || findAttributedScopedStatement->bindInt(1, *sourceSiteDomainID) != SQLITE_OK
-        || findAttributedScopedStatement->bindInt(2, *destinationSiteDomainID) != SQLITE_OK) {
+        || findAttributedScopedStatement->bindInt(2, *destinationSiteDomainID) != SQLITE_OK
+        || findAttributedScopedStatement->bindText(3, applicationBundleIdentifier) != SQLITE_OK) {
         RELEASE_LOG_ERROR(PrivateClickMeasurement, "%p - Database::findPrivateClickMeasurement findAttributedQuery, error message: %" PRIVATE_LOG_STRING, this, m_database.lastErrorMsg());
         ASSERT_NOT_REACHED();
     }
@@ -271,7 +273,7 @@ std::pair<std::optional<Database::UnattributedPrivateClickMeasurement>, std::opt
     return std::make_pair(unattributedPrivateClickMeasurement, attributedPrivateClickMeasurement);
 }
 
-std::pair<std::optional<PrivateClickMeasurement::AttributionSecondsUntilSendData>, DebugInfo> Database::attributePrivateClickMeasurement(const WebCore::PrivateClickMeasurement::SourceSite& sourceSite, const WebCore::PrivateClickMeasurement::AttributionDestinationSite& destinationSite, WebCore::PrivateClickMeasurement::AttributionTriggerData&& attributionTriggerData)
+std::pair<std::optional<PrivateClickMeasurement::AttributionSecondsUntilSendData>, DebugInfo> Database::attributePrivateClickMeasurement(const WebCore::PrivateClickMeasurement::SourceSite& sourceSite, const WebCore::PrivateClickMeasurement::AttributionDestinationSite& destinationSite, const ApplicationBundleIdentifier& applicationBundleIdentifier, WebCore::PrivateClickMeasurement::AttributionTriggerData&& attributionTriggerData)
 {
     ASSERT(!RunLoop::isMain());
 
@@ -290,7 +292,7 @@ std::pair<std::optional<PrivateClickMeasurement::AttributionSecondsUntilSendData
 
     PrivateClickMeasurement::AttributionSecondsUntilSendData secondsUntilSend { std::nullopt, std::nullopt };
 
-    auto attribution = findPrivateClickMeasurement(sourceSite, destinationSite);
+    auto attribution = findPrivateClickMeasurement(sourceSite, destinationSite, applicationBundleIdentifier);
     auto& previouslyUnattributed = attribution.first;
     auto& previouslyAttributed = attribution.second;
 
@@ -349,6 +351,7 @@ void Database::removeUnattributed(PrivateClickMeasurement& attribution)
     if (!scopedStatement
         || scopedStatement->bindInt(1, *sourceSiteDomainID) != SQLITE_OK
         || scopedStatement->bindInt(2, *destinationSiteDomainID) != SQLITE_OK
+        || scopedStatement->bindText(3, attribution.sourceApplicationBundleID()) != SQLITE_OK
         || scopedStatement->step() != SQLITE_DONE) {
         RELEASE_LOG_ERROR(PrivateClickMeasurement, "%p - Database::removeUnattributed, error message: %" PRIVATE_LOG_STRING, this, m_database.lastErrorMsg());
         ASSERT_NOT_REACHED();
@@ -521,6 +524,7 @@ void Database::clearSentAttribution(WebCore::PrivateClickMeasurement&& attributi
 
     auto sourceSiteDomainID = domainID(attribution.sourceSite().registrableDomain);
     auto destinationSiteDomainID = domainID(attribution.destinationSite().registrableDomain);
+    auto sourceApplicationBundleID = attribution.sourceApplicationBundleID();
 
     if (!sourceSiteDomainID || !destinationSiteDomainID)
         return;
@@ -531,7 +535,7 @@ void Database::clearSentAttribution(WebCore::PrivateClickMeasurement&& attributi
             ASSERT_NOT_REACHED();
             return;
         }
-        markReportAsSentToSource(*sourceSiteDomainID, *destinationSiteDomainID);
+        markReportAsSentToSource(*sourceSiteDomainID, *destinationSiteDomainID, sourceApplicationBundleID);
         sourceEarliestTimeToSend = std::nullopt;
         break;
     case PrivateClickMeasurement::AttributionReportEndpoint::Destination:
@@ -539,7 +543,7 @@ void Database::clearSentAttribution(WebCore::PrivateClickMeasurement&& attributi
             ASSERT_NOT_REACHED();
             return;
         }
-        markReportAsSentToDestination(*sourceSiteDomainID, *destinationSiteDomainID);
+        markReportAsSentToDestination(*sourceSiteDomainID, *destinationSiteDomainID, sourceApplicationBundleID);
         destinationEarliestTimeToSend = std::nullopt;
     }
 
@@ -547,17 +551,18 @@ void Database::clearSentAttribution(WebCore::PrivateClickMeasurement&& attributi
     if (destinationEarliestTimeToSend || sourceEarliestTimeToSend)
         return;
 
-    auto clearAttributedStatement = m_database.prepareStatement("DELETE FROM AttributedPrivateClickMeasurement WHERE sourceSiteDomainID = ? AND destinationSiteDomainID = ?"_s);
+    auto clearAttributedStatement = m_database.prepareStatement("DELETE FROM AttributedPrivateClickMeasurement WHERE sourceSiteDomainID = ? AND destinationSiteDomainID = ? AND sourceApplicationBundleID = ?"_s);
     if (!clearAttributedStatement
         || clearAttributedStatement->bindInt(1, *sourceSiteDomainID) != SQLITE_OK
         || clearAttributedStatement->bindInt(2, *destinationSiteDomainID) != SQLITE_OK
+        || clearAttributedStatement->bindText(3, sourceApplicationBundleID) != SQLITE_OK
         || clearAttributedStatement->step() != SQLITE_DONE) {
         RELEASE_LOG_ERROR(PrivateClickMeasurement, "%p - Database::clearSentAttribution failed to step, error message: %" PRIVATE_LOG_STRING, this, m_database.lastErrorMsg());
         ASSERT_NOT_REACHED();
     }
 }
 
-void Database::markReportAsSentToDestination(SourceDomainID sourceSiteDomainID, DestinationDomainID destinationSiteDomainID)
+void Database::markReportAsSentToDestination(SourceDomainID sourceSiteDomainID, DestinationDomainID destinationSiteDomainID, const ApplicationBundleIdentifier& sourceApplicationBundleID)
 {
     ASSERT(!RunLoop::isMain());
     auto scopedStatement = this->scopedStatement(m_markReportAsSentToDestinationStatement, markReportAsSentToDestinationQuery, "markReportAsSentToDestination"_s);
@@ -565,13 +570,14 @@ void Database::markReportAsSentToDestination(SourceDomainID sourceSiteDomainID, 
     if (!scopedStatement
         || scopedStatement->bindInt(1, sourceSiteDomainID) != SQLITE_OK
         || scopedStatement->bindInt(2, destinationSiteDomainID) != SQLITE_OK
+        || scopedStatement->bindText(3, sourceApplicationBundleID) != SQLITE_OK
         || scopedStatement->step() != SQLITE_DONE) {
         RELEASE_LOG_ERROR(PrivateClickMeasurement, "Database::markReportAsSentToDestination, error message: %" PUBLIC_LOG_STRING, m_database.lastErrorMsg());
         ASSERT_NOT_REACHED();
     }
 }
 
-void Database::markReportAsSentToSource(SourceDomainID sourceSiteDomainID, DestinationDomainID destinationSiteDomainID)
+void Database::markReportAsSentToSource(SourceDomainID sourceSiteDomainID, DestinationDomainID destinationSiteDomainID, const ApplicationBundleIdentifier& sourceApplicationBundleID)
 {
     ASSERT(!RunLoop::isMain());
     auto scopedStatement = this->scopedStatement(m_markReportAsSentToSourceStatement, markReportAsSentToSourceQuery, "markReportAsSentToSource"_s);
@@ -579,6 +585,7 @@ void Database::markReportAsSentToSource(SourceDomainID sourceSiteDomainID, Desti
     if (!scopedStatement
         || scopedStatement->bindInt(1, sourceSiteDomainID) != SQLITE_OK
         || scopedStatement->bindInt(2, destinationSiteDomainID) != SQLITE_OK
+        || scopedStatement->bindText(3, sourceApplicationBundleID) != SQLITE_OK
         || scopedStatement->step() != SQLITE_DONE) {
         RELEASE_LOG_ERROR(PrivateClickMeasurement, "Database::markReportAsSentToSource, error message: %" PUBLIC_LOG_STRING, m_database.lastErrorMsg());
         ASSERT_NOT_REACHED();
@@ -599,6 +606,7 @@ std::pair<std::optional<Database::SourceEarliestTimeToSend>, std::optional<Datab
     if (!scopedStatement
         || scopedStatement->bindInt(1, *sourceSiteDomainID) != SQLITE_OK
         || scopedStatement->bindInt(2, *destinationSiteDomainID) != SQLITE_OK
+        || scopedStatement->bindText(3, attribution.sourceApplicationBundleID()) != SQLITE_OK
         || scopedStatement->step() != SQLITE_ROW) {
         RELEASE_LOG_ERROR(PrivateClickMeasurement, "Database::earliestTimesToSend, error message: %" PUBLIC_LOG_STRING, m_database.lastErrorMsg());
         ASSERT_NOT_REACHED();

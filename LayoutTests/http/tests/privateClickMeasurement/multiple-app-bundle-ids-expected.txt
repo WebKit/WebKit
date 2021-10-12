@@ -1,0 +1,35 @@
+Tests private click measurement with multiple app bundle IDs, making sure only the matching ID is considered a match.
+
+
+
+
+--------
+Frame: '<!--frame1-->'
+--------
+Attribution received.
+HTTP_HOST: 127.0.0.1:8000
+Content type: application/json
+REQUEST_URI: /privateClickMeasurement/resources/conversionReport.py?recipient=ClickSource
+No cookies in attribution request.
+Request body:
+{"source_engagement_type":"click","source_site":"127.0.0.1","source_id":33,"attributed_on_site":"localhost","trigger_data":12,"version":2}
+
+
+--------
+Frame: '<!--frame2-->'
+--------
+Attribution received.
+HTTP_HOST: localhost:8000
+Content type: application/json
+REQUEST_URI: /privateClickMeasurement/resources/conversionReport.py?recipient=ClickDestination
+No cookies in attribution request.
+Request body:
+{"source_engagement_type":"click","source_site":"127.0.0.1","source_id":33,"attributed_on_site":"localhost","trigger_data":12,"version":2}
+
+Unattributed Private Click Measurements:
+WebCore::PrivateClickMeasurement 1
+Source site: 127.0.0.1
+Attribute on site: localhost
+Source ID: 23
+No attribution trigger data.
+Application bundle identifier: testBundleID

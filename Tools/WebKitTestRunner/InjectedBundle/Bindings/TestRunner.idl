@@ -419,6 +419,7 @@ interface TestRunner {
     undefined setPrivateClickMeasurementAttributionReportURLsForTesting(DOMString sourceURLString, DOMString destinationURLString);
     undefined markPrivateClickMeasurementsAsExpiredForTesting();
     undefined setPrivateClickMeasurementFraudPreventionValuesForTesting(DOMString unlinkableToken, DOMString secretToken, DOMString signature, DOMString keyID);
+    undefined setPrivateClickMeasurementAppBundleIDForTesting(DOMString appBundleID);
 
     // SpeechRecognition
     undefined setIsSpeechRecognitionPermissionGranted(boolean value);

@@ -42,8 +42,10 @@
 #include "WebSocketTask.h"
 #include <WebCore/CookieJar.h>
 #include <WebCore/ResourceRequest.h>
+#include <WebCore/RuntimeApplicationChecks.h>
 
 #if PLATFORM(COCOA)
+#include "DefaultWebBrowserChecks.h"
 #include "NetworkSessionCocoa.h"
 #endif
 #if USE(SOUP)
@@ -318,7 +320,12 @@ void NetworkSession::storePrivateClickMeasurement(WebCore::PrivateClickMeasureme
 
 void NetworkSession::handlePrivateClickMeasurementConversion(PrivateClickMeasurement::AttributionTriggerData&& attributionTriggerData, const URL& requestURL, const WebCore::ResourceRequest& redirectRequest)
 {
-    privateClickMeasurement().handleAttribution(WTFMove(attributionTriggerData), requestURL, redirectRequest);
+#if PLATFORM(COCOA)
+    auto appBundleID = WebCore::applicationBundleIdentifier();
+#else
+    auto appBundleID = String();
+#endif
+    privateClickMeasurement().handleAttribution(WTFMove(attributionTriggerData), requestURL, RegistrableDomain(redirectRequest.url()), redirectRequest.firstPartyForCookies(), appBundleID);
 }
 
 void NetworkSession::dumpPrivateClickMeasurement(CompletionHandler<void(String)>&& completionHandler)
@@ -380,6 +387,14 @@ void NetworkSession::setPCMFraudPreventionValuesForTesting(String&& unlinkableTo
 void NetworkSession::firePrivateClickMeasurementTimerImmediately()
 {
     privateClickMeasurement().startTimer(0_s);
+}
+
+void NetworkSession::setPrivateClickMeasurementAppBundleIDForTesting(String&& appBundleIDForTesting)
+{
+#if PLATFORM(COCOA)
+    RELEASE_ASSERT(isRunningTest(WebCore::applicationBundleIdentifier()));
+#endif
+    privateClickMeasurement().setPrivateClickMeasurementAppBundleIDForTesting(WTFMove(appBundleIDForTesting));
 }
 
 void NetworkSession::addKeptAliveLoad(Ref<NetworkResourceLoader>&& loader)
