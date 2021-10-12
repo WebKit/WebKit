@@ -1574,5 +1574,3 @@
 (when (defined? 'darwin-notification-post)
     (allow darwin-notification-post (with telemetry))
 )
-
-(deny dynamic-code-generation)

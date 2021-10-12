@@ -1,3 +1,17 @@
+2021-10-12  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r283890.
+        https://bugs.webkit.org/show_bug.cgi?id=231567
+
+        Introduced crash
+
+        Reverted changeset:
+
+        "Block access in sandbox to capability which is allowed by
+        default"
+        https://bugs.webkit.org/show_bug.cgi?id=231079
+        https://commits.webkit.org/r283890
+
 2021-10-12  Youenn Fablet  <youenn@apple.com>
 
         Error the encoder in case we cannot create a RemoteVideoSample
