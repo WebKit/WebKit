@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKitLegacy/WebQuotaManager.h>
+#import "WebQuotaManager.h"
 
 @interface WebDatabaseQuotaManager : NSObject <WebQuotaManager> {
 @private

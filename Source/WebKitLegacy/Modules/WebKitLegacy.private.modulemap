@@ -1,5 +1,0 @@
-framework module WebKitLegacy [system] {
-  umbrella "PrivateHeaders"
-
-  explicit module * { export * }
-}

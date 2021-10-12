@@ -23,9 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if defined(__cplusplus)
+#import <Foundation/NSObject.h>
 
-#import <Foundation/Foundation.h>
+@class CLLocationManager;
+@class NSString;
 
 namespace WebCore {
 class GeolocationPositionData;
@@ -58,5 +59,3 @@ class GeolocationPositionData;
 
 - (void)setEnableHighAccuracy:(BOOL)flag;
 @end
-
-#endif
