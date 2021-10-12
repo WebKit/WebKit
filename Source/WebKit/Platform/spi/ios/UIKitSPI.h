@@ -483,22 +483,10 @@ typedef NS_ENUM(NSUInteger, UIScrollPhase) {
 
 @end
 
-
 @interface NSString (UIKitDetails)
 - (CGSize)_legacy_sizeWithFont:(UIFont *)font forWidth:(CGFloat)width lineBreakMode:(NSLineBreakMode)lineBreakMode;
 - (CGSize)_legacy_sizeWithFont:(UIFont *)font minFontSize:(CGFloat)minFontSize actualFontSize:(CGFloat *)actualFontSize forWidth:(CGFloat)width lineBreakMode:(NSLineBreakMode)lineBreakMode;
 @end
-
-#if HAVE(UI_HOVER_EVENT_RESPONDABLE)
-
-@protocol _UIHoverEventRespondable <NSObject>
-- (void)_hoverEntered:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event;
-- (void)_hoverMoved:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event;
-- (void)_hoverExited:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event;
-- (void)_hoverCancelled:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event;
-@end
-
-#endif // HAVE(UI_HOVER_EVENT_RESPONDABLE)
 
 @interface UITableView ()
 @property (nonatomic, getter=_sectionContentInsetFollowsLayoutMargins, setter=_setSectionContentInsetFollowsLayoutMargins:) BOOL sectionContentInsetFollowsLayoutMargins;
