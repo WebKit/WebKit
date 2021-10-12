@@ -1,3 +1,13 @@
+2021-10-12  Jonathan Bedard  <jbedard@apple.com>
+
+        [Python-3] Invoke webkit-patch with Python 3 by default
+        https://bugs.webkit.org/show_bug.cgi?id=231591
+        <rdar://problem/84153640>
+
+        Reviewed by Michael Catanzaro.
+
+        * Scripts/webkit-patch: Change shebang to Python 3.
+
 2021-10-12  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Unreviewed, run-benchmark fix after r283936
