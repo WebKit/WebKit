@@ -43,7 +43,6 @@
 #include <WebCore/DisplayList.h>
 #include <WebCore/DisplayListItems.h>
 #include <WebCore/DisplayListReplayer.h>
-#include <WebCore/ProcessIdentifier.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -168,7 +167,7 @@ private:
 
     class ReplayerDelegate : public WebCore::DisplayList::Replayer::Delegate {
     public:
-        ReplayerDelegate(WebCore::ImageBuffer&, RemoteRenderingBackend&, WebCore::ProcessIdentifier webProcessIdentifier);
+        ReplayerDelegate(WebCore::ImageBuffer&, RemoteRenderingBackend&);
 
     private:
         bool apply(WebCore::DisplayList::ItemHandle, WebCore::GraphicsContext&) final;
@@ -178,7 +177,6 @@ private:
 
         WebCore::ImageBuffer& m_destination;
         RemoteRenderingBackend& m_remoteRenderingBackend;
-        WebCore::ProcessIdentifier m_webProcessIdentifier;
     };
 
     struct PendingWakeupInformation {

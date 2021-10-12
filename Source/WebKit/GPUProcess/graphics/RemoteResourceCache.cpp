@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,14 +31,8 @@
 namespace WebKit {
 using namespace WebCore;
 
-RemoteResourceCache::RemoteResourceCache(ProcessIdentifier webProcessIdentifier)
-    : m_webProcessIdentifier(webProcessIdentifier)
-{
-}
-
 RemoteResourceCache::RemoteResourceCache(RemoteResourceCache&& other)
-    : m_webProcessIdentifier(other.m_webProcessIdentifier)
-    , m_imageBuffers(WTFMove(other.m_imageBuffers))
+    : m_imageBuffers(WTFMove(other.m_imageBuffers))
     , m_nativeImages(WTFMove(other.m_nativeImages))
     , m_fonts(WTFMove(other.m_fonts))
     , m_resourceUseCounters(WTFMove(other.m_resourceUseCounters))
@@ -46,53 +40,48 @@ RemoteResourceCache::RemoteResourceCache(RemoteResourceCache&& other)
     updateHasActiveDrawables();
 }
 
-void RemoteResourceCache::cacheImageBuffer(Ref<ImageBuffer>&& imageBuffer, QualifiedRenderingResourceIdentifier renderingResourceIdentifier)
+void RemoteResourceCache::cacheImageBuffer(Ref<ImageBuffer>&& imageBuffer)
 {
-    ASSERT(renderingResourceIdentifier.object() == imageBuffer->renderingResourceIdentifier());
-    ASSERT(renderingResourceIdentifier.processIdentifier() == m_webProcessIdentifier);
-    m_imageBuffers.add(renderingResourceIdentifier.object(), WTFMove(imageBuffer));
+    auto renderingResourceIdentifier = imageBuffer->renderingResourceIdentifier();
+    m_imageBuffers.add(renderingResourceIdentifier, WTFMove(imageBuffer));
     updateHasActiveDrawables();
 
     ensureResourceUseCounter(renderingResourceIdentifier);
 }
 
-ImageBuffer* RemoteResourceCache::cachedImageBuffer(QualifiedRenderingResourceIdentifier renderingResourceIdentifier) const
+ImageBuffer* RemoteResourceCache::cachedImageBuffer(RenderingResourceIdentifier renderingResourceIdentifier) const
 {
-    ASSERT(renderingResourceIdentifier.processIdentifier() == m_webProcessIdentifier);
-    return m_imageBuffers.get(renderingResourceIdentifier.object());
+    return m_imageBuffers.get(renderingResourceIdentifier);
 }
 
-void RemoteResourceCache::cacheNativeImage(Ref<NativeImage>&& image, QualifiedRenderingResourceIdentifier renderingResourceIdentifier)
+void RemoteResourceCache::cacheNativeImage(Ref<NativeImage>&& image)
 {
-    ASSERT(renderingResourceIdentifier.object() == image->renderingResourceIdentifier());
-    ASSERT(renderingResourceIdentifier.processIdentifier() == m_webProcessIdentifier);
-    m_nativeImages.add(renderingResourceIdentifier.object(), WTFMove(image));
+    auto renderingResourceIdentifier = image->renderingResourceIdentifier();
+    m_nativeImages.add(renderingResourceIdentifier, WTFMove(image));
     updateHasActiveDrawables();
 
     ensureResourceUseCounter(renderingResourceIdentifier);
 }
 
-NativeImage* RemoteResourceCache::cachedNativeImage(QualifiedRenderingResourceIdentifier renderingResourceIdentifier) const
+NativeImage* RemoteResourceCache::cachedNativeImage(RenderingResourceIdentifier renderingResourceIdentifier) const
 {
-    ASSERT(renderingResourceIdentifier.processIdentifier() == m_webProcessIdentifier);
-    return m_nativeImages.get(renderingResourceIdentifier.object());
+    return m_nativeImages.get(renderingResourceIdentifier);
 }
 
-void RemoteResourceCache::cacheFont(Ref<Font>&& font, QualifiedRenderingResourceIdentifier renderingResourceIdentifier)
+void RemoteResourceCache::cacheFont(Ref<Font>&& font)
 {
-    ASSERT(renderingResourceIdentifier.object() == font->renderingResourceIdentifier());
-    ASSERT(renderingResourceIdentifier.processIdentifier() == m_webProcessIdentifier);
-    m_fonts.add(renderingResourceIdentifier.object(), WTFMove(font));
+    auto renderingResourceIdentifier = font->renderingResourceIdentifier();
+    m_fonts.add(renderingResourceIdentifier, WTFMove(font));
 
     ensureResourceUseCounter(renderingResourceIdentifier);
 }
 
-Font* RemoteResourceCache::cachedFont(QualifiedRenderingResourceIdentifier renderingResourceIdentifier) const
+Font* RemoteResourceCache::cachedFont(RenderingResourceIdentifier renderingResourceIdentifier) const
 {
-    return m_fonts.get(renderingResourceIdentifier.object());
+    return m_fonts.get(renderingResourceIdentifier);
 }
 
-void RemoteResourceCache::ensureResourceUseCounter(QualifiedRenderingResourceIdentifier renderingResourceIdentifier)
+void RemoteResourceCache::ensureResourceUseCounter(RenderingResourceIdentifier renderingResourceIdentifier)
 {
     auto result = m_resourceUseCounters.add(renderingResourceIdentifier, ResourceUseCounter { });
     if (!result.isNewEntry) {
@@ -108,7 +97,7 @@ void RemoteResourceCache::deleteAllFonts()
     m_fonts.clear();
 }
 
-bool RemoteResourceCache::maybeRemoveResource(QualifiedRenderingResourceIdentifier renderingResourceIdentifier, ResourceUseCountersMap::iterator& iterator)
+bool RemoteResourceCache::maybeRemoveResource(RenderingResourceIdentifier renderingResourceIdentifier, ResourceUseCountersMap::iterator& iterator)
 {
     auto& value = iterator->value;
     if (value.state == ResourceState::Alive || value.useOrPendingCount < 0)
@@ -149,18 +138,18 @@ bool RemoteResourceCache::maybeRemoveResource(QualifiedRenderingResourceIdentifi
 
     m_resourceUseCounters.remove(iterator);
 
-    if (m_imageBuffers.remove(renderingResourceIdentifier.object()) || m_nativeImages.remove(renderingResourceIdentifier.object())) {
+    if (m_imageBuffers.remove(renderingResourceIdentifier) || m_nativeImages.remove(renderingResourceIdentifier)) {
         updateHasActiveDrawables();
         return true;
     }
-    if (m_fonts.remove(renderingResourceIdentifier.object()))
+    if (m_fonts.remove(renderingResourceIdentifier))
         return true;
 
     // Caching the remote resource should have happened before releasing it.
     return false;
 }
 
-void RemoteResourceCache::recordResourceUse(QualifiedRenderingResourceIdentifier renderingResourceIdentifier)
+void RemoteResourceCache::recordResourceUse(RenderingResourceIdentifier renderingResourceIdentifier)
 {
     auto iterator = m_resourceUseCounters.find(renderingResourceIdentifier);
 
@@ -172,7 +161,7 @@ void RemoteResourceCache::recordResourceUse(QualifiedRenderingResourceIdentifier
     maybeRemoveResource(renderingResourceIdentifier, iterator);
 }
 
-bool RemoteResourceCache::releaseRemoteResource(QualifiedRenderingResourceIdentifier renderingResourceIdentifier, uint64_t useCount)
+bool RemoteResourceCache::releaseRemoteResource(RenderingResourceIdentifier renderingResourceIdentifier, uint64_t useCount)
 {
     auto iterator = m_resourceUseCounters.find(renderingResourceIdentifier);
     if (iterator == m_resourceUseCounters.end())

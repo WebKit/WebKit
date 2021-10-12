@@ -82,7 +82,6 @@ Ref<RemoteRenderingBackend> RemoteRenderingBackend::create(GPUConnectionToWebPro
 
 RemoteRenderingBackend::RemoteRenderingBackend(GPUConnectionToWebProcess& gpuConnectionToWebProcess, RemoteRenderingBackendCreationParameters&& creationParameters)
     : m_workQueue(WorkQueue::create("RemoteRenderingBackend work queue", WorkQueue::Type::Serial, WorkQueue::QOS::UserInteractive))
-    , m_remoteResourceCache(gpuConnectionToWebProcess.webProcessIdentifier())
     , m_gpuConnectionToWebProcess(gpuConnectionToWebProcess)
     , m_renderingBackendIdentifier(creationParameters.identifier)
     , m_resumeDisplayListSemaphore(WTFMove(creationParameters.resumeDisplayListSemaphore))
@@ -188,17 +187,16 @@ void RemoteRenderingBackend::createImageBufferWithQualifiedIdentifier(const Floa
         return;
     }
 
-    m_remoteResourceCache.cacheImageBuffer(*imageBuffer, imageBufferResourceIdentifier);
+    m_remoteResourceCache.cacheImageBuffer(*imageBuffer);
     updateRenderingResourceRequest();
 
     if (m_pendingWakeupInfo && m_pendingWakeupInfo->shouldPerformWakeup(imageBufferResourceIdentifier))
         resumeFromPendingWakeupInformation();
 }
 
-RemoteRenderingBackend::ReplayerDelegate::ReplayerDelegate(WebCore::ImageBuffer& destination, RemoteRenderingBackend& remoteRenderingBackend, ProcessIdentifier webProcessIdentifier)
+RemoteRenderingBackend::ReplayerDelegate::ReplayerDelegate(WebCore::ImageBuffer& destination, RemoteRenderingBackend& remoteRenderingBackend)
     : m_destination(destination)
     , m_remoteRenderingBackend(remoteRenderingBackend)
-    , m_webProcessIdentifier(webProcessIdentifier)
 {
 }
 
@@ -225,7 +223,7 @@ void RemoteRenderingBackend::ReplayerDelegate::didResetMaskImageBuffer()
 
 void RemoteRenderingBackend::ReplayerDelegate::recordResourceUse(RenderingResourceIdentifier renderingResourceIdentifier)
 {
-    m_remoteRenderingBackend.remoteResourceCache().recordResourceUse({ renderingResourceIdentifier, m_webProcessIdentifier });
+    m_remoteRenderingBackend.remoteResourceCache().recordResourceUse(renderingResourceIdentifier);
 }
 
 DisplayList::ReplayResult RemoteRenderingBackend::submit(const DisplayList::DisplayList& displayList, ImageBuffer& destination)
@@ -233,7 +231,7 @@ DisplayList::ReplayResult RemoteRenderingBackend::submit(const DisplayList::Disp
     if (displayList.isEmpty())
         return { };
 
-    ReplayerDelegate replayerDelegate(destination, *this, m_gpuConnectionToWebProcess->webProcessIdentifier());
+    ReplayerDelegate replayerDelegate(destination, *this);
 
     return WebCore::DisplayList::Replayer {
         destination.context(),
@@ -281,7 +279,7 @@ RefPtr<ImageBuffer> RemoteRenderingBackend::nextDestinationImageBufferAfterApply
         MESSAGE_CHECK_WITH_RETURN_VALUE(offset <= handle.sharedMemory().size(), nullptr, "Out-of-bounds offset into shared display list handle");
 
         if (result.reasonForStopping == DisplayList::StopReplayReason::ChangeDestinationImageBuffer) {
-            destination = m_remoteResourceCache.cachedImageBuffer({ *result.nextDestinationImageBuffer, m_gpuConnectionToWebProcess->webProcessIdentifier() });
+            destination = m_remoteResourceCache.cachedImageBuffer(*result.nextDestinationImageBuffer);
             if (!destination) {
                 ASSERT(!m_pendingWakeupInfo);
                 m_pendingWakeupInfo = {{
@@ -329,7 +327,7 @@ RefPtr<ImageBuffer> RemoteRenderingBackend::nextDestinationImageBufferAfterApply
             auto newDestinationIdentifier = makeObjectIdentifier<RenderingResourceIdentifierType>(resumeReadingInfo->destination);
             MESSAGE_CHECK_WITH_RETURN_VALUE(newDestinationIdentifier.isValid(), nullptr, "Invalid image buffer destination when resuming display list processing");
 
-            destination = m_remoteResourceCache.cachedImageBuffer({ newDestinationIdentifier, m_gpuConnectionToWebProcess->webProcessIdentifier() });
+            destination = m_remoteResourceCache.cachedImageBuffer(newDestinationIdentifier);
             MESSAGE_CHECK_WITH_RETURN_VALUE(destination, nullptr, "Missing image buffer destination when resuming display list processing");
 
             offset = resumeReadingInfo->offset;
@@ -354,7 +352,7 @@ void RemoteRenderingBackend::wakeUpAndApplyDisplayListWithQualifiedIdentifier(We
 
     updateLastKnownState(RemoteRenderingBackendState::BeganReplayingDisplayList);
 
-    RefPtr destinationImageBuffer = m_remoteResourceCache.cachedImageBuffer(destinationImageBufferIdentifier);
+    RefPtr destinationImageBuffer = m_remoteResourceCache.cachedImageBuffer(destinationImageBufferIdentifier.object());
     MESSAGE_CHECK(destinationImageBuffer, "Missing destination image buffer");
 
     auto initialHandle = m_sharedDisplayListHandles.get(itemBufferIdentifier);
@@ -474,7 +472,7 @@ void RemoteRenderingBackend::getDataURLForImageBufferWithQualifiedIdentifier(con
     ASSERT(!RunLoop::isMain());
 
     String urlString;
-    if (auto imageBuffer = m_remoteResourceCache.cachedImageBuffer(renderingResourceIdentifier))
+    if (auto imageBuffer = m_remoteResourceCache.cachedImageBuffer(renderingResourceIdentifier.object()))
         urlString = imageBuffer->toDataURL(mimeType, quality, preserveResolution);
     completionHandler(WTFMove(urlString));
 }
@@ -491,7 +489,7 @@ void RemoteRenderingBackend::getDataForImageBufferWithQualifiedIdentifier(const 
     ASSERT(!RunLoop::isMain());
 
     Vector<uint8_t> data;
-    if (auto imageBuffer = m_remoteResourceCache.cachedImageBuffer(renderingResourceIdentifier))
+    if (auto imageBuffer = m_remoteResourceCache.cachedImageBuffer(renderingResourceIdentifier.object()))
         data = imageBuffer->toData(mimeType, quality);
     completionHandler(WTFMove(data));
 }
@@ -509,7 +507,7 @@ void RemoteRenderingBackend::getShareableBitmapForImageBufferWithQualifiedIdenti
 
     ShareableBitmap::Handle handle;
     [&]() {
-        auto imageBuffer = m_remoteResourceCache.cachedImageBuffer(identifier);
+        auto imageBuffer = m_remoteResourceCache.cachedImageBuffer(identifier.object());
         if (!imageBuffer)
             return;
         auto image = imageBuffer->copyNativeImage(WebCore::BackingStoreCopy::DontCopyBackingStore);
@@ -548,7 +546,7 @@ void RemoteRenderingBackend::cacheNativeImageWithQualifiedIdentifier(const Share
     if (!image)
         return;
 
-    m_remoteResourceCache.cacheNativeImage(*image, nativeImageResourceIdentifier);
+    m_remoteResourceCache.cacheNativeImage(*image);
 
     if (m_pendingWakeupInfo && m_pendingWakeupInfo->shouldPerformWakeup(nativeImageResourceIdentifier))
         resumeFromPendingWakeupInformation();
@@ -566,7 +564,7 @@ void RemoteRenderingBackend::cacheFontWithQualifiedIdentifier(Ref<Font>&& font, 
 {
     ASSERT(!RunLoop::isMain());
 
-    m_remoteResourceCache.cacheFont(WTFMove(font), fontResourceIdentifier);
+    m_remoteResourceCache.cacheFont(WTFMove(font));
     if (m_pendingWakeupInfo && m_pendingWakeupInfo->shouldPerformWakeup(fontResourceIdentifier))
         resumeFromPendingWakeupInformation();
 }
@@ -587,7 +585,7 @@ void RemoteRenderingBackend::releaseRemoteResource(RenderingResourceIdentifier r
 void RemoteRenderingBackend::releaseRemoteResourceWithQualifiedIdentifier(QualifiedRenderingResourceIdentifier renderingResourceIdentifier, uint64_t useCount)
 {
     ASSERT(!RunLoop::isMain());
-    auto success = m_remoteResourceCache.releaseRemoteResource(renderingResourceIdentifier, useCount);
+    auto success = m_remoteResourceCache.releaseRemoteResource(renderingResourceIdentifier.object(), useCount);
     MESSAGE_CHECK(success, "Resource is being released before being cached.");
     updateRenderingResourceRequest();
 }
@@ -595,7 +593,7 @@ void RemoteRenderingBackend::releaseRemoteResourceWithQualifiedIdentifier(Qualif
 void RemoteRenderingBackend::finalizeRenderingUpdate(RenderingUpdateID renderingUpdateID)
 {
     auto shouldPerformWakeup = [&] {
-        return m_remoteResourceCache.cachedImageBuffer(m_pendingWakeupInfo->destinationImageBufferIdentifier) && m_sharedDisplayListHandles.contains(m_pendingWakeupInfo->itemBufferIdentifier);
+        return m_remoteResourceCache.cachedImageBuffer(m_pendingWakeupInfo->destinationImageBufferIdentifier.object()) && m_sharedDisplayListHandles.contains(m_pendingWakeupInfo->itemBufferIdentifier);
     };
 
     if (m_pendingWakeupInfo && shouldPerformWakeup())

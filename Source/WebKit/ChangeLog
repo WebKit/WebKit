@@ -1,3 +1,42 @@
+2021-10-11  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Revert 242806@main because it broke the build
+        https://bugs.webkit.org/show_bug.cgi?id=231546
+
+        Unreviewed.
+
+        * GPUProcess/graphics/RemoteGraphicsContextGL.cpp:
+        (WebKit::RemoteGraphicsContextGL::paintPixelBufferToImageBuffer):
+        * GPUProcess/graphics/RemoteRenderingBackend.cpp:
+        (WebKit::RemoteRenderingBackend::RemoteRenderingBackend):
+        (WebKit::RemoteRenderingBackend::createImageBufferWithQualifiedIdentifier):
+        (WebKit::RemoteRenderingBackend::ReplayerDelegate::ReplayerDelegate):
+        (WebKit::RemoteRenderingBackend::ReplayerDelegate::recordResourceUse):
+        (WebKit::RemoteRenderingBackend::submit):
+        (WebKit::RemoteRenderingBackend::nextDestinationImageBufferAfterApplyingDisplayLists):
+        (WebKit::RemoteRenderingBackend::wakeUpAndApplyDisplayListWithQualifiedIdentifier):
+        (WebKit::RemoteRenderingBackend::getDataURLForImageBufferWithQualifiedIdentifier):
+        (WebKit::RemoteRenderingBackend::getDataForImageBufferWithQualifiedIdentifier):
+        (WebKit::RemoteRenderingBackend::getShareableBitmapForImageBufferWithQualifiedIdentifier):
+        (WebKit::RemoteRenderingBackend::cacheNativeImageWithQualifiedIdentifier):
+        (WebKit::RemoteRenderingBackend::cacheFontWithQualifiedIdentifier):
+        (WebKit::RemoteRenderingBackend::releaseRemoteResourceWithQualifiedIdentifier):
+        (WebKit::RemoteRenderingBackend::finalizeRenderingUpdate):
+        * GPUProcess/graphics/RemoteRenderingBackend.h:
+        * GPUProcess/graphics/RemoteResourceCache.cpp:
+        (WebKit::RemoteResourceCache::RemoteResourceCache):
+        (WebKit::RemoteResourceCache::cacheImageBuffer):
+        (WebKit::RemoteResourceCache::cachedImageBuffer const):
+        (WebKit::RemoteResourceCache::cacheNativeImage):
+        (WebKit::RemoteResourceCache::cachedNativeImage const):
+        (WebKit::RemoteResourceCache::cacheFont):
+        (WebKit::RemoteResourceCache::cachedFont const):
+        (WebKit::RemoteResourceCache::ensureResourceUseCounter):
+        (WebKit::RemoteResourceCache::maybeRemoveResource):
+        (WebKit::RemoteResourceCache::recordResourceUse):
+        (WebKit::RemoteResourceCache::releaseRemoteResource):
+        * GPUProcess/graphics/RemoteResourceCache.h:
+
 2021-10-11  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Clean up some code in DisplayList::Recorder in preparation for bug #230860
