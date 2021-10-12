@@ -28,8 +28,8 @@
 
 #if TARGET_OS_IPHONE
 
-#import "WKTypes.h"
 #import <Foundation/Foundation.h>
+#import <WebCore/WKTypes.h>
 
 @class WebEvent;
 

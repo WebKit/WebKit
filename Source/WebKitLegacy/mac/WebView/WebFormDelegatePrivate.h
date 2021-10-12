@@ -26,7 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WebFormDelegate.h"
+#import <WebKitLegacy/WebFormDelegate.h>
 
 @interface WebFormDelegate (WebPrivate)
 + (WebFormDelegate *)_sharedWebFormDelegate;
