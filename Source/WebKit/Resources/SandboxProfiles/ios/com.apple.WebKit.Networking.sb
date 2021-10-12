@@ -267,9 +267,9 @@
         ;; <rdar://problem/7674121>
         ;; <rdar://problem/9151290>
         (allow ipc-posix-shm
-               (ipc-posix-name-regex #"^stack-logs")
-               (ipc-posix-name-regex #"^OA-")
-               (ipc-posix-name-regex #"^/FSM-"))
+               (ipc-posix-name-prefix "stack-logs")
+               (ipc-posix-name-prefix "OA-")
+               (ipc-posix-name-prefix "/FSM-"))
 
         (with-filter (system-attribute apple-internal)
             ;; <rdar://problem/8565035>

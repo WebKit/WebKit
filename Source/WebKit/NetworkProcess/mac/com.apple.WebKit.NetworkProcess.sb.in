@@ -219,7 +219,7 @@
         "sysctl.name2oid"
         "vm.footprint_suspend")
     (sysctl-name-prefix "kern.proc.pid.")
-    (sysctl-name-regex #"^net.routetable")
+    (sysctl-name-prefix "net.routetable")
     (sysctl-name-prefix "hw.optional.") ;; <rdar://problem/71462790>
     (sysctl-name-prefix "hw.perflevel") ;; <rdar://problem/76783596>
 )
@@ -342,7 +342,7 @@
 (allow ipc-posix-shm-read-data (with telemetry)
     (ipc-posix-name "FNetwork.defaultStorageSession")
     (ipc-posix-name-regex #"\.PrivateBrowsing-")
-    (ipc-posix-name-regex #"^WebKit Test-")
+    (ipc-posix-name-prefix "^WebKit Test-")
     (ipc-posix-name "/com.apple.AppSSO.version")
 )
 
@@ -456,11 +456,10 @@
     (subpath "/Library/KerberosPlugins/GSSAPI")
     (subpath "/Library/KerberosPlugins/KerberosFrameworkPlugins"))
 
-(if (defined? 'vnode-type)
-    (deny file-write-create (vnode-type SYMLINK)))
+(deny file-write-create (vnode-type SYMLINK))
 
 ;; Reserve a namespace for additional protected extended attributes.
-(deny file-read-xattr file-write-xattr (xattr-regex #"^com\.apple\.security\.private\."))
+(deny file-read-xattr file-write-xattr (xattr-prefix "com.apple.security.private."))
 
 (deny file-read* file-write* (with no-log)
     ;; FIXME: Should be removed after <rdar://problem/10463881> is fixed.

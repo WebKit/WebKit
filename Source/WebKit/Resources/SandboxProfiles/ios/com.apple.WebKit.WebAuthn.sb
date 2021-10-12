@@ -61,9 +61,9 @@
         (subpath "/Developer"))
 
     (allow ipc-posix-shm
-        (ipc-posix-name-regex #"^stack-logs")
-        (ipc-posix-name-regex #"^OA-")
-        (ipc-posix-name-regex #"^/FSM-"))
+        (ipc-posix-name-prefix "stack-logs")
+        (ipc-posix-name-prefix "OA-")
+        (ipc-posix-name-prefix "/FSM-"))
 
     (allow ipc-posix-shm-read* ipc-posix-shm-write-data ipc-posix-shm-write-unlink
         (ipc-posix-name-regex #"^gdt-[A-Za-z0-9]+-(c|s)$"))
@@ -383,7 +383,7 @@
         (extension-class "com.apple.nsurlstorage.extension-cache")))
 
 (deny file-write-create (vnode-type SYMLINK))
-(deny file-read-xattr file-write-xattr (xattr-regex #"^com\.apple\.security\.private\."))
+(deny file-read-xattr file-write-xattr (xattr-prefix "com.apple.security.private."))
 
 ;; FIXME: Can further restrict the following rules.
 (allow iokit-get-properties (with report) (with telemetry))

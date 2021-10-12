@@ -1,3 +1,28 @@
+2021-10-12  Brent Fulgham  <bfulgham@apple.com>
+
+        Sandbox complexity and performance improvements
+        https://bugs.webkit.org/show_bug.cgi?id=231184
+        <rdar://problem/47565664>
+
+        Reviewed by Per Arne Vollan.
+
+        This patch adopts a set of suggested improvements made by Apple's Sandbox team:
+
+        1. Minimize regex usage
+        2. Remove duplicate rules
+        3. Remove 'defined?' checks for the many things that are supported in all WebKit target OSes.
+
+        These will simplify the rules, and should provide some launch time improvement.
+
+        * GPUProcess/mac/com.apple.WebKit.GPUProcess.sb.in:
+        * NetworkProcess/mac/com.apple.WebKit.NetworkProcess.sb.in:
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.GPU.sb:
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.Networking.sb:
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebAuthn.sb:
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb.in:
+        * WebAuthnProcess/mac/com.apple.WebKit.WebAuthnProcess.sb.in:
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2021-10-12  Per Arne Vollan <pvollan@apple.com>
 
         [iOS][GPUP] Remove sandbox access to com.apple.audio.AudioComponentRegistrar

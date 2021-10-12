@@ -175,11 +175,16 @@
 (allow sysctl-read (with telemetry)
     (sysctl-name
         "hw.activecpu" ;; <rdar://problem/56795575>
+        "hw.availcpu"
         "hw.byteorder"
+        "hw.busfrequency"
         "hw.busfrequency_max"
         "hw.cacheconfig" ;; <rdar://problem/78213563>
         "hw.cachelinesize" ;; <rdar://problem/56795575>
         "hw.cachesize" ;; <rdar://problem/78213563>
+        "hw.cpufamily" ;; <rdar://problem/58416475>
+        "hw.cpufrequency"
+        "hw.cpufrequency_max"
         "hw.cpusubfamily"
         "hw.cputhreadtype"
         "hw.cputype"
@@ -198,6 +203,8 @@
         "hw.pagesize_compat" ;; <rdar://problem/76783596>
         "hw.physicalcpu" ;; <rdar://problem/58416475>
         "hw.physicalcpu_max" ;; <rdar://problem/58416475>
+        "hw.tbfrequency"
+        "hw.tbfrequency_compat"
         "hw.vectorunit"
         "kern.bootargs" ;; <rdar://problem/47738015>
         "kern.hostname"
@@ -205,6 +212,9 @@
         "kern.maxfilesperproc"
         "kern.memorystatus_level"
         "kern.osproductversion" ;; <rdar://problem/51756739>
+        "kern.osrelease"
+        "kern.ostype"
+        "kern.osvariant_status"
         "kern.osversion"
         "kern.safeboot"
         "kern.version"
@@ -214,12 +224,7 @@
         "kern.tcsm_enable"
         "kern.tcsm_available"
         "vm.footprint_suspend")
-    (sysctl-name-regex #"^hw.(active|avail)cpu")
-    (sysctl-name-regex #"^hw.(busfrequency|cachelinesize|cpufrequency(|_max)|pagesize|tbfrequency)(|_compat)")
-    (sysctl-name-regex #"^hw.l.+cachesize")
-    (sysctl-name-regex #"^hw.(logical|physical)cpu_max")
-    (sysctl-name-regex #"^kern.os(release|type|variant_status|version)")
-    (sysctl-name-regex #"^net.routetable")
+    (sysctl-name-prefix "net.routetable")
     (sysctl-name-prefix "hw.optional.") ;; <rdar://problem/71462790>
     (sysctl-name-prefix "hw.perflevel") ;; <rdar://problem/76783596>
 )
@@ -232,21 +237,39 @@
 (allow iokit-get-properties
     (iokit-property "AAPL,LCD-PowerState-ON") ;; <rdar://problem/47738015>
     (iokit-property "AGCInfo")
-    (iokit-property-regex #"^Accel(Caps|NativeDMARowByteAlignment)")
-    (iokit-property-regex #"^(Accurate|Extended)MaxDigitizerPressureValue")
-    (iokit-property-regex #"^(Activation|Animation)Thresholds")
+    (iokit-property "AccelCaps")
+    (iokit-property "AccelNativeDMARowByteAlignment")
+    (iokit-property "AccurateMaxDigitizerPressureValue")
+    (iokit-property "ActivationThresholds")
     (iokit-property "ActuationSupported")
+    (iokit-property "AnimationThresholds")
     (iokit-property "AllowDisplaySleep")
     (iokit-property "AlwaysNeedsVelocityCalculated")
-    (iokit-property-regex #"Apple(GVAKeyDoesNotExist|IntelMEVABundleName)")
-    (iokit-property-regex #"^AAPL,(DisplayPipe|OpenCLdisabled|IOGraphics_LER(|_RegTag_1|_RegTag_0|_Busy_2)|alias-policy|boot-display|display-alias|mux-switch-state|ndrv-dev|primary-display|slot-name)")
-    (iokit-property-regex #"^ATY,(cbits|fb_(linebytes|offset|size)|intrev)")
+    (iokit-property "AppleGVAKeyDoesNotExist")
+    (iokit-property "AppleIntelMEVABundleName")
+    (iokit-property "AAPL,DisplayPipe")
+    (iokit-property "AAPL,OpenCLdisabled")
+    (iokit-property-prefix "AAPL,IOGraphics_LER")
+    (iokit-property "AAPL,alias-policy")
+    (iokit-property "AAPL,boot-display")
+    (iokit-property "AAPL,display-alias")
+    (iokit-property "AAPL,mux-switch-state")
+    (iokit-property "AAPL,ndrv-dev")
+    (iokit-property "AAPL,primary-display")
+    (iokit-property "AAPL,slot-name")
+    (iokit-property "ATY,cbits")
+    (iokit-property "ATY,fb_linebytes")
+    (iokit-property "ATY,fb_offset")
+    (iokit-property "ATY,fb_size")
+    (iokit-property "ATY,intrev")
     (iokit-property "ATY,DeviceName") ;; Needed by Metal compilers
+    (iokit-property "ATY,EFIDisplay")
     (iokit-property "ATY,FamilyName") ;; Ditto
     (iokit-property "AVCSupported")
     (iokit-property "BacklightHandle")
     (iokit-property "BlockSize")
-    (iokit-property-regex #"^CEA(ModeID|PixelRepetition)")
+    (iokit-property "CEAModeID")
+    (iokit-property "CEAPixelRepetition")
     (iokit-property "CFBundleIdentifier")
     (iokit-property "CFBundleIdentifierKernel") ;; <rdar://problem/47738015>
     (iokit-property "CapsLockDelay")
@@ -257,7 +280,8 @@
     (iokit-property "DPLinkRate")
     (iokit-property "Description")
     (iokit-property "Development")
-    (iokit-property-regex #"^Device( Characteristics|EqID)")
+    (iokit-property "Device Characteristics")
+    (iokit-property "DeviceEqID")
     (iokit-property "DiskImageURL")
     (iokit-property "DisplayRouting")
     (iokit-property "Driver is Ready")
@@ -265,6 +289,7 @@
     (iokit-property "EnableLPVP")
     (iokit-property "Encrypted")
     (iokit-property "Endianness")
+    (iokit-property "ExtendedMaxDigitizerPressureValue")
     (iokit-property "Family ID")
     (iokit-property "ForceSupported")
     (iokit-property "Formats")
@@ -279,66 +304,70 @@
     (iokit-property "HEVCSupported")
     (iokit-property "HIDPointerAccelerationType")
     (iokit-property "HwCtxCacheUpdate")
-    (iokit-property-regex #"^IOAccel(DisplayPipeCapabilities|Index|Types|Revision)")
-    (iokit-property-regex #"^IO(Class|MatchCategory|NameMatch)")
-    (iokit-property-regex #"^IOAudioControl(ChannelID|ID|SubType|Usage|Value)")
-    (iokit-property-regex #"^IOAudioDevice(CanBeDefaults|TransportType)")
-    (iokit-property-regex #"^IOAudioEngine(ChannelNames|ClientDescription|CoreAudioPlugIn|(|Device)Description|Flavor|GlobalUniqueID|IsHidden|OutputChannelLayout|SampleOffset|State)")
-    (iokit-property-regex #"^IOAudioEngineClock(Domain|IsStable)")
-    (iokit-property "IOAudioEngineDisableClockBoundsCheck")
-    (iokit-property-regex #"^IOAudioEngine(Input|Output)Sample(Latency|Offset)")
-    (iokit-property-regex #"^IOAudioEngineNum(ActiveUserClients|SampleFramesPerBuffer)")
+    (iokit-property "IOAccelDisplayPipeCapabilities")
+    (iokit-property "IOAccelIndex")
+    (iokit-property "IOAccelTypes")
+    (iokit-property "IOAccelRevision")
+    (iokit-property-prefix "IOAudioControl")
+    (iokit-property "IOAudioDeviceCanBeDefaults")
+    (iokit-property "IOAudioDeviceTransportType")
+    (iokit-property-prefix "IOAudioEngine")
     (iokit-property "IOAudioSampleRate")
     (iokit-property "IOAudioStreamSampleFormatByteOrder")
-    (iokit-property-regex #"^IOAV(.*)(De|En)code$")
+    (iokit-property-prefix "IOAV")
     (iokit-property "IOBacklightHandlerID")
     (iokit-property "IOBusyInterest")
     (iokit-property "IOCFPlugInTypes")
     (iokit-property "IOChildIndex")
-    (iokit-property-regex #"^IOClass(|NameOverride)")
+    (iokit-property "IOClass")
+    (iokit-property "IOClassNameOverride")
     (iokit-property "IOConsoleUsers")
     (iokit-property "IODVDBundleName")
     (iokit-property "IODeviceMemory")
     (iokit-property "IODisplayParameters")
-    (iokit-property-regex #"^IOFB(CLUTDefer|Config|CursorInfo|Dependent(ID|Index))")
-    (iokit-property "IOFBCurrentPixelClock")
-    (iokit-property-regex #"^IOFBCurrentPixelCount(|Real)")
-    (iokit-property-regex #"^IOFB(DetailedTimings|Gamma(Count|HeaderSize|Width))")
-    (iokit-property-regex #"^IOFB(Blue|Green|Red)GammaScale")
-    (iokit-property-regex #"^IOFBI2CInterface(IDs|Info)")
-    (iokit-property-regex #"^IOFB(HDMIDongleROM|Integrated|MemorySize|NeedsRefresh|ProbeOptions|ScalerInfo|TimingRange|Transform|UIScale|WaitCursor(Frames|Period))")
+    (iokit-property-prefix "IOFB")
     (iokit-property "IOFramebufferOpenGLIndex")
     (iokit-property "IOGeneralInterest")
     (iokit-property "IOGLBundleName")
-    (iokit-property-regex #"^IOGVA(BGRAEnc|Codec|EncoderRestricted|Scaler|VTCapabilities|HEVCDecodeCapabilities|HEVCEncodeCapabilities)")
-    (iokit-property-regex #"^IOGVA(.*)(De|En)code$")
+    (iokit-property-prefix "IOGVA")
     (iokit-property "IOHibernateState")
     (iokit-property "IOI2CTransactionTypes")
-    (iokit-property-regex #"^IOInterrupt(Controllers|Specifiers)")
+    (iokit-property "IOInterruptControllers")
+    (iokit-property "IOInterruptSpecifiers")
     (iokit-property "IOKitDebug")
     (iokit-property "IOMatchCategory")
     (iokit-property "IOMediaIcon")
     (iokit-property "IONDRVFramebufferGeneration")
     (iokit-property "IONVRAMProperty")
-    (iokit-property-regex #"^IOName(|Match(|ed))")
+    (iokit-property "IOName")
+    (iokit-property "IONameMatch")
+    (iokit-property "IONameMatched")
     (iokit-property "IOOCDBundleName")
     (iokit-property "IOPCITunnelled")
     (iokit-property "IOPCITunnelCompatible")
     (iokit-property "IOPMStrictTreeOrder")
     (iokit-property "IOParentMatch")
-    (iokit-property-regex #"^IOPCI((Class|Primary|Property|)Match|Express(Capabilities|Link(Status|Capabilities))|MSIMode|Resourced|Tunnelled)")
+    (iokit-property-prefix "IOPCI")
     (iokit-property "IOPMIsPowerManaged")
-    (iokit-property-regex #"^IOPlatform(SerialNumber|UUID)")
+    (iokit-property "IOPersonalityPublisher")
+    (iokit-property "IOPlatformSerialNumber")
+    (iokit-property "IOPlatformUUID")
     (iokit-property "IOPowerManagement")
     (iokit-property "IOProbeScore")
     (iokit-property "IOPropertyMatch")
     (iokit-property "IOProviderClass")
-    (iokit-property-regex #"^IOReport(Lures|Legend(|Public))")
+    (iokit-property "IOReportLures")
+    (iokit-property "IOReportLegend")
+    (iokit-property "IOReportLegendPublic")
     (iokit-property "IOScreenRestoreState")
     (iokit-property "IOSourceVersion")
-    (iokit-property-regex #"^IOVA(BundleName|Renderer(|Sub)ID)")
-    (iokit-property-regex #"^InternalStatistics(|Accm)")
-    (iokit-property-regex #"^MetalPlugin(Name|ClassName)")
+    (iokit-property "IOVABundleName")
+    (iokit-property "IOVARendererID")
+    (iokit-property "IOVARendererSubID")
+    (iokit-property "InternalStatistics")
+    (iokit-property "InternalStatisticsAccm")
+    (iokit-property "MetalPluginClassName")
+    (iokit-property "MetalPluginName")
     (iokit-property "MetalStatisticsName")
     (iokit-property "MTHIDDevice")
     (iokit-property "MT Built-In")
@@ -346,56 +375,79 @@
     (iokit-property "Max Packet Size")
     (iokit-property "MaximumBootBeepVolume")
     (iokit-property "MinDigitizerPressureValue")
+    (iokit-property "Multitouch ID")
     (iokit-property "Multitouch Serial Number")
-    (iokit-property-regex #"^Multitouch (Subdevice |)ID")
+    (iokit-property "Multitouch Subdevice ID")
     (iokit-property "NVArch")
-    (iokit-property-regex #"^NVC(AP|LASS)")
-    (iokit-property-regex #"^NVDA,(Features|NVPresentment-version|accel-loaded|invalid-config|mm-version)")
+    (iokit-property "NVCAP")
+    (iokit-property "NVCLASS")
     (iokit-property "NVDA,Enable-A2R10G10B10Format")
-    (iokit-property-regex #"^NVDA(Type|initgl_created)")
+    (iokit-property "NVDA,Features")
+    (iokit-property "NVDA,NVPresentment-version")
+    (iokit-property "NVDA,accel-loaded")
+    (iokit-property "NVDA,invalid-config")
+    (iokit-property "NVDA,mm-version")
+    (iokit-property "NVDAType")
+    (iokit-property "NVDAinitgl_created")
     (iokit-property "NVRAMProperty")
     (iokit-property "NXSystemInfo")
-    (iokit-property-regex #"^VRAM,(memvendorID|total(MB|size))")
+    (iokit-property "VRAM,memvendorID")
+    (iokit-property "VRAM,totalsize")
     (iokit-property "NoAutoRoute")
-    (iokit-property-regex #"^Num(Blocks|Streams)")
-    (iokit-property-regex #"^PerformanceStatistics(|Accum)")
+    (iokit-property "NumBlocks")
+    (iokit-property "NumStreams")
+    (iokit-property "PerformanceStatistics")
+    (iokit-property "PerformanceStatisticsAccum")
     (iokit-property "PinConfigurations")
     (iokit-property "Protocol Characteristics")
     (iokit-property "Removable")
-    (iokit-property-regex #"^ResetOn(Lock|Unlock)Ms")
+    (iokit-property "ResetOnLockMs")
+    (iokit-property "ResetOnUnlockMs")
+    (iokit-property "SWIP_properties")
     (iokit-property "SafeEjectRequested")
     (iokit-property "SampleRates")
+    (iokit-property "Sensor Columns")
+    (iokit-property "Sensor Rows")
+    (iokit-property "Sensor Region Descriptor")
+    (iokit-property "Sensor Region Param")
+    (iokit-property "Sensor Region Rows")
+    (iokit-property "Sensor Surface Descriptor")
+    (iokit-property "Sensor Surface Height")
+    (iokit-property "Sensor Surface Width")
     (iokit-property "Serial Number")
     (iokit-property "StartupDisplay")
     (iokit-property "SurfaceList")
-    (iokit-property-regex #"^Support(AudioAUUC|sSilentClick|TapToWake)")
-    (iokit-property-regex #"^Sensor (Columns|Rows)")
-    (iokit-property-regex #"^Sensor Region (Descriptor|Param|Rows)")
-    (iokit-property-regex #"^Sensor Surface (Descriptor|Height|Width)")
-    (iokit-property "SurfaceList")
+    (iokit-property "SupportAudioAUUC")
+    (iokit-property "SupportsSilentClick")
+    (iokit-property "SupportTapToWake")
     (iokit-property "TimeStampFiltering")
     (iokit-property "Transport")
     (iokit-property "USBADC") ;; Needed for Audio support on older hardware
     (iokit-property "UserClientEnabled")
     (iokit-property "VRAM,totalMB")
     (iokit-property "WANTS_FRAMES_IGNORED")
-    (iokit-property-regex #"^acpi-(device|path)")
+    (iokit-property "acpi-device")
+    (iokit-property "acpi-path")
     (iokit-property "assigned-addresses")
     (iokit-property "attached-gpu-control-path")
-    (iokit-property-regex #"^audio-(codec-info|device-mvalue|device-nvalue|selector)")
+    (iokit-property "audio-codec-info")
+    (iokit-property "audio-device-mvalue")
+    (iokit-property "audio-device-nvalue")
+    (iokit-property "audio-selector")
     (iokit-property "av-signal-type")
     (iokit-property "backlight-PWM-freq")
     (iokit-property "bcdVersion")
-    (iokit-property-regex #"^(board|device|revision|subsystem|vendor)-id")
+    (iokit-property "board-id")
     (iokit-property "boot-gamma-restored")
     (iokit-property "built-in")
     (iokit-property "cail_properties")
-    (iokit-property-regex #"^canvas-(height|width)")
+    (iokit-property "canvas-height")
+    (iokit-property "canvas-width")
     (iokit-property "class-code")
     (iokit-property "color-accuracy-index")
     (iokit-property "compatible")
     (iokit-property "connector-type")
-    (iokit-property-regex #"^(device|revision|subsystem-vendor|touch-size)-id")
+    (iokit-property "device-id")
     (iokit-property "device_type")
     (iokit-property "display-bpc")
     (iokit-property "display-connect-flags")
@@ -408,7 +460,8 @@
     (iokit-property "graphic-options")
     (iokit-property "hda-gfx")
     (iokit-property "housing-color")
-    (iokit-property-regex #"^id(Product|Vendor)")
+    (iokit-property "idProduct")
+    (iokit-property "idVendor")
     (iokit-property "iofb_version")
     (iokit-property "image-encrypted")
     (iokit-property "image-path") ;; Needed by LaunchServices
@@ -421,32 +474,30 @@
 #if __MAC_OS_X_VERSION_MIN_REQUIRED < 110000
     (iokit-property "od-server-name") ;; Needed by LaunchServices
 #endif
-    (iokit-property-regex #"^parser-(options|type)")
-    (iokit-property-regex #"^pci(-aspm-default|debug)")
+    (iokit-property "parser-options")
+    (iokit-property "parser-type")
+    (iokit-property "pci-aspm-default")
+    (iokit-property "pcidebug")
     (iokit-property "port-number")
     (iokit-property "reg")
+    (iokit-property "revision-id")
     (iokit-property "rm_board_number")
-    (iokit-property-regex #"^(rom|vbios)-revision")
+    (iokit-property "rom-revision")
     (iokit-property "saved-config")
     (iokit-property "startup-timing")
+    (iokit-property "subsystem-id")
+    (iokit-property "subsystem-vendor-id")
     (iokit-property "touch-size-id")
-    (iokit-property "ATY,cbits")
-    (iokit-property "ATY,intrev")
-    (iokit-property "AccelNativeDMARowByteAlignment")
+    (iokit-property "vendor-id")
+    (iokit-property "vbios-revision")
     (iokit-property "CompactVRAM")
     (iokit-property "EnableBlitLib")
     (iokit-property "ForceDisableEDRAM")
-    (iokit-property "GPUConfigurationVariable")
-    (iokit-property "GpuDebugPolicy")
-    (iokit-property "IOKitDebug")
     (iokit-property "IOPCIMatch")
-    (iokit-property "IOOCDBundleName")
     (iokit-property "MetalStatisticsScriptName")
     (iokit-property "MetalCoalesce")
     (iokit-property "PanicOnGPUHang")
     (iokit-property "TelemetryDisable")
-    (iokit-property "cail_properties")
-    (iokit-property "dpm")
     (iokit-property "IOGVAH264EncodeCapabilities") ;; <rdar://problem/49498040>
 #if !PLATFORM(MAC) || __MAC_OS_X_VERSION_MIN_REQUIRED > 101500
     (iokit-property "IOAVDHEVCDecodeCapabilities") ;; <rdar://problem/71100188>
@@ -637,8 +688,7 @@
 (allow mach-lookup (with telemetry) (extension "com.apple.app-sandbox.mach")) ;; FIXME: Should be removed when <rdar://problem/13066206> is fixed.
 
 ;; Allow the OpenGL Profiler to attach.
-(if (defined? 'mach-register)
-    (allow mach-register (with telemetry) (global-name-regex #"^_oglprof_attach_<[0-9]+>$")))
+(allow mach-register (with telemetry) (global-name-regex #"^_oglprof_attach_<[0-9]+>$"))
 
 (if (positive? (string-length (param "DARWIN_USER_CACHE_DIR")))
     (allow-read-write-directory-and-issue-read-write-extensions (param "DARWIN_USER_CACHE_DIR")))
@@ -662,11 +712,11 @@
 (allow ipc-posix-shm-read-data (with telemetry)
     (ipc-posix-name "FNetwork.defaultStorageSession")
     (ipc-posix-name-regex #"\.PrivateBrowsing-")
-    (ipc-posix-name-regex #"^WebKit Test-"))
+    (ipc-posix-name-prefix "WebKit Test-"))
 
 ;; Audio
 (allow ipc-posix-shm-read* ipc-posix-shm-write-data (with telemetry)
-    (ipc-posix-name-regex #"^AudioIO"))
+    (ipc-posix-name-prefix "AudioIO"))
 
 (allow mach-lookup
     (global-name "com.apple.audio.AudioComponentRegistrar"))
@@ -745,7 +795,7 @@
 
 ;; CoreFoundation. We don't import com.apple.corefoundation.sb, because it allows unnecessary access to pasteboard.
 (allow mach-lookup (with telemetry)
-    (global-name-regex #"^com.apple.distributed_notifications")
+    (global-name-prefix "com.apple.distributed_notifications")
 #if !HAVE(CSCHECKFIXDISABLE)
     (global-name "com.apple.CoreServices.coreservicesd")
 #endif
@@ -754,7 +804,7 @@
 (allow file-read-data (with telemetry)
     (literal "/dev/autofs_nowait")) ; Used by CF to circumvent automount triggers
 (allow ipc-posix-shm (with telemetry)
-    (ipc-posix-name-regex #"^CFPBS:")) ; <rdar://problem/13757475>
+    (ipc-posix-name-prefix "CFPBS:")) ; <rdar://problem/13757475>
 (allow system-fsctl (with telemetry) (fsctl-command (_IO "h" 47)))
 
 ;; Graphics
@@ -786,11 +836,10 @@
        (global-name "com.apple.system.notification_center"))
 #endif
 
-(if (defined? 'vnode-type)
-        (deny file-write-create (vnode-type SYMLINK)))
+(deny file-write-create (vnode-type SYMLINK))
 
 ;; Reserve a namespace for additional protected extended attributes.
-(deny file-read-xattr file-write-xattr (xattr-regex #"^com\.apple\.security\.private\."))
+(deny file-read-xattr file-write-xattr (xattr-prefix "com.apple.security.private."))
 
 (deny file-read* file-write* (with no-log)
        ;; FIXME: Should be removed after <rdar://problem/10463881> is fixed.

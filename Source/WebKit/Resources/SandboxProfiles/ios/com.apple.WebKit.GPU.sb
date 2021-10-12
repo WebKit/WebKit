@@ -296,9 +296,9 @@
                (subpath "/Developer"))
 
         (allow ipc-posix-shm
-               (ipc-posix-name-regex #"^stack-logs")
-               (ipc-posix-name-regex #"^OA-")
-               (ipc-posix-name-regex #"^/FSM-"))
+               (ipc-posix-name-prefix "stack-logs")
+               (ipc-posix-name-prefix "OA-")
+               (ipc-posix-name-prefix "/FSM-"))
 
         (allow ipc-posix-shm-read* ipc-posix-shm-write-data ipc-posix-shm-write-unlink
                (ipc-posix-name-regex #"^gdt-[A-Za-z0-9]+-(c|s)$"))
@@ -765,14 +765,33 @@
 )
 
 (allow iokit-get-properties
-    (iokit-property-regex #"^AAPL,(DisplayPipe|OpenCLdisabled|IOGraphics_LER(|_RegTag_1|_RegTag_0|_Busy_2)|alias-policy|boot-display|display-alias|mux-switch-state|ndrv-dev|primary-display|slot-name)")
+    (iokit-property "AAPL,DisplayPipe")
+    (iokit-property "AAPL,OpenCLdisabled")
+    (iokit-property "AAPL,IOGraphics_LER")
+    (iokit-property "AAPL,IOGraphics_LER_RegTag_0")
+    (iokit-property "AAPL,IOGraphics_LER_RegTag_1")
+    (iokit-property "AAPL,IOGraphics_LER_Busy_2")
+    (iokit-property "AAPL,alias-policy")
+    (iokit-property "AAPL,boot-display")
+    (iokit-property "AAPL,display-alias")
+    (iokit-property "AAPL,mux-switch-state")
+    (iokit-property "AAPL,ndrv-dev")
+    (iokit-property "AAPL,primary-display")
+    (iokit-property "AAPL,slot-name")
     (iokit-property "APTDevice")
     (iokit-property "AVCSupported")
-    (iokit-property-regex #"^AppleJPEG(NumCores|Supports(AppleInterchangeFormats|MissingEOI|RSTLogging))")
+    (iokit-property "AppleJPEGNumCores")
+    (iokit-property "AppleJPEGSupportsAppleInterchangeFormats")
+    (iokit-property "AppleJPEGSupportsMissingEOI")
+    (iokit-property "AppleJPEGSupportsRSTLogging")
     (iokit-property "BaseAddressAlignmentRequirement")
-    (iokit-property-regex #"^DisplayPipe(PlaneBaseAlignment|StrideRequirements)")
+    (iokit-property "DisplayPipePlaneBaseAlignment")
+    (iokit-property "DisplayPipeStrideRequirements")
     (iokit-property "HEVCSupported")
-    (iokit-property-regex #"IOGVA(BGRAEnc|Codec|EncoderRestricted|Scaler)")
+    (iokit-property "IOGVABGRAEnc")
+    (iokit-property "IOGVACodec")
+    (iokit-property "IOGVAEncoderRestricted")
+    (iokit-property "IOGVAScaler")
     (iokit-property "IOClassNameOverride")
     (iokit-property "IOPlatformUUID")
     (iokit-property "IOSurfaceAcceleratorCapabilitiesDict")
@@ -783,7 +802,8 @@
     (iokit-property "artwork-display-gamut") ;; <rdar://problem/49497788>
     (iokit-property "artwork-dynamic-displaymode") ;; <rdar://problem/49497720>
     (iokit-property "artwork-scale-factor") ;; <rdar://problem/49497788>
-    (iokit-property-regex #"(canvas-height|canvas-width)")
+    (iokit-property "canvas-height")
+    (iokit-property "canvas-width")
     (iokit-property "chip-id") ;; <rdar://problem/52903477>
     (iokit-property "class-code")
     (iokit-property "color-accuracy-index")
@@ -864,7 +884,7 @@
 )
 
 (deny file-write-create (vnode-type SYMLINK))
-(deny file-read-xattr file-write-xattr (xattr-regex #"^com\.apple\.security\.private\."))
+(deny file-read-xattr file-write-xattr (xattr-prefix "com.apple.security.private."))
 
 ;; Allow loading injected bundles.
 (allow file-map-executable (with telemetry))
