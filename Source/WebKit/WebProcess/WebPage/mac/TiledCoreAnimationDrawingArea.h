@@ -181,6 +181,6 @@ inline bool TiledCoreAnimationDrawingArea::addMilestonesToDispatch(OptionSet<Web
 
 } // namespace WebKit
 
-SPECIALIZE_TYPE_TRAITS_DRAWING_AREA(TiledCoreAnimationDrawingArea, DrawingAreaTypeTiledCoreAnimation)
+SPECIALIZE_TYPE_TRAITS_DRAWING_AREA(TiledCoreAnimationDrawingArea, DrawingAreaType::TiledCoreAnimation)
 
 #endif // PLATFORM(MAC)

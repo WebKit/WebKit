@@ -158,7 +158,7 @@ protected:
         return m_webPage.send(message, m_identifier.toUInt64(), { });
     }
 
-    DrawingAreaType m_type;
+    const DrawingAreaType m_type;
     DrawingAreaIdentifier m_identifier;
     WebPage& m_webPage;
 

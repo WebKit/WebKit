@@ -1962,7 +1962,7 @@ std::unique_ptr<WebKit::DrawingAreaProxy> WebViewImpl::createDrawingAreaProxy(We
 bool WebViewImpl::isUsingUISideCompositing() const
 {
     auto* drawingArea = m_page->drawingArea();
-    return drawingArea && drawingArea->type() == DrawingAreaTypeRemoteLayerTree;
+    return drawingArea && drawingArea->type() == DrawingAreaType::RemoteLayerTree;
 }
 
 void WebViewImpl::setDrawingAreaSize(CGSize size)

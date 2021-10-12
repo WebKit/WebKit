@@ -1,3 +1,43 @@
+2021-10-11  Simon Fraser  <simon.fraser@apple.com>
+
+        Make DrawingAreaType an enum class
+        https://bugs.webkit.org/show_bug.cgi?id=231543
+
+        Reviewed by Wenson Hsieh.
+
+        Make DrawingAreaType an enum class, and make the DrawingArea type member const.
+
+        * Shared/DrawingAreaInfo.h:
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::isUsingUISideCompositing const):
+        * UIProcess/CoordinatedGraphics/DrawingAreaProxyCoordinatedGraphics.cpp:
+        (WebKit::DrawingAreaProxyCoordinatedGraphics::DrawingAreaProxyCoordinatedGraphics):
+        * UIProcess/RemoteLayerTree/RemoteLayerTreeDrawingAreaProxy.h:
+        * UIProcess/RemoteLayerTree/RemoteLayerTreeDrawingAreaProxy.mm:
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::RemoteLayerTreeDrawingAreaProxy):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::setDrawingArea):
+        (WebKit::WebPageProxy::commitProvisionalPage):
+        (WebKit::WebPageProxy::enterAcceleratedCompositingMode):
+        (WebKit::WebPageProxy::didFirstLayerFlush):
+        * UIProcess/mac/TiledCoreAnimationDrawingAreaProxy.h:
+        * UIProcess/mac/TiledCoreAnimationDrawingAreaProxy.mm:
+        (WebKit::TiledCoreAnimationDrawingAreaProxy::TiledCoreAnimationDrawingAreaProxy):
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::createScrollingCoordinator const):
+        * WebProcess/WebPage/CoordinatedGraphics/DrawingAreaCoordinatedGraphics.cpp:
+        (WebKit::DrawingAreaCoordinatedGraphics::DrawingAreaCoordinatedGraphics):
+        * WebProcess/WebPage/DrawingArea.cpp:
+        (WebKit::DrawingArea::create):
+        (WebKit::DrawingArea::supportsGPUProcessRendering):
+        * WebProcess/WebPage/DrawingArea.h:
+        * WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeDrawingArea.h:
+        * WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeDrawingArea.mm:
+        (WebKit::RemoteLayerTreeDrawingArea::RemoteLayerTreeDrawingArea):
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.h:
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::TiledCoreAnimationDrawingArea):
+
 2021-10-11  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [GPU Process] Unique RenderingResourceIdentifiers Part 5: Uniquify RemoteDisplayListRecorder at entry points

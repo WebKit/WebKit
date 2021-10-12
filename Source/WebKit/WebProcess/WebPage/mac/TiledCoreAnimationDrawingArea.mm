@@ -75,7 +75,7 @@ namespace WebKit {
 using namespace WebCore;
 
 TiledCoreAnimationDrawingArea::TiledCoreAnimationDrawingArea(WebPage& webPage, const WebPageCreationParameters& parameters)
-    : DrawingArea(DrawingAreaTypeTiledCoreAnimation, parameters.drawingAreaIdentifier, webPage)
+    : DrawingArea(DrawingAreaType::TiledCoreAnimation, parameters.drawingAreaIdentifier, webPage)
     , m_isPaintingSuspended(!(parameters.activityState & ActivityState::IsVisible))
 {
     m_webPage.corePage()->settings().setForceCompositingMode(true);

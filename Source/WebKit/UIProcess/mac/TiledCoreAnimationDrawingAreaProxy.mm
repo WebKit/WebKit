@@ -43,7 +43,7 @@ using namespace IPC;
 using namespace WebCore;
 
 TiledCoreAnimationDrawingAreaProxy::TiledCoreAnimationDrawingAreaProxy(WebPageProxy& webPageProxy, WebProcessProxy& process)
-    : DrawingAreaProxy(DrawingAreaTypeTiledCoreAnimation, webPageProxy, process)
+    : DrawingAreaProxy(DrawingAreaType::TiledCoreAnimation, webPageProxy, process)
     , m_isWaitingForDidUpdateGeometry(false)
 {
 }

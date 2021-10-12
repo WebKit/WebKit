@@ -55,7 +55,7 @@ namespace WebKit {
 using namespace WebCore;
 
 DrawingAreaProxyCoordinatedGraphics::DrawingAreaProxyCoordinatedGraphics(WebPageProxy& webPageProxy, WebProcessProxy& process)
-    : DrawingAreaProxy(DrawingAreaTypeCoordinatedGraphics, webPageProxy, process)
+    : DrawingAreaProxy(DrawingAreaType::CoordinatedGraphics, webPageProxy, process)
 #if !PLATFORM(WPE)
     , m_discardBackingStoreTimer(RunLoop::current(), this, &DrawingAreaProxyCoordinatedGraphics::discardBackingStore)
 #endif

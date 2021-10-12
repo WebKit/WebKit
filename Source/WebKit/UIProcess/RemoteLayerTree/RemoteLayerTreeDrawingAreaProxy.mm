@@ -112,7 +112,7 @@ using namespace IPC;
 using namespace WebCore;
 
 RemoteLayerTreeDrawingAreaProxy::RemoteLayerTreeDrawingAreaProxy(WebPageProxy& webPageProxy, WebProcessProxy& process)
-    : DrawingAreaProxy(DrawingAreaTypeRemoteLayerTree, webPageProxy, process)
+    : DrawingAreaProxy(DrawingAreaType::RemoteLayerTree, webPageProxy, process)
     , m_remoteLayerTreeHost(makeUnique<RemoteLayerTreeHost>(*this))
 {
     // We don't want to pool surfaces in the UI process.

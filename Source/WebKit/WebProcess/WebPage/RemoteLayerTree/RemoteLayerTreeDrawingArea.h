@@ -182,4 +182,4 @@ inline bool RemoteLayerTreeDrawingArea::addMilestonesToDispatch(OptionSet<WebCor
 
 } // namespace WebKit
 
-SPECIALIZE_TYPE_TRAITS_DRAWING_AREA(RemoteLayerTreeDrawingArea, DrawingAreaTypeRemoteLayerTree)
+SPECIALIZE_TYPE_TRAITS_DRAWING_AREA(RemoteLayerTreeDrawingArea, DrawingAreaType::RemoteLayerTree)

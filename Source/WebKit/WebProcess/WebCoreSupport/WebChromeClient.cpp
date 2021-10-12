@@ -1012,7 +1012,7 @@ RefPtr<ScrollingCoordinator> WebChromeClient::createScrollingCoordinator(Page& p
 {
     ASSERT_UNUSED(page, m_page.corePage() == &page);
 #if PLATFORM(COCOA)
-    if (m_page.drawingArea()->type() != DrawingAreaTypeRemoteLayerTree)
+    if (m_page.drawingArea()->type() != DrawingAreaType::RemoteLayerTree)
         return nullptr;
     return RemoteScrollingCoordinator::create(&m_page);
 #else

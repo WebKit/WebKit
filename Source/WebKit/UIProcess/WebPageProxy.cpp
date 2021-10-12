@@ -1099,7 +1099,7 @@ void WebPageProxy::setDrawingArea(std::unique_ptr<DrawingAreaProxy>&& drawingAre
     m_drawingArea->setSize(viewSize());
 
 #if ENABLE(ASYNC_SCROLLING) && PLATFORM(COCOA)
-    if (m_drawingArea->type() == DrawingAreaTypeRemoteLayerTree) {
+    if (m_drawingArea->type() == DrawingAreaType::RemoteLayerTree) {
         m_scrollingCoordinatorProxy = makeUnique<RemoteScrollingCoordinatorProxy>(*this);
 #if PLATFORM(IOS_FAMILY)
         // On iOS, main frame scrolls are sent in terms of visible rect updates.
@@ -3602,7 +3602,7 @@ void WebPageProxy::commitProvisionalPage(FrameIdentifier frameID, FrameInfoData&
 #if PLATFORM(MAC)
     // On macOS, when not using UI-side compositing, we need to make sure we do not close the page in the previous process until we've
     // entered accelerated compositing for the new page or we will flash on navigation.
-    if (drawingArea()->type() == DrawingAreaTypeTiledCoreAnimation)
+    if (drawingArea()->type() == DrawingAreaType::TiledCoreAnimation)
         shouldDelayClosingUntilFirstLayerFlush = ShouldDelayClosingUntilFirstLayerFlush::Yes;
 #endif
 
@@ -8359,7 +8359,7 @@ void WebPageProxy::isJITEnabled(CompletionHandler<void(bool)>&& completionHandle
 void WebPageProxy::enterAcceleratedCompositingMode(const LayerTreeContext& layerTreeContext)
 {
 #if PLATFORM(MAC)
-    ASSERT(m_drawingArea->type() == DrawingAreaTypeTiledCoreAnimation);
+    ASSERT(m_drawingArea->type() == DrawingAreaType::TiledCoreAnimation);
 #endif
     pageClient().enterAcceleratedCompositingMode(layerTreeContext);
 }
@@ -8367,7 +8367,7 @@ void WebPageProxy::enterAcceleratedCompositingMode(const LayerTreeContext& layer
 void WebPageProxy::didFirstLayerFlush(const LayerTreeContext& layerTreeContext)
 {
 #if PLATFORM(MAC)
-    ASSERT(m_drawingArea->type() == DrawingAreaTypeTiledCoreAnimation);
+    ASSERT(m_drawingArea->type() == DrawingAreaType::TiledCoreAnimation);
 #endif
     pageClient().didFirstLayerFlush(layerTreeContext);
 
