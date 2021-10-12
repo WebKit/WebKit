@@ -1982,7 +1982,7 @@ webkit.org/b/216162 [ Debug ] imported/w3c/web-platform-tests/encoding/textdecod
 
 webkit.org/b/216298 imported/w3c/web-platform-tests/IndexedDB/blob-valid-after-deletion.any.html [ Pass Failure ]
 
-webkit.org/b/231387 [ Release ] imported/w3c/web-platform-tests/IndexedDB/interleaved-cursors-small.html [ Pass Failure ]
+webkit.org/b/231387 [ Debug ] imported/w3c/web-platform-tests/IndexedDB/interleaved-cursors-small.html [ Pass Failure ]
 
 webkit.org/b/209619 compositing/clipping/border-radius-async-overflow-stacking.html [ Pass ImageOnlyFailure ]
 
