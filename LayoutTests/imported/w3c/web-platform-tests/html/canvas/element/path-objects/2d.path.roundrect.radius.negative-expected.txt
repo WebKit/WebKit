@@ -1,0 +1,8 @@
+2d.path.roundrect.radius.negative
+roundRect() with negative radius throws an exception
+Actual output:
+
+FAIL roundRect() with negative radius throws an exception assert_throws_js: function "() => { ctx.roundRect(0, 0, 0, 0, [-1])}" threw object "TypeError: ctx.roundRect is not a function. (In 'ctx.roundRect(0, 0, 0, 0, [-1])', 'ctx.roundRect' is undefined)" ("TypeError") expected instance of function "function RangeError() {
+    [native code]
+}" ("RangeError")
+

@@ -2261,11 +2261,6 @@ webkit.org/b/226299 [ BigSur ] http/tests/performance/performance-resource-timin
 # rdar://80340280 ([ Monterey Debug ] http/tests/media/user-gesture-preserved-across-xmlhttprequest.html is a flaky timeout)
 [ Monterey Debug ] http/tests/media/user-gesture-preserved-across-xmlhttprequest.html [ Pass Timeout ]
 
-#rdar://80344478 ([ Monterey ] 3 imported/w3c/web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap* tests timing out)
-[ Monterey ] imported/w3c/web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-drawImage.html [ Timeout ]
-[ Monterey ] imported/w3c/web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-flipY.html [ Timeout ]
-[ Monterey ] imported/w3c/web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-serializable.html [ Timeout ]
-
 [ BigSur Monterey ] webaudio/Panner/hrtf-database.html [ Pass ]
 [ BigSur Monterey ] webaudio/codec-tests/aac/vbr-128kbps-44khz.html [ Pass ]
 

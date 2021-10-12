@@ -33,6 +33,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/text-styles/2d.text.font.default.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/text-styles/2d.text.font.parse.basic.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/text-styles/2d.text.font.parse.complex.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/text-styles/2d.text.font.parse.family.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/text-styles/2d.text.font.parse.invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/text-styles/2d.text.font.parse.size.percentage.default.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/text-styles/2d.text.font.parse.size.percentage.html
