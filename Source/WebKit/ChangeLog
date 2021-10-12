@@ -1,3 +1,17 @@
+2021-10-12  Youenn Fablet  <youenn@apple.com>
+
+        Error the encoder in case we cannot create a RemoteVideoSample
+        https://bugs.webkit.org/show_bug.cgi?id=231505
+        <rdar://83975229>
+
+        Reviewed by Eric Carlson.
+
+        * WebProcess/GPU/webrtc/LibWebRTCCodecs.cpp:
+        (WebKit::LibWebRTCCodecs::encodeFrame):
+        RemoteVideoSample::create can return nullptr if we cannot get an IOSurface from the pixel buffer or if pixel buffer is null
+        due to VTPixelBufferConformerCopyConformedPixelBuffer failing.
+        In that case, we error the encoder instead of trying to encode the frame.
+
 2021-10-11  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [GPU Process] Unique RenderingResourceIdentifiers Part 8: Consolidate DisplayList::ResourceHeap
