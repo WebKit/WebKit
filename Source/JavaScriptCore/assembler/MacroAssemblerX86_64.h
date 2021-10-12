@@ -106,7 +106,7 @@ public:
     void load8(const void* address, RegisterID dest)
     {
         move(TrustedImmPtr(address), dest);
-        load8(dest, dest);
+        load8(Address(dest), dest);
     }
 
     void load16(ExtendedAddress address, RegisterID dest)
@@ -132,7 +132,7 @@ public:
             m_assembler.movl_mEAX(address);
         else {
             move(TrustedImmPtr(address), dest);
-            load32(dest, dest);
+            load32(Address(dest), dest);
         }
     }
 
@@ -151,7 +151,7 @@ public:
     void store32(TrustedImm32 imm, void* address)
     {
         move(TrustedImmPtr(address), scratchRegister());
-        store32(imm, scratchRegister());
+        store32(imm, Address(scratchRegister()));
     }
 
     void store32(RegisterID source, void* address)
@@ -160,7 +160,7 @@ public:
             m_assembler.movl_EAXm(address);
         else {
             move(TrustedImmPtr(address), scratchRegister());
-            store32(source, scratchRegister());
+            store32(source, Address(scratchRegister()));
         }
     }
     
@@ -918,7 +918,7 @@ public:
         m_assembler.notq_m(dest.offset, dest.base, dest.index, dest.scale);
     }
 
-    void load64(ImplicitAddress address, RegisterID dest)
+    void load64(Address address, RegisterID dest)
     {
         m_assembler.movq_mr(address.offset, address.base, dest);
     }
@@ -934,7 +934,7 @@ public:
             m_assembler.movq_mEAX(address);
         else {
             move(TrustedImmPtr(address), dest);
-            load64(dest, dest);
+            load64(Address(dest), dest);
         }
     }
 
@@ -952,7 +952,7 @@ public:
         return DataLabelCompact(this);
     }
 
-    void store64(RegisterID src, ImplicitAddress address)
+    void store64(RegisterID src, Address address)
     {
         m_assembler.movq_rm(src, address.offset, address.base);
     }
@@ -968,11 +968,11 @@ public:
             m_assembler.movq_EAXm(address);
         else {
             move(TrustedImmPtr(address), scratchRegister());
-            store64(src, scratchRegister());
+            store64(src, Address(scratchRegister()));
         }
     }
 
-    void store64(TrustedImm32 imm, ImplicitAddress address)
+    void store64(TrustedImm32 imm, Address address)
     {
         m_assembler.movq_i32m(imm.m_value, address.offset, address.base);
     }
@@ -987,7 +987,7 @@ public:
         if (CAN_SIGN_EXTEND_32_64(imm.m_value)) {
             auto addressReg = scratchRegister();
             move(TrustedImmPtr(address), addressReg);
-            store64(TrustedImm32(static_cast<int32_t>(imm.m_value)), addressReg);
+            store64(TrustedImm32(static_cast<int32_t>(imm.m_value)), Address(addressReg));
             return;
         }
 
@@ -998,7 +998,7 @@ public:
         swap(src, X86Registers::eax);
     }
 
-    void store64(TrustedImm64 imm, ImplicitAddress address)
+    void store64(TrustedImm64 imm, Address address)
     {
         if (CAN_SIGN_EXTEND_32_64(imm.m_value)) {
             store64(TrustedImm32(static_cast<int32_t>(imm.m_value)), address);
@@ -1524,7 +1524,7 @@ public:
         return branch32(cond, left, scratchRegister());
     }
 
-    DataLabelPtr storePtrWithPatch(TrustedImmPtr initialValue, ImplicitAddress address)
+    DataLabelPtr storePtrWithPatch(TrustedImmPtr initialValue, Address address)
     {
         DataLabelPtr label = moveWithPatch(initialValue, scratchRegister());
         store64(scratchRegister(), address);

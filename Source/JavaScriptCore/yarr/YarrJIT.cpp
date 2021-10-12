@@ -697,7 +697,7 @@ class YarrGenerator final : public YarrJITInfo, private MacroAssembler {
 
         JumpList notUnicode;
 
-        load16Unaligned(regUnicodeInputAndTrail, resultReg);
+        load16Unaligned(Address(regUnicodeInputAndTrail), resultReg);
 
         // Is the character a leading surrogate?
         and32(surrogateTagMask, resultReg, unicodeTemp);
@@ -879,7 +879,7 @@ class YarrGenerator final : public YarrJITInfo, private MacroAssembler {
     {
         ASSERT(!m_pattern.m_body->m_hasFixedSize);
         if (m_compileMode == JITCompileMode::IncludeSubpatterns)
-            store32(reg, output);
+            store32(reg, Address(output));
         else
             move(reg, output);
     }
@@ -887,7 +887,7 @@ class YarrGenerator final : public YarrJITInfo, private MacroAssembler {
     {
         ASSERT(!m_pattern.m_body->m_hasFixedSize);
         if (m_compileMode == JITCompileMode::IncludeSubpatterns)
-            load32(output, reg);
+            load32(Address(output), reg);
         else
             move(output, reg);
     }
@@ -2830,7 +2830,7 @@ class YarrGenerator final : public YarrJITInfo, private MacroAssembler {
 
                     loadFromFrame(parenthesesFrameLocation + BackTrackInfoParentheses::parenContextHeadIndex(), currParenContextReg);
                     allocateParenContext(newParenContextReg);
-                    storePtr(currParenContextReg, newParenContextReg);
+                    storePtr(currParenContextReg, Address(newParenContextReg));
                     storeToFrame(newParenContextReg, parenthesesFrameLocation + BackTrackInfoParentheses::parenContextHeadIndex());
                     saveParenContext(newParenContextReg, regT2, term->parentheses.subpatternId, term->parentheses.lastSubpatternId, parenthesesFrameLocation);
                     storeToFrame(index, parenthesesFrameLocation + BackTrackInfoParentheses::beginIndex());

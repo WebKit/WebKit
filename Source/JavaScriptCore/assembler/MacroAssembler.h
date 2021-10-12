@@ -329,11 +329,11 @@ public:
     void pushToSave(FPRegisterID src)
     {
         subPtr(TrustedImm32(sizeof(double)), stackPointerRegister);
-        storeDouble(src, stackPointerRegister);
+        storeDouble(src, Address(stackPointerRegister));
     }
     void popToRestore(FPRegisterID dest)
     {
-        loadDouble(stackPointerRegister, dest);
+        loadDouble(Address(stackPointerRegister), dest);
         addPtr(TrustedImm32(sizeof(double)), stackPointerRegister);
     }
     
@@ -702,7 +702,7 @@ public:
         xor32(src, dest);
     }
 
-    void loadPtr(ImplicitAddress address, RegisterID dest)
+    void loadPtr(Address address, RegisterID dest)
     {
         load32(address, dest);
     }
@@ -752,7 +752,7 @@ public:
         compare32(cond, left, right, dest);
     }
     
-    void storePtr(RegisterID src, ImplicitAddress address)
+    void storePtr(RegisterID src, Address address)
     {
         store32(src, address);
     }
@@ -767,7 +767,7 @@ public:
         store32(src, address);
     }
 
-    void storePtr(TrustedImmPtr imm, ImplicitAddress address)
+    void storePtr(TrustedImmPtr imm, Address address)
     {
         store32(TrustedImm32(imm), address);
     }
@@ -782,7 +782,7 @@ public:
         store32(TrustedImm32(imm), address);
     }
 
-    void storePtr(TrustedImm32 imm, ImplicitAddress address)
+    void storePtr(TrustedImm32 imm, Address address)
     {
         store32(imm, address);
     }
@@ -1050,7 +1050,7 @@ public:
         xor64(TrustedImm64(imm), srcDest);
     }
 
-    void loadPtr(ImplicitAddress address, RegisterID dest)
+    void loadPtr(Address address, RegisterID dest)
     {
         load64(address, dest);
     }
@@ -1089,7 +1089,7 @@ public:
         return load64WithCompactAddressOffsetPatch(address, dest);
     }
 
-    void storePtr(RegisterID src, ImplicitAddress address)
+    void storePtr(RegisterID src, Address address)
     {
         store64(src, address);
     }
@@ -1104,12 +1104,12 @@ public:
         store64(src, address);
     }
 
-    void storePtr(TrustedImmPtr imm, ImplicitAddress address)
+    void storePtr(TrustedImmPtr imm, Address address)
     {
         store64(TrustedImm64(imm), address);
     }
 
-    void storePtr(TrustedImm32 imm, ImplicitAddress address)
+    void storePtr(TrustedImm32 imm, Address address)
     {
         store64(imm, address);
     }

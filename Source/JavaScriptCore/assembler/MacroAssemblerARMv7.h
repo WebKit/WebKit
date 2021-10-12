@@ -370,16 +370,16 @@ public:
         ARMThumbImmediate armImm = ARMThumbImmediate::makeEncodedImm(imm.m_value);
         if (armImm.isValid()) {
             move(TrustedImmPtr(address.m_ptr), addressTempRegister);
-            load8(addressTempRegister, dataTempRegister);
+            load8(Address(addressTempRegister), dataTempRegister);
             m_assembler.orr(dataTempRegister, dataTempRegister, armImm);
-            store8(dataTempRegister, addressTempRegister);
+            store8(dataTempRegister, Address(addressTempRegister));
         } else {
             move(TrustedImmPtr(address.m_ptr), addressTempRegister);
-            load8(addressTempRegister, dataTempRegister);
+            load8(Address(addressTempRegister), dataTempRegister);
             move(imm, addressTempRegister);
             m_assembler.orr(dataTempRegister, dataTempRegister, addressTempRegister);
             move(TrustedImmPtr(address.m_ptr), addressTempRegister);
-            store8(dataTempRegister, addressTempRegister);
+            store8(dataTempRegister, Address(addressTempRegister));
         }
     }
 
@@ -388,16 +388,16 @@ public:
         ARMThumbImmediate armImm = ARMThumbImmediate::makeEncodedImm(imm.m_value);
         if (armImm.isValid()) {
             move(TrustedImmPtr(dest.m_ptr), addressTempRegister);
-            load16(addressTempRegister, dataTempRegister);
+            load16(Address(addressTempRegister), dataTempRegister);
             m_assembler.orr(dataTempRegister, dataTempRegister, armImm);
-            store16(dataTempRegister, addressTempRegister);
+            store16(dataTempRegister, Address(addressTempRegister));
         } else {
             move(TrustedImmPtr(dest.m_ptr), addressTempRegister);
-            load16(addressTempRegister, dataTempRegister);
+            load16(Address(addressTempRegister), dataTempRegister);
             move(imm, addressTempRegister);
             m_assembler.orr(dataTempRegister, dataTempRegister, addressTempRegister);
             move(TrustedImmPtr(dest.m_ptr), addressTempRegister);
-            store16(dataTempRegister, addressTempRegister);
+            store16(dataTempRegister, Address(addressTempRegister));
         }
     }
 
@@ -409,9 +409,9 @@ public:
     void or32(RegisterID src, AbsoluteAddress dest)
     {
         move(TrustedImmPtr(dest.m_ptr), addressTempRegister);
-        load32(addressTempRegister, dataTempRegister);
+        load32(Address(addressTempRegister), dataTempRegister);
         or32(src, dataTempRegister);
-        store32(dataTempRegister, addressTempRegister);
+        store32(dataTempRegister, Address(addressTempRegister));
     }
 
     void or32(TrustedImm32 imm, AbsoluteAddress address)
@@ -419,16 +419,16 @@ public:
         ARMThumbImmediate armImm = ARMThumbImmediate::makeEncodedImm(imm.m_value);
         if (armImm.isValid()) {
             move(TrustedImmPtr(address.m_ptr), addressTempRegister);
-            load32(addressTempRegister, dataTempRegister);
+            load32(Address(addressTempRegister), dataTempRegister);
             m_assembler.orr(dataTempRegister, dataTempRegister, armImm);
-            store32(dataTempRegister, addressTempRegister);
+            store32(dataTempRegister, Address(addressTempRegister));
         } else {
             move(TrustedImmPtr(address.m_ptr), addressTempRegister);
-            load32(addressTempRegister, dataTempRegister);
+            load32(Address(addressTempRegister), dataTempRegister);
             move(imm, addressTempRegister);
             m_assembler.orr(dataTempRegister, dataTempRegister, addressTempRegister);
             move(TrustedImmPtr(address.m_ptr), addressTempRegister);
-            store32(dataTempRegister, addressTempRegister);
+            store32(dataTempRegister, Address(addressTempRegister));
         }
     }
 
@@ -754,7 +754,7 @@ private:
     }
 
 public:
-    void load32(ImplicitAddress address, RegisterID dest)
+    void load32(Address address, RegisterID dest)
     {
         load32(setupArmAddress(address), dest);
     }
@@ -800,12 +800,12 @@ public:
         return result;
     }
 
-    void load8(ImplicitAddress address, RegisterID dest)
+    void load8(Address address, RegisterID dest)
     {
         load8(setupArmAddress(address), dest);
     }
 
-    void load8SignedExtendTo32(ImplicitAddress, RegisterID)
+    void load8SignedExtendTo32(Address, RegisterID)
     {
         UNREACHABLE_FOR_PLATFORM();
     }
@@ -823,7 +823,7 @@ public:
     void load8(const void* address, RegisterID dest)
     {
         move(TrustedImmPtr(address), dest);
-        load8(dest, dest);
+        load8(Address(dest), dest);
     }
 
     DataLabel32 load32WithAddressOffsetPatch(Address address, RegisterID dest)
@@ -862,7 +862,7 @@ public:
         load16SignedExtendTo32(setupArmAddress(address), dest);
     }
     
-    void load16(ImplicitAddress address, RegisterID dest)
+    void load16(Address address, RegisterID dest)
     {
         ARMThumbImmediate armImm = ARMThumbImmediate::makeUInt12(address.offset);
         if (armImm.isValid())
@@ -873,7 +873,7 @@ public:
         }
     }
     
-    void load16SignedExtendTo32(ImplicitAddress, RegisterID)
+    void load16SignedExtendTo32(Address, RegisterID)
     {
         UNREACHABLE_FOR_PLATFORM();
     }
@@ -903,7 +903,7 @@ public:
         return label;
     }
 
-    void store32(RegisterID src, ImplicitAddress address)
+    void store32(RegisterID src, Address address)
     {
         store32(src, setupArmAddress(address));
     }
@@ -913,7 +913,7 @@ public:
         store32(src, setupArmAddress(address));
     }
 
-    void store32(TrustedImm32 imm, ImplicitAddress address)
+    void store32(TrustedImm32 imm, Address address)
     {
         move(imm, dataTempRegister);
         store32(dataTempRegister, setupArmAddress(address));
@@ -972,7 +972,7 @@ public:
         store8(src, ArmAddress(addrreg, 0));
     }
     
-    void store16(RegisterID src, ImplicitAddress address)
+    void store16(RegisterID src, Address address)
     {
         store16(src, setupArmAddress(address));
     }
@@ -1043,7 +1043,7 @@ public:
     static bool supportsFloatingPointAbs() { return true; }
     static bool supportsFloatingPointRounding() { return false; }
 
-    void loadDouble(ImplicitAddress address, FPRegisterID dest)
+    void loadDouble(Address address, FPRegisterID dest)
     {
         RegisterID base = address.base;
         int32_t offset = address.offset;
@@ -1058,7 +1058,7 @@ public:
         m_assembler.vldr(dest, base, offset);
     }
 
-    void loadFloat(ImplicitAddress address, FPRegisterID dest)
+    void loadFloat(Address address, FPRegisterID dest)
     {
         RegisterID base = address.base;
         int32_t offset = address.offset;
@@ -1112,7 +1112,7 @@ public:
         m_assembler.vldr(dest, addressTempRegister, 0);
     }
 
-    void storeDouble(FPRegisterID src, ImplicitAddress address)
+    void storeDouble(FPRegisterID src, Address address)
     {
         RegisterID base = address.base;
         int32_t offset = address.offset;
@@ -1127,7 +1127,7 @@ public:
         m_assembler.vstr(src, base, offset);
     }
 
-    void storeFloat(FPRegisterID src, ImplicitAddress address)
+    void storeFloat(FPRegisterID src, Address address)
     {
         RegisterID base = address.base;
         int32_t offset = address.offset;
@@ -1145,7 +1145,7 @@ public:
     void storeDouble(FPRegisterID src, TrustedImmPtr address)
     {
         move(address, addressTempRegister);
-        storeDouble(src, addressTempRegister);
+        storeDouble(src, Address(addressTempRegister));
     }
 
     void storeDouble(FPRegisterID src, BaseIndex address)
@@ -2132,13 +2132,13 @@ public:
         return PatchableJump(result);
     }
 
-    ALWAYS_INLINE DataLabelPtr storePtrWithPatch(TrustedImmPtr initialValue, ImplicitAddress address)
+    ALWAYS_INLINE DataLabelPtr storePtrWithPatch(TrustedImmPtr initialValue, Address address)
     {
         DataLabelPtr label = moveWithPatch(initialValue, dataTempRegister);
         store32(dataTempRegister, address);
         return label;
     }
-    ALWAYS_INLINE DataLabelPtr storePtrWithPatch(ImplicitAddress address) { return storePtrWithPatch(TrustedImmPtr(nullptr), address); }
+    ALWAYS_INLINE DataLabelPtr storePtrWithPatch(Address address) { return storePtrWithPatch(TrustedImmPtr(nullptr), address); }
 
     template<PtrTag resultTag, PtrTag locationTag>
     static FunctionPtr<resultTag> readCallTarget(CodeLocationCall<locationTag> call)
@@ -2241,15 +2241,6 @@ protected:
     }
 
     ArmAddress setupArmAddress(Address address)
-    {
-        if ((address.offset >= -0xff) && (address.offset <= 0xfff))
-            return ArmAddress(address.base, address.offset);
-
-        move(TrustedImm32(address.offset), addressTempRegister);
-        return ArmAddress(address.base, addressTempRegister);
-    }
-
-    ArmAddress setupArmAddress(ImplicitAddress address)
     {
         if ((address.offset >= -0xff) && (address.offset <= 0xfff))
             return ArmAddress(address.base, address.offset);

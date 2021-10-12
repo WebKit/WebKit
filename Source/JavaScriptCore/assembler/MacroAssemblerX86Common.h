@@ -1210,7 +1210,7 @@ public:
     // operand objects to loads and store will be implicitly constructed if a
     // register is passed.
 
-    void load32(ImplicitAddress address, RegisterID dest)
+    void load32(Address address, RegisterID dest)
     {
         m_assembler.movl_mr(address.offset, address.base, dest);
     }
@@ -1225,7 +1225,7 @@ public:
         load32(address, dest);
     }
 
-    void load16Unaligned(ImplicitAddress address, RegisterID dest)
+    void load16Unaligned(Address address, RegisterID dest)
     {
         load16(address, dest);
     }
@@ -1268,7 +1268,7 @@ public:
         m_assembler.movzbl_mr(address.offset, address.base, address.index, address.scale, dest);
     }
 
-    void load8(ImplicitAddress address, RegisterID dest)
+    void load8(Address address, RegisterID dest)
     {
         m_assembler.movzbl_mr(address.offset, address.base, dest);
     }
@@ -1278,7 +1278,7 @@ public:
         m_assembler.movsbl_mr(address.offset, address.base, address.index, address.scale, dest);
     }
 
-    void load8SignedExtendTo32(ImplicitAddress address, RegisterID dest)
+    void load8SignedExtendTo32(Address address, RegisterID dest)
     {
         m_assembler.movsbl_mr(address.offset, address.base, dest);
     }
@@ -1293,7 +1293,7 @@ public:
         m_assembler.movsbl_rr(src, dest);
     }
     
-    void load16(ImplicitAddress address, RegisterID dest)
+    void load16(Address address, RegisterID dest)
     {
         m_assembler.movzwl_mr(address.offset, address.base, dest);
     }
@@ -1303,11 +1303,6 @@ public:
         m_assembler.movzwl_mr(address.offset, address.base, address.index, address.scale, dest);
     }
     
-    void load16(Address address, RegisterID dest)
-    {
-        m_assembler.movzwl_mr(address.offset, address.base, dest);
-    }
-
     void load16SignedExtendTo32(BaseIndex address, RegisterID dest)
     {
         m_assembler.movswl_mr(address.offset, address.base, address.index, address.scale, dest);
@@ -1352,7 +1347,7 @@ public:
         return DataLabel32(this);
     }
 
-    void store32(RegisterID src, ImplicitAddress address)
+    void store32(RegisterID src, Address address)
     {
         m_assembler.movl_rm(src, address.offset, address.base);
     }
@@ -1362,7 +1357,7 @@ public:
         m_assembler.movl_rm(src, address.offset, address.base, address.index, address.scale);
     }
 
-    void store32(TrustedImm32 imm, ImplicitAddress address)
+    void store32(TrustedImm32 imm, Address address)
     {
         m_assembler.movl_i32m(imm.m_value, address.offset, address.base);
     }
@@ -1469,7 +1464,7 @@ public:
         m_assembler.movw_im(static_cast<int16_t>(imm.m_value), address.offset, address.base, address.index, address.scale);
     }
 
-    void store16(TrustedImm32 imm, ImplicitAddress address)
+    void store16(TrustedImm32 imm, Address address)
     {
         m_assembler.movw_im(static_cast<int16_t>(imm.m_value), address.offset, address.base);
     }
@@ -1488,11 +1483,11 @@ public:
         m_assembler.movsd_mr(address.asPtr(), dest);
 #else
         move(address, scratchRegister());
-        loadDouble(scratchRegister(), dest);
+        loadDouble(Address(scratchRegister()), dest);
 #endif
     }
 
-    void loadDouble(ImplicitAddress address, FPRegisterID dest)
+    void loadDouble(Address address, FPRegisterID dest)
     {
         m_assembler.movsd_mr(address.offset, address.base, dest);
     }
@@ -1508,11 +1503,11 @@ public:
         m_assembler.movss_mr(address.asPtr(), dest);
 #else
         move(address, scratchRegister());
-        loadFloat(scratchRegister(), dest);
+        loadFloat(Address(scratchRegister()), dest);
 #endif
     }
 
-    void loadFloat(ImplicitAddress address, FPRegisterID dest)
+    void loadFloat(Address address, FPRegisterID dest)
     {
         m_assembler.movss_mr(address.offset, address.base, dest);
     }
@@ -1522,7 +1517,7 @@ public:
         m_assembler.movss_mr(address.offset, address.base, address.index, address.scale, dest);
     }
 
-    void storeDouble(FPRegisterID src, ImplicitAddress address)
+    void storeDouble(FPRegisterID src, Address address)
     {
         m_assembler.movsd_rm(src, address.offset, address.base);
     }
@@ -1532,7 +1527,7 @@ public:
         m_assembler.movsd_rm(src, address.offset, address.base, address.index, address.scale);
     }
 
-    void storeFloat(FPRegisterID src, ImplicitAddress address)
+    void storeFloat(FPRegisterID src, Address address)
     {
         m_assembler.movss_rm(src, address.offset, address.base);
     }

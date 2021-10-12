@@ -2185,7 +2185,7 @@ void JIT::emitGetVarFromPointer(JSValue* operand, GPRReg reg)
 void JIT::emitGetVarFromIndirectPointer(JSValue** operand, GPRReg reg)
 {
     loadPtr(operand, reg);
-    loadPtr(reg, reg);
+    loadPtr(Address(reg), reg);
 }
 
 void JIT::emitGetClosureVar(VirtualRegister scope, uintptr_t operand)

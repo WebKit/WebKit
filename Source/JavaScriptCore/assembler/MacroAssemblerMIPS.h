@@ -917,7 +917,7 @@ public:
     // register is passed.
 
     /* Need to use zero-extened load byte for load8.  */
-    void load8(ImplicitAddress address, RegisterID dest)
+    void load8(Address address, RegisterID dest)
     {
         if (address.offset >= -32768 && address.offset <= 32767
             && !m_fixedWidth)
@@ -976,7 +976,7 @@ public:
         }
     }
 
-    void load8SignedExtendTo32(ImplicitAddress address, RegisterID dest)
+    void load8SignedExtendTo32(Address address, RegisterID dest)
     {
         if (address.offset >= -32768 && address.offset <= 32767
             && !m_fixedWidth)
@@ -1036,7 +1036,7 @@ public:
     }
 
 
-    void load32(ImplicitAddress address, RegisterID dest)
+    void load32(Address address, RegisterID dest)
     {
         if (address.offset >= -32768 && address.offset <= 32767
             && !m_fixedWidth)
@@ -1233,7 +1233,7 @@ public:
     }
 
     /* Need to use zero-extened load half-word for load16.  */
-    void load16(ImplicitAddress address, RegisterID dest)
+    void load16(Address address, RegisterID dest)
     {
         if (address.offset >= -32768 && address.offset <= 32767
             && !m_fixedWidth)
@@ -1327,7 +1327,7 @@ public:
         return dataLabel;
     }
 
-    void store8(RegisterID src, ImplicitAddress address)
+    void store8(RegisterID src, Address address)
     {
         if (address.offset >= -32768 && address.offset <= 32767
             && !m_fixedWidth)
@@ -1406,7 +1406,7 @@ public:
         }
     }
 
-    void store8(TrustedImm32 imm, ImplicitAddress address)
+    void store8(TrustedImm32 imm, Address address)
     {
         TrustedImm32 imm8(static_cast<int8_t>(imm.m_value));
         if (address.offset >= -32768 && address.offset <= 32767
@@ -1450,7 +1450,7 @@ public:
         }
     }
 
-    void store16(RegisterID src, ImplicitAddress address)
+    void store16(RegisterID src, Address address)
     {
         if (address.offset >= -32768 && address.offset <= 32767
             && !m_fixedWidth) {
@@ -1488,7 +1488,7 @@ public:
         }
     }
 
-    void store32(RegisterID src, ImplicitAddress address)
+    void store32(RegisterID src, Address address)
     {
         if (address.offset >= -32768 && address.offset <= 32767
             && !m_fixedWidth)
@@ -1526,7 +1526,7 @@ public:
         }
     }
 
-    void store32(TrustedImm32 imm, ImplicitAddress address)
+    void store32(TrustedImm32 imm, Address address)
     {
         if (address.offset >= -32768 && address.offset <= 32767
             && !m_fixedWidth) {
@@ -2912,7 +2912,7 @@ public:
         return temp;
     }
 
-    DataLabelPtr storePtrWithPatch(TrustedImmPtr initialValue, ImplicitAddress address)
+    DataLabelPtr storePtrWithPatch(TrustedImmPtr initialValue, Address address)
     {
         m_fixedWidth = true;
         DataLabelPtr dataLabel = moveWithPatch(initialValue, dataTempRegister);
@@ -2921,7 +2921,7 @@ public:
         return dataLabel;
     }
 
-    DataLabelPtr storePtrWithPatch(ImplicitAddress address)
+    DataLabelPtr storePtrWithPatch(Address address)
     {
         return storePtrWithPatch(TrustedImmPtr(nullptr), address);
     }
@@ -2947,7 +2947,7 @@ public:
         }
     }
 
-    void loadFloat(ImplicitAddress address, FPRegisterID dest)
+    void loadFloat(Address address, FPRegisterID dest)
     {
         if (address.offset >= -32768 && address.offset <= 32767
             && !m_fixedWidth) {
@@ -2964,7 +2964,7 @@ public:
         }
     }
 
-    void loadDouble(ImplicitAddress address, FPRegisterID dest)
+    void loadDouble(Address address, FPRegisterID dest)
     {
 #if WTF_MIPS_ISA(1)
         /*
@@ -3086,7 +3086,7 @@ public:
         }
     }
 
-    void storeFloat(FPRegisterID src, ImplicitAddress address)
+    void storeFloat(FPRegisterID src, Address address)
     {
         if (address.offset >= -32768 && address.offset <= 32767
             && !m_fixedWidth)
@@ -3103,7 +3103,7 @@ public:
         }
     }
 
-    void storeDouble(FPRegisterID src, ImplicitAddress address)
+    void storeDouble(FPRegisterID src, Address address)
     {
 #if WTF_MIPS_ISA(1)
         /*

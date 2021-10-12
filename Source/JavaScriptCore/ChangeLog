@@ -1,5 +1,176 @@
 2021-10-11  Saam Barati  <sbarati@apple.com>
 
+        Remove ImplicitAddress
+        https://bugs.webkit.org/show_bug.cgi?id=230820
+        <rdar://problem/83826318>
+
+        Reviewed by Yusuke Suzuki.
+
+        Because we rely on implicit conversion from RegisterID to int values,
+        some compilers (aka MSVC) might convert a constant RegisterID that's passed in
+        to nullptr instead of calling the implicit constructor in ImplicitAddress.
+        
+        For example, I got bit by this when I had code that did:
+        loadPtr(regT0, xyz)
+        
+        This called the loadPtr(void*, RegisterID) function with nullptr passed as
+        the first argument instead of the loadPtr(ImplicitAddress, RegisterID)
+        function.
+        
+        Let's avoid any such problems in the future by just not using ImplicitAddress.
+
+        * assembler/AbstractMacroAssembler.h:
+        (JSC::AbstractMacroAssembler::ImplicitAddress::ImplicitAddress): Deleted.
+        * assembler/MacroAssembler.h:
+        (JSC::MacroAssembler::pushToSave):
+        (JSC::MacroAssembler::popToRestore):
+        (JSC::MacroAssembler::loadPtr):
+        (JSC::MacroAssembler::storePtr):
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::load64):
+        (JSC::MacroAssemblerARM64::load32):
+        (JSC::MacroAssemblerARM64::load16):
+        (JSC::MacroAssemblerARM64::load16Unaligned):
+        (JSC::MacroAssemblerARM64::load16SignedExtendTo32):
+        (JSC::MacroAssemblerARM64::load8):
+        (JSC::MacroAssemblerARM64::load8SignedExtendTo32):
+        (JSC::MacroAssemblerARM64::store64):
+        (JSC::MacroAssemblerARM64::store32):
+        (JSC::MacroAssemblerARM64::store16):
+        (JSC::MacroAssemblerARM64::store8):
+        (JSC::MacroAssemblerARM64::loadDouble):
+        (JSC::MacroAssemblerARM64::loadFloat):
+        (JSC::MacroAssemblerARM64::storeDouble):
+        (JSC::MacroAssemblerARM64::storeFloat):
+        (JSC::MacroAssemblerARM64::pushToSaveImmediateWithoutTouchingRegisters):
+        (JSC::MacroAssemblerARM64::popToRestore):
+        (JSC::MacroAssemblerARM64::pushToSave):
+        (JSC::MacroAssemblerARM64::storePtrWithPatch):
+        (JSC::MacroAssemblerARM64::loadAcq8SignedExtendTo32):
+        (JSC::MacroAssemblerARM64::loadAcq8):
+        (JSC::MacroAssemblerARM64::storeRel8):
+        (JSC::MacroAssemblerARM64::loadAcq16SignedExtendTo32):
+        (JSC::MacroAssemblerARM64::loadAcq16):
+        (JSC::MacroAssemblerARM64::storeRel16):
+        (JSC::MacroAssemblerARM64::loadAcq32):
+        (JSC::MacroAssemblerARM64::loadAcq64):
+        (JSC::MacroAssemblerARM64::storeRel32):
+        (JSC::MacroAssemblerARM64::storeRel64):
+        (JSC::MacroAssemblerARM64::loadLink8):
+        (JSC::MacroAssemblerARM64::loadLinkAcq8):
+        (JSC::MacroAssemblerARM64::storeCond8):
+        (JSC::MacroAssemblerARM64::storeCondRel8):
+        (JSC::MacroAssemblerARM64::loadLink16):
+        (JSC::MacroAssemblerARM64::loadLinkAcq16):
+        (JSC::MacroAssemblerARM64::storeCond16):
+        (JSC::MacroAssemblerARM64::storeCondRel16):
+        (JSC::MacroAssemblerARM64::loadLink32):
+        (JSC::MacroAssemblerARM64::loadLinkAcq32):
+        (JSC::MacroAssemblerARM64::storeCond32):
+        (JSC::MacroAssemblerARM64::storeCondRel32):
+        (JSC::MacroAssemblerARM64::loadLink64):
+        (JSC::MacroAssemblerARM64::loadLinkAcq64):
+        (JSC::MacroAssemblerARM64::storeCond64):
+        (JSC::MacroAssemblerARM64::storeCondRel64):
+        (JSC::MacroAssemblerARM64::extractSimpleAddress):
+        * assembler/MacroAssemblerARM64E.h:
+        (JSC::MacroAssemblerARM64E::atomicXchgAdd8):
+        (JSC::MacroAssemblerARM64E::atomicXchgAdd16):
+        (JSC::MacroAssemblerARM64E::atomicXchgAdd32):
+        (JSC::MacroAssemblerARM64E::atomicXchgAdd64):
+        (JSC::MacroAssemblerARM64E::atomicXchgXor8):
+        (JSC::MacroAssemblerARM64E::atomicXchgXor16):
+        (JSC::MacroAssemblerARM64E::atomicXchgXor32):
+        (JSC::MacroAssemblerARM64E::atomicXchgXor64):
+        (JSC::MacroAssemblerARM64E::atomicXchgOr8):
+        (JSC::MacroAssemblerARM64E::atomicXchgOr16):
+        (JSC::MacroAssemblerARM64E::atomicXchgOr32):
+        (JSC::MacroAssemblerARM64E::atomicXchgOr64):
+        (JSC::MacroAssemblerARM64E::atomicXchgClear8):
+        (JSC::MacroAssemblerARM64E::atomicXchgClear16):
+        (JSC::MacroAssemblerARM64E::atomicXchgClear32):
+        (JSC::MacroAssemblerARM64E::atomicXchgClear64):
+        (JSC::MacroAssemblerARM64E::atomicXchg8):
+        (JSC::MacroAssemblerARM64E::atomicXchg16):
+        (JSC::MacroAssemblerARM64E::atomicXchg32):
+        (JSC::MacroAssemblerARM64E::atomicXchg64):
+        (JSC::MacroAssemblerARM64E::atomicStrongCAS8):
+        (JSC::MacroAssemblerARM64E::atomicStrongCAS16):
+        (JSC::MacroAssemblerARM64E::atomicStrongCAS32):
+        (JSC::MacroAssemblerARM64E::atomicStrongCAS64):
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::or8):
+        (JSC::MacroAssemblerARMv7::or16):
+        (JSC::MacroAssemblerARMv7::or32):
+        (JSC::MacroAssemblerARMv7::load32):
+        (JSC::MacroAssemblerARMv7::load8):
+        (JSC::MacroAssemblerARMv7::load8SignedExtendTo32):
+        (JSC::MacroAssemblerARMv7::load16):
+        (JSC::MacroAssemblerARMv7::load16SignedExtendTo32):
+        (JSC::MacroAssemblerARMv7::store32):
+        (JSC::MacroAssemblerARMv7::store16):
+        (JSC::MacroAssemblerARMv7::loadDouble):
+        (JSC::MacroAssemblerARMv7::loadFloat):
+        (JSC::MacroAssemblerARMv7::storeDouble):
+        (JSC::MacroAssemblerARMv7::storeFloat):
+        (JSC::MacroAssemblerARMv7::storePtrWithPatch):
+        * assembler/MacroAssemblerMIPS.h:
+        (JSC::MacroAssemblerMIPS::load8):
+        (JSC::MacroAssemblerMIPS::load8SignedExtendTo32):
+        (JSC::MacroAssemblerMIPS::load32):
+        (JSC::MacroAssemblerMIPS::load16):
+        (JSC::MacroAssemblerMIPS::store8):
+        (JSC::MacroAssemblerMIPS::store16):
+        (JSC::MacroAssemblerMIPS::store32):
+        (JSC::MacroAssemblerMIPS::storePtrWithPatch):
+        (JSC::MacroAssemblerMIPS::loadFloat):
+        (JSC::MacroAssemblerMIPS::loadDouble):
+        (JSC::MacroAssemblerMIPS::storeFloat):
+        (JSC::MacroAssemblerMIPS::storeDouble):
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::load32):
+        (JSC::MacroAssemblerX86Common::load16Unaligned):
+        (JSC::MacroAssemblerX86Common::load8):
+        (JSC::MacroAssemblerX86Common::load8SignedExtendTo32):
+        (JSC::MacroAssemblerX86Common::load16):
+        (JSC::MacroAssemblerX86Common::store32):
+        (JSC::MacroAssemblerX86Common::store16):
+        (JSC::MacroAssemblerX86Common::loadDouble):
+        (JSC::MacroAssemblerX86Common::loadFloat):
+        (JSC::MacroAssemblerX86Common::storeDouble):
+        (JSC::MacroAssemblerX86Common::storeFloat):
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::load8):
+        (JSC::MacroAssemblerX86_64::load32):
+        (JSC::MacroAssemblerX86_64::store32):
+        (JSC::MacroAssemblerX86_64::load64):
+        (JSC::MacroAssemblerX86_64::store64):
+        (JSC::MacroAssemblerX86_64::storePtrWithPatch):
+        * assembler/testmasm.cpp:
+        (JSC::testBranchTruncateDoubleToInt32):
+        (JSC::testLoadPrePostIndex32):
+        (JSC::testLoadPrePostIndex64):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileStringSlice):
+        (JSC::DFG::SpeculativeJIT::compileGetByValOnString):
+        (JSC::DFG::SpeculativeJIT::compileClearCatchLocals):
+        * ftl/FTLLocation.cpp:
+        (JSC::FTL::Location::restoreInto const):
+        * ftl/FTLThunks.cpp:
+        (JSC::FTL::genericGenerationThunkGenerator):
+        * jit/AssemblyHelpers.cpp:
+        (JSC::AssemblyHelpers::debugCall):
+        (JSC::AssemblyHelpers::sanitizeStackInline):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emitGetVarFromIndirectPointer):
+        * jit/ThunkGenerators.cpp:
+        (JSC::arityFixupGenerator):
+        * wasm/WasmBinding.cpp:
+        (JSC::Wasm::wasmToWasm):
+        * yarr/YarrJIT.cpp:
+
+2021-10-11  Saam Barati  <sbarati@apple.com>
+
         Share more code that uses ScratchRegisterAllocator in the ICs
         https://bugs.webkit.org/show_bug.cgi?id=231125
         <rdar://problem/84066374>

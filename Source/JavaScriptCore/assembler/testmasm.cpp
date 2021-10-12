@@ -303,16 +303,16 @@ void testBranchTruncateDoubleToInt32(double val, int32_t expected)
         jit.subPtr(CCallHelpers::TrustedImm32(stackAlignmentBytes()), MacroAssembler::stackPointerRegister);
         if (isBigEndian) {
             jit.store32(CCallHelpers::TrustedImm32(valAsUInt >> 32),
-                MacroAssembler::stackPointerRegister);
+                MacroAssembler::Address(MacroAssembler::stackPointerRegister));
             jit.store32(CCallHelpers::TrustedImm32(valAsUInt & 0xffffffff),
                 MacroAssembler::Address(MacroAssembler::stackPointerRegister, 4));
         } else {
             jit.store32(CCallHelpers::TrustedImm32(valAsUInt & 0xffffffff),
-                MacroAssembler::stackPointerRegister);
+                MacroAssembler::Address(MacroAssembler::stackPointerRegister));
             jit.store32(CCallHelpers::TrustedImm32(valAsUInt >> 32),
                 MacroAssembler::Address(MacroAssembler::stackPointerRegister, 4));
         }
-        jit.loadDouble(MacroAssembler::stackPointerRegister, FPRInfo::fpRegT0);
+        jit.loadDouble(MacroAssembler::Address(MacroAssembler::stackPointerRegister), FPRInfo::fpRegT0);
 
         MacroAssembler::Jump done;
         done = jit.branchTruncateDoubleToInt32(FPRInfo::fpRegT0, GPRInfo::returnValueGPR, MacroAssembler::BranchIfTruncateSuccessful);
@@ -2313,7 +2313,7 @@ void testLoadPrePostIndex32()
 
             // res = *++p1; *p1 = 4; return res;
             jit.load32(CCallHelpers::PreIndexAddress(GPRInfo::argumentGPR0, index), GPRInfo::argumentGPR1);
-            jit.store32(CCallHelpers::TrustedImm32(replace), CCallHelpers::ImplicitAddress(GPRInfo::argumentGPR0));
+            jit.store32(CCallHelpers::TrustedImm32(replace), CCallHelpers::Address(GPRInfo::argumentGPR0));
             jit.move(GPRInfo::argumentGPR1, GPRInfo::returnValueGPR);
 
             emitFunctionEpilogue(jit);
@@ -2331,7 +2331,7 @@ void testLoadPrePostIndex32()
 
             // res = *p2++; *p2 = 5; return res;
             jit.load32(CCallHelpers::PostIndexAddress(GPRInfo::argumentGPR0, index), GPRInfo::argumentGPR1);
-            jit.store32(CCallHelpers::TrustedImm32(replace), CCallHelpers::ImplicitAddress(GPRInfo::argumentGPR0));
+            jit.store32(CCallHelpers::TrustedImm32(replace), CCallHelpers::Address(GPRInfo::argumentGPR0));
             jit.move(GPRInfo::argumentGPR1, GPRInfo::returnValueGPR);
 
             emitFunctionEpilogue(jit);
@@ -2355,7 +2355,7 @@ void testLoadPrePostIndex64()
 
             // res = *++p1; *p1 = 4; return res;
             jit.load64(CCallHelpers::PreIndexAddress(GPRInfo::argumentGPR0, index), GPRInfo::argumentGPR1);
-            jit.store64(CCallHelpers::TrustedImm64(replace), CCallHelpers::ImplicitAddress(GPRInfo::argumentGPR0));
+            jit.store64(CCallHelpers::TrustedImm64(replace), CCallHelpers::Address(GPRInfo::argumentGPR0));
             jit.move(GPRInfo::argumentGPR1, GPRInfo::returnValueGPR);
 
             emitFunctionEpilogue(jit);
@@ -2373,7 +2373,7 @@ void testLoadPrePostIndex64()
 
             // res = *p2++; *p2 = 5; return res;
             jit.load64(CCallHelpers::PostIndexAddress(GPRInfo::argumentGPR0, index), GPRInfo::argumentGPR1);
-            jit.store64(CCallHelpers::TrustedImm64(replace), CCallHelpers::ImplicitAddress(GPRInfo::argumentGPR0));
+            jit.store64(CCallHelpers::TrustedImm64(replace), CCallHelpers::Address(GPRInfo::argumentGPR0));
             jit.move(GPRInfo::argumentGPR1, GPRInfo::returnValueGPR);
 
             emitFunctionEpilogue(jit);

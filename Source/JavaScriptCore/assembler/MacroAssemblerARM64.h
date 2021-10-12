@@ -1522,7 +1522,7 @@ public:
         }
     }
 
-    void load64(ImplicitAddress address, RegisterID dest)
+    void load64(Address address, RegisterID dest)
     {
         if (tryLoadWithOffset<64>(dest, address.base, address.offset))
             return;
@@ -1677,7 +1677,7 @@ public:
         return result;
     }
 
-    void load32(ImplicitAddress address, RegisterID dest)
+    void load32(Address address, RegisterID dest)
     {
         if (tryLoadWithOffset<32>(dest, address.base, address.offset))
             return;
@@ -1736,7 +1736,7 @@ public:
         load32(address, dest);
     }
 
-    void load16(ImplicitAddress address, RegisterID dest)
+    void load16(Address address, RegisterID dest)
     {
         if (tryLoadWithOffset<16>(dest, address.base, address.offset))
             return;
@@ -1772,7 +1772,7 @@ public:
         load<16>(address, dest);
     }
 
-    void load16Unaligned(ImplicitAddress address, RegisterID dest)
+    void load16Unaligned(Address address, RegisterID dest)
     {
         load16(address, dest);
     }
@@ -1782,7 +1782,7 @@ public:
         load16(address, dest);
     }
 
-    void load16SignedExtendTo32(ImplicitAddress address, RegisterID dest)
+    void load16SignedExtendTo32(Address address, RegisterID dest)
     {
         if (tryLoadSignedWithOffset<16>(dest, address.base, address.offset))
             return;
@@ -1815,7 +1815,7 @@ public:
         m_assembler.sxth<32>(dest, src);
     }
 
-    void load8(ImplicitAddress address, RegisterID dest)
+    void load8(Address address, RegisterID dest)
     {
         if (tryLoadWithOffset<8>(dest, address.base, address.offset))
             return;
@@ -1851,7 +1851,7 @@ public:
         m_assembler.ldrb(dest, src, simm);
     }
 
-    void load8SignedExtendTo32(ImplicitAddress address, RegisterID dest)
+    void load8SignedExtendTo32(Address address, RegisterID dest)
     {
         if (tryLoadSignedWithOffset<8>(dest, address.base, address.offset))
             return;
@@ -1892,7 +1892,7 @@ public:
         m_assembler.sxtb<32>(dest, src);
     }
 
-    void store64(RegisterID src, ImplicitAddress address)
+    void store64(RegisterID src, Address address)
     {
         if (tryStoreWithOffset<64>(src, address.base, address.offset))
             return;
@@ -1941,12 +1941,12 @@ public:
         store64(dataTempRegister, address);
     }
 
-    void store64(TrustedImm32 imm, ImplicitAddress address)
+    void store64(TrustedImm32 imm, Address address)
     {
         store64(TrustedImm64(imm.m_value), address);
     }
 
-    void store64(TrustedImm64 imm, ImplicitAddress address)
+    void store64(TrustedImm64 imm, Address address)
     {
         if (!imm.m_value) {
             store64(ARM64Registers::zr, address);
@@ -2036,7 +2036,7 @@ public:
         storeDouble(src2, Address(dest, offset.m_value + 8));
     }
 
-    void store32(RegisterID src, ImplicitAddress address)
+    void store32(RegisterID src, Address address)
     {
         if (tryStoreWithOffset<32>(src, address.base, address.offset))
             return;
@@ -2064,7 +2064,7 @@ public:
         store<32>(src, address);
     }
 
-    void store32(TrustedImm32 imm, ImplicitAddress address)
+    void store32(TrustedImm32 imm, Address address)
     {
         if (!imm.m_value) {
             store32(ARM64Registers::zr, address);
@@ -2115,7 +2115,7 @@ public:
         return label;
     }
 
-    void store16(RegisterID src, ImplicitAddress address)
+    void store16(RegisterID src, Address address)
     {
         if (tryStoreWithOffset<16>(src, address.base, address.offset))
             return;
@@ -2174,7 +2174,7 @@ public:
         m_assembler.strb(src, memoryTempRegister, 0);
     }
 
-    void store8(RegisterID src, ImplicitAddress address)
+    void store8(RegisterID src, Address address)
     {
         if (tryStoreWithOffset<8>(src, address.base, address.offset))
             return;
@@ -2195,7 +2195,7 @@ public:
         store8(dataTempRegister, address);
     }
 
-    void store8(TrustedImm32 imm, ImplicitAddress address)
+    void store8(TrustedImm32 imm, Address address)
     {
         TrustedImm32 imm8(static_cast<int8_t>(imm.m_value));
         if (!imm8.m_value) {
@@ -2460,7 +2460,7 @@ public:
         m_assembler.fdiv<32>(dest, op1, op2);
     }
 
-    void loadDouble(ImplicitAddress address, FPRegisterID dest)
+    void loadDouble(Address address, FPRegisterID dest)
     {
         if (tryLoadWithOffset<64>(dest, address.base, address.offset))
             return;
@@ -2489,7 +2489,7 @@ public:
         m_assembler.ldr<64>(dest, memoryTempRegister, ARM64Registers::zr);
     }
 
-    void loadFloat(ImplicitAddress address, FPRegisterID dest)
+    void loadFloat(Address address, FPRegisterID dest)
     {
         if (tryLoadWithOffset<32>(dest, address.base, address.offset))
             return;
@@ -2742,7 +2742,7 @@ public:
         m_assembler.fsqrt<32>(dest, src);
     }
 
-    void storeDouble(FPRegisterID src, ImplicitAddress address)
+    void storeDouble(FPRegisterID src, Address address)
     {
         if (tryStoreWithOffset<64>(src, address.base, address.offset))
             return;
@@ -2771,7 +2771,7 @@ public:
         m_assembler.str<64>(src, address.base, memoryTempRegister);
     }
 
-    void storeFloat(FPRegisterID src, ImplicitAddress address)
+    void storeFloat(FPRegisterID src, Address address)
     {
         if (tryStoreWithOffset<32>(src, address.base, address.offset))
             return;
@@ -2928,7 +2928,7 @@ public:
 
         pushPair(reg, reg);
         move(imm, reg);
-        store64(reg, stackPointerRegister);
+        store64(reg, Address(stackPointerRegister));
         load64(Address(stackPointerRegister, 8), reg);
     }
 
@@ -2946,14 +2946,14 @@ public:
     
     void popToRestore(FPRegisterID dest)
     {
-        loadDouble(stackPointerRegister, dest);
+        loadDouble(Address(stackPointerRegister), dest);
         add64(TrustedImm32(16), stackPointerRegister);
     }
     
     void pushToSave(FPRegisterID src)
     {
         sub64(TrustedImm32(16), stackPointerRegister);
-        storeDouble(src, stackPointerRegister);
+        storeDouble(src, Address(stackPointerRegister));
     }
 
     static constexpr ptrdiff_t pushToSaveByteOffset() { return 16; }
@@ -4163,7 +4163,7 @@ public:
         return PatchableJump(result);
     }
 
-    ALWAYS_INLINE DataLabelPtr storePtrWithPatch(TrustedImmPtr initialValue, ImplicitAddress address)
+    ALWAYS_INLINE DataLabelPtr storePtrWithPatch(TrustedImmPtr initialValue, Address address)
     {
         DataLabelPtr label(this);
         moveWithFixedWidth(initialValue, getCachedDataTempRegisterIDAndInvalidate());
@@ -4171,7 +4171,7 @@ public:
         return label;
     }
 
-    ALWAYS_INLINE DataLabelPtr storePtrWithPatch(ImplicitAddress address)
+    ALWAYS_INLINE DataLabelPtr storePtrWithPatch(Address address)
     {
         return storePtrWithPatch(TrustedImmPtr(nullptr), address);
     }
@@ -4216,134 +4216,134 @@ public:
         m_assembler.dmbISH();
     }
     
-    void loadAcq8SignedExtendTo32(ImplicitAddress address, RegisterID dest)
+    void loadAcq8SignedExtendTo32(Address address, RegisterID dest)
     {
         m_assembler.ldar<8>(dest, extractSimpleAddress(address));
     }
     
-    void loadAcq8(ImplicitAddress address, RegisterID dest)
+    void loadAcq8(Address address, RegisterID dest)
     {
         loadAcq8SignedExtendTo32(address, dest);
         and32(TrustedImm32(0xff), dest);
     }
     
-    void storeRel8(RegisterID src, ImplicitAddress address)
+    void storeRel8(RegisterID src, Address address)
     {
         m_assembler.stlr<8>(src, extractSimpleAddress(address));
     }
     
-    void loadAcq16SignedExtendTo32(ImplicitAddress address, RegisterID dest)
+    void loadAcq16SignedExtendTo32(Address address, RegisterID dest)
     {
         m_assembler.ldar<16>(dest, extractSimpleAddress(address));
     }
     
-    void loadAcq16(ImplicitAddress address, RegisterID dest)
+    void loadAcq16(Address address, RegisterID dest)
     {
         loadAcq16SignedExtendTo32(address, dest);
         and32(TrustedImm32(0xffff), dest);
     }
     
-    void storeRel16(RegisterID src, ImplicitAddress address)
+    void storeRel16(RegisterID src, Address address)
     {
         m_assembler.stlr<16>(src, extractSimpleAddress(address));
     }
     
-    void loadAcq32(ImplicitAddress address, RegisterID dest)
+    void loadAcq32(Address address, RegisterID dest)
     {
         m_assembler.ldar<32>(dest, extractSimpleAddress(address));
     }
     
-    void loadAcq64(ImplicitAddress address, RegisterID dest)
+    void loadAcq64(Address address, RegisterID dest)
     {
         m_assembler.ldar<64>(dest, extractSimpleAddress(address));
     }
     
-    void storeRel32(RegisterID dest, ImplicitAddress address)
+    void storeRel32(RegisterID dest, Address address)
     {
         m_assembler.stlr<32>(dest, extractSimpleAddress(address));
     }
     
-    void storeRel64(RegisterID dest, ImplicitAddress address)
+    void storeRel64(RegisterID dest, Address address)
     {
         m_assembler.stlr<64>(dest, extractSimpleAddress(address));
     }
     
-    void loadLink8(ImplicitAddress address, RegisterID dest)
+    void loadLink8(Address address, RegisterID dest)
     {
         m_assembler.ldxr<8>(dest, extractSimpleAddress(address));
     }
     
-    void loadLinkAcq8(ImplicitAddress address, RegisterID dest)
+    void loadLinkAcq8(Address address, RegisterID dest)
     {
         m_assembler.ldaxr<8>(dest, extractSimpleAddress(address));
     }
     
-    void storeCond8(RegisterID src, ImplicitAddress address, RegisterID result)
+    void storeCond8(RegisterID src, Address address, RegisterID result)
     {
         m_assembler.stxr<8>(result, src, extractSimpleAddress(address));
     }
     
-    void storeCondRel8(RegisterID src, ImplicitAddress address, RegisterID result)
+    void storeCondRel8(RegisterID src, Address address, RegisterID result)
     {
         m_assembler.stlxr<8>(result, src, extractSimpleAddress(address));
     }
     
-    void loadLink16(ImplicitAddress address, RegisterID dest)
+    void loadLink16(Address address, RegisterID dest)
     {
         m_assembler.ldxr<16>(dest, extractSimpleAddress(address));
     }
     
-    void loadLinkAcq16(ImplicitAddress address, RegisterID dest)
+    void loadLinkAcq16(Address address, RegisterID dest)
     {
         m_assembler.ldaxr<16>(dest, extractSimpleAddress(address));
     }
     
-    void storeCond16(RegisterID src, ImplicitAddress address, RegisterID result)
+    void storeCond16(RegisterID src, Address address, RegisterID result)
     {
         m_assembler.stxr<16>(result, src, extractSimpleAddress(address));
     }
     
-    void storeCondRel16(RegisterID src, ImplicitAddress address, RegisterID result)
+    void storeCondRel16(RegisterID src, Address address, RegisterID result)
     {
         m_assembler.stlxr<16>(result, src, extractSimpleAddress(address));
     }
     
-    void loadLink32(ImplicitAddress address, RegisterID dest)
+    void loadLink32(Address address, RegisterID dest)
     {
         m_assembler.ldxr<32>(dest, extractSimpleAddress(address));
     }
     
-    void loadLinkAcq32(ImplicitAddress address, RegisterID dest)
+    void loadLinkAcq32(Address address, RegisterID dest)
     {
         m_assembler.ldaxr<32>(dest, extractSimpleAddress(address));
     }
     
-    void storeCond32(RegisterID src, ImplicitAddress address, RegisterID result)
+    void storeCond32(RegisterID src, Address address, RegisterID result)
     {
         m_assembler.stxr<32>(result, src, extractSimpleAddress(address));
     }
     
-    void storeCondRel32(RegisterID src, ImplicitAddress address, RegisterID result)
+    void storeCondRel32(RegisterID src, Address address, RegisterID result)
     {
         m_assembler.stlxr<32>(result, src, extractSimpleAddress(address));
     }
     
-    void loadLink64(ImplicitAddress address, RegisterID dest)
+    void loadLink64(Address address, RegisterID dest)
     {
         m_assembler.ldxr<64>(dest, extractSimpleAddress(address));
     }
     
-    void loadLinkAcq64(ImplicitAddress address, RegisterID dest)
+    void loadLinkAcq64(Address address, RegisterID dest)
     {
         m_assembler.ldaxr<64>(dest, extractSimpleAddress(address));
     }
     
-    void storeCond64(RegisterID src, ImplicitAddress address, RegisterID result)
+    void storeCond64(RegisterID src, Address address, RegisterID result)
     {
         m_assembler.stxr<64>(result, src, extractSimpleAddress(address));
     }
     
-    void storeCondRel64(RegisterID src, ImplicitAddress address, RegisterID result)
+    void storeCondRel64(RegisterID src, Address address, RegisterID result)
     {
         m_assembler.stlxr<64>(result, src, extractSimpleAddress(address));
     }
@@ -5204,7 +5204,7 @@ protected:
         RELEASE_ASSERT_NOT_REACHED();
     }
     
-    RegisterID extractSimpleAddress(ImplicitAddress address)
+    RegisterID extractSimpleAddress(Address address)
     {
         if (!address.offset)
             return address.base;

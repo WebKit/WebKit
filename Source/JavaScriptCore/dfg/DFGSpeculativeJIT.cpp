@@ -1918,7 +1918,7 @@ void SpeculativeJIT::compileStringSlice(Node* node)
 
     m_jit.lshift32(MacroAssembler::TrustedImm32(sizeof(void*) == 4 ? 2 : 3), tempGPR);
     m_jit.addPtr(TrustedImmPtr(vm.smallStrings.singleCharacterStrings()), tempGPR);
-    m_jit.loadPtr(tempGPR, tempGPR);
+    m_jit.loadPtr(CCallHelpers::Address(tempGPR), tempGPR);
 
     addSlowPathGenerator(slowPathCall(bigCharacter, this, operationSingleCharacterString, tempGPR, &vm, tempGPR));
 
@@ -2634,7 +2634,7 @@ void SpeculativeJIT::compileGetByValOnString(Node* node, const ScopedLambda<std:
     VM& vm = this->vm();
     m_jit.lshift32(MacroAssembler::TrustedImm32(sizeof(void*) == 4 ? 2 : 3), scratchReg);
     m_jit.addPtr(TrustedImmPtr(vm.smallStrings.singleCharacterStrings()), scratchReg);
-    m_jit.loadPtr(scratchReg, scratchReg);
+    m_jit.loadPtr(CCallHelpers::Address(scratchReg), scratchReg);
 
     addSlowPathGenerator(
         slowPathCall(
@@ -15339,7 +15339,7 @@ void SpeculativeJIT::compileClearCatchLocals(Node* node)
     GPRTemporary scratch(this);
     GPRReg scratchGPR = scratch.gpr();
     m_jit.move(TrustedImmPtr(scratchBuffer->addressOfActiveLength()), scratchGPR);
-    m_jit.storePtr(TrustedImmPtr(nullptr), scratchGPR);
+    m_jit.storePtr(TrustedImmPtr(nullptr), CCallHelpers::Address(scratchGPR));
     noResult(node);
 }
 
