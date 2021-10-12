@@ -2172,4 +2172,6 @@ webkit.org/b/231397 [ Debug ] js/error-should-not-strong-reference-global-object
 
 webkit.org/b/231444 imported/blink/fast/dom/shadow/shadowdom-for-keygen-only-shadow.html [ Pass Crash ]
 
+webkit.org/b/231612 imported/blink/fast/dom/importNode-cdata.html [ Pass Timeout ]
+
 webkit.org/b/231610 applicationmanifest/developer-warnings.html [ Pass Timeout ]
