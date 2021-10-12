@@ -1,3 +1,12 @@
+2021-10-12  Ayumi Kojima  <ayumi_kojima@apple.com>
+
+        [ iOS ] http/tests/cache/disk-cache/redirect-chain-limits.html is a flaky timeout.
+        https://bugs.webkit.org/show_bug.cgi?id=231630
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+
 2021-10-12  Eric Hutchison  <ehutchison@apple.com>
 
         [ iOS15 Debug ] fast/scrolling/ios/click-events-during-momentum-scroll-in-main-frame.html is a flaky timeout.
