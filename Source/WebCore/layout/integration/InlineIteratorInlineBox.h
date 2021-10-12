@@ -67,6 +67,7 @@ private:
 
 InlineBoxIterator inlineBoxFor(const LegacyInlineFlowBox&);
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
+InlineBoxIterator inlineBoxFor(const LayoutIntegration::InlineContent&, const InlineDisplay::Box&);
 InlineBoxIterator inlineBoxFor(const LayoutIntegration::InlineContent&, size_t boxIndex);
 #endif
 

@@ -33,6 +33,7 @@
 #include "HitTestLocation.h"
 #include "HitTestRequest.h"
 #include "HitTestResult.h"
+#include "InlineBoxPainter.h"
 #include "InlineDamage.h"
 #include "InlineFormattingContext.h"
 #include "InlineFormattingState.h"
@@ -505,18 +506,40 @@ void LineLayout::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
     if (paintInfo.phase != PaintPhase::Foreground && paintInfo.phase != PaintPhase::EventRegion && paintInfo.phase != PaintPhase::TextClip && paintInfo.phase != PaintPhase::Selection)
         return;
 
-    auto paintRect = paintInfo.rect;
-    paintRect.moveBy(-paintOffset);
+    auto damageRect = paintInfo.rect;
+    damageRect.moveBy(-paintOffset);
 
-    for (auto& box : m_inlineContent->boxesForRect(paintRect)) {
+    auto hasDamage = [&](auto& box) {
+        if (box.style().visibility() != Visibility::Visible)
+            return false;
+        auto rect = enclosingLayoutRect(box.inkOverflow());
+        flow().flipForWritingMode(rect);
+        // FIXME: This should test for intersection but horizontal ink overflow is miscomputed in a few cases (like with negative letter-spacing).
+        return damageRect.maxY() > rect.y() && damageRect.y() < rect.maxY();
+    };
+
+    for (auto& box : m_inlineContent->boxesForRect(damageRect)) {
         if (box.isLineBreak())
             continue;
-        if (box.isInlineBox())
-            continue;
-        if (box.text()) {
-            paintTextBoxUsingPhysicalCoordinates(paintInfo, paintOffset, box);
+
+        if (box.isInlineBox()) {
+            if (!hasDamage(box))
+                continue;
+
+            InlineBoxPainter painter(*m_inlineContent, box, paintInfo, paintOffset);
+            painter.paint();
             continue;
         }
+
+        if (box.text()) {
+            if (!box.text()->length() || !hasDamage(box))
+                continue;
+
+            TextBoxPainter painter(*m_inlineContent, box, paintInfo, paintOffset);
+            painter.paint();
+            continue;
+        }
+
         if (auto& renderer = m_boxTree.rendererForLayoutBox(box.layoutBox()); is<RenderBox>(renderer) && renderer.isReplaced()) {
             auto& renderBox = downcast<RenderBox>(renderer);
             if (!renderBox.hasSelfPaintingLayer() && paintInfo.shouldPaintWithinRoot(renderBox))
@@ -591,44 +614,6 @@ void LineLayout::clearInlineContent()
         return;
     m_inlineContent->clearAndDetach();
     m_inlineContent = nullptr;
-}
-
-void LineLayout::paintTextBoxUsingPhysicalCoordinates(PaintInfo& paintInfo, const LayoutPoint& paintOffset, const InlineDisplay::Box& textBox)
-{
-    auto& style = textBox.style();
-    if (textBox.style().visibility() != Visibility::Visible)
-        return;
-
-    auto& textContent = *textBox.text();
-    if (!textContent.length())
-        return;
-
-    auto& formattingContextRoot = flow();
-    auto blockIsHorizontalWriting = formattingContextRoot.style().isHorizontalWritingMode();
-    auto physicalPaintOffset = paintOffset;
-    if (!blockIsHorizontalWriting) {
-        // FIXME: Figure out why this translate is required.
-        physicalPaintOffset.move({ 0, -textBox.logicalRect().height() });
-    }
-
-    auto physicalRect = [&](const auto& rect) -> FloatRect {
-        if (!style.isFlippedBlocksWritingMode())
-            return rect;
-        if (!blockIsHorizontalWriting)
-            return FloatRect { formattingContextRoot.width() - rect.bottom(), rect.left() , rect.width(), rect.height() };
-        ASSERT_NOT_IMPLEMENTED_YET();
-        return rect;
-    };
-
-    auto visualOverflowRect = physicalRect(textBox.inkOverflow());
-
-    auto damagedRect = paintInfo.rect;
-    damagedRect.moveBy(-physicalPaintOffset);
-    if (damagedRect.y() > visualOverflowRect.maxY() || damagedRect.maxY() < visualOverflowRect.y())
-        return;
-
-    TextBoxPainter painter(*m_inlineContent, textBox, paintInfo, paintOffset);
-    painter.paint();
 }
 
 Layout::InlineDamage& LineLayout::ensureLineDamage()

@@ -124,8 +124,6 @@ private:
     InlineContent& ensureInlineContent();
     void updateLayoutBoxDimensions(const RenderBox&);
 
-    void paintTextBoxUsingPhysicalCoordinates(PaintInfo&, const LayoutPoint& paintOffset, const InlineDisplay::Box&);
-
     Layout::InlineDamage& ensureLineDamage();
 
     const Layout::ContainerBox& rootLayoutBox() const;

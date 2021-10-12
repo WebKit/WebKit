@@ -37,7 +37,19 @@
 namespace WebCore {
 
 InlineBoxPainter::InlineBoxPainter(const LegacyInlineFlowBox& inlineBox, PaintInfo& paintInfo, const LayoutPoint& paintOffset)
-    : m_inlineBox(*InlineIterator::inlineBoxFor(inlineBox))
+    : InlineBoxPainter(*InlineIterator::inlineBoxFor(inlineBox), paintInfo, paintOffset)
+{
+}
+
+#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
+InlineBoxPainter::InlineBoxPainter(const LayoutIntegration::InlineContent& inlineContent, const InlineDisplay::Box& box, PaintInfo& paintInfo, const LayoutPoint& paintOffset)
+    : InlineBoxPainter(*InlineIterator::inlineBoxFor(inlineContent, box), paintInfo, paintOffset)
+{
+}
+#endif
+
+InlineBoxPainter::InlineBoxPainter(const InlineIterator::InlineBox& inlineBox, PaintInfo& paintInfo, const LayoutPoint& paintOffset)
+    : m_inlineBox(inlineBox)
     , m_paintInfo(paintInfo)
     , m_paintOffset(paintOffset)
     , m_renderer(m_inlineBox.renderer())

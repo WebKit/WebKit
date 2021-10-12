@@ -212,6 +212,9 @@ static void printReason(AvoidanceReason reason, TextStream& stream)
     case AvoidanceReason::InlineBoxHasBackground:
         stream << "inline box has background";
         break;
+    case AvoidanceReason::InlineBoxHasBackgroundClipText:
+        stream << "inline box has background-clip: text";
+        break;
     default:
         break;
     }
@@ -481,6 +484,8 @@ static OptionSet<AvoidanceReason> canUseForRenderInlineChild(const RenderInline&
         SET_REASON_AND_RETURN_IF_NEEDED(InlineBoxHasBorderOrBorderImage, reasons, includeReasons);
     if (style.hasBackground())
         SET_REASON_AND_RETURN_IF_NEEDED(InlineBoxHasBackground, reasons, includeReasons);
+    if (style.backgroundClip() == FillBox::Text)
+        SET_REASON_AND_RETURN_IF_NEEDED(InlineBoxHasBackgroundClipText, reasons, includeReasons);
     if (style.hasOutline())
         SET_REASON_AND_RETURN_IF_NEEDED(ContentHasOutline, reasons, includeReasons);
     if (renderInline.isInFlowPositioned())
