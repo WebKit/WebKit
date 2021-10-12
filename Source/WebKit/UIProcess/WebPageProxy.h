@@ -715,6 +715,8 @@ public:
     void requestScroll(const WebCore::FloatPoint& scrollPosition, const WebCore::IntPoint& scrollOrigin, WebCore::ScrollIsAnimated);
     
     WebCore::FloatPoint viewScrollPosition() const;
+    
+    void setHasActiveAnimatedScrolls(bool isRunning);
 
     void setDelegatesScrolling(bool delegatesScrolling) { m_delegatesScrolling = delegatesScrolling; }
     bool delegatesScrolling() const { return m_delegatesScrolling; }
@@ -2374,10 +2376,6 @@ private:
     void didReleaseAllTouchPoints() { }
 #endif // PLATFORM(IOS_FAMILY)
 
-#if ENABLE(DATA_DETECTION)
-    RetainPtr<NSArray> m_dataDetectionResults;
-#endif
-
     void performDragControllerAction(DragControllerAction, WebCore::DragData&, const String& dragStorageName, SandboxExtension::Handle&&, Vector<SandboxExtension::Handle>&&);
 
     void updateBackingStoreDiscardableState();
@@ -2391,6 +2389,7 @@ private:
 
 #if HAVE(CVDISPLAYLINK)
     void wheelEventHysteresisUpdated(PAL::HysteresisState);
+    void updateDisplayLinkFrequency();
 #endif
     void updateWheelEventActivityAfterProcessSwap();
 
@@ -2637,7 +2636,6 @@ private:
 
 #if PLATFORM(MAC)
     bool m_useSystemAppearance { false };
-
     bool m_acceptsFirstMouse { false };
 #endif
 
@@ -2655,6 +2653,10 @@ private:
 
 #if ENABLE(WEB_AUTHN)
     std::unique_ptr<WebAuthenticatorCoordinatorProxy> m_credentialsMessenger;
+#endif
+
+#if ENABLE(DATA_DETECTION)
+    RetainPtr<NSArray> m_dataDetectionResults;
 #endif
 
     HashSet<WebEditCommandProxy*> m_editCommandSet;
@@ -2762,6 +2764,8 @@ private:
     bool m_isPerformingDOMPrintOperation { false };
 
     bool m_hasUpdatedRenderingAfterDidCommitLoad { true };
+
+    bool m_hasActiveAnimatedScroll { false };
 
     WebCore::ResourceRequest m_decidePolicyForResponseRequest;
     bool m_shouldSuppressAppLinksInNextNavigationPolicyDecision { false };

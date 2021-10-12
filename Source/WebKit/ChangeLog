@@ -1,3 +1,51 @@
+2021-10-12  Simon Fraser  <simon.fraser@apple.com>
+
+        Scrolling thread animations need to commit layers on the scrolling thread
+        https://bugs.webkit.org/show_bug.cgi?id=231593
+
+        Reviewed by Tim Horton.
+        
+        Scroll animations were running on the scrolling thread (in that the timers were firing on
+        that thread), but the scrolling thread wasn't changing layer positions, so those animations
+        weren't smooth.
+
+        This happened because of an existing assumption that we only commit layer changes on the
+        scrolling thread in response to wheel events; the machinery around
+        ThreadedScrollingTree::displayDidRefresh() was all gated on having recently received a wheel
+        event.
+
+        To fix this we need to communicate back to the UI process when there are active scroll
+        animations running. The ScrollingTree already tracks this, and the virtual
+        hasNodeWithAnimatedScrollChanged() on ScrollingCoordinator is called for it. To get this to
+        the UI process on macOS, subclass ScrollingCoordinatorMac in WebKit2 and override
+        hasNodeWithAnimatedScrollChanged() to call into WebPage, which then IPCs to WebPageProxy.
+        This ends up calling setDisplayLinkForDisplayWantsFullSpeedUpdates() so that know to IPC
+        displayDidRefresh to EventDispatcher off the main thread (as we do for wheel events).
+
+        Scroll animations are still based on a 60Hz timer, but in future should be driven by
+        displayDidRefresh() notifications.
+
+        * SourcesCocoa.txt:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::wheelEventHysteresisUpdated):
+        (WebKit::WebPageProxy::updateDisplayLinkFrequency):
+        (WebKit::WebPageProxy::updateWheelEventActivityAfterProcessSwap):
+        (WebKit::WebPageProxy::setHasActiveAnimatedScrolls):
+        (WebKit::WebPageProxy::resetStateAfterProcessExited):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::createScrollingCoordinator const):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::setHasActiveAnimatedScrolls):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/mac/TiledCoreAnimationScrollingCoordinator.h: Copied from Source/WebCore/page/scrolling/mac/ScrollingCoordinatorMac.h.
+        * WebProcess/WebPage/mac/TiledCoreAnimationScrollingCoordinator.mm: Copied from Source/WebCore/page/scrolling/mac/ScrollingCoordinatorMac.h.
+        (WebKit::TiledCoreAnimationScrollingCoordinator::TiledCoreAnimationScrollingCoordinator):
+        (WebKit::TiledCoreAnimationScrollingCoordinator::pageDestroyed):
+        (WebKit::TiledCoreAnimationScrollingCoordinator::hasNodeWithAnimatedScrollChanged):
+
 2021-10-12  Alex Christensen  <achristensen@webkit.org>
 
         Use STL instead of WTF::get_if, WTF::Monostate, WTF::visit, and WTF::holds_alternative

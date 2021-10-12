@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,39 +23,37 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#import "config.h"
 
 #if ENABLE(ASYNC_SCROLLING) && ENABLE(SCROLLING_THREAD)
+#import "TiledCoreAnimationScrollingCoordinator.h"
 
-#include "AsyncScrollingCoordinator.h"
+#import "WebPage.h"
 
-namespace WebCore {
+namespace WebKit {
 
-class WEBCORE_EXPORT ScrollingCoordinatorMac : public AsyncScrollingCoordinator {
-public:
-    explicit ScrollingCoordinatorMac(Page*);
-    virtual ~ScrollingCoordinatorMac();
+TiledCoreAnimationScrollingCoordinator::TiledCoreAnimationScrollingCoordinator(WebPage* page)
+    : ScrollingCoordinatorMac(page->corePage())
+    , m_page(page)
+{
+}
 
-    void pageDestroyed() override;
+TiledCoreAnimationScrollingCoordinator::~TiledCoreAnimationScrollingCoordinator() = default;
 
-    void commitTreeStateIfNeeded() final;
+void TiledCoreAnimationScrollingCoordinator::pageDestroyed()
+{
+    ScrollingCoordinatorMac::pageDestroyed();
+    m_page = nullptr;
+}
 
-    // Handle the wheel event on the scrolling thread. Returns whether the event was handled or not.
-    bool handleWheelEventForScrolling(const PlatformWheelEvent&, ScrollingNodeID, std::optional<WheelScrollGestureState>) final;
-    void wheelEventWasProcessedByMainThread(const PlatformWheelEvent&, std::optional<WheelScrollGestureState>) final;
+void TiledCoreAnimationScrollingCoordinator::hasNodeWithAnimatedScrollChanged(bool haveAnimatedScrollingNodes)
+{
+    if (!m_page)
+        return;
 
-private:
-    void scheduleTreeStateCommit() final;
+    m_page->setHasActiveAnimatedScrolls(haveAnimatedScrollingNodes);
+}
 
-    void willStartRenderingUpdate() final;
-    void didCompleteRenderingUpdate() final;
-
-    void updateTiledScrollingIndicator();
-
-    void startMonitoringWheelEvents(bool clearLatchingState) final;
-    void stopMonitoringWheelEvents() final;
-};
-
-} // namespace WebCore
+} // namespace WebKit
 
 #endif // ENABLE(ASYNC_SCROLLING) && ENABLE(SCROLLING_THREAD)

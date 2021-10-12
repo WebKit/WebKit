@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,35 +27,29 @@
 
 #if ENABLE(ASYNC_SCROLLING) && ENABLE(SCROLLING_THREAD)
 
-#include "AsyncScrollingCoordinator.h"
+#include <WebCore/ScrollingCoordinatorMac.h>
 
-namespace WebCore {
+namespace WebKit {
 
-class WEBCORE_EXPORT ScrollingCoordinatorMac : public AsyncScrollingCoordinator {
+class WebPage;
+
+class TiledCoreAnimationScrollingCoordinator final : public WebCore::ScrollingCoordinatorMac {
 public:
-    explicit ScrollingCoordinatorMac(Page*);
-    virtual ~ScrollingCoordinatorMac();
-
-    void pageDestroyed() override;
-
-    void commitTreeStateIfNeeded() final;
-
-    // Handle the wheel event on the scrolling thread. Returns whether the event was handled or not.
-    bool handleWheelEventForScrolling(const PlatformWheelEvent&, ScrollingNodeID, std::optional<WheelScrollGestureState>) final;
-    void wheelEventWasProcessedByMainThread(const PlatformWheelEvent&, std::optional<WheelScrollGestureState>) final;
+    static Ref<TiledCoreAnimationScrollingCoordinator> create(WebPage* page)
+    {
+        return adoptRef(*new TiledCoreAnimationScrollingCoordinator(page));
+    }
 
 private:
-    void scheduleTreeStateCommit() final;
+    explicit TiledCoreAnimationScrollingCoordinator(WebPage*);
+    ~TiledCoreAnimationScrollingCoordinator();
 
-    void willStartRenderingUpdate() final;
-    void didCompleteRenderingUpdate() final;
-
-    void updateTiledScrollingIndicator();
-
-    void startMonitoringWheelEvents(bool clearLatchingState) final;
-    void stopMonitoringWheelEvents() final;
+    void pageDestroyed() final;
+    void hasNodeWithAnimatedScrollChanged(bool) final;
+    
+    WebPage* m_page;
 };
 
-} // namespace WebCore
+} // namespace WebKit
 
 #endif // ENABLE(ASYNC_SCROLLING) && ENABLE(SCROLLING_THREAD)
