@@ -28,6 +28,7 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "QualifiedRenderingResourceIdentifier.h"
+#include "QualifiedResourceHeap.h"
 #include <WebCore/Font.h>
 #include <WebCore/ImageBuffer.h>
 #include <WebCore/NativeImage.h>
@@ -85,12 +86,11 @@ private:
 
     void updateHasActiveDrawables();
 
-    WebCore::ProcessIdentifier m_webProcessIdentifier;
-
-    WebCore::DisplayList::ResourceHeap m_resourceHeap;
-    std::atomic<bool> m_hasActiveDrawables { false };
+    QualifiedResourceHeap m_resourceHeap;
 
     ResourceUseCountersMap m_resourceUseCounters;
+
+    std::atomic<bool> m_hasActiveDrawables { false };
 };
 
 } // namespace WebKit

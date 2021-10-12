@@ -37,83 +37,48 @@ namespace DisplayList {
 
 class ResourceHeap {
 public:
+    virtual ~ResourceHeap() = default;
+
+    virtual ImageBuffer* getImageBuffer(RenderingResourceIdentifier) const = 0;
+    virtual NativeImage* getNativeImage(RenderingResourceIdentifier) const = 0;
+    virtual Font* getFont(RenderingResourceIdentifier) const = 0;
+};
+
+class LocalResourceHeap : public ResourceHeap {
+public:
     void add(RenderingResourceIdentifier renderingResourceIdentifier, Ref<ImageBuffer>&& imageBuffer)
     {
-        if (m_resources.add(renderingResourceIdentifier, RefPtr<ImageBuffer>(WTFMove(imageBuffer))).isNewEntry)
-            ++m_imageBufferCount;
+        m_resources.add(renderingResourceIdentifier, WTFMove(imageBuffer));
     }
 
     void add(RenderingResourceIdentifier renderingResourceIdentifier, Ref<NativeImage>&& image)
     {
-        if (m_resources.add(renderingResourceIdentifier, RefPtr<NativeImage>(WTFMove(image))).isNewEntry)
-            ++m_nativeImageCount;
+        m_resources.add(renderingResourceIdentifier, WTFMove(image));
     }
 
     void add(RenderingResourceIdentifier renderingResourceIdentifier, Ref<Font>&& font)
     {
-        if (m_resources.add(renderingResourceIdentifier, RefPtr<Font>(WTFMove(font))).isNewEntry)
-            ++m_fontCount;
+        m_resources.add(renderingResourceIdentifier, WTFMove(font));
     }
 
-    ImageBuffer* getImageBuffer(RenderingResourceIdentifier renderingResourceIdentifier) const
+    ImageBuffer* getImageBuffer(RenderingResourceIdentifier renderingResourceIdentifier) const final
     {
         return get<ImageBuffer>(renderingResourceIdentifier);
     }
 
-    NativeImage* getNativeImage(RenderingResourceIdentifier renderingResourceIdentifier) const
+    NativeImage* getNativeImage(RenderingResourceIdentifier renderingResourceIdentifier) const final
     {
         return get<NativeImage>(renderingResourceIdentifier);
     }
 
-    Font* getFont(RenderingResourceIdentifier renderingResourceIdentifier) const
+    Font* getFont(RenderingResourceIdentifier renderingResourceIdentifier) const final
     {
         return get<Font>(renderingResourceIdentifier);
-    }
-
-    bool hasImageBuffer() const
-    {
-        return m_imageBufferCount;
-    }
-
-    bool hasNativeImage() const
-    {
-        return m_nativeImageCount;
-    }
-
-    bool hasFont() const
-    {
-        return m_fontCount;
-    }
-
-    bool removeImageBuffer(RenderingResourceIdentifier renderingResourceIdentifier)
-    {
-        return remove<ImageBuffer>(renderingResourceIdentifier, m_imageBufferCount);
-    }
-
-    bool removeNativeImage(RenderingResourceIdentifier renderingResourceIdentifier)
-    {
-        return remove<NativeImage>(renderingResourceIdentifier, m_nativeImageCount);
-    }
-
-    bool removeFont(RenderingResourceIdentifier renderingResourceIdentifier)
-    {
-        return remove<Font>(renderingResourceIdentifier, m_fontCount);
     }
 
     void clear()
     {
         m_resources.clear();
-        m_imageBufferCount = 0;
-        m_nativeImageCount = 0;
-        m_fontCount = 0;
-    }
-
-    void deleteAllFonts()
-    {
-        m_resources.removeIf([] (const auto& resource) {
-            return std::holds_alternative<RefPtr<Font>>(resource.value);
-        });
-        m_fontCount = 0;
     }
 
 private:
@@ -123,30 +88,12 @@ private:
         auto iterator = m_resources.find(renderingResourceIdentifier);
         if (iterator == m_resources.end())
             return nullptr;
-        if (!std::holds_alternative<RefPtr<T>>(iterator->value))
-            return nullptr;
-        return WTF::get<RefPtr<T>>(iterator->value).get();
+        ASSERT(std::holds_alternative<Ref<T>>(iterator->value));
+        return std::get<Ref<T>>(iterator->value).ptr();
     }
 
-    template <typename T>
-    bool remove(RenderingResourceIdentifier renderingResourceIdentifier, unsigned& counter)
-    {
-        auto iterator = m_resources.find(renderingResourceIdentifier);
-        if (iterator == m_resources.end())
-            return false;
-        if (!std::holds_alternative<RefPtr<T>>(iterator->value))
-            return false;
-        auto result = m_resources.remove(iterator);
-        ASSERT(result);
-        --counter;
-        return result;
-    }
-
-    using Resource = Variant<RefPtr<ImageBuffer>, RefPtr<NativeImage>, RefPtr<Font>>;
+    using Resource = Variant<std::monostate, Ref<ImageBuffer>, Ref<NativeImage>, Ref<Font>>;
     HashMap<RenderingResourceIdentifier, Resource> m_resources;
-    unsigned m_imageBufferCount { 0 };
-    unsigned m_nativeImageCount { 0 };
-    unsigned m_fontCount { 0 };
 };
 
 }

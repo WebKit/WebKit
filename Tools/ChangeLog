@@ -1,3 +1,14 @@
+2021-10-12  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [GPU Process] Unique RenderingResourceIdentifiers Part 9: Finish migrating RemoteResourceCache to QualifiedRenderingResourceIdentifier
+        https://bugs.webkit.org/show_bug.cgi?id=231414
+        <rdar://problem/84015584>
+
+        Reviewed by Said Abou-Hallawa.
+
+        * TestWebKitAPI/Tests/WebCore/cg/DisplayListTestsCG.cpp:
+        (TestWebKitAPI::TEST):
+
 2021-10-12  Gabriel Nava Marino  <gnavamarino@apple.com>
 
         WebKitTestRunner should check mainFrameURL exists in InjectedBundlePage::willSendRequestForFrame

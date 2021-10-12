@@ -1,3 +1,40 @@
+2021-10-12  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [GPU Process] Unique RenderingResourceIdentifiers Part 9: Finish migrating RemoteResourceCache to QualifiedRenderingResourceIdentifier
+        https://bugs.webkit.org/show_bug.cgi?id=231414
+        <rdar://problem/84015584>
+
+        Reviewed by Said Abou-Hallawa.
+
+        Now that DisplayList::ResourceHeap exists, we can make a ResourceHeap subclass specifically for
+        the GPU process. The implementation of this class holds QualifiedRenderingResourceIdentifiers
+        instead of RenderingResourceIdentifier.
+
+        * GPUProcess/graphics/QualifiedResourceHeap.h: Added.
+        (WebKit::QualifiedResourceHeap::QualifiedResourceHeap):
+        (WebKit::QualifiedResourceHeap::add):
+        (WebKit::QualifiedResourceHeap::getImageBuffer const):
+        (WebKit::QualifiedResourceHeap::getNativeImage const):
+        (WebKit::QualifiedResourceHeap::getFont const):
+        (WebKit::QualifiedResourceHeap::hasImageBuffer const):
+        (WebKit::QualifiedResourceHeap::hasNativeImage const):
+        (WebKit::QualifiedResourceHeap::hasFont const):
+        (WebKit::QualifiedResourceHeap::removeImageBuffer):
+        (WebKit::QualifiedResourceHeap::removeNativeImage):
+        (WebKit::QualifiedResourceHeap::removeFont):
+        (WebKit::QualifiedResourceHeap::deleteAllFonts):
+        * GPUProcess/graphics/RemoteResourceCache.cpp:
+        (WebKit::RemoteResourceCache::RemoteResourceCache):
+        (WebKit::RemoteResourceCache::cacheImageBuffer):
+        (WebKit::RemoteResourceCache::cachedImageBuffer const):
+        (WebKit::RemoteResourceCache::cacheNativeImage):
+        (WebKit::RemoteResourceCache::cachedNativeImage const):
+        (WebKit::RemoteResourceCache::cacheFont):
+        (WebKit::RemoteResourceCache::cachedFont const):
+        (WebKit::RemoteResourceCache::maybeRemoveResource):
+        * GPUProcess/graphics/RemoteResourceCache.h:
+        * WebKit.xcodeproj/project.pbxproj:
+
 2021-10-12  Simon Fraser  <simon.fraser@apple.com>
 
         Scrolling thread animations need to commit layers on the scrolling thread

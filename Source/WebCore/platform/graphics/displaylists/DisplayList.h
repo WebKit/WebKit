@@ -127,7 +127,7 @@ private:
 
     static bool shouldDumpForFlags(AsTextFlags, ItemHandle);
 
-    ResourceHeap m_resourceHeap;
+    LocalResourceHeap m_resourceHeap;
     std::unique_ptr<ItemBuffer> m_items;
     Vector<std::optional<FloatRect>> m_drawingItemExtents;
     bool m_tracksDrawingItemExtents { true };

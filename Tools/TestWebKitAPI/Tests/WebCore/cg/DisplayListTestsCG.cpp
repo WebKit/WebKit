@@ -73,7 +73,7 @@ TEST(DisplayListTests, ReplayWithMissingResource)
 
     {
         auto imageBuffer = ImageBuffer::create({ 100, 100 }, RenderingMode::Unaccelerated, 1, colorSpace, PixelFormat::BGRA8);
-        ResourceHeap resourceHeap;
+        LocalResourceHeap resourceHeap;
         resourceHeap.add(imageBufferIdentifier, imageBuffer.releaseNonNull());
 
         Replayer replayer { context, list, &resourceHeap };
