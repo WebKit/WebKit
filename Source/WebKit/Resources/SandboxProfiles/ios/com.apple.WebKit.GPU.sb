@@ -935,7 +935,7 @@
 (media-capture-support)
 
 (allow mach-lookup (with telemetry)
-  (global-name "com.apple.audio.AudioQueueServer" "com.apple.audio.AudioComponentRegistrar")
+  (global-name "com.apple.audio.AudioQueueServer")
 )
 
 ;; These services have been identified as unused during living-on.
