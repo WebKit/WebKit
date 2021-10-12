@@ -1,3 +1,12 @@
+2021-10-12  Jonathan Bedard  <jbedard@apple.com>
+
+        Move few scripts from python 2 to python3 (Follow-up)
+        https://bugs.webkit.org/show_bug.cgi?id=229817
+
+        Reviewed by Alexey Proskuryakov.
+
+        * CISupport/clean-build: Invoke clean-webkit with Python 3.
+
 2021-10-12  Alex Christensen  <achristensen@webkit.org>
 
         Remove non-HAVE(CFNETWORK_NSURLSESSION_STRICTRUSTEVALUATE) code
