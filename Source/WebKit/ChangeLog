@@ -1,3 +1,22 @@
+2021-10-12  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Add some missing WebCore:: namespaces in RemoteDisplayListRecorderProxy
+        https://bugs.webkit.org/show_bug.cgi?id=231584
+
+        Reviewed by Myles C. Maxfield.
+
+        A tiny bit of cleanup before #230860.
+
+        * GPUProcess/graphics/RemoteDisplayListRecorder.h:
+        (WebKit::RemoteDisplayListRecorder::handleItem):
+
+        Drive-by fix: also add a missing call to `std::forward` when applying display list items with additional
+        resources as arguments.
+
+        * WebProcess/GPU/graphics/RemoteDisplayListRecorderProxy.h:
+
+        Add the missing `WebCore::` prefixes.
+
 2021-10-12  Alex Christensen  <achristensen@webkit.org>
 
         Remove non-HAVE(CFNETWORK_NSURLSESSION_STRICTRUSTEVALUATE) code

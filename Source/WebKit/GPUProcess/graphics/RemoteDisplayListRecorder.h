@@ -138,12 +138,12 @@ private:
     WebCore::GraphicsContext& drawingContext();
 
     template<typename T, typename ... AdditionalArgs>
-    void handleItem(T&& item, AdditionalArgs&& ... args)
+    void handleItem(T&& item, AdditionalArgs&&... args)
     {
         // FIXME: In the future, we should consider buffering up batches of display list items before
         // applying them instead of applying them immediately, so that we can apply clipping and occlusion
         // optimizations to skip over parts of a display list, if possible.
-        item.apply(drawingContext(), args...);
+        item.apply(drawingContext(), std::forward<AdditionalArgs>(args)...);
     }
 
     void startListeningForIPC();

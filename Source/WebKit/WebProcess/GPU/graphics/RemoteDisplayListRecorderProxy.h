@@ -61,8 +61,8 @@ private:
 
     friend class DrawGlyphsRecorder;
 
-    bool canDrawImageBuffer(const ImageBuffer&) const final;
-    RenderingMode renderingMode() const final;
+    bool canDrawImageBuffer(const WebCore::ImageBuffer&) const final;
+    WebCore::RenderingMode renderingMode() const final;
 
     void recordSave() final;
     void recordRestore() final;
@@ -85,7 +85,7 @@ private:
     void recordClipToImageBuffer(WebCore::RenderingResourceIdentifier imageBufferIdentifier, const WebCore::FloatRect& destinationRect) final;
     void recordClipOutToPath(const WebCore::Path&) final;
     void recordClipPath(const WebCore::Path&, WebCore::WindRule) final;
-    void recordBeginClipToDrawingCommands(const WebCore::FloatRect& destination, DestinationColorSpace) final;
+    void recordBeginClipToDrawingCommands(const WebCore::FloatRect& destination, WebCore::DestinationColorSpace) final;
     void recordEndClipToDrawingCommands(const WebCore::FloatRect& destination) final;
     void recordDrawGlyphs(const WebCore::Font&, const WebCore::GlyphBufferGlyph*, const WebCore::GlyphBufferAdvance*, unsigned count, const WebCore::FloatPoint& localAnchor, WebCore::FontSmoothingMode) final;
     void recordDrawImageBuffer(WebCore::RenderingResourceIdentifier imageBufferIdentifier, const WebCore::FloatRect& destRect, const WebCore::FloatRect& srcRect, const WebCore::ImagePaintingOptions&) final;
@@ -115,7 +115,7 @@ private:
 #endif
     void recordFillPath(const WebCore::Path&) final;
     void recordFillEllipse(const WebCore::FloatRect&) final;
-    void recordPaintFrameForMedia(MediaPlayer&, const WebCore::FloatRect& destination) final;
+    void recordPaintFrameForMedia(WebCore::MediaPlayer&, const WebCore::FloatRect& destination) final;
     void recordStrokeRect(const WebCore::FloatRect&, float) final;
 #if ENABLE(INLINE_PATH_DATA)
     void recordStrokeLine(const WebCore::LineData&) final;
