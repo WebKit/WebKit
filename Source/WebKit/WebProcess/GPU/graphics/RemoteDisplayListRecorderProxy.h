@@ -115,8 +115,6 @@ private:
 #endif
     void recordFillPath(const WebCore::Path&) final;
     void recordFillEllipse(const WebCore::FloatRect&) final;
-    void recordGetPixelBuffer(WebCore::PixelBufferFormat outputFormat, const WebCore::IntRect&) final;
-    void recordPutPixelBuffer(const WebCore::PixelBuffer&, const WebCore::IntRect& srcRect, const WebCore::IntPoint& destPoint, WebCore::AlphaPremultiplication) final;
     void recordPaintFrameForMedia(MediaPlayer&, const WebCore::FloatRect& destination) final;
     void recordStrokeRect(const WebCore::FloatRect&, float) final;
 #if ENABLE(INLINE_PATH_DATA)

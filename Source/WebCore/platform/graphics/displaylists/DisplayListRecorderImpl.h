@@ -114,8 +114,6 @@ private:
 #endif
     void recordFillPath(const Path&) final;
     void recordFillEllipse(const FloatRect&) final;
-    void recordGetPixelBuffer(PixelBufferFormat outputFormat, const IntRect&) final;
-    void recordPutPixelBuffer(const PixelBuffer&, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication) final;
     void recordPaintFrameForMedia(MediaPlayer&, const FloatRect& destination) final;
     void recordStrokeRect(const FloatRect&, float) final;
 #if ENABLE(INLINE_PATH_DATA)

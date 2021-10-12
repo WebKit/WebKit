@@ -295,7 +295,7 @@ private:
 #endif
 };
 
-WTF::TextStream& operator<<(WTF::TextStream&, const Path&);
+WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const Path&);
 
 template<class Encoder> void Path::encode(Encoder& encoder) const
 {

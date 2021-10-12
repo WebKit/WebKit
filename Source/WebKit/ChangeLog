@@ -1,3 +1,18 @@
+2021-10-11  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Clean up some code in DisplayList::Recorder in preparation for bug #230860
+        https://bugs.webkit.org/show_bug.cgi?id=231532
+
+        Reviewed by Myles C. Maxfield.
+
+        * WebProcess/GPU/graphics/RemoteDisplayListRecorderProxy.cpp:
+        (WebKit::RemoteDisplayListRecorderProxy::recordGetPixelBuffer): Deleted.
+        (WebKit::RemoteDisplayListRecorderProxy::recordPutPixelBuffer): Deleted.
+
+        See WebCore ChangeLog for more details.
+
+        * WebProcess/GPU/graphics/RemoteDisplayListRecorderProxy.h:
+
 2021-10-11  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [GPU Process] Unique RenderingResourceIdentifiers Part 5: Migrate RemoteResourceCache to QualifiedRenderingResourceIdentifier

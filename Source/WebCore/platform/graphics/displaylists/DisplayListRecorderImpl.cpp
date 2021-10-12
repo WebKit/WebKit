@@ -342,16 +342,6 @@ void RecorderImpl::recordFillEllipse(const FloatRect& rect)
     append<FillEllipse>(rect);
 }
 
-void RecorderImpl::recordGetPixelBuffer(PixelBufferFormat outputFormat, const IntRect& rect)
-{
-    append<GetPixelBuffer>(outputFormat, rect);
-}
-
-void RecorderImpl::recordPutPixelBuffer(const PixelBuffer& buffer, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication premultiplication)
-{
-    append<PutPixelBuffer>(buffer, srcRect, destPoint, premultiplication);
-}
-
 void RecorderImpl::recordPaintFrameForMedia(MediaPlayer& player, const FloatRect& destination)
 {
     append<PaintFrameForMedia>(player, destination);

@@ -327,16 +327,6 @@ void RemoteDisplayListRecorderProxy::recordFillEllipse(const FloatRect& rect)
     send(Messages::RemoteDisplayListRecorder::FillEllipse(rect));
 }
 
-void RemoteDisplayListRecorderProxy::recordGetPixelBuffer(PixelBufferFormat outputFormat, const IntRect& rect)
-{
-    send(Messages::RemoteDisplayListRecorder::GetPixelBuffer(rect, outputFormat));
-}
-
-void RemoteDisplayListRecorderProxy::recordPutPixelBuffer(const PixelBuffer& buffer, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication premultiplication)
-{
-    send(Messages::RemoteDisplayListRecorder::PutPixelBuffer(srcRect, destPoint, buffer, premultiplication));
-}
-
 void RemoteDisplayListRecorderProxy::recordPaintFrameForMedia(MediaPlayer& player, const FloatRect& destination)
 {
     send(Messages::RemoteDisplayListRecorder::PaintFrameForMedia(player.identifier(), destination));

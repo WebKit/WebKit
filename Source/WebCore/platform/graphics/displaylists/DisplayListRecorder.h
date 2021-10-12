@@ -116,8 +116,6 @@ protected:
 #endif
     virtual void recordFillPath(const Path&) = 0;
     virtual void recordFillEllipse(const FloatRect&) = 0;
-    virtual void recordGetPixelBuffer(PixelBufferFormat outputFormat, const IntRect&) = 0;
-    virtual void recordPutPixelBuffer(const PixelBuffer&, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication) = 0;
     virtual void recordPaintFrameForMedia(MediaPlayer&, const FloatRect& destination) = 0;
     virtual void recordStrokeRect(const FloatRect&, float) = 0;
 #if ENABLE(INLINE_PATH_DATA)
