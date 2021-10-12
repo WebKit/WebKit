@@ -1584,6 +1584,15 @@ ModernMediaControls.css : $(MODERN_MEDIA_CONTROLS_STYLE_SHEETS)
 
 # user agent style sheets
 
+POSSIBLE_ADDITIONAL_USER_AGENT_STYLE_SHEETS = \
+    $(foreach \
+        STYLE_SHEET, \
+        $(ADDITIONAL_USER_AGENT_STYLE_SHEETS), \
+        $(firstword $(realpath $(foreach \
+            ADDITIONS_PATH, \
+            $(ADDITIONS_PATHS), \
+            $(ADDITIONS_PATH)/$(STYLE_SHEET)))))
+
 USER_AGENT_STYLE_SHEETS = \
     $(WebCore)/css/dialog.css \
     $(WebCore)/css/fullscreen.css \
@@ -1598,6 +1607,7 @@ USER_AGENT_STYLE_SHEETS = \
     $(WebCore)/html/shadow/meterElementShadow.css \
     $(WebCore)/Modules/plugins/QuickTimePluginReplacement.css \
     ModernMediaControls.css \
+    $(POSSIBLE_ADDITIONAL_USER_AGENT_STYLE_SHEETS) \
 #
 
 UserAgentStyleSheets.h : $(WebCore)/css/make-css-file-arrays.pl $(WebCore)/bindings/scripts/preprocessor.pm $(USER_AGENT_STYLE_SHEETS) $(FEATURE_AND_PLATFORM_DEFINE_DEPENDENCIES)
