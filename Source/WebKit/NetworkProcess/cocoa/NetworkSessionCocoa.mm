@@ -664,7 +664,6 @@ static void updateIgnoreStrictTransportSecuritySetting(RetainPtr<NSURLRequest>& 
     }
 }
 
-#if HAVE(CFNETWORK_NSURLSESSION_STRICTRUSTEVALUATE)
 static inline void processServerTrustEvaluation(NetworkSessionCocoa& session, SessionWrapper& sessionWrapper, NSURLAuthenticationChallenge *challenge, NegotiatedLegacyTLS negotiatedLegacyTLS, NetworkDataTaskCocoa::TaskIdentifier taskIdentifier, NetworkDataTaskCocoa* networkDataTask, CompletionHandler<void(NSURLSessionAuthChallengeDisposition disposition, NSURLCredential *credential)>&& completionHandler)
 {
     session.continueDidReceiveChallenge(sessionWrapper, challenge, negotiatedLegacyTLS, taskIdentifier, networkDataTask, [completionHandler = WTFMove(completionHandler), secTrust = retainPtr(challenge.protectionSpace.serverTrust)] (WebKit::AuthenticationChallengeDisposition disposition, const WebCore::Credential& credential) mutable {
@@ -676,7 +675,6 @@ static inline void processServerTrustEvaluation(NetworkSessionCocoa& session, Se
         completionHandler(toNSURLSessionAuthChallengeDisposition(disposition), credential.nsCredential());
     });
 }
-#endif
 
 - (NetworkSessionCocoa*)sessionFromTask:(NSURLSessionTask *)task {
     if (auto* networkDataTask = [self existingTask:task])
@@ -748,7 +746,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
                 NSURLProtectionSpace *protectionSpace = challenge.protectionSpace;
                 networkDataTask->didNegotiateModernTLS(URL(URL(), makeString(String(protectionSpace.protocol), "://", String(protectionSpace.host), ':', protectionSpace.port)));
             }
-#if HAVE(CFNETWORK_NSURLSESSION_STRICTRUSTEVALUATE)
             auto decisionHandler = makeBlockPtr([weakSelf = WeakObjCPtr<WKNetworkSessionDelegate>(self), sessionCocoa = makeWeakPtr(sessionCocoa), completionHandler = makeBlockPtr(completionHandler), taskIdentifier, networkDataTask = RefPtr { networkDataTask }, negotiatedLegacyTLS](NSURLAuthenticationChallenge *challenge, OSStatus trustResult) mutable {
                 auto strongSelf = weakSelf.get();
                 if (!strongSelf)
@@ -763,9 +760,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
             });
             [NSURLSession _strictTrustEvaluate:challenge queue:[NSOperationQueue mainQueue].underlyingQueue completionHandler:decisionHandler.get()];
             return;
-#else
-            return completionHandler(NSURLSessionAuthChallengeRejectProtectionSpace, nil);
-#endif
         }
     }
 

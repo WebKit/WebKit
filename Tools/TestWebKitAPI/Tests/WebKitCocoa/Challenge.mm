@@ -619,14 +619,7 @@ TEST(WebKit, ServerTrust)
 
 TEST(WebKit, FastServerTrust)
 {
-#if HAVE(CFNETWORK_NSURLSESSION_STRICTRUSTEVALUATE)
     HTTPServer server(HTTPServer::respondWithOK, HTTPServer::Protocol::Https);
-#else
-    // FIXME: Remove this. HAVE(CFNETWORK_NSURLSESSION_STRICTRUSTEVALUATE) is now true on all supported platforms.
-    TCPServer server(TCPServer::Protocol::HTTPS, [](SSL* ssl) {
-        EXPECT_FALSE(ssl);
-    }, std::nullopt, 2);
-#endif
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     auto dataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]);
     [dataStoreConfiguration setFastServerTrustEvaluationEnabled:YES];
@@ -635,16 +628,8 @@ TEST(WebKit, FastServerTrust)
     auto delegate = adoptNS([ServerTrustDelegate new]);
     [webView setNavigationDelegate:delegate.get()];
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"https://localhost:%d/", server.port()]]]];
-#if HAVE(CFNETWORK_NSURLSESSION_STRICTRUSTEVALUATE)
     [delegate waitForDidFinishNavigation];
     EXPECT_EQ([delegate authenticationChallengeCount], 1ull);
-#else
-    NSError *error = [delegate waitForDidFailProvisionalNavigationError];
-    EXPECT_WK_STREQ([error.userInfo[_WKRecoveryAttempterErrorKey] className], @"WKReloadFrameErrorRecoveryAttempter");
-    EXPECT_WK_STREQ(error.domain, NSURLErrorDomain);
-    EXPECT_EQ(error.code, NSURLErrorServerCertificateUntrusted);
-    EXPECT_EQ([delegate authenticationChallengeCount], 0ull);
-#endif
 }
 
 TEST(WebKit, ErrorSecureCoding)

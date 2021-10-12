@@ -1,3 +1,13 @@
+2021-10-12  Alex Christensen  <achristensen@webkit.org>
+
+        Remove non-HAVE(CFNETWORK_NSURLSESSION_STRICTRUSTEVALUATE) code
+        https://bugs.webkit.org/show_bug.cgi?id=231579
+
+        Reviewed by Chris Dumez.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/Challenge.mm:
+        (TestWebKitAPI::TEST):
+
 2021-10-11  Diego Pino Garcia  <dpino@igalia.com>
 
         [GTK] Unreviewed build fix. Fix build for Debian 10 (Buster)
