@@ -2190,3 +2190,5 @@ webkit.org/b/231622 fast/events/ios/rotation/orientationchange-event-listener-on
 webkit.org/b/231622 fast/events/ios/rotation/do-not-shrink-to-fit-content-after-rotation.html [ Pass Timeout ]
 
 webkit.org/b/231623 [ Debug ] fast/scrolling/ios/click-events-during-momentum-scroll-in-main-frame.html [ Pass Timeout ]
+
+webkit.org/b/231631 [ Debug ] fast/selectors/case-insensitive-attribute-bascis.html [ Pass Timeout ]
