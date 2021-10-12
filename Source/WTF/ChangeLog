@@ -1,3 +1,15 @@
+2021-10-12  Simon Fraser  <simon.fraser@apple.com>
+
+        Add support for ScrollOptions' ScrollBehavior and CSS scroll-behavior properties
+        https://bugs.webkit.org/show_bug.cgi?id=188043
+        <rdar://48436802>
+
+        Reviewed by Myles C. Maxfield.
+
+        Enable CSS smooth scrolling by default.
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml:
+
 2021-10-12  Alex Christensen  <achristensen@webkit.org>
 
         Use STL instead of WTF::get_if, WTF::Monostate, WTF::visit, and WTF::holds_alternative
