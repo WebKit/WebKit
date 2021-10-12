@@ -106,3 +106,4 @@ webkit.org/b/230419 platform/ipad/media/modern-media-controls/media-documents/me
 
 webkit.org/b/231609 imported/w3c/web-platform-tests/webmessaging/MessagePort_onmessage_start.any.worker.html [ Pass Failure ]
 
+webkit.org/b/231611 [ Debug ] imported/w3c/web-platform-tests/webrtc-encoded-transform/sframe-transform-in-worker.https.html [ Pass Failure ]
