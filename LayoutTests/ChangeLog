@@ -1,3 +1,17 @@
+2021-10-12  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        WebGL first clear is lost when scissor is used for preserveDrawingBuffer:true in some conditions
+        https://bugs.webkit.org/show_bug.cgi?id=230618
+        <rdar://problem/83668270>
+
+        Reviewed by Dean Jackson.
+
+        Add a pixel test to verify that scissor is not applied when blitting drawing buffer
+        to display buffer in preserveDrawingBuffer: true case.
+
+        * webgl/gl-clear-preserve-drawing-buffer-bug-expected.html: Added.
+        * webgl/gl-clear-preserve-drawing-buffer-bug.html: Added.
+
 2021-10-11  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
 
         [GLIB] Update test expectations for failing CSS tests.
