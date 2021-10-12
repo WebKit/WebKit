@@ -1,3 +1,20 @@
+2021-10-12  David Kilzer  <ddkilzer@apple.com>
+
+        Switch WTF::bridge_cast to use type traits
+        <https://webkit.org/b/231467>
+        <rdar://problem/84050614>
+
+        Reviewed by Darin Adler.
+
+        * wtf/cocoa/TollFreeBridging.h: Add.
+        (WTF::CFTollFreeBridgingTraits): Add.
+        (WTF::NSTollFreeBridgingTraits): Add.
+        - Define type traits for CF and NS classes with toll-free
+          bridging.
+        * wtf/cocoa/TypeCastsCocoa.h:
+        (WTF::bridge_cast):
+        - Make use of type traits in TollFreeBridging.h.
+
 2021-10-12  Simon Fraser  <simon.fraser@apple.com>
 
         Add support for ScrollOptions' ScrollBehavior and CSS scroll-behavior properties

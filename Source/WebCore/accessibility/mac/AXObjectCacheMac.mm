@@ -36,6 +36,7 @@
 #import "WebAccessibilityObjectWrapperMac.h"
 #import <pal/spi/cocoa/NSAccessibilitySPI.h>
 #import <pal/spi/mac/HIServicesSPI.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 #import <pal/spi/cocoa/AccessibilitySupportSPI.h>
@@ -491,7 +492,7 @@ static void addTextMarkerFor(NSMutableDictionary* change, AXCoreObject& object, 
 static void addTextMarkerFor(NSMutableDictionary* change, AXCoreObject& object, HTMLTextFormControlElement& textControl)
 {
     if (auto textMarker = [object.wrapper() textMarkerForFirstPositionInTextControl:textControl])
-        [change setObject:textMarker.bridgingAutorelease() forKey:NSAccessibilityTextChangeValueStartMarker];
+        [change setObject:bridge_id_cast(textMarker.get()) forKey:NSAccessibilityTextChangeValueStartMarker];
 }
 
 template <typename TextMarkerTargetType>

@@ -27,6 +27,7 @@
 
 #import <wtf/Assertions.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/cocoa/TollFreeBridging.h>
 
 namespace WTF {
 
@@ -40,55 +41,25 @@ namespace WTF {
 #define WTF_NS_TO_CF_BRIDGE_TRANSFER(type, value) ((__bridge type)value)
 #endif
 
-#define WTF_DECLARE_CF_NS_BRIDGE_CAST(CFClassName, NSClassName) \
-inline CFClassName##Ref bridge_cast(NSClassName *object) \
-{ \
-    return (__bridge CFClassName##Ref)object; \
-} \
-inline RetainPtr<CFClassName##Ref> bridge_cast(RetainPtr<NSClassName>&& object) \
-{ \
-    return adoptCF(WTF_NS_TO_CF_BRIDGE_TRANSFER(CFClassName##Ref, object.leakRef())); \
-} \
-inline NSClassName *bridge_cast(CFClassName##Ref object) \
-{ \
-    return (__bridge NSClassName *)object; \
-} \
-inline RetainPtr<NSClassName> bridge_cast(RetainPtr<CFClassName##Ref>&& object) \
-{ \
-    return adoptNS(WTF_CF_TO_NS_BRIDGE_TRANSFER(NSClassName *, object.leakRef())); \
-}
-
-WTF_DECLARE_CF_NS_BRIDGE_CAST(CFArray, NSArray)
-WTF_DECLARE_CF_NS_BRIDGE_CAST(CFAttributedString, NSAttributedString)
-WTF_DECLARE_CF_NS_BRIDGE_CAST(CFCharacterSet, NSCharacterSet)
-WTF_DECLARE_CF_NS_BRIDGE_CAST(CFData, NSData)
-WTF_DECLARE_CF_NS_BRIDGE_CAST(CFDate, NSDate)
-WTF_DECLARE_CF_NS_BRIDGE_CAST(CFDictionary, NSDictionary)
-WTF_DECLARE_CF_NS_BRIDGE_CAST(CFError, NSError)
-WTF_DECLARE_CF_NS_BRIDGE_CAST(CFFileSecurity, NSFileSecurity)
-WTF_DECLARE_CF_NS_BRIDGE_CAST(CFLocale, NSLocale)
-WTF_DECLARE_CF_NS_BRIDGE_CAST(CFNull, NSNull)
-WTF_DECLARE_CF_NS_BRIDGE_CAST(CFNumber, NSNumber)
-WTF_DECLARE_CF_NS_BRIDGE_CAST(CFSet, NSSet)
-WTF_DECLARE_CF_NS_BRIDGE_CAST(CFString, NSString)
-WTF_DECLARE_CF_NS_BRIDGE_CAST(CFTimeZone, NSTimeZone)
-WTF_DECLARE_CF_NS_BRIDGE_CAST(CFURL, NSURL)
-
-inline NSNumber *bridge_cast(CFBooleanRef object)
+template<typename T> inline typename NSTollFreeBridgingTraits<std::remove_pointer_t<T>>::BridgedType bridge_cast(T object)
 {
-    return (__bridge NSNumber *)object;
-}
-inline RetainPtr<NSNumber> bridge_cast(RetainPtr<CFBooleanRef>&& object)
-{
-    return adoptNS(WTF_CF_TO_NS_BRIDGE_TRANSFER(NSNumber *, object.leakRef()));
+    return (__bridge typename NSTollFreeBridgingTraits<std::remove_pointer_t<T>>::BridgedType)object;
 }
 
-WTF_DECLARE_CF_NS_BRIDGE_CAST(CFMutableArray, NSMutableArray)
-WTF_DECLARE_CF_NS_BRIDGE_CAST(CFMutableAttributedString, NSMutableAttributedString)
-WTF_DECLARE_CF_NS_BRIDGE_CAST(CFMutableData, NSMutableData)
-WTF_DECLARE_CF_NS_BRIDGE_CAST(CFMutableDictionary, NSMutableDictionary)
-WTF_DECLARE_CF_NS_BRIDGE_CAST(CFMutableSet, NSMutableSet)
-WTF_DECLARE_CF_NS_BRIDGE_CAST(CFMutableString, NSMutableString)
+template<typename T> inline RetainPtr<typename NSTollFreeBridgingTraits<std::remove_pointer_t<T>>::BridgedType> bridge_cast(RetainPtr<T>&& object)
+{
+    return adoptCF(WTF_NS_TO_CF_BRIDGE_TRANSFER(typename NSTollFreeBridgingTraits<std::remove_pointer_t<T>>::BridgedType, object.leakRef()));
+}
+
+template<typename T> inline typename CFTollFreeBridgingTraits<T>::BridgedType bridge_cast(T object)
+{
+    return (__bridge typename CFTollFreeBridgingTraits<T>::BridgedType)object;
+}
+
+template<typename T> inline RetainPtr<std::remove_pointer_t<typename CFTollFreeBridgingTraits<T>::BridgedType>> bridge_cast(RetainPtr<T>&& object)
+{
+    return adoptNS(WTF_CF_TO_NS_BRIDGE_TRANSFER(typename CFTollFreeBridgingTraits<T>::BridgedType, object.leakRef()));
+}
 
 // Use bridge_id_cast to convert from CF -> id without ref churn.
 
@@ -102,7 +73,6 @@ inline RetainPtr<id> bridge_id_cast(RetainPtr<CFTypeRef>&& object)
     return adoptNS(WTF_CF_TO_NS_BRIDGE_TRANSFER(id, object.leakRef()));
 }
 
-#undef WTF_DECLARE_CF_NS_BRIDGE_CAST
 #undef WTF_NS_TO_CF_BRIDGE_TRANSFER
 #undef WTF_CF_TO_NS_BRIDGE_TRANSFER
 

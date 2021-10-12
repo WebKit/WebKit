@@ -79,6 +79,7 @@
 #import "VisibleUnits.h"
 #import "WebCoreFrameView.h"
 #import <pal/spi/cocoa/NSAccessibilitySPI.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
 using namespace WebCore;
@@ -4085,7 +4086,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
                 return nil;
 
             CharacterOffset characterOffset = characterOffsetForTextMarker(cache, textMarker);
-            return [protectedSelf nextTextMarkerForCharacterOffset:characterOffset].bridgingAutorelease();
+            return bridge_id_cast([protectedSelf nextTextMarkerForCharacterOffset:characterOffset]);
         });
     }
 
@@ -4100,7 +4101,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
                 return nil;
 
             CharacterOffset characterOffset = characterOffsetForTextMarker(cache, textMarker);
-            return [protectedSelf previousTextMarkerForCharacterOffset:characterOffset].bridgingAutorelease();
+            return bridge_id_cast([protectedSelf previousTextMarkerForCharacterOffset:characterOffset]);
         });
     }
 
