@@ -44,11 +44,9 @@
 // Debug builds with ARC enabled cause objects to be autoreleased
 // when assigning adoptNS() result to a different RetainPtr<> type,
 // and when calling RetainPtr<>::get().
-#define BEGIN_AUTORELEASEPOOL_FOR_ARC_DEBUG @autoreleasepool {
-#define END_AUTORELEASEPOOL_FOR_ARC_DEBUG }
+#define AUTORELEASEPOOL_FOR_ARC_DEBUG @autoreleasepool
 #else
-#define BEGIN_AUTORELEASEPOOL_FOR_ARC_DEBUG
-#define END_AUTORELEASEPOOL_FOR_ARC_DEBUG
+#define AUTORELEASEPOOL_FOR_ARC_DEBUG
 #endif
 
 namespace TestWebKitAPI {
@@ -57,25 +55,25 @@ TEST(RETAIN_PTR_TEST_NAME, AdoptNS)
 {
     RetainPtr<NSObject> object1 = adoptNS([[NSObject alloc] init]);
     uintptr_t objectPtr1 = 0;
-BEGIN_AUTORELEASEPOOL_FOR_ARC_DEBUG
-    objectPtr1 = reinterpret_cast<uintptr_t>(object1.get());
-END_AUTORELEASEPOOL_FOR_ARC_DEBUG
+    AUTORELEASEPOOL_FOR_ARC_DEBUG {
+        objectPtr1 = reinterpret_cast<uintptr_t>(object1.get());
+    }
     EXPECT_EQ(1L, CFGetRetainCount((CFTypeRef)objectPtr1));
 
     RetainPtr<NSObject *> object2;
     uintptr_t objectPtr2 = 0;
-BEGIN_AUTORELEASEPOOL_FOR_ARC_DEBUG
-    object2 = adoptNS([[NSObject alloc] init]);
-    objectPtr2 = reinterpret_cast<uintptr_t>(object2.get());
-END_AUTORELEASEPOOL_FOR_ARC_DEBUG
+    AUTORELEASEPOOL_FOR_ARC_DEBUG {
+        object2 = adoptNS([[NSObject alloc] init]);
+        objectPtr2 = reinterpret_cast<uintptr_t>(object2.get());
+    }
     EXPECT_EQ(1L, CFGetRetainCount((CFTypeRef)objectPtr2));
 
     RetainPtr<id> object3;
     uintptr_t objectPtr3 = 0;
-BEGIN_AUTORELEASEPOOL_FOR_ARC_DEBUG
-    object3 = adoptNS([[NSObject alloc] init]);
-    objectPtr3 = reinterpret_cast<uintptr_t>(object3.get());
-END_AUTORELEASEPOOL_FOR_ARC_DEBUG
+    AUTORELEASEPOOL_FOR_ARC_DEBUG {
+        object3 = adoptNS([[NSObject alloc] init]);
+        objectPtr3 = reinterpret_cast<uintptr_t>(object3.get());
+    }
     EXPECT_EQ(1, CFGetRetainCount((CFTypeRef)objectPtr3));
 }
 
@@ -299,9 +297,9 @@ TEST(RETAIN_PTR_TEST_NAME, RetainPtrNS)
         object1 = retainPtr([[NSObject new] autorelease]);
     }
     uintptr_t objectPtr1 = 0;
-BEGIN_AUTORELEASEPOOL_FOR_ARC_DEBUG
-    objectPtr1 = reinterpret_cast<uintptr_t>(object1.get());
-END_AUTORELEASEPOOL_FOR_ARC_DEBUG
+    AUTORELEASEPOOL_FOR_ARC_DEBUG {
+        objectPtr1 = reinterpret_cast<uintptr_t>(object1.get());
+    }
     EXPECT_EQ(1L, CFGetRetainCount((CFTypeRef)objectPtr1));
 
     RetainPtr<NSObject *> object2;
@@ -309,9 +307,9 @@ END_AUTORELEASEPOOL_FOR_ARC_DEBUG
         object2 = retainPtr([[NSObject new] autorelease]);
     }
     uintptr_t objectPtr2 = 0;
-BEGIN_AUTORELEASEPOOL_FOR_ARC_DEBUG
-    objectPtr2 = reinterpret_cast<uintptr_t>(object2.get());
-END_AUTORELEASEPOOL_FOR_ARC_DEBUG
+    AUTORELEASEPOOL_FOR_ARC_DEBUG {
+        objectPtr2 = reinterpret_cast<uintptr_t>(object2.get());
+    }
     EXPECT_EQ(1L, CFGetRetainCount((CFTypeRef)objectPtr2));
 
     RetainPtr<id> object3;
@@ -319,9 +317,9 @@ END_AUTORELEASEPOOL_FOR_ARC_DEBUG
         object3 = retainPtr([[NSObject new] autorelease]);
     }
     uintptr_t objectPtr3 = 0;
-BEGIN_AUTORELEASEPOOL_FOR_ARC_DEBUG
-    objectPtr3 = reinterpret_cast<uintptr_t>(object3.get());
-END_AUTORELEASEPOOL_FOR_ARC_DEBUG
+    AUTORELEASEPOOL_FOR_ARC_DEBUG {
+        objectPtr3 = reinterpret_cast<uintptr_t>(object3.get());
+    }
     EXPECT_EQ(1L, CFGetRetainCount((CFTypeRef)objectPtr3));
 }
 

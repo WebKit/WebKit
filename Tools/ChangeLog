@@ -1,3 +1,16 @@
+2021-10-11  Darin Adler  <darin@apple.com>
+
+        Slightly better idiom for ARC debug autorelease workaround
+        https://bugs.webkit.org/show_bug.cgi?id=231435
+
+        Reviewed by David Kilzer.
+
+        * TestWebKitAPI/Tests/WTF/cocoa/TypeCastsCocoa.mm:
+        (TestWebKitAPI::TEST): Use one macro instead of two, with
+        traditional indentation instead of left flush style.
+        * TestWebKitAPI/Tests/WTF/ns/RetainPtr.mm:
+        (TestWebKitAPI::TEST): Ditto.
+
 2021-10-11  Jonathan Bedard  <jbedard@apple.com>
 
         [build-imagediff] Build universal binaries by default

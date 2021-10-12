@@ -35,11 +35,9 @@
 // Debug builds with ARC enabled cause objects to be autoreleased
 // when assigning adoptNS() result to a different RetainPtr<> type,
 // and when calling RetainPtr<>::get().
-#define BEGIN_AUTORELEASEPOOL_FOR_ARC_DEBUG @autoreleasepool {
-#define END_AUTORELEASEPOOL_FOR_ARC_DEBUG }
+#define AUTORELEASEPOOL_FOR_ARC_DEBUG @autoreleasepool
 #else
-#define BEGIN_AUTORELEASEPOOL_FOR_ARC_DEBUG
-#define END_AUTORELEASEPOOL_FOR_ARC_DEBUG
+#define AUTORELEASEPOOL_FOR_ARC_DEBUG
 #endif
 
 @interface MyObjectSubtype : NSObject
@@ -114,9 +112,9 @@ TEST(TypeCastsCocoa, bridge_id_cast)
 
         auto objectID = bridge_id_cast(WTFMove(objectCF));
         uintptr_t objectIDPtr;
-BEGIN_AUTORELEASEPOOL_FOR_ARC_DEBUG
-        objectIDPtr = reinterpret_cast<uintptr_t>(objectID.get());
-END_AUTORELEASEPOOL_FOR_ARC_DEBUG
+        AUTORELEASEPOOL_FOR_ARC_DEBUG {
+            objectIDPtr = reinterpret_cast<uintptr_t>(objectID.get());
+        }
         EXPECT_EQ(NULL, objectCF.get());
         EXPECT_EQ(objectCFPtr, objectIDPtr);
         EXPECT_EQ(1L, CFGetRetainCount((CFTypeRef)objectIDPtr));
@@ -130,34 +128,34 @@ TEST(TypeCastsCocoa, checked_objc_cast)
     @autoreleasepool {
         RetainPtr<id> objectNS;
         uintptr_t objectNSPtr;
-BEGIN_AUTORELEASEPOOL_FOR_ARC_DEBUG
-        objectNS = adoptNS<id>([[NSString alloc] initWithFormat:@"%s", helloWorldCString]);
-        objectNSPtr = reinterpret_cast<uintptr_t>(objectNS.get());
-        EXPECT_EQ(objectNS.get(), checked_objc_cast<NSString>(objectNS.get()));
-        EXPECT_EQ(objectNS.get(), checked_objc_cast<NSObject>(objectNS.get()));
-END_AUTORELEASEPOOL_FOR_ARC_DEBUG
+        AUTORELEASEPOOL_FOR_ARC_DEBUG {
+            objectNS = adoptNS<id>([[NSString alloc] initWithFormat:@"%s", helloWorldCString]);
+            objectNSPtr = reinterpret_cast<uintptr_t>(objectNS.get());
+            EXPECT_EQ(objectNS.get(), checked_objc_cast<NSString>(objectNS.get()));
+            EXPECT_EQ(objectNS.get(), checked_objc_cast<NSObject>(objectNS.get()));
+        }
         EXPECT_EQ(1L, CFGetRetainCount((CFTypeRef)objectNSPtr));
     }
 
     @autoreleasepool {
         RetainPtr<NSObject *> objectNS;
         uintptr_t objectNSPtr;
-BEGIN_AUTORELEASEPOOL_FOR_ARC_DEBUG
-        objectNS = adoptNS<NSObject *>([[NSString alloc] initWithFormat:@"%s", helloWorldCString]);
-        objectNSPtr = reinterpret_cast<uintptr_t>(objectNS.get());
-        EXPECT_EQ(objectNS.get(), checked_objc_cast<NSString>(objectNS.get()));
-END_AUTORELEASEPOOL_FOR_ARC_DEBUG
+        AUTORELEASEPOOL_FOR_ARC_DEBUG {
+            objectNS = adoptNS<NSObject *>([[NSString alloc] initWithFormat:@"%s", helloWorldCString]);
+            objectNSPtr = reinterpret_cast<uintptr_t>(objectNS.get());
+            EXPECT_EQ(objectNS.get(), checked_objc_cast<NSString>(objectNS.get()));
+        }
         EXPECT_EQ(1L, CFGetRetainCount((CFTypeRef)objectNSPtr));
     }
 
     @autoreleasepool {
         RetainPtr<NSString> objectNS;
         uintptr_t objectNSPtr;
-BEGIN_AUTORELEASEPOOL_FOR_ARC_DEBUG
-        objectNS = adoptNS([[NSString alloc] initWithFormat:@"%s", helloWorldCString]);
-        objectNSPtr = reinterpret_cast<uintptr_t>(objectNS.get());
-        EXPECT_EQ(objectNS.get(), checked_objc_cast<NSObject>(objectNS.get()));
-END_AUTORELEASEPOOL_FOR_ARC_DEBUG
+        AUTORELEASEPOOL_FOR_ARC_DEBUG {
+            objectNS = adoptNS([[NSString alloc] initWithFormat:@"%s", helloWorldCString]);
+            objectNSPtr = reinterpret_cast<uintptr_t>(objectNS.get());
+            EXPECT_EQ(objectNS.get(), checked_objc_cast<NSObject>(objectNS.get()));
+        }
         EXPECT_EQ(1L, CFGetRetainCount((CFTypeRef)objectNSPtr));
     }
 }
@@ -169,55 +167,55 @@ TEST(TypeCastsCocoa, dynamic_objc_cast)
     @autoreleasepool {
         auto objectNS = adoptNS<id>([[NSString alloc] initWithFormat:@"%s", helloWorldCString]);
         uintptr_t objectNSPtr;
-BEGIN_AUTORELEASEPOOL_FOR_ARC_DEBUG
-        objectNSPtr = reinterpret_cast<uintptr_t>(objectNS.get());
-        EXPECT_EQ(objectNS.get(), dynamic_objc_cast<NSString>(objectNS.get()));
-        EXPECT_EQ(objectNS.get(), dynamic_objc_cast<NSObject>(objectNS.get()));
-        EXPECT_EQ(nil, dynamic_objc_cast<NSArray>(objectNS.get()));
-END_AUTORELEASEPOOL_FOR_ARC_DEBUG
+        AUTORELEASEPOOL_FOR_ARC_DEBUG {
+            objectNSPtr = reinterpret_cast<uintptr_t>(objectNS.get());
+            EXPECT_EQ(objectNS.get(), dynamic_objc_cast<NSString>(objectNS.get()));
+            EXPECT_EQ(objectNS.get(), dynamic_objc_cast<NSObject>(objectNS.get()));
+            EXPECT_EQ(nil, dynamic_objc_cast<NSArray>(objectNS.get()));
+        }
         EXPECT_EQ(1L, CFGetRetainCount((CFTypeRef)objectNSPtr));
     }
 
     @autoreleasepool {
         auto objectNS = adoptNS<NSObject *>([[NSString alloc] initWithFormat:@"%s", helloWorldCString]);
         uintptr_t objectNSPtr;
-BEGIN_AUTORELEASEPOOL_FOR_ARC_DEBUG
-        objectNSPtr = reinterpret_cast<uintptr_t>(objectNS.get());
-        EXPECT_EQ(objectNS.get(), dynamic_objc_cast<NSString>(objectNS.get()));
-        EXPECT_EQ(nil, dynamic_objc_cast<NSArray>(objectNS.get()));
-END_AUTORELEASEPOOL_FOR_ARC_DEBUG
+        AUTORELEASEPOOL_FOR_ARC_DEBUG {
+            objectNSPtr = reinterpret_cast<uintptr_t>(objectNS.get());
+            EXPECT_EQ(objectNS.get(), dynamic_objc_cast<NSString>(objectNS.get()));
+            EXPECT_EQ(nil, dynamic_objc_cast<NSArray>(objectNS.get()));
+        }
         EXPECT_EQ(1L, CFGetRetainCount((CFTypeRef)objectNSPtr));
     }
 
     @autoreleasepool {
         auto objectNS = adoptNS([[NSString alloc] initWithFormat:@"%s", helloWorldCString]);
         uintptr_t objectNSPtr;
-BEGIN_AUTORELEASEPOOL_FOR_ARC_DEBUG
-        objectNSPtr = reinterpret_cast<uintptr_t>(objectNS.get());
-        EXPECT_EQ(objectNS.get(), dynamic_objc_cast<NSObject>(objectNS.get()));
-        EXPECT_EQ(nil, dynamic_objc_cast<NSArray>(objectNS.get()));
-END_AUTORELEASEPOOL_FOR_ARC_DEBUG
+        AUTORELEASEPOOL_FOR_ARC_DEBUG {
+            objectNSPtr = reinterpret_cast<uintptr_t>(objectNS.get());
+            EXPECT_EQ(objectNS.get(), dynamic_objc_cast<NSObject>(objectNS.get()));
+            EXPECT_EQ(nil, dynamic_objc_cast<NSArray>(objectNS.get()));
+        }
         EXPECT_EQ(1L, CFGetRetainCount((CFTypeRef)objectNSPtr));
     }
 
     @autoreleasepool {
         auto objectID = adoptNS<id>([[NSObject alloc] init]);
         uintptr_t objectIDPtr;
-BEGIN_AUTORELEASEPOOL_FOR_ARC_DEBUG
-        objectIDPtr = reinterpret_cast<uintptr_t>(objectID.get());
-        EXPECT_EQ(objectID.get(), dynamic_objc_cast<NSObject>(objectID.get()));
-        EXPECT_EQ(nil, dynamic_objc_cast<MyObjectSubtype>(objectID.get()));
-END_AUTORELEASEPOOL_FOR_ARC_DEBUG
+        AUTORELEASEPOOL_FOR_ARC_DEBUG {
+            objectIDPtr = reinterpret_cast<uintptr_t>(objectID.get());
+            EXPECT_EQ(objectID.get(), dynamic_objc_cast<NSObject>(objectID.get()));
+            EXPECT_EQ(nil, dynamic_objc_cast<MyObjectSubtype>(objectID.get()));
+        }
         EXPECT_EQ(1L, CFGetRetainCount((CFTypeRef)objectIDPtr));
     }
 
     @autoreleasepool {
         auto objectNS = adoptNS([[NSObject alloc] init]);
         uintptr_t objectNSPtr;
-BEGIN_AUTORELEASEPOOL_FOR_ARC_DEBUG
-        objectNSPtr = reinterpret_cast<uintptr_t>(objectNS.get());
-        EXPECT_EQ(nil, dynamic_objc_cast<MyObjectSubtype>(objectNS.get()));
-END_AUTORELEASEPOOL_FOR_ARC_DEBUG
+        AUTORELEASEPOOL_FOR_ARC_DEBUG {
+            objectNSPtr = reinterpret_cast<uintptr_t>(objectNS.get());
+            EXPECT_EQ(nil, dynamic_objc_cast<MyObjectSubtype>(objectNS.get()));
+        }
         EXPECT_EQ(1L, CFGetRetainCount((CFTypeRef)objectNSPtr));
     }
 }
@@ -234,49 +232,49 @@ TEST(TypeCastsCocoa, dynamic_objc_cast_RetainPtr)
     @autoreleasepool {
         auto object = adoptNS<id>([[NSString alloc] initWithFormat:@"%s", helloWorldCString]);
         uintptr_t objectPtr;
-BEGIN_AUTORELEASEPOOL_FOR_ARC_DEBUG
-        objectPtr = reinterpret_cast<uintptr_t>(object.get());
-END_AUTORELEASEPOOL_FOR_ARC_DEBUG
+        AUTORELEASEPOOL_FOR_ARC_DEBUG {
+            objectPtr = reinterpret_cast<uintptr_t>(object.get());
+        }
         EXPECT_EQ(1L, CFGetRetainCount((CFTypeRef)objectPtr));
 
         RetainPtr<NSString> objectCast;
         uintptr_t objectCastPtr;
-BEGIN_AUTORELEASEPOOL_FOR_ARC_DEBUG
-        objectCast = dynamic_objc_cast<NSString>(WTFMove(object));
-        objectCastPtr = reinterpret_cast<uintptr_t>(objectCast.get());
-END_AUTORELEASEPOOL_FOR_ARC_DEBUG
+        AUTORELEASEPOOL_FOR_ARC_DEBUG {
+            objectCast = dynamic_objc_cast<NSString>(WTFMove(object));
+            objectCastPtr = reinterpret_cast<uintptr_t>(objectCast.get());
+        }
         EXPECT_EQ(nil, object.get());
         EXPECT_EQ(objectPtr, objectCastPtr);
         EXPECT_EQ(1L, CFGetRetainCount((CFTypeRef)objectCastPtr));
 
-BEGIN_AUTORELEASEPOOL_FOR_ARC_DEBUG
-        object = adoptNS<id>([[NSString alloc] initWithFormat:@"%s", helloWorldCString]);
-        objectPtr = reinterpret_cast<uintptr_t>(object.get());
-END_AUTORELEASEPOOL_FOR_ARC_DEBUG
+        AUTORELEASEPOOL_FOR_ARC_DEBUG {
+            object = adoptNS<id>([[NSString alloc] initWithFormat:@"%s", helloWorldCString]);
+            objectPtr = reinterpret_cast<uintptr_t>(object.get());
+        }
         EXPECT_EQ(1L, CFGetRetainCount((CFTypeRef)objectPtr));
 
         RetainPtr<NSObject> objectCast2;
         uintptr_t objectCastPtr2;
-BEGIN_AUTORELEASEPOOL_FOR_ARC_DEBUG
-        objectCast2 = dynamic_objc_cast<NSObject>(WTFMove(object));
-        objectCastPtr2 = reinterpret_cast<uintptr_t>(objectCast2.get());
-END_AUTORELEASEPOOL_FOR_ARC_DEBUG
+        AUTORELEASEPOOL_FOR_ARC_DEBUG {
+            objectCast2 = dynamic_objc_cast<NSObject>(WTFMove(object));
+            objectCastPtr2 = reinterpret_cast<uintptr_t>(objectCast2.get());
+        }
         EXPECT_EQ(nil, object.get());
         EXPECT_EQ(objectPtr, objectCastPtr2);
         EXPECT_EQ(1L, CFGetRetainCount((CFTypeRef)objectCastPtr2));
 
-BEGIN_AUTORELEASEPOOL_FOR_ARC_DEBUG
-        object = adoptNS<id>([[NSString alloc] initWithFormat:@"%s", helloWorldCString]);
-        objectPtr = reinterpret_cast<uintptr_t>(object.get());
-END_AUTORELEASEPOOL_FOR_ARC_DEBUG
+        AUTORELEASEPOOL_FOR_ARC_DEBUG {
+            object = adoptNS<id>([[NSString alloc] initWithFormat:@"%s", helloWorldCString]);
+            objectPtr = reinterpret_cast<uintptr_t>(object.get());
+        }
         EXPECT_EQ(1L, CFGetRetainCount((CFTypeRef)objectPtr));
 
         RetainPtr<NSArray> objectCastBad;
         uintptr_t objectPtr2;
-BEGIN_AUTORELEASEPOOL_FOR_ARC_DEBUG
-        objectCastBad = dynamic_objc_cast<NSArray>(WTFMove(object));
-        objectPtr2 = reinterpret_cast<uintptr_t>(object.get());
-END_AUTORELEASEPOOL_FOR_ARC_DEBUG
+        AUTORELEASEPOOL_FOR_ARC_DEBUG {
+            objectCastBad = dynamic_objc_cast<NSArray>(WTFMove(object));
+            objectPtr2 = reinterpret_cast<uintptr_t>(object.get());
+        }
         EXPECT_EQ(objectPtr, objectPtr2);
         EXPECT_EQ(nil, objectCastBad.get());
         EXPECT_EQ(1L, CFGetRetainCount((CFTypeRef)objectPtr2));
@@ -285,16 +283,16 @@ END_AUTORELEASEPOOL_FOR_ARC_DEBUG
     @autoreleasepool {
         auto object = adoptNS([[NSString alloc] initWithFormat:@"%s", helloWorldCString]);
         uintptr_t objectPtr;
-BEGIN_AUTORELEASEPOOL_FOR_ARC_DEBUG
-        objectPtr = reinterpret_cast<uintptr_t>(object.get());
-END_AUTORELEASEPOOL_FOR_ARC_DEBUG
+        AUTORELEASEPOOL_FOR_ARC_DEBUG {
+            objectPtr = reinterpret_cast<uintptr_t>(object.get());
+        }
         EXPECT_EQ(1L, CFGetRetainCount((CFTypeRef)objectPtr));
 
         auto objectCast = dynamic_objc_cast<NSObject>(WTFMove(object));
         uintptr_t objectCastPtr;
-BEGIN_AUTORELEASEPOOL_FOR_ARC_DEBUG
-        objectCastPtr = reinterpret_cast<uintptr_t>(objectCast.get());
-END_AUTORELEASEPOOL_FOR_ARC_DEBUG
+        AUTORELEASEPOOL_FOR_ARC_DEBUG {
+            objectCastPtr = reinterpret_cast<uintptr_t>(objectCast.get());
+        }
         EXPECT_EQ(nil, object.get());
         EXPECT_EQ(objectPtr, objectCastPtr);
         EXPECT_EQ(1L, CFGetRetainCount((CFTypeRef)objectCastPtr));
@@ -303,32 +301,32 @@ END_AUTORELEASEPOOL_FOR_ARC_DEBUG
     @autoreleasepool {
         RetainPtr<id> object;
         uintptr_t objectPtr;
-BEGIN_AUTORELEASEPOOL_FOR_ARC_DEBUG
-        object = adoptNS<id>([[NSObject alloc] init]);
-        objectPtr = reinterpret_cast<uintptr_t>(object.get());
-END_AUTORELEASEPOOL_FOR_ARC_DEBUG
+        AUTORELEASEPOOL_FOR_ARC_DEBUG {
+            object = adoptNS<id>([[NSObject alloc] init]);
+            objectPtr = reinterpret_cast<uintptr_t>(object.get());
+        }
         EXPECT_EQ(1L, CFGetRetainCount((CFTypeRef)objectPtr));
 
         RetainPtr<NSObject> objectCast;
         uintptr_t objectCastPtr;
-BEGIN_AUTORELEASEPOOL_FOR_ARC_DEBUG
-        objectCast = dynamic_objc_cast<NSObject>(WTFMove(object));
-        objectCastPtr = reinterpret_cast<uintptr_t>(objectCast.get());
-END_AUTORELEASEPOOL_FOR_ARC_DEBUG
+        AUTORELEASEPOOL_FOR_ARC_DEBUG {
+            objectCast = dynamic_objc_cast<NSObject>(WTFMove(object));
+            objectCastPtr = reinterpret_cast<uintptr_t>(objectCast.get());
+        }
         EXPECT_EQ(nil, object.get());
         EXPECT_EQ(objectPtr, objectCastPtr);
         EXPECT_EQ(1L, CFGetRetainCount((CFTypeRef)objectCastPtr));
 
-BEGIN_AUTORELEASEPOOL_FOR_ARC_DEBUG
-        object = adoptNS<id>([[NSObject alloc] init]);
-        objectPtr = reinterpret_cast<uintptr_t>(object.get());
-END_AUTORELEASEPOOL_FOR_ARC_DEBUG
+        AUTORELEASEPOOL_FOR_ARC_DEBUG {
+            object = adoptNS<id>([[NSObject alloc] init]);
+            objectPtr = reinterpret_cast<uintptr_t>(object.get());
+        }
         EXPECT_EQ(1L, CFGetRetainCount((CFTypeRef)objectPtr));
 
         RetainPtr<MyObjectSubtype> objectCastBad;
-BEGIN_AUTORELEASEPOOL_FOR_ARC_DEBUG
-        objectCastBad = dynamic_objc_cast<MyObjectSubtype>(WTFMove(object));
-END_AUTORELEASEPOOL_FOR_ARC_DEBUG
+        AUTORELEASEPOOL_FOR_ARC_DEBUG {
+            objectCastBad = dynamic_objc_cast<MyObjectSubtype>(WTFMove(object));
+        }
         EXPECT_EQ(nil, objectCastBad.get());
         EXPECT_EQ(1L, CFGetRetainCount((CFTypeRef)objectPtr));
     }
