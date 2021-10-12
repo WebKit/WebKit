@@ -22,7 +22,7 @@
 #include "WebViewTest.h"
 
 #include <JavaScriptCore/JSRetainPtr.h>
-#include <WebKit/WebKitWebViewInternal.h>
+#include <WebKitWebViewInternal.h>
 
 bool WebViewTest::shouldInitializeWebViewInConstructor = true;
 bool WebViewTest::shouldCreateEphemeralWebView = false;

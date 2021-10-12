@@ -21,7 +21,7 @@
 
 // Include WebKitSettingsPrivate.h for webkitSettingsSetMediaCaptureRequiresSecureConnection().
 #define WEBKIT2_COMPILATION
-#include <WebKit/WebKitSettingsPrivate.h>
+#include <WebKitSettingsPrivate.h>
 #undef WEBKIT2_COMPILATION
 
 #include "WebViewTest.h"

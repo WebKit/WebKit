@@ -1,3 +1,11 @@
+2021-10-11  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK] Unreviewed build fix. Fix build for Debian 10 (Buster)
+
+        * TestWebKitAPI/Tests/WebKitGLib/TestUIClient.cpp:
+        * TestWebKitAPI/Tests/WebKitGLib/WebProcessTest.cpp:
+        * TestWebKitAPI/glib/WebKitGLib/WebViewTest.cpp:
+
 2021-10-11  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [GPU Process] Unique RenderingResourceIdentifiers Part 8: Consolidate DisplayList::ResourceHeap
