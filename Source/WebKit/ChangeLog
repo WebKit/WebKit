@@ -1,5 +1,32 @@
 2021-10-11  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        [GPU Process] Unique RenderingResourceIdentifiers Part 5: Uniquify RemoteDisplayListRecorder at entry points
+        https://bugs.webkit.org/show_bug.cgi?id=231548
+        <rdar://problem/84128595>
+
+        Reviewed by Wenson Hsieh.
+
+        This simply applies the same treatment in https://commits.webkit.org/242676@main to
+        RemoteDisplayListRecorder. This is being done in a follow-up patch because it
+        relies on https://bugs.webkit.org/show_bug.cgi?id=231484.
+
+        No new tests because there is no behavior change.
+
+        * GPUProcess/graphics/RemoteDisplayListRecorder.cpp:
+        (WebKit::RemoteDisplayListRecorder::RemoteDisplayListRecorder):
+        (WebKit::RemoteDisplayListRecorder::clipToImageBuffer):
+        (WebKit::RemoteDisplayListRecorder::clipToImageBufferWithQualifiedIdentifier):
+        (WebKit::RemoteDisplayListRecorder::drawImageBuffer):
+        (WebKit::RemoteDisplayListRecorder::drawImageBufferWithQualifiedIdentifier):
+        (WebKit::RemoteDisplayListRecorder::drawNativeImage):
+        (WebKit::RemoteDisplayListRecorder::drawNativeImageWithQualifiedIdentifier):
+        (WebKit::RemoteDisplayListRecorder::drawPattern):
+        (WebKit::RemoteDisplayListRecorder::drawPatternWithQualifiedIdentifier):
+        * GPUProcess/graphics/RemoteDisplayListRecorder.h:
+        (WebKit::RemoteDisplayListRecorder::create):
+
+2021-10-11  Myles C. Maxfield  <mmaxfield@apple.com>
+
         Revert 242806@main because it broke the build
         https://bugs.webkit.org/show_bug.cgi?id=231546
 

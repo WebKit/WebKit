@@ -33,6 +33,7 @@
 #include "StreamMessageReceiver.h"
 #include "StreamServerConnection.h"
 #include <WebCore/DisplayListItems.h>
+#include <WebCore/ProcessIdentifier.h>
 #include <wtf/RefCounted.h>
 #include <wtf/WeakPtr.h>
 
@@ -43,9 +44,9 @@ class RemoteResourceCache;
 
 class RemoteDisplayListRecorder : public IPC::StreamMessageReceiver, public CanMakeWeakPtr<RemoteDisplayListRecorder> {
 public:
-    static Ref<RemoteDisplayListRecorder> create(WebCore::ImageBuffer& imageBuffer, QualifiedRenderingResourceIdentifier imageBufferIdentifier, RemoteRenderingBackend& renderingBackend)
+    static Ref<RemoteDisplayListRecorder> create(WebCore::ImageBuffer& imageBuffer, QualifiedRenderingResourceIdentifier imageBufferIdentifier, WebCore::ProcessIdentifier webProcessIdentifier, RemoteRenderingBackend& renderingBackend)
     {
-        auto instance = adoptRef(*new RemoteDisplayListRecorder(imageBuffer, imageBufferIdentifier, renderingBackend));
+        auto instance = adoptRef(*new RemoteDisplayListRecorder(imageBuffer, imageBufferIdentifier, webProcessIdentifier, renderingBackend));
         instance->startListeningForIPC();
         return instance;
     }
@@ -124,7 +125,12 @@ public:
     void flushContext(WebCore::GraphicsContextFlushIdentifier);
 
 private:
-    RemoteDisplayListRecorder(WebCore::ImageBuffer&, QualifiedRenderingResourceIdentifier, RemoteRenderingBackend&);
+    RemoteDisplayListRecorder(WebCore::ImageBuffer&, QualifiedRenderingResourceIdentifier, WebCore::ProcessIdentifier webProcessIdentifier, RemoteRenderingBackend&);
+
+    void clipToImageBufferWithQualifiedIdentifier(QualifiedRenderingResourceIdentifier, const WebCore::FloatRect& destinationRect);
+    void drawImageBufferWithQualifiedIdentifier(QualifiedRenderingResourceIdentifier imageBufferIdentifier, const WebCore::FloatRect& destinationRect, const WebCore::FloatRect& srcRect, const WebCore::ImagePaintingOptions&);
+    void drawNativeImageWithQualifiedIdentifier(QualifiedRenderingResourceIdentifier imageIdentifier, const WebCore::FloatSize& imageSize, const WebCore::FloatRect& destRect, const WebCore::FloatRect& srcRect, const WebCore::ImagePaintingOptions&);
+    void drawPatternWithQualifiedIdentifier(QualifiedRenderingResourceIdentifier imageIdentifier, const WebCore::FloatSize& imageSize, const WebCore::FloatRect& destRect, const WebCore::FloatRect& tileRect, const WebCore::AffineTransform&, const WebCore::FloatPoint&, const WebCore::FloatSize& spacing, const WebCore::ImagePaintingOptions&);
 
     RemoteResourceCache& resourceCache();
     WebCore::GraphicsContext& drawingContext();
@@ -143,6 +149,7 @@ private:
 
     Ref<WebCore::ImageBuffer> m_imageBuffer;
     QualifiedRenderingResourceIdentifier m_imageBufferIdentifier;
+    WebCore::ProcessIdentifier m_webProcessIdentifier;
     Ref<RemoteRenderingBackend> m_renderingBackend;
     RefPtr<WebCore::ImageBuffer> m_maskImageBuffer;
     bool m_isListeningForIPC { false };

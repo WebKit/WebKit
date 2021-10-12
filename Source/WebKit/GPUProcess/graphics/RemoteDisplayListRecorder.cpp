@@ -33,9 +33,10 @@
 namespace WebKit {
 using namespace WebCore;
 
-RemoteDisplayListRecorder::RemoteDisplayListRecorder(ImageBuffer& imageBuffer, QualifiedRenderingResourceIdentifier imageBufferIdentifier, RemoteRenderingBackend& renderingBackend)
+RemoteDisplayListRecorder::RemoteDisplayListRecorder(ImageBuffer& imageBuffer, QualifiedRenderingResourceIdentifier imageBufferIdentifier, ProcessIdentifier webProcessIdentifier, RemoteRenderingBackend& renderingBackend)
     : m_imageBuffer(imageBuffer)
     , m_imageBufferIdentifier(imageBufferIdentifier)
+    , m_webProcessIdentifier(webProcessIdentifier)
     , m_renderingBackend(renderingBackend)
 {
 }
@@ -172,16 +173,23 @@ void RemoteDisplayListRecorder::clipOut(const FloatRect& rect)
     handleItem(DisplayList::ClipOut(rect));
 }
 
-void RemoteDisplayListRecorder::clipToImageBuffer(WebCore::RenderingResourceIdentifier imageBufferIdentifier, const WebCore::FloatRect& destinationRect)
+void RemoteDisplayListRecorder::clipToImageBuffer(RenderingResourceIdentifier imageBufferIdentifier, const WebCore::FloatRect& destinationRect)
 {
-    RefPtr imageBuffer = resourceCache().cachedImageBuffer(imageBufferIdentifier);
+    // Immediately turn the RenderingResourceIdentifier (which is error-prone) to a QualifiedRenderingResourceIdentifier,
+    // and use a helper function to make sure that don't accidentally use the RenderingResourceIdentifier (because the helper function can't see it).
+    clipToImageBufferWithQualifiedIdentifier({ imageBufferIdentifier, m_webProcessIdentifier }, destinationRect);
+}
+
+void RemoteDisplayListRecorder::clipToImageBufferWithQualifiedIdentifier(QualifiedRenderingResourceIdentifier imageBufferIdentifier, const WebCore::FloatRect& destinationRect)
+{
+    RefPtr imageBuffer = resourceCache().cachedImageBuffer(imageBufferIdentifier.object());
     if (!imageBuffer) {
         ASSERT_NOT_REACHED();
         return;
     }
 
-    handleItem(DisplayList::ClipToImageBuffer(imageBufferIdentifier, destinationRect), *imageBuffer);
-    resourceCache().recordResourceUse(imageBufferIdentifier);
+    handleItem(DisplayList::ClipToImageBuffer(imageBufferIdentifier.object(), destinationRect), *imageBuffer);
+    resourceCache().recordResourceUse(imageBufferIdentifier.object());
 }
 
 void RemoteDisplayListRecorder::clipOutToPath(const Path& path)
@@ -225,38 +233,59 @@ void RemoteDisplayListRecorder::drawGlyphs(DisplayList::DrawGlyphs&& item)
 
 void RemoteDisplayListRecorder::drawImageBuffer(RenderingResourceIdentifier imageBufferIdentifier, const FloatRect& destinationRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
 {
-    RefPtr imageBuffer = resourceCache().cachedImageBuffer(imageBufferIdentifier);
+    // Immediately turn the RenderingResourceIdentifier (which is error-prone) to a QualifiedRenderingResourceIdentifier,
+    // and use a helper function to make sure that don't accidentally use the RenderingResourceIdentifier (because the helper function can't see it).
+    drawImageBufferWithQualifiedIdentifier({ imageBufferIdentifier, m_webProcessIdentifier }, destinationRect, srcRect, options);
+}
+
+void RemoteDisplayListRecorder::drawImageBufferWithQualifiedIdentifier(QualifiedRenderingResourceIdentifier imageBufferIdentifier, const FloatRect& destinationRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
+{
+    RefPtr imageBuffer = resourceCache().cachedImageBuffer(imageBufferIdentifier.object());
     if (!imageBuffer) {
         ASSERT_NOT_REACHED();
         return;
     }
 
-    handleItem(DisplayList::DrawImageBuffer(imageBufferIdentifier, destinationRect, srcRect, options), *imageBuffer);
-    resourceCache().recordResourceUse(imageBufferIdentifier);
+    handleItem(DisplayList::DrawImageBuffer(imageBufferIdentifier.object(), destinationRect, srcRect, options), *imageBuffer);
+    resourceCache().recordResourceUse(imageBufferIdentifier.object());
 }
 
 void RemoteDisplayListRecorder::drawNativeImage(RenderingResourceIdentifier imageIdentifier, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
 {
-    RefPtr image = resourceCache().cachedNativeImage(imageIdentifier);
+    // Immediately turn the RenderingResourceIdentifier (which is error-prone) to a QualifiedRenderingResourceIdentifier,
+    // and use a helper function to make sure that don't accidentally use the RenderingResourceIdentifier (because the helper function can't see it).
+    drawNativeImageWithQualifiedIdentifier({ imageIdentifier, m_webProcessIdentifier }, imageSize, destRect, srcRect, options);
+}
+
+void RemoteDisplayListRecorder::drawNativeImageWithQualifiedIdentifier(QualifiedRenderingResourceIdentifier imageIdentifier, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
+{
+    RefPtr image = resourceCache().cachedNativeImage(imageIdentifier.object());
     if (!image) {
         ASSERT_NOT_REACHED();
         return;
     }
 
-    handleItem(DisplayList::DrawNativeImage(imageIdentifier, imageSize, destRect, srcRect, options), *image);
-    resourceCache().recordResourceUse(imageIdentifier);
+    handleItem(DisplayList::DrawNativeImage(imageIdentifier.object(), imageSize, destRect, srcRect, options), *image);
+    resourceCache().recordResourceUse(imageIdentifier.object());
 }
 
 void RemoteDisplayListRecorder::drawPattern(RenderingResourceIdentifier imageIdentifier, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& transform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& options)
 {
-    RefPtr image = resourceCache().cachedNativeImage(imageIdentifier);
+    // Immediately turn the RenderingResourceIdentifier (which is error-prone) to a QualifiedRenderingResourceIdentifier,
+    // and use a helper function to make sure that don't accidentally use the RenderingResourceIdentifier (because the helper function can't see it).
+    drawPatternWithQualifiedIdentifier({ imageIdentifier, m_webProcessIdentifier }, imageSize, destRect, tileRect, transform, phase, spacing, options);
+}
+
+void RemoteDisplayListRecorder::drawPatternWithQualifiedIdentifier(QualifiedRenderingResourceIdentifier imageIdentifier, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& transform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& options)
+{
+    RefPtr image = resourceCache().cachedNativeImage(imageIdentifier.object());
     if (!image) {
         ASSERT_NOT_REACHED();
         return;
     }
 
-    handleItem(DisplayList::DrawPattern(imageIdentifier, imageSize, destRect, tileRect, transform, phase, spacing, options), *image);
-    resourceCache().recordResourceUse(imageIdentifier);
+    handleItem(DisplayList::DrawPattern(imageIdentifier.object(), imageSize, destRect, tileRect, transform, phase, spacing, options), *image);
+    resourceCache().recordResourceUse(imageIdentifier.object());
 }
 
 void RemoteDisplayListRecorder::beginTransparencyLayer(float opacity)
