@@ -1,3 +1,14 @@
+2021-10-12  Alex Christensen  <achristensen@webkit.org>
+
+        Begin migration from WTF::Variant to std::variant
+        https://bugs.webkit.org/show_bug.cgi?id=231086
+
+        Reviewed by Chris Dumez.
+
+        * Platform/IPC/ArgumentCoders.h:
+        (IPC::VariantCoder::encode):
+        (IPC::VariantCoder::decode):
+
 2021-10-12  Per Arne Vollan <pvollan@apple.com>
 
         [iOS] Add syscall telemetry in the WebContent process' sandbox

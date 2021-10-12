@@ -733,7 +733,7 @@ struct VariantCoder {
     static void encode(Encoder& encoder, const WTF::Variant<Types...>& variant, unsigned i)
     {
         if (i == index) {
-            encoder << WTF::get<index>(variant);
+            encoder << std::get<index>(variant);
             return;
         }
         VariantCoder<index - 1, Types...>::encode(encoder, variant, i);
@@ -743,7 +743,7 @@ struct VariantCoder {
     static std::optional<WTF::Variant<Types...>> decode(Decoder& decoder, unsigned i)
     {
         if (i == index) {
-            std::optional<typename WTF::variant_alternative<index, WTF::Variant<Types...>>::type> optional;
+            std::optional<typename std::variant_alternative<index, WTF::Variant<Types...>>::type> optional;
             decoder >> optional;
             if (!optional)
                 return std::nullopt;
@@ -759,14 +759,14 @@ struct VariantCoder<0, Types...> {
     static void encode(Encoder& encoder, const WTF::Variant<Types...>& variant, unsigned i)
     {
         ASSERT_UNUSED(i, !i);
-        encoder << WTF::get<0>(variant);
+        encoder << std::get<0>(variant);
     }
     
     template<typename Decoder>
     static std::optional<WTF::Variant<Types...>> decode(Decoder& decoder, unsigned i)
     {
         ASSERT_UNUSED(i, !i);
-        std::optional<typename WTF::variant_alternative<0, WTF::Variant<Types...>>::type> optional;
+        std::optional<typename std::variant_alternative<0, WTF::Variant<Types...>>::type> optional;
         decoder >> optional;
         if (!optional)
             return std::nullopt;

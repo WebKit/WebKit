@@ -83,7 +83,6 @@ template<typename> class StringBuffer;
 template<typename> class StringParsingBuffer;
 template<typename, typename = void> class StringTypeAdapter;
 template<typename> class UniqueRef;
-template<typename...> class Variant;
 template<typename, size_t = 0, typename = CrashOnOverflow, size_t = 16, typename Malloc = VectorMalloc> class Vector;
 template<typename, typename = EmptyCounter> class WeakPtr;
 
@@ -157,7 +156,6 @@ using WTF::TextPosition;
 using WTF::TextStream;
 using WTF::URL;
 using WTF::UniqueRef;
-using WTF::Variant;
 using WTF::Vector;
 
 template<class T, class E> using Expected = std::experimental::expected<T, E>;

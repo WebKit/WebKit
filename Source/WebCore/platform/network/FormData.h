@@ -153,10 +153,10 @@ struct FormDataElement {
         if (data.index() != other.data.index())
             return false;
         if (!data.index())
-            return WTF::get<0>(data) == WTF::get<0>(other.data);
+            return std::get<0>(data) == std::get<0>(other.data);
         if (data.index() == 1)
-            return WTF::get<1>(data) == WTF::get<1>(other.data);
-        return WTF::get<2>(data) == WTF::get<2>(other.data);
+            return std::get<1>(data) == std::get<1>(other.data);
+        return std::get<2>(data) == std::get<2>(other.data);
     }
     bool operator!=(const FormDataElement& other) const
     {

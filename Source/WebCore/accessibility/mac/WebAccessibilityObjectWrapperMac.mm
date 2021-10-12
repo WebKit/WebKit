@@ -2302,11 +2302,11 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
         auto value = backingObject->value();
         return WTF::switchOn(value,
-            [] (bool& typedValue) { return @(typedValue); },
-            [] (unsigned& typedValue) { return @(typedValue); },
-            [] (float& typedValue) { return @(typedValue); },
-            [] (String& typedValue) { return (id)(NSString *)typedValue; },
-            [] (AccessibilityButtonState& typedValue) { return @((unsigned)typedValue); },
+            [] (bool& typedValue) -> id { return @(typedValue); },
+            [] (unsigned& typedValue) -> id { return @(typedValue); },
+            [] (float& typedValue) -> id { return @(typedValue); },
+            [] (String& typedValue) -> id { return (NSString *)typedValue; },
+            [] (AccessibilityButtonState& typedValue) -> id { return @((unsigned)typedValue); },
             [] (AXCoreObject*& typedValue) { return typedValue ? (id)typedValue->wrapper() : nil; },
             [] (auto&) { return nil; }
         );

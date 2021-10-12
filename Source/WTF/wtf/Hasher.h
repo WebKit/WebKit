@@ -21,6 +21,7 @@
 #pragma once
 
 #include <optional>
+#include <variant>
 #include <wtf/StdLibExtras.h>
 #include <wtf/URL.h>
 #include <wtf/text/AtomString.h>
@@ -166,10 +167,10 @@ template<typename T> void add(Hasher& hasher, const std::optional<T>& optional)
         add(hasher, optional.value());
 }
 
-template<typename... Types> void add(Hasher& hasher, const Variant<Types...>& variant)
+template<typename... Types> void add(Hasher& hasher, const std::variant<Types...>& variant)
 {
     add(hasher, variant.index());
-    visit([&hasher] (auto& value) {
+    std::visit([&hasher] (auto& value) {
         add(hasher, value);
     }, variant);
 }

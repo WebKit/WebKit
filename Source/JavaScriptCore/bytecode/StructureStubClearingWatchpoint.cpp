@@ -65,9 +65,9 @@ inline bool WatchpointsOnStructureStubInfo::isValid() const
 WatchpointsOnStructureStubInfo::Node& WatchpointsOnStructureStubInfo::addWatchpoint(const ObjectPropertyCondition& key)
 {
     if (!key || key.condition().kind() != PropertyCondition::Equivalence)
-        return *m_watchpoints.add(WTF::in_place<StructureTransitionStructureStubClearingWatchpoint>, key, *this);
+        return *m_watchpoints.add(std::in_place_type<StructureTransitionStructureStubClearingWatchpoint>, key, *this);
     ASSERT(key.condition().kind() == PropertyCondition::Equivalence);
-    return *m_watchpoints.add(WTF::in_place<AdaptiveValueStructureStubClearingWatchpoint>, key, *this);
+    return *m_watchpoints.add(std::in_place_type<AdaptiveValueStructureStubClearingWatchpoint>, key, *this);
 }
 
 void WatchpointsOnStructureStubInfo::ensureReferenceAndInstallWatchpoint(

@@ -385,7 +385,7 @@ template<typename... T> struct JSConverter<IDLUnion<T...>> {
     static constexpr bool needsState = true;
     static constexpr bool needsGlobalObject = true;
 
-    using Sequence = brigand::make_sequence<brigand::ptrdiff_t<0>, WTF::variant_size<ImplementationType>::value>;
+    using Sequence = brigand::make_sequence<brigand::ptrdiff_t<0>, std::variant_size<ImplementationType>::value>;
 
     static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject& globalObject, const ImplementationType& variant)
     {
@@ -396,7 +396,7 @@ template<typename... T> struct JSConverter<IDLUnion<T...>> {
             using I = typename WTF::RemoveCVAndReference<decltype(type)>::type::type;
             if (I::value == index) {
                 ASSERT(!returnValue);
-                returnValue = toJS<brigand::at<TypeList, I>>(lexicalGlobalObject, globalObject, WTF::get<I::value>(variant));
+                returnValue = toJS<brigand::at<TypeList, I>>(lexicalGlobalObject, globalObject, std::get<I::value>(variant));
             }
         });
 

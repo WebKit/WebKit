@@ -1,3 +1,57 @@
+2021-10-12  Alex Christensen  <achristensen@webkit.org>
+
+        Begin migration from WTF::Variant to std::variant
+        https://bugs.webkit.org/show_bug.cgi?id=231086
+
+        Reviewed by Chris Dumez.
+
+        This is reasonably close to just changing the header and all the code stays the same until later.
+        Templates that were only used once like std::variant_size I just changed inline instead of adding a wrapper to Variant.h.
+        WTF::get still means something else, so I just changed the few that take a Variant parameter to std::get in the code.
+        WTF::in_place maps to std::in_place_type and std::in_place_index_t, so I just changed those in the code too.
+        There was also another visitor added since r283906 with different return types among the lambdas, so I just fixed it with the switch.
+
+        * wtf/Forward.h:
+        * wtf/Hasher.h:
+        (WTF::add):
+        * wtf/Variant.h:
+        (WTF::get):
+        (WTF::visit):
+        (WTF::get_if):
+        (WTF::in_place): Deleted.
+        (WTF::__throw_bad_variant_access): Deleted.
+        (WTF::=): Deleted.
+        (WTF::__variant_storage::__get): Deleted.
+        (WTF::__variant_storage::__get_rref): Deleted.
+        (WTF::__variant_storage::__destroy): Deleted.
+        (WTF::__storage_wrapper::__construct): Deleted.
+        (WTF::__storage_wrapper::__storage_wrapper): Deleted.
+        (WTF::__storage_wrapper::__get): Deleted.
+        (WTF::__storage_wrapper::__get const): Deleted.
+        (WTF::__storage_wrapper::__destroy): Deleted.
+        (WTF::__storage_wrapper<_Type::__storage_wrapper): Deleted.
+        (WTF::__storage_wrapper<_Type::__get): Deleted.
+        (WTF::__storage_wrapper<_Type::__get const): Deleted.
+        (WTF::__variant_base::~__variant_base): Deleted.
+        (WTF::__backup_storage_ops::__move_construct_func): Deleted.
+        (WTF::__backup_storage_ops::__destroy_func): Deleted.
+        (WTF::__backup_storage::__backup_storage): Deleted.
+        (WTF::__backup_storage::__destroy): Deleted.
+        (WTF::__backup_storage::~__backup_storage): Deleted.
+        (WTF::Variant<>::swap): Deleted.
+        (WTF::__NOEXCEPT_): Deleted.
+        (WTF::__variant_accessor::get): Deleted.
+        (WTF::__visitor_table::__trampoline_func): Deleted.
+        (WTF::__arg_selector): Deleted.
+        (WTF::__visit_helper2::__visit): Deleted.
+        (WTF::operator==): Deleted.
+        (WTF::operator!=): Deleted.
+        (WTF::operator<): Deleted.
+        (WTF::operator>): Deleted.
+        (WTF::operator>=): Deleted.
+        (WTF::operator<=): Deleted.
+        (WTF::__hash_visitor::operator()): Deleted.
+
 2021-10-11  Alex Christensen  <achristensen@webkit.org>
 
         Only mark needed JSONImpl::ObjectBase functions with WTF_EXPORT_PRIVATE

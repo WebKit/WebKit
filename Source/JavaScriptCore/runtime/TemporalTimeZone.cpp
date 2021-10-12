@@ -35,14 +35,14 @@ const ClassInfo TemporalTimeZone::s_info = { "Object", &Base::s_info, nullptr, n
 
 TemporalTimeZone* TemporalTimeZone::createFromID(VM& vm, Structure* structure, TimeZoneID identifier)
 {
-    TemporalTimeZone* format = new (NotNull, allocateCell<TemporalTimeZone>(vm.heap)) TemporalTimeZone(vm, structure, TimeZone { WTF::in_place<0>, identifier });
+    TemporalTimeZone* format = new (NotNull, allocateCell<TemporalTimeZone>(vm.heap)) TemporalTimeZone(vm, structure, TimeZone { std::in_place_index_t<0>(), identifier });
     format->finishCreation(vm);
     return format;
 }
 
 TemporalTimeZone* TemporalTimeZone::createFromUTCOffset(VM& vm, Structure* structure, int64_t utcOffset)
 {
-    TemporalTimeZone* format = new (NotNull, allocateCell<TemporalTimeZone>(vm.heap)) TemporalTimeZone(vm, structure, TimeZone { WTF::in_place<1>, utcOffset });
+    TemporalTimeZone* format = new (NotNull, allocateCell<TemporalTimeZone>(vm.heap)) TemporalTimeZone(vm, structure, TimeZone { std::in_place_index_t<1>(), utcOffset });
     format->finishCreation(vm);
     return format;
 }
