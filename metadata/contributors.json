@@ -5947,9 +5947,11 @@
    },
    {
       "emails" : [
-         "slewis@apple.com"
+         "slewis@apple.com",
+         "stephanielewis@gmail.com"
       ],
       "expertise" : "Performance Testing, Tools",
+      "github" : "sundiamonde",
       "name" : "Stephanie Lewis",
       "nicks" : [
          "sundiamonde"
