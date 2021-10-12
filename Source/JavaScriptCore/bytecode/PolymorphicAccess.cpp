@@ -253,6 +253,22 @@ void AccessGenerationState::emitExplicitExceptionHandler()
     }
 }
 
+ScratchRegisterAllocator AccessGenerationState::makeDefaultScratchAllocator(GPRReg extraToLock)
+{
+    ScratchRegisterAllocator allocator(stubInfo->usedRegisters);
+    allocator.lock(stubInfo->baseRegs());
+    allocator.lock(valueRegs);
+    allocator.lock(u.thisGPR);
+#if USE(JSVALUE32_64)
+    allocator.lock(stubInfo->v.thisTagGPR);
+#endif
+    allocator.lock(stubInfo->m_stubInfoGPR);
+    allocator.lock(stubInfo->m_arrayProfileGPR);
+    allocator.lock(extraToLock);
+
+    return allocator;
+}
+
 PolymorphicAccess::PolymorphicAccess() { }
 PolymorphicAccess::~PolymorphicAccess() { }
 
@@ -483,23 +499,8 @@ AccessGenerationResult PolymorphicAccess::regenerate(const GCSafeConcurrentJSLoc
     }
     m_list.resize(dstIndex);
 
-    ScratchRegisterAllocator allocator(stubInfo.usedRegisters);
+    auto allocator = state.makeDefaultScratchAllocator();
     state.allocator = &allocator;
-    allocator.lock(state.baseGPR);
-    if (state.u.thisGPR != InvalidGPRReg)
-        allocator.lock(state.u.thisGPR);
-    if (state.valueRegs)
-        allocator.lock(state.valueRegs);
-#if USE(JSVALUE32_64)
-    allocator.lock(stubInfo.baseTagGPR);
-    if (stubInfo.v.thisTagGPR != InvalidGPRReg)
-        allocator.lock(stubInfo.v.thisTagGPR);
-#endif
-    if (stubInfo.m_stubInfoGPR != InvalidGPRReg)
-        allocator.lock(stubInfo.m_stubInfoGPR);
-    if (stubInfo.m_arrayProfileGPR != InvalidGPRReg)
-        allocator.lock(stubInfo.m_arrayProfileGPR);
-
     state.scratchGPR = allocator.allocateScratchGPR();
 
     for (auto& accessCase : cases) {

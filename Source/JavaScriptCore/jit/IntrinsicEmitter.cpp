@@ -139,20 +139,7 @@ void IntrinsicGetterAccessCase::emitIntrinsicGetter(AccessGenerationState& state
     case UnderscoreProtoIntrinsic: {
         StructureStubInfo& stubInfo = *state.stubInfo;
         if (stubInfo.thisValueIsInThisGPR()) {
-            ScratchRegisterAllocator allocator(stubInfo.usedRegisters);
-            allocator.lock(state.scratchGPR);
-            allocator.lock(state.baseGPR);
-            allocator.lock(state.u.thisGPR);
-            allocator.lock(valueRegs);
-#if USE(JSVALUE32_64)
-            allocator.lock(stubInfo.baseTagGPR);
-            allocator.lock(stubInfo.v.thisTagGPR);
-#endif
-            if (stubInfo.m_stubInfoGPR != InvalidGPRReg)
-                allocator.lock(stubInfo.m_stubInfoGPR);
-            if (stubInfo.m_arrayProfileGPR != InvalidGPRReg)
-                allocator.lock(stubInfo.m_arrayProfileGPR);
-
+            auto allocator = state.makeDefaultScratchAllocator(state.scratchGPR);
             GPRReg scratch2GPR = allocator.allocateScratchGPR();
             auto preservedState = allocator.preserveReusedRegistersByPushing(jit, ScratchRegisterAllocator::ExtraStackSpace::NoExtraSpace);
 

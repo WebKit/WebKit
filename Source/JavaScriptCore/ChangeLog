@@ -1,5 +1,31 @@
 2021-10-11  Saam Barati  <sbarati@apple.com>
 
+        Share more code that uses ScratchRegisterAllocator in the ICs
+        https://bugs.webkit.org/show_bug.cgi?id=231125
+        <rdar://problem/84066374>
+
+        Reviewed by Sam Weinig.
+
+        We had the same code to allocate a scratch register allocator copy pasted
+        all over the IC code. This patch refactors that to use a shared helper.
+        
+        Also, Delete was using a ScratchRegisterAllocator for no reason (it never
+        allocated a scratch register), so I deleted that code.
+
+        * bytecode/AccessCase.cpp:
+        (JSC::AccessCase::generateWithGuard):
+        (JSC::AccessCase::generateImpl):
+        * bytecode/GetterSetterAccessCase.cpp:
+        (JSC::GetterSetterAccessCase::emitDOMJITGetter):
+        * bytecode/PolymorphicAccess.cpp:
+        (JSC::AccessGenerationState::makeDefaultScratchAllocator):
+        (JSC::PolymorphicAccess::regenerate):
+        * bytecode/PolymorphicAccess.h:
+        * jit/IntrinsicEmitter.cpp:
+        (JSC::IntrinsicGetterAccessCase::emitIntrinsicGetter):
+
+2021-10-11  Saam Barati  <sbarati@apple.com>
+
         Don't branch around register allocation in DFG enumerator get by val and pass in the right LValue type to strictInt52ToJSValue
         https://bugs.webkit.org/show_bug.cgi?id=231465
         <rdar://83876470>
