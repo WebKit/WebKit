@@ -344,7 +344,6 @@ void NetworkProcess::initializeNetworkProcess(NetworkProcessCreationParameters&&
     setCacheModel(parameters.cacheModel);
 
     setPrivateClickMeasurementEnabled(parameters.enablePrivateClickMeasurement);
-    setPrivateClickMeasurementDebugMode(parameters.enablePrivateClickMeasurementDebugMode);
     m_ftpEnabled = parameters.ftpEnabled;
 
     for (auto& supplement : m_supplements.values())
@@ -1345,24 +1344,10 @@ bool NetworkProcess::privateClickMeasurementEnabled() const
     return m_privateClickMeasurementEnabled;
 }
 
-void NetworkProcess::setPrivateClickMeasurementDebugMode(bool enabled)
+void NetworkProcess::setPrivateClickMeasurementDebugMode(PAL::SessionID sessionID, bool enabled)
 {
-    if (m_privateClickMeasurementDebugModeEnabled == enabled)
-        return;
-
-    m_privateClickMeasurementDebugModeEnabled = enabled;
-
-    String message = enabled ? "[Private Click Measurement] Turned Debug Mode on."_s : "[Private Click Measurement] Turned Debug Mode off."_s;
-    for (auto& networkConnectionToWebProcess : m_webProcessConnections.values()) {
-        if (networkConnectionToWebProcess->sessionID().isEphemeral())
-            continue;
-        networkConnectionToWebProcess->broadcastConsoleMessage(MessageSource::PrivateClickMeasurement, MessageLevel::Info, message);
-    }
-}
-
-bool NetworkProcess::privateClickMeasurementDebugModeEnabled() const
-{
-    return m_privateClickMeasurementDebugModeEnabled;
+    if (auto* networkSession = this->networkSession(sessionID))
+        networkSession->setPrivateClickMeasurementDebugMode(enabled);
 }
 
 void NetworkProcess::preconnectTo(PAL::SessionID sessionID, WebPageProxyIdentifier webPageProxyID, WebCore::PageIdentifier webPageID, const URL& url, const String& userAgent, WebCore::StoredCredentialsPolicy storedCredentialsPolicy, std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain, LastNavigationWasAppInitiated lastNavigationWasAppInitiated)

@@ -580,7 +580,9 @@ bool PrivateClickMeasurementManager::featureEnabled() const
 
 bool PrivateClickMeasurementManager::debugModeEnabled() const
 {
-    return m_networkProcess->privateClickMeasurementDebugModeEnabled() && !m_sessionID.isEphemeral();
+    return m_networkSession
+        && m_networkSession->privateClickMeasurementDebugModeEnabled()
+        && !m_sessionID.isEphemeral();
 }
 
 void PrivateClickMeasurementManager::markAttributedPrivateClickMeasurementsAsExpiredForTesting(CompletionHandler<void()>&& completionHandler)

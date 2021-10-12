@@ -88,6 +88,16 @@ WebCore::ThirdPartyCookieBlockingMode WebsiteDataStore::thirdPartyCookieBlocking
 }
 #endif
 
+static bool experimentalFeatureEnabled(const String& key)
+{
+#if PLATFORM(MAC)
+    NSString *format = @"Experimental%@";
+#else
+    NSString *format = @"WebKitExperimental%@";
+#endif
+    return [[NSUserDefaults standardUserDefaults] boolForKey:[NSString stringWithFormat:format, static_cast<NSString *>(key)]];
+}
+
 void WebsiteDataStore::platformSetNetworkParameters(WebsiteDataStoreParameters& parameters)
 {
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessRawCookies));
@@ -188,23 +198,13 @@ void WebsiteDataStore::platformSetNetworkParameters(WebsiteDataStoreParameters& 
 
     parameters.uiProcessCookieStorageIdentifier = m_uiProcessCookieStorageIdentifier;
 
+    parameters.networkSessionParameters.enablePrivateClickMeasurementDebugMode = experimentalFeatureEnabled(WebPreferencesKey::privateClickMeasurementDebugModeEnabledKey());
+
     if (!cookieFile.isEmpty()) {
         if (auto handle = SandboxExtension::createHandleForReadWriteDirectory(FileSystem::parentPath(cookieFile)))
             parameters.cookieStoragePathExtensionHandle = WTFMove(*handle);
     }
 }
-
-#if HAVE(CFNETWORK_ALTERNATIVE_SERVICE) || HAVE(NETWORK_LOADER)
-static bool experimentalFeatureEnabled(const String& key)
-{
-#if PLATFORM(MAC)
-    NSString *format = @"Experimental%@";
-#else
-    NSString *format = @"WebKitExperimental%@";
-#endif
-    return [[NSUserDefaults standardUserDefaults] boolForKey:[NSString stringWithFormat:format, static_cast<NSString *>(key)]];
-}
-#endif
 
 bool WebsiteDataStore::http3Enabled()
 {

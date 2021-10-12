@@ -71,7 +71,6 @@ void NetworkProcessCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << urlSchemesRegisteredAsNoAccess;
 
     encoder << enablePrivateClickMeasurement;
-    encoder << enablePrivateClickMeasurementDebugMode;
     encoder << ftpEnabled;
     encoder << websiteDataStoreParameters;
 }
@@ -144,8 +143,6 @@ bool NetworkProcessCreationParameters::decode(IPC::Decoder& decoder, NetworkProc
         return false;
 
     if (!decoder.decode(result.enablePrivateClickMeasurement))
-        return false;
-    if (!decoder.decode(result.enablePrivateClickMeasurementDebugMode))
         return false;
     if (!decoder.decode(result.ftpEnabled))
         return false;

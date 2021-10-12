@@ -87,6 +87,7 @@ void NetworkSessionCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << appHasRequestedCrossWebsiteTrackingPermission;
     encoder << useNetworkLoader;
     encoder << allowsHSTSWithUntrustedRootCertificate;
+    encoder << enablePrivateClickMeasurementDebugMode;
     encoder << resourceLoadStatisticsParameters;
 }
 
@@ -293,7 +294,12 @@ std::optional<NetworkSessionCreationParameters> NetworkSessionCreationParameters
     decoder >> allowsHSTSWithUntrustedRootCertificate;
     if (!allowsHSTSWithUntrustedRootCertificate)
         return std::nullopt;
-    
+
+    std::optional<bool> enablePrivateClickMeasurementDebugMode;
+    decoder >> enablePrivateClickMeasurementDebugMode;
+    if (!enablePrivateClickMeasurementDebugMode)
+        return std::nullopt;
+
     std::optional<ResourceLoadStatisticsParameters> resourceLoadStatisticsParameters;
     decoder >> resourceLoadStatisticsParameters;
     if (!resourceLoadStatisticsParameters)
@@ -347,6 +353,7 @@ std::optional<NetworkSessionCreationParameters> NetworkSessionCreationParameters
         , WTFMove(*appHasRequestedCrossWebsiteTrackingPermission)
         , WTFMove(*useNetworkLoader)
         , WTFMove(*allowsHSTSWithUntrustedRootCertificate)
+        , WTFMove(*enablePrivateClickMeasurementDebugMode)
         , WTFMove(*resourceLoadStatisticsParameters)
     }};
 }

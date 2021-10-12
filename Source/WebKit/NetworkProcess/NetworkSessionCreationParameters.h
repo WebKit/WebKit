@@ -102,6 +102,7 @@ struct NetworkSessionCreationParameters {
     bool appHasRequestedCrossWebsiteTrackingPermission { false };
     bool useNetworkLoader { false };
     bool allowsHSTSWithUntrustedRootCertificate { false };
+    bool enablePrivateClickMeasurementDebugMode { false };
 
     ResourceLoadStatisticsParameters resourceLoadStatisticsParameters;
 };

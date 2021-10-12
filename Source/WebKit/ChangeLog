@@ -1,5 +1,52 @@
 2021-10-12  Alan Coon  <alancoon@apple.com>
 
+        Apply patch. rdar://problem/83955138
+
+    Branch application of r283504.
+
+    2021-10-12  Alex Christensen  <achristensen@webkit.org>
+
+            Enable PCM debug mode per WebsiteDataStore instead of process-global
+            https://bugs.webkit.org/show_bug.cgi?id=231096
+
+            Reviewed by Kate Cheney.
+
+            This will make it so we don't need to restart the network process in order to enable or disable debug mode.
+
+            * NetworkProcess/NetworkProcess.cpp:
+            (WebKit::NetworkProcess::initializeNetworkProcess):
+            (WebKit::NetworkProcess::setPrivateClickMeasurementDebugMode):
+            (WebKit::NetworkProcess::privateClickMeasurementDebugModeEnabled const): Deleted.
+            * NetworkProcess/NetworkProcess.h:
+            * NetworkProcess/NetworkProcess.messages.in:
+            * NetworkProcess/NetworkProcessCreationParameters.cpp:
+            (WebKit::NetworkProcessCreationParameters::encode const):
+            (WebKit::NetworkProcessCreationParameters::decode):
+            * NetworkProcess/NetworkProcessCreationParameters.h:
+            * NetworkProcess/NetworkSession.cpp:
+            (WebKit::NetworkSession::NetworkSession):
+            (WebKit::NetworkSession::setPrivateClickMeasurementDebugMode):
+            * NetworkProcess/NetworkSession.h:
+            (WebKit::NetworkSession::privateClickMeasurementDebugModeEnabled const):
+            * NetworkProcess/NetworkSessionCreationParameters.cpp:
+            (WebKit::NetworkSessionCreationParameters::encode const):
+            (WebKit::NetworkSessionCreationParameters::decode):
+            * NetworkProcess/NetworkSessionCreationParameters.h:
+            * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementClientImpl.cpp:
+            (WebKit::PCM::ClientImpl::debugModeEnabled const):
+            * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+            (WebKit::WebProcessPool::platformInitializeNetworkProcess):
+            * UIProcess/Network/NetworkProcessProxy.cpp:
+            (WebKit::NetworkProcessProxy::setPrivateClickMeasurementDebugMode):
+            * UIProcess/Network/NetworkProcessProxy.h:
+            * UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm:
+            (WebKit::experimentalFeatureEnabled):
+            (WebKit::WebsiteDataStore::platformSetNetworkParameters):
+            * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+            (WebKit::WebsiteDataStore::setPrivateClickMeasurementDebugMode):
+
+2021-10-12  Alan Coon  <alancoon@apple.com>
+
         Apply patch. rdar://problem/84130892
 
     2021-10-12  John Wilander  <wilander@apple.com>

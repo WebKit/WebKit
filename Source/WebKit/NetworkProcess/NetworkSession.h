@@ -170,6 +170,8 @@ public:
 
     NetworkLoadScheduler& networkLoadScheduler();
     PrivateClickMeasurementManager& privateClickMeasurement() { return *m_privateClickMeasurement; }
+    void setPrivateClickMeasurementDebugMode(bool);
+    bool privateClickMeasurementDebugModeEnabled() const { return m_privateClickMeasurementDebugModeEnabled; }
 
 #if PLATFORM(COCOA)
     AppPrivacyReportTestingData& appPrivacyReportTestingData() { return m_appPrivacyReportTestingData; }
@@ -214,6 +216,7 @@ protected:
 #endif
     bool m_isStaleWhileRevalidateEnabled { false };
     std::unique_ptr<PrivateClickMeasurementManager> m_privateClickMeasurement;
+    bool m_privateClickMeasurementDebugModeEnabled { false };
 
     HashSet<Ref<NetworkResourceLoader>> m_keptAliveLoads;
 

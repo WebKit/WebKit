@@ -1247,12 +1247,12 @@ void NetworkProcessProxy::setDomainsWithCrossPageStorageAccess(HashMap<TopFrameD
 
 #endif // ENABLE(RESOURCE_LOAD_STATISTICS)
 
-void NetworkProcessProxy::setPrivateClickMeasurementDebugMode(bool debugMode)
+void NetworkProcessProxy::setPrivateClickMeasurementDebugMode(PAL::SessionID sessionID, bool debugMode)
 {
     if (!canSendMessage())
         return;
 
-    send(Messages::NetworkProcess::SetPrivateClickMeasurementDebugMode(debugMode), 0);
+    send(Messages::NetworkProcess::SetPrivateClickMeasurementDebugMode(sessionID, debugMode), 0);
 }
 
 void NetworkProcessProxy::sendProcessWillSuspendImminentlyForTesting()

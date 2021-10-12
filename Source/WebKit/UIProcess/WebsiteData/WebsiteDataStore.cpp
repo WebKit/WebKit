@@ -1903,7 +1903,7 @@ void WebsiteDataStore::isResourceLoadStatisticsEphemeral(CompletionHandler<void(
 
 void WebsiteDataStore::setPrivateClickMeasurementDebugMode(bool enabled)
 {
-    networkProcess().setPrivateClickMeasurementDebugMode(enabled);
+    networkProcess().setPrivateClickMeasurementDebugMode(sessionID(), enabled);
 }
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
