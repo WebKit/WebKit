@@ -1,4 +1,4 @@
 
-FAIL test SyncAccessHandle.getSize after SyncAccessHandle.write promise_test: Unhandled rejection with value: object "TypeError: handle.write is not a function. (In 'handle.write(writeBuffer, {at: 0})', 'handle.write' is undefined)"
-FAIL test createSyncAccessHandle.getSize with pending operation promise_test: Unhandled rejection with value: object "InvalidStateError: The object is in an invalid state."
+PASS test SyncAccessHandle.getSize after SyncAccessHandle.write
+FAIL test createSyncAccessHandle.getSize with pending operation assert_unreached: Should have rejected: undefined Reached unreachable code
 

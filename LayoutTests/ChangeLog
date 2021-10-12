@@ -1,3 +1,21 @@
+2021-10-12  Sihui Liu  <sihui_liu@apple.com>
+
+        Implement FileSystemSyncAccessHandle read() and write()
+        https://bugs.webkit.org/show_bug.cgi?id=231466
+        <rdar://problem/84050394>
+
+        Reviewed by Youenn Fablet.
+
+        * storage/filesystemaccess/resources/sync-access-handle-read-write.js: Added.
+        (finishTest):
+        (arrayBufferToString):
+        (stringToArrayBuffer):
+        (write):
+        (read):
+        (async test):
+        * storage/filesystemaccess/sync-access-handle-read-write-worker-expected.txt: Added.
+        * storage/filesystemaccess/sync-access-handle-read-write-worker.html: Added.
+
 2021-10-12  Ayumi Kojima  <ayumi_kojima@apple.com>
 
         [ iOS, Mac ] imported/w3c/web-platform-tests/css/css-cascade/layer-counter-style-override.html is a flaky failure.

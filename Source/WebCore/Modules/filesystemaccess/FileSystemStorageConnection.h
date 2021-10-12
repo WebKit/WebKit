@@ -28,6 +28,7 @@
 #include "FileSystemHandleIdentifier.h"
 #include "FileSystemSyncAccessHandleIdentifier.h"
 #include <wtf/CompletionHandler.h>
+#include <wtf/FileSystem.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
 namespace WebCore {
@@ -43,7 +44,7 @@ public:
     using SameEntryCallback = CompletionHandler<void(ExceptionOr<bool>&&)>;
     using GetHandleCallback = CompletionHandler<void(ExceptionOr<FileSystemHandleIdentifier>&&)>;
     using ResolveCallback = CompletionHandler<void(ExceptionOr<Vector<String>>&&)>;
-    using GetAccessHandleCallback = CompletionHandler<void(ExceptionOr<FileSystemSyncAccessHandleIdentifier>&&)>;
+    using GetAccessHandleCallback = CompletionHandler<void(ExceptionOr<std::pair<FileSystemSyncAccessHandleIdentifier, FileSystem::PlatformFileHandle>>&&)>;
     using VoidCallback = CompletionHandler<void(ExceptionOr<void>&&)>;
     using IntegerCallback = CompletionHandler<void(ExceptionOr<uint64_t>&&)>;
     using GetHandleNamesCallback = CompletionHandler<void(ExceptionOr<Vector<String>>&&)>;

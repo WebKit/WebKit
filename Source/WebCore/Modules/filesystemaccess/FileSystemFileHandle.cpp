@@ -57,29 +57,24 @@ void FileSystemFileHandle::createSyncAccessHandle(DOMPromiseDeferred<IDLInterfac
         if (result.hasException())
             return promise.reject(result.releaseException());
 
-        promise.settle(FileSystemSyncAccessHandle::create(protectedThis.get(), result.returnValue()));
+        auto resultValue = result.releaseReturnValue();
+        promise.settle(FileSystemSyncAccessHandle::create(protectedThis.get(), resultValue.first, resultValue.second));
     });
 }
 
-void FileSystemFileHandle::getSize(FileSystemSyncAccessHandleIdentifier accessHandleIdentifier, DOMPromiseDeferred<IDLUnsignedLongLong>&& promise)
+void FileSystemFileHandle::getSize(FileSystemSyncAccessHandleIdentifier accessHandleIdentifier, CompletionHandler<void(ExceptionOr<uint64_t>&&)>&& completionHandler)
 {
-    connection().getSize(identifier(), accessHandleIdentifier, [promise = WTFMove(promise)](auto result) mutable {
-        promise.settle(WTFMove(result));
-    });
+    connection().getSize(identifier(), accessHandleIdentifier, WTFMove(completionHandler));
 }
 
-void FileSystemFileHandle::truncate(FileSystemSyncAccessHandleIdentifier accessHandleIdentifier, unsigned long long size, DOMPromiseDeferred<void>&& promise)
+void FileSystemFileHandle::truncate(FileSystemSyncAccessHandleIdentifier accessHandleIdentifier, unsigned long long size, CompletionHandler<void(ExceptionOr<void>&&)>&& completionHandler)
 {
-    connection().truncate(identifier(), accessHandleIdentifier, size, [promise = WTFMove(promise)](auto result) mutable {
-        promise.settle(WTFMove(result));
-    });
+    connection().truncate(identifier(), accessHandleIdentifier, size, WTFMove(completionHandler));
 }
 
-void FileSystemFileHandle::flush(FileSystemSyncAccessHandleIdentifier accessHandleIdentifier, DOMPromiseDeferred<void>&& promise)
+void FileSystemFileHandle::flush(FileSystemSyncAccessHandleIdentifier accessHandleIdentifier, CompletionHandler<void(ExceptionOr<void>&&)>&& completionHandler)
 {
-    connection().flush(identifier(), accessHandleIdentifier, [promise = WTFMove(promise)](auto result) mutable {
-        promise.settle(WTFMove(result));
-    });
+    connection().flush(identifier(), accessHandleIdentifier, WTFMove(completionHandler));
 }
 
 void FileSystemFileHandle::close(FileSystemSyncAccessHandleIdentifier accessHandleIdentifier, CompletionHandler<void(ExceptionOr<void>&&)>&& completionHandler)

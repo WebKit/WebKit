@@ -30,6 +30,10 @@
 #include <WebCore/FileSystemSyncAccessHandleIdentifier.h>
 #include <wtf/WeakPtr.h>
 
+namespace IPC {
+class SharedFileHandle;
+}
+
 namespace WebKit {
 
 class FileSystemStorageManager;
@@ -53,7 +57,8 @@ public:
     Expected<Vector<String>, FileSystemStorageError> getHandleNames();
     Expected<std::pair<WebCore::FileSystemHandleIdentifier, bool>, FileSystemStorageError> getHandle(IPC::Connection::UniqueID, String&& name);
 
-    Expected<WebCore::FileSystemSyncAccessHandleIdentifier, FileSystemStorageError> createSyncAccessHandle();
+    using AccessHandleInfo = std::pair<WebCore::FileSystemSyncAccessHandleIdentifier, IPC::SharedFileHandle>;
+    Expected<AccessHandleInfo, FileSystemStorageError> createSyncAccessHandle();
     Expected<uint64_t, FileSystemStorageError> getSize(WebCore::FileSystemSyncAccessHandleIdentifier);
     std::optional<FileSystemStorageError> truncate(WebCore::FileSystemSyncAccessHandleIdentifier, uint64_t size);
     std::optional<FileSystemStorageError> flush(WebCore::FileSystemSyncAccessHandleIdentifier);
@@ -68,6 +73,7 @@ private:
     String m_path;
     String m_name;
     std::optional<WebCore::FileSystemSyncAccessHandleIdentifier> m_activeSyncAccessHandle;
+    FileSystem::PlatformFileHandle m_handle { FileSystem::invalidPlatformFileHandle };
 };
 
 } // namespace WebKit

@@ -1978,6 +1978,7 @@
         (syscall-number SYS_connect_nocancel)
         (syscall-number SYS_sendto_nocancel)
         (syscall-number SYS_fsgetpath)
+        (syscall-number SYS_fileport_makefd)
         (syscall-number SYS_fileport_makeport)
         (syscall-number SYS_guarded_open_np)
         (syscall-number SYS_guarded_close_np)

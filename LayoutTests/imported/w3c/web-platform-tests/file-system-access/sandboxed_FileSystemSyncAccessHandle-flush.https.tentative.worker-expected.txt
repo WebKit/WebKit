@@ -1,6 +1,6 @@
 
 PASS Test flush on an empty file.
-FAIL SyncAccessHandle.read returns bytes written by SyncAccessHandle.write after SyncAccessHandle.flush promise_test: Unhandled rejection with value: object "TypeError: handle.write is not a function. (In 'handle.write(writeBuffer, {at: 0})', 'handle.write' is undefined)"
-FAIL SyncAccessHandle.read fails when there is a pending SyncAccessHandle.flush promise_test: Unhandled rejection with value: object "InvalidStateError: The object is in an invalid state."
-FAIL SyncAccessHandle.write fails when there is a pending SyncAccessHandle.flush promise_test: Unhandled rejection with value: object "InvalidStateError: The object is in an invalid state."
+PASS SyncAccessHandle.read returns bytes written by SyncAccessHandle.write after SyncAccessHandle.flush
+PASS SyncAccessHandle.read fails when there is a pending SyncAccessHandle.flush
+PASS SyncAccessHandle.write fails when there is a pending SyncAccessHandle.flush
 

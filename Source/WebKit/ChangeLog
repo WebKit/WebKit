@@ -1,3 +1,52 @@
+2021-10-12  Sihui Liu  <sihui_liu@apple.com>
+
+        Implement FileSystemSyncAccessHandle read() and write()
+        https://bugs.webkit.org/show_bug.cgi?id=231466
+        <rdar://problem/84050394>
+
+        Reviewed by Youenn Fablet.
+
+        Let network process open the file and pass file descriptor to web process, so that web process can read and 
+        write the file without sending IPC messages. Currently getting file size, truncating file and syncing file are 
+        still performed by network process.
+
+        * NetworkProcess/storage/FileSystemStorageError.h:
+        (WebKit::convertToException):
+        * NetworkProcess/storage/FileSystemStorageHandle.cpp:
+        (WebKit::FileSystemStorageHandle::createSyncAccessHandle):
+        (WebKit::FileSystemStorageHandle::truncate):
+        (WebKit::FileSystemStorageHandle::flush):
+        (WebKit::FileSystemStorageHandle::close):
+        * NetworkProcess/storage/FileSystemStorageHandle.h:
+        * NetworkProcess/storage/NetworkStorageManager.cpp:
+        (WebKit::NetworkStorageManager::createSyncAccessHandle):
+        * NetworkProcess/storage/NetworkStorageManager.h:
+        * NetworkProcess/storage/NetworkStorageManager.messages.in:
+        * Platform/IPC/SharedFileHandle.cpp: Added.
+        (IPC::SharedFileHandle::create):
+        (IPC::SharedFileHandle::encode const):
+        (IPC::SharedFileHandle::decode):
+        * Platform/IPC/SharedFileHandle.h: Added.
+        (IPC::SharedFileHandle::handle):
+        (IPC::SharedFileHandle::SharedFileHandle):
+        * Platform/IPC/cocoa/SharedFileHandleCocoa.cpp: Added.
+        (IPC::SharedFileHandle::create):
+        (IPC::SharedFileHandle::encode const):
+        (IPC::SharedFileHandle::decode):
+        * Sources.txt:
+        * UIProcess/API/Cocoa/WKPreferences.mm:
+        (-[WKPreferences _fileSystemAccessEnabled]):
+        (-[WKPreferences _setFileSystemAccessEnabled:]):
+        (-[WKPreferences _storageAPIEnabled]):
+        (-[WKPreferences _setStorageAPIEnabled:]):
+        (-[WKPreferences _accessHandleEnabled]):
+        (-[WKPreferences _setAccessHandleEnabled:]):
+        * UIProcess/API/Cocoa/WKPreferencesPrivate.h:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/WebCoreSupport/WebFileSystemStorageConnection.cpp:
+        (WebKit::WebFileSystemStorageConnection::createSyncAccessHandle):
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2021-10-12  Chris Dumez  <cdumez@apple.com>
 
         Decrease use of makeWeakPtr()

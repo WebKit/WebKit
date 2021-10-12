@@ -28,6 +28,7 @@
 
 #include "FileSystemStorageError.h"
 #include "FileSystemStorageManager.h"
+#include "SharedFileHandle.h"
 #include <wtf/Scope.h>
 
 namespace WebKit {
@@ -143,7 +144,7 @@ Expected<Vector<String>, FileSystemStorageError> FileSystemStorageHandle::resolv
     return restPath.split(pathSeparator);
 }
 
-Expected<WebCore::FileSystemSyncAccessHandleIdentifier, FileSystemStorageError> FileSystemStorageHandle::createSyncAccessHandle()
+Expected<FileSystemStorageHandle::AccessHandleInfo, FileSystemStorageError> FileSystemStorageHandle::createSyncAccessHandle()
 {
     if (!m_manager)
         return makeUnexpected(FileSystemStorageError::Unknown);
@@ -152,9 +153,20 @@ Expected<WebCore::FileSystemSyncAccessHandleIdentifier, FileSystemStorageError> 
     if (!acquired)
         return makeUnexpected(FileSystemStorageError::InvalidState);
 
+    m_handle = FileSystem::openFile(m_path, FileSystem::FileOpenMode::ReadWrite);
+    if (m_handle == FileSystem::invalidPlatformFileHandle)
+        return makeUnexpected(FileSystemStorageError::Unknown);
+
+    auto ipcHandle = IPC::SharedFileHandle::create(m_handle);
+    if (!ipcHandle) {
+        FileSystem::closeFile(m_handle);
+        m_handle = FileSystem::invalidPlatformFileHandle;
+        return makeUnexpected(FileSystemStorageError::BackendNotSupported);
+    }
+
     ASSERT(!m_activeSyncAccessHandle);
     m_activeSyncAccessHandle = WebCore::FileSystemSyncAccessHandleIdentifier::generateThreadSafe();
-    return *m_activeSyncAccessHandle;
+    return std::pair { *m_activeSyncAccessHandle, WTFMove(*ipcHandle) };
 }
 
 Expected<uint64_t, FileSystemStorageError> FileSystemStorageHandle::getSize(WebCore::FileSystemSyncAccessHandleIdentifier accessHandleIdentifier)
@@ -180,12 +192,8 @@ std::optional<FileSystemStorageError> FileSystemStorageHandle::truncate(WebCore:
     if (!m_activeSyncAccessHandle || *m_activeSyncAccessHandle != accessHandleIdentifier)
         return FileSystemStorageError::Unknown;
 
-    auto handle = FileSystem::openFile(m_path, FileSystem::FileOpenMode::ReadWrite);
-    auto closeFileScope = makeScopeExit([&] {
-        FileSystem::closeFile(handle);
-    });
-
-    auto result = FileSystem::truncateFile(handle, size);
+    ASSERT(m_handle != FileSystem::invalidPlatformFileHandle);
+    auto result = FileSystem::truncateFile(m_handle, size);
     if (!result)
         return FileSystemStorageError::Unknown;
 
@@ -200,7 +208,11 @@ std::optional<FileSystemStorageError> FileSystemStorageHandle::flush(WebCore::Fi
     if (!m_activeSyncAccessHandle || *m_activeSyncAccessHandle != accessHandleIdentifier)
         return FileSystemStorageError::Unknown;
 
-    // FIXME: when write operation is implemented, perform actual flush here.
+    ASSERT(m_handle != FileSystem::invalidPlatformFileHandle);
+    auto result = FileSystem::flushFile(m_handle);
+    if (!result)
+        return FileSystemStorageError::Unknown;
+
     return std::nullopt;
 }
 
@@ -211,6 +223,10 @@ std::optional<FileSystemStorageError> FileSystemStorageHandle::close(WebCore::Fi
 
     if (!m_activeSyncAccessHandle || *m_activeSyncAccessHandle != accessHandleIdentifier)
         return FileSystemStorageError::Unknown;
+
+    ASSERT(m_handle != FileSystem::invalidPlatformFileHandle);
+    FileSystem::closeFile(m_handle);
+    m_handle = FileSystem::invalidPlatformFileHandle;
 
     m_manager->releaseLockForFile(m_path, m_identifier);
     m_activeSyncAccessHandle = std::nullopt;
