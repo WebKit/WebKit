@@ -1,5 +1,21 @@
 2021-10-12  Alex Christensen  <achristensen@webkit.org>
 
+        Rename AdAttributionDaemon to adattributiond
+        https://bugs.webkit.org/show_bug.cgi?id=231620
+
+        Reviewed by Kate Cheney.
+
+        adattributiond is its approved name in rdar://80701098 and we already used it in some places.
+        Use it consistently.
+
+        * Configurations/adattributiond.xcconfig: Renamed from Source/WebKit/Configurations/AdAttributionDaemon.xcconfig.
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.adattributiond.sb: Renamed from Source/WebKit/Resources/SandboxProfiles/ios/com.apple.WebKit.AdAttributionDaemon.sb.
+        * Scripts/process-entitlements.sh:
+        * Shared/EntryPointUtilities/Cocoa/Daemon/adattributiond.c: Renamed from Source/WebKit/Shared/EntryPointUtilities/Cocoa/Daemon/AdAttributionDaemon.c.
+        * WebKit.xcodeproj/project.pbxproj:
+
+2021-10-12  Alex Christensen  <achristensen@webkit.org>
+
         Reduce use of WebCore structures in adattributiond
         https://bugs.webkit.org/show_bug.cgi?id=231617
 

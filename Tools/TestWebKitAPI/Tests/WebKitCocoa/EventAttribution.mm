@@ -400,7 +400,7 @@ static RetainPtr<NSURL> currentExecutableDirectory()
 
 static RetainPtr<NSURL> testPCMDaemonLocation()
 {
-    return [currentExecutableDirectory() URLByAppendingPathComponent:@"AdAttributionDaemon" isDirectory:NO];
+    return [currentExecutableDirectory() URLByAppendingPathComponent:@"adattributiond" isDirectory:NO];
 }
 
 #if HAVE(OS_LAUNCHD_JOB)
@@ -467,7 +467,7 @@ static std::pair<NSURL *, WKWebViewConfiguration *> setUpDaemon(WKWebViewConfigu
         [fileManager removeItemAtURL:tempDir error:&error];
     EXPECT_NULL(error);
 
-    system("killall AdAttributionDaemon -9 2> /dev/null");
+    system("killall adattributiond -9 2> /dev/null");
 
     auto plist = testDaemonPList(tempDir);
 #if HAVE(OS_LAUNCHD_JOB)
@@ -494,7 +494,7 @@ static std::pair<NSURL *, WKWebViewConfiguration *> setUpDaemon(WKWebViewConfigu
 
 static void cleanUpDaemon(NSURL *tempDir)
 {
-    system("killall AdAttributionDaemon -9");
+    system("killall adattributiond -9");
 
     EXPECT_TRUE([[NSFileManager defaultManager] fileExistsAtPath:tempDir.path]);
     NSError *error = nil;

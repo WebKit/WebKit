@@ -81,7 +81,7 @@ static void startListeningForMachServiceConnections(const char* serviceName)
             return;
 
 #if USE(APPLE_INTERNAL_SDK)
-        if (!WTF::hasEntitlement(peer, "com.apple.private.webkit.adattributiondaemon")) {
+        if (!WTF::hasEntitlement(peer, "com.apple.private.webkit.adattributiond")) {
             NSLog(@"Connection attempted without required entitlement");
             xpc_connection_cancel(peer);
             return;

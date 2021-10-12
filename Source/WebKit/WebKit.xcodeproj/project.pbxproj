@@ -1287,7 +1287,7 @@
 		5CABDC8622C40FDE001EDE8E /* WKMessageListener.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CABDC8522C40FCC001EDE8E /* WKMessageListener.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5CABDC8722C40FED001EDE8E /* APIMessageListener.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CABDC8322C40FA7001EDE8E /* APIMessageListener.h */; };
 		5CADDE05215046BD0067D309 /* WKWebProcess.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C74300E21500492004BFA17 /* WKWebProcess.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		5CAF7AA726F93AB00003F19E /* AdAttributionDaemon.c in Sources */ = {isa = PBXBuildFile; fileRef = 5CAF7AA526F93A950003F19E /* AdAttributionDaemon.c */; };
+		5CAF7AA726F93AB00003F19E /* adattributiond.c in Sources */ = {isa = PBXBuildFile; fileRef = 5CAF7AA526F93A950003F19E /* adattributiond.c */; };
 		5CAFDE452130846300B1F7E1 /* _WKInspector.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CAFDE422130843500B1F7E1 /* _WKInspector.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5CAFDE472130846A00B1F7E1 /* _WKInspectorInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CAFDE442130843600B1F7E1 /* _WKInspectorInternal.h */; };
 		5CB6AE442609799C00B6ED5A /* ReasonSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CB6AE432609799C00B6ED5A /* ReasonSPI.h */; };
@@ -4509,7 +4509,7 @@
 		5C1427141C23F8B000D41183 /* LegacyCustomProtocolManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LegacyCustomProtocolManager.h; sourceTree = "<group>"; };
 		5C1427151C23F8B000D41183 /* LegacyCustomProtocolManager.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LegacyCustomProtocolManager.messages.in; sourceTree = "<group>"; };
 		5C14271B1C23F8CC00D41183 /* LegacyCustomProtocolManagerCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LegacyCustomProtocolManagerCocoa.mm; sourceTree = "<group>"; };
-		5C1578E5270E0DBC00ED5280 /* com.apple.WebKit.AdAttributionDaemon.sb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = com.apple.WebKit.AdAttributionDaemon.sb; sourceTree = "<group>"; };
+		5C1578E5270E0DBC00ED5280 /* com.apple.WebKit.adattributiond.sb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = com.apple.WebKit.adattributiond.sb; sourceTree = "<group>"; };
 		5C19A51E1FD0B14600EEA323 /* URLSchemeTaskParameters.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = URLSchemeTaskParameters.cpp; sourceTree = "<group>"; };
 		5C19A51F1FD0B14700EEA323 /* URLSchemeTaskParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = URLSchemeTaskParameters.h; sourceTree = "<group>"; };
 		5C1B38DF2667140700B1545B /* WebPageNetworkParameters.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebPageNetworkParameters.h; sourceTree = "<group>"; };
@@ -4590,9 +4590,9 @@
 		5CABDC8422C40FCC001EDE8E /* WKMessageListener.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKMessageListener.cpp; sourceTree = "<group>"; };
 		5CABDC8522C40FCC001EDE8E /* WKMessageListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKMessageListener.h; sourceTree = "<group>"; };
 		5CADDE0D2151AA010067D309 /* AuthenticationChallengeDisposition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AuthenticationChallengeDisposition.h; sourceTree = "<group>"; };
-		5CAF7AA426F93A750003F19E /* AdAttributionDaemon */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = AdAttributionDaemon; sourceTree = BUILT_PRODUCTS_DIR; };
-		5CAF7AA526F93A950003F19E /* AdAttributionDaemon.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = AdAttributionDaemon.c; sourceTree = "<group>"; };
-		5CAF7AA626F93AA50003F19E /* AdAttributionDaemon.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = AdAttributionDaemon.xcconfig; sourceTree = "<group>"; };
+		5CAF7AA426F93A750003F19E /* adattributiond */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = adattributiond; sourceTree = BUILT_PRODUCTS_DIR; };
+		5CAF7AA526F93A950003F19E /* adattributiond.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = adattributiond.c; sourceTree = "<group>"; };
+		5CAF7AA626F93AA50003F19E /* adattributiond.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = adattributiond.xcconfig; sourceTree = "<group>"; };
 		5CAFDE422130843500B1F7E1 /* _WKInspector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKInspector.h; sourceTree = "<group>"; };
 		5CAFDE432130843600B1F7E1 /* _WKInspector.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKInspector.mm; sourceTree = "<group>"; };
 		5CAFDE442130843600B1F7E1 /* _WKInspectorInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKInspectorInternal.h; sourceTree = "<group>"; };
@@ -6286,7 +6286,7 @@
 		034768DFFF38A50411DB9C8B /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				5CAF7AA426F93A750003F19E /* AdAttributionDaemon */,
+				5CAF7AA426F93A750003F19E /* adattributiond */,
 				2D9FB228237523830049F936 /* com.apple.WebKit.GPU.xpc */,
 				BC8283B116B4BF7700A278FE /* com.apple.WebKit.Networking.xpc */,
 				BC82841F16B4FDF600A278FE /* com.apple.WebKit.Plugin.64.xpc */,
@@ -6722,7 +6722,7 @@
 		1A4F9769100E7B6600637A18 /* Configurations */ = {
 			isa = PBXGroup;
 			children = (
-				5CAF7AA626F93AA50003F19E /* AdAttributionDaemon.xcconfig */,
+				5CAF7AA626F93AA50003F19E /* adattributiond.xcconfig */,
 				A1EDD2D91884ACE000BBFE98 /* All.xcconfig */,
 				1A4F976A100E7B6600637A18 /* Base.xcconfig */,
 				5DAD73F1116FF90C00EE5396 /* BaseTarget.xcconfig */,
@@ -9505,7 +9505,7 @@
 		5CB9310326E8375B0032B1C0 /* Daemon */ = {
 			isa = PBXGroup;
 			children = (
-				5CAF7AA526F93A950003F19E /* AdAttributionDaemon.c */,
+				5CAF7AA526F93A950003F19E /* adattributiond.c */,
 				5C6289A827068EC000CF5EC6 /* PCMDaemonConnectionSet.h */,
 				5C6289A927068EC000CF5EC6 /* PCMDaemonConnectionSet.mm */,
 				5CB9310426E837FC0032B1C0 /* PCMDaemonEntryPoint.h */,
@@ -10013,7 +10013,7 @@
 		A78CCDD6193AC9E3005ECC25 /* ios */ = {
 			isa = PBXGroup;
 			children = (
-				5C1578E5270E0DBC00ED5280 /* com.apple.WebKit.AdAttributionDaemon.sb */,
+				5C1578E5270E0DBC00ED5280 /* com.apple.WebKit.adattributiond.sb */,
 				2DB96052239886B900102791 /* com.apple.WebKit.GPU.sb */,
 				A78CCDD8193AC9E3005ECC25 /* com.apple.WebKit.Networking.sb */,
 				57EFC77D2550EB8500F9477D /* com.apple.WebKit.WebAuthn.sb */,
@@ -13524,14 +13524,14 @@
 			productReference = 5742A2F72535613F00B7BA14 /* com.apple.WebKit.WebAuthn.xpc */;
 			productType = "com.apple.product-type.xpc-service";
 		};
-		5CAF7A9926F93A750003F19E /* AdAttributionDaemon */ = {
+		5CAF7A9926F93A750003F19E /* adattributiond */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 5CAF7AA026F93A750003F19E /* Build configuration list for PBXNativeTarget "AdAttributionDaemon" */;
+			buildConfigurationList = 5CAF7AA026F93A750003F19E /* Build configuration list for PBXNativeTarget "adattributiond" */;
 			buildPhases = (
 				5CAF7A9C26F93A750003F19E /* Headers */,
 				5CAF7A9D26F93A750003F19E /* Sources */,
 				5CAF7A9F26F93A750003F19E /* Frameworks */,
-				5C1578E6270E129400ED5280 /* Process AdAttributionDaemon Entitlements */,
+				5C1578E6270E129400ED5280 /* Process adattributiond Entitlements */,
 			);
 			buildRules = (
 			);
@@ -13539,9 +13539,9 @@
 				DFEE369A26FAD112007C78E0 /* PBXTargetDependency */,
 				5CAF7A9A26F93A750003F19E /* PBXTargetDependency */,
 			);
-			name = AdAttributionDaemon;
+			name = adattributiond;
 			productName = PluginProcessShim;
-			productReference = 5CAF7AA426F93A750003F19E /* AdAttributionDaemon */;
+			productReference = 5CAF7AA426F93A750003F19E /* adattributiond */;
 			productType = "com.apple.product-type.tool";
 		};
 		8DC2EF4F0486A6940098B216 /* WebKit */ = {
@@ -13754,7 +13754,7 @@
 				E1AC2E2720F7B94C00B0897D /* Unlock Keychain */,
 				5325BDCD21DFF47700A0DEE1 /* Apply Configuration to XCFileLists */,
 				942DB232257EE6D4009BD80A /* EmptyDSTROOT */,
-				5CAF7A9926F93A750003F19E /* AdAttributionDaemon */,
+				5CAF7A9926F93A750003F19E /* adattributiond */,
 			);
 		};
 /* End PBXProject section */
@@ -14038,7 +14038,7 @@
 				"$(SRCROOT)/Resources/SandboxProfiles/ios/com.apple.WebKit.Networking.sb",
 				"$(SRCROOT)/Resources/SandboxProfiles/ios/com.apple.WebKit.GPU.sb",
 				"$(SRCROOT)/Resources/SandboxProfiles/ios/com.apple.WebKit.WebAuthn.sb",
-				"$(SRCROOT)/Resources/SandboxProfiles/ios/com.apple.WebKit.AdAttributionDaemon.sb",
+				"$(SRCROOT)/Resources/SandboxProfiles/ios/com.apple.WebKit.adattributiond.sb",
 			);
 			name = "Copy iOS Sandbox Profiles for Manual Sandboxing";
 			outputPaths = (
@@ -14160,7 +14160,7 @@
 			shellPath = /bin/sh;
 			shellScript = "Scripts/process-entitlements.sh\n";
 		};
-		5C1578E6270E129400ED5280 /* Process AdAttributionDaemon Entitlements */ = {
+		5C1578E6270E129400ED5280 /* Process adattributiond Entitlements */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -14170,7 +14170,7 @@
 			inputPaths = (
 				"$(SRCROOT)/Scripts/process-entitlements.sh",
 			);
-			name = "Process AdAttributionDaemon Entitlements";
+			name = "Process adattributiond Entitlements";
 			outputFileListPaths = (
 			);
 			outputPaths = (
@@ -14455,7 +14455,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5CAF7AA726F93AB00003F19E /* AdAttributionDaemon.c in Sources */,
+				5CAF7AA726F93AB00003F19E /* adattributiond.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -15036,7 +15036,7 @@
 		};
 		5CAF7AA926F93F9F0003F19E /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 5CAF7A9926F93A750003F19E /* AdAttributionDaemon */;
+			target = 5CAF7A9926F93A750003F19E /* adattributiond */;
 			targetProxy = 5CAF7AA826F93F9F0003F19E /* PBXContainerItemProxy */;
 		};
 		A15797412582AE7300528236 /* PBXTargetDependency */ = {
@@ -15320,7 +15320,7 @@
 		};
 		5CAF7AA126F93A750003F19E /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 5CAF7AA626F93AA50003F19E /* AdAttributionDaemon.xcconfig */;
+			baseConfigurationReference = 5CAF7AA626F93AA50003F19E /* adattributiond.xcconfig */;
 			buildSettings = {
 				OTHER_LDFLAGS = "$(OTHER_LDFLAGS)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -15329,7 +15329,7 @@
 		};
 		5CAF7AA226F93A750003F19E /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 5CAF7AA626F93AA50003F19E /* AdAttributionDaemon.xcconfig */;
+			baseConfigurationReference = 5CAF7AA626F93AA50003F19E /* adattributiond.xcconfig */;
 			buildSettings = {
 				OTHER_LDFLAGS = "$(OTHER_LDFLAGS)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -15338,7 +15338,7 @@
 		};
 		5CAF7AA326F93A750003F19E /* Production */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 5CAF7AA626F93AA50003F19E /* AdAttributionDaemon.xcconfig */;
+			baseConfigurationReference = 5CAF7AA626F93AA50003F19E /* adattributiond.xcconfig */;
 			buildSettings = {
 				OTHER_LDFLAGS = "$(OTHER_LDFLAGS)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -15687,7 +15687,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Production;
 		};
-		5CAF7AA026F93A750003F19E /* Build configuration list for PBXNativeTarget "AdAttributionDaemon" */ = {
+		5CAF7AA026F93A750003F19E /* Build configuration list for PBXNativeTarget "adattributiond" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5CAF7AA126F93A750003F19E /* Debug */,

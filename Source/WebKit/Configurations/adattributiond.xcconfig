@@ -23,7 +23,7 @@
 
 #include "BaseTarget.xcconfig"
 
-PRODUCT_NAME = AdAttributionDaemon;
+PRODUCT_NAME = adattributiond;
 
 OTHER_LDFLAGS = -framework WebKit;
 FRAMEWORK_SEARCH_PATHS = $(BUILT_PRODUCTS_DIR);
