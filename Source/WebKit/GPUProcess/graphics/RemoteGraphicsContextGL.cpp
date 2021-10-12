@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -232,7 +232,7 @@ void RemoteGraphicsContextGL::paintPixelBufferToImageBuffer(std::optional<WebCor
     Condition conditionVariable;
     bool isFinished = false;
     m_renderingBackend->dispatch([&, contextAttributes = m_context->contextAttributes()]() mutable {
-        if (auto imageBuffer = m_renderingBackend->remoteResourceCache().cachedImageBuffer(target.object())) {
+        if (auto imageBuffer = m_renderingBackend->remoteResourceCache().cachedImageBuffer(target)) {
             // Here we do not try to play back pending commands for imageBuffer. Currently this call is only made for empty
             // image buffers and there's no good way to add display lists.
             if (pixelBuffer)

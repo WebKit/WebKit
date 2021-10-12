@@ -1,5 +1,64 @@
 2021-10-11  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        [GPU Process] Unique RenderingResourceIdentifiers Part 5: Migrate RemoteResourceCache to QualifiedRenderingResourceIdentifier
+        https://bugs.webkit.org/show_bug.cgi?id=231407
+        <rdar://problem/84010479>
+
+        Reviewed by Said Abou-Hallawa.
+
+        This pushes QualifiedRenderingResourceIdentifier down into RemoteResourceCache, but doesn't go all the way.
+        This patch augments RemoteResourceCache's API to accept QualifiedRenderingResourceIdentifiers, and also
+        migrates RemoteResourceCache::m_resourceUseCounters to use QualifiedRenderingResourceIdentifiers.
+
+        RemoteResourceCache::m_imageBuffers, RemoteResourceCache::m_nativeImages, and RemoteResourceCache::m_fonts
+        are WebCore typedefs, and are passed to WebCore's display list replaying code, but that code should have no
+        notion of process identifiers. Therefore, in order to make those members hold data that WebCore doesn't
+        understand, I'm going to have to wrap an opaque class around them and pass that class around instead of
+        the raw HashMaps. I'll do that in another patch.
+
+        No new tests because there is no behavior change.
+
+        * GPUProcess/graphics/RemoteDisplayListRecorder.cpp:
+        (WebKit::RemoteDisplayListRecorder::setStateWithQualifiedIdentifiers):
+        (WebKit::RemoteDisplayListRecorder::clipToImageBufferWithQualifiedIdentifier):
+        (WebKit::RemoteDisplayListRecorder::drawGlyphsWithQualifiedIdentifier):
+        (WebKit::RemoteDisplayListRecorder::drawImageBufferWithQualifiedIdentifier):
+        (WebKit::RemoteDisplayListRecorder::drawNativeImageWithQualifiedIdentifier):
+        (WebKit::RemoteDisplayListRecorder::drawPatternWithQualifiedIdentifier):
+        * GPUProcess/graphics/RemoteGraphicsContextGL.cpp:
+        (WebKit::RemoteGraphicsContextGL::paintPixelBufferToImageBuffer):
+        * GPUProcess/graphics/RemoteRenderingBackend.cpp:
+        (WebKit::RemoteRenderingBackend::RemoteRenderingBackend):
+        (WebKit::RemoteRenderingBackend::createImageBufferWithQualifiedIdentifier):
+        (WebKit::RemoteRenderingBackend::ReplayerDelegate::ReplayerDelegate):
+        (WebKit::RemoteRenderingBackend::ReplayerDelegate::recordResourceUse):
+        (WebKit::RemoteRenderingBackend::submit):
+        (WebKit::RemoteRenderingBackend::nextDestinationImageBufferAfterApplyingDisplayLists):
+        (WebKit::RemoteRenderingBackend::wakeUpAndApplyDisplayListWithQualifiedIdentifier):
+        (WebKit::RemoteRenderingBackend::getDataURLForImageBufferWithQualifiedIdentifier):
+        (WebKit::RemoteRenderingBackend::getDataForImageBufferWithQualifiedIdentifier):
+        (WebKit::RemoteRenderingBackend::getShareableBitmapForImageBufferWithQualifiedIdentifier):
+        (WebKit::RemoteRenderingBackend::cacheNativeImageWithQualifiedIdentifier):
+        (WebKit::RemoteRenderingBackend::cacheFontWithQualifiedIdentifier):
+        (WebKit::RemoteRenderingBackend::releaseRemoteResourceWithQualifiedIdentifier):
+        (WebKit::RemoteRenderingBackend::finalizeRenderingUpdate):
+        * GPUProcess/graphics/RemoteRenderingBackend.h:
+        * GPUProcess/graphics/RemoteResourceCache.cpp:
+        (WebKit::RemoteResourceCache::RemoteResourceCache):
+        (WebKit::RemoteResourceCache::cacheImageBuffer):
+        (WebKit::RemoteResourceCache::cachedImageBuffer const):
+        (WebKit::RemoteResourceCache::cacheNativeImage):
+        (WebKit::RemoteResourceCache::cachedNativeImage const):
+        (WebKit::RemoteResourceCache::cacheFont):
+        (WebKit::RemoteResourceCache::cachedFont const):
+        (WebKit::RemoteResourceCache::ensureResourceUseCounter):
+        (WebKit::RemoteResourceCache::maybeRemoveResource):
+        (WebKit::RemoteResourceCache::recordResourceUse):
+        (WebKit::RemoteResourceCache::releaseRemoteResource):
+        * GPUProcess/graphics/RemoteResourceCache.h:
+
+2021-10-11  Myles C. Maxfield  <mmaxfield@apple.com>
+
         [GPU Process] Unique RenderingResourceIdentifiers Part 6: Uniquify more of RemoteDisplayListRecorder at entry points
         https://bugs.webkit.org/show_bug.cgi?id=231552
         <rdar://problem/84130587>

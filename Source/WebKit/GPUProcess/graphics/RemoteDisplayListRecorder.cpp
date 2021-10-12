@@ -130,19 +130,19 @@ void RemoteDisplayListRecorder::setStateWithQualifiedIdentifiers(DisplayList::Se
 {
     RefPtr<NativeImage> strokePatternImage;
     if (strokePatternImageIdentifier)
-        strokePatternImage = resourceCache().cachedNativeImage(strokePatternImageIdentifier.object());
+        strokePatternImage = resourceCache().cachedNativeImage(strokePatternImageIdentifier);
 
     RefPtr<NativeImage> fillPatternImage;
     if (fillPatternImageIdentifier)
-        fillPatternImage = resourceCache().cachedNativeImage(fillPatternImageIdentifier.object());
+        fillPatternImage = resourceCache().cachedNativeImage(fillPatternImageIdentifier);
 
     handleItem(WTFMove(item), strokePatternImage.get(), fillPatternImage.get());
 
     if (strokePatternImage)
-        resourceCache().recordResourceUse(strokePatternImageIdentifier.object());
+        resourceCache().recordResourceUse(strokePatternImageIdentifier);
 
     if (fillPatternImage)
-        resourceCache().recordResourceUse(fillPatternImageIdentifier.object());
+        resourceCache().recordResourceUse(fillPatternImageIdentifier);
 }
 
 void RemoteDisplayListRecorder::setLineCap(LineCap lineCap)
@@ -189,14 +189,14 @@ void RemoteDisplayListRecorder::clipToImageBuffer(RenderingResourceIdentifier im
 
 void RemoteDisplayListRecorder::clipToImageBufferWithQualifiedIdentifier(QualifiedRenderingResourceIdentifier imageBufferIdentifier, const WebCore::FloatRect& destinationRect)
 {
-    RefPtr imageBuffer = resourceCache().cachedImageBuffer(imageBufferIdentifier.object());
+    RefPtr imageBuffer = resourceCache().cachedImageBuffer(imageBufferIdentifier);
     if (!imageBuffer) {
         ASSERT_NOT_REACHED();
         return;
     }
 
     handleItem(DisplayList::ClipToImageBuffer(imageBufferIdentifier.object(), destinationRect), *imageBuffer);
-    resourceCache().recordResourceUse(imageBufferIdentifier.object());
+    resourceCache().recordResourceUse(imageBufferIdentifier);
 }
 
 void RemoteDisplayListRecorder::clipOutToPath(const Path& path)
@@ -233,14 +233,14 @@ void RemoteDisplayListRecorder::drawGlyphs(DisplayList::DrawGlyphs&& item)
 
 void RemoteDisplayListRecorder::drawGlyphsWithQualifiedIdentifier(DisplayList::DrawGlyphs&& item, QualifiedRenderingResourceIdentifier fontIdentifier)
 {
-    RefPtr font = resourceCache().cachedFont(fontIdentifier.object());
+    RefPtr font = resourceCache().cachedFont(fontIdentifier);
     if (!font) {
         ASSERT_NOT_REACHED();
         return;
     }
 
     handleItem(WTFMove(item), *font);
-    resourceCache().recordResourceUse(fontIdentifier.object());
+    resourceCache().recordResourceUse(fontIdentifier);
 }
 
 void RemoteDisplayListRecorder::drawImageBuffer(RenderingResourceIdentifier imageBufferIdentifier, const FloatRect& destinationRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
@@ -252,14 +252,14 @@ void RemoteDisplayListRecorder::drawImageBuffer(RenderingResourceIdentifier imag
 
 void RemoteDisplayListRecorder::drawImageBufferWithQualifiedIdentifier(QualifiedRenderingResourceIdentifier imageBufferIdentifier, const FloatRect& destinationRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
 {
-    RefPtr imageBuffer = resourceCache().cachedImageBuffer(imageBufferIdentifier.object());
+    RefPtr imageBuffer = resourceCache().cachedImageBuffer(imageBufferIdentifier);
     if (!imageBuffer) {
         ASSERT_NOT_REACHED();
         return;
     }
 
     handleItem(DisplayList::DrawImageBuffer(imageBufferIdentifier.object(), destinationRect, srcRect, options), *imageBuffer);
-    resourceCache().recordResourceUse(imageBufferIdentifier.object());
+    resourceCache().recordResourceUse(imageBufferIdentifier);
 }
 
 void RemoteDisplayListRecorder::drawNativeImage(RenderingResourceIdentifier imageIdentifier, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
@@ -271,14 +271,14 @@ void RemoteDisplayListRecorder::drawNativeImage(RenderingResourceIdentifier imag
 
 void RemoteDisplayListRecorder::drawNativeImageWithQualifiedIdentifier(QualifiedRenderingResourceIdentifier imageIdentifier, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
 {
-    RefPtr image = resourceCache().cachedNativeImage(imageIdentifier.object());
+    RefPtr image = resourceCache().cachedNativeImage(imageIdentifier);
     if (!image) {
         ASSERT_NOT_REACHED();
         return;
     }
 
     handleItem(DisplayList::DrawNativeImage(imageIdentifier.object(), imageSize, destRect, srcRect, options), *image);
-    resourceCache().recordResourceUse(imageIdentifier.object());
+    resourceCache().recordResourceUse(imageIdentifier);
 }
 
 void RemoteDisplayListRecorder::drawPattern(RenderingResourceIdentifier imageIdentifier, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& transform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& options)
@@ -290,14 +290,14 @@ void RemoteDisplayListRecorder::drawPattern(RenderingResourceIdentifier imageIde
 
 void RemoteDisplayListRecorder::drawPatternWithQualifiedIdentifier(QualifiedRenderingResourceIdentifier imageIdentifier, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& transform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& options)
 {
-    RefPtr image = resourceCache().cachedNativeImage(imageIdentifier.object());
+    RefPtr image = resourceCache().cachedNativeImage(imageIdentifier);
     if (!image) {
         ASSERT_NOT_REACHED();
         return;
     }
 
     handleItem(DisplayList::DrawPattern(imageIdentifier.object(), imageSize, destRect, tileRect, transform, phase, spacing, options), *image);
-    resourceCache().recordResourceUse(imageIdentifier.object());
+    resourceCache().recordResourceUse(imageIdentifier);
 }
 
 void RemoteDisplayListRecorder::beginTransparencyLayer(float opacity)
