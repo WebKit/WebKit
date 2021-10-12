@@ -1,3 +1,12 @@
+2021-10-12  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Unreviewed, run-benchmark fix after r283936
+        https://bugs.webkit.org/show_bug.cgi?id=231512
+
+        import sys is necessary.
+
+        * Scripts/webkitpy/benchmark_runner/browser_driver/osx_safari_driver.py:
+
 2021-10-12  Tim Horton  <timothy_horton@apple.com>
 
         Borders are not drawn when using BifurcatedGraphicsContext
