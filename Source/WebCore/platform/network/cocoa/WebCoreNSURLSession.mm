@@ -30,6 +30,7 @@
 #import "ParsedRequestRange.h"
 #import "PlatformMediaResourceLoader.h"
 #import "SubresourceLoader.h"
+#import "WebCoreObjCExtras.h"
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/CompletionHandler.h>
@@ -81,10 +82,19 @@ static NSDate * __nullable networkLoadMetricsDate(MonotonicTime time)
 
 - (instancetype)_initWithMetrics:(WebCore::NetworkLoadMetrics&&)metrics
 {
+    ASSERT(isMainThread());
     if (!(self = [super init]))
         return nil;
     _metrics = metrics;
     return self;
+}
+
+- (void)dealloc
+{
+    if (WebCoreObjCScheduleDeallocateOnMainThread(WebCoreNSURLSessionTaskTransactionMetrics.class, self))
+        return;
+
+    [super dealloc];
 }
 
 @dynamic fetchStartDate;
@@ -216,10 +226,20 @@ static NSDate * __nullable networkLoadMetricsDate(MonotonicTime time)
 
 - (instancetype)_initWithMetrics:(WebCore::NetworkLoadMetrics&&)metrics
 {
+    ASSERT(isMainThread());
+
     if (!(self = [super init]))
         return nil;
     _transactionMetrics = adoptNS([[WebCoreNSURLSessionTaskTransactionMetrics alloc] _initWithMetrics:WTFMove(metrics)]);
     return self;
+}
+
+- (void)dealloc
+{
+    if (WebCoreObjCScheduleDeallocateOnMainThread(WebCoreNSURLSessionTaskMetrics.class, self))
+        return;
+
+    [super dealloc];
 }
 
 @dynamic transactionMetrics;
@@ -941,11 +961,12 @@ void WebCoreNSURLSessionDataTaskClient::loadFinished(PlatformMediaResource& reso
     RetainPtr<WebCoreNSURLSessionDataTask> strongSelf { self };
     RetainPtr<WebCoreNSURLSession> strongSession { self.session };
     RetainPtr<NSError> strongError { error };
-    [self.session addDelegateOperation:[strongSelf, strongSession, strongError, metrics = metrics.isolatedCopy()] () mutable {
+    auto taskMetrics = adoptNS([[WebCoreNSURLSessionTaskMetrics alloc] _initWithMetrics:NetworkLoadMetrics(metrics)]);
+    [self.session addDelegateOperation:[strongSelf, strongSession, strongError, taskMetrics = WTFMove(taskMetrics)] () mutable {
         id<NSURLSessionTaskDelegate> delegate = (id<NSURLSessionTaskDelegate>)strongSession.get().delegate;
 
         if ([delegate respondsToSelector:@selector(URLSession:task:didFinishCollectingMetrics:)])
-            [delegate URLSession:(NSURLSession *)strongSession.get() task:(NSURLSessionDataTask *)strongSelf.get() didFinishCollectingMetrics:(NSURLSessionTaskMetrics *)adoptNS([[WebCoreNSURLSessionTaskMetrics alloc] _initWithMetrics:WTFMove(metrics)]).get()];
+            [delegate URLSession:(NSURLSession *)strongSession.get() task:(NSURLSessionDataTask *)strongSelf.get() didFinishCollectingMetrics:(NSURLSessionTaskMetrics *)taskMetrics.get()];
 
         if ([delegate respondsToSelector:@selector(URLSession:task:didCompleteWithError:)])
             [delegate URLSession:(NSURLSession *)strongSession.get() task:(NSURLSessionDataTask *)strongSelf.get() didCompleteWithError:strongError.get()];
