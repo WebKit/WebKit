@@ -1,3 +1,13 @@
+2021-10-12  Alan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] LazyLineBreakIterator should be correctly setup for the prior context case
+        https://bugs.webkit.org/show_bug.cgi?id=231608
+
+        Reviewed by Antti Koivisto.
+
+        * fast/inline/line-break-loose-with-inline-box-boundary-expected.html: Added.
+        * fast/inline/line-break-loose-with-inline-box-boundary.html: Added.
+
 2021-10-12  Sihui Liu  <sihui_liu@apple.com>
 
         Implement FileSystemSyncAccessHandle read() and write()

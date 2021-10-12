@@ -60,7 +60,8 @@ static inline bool endsWithSoftWrapOpportunity(const InlineTextItem& currentText
         // See the templated CharacterType in nextBreakablePosition for last and lastlast characters. 
         currentContent = String::make16BitFrom8BitSource(currentContent.characters8(), currentContent.length());
     }
-    auto lineBreakIterator = LazyLineBreakIterator { currentContent };
+    auto& style = nextInlineTextItem.style();
+    auto lineBreakIterator = LazyLineBreakIterator { currentContent, style.computedLocale(), TextUtil::lineBreakIteratorMode(style.lineBreak()) };
     auto previousContentLength = previousContent.length();
     // FIXME: We should look into the entire uncommitted content for more text context.
     UChar lastCharacter = previousContentLength ? previousContent[previousContentLength - 1] : 0;
@@ -71,7 +72,7 @@ static inline bool endsWithSoftWrapOpportunity(const InlineTextItem& currentText
     // Now check if we can break right at the inline item boundary.
     // With the [ex-ample], findNextBreakablePosition should return the startPosition (0).
     // FIXME: Check if there's a more correct way of finding breaking opportunities.
-    return !TextUtil::findNextBreakablePosition(lineBreakIterator, 0, nextInlineTextItem.style());
+    return !TextUtil::findNextBreakablePosition(lineBreakIterator, 0, style);
 }
 
 static inline bool isAtSoftWrapOpportunity(const InlineFormattingContext& inlineFormattingContext, const InlineItem& current, const InlineItem& next)
