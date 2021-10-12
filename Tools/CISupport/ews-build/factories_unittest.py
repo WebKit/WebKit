@@ -49,8 +49,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'show-identifier',
             'update-working-directory',
             'apply-patch',
-            'apply-watch-list',
-            'verify-github-integrity'
+            'apply-watch-list'
         ],
         'GTK-Build-EWS': [
             'configure-build',

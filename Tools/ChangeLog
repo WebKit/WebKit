@@ -1,5 +1,17 @@
 2021-10-12  Jonathan Bedard  <jbedard@apple.com>
 
+        Reverting r282216 becasue unauthenticated GitHub requests have low rate limits
+        https://bugs.webkit.org/show_bug.cgi?id=230095
+
+        Reviewed by Ryan Haddad.
+
+        * CISupport/ews-build/factories.py:
+        (WatchListFactory.__init__):
+        * CISupport/ews-build/factories_unittest.py:
+        (TestExpectedBuildSteps):
+
+2021-10-12  Jonathan Bedard  <jbedard@apple.com>
+
         [Python-3] Invoke webkit-patch with Python 3 by default
         https://bugs.webkit.org/show_bug.cgi?id=231591
         <rdar://problem/84153640>
