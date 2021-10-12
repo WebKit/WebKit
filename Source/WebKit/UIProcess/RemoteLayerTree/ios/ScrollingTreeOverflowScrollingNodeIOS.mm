@@ -80,7 +80,10 @@ void ScrollingTreeOverflowScrollingNodeIOS::repositionScrollingLayers()
 
 bool ScrollingTreeOverflowScrollingNodeIOS::startAnimatedScrollToPosition(FloatPoint destinationPosition)
 {
-    return m_scrollingNodeDelegate->startAnimatedScrollToPosition(destinationPosition);
+    bool started = m_scrollingNodeDelegate->startAnimatedScrollToPosition(destinationPosition);
+    if (started)
+        willStartAnimatedScroll();
+    return started;
 }
 
 void ScrollingTreeOverflowScrollingNodeIOS::stopAnimatedScroll()

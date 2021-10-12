@@ -104,7 +104,11 @@ WheelEventHandlingResult ScrollingTreeFrameScrollingNodeNicosia::handleWheelEven
 
 bool ScrollingTreeFrameScrollingNodeNicosia::startAnimatedScrollToPosition(FloatPoint destinationPosition)
 {
-    return m_delegate.startAnimatedScrollToPosition(destinationPosition);
+    bool started = m_delegate.startAnimatedScrollToPosition(destinationPosition);
+    if (started)
+        willStartAnimatedScroll();
+
+    return started;
 }
 
 void ScrollingTreeFrameScrollingNodeNicosia::stopAnimatedScroll()

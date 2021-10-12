@@ -229,6 +229,7 @@ void ScrollingTreeScrollingNode::didStopAnimatedScroll()
 {
     LOG_WITH_STREAM(Scrolling, stream << "ScrollingTreeScrollingNode " << scrollingNodeID() << " didStopAnimatedScroll");
     scrollingTree().scrollingTreeNodeDidStopAnimatedScroll(*this);
+    scrollingTree().setAnimatedScrollInProgressForNode(scrollingNodeID(), false);
 }
 
 void ScrollingTreeScrollingNode::handleScrollPositionRequest(const RequestedScrollData& requestedScrollData)
@@ -257,6 +258,11 @@ FloatPoint ScrollingTreeScrollingNode::adjustedScrollPosition(const FloatPoint& 
         return clampScrollPosition(scrollPosition);
 
     return scrollPosition;
+}
+
+void ScrollingTreeScrollingNode::willStartAnimatedScroll()
+{
+    scrollingTree().setAnimatedScrollInProgressForNode(scrollingNodeID(), true);
 }
 
 void ScrollingTreeScrollingNode::scrollBy(const FloatSize& delta, ScrollClamping clamp)

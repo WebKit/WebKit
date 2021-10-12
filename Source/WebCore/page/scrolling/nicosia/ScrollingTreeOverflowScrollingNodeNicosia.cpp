@@ -87,7 +87,11 @@ WheelEventHandlingResult ScrollingTreeOverflowScrollingNodeNicosia::handleWheelE
 
 bool ScrollingTreeOverflowScrollingNodeNicosia::startAnimatedScrollToPosition(FloatPoint destinationPosition)
 {
-    return m_delegate.startAnimatedScrollToPosition(destinationPosition);
+    bool started = m_delegate.startAnimatedScrollToPosition(destinationPosition);
+    if (started)
+        willStartAnimatedScroll();
+
+    return started;
 }
 
 void ScrollingTreeOverflowScrollingNodeNicosia::stopAnimatedScroll()

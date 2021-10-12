@@ -328,11 +328,18 @@ void ThreadedScrollingTree::setActiveScrollSnapIndices(ScrollingNodeID nodeID, s
 }
 #endif
 
+bool ThreadedScrollingTree::scrollingThreadIsActive()
+{
+    return hasProcessedWheelEventsRecently() || hasNodeWithActiveAnimatedScroll();
+}
+
 void ThreadedScrollingTree::willStartRenderingUpdate()
 {
     ASSERT(isMainThread());
 
-    if (!hasProcessedWheelEventsRecently())
+    LOG_WITH_STREAM(ScrollAnimations, stream << "ThreadedScrollingTree::willStartRenderingUpdate - scrollingThreadIsActive " << scrollingThreadIsActive());
+
+    if (!scrollingThreadIsActive())
         return;
 
     tracePoint(ScrollingThreadRenderUpdateSyncStart);
@@ -356,6 +363,13 @@ Seconds ThreadedScrollingTree::maxAllowableRenderingUpdateDurationForSynchroniza
     auto displayFPS = nominalFramesPerSecond().value_or(60);
     Seconds frameDuration = 1_s / (double)displayFPS;
     return allowableFrameFraction * frameDuration;
+}
+
+void ThreadedScrollingTree::hasNodeWithAnimatedScrollChanged(bool hasNodeWithAnimatedScroll)
+{
+    RunLoop::main().dispatch([scrollingCoordinator = m_scrollingCoordinator, hasNodeWithAnimatedScroll] {
+        scrollingCoordinator->hasNodeWithAnimatedScrollChanged(hasNodeWithAnimatedScroll);
+    });
 }
 
 // This code allows the main thread about half a frame to complete its rendering udpate. If the main thread
@@ -451,16 +465,16 @@ void ThreadedScrollingTree::displayDidRefreshOnScrollingThread()
 
 void ThreadedScrollingTree::displayDidRefresh(PlatformDisplayID displayID)
 {
-    bool hasProcessedWheelEventsRecently = this->hasProcessedWheelEventsRecently();
+    bool scrollingThreadIsActive = this->scrollingThreadIsActive();
 
     // We're on the EventDispatcher thread or in the ThreadedCompositor thread here.
-    tracePoint(ScrollingTreeDisplayDidRefresh, displayID, hasProcessedWheelEventsRecently);
+    tracePoint(ScrollingTreeDisplayDidRefresh, displayID, scrollingThreadIsActive);
 
     if (displayID != this->displayID())
         return;
 
 #if !PLATFORM(WPE) && !PLATFORM(GTK)
-    if (!hasProcessedWheelEventsRecently)
+    if (!scrollingThreadIsActive)
         return;
 #endif
 

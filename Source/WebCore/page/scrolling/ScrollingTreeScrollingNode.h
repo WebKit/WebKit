@@ -128,6 +128,9 @@ protected:
     virtual bool startAnimatedScrollToPosition(FloatPoint) { return false; }
     virtual void stopAnimatedScroll() { }
 
+    void willStartAnimatedScroll();
+    void didStopAnimatedScroll();
+
     virtual void currentScrollPositionChanged(ScrollType, ScrollingLayerPositionAction = ScrollingLayerPositionAction::Sync);
     virtual void updateViewportForCurrentScrollPosition(std::optional<FloatRect> = { }) { }
     virtual bool scrollPositionAndLayoutViewportMatch(const FloatPoint& position, std::optional<FloatRect> overrideLayoutViewport);
@@ -136,8 +139,6 @@ protected:
     virtual void repositionRelatedLayers() { }
 
     void applyLayerPositions() override;
-
-    void didStopAnimatedScroll();
 
     const FloatSize& reachableContentsSize() const { return m_reachableContentsSize; }
     

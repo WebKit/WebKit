@@ -113,6 +113,9 @@ public:
     bool isScrollSnapInProgressForNode(ScrollingNodeID);
     void setNodeScrollSnapInProgress(ScrollingNodeID, bool);
 
+    bool isAnimatedScrollInProgressForNode(ScrollingNodeID);
+    void setAnimatedScrollInProgressForNode(ScrollingNodeID, bool);
+
     virtual void invalidate() { }
     WEBCORE_EXPORT void commitTreeState(std::unique_ptr<ScrollingStateTree>&&);
     
@@ -222,7 +225,6 @@ public:
     void windowScreenDidChange(PlatformDisplayID, std::optional<FramesPerSecond> nominalFramesPerSecond);
     PlatformDisplayID displayID();
     
-    bool hasProcessedWheelEventsRecently();
     WEBCORE_EXPORT void willProcessWheelEvent();
 
     void addPendingScrollUpdate(ScrollUpdate&&);
@@ -241,6 +243,11 @@ protected:
 
     void applyLayerPositionsInternal() WTF_REQUIRES_LOCK(m_treeLock);
     void removeAllNodes() WTF_REQUIRES_LOCK(m_treeLock);
+    
+    virtual void hasNodeWithAnimatedScrollChanged(bool /* hasNodeWithAnimatedScroll */) { }
+
+    bool hasProcessedWheelEventsRecently();
+    bool hasNodeWithActiveAnimatedScroll();
 
     Lock m_treeLock; // Protects the scrolling tree.
 
@@ -262,7 +269,7 @@ private:
     OptionSet<WheelEventProcessingSteps> computeWheelProcessingSteps(const PlatformWheelEvent&) WTF_REQUIRES_LOCK(m_treeStateLock);
 
     virtual void receivedWheelEvent(const PlatformWheelEvent&) { }
-    
+
     RefPtr<ScrollingTreeFrameScrollingNode> m_rootNode;
 
     using ScrollingTreeNodeMap = HashMap<ScrollingNodeID, RefPtr<ScrollingTreeNode>>;
@@ -285,6 +292,7 @@ private:
         HashSet<ScrollingNodeID> nodesWithActiveRubberBanding;
         HashSet<ScrollingNodeID> nodesWithActiveScrollSnap;
         HashSet<ScrollingNodeID> nodesWithActiveUserScrolls;
+        HashSet<ScrollingNodeID> nodesWithActiveAnimatedScrolls;
     };
     
     Lock m_treeStateLock;

@@ -402,7 +402,7 @@ void ScrollingTreeScrollingNodeDelegateMac::deferWheelEventTestCompletionForReas
 
     scrollingTree().deferWheelEventTestCompletionForReason(identifier, reason);
 }
-    
+
 void ScrollingTreeScrollingNodeDelegateMac::removeWheelEventTestCompletionDeferralForReason(WheelEventTestMonitor::ScrollableAreaIdentifier identifier, WheelEventTestMonitor::DeferReason reason) const
 {
     if (!scrollingTree().isMonitoringWheelEvents())

@@ -127,7 +127,10 @@ WheelEventHandlingResult ScrollingTreeFrameScrollingNodeMac::handleWheelEvent(co
 
 bool ScrollingTreeFrameScrollingNodeMac::startAnimatedScrollToPosition(FloatPoint destinationPosition)
 {
-    return m_delegate.startAnimatedScrollToPosition(destinationPosition);
+    bool started = m_delegate.startAnimatedScrollToPosition(destinationPosition);
+    if (started)
+        willStartAnimatedScroll();
+    return started;
 }
 
 void ScrollingTreeFrameScrollingNodeMac::stopAnimatedScroll()
@@ -148,7 +151,7 @@ FloatPoint ScrollingTreeFrameScrollingNodeMac::adjustedScrollPosition(const Floa
 
 void ScrollingTreeFrameScrollingNodeMac::currentScrollPositionChanged(ScrollType scrollType, ScrollingLayerPositionAction action)
 {
-    LOG_WITH_STREAM(Scrolling, stream << "ScrollingTreeFrameScrollingNodeMac " << scrollingNodeID() << " currentScrollPositionChanged to " << currentScrollPosition() << " min: " << minimumScrollPosition() << " max: " << maximumScrollPosition() << " sync: " << hasSynchronousScrollingReasons());
+    LOG_WITH_STREAM(Scrolling, stream << "ScrollingTreeFrameScrollingNodeMac " << scrollingNodeID() << " currentScrollPositionChanged to " << currentScrollPosition() << " min: " << minimumScrollPosition() << " max: " << maximumScrollPosition() << " sync: " << hasSynchronousScrollingReasons() << " is animating: " << scrollingTree().isAnimatedScrollInProgressForNode(scrollingNodeID()));
 
     m_delegate.currentScrollPositionChanged();
 

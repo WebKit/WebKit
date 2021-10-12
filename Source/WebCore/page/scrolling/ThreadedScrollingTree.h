@@ -101,7 +101,11 @@ private:
     void scheduleDelayedRenderingUpdateDetectionTimer(Seconds) WTF_REQUIRES_LOCK(m_treeLock);
     void delayedRenderingUpdateDetectionTimerFired();
 
+    void hasNodeWithAnimatedScrollChanged(bool) final;
+
     Seconds maxAllowableRenderingUpdateDurationForSynchronization();
+    
+    bool scrollingThreadIsActive();
 
     enum class SynchronizationState : uint8_t {
         Idle,

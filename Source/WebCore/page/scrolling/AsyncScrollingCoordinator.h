@@ -71,6 +71,8 @@ public:
 
     bool scrollAnimatorEnabled() const;
 
+    virtual void hasNodeWithAnimatedScrollChanged(bool) { };
+
 protected:
     WEBCORE_EXPORT AsyncScrollingCoordinator(Page*);
 

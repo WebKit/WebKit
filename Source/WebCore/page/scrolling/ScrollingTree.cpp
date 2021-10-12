@@ -583,6 +583,40 @@ void ScrollingTree::setNodeScrollSnapInProgress(ScrollingNodeID nodeID, bool isS
         m_treeState.nodesWithActiveScrollSnap.remove(nodeID);
 }
 
+bool ScrollingTree::isAnimatedScrollInProgressForNode(ScrollingNodeID nodeID)
+{
+    if (!nodeID)
+        return false;
+
+    Locker locker { m_treeStateLock };
+    return m_treeState.nodesWithActiveAnimatedScrolls.contains(nodeID);
+}
+
+void ScrollingTree::setAnimatedScrollInProgressForNode(ScrollingNodeID nodeID, bool isAnimatedScrollInProgress)
+{
+    if (!nodeID)
+        return;
+
+    Locker locker { m_treeStateLock };
+    
+    bool hadAnyAnimatedScrollingNodes = !m_treeState.nodesWithActiveAnimatedScrolls.isEmpty();
+    
+    if (isAnimatedScrollInProgress)
+        m_treeState.nodesWithActiveAnimatedScrolls.add(nodeID);
+    else
+        m_treeState.nodesWithActiveAnimatedScrolls.remove(nodeID);
+
+    bool hasAnyAnimatedScrollingNodes = !m_treeState.nodesWithActiveAnimatedScrolls.isEmpty();
+    if (hasAnyAnimatedScrollingNodes != hadAnyAnimatedScrollingNodes)
+        hasNodeWithAnimatedScrollChanged(hasAnyAnimatedScrollingNodes);
+}
+
+bool ScrollingTree::hasNodeWithActiveAnimatedScroll()
+{
+    Locker locker { m_treeStateLock };
+    return !m_treeState.nodesWithActiveAnimatedScrolls.isEmpty();
+}
+
 void ScrollingTree::setMainFramePinnedState(RectEdges<bool> edgePinningState)
 {
     Locker locker { m_swipeStateLock };

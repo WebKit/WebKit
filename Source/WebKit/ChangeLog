@@ -1,3 +1,13 @@
+2021-10-12  Simon Fraser  <simon.fraser@apple.com>
+
+        Have the ScrollingTree track nodes with animated scrolls
+        https://bugs.webkit.org/show_bug.cgi?id=231554
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/RemoteLayerTree/ios/ScrollingTreeOverflowScrollingNodeIOS.mm:
+        (WebKit::ScrollingTreeOverflowScrollingNodeIOS::startAnimatedScrollToPosition):
+
 2021-10-12  Alex Christensen  <achristensen@webkit.org>
 
         Begin migration from WTF::Variant to std::variant

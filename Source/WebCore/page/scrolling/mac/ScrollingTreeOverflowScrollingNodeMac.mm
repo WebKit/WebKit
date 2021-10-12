@@ -76,7 +76,10 @@ WheelEventHandlingResult ScrollingTreeOverflowScrollingNodeMac::handleWheelEvent
 
 bool ScrollingTreeOverflowScrollingNodeMac::startAnimatedScrollToPosition(FloatPoint destinationPosition)
 {
-    return m_delegate.startAnimatedScrollToPosition(destinationPosition);
+    bool started = m_delegate.startAnimatedScrollToPosition(destinationPosition);
+    if (started)
+        willStartAnimatedScroll();
+    return started;
 }
 
 void ScrollingTreeOverflowScrollingNodeMac::stopAnimatedScroll()
