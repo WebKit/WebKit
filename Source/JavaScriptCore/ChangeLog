@@ -1,3 +1,23 @@
+2021-10-12  Saam Barati  <sbarati@apple.com>
+
+        Fix spec-correctness when inlining __proto__ intrinsic using get_by_id_with_this
+        https://bugs.webkit.org/show_bug.cgi?id=231559
+
+        Reviewed by Yusuke Suzuki.
+
+        My original fix in r283512 has some theoretical spec correctness issues.
+        I'm not sure if they can be materialized or not since we only use
+        get_by_id_with_this in very limited scenarios. However, this patch just
+        makes it so we call the getter instead of attempting to inline it
+        when using get_by_id_with_this.
+
+        * jit/AssemblyHelpers.cpp:
+        (JSC::AssemblyHelpers::emitLoadPrototypeWithoutCheck): Deleted.
+        * jit/AssemblyHelpers.h:
+        * jit/IntrinsicEmitter.cpp:
+        (JSC::IntrinsicGetterAccessCase::canEmitIntrinsicGetter):
+        (JSC::IntrinsicGetterAccessCase::emitIntrinsicGetter):
+
 2021-10-12  Alex Christensen  <achristensen@webkit.org>
 
         Use STL instead of WTF::get_if, WTF::Monostate, WTF::visit, and WTF::holds_alternative
