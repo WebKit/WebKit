@@ -5290,7 +5290,8 @@
          "philn@webkit.org",
          "philn@igalia.com"
       ],
-      "expertise" : "WebKitGTK, Media support (focused on the GStreamer implementation)",
+      "github" : "philn",
+      "expertise" : "WebKitGTK, WPE, Media support (focused on the GStreamer implementation)",
       "name" : "Philippe Normand",
       "nicks" : [
          "philn"

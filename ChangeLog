@@ -1,3 +1,11 @@
+2021-10-12  Philippe Normand  <pnormand@igalia.com>
+
+        Add my github username to contributors.json
+
+        Unreviewed.
+
+        * metadata/contributors.json:
+
 2021-10-11  Patrick Griffis  <pgriffis@igalia.com>
 
         Add my github username to contributors.json
