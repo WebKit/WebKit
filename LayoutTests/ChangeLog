@@ -1,5 +1,14 @@
 2021-10-12  Ayumi Kojima  <ayumi_kojima@apple.com>
 
+        [ iOS, Mac ] imported/w3c/web-platform-tests/css/css-cascade/layer-counter-style-override.html is a flaky failure.
+        https://bugs.webkit.org/show_bug.cgi?id=230905
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
+2021-10-12  Ayumi Kojima  <ayumi_kojima@apple.com>
+
         [ iOS ] fast/scrolling/ios/scroll-snap-with-momentum-scroll-in-overflow-scroll-area.html is a flaky failure.
         https://bugs.webkit.org/show_bug.cgi?id=231641
 
