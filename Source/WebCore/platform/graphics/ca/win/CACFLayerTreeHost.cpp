@@ -160,7 +160,7 @@ void CACFLayerTreeHost::initialize()
 
 #ifndef NDEBUG
     auto debugColor = adoptCF(CGColorCreateGenericRGB(1, 0, 0, 0.8));
-    m_rootLayer->setBackgroundColor(debugColor.get());
+    m_rootLayer->setBackgroundColor(roundAndClampToSRGBALossy(debugColor.get()));
 #endif
 }
 
