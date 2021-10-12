@@ -83,7 +83,7 @@ private:
     bool featureEnabled() const;
     bool debugModeEnabled() const;
 
-    WebCore::Timer m_firePendingAttributionRequestsTimer;
+    RunLoop::Timer<PrivateClickMeasurementManager> m_firePendingAttributionRequestsTimer;
     bool m_isRunningTest { false };
     std::optional<URL> m_tokenPublicKeyURLForTesting;
     std::optional<URL> m_tokenSignatureURLForTesting;

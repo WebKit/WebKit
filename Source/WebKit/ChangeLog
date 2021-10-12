@@ -1,3 +1,29 @@
+2021-10-12  Alex Christensen  <achristensen@webkit.org>
+
+        Reduce use of WebCore structures in adattributiond
+        https://bugs.webkit.org/show_bug.cgi?id=231617
+
+        Reviewed by Chris Dumez.
+
+        In order to reduce the memory use of adattributiond, I'm planning to have it not link WebKit.framework.
+        This is progress towards that.
+        I use a RunLoop::Timer instead of a WebCore::Timer, which does the same thing on the main thread.
+        I use a WTF::String to represent the error description or lack thereof instead of sending the whole error.
+        I stop sending the response, because it was unused.
+
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementManager.cpp:
+        (WebKit::PrivateClickMeasurementManager::PrivateClickMeasurementManager):
+        (WebKit::PrivateClickMeasurementManager::getTokenPublicKey):
+        (WebKit::PrivateClickMeasurementManager::getSignedUnlinkableToken):
+        (WebKit::PrivateClickMeasurementManager::attribute):
+        (WebKit::PrivateClickMeasurementManager::fireConversionRequestImpl):
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementManager.h:
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementNetworkLoader.cpp:
+        (WebKit::PCM::NetworkLoader::start):
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementNetworkLoader.h:
+        * NetworkProcess/PrivateClickMeasurement/cocoa/PrivateClickMeasurementNetworkLoaderCocoa.mm:
+        (WebKit::PCM::NetworkLoader::start):
+
 2021-10-12  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, reverting r284022.

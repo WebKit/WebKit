@@ -38,7 +38,7 @@ namespace PCM {
 void NetworkLoader::start(URL&&, RefPtr<JSON::Object>&&, WebCore::PrivateClickMeasurement::PcmDataCarried, Callback&& completionHandler)
 {
     notImplemented();
-    completionHandler({ }, { }, { });
+    completionHandler({ }, { });
 }
 
 void NetworkLoader::allowTLSCertificateChainForLocalPCMTesting(const WebCore::CertificateInfo&)
