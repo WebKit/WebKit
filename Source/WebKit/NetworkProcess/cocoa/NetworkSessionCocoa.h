@@ -79,7 +79,7 @@ public:
         return adoptRef(*new SessionSet);
     }
 
-    SessionWrapper& isolatedSession(WebCore::StoredCredentialsPolicy, const WebCore::RegistrableDomain, NavigatingToAppBoundDomain, NetworkSessionCocoa&);
+    SessionWrapper& isolatedSession(WebCore::StoredCredentialsPolicy, const WebCore::RegistrableDomain&, NavigatingToAppBoundDomain, NetworkSessionCocoa&);
     SessionWrapper& initializeEphemeralStatelessSessionIfNeeded(NavigatingToAppBoundDomain, NetworkSessionCocoa&);
 
     HashMap<WebCore::RegistrableDomain, std::unique_ptr<IsolatedSession>> isolatedSessions;
@@ -123,7 +123,7 @@ public:
 
     CFDictionaryRef proxyConfiguration() const { return m_proxyConfiguration.get(); }
 
-    bool hasIsolatedSession(const WebCore::RegistrableDomain) const override;
+    bool hasIsolatedSession(const WebCore::RegistrableDomain&) const override;
     void clearIsolatedSessions() override;
 
 #if ENABLE(APP_BOUND_DOMAINS)
@@ -142,7 +142,7 @@ private:
     void invalidateAndCancel() override;
     void clearCredentials() override;
     bool shouldLogCookieInformation() const override { return m_shouldLogCookieInformation; }
-    SessionWrapper& isolatedSession(WebPageProxyIdentifier, WebCore::StoredCredentialsPolicy, const WebCore::RegistrableDomain, NavigatingToAppBoundDomain);
+    SessionWrapper& isolatedSession(WebPageProxyIdentifier, WebCore::StoredCredentialsPolicy, const WebCore::RegistrableDomain&, NavigatingToAppBoundDomain);
 
 #if ENABLE(APP_BOUND_DOMAINS)
     SessionWrapper& appBoundSession(WebPageProxyIdentifier, WebCore::StoredCredentialsPolicy);

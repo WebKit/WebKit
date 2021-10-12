@@ -108,7 +108,7 @@ public:
     void logDiagnosticMessageWithValue(const String& message, const String& description, unsigned value, unsigned significantFigures, WebCore::ShouldSample);
     bool enableResourceLoadStatisticsLogTestingEvent() const { return m_enableResourceLoadStatisticsLogTestingEvent; }
     void setResourceLoadStatisticsLogTestingEvent(bool log) { m_enableResourceLoadStatisticsLogTestingEvent = log; }
-    virtual bool hasIsolatedSession(const WebCore::RegistrableDomain) const { return false; }
+    virtual bool hasIsolatedSession(const WebCore::RegistrableDomain&) const { return false; }
     virtual void clearIsolatedSessions() { }
     void setShouldDowngradeReferrerForTesting(bool);
     bool shouldDowngradeReferrer() const;
