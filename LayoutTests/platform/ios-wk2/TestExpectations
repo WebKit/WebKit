@@ -2171,3 +2171,5 @@ webkit.org/b/231397 [ Debug ] imported/w3c/web-platform-tests/selection/collapse
 webkit.org/b/231397 [ Debug ] js/error-should-not-strong-reference-global-object.html [ Slow ]
 
 webkit.org/b/231444 imported/blink/fast/dom/shadow/shadowdom-for-keygen-only-shadow.html [ Pass Crash ]
+
+webkit.org/b/231610 applicationmanifest/developer-warnings.html [ Pass Timeout ]
