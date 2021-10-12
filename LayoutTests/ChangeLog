@@ -1,5 +1,15 @@
 2021-10-12  Eric Hutchison  <ehutchison@apple.com>
 
+        [ iOS15 iPad Debug ] webrtc/video-mute.html is a flaky timeout.
+        https://bugs.webkit.org/show_bug.cgi?id=231640.
+
+        Unreviewed test gardening.
+
+        * platform/ios-14-wk2/TestExpectations:
+        * platform/ipad/TestExpectations:
+
+2021-10-12  Eric Hutchison  <ehutchison@apple.com>
+
         [ iOS15 Debug ] webgl/pending/conformance/glsl/misc/shader-with-reserved-words-2.html is a flaky timeout.
         https://bugs.webkit.org/show_bug.cgi?id=231638.
 

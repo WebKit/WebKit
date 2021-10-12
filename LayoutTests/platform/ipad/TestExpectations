@@ -111,3 +111,5 @@ webkit.org/b/231609 imported/w3c/web-platform-tests/webmessaging/MessagePort_onm
 webkit.org/b/231611 [ Debug ] imported/w3c/web-platform-tests/webrtc-encoded-transform/sframe-transform-in-worker.https.html [ Pass Failure ]
 
 webkit.org/b/231616 [ Debug ] compositing/layer-creation/scale-rotation-transition-overlap.html [ Pass Failure Timeout ]
+
+webkit.org/b/231640 [ Debug ] webrtc/video-mute.html [ Pass Timeout ]
