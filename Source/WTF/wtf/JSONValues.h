@@ -209,10 +209,10 @@ protected:
 
     // FIXME: <http://webkit.org/b/179847> remove these functions when legacy InspectorObject symbols are no longer needed.
     bool getBoolean(const String& name, bool& output) const;
-    bool getString(const String& name, String& output) const;
+    WTF_EXPORT_PRIVATE bool getString(const String& name, String& output) const;
     bool getObject(const String& name, RefPtr<Object>& output) const;
     bool getArray(const String& name, RefPtr<Array>& output) const;
-    bool getValue(const String& name, RefPtr<Value>& output) const;
+    WTF_EXPORT_PRIVATE bool getValue(const String& name, RefPtr<Value>& output) const;
 
 protected:
     ObjectBase();

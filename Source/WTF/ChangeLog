@@ -1,3 +1,9 @@
+2021-10-12  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Unreviewed WinCairo build fix for r283943.
+
+        * wtf/JSONValues.h:
+
 2021-10-12  Alex Christensen  <achristensen@webkit.org>
 
         Remove non-HAVE(CFNETWORK_NSURLSESSION_STRICTRUSTEVALUATE) code
