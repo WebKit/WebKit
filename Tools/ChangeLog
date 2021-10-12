@@ -1,3 +1,14 @@
+2021-10-12  Gabriel Nava Marino  <gnavamarino@apple.com>
+
+        WebKitTestRunner should check mainFrameURL exists in InjectedBundlePage::willSendRequestForFrame
+        https://bugs.webkit.org/show_bug.cgi?id=231401
+
+        Reviewed by Youenn Fablet.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::InjectedBundlePage::willSendRequestForFrame):
+        Add mainFrameURL check in case of loading a non localhost URL with WebKitTestRunner.
+
 2021-10-12  Alex Christensen  <achristensen@webkit.org>
 
         Use STL instead of WTF::get_if, WTF::Monostate, WTF::visit, and WTF::holds_alternative

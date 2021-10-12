@@ -1056,10 +1056,11 @@ WKURLRequestRef InjectedBundlePage::willSendRequestForFrame(WKBundlePageRef page
             auto mainFrameURL = adoptWK(WKBundleFrameCopyURL(mainFrame));
             if (!mainFrameURL || WKStringIsEqualToUTF8CString(adoptWK(WKURLCopyString(mainFrameURL.get())).get(), "about:blank"))
                 mainFrameURL = adoptWK(WKBundleFrameCopyProvisionalURL(mainFrame));
-
-            auto mainFrameHost = adoptWK(WKURLCopyHostName(mainFrameURL.get()));
-            auto mainFrameScheme = adoptWK(WKURLCopyScheme(mainFrameURL.get()));
-            mainFrameIsExternal = isHTTPOrHTTPSScheme(mainFrameScheme.get()) && !isLocalHost(mainFrameHost.get());
+            if (mainFrameURL) {
+                auto mainFrameHost = adoptWK(WKURLCopyHostName(mainFrameURL.get()));
+                auto mainFrameScheme = adoptWK(WKURLCopyScheme(mainFrameURL.get()));
+                mainFrameIsExternal = isHTTPOrHTTPSScheme(mainFrameScheme.get()) && !isLocalHost(mainFrameHost.get());
+            }
         }
         if (!mainFrameIsExternal && !isAllowedHost(host.get())) {
             injectedBundle.outputText(makeString("Blocked access to external URL ", urlString.get(), '\n'));
