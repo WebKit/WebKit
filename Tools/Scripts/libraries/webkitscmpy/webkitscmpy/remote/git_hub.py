@@ -29,7 +29,7 @@ import sys
 from datetime import datetime
 from requests.auth import HTTPBasicAuth
 from webkitcorepy import credentials, decorators
-from webkitscmpy import Commit, PullRequest
+from webkitscmpy import Commit, Contributor, PullRequest
 from webkitscmpy.remote.scm import Scm
 from xml.dom import minidom
 
@@ -49,17 +49,24 @@ class GitHub(Scm):
                 author=self.repository.contributors.create(data['user']['login']),
                 head=data['head']['ref'],
                 base=data['base']['ref'],
+                opened=dict(
+                    open=True,
+                    closed=False,
+                ).get(data.get('state'), None),
+                generator=self,
             )
 
         def get(self, number):
             return self.PullRequest(self.repository.request('pulls/{}'.format(int(number))))
 
-        def find(self, state=None, head=None, base=None):
-            if not state:
-                state = 'all'
+        def find(self, opened=True, head=None, base=None):
             user, _ = self.repository.credentials()
             data = self.repository.request('pulls', params=dict(
-                state=state,
+                state={
+                    None: 'all',
+                    True: 'open',
+                    False: 'closed',
+                }.get(opened),
                 base=base,
                 head='{}:{}'.format(user, head) if user and head else head,
             ))
@@ -129,7 +136,49 @@ class GitHub(Scm):
                 pull_request.author = self.repository.contributors.create(data['user']['login'])
             pull_request.head = data.get('head', {}).get('displayId', pull_request.base)
             pull_request.base = data.get('base', {}).get('displayId', pull_request.base)
+            pull_request._opened = dict(
+                open=True,
+                closed=False,
+            ).get(data.get('state'), None),
+            pull_request.generator = self
 
+            return pull_request
+
+        def _contributor(self, username):
+            result = self.repository.contributors.get(username, None)
+            if result:
+                return result
+
+            response = requests.get(
+                '{api_url}/users/{username}'.format(
+                    api_url=self.repository.api_url,
+                    username=username,
+                ), auth=HTTPBasicAuth(*self.repository.credentials(required=True)),
+                headers=dict(Accept='application/vnd.github.v3+json'),
+            )
+            if response.status_code // 100 != 2:
+                return Contributor(username)
+
+            data = response.json()
+            result = self.repository.contributors.create(data.get('name', username), data.get('email'))
+            result.github = username
+            self.repository.contributors[username] = result
+            return result
+
+        def reviewers(self, pull_request):
+            response = self.repository.request('pulls/{}/requested_reviewers'.format(pull_request.number))
+            pull_request._reviewers = [self._contributor(user['login']) for user in response.get('users', [])]
+            pull_request._approvers = []
+            pull_request._blockers = []
+            for review in self.repository.request('pulls/{}/reviews'.format(pull_request.number)):
+                contributor = self._contributor(review['user']['login'])
+                pull_request._reviewers.append(contributor)
+                if review.get('state') == 'APPROVED':
+                    pull_request._approvers.append(contributor)
+                elif review.get('state') == 'CHANGES_REQUESTED':
+                    pull_request._blockers.append(contributor)
+
+            pull_request._reviewers = sorted(pull_request._reviewers)
             return pull_request
 
 

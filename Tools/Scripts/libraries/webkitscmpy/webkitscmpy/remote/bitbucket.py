@@ -42,30 +42,50 @@ class BitBucket(Scm):
         def PullRequest(self, data):
             if not data:
                 return None
-            return PullRequest(
+            result = PullRequest(
                 number=data['id'],
                 title=data.get('title'),
                 body=data.get('description'),
                 author=self.repository.contributors.create(
                     data['author']['user']['displayName'],
-                    data['author']['user']['emailAddress'],
+                    data['author']['user'].get('emailAddress', None),
                 ), head=data['fromRef']['displayId'],
                 base=data['toRef']['displayId'],
+                opened=True if data.get('open') else (False if data.get('closed') else None),
+                generator=self,
             )
+
+            result._reviewers = []
+            result._approvers = []
+            result._blockers = []
+            for rdata in data.get('reviewers', []):
+                reviewer = self.repository.contributors.create(
+                    rdata['user']['displayName'],
+                    rdata['user'].get('emailAddress', None),
+                )
+                result._reviewers.append(reviewer)
+                if rdata.get('approved', False):
+                    result._approvers.append(reviewer)
+                if rdata.get('status') == 'NEEDS_WORK':
+                    result._blockers.append(reviewer)
+
+            result._reviewers = sorted(result._reviewers)
+            return result
 
         def get(self, number):
             return self.PullRequest(self.repository.request('pull-requests/{}'.format(int(number))))
 
-        def find(self, state=None, head=None, base=None):
+        def find(self, opened=True, head=None, base=None):
             params = dict(
                 limit=100,
                 withProperties='false',
                 withAttributes='false',
             )
-            if state == PullRequest.State.OPENED:
+            if opened is True:
                 params['state'] = 'OPEN'
-            if state == PullRequest.State.CLOSED:
+            elif not opened:
                 params['state'] = ['DECLINED', 'MERGED', 'SUPERSEDED']
+
             if head:
                 params['direction'] = 'OUTGOING'
                 params['at'] = 'refs/heads/{}'.format(head)
@@ -74,6 +94,15 @@ class BitBucket(Scm):
                 if base and not datum['toRef']['id'].endswith(base):
                     continue
                 yield self.PullRequest(datum)
+
+            # Stash is bad at filter for open and closed PRs at the same time
+            if opened is None:
+                params['state'] = 'OPEN'
+                data = self.repository.request('pull-requests', params=params)
+                for datum in data or []:
+                    if base and not datum['toRef']['id'].endswith(base):
+                        continue
+                    yield self.PullRequest(datum)
 
         def create(self, head, title, body=None, commits=None, base=None):
             for key, value in dict(head=head, title=title).items():
@@ -173,9 +202,15 @@ class BitBucket(Scm):
                 pull_request.author = self.repository.contributors.create(user['displayName'], user['emailAddress'])
             pull_request.head = data.get('fromRef', {}).get('displayId', pull_request.base)
             pull_request.base = data.get('toRef', {}).get('displayId', pull_request.base)
+            pull_request.generator = self
 
             return pull_request
 
+        def reviewers(self, pull_request):
+            got = self.get(pull_request.number)
+            pull_request._reviewers = got._reviewers if got else []
+            pull_request._approvers = got._approvers if got else []
+            return pull_request
 
     @classmethod
     def is_webserver(cls, url):

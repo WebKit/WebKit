@@ -1,4 +1,4 @@
-# Copyright (C) 2020 Apple Inc. All rights reserved.
+# Copyright (C) 2020, 2021 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -33,13 +33,16 @@ class Scm(ScmBase):
         def get(self, number):
             raise NotImplementedError()
 
-        def find(self, state=None, head=None, base=None):
+        def find(self, opened=True, head=None, base=None):
             raise NotImplementedError()
 
         def create(self, head, title, body=None, commits=None, base=None):
             raise NotImplementedError()
 
         def update(self, pull_request, head=None, title=None, body=None, commits=None, base=None):
+            raise NotImplementedError()
+
+        def reviewers(self, pull_request):
             raise NotImplementedError()
 
 

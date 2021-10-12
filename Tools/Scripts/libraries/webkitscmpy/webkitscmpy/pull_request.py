@@ -44,10 +44,6 @@ class PullRequest(object):
         '&': '&amp;',
     }
 
-    class State(object):
-        OPENED = 'opened'
-        CLOSED = 'closed'
-
     @classmethod
     def escape_html(cls, message):
         message = ''.join(cls.ESCAPE_TABLE.get(c, c) for c in message)
@@ -103,13 +99,42 @@ class PullRequest(object):
                     body = part.rstrip().lstrip()
         return body or None, commits
 
-    def __init__(self, number, title=None, body=None, author=None, head=None, base=None):
+    def __init__(self, number, title=None, body=None, author=None, head=None, base=None, opened=None, generator=None):
         self.number = number
         self.title = title
         self.body, self.commits = self.parse_body(body)
         self.author = author
         self.head = head
         self.base = base
+        self._opened = opened
+        self._reviewers = None
+        self._approvers = None
+        self._blockers = None
+        self.generator = generator
+
+    @property
+    def reviewers(self):
+        if self._reviewers is None and self.generator:
+            self.generator.reviewers(self)
+        return self._reviewers
+
+    @property
+    def approvers(self):
+        if self._approvers is None and self.generator:
+            self.generator.reviewers(self)
+        return self._approvers
+
+    @property
+    def blockers(self):
+        if self._blockers is None and self.generator:
+            self.generator.reviewers(self)
+        return self._blockers
+
+    @property
+    def opened(self):
+        if self._opened is None:
+            return '?'
+        return self._opened
 
     def __repr__(self):
         return 'PR {}{}'.format(self.number, ' | {}'.format(self.title) if self.title else '')

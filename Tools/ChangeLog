@@ -1,3 +1,43 @@
+2021-10-12  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitscmpy] List reviewers for pull-request
+        https://bugs.webkit.org/show_bug.cgi?id=231577
+        <rdar://problem/84146807>
+
+        Reviewed by NOBODY (OOPS!).
+
+        * Scripts/libraries/webkitscmpy/webkitscmpy/mocks/remote/bitbucket.py:
+        (BitBucket.request): Add state to created pull-reqest.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/mocks/remote/git_hub.py:
+        (GitHub):
+        (GitHub._users): Vend json representation of user for username.
+        (GitHub.request): Filter review details, add users endpoint.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/program/pull_request.py:
+        (PullRequest.main): Match both closed and opened pull-requests.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/pull_request.py:
+        (PullRequest): Remove state.
+        (PullRequest.__init__): Add opened flag, reviewers and generator.
+        (PullRequest.reviewers): List the users who are reviewing this change.
+        (PullRequest.approvers): List the users who have aproved this change.
+        (PullRequest.blockers): List the users that are blocking this change from landing.
+        (PullRequest.opened): Check the pull-request is opened.
+        (PullRequest.State): Deleted.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/remote/bitbucket.py:
+        (BitBucket.PRGenerator.PullRequest): Set opened flag, specify reviewers.
+        (BitBucket.PRGenerator.find): Filter by opened flag instead of state.
+        (BitBucket.PRGenerator.update): Set generator.
+        (BitBucket.PRGenerator.reviewers): Set reviewer lists.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/remote/git_hub.py:
+        (GitHub.PRGenerator.PullRequest): Set opened flag, pass generator.
+        (GitHub.PRGenerator.find): Filter by opened flag instead of state.
+        (GitHub.PRGenerator.update): Set generator and opened flag.
+        (GitHub.PRGenerator._contributor): Find contributor matching username.
+        (GitHub.PRGenerator.reviewers): Populate lists of reviewers for a pull-request.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/remote/scm.py:
+        (Scm.PRGenerator.find): Filter via opened flag instead of state.
+        (Scm.PRGenerator.reviewers): Function which populates reviewer lists for a pull-request.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/pull_request_unittest.py:
+
 2021-10-11  Diego Pino Garcia  <dpino@igalia.com>
 
         [GTK] Unreviewed build fix. Fix build for Debian 10 (Buster)

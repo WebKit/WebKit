@@ -25,7 +25,7 @@ import sys
 import unittest
 
 from webkitcorepy import OutputCapture, testing
-from webkitscmpy import Commit, PullRequest, program, mocks, remote
+from webkitscmpy import Contributor, Commit, PullRequest, program, mocks, remote
 
 
 class TestPullRequest(unittest.TestCase):
@@ -433,6 +433,12 @@ class TestNetworkPullRequestGitHub(unittest.TestCase):
     @classmethod
     def webserver(cls):
         result = mocks.remote.GitHub()
+        result.users = dict(
+            ereviewer=Contributor('Eager Reviewer', ['ereviewer@webkit.org'], github='ereviewer'),
+            rreviewer=Contributor('Reluctant Reviewer', ['rreviewer@webkit.org'], github='rreviewer'),
+            sreviewer=Contributor('Suspicious Reviewer', ['sreviewer@webkit.org'], github='sreviewer'),
+            tcontributor=Contributor('Tim Contributor', ['tcontributor@webkit.org']),
+        )
         result.pull_requests = [dict(
             number=1,
             state='open',
@@ -450,6 +456,11 @@ Reviewed by NOBODY (OOPS!).
 ''',
             head=dict(ref='eng/pull-request'),
             base=dict(ref='main'),
+            requested_reviews=[dict(login='rreviewer')],
+            reviews=[
+                dict(user=dict(login='ereviewer'), state='APPROVED'),
+                dict(user=dict(login='sreviewer'), state='CHANGES_REQUESTED'),
+            ],
         )]
         return result
 
@@ -466,9 +477,21 @@ Reviewed by NOBODY (OOPS!).
         with self.webserver():
             pr = remote.GitHub(self.remote).pull_requests.get(1)
             self.assertEqual(pr.number, 1)
+            self.assertTrue(pr.opened)
             self.assertEqual(pr.title, 'Example Change')
             self.assertEqual(pr.head, 'eng/pull-request')
             self.assertEqual(pr.base, 'main')
+
+    def test_reviewers(self):
+        with self.webserver():
+            pr = remote.GitHub(self.remote).pull_requests.get(1)
+            self.assertEqual(pr.reviewers, [
+                Contributor('Eager Reviewer', ['ereviewer@webkit.org']),
+                Contributor('Reluctant Reviewer', ['rreviewer@webkit.org']),
+                Contributor('Suspicious Reviewer', ['sreviewer@webkit.org']),
+            ])
+            self.assertEqual(pr.approvers, [Contributor('Eager Reviewer', ['ereviewer@webkit.org'])])
+            self.assertEqual(pr.blockers, [Contributor('Suspicious Reviewer', ['sreviewer@webkit.org'])])
 
 
 class TestNetworkPullRequestBitBucket(unittest.TestCase):
@@ -480,6 +503,8 @@ class TestNetworkPullRequestBitBucket(unittest.TestCase):
         result.pull_requests = [dict(
             id=1,
             state='OPEN',
+            open=True,
+            closed=False,
             title='Example Change',
             author=dict(
                 user=dict(
@@ -499,6 +524,24 @@ Reviewed by NOBODY (OOPS!).
 ''',
             fromRef=dict(displayId='eng/pull-request'),
             toRef=dict(displayId='main'),
+            reviewers=[
+                dict(
+                    user=dict(
+                        displayName='Reluctant Reviewer',
+                        emailAddress='rreviewer@webkit.org',
+                    ), approved=False,
+                ), dict(
+                    user=dict(
+                        displayName='Eager Reviewer',
+                        emailAddress='ereviewer@webkit.org',
+                    ), approved=True,
+                ), dict(
+                    user=dict(
+                        displayName='Suspicious Reviewer',
+                        emailAddress='sreviewer@webkit.org',
+                    ), status='NEEDS_WORK',
+                ),
+            ],
         )]
         return result
 
@@ -516,6 +559,18 @@ Reviewed by NOBODY (OOPS!).
         with self.webserver():
             pr = remote.BitBucket(self.remote).pull_requests.get(1)
             self.assertEqual(pr.number, 1)
+            self.assertTrue(pr.opened)
             self.assertEqual(pr.title, 'Example Change')
             self.assertEqual(pr.head, 'eng/pull-request')
             self.assertEqual(pr.base, 'main')
+
+    def test_reviewers(self):
+        with self.webserver():
+            pr = remote.BitBucket(self.remote).pull_requests.get(1)
+            self.assertEqual(pr.reviewers, [
+                Contributor('Eager Reviewer', ['ereviewer@webkit.org']),
+                Contributor('Reluctant Reviewer', ['rreviewer@webkit.org']),
+                Contributor('Suspicious Reviewer', ['sreviewer@webkit.org']),
+            ])
+            self.assertEqual(pr.approvers, [Contributor('Eager Reviewer', ['ereviewer@webkit.org'])])
+            self.assertEqual(pr.blockers, [Contributor('Suspicious Reviewer', ['sreviewer@webkit.org'])])
