@@ -284,7 +284,7 @@ void GraphicsContextCairo::translate(float x, float y)
     Cairo::translate(*this, x, y);
 }
 
-void GraphicsContextCairo::updateState(const GraphicsContextState& state, GraphicsContextState::StateChangeFlags flags)
+void GraphicsContextCairo::didUpdateState(const GraphicsContextState& state, GraphicsContextState::StateChangeFlags flags)
 {
     if (flags & GraphicsContextState::StrokeThicknessChange)
         Cairo::State::setStrokeThickness(*this, state.strokeThickness);

@@ -92,6 +92,73 @@ GraphicsContextState::GraphicsContextState(GraphicsContextState&&) = default;
 GraphicsContextState& GraphicsContextState::operator=(const GraphicsContextState&) = default;
 GraphicsContextState& GraphicsContextState::operator=(GraphicsContextState&&) = default;
 
+void GraphicsContextState::mergeChanges(const GraphicsContextState& state, GraphicsContextState::StateChangeFlags flags)
+{
+    auto strokeFlags = { GraphicsContextState::StrokeColorChange, GraphicsContextState::StrokeGradientChange, GraphicsContextState::StrokePatternChange };
+    if (flags.containsAny(strokeFlags)) {
+        strokeColor = state.strokeColor;
+        strokeGradient = state.strokeGradient;
+        strokePattern = state.strokePattern;
+    }
+
+    auto fillFlags = { GraphicsContextState::FillColorChange, GraphicsContextState::FillGradientChange, GraphicsContextState::FillPatternChange };
+    if (flags.containsAny(fillFlags)) {
+        fillColor = state.fillColor;
+        fillGradient = state.fillGradient;
+        fillPattern = state.fillPattern;
+    }
+
+    if (flags.contains(GraphicsContextState::ShadowChange)) {
+        shadowOffset = state.shadowOffset;
+        shadowBlur = state.shadowBlur;
+        shadowColor = state.shadowColor;
+        shadowRadiusMode = state.shadowRadiusMode;
+    }
+
+    if (flags.contains(GraphicsContextState::StrokeThicknessChange))
+        strokeThickness = state.strokeThickness;
+
+    if (flags.contains(GraphicsContextState::TextDrawingModeChange))
+        textDrawingMode = state.textDrawingMode;
+
+    if (flags.contains(GraphicsContextState::StrokeStyleChange))
+        strokeStyle = state.strokeStyle;
+
+    if (flags.contains(GraphicsContextState::FillRuleChange))
+        fillRule = state.fillRule;
+
+    if (flags.contains(GraphicsContextState::AlphaChange))
+        alpha = state.alpha;
+
+    if (flags.containsAny({ GraphicsContextState::CompositeOperationChange, GraphicsContextState::BlendModeChange })) {
+        compositeOperator = state.compositeOperator;
+        blendMode = state.blendMode;
+    }
+
+    if (flags.contains(GraphicsContextState::ShouldAntialiasChange))
+        shouldAntialias = state.shouldAntialias;
+
+    if (flags.contains(GraphicsContextState::ShouldSmoothFontsChange))
+        shouldSmoothFonts = state.shouldSmoothFonts;
+
+    if (flags.contains(GraphicsContextState::ShouldSubpixelQuantizeFontsChange))
+        shouldSubpixelQuantizeFonts = state.shouldSubpixelQuantizeFonts;
+
+    if (flags.contains(GraphicsContextState::ShadowsIgnoreTransformsChange))
+        shadowsIgnoreTransforms = state.shadowsIgnoreTransforms;
+
+    if (flags.contains(GraphicsContextState::DrawLuminanceMaskChange))
+        drawLuminanceMask = state.drawLuminanceMask;
+
+    if (flags.contains(GraphicsContextState::ImageInterpolationQualityChange))
+        imageInterpolationQuality = state.imageInterpolationQuality;
+
+#if HAVE(OS_DARK_MODE_SUPPORT)
+    if (flags.contains(GraphicsContextState::UseDarkAppearanceChange))
+        useDarkAppearance = state.useDarkAppearance;
+#endif
+}
+
 GraphicsContextState::StateChangeFlags GraphicsContextStateChange::changesFromState(const GraphicsContextState& state) const
 {
     GraphicsContextState::StateChangeFlags changeFlags;
@@ -137,72 +204,19 @@ GraphicsContextState::StateChangeFlags GraphicsContextStateChange::changesFromSt
 
 void GraphicsContextStateChange::accumulate(const GraphicsContextState& state, GraphicsContextState::StateChangeFlags flags)
 {
-    // FIXME: This code should move to GraphicsContextState.
+    m_state.mergeChanges(state, flags);
+
     auto strokeFlags = { GraphicsContextState::StrokeColorChange, GraphicsContextState::StrokeGradientChange, GraphicsContextState::StrokePatternChange };
-    if (flags.containsAny(strokeFlags)) {
-        m_state.strokeColor = state.strokeColor;
-        m_state.strokeGradient = state.strokeGradient;
-        m_state.strokePattern = state.strokePattern;
+    if (flags.containsAny(strokeFlags))
         m_changeFlags.remove(strokeFlags);
-    }
 
     auto fillFlags = { GraphicsContextState::FillColorChange, GraphicsContextState::FillGradientChange, GraphicsContextState::FillPatternChange };
-    if (flags.containsAny(fillFlags)) {
-        m_state.fillColor = state.fillColor;
-        m_state.fillGradient = state.fillGradient;
-        m_state.fillPattern = state.fillPattern;
+    if (flags.containsAny(fillFlags))
         m_changeFlags.remove(fillFlags);
-    }
 
-    if (flags.contains(GraphicsContextState::ShadowChange)) {
-        m_state.shadowOffset = state.shadowOffset;
-        m_state.shadowBlur = state.shadowBlur;
-        m_state.shadowColor = state.shadowColor;
-        m_state.shadowRadiusMode = state.shadowRadiusMode;
-    }
-
-    if (flags.contains(GraphicsContextState::StrokeThicknessChange))
-        m_state.strokeThickness = state.strokeThickness;
-
-    if (flags.contains(GraphicsContextState::TextDrawingModeChange))
-        m_state.textDrawingMode = state.textDrawingMode;
-
-    if (flags.contains(GraphicsContextState::StrokeStyleChange))
-        m_state.strokeStyle = state.strokeStyle;
-
-    if (flags.contains(GraphicsContextState::FillRuleChange))
-        m_state.fillRule = state.fillRule;
-
-    if (flags.contains(GraphicsContextState::AlphaChange))
-        m_state.alpha = state.alpha;
-
-    if (flags.containsAny({ GraphicsContextState::CompositeOperationChange, GraphicsContextState::BlendModeChange })) {
-        m_state.compositeOperator = state.compositeOperator;
-        m_state.blendMode = state.blendMode;
-    }
-
-    if (flags.contains(GraphicsContextState::ShouldAntialiasChange))
-        m_state.shouldAntialias = state.shouldAntialias;
-
-    if (flags.contains(GraphicsContextState::ShouldSmoothFontsChange))
-        m_state.shouldSmoothFonts = state.shouldSmoothFonts;
-
-    if (flags.contains(GraphicsContextState::ShouldSubpixelQuantizeFontsChange))
-        m_state.shouldSubpixelQuantizeFonts = state.shouldSubpixelQuantizeFonts;
-
-    if (flags.contains(GraphicsContextState::ShadowsIgnoreTransformsChange))
-        m_state.shadowsIgnoreTransforms = state.shadowsIgnoreTransforms;
-
-    if (flags.contains(GraphicsContextState::DrawLuminanceMaskChange))
-        m_state.drawLuminanceMask = state.drawLuminanceMask;
-
-    if (flags.contains(GraphicsContextState::ImageInterpolationQualityChange))
-        m_state.imageInterpolationQuality = state.imageInterpolationQuality;
-
-#if HAVE(OS_DARK_MODE_SUPPORT)
-    if (flags.contains(GraphicsContextState::UseDarkAppearanceChange))
-        m_state.useDarkAppearance = state.useDarkAppearance;
-#endif
+    auto compositeOperatorFlags = { GraphicsContextState::CompositeOperationChange, GraphicsContextState::BlendModeChange };
+    if (flags.containsAny(compositeOperatorFlags))
+        m_changeFlags.remove(compositeOperatorFlags);
 
     m_changeFlags.add(flags);
 }
@@ -375,6 +389,12 @@ void GraphicsContext::restore()
         m_stack.clear();
 }
 
+void GraphicsContext::updateState(const GraphicsContextState& state, GraphicsContextState::StateChangeFlags flags)
+{
+    m_state.mergeChanges(state, flags);
+    didUpdateState(state, flags);
+}
+
 void GraphicsContext::drawRaisedEllipse(const FloatRect& rect, const Color& ellipseColor, const Color& shadowColor)
 {
     save();
@@ -397,7 +417,7 @@ void GraphicsContext::setStrokeColor(const Color& color)
     m_state.strokeColor = color;
     m_state.strokeGradient = nullptr;
     m_state.strokePattern = nullptr;
-    updateState(m_state, GraphicsContextState::StrokeColorChange);
+    didUpdateState(m_state, GraphicsContextState::StrokeColorChange);
 }
 
 void GraphicsContext::setShadow(const FloatSize& offset, float blur, const Color& color, ShadowRadiusMode radiusMode)
@@ -406,7 +426,7 @@ void GraphicsContext::setShadow(const FloatSize& offset, float blur, const Color
     m_state.shadowBlur = blur;
     m_state.shadowColor = color;
     m_state.shadowRadiusMode = radiusMode;
-    updateState(m_state, GraphicsContextState::ShadowChange);
+    didUpdateState(m_state, GraphicsContextState::ShadowChange);
 }
 
 void GraphicsContext::clearShadow()
@@ -415,7 +435,7 @@ void GraphicsContext::clearShadow()
     m_state.shadowBlur = 0;
     m_state.shadowColor = Color();
     m_state.shadowRadiusMode = ShadowRadiusMode::Default;
-    updateState(m_state, GraphicsContextState::ShadowChange);
+    didUpdateState(m_state, GraphicsContextState::ShadowChange);
 }
 
 bool GraphicsContext::getShadow(FloatSize& offset, float& blur, Color& color) const
@@ -432,7 +452,7 @@ void GraphicsContext::setFillColor(const Color& color)
     m_state.fillColor = color;
     m_state.fillGradient = nullptr;
     m_state.fillPattern = nullptr;
-    updateState(m_state, GraphicsContextState::FillColorChange);
+    didUpdateState(m_state, GraphicsContextState::FillColorChange);
 }
 
 void GraphicsContext::setStrokePattern(Ref<Pattern>&& pattern)
@@ -440,7 +460,7 @@ void GraphicsContext::setStrokePattern(Ref<Pattern>&& pattern)
     m_state.strokeColor = { };
     m_state.strokeGradient = nullptr;
     m_state.strokePattern = WTFMove(pattern);
-    updateState(m_state, GraphicsContextState::StrokePatternChange);
+    didUpdateState(m_state, GraphicsContextState::StrokePatternChange);
 }
 
 void GraphicsContext::setFillPattern(Ref<Pattern>&& pattern)
@@ -448,7 +468,7 @@ void GraphicsContext::setFillPattern(Ref<Pattern>&& pattern)
     m_state.fillColor = { };
     m_state.fillGradient = nullptr;
     m_state.fillPattern = WTFMove(pattern);
-    updateState(m_state, GraphicsContextState::FillPatternChange);
+    didUpdateState(m_state, GraphicsContextState::FillPatternChange);
 }
 
 void GraphicsContext::setStrokeGradient(Ref<Gradient>&& gradient, const AffineTransform& strokeGradientSpaceTransform)
@@ -457,7 +477,7 @@ void GraphicsContext::setStrokeGradient(Ref<Gradient>&& gradient, const AffineTr
     m_state.strokeGradient = WTFMove(gradient);
     m_state.strokeGradientSpaceTransform = strokeGradientSpaceTransform;
     m_state.strokePattern = nullptr;
-    updateState(m_state, GraphicsContextState::StrokeGradientChange);
+    didUpdateState(m_state, GraphicsContextState::StrokeGradientChange);
 }
 
 void GraphicsContext::setFillGradient(Ref<Gradient>&& gradient, const AffineTransform& fillGradientSpaceTransform)
@@ -466,7 +486,7 @@ void GraphicsContext::setFillGradient(Ref<Gradient>&& gradient, const AffineTran
     m_state.fillGradient = WTFMove(gradient);
     m_state.fillGradientSpaceTransform = fillGradientSpaceTransform;
     m_state.fillPattern = nullptr;
-    updateState(m_state, GraphicsContextState::FillGradientChange);
+    didUpdateState(m_state, GraphicsContextState::FillGradientChange);
     // FIXME: also fill pattern?
 }
 
@@ -699,7 +719,7 @@ void GraphicsContext::setCompositeOperation(CompositeOperator compositeOperation
 {
     m_state.compositeOperator = compositeOperation;
     m_state.blendMode = blendMode;
-    updateState(m_state, GraphicsContextState::CompositeOperationChange);
+    didUpdateState(m_state, GraphicsContextState::CompositeOperationChange);
 }
 
 void GraphicsContext::adjustLineToPixelBoundaries(FloatPoint& p1, FloatPoint& p2, float strokeWidth, StrokeStyle penStyle)

@@ -183,7 +183,7 @@ void DrawGlyphsRecorder::updateFillColor(const Color& newColor, Gradient* newGra
         newState.fillGradient = newGradient;
     if (newPattern)
         newState.fillPattern = newPattern;
-    m_owner.updateState(newState, { GraphicsContextState::FillColorChange });
+    m_owner.didUpdateState(newState, { GraphicsContextState::FillColorChange });
     m_currentState.fillStyle.color = newColor;
 }
 
@@ -201,7 +201,7 @@ void DrawGlyphsRecorder::updateStrokeColor(const Color& newColor, Gradient* newG
         newState.strokeGradient = newGradient;
     if (newPattern)
         newState.strokePattern = newPattern;
-    m_owner.updateState(newState, { GraphicsContextState::StrokeColorChange });
+    m_owner.didUpdateState(newState, { GraphicsContextState::StrokeColorChange });
     m_currentState.strokeStyle.color = newColor;
 }
 
@@ -240,7 +240,7 @@ void DrawGlyphsRecorder::updateShadow(const FloatSize& shadowOffset, float shado
     }
     if (stateChangeFlags.isEmpty())
         return;
-    m_owner.updateState(newState, stateChangeFlags);
+    m_owner.didUpdateState(newState, stateChangeFlags);
 
     m_currentState.shadow.offset = shadowOffset;
     m_currentState.shadow.blur = shadowBlur;

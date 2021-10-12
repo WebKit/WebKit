@@ -119,7 +119,7 @@ const GraphicsContextState& Recorder::state() const
     return currentState().stateChange.m_state;
 }
 
-void Recorder::updateState(const GraphicsContextState& state, GraphicsContextState::StateChangeFlags flags)
+void Recorder::didUpdateState(const GraphicsContextState& state, GraphicsContextState::StateChangeFlags flags)
 {
     currentState().stateChange.accumulate(state, flags);
 }

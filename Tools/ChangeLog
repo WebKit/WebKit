@@ -1,3 +1,15 @@
+2021-10-12  Tim Horton  <timothy_horton@apple.com>
+
+        Borders are not drawn when using BifurcatedGraphicsContext
+        https://bugs.webkit.org/show_bug.cgi?id=230976
+        <rdar://problem/83657330>
+
+        Reviewed by Sam Weinig.
+
+        * TestWebKitAPI/Tests/WebCore/cg/BifurcatedGraphicsContextTestsCG.cpp:
+        (TestWebKitAPI::TEST):
+        Add a test for line drawing.
+
 2021-10-12  Jonathan Bedard  <jbedard@apple.com>
 
         Move few scripts from python 2 to python3 (Follow-up)

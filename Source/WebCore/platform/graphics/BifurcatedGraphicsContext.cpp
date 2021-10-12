@@ -429,8 +429,11 @@ bool BifurcatedGraphicsContext::supportsInternalLinks() const
     return m_primaryContext.supportsInternalLinks();
 }
 
-void BifurcatedGraphicsContext::updateState(const GraphicsContextState& state, GraphicsContextState::StateChangeFlags flags)
+void BifurcatedGraphicsContext::didUpdateState(const GraphicsContextState& state, GraphicsContextState::StateChangeFlags flags)
 {
+    // This calls updateState() instead of didUpdateState() so that changes
+    // are also applied to each context's GraphicsContextState, so that code
+    // internal to the child contexts that reads from the state gets the right values.
     m_primaryContext.updateState(state, flags);
     m_secondaryContext.updateState(state, flags);
 }

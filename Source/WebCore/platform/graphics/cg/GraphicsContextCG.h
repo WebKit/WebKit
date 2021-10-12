@@ -167,7 +167,7 @@ public:
 
     bool supportsInternalLinks() const final;
 
-    void updateState(const GraphicsContextState&, GraphicsContextState::StateChangeFlags) final;
+    void didUpdateState(const GraphicsContextState&, GraphicsContextState::StateChangeFlags) final;
 
 #if OS(WINDOWS)
     GraphicsContextPlatformPrivate* deprecatedPrivateContext() const final;

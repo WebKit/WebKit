@@ -647,7 +647,7 @@ bool GraphicsContextDirect2D::supportsTransparencyLayers()
     return false;
 }
 
-void GraphicsContextDirect2D::updateState(const GraphicsContextState& state, GraphicsContextState::StateChangeFlags flags)
+void GraphicsContextDirect2D::didUpdateState(const GraphicsContextState& state, GraphicsContextState::StateChangeFlags flags)
 {
     if (flags & GraphicsContextState::StrokeThicknessChange)
         Direct2D::State::setStrokeThickness(m_platformContext, state.strokeThickness);

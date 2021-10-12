@@ -46,11 +46,10 @@ using namespace DisplayList;
 constexpr CGFloat contextWidth = 1;
 constexpr CGFloat contextHeight = 1;
 
-TEST(BifurcatedGraphicsContextTests, BasicBifurcatedContext)
+TEST(BifurcatedGraphicsContextTests, Basic)
 {
     auto colorSpace = DestinationColorSpace::SRGB();
     auto primaryCGContext = adoptCF(CGBitmapContextCreate(nullptr, contextWidth, contextHeight, 8, 4 * contextWidth, colorSpace.platformColorSpace(), kCGImageAlphaPremultipliedLast));
-    auto secondaryCGContext = adoptCF(CGBitmapContextCreate(nullptr, contextWidth, contextHeight, 8, 4 * contextWidth, colorSpace.platformColorSpace(), kCGImageAlphaPremultipliedLast));
 
     GraphicsContextCG primaryContext(primaryCGContext.get());
 
@@ -88,7 +87,7 @@ TEST(BifurcatedGraphicsContextTests, BasicBifurcatedContext)
     EXPECT_TRUE(sawFillRect);
 }
 
-TEST(BifurcatedGraphicsContextTests, TextInBifurcatedContext)
+TEST(BifurcatedGraphicsContextTests, Text)
 {
     InMemoryDisplayList primaryDisplayList;
     RecorderImpl primaryContext(primaryDisplayList, { }, FloatRect(0, 0, contextWidth, contextHeight), { });
@@ -192,6 +191,32 @@ TEST(BifurcatedGraphicsContextTests, DrawGradientImage)
     EXPECT_EQ(secondaryData[0], 255);
     EXPECT_EQ(secondaryData[1], 0);
     EXPECT_EQ(secondaryData[2], 0);
+}
+
+TEST(BifurcatedGraphicsContextTests, Borders)
+{
+    auto colorSpace = DestinationColorSpace::SRGB();
+    auto primaryCGContext = adoptCF(CGBitmapContextCreate(nullptr, contextWidth, contextHeight, 8, 4 * contextWidth, colorSpace.platformColorSpace(), kCGImageAlphaPremultipliedLast));
+
+    GraphicsContextCG primaryContext(primaryCGContext.get());
+
+    InMemoryDisplayList displayList;
+    RecorderImpl secondaryContext(displayList, { }, FloatRect(0, 0, contextWidth, contextHeight), { });
+
+    BifurcatedGraphicsContext ctx(primaryContext, secondaryContext);
+
+    ctx.setStrokeColor(Color::red);
+    ctx.setStrokeStyle(SolidStroke);
+    ctx.setStrokeThickness(10);
+    ctx.drawLine({ 0, 0 }, { contextWidth, 0 });
+
+    // The primary context should have red pixels.
+    CGContextFlush(primaryCGContext.get());
+    uint8_t* primaryData = static_cast<uint8_t*>(CGBitmapContextGetData(primaryCGContext.get()));
+    EXPECT_EQ(primaryData[0], 255);
+    EXPECT_EQ(primaryData[1], 0);
+    EXPECT_EQ(primaryData[2], 0);
+    EXPECT_EQ(primaryData[3], 255);
 }
 
 } // namespace TestWebKitAPI

@@ -191,7 +191,7 @@ GraphicsContextCG::GraphicsContextCG(CGContextRef cgContext)
 
     m_data = new GraphicsContextPlatformPrivate(cgContext);
     // Make sure the context starts in sync with our state.
-    updateState(m_state, { GraphicsContextState::FillColorChange, GraphicsContextState::StrokeColorChange, GraphicsContextState::StrokeThicknessChange });
+    didUpdateState(m_state, { GraphicsContextState::FillColorChange, GraphicsContextState::StrokeColorChange, GraphicsContextState::StrokeThicknessChange });
     m_state.imageInterpolationQuality = coreInterpolationQuality(CGContextGetInterpolationQuality(platformContext()));
 }
 
@@ -1075,7 +1075,7 @@ static void setCGShadow(const GraphicsContext& graphicsContext, const FloatSize&
         CGContextSetShadowWithColor(context, CGSizeMake(xOffset, yOffset), blurRadius, cachedCGColor(color));
 }
 
-void GraphicsContextCG::updateState(const GraphicsContextState& state, GraphicsContextState::StateChangeFlags flags)
+void GraphicsContextCG::didUpdateState(const GraphicsContextState& state, GraphicsContextState::StateChangeFlags flags)
 {
     auto context = platformContext();
 

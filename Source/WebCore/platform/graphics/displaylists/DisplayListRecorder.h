@@ -197,7 +197,7 @@ private:
 
     WEBCORE_EXPORT const GraphicsContextState& state() const final;
 
-    WEBCORE_EXPORT void updateState(const GraphicsContextState&, GraphicsContextState::StateChangeFlags) final;
+    WEBCORE_EXPORT void didUpdateState(const GraphicsContextState&, GraphicsContextState::StateChangeFlags) final;
 
     WEBCORE_EXPORT void setLineCap(LineCap) final;
     WEBCORE_EXPORT void setLineDash(const DashArray&, float dashOffset) final;
