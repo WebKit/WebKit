@@ -343,9 +343,9 @@ sub addProperty($$)
                 }
             }
         } elsif ($optionName eq "animatable") {
-             $propertiesWithStyleBuilderOptions{$name}{"animatable"} = $optionsHashRef->{"animatable"};
+            $propertiesWithStyleBuilderOptions{$name}{"animatable"} = $optionsHashRef->{"animatable"};
         } elsif ($optionName eq "inherited") {
-            $nameIsInherited{$name} = 1;
+            $nameIsInherited{$name} = $optionsHashRef->{"inherited"};
         } elsif ($optionName eq "values") {
             # FIXME: Implement.
         }
