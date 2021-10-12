@@ -97,7 +97,7 @@ void WebPaymentCoordinatorProxy::showPaymentUI(WebCore::PageIdentifier destinati
     for (const auto& linkIconURLString : linkIconURLStrings)
         linkIconURLs.append(URL(URL(), linkIconURLString));
 
-    platformShowPaymentUI(webPageProxyID, originatingURL, linkIconURLs, paymentRequest, [this, weakThis = makeWeakPtr(*this)](bool result) {
+    platformShowPaymentUI(webPageProxyID, originatingURL, linkIconURLs, paymentRequest, [this, weakThis = WeakPtr { *this }](bool result) {
         if (!weakThis)
             return;
 

@@ -118,7 +118,7 @@ void U2fAuthenticator::issueNewCommand(Vector<uint8_t>&& command, CommandType ty
 
 void U2fAuthenticator::issueCommand(const Vector<uint8_t>& command, CommandType type)
 {
-    driver().transact(Vector<uint8_t>(command), [weakThis = makeWeakPtr(*this), type](Vector<uint8_t>&& data) {
+    driver().transact(Vector<uint8_t>(command), [weakThis = WeakPtr { *this }, type](Vector<uint8_t>&& data) {
         ASSERT(RunLoop::isMain());
         if (!weakThis)
             return;

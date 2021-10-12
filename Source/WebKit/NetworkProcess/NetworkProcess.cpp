@@ -180,7 +180,7 @@ NetworkProcess::NetworkProcess(AuxiliaryProcessInitializationParameters&& parame
     LegacyCustomProtocolManager::networkProcessCreated(*this);
 #endif
 
-    NetworkStateNotifier::singleton().addListener([weakThis = makeWeakPtr(*this)](bool isOnLine) {
+    NetworkStateNotifier::singleton().addListener([weakThis = WeakPtr { *this }](bool isOnLine) {
         if (!weakThis)
             return;
         for (auto& webProcessConnection : weakThis->m_webProcessConnections.values())
@@ -2222,7 +2222,7 @@ void NetworkProcess::suspendIDBServers(bool isSuspensionImminent)
     if (allSuspended)
         return;
 
-    RunLoop::main().dispatchAfter(5_s, [this, weakThis = makeWeakPtr(*this), suspensionIdentifier = m_suspensionIdentifier] {
+    RunLoop::main().dispatchAfter(5_s, [this, weakThis = WeakPtr { *this }, suspensionIdentifier = m_suspensionIdentifier] {
         if (!weakThis)
             return;
 
@@ -2545,7 +2545,7 @@ RefPtr<StorageQuotaManager> NetworkProcess::storageQuotaManager(PAL::SessionID s
 
         return CacheStorage::Engine::diskUsage(cacheRootPath, origin) + IDBServer::IDBServer::diskUsage(idbRootPath, origin);
     };
-    StorageQuotaManager::QuotaIncreaseRequester quotaIncreaseRequester = [this, weakThis = makeWeakPtr(*this), sessionID, origin] (uint64_t currentQuota, uint64_t currentSpace, uint64_t requestedIncrease, auto&& callback) {
+    StorageQuotaManager::QuotaIncreaseRequester quotaIncreaseRequester = [this, weakThis = WeakPtr { *this }, sessionID, origin] (uint64_t currentQuota, uint64_t currentSpace, uint64_t requestedIncrease, auto&& callback) {
         ASSERT(isMainRunLoop());
         if (!weakThis)
             callback({ });

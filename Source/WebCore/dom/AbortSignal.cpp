@@ -84,8 +84,8 @@ void AbortSignal::signalFollow(AbortSignal& signal)
     }
 
     ASSERT(!m_followingSignal);
-    m_followingSignal = makeWeakPtr(signal);
-    signal.addAlgorithm([weakThis = makeWeakPtr(this)] {
+    m_followingSignal = signal;
+    signal.addAlgorithm([weakThis = WeakPtr { this }] {
         if (weakThis)
             weakThis->signalAbort();
     });

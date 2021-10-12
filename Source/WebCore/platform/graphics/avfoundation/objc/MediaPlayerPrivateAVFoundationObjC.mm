@@ -615,7 +615,7 @@ void MediaPlayerPrivateAVFoundationObjC::createVideoLayer()
     if (!m_avPlayer || m_haveBeenAskedToCreateLayer)
         return;
 
-    ensureOnMainThread([this, weakThis = makeWeakPtr(*this)] {
+    ensureOnMainThread([this, weakThis = WeakPtr { *this }] {
         if (!weakThis)
             return;
 
@@ -1098,8 +1098,7 @@ void MediaPlayerPrivateAVFoundationObjC::createAVPlayer()
 #endif
 
     ASSERT(!m_currentTimeObserver);
-    auto weakThis = makeWeakPtr(*this);
-    m_currentTimeObserver = [m_avPlayer addPeriodicTimeObserverForInterval:PAL::CMTimeMake(1, 10) queue:dispatch_get_main_queue() usingBlock:[weakThis] (CMTime time) {
+    m_currentTimeObserver = [m_avPlayer addPeriodicTimeObserverForInterval:PAL::CMTimeMake(1, 10) queue:dispatch_get_main_queue() usingBlock:[weakThis = WeakPtr { *this }] (CMTime time) {
         ensureOnMainThread([weakThis, time] {
             if (weakThis)
                 weakThis->currentMediaTimeDidChange(PAL::toMediaTime(time));
@@ -1190,7 +1189,7 @@ void MediaPlayerPrivateAVFoundationObjC::checkPlayability()
     m_haveCheckedPlayability = true;
 
     INFO_LOG(LOGIDENTIFIER);
-    auto weakThis = makeWeakPtr(*this);
+    WeakPtr weakThis { *this };
 
     [m_avAsset loadValuesAsynchronouslyForKeys:@[@"playable", @"tracks"] completionHandler:^{
         callOnMainThread([weakThis] {
@@ -1206,7 +1205,7 @@ void MediaPlayerPrivateAVFoundationObjC::beginLoadingMetadata()
 
     OSObjectPtr<dispatch_group_t> metadataLoadingGroup = adoptOSObject(dispatch_group_create());
     dispatch_group_enter(metadataLoadingGroup.get());
-    auto weakThis = makeWeakPtr(*this);
+    WeakPtr weakThis { *this };
     [m_avAsset loadValuesAsynchronouslyForKeys:assetMetadataKeyNames() completionHandler:^{
         callOnMainThread([weakThis, metadataLoadingGroup] {
             if (weakThis && [weakThis->m_avAsset statusOfValueForKey:@"tracks" error:nil] == AVKeyValueStatusLoaded) {
@@ -1515,7 +1514,7 @@ void MediaPlayerPrivateAVFoundationObjC::seekToTime(const MediaTime& time, const
     if (PAL::CMTimeCompare(cmBefore, PAL::kCMTimeZero) < 0)
         cmBefore = PAL::kCMTimeZero;
     
-    auto weakThis = makeWeakPtr(*this);
+    WeakPtr weakThis { *this };
 
     setShouldObserveTimeControlStatus(false);
     [m_avPlayerItem seekToTime:cmTime toleranceBefore:cmBefore toleranceAfter:cmAfter completionHandler:^(BOOL finished) {
@@ -3176,8 +3175,7 @@ void MediaPlayerPrivateAVFoundationObjC::setShouldPlayToPlaybackTarget(bool shou
     ASSERT(m_playbackTarget->targetType() == MediaPlaybackTarget::TargetType::Mock);
 
     setDelayCallbacks(true);
-    auto weakThis = makeWeakPtr(*this);
-    scheduleMainThreadNotification(MediaPlayerPrivateAVFoundation::Notification([weakThis] {
+    scheduleMainThreadNotification(MediaPlayerPrivateAVFoundation::Notification([weakThis = WeakPtr { *this }] {
         if (!weakThis)
             return;
         weakThis->playbackTargetIsWirelessDidChange();

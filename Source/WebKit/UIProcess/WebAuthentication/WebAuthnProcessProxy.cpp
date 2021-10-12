@@ -109,7 +109,7 @@ void WebAuthnProcessProxy::processWillShutDown(IPC::Connection& connection)
 void WebAuthnProcessProxy::getWebAuthnProcessConnection(WebProcessProxy& webProcessProxy, Messages::WebProcessProxy::GetWebAuthnProcessConnection::DelayedReply&& reply)
 {
     RELEASE_LOG(ProcessSuspension, "%p - WebAuthnProcessProxy is taking a background assertion because a web process is requesting a connection", this);
-    sendWithAsyncReply(Messages::WebAuthnProcess::CreateWebAuthnConnectionToWebProcess { webProcessProxy.coreProcessIdentifier() }, [this, weakThis = makeWeakPtr(*this), reply = WTFMove(reply)](auto&& identifier) mutable {
+    sendWithAsyncReply(Messages::WebAuthnProcess::CreateWebAuthnConnectionToWebProcess { webProcessProxy.coreProcessIdentifier() }, [this, weakThis = WeakPtr { *this }, reply = WTFMove(reply)](auto&& identifier) mutable {
         if (!weakThis) {
             RELEASE_LOG_ERROR(Process, "WebAuthnProcessProxy::getWebAuthnProcessConnection: WebAuthnProcessProxy deallocated during connection establishment");
             return reply({ });

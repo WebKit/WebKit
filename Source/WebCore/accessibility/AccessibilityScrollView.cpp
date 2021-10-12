@@ -38,7 +38,7 @@
 namespace WebCore {
     
 AccessibilityScrollView::AccessibilityScrollView(ScrollView* view)
-    : m_scrollView(makeWeakPtr(view))
+    : m_scrollView(view)
     , m_childrenDirty(false)
 {
 }

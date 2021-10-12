@@ -350,7 +350,7 @@ void MediaRecorderPrivateWriter::flushCompressedSampleBuffers(Function<void()>&&
 
     ASSERT(!m_isFlushingSamples);
     m_isFlushingSamples = true;
-    auto block = makeBlockPtr([this, weakThis = makeWeakPtr(*this), hasPendingAudioSamples, hasPendingVideoSamples, audioSampleQueue = WTFMove(m_pendingAudioSampleQueue), videoSampleQueue = WTFMove(m_pendingVideoSampleQueue), callback = WTFMove(callback)]() mutable {
+    auto block = makeBlockPtr([this, weakThis = WeakPtr { *this }, hasPendingAudioSamples, hasPendingVideoSamples, audioSampleQueue = WTFMove(m_pendingAudioSampleQueue), videoSampleQueue = WTFMove(m_pendingVideoSampleQueue), callback = WTFMove(callback)]() mutable {
         if (!weakThis) {
             callback();
             return;

@@ -1,3 +1,210 @@
+2021-10-12  Chris Dumez  <cdumez@apple.com>
+
+        Allow direct construction of WeakPtr without makeWeakPtr()
+        https://bugs.webkit.org/show_bug.cgi?id=231580
+
+        Reviewed by Darin Adler.
+
+        Allow direct construction of WeakPtr without makeWeakPtr(), and deprecate makeWeakPtr().
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.cpp:
+        (WebKit::ResourceLoadStatisticsDatabaseStore::updateCookieBlocking):
+        * NetworkProcess/Classifier/ResourceLoadStatisticsStore.cpp:
+        (WebKit::ResourceLoadStatisticsStore::removeDataRecords):
+        (WebKit::ResourceLoadStatisticsStore::processStatisticsAndDataRecords):
+        (WebKit::ResourceLoadStatisticsStore::grandfatherExistingWebsiteData):
+        (WebKit::ResourceLoadStatisticsStore::scheduleStatisticsProcessingRequestIfNecessary):
+        (WebKit::ResourceLoadStatisticsStore::debugBroadcastConsoleMessage):
+        * NetworkProcess/Downloads/Download.cpp:
+        (WebKit::Download::cancel):
+        * NetworkProcess/NetworkDataTask.cpp:
+        (WebKit::NetworkDataTask::scheduleFailure):
+        * NetworkProcess/NetworkLoadChecker.cpp:
+        (WebKit::NetworkLoadChecker::checkRequest):
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::m_messagePortChannelRegistry):
+        (WebKit::NetworkProcess::suspendIDBServers):
+        (WebKit::NetworkProcess::storageQuotaManager):
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::start):
+        (WebKit::NetworkResourceLoader::retrieveCacheEntry):
+        (WebKit::NetworkResourceLoader::startNetworkLoad):
+        * NetworkProcess/NetworkSession.cpp:
+        (WebKit::NetworkSession::handlePrivateClickMeasurementConversion):
+        * NetworkProcess/PingLoad.cpp:
+        (WebKit::PingLoad::initialize):
+        (WebKit::PingLoad::didReceiveChallenge):
+        (WebKit::PingLoad::didReceiveResponse):
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementManager.cpp:
+        (WebKit::PrivateClickMeasurementManager::storeUnattributed):
+        (WebKit::PrivateClickMeasurementManager::getTokenPublicKey):
+        (WebKit::PrivateClickMeasurementManager::getSignedUnlinkableToken):
+        (WebKit::PrivateClickMeasurementManager::attribute):
+        (WebKit::PrivateClickMeasurementManager::fireConversionRequest):
+        (WebKit::PrivateClickMeasurementManager::fireConversionRequestImpl):
+        (WebKit::PrivateClickMeasurementManager::firePendingAttributionRequests):
+        (WebKit::PrivateClickMeasurementManager::destroyStoreForTesting):
+        * NetworkProcess/ServiceWorker/ServiceWorkerSoftUpdateLoader.cpp:
+        (WebKit::ServiceWorkerSoftUpdateLoader::ServiceWorkerSoftUpdateLoader):
+        * NetworkProcess/WebStorage/LocalStorageDatabase.cpp:
+        (WebKit::LocalStorageDatabase::startTransactionIfNecessary):
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoadManager.cpp:
+        (WebKit::NetworkCache::SpeculativeLoadManager::registerLoad):
+        (WebKit::NetworkCache::SpeculativeLoadManager::preloadEntry):
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+        (WebKit::NetworkDataTaskCocoa::willPerformHTTPRedirection):
+        * NetworkProcess/ios/NetworkProcessIOS.mm:
+        (WebKit::NetworkProcess::setIsHoldingLockedFiles):
+        * Shared/ApplePay/WebPaymentCoordinatorProxy.cpp:
+        (WebKit::WebPaymentCoordinatorProxy::showPaymentUI):
+        * Shared/ApplePay/ios/WebPaymentCoordinatorProxyIOS.mm:
+        (WebKit::WebPaymentCoordinatorProxy::platformShowPaymentUI):
+        * Shared/ApplePay/mac/WebPaymentCoordinatorProxyMac.mm:
+        (WebKit::WebPaymentCoordinatorProxy::platformShowPaymentUI):
+        * Shared/Authentication/cocoa/AuthenticationManagerCocoa.mm:
+        (WebKit::AuthenticationManager::initializeConnection):
+        * Shared/WebSQLiteDatabaseTracker.cpp:
+        (WebKit::WebSQLiteDatabaseTracker::didFinishLastTransaction):
+        * UIProcess/ApplicationStateTracker.mm:
+        (WebKit::ApplicationStateTracker::ApplicationStateTracker):
+        * UIProcess/AuxiliaryProcessProxy.cpp:
+        (WebKit::AuxiliaryProcessProxy::checkForResponsiveness):
+        * UIProcess/Cocoa/DownloadProxyMapCocoa.mm:
+        (WebKit::DownloadProxyMap::platformCreate):
+        * UIProcess/Cocoa/ModelElementControllerCocoa.mm:
+        (WebKit::ModelElementController::modelElementDidCreatePreview):
+        * UIProcess/Cocoa/SOAuthorization/SOAuthorizationSession.mm:
+        (WebKit::SOAuthorizationSession::start):
+        (WebKit::SOAuthorizationSession::continueStartAfterGetAuthorizationHints):
+        (WebKit::SOAuthorizationSession::complete):
+        (WebKit::SOAuthorizationSession::presentViewController):
+        * UIProcess/Cocoa/WebPageProxyCocoa.mm:
+        (WebKit::WebPageProxy::scheduleActivityStateUpdate):
+        (WebKit::WebPageProxy::setUpHighlightsObserver):
+        * UIProcess/Cocoa/WebProcessProxyCocoa.mm:
+        (WebKit::WebProcessProxy::sendAudioComponentRegistrations):
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::showSafeBrowsingWarning):
+        (WebKit::WebViewImpl::updateWindowAndViewFrames):
+        (WebKit::WebViewImpl::scheduleSetTopContentInsetDispatch):
+        (WebKit::WebViewImpl::viewDidMoveToWindow):
+        (WebKit::WebViewImpl::prepareForMoveToWindow):
+        (WebKit::WebViewImpl::validateUserInterfaceItem):
+        (WebKit::WebViewImpl::requestCandidatesForSelectionIfNeeded):
+        (WebKit::WebViewImpl::interpretKeyEvent):
+        (WebKit::WebViewImpl::firstRectForCharacterRange):
+        (WebKit::WebViewImpl::performKeyEquivalent):
+        (WebKit::WebViewImpl::keyUp):
+        (WebKit::WebViewImpl::keyDown):
+        (WebKit::WebViewImpl::flagsChanged):
+        (WebKit::WebViewImpl::nativeMouseEventHandler):
+        (WebKit::WebViewImpl::handleContextMenuTranslation):
+        * UIProcess/GPU/GPUProcessProxy.cpp:
+        (WebKit::GPUProcessProxy::getGPUProcessConnection):
+        * UIProcess/Media/cocoa/AudioSessionRoutingArbitratorProxyCocoa.mm:
+        (WebKit::AudioSessionRoutingArbitratorProxy::beginRoutingArbitrationWithCategory):
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::getNetworkProcessConnection):
+        * UIProcess/ProcessThrottler.cpp:
+        (WebKit::ProcessThrottler::setAssertionType):
+        (WebKit::ProcessThrottler::sendPrepareToSuspendIPC):
+        * UIProcess/SpeechRecognitionPermissionManager.cpp:
+        (WebKit::SpeechRecognitionPermissionManager::requestUserPermission):
+        * UIProcess/UserMediaPermissionRequestManagerProxy.cpp:
+        (WebKit::UserMediaPermissionRequestManagerProxy::grantRequest):
+        (WebKit::UserMediaPermissionRequestManagerProxy::getUserMediaPermissionInfo):
+        (WebKit::UserMediaPermissionRequestManagerProxy::enumerateMediaDevicesForFrame):
+        * UIProcess/UserMediaProcessManager.cpp:
+        (WebKit::UserMediaProcessManager::updateCaptureDevices):
+        * UIProcess/WebAuthentication/Authenticator.cpp:
+        (WebKit::Authenticator::handleRequest):
+        * UIProcess/WebAuthentication/AuthenticatorManager.cpp:
+        (WebKit::AuthenticatorManager::clearStateAsync):
+        (WebKit::AuthenticatorManager::downgrade):
+        (WebKit::AuthenticatorManager::requestPin):
+        (WebKit::AuthenticatorManager::runPanel):
+        * UIProcess/WebAuthentication/AuthenticatorTransportService.cpp:
+        (WebKit::AuthenticatorTransportService::startDiscovery):
+        (WebKit::AuthenticatorTransportService::restartDiscovery):
+        * UIProcess/WebAuthentication/Cocoa/LocalAuthenticator.mm:
+        (WebKit::LocalAuthenticator::makeCredential):
+        (WebKit::LocalAuthenticator::continueMakeCredentialAfterDecidePolicy):
+        (WebKit::LocalAuthenticator::continueMakeCredentialAfterReceivingLAContext):
+        (WebKit::LocalAuthenticator::continueMakeCredentialAfterUserVerification):
+        (WebKit::LocalAuthenticator::getAssertion):
+        (WebKit::LocalAuthenticator::continueGetAssertionAfterResponseSelected):
+        * UIProcess/WebAuthentication/Cocoa/NfcService.mm:
+        (WebKit::NfcService::platformStartDiscovery):
+        * UIProcess/WebAuthentication/Mock/MockHidConnection.cpp:
+        (WebKit::MockHidConnection::send):
+        (WebKit::MockHidConnection::feedReports):
+        (WebKit::MockHidConnection::continueFeedReports):
+        * UIProcess/WebAuthentication/Mock/MockNfcService.mm:
+        (WebKit::MockNfcService::receiveStartPolling):
+        * UIProcess/WebAuthentication/WebAuthnProcessProxy.cpp:
+        (WebKit::WebAuthnProcessProxy::getWebAuthnProcessConnection):
+        * UIProcess/WebAuthentication/fido/CtapAuthenticator.cpp:
+        (WebKit::CtapAuthenticator::makeCredential):
+        (WebKit::CtapAuthenticator::getAssertion):
+        (WebKit::CtapAuthenticator::continueGetAssertionAfterResponseReceived):
+        (WebKit::CtapAuthenticator::continueGetNextAssertionAfterResponseReceived):
+        (WebKit::CtapAuthenticator::getRetries):
+        (WebKit::CtapAuthenticator::continueGetKeyAgreementAfterGetRetries):
+        (WebKit::CtapAuthenticator::continueRequestPinAfterGetKeyAgreement):
+        (WebKit::CtapAuthenticator::continueGetPinTokenAfterRequestPin):
+        * UIProcess/WebAuthentication/fido/CtapHidDriver.cpp:
+        (WebKit::CtapHidDriver::Worker::transact):
+        (WebKit::CtapHidDriver::Worker::write):
+        (WebKit::CtapHidDriver::transact):
+        (WebKit::CtapHidDriver::continueAfterChannelAllocated):
+        * UIProcess/WebAuthentication/fido/FidoService.cpp:
+        (WebKit::FidoService::getInfo):
+        * UIProcess/WebAuthentication/fido/U2fAuthenticator.cpp:
+        (WebKit::U2fAuthenticator::issueCommand):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::tryClose):
+        (WebKit::WebPageProxy::setUnderPageBackgroundColorOverride):
+        (WebKit::WebPageProxy::handlePreventableTouchEvent):
+        (WebKit::WebPageProxy::receivedPolicyDecision):
+        (WebKit::WebPageProxy::runModalJavaScriptDialog):
+        (WebKit::WebPageProxy::runBeforeUnloadConfirmPanel):
+        (WebKit::WebPageProxy::contextMenuItemSelected):
+        (WebKit::WebPageProxy::createMediaSessionCoordinator):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::getGPUProcessConnection):
+        (WebKit::WebProcessPool::getWebAuthnProcessConnection):
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::isResponsive):
+        (WebKit::WebProcessProxy::isResponsiveWithLazyStop):
+        (WebKit::WebProcessProxy::establishServiceWorkerContext):
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::getNetworkProcessConnection):
+        * UIProcess/XR/PlatformXRSystem.cpp:
+        (WebKit::PlatformXRSystem::initializeTrackingAndRendering):
+        * UIProcess/ios/ProcessAssertionIOS.mm:
+        (WebKit::ProcessAssertion::acquireSync):
+        (WebKit::ProcessAndUIAssertion::processAssertionWasInvalidated):
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::willOpenAppLink):
+        * UIProcess/mac/WebContextMenuProxyMac.mm:
+        (WebKit::WebContextMenuProxyMac::insertOrUpdateQuickLookImageItem):
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.cpp:
+        (WebKit::MediaPlayerPrivateRemote::prepareForPlayback):
+        (WebKit::MediaPlayerPrivateRemote::load):
+        (WebKit::MediaPlayerPrivateRemote::performTaskAtMediaTime):
+        * WebProcess/MediaStream/UserMediaPermissionRequestManager.cpp:
+        (WebKit::UserMediaPermissionRequestManager::updateCaptureDevices):
+        * WebProcess/WebCoreSupport/WebPermissionController.cpp:
+        (WebKit::WebPermissionController::tryProcessingRequests):
+        * WebProcess/WebCoreSupport/WebSpeechSynthesisClient.cpp:
+        (WebKit::WebSpeechSynthesisClient::speak):
+        (WebKit::WebSpeechSynthesisClient::pause):
+        (WebKit::WebSpeechSynthesisClient::resume):
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::sendDidFirstLayerFlushIfNeeded):
+        (WebKit::TiledCoreAnimationDrawingArea::forceRepaintAsync):
+        (WebKit::TiledCoreAnimationDrawingArea::handleActivityStateChangeCallbacksIfNeeded):
+
 2021-10-12  Brent Fulgham  <bfulgham@apple.com>
 
         Sandbox complexity and performance improvements

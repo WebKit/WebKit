@@ -299,7 +299,7 @@ void MediaDevices::listenForDeviceChanges()
 
     m_listeningForDeviceChanges = true;
 
-    m_deviceChangeToken = controller->addDeviceChangeObserver([weakThis = makeWeakPtr(*this), this]() {
+    m_deviceChangeToken = controller->addDeviceChangeObserver([weakThis = WeakPtr { *this }, this]() {
         if (!weakThis || isContextStopped() || m_scheduledEventTimer.isActive())
             return;
 

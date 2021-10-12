@@ -37,7 +37,7 @@ namespace WebCore {
 using namespace HTMLNames;
 
 AccessibilityMenuListOption::AccessibilityMenuListOption(HTMLOptionElement& element)
-    : m_element(makeWeakPtr(element))
+    : m_element(element)
 {
 }
 

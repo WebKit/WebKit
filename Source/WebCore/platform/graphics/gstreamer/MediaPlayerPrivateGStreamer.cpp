@@ -1843,7 +1843,7 @@ void MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
         if (gst_is_missing_plugin_message(message)) {
 #if !USE(GSTREAMER_FULL)
             if (gst_install_plugins_supported()) {
-                auto missingPluginCallback = MediaPlayerRequestInstallMissingPluginsCallback::create([weakThis = makeWeakPtr(*this)](uint32_t result, MediaPlayerRequestInstallMissingPluginsCallback& missingPluginCallback) {
+                auto missingPluginCallback = MediaPlayerRequestInstallMissingPluginsCallback::create([weakThis = WeakPtr { *this }](uint32_t result, MediaPlayerRequestInstallMissingPluginsCallback& missingPluginCallback) {
                     if (!weakThis) {
                         GST_INFO("got missing pluging installation callback in destroyed player with result %u", result);
                         return;
@@ -3040,7 +3040,7 @@ void MediaPlayerPrivateGStreamer::invalidateCachedPosition() const
 
 void MediaPlayerPrivateGStreamer::invalidateCachedPositionOnNextIteration() const
 {
-    RunLoop::main().dispatch([weakThis = makeWeakPtr(*this), this] {
+    RunLoop::main().dispatch([weakThis = WeakPtr { *this }, this] {
         if (!weakThis)
             return;
         invalidateCachedPosition();
@@ -3074,7 +3074,7 @@ void MediaPlayerPrivateGStreamer::triggerRepaint(GstSample* sample)
             GST_ERROR_OBJECT(pipeline(), "Received sample without caps: %" GST_PTR_FORMAT, sample);
             return;
         }
-        RunLoop::main().dispatch([weakThis = makeWeakPtr(*this), this, caps = WTFMove(caps)] {
+        RunLoop::main().dispatch([weakThis = WeakPtr { *this }, this, caps = WTFMove(caps)] {
             if (!weakThis)
                 return;
             updateVideoSizeAndOrientationFromCaps(caps.get());
@@ -3586,7 +3586,7 @@ void MediaPlayerPrivateGStreamer::initializationDataEncountered(InitData&& initD
 {
     ASSERT(!isMainThread());
 
-    RunLoop::main().dispatch([weakThis = makeWeakPtr(*this), initData = WTFMove(initData)] {
+    RunLoop::main().dispatch([weakThis = WeakPtr { *this }, initData = WTFMove(initData)] {
         if (!weakThis)
             return;
 

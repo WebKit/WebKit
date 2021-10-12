@@ -81,7 +81,7 @@ void PingLoad::initialize(NetworkProcess& networkProcess)
     // Set a very generous timeout, just in case.
     m_timeoutTimer.startOneShot(60000_s);
 
-    m_networkLoadChecker->check(ResourceRequest { m_parameters.request }, nullptr, [this, weakThis = makeWeakPtr(*this), networkProcess = Ref { networkProcess }] (auto&& result) {
+    m_networkLoadChecker->check(ResourceRequest { m_parameters.request }, nullptr, [this, weakThis = WeakPtr { *this }, networkProcess = Ref { networkProcess }] (auto&& result) {
         if (!weakThis)
             return;
         WTF::switchOn(result,
@@ -155,7 +155,7 @@ void PingLoad::didReceiveChallenge(AuthenticationChallenge&& challenge, Negotiat
         m_networkLoadChecker->networkProcess().authenticationManager().didReceiveAuthenticationChallenge(m_sessionID, m_parameters.webPageProxyID,  m_parameters.topOrigin ? &m_parameters.topOrigin->data() : nullptr, challenge, negotiatedLegacyTLS, WTFMove(completionHandler));
         return;
     }
-    auto weakThis = makeWeakPtr(*this);
+    WeakPtr weakThis { *this };
     completionHandler(AuthenticationChallengeDisposition::Cancel, { });
     if (!weakThis)
         return;
@@ -165,7 +165,7 @@ void PingLoad::didReceiveChallenge(AuthenticationChallenge&& challenge, Negotiat
 void PingLoad::didReceiveResponse(ResourceResponse&& response, NegotiatedLegacyTLS, ResponseCompletionHandler&& completionHandler)
 {
     PING_RELEASE_LOG("didReceiveResponse - httpStatusCode=%d", response.httpStatusCode());
-    auto weakThis = makeWeakPtr(*this);
+    WeakPtr weakThis { *this };
     completionHandler(PolicyAction::Ignore);
     if (!weakThis)
         return;

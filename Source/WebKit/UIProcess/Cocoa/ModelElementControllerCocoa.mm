@@ -140,7 +140,7 @@ void ModelElementController::modelElementDidCreatePreview(const WebCore::Element
         iterator->value = preview;
 
     RELEASE_ASSERT(isMainRunLoop());
-    auto weakThis = makeWeakPtr(*this);
+    WeakPtr weakThis { *this };
     auto elementContextCopy = context;
     auto uuidCopy = uuid;
     NSURL *url = [NSURL fileURLWithPath:fileURL.fileSystemPath()];

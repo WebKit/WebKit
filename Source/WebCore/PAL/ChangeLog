@@ -1,3 +1,15 @@
+2021-10-12  Chris Dumez  <cdumez@apple.com>
+
+        Allow direct construction of WeakPtr without makeWeakPtr()
+        https://bugs.webkit.org/show_bug.cgi?id=231580
+
+        Reviewed by Darin Adler.
+
+        Allow direct construction of WeakPtr without makeWeakPtr(), and deprecate makeWeakPtr().
+
+        * pal/system/mac/SystemSleepListenerMac.mm:
+        (PAL::SystemSleepListenerMac::SystemSleepListenerMac):
+
 2021-10-12  Alex Christensen  <achristensen@webkit.org>
 
         Remove non-HAVE(CFNETWORK_NSURLSESSION_STRICTRUSTEVALUATE) code

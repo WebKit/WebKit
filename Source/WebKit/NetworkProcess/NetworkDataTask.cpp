@@ -94,7 +94,7 @@ NetworkDataTask::~NetworkDataTask()
 
 void NetworkDataTask::scheduleFailure(FailureType type)
 {
-    RunLoop::main().dispatch([this, weakThis = makeWeakPtr(*this), type] {
+    RunLoop::main().dispatch([this, weakThis = WeakPtr { *this }, type] {
         if (!weakThis || !m_client)
             return;
 

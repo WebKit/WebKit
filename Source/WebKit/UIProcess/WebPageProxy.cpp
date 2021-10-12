@@ -1224,7 +1224,7 @@ bool WebPageProxy::tryClose()
         return true;
 
     m_tryCloseTimeoutTimer.startOneShot(tryCloseTimeoutDelay);
-    sendWithAsyncReply(Messages::WebPage::TryClose(), [this, weakThis = makeWeakPtr(*this)](bool shouldClose) {
+    sendWithAsyncReply(Messages::WebPage::TryClose(), [this, weakThis = WeakPtr { *this }](bool shouldClose) {
         if (!weakThis)
             return;
 
@@ -2029,7 +2029,7 @@ void WebPageProxy::setUnderPageBackgroundColorOverride(Color&& newUnderPageBackg
 
     m_hasPendingUnderPageBackgroundColorOverrideToDispatch = true;
 
-    RunLoop::main().dispatch([this, weakThis = makeWeakPtr(*this)] {
+    RunLoop::main().dispatch([this, weakThis = WeakPtr { *this }] {
         if (!weakThis)
             return;
 
@@ -3199,7 +3199,7 @@ void WebPageProxy::handlePreventableTouchEvent(NativeWebTouchEvent& event)
         if (isTouchEnd)
             ++m_handlingPreventableTouchEndCount;
 
-        sendWithAsyncReply(Messages::EventDispatcher::TouchEvent(m_webPageID, event), [this, weakThis = makeWeakPtr(*this), event] (bool handled) {
+        sendWithAsyncReply(Messages::EventDispatcher::TouchEvent(m_webPageID, event), [this, weakThis = WeakPtr { *this }, event] (bool handled) {
             RefPtr protectedThis { weakThis.get() };
             if (!protectedThis)
                 return;
@@ -3559,7 +3559,7 @@ void WebPageProxy::receivedPolicyDecision(PolicyAction action, API::Navigation* 
     if (action == PolicyAction::Download) {
         // Create a download proxy.
         auto& download = m_process->processPool().createDownloadProxy(m_websiteDataStore, m_decidePolicyForResponseRequest, this, navigation ? navigation->originatingFrameInfo() : FrameInfoData { });
-        download.setDidStartCallback([this, weakThis = makeWeakPtr(*this), navigationActionOrResponse = WTFMove(navigationActionOrResponse)] (auto* downloadProxy) {
+        download.setDidStartCallback([this, weakThis = WeakPtr { *this }, navigationActionOrResponse = WTFMove(navigationActionOrResponse)] (auto* downloadProxy) {
             if (!weakThis || !downloadProxy)
                 return;
             WTF::switchOn(navigationActionOrResponse,
@@ -5893,7 +5893,7 @@ void WebPageProxy::closePage()
 
 void WebPageProxy::runModalJavaScriptDialog(RefPtr<WebFrameProxy>&& frame, FrameInfoData&& frameInfo, const String& message, CompletionHandler<void(WebPageProxy&, WebFrameProxy* frame, FrameInfoData&& frameInfo, const String& message, CompletionHandler<void()>&&)>&& runDialogCallback)
 {
-    pageClient().runModalJavaScriptDialog([weakThis = makeWeakPtr(*this), frameInfo = WTFMove(frameInfo), frame = WTFMove(frame), message, runDialogCallback = WTFMove(runDialogCallback)]() mutable {
+    pageClient().runModalJavaScriptDialog([weakThis = WeakPtr { *this }, frameInfo = WTFMove(frameInfo), frame = WTFMove(frame), message, runDialogCallback = WTFMove(runDialogCallback)]() mutable {
         RefPtr protectedThis { weakThis.get() };
         if (!protectedThis)
             return;
@@ -6132,7 +6132,7 @@ void WebPageProxy::runBeforeUnloadConfirmPanel(FrameIdentifier frameID, FrameInf
     bool shouldResumeTimerAfterPrompt = m_tryCloseTimeoutTimer.isActive();
     m_tryCloseTimeoutTimer.stop();
     m_uiClient->runBeforeUnloadConfirmPanel(*this, message, frame, WTFMove(frameInfo),
-        [this, weakThis = makeWeakPtr(*this), completionHandler = WTFMove(reply), shouldResumeTimerAfterPrompt](bool shouldClose) mutable {
+        [this, weakThis = WeakPtr { *this }, completionHandler = WTFMove(reply), shouldResumeTimerAfterPrompt](bool shouldClose) mutable {
             if (weakThis && shouldResumeTimerAfterPrompt)
                 m_tryCloseTimeoutTimer.startOneShot(tryCloseTimeoutDelay);
             completionHandler(shouldClose);
@@ -7017,7 +7017,7 @@ void WebPageProxy::contextMenuItemSelected(const WebContextMenuItemData& item)
 
     if (downloadInfo) {
         auto& download = m_process->processPool().download(m_websiteDataStore, this, URL(URL(), downloadInfo->url), downloadInfo->suggestedFilename);
-        download.setDidStartCallback([this, weakThis = makeWeakPtr(*this)] (auto* download) {
+        download.setDidStartCallback([this, weakThis = WeakPtr { *this }] (auto* download) {
             if (!weakThis || !download)
                 return;
             m_navigationClient->contextMenuDidCreateDownload(*this, *download);
@@ -10874,7 +10874,7 @@ Vector<SandboxExtension::Handle> WebPageProxy::createNetworkExtensionsSandboxExt
 #if ENABLE(MEDIA_SESSION_COORDINATOR)
 void WebPageProxy::createMediaSessionCoordinator(Ref<MediaSessionCoordinatorProxyPrivate>&& privateCoordinator, CompletionHandler<void(bool)>&& completionHandler)
 {
-    sendWithAsyncReply(Messages::WebPage::CreateMediaSessionCoordinator(privateCoordinator->identifier()), [weakThis = makeWeakPtr(*this), privateCoordinator = WTFMove(privateCoordinator), completionHandler = WTFMove(completionHandler)](bool success) mutable {
+    sendWithAsyncReply(Messages::WebPage::CreateMediaSessionCoordinator(privateCoordinator->identifier()), [weakThis = WeakPtr { *this }, privateCoordinator = WTFMove(privateCoordinator), completionHandler = WTFMove(completionHandler)](bool success) mutable {
 
         if (!weakThis || !success) {
             completionHandler(false);

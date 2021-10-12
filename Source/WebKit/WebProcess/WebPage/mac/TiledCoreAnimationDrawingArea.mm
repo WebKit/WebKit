@@ -118,7 +118,7 @@ void TiledCoreAnimationDrawingArea::sendDidFirstLayerFlushIfNeeded()
     m_needsSendDidFirstLayerFlush = false;
 
     // Let the first commit complete before sending.
-    [CATransaction addCommitHandler:[this, weakThis = makeWeakPtr(*this)] {
+    [CATransaction addCommitHandler:[this, weakThis = WeakPtr { *this }] {
         if (!weakThis || !m_layerHostingContext)
             return;
         LayerTreeContext layerTreeContext;
@@ -184,7 +184,7 @@ void TiledCoreAnimationDrawingArea::forceRepaintAsync(WebPage& page, CompletionH
         return completionHandler();
     }
 
-    dispatchAfterEnsuringUpdatedScrollPosition([this, weakThis = makeWeakPtr(*this), completionHandler = WTFMove(completionHandler)] () mutable {
+    dispatchAfterEnsuringUpdatedScrollPosition([this, weakThis = WeakPtr { *this }, completionHandler = WTFMove(completionHandler)] () mutable {
         if (!weakThis)
             return completionHandler();
         m_webPage.drawingArea()->forceRepaint();
@@ -513,7 +513,7 @@ void TiledCoreAnimationDrawingArea::handleActivityStateChangeCallbacksIfNeeded()
         return;
     }
 
-    [CATransaction addCommitHandler:[weakThis = makeWeakPtr(*this)] {
+    [CATransaction addCommitHandler:[weakThis = WeakPtr { *this }] {
         if (!weakThis)
             return;
 

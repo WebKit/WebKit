@@ -44,7 +44,7 @@ namespace WebCore {
 using namespace HTMLNames;
     
 AccessibilityListBoxOption::AccessibilityListBoxOption(HTMLElement& element)
-    : m_optionElement(makeWeakPtr(element))
+    : m_optionElement(element)
 {
 }
 

@@ -71,7 +71,7 @@ public:
     virtual void animationTimelineDidChange(AnimationTimeline*) = 0;
 
     WebAnimation* animation() const { return m_animation.get(); }
-    virtual void setAnimation(WebAnimation* animation) { m_animation = makeWeakPtr(animation); }
+    virtual void setAnimation(WebAnimation* animation) { m_animation = animation; }
 
     Seconds delay() const { return m_delay; }
     void setDelay(const Seconds&);

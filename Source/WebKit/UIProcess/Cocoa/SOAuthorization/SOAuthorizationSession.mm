@@ -171,7 +171,7 @@ void SOAuthorizationSession::start()
     ASSERT((m_state == State::Idle || m_state == State::Waiting) && m_navigationAction);
     m_state = State::Active;
     AUTHORIZATIONSESSION_RELEASE_LOG("start: Moving m_state to Active.");
-    [m_soAuthorization getAuthorizationHintsWithURL:m_navigationAction->request().url() responseCode:0 completion:makeBlockPtr([this, weakThis = makeWeakPtr(*this)] (SOAuthorizationHints *authorizationHints, NSError *error) {
+    [m_soAuthorization getAuthorizationHintsWithURL:m_navigationAction->request().url() responseCode:0 completion:makeBlockPtr([this, weakThis = WeakPtr { *this }] (SOAuthorizationHints *authorizationHints, NSError *error) {
         AUTHORIZATIONSESSION_RELEASE_LOG("start: Receive SOAuthorizationHints (error=%ld)", error ? error.code : 0);
 
         if (!weakThis) {
@@ -200,7 +200,7 @@ void SOAuthorizationSession::continueStartAfterGetAuthorizationHints(const Strin
     }
 
     AUTHORIZATIONSESSION_RELEASE_LOG("continueStartAfterGetAuthorizationHints: Checking page for policy choice.");
-    m_page->decidePolicyForSOAuthorizationLoad(hints, [this, weakThis = makeWeakPtr(*this)] (SOAuthorizationLoadPolicy policy) {
+    m_page->decidePolicyForSOAuthorizationLoad(hints, [this, weakThis = WeakPtr { *this }] (SOAuthorizationLoadPolicy policy) {
         if (!weakThis)
             return;
         continueStartAfterDecidePolicy(policy);
@@ -314,7 +314,7 @@ void SOAuthorizationSession::complete(NSHTTPURLResponse *httpResponse, NSData *d
         return;
     }
 
-    m_page->websiteDataStore().cookieStore().setCookies(WTFMove(cookies), [this, weakThis = makeWeakPtr(*this), response = WTFMove(response), data = adoptNS([[NSData alloc] initWithData:data])] () mutable {
+    m_page->websiteDataStore().cookieStore().setCookies(WTFMove(cookies), [this, weakThis = WeakPtr { *this }, response = WTFMove(response), data = adoptNS([[NSData alloc] initWithData:data])] () mutable {
         if (!weakThis)
             return;
 
@@ -348,7 +348,7 @@ void SOAuthorizationSession::presentViewController(SOAuthorizationViewController
 
     m_sheetWindow = [NSWindow windowWithContentViewController:m_viewController.get()];
 
-    m_sheetWindowWillCloseObserver = [[NSNotificationCenter defaultCenter] addObserverForName:NSWindowWillCloseNotification object:m_sheetWindow.get() queue:nil usingBlock:[weakThis = makeWeakPtr(*this)] (NSNotification *) {
+    m_sheetWindowWillCloseObserver = [[NSNotificationCenter defaultCenter] addObserverForName:NSWindowWillCloseNotification object:m_sheetWindow.get() queue:nil usingBlock:[weakThis = WeakPtr { *this }] (NSNotification *) {
         if (!weakThis)
             return;
         RELEASE_LOG(AppSSO, "presentViewController: Received NSWindowWillCloseNotification. Dismissing the view controller.");

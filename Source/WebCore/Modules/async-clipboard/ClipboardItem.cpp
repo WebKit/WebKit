@@ -66,8 +66,8 @@ ClipboardItem::ClipboardItem(Vector<KeyValuePair<String, RefPtr<DOMPromise>>>&& 
 }
 
 ClipboardItem::ClipboardItem(Clipboard& clipboard, const PasteboardItemInfo& info)
-    : m_clipboard(makeWeakPtr(clipboard))
-    , m_navigator(makeWeakPtr(clipboard.navigator()))
+    : m_clipboard(clipboard)
+    , m_navigator(clipboard.navigator())
     , m_dataSource(makeUnique<ClipboardItemPasteboardDataSource>(*this, info))
     , m_presentationStyle(clipboardItemPresentationStyle(info))
 {

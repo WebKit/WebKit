@@ -37,12 +37,12 @@ namespace WebKit {
 void DownloadProxyMap::platformCreate()
 {
 #if PLATFORM(IOS_FAMILY)
-    m_backgroundObserver = [[NSNotificationCenter defaultCenter] addObserverForName:UIApplicationDidEnterBackgroundNotification object:[UIApplication sharedApplication] queue:nil usingBlock:makeBlockPtr([weakThis = makeWeakPtr(*this)](NSNotification *) {
+    m_backgroundObserver = [[NSNotificationCenter defaultCenter] addObserverForName:UIApplicationDidEnterBackgroundNotification object:[UIApplication sharedApplication] queue:nil usingBlock:makeBlockPtr([weakThis = WeakPtr { *this }](NSNotification *) {
         if (!weakThis)
             return;
         weakThis->applicationDidEnterBackground();
     }).get()];
-    m_foregroundObserver = [[NSNotificationCenter defaultCenter] addObserverForName:UIApplicationWillEnterForegroundNotification object:[UIApplication sharedApplication] queue:nil usingBlock:makeBlockPtr([weakThis = makeWeakPtr(*this)](NSNotification *) {
+    m_foregroundObserver = [[NSNotificationCenter defaultCenter] addObserverForName:UIApplicationWillEnterForegroundNotification object:[UIApplication sharedApplication] queue:nil usingBlock:makeBlockPtr([weakThis = WeakPtr { *this }](NSNotification *) {
         if (!weakThis)
             return;
         weakThis->applicationWillEnterForeground();

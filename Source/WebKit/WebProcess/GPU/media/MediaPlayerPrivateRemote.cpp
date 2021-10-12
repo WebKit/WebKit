@@ -148,7 +148,7 @@ void MediaPlayerPrivateRemote::prepareForPlayback(bool privateMode, MediaPlayer:
     auto scale = player->playerContentsScale();
     auto preferredDynamicRangeMode = m_player->preferredDynamicRangeMode();
 
-    connection().sendWithAsyncReply(Messages::RemoteMediaPlayerProxy::PrepareForPlayback(privateMode, preload, preservesPitch, prepare, scale, preferredDynamicRangeMode), [weakThis = makeWeakPtr(*this), this](auto inlineLayerHostingContextId) mutable {
+    connection().sendWithAsyncReply(Messages::RemoteMediaPlayerProxy::PrepareForPlayback(privateMode, preload, preservesPitch, prepare, scale, preferredDynamicRangeMode), [weakThis = WeakPtr { *this }, this](auto inlineLayerHostingContextId) mutable {
         if (!weakThis)
             return;
 
@@ -201,7 +201,7 @@ void MediaPlayerPrivateRemote::load(const URL& url, const ContentType& contentTy
         sandboxExtensionHandle = WTFMove(handle);
     }
 
-    connection().sendWithAsyncReply(Messages::RemoteMediaPlayerProxy::Load(url, sandboxExtensionHandle, contentType, keySystem), [weakThis = makeWeakPtr(*this), this](auto&& configuration) {
+    connection().sendWithAsyncReply(Messages::RemoteMediaPlayerProxy::Load(url, sandboxExtensionHandle, contentType, keySystem), [weakThis = WeakPtr { *this }, this](auto&& configuration) {
         if (!weakThis)
             return;
 
@@ -760,7 +760,7 @@ void MediaPlayerPrivateRemote::load(const URL& url, const ContentType& contentTy
 {
     if (m_remoteEngineIdentifier == MediaPlayerEnums::MediaEngineIdentifier::AVFoundationMSE) {
         auto identifier = RemoteMediaSourceIdentifier::generate();
-        connection().sendWithAsyncReply(Messages::RemoteMediaPlayerProxy::LoadMediaSource(url, contentType, RuntimeEnabledFeatures::sharedFeatures().webMParserEnabled(), identifier), [weakThis = makeWeakPtr(*this), this](auto&& configuration) {
+        connection().sendWithAsyncReply(Messages::RemoteMediaPlayerProxy::LoadMediaSource(url, contentType, RuntimeEnabledFeatures::sharedFeatures().webMParserEnabled(), identifier), [weakThis = WeakPtr { *this }, this](auto&& configuration) {
             if (!weakThis)
                 return;
 
@@ -776,7 +776,7 @@ void MediaPlayerPrivateRemote::load(const URL& url, const ContentType& contentTy
         return;
     }
 
-    callOnMainRunLoop([weakThis = makeWeakPtr(*this), this] {
+    callOnMainRunLoop([weakThis = WeakPtr { *this }, this] {
         if (!weakThis)
             return;
 
@@ -793,7 +793,7 @@ void MediaPlayerPrivateRemote::load(const URL& url, const ContentType& contentTy
 #if ENABLE(MEDIA_STREAM)
 void MediaPlayerPrivateRemote::load(MediaStreamPrivate&)
 {
-    callOnMainRunLoop([weakThis = makeWeakPtr(*this), this] {
+    callOnMainRunLoop([weakThis = WeakPtr { *this }, this] {
         if (!weakThis)
             return;
 
@@ -1321,7 +1321,7 @@ void MediaPlayerPrivateRemote::setPreferredDynamicRangeMode(WebCore::DynamicRang
 
 bool MediaPlayerPrivateRemote::performTaskAtMediaTime(WTF::Function<void()>&& completionHandler, const MediaTime& mediaTime)
 {
-    auto asyncReplyHandler = [weakThis = makeWeakPtr(*this), this, completionHandler = WTFMove(completionHandler)](std::optional<MediaTime> currentTime, std::optional<MonotonicTime> queryTime) mutable {
+    auto asyncReplyHandler = [weakThis = WeakPtr { *this }, this, completionHandler = WTFMove(completionHandler)](std::optional<MediaTime> currentTime, std::optional<MonotonicTime> queryTime) mutable {
         if (!weakThis || !currentTime || !queryTime)
             return;
 

@@ -52,7 +52,7 @@ Ref<AccessibilitySVGRoot> AccessibilitySVGRoot::create(RenderObject* renderer)
 
 void AccessibilitySVGRoot::setParent(AccessibilityRenderObject* parent)
 {
-    m_parent = makeWeakPtr(parent);
+    m_parent = parent;
 }
     
 AccessibilityObject* AccessibilitySVGRoot::parentObject() const

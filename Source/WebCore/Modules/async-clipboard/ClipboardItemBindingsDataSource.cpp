@@ -128,7 +128,7 @@ void ClipboardItemBindingsDataSource::collectDataForWriting(Clipboard& destinati
     m_itemTypeLoaders.clear();
     ASSERT(!m_completionHandler);
     m_completionHandler = WTFMove(completion);
-    m_writingDestination = makeWeakPtr(destination);
+    m_writingDestination = destination;
     m_numberOfPendingClipboardTypes = m_itemPromises.size();
     m_itemTypeLoaders = m_itemPromises.map([&] (auto& typeAndItem) {
         auto type = typeAndItem.key;
@@ -139,7 +139,7 @@ void ClipboardItemBindingsDataSource::collectDataForWriting(Clipboard& destinati
         });
 
         auto promise = typeAndItem.value;
-        promise->whenSettled([this, protectedItem = Ref { m_item }, destination = m_writingDestination, promise, type, weakItemTypeLoader = makeWeakPtr(itemTypeLoader.ptr())] () mutable {
+        promise->whenSettled([this, protectedItem = Ref { m_item }, destination = m_writingDestination, promise, type, weakItemTypeLoader = WeakPtr { itemTypeLoader }] () mutable {
             if (!weakItemTypeLoader)
                 return;
 

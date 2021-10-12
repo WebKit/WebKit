@@ -150,7 +150,7 @@ IntRect TextTrackRepresentationCocoa::bounds() const
 
 void TextTrackRepresentationCocoa::boundsChanged()
 {
-    callOnMainThread([weakThis = makeWeakPtr(*this)] {
+    callOnMainThread([weakThis = WeakPtr { *this }] {
         if (weakThis)
             weakThis->client().textTrackRepresentationBoundsChanged(weakThis->bounds());
     });

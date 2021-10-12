@@ -102,7 +102,7 @@ void CtapAuthenticator::makeCredential()
         cborCmd = encodeMakeCredenitalRequestAsCBOR(requestData().hash, options, internalUVAvailability, PinParameters { pin::kProtocolVersion, m_pinAuth });
     else
         cborCmd = encodeMakeCredenitalRequestAsCBOR(requestData().hash, options, internalUVAvailability);
-    driver().transact(WTFMove(cborCmd), [weakThis = makeWeakPtr(*this)](Vector<uint8_t>&& data) {
+    driver().transact(WTFMove(cborCmd), [weakThis = WeakPtr { *this }](Vector<uint8_t>&& data) {
         ASSERT(RunLoop::isMain());
         if (!weakThis)
             return;
@@ -147,7 +147,7 @@ void CtapAuthenticator::getAssertion()
         cborCmd = encodeGetAssertionRequestAsCBOR(requestData().hash, options, internalUVAvailability, PinParameters { pin::kProtocolVersion, m_pinAuth });
     else
         cborCmd = encodeGetAssertionRequestAsCBOR(requestData().hash, options, internalUVAvailability);
-    driver().transact(WTFMove(cborCmd), [weakThis = makeWeakPtr(*this)](Vector<uint8_t>&& data) {
+    driver().transact(WTFMove(cborCmd), [weakThis = WeakPtr { *this }](Vector<uint8_t>&& data) {
         ASSERT(RunLoop::isMain());
         if (!weakThis)
             return;
@@ -186,7 +186,7 @@ void CtapAuthenticator::continueGetAssertionAfterResponseReceived(Vector<uint8_t
     m_remainingAssertionResponses = response->numberOfCredentials() - 1;
     m_assertionResponses.reserveInitialCapacity(response->numberOfCredentials());
     m_assertionResponses.uncheckedAppend(response.releaseNonNull());
-    driver().transact(encodeEmptyAuthenticatorRequest(CtapRequestCommand::kAuthenticatorGetNextAssertion), [weakThis = makeWeakPtr(*this)](Vector<uint8_t>&& data) {
+    driver().transact(encodeEmptyAuthenticatorRequest(CtapRequestCommand::kAuthenticatorGetNextAssertion), [weakThis = WeakPtr { *this }](Vector<uint8_t>&& data) {
         ASSERT(RunLoop::isMain());
         if (!weakThis)
             return;
@@ -212,7 +212,7 @@ void CtapAuthenticator::continueGetNextAssertionAfterResponseReceived(Vector<uin
             for (auto& response : m_assertionResponses)
                 responsesCopy.uncheckedAppend(response.copyRef());
 
-            observer->selectAssertionResponse(WTFMove(responsesCopy), WebAuthenticationSource::External, [this, weakThis = makeWeakPtr(*this)] (AuthenticatorAssertionResponse* response) {
+            observer->selectAssertionResponse(WTFMove(responsesCopy), WebAuthenticationSource::External, [this, weakThis = WeakPtr { *this }] (AuthenticatorAssertionResponse* response) {
                 ASSERT(RunLoop::isMain());
                 if (!weakThis)
                     return;
@@ -227,7 +227,7 @@ void CtapAuthenticator::continueGetNextAssertionAfterResponseReceived(Vector<uin
         return;
     }
 
-    driver().transact(encodeEmptyAuthenticatorRequest(CtapRequestCommand::kAuthenticatorGetNextAssertion), [weakThis = makeWeakPtr(*this)](Vector<uint8_t>&& data) {
+    driver().transact(encodeEmptyAuthenticatorRequest(CtapRequestCommand::kAuthenticatorGetNextAssertion), [weakThis = WeakPtr { *this }](Vector<uint8_t>&& data) {
         ASSERT(RunLoop::isMain());
         if (!weakThis)
             return;
@@ -238,7 +238,7 @@ void CtapAuthenticator::continueGetNextAssertionAfterResponseReceived(Vector<uin
 void CtapAuthenticator::getRetries()
 {
     auto cborCmd = encodeAsCBOR(pin::RetriesRequest { });
-    driver().transact(WTFMove(cborCmd), [weakThis = makeWeakPtr(*this)](Vector<uint8_t>&& data) {
+    driver().transact(WTFMove(cborCmd), [weakThis = WeakPtr { *this }](Vector<uint8_t>&& data) {
         ASSERT(RunLoop::isMain());
         if (!weakThis)
             return;
@@ -256,7 +256,7 @@ void CtapAuthenticator::continueGetKeyAgreementAfterGetRetries(Vector<uint8_t>&&
     }
 
     auto cborCmd = encodeAsCBOR(pin::KeyAgreementRequest { });
-    driver().transact(WTFMove(cborCmd), [weakThis = makeWeakPtr(*this), retries = retries->retries] (Vector<uint8_t>&& data) {
+    driver().transact(WTFMove(cborCmd), [weakThis = WeakPtr { *this }, retries = retries->retries] (Vector<uint8_t>&& data) {
         ASSERT(RunLoop::isMain());
         if (!weakThis)
             return;
@@ -274,7 +274,7 @@ void CtapAuthenticator::continueRequestPinAfterGetKeyAgreement(Vector<uint8_t>&&
     }
 
     if (auto* observer = this->observer()) {
-        observer->requestPin(retries, [weakThis = makeWeakPtr(*this), keyAgreement = WTFMove(*keyAgreement)] (const String& pin) {
+        observer->requestPin(retries, [weakThis = WeakPtr { *this }, keyAgreement = WTFMove(*keyAgreement)] (const String& pin) {
             ASSERT(RunLoop::isMain());
             if (!weakThis)
                 return;
@@ -305,7 +305,7 @@ void CtapAuthenticator::continueGetPinTokenAfterRequestPin(const String& pin, co
     }
 
     auto cborCmd = encodeAsCBOR(*tokenRequest);
-    driver().transact(WTFMove(cborCmd), [weakThis = makeWeakPtr(*this), tokenRequest = WTFMove(*tokenRequest)] (Vector<uint8_t>&& data) {
+    driver().transact(WTFMove(cborCmd), [weakThis = WeakPtr { *this }, tokenRequest = WTFMove(*tokenRequest)] (Vector<uint8_t>&& data) {
         ASSERT(RunLoop::isMain());
         if (!weakThis)
             return;

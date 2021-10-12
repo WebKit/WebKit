@@ -550,7 +550,7 @@ void NetworkDataTaskCocoa::willPerformHTTPRedirection(WebCore::ResourceResponse&
     updateTaskWithFirstPartyForSameSiteCookies(m_task.get(), request);
 
     if (m_client)
-        m_client->willPerformHTTPRedirection(WTFMove(redirectResponse), WTFMove(request), [completionHandler = WTFMove(completionHandler), this, weakThis = makeWeakPtr(*this)] (auto&& request) mutable {
+        m_client->willPerformHTTPRedirection(WTFMove(redirectResponse), WTFMove(request), [completionHandler = WTFMove(completionHandler), this, weakThis = WeakPtr { *this }] (auto&& request) mutable {
             if (!weakThis || !m_session)
                 return completionHandler({ });
             if (!request.isNull()) {

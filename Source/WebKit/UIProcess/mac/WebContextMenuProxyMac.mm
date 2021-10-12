@@ -574,7 +574,7 @@ void WebContextMenuProxyMac::insertOrUpdateQuickLookImageItem(const URL& imageUR
 {
     Ref page = *this->page();
     if (quickLookItemToInsertIfNeeded) {
-        page->computeHasImageAnalysisResults(imageURL, imageBitmap.get(), ImageAnalysisType::VisualSearch, [weakThis = makeWeakPtr(*this), quickLookItemToInsertIfNeeded = WTFMove(*quickLookItemToInsertIfNeeded)] (bool hasVisualSearchResults) mutable {
+        page->computeHasImageAnalysisResults(imageURL, imageBitmap.get(), ImageAnalysisType::VisualSearch, [weakThis = WeakPtr { *this }, quickLookItemToInsertIfNeeded = WTFMove(*quickLookItemToInsertIfNeeded)] (bool hasVisualSearchResults) mutable {
             if (RefPtr protectedThis = weakThis.get(); protectedThis && hasVisualSearchResults) {
                 protectedThis->m_quickLookPreviewActivity = QuickLookPreviewActivity::VisualSearch;
                 [protectedThis->m_menu addItem:NSMenuItem.separatorItem];
@@ -585,7 +585,7 @@ void WebContextMenuProxyMac::insertOrUpdateQuickLookImageItem(const URL& imageUR
     }
 
     if (shouldUpdateQuickLookItemTitle) {
-        page->computeHasImageAnalysisResults(imageURL, imageBitmap.get(), ImageAnalysisType::VisualSearch, [weakThis = makeWeakPtr(*this), weakPage = makeWeakPtr(page.get()), imageURL, imageBitmap = WTFMove(imageBitmap)] (bool hasVisualSearchResults) mutable {
+        page->computeHasImageAnalysisResults(imageURL, imageBitmap.get(), ImageAnalysisType::VisualSearch, [weakThis = WeakPtr { *this }, weakPage = makeWeakPtr(page.get()), imageURL, imageBitmap = WTFMove(imageBitmap)] (bool hasVisualSearchResults) mutable {
             RefPtr protectedThis { weakThis.get() };
             if (!protectedThis)
                 return;

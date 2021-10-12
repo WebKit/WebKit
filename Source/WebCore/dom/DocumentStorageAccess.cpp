@@ -123,7 +123,7 @@ void DocumentStorageAccess::hasStorageAccess(Ref<DeferredPromise>&& promise)
         return;
     }
 
-    page->chrome().client().hasStorageAccess(RegistrableDomain::uncheckedCreateFromHost(m_document.securityOrigin().host()), RegistrableDomain::uncheckedCreateFromHost(m_document.topOrigin().host()), *frame, [weakThis = makeWeakPtr(*this), promise = WTFMove(promise)] (bool hasAccess) {
+    page->chrome().client().hasStorageAccess(RegistrableDomain::uncheckedCreateFromHost(m_document.securityOrigin().host()), RegistrableDomain::uncheckedCreateFromHost(m_document.topOrigin().host()), *frame, [weakThis = WeakPtr { *this }, promise = WTFMove(promise)] (bool hasAccess) {
         if (!weakThis)
             return;
 
@@ -199,7 +199,7 @@ void DocumentStorageAccess::requestStorageAccess(Ref<DeferredPromise>&& promise)
     if (!page->settings().storageAccessAPIPerPageScopeEnabled())
         m_storageAccessScope = StorageAccessScope::PerFrame;
 
-    page->chrome().client().requestStorageAccess(RegistrableDomain::uncheckedCreateFromHost(m_document.securityOrigin().host()), RegistrableDomain::uncheckedCreateFromHost(m_document.topOrigin().host()), *frame, m_storageAccessScope, [this, weakThis = makeWeakPtr(*this), promise = WTFMove(promise)] (RequestStorageAccessResult result) mutable {
+    page->chrome().client().requestStorageAccess(RegistrableDomain::uncheckedCreateFromHost(m_document.securityOrigin().host()), RegistrableDomain::uncheckedCreateFromHost(m_document.topOrigin().host()), *frame, m_storageAccessScope, [this, weakThis = WeakPtr { *this }, promise = WTFMove(promise)] (RequestStorageAccessResult result) mutable {
         if (!weakThis)
             return;
 
@@ -266,7 +266,7 @@ void DocumentStorageAccess::requestStorageAccessQuirk(RegistrableDomain&& reques
 
     auto topFrameDomain = RegistrableDomain(m_document.topDocument().url());
 
-    m_document.frame()->page()->chrome().client().requestStorageAccess(WTFMove(requestingDomain), WTFMove(topFrameDomain), *m_document.frame(), m_storageAccessScope, [this, weakThis = makeWeakPtr(*this), completionHandler = WTFMove(completionHandler)] (RequestStorageAccessResult result) mutable {
+    m_document.frame()->page()->chrome().client().requestStorageAccess(WTFMove(requestingDomain), WTFMove(topFrameDomain), *m_document.frame(), m_storageAccessScope, [this, weakThis = WeakPtr { *this }, completionHandler = WTFMove(completionHandler)] (RequestStorageAccessResult result) mutable {
         if (!weakThis)
             return;
 

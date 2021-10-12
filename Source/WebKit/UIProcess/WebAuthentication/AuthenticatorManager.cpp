@@ -238,7 +238,7 @@ void AuthenticatorManager::enableNativeSupport()
 
 void AuthenticatorManager::clearStateAsync()
 {
-    RunLoop::main().dispatch([weakThis = makeWeakPtr(*this)] {
+    RunLoop::main().dispatch([weakThis = WeakPtr { *this }] {
         if (!weakThis)
             return;
         weakThis->clearState();
@@ -300,7 +300,7 @@ void AuthenticatorManager::respondReceived(Respond&& respond)
 
 void AuthenticatorManager::downgrade(Authenticator* id, Ref<Authenticator>&& downgradedAuthenticator)
 {
-    RunLoop::main().dispatch([weakThis = makeWeakPtr(*this), id] {
+    RunLoop::main().dispatch([weakThis = WeakPtr { *this }, id] {
         if (!weakThis)
             return;
         auto removed = weakThis->m_authenticators.remove(id);
@@ -337,7 +337,7 @@ void AuthenticatorManager::requestPin(uint64_t retries, CompletionHandler<void(c
         return;
     }
 
-    auto callback = [weakThis = makeWeakPtr(*this), this, completionHandler = WTFMove(completionHandler)] (const WTF::String& pin) mutable {
+    auto callback = [weakThis = WeakPtr { *this }, this, completionHandler = WTFMove(completionHandler)] (const WTF::String& pin) mutable {
         if (!weakThis)
             return;
 
@@ -462,7 +462,7 @@ void AuthenticatorManager::runPanel()
 
     m_pendingRequestData.panel = API::WebAuthenticationPanel::create(*this, getRpId(options), transports, getClientDataType(options), getUserName(options));
     auto& panel = *m_pendingRequestData.panel;
-    page->uiClient().runWebAuthenticationPanel(*page, panel, *frame, FrameInfoData { m_pendingRequestData.frameInfo }, [transports = WTFMove(transports), weakPanel = makeWeakPtr(panel), weakThis = makeWeakPtr(*this), this] (WebAuthenticationPanelResult result) {
+    page->uiClient().runWebAuthenticationPanel(*page, panel, *frame, FrameInfoData { m_pendingRequestData.frameInfo }, [transports = WTFMove(transports), weakPanel = makeWeakPtr(panel), weakThis = WeakPtr { *this }, this] (WebAuthenticationPanelResult result) {
         // The panel address is used to determine if the current pending request is still the same.
         if (!weakThis || !weakPanel
             || (result == WebAuthenticationPanelResult::DidNotPresent)

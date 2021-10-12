@@ -808,7 +808,7 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::updateLicense(const String&, Li
             m_updateResponseCollector = nullptr;
         }
 
-        m_updateResponseCollector = WTF::makeUnique<UpdateResponseCollector>(m_currentRequest.value().requests.size(), [weakThis = makeWeakPtr(*this), this] (std::optional<UpdateResponseCollector::ResponseMap>&& responses) {
+        m_updateResponseCollector = WTF::makeUnique<UpdateResponseCollector>(m_currentRequest.value().requests.size(), [weakThis = WeakPtr { *this }, this] (std::optional<UpdateResponseCollector::ResponseMap>&& responses) {
             if (!weakThis)
                 return;
 
@@ -1099,7 +1099,7 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::didProvideRequest(AVContentKeyR
 
     RetainPtr<NSData> contentIdentifier = keyIDs.first()->createNSData();
     @try {
-        [request makeStreamingContentKeyRequestDataForApp:appIdentifier.get() contentIdentifier:contentIdentifier.get() options:nil completionHandler:[this, weakThis = makeWeakPtr(*this)] (NSData *contentKeyRequestData, NSError *error) mutable {
+        [request makeStreamingContentKeyRequestDataForApp:appIdentifier.get() contentIdentifier:contentIdentifier.get() options:nil completionHandler:[this, weakThis = WeakPtr { *this }] (NSData *contentKeyRequestData, NSError *error) mutable {
             callOnMainThread([this, weakThis = WTFMove(weakThis), error = retainPtr(error), contentKeyRequestData = retainPtr(contentKeyRequestData)] {
                 if (!weakThis)
                     return;
@@ -1179,7 +1179,7 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::didProvideRequests(Vector<Retai
         RequestsData requestsData;
     };
 
-    auto aggregator = CallbackAggregator::create([this, weakThis = makeWeakPtr(*this)] (RequestsData&& requestsData) {
+    auto aggregator = CallbackAggregator::create([this, weakThis = WeakPtr { *this }] (RequestsData&& requestsData) {
         if (!weakThis)
             return;
 
@@ -1254,7 +1254,7 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::didProvideRenewingRequest(AVCon
 
     RetainPtr<NSData> contentIdentifier = keyIDs.first()->createNSData();
     @try {
-        [request makeStreamingContentKeyRequestDataForApp:appIdentifier.get() contentIdentifier:contentIdentifier.get() options:nil completionHandler:[this, weakThis = makeWeakPtr(*this)] (NSData *contentKeyRequestData, NSError *error) mutable {
+        [request makeStreamingContentKeyRequestDataForApp:appIdentifier.get() contentIdentifier:contentIdentifier.get() options:nil completionHandler:[this, weakThis = WeakPtr { *this }] (NSData *contentKeyRequestData, NSError *error) mutable {
             callOnMainThread([this, weakThis = WTFMove(weakThis), error = retainPtr(error), contentKeyRequestData = retainPtr(contentKeyRequestData)] {
                 if (!weakThis || !m_client || error)
                     return;

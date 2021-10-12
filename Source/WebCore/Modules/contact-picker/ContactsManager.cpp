@@ -52,7 +52,7 @@ Ref<ContactsManager> ContactsManager::create(Navigator& navigator)
 }
 
 ContactsManager::ContactsManager(Navigator& navigator)
-    : m_navigator(makeWeakPtr(navigator))
+    : m_navigator(navigator)
 {
 }
 

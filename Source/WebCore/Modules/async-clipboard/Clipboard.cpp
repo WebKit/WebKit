@@ -73,7 +73,7 @@ Ref<Clipboard> Clipboard::create(Navigator& navigator)
 }
 
 Clipboard::Clipboard(Navigator& navigator)
-    : m_navigator(makeWeakPtr(navigator))
+    : m_navigator(navigator)
 {
 }
 
@@ -302,7 +302,7 @@ Pasteboard& Clipboard::activePasteboard()
 }
 
 Clipboard::ItemWriter::ItemWriter(Clipboard& clipboard, Ref<DeferredPromise>&& promise)
-    : m_clipboard(makeWeakPtr(clipboard))
+    : m_clipboard(clipboard)
     , m_promise(WTFMove(promise))
     , m_pasteboard(Pasteboard::createForCopyAndPaste(PagePasteboardContext::create(clipboard.frame()->pageID())))
 {

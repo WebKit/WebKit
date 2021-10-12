@@ -84,7 +84,7 @@ auto MockHidConnection::sendSync(const Vector<uint8_t>& data) -> DataSent
 void MockHidConnection::send(Vector<uint8_t>&& data, DataSentCallback&& callback)
 {
     ASSERT(isInitialized());
-    auto task = makeBlockPtr([weakThis = makeWeakPtr(*this), data = WTFMove(data), callback = WTFMove(callback)]() mutable {
+    auto task = makeBlockPtr([weakThis = WeakPtr { *this }, data = WTFMove(data), callback = WTFMove(callback)]() mutable {
         ASSERT(!RunLoop::isMain());
         RunLoop::main().dispatch([weakThis, data = WTFMove(data), callback = WTFMove(callback)]() mutable {
             if (!weakThis) {
@@ -281,7 +281,7 @@ void MockHidConnection::feedReports()
         if (!isFirst && stagesMatch() && m_configuration.hid->error == Mock::HidError::WrongChannelId)
             report = FidoHidContinuationPacket(m_currentChannel - 1, 0, { }).getSerializedData();
         // Packets are feed asynchronously to mimic actual data transmission.
-        RunLoop::main().dispatch([report = WTFMove(report), weakThis = makeWeakPtr(*this)]() mutable {
+        RunLoop::main().dispatch([report = WTFMove(report), weakThis = WeakPtr { *this }]() mutable {
             if (!weakThis)
                 return;
             weakThis->receiveReport(WTFMove(report));
@@ -307,7 +307,7 @@ void MockHidConnection::shouldContinueFeedReports()
 void MockHidConnection::continueFeedReports()
 {
     // Send actual response for the next run.
-    RunLoop::main().dispatch([weakThis = makeWeakPtr(*this)]() mutable {
+    RunLoop::main().dispatch([weakThis = WeakPtr { *this }]() mutable {
         if (!weakThis)
             return;
         weakThis->feedReports();

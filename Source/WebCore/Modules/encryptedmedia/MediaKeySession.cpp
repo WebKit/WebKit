@@ -106,7 +106,7 @@ MediaKeySession::MediaKeySession(Document& document, WeakPtr<MediaKeys>&& keys, 
 #if !RELEASE_LOG_DISABLED
     m_instanceSession->setLogger(m_logger, m_logIdentifier);
 #endif
-    m_instanceSession->setClient(makeWeakPtr(*this));
+    m_instanceSession->setClient(*this);
 
     document.addDisplayChangedObserver(m_displayChangedObserver);
 }
@@ -173,7 +173,7 @@ void MediaKeySession::generateRequest(const AtomString& initDataType, const Buff
     // 8. Let session type be this object's session type.
     // 9. Let promise be a new promise.
     // 10. Run the following steps in parallel:
-    queueTaskKeepingObjectAlive(*this, TaskSource::Networking, [this, weakThis = makeWeakPtr(*this), initData = SharedBuffer::create(initData.data(), initData.length()), initDataType, promise = WTFMove(promise), identifier = WTFMove(identifier)] () mutable {
+    queueTaskKeepingObjectAlive(*this, TaskSource::Networking, [this, weakThis = WeakPtr { *this }, initData = SharedBuffer::create(initData.data(), initData.length()), initDataType, promise = WTFMove(promise), identifier = WTFMove(identifier)] () mutable {
         // 10.1. If the init data is not valid for initDataType, reject promise with a newly created TypeError.
         // 10.2. Let sanitized init data be a validated and sanitized version of init data.
         RefPtr<SharedBuffer> sanitizedInitData = m_implementation->sanitizeInitData(initDataType, initData);
@@ -302,7 +302,7 @@ void MediaKeySession::load(const String& sessionId, Ref<DeferredPromise>&& promi
 
     // 7. Let promise be a new promise.
     // 8. Run the following steps in parallel:
-    queueTaskKeepingObjectAlive(*this, TaskSource::Networking, [this, weakThis = makeWeakPtr(*this), sessionId, promise = WTFMove(promise), identifier = WTFMove(identifier)] () mutable {
+    queueTaskKeepingObjectAlive(*this, TaskSource::Networking, [this, weakThis = WeakPtr { *this }, sessionId, promise = WTFMove(promise), identifier = WTFMove(identifier)] () mutable {
         // 8.1. Let sanitized session ID be a validated and/or sanitized version of sessionId.
         // 8.2. If the preceding step failed, or if sanitized session ID is empty, reject promise with a newly created TypeError.
         std::optional<String> sanitizedSessionId = m_implementation->sanitizeSessionId(sessionId);
@@ -420,7 +420,7 @@ void MediaKeySession::update(const BufferSource& response, Ref<DeferredPromise>&
     // 4. Let response copy be a copy of the contents of the response parameter.
     // 5. Let promise be a new promise.
     // 6. Run the following steps in parallel:
-    queueTaskKeepingObjectAlive(*this, TaskSource::Networking, [this, weakThis = makeWeakPtr(*this), response = SharedBuffer::create(response.data(), response.length()), promise = WTFMove(promise), identifier = WTFMove(identifier)] () mutable {
+    queueTaskKeepingObjectAlive(*this, TaskSource::Networking, [this, weakThis = WeakPtr { *this }, response = SharedBuffer::create(response.data(), response.length()), promise = WTFMove(promise), identifier = WTFMove(identifier)] () mutable {
         // 6.1. Let sanitized response be a validated and/or sanitized version of response copy.
         RefPtr<SharedBuffer> sanitizedResponse = m_implementation->sanitizeResponse(response);
 
@@ -554,7 +554,7 @@ void MediaKeySession::close(Ref<DeferredPromise>&& promise)
 
     // 4. Let promise be a new promise.
     // 5. Run the following steps in parallel:
-    queueTaskKeepingObjectAlive(*this, TaskSource::Networking, [this, weakThis = makeWeakPtr(*this), promise = WTFMove(promise), identifier = WTFMove(identifier)] () mutable {
+    queueTaskKeepingObjectAlive(*this, TaskSource::Networking, [this, weakThis = WeakPtr { *this }, promise = WTFMove(promise), identifier = WTFMove(identifier)] () mutable {
         // 5.1. Let cdm be the CDM instance represented by session's cdm instance value.
         // 5.2. Use cdm to close the key session associated with session.
         m_instanceSession->closeSession(m_sessionId, [this, weakThis = makeWeakPtr(*weakThis), promise = WTFMove(promise), identifier = WTFMove(identifier)] () mutable {
@@ -595,7 +595,7 @@ void MediaKeySession::remove(Ref<DeferredPromise>&& promise)
 
     // 3. Let promise be a new promise.
     // 4. Run the following steps in parallel:
-    queueTaskKeepingObjectAlive(*this, TaskSource::Networking, [this, weakThis = makeWeakPtr(*this), promise = WTFMove(promise), identifier = WTFMove(identifier)] () mutable {
+    queueTaskKeepingObjectAlive(*this, TaskSource::Networking, [this, weakThis = WeakPtr { *this }, promise = WTFMove(promise), identifier = WTFMove(identifier)] () mutable {
         // 4.1. Let cdm be the CDM instance represented by this object's cdm instance value.
         // 4.2. Let message be null.
         // 4.3. Let message type be null.

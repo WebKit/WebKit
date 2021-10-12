@@ -284,7 +284,7 @@ Element* AXObjectCache::currentModalNode()
     for (auto& element : m_modalElementsSet) {
         if (isNodeVisible(element)) {
             if (focusedElement && focusedElement->isDescendantOf(element)) {
-                m_currentModalElement = makeWeakPtr(element);
+                m_currentModalElement = element;
                 break;
             }
 
@@ -293,7 +293,7 @@ Element* AXObjectCache::currentModalNode()
     }
 
     if (!m_currentModalElement)
-        m_currentModalElement = makeWeakPtr(lastVisible.get());
+        m_currentModalElement = lastVisible.get();
 
     return m_currentModalElement.get();
 }

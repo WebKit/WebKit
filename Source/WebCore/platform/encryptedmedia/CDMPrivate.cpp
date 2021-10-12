@@ -75,7 +75,7 @@ void CDMPrivate::doSupportedConfigurationStep(CDMKeySystemConfiguration&& candid
         return;
     }
 
-    auto consentCallback = [weakThis = makeWeakPtr(*this), callback = WTFMove(callback), access] (ConsentStatus status, CDMKeySystemConfiguration&& configuration, CDMRestrictions&& restrictions) mutable {
+    auto consentCallback = [weakThis = WeakPtr { *this }, callback = WTFMove(callback), access] (ConsentStatus status, CDMKeySystemConfiguration&& configuration, CDMRestrictions&& restrictions) mutable {
         if (!weakThis) {
             callback(std::nullopt);
             return;

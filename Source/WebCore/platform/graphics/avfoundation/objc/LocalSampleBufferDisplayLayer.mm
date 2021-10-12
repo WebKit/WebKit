@@ -407,7 +407,7 @@ void LocalSampleBufferDisplayLayer::clearEnqueuedSamples()
 
 void LocalSampleBufferDisplayLayer::requestNotificationWhenReadyForVideoData()
 {
-    auto weakThis = makeWeakPtr(*this);
+    WeakPtr weakThis { *this };
     [m_sampleBufferDisplayLayer requestMediaDataWhenReadyOnQueue:dispatch_get_main_queue() usingBlock:^{
         if (!weakThis)
             return;

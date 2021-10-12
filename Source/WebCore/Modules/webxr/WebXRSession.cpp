@@ -210,7 +210,7 @@ void WebXRSession::requestReferenceSpace(XRReferenceSpaceType type, RequestRefer
 
     // 1. Let promise be a new Promise.
     // 2. Run the following steps in parallel:
-    scriptExecutionContext()->postTask([this, weakThis = makeWeakPtr(*this), promise = WTFMove(promise), type](auto&) mutable {
+    scriptExecutionContext()->postTask([this, weakThis = WeakPtr { *this }, promise = WTFMove(promise), type](auto&) mutable {
         if (!weakThis)
             return;
         // 2.1. If the result of running reference space is supported for type and session is false, queue a task to reject promise

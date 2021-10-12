@@ -2205,7 +2205,7 @@ void WebFrameLoaderClient::getLoadDecisionForIcons(const Vector<std::pair<WebCor
         }
 
         m_loadingIcon = true;
-        documentLoader->didGetLoadDecisionForIcon(true, icon->second, [this, weakThis = makeWeakPtr(*this)] (WebCore::SharedBuffer* buffer) {
+        documentLoader->didGetLoadDecisionForIcon(true, icon->second, [this, weakThis = WeakPtr { *this }] (WebCore::SharedBuffer* buffer) {
             if (!weakThis)
                 return;
             finishedLoadingIcon(buffer);

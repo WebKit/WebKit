@@ -574,7 +574,7 @@ void TextManipulationController::scheduleObservationUpdate()
 
     m_didScheduleObservationUpdate = true;
 
-    m_document->eventLoop().queueTask(TaskSource::InternalAsyncTask, [weakThis = makeWeakPtr(*this)] {
+    m_document->eventLoop().queueTask(TaskSource::InternalAsyncTask, [weakThis = WeakPtr { *this }] {
         auto* controller = weakThis.get();
         if (!controller)
             return;

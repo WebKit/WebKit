@@ -467,7 +467,7 @@ void CDMInstanceSessionClearKey::requestLicense(LicenseType, const AtomString& i
         initData = extractKeyIdFromWebMInitData(initData.get());
 
     callOnMainThread(
-        [this, weakThis = makeWeakPtr(*this), callback = WTFMove(callback), initData = WTFMove(initData)]() mutable {
+        [this, weakThis = WeakPtr { *this }, callback = WTFMove(callback), initData = WTFMove(initData)]() mutable {
             if (!weakThis)
                 return;
 
@@ -483,7 +483,7 @@ void CDMInstanceSessionClearKey::updateLicense(const String& sessionId, LicenseT
     UNUSED_PARAM(sessionId);
 #endif
     auto dispatchCallback =
-        [weakThis = makeWeakPtr(*this), &callback](bool sessionWasClosed, std::optional<KeyStatusVector>&& changedKeys, SuccessValue succeeded) {
+        [weakThis = WeakPtr { *this }, &callback](bool sessionWasClosed, std::optional<KeyStatusVector>&& changedKeys, SuccessValue succeeded) {
             callOnMainThread(
                 [weakThis = makeWeakPtr(*weakThis), callback = WTFMove(callback), sessionWasClosed, changedKeys = WTFMove(changedKeys), succeeded] () mutable {
                     if (!weakThis)
@@ -538,7 +538,7 @@ void CDMInstanceSessionClearKey::loadSession(LicenseType, const String& sessionI
 
     ASSERT(sessionId == m_sessionID);
     KeyStatusVector keyStatusVector = m_keyStore.convertToJSKeyStatusVector();
-    callOnMainThread([weakThis = makeWeakPtr(*this), callback = WTFMove(callback), &keyStatusVector]() mutable {
+    callOnMainThread([weakThis = WeakPtr { *this }, callback = WTFMove(callback), &keyStatusVector]() mutable {
         if (!weakThis)
             return;
 
@@ -549,7 +549,7 @@ void CDMInstanceSessionClearKey::loadSession(LicenseType, const String& sessionI
 void CDMInstanceSessionClearKey::closeSession(const String&, CloseSessionCallback&& callback)
 {
     callOnMainThread(
-        [weakThis = makeWeakPtr(*this), callback = WTFMove(callback)] () mutable {
+        [weakThis = WeakPtr { *this }, callback = WTFMove(callback)] () mutable {
             if (!weakThis)
                 return;
 
@@ -566,7 +566,7 @@ void CDMInstanceSessionClearKey::removeSessionData(const String& sessionId, Lice
     ASSERT(sessionId == m_sessionID);
 
     auto dispatchCallback =
-        [weakThis = makeWeakPtr(*this), &callback](KeyStatusVector&& keyStatusVector, std::optional<Ref<SharedBuffer>>&& message, SuccessValue success) {
+        [weakThis = WeakPtr { *this }, &callback](KeyStatusVector&& keyStatusVector, std::optional<Ref<SharedBuffer>>&& message, SuccessValue success) {
             callOnMainThread(
                 [weakThis = makeWeakPtr(*weakThis), callback = WTFMove(callback), keyStatusVector = WTFMove(keyStatusVector), message = WTFMove(message), success]() mutable {
                     if (!weakThis)

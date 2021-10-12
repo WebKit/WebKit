@@ -468,7 +468,7 @@ void WebProcessPool::getGPUProcessConnection(WebProcessProxy& webProcessProxy, G
 #if ENABLE(IPC_TESTING_API)
     parameters.ignoreInvalidMessageForTesting = webProcessProxy.ignoreInvalidMessageForTesting();
 #endif
-    ensureGPUProcess().getGPUProcessConnection(webProcessProxy, parameters, [this, weakThis = makeWeakPtr(*this), parameters, webProcessProxy = makeWeakPtr(webProcessProxy), reply = WTFMove(reply)] (auto& connectionInfo) mutable {
+    ensureGPUProcess().getGPUProcessConnection(webProcessProxy, parameters, [this, weakThis = WeakPtr { *this }, parameters, webProcessProxy = makeWeakPtr(webProcessProxy), reply = WTFMove(reply)] (auto& connectionInfo) mutable {
         if (UNLIKELY(!IPC::Connection::identifierIsValid(connectionInfo.identifier()))) {
             // Retry on the next RunLoop iteration because we may be inside the WebProcessPool destructor.
             RunLoop::main().dispatch([this, weakThis = WTFMove(weakThis), webProcessProxy = WTFMove(webProcessProxy), parameters = WTFMove(parameters), reply = WTFMove(reply)] () mutable {
@@ -488,7 +488,7 @@ void WebProcessPool::getGPUProcessConnection(WebProcessProxy& webProcessProxy, G
 #if ENABLE(WEB_AUTHN)
 void WebProcessPool::getWebAuthnProcessConnection(WebProcessProxy& webProcessProxy, Messages::WebProcessProxy::GetWebAuthnProcessConnection::DelayedReply&& reply)
 {
-    WebAuthnProcessProxy::singleton().getWebAuthnProcessConnection(webProcessProxy, [this, weakThis = makeWeakPtr(*this), webProcessProxy = makeWeakPtr(webProcessProxy), reply = WTFMove(reply)] (auto& connectionInfo) mutable {
+    WebAuthnProcessProxy::singleton().getWebAuthnProcessConnection(webProcessProxy, [this, weakThis = WeakPtr { *this }, webProcessProxy = makeWeakPtr(webProcessProxy), reply = WTFMove(reply)] (auto& connectionInfo) mutable {
         if (UNLIKELY(!IPC::Connection::identifierIsValid(connectionInfo.identifier()) && webProcessProxy && weakThis)) {
             WEBPROCESSPOOL_RELEASE_LOG_ERROR(Process, "getWebAuthnProcessConnection: Failed first attempt, retrying");
             WebAuthnProcessProxy::singleton().getWebAuthnProcessConnection(*webProcessProxy, WTFMove(reply));

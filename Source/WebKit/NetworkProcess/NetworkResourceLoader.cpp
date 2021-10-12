@@ -188,7 +188,7 @@ void NetworkResourceLoader::start()
     m_wasStarted = true;
 
     if (m_networkLoadChecker) {
-        m_networkLoadChecker->check(ResourceRequest { originalRequest() }, this, [this, weakThis = makeWeakPtr(*this)] (auto&& result) {
+        m_networkLoadChecker->check(ResourceRequest { originalRequest() }, this, [this, weakThis = WeakPtr { *this }] (auto&& result) {
             if (!weakThis)
                 return;
 
@@ -253,7 +253,7 @@ void NetworkResourceLoader::retrieveCacheEntry(const ResourceRequest& request)
     }
 
     LOADER_RELEASE_LOG("retrieveCacheEntry: Checking the HTTP disk cache");
-    m_cache->retrieve(request, globalFrameID(), m_parameters.isNavigatingToAppBoundDomain, [this, weakThis = makeWeakPtr(*this), request = ResourceRequest { request }](auto entry, auto info) mutable {
+    m_cache->retrieve(request, globalFrameID(), m_parameters.isNavigatingToAppBoundDomain, [this, weakThis = WeakPtr { *this }, request = ResourceRequest { request }](auto entry, auto info) mutable {
         if (!weakThis)
             return;
 
@@ -343,7 +343,7 @@ void NetworkResourceLoader::startNetworkLoad(ResourceRequest&& request, FirstLoa
     parameters.isNavigatingToAppBoundDomain = m_parameters.isNavigatingToAppBoundDomain;
     m_networkLoad = makeUnique<NetworkLoad>(*this, &networkSession->blobRegistry(), WTFMove(parameters), *networkSession);
     
-    auto weakThis = makeWeakPtr(*this);
+    WeakPtr weakThis { *this };
     if (isSynchronous())
         m_networkLoad->start(); // May delete this object
     else

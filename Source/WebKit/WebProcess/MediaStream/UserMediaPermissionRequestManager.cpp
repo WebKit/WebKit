@@ -151,7 +151,7 @@ void UserMediaPermissionRequestManager::enumerateMediaDevices(Document& document
 #if USE(GSTREAMER)
 void UserMediaPermissionRequestManager::updateCaptureDevices(ShouldNotify shouldNotify)
 {
-    WebCore::RealtimeMediaSourceCenter::singleton().getMediaStreamDevices([weakThis = makeWeakPtr(*this), this, shouldNotify](auto&& newDevices) mutable {
+    WebCore::RealtimeMediaSourceCenter::singleton().getMediaStreamDevices([weakThis = WeakPtr { *this }, this, shouldNotify](auto&& newDevices) mutable {
         if (!weakThis)
             return;
 

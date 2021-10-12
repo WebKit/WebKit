@@ -112,7 +112,7 @@ void WebPermissionController::tryProcessingRequests()
         }
 
         currentRequest.isWaitingForReply = true;
-        m_page->sendWithAsyncReply(Messages::WebPageProxy::requestPermission(currentRequest.origin, currentRequest.descriptor), [this, weakThis = makeWeakPtr(*this)](auto state) {
+        m_page->sendWithAsyncReply(Messages::WebPageProxy::requestPermission(currentRequest.origin, currentRequest.descriptor), [this, weakThis = WeakPtr { *this }](auto state) {
             if (!weakThis)
                 return;
 

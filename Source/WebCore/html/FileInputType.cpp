@@ -437,7 +437,7 @@ void FileInputType::filesChosen(const Vector<FileChooserFileInfo>& paths, const 
         return;
     }
 
-    m_directoryFileListCreator = DirectoryFileListCreator::create([this, weakThis = makeWeakPtr(*this), icon = RefPtr { icon }](Ref<FileList>&& fileList) mutable {
+    m_directoryFileListCreator = DirectoryFileListCreator::create([this, weakThis = WeakPtr { *this }, icon = RefPtr { icon }](Ref<FileList>&& fileList) mutable {
         ASSERT(isMainThread());
         if (!weakThis)
             return;

@@ -81,7 +81,7 @@ void PlatformXRSystem::initializeTrackingAndRendering()
 
     auto immersiveSessionActivity = m_page.process().throttler().foregroundActivity("XR immersive session"_s);
 
-    xrCoordinator->startSession(m_page, [weakThis = makeWeakPtr(*this), immersiveSessionActivity = WTFMove(immersiveSessionActivity)](XRDeviceIdentifier deviceIdentifier) mutable {
+    xrCoordinator->startSession(m_page, [weakThis = WeakPtr { *this }, immersiveSessionActivity = WTFMove(immersiveSessionActivity)](XRDeviceIdentifier deviceIdentifier) mutable {
         RunLoop::main().dispatch([weakThis, deviceIdentifier, immersiveSessionActivity = WTFMove(immersiveSessionActivity)]() mutable {
             if (weakThis)
                 weakThis->m_page.send(Messages::PlatformXRSystemProxy::SessionDidEnd(deviceIdentifier));

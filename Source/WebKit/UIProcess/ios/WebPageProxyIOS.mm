@@ -1504,7 +1504,7 @@ void WebPageProxy::willOpenAppLink()
     // We chose 25 seconds because the system only gives us 30 seconds and we don't want to get too close to that limit
     // to avoid assertion invalidation (or even termination).
     m_openingAppLinkActivity = process().throttler().backgroundActivity("Opening AppLink"_s).moveToUniquePtr();
-    WorkQueue::main().dispatchAfter(25_s, [weakThis = makeWeakPtr(*this)] {
+    WorkQueue::main().dispatchAfter(25_s, [weakThis = WeakPtr { *this }] {
         if (weakThis)
             weakThis->m_openingAppLinkActivity = nullptr;
     });

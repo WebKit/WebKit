@@ -122,7 +122,7 @@ using namespace HTMLNames;
 
 AccessibilityRenderObject::AccessibilityRenderObject(RenderObject* renderer)
     : AccessibilityNodeObject(renderer->node())
-    , m_renderer(makeWeakPtr(renderer))
+    , m_renderer(renderer)
 {
 #ifndef NDEBUG
     m_renderer->setHasAXObject(true);
@@ -166,7 +166,7 @@ RenderBoxModelObject* AccessibilityRenderObject::renderBoxModelObject() const
 
 void AccessibilityRenderObject::setRenderer(RenderObject* renderer)
 {
-    m_renderer = makeWeakPtr(renderer);
+    m_renderer = renderer;
     setNode(renderer->node());
 }
 

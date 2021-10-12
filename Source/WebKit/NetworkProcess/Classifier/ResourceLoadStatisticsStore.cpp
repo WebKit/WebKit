@@ -183,7 +183,7 @@ void ResourceLoadStatisticsStore::removeDataRecords(CompletionHandler<void()>&& 
 
     setDataRecordsBeingRemoved(true);
 
-    RunLoop::main().dispatch([store = Ref { m_store }, domainsToDeleteOrRestrictWebsiteDataFor = crossThreadCopy(domainsToDeleteOrRestrictWebsiteDataFor), completionHandler = WTFMove(completionHandler), weakThis = makeWeakPtr(*this), shouldNotifyPagesWhenDataRecordsWereScanned = m_parameters.shouldNotifyPagesWhenDataRecordsWereScanned, workQueue = m_workQueue] () mutable {
+    RunLoop::main().dispatch([store = Ref { m_store }, domainsToDeleteOrRestrictWebsiteDataFor = crossThreadCopy(domainsToDeleteOrRestrictWebsiteDataFor), completionHandler = WTFMove(completionHandler), weakThis = WeakPtr { *this }, shouldNotifyPagesWhenDataRecordsWereScanned = m_parameters.shouldNotifyPagesWhenDataRecordsWereScanned, workQueue = m_workQueue] () mutable {
         store->deleteAndRestrictWebsiteDataForRegistrableDomains(WebResourceLoadStatisticsStore::monitoredDataTypes(), WTFMove(domainsToDeleteOrRestrictWebsiteDataFor), shouldNotifyPagesWhenDataRecordsWereScanned, [completionHandler = WTFMove(completionHandler), weakThis = WTFMove(weakThis), workQueue](const HashSet<RegistrableDomain>& domainsWithDeletedWebsiteData) mutable {
             workQueue->dispatch([domainsWithDeletedWebsiteData = crossThreadCopy(domainsWithDeletedWebsiteData), completionHandler = WTFMove(completionHandler), weakThis = WTFMove(weakThis)] () mutable {
                 if (!weakThis) {
@@ -219,7 +219,7 @@ void ResourceLoadStatisticsStore::processStatisticsAndDataRecords()
     if (m_parameters.shouldClassifyResourcesBeforeDataRecordsRemoval)
         classifyPrevalentResources();
     
-    removeDataRecords([this, weakThis = makeWeakPtr(*this)] () mutable {
+    removeDataRecords([this, weakThis = WeakPtr { *this }] () mutable {
         ASSERT(!RunLoop::isMain());
         if (!weakThis)
             return;
@@ -241,7 +241,7 @@ void ResourceLoadStatisticsStore::grandfatherExistingWebsiteData(CompletionHandl
 {
     ASSERT(!RunLoop::isMain());
 
-    RunLoop::main().dispatch([weakThis = makeWeakPtr(*this), callback = WTFMove(callback), shouldNotifyPagesWhenDataRecordsWereScanned = m_parameters.shouldNotifyPagesWhenDataRecordsWereScanned, workQueue = m_workQueue, store = Ref { m_store }] () mutable {
+    RunLoop::main().dispatch([weakThis = WeakPtr { *this }, callback = WTFMove(callback), shouldNotifyPagesWhenDataRecordsWereScanned = m_parameters.shouldNotifyPagesWhenDataRecordsWereScanned, workQueue = m_workQueue, store = Ref { m_store }] () mutable {
         store->registrableDomainsWithWebsiteData(WebResourceLoadStatisticsStore::monitoredDataTypes(), shouldNotifyPagesWhenDataRecordsWereScanned, [weakThis = WTFMove(weakThis), callback = WTFMove(callback), workQueue] (HashSet<RegistrableDomain>&& domainsWithWebsiteData) mutable {
             workQueue->dispatch([weakThis = WTFMove(weakThis), domainsWithWebsiteData = crossThreadCopy(domainsWithWebsiteData), callback = WTFMove(callback)] () mutable {
                 if (!weakThis) {
@@ -299,7 +299,7 @@ void ResourceLoadStatisticsStore::scheduleStatisticsProcessingRequestIfNecessary
     ASSERT(!RunLoop::isMain());
 
     m_pendingStatisticsProcessingRequestIdentifier = ++m_lastStatisticsProcessingRequestIdentifier;
-    m_workQueue->dispatchAfter(minimumStatisticsProcessingInterval, [this, weakThis = makeWeakPtr(*this), statisticsProcessingRequestIdentifier = *m_pendingStatisticsProcessingRequestIdentifier] {
+    m_workQueue->dispatchAfter(minimumStatisticsProcessingInterval, [this, weakThis = WeakPtr { *this }, statisticsProcessingRequestIdentifier = *m_pendingStatisticsProcessingRequestIdentifier] {
         if (!weakThis)
             return;
 
@@ -486,7 +486,7 @@ void ResourceLoadStatisticsStore::didCreateNetworkProcess()
 void ResourceLoadStatisticsStore::debugBroadcastConsoleMessage(MessageSource source, MessageLevel level, const String& message)
 {
     if (!RunLoop::isMain()) {
-        RunLoop::main().dispatch([&, weakThis = makeWeakPtr(*this), source = crossThreadCopy(source), level = crossThreadCopy(level), message = crossThreadCopy(message)]() {
+        RunLoop::main().dispatch([&, weakThis = WeakPtr { *this }, source = crossThreadCopy(source), level = crossThreadCopy(level), message = crossThreadCopy(message)]() {
             if (!weakThis)
                 return;
 

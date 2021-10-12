@@ -152,7 +152,7 @@ void MediaPlayerPrivateAVFoundation::setNeedsRenderingModeChanged()
         return;
     m_needsRenderingModeChanged = true;
 
-    queueTaskOnEventLoop([weakThis = makeWeakPtr(*this)] {
+    queueTaskOnEventLoop([weakThis = WeakPtr { *this }] {
         if (weakThis)
             weakThis->renderingModeChanged();
     });
@@ -774,7 +774,7 @@ void MediaPlayerPrivateAVFoundation::scheduleMainThreadNotification(Notification
         if (delayDispatch && !m_mainThreadCallPending) {
             m_mainThreadCallPending = true;
 
-            callOnMainThread([weakThis = makeWeakPtr(*this)] {
+            callOnMainThread([weakThis = WeakPtr { *this }] {
                 if (!weakThis)
                     return;
 
@@ -806,7 +806,7 @@ void MediaPlayerPrivateAVFoundation::dispatchNotification()
         }
         
         if (!m_queuedNotifications.isEmpty() && !m_mainThreadCallPending) {
-            callOnMainThread([weakThis = makeWeakPtr(*this)] {
+            callOnMainThread([weakThis = WeakPtr { *this }] {
                 if (!weakThis)
                     return;
 

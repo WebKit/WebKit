@@ -116,7 +116,7 @@ void SimulatedXRDevice::initializeTrackingAndRendering(PlatformXR::SessionMode)
         // There is no way to know how many simulateInputConnection calls will the device receive,
         // so notify the input sources have been initialized with an empty list. This is not a problem because
         // WPT tests rely on requestAnimationFrame updates to test the input sources.
-        callOnMainThread([this, weakThis = makeWeakPtr(*this)]() {
+        callOnMainThread([this, weakThis = WeakPtr { *this }]() {
             if (!weakThis)
                 return;
             if (m_trackingAndRenderingClient)

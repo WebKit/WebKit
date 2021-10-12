@@ -84,7 +84,7 @@ void PrivateClickMeasurementManager::storeUnattributed(PrivateClickMeasurement&&
     if (measurement.ephemeralSourceNonce()) {
         auto measurementCopy = measurement;
         // This is guaranteed to be close in time to the navigational click which makes it likely to be personally identifiable.
-        getTokenPublicKey(WTFMove(measurementCopy), PrivateClickMeasurement::AttributionReportEndpoint::Source, PrivateClickMeasurement::PcmDataCarried::PersonallyIdentifiable, [weakThis = makeWeakPtr(*this), this] (PrivateClickMeasurement&& measurement, const String& publicKeyBase64URL) {
+        getTokenPublicKey(WTFMove(measurementCopy), PrivateClickMeasurement::AttributionReportEndpoint::Source, PrivateClickMeasurement::PcmDataCarried::PersonallyIdentifiable, [weakThis = WeakPtr { *this }, this] (PrivateClickMeasurement&& measurement, const String& publicKeyBase64URL) {
             if (!weakThis)
                 return;
 
@@ -136,7 +136,7 @@ void PrivateClickMeasurementManager::getTokenPublicKey(PrivateClickMeasurement&&
     RELEASE_LOG_INFO(PrivateClickMeasurement, "About to fire a token public key request.");
     m_client->broadcastConsoleMessage(MessageLevel::Log, "[Private Click Measurement] About to fire a token public key request."_s);
 
-    PCM::NetworkLoader::start(WTFMove(tokenPublicKeyURL), nullptr, pcmDataCarried, [weakThis = makeWeakPtr(*this), this, attribution = WTFMove(attribution), callback = WTFMove(callback)] (auto& error, auto& response, auto& jsonObject) mutable {
+    PCM::NetworkLoader::start(WTFMove(tokenPublicKeyURL), nullptr, pcmDataCarried, [weakThis = WeakPtr { *this }, this, attribution = WTFMove(attribution), callback = WTFMove(callback)] (auto& error, auto& response, auto& jsonObject) mutable {
         if (!weakThis)
             return;
 
@@ -179,7 +179,7 @@ void PrivateClickMeasurementManager::getSignedUnlinkableToken(PrivateClickMeasur
     RELEASE_LOG_INFO(PrivateClickMeasurement, "About to fire a unlinkable token signing request.");
     m_client->broadcastConsoleMessage(MessageLevel::Log, "[Private Click Measurement] About to fire a unlinkable token signing request."_s);
 
-    PCM::NetworkLoader::start(WTFMove(tokenSignatureURL), measurement.tokenSignatureJSON(), pcmDataCarried, [weakThis = makeWeakPtr(*this), this, measurement = WTFMove(measurement)] (auto& error, auto& response, auto& jsonObject) mutable {
+    PCM::NetworkLoader::start(WTFMove(tokenSignatureURL), measurement.tokenSignatureJSON(), pcmDataCarried, [weakThis = WeakPtr { *this }, this, measurement = WTFMove(measurement)] (auto& error, auto& response, auto& jsonObject) mutable {
         if (!weakThis)
             return;
 
@@ -281,7 +281,7 @@ void PrivateClickMeasurementManager::attribute(const SourceSite& sourceSite, con
     if (!featureEnabled())
         return;
 
-    store().attributePrivateClickMeasurement(sourceSite, destinationSite, applicationBundleIdentifier, WTFMove(attributionTriggerData), [this, weakThis = makeWeakPtr(*this)] (auto attributionSecondsUntilSendData, auto debugInfo) {
+    store().attributePrivateClickMeasurement(sourceSite, destinationSite, applicationBundleIdentifier, WTFMove(attributionTriggerData), [this, weakThis = WeakPtr { *this }] (auto attributionSecondsUntilSendData, auto debugInfo) {
         if (!weakThis)
             return;
         
@@ -326,7 +326,7 @@ void PrivateClickMeasurementManager::fireConversionRequest(const PrivateClickMea
 
     auto attributionCopy = attribution;
     // This happens out of webpage context and with a long delay and is thus unlikely to be personally identifiable.
-    getTokenPublicKey(WTFMove(attributionCopy), attributionReportEndpoint, PrivateClickMeasurement::PcmDataCarried::NonPersonallyIdentifiable, [weakThis = makeWeakPtr(*this), this, attributionReportEndpoint] (PrivateClickMeasurement&& attribution, const String& publicKeyBase64URL) {
+    getTokenPublicKey(WTFMove(attributionCopy), attributionReportEndpoint, PrivateClickMeasurement::PcmDataCarried::NonPersonallyIdentifiable, [weakThis = WeakPtr { *this }, this, attributionReportEndpoint] (PrivateClickMeasurement&& attribution, const String& publicKeyBase64URL) {
         if (!weakThis)
             return;
 
@@ -365,7 +365,7 @@ void PrivateClickMeasurementManager::fireConversionRequestImpl(const PrivateClic
     RELEASE_LOG_INFO(PrivateClickMeasurement, "About to fire an attribution request.");
     m_client->broadcastConsoleMessage(MessageLevel::Log, "[Private Click Measurement] About to fire an attribution request."_s);
 
-    PCM::NetworkLoader::start(WTFMove(attributionURL), attribution.attributionReportJSON(), pcmDataCarried, [weakThis = makeWeakPtr(*this), this](auto& error, auto& response, auto&) {
+    PCM::NetworkLoader::start(WTFMove(attributionURL), attribution.attributionReportJSON(), pcmDataCarried, [weakThis = WeakPtr { *this }, this](auto& error, auto& response, auto&) {
         if (!weakThis)
             return;
 
@@ -387,7 +387,7 @@ void PrivateClickMeasurementManager::firePendingAttributionRequests()
     if (!featureEnabled())
         return;
 
-    store().allAttributedPrivateClickMeasurement([this, weakThis = makeWeakPtr(*this)] (auto&& attributions) {
+    store().allAttributedPrivateClickMeasurement([this, weakThis = WeakPtr { *this }] (auto&& attributions) {
         if (!weakThis)
             return;
         auto nextTimeToFire = Seconds::infinity();
@@ -548,7 +548,7 @@ void PrivateClickMeasurementManager::destroyStoreForTesting(CompletionHandler<vo
 {
     if (!m_store)
         return completionHandler();
-    m_store->close([weakThis = makeWeakPtr(*this), completionHandler = WTFMove(completionHandler)] () mutable {
+    m_store->close([weakThis = WeakPtr { *this }, completionHandler = WTFMove(completionHandler)] () mutable {
         if (weakThis)
             weakThis->m_store = nullptr;
         return completionHandler();

@@ -236,7 +236,7 @@ void LocalAuthenticator::makeCredential()
     // Get user consent.
     if (webAuthenticationModernEnabled()) {
         if (auto* observer = this->observer()) {
-            auto callback = [weakThis = makeWeakPtr(*this)] (LAContext *context) {
+            auto callback = [weakThis = WeakPtr { *this }] (LAContext *context) {
                 ASSERT(RunLoop::isMain());
                 if (!weakThis)
                     return;
@@ -250,7 +250,7 @@ void LocalAuthenticator::makeCredential()
     }
 
     if (auto* observer = this->observer()) {
-        auto callback = [weakThis = makeWeakPtr(*this)] (LocalAuthenticatorPolicy policy) {
+        auto callback = [weakThis = WeakPtr { *this }] (LocalAuthenticatorPolicy policy) {
             ASSERT(RunLoop::isMain());
             if (!weakThis)
                 return;
@@ -285,7 +285,7 @@ void LocalAuthenticator::continueMakeCredentialAfterDecidePolicy(LocalAuthentica
     }
 
     SecAccessControlRef accessControlRef = accessControl.get();
-    auto callback = [accessControl = WTFMove(accessControl), weakThis = makeWeakPtr(*this)] (LocalConnection::UserVerification verification, LAContext *context) {
+    auto callback = [accessControl = WTFMove(accessControl), weakThis = WeakPtr { *this }] (LocalConnection::UserVerification verification, LAContext *context) {
         ASSERT(RunLoop::isMain());
         if (!weakThis)
             return;
@@ -312,7 +312,7 @@ void LocalAuthenticator::continueMakeCredentialAfterReceivingLAContext(LAContext
     }
 
     SecAccessControlRef accessControlRef = accessControl.get();
-    auto callback = [accessControl = WTFMove(accessControl), context = retainPtr(context), weakThis = makeWeakPtr(*this)] (LocalConnection::UserVerification verification) {
+    auto callback = [accessControl = WTFMove(accessControl), context = retainPtr(context), weakThis = WeakPtr { *this }] (LocalConnection::UserVerification verification) {
         ASSERT(RunLoop::isMain());
         if (!weakThis)
             return;
@@ -422,7 +422,7 @@ void LocalAuthenticator::continueMakeCredentialAfterUserVerification(SecAccessCo
     // Step 13. Apple Attestation
     auto authData = buildAuthData(creationOptions.rp.id, flags, counter, buildAttestedCredentialData(aaguidVector(), credentialId, cosePublicKey));
     auto nsAuthData = toNSData(authData);
-    auto callback = [credentialId = WTFMove(credentialId), authData = WTFMove(authData), weakThis = makeWeakPtr(*this)] (NSArray * _Nullable certificates, NSError * _Nullable error) mutable {
+    auto callback = [credentialId = WTFMove(credentialId), authData = WTFMove(authData), weakThis = WeakPtr { *this }] (NSArray * _Nullable certificates, NSError * _Nullable error) mutable {
         ASSERT(RunLoop::isMain());
         if (!weakThis)
             return;
@@ -510,7 +510,7 @@ void LocalAuthenticator::getAssertion()
     m_connection->filterResponses(assertionResponses);
 
     if (auto* observer = this->observer()) {
-        auto callback = [this, weakThis = makeWeakPtr(*this)] (AuthenticatorAssertionResponse* response) {
+        auto callback = [this, weakThis = WeakPtr { *this }] (AuthenticatorAssertionResponse* response) {
             ASSERT(RunLoop::isMain());
             if (!weakThis)
                 return;
@@ -535,7 +535,7 @@ void LocalAuthenticator::continueGetAssertionAfterResponseSelected(Ref<WebCore::
         auto accessControlRef = response->accessControl();
         LAContext *context = response->laContext();
         auto callback = [
-            weakThis = makeWeakPtr(*this),
+            weakThis = WeakPtr { *this },
             response = WTFMove(response)
         ] (LocalConnection::UserVerification verification) mutable {
             ASSERT(RunLoop::isMain());
@@ -553,7 +553,7 @@ void LocalAuthenticator::continueGetAssertionAfterResponseSelected(Ref<WebCore::
 
     auto accessControlRef = response->accessControl();
     auto callback = [
-        weakThis = makeWeakPtr(*this),
+        weakThis = WeakPtr { *this },
         response = WTFMove(response)
     ] (LocalConnection::UserVerification verification, LAContext *context) mutable {
         ASSERT(RunLoop::isMain());

@@ -387,7 +387,7 @@ void MediaControlTextTrackContainerElement::updateSizes(ForceUpdate force)
     for (auto& activeCue : m_mediaElement->currentlyActiveCues())
         activeCue.data()->recalculateStyles();
 
-    document().eventLoop().queueTask(TaskSource::MediaElement, [weakThis = makeWeakPtr(*this)] () {
+    document().eventLoop().queueTask(TaskSource::MediaElement, [weakThis = WeakPtr { *this }] () {
         if (weakThis)
             weakThis->updateDisplay();
     });

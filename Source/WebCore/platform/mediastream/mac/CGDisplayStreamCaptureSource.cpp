@@ -160,7 +160,7 @@ CGDisplayStreamFrameAvailableHandler CGDisplayStreamCaptureSource::frameAvailabl
     if (m_frameAvailableHandler)
         return m_frameAvailableHandler.get();
 
-    auto weakThis = makeWeakPtr(*this);
+    WeakPtr weakThis { *this };
     m_frameAvailableHandler = ^(CGDisplayStreamFrameStatus status, uint64_t displayTime, IOSurfaceRef frameSurface, CGDisplayStreamUpdateRef updateRef)
     {
         if (!frameSurface || !displayTime)

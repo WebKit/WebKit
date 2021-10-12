@@ -615,7 +615,7 @@ void NetworkStorageSession::registerCookieChangeListenersIfNecessary()
 
     m_didRegisterCookieListeners = true;
 
-    [nsCookieStorage() _setCookiesChangedHandler:makeBlockPtr([this, weakThis = makeWeakPtr(*this)](NSArray<NSHTTPCookie *> *addedCookies, NSString *domainForChangedCookie) {
+    [nsCookieStorage() _setCookiesChangedHandler:makeBlockPtr([this, weakThis = WeakPtr { *this }](NSArray<NSHTTPCookie *> *addedCookies, NSString *domainForChangedCookie) {
         if (!weakThis)
             return;
         String host = domainForChangedCookie;
@@ -629,7 +629,7 @@ void NetworkStorageSession::registerCookieChangeListenersIfNecessary()
             observer->cookiesAdded(host, cookies);
     }).get() onQueue:dispatch_get_main_queue()];
 
-    [nsCookieStorage() _setCookiesRemovedHandler:makeBlockPtr([this, weakThis = makeWeakPtr(*this)](NSArray<NSHTTPCookie *> *removedCookies, NSString *domainForRemovedCookies, bool removeAllCookies) {
+    [nsCookieStorage() _setCookiesRemovedHandler:makeBlockPtr([this, weakThis = WeakPtr { *this }](NSArray<NSHTTPCookie *> *removedCookies, NSString *domainForRemovedCookies, bool removeAllCookies) {
         if (!weakThis)
             return;
         if (removeAllCookies) {

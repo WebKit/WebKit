@@ -228,7 +228,7 @@ void ValidationMessage::buildBubbleTree()
 
     if (!document.view())
         return;
-    document.view()->queuePostLayoutCallback([weakThis = makeWeakPtr(*this)] {
+    document.view()->queuePostLayoutCallback([weakThis = WeakPtr { *this }] {
         if (!weakThis)
             return;
         weakThis->adjustBubblePosition();

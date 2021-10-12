@@ -498,7 +498,7 @@ void OpenXRDevice::endSession()
         return;
 
     // Notify did end event
-    callOnMainThread([this, weakThis = makeWeakPtr(*this)]() {
+    callOnMainThread([this, weakThis = WeakPtr { *this }]() {
         if (!weakThis)
             return;
         if (m_trackingAndRenderingClient)
@@ -587,7 +587,7 @@ void OpenXRDevice::updateInteractionProfile()
 
     didNotifyInputInitialization = true;
     auto inputSources = m_input->collectInputSources(m_frameState);
-    callOnMainThread([this, weakThis = makeWeakPtr(*this), inputSources = WTFMove(inputSources)]() mutable {
+    callOnMainThread([this, weakThis = WeakPtr { *this }, inputSources = WTFMove(inputSources)]() mutable {
         if (!weakThis)
             return;
         if (m_trackingAndRenderingClient)

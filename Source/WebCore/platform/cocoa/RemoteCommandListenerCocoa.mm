@@ -135,7 +135,7 @@ RemoteCommandListenerCocoa::RemoteCommandListenerCocoa(RemoteCommandListenerClie
 
     scheduleSupportedCommandsUpdate();
 
-    auto weakThis = makeWeakPtr(*this);
+    WeakPtr weakThis { *this };
     m_commandHandler = MRMediaRemoteAddAsyncCommandHandlerBlock(^(MRMediaRemoteCommand command, CFDictionaryRef options, void(^completion)(CFArrayRef)) {
 
         LOG(Media, "RemoteCommandListenerCocoa::RemoteCommandListenerCocoa - received command %u", command);

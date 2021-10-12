@@ -112,7 +112,7 @@ void LocalStorageDatabase::startTransactionIfNecessary()
         return;
 
     m_transaction->begin();
-    m_workQueue->dispatchAfter(transactionDuration, [weakThis = makeWeakPtr(*this)] {
+    m_workQueue->dispatchAfter(transactionDuration, [weakThis = WeakPtr { *this }] {
         if (weakThis)
             weakThis->m_transaction->commit();
     });

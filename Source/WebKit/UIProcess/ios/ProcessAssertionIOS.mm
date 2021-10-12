@@ -370,7 +370,7 @@ void ProcessAssertion::acquireSync()
     NSError *acquisitionError = nil;
     if (![m_rbsAssertion acquireWithError:&acquisitionError]) {
         RELEASE_LOG_ERROR(ProcessSuspension, "%p - ProcessAssertion: Failed to acquire RBS assertion '%{public}s' for process with PID=%d, error: %{public}@", this, m_reason.utf8().data(), m_pid, acquisitionError);
-        RunLoop::main().dispatch([weakThis = makeWeakPtr(*this)] {
+        RunLoop::main().dispatch([weakThis = WeakPtr { *this }] {
             if (weakThis)
                 weakThis->processAssertionWasInvalidated();
         });
@@ -451,7 +451,7 @@ void ProcessAndUIAssertion::processAssertionWasInvalidated()
 {
     ASSERT(RunLoop::isMain());
 
-    auto weakThis = makeWeakPtr(*this);
+    WeakPtr weakThis { *this };
     ProcessAssertion::processAssertionWasInvalidated();
 
     // Calling ProcessAssertion::processAssertionWasInvalidated() may have destroyed |this|.

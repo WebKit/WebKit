@@ -82,7 +82,7 @@ bool PaymentCoordinator::canMakePayments(Document& document)
 
 void PaymentCoordinator::canMakePaymentsWithActiveCard(Document& document, const String& merchantIdentifier, WTF::Function<void(bool)>&& completionHandler)
 {
-    m_client.canMakePaymentsWithActiveCard(merchantIdentifier, document.domain(), [this, weakThis = makeWeakPtr(*this), document = makeWeakPtr(document), completionHandler = WTFMove(completionHandler)](bool canMakePayments) {
+    m_client.canMakePaymentsWithActiveCard(merchantIdentifier, document.domain(), [this, weakThis = WeakPtr { *this }, document = WeakPtr { document }, completionHandler = WTFMove(completionHandler)](bool canMakePayments) {
         if (!weakThis)
             return completionHandler(false);
 
@@ -331,7 +331,7 @@ Expected<void, ExceptionDetails> PaymentCoordinator::shouldAllowUserAgentScripts
 void PaymentCoordinator::getSetupFeatures(const ApplePaySetupConfiguration& configuration, const URL& url, CompletionHandler<void(Vector<Ref<ApplePaySetupFeature>>&&)>&& completionHandler)
 {
     PAYMENT_COORDINATOR_RELEASE_LOG("getSetupFeatures()");
-    m_client.getSetupFeatures(configuration, url, [this, weakThis = makeWeakPtr(*this), completionHandler = WTFMove(completionHandler)](Vector<Ref<ApplePaySetupFeature>>&& features) mutable {
+    m_client.getSetupFeatures(configuration, url, [this, weakThis = WeakPtr { *this }, completionHandler = WTFMove(completionHandler)](Vector<Ref<ApplePaySetupFeature>>&& features) mutable {
         if (!weakThis)
             return;
         PAYMENT_COORDINATOR_RELEASE_LOG("getSetupFeatures() completed (features: %zu)", features.size());
@@ -342,7 +342,7 @@ void PaymentCoordinator::getSetupFeatures(const ApplePaySetupConfiguration& conf
 void PaymentCoordinator::beginApplePaySetup(const ApplePaySetupConfiguration& configuration, const URL& url, Vector<RefPtr<ApplePaySetupFeature>>&& features, CompletionHandler<void(bool)>&& completionHandler)
 {
     PAYMENT_COORDINATOR_RELEASE_LOG("beginApplePaySetup()");
-    m_client.beginApplePaySetup(configuration, url, WTFMove(features), [this, weakThis = makeWeakPtr(*this), completionHandler = WTFMove(completionHandler)](bool success) mutable {
+    m_client.beginApplePaySetup(configuration, url, WTFMove(features), [this, weakThis = WeakPtr { *this }, completionHandler = WTFMove(completionHandler)](bool success) mutable {
         if (!weakThis)
             return;
         PAYMENT_COORDINATOR_RELEASE_LOG("beginApplePaySetup() completed (success: %d)", success);

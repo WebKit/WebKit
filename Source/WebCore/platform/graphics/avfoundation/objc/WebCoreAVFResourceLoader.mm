@@ -241,7 +241,7 @@ DataURLResourceMediaLoader::DataURLResourceMediaLoader(WebCoreAVFResourceLoader&
         m_buffer = SharedBuffer::create(WTFMove(result->data));
     }
 
-    callOnMainThread([this, weakThis = makeWeakPtr(*this)] {
+    callOnMainThread([this, weakThis = WeakPtr { *this }] {
         if (!weakThis)
             return;
 

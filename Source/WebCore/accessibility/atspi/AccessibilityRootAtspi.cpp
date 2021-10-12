@@ -39,7 +39,7 @@ Ref<AccessibilityRootAtspi> AccessibilityRootAtspi::create(const Page& page, Acc
 
 AccessibilityRootAtspi::AccessibilityRootAtspi(const Page& page, AccessibilityAtspi& atspi)
     : m_atspi(atspi)
-    , m_page(makeWeakPtr(page))
+    , m_page(page)
 {
     RELEASE_ASSERT(isMainThread());
 }

@@ -1241,7 +1241,7 @@ void WebEditorClient::requestCheckingOfString(TextCheckingRequest& request, cons
 
     NSRange range = NSMakeRange(0, request.data().text().length());
     NSRunLoop *currentLoop = [NSRunLoop currentRunLoop];
-    WeakPtr<WebEditorClient> weakThis = makeWeakPtr(*this);
+    WeakPtr weakThis { *this };
     NSDictionary *options = @{ NSTextCheckingInsertionPointKey : [NSNumber numberWithUnsignedInteger:insertionPointFromCurrentSelection(currentSelection)] };
     NSTextCheckingType types = NSTextCheckingTypeSpelling | NSTextCheckingTypeGrammar | NSTextCheckingTypeLink | NSTextCheckingTypeQuote | NSTextCheckingTypeDash | NSTextCheckingTypeReplacement | NSTextCheckingTypeCorrection;
     [[NSSpellChecker sharedSpellChecker] requestCheckingOfString:request.data().text() range:range types:types options:options inSpellDocumentWithTag:0 completionHandler:^(NSInteger, NSArray *results, NSOrthography *, NSInteger) {

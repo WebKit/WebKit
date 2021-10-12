@@ -225,7 +225,7 @@ void SpeechRecognitionPermissionManager::requestUserPermission(WebCore::SpeechRe
     auto clientOrigin = recognitionRequest.clientOrigin();
     auto requestingOrigin = clientOrigin.clientOrigin.securityOrigin();
     auto topOrigin = clientOrigin.topOrigin.securityOrigin();
-    auto decisionHandler = [this, weakThis = makeWeakPtr(*this)](bool granted) {
+    auto decisionHandler = [this, weakThis = WeakPtr { *this }](bool granted) {
         if (!weakThis)
             return;
 

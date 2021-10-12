@@ -1061,7 +1061,7 @@ void MediaPlayerPrivateMediaStreamAVFObjC::audioOutputDeviceChanged()
 void MediaPlayerPrivateMediaStreamAVFObjC::scheduleDeferredTask(Function<void ()>&& function)
 {
     ASSERT(function);
-    callOnMainThread([weakThis = makeWeakPtr(*this), function = WTFMove(function)] {
+    callOnMainThread([weakThis = WeakPtr { *this }, function = WTFMove(function)] {
         if (!weakThis)
             return;
 

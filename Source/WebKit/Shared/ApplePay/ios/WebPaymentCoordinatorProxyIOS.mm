@@ -56,7 +56,7 @@ void WebPaymentCoordinatorProxy::platformShowPaymentUI(WebPageProxyIdentifier we
         return completionHandler(false);
 
 #if ENABLE(APPLE_PAY_REMOTE_UI_USES_SCENE)
-    m_client.getWindowSceneIdentifierForPaymentPresentation(webPageProxyID, [weakThis = makeWeakPtr(*this), completionHandler = WTFMove(completionHandler)](const String& sceneID) mutable {
+    m_client.getWindowSceneIdentifierForPaymentPresentation(webPageProxyID, [weakThis = WeakPtr { *this }, completionHandler = WTFMove(completionHandler)](const String& sceneID) mutable {
         if (!weakThis) {
             completionHandler(false);
             return;

@@ -94,7 +94,7 @@ void Download::cancel(CompletionHandler<void(const IPC::DataReference&)>&& compl
     // completionHandler will inform the API that the cancellation succeeded.
     m_ignoreDidFailCallback = ignoreDidFailCallback;
 
-    auto completionHandlerWrapper = [this, weakThis = makeWeakPtr(*this), completionHandler = WTFMove(completionHandler)] (const IPC::DataReference& resumeData) mutable {
+    auto completionHandlerWrapper = [this, weakThis = WeakPtr { *this }, completionHandler = WTFMove(completionHandler)] (const IPC::DataReference& resumeData) mutable {
         completionHandler(resumeData);
         if (!weakThis || m_ignoreDidFailCallback == IgnoreDidFailCallback::No)
             return;
