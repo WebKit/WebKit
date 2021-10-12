@@ -125,7 +125,7 @@ void WebPasteboardProxy::writeCustomData(IPC::Connection&, const Vector<Pasteboa
     SelectionData selectionData;
     const auto& customData = data[0];
     customData.forEachPlatformStringOrBuffer([&selectionData] (auto& type, auto& stringOrBuffer) {
-        if (WTF::holds_alternative<String>(stringOrBuffer)) {
+        if (std::holds_alternative<String>(stringOrBuffer)) {
             if (type == "text/plain"_s)
                 selectionData.setText(WTF::get<String>(stringOrBuffer));
             else if (type == "text/html"_s)

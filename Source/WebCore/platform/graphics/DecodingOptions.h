@@ -123,7 +123,7 @@ private:
     template<typename T>
     bool has() const
     {
-        return WTF::holds_alternative<T>(m_decodingModeOrSize);
+        return std::holds_alternative<T>(m_decodingModeOrSize);
     }
 
     bool hasDecodingMode() const

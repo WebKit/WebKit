@@ -339,7 +339,7 @@ protected:
 
     RefPtr<WebCore::SharedBuffer> encodeItemOutOfLine(const WebCore::DisplayList::DisplayListItem& item) const final
     {
-        return WTF::visit([](const auto& displayListItem) -> RefPtr<WebCore::SharedBuffer> {
+        return std::visit([](const auto& displayListItem) -> RefPtr<WebCore::SharedBuffer> {
             using DisplayListItemType = typename WTF::RemoveCVAndReference<decltype(displayListItem)>::type;
             if constexpr (!DisplayListItemType::isInlineItem)
                 return IPC::Encoder::encodeSingleObject<DisplayListItemType>(displayListItem);

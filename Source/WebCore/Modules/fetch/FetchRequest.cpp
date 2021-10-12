@@ -275,7 +275,7 @@ ExceptionOr<Ref<FetchRequest>> FetchRequest::create(ScriptExecutionContext& cont
 {
     auto request = adoptRef(*new FetchRequest(context, std::nullopt, FetchHeaders::create(FetchHeaders::Guard::Request), { }, { }, { }));
 
-    if (WTF::holds_alternative<String>(input)) {
+    if (std::holds_alternative<String>(input)) {
         auto result = request->initializeWith(WTF::get<String>(input), WTFMove(init));
         if (result.hasException())
             return result.releaseException();

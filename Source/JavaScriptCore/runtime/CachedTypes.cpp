@@ -1037,7 +1037,7 @@ class CachedCompactTDZEnvironment : public CachedObject<CompactTDZEnvironment> {
 public:
     void encode(Encoder& encoder, const CompactTDZEnvironment& env)
     {
-        if (WTF::holds_alternative<CompactTDZEnvironment::Compact>(env.m_variables))
+        if (std::holds_alternative<CompactTDZEnvironment::Compact>(env.m_variables))
             m_variables.encode(encoder, WTF::get<CompactTDZEnvironment::Compact>(env.m_variables));
         else {
             CompactTDZEnvironment::Compact compact;

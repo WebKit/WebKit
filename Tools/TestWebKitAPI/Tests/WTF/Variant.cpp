@@ -56,18 +56,18 @@ TEST(WTF_Variant, Basic)
     Variant<int, double> variant = 1;
     EXPECT_TRUE(variant.index() == 0);
     EXPECT_TRUE(WTF::get<int>(variant) == 1);
-    EXPECT_EQ(*WTF::get_if<int>(&variant), 1);
-    EXPECT_EQ(WTF::get_if<double>(&variant), nullptr);
-    EXPECT_TRUE(WTF::holds_alternative<int>(variant));
-    EXPECT_FALSE(WTF::holds_alternative<double>(variant));
+    EXPECT_EQ(*std::get_if<int>(&variant), 1);
+    EXPECT_EQ(std::get_if<double>(&variant), nullptr);
+    EXPECT_TRUE(std::holds_alternative<int>(variant));
+    EXPECT_FALSE(std::holds_alternative<double>(variant));
 
     variant = 1.0;
     EXPECT_TRUE(variant.index() == 1);
     EXPECT_TRUE(WTF::get<double>(variant) == 1);
-    EXPECT_EQ(*WTF::get_if<double>(&variant), 1.0);
-    EXPECT_EQ(WTF::get_if<int>(&variant), nullptr);
-    EXPECT_TRUE(WTF::holds_alternative<double>(variant));
-    EXPECT_FALSE(WTF::holds_alternative<int>(variant));
+    EXPECT_EQ(*std::get_if<double>(&variant), 1.0);
+    EXPECT_EQ(std::get_if<int>(&variant), nullptr);
+    EXPECT_TRUE(std::holds_alternative<double>(variant));
+    EXPECT_FALSE(std::holds_alternative<int>(variant));
 }
 
 TEST(WTF_Variant, BasicVisitor)
@@ -95,17 +95,17 @@ TEST(WTF_Variant, BasicVisitor)
     Type type = Type::None;
 
     Variant<int, float, String> variant = 8;
-    WTF::visit(Visitor(type), variant);
+    std::visit(Visitor(type), variant);
     EXPECT_TRUE(Type::Int == type);
 
 
     variant = 1.0f;
-    WTF::visit(Visitor(type), variant);
+    std::visit(Visitor(type), variant);
     EXPECT_TRUE(Type::Float == type);
 
 
     variant = "hello";
-    WTF::visit(Visitor(type), variant);
+    std::visit(Visitor(type), variant);
     EXPECT_TRUE(Type::String == type);
 }
 
@@ -128,11 +128,11 @@ TEST(WTF_Variant, RetainPtr)
     RefPtr<RefLogger> refPtr;
     RetainPtr<CFDataRef> retainPtr;
     Variant<RefPtr<RefLogger>, RetainPtr<CFDataRef>> variant(WTFMove(refPtr));
-    WTF::visit(visitor, variant);
+    std::visit(visitor, variant);
     EXPECT_TRUE(Type::RefPtr == type);
     
     variant = WTFMove(retainPtr);
-    WTF::visit(visitor, variant);
+    std::visit(visitor, variant);
     EXPECT_TRUE(Type::RetainPtr == type);
 }
 #endif
@@ -155,17 +155,17 @@ TEST(WTF_Variant, VisitorUsingMakeVisitor)
     );
 
     Variant<int, float, String> variant = 8;
-    WTF::visit(visitor, variant);
+    std::visit(visitor, variant);
     EXPECT_TRUE(Type::Int == type);
 
 
     variant = 1.0f;
-    WTF::visit(visitor, variant);
+    std::visit(visitor, variant);
     EXPECT_TRUE(Type::Float == type);
 
 
     variant = "hello";
-    WTF::visit(visitor, variant);
+    std::visit(visitor, variant);
     EXPECT_TRUE(Type::String == type);
 }
 

@@ -2297,7 +2297,7 @@ start:
             auto parseNumberResult = parseHex();
             if (!parseNumberResult)
                 tokenData->doubleValue = 0;
-            else if (WTF::holds_alternative<double>(*parseNumberResult))
+            else if (std::holds_alternative<double>(*parseNumberResult))
                 tokenData->doubleValue = WTF::get<double>(*parseNumberResult);
             else {
                 token = BIGINT;
@@ -2336,7 +2336,7 @@ start:
             auto parseNumberResult = parseBinary();
             if (!parseNumberResult)
                 tokenData->doubleValue = 0;
-            else if (WTF::holds_alternative<double>(*parseNumberResult))
+            else if (std::holds_alternative<double>(*parseNumberResult))
                 tokenData->doubleValue = WTF::get<double>(*parseNumberResult);
             else {
                 token = BIGINT;
@@ -2376,7 +2376,7 @@ start:
             auto parseNumberResult = parseOctal();
             if (!parseNumberResult)
                 tokenData->doubleValue = 0;
-            else if (WTF::holds_alternative<double>(*parseNumberResult))
+            else if (std::holds_alternative<double>(*parseNumberResult))
                 tokenData->doubleValue = WTF::get<double>(*parseNumberResult);
             else {
                 token = BIGINT;
@@ -2417,7 +2417,7 @@ start:
         }
         if (isASCIIOctalDigit(m_current)) {
             auto parseNumberResult = parseOctal();
-            if (parseNumberResult && WTF::holds_alternative<double>(*parseNumberResult)) {
+            if (parseNumberResult && std::holds_alternative<double>(*parseNumberResult)) {
                 tokenData->doubleValue = WTF::get<double>(*parseNumberResult);
                 token = tokenTypeForIntegerLikeToken(tokenData->doubleValue);
             }
@@ -2427,7 +2427,7 @@ start:
         if (LIKELY(token != INTEGER && token != DOUBLE)) {
             auto parseNumberResult = parseDecimal();
             if (parseNumberResult) {
-                if (WTF::holds_alternative<double>(*parseNumberResult)) {
+                if (std::holds_alternative<double>(*parseNumberResult)) {
                     tokenData->doubleValue = WTF::get<double>(*parseNumberResult);
                     token = tokenTypeForIntegerLikeToken(tokenData->doubleValue);
                 } else {

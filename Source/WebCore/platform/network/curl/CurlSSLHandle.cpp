@@ -58,7 +58,7 @@ void CurlSSLHandle::setCACertData(CertificateInfo::Certificate&& caCertData)
 
 void CurlSSLHandle::clearCACertInfo()
 {
-    m_caCertInfo = WTF::Monostate { };
+    m_caCertInfo = std::monostate { };
 }
 
 void CurlSSLHandle::allowAnyHTTPSCertificatesForHost(const String& host)

@@ -393,7 +393,7 @@ ExceptionOr<void> VTTCue::setLine(const LineAndPositionSetting& position)
 {
     double linePosition = 0;
 
-    if (WTF::holds_alternative<AutoKeyword>(position)) {
+    if (std::holds_alternative<AutoKeyword>(position)) {
         if (std::isnan(m_linePosition))
             return { };
         linePosition = std::numeric_limits<double>::quiet_NaN();
@@ -465,7 +465,7 @@ ExceptionOr<void> VTTCue::setPosition(const LineAndPositionSetting& position)
     // position must be set to the new value; if the new value is the string
     // "auto", then it must be interpreted as the special value auto.
     double textPosition = 0;
-    if (WTF::holds_alternative<AutoKeyword>(position)) {
+    if (std::holds_alternative<AutoKeyword>(position)) {
         if (textPositionIsAuto())
             return { };
         textPosition = std::numeric_limits<double>::quiet_NaN();

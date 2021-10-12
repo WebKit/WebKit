@@ -202,7 +202,7 @@ template<class Decoder> std::optional<BezierCurveData> BezierCurveData::decode(D
     return data;
 }
 
-using InlinePathData = Variant<Monostate, MoveData, LineData, ArcData, QuadCurveData, BezierCurveData>;
+using InlinePathData = Variant<std::monostate, MoveData, LineData, ArcData, QuadCurveData, BezierCurveData>;
 
 } // namespace WebCore
 

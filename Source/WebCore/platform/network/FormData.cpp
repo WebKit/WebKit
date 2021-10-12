@@ -127,7 +127,7 @@ unsigned FormData::imageOrMediaFilesCount() const
 {
     unsigned imageOrMediaFilesCount = 0;
     for (auto& element : m_elements) {
-        auto* encodedFileData = WTF::get_if<FormDataElement::EncodedFileData>(&element.data);
+        auto* encodedFileData = std::get_if<FormDataElement::EncodedFileData>(&element.data);
         if (!encodedFileData)
             continue;
 
@@ -177,7 +177,7 @@ void FormData::appendData(const void* data, size_t size)
 {
     m_lengthInBytes = std::nullopt;
     if (!m_elements.isEmpty()) {
-        if (auto* vector = WTF::get_if<Vector<uint8_t>>(&m_elements.last().data)) {
+        if (auto* vector = std::get_if<Vector<uint8_t>>(&m_elements.last().data)) {
             vector->append(static_cast<const uint8_t*>(data), size);
             return;
         }
@@ -254,7 +254,7 @@ void FormData::appendMultiPartKeyValuePairItems(const DOMFormData& formData)
         Vector<char> header;
         FormDataBuilder::beginMultiPartHeader(header, m_boundary.data(), normalizedName);
 
-        if (WTF::holds_alternative<RefPtr<File>>(item.data))
+        if (std::holds_alternative<RefPtr<File>>(item.data))
             appendMultiPartFileValue(*WTF::get<RefPtr<File>>(item.data), header, encoding);
         else
             appendMultiPartStringValue(WTF::get<String>(item.data), header, encoding);
@@ -275,10 +275,10 @@ void FormData::appendNonMultiPartKeyValuePairItems(const DOMFormData& formData, 
     for (auto& item : formData.items()) {
         // FIXME: The expected behavior is to convert files to string for enctype "text/plain". Conversion may be added at "void DOMFormData::set(const String& name, Blob& blob, const String& filename)" or here.
         // FIXME: Remove the following if statement when fixed.
-        if (!WTF::holds_alternative<String>(item.data))
+        if (!std::holds_alternative<String>(item.data))
             continue;
         
-        ASSERT(WTF::holds_alternative<String>(item.data));
+        ASSERT(std::holds_alternative<String>(item.data));
 
         auto normalizedName = normalizeStringData(encoding, item.name);
         auto normalizedStringData = normalizeStringData(encoding, WTF::get<String>(item.data));
@@ -293,7 +293,7 @@ Vector<uint8_t> FormData::flatten() const
     // Concatenate all the byte arrays, but omit any files.
     Vector<uint8_t> data;
     for (auto& element : m_elements) {
-        if (auto* vector = WTF::get_if<Vector<uint8_t>>(&element.data))
+        if (auto* vector = std::get_if<Vector<uint8_t>>(&element.data))
             data.append(vector->data(), vector->size());
     }
     return data;
@@ -332,7 +332,7 @@ static void appendBlobResolved(BlobRegistryImpl* blobRegistry, FormData& formDat
 bool FormData::containsBlobElement() const
 {
     for (auto& element : m_elements) {
-        if (WTF::holds_alternative<FormDataElement::EncodedBlobData>(element.data))
+        if (std::holds_alternative<FormDataElement::EncodedBlobData>(element.data))
             return true;
     }
     return false;
@@ -367,7 +367,7 @@ FormDataForUpload FormData::prepareForUpload()
 {
     Vector<String> generatedFiles;
     for (auto& element : m_elements) {
-        auto* fileData = WTF::get_if<FormDataElement::EncodedFileData>(&element.data);
+        auto* fileData = std::get_if<FormDataElement::EncodedFileData>(&element.data);
         if (!fileData)
             continue;
         if (FileSystem::fileTypeFollowingSymlinks(fileData->filename) != FileSystem::FileType::Directory)
@@ -414,7 +414,7 @@ uint64_t FormData::lengthInBytes() const
 RefPtr<SharedBuffer> FormData::asSharedBuffer() const
 {
     for (auto& element : m_elements) {
-        if (!WTF::holds_alternative<Vector<uint8_t>>(element.data))
+        if (!std::holds_alternative<Vector<uint8_t>>(element.data))
             return nullptr;
     }
     return SharedBuffer::create(flatten());
@@ -425,7 +425,7 @@ URL FormData::asBlobURL() const
     if (m_elements.size() != 1)
         return { };
 
-    if (auto* blobData = WTF::get_if<FormDataElement::EncodedBlobData>(&m_elements.first().data))
+    if (auto* blobData = std::get_if<FormDataElement::EncodedBlobData>(&m_elements.first().data))
         return blobData->url;
     return { };
 }

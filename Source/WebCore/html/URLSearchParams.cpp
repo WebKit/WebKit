@@ -56,7 +56,7 @@ ExceptionOr<Ref<URLSearchParams>> URLSearchParams::create(Variant<Vector<Vector<
     }, [&](const String& string) -> ExceptionOr<Ref<URLSearchParams>> {
         return adoptRef(*new URLSearchParams(string, nullptr));
     });
-    return WTF::visit(visitor, variant);
+    return std::visit(visitor, variant);
 }
 
 String URLSearchParams::get(const String& name) const

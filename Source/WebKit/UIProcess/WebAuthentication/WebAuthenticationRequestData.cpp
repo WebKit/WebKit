@@ -35,14 +35,14 @@ using namespace WebCore;
 
 ClientDataType getClientDataType(const Variant<PublicKeyCredentialCreationOptions, PublicKeyCredentialRequestOptions>& options)
 {
-    if (WTF::holds_alternative<PublicKeyCredentialCreationOptions>(options))
+    if (std::holds_alternative<PublicKeyCredentialCreationOptions>(options))
         return ClientDataType::Create;
     return ClientDataType::Get;
 }
 
 UserVerificationRequirement getUserVerificationRequirement(const Variant<PublicKeyCredentialCreationOptions, PublicKeyCredentialRequestOptions>& options)
 {
-    if (WTF::holds_alternative<PublicKeyCredentialCreationOptions>(options)) {
+    if (std::holds_alternative<PublicKeyCredentialCreationOptions>(options)) {
         if (auto authenticatorSelection = WTF::get<PublicKeyCredentialCreationOptions>(options).authenticatorSelection)
             return authenticatorSelection->userVerification;
         return UserVerificationRequirement::Preferred;

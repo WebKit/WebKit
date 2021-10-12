@@ -1541,12 +1541,12 @@ void ArgumentCoder<PasteboardCustomData::Entry>::encode(Encoder& encoder, const 
     encoder << data.type << data.customData;
 
     auto& platformData = data.platformData;
-    bool hasString = WTF::holds_alternative<String>(platformData);
+    bool hasString = std::holds_alternative<String>(platformData);
     encoder << hasString;
     if (hasString)
         encoder << WTF::get<String>(platformData);
 
-    bool hasBuffer = WTF::holds_alternative<Ref<SharedBuffer>>(platformData);
+    bool hasBuffer = std::holds_alternative<Ref<SharedBuffer>>(platformData);
     encoder << hasBuffer;
     if (hasBuffer)
         encodeSharedBuffer(encoder, WTF::get<Ref<SharedBuffer>>(platformData).ptr());
@@ -2742,7 +2742,7 @@ bool ArgumentCoder<MediaConstraints>::decode(Decoder& decoder, WebCore::MediaCon
 
 void ArgumentCoder<IDBKeyPath>::encode(Encoder& encoder, const IDBKeyPath& keyPath)
 {
-    bool isString = WTF::holds_alternative<String>(keyPath);
+    bool isString = std::holds_alternative<String>(keyPath);
     encoder << isString;
     if (isString)
         encoder << WTF::get<String>(keyPath);
@@ -2772,7 +2772,7 @@ bool ArgumentCoder<IDBKeyPath>::decode(Decoder& decoder, IDBKeyPath& keyPath)
 #if ENABLE(SERVICE_WORKER)
 void ArgumentCoder<ServiceWorkerOrClientData>::encode(Encoder& encoder, const ServiceWorkerOrClientData& data)
 {
-    bool isServiceWorkerData = WTF::holds_alternative<ServiceWorkerData>(data);
+    bool isServiceWorkerData = std::holds_alternative<ServiceWorkerData>(data);
     encoder << isServiceWorkerData;
     if (isServiceWorkerData)
         encoder << WTF::get<ServiceWorkerData>(data);
@@ -2805,7 +2805,7 @@ bool ArgumentCoder<ServiceWorkerOrClientData>::decode(Decoder& decoder, ServiceW
 
 void ArgumentCoder<ServiceWorkerOrClientIdentifier>::encode(Encoder& encoder, const ServiceWorkerOrClientIdentifier& identifier)
 {
-    bool isServiceWorkerIdentifier = WTF::holds_alternative<ServiceWorkerIdentifier>(identifier);
+    bool isServiceWorkerIdentifier = std::holds_alternative<ServiceWorkerIdentifier>(identifier);
     encoder << isServiceWorkerIdentifier;
     if (isServiceWorkerIdentifier)
         encoder << WTF::get<ServiceWorkerIdentifier>(identifier);

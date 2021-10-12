@@ -49,7 +49,7 @@ class CurlSSLHandle {
     using ClientCertificate = std::pair<String, String>;
 
 public:
-    using CACertInfo = Variant<Monostate, String, CertificateInfo::Certificate>;
+    using CACertInfo = Variant<std::monostate, String, CertificateInfo::Certificate>;
 
     CurlSSLHandle();
 

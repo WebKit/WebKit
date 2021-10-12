@@ -98,7 +98,7 @@ std::unique_ptr<ImageBufferShareableBitmapBackend> ImageBufferShareableBitmapBac
 
 std::unique_ptr<ImageBufferShareableBitmapBackend> ImageBufferShareableBitmapBackend::create(const Parameters& parameters, ImageBufferBackendHandle handle)
 {
-    if (!WTF::holds_alternative<ShareableBitmap::Handle>(handle)) {
+    if (!std::holds_alternative<ShareableBitmap::Handle>(handle)) {
         ASSERT_NOT_REACHED();
         return nullptr;
     }

@@ -584,7 +584,7 @@ protected:
 
 private:
     Variant<
-        WTF::Monostate,
+        std::monostate,
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
         std::unique_ptr<LayoutIntegration::LineLayout>,
 #endif
@@ -598,12 +598,12 @@ private:
 
 inline bool RenderBlockFlow::hasLineLayout() const
 {
-    return !WTF::holds_alternative<WTF::Monostate>(m_lineLayout);
+    return !std::holds_alternative<std::monostate>(m_lineLayout);
 }
 
 inline bool RenderBlockFlow::hasLegacyLineLayout() const
 {
-    return WTF::holds_alternative<std::unique_ptr<LegacyLineLayout>>(m_lineLayout);
+    return std::holds_alternative<std::unique_ptr<LegacyLineLayout>>(m_lineLayout);
 }
 
 inline const LegacyLineLayout* RenderBlockFlow::legacyLineLayout() const
@@ -619,7 +619,7 @@ inline LegacyLineLayout* RenderBlockFlow::legacyLineLayout()
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 inline bool RenderBlockFlow::hasModernLineLayout() const
 {
-    return WTF::holds_alternative<std::unique_ptr<LayoutIntegration::LineLayout>>(m_lineLayout);
+    return std::holds_alternative<std::unique_ptr<LayoutIntegration::LineLayout>>(m_lineLayout);
 }
 
 inline const LayoutIntegration::LineLayout* RenderBlockFlow::modernLineLayout() const

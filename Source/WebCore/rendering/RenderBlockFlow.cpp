@@ -467,7 +467,7 @@ void RenderBlockFlow::setChildrenInline(bool value)
 {
     if (childrenInline() && !value) {
         setLineLayoutPath(UndeterminedPath);
-        m_lineLayout = WTF::Monostate();
+        m_lineLayout = std::monostate();
     }
 
     RenderBlock::setChildrenInline(value);
@@ -2181,7 +2181,7 @@ void RenderBlockFlow::styleWillChange(StyleDifference diff, const RenderStyle& n
 
 void RenderBlockFlow::deleteLines()
 {
-    m_lineLayout = WTF::Monostate();
+    m_lineLayout = std::monostate();
 
     RenderBlock::deleteLines();
 }
@@ -3740,7 +3740,7 @@ void RenderBlockFlow::invalidateLineLayoutPath()
         if (modernLineLayout() && modernLineLayout()->shouldSwitchToLegacyOnInvalidation())
             path = ForcedLegacyPath;
 #endif
-        m_lineLayout = WTF::Monostate();
+        m_lineLayout = std::monostate();
         setLineLayoutPath(path);
         if (needsLayout())
             return;

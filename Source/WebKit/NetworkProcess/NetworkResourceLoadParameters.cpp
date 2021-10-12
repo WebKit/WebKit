@@ -53,7 +53,7 @@ void NetworkResourceLoadParameters::encode(IPC::Encoder& encoder) const
 
         Vector<SandboxExtension::Handle> requestBodySandboxExtensions;
         for (const FormDataElement& element : request.httpBody()->elements()) {
-            if (auto* fileData = WTF::get_if<FormDataElement::EncodedFileData>(&element.data)) {
+            if (auto* fileData = std::get_if<FormDataElement::EncodedFileData>(&element.data)) {
                 const String& path = fileData->filename;
                 if (auto handle = SandboxExtension::createHandle(path, SandboxExtension::Type::ReadOnly))
                     requestBodySandboxExtensions.append(WTFMove(*handle));

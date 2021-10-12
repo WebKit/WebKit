@@ -93,7 +93,7 @@ static ExceptionOr<std::unique_ptr<CryptoAlgorithmParameters>> normalizeCryptoAl
     VM& vm = state.vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    if (WTF::holds_alternative<String>(algorithmIdentifier)) {
+    if (std::holds_alternative<String>(algorithmIdentifier)) {
         auto newParams = Strong<JSObject>(vm, constructEmptyObject(&state));
         newParams->putDirect(vm, Identifier::fromString(vm, "name"), jsString(vm, WTF::get<String>(algorithmIdentifier)));
         

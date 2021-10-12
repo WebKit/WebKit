@@ -40,7 +40,7 @@ Data::Data(const uint8_t* data, size_t size)
 
 Data::Data(Variant<Vector<uint8_t>, FileSystem::MappedFileData>&& data)
     : m_buffer(Box<Variant<Vector<uint8_t>, FileSystem::MappedFileData>>::create(WTFMove(data)))
-    , m_isMap(WTF::holds_alternative<FileSystem::MappedFileData>(*m_buffer))
+    , m_isMap(std::holds_alternative<FileSystem::MappedFileData>(*m_buffer))
 {
     m_size = WTF::switchOn(*m_buffer,
         [](const Vector<uint8_t>& buffer) -> size_t { return buffer.size(); },

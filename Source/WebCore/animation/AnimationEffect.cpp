@@ -384,7 +384,7 @@ ExceptionOr<void> AnimationEffect::updateTiming(std::optional<OptionalEffectTimi
     // 3. If the duration member of input is present, and less than zero or is the value NaN, throw a TypeError and abort this procedure.
     // FIXME: should it not throw an exception on a string other than "auto"?
     if (timing->duration) {
-        if (WTF::holds_alternative<double>(timing->duration.value())) {
+        if (std::holds_alternative<double>(timing->duration.value())) {
             auto durationAsDouble = WTF::get<double>(timing->duration.value());
             if (durationAsDouble < 0 || std::isnan(durationAsDouble))
                 return Exception { TypeError };
@@ -429,7 +429,7 @@ ExceptionOr<void> AnimationEffect::updateTiming(std::optional<OptionalEffectTimi
         m_iterations = timing->iterations.value();
 
     if (timing->duration)
-        m_iterationDuration = WTF::holds_alternative<double>(timing->duration.value()) ? Seconds::fromMilliseconds(WTF::get<double>(timing->duration.value())) : 0_s;
+        m_iterationDuration = std::holds_alternative<double>(timing->duration.value()) ? Seconds::fromMilliseconds(WTF::get<double>(timing->duration.value())) : 0_s;
 
     if (timing->direction)
         m_direction = timing->direction.value();

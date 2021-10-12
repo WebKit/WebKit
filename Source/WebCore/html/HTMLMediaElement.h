@@ -556,7 +556,7 @@ public:
 
 #if ENABLE(MEDIA_STREAM)
     void mediaStreamCaptureStarted();
-    bool hasMediaStreamSrcObject() const { return m_mediaProvider && WTF::holds_alternative<RefPtr<MediaStream>>(*m_mediaProvider); }
+    bool hasMediaStreamSrcObject() const { return m_mediaProvider && std::holds_alternative<RefPtr<MediaStream>>(*m_mediaProvider); }
 #endif
 
     bool supportsSeeking() const override;

@@ -175,7 +175,7 @@ inline void DocumentMarker::shiftOffsets(int delta)
 
 inline const String& DocumentMarker::description() const
 {
-    return WTF::holds_alternative<String>(m_data) ? WTF::get<String>(m_data) : emptyString();
+    return std::holds_alternative<String>(m_data) ? WTF::get<String>(m_data) : emptyString();
 }
 
 } // namespace WebCore

@@ -45,14 +45,14 @@ public:
 
     const uint8_t* data() const
     {
-        return WTF::visit([](auto& buffer) -> const uint8_t* {
+        return std::visit([](auto& buffer) -> const uint8_t* {
             return buffer ? static_cast<const uint8_t*>(buffer->data()) : nullptr;
         }, m_variant);
     }
 
     size_t length() const
     {
-        return WTF::visit([](auto& buffer) -> size_t {
+        return std::visit([](auto& buffer) -> size_t {
             return buffer ? buffer->byteLength() : 0;
         }, m_variant);
     }

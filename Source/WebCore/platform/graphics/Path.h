@@ -419,7 +419,7 @@ template<class Decoder> std::optional<Path> Path::decode(Decoder& decoder)
 
 template <typename DataType> inline bool Path::hasInlineData() const
 {
-    return WTF::holds_alternative<DataType>(m_inlineData);
+    return std::holds_alternative<DataType>(m_inlineData);
 }
 
 template<typename DataType> inline const DataType& Path::inlineData() const
@@ -434,7 +434,7 @@ template<typename DataType> inline DataType& Path::inlineData()
 
 inline bool Path::hasInlineData() const
 {
-    return !hasInlineData<Monostate>();
+    return !hasInlineData<std::monostate>();
 }
 
 #endif

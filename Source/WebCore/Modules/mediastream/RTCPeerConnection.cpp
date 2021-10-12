@@ -182,7 +182,7 @@ ExceptionOr<Ref<RTCRtpTransceiver>> RTCPeerConnection::addTransceiver(AddTransce
 {
     INFO_LOG(LOGIDENTIFIER);
 
-    if (WTF::holds_alternative<String>(withTrack)) {
+    if (std::holds_alternative<String>(withTrack)) {
         const String& kind = WTF::get<String>(withTrack);
         if (kind != "audio"_s && kind != "video"_s)
             return Exception { TypeError };
@@ -843,7 +843,7 @@ void RTCPeerConnection::dispatchEvent(Event& event)
 
 static inline ExceptionOr<PeerConnectionBackend::CertificateInformation> certificateTypeFromAlgorithmIdentifier(JSC::JSGlobalObject& lexicalGlobalObject, RTCPeerConnection::AlgorithmIdentifier&& algorithmIdentifier)
 {
-    if (WTF::holds_alternative<String>(algorithmIdentifier))
+    if (std::holds_alternative<String>(algorithmIdentifier))
         return Exception { NotSupportedError, "Algorithm is not supported"_s };
 
     auto& value = WTF::get<JSC::Strong<JSC::JSObject>>(algorithmIdentifier);

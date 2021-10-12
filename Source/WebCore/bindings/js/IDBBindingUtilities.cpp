@@ -327,7 +327,7 @@ bool injectIDBKeyIntoScriptValue(JSGlobalObject& lexicalGlobalObject, const IDBK
 {
     LOG(IndexedDB, "injectIDBKeyIntoScriptValue");
 
-    ASSERT(WTF::holds_alternative<String>(keyPath));
+    ASSERT(std::holds_alternative<String>(keyPath));
 
     Vector<String> keyPathElements;
     IDBKeyPathParseError error;
@@ -358,7 +358,7 @@ bool injectIDBKeyIntoScriptValue(JSGlobalObject& lexicalGlobalObject, const IDBK
 
 RefPtr<IDBKey> maybeCreateIDBKeyFromScriptValueAndKeyPath(JSGlobalObject& lexicalGlobalObject, JSValue value, const IDBKeyPath& keyPath)
 {
-    if (WTF::holds_alternative<Vector<String>>(keyPath)) {
+    if (std::holds_alternative<Vector<String>>(keyPath)) {
         auto& array = WTF::get<Vector<String>>(keyPath);
         Vector<RefPtr<IDBKey>> result;
         result.reserveInitialCapacity(array.size());
@@ -378,7 +378,7 @@ bool canInjectIDBKeyIntoScriptValue(JSGlobalObject& lexicalGlobalObject, JSValue
 {
     LOG(StorageAPI, "canInjectIDBKeyIntoScriptValue");
 
-    ASSERT(WTF::holds_alternative<String>(keyPath));
+    ASSERT(std::holds_alternative<String>(keyPath));
     Vector<String> keyPathElements;
     IDBKeyPathParseError error;
     IDBParseKeyPath(WTF::get<String>(keyPath), keyPathElements, error);
@@ -440,7 +440,7 @@ static Vector<IDBKeyData> createKeyPathArray(JSGlobalObject& lexicalGlobalObject
 {
     auto visitor = WTF::makeVisitor([&](const String& string) -> Vector<IDBKeyData> {
         // Value doesn't contain auto-generated key, so we need to manually add key if it is possibly auto-generated.
-        if (objectStoreKeyPath && WTF::holds_alternative<String>(objectStoreKeyPath.value()) && IDBKeyPath(string) == objectStoreKeyPath.value())
+        if (objectStoreKeyPath && std::holds_alternative<String>(objectStoreKeyPath.value()) && IDBKeyPath(string) == objectStoreKeyPath.value())
             return { objectStoreKey };
 
         auto idbKey = internalCreateIDBKeyFromScriptValueAndKeyPath(lexicalGlobalObject, value, string);
@@ -457,7 +457,7 @@ static Vector<IDBKeyData> createKeyPathArray(JSGlobalObject& lexicalGlobalObject
     }, [&](const Vector<String>& vector) -> Vector<IDBKeyData> {
         Vector<IDBKeyData> keys;
         for (auto& entry : vector) {
-            if (objectStoreKeyPath && WTF::holds_alternative<String>(objectStoreKeyPath.value()) && IDBKeyPath(entry) == objectStoreKeyPath.value())
+            if (objectStoreKeyPath && std::holds_alternative<String>(objectStoreKeyPath.value()) && IDBKeyPath(entry) == objectStoreKeyPath.value())
                 keys.append(objectStoreKey);
             else {
                 auto key = internalCreateIDBKeyFromScriptValueAndKeyPath(lexicalGlobalObject, value, entry);
@@ -469,7 +469,7 @@ static Vector<IDBKeyData> createKeyPathArray(JSGlobalObject& lexicalGlobalObject
         return keys;
     });
 
-    return WTF::visit(visitor, info.keyPath());
+    return std::visit(visitor, info.keyPath());
 }
 
 void generateIndexKeyForValue(JSGlobalObject& lexicalGlobalObject, const IDBIndexInfo& info, JSValue value, IndexKey& outKey, const std::optional<IDBKeyPath>& objectStoreKeyPath, const IDBKeyData& objectStoreKey)
@@ -512,7 +512,7 @@ IndexIDToIndexKeyMap generateIndexKeyMapForValue(JSC::JSGlobalObject& lexicalGlo
 std::optional<JSC::JSValue> deserializeIDBValueWithKeyInjection(JSGlobalObject& lexicalGlobalObject, const IDBValue& value, const IDBKeyData& key, const std::optional<IDBKeyPath>& keyPath)
 {
     auto jsValue = deserializeIDBValueToJSValue(lexicalGlobalObject, value);
-    if (jsValue.isUndefined() || !keyPath || !WTF::holds_alternative<String>(keyPath.value()) || !isIDBKeyPathValid(keyPath.value()))
+    if (jsValue.isUndefined() || !keyPath || !std::holds_alternative<String>(keyPath.value()) || !isIDBKeyPathValid(keyPath.value()))
         return jsValue;
 
     JSLockHolder locker(lexicalGlobalObject.vm());

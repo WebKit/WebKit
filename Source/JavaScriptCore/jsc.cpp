@@ -2148,13 +2148,13 @@ JSC_DEFINE_HOST_FUNCTION(functionDollarAgentReceiveBroadcast, (JSGlobalObject* g
 
     auto content = message->releaseContents();
     JSValue result = ([&]() -> JSValue {
-        if (WTF::holds_alternative<ArrayBufferContents>(content)) {
+        if (std::holds_alternative<ArrayBufferContents>(content)) {
             auto nativeBuffer = ArrayBuffer::create(WTF::get<ArrayBufferContents>(WTFMove(content)));
             ArrayBufferSharingMode sharingMode = nativeBuffer->sharingMode();
             return JSArrayBuffer::create(vm, globalObject->arrayBufferStructure(sharingMode), WTFMove(nativeBuffer));
         }
 #if ENABLE(WEBASSEMBLY)
-        if (WTF::holds_alternative<Ref<Wasm::MemoryHandle>>(content)) {
+        if (std::holds_alternative<Ref<Wasm::MemoryHandle>>(content)) {
             JSWebAssemblyMemory* jsMemory = JSC::JSWebAssemblyMemory::tryCreate(globalObject, vm, globalObject->webAssemblyMemoryStructure());
             scope.releaseAssertNoException();
             Ref<Wasm::Memory> memory = Wasm::Memory::create(WTF::get<Ref<Wasm::MemoryHandle>>(WTFMove(content)),

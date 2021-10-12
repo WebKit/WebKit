@@ -1,5 +1,41 @@
 2021-10-12  Alex Christensen  <achristensen@webkit.org>
 
+        Use STL instead of WTF::get_if, WTF::Monostate, WTF::visit, and WTF::holds_alternative
+        https://bugs.webkit.org/show_bug.cgi?id=231582
+
+        Reviewed by Darin Adler.
+
+        * jit/AssemblyHelpers.cpp:
+        (JSC::AssemblyHelpers::branchIfValue):
+        * jsc.cpp:
+        (JSC_DEFINE_HOST_FUNCTION):
+        * parser/Lexer.cpp:
+        (JSC::Lexer<T>::lexWithoutClearingLineTerminator):
+        * parser/VariableEnvironment.h:
+        (JSC::CompactTDZEnvironment::toTDZEnvironment const):
+        * runtime/CacheUpdate.cpp:
+        (JSC::CacheUpdate::isGlobal const):
+        * runtime/CachedTypes.cpp:
+        (JSC::CachedCompactTDZEnvironment::encode):
+        * wasm/WasmLLIntGenerator.cpp:
+        (JSC::Wasm::LLIntGenerator::ControlType::isLoop):
+        (JSC::Wasm::LLIntGenerator::ControlType::isTopLevel):
+        (JSC::Wasm::LLIntGenerator::ControlType::isBlock):
+        (JSC::Wasm::LLIntGenerator::ControlType::isIf):
+        (JSC::Wasm::LLIntGenerator::ControlType::isTry):
+        (JSC::Wasm::LLIntGenerator::ControlType::isAnyCatch):
+        (JSC::Wasm::LLIntGenerator::ControlType::isCatch):
+        (JSC::Wasm::LLIntGenerator::ControlType::targetLabelForBranch const):
+        (JSC::Wasm::LLIntGenerator::ControlType::branchTargetArity const):
+        (JSC::Wasm::LLIntGenerator::ControlType::branchTargetType const):
+        (JSC::Wasm::LLIntGenerator::addElse):
+        (JSC::Wasm::LLIntGenerator::addCatchToUnreachable):
+        (JSC::Wasm::LLIntGenerator::addCatchAllToUnreachable):
+        (JSC::Wasm::LLIntGenerator::addRethrow):
+        (JSC::Wasm::LLIntGenerator::addEndToUnreachable):
+
+2021-10-12  Alex Christensen  <achristensen@webkit.org>
+
         Begin migration from WTF::Variant to std::variant
         https://bugs.webkit.org/show_bug.cgi?id=231086
 

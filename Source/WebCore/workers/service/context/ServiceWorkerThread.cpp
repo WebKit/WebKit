@@ -145,7 +145,7 @@ void ServiceWorkerThread::queueTaskToPostMessage(MessageWithMessagePorts&& messa
     serviceWorkerGlobalScope->eventLoop().queueTask(TaskSource::DOMManipulation, [weakThis = makeWeakPtr(this), serviceWorkerGlobalScope, message = WTFMove(message), sourceData = WTFMove(sourceData)]() mutable {
         URL sourceURL;
         ExtendableMessageEventSource source;
-        if (WTF::holds_alternative<ServiceWorkerClientData>(sourceData)) {
+        if (std::holds_alternative<ServiceWorkerClientData>(sourceData)) {
             RefPtr<ServiceWorkerClient> sourceClient = ServiceWorkerClient::getOrCreate(serviceWorkerGlobalScope, WTFMove(WTF::get<ServiceWorkerClientData>(sourceData)));
 
             RELEASE_ASSERT(!sourceClient->url().protocolIsInHTTPFamily() || !serviceWorkerGlobalScope->url().protocolIsInHTTPFamily() || protocolHostAndPortAreEqual(serviceWorkerGlobalScope->url(), sourceClient->url()));

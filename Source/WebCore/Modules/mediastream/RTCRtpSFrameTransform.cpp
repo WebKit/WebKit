@@ -67,7 +67,7 @@ RTCRtpSFrameTransform::~RTCRtpSFrameTransform()
 void RTCRtpSFrameTransform::setEncryptionKey(CryptoKey& key, std::optional<uint64_t> keyId, DOMPromiseDeferred<void>&& promise)
 {
     auto algorithm = key.algorithm();
-    if (!WTF::holds_alternative<CryptoKeyAlgorithm>(algorithm)) {
+    if (!std::holds_alternative<CryptoKeyAlgorithm>(algorithm)) {
         promise.reject(Exception { TypeError, "Invalid key"_s });
         return;
     }

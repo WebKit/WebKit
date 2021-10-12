@@ -102,7 +102,7 @@ ExceptionOr<void> ApplePayPaymentHandler::validateData(Document& document, JSC::
 
 bool ApplePayPaymentHandler::handlesIdentifier(const PaymentRequest::MethodIdentifier& identifier)
 {
-    if (!WTF::holds_alternative<URL>(identifier))
+    if (!std::holds_alternative<URL>(identifier))
         return false;
 
     auto& url = WTF::get<URL>(identifier);

@@ -212,9 +212,9 @@ void ClipboardItemBindingsDataSource::invokeCompletionHandler()
     for (auto& itemTypeLoader : itemTypeLoaders) {
         auto type = itemTypeLoader->type();
         auto& data = itemTypeLoader->data();
-        if (WTF::holds_alternative<String>(data) && !!WTF::get<String>(data))
+        if (std::holds_alternative<String>(data) && !!WTF::get<String>(data))
             customData.writeString(type, WTF::get<String>(data));
-        else if (WTF::holds_alternative<Ref<SharedBuffer>>(data))
+        else if (std::holds_alternative<Ref<SharedBuffer>>(data))
             customData.writeData(type, WTF::get<Ref<SharedBuffer>>(data).copyRef());
         else {
             completionHandler(std::nullopt);
@@ -263,10 +263,10 @@ void ClipboardItemBindingsDataSource::ClipboardItemTypeLoader::sanitizeDataIfNee
 {
     if (m_type == "text/html"_s) {
         String markupToSanitize;
-        if (WTF::holds_alternative<Ref<SharedBuffer>>(m_data)) {
+        if (std::holds_alternative<Ref<SharedBuffer>>(m_data)) {
             auto& buffer = WTF::get<Ref<SharedBuffer>>(m_data);
             markupToSanitize = String::fromUTF8(buffer->data(), buffer->size());
-        } else if (WTF::holds_alternative<String>(m_data))
+        } else if (std::holds_alternative<String>(m_data))
             markupToSanitize = WTF::get<String>(m_data);
 
         if (markupToSanitize.isEmpty())
@@ -277,9 +277,9 @@ void ClipboardItemBindingsDataSource::ClipboardItemTypeLoader::sanitizeDataIfNee
 
     if (m_type == "image/png"_s) {
         RefPtr<SharedBuffer> bufferToSanitize;
-        if (WTF::holds_alternative<Ref<SharedBuffer>>(m_data))
+        if (std::holds_alternative<Ref<SharedBuffer>>(m_data))
             bufferToSanitize = WTF::get<Ref<SharedBuffer>>(m_data).ptr();
-        else if (WTF::holds_alternative<String>(m_data))
+        else if (std::holds_alternative<String>(m_data))
             bufferToSanitize = utf8Buffer(WTF::get<String>(m_data));
 
         if (!bufferToSanitize || bufferToSanitize->isEmpty())

@@ -191,7 +191,7 @@ ExceptionOr<void> IDBCursor::continuePrimaryKey(JSGlobalObject& state, JSValue k
     if (sourcesDeleted())
         return Exception { InvalidStateError, "Failed to execute 'continuePrimaryKey' on 'IDBCursor': The cursor's source or effective object store has been deleted."_s };
 
-    if (!WTF::holds_alternative<RefPtr<IDBIndex>>(m_source))
+    if (!std::holds_alternative<RefPtr<IDBIndex>>(m_source))
         return Exception { InvalidAccessError, "Failed to execute 'continuePrimaryKey' on 'IDBCursor': The cursor's source is not an index."_s };
 
     auto direction = m_info.cursorDirection();

@@ -111,7 +111,7 @@ public:
     void deleteAllFonts()
     {
         m_resources.removeIf([] (const auto& resource) {
-            return WTF::holds_alternative<RefPtr<Font>>(resource.value);
+            return std::holds_alternative<RefPtr<Font>>(resource.value);
         });
         m_fontCount = 0;
     }
@@ -123,7 +123,7 @@ private:
         auto iterator = m_resources.find(renderingResourceIdentifier);
         if (iterator == m_resources.end())
             return nullptr;
-        if (!WTF::holds_alternative<RefPtr<T>>(iterator->value))
+        if (!std::holds_alternative<RefPtr<T>>(iterator->value))
             return nullptr;
         return WTF::get<RefPtr<T>>(iterator->value).get();
     }
@@ -134,7 +134,7 @@ private:
         auto iterator = m_resources.find(renderingResourceIdentifier);
         if (iterator == m_resources.end())
             return false;
-        if (!WTF::holds_alternative<RefPtr<T>>(iterator->value))
+        if (!std::holds_alternative<RefPtr<T>>(iterator->value))
             return false;
         auto result = m_resources.remove(iterator);
         ASSERT(result);

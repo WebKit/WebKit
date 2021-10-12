@@ -55,7 +55,7 @@ size_t ImageBufferShareableIOSurfaceBackend::calculateExternalMemoryCost(const P
 
 std::unique_ptr<ImageBufferShareableIOSurfaceBackend> ImageBufferShareableIOSurfaceBackend::create(const Parameters& parameters, ImageBufferBackendHandle handle)
 {
-    if (!WTF::holds_alternative<MachSendRight>(handle)) {
+    if (!std::holds_alternative<MachSendRight>(handle)) {
         RELEASE_ASSERT_NOT_REACHED();
         return nullptr;
     }

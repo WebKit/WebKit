@@ -60,7 +60,7 @@ String convertEnumerationToString(SpeechRecognitionUpdateType enumerationValue)
 
 SpeechRecognitionUpdate SpeechRecognitionUpdate::create(SpeechRecognitionConnectionClientIdentifier clientIdentifier, SpeechRecognitionUpdateType type)
 {
-    return SpeechRecognitionUpdate { clientIdentifier, type, WTF::Monostate() };
+    return SpeechRecognitionUpdate { clientIdentifier, type, std::monostate() };
 }
 
 SpeechRecognitionUpdate SpeechRecognitionUpdate::createError(SpeechRecognitionConnectionClientIdentifier clientIdentifier, const SpeechRecognitionError& error)

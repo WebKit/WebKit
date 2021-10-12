@@ -656,7 +656,7 @@ static RetainPtr<WebItemProviderRegistrationInfoList> createItemProviderRegistra
         if (cocoaType.isEmpty())
             return;
 
-        if (WTF::holds_alternative<String>(value)) {
+        if (std::holds_alternative<String>(value)) {
             if (WTF::get<String>(value).isNull())
                 return;
 

@@ -77,7 +77,7 @@ private:
 #if ENABLE(WEBGL)
         std::reference_wrapper<WebGLProgram>,
 #endif
-        WTF::Monostate
+        std::monostate
     > m_program;
 
     bool m_disabled { false };

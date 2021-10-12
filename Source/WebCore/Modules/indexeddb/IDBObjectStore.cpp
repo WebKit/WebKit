@@ -479,7 +479,7 @@ ExceptionOr<Ref<IDBIndex>> IDBObjectStore::createIndex(JSGlobalObject&, const St
     if (name.isNull())
         return Exception { TypeError };
 
-    if (parameters.multiEntry && WTF::holds_alternative<Vector<String>>(keyPath))
+    if (parameters.multiEntry && std::holds_alternative<Vector<String>>(keyPath))
         return Exception { InvalidAccessError, "Failed to execute 'createIndex' on 'IDBObjectStore': The keyPath argument was an array and the multiEntry option is true."_s };
 
     // Install the new Index into the ObjectStore's info.

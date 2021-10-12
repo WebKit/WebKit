@@ -298,7 +298,7 @@ public:
     static Ref<StyleRuleLayer> createBlock(CascadeLayerName&&, std::unique_ptr<DeferredStyleGroupRuleList>&&);
     Ref<StyleRuleLayer> copy() const { return adoptRef(*new StyleRuleLayer(*this)); }
 
-    bool isStatement() const { return WTF::holds_alternative<Vector<CascadeLayerName>>(m_nameVariant); }
+    bool isStatement() const { return std::holds_alternative<Vector<CascadeLayerName>>(m_nameVariant); }
 
     auto& name() const { return WTF::get<CascadeLayerName>(m_nameVariant); }
     auto& nameList() const { return WTF::get<Vector<CascadeLayerName>>(m_nameVariant); }

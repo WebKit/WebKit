@@ -960,7 +960,7 @@ AssemblyHelpers::JumpList AssemblyHelpers::branchIfValue(VM& vm, JSValueRegs val
         JumpList isNotMasqueradesAsUndefined;
         isNotMasqueradesAsUndefined.append(branchTest8(Zero, Address(value.payloadGPR(), JSCell::typeInfoFlagsOffset()), TrustedImm32(MasqueradesAsUndefined)));
         emitLoadStructure(vm, value.payloadGPR(), scratch, scratchIfShouldCheckMasqueradesAsUndefined);
-        if (WTF::holds_alternative<JSGlobalObject*>(globalObject))
+        if (std::holds_alternative<JSGlobalObject*>(globalObject))
             move(TrustedImmPtr(WTF::get<JSGlobalObject*>(globalObject)), scratchIfShouldCheckMasqueradesAsUndefined);
         else
             move(WTF::get<GPRReg>(globalObject), scratchIfShouldCheckMasqueradesAsUndefined);

@@ -137,7 +137,7 @@ GRefPtr<GInputStream> webkitFormDataInputStreamNew(Ref<FormData>&& formData)
     // GFileInputStream is not pollable, so the stream is only pollable if FormData doesn't contain EncodedFileData elements.
     stream->priv->canPoll = true;
     for (const auto& element : stream->priv->formData->elements()) {
-        if (WTF::holds_alternative<FormDataElement::EncodedFileData>(element.data)) {
+        if (std::holds_alternative<FormDataElement::EncodedFileData>(element.data)) {
             stream->priv->canPoll = false;
             break;
         }

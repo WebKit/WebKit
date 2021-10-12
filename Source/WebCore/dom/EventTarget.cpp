@@ -125,7 +125,7 @@ void EventTarget::addEventListenerForBindings(const AtomString& eventType, RefPt
         addEventListener(eventType, listener.releaseNonNull(), capture);
     });
 
-    WTF::visit(visitor, variant);
+    std::visit(visitor, variant);
 }
 
 void EventTarget::removeEventListenerForBindings(const AtomString& eventType, RefPtr<EventListener>&& listener, EventListenerOptionsOrBoolean&& variant)
@@ -139,7 +139,7 @@ void EventTarget::removeEventListenerForBindings(const AtomString& eventType, Re
         removeEventListener(eventType, *listener, capture);
     });
 
-    WTF::visit(visitor, variant);
+    std::visit(visitor, variant);
 }
 
 bool EventTarget::removeEventListener(const AtomString& eventType, EventListener& listener, const EventListenerOptions& options)

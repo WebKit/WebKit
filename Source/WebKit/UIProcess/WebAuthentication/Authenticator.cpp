@@ -39,7 +39,7 @@ void Authenticator::handleRequest(const WebAuthenticationRequestData& data)
     RunLoop::main().dispatch([weakThis = WeakPtr { *this }, this] {
         if (!weakThis)
             return;
-        if (WTF::holds_alternative<WebCore::PublicKeyCredentialCreationOptions>(m_pendingRequestData.options))
+        if (std::holds_alternative<WebCore::PublicKeyCredentialCreationOptions>(m_pendingRequestData.options))
             makeCredential();
         else
             getAssertion();

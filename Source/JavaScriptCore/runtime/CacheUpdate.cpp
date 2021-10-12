@@ -48,7 +48,7 @@ CacheUpdate& CacheUpdate::operator=(CacheUpdate&& other)
 
 bool CacheUpdate::isGlobal() const
 {
-    return WTF::holds_alternative<GlobalUpdate>(m_update);
+    return std::holds_alternative<GlobalUpdate>(m_update);
 }
 
 const CacheUpdate::GlobalUpdate& CacheUpdate::asGlobal() const

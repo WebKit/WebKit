@@ -59,7 +59,7 @@ BoxPtr<OpenCDMSession> CDMProxyThunder::getDecryptionSession(DecryptionContext& 
         return nullptr;
 
     KeyHandleValueVariant keyData = keyHandle.value()->value();
-    ASSERT(WTF::holds_alternative<BoxPtr<OpenCDMSession>>(keyData));
+    ASSERT(std::holds_alternative<BoxPtr<OpenCDMSession>>(keyData));
 
     BoxPtr<OpenCDMSession> keyValue = WTF::get<BoxPtr<OpenCDMSession>>(keyData);
 

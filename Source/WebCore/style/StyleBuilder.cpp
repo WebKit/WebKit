@@ -204,7 +204,7 @@ void Builder::applyCustomProperty(const String& name)
 
         m_state.m_inProgressPropertiesCustom.add(name);
 
-        if (WTF::holds_alternative<Ref<CSSVariableReferenceValue>>(valueToApply->value())) {
+        if (std::holds_alternative<Ref<CSSVariableReferenceValue>>(valueToApply->value())) {
             RefPtr<CSSValue> parsedValue = resolvedVariableValue(CSSPropertyCustom, valueToApply.get());
 
             if (m_state.m_appliedCustomProperties.contains(name))
@@ -233,7 +233,7 @@ void Builder::applyCustomProperty(const String& name)
 
         Ref valueToApply = downcast<CSSCustomPropertyValue>(*property.cssValue[index]);
 
-        if (inCycle && WTF::holds_alternative<Ref<CSSVariableReferenceValue>>(valueToApply->value())) {
+        if (inCycle && std::holds_alternative<Ref<CSSVariableReferenceValue>>(valueToApply->value())) {
             // Resolve this value so that we reset its dependencies.
             resolvedVariableValue(CSSPropertyCustom, valueToApply.get());
         }
@@ -283,7 +283,7 @@ void Builder::applyProperty(CSSPropertyID id, CSSValue& value, SelectorChecker::
     if (id == CSSPropertyCustom) {
         customPropertyValue = downcast<CSSCustomPropertyValue>(valueToApply.ptr());
         ASSERT(customPropertyValue->isResolved());
-        if (WTF::holds_alternative<CSSValueID>(customPropertyValue->value()))
+        if (std::holds_alternative<CSSValueID>(customPropertyValue->value()))
             customPropertyValueID = WTF::get<CSSValueID>(customPropertyValue->value());
         auto& name = customPropertyValue->name();
         customPropertyRegistered = m_state.document().getCSSRegisteredCustomPropertySet().get(name);

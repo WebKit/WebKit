@@ -1,3 +1,64 @@
+2021-10-12  Alex Christensen  <achristensen@webkit.org>
+
+        Use STL instead of WTF::get_if, WTF::Monostate, WTF::visit, and WTF::holds_alternative
+        https://bugs.webkit.org/show_bug.cgi?id=231582
+
+        Reviewed by Darin Adler.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::resolveBlobReferences):
+        * NetworkProcess/NetworkResourceLoadParameters.cpp:
+        (WebKit::NetworkResourceLoadParameters::encode const):
+        * NetworkProcess/cache/NetworkCacheDataCurl.cpp:
+        (WebKit::NetworkCache::Data::Data):
+        * Platform/IPC/ArgumentCoders.h:
+        (IPC::ArgumentCoder<std::monostate>::encode):
+        (IPC::ArgumentCoder<std::monostate>::decode):
+        (IPC::ArgumentCoder<Monostate>::encode): Deleted.
+        (IPC::ArgumentCoder<Monostate>::decode): Deleted.
+        * Platform/IPC/FormDataReference.h:
+        (IPC::FormDataReference::encode const):
+        * Platform/IPC/MessageReceiveQueueMap.cpp:
+        (IPC::MessageReceiveQueueMap::get const):
+        * Platform/IPC/unix/ConnectionUnix.cpp:
+        (IPC::Connection::sendOutputMessage):
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<PasteboardCustomData::Entry>::encode):
+        (IPC::ArgumentCoder<IDBKeyPath>::encode):
+        (IPC::ArgumentCoder<ServiceWorkerOrClientData>::encode):
+        (IPC::ArgumentCoder<ServiceWorkerOrClientIdentifier>::encode):
+        * Shared/WebPreferencesStore.cpp:
+        (WebKit::valueForKey):
+        * UIProcess/ProcessThrottler.cpp:
+        (WebKit::ProcessThrottler::isValidBackgroundActivity):
+        (WebKit::ProcessThrottler::isValidForegroundActivity):
+        (WebKit::ProcessThrottler::TimedActivity::updateTimer):
+        * UIProcess/WebAuthentication/Authenticator.cpp:
+        (WebKit::Authenticator::handleRequest):
+        * UIProcess/WebAuthentication/AuthenticatorManager.cpp:
+        (WebKit::WebCore::getRpId):
+        (WebKit::WebCore::getUserName):
+        (WebKit::AuthenticatorManager::respondReceived):
+        (WebKit::AuthenticatorManager::invokePendingCompletionHandler):
+        * UIProcess/WebAuthentication/WebAuthenticationRequestData.cpp:
+        (WebKit::getClientDataType):
+        (WebKit::getUserVerificationRequirement):
+        * UIProcess/gtk/WebPasteboardProxyGtk.cpp:
+        (WebKit::WebPasteboardProxy::writeCustomData):
+        * WebProcess/GPU/graphics/ImageBufferShareableBitmapBackend.cpp:
+        (WebKit::ImageBufferShareableBitmapBackend::create):
+        * WebProcess/GPU/graphics/RemoteImageBufferProxy.h:
+        * WebProcess/GPU/graphics/cocoa/ImageBufferShareableIOSurfaceBackend.cpp:
+        (WebKit::ImageBufferShareableIOSurfaceBackend::create):
+        * WebProcess/GPU/graphics/cocoa/ImageBufferShareableMappedIOSurfaceBackend.cpp:
+        (WebKit::ImageBufferShareableMappedIOSurfaceBackend::create):
+        * WebProcess/Storage/WebServiceWorkerFetchTaskClient.cpp:
+        (WebKit::WebServiceWorkerFetchTaskClient::didReceiveData):
+        * WebProcess/WebCoreSupport/gtk/WebEditorClientGtk.cpp:
+        (WebKit::WebEditorClient::executePendingEditorCommands):
+        * WebProcess/WebPage/Cocoa/TextCheckingControllerProxy.mm:
+        (WebKit::TextCheckingControllerProxy::removeAnnotationRelativeToSelection):
+
 2021-10-12  Chris Dumez  <cdumez@apple.com>
 
         Allow direct construction of WeakPtr without makeWeakPtr()

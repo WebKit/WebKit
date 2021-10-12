@@ -362,14 +362,14 @@ void Device::FrameData::View::encode(Encoder& encoder) const
 {
     encoder << offset;
 
-    bool hasFov = WTF::holds_alternative<PlatformXR::Device::FrameData::Fov>(projection);
+    bool hasFov = std::holds_alternative<PlatformXR::Device::FrameData::Fov>(projection);
     encoder << hasFov;
     if (hasFov) {
         encoder << WTF::get<PlatformXR::Device::FrameData::Fov>(projection);
         return;
     }
 
-    bool hasProjectionMatrix = WTF::holds_alternative<PlatformXR::Device::FrameData::ProjectionMatrix>(projection);
+    bool hasProjectionMatrix = std::holds_alternative<PlatformXR::Device::FrameData::ProjectionMatrix>(projection);
     encoder << hasProjectionMatrix;
     if (hasProjectionMatrix) {
         for (float f : WTF::get<PlatformXR::Device::FrameData::ProjectionMatrix>(projection))
@@ -377,7 +377,7 @@ void Device::FrameData::View::encode(Encoder& encoder) const
         return;
     }
 
-    ASSERT(WTF::holds_alternative<std::nullptr_t>(projection));
+    ASSERT(std::holds_alternative<std::nullptr_t>(projection));
 }
 
 template<class Decoder>

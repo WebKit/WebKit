@@ -834,14 +834,14 @@ template<> struct ArgumentCoder<audit_token_t> {
 };
 #endif
 
-template<> struct ArgumentCoder<Monostate> {
+template<> struct ArgumentCoder<std::monostate> {
     template<typename Encoder>
-    static void encode(Encoder&, const Monostate&) { }
+    static void encode(Encoder&, const std::monostate&) { }
 
     template<typename Decoder>
-    static std::optional<Monostate> decode(Decoder&)
+    static std::optional<std::monostate> decode(Decoder&)
     {
-        return Monostate { };
+        return std::monostate { };
     }
 };
 

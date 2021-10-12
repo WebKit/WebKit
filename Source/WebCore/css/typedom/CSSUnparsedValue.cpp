@@ -130,7 +130,7 @@ String CSSUnparsedValue::toString() const
 void CSSUnparsedValue::serialize(StringBuilder& builder) const
 {
     for (auto& segment : m_segments) {
-        WTF::visit(WTF::makeVisitor([&] (const String& value) {
+        std::visit(WTF::makeVisitor([&] (const String& value) {
             builder.append(value);
         }, [&] (const RefPtr<CSSOMVariableReferenceValue>& value) {
             value->serialize(builder);

@@ -51,8 +51,8 @@ public:
     {
     }
 
-    bool isIPv4() const { return WTF::holds_alternative<struct in_addr>(m_address); }
-    bool isIPv6() const { return WTF::holds_alternative<struct in6_addr>(m_address); }
+    bool isIPv4() const { return std::holds_alternative<struct in_addr>(m_address); }
+    bool isIPv6() const { return std::holds_alternative<struct in6_addr>(m_address); }
 
     const struct in_addr& ipv4Address() const { return WTF::get<struct in_addr>(m_address); }
     const struct in6_addr& ipv6Address() const { return WTF::get<struct in6_addr>(m_address); }

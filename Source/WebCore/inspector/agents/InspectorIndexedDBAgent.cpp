@@ -116,7 +116,7 @@ public:
         }
 
         auto resultValue = result.releaseReturnValue();
-        if (!WTF::holds_alternative<RefPtr<IDBDatabase>>(resultValue)) {
+        if (!std::holds_alternative<RefPtr<IDBDatabase>>(resultValue)) {
             m_executableWithDatabase->requestCallback().sendFailure("Unexpected result type.");
             return;
         }
@@ -167,7 +167,7 @@ static Ref<Protocol::IndexedDB::KeyPath> keyPathFromIDBKeyPath(const std::option
         keyPath->setArray(WTFMove(array));
         return keyPath;
     });
-    return WTF::visit(visitor, idbKeyPath.value());
+    return std::visit(visitor, idbKeyPath.value());
 }
 
 static RefPtr<IDBTransaction> transactionForDatabase(IDBDatabase* idbDatabase, const String& objectStoreName, IDBTransactionMode mode = IDBTransactionMode::Readonly)
@@ -362,7 +362,7 @@ public:
         }
         
         auto resultValue = result.releaseReturnValue();
-        if (!WTF::holds_alternative<RefPtr<IDBCursor>>(resultValue)) {
+        if (!std::holds_alternative<RefPtr<IDBCursor>>(resultValue)) {
             end(false);
             return;
         }

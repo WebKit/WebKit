@@ -53,25 +53,8 @@
 
 namespace WTF {
 
-#if COMPILER_SUPPORTS(EXCEPTIONS)
-#define __THROW_EXCEPTION(__exception) throw __exception;
-#define __NOEXCEPT noexcept
-#define __NOEXCEPT_(__exception) noexcept(__exception)
-#else
-#define __THROW_EXCEPTION(__exception) do { (void)__exception; CRASH(); } while (0);
-#define __NOEXCEPT
-#define __NOEXCEPT_(...)
-#endif
-
-using Monostate = std::monostate;
 template<typename... Types>
 using Variant = std::variant<Types...>;
-
-template<typename _Type,typename ... _Types>
-constexpr bool holds_alternative(Variant<_Types...> const& __v) __NOEXCEPT
-{
-    return std::holds_alternative<_Type>(__v);
-}
 
 template<typename _Type,typename ... _Types>
 constexpr _Type& get(Variant<_Types...>& __v)
@@ -97,46 +80,14 @@ constexpr const _Type&& get(Variant<_Types...> const&& __v)
     return std::get<_Type>(WTFMove(__v));
 }
 
-template <typename Visitor, typename... Variants>
-constexpr auto visit(Visitor&& visitor, Variants&&... variants) -> decltype(std::visit(std::forward<Visitor>(visitor), std::forward<Variants>(variants)...))
-{
-    return std::visit(std::forward<Visitor>(visitor), std::forward<Variants>(variants)...);
-}
-
-template<typename _Type,typename ... _Types>
-constexpr std::add_pointer_t<_Type> get_if(Variant<_Types...>* variant)
-{
-    return std::get_if<_Type>(variant);
-}
-
-template<typename _Type,typename ... _Types>
-constexpr std::add_pointer_t<_Type const> get_if(Variant<_Types...> const* variant)
-{
-    return std::get_if<_Type>(variant);
-}
-
-template<ptrdiff_t _Index,typename ... _Types>
-constexpr typename std::add_pointer_t<std::variant_alternative_t<_Index, std::variant<_Types...>>>::__type get_if(Variant<_Types...>* variant)
-{
-    return std::get_if<_Index>(variant);
-}
-
-template<ptrdiff_t _Index,typename ... _Types>
-constexpr typename std::add_pointer_t<std::variant_alternative_t<_Index, std::variant<_Types...>>>::__type const get_if(
-    Variant<_Types...> const* variant)
-{
-    return std::get_if<_Index>(variant);
-}
-
 // -- WebKit Additions --
 
 template<class V, class... F>
-auto switchOn(V&& v, F&&... f) -> decltype(WTF::visit(makeVisitor(std::forward<F>(f)...), std::forward<V>(v)))
+auto switchOn(V&& v, F&&... f) -> decltype(std::visit(makeVisitor(std::forward<F>(f)...), std::forward<V>(v)))
 {
-    return WTF::visit(makeVisitor(std::forward<F>(f)...), std::forward<V>(v));
+    return std::visit(makeVisitor(std::forward<F>(f)...), std::forward<V>(v));
 }
 
 } // namespace WTF
 
-using WTF::Monostate;
 using WTF::Variant;

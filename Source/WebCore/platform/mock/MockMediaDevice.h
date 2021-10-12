@@ -160,10 +160,10 @@ struct MockDisplayProperties {
 };
 
 struct MockMediaDevice {
-    bool isMicrophone() const { return WTF::holds_alternative<MockMicrophoneProperties>(properties); }
-    bool isSpeaker() const { return WTF::holds_alternative<MockSpeakerProperties>(properties); }
-    bool isCamera() const { return WTF::holds_alternative<MockCameraProperties>(properties); }
-    bool isDisplay() const { return WTF::holds_alternative<MockDisplayProperties>(properties); }
+    bool isMicrophone() const { return std::holds_alternative<MockMicrophoneProperties>(properties); }
+    bool isSpeaker() const { return std::holds_alternative<MockSpeakerProperties>(properties); }
+    bool isCamera() const { return std::holds_alternative<MockCameraProperties>(properties); }
+    bool isDisplay() const { return std::holds_alternative<MockDisplayProperties>(properties); }
 
     CaptureDevice captureDevice() const
     {

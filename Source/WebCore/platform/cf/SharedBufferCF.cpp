@@ -44,7 +44,7 @@ SharedBuffer::SharedBuffer(CFDataRef data)
 RetainPtr<CFDataRef> SharedBuffer::createCFData() const
 {
     if (m_segments.size() == 1) {
-        if (auto* data = WTF::get_if<RetainPtr<CFDataRef>>(&m_segments[0].segment->m_immutableData))
+        if (auto* data = std::get_if<RetainPtr<CFDataRef>>(&m_segments[0].segment->m_immutableData))
             return *data;
     }
     auto cfData = adoptCF(CFDataCreateMutable(nullptr, size()));
@@ -64,7 +64,7 @@ void SharedBuffer::hintMemoryNotNeededSoon() const
 {
     for (const auto& entry : m_segments) {
         if (entry.segment->hasOneRef()) {
-            if (auto* data = WTF::get_if<RetainPtr<CFDataRef>>(&entry.segment->m_immutableData))
+            if (auto* data = std::get_if<RetainPtr<CFDataRef>>(&entry.segment->m_immutableData))
                 OSAllocator::hintMemoryNotNeededSoon(const_cast<UInt8*>(CFDataGetBytePtr(data->get())), CFDataGetLength(data->get()));
         }
     }

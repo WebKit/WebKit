@@ -244,7 +244,7 @@ inline const RenderObject& Box::renderer() const
 
 inline const LegacyInlineBox* Box::legacyInlineBox() const
 {
-    if (!WTF::holds_alternative<BoxLegacyPath>(m_pathVariant))
+    if (!std::holds_alternative<BoxLegacyPath>(m_pathVariant))
         return nullptr;
     return WTF::get<BoxLegacyPath>(m_pathVariant).legacyInlineBox();
 }
@@ -252,7 +252,7 @@ inline const LegacyInlineBox* Box::legacyInlineBox() const
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 inline const InlineDisplay::Box* Box::inlineBox() const
 {
-    if (!WTF::holds_alternative<BoxModernPath>(m_pathVariant))
+    if (!std::holds_alternative<BoxModernPath>(m_pathVariant))
         return nullptr;
     return &WTF::get<BoxModernPath>(m_pathVariant).box();
 }

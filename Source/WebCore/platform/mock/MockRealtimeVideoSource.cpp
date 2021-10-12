@@ -485,7 +485,7 @@ ImageBuffer* MockRealtimeVideoSource::imageBuffer() const
 
 bool MockRealtimeVideoSource::mockDisplayType(CaptureDevice::DeviceType type) const
 {
-    if (!WTF::holds_alternative<MockDisplayProperties>(m_device.properties))
+    if (!std::holds_alternative<MockDisplayProperties>(m_device.properties))
         return false;
 
     return WTF::get<MockDisplayProperties>(m_device.properties).type == type;

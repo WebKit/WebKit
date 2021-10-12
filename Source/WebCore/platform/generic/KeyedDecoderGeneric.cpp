@@ -223,7 +223,7 @@ const T* KeyedDecoderGeneric::getPointerFromDictionaryStack(const String& key)
     if (!node)
         return nullptr;
 
-    return WTF::get_if<T>(node);
+    return std::get_if<T>(node);
 }
 
 template<typename T>

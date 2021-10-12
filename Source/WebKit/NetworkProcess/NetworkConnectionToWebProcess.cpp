@@ -470,7 +470,7 @@ Vector<RefPtr<WebCore::BlobDataFileReference>> NetworkConnectionToWebProcess::re
     Vector<RefPtr<WebCore::BlobDataFileReference>> files;
     if (auto* body = loadParameters.request.httpBody()) {
         for (auto& element : body->elements()) {
-            if (auto* blobData = WTF::get_if<FormDataElement::EncodedBlobData>(&element.data))
+            if (auto* blobData = std::get_if<FormDataElement::EncodedBlobData>(&element.data))
                 files.appendVector(blobRegistry.filesInBlob(blobData->url));
         }
         const_cast<WebCore::ResourceRequest&>(loadParameters.request).setHTTPBody(body->resolveBlobReferences(&blobRegistry));

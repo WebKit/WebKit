@@ -140,7 +140,7 @@ private:
 
     Variant<
         std::reference_wrapper<CanvasRenderingContext>,
-        Monostate
+        std::monostate
     > m_context;
 
     RefPtr<Inspector::Protocol::Recording::InitialState> m_initialState;

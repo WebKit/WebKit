@@ -397,7 +397,7 @@ void setHTTPBody(CFMutableURLRequestRef request, FormData* formData)
     // Handle the common special case of one piece of form data, with no files.
     auto& elements = formData->elements();
     if (elements.size() == 1 && !formData->alwaysStream()) {
-        if (auto* vector = WTF::get_if<Vector<uint8_t>>(&elements[0].data)) {
+        if (auto* vector = std::get_if<Vector<uint8_t>>(&elements[0].data)) {
             auto data = adoptCF(CFDataCreate(nullptr, vector->data(), vector->size()));
             CFURLRequestSetHTTPRequestBody(request, data.get());
             return;

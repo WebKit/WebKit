@@ -49,8 +49,8 @@ public:
     static CanvasStyle createFromString(const String& color, CanvasBase&);
     static CanvasStyle createFromStringWithOverrideAlpha(const String& color, float alpha, CanvasBase&);
 
-    bool isValid() const { return !WTF::holds_alternative<Invalid>(m_style); }
-    bool isCurrentColor() const { return WTF::holds_alternative<CurrentColor>(m_style); }
+    bool isValid() const { return !std::holds_alternative<Invalid>(m_style); }
+    bool isCurrentColor() const { return std::holds_alternative<CurrentColor>(m_style); }
     std::optional<float> overrideAlpha() const { return WTF::get<CurrentColor>(m_style).overrideAlpha; }
 
     String color() const;
@@ -88,14 +88,14 @@ inline CanvasStyle::CanvasStyle()
 
 inline RefPtr<CanvasGradient> CanvasStyle::canvasGradient() const
 {
-    if (!WTF::holds_alternative<RefPtr<CanvasGradient>>(m_style))
+    if (!std::holds_alternative<RefPtr<CanvasGradient>>(m_style))
         return nullptr;
     return WTF::get<RefPtr<CanvasGradient>>(m_style);
 }
 
 inline RefPtr<CanvasPattern> CanvasStyle::canvasPattern() const
 {
-    if (!WTF::holds_alternative<RefPtr<CanvasPattern>>(m_style))
+    if (!std::holds_alternative<RefPtr<CanvasPattern>>(m_style))
         return nullptr;
     return WTF::get<RefPtr<CanvasPattern>>(m_style);
 }

@@ -245,14 +245,14 @@ void ProcessThrottler::assertionWasInvalidated()
 
 bool ProcessThrottler::isValidBackgroundActivity(const ProcessThrottler::ActivityVariant& activity)
 {
-    if (!WTF::holds_alternative<UniqueRef<ProcessThrottler::BackgroundActivity>>(activity))
+    if (!std::holds_alternative<UniqueRef<ProcessThrottler::BackgroundActivity>>(activity))
         return false;
     return WTF::get<UniqueRef<ProcessThrottler::BackgroundActivity>>(activity)->isValid();
 }
 
 bool ProcessThrottler::isValidForegroundActivity(const ProcessThrottler::ActivityVariant& activity)
 {
-    if (!WTF::holds_alternative<UniqueRef<ProcessThrottler::ForegroundActivity>>(activity))
+    if (!std::holds_alternative<UniqueRef<ProcessThrottler::ForegroundActivity>>(activity))
         return false;
     return WTF::get<UniqueRef<ProcessThrottler::ForegroundActivity>>(activity)->isValid();
 }
@@ -280,7 +280,7 @@ void ProcessThrottler::TimedActivity::activityTimedOut()
 
 void ProcessThrottler::TimedActivity::updateTimer()
 {
-    if (WTF::holds_alternative<std::nullptr_t>(m_activity))
+    if (std::holds_alternative<std::nullptr_t>(m_activity))
         m_timer.stop();
     else
         m_timer.startOneShot(m_timeout);

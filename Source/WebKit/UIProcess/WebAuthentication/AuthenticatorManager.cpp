@@ -149,14 +149,14 @@ static void processGoogleLegacyAppIdSupportExtension(const std::optional<Authent
 
 static String getRpId(const Variant<PublicKeyCredentialCreationOptions, PublicKeyCredentialRequestOptions>& options)
 {
-    if (WTF::holds_alternative<PublicKeyCredentialCreationOptions>(options))
+    if (std::holds_alternative<PublicKeyCredentialCreationOptions>(options))
         return WTF::get<PublicKeyCredentialCreationOptions>(options).rp.id;
     return WTF::get<PublicKeyCredentialRequestOptions>(options).rpId;
 }
 
 static String getUserName(const Variant<PublicKeyCredentialCreationOptions, PublicKeyCredentialRequestOptions>& options)
 {
-    if (WTF::holds_alternative<PublicKeyCredentialCreationOptions>(options))
+    if (std::holds_alternative<PublicKeyCredentialCreationOptions>(options))
         return WTF::get<PublicKeyCredentialCreationOptions>(options).user.name;
     return emptyString();
 }
@@ -285,7 +285,7 @@ void AuthenticatorManager::respondReceived(Respond&& respond)
         return;
     ASSERT(m_pendingCompletionHandler);
 
-    auto shouldComplete = WTF::holds_alternative<Ref<AuthenticatorResponse>>(respond);
+    auto shouldComplete = std::holds_alternative<Ref<AuthenticatorResponse>>(respond);
     if (!shouldComplete)
         shouldComplete = WTF::get<ExceptionData>(respond).code == InvalidStateError;
     if (shouldComplete) {
@@ -498,7 +498,7 @@ void AuthenticatorManager::runPresenterInternal(const TransportSet& transports)
 
 void AuthenticatorManager::invokePendingCompletionHandler(Respond&& respond)
 {
-    auto result = WTF::holds_alternative<Ref<AuthenticatorResponse>>(respond) ? WebAuthenticationResult::Succeeded : WebAuthenticationResult::Failed;
+    auto result = std::holds_alternative<Ref<AuthenticatorResponse>>(respond) ? WebAuthenticationResult::Succeeded : WebAuthenticationResult::Failed;
 
     // This is for the new UI.
     if (m_presenter)

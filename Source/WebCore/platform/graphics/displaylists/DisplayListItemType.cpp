@@ -273,7 +273,7 @@ size_t paddedSizeOfTypeAndItemInBytes(ItemType type)
 
 size_t paddedSizeOfTypeAndItemInBytes(const DisplayListItem& displayListItem)
 {
-    auto itemSize = WTF::visit([](const auto& item) {
+    auto itemSize = std::visit([](const auto& item) {
         return sizeof(item);
     }, displayListItem);
     return sizeof(uint64_t) + roundUpToMultipleOf(alignof(uint64_t), itemSize);
@@ -281,7 +281,7 @@ size_t paddedSizeOfTypeAndItemInBytes(const DisplayListItem& displayListItem)
 
 ItemType displayListItemType(const DisplayListItem& displayListItem)
 {
-    return WTF::visit([](const auto& item) {
+    return std::visit([](const auto& item) {
         return item.itemType;
     }, displayListItem);
 }

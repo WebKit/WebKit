@@ -98,7 +98,7 @@ static ExceptionOr<void> appendToHeaderMap(const HTTPHeaderMap::HTTPHeaderMapCon
 // https://fetch.spec.whatwg.org/#concept-headers-fill
 static ExceptionOr<void> fillHeaderMap(HTTPHeaderMap& headers, const FetchHeaders::Init& headersInit, FetchHeaders::Guard guard)
 {
-    if (WTF::holds_alternative<Vector<Vector<String>>>(headersInit)) {
+    if (std::holds_alternative<Vector<Vector<String>>>(headersInit)) {
         auto& sequence = WTF::get<Vector<Vector<String>>>(headersInit);
         for (auto& header : sequence) {
             if (header.size() != 2)

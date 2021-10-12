@@ -152,7 +152,7 @@ ExceptionOr<Ref<WebXRWebGLLayer>> WebXRWebGLLayer::create(Ref<WebXRSession>&& se
             // 10. Return layer.
             return adoptRef(*new WebXRWebGLLayer(WTFMove(session), WTFMove(context), WTFMove(framebuffer), antialias, ignoreDepthValues, isCompositionEnabled));
         },
-        [](WTF::Monostate) {
+        [](std::monostate) {
             ASSERT_NOT_REACHED();
             return Exception { InvalidStateError };
         }

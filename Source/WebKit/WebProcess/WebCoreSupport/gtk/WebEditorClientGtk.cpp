@@ -65,7 +65,7 @@ bool WebEditorClient::executePendingEditorCommands(Frame& frame, const Vector<WT
     }
 
     for (auto& commandVariant : commands) {
-        if (WTF::holds_alternative<String>(commandVariant)) {
+        if (std::holds_alternative<String>(commandVariant)) {
             if (!handleGtkEditorCommand(frame, WTF::get<String>(commandVariant), allowTextInsertion))
                 return false;
         } else {

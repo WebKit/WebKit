@@ -237,7 +237,7 @@ IndexedDB::IndexRecordType IDBRequest::requestedIndexRecordType() const
 {
     ASSERT(canCurrentThreadAccessThreadLocalData(originThread()));
     ASSERT(m_source);
-    ASSERT(WTF::holds_alternative<RefPtr<IDBIndex>>(m_source.value()));
+    ASSERT(std::holds_alternative<RefPtr<IDBIndex>>(m_source.value()));
 
     return m_requestedIndexRecordType;
 }

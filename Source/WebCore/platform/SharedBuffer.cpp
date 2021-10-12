@@ -145,7 +145,7 @@ Vector<uint8_t> SharedBuffer::takeData()
         return { };
 
     Vector<uint8_t> combinedData;
-    if (hasOneSegment() && WTF::holds_alternative<Vector<uint8_t>>(m_segments[0].segment->m_immutableData))
+    if (hasOneSegment() && std::holds_alternative<Vector<uint8_t>>(m_segments[0].segment->m_immutableData))
         combinedData = std::exchange(WTF::get<Vector<uint8_t>>(m_segments[0].segment->m_immutableData), Vector<uint8_t>());
     else
         combinedData = combineSegmentsData(m_segments, m_size);
@@ -355,12 +355,12 @@ const uint8_t* SharedBuffer::DataSegment::data() const
         [](const FileSystem::MappedFileData& data) -> const uint8_t* { return static_cast<const uint8_t*>(data.data()); },
         [](const Provider& provider) -> const uint8_t* { return provider.data(); }
     );
-    return WTF::visit(visitor, m_immutableData);
+    return std::visit(visitor, m_immutableData);
 }
 
 bool SharedBuffer::DataSegment::containsMappedFileData() const
 {
-    return WTF::holds_alternative<FileSystem::MappedFileData>(m_immutableData);
+    return std::holds_alternative<FileSystem::MappedFileData>(m_immutableData);
 }
 
 #if !USE(CF)
@@ -439,7 +439,7 @@ size_t SharedBuffer::DataSegment::size() const
         [](const FileSystem::MappedFileData& data) -> size_t { return data.size(); },
         [](const Provider& provider) -> size_t { return provider.size(); }
     );
-    return WTF::visit(visitor, m_immutableData);
+    return std::visit(visitor, m_immutableData);
 }
 
 SharedBufferDataView::SharedBufferDataView(Ref<SharedBuffer::DataSegment>&& segment, size_t positionWithinSegment)

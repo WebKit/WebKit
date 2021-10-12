@@ -730,7 +730,7 @@ private:
     void saveBlendValue(GCGLenum attachment, T& destination)
     {
         WebGLAny param = m_context.getParameter(attachment);
-        if (WTF::holds_alternative<T>(param))
+        if (std::holds_alternative<T>(param))
             destination = WTF::get<T>(param);
     }
 
@@ -738,16 +738,16 @@ private:
     {
         WebGLAny binding = m_context.getParameter(pname);
         if (pname == GraphicsContextGL::FRAMEBUFFER_BINDING)
-            return WTF::holds_alternative<RefPtr<WebGLFramebuffer>>(binding) && WTF::get<RefPtr<WebGLFramebuffer>>(binding);
+            return std::holds_alternative<RefPtr<WebGLFramebuffer>>(binding) && WTF::get<RefPtr<WebGLFramebuffer>>(binding);
         if (pname == GraphicsContextGL::RENDERBUFFER_BINDING)
-            return WTF::holds_alternative<RefPtr<WebGLRenderbuffer>>(binding) && WTF::get<RefPtr<WebGLRenderbuffer>>(binding);
+            return std::holds_alternative<RefPtr<WebGLRenderbuffer>>(binding) && WTF::get<RefPtr<WebGLRenderbuffer>>(binding);
         return false;
     }
 
     bool hasFramebufferParameterAttachment(GCGLenum attachment)
     {
         WebGLAny attachmentParameter = m_context.getFramebufferAttachmentParameter(GraphicsContextGL::FRAMEBUFFER, attachment, GraphicsContextGL::FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE);
-        if (!WTF::holds_alternative<unsigned>(attachmentParameter))
+        if (!std::holds_alternative<unsigned>(attachmentParameter))
             return false;
         if (WTF::get<unsigned>(attachmentParameter) != static_cast<unsigned>(GraphicsContextGL::RENDERBUFFER))
             return false;
@@ -1758,7 +1758,7 @@ void WebGLRenderingContextBase::bufferData(GCGLenum target, std::optional<Buffer
     if (!buffer)
         return;
 
-    WTF::visit([&](auto& data) {
+    std::visit([&](auto& data) {
         if (!buffer->associateBufferData(data.get())) {
             this->synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "bufferData", "invalid buffer");
             return;
@@ -1785,7 +1785,7 @@ void WebGLRenderingContextBase::bufferSubData(GCGLenum target, long long offset,
         return;
     }
 
-    WTF::visit([&](auto& data) {
+    std::visit([&](auto& data) {
         if (!buffer->associateBufferSubData(static_cast<GCGLintptr>(offset), data.get())) {
             this->synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "bufferSubData", "offset out of range");
             return;
@@ -4813,7 +4813,7 @@ IntRect WebGLRenderingContextBase::getTexImageSourceSize(TexImageSource& source)
     }
     );
 
-    ExceptionOr<IntRect> result = WTF::visit(visitor, source);
+    ExceptionOr<IntRect> result = std::visit(visitor, source);
     if (result.hasException())
         return sentinelEmptyRect();
     return result.returnValue();
@@ -5074,7 +5074,7 @@ ExceptionOr<void> WebGLRenderingContextBase::texImageSourceHelper(TexImageFuncti
 #endif // ENABLE(VIDEO)
     );
 
-    return WTF::visit(visitor, source);
+    return std::visit(visitor, source);
 }
 
 void WebGLRenderingContextBase::texImageArrayBufferViewHelper(TexImageFunctionID functionID, GCGLenum target, GCGLint level, GCGLint internalformat, GCGLsizei width, GCGLsizei height, GCGLsizei depth, GCGLint border, GCGLenum format, GCGLenum type, GCGLint xoffset, GCGLint yoffset, GCGLint zoffset, RefPtr<ArrayBufferView>&& pixels, NullDisposition nullDisposition, GCGLuint srcOffset)
