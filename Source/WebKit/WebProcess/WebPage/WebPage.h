@@ -617,7 +617,9 @@ public:
     void listenForLayoutMilestones(OptionSet<WebCore::LayoutMilestone>);
 
     void setSuppressScrollbarAnimations(bool);
-    
+
+    void setHasActiveAnimatedScrolls(bool);
+
     void setEnableVerticalRubberBanding(bool);
     void setEnableHorizontalRubberBanding(bool);
     

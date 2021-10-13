@@ -2729,6 +2729,11 @@ void WebPage::pageStoppedScrolling()
         frame->loader().history().saveScrollPositionAndViewStateToItem(frame->loader().history().currentItem());
 }
 
+void WebPage::setHasActiveAnimatedScrolls(bool hasActiveAnimatedScrolls)
+{
+    send(Messages::WebPageProxy::SetHasActiveAnimatedScrolls(hasActiveAnimatedScrolls));
+}
+
 #if ENABLE(CONTEXT_MENUS)
 WebContextMenu& WebPage::contextMenu()
 {
