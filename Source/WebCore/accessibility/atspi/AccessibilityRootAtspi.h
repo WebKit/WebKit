@@ -34,7 +34,7 @@ class Page;
 class AccessibilityRootAtspi final : public ThreadSafeRefCounted<AccessibilityRootAtspi> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<AccessibilityRootAtspi> create(const Page&, AccessibilityAtspi&);
+    static Ref<AccessibilityRootAtspi> create(Page&, AccessibilityAtspi&);
     ~AccessibilityRootAtspi() = default;
 
     void registerObject(CompletionHandler<void(const String&)>&&);
@@ -52,7 +52,7 @@ public:
     void serialize(GVariantBuilder*) const;
 
 private:
-    AccessibilityRootAtspi(const Page&, AccessibilityAtspi&);
+    AccessibilityRootAtspi(Page&, AccessibilityAtspi&);
 
     static GDBusInterfaceVTable s_accessibleFunctions;
 

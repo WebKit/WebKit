@@ -32,12 +32,12 @@
 
 namespace WebCore {
 
-Ref<AccessibilityRootAtspi> AccessibilityRootAtspi::create(const Page& page, AccessibilityAtspi& atspi)
+Ref<AccessibilityRootAtspi> AccessibilityRootAtspi::create(Page& page, AccessibilityAtspi& atspi)
 {
     return adoptRef(*new AccessibilityRootAtspi(page, atspi));
 }
 
-AccessibilityRootAtspi::AccessibilityRootAtspi(const Page& page, AccessibilityAtspi& atspi)
+AccessibilityRootAtspi::AccessibilityRootAtspi(Page& page, AccessibilityAtspi& atspi)
     : m_atspi(atspi)
     , m_page(page)
 {
