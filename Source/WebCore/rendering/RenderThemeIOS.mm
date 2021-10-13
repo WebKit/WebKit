@@ -54,6 +54,7 @@
 #import "HTMLMeterElement.h"
 #import "HTMLNames.h"
 #import "HTMLSelectElement.h"
+#import "HTMLTextAreaElement.h"
 #import "IOSurface.h"
 #import "Icon.h"
 #import "LocalCurrentTraitCollection.h"
@@ -602,7 +603,8 @@ void RenderThemeIOS::paintTextFieldDecorations(const RenderBox& box, const Paint
             auto& input = downcast<HTMLInputElement>(*element);
             if (input.isTextField() && !input.isSearchField())
                 shouldPaintFillAndInnerShadow = true;
-        }
+        } else if (is<HTMLTextAreaElement>(*element))
+            shouldPaintFillAndInnerShadow = true;
 
         bool useAlternateDesign = box.settings().alternateFormControlDesignEnabled();
         if (useAlternateDesign && shouldPaintFillAndInnerShadow) {
@@ -628,6 +630,18 @@ void RenderThemeIOS::paintTextFieldDecorations(const RenderBox& box, const Paint
         FloatPoint point(rect.x() + style.borderLeftWidth(), rect.y() + style.borderTopWidth());
         drawAxialGradient(context.platformContext(), gradientWithName(InsetGradient), point, FloatPoint(CGPointMake(point.x(), point.y() + 3.0f)), LinearInterpolation);
     }
+}
+
+void RenderThemeIOS::adjustTextAreaStyle(RenderStyle& style, const Element* element) const
+{
+    if (!element)
+        return;
+
+    if (!element->document().settings().alternateFormControlDesignEnabled())
+        return;
+
+    style.setBackgroundColor(Color::transparentBlack);
+    style.resetBorderExceptRadius();
 }
 
 void RenderThemeIOS::paintTextAreaDecorations(const RenderBox& box, const PaintInfo& paintInfo, const FloatRect& rect)

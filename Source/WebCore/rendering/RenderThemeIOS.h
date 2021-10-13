@@ -93,6 +93,7 @@ private:
 
     void adjustTextFieldStyle(RenderStyle&, const Element*) const final;
     void paintTextFieldDecorations(const RenderBox&, const PaintInfo&, const FloatRect&) override;
+    void adjustTextAreaStyle(RenderStyle&, const Element*) const final;
     void paintTextAreaDecorations(const RenderBox&, const PaintInfo&, const FloatRect&) override;
 
     void paintTextFieldInnerShadow(const PaintInfo&, const FloatRoundedRect&);
