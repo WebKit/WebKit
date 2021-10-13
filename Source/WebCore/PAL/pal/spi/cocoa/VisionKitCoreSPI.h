@@ -126,8 +126,16 @@ typedef NS_ENUM(NSInteger, VKImageOrientation) {
 @property (nonatomic, readonly) NSArray<VKWKTextInfo *> *children;
 @end
 
+@class DDScannerResult;
+
+@interface VKWKDataDetectorInfo : NSObject
+@property (nonatomic, readonly) DDScannerResult *result;
+@property (nonatomic, readonly) NSArray<VKQuad *> *boundingQuads;
+@end
+
 @interface VKImageAnalysis (WebKitSPI)
 @property (nonatomic, readonly) NSArray<VKWKLineInfo *> *allLines;
+@property (nonatomic, readonly) NSArray<VKWKDataDetectorInfo *> *textDataDetectors;
 #if HAVE(VK_IMAGE_ANALYSIS_FOR_MACHINE_READABLE_CODES)
 @property (nonatomic) UIMenu *mrcMenu;
 @property (nonatomic, nullable, weak) UIViewController *presentingViewControllerForMrcAction;

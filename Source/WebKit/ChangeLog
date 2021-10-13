@@ -1,3 +1,20 @@
+2021-10-12  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Move some staged VisionKitCore SPI into VisionKitCoreSPI.h
+        https://bugs.webkit.org/show_bug.cgi?id=231648
+
+        Reviewed by Tim Horton.
+
+        Move these interface declarations out of this implementation file, and into PAL instead, but only if we're not
+        using the Apple internal SDK. Additionally, redefine VKWKDataDetectorInfo as a class instead of a protocol; this
+        workaround was only added to ensure source and binary compatibility with older versions of the internal macOS
+        Monterey/iOS 15 SDK.
+
+        No change in behavior.
+
+        * Platform/cocoa/TextRecognitionUtilities.mm:
+        (WebKit::makeTextRecognitionResult):
+
 2021-10-12  Alex Christensen  <achristensen@webkit.org>
 
         Use std::variant instead of WTF::Variant

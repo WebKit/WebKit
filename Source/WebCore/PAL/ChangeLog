@@ -1,3 +1,14 @@
+2021-10-12  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Move some staged VisionKitCore SPI into VisionKitCoreSPI.h
+        https://bugs.webkit.org/show_bug.cgi?id=231648
+
+        Reviewed by Tim Horton.
+
+        See WebKit/ChangeLog for more details.
+
+        * pal/spi/cocoa/VisionKitCoreSPI.h:
+
 2021-10-12  Sihui Liu  <sihui_liu@apple.com>
 
         Implement FileSystemSyncAccessHandle read() and write()
