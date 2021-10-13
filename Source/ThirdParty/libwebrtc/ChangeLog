@@ -1,3 +1,25 @@
+2021-10-13  Cameron McCormack  <heycam@apple.com>
+
+        Override guessed color space for incoming H.264/265 streams
+        https://bugs.webkit.org/show_bug.cgi?id=231353
+        <rdar://problem/83969311>
+
+        Reviewed by Youenn Fablet.
+
+        When the VTDecompressionSession decodes incoming H.264/H.265 samples,
+        it puts guessed color space attachments on the CVPixelBuffer, and the
+        guesses are based on video resolution. WebRTC streams however default
+        to being sRGB. So this patch overrides a guess with what we know the
+        stream will be. (Once we support different color spaces in WebRTC
+        video streams we'll need to adjust this.)
+
+        * Source/webrtc/sdk/objc/components/video_codec/RTCVideoDecoderH264.mm:
+        (overrideColorSpaceAttachmentsIfNeeded):
+        (decompressionOutputCallback):
+        * Source/webrtc/sdk/objc/components/video_codec/RTCVideoDecoderH265.mm:
+        (overrideColorSpaceAttachmentsIfNeeded):
+        (h265DecompressionOutputCallback):
+
 2021-10-12  Alexey Proskuryakov  <ap@apple.com>
 
         Invoke ThirdParty build scripts with python3 explicitly
