@@ -1,3 +1,18 @@
+2021-10-12  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        WPT test gardening for font palettes
+        https://bugs.webkit.org/show_bug.cgi?id=231649
+
+        This is being upstreamed in https://github.com/web-platform-tests/wpt/pull/30959.
+
+        Unreviewed.
+
+        * web-platform-tests/css/css-fonts/font-palette-add-2.html:
+        * web-platform-tests/css/css-fonts/font-palette-modify-2.html:
+        * web-platform-tests/css/css-fonts/font-palette-remove-2.html:
+        * web-platform-tests/css/css-fonts/parsing/font-palette-invalid.html:
+        * web-platform-tests/css/css-fonts/parsing/font-palette-valid.html:
+
 2021-10-12  Sihui Liu  <sihui_liu@apple.com>
 
         Implement FileSystemSyncAccessHandle read() and write()
