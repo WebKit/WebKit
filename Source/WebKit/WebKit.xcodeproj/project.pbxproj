@@ -2528,6 +2528,7 @@
 		07E19F0923D533BA0094FFB4 /* TextTrackPrivateRemote.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TextTrackPrivateRemote.h; sourceTree = "<group>"; };
 		0867D6A5FE840307C02AAC07 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		089C1667FE841158C02AAC07 /* en */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		0DCBF4D926E2ED3200EA0E07 /* WebAuthenticatorCoordinatorProxy.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WebAuthenticatorCoordinatorProxy.mm; sourceTree = "<group>"; };
 		0E97D74C200E8FF300BF6643 /* SafeBrowsingSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SafeBrowsingSPI.h; sourceTree = "<group>"; };
 		0EDE85022004E74900030560 /* WebsitePopUpPolicy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebsitePopUpPolicy.h; sourceTree = "<group>"; };
 		0F04159823C7CC720060A3E2 /* WKScrollViewMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKScrollViewMac.h; sourceTree = "<group>"; };
@@ -9341,6 +9342,7 @@
 				570DAAAD23026F5C00E8FC04 /* NfcService.mm */,
 				577FF7832346ECAA004EDFB9 /* WebAuthenticationPanelClient.h */,
 				577FF7842346ECAA004EDFB9 /* WebAuthenticationPanelClient.mm */,
+				0DCBF4D926E2ED3200EA0E07 /* WebAuthenticatorCoordinatorProxy.mm */,
 				577739932580388F0059348B /* WKASCAuthorizationPresenterDelegate.h */,
 				577739942580388F0059348B /* WKASCAuthorizationPresenterDelegate.mm */,
 				570DAAC423037F7E00E8FC04 /* WKNFReaderSessionDelegate.h */,

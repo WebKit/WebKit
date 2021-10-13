@@ -1,3 +1,92 @@
+2021-10-12  Garrett Davidson  <garrett_davidson@apple.com>
+
+        Adopt platform UI for WebAuthn
+        https://bugs.webkit.org/show_bug.cgi?id=230906
+        <rdar://74659556>
+
+        Reviewed by David Kilzer.
+
+        Switch to using the platform's UI for WebAuthn transactions, where available,
+        which takes precedence over the WebAuthn process.
+
+        Covered by existing tests.
+
+        * Platform/spi/Cocoa/AuthenticationServicesCoreSPI.h:
+        When possible, switch to importing the umbrella header directly instead of
+        redeclaring the entire interface.
+
+        Also, fix an existing bug caused by the redeclaration, where the
+        ASCSecurityKeyPublicKeyCredentialKind enum was renamed.
+
+        * SourcesCocoa.txt:
+        Build the new file.
+
+        * UIProcess/API/Cocoa/_WKWebAuthenticationPanel.mm:
+        (-[_WKWebAuthenticationPanel makeCredentialWithChallenge:origin:options:completionHandler:]):
+        Return the full error to the delegate.
+
+        * UIProcess/WebAuthentication/Cocoa/AuthenticationServicesCoreSoftLink.h:
+        * UIProcess/WebAuthentication/Cocoa/AuthenticationServicesCoreSoftLink.mm:
+        Add all of the new required classes for soft linking, and sort the list.
+
+        * UIProcess/WebAuthentication/Cocoa/WebAuthenticatorCoordinatorProxy.mm: Added.
+        (WebKit::toArrayBuffer):
+        (WebKit::toNSData):
+        (WebKit::toNSString):
+        (WebKit::toExceptionCode):
+        (WebKit::toASCDescriptor):
+        Helper methods for converting between WK and ASC types.
+
+        (WebKit::configureRegistrationRequestContext):
+        (WebKit::configurationAssertionRequestContext):
+        Create and configure an ASCCredentialRequestContext from the provided options.
+
+        (WebKit::WebAuthenticatorCoordinatorProxy::makeCredential):
+        (WebKit::WebAuthenticatorCoordinatorProxy::getAssertion):
+        Configure and perform the request.
+
+        (WebKit::WebAuthenticatorCoordinatorProxy::performRequest):
+        - Create a proxy to talk to AuthenticationServicesAgent.
+        - Ask the proxy if we're allowed to perform the request.
+          - If no, return an error.
+          - If yes, create presenter and present over the web page's window.
+        - When the request if finished, check the kind of credential we got, and return
+        the relevant AuthenticatorResponseData/AuthenticatorAttachment.
+        - If the request was canceled or failed, `credential` will be nil and `error` will
+        be non-nil. In most cases, the error will be WKErrorDomain, which we can convert
+        directly to ExceptionData. The one exception is the user canceled the request in
+        the platform UI, so return the appropriate ExceptionData in that case. The final
+        "Operation failed." case covers anything else unexpected happening.
+
+        (WebKit::WebAuthenticatorCoordinatorProxy::isUserVerifyingPlatformAuthenticatorAvailable):
+        If +shouldUseAlternateCredentialStore is true, this is always true. Otherwise,
+        fall back to the old behavior.
+
+        * UIProcess/WebAuthentication/Cocoa/WKASCAuthorizationPresenterDelegate.mm:
+        (-[WKASCAuthorizationPresenterDelegate authorizationPresenter:credentialRequestedForLoginChoice:authenticatedContext:completionHandler:]):
+        Use the new name of the enum, unconditionally.
+
+        * UIProcess/WebAuthentication/WebAuthenticatorCoordinatorProxy.cpp:
+        Wrap a few methods in the new flag. When the flag is on, these methods will exist
+        in WebAuthenticatorCoordinatorProxy.mm.
+
+        * UIProcess/WebAuthentication/WebAuthenticatorCoordinatorProxy.h:
+        New ivar and method for the platform presenter.
+        Make the superclass public so we can use the WeakPtr inheritance.
+
+        * UIProcess/ios/WKHoverPlatterParameters.mm:
+        Add some missing imports since this file got pushed off the end of
+        UnifiedSource47-mm.mm.
+
+        * WebKit.xcodeproj/project.pbxproj:
+        Add the new file.
+
+        * WebProcess/WebAuthentication/WebAuthenticatorCoordinator.cpp:
+        When platform UI is available, prefer it over the WebAuthn process.
+        (WebKit::WebAuthenticatorCoordinator::makeCredential):
+        (WebKit::WebAuthenticatorCoordinator::getAssertion):
+        (WebKit::WebAuthenticatorCoordinator::isUserVerifyingPlatformAuthenticatorAvailable):
+
 2021-10-12  Simon Fraser  <simon.fraser@apple.com>
 
         Scrolling thread animations need to commit layers on the scrolling thread

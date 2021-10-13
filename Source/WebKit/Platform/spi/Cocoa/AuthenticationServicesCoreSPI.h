@@ -25,19 +25,9 @@
 
 #pragma once
 
-#if HAVE(ASC_AUTH_UI)
-
-// FIXME<rdar://problem/72406585>: Uncomment the headers after the SDK becomes stable.
-//#if USE(APPLE_INTERNAL_SDK)
-//
-//// FIXME(219767): Remove ASCAppleIDCredential.h.
-//#import <AuthenticationServicesCore/ASCAppleIDCredential.h>
-//#import <AuthenticationServicesCore/ASCAuthorizationPresentationContext.h>
-//#import <AuthenticationServicesCore/ASCAuthorizationPresenter.h>
-//#import <AuthenticationServicesCore/ASCPlatformPublicKeyCredentialLoginChoice.h>
-//#import <AuthenticationServicesCore/ASCSecurityKeyPublicKeyCredentialLoginChoice.h>
-//
-//#else
+#if HAVE(UNIFIED_ASC_AUTH_UI)
+#import <AuthenticationServicesCore/AuthenticationServicesCorePrivate.h>
+#elif HAVE(ASC_AUTH_UI)
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -108,10 +98,10 @@ extern NSString * const ASCAuthorizationPresentationContextDataKey;
 
 @end
 
-typedef NS_ENUM(NSInteger, ASCSecurityKeyPublicKeyCredentialLoginChoiceKind) {
-    ASCSecurityKeyPublicKeyCredentialLoginChoiceKindRegistration,
-    ASCSecurityKeyPublicKeyCredentialLoginChoiceKindAssertion,
-    ASCSecurityKeyPublicKeyCredentialLoginChoiceKindAssertionPlaceholder,
+typedef NS_ENUM(NSInteger, ASCSecurityKeyPublicKeyCredentialKind) {
+    ASCSecurityKeyPublicKeyCredentialKindRegistration,
+    ASCSecurityKeyPublicKeyCredentialKindAssertion,
+    ASCSecurityKeyPublicKeyCredentialKindAssertionPlaceholder,
 };
 
 @interface ASCPublicKeyCredentialCreationOptions : NSObject <NSSecureCoding>
@@ -136,7 +126,7 @@ typedef NS_ENUM(NSInteger, ASCSecurityKeyPublicKeyCredentialLoginChoiceKind) {
 @property (nonatomic, nullable, readonly, copy) NSString *name;
 @property (nonatomic, nullable, readonly, copy) NSString *displayName;
 @property (nonatomic, nullable, readonly, copy) NSData *userHandle;
-@property (nonatomic, readonly) ASCSecurityKeyPublicKeyCredentialLoginChoiceKind loginChoiceKind;
+@property (nonatomic, readonly) ASCSecurityKeyPublicKeyCredentialKind credentialKind;
 
 + (instancetype)new NS_UNAVAILABLE;
 - (instancetype)init NS_UNAVAILABLE;

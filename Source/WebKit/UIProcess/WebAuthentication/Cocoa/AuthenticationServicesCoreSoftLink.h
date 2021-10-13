@@ -32,14 +32,23 @@ SOFT_LINK_FRAMEWORK_FOR_HEADER(WebKit, AuthenticationServicesCore);
 
 SOFT_LINK_CLASS_FOR_HEADER(WebKit, ASCWebKitSPISupport);
 
-#if HAVE(ASC_AUTH_UI)
+#if HAVE(ASC_AUTH_UI) || HAVE(UNIFIED_ASC_AUTH_UI)
 
-SOFT_LINK_CLASS_FOR_HEADER(WebKit, ASCAuthorizationPresenter);
-SOFT_LINK_CLASS_FOR_HEADER(WebKit, ASCAuthorizationPresentationContext);
-SOFT_LINK_CLASS_FOR_HEADER(WebKit, ASCPlatformPublicKeyCredentialLoginChoice);
-SOFT_LINK_CLASS_FOR_HEADER(WebKit, ASCSecurityKeyPublicKeyCredentialLoginChoice);
+SOFT_LINK_CLASS_FOR_HEADER(WebKit, ASCAgentProxy);
 SOFT_LINK_CLASS_FOR_HEADER(WebKit, ASCAppleIDCredential);
+SOFT_LINK_CLASS_FOR_HEADER(WebKit, ASCAuthorizationPresentationContext);
+SOFT_LINK_CLASS_FOR_HEADER(WebKit, ASCAuthorizationPresenter);
+SOFT_LINK_CLASS_FOR_HEADER(WebKit, ASCAuthorizationRemotePresenter);
+SOFT_LINK_CLASS_FOR_HEADER(WebKit, ASCCredentialRequestContext);
+SOFT_LINK_CLASS_FOR_HEADER(WebKit, ASCPlatformPublicKeyCredentialAssertion);
+SOFT_LINK_CLASS_FOR_HEADER(WebKit, ASCPlatformPublicKeyCredentialLoginChoice);
+SOFT_LINK_CLASS_FOR_HEADER(WebKit, ASCPlatformPublicKeyCredentialRegistration);
+SOFT_LINK_CLASS_FOR_HEADER(WebKit, ASCPublicKeyCredentialAssertionOptions);
 SOFT_LINK_CLASS_FOR_HEADER(WebKit, ASCPublicKeyCredentialCreationOptions);
+SOFT_LINK_CLASS_FOR_HEADER(WebKit, ASCPublicKeyCredentialDescriptor);
+SOFT_LINK_CLASS_FOR_HEADER(WebKit, ASCSecurityKeyPublicKeyCredentialAssertion);
+SOFT_LINK_CLASS_FOR_HEADER(WebKit, ASCSecurityKeyPublicKeyCredentialLoginChoice);
+SOFT_LINK_CLASS_FOR_HEADER(WebKit, ASCSecurityKeyPublicKeyCredentialRegistration);
 
 SOFT_LINK_CONSTANT_FOR_HEADER(WebKit, AuthenticationServicesCore, ASCAuthorizationErrorDomain, NSErrorDomain);
 #define ASCAuthorizationErrorDomain WebKit::get_AuthenticationServicesCore_ASCAuthorizationErrorDomain()

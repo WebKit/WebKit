@@ -592,6 +592,7 @@ UIProcess/WebAuthentication/Cocoa/NfcService.mm
 UIProcess/WebAuthentication/Cocoa/WKASCAuthorizationPresenterDelegate.mm
 UIProcess/WebAuthentication/Cocoa/WKNFReaderSessionDelegate.mm
 UIProcess/WebAuthentication/Cocoa/WebAuthenticationPanelClient.mm
+UIProcess/WebAuthentication/Cocoa/WebAuthenticatorCoordinatorProxy.mm
 
 UIProcess/WebAuthentication/Mock/MockLocalConnection.mm
 UIProcess/WebAuthentication/Mock/MockLocalService.mm

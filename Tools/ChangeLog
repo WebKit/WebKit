@@ -1,3 +1,18 @@
+2021-10-12  Garrett Davidson  <garrett_davidson@apple.com>
+
+        Adopt platform UI for WebAuthn
+        https://bugs.webkit.org/show_bug.cgi?id=230906
+        <rdar://74659556>
+
+        Reviewed by David Kilzer.
+
+        Update the timeout test to expect NotAllowedError, which is the expected error
+        code when a timeout occurs, per Step 21 of the "Create a New Credential"
+        algorithm.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/_WKWebAuthenticationPanel.mm:
+        (TestWebKitAPI::TEST):
+
 2021-10-12  Sihui Liu  <sihui_liu@apple.com>
 
         Implement FileSystemSyncAccessHandle read() and write()

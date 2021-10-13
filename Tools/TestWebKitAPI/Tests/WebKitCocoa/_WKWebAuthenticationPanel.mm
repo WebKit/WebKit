@@ -34,6 +34,7 @@
 #import "WKWebViewConfigurationExtras.h"
 #import <LocalAuthentication/LocalAuthentication.h>
 #import <WebCore/AuthenticatorAttachment.h>
+#import <WebCore/ExceptionCode.h>
 #import <WebCore/PublicKeyCredentialCreationOptions.h>
 #import <WebCore/PublicKeyCredentialRequestOptions.h>
 #import <WebKit/WKPreferencesPrivate.h>
@@ -1830,7 +1831,7 @@ TEST(WebAuthenticationPanel, MakeCredentialSPITimeout)
 
         EXPECT_NULL(response);
         EXPECT_EQ(error.domain, WKErrorDomain);
-        EXPECT_EQ(error.code, WKErrorUnknown);
+        EXPECT_EQ(error.code, NotAllowedError);
     }];
     Util::run(&webAuthenticationPanelRan);
 }

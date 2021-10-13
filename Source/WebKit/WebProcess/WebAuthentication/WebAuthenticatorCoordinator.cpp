@@ -69,7 +69,12 @@ void WebAuthenticatorCoordinator::makeCredential(const Frame& frame, const Secur
         return;
 
     auto isProcessingUserGesture = processingUserGesture(frame, webFrame->frameID());
-    if (!RuntimeEnabledFeatures::sharedFeatures().webAuthenticationModernEnabled()) {
+#if HAVE(UNIFIED_ASC_AUTH_UI)
+    bool useWebAuthnProcess = false;
+#else
+    bool useWebAuthnProcess = RuntimeEnabledFeatures::sharedFeatures().webAuthenticationModernEnabled();
+#endif
+    if (!useWebAuthnProcess) {
         m_webPage.sendWithAsyncReply(Messages::WebAuthenticatorCoordinatorProxy::MakeCredential(webFrame->frameID(), webFrame->info(), hash, options, isProcessingUserGesture), WTFMove(handler));
         return;
     }
@@ -86,7 +91,12 @@ void WebAuthenticatorCoordinator::getAssertion(const Frame& frame, const Securit
         return;
 
     auto isProcessingUserGesture = processingUserGesture(frame, webFrame->frameID());
-    if (!RuntimeEnabledFeatures::sharedFeatures().webAuthenticationModernEnabled()) {
+#if HAVE(UNIFIED_ASC_AUTH_UI)
+    bool useWebAuthnProcess = false;
+#else
+    bool useWebAuthnProcess = RuntimeEnabledFeatures::sharedFeatures().webAuthenticationModernEnabled();
+#endif
+    if (!useWebAuthnProcess) {
         m_webPage.sendWithAsyncReply(Messages::WebAuthenticatorCoordinatorProxy::GetAssertion(webFrame->frameID(), webFrame->info(), hash, options, isProcessingUserGesture), WTFMove(handler));
         return;
     }
@@ -98,7 +108,12 @@ void WebAuthenticatorCoordinator::getAssertion(const Frame& frame, const Securit
 
 void WebAuthenticatorCoordinator::isUserVerifyingPlatformAuthenticatorAvailable(QueryCompletionHandler&& handler)
 {
-    if (!RuntimeEnabledFeatures::sharedFeatures().webAuthenticationModernEnabled()) {
+#if HAVE(UNIFIED_ASC_AUTH_UI)
+    bool useWebAuthnProcess = false;
+#else
+    bool useWebAuthnProcess = RuntimeEnabledFeatures::sharedFeatures().webAuthenticationModernEnabled();
+#endif
+    if (!useWebAuthnProcess) {
         m_webPage.sendWithAsyncReply(Messages::WebAuthenticatorCoordinatorProxy::IsUserVerifyingPlatformAuthenticatorAvailable(), WTFMove(handler));
         return;
     }
