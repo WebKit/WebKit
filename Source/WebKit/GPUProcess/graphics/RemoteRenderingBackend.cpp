@@ -28,7 +28,6 @@
 
 #if ENABLE(GPU_PROCESS)
 
-#include "DisplayListReaderHandle.h"
 #include "GPUConnectionToWebProcess.h"
 #include "Logging.h"
 #include "PlatformRemoteImageBuffer.h"
@@ -73,47 +72,47 @@
 namespace WebKit {
 using namespace WebCore;
 
-Ref<RemoteRenderingBackend> RemoteRenderingBackend::create(GPUConnectionToWebProcess& gpuConnectionToWebProcess, RemoteRenderingBackendCreationParameters&& creationParameters)
+Ref<RemoteRenderingBackend> RemoteRenderingBackend::create(GPUConnectionToWebProcess& gpuConnectionToWebProcess, RemoteRenderingBackendCreationParameters&& creationParameters, IPC::StreamConnectionBuffer&& streamBuffer)
 {
-    auto instance = adoptRef(*new RemoteRenderingBackend(gpuConnectionToWebProcess, WTFMove(creationParameters)));
+    auto instance = adoptRef(*new RemoteRenderingBackend(gpuConnectionToWebProcess, WTFMove(creationParameters), WTFMove(streamBuffer)));
     instance->startListeningForIPC();
     return instance;
 }
 
-RemoteRenderingBackend::RemoteRenderingBackend(GPUConnectionToWebProcess& gpuConnectionToWebProcess, RemoteRenderingBackendCreationParameters&& creationParameters)
-    : m_workQueue(WorkQueue::create("RemoteRenderingBackend work queue", WorkQueue::Type::Serial, WorkQueue::QOS::UserInteractive))
+RemoteRenderingBackend::RemoteRenderingBackend(GPUConnectionToWebProcess& gpuConnectionToWebProcess, RemoteRenderingBackendCreationParameters&& creationParameters, IPC::StreamConnectionBuffer&& streamBuffer)
+    : m_workQueue("RemoteRenderingBackend work queue")
+    , m_streamConnection(IPC::StreamServerConnection::create(gpuConnectionToWebProcess.connection(), WTFMove(streamBuffer), m_workQueue))
     , m_remoteResourceCache(gpuConnectionToWebProcess.webProcessIdentifier())
     , m_gpuConnectionToWebProcess(gpuConnectionToWebProcess)
     , m_renderingBackendIdentifier(creationParameters.identifier)
-    , m_resumeDisplayListSemaphore(WTFMove(creationParameters.resumeDisplayListSemaphore))
 {
     ASSERT(RunLoop::isMain());
+    send(Messages::RemoteRenderingBackendProxy::DidCreateWakeUpSemaphoreForDisplayListStream(m_workQueue.wakeUpSemaphore()), m_renderingBackendIdentifier);
 }
 
 void RemoteRenderingBackend::startListeningForIPC()
 {
-    m_gpuConnectionToWebProcess->connection().addWorkQueueMessageReceiver(Messages::RemoteRenderingBackend::messageReceiverName(), m_workQueue, this, m_renderingBackendIdentifier.toUInt64());
+    m_streamConnection->startReceivingMessages(*this, Messages::RemoteRenderingBackend::messageReceiverName(), m_renderingBackendIdentifier.toUInt64());
 }
 
 RemoteRenderingBackend::~RemoteRenderingBackend()
 {
     // Make sure we destroy the ResourceCache on the WorkQueue since it gets populated on the WorkQueue.
     // Make sure rendering resource request is released after destroying the cache.
-    m_workQueue->dispatch([renderingResourcesRequest = WTFMove(m_renderingResourcesRequest), remoteResourceCache = WTFMove(m_remoteResourceCache)] { });
+    m_workQueue.dispatch([renderingResourcesRequest = WTFMove(m_renderingResourcesRequest), remoteResourceCache = WTFMove(m_remoteResourceCache)] { });
 }
 
 void RemoteRenderingBackend::stopListeningForIPC()
 {
     ASSERT(RunLoop::isMain());
-
-    // The RemoteRenderingBackend destructor won't be called until disconnect() is called and we unregister ourselves as a WorkQueueMessageReceiver because
-    // the IPC::Connection refs its WorkQueueMessageReceivers.
-    m_gpuConnectionToWebProcess->connection().removeWorkQueueMessageReceiver(Messages::RemoteRenderingBackend::messageReceiverName(), m_renderingBackendIdentifier.toUInt64());
+    m_streamConnection->stopReceivingMessages(Messages::RemoteRenderingBackend::messageReceiverName(), m_renderingBackendIdentifier.toUInt64());
+    for (auto& remoteContext : std::exchange(m_remoteDisplayLists, { }))
+        remoteContext.stopListeningForIPC();
 }
 
 void RemoteRenderingBackend::dispatch(Function<void()>&& task)
 {
-    m_workQueue->dispatch(WTFMove(task));
+    m_workQueue.dispatch(WTFMove(task));
 }
 
 IPC::Connection* RemoteRenderingBackend::messageSenderConnection() const
@@ -126,26 +125,9 @@ uint64_t RemoteRenderingBackend::messageSenderDestinationID() const
     return m_renderingBackendIdentifier.toUInt64();
 }
 
-bool RemoteRenderingBackend::applyMediaItem(DisplayList::ItemHandle item, GraphicsContext& context)
+void RemoteRenderingBackend::didCreateImageBufferBackend(ImageBufferBackendHandle handle, QualifiedRenderingResourceIdentifier renderingResourceIdentifier, RemoteDisplayListRecorder& remoteDisplayList)
 {
-    ASSERT(!RunLoop::isMain());
-
-    if (!item.is<DisplayList::PaintFrameForMedia>())
-        return false;
-
-    auto& mediaItem = item.get<DisplayList::PaintFrameForMedia>();
-    callOnMainRunLoopAndWait([&, gpuConnectionToWebProcess = m_gpuConnectionToWebProcess, mediaPlayerIdentifier = mediaItem.identifier()] {
-        auto player = gpuConnectionToWebProcess->remoteMediaPlayerManagerProxy().mediaPlayer(mediaPlayerIdentifier);
-        if (!player)
-            return;
-        // It is currently not safe to call paintFrameForMedia() off the main thread.
-        context.paintFrameForMedia(*player, mediaItem.destination());
-    });
-    return true;
-}
-
-void RemoteRenderingBackend::didCreateImageBufferBackend(ImageBufferBackendHandle handle, QualifiedRenderingResourceIdentifier renderingResourceIdentifier)
-{
+    m_remoteDisplayLists.add(remoteDisplayList);
     MESSAGE_CHECK(renderingResourceIdentifier.processIdentifier() == m_gpuConnectionToWebProcess->webProcessIdentifier(), "Sending didCreateImageBufferBackend() message to the wrong web process.");
     send(Messages::RemoteRenderingBackendProxy::DidCreateImageBufferBackend(WTFMove(handle), renderingResourceIdentifier.object()), m_renderingBackendIdentifier);
 }
@@ -190,213 +172,6 @@ void RemoteRenderingBackend::createImageBufferWithQualifiedIdentifier(const Floa
 
     m_remoteResourceCache.cacheImageBuffer(*imageBuffer, imageBufferResourceIdentifier);
     updateRenderingResourceRequest();
-
-    if (m_pendingWakeupInfo && m_pendingWakeupInfo->shouldPerformWakeup(imageBufferResourceIdentifier))
-        resumeFromPendingWakeupInformation();
-}
-
-RemoteRenderingBackend::ReplayerDelegate::ReplayerDelegate(WebCore::ImageBuffer& destination, RemoteRenderingBackend& remoteRenderingBackend, ProcessIdentifier webProcessIdentifier)
-    : m_destination(destination)
-    , m_remoteRenderingBackend(remoteRenderingBackend)
-    , m_webProcessIdentifier(webProcessIdentifier)
-{
-}
-
-bool RemoteRenderingBackend::ReplayerDelegate::apply(WebCore::DisplayList::ItemHandle item, WebCore::GraphicsContext& graphicsContext)
-{
-    auto apply = [&](auto&& destination) {
-        return destination.apply(item, graphicsContext);
-    };
-
-    if (m_destination.renderingMode() == RenderingMode::Accelerated)
-        return apply(static_cast<AcceleratedRemoteImageBuffer&>(m_destination));
-    return apply(static_cast<UnacceleratedRemoteImageBuffer&>(m_destination));
-}
-
-void RemoteRenderingBackend::ReplayerDelegate::didCreateMaskImageBuffer(WebCore::ImageBuffer& imageBuffer)
-{
-    m_remoteRenderingBackend.didCreateMaskImageBuffer(imageBuffer);
-}
-
-void RemoteRenderingBackend::ReplayerDelegate::didResetMaskImageBuffer()
-{
-    m_remoteRenderingBackend.didResetMaskImageBuffer();
-}
-
-void RemoteRenderingBackend::ReplayerDelegate::recordResourceUse(RenderingResourceIdentifier renderingResourceIdentifier)
-{
-    m_remoteRenderingBackend.remoteResourceCache().recordResourceUse({ renderingResourceIdentifier, m_webProcessIdentifier });
-}
-
-DisplayList::ReplayResult RemoteRenderingBackend::submit(const DisplayList::DisplayList& displayList, ImageBuffer& destination)
-{
-    if (displayList.isEmpty())
-        return { };
-
-    ReplayerDelegate replayerDelegate(destination, *this, m_gpuConnectionToWebProcess->webProcessIdentifier());
-
-    return WebCore::DisplayList::Replayer {
-        destination.context(),
-        displayList,
-        &remoteResourceCache().resourceHeap(),
-        m_currentMaskImageBuffer.get(),
-        &replayerDelegate
-    }.replay();
-}
-
-RefPtr<ImageBuffer> RemoteRenderingBackend::nextDestinationImageBufferAfterApplyingDisplayLists(ImageBuffer& initialDestination, size_t initialOffset, DisplayListReaderHandle& handle, GPUProcessWakeupReason reason, ProcessIdentifier webProcessIdentifier)
-{
-    RefPtr destination { &initialDestination };
-    Ref handleProtector { handle };
-
-    auto offset = initialOffset;
-    size_t sizeToRead = 0;
-    do {
-        sizeToRead = handle.unreadBytes();
-    } while (!sizeToRead);
-
-    while (destination) {
-        auto displayList = handle.displayListForReading(offset, sizeToRead, *this);
-        MESSAGE_CHECK_WITH_RETURN_VALUE(displayList, nullptr, "Failed to map display list from shared memory");
-
-#if !LOG_DISABLED
-        auto startTime = MonotonicTime::now();
-#endif
-        auto result = submit(*displayList, *destination);
-        LOG_WITH_STREAM(SharedDisplayLists, stream << "Read [" << offset << ", " << offset + result.numberOfBytesRead << "]; Items[" << handle.identifier() << "] => Image(" << destination->renderingResourceIdentifier() << ") in " << MonotonicTime::now() - startTime);
-        MESSAGE_CHECK_WITH_RETURN_VALUE(result.reasonForStopping != DisplayList::StopReplayReason::InvalidItemOrExtent, nullptr, "Detected invalid display list item or extent");
-        MESSAGE_CHECK_WITH_RETURN_VALUE(result.reasonForStopping != DisplayList::StopReplayReason::OutOfMemory, nullptr, "Cound not allocate memory");
-
-        auto advanceResult = handle.advance(result.numberOfBytesRead);
-        MESSAGE_CHECK_WITH_RETURN_VALUE(advanceResult, nullptr, "Failed to advance display list reader handle");
-        sizeToRead = *advanceResult;
-
-        CheckedSize checkedOffset = offset;
-        checkedOffset += result.numberOfBytesRead;
-        MESSAGE_CHECK_WITH_RETURN_VALUE(!checkedOffset.hasOverflowed(), nullptr, "Overflowed when advancing shared display list handle offset");
-
-        offset = checkedOffset;
-        MESSAGE_CHECK_WITH_RETURN_VALUE(offset <= handle.sharedMemory().size(), nullptr, "Out-of-bounds offset into shared display list handle");
-
-        if (result.reasonForStopping == DisplayList::StopReplayReason::ChangeDestinationImageBuffer) {
-            destination = m_remoteResourceCache.cachedImageBuffer({ *result.nextDestinationImageBuffer, m_gpuConnectionToWebProcess->webProcessIdentifier() });
-            if (!destination) {
-                ASSERT(!m_pendingWakeupInfo);
-                m_pendingWakeupInfo = {{
-                    handle.identifier(),
-                    offset,
-                    { *result.nextDestinationImageBuffer, webProcessIdentifier },
-                    reason,
-                    std::nullopt,
-                    RemoteRenderingBackendState::WaitingForDestinationImageBuffer
-                }};
-            }
-        }
-
-        if (result.reasonForStopping == DisplayList::StopReplayReason::MissingCachedResource) {
-            m_pendingWakeupInfo = {{
-                handle.identifier(),
-                offset,
-                { destination->renderingResourceIdentifier(), webProcessIdentifier },
-                reason,
-                { { *result.missingCachedResourceIdentifier, webProcessIdentifier } },
-                RemoteRenderingBackendState::WaitingForCachedResource
-            }};
-        }
-
-        if (m_pendingWakeupInfo)
-            break;
-
-        if (!sizeToRead) {
-            if (reason != GPUProcessWakeupReason::ItemCountHysteresisExceeded)
-                break;
-
-            handle.startWaiting();
-            m_resumeDisplayListSemaphore.waitFor(30_us);
-
-            auto stopWaitingResult = handle.stopWaiting();
-            MESSAGE_CHECK_WITH_RETURN_VALUE(stopWaitingResult, nullptr, "Invalid waiting status detected when resuming display list processing");
-
-            auto resumeReadingInfo = stopWaitingResult.value();
-            if (!resumeReadingInfo)
-                break;
-
-            sizeToRead = handle.unreadBytes();
-            MESSAGE_CHECK_WITH_RETURN_VALUE(sizeToRead, nullptr, "No unread bytes when resuming display list processing");
-
-            auto newDestinationIdentifier = makeObjectIdentifier<RenderingResourceIdentifierType>(resumeReadingInfo->destination);
-            MESSAGE_CHECK_WITH_RETURN_VALUE(newDestinationIdentifier.isValid(), nullptr, "Invalid image buffer destination when resuming display list processing");
-
-            destination = m_remoteResourceCache.cachedImageBuffer({ newDestinationIdentifier, m_gpuConnectionToWebProcess->webProcessIdentifier() });
-            MESSAGE_CHECK_WITH_RETURN_VALUE(destination, nullptr, "Missing image buffer destination when resuming display list processing");
-
-            offset = resumeReadingInfo->offset;
-        }
-    }
-
-    return destination;
-}
-
-void RemoteRenderingBackend::wakeUpAndApplyDisplayList(const GPUProcessWakeupMessageArguments& arguments)
-{
-    // Immediately turn the RenderingResourceIdentifier (which is error-prone) to a QualifiedRenderingResourceIdentifier,
-    // and use a helper function to make sure that don't accidentally use the RenderingResourceIdentifier (because the helper function can't see it).
-    wakeUpAndApplyDisplayListWithQualifiedIdentifier(arguments.itemBufferIdentifier, arguments.offset, { arguments.destinationImageBufferIdentifier, m_gpuConnectionToWebProcess->webProcessIdentifier() }, arguments.reason);
-}
-
-void RemoteRenderingBackend::wakeUpAndApplyDisplayListWithQualifiedIdentifier(WebCore::DisplayList::ItemBufferIdentifier itemBufferIdentifier, uint64_t offset, QualifiedRenderingResourceIdentifier destinationImageBufferIdentifier, GPUProcessWakeupReason reason)
-{
-    ASSERT(!RunLoop::isMain());
-
-    TraceScope tracingScope(WakeUpAndApplyDisplayListStart, WakeUpAndApplyDisplayListEnd);
-
-    updateLastKnownState(RemoteRenderingBackendState::BeganReplayingDisplayList);
-
-    RefPtr destinationImageBuffer = m_remoteResourceCache.cachedImageBuffer(destinationImageBufferIdentifier);
-    MESSAGE_CHECK(destinationImageBuffer, "Missing destination image buffer");
-
-    auto initialHandle = m_sharedDisplayListHandles.get(itemBufferIdentifier);
-    MESSAGE_CHECK(initialHandle, "Missing initial shared display list handle");
-
-    LOG_WITH_STREAM(SharedDisplayLists, stream << "Waking up to Items[" << itemBufferIdentifier << "] => Image(" << destinationImageBufferIdentifier.object() << ") at " << offset);
-    destinationImageBuffer = nextDestinationImageBufferAfterApplyingDisplayLists(*destinationImageBuffer, offset, *initialHandle, reason, m_gpuConnectionToWebProcess->webProcessIdentifier());
-
-    // FIXME: All the callers pass m_pendingWakeupInfo's fields so the body of this function should just be this loop.
-    while (destinationImageBuffer && m_pendingWakeupInfo) {
-        if (m_pendingWakeupInfo->missingCachedResourceIdentifier)
-            break;
-
-        auto nextHandle = m_sharedDisplayListHandles.get(m_pendingWakeupInfo->itemBufferIdentifier);
-        if (!nextHandle) {
-            // If the handle identifier is currently unknown, wait until the GPU process receives an
-            // IPC message with a shared memory handle to the next item buffer.
-            break;
-        }
-
-        // Otherwise, continue reading the next display list item buffer from the start.
-        auto offset = m_pendingWakeupInfo->offset;
-        auto reason = m_pendingWakeupInfo->reason;
-        m_pendingWakeupInfo = std::nullopt;
-        destinationImageBuffer = nextDestinationImageBufferAfterApplyingDisplayLists(*destinationImageBuffer, offset, *nextHandle, reason, m_gpuConnectionToWebProcess->webProcessIdentifier());
-    }
-    LOG_WITH_STREAM(SharedDisplayLists, stream << "Going back to sleep.");
-
-    if (m_pendingWakeupInfo)
-        updateLastKnownState(m_pendingWakeupInfo->state);
-    else
-        updateLastKnownState(RemoteRenderingBackendState::FinishedReplayingDisplayList);
-}
-
-void RemoteRenderingBackend::setNextItemBufferToRead(DisplayList::ItemBufferIdentifier identifier, QualifiedRenderingResourceIdentifier destinationIdentifier)
-{
-    m_pendingWakeupInfo = {{
-        identifier,
-        SharedDisplayListHandle::headerSize(),
-        destinationIdentifier,
-        GPUProcessWakeupReason::Unspecified,
-        std::nullopt,
-        RemoteRenderingBackendState::WaitingForItemBuffer
-    }};
 }
 
 std::optional<SharedMemory::IPCHandle> RemoteRenderingBackend::updateSharedMemoryForGetPixelBufferHelper(size_t byteCount)
@@ -547,9 +322,6 @@ void RemoteRenderingBackend::cacheNativeImageWithQualifiedIdentifier(const Share
         return;
 
     m_remoteResourceCache.cacheNativeImage(*image, nativeImageResourceIdentifier);
-
-    if (m_pendingWakeupInfo && m_pendingWakeupInfo->shouldPerformWakeup(nativeImageResourceIdentifier))
-        resumeFromPendingWakeupInformation();
 }
 
 void RemoteRenderingBackend::cacheFont(Ref<WebCore::Font>&& font)
@@ -565,8 +337,6 @@ void RemoteRenderingBackend::cacheFontWithQualifiedIdentifier(Ref<Font>&& font, 
     ASSERT(!RunLoop::isMain());
 
     m_remoteResourceCache.cacheFont(WTFMove(font), fontResourceIdentifier);
-    if (m_pendingWakeupInfo && m_pendingWakeupInfo->shouldPerformWakeup(fontResourceIdentifier))
-        resumeFromPendingWakeupInformation();
 }
 
 void RemoteRenderingBackend::deleteAllFonts()
@@ -592,167 +362,7 @@ void RemoteRenderingBackend::releaseRemoteResourceWithQualifiedIdentifier(Qualif
 
 void RemoteRenderingBackend::finalizeRenderingUpdate(RenderingUpdateID renderingUpdateID)
 {
-    auto shouldPerformWakeup = [&] {
-        return m_remoteResourceCache.cachedImageBuffer(m_pendingWakeupInfo->destinationImageBufferIdentifier) && m_sharedDisplayListHandles.contains(m_pendingWakeupInfo->itemBufferIdentifier);
-    };
-
-    if (m_pendingWakeupInfo && shouldPerformWakeup())
-        resumeFromPendingWakeupInformation();
-
     send(Messages::RemoteRenderingBackendProxy::DidFinalizeRenderingUpdate(renderingUpdateID), m_renderingBackendIdentifier);
-}
-
-void RemoteRenderingBackend::didCreateSharedDisplayListHandle(DisplayList::ItemBufferIdentifier itemBufferIdentifier, const SharedMemory::IPCHandle& handle, RenderingResourceIdentifier destinationBufferIdentifier)
-{
-    // Immediately turn the RenderingResourceIdentifier (which is error-prone) to a QualifiedRenderingResourceIdentifier,
-    // and use a helper function to make sure that don't accidentally use the RenderingResourceIdentifier (because the helper function can't see it).
-    didCreateSharedDisplayListHandleWithQualifiedIdentifier(itemBufferIdentifier, handle, { destinationBufferIdentifier, m_gpuConnectionToWebProcess->webProcessIdentifier() });
-}
-
-void RemoteRenderingBackend::didCreateSharedDisplayListHandleWithQualifiedIdentifier(DisplayList::ItemBufferIdentifier itemBufferIdentifier, const SharedMemory::IPCHandle& handle, QualifiedRenderingResourceIdentifier)
-{
-    ASSERT(!RunLoop::isMain());
-    MESSAGE_CHECK(!m_sharedDisplayListHandles.contains(itemBufferIdentifier), "Duplicate shared display list handle");
-
-    if (auto sharedMemory = SharedMemory::map(handle.handle, SharedMemory::Protection::ReadWrite)) {
-        auto handle = DisplayListReaderHandle::create(itemBufferIdentifier, sharedMemory.releaseNonNull());
-        MESSAGE_CHECK(handle, "There must be enough space to create the handle.");
-        m_sharedDisplayListHandles.set(itemBufferIdentifier, handle);
-    }
-
-    if (m_pendingWakeupInfo && m_pendingWakeupInfo->shouldPerformWakeup(itemBufferIdentifier))
-        resumeFromPendingWakeupInformation();
-}
-
-void RemoteRenderingBackend::resumeFromPendingWakeupInformation()
-{
-    auto itemBufferIdentifier = m_pendingWakeupInfo->itemBufferIdentifier;
-    auto offset = m_pendingWakeupInfo->offset;
-    auto destinationImageBufferIdentifier = m_pendingWakeupInfo->destinationImageBufferIdentifier;
-    auto reason = m_pendingWakeupInfo->reason;
-    m_pendingWakeupInfo = std::nullopt;
-    wakeUpAndApplyDisplayListWithQualifiedIdentifier(itemBufferIdentifier, offset, destinationImageBufferIdentifier, reason);
-}
-
-void RemoteRenderingBackend::didCreateMaskImageBuffer(ImageBuffer& imageBuffer)
-{
-    ASSERT(!RunLoop::isMain());
-    MESSAGE_CHECK(!m_currentMaskImageBuffer, "Current mask image buffer is already set.");
-    m_currentMaskImageBuffer = &imageBuffer;
-}
-
-void RemoteRenderingBackend::didResetMaskImageBuffer()
-{
-    ASSERT(!RunLoop::isMain());
-    MESSAGE_CHECK(m_currentMaskImageBuffer, "Current mask image buffer was not already set.");
-    m_currentMaskImageBuffer = nullptr;
-}
-
-std::optional<DisplayList::ItemHandle> WARN_UNUSED_RETURN RemoteRenderingBackend::decodeItem(const uint8_t* data, size_t length, DisplayList::ItemType type, uint8_t* handleLocation)
-{
-    /* This needs to match (1) isInlineItem() in DisplayListItemType.cpp, (2) RemoteImageBufferProxy::encodeItem(),
-     * and (3) all the "static constexpr bool isInlineItem"s inside the individual item classes.
-     * See the comment at the top of DisplayListItems.h for why. */
-
-    switch (type) {
-    case DisplayList::ItemType::BeginClipToDrawingCommands:
-        return decodeAndCreate<DisplayList::BeginClipToDrawingCommands>(data, length, handleLocation);
-    case DisplayList::ItemType::ClipOutToPath:
-        return decodeAndCreate<DisplayList::ClipOutToPath>(data, length, handleLocation);
-    case DisplayList::ItemType::ClipPath:
-        return decodeAndCreate<DisplayList::ClipPath>(data, length, handleLocation);
-    case DisplayList::ItemType::DrawFocusRingPath:
-        return decodeAndCreate<DisplayList::DrawFocusRingPath>(data, length, handleLocation);
-    case DisplayList::ItemType::DrawFocusRingRects:
-        return decodeAndCreate<DisplayList::DrawFocusRingRects>(data, length, handleLocation);
-    case DisplayList::ItemType::DrawGlyphs:
-        return decodeAndCreate<DisplayList::DrawGlyphs>(data, length, handleLocation);
-    case DisplayList::ItemType::DrawLinesForText:
-        return decodeAndCreate<DisplayList::DrawLinesForText>(data, length, handleLocation);
-    case DisplayList::ItemType::DrawPath:
-        return decodeAndCreate<DisplayList::DrawPath>(data, length, handleLocation);
-    case DisplayList::ItemType::FillCompositedRect:
-        return decodeAndCreate<DisplayList::FillCompositedRect>(data, length, handleLocation);
-    case DisplayList::ItemType::FillPath:
-        return decodeAndCreate<DisplayList::FillPath>(data, length, handleLocation);
-    case DisplayList::ItemType::FillRectWithColor:
-        return decodeAndCreate<DisplayList::FillRectWithColor>(data, length, handleLocation);
-    case DisplayList::ItemType::FillRectWithGradient:
-        return decodeAndCreate<DisplayList::FillRectWithGradient>(data, length, handleLocation);
-    case DisplayList::ItemType::FillRectWithRoundedHole:
-        return decodeAndCreate<DisplayList::FillRectWithRoundedHole>(data, length, handleLocation);
-    case DisplayList::ItemType::FillRoundedRect:
-        return decodeAndCreate<DisplayList::FillRoundedRect>(data, length, handleLocation);
-    case DisplayList::ItemType::GetPixelBuffer:
-        return decodeAndCreate<DisplayList::GetPixelBuffer>(data, length, handleLocation);
-    case DisplayList::ItemType::PutPixelBuffer:
-        return decodeAndCreate<DisplayList::PutPixelBuffer>(data, length, handleLocation);
-    case DisplayList::ItemType::SetLineDash:
-        return decodeAndCreate<DisplayList::SetLineDash>(data, length, handleLocation);
-    case DisplayList::ItemType::SetState:
-        return decodeAndCreate<DisplayList::SetState>(data, length, handleLocation);
-    case DisplayList::ItemType::StrokePath:
-        return decodeAndCreate<DisplayList::StrokePath>(data, length, handleLocation);
-    case DisplayList::ItemType::ApplyDeviceScaleFactor:
-#if USE(CG)
-    case DisplayList::ItemType::ApplyFillPattern:
-    case DisplayList::ItemType::ApplyStrokePattern:
-#endif
-    case DisplayList::ItemType::BeginTransparencyLayer:
-    case DisplayList::ItemType::ClearRect:
-    case DisplayList::ItemType::ClearShadow:
-    case DisplayList::ItemType::Clip:
-    case DisplayList::ItemType::ClipOut:
-    case DisplayList::ItemType::ClipToImageBuffer:
-    case DisplayList::ItemType::EndClipToDrawingCommands:
-    case DisplayList::ItemType::ConcatenateCTM:
-    case DisplayList::ItemType::DrawDotsForDocumentMarker:
-    case DisplayList::ItemType::DrawEllipse:
-    case DisplayList::ItemType::DrawImageBuffer:
-    case DisplayList::ItemType::DrawNativeImage:
-    case DisplayList::ItemType::DrawPattern:
-    case DisplayList::ItemType::DrawLine:
-    case DisplayList::ItemType::DrawRect:
-    case DisplayList::ItemType::EndTransparencyLayer:
-    case DisplayList::ItemType::FillEllipse:
-#if ENABLE(INLINE_PATH_DATA)
-    case DisplayList::ItemType::FillLine:
-    case DisplayList::ItemType::FillArc:
-    case DisplayList::ItemType::FillQuadCurve:
-    case DisplayList::ItemType::FillBezierCurve:
-#endif
-    case DisplayList::ItemType::FillRect:
-    case DisplayList::ItemType::FlushContext:
-    case DisplayList::ItemType::MetaCommandChangeDestinationImageBuffer:
-    case DisplayList::ItemType::MetaCommandChangeItemBuffer:
-#if ENABLE(VIDEO)
-    case DisplayList::ItemType::PaintFrameForMedia:
-#endif
-    case DisplayList::ItemType::Restore:
-    case DisplayList::ItemType::Rotate:
-    case DisplayList::ItemType::Save:
-    case DisplayList::ItemType::Scale:
-    case DisplayList::ItemType::SetCTM:
-    case DisplayList::ItemType::SetInlineFillColor:
-    case DisplayList::ItemType::SetInlineStrokeColor:
-    case DisplayList::ItemType::SetLineCap:
-    case DisplayList::ItemType::SetLineJoin:
-    case DisplayList::ItemType::SetMiterLimit:
-    case DisplayList::ItemType::SetStrokeThickness:
-    case DisplayList::ItemType::StrokeEllipse:
-#if ENABLE(INLINE_PATH_DATA)
-    case DisplayList::ItemType::StrokeArc:
-    case DisplayList::ItemType::StrokeQuadCurve:
-    case DisplayList::ItemType::StrokeBezierCurve:
-#endif
-    case DisplayList::ItemType::StrokeRect:
-    case DisplayList::ItemType::StrokeLine:
-    case DisplayList::ItemType::Translate:
-        ASSERT_NOT_REACHED();
-        return std::nullopt;
-    }
-    ASSERT_NOT_REACHED();
-    return std::nullopt;
 }
 
 void RemoteRenderingBackend::updateRenderingResourceRequest()
@@ -769,18 +379,6 @@ bool RemoteRenderingBackend::allowsExitUnderMemoryPressure() const
 {
     ASSERT(isMainRunLoop());
     return !m_remoteResourceCache.hasActiveDrawables();
-}
-
-RemoteRenderingBackendState RemoteRenderingBackend::lastKnownState() const
-{
-    ASSERT(RunLoop::isMain());
-    return m_lastKnownState.load();
-}
-
-void RemoteRenderingBackend::updateLastKnownState(RemoteRenderingBackendState state)
-{
-    ASSERT(!RunLoop::isMain());
-    m_lastKnownState.storeRelaxed(state);
 }
 
 void RemoteRenderingBackend::performWithMediaPlayerOnMainThread(MediaPlayerIdentifier identifier, Function<void(MediaPlayer&)>&& callback)

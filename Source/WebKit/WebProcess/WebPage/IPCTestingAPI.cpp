@@ -761,13 +761,6 @@ static bool encodeRemoteRenderingBackendCreationParameters(IPC::Encoder& encoder
     if (!identifier)
         return false;
 
-    auto jsSemaphore = jsObject->get(globalObject, JSC::Identifier::fromString(globalObject->vm(), "semaphore"_s));
-    if (scope.exception())
-        return false;
-    RefPtr semaphoreObject = JSIPCSemaphore::toWrapped(toRef(globalObject), toRef(jsSemaphore));
-    if (!semaphoreObject)
-        return false;
-
     auto pageProxyID = getObjectIdentifierFromProperty<WebPageProxyIdentifierType>(globalObject, jsObject, "pageProxyID"_s, scope);
     if (!pageProxyID)
         return false;
@@ -776,10 +769,8 @@ static bool encodeRemoteRenderingBackendCreationParameters(IPC::Encoder& encoder
     if (!pageID)
         return false;
 
-    auto semaphore = semaphoreObject->exchange();
-    RemoteRenderingBackendCreationParameters parameters { *identifier, WTFMove(semaphore), *pageProxyID, *pageID };
+    RemoteRenderingBackendCreationParameters parameters { *identifier, *pageProxyID, *pageID };
     encoder << parameters;
-    semaphoreObject->exchange(WTFMove(parameters.resumeDisplayListSemaphore));
     return true;
 }
 #endif

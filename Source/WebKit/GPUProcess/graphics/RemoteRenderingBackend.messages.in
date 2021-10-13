@@ -22,20 +22,18 @@
 
 #if ENABLE(GPU_PROCESS)
 
-messages -> RemoteRenderingBackend {
+messages -> RemoteRenderingBackend NotRefCounted Stream {
     CreateImageBuffer(WebCore::FloatSize logicalSize, WebCore::RenderingMode renderingMode, float resolutionScale, WebCore::DestinationColorSpace colorSpace, enum:uint8_t WebCore::PixelFormat pixelFormat, WebCore::RenderingResourceIdentifier renderingResourceIdentifier)
-    WakeUpAndApplyDisplayList(struct WebKit::GPUProcessWakeupMessageArguments arguments)
-    UpdateSharedMemoryForGetPixelBuffer(uint32_t byteCount) -> (WebKit::SharedMemory::IPCHandle handle) Synchronous
-    SemaphoreForGetPixelBuffer() -> (IPC::Semaphore semaphore) Synchronous
-    UpdateSharedMemoryAndSemaphoreForGetPixelBuffer(uint32_t byteCount) -> (WebKit::SharedMemory::IPCHandle handle, IPC::Semaphore semaphore) Synchronous
+    UpdateSharedMemoryForGetPixelBuffer(uint32_t byteCount) -> (WebKit::SharedMemory::IPCHandle handle) Synchronous NotStreamEncodableReply
+    SemaphoreForGetPixelBuffer() -> (IPC::Semaphore semaphore) Synchronous NotStreamEncodableReply
+    UpdateSharedMemoryAndSemaphoreForGetPixelBuffer(uint32_t byteCount) -> (WebKit::SharedMemory::IPCHandle handle, IPC::Semaphore semaphore) Synchronous NotStreamEncodableReply
     DestroyGetPixelBufferSharedMemory()
     GetDataURLForImageBuffer(String mimeType, std::optional<double> quality, enum:uint8_t WebCore::PreserveResolution preserveResolution, WebCore::RenderingResourceIdentifier renderingResourceIdentifier) -> (String urlString) Synchronous
     GetDataForImageBuffer(String mimeType, std::optional<double> quality, WebCore::RenderingResourceIdentifier renderingResourceIdentifier) -> (Vector<uint8_t> data) Synchronous
-    GetShareableBitmapForImageBuffer(WebCore::RenderingResourceIdentifier imageBuffer, enum:uint8_t WebCore::PreserveResolution preserveResolution) -> (WebKit::ShareableBitmap::Handle handle) Synchronous
-    CacheNativeImage(WebKit::ShareableBitmap::Handle handle, WebCore::RenderingResourceIdentifier renderingResourceIdentifier)
-    CacheFont(IPC::FontReference font)
+    GetShareableBitmapForImageBuffer(WebCore::RenderingResourceIdentifier imageBuffer, enum:uint8_t WebCore::PreserveResolution preserveResolution) -> (WebKit::ShareableBitmap::Handle handle) Synchronous NotStreamEncodableReply
+    CacheNativeImage(WebKit::ShareableBitmap::Handle handle, WebCore::RenderingResourceIdentifier renderingResourceIdentifier) NotStreamEncodable
+    CacheFont(IPC::FontReference font) NotStreamEncodable
     DeleteAllFonts()
-    DidCreateSharedDisplayListHandle(WebCore::DisplayList::ItemBufferIdentifier identifier, WebKit::SharedMemory::IPCHandle handle, WebCore::RenderingResourceIdentifier destinationBufferIdentifier)
     ReleaseRemoteResource(WebCore::RenderingResourceIdentifier renderingResourceIdentifier, uint64_t useCount)
     FinalizeRenderingUpdate(WebKit::RenderingUpdateID renderingUpdateID)
 }

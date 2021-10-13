@@ -1,3 +1,180 @@
+2021-10-12  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [GPU Process] Use IPC streaming for concurrent display list processing
+        https://bugs.webkit.org/show_bug.cgi?id=230860
+        rdar://83438038
+
+        Reviewed by Tim Horton.
+
+        This patch rebuilds the concurrent display list architecture in the web and GPU processes on top of the
+        streamable IPC connections currently used by WebGL in the GPU process. See below for more details.
+
+        There should be no change in behavior.
+
+        * GPUProcess/GPUConnectionToWebProcess.cpp:
+        (WebKit::GPUConnectionToWebProcess::createRenderingBackend):
+
+        Pass a StreamConnectionBuffer from the web process to the GPU process when constructing
+        RemoteRenderingBackend; this serves as the pool of shared memory used to store streaming IPC messages sent from
+        the web process to the GPU process. I've (somewhat arbitrarily) chosen the size of this StreamConnectionBuffer
+        to match WebGL's connection buffer, though this can be tuned as needed. In a future patch, we may also want to
+        implement a mechanism for starting out with a small connection buffer, and growing it by successively larger
+        segments as needed.
+
+        * GPUProcess/GPUConnectionToWebProcess.h:
+        * GPUProcess/GPUConnectionToWebProcess.messages.in:
+        * GPUProcess/cocoa/GPUProcessCocoa.mm:
+        (WebKit::GPUProcess::additionalStateForDiagnosticReport const):
+
+        Add a FIXME for re-introducing diagnostic state logging when using streamable IPC.
+
+        * GPUProcess/graphics/RemoteDisplayListRecorder.cpp:
+        (WebKit::RemoteDisplayListRecorder::RemoteDisplayListRecorder):
+        (WebKit::RemoteDisplayListRecorder::startListeningForIPC):
+        (WebKit::RemoteDisplayListRecorder::stopListeningForIPC):
+
+        Add and remove the remote display list as a destination on the RemoteRenderingBackend's stream connection. Note
+        that the synchronous dispatch to the main thread here is necessary to maintain the ordering of out-of-stream IPC
+        messages that may have been received on the IPC thread.
+
+        * GPUProcess/graphics/RemoteDisplayListRecorder.h:
+        (WebKit::RemoteDisplayListRecorder::create):
+        (WebKit::RemoteDisplayListRecorder::handleItem):
+        * GPUProcess/graphics/RemoteImageBuffer.h:
+        (WebKit::RemoteImageBuffer::RemoteImageBuffer):
+        (WebKit::RemoteImageBuffer::apply): Deleted.
+
+        Introduce `m_remoteDisplayList` to RemoteImageBuffer, and remove some logic for applying display list items that
+        is no longer necessary.
+
+        * GPUProcess/graphics/RemoteRenderingBackend.cpp:
+        (WebKit::RemoteRenderingBackend::create):
+        (WebKit::RemoteRenderingBackend::RemoteRenderingBackend):
+
+        Set up the IPC stream connection and stream connection work queue, and immediately send a wakeup semaphore back
+        to the web process.
+
+        (WebKit::RemoteRenderingBackend::startListeningForIPC):
+        (WebKit::RemoteRenderingBackend::~RemoteRenderingBackend):
+        (WebKit::RemoteRenderingBackend::stopListeningForIPC):
+
+        Add a mechanism to immediately tell all `m_remoteDisplayLists` to stop listening for streaming IPC messages when
+        the owning RemoteRenderingBackend stops listening.
+
+        (WebKit::RemoteRenderingBackend::dispatch):
+        (WebKit::RemoteRenderingBackend::didCreateImageBufferBackend):
+        (WebKit::RemoteRenderingBackend::createImageBufferWithQualifiedIdentifier):
+        (WebKit::RemoteRenderingBackend::cacheNativeImageWithQualifiedIdentifier):
+        (WebKit::RemoteRenderingBackend::cacheFontWithQualifiedIdentifier):
+        (WebKit::RemoteRenderingBackend::finalizeRenderingUpdate):
+        (WebKit::RemoteRenderingBackend::applyMediaItem): Deleted.
+        (WebKit::RemoteRenderingBackend::ReplayerDelegate::ReplayerDelegate): Deleted.
+        (WebKit::RemoteRenderingBackend::ReplayerDelegate::apply): Deleted.
+        (WebKit::RemoteRenderingBackend::ReplayerDelegate::didCreateMaskImageBuffer): Deleted.
+        (WebKit::RemoteRenderingBackend::ReplayerDelegate::didResetMaskImageBuffer): Deleted.
+        (WebKit::RemoteRenderingBackend::ReplayerDelegate::recordResourceUse): Deleted.
+        (WebKit::RemoteRenderingBackend::submit): Deleted.
+        (WebKit::RemoteRenderingBackend::nextDestinationImageBufferAfterApplyingDisplayLists): Deleted.
+        (WebKit::RemoteRenderingBackend::wakeUpAndApplyDisplayList): Deleted.
+        (WebKit::RemoteRenderingBackend::wakeUpAndApplyDisplayListWithQualifiedIdentifier): Deleted.
+        (WebKit::RemoteRenderingBackend::setNextItemBufferToRead): Deleted.
+        (WebKit::RemoteRenderingBackend::didCreateSharedDisplayListHandle): Deleted.
+        (WebKit::RemoteRenderingBackend::didCreateSharedDisplayListHandleWithQualifiedIdentifier): Deleted.
+        (WebKit::RemoteRenderingBackend::resumeFromPendingWakeupInformation): Deleted.
+        (WebKit::RemoteRenderingBackend::didCreateMaskImageBuffer): Deleted.
+        (WebKit::RemoteRenderingBackend::didResetMaskImageBuffer): Deleted.
+        (WebKit::RemoteRenderingBackend::decodeItem): Deleted.
+        (WebKit::RemoteRenderingBackend::lastKnownState const): Deleted.
+        (WebKit::RemoteRenderingBackend::updateLastKnownState): Deleted.
+
+        Remove logic for coordinating wakeups and shared display list item buffers in the GPU process.
+
+        * GPUProcess/graphics/RemoteRenderingBackend.h:
+
+        Subclass IPC::StreamMessageReceiver. In this new concurrent display list model, RemoteRenderingBackend serves
+        as a streaming IPC destination alongside each RemoteDisplayListRecorder in the GPU process; all messages
+        previously sent to the RemoteRenderingBackend as normal IPC are now sent through the connection stream (though
+        some must be marked as non-stream-encodable).
+
+        (WebKit::RemoteRenderingBackend::streamConnection const):
+        (WebKit::RemoteRenderingBackend::decodeAndCreate): Deleted.
+        (): Deleted.
+        (WebKit::RemoteRenderingBackend::PendingWakeupInformation::shouldPerformWakeup const): Deleted.
+
+        Delete more logic related to concurrent display lists.
+
+        * GPUProcess/graphics/RemoteRenderingBackend.messages.in:
+
+        Make RemoteRenderingBackend a stream message receiver.
+
+        * GPUProcess/graphics/RemoteRenderingBackendCreationParameters.h:
+        (WebKit::RemoteRenderingBackendCreationParameters::encode const):
+        (WebKit::RemoteRenderingBackendCreationParameters::decode):
+
+        Remove the IPC::Semaphore here, that was previously used for quick GPU process wakeups. This semaphore is no
+        longer needed because we always use IPC::Semaphore for waking the GPU process when using streaming IPC.
+
+        * GPUProcess/graphics/RemoteResourceCache.h:
+        * WebProcess/GPU/graphics/RemoteImageBufferProxy.h:
+
+        Make the RemoteImageBufferProxy template class directly subclass ConcreteImageBuffer instead of
+        DisplayList::ImageBuffer; additionally, introduce a `RemoteDisplayListRecorderProxy m_remoteDisplayList` here,
+        which we use as our drawing graphics context.
+
+        (WebKit::RemoteImageBufferProxy::~RemoteImageBufferProxy):
+        (WebKit::RemoteImageBufferProxy::RemoteImageBufferProxy):
+        (WebKit::RemoteImageBufferProxy::recordNativeImageUse):
+        (WebKit::RemoteImageBufferProxy::recordFontUse):
+        (WebKit::RemoteImageBufferProxy::recordImageBufferUse):
+        (WebKit::RemoteImageBufferProxy::clearDisplayList): Deleted.
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.cpp:
+        (WebKit::RemoteRenderingBackendProxy::RemoteRenderingBackendProxy):
+        (WebKit::RemoteRenderingBackendProxy::ensureGPUProcessConnection):
+        (WebKit::RemoteRenderingBackendProxy::gpuProcessConnectionDidClose):
+        (WebKit::RemoteRenderingBackendProxy::createRemoteImageBuffer):
+        (WebKit::RemoteRenderingBackendProxy::sharedMemoryForGetPixelBuffer):
+        (WebKit::RemoteRenderingBackendProxy::destroyGetPixelBufferSharedMemory):
+        (WebKit::RemoteRenderingBackendProxy::getDataURLForImageBuffer):
+        (WebKit::RemoteRenderingBackendProxy::getDataForImageBuffer):
+        (WebKit::RemoteRenderingBackendProxy::getShareableBitmap):
+
+        Send all IPC messages to RemoteRenderingBackend in the GPU process through the stream connection, instead of
+        using standard IPC messages. This guarantees ordering when receiving cached resources.
+
+        (WebKit::RemoteRenderingBackendProxy::cacheNativeImage):
+        (WebKit::RemoteRenderingBackendProxy::cacheFont):
+        (WebKit::RemoteRenderingBackendProxy::deleteAllFonts):
+        (WebKit::RemoteRenderingBackendProxy::releaseRemoteResource):
+        (WebKit::RemoteRenderingBackendProxy::finalizeRenderingUpdate):
+        (WebKit::RemoteRenderingBackendProxy::renderingBackendIdentifier const):
+        (WebKit::RemoteRenderingBackendProxy::ensureBackendCreated):
+        (WebKit::RemoteRenderingBackendProxy::streamConnection):
+
+        Add a mechanism to ensure that we have the IPC stream wakeup semaphore before grabbing the stream connection.
+
+        (WebKit::RemoteRenderingBackendProxy::didCreateWakeUpSemaphoreForDisplayListStream):
+        (WebKit::RemoteRenderingBackendProxy::willAppendItem): Deleted.
+        (WebKit::RemoteRenderingBackendProxy::sendWakeupMessage): Deleted.
+        (WebKit::RemoteRenderingBackendProxy::sendDeferredWakeupMessageIfNeeded): Deleted.
+        (WebKit::RemoteRenderingBackendProxy::didAppendData): Deleted.
+        (WebKit::RemoteRenderingBackendProxy::mostRecentlyUsedDisplayListHandle): Deleted.
+        (WebKit::RemoteRenderingBackendProxy::findReusableDisplayListHandle): Deleted.
+        (WebKit::RemoteRenderingBackendProxy::createItemBuffer): Deleted.
+
+        Remove all logic previously used to coordinate concurrent display list processing on the remote rendering
+        backend.
+
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.h:
+        (WebKit::RemoteRenderingBackendProxy::remoteResourceCacheProxy):
+        (WebKit::RemoteRenderingBackendProxy::sendToStream):
+        (WebKit::RemoteRenderingBackendProxy::sendSyncToStream):
+
+        Add helper methods to send IPC messages to the remote rendering backend through the connection stream.
+
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.messages.in:
+        * WebProcess/WebPage/IPCTestingAPI.cpp:
+        (WebKit::IPCTestingAPI::encodeRemoteRenderingBackendCreationParameters):
+
 2021-10-12  Ross Kirsling  <ross.kirsling@sony.com>
 
         Non-unified build fixes, October 2021 edition.
