@@ -25,7 +25,6 @@
 
 #include "config.h"
 #include "HTMLDialogElement.h"
-#include "ElementTraversal.h"
 #include "EventLoop.h"
 #include "EventNames.h"
 #include "FocusOptions.h"
