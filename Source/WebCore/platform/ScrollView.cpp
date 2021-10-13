@@ -454,6 +454,7 @@ void ScrollView::scrollOffsetChangedViaPlatformWidget(const ScrollOffset& oldOff
     }
 
     scrollOffsetChangedViaPlatformWidgetImpl(oldOffset, newOffset);
+    scrollAnimator().setCurrentPosition(scrollPosition());
 }
 
 void ScrollView::handleDeferredScrollUpdateAfterContentSizeChange()
@@ -481,6 +482,11 @@ void ScrollView::scrollTo(const ScrollPosition& newPosition)
     IntSize scrollDelta = newPosition - m_scrollPosition;
     if (scrollDelta.isZero())
         return;
+
+    if (platformWidget()) {
+        platformSetScrollPosition(newPosition);
+        return;
+    }
 
     m_scrollPosition = newPosition;
 
@@ -518,14 +524,14 @@ void ScrollView::setScrollPosition(const ScrollPosition& scrollPosition, const S
     if (prohibitsScrolling())
         return;
 
-    if (platformWidget()) {
-        platformSetScrollPosition(scrollPosition);
-        return;
-    }
-
     if (scrollAnimationStatus() == ScrollAnimationStatus::Animating) {
         scrollAnimator().cancelAnimations();
         stopAsyncAnimatedScroll();
+    }
+
+    if (platformWidget()) {
+        platformSetScrollPosition(scrollPosition);
+        return;
     }
 
     ScrollPosition newScrollPosition = (!delegatesScrolling() && options.clamping == ScrollClamping::Clamped) ? adjustScrollPositionWithinRange(scrollPosition) : scrollPosition;

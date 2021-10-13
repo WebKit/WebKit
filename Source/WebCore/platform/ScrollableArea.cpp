@@ -181,10 +181,10 @@ void ScrollableArea::scrollPositionChanged(const ScrollPosition& position)
     // Tell the derived class to scroll its contents.
     setScrollOffset(scrollOffsetFromPosition(position));
 
-    Scrollbar* verticalScrollbar = this->verticalScrollbar();
+    auto* verticalScrollbar = this->verticalScrollbar();
 
     // Tell the scrollbars to update their thumb postions.
-    if (Scrollbar* horizontalScrollbar = this->horizontalScrollbar()) {
+    if (auto* horizontalScrollbar = this->horizontalScrollbar()) {
         horizontalScrollbar->offsetDidChange();
         if (horizontalScrollbar->isOverlayScrollbar() && !hasLayerForHorizontalScrollbar()) {
             if (!verticalScrollbar)
