@@ -4693,6 +4693,8 @@ webkit.org/b/229379 fast/visual-viewport/resize-event-fired-window-resized.html 
 
 webkit.org/b/215318 fast/text/zwj-ligature.html [ ImageOnlyFailure ]
 
+webkit.org/b/231690 fast/text/hanging-punctuation-allow-end-basic.html [ ImageOnlyFailure ]
+
 webkit.org/b/229594 js/dfg-int16array.html [ Pass Crash ]
 webkit.org/b/229594 js/dfg-int32array-overflow-values.html [ Pass Crash ]
 webkit.org/b/229594 js/dfg-int8array.html [ Pass Crash ]
