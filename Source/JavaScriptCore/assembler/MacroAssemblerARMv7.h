@@ -189,7 +189,6 @@ public:
         }
 
         ARMThumbImmediate armImm = ARMThumbImmediate::makeUInt12OrEncodedImm(imm.m_value);
-
         if (armImm.isValid())
             m_assembler.add(dest, src, armImm);
         else {
@@ -200,19 +199,8 @@ public:
 
     void add32(TrustedImm32 imm, Address address)
     {
-        load32(address, dataTempRegister);
-
-        ARMThumbImmediate armImm = ARMThumbImmediate::makeUInt12OrEncodedImm(imm.m_value);
-        if (armImm.isValid())
-            m_assembler.add(dataTempRegister, dataTempRegister, armImm);
-        else {
-            // Hrrrm, since dataTempRegister holds the data loaded,
-            // use addressTempRegister to hold the immediate.
-            move(imm, addressTempRegister);
-            m_assembler.add(dataTempRegister, dataTempRegister, addressTempRegister);
-        }
-
-        store32(dataTempRegister, address);
+        constexpr bool updateFlags = false;
+        add32Impl(imm, address, updateFlags);
     }
 
     void add32(Address src, RegisterID dest)
@@ -223,19 +211,8 @@ public:
 
     void add32(TrustedImm32 imm, AbsoluteAddress address)
     {
-        load32(address.m_ptr, dataTempRegister);
-
-        ARMThumbImmediate armImm = ARMThumbImmediate::makeUInt12OrEncodedImm(imm.m_value);
-        if (armImm.isValid())
-            m_assembler.add(dataTempRegister, dataTempRegister, armImm);
-        else {
-            // Hrrrm, since dataTempRegister holds the data loaded,
-            // use addressTempRegister to hold the immediate.
-            move(imm, addressTempRegister);
-            m_assembler.add(dataTempRegister, dataTempRegister, addressTempRegister);
-        }
-
-        store32(dataTempRegister, address.m_ptr);
+        constexpr bool updateFlags = false;
+        add32Impl(imm, address, updateFlags);
     }
 
     void getEffectiveAddress(BaseIndex address, RegisterID dest)
@@ -1577,6 +1554,52 @@ private:
         }
     }
 
+    void add32Impl(TrustedImm32 imm, Address address, bool updateFlags = false)
+    {
+        load32(address, dataTempRegister);
+
+        ARMThumbImmediate armImm = ARMThumbImmediate::makeEncodedImm(imm.m_value);
+        if (armImm.isValid()) {
+            if (updateFlags)
+                m_assembler.add_S(dataTempRegister, dataTempRegister, armImm);
+            else
+                m_assembler.add(dataTempRegister, dataTempRegister, armImm);
+        } else {
+            // Hrrrm, since dataTempRegister holds the data loaded,
+            // use addressTempRegister to hold the immediate.
+            move(imm, addressTempRegister);
+            if (updateFlags)
+                m_assembler.add_S(dataTempRegister, dataTempRegister, addressTempRegister);
+            else
+                m_assembler.add(dataTempRegister, dataTempRegister, addressTempRegister);
+        }
+
+        store32(dataTempRegister, address);
+    }
+
+    void add32Impl(TrustedImm32 imm, AbsoluteAddress address, bool updateFlags = false)
+    {
+        load32(address.m_ptr, dataTempRegister);
+
+        ARMThumbImmediate armImm = ARMThumbImmediate::makeEncodedImm(imm.m_value);
+        if (armImm.isValid()) {
+            if (updateFlags)
+                m_assembler.add_S(dataTempRegister, dataTempRegister, armImm);
+            else
+                m_assembler.add(dataTempRegister, dataTempRegister, armImm);
+        } else {
+            // Hrrrm, since dataTempRegister holds the data loaded,
+            // use addressTempRegister to hold the immediate.
+            move(imm, addressTempRegister);
+            if (updateFlags)
+                m_assembler.add_S(dataTempRegister, dataTempRegister, addressTempRegister);
+            else
+                m_assembler.add(dataTempRegister, dataTempRegister, addressTempRegister);
+        }
+
+        store32(dataTempRegister, address.m_ptr);
+    }
+
 public:
     void test32(RegisterID reg, TrustedImm32 mask = TrustedImm32(-1))
     {
@@ -1847,13 +1870,15 @@ public:
 
     Jump branchAdd32(ResultCondition cond, TrustedImm32 imm, AbsoluteAddress dest)
     {
-        add32(imm, dest);
+        constexpr bool updateFlags = true;
+        add32Impl(imm, dest, updateFlags);
         return Jump(makeBranch(cond));
     }
 
     Jump branchAdd32(ResultCondition cond, TrustedImm32 imm, Address dest)
     {
-        add32(imm, dest);
+        constexpr bool updateFlags = true;
+        add32Impl(imm, dest, updateFlags);
         return Jump(makeBranch(cond));
     }
 

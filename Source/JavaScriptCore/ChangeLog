@@ -1,3 +1,24 @@
+2021-10-13  Mikhail R. Gadelha  <mikhail@igalia.com>
+
+        [JSC][32bit] Fix wrong branchAdd32 assembly for ARMv7
+        https://bugs.webkit.org/show_bug.cgi?id=231362
+
+        Reviewed by Yusuke Suzuki.
+
+        After the unlinked baseline jit was merged, a new branchAdd32 method
+        needed to be implemented for ARMv7, however, the first version
+        submitted by me used the add32 method to perform the add before
+        branching.
+
+        In this patch, we fix the call to add32 by adding a new private method
+        add32Impl with an optional parameter that selects either add or adds,
+        make branchAdd32 call the adds version.
+
+        (Patch co-authored with Geza Lore)
+
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::branchAdd32):
+
 2021-10-12  Alexey Proskuryakov  <ap@apple.com>
 
         Invoke build scripts with python3 explicitly
