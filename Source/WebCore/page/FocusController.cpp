@@ -30,7 +30,7 @@
 #include "AXObjectCache.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
-#include "Document.h"
+#include "DocumentInlines.h"
 #include "Editing.h"
 #include "Editor.h"
 #include "EditorClient.h"

@@ -503,7 +503,7 @@ public:
 
     virtual bool shouldUseTiledBackingForFrameView(const FrameView&) const { return false; }
 
-    virtual void isPlayingMediaDidChange(MediaProducer::MediaStateFlags) { }
+    virtual void isPlayingMediaDidChange(MediaProducerMediaStateFlags) { }
     virtual void handleAutoplayEvent(AutoplayEvent, OptionSet<AutoplayEventFlags>) { }
 
 #if ENABLE(WEB_CRYPTO)
@@ -534,7 +534,7 @@ public:
     virtual void addPlaybackTargetPickerClient(PlaybackTargetClientContextIdentifier) { }
     virtual void removePlaybackTargetPickerClient(PlaybackTargetClientContextIdentifier) { }
     virtual void showPlaybackTargetPicker(PlaybackTargetClientContextIdentifier, const IntPoint&, bool /*isVideo*/) { }
-    virtual void playbackTargetPickerClientStateDidChange(PlaybackTargetClientContextIdentifier, MediaProducer::MediaStateFlags) { }
+    virtual void playbackTargetPickerClientStateDidChange(PlaybackTargetClientContextIdentifier, MediaProducerMediaStateFlags) { }
     virtual void setMockMediaPlaybackTargetPickerEnabled(bool)  { }
     virtual void setMockMediaPlaybackTargetPickerState(const String&, MediaPlaybackTargetContext::MockState) { }
     virtual void mockMediaPlaybackTargetPickerDismissPopup() { }

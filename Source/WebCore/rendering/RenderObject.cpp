@@ -28,6 +28,7 @@
 #include "RenderObject.h"
 
 #include "AXObjectCache.h"
+#include "DocumentInlines.h"
 #include "Editing.h"
 #include "ElementAncestorIterator.h"
 #include "FloatQuad.h"
@@ -1795,7 +1796,7 @@ bool RenderObject::useDarkAppearance() const
     return document().useDarkAppearance(&style());
 }
 
-OptionSet<StyleColor::Options> RenderObject::styleColorOptions() const
+OptionSet<StyleColorOptions> RenderObject::styleColorOptions() const
 {
     return document().styleColorOptions(&style());
 }

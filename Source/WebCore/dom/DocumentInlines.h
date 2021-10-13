@@ -26,6 +26,9 @@
 #pragma once
 
 #include "Document.h"
+#include "MediaProducer.h"
+#include "SecurityOrigin.h"
+#include "TextResourceDecoder.h"
 
 namespace WebCore {
 
@@ -35,6 +38,10 @@ inline TextEncoding Document::textEncoding() const
         return decoder->encoding();
     return TextEncoding();
 }
+
+inline AtomString Document::encoding() const { return textEncoding().domName(); }
+
+inline String Document::charset() const { return Document::encoding(); }
 
 inline const Document* Document::templateDocument() const
 {
@@ -58,6 +65,19 @@ inline void Document::invalidateAccessKeyCache()
     if (UNLIKELY(m_accessKeyCache))
         invalidateAccessKeyCacheSlowCase();
 }
+
+inline bool Document::isCapturing() const
+{
+    return MediaProducer::isCapturing(m_mediaState);
+}
+
+inline bool Document::hasMutationObserversOfType(MutationObserverOptionType type) const
+{
+    return m_mutationObserverTypes.containsAny(type);
+}
+
+inline bool Document::isSameOriginAsTopDocument() const { return securityOrigin().isSameOriginAs(topOrigin()); }
+
 
 // These functions are here because they require the Document class definition and we want to inline them.
 

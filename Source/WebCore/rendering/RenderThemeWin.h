@@ -54,12 +54,12 @@ public:
     // A method asking if the theme's controls actually care about redrawing when hovered.
     bool supportsHover(const RenderStyle&) const override;
 
-    Color platformActiveSelectionBackgroundColor(OptionSet<StyleColor::Options>) const override;
-    Color platformInactiveSelectionBackgroundColor(OptionSet<StyleColor::Options>) const override;
-    Color platformActiveSelectionForegroundColor(OptionSet<StyleColor::Options>) const override;
-    Color platformInactiveSelectionForegroundColor(OptionSet<StyleColor::Options>) const override;
+    Color platformActiveSelectionBackgroundColor(OptionSet<StyleColorOptions>) const override;
+    Color platformInactiveSelectionBackgroundColor(OptionSet<StyleColorOptions>) const override;
+    Color platformActiveSelectionForegroundColor(OptionSet<StyleColorOptions>) const override;
+    Color platformInactiveSelectionForegroundColor(OptionSet<StyleColorOptions>) const override;
 
-    Color systemColor(CSSValueID, OptionSet<StyleColor::Options>) const override;
+    Color systemColor(CSSValueID, OptionSet<StyleColorOptions>) const override;
 
     bool paintCheckbox(const RenderObject& o, const PaintInfo& i, const FloatRect& r) override
     { return paintButton(o, i, IntRect(r)); }

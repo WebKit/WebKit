@@ -60,9 +60,9 @@
 #import <WebCore/CSSStyleDeclaration.h>
 #import <WebCore/Comment.h>
 #import <WebCore/DOMWindow.h>
-#import <WebCore/Document.h>
 #import <WebCore/DocumentFragment.h>
 #import <WebCore/DocumentFullscreen.h>
+#import <WebCore/DocumentInlines.h>
 #import <WebCore/DocumentType.h>
 #import <WebCore/Event.h>
 #import <WebCore/HTMLCollection.h>

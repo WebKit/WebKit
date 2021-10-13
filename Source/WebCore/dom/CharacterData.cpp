@@ -44,7 +44,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(CharacterData);
 static bool canUseSetDataOptimization(const CharacterData& node)
 {
     auto& document = node.document();
-    return !document.hasListenerType(Document::DOMCHARACTERDATAMODIFIED_LISTENER) && !document.hasMutationObserversOfType(MutationObserver::CharacterData)
+    return !document.hasListenerType(Document::DOMCHARACTERDATAMODIFIED_LISTENER) && !document.hasMutationObserversOfType(MutationObserverOptionType::CharacterData)
         && !document.hasListenerType(Document::DOMSUBTREEMODIFIED_LISTENER);
 }
 

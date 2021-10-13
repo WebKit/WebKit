@@ -53,6 +53,7 @@
 #include <WebCore/MediaPlayer.h>
 #include <WebCore/MediaPlayerPrivate.h>
 #include <WebCore/NotImplemented.h>
+#include <WebCore/SecurityOrigin.h>
 
 #if ENABLE(ENCRYPTED_MEDIA)
 #include "RemoteCDMFactoryProxy.h"

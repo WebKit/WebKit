@@ -46,6 +46,7 @@
 #include "DictationAlternative.h"
 #include "DictationCommand.h"
 #include "DocumentFragment.h"
+#include "DocumentInlines.h"
 #include "DocumentMarkerController.h"
 #include "Editing.h"
 #include "EditorClient.h"

@@ -1,3 +1,81 @@
+2021-10-12  Jer Noble  <jer.noble@apple.com>
+
+        [Build-time perf] Forward-declare more things in Document.h
+        https://bugs.webkit.org/show_bug.cgi?id=231489
+
+        Reviewed by Myles C. Maxfield.
+
+        Move the folowing enumerations outside their classes so that they can be forward-declared:
+        - MediaProducer::MediaStateFlags -> MediaProducerMediaStateFlags
+        - MediaProducer::MediaCaptureKind -> MediaProducerMediaCaptureKind
+        - MediaProducer::MutedState -> MediaProducerMutedState
+
+        * GPUProcess/media/RemoteMediaPlayerProxy.cpp:
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::enqueueSecurityPolicyViolationEvent):
+        * NetworkProcess/NetworkResourceLoader.h:
+        * Scripts/webkit/messages.py:
+        (headers_for_type):
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::decode):
+        * Shared/WebPageCreationParameters.h:
+        * UIProcess/API/APIUIClient.h:
+        (API::UIClient::mediaCaptureStateDidChange):
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetMuted):
+        (WKPageGetMediaState):
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView cameraCaptureState]):
+        (-[WKWebView microphoneCaptureState]):
+        (-[WKWebView setMicrophoneCaptureState:completionHandler:]):
+        (-[WKWebView setCameraCaptureState:completionHandler:]):
+        (-[WKWebView _stopMediaCapture]):
+        (-[WKWebView _setPageMuted:]):
+        * UIProcess/API/glib/WebKitWebView.cpp:
+        (webkitWebViewConfigureMediaCapture):
+        (webkit_web_view_set_camera_capture_state):
+        (webkit_web_view_set_microphone_capture_state):
+        (webkit_web_view_set_display_capture_state):
+        * UIProcess/Cocoa/MediaUtilities.h:
+        * UIProcess/Cocoa/MediaUtilities.mm:
+        (WebKit::toWKMediaCaptureStateDeprecated):
+        (WebKit::toWKMediaMutedState):
+        * UIProcess/Cocoa/UIDelegate.h:
+        * UIProcess/Cocoa/UIDelegate.mm:
+        (WebKit::UIDelegate::UIClient::mediaCaptureStateDidChange):
+        * UIProcess/UserMediaPermissionRequestManagerProxy.cpp:
+        (WebKit::UserMediaPermissionRequestManagerProxy::~UserMediaPermissionRequestManagerProxy):
+        (WebKit::UserMediaPermissionRequestManagerProxy::stopCapture):
+        (WebKit::UserMediaPermissionRequestManagerProxy::captureStateChanged):
+        * UIProcess/UserMediaPermissionRequestManagerProxy.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::updateActivityState):
+        (WebKit::WebPageProxy::setMuted):
+        (WebKit::WebPageProxy::stopMediaCapture):
+        (WebKit::WebPageProxy::isPlayingMediaDidChange):
+        (WebKit::WebPageProxy::updatePlayingMediaDidChange):
+        (WebKit::WebPageProxy::playbackTargetPickerClientStateDidChange):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::pageMutedStateChanged):
+        * UIProcess/WebProcessProxy.h:
+        * WebProcess/Plugins/PluginView.cpp:
+        * WebProcess/Plugins/PluginView.h:
+        (WebKit::PluginView::mediaState const):
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::isPlayingMediaDidChange):
+        (WebKit::WebChromeClient::playbackTargetPickerClientStateDidChange):
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.cpp:
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::enqueueSecurityPolicyViolationEvent):
+        (WebKit::WebPage::setMuted):
+        (WebKit::WebPage::stopMediaCapture):
+        (WebKit::WebPage::isPlayingMediaDidChange):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2021-10-12  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [GPU Process] Use IPC streaming for concurrent display list processing

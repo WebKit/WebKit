@@ -29,6 +29,7 @@
 #include "BreakLines.h"
 #include "BreakingContext.h"
 #include "CharacterProperties.h"
+#include "DocumentInlines.h"
 #include "DocumentMarkerController.h"
 #include "FloatQuad.h"
 #include "Frame.h"

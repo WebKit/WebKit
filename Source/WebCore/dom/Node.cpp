@@ -35,6 +35,7 @@
 #include "ContextMenuController.h"
 #include "DOMWindow.h"
 #include "DataTransfer.h"
+#include "DocumentInlines.h"
 #include "DocumentType.h"
 #include "ElementIterator.h"
 #include "ElementRareData.h"
@@ -2282,7 +2283,7 @@ HashSet<MutationObserverRegistration*>* Node::transientMutationObserverRegistry(
     return &data->transientRegistry;
 }
 
-template<typename Registry> static inline void collectMatchingObserversForMutation(HashMap<Ref<MutationObserver>, MutationRecordDeliveryOptions>& observers, Registry* registry, Node& target, MutationObserver::MutationType type, const QualifiedName* attributeName)
+template<typename Registry> static inline void collectMatchingObserversForMutation(HashMap<Ref<MutationObserver>, MutationRecordDeliveryOptions>& observers, Registry* registry, Node& target, MutationObserverOptionType type, const QualifiedName* attributeName)
 {
     if (!registry)
         return;
@@ -2292,15 +2293,15 @@ template<typename Registry> static inline void collectMatchingObserversForMutati
             auto deliveryOptions = registration->deliveryOptions();
             auto result = observers.add(registration->observer(), deliveryOptions);
             if (!result.isNewEntry)
-                result.iterator->value |= deliveryOptions;
+                result.iterator->value.add(deliveryOptions);
         }
     }
 }
 
-HashMap<Ref<MutationObserver>, MutationRecordDeliveryOptions> Node::registeredMutationObservers(MutationObserver::MutationType type, const QualifiedName* attributeName)
+HashMap<Ref<MutationObserver>, MutationRecordDeliveryOptions> Node::registeredMutationObservers(MutationObserverOptionType type, const QualifiedName* attributeName)
 {
     HashMap<Ref<MutationObserver>, MutationRecordDeliveryOptions> result;
-    ASSERT((type == MutationObserver::Attributes && attributeName) || !attributeName);
+    ASSERT((type == MutationObserverOptionType::Attributes && attributeName) || !attributeName);
     collectMatchingObserversForMutation(result, mutationObserverRegistry(), *this, type, attributeName);
     collectMatchingObserversForMutation(result, transientMutationObserverRegistry(), *this, type, attributeName);
     for (Node* node = parentNode(); node; node = node->parentNode()) {

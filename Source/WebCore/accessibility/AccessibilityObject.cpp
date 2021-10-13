@@ -37,6 +37,7 @@
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "DOMTokenList.h"
+#include "DocumentInlines.h"
 #include "Editing.h"
 #include "Editor.h"
 #include "ElementIterator.h"

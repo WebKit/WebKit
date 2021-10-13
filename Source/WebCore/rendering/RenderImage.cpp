@@ -31,6 +31,7 @@
 #include "AXObjectCache.h"
 #include "BitmapImage.h"
 #include "CachedImage.h"
+#include "DocumentInlines.h"
 #include "FocusController.h"
 #include "FontCache.h"
 #include "FontCascade.h"

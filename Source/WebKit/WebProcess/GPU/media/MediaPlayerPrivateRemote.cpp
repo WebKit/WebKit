@@ -49,6 +49,7 @@
 #include <WebCore/PlatformTimeRanges.h>
 #include <WebCore/ResourceError.h>
 #include <WebCore/RuntimeEnabledFeatures.h>
+#include <WebCore/SecurityOrigin.h>
 #include <WebCore/TextTrackRepresentation.h>
 #include <WebCore/VideoLayerManager.h>
 #include <wtf/HashMap.h>

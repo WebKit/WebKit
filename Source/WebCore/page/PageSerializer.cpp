@@ -36,7 +36,7 @@
 #include "CSSImportRule.h"
 #include "CSSStyleRule.h"
 #include "CachedImage.h"
-#include "Document.h"
+#include "DocumentInlines.h"
 #include "ElementInlines.h"
 #include "Frame.h"
 #include "HTMLFrameOwnerElement.h"

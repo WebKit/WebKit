@@ -159,7 +159,7 @@ Color RenderReplaced::calculateHighlightColor() const
                     if (!isHighlighted(state, highlightData))
                         continue;
 
-                    OptionSet<StyleColor::Options> styleColorOptions = { StyleColor::Options::UseSystemAppearance };
+                    OptionSet<StyleColorOptions> styleColorOptions = { StyleColorOptions::UseSystemAppearance };
                     return theme().appHighlightColor(styleColorOptions);
                 }
             }

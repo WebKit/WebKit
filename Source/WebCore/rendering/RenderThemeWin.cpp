@@ -285,25 +285,25 @@ bool RenderThemeWin::supportsHover(const RenderStyle&) const
     return haveTheme;
 }
 
-Color RenderThemeWin::platformActiveSelectionBackgroundColor(OptionSet<StyleColor::Options>) const
+Color RenderThemeWin::platformActiveSelectionBackgroundColor(OptionSet<StyleColorOptions>) const
 {
     COLORREF color = GetSysColor(COLOR_HIGHLIGHT);
     return SRGBA<uint8_t> { GetRValue(color), GetGValue(color), GetBValue(color) };
 }
 
-Color RenderThemeWin::platformInactiveSelectionBackgroundColor(OptionSet<StyleColor::Options>) const
+Color RenderThemeWin::platformInactiveSelectionBackgroundColor(OptionSet<StyleColorOptions>) const
 {
     // This color matches Firefox.
     return SRGBA<uint8_t> { 176, 176, 176 };
 }
 
-Color RenderThemeWin::platformActiveSelectionForegroundColor(OptionSet<StyleColor::Options>) const
+Color RenderThemeWin::platformActiveSelectionForegroundColor(OptionSet<StyleColorOptions>) const
 {
     COLORREF color = GetSysColor(COLOR_HIGHLIGHTTEXT);
     return SRGBA<uint8_t> { GetRValue(color), GetGValue(color), GetBValue(color) };
 }
 
-Color RenderThemeWin::platformInactiveSelectionForegroundColor(OptionSet<StyleColor::Options> options) const
+Color RenderThemeWin::platformInactiveSelectionForegroundColor(OptionSet<StyleColorOptions> options) const
 {
     return platformActiveSelectionForegroundColor(options);
 }
@@ -1002,7 +1002,7 @@ static int cssValueIdToSysColorIndex(CSSValueID cssValueId)
     }
 }
 
-Color RenderThemeWin::systemColor(CSSValueID cssValueId, OptionSet<StyleColor::Options> options) const
+Color RenderThemeWin::systemColor(CSSValueID cssValueId, OptionSet<StyleColorOptions> options) const
 {
 #if HAVE(OS_DARK_MODE_SUPPORT)
     switch (cssValueId) {

@@ -69,6 +69,7 @@
 #include "DocumentLoader.h"
 #include "DocumentMarkerController.h"
 #include "DocumentTimeline.h"
+#include "DocumentTimelinesController.h"
 #include "Editor.h"
 #include "Element.h"
 #include "EventHandler.h"
@@ -4624,14 +4625,14 @@ void Internals::setPageMuted(StringView statesString)
     if (!document)
         return;
 
-    WebCore::MediaProducer::MutedStateFlags state;
+    WebCore::MediaProducerMutedStateFlags state;
     for (StringView stateString : statesString.split(',')) {
         if (equalLettersIgnoringASCIICase(stateString, "audio"))
-            state.add(MediaProducer::MutedState::AudioIsMuted);
+            state.add(MediaProducerMutedState::AudioIsMuted);
         if (equalLettersIgnoringASCIICase(stateString, "capturedevices"))
             state.add(MediaProducer::AudioAndVideoCaptureIsMuted);
         if (equalLettersIgnoringASCIICase(stateString, "screencapture"))
-            state.add(MediaProducer::MutedState::ScreenCaptureIsMuted);
+            state.add(MediaProducerMutedState::ScreenCaptureIsMuted);
     }
 
     if (Page* page = document->page())
@@ -4646,43 +4647,43 @@ String Internals::pageMediaState()
 
     auto state = document->page()->mediaState();
     StringBuilder string;
-    if (state.containsAny(MediaProducer::MediaState::IsPlayingAudio))
+    if (state.containsAny(MediaProducerMediaState::IsPlayingAudio))
         string.append("IsPlayingAudio,");
-    if (state.containsAny(MediaProducer::MediaState::IsPlayingVideo))
+    if (state.containsAny(MediaProducerMediaState::IsPlayingVideo))
         string.append("IsPlayingVideo,");
-    if (state.containsAny(MediaProducer::MediaState::IsPlayingToExternalDevice))
+    if (state.containsAny(MediaProducerMediaState::IsPlayingToExternalDevice))
         string.append("IsPlayingToExternalDevice,");
-    if (state.containsAny(MediaProducer::MediaState::RequiresPlaybackTargetMonitoring))
+    if (state.containsAny(MediaProducerMediaState::RequiresPlaybackTargetMonitoring))
         string.append("RequiresPlaybackTargetMonitoring,");
-    if (state.containsAny(MediaProducer::MediaState::ExternalDeviceAutoPlayCandidate))
+    if (state.containsAny(MediaProducerMediaState::ExternalDeviceAutoPlayCandidate))
         string.append("ExternalDeviceAutoPlayCandidate,");
-    if (state.containsAny(MediaProducer::MediaState::DidPlayToEnd))
+    if (state.containsAny(MediaProducerMediaState::DidPlayToEnd))
         string.append("DidPlayToEnd,");
-    if (state.containsAny(MediaProducer::MediaState::IsSourceElementPlaying))
+    if (state.containsAny(MediaProducerMediaState::IsSourceElementPlaying))
         string.append("IsSourceElementPlaying,");
 
-    if (state.containsAny(MediaProducer::MediaState::IsNextTrackControlEnabled))
+    if (state.containsAny(MediaProducerMediaState::IsNextTrackControlEnabled))
         string.append("IsNextTrackControlEnabled,");
-    if (state.containsAny(MediaProducer::MediaState::IsPreviousTrackControlEnabled))
+    if (state.containsAny(MediaProducerMediaState::IsPreviousTrackControlEnabled))
         string.append("IsPreviousTrackControlEnabled,");
 
-    if (state.containsAny(MediaProducer::MediaState::HasPlaybackTargetAvailabilityListener))
+    if (state.containsAny(MediaProducerMediaState::HasPlaybackTargetAvailabilityListener))
         string.append("HasPlaybackTargetAvailabilityListener,");
-    if (state.containsAny(MediaProducer::MediaState::HasAudioOrVideo))
+    if (state.containsAny(MediaProducerMediaState::HasAudioOrVideo))
         string.append("HasAudioOrVideo,");
-    if (state.containsAny(MediaProducer::MediaState::HasActiveAudioCaptureDevice))
+    if (state.containsAny(MediaProducerMediaState::HasActiveAudioCaptureDevice))
         string.append("HasActiveAudioCaptureDevice,");
-    if (state.containsAny(MediaProducer::MediaState::HasActiveVideoCaptureDevice))
+    if (state.containsAny(MediaProducerMediaState::HasActiveVideoCaptureDevice))
         string.append("HasActiveVideoCaptureDevice,");
-    if (state.containsAny(MediaProducer::MediaState::HasMutedAudioCaptureDevice))
+    if (state.containsAny(MediaProducerMediaState::HasMutedAudioCaptureDevice))
         string.append("HasMutedAudioCaptureDevice,");
-    if (state.containsAny(MediaProducer::MediaState::HasMutedVideoCaptureDevice))
+    if (state.containsAny(MediaProducerMediaState::HasMutedVideoCaptureDevice))
         string.append("HasMutedVideoCaptureDevice,");
-    if (state.containsAny(MediaProducer::MediaState::HasUserInteractedWithMediaElement))
+    if (state.containsAny(MediaProducerMediaState::HasUserInteractedWithMediaElement))
         string.append("HasUserInteractedWithMediaElement,");
-    if (state.containsAny(MediaProducer::MediaState::HasActiveDisplayCaptureDevice))
+    if (state.containsAny(MediaProducerMediaState::HasActiveDisplayCaptureDevice))
         string.append("HasActiveDisplayCaptureDevice,");
-    if (state.containsAny(MediaProducer::MediaState::HasMutedDisplayCaptureDevice))
+    if (state.containsAny(MediaProducerMediaState::HasMutedDisplayCaptureDevice))
         string.append("HasMutedDisplayCaptureDevice,");
 
     if (string.isEmpty())
@@ -6115,11 +6116,11 @@ String Internals::systemColorForCSSValue(const String& cssValue, bool useDarkMod
     CSSValueID id = cssValueKeywordID(cssValue);
     RELEASE_ASSERT(StyleColor::isSystemColorKeyword(id));
 
-    OptionSet<StyleColor::Options> options;
+    OptionSet<StyleColorOptions> options;
     if (useDarkModeAppearance)
-        options.add(StyleColor::Options::UseDarkAppearance);
+        options.add(StyleColorOptions::UseDarkAppearance);
     if (useElevatedUserInterfaceLevel)
-        options.add(StyleColor::Options::UseElevatedUserInterfaceLevel);
+        options.add(StyleColorOptions::UseElevatedUserInterfaceLevel);
     
     return serializationForCSS(RenderTheme::singleton().systemColor(id, options));
 }

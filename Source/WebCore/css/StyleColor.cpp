@@ -37,7 +37,7 @@
 
 namespace WebCore {
 
-Color StyleColor::colorFromKeyword(CSSValueID keyword, OptionSet<Options> options)
+Color StyleColor::colorFromKeyword(CSSValueID keyword, OptionSet<StyleColorOptions> options)
 {
     if (const char* valueName = getValueName(keyword)) {
         if (const NamedColor* namedColor = findColor(valueName, strlen(valueName)))

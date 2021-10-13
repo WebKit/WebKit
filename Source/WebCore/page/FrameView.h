@@ -542,7 +542,7 @@ public:
     bool shouldSetCursor() const;
 
     WEBCORE_EXPORT bool useDarkAppearance() const final;
-    OptionSet<StyleColor::Options> styleColorOptions() const;
+    OptionSet<StyleColorOptions> styleColorOptions() const;
 
     // FIXME: Remove this method once plugin loading is decoupled from layout.
     void flushAnyPendingPostLayoutTasks();
@@ -961,7 +961,7 @@ private:
 
     bool m_isTransparent { false };
 #if ENABLE(DARK_MODE_CSS)
-    OptionSet<StyleColor::Options> m_styleColorOptions;
+    OptionSet<StyleColorOptions> m_styleColorOptions;
 #endif
 
     bool m_isTrackingRepaints { false }; // Used for testing.

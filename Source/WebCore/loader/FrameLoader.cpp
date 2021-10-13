@@ -55,7 +55,7 @@
 #include "DatabaseManager.h"
 #include "DiagnosticLoggingClient.h"
 #include "DiagnosticLoggingKeys.h"
-#include "Document.h"
+#include "DocumentInlines.h"
 #include "DocumentLoader.h"
 #include "Editor.h"
 #include "EditorClient.h"

@@ -29,6 +29,7 @@
 
 #include "Document.h"
 #include "LibWebRTCProvider.h"
+#include "RTCNetworkManager.h"
 #include "RTCPeerConnection.h"
 
 namespace WebCore {

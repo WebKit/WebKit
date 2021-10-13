@@ -1227,7 +1227,7 @@ void UIDelegate::UIClient::checkUserMediaPermissionForOrigin(WebPageProxy& page,
     [(id <WKUIDelegatePrivate>)delegate _webView:m_uiDelegate->m_webView.get().get() checkUserMediaPermissionForURL:requestFrameURL mainFrameURL:mainFrameURL frameIdentifier:frame.frameID().toUInt64() decisionHandler:decisionHandler.get()];
 }
 
-void UIDelegate::UIClient::mediaCaptureStateDidChange(WebCore::MediaProducer::MediaStateFlags state)
+void UIDelegate::UIClient::mediaCaptureStateDidChange(WebCore::MediaProducerMediaStateFlags state)
 {
     if (!m_uiDelegate)
         return;

@@ -35,6 +35,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/ListHashSet.h>
+#include <wtf/WeakHashSet.h>
 
 #if USE(ATK)
 #include <wtf/glib/GRefPtr.h>

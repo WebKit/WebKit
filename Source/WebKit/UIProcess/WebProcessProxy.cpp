@@ -1847,7 +1847,7 @@ void WebProcessProxy::muteCaptureInPagesExcept(WebCore::PageIdentifier pageID)
 
 #endif
 
-void WebProcessProxy::pageMutedStateChanged(WebCore::PageIdentifier identifier, WebCore::MediaProducer::MutedStateFlags flags)
+void WebProcessProxy::pageMutedStateChanged(WebCore::PageIdentifier identifier, WebCore::MediaProducerMutedStateFlags flags)
 {
     bool mutedForCapture = flags.containsAny(MediaProducer::AudioAndVideoCaptureIsMuted);
     if (!mutedForCapture)

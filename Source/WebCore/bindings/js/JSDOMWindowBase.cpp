@@ -103,6 +103,8 @@ JSDOMWindowBase::JSDOMWindowBase(VM& vm, Structure* structure, RefPtr<DOMWindow>
     m_proxy.set(vm, this, proxy);
 }
 
+JSDOMWindowBase::~JSDOMWindowBase() = default;
+
 SUPPRESS_ASAN inline void JSDOMWindowBase::initStaticGlobals(JSC::VM& vm)
 {
     auto& builtinNames = static_cast<JSVMClientData*>(vm.clientData)->builtinNames();

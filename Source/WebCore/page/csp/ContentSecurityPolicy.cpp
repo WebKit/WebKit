@@ -36,7 +36,7 @@
 #include "ContentSecurityPolicySource.h"
 #include "ContentSecurityPolicySourceList.h"
 #include "DOMStringList.h"
-#include "Document.h"
+#include "DocumentInlines.h"
 #include "DocumentLoader.h"
 #include "EventNames.h"
 #include "FormData.h"
@@ -783,7 +783,7 @@ void ContentSecurityPolicy::reportViolation(const String& effectiveViolatedDirec
     unsigned short httpStatusCode = m_selfSourceProtocol == "http" ? m_httpStatusCode : 0;
 
     // 1. Dispatch violation event.
-    SecurityPolicyViolationEvent::Init violationEventInit;
+    SecurityPolicyViolationEventInit violationEventInit;
     violationEventInit.documentURI = info.documentURI;
     violationEventInit.referrer = m_referrer;
     violationEventInit.blockedURI = blockedURI;
@@ -791,7 +791,7 @@ void ContentSecurityPolicy::reportViolation(const String& effectiveViolatedDirec
     violationEventInit.effectiveDirective = effectiveViolatedDirective;
     violationEventInit.originalPolicy = violatedDirectiveList.header();
     violationEventInit.sourceFile = info.sourceFile;
-    violationEventInit.disposition = violatedDirectiveList.isReportOnly() ? SecurityPolicyViolationEvent::Disposition::Report : SecurityPolicyViolationEvent::Disposition::Enforce;
+    violationEventInit.disposition = violatedDirectiveList.isReportOnly() ? SecurityPolicyViolationEventDisposition::Report : SecurityPolicyViolationEventDisposition::Enforce;
     violationEventInit.statusCode = httpStatusCode;
     violationEventInit.lineNumber =  info.lineNumber;
     violationEventInit.columnNumber = info.columnNumber;

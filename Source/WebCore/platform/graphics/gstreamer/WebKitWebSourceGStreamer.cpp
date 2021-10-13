@@ -31,6 +31,7 @@
 #include "ResourceError.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
+#include "SecurityOrigin.h"
 #include <cstdint>
 #include <wtf/Condition.h>
 #include <wtf/DataMutex.h>

@@ -1312,12 +1312,12 @@ void RenderThemeIOS::paintFileUploadIconDecorations(const RenderObject&, const R
     icon->paint(paintInfo.context(), thumbnailRect);
 }
 
-Color RenderThemeIOS::platformActiveSelectionBackgroundColor(OptionSet<StyleColor::Options>) const
+Color RenderThemeIOS::platformActiveSelectionBackgroundColor(OptionSet<StyleColorOptions>) const
 {
     return Color::transparentBlack;
 }
 
-Color RenderThemeIOS::platformInactiveSelectionBackgroundColor(OptionSet<StyleColor::Options>) const
+Color RenderThemeIOS::platformInactiveSelectionBackgroundColor(OptionSet<StyleColorOptions>) const
 {
     return Color::transparentBlack;
 }
@@ -1337,13 +1337,13 @@ Color RenderThemeIOS::systemFocusRingColor()
     return *cachedFocusRingColor();
 }
 
-Color RenderThemeIOS::platformFocusRingColor(OptionSet<StyleColor::Options>) const
+Color RenderThemeIOS::platformFocusRingColor(OptionSet<StyleColorOptions>) const
 {
     return systemFocusRingColor();
 }
 
 #if ENABLE(APP_HIGHLIGHTS)
-Color RenderThemeIOS::platformAppHighlightColor(OptionSet<StyleColor::Options>) const
+Color RenderThemeIOS::platformAppHighlightColor(OptionSet<StyleColorOptions>) const
 {
     // FIXME: expose the real value from UIKit.
     return SRGBA<uint8_t> { 255, 238, 190 };
@@ -1498,9 +1498,9 @@ void RenderThemeIOS::setFocusRingColor(const Color& color)
     cachedFocusRingColor() = color;
 }
 
-Color RenderThemeIOS::systemColor(CSSValueID cssValueID, OptionSet<StyleColor::Options> options) const
+Color RenderThemeIOS::systemColor(CSSValueID cssValueID, OptionSet<StyleColorOptions> options) const
 {
-    const bool forVisitedLink = options.contains(StyleColor::Options::ForVisitedLink);
+    const bool forVisitedLink = options.contains(StyleColorOptions::ForVisitedLink);
 
     // The system color cache below can't handle visited links. The only color value
     // that cares about visited links is CSSValueWebkitLink, so handle it here by
@@ -1512,8 +1512,8 @@ Color RenderThemeIOS::systemColor(CSSValueID cssValueID, OptionSet<StyleColor::O
 
     auto& cache = colorCache(options);
     return cache.systemStyleColors.ensure(cssValueID, [this, cssValueID, options] () -> Color {
-        const bool useDarkAppearance = options.contains(StyleColor::Options::UseDarkAppearance);
-        const bool useElevatedUserInterfaceLevel = options.contains(StyleColor::Options::UseElevatedUserInterfaceLevel);
+        const bool useDarkAppearance = options.contains(StyleColorOptions::UseDarkAppearance);
+        const bool useElevatedUserInterfaceLevel = options.contains(StyleColorOptions::UseElevatedUserInterfaceLevel);
         if (!globalCSSValueToSystemColorMap().isEmpty()) {
             auto it = globalCSSValueToSystemColorMap().find(CSSValueKey { cssValueID, useDarkAppearance, useElevatedUserInterfaceLevel });
             if (it == globalCSSValueToSystemColorMap().end())
@@ -2119,7 +2119,7 @@ constexpr auto nativeControlBorderWidth = 1.0f;
 constexpr auto checkboxRadioBorderWidth = 1.5f;
 constexpr auto checkboxRadioBorderDisabledOpacity = 0.3f;
 
-Color RenderThemeIOS::checkboxRadioBorderColor(OptionSet<ControlStates::States> states, OptionSet<StyleColor::Options> styleColorOptions)
+Color RenderThemeIOS::checkboxRadioBorderColor(OptionSet<ControlStates::States> states, OptionSet<StyleColorOptions> styleColorOptions)
 {
     auto defaultBorderColor = systemColor(CSSValueAppleSystemSecondaryLabel, styleColorOptions);
 
@@ -2132,7 +2132,7 @@ Color RenderThemeIOS::checkboxRadioBorderColor(OptionSet<ControlStates::States> 
     return defaultBorderColor;
 }
 
-Color RenderThemeIOS::checkboxRadioBackgroundColor(bool useAlternateDesign, OptionSet<ControlStates::States> states, OptionSet<StyleColor::Options> styleColorOptions)
+Color RenderThemeIOS::checkboxRadioBackgroundColor(bool useAlternateDesign, OptionSet<ControlStates::States> states, OptionSet<StyleColorOptions> styleColorOptions)
 {
     bool isEmpty = !states.containsAny({ ControlStates::States::Checked, ControlStates::States::Indeterminate });
     bool isEnabled = states.contains(ControlStates::States::Enabled);
@@ -2172,12 +2172,12 @@ RefPtr<Gradient> RenderThemeIOS::checkboxRadioBackgroundGradient(const FloatRect
     return gradient;
 }
 
-Color RenderThemeIOS::checkboxRadioIndicatorColor(OptionSet<ControlStates::States> states, OptionSet<StyleColor::Options> styleColorOptions)
+Color RenderThemeIOS::checkboxRadioIndicatorColor(OptionSet<ControlStates::States> states, OptionSet<StyleColorOptions> styleColorOptions)
 {
     if (!states.contains(ControlStates::States::Enabled))
         return systemColor(CSSValueAppleSystemTertiaryLabel, styleColorOptions);
 
-    Color enabledIndicatorColor = systemColor(CSSValueAppleSystemLabel, styleColorOptions | StyleColor::Options::UseDarkAppearance);
+    Color enabledIndicatorColor = systemColor(CSSValueAppleSystemLabel, styleColorOptions | StyleColorOptions::UseDarkAppearance);
     if (states.contains(ControlStates::States::Pressed))
         return enabledIndicatorColor.colorWithAlphaMultipliedBy(pressedStateOpacity);
 

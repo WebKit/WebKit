@@ -116,7 +116,7 @@ private:
     bool isOfflineContext() const final { return false; }
 
     // MediaProducer
-    MediaProducer::MediaStateFlags mediaState() const final;
+    MediaProducerMediaStateFlags mediaState() const final;
     void pageMutedStateDidChange() final;
 
     // PlatformMediaSessionClient

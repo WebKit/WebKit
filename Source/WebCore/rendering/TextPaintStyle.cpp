@@ -98,9 +98,9 @@ TextPaintStyle computeTextPaintStyle(const Frame& frame, const RenderStyle& line
     if (lineStyle.insideDefaultButton()) {
         Page* page = frame.page();
         if (page && page->focusController().isActive()) {
-            OptionSet<StyleColor::Options> options;
+            OptionSet<StyleColorOptions> options;
             if (page->useSystemAppearance())
-                options.add(StyleColor::Options::UseSystemAppearance);
+                options.add(StyleColorOptions::UseSystemAppearance);
             paintStyle.fillColor = RenderTheme::singleton().defaultButtonTextColor(options);
             return paintStyle;
         }

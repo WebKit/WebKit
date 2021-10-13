@@ -30,7 +30,6 @@
 
 #include "ContentType.h"
 #include "DeprecatedGlobalSettings.h"
-#include "Document.h"
 #include "GraphicsContext.h"
 #include "IntRect.h"
 #include "LegacyCDMSession.h"
@@ -41,6 +40,7 @@
 #include "PlatformScreen.h"
 #include "PlatformTextTrack.h"
 #include "PlatformTimeRanges.h"
+#include "SecurityOrigin.h"
 #include <JavaScriptCore/ArrayBuffer.h>
 #include <wtf/Lock.h>
 #include <wtf/NeverDestroyed.h>

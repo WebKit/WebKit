@@ -49,7 +49,7 @@ namespace WebKit {
 using namespace WebCore;
 
 #if ENABLE(MEDIA_STREAM)
-static const MediaProducer::MediaStateFlags activeCaptureMask { MediaProducer::MediaState::HasActiveAudioCaptureDevice, MediaProducer::MediaState::HasActiveVideoCaptureDevice };
+static const MediaProducerMediaStateFlags activeCaptureMask { MediaProducerMediaState::HasActiveAudioCaptureDevice, MediaProducerMediaState::HasActiveVideoCaptureDevice };
 #endif
 
 #if ENABLE(MEDIA_STREAM)
@@ -95,7 +95,7 @@ UserMediaPermissionRequestManagerProxy::UserMediaPermissionRequestManagerProxy(W
 
 UserMediaPermissionRequestManagerProxy::~UserMediaPermissionRequestManagerProxy()
 {
-    m_page.sendWithAsyncReply(Messages::WebPage::StopMediaCapture { MediaProducer::MediaCaptureKind::AudioVideo }, [] { });
+    m_page.sendWithAsyncReply(Messages::WebPage::StopMediaCapture { MediaProducerMediaCaptureKind::AudioVideo }, [] { });
 #if ENABLE(MEDIA_STREAM)
     UserMediaProcessManager::singleton().revokeSandboxExtensionsIfNeeded(page().process());
     proxies().remove(this);
@@ -129,7 +129,7 @@ void UserMediaPermissionRequestManagerProxy::stopCapture()
 {
     ALWAYS_LOG(LOGIDENTIFIER);
     invalidatePendingRequests();
-    m_page.stopMediaCapture(MediaProducer::MediaCaptureKind::AudioVideo);
+    m_page.stopMediaCapture(MediaProducerMediaCaptureKind::AudioVideo);
 }
 
 void UserMediaPermissionRequestManagerProxy::captureDevicesChanged()
@@ -863,7 +863,7 @@ void UserMediaPermissionRequestManagerProxy::syncWithWebCorePrefs() const
 #endif
 }
 
-void UserMediaPermissionRequestManagerProxy::captureStateChanged(MediaProducer::MediaStateFlags oldState, MediaProducer::MediaStateFlags newState)
+void UserMediaPermissionRequestManagerProxy::captureStateChanged(MediaProducerMediaStateFlags oldState, MediaProducerMediaStateFlags newState)
 {
     if (!m_page.hasRunningProcess())
         return;

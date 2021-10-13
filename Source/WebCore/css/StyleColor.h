@@ -37,15 +37,15 @@
 
 namespace WebCore {
 
-struct StyleColor {
-    enum class Options : uint8_t {
-        ForVisitedLink = 1 << 0,
-        UseSystemAppearance = 1 << 1,
-        UseDarkAppearance = 1 << 2,
-        UseElevatedUserInterfaceLevel = 1 << 3
-    };
+enum class StyleColorOptions : uint8_t {
+    ForVisitedLink = 1 << 0,
+    UseSystemAppearance = 1 << 1,
+    UseDarkAppearance = 1 << 2,
+    UseElevatedUserInterfaceLevel = 1 << 3
+};
 
-    static Color colorFromKeyword(CSSValueID, OptionSet<Options>);
+struct StyleColor {
+    static Color colorFromKeyword(CSSValueID, OptionSet<StyleColorOptions>);
     static bool isAbsoluteColorKeyword(CSSValueID);
     WEBCORE_EXPORT static bool isSystemColorKeyword(CSSValueID);
 

@@ -69,9 +69,9 @@ public:
     static Ref<MediaStreamTrack> create(ScriptExecutionContext&, Ref<MediaStreamTrackPrivate>&&);
     virtual ~MediaStreamTrack();
 
-    static void endCapture(Document&, MediaProducer::MediaCaptureKind);
+    static void endCapture(Document&, MediaProducerMediaCaptureKind);
 
-    static MediaProducer::MediaStateFlags captureState(Document&);
+    static MediaProducerMediaStateFlags captureState(Document&);
     static void updateCaptureAccordingToMutedState(Document&);
 
     virtual bool isCanvas() const { return false; }
@@ -141,7 +141,7 @@ public:
 
     RefPtr<WebAudioSourceProvider> createAudioSourceProvider();
 
-    MediaProducer::MediaStateFlags mediaState() const;
+    MediaProducerMediaStateFlags mediaState() const;
 
     void addObserver(Observer&);
     void removeObserver(Observer&);

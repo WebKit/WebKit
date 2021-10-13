@@ -56,12 +56,12 @@ public:
     std::unique_ptr<HashSet<GCReachableRef<Node>>> takeTransientRegistrations();
     bool hasTransientRegistrations() const { return m_transientRegistrationNodes && !m_transientRegistrationNodes->isEmpty(); }
 
-    bool shouldReceiveMutationFrom(Node&, MutationObserver::MutationType, const QualifiedName* attributeName) const;
-    bool isSubtree() const { return m_options & MutationObserver::Subtree; }
+    bool shouldReceiveMutationFrom(Node&, MutationObserverOptionType, const QualifiedName* attributeName) const;
+    bool isSubtree() const { return m_options.contains(MutationObserverOptionType::Subtree); }
 
     MutationObserver& observer() { return m_observer.get(); }
     Node& node() { return m_node; }
-    MutationRecordDeliveryOptions deliveryOptions() const { return m_options & (MutationObserver::AttributeOldValue | MutationObserver::CharacterDataOldValue); }
+    MutationRecordDeliveryOptions deliveryOptions() const { return m_options & MutationObserver::AllDeliveryFlags; }
     MutationObserverOptions mutationTypes() const { return m_options & MutationObserver::AllMutationTypes; }
 
     bool isReachableFromOpaqueRoots(JSC::AbstractSlotVisitor&) const;

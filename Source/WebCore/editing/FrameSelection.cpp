@@ -30,7 +30,7 @@
 #include "CharacterData.h"
 #include "ColorBlending.h"
 #include "DeleteSelectionCommand.h"
-#include "Document.h"
+#include "DocumentInlines.h"
 #include "Editing.h"
 #include "Editor.h"
 #include "EditorClient.h"

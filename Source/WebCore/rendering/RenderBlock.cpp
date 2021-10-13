@@ -25,7 +25,7 @@
 #include "RenderBlock.h"
 
 #include "AXObjectCache.h"
-#include "Document.h"
+#include "DocumentInlines.h"
 #include "Editor.h"
 #include "Element.h"
 #include "EventRegion.h"

@@ -54,7 +54,7 @@
 #include "WebKitDOMXPathResultPrivate.h"
 #include <WebCore/CSSImportRule.h>
 #include <WebCore/DOMException.h>
-#include <WebCore/Document.h>
+#include <WebCore/DocumentInlines.h>
 #include <WebCore/FullscreenManager.h>
 #include <WebCore/JSExecState.h>
 #include <WebCore/SecurityOrigin.h>

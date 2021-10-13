@@ -102,7 +102,7 @@ ALWAYS_INLINE NodeVector ContainerNode::removeAllChildrenWithScriptAssertion(Chi
     } else {
         ASSERT(source == ChildChange::Source::Parser);
         ScriptDisallowedScope::InMainThread scriptDisallowedScope;
-        if (UNLIKELY(document().hasMutationObserversOfType(MutationObserver::ChildList))) {
+        if (UNLIKELY(document().hasMutationObserversOfType(MutationObserverOptionType::ChildList))) {
             ChildListMutationScope mutation(*this);
             for (auto& child : children)
                 mutation.willRemoveChild(child.get());

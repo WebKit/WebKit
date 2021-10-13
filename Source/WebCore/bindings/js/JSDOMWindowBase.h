@@ -56,6 +56,7 @@ public:
     template<typename, JSC::SubspaceAccess>
     static void subspaceFor(JSC::VM&) { RELEASE_ASSERT_NOT_REACHED(); }
 
+    ~JSDOMWindowBase();
     void updateDocument();
 
     DOMWindow& wrapped() const { return *m_wrapped; }

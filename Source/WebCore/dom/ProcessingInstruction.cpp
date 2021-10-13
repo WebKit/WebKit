@@ -27,7 +27,7 @@
 #include "CachedResourceLoader.h"
 #include "CachedResourceRequest.h"
 #include "CachedXSLStyleSheet.h"
-#include "Document.h"
+#include "DocumentInlines.h"
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "MediaList.h"

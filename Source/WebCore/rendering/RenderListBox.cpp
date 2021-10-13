@@ -33,7 +33,7 @@
 #include "AXObjectCache.h"
 #include "CSSFontSelector.h"
 #include "DeprecatedGlobalSettings.h"
-#include "Document.h"
+#include "DocumentInlines.h"
 #include "EventHandler.h"
 #include "FocusController.h"
 #include "Frame.h"

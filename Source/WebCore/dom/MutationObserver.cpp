@@ -71,37 +71,37 @@ MutationObserver::~MutationObserver()
 
 bool MutationObserver::validateOptions(MutationObserverOptions options)
 {
-    return (options & (Attributes | CharacterData | ChildList))
-        && ((options & Attributes) || !(options & AttributeOldValue))
-        && ((options & Attributes) || !(options & AttributeFilter))
-        && ((options & CharacterData) || !(options & CharacterDataOldValue));
+    return options.containsAny(AllMutationTypes)
+        && (options.contains(OptionType::Attributes) || !options.contains(OptionType::AttributeOldValue))
+        && (options.contains(OptionType::Attributes) || !options.contains(OptionType::AttributeFilter))
+        && (options.contains(OptionType::CharacterData) || !options.contains(OptionType::CharacterDataOldValue));
 }
 
 ExceptionOr<void> MutationObserver::observe(Node& node, const Init& init)
 {
-    MutationObserverOptions options = 0;
+    MutationObserverOptions options;
 
     if (init.childList)
-        options |= ChildList;
+        options.add(OptionType::ChildList);
     if (init.subtree)
-        options |= Subtree;
+        options.add(OptionType::Subtree);
     if (init.attributeOldValue.value_or(false))
-        options |= AttributeOldValue;
+        options.add(OptionType::AttributeOldValue);
     if (init.characterDataOldValue.value_or(false))
-        options |= CharacterDataOldValue;
+        options.add(OptionType::CharacterDataOldValue);
 
     HashSet<AtomString> attributeFilter;
     if (init.attributeFilter) {
         for (auto& value : init.attributeFilter.value())
             attributeFilter.add(value);
-        options |= AttributeFilter;
+        options.add(OptionType::AttributeFilter);
     }
 
-    if (init.attributes ? init.attributes.value() : (options & (AttributeFilter | AttributeOldValue)))
-        options |= Attributes;
+    if (init.attributes ? init.attributes.value() : options.containsAny({ OptionType::AttributeFilter, OptionType::AttributeOldValue }))
+        options.add(OptionType::Attributes);
 
-    if (init.characterData ? init.characterData.value() : (options & CharacterDataOldValue))
-        options |= CharacterData;
+    if (init.characterData ? init.characterData.value() : options.contains(OptionType::CharacterDataOldValue))
+        options.add(OptionType::CharacterData);
 
     if (!validateOptions(options))
         return Exception { TypeError };

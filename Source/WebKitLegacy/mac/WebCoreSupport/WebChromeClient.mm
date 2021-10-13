@@ -1129,7 +1129,7 @@ void WebChromeClient::showPlaybackTargetPicker(PlaybackTargetClientContextIdenti
     [m_webView _showPlaybackTargetPicker:contextId location:location hasVideo:hasVideo];
 }
 
-void WebChromeClient::playbackTargetPickerClientStateDidChange(PlaybackTargetClientContextIdentifier contextId, MediaProducer::MediaStateFlags state)
+void WebChromeClient::playbackTargetPickerClientStateDidChange(PlaybackTargetClientContextIdentifier contextId, MediaProducerMediaStateFlags state)
 {
     [m_webView _playbackTargetPickerClientStateDidChange:contextId state:state];
 }

@@ -40,7 +40,7 @@
 #include "CachedScript.h"
 #include "CertificateInfo.h"
 #include "CertificateSummary.h"
-#include "Document.h"
+#include "DocumentInlines.h"
 #include "DocumentLoader.h"
 #include "DocumentThreadableLoader.h"
 #include "FormData.h"

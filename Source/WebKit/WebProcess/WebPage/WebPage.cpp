@@ -4382,7 +4382,7 @@ void WebPage::sendViolationReportWhenNavigatingAwayFromCOOPResponse(FrameIdentif
         WebCore::sendViolationReportWhenNavigatingAwayFromCOOPResponse(*frame->coreFrame(), coop, disposition, coopURL, nextResponseURL, coopOrigin.securityOrigin(), nextResponseOrigin.securityOrigin(), isCOOPResponseNavigationSource, userAgent);
 }
 
-void WebPage::enqueueSecurityPolicyViolationEvent(FrameIdentifier frameID, SecurityPolicyViolationEvent::Init&& eventInit)
+void WebPage::enqueueSecurityPolicyViolationEvent(FrameIdentifier frameID, SecurityPolicyViolationEventInit&& eventInit)
 {
     auto* frame = WebProcess::singleton().webFrame(frameID);
     if (!frame)
@@ -5582,13 +5582,13 @@ void WebPage::setMediaVolume(float volume)
     m_page->setMediaVolume(volume);
 }
 
-void WebPage::setMuted(MediaProducer::MutedStateFlags state, CompletionHandler<void()>&& completionHandler)
+void WebPage::setMuted(MediaProducerMutedStateFlags state, CompletionHandler<void()>&& completionHandler)
 {
     m_page->setMuted(state);
     completionHandler();
 }
 
-void WebPage::stopMediaCapture(MediaProducer::MediaCaptureKind kind, CompletionHandler<void()>&& completionHandler)
+void WebPage::stopMediaCapture(MediaProducerMediaCaptureKind kind, CompletionHandler<void()>&& completionHandler)
 {
 #if ENABLE(MEDIA_STREAM)
     m_page->stopMediaCapture(kind);
@@ -7458,7 +7458,7 @@ void WebPage::synchronizeCORSDisablingPatternsWithNetworkProcess()
     WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::SetCORSDisablingPatterns(m_identifier, m_corsDisablingPatterns), 0);
 }
 
-void WebPage::isPlayingMediaDidChange(WebCore::MediaProducer::MediaStateFlags state)
+void WebPage::isPlayingMediaDidChange(WebCore::MediaProducerMediaStateFlags state)
 {
     send(Messages::WebPageProxy::IsPlayingMediaDidChange(state));
 }

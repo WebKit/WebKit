@@ -22,6 +22,7 @@
 
 #include "CachedScriptFetcher.h"
 #include "ContentSecurityPolicy.h"
+#include "DocumentInlines.h"
 #include "Element.h"
 #include "Frame.h"
 #include "JSNode.h"

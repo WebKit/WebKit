@@ -1041,9 +1041,9 @@ static WKMediaPlaybackState toWKMediaPlaybackState(WebKit::MediaPlaybackState me
 - (WKMediaCaptureState)cameraCaptureState
 {
     auto state = _page->reportedMediaState();
-    if (state & WebCore::MediaProducer::MediaState::HasActiveVideoCaptureDevice)
+    if (state & WebCore::MediaProducerMediaState::HasActiveVideoCaptureDevice)
         return WKMediaCaptureStateActive;
-    if (state & WebCore::MediaProducer::MediaState::HasMutedVideoCaptureDevice)
+    if (state & WebCore::MediaProducerMediaState::HasMutedVideoCaptureDevice)
         return WKMediaCaptureStateMuted;
     return WKMediaCaptureStateNone;
 }
@@ -1051,9 +1051,9 @@ static WKMediaPlaybackState toWKMediaPlaybackState(WebKit::MediaPlaybackState me
 - (WKMediaCaptureState)microphoneCaptureState
 {
     auto state = _page->reportedMediaState();
-    if (state & WebCore::MediaProducer::MediaState::HasActiveAudioCaptureDevice)
+    if (state & WebCore::MediaProducerMediaState::HasActiveAudioCaptureDevice)
         return WKMediaCaptureStateActive;
-    if (state & WebCore::MediaProducer::MediaState::HasMutedAudioCaptureDevice)
+    if (state & WebCore::MediaProducerMediaState::HasMutedAudioCaptureDevice)
         return WKMediaCaptureStateMuted;
     return WKMediaCaptureStateNone;
 }
@@ -1065,16 +1065,16 @@ static WKMediaPlaybackState toWKMediaPlaybackState(WebKit::MediaPlaybackState me
         completionHandler = [] { };
 
     if (state == WKMediaCaptureStateNone) {
-        _page->stopMediaCapture(WebCore::MediaProducer::MediaCaptureKind::Audio, [completionHandler = makeBlockPtr(completionHandler)] {
+        _page->stopMediaCapture(WebCore::MediaProducerMediaCaptureKind::Audio, [completionHandler = makeBlockPtr(completionHandler)] {
             completionHandler();
         });
         return;
     }
     auto mutedState = _page->mutedStateFlags();
     if (state == WKMediaCaptureStateActive)
-        mutedState.remove(WebCore::MediaProducer::MutedState::AudioCaptureIsMuted);
+        mutedState.remove(WebCore::MediaProducerMutedState::AudioCaptureIsMuted);
     else if (state == WKMediaCaptureStateMuted)
-        mutedState.add(WebCore::MediaProducer::MutedState::AudioCaptureIsMuted);
+        mutedState.add(WebCore::MediaProducerMutedState::AudioCaptureIsMuted);
     _page->setMuted(mutedState, [completionHandler = makeBlockPtr(completionHandler)] {
         completionHandler();
     });
@@ -1087,16 +1087,16 @@ static WKMediaPlaybackState toWKMediaPlaybackState(WebKit::MediaPlaybackState me
         completionHandler = [] { };
 
     if (state == WKMediaCaptureStateNone) {
-        _page->stopMediaCapture(WebCore::MediaProducer::MediaCaptureKind::Video, [completionHandler = makeBlockPtr(completionHandler)] {
+        _page->stopMediaCapture(WebCore::MediaProducerMediaCaptureKind::Video, [completionHandler = makeBlockPtr(completionHandler)] {
             completionHandler();
         });
         return;
     }
     auto mutedState = _page->mutedStateFlags();
     if (state == WKMediaCaptureStateActive)
-        mutedState.remove(WebCore::MediaProducer::MutedState::VideoCaptureIsMuted);
+        mutedState.remove(WebCore::MediaProducerMutedState::VideoCaptureIsMuted);
     else if (state == WKMediaCaptureStateMuted)
-        mutedState.add(WebCore::MediaProducer::MutedState::VideoCaptureIsMuted);
+        mutedState.add(WebCore::MediaProducerMutedState::VideoCaptureIsMuted);
     _page->setMuted(mutedState, [completionHandler = makeBlockPtr(completionHandler)] {
         completionHandler();
     });
@@ -2275,7 +2275,7 @@ static RetainPtr<NSArray> wkTextManipulationErrors(NSArray<_WKTextManipulationIt
 - (void)_stopMediaCapture
 {
     THROW_IF_SUSPENDED;
-    _page->stopMediaCapture(WebCore::MediaProducer::MediaCaptureKind::AudioVideo);
+    _page->stopMediaCapture(WebCore::MediaProducerMediaCaptureKind::AudioVideo);
 }
 
 - (void)_stopAllMediaPlayback
@@ -3598,14 +3598,14 @@ static inline OptionSet<WebKit::FindOptions> toFindOptions(_WKFindOptions wkFind
 - (void)_setPageMuted:(_WKMediaMutedState)mutedState
 {
     THROW_IF_SUSPENDED;
-    WebCore::MediaProducer::MutedStateFlags coreState;
+    WebCore::MediaProducerMutedStateFlags coreState;
 
     if (mutedState & _WKMediaAudioMuted)
-        coreState.add(WebCore::MediaProducer::MutedState::AudioIsMuted);
+        coreState.add(WebCore::MediaProducerMutedState::AudioIsMuted);
     if (mutedState & _WKMediaCaptureDevicesMuted)
         coreState.add(WebCore::MediaProducer::AudioAndVideoCaptureIsMuted);
     if (mutedState & _WKMediaScreenCaptureMuted)
-        coreState.add(WebCore::MediaProducer::MutedState::ScreenCaptureIsMuted);
+        coreState.add(WebCore::MediaProducerMutedState::ScreenCaptureIsMuted);
 
     _page->setMuted(coreState);
 }

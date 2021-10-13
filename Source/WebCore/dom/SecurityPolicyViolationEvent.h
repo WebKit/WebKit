@@ -29,30 +29,33 @@
 
 namespace WebCore {
 
+enum class SecurityPolicyViolationEventDisposition : bool { Enforce, Report };
+
+struct SecurityPolicyViolationEventInit : EventInit {
+    SecurityPolicyViolationEventInit() { }
+
+    String documentURI;
+    String referrer;
+    String blockedURI;
+    String violatedDirective;
+    String effectiveDirective;
+    String originalPolicy;
+    String sourceFile;
+    String sample;
+    SecurityPolicyViolationEventDisposition disposition { SecurityPolicyViolationEventDisposition::Enforce };
+    unsigned short statusCode { 0 };
+    unsigned lineNumber { 0 };
+    unsigned columnNumber { 0 };
+
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static WARN_UNUSED_RETURN bool decode(Decoder&, SecurityPolicyViolationEventInit&);
+};
+
 class SecurityPolicyViolationEvent final : public Event {
     WTF_MAKE_ISO_ALLOCATED(SecurityPolicyViolationEvent);
 public:
-    enum class Disposition : bool { Enforce, Report };
-
-    struct Init : EventInit {
-        Init() { }
-
-        String documentURI;
-        String referrer;
-        String blockedURI;
-        String violatedDirective;
-        String effectiveDirective;
-        String originalPolicy;
-        String sourceFile;
-        String sample;
-        Disposition disposition { Disposition::Enforce };
-        unsigned short statusCode { 0 };
-        unsigned lineNumber { 0 };
-        unsigned columnNumber { 0 };
-
-        template<class Encoder> void encode(Encoder&) const;
-        template<class Decoder> static WARN_UNUSED_RETURN bool decode(Decoder&, Init&);
-    };
+    using Disposition = SecurityPolicyViolationEventDisposition;
+    using Init = SecurityPolicyViolationEventInit;
 
     static Ref<SecurityPolicyViolationEvent> create(const AtomString& type, const Init& initializer = { }, IsTrusted isTrusted = IsTrusted::No)
     {
@@ -111,7 +114,7 @@ private:
 };
 
 template<class Encoder>
-void SecurityPolicyViolationEvent::Init::encode(Encoder& encoder) const
+void SecurityPolicyViolationEventInit::encode(Encoder& encoder) const
 {
     encoder << static_cast<const EventInit&>(*this);
     encoder << documentURI;
@@ -129,7 +132,7 @@ void SecurityPolicyViolationEvent::Init::encode(Encoder& encoder) const
 }
 
 template<class Decoder>
-bool SecurityPolicyViolationEvent::Init::decode(Decoder& decoder, SecurityPolicyViolationEvent::Init& eventInit)
+bool SecurityPolicyViolationEventInit::decode(Decoder& decoder, SecurityPolicyViolationEventInit& eventInit)
 {
     if (!decoder.decode(static_cast<EventInit&>(eventInit)))
         return false;
@@ -164,11 +167,11 @@ bool SecurityPolicyViolationEvent::Init::decode(Decoder& decoder, SecurityPolicy
 
 namespace WTF {
 
-template<> struct EnumTraits<WebCore::SecurityPolicyViolationEvent::Disposition> {
+template<> struct EnumTraits<WebCore::SecurityPolicyViolationEventDisposition> {
     using values = EnumValues<
-    WebCore::SecurityPolicyViolationEvent::Disposition,
-    WebCore::SecurityPolicyViolationEvent::Disposition::Enforce,
-    WebCore::SecurityPolicyViolationEvent::Disposition::Report
+    WebCore::SecurityPolicyViolationEventDisposition,
+    WebCore::SecurityPolicyViolationEventDisposition::Enforce,
+    WebCore::SecurityPolicyViolationEventDisposition::Report
     >;
 };
 

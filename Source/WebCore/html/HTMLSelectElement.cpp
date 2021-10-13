@@ -30,6 +30,7 @@
 
 #include "AXObjectCache.h"
 #include "DOMFormData.h"
+#include "DocumentInlines.h"
 #include "ElementTraversal.h"
 #include "EventHandler.h"
 #include "EventNames.h"

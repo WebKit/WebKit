@@ -30,6 +30,7 @@
 #include "Document.h"
 #include "EventNames.h"
 #include "PermissionController.h"
+#include "SecurityOrigin.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {

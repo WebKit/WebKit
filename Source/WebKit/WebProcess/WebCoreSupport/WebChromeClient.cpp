@@ -1260,7 +1260,7 @@ bool WebChromeClient::shouldUseTiledBackingForFrameView(const FrameView& frameVi
     return m_page.drawingArea()->shouldUseTiledBackingForFrameView(frameView);
 }
 
-void WebChromeClient::isPlayingMediaDidChange(MediaProducer::MediaStateFlags state)
+void WebChromeClient::isPlayingMediaDidChange(MediaProducerMediaStateFlags state)
 {
     m_page.isPlayingMediaDidChange(state);
 }
@@ -1392,7 +1392,7 @@ void WebChromeClient::showPlaybackTargetPicker(PlaybackTargetClientContextIdenti
     m_page.send(Messages::WebPageProxy::ShowPlaybackTargetPicker(contextId, rect, isVideo));
 }
 
-void WebChromeClient::playbackTargetPickerClientStateDidChange(PlaybackTargetClientContextIdentifier contextId, MediaProducer::MediaStateFlags state)
+void WebChromeClient::playbackTargetPickerClientStateDidChange(PlaybackTargetClientContextIdentifier contextId, MediaProducerMediaStateFlags state)
 {
     m_page.send(Messages::WebPageProxy::PlaybackTargetPickerClientStateDidChange(contextId, state));
 }

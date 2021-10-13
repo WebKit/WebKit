@@ -28,7 +28,7 @@
 #include "AXObjectCache.h"
 #include "CSSPrimitiveValueMappings.h"
 #include "ChromeClient.h"
-#include "Document.h"
+#include "DocumentInlines.h"
 #include "Editing.h"
 #include "ElementAncestorIterator.h"
 #include "Event.h"

@@ -135,49 +135,49 @@ bool RenderThemeAdwaita::shouldHaveCapsLockIndicator(const HTMLInputElement& ele
     return element.isPasswordField();
 }
 
-Color RenderThemeAdwaita::platformActiveSelectionBackgroundColor(OptionSet<StyleColor::Options>) const
+Color RenderThemeAdwaita::platformActiveSelectionBackgroundColor(OptionSet<StyleColorOptions>) const
 {
     return static_cast<ThemeAdwaita&>(Theme::singleton()).activeSelectionBackgroundColor();
 }
 
-Color RenderThemeAdwaita::platformInactiveSelectionBackgroundColor(OptionSet<StyleColor::Options>) const
+Color RenderThemeAdwaita::platformInactiveSelectionBackgroundColor(OptionSet<StyleColorOptions>) const
 {
     return static_cast<ThemeAdwaita&>(Theme::singleton()).inactiveSelectionBackgroundColor();
 }
 
-Color RenderThemeAdwaita::platformActiveSelectionForegroundColor(OptionSet<StyleColor::Options>) const
+Color RenderThemeAdwaita::platformActiveSelectionForegroundColor(OptionSet<StyleColorOptions>) const
 {
     return static_cast<ThemeAdwaita&>(Theme::singleton()).activeSelectionForegroundColor();
 }
 
-Color RenderThemeAdwaita::platformInactiveSelectionForegroundColor(OptionSet<StyleColor::Options>) const
+Color RenderThemeAdwaita::platformInactiveSelectionForegroundColor(OptionSet<StyleColorOptions>) const
 {
     return static_cast<ThemeAdwaita&>(Theme::singleton()).inactiveSelectionForegroundColor();
 }
 
-Color RenderThemeAdwaita::platformActiveListBoxSelectionBackgroundColor(OptionSet<StyleColor::Options>) const
+Color RenderThemeAdwaita::platformActiveListBoxSelectionBackgroundColor(OptionSet<StyleColorOptions>) const
 {
     return static_cast<ThemeAdwaita&>(Theme::singleton()).activeSelectionBackgroundColor();
 }
 
-Color RenderThemeAdwaita::platformInactiveListBoxSelectionBackgroundColor(OptionSet<StyleColor::Options>) const
+Color RenderThemeAdwaita::platformInactiveListBoxSelectionBackgroundColor(OptionSet<StyleColorOptions>) const
 {
     return static_cast<ThemeAdwaita&>(Theme::singleton()).inactiveSelectionBackgroundColor();
 }
 
-Color RenderThemeAdwaita::platformActiveListBoxSelectionForegroundColor(OptionSet<StyleColor::Options>) const
+Color RenderThemeAdwaita::platformActiveListBoxSelectionForegroundColor(OptionSet<StyleColorOptions>) const
 {
     return static_cast<ThemeAdwaita&>(Theme::singleton()).activeSelectionForegroundColor();
 }
 
-Color RenderThemeAdwaita::platformInactiveListBoxSelectionForegroundColor(OptionSet<StyleColor::Options>) const
+Color RenderThemeAdwaita::platformInactiveListBoxSelectionForegroundColor(OptionSet<StyleColorOptions>) const
 {
     return static_cast<ThemeAdwaita&>(Theme::singleton()).inactiveSelectionForegroundColor();
 }
 
-Color RenderThemeAdwaita::platformFocusRingColor(OptionSet<StyleColor::Options> options) const
+Color RenderThemeAdwaita::platformFocusRingColor(OptionSet<StyleColorOptions> options) const
 {
-    return ThemeAdwaita::focusColor(options.contains(StyleColor::Options::UseDarkAppearance));
+    return ThemeAdwaita::focusColor(options.contains(StyleColorOptions::UseDarkAppearance));
 }
 
 void RenderThemeAdwaita::platformColorsDidChange()
@@ -203,9 +203,9 @@ Vector<String, 2> RenderThemeAdwaita::mediaControlsScripts()
 }
 #endif
 
-Color RenderThemeAdwaita::systemColor(CSSValueID cssValueID, OptionSet<StyleColor::Options> options) const
+Color RenderThemeAdwaita::systemColor(CSSValueID cssValueID, OptionSet<StyleColorOptions> options) const
 {
-    const bool useDarkAppearance = options.contains(StyleColor::Options::UseDarkAppearance);
+    const bool useDarkAppearance = options.contains(StyleColorOptions::UseDarkAppearance);
 
     switch (cssValueID) {
     case CSSValueActivecaption:

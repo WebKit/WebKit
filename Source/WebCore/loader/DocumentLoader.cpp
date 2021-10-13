@@ -2398,7 +2398,7 @@ void DocumentLoader::sendCSPViolationReport(URL&& reportURL, Ref<FormData>&& rep
     PingLoader::sendViolationReport(*m_frame, WTFMove(reportURL), WTFMove(report), ViolationReportType::ContentSecurityPolicy);
 }
 
-void DocumentLoader::enqueueSecurityPolicyViolationEvent(SecurityPolicyViolationEvent::Init&& eventInit)
+void DocumentLoader::enqueueSecurityPolicyViolationEvent(SecurityPolicyViolationEventInit&& eventInit)
 {
     m_frame->document()->enqueueSecurityPolicyViolationEvent(WTFMove(eventInit));
 }

@@ -95,16 +95,16 @@ std::unique_ptr<HashSet<GCReachableRef<Node>>> MutationObserverRegistration::tak
     return returnValue;
 }
 
-bool MutationObserverRegistration::shouldReceiveMutationFrom(Node& node, MutationObserver::MutationType type, const QualifiedName* attributeName) const
+bool MutationObserverRegistration::shouldReceiveMutationFrom(Node& node, MutationObserverOptionType type, const QualifiedName* attributeName) const
 {
-    ASSERT((type == MutationObserver::Attributes && attributeName) || !attributeName);
-    if (!(m_options & type))
+    ASSERT((type == MutationObserverOptionType::Attributes && attributeName) || !attributeName);
+    if (!m_options.contains(type))
         return false;
 
     if (&m_node != &node && !isSubtree())
         return false;
 
-    if (type != MutationObserver::Attributes || !(m_options & MutationObserver::AttributeFilter))
+    if (type != MutationObserverOptionType::Attributes || !m_options.contains(MutationObserverOptionType::AttributeFilter))
         return true;
 
     if (!attributeName->namespaceURI().isNull())

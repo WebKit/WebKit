@@ -476,6 +476,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     dom/DocumentFontLoader.h
     dom/DocumentFragment.h
     dom/DocumentFullscreen.h
+    dom/DocumentInlines.h
     dom/DocumentMarker.h
     dom/DocumentMarkerController.h
     dom/DocumentStorageAccess.h
@@ -961,6 +962,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     page/PageConsoleClient.h
     page/PageGroup.h
     page/PageIdentifier.h
+    page/PageInlines.h
     page/PageOverlay.h
     page/PageOverlayController.h
     page/PagePasteboardContext.h

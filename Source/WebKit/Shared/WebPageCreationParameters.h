@@ -119,7 +119,7 @@ struct WebPageCreationParameters {
     float topContentInset;
     
     float mediaVolume;
-    WebCore::MediaProducer::MutedStateFlags muted;
+    WebCore::MediaProducerMutedStateFlags muted;
     bool mayStartMediaWhenInWindow;
     bool mediaPlaybackIsSuspended { false };
 

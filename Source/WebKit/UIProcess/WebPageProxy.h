@@ -1398,13 +1398,13 @@ public:
     uint64_t renderTreeSize() const { return m_renderTreeSize; }
 
     void setMediaVolume(float);
-    void setMuted(WebCore::MediaProducer::MutedStateFlags, CompletionHandler<void()>&& = [] { });
-    bool isAudioMuted() const { return m_mutedState.contains(WebCore::MediaProducer::MutedState::AudioIsMuted); };
+    void setMuted(WebCore::MediaProducerMutedStateFlags, CompletionHandler<void()>&& = [] { });
+    bool isAudioMuted() const { return m_mutedState.contains(WebCore::MediaProducerMutedState::AudioIsMuted); };
     void setMayStartMediaWhenInWindow(bool);
     bool mayStartMediaWhenInWindow() const { return m_mayStartMediaWhenInWindow; }
     void setMediaCaptureEnabled(bool);
     bool mediaCaptureEnabled() const { return m_mediaCaptureEnabled; }
-    void stopMediaCapture(WebCore::MediaProducer::MediaCaptureKind, CompletionHandler<void()>&& = [] { });
+    void stopMediaCapture(WebCore::MediaProducerMediaCaptureKind, CompletionHandler<void()>&& = [] { });
 
     void pauseAllMediaPlayback(CompletionHandler<void()>&&);
     void suspendAllMediaPlayback(CompletionHandler<void()>&&);
@@ -1510,18 +1510,18 @@ public:
 
     bool isShowingNavigationGestureSnapshot() const { return m_isShowingNavigationGestureSnapshot; }
 
-    bool isPlayingAudio() const { return !!(m_mediaState & WebCore::MediaProducer::MediaState::IsPlayingAudio); }
-    void isPlayingMediaDidChange(WebCore::MediaProducer::MediaStateFlags);
+    bool isPlayingAudio() const { return !!(m_mediaState & WebCore::MediaProducerMediaState::IsPlayingAudio); }
+    void isPlayingMediaDidChange(WebCore::MediaProducerMediaStateFlags);
     void updateReportedMediaCaptureState();
 
     enum class CanDelayNotification { No, Yes };
-    void updatePlayingMediaDidChange(WebCore::MediaProducer::MediaStateFlags, CanDelayNotification = CanDelayNotification::No);
+    void updatePlayingMediaDidChange(WebCore::MediaProducerMediaStateFlags, CanDelayNotification = CanDelayNotification::No);
     bool isCapturingAudio() const { return m_mediaState.containsAny(WebCore::MediaProducer::AudioCaptureMask); }
     bool isCapturingVideo() const { return m_mediaState.containsAny(WebCore::MediaProducer::VideoCaptureMask); }
-    bool hasActiveAudioStream() const { return m_mediaState.containsAny(WebCore::MediaProducer::MediaState::HasActiveAudioCaptureDevice); }
-    bool hasActiveVideoStream() const { return m_mediaState.containsAny(WebCore::MediaProducer::MediaState::HasActiveVideoCaptureDevice); }
-    WebCore::MediaProducer::MediaStateFlags reportedMediaState() const { return m_reportedMediaCaptureState | (m_mediaState - WebCore::MediaProducer::MediaCaptureMask); }
-    WebCore::MediaProducer::MutedStateFlags mutedStateFlags() const { return m_mutedState; }
+    bool hasActiveAudioStream() const { return m_mediaState.containsAny(WebCore::MediaProducerMediaState::HasActiveAudioCaptureDevice); }
+    bool hasActiveVideoStream() const { return m_mediaState.containsAny(WebCore::MediaProducerMediaState::HasActiveVideoCaptureDevice); }
+    WebCore::MediaProducerMediaStateFlags reportedMediaState() const { return m_reportedMediaCaptureState | (m_mediaState - WebCore::MediaProducer::MediaCaptureMask); }
+    WebCore::MediaProducerMutedStateFlags mutedStateFlags() const { return m_mutedState; }
 
     void handleAutoplayEvent(WebCore::AutoplayEvent, OptionSet<WebCore::AutoplayEventFlags>);
 
@@ -1605,7 +1605,7 @@ public:
     void addPlaybackTargetPickerClient(WebCore::PlaybackTargetClientContextIdentifier);
     void removePlaybackTargetPickerClient(WebCore::PlaybackTargetClientContextIdentifier);
     void showPlaybackTargetPicker(WebCore::PlaybackTargetClientContextIdentifier, const WebCore::FloatRect&, bool hasVideo);
-    void playbackTargetPickerClientStateDidChange(WebCore::PlaybackTargetClientContextIdentifier, WebCore::MediaProducer::MediaStateFlags);
+    void playbackTargetPickerClientStateDidChange(WebCore::PlaybackTargetClientContextIdentifier, WebCore::MediaProducerMediaStateFlags);
     void setMockMediaPlaybackTargetPickerEnabled(bool);
     void setMockMediaPlaybackTargetPickerState(const String&, WebCore::MediaPlaybackTargetContext::MockState);
     void mockMediaPlaybackTargetPickerDismissPopup();
@@ -2909,7 +2909,7 @@ private:
     WebCore::LayoutPoint m_maxStableLayoutViewportOrigin;
 
     float m_mediaVolume { 1 };
-    WebCore::MediaProducer::MutedStateFlags m_mutedState;
+    WebCore::MediaProducerMutedStateFlags m_mutedState;
     bool m_mayStartMediaWhenInWindow { true };
     bool m_mediaPlaybackIsSuspended { false };
     bool m_mediaCaptureEnabled { true };
@@ -2945,10 +2945,10 @@ private:
     bool m_activityStateChangeWantsSynchronousReply { false };
     Vector<CompletionHandler<void()>> m_nextActivityStateChangeCallbacks;
 
-    WebCore::MediaProducer::MediaStateFlags m_mediaState;
+    WebCore::MediaProducerMediaStateFlags m_mediaState;
 
     // To make sure capture indicators are visible long enough, m_reportedMediaCaptureState is the same as m_mediaState except that we might delay a bit transition from capturing to not-capturing.
-    WebCore::MediaProducer::MediaStateFlags m_reportedMediaCaptureState;
+    WebCore::MediaProducerMediaStateFlags m_reportedMediaCaptureState;
     RunLoop::Timer<WebPageProxy> m_updateReportedMediaCaptureStateTimer;
     static constexpr Seconds DefaultMediaCaptureReportingDelay { 3_s };
     Seconds m_mediaCaptureReportingDelay { DefaultMediaCaptureReportingDelay };

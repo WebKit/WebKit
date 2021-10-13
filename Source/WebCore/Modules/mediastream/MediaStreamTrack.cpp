@@ -63,7 +63,7 @@ static HashSet<MediaStreamTrack*>& allCaptureTracks()
     return captureTracks;
 }
 
-static MediaProducer::MediaStateFlags sourceCaptureState(RealtimeMediaSource&);
+static MediaProducerMediaStateFlags sourceCaptureState(RealtimeMediaSource&);
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(MediaStreamTrack);
 
@@ -401,7 +401,7 @@ void MediaStreamTrack::removeObserver(Observer& observer)
     m_observers.removeFirst(&observer);
 }
 
-MediaProducer::MediaStateFlags MediaStreamTrack::mediaState() const
+MediaProducerMediaStateFlags MediaStreamTrack::mediaState() const
 {
     if (m_ended || !isCaptureTrack())
         return MediaProducer::IsNotPlaying;
@@ -413,33 +413,33 @@ MediaProducer::MediaStateFlags MediaStreamTrack::mediaState() const
     return sourceCaptureState(source());
 }
 
-MediaProducer::MediaStateFlags sourceCaptureState(RealtimeMediaSource& source)
+MediaProducerMediaStateFlags sourceCaptureState(RealtimeMediaSource& source)
 {
     switch (source.deviceType()) {
     case CaptureDevice::DeviceType::Microphone:
         if (source.muted())
-            return MediaProducer::MediaState::HasMutedAudioCaptureDevice;
+            return MediaProducerMediaState::HasMutedAudioCaptureDevice;
         if (source.interrupted())
-            return MediaProducer::MediaState::HasInterruptedAudioCaptureDevice;
+            return MediaProducerMediaState::HasInterruptedAudioCaptureDevice;
         if (source.isProducingData())
-            return MediaProducer::MediaState::HasActiveAudioCaptureDevice;
+            return MediaProducerMediaState::HasActiveAudioCaptureDevice;
         break;
     case CaptureDevice::DeviceType::Camera:
         if (source.muted())
-            return MediaProducer::MediaState::HasMutedVideoCaptureDevice;
+            return MediaProducerMediaState::HasMutedVideoCaptureDevice;
         if (source.interrupted())
-            return MediaProducer::MediaState::HasInterruptedVideoCaptureDevice;
+            return MediaProducerMediaState::HasInterruptedVideoCaptureDevice;
         if (source.isProducingData())
-            return MediaProducer::MediaState::HasActiveVideoCaptureDevice;
+            return MediaProducerMediaState::HasActiveVideoCaptureDevice;
         break;
     case CaptureDevice::DeviceType::Screen:
     case CaptureDevice::DeviceType::Window:
         if (source.muted())
-            return MediaProducer::MediaState::HasMutedDisplayCaptureDevice;
+            return MediaProducerMediaState::HasMutedDisplayCaptureDevice;
         if (source.interrupted())
-            return MediaProducer::MediaState::HasInterruptedDisplayCaptureDevice;
+            return MediaProducerMediaState::HasInterruptedDisplayCaptureDevice;
         if (source.isProducingData())
-            return MediaProducer::MediaState::HasActiveDisplayCaptureDevice;
+            return MediaProducerMediaState::HasActiveDisplayCaptureDevice;
         break;
     case CaptureDevice::DeviceType::Speaker:
     case CaptureDevice::DeviceType::Unknown:
@@ -449,9 +449,9 @@ MediaProducer::MediaStateFlags sourceCaptureState(RealtimeMediaSource& source)
     return MediaProducer::IsNotPlaying;
 }
 
-MediaProducer::MediaStateFlags MediaStreamTrack::captureState(Document& document)
+MediaProducerMediaStateFlags MediaStreamTrack::captureState(Document& document)
 {
-    MediaProducer::MediaStateFlags state;
+    MediaProducerMediaStateFlags state;
     for (auto* captureTrack : allCaptureTracks()) {
         if (captureTrack->document() != &document || captureTrack->ended())
             continue;
@@ -483,13 +483,13 @@ void MediaStreamTrack::updateCaptureAccordingToMutedState(Document& document)
 
     auto* activeAudioSource = RealtimeMediaSourceCenter::singleton().audioCaptureFactory().activeSource();
     if (activeAudioSource && isSourceCapturingForTrackInDocument(*activeAudioSource, document)) {
-        bool pageMuted = page->mutedState().contains(MediaProducer::MutedState::AudioCaptureIsMuted);
+        bool pageMuted = page->mutedState().contains(MediaProducerMutedState::AudioCaptureIsMuted);
         activeAudioSource->setMuted(pageMuted || (document.hidden() && document.settings().interruptAudioOnPageVisibilityChangeEnabled()));
     }
 
     auto* activeVideoSource = RealtimeMediaSourceCenter::singleton().videoCaptureFactory().activeSource();
     if (activeVideoSource && isSourceCapturingForTrackInDocument(*activeVideoSource, document)) {
-        bool pageMuted = page->mutedState().contains(MediaProducer::MutedState::VideoCaptureIsMuted);
+        bool pageMuted = page->mutedState().contains(MediaProducerMutedState::VideoCaptureIsMuted);
         activeVideoSource->setMuted(pageMuted || document.hidden());
     }
 #else
@@ -509,14 +509,14 @@ void MediaStreamTrack::updateToPageMutedState()
 
     switch (source().deviceType()) {
     case CaptureDevice::DeviceType::Microphone:
-        m_private->setMuted(page->mutedState().contains(MediaProducer::MutedState::AudioCaptureIsMuted));
+        m_private->setMuted(page->mutedState().contains(MediaProducerMutedState::AudioCaptureIsMuted));
         break;
     case CaptureDevice::DeviceType::Camera:
-        m_private->setMuted(page->mutedState().contains(MediaProducer::MutedState::VideoCaptureIsMuted));
+        m_private->setMuted(page->mutedState().contains(MediaProducerMutedState::VideoCaptureIsMuted));
         break;
     case CaptureDevice::DeviceType::Screen:
     case CaptureDevice::DeviceType::Window:
-        m_private->setMuted(page->mutedState().contains(MediaProducer::MutedState::ScreenCaptureIsMuted));
+        m_private->setMuted(page->mutedState().contains(MediaProducerMutedState::ScreenCaptureIsMuted));
         break;
     case CaptureDevice::DeviceType::Speaker:
     case CaptureDevice::DeviceType::Unknown:
@@ -525,20 +525,20 @@ void MediaStreamTrack::updateToPageMutedState()
     }
 }
 
-static inline bool trackMatchesKind(RealtimeMediaSource::Type type, MediaProducer::MediaCaptureKind kind)
+static inline bool trackMatchesKind(RealtimeMediaSource::Type type, MediaProducerMediaCaptureKind kind)
 {
     switch (kind) {
-    case MediaProducer::MediaCaptureKind::Audio:
+    case MediaProducerMediaCaptureKind::Audio:
         return type == RealtimeMediaSource::Type::Audio;
-    case MediaProducer::MediaCaptureKind::AudioVideo:
+    case MediaProducerMediaCaptureKind::AudioVideo:
         return type != RealtimeMediaSource::Type::None;
-    case MediaProducer::MediaCaptureKind::Video:
+    case MediaProducerMediaCaptureKind::Video:
         return type == RealtimeMediaSource::Type::Video;
     }
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-void MediaStreamTrack::endCapture(Document& document, MediaProducer::MediaCaptureKind kind)
+void MediaStreamTrack::endCapture(Document& document, MediaProducerMediaCaptureKind kind)
 {
     bool didEndCapture = false;
     for (auto* captureTrack : allCaptureTracks()) {

@@ -24,6 +24,7 @@
 #include "RenderWidget.h"
 
 #include "AXObjectCache.h"
+#include "DocumentInlines.h"
 #include "FloatRoundedRect.h"
 #include "Frame.h"
 #include "HTMLFrameOwnerElement.h"

@@ -62,6 +62,7 @@
 #include "DebugPageOverlays.h"
 #include "DeprecatedGlobalSettings.h"
 #include "DocumentFontLoader.h"
+#include "DocumentInlines.h"
 #include "DocumentLoader.h"
 #include "DocumentMarkerController.h"
 #include "DocumentSharedObjectPool.h"
@@ -177,6 +178,7 @@
 #include "PseudoClassChangeInvalidation.h"
 #include "PublicSuffix.h"
 #include "Quirks.h"
+#include "RTCNetworkManager.h"
 #include "Range.h"
 #include "RealtimeMediaSourceCenter.h"
 #include "RenderChildIterator.h"
@@ -239,6 +241,7 @@
 #include "TextEvent.h"
 #include "TextManipulationController.h"
 #include "TextNodeTraversal.h"
+#include "TextResourceDecoder.h"
 #include "TouchAction.h"
 #include "TransformSource.h"
 #include "TreeWalker.h"
@@ -979,7 +982,7 @@ void Document::resetLinkColor()
 
 void Document::resetVisitedLinkColor()
 {
-    m_visitedLinkColor = StyleColor::colorFromKeyword(CSSValueWebkitLink, styleColorOptions(nullptr) | StyleColor::Options::ForVisitedLink);
+    m_visitedLinkColor = StyleColor::colorFromKeyword(CSSValueWebkitLink, styleColorOptions(nullptr) | StyleColorOptions::ForVisitedLink);
 }
 
 void Document::resetActiveLinkColor()
@@ -3574,6 +3577,13 @@ RefPtr<RTCDataChannelRemoteHandlerConnection> Document::createRTCDataChannelRemo
     return page->libWebRTCProvider().createRTCDataChannelRemoteHandlerConnection();
 }
 
+#if ENABLE(WEB_RTC)
+void Document::setRTCNetworkManager(Ref<RTCNetworkManager>&& rtcNetworkManager)
+{
+    m_rtcNetworkManager = WTFMove(rtcNetworkManager);
+}
+#endif
+
 bool Document::canNavigate(Frame* targetFrame, const URL& destinationURL)
 {
     if (!m_frame)
@@ -4399,18 +4409,18 @@ void Document::noteUserInteractionWithMediaElement()
 void Document::updateIsPlayingMedia()
 {
     ASSERT(!m_audioProducers.hasNullReferences());
-    MediaProducer::MediaStateFlags state;
+    MediaProducerMediaStateFlags state;
     for (auto& audioProducer : m_audioProducers)
         state.add(audioProducer.mediaState());
 
 #if ENABLE(MEDIA_STREAM)
     state.add(MediaStreamTrack::captureState(*this));
     if (m_activeSpeechRecognition)
-        state.add(MediaProducer::MediaState::HasActiveAudioCaptureDevice);
+        state.add(MediaProducerMediaState::HasActiveAudioCaptureDevice);
 #endif
 
     if (m_userHasInteractedWithMediaElement)
-        state.add(MediaProducer::MediaState::HasUserInteractedWithMediaElement);
+        state.add(MediaProducerMediaState::HasUserInteractedWithMediaElement);
 
     if (state == m_mediaState)
         return;
@@ -6755,7 +6765,7 @@ void Document::dispatchPageshowEvent(PageshowEventPersistence persisted)
     dispatchWindowEvent(PageTransitionEvent::create(eventNames().pageshowEvent, persisted), this);
 }
 
-void Document::enqueueSecurityPolicyViolationEvent(SecurityPolicyViolationEvent::Init&& eventInit)
+void Document::enqueueSecurityPolicyViolationEvent(SecurityPolicyViolationEventInit&& eventInit)
 {
     queueTaskToDispatchEvent(TaskSource::DOMManipulation, SecurityPolicyViolationEvent::create(eventNames().securitypolicyviolationEvent, WTFMove(eventInit), Event::IsTrusted::Yes));
 }
@@ -7539,15 +7549,15 @@ bool Document::useElevatedUserInterfaceLevel() const
     return false;
 }
 
-OptionSet<StyleColor::Options> Document::styleColorOptions(const RenderStyle* style) const
+OptionSet<StyleColorOptions> Document::styleColorOptions(const RenderStyle* style) const
 {
-    OptionSet<StyleColor::Options> options;
+    OptionSet<StyleColorOptions> options;
     if (useSystemAppearance())
-        options.add(StyleColor::Options::UseSystemAppearance);
+        options.add(StyleColorOptions::UseSystemAppearance);
     if (useDarkAppearance(style))
-        options.add(StyleColor::Options::UseDarkAppearance);
+        options.add(StyleColorOptions::UseDarkAppearance);
     if (useElevatedUserInterfaceLevel())
-        options.add(StyleColor::Options::UseElevatedUserInterfaceLevel);
+        options.add(StyleColorOptions::UseElevatedUserInterfaceLevel);
     return options;
 }
 
@@ -7724,7 +7734,7 @@ void Document::showPlaybackTargetPicker(MediaPlaybackTargetClient& client, bool 
     page->showPlaybackTargetPicker(it->value, position, isVideo, routeSharingPolicy, routingContextUID);
 }
 
-void Document::playbackTargetPickerClientStateDidChange(MediaPlaybackTargetClient& client, MediaProducer::MediaStateFlags state)
+void Document::playbackTargetPickerClientStateDidChange(MediaPlaybackTargetClient& client, MediaProducerMediaStateFlags state)
 {
     Page* page = this->page();
     if (!page)
@@ -8229,7 +8239,7 @@ void Document::orientationChanged(int orientation)
 
 #if ENABLE(MEDIA_STREAM)
 
-void Document::stopMediaCapture(MediaProducer::MediaCaptureKind kind)
+void Document::stopMediaCapture(MediaProducerMediaCaptureKind kind)
 {
     MediaStreamTrack::endCapture(*this, kind);
 }

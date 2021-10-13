@@ -36,6 +36,7 @@
 #include "ComposedTreeAncestorIterator.h"
 #include "ComposedTreeIterator.h"
 #include "CursorList.h"
+#include "DocumentInlines.h"
 #include "DocumentMarkerController.h"
 #include "DragController.h"
 #include "DragEvent.h"

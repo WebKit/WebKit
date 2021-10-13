@@ -164,7 +164,7 @@ public:
     RenderFragmentedFlow* enclosingFragmentedFlow() const;
 
     WEBCORE_EXPORT bool useDarkAppearance() const;
-    OptionSet<StyleColor::Options> styleColorOptions() const;
+    OptionSet<StyleColorOptions> styleColorOptions() const;
 
 #if ASSERT_ENABLED
     void setHasAXObject(bool flag) { m_hasAXObject = flag; }

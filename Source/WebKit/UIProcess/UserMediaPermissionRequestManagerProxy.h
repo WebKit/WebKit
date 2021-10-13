@@ -88,7 +88,7 @@ public:
     void clearCachedState();
     void captureDevicesChanged();
 
-    void captureStateChanged(WebCore::MediaProducer::MediaStateFlags oldState, WebCore::MediaProducer::MediaStateFlags newState);
+    void captureStateChanged(WebCore::MediaProducerMediaStateFlags oldState, WebCore::MediaProducerMediaStateFlags newState);
     void syncWithWebCorePrefs() const;
 
     enum class RequestAction {
@@ -167,7 +167,7 @@ private:
 
     Vector<DeniedRequest> m_deniedRequests;
 
-    WebCore::MediaProducer::MediaStateFlags m_captureState;
+    WebCore::MediaProducerMediaStateFlags m_captureState;
     RunLoop::Timer<UserMediaPermissionRequestManagerProxy> m_watchdogTimer;
     Seconds m_currentWatchdogInterval;
 #if !RELEASE_LOG_DISABLED

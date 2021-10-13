@@ -28,29 +28,29 @@
 
 namespace WebKit {
 
-_WKMediaCaptureStateDeprecated toWKMediaCaptureStateDeprecated(WebCore::MediaProducer::MediaStateFlags state)
+_WKMediaCaptureStateDeprecated toWKMediaCaptureStateDeprecated(WebCore::MediaProducerMediaStateFlags state)
 {
     _WKMediaCaptureStateDeprecated mediaCaptureState = _WKMediaCaptureStateDeprecatedNone;
-    if (state & WebCore::MediaProducer::MediaState::HasActiveAudioCaptureDevice)
+    if (state & WebCore::MediaProducerMediaState::HasActiveAudioCaptureDevice)
         mediaCaptureState |= _WKMediaCaptureStateDeprecatedActiveMicrophone;
-    if (state & WebCore::MediaProducer::MediaState::HasActiveVideoCaptureDevice)
+    if (state & WebCore::MediaProducerMediaState::HasActiveVideoCaptureDevice)
         mediaCaptureState |= _WKMediaCaptureStateDeprecatedActiveCamera;
-    if (state & WebCore::MediaProducer::MediaState::HasMutedAudioCaptureDevice)
+    if (state & WebCore::MediaProducerMediaState::HasMutedAudioCaptureDevice)
         mediaCaptureState |= _WKMediaCaptureStateDeprecatedMutedMicrophone;
-    if (state & WebCore::MediaProducer::MediaState::HasMutedVideoCaptureDevice)
+    if (state & WebCore::MediaProducerMediaState::HasMutedVideoCaptureDevice)
         mediaCaptureState |= _WKMediaCaptureStateDeprecatedMutedCamera;
 
     return mediaCaptureState;
 }
 
-_WKMediaMutedState toWKMediaMutedState(WebCore::MediaProducer::MutedStateFlags state)
+_WKMediaMutedState toWKMediaMutedState(WebCore::MediaProducerMutedStateFlags state)
 {
     _WKMediaMutedState mediaMutedState = _WKMediaNoneMuted;
-    if (state & WebCore::MediaProducer::MutedState::AudioIsMuted)
+    if (state & WebCore::MediaProducerMutedState::AudioIsMuted)
         mediaMutedState |= _WKMediaAudioMuted;
     if (state & WebCore::MediaProducer::AudioAndVideoCaptureIsMuted)
         mediaMutedState |= _WKMediaCaptureDevicesMuted;
-    if (state & WebCore::MediaProducer::MutedState::ScreenCaptureIsMuted)
+    if (state & WebCore::MediaProducerMutedState::ScreenCaptureIsMuted)
         mediaMutedState |= _WKMediaScreenCaptureMuted;
     return mediaMutedState;
 }

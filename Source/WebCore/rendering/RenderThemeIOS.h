@@ -118,10 +118,10 @@ private:
     void paintSearchFieldDecorations(const RenderBox&, const PaintInfo&, const IntRect&) override;
 
 #if ENABLE(IOS_FORM_CONTROL_REFRESH)
-    Color checkboxRadioBorderColor(OptionSet<ControlStates::States>, OptionSet<StyleColor::Options>);
-    Color checkboxRadioBackgroundColor(bool useAlternateDesign, OptionSet<ControlStates::States>, OptionSet<StyleColor::Options>);
+    Color checkboxRadioBorderColor(OptionSet<ControlStates::States>, OptionSet<StyleColorOptions>);
+    Color checkboxRadioBackgroundColor(bool useAlternateDesign, OptionSet<ControlStates::States>, OptionSet<StyleColorOptions>);
     RefPtr<Gradient> checkboxRadioBackgroundGradient(const FloatRect&, OptionSet<ControlStates::States>);
-    Color checkboxRadioIndicatorColor(OptionSet<ControlStates::States>, OptionSet<StyleColor::Options>);
+    Color checkboxRadioIndicatorColor(OptionSet<ControlStates::States>, OptionSet<StyleColorOptions>);
 
     bool paintCheckbox(const RenderObject&, const PaintInfo&, const FloatRect&) override;
     bool paintRadio(const RenderObject&, const PaintInfo&, const FloatRect&) override;
@@ -159,12 +159,12 @@ private:
 
     bool supportsBoxShadow(const RenderStyle&) const final;
 
-    Color platformActiveSelectionBackgroundColor(OptionSet<StyleColor::Options>) const override;
-    Color platformInactiveSelectionBackgroundColor(OptionSet<StyleColor::Options>) const override;
-    Color platformFocusRingColor(OptionSet<StyleColor::Options>) const final;
+    Color platformActiveSelectionBackgroundColor(OptionSet<StyleColorOptions>) const override;
+    Color platformInactiveSelectionBackgroundColor(OptionSet<StyleColorOptions>) const override;
+    Color platformFocusRingColor(OptionSet<StyleColorOptions>) const final;
 
 #if ENABLE(APP_HIGHLIGHTS)
-    Color platformAppHighlightColor(OptionSet<StyleColor::Options>) const final;
+    Color platformAppHighlightColor(OptionSet<StyleColorOptions>) const final;
 #endif
 
 #if ENABLE(TOUCH_EVENTS)
@@ -201,7 +201,7 @@ private:
 
     FloatRect addRoundedBorderClip(const RenderObject& box, GraphicsContext&, const IntRect&);
 
-    Color systemColor(CSSValueID, OptionSet<StyleColor::Options>) const override;
+    Color systemColor(CSSValueID, OptionSet<StyleColorOptions>) const override;
 
 #if USE(SYSTEM_PREVIEW)
     RetainPtr<CIContext> m_ciContext;

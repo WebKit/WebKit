@@ -27,7 +27,6 @@
 #include "EventTarget.h"
 #include "ExceptionOr.h"
 #include "LayoutRect.h"
-#include "MutationObserver.h"
 #include "RenderStyleConstants.h"
 #include "StyleValidity.h"
 #include "TreeScope.h"
@@ -54,6 +53,8 @@ class FloatPoint;
 class HTMLQualifiedName;
 class HTMLSlotElement;
 class MathMLQualifiedName;
+class MutationObserver;
+class MutationObserverRegistration;
 class NamedNodeMap;
 class NodeList;
 class NodeListsNodeData;
@@ -66,6 +67,10 @@ class RenderStyle;
 class SVGQualifiedName;
 class ShadowRoot;
 class TouchEvent;
+
+enum class MutationObserverOptionType : uint8_t;
+using MutationObserverOptions = OptionSet<MutationObserverOptionType>;
+using MutationRecordDeliveryOptions = OptionSet<MutationObserverOptionType>;
 
 using NodeOrString = std::variant<RefPtr<Node>, String>;
 
@@ -494,7 +499,7 @@ public:
     EventTargetData* eventTargetDataConcurrently() final;
     EventTargetData& ensureEventTargetData() final;
 
-    HashMap<Ref<MutationObserver>, MutationRecordDeliveryOptions> registeredMutationObservers(MutationObserver::MutationType, const QualifiedName* attributeName);
+    HashMap<Ref<MutationObserver>, MutationRecordDeliveryOptions> registeredMutationObservers(MutationObserverOptionType, const QualifiedName* attributeName);
     void registerMutationObserver(MutationObserver&, MutationObserverOptions, const HashSet<AtomString>& attributeFilter);
     void unregisterMutationObserver(MutationObserverRegistration&);
     void registerTransientMutationObserver(MutationObserverRegistration&);

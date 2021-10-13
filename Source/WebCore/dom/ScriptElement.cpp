@@ -30,6 +30,7 @@
 #include "ContentSecurityPolicy.h"
 #include "CrossOriginAccessControl.h"
 #include "CurrentScriptIncrementer.h"
+#include "DocumentInlines.h"
 #include "ElementInlines.h"
 #include "Event.h"
 #include "EventNames.h"

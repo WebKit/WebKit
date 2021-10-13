@@ -33,7 +33,7 @@ messages -> WebPage LegacyReceiver {
     SendCOEPCORPViolation(WebCore::FrameIdentifier frameID, struct WebCore::SecurityOriginData embedderOrigin, String endpoint, enum:bool WebCore::COEPDisposition disposition, enum:uint8_t WebCore::FetchOptions::Destination destination, URL blockedURL)
     SendViolationReportWhenNavigatingToCOOPResponse(WebCore::FrameIdentifier frameID, struct WebCore::CrossOriginOpenerPolicy coop, enum:bool WebCore::COOPDisposition disposition, URL coopURL, URL previousResponseURL, struct WebCore::SecurityOriginData coopOrigin, struct WebCore::SecurityOriginData previousResponseOrigin, String referrer, String userAgent, String reportToHeaderValue)
     SendViolationReportWhenNavigatingAwayFromCOOPResponse(WebCore::FrameIdentifier frameID, struct WebCore::CrossOriginOpenerPolicy coop, enum:bool WebCore::COOPDisposition disposition, URL coopURL, URL nextResponseURL, struct WebCore::SecurityOriginData coopOrigin, struct WebCore::SecurityOriginData nextResponseOrigin, bool isCOOPResponseNavigationSource, String userAgent)
-    EnqueueSecurityPolicyViolationEvent(WebCore::FrameIdentifier frameID, WebCore::SecurityPolicyViolationEvent::Init eventInit)
+    EnqueueSecurityPolicyViolationEvent(WebCore::FrameIdentifier frameID, struct WebCore::SecurityPolicyViolationEventInit eventInit)
 
     TestProcessIncomingSyncMessagesWhenWaitingForSyncReply() -> (bool handled) Synchronous
 
@@ -417,9 +417,9 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
 
     # Media
     SetMediaVolume(float volume)
-    SetMuted(WebCore::MediaProducer::MutedStateFlags muted) -> () Async
+    SetMuted(OptionSet<WebCore::MediaProducerMutedState> muted) -> () Async
     SetMayStartMediaWhenInWindow(bool mayStartMedia)
-    StopMediaCapture(WebCore::MediaProducer::MediaCaptureKind kind) -> () Async
+    StopMediaCapture(enum:uint8_t WebCore::MediaProducerMediaCaptureKind kind) -> () Async
 
     SetCanRunBeforeUnloadConfirmPanel(bool canRunBeforeUnloadConfirmPanel)
     SetCanRunModal(bool canRunModal)

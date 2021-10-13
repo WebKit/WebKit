@@ -243,7 +243,7 @@ private:
     void addPlaybackTargetPickerClient(WebCore::PlaybackTargetClientContextIdentifier) final;
     void removePlaybackTargetPickerClient(WebCore::PlaybackTargetClientContextIdentifier) final;
     void showPlaybackTargetPicker(WebCore::PlaybackTargetClientContextIdentifier, const WebCore::IntPoint&, bool /* hasVideo */) final;
-    void playbackTargetPickerClientStateDidChange(WebCore::PlaybackTargetClientContextIdentifier, WebCore::MediaProducer::MediaStateFlags) final;
+    void playbackTargetPickerClientStateDidChange(WebCore::PlaybackTargetClientContextIdentifier, WebCore::MediaProducerMediaStateFlags) final;
     void setMockMediaPlaybackTargetPickerEnabled(bool) final;
     void setMockMediaPlaybackTargetPickerState(const String&, WebCore::MediaPlaybackTargetContext::MockState) final;
     void mockMediaPlaybackTargetPickerDismissPopup() override;

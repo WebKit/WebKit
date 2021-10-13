@@ -352,7 +352,7 @@ private:
 
     bool shouldUseTiledBackingForFrameView(const WebCore::FrameView&) const final;
 
-    void isPlayingMediaDidChange(WebCore::MediaProducer::MediaStateFlags) final;
+    void isPlayingMediaDidChange(WebCore::MediaProducerMediaStateFlags) final;
     void handleAutoplayEvent(WebCore::AutoplayEvent, OptionSet<WebCore::AutoplayEventFlags>) final;
 
 #if ENABLE(APP_HIGHLIGHTS)
@@ -391,7 +391,7 @@ private:
     void addPlaybackTargetPickerClient(WebCore::PlaybackTargetClientContextIdentifier) final;
     void removePlaybackTargetPickerClient(WebCore::PlaybackTargetClientContextIdentifier) final;
     void showPlaybackTargetPicker(WebCore::PlaybackTargetClientContextIdentifier, const WebCore::IntPoint&, bool) final;
-    void playbackTargetPickerClientStateDidChange(WebCore::PlaybackTargetClientContextIdentifier, WebCore::MediaProducer::MediaStateFlags) final;
+    void playbackTargetPickerClientStateDidChange(WebCore::PlaybackTargetClientContextIdentifier, WebCore::MediaProducerMediaStateFlags) final;
     void setMockMediaPlaybackTargetPickerEnabled(bool) final;
     void setMockMediaPlaybackTargetPickerState(const String&, WebCore::MediaPlaybackTargetContext::MockState) final;
     void mockMediaPlaybackTargetPickerDismissPopup() final;

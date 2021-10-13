@@ -4868,7 +4868,7 @@ void webkit_web_view_set_cors_allowlist(WebKitWebView* webView, const gchar* con
     getPage(webView).setCORSDisablingPatterns(WTFMove(allowListVector));
 }
 
-static void webkitWebViewConfigureMediaCapture(WebKitWebView* webView, WebCore::MediaProducer::MediaCaptureKind captureKind, WebKitMediaCaptureState captureState, bool isFromDisplayCapture = false)
+static void webkitWebViewConfigureMediaCapture(WebKitWebView* webView, WebCore::MediaProducerMediaCaptureKind captureKind, WebKitMediaCaptureState captureState, bool isFromDisplayCapture = false)
 {
     auto& page = getPage(webView);
     auto mutedState = page.mutedStateFlags();
@@ -4877,13 +4877,13 @@ static void webkitWebViewConfigureMediaCapture(WebKitWebView* webView, WebCore::
     case WEBKIT_MEDIA_CAPTURE_STATE_NONE:
         page.stopMediaCapture(captureKind, [webView, captureKind] {
             switch (captureKind) {
-            case WebCore::MediaProducer::MediaCaptureKind::Audio:
+            case WebCore::MediaProducerMediaCaptureKind::Audio:
                 g_object_notify_by_pspec(G_OBJECT(webView), sObjProperties[PROP_MICROPHONE_CAPTURE_STATE]);
                 break;
-            case WebCore::MediaProducer::MediaCaptureKind::Video:
+            case WebCore::MediaProducerMediaCaptureKind::Video:
                 g_object_notify_by_pspec(G_OBJECT(webView), sObjProperties[PROP_CAMERA_CAPTURE_STATE]);
                 break;
-            case WebCore::MediaProducer::MediaCaptureKind::AudioVideo:
+            case WebCore::MediaProducerMediaCaptureKind::AudioVideo:
                 ASSERT_NOT_REACHED();
                 return;
             }
@@ -4891,16 +4891,16 @@ static void webkitWebViewConfigureMediaCapture(WebKitWebView* webView, WebCore::
         break;
     case WEBKIT_MEDIA_CAPTURE_STATE_ACTIVE:
         switch (captureKind) {
-        case WebCore::MediaProducer::MediaCaptureKind::Audio:
+        case WebCore::MediaProducerMediaCaptureKind::Audio:
             mutedState.remove(WebCore::MediaProducer::MutedState::AudioCaptureIsMuted);
             break;
-        case WebCore::MediaProducer::MediaCaptureKind::Video:
+        case WebCore::MediaProducerMediaCaptureKind::Video:
             if (isFromDisplayCapture)
                 mutedState.remove(WebCore::MediaProducer::MutedState::ScreenCaptureIsMuted);
             else
                 mutedState.remove(WebCore::MediaProducer::MutedState::VideoCaptureIsMuted);
             break;
-        case WebCore::MediaProducer::MediaCaptureKind::AudioVideo:
+        case WebCore::MediaProducerMediaCaptureKind::AudioVideo:
             ASSERT_NOT_REACHED();
             return;
         }
@@ -4908,16 +4908,16 @@ static void webkitWebViewConfigureMediaCapture(WebKitWebView* webView, WebCore::
         break;
     case WEBKIT_MEDIA_CAPTURE_STATE_MUTED:
         switch (captureKind) {
-        case WebCore::MediaProducer::MediaCaptureKind::Audio:
+        case WebCore::MediaProducerMediaCaptureKind::Audio:
             mutedState.add(WebCore::MediaProducer::MutedState::AudioCaptureIsMuted);
             break;
-        case WebCore::MediaProducer::MediaCaptureKind::Video:
+        case WebCore::MediaProducerMediaCaptureKind::Video:
             if (isFromDisplayCapture)
                 mutedState.add(WebCore::MediaProducer::MutedState::ScreenCaptureIsMuted);
             else
                 mutedState.add(WebCore::MediaProducer::MutedState::VideoCaptureIsMuted);
             break;
-        case WebCore::MediaProducer::MediaCaptureKind::AudioVideo:
+        case WebCore::MediaProducerMediaCaptureKind::AudioVideo:
             ASSERT_NOT_REACHED();
             return;
         }
@@ -4965,7 +4965,7 @@ void webkit_web_view_set_camera_capture_state(WebKitWebView* webView, WebKitMedi
     if (webkit_web_view_get_camera_capture_state(webView) == WEBKIT_MEDIA_CAPTURE_STATE_NONE)
         return;
 
-    webkitWebViewConfigureMediaCapture(webView, WebCore::MediaProducer::MediaCaptureKind::Video, state);
+    webkitWebViewConfigureMediaCapture(webView, WebCore::MediaProducerMediaCaptureKind::Video, state);
 }
 
 /**
@@ -5007,7 +5007,7 @@ void webkit_web_view_set_microphone_capture_state(WebKitWebView* webView, WebKit
     if (webkit_web_view_get_microphone_capture_state(webView) == WEBKIT_MEDIA_CAPTURE_STATE_NONE)
         return;
 
-    webkitWebViewConfigureMediaCapture(webView, WebCore::MediaProducer::MediaCaptureKind::Audio, state);
+    webkitWebViewConfigureMediaCapture(webView, WebCore::MediaProducerMediaCaptureKind::Audio, state);
 }
 
 /**
@@ -5049,5 +5049,5 @@ void webkit_web_view_set_display_capture_state(WebKitWebView* webView, WebKitMed
     if (webkit_web_view_get_display_capture_state(webView) == WEBKIT_MEDIA_CAPTURE_STATE_NONE)
         return;
 
-    webkitWebViewConfigureMediaCapture(webView, WebCore::MediaProducer::MediaCaptureKind::Video, state, true);
+    webkitWebViewConfigureMediaCapture(webView, WebCore::MediaProducerMediaCaptureKind::Video, state, true);
 }

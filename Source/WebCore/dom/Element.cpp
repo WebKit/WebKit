@@ -42,6 +42,7 @@
 #include "DOMRectList.h"
 #include "DOMTokenList.h"
 #include "DOMWindow.h"
+#include "DocumentInlines.h"
 #include "DocumentSharedObjectPool.h"
 #include "DocumentTimeline.h"
 #include "Editing.h"

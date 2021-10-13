@@ -35,7 +35,7 @@
 #if ENABLE(ACCESSIBILITY) && USE(ATK)
 
 #include "AccessibilityObject.h"
-#include "Document.h"
+#include "DocumentInlines.h"
 #include "DocumentType.h"
 #include "WebKitAccessible.h"
 #include "WebKitAccessibleUtil.h"

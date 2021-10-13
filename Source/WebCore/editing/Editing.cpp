@@ -28,7 +28,7 @@
 
 #include "AXObjectCache.h"
 #include "CachedImage.h"
-#include "Document.h"
+#include "DocumentInlines.h"
 #include "Editor.h"
 #include "ElementInlines.h"
 #include "Frame.h"

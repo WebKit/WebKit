@@ -59,7 +59,7 @@
 #include <WebCore/MouseEvent.h>
 #include <WebCore/NetscapePlugInStreamLoader.h>
 #include <WebCore/NetworkStorageSession.h>
-#include <WebCore/Page.h>
+#include <WebCore/PageInlines.h>
 #include <WebCore/PlatformMouseEvent.h>
 #include <WebCore/ProtectionSpace.h>
 #include <WebCore/ProxyServer.h>

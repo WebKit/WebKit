@@ -50,6 +50,7 @@
 #include "DocumentLoader.h"
 #include "DocumentMarkerController.h"
 #include "DocumentTimeline.h"
+#include "DocumentTimelinesController.h"
 #include "DragController.h"
 #include "Editing.h"
 #include "Editor.h"
@@ -2173,7 +2174,7 @@ void Page::storageBlockingStateChanged()
 
 void Page::updateIsPlayingMedia()
 {
-    MediaProducer::MediaStateFlags state;
+    MediaProducerMediaStateFlags state;
     forEachDocument([&](auto& document) {
         state.add(document.mediaState());
     });
@@ -2211,7 +2212,7 @@ void Page::playbackControlsMediaEngineChanged()
 
 #endif
 
-void Page::setMuted(MediaProducer::MutedStateFlags muted)
+void Page::setMuted(MediaProducerMutedStateFlags muted)
 {
     m_mutedState = muted;
 
@@ -2220,7 +2221,7 @@ void Page::setMuted(MediaProducer::MutedStateFlags muted)
     });
 }
 
-void Page::stopMediaCapture(MediaProducer::MediaCaptureKind kind)
+void Page::stopMediaCapture(MediaProducerMediaCaptureKind kind)
 {
     UNUSED_PARAM(kind);
 #if ENABLE(MEDIA_STREAM)
@@ -3021,7 +3022,7 @@ void Page::showPlaybackTargetPicker(PlaybackTargetClientContextIdentifier contex
 #endif
 }
 
-void Page::playbackTargetPickerClientStateDidChange(PlaybackTargetClientContextIdentifier contextId, MediaProducer::MediaStateFlags state)
+void Page::playbackTargetPickerClientStateDidChange(PlaybackTargetClientContextIdentifier contextId, MediaProducerMediaStateFlags state)
 {
     chrome().client().playbackTargetPickerClientStateDidChange(contextId, state);
 }

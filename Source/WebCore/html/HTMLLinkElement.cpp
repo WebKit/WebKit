@@ -34,7 +34,7 @@
 #include "CrossOriginAccessControl.h"
 #include "DOMTokenList.h"
 #include "DefaultResourceLoadPriority.h"
-#include "Document.h"
+#include "DocumentInlines.h"
 #include "DocumentLoader.h"
 #include "ElementInlines.h"
 #include "Event.h"

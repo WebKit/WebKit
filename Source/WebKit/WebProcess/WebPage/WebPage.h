@@ -448,7 +448,7 @@ public:
     void sendCOEPCORPViolation(WebCore::FrameIdentifier, const WebCore::SecurityOriginData& embedderOrigin, const String& endpoint, WebCore::COEPDisposition, WebCore::FetchOptions::Destination, const URL& blockedURL);
     void sendViolationReportWhenNavigatingToCOOPResponse(WebCore::FrameIdentifier, const WebCore::CrossOriginOpenerPolicy&, WebCore::COOPDisposition, const URL& coopURL, const URL& previousResponseURL, const WebCore::SecurityOriginData& coopOrigin, const WebCore::SecurityOriginData& previousResponseOrigin, const String& referrer, const String& userAgent, const String& reportToHeaderValue);
     void sendViolationReportWhenNavigatingAwayFromCOOPResponse(WebCore::FrameIdentifier, const WebCore::CrossOriginOpenerPolicy&, WebCore::COOPDisposition, const URL& coopURL, const URL& nextResponseURL, const WebCore::SecurityOriginData& coopOrigin, const WebCore::SecurityOriginData& nextResponseOrigin, bool isCOOPResponseNavigationSource, const String& userAgent);
-    void enqueueSecurityPolicyViolationEvent(WebCore::FrameIdentifier, WebCore::SecurityPolicyViolationEvent::Init&&);
+    void enqueueSecurityPolicyViolationEvent(WebCore::FrameIdentifier, WebCore::SecurityPolicyViolationEventInit&&);
 
     // -- Called by the DrawingArea.
     // FIXME: We could genericize these into a DrawingArea client interface. Would that be beneficial?
@@ -1029,9 +1029,9 @@ public:
     void removeResourceRequest(WebCore::ResourceLoaderIdentifier);
 
     void setMediaVolume(float);
-    void setMuted(WebCore::MediaProducer::MutedStateFlags, CompletionHandler<void()>&&);
+    void setMuted(WebCore::MediaProducerMutedStateFlags, CompletionHandler<void()>&&);
     void setMayStartMediaWhenInWindow(bool);
-    void stopMediaCapture(WebCore::MediaProducer::MediaCaptureKind, CompletionHandler<void()>&&);
+    void stopMediaCapture(WebCore::MediaProducerMediaCaptureKind, CompletionHandler<void()>&&);
 
     void updateMainFrameScrollOffsetPinning();
 
@@ -1426,7 +1426,7 @@ public:
     void removeMediaUsageManagerSession(WebCore::MediaSessionIdentifier);
 #endif
 
-    void isPlayingMediaDidChange(WebCore::MediaProducer::MediaStateFlags);
+    void isPlayingMediaDidChange(WebCore::MediaProducerMediaStateFlags);
 
 #if ENABLE(IMAGE_ANALYSIS)
     void requestTextRecognition(WebCore::Element&, CompletionHandler<void(RefPtr<WebCore::Element>&&)>&&);

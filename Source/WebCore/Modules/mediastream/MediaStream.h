@@ -122,7 +122,7 @@ private:
     void didRemoveTrack(MediaStreamTrackPrivate&) final;
     void characteristicsChanged() final;
 
-    MediaProducer::MediaStateFlags mediaState() const;
+    MediaProducerMediaStateFlags mediaState() const;
 
     // MediaCanStartListener
     void mediaCanStart(Document&) final;
@@ -143,7 +143,7 @@ private:
 
     HashMap<String, RefPtr<MediaStreamTrack>> m_trackSet;
 
-    MediaProducer::MediaStateFlags m_state;
+    MediaProducerMediaStateFlags m_state;
 
     bool m_isActive { false };
     bool m_isProducingData { false };

@@ -34,6 +34,7 @@
 
 #include "AXObjectCache.h"
 #include "Decimal.h"
+#include "DocumentInlines.h"
 #include "ElementChildIterator.h"
 #include "EventNames.h"
 #include "HTMLCollection.h"

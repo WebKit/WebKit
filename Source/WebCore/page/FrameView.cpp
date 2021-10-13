@@ -38,6 +38,7 @@
 #include "DOMWindow.h"
 #include "DebugPageOverlays.h"
 #include "DeprecatedGlobalSettings.h"
+#include "DocumentInlines.h"
 #include "DocumentLoader.h"
 #include "DocumentMarkerController.h"
 #include "DocumentSVG.h"
@@ -2088,7 +2089,7 @@ bool FrameView::useDarkAppearance() const
     return false;
 }
 
-OptionSet<StyleColor::Options> FrameView::styleColorOptions() const
+OptionSet<StyleColorOptions> FrameView::styleColorOptions() const
 {
 #if ENABLE(DARK_MODE_CSS)
     if (auto* renderer = rendererForColorScheme())

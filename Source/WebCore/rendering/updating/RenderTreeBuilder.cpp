@@ -27,6 +27,7 @@
 #include "RenderTreeBuilder.h"
 
 #include "AXObjectCache.h"
+#include "DocumentInlines.h"
 #include "Frame.h"
 #include "FrameSelection.h"
 #include "RenderButton.h"

@@ -38,6 +38,7 @@
 #include "DeclarativeAnimation.h"
 #include "DocumentThreadableLoader.h"
 #include "Element.h"
+#include "Event.h"
 #include "EventTarget.h"
 #include "FormData.h"
 #include "Frame.h"

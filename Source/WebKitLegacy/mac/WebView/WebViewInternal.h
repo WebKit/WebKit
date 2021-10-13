@@ -336,7 +336,7 @@ WebLayoutMilestones kitLayoutMilestones(OptionSet<WebCore::LayoutMilestone>);
 - (void)_addPlaybackTargetPickerClient:(WebCore::PlaybackTargetClientContextIdentifier)contextId;
 - (void)_removePlaybackTargetPickerClient:(WebCore::PlaybackTargetClientContextIdentifier)contextId;
 - (void)_showPlaybackTargetPicker:(WebCore::PlaybackTargetClientContextIdentifier)contextId location:(const WebCore::IntPoint&)location hasVideo:(BOOL)hasVideo;
-- (void)_playbackTargetPickerClientStateDidChange:(WebCore::PlaybackTargetClientContextIdentifier)contextId state:(WebCore::MediaProducer::MediaStateFlags)state;
+- (void)_playbackTargetPickerClientStateDidChange:(WebCore::PlaybackTargetClientContextIdentifier)contextId state:(WebCore::MediaProducerMediaStateFlags)state;
 - (void)_setMockMediaPlaybackTargetPickerEnabled:(bool)enabled;
 - (void)_setMockMediaPlaybackTargetPickerName:(NSString *)name state:(WebCore::MediaPlaybackTargetContext::MockState)state;
 - (void)_mockMediaPlaybackTargetPickerDismissPopup;

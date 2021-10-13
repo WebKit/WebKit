@@ -522,7 +522,7 @@ private:
     // ContentSecurityPolicyClient
     WEBCORE_EXPORT void addConsoleMessage(MessageSource, MessageLevel, const String&, unsigned long requestIdentifier) final;
     WEBCORE_EXPORT void sendCSPViolationReport(URL&&, Ref<FormData>&&) final;
-    WEBCORE_EXPORT void enqueueSecurityPolicyViolationEvent(SecurityPolicyViolationEvent::Init&&) final;
+    WEBCORE_EXPORT void enqueueSecurityPolicyViolationEvent(SecurityPolicyViolationEventInit&&) final;
 
     bool disallowWebArchive() const;
     bool disallowDataRequest() const;

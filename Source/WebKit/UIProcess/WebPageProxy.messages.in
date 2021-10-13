@@ -463,7 +463,7 @@ messages -> WebPageProxy {
     ContentFilterDidBlockLoadForFrame(WebCore::ContentFilterUnblockHandler unblockHandler, WebCore::FrameIdentifier frameID)
 #endif
 
-    IsPlayingMediaDidChange(WebCore::MediaProducer::MediaStateFlags state)
+    IsPlayingMediaDidChange(OptionSet<WebCore::MediaProducerMediaState> state)
     HandleAutoplayEvent(enum:uint8_t WebCore::AutoplayEvent event, OptionSet<WebCore::AutoplayEventFlags> flags)
 
 #if PLATFORM(MAC)
@@ -482,7 +482,7 @@ messages -> WebPageProxy {
     AddPlaybackTargetPickerClient(WebCore::PlaybackTargetClientContextIdentifier contextId)
     RemovePlaybackTargetPickerClient(WebCore::PlaybackTargetClientContextIdentifier contextId)
     ShowPlaybackTargetPicker(WebCore::PlaybackTargetClientContextIdentifier contextId, WebCore::FloatRect pickerLocation, bool hasVideo)
-    PlaybackTargetPickerClientStateDidChange(WebCore::PlaybackTargetClientContextIdentifier contextId, WebCore::MediaProducer::MediaStateFlags mediaState)
+    PlaybackTargetPickerClientStateDidChange(WebCore::PlaybackTargetClientContextIdentifier contextId, OptionSet<WebCore::MediaProducerMediaState> mediaState)
     SetMockMediaPlaybackTargetPickerEnabled(bool enabled)
     SetMockMediaPlaybackTargetPickerState(String name, enum:uint8_t WebCore::MediaPlaybackTargetContext::MockState pickerState)
     MockMediaPlaybackTargetPickerDismissPopup()

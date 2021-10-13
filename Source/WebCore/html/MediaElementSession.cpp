@@ -31,7 +31,7 @@
 
 #include "Chrome.h"
 #include "ChromeClient.h"
-#include "Document.h"
+#include "DocumentInlines.h"
 #include "DocumentLoader.h"
 #include "ElementInlines.h"
 #include "Frame.h"
@@ -385,7 +385,7 @@ Expected<void, MediaPlaybackDenialReason> MediaElementSession::playbackStateChan
     if (m_element.hasMediaStreamSrcObject()) {
         if (document.isCapturing())
             return { };
-        if (document.mediaState() & MediaProducer::MediaState::IsPlayingAudio)
+        if (document.mediaState() & MediaProducerMediaState::IsPlayingAudio)
             return { };
     }
 #endif
@@ -400,7 +400,7 @@ Expected<void, MediaPlaybackDenialReason> MediaElementSession::playbackStateChan
         return makeUnexpected(MediaPlaybackDenialReason::UserGestureRequired);
     }
 
-    if (topDocument.mediaState() & MediaProducer::MediaState::HasUserInteractedWithMediaElement && topDocument.quirks().needsPerDocumentAutoplayBehavior())
+    if (topDocument.mediaState() & MediaProducerMediaState::HasUserInteractedWithMediaElement && topDocument.quirks().needsPerDocumentAutoplayBehavior())
         return { };
 
     if (topDocument.hasHadUserInteraction() && document.quirks().shouldAutoplayForArbitraryUserGesture())
@@ -809,7 +809,7 @@ void MediaElementSession::playbackTargetPickerWasDismissed()
     client().playbackTargetPickerWasDismissed();
 }
 
-void MediaElementSession::mediaStateDidChange(MediaProducer::MediaStateFlags state)
+void MediaElementSession::mediaStateDidChange(MediaProducerMediaStateFlags state)
 {
     m_element.document().playbackTargetPickerClientStateDidChange(*this, state);
 }

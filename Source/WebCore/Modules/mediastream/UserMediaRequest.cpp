@@ -36,7 +36,7 @@
 
 #if ENABLE(MEDIA_STREAM)
 
-#include "Document.h"
+#include "DocumentInlines.h"
 #include "Frame.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSMediaStream.h"

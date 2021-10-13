@@ -31,9 +31,10 @@
 #include "AudioContextOptions.h"
 #include "AudioTimestamp.h"
 #include "DOMWindow.h"
+#include "DocumentInlines.h"
 #include "JSDOMPromiseDeferred.h"
 #include "Logging.h"
-#include "Page.h"
+#include "PageInlines.h"
 #include "Performance.h"
 #include "PlatformMediaSessionManager.h"
 #include "Quirks.h"
@@ -356,10 +357,10 @@ bool AudioContext::willPausePlayback()
     return m_mediaSession->clientWillPausePlayback();
 }
 
-MediaProducer::MediaStateFlags AudioContext::mediaState() const
+MediaProducerMediaStateFlags AudioContext::mediaState() const
 {
     if (!isStopped() && destination().isPlayingAudio())
-        return MediaProducer::MediaState::IsPlayingAudio;
+        return MediaProducerMediaState::IsPlayingAudio;
 
     return MediaProducer::IsNotPlaying;
 }
@@ -419,7 +420,7 @@ bool AudioContext::willBeginPlayback()
 void AudioContext::visibilityStateChanged()
 {
     // Do not suspend if audio is audible.
-    if (!document() || mediaState() == MediaProducer::MediaState::IsPlayingAudio || isStopped())
+    if (!document() || mediaState() == MediaProducerMediaState::IsPlayingAudio || isStopped())
         return;
 
     if (document()->hidden()) {

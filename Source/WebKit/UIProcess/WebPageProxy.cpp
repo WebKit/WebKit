@@ -2113,11 +2113,11 @@ void WebPageProxy::updateActivityState(OptionSet<ActivityState::Flag> flagsToUpd
         m_activityState.add(ActivityState::IsInWindow);
     if (flagsToUpdate & ActivityState::IsVisuallyIdle && pageClient().isVisuallyIdle())
         m_activityState.add(ActivityState::IsVisuallyIdle);
-    if (flagsToUpdate & ActivityState::IsAudible && m_mediaState.contains(MediaProducer::MediaState::IsPlayingAudio) && !(m_mutedState.contains(MediaProducer::MutedState::AudioIsMuted)))
+    if (flagsToUpdate & ActivityState::IsAudible && m_mediaState.contains(MediaProducerMediaState::IsPlayingAudio) && !(m_mutedState.contains(MediaProducerMutedState::AudioIsMuted)))
         m_activityState.add(ActivityState::IsAudible);
     if (flagsToUpdate & ActivityState::IsLoading && m_pageLoadState.isLoading())
         m_activityState.add(ActivityState::IsLoading);
-    if (flagsToUpdate & ActivityState::IsCapturingMedia && m_mediaState.containsAny({ MediaProducer::MediaState::HasActiveAudioCaptureDevice,  MediaProducer::MediaState::HasActiveVideoCaptureDevice }))
+    if (flagsToUpdate & ActivityState::IsCapturingMedia && m_mediaState.containsAny({ MediaProducerMediaState::HasActiveAudioCaptureDevice,  MediaProducerMediaState::HasActiveVideoCaptureDevice }))
         m_activityState.add(ActivityState::IsCapturingMedia);
 }
 
@@ -6246,7 +6246,7 @@ void WebPageProxy::setMediaVolume(float volume)
     send(Messages::WebPage::SetMediaVolume(volume));
 }
 
-void WebPageProxy::setMuted(WebCore::MediaProducer::MutedStateFlags state, CompletionHandler<void()>&& completionHandler)
+void WebPageProxy::setMuted(WebCore::MediaProducerMutedStateFlags state, CompletionHandler<void()>&& completionHandler)
 {
     m_mutedState = state;
 
@@ -6277,7 +6277,7 @@ void WebPageProxy::setMediaCaptureEnabled(bool enabled)
 #endif
 }
 
-void WebPageProxy::stopMediaCapture(MediaProducer::MediaCaptureKind kind, CompletionHandler<void()>&& completionHandler)
+void WebPageProxy::stopMediaCapture(MediaProducerMediaCaptureKind kind, CompletionHandler<void()>&& completionHandler)
 {
     if (!hasRunningProcess())
         return completionHandler();
@@ -9458,7 +9458,7 @@ void WebPageProxy::navigationGestureSnapshotWasRemoved()
     m_navigationClient->didRemoveNavigationGestureSnapshot(*this);
 }
 
-void WebPageProxy::isPlayingMediaDidChange(MediaProducer::MediaStateFlags newState)
+void WebPageProxy::isPlayingMediaDidChange(MediaProducerMediaStateFlags newState)
 {
 #if PLATFORM(IOS_FAMILY)
     if (!m_process->throttler().shouldBeRunnable())
@@ -9469,7 +9469,7 @@ void WebPageProxy::isPlayingMediaDidChange(MediaProducer::MediaStateFlags newSta
         updatePlayingMediaDidChange(newState, CanDelayNotification::Yes);
 }
 
-void WebPageProxy::updatePlayingMediaDidChange(MediaProducer::MediaStateFlags newState, CanDelayNotification canDelayNotification)
+void WebPageProxy::updatePlayingMediaDidChange(MediaProducerMediaStateFlags newState, CanDelayNotification canDelayNotification)
 {
 #if ENABLE(MEDIA_STREAM)
     auto updateMediaCaptureStateImmediatelyIfNeeded = [&] {
@@ -9498,14 +9498,14 @@ void WebPageProxy::updatePlayingMediaDidChange(MediaProducer::MediaStateFlags ne
 #endif
 
 #if ENABLE(MEDIA_STREAM)
-    WebCore::MediaProducer::MediaStateFlags oldMediaCaptureState = m_mediaState & WebCore::MediaProducer::MediaCaptureMask;
-    WebCore::MediaProducer::MediaStateFlags newMediaCaptureState = newState & WebCore::MediaProducer::MediaCaptureMask;
+    WebCore::MediaProducerMediaStateFlags oldMediaCaptureState = m_mediaState & WebCore::MediaProducer::MediaCaptureMask;
+    WebCore::MediaProducerMediaStateFlags newMediaCaptureState = newState & WebCore::MediaProducer::MediaCaptureMask;
 #endif
 
-    MediaProducer::MediaStateFlags playingMediaMask { MediaProducer::MediaState::IsPlayingAudio, MediaProducer::MediaState::IsPlayingVideo };
-    MediaProducer::MediaStateFlags oldState = m_mediaState;
+    MediaProducerMediaStateFlags playingMediaMask { MediaProducerMediaState::IsPlayingAudio, MediaProducerMediaState::IsPlayingVideo };
+    MediaProducerMediaStateFlags oldState = m_mediaState;
 
-    bool playingAudioChanges = (oldState.contains(MediaProducer::MediaState::IsPlayingAudio)) != (newState.contains(MediaProducer::MediaState::IsPlayingAudio));
+    bool playingAudioChanges = (oldState.contains(MediaProducerMediaState::IsPlayingAudio)) != (newState.contains(MediaProducerMediaState::IsPlayingAudio));
     if (playingAudioChanges)
         pageClient().isPlayingAudioWillChange();
     m_mediaState = newState;
@@ -9529,7 +9529,7 @@ void WebPageProxy::updatePlayingMediaDidChange(MediaProducer::MediaStateFlags ne
     if ((oldState & playingMediaMask) != (m_mediaState & playingMediaMask))
         m_uiClient->isPlayingMediaDidChange(*this);
 
-    if ((oldState.containsAny(MediaProducer::MediaState::HasAudioOrVideo)) != (m_mediaState.containsAny(MediaProducer::MediaState::HasAudioOrVideo)))
+    if ((oldState.containsAny(MediaProducerMediaState::HasAudioOrVideo)) != (m_mediaState.containsAny(MediaProducerMediaState::HasAudioOrVideo)))
         videoControlsManagerDidChange();
 
     m_process->updateAudibleMediaAssertions();
@@ -9729,7 +9729,7 @@ void WebPageProxy::showPlaybackTargetPicker(PlaybackTargetClientContextIdentifie
     pageClient().mediaSessionManager().showPlaybackTargetPicker(*this, contextId, pageClient().rootViewToScreen(IntRect(rect)), hasVideo, useDarkAppearance());
 }
 
-void WebPageProxy::playbackTargetPickerClientStateDidChange(PlaybackTargetClientContextIdentifier contextId, WebCore::MediaProducer::MediaStateFlags state)
+void WebPageProxy::playbackTargetPickerClientStateDidChange(PlaybackTargetClientContextIdentifier contextId, WebCore::MediaProducerMediaStateFlags state)
 {
     pageClient().mediaSessionManager().clientStateDidChange(*this, contextId, state);
 }

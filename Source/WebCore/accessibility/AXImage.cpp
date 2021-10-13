@@ -32,6 +32,7 @@
 #include "AXLogger.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
+#include "DocumentInlines.h"
 
 namespace WebCore {
 

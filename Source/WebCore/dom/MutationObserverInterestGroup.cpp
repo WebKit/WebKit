@@ -44,9 +44,9 @@ inline MutationObserverInterestGroup::MutationObserverInterestGroup(HashMap<Ref<
     ASSERT(!m_observers.isEmpty());
 }
 
-std::unique_ptr<MutationObserverInterestGroup> MutationObserverInterestGroup::createIfNeeded(Node& target, MutationObserver::MutationType type, MutationRecordDeliveryOptions oldValueFlag, const QualifiedName* attributeName)
+std::unique_ptr<MutationObserverInterestGroup> MutationObserverInterestGroup::createIfNeeded(Node& target, MutationObserverOptionType type, MutationRecordDeliveryOptions oldValueFlag, const QualifiedName* attributeName)
 {
-    ASSERT((type == MutationObserver::Attributes && attributeName) || !attributeName);
+    ASSERT((type == MutationObserverOptionType::Attributes && attributeName) || !attributeName);
     auto observers = target.registeredMutationObservers(type, attributeName);
     if (observers.isEmpty())
         return nullptr;

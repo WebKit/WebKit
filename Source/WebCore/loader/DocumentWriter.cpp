@@ -33,6 +33,7 @@
 #include "ContentSecurityPolicy.h"
 #include "DOMImplementation.h"
 #include "DOMWindow.h"
+#include "DocumentInlines.h"
 #include "DocumentLoader.h"
 #include "Frame.h"
 #include "FrameLoader.h"

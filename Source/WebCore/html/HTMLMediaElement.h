@@ -527,7 +527,7 @@ public:
 
     double maxBufferedTime() const;
 
-    MediaProducer::MediaStateFlags mediaState() const override;
+    MediaProducerMediaStateFlags mediaState() const override;
 
     void layoutSizeChanged();
     void visibilityDidChange();
@@ -1212,7 +1212,7 @@ private:
 #endif
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
-    MediaProducer::MediaStateFlags m_mediaState;
+    MediaProducerMediaStateFlags m_mediaState;
     MonotonicTime m_currentPlaybackTargetIsWirelessEventFiredTime;
     bool m_hasPlaybackTargetAvailabilityListeners { false };
     bool m_failedToPlayToWirelessTarget { false };

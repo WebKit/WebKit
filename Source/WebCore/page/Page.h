@@ -177,6 +177,12 @@ enum class CanWrap : bool;
 enum class DidWrap : bool;
 enum class RouteSharingPolicy : uint8_t;
 enum class ShouldTreatAsContinuingLoad : uint8_t;
+enum class MediaProducerMediaState : uint32_t;
+enum class MediaProducerMediaCaptureKind : uint8_t;
+enum class MediaProducerMutedState : uint8_t;
+
+using MediaProducerMediaStateFlags = OptionSet<MediaProducerMediaState>;
+using MediaProducerMutedStateFlags = OptionSet<MediaProducerMutedState>;
 
 enum class EventThrottlingBehavior : bool { Responsive, Unresponsive };
 enum class MainFrameMainResource : bool { No, Yes };
@@ -731,18 +737,18 @@ public:
     WEBCORE_EXPORT void setSessionID(PAL::SessionID);
     bool usesEphemeralSession() const { return m_sessionID.isEphemeral(); }
 
-    MediaProducer::MediaStateFlags mediaState() const { return m_mediaState; }
+    MediaProducerMediaStateFlags mediaState() const { return m_mediaState; }
     void updateIsPlayingMedia();
-    MediaProducer::MutedStateFlags mutedState() const { return m_mutedState; }
-    bool isAudioMuted() const { return m_mutedState.contains(MediaProducer::MutedState::AudioIsMuted); }
-    bool isMediaCaptureMuted() const { return m_mutedState.containsAny(MediaProducer::MediaStreamCaptureIsMuted); };
+    MediaProducerMutedStateFlags mutedState() const { return m_mutedState; }
+    inline bool isAudioMuted() const;
+    inline bool isMediaCaptureMuted() const;
     void schedulePlaybackControlsManagerUpdate();
 #if ENABLE(VIDEO)
     void playbackControlsMediaEngineChanged();
 #endif
-    WEBCORE_EXPORT void setMuted(MediaProducer::MutedStateFlags);
+    WEBCORE_EXPORT void setMuted(MediaProducerMutedStateFlags);
 
-    WEBCORE_EXPORT void stopMediaCapture(MediaProducer::MediaCaptureKind);
+    WEBCORE_EXPORT void stopMediaCapture(MediaProducerMediaCaptureKind);
 
     MediaSessionGroupIdentifier mediaSessionGroupIdentifier() const;
     WEBCORE_EXPORT bool mediaPlaybackExists();
@@ -765,7 +771,7 @@ public:
     void addPlaybackTargetPickerClient(PlaybackTargetClientContextIdentifier);
     void removePlaybackTargetPickerClient(PlaybackTargetClientContextIdentifier);
     void showPlaybackTargetPicker(PlaybackTargetClientContextIdentifier, const IntPoint&, bool, RouteSharingPolicy, const String&);
-    void playbackTargetPickerClientStateDidChange(PlaybackTargetClientContextIdentifier, MediaProducer::MediaStateFlags);
+    void playbackTargetPickerClientStateDidChange(PlaybackTargetClientContextIdentifier, MediaProducerMediaStateFlags);
     WEBCORE_EXPORT void setMockMediaPlaybackTargetPickerEnabled(bool);
     WEBCORE_EXPORT void setMockMediaPlaybackTargetPickerState(const String&, MediaPlaybackTargetContext::MockState);
     WEBCORE_EXPORT void mockMediaPlaybackTargetPickerDismissPopup();
@@ -998,7 +1004,7 @@ private:
     bool m_inLowQualityInterpolationMode { false };
     bool m_areMemoryCacheClientCallsEnabled { true };
     float m_mediaVolume { 1 };
-    MediaProducer::MutedStateFlags m_mutedState;
+    MediaProducerMutedStateFlags m_mutedState;
 
     float m_pageScaleFactor { 1 };
     float m_zoomedOutPageScaleFactor { 0 };
@@ -1122,7 +1128,7 @@ private:
     bool m_isClosing { false };
     bool m_isRestoringCachedPage { false };
 
-    MediaProducer::MediaStateFlags m_mediaState;
+    MediaProducerMediaStateFlags m_mediaState;
 
 #if ENABLE(VIDEO)
     Timer m_playbackControlsManagerUpdateTimer;

@@ -9241,7 +9241,7 @@ bool LayerFlushController::flushLayers()
     [self _devicePicker]->showPlaybackTargetPicker(contextId, rectInScreenCoordinates, hasVideo);
 }
 
-- (void)_playbackTargetPickerClientStateDidChange:(WebCore::PlaybackTargetClientContextIdentifier)contextId state:(WebCore::MediaProducer::MediaStateFlags)state
+- (void)_playbackTargetPickerClientStateDidChange:(WebCore::PlaybackTargetClientContextIdentifier)contextId state:(WebCore::MediaProducerMediaStateFlags)state
 {
     [self _devicePicker]->playbackTargetPickerClientStateDidChange(contextId, state);
 }

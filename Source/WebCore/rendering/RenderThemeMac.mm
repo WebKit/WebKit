@@ -284,16 +284,16 @@ NSView *RenderThemeMac::documentViewFor(const RenderObject& o) const
     return ThemeMac::ensuredView(&o.view().frameView(), states);
 }
 
-Color RenderThemeMac::platformActiveSelectionBackgroundColor(OptionSet<StyleColor::Options> options) const
+Color RenderThemeMac::platformActiveSelectionBackgroundColor(OptionSet<StyleColorOptions> options) const
 {
-    LocalDefaultSystemAppearance localAppearance(options.contains(StyleColor::Options::UseDarkAppearance));
+    LocalDefaultSystemAppearance localAppearance(options.contains(StyleColorOptions::UseDarkAppearance));
     return colorFromNSColor([NSColor selectedTextBackgroundColor]);
 }
 
-Color RenderThemeMac::platformInactiveSelectionBackgroundColor(OptionSet<StyleColor::Options> options) const
+Color RenderThemeMac::platformInactiveSelectionBackgroundColor(OptionSet<StyleColorOptions> options) const
 {
 #if HAVE(OS_DARK_MODE_SUPPORT)
-    LocalDefaultSystemAppearance localAppearance(options.contains(StyleColor::Options::UseDarkAppearance));
+    LocalDefaultSystemAppearance localAppearance(options.contains(StyleColorOptions::UseDarkAppearance));
     return colorFromNSColor([NSColor unemphasizedSelectedTextBackgroundColor]);
 #else
     UNUSED_PARAM(options);
@@ -301,9 +301,9 @@ Color RenderThemeMac::platformInactiveSelectionBackgroundColor(OptionSet<StyleCo
 #endif
 }
 
-Color RenderThemeMac::transformSelectionBackgroundColor(const Color& color, OptionSet<StyleColor::Options> options) const
+Color RenderThemeMac::transformSelectionBackgroundColor(const Color& color, OptionSet<StyleColorOptions> options) const
 {
-    LocalDefaultSystemAppearance localAppearance(options.contains(StyleColor::Options::UseDarkAppearance));
+    LocalDefaultSystemAppearance localAppearance(options.contains(StyleColorOptions::UseDarkAppearance));
     if (localAppearance.usingDarkAppearance()) {
         // Use an alpha value that is similar to results from blendWithWhite() on light colors.
         static const float darkAppearanceAlpha = 0.8;
@@ -313,24 +313,24 @@ Color RenderThemeMac::transformSelectionBackgroundColor(const Color& color, Opti
     return RenderTheme::transformSelectionBackgroundColor(color, options);
 }
 
-bool RenderThemeMac::supportsSelectionForegroundColors(OptionSet<StyleColor::Options> options) const
+bool RenderThemeMac::supportsSelectionForegroundColors(OptionSet<StyleColorOptions> options) const
 {
-    LocalDefaultSystemAppearance localAppearance(options.contains(StyleColor::Options::UseDarkAppearance));
+    LocalDefaultSystemAppearance localAppearance(options.contains(StyleColorOptions::UseDarkAppearance));
     return localAppearance.usingDarkAppearance();
 }
 
-Color RenderThemeMac::platformActiveSelectionForegroundColor(OptionSet<StyleColor::Options> options) const
+Color RenderThemeMac::platformActiveSelectionForegroundColor(OptionSet<StyleColorOptions> options) const
 {
-    LocalDefaultSystemAppearance localAppearance(options.contains(StyleColor::Options::UseDarkAppearance));
+    LocalDefaultSystemAppearance localAppearance(options.contains(StyleColorOptions::UseDarkAppearance));
     if (localAppearance.usingDarkAppearance())
         return colorFromNSColor([NSColor selectedTextColor]);
     return { };
 }
 
-Color RenderThemeMac::platformInactiveSelectionForegroundColor(OptionSet<StyleColor::Options> options) const
+Color RenderThemeMac::platformInactiveSelectionForegroundColor(OptionSet<StyleColorOptions> options) const
 {
 #if HAVE(OS_DARK_MODE_SUPPORT)
-    LocalDefaultSystemAppearance localAppearance(options.contains(StyleColor::Options::UseDarkAppearance));
+    LocalDefaultSystemAppearance localAppearance(options.contains(StyleColorOptions::UseDarkAppearance));
     if (localAppearance.usingDarkAppearance())
         return colorFromNSColor([NSColor unemphasizedSelectedTextColor]);
     return { };
@@ -340,10 +340,10 @@ Color RenderThemeMac::platformInactiveSelectionForegroundColor(OptionSet<StyleCo
 #endif
 }
 
-Color RenderThemeMac::platformActiveListBoxSelectionBackgroundColor(OptionSet<StyleColor::Options> options) const
+Color RenderThemeMac::platformActiveListBoxSelectionBackgroundColor(OptionSet<StyleColorOptions> options) const
 {
 #if HAVE(OS_DARK_MODE_SUPPORT)
-    LocalDefaultSystemAppearance localAppearance(options.contains(StyleColor::Options::UseDarkAppearance));
+    LocalDefaultSystemAppearance localAppearance(options.contains(StyleColorOptions::UseDarkAppearance));
     return colorFromNSColor([NSColor selectedContentBackgroundColor]);
 #else
     UNUSED_PARAM(options);
@@ -353,10 +353,10 @@ Color RenderThemeMac::platformActiveListBoxSelectionBackgroundColor(OptionSet<St
 #endif
 }
 
-Color RenderThemeMac::platformInactiveListBoxSelectionBackgroundColor(OptionSet<StyleColor::Options> options) const
+Color RenderThemeMac::platformInactiveListBoxSelectionBackgroundColor(OptionSet<StyleColorOptions> options) const
 {
 #if HAVE(OS_DARK_MODE_SUPPORT)
-    LocalDefaultSystemAppearance localAppearance(options.contains(StyleColor::Options::UseDarkAppearance));
+    LocalDefaultSystemAppearance localAppearance(options.contains(StyleColorOptions::UseDarkAppearance));
 #else
     UNUSED_PARAM(options);
 #endif
@@ -364,16 +364,16 @@ Color RenderThemeMac::platformInactiveListBoxSelectionBackgroundColor(OptionSet<
 
 }
 
-Color RenderThemeMac::platformActiveListBoxSelectionForegroundColor(OptionSet<StyleColor::Options> options) const
+Color RenderThemeMac::platformActiveListBoxSelectionForegroundColor(OptionSet<StyleColorOptions> options) const
 {
-    LocalDefaultSystemAppearance localAppearance(options.contains(StyleColor::Options::UseDarkAppearance));
+    LocalDefaultSystemAppearance localAppearance(options.contains(StyleColorOptions::UseDarkAppearance));
     return colorFromNSColor([NSColor alternateSelectedControlTextColor]);
 }
 
-Color RenderThemeMac::platformInactiveListBoxSelectionForegroundColor(OptionSet<StyleColor::Options> options) const
+Color RenderThemeMac::platformInactiveListBoxSelectionForegroundColor(OptionSet<StyleColorOptions> options) const
 {
 #if HAVE(OS_DARK_MODE_SUPPORT)
-    LocalDefaultSystemAppearance localAppearance(options.contains(StyleColor::Options::UseDarkAppearance));
+    LocalDefaultSystemAppearance localAppearance(options.contains(StyleColorOptions::UseDarkAppearance));
     return colorFromNSColor([NSColor unemphasizedSelectedTextColor]);
 #else
     UNUSED_PARAM(options);
@@ -381,32 +381,32 @@ Color RenderThemeMac::platformInactiveListBoxSelectionForegroundColor(OptionSet<
 #endif
 }
 
-Color RenderThemeMac::platformFocusRingColor(OptionSet<StyleColor::Options> options) const
+Color RenderThemeMac::platformFocusRingColor(OptionSet<StyleColorOptions> options) const
 {
     if (usesTestModeFocusRingColor())
         return oldAquaFocusRingColor();
-    LocalDefaultSystemAppearance localAppearance(options.contains(StyleColor::Options::UseDarkAppearance));
+    LocalDefaultSystemAppearance localAppearance(options.contains(StyleColorOptions::UseDarkAppearance));
     // The color is expected to be opaque, since CoreGraphics will apply opacity when drawing (because opacity is normally animated).
     return colorFromNSColor([NSColor keyboardFocusIndicatorColor]).opaqueColor();
 }
 
-Color RenderThemeMac::platformTextSearchHighlightColor(OptionSet<StyleColor::Options> options) const
+Color RenderThemeMac::platformTextSearchHighlightColor(OptionSet<StyleColorOptions> options) const
 {
-    LocalDefaultSystemAppearance localAppearance(options.contains(StyleColor::Options::UseDarkAppearance));
+    LocalDefaultSystemAppearance localAppearance(options.contains(StyleColorOptions::UseDarkAppearance));
     return colorFromNSColor([NSColor findHighlightColor]);
 }
 
 #if ENABLE(APP_HIGHLIGHTS)
-Color RenderThemeMac::platformAppHighlightColor(OptionSet<StyleColor::Options>) const
+Color RenderThemeMac::platformAppHighlightColor(OptionSet<StyleColorOptions>) const
 {
     // FIXME: expose the real value from AppKit.
     return SRGBA<uint8_t> { 255, 238, 190 };
 }
 #endif
 
-Color RenderThemeMac::platformDefaultButtonTextColor(OptionSet<StyleColor::Options> options) const
+Color RenderThemeMac::platformDefaultButtonTextColor(OptionSet<StyleColorOptions> options) const
 {
-    LocalDefaultSystemAppearance localAppearance(options.contains(StyleColor::Options::UseDarkAppearance));
+    LocalDefaultSystemAppearance localAppearance(options.contains(StyleColorOptions::UseDarkAppearance));
     return colorFromNSColor([NSColor alternateSelectedControlTextColor]);
 }
 
@@ -449,11 +449,11 @@ static SRGBA<uint8_t> menuBackgroundColor()
     return makeFromComponentsClamping<SRGBA<uint8_t>>(pixel[0], pixel[1], pixel[2], pixel[3]);
 }
 
-Color RenderThemeMac::systemColor(CSSValueID cssValueID, OptionSet<StyleColor::Options> options) const
+Color RenderThemeMac::systemColor(CSSValueID cssValueID, OptionSet<StyleColorOptions> options) const
 {
-    const bool useSystemAppearance = options.contains(StyleColor::Options::UseSystemAppearance);
-    const bool useDarkAppearance = options.contains(StyleColor::Options::UseDarkAppearance);
-    const bool forVisitedLink = options.contains(StyleColor::Options::ForVisitedLink);
+    const bool useSystemAppearance = options.contains(StyleColorOptions::UseSystemAppearance);
+    const bool useDarkAppearance = options.contains(StyleColorOptions::UseDarkAppearance);
+    const bool forVisitedLink = options.contains(StyleColorOptions::ForVisitedLink);
 
     auto& cache = colorCache(options);
 
@@ -1571,7 +1571,7 @@ void RenderThemeMac::adjustMenuListStyle(RenderStyle& style, const Element* e) c
     // Set the foreground color to black or gray when we have the aqua look.
     Color c = Color::darkGray;
     if (e) {
-        OptionSet<StyleColor::Options> options = e->document().styleColorOptions(&style);
+        OptionSet<StyleColorOptions> options = e->document().styleColorOptions(&style);
         c = !e->isDisabledFormControl() ? systemColor(CSSValueButtontext, options) : systemColor(CSSValueGraytext, options);
     }
     style.setColor(c);

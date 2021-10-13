@@ -284,7 +284,7 @@ std::optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::
     if (!decoder.decode(parameters.mediaVolume))
         return std::nullopt;
 
-    std::optional<WebCore::MediaProducer::MutedStateFlags> mutedStateFlags;
+    std::optional<WebCore::MediaProducerMutedStateFlags> mutedStateFlags;
     decoder >> mutedStateFlags;
     if (!mutedStateFlags)
         return std::nullopt;

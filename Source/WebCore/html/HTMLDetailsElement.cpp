@@ -23,9 +23,11 @@
 #include "HTMLDetailsElement.h"
 
 #include "AXObjectCache.h"
+#include "DocumentInlines.h"
 #include "ElementIterator.h"
 #include "EventLoop.h"
 #include "EventNames.h"
+#include "GCReachableRef.h"
 #include "HTMLSlotElement.h"
 #include "HTMLSummaryElement.h"
 #include "LocalizedStrings.h"

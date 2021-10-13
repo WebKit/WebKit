@@ -55,7 +55,7 @@
 #include "DOMException.h"
 #include "DOMPatchSupport.h"
 #include "DOMWindow.h"
-#include "Document.h"
+#include "DocumentInlines.h"
 #include "DocumentType.h"
 #include "Editing.h"
 #include "Element.h"
