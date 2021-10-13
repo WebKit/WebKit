@@ -576,10 +576,14 @@ std::optional<InlineContentBreaker::PartialRun> InlineContentBreaker::tryBreakin
 
 void InlineContentBreaker::ContinuousContent::append(const InlineItem& inlineItem, const RenderStyle& style, InlineLayoutUnit logicalWidth, std::optional<InlineLayoutUnit> collapsibleWidth)
 {
+    ASSERT(inlineItem.isText() || inlineItem.isBox() || inlineItem.isInlineBoxStart() || inlineItem.isInlineBoxEnd());
     m_runs.append({ inlineItem, style, logicalWidth });
     m_logicalWidth = clampTo<InlineLayoutUnit>(m_logicalWidth + logicalWidth);
     if (!collapsibleWidth) {
-        m_collapsibleLogicalWidth = { };
+        if (inlineItem.isText() || inlineItem.isBox()) {
+            // Inline boxes do not prevent the trailing content from getting collapsed.
+            m_collapsibleLogicalWidth = { };
+        }
         return;
     }
     ASSERT(*collapsibleWidth <= logicalWidth);
