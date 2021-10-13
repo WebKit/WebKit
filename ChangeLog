@@ -1,3 +1,11 @@
+2021-10-13  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Add my github username to contributors.json
+
+        Unreviewed.
+
+        * metadata/contributors.json:
+
 2021-10-12  Alex Christensen  <achristensen@webkit.org>
 
         Add webpushd executable

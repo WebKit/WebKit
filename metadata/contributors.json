@@ -1281,7 +1281,8 @@
          "carlosgc@gnome.org",
          "carlosgc@webkit.org"
       ],
-      "expertise" : "The WebKitGTK Port, WebKit2, Glib unicode backend, GTK contributor, Epiphany contributor",
+      "expertise" : "WebKitGTK, WPE, WebDriver, networking",
+      "github" : "carlosgcampos",
       "name" : "Carlos Garcia Campos",
       "nicks" : [
          "KaL"
