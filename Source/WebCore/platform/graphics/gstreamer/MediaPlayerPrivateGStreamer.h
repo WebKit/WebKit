@@ -462,7 +462,7 @@ private:
     bool canSaveMediaData() const override;
 
     void purgeOldDownloadFiles(const String& downloadFilePrefixPath);
-    static void uriDecodeBinElementAddedCallback(GstBin*, GstElement*, MediaPlayerPrivateGStreamer*);
+    void configureDownloadBuffer(GstElement*);
     static void downloadBufferFileCreatedCallback(MediaPlayerPrivateGStreamer*);
 
     void setPlaybinURL(const URL& urlString);
