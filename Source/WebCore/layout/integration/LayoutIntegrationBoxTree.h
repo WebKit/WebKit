@@ -48,8 +48,8 @@ public:
     const RenderBlockFlow& flow() const { return m_flow; }
     RenderBlockFlow& flow() { return m_flow; }
 
-    const Layout::InitialContainingBlock& rootLayoutBox() const { return m_root; }
-    Layout::InitialContainingBlock& rootLayoutBox() { return m_root; }
+    const Layout::ContainerBox& rootLayoutBox() const { return m_root; }
+    Layout::ContainerBox& rootLayoutBox() { return m_root; }
 
     const Layout::Box& layoutBoxForRenderer(const RenderObject&) const;
     Layout::Box& layoutBoxForRenderer(const RenderObject&);
@@ -70,7 +70,7 @@ private:
     void appendChild(UniqueRef<Layout::Box>, RenderObject&);
 
     RenderBlockFlow& m_flow;
-    Layout::InitialContainingBlock m_root;
+    Layout::ContainerBox m_root;
     Vector<BoxAndRenderer, 1> m_boxes;
 
     HashMap<const RenderObject*, CheckedRef<Layout::Box>> m_rendererToBoxMap;

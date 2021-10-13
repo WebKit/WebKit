@@ -71,8 +71,10 @@ static std::unique_ptr<RenderStyle> rootBoxFirstLineStyle(const RenderBlockFlow&
 
 BoxTree::BoxTree(RenderBlockFlow& flow)
     : m_flow(flow)
-    , m_root(rootBoxStyle(flow.style()), rootBoxFirstLineStyle(flow))
+    , m_root(Layout::Box::ElementAttributes { }, rootBoxStyle(flow.style()), rootBoxFirstLineStyle(flow))
 {
+    m_root.setIsIntegrationBlockContainer();
+
     if (flow.isAnonymous())
         m_root.setIsAnonymous();
 
