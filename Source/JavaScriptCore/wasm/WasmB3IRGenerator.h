@@ -28,6 +28,7 @@
 #if ENABLE(WEBASSEMBLY_B3JIT)
 
 #include "B3Common.h"
+#include "B3Procedure.h"
 #include "CCallHelpers.h"
 #include "JITCompilation.h"
 #include "JITOpaqueByproducts.h"
@@ -41,10 +42,6 @@
 extern "C" void dumpProcedure(void*);
 
 namespace JSC {
-
-namespace B3 {
-class Procedure;
-}
 
 namespace Wasm {
 
