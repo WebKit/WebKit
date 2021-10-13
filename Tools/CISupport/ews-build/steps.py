@@ -1838,7 +1838,7 @@ class RunJavaScriptCoreTests(shell.Test):
     NUM_FAILURES_TO_DISPLAY_IN_STATUS = 5
 
     def __init__(self, **kwargs):
-        shell.Test.__init__(self, logEnviron=False, **kwargs)
+        shell.Test.__init__(self, logEnviron=False, sigtermTime=10, **kwargs)
         self.binaryFailures = []
         self.stressTestFailures = []
 
