@@ -46,6 +46,7 @@
 #include <iterator>
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/PrintStream.h>
 #include <wtf/text/Base64.h>
 #include <wtf/text/StringToIntegerConversion.h>
 
