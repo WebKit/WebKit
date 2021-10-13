@@ -54,6 +54,7 @@ private:
     void dumpProperties(WTF::TextStream&, ScrollingStateTreeAsTextBehavior) const override;
 
     FloatPoint computeLayerPosition() const;
+    FloatSize scrollDeltaSinceLastCommit() const;
 
     StickyPositionViewportConstraints m_constraints;
     RefPtr<Nicosia::CompositionLayer> m_layer;

@@ -111,6 +111,7 @@ void ScrollingTreeStickyNode::dumpProperties(TextStream& ts, ScrollingStateTreeA
 
 FloatPoint ScrollingTreeStickyNode::computeLayerPosition() const
 {
+    FloatSize offsetFromStickyAncestors;
     auto computeLayerPositionForScrollingNode = [&](ScrollingTreeNode& scrollingNode) {
         FloatRect constrainingRect;
         if (is<ScrollingTreeFrameScrollingNode>(scrollingNode)) {
@@ -121,6 +122,7 @@ FloatPoint ScrollingTreeStickyNode::computeLayerPosition() const
             constrainingRect = m_constraints.constrainingRectAtLastLayout();
             constrainingRect.move(overflowScrollingNode.scrollDeltaSinceLastCommit());
         }
+        constrainingRect.move(-offsetFromStickyAncestors);
         return m_constraints.layerPositionForConstrainingRect(constrainingRect);
     };
 
@@ -137,13 +139,22 @@ FloatPoint ScrollingTreeStickyNode::computeLayerPosition() const
         if (is<ScrollingTreeScrollingNode>(*ancestor))
             return computeLayerPositionForScrollingNode(*ancestor);
 
-        if (is<ScrollingTreeFixedNode>(*ancestor) || is<ScrollingTreeStickyNode>(*ancestor)) {
+        if (is<ScrollingTreeStickyNode>(*ancestor))
+            offsetFromStickyAncestors += downcast<ScrollingTreeStickyNode>(*ancestor).scrollDeltaSinceLastCommit();
+
+        if (is<ScrollingTreeFixedNode>(*ancestor)) {
             // FIXME: Do we need scrolling tree nodes at all for nested cases?
             return m_constraints.layerPositionAtLastLayout();
         }
     }
     ASSERT_NOT_REACHED();
     return m_constraints.layerPositionAtLastLayout();
+}
+
+FloatSize ScrollingTreeStickyNode::scrollDeltaSinceLastCommit() const
+{
+    auto layerPosition = computeLayerPosition();
+    return layerPosition - m_constraints.layerPositionAtLastLayout();
 }
 
 } // namespace WebCore

@@ -1,3 +1,19 @@
+2021-10-13  Martin Robinson  <mrobinson@webkit.org>
+
+        Sticky element inside another sticky element does not redraw properly on scroll
+        https://bugs.webkit.org/show_bug.cgi?id=199915
+        <rdar://problem/53375284>
+
+        Reviewed by Simon Fraser.
+
+        When calculating layer position for sticky nodes in the scrolling tree, take into
+        account situations where the sticky parents of sticky nodes don't stick (due to
+        sizing). This was handled properly in layout, but not in the scrolling tree, which
+        caused these kinds of nodes to jump around.
+
+        * scrollingcoordinator/mac/nested-sticky-with-nonsticking-sticky-parent-expected.html: Added.
+        * scrollingcoordinator/mac/nested-sticky-with-nonsticking-sticky-parent.html: Added.
+
 2021-10-12  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
 
         [GTK] Update test expectations for CSS web platform tests.
