@@ -183,6 +183,15 @@ RefPtr<JSC::Uint8ClampedArray> MediaSampleGStreamer::getRGBAImageData() const
     return JSC::Uint8ClampedArray::tryCreate(WTFMove(bufferStorage), 0, byteLength);
 }
 
+void MediaSampleGStreamer::extendToTheBeginning()
+{
+    // Only to be used with the first sample, as a hack for lack of support for edit lists.
+    // See AppendPipeline::appsinkNewSample()
+    ASSERT(m_dts == MediaTime::zeroTime());
+    m_duration += m_pts;
+    m_pts = MediaTime::zeroTime();
+}
+
 void MediaSampleGStreamer::setTimestamps(const MediaTime& presentationTime, const MediaTime& decodeTime)
 {
     m_pts = presentationTime;
