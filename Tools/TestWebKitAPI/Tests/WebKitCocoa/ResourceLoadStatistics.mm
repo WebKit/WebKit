@@ -520,6 +520,8 @@ void waitUntilTwoServersConnected(const unsigned& serversConnected, CompletionHa
     }).get());
 }
 
+// FIXME: Re-enable this test once webkit.org/b/231366 is resolved.
+#if PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED < 150000
 TEST(ResourceLoadStatistics, DataTaskIdentifierCollision)
 {
     using namespace TestWebKitAPI;
@@ -588,6 +590,7 @@ TEST(ResourceLoadStatistics, DataTaskIdentifierCollision)
     EXPECT_TRUE(contains(messages, "1"));
     EXPECT_TRUE(contains(messages, "2"));
 }
+#endif
 
 TEST(ResourceLoadStatistics, NoMessagesWhenNotTesting)
 {

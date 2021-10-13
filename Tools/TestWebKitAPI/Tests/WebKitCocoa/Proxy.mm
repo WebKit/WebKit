@@ -75,6 +75,8 @@
 
 namespace TestWebKitAPI {
 
+// FIXME: Re-enable this test once webkit.org/b/231396 is resolved.
+#if PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED < 150000
 TEST(WebKit, HTTPSProxy)
 {
     HTTPServer server(HTTPServer::respondWithOK, HTTPServer::Protocol::HttpsProxy);
@@ -92,6 +94,7 @@ TEST(WebKit, HTTPSProxy)
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/"]]];
     EXPECT_WK_STREQ([delegate waitForAlert], "success!");
 }
+#endif
 
 TEST(WebKit, SOCKS5)
 {

@@ -69,6 +69,8 @@ TEST(WKWebViewPausePlayingAudioTests, InWindow)
     Util::run(&isPlaying);
 }
 
+// FIXME: Re-enable this test once webkit.org/b/230321 is resolved.
+#if PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED < 150000
 TEST(WKWebViewPausePlayingAudioTests, OutOfWindow)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100) configuration:autoplayingConfiguration().get() addToWindow:YES]);
@@ -102,6 +104,7 @@ TEST(WKWebViewPausePlayingAudioTests, OutOfWindow)
 
     Util::run(&isPlaying);
 }
+#endif
 
 }
 
