@@ -34,7 +34,6 @@ namespace WebCore {
 template<typename> class DOMPromiseDeferred;
 
 class FileSystemStorageConnection;
-enum class PermissionState : uint8_t;
 
 class FileSystemHandle : public RefCounted<FileSystemHandle> {
     WTF_MAKE_ISO_ALLOCATED(FileSystemHandle);
@@ -50,6 +49,7 @@ public:
     FileSystemHandleIdentifier identifier() const { return m_identifier; }
 
     void isSameEntry(FileSystemHandle&, DOMPromiseDeferred<IDLBoolean>&&) const;
+    void move(FileSystemHandle&, const String& newName, DOMPromiseDeferred<void>&&);
 
 protected:
     FileSystemHandle(Kind, String&& name, FileSystemHandleIdentifier, Ref<FileSystemStorageConnection>&&);

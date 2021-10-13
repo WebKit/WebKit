@@ -54,4 +54,17 @@ void FileSystemHandle::isSameEntry(FileSystemHandle& handle, DOMPromiseDeferred<
     });
 }
 
+void FileSystemHandle::move(FileSystemHandle& destinationHandle, const String& newName, DOMPromiseDeferred<void>&& promise)
+{
+    if (destinationHandle.kind() != Kind::Directory)
+        return promise.reject(Exception { TypeMismatchError });
+
+    m_connection->move(m_identifier, destinationHandle.identifier(), newName, [this, protectedThis = Ref { *this }, newName, promise = WTFMove(promise)](auto result) mutable {
+        if (!result.hasException())
+            m_name = newName;
+
+        promise.settle(WTFMove(result));
+    });
+}
+
 } // namespace WebCore

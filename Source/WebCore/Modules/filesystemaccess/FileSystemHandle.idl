@@ -38,4 +38,5 @@ enum FileSystemHandleKind {
     readonly attribute USVString name;
 
     Promise<boolean> isSameEntry(FileSystemHandle other);
+    Promise<undefined> move(FileSystemHandle destination, USVString newName);
 };

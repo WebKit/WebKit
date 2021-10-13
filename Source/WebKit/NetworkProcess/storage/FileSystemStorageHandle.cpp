@@ -72,6 +72,11 @@ bool FileSystemStorageHandle::isSameEntry(WebCore::FileSystemHandleIdentifier id
     return m_path == path;
 }
 
+static bool isValidFileName(const String& name)
+{
+    return name != "." && name != ".." && !name.contains(pathSeparator);
+}
+
 Expected<WebCore::FileSystemHandleIdentifier, FileSystemStorageError> FileSystemStorageHandle::requestCreateHandle(IPC::Connection::UniqueID connection, Type type, String&& name, bool createIfNecessary)
 {
     if (m_type != FileSystemStorageHandle::Type::Directory)
@@ -81,7 +86,7 @@ Expected<WebCore::FileSystemHandleIdentifier, FileSystemStorageError> FileSystem
         return makeUnexpected(FileSystemStorageError::Unknown);
 
     // https://wicg.github.io/file-system-access/#valid-file-name
-    if (name == "." || name == ".." || name.contains(pathSeparator))
+    if (!isValidFileName(name))
         return makeUnexpected(FileSystemStorageError::InvalidName);
 
     auto path = FileSystem::pathByAppendingComponent(m_path, name);
@@ -252,6 +257,38 @@ Expected<std::pair<WebCore::FileSystemHandleIdentifier, bool>, FileSystemStorage
     auto resultType = m_manager->getType(result.value());
     ASSERT(resultType != FileSystemStorageHandle::Type::Any);
     return std::pair { result.value(), resultType == FileSystemStorageHandle::Type::Directory };
+}
+
+std::optional<FileSystemStorageError> FileSystemStorageHandle::move(WebCore::FileSystemHandleIdentifier destinationIdentifier, const String& newName)
+{
+    if (!m_manager)
+        return FileSystemStorageError::Unknown;
+
+    // Do not move file if there is ongoing operation.
+    if (m_activeSyncAccessHandle)
+        return FileSystemStorageError::InvalidState;
+
+    if (m_manager->getType(destinationIdentifier) != Type::Directory)
+        return FileSystemStorageError::TypeMismatch;
+
+    auto path = m_manager->getPath(destinationIdentifier);
+    if (path.isEmpty())
+        return FileSystemStorageError::Unknown;
+
+    if (!isValidFileName(newName))
+        return FileSystemStorageError::InvalidName;
+
+    auto destinationPath = FileSystem::pathByAppendingComponent(path, newName);
+    if (FileSystem::fileExists(destinationPath))
+        return FileSystemStorageError::Unknown;
+
+    if (!FileSystem::moveFile(m_path, destinationPath))
+        return FileSystemStorageError::Unknown;
+
+    m_path = destinationPath;
+    m_name = newName;
+
+    return std::nullopt;
 }
 
 } // namespace WebKit

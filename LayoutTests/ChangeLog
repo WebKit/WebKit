@@ -1,3 +1,19 @@
+2021-10-13  Sihui Liu  <sihui_liu@apple.com>
+
+        Implement FileSystemHandle move()
+        https://bugs.webkit.org/show_bug.cgi?id=231676
+        <rdar://problem/84199823>
+
+        Reviewed by Youenn Fablet.
+
+        * storage/filesystemaccess/handle-move-expected.txt: Added.
+        * storage/filesystemaccess/handle-move-worker-expected.txt: Added.
+        * storage/filesystemaccess/handle-move-worker.html: Added.
+        * storage/filesystemaccess/handle-move.html: Added.
+        * storage/filesystemaccess/resources/handle-move.js: Added.
+        (finishTest):
+        (async test):
+
 2021-10-13  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WinCairo] Unreviewed test gardening

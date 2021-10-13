@@ -1,0 +1,22 @@
+This test checks move() of FileSystemHandle.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Test basic move:
+PASS fileHandle.name is "file"
+PASS fileHandle.name is "newFile"
+PASS getFileHandleError.toString() is "NotFoundError: The object can not be found here."
+PASS fileHandle2.name is "newFile"
+PASS fileHandle2.kind is "file"
+Test move to a file handle:
+PASS moveFileError.toString() is "TypeMismatchError: The type of an object was incompatible with the expected type of the parameter associated to the object."
+Test move to a destination with existing file:
+PASS moveFileError.toString() is "UnknownError: The operation failed for an unknown transient reason (e.g. out of memory)."
+Test move with an invalid name:
+PASS moveFileError.toString() is "UnknownError: Name is invalid"
+PASS moveFileError.toString() is "UnknownError: Name is invalid"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

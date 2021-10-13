@@ -195,4 +195,14 @@ void WebFileSystemStorageConnection::getHandle(WebCore::FileSystemHandleIdentifi
     });
 }
 
+void WebFileSystemStorageConnection::move(WebCore::FileSystemHandleIdentifier identifier, WebCore::FileSystemHandleIdentifier destinationIdentifier, const String& newName, VoidCallback&& completionHandler)
+{
+    if (!m_connection)
+        return completionHandler(WebCore::Exception { WebCore::UnknownError, "Connection is lost" });
+
+    m_connection->sendWithAsyncReply(Messages::NetworkStorageManager::Move(identifier, destinationIdentifier, newName), [completionHandler = WTFMove(completionHandler)](auto error) mutable {
+        completionHandler(convertToExceptionOr(error));
+    });
+}
+
 } // namespace WebKit

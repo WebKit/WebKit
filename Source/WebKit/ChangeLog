@@ -1,3 +1,25 @@
+2021-10-13  Sihui Liu  <sihui_liu@apple.com>
+
+        Implement FileSystemHandle move()
+        https://bugs.webkit.org/show_bug.cgi?id=231676
+        <rdar://problem/84199823>
+
+        Reviewed by Youenn Fablet.
+
+        * NetworkProcess/storage/FileSystemStorageHandle.cpp:
+        (WebKit::isValidFileName):
+        (WebKit::FileSystemStorageHandle::requestCreateHandle):
+        (WebKit::FileSystemStorageHandle::removeEntry):
+        (WebKit::FileSystemStorageHandle::move):
+        * NetworkProcess/storage/FileSystemStorageHandle.h:
+        * NetworkProcess/storage/NetworkStorageManager.cpp:
+        (WebKit::NetworkStorageManager::move):
+        * NetworkProcess/storage/NetworkStorageManager.h:
+        * NetworkProcess/storage/NetworkStorageManager.messages.in:
+        * WebProcess/WebCoreSupport/WebFileSystemStorageConnection.cpp:
+        (WebKit::WebFileSystemStorageConnection::move):
+        * WebProcess/WebCoreSupport/WebFileSystemStorageConnection.h:
+
 2021-10-13  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Support both VK and VKC-prefixed SPI when softlinking VisionKitCore classes
