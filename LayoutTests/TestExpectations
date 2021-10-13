@@ -1124,6 +1124,16 @@ media/video-supports-fullscreen.html [ Skip ]
 # Support for VP9 encoded videos with transparency is only available on ports that use GStreamer.
 media/video-with-alpha.html [ Skip ]
 
+# accent-color is currently only supported on macOS
+fast/css/accent-color/checkbox.html [ ImageOnlyFailure ]
+fast/css/accent-color/datalist.html [ ImageOnlyFailure ]
+fast/css/accent-color/progress.html [ ImageOnlyFailure ]
+fast/css/accent-color/radio.html [ ImageOnlyFailure ]
+fast/css/accent-color/range.html [ ImageOnlyFailure ]
+fast/css/accent-color/select.html [ ImageOnlyFailure ]
+fast/css/accent-color/text.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-ui/accent-color-checkbox-checked-001.tentative.html [ ImageOnlyFailure ]
+
 #//////////////////////////////////////////////////////////////////////////////////////////
 # End platform-specific tests.
 #//////////////////////////////////////////////////////////////////////////////////////////

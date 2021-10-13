@@ -31,6 +31,7 @@
 
 namespace WebCore {
 
+class Color;
 class ControlStates;
 class FloatRect;
 class FontCascade;
@@ -68,7 +69,8 @@ public:
     virtual bool controlRequiresPreWhiteSpace(ControlPart) const;
 
     // Method for painting a control. The rect is in zoomed coordinates.
-    virtual void paint(ControlPart, ControlStates&, GraphicsContext&, const FloatRect& zoomedRect, float zoomFactor, ScrollView*, float deviceScaleFactor, float pageScaleFactor, bool useSystemAppearance, bool useDarkAppearance);
+    // FIXME: <https://webkit.org/b/231637> Move parameters to a struct.
+    virtual void paint(ControlPart, ControlStates&, GraphicsContext&, const FloatRect& zoomedRect, float zoomFactor, ScrollView*, float deviceScaleFactor, float pageScaleFactor, bool useSystemAppearance, bool useDarkAppearance, const Color& tintColor);
 
     // Some controls may spill out of their containers (e.g., the check on an OS X checkbox).  When these controls repaint,
     // the theme needs to communicate this inflated rect to the engine so that it can invalidate the whole control.

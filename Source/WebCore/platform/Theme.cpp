@@ -26,6 +26,7 @@
 #include "config.h"
 #include "Theme.h"
 
+#include "Color.h"
 #include "GraphicsContext.h"
 #include "LengthBox.h"
 #include "LengthSize.h"
@@ -69,7 +70,7 @@ bool Theme::controlRequiresPreWhiteSpace(ControlPart) const
     return false;
 }
 
-void Theme::paint(ControlPart, ControlStates&, GraphicsContext&, const FloatRect&, float, ScrollView*, float, float, bool, bool)
+void Theme::paint(ControlPart, ControlStates&, GraphicsContext&, const FloatRect&, float, ScrollView*, float, float, bool, bool, const Color&)
 {
 }
 

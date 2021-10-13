@@ -1859,8 +1859,6 @@ public:
     const Color& textStrokeColor() const { return m_rareInheritedData->textStrokeColor; }
     const Color& caretColor() const { return m_rareInheritedData->caretColor; }
     bool hasAutoCaretColor() const { return m_rareInheritedData->hasAutoCaretColor; }
-    const Color& accentColor() const { return m_rareInheritedData->accentColor; }
-    bool hasAutoAccentColor() const { return m_rareInheritedData->hasAutoAccentColor; }
     const Color& visitedLinkColor() const;
     const Color& visitedLinkBackgroundColor() const { return m_rareNonInheritedData->visitedLinkBackgroundColor; }
     const Color& visitedLinkBorderLeftColor() const { return m_rareNonInheritedData->visitedLinkBorderLeftColor; }
@@ -1880,6 +1878,10 @@ public:
     const Color& stopColor() const { return svgStyle().stopColor(); }
     const Color& floodColor() const { return svgStyle().floodColor(); }
     const Color& lightingColor() const { return svgStyle().lightingColor(); }
+
+    Color effectiveAccentColor() const;
+    const Color& accentColor() const { return m_rareInheritedData->accentColor; }
+    bool hasAutoAccentColor() const { return m_rareInheritedData->hasAutoAccentColor; }
 
 private:
     struct NonInheritedFlags {

@@ -228,7 +228,7 @@ LengthBox ThemeAdwaita::controlBorder(ControlPart part, const FontCascade& font,
     return Theme::controlBorder(part, font, zoomedBox, zoomFactor);
 }
 
-void ThemeAdwaita::paint(ControlPart part, ControlStates& states, GraphicsContext& context, const FloatRect& zoomedRect, float, ScrollView*, float, float, bool, bool useDarkAppearance)
+void ThemeAdwaita::paint(ControlPart part, ControlStates& states, GraphicsContext& context, const FloatRect& zoomedRect, float, ScrollView*, float, float, bool, bool useDarkAppearance, const Color&)
 {
     switch (part) {
     case CheckboxPart:

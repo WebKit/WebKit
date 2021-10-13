@@ -1,3 +1,13 @@
+2021-10-13  Aditya Keerthi  <akeerthi@apple.com>
+
+        [macOS] Add support for accent-color
+        https://bugs.webkit.org/show_bug.cgi?id=231464
+        rdar://84049511
+
+        Reviewed by Tim Horton.
+
+        * pal/spi/mac/NSAppearanceSPI.h:
+
 2021-10-12  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Move some staged VisionKitCore SPI into VisionKitCoreSPI.h

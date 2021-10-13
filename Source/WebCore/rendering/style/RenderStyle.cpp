@@ -2173,6 +2173,17 @@ Color RenderStyle::colorByApplyingColorFilter(const Color& color) const
     return transformedColor;
 }
 
+Color RenderStyle::effectiveAccentColor() const
+{
+    if (hasAutoAccentColor())
+        return { };
+
+    if (hasAppleColorFilter())
+        return colorByApplyingColorFilter(colorResolvingCurrentColor(accentColor()));
+
+    return colorResolvingCurrentColor(accentColor());
+}
+
 const BorderValue& RenderStyle::borderBefore() const
 {
     switch (writingMode()) {

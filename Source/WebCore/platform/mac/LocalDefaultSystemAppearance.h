@@ -33,6 +33,8 @@
 OBJC_CLASS NSAppearance;
 
 namespace WebCore {
+
+class Color;
     
 // This class automatically saves and restores the current NSAppearance for
 // functions which call out into AppKit and rely on the current NSAppearance being set
@@ -40,7 +42,7 @@ class LocalDefaultSystemAppearance {
     WTF_MAKE_NONCOPYABLE(LocalDefaultSystemAppearance);
 
 public:
-    WEBCORE_EXPORT LocalDefaultSystemAppearance(bool useDarkAppearance);
+    WEBCORE_EXPORT LocalDefaultSystemAppearance(bool useDarkAppearance, const Color& tintColor = { });
     WEBCORE_EXPORT ~LocalDefaultSystemAppearance();
 
     bool usingDarkAppearance() const

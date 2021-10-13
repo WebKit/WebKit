@@ -382,7 +382,7 @@ bool RenderThemeAdwaita::paintMenuList(const RenderObject& renderObject, const P
     if (isHovered(renderObject))
         states.add(ControlStates::States::Hovered);
     ControlStates controlStates(states);
-    Theme::singleton().paint(ButtonPart, controlStates, graphicsContext, rect, 1., nullptr, 1., 1., false, renderObject.useDarkAppearance());
+    Theme::singleton().paint(ButtonPart, controlStates, graphicsContext, rect, 1., nullptr, 1., 1., false, renderObject.useDarkAppearance(), renderObject.style().effectiveAccentColor());
 
     FloatRect fieldRect = rect;
     fieldRect.inflate(menuListButtonBorderSize);

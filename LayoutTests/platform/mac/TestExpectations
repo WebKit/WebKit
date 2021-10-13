@@ -2345,6 +2345,17 @@ webkit.org/b/229517 imported/w3c/web-platform-tests/webrtc-extensions/RTCRtpSync
 
 webkit.org/b/230116 imported/w3c/web-platform-tests/webrtc-extensions/transfer-datachannel.html [ Pass Failure ]
 
+# accent-color is currently only supported on macOS
+fast/css/accent-color/checkbox.html [ Pass ]
+fast/css/accent-color/progress.html [ Pass ]
+fast/css/accent-color/radio.html [ Pass ]
+fast/css/accent-color/select.html [ Pass ]
+fast/css/accent-color/text.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-ui/accent-color-checkbox-checked-001.tentative.html [ Pass ]
+
+webkit.org/b/199350 fast/css/accent-color/datalist.html [ ImageOnlyFailure ]
+webkit.org/b/231463 fast/css/accent-color/range.html [ ImageOnlyFailure ]
+
 # display-p3 canvas and ImageData are Cocoa only for now.
 [ Monterey+ ] fast/canvas/canvas-color-space-display-p3-ImageData.html [ Pass ]
 [ Monterey+ ] fast/canvas/canvas-color-space-display-p3.html [ Pass ]

@@ -1310,6 +1310,8 @@ bool RenderThemeMac::paintProgressBar(const RenderObject& renderObject, const Pa
     if (!is<RenderProgress>(renderObject))
         return true;
 
+    LocalDefaultSystemAppearance localAppearance(renderObject.useDarkAppearance(), renderObject.style().effectiveAccentColor());
+
     IntRect inflatedRect = progressBarRectForBounds(renderObject, rect);
     NSControlSize controlSize = controlSizeForFont(renderObject.style());
     const auto& renderProgress = downcast<RenderProgress>(renderObject);
@@ -1662,7 +1664,7 @@ void RenderThemeMac::setPopupButtonCellState(const RenderObject& o, const IntSiz
 
 void RenderThemeMac::paintCellAndSetFocusedElementNeedsRepaintIfNecessary(NSCell* cell, const RenderObject& renderer, const PaintInfo& paintInfo, const FloatRect& rect)
 {
-    LocalDefaultSystemAppearance localAppearance(renderer.useDarkAppearance());
+    LocalDefaultSystemAppearance localAppearance(renderer.useDarkAppearance(), renderer.style().effectiveAccentColor());
     bool shouldDrawFocusRing = isFocused(renderer) && renderer.style().outlineStyleIsAuto() == OutlineIsAuto::On;
     bool shouldDrawCell = true;
     if (ThemeMac::drawCellOrFocusRingWithViewIntoContext(cell, paintInfo.context(), rect, documentViewFor(renderer), shouldDrawCell, shouldDrawFocusRing, renderer.page().deviceScaleFactor()))

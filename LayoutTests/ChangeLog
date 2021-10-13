@@ -1,3 +1,31 @@
+2021-10-13  Aditya Keerthi  <akeerthi@apple.com>
+
+        [macOS] Add support for accent-color
+        https://bugs.webkit.org/show_bug.cgi?id=231464
+        rdar://84049511
+
+        Reviewed by Tim Horton.
+
+        Added ref tests for accent-color. These are not WPT, since the spec does
+        not specify which controls accent-color applies to.
+
+        * TestExpectations:
+        * fast/css/accent-color/checkbox-expected-mismatch.html: Added.
+        * fast/css/accent-color/checkbox.html: Added.
+        * fast/css/accent-color/datalist-expected-mismatch.html: Added.
+        * fast/css/accent-color/datalist.html: Added.
+        * fast/css/accent-color/progress-expected-mismatch.html: Added.
+        * fast/css/accent-color/progress.html: Added.
+        * fast/css/accent-color/radio-expected-mismatch.html: Added.
+        * fast/css/accent-color/radio.html: Added.
+        * fast/css/accent-color/range-expected-mismatch.html: Added.
+        * fast/css/accent-color/range.html: Added.
+        * fast/css/accent-color/select-expected-mismatch.html: Added.
+        * fast/css/accent-color/select.html: Added.
+        * fast/css/accent-color/text-expected.html: Added.
+        * fast/css/accent-color/text.html: Added.
+        * platform/mac/TestExpectations:
+
 2021-10-13  Eric Hutchison  <ehutchison@apple.com>
 
         [ iOS15 Catalina Debug ] requestidlecallback/requestidlecallback-document-gc.html is a flaky crash.
