@@ -1,3 +1,9 @@
+2021-10-13  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo] Unreviewed test gardening
+
+        * platform/wincairo/TestExpectations:
+
 2021-10-13  Eric Hutchison  <ehutchison@apple.com>
 
         Update test expectations for fast/events/ios/dom-update-on-keydown-quirk.html.
