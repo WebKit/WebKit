@@ -1,3 +1,13 @@
+2021-10-13  Eric Hutchison  <ehutchison@apple.com>
+
+        [ iOS15 Catalina Debug ] requestidlecallback/requestidlecallback-document-gc.html is a flaky crash.
+        https://bugs.webkit.org/show_bug.cgi?id=231684.
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+        * platform/mac-wk1/TestExpectations:
+
 2021-10-13  Chris Dumez  <cdumez@apple.com>
 
         MessagePort messages sent in iframe unload event not received
