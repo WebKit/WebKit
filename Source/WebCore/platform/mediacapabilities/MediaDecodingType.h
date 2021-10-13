@@ -27,9 +27,10 @@
 
 namespace WebCore {
 
-enum class MediaDecodingType : bool {
+enum class MediaDecodingType : uint8_t {
     File,
     MediaSource,
+    WebRTC
 };
 
 }
@@ -40,7 +41,8 @@ template<> struct EnumTraits<WebCore::MediaDecodingType> {
     using values = EnumValues<
         WebCore::MediaDecodingType,
         WebCore::MediaDecodingType::File,
-        WebCore::MediaDecodingType::MediaSource
+        WebCore::MediaDecodingType::MediaSource,
+        WebCore::MediaDecodingType::WebRTC
     >;
 };
 

@@ -63,8 +63,20 @@ static std::optional<MediaCapabilitiesInfo> computeMediaCapabilitiesInfo(const M
     if (configuration.video) {
         auto& videoConfiguration = configuration.video.value();
         MediaEngineSupportParameters parameters { };
+
+        switch (configuration.type) {
+        case MediaDecodingType::File:
+            parameters.isMediaSource = false;
+            break;
+        case MediaDecodingType::MediaSource:
+            parameters.isMediaSource = true;
+            break;
+        case MediaDecodingType::WebRTC:
+            ASSERT_NOT_REACHED();
+            return std::nullopt;
+        }
+
         parameters.type = ContentType(videoConfiguration.contentType);
-        parameters.isMediaSource = configuration.type == MediaDecodingType::MediaSource;
         if (MediaPlayer::supportsType(parameters) != MediaPlayer::SupportsType::IsSupported)
             return std::nullopt;
 

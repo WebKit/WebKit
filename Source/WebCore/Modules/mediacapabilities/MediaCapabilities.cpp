@@ -32,6 +32,7 @@
 #include "JSDOMPromiseDeferred.h"
 #include "JSMediaCapabilitiesDecodingInfo.h"
 #include "JSMediaCapabilitiesEncodingInfo.h"
+#include "LibWebRTCProvider.h"
 #include "Logging.h"
 #include "MediaCapabilitiesDecodingInfo.h"
 #include "MediaCapabilitiesEncodingInfo.h"
@@ -39,6 +40,7 @@
 #include "MediaDecodingConfiguration.h"
 #include "MediaEncodingConfiguration.h"
 #include "MediaEngineConfigurationFactory.h"
+#include "Page.h"
 #include "Settings.h"
 #include <wtf/Logger.h>
 #include <wtf/RobinHoodHashSet.h>
@@ -195,7 +197,7 @@ void MediaCapabilities::decodingInfo(Document& document, MediaDecodingConfigurat
     // 4. Let p be a new promise.
     // 5. In parallel, run the create a MediaCapabilitiesInfo algorithm with configuration and resolve p with its result.
     // 6. Return p.
-    document.eventLoop().queueTask(TaskSource::MediaElement, [configuration = WTFMove(configuration), promise = WTFMove(promise), logger = WTFMove(logger), identifier = WTFMove(identifier)] () mutable {
+    document.eventLoop().queueTask(TaskSource::MediaElement, [configuration = WTFMove(configuration), promise = WTFMove(promise), logger = WTFMove(logger), identifier = WTFMove(identifier), document = Ref { document }] () mutable {
 
         // 2.2.3 If configuration is of type MediaDecodingConfiguration, run the following substeps:
         MediaEngineConfigurationFactory::DecodingConfigurationCallback callback = [promise = WTFMove(promise), logger = WTFMove(logger), identifier = WTFMove(identifier)] (auto info) mutable {
@@ -215,6 +217,14 @@ void MediaCapabilities::decodingInfo(Document& document, MediaDecodingConfigurat
 #endif
             promise->resolve<IDLDictionary<MediaCapabilitiesDecodingInfo>>(WTFMove(info));
         };
+
+#if ENABLE(WEB_RTC)
+        if (configuration.type == MediaDecodingType::WebRTC) {
+            if (auto* page = document->page())
+                page->libWebRTCProvider().createDecodingConfiguration(WTFMove(configuration), WTFMove(callback));
+            return;
+        }
+#endif
 
         MediaEngineConfigurationFactory::createDecodingConfiguration(WTFMove(configuration), WTFMove(callback));
     });
@@ -236,8 +246,7 @@ void MediaCapabilities::encodingInfo(Document& document, MediaEncodingConfigurat
     // 4. Let p be a new promise.
     // 5. In parallel, run the create a MediaCapabilitiesInfo algorithm with configuration and resolve p with its result.
     // 6. Return p.
-    document.eventLoop().queueTask(TaskSource::MediaElement, [configuration = WTFMove(configuration), promise = WTFMove(promise)] () mutable {
-
+    document.eventLoop().queueTask(TaskSource::MediaElement, [configuration = WTFMove(configuration), promise = WTFMove(promise),  document = Ref { document }] () mutable {
         // 2.2.4. If configuration is of type MediaEncodingConfiguration, run the following substeps:
         MediaEngineConfigurationFactory::EncodingConfigurationCallback callback = [promise = WTFMove(promise)] (auto info) mutable {
             // 2.2.4.1. If the user agent is able to encode the media
@@ -256,6 +265,14 @@ void MediaCapabilities::encodingInfo(Document& document, MediaEncodingConfigurat
             // encoding modules.
             promise->resolve<IDLDictionary<MediaCapabilitiesEncodingInfo>>(WTFMove(info));
         };
+
+#if ENABLE(WEB_RTC)
+        if (configuration.type == MediaEncodingType::WebRTC) {
+            if (auto* page = document->page())
+                page->libWebRTCProvider().createEncodingConfiguration(WTFMove(configuration), WTFMove(callback));
+            return;
+        }
+#endif
 
         MediaEngineConfigurationFactory::createEncodingConfiguration(WTFMove(configuration), WTFMove(callback));
 

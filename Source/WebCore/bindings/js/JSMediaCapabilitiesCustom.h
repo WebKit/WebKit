@@ -31,12 +31,20 @@ namespace WebCore {
 
 ALWAYS_INLINE bool JSMediaCapabilitiesEncodingInfoIsEnabled()
 {
+#if ENABLE(WEB_RTC)
+    return true;
+#else
     return MediaEngineConfigurationFactory::hasEncodingConfigurationFactory();
+#endif
 }
 
 ALWAYS_INLINE bool JSMediaCapabilitiesDecodingInfoIsEnabled()
 {
+#if ENABLE(WEB_RTC)
+    return true;
+#else
     return MediaEngineConfigurationFactory::hasDecodingConfigurationFactory();
+#endif
 }
 
 }

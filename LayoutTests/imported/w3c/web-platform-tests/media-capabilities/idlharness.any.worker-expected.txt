@@ -1,0 +1,39 @@
+
+PASS idlharness
+PASS idl_test setup
+PASS idl_test validation
+PASS Partial interface Navigator: original interface defined
+PASS Partial interface Navigator: valid exposure set
+PASS Partial interface Navigator: member names are unique
+PASS Partial interface WorkerNavigator: original interface defined
+PASS Partial interface WorkerNavigator: valid exposure set
+PASS Partial interface WorkerNavigator: member names are unique
+PASS Partial interface mixin NavigatorID: member names are unique
+PASS Navigator includes NavigatorID: member names are unique
+PASS Navigator includes NavigatorLanguage: member names are unique
+PASS Navigator includes NavigatorOnLine: member names are unique
+PASS Navigator includes NavigatorContentUtils: member names are unique
+PASS Navigator includes NavigatorCookies: member names are unique
+PASS Navigator includes NavigatorPlugins: member names are unique
+PASS Navigator includes NavigatorConcurrentHardware: member names are unique
+PASS WorkerNavigator includes NavigatorID: member names are unique
+PASS WorkerNavigator includes NavigatorLanguage: member names are unique
+PASS WorkerNavigator includes NavigatorOnLine: member names are unique
+PASS WorkerNavigator includes NavigatorConcurrentHardware: member names are unique
+FAIL MediaCapabilities interface: existence and properties of interface object assert_own_property: self does not have own property "MediaCapabilities" expected property "MediaCapabilities" missing
+FAIL MediaCapabilities interface object length assert_own_property: self does not have own property "MediaCapabilities" expected property "MediaCapabilities" missing
+FAIL MediaCapabilities interface object name assert_own_property: self does not have own property "MediaCapabilities" expected property "MediaCapabilities" missing
+FAIL MediaCapabilities interface: existence and properties of interface prototype object assert_own_property: self does not have own property "MediaCapabilities" expected property "MediaCapabilities" missing
+FAIL MediaCapabilities interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "MediaCapabilities" expected property "MediaCapabilities" missing
+FAIL MediaCapabilities interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "MediaCapabilities" expected property "MediaCapabilities" missing
+FAIL MediaCapabilities interface: operation decodingInfo(MediaDecodingConfiguration) assert_own_property: self does not have own property "MediaCapabilities" expected property "MediaCapabilities" missing
+FAIL MediaCapabilities interface: operation encodingInfo(MediaEncodingConfiguration) assert_own_property: self does not have own property "MediaCapabilities" expected property "MediaCapabilities" missing
+FAIL MediaCapabilities must be primary interface of navigator.mediaCapabilities assert_equals: wrong typeof object expected "object" but got "undefined"
+FAIL Stringification of navigator.mediaCapabilities assert_equals: wrong typeof object expected "object" but got "undefined"
+FAIL MediaCapabilities interface: navigator.mediaCapabilities must inherit property "decodingInfo(MediaDecodingConfiguration)" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
+FAIL MediaCapabilities interface: calling decodingInfo(MediaDecodingConfiguration) on navigator.mediaCapabilities with too few arguments must throw TypeError assert_equals: wrong typeof object expected "object" but got "undefined"
+FAIL MediaCapabilities interface: navigator.mediaCapabilities must inherit property "encodingInfo(MediaEncodingConfiguration)" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
+FAIL MediaCapabilities interface: calling encodingInfo(MediaEncodingConfiguration) on navigator.mediaCapabilities with too few arguments must throw TypeError assert_equals: wrong typeof object expected "object" but got "undefined"
+FAIL WorkerNavigator interface: attribute mediaCapabilities assert_true: The prototype object must have a property "mediaCapabilities" expected true got false
+FAIL WorkerNavigator interface: navigator must inherit property "mediaCapabilities" with the proper type assert_inherits: property "mediaCapabilities" not found in prototype chain
+

@@ -25,5 +25,6 @@
 
 enum MediaDecodingType {
   "file",
-  "media-source"
+  "media-source",
+  "webrtc"
 };

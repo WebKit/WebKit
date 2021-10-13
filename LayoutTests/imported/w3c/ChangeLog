@@ -1,3 +1,31 @@
+2021-10-13  Youenn Fablet  <youenn@apple.com>
+
+        Add support for WebRTC media capabilities
+        https://bugs.webkit.org/show_bug.cgi?id=231568
+
+        Reviewed by Eric Carlson.
+
+        * resources/import-expectations.json:
+        * web-platform-tests/media-capabilities/META.yml: Added.
+        * web-platform-tests/media-capabilities/README.md: Added.
+        * web-platform-tests/media-capabilities/decodingInfo.any-expected.txt: Added.
+        * web-platform-tests/media-capabilities/decodingInfo.any.html: Added.
+        * web-platform-tests/media-capabilities/decodingInfo.any.js: Added.
+        * web-platform-tests/media-capabilities/decodingInfo.any.worker-expected.txt: Added.
+        * web-platform-tests/media-capabilities/decodingInfo.any.worker.html: Added.
+        * web-platform-tests/media-capabilities/decodingInfo.webrtc-expected.txt: Added.
+        * web-platform-tests/media-capabilities/decodingInfo.webrtc.html: Added.
+        * web-platform-tests/media-capabilities/encodingInfo-expected.txt: Added.
+        * web-platform-tests/media-capabilities/encodingInfo.html: Added.
+        * web-platform-tests/media-capabilities/encodingInfo.webrtc-expected.txt: Added.
+        * web-platform-tests/media-capabilities/encodingInfo.webrtc.html: Added.
+        * web-platform-tests/media-capabilities/idlharness.any-expected.txt: Added.
+        * web-platform-tests/media-capabilities/idlharness.any.html: Added.
+        * web-platform-tests/media-capabilities/idlharness.any.js: Added.
+        * web-platform-tests/media-capabilities/idlharness.any.worker-expected.txt: Added.
+        * web-platform-tests/media-capabilities/idlharness.any.worker.html: Added.
+        * web-platform-tests/media-capabilities/w3c-import.log: Added.
+
 2021-10-12  Kate Cheney  <katherine_cheney@apple.com>
 
         CSP: Implement unsafe-hashes

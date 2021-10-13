@@ -41,7 +41,7 @@ struct MediaCapabilitiesEncodingInfo;
 enum class ColorGamut : uint8_t;
 enum class HdrMetadataType : uint8_t;
 enum class TransferFunction : uint8_t;
-enum class MediaDecodingType : bool;
+enum class MediaDecodingType : uint8_t;
 enum class MediaEncodingType : bool;
 
 }
