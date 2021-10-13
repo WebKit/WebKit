@@ -25,6 +25,7 @@
 #include "AccessibilityObjectInterface.h"
 #include "AccessibilityRootAtspi.h"
 #include "AccessibilityTableCell.h"
+#include "ElementInlines.h"
 #include "RenderAncestorIterator.h"
 #include "RenderBlock.h"
 #include <glib/gi18n-lib.h>
