@@ -33,7 +33,7 @@ def append_file_as_byte_array_string(variable_name, filename, dest_src_file):
     string += 'constexpr uint8_t {0}[]={{\n'.format(variable_name)
     bytes_ = open(filename, "rb").read()
     for byte in bytes_:
-        string += '0x{:02x}'.format(ord(byte)) + ", "
+        string += '0x{:02x}'.format(byte) + ", "
     string += "\n};\n"
     with open(dest_src_file, "a") as out_file:
         out_file.write(string)

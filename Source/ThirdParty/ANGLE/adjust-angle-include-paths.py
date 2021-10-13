@@ -1,4 +1,4 @@
-#! /usr/bin/python
+#!/usr/bin/python3
 
 # WebKit builds ANGLE as a static library, and exports some of the
 # internal header files as "public headers" in the Xcode project for

@@ -1,3 +1,14 @@
+2021-10-12  Alexey Proskuryakov  <ap@apple.com>
+
+        Invoke ThirdParty build scripts with python3 explicitly
+        https://bugs.webkit.org/show_bug.cgi?id=231605
+
+        Reviewed by Dean Jackson.
+
+        * ANGLE.xcodeproj/project.pbxproj:
+        * adjust-angle-include-paths.py:
+        * src/libANGLE/renderer/metal/shaders/create_mtl_internal_shaders.py:
+
 2021-10-06  Kyle Piddington  <kpiddington@apple.com>
 
         Shadertoy "truchet district" fails to compile with error: Internal error compiling shader with Metal backend"
