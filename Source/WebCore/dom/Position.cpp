@@ -740,7 +740,7 @@ Position Position::upstream(EditingBoundaryCrossingRule rule) const
         if (is<RenderText>(*renderer)) {
             auto& textRenderer = downcast<RenderText>(*renderer);
 
-            auto firstTextRun = InlineIterator::firstTextBoxInTextOrderFor(textRenderer);
+            auto [firstTextRun, orderCache] = InlineIterator::firstTextBoxInLogicalOrderFor(textRenderer);
             if (!firstTextRun)
                 continue;
 
@@ -758,7 +758,7 @@ Position Position::upstream(EditingBoundaryCrossingRule rule) const
                 if (textOffset > run->start() && textOffset <= run->end())
                     return currentPosition;
 
-                auto nextRun = run->nextTextBoxInTextOrder();
+                auto nextRun = InlineIterator::nextTextBoxInLogicalOrder(run, orderCache);
                 if (textOffset == run->end() + 1 && nextRun && run->line() != nextRun->line())
                     return currentPosition;
 
@@ -847,7 +847,7 @@ Position Position::downstream(EditingBoundaryCrossingRule rule) const
         if (is<RenderText>(*renderer)) {
             auto& textRenderer = downcast<RenderText>(*renderer);
 
-            auto firstTextRun = InlineIterator::firstTextBoxInTextOrderFor(textRenderer);
+            auto [firstTextRun, orderCache] = InlineIterator::firstTextBoxInLogicalOrderFor(textRenderer);
             if (!firstTextRun)
                 continue;
 
@@ -864,7 +864,7 @@ Position Position::downstream(EditingBoundaryCrossingRule rule) const
                 if (textOffset >= run->start() && textOffset < run->end())
                     return currentPosition;
 
-                auto nextRun = run->nextTextBoxInTextOrder();
+                auto nextRun = InlineIterator::nextTextBoxInLogicalOrder(run, orderCache);
                 if (textOffset == run->end() && nextRun && run->line() != nextRun->line())
                     return currentPosition;
 
@@ -1173,7 +1173,7 @@ static InlineIterator::TextBoxIterator searchAheadForBetterMatch(RenderText& ren
         if (isNonTextLeafChild(*next))
             return { };
         if (is<RenderText>(*next)) {
-            if (auto run = InlineIterator::firstTextBoxInTextOrderFor(downcast<RenderText>(*next)))
+            if (auto [run, orderCache] = InlineIterator::firstTextBoxInLogicalOrderFor(downcast<RenderText>(*next)); run)
                 return run;
         }
     }

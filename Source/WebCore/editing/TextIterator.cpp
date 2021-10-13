@@ -438,12 +438,9 @@ void TextIterator::advance()
         return;
     }
 
-    if (!m_textRun && m_remainingTextRun) {
-        m_textRun = m_remainingTextRun;
-        m_remainingTextRun = { };
-        m_firstLetterText = { };
-        m_offset = 0;
-    }
+    if (!m_textRun && m_remainingTextRun)
+        revertToRemainingTextRun();
+
     // handle remembered text box
     if (m_textRun) {
         handleTextRun();
@@ -581,7 +578,7 @@ bool TextIterator::handleTextNode()
         return true;
     }
 
-    m_textRun = InlineIterator::firstTextBoxInTextOrderFor(renderer);
+    std::tie(m_textRun, m_textRunLogicalOrderCache) = InlineIterator::firstTextBoxInLogicalOrderFor(renderer);
 
     bool shouldHandleFirstLetter = !m_handledFirstLetter && is<RenderTextFragment>(renderer) && !m_offset;
     if (shouldHandleFirstLetter)
@@ -608,7 +605,7 @@ void TextIterator::handleTextRun()
         return;
     }
 
-    auto firstTextRun = InlineIterator::firstTextBoxInTextOrderFor(renderer);
+    auto [firstTextRun, orderCache] = InlineIterator::firstTextBoxInLogicalOrderFor(renderer);
 
     String rendererText = renderer.text();
     unsigned start = m_offset;
@@ -633,8 +630,7 @@ void TextIterator::handleTextRun()
         unsigned runEnd = std::min(textRunEnd, end);
         
         // Determine what the next text run will be, but don't advance yet
-        auto nextTextRun = m_textRun;
-        nextTextRun.traverseNextTextBoxInTextOrder();
+        auto nextTextRun = InlineIterator::nextTextBoxInLogicalOrder(m_textRun, m_textRunLogicalOrderCache);
 
         if (runStart < runEnd) {
             auto isNewlineOrTab = [&](UChar character) {
@@ -677,12 +673,20 @@ void TextIterator::handleTextRun()
         m_textRun = nextTextRun;
     }
     if (!m_textRun && m_remainingTextRun) {
-        m_textRun = m_remainingTextRun;
-        m_remainingTextRun = { };
-        m_firstLetterText = { };
-        m_offset = 0;
+        revertToRemainingTextRun();
         handleTextRun();
     }
+}
+
+void TextIterator::revertToRemainingTextRun()
+{
+    ASSERT(!m_textRun && m_remainingTextRun);
+
+    m_textRun = m_remainingTextRun;
+    m_textRunLogicalOrderCache = std::exchange(m_remainingTextRunLogicalOrderCache, { });
+    m_remainingTextRun = { };
+    m_firstLetterText = { };
+    m_offset = 0;
 }
 
 static inline RenderText* firstRenderTextInFirstLetter(RenderBoxModelObject* firstLetter)
@@ -702,7 +706,8 @@ void TextIterator::handleTextNodeFirstLetter(RenderTextFragment& renderer)
         if (auto* firstLetterText = firstRenderTextInFirstLetter(firstLetter)) {
             m_handledFirstLetter = true;
             m_remainingTextRun = m_textRun;
-            m_textRun = InlineIterator::firstTextBoxInTextOrderFor(*firstLetterText);
+            m_remainingTextRunLogicalOrderCache = std::exchange(m_textRunLogicalOrderCache, { });
+            std::tie(m_textRun, m_textRunLogicalOrderCache) = InlineIterator::firstTextBoxInLogicalOrderFor(*firstLetterText);
             m_firstLetterText = firstLetterText;
         }
     }

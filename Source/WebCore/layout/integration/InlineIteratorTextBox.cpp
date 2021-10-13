@@ -38,11 +38,6 @@ TextBoxIterator TextBox::nextTextBox() const
     return TextBoxIterator(*this).traverseNextTextBox();
 }
 
-TextBoxIterator TextBox::nextTextBoxInTextOrder() const
-{
-    return TextBoxIterator(*this).traverseNextTextBoxInTextOrder();
-}
-
 LayoutRect TextBox::selectionRect(unsigned rangeStart, unsigned rangeEnd) const
 {
     auto [clampedStart, clampedEnd] = selectableRange().clamp(rangeStart, rangeEnd);
@@ -94,14 +89,6 @@ TextBoxIterator& TextBoxIterator::traverseNextTextBox()
     return *this;
 }
 
-TextBoxIterator& TextBoxIterator::traverseNextTextBoxInTextOrder()
-{
-    WTF::switchOn(m_box.m_pathVariant, [](auto& path) {
-        path.traverseNextTextBoxInTextOrder();
-    });
-    return *this;
-}
-
 TextBoxIterator firstTextBoxFor(const RenderText& text)
 {
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
@@ -112,20 +99,41 @@ TextBoxIterator firstTextBoxFor(const RenderText& text)
     return { BoxLegacyPath { text.firstTextBox() } };
 }
 
-TextBoxIterator firstTextBoxInTextOrderFor(const RenderText& text)
+std::pair<TextBoxIterator, LogicalOrderCache> firstTextBoxInLogicalOrderFor(const RenderText& text)
 {
-    if (text.firstTextBox() && text.containsReversedText()) {
-        Vector<const LegacyInlineBox*> sortedTextBoxes;
-        for (auto* textBox = text.firstTextBox(); textBox; textBox = textBox->nextTextBox())
-            sortedTextBoxes.append(textBox);
-        std::sort(sortedTextBoxes.begin(), sortedTextBoxes.end(), [](auto* a, auto* b) {
-            return LegacyInlineTextBox::compareByStart(downcast<LegacyInlineTextBox>(a), downcast<LegacyInlineTextBox>(b));
-        });
-        auto* first = sortedTextBoxes[0];
-        return { BoxLegacyPath { first, WTFMove(sortedTextBoxes), 0 } };
+    if (!text.containsReversedText())
+        return { firstTextBoxFor(text), nullptr };
+
+    auto cache = WTF::makeUnique<LogicalOrderCacheData>();
+    for (auto textBox : textBoxesFor(text))
+        cache->boxes.append(textBox);
+
+    if (cache->boxes.isEmpty())
+        return { TextBoxIterator { }, nullptr };
+
+    std::sort(cache->boxes.begin(), cache->boxes.end(), [&](auto& a, auto& b) {
+        return a->start() < b->start();
+    });
+
+    return { cache->boxes[0], WTFMove(cache) };
+}
+
+TextBoxIterator nextTextBoxInLogicalOrder(const TextBoxIterator& textBox, LogicalOrderCache& cache)
+{
+    if (!cache)
+        return textBox->nextTextBox();
+
+    if (cache->index == cache->boxes.size() || cache->boxes[cache->index] != textBox) {
+        cache->index = cache->boxes.find(textBox);
+        ASSERT(cache->index != notFound);
     }
 
-    return firstTextBoxFor(text);
+    cache->index++;
+
+    if (cache->index < cache->boxes.size())
+        return cache->boxes[cache->index];
+
+    return { };
 }
 
 TextBoxIterator textBoxFor(const LegacyInlineTextBox* legacyInlineTextBox)

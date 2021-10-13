@@ -136,12 +136,6 @@ public:
         ASSERT(atEnd() || box().text());
     }
 
-    void traverseNextTextBoxInTextOrder()
-    {
-        // FIXME: No RTL in LFC.
-        traverseNextTextBox();
-    }
-
     void traverseNextOnLine()
     {
         ASSERT(!atEnd());

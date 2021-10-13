@@ -87,15 +87,6 @@ public:
     }
 
     void traverseNextTextBox() { m_inlineBox = inlineTextBox()->nextTextBox(); }
-    void traverseNextTextBoxInTextOrder()
-    {
-        if (!m_logicalOrderCache.isEmpty()) {
-            traverseNextInlineBoxInCacheOrder();
-            ASSERT(!m_inlineBox || is<LegacyInlineTextBox>(m_inlineBox));
-            return;
-        }
-        traverseNextTextBox();
-    }
 
     void traverseNextOnLine()
     {

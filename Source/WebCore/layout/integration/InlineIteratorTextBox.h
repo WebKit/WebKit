@@ -32,6 +32,9 @@ namespace WebCore {
 
 namespace InlineIterator {
 
+struct LogicalOrderCacheData;
+using LogicalOrderCache = std::unique_ptr<LogicalOrderCacheData>;
+
 class TextBox : public Box {
 public:
     TextBox(PathVariant&&);
@@ -60,7 +63,6 @@ public:
     const LegacyInlineTextBox* legacyInlineBox() const { return downcast<LegacyInlineTextBox>(Box::legacyInlineBox()); }
 
     TextBoxIterator nextTextBox() const;
-    TextBoxIterator nextTextBoxInTextOrder() const;
 };
 
 class TextBoxIterator : public LeafBoxIterator {
@@ -75,7 +77,6 @@ public:
     const TextBox* operator->() const { return &get(); }
 
     TextBoxIterator& traverseNextTextBox();
-    TextBoxIterator& traverseNextTextBoxInTextOrder();
 
 private:
     BoxIterator& traverseNextOnLine() = delete;
@@ -103,13 +104,21 @@ private:
 };
 
 TextBoxIterator firstTextBoxFor(const RenderText&);
-TextBoxIterator firstTextBoxInTextOrderFor(const RenderText&);
 TextBoxIterator textBoxFor(const LegacyInlineTextBox*);
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 TextBoxIterator textBoxFor(const LayoutIntegration::InlineContent&, const InlineDisplay::Box&);
 TextBoxIterator textBoxFor(const LayoutIntegration::InlineContent&, size_t boxIndex);
 #endif
 TextBoxRange textBoxesFor(const RenderText&);
+
+struct LogicalOrderCacheData {
+    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    
+    Vector<TextBoxIterator> boxes;
+    size_t index { 0 };
+};
+std::pair<TextBoxIterator, LogicalOrderCache> firstTextBoxInLogicalOrderFor(const RenderText&);
+TextBoxIterator nextTextBoxInLogicalOrder(const TextBoxIterator&, LogicalOrderCache&);
 
 inline bool TextBox::hasHyphen() const
 {

@@ -88,8 +88,6 @@ public:
     using LegacyInlineBox::forceLeftExpansion;
     using LegacyInlineBox::setForceLeftExpansion;
 
-    static inline bool compareByStart(const LegacyInlineTextBox* first, const LegacyInlineTextBox* second) { return first->start() < second->start(); }
-
     LayoutUnit baselinePosition(FontBaseline) const final;
     LayoutUnit lineHeight() const final;
 

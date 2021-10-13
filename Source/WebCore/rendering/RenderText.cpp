@@ -1712,7 +1712,7 @@ unsigned RenderText::countRenderedCharacterOffsetsUntil(unsigned offset) const
 enum class OffsetType { Character, Caret };
 static bool containsOffset(const RenderText& text, unsigned offset, OffsetType type)
 {
-    for (auto box = InlineIterator::firstTextBoxInTextOrderFor(text); box; box.traverseNextTextBoxInTextOrder()) {
+    for (auto [box, orderCache] = InlineIterator::firstTextBoxInLogicalOrderFor(text); box; box = InlineIterator::nextTextBoxInLogicalOrder(box, orderCache)) {
         auto start = box->start();
         if (offset < start)
             return false;
