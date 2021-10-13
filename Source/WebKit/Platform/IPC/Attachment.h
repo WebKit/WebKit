@@ -69,7 +69,7 @@ public:
 
     using SocketDescriptor = int;
     using CustomWriterFunc = WTF::Function<void(SocketDescriptor)>;
-    using CustomWriter = Variant<CustomWriterFunc, SocketDescriptor>;
+    using CustomWriter = std::variant<CustomWriterFunc, SocketDescriptor>;
     Attachment(CustomWriter&&);
 #elif OS(DARWIN)
     Attachment(mach_port_name_t, mach_msg_type_name_t disposition);

@@ -43,7 +43,7 @@ typedef FontFamilySpecificationCoreText FontFamilyPlatformSpecification;
 typedef FontFamilySpecificationNull FontFamilyPlatformSpecification;
 #endif
 
-typedef Variant<AtomString, FontFamilyPlatformSpecification> FontFamilySpecification;
+typedef std::variant<AtomString, FontFamilyPlatformSpecification> FontFamilySpecification;
 
 class FontCascadeDescription : public FontDescription {
 public:

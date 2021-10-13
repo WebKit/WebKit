@@ -34,7 +34,7 @@
 namespace WebCore {
 
 struct RTCIceServer {
-    Variant<String, Vector<String>> urls;
+    std::variant<String, Vector<String>> urls;
     String credential;
     String username;
 };

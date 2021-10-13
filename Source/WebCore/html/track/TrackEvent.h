@@ -44,7 +44,7 @@ public:
         return adoptRef(*new TrackEvent(type, canBubble, cancelable, WTFMove(track)));
     }
 
-    using TrackEventTrack = Variant<RefPtr<VideoTrack>, RefPtr<AudioTrack>, RefPtr<TextTrack>>;
+    using TrackEventTrack = std::variant<RefPtr<VideoTrack>, RefPtr<AudioTrack>, RefPtr<TextTrack>>;
 
     struct Init : public EventInit {
         std::optional<TrackEventTrack> track;

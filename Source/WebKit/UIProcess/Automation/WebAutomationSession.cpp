@@ -1660,7 +1660,7 @@ void WebAutomationSession::simulateTouchInteraction(WebPageProxy& page, TouchInt
 #endif // ENABLE(WEBDRIVER_TOUCH_INTERACTIONS)
 
 #if ENABLE(WEBDRIVER_KEYBOARD_INTERACTIONS)
-void WebAutomationSession::simulateKeyboardInteraction(WebPageProxy& page, KeyboardInteraction interaction, WTF::Variant<VirtualKey, CharKey>&& key, CompletionHandler<void(std::optional<AutomationCommandError>)>&& completionHandler)
+void WebAutomationSession::simulateKeyboardInteraction(WebPageProxy& page, KeyboardInteraction interaction, std::variant<VirtualKey, CharKey>&& key, CompletionHandler<void(std::optional<AutomationCommandError>)>&& completionHandler)
 {
     // Bridge the flushed callback to our command's completion handler.
     auto keyboardEventsFlushedCallback = [completionHandler = WTFMove(completionHandler)](std::optional<AutomationCommandError> error) mutable {

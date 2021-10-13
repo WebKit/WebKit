@@ -262,7 +262,7 @@ public:
     void setViewScale(CGFloat);
     CGFloat viewScale() const;
 
-    void showSafeBrowsingWarning(const SafeBrowsingWarning&, CompletionHandler<void(Variant<ContinueUnsafeLoad, URL>&&)>&&);
+    void showSafeBrowsingWarning(const SafeBrowsingWarning&, CompletionHandler<void(std::variant<ContinueUnsafeLoad, URL>&&)>&&);
     void clearSafeBrowsingWarning();
     void clearSafeBrowsingWarningIfForMainFrameNavigation();
 

@@ -69,7 +69,7 @@ void WebAuthenticatorCoordinatorProxy::getAssertion(FrameIdentifier frameId, Fra
 
 void WebAuthenticatorCoordinatorProxy::handleRequest(WebAuthenticationRequestData&& data, RequestCompletionHandler&& handler)
 {
-    auto callback = [handler = WTFMove(handler)] (Variant<Ref<AuthenticatorResponse>, ExceptionData>&& result) mutable {
+    auto callback = [handler = WTFMove(handler)] (std::variant<Ref<AuthenticatorResponse>, ExceptionData>&& result) mutable {
         ASSERT(RunLoop::isMain());
         WTF::switchOn(result, [&](const Ref<AuthenticatorResponse>& response) {
             handler(response->data(), response->attachment(), { });

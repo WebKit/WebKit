@@ -169,7 +169,7 @@ private:
     explicit IDBKey(const ThreadSafeDataBuffer&);
 
     const IndexedDB::KeyType m_type;
-    Variant<Vector<RefPtr<IDBKey>>, String, double, ThreadSafeDataBuffer> m_value;
+    std::variant<Vector<RefPtr<IDBKey>>, String, double, ThreadSafeDataBuffer> m_value;
 
     const size_t m_sizeEstimate;
 

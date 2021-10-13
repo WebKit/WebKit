@@ -32,7 +32,7 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(SharedWorker);
 
-SharedWorker::SharedWorker(String&&, std::optional<Variant<String, WorkerOptions>>&&)
+SharedWorker::SharedWorker(String&&, std::optional<std::variant<String, WorkerOptions>>&&)
 {
 }
 

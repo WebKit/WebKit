@@ -80,8 +80,8 @@ public:
         unsigned m_tryDepth;
     };
 
-    struct ControlType : public Variant<ControlLoop, ControlTopLevel, ControlBlock, ControlIf, ControlTry, ControlCatch> {
-        using Base = Variant<ControlLoop, ControlTopLevel, ControlBlock, ControlIf, ControlTry, ControlCatch>;
+    struct ControlType : public std::variant<ControlLoop, ControlTopLevel, ControlBlock, ControlIf, ControlTry, ControlCatch> {
+        using Base = std::variant<ControlLoop, ControlTopLevel, ControlBlock, ControlIf, ControlTry, ControlCatch>;
 
         ControlType()
             : Base(ControlBlock { })

@@ -105,7 +105,7 @@ public:
     using BackgroundActivity = Activity<ActivityType::Background>;
     UniqueRef<BackgroundActivity> backgroundActivity(ASCIILiteral name);
 
-    using ActivityVariant = Variant<std::nullptr_t, UniqueRef<BackgroundActivity>, UniqueRef<ForegroundActivity>>;
+    using ActivityVariant = std::variant<std::nullptr_t, UniqueRef<BackgroundActivity>, UniqueRef<ForegroundActivity>>;
     static bool isValidBackgroundActivity(const ActivityVariant&);
     static bool isValidForegroundActivity(const ActivityVariant&);
 

@@ -505,7 +505,7 @@ bool MediaControlsHost::showMediaControlsContextMenu(HTMLElement& target, String
         x2_0,
     };
 
-    using MenuData = Variant<
+    using MenuData = std::variant<
 #if ENABLE(VIDEO_PRESENTATION_MODE)
         PictureInPictureTag,
 #endif // ENABLE(VIDEO_PRESENTATION_MODE)

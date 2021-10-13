@@ -46,7 +46,7 @@ namespace WebCore {
 class MediaPlayer;
 
 using KeyIDType = Vector<uint8_t>;
-using KeyHandleValueVariant = Variant<
+using KeyHandleValueVariant = std::variant<
     Vector<uint8_t>
 #if ENABLE(THUNDER)
     , BoxPtr<OpenCDMSession>

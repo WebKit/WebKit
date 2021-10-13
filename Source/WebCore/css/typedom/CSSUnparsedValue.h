@@ -36,7 +36,7 @@ namespace WebCore {
 template<typename> class ExceptionOr;
 class CSSOMVariableReferenceValue;
 class CSSParserTokenRange;
-using CSSUnparsedSegment = Variant<String, RefPtr<CSSOMVariableReferenceValue>>;
+using CSSUnparsedSegment = std::variant<String, RefPtr<CSSOMVariableReferenceValue>>;
 
 class CSSUnparsedValue final : public CSSStyleValue {
     WTF_MAKE_ISO_ALLOCATED(CSSUnparsedValue);

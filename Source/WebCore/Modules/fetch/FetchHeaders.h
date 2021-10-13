@@ -46,7 +46,7 @@ public:
         Response
     };
 
-    using Init = Variant<Vector<Vector<String>>, Vector<WTF::KeyValuePair<String, String>>>;
+    using Init = std::variant<Vector<Vector<String>>, Vector<WTF::KeyValuePair<String, String>>>;
     static ExceptionOr<Ref<FetchHeaders>> create(std::optional<Init>&&);
 
     static Ref<FetchHeaders> create(Guard guard = Guard::None, HTTPHeaderMap&& headers = { }) { return adoptRef(*new FetchHeaders { guard, WTFMove(headers) }); }

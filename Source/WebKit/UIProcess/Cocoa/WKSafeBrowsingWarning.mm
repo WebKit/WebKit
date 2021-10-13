@@ -290,13 +290,13 @@ static RetainPtr<ViewType> makeLabel(NSAttributedString *attributedString)
 
 @implementation WKSafeBrowsingWarning
 
-- (instancetype)initWithFrame:(RectType)frame safeBrowsingWarning:(const WebKit::SafeBrowsingWarning&)warning completionHandler:(CompletionHandler<void(Variant<WebKit::ContinueUnsafeLoad, URL>&&)>&&)completionHandler
+- (instancetype)initWithFrame:(RectType)frame safeBrowsingWarning:(const WebKit::SafeBrowsingWarning&)warning completionHandler:(CompletionHandler<void(std::variant<WebKit::ContinueUnsafeLoad, URL>&&)>&&)completionHandler
 {
     if (!(self = [super initWithFrame:frame])) {
         completionHandler(WebKit::ContinueUnsafeLoad::Yes);
         return nil;
     }
-    _completionHandler = [weakSelf = WeakObjCPtr<WKSafeBrowsingWarning>(self), completionHandler = WTFMove(completionHandler)] (Variant<WebKit::ContinueUnsafeLoad, URL>&& result) mutable {
+    _completionHandler = [weakSelf = WeakObjCPtr<WKSafeBrowsingWarning>(self), completionHandler = WTFMove(completionHandler)] (std::variant<WebKit::ContinueUnsafeLoad, URL>&& result) mutable {
 #if PLATFORM(WATCHOS)
         if (auto strongSelf = weakSelf.get())
             [strongSelf.get()->_previousFirstResponder becomeFirstResponder];

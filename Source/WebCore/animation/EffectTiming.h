@@ -33,7 +33,7 @@
 namespace WebCore {
 
 struct EffectTiming {
-    Variant<double, String> duration { "auto" };
+    std::variant<double, String> duration { "auto" };
     double delay { 0 };
     double endDelay { 0 };
     double iterationStart { 0 };

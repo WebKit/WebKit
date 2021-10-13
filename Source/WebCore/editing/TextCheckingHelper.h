@@ -94,7 +94,7 @@ public:
 
     MisspelledWord findFirstMisspelledWord() const;
     UngrammaticalPhrase findFirstUngrammaticalPhrase() const;
-    Variant<MisspelledWord, UngrammaticalPhrase> findFirstMisspelledWordOrUngrammaticalPhrase(bool checkGrammar) const;
+    std::variant<MisspelledWord, UngrammaticalPhrase> findFirstMisspelledWordOrUngrammaticalPhrase(bool checkGrammar) const;
 
     std::optional<SimpleRange> markAllMisspelledWords() const; // Returns the range of the first misspelled word.
     void markAllUngrammaticalPhrases() const;

@@ -193,7 +193,7 @@ private:
     bool m_isNull { false };
     bool m_isDeletedValue { false };
 
-    Variant<Vector<IDBKeyData>, String, double, ThreadSafeDataBuffer> m_value;
+    std::variant<Vector<IDBKeyData>, String, double, ThreadSafeDataBuffer> m_value;
 };
 
 struct IDBKeyDataHash {

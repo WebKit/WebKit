@@ -124,9 +124,9 @@ class HTMLVideoElement;
 #endif
 
 #if ENABLE(OFFSCREEN_CANVAS)
-using WebGLCanvas = WTF::Variant<RefPtr<HTMLCanvasElement>, RefPtr<OffscreenCanvas>>;
+using WebGLCanvas = std::variant<RefPtr<HTMLCanvasElement>, RefPtr<OffscreenCanvas>>;
 #else
-using WebGLCanvas = WTF::Variant<RefPtr<HTMLCanvasElement>>;
+using WebGLCanvas = std::variant<RefPtr<HTMLCanvasElement>>;
 #endif
 
 #if ENABLE(MEDIA_STREAM)
@@ -158,7 +158,7 @@ public:
     void blendFunc(GCGLenum sfactor, GCGLenum dfactor);
     void blendFuncSeparate(GCGLenum srcRGB, GCGLenum dstRGB, GCGLenum srcAlpha, GCGLenum dstAlpha);
 
-    using BufferDataSource = WTF::Variant<RefPtr<ArrayBuffer>, RefPtr<ArrayBufferView>>;
+    using BufferDataSource = std::variant<RefPtr<ArrayBuffer>, RefPtr<ArrayBufferView>>;
     void bufferData(GCGLenum target, long long size, GCGLenum usage);
     void bufferData(GCGLenum target, std::optional<BufferDataSource>&&, GCGLenum usage);
     void bufferSubData(GCGLenum target, long long offset, BufferDataSource&&);
@@ -280,9 +280,9 @@ public:
     virtual void texImage2D(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLint border, GCGLenum format, GCGLenum type, RefPtr<ArrayBufferView>&&);
 
 #if ENABLE(VIDEO)
-    using TexImageSource = WTF::Variant<RefPtr<ImageBitmap>, RefPtr<ImageData>, RefPtr<HTMLImageElement>, RefPtr<HTMLCanvasElement>, RefPtr<HTMLVideoElement>>;
+    using TexImageSource = std::variant<RefPtr<ImageBitmap>, RefPtr<ImageData>, RefPtr<HTMLImageElement>, RefPtr<HTMLCanvasElement>, RefPtr<HTMLVideoElement>>;
 #else
-    using TexImageSource = WTF::Variant<RefPtr<ImageBitmap>, RefPtr<ImageData>, RefPtr<HTMLImageElement>, RefPtr<HTMLCanvasElement>>;
+    using TexImageSource = std::variant<RefPtr<ImageBitmap>, RefPtr<ImageData>, RefPtr<HTMLImageElement>, RefPtr<HTMLCanvasElement>>;
 #endif
 
     virtual ExceptionOr<void> texImage2D(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLenum format, GCGLenum type, std::optional<TexImageSource>);
@@ -297,7 +297,7 @@ public:
     template <class TypedArray, class DataType>
     class TypedList {
     public:
-        using VariantType = Variant<RefPtr<TypedArray>, Vector<DataType>>;
+        using VariantType = std::variant<RefPtr<TypedArray>, Vector<DataType>>;
 
         TypedList(VariantType&& variant)
             : m_variant(WTFMove(variant))

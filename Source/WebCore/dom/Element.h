@@ -164,7 +164,7 @@ public:
     inline unsigned findAttributeIndexByName(const QualifiedName&) const;
     inline unsigned findAttributeIndexByName(const AtomString&, bool shouldIgnoreAttributeCase) const;
 
-    WEBCORE_EXPORT void scrollIntoView(std::optional<Variant<bool, ScrollIntoViewOptions>>&& arg);
+    WEBCORE_EXPORT void scrollIntoView(std::optional<std::variant<bool, ScrollIntoViewOptions>>&& arg);
     WEBCORE_EXPORT void scrollIntoView(bool alignToTop = true);
     WEBCORE_EXPORT void scrollIntoViewIfNeeded(bool centerIfNeeded = true);
     WEBCORE_EXPORT void scrollIntoViewIfNotVisible(bool centerIfNotVisible = true);
@@ -634,7 +634,7 @@ public:
 
     Element* findAnchorElementForLink(String& outAnchorName);
 
-    ExceptionOr<Ref<WebAnimation>> animate(JSC::JSGlobalObject&, JSC::Strong<JSC::JSObject>&&, std::optional<Variant<double, KeyframeAnimationOptions>>&&);
+    ExceptionOr<Ref<WebAnimation>> animate(JSC::JSGlobalObject&, JSC::Strong<JSC::JSObject>&&, std::optional<std::variant<double, KeyframeAnimationOptions>>&&);
     Vector<RefPtr<WebAnimation>> getAnimations(std::optional<GetAnimationsOptions>);
 
     ElementIdentifier createElementIdentifier();

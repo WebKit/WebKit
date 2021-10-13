@@ -78,7 +78,7 @@ public:
         size_t read(size_t position, size_t, uint8_t* destination) const;
 
     private:
-        Variant<
+        std::variant<
 #if HAVE(MT_PLUGIN_FORMAT_READER)
             RetainPtr<MTPluginByteSourceRef>,
 #endif

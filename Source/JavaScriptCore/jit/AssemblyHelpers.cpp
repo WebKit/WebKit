@@ -898,7 +898,7 @@ void AssemblyHelpers::emitConvertValueToBoolean(VM& vm, JSValueRegs value, GPRRe
     done.link(this);
 }
 
-AssemblyHelpers::JumpList AssemblyHelpers::branchIfValue(VM& vm, JSValueRegs value, GPRReg scratch, GPRReg scratchIfShouldCheckMasqueradesAsUndefined, FPRReg valueAsFPR, FPRReg tempFPR, bool shouldCheckMasqueradesAsUndefined, Variant<JSGlobalObject*, GPRReg> globalObject, bool invert)
+AssemblyHelpers::JumpList AssemblyHelpers::branchIfValue(VM& vm, JSValueRegs value, GPRReg scratch, GPRReg scratchIfShouldCheckMasqueradesAsUndefined, FPRReg valueAsFPR, FPRReg tempFPR, bool shouldCheckMasqueradesAsUndefined, std::variant<JSGlobalObject*, GPRReg> globalObject, bool invert)
 {
     // Implements the following control flow structure:
     // if (value is cell) {

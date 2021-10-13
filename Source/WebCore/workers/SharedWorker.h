@@ -35,11 +35,11 @@ class MessagePort;
 class SharedWorker final : public AbstractWorker {
     WTF_MAKE_ISO_ALLOCATED(SharedWorker);
 public:
-    static Ref<SharedWorker> create(String&& scriptURL, std::optional<Variant<String, WorkerOptions>>&& options) { return adoptRef(*new SharedWorker(WTFMove(scriptURL), WTFMove(options))); }
+    static Ref<SharedWorker> create(String&& scriptURL, std::optional<std::variant<String, WorkerOptions>>&& options) { return adoptRef(*new SharedWorker(WTFMove(scriptURL), WTFMove(options))); }
 
     MessagePort* port() const;
 private:
-    SharedWorker(String&&, std::optional<Variant<String, WorkerOptions>>&&);
+    SharedWorker(String&&, std::optional<std::variant<String, WorkerOptions>>&&);
 
     EventTargetInterface eventTargetInterface() const final;
     ScriptExecutionContext* scriptExecutionContext() const final;

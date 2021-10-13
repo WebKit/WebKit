@@ -46,9 +46,9 @@ public:
     JS_EXPORT_PRIVATE size_t size() const;
 
 private:
-    CachePayload(Variant<FileSystem::MappedFileData, std::pair<MallocPtr<uint8_t, VMMalloc>, size_t>>&&);
+    CachePayload(std::variant<FileSystem::MappedFileData, std::pair<MallocPtr<uint8_t, VMMalloc>, size_t>>&&);
 
-    Variant<FileSystem::MappedFileData, std::pair<MallocPtr<uint8_t, VMMalloc>, size_t>> m_data;
+    std::variant<FileSystem::MappedFileData, std::pair<MallocPtr<uint8_t, VMMalloc>, size_t>> m_data;
 };
 
 } // namespace JSC

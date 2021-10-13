@@ -542,7 +542,7 @@ Ref<ValidationBubble> PageClientImpl::createValidationBubble(const String& messa
     return ValidationBubble::create(m_view, message, settings);
 }
 
-void PageClientImpl::showSafeBrowsingWarning(const SafeBrowsingWarning& warning, CompletionHandler<void(Variant<WebKit::ContinueUnsafeLoad, URL>&&)>&& completionHandler)
+void PageClientImpl::showSafeBrowsingWarning(const SafeBrowsingWarning& warning, CompletionHandler<void(std::variant<WebKit::ContinueUnsafeLoad, URL>&&)>&& completionHandler)
 {
     if (!m_impl)
         return completionHandler(ContinueUnsafeLoad::Yes);

@@ -1756,7 +1756,7 @@ void WebViewImpl::takeFocus(WebCore::FocusDirection direction)
         [webView.window selectKeyViewPrecedingView:webView];
 }
 
-void WebViewImpl::showSafeBrowsingWarning(const SafeBrowsingWarning& warning, CompletionHandler<void(Variant<ContinueUnsafeLoad, URL>&&)>&& completionHandler)
+void WebViewImpl::showSafeBrowsingWarning(const SafeBrowsingWarning& warning, CompletionHandler<void(std::variant<ContinueUnsafeLoad, URL>&&)>&& completionHandler)
 {
     if (!m_view)
         return completionHandler(ContinueUnsafeLoad::Yes);

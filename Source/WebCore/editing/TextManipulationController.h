@@ -104,7 +104,7 @@ public:
         };
 
         Type type;
-        WTF::Variant<ElementRule, AttributeRule, ClassRule> rule;
+        std::variant<ElementRule, AttributeRule, ClassRule> rule;
 
         bool match(const Element&) const;
 

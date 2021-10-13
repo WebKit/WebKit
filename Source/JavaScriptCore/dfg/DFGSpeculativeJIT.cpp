@@ -10555,7 +10555,7 @@ void SpeculativeJIT::compileCallDOM(Node* node)
 
     // FIXME: We should have a way to call functions with the vector of registers.
     // https://bugs.webkit.org/show_bug.cgi?id=163099
-    using OperandVariant = Variant<SpeculateCellOperand, SpeculateInt32Operand, SpeculateBooleanOperand>;
+    using OperandVariant = std::variant<SpeculateCellOperand, SpeculateInt32Operand, SpeculateBooleanOperand>;
     Vector<OperandVariant, JSC_DOMJIT_SIGNATURE_MAX_ARGUMENTS_INCLUDING_THIS> operands;
     Vector<GPRReg, JSC_DOMJIT_SIGNATURE_MAX_ARGUMENTS_INCLUDING_THIS> regs;
 

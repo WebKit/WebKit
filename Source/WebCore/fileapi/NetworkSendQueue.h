@@ -63,7 +63,7 @@ public:
 private:
     void processMessages();
 
-    using Message = Variant<CString, Ref<SharedBuffer>, UniqueRef<BlobLoader>>;
+    using Message = std::variant<CString, Ref<SharedBuffer>, UniqueRef<BlobLoader>>;
     Deque<Message> m_queue;
 
     WriteString m_writeString;

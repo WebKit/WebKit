@@ -141,7 +141,7 @@ private:
     // - Asynchronous + anySize: DecodingMode::Asynchronous
     // - Asynchronous + intrinsicSize: an empty std::optional<IntSize>>
     // - Asynchronous + sizeForDrawing: a none empty std::optional<IntSize>>
-    using DecodingModeOrSize = Variant<DecodingMode, std::optional<IntSize>>;
+    using DecodingModeOrSize = std::variant<DecodingMode, std::optional<IntSize>>;
     DecodingModeOrSize m_decodingModeOrSize;
 };
 

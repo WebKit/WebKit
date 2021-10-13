@@ -82,7 +82,7 @@ public:
     virtual ~VTTCue();
 
     enum AutoKeyword { Auto };
-    using LineAndPositionSetting = Variant<double, AutoKeyword>;
+    using LineAndPositionSetting = std::variant<double, AutoKeyword>;
 
     void setTrack(TextTrack*);
 

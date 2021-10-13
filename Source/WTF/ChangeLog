@@ -1,3 +1,18 @@
+2021-10-12  Alex Christensen  <achristensen@webkit.org>
+
+        Use std::variant instead of WTF::Variant
+        https://bugs.webkit.org/show_bug.cgi?id=231629
+
+        Reviewed by Chris Dumez.
+
+        * wtf/LikelyDenseUnsignedIntegerSet.h:
+        * wtf/SmallSet.h:
+        * wtf/text/TextBreakIterator.cpp:
+        (WTF::mapModeToBackingIterator):
+        * wtf/text/TextBreakIterator.h:
+        * wtf/text/cocoa/TextBreakIteratorInternalICUCocoa.cpp:
+        (WTF::mapModeToBackingIterator):
+
 2021-10-12  Tim Horton  <timothy_horton@apple.com>
 
         Remove some unused UIKit SPI declarations

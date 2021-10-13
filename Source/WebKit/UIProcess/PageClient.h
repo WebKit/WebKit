@@ -282,7 +282,7 @@ public:
 
     virtual void didChangeContentSize(const WebCore::IntSize&) = 0;
 
-    virtual void showSafeBrowsingWarning(const SafeBrowsingWarning&, CompletionHandler<void(Variant<ContinueUnsafeLoad, URL>&&)>&& completionHandler) { completionHandler(ContinueUnsafeLoad::Yes); }
+    virtual void showSafeBrowsingWarning(const SafeBrowsingWarning&, CompletionHandler<void(std::variant<ContinueUnsafeLoad, URL>&&)>&& completionHandler) { completionHandler(ContinueUnsafeLoad::Yes); }
     virtual void clearSafeBrowsingWarning() { }
     virtual void clearSafeBrowsingWarningIfForMainFrameNavigation() { }
     

@@ -43,7 +43,7 @@ class HTMLFormElement;
 
 class DOMFormData : public RefCounted<DOMFormData> {
 public:
-    using FormDataEntryValue = Variant<RefPtr<File>, String>;
+    using FormDataEntryValue = std::variant<RefPtr<File>, String>;
 
     struct Item {
         String name;

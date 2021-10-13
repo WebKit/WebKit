@@ -231,7 +231,7 @@ protected:
     virtual void updatePullStatus() { }
 
 private:
-    using WeakOrStrongContext = Variant<Ref<BaseAudioContext>, WeakPtr<BaseAudioContext>>;
+    using WeakOrStrongContext = std::variant<Ref<BaseAudioContext>, WeakPtr<BaseAudioContext>>;
     static WeakOrStrongContext toWeakOrStrongContext(BaseAudioContext&, NodeType);
 
     // EventTarget

@@ -131,7 +131,7 @@ private:
     std::optional<BlobLoader> m_blobLoader;
     bool m_isBodyOpaque { false };
 
-    Variant<std::nullptr_t, Exception, ResourceError> m_loadingError;
+    std::variant<std::nullptr_t, Exception, ResourceError> m_loadingError;
 };
 
 } // namespace WebCore

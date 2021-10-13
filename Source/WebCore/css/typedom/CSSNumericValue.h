@@ -42,7 +42,7 @@ template<typename> class ExceptionOr;
 class CSSNumericValue : public CSSStyleValue {
     WTF_MAKE_ISO_ALLOCATED(CSSNumericValue);
 public:
-    using CSSNumberish = Variant<double, RefPtr<CSSNumericValue>>;
+    using CSSNumberish = std::variant<double, RefPtr<CSSNumericValue>>;
 
     Ref<CSSNumericValue> add(Vector<CSSNumberish>&&);
     Ref<CSSNumericValue> sub(Vector<CSSNumberish>&&);

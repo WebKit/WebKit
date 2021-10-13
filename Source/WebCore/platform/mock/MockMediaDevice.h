@@ -259,7 +259,7 @@ struct MockMediaDevice {
 
     String persistentId;
     String label;
-    Variant<MockMicrophoneProperties, MockSpeakerProperties, MockCameraProperties, MockDisplayProperties> properties;
+    std::variant<MockMicrophoneProperties, MockSpeakerProperties, MockCameraProperties, MockDisplayProperties> properties;
 };
 
 } // namespace WebCore

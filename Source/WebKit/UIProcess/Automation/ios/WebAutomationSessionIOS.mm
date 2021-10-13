@@ -68,7 +68,7 @@ void WebAutomationSession::sendSynthesizedEventsToPage(WebPageProxy& page, NSArr
 #pragma mark Commands for Platform: 'iOS'
 
 #if ENABLE(WEBDRIVER_KEYBOARD_INTERACTIONS)
-void WebAutomationSession::platformSimulateKeyboardInteraction(WebPageProxy& page, KeyboardInteraction interaction, WTF::Variant<VirtualKey, CharKey>&& key)
+void WebAutomationSession::platformSimulateKeyboardInteraction(WebPageProxy& page, KeyboardInteraction interaction, std::variant<VirtualKey, CharKey>&& key)
 {
     // The modifiers changed by the virtual key when it is pressed or released.
     WebEventFlags changedModifiers = 0;

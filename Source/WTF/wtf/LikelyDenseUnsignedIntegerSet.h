@@ -37,7 +37,7 @@ namespace WTF {
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(LikelyDenseUnsignedIntegerSet);
 
-// This is effectively a Variant<HashSet, Pair<BitVector, IndexType>>
+// This is effectively a std::variant<HashSet, Pair<BitVector, IndexType>>
 // If it is in BitVector mode, it keeps track of the minimum value in the set, and has the bitVector shifted by the same amount.
 // So for example {4000, 4002, 4003} would be represented as the bitVector 1101 with a m_min of 4000.
 // It shifts between the two modes whenever that would at least halve its memory usage. So it will never use more than twice the optimal amount of memory, and yet should not ping-pong between the two modes too often.
@@ -219,7 +219,7 @@ public:
         }
 
     private:
-        WTF::Variant<BitVector::iterator, typename Set::iterator> m_underlying;
+        std::variant<BitVector::iterator, typename Set::iterator> m_underlying;
         IndexType m_shift;
     };
 

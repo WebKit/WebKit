@@ -40,9 +40,9 @@ namespace WebCore {
 class Blob;
 
 #if ENABLE(SERVICE_WORKER)
-using MessageEventSource = Variant<RefPtr<WindowProxy>, RefPtr<MessagePort>, RefPtr<ServiceWorker>>;
+using MessageEventSource = std::variant<RefPtr<WindowProxy>, RefPtr<MessagePort>, RefPtr<ServiceWorker>>;
 #else
-using MessageEventSource = Variant<RefPtr<WindowProxy>, RefPtr<MessagePort>>;
+using MessageEventSource = std::variant<RefPtr<WindowProxy>, RefPtr<MessagePort>>;
 #endif
 
 class MessageEvent final : public Event {
@@ -73,7 +73,7 @@ public:
     const std::optional<MessageEventSource>& source() const { return m_source; }
     const Vector<RefPtr<MessagePort>>& ports() const { return m_ports; }
 
-    using DataType = Variant<JSValueInWrappedObject, Ref<SerializedScriptValue>, String, Ref<Blob>, Ref<ArrayBuffer>>;
+    using DataType = std::variant<JSValueInWrappedObject, Ref<SerializedScriptValue>, String, Ref<Blob>, Ref<ArrayBuffer>>;
     const DataType& data() const { return m_data; }
 
     JSValueInWrappedObject& cachedData() { return m_cachedData; }

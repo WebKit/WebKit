@@ -44,7 +44,7 @@ class URLSearchParams;
 class FetchRequest final : public FetchBodyOwner {
 public:
     using Init = FetchRequestInit;
-    using Info = Variant<RefPtr<FetchRequest>, String>;
+    using Info = std::variant<RefPtr<FetchRequest>, String>;
 
     using Cache = FetchOptions::Cache;
     using Credentials = FetchOptions::Credentials;

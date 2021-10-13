@@ -54,16 +54,16 @@ Ref<HTMLFormControlsCollection> HTMLFormControlsCollection::create(ContainerNode
 
 HTMLFormControlsCollection::~HTMLFormControlsCollection() = default;
 
-std::optional<Variant<RefPtr<RadioNodeList>, RefPtr<Element>>> HTMLFormControlsCollection::namedItemOrItems(const String& name) const
+std::optional<std::variant<RefPtr<RadioNodeList>, RefPtr<Element>>> HTMLFormControlsCollection::namedItemOrItems(const String& name) const
 {
     auto namedItems = this->namedItems(name);
 
     if (namedItems.isEmpty())
         return std::nullopt;
     if (namedItems.size() == 1)
-        return Variant<RefPtr<RadioNodeList>, RefPtr<Element>> { RefPtr<Element> { WTFMove(namedItems[0]) } };
+        return std::variant<RefPtr<RadioNodeList>, RefPtr<Element>> { RefPtr<Element> { WTFMove(namedItems[0]) } };
 
-    return Variant<RefPtr<RadioNodeList>, RefPtr<Element>> { RefPtr<RadioNodeList> { ownerNode().radioNodeList(name) } };
+    return std::variant<RefPtr<RadioNodeList>, RefPtr<Element>> { RefPtr<RadioNodeList> { ownerNode().radioNodeList(name) } };
 }
 
 static unsigned findFormAssociatedElement(const Vector<WeakPtr<HTMLElement>>& elements, const Element& element)

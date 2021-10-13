@@ -67,9 +67,9 @@ struct IntersectionObserverData {
 class IntersectionObserver : public RefCounted<IntersectionObserver>, public CanMakeWeakPtr<IntersectionObserver> {
 public:
     struct Init {
-        std::optional<Variant<RefPtr<Element>, RefPtr<Document>>> root;
+        std::optional<std::variant<RefPtr<Element>, RefPtr<Document>>> root;
         String rootMargin;
-        Variant<double, Vector<double>> threshold;
+        std::variant<double, Vector<double>> threshold;
     };
 
     static ExceptionOr<Ref<IntersectionObserver>> create(Document&, Ref<IntersectionObserverCallback>&&, Init&&);

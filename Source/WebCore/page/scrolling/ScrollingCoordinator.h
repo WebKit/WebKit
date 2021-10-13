@@ -81,7 +81,7 @@ public:
     // Should be called whenever the given frame view has been laid out.
     virtual void frameViewLayoutUpdated(FrameView&) { }
 
-    using LayoutViewportOriginOrOverrideRect = WTF::Variant<std::optional<FloatPoint>, std::optional<FloatRect>>;
+    using LayoutViewportOriginOrOverrideRect = std::variant<std::optional<FloatPoint>, std::optional<FloatRect>>;
     virtual void reconcileScrollingState(FrameView&, const FloatPoint&, const LayoutViewportOriginOrOverrideRect&, ScrollType, ViewportRectStability, ScrollingLayerPositionAction) { }
 
     // Should be called whenever the set of fixed objects changes.

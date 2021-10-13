@@ -536,7 +536,7 @@ static RetainPtr<_WKAuthenticatorAttestationResponse> wkAuthenticatorAttestation
 #if ENABLE(WEB_AUTHN)
     auto clientDataJSON = produceClientDataJson(_WKWebAuthenticationTypeCreate, challenge, origin);
     auto hash = produceClientDataJsonHash(clientDataJSON.get());
-    auto callback = [handler = makeBlockPtr(handler), clientDataJSON = WTFMove(clientDataJSON)] (Variant<Ref<WebCore::AuthenticatorResponse>, WebCore::ExceptionData>&& result) mutable {
+    auto callback = [handler = makeBlockPtr(handler), clientDataJSON = WTFMove(clientDataJSON)] (std::variant<Ref<WebCore::AuthenticatorResponse>, WebCore::ExceptionData>&& result) mutable {
         WTF::switchOn(result, [&](const Ref<WebCore::AuthenticatorResponse>& response) {
             handler(wkAuthenticatorAttestationResponse(response->data(), clientDataJSON.get(), response->attachment()).get(), nil);
         }, [&](const WebCore::ExceptionData& exception) {
@@ -586,7 +586,7 @@ static RetainPtr<_WKAuthenticatorAssertionResponse> wkAuthenticatorAssertionResp
 #if ENABLE(WEB_AUTHN)
     auto clientDataJSON = produceClientDataJson(_WKWebAuthenticationTypeGet, challenge, origin);
     auto hash = produceClientDataJsonHash(clientDataJSON.get());
-    auto callback = [handler = makeBlockPtr(handler), clientDataJSON = WTFMove(clientDataJSON)] (Variant<Ref<WebCore::AuthenticatorResponse>, WebCore::ExceptionData>&& result) mutable {
+    auto callback = [handler = makeBlockPtr(handler), clientDataJSON = WTFMove(clientDataJSON)] (std::variant<Ref<WebCore::AuthenticatorResponse>, WebCore::ExceptionData>&& result) mutable {
         WTF::switchOn(result, [&](const Ref<WebCore::AuthenticatorResponse>& response) {
             handler(wkAuthenticatorAssertionResponse(response->data(), clientDataJSON.get(), response->attachment()).get(), nil);
         }, [&](const WebCore::ExceptionData& exception) {

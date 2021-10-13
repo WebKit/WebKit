@@ -53,7 +53,7 @@ public:
 
     WEBCORE_EXPORT unsigned length() const;
     HTMLElement* item(unsigned index);
-    std::optional<Variant<RefPtr<RadioNodeList>, RefPtr<Element>>> namedItem(const AtomString&);
+    std::optional<std::variant<RefPtr<RadioNodeList>, RefPtr<Element>>> namedItem(const AtomString&);
     Vector<AtomString> supportedPropertyNames() const;
 
     String enctype() const { return m_attributes.encodingType(); }

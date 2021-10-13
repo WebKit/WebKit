@@ -153,7 +153,7 @@ public:
     void simulateTouchInteraction(WebPageProxy&, TouchInteraction, const WebCore::IntPoint& locationInView, std::optional<Seconds> duration, AutomationCompletionHandler&&);
 #endif
 #if ENABLE(WEBDRIVER_KEYBOARD_INTERACTIONS)
-    void simulateKeyboardInteraction(WebPageProxy&, KeyboardInteraction, WTF::Variant<VirtualKey, CharKey>&&, AutomationCompletionHandler&&);
+    void simulateKeyboardInteraction(WebPageProxy&, KeyboardInteraction, std::variant<VirtualKey, CharKey>&&, AutomationCompletionHandler&&);
 #endif
 #if ENABLE(WEBDRIVER_WHEEL_INTERACTIONS)
     void simulateWheelInteraction(WebPageProxy&, const WebCore::IntPoint& locationInView, const WebCore::IntSize& delta, AutomationCompletionHandler&&);
@@ -262,7 +262,7 @@ private:
 #endif
 #if ENABLE(WEBDRIVER_KEYBOARD_INTERACTIONS)
     // Simulates a single virtual or char key being pressed/released, such as 'a', Control, F-keys, Numpad keys, etc. as allowed by the protocol.
-    void platformSimulateKeyboardInteraction(WebPageProxy&, KeyboardInteraction, WTF::Variant<VirtualKey, CharKey>&&);
+    void platformSimulateKeyboardInteraction(WebPageProxy&, KeyboardInteraction, std::variant<VirtualKey, CharKey>&&);
     // Simulates key presses to produce the codepoints in a string. One or more code points are delivered atomically at grapheme cluster boundaries.
     void platformSimulateKeySequence(WebPageProxy&, const String&);
 #endif // ENABLE(WEBDRIVER_KEYBOARD_INTERACTIONS)

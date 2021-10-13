@@ -309,7 +309,7 @@ private:
     StyleRuleLayer(CascadeLayerName&&, std::unique_ptr<DeferredStyleGroupRuleList>&&);
     StyleRuleLayer(const StyleRuleLayer&);
 
-    Variant<CascadeLayerName, Vector<CascadeLayerName>> m_nameVariant;
+    std::variant<CascadeLayerName, Vector<CascadeLayerName>> m_nameVariant;
 };
 
 // This is only used by the CSS parser.

@@ -72,7 +72,7 @@ private:
 
     CanvasStyle(CurrentColor);
 
-    Variant<Invalid, Color, RefPtr<CanvasGradient>, RefPtr<CanvasPattern>, CurrentColor> m_style;
+    std::variant<Invalid, Color, RefPtr<CanvasGradient>, RefPtr<CanvasPattern>, CurrentColor> m_style;
 };
 
 bool isCurrentColorString(const String& colorString);

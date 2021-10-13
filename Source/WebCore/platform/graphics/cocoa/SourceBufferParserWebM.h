@@ -288,7 +288,7 @@ private:
     UniqueRef<SegmentReader> m_reader;
 
     Vector<UniqueRef<TrackData>> m_tracks;
-    using BlockVariant = Variant<webm::Block, webm::SimpleBlock>;
+    using BlockVariant = std::variant<webm::Block, webm::SimpleBlock>;
     std::optional<BlockVariant> m_currentBlock;
     std::optional<uint64_t> m_rewindToPosition;
     float m_minimumAudioSampleDuration { 2 };

@@ -60,7 +60,7 @@ class WebGL2RenderingContext;
 class WebGLRenderingContext;
 class WebGLRenderingContextBase;
 
-using OffscreenRenderingContext = Variant<
+using OffscreenRenderingContext = std::variant<
 #if ENABLE(WEBGL)
     RefPtr<WebGLRenderingContext>,
 #endif

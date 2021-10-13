@@ -58,7 +58,7 @@ public:
     const struct in6_addr& ipv6Address() const { return WTF::get<struct in6_addr>(m_address); }
 
 private:
-    Variant<struct in_addr, struct in6_addr> m_address;
+    std::variant<struct in_addr, struct in6_addr> m_address;
 };
 
 enum class DNSError { Unknown, CannotResolve, Cancelled };

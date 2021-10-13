@@ -43,7 +43,7 @@ TextBreakIteratorCache& TextBreakIteratorCache::singleton()
 
 #if !PLATFORM(MAC) && !PLATFORM(IOS_FAMILY)
 
-static Variant<TextBreakIteratorICU, TextBreakIteratorPlatform> mapModeToBackingIterator(StringView string, TextBreakIterator::Mode mode, const AtomString& locale)
+static std::variant<TextBreakIteratorICU, TextBreakIteratorPlatform> mapModeToBackingIterator(StringView string, TextBreakIterator::Mode mode, const AtomString& locale)
 {
     switch (mode) {
     case TextBreakIterator::Mode::Line:

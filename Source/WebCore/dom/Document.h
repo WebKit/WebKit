@@ -319,7 +319,7 @@ enum class CustomElementNameValidationStatus {
     ConflictsWithStandardElementName
 };
 
-using RenderingContext = Variant<
+using RenderingContext = std::variant<
 #if ENABLE(WEBGL)
     RefPtr<WebGLRenderingContext>,
 #endif

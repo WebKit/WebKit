@@ -507,7 +507,7 @@ static inline ExceptionOr<void> processPropertyIndexedKeyframes(JSGlobalObject& 
     return { };
 }
 
-ExceptionOr<Ref<KeyframeEffect>> KeyframeEffect::create(JSGlobalObject& lexicalGlobalObject, Element* target, Strong<JSObject>&& keyframes, std::optional<Variant<double, KeyframeEffectOptions>>&& options)
+ExceptionOr<Ref<KeyframeEffect>> KeyframeEffect::create(JSGlobalObject& lexicalGlobalObject, Element* target, Strong<JSObject>&& keyframes, std::optional<std::variant<double, KeyframeEffectOptions>>&& options)
 {
     auto keyframeEffect = adoptRef(*new KeyframeEffect(target, PseudoId::None));
 
@@ -515,7 +515,7 @@ ExceptionOr<Ref<KeyframeEffect>> KeyframeEffect::create(JSGlobalObject& lexicalG
         OptionalEffectTiming timing;
         auto optionsValue = options.value();
         if (std::holds_alternative<double>(optionsValue)) {
-            Variant<double, String> duration = WTF::get<double>(optionsValue);
+            std::variant<double, String> duration = WTF::get<double>(optionsValue);
             timing.duration = duration;
         } else {
             auto keyframeEffectOptions = WTF::get<KeyframeEffectOptions>(optionsValue);

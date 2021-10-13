@@ -34,7 +34,7 @@ namespace WebCore {
 
 class BufferSource {
 public:
-    using VariantType = WTF::Variant<RefPtr<JSC::ArrayBufferView>, RefPtr<JSC::ArrayBuffer>>;
+    using VariantType = std::variant<RefPtr<JSC::ArrayBufferView>, RefPtr<JSC::ArrayBuffer>>;
 
     BufferSource() { }
     BufferSource(VariantType&& variant)

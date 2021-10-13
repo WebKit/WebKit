@@ -89,7 +89,7 @@ Document* MediaDevices::document() const
     return downcast<Document>(scriptExecutionContext());
 }
 
-static MediaConstraints createMediaConstraints(const Variant<bool, MediaTrackConstraints>& constraints)
+static MediaConstraints createMediaConstraints(const std::variant<bool, MediaTrackConstraints>& constraints)
 {
     return WTF::switchOn(constraints,
         [&] (bool isValid) {

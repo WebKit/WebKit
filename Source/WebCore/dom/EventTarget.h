@@ -68,9 +68,9 @@ public:
     WEBCORE_EXPORT virtual bool isNode() const;
     WEBCORE_EXPORT virtual bool isPaymentRequest() const;
 
-    using AddEventListenerOptionsOrBoolean = Variant<AddEventListenerOptions, bool>;
+    using AddEventListenerOptionsOrBoolean = std::variant<AddEventListenerOptions, bool>;
     WEBCORE_EXPORT void addEventListenerForBindings(const AtomString& eventType, RefPtr<EventListener>&&, AddEventListenerOptionsOrBoolean&&);
-    using EventListenerOptionsOrBoolean = Variant<EventListenerOptions, bool>;
+    using EventListenerOptionsOrBoolean = std::variant<EventListenerOptions, bool>;
     WEBCORE_EXPORT void removeEventListenerForBindings(const AtomString& eventType, RefPtr<EventListener>&&, EventListenerOptionsOrBoolean&&);
     WEBCORE_EXPORT ExceptionOr<bool> dispatchEventForBindings(Event&);
 

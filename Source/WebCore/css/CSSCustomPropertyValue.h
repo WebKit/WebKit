@@ -38,7 +38,7 @@ class CSSParserToken;
 
 class CSSCustomPropertyValue final : public CSSValue {
 public:
-    using VariantValue = Variant<std::monostate, Ref<CSSVariableReferenceValue>, CSSValueID, Ref<CSSVariableData>, Length, Ref<StyleImage>>;
+    using VariantValue = std::variant<std::monostate, Ref<CSSVariableReferenceValue>, CSSValueID, Ref<CSSVariableData>, Length, Ref<StyleImage>>;
 
     static Ref<CSSCustomPropertyValue> createEmpty(const AtomString& name);
 

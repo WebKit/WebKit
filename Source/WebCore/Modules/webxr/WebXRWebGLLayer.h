@@ -58,7 +58,7 @@ class WebXRWebGLLayer : public WebXRLayer, private CanvasObserver {
     WTF_MAKE_ISO_ALLOCATED(WebXRWebGLLayer);
 public:
 
-    using WebXRRenderingContext = WTF::Variant<
+    using WebXRRenderingContext = std::variant<
         RefPtr<WebGLRenderingContext>
 #if ENABLE(WEBGL2)
         , RefPtr<WebGL2RenderingContext>

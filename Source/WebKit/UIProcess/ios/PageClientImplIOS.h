@@ -147,7 +147,7 @@ private:
     void clearTextIndicator(WebCore::TextIndicatorDismissalAnimation) override;
     void setTextIndicatorAnimationProgress(float) override;
 
-    void showSafeBrowsingWarning(const SafeBrowsingWarning&, CompletionHandler<void(Variant<WebKit::ContinueUnsafeLoad, URL>&&)>&&) override;
+    void showSafeBrowsingWarning(const SafeBrowsingWarning&, CompletionHandler<void(std::variant<WebKit::ContinueUnsafeLoad, URL>&&)>&&) override;
     void clearSafeBrowsingWarning() override;
     void clearSafeBrowsingWarningIfForMainFrameNavigation() override;
 

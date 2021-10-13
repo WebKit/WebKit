@@ -64,7 +64,7 @@ public:
     template<class Decoder> static std::optional<SpeechRecognitionUpdate> decode(Decoder&);
 
 private:
-    using Content = Variant<std::monostate, SpeechRecognitionError, Vector<SpeechRecognitionResultData>>;
+    using Content = std::variant<std::monostate, SpeechRecognitionError, Vector<SpeechRecognitionResultData>>;
     WEBCORE_EXPORT SpeechRecognitionUpdate(SpeechRecognitionConnectionClientIdentifier, SpeechRecognitionUpdateType, Content);
 
     SpeechRecognitionConnectionClientIdentifier m_clientIdentifier;

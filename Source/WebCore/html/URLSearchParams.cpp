@@ -41,7 +41,7 @@ URLSearchParams::URLSearchParams(const Vector<WTF::KeyValuePair<String, String>>
 {
 }
 
-ExceptionOr<Ref<URLSearchParams>> URLSearchParams::create(Variant<Vector<Vector<String>>, Vector<WTF::KeyValuePair<String, String>>, String>&& variant)
+ExceptionOr<Ref<URLSearchParams>> URLSearchParams::create(std::variant<Vector<Vector<String>>, Vector<WTF::KeyValuePair<String, String>>, String>&& variant)
 {
     auto visitor = WTF::makeVisitor([&](const Vector<Vector<String>>& vector) -> ExceptionOr<Ref<URLSearchParams>> {
         Vector<WTF::KeyValuePair<String, String>> pairs;

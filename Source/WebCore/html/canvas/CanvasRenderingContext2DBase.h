@@ -65,7 +65,7 @@ class TextMetrics;
 
 struct DOMMatrix2DInit;
 
-using CanvasImageSource = Variant<RefPtr<HTMLImageElement>, RefPtr<HTMLCanvasElement>, RefPtr<ImageBitmap>
+using CanvasImageSource = std::variant<RefPtr<HTMLImageElement>, RefPtr<HTMLCanvasElement>, RefPtr<ImageBitmap>
 #if ENABLE(CSS_TYPED_OM)
     , RefPtr<CSSStyleImageValue>
 #endif
@@ -182,7 +182,7 @@ public:
     void drawImageFromRect(HTMLImageElement&, float sx = 0, float sy = 0, float sw = 0, float sh = 0, float dx = 0, float dy = 0, float dw = 0, float dh = 0, const String& compositeOperation = emptyString());
     void clearCanvas();
 
-    using StyleVariant = Variant<String, RefPtr<CanvasGradient>, RefPtr<CanvasPattern>>;
+    using StyleVariant = std::variant<String, RefPtr<CanvasGradient>, RefPtr<CanvasPattern>>;
     StyleVariant strokeStyle() const;
     void setStrokeStyle(StyleVariant&&);
     StyleVariant fillStyle() const;

@@ -53,7 +53,7 @@ public:
         String display;
     };
     
-    using Source = Variant<String, RefPtr<JSC::ArrayBuffer>, RefPtr<JSC::ArrayBufferView>>;
+    using Source = std::variant<String, RefPtr<JSC::ArrayBuffer>, RefPtr<JSC::ArrayBufferView>>;
     static Ref<FontFace> create(ScriptExecutionContext&, const String& family, Source&&, const Descriptors&);
     static Ref<FontFace> create(ScriptExecutionContext*, CSSFontFace&);
     virtual ~FontFace();

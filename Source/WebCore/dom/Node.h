@@ -67,7 +67,7 @@ class SVGQualifiedName;
 class ShadowRoot;
 class TouchEvent;
 
-using NodeOrString = Variant<RefPtr<Node>, String>;
+using NodeOrString = std::variant<RefPtr<Node>, String>;
 
 class Node : public EventTarget {
     WTF_MAKE_ISO_ALLOCATED(Node);

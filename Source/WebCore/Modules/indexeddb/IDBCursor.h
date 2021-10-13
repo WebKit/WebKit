@@ -51,7 +51,7 @@ public:
     
     virtual ~IDBCursor();
 
-    using Source = Variant<RefPtr<IDBObjectStore>, RefPtr<IDBIndex>>;
+    using Source = std::variant<RefPtr<IDBObjectStore>, RefPtr<IDBIndex>>;
 
     const Source& source() const;
     IDBCursorDirection direction() const;

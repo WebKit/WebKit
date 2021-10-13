@@ -102,7 +102,7 @@ private:
         return m_locale;
     }
 
-    Variant<TextBreakIteratorICU, TextBreakIteratorPlatform> m_backing;
+    std::variant<TextBreakIteratorICU, TextBreakIteratorPlatform> m_backing;
     Mode m_mode;
     AtomString m_locale;
 };

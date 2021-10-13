@@ -34,7 +34,7 @@
 
 namespace WebKit {
 
-using ImageBufferBackendHandle = Variant<
+using ImageBufferBackendHandle = std::variant<
     ShareableBitmap::Handle
 #if PLATFORM(COCOA) // FIXME: This is really about IOSurface.
     , MachSendRight

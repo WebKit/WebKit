@@ -430,7 +430,7 @@ std::optional<int64_t> parseTimeZoneNumericUTCOffset(StringView string)
 }
 
 template<typename CharacterType>
-static std::optional<Variant<Vector<LChar>, int64_t>> parseTimeZoneBracketedAnnotation(StringParsingBuffer<CharacterType>& buffer)
+static std::optional<std::variant<Vector<LChar>, int64_t>> parseTimeZoneBracketedAnnotation(StringParsingBuffer<CharacterType>& buffer)
 {
     // https://tc39.es/proposal-temporal/#prod-TimeZoneBracketedAnnotation
     // TimeZoneBracketedAnnotation :

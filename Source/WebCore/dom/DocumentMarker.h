@@ -96,7 +96,7 @@ public:
     };
 #endif
 
-    using Data = Variant<
+    using Data = std::variant<
         String
         , DictationData // DictationAlternatives
 #if PLATFORM(IOS_FAMILY)

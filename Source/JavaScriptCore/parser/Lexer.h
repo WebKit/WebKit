@@ -180,7 +180,7 @@ private:
     template <bool shouldBuildStrings> ALWAYS_INLINE StringParseResult parseComplexEscape(bool strictMode);
     ALWAYS_INLINE StringParseResult parseTemplateLiteral(JSTokenData*, RawStringsBuildMode);
     
-    using NumberParseResult = Variant<double, const Identifier*>;
+    using NumberParseResult = std::variant<double, const Identifier*>;
     ALWAYS_INLINE std::optional<NumberParseResult> parseHex();
     ALWAYS_INLINE std::optional<NumberParseResult> parseBinary();
     ALWAYS_INLINE std::optional<NumberParseResult> parseOctal();

@@ -33,14 +33,14 @@
 namespace WebKit {
 using namespace WebCore;
 
-ClientDataType getClientDataType(const Variant<PublicKeyCredentialCreationOptions, PublicKeyCredentialRequestOptions>& options)
+ClientDataType getClientDataType(const std::variant<PublicKeyCredentialCreationOptions, PublicKeyCredentialRequestOptions>& options)
 {
     if (std::holds_alternative<PublicKeyCredentialCreationOptions>(options))
         return ClientDataType::Create;
     return ClientDataType::Get;
 }
 
-UserVerificationRequirement getUserVerificationRequirement(const Variant<PublicKeyCredentialCreationOptions, PublicKeyCredentialRequestOptions>& options)
+UserVerificationRequirement getUserVerificationRequirement(const std::variant<PublicKeyCredentialCreationOptions, PublicKeyCredentialRequestOptions>& options)
 {
     if (std::holds_alternative<PublicKeyCredentialCreationOptions>(options)) {
         if (auto authenticatorSelection = WTF::get<PublicKeyCredentialCreationOptions>(options).authenticatorSelection)

@@ -49,7 +49,7 @@ CachePayload::CachePayload(CachePayload&& other)
     other.m_data = std::pair { nullptr, 0 };
 }
 
-CachePayload::CachePayload(Variant<FileSystem::MappedFileData, std::pair<MallocPtr<uint8_t, VMMalloc>, size_t>>&& data)
+CachePayload::CachePayload(std::variant<FileSystem::MappedFileData, std::pair<MallocPtr<uint8_t, VMMalloc>, size_t>>&& data)
     : m_data(WTFMove(data))
 {
 }

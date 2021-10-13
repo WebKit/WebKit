@@ -906,7 +906,7 @@ inline ScrollAlignment toScrollAlignmentForBlockDirection(std::optional<ScrollLo
     }
 }
 
-void Element::scrollIntoView(std::optional<Variant<bool, ScrollIntoViewOptions>>&& arg)
+void Element::scrollIntoView(std::optional<std::variant<bool, ScrollIntoViewOptions>>&& arg)
 {
     document().updateLayoutIgnorePendingStylesheets();
 
@@ -4621,13 +4621,13 @@ Element* Element::findAnchorElementForLink(String& outAnchorName)
     return nullptr;
 }
 
-ExceptionOr<Ref<WebAnimation>> Element::animate(JSC::JSGlobalObject& lexicalGlobalObject, JSC::Strong<JSC::JSObject>&& keyframes, std::optional<Variant<double, KeyframeAnimationOptions>>&& options)
+ExceptionOr<Ref<WebAnimation>> Element::animate(JSC::JSGlobalObject& lexicalGlobalObject, JSC::Strong<JSC::JSObject>&& keyframes, std::optional<std::variant<double, KeyframeAnimationOptions>>&& options)
 {
     String id = "";
-    std::optional<Variant<double, KeyframeEffectOptions>> keyframeEffectOptions;
+    std::optional<std::variant<double, KeyframeEffectOptions>> keyframeEffectOptions;
     if (options) {
         auto optionsValue = options.value();
-        Variant<double, KeyframeEffectOptions> keyframeEffectOptionsVariant;
+        std::variant<double, KeyframeEffectOptions> keyframeEffectOptionsVariant;
         if (std::holds_alternative<double>(optionsValue))
             keyframeEffectOptionsVariant = WTF::get<double>(optionsValue);
         else {

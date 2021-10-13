@@ -73,7 +73,7 @@ private:
     String m_identifier;
     InspectorCanvas& m_canvas;
 
-    Variant<
+    std::variant<
 #if ENABLE(WEBGL)
         std::reference_wrapper<WebGLProgram>,
 #endif

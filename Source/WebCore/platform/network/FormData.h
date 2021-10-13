@@ -38,7 +38,7 @@ class TextEncoding;
 struct FormDataElement {
     struct EncodedFileData;
     struct EncodedBlobData;
-    using Data = Variant<Vector<uint8_t>, EncodedFileData, EncodedBlobData>;
+    using Data = std::variant<Vector<uint8_t>, EncodedFileData, EncodedBlobData>;
 
     FormDataElement() = default;
     explicit FormDataElement(Data&& data)

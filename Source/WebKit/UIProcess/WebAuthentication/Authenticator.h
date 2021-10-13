@@ -46,7 +46,7 @@ namespace WebKit {
 
 class Authenticator : public RefCounted<Authenticator>, public CanMakeWeakPtr<Authenticator> {
 public:
-    using Respond = Variant<Ref<WebCore::AuthenticatorResponse>, WebCore::ExceptionData>;
+    using Respond = std::variant<Ref<WebCore::AuthenticatorResponse>, WebCore::ExceptionData>;
 
     class Observer : public CanMakeWeakPtr<Observer> {
     public:

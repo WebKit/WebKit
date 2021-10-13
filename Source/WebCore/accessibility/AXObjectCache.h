@@ -176,7 +176,7 @@ public:
     void detachWrapper(AXCoreObject*, AccessibilityDetachmentType);
 #endif
 private:
-    using DOMObjectVariant = Variant<std::nullptr_t, RenderObject*, Node*, Widget*>;
+    using DOMObjectVariant = std::variant<std::nullptr_t, RenderObject*, Node*, Widget*>;
     void cacheAndInitializeWrapper(AccessibilityObject*, DOMObjectVariant = nullptr);
     void attachWrapper(AXCoreObject*);
 

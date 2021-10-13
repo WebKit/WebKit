@@ -47,7 +47,7 @@ class WebGLTransformFeedback;
 class WebGLVertexArrayObject;
 class WebGLVertexArrayObjectOES;
 
-using WebGLAny = Variant<
+using WebGLAny = std::variant<
     std::nullptr_t,
     bool,
     int,

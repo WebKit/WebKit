@@ -128,7 +128,7 @@ void PerformanceUserTiming::clearMarks(const String& markName)
     clearPerformanceEntries(m_marksMap, markName);
 }
 
-ExceptionOr<double> PerformanceUserTiming::convertMarkToTimestamp(const Variant<String, double>& mark) const
+ExceptionOr<double> PerformanceUserTiming::convertMarkToTimestamp(const std::variant<String, double>& mark) const
 {
     return WTF::switchOn(mark, [&](auto& value) {
         return convertMarkToTimestamp(value);

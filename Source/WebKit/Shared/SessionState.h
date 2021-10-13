@@ -55,7 +55,7 @@ struct HTTPBody {
             Blob,
         };
 
-        // FIXME: This should be a Variant. It's also unclear why we don't just use FormDataElement here.
+        // FIXME: This should be a std::variant. It's also unclear why we don't just use FormDataElement here.
         Type type = Type::Data;
 
         // Data.

@@ -92,7 +92,7 @@ private:
         return std::get<Ref<T>>(iterator->value).ptr();
     }
 
-    using Resource = Variant<std::monostate, Ref<ImageBuffer>, Ref<NativeImage>, Ref<Font>>;
+    using Resource = std::variant<std::monostate, Ref<ImageBuffer>, Ref<NativeImage>, Ref<Font>>;
     HashMap<RenderingResourceIdentifier, Resource> m_resources;
 };
 

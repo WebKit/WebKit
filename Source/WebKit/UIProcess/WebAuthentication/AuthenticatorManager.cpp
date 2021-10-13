@@ -147,14 +147,14 @@ static void processGoogleLegacyAppIdSupportExtension(const std::optional<Authent
     transports.remove(AuthenticatorTransport::Internal);
 }
 
-static String getRpId(const Variant<PublicKeyCredentialCreationOptions, PublicKeyCredentialRequestOptions>& options)
+static String getRpId(const std::variant<PublicKeyCredentialCreationOptions, PublicKeyCredentialRequestOptions>& options)
 {
     if (std::holds_alternative<PublicKeyCredentialCreationOptions>(options))
         return WTF::get<PublicKeyCredentialCreationOptions>(options).rp.id;
     return WTF::get<PublicKeyCredentialRequestOptions>(options).rpId;
 }
 
-static String getUserName(const Variant<PublicKeyCredentialCreationOptions, PublicKeyCredentialRequestOptions>& options)
+static String getUserName(const std::variant<PublicKeyCredentialCreationOptions, PublicKeyCredentialRequestOptions>& options)
 {
     if (std::holds_alternative<PublicKeyCredentialCreationOptions>(options))
         return WTF::get<PublicKeyCredentialCreationOptions>(options).user.name;

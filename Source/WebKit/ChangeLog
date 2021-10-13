@@ -1,3 +1,75 @@
+2021-10-12  Alex Christensen  <achristensen@webkit.org>
+
+        Use std::variant instead of WTF::Variant
+        https://bugs.webkit.org/show_bug.cgi?id=231629
+
+        Reviewed by Chris Dumez.
+
+        * NetworkProcess/NetworkLoadChecker.h:
+        * NetworkProcess/cache/NetworkCacheData.h:
+        * Platform/IPC/ArgumentCoders.h:
+        (IPC::VariantCoder::encode):
+        (IPC::VariantCoder::decode):
+        * Platform/IPC/Attachment.h:
+        * Platform/IPC/MessageReceiveQueueMap.h:
+        * Shared/SessionState.h:
+        * Shared/WebCoreArgumentCoders.h:
+        * Shared/WebPreferencesStore.h:
+        * Shared/mac/MediaFormatReader/MediaSampleCursor.h:
+        * UIProcess/API/APIWebAuthenticationPanel.h:
+        * UIProcess/API/C/WKMockMediaDevice.cpp:
+        (WKAddMockMediaDevice):
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _showSafeBrowsingWarning:completionHandler:]):
+        (-[WKWebView _showSafeBrowsingWarningWithURL:title:warning:detailsWithLinks:completionHandler:]):
+        * UIProcess/API/Cocoa/WKWebViewInternal.h:
+        * UIProcess/API/Cocoa/_WKWebAuthenticationPanel.mm:
+        (-[_WKWebAuthenticationPanel makeCredentialWithChallenge:origin:options:completionHandler:]):
+        (-[_WKWebAuthenticationPanel getAssertionWithChallenge:origin:options:completionHandler:]):
+        * UIProcess/Automation/SimulatedInputDispatcher.h:
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::WebAutomationSession::simulateKeyboardInteraction):
+        * UIProcess/Automation/WebAutomationSession.h:
+        * UIProcess/Automation/ios/WebAutomationSessionIOS.mm:
+        (WebKit::WebAutomationSession::platformSimulateKeyboardInteraction):
+        * UIProcess/Automation/mac/WebAutomationSessionMac.mm:
+        (WebKit::WebAutomationSession::platformSimulateKeyboardInteraction):
+        * UIProcess/Cocoa/SOAuthorization/SubFrameSOAuthorizationSession.h:
+        * UIProcess/Cocoa/WKSafeBrowsingWarning.h:
+        * UIProcess/Cocoa/WKSafeBrowsingWarning.mm:
+        (-[WKSafeBrowsingWarning initWithFrame:safeBrowsingWarning:completionHandler:]):
+        * UIProcess/Cocoa/WebViewImpl.h:
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::showSafeBrowsingWarning):
+        * UIProcess/PageClient.h:
+        (WebKit::PageClient::showSafeBrowsingWarning):
+        * UIProcess/ProcessThrottler.h:
+        * UIProcess/WebAuthentication/Authenticator.h:
+        * UIProcess/WebAuthentication/AuthenticatorManager.cpp:
+        (WebKit::WebCore::getRpId):
+        (WebKit::WebCore::getUserName):
+        * UIProcess/WebAuthentication/AuthenticatorManager.h:
+        * UIProcess/WebAuthentication/WebAuthenticationRequestData.cpp:
+        (WebKit::getClientDataType):
+        (WebKit::getUserVerificationRequirement):
+        * UIProcess/WebAuthentication/WebAuthenticationRequestData.h:
+        * UIProcess/WebAuthentication/WebAuthenticatorCoordinatorProxy.cpp:
+        (WebKit::WebAuthenticatorCoordinatorProxy::handleRequest):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::receivedPolicyDecision):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::showSafeBrowsingWarning):
+        * UIProcess/mac/PageClientImplMac.h:
+        * UIProcess/mac/PageClientImplMac.mm:
+        (WebKit::PageClientImpl::showSafeBrowsingWarning):
+        * WebAuthnProcess/WebAuthnConnectionToWebProcess.cpp:
+        (WebKit::WebAuthnConnectionToWebProcess::handleRequest):
+        * WebProcess/GPU/graphics/ImageBufferBackendHandle.h:
+        * WebProcess/Storage/WebServiceWorkerFetchTaskClient.h:
+        * WebProcess/WebPage/RemoteLayerTree/PlatformCAAnimationRemote.h:
+
 2021-10-12  Garrett Davidson  <garrett_davidson@apple.com>
 
         Adopt platform UI for WebAuthn

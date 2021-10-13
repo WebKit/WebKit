@@ -60,7 +60,7 @@ template<typename IDLType> class DOMPromiseDeferred;
 class ImageBitmap final : public ScriptWrappable, public RefCounted<ImageBitmap> {
     WTF_MAKE_ISO_ALLOCATED(ImageBitmap);
 public:
-    using Source = Variant<
+    using Source = std::variant<
         RefPtr<HTMLImageElement>,
 #if ENABLE(VIDEO)
         RefPtr<HTMLVideoElement>,

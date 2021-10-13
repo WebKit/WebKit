@@ -64,7 +64,7 @@ struct WebPreferencesStore {
     static void overrideBoolValueForKey(const String& key, bool value);
     static void removeTestRunnerOverrides();
 
-    using Value = Variant<String, bool, uint32_t, double>;
+    using Value = std::variant<String, bool, uint32_t, double>;
 
     using ValueMap = MemoryCompactRobinHoodHashMap<String, Value>;
     ValueMap m_values;

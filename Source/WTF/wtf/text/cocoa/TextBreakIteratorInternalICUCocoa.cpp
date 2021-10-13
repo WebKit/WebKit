@@ -31,7 +31,7 @@ namespace WTF {
 // Buffer sized to hold ASCII locale ID strings up to 32 characters long.
 using LocaleIDBuffer = std::array<char, 33>;
 
-static Variant<TextBreakIteratorICU, TextBreakIteratorPlatform> mapModeToBackingIterator(StringView string, TextBreakIterator::Mode mode, const AtomString& locale)
+static std::variant<TextBreakIteratorICU, TextBreakIteratorPlatform> mapModeToBackingIterator(StringView string, TextBreakIterator::Mode mode, const AtomString& locale)
 {
     switch (mode) {
     case TextBreakIterator::Mode::Line:

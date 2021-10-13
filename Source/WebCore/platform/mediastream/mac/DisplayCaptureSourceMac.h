@@ -52,7 +52,7 @@ class PixelBufferConformerCV;
 
 class DisplayCaptureSourceMac final : public RealtimeMediaSource {
 public:
-    using DisplayFrameType = WTF::Variant<RefPtr<NativeImage>, RetainPtr<IOSurfaceRef>>;
+    using DisplayFrameType = std::variant<RefPtr<NativeImage>, RetainPtr<IOSurfaceRef>>;
 
     class Capturer : public LoggerHelper {
         WTF_MAKE_FAST_ALLOCATED;

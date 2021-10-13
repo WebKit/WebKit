@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-static Variant<String, Ref<SharedBuffer>> copyPlatformData(const Variant<String, Ref<SharedBuffer>>& other)
+static std::variant<String, Ref<SharedBuffer>> copyPlatformData(const std::variant<String, Ref<SharedBuffer>>& other)
 {
     if (std::holds_alternative<String>(other))
         return { WTF::get<String>(other) };
@@ -265,7 +265,7 @@ void PasteboardCustomData::forEachCustomString(Function<void(const String& type,
     }
 }
 
-void PasteboardCustomData::forEachPlatformStringOrBuffer(Function<void(const String& type, const Variant<String, Ref<SharedBuffer>>& data)>&& function) const
+void PasteboardCustomData::forEachPlatformStringOrBuffer(Function<void(const String& type, const std::variant<String, Ref<SharedBuffer>>& data)>&& function) const
 {
     for (auto& entry : m_data) {
         auto& data = entry.platformData;

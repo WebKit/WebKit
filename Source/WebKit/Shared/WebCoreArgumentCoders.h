@@ -177,7 +177,7 @@ struct VelocityData;
 struct ViewportAttributes;
 struct WindowFeatures;
 
-using IDBKeyPath = Variant<String, Vector<String>>;
+using IDBKeyPath = std::variant<String, Vector<String>>;
 
 #if PLATFORM(COCOA)
 struct KeypressCommand;

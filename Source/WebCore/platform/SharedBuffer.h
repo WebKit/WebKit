@@ -182,7 +182,7 @@ public:
         DataSegment(Provider&& provider)
             : m_immutableData(WTFMove(provider)) { }
 
-        Variant<Vector<uint8_t>,
+        std::variant<Vector<uint8_t>,
 #if USE(CF)
             RetainPtr<CFDataRef>,
 #endif

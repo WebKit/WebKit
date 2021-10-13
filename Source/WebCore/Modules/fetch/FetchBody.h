@@ -53,7 +53,7 @@ public:
 
     void consumeAsStream(FetchBodyOwner&, FetchBodySource&);
 
-    using Init = Variant<RefPtr<Blob>, RefPtr<ArrayBufferView>, RefPtr<ArrayBuffer>, RefPtr<DOMFormData>, RefPtr<URLSearchParams>, RefPtr<ReadableStream>, String>;
+    using Init = std::variant<RefPtr<Blob>, RefPtr<ArrayBufferView>, RefPtr<ArrayBuffer>, RefPtr<DOMFormData>, RefPtr<URLSearchParams>, RefPtr<ReadableStream>, String>;
     static ExceptionOr<FetchBody> extract(Init&&, String&);
     FetchBody() = default;
 
@@ -64,7 +64,7 @@ public:
 
     RefPtr<FormData> bodyAsFormData() const;
 
-    using TakenData = Variant<std::nullptr_t, Ref<FormData>, Ref<SharedBuffer>>;
+    using TakenData = std::variant<std::nullptr_t, Ref<FormData>, Ref<SharedBuffer>>;
     TakenData take();
 
     void setAsFormData(Ref<FormData>&& data) { m_data = WTFMove(data); }
@@ -119,7 +119,7 @@ private:
     const String& textBody() const { return WTF::get<String>(m_data); }
     const URLSearchParams& urlSearchParamsBody() const { return WTF::get<Ref<const URLSearchParams>>(m_data).get(); }
 
-    using Data = Variant<std::nullptr_t, Ref<const Blob>, Ref<FormData>, Ref<const ArrayBuffer>, Ref<const ArrayBufferView>, Ref<const URLSearchParams>, String>;
+    using Data = std::variant<std::nullptr_t, Ref<const Blob>, Ref<FormData>, Ref<const ArrayBuffer>, Ref<const ArrayBufferView>, Ref<const URLSearchParams>, String>;
     Data m_data { nullptr };
 
     FetchBodyConsumer m_consumer { FetchBodyConsumer::Type::None };

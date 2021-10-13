@@ -730,7 +730,7 @@ template<typename ErrorType> struct ArgumentCoder<Expected<void, ErrorType>> {
 template<size_t index, typename... Types>
 struct VariantCoder {
     template<typename Encoder>
-    static void encode(Encoder& encoder, const WTF::Variant<Types...>& variant, unsigned i)
+    static void encode(Encoder& encoder, const std::variant<Types...>& variant, unsigned i)
     {
         if (i == index) {
             encoder << std::get<index>(variant);
@@ -740,10 +740,10 @@ struct VariantCoder {
     }
     
     template<typename Decoder>
-    static std::optional<WTF::Variant<Types...>> decode(Decoder& decoder, unsigned i)
+    static std::optional<std::variant<Types...>> decode(Decoder& decoder, unsigned i)
     {
         if (i == index) {
-            std::optional<typename std::variant_alternative<index, WTF::Variant<Types...>>::type> optional;
+            std::optional<typename std::variant_alternative<index, std::variant<Types...>>::type> optional;
             decoder >> optional;
             if (!optional)
                 return std::nullopt;
@@ -756,17 +756,17 @@ struct VariantCoder {
 template<typename... Types>
 struct VariantCoder<0, Types...> {
     template<typename Encoder>
-    static void encode(Encoder& encoder, const WTF::Variant<Types...>& variant, unsigned i)
+    static void encode(Encoder& encoder, const std::variant<Types...>& variant, unsigned i)
     {
         ASSERT_UNUSED(i, !i);
         encoder << std::get<0>(variant);
     }
     
     template<typename Decoder>
-    static std::optional<WTF::Variant<Types...>> decode(Decoder& decoder, unsigned i)
+    static std::optional<std::variant<Types...>> decode(Decoder& decoder, unsigned i)
     {
         ASSERT_UNUSED(i, !i);
-        std::optional<typename std::variant_alternative<0, WTF::Variant<Types...>>::type> optional;
+        std::optional<typename std::variant_alternative<0, std::variant<Types...>>::type> optional;
         decoder >> optional;
         if (!optional)
             return std::nullopt;
@@ -774,9 +774,9 @@ struct VariantCoder<0, Types...> {
     }
 };
 
-template<typename... Types> struct ArgumentCoder<WTF::Variant<Types...>> {
+template<typename... Types> struct ArgumentCoder<std::variant<Types...>> {
     template<typename Encoder>
-    static void encode(Encoder& encoder, const WTF::Variant<Types...>& variant)
+    static void encode(Encoder& encoder, const std::variant<Types...>& variant)
     {
         unsigned i = variant.index();
         encoder << i;
@@ -784,7 +784,7 @@ template<typename... Types> struct ArgumentCoder<WTF::Variant<Types...>> {
     }
     
     template<typename Decoder>
-    static std::optional<WTF::Variant<Types...>> decode(Decoder& decoder)
+    static std::optional<std::variant<Types...>> decode(Decoder& decoder)
     {
         std::optional<unsigned> i;
         decoder >> i;

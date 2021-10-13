@@ -75,10 +75,10 @@ using SWServerToContextConnectionIdentifier = ObjectIdentifier<SWServerToContext
 using SWServerConnectionIdentifierType = ProcessIdentifierType;
 using SWServerConnectionIdentifier = ObjectIdentifier<SWServerConnectionIdentifierType>;
 
-using DocumentOrWorkerIdentifier = Variant<DocumentIdentifier, ServiceWorkerIdentifier>;
+using DocumentOrWorkerIdentifier = std::variant<DocumentIdentifier, ServiceWorkerIdentifier>;
 
-using ServiceWorkerOrClientData = Variant<ServiceWorkerData, ServiceWorkerClientData>;
-using ServiceWorkerOrClientIdentifier = Variant<ServiceWorkerIdentifier, ServiceWorkerClientIdentifier>;
+using ServiceWorkerOrClientData = std::variant<ServiceWorkerData, ServiceWorkerClientData>;
+using ServiceWorkerOrClientIdentifier = std::variant<ServiceWorkerIdentifier, ServiceWorkerClientIdentifier>;
 
 } // namespace WebCore
 

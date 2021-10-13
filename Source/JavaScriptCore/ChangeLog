@@ -1,3 +1,32 @@
+2021-10-12  Alex Christensen  <achristensen@webkit.org>
+
+        Use std::variant instead of WTF::Variant
+        https://bugs.webkit.org/show_bug.cgi?id=231629
+
+        Reviewed by Chris Dumez.
+
+        * bytecode/StructureStubClearingWatchpoint.h:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileCallDOM):
+        * jit/AssemblyHelpers.cpp:
+        (JSC::AssemblyHelpers::branchIfValue):
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::branchIfTruthy):
+        (JSC::AssemblyHelpers::branchIfFalsey):
+        * jit/SnippetReg.h:
+        * jsc.cpp:
+        * parser/Lexer.h:
+        * parser/VariableEnvironment.h:
+        * runtime/BytecodeCacheError.h:
+        * runtime/CachePayload.cpp:
+        (JSC::CachePayload::CachePayload):
+        * runtime/CachePayload.h:
+        * runtime/CacheUpdate.h:
+        * runtime/ISO8601.cpp:
+        (JSC::ISO8601::parseTimeZoneBracketedAnnotation):
+        * runtime/ISO8601.h:
+        * wasm/WasmLLIntGenerator.cpp:
+
 2021-10-12  Chris Dumez  <cdumez@apple.com>
 
         Decrease use of makeWeakPtr()

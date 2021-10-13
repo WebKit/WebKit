@@ -47,7 +47,7 @@ struct EndIterator { };
 
 class Box {
 public:
-    using PathVariant = Variant<
+    using PathVariant = std::variant<
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
         BoxModernPath,
 #endif

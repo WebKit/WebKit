@@ -626,7 +626,7 @@ enum class AccessibilitySearchKey {
     VisitedLink,
 };
 
-using AXEditingStyleValueVariant = Variant<String, bool, int>;
+using AXEditingStyleValueVariant = std::variant<String, bool, int>;
 
 struct AccessibilitySearchCriteria {
     AXCoreObject* anchorObject { nullptr };
@@ -1120,7 +1120,7 @@ public:
     virtual bool ariaRoleHasPresentationalChildren() const = 0;
     virtual bool inheritsPresentationalRole() const = 0;
 
-    using AXValue = Variant<bool, unsigned, float, String, AccessibilityButtonState, AXCoreObject*>;
+    using AXValue = std::variant<bool, unsigned, float, String, AccessibilityButtonState, AXCoreObject*>;
     virtual AXValue value() = 0;
 
     // Accessibility Text

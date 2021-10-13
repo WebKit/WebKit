@@ -210,7 +210,7 @@ private:
 #endif
     }
 
-    using Resource = Variant<std::monostate, Ref<WebCore::ImageBuffer>, Ref<WebCore::NativeImage>, Ref<WebCore::Font>>;
+    using Resource = std::variant<std::monostate, Ref<WebCore::ImageBuffer>, Ref<WebCore::NativeImage>, Ref<WebCore::Font>>;
     HashMap<QualifiedRenderingResourceIdentifier, Resource> m_resources;
     WebCore::ProcessIdentifier m_webProcessIdentifier;
     unsigned m_imageBufferCount { 0 };

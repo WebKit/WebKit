@@ -36,7 +36,7 @@ class DOMURL;
 
 class URLSearchParams : public RefCounted<URLSearchParams> {
 public:
-    static ExceptionOr<Ref<URLSearchParams>> create(Variant<Vector<Vector<String>>, Vector<WTF::KeyValuePair<String, String>>, String>&&);
+    static ExceptionOr<Ref<URLSearchParams>> create(std::variant<Vector<Vector<String>>, Vector<WTF::KeyValuePair<String, String>>, String>&&);
     static Ref<URLSearchParams> create(const String& string, DOMURL* associatedURL)
     {
         return adoptRef(*new URLSearchParams(string, associatedURL));

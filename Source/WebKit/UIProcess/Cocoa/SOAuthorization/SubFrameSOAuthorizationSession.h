@@ -45,7 +45,7 @@ public:
     ~SubFrameSOAuthorizationSession();
 
 private:
-    using Supplement = Variant<Vector<uint8_t>, String>;
+    using Supplement = std::variant<Vector<uint8_t>, String>;
 
     SubFrameSOAuthorizationSession(SOAuthorization *, Ref<API::NavigationAction>&&, WebPageProxy&, Callback&&, WebCore::FrameIdentifier);
 

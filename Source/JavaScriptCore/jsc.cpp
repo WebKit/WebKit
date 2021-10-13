@@ -209,9 +209,9 @@ static void checkException(GlobalObject*, bool isLastFile, bool hasException, JS
 class Message : public ThreadSafeRefCounted<Message> {
 public:
 #if ENABLE(WEBASSEMBLY)
-    using Content = Variant<ArrayBufferContents, Ref<Wasm::MemoryHandle>>;
+    using Content = std::variant<ArrayBufferContents, Ref<Wasm::MemoryHandle>>;
 #else
-    using Content = Variant<ArrayBufferContents>;
+    using Content = std::variant<ArrayBufferContents>;
 #endif
     Message(Content&&, int32_t);
     ~Message();

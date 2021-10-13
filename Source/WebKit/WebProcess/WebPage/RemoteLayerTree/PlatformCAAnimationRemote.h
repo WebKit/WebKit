@@ -130,7 +130,7 @@ public:
     void didStart(CFTimeInterval beginTime) { m_properties.beginTime = beginTime; }
 
 
-    using KeyframeValue = Variant<float, WebCore::Color, WebCore::FloatPoint3D, WebCore::TransformationMatrix, RefPtr<WebCore::FilterOperation>>;
+    using KeyframeValue = std::variant<float, WebCore::Color, WebCore::FloatPoint3D, WebCore::TransformationMatrix, RefPtr<WebCore::FilterOperation>>;
 
     struct Properties {
         Properties()

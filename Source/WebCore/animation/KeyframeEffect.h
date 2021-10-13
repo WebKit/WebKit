@@ -49,7 +49,7 @@ class FilterOperations;
 class KeyframeEffect : public AnimationEffect
     , public CSSPropertyBlendingClient {
 public:
-    static ExceptionOr<Ref<KeyframeEffect>> create(JSC::JSGlobalObject&, Element*, JSC::Strong<JSC::JSObject>&&, std::optional<Variant<double, KeyframeEffectOptions>>&&);
+    static ExceptionOr<Ref<KeyframeEffect>> create(JSC::JSGlobalObject&, Element*, JSC::Strong<JSC::JSObject>&&, std::optional<std::variant<double, KeyframeEffectOptions>>&&);
     static ExceptionOr<Ref<KeyframeEffect>> create(JSC::JSGlobalObject&, Ref<KeyframeEffect>&&);
     static Ref<KeyframeEffect> create(const Element&, PseudoId);
     ~KeyframeEffect() { }
@@ -57,9 +57,9 @@ public:
     bool isKeyframeEffect() const final { return true; }
 
     struct BasePropertyIndexedKeyframe {
-        Variant<std::nullptr_t, Vector<std::optional<double>>, double> offset = Vector<std::optional<double>>();
-        Variant<Vector<String>, String> easing = Vector<String>();
-        Variant<Vector<CompositeOperationOrAuto>, CompositeOperationOrAuto> composite = Vector<CompositeOperationOrAuto>();
+        std::variant<std::nullptr_t, Vector<std::optional<double>>, double> offset = Vector<std::optional<double>>();
+        std::variant<Vector<String>, String> easing = Vector<String>();
+        std::variant<Vector<CompositeOperationOrAuto>, CompositeOperationOrAuto> composite = Vector<CompositeOperationOrAuto>();
     };
 
     struct BaseKeyframe {

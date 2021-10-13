@@ -106,7 +106,7 @@ private:
 
     void appendActionSnapshotIfNeeded();
 
-    using DuplicateDataVariant = Variant<
+    using DuplicateDataVariant = std::variant<
         RefPtr<CanvasGradient>,
         RefPtr<CanvasPattern>,
         RefPtr<HTMLCanvasElement>,
@@ -138,7 +138,7 @@ private:
 
     String m_identifier;
 
-    Variant<
+    std::variant<
         std::reference_wrapper<CanvasRenderingContext>,
         std::monostate
     > m_context;

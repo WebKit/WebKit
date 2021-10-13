@@ -115,7 +115,7 @@ class RemotePlayback;
 using CueInterval = PODInterval<MediaTime, TextTrackCue*>;
 using CueList = Vector<CueInterval>;
 
-using MediaProvider = std::optional<Variant<
+using MediaProvider = std::optional < std::variant <
 #if ENABLE(MEDIA_STREAM)
     RefPtr<MediaStream>,
 #endif

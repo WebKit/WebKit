@@ -1465,7 +1465,7 @@ inline OptionSet<WebKit::FindOptions> toFindOptions(WKFindConfiguration *configu
 
 #pragma mark - macOS/iOS internal
 
-- (void)_showSafeBrowsingWarning:(const WebKit::SafeBrowsingWarning&)warning completionHandler:(CompletionHandler<void(Variant<WebKit::ContinueUnsafeLoad, URL>&&)>&&)completionHandler
+- (void)_showSafeBrowsingWarning:(const WebKit::SafeBrowsingWarning&)warning completionHandler:(CompletionHandler<void(std::variant<WebKit::ContinueUnsafeLoad, URL>&&)>&&)completionHandler
 {
     _safeBrowsingWarning = adoptNS([[WKSafeBrowsingWarning alloc] initWithFrame:self.bounds safeBrowsingWarning:warning completionHandler:[weakSelf = WeakObjCPtr<WKWebView>(self), completionHandler = WTFMove(completionHandler)] (auto&& result) mutable {
         completionHandler(WTFMove(result));
@@ -2745,7 +2745,7 @@ static void convertAndAddHighlight(Vector<Ref<WebKit::SharedMemory>>& buffers, N
 {
     THROW_IF_SUSPENDED;
     auto safeBrowsingWarning = WebKit::SafeBrowsingWarning::create(url, title, warning, details);
-    auto wrapper = [completionHandler = makeBlockPtr(completionHandler)] (Variant<WebKit::ContinueUnsafeLoad, URL>&& variant) {
+    auto wrapper = [completionHandler = makeBlockPtr(completionHandler)] (std::variant<WebKit::ContinueUnsafeLoad, URL>&& variant) {
         switchOn(variant, [&] (WebKit::ContinueUnsafeLoad continueUnsafeLoad) {
             switch (continueUnsafeLoad) {
             case WebKit::ContinueUnsafeLoad::Yes:
