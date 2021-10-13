@@ -66,14 +66,17 @@ RefPtr<NativeImage> MediaPlayerPrivateRemote::nativeImageForCurrentTime()
     return NativeImage::create(WTFMove(platformImage));
 }
 
+#if USE(AVFOUNDATION)
 RetainPtr<CVPixelBufferRef> MediaPlayerPrivateRemote::pixelBufferForCurrentTime()
 {
-
-    RetainPtr<CVPixelBufferRef> result;
-    if (!connection().sendSync(Messages::RemoteMediaPlayerProxy::PixelBufferForCurrentTime(), Messages::RemoteMediaPlayerProxy::PixelBufferForCurrentTime::Reply(result), m_id))
+    std::optional<RetainPtr<CVPixelBufferRef>> result;
+    if (!connection().sendSync(Messages::RemoteMediaPlayerProxy::PixelBufferForCurrentTimeIfChanged(), Messages::RemoteMediaPlayerProxy::PixelBufferForCurrentTimeIfChanged::Reply(result), m_id))
         return nullptr;
-    return result;
+    if (result)
+        m_pixelBufferForCurrentTime = WTFMove(*result);
+    return m_pixelBufferForCurrentTime;
 }
+#endif
 
 } // namespace WebKit
 

@@ -314,7 +314,7 @@ private:
     void nativeImageForCurrentTime(CompletionHandler<void(std::optional<WTF::MachSendRight>&&)>&&);
 #endif
 #if USE(AVFOUNDATION)
-    void pixelBufferForCurrentTime(CompletionHandler<void(RetainPtr<CVPixelBufferRef>&&)>&&);
+    void pixelBufferForCurrentTimeIfChanged(CompletionHandler<void(std::optional<RetainPtr<CVPixelBufferRef>>&&)>&&);
 #endif
 
 #if !RELEASE_LOG_DISABLED
@@ -369,7 +369,9 @@ private:
     ScopedRenderingResourcesRequest m_renderingResourcesRequest;
 
     bool m_observingTimeChanges { false };
-
+#if USE(AVFOUNDATION)
+    RetainPtr<CVPixelBufferRef> m_pixelBufferForCurrentTime;
+#endif
 #if !RELEASE_LOG_DISABLED
     const Logger& m_logger;
 #endif
