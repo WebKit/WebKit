@@ -1,3 +1,14 @@
+2021-10-13  Per Arne  <pvollan@apple.com>
+
+        Restrict "darwin-notification-post" to a minimal set in the WP sandbox
+        https://bugs.webkit.org/show_bug.cgi?id=231594
+        <rdar://66586792>
+
+        Reviewed by Brent Fulgham.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb.in:
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2021-10-13  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         WebGL video texture upload is very slow due to excessive transfer of the video pixel buffer

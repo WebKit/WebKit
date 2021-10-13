@@ -2321,9 +2321,11 @@
 )
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED > 110000
-(when (defined? 'darwin-notification-post)
-    (allow darwin-notification-post (with telemetry))
-)
+(deny darwin-notification-post (with telemetry))
+(allow darwin-notification-post
+    (notification-name
+        "com.apple.accessibility.AirPodsSpatialAudioLockToDeviceChanged"
+        "com.apple.webinspectord.availability_check"))
 #endif
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED > 110000

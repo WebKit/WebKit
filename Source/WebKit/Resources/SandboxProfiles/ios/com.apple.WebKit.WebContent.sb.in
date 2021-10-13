@@ -1590,6 +1590,22 @@
     )
 )
 
-(when (defined? 'darwin-notification-post)
-    (allow darwin-notification-post (with telemetry))
-)
+(deny darwin-notification-post (with telemetry))
+(allow darwin-notification-post
+    (notification-name
+        "_AXNotification_AXSClassicInvertColorsPreference"
+        "com.apple.WebContentFilter.remoteUI.WebContentAnalysisUI-com.apple.uikit.viewService.connectionRequest"
+        "com.apple.accessibility.AirPodsSpatialAudioLockToDeviceChanged"
+        "com.apple.accessibility.QuickSpeakEnabled"
+        "com.apple.accessibility.application.status"
+        "com.apple.accessibility.automation.enabled.status"
+        "com.apple.accessibility.darken.system.colors"
+        "com.apple.accessibility.enhance.background.contrast.status"
+        "com.apple.accessibility.monoaudio.status"
+        "com.apple.accessibility.reduce.motion.status"
+        "com.apple.accessibility.status"
+        "com.apple.accessibility.text.legibility.status"
+        "com.apple.accessibility.voiceovertouch.status"
+        "com.apple.accessibility.wob.status"
+        "com.apple.automation.stringlookupinfoenabled"
+        "com.apple.webinspectord.availability_check"))
