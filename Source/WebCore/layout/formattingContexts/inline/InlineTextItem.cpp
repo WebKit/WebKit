@@ -150,7 +150,7 @@ void InlineTextItem::createAndAppendTextItems(InlineItems& inlineContent, const 
     }
 }
 
-bool InlineTextItem::isEmptyContent() const
+bool InlineTextItem::isZeroWidthSpaceSeparator() const
 {
     // FIXME: We should check for more zero width content and not just U+200B.
     return !m_length || (m_length == 1 && inlineTextBox().content()[start()] == zeroWidthSpace); 

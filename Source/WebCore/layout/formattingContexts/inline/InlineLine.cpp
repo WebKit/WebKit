@@ -267,21 +267,17 @@ void Line::appendInlineBoxEnd(const InlineItem& inlineItem, const RenderStyle& s
 void Line::appendTextContent(const InlineTextItem& inlineTextItem, const RenderStyle& style, InlineLayoutUnit logicalWidth)
 {
     auto willCollapseCompletely = [&] {
-        if (inlineTextItem.isEmptyContent())
-            return true;
         if (!inlineTextItem.isWhitespace())
             return false;
         if (InlineTextItem::shouldPreserveSpacesAndTabs(inlineTextItem))
             return false;
-        // Check if the last item is collapsed as well.
+        // This content is collapsible. Let's check if the last item is collapsed.
         for (auto& run : WTF::makeReversedRange(m_runs)) {
             if (run.isBox())
                 return false;
             // https://drafts.csswg.org/css-text-3/#white-space-phase-1
             // Any collapsible space immediately following another collapsible space—even one outside the boundary of the inline containing that space,
             // provided both spaces are within the same inline formatting context—is collapsed to have zero advance width.
-            // : "<span>  </span> " <- the trailing whitespace collapses completely.
-            // Not that when the inline box has preserve whitespace style, "<span style="white-space: pre">  </span> " <- this whitespace stays around.
             if (run.isText())
                 return run.hasCollapsibleTrailingWhitespace();
             ASSERT(run.isInlineBoxStart() || run.isInlineBoxEnd() || run.isWordBreakOpportunity());
@@ -304,6 +300,8 @@ void Line::appendTextContent(const InlineTextItem& inlineTextItem, const RenderS
         if (lastRun.hasCollapsedTrailingWhitespace())
             return true;
         if (inlineTextItem.isWordSeparator() && style.fontCascade().wordSpacing())
+            return true;
+        if (inlineTextItem.isZeroWidthSpaceSeparator())
             return true;
         return false;
     }();

@@ -1,3 +1,13 @@
+2021-10-12  Alan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Do not collapse whitespace with zero-width space separator in-between
+        https://bugs.webkit.org/show_bug.cgi?id=231595
+
+        Reviewed by Antti Koivisto.
+
+        * fast/text/whitespace-with-zero-width-space-in-between-expected.html: Added.
+        * fast/text/whitespace-with-zero-width-space-in-between.html: Added.
+
 2021-10-12  Ayumi Kojima  <ayumi_kojima@apple.com>
 
         [ macOS wk1 ] imported/w3c/web-platform-tests/css/selectors/focus-visible-009.html is a flaky failure.
