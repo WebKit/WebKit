@@ -1,3 +1,17 @@
+2021-10-13  Philippe Normand  <pnormand@igalia.com>
+
+        CLang build warning in CheckedPtr.h
+        https://bugs.webkit.org/show_bug.cgi?id=231672
+
+        Reviewed by Alex Christensen.
+
+        Assert on the wrapped pointer. Asserting on `this` always results to true, defeating the
+        purpose of the ASSERT.
+
+        * wtf/CheckedPtr.h:
+        (WTF::CheckedPtr::operator* const):
+        (WTF::CheckedPtr::operator*):
+
 2021-10-12  Alex Christensen  <achristensen@webkit.org>
 
         Use std::variant instead of WTF::Variant

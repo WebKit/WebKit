@@ -105,8 +105,8 @@ public:
 
     ALWAYS_INLINE const T* get() const { return PtrTraits::unwrap(m_ptr); }
     ALWAYS_INLINE T* get() { return PtrTraits::unwrap(m_ptr); }
-    ALWAYS_INLINE const T& operator*() const { ASSERT(this); return *get(); }
-    ALWAYS_INLINE T& operator*() { ASSERT(this); return *get(); }
+    ALWAYS_INLINE const T& operator*() const { ASSERT(m_ptr); return *get(); }
+    ALWAYS_INLINE T& operator*() { ASSERT(m_ptr); return *get(); }
     ALWAYS_INLINE const T* operator->() const { return get(); }
     ALWAYS_INLINE T* operator->() { return get(); }
 
