@@ -47,6 +47,8 @@ public:
 
     void queueCancelTask();
 
+    void runFocusingSteps();
+
 private:
     HTMLDialogElement(const QualifiedName&, Document&);
 
@@ -54,6 +56,7 @@ private:
 
     String m_returnValue;
     bool m_isModal { false };
+    WeakPtr<Element> m_previouslyFocusedElement;
 };
 
 } // namespace WebCore

@@ -1,7 +1,5 @@
-CONSOLE MESSAGE: Error: assert_true: select element should be focused expected true got false
 Test dialog modal is closed by escape key with select focused
 
 
-
-FAIL Test dialog modal is closed by escape key with select focused Error: assert_true: select element should be focused expected true got false
+PASS Test dialog modal is closed by escape key with select focused
 

@@ -4506,7 +4506,7 @@ void Document::flushAutofocusCandidates()
         // FIXME: Need to ignore if the inclusive ancestor documents has a target element.
         // FIXME: Use the result of getting the focusable area for element if element is not focusable.
         if (element->isFocusable()) {
-            m_autofocusCandidates.clear();
+            clearAutofocusCandidates();
             setAutofocusProcessed();
             element->runFocusingStepsForAutofocus();
             return;

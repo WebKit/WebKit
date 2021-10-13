@@ -799,7 +799,9 @@ public:
 
     bool isAutofocusProcessed() const { return m_isAutofocusProcessed; }
     void setAutofocusProcessed() { m_isAutofocusProcessed = true; }
+
     void appendAutofocusCandidate(Element&);
+    void clearAutofocusCandidates() { m_autofocusCandidates.clear(); }
     void flushAutofocusCandidates();
 
     void hoveredElementDidDetach(Element&);

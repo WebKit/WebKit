@@ -1,3 +1,22 @@
+2021-10-13  Tim Nguyen  <ntim@apple.com>
+
+        Implement <dialog> focusing steps
+        https://bugs.webkit.org/show_bug.cgi?id=227537
+
+        Reviewed by Darin Adler.
+
+        https://html.spec.whatwg.org/multipage/interactive-elements.html#dialog-focusing-steps
+
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-autofocus-expected.txt:
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-autofocus-just-once-expected.txt:
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-autofocus-multiple-times-expected.txt:
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-cancel-with-input-expected.txt:
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-cancel-with-select-expected.txt:
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-focusing-steps-prevent-autofocus-expected.txt:
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-showModal-expected.txt:
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/focus-after-close-expected.txt:
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/show-modal-focusing-steps-expected.txt:
+
 2021-10-13  Aditya Keerthi  <akeerthi@apple.com>
 
         [macOS] Add support for accent-color
