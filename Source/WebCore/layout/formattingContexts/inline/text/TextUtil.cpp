@@ -120,6 +120,9 @@ TextUtil::FallbackFontList TextUtil::fallbackFontsForRun(const Line::Run& run, c
     TextUtil::FallbackFontList fallbackFonts;
 
     auto collectFallbackFonts = [&](const auto& textRun) {
+        if (textRun.text().isEmpty())
+            return;
+
         if (textRun.is8Bit()) {
             auto textIterator = Latin1TextIterator { textRun.data8(0), 0, textRun.length(), textRun.length() };
             fallbackFontsForRunWithIterator(fallbackFonts, style.fontCascade(), textRun, textIterator);
