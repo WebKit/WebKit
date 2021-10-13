@@ -1,3 +1,13 @@
+2021-10-13  Alan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Preserved tab is not a word separator
+        https://bugs.webkit.org/show_bug.cgi?id=231687
+
+        Reviewed by Antti Koivisto.
+
+        * fast/text/preserved-white-space-with-word-spacing-expected.html: Added.
+        * fast/text/preserved-white-space-with-word-spacing.html: Added.
+
 2021-10-13  Jean-Yves Avenard  <jya@apple.com>
 
         Add mp3 and aac web audio test

@@ -509,6 +509,10 @@ void LineBuilder::candidateContentForLine(LineCandidate& lineCandidate, size_t c
             auto logicalWidth = leadingLogicalWidth ? *std::exchange(leadingLogicalWidth, std::nullopt) : inlineItemWidth(inlineItem, currentLogicalRight);
             lineCandidate.inlineContent.appendInlineItem(inlineItem, style, logicalWidth);
             currentLogicalRight += logicalWidth;
+            if (is<InlineTextItem>(inlineItem) && downcast<InlineTextItem>(inlineItem).isWordSeparator()) {
+                // Word spacing does not make the run longer, but it produces an offset instead. See Line::appendTextContent as well.
+                currentLogicalRight += style.fontCascade().wordSpacing();
+            }
             continue;
         }
         if (inlineItem.isBox()) {
