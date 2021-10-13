@@ -1,3 +1,21 @@
+2021-10-13  Kyle Piddington  <kpiddington@apple.com>
+
+        Upstream ANGLE: PrimitiveRestart tests fail due to incorrect draw commands
+        https://bugs.webkit.org/show_bug.cgi?id=231626
+        <rdar:/problem/84167241>
+   
+        Primitive restart draw commands were being encoded
+        incorrectly. Single element ranges were being disregarded,
+        and a maximum draw size was not being enforced when the
+        index buffer was aliased / reused.
+
+        Cherry-pick from upstream anglebug.com/6535
+    
+        Reviewed by Kenneth Russell.
+
+        * src/libANGLE/renderer/metal/VertexArrayMtl.mm:
+        (rx::VertexArrayMtl::getDrawIndices):
+
 2021-10-12  Alexey Proskuryakov  <ap@apple.com>
 
         Invoke ThirdParty build scripts with python3 explicitly
