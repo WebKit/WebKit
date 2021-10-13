@@ -26,11 +26,11 @@
 #include "config.h"
 #include "PrivateClickMeasurementManagerInterface.h"
 
+#include "DaemonDecoder.h"
+#include "DaemonEncoder.h"
 #include "HandleMessage.h"
 #include "PrivateClickMeasurementConnection.h"
 #include "PrivateClickMeasurementDaemonClient.h"
-#include "PrivateClickMeasurementDecoder.h"
-#include "PrivateClickMeasurementEncoder.h"
 #include "PrivateClickMeasurementManager.h"
 #include "WebCoreArgumentCoders.h"
 
@@ -143,7 +143,7 @@ EMPTY_REPLY(storeUnattributed);
 
 PCM::EncodedMessage toStringForTesting::encodeReply(String reply)
 {
-    PCM::Encoder encoder;
+    Daemon::Encoder encoder;
     encoder << reply;
     return encoder.takeBuffer();
 }
@@ -197,9 +197,9 @@ static PrivateClickMeasurementManager& daemonManager()
 }
 
 template<typename Info>
-void handlePCMMessage(PCM::EncodedMessage&& encodedMessage)
+void handlePCMMessage(Span<const uint8_t> encodedMessage)
 {
-    PCM::Decoder decoder(WTFMove(encodedMessage));
+    Daemon::Decoder decoder(encodedMessage);
 
     std::optional<typename Info::ArgsTuple> arguments;
     decoder >> arguments;
@@ -209,10 +209,10 @@ void handlePCMMessage(PCM::EncodedMessage&& encodedMessage)
     IPC::callMemberFunction(WTFMove(*arguments), &daemonManager(), Info::MemberFunction);
 }
 
-static void handlePCMMessageSetDebugModeIsEnabled(const Connection& connection, PCM::EncodedMessage&& encodedMessage)
+static void handlePCMMessageSetDebugModeIsEnabled(const Daemon::Connection& connection, Span<const uint8_t> encodedMessage)
 {
 #if PLATFORM(COCOA)
-    PCM::Decoder decoder(WTFMove(encodedMessage));
+    Daemon::Decoder decoder(encodedMessage);
     std::optional<bool> enabled;
     decoder >> enabled;
     if (UNLIKELY(!enabled))
@@ -230,9 +230,9 @@ static void handlePCMMessageSetDebugModeIsEnabled(const Connection& connection, 
 }
 
 template<typename Info>
-void handlePCMMessageWithReply(PCM::EncodedMessage&& encodedMessage, CompletionHandler<void(PCM::EncodedMessage&&)>&& replySender)
+void handlePCMMessageWithReply(Span<const uint8_t> encodedMessage, CompletionHandler<void(PCM::EncodedMessage&&)>&& replySender)
 {
-    PCM::Decoder decoder(WTFMove(encodedMessage));
+    Daemon::Decoder decoder(encodedMessage);
 
     std::optional<typename Info::ArgsTuple> arguments;
     decoder >> arguments;
@@ -251,63 +251,63 @@ void doDailyActivityInManager()
     daemonManager().firePendingAttributionRequests();
 }
 
-void decodeMessageAndSendToManager(const Connection& connection, MessageType messageType, Vector<uint8_t>&& encodedMessage, CompletionHandler<void(Vector<uint8_t>&&)>&& replySender)
+void decodeMessageAndSendToManager(const Daemon::Connection& connection, MessageType messageType, Span<const uint8_t> encodedMessage, CompletionHandler<void(Vector<uint8_t>&&)>&& replySender)
 {
     ASSERT(messageTypeSendsReply(messageType) == !!replySender);
     switch (messageType) {
     case PCM::MessageType::StoreUnattributed:
-        handlePCMMessageWithReply<MessageInfo::storeUnattributed>(WTFMove(encodedMessage), WTFMove(replySender));
+        handlePCMMessageWithReply<MessageInfo::storeUnattributed>(encodedMessage, WTFMove(replySender));
         break;
     case PCM::MessageType::HandleAttribution:
-        handlePCMMessage<MessageInfo::handleAttribution>(WTFMove(encodedMessage));
+        handlePCMMessage<MessageInfo::handleAttribution>(encodedMessage);
         break;
     case PCM::MessageType::Clear:
-        handlePCMMessageWithReply<MessageInfo::clear>(WTFMove(encodedMessage), WTFMove(replySender));
+        handlePCMMessageWithReply<MessageInfo::clear>(encodedMessage, WTFMove(replySender));
         break;
     case PCM::MessageType::ClearForRegistrableDomain:
-        handlePCMMessageWithReply<MessageInfo::clearForRegistrableDomain>(WTFMove(encodedMessage), WTFMove(replySender));
+        handlePCMMessageWithReply<MessageInfo::clearForRegistrableDomain>(encodedMessage, WTFMove(replySender));
         break;
     case PCM::MessageType::SetDebugModeIsEnabled:
-        handlePCMMessageSetDebugModeIsEnabled(connection, WTFMove(encodedMessage));
+        handlePCMMessageSetDebugModeIsEnabled(connection, encodedMessage);
         break;
     case PCM::MessageType::MigratePrivateClickMeasurementFromLegacyStorage:
-        handlePCMMessage<MessageInfo::migratePrivateClickMeasurementFromLegacyStorage>(WTFMove(encodedMessage));
+        handlePCMMessage<MessageInfo::migratePrivateClickMeasurementFromLegacyStorage>(encodedMessage);
         break;
     case PCM::MessageType::ToStringForTesting:
-        handlePCMMessageWithReply<MessageInfo::toStringForTesting>(WTFMove(encodedMessage), WTFMove(replySender));
+        handlePCMMessageWithReply<MessageInfo::toStringForTesting>(encodedMessage, WTFMove(replySender));
         break;
     case PCM::MessageType::SetOverrideTimerForTesting:
-        handlePCMMessage<MessageInfo::setOverrideTimerForTesting>(WTFMove(encodedMessage));
+        handlePCMMessage<MessageInfo::setOverrideTimerForTesting>(encodedMessage);
         break;
     case PCM::MessageType::SetTokenPublicKeyURLForTesting:
-        handlePCMMessage<MessageInfo::setTokenPublicKeyURLForTesting>(WTFMove(encodedMessage));
+        handlePCMMessage<MessageInfo::setTokenPublicKeyURLForTesting>(encodedMessage);
         break;
     case PCM::MessageType::SetTokenSignatureURLForTesting:
-        handlePCMMessage<MessageInfo::setTokenSignatureURLForTesting>(WTFMove(encodedMessage));
+        handlePCMMessage<MessageInfo::setTokenSignatureURLForTesting>(encodedMessage);
         break;
     case PCM::MessageType::SetAttributionReportURLsForTesting:
-        handlePCMMessage<MessageInfo::setAttributionReportURLsForTesting>(WTFMove(encodedMessage));
+        handlePCMMessage<MessageInfo::setAttributionReportURLsForTesting>(encodedMessage);
         break;
     case PCM::MessageType::MarkAllUnattributedAsExpiredForTesting:
-        handlePCMMessage<MessageInfo::markAllUnattributedAsExpiredForTesting>(WTFMove(encodedMessage));
+        handlePCMMessage<MessageInfo::markAllUnattributedAsExpiredForTesting>(encodedMessage);
         break;
     case PCM::MessageType::MarkAttributedPrivateClickMeasurementsAsExpiredForTesting:
-        handlePCMMessageWithReply<MessageInfo::markAttributedPrivateClickMeasurementsAsExpiredForTesting>(WTFMove(encodedMessage), WTFMove(replySender));
+        handlePCMMessageWithReply<MessageInfo::markAttributedPrivateClickMeasurementsAsExpiredForTesting>(encodedMessage, WTFMove(replySender));
         break;
     case PCM::MessageType::SetPCMFraudPreventionValuesForTesting:
-        handlePCMMessage<MessageInfo::setPCMFraudPreventionValuesForTesting>(WTFMove(encodedMessage));
+        handlePCMMessage<MessageInfo::setPCMFraudPreventionValuesForTesting>(encodedMessage);
         break;
     case PCM::MessageType::StartTimerImmediatelyForTesting:
-        handlePCMMessage<MessageInfo::startTimerImmediatelyForTesting>(WTFMove(encodedMessage));
+        handlePCMMessage<MessageInfo::startTimerImmediatelyForTesting>(encodedMessage);
         break;
     case PCM::MessageType::SetPrivateClickMeasurementAppBundleIDForTesting:
-        handlePCMMessage<MessageInfo::setPrivateClickMeasurementAppBundleIDForTesting>(WTFMove(encodedMessage));
+        handlePCMMessage<MessageInfo::setPrivateClickMeasurementAppBundleIDForTesting>(encodedMessage);
         break;
     case PCM::MessageType::DestroyStoreForTesting:
-        handlePCMMessageWithReply<MessageInfo::destroyStoreForTesting>(WTFMove(encodedMessage), WTFMove(replySender));
+        handlePCMMessageWithReply<MessageInfo::destroyStoreForTesting>(encodedMessage, WTFMove(replySender));
         break;
     case PCM::MessageType::AllowTLSCertificateChainForLocalPCMTesting:
-        handlePCMMessage<MessageInfo::allowTLSCertificateChainForLocalPCMTesting>(WTFMove(encodedMessage));
+        handlePCMMessage<MessageInfo::allowTLSCertificateChainForLocalPCMTesting>(encodedMessage);
         break;
     }
 }

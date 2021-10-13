@@ -29,9 +29,9 @@
 
 #import "ArgumentCodersCF.h"
 #import "ArgumentCodersCocoa.h"
+#import "DaemonDecoder.h"
+#import "DaemonEncoder.h"
 #import "DataReference.h"
-#import "PrivateClickMeasurementDecoder.h"
-#import "PrivateClickMeasurementEncoder.h"
 #import <WebCore/CertificateInfo.h>
 #import <WebCore/ContentFilterUnblockHandler.h>
 #import <WebCore/Credential.h>
@@ -67,7 +67,7 @@ void ArgumentCoder<WebCore::CertificateInfo>::encode(Encoder& encoder, const Web
 }
 
 template<>
-void ArgumentCoder<WebCore::CertificateInfo>::encode(WebKit::PCM::Encoder& encoder, const WebCore::CertificateInfo& certificateInfo)
+void ArgumentCoder<WebCore::CertificateInfo>::encode(WebKit::Daemon::Encoder& encoder, const WebCore::CertificateInfo& certificateInfo)
 {
     ASSERT(certificateInfo.type() == WebCore::CertificateInfo::Type::Trust);
     encoder << certificateInfo.trust();
@@ -109,7 +109,7 @@ std::optional<WebCore::CertificateInfo> ArgumentCoder<WebCore::CertificateInfo>:
 }
 
 template<>
-std::optional<WebCore::CertificateInfo> ArgumentCoder<WebCore::CertificateInfo>::decode(WebKit::PCM::Decoder& decoder)
+std::optional<WebCore::CertificateInfo> ArgumentCoder<WebCore::CertificateInfo>::decode(WebKit::Daemon::Decoder& decoder)
 {
     std::optional<RetainPtr<SecTrustRef>> trust;
     decoder >> trust;

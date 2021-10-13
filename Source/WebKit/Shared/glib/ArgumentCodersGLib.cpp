@@ -26,9 +26,9 @@
 #include "config.h"
 #include "ArgumentCodersGLib.h"
 
+#include "DaemonDecoder.h"
+#include "DaemonEncoder.h"
 #include "DataReference.h"
-#include "PrivateClickMeasurementDecoder.h"
-#include "PrivateClickMeasurementEncoder.h"
 #include <gio/gio.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/text/CString.h>
@@ -107,7 +107,7 @@ void ArgumentCoder<GRefPtr<GTlsCertificate>>::encode(Encoder& encoder, GRefPtr<G
     }
 }
 template void ArgumentCoder<GRefPtr<GTlsCertificate>>::encode<Encoder>(Encoder&, GRefPtr<GTlsCertificate>);
-template void ArgumentCoder<GRefPtr<GTlsCertificate>>::encode<WebKit::PCM::Encoder>(WebKit::PCM::Encoder&, GRefPtr<GTlsCertificate>);
+template void ArgumentCoder<GRefPtr<GTlsCertificate>>::encode<WebKit::Daemon::Encoder>(WebKit::Daemon::Encoder&, GRefPtr<GTlsCertificate>);
 
 template<typename Decoder>
 std::optional<GRefPtr<GTlsCertificate>> ArgumentCoder<GRefPtr<GTlsCertificate>>::decode(Decoder& decoder)
@@ -164,6 +164,6 @@ std::optional<GRefPtr<GTlsCertificate>> ArgumentCoder<GRefPtr<GTlsCertificate>>:
     return certificate;
 }
 template std::optional<GRefPtr<GTlsCertificate>> ArgumentCoder<GRefPtr<GTlsCertificate>>::decode<Decoder>(Decoder&);
-template std::optional<GRefPtr<GTlsCertificate>> ArgumentCoder<GRefPtr<GTlsCertificate>>::decode<WebKit::PCM::Decoder>(WebKit::PCM::Decoder&);
+template std::optional<GRefPtr<GTlsCertificate>> ArgumentCoder<GRefPtr<GTlsCertificate>>::decode<WebKit::Daemon::Decoder>(WebKit::Daemon::Decoder&);
 
 } // namespace IPC

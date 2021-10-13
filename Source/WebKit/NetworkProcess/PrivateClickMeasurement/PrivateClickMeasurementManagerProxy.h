@@ -69,7 +69,7 @@ private:
     template<MessageType messageType, typename... Args, typename... ReplyArgs>
     void sendMessageWithReply(CompletionHandler<void(ReplyArgs...)>&&, Args&&...) const;
 
-    ConnectionToMachService m_connection;
+    Connection m_connection;
 };
 
 } // namespace PCM

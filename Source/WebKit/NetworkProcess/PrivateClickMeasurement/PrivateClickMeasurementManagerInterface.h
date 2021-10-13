@@ -35,13 +35,15 @@ class CertificateInfo;
 
 namespace WebKit {
 
+namespace Daemon {
+class Connection;
+}
+
 enum class PrivateClickMeasurementAttributionType : bool { Unattributed, Attributed };
 
 class PrivateClickMeasurementManager;
 
 namespace PCM {
-
-class Connection;
 
 class ManagerInterface {
 public:
@@ -106,7 +108,7 @@ enum class MessageType : uint8_t {
 constexpr const char* protocolEncodedMessageKey { "encoded message" };
 using EncodedMessage = Vector<uint8_t>;
 
-void decodeMessageAndSendToManager(const Connection&, MessageType, Vector<uint8_t>&& message, CompletionHandler<void(Vector<uint8_t>&&)>&&);
+void decodeMessageAndSendToManager(const Daemon::Connection&, MessageType, Span<const uint8_t> encodedMessage, CompletionHandler<void(Vector<uint8_t>&&)>&&);
 void doDailyActivityInManager();
 bool messageTypeSendsReply(MessageType);
 

@@ -1256,6 +1256,8 @@
 		5C1427071C23F84C00D41183 /* DownloadManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C1426F91C23F84300D41183 /* DownloadManager.h */; };
 		5C1427181C23F8B700D41183 /* LegacyCustomProtocolManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C1427141C23F8B000D41183 /* LegacyCustomProtocolManager.h */; };
 		5C1579DC27165B8200ED5280 /* webpushd.c in Sources */ = {isa = PBXBuildFile; fileRef = 5C1579DB27165B7500ED5280 /* webpushd.c */; };
+		5C1579EE27172A8B00ED5280 /* DaemonEncoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C1579EA27172A8B00ED5280 /* DaemonEncoder.h */; };
+		5C1579EF27172A8B00ED5280 /* DaemonDecoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C1579EB27172A8B00ED5280 /* DaemonDecoder.h */; };
 		5C19A5201FD0B29500EEA323 /* URLSchemeTaskParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C19A51F1FD0B14700EEA323 /* URLSchemeTaskParameters.h */; };
 		5C20CBA01BB1ECD800895BB1 /* NetworkSession.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C20CB9E1BB0DD1800895BB1 /* NetworkSession.h */; };
 		5C26958520043212005C439B /* WKOpenPanelParametersPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C26958420042F12005C439B /* WKOpenPanelParametersPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -4535,6 +4537,13 @@
 		5C1579DA27165B2F00ED5280 /* webpushd */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = webpushd; sourceTree = BUILT_PRODUCTS_DIR; };
 		5C1579DB27165B7500ED5280 /* webpushd.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = webpushd.c; sourceTree = "<group>"; };
 		5C1579DD27165BE500ED5280 /* webpushd.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = webpushd.xcconfig; sourceTree = "<group>"; };
+		5C1579E227172A4900ED5280 /* DaemonConnection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DaemonConnection.cpp; sourceTree = "<group>"; };
+		5C1579E327172A4900ED5280 /* DaemonConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DaemonConnection.h; sourceTree = "<group>"; };
+		5C1579E627172A5100ED5280 /* DaemonConnectionCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DaemonConnectionCocoa.mm; sourceTree = "<group>"; };
+		5C1579E827172A8A00ED5280 /* DaemonEncoder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DaemonEncoder.cpp; sourceTree = "<group>"; };
+		5C1579E927172A8B00ED5280 /* DaemonDecoder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DaemonDecoder.cpp; sourceTree = "<group>"; };
+		5C1579EA27172A8B00ED5280 /* DaemonEncoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DaemonEncoder.h; sourceTree = "<group>"; };
+		5C1579EB27172A8B00ED5280 /* DaemonDecoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DaemonDecoder.h; sourceTree = "<group>"; };
 		5C19A51E1FD0B14600EEA323 /* URLSchemeTaskParameters.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = URLSchemeTaskParameters.cpp; sourceTree = "<group>"; };
 		5C19A51F1FD0B14700EEA323 /* URLSchemeTaskParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = URLSchemeTaskParameters.h; sourceTree = "<group>"; };
 		5C1B38DF2667140700B1545B /* WebPageNetworkParameters.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebPageNetworkParameters.h; sourceTree = "<group>"; };
@@ -4639,14 +4648,10 @@
 		5CB930F526E802150032B1C0 /* PrivateClickMeasurementManagerProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrivateClickMeasurementManagerProxy.h; sourceTree = "<group>"; };
 		5CB930F626E802150032B1C0 /* PrivateClickMeasurementDaemonClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrivateClickMeasurementDaemonClient.h; sourceTree = "<group>"; };
 		5CB930F726E802150032B1C0 /* PrivateClickMeasurementDaemonClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PrivateClickMeasurementDaemonClient.cpp; sourceTree = "<group>"; };
-		5CB930F826E802150032B1C0 /* PrivateClickMeasurementDecoder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PrivateClickMeasurementDecoder.cpp; sourceTree = "<group>"; };
-		5CB930F926E802150032B1C0 /* PrivateClickMeasurementEncoder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PrivateClickMeasurementEncoder.cpp; sourceTree = "<group>"; };
 		5CB930FA26E802150032B1C0 /* PrivateClickMeasurementManagerInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrivateClickMeasurementManagerInterface.h; sourceTree = "<group>"; };
 		5CB930FB26E802150032B1C0 /* PrivateClickMeasurementManagerProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PrivateClickMeasurementManagerProxy.cpp; sourceTree = "<group>"; };
 		5CB930FC26E802160032B1C0 /* PrivateClickMeasurementConnection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PrivateClickMeasurementConnection.cpp; sourceTree = "<group>"; };
-		5CB930FD26E802160032B1C0 /* PrivateClickMeasurementDecoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrivateClickMeasurementDecoder.h; sourceTree = "<group>"; };
 		5CB930FE26E802160032B1C0 /* PrivateClickMeasurementConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrivateClickMeasurementConnection.h; sourceTree = "<group>"; };
-		5CB930FF26E802160032B1C0 /* PrivateClickMeasurementEncoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrivateClickMeasurementEncoder.h; sourceTree = "<group>"; };
 		5CB9310426E837FC0032B1C0 /* PCMDaemonEntryPoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PCMDaemonEntryPoint.h; sourceTree = "<group>"; };
 		5CB9310526E837FD0032B1C0 /* PCMDaemonEntryPoint.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PCMDaemonEntryPoint.mm; sourceTree = "<group>"; };
 		5CB9310626E839A90032B1C0 /* PrivateClickMeasurementManagerInterface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PrivateClickMeasurementManagerInterface.cpp; sourceTree = "<group>"; };
@@ -7369,6 +7374,12 @@
 				BCEE966B112FAF57006BCC24 /* Attachment.h */,
 				BC032DA210F437D10058C15A /* Connection.cpp */,
 				BC032DA310F437D10058C15A /* Connection.h */,
+				5C1579E227172A4900ED5280 /* DaemonConnection.cpp */,
+				5C1579E327172A4900ED5280 /* DaemonConnection.h */,
+				5C1579E927172A8B00ED5280 /* DaemonDecoder.cpp */,
+				5C1579EB27172A8B00ED5280 /* DaemonDecoder.h */,
+				5C1579E827172A8A00ED5280 /* DaemonEncoder.cpp */,
+				5C1579EA27172A8B00ED5280 /* DaemonEncoder.h */,
 				1AC7537E183BE50F0072CB15 /* DataReference.h */,
 				BC032D9D10F437D10058C15A /* Decoder.cpp */,
 				BC032D9E10F437D10058C15A /* Decoder.h */,
@@ -9437,10 +9448,6 @@
 				5C826D6926D482EA008AEC91 /* PrivateClickMeasurementDatabase.h */,
 				5CBE909026D7FB7C005A2E95 /* PrivateClickMeasurementDebugInfo.cpp */,
 				5CBE908F26D7FB62005A2E95 /* PrivateClickMeasurementDebugInfo.h */,
-				5CB930F826E802150032B1C0 /* PrivateClickMeasurementDecoder.cpp */,
-				5CB930FD26E802160032B1C0 /* PrivateClickMeasurementDecoder.h */,
-				5CB930F926E802150032B1C0 /* PrivateClickMeasurementEncoder.cpp */,
-				5CB930FF26E802160032B1C0 /* PrivateClickMeasurementEncoder.h */,
 				6BD05864220CE8C2000BED5C /* PrivateClickMeasurementManager.cpp */,
 				6BD05863220CE8C2000BED5C /* PrivateClickMeasurementManager.h */,
 				5CB9310626E839A90032B1C0 /* PrivateClickMeasurementManagerInterface.cpp */,
@@ -11171,6 +11178,7 @@
 			isa = PBXGroup;
 			children = (
 				1A30EAC5115D7DA30053E937 /* ConnectionCocoa.mm */,
+				5C1579E627172A5100ED5280 /* DaemonConnectionCocoa.mm */,
 				1A1EC69D1872092100B951F0 /* ImportanceAssertion.h */,
 				1A6D86BF1DF75265007745E8 /* MachMessage.cpp */,
 				1A6D86C01DF75265007745E8 /* MachMessage.h */,
@@ -12311,6 +12319,8 @@
 				57597EBD218184900037F924 /* CtapAuthenticator.h in Headers */,
 				57597EB921811D9A0037F924 /* CtapHidDriver.h in Headers */,
 				570DAACA230385FD00E8FC04 /* CtapNfcDriver.h in Headers */,
+				5C1579EF27172A8B00ED5280 /* DaemonDecoder.h in Headers */,
+				5C1579EE27172A8B00ED5280 /* DaemonEncoder.h in Headers */,
 				C55F91711C59676E0029E92D /* DataDetectionResult.h in Headers */,
 				1AC75380183BE50F0072CB15 /* DataReference.h in Headers */,
 				99036AE923A970870000B06A /* DebuggableInfoData.h in Headers */,

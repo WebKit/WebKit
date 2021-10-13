@@ -24,11 +24,11 @@
  */
 
 #include "config.h"
-#include "PrivateClickMeasurementDecoder.h"
+#include "DaemonDecoder.h"
 
 namespace WebKit {
 
-namespace PCM {
+namespace Daemon {
 
 Decoder::~Decoder()
 {
@@ -58,6 +58,6 @@ const uint8_t* Decoder::decodeFixedLengthReference(size_t size, size_t)
     return data;
 }
 
-} // namespace PCM
+} // namespace Daemon
 
 } // namespace WebKit

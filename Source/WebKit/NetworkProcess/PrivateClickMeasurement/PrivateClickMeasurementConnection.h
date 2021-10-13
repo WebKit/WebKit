@@ -25,15 +25,8 @@
 
 #pragma once
 
-#include <wtf/CompletionHandler.h>
-#include <wtf/Vector.h>
-#include <wtf/WeakPtr.h>
-#include <wtf/text/CString.h>
-
-#if PLATFORM(COCOA)
-#include <wtf/RetainPtr.h>
-#include <wtf/spi/darwin/XPCSPI.h>
-#endif
+#include "DaemonConnection.h"
+#include "PrivateClickMeasurementManagerInterface.h"
 
 namespace WebKit {
 
@@ -42,37 +35,26 @@ class NetworkSession;
 namespace PCM {
 
 enum class MessageType : uint8_t;
-using EncodedMessage = Vector<uint8_t>;
 
-class Connection : public CanMakeWeakPtr<Connection> {
-public:
-    Connection() = default;
-#if PLATFORM(COCOA)
-    explicit Connection(RetainPtr<xpc_connection_t>&& connection)
-        : m_connection(WTFMove(connection)) { }
-    xpc_connection_t get() const { return m_connection.get(); }
-    void send(xpc_object_t) const;
-    void sendWithReply(xpc_object_t, CompletionHandler<void(xpc_object_t)>&&) const;
-protected:
-    mutable RetainPtr<xpc_connection_t> m_connection;
-#endif
+struct ConnectionTraits {
+    using MessageType = WebKit::PCM::MessageType;
+    static constexpr const char* protocolVersionKey { PCM::protocolVersionKey };
+    static constexpr uint64_t protocolVersionValue { PCM::protocolVersionValue };
+    static constexpr const char* protocolEncodedMessageKey { PCM::protocolEncodedMessageKey };
 };
 
-class ConnectionToMachService : public Connection {
+class Connection : public Daemon::ConnectionToMachService<ConnectionTraits> {
 public:
-    ConnectionToMachService(CString&& machServiceName, NetworkSession&);
-
-    void send(MessageType, EncodedMessage&&) const;
-    void sendWithReply(MessageType, EncodedMessage&&, CompletionHandler<void(EncodedMessage&&)>&&) const;
+    Connection(CString&& machServiceName, NetworkSession&);
 
 private:
-    void initializeConnectionIfNeeded() const;
+    void newConnectionWasInitialized() const final;
 #if PLATFORM(COCOA)
-    void checkForDebugMessageBroadcast(xpc_object_t) const;
+    RetainPtr<xpc_object_t> dictionaryFromMessage(MessageType, Daemon::EncodedMessage&&) const final;
+    void connectionReceivedEvent(xpc_object_t) const final;
 #endif
     void sendDebugModeIsEnabledMessageIfNecessary() const;
 
-    const CString m_machServiceName;
     WeakPtr<NetworkSession> m_networkSession;
 };
 

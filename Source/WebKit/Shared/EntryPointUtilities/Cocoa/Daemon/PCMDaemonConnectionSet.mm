@@ -57,7 +57,7 @@ void DaemonConnectionSet::remove(xpc_connection_t connection)
     }
 }
 
-void DaemonConnectionSet::setConnectedNetworkProcessHasDebugModeEnabled(const Connection& connection, bool enabled)
+void DaemonConnectionSet::setConnectedNetworkProcessHasDebugModeEnabled(const Daemon::Connection& connection, bool enabled)
 {
     auto iterator = m_connections.find(connection.get());
     if (iterator == m_connections.end()) {

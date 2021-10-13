@@ -26,7 +26,7 @@
 #import "config.h"
 #import "PrivateClickMeasurementConnection.h"
 
-#import "PrivateClickMeasurementEncoder.h"
+#import "DaemonEncoder.h"
 #import "PrivateClickMeasurementXPCUtilities.h"
 #import <wtf/NeverDestroyed.h>
 
@@ -34,28 +34,7 @@ namespace WebKit {
 
 namespace PCM {
 
-void ConnectionToMachService::initializeConnectionIfNeeded() const
-{
-    if (m_connection)
-        return;
-    m_connection = adoptNS(xpc_connection_create_mach_service(m_machServiceName.data(), dispatch_get_main_queue(), 0));
-    xpc_connection_set_event_handler(m_connection.get(), [weakThis = makeWeakPtr(*this)](xpc_object_t event) {
-        if (!weakThis)
-            return;
-        if (event == XPC_ERROR_CONNECTION_INVALID)
-            WTFLogAlways("Failed to connect to mach service %s, likely because it is not registered with launchd", weakThis->m_machServiceName.data());
-        if (event == XPC_ERROR_CONNECTION_INTERRUPTED) {
-            // Daemon crashed, we will need to make a new connection to a new instance of the daemon.
-            weakThis->m_connection = nullptr;
-        }
-        weakThis->checkForDebugMessageBroadcast(event);
-    });
-    xpc_connection_activate(m_connection.get());
-
-    sendDebugModeIsEnabledMessageIfNecessary();
-}
-
-void ConnectionToMachService::sendDebugModeIsEnabledMessageIfNecessary() const
+void Connection::newConnectionWasInitialized() const
 {
     ASSERT(m_connection);
     if (!m_networkSession
@@ -63,12 +42,12 @@ void ConnectionToMachService::sendDebugModeIsEnabledMessageIfNecessary() const
         || !m_networkSession->privateClickMeasurementDebugModeEnabled())
         return;
 
-    Encoder encoder;
+    Daemon::Encoder encoder;
     encoder.encode(true);
     send(MessageType::SetDebugModeIsEnabled, encoder.takeBuffer());
 }
 
-void ConnectionToMachService::checkForDebugMessageBroadcast(xpc_object_t request) const
+void Connection::connectionReceivedEvent(xpc_object_t request) const
 {
     if (xpc_get_type(request) != XPC_TYPE_DICTIONARY)
         return;
@@ -82,57 +61,12 @@ void ConnectionToMachService::checkForDebugMessageBroadcast(xpc_object_t request
     m_networkSession->networkProcess().broadcastConsoleMessage(m_networkSession->sessionID(), MessageSource::PrivateClickMeasurement, messageLevel, String::fromUTF8(debugMessage));
 }
 
-static OSObjectPtr<xpc_object_t> dictionaryFromMessage(MessageType messageType, EncodedMessage&& message)
+RetainPtr<xpc_object_t> Connection::dictionaryFromMessage(MessageType messageType, EncodedMessage&& message) const
 {
-    auto dictionary = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
+    auto dictionary = adoptNS(xpc_dictionary_create(nullptr, nullptr, 0));
     addVersionAndEncodedMessageToDictionary(WTFMove(message), dictionary.get());
     xpc_dictionary_set_uint64(dictionary.get(), protocolMessageTypeKey, static_cast<uint64_t>(messageType));
     return dictionary;
-}
-
-void Connection::send(xpc_object_t message) const
-{
-    ASSERT(RunLoop::isMain());
-    ASSERT(m_connection.get());
-    ASSERT(xpc_get_type(message) == XPC_TYPE_DICTIONARY);
-    xpc_connection_send_message(m_connection.get(), message);
-}
-
-void Connection::sendWithReply(xpc_object_t message, CompletionHandler<void(xpc_object_t)>&& completionHandler) const
-{
-    ASSERT(RunLoop::isMain());
-    ASSERT(m_connection.get());
-    ASSERT(xpc_get_type(message) == XPC_TYPE_DICTIONARY);
-    xpc_connection_send_message_with_reply(m_connection.get(), message, dispatch_get_main_queue(), makeBlockPtr([completionHandler = WTFMove(completionHandler)] (xpc_object_t reply) mutable {
-        ASSERT(RunLoop::isMain());
-        completionHandler(reply);
-    }).get());
-}
-
-void ConnectionToMachService::send(MessageType messageType, EncodedMessage&& message) const
-{
-    initializeConnectionIfNeeded();
-    Connection::send(dictionaryFromMessage(messageType, WTFMove(message)).get());
-}
-
-void ConnectionToMachService::sendWithReply(MessageType messageType, EncodedMessage&& message, CompletionHandler<void(EncodedMessage&&)>&& completionHandler) const
-{
-    ASSERT(RunLoop::isMain());
-    initializeConnectionIfNeeded();
-
-    Connection::sendWithReply(dictionaryFromMessage(messageType, WTFMove(message)).get(), [completionHandler = WTFMove(completionHandler)] (xpc_object_t reply) mutable {
-        if (xpc_get_type(reply) != XPC_TYPE_DICTIONARY) {
-            ASSERT_NOT_REACHED();
-            return completionHandler({ });
-        }
-        if (xpc_dictionary_get_uint64(reply, protocolVersionKey) != protocolVersionValue) {
-            ASSERT_NOT_REACHED();
-            return completionHandler({ });
-        }
-        size_t dataSize { 0 };
-        const void* data = xpc_dictionary_get_data(reply, protocolEncodedMessageKey, &dataSize);
-        completionHandler({ static_cast<const uint8_t*>(data), dataSize });
-    });
 }
 
 } // namespace PCM

@@ -26,9 +26,9 @@
 #import "config.h"
 #import "PCMDaemonEntryPoint.h"
 
+#import "DaemonDecoder.h"
 #import "PCMDaemonConnectionSet.h"
 #import "PrivateClickMeasurementConnection.h"
-#import "PrivateClickMeasurementDecoder.h"
 #import "PrivateClickMeasurementManagerInterface.h"
 #import "PrivateClickMeasurementXPCUtilities.h"
 #import <Foundation/Foundation.h>
@@ -69,8 +69,8 @@ static void connectionEventHandler(xpc_object_t request)
     auto messageType { static_cast<PCM::MessageType>(xpc_dictionary_get_uint64(request, PCM::protocolMessageTypeKey)) };
     size_t dataSize { 0 };
     const void* data = xpc_dictionary_get_data(request, PCM::protocolEncodedMessageKey, &dataSize);
-    PCM::EncodedMessage encodedMessage { static_cast<const uint8_t*>(data), dataSize };
-    decodeMessageAndSendToManager(PCM::Connection(xpc_dictionary_get_remote_connection(request)), messageType, WTFMove(encodedMessage), replySender(messageType, request));
+    Span<const uint8_t> encodedMessage { static_cast<const uint8_t*>(data), dataSize };
+    decodeMessageAndSendToManager(Daemon::Connection(xpc_dictionary_get_remote_connection(request)), messageType, encodedMessage, replySender(messageType, request));
 }
 
 static void startListeningForMachServiceConnections(const char* serviceName)

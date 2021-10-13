@@ -106,8 +106,6 @@ NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementNetworkLoader.cpp
 NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementStore.cpp
 NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementConnection.cpp
 NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementDaemonClient.cpp
-NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementDecoder.cpp
-NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementEncoder.cpp
 NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementManagerProxy.cpp
 
 NetworkProcess/ServiceWorker/ServiceWorkerFetchTask.cpp @no-unify
@@ -162,6 +160,9 @@ Platform/SharedMemory.cpp @no-unify
 Platform/IPC/ArgumentCoders.cpp @no-unify
 Platform/IPC/Attachment.cpp @no-unify
 Platform/IPC/Connection.cpp @no-unify
+Platform/IPC/DaemonConnection.cpp
+Platform/IPC/DaemonDecoder.cpp
+Platform/IPC/DaemonEncoder.cpp
 Platform/IPC/Decoder.cpp @no-unify
 Platform/IPC/Encoder.cpp @no-unify
 Platform/IPC/JSIPCBinding.cpp @no-unify

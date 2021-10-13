@@ -23,25 +23,48 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "PrivateClickMeasurementConnection.h"
+#pragma once
+
+#include "ArgumentCoders.h"
 
 namespace WebKit {
 
-namespace PCM {
+namespace Daemon {
 
-Connection::Connection(CString&& machServiceName, NetworkSession& networkSession)
-    : Daemon::ConnectionToMachService<ConnectionTraits>(WTFMove(machServiceName))
-    , m_networkSession(networkSession)
-{
-}
+class Decoder {
+public:
+    Decoder(Span<const uint8_t> buffer)
+        : m_buffer(buffer) { }
+    ~Decoder();
 
-#if !PLATFORM(COCOA)
-void Connection::newConnectionWasInitialized() const
-{
-}
-#endif
+    template<typename T>
+    Decoder& operator>>(std::optional<T>& t)
+    {
+        t = IPC::ArgumentCoder<std::remove_const_t<std::remove_reference_t<T>>, void>::decode(*this);
+        return *this;
+    }
 
-} // namespace PCM
+    template<typename T>
+    WARN_UNUSED_RETURN bool bufferIsLargeEnoughToContain(size_t numElements) const
+    {
+        static_assert(std::is_arithmetic<T>::value, "Type T must have a fixed, known encoded size!");
+
+        if (numElements > std::numeric_limits<size_t>::max() / sizeof(T))
+            return false;
+
+        return bufferIsLargeEnoughToContainBytes(numElements * sizeof(T));
+    }
+
+    WARN_UNUSED_RETURN bool decodeFixedLengthData(uint8_t* data, size_t, size_t alignment);
+    const uint8_t* decodeFixedLengthReference(size_t, size_t);
+
+private:
+    WARN_UNUSED_RETURN bool bufferIsLargeEnoughToContainBytes(size_t) const;
+
+    Span<const uint8_t> m_buffer;
+    size_t m_bufferPosition { 0 };
+};
+
+} // namespace Daemon
 
 } // namespace WebKit

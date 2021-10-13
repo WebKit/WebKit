@@ -96,6 +96,7 @@ Platform/ios/AccessibilityIOS.mm
 Platform/ios/PaymentAuthorizationController.mm
 
 Platform/IPC/cocoa/ConnectionCocoa.mm
+Platform/IPC/cocoa/DaemonConnectionCocoa.mm
 Platform/IPC/cocoa/MachMessage.cpp
 
 Platform/IPC/darwin/IPCSemaphoreDarwin.cpp

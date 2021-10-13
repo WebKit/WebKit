@@ -29,42 +29,33 @@
 
 namespace WebKit {
 
-namespace PCM {
+namespace Daemon {
 
-class Decoder {
+class Encoder {
 public:
-    Decoder(Vector<uint8_t>&& buffer)
-        : m_buffer(WTFMove(buffer)) { }
-    ~Decoder();
-
     template<typename T>
-    Decoder& operator>>(std::optional<T>& t)
+    Encoder& operator<<(T&& t)
     {
-        t = IPC::ArgumentCoder<std::remove_const_t<std::remove_reference_t<T>>, void>::decode(*this);
+        IPC::ArgumentCoder<std::remove_const_t<std::remove_reference_t<T>>>::encode(*this, std::forward<T>(t));
         return *this;
     }
 
-    template<typename T>
-    WARN_UNUSED_RETURN bool bufferIsLargeEnoughToContain(size_t numElements) const
+    template<typename Arg, typename... Args>
+    void encode(Arg&& arg, Args&&... args)
     {
-        static_assert(std::is_arithmetic<T>::value, "Type T must have a fixed, known encoded size!");
-
-        if (numElements > std::numeric_limits<size_t>::max() / sizeof(T))
-            return false;
-
-        return bufferIsLargeEnoughToContainBytes(numElements * sizeof(T));
+        *this << std::forward<Arg>(arg);
+        encode(std::forward<Args>(args)...);
     }
+    void encode() { }
 
-    WARN_UNUSED_RETURN bool decodeFixedLengthData(uint8_t* data, size_t, size_t alignment);
-    const uint8_t* decodeFixedLengthReference(size_t, size_t);
+    Vector<uint8_t> takeBuffer() { return std::exchange(m_buffer, { }); }
+
+    void encodeFixedLengthData(const uint8_t*, size_t, size_t alignment);
 
 private:
-    WARN_UNUSED_RETURN bool bufferIsLargeEnoughToContainBytes(size_t) const;
-
     Vector<uint8_t> m_buffer;
-    size_t m_bufferPosition { 0 };
 };
 
-} // namespace PCM
+} // namespace Daemon
 
 } // namespace WebKit

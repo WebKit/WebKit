@@ -1,3 +1,79 @@
+2021-10-13  Alex Christensen  <achristensen@webkit.org>
+
+        Prepare adattributiond Connection and IPC code for reuse with webpushd
+        https://bugs.webkit.org/show_bug.cgi?id=231680
+
+        Reviewed by Brady Eidson.
+
+        I move Connection, Encoder, and Decoder out of namespace PCM and into namespace Daemon and keep the PCM parts in PCM::Connection.
+        I remove an unnecessary memory copy by using a Span instead of a Vector for decoding.
+        I make ConnectionToMachService a template to be used with a different communication protocol for communicating with webpushd.
+
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementConnection.cpp:
+        (WebKit::PCM::Connection::Connection):
+        (WebKit::PCM::ConnectionToMachService::ConnectionToMachService): Deleted.
+        (WebKit::PCM::ConnectionToMachService::send const): Deleted.
+        (WebKit::PCM::ConnectionToMachService::sendWithReply const): Deleted.
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementConnection.h:
+        (WebKit::PCM::Connection::Connection): Deleted.
+        (WebKit::PCM::Connection::get const): Deleted.
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementManagerInterface.cpp:
+        (WebKit::PCM::MessageInfo::toStringForTesting::encodeReply):
+        (WebKit::PCM::handlePCMMessage):
+        (WebKit::PCM::handlePCMMessageSetDebugModeIsEnabled):
+        (WebKit::PCM::handlePCMMessageWithReply):
+        (WebKit::PCM::decodeMessageAndSendToManager):
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementManagerInterface.h:
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementManagerProxy.cpp:
+        (WebKit::PCM::ManagerProxy::sendMessage const):
+        (WebKit::PCM::ReplyCaller<>::callReply):
+        (WebKit::PCM::ReplyCaller<String>::callReply):
+        (WebKit::PCM::ManagerProxy::sendMessageWithReply const):
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementManagerProxy.h:
+        * NetworkProcess/PrivateClickMeasurement/cocoa/PrivateClickMeasurementConnectionCocoa.mm:
+        (WebKit::PCM::Connection::newConnectionWasInitialized const):
+        (WebKit::PCM::Connection::connectionReceivedEvent const):
+        (WebKit::PCM::Connection::dictionaryFromMessage const):
+        (WebKit::PCM::ConnectionToMachService::initializeConnectionIfNeeded const): Deleted.
+        (WebKit::PCM::ConnectionToMachService::sendDebugModeIsEnabledMessageIfNecessary const): Deleted.
+        (WebKit::PCM::ConnectionToMachService::checkForDebugMessageBroadcast const): Deleted.
+        (WebKit::PCM::dictionaryFromMessage): Deleted.
+        (WebKit::PCM::Connection::send const): Deleted.
+        (WebKit::PCM::Connection::sendWithReply const): Deleted.
+        (WebKit::PCM::ConnectionToMachService::send const): Deleted.
+        (WebKit::PCM::ConnectionToMachService::sendWithReply const): Deleted.
+        * Platform/IPC/ArgumentCoders.cpp:
+        * Platform/IPC/DaemonConnection.cpp: Copied from Source/WebKit/NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementEncoder.cpp.
+        (WebKit::Daemon::ConnectionToMachService<Traits>::send const):
+        (WebKit::Daemon::ConnectionToMachService<Traits>::sendWithReply const):
+        * Platform/IPC/DaemonConnection.h: Copied from Source/WebKit/NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementConnection.h.
+        (WebKit::Daemon::Connection::Connection):
+        (WebKit::Daemon::Connection::get const):
+        (WebKit::Daemon::ConnectionToMachService::ConnectionToMachService):
+        * Platform/IPC/DaemonDecoder.cpp: Renamed from Source/WebKit/NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementDecoder.cpp.
+        * Platform/IPC/DaemonDecoder.h: Renamed from Source/WebKit/NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementDecoder.h.
+        (WebKit::Daemon::Decoder::Decoder):
+        * Platform/IPC/DaemonEncoder.cpp: Renamed from Source/WebKit/NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementEncoder.cpp.
+        * Platform/IPC/DaemonEncoder.h: Renamed from Source/WebKit/NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementEncoder.h.
+        * Platform/IPC/cocoa/DaemonConnectionCocoa.mm: Copied from Source/WebKit/NetworkProcess/PrivateClickMeasurement/cocoa/PrivateClickMeasurementConnectionCocoa.mm.
+        (WebKit::Daemon::Connection::send const):
+        (WebKit::Daemon::Connection::sendWithReply const):
+        (WebKit::Daemon::ConnectionToMachService<Traits>::initializeConnectionIfNeeded const):
+        (WebKit::Daemon::ConnectionToMachService<Traits>::send const):
+        (WebKit::Daemon::ConnectionToMachService<Traits>::sendWithReply const):
+        * Shared/EntryPointUtilities/Cocoa/Daemon/PCMDaemonConnectionSet.h:
+        * Shared/EntryPointUtilities/Cocoa/Daemon/PCMDaemonConnectionSet.mm:
+        (WebKit::PCM::DaemonConnectionSet::setConnectedNetworkProcessHasDebugModeEnabled):
+        * Shared/EntryPointUtilities/Cocoa/Daemon/PCMDaemonEntryPoint.mm:
+        (WebKit::connectionEventHandler):
+        * Shared/cf/ArgumentCodersCF.cpp:
+        * Shared/mac/WebCoreArgumentCodersMac.mm:
+        (IPC::ArgumentCoder<WebCore::CertificateInfo>::encode):
+        (IPC::ArgumentCoder<WebCore::CertificateInfo>::decode):
+        * Sources.txt:
+        * SourcesCocoa.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+
 2021-10-13  Sihui Liu  <sihui_liu@apple.com>
 
         Implement FileSystemHandle move()

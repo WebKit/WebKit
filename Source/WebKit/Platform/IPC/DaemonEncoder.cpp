@@ -23,39 +23,18 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
-#include "ArgumentCoders.h"
+#include "config.h"
+#include "DaemonEncoder.h"
 
 namespace WebKit {
 
-namespace PCM {
+namespace Daemon {
 
-class Encoder {
-public:
-    template<typename T>
-    Encoder& operator<<(T&& t)
-    {
-        IPC::ArgumentCoder<std::remove_const_t<std::remove_reference_t<T>>>::encode(*this, std::forward<T>(t));
-        return *this;
-    }
+void Encoder::encodeFixedLengthData(const uint8_t* data, size_t size, size_t)
+{
+    m_buffer.append(data, size);
+}
 
-    template<typename Arg, typename... Args>
-    void encode(Arg&& arg, Args&&... args)
-    {
-        *this << std::forward<Arg>(arg);
-        encode(std::forward<Args>(args)...);
-    }
-    void encode() { }
-
-    Vector<uint8_t> takeBuffer() { return std::exchange(m_buffer, { }); }
-
-    void encodeFixedLengthData(const uint8_t*, size_t, size_t alignment);
-
-private:
-    Vector<uint8_t> m_buffer;
-};
-
-} // namespace PCM
+} // namespace Daemon
 
 } // namespace WebKit

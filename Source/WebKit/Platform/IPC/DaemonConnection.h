@@ -25,36 +25,58 @@
 
 #pragma once
 
-#include <wtf/HashMap.h>
+#include <wtf/CompletionHandler.h>
+#include <wtf/Vector.h>
+#include <wtf/WeakPtr.h>
+#include <wtf/text/CString.h>
+
+#if PLATFORM(COCOA)
 #include <wtf/RetainPtr.h>
 #include <wtf/spi/darwin/XPCSPI.h>
-
-namespace JSC {
-enum class MessageLevel : uint8_t;
-}
+#endif
 
 namespace WebKit {
+
 namespace Daemon {
-class Connection;
-}
-namespace PCM {
 
-class DaemonConnectionSet {
+using EncodedMessage = Vector<uint8_t>;
+
+class Connection : public CanMakeWeakPtr<Connection> {
 public:
-    static DaemonConnectionSet& singleton();
-    
-    void add(xpc_connection_t);
-    void remove(xpc_connection_t);
-
-    void setConnectedNetworkProcessHasDebugModeEnabled(const Daemon::Connection&, bool);
-    bool debugModeEnabled() const;
-    void broadcastConsoleMessage(JSC::MessageLevel, const String&);
-    
-private:
-    enum class DebugModeEnabled : bool { No, Yes };
-    HashMap<RetainPtr<xpc_connection_t>, DebugModeEnabled> m_connections;
-    size_t m_connectionsWithDebugModeEnabled { 0 };
+    Connection() = default;
+#if PLATFORM(COCOA)
+    explicit Connection(RetainPtr<xpc_connection_t>&& connection)
+        : m_connection(WTFMove(connection)) { }
+    xpc_connection_t get() const { return m_connection.get(); }
+    void send(xpc_object_t) const;
+    void sendWithReply(xpc_object_t, CompletionHandler<void(xpc_object_t)>&&) const;
+protected:
+    mutable RetainPtr<xpc_connection_t> m_connection;
+#endif
 };
 
-} // namespace PCM
+template<typename Traits>
+class ConnectionToMachService : public Connection {
+public:
+    ConnectionToMachService(CString&& machServiceName)
+        : m_machServiceName(WTFMove(machServiceName)) { }
+    virtual ~ConnectionToMachService() = default;
+
+    void send(typename Traits::MessageType, EncodedMessage&&) const;
+    void sendWithReply(typename Traits::MessageType, EncodedMessage&&, CompletionHandler<void(EncodedMessage&&)>&&) const;
+
+    virtual void newConnectionWasInitialized() const = 0;
+#if PLATFORM(COCOA)
+    virtual RetainPtr<xpc_object_t> dictionaryFromMessage(typename Traits::MessageType, EncodedMessage&&) const = 0;
+    virtual void connectionReceivedEvent(xpc_object_t) const = 0;
+#endif
+
+private:
+    void initializeConnectionIfNeeded() const;
+
+    const CString m_machServiceName;
+};
+
+} // namespace Daemon
+
 } // namespace WebKit

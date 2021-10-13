@@ -24,17 +24,31 @@
  */
 
 #include "config.h"
-#include "PrivateClickMeasurementEncoder.h"
+#include "DaemonConnection.h"
+
+#include "PrivateClickMeasurementConnection.h"
 
 namespace WebKit {
 
-namespace PCM {
+namespace Daemon {
 
-void Encoder::encodeFixedLengthData(const uint8_t* data, size_t size, size_t)
+#if !PLATFORM(COCOA)
+
+template<typename Traits>
+void ConnectionToMachService<Traits>::send(typename Traits::MessageType, EncodedMessage&&) const
 {
-    m_buffer.append(data, size);
 }
 
-} // namespace PCM
+template<typename Traits>
+void ConnectionToMachService<Traits>::sendWithReply(typename Traits::MessageType, EncodedMessage&&, CompletionHandler<void(EncodedMessage&&)>&& completionHandler) const
+{
+    completionHandler({ });
+}
+
+template class ConnectionToMachService<PCM::ConnectionTraits>;
+
+#endif
+
+} // namespace Daemon
 
 } // namespace WebKit

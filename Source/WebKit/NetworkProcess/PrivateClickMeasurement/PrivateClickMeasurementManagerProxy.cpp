@@ -26,9 +26,9 @@
 #include "config.h"
 #include "PrivateClickMeasurementManagerProxy.h"
 
+#include "DaemonDecoder.h"
+#include "DaemonEncoder.h"
 #include "PrivateClickMeasurementConnection.h"
-#include "PrivateClickMeasurementDecoder.h"
-#include "PrivateClickMeasurementEncoder.h"
 #include "WebCoreArgumentCoders.h"
 
 namespace WebKit {
@@ -38,20 +38,20 @@ namespace PCM {
 template<MessageType messageType, typename... Args>
 void ManagerProxy::sendMessage(Args&&... args) const
 {
-    Encoder encoder;
+    Daemon::Encoder encoder;
     encoder.encode(std::forward<Args>(args)...);
     m_connection.send(messageType, encoder.takeBuffer());
 }
 
 template<typename... Args> struct ReplyCaller;
 template<> struct ReplyCaller<> {
-    static void callReply(Decoder&& decoder, CompletionHandler<void()>&& completionHandler)
+    static void callReply(Daemon::Decoder&& decoder, CompletionHandler<void()>&& completionHandler)
     {
         completionHandler();
     }
 };
 template<> struct ReplyCaller<String> {
-    static void callReply(Decoder&& decoder, CompletionHandler<void(String&&)>&& completionHandler)
+    static void callReply(Daemon::Decoder&& decoder, CompletionHandler<void(String&&)>&& completionHandler)
     {
         std::optional<String> string;
         decoder >> string;
@@ -64,10 +64,10 @@ template<> struct ReplyCaller<String> {
 template<MessageType messageType, typename... Args, typename... ReplyArgs>
 void ManagerProxy::sendMessageWithReply(CompletionHandler<void(ReplyArgs...)>&& completionHandler, Args&&... args) const
 {
-    Encoder encoder;
+    Daemon::Encoder encoder;
     encoder.encode(std::forward<Args>(args)...);
     m_connection.sendWithReply(messageType, encoder.takeBuffer(), [completionHandler = WTFMove(completionHandler)] (auto replyBuffer) mutable {
-        Decoder decoder(WTFMove(replyBuffer));
+        Daemon::Decoder decoder(WTFMove(replyBuffer));
         ReplyCaller<ReplyArgs...>::callReply(WTFMove(decoder), WTFMove(completionHandler));
     });
 }
