@@ -28,7 +28,7 @@
 #if ENABLE(CSS_TYPED_OM)
 
 #include "CSSStyleValue.h"
-#include <wtf/RefCounted.h>
+#include <wtf/Variant.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {

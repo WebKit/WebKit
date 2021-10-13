@@ -59,7 +59,7 @@ private:
         m_renderingBackend->sendToStream(WTFMove(message), m_destinationBufferIdentifier);
     }
 
-    friend class DrawGlyphsRecorder;
+    friend class WebCore::DrawGlyphsRecorder;
 
     bool canDrawImageBuffer(const WebCore::ImageBuffer&) const final;
     WebCore::RenderingMode renderingMode() const final;

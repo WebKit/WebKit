@@ -28,10 +28,8 @@
 
 #include "CustomElementRegistry.h"
 #include "DOMWindow.h"
-#include "Document.h"
-#include "Element.h"
+#include "ElementInlines.h"
 #include "EventLoop.h"
-#include "HTMLNames.h"
 #include "JSCustomElementInterface.h"
 #include "JSDOMBinding.h"
 #include "WindowEventLoop.h"

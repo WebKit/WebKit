@@ -29,6 +29,13 @@
 #include "config.h"
 #include "RuleSetBuilder.h"
 
+#include "CSSFontSelector.h"
+#include "CSSKeyframesRule.h"
+#include "MediaQueryEvaluator.h"
+#include "StyleResolver.h"
+#include "StyleRuleImport.h"
+#include "StyleSheetContents.h"
+
 namespace WebCore {
 namespace Style {
 

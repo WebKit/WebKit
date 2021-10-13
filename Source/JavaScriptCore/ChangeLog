@@ -1,3 +1,12 @@
+2021-10-12  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Non-unified build fixes, October 2021 edition.
+        https://bugs.webkit.org/show_bug.cgi?id=231654
+
+        Reviewed by Don Olmstead.
+
+        * runtime/ControlFlowProfiler.h:
+
 2021-10-12  Alex Christensen  <achristensen@webkit.org>
 
         Use std::variant instead of WTF::Variant

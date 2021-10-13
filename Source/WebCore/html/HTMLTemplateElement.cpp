@@ -31,6 +31,7 @@
 #include "config.h"
 #include "HTMLTemplateElement.h"
 
+#include "Document.h"
 #include "DocumentFragment.h"
 #include "TemplateContentDocumentFragment.h"
 #include "markup.h"

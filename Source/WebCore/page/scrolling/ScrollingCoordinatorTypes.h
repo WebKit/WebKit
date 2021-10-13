@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "FloatPoint.h"
 #include "ScrollTypes.h"
 #include <wtf/EnumTraits.h>
 

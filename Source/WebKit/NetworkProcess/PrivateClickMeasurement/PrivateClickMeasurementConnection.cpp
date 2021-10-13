@@ -26,6 +26,7 @@
 #include "config.h"
 #include "PrivateClickMeasurementConnection.h"
 
+#include "NetworkSession.h"
 #include <WebCore/NotImplemented.h>
 
 namespace WebKit {

@@ -27,6 +27,7 @@
 #pragma once
 
 #include "BasicBlockLocation.h"
+#include "SourceID.h"
 #include <wtf/HashMap.h>
 
 namespace JSC {

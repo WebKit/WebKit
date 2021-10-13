@@ -28,6 +28,7 @@
 #include "DocumentSharedObjectPool.h"
 
 #include "Element.h"
+#include "ElementData.h"
 
 namespace WebCore {
 

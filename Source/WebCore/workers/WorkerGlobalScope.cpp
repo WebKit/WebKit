@@ -41,6 +41,7 @@
 #include "InspectorInstrumentation.h"
 #include "JSDOMExceptionHandling.h"
 #include "Performance.h"
+#include "RTCDataChannelRemoteHandlerConnection.h"
 #include "RuntimeEnabledFeatures.h"
 #include "ScheduledAction.h"
 #include "ScriptSourceCode.h"

@@ -33,6 +33,7 @@
 #include "SubmitInputType.h"
 
 #include "DOMFormData.h"
+#include "Document.h"
 #include "Event.h"
 #include "HTMLFormElement.h"
 #include "HTMLInputElement.h"

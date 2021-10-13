@@ -28,6 +28,8 @@
 
 namespace WebCore {
 
+class WindowProxy;
+
 class HTMLFrameSetElement final : public HTMLElement {
     WTF_MAKE_ISO_ALLOCATED(HTMLFrameSetElement);
 public:

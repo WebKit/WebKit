@@ -221,7 +221,7 @@ JSC::JSValue JSDOMAsyncIteratorBase<JSWrapper, IteratorTraits, JSIterator>::next
     auto data = JSC::JSPromise::convertCapabilityToDeferredData(&lexicalGlobalObject, afterOngoingPromiseCapability);
     RETURN_IF_EXCEPTION(scope, { });
 
-    auto* castedThis = jsDynamicCast<JSIterator*>(vm, this);
+    auto* castedThis = JSC::jsDynamicCast<JSIterator*>(vm, this);
     RETURN_IF_EXCEPTION(scope, { });
 
     auto onSettled = castedThis->createOnSettledFunction(&lexicalGlobalObject);
@@ -257,7 +257,7 @@ JSC::JSPromise* JSDOMAsyncIteratorBase<JSWrapper, IteratorTraits, JSIterator>::r
     auto nextPromise = getNextIterationResult(globalObject);
     RETURN_IF_EXCEPTION(scope, nullptr);
 
-    auto* castedThis = jsDynamicCast<JSIterator*>(vm, this);
+    auto* castedThis = JSC::jsDynamicCast<JSIterator*>(vm, this);
     RETURN_IF_EXCEPTION(scope, { });
 
     auto onFulfilled = castedThis->createOnFulfilledFunction(&globalObject);

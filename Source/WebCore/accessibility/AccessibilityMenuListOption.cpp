@@ -28,6 +28,7 @@
 
 #include "AXObjectCache.h"
 #include "AccessibilityMenuListPopup.h"
+#include "Document.h"
 #include "HTMLNames.h"
 #include "HTMLOptionElement.h"
 #include "HTMLSelectElement.h"

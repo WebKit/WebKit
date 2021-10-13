@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "Document.h"
 #include "GCReachableRef.h"
 #include "IntersectionObserverCallback.h"
 #include "IntersectionObserverEntry.h"
@@ -43,7 +44,6 @@ class AbstractSlotVisitor;
 
 namespace WebCore {
 
-class Document;
 class Element;
 class ContainerNode;
 

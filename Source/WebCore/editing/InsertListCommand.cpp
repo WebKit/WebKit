@@ -26,6 +26,7 @@
 #include "config.h"
 #include "InsertListCommand.h"
 
+#include "Document.h"
 #include "Editing.h"
 #include "ElementTraversal.h"
 #include "HTMLBRElement.h"

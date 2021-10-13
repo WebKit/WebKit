@@ -25,6 +25,7 @@
 #include "RenderSVGInlineText.h"
 #include "RenderSVGResource.h"
 #include "RenderSVGText.h"
+#include "SVGGraphicsElement.h"
 #include "SVGInlineFlowBox.h"
 #include "SVGResourcesCache.h"
 #include <wtf/IsoMallocInlines.h>
