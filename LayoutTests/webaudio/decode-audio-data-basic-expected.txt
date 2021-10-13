@@ -5,6 +5,8 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 PASS Passing a null array to AudioContext.decodeAudioData() threw a TypeError
 PASS The resources/media/24bit-44khz.wav test: successCallback has been called correctly.
+PASS The resources/media/128kbps-44khz.mp3 test: successCallback has been called correctly.
+PASS The resources/media/vbr-128kbps-44khz.m4a test: successCallback has been called correctly.
 PASS The resources/media/invalid-audio-file.txt test: errorCallback has been called correctly.
 PASS successfullyParsed is true
 

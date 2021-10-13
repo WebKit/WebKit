@@ -224,11 +224,6 @@ media/modern-media-controls/scrubber-support/scrubber-support-drag.html [ Timeou
 # webkit.org/b/221693
 media/encrypted-media/clearKey/clearKey-session-life-cycle.html [ Failure Crash ]
 
-# webkit.org/b/220805
-webaudio/Panner/hrtf-database.html [ Timeout ]
-webaudio/codec-tests/aac/vbr-128kbps-44khz.html [ Timeout ]
-webaudio/codec-tests/mp3/128kbps-44khz.html [ Timeout ]
-
 # webkit.org/b/221791
 # fast/canvas/webgl/tex-image-and-sub-image-2d-with-video-rgb565.html [ Failure ]
 # fast/canvas/webgl/tex-image-and-sub-image-2d-with-video-rgba4444.html [ Failure ]

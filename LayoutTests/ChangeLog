@@ -1,3 +1,20 @@
+2021-10-13  Jean-Yves Avenard  <jya@apple.com>
+
+        Add mp3 and aac web audio test
+        https://bugs.webkit.org/show_bug.cgi?id=231643
+        rdar://problem/84178398
+
+        Add MP3 / AAC webaudio decodeAudioData tests.
+        Existing tests were disabled by default, likely due to
+        https://bugs.webkit.org/show_bug.cgi?id=230974
+
+        Reviewed by Eric Carlson.
+
+        * platform/mac/TestExpectations:
+        * platform/wk2/TestExpectations:
+        * webaudio/decode-audio-data-basic-expected.txt:
+        * webaudio/decode-audio-data-basic.html:
+
 2021-10-13  Sihui Liu  <sihui_liu@apple.com>
 
         Implement FileSystemHandle move()
