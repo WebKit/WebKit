@@ -222,6 +222,7 @@ class BitBucket(mocks.Requests):
             json['id'] = 1 + max([0] + [pr.get('id', 0) for pr in self.pull_requests])
             json['fromRef']['displayId'] = json['fromRef']['id'].split('/')[-2:]
             json['toRef']['displayId'] = json['toRef']['id'].split('/')[-2:]
+            json['state'] = 'OPEN'
             self.pull_requests.append(json)
             return mocks.Response.fromJson(json)
 

@@ -121,7 +121,7 @@ class PullRequest(Command):
             sys.stderr.write("'{}' cannot generate pull-requests\n".format(rmt.url))
             return 1
         user, _ = rmt.credentials(required=True) if isinstance(rmt, remote.GitHub) else (repository.config()['user.email'], None)
-        candidates = list(rmt.pull_requests.find(head=repository.branch))
+        candidates = list(rmt.pull_requests.find(opened=None, head=repository.branch))
         commits = list(repository.commits(begin=dict(hash=branch_point.hash), end=dict(branch=repository.branch)))
 
         title = commits[0].message.splitlines()[0]

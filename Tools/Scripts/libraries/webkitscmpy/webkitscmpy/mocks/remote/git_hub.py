@@ -59,6 +59,7 @@ class GitHub(mocks.Requests):
         self.head = self.commits[self.default_branch][-1]
         self.tags = {}
         self.pull_requests = []
+        self.users = dict()
         self._environment = None
 
     def __enter__(self):
@@ -281,6 +282,15 @@ class GitHub(mocks.Requests):
             ), url=url
         )
 
+    def _users(self, url, username):
+        user = self.users.get(username)
+        if not user:
+            return mocks.Response.create404(url)
+        return mocks.Response.fromJson(dict(
+            name=user.name,
+            email=user.email,
+        ), url=url)
+
     def request(self, method, url, data=None, params=None, auth=None, json=None, **kwargs):
         if not url.startswith('http://') and not url.startswith('https://'):
             return mocks.Response.create404(url)
@@ -357,8 +367,16 @@ class GitHub(mocks.Requests):
         # Pull-request by number
         if method == 'GET' and stripped_url.startswith(pr_base):
             for candidate in self.pull_requests:
-                if stripped_url.split('/')[-1] == str(candidate['number']):
-                    return mocks.Response.fromJson(candidate, url=url)
+                if stripped_url.split('/')[5] == str(candidate['number']):
+                    if len(stripped_url.split('/')) == 7:
+                        if stripped_url.split('/')[6] == 'requested_reviewers':
+                            return mocks.Response.fromJson(dict(users=candidate.get('requested_reviews', [])))
+                        if stripped_url.split('/')[6] == 'reviews':
+                            return mocks.Response.fromJson(candidate.get('reviews', []))
+                        return mocks.Response.create404(url)
+                    return mocks.Response.fromJson({
+                        key: value for key, value in candidate.items() if key not in ('requested_reviews', 'reviews')
+                    }, url=url)
             return mocks.Response.create404(url)
 
         # Create/update pull-request
@@ -398,6 +416,10 @@ class GitHub(mocks.Requests):
             if existing is None:
                 return mocks.Response.create404(url)
             self.pull_requests[existing].update(pr)
-            return mocks.Response.fromJson(self.pull_requests[i], url=url)
+            return mocks.Response.fromJson(self.pull_requests[existing], url=url)
+
+        # Access user
+        if method == 'GET' and stripped_url.startswith('{}/users'.format(self.api_remote.split('/')[0])):
+            return self._users(url, stripped_url.split('/')[-1])
 
         return mocks.Response.create404(url)
