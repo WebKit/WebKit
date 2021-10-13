@@ -79,7 +79,7 @@ void RadioButtonGroup::setCheckedButton(HTMLInputElement* button)
     if (hadCheckedButton != willHaveCheckedButton)
         setNeedsStyleRecalcForAllButtons();
 
-    m_checkedButton = makeWeakPtr(button);
+    m_checkedButton = button;
     if (oldCheckedButton)
         oldCheckedButton->setChecked(false);
 }

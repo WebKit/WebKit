@@ -606,7 +606,7 @@ ErrorStringOr<void> InspectorOverlay::setGridOverlayForNode(Node& node, const In
 
     removeGridOverlayForNode(node);
 
-    m_activeGridOverlays.append({ makeWeakPtr(node), gridOverlayConfig });
+    m_activeGridOverlays.append({ node, gridOverlayConfig });
 
     update();
 

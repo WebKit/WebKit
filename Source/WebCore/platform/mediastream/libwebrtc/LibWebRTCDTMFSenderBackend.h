@@ -39,7 +39,7 @@ ALLOW_UNUSED_PARAMETERS_END
 
 namespace WebCore {
 
-// Use eager initialization for the WeakPtrFactory since we call makeWeakPtr() from another thread.
+// Use eager initialization for the WeakPtrFactory since we construct WeakPtrs on another thread.
 class LibWebRTCDTMFSenderBackend final : public RTCDTMFSenderBackend, private webrtc::DtmfSenderObserverInterface, public CanMakeWeakPtr<LibWebRTCDTMFSenderBackend, WeakPtrFactoryInitialization::Eager> {
     WTF_MAKE_FAST_ALLOCATED;
 public:

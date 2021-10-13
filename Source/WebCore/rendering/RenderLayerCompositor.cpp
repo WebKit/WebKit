@@ -249,7 +249,7 @@ public:
     void appendSharingLayer(RenderLayer& layer)
     {
         ASSERT(m_backingProviderCandidate);
-        m_backingSharingLayers.append(makeWeakPtr(layer));
+        m_backingSharingLayers.append(layer);
     }
 
     RenderLayer* updateBeforeDescendantTraversal(RenderLayer&, bool willBeComposited);
@@ -4462,7 +4462,7 @@ ScrollingNodeID RenderLayerCompositor::attachScrollingNode(RenderLayer& layer, S
         m_clipLayer->setScrollingNodeID(nodeID);
 #endif
 
-    m_scrollingNodeToLayerMap.add(nodeID, makeWeakPtr(layer));
+    m_scrollingNodeToLayerMap.add(nodeID, layer);
 
     return nodeID;
 }

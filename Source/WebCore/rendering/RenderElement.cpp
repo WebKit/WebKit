@@ -2407,7 +2407,7 @@ WeakPtr<RenderBlockFlow> RenderElement::backdropRenderer() const
 
 void RenderElement::setBackdropRenderer(RenderBlockFlow& renderer)
 {
-    ensureRareData().backdropRenderer = makeWeakPtr(renderer);
+    ensureRareData().backdropRenderer = renderer;
 }
 
 }

@@ -35,7 +35,7 @@ Ref<DOMMimeTypeArray> DOMMimeTypeArray::create(Navigator& navigator, Vector<Ref<
 }
 
 DOMMimeTypeArray::DOMMimeTypeArray(Navigator& navigator, Vector<Ref<DOMMimeType>>&& types)
-    : m_navigator(makeWeakPtr(navigator))
+    : m_navigator(navigator)
     , m_types(WTFMove(types))
 {
 }

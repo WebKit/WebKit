@@ -98,7 +98,7 @@ CachedImage::~CachedImage()
 
 void CachedImage::load(CachedResourceLoader& loader)
 {
-    m_skippingRevalidationDocument = makeWeakPtr(loader.document());
+    m_skippingRevalidationDocument = loader.document();
     if (loader.shouldPerformImageLoad(url()))
         CachedResource::load(loader);
     else

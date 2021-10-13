@@ -382,7 +382,7 @@ Protocol::DOM::NodeId InspectorDOMAgent::bind(Node& node)
 {
     return m_nodeToId.ensure(node, [&] {
         auto id = m_lastNodeId++;
-        m_idToNode.set(id, makeWeakPtr(node));
+        m_idToNode.set(id, node);
         return id;
     }).iterator->value;
 }

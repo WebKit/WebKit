@@ -321,7 +321,7 @@ void SVGElement::addReferencingElement(SVGElement& element)
     ensureSVGRareData().addReferencingElement(element);
     auto& rareDataOfReferencingElement = element.ensureSVGRareData();
     RELEASE_ASSERT(!rareDataOfReferencingElement.referenceTarget());
-    rareDataOfReferencingElement.setReferenceTarget(makeWeakPtr(*this));
+    rareDataOfReferencingElement.setReferenceTarget(*this);
 }
 
 void SVGElement::removeReferencingElement(SVGElement& element)

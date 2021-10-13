@@ -35,7 +35,7 @@ OBJC_CLASS WebCookieObserverAdapter;
 
 namespace WebCore {
 
-// Use eager initialization for the WeakPtrFactory since we call makeWeakPtr() from a non-main thread.
+// Use eager initialization for the WeakPtrFactory since we construct WeakPtrs on a non-main thread.
 class WEBCORE_EXPORT CookieStorageObserver : public CanMakeWeakPtr<CookieStorageObserver, WeakPtrFactoryInitialization::Eager> {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(CookieStorageObserver);

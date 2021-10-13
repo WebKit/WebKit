@@ -190,7 +190,7 @@ DateTimeEditElement::EditControlOwner::~EditControlOwner() = default;
 
 DateTimeEditElement::DateTimeEditElement(Document& document, EditControlOwner& editControlOwner)
     : HTMLDivElement(divTag, document)
-    , m_editControlOwner(makeWeakPtr(editControlOwner))
+    , m_editControlOwner(editControlOwner)
 {
     m_placeholderDate.setToCurrentLocalTime();
 }

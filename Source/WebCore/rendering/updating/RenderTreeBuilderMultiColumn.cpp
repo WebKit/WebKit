@@ -295,7 +295,7 @@ void RenderTreeBuilder::MultiColumn::multiColumnDescendantInserted(RenderMultiCo
             // column sets.
             RenderMultiColumnSpannerPlaceholder& placeholder = downcast<RenderMultiColumnSpannerPlaceholder>(*descendant);
             ASSERT(!flow.spannerMap().get(placeholder.spanner()));
-            flow.spannerMap().add(placeholder.spanner(), makeWeakPtr(downcast<RenderMultiColumnSpannerPlaceholder>(descendant)));
+            flow.spannerMap().add(placeholder.spanner(), downcast<RenderMultiColumnSpannerPlaceholder>(descendant));
             ASSERT(!placeholder.firstChild()); // There should be no children here, but if there are, we ought to skip them.
         } else
             descendant = processPossibleSpannerDescendant(flow, subtreeRoot, *descendant);

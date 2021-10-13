@@ -57,7 +57,7 @@ std::unique_ptr<AudioMediaStreamTrackRenderer> AudioTrackPrivateMediaStream::cre
     auto& track = stream.m_streamTrack.get();
     renderer->setLogger(track.logger(), track.logIdentifier());
 #endif
-    renderer->setCrashCallback([stream = makeWeakPtr(stream)] {
+    renderer->setCrashCallback([stream = WeakPtr { stream }] {
         if (stream)
             stream->createNewRenderer();
     });

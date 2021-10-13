@@ -42,7 +42,7 @@ public:
     virtual ~InbandTextTrackPrivate() = default;
 
     InbandTextTrackPrivateClient* client() const override { return m_client.get(); }
-    virtual void setClient(InbandTextTrackPrivateClient& client) { m_client = makeWeakPtr(client); }
+    virtual void setClient(InbandTextTrackPrivateClient& client) { m_client = client; }
     void clearClient() { m_client = nullptr; }
 
     enum class Mode : uint8_t {

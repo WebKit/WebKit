@@ -417,7 +417,7 @@ void ApplicationCacheGroup::update(Frame& frame, ApplicationCacheUpdateOption up
     }
 
     ASSERT(!m_frame);
-    m_frame = makeWeakPtr(frame);
+    m_frame = frame;
 
     setUpdateStatus(Checking);
 

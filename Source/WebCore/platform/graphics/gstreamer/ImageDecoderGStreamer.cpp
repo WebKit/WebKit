@@ -313,7 +313,7 @@ void ImageDecoderGStreamer::InnerDecoder::handleMessage(GstMessage* message)
 {
     ASSERT(&m_runLoop == &RunLoop::current());
 
-    auto scopeExit = makeScopeExit([protectedThis = makeWeakPtr(this)] {
+    auto scopeExit = makeScopeExit([protectedThis = WeakPtr { *this }] {
         if (!protectedThis)
             return;
         Locker locker { protectedThis->m_messageLock };
@@ -382,7 +382,7 @@ void ImageDecoderGStreamer::InnerDecoder::preparePipeline()
             decoder.handleMessage(message);
         else {
             GRefPtr<GstMessage> protectedMessage(message);
-            auto weakThis = makeWeakPtr(decoder);
+            WeakPtr weakThis { decoder };
             decoder.m_runLoop.dispatch([weakThis, protectedMessage] {
                 if (weakThis)
                     weakThis->handleMessage(protectedMessage.get());

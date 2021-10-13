@@ -398,7 +398,7 @@ void CDMInstanceProxy::unrefAllKeysFrom(const KeyStore& keyStore)
 }
 
 CDMInstanceSessionProxy::CDMInstanceSessionProxy(CDMInstanceProxy& instance)
-    : m_instance(makeWeakPtr(instance))
+    : m_instance(instance)
 {
 }
 

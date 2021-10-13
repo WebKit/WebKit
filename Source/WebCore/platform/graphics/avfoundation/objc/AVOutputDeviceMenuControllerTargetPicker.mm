@@ -59,7 +59,7 @@ namespace WebCore {
 
 AVOutputDeviceMenuControllerTargetPicker::AVOutputDeviceMenuControllerTargetPicker(AVPlaybackTargetPicker::Client& client)
     : AVPlaybackTargetPicker(client)
-    , m_outputDeviceMenuControllerDelegate(adoptNS([[WebAVOutputDeviceMenuControllerHelper alloc] initWithCallback:makeWeakPtr(*this)]))
+    , m_outputDeviceMenuControllerDelegate(adoptNS([[WebAVOutputDeviceMenuControllerHelper alloc] initWithCallback:*this]))
 {
 }
 

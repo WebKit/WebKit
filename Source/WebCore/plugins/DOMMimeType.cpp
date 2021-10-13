@@ -31,9 +31,9 @@ Ref<DOMMimeType> DOMMimeType::create(Navigator& navigator, const MimeClassInfo& 
 }
 
 DOMMimeType::DOMMimeType(Navigator& navigator, const MimeClassInfo& info, DOMPlugin& enabledPlugin)
-    : m_navigator(makeWeakPtr(navigator))
+    : m_navigator(navigator)
     , m_info(info)
-    , m_enabledPlugin(makeWeakPtr(enabledPlugin))
+    , m_enabledPlugin(enabledPlugin)
 {
 }
 

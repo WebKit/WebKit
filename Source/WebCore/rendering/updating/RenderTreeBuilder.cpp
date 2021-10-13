@@ -732,7 +732,7 @@ RenderObject* RenderTreeBuilder::splitAnonymousBoxesAroundChild(RenderBox& paren
 void RenderTreeBuilder::childFlowStateChangesAndAffectsParentBlock(RenderElement& child)
 {
     if (!child.isInline()) {
-        auto parent = makeWeakPtr(child.parent());
+        WeakPtr parent = child.parent();
         if (is<RenderBlock>(*parent))
             blockBuilder().childBecameNonInline(downcast<RenderBlock>(*parent), child);
         else if (is<RenderInline>(*parent))
@@ -864,7 +864,7 @@ void RenderTreeBuilder::destroyAndCleanUpAnonymousWrappers(RenderObject& rendere
     collapseAndDestroyAnonymousSiblings();
 
     // FIXME: Do not try to collapse/cleanup the anonymous wrappers inside destroy (see webkit.org/b/186746).
-    auto destroyRootParent = makeWeakPtr(*destroyRoot.parent());
+    WeakPtr destroyRootParent = *destroyRoot.parent();
     if (&rendererToDestroy != &destroyRoot) {
         // Destroy the child renderer first, before we start tearing down the anonymous wrapper ancestor chain.
         destroy(rendererToDestroy);

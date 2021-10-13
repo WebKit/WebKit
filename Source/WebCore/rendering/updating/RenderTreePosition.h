@@ -37,7 +37,7 @@ public:
     }
     RenderTreePosition(RenderElement& parent, RenderObject* nextSibling)
         : m_parent(parent)
-        , m_nextSibling(makeWeakPtr(nextSibling))
+        , m_nextSibling(nextSibling)
         , m_hasValidNextSibling(true)
     {
     }

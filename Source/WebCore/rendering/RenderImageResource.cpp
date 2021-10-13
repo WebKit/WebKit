@@ -45,7 +45,7 @@ void RenderImageResource::initialize(RenderElement& renderer, CachedImage* style
 {
     ASSERT(!m_renderer);
     ASSERT(!m_cachedImage);
-    m_renderer = makeWeakPtr(renderer);
+    m_renderer = renderer;
     m_cachedImage = styleCachedImage;
     m_cachedImageRemoveClientIsNeeded = !styleCachedImage;
 }

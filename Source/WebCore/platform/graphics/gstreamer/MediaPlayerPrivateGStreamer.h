@@ -107,7 +107,7 @@ class VideoTrackPrivateGStreamer;
 
 void registerWebKitGStreamerElements();
 
-// Use eager initialization for the WeakPtrFactory since we call makeWeakPtr() from another thread.
+// Use eager initialization for the WeakPtrFactory since we construct WeakPtrs on another thread.
 class MediaPlayerPrivateGStreamer : public MediaPlayerPrivateInterface
     , public CanMakeWeakPtr<MediaPlayerPrivateGStreamer, WeakPtrFactoryInitialization::Eager>
 #if !RELEASE_LOG_DISABLED

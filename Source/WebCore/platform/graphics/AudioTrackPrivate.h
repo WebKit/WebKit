@@ -40,7 +40,7 @@ public:
         return adoptRef(*new AudioTrackPrivate);
     }
 
-    void setClient(AudioTrackPrivateClient& client) { m_client = makeWeakPtr(client); }
+    void setClient(AudioTrackPrivateClient& client) { m_client = client; }
     void clearClient() { m_client = nullptr; }
     AudioTrackPrivateClient* client() const override { return m_client.get(); }
 

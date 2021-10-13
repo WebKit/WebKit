@@ -173,7 +173,7 @@ WeakPtr<PlatformResourceMediaLoader> PlatformResourceMediaLoader::create(WebCore
         return nullptr;
     auto* resourcePointer = resource.get();
     auto client = adoptRef(*new PlatformResourceMediaLoader { parent, resource.releaseNonNull() });
-    auto result = makeWeakPtr(client.get());
+    WeakPtr result = client;
 
     resourcePointer->setClient(WTFMove(client));
     return result;

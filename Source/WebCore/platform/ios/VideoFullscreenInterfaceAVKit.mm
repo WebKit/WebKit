@@ -111,7 +111,7 @@ static bool ignoreWatchdogForDebugging = false;
 - (void)setFullscreenInterface:(VideoFullscreenInterfaceAVKit*)fullscreenInterface
 {
     ASSERT(isMainThread());
-    _fullscreenInterface = makeWeakPtr(*fullscreenInterface);
+    _fullscreenInterface = *fullscreenInterface;
 }
 
 - (void)playerViewControllerWillStartPictureInPicture:(AVPlayerViewController *)playerViewController

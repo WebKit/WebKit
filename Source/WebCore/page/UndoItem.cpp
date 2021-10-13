@@ -41,8 +41,8 @@ UndoManager* UndoItem::undoManager() const
 
 void UndoItem::setUndoManager(UndoManager* undoManager)
 {
-    m_undoManager = makeWeakPtr(undoManager);
-    m_document = makeWeakPtr(undoManager ? &undoManager->document() : nullptr);
+    m_undoManager = undoManager;
+    m_document = undoManager ? &undoManager->document() : nullptr;
 }
 
 void UndoItem::invalidate()

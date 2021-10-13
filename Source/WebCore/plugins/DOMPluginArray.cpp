@@ -36,7 +36,7 @@ Ref<DOMPluginArray> DOMPluginArray::create(Navigator& navigator, Vector<Ref<DOMP
 }
 
 DOMPluginArray::DOMPluginArray(Navigator& navigator, Vector<Ref<DOMPlugin>>&& publiclyVisiblePlugins, Vector<Ref<DOMPlugin>>&& additionalWebVisibilePlugins)
-    : m_navigator(makeWeakPtr(navigator))
+    : m_navigator(navigator)
     , m_publiclyVisiblePlugins(WTFMove(publiclyVisiblePlugins))
     , m_additionalWebVisibilePlugins(WTFMove(additionalWebVisibilePlugins))
 {

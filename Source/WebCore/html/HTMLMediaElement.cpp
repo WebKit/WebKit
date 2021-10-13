@@ -7279,7 +7279,7 @@ RefPtr<PlatformMediaResourceLoader> HTMLMediaElement::mediaPlayerCreateResourceL
     auto destination = isVideo() ? FetchOptions::Destination::Video : FetchOptions::Destination::Audio;
     auto mediaResourceLoader = adoptRef(*new MediaResourceLoader(document(), *this, crossOrigin(), destination));
 
-    m_lastMediaResourceLoaderForTesting = makeWeakPtr(mediaResourceLoader.get());
+    m_lastMediaResourceLoaderForTesting = mediaResourceLoader.get();
 
     return mediaResourceLoader;
 }

@@ -49,7 +49,7 @@ WorkerFontLoadRequest::WorkerFontLoadRequest(URL&& url, LoadedFromOpaqueSource l
 
 void WorkerFontLoadRequest::load(WorkerGlobalScope& workerGlobalScope)
 {
-    m_context = makeWeakPtr(static_cast<ScriptExecutionContext*>(&workerGlobalScope));
+    m_context = workerGlobalScope;
 
     ResourceRequest request { m_url };
     ASSERT(request.httpMethod() == "GET");

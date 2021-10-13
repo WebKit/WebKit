@@ -201,7 +201,7 @@ void MediaSessionManagerGLib::sessionWillEndPlayback(PlatformMediaSession& sessi
 {
     PlatformMediaSessionManager::sessionWillEndPlayback(session, delayCallingUpdateNowPlaying);
 
-    callOnMainThread([weakSession = makeWeakPtr(session)] {
+    callOnMainThread([weakSession = WeakPtr { session }] {
         if (weakSession)
             weakSession->updateMediaUsageIfChanged();
     });

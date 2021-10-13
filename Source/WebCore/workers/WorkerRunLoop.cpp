@@ -281,7 +281,7 @@ WorkerMainRunLoop::WorkerMainRunLoop()
 
 void WorkerMainRunLoop::setGlobalScope(WorkerOrWorkletGlobalScope& globalScope)
 {
-    m_workerOrWorkletGlobalScope = makeWeakPtr(globalScope);
+    m_workerOrWorkletGlobalScope = globalScope;
 }
 
 void WorkerMainRunLoop::postTaskAndTerminate(ScriptExecutionContext::Task&& task)

@@ -832,7 +832,7 @@ static WeakPtr<ScrollableArea> scrollableAreaForEventTarget(Element* eventTarget
     if (!widget || !widget->isScrollView())
         return { };
 
-    return makeWeakPtr(static_cast<ScrollableArea&>(static_cast<ScrollView&>(*widget)));
+    return static_cast<ScrollableArea&>(static_cast<ScrollView&>(*widget));
 }
     
 static bool eventTargetIsPlatformWidget(Element* eventTarget)
@@ -854,7 +854,7 @@ static WeakPtr<ScrollableArea> scrollableAreaForContainerNode(ContainerNode& con
     if (!scrollableAreaPtr)
         return { };
     
-    return makeWeakPtr(*scrollableAreaPtr);
+    return *scrollableAreaPtr;
 }
 
 void EventHandler::determineWheelEventTarget(const PlatformWheelEvent& wheelEvent, RefPtr<Element>& wheelEventTarget, WeakPtr<ScrollableArea>& scrollableArea, bool& isOverWidget)
@@ -874,7 +874,7 @@ void EventHandler::determineWheelEventTarget(const PlatformWheelEvent& wheelEven
         if (scrollableContainer)
             scrollableArea = scrollableAreaForContainerNode(*scrollableContainer);
         else
-            scrollableArea = makeWeakPtr(static_cast<ScrollableArea&>(*view));
+            scrollableArea = static_cast<ScrollableArea&>(*view);
     }
 
     LOG_WITH_STREAM(ScrollLatching, stream << "EventHandler::determineWheelEventTarget() - event " << wheelEvent << " found scrollableArea " << ValueOrNull(scrollableArea.get()) << ", latching state is " << page->scrollLatchingController());

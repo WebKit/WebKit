@@ -153,7 +153,7 @@ static inline bool shouldAlwaysUseDirectionalSelection(Document* document)
 }
 
 FrameSelection::FrameSelection(Document* document)
-    : m_document(makeWeakPtr(document))
+    : m_document(document)
     , m_granularity(TextGranularity::CharacterGranularity)
 #if ENABLE(TEXT_CARET)
     , m_caretBlinkTimer(*this, &FrameSelection::caretBlinkTimerFired)

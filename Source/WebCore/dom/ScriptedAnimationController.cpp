@@ -40,7 +40,7 @@
 namespace WebCore {
 
 ScriptedAnimationController::ScriptedAnimationController(Document& document)
-    : m_document(makeWeakPtr(document))
+    : m_document(document)
 {
 }
 

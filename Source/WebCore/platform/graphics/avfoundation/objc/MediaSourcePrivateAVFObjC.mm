@@ -54,7 +54,7 @@ Ref<MediaSourcePrivateAVFObjC> MediaSourcePrivateAVFObjC::create(MediaPlayerPriv
 }
 
 MediaSourcePrivateAVFObjC::MediaSourcePrivateAVFObjC(MediaPlayerPrivateMediaSourceAVFObjC& parent, MediaSourcePrivateClient* client)
-    : m_player(makeWeakPtr(parent))
+    : m_player(parent)
     , m_client(client)
     , m_isEnded(false)
 #if !RELEASE_LOG_DISABLED

@@ -54,7 +54,7 @@ ApplicationCache::~ApplicationCache()
 void ApplicationCache::setGroup(ApplicationCacheGroup* group)
 {
     ASSERT(!m_group || group == m_group);
-    m_group = makeWeakPtr(group);
+    m_group = group;
 }
 
 bool ApplicationCache::isComplete()
@@ -77,7 +77,7 @@ void ApplicationCache::setManifestResource(Ref<ApplicationCacheResource>&& manif
     ASSERT(!m_manifest);
     ASSERT(manifest->type() & ApplicationCacheResource::Manifest);
 
-    m_manifest = makeWeakPtr(manifest.get());
+    m_manifest = manifest;
 
     addResource(WTFMove(manifest));
 }

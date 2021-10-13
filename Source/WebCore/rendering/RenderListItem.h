@@ -57,7 +57,7 @@ public:
     RenderStyle computeMarkerStyle() const;
 
     RenderListMarker* markerRenderer() const { return m_marker.get(); }
-    void setMarkerRenderer(RenderListMarker& marker) { m_marker = makeWeakPtr(marker); }
+    void setMarkerRenderer(RenderListMarker& marker) { m_marker = marker; }
 
     bool isInReversedOrderedList() const;
 

@@ -208,7 +208,7 @@ void AudioSourceProviderGStreamer::setClient(AudioSourceProviderClient* newClien
 
     GST_DEBUG("Setting up client %p (previous: %p)", newClient, client());
     bool previousClientWasValid = !!m_client;
-    m_client = makeWeakPtr(newClient);
+    m_client = newClient;
 
     // The volume element is used to mute audio playback towards the
     // autoaudiosink. This is needed to avoid double playback of audio

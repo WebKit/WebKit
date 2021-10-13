@@ -56,7 +56,7 @@ const int defaultBufferLength = 32768;
 
 FileReaderLoader::FileReaderLoader(ReadType readType, FileReaderLoaderClient* client)
     : m_readType(readType)
-    , m_client(makeWeakPtr(client))
+    , m_client(client)
     , m_isRawDataConverted(false)
     , m_stringResult(emptyString())
     , m_variableLength(false)

@@ -43,8 +43,8 @@ class RenderRange {
 public:
     RenderRange() = default;
     RenderRange(RenderObject* start, RenderObject* end, unsigned startOffset, unsigned endOffset)
-        : m_start(makeWeakPtr(start))
-        , m_end(makeWeakPtr(end))
+        : m_start(start)
+        , m_end(end)
         , m_startOffset(startOffset)
         , m_endOffset(endOffset)
     {

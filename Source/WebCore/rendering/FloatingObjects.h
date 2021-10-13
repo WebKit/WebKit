@@ -90,7 +90,7 @@ public:
     // FIXME: Callers of these methods are dangerous and should be allowed explicitly or removed.
     LegacyRootInlineBox* originatingLine() const { return m_originatingLine.get(); }
     void clearOriginatingLine() { m_originatingLine = nullptr; }
-    void setOriginatingLine(LegacyRootInlineBox& line) { m_originatingLine = makeWeakPtr(line); }
+    void setOriginatingLine(LegacyRootInlineBox& line) { m_originatingLine = line; }
 
     LayoutSize locationOffsetOfBorderBox() const
     {

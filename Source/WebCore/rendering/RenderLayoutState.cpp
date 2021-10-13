@@ -220,7 +220,7 @@ void RenderLayoutState::propagateLineGridInfo(const RenderLayoutState& ancestor,
     if (renderer.isUnsplittableForPagination())
         return;
 
-    m_lineGrid = makeWeakPtr(ancestor.lineGrid());
+    m_lineGrid = ancestor.lineGrid();
     m_lineGridOffset = ancestor.lineGridOffset();
     m_lineGridPaginationOrigin = ancestor.lineGridPaginationOrigin();
 }
@@ -240,7 +240,7 @@ void RenderLayoutState::establishLineGrid(const FrameViewLayoutContext::LayoutSt
             if (!currentGrid)
                 break;
             if (currentGrid->style().lineGrid() == renderer.style().lineGrid()) {
-                m_lineGrid = makeWeakPtr(currentGrid);
+                m_lineGrid = currentGrid;
                 m_lineGridOffset = currentState.m_lineGridOffset;
                 return;
             }
@@ -248,7 +248,7 @@ void RenderLayoutState::establishLineGrid(const FrameViewLayoutContext::LayoutSt
     }
     
     // We didn't find an already-established grid with this identifier. Our render object establishes the grid.
-    m_lineGrid = makeWeakPtr(renderer);
+    m_lineGrid = renderer;
     m_lineGridOffset = m_layoutOffset;
 }
 

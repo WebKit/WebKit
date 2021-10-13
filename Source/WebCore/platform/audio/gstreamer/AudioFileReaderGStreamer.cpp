@@ -341,7 +341,7 @@ void AudioFileReader::decodeAudioForBusCreation()
             reader.handleMessage(message);
         else {
             GRefPtr<GstMessage> protectMessage(message);
-            auto weakThis = makeWeakPtr(reader);
+            WeakPtr weakThis { reader };
             reader.m_runLoop.dispatch([weakThis, protectMessage] {
                 if (weakThis)
                     weakThis->handleMessage(protectMessage.get());

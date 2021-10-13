@@ -126,7 +126,7 @@ void WheelEventTestMonitor::receivedWheelEvent(const PlatformWheelEvent& event)
 
 void WheelEventTestMonitor::scheduleCallbackCheck()
 {
-    ensureOnMainThread([weakPage = makeWeakPtr(m_page)] {
+    ensureOnMainThread([weakPage = WeakPtr { m_page }] {
         if (weakPage)
             weakPage->scheduleRenderingUpdate(RenderingUpdateStep::WheelEventMonitorCallbacks);
     });

@@ -51,9 +51,9 @@ SWServerWorker* SWServerWorker::existingWorkerForIdentifier(ServiceWorkerIdentif
 
 // FIXME: Use r-value references for script and contentSecurityPolicy
 SWServerWorker::SWServerWorker(SWServer& server, SWServerRegistration& registration, const URL& scriptURL, const ScriptBuffer& script, const CertificateInfo& certificateInfo, const ContentSecurityPolicyResponseHeaders& contentSecurityPolicy, const CrossOriginEmbedderPolicy& crossOriginEmbedderPolicy, String&& referrerPolicy, WorkerType type, ServiceWorkerIdentifier identifier, HashMap<URL, ServiceWorkerContextData::ImportedScript>&& scriptResourceMap)
-    : m_server(makeWeakPtr(server))
+    : m_server(server)
     , m_registrationKey(registration.key())
-    , m_registration(makeWeakPtr(registration))
+    , m_registration(registration)
     , m_data { identifier, scriptURL, ServiceWorkerState::Parsed, type, registration.identifier() }
     , m_script(script)
     , m_certificateInfo(certificateInfo)

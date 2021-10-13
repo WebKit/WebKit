@@ -372,7 +372,7 @@ bool FrameLoader::SubframeLoader::loadPlugin(HTMLPlugInImageElement& pluginEleme
         loadManually = false;
 #endif
 
-    auto weakRenderer = makeWeakPtr(*renderer);
+    WeakPtr weakRenderer { *renderer };
 
     auto widget = m_frame.loader().client().createPlugin(contentSize, pluginElement, url, paramNames, paramValues, mimeType, loadManually);
 

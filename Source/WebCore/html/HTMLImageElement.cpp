@@ -70,7 +70,7 @@ HTMLImageElement::HTMLImageElement(const QualifiedName& tagName, Document& docum
     : HTMLElement(tagName, document)
     , m_imageLoader(WTF::makeUnique<HTMLImageLoader>(*this))
     , m_form(nullptr)
-    , m_formSetByParser(makeWeakPtr(form))
+    , m_formSetByParser(form)
     , m_compositeOperator(CompositeOperator::SourceOver)
     , m_imageDevicePixelRatio(1.0f)
 {
@@ -402,7 +402,7 @@ Node::InsertedIntoAncestorResult HTMLImageElement::insertedIntoAncestor(Insertio
 
     if (!m_form) {
         if (auto* newForm = HTMLFormElement::findClosestFormAncestor(*this)) {
-            m_form = makeWeakPtr(newForm);
+            m_form = newForm;
             newForm->registerImgElement(this);
         }
     }
@@ -455,7 +455,7 @@ HTMLPictureElement* HTMLImageElement::pictureElement() const
     
 void HTMLImageElement::setPictureElement(HTMLPictureElement* pictureElement)
 {
-    m_pictureElement = makeWeakPtr(pictureElement);
+    m_pictureElement = pictureElement;
 }
     
 unsigned HTMLImageElement::width(bool ignorePendingStylesheets)
@@ -857,7 +857,7 @@ void HTMLImageElement::setSourceElement(HTMLSourceElement* sourceElement)
 {
     if (m_sourceElement == sourceElement)
         return;
-    m_sourceElement = makeWeakPtr(sourceElement);
+    m_sourceElement = sourceElement;
     invalidateAttributeMapping();
 }
 

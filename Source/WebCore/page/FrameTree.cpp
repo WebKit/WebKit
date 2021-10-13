@@ -38,7 +38,7 @@ namespace WebCore {
 
 FrameTree::FrameTree(Frame& thisFrame, Frame* parentFrame)
     : m_thisFrame(thisFrame)
-    , m_parent(makeWeakPtr(parentFrame))
+    , m_parent(parentFrame)
 {
 }
 
@@ -73,9 +73,9 @@ Frame* FrameTree::parent() const
 void FrameTree::appendChild(Frame& child)
 {
     ASSERT(child.page() == m_thisFrame.page());
-    child.tree().m_parent = makeWeakPtr(m_thisFrame);
+    child.tree().m_parent = m_thisFrame;
     WeakPtr<Frame> oldLast = m_lastChild;
-    m_lastChild = makeWeakPtr(child);
+    m_lastChild = child;
 
     if (oldLast) {
         child.tree().m_previousSibling = oldLast;

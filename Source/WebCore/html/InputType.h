@@ -402,7 +402,7 @@ public:
 protected:
     explicit InputType(Type type, HTMLInputElement& element)
         : m_type(type)
-        , m_element(makeWeakPtr(element)) { }
+        , m_element(element) { }
     HTMLInputElement* element() const { return m_element.get(); }
     Chrome* chrome() const;
     Decimal parseToNumberOrNaN(const String&) const;

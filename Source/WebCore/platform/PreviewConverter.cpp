@@ -134,7 +134,7 @@ bool PreviewConverter::hasClient(PreviewConverterClient& client) const
 void PreviewConverter::addClient(PreviewConverterClient& client)
 {
     ASSERT(!hasClient(client));
-    m_clients.append(makeWeakPtr(client));
+    m_clients.append(client);
     didAddClient(client);
 }
 
@@ -175,7 +175,7 @@ void PreviewConverter::iterateClients(T&& callback)
 
 void PreviewConverter::didAddClient(PreviewConverterClient& client)
 {
-    RunLoop::current().dispatch([this, protectedThis = Ref { *this }, weakClient = makeWeakPtr(client)]() {
+    RunLoop::current().dispatch([this, protectedThis = Ref { *this }, weakClient = WeakPtr { client }]() {
         if (auto client = weakClient.get())
             replayToClient(*client);
     });

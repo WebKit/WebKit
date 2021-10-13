@@ -33,7 +33,7 @@
 namespace WebCore {
 
 DOMWindowProperty::DOMWindowProperty(DOMWindow* window)
-    : m_window(makeWeakPtr(window))
+    : m_window(window)
 {
 }
 

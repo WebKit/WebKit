@@ -275,7 +275,7 @@ void Editor::setDictationPhrasesAsChildOfElement(const Vector<Vector<String>>& d
 
     element.appendChild(createFragmentFromText(context, dictationPhrasesBuilder.toString()));
 
-    auto weakElement = makeWeakPtr(element);
+    WeakPtr weakElement { element };
 
     // We need a layout in order to add markers below.
     document().updateLayout();

@@ -420,7 +420,7 @@ void CDMInstanceFairPlayStreamingAVFObjC::setStorageDirectory(const String& stor
 RefPtr<CDMInstanceSession> CDMInstanceFairPlayStreamingAVFObjC::createSession()
 {
     auto session = adoptRef(*new CDMInstanceSessionFairPlayStreamingAVFObjC(*this));
-    m_sessions.append(makeWeakPtr(session.get()));
+    m_sessions.append(session);
     return session;
 }
 

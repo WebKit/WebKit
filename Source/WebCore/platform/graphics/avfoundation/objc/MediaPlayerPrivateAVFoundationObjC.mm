@@ -450,8 +450,8 @@ void MediaPlayerPrivateAVFoundationObjC::clearMediaCacheForOrigins(const String&
 MediaPlayerPrivateAVFoundationObjC::MediaPlayerPrivateAVFoundationObjC(MediaPlayer* player)
     : MediaPlayerPrivateAVFoundation(player)
     , m_videoLayerManager(makeUnique<VideoLayerManagerObjC>(logger(), logIdentifier()))
-    , m_objcObserver(adoptNS([[WebCoreAVFMovieObserver alloc] initWithPlayer:makeWeakPtr(*this)]))
-    , m_loaderDelegate(adoptNS([[WebCoreAVFLoaderDelegate alloc] initWithPlayer:makeWeakPtr(*this)]))
+    , m_objcObserver(adoptNS([[WebCoreAVFMovieObserver alloc] initWithPlayer:*this]))
+    , m_loaderDelegate(adoptNS([[WebCoreAVFLoaderDelegate alloc] initWithPlayer:*this]))
     , m_cachedItemStatus(MediaPlayerAVPlayerItemStatusDoesNotExist)
 {
     m_muted = player->muted();
@@ -2468,7 +2468,7 @@ void MediaPlayerPrivateAVFoundationObjC::createVideoOutput()
         return;
     }
 
-    m_videoOutputDelegate = adoptNS([[WebCoreAVFPullDelegate alloc] initWithPlayer:makeWeakPtr(*this)]);
+    m_videoOutputDelegate = adoptNS([[WebCoreAVFPullDelegate alloc] initWithPlayer:*this]);
     [m_videoOutput setDelegate:m_videoOutputDelegate.get() queue:globalPullDelegateQueue()];
 
     [m_avPlayerItem addOutput:m_videoOutput.get()];
@@ -2655,7 +2655,7 @@ std::unique_ptr<LegacyCDMSession> MediaPlayerPrivateAVFoundationObjC::createSess
     if (!keySystemIsSupported(keySystem))
         return nullptr;
     auto session = makeUnique<CDMSessionAVFoundationObjC>(this, client);
-    m_session = makeWeakPtr(*session);
+    m_session = *session;
     return WTFMove(session);
 }
 

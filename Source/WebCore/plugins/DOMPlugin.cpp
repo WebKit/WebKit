@@ -48,7 +48,7 @@ static Vector<Ref<DOMMimeType>> makeMimeTypes(Navigator& navigator, const Plugin
 }
 
 DOMPlugin::DOMPlugin(Navigator& navigator, const PluginInfo& info)
-    : m_navigator(makeWeakPtr(navigator))
+    : m_navigator(navigator)
     , m_info(info)
     , m_mimeTypes(makeMimeTypes(navigator, info, *this))
 {

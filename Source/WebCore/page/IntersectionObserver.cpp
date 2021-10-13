@@ -116,19 +116,19 @@ ExceptionOr<Ref<IntersectionObserver>> IntersectionObserver::create(Document& do
 }
 
 IntersectionObserver::IntersectionObserver(Document& document, Ref<IntersectionObserverCallback>&& callback, ContainerNode* root, LengthBox&& parsedRootMargin, Vector<double>&& thresholds)
-    : m_root(makeWeakPtr(root))
+    : m_root(root)
     , m_rootMargin(WTFMove(parsedRootMargin))
     , m_thresholds(WTFMove(thresholds))
     , m_callback(WTFMove(callback))
 {
     if (is<Document>(root)) {
         auto& observerData = downcast<Document>(*root).ensureIntersectionObserverData();
-        observerData.observers.append(makeWeakPtr(this));
+        observerData.observers.append(*this);
     } else if (root) {
         auto& observerData = downcast<Element>(*root).ensureIntersectionObserverData();
-        observerData.observers.append(makeWeakPtr(this));
+        observerData.observers.append(*this);
     } else if (auto* frame = document.frame())
-        m_implicitRootDocument = makeWeakPtr(frame->mainFrame().document());
+        m_implicitRootDocument = frame->mainFrame().document();
 
     std::sort(m_thresholds.begin(), m_thresholds.end());
 }
@@ -165,9 +165,9 @@ void IntersectionObserver::observe(Element& target)
     if (!trackingDocument() || !m_callback || isObserving(target))
         return;
 
-    target.ensureIntersectionObserverData().registrations.append({ makeWeakPtr(this), std::nullopt });
+    target.ensureIntersectionObserverData().registrations.append({ *this, std::nullopt });
     bool hadObservationTargets = hasObservationTargets();
-    m_observationTargets.append(makeWeakPtr(target));
+    m_observationTargets.append(target);
 
     // Per the specification, we should dispatch at least one observation for the target. For this reason, we make sure to keep the
     // target alive until this first observation. This, in turn, will keep the IntersectionObserver's JS wrapper alive via

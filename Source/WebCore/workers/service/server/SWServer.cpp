@@ -196,12 +196,12 @@ void SWServer::addRegistration(std::unique_ptr<SWServerRegistration>&& registrat
         m_uniqueRegistrationCount++;
 
     if (registration->serviceWorkerPageIdentifier())
-        m_serviceWorkerPageIdentifierToRegistrationMap.add(*registration->serviceWorkerPageIdentifier(), makeWeakPtr(*registration));
+        m_serviceWorkerPageIdentifierToRegistrationMap.add(*registration->serviceWorkerPageIdentifier(), *registration);
 
     m_originStore->add(registration->key().topOrigin());
     auto registrationID = registration->identifier();
     ASSERT(!m_scopeToRegistrationMap.contains(registration->key()));
-    m_scopeToRegistrationMap.set(registration->key(), makeWeakPtr(*registration));
+    m_scopeToRegistrationMap.set(registration->key(), *registration);
     auto addResult1 = m_registrations.add(registrationID, WTFMove(registration));
     ASSERT_UNUSED(addResult1, addResult1.isNewEntry);
 }

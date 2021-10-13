@@ -1820,7 +1820,7 @@ void RenderText::setInlineWrapperForDisplayContents(RenderInline* wrapper)
         m_hasInlineWrapperForDisplayContents = false;
         return;
     }
-    inlineWrapperForDisplayContentsMap().add(this, makeWeakPtr(wrapper));
+    inlineWrapperForDisplayContentsMap().add(this, wrapper);
     m_hasInlineWrapperForDisplayContents = true;
 }
 

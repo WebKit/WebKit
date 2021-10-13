@@ -395,14 +395,14 @@ void VideoFullscreenInterfaceMac::setVideoFullscreenModel(VideoFullscreenModel* 
 {
     if (m_videoFullscreenModel)
         m_videoFullscreenModel->removeClient(*this);
-    m_videoFullscreenModel = makeWeakPtr(model);
+    m_videoFullscreenModel = model;
     if (m_videoFullscreenModel)
         m_videoFullscreenModel->addClient(*this);
 }
 
 void VideoFullscreenInterfaceMac::setVideoFullscreenChangeObserver(VideoFullscreenChangeObserver* observer)
 {
-    m_fullscreenChangeObserver = makeWeakPtr(observer);
+    m_fullscreenChangeObserver = observer;
 }
 
 void VideoFullscreenInterfaceMac::setMode(HTMLMediaElementEnums::VideoFullscreenMode mode, bool)

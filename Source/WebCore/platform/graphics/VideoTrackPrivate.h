@@ -35,7 +35,7 @@ namespace WebCore {
 
 class VideoTrackPrivate : public TrackPrivateBase {
 public:
-    void setClient(VideoTrackPrivateClient& client) { m_client = makeWeakPtr(client); }
+    void setClient(VideoTrackPrivateClient& client) { m_client = client; }
     void clearClient() { m_client = nullptr; }
     VideoTrackPrivateClient* client() const override { return m_client.get(); }
 

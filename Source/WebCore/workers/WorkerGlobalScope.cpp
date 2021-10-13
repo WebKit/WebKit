@@ -371,7 +371,7 @@ ExceptionOr<void> WorkerGlobalScope::importScripts(const Vector<String>& urls)
         {
             NakedPtr<JSC::Exception> exception;
             ScriptSourceCode sourceCode(scriptLoader->script(), URL(scriptLoader->responseURL()));
-            sourceProvider = makeWeakPtr(static_cast<ScriptBufferSourceProvider&>(sourceCode.provider()));
+            sourceProvider = static_cast<ScriptBufferSourceProvider&>(sourceCode.provider());
             script()->evaluate(sourceCode, exception);
             if (exception) {
                 script()->setException(exception);
@@ -595,7 +595,7 @@ void WorkerGlobalScope::releaseMemoryInWorkers(Synchronous synchronous)
 void WorkerGlobalScope::setMainScriptSourceProvider(ScriptBufferSourceProvider& provider)
 {
     ASSERT(!m_mainScriptSourceProvider);
-    m_mainScriptSourceProvider = makeWeakPtr(provider);
+    m_mainScriptSourceProvider = provider;
 }
 
 void WorkerGlobalScope::addImportedScriptSourceProvider(const URL& url, ScriptBufferSourceProvider& provider)

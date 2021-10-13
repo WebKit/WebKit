@@ -176,7 +176,7 @@ void PlatformMediaSessionManager::endInterruption(PlatformMediaSession::EndInter
 void PlatformMediaSessionManager::addSession(PlatformMediaSession& session)
 {
     ALWAYS_LOG(LOGIDENTIFIER, session.logIdentifier());
-    m_sessions.append(makeWeakPtr(session));
+    m_sessions.append(session);
     if (m_interrupted)
         session.setState(PlatformMediaSession::Interrupted);
 
@@ -285,7 +285,7 @@ void PlatformMediaSessionManager::sessionWillEndPlayback(PlatformMediaSession& s
         return;
 
     m_sessions.remove(pausingSessionIndex);
-    m_sessions.append(makeWeakPtr(session));
+    m_sessions.append(session);
 
     ALWAYS_LOG(LOGIDENTIFIER, "session moved from index ", pausingSessionIndex, " to ", lastPlayingSessionIndex);
 }
@@ -308,7 +308,7 @@ void PlatformMediaSessionManager::setCurrentSession(PlatformMediaSession& sessio
         return;
 
     m_sessions.remove(index);
-    m_sessions.insert(0, makeWeakPtr(session));
+    m_sessions.insert(0, session);
     
     ALWAYS_LOG(LOGIDENTIFIER, "session moved from index ", index, " to 0");
 }

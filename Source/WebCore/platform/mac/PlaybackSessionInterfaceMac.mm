@@ -52,7 +52,7 @@ Ref<PlaybackSessionInterfaceMac> PlaybackSessionInterfaceMac::create(PlaybackSes
 }
 
 PlaybackSessionInterfaceMac::PlaybackSessionInterfaceMac(PlaybackSessionModel& model)
-    : m_playbackSessionModel(makeWeakPtr(model))
+    : m_playbackSessionModel(model)
 {
 }
 

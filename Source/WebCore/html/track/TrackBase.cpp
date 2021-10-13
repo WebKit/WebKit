@@ -73,7 +73,7 @@ TrackBase::TrackBase(ScriptExecutionContext* context, Type type, const AtomStrin
 
 void TrackBase::setTrackList(TrackListBase& trackList)
 {
-    m_trackList = makeWeakPtr(trackList);
+    m_trackList = trackList;
 }
 
 void TrackBase::clearTrackList()

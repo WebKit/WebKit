@@ -130,7 +130,7 @@ void SlotAssignment::addSlotElementByName(const AtomString& name, HTMLSlotElemen
 
     slot.elementCount++;
     if (slot.elementCount == 1) {
-        slot.element = makeWeakPtr(slotElement);
+        slot.element = slotElement;
         if (shadowRoot.shouldFireSlotchangeEvent() && hasAssignedNodes(shadowRoot, slot))
             slotElement.enqueueSlotChangeEvent();
         return;
@@ -225,7 +225,7 @@ void SlotAssignment::resolveSlotsAfterSlotMutation(ShadowRoot& shadowRoot, SlotM
                 currentSlot->oldElement = WTFMove(currentSlot->element);
                 currentElement->enqueueSlotChangeEvent();
             }
-            currentSlot->element = makeWeakPtr(*currentElement);
+            currentSlot->element = *currentElement;
         }
     }
 
@@ -377,14 +377,14 @@ void SlotAssignment::assignToSlot(Node& child, const AtomString& slotName)
     if (slotName == defaultSlotName()) {
         auto defaultSlotEntry = m_slots.find(defaultSlotName());
         if (defaultSlotEntry != m_slots.end())
-            defaultSlotEntry->value->assignedNodes.append(makeWeakPtr(child));
+            defaultSlotEntry->value->assignedNodes.append(child);
         return;
     }
 
     auto addResult = m_slots.ensure(slotName, [] {
         return makeUnique<Slot>();
     });
-    addResult.iterator->value->assignedNodes.append(makeWeakPtr(child));
+    addResult.iterator->value->assignedNodes.append(child);
 }
 
 }

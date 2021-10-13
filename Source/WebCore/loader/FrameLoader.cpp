@@ -217,7 +217,7 @@ static bool isDocumentSandboxed(Frame& frame, SandboxFlags mask)
 class PageLevelForbidScope {
 protected:
     explicit PageLevelForbidScope(Page* page)
-        : m_page(makeWeakPtr(page))
+        : m_page(page)
     {
     }
 
@@ -1059,7 +1059,7 @@ void FrameLoader::setOpener(Frame* opener)
         if (auto* page = m_frame.page())
             page->setOpenedByDOMWithOpener(true);
     }
-    m_opener = makeWeakPtr(opener);
+    m_opener = opener;
 
     if (m_frame.document())
         m_frame.document()->initSecurityContext();
@@ -1270,7 +1270,7 @@ void FrameLoader::loadFrameRequest(FrameLoadRequest&& request, Event* event, Ref
     else
         loadType = FrameLoadType::Standard;
 
-    auto completionHandler = [this, protectedFrame = Ref { m_frame }, formState = makeWeakPtr(formState.get()), frameName = request.frameName()] {
+    auto completionHandler = [this, protectedFrame = Ref { m_frame }, formState = WeakPtr { formState }, frameName = request.frameName()] {
         // FIXME: It's possible this targetFrame will not be the same frame that was targeted by the actual
         // load if frame names have changed.
         Frame* sourceFrame = formState ? formState->sourceDocument().frame() : &m_frame;

@@ -68,7 +68,7 @@ void Grid::insert(RenderBox& child, const GridArea& area)
 
     for (auto row : area.rows) {
         for (auto column : area.columns)
-            m_grid[row][column].append(makeWeakPtr(child));
+            m_grid[row][column].append(child);
     }
 
     setGridItemArea(child, area);

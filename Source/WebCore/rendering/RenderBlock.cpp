@@ -2691,7 +2691,7 @@ void RenderBlock::setCachedEnclosingFragmentedFlowNeedsUpdate()
 RenderFragmentedFlow* RenderBlock::updateCachedEnclosingFragmentedFlow(RenderFragmentedFlow* fragmentedFlow) const
 {
     RenderBlockRareData& rareData = ensureBlockRareData(*this);
-    rareData.m_enclosingFragmentedFlow = makeWeakPtr(fragmentedFlow);
+    rareData.m_enclosingFragmentedFlow = fragmentedFlow;
 
     return fragmentedFlow;
 }

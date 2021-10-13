@@ -49,7 +49,7 @@ namespace WebCore {
 class FloatQuad;
 
 ImageOverlayController::ImageOverlayController(Page& page)
-    : m_page(makeWeakPtr(page))
+    : m_page(page)
 {
 }
 
@@ -96,7 +96,7 @@ void ImageOverlayController::selectionQuadsDidChange(Frame& frame, const Vector<
         return;
     }
 
-    m_hostElementForSelection = makeWeakPtr(*overlayHost);
+    m_hostElementForSelection = *overlayHost;
     m_selectionQuads = quads;
     m_selectionBackgroundColor = overlayHostRenderer->selectionBackgroundColor();
     m_selectionClipRect = overlayHostRenderer->absoluteBoundingBoxRect();

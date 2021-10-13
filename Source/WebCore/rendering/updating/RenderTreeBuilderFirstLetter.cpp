@@ -193,7 +193,7 @@ void RenderTreeBuilder::FirstLetter::updateStyle(RenderBlock& firstLetterBlock, 
             remainingText->setFirstLetter(*newFirstLetter);
             newFirstLetter->setFirstLetterRemainingText(*remainingText);
         }
-        WeakPtr<RenderObject> nextSibling = makeWeakPtr(firstLetter->nextSibling());
+        WeakPtr nextSibling = firstLetter->nextSibling();
         m_builder.destroy(*firstLetter);
         m_builder.attach(*firstLetterContainer, WTFMove(newFirstLetter), nextSibling.get());
         return;
@@ -251,8 +251,8 @@ void RenderTreeBuilder::FirstLetter::createRenderers(RenderBlock& firstLetterBlo
         }
 
         auto* textNode = currentTextChild.textNode();
-        auto beforeChild = makeWeakPtr(currentTextChild.nextSibling());
-        auto inlineWrapperForDisplayContents = makeWeakPtr(currentTextChild.inlineWrapperForDisplayContents());
+        WeakPtr beforeChild = currentTextChild.nextSibling();
+        WeakPtr inlineWrapperForDisplayContents = currentTextChild.inlineWrapperForDisplayContents();
         auto hasInlineWrapperForDisplayContents = inlineWrapperForDisplayContents.get();
         m_builder.destroy(currentTextChild);
 

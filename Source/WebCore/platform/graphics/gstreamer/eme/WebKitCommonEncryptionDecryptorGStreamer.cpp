@@ -432,7 +432,7 @@ bool webKitMediaCommonEncryptionDecryptIsFlushing(WebKitMediaCommonEncryptionDec
 WeakPtr<WebCore::CDMProxyDecryptionClient> webKitMediaCommonEncryptionDecryptGetCDMProxyDecryptionClient(WebKitMediaCommonEncryptionDecrypt* self)
 {
     WebKitMediaCommonEncryptionDecryptPrivate* priv = WEBKIT_MEDIA_CENC_DECRYPT_GET_PRIVATE(self);
-    return makeWeakPtr(*priv->cdmProxyDecryptionClientImplementation);
+    return *priv->cdmProxyDecryptionClientImplementation;
 }
 
 static GstStateChangeReturn changeState(GstElement* element, GstStateChange transition)

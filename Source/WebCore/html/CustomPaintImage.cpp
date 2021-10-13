@@ -50,9 +50,9 @@
 namespace WebCore {
 
 CustomPaintImage::CustomPaintImage(PaintWorkletGlobalScope::PaintDefinition& definition, const FloatSize& size, RenderElement& element, const Vector<String>& arguments)
-    : m_paintDefinition(makeWeakPtr(definition))
+    : m_paintDefinition(definition)
     , m_inputProperties(definition.inputProperties)
-    , m_element(makeWeakPtr(element))
+    , m_element(element)
     , m_arguments(arguments)
 {
     setContainerSize(size);

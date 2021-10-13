@@ -103,7 +103,7 @@ RefPtr<MediaRecorderPrivateWriter> MediaRecorderPrivateWriter::create(bool hasAu
 
 void MediaRecorderPrivateWriter::compressedVideoOutputBufferCallback(void *mediaRecorderPrivateWriter, CMBufferQueueTriggerToken)
 {
-    callOnMainThread([weakWriter = makeWeakPtr(static_cast<MediaRecorderPrivateWriter*>(mediaRecorderPrivateWriter))] {
+    callOnMainThread([weakWriter = WeakPtr { static_cast<MediaRecorderPrivateWriter*>(mediaRecorderPrivateWriter) }] {
         if (weakWriter)
             weakWriter->processNewCompressedVideoSampleBuffers();
     });
@@ -111,7 +111,7 @@ void MediaRecorderPrivateWriter::compressedVideoOutputBufferCallback(void *media
 
 void MediaRecorderPrivateWriter::compressedAudioOutputBufferCallback(void *mediaRecorderPrivateWriter, CMBufferQueueTriggerToken)
 {
-    callOnMainThread([weakWriter = makeWeakPtr(static_cast<MediaRecorderPrivateWriter*>(mediaRecorderPrivateWriter))] {
+    callOnMainThread([weakWriter = WeakPtr { static_cast<MediaRecorderPrivateWriter*>(mediaRecorderPrivateWriter) }] {
         if (weakWriter)
             weakWriter->processNewCompressedAudioSampleBuffers();
     });

@@ -178,7 +178,7 @@ void EditCommand::setEndingSelection(const VisibleSelection& selection)
 void EditCommand::setParent(CompositeEditCommand* parent)
 {
     ASSERT((parent && !m_parent) || (!parent && m_parent));
-    m_parent = makeWeakPtr(parent);
+    m_parent = parent;
     if (parent) {
         m_startingSelection = parent->m_endingSelection;
         m_endingSelection = parent->m_endingSelection;

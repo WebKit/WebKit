@@ -51,8 +51,8 @@ void MediaResourceLoader::recordResponsesForTesting()
 
 MediaResourceLoader::MediaResourceLoader(Document& document, Element& element, const String& crossOriginMode, FetchOptions::Destination destination)
     : ContextDestructionObserver(&document)
-    , m_document(makeWeakPtr(document))
-    , m_element(makeWeakPtr(element))
+    , m_document(document)
+    , m_element(element)
     , m_crossOriginMode(crossOriginMode)
     , m_destination(destination)
 {

@@ -76,7 +76,7 @@ Ref<MediaControlTextTrackContainerElement> MediaControlTextTrackContainerElement
 
 MediaControlTextTrackContainerElement::MediaControlTextTrackContainerElement(Document& document, HTMLMediaElement& element)
     : HTMLDivElement(divTag, document)
-    , m_mediaElement(makeWeakPtr(&element))
+    , m_mediaElement(element)
 {
 }
 

@@ -402,7 +402,7 @@ void HTMLFormElement::submit(Event* event, bool activateSubmitButton, bool proce
     if (m_plannedFormSubmission)
         m_plannedFormSubmission->cancel();
 
-    m_plannedFormSubmission = makeWeakPtr(formSubmission.get());
+    m_plannedFormSubmission = formSubmission;
     
     if (RuntimeEnabledFeatures::sharedFeatures().dialogElementEnabled() && formSubmission->method() == FormSubmission::Method::Dialog)
         submitDialog(WTFMove(formSubmission));
@@ -594,7 +594,7 @@ unsigned HTMLFormElement::formElementIndex(FormAssociatedElement* associatedElem
 
 void HTMLFormElement::registerFormElement(FormAssociatedElement* e)
 {
-    m_associatedElements.insert(formElementIndex(e), makeWeakPtr(e->asHTMLElement()));
+    m_associatedElements.insert(formElementIndex(e), e->asHTMLElement());
 
     if (is<HTMLFormControlElement>(e)) {
         HTMLFormControlElement& control = downcast<HTMLFormControlElement>(*e);
@@ -651,7 +651,7 @@ bool HTMLFormElement::isURLAttribute(const Attribute& attribute) const
 void HTMLFormElement::registerImgElement(HTMLImageElement* e)
 {
     ASSERT(m_imageElements.find(e) == notFound);
-    m_imageElements.append(makeWeakPtr(e));
+    m_imageElements.append(e);
 }
 
 void HTMLFormElement::removeImgElement(HTMLImageElement* e)
@@ -752,7 +752,7 @@ HTMLFormControlElement* HTMLFormElement::defaultButton() const
             continue;
         HTMLFormControlElement& control = downcast<HTMLFormControlElement>(*associatedElement);
         if (control.isSuccessfulSubmitButton()) {
-            m_defaultButton = makeWeakPtr(control);
+            m_defaultButton = control;
             return &control;
         }
     }
@@ -852,7 +852,7 @@ void HTMLFormElement::addToPastNamesMap(FormNamedItem* item, const AtomString& p
 #endif
     if (pastName.isEmpty())
         return;
-    m_pastNamesMap.set(pastName.impl(), makeWeakPtr(item->asHTMLElement()));
+    m_pastNamesMap.set(pastName.impl(), item->asHTMLElement());
 }
 
 void HTMLFormElement::removeFromPastNamesMap(FormNamedItem* item)

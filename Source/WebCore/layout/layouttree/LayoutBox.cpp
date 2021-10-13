@@ -543,7 +543,7 @@ std::optional<LayoutUnit> Box::columnWidth() const
 void Box::setCachedGeometryForLayoutState(LayoutState& layoutState, std::unique_ptr<BoxGeometry> geometry) const
 {
     ASSERT(!m_cachedLayoutState);
-    m_cachedLayoutState = makeWeakPtr(layoutState);
+    m_cachedLayoutState = layoutState;
     m_cachedGeometryForLayoutState = WTFMove(geometry);
 }
 

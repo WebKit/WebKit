@@ -93,7 +93,7 @@ void ImageOverlayController::updateDataDetectorHighlights(const HTMLElement& ove
 #else
         auto highlight = adoptCF(PAL::softLink_DataDetectors_DDHighlightCreateWithRectsInVisibleRectWithStyleAndDirection(nullptr, &elementBounds, 1, mainFrameView->visibleContentRect(), DDHighlightStyleBubbleStandard | DDHighlightStyleStandardIconArrow, YES, NSWritingDirectionNatural, NO, YES));
 #endif
-        m_dataDetectorContainersAndHighlights.append({ makeWeakPtr(element.get()), DataDetectorHighlight::createForImageOverlay(*m_page, *this, WTFMove(highlight), *makeRangeSelectingNode(element.get())) });
+        m_dataDetectorContainersAndHighlights.append({ element, DataDetectorHighlight::createForImageOverlay(*m_page, *this, WTFMove(highlight), *makeRangeSelectingNode(element.get())) });
     }
 }
 
@@ -223,7 +223,7 @@ void ImageOverlayController::elementUnderMouseDidChange(Frame& frame, Element* e
         return;
     }
 
-    m_hostElementForDataDetectors = makeWeakPtr(imageOverlayHost.get());
+    m_hostElementForDataDetectors = imageOverlayHost;
     installPageOverlayIfNeeded();
 }
 

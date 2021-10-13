@@ -37,7 +37,7 @@
 namespace WebCore {
 
 DOMWindowExtension::DOMWindowExtension(DOMWindow* window, DOMWrapperWorld& world)
-    : m_window(makeWeakPtr(window))
+    : m_window(window)
     , m_world(world)
     , m_wasDetached(false)
 {

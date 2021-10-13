@@ -558,8 +558,8 @@ void TextureMapperLayer::removeAllChildren()
 void TextureMapperLayer::setMaskLayer(TextureMapperLayer* maskLayer)
 {
     if (maskLayer) {
-        maskLayer->m_effectTarget = makeWeakPtr(*this);
-        m_state.maskLayer = makeWeakPtr(*maskLayer);
+        maskLayer->m_effectTarget = *this;
+        m_state.maskLayer = *maskLayer;
     } else
         m_state.maskLayer = nullptr;
 }
@@ -568,8 +568,8 @@ void TextureMapperLayer::setReplicaLayer(TextureMapperLayer* replicaLayer)
 {
     if (replicaLayer) {
         replicaLayer->m_isReplica = true;
-        replicaLayer->m_effectTarget = makeWeakPtr(*this);
-        m_state.replicaLayer = makeWeakPtr(*replicaLayer);
+        replicaLayer->m_effectTarget = *this;
+        m_state.replicaLayer = *replicaLayer;
     } else
         m_state.replicaLayer = nullptr;
 }
@@ -578,8 +578,8 @@ void TextureMapperLayer::setBackdropLayer(TextureMapperLayer* backdropLayer)
 {
     if (backdropLayer) {
         backdropLayer->m_isBackdrop = true;
-        backdropLayer->m_effectTarget = makeWeakPtr(*this);
-        m_state.backdropLayer = makeWeakPtr(*backdropLayer);
+        backdropLayer->m_effectTarget = *this;
+        m_state.backdropLayer = *backdropLayer;
     } else
         m_state.backdropLayer = nullptr;
 }

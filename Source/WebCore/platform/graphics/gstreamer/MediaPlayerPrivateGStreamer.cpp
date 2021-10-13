@@ -1056,7 +1056,7 @@ void MediaPlayerPrivateGStreamer::notifyPlayerOfTrack()
             }
         }
 
-        auto track = TrackPrivateType::create(makeWeakPtr(*this), i, WTFMove(pad));
+        auto track = TrackPrivateType::create(*this, i, WTFMove(pad));
         if (!track->trackIndex() && (type == TrackType::Audio || type == TrackType::Video))
             track->setActive(true);
         ASSERT(streamId == track->id());
@@ -1439,7 +1439,7 @@ void MediaPlayerPrivateGStreamer::updateTracks(const GRefPtr<GstStreamCollection
     unsigned textTrackIndex = 0;
 
 #define CREATE_TRACK(type, Type) G_STMT_START {                     \
-        RefPtr<Type##TrackPrivateGStreamer> track = Type##TrackPrivateGStreamer::create(makeWeakPtr(*this), type##TrackIndex, WTFMove(stream)); \
+        RefPtr<Type##TrackPrivateGStreamer> track = Type##TrackPrivateGStreamer::create(*this, type##TrackIndex, WTFMove(stream)); \
         auto trackId = track->id();                                 \
         if (!type##TrackIndex) {                                    \
             m_wanted##Type##StreamId = trackId;                     \
@@ -1519,7 +1519,7 @@ void MediaPlayerPrivateGStreamer::handleStreamCollectionMessage(GstMessage* mess
     }
 #endif
 
-    auto callback = [player = makeWeakPtr(*this), collection = WTFMove(collection)] {
+    auto callback = [player = WeakPtr { *this }, collection = WTFMove(collection)] {
         if (player)
             player->updateTracks(collection);
     };
@@ -2730,7 +2730,7 @@ void MediaPlayerPrivateGStreamer::createGSTPlayBin(const URL& url)
     ASSERT(textCombiner);
     g_object_set(m_pipeline.get(), "text-stream-combiner", textCombiner, nullptr);
 
-    m_textSink = webkitTextSinkNew(makeWeakPtr(*this));
+    m_textSink = webkitTextSinkNew(*this);
     ASSERT(m_textSink);
 
     g_object_set(m_pipeline.get(), "text-sink", m_textSink.get(), nullptr);

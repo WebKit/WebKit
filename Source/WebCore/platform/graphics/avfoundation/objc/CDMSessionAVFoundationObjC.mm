@@ -44,7 +44,7 @@
 namespace WebCore {
 
 CDMSessionAVFoundationObjC::CDMSessionAVFoundationObjC(MediaPlayerPrivateAVFoundationObjC* parent, LegacyCDMSessionClient* client)
-    : m_parent(makeWeakPtr(*parent))
+    : m_parent(*parent)
     , m_client(client)
     , m_sessionId(createCanonicalUUIDString())
 {

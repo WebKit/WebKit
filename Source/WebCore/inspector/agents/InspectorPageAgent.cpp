@@ -838,7 +838,7 @@ String InspectorPageAgent::frameId(Frame* frame)
         return emptyString();
     return m_frameToIdentifier.ensure(frame, [this, frame] {
         auto identifier = IdentifiersFactory::createIdentifier();
-        m_identifierToFrame.set(identifier, makeWeakPtr(frame));
+        m_identifierToFrame.set(identifier, frame);
         return identifier;
     }).iterator->value;
 }

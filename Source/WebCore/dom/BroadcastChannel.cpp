@@ -104,7 +104,7 @@ private:
 };
 
 BroadcastChannel::MainThreadBridge::MainThreadBridge(BroadcastChannel& channel, const String& name)
-    : m_broadcastChannel(makeWeakPtr(channel))
+    : m_broadcastChannel(channel)
     , m_identifier(BroadcastChannelIdentifier::generateThreadSafe())
     , m_name(name.isolatedCopy())
 {

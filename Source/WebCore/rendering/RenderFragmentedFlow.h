@@ -215,8 +215,8 @@ protected:
         
         void setRange(RenderFragmentContainer* start, RenderFragmentContainer* end)
         {
-            m_startFragment = makeWeakPtr(start);
-            m_endFragment = makeWeakPtr(end);
+            m_startFragment = start;
+            m_endFragment = end;
             m_rangeInvalidated = true;
         }
 

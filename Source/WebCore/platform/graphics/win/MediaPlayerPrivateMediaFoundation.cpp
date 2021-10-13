@@ -57,7 +57,7 @@ static const double tenMegahertz = 10000000;
 namespace WebCore {
 
 MediaPlayerPrivateMediaFoundation::MediaPlayerPrivateMediaFoundation(MediaPlayer* player) 
-    : m_weakThis(makeWeakPtr(this))
+    : m_weakThis(this)
     , m_player(player)
     , m_visible(false)
     , m_loadingProgress(false)

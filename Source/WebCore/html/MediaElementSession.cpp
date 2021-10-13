@@ -125,7 +125,7 @@ class MediaSessionObserver : public MediaSession::Observer {
 
 public:
     MediaSessionObserver(MediaElementSession& session, const Ref<MediaSession>& mediaSession)
-        : m_session(makeWeakPtr(session)), m_mediaSession(mediaSession)
+        : m_session(session), m_mediaSession(mediaSession)
     {
         m_mediaSession->addObserver(*this);
     }

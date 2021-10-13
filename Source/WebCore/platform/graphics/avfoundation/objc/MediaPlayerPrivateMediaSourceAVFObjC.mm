@@ -120,7 +120,7 @@ void EffectiveRateChangedListener::stop(CMTimebaseRef timebase)
 }
 
 EffectiveRateChangedListener::EffectiveRateChangedListener(MediaPlayerPrivateMediaSourceAVFObjC& client, CMTimebaseRef timebase)
-    : m_client(makeWeakPtr(client))
+    : m_client(client)
 {
     CMNotificationCenterRef nc = PAL::CMNotificationCenterGetDefaultLocalCenter();
     PAL::CMNotificationCenterAddListener(nc, this, CMTimebaseEffectiveRateChangedCallback, PAL::kCMTimebaseNotification_EffectiveRateChanged, timebase, 0);
@@ -1110,7 +1110,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::setCDMSession(LegacyCDMSession* sessi
 
     ALWAYS_LOG(LOGIDENTIFIER);
 
-    m_session = makeWeakPtr(toCDMSessionMediaSourceAVFObjC(session));
+    m_session = toCDMSessionMediaSourceAVFObjC(session);
 
 #if HAVE(AVSTREAMSESSION)
     if (CDMSessionAVStreamSession* cdmStreamSession = toCDMSessionAVStreamSession(m_session.get()))

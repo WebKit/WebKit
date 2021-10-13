@@ -57,7 +57,7 @@ NetscapePlugInStreamLoader::NetscapePlugInStreamLoader(Frame& frame, NetscapePlu
         ContentSecurityPolicyImposition::DoPolicyCheck,
         DefersLoadingPolicy::AllowDefersLoading,
         CachingPolicy::AllowCaching))
-    , m_client(makeWeakPtr(client))
+    , m_client(client)
 {
 #if ENABLE(CONTENT_EXTENSIONS)
     m_resourceType = { ContentExtensions::ResourceType::Other };

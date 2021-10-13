@@ -423,7 +423,7 @@ void OffscreenCanvas::setPlaceholderCanvas(HTMLCanvasElement& canvas)
 {
     ASSERT(!m_context);
     ASSERT(isMainThread());
-    m_placeholderData->canvas = makeWeakPtr(canvas);
+    m_placeholderData->canvas = canvas;
     auto& placeholderContext = downcast<PlaceholderRenderingContext>(*canvas.renderingContext());
     auto& imageBufferPipe = placeholderContext.imageBufferPipe();
     if (imageBufferPipe)

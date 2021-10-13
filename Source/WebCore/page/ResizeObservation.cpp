@@ -39,7 +39,7 @@ Ref<ResizeObservation> ResizeObservation::create(Element& target, ResizeObserver
 }
 
 ResizeObservation::ResizeObservation(Element& element, ResizeObserverBoxOptions observedBox)
-    : m_target { makeWeakPtr(element) }
+    : m_target { element }
     , m_observedBox { observedBox }
 {
 }

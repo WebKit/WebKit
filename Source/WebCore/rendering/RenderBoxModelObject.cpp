@@ -85,7 +85,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(RenderBoxModelObject);
 // <b><i><p>Hello</p></i></b>. In this example the <i> will have a block as
 // its continuation but the <b> will just have an inline as its continuation.
 RenderBoxModelObject::ContinuationChainNode::ContinuationChainNode(RenderBoxModelObject& renderer)
-    : renderer(makeWeakPtr(renderer))
+    : renderer(renderer)
 {
 }
 
@@ -2635,7 +2635,7 @@ RenderTextFragment* RenderBoxModelObject::firstLetterRemainingText() const
 void RenderBoxModelObject::setFirstLetterRemainingText(RenderTextFragment& remainingText)
 {
     ASSERT(isFirstLetter());
-    firstLetterRemainingTextMap().set(this, makeWeakPtr(remainingText));
+    firstLetterRemainingTextMap().set(this, remainingText);
 }
 
 void RenderBoxModelObject::clearFirstLetterRemainingText()

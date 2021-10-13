@@ -45,7 +45,7 @@ void RenderTreePosition::computeNextSibling(const Node& node)
 #endif
         return;
     }
-    m_nextSibling = makeWeakPtr(nextSiblingRenderer(node));
+    m_nextSibling = nextSiblingRenderer(node);
     m_hasValidNextSibling = true;
 }
 

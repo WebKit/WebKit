@@ -1465,7 +1465,7 @@ String listMarkerText(ListStyleType type, int value)
 
 RenderListMarker::RenderListMarker(RenderListItem& listItem, RenderStyle&& style)
     : RenderBox(listItem.document(), WTFMove(style), 0)
-    , m_listItem(makeWeakPtr(listItem))
+    , m_listItem(listItem)
 {
     // init RenderObject attributes
     setInline(true);   // our object is Inline

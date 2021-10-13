@@ -1553,7 +1553,7 @@ void Page::updateRendering()
     Vector<WeakPtr<Document>> initialDocuments;
     forEachDocument([&initialDocuments] (Document& document) {
         document.domWindow()->freezeNowTimestamp();
-        initialDocuments.append(makeWeakPtr(&document));
+        initialDocuments.append(document);
     });
 
     auto runProcessingStep = [&](RenderingUpdateStep step, const WTF::Function<void(Document&)>& perDocumentFunction) {
@@ -1672,7 +1672,7 @@ void Page::doAfterUpdateRendering()
         
         if (appHighlightStorage->hasUnrestoredHighlights() && MonotonicTime::now() - appHighlightStorage->lastRangeSearchTime() > 1_s) {
             appHighlightStorage->resetLastRangeSearchTime();
-            document.eventLoop().queueTask(TaskSource::InternalAsyncTask, [weakDocument = makeWeakPtr(document)] {
+            document.eventLoop().queueTask(TaskSource::InternalAsyncTask, [weakDocument = WeakPtr { document }] {
                 RefPtr document { weakDocument.get() };
                 if (!document)
                     return;
@@ -3659,7 +3659,7 @@ void Page::updateElementsWithTextRecognitionResults()
     }
 
     for (auto& [element, result] : elementsToUpdate) {
-        element->document().eventLoop().queueTask(TaskSource::InternalAsyncTask, [result = TextRecognitionResult { result }, weakElement = makeWeakPtr(element.get())] {
+        element->document().eventLoop().queueTask(TaskSource::InternalAsyncTask, [result = TextRecognitionResult { result }, weakElement = WeakPtr { element }] {
             RefPtr element { weakElement.get() };
             if (!element)
                 return;
@@ -3705,7 +3705,7 @@ void Page::setServiceWorkerGlobalScope(ServiceWorkerGlobalScope& serviceWorkerGl
 {
     ASSERT(isMainThread());
     ASSERT(m_isServiceWorkerPage);
-    m_serviceWorkerGlobalScope = makeWeakPtr(serviceWorkerGlobalScope);
+    m_serviceWorkerGlobalScope = serviceWorkerGlobalScope;
 }
 #endif
 

@@ -53,7 +53,7 @@ DateTimeFieldElement::FieldOwner::~FieldOwner() = default;
 
 DateTimeFieldElement::DateTimeFieldElement(Document& document, FieldOwner& fieldOwner)
     : HTMLDivElement(divTag, document)
-    , m_fieldOwner(makeWeakPtr(fieldOwner))
+    , m_fieldOwner(fieldOwner)
 {
     setHasCustomStyleResolveCallbacks();
 }

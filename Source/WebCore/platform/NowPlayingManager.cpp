@@ -43,7 +43,7 @@ void NowPlayingManager::didReceiveRemoteControlCommand(PlatformMediaSession::Rem
 
 void NowPlayingManager::addClient(Client& client)
 {
-    m_client = makeWeakPtr(client);
+    m_client = client;
     ensureRemoteCommandListenerCreated();
 }
 

@@ -66,7 +66,7 @@ bool RenderButton::hasLineIfEmpty() const
 void RenderButton::setInnerRenderer(RenderBlock& innerRenderer)
 {
     ASSERT(!m_inner.get());
-    m_inner = makeWeakPtr(innerRenderer);
+    m_inner = innerRenderer;
     updateAnonymousChildStyle(m_inner->mutableStyle());
 }
     
@@ -103,7 +103,7 @@ void RenderButton::setText(const String& str)
 
     if (!m_buttonText) {
         auto newButtonText = createRenderer<RenderTextFragment>(document(), str);
-        m_buttonText = makeWeakPtr(*newButtonText);
+        m_buttonText = *newButtonText;
         // FIXME: This mutation should go through the normal RenderTreeBuilder path.
         if (RenderTreeBuilder::current())
             RenderTreeBuilder::current()->attach(*this, WTFMove(newButtonText));

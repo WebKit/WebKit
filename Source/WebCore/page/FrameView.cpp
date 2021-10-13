@@ -3270,7 +3270,7 @@ void FrameView::updateEmbeddedObject(RenderEmbeddedObject& embeddedObject)
 
     auto& element = embeddedObject.frameOwnerElement();
 
-    auto weakRenderer = makeWeakPtr(embeddedObject);
+    WeakPtr weakRenderer { embeddedObject };
 
     if (is<HTMLPlugInImageElement>(element)) {
         auto& pluginElement = downcast<HTMLPlugInImageElement>(element);

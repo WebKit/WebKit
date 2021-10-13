@@ -105,7 +105,7 @@ void MockCDMFactory::setSupportedRobustness(Vector<String>&& robustnesses)
 
 std::unique_ptr<CDMPrivate> MockCDMFactory::createCDM(const String&)
 {
-    return makeUnique<MockCDM>(makeWeakPtr(*this));
+    return makeUnique<MockCDM>(*this);
 }
 
 MockCDM::MockCDM(WeakPtr<MockCDMFactory> factory)
@@ -184,7 +184,7 @@ RefPtr<CDMInstance> MockCDM::createInstance()
 {
     if (m_factory && !m_factory->canCreateInstances())
         return nullptr;
-    return adoptRef(new MockCDMInstance(makeWeakPtr(*this)));
+    return adoptRef(new MockCDMInstance(*this));
 }
 
 void MockCDM::loadAndInitialize()
@@ -289,7 +289,7 @@ const String& MockCDMInstance::keySystem() const
 
 RefPtr<CDMInstanceSession> MockCDMInstance::createSession()
 {
-    return adoptRef(new MockCDMInstanceSession(makeWeakPtr(*this)));
+    return adoptRef(new MockCDMInstanceSession(*this));
 }
 
 MockCDMInstanceSession::MockCDMInstanceSession(WeakPtr<MockCDMInstance>&& instance)

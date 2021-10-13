@@ -49,7 +49,7 @@ COMPILE_ASSERT(sizeof(WeakPtr<LegacyRootInlineBox>) == sizeof(void*), WeakPtr_sh
 #endif
 
 FloatingObject::FloatingObject(RenderBox& renderer)
-    : m_renderer(makeWeakPtr(renderer))
+    : m_renderer(renderer)
     , m_paintsFloat(true)
     , m_isDescendant(false)
     , m_isPlaced(false)
@@ -66,7 +66,7 @@ FloatingObject::FloatingObject(RenderBox& renderer)
 }
 
 FloatingObject::FloatingObject(RenderBox& renderer, Type type, const LayoutRect& frameRect, const LayoutSize& marginOffset, bool shouldPaint, bool isDescendant)
-    : m_renderer(makeWeakPtr(renderer))
+    : m_renderer(renderer)
     , m_frameRect(frameRect)
     , m_marginOffset(marginOffset)
     , m_type(type)
@@ -152,7 +152,7 @@ public:
     typedef FloatingObjectInterval IntervalType;
 
     ComputeFloatOffsetAdapter(const RenderBlockFlow& renderer, LayoutUnit lineTop, LayoutUnit lineBottom, LayoutUnit offset)
-        : m_renderer(makeWeakPtr(renderer))
+        : m_renderer(renderer)
         , m_lineTop(lineTop)
         , m_lineBottom(lineBottom)
         , m_offset(offset)
@@ -213,7 +213,7 @@ public:
     typedef FloatingObjectInterval IntervalType;
 
     FindNextFloatLogicalBottomAdapter(const RenderBlockFlow& renderer, LayoutUnit belowLogicalHeight)
-        : m_renderer(makeWeakPtr(renderer))
+        : m_renderer(renderer)
         , m_belowLogicalHeight(belowLogicalHeight)
     {
     }
@@ -275,7 +275,7 @@ LayoutUnit FloatingObjects::findNextFloatLogicalBottomBelowForBlock(LayoutUnit l
 
 FloatingObjects::FloatingObjects(const RenderBlockFlow& renderer)
     : m_horizontalWritingMode(renderer.isHorizontalWritingMode())
-    , m_renderer(makeWeakPtr(renderer))
+    , m_renderer(renderer)
 {
 }
 

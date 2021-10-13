@@ -106,7 +106,7 @@ class EventLoopTaskGroup : public CanMakeWeakPtr<EventLoopTaskGroup> {
 
 public:
     EventLoopTaskGroup(EventLoop& eventLoop)
-        : m_eventLoop(makeWeakPtr(eventLoop))
+        : m_eventLoop(eventLoop)
     {
         eventLoop.registerGroup(*this);
     }
@@ -193,7 +193,7 @@ private:
 
 inline EventLoopTask::EventLoopTask(TaskSource source, EventLoopTaskGroup& group)
     : m_taskSource(source)
-    , m_group(makeWeakPtr(group))
+    , m_group(group)
 { }
 
 } // namespace WebCore

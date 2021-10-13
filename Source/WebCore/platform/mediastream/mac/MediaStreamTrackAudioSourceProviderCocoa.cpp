@@ -38,7 +38,7 @@ Ref<MediaStreamTrackAudioSourceProviderCocoa> MediaStreamTrackAudioSourceProvide
 }
 
 MediaStreamTrackAudioSourceProviderCocoa::MediaStreamTrackAudioSourceProviderCocoa(MediaStreamTrackPrivate& source)
-    : m_captureSource(makeWeakPtr(source))
+    : m_captureSource(source)
     , m_source(source.source())
 {
 #if USE(LIBWEBRTC)

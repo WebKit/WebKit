@@ -34,7 +34,7 @@ namespace WebCore {
 
 SVGViewSpec::SVGViewSpec(SVGElement& contextElement)
     : SVGFitToViewBox(&contextElement, SVGPropertyAccess::ReadOnly)
-    , m_contextElement(makeWeakPtr(contextElement))
+    , m_contextElement(contextElement)
     , m_transform(SVGTransformList::create(&contextElement, SVGPropertyAccess::ReadOnly))
 {
     static std::once_flag onceFlag;

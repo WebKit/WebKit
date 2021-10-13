@@ -314,7 +314,7 @@ void DocumentWriter::setEncoding(const String& name, bool userChosen)
 
 void DocumentWriter::setFrame(Frame& frame)
 {
-    m_frame = makeWeakPtr(frame);
+    m_frame = frame;
 }
 
 void DocumentWriter::setDocumentWasLoadedAsPartOfNavigation()

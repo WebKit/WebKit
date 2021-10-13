@@ -62,7 +62,7 @@ void RenderTreeUpdater::GeneratedContent::updateQuotesUpTo(RenderQuote* lastQuot
         auto& quote = *it;
         // Quote character depends on quote depth so we chain the updates.
         quote.updateRenderer(m_updater.m_builder, m_previousUpdatedQuote.get());
-        m_previousUpdatedQuote = makeWeakPtr(quote);
+        m_previousUpdatedQuote = quote;
         if (&quote == lastQuote)
             return;
     }
@@ -192,13 +192,13 @@ void RenderTreeUpdater::GeneratedContent::updateBackdropRenderer(RenderElement& 
     else {
         newBackdropRenderer = WebCore::createRenderer<RenderBlockFlow>(renderer.document(), WTFMove(newStyle));
         newBackdropRenderer->initializeStyle();
-        backdropRenderer = makeWeakPtr(newBackdropRenderer.get());
+        backdropRenderer = newBackdropRenderer.get();
         renderer.setBackdropRenderer(*backdropRenderer);
     }
 
     // Update or attach to renderer parent
-    auto currentParent = makeWeakPtr(backdropRenderer->parent());
-    auto newParent = makeWeakPtr(renderer.parent());
+    WeakPtr currentParent = backdropRenderer->parent();
+    WeakPtr newParent = renderer.parent();
 
     ASSERT(newParent, "Should have new parent");
 

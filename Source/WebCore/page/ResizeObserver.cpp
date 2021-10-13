@@ -41,7 +41,7 @@ Ref<ResizeObserver> ResizeObserver::create(Document& document, Ref<ResizeObserve
 }
 
 ResizeObserver::ResizeObserver(Document& document, Ref<ResizeObserverCallback>&& callback)
-    : m_document(makeWeakPtr(document))
+    : m_document(document)
     , m_callback(WTFMove(callback))
 {
 }
@@ -73,7 +73,7 @@ void ResizeObserver::observe(Element& target, const ResizeObserverOptions& optio
     }
 
     auto& observerData = target.ensureResizeObserverData();
-    observerData.observers.append(makeWeakPtr(this));
+    observerData.observers.append(*this);
 
     m_observations.append(ResizeObservation::create(target, options.box));
 

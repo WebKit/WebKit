@@ -44,7 +44,7 @@ public:
     String closingBrace() const { return m_close; }
 
     RenderMathMLFencedOperator* closeFenceRenderer() const { return m_closeFenceRenderer.get(); }
-    void setCloseFenceRenderer(RenderMathMLFencedOperator& renderer) { m_closeFenceRenderer = makeWeakPtr(renderer); }
+    void setCloseFenceRenderer(RenderMathMLFencedOperator& renderer) { m_closeFenceRenderer = renderer; }
 
     void updateFromElement();
 

@@ -59,7 +59,7 @@ public:
     void* opaqueRoot();
 
     using OpaqueRootObserver = WTF::Observer<void*()>;
-    void setOpaqueRootObserver(const OpaqueRootObserver& observer) { m_opaqueRootObserver = makeWeakPtr(observer); };
+    void setOpaqueRootObserver(const OpaqueRootObserver& observer) { m_opaqueRootObserver = observer; };
 
     // Needs to be public so tracks can call it
     void scheduleChangeEvent();

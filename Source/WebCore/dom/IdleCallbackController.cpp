@@ -33,7 +33,7 @@
 namespace WebCore {
 
 IdleCallbackController::IdleCallbackController(Document& document)
-    : m_document(makeWeakPtr(document))
+    : m_document(document)
 {
 
 }

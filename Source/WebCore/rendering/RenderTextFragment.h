@@ -46,7 +46,7 @@ public:
     unsigned end() const { return m_end; }
 
     RenderBoxModelObject* firstLetter() const { return m_firstLetter.get(); }
-    void setFirstLetter(RenderBoxModelObject& firstLetter) { m_firstLetter = makeWeakPtr(firstLetter); }
+    void setFirstLetter(RenderBoxModelObject& firstLetter) { m_firstLetter = firstLetter; }
     
     RenderBlock* blockForAccompanyingFirstLetter();
 

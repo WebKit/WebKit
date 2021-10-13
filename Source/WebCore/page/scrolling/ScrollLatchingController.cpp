@@ -118,7 +118,7 @@ void ScrollLatchingController::updateAndFetchLatchingStateForFrame(Frame& frame,
         if (!hasStateForFrame(frame)) {
             FrameState state;
             state.frame = &frame;
-            state.wheelEventElement = makeWeakPtr(latchedElement.get());
+            state.wheelEventElement = latchedElement;
             if (shouldLatchToScrollableArea(frame, scrollableArea.get(), m_cumulativeEventDelta))
                 state.scrollableArea = scrollableArea;
             state.isOverWidget = isOverWidget;

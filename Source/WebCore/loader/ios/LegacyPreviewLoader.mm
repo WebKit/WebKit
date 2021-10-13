@@ -119,7 +119,7 @@ void LegacyPreviewLoader::previewConverterDidStartConverting(PreviewConverter& c
         return;
     }
 
-    resourceLoader->didReceiveResponse(response, [this, weakThis = makeWeakPtr(static_cast<PreviewConverterClient&>(*this)), converter = Ref { converter }] {
+    resourceLoader->didReceiveResponse(response, [this, weakThis = WeakPtr { static_cast<PreviewConverterClient&>(*this) }, converter = Ref { converter }] {
         if (!weakThis)
             return;
 
@@ -236,7 +236,7 @@ LegacyPreviewLoader::LegacyPreviewLoader(ResourceLoader& loader, const ResourceR
     : m_converter { PreviewConverter::create(response, *this) }
     , m_client { makeClient(loader, m_converter->previewFileName(), m_converter->previewUTI()) }
     , m_originalData { SharedBuffer::create() }
-    , m_resourceLoader { makeWeakPtr(loader) }
+    , m_resourceLoader { loader }
     , m_shouldDecidePolicyBeforeLoading { loader.frame()->settings().shouldDecidePolicyBeforeLoadingQuickLookPreview() }
 {
     ASSERT(PreviewConverter::supportsMIMEType(response.mimeType()));

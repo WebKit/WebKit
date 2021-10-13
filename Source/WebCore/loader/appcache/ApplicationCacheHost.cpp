@@ -305,7 +305,7 @@ bool ApplicationCacheHost::canCacheInBackForwardCache()
 void ApplicationCacheHost::setDOMApplicationCache(DOMApplicationCache* domApplicationCache)
 {
     ASSERT(!m_domApplicationCache || !domApplicationCache);
-    m_domApplicationCache = makeWeakPtr(domApplicationCache);
+    m_domApplicationCache = domApplicationCache;
 }
 
 void ApplicationCacheHost::notifyDOMApplicationCache(const AtomString& eventType, int total, int done)
@@ -397,7 +397,7 @@ void ApplicationCacheHost::dispatchDOMEvent(const AtomString& eventType, int tot
 void ApplicationCacheHost::setCandidateApplicationCacheGroup(ApplicationCacheGroup* group)
 {
     ASSERT(!m_applicationCache);
-    m_candidateApplicationCacheGroup = makeWeakPtr(group);
+    m_candidateApplicationCacheGroup = group;
 }
     
 void ApplicationCacheHost::setApplicationCache(RefPtr<ApplicationCache>&& applicationCache)

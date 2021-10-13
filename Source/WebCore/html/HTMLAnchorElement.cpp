@@ -624,7 +624,7 @@ void HTMLAnchorElement::setRootEditableElementForSelectionOnMouseDown(Element* e
         return;
     }
 
-    rootEditableElementMap().set(*this, makeWeakPtr(element));
+    rootEditableElementMap().set(*this, element);
     m_hasRootEditableElementForSelectionOnMouseDown = true;
 }
 

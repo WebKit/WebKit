@@ -864,7 +864,7 @@ RenderView::RepaintRegionAccumulator::RepaintRegionAccumulator(RenderView* view)
     m_wasAccumulatingRepaintRegion = !!rootRenderView->m_accumulatedRepaintRegion;
     if (!m_wasAccumulatingRepaintRegion)
         rootRenderView->m_accumulatedRepaintRegion = makeUnique<Region>();
-    m_rootView = makeWeakPtr(*rootRenderView);
+    m_rootView = *rootRenderView;
 }
 
 RenderView::RepaintRegionAccumulator::~RepaintRegionAccumulator()
@@ -917,12 +917,12 @@ unsigned RenderView::pageCount() const
 void RenderView::layerChildrenChangedDuringStyleChange(RenderLayer& layer)
 {
     if (!m_styleChangeLayerMutationRoot) {
-        m_styleChangeLayerMutationRoot = makeWeakPtr(layer);
+        m_styleChangeLayerMutationRoot = layer;
         return;
     }
 
     RenderLayer* commonAncestor = m_styleChangeLayerMutationRoot->commonAncestorWithLayer(layer);
-    m_styleChangeLayerMutationRoot = makeWeakPtr(commonAncestor);
+    m_styleChangeLayerMutationRoot = commonAncestor;
 }
 
 RenderLayer* RenderView::takeStyleChangeLayerTreeMutationRoot()

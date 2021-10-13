@@ -333,7 +333,7 @@ bool MessagePort::virtualHasPendingActivity() const
         if (is<WorkerOrWorkletGlobalScope>(*m_scriptExecutionContext))
             workerOrWorkletThread = downcast<WorkerOrWorkletGlobalScope>(*m_scriptExecutionContext).workerOrWorkletThread();
 
-        callOnMainThread([remoteIdentifier = m_remoteIdentifier, weakThis = makeWeakPtr(const_cast<MessagePort*>(this)), workerOrWorkletThread = WTFMove(workerOrWorkletThread)]() mutable {
+        callOnMainThread([remoteIdentifier = m_remoteIdentifier, weakThis = WeakPtr { *this }, workerOrWorkletThread = WTFMove(workerOrWorkletThread)]() mutable {
             MessagePortChannelProvider::singleton().checkRemotePortForActivity(remoteIdentifier, [weakThis = WTFMove(weakThis), workerOrWorkletThread = WTFMove(workerOrWorkletThread)](auto hasActivity) mutable {
                 if (!workerOrWorkletThread) {
                     if (weakThis)

@@ -31,7 +31,7 @@
 namespace WebCore {
 
 URLSearchParams::URLSearchParams(const String& init, DOMURL* associatedURL)
-    : m_associatedURL(makeWeakPtr(associatedURL))
+    : m_associatedURL(associatedURL)
     , m_pairs(init.startsWith('?') ? WTF::URLParser::parseURLEncodedForm(StringView(init).substring(1)) : WTF::URLParser::parseURLEncodedForm(init))
 {
 }

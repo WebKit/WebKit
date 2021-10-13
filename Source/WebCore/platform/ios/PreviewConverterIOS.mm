@@ -50,7 +50,7 @@
     if (!(self = [super init]))
         return nil;
 
-    _delegate = makeWeakPtr(delegate);
+    _delegate = delegate;
     return self;
 }
 
@@ -84,7 +84,7 @@ namespace WebCore {
 PreviewConverter::PreviewConverter(const ResourceResponse& response, PreviewConverterProvider& provider)
     : m_previewData { SharedBuffer::create() }
     , m_originalResponse { response }
-    , m_provider { makeWeakPtr(provider) }
+    , m_provider { provider }
     , m_platformDelegate { adoptNS([[WebPreviewConverterDelegate alloc] initWithDelegate:*this]) }
     , m_platformConverter { adoptNS([PAL::allocQLPreviewConverterInstance() initWithConnection:nil delegate:m_platformDelegate.get() response:m_originalResponse.nsURLResponse() options:nil]) }
 {

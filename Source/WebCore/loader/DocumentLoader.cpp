@@ -792,7 +792,7 @@ bool DocumentLoader::tryLoadingSubstituteData()
     if (!m_deferMainResourceDataLoad || frameLoader()->loadsSynchronously())
         handleSubstituteDataLoadNow();
     else {
-        auto loadData = [this, weakDataLoadToken = makeWeakPtr(m_dataLoadToken)] {
+        auto loadData = [this, weakDataLoadToken = WeakPtr { m_dataLoadToken }] {
             if (!weakDataLoadToken)
                 return;
             m_dataLoadToken.clear();
@@ -2423,7 +2423,7 @@ ResourceError DocumentLoader::contentFilterDidBlock(ContentFilterUnblockHandler 
 {
     unblockHandler.setUnreachableURL(documentURL());
     if (!unblockRequestDeniedScript.isEmpty() && frame()) {
-        unblockHandler.wrapWithDecisionHandler([scriptController = makeWeakPtr(frame()->script()), script = unblockRequestDeniedScript.isolatedCopy()](bool unblocked) {
+        unblockHandler.wrapWithDecisionHandler([scriptController = WeakPtr { frame()->script() }, script = unblockRequestDeniedScript.isolatedCopy()](bool unblocked) {
             if (!unblocked && scriptController)
                 scriptController->executeScriptIgnoringException(script);
         });

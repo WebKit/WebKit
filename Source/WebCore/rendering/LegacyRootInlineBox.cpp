@@ -607,7 +607,7 @@ BidiStatus LegacyRootInlineBox::lineBreakBidiStatus() const
 
 void LegacyRootInlineBox::setLineBreakInfo(RenderObject* object, unsigned breakPosition, const BidiStatus& status)
 {
-    m_lineBreakObj = makeWeakPtr(object);
+    m_lineBreakObj = object;
     m_lineBreakPos = breakPosition;
     m_lineBreakBidiStatusEor = status.eor;
     m_lineBreakBidiStatusLastStrong = status.lastStrong;

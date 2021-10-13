@@ -68,7 +68,7 @@ TableGrid::Cell::Cell(const ContainerBox& cellBox, SlotPosition position, CellSp
 }
 
 TableGrid::Slot::Slot(Cell& cell, bool isColumnSpanned, bool isRowSpanned)
-    : m_cell(makeWeakPtr(cell))
+    : m_cell(cell)
     , m_isColumnSpanned(isColumnSpanned)
     , m_isRowSpanned(isRowSpanned)
 {

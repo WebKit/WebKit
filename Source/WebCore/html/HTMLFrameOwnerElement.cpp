@@ -57,7 +57,7 @@ void HTMLFrameOwnerElement::setContentFrame(Frame& frame)
     ASSERT(!m_contentFrame || m_contentFrame->ownerElement() != this);
     // Disconnected frames should not be allowed to load.
     ASSERT(isConnected());
-    m_contentFrame = makeWeakPtr(frame);
+    m_contentFrame = frame;
 
     for (RefPtr<ContainerNode> node = this; node; node = node->parentOrShadowHostNode())
         node->incrementConnectedSubframeCount();

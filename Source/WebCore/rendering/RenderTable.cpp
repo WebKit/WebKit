@@ -170,24 +170,24 @@ void RenderTable::willInsertTableSection(RenderTableSection& child, RenderObject
     case DisplayType::TableHeaderGroup:
         resetSectionPointerIfNotBefore(m_head, beforeChild);
         if (!m_head)
-            m_head = makeWeakPtr(child);
+            m_head = child;
         else {
             resetSectionPointerIfNotBefore(m_firstBody, beforeChild);
             if (!m_firstBody)
-                m_firstBody = makeWeakPtr(child);
+                m_firstBody = child;
         }
         break;
     case DisplayType::TableFooterGroup:
         resetSectionPointerIfNotBefore(m_foot, beforeChild);
         if (!m_foot) {
-            m_foot = makeWeakPtr(child);
+            m_foot = child;
             break;
         }
         FALLTHROUGH;
     case DisplayType::TableRowGroup:
         resetSectionPointerIfNotBefore(m_firstBody, beforeChild);
         if (!m_firstBody)
-            m_firstBody = makeWeakPtr(child);
+            m_firstBody = child;
         break;
     default:
         ASSERT_NOT_REACHED();
@@ -199,7 +199,7 @@ void RenderTable::willInsertTableSection(RenderTableSection& child, RenderObject
 void RenderTable::addCaption(RenderTableCaption& caption)
 {
     ASSERT(m_captions.find(&caption) == notFound);
-    m_captions.append(makeWeakPtr(caption));
+    m_captions.append(caption);
 }
 
 void RenderTable::removeCaption(RenderTableCaption& oldCaption)
@@ -942,7 +942,7 @@ void RenderTable::updateColumnCache() const
     for (RenderTableCol* columnRenderer = firstColumn(); columnRenderer; columnRenderer = columnRenderer->nextColumn()) {
         if (columnRenderer->isTableColumnGroupWithColumnChildren())
             continue;
-        m_columnRenderers.append(makeWeakPtr(columnRenderer));
+        m_columnRenderers.append(columnRenderer);
         // FIXME: We should look to compute the effective column index successively from previous values instead of
         // calling colToEffCol(), which is in O(numEffCols()). Although it's unlikely that this is a hot function.
         m_effectiveColumnIndexMap.add(columnRenderer, colToEffCol(columnIndex));
@@ -1080,9 +1080,9 @@ void RenderTable::recalcSections() const
             if (is<RenderTableSection>(*child)) {
                 RenderTableSection& section = downcast<RenderTableSection>(*child);
                 if (!m_head)
-                    m_head = makeWeakPtr(section);
+                    m_head = section;
                 else if (!m_firstBody)
-                    m_firstBody = makeWeakPtr(section);
+                    m_firstBody = section;
                 section.recalcCellsIfNeeded();
             }
             break;
@@ -1090,9 +1090,9 @@ void RenderTable::recalcSections() const
             if (is<RenderTableSection>(*child)) {
                 RenderTableSection& section = downcast<RenderTableSection>(*child);
                 if (!m_foot)
-                    m_foot = makeWeakPtr(section);
+                    m_foot = section;
                 else if (!m_firstBody)
-                    m_firstBody = makeWeakPtr(section);
+                    m_firstBody = section;
                 section.recalcCellsIfNeeded();
             }
             break;
@@ -1100,7 +1100,7 @@ void RenderTable::recalcSections() const
             if (is<RenderTableSection>(*child)) {
                 RenderTableSection& section = downcast<RenderTableSection>(*child);
                 if (!m_firstBody)
-                    m_firstBody = makeWeakPtr(section);
+                    m_firstBody = section;
                 section.recalcCellsIfNeeded();
             }
             break;

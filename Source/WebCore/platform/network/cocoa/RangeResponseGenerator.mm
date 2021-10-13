@@ -113,7 +113,7 @@ void RangeResponseGenerator::giveResponseToTaskIfBytesInRangeReceived(WebCoreNSU
     if (!taskData)
         return;
     
-    auto giveBytesToTask = [task = retainPtr(task), buffer, taskData = makeWeakPtr(*taskData), generator = makeWeakPtr(*this)] {
+    auto giveBytesToTask = [task = retainPtr(task), buffer, taskData = WeakPtr { *taskData }, generator = WeakPtr { *this }] {
         ASSERT(isMainThread());
         if ([task state] != NSURLSessionTaskStateRunning)
             return;
@@ -144,7 +144,7 @@ void RangeResponseGenerator::giveResponseToTaskIfBytesInRangeReceived(WebCoreNSU
     switch (taskData->responseState) {
     case Data::TaskData::ResponseState::NotSynthesizedYet: {
         auto response = synthesizedResponseForRange(data.originalResponse, range, expectedContentLength);
-        [task resource:nullptr receivedResponse:response completionHandler:[giveBytesToTask = WTFMove(giveBytesToTask), taskData = makeWeakPtr(taskData), task = retainPtr(task)] (WebCore::ShouldContinuePolicyCheck shouldContinue) {
+        [task resource:nullptr receivedResponse:response completionHandler:[giveBytesToTask = WTFMove(giveBytesToTask), taskData = WeakPtr { taskData }, task = retainPtr(task)] (WebCore::ShouldContinuePolicyCheck shouldContinue) {
             if (taskData)
                 taskData->responseState = Data::TaskData::ResponseState::SessionCalledCompletionHandler;
             if (shouldContinue == ShouldContinuePolicyCheck::Yes)
@@ -206,7 +206,7 @@ bool RangeResponseGenerator::willHandleRequest(WebCoreNSURLSessionDataTask *task
 class RangeResponseGenerator::MediaResourceClient : public PlatformMediaResourceClient {
 public:
     MediaResourceClient(RangeResponseGenerator& generator, URL&& url)
-        : m_generator(makeWeakPtr(generator))
+        : m_generator(generator)
         , m_urlString(WTFMove(url).string()) { }
 private:
 

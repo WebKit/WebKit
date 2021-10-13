@@ -34,7 +34,7 @@ namespace WebCore {
 DocumentParser::DocumentParser(Document& document)
     : m_state(ParserState::Parsing)
     , m_documentWasLoadedAsPartOfNavigation(false)
-    , m_document(makeWeakPtr(document))
+    , m_document(document)
 {
 }
 

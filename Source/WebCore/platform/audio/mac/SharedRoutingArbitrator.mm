@@ -55,7 +55,7 @@ void SharedRoutingArbitrator::beginRoutingArbitrationForToken(const Token& token
     ASSERT(!isInRoutingArbitrationForToken(token));
 
     if (m_setupArbitrationOngoing) {
-        m_enqueuedCallbacks.append([this, weakToken = makeWeakPtr(token), callback = WTFMove(callback)] (RoutingArbitrationError error, DefaultRouteChanged routeChanged) mutable {
+        m_enqueuedCallbacks.append([this, weakToken = WeakPtr { token }, callback = WTFMove(callback)] (RoutingArbitrationError error, DefaultRouteChanged routeChanged) mutable {
             if (error == RoutingArbitrationError::None && weakToken)
                 m_tokens.add(*weakToken);
 
@@ -93,7 +93,7 @@ void SharedRoutingArbitrator::beginRoutingArbitrationForToken(const Token& token
     }
 
     m_setupArbitrationOngoing = true;
-    m_enqueuedCallbacks.append([this, weakToken = makeWeakPtr(token), callback = WTFMove(callback)] (RoutingArbitrationError error, DefaultRouteChanged routeChanged) mutable {
+    m_enqueuedCallbacks.append([this, weakToken = WeakPtr { token }, callback = WTFMove(callback)] (RoutingArbitrationError error, DefaultRouteChanged routeChanged) mutable {
         if (error == RoutingArbitrationError::None && weakToken)
             m_tokens.add(*weakToken);
 

@@ -304,7 +304,7 @@ Ref<SourceBufferPrivateAVFObjC> SourceBufferPrivateAVFObjC::create(MediaSourcePr
 
 SourceBufferPrivateAVFObjC::SourceBufferPrivateAVFObjC(MediaSourcePrivateAVFObjC* parent, Ref<SourceBufferParser>&& parser)
     : m_parser(WTFMove(parser))
-    , m_errorListener(adoptNS([[WebAVSampleBufferErrorListener alloc] initWithParent:makeWeakPtr(*this)]))
+    , m_errorListener(adoptNS([[WebAVSampleBufferErrorListener alloc] initWithParent:*this]))
     , m_appendQueue(WorkQueue::create("SourceBufferPrivateAVFObjC data parser queue"))
     , m_mediaSource(parent)
     , m_mapID(nextMapID())
@@ -322,7 +322,7 @@ SourceBufferPrivateAVFObjC::SourceBufferPrivateAVFObjC(MediaSourcePrivateAVFObjC
     m_parser->setLogger(m_logger.get(), m_logIdentifier);
 #endif
 
-    sourceBufferMap().add(m_mapID, makeWeakPtr(*this));
+    sourceBufferMap().add(m_mapID, *this);
 }
 
 SourceBufferPrivateAVFObjC::~SourceBufferPrivateAVFObjC()
@@ -876,7 +876,7 @@ void SourceBufferPrivateAVFObjC::setCDMSession(CDMSessionMediaSourceAVFObjC* ses
     if (m_session)
         m_session->removeSourceBuffer(this);
 
-    m_session = makeWeakPtr(session);
+    m_session = session;
 
     if (m_session) {
         m_session->addSourceBuffer(this);

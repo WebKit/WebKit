@@ -43,7 +43,7 @@ namespace WebCore {
 using EvaluationError = InspectorFrontendAPIDispatcher::EvaluationError;
 
 InspectorFrontendAPIDispatcher::InspectorFrontendAPIDispatcher(Page& frontendPage)
-    : m_frontendPage(makeWeakPtr(frontendPage))
+    : m_frontendPage(frontendPage)
 {
 }
 

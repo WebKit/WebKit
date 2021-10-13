@@ -106,7 +106,7 @@ void RenderMenuList::willBeDestroyed()
 void RenderMenuList::setInnerRenderer(RenderBlock& innerRenderer)
 {
     ASSERT(!m_innerBlock.get());
-    m_innerBlock = makeWeakPtr(innerRenderer);
+    m_innerBlock = innerRenderer;
     adjustInnerStyle();
 }
 
@@ -281,7 +281,7 @@ void RenderMenuList::setText(const String& s)
         m_buttonText->dirtyLineBoxes(false);
     } else {
         auto newButtonText = createRenderer<RenderText>(document(), textToUse);
-        m_buttonText = makeWeakPtr(*newButtonText);
+        m_buttonText = *newButtonText;
         // FIXME: This mutation should go through the normal RenderTreeBuilder path.
         if (RenderTreeBuilder::current())
             RenderTreeBuilder::current()->attach(*this, WTFMove(newButtonText));

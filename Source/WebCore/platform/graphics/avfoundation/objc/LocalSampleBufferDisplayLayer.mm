@@ -64,7 +64,7 @@ using namespace WebCore;
     if (!(self = [super init]))
         return nil;
 
-    _parent = makeWeakPtr(parent);
+    _parent = parent;
 
     return self;
 }

@@ -216,7 +216,7 @@ void FrameViewLayoutContext::layout()
         if (!renderView())
             return;
 
-        layoutRoot = makeWeakPtr(subtreeLayoutRoot() ? subtreeLayoutRoot() : renderView());
+        layoutRoot = subtreeLayoutRoot() ? subtreeLayoutRoot() : renderView();
         m_needsFullRepaint = is<RenderView>(layoutRoot) && (m_firstLayout || renderView()->printing());
         view().willDoLayout(layoutRoot);
         m_firstLayout = false;
@@ -482,7 +482,7 @@ void FrameViewLayoutContext::convertSubtreeLayoutToFullLayout()
 
 void FrameViewLayoutContext::setSubtreeLayoutRoot(RenderElement& layoutRoot)
 {
-    m_subtreeLayoutRoot = makeWeakPtr(layoutRoot);
+    m_subtreeLayoutRoot = layoutRoot;
 }
 
 bool FrameViewLayoutContext::canPerformLayout() const

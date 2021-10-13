@@ -552,7 +552,7 @@ void FullscreenManager::setFullscreenRenderer(RenderTreeBuilder& builder, Render
         builder.destroy(*m_fullscreenRenderer);
     ASSERT(!m_fullscreenRenderer);
 
-    m_fullscreenRenderer = makeWeakPtr(renderer);
+    m_fullscreenRenderer = renderer;
 }
 
 RenderFullScreen* FullscreenManager::fullscreenRenderer() const
