@@ -1,3 +1,12 @@
+2021-10-13  Sihui Liu  <sihui_liu@apple.com>
+
+        Enable FileSystemAccess and AccessHandle by default
+        https://bugs.webkit.org/show_bug.cgi?id=231677
+
+        Reviewed by Youenn Fablet.
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml:
+
 2021-10-13  Alex Christensen  <achristensen@webkit.org>
 
         Remove WTF::Variant and WTF::get
