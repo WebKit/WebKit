@@ -1,3 +1,74 @@
+2021-10-12  Alexey Proskuryakov  <ap@apple.com>
+
+        Invoke build scripts with python3 explicitly
+        https://bugs.webkit.org/show_bug.cgi?id=231587
+
+        Reviewed by Jonathan Bedard.
+
+        Much of the work to support Python 3 was done years ago, but we need this to
+        actually use Python 3 on macOS.
+
+        Python 3 no longer raises ValueError on relative module import failure, so changed
+        that to the correct ImportError.
+
+        * DerivedSources.make:
+        * Scripts/UpdateContents.py:
+        * Scripts/cssmin.py:
+        * Scripts/generate-combined-inspector-json.py:
+        * Scripts/generate-js-builtins.py:
+        * Scripts/inline-and-minify-stylesheets-and-scripts.py:
+        * Scripts/lazywriter.py:
+        * Scripts/make-js-file-arrays.py:
+        * Scripts/wkbuiltins/builtins_generate_combined_header.py:
+        * Scripts/wkbuiltins/builtins_generate_combined_implementation.py:
+        * Scripts/wkbuiltins/builtins_generate_internals_wrapper_header.py:
+        * Scripts/wkbuiltins/builtins_generate_internals_wrapper_implementation.py:
+        * Scripts/wkbuiltins/builtins_generate_separate_header.py:
+        * Scripts/wkbuiltins/builtins_generate_separate_implementation.py:
+        * Scripts/wkbuiltins/builtins_generate_wrapper_header.py:
+        * Scripts/wkbuiltins/builtins_generate_wrapper_implementation.py:
+        * Scripts/wkbuiltins/builtins_generator.py:
+        * Scripts/wkbuiltins/builtins_model.py:
+        * Scripts/wkbuiltins/builtins_templates.py:
+        * disassembler/udis86/ud_opcode.py:
+        (UdOpcodeTable.entries):
+        (UdOpcodeTables.addSSE2AVXInsn):
+        (itemslist): Deleted.
+        * inspector/scripts/codegen/cpp_generator.py:
+        * inspector/scripts/codegen/cpp_generator_templates.py:
+        * inspector/scripts/codegen/generate_cpp_alternate_backend_dispatcher_header.py:
+        * inspector/scripts/codegen/generate_cpp_backend_dispatcher_header.py:
+        * inspector/scripts/codegen/generate_cpp_backend_dispatcher_implementation.py:
+        * inspector/scripts/codegen/generate_cpp_frontend_dispatcher_header.py:
+        * inspector/scripts/codegen/generate_cpp_frontend_dispatcher_implementation.py:
+        * inspector/scripts/codegen/generate_cpp_protocol_types_header.py:
+        * inspector/scripts/codegen/generate_cpp_protocol_types_implementation.py:
+        * inspector/scripts/codegen/generate_js_backend_commands.py:
+        * inspector/scripts/codegen/generate_objc_backend_dispatcher_header.py:
+        * inspector/scripts/codegen/generate_objc_backend_dispatcher_implementation.py:
+        * inspector/scripts/codegen/generate_objc_configuration_header.py:
+        * inspector/scripts/codegen/generate_objc_configuration_implementation.py:
+        * inspector/scripts/codegen/generate_objc_frontend_dispatcher_implementation.py:
+        * inspector/scripts/codegen/generate_objc_header.py:
+        * inspector/scripts/codegen/generate_objc_internal_header.py:
+        * inspector/scripts/codegen/generate_objc_protocol_type_conversions_header.py:
+        * inspector/scripts/codegen/generate_objc_protocol_type_conversions_implementation.py:
+        * inspector/scripts/codegen/generate_objc_protocol_types_implementation.py:
+        * inspector/scripts/codegen/generator.py:
+        * inspector/scripts/codegen/generator_templates.py:
+        * inspector/scripts/codegen/models.py:
+        * inspector/scripts/codegen/objc_generator.py:
+        * inspector/scripts/codegen/objc_generator_templates.py:
+        * inspector/scripts/generate-inspector-protocol-bindings.py:
+        * wasm/generateWasm.py:
+        * wasm/generateWasmB3IRGeneratorInlinesHeader.py:
+        * wasm/generateWasmOpsHeader.py:
+        * yarr/create_regex_tables:
+        (in): Deleted.
+        * yarr/generateYarrCanonicalizeUnicode:
+        * yarr/generateYarrUnicodePropertyTables.py:
+        * yarr/hasher.py:
+
 2021-10-13  Alex Christensen  <achristensen@webkit.org>
 
         Remove WTF::Variant and WTF::get

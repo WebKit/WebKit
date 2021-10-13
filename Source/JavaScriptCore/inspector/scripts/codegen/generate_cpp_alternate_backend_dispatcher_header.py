@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 #
 # Copyright (c) 2014, 2016 Apple Inc. All rights reserved.
 # Copyright (c) 2014 University of Washington. All rights reserved.
@@ -34,7 +34,7 @@ try:
     from .cpp_generator import CppGenerator
     from .cpp_generator_templates import CppGeneratorTemplates as CppTemplates
     from .models import EnumType, AliasedType
-except ValueError:
+except ImportError:
     from cpp_generator import CppGenerator
     from cpp_generator_templates import CppGeneratorTemplates as CppTemplates
     from models import EnumType, AliasedType

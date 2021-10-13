@@ -21,9 +21,9 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 # Examples of how to run:
-# python Source/WebKit/Scripts/webkit/messages_unittest.py [-r]
-# cd Source/WebKit/Scripts && python -m webkit.messages_unittest
-# cd Source/WebKit/Scripts && python -m unittest discover -p '*_unittest.py'
+# python3 Source/WebKit/Scripts/webkit/messages_unittest.py [-r]
+# cd Source/WebKit/Scripts && python3 -m webkit.messages_unittest
+# cd Source/WebKit/Scripts && python3 -m unittest discover -p '*_unittest.py'
 
 import os
 import re

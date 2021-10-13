@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 #
 # Copyright (c) 2014 Apple Inc. All rights reserved.
 # Copyright (c) 2014 University of Washington. All rights reserved.
@@ -32,7 +32,7 @@ from string import Template
 try:
     from .generator_templates import GeneratorTemplates as Templates
     from .models import PrimitiveType, ObjectType, ArrayType, EnumType, AliasedType, Frameworks
-except ValueError:
+except ImportError:
     from generator_templates import GeneratorTemplates as Templates
     from models import PrimitiveType, ObjectType, ArrayType, EnumType, AliasedType, Frameworks
 

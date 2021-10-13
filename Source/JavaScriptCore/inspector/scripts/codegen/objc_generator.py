@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 #
 # Copyright (c) 2014, 2016 Apple Inc. All rights reserved.
 #
@@ -27,7 +27,7 @@ import logging
 try:
     from .generator import Generator, ucfirst
     from .models import PrimitiveType, ObjectType, ArrayType, EnumType, AliasedType, Frameworks
-except ValueError:
+except ImportError:
     from generator import Generator, ucfirst
     from models import PrimitiveType, ObjectType, ArrayType, EnumType, AliasedType, Frameworks
 

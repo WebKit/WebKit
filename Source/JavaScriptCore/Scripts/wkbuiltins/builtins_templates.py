@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 #
 # Copyright (c) 2014-2021 Apple Inc. All rights reserved.
 # Copyright (C) 2015 Canon Inc. All rights reserved.

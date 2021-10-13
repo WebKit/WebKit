@@ -156,7 +156,7 @@ my $inspectorLicense = <<'EOF';
 EOF
 
 my $perl = $^X;
-my $python = ($OSNAME =~ /cygwin/) ? "/usr/bin/python" : "python";
+my $python = ($OSNAME =~ /cygwin/) ? "/usr/bin/python3" : "python3";
 my $derivedSourcesDir = $ENV{'DERIVED_SOURCES_DIR'};
 my $scriptsRoot = File::Spec->catdir($ENV{'SRCROOT'}, 'Scripts');
 my $sharedScriptsRoot = File::Spec->catdir($ENV{'JAVASCRIPTCORE_PRIVATE_HEADERS_DIR'});

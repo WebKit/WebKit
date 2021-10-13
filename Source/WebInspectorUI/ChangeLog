@@ -1,3 +1,15 @@
+2021-10-12  Alexey Proskuryakov  <ap@apple.com>
+
+        Invoke build scripts with python3 explicitly
+        https://bugs.webkit.org/show_bug.cgi?id=231587
+
+        Reviewed by Jonathan Bedard.
+
+        Much of the work to support Python 3 was done years ago, but we need this to
+        actually use Python 3 on macOS.
+
+        * Scripts/copy-user-interface-resources.pl:
+
 2021-10-11  BJ Burg  <bburg@apple.com>
 
         Web Inspector: add TabBar context menu support for WI.WebInspectorExtensionTabContentView
