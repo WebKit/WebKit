@@ -1,3 +1,16 @@
+2021-10-13  Per Arne Vollan <pvollan@apple.com>
+
+        [iOS] Stop including 'util.sb' in the WebContent process' sandbox
+        https://bugs.webkit.org/show_bug.cgi?id=231570
+        <rdar://problem/84143956>
+
+        Reviewed by Brent Fulgham.
+
+        This is a step towards being able to test-compile the sandbox on Open Source builders.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb.in:
+        * Shared/Sandbox/util.sb: Added.
+
 2021-10-12  Alexey Proskuryakov  <ap@apple.com>
 
         Invoke build scripts with python3 explicitly
