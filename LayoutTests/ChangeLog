@@ -1,3 +1,39 @@
+2021-10-13  Aditya Keerthi  <akeerthi@apple.com>
+
+        Unprefix -webkit-appearance
+        https://bugs.webkit.org/show_bug.cgi?id=231534
+        rdar://84112934
+
+        Reviewed by Wenson Hsieh.
+
+        * TestExpectations:
+
+        Mark two tests ref tests as failing. These tests were incorrectly passing
+        due to lack of support for 'appearance'. The tests use <compat-auto> values
+        which we do not yet support due to compat risk with internal apps. These
+        tests will be addressed on a case-by-case basis.
+
+        * fast/css/getComputedStyle/computed-style-expected.txt:
+        * fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * fast/css/getComputedStyle/resources/property-names.js:
+        * platform/glib/fast/css/getComputedStyle/computed-style-expected.txt:
+        * platform/glib/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * platform/glib/svg/css/getComputedStyle-basic-expected.txt:
+        * platform/gtk/imported/w3c/web-platform-tests/css/cssom/cssstyledeclaration-csstext-expected.txt:
+        * platform/ios-wk2/imported/w3c/web-platform-tests/css/css-ui/appearance-cssom-001-expected.txt:
+        * platform/ios-wk2/imported/w3c/web-platform-tests/css/cssom/cssstyledeclaration-csstext-expected.txt:
+        * platform/ios-wk2/imported/w3c/web-platform-tests/html/rendering/widgets/appearance/default-styles-expected.txt:
+        * platform/ios/fast/css/getComputedStyle/computed-style-expected.txt:
+        * platform/ios/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * platform/ios/imported/w3c/web-platform-tests/css/cssom/cssstyledeclaration-csstext-expected.txt:
+        * platform/ios/svg/css/getComputedStyle-basic-expected.txt:
+        * platform/mac-wk1/imported/w3c/web-platform-tests/html/rendering/widgets/appearance/default-styles-expected.txt:
+        * platform/mac/fast/css/getComputedStyle/computed-style-expected.txt:
+        * platform/mac/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * platform/mac/svg/css/getComputedStyle-basic-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/css/cssom/cssstyledeclaration-csstext-expected.txt:
+        * svg/css/getComputedStyle-basic-expected.txt:
+
 2021-10-13  Simon Fraser  <simon.fraser@apple.com>
 
         [WK1] Tests for smooth scrolling of a window fail

@@ -3515,7 +3515,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         }
         case CSSPropertyAnimationTimingFunction:
             return timingFunctionValue(style.animations());
-        case CSSPropertyWebkitAppearance:
+        case CSSPropertyAppearance:
             return cssValuePool.createValue(style.appearance());
         case CSSPropertyAspectRatio:
             if (!m_element->document().settings().aspectRatioEnabled())

@@ -3,6 +3,7 @@ align-content: normal
 align-items: normal
 align-self: auto
 alignment-baseline: auto
+appearance: none
 background-attachment: scroll
 background-clip: border-box
 background-color: rgb(0, 128, 0)
@@ -192,7 +193,6 @@ word-wrap: normal
 writing-mode: horizontal-tb
 z-index: auto
 zoom: 1
--webkit-appearance: none
 -webkit-backface-visibility: visible
 -webkit-background-clip: border-box
 -webkit-background-composite: source-over

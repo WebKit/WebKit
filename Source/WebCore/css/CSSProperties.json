@@ -4938,7 +4938,12 @@
             },
             "status": "non-standard"
         },
-        "-webkit-appearance": {
+        "appearance": {
+            "codegen-properties": {
+                "aliases": [
+                    "-webkit-appearance"
+                ]
+            },
             "values": [
                 "checkbox",
                 "radio",

@@ -1,3 +1,29 @@
+2021-10-13  Aditya Keerthi  <akeerthi@apple.com>
+
+        Unprefix -webkit-appearance
+        https://bugs.webkit.org/show_bug.cgi?id=231534
+        rdar://84112934
+
+        Reviewed by Wenson Hsieh.
+
+        Mark progressions.
+
+        The remaining test failures deal with <compat-auto> keywords and will
+        be addressed on a case-by-case basis.
+
+        * web-platform-tests/css/css-cascade/all-prop-initial-xml-expected.txt:
+        * web-platform-tests/css/css-ui/appearance-cssom-001-expected.txt:
+        * web-platform-tests/css/css-ui/appearance-initial-value-001-expected.txt:
+        * web-platform-tests/css/css-ui/appearance-parsing-expected.txt:
+        * web-platform-tests/css/css-ui/appearance-property-expected.txt:
+        * web-platform-tests/css/css-ui/appearance-serialization-expected.txt:
+        * web-platform-tests/css/css-ui/inheritance-expected.txt:
+        * web-platform-tests/css/css-ui/webkit-appearance-parsing-expected.txt:
+        * web-platform-tests/css/css-ui/webkit-appearance-property-expected.txt:
+        * web-platform-tests/css/css-ui/webkit-appearance-serialization-expected.txt:
+        * web-platform-tests/css/cssom/cssstyledeclaration-csstext-expected.txt:
+        * web-platform-tests/html/rendering/widgets/appearance/default-styles-expected.txt:
+
 2021-10-13  Youenn Fablet  <youenn@apple.com>
 
         Add support for WebRTC media capabilities

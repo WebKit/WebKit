@@ -11,7 +11,7 @@ var propertiesToTest = {
     "-webkit-animation-name": true,
     "-webkit-animation-play-state": true,
     "-webkit-animation-timing-function": true,
-    "-webkit-appearance": true,
+    "appearance": true,
     "-webkit-backface-visibility": true,
     "-webkit-background-clip": true,
     "-webkit-background-composite": true,

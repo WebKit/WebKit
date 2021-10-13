@@ -753,7 +753,7 @@ bool CSSParserFastPaths::isValidKeywordPropertyAndValue(CSSPropertyID propertyId
         return valueID == CSSValueNone || valueID == CSSValueNonScalingStroke;
     case CSSPropertyVisibility: // visible | hidden | collapse
         return valueID == CSSValueVisible || valueID == CSSValueHidden || valueID == CSSValueCollapse;
-    case CSSPropertyWebkitAppearance:
+    case CSSPropertyAppearance:
         return (valueID >= CSSValueCheckbox && valueID <= CSSValueCapsLockIndicator) || valueID == CSSValueNone || valueID == CSSValueAuto;
     case CSSPropertyBackfaceVisibility:
         return valueID == CSSValueVisible || valueID == CSSValueHidden;
@@ -964,7 +964,7 @@ bool CSSParserFastPaths::isKeywordPropertyID(CSSPropertyID propertyId)
     case CSSPropertyTransformStyle:
     case CSSPropertyUnicodeBidi:
     case CSSPropertyVisibility:
-    case CSSPropertyWebkitAppearance:
+    case CSSPropertyAppearance:
     case CSSPropertyBackfaceVisibility:
     case CSSPropertyWebkitBorderFit:
     case CSSPropertyWebkitBoxAlign:

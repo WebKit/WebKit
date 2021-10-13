@@ -6,6 +6,8 @@ rect: style.getPropertyValue(align-self) : auto
 rect: style.getPropertyCSSValue(align-self) : [object CSSValueList]
 rect: style.getPropertyValue(alignment-baseline) : auto
 rect: style.getPropertyCSSValue(alignment-baseline) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(appearance) : none
+rect: style.getPropertyCSSValue(appearance) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(background-attachment) : scroll
 rect: style.getPropertyCSSValue(background-attachment) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(background-clip) : border-box
@@ -386,8 +388,6 @@ rect: style.getPropertyValue(z-index) : auto
 rect: style.getPropertyCSSValue(z-index) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(zoom) : 1
 rect: style.getPropertyCSSValue(zoom) : [object CSSPrimitiveValue]
-rect: style.getPropertyValue(-webkit-appearance) : none
-rect: style.getPropertyCSSValue(-webkit-appearance) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-background-clip) : border-box
 rect: style.getPropertyCSSValue(-webkit-background-clip) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-background-composite) : source-over
@@ -528,6 +528,8 @@ g: style.getPropertyValue(align-self) : auto
 g: style.getPropertyCSSValue(align-self) : [object CSSValueList]
 g: style.getPropertyValue(alignment-baseline) : auto
 g: style.getPropertyCSSValue(alignment-baseline) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(appearance) : none
+g: style.getPropertyCSSValue(appearance) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(background-attachment) : scroll
 g: style.getPropertyCSSValue(background-attachment) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(background-clip) : border-box
@@ -908,8 +910,6 @@ g: style.getPropertyValue(z-index) : auto
 g: style.getPropertyCSSValue(z-index) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(zoom) : 1
 g: style.getPropertyCSSValue(zoom) : [object CSSPrimitiveValue]
-g: style.getPropertyValue(-webkit-appearance) : none
-g: style.getPropertyCSSValue(-webkit-appearance) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-background-clip) : border-box
 g: style.getPropertyCSSValue(-webkit-background-clip) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-background-composite) : source-over
