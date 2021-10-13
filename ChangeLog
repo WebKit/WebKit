@@ -1,3 +1,14 @@
+2021-10-12  Basuke Suzuki  <basuke.suzuki@sony.com>
+
+        [PlayStation] Enable RemoteInspector by default
+        https://bugs.webkit.org/show_bug.cgi?id=231599
+
+        Reviewed by Fujii Hironori.
+
+        It was treated as experimental feature but we've depended on this feature in various situation.
+
+        * Source/cmake/OptionsPlayStation.cmake:
+
 2021-10-12  Philippe Normand  <pnormand@igalia.com>
 
         Add my github username to contributors.json
