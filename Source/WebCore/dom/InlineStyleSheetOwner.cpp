@@ -169,7 +169,7 @@ void InlineStyleSheetOwner::createSheet(Element& element, const String& text)
     ASSERT(document.contentSecurityPolicy());
     const ContentSecurityPolicy& contentSecurityPolicy = *document.contentSecurityPolicy();
     bool hasKnownNonce = contentSecurityPolicy.allowStyleWithNonce(element.attributeWithoutSynchronization(HTMLNames::nonceAttr), element.isInUserAgentShadowTree());
-    if (!contentSecurityPolicy.allowInlineStyle(document.url().string(), m_startTextPosition.m_line, text, hasKnownNonce))
+    if (!contentSecurityPolicy.allowInlineStyle(document.url().string(), m_startTextPosition.m_line, text, CheckUnsafeHashes::No, hasKnownNonce))
         return;
 
     auto mediaQueries = MediaQuerySet::create(m_media, MediaQueryParserContext(document));

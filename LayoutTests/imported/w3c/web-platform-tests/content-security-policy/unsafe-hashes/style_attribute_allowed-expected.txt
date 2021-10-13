@@ -1,3 +1,3 @@
 
-FAIL Test that the inline style attribute is loaded assert_equals: expected "" but got "green"
+PASS Test that the inline style attribute is loaded
 

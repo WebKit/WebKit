@@ -56,6 +56,11 @@ static inline bool checkInline(ContentSecurityPolicySourceListDirective* directi
     return !directive || directive->allowInline();
 }
 
+static inline bool checkUnsafeHashes(ContentSecurityPolicySourceListDirective* directive, const ContentSecurityPolicyHash& hash)
+{
+    return !directive || directive->allowUnsafeHashes(hash);
+}
+
 static inline bool checkNonParserInsertedScripts(ContentSecurityPolicySourceListDirective* directive, ParserInserted parserInserted)
 {
     if (!directive)
@@ -155,6 +160,22 @@ const ContentSecurityPolicyDirective* ContentSecurityPolicyDirectiveList::violat
 {
     ContentSecurityPolicySourceListDirective* operativeDirective = this->operativeDirective(m_scriptSrc.get());
     if (checkEval(operativeDirective))
+        return nullptr;
+    return operativeDirective;
+}
+
+const ContentSecurityPolicyDirective* ContentSecurityPolicyDirectiveList::violatedDirectiveForUnsafeHashScript(const ContentSecurityPolicyHash& hash) const
+{
+    auto* operativeDirective = this->operativeDirective(m_scriptSrc.get());
+    if (checkUnsafeHashes(operativeDirective, hash))
+        return nullptr;
+    return operativeDirective;
+}
+
+const ContentSecurityPolicyDirective* ContentSecurityPolicyDirectiveList::violatedDirectiveForUnsafeHashStyle(const ContentSecurityPolicyHash& hash) const
+{
+    auto* operativeDirective = this->operativeDirective(m_styleSrc.get());
+    if (checkUnsafeHashes(operativeDirective, hash))
         return nullptr;
     return operativeDirective;
 }

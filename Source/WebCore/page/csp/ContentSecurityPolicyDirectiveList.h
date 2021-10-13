@@ -52,6 +52,8 @@ public:
 
     const ContentSecurityPolicyDirective* violatedDirectiveForScriptHash(const ContentSecurityPolicyHash&) const;
     const ContentSecurityPolicyDirective* violatedDirectiveForStyleHash(const ContentSecurityPolicyHash&) const;
+    const ContentSecurityPolicyDirective* violatedDirectiveForUnsafeHashScript(const ContentSecurityPolicyHash&) const;
+    const ContentSecurityPolicyDirective* violatedDirectiveForUnsafeHashStyle(const ContentSecurityPolicyHash&) const;
 
     const ContentSecurityPolicyDirective* violatedDirectiveForScriptNonce(const String&) const;
     const ContentSecurityPolicyDirective* violatedDirectiveForStyleNonce(const String&) const;

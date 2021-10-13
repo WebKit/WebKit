@@ -46,6 +46,7 @@ private:
     struct CreationArguments;
     static RefPtr<JSLazyEventListener> create(CreationArguments&&);
     JSLazyEventListener(CreationArguments&&, const URL& sourceURL, const TextPosition&);
+    String code() const final { return m_code; }
 
 #if ASSERT_ENABLED
     void checkValidityForEventTarget(EventTarget&) final;

@@ -1,3 +1,2 @@
 
-FAIL Test that the javascript: src is allowed to run assert_unreached: Should have not raised any event Reached unreachable code
-
+PASS Test that the javascript: src is allowed to run

@@ -1,3 +1,31 @@
+2021-10-12  Kate Cheney  <katherine_cheney@apple.com>
+
+        CSP: Implement unsafe-hashes
+        https://bugs.webkit.org/show_bug.cgi?id=231313
+        <rdar://problem/83724376>
+
+        Reviewed by Brent Fulgham.
+
+        Some unsafe-hashes tests still "fail" because we haven't implemented 
+        some directives like script-src-elem/script-src-attr but will
+        still test correct behavior for unsafe-hashes because the reports are
+        received correctly. Tracking implementation of missing directives
+        in rdar://83332874.
+
+        * web-platform-tests/content-security-policy/navigation/to-javascript-parent-initiated-parent-csp-expected.txt:
+        * web-platform-tests/content-security-policy/securitypolicyviolation/blockeduri-inline-expected.txt:
+        Tests that have changed failures now that the blockedURI target is
+        correct.
+
+        * web-platform-tests/content-security-policy/unsafe-hashes/javascript_src_allowed-href-expected.txt:
+        * web-platform-tests/content-security-policy/unsafe-hashes/javascript_src_allowed-href_blank-expected.txt:
+        * web-platform-tests/content-security-policy/unsafe-hashes/javascript_src_allowed-window_location-expected.txt:
+        * web-platform-tests/content-security-policy/unsafe-hashes/javascript_src_allowed-window_open-expected.txt:
+        * web-platform-tests/content-security-policy/unsafe-hashes/script_event_handlers_allowed-expected.txt:
+        * web-platform-tests/content-security-policy/unsafe-hashes/style_attribute_allowed-expected.txt:
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/dynamic-import/string-compilation-nonce-classic-expected.txt:
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/dynamic-import/string-compilation-nonce-module-expected.txt:
+
 2021-10-12  Myles C. Maxfield  <mmaxfield@apple.com>
 
         WPT test gardening for font palettes

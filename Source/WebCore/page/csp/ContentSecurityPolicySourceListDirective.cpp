@@ -57,4 +57,9 @@ bool ContentSecurityPolicySourceListDirective::allows(const ContentSecurityPolic
     return m_sourceList.matches(hash);
 }
 
+bool ContentSecurityPolicySourceListDirective::allowUnsafeHashes(const ContentSecurityPolicyHash& hash) const
+{
+    return m_sourceList.allowUnsafeHashes() && allows(hash);
+}
+
 } // namespace WebCore

@@ -1,3 +1,37 @@
+2021-10-12  Kate Cheney  <katherine_cheney@apple.com>
+
+        CSP: Implement unsafe-hashes
+        https://bugs.webkit.org/show_bug.cgi?id=231313
+        <rdar://problem/83724376>
+
+        Reviewed by Brent Fulgham.
+
+        Mostly updating blockedURI to be "inline" in the case of inline script
+        or style violations to match the CSP3 spec. 
+
+        * TestExpectations:
+        javascript_src_allowed-href_blank.html times out because it can't find
+        opener.t1. This is unrelated to unsafe-hashes and seems to be another
+        bug in our DOM code.
+
+        * http/tests/security/contentSecurityPolicy/1.1/report-uri-effective-directive-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/scripthash-allowed-by-enforced-policy-and-blocked-by-report-policy-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/scripthash-allowed-by-enforced-policy-and-blocked-by-report-policy2-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/scripthash-allowed-by-legacy-enforced-policy-and-blocked-by-report-policy-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/scripthash-allowed-by-legacy-enforced-policy-and-blocked-by-report-policy2-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/scripthash-blocked-by-enforced-policy-and-allowed-by-report-policy-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/scripthash-blocked-by-legacy-enforced-policy-and-blocked-by-report-policy-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/scripthash-blocked-by-legacy-enforced-policy-and-blocked-by-report-policy2-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-blocked-by-enforced-policy-and-allowed-by-report-policy-expected.txt:
+        * http/tests/security/contentSecurityPolicy/report-and-enforce-expected.txt:
+        * http/tests/security/contentSecurityPolicy/report-only-expected.txt:
+        * http/tests/security/contentSecurityPolicy/report-only-from-header-expected.txt:
+        * http/tests/security/contentSecurityPolicy/report-only-upgrade-insecure-expected.txt:
+        * http/tests/security/contentSecurityPolicy/report-status-code-zero-when-using-https-expected.txt:
+        * http/tests/security/contentSecurityPolicy/report-uri-expected.txt:
+        * http/tests/security/contentSecurityPolicy/report-uri-from-child-frame-expected.txt:
+        * http/tests/security/contentSecurityPolicy/report-uri-scheme-relative-expected.txt:
+
 2021-10-12  Alan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Do not collapse whitespace with zero-width space separator in-between

@@ -237,6 +237,11 @@ template<typename CharacterType> std::optional<ContentSecurityPolicySourceList::
         m_allowEval = true;
         return source;
     }
+    
+    if (skipExactlyIgnoringASCIICase(buffer, "'unsafe-hashes'")) {
+        m_allowUnsafeHashes = true;
+        return source;
+    }
 
     auto begin = buffer.position();
     auto beginHost = begin;

@@ -206,7 +206,7 @@ void StyledElement::styleAttributeChanged(const AtomString& newStyleString, Attr
     if (document().scriptableDocumentParser() && !document().isInDocumentWrite())
         startLineNumber = document().scriptableDocumentParser()->textPosition().m_line;
 
-    if (reason == ModifiedByCloning || document().contentSecurityPolicy()->allowInlineStyle(document().url().string(), startLineNumber, { }, isInUserAgentShadowTree()))
+    if (reason == ModifiedByCloning || document().contentSecurityPolicy()->allowInlineStyle(document().url().string(), startLineNumber, newStyleString.string(), CheckUnsafeHashes::Yes, isInUserAgentShadowTree()))
         setInlineStyleFromString(newStyleString);
 
     elementData()->setStyleAttributeIsDirty(false);

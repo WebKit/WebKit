@@ -1,4 +1,4 @@
 
 
-FAIL Should not have executed the javascript url assert_equals: expected "inline" but got ""
+FAIL Should not have executed the javascript url assert_equals: expected "script-src-attr" but got "script-src"
 
