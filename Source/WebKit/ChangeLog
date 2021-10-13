@@ -1,3 +1,51 @@
+2021-10-13  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Support both VK and VKC-prefixed SPI when softlinking VisionKitCore classes
+        https://bugs.webkit.org/show_bug.cgi?id=231683
+        rdar://83744729
+
+        Reviewed by Tim Horton.
+
+        Several SPI classes in VisionKitCore are going to be renamed to be prefixed with VKC- rather than VK-, with a
+        `@compatibility_alias` for the existing SPI names. Refactor Live Text support in WebKit to be both binary and
+        source compatible with this future version of VisionKitCore, by checking for the existence of both class names
+        when softlinking VKImageAnalyzer and VKImageAnalyzerRequest. See below for more details.
+
+        * Platform/cocoa/TextRecognitionUtilities.h:
+        * Platform/cocoa/TextRecognitionUtilities.mm:
+        (WebKit::hasVisionKitCorePrefixedClasses):
+        (WebKit::createImageAnalyzer):
+        (WebKit::createImageAnalyzerRequest):
+
+        Instead of calling into PAL softlinking functions to allocate VKImageAnalyzer, put this logic behind a helper
+        function in TextRecognitionUtilities, which knows how to check for either class.
+
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::ensureImageAnalyzer):
+        (WebKit::createImageAnalyzerRequest):
+        (WebKit::WebViewImpl::requestTextRecognition):
+        (WebKit::WebViewImpl::computeHasImageAnalysisResults):
+        (WebKit::createImageAnalysisRequest): Deleted.
+
+        Use the helper functions declared in TextRecognitionUtilities.h.
+
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView imageAnalyzer]):
+        (-[WKContentView createImageAnalyzerRequest:image:imageURL:]):
+        (-[WKContentView createImageAnalyzerRequest:image:]):
+        (-[WKContentView requestTextRecognition:imageData:completionHandler:]):
+        (-[WKContentView imageAnalysisGestureDidBegin:]):
+        (-[WKContentView imageAnalysisGestureDidTimeOut:]):
+        (-[WKContentView createImageAnalysisRequest:image:imageURL:]): Deleted.
+        (-[WKContentView createImageAnalysisRequest:image:]): Deleted.
+
+        Use the helper functions declared in TextRecognitionUtilities.h, instead of using PAL softlinking directly. We
+        also refactor this code to pass a CGImageRef instead of a UIImage when initializing the image analyzer request,
+        such that the helper functions can work across macOS and iOS.
+
+        Also rename `createImageAnalysisRequest` to `createImageAnalyzerRequest` for consistency with the class name.
+
 2021-10-13  Per Arne  <pvollan@apple.com>
 
         Restrict "darwin-notification-post" to a minimal set in the WP sandbox

@@ -10020,7 +10020,7 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
 - (VKImageAnalyzer *)imageAnalyzer
 {
     if (!_imageAnalyzer)
-        _imageAnalyzer = adoptNS([PAL::allocVKImageAnalyzerInstance() init]);
+        _imageAnalyzer = WebKit::createImageAnalyzer();
     return _imageAnalyzer.get();
 }
 
@@ -10087,17 +10087,17 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
     _elementPendingImageAnalysis = std::nullopt;
 }
 
-- (RetainPtr<VKImageAnalyzerRequest>)createImageAnalysisRequest:(VKAnalysisTypes)analysisTypes image:(UIImage *)image imageURL:(NSURL *)imageURL
+- (RetainPtr<VKImageAnalyzerRequest>)createImageAnalyzerRequest:(VKAnalysisTypes)analysisTypes image:(CGImageRef)image imageURL:(NSURL *)imageURL
 {
-    auto request = adoptNS([PAL::allocVKImageAnalyzerRequestInstance() initWithImage:image orientation:VKImageOrientationUp requestType:analysisTypes]);
+    auto request = WebKit::createImageAnalyzerRequest(image, analysisTypes);
     [request setImageURL:imageURL];
     [request setPageURL:[NSURL _web_URLWithWTFString:_page->currentURL()]];
     return request;
 }
 
-- (RetainPtr<VKImageAnalyzerRequest>)createImageAnalysisRequest:(VKAnalysisTypes)analysisTypes image:(UIImage *)image
+- (RetainPtr<VKImageAnalyzerRequest>)createImageAnalyzerRequest:(VKAnalysisTypes)analysisTypes image:(CGImageRef)image
 {
-    return [self createImageAnalysisRequest:analysisTypes image:image imageURL:_positionInformation.imageURL];
+    return [self createImageAnalyzerRequest:analysisTypes image:image imageURL:_positionInformation.imageURL];
 }
 
 #if USE(UICONTEXTMENU) && ENABLE(IMAGE_ANALYSIS_FOR_MACHINE_READABLE_CODES)
@@ -10139,13 +10139,7 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
         return;
     }
 
-    auto image = adoptNS([[UIImage alloc] initWithCGImage:cgImage.get()]);
-    if (!image) {
-        completion({ });
-        return;
-    }
-
-    auto request = [self createImageAnalysisRequest:VKAnalysisTypeText image:image.get()];
+    auto request = [self createImageAnalyzerRequest:VKAnalysisTypeText image:cgImage.get()];
     [[self imageAnalyzer] processRequest:request.get() progressHandler:nil completionHandler:makeBlockPtr([completion = WTFMove(completion)] (VKImageAnalysis *result, NSError *) mutable {
         completion(WebKit::makeTextRecognitionResult(result));
     }).get()];
@@ -10210,12 +10204,6 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
             return;
         }
 
-        auto image = adoptNS([[UIImage alloc] initWithCGImage:cgImage.get()]);
-        if (!image) {
-            [strongSelf _invokeAllActionsToPerformAfterPendingImageAnalysis:WebKit::ProceedWithTextSelectionInImage::No];
-            return;
-        }
-
         RELEASE_LOG(Images, "Image analysis preflight gesture initiated (request %" PRIu64 ").", requestIdentifier.toUInt64());
 
         strongSelf->_elementPendingImageAnalysis = information.imageElementContext;
@@ -10223,8 +10211,8 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
         auto requestLocation = information.request.point;
         WebCore::ElementContext elementContext = *information.imageElementContext;
 
-        auto requestForTextSelection = [strongSelf createImageAnalysisRequest:VKAnalysisTypeText image:image.get()];
-        auto requestForContextMenu = [strongSelf createImageAnalysisRequest:VKAnalysisTypeVisualSearch | VKAnalysisTypeMachineReadableCode | VKAnalysisTypeAppClip image:image.get()];
+        auto requestForTextSelection = [strongSelf createImageAnalyzerRequest:VKAnalysisTypeText image:cgImage.get()];
+        auto requestForContextMenu = [strongSelf createImageAnalyzerRequest:VKAnalysisTypeVisualSearch | VKAnalysisTypeMachineReadableCode | VKAnalysisTypeAppClip image:cgImage.get()];
 
         auto textAnalysisStartTime = MonotonicTime::now();
         [[strongSelf imageAnalyzer] processRequest:requestForTextSelection.get() progressHandler:nil completionHandler:[requestIdentifier = WTFMove(requestIdentifier), weakSelf, elementContext, requestLocation, requestForContextMenu, gestureDeferralToken, textAnalysisStartTime] (VKImageAnalysis *result, NSError *error) mutable {
@@ -10320,16 +10308,12 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
         if (!cgImage)
             return;
 
-        auto image = adoptNS([[UIImage alloc] initWithCGImage:cgImage.get()]);
-        if (!image)
-            return;
-
         RELEASE_LOG(Images, "Image analysis timeout gesture initiated.");
         // FIXME: We need to implement some way to cache image analysis results per element, so that we don't end up
         // making redundant image analysis requests for the same image data.
 
         auto visualSearchAnalysisStartTime = MonotonicTime::now();
-        auto requestForContextMenu = [strongSelf createImageAnalysisRequest:VKAnalysisTypeVisualSearch | VKAnalysisTypeMachineReadableCode | VKAnalysisTypeAppClip image:image.get()];
+        auto requestForContextMenu = [strongSelf createImageAnalyzerRequest:VKAnalysisTypeVisualSearch | VKAnalysisTypeMachineReadableCode | VKAnalysisTypeAppClip image:cgImage.get()];
         [[strongSelf imageAnalyzer] processRequest:requestForContextMenu.get() progressHandler:nil completionHandler:[weakSelf, location, visualSearchAnalysisStartTime] (VKImageAnalysis *result, NSError *error) {
             auto strongSelf = weakSelf.get();
             if (!strongSelf)

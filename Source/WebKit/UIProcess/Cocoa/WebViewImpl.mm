@@ -190,15 +190,15 @@ VKImageAnalyzer *WebViewImpl::ensureImageAnalyzer()
 {
     if (!m_imageAnalyzer) {
         m_imageAnalyzerQueue = WorkQueue::create("WebKit image analyzer queue");
-        m_imageAnalyzer = adoptNS([PAL::allocVKImageAnalyzerInstance() init]);
+        m_imageAnalyzer = createImageAnalyzer();
         [m_imageAnalyzer setCallbackQueue:m_imageAnalyzerQueue->dispatchQueue()];
     }
     return m_imageAnalyzer.get();
 }
 
-static RetainPtr<VKImageAnalyzerRequest> createImageAnalysisRequest(CGImageRef image, const URL& imageURL, const URL& pageURL, VKAnalysisTypes types)
+static RetainPtr<VKImageAnalyzerRequest> createImageAnalyzerRequest(CGImageRef image, const URL& imageURL, const URL& pageURL, VKAnalysisTypes types)
 {
-    auto request = adoptNS([PAL::allocVKImageAnalyzerRequestInstance() initWithCGImage:image orientation:VKImageOrientationUp requestType:types]);
+    auto request = createImageAnalyzerRequest(image, types);
     [request setImageURL:imageURL];
     [request setPageURL:pageURL];
     return request;
@@ -218,7 +218,7 @@ void WebViewImpl::requestTextRecognition(const URL& imageURL, const ShareableBit
     }
 
     auto cgImage = imageBitmap->makeCGImage();
-    auto request = createImageAnalysisRequest(cgImage.get(), imageURL, [NSURL _web_URLWithWTFString:m_page->currentURL()], VKAnalysisTypeText);
+    auto request = createImageAnalyzerRequest(cgImage.get(), imageURL, [NSURL _web_URLWithWTFString:m_page->currentURL()], VKAnalysisTypeText);
     auto startTime = MonotonicTime::now();
     [ensureImageAnalyzer() processRequest:request.get() progressHandler:nil completionHandler:makeBlockPtr([completion = WTFMove(completion), startTime] (VKImageAnalysis *analysis, NSError *) mutable {
         callOnMainRunLoop([completion = WTFMove(completion), result = makeTextRecognitionResult(analysis), startTime] () mutable {
@@ -237,7 +237,7 @@ void WebViewImpl::computeHasImageAnalysisResults(const URL& imageURL, ShareableB
 
     auto cgImage = imageBitmap.makeCGImage();
     auto analysisType = type == ImageAnalysisType::VisualSearch ? VKAnalysisTypeVisualSearch : VKAnalysisTypeText;
-    auto request = createImageAnalysisRequest(cgImage.get(), imageURL, [NSURL _web_URLWithWTFString:m_page->currentURL()], analysisType);
+    auto request = createImageAnalyzerRequest(cgImage.get(), imageURL, [NSURL _web_URLWithWTFString:m_page->currentURL()], analysisType);
     auto startTime = MonotonicTime::now();
     [ensureImageAnalyzer() processRequest:request.get() progressHandler:nil completionHandler:makeBlockPtr([completion = WTFMove(completion), startTime, analysisType] (VKImageAnalysis *analysis, NSError *) mutable {
         BOOL result = [analysis hasResultsForAnalysisTypes:analysisType];

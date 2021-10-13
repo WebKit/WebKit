@@ -109,7 +109,6 @@ class WebPageProxy;
 }
 
 @class QLPreviewController;
-@class VKImageAnalyzer;
 @class WebEvent;
 @class WebTextIndicatorLayer;
 @class WKActionSheetAssistant;
@@ -504,7 +503,7 @@ using ImageAnalysisRequestIdentifier = ObjectIdentifier<ImageAnalysisRequestIden
     BOOL _contextMenuWasTriggeredByImageAnalysisTimeout;
 #endif // USE(UICONTEXTMENU)
     BOOL _isProceedingWithTextSelectionInImage;
-    RetainPtr<VKImageAnalyzer> _imageAnalyzer;
+    RetainPtr<id> _imageAnalyzer;
 #if USE(QUICK_LOOK)
     RetainPtr<QLPreviewController> _visualSearchPreviewController;
     RetainPtr<UIImage> _visualSearchPreviewImage;

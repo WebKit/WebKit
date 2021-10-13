@@ -35,6 +35,32 @@
 namespace WebKit {
 using namespace WebCore;
 
+static bool hasVisionKitCorePrefixedClasses()
+{
+    static bool result = false;
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [&] {
+        result = !!PAL::getVKCImageAnalyzerClass();
+    });
+    return result;
+}
+
+RetainPtr<VKImageAnalyzer> createImageAnalyzer()
+{
+    if (hasVisionKitCorePrefixedClasses())
+        return adoptNS([static_cast<VKImageAnalyzer *>(PAL::allocVKCImageAnalyzerInstance()) init]);
+
+    return adoptNS([PAL::allocVKImageAnalyzerInstance() init]);
+}
+
+RetainPtr<VKImageAnalyzerRequest> createImageAnalyzerRequest(CGImageRef image, VKAnalysisTypes types)
+{
+    if (hasVisionKitCorePrefixedClasses())
+        return adoptNS([static_cast<VKImageAnalyzerRequest *>(PAL::allocVKCImageAnalyzerRequestInstance()) initWithCGImage:image orientation:VKImageOrientationUp requestType:types]);
+
+    return adoptNS([PAL::allocVKImageAnalyzerRequestInstance() initWithCGImage:image orientation:VKImageOrientationUp requestType:types]);
+}
+
 static FloatQuad floatQuad(VKQuad *quad)
 {
     return { quad.topLeft, quad.topRight, quad.bottomRight, quad.bottomLeft };
