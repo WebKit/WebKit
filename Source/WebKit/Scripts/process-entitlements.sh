@@ -377,6 +377,12 @@ function ios_family_process_adattributiond_entitlements()
     plistbuddy Add :seatbelt-profiles:0 string com.apple.webkit.adattributiond
 }
 
+function ios_family_process_webpushd_entitlements()
+{
+    # FIXME: Add a sandbox profile for webpushd and add it to the seatbelt-profiles array.
+    echo "webpushd sandbox has not been implemented yet"
+}
+
 function ios_family_process_network_entitlements()
 {
     plistbuddy Add :com.apple.private.webkit.adattributiond bool YES
@@ -414,7 +420,7 @@ plistbuddy Clear dict
 # Simulator entitlements should be added to Resources/ios/XPCService-ios-simulator.entitlements
 if [[ "${WK_PLATFORM_NAME}" =~ .*simulator ]]
 then
-    if [[ "${PRODUCT_NAME}" != adattributiond ]]; then
+    if [[ "${PRODUCT_NAME}" != adattributiond && "${PRODUCT_NAME}" != webpushd ]]; then
         cp "${CODE_SIGN_ENTITLEMENTS}" "${WK_PROCESSED_XCENT_FILE}"
     fi
 elif [[ "${WK_PLATFORM_NAME}" == macosx ]]
@@ -427,7 +433,7 @@ then
     elif [[ "${PRODUCT_NAME}" == com.apple.WebKit.Plugin.64 ]]; then mac_process_plugin_entitlements
     elif [[ "${PRODUCT_NAME}" == com.apple.WebKit.GPU ]]; then mac_process_gpu_entitlements
     elif [[ "${PRODUCT_NAME}" == com.apple.WebKit.WebAuthn ]]; then mac_process_webauthn_entitlements
-    else echo "Unsupported/unknown product: ${PRODUCT_NAME}"
+    elif [[ "${PRODUCT_NAME}" != webpushd && "${PRODUCT_NAME}" != adattributiond ]]; then echo "Unsupported/unknown product: ${PRODUCT_NAME}"
     fi
 elif [[ "${WK_PLATFORM_NAME}" == maccatalyst || "${WK_PLATFORM_NAME}" == iosmac ]]
 then
@@ -452,6 +458,8 @@ then
     elif [[ "${PRODUCT_NAME}" == com.apple.WebKit.WebAuthn ]]; then ios_family_process_webauthn_entitlements
     elif [[ "${PRODUCT_NAME}" == adattributiond ]]; then
         ios_family_process_adattributiond_entitlements
+    elif [[ "${PRODUCT_NAME}" == webpushd ]]; then
+        ios_family_process_webpushd_entitlements
     else echo "Unsupported/unknown product: ${PRODUCT_NAME}"
     fi
 else

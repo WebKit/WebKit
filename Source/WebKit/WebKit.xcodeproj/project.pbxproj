@@ -7,13 +7,14 @@
 	objects = {
 
 /* Begin PBXAggregateTarget section */
-		1A50DB38110A3C13000D3FE5 /* Framework & XPC Services */ = {
+		1A50DB38110A3C13000D3FE5 /* Framework, XPC Services, and daemons */ = {
 			isa = PBXAggregateTarget;
-			buildConfigurationList = 1A50DB48110A3C27000D3FE5 /* Build configuration list for PBXAggregateTarget "Framework & XPC Services" */;
+			buildConfigurationList = 1A50DB48110A3C27000D3FE5 /* Build configuration list for PBXAggregateTarget "Framework, XPC Services, and daemons" */;
 			buildPhases = (
 				BCFFCA8A160D6DEA003DF315 /* Add XPCServices symlink */,
 			);
 			dependencies = (
+				5C1579DF27165E0800ED5280 /* PBXTargetDependency */,
 				5CAF7AA926F93F9F0003F19E /* PBXTargetDependency */,
 				5742A2FA2535619D00B7BA14 /* PBXTargetDependency */,
 				BCA8D46815BCE0D6009DC1F1 /* PBXTargetDependency */,
@@ -22,7 +23,7 @@
 				BC8283D516B4C01F00A278FE /* PBXTargetDependency */,
 				2D9FB22C2375245C0049F936 /* PBXTargetDependency */,
 			);
-			name = "Framework & XPC Services";
+			name = "Framework, XPC Services, and daemons";
 			productName = WebKit2;
 		};
 		2D7DEBD821269C6B00B9F73C /* Generate Unified Sources */ = {
@@ -1254,6 +1255,7 @@
 		5C1427051C23F84C00D41183 /* DownloadID.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C1426F71C23F84300D41183 /* DownloadID.h */; };
 		5C1427071C23F84C00D41183 /* DownloadManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C1426F91C23F84300D41183 /* DownloadManager.h */; };
 		5C1427181C23F8B700D41183 /* LegacyCustomProtocolManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C1427141C23F8B000D41183 /* LegacyCustomProtocolManager.h */; };
+		5C1579DC27165B8200ED5280 /* webpushd.c in Sources */ = {isa = PBXBuildFile; fileRef = 5C1579DB27165B7500ED5280 /* webpushd.c */; };
 		5C19A5201FD0B29500EEA323 /* URLSchemeTaskParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C19A51F1FD0B14700EEA323 /* URLSchemeTaskParameters.h */; };
 		5C20CBA01BB1ECD800895BB1 /* NetworkSession.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C20CB9E1BB0DD1800895BB1 /* NetworkSession.h */; };
 		5C26958520043212005C439B /* WKOpenPanelParametersPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C26958420042F12005C439B /* WKOpenPanelParametersPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -2201,6 +2203,20 @@
 			proxyType = 1;
 			remoteGlobalIDString = 5742A2E52535613F00B7BA14;
 			remoteInfo = WebAuthentication;
+		};
+		5C1579D027165B2F00ED5280 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = E1AC2E2720F7B94C00B0897D;
+			remoteInfo = "Unlock Keychain";
+		};
+		5C1579DE27165E0800ED5280 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5C1579CC27165B2F00ED5280;
+			remoteInfo = webpushd;
 		};
 		5CAF7A9B26F93A750003F19E /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -4516,6 +4532,9 @@
 		5C1427151C23F8B000D41183 /* LegacyCustomProtocolManager.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LegacyCustomProtocolManager.messages.in; sourceTree = "<group>"; };
 		5C14271B1C23F8CC00D41183 /* LegacyCustomProtocolManagerCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LegacyCustomProtocolManagerCocoa.mm; sourceTree = "<group>"; };
 		5C1578E5270E0DBC00ED5280 /* com.apple.WebKit.adattributiond.sb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = com.apple.WebKit.adattributiond.sb; sourceTree = "<group>"; };
+		5C1579DA27165B2F00ED5280 /* webpushd */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = webpushd; sourceTree = BUILT_PRODUCTS_DIR; };
+		5C1579DB27165B7500ED5280 /* webpushd.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = webpushd.c; sourceTree = "<group>"; };
+		5C1579DD27165BE500ED5280 /* webpushd.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = webpushd.xcconfig; sourceTree = "<group>"; };
 		5C19A51E1FD0B14600EEA323 /* URLSchemeTaskParameters.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = URLSchemeTaskParameters.cpp; sourceTree = "<group>"; };
 		5C19A51F1FD0B14700EEA323 /* URLSchemeTaskParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = URLSchemeTaskParameters.h; sourceTree = "<group>"; };
 		5C1B38DF2667140700B1545B /* WebPageNetworkParameters.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebPageNetworkParameters.h; sourceTree = "<group>"; };
@@ -6228,6 +6247,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		5C1579D427165B2F00ED5280 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		5CAF7A9F26F93A750003F19E /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -6296,6 +6322,7 @@
 			isa = PBXGroup;
 			children = (
 				5CAF7AA426F93A750003F19E /* adattributiond */,
+				5C1579DA27165B2F00ED5280 /* webpushd */,
 				2D9FB228237523830049F936 /* com.apple.WebKit.GPU.xpc */,
 				BC8283B116B4BF7700A278FE /* com.apple.WebKit.Networking.xpc */,
 				BC82841F16B4FDF600A278FE /* com.apple.WebKit.Plugin.64.xpc */,
@@ -6753,6 +6780,7 @@
 				BCB86F4B116AAACD00CE20B7 /* WebKit.xcconfig */,
 				CD09FD0A26152E2300E4ACF1 /* WebKitSwift.xcconfig */,
 				37119A7C20CCB64E002C6DC9 /* WebKitTargetConditionals.xcconfig */,
+				5C1579DD27165BE500ED5280 /* webpushd.xcconfig */,
 			);
 			path = Configurations;
 			sourceTree = "<group>";
@@ -9522,6 +9550,7 @@
 				5C6289A927068EC000CF5EC6 /* PCMDaemonConnectionSet.mm */,
 				5CB9310426E837FC0032B1C0 /* PCMDaemonEntryPoint.h */,
 				5CB9310526E837FD0032B1C0 /* PCMDaemonEntryPoint.mm */,
+				5C1579DB27165B7500ED5280 /* webpushd.c */,
 			);
 			name = Daemon;
 			path = Cocoa/Daemon;
@@ -11982,6 +12011,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		5C1579D127165B2F00ED5280 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		5CAF7A9C26F93A750003F19E /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -13540,6 +13576,25 @@
 			productReference = 5742A2F72535613F00B7BA14 /* com.apple.WebKit.WebAuthn.xpc */;
 			productType = "com.apple.product-type.xpc-service";
 		};
+		5C1579CC27165B2F00ED5280 /* webpushd */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5C1579D627165B2F00ED5280 /* Build configuration list for PBXNativeTarget "webpushd" */;
+			buildPhases = (
+				5C1579D127165B2F00ED5280 /* Headers */,
+				5C1579D227165B2F00ED5280 /* Sources */,
+				5C1579D427165B2F00ED5280 /* Frameworks */,
+				5C1579D527165B2F00ED5280 /* Process webpushd Entitlements */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				5C1579CF27165B2F00ED5280 /* PBXTargetDependency */,
+			);
+			name = webpushd;
+			productName = PluginProcessShim;
+			productReference = 5C1579DA27165B2F00ED5280 /* webpushd */;
+			productType = "com.apple.product-type.tool";
+		};
 		5CAF7A9926F93A750003F19E /* adattributiond */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 5CAF7AA026F93A750003F19E /* Build configuration list for PBXNativeTarget "adattributiond" */;
@@ -13752,7 +13807,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				1A50DB38110A3C13000D3FE5 /* Framework & XPC Services */,
+				1A50DB38110A3C13000D3FE5 /* Framework, XPC Services, and daemons */,
 				CD0C36D52639D39A004E35D8 /* Everything */,
 				8DC2EF4F0486A6940098B216 /* WebKit */,
 				CD95493426159004008372D9 /* WebKitSwift */,
@@ -13771,6 +13826,7 @@
 				5325BDCD21DFF47700A0DEE1 /* Apply Configuration to XCFileLists */,
 				942DB232257EE6D4009BD80A /* EmptyDSTROOT */,
 				5CAF7A9926F93A750003F19E /* adattributiond */,
+				5C1579CC27165B2F00ED5280 /* webpushd */,
 			);
 		};
 /* End PBXProject section */
@@ -14196,6 +14252,26 @@
 			shellPath = /bin/sh;
 			shellScript = "Scripts/process-entitlements.sh\n";
 		};
+		5C1579D527165B2F00ED5280 /* Process webpushd Entitlements */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/Scripts/process-entitlements.sh",
+			);
+			name = "Process webpushd Entitlements";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(WK_PROCESSED_XCENT_FILE)",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "Scripts/process-entitlements.sh\n";
+		};
 		5DF408C5131DD46700130071 /* Check For Weak VTables and Externals */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -14464,6 +14540,14 @@
 			files = (
 				5742A2EB2535613F00B7BA14 /* AuxiliaryProcessMain.cpp in Sources */,
 				5742A2EC2535613F00B7BA14 /* XPCServiceMain.mm in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5C1579D227165B2F00ED5280 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5C1579DC27165B8200ED5280 /* webpushd.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -15047,6 +15131,16 @@
 			target = 5742A2E52535613F00B7BA14 /* WebAuthn */;
 			targetProxy = 5742A2F92535619D00B7BA14 /* PBXContainerItemProxy */;
 		};
+		5C1579CF27165B2F00ED5280 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = E1AC2E2720F7B94C00B0897D /* Unlock Keychain */;
+			targetProxy = 5C1579D027165B2F00ED5280 /* PBXContainerItemProxy */;
+		};
+		5C1579DF27165E0800ED5280 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5C1579CC27165B2F00ED5280 /* webpushd */;
+			targetProxy = 5C1579DE27165E0800ED5280 /* PBXContainerItemProxy */;
+		};
 		5CAF7A9A26F93A750003F19E /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = E1AC2E2720F7B94C00B0897D /* Unlock Keychain */;
@@ -15094,7 +15188,7 @@
 		};
 		CD0C36DB2639D3AF004E35D8 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 1A50DB38110A3C13000D3FE5 /* Framework & XPC Services */;
+			target = 1A50DB38110A3C13000D3FE5 /* Framework, XPC Services, and daemons */;
 			targetProxy = CD0C36DA2639D3AF004E35D8 /* PBXContainerItemProxy */;
 		};
 		CD0C36DD2639D3B4004E35D8 /* PBXTargetDependency */ = {
@@ -15333,6 +15427,33 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 57A9FF07252BE6E0006A2040 /* WebAuthnService.xcconfig */;
 			buildSettings = {
+			};
+			name = Production;
+		};
+		5C1579D727165B2F00ED5280 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5C1579DD27165BE500ED5280 /* webpushd.xcconfig */;
+			buildSettings = {
+				OTHER_LDFLAGS = "$(OTHER_LDFLAGS)";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		5C1579D827165B2F00ED5280 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5C1579DD27165BE500ED5280 /* webpushd.xcconfig */;
+			buildSettings = {
+				OTHER_LDFLAGS = "$(OTHER_LDFLAGS)";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		5C1579D927165B2F00ED5280 /* Production */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5C1579DD27165BE500ED5280 /* webpushd.xcconfig */;
+			buildSettings = {
+				OTHER_LDFLAGS = "$(OTHER_LDFLAGS)";
+				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Production;
 		};
@@ -15615,7 +15736,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		1A50DB48110A3C27000D3FE5 /* Build configuration list for PBXAggregateTarget "Framework & XPC Services" */ = {
+		1A50DB48110A3C27000D3FE5 /* Build configuration list for PBXAggregateTarget "Framework, XPC Services, and daemons" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				1A50DB39110A3C13000D3FE5 /* Debug */,
@@ -15701,6 +15822,16 @@
 				5742A2F42535613F00B7BA14 /* Debug */,
 				5742A2F52535613F00B7BA14 /* Release */,
 				5742A2F62535613F00B7BA14 /* Production */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Production;
+		};
+		5C1579D627165B2F00ED5280 /* Build configuration list for PBXNativeTarget "webpushd" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5C1579D727165B2F00ED5280 /* Debug */,
+				5C1579D827165B2F00ED5280 /* Release */,
+				5C1579D927165B2F00ED5280 /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Production;

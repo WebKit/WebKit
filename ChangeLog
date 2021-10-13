@@ -1,3 +1,12 @@
+2021-10-12  Alex Christensen  <achristensen@webkit.org>
+
+        Add webpushd executable
+        https://bugs.webkit.org/show_bug.cgi?id=231650
+
+        Reviewed by Brady Eidson.
+
+        * WebKit.xcworkspace/xcshareddata/xcschemes/All Source.xcscheme:
+
 2021-10-12  Basuke Suzuki  <basuke.suzuki@sony.com>
 
         [PlayStation] Enable RemoteInspector by default
