@@ -1,3 +1,16 @@
+2021-10-13  Chris Dumez  <cdumez@apple.com>
+
+        MessagePort messages sent in iframe unload event not received
+        https://bugs.webkit.org/show_bug.cgi?id=231167
+        <rdar://problem/84095357>
+
+        Reviewed by Alex Christensen.
+
+        Add layout test coverage.
+
+        * fast/frames/message-port-postMessage-unload-event-expected.txt: Added.
+        * fast/frames/message-port-postMessage-unload-event.html: Added.
+
 2021-10-13  Ayumi Kojima  <ayumi_kojima@apple.com>
 
         [ iOS MacOS wk2 Release ] 2 fast/canvas tests are flaky failing.
