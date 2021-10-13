@@ -33,7 +33,6 @@ LocalizedStringsGtk.cpp
 ../../../WebKit/UIProcess/API/glib/WebKitWindowProperties.cpp
 ../../../WebKit/UIProcess/API/gtk/WebKitAuthenticationDialog.cpp
 ../../../WebKit/UIProcess/API/gtk/WebKitColorChooserRequest.cpp
-../../../WebKit/UIProcess/API/gtk/WebKitEmojiChooser.cpp
 ../../../WebKit/UIProcess/API/gtk/WebKitPrintCustomWidget.cpp
 ../../../WebKit/UIProcess/API/gtk/WebKitPrintOperation.cpp
 ../../../WebKit/UIProcess/API/gtk/WebKitScriptDialogImpl.cpp
