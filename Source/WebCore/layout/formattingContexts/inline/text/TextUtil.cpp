@@ -222,6 +222,12 @@ bool TextUtil::shouldPreserveNewline(const Box& layoutBox)
     return whitespace == WhiteSpace::Pre || whitespace == WhiteSpace::PreWrap || whitespace == WhiteSpace::BreakSpaces || whitespace == WhiteSpace::PreLine; 
 }
 
+bool TextUtil::isWrappingAllowed(const RenderStyle& style)
+{
+    // Do not try to wrap overflown 'pre' and 'no-wrap' content to next line.
+    return style.whiteSpace() != WhiteSpace::Pre && style.whiteSpace() != WhiteSpace::NoWrap;
+}
+
 LineBreakIteratorMode TextUtil::lineBreakIteratorMode(LineBreak lineBreak)
 {
     switch (lineBreak) {

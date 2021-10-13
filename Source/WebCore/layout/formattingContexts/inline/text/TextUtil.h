@@ -64,6 +64,7 @@ public:
     static bool shouldPreserveSpacesAndTabs(const Box&);
     static bool shouldPreserveNewline(const Box&);
     static bool canUseSimplifiedTextMeasuringForFirstLine(const RenderStyle&, const RenderStyle& firstLineStyle);
+    static bool isWrappingAllowed(const RenderStyle&);
 };
 
 }

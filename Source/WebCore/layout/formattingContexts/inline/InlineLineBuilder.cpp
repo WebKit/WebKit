@@ -77,6 +77,7 @@ static inline bool endsWithSoftWrapOpportunity(const InlineTextItem& currentText
 
 static inline bool isAtSoftWrapOpportunity(const InlineFormattingContext& inlineFormattingContext, const InlineItem& current, const InlineItem& next)
 {
+    // FIXME: Transition no-wrapping logic from InlineContentBreaker to here where we compute the soft wrap opportunity indexes.
     // "is at" simple means that there's a soft wrap opportunity right after the [current].
     // [text][ ][text][inline box start]... (<div>text content<span>..</div>)
     // soft wrap indexes: 0 and 1 definitely, 2 depends on the content after the [inline box start].
@@ -93,12 +94,12 @@ static inline bool isAtSoftWrapOpportunity(const InlineFormattingContext& inline
         auto& nextInlineTextItem = downcast<InlineTextItem>(next);
         if (currentInlineTextItem.isWhitespace()) {
             // [ ][text] : after [whitespace] position is a soft wrap opportunity.
-            return true;
+            return TextUtil::isWrappingAllowed(currentInlineTextItem.style());
         }
         if (nextInlineTextItem.isWhitespace()) {
             // [text][ ] (<span>text</span> )
             // white-space: break-spaces: line breaking opportunity exists after every preserved white space character, but not before.
-            return nextInlineTextItem.style().whiteSpace() != WhiteSpace::BreakSpaces;
+            return TextUtil::isWrappingAllowed(nextInlineTextItem.style()) && nextInlineTextItem.style().whiteSpace() != WhiteSpace::BreakSpaces;
         }
         if (current.style().lineBreak() == LineBreak::Anywhere || next.style().lineBreak() == LineBreak::Anywhere) {
             // There is a soft wrap opportunity around every typographic character unit, including around any punctuation character
@@ -711,7 +712,7 @@ LineBuilder::Result LineBuilder::handleInlineContent(InlineContentBreaker& inlin
             auto& trailingRun = candidateRuns.last();
             // FIXME: There must be a way to decide if the trailing run actually ended up on the line.
             // Let's just deal with collapsed leading whitespace for now.
-            if (!m_line.runs().isEmpty() && InlineContentBreaker::isWrappingAllowed(trailingRun))
+            if (!m_line.runs().isEmpty() && TextUtil::isWrappingAllowed(trailingRun.style))
                 m_wrapOpportunityList.append(&trailingRun.inlineItem);
         }
         return { result.isEndOfLine, { candidateRuns.size(), false } };

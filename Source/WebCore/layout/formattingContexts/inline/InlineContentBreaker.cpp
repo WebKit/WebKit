@@ -130,12 +130,6 @@ static inline std::optional<size_t> firstTextRunIndex(const InlineContentBreaker
     return { };
 }
 
-bool InlineContentBreaker::isWrappingAllowed(const ContinuousContent::Run& run)
-{
-    // Do not try to wrap overflown 'pre' and 'no-wrap' content to next line.
-    return run.style.whiteSpace() != WhiteSpace::Pre && run.style.whiteSpace() != WhiteSpace::NoWrap;
-}
-
 bool InlineContentBreaker::shouldKeepEndOfLineWhitespace(const ContinuousContent& continuousContent) const
 {
     // Grab the style and check for white-space property to decide whether we should let this whitespace content overflow the current line.
@@ -269,7 +263,7 @@ InlineContentBreaker::Result InlineContentBreaker::processOverflowingContent(con
         // Parent style drives the wrapping behavior here.
         // e.g. <div style="white-space: nowrap">some text<div style="display: inline-block; white-space: pre-wrap"></div></div>.
         // While the inline-block has pre-wrap which allows wrapping, the content lives in a nowrap context.
-        return isWrappingAllowed(continuousContent.runs()[overflowingRunIndex]);
+        return TextUtil::isWrappingAllowed(continuousContent.runs()[overflowingRunIndex].style);
     };
     if (shouldWrapUnbreakableContentToNextLine())
         return { Result::Action::Wrap, IsEndOfLine::Yes };
@@ -300,7 +294,7 @@ static bool isWrappableRun(const InlineContentBreaker::ContinuousContent::Run& r
         return false;
     }
     // Check if this text run needs to stay on the current line.
-    return InlineContentBreaker::isWrappingAllowed(run);
+    return TextUtil::isWrappingAllowed(run.style);
 }
 
 std::optional<InlineContentBreaker::OverflowingTextContent::BreakingPosition> InlineContentBreaker::tryBreakingOverflowingRun(const LineStatus& lineStatus, const ContinuousContent::RunList& runs, size_t overflowingRunIndex, InlineLayoutUnit nonOverflowingContentWidth) const

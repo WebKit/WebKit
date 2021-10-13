@@ -1,3 +1,13 @@
+2021-10-13  Alan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Do not break at the inline box boundary when wrapping is not allowed
+        https://bugs.webkit.org/show_bug.cgi?id=231581
+
+        Reviewed by Antti Koivisto.
+
+        * fast/inline/no-soft-wrap-opportunity-at-inline-box-expected.html: Added.
+        * fast/inline/no-soft-wrap-opportunity-at-inline-box.html: Added.
+
 2021-10-13  Alicia Boya García  <aboya@igalia.com>
 
         Unreviewed, reverting r283609
