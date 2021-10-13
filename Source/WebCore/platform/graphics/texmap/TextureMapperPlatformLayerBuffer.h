@@ -56,7 +56,7 @@ public:
     struct ExternalOESTexture {
         GLuint id;
     };
-    using TextureVariant = WTF::Variant<RGBTexture, YUVTexture, ExternalOESTexture>;
+    using TextureVariant = std::variant<RGBTexture, YUVTexture, ExternalOESTexture>;
 
     TextureMapperPlatformLayerBuffer(TextureVariant&&, const IntSize&, TextureMapperGL::Flags, GLint internalFormat);
 

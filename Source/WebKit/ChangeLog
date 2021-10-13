@@ -1,3 +1,81 @@
+2021-10-13  Alex Christensen  <achristensen@webkit.org>
+
+        Remove WTF::Variant and WTF::get
+        https://bugs.webkit.org/show_bug.cgi?id=231675
+
+        Reviewed by Chris Dumez.
+
+        * GPUProcess/graphics/QualifiedResourceHeap.h:
+        (WebKit::QualifiedResourceHeap::get const):
+        * NetworkProcess/cache/NetworkCacheDataCurl.cpp:
+        (WebKit::NetworkCache::Data::Data):
+        * Shared/RemoteLayerTree/RemoteLayerBackingStore.mm:
+        (WebKit::RemoteLayerBackingStore::applyBackingStoreToLayer):
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<PasteboardCustomData::Entry>::encode):
+        (IPC::ArgumentCoder<IDBKeyPath>::encode):
+        (IPC::ArgumentCoder<ServiceWorkerOrClientData>::encode):
+        (IPC::ArgumentCoder<ServiceWorkerOrClientIdentifier>::encode):
+        * Shared/WebPreferencesStore.cpp:
+        (WebKit::valueForKey):
+        * UIProcess/API/wpe/TouchGestureController.h:
+        * UIProcess/Automation/gtk/WebAutomationSessionGtk.cpp:
+        (WebKit::WebAutomationSession::platformSimulateKeyboardInteraction):
+        * UIProcess/Automation/wpe/WebAutomationSessionWPE.cpp:
+        (WebKit::WebAutomationSession::platformSimulateKeyboardInteraction):
+        * UIProcess/Cocoa/UserMediaCaptureManagerProxy.cpp:
+        * UIProcess/ProcessThrottler.cpp:
+        (WebKit::ProcessThrottler::isValidBackgroundActivity):
+        (WebKit::ProcessThrottler::isValidForegroundActivity):
+        * UIProcess/WebAuthentication/AuthenticatorManager.cpp:
+        (WebKit::WebCore::getRpId):
+        (WebKit::WebCore::getUserName):
+        (WebKit::AuthenticatorManager::respondReceived):
+        * UIProcess/WebAuthentication/Cocoa/LocalAuthenticator.mm:
+        (WebKit::LocalAuthenticator::makeCredential):
+        (WebKit::LocalAuthenticator::continueMakeCredentialAfterDecidePolicy):
+        (WebKit::LocalAuthenticator::continueMakeCredentialAfterUserVerification):
+        (WebKit::LocalAuthenticator::continueMakeCredentialAfterAttested):
+        (WebKit::LocalAuthenticator::getAssertion):
+        (WebKit::LocalAuthenticator::continueGetAssertionAfterResponseSelected):
+        (WebKit::LocalAuthenticator::continueGetAssertionAfterUserVerification):
+        (WebKit::LocalAuthenticator::deleteDuplicateCredential const):
+        * UIProcess/WebAuthentication/WebAuthenticationRequestData.cpp:
+        (WebKit::getUserVerificationRequirement):
+        * UIProcess/WebAuthentication/fido/CtapAuthenticator.cpp:
+        (WebKit::CtapAuthenticator::makeCredential):
+        (WebKit::CtapAuthenticator::continueMakeCredentialAfterResponseReceived):
+        (WebKit::CtapAuthenticator::getAssertion):
+        (WebKit::CtapAuthenticator::processGoogleLegacyAppIdSupportExtension):
+        * UIProcess/WebAuthentication/fido/U2fAuthenticator.cpp:
+        (WebKit::U2fAuthenticator::makeCredential):
+        (WebKit::U2fAuthenticator::checkExcludeList):
+        (WebKit::U2fAuthenticator::issueRegisterCommand):
+        (WebKit::U2fAuthenticator::getAssertion):
+        (WebKit::U2fAuthenticator::issueSignCommand):
+        (WebKit::U2fAuthenticator::continueRegisterCommandAfterResponseReceived):
+        (WebKit::U2fAuthenticator::continueSignCommandAfterResponseReceived):
+        * WebProcess/GPU/graphics/ImageBufferShareableBitmapBackend.cpp:
+        (WebKit::ImageBufferShareableBitmapBackend::create):
+        * WebProcess/GPU/graphics/cocoa/ImageBufferShareableIOSurfaceBackend.cpp:
+        (WebKit::ImageBufferShareableIOSurfaceBackend::createImageBufferBackendHandle const):
+        * WebProcess/GPU/graphics/cocoa/ImageBufferShareableMappedIOSurfaceBackend.cpp:
+        (WebKit::ImageBufferShareableMappedIOSurfaceBackend::create):
+        * WebProcess/GPU/webrtc/MediaRecorderPrivate.cpp:
+        (WebKit::MediaRecorderPrivate::audioSamplesAvailable):
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLSelectElement.cpp:
+        (webkit_dom_html_select_element_add):
+        * WebProcess/Speech/SpeechRecognitionRealtimeMediaSourceManager.cpp:
+        * WebProcess/Storage/WebServiceWorkerFetchTaskClient.cpp:
+        (WebKit::WebServiceWorkerFetchTaskClient::didReceiveData):
+        * WebProcess/WebCoreSupport/gtk/WebEditorClientGtk.cpp:
+        (WebKit::WebEditorClient::executePendingEditorCommands):
+        * WebProcess/WebPage/Cocoa/TextCheckingControllerProxy.mm:
+        (WebKit::TextCheckingControllerProxy::removeAnnotationRelativeToSelection):
+        (WebKit::TextCheckingControllerProxy::annotatedSubstringBetweenPositions):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::getPlatformEditorState const):
+
 2021-10-12  Jer Noble  <jer.noble@apple.com>
 
         [Build-time perf] Forward-declare more things in Document.h

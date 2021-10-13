@@ -255,9 +255,9 @@ void FormData::appendMultiPartKeyValuePairItems(const DOMFormData& formData)
         FormDataBuilder::beginMultiPartHeader(header, m_boundary.data(), normalizedName);
 
         if (std::holds_alternative<RefPtr<File>>(item.data))
-            appendMultiPartFileValue(*WTF::get<RefPtr<File>>(item.data), header, encoding);
+            appendMultiPartFileValue(*std::get<RefPtr<File>>(item.data), header, encoding);
         else
-            appendMultiPartStringValue(WTF::get<String>(item.data), header, encoding);
+            appendMultiPartStringValue(std::get<String>(item.data), header, encoding);
 
         appendData("\r\n", 2);
     }
@@ -281,7 +281,7 @@ void FormData::appendNonMultiPartKeyValuePairItems(const DOMFormData& formData, 
         ASSERT(std::holds_alternative<String>(item.data));
 
         auto normalizedName = normalizeStringData(encoding, item.name);
-        auto normalizedStringData = normalizeStringData(encoding, WTF::get<String>(item.data));
+        auto normalizedStringData = normalizeStringData(encoding, std::get<String>(item.data));
         FormDataBuilder::addKeyValuePairAsFormData(encodedData, normalizedName, normalizedStringData, encodingType);
     }
 

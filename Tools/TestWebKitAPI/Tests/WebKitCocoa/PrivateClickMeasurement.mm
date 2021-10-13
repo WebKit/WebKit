@@ -52,7 +52,7 @@ static RetainPtr<WKWebView> webViewWithResourceLoadStatisticsEnabledInNetworkPro
 }
 
 template<size_t size>
-void addValuesToTable(WebCore::SQLiteDatabase& database, ASCIILiteral query, std::array<Variant<StringView, int, double>, size> values)
+void addValuesToTable(WebCore::SQLiteDatabase& database, ASCIILiteral query, std::array<std::variant<StringView, int, double>, size> values)
 {
     auto statement = database.prepareStatement(query);
     EXPECT_TRUE(!!statement);

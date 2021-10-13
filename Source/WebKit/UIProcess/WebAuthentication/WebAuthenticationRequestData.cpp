@@ -43,12 +43,12 @@ ClientDataType getClientDataType(const std::variant<PublicKeyCredentialCreationO
 UserVerificationRequirement getUserVerificationRequirement(const std::variant<PublicKeyCredentialCreationOptions, PublicKeyCredentialRequestOptions>& options)
 {
     if (std::holds_alternative<PublicKeyCredentialCreationOptions>(options)) {
-        if (auto authenticatorSelection = WTF::get<PublicKeyCredentialCreationOptions>(options).authenticatorSelection)
+        if (auto authenticatorSelection = std::get<PublicKeyCredentialCreationOptions>(options).authenticatorSelection)
             return authenticatorSelection->userVerification;
         return UserVerificationRequirement::Preferred;
     }
 
-    return WTF::get<PublicKeyCredentialRequestOptions>(options).userVerification;
+    return std::get<PublicKeyCredentialRequestOptions>(options).userVerification;
 }
 
 } // namespace WebKit

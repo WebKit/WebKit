@@ -170,7 +170,7 @@ IntSize MockDisplayCapturer::intrinsicSize() const
     if (!device->isDisplay())
         return { };
 
-    auto& properties = WTF::get<MockDisplayProperties>(device->properties);
+    auto& properties = std::get<MockDisplayProperties>(device->properties);
     return properties.defaultSize;
 }
 #endif // PLATFORM(MAC)

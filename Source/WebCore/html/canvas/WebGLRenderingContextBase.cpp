@@ -731,16 +731,16 @@ private:
     {
         WebGLAny param = m_context.getParameter(attachment);
         if (std::holds_alternative<T>(param))
-            destination = WTF::get<T>(param);
+            destination = std::get<T>(param);
     }
 
     bool hasBufferBinding(GCGLenum pname)
     {
         WebGLAny binding = m_context.getParameter(pname);
         if (pname == GraphicsContextGL::FRAMEBUFFER_BINDING)
-            return std::holds_alternative<RefPtr<WebGLFramebuffer>>(binding) && WTF::get<RefPtr<WebGLFramebuffer>>(binding);
+            return std::holds_alternative<RefPtr<WebGLFramebuffer>>(binding) && std::get<RefPtr<WebGLFramebuffer>>(binding);
         if (pname == GraphicsContextGL::RENDERBUFFER_BINDING)
-            return std::holds_alternative<RefPtr<WebGLRenderbuffer>>(binding) && WTF::get<RefPtr<WebGLRenderbuffer>>(binding);
+            return std::holds_alternative<RefPtr<WebGLRenderbuffer>>(binding) && std::get<RefPtr<WebGLRenderbuffer>>(binding);
         return false;
     }
 
@@ -749,7 +749,7 @@ private:
         WebGLAny attachmentParameter = m_context.getFramebufferAttachmentParameter(GraphicsContextGL::FRAMEBUFFER, attachment, GraphicsContextGL::FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE);
         if (!std::holds_alternative<unsigned>(attachmentParameter))
             return false;
-        if (WTF::get<unsigned>(attachmentParameter) != static_cast<unsigned>(GraphicsContextGL::RENDERBUFFER))
+        if (std::get<unsigned>(attachmentParameter) != static_cast<unsigned>(GraphicsContextGL::RENDERBUFFER))
             return false;
         return true;
     }

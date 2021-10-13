@@ -36,10 +36,10 @@ namespace WebCore {
 static std::variant<String, Ref<SharedBuffer>> copyPlatformData(const std::variant<String, Ref<SharedBuffer>>& other)
 {
     if (std::holds_alternative<String>(other))
-        return { WTF::get<String>(other) };
+        return { std::get<String>(other) };
 
     if (std::holds_alternative<Ref<SharedBuffer>>(other))
-        return { WTF::get<Ref<SharedBuffer>>(other).copyRef() };
+        return { std::get<Ref<SharedBuffer>>(other).copyRef() };
 
     return { };
 }
@@ -209,7 +209,7 @@ RefPtr<SharedBuffer> PasteboardCustomData::readBuffer(const String& type) const
             continue;
 
         if (std::holds_alternative<Ref<SharedBuffer>>(entry.platformData))
-            return WTF::get<Ref<SharedBuffer>>(entry.platformData).copyRef();
+            return std::get<Ref<SharedBuffer>>(entry.platformData).copyRef();
 
         return nullptr;
     }
@@ -223,7 +223,7 @@ String PasteboardCustomData::readString(const String& type) const
             continue;
 
         if (std::holds_alternative<String>(entry.platformData))
-            return WTF::get<String>(entry.platformData);
+            return std::get<String>(entry.platformData);
 
         return { };
     }
@@ -251,7 +251,7 @@ void PasteboardCustomData::forEachPlatformString(Function<void(const String& typ
         if (!std::holds_alternative<String>(entry.platformData))
             continue;
 
-        auto string = WTF::get<String>(entry.platformData);
+        auto string = std::get<String>(entry.platformData);
         if (!string.isNull())
             function(entry.type, string);
     }
@@ -269,7 +269,7 @@ void PasteboardCustomData::forEachPlatformStringOrBuffer(Function<void(const Str
 {
     for (auto& entry : m_data) {
         auto& data = entry.platformData;
-        if ((std::holds_alternative<String>(data) && !WTF::get<String>(data).isNull()) || std::holds_alternative<Ref<SharedBuffer>>(data))
+        if ((std::holds_alternative<String>(data) && !std::get<String>(data).isNull()) || std::holds_alternative<Ref<SharedBuffer>>(data))
             function(entry.type, data);
     }
 }

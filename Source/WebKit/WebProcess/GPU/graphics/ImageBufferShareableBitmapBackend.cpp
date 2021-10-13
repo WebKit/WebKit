@@ -103,7 +103,7 @@ std::unique_ptr<ImageBufferShareableBitmapBackend> ImageBufferShareableBitmapBac
         return nullptr;
     }
 
-    auto bitmap = ShareableBitmap::create(WTFMove(WTF::get<ShareableBitmap::Handle>(handle)));
+    auto bitmap = ShareableBitmap::create(WTFMove(std::get<ShareableBitmap::Handle>(handle)));
     if (!bitmap)
         return nullptr;
 

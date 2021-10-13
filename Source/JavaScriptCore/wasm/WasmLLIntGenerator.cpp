@@ -128,7 +128,7 @@ public:
         {
             if (!std::holds_alternative<ControlCatch>(control))
                 return false;
-            ControlCatch catchData = WTF::get<ControlCatch>(control);
+            ControlCatch catchData = std::get<ControlCatch>(control);
             return catchData.m_kind == CatchKind::Catch;
         }
 
@@ -138,7 +138,7 @@ public:
         RefPtr<Label> targetLabelForBranch() const
         {
             if (std::holds_alternative<ControlLoop>(*this))
-                return WTF::get<ControlLoop>(*this).m_body.ptr();
+                return std::get<ControlLoop>(*this).m_body.ptr();
             return m_continuation;
         }
 
@@ -1000,7 +1000,7 @@ auto LLIntGenerator::addLoop(BlockSignature signature, Stack& enclosingStack, Co
         for (TypedExpression expression : expressionStack)
             osrEntryData.append(expression);
         if (ControlType::isAnyCatch(data))
-            osrEntryData.append(WTF::get<ControlCatch>(data).m_exception);
+            osrEntryData.append(std::get<ControlCatch>(data).m_exception);
     }
     for (TypedExpression expression : enclosingStack)
         osrEntryData.append(expression);
@@ -1051,7 +1051,7 @@ auto LLIntGenerator::addElseToUnreachable(ControlType& data) -> PartialResult
 {
     m_stackSize = data.stackSize() + data.m_signature->argumentCount();
 
-    ControlIf& control = WTF::get<ControlIf>(data);
+    ControlIf& control = std::get<ControlIf>(data);
     emitLabel(control.m_alternate.get());
     data = ControlType::block(data.m_signature, m_stackSize, WTFMove(data.m_continuation));
     return { };
@@ -1101,7 +1101,7 @@ auto LLIntGenerator::addCatchToUnreachable(unsigned exceptionIndex, const Signat
     m_stackSize = data.stackSize();
     VirtualRegister exception = push();
     if (std::holds_alternative<ControlTry>(data)) {
-        ControlTry& tryData = WTF::get<ControlTry>(data);
+        ControlTry& tryData = std::get<ControlTry>(data);
         data = ControlType::createCatch(data.m_signature, data.stackSize(), WTFMove(tryData.m_try), WTFMove(data.m_continuation), catchLabel, tryData.m_tryDepth, exception);
     }
     for (unsigned i = 0; i < exceptionSignature.argumentCount(); ++i)
@@ -1133,7 +1133,7 @@ auto LLIntGenerator::addCatchToUnreachable(unsigned exceptionIndex, const Signat
         }
     }
 
-    ControlCatch& catchData = WTF::get<ControlCatch>(data);
+    ControlCatch& catchData = std::get<ControlCatch>(data);
     catchData.m_kind = CatchKind::Catch;
     m_codeBlock->addExceptionHandler({ HandlerType::Catch, catchData.m_tryStart->location(), catchData.m_tryEnd->location(), catchLabel->location(), m_tryDepth, exceptionIndex });
 
@@ -1154,10 +1154,10 @@ auto LLIntGenerator::addCatchAllToUnreachable(ControlType& data) -> PartialResul
     m_stackSize = data.stackSize();
     VirtualRegister exception = push();
     if (std::holds_alternative<ControlTry>(data)) {
-        ControlTry& tryData = WTF::get<ControlTry>(data);
+        ControlTry& tryData = std::get<ControlTry>(data);
         data = ControlType::createCatch(data.m_signature, data.stackSize(), WTFMove(tryData.m_try), WTFMove(data.m_continuation), catchLabel, tryData.m_tryDepth, exception);
     }
-    ControlCatch& catchData = WTF::get<ControlCatch>(data);
+    ControlCatch& catchData = std::get<ControlCatch>(data);
     catchData.m_kind = CatchKind::CatchAll;
 
     if (Context::useFastTLS())
@@ -1180,9 +1180,9 @@ auto LLIntGenerator::addDelegateToUnreachable(ControlType& target, ControlType& 
     Ref<Label> delegateLabel = newEmittedLabel();
 
     ASSERT(ControlType::isTry(target) || ControlType::isTopLevel(target));
-    unsigned targetDepth = ControlType::isTry(target) ? WTF::get<ControlTry>(target).m_tryDepth : 0;
+    unsigned targetDepth = ControlType::isTry(target) ? std::get<ControlTry>(target).m_tryDepth : 0;
 
-    ControlTry& tryData = WTF::get<ControlTry>(data);
+    ControlTry& tryData = std::get<ControlTry>(data);
     m_codeBlock->addExceptionHandler({ HandlerType::Delegate, tryData.m_try->location(), delegateLabel->location(), 0, m_tryDepth, targetDepth });
     checkConsistency();
     return { };
@@ -1205,7 +1205,7 @@ auto LLIntGenerator::addRethrow(unsigned, ControlType& data) -> PartialResult
 {
     m_usesExceptions = true;
     ASSERT(std::holds_alternative<ControlCatch>(data));
-    ControlCatch catchData = WTF::get<ControlCatch>(data);
+    ControlCatch catchData = std::get<ControlCatch>(data);
     WasmRethrow::emit(this, catchData.m_exception);
     return { };
 }

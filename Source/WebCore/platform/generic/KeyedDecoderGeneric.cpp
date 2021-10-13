@@ -38,7 +38,7 @@ namespace WebCore {
 class KeyedDecoderGeneric::Dictionary {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    using Node = Variant<Vector<uint8_t>, bool, uint32_t, uint64_t, int32_t, int64_t, float, double, String, std::unique_ptr<Dictionary>, std::unique_ptr<Array>>;
+    using Node = std::variant<Vector<uint8_t>, bool, uint32_t, uint64_t, int32_t, int64_t, float, double, String, std::unique_ptr<Dictionary>, std::unique_ptr<Array>>;
 
     template <typename T>
     void add(const String& key, T&& value) { m_map.add(key, makeUniqueWithoutFastMallocCheck<Node>(std::forward<T>(value))); }

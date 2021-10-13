@@ -2429,7 +2429,7 @@ private:
     RenderingResourceIdentifier m_identifier;
 };
 
-using DisplayListItem = Variant
+using DisplayListItem = std::variant
     < ApplyDeviceScaleFactor
     , BeginClipToDrawingCommands
     , BeginTransparencyLayer

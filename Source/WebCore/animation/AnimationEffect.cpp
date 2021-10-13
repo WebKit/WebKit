@@ -385,11 +385,11 @@ ExceptionOr<void> AnimationEffect::updateTiming(std::optional<OptionalEffectTimi
     // FIXME: should it not throw an exception on a string other than "auto"?
     if (timing->duration) {
         if (std::holds_alternative<double>(timing->duration.value())) {
-            auto durationAsDouble = WTF::get<double>(timing->duration.value());
+            auto durationAsDouble = std::get<double>(timing->duration.value());
             if (durationAsDouble < 0 || std::isnan(durationAsDouble))
                 return Exception { TypeError };
         } else {
-            if (WTF::get<String>(timing->duration.value()) != "auto")
+            if (std::get<String>(timing->duration.value()) != "auto")
                 return Exception { TypeError };
         }
     }
@@ -429,7 +429,7 @@ ExceptionOr<void> AnimationEffect::updateTiming(std::optional<OptionalEffectTimi
         m_iterations = timing->iterations.value();
 
     if (timing->duration)
-        m_iterationDuration = std::holds_alternative<double>(timing->duration.value()) ? Seconds::fromMilliseconds(WTF::get<double>(timing->duration.value())) : 0_s;
+        m_iterationDuration = std::holds_alternative<double>(timing->duration.value()) ? Seconds::fromMilliseconds(std::get<double>(timing->duration.value())) : 0_s;
 
     if (timing->direction)
         m_direction = timing->direction.value();

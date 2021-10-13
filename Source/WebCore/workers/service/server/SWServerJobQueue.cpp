@@ -403,7 +403,7 @@ void SWServerJobQueue::cancelJobsFromConnection(SWServerConnectionIdentifier con
 void SWServerJobQueue::cancelJobsFromServiceWorker(ServiceWorkerIdentifier serviceWorkerIdentifier)
 {
     removeAllJobsMatching([serviceWorkerIdentifier](auto& job) {
-        return std::holds_alternative<ServiceWorkerIdentifier>(job.sourceContext) && WTF::get<ServiceWorkerIdentifier>(job.sourceContext) == serviceWorkerIdentifier;
+        return std::holds_alternative<ServiceWorkerIdentifier>(job.sourceContext) && std::get<ServiceWorkerIdentifier>(job.sourceContext) == serviceWorkerIdentifier;
     });
 }
 

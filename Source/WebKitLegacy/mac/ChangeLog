@@ -1,3 +1,14 @@
+2021-10-13  Alex Christensen  <achristensen@webkit.org>
+
+        Remove WTF::Variant and WTF::get
+        https://bugs.webkit.org/show_bug.cgi?id=231675
+
+        Reviewed by Chris Dumez.
+
+        * WebView/WebFrame.mm:
+        (-[WebFrame getDictationResultRanges:andMetadatas:]):
+        (-[WebFrame dictationResultMetadataForRange:]):
+
 2021-10-12  Jer Noble  <jer.noble@apple.com>
 
         [Build-time perf] Forward-declare more things in Document.h

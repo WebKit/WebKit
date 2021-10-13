@@ -921,8 +921,8 @@ void Element::scrollIntoView(std::optional<std::variant<bool, ScrollIntoViewOpti
     if (arg) {
         auto value = arg.value();
         if (std::holds_alternative<ScrollIntoViewOptions>(value))
-            options = WTF::get<ScrollIntoViewOptions>(value);
-        else if (!WTF::get<bool>(value))
+            options = std::get<ScrollIntoViewOptions>(value);
+        else if (!std::get<bool>(value))
             options.blockPosition = ScrollLogicalPosition::End;
     }
 
@@ -4630,9 +4630,9 @@ ExceptionOr<Ref<WebAnimation>> Element::animate(JSC::JSGlobalObject& lexicalGlob
         auto optionsValue = options.value();
         std::variant<double, KeyframeEffectOptions> keyframeEffectOptionsVariant;
         if (std::holds_alternative<double>(optionsValue))
-            keyframeEffectOptionsVariant = WTF::get<double>(optionsValue);
+            keyframeEffectOptionsVariant = std::get<double>(optionsValue);
         else {
-            auto keyframeEffectOptions = WTF::get<KeyframeAnimationOptions>(optionsValue);
+            auto keyframeEffectOptions = std::get<KeyframeAnimationOptions>(optionsValue);
             id = keyframeEffectOptions.id;
             keyframeEffectOptionsVariant = WTFMove(keyframeEffectOptions);
         }

@@ -1,3 +1,13 @@
+2021-10-13  Alex Christensen  <achristensen@webkit.org>
+
+        Remove WTF::Variant and WTF::get
+        https://bugs.webkit.org/show_bug.cgi?id=231675
+
+        Reviewed by Chris Dumez.
+
+        * wtf/Variant.h:
+        (WTF::get): Deleted.
+
 2021-10-13  Chris Dumez  <cdumez@apple.com>
 
         Stop using makeWeakPtr() in WebCore

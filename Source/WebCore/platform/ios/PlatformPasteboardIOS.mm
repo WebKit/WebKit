@@ -657,10 +657,10 @@ static RetainPtr<WebItemProviderRegistrationInfoList> createItemProviderRegistra
             return;
 
         if (std::holds_alternative<String>(value)) {
-            if (WTF::get<String>(value).isNull())
+            if (std::get<String>(value).isNull())
                 return;
 
-            NSString *nsStringValue = WTF::get<String>(value);
+            NSString *nsStringValue = std::get<String>(value);
             auto cfType = cocoaType.createCFString();
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
             if (UTTypeConformsTo(cfType.get(), kUTTypeURL))
@@ -673,7 +673,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
             return;
         }
 
-        auto buffer = WTF::get<Ref<SharedBuffer>>(value);
+        auto buffer = std::get<Ref<SharedBuffer>>(value);
         [representationsToRegister addData:buffer->createNSData().get() forType:(NSString *)cocoaType];
     });
 

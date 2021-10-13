@@ -65,7 +65,7 @@ std::unique_ptr<ImageBufferShareableIOSurfaceBackend> ImageBufferShareableIOSurf
 
 ImageBufferBackendHandle ImageBufferShareableIOSurfaceBackend::createImageBufferBackendHandle() const
 {
-    return WTF::get<MachSendRight>(m_handle).copySendRight();
+    return std::get<MachSendRight>(m_handle).copySendRight();
 }
 
 GraphicsContext& ImageBufferShareableIOSurfaceBackend::context() const

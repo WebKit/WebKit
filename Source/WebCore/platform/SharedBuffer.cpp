@@ -146,7 +146,7 @@ Vector<uint8_t> SharedBuffer::takeData()
 
     Vector<uint8_t> combinedData;
     if (hasOneSegment() && std::holds_alternative<Vector<uint8_t>>(m_segments[0].segment->m_immutableData))
-        combinedData = std::exchange(WTF::get<Vector<uint8_t>>(m_segments[0].segment->m_immutableData), Vector<uint8_t>());
+        combinedData = std::exchange(std::get<Vector<uint8_t>>(m_segments[0].segment->m_immutableData), Vector<uint8_t>());
     else
         combinedData = combineSegmentsData(m_segments, m_size);
 

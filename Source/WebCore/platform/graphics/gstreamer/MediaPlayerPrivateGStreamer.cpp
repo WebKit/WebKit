@@ -984,7 +984,7 @@ void MediaPlayerPrivateGStreamer::notifyPlayerOfTrack()
     ASSERT(m_isLegacyPlaybin);
 
     using TrackType = TrackPrivateBaseGStreamer::TrackType;
-    Variant<HashMap<AtomString, RefPtr<AudioTrackPrivateGStreamer>>*, HashMap<AtomString, RefPtr<VideoTrackPrivateGStreamer>>*, HashMap<AtomString, RefPtr<InbandTextTrackPrivateGStreamer>>*> variantTracks = static_cast<HashMap<AtomString, RefPtr<TrackPrivateType>>*>(0);
+    std::variant<HashMap<AtomString, RefPtr<AudioTrackPrivateGStreamer>>*, HashMap<AtomString, RefPtr<VideoTrackPrivateGStreamer>>*, HashMap<AtomString, RefPtr<InbandTextTrackPrivateGStreamer>>*> variantTracks = static_cast<HashMap<AtomString, RefPtr<TrackPrivateType>>*>(0);
     auto type(static_cast<TrackType>(variantTracks.index()));
     const char* typeName;
     bool* hasType;
@@ -1007,7 +1007,7 @@ void MediaPlayerPrivateGStreamer::notifyPlayerOfTrack()
     default:
         ASSERT_NOT_REACHED();
     }
-    HashMap<AtomString, RefPtr<TrackPrivateType>>& tracks = *WTF::get<HashMap<AtomString, RefPtr<TrackPrivateType>>*>(variantTracks);
+    HashMap<AtomString, RefPtr<TrackPrivateType>>& tracks = *std::get<HashMap<AtomString, RefPtr<TrackPrivateType>>*>(variantTracks);
 
     // Ignore notifications after a EOS. We don't want the tracks to disappear when the video is finished.
     if (m_isEndReached && (type == TrackType::Audio || type == TrackType::Video))
@@ -1062,16 +1062,16 @@ void MediaPlayerPrivateGStreamer::notifyPlayerOfTrack()
         ASSERT(streamId == track->id());
         tracks.add(streamId, track.copyRef());
 
-        Variant<AudioTrackPrivate*, VideoTrackPrivate*, InbandTextTrackPrivate*> variantTrack(&track.get());
+        std::variant<AudioTrackPrivate*, VideoTrackPrivate*, InbandTextTrackPrivate*> variantTrack(&track.get());
         switch (variantTrack.index()) {
         case TrackType::Audio:
-            m_player->addAudioTrack(*WTF::get<AudioTrackPrivate*>(variantTrack));
+            m_player->addAudioTrack(*std::get<AudioTrackPrivate*>(variantTrack));
             break;
         case TrackType::Video:
-            m_player->addVideoTrack(*WTF::get<VideoTrackPrivate*>(variantTrack));
+            m_player->addVideoTrack(*std::get<VideoTrackPrivate*>(variantTrack));
             break;
         case TrackType::Text:
-            m_player->addTextTrack(*WTF::get<InbandTextTrackPrivate*>(variantTrack));
+            m_player->addTextTrack(*std::get<InbandTextTrackPrivate*>(variantTrack));
             break;
         }
     }

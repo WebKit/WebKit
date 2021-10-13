@@ -398,7 +398,7 @@ ExceptionOr<void> VTTCue::setLine(const LineAndPositionSetting& position)
             return { };
         linePosition = std::numeric_limits<double>::quiet_NaN();
     } else {
-        linePosition = WTF::get<double>(position);
+        linePosition = std::get<double>(position);
 
         if (m_linePosition == linePosition)
             return { };
@@ -470,7 +470,7 @@ ExceptionOr<void> VTTCue::setPosition(const LineAndPositionSetting& position)
             return { };
         textPosition = std::numeric_limits<double>::quiet_NaN();
     } else {
-        textPosition = WTF::get<double>(position);
+        textPosition = std::get<double>(position);
         if (!(textPosition >= 0 && textPosition <= 100))
             return Exception { IndexSizeError };
 

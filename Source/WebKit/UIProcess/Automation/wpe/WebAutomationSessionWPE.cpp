@@ -327,7 +327,7 @@ static uint32_t modifiersForKeyCode(unsigned keyCode)
     return 0;
 }
 
-void WebAutomationSession::platformSimulateKeyboardInteraction(WebPageProxy& page, KeyboardInteraction interaction, WTF::Variant<VirtualKey, CharKey>&& key)
+void WebAutomationSession::platformSimulateKeyboardInteraction(WebPageProxy& page, KeyboardInteraction interaction, std::variant<VirtualKey, CharKey>&& key)
 {
     uint32_t keyCode;
     WTF::switchOn(key,

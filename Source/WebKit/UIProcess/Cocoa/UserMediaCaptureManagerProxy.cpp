@@ -157,7 +157,7 @@ private:
             m_startTime = time;
             m_captureSemaphore = makeUnique<IPC::Semaphore>();
             ASSERT(description.platformDescription().type == PlatformDescription::CAAudioStreamBasicType);
-            m_description = *WTF::get<const AudioStreamBasicDescription*>(description.platformDescription().description);
+            m_description = *std::get<const AudioStreamBasicDescription*>(description.platformDescription().description);
 
             m_frameChunkSize = std::max(WebCore::AudioUtilities::renderQuantumSize, AudioSession::sharedSession().preferredBufferSize());
 

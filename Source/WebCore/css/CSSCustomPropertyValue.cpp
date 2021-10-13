@@ -42,15 +42,15 @@ bool CSSCustomPropertyValue::equals(const CSSCustomPropertyValue& other) const
     return WTF::switchOn(m_value, [&](const std::monostate&) {
         return true;
     }, [&](const Ref<CSSVariableReferenceValue>& value) {
-        return value.get() == WTF::get<Ref<CSSVariableReferenceValue>>(other.m_value).get();
+        return value.get() == std::get<Ref<CSSVariableReferenceValue>>(other.m_value).get();
     }, [&](const CSSValueID& value) {
-        return value == WTF::get<CSSValueID>(other.m_value);
+        return value == std::get<CSSValueID>(other.m_value);
     }, [&](const Ref<CSSVariableData>& value) {
-        return value.get() == WTF::get<Ref<CSSVariableData>>(other.m_value).get();
+        return value.get() == std::get<Ref<CSSVariableData>>(other.m_value).get();
     }, [&](const Length& value) {
-        return value == WTF::get<Length>(other.m_value);
+        return value == std::get<Length>(other.m_value);
     }, [&](const Ref<StyleImage>& value) {
-        return value.get() == WTF::get<Ref<StyleImage>>(other.m_value).get();
+        return value.get() == std::get<Ref<StyleImage>>(other.m_value).get();
     });
 }
 

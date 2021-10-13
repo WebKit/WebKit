@@ -84,8 +84,8 @@ public:
 
     const AtomString& name() const { return m_name; }
     bool isResolved() const { return !std::holds_alternative<Ref<CSSVariableReferenceValue>>(m_value); }
-    bool isUnset() const { return std::holds_alternative<CSSValueID>(m_value) && WTF::get<CSSValueID>(m_value) == CSSValueUnset; }
-    bool isInvalid() const { return std::holds_alternative<CSSValueID>(m_value) && WTF::get<CSSValueID>(m_value) == CSSValueInvalid; }
+    bool isUnset() const { return std::holds_alternative<CSSValueID>(m_value) && std::get<CSSValueID>(m_value) == CSSValueUnset; }
+    bool isInvalid() const { return std::holds_alternative<CSSValueID>(m_value) && std::get<CSSValueID>(m_value) == CSSValueInvalid; }
 
     const VariantValue& value() const { return m_value; }
 

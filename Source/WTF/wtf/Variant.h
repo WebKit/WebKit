@@ -53,33 +53,6 @@
 
 namespace WTF {
 
-template<typename... Types>
-using Variant = std::variant<Types...>;
-
-template<typename _Type,typename ... _Types>
-constexpr _Type& get(Variant<_Types...>& __v)
-{
-    return std::get<_Type>(__v);
-}
-
-template<typename _Type,typename ... _Types>
-constexpr _Type&& get(Variant<_Types...>&& __v)
-{
-    return std::get<_Type>(WTFMove(__v));
-}
-
-template<typename _Type,typename ... _Types>
-constexpr _Type const& get(Variant<_Types...> const& __v)
-{
-    return std::get<_Type>(__v);
-}
-
-template<typename _Type,typename ... _Types>
-constexpr const _Type&& get(Variant<_Types...> const&& __v)
-{
-    return std::get<_Type>(WTFMove(__v));
-}
-
 // -- WebKit Additions --
 
 template<class V, class... F>
@@ -89,5 +62,3 @@ auto switchOn(V&& v, F&&... f) -> decltype(std::visit(makeVisitor(std::forward<F
 }
 
 } // namespace WTF
-
-using WTF::Variant;

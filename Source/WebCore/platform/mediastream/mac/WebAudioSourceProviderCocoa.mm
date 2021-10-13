@@ -140,7 +140,7 @@ void WebAudioSourceProviderCocoa::prepare(const AudioStreamBasicDescription& for
 void WebAudioSourceProviderCocoa::receivedNewAudioSamples(const PlatformAudioData& data, const AudioStreamDescription& description, size_t frameCount)
 {
     ASSERT(description.platformDescription().type == PlatformDescription::CAAudioStreamBasicType);
-    auto& basicDescription = *WTF::get<const AudioStreamBasicDescription*>(description.platformDescription().description);
+    auto& basicDescription = *std::get<const AudioStreamBasicDescription*>(description.platformDescription().description);
     if (!m_inputDescription || m_inputDescription->streamDescription() != basicDescription)
         prepare(basicDescription);
 

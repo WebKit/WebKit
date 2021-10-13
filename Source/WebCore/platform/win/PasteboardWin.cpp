@@ -1141,7 +1141,7 @@ void Pasteboard::writeCustomData(const Vector<PasteboardCustomData>& data)
             if (std::holds_alternative<String>(stringOrBuffer)) {
                 ClipboardDataType dataType = clipboardTypeFromMIMEType(type);
 
-                String str = WTF::get<String>(stringOrBuffer);
+                String str = std::get<String>(stringOrBuffer);
                 replaceNewlinesWithWindowsStyleNewlines(str);
                 HGLOBAL cbData = createGlobalData(str);
 

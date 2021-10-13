@@ -51,7 +51,7 @@ public:
 
     bool isValid() const { return !std::holds_alternative<Invalid>(m_style); }
     bool isCurrentColor() const { return std::holds_alternative<CurrentColor>(m_style); }
-    std::optional<float> overrideAlpha() const { return WTF::get<CurrentColor>(m_style).overrideAlpha; }
+    std::optional<float> overrideAlpha() const { return std::get<CurrentColor>(m_style).overrideAlpha; }
 
     String color() const;
     RefPtr<CanvasGradient> canvasGradient() const;
@@ -90,19 +90,19 @@ inline RefPtr<CanvasGradient> CanvasStyle::canvasGradient() const
 {
     if (!std::holds_alternative<RefPtr<CanvasGradient>>(m_style))
         return nullptr;
-    return WTF::get<RefPtr<CanvasGradient>>(m_style);
+    return std::get<RefPtr<CanvasGradient>>(m_style);
 }
 
 inline RefPtr<CanvasPattern> CanvasStyle::canvasPattern() const
 {
     if (!std::holds_alternative<RefPtr<CanvasPattern>>(m_style))
         return nullptr;
-    return WTF::get<RefPtr<CanvasPattern>>(m_style);
+    return std::get<RefPtr<CanvasPattern>>(m_style);
 }
 
 inline String CanvasStyle::color() const
 {
-    return serializationForHTML(WTF::get<Color>(m_style));
+    return serializationForHTML(std::get<Color>(m_style));
 }
 
 } // namespace WebCore

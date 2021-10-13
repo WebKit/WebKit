@@ -112,7 +112,7 @@ private:
         DisableMallocRestrictionsForCurrentThreadScope scope;
         if (m_description != description) {
             ASSERT(description.platformDescription().type == PlatformDescription::CAAudioStreamBasicType);
-            m_description = *WTF::get<const AudioStreamBasicDescription*>(description.platformDescription().description);
+            m_description = *std::get<const AudioStreamBasicDescription*>(description.platformDescription().description);
 
             m_numberOfFrames = m_description.sampleRate() * 2;
             m_ringBuffer.allocate(m_description.streamDescription(), m_numberOfFrames);

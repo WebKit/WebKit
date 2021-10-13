@@ -331,7 +331,7 @@ bool injectIDBKeyIntoScriptValue(JSGlobalObject& lexicalGlobalObject, const IDBK
 
     Vector<String> keyPathElements;
     IDBKeyPathParseError error;
-    IDBParseKeyPath(WTF::get<String>(keyPath), keyPathElements, error);
+    IDBParseKeyPath(std::get<String>(keyPath), keyPathElements, error);
     ASSERT(error == IDBKeyPathParseError::None);
 
     if (keyPathElements.isEmpty())
@@ -359,7 +359,7 @@ bool injectIDBKeyIntoScriptValue(JSGlobalObject& lexicalGlobalObject, const IDBK
 RefPtr<IDBKey> maybeCreateIDBKeyFromScriptValueAndKeyPath(JSGlobalObject& lexicalGlobalObject, JSValue value, const IDBKeyPath& keyPath)
 {
     if (std::holds_alternative<Vector<String>>(keyPath)) {
-        auto& array = WTF::get<Vector<String>>(keyPath);
+        auto& array = std::get<Vector<String>>(keyPath);
         Vector<RefPtr<IDBKey>> result;
         result.reserveInitialCapacity(array.size());
         for (auto& string : array) {
@@ -371,7 +371,7 @@ RefPtr<IDBKey> maybeCreateIDBKeyFromScriptValueAndKeyPath(JSGlobalObject& lexica
         return IDBKey::createArray(WTFMove(result));
     }
 
-    return internalCreateIDBKeyFromScriptValueAndKeyPath(lexicalGlobalObject, value, WTF::get<String>(keyPath));
+    return internalCreateIDBKeyFromScriptValueAndKeyPath(lexicalGlobalObject, value, std::get<String>(keyPath));
 }
 
 bool canInjectIDBKeyIntoScriptValue(JSGlobalObject& lexicalGlobalObject, JSValue scriptValue, const IDBKeyPath& keyPath)
@@ -381,7 +381,7 @@ bool canInjectIDBKeyIntoScriptValue(JSGlobalObject& lexicalGlobalObject, JSValue
     ASSERT(std::holds_alternative<String>(keyPath));
     Vector<String> keyPathElements;
     IDBKeyPathParseError error;
-    IDBParseKeyPath(WTF::get<String>(keyPath), keyPathElements, error);
+    IDBParseKeyPath(std::get<String>(keyPath), keyPathElements, error);
     ASSERT(error == IDBKeyPathParseError::None);
 
     if (!keyPathElements.size())

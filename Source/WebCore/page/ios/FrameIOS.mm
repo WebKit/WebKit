@@ -728,7 +728,7 @@ NSArray *Frame::interpretationsForCurrentRoot() const
     size_t interpretationsCount = 1;
 
     for (auto* marker : markersInRoot)
-        interpretationsCount *= WTF::get<Vector<String>>(marker->data()).size() + 1;
+        interpretationsCount *= std::get<Vector<String>>(marker->data()).size() + 1;
 
     Vector<Vector<UChar>> interpretations;
     interpretations.grow(interpretationsCount);
@@ -739,7 +739,7 @@ NSArray *Frame::interpretationsForCurrentRoot() const
 
     for (auto& node : intersectingNodes(rangeOfRootContents)) {
         for (auto* marker : document()->markers().markersFor(node, DocumentMarker::DictationPhraseWithAlternatives)) {
-            auto& alternatives = WTF::get<Vector<String>>(marker->data());
+            auto& alternatives = std::get<Vector<String>>(marker->data());
 
             auto rangeForMarker = makeSimpleRange(node, *marker);
 

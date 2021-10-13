@@ -93,7 +93,7 @@ void CtapAuthenticator::makeCredential()
     if (processGoogleLegacyAppIdSupportExtension())
         return;
     Vector<uint8_t> cborCmd;
-    auto& options = WTF::get<PublicKeyCredentialCreationOptions>(requestData().options);
+    auto& options = std::get<PublicKeyCredentialCreationOptions>(requestData().options);
     auto internalUVAvailability = m_info.options().userVerificationAvailability();
     // If UV is required, then either built-in uv or a pin will work.
     if (internalUVAvailability == UVAvailability::kSupportedAndConfigured && (!options.authenticatorSelection || options.authenticatorSelection->userVerification != UserVerificationRequirement::Discouraged))
@@ -112,7 +112,7 @@ void CtapAuthenticator::makeCredential()
 
 void CtapAuthenticator::continueMakeCredentialAfterResponseReceived(Vector<uint8_t>&& data)
 {
-    auto response = readCTAPMakeCredentialResponse(data, AuthenticatorAttachment::CrossPlatform, WTF::get<PublicKeyCredentialCreationOptions>(requestData().options).attestation);
+    auto response = readCTAPMakeCredentialResponse(data, AuthenticatorAttachment::CrossPlatform, std::get<PublicKeyCredentialCreationOptions>(requestData().options).attestation);
     if (!response) {
         auto error = getResponseCode(data);
 
@@ -138,7 +138,7 @@ void CtapAuthenticator::getAssertion()
 {
     ASSERT(!m_isDowngraded);
     Vector<uint8_t> cborCmd;
-    auto& options = WTF::get<PublicKeyCredentialRequestOptions>(requestData().options);
+    auto& options = std::get<PublicKeyCredentialRequestOptions>(requestData().options);
     auto internalUVAvailability = m_info.options().userVerificationAvailability();
     // If UV is required, then either built-in uv or a pin will work.
     if (internalUVAvailability == UVAvailability::kSupportedAndConfigured && options.userVerification != UserVerificationRequirement::Discouraged)
@@ -375,7 +375,7 @@ bool CtapAuthenticator::tryDowngrade()
 // Only U2F protocol is supported for Google legacy AppID support.
 bool CtapAuthenticator::processGoogleLegacyAppIdSupportExtension()
 {
-    auto& extensions = WTF::get<PublicKeyCredentialCreationOptions>(requestData().options).extensions;
+    auto& extensions = std::get<PublicKeyCredentialCreationOptions>(requestData().options).extensions;
     if (!extensions) {
         // AuthenticatorCoordinator::create should always set it.
         ASSERT_NOT_REACHED();

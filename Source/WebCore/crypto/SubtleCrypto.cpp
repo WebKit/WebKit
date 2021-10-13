@@ -95,12 +95,12 @@ static ExceptionOr<std::unique_ptr<CryptoAlgorithmParameters>> normalizeCryptoAl
 
     if (std::holds_alternative<String>(algorithmIdentifier)) {
         auto newParams = Strong<JSObject>(vm, constructEmptyObject(&state));
-        newParams->putDirect(vm, Identifier::fromString(vm, "name"), jsString(vm, WTF::get<String>(algorithmIdentifier)));
+        newParams->putDirect(vm, Identifier::fromString(vm, "name"), jsString(vm, std::get<String>(algorithmIdentifier)));
         
         return normalizeCryptoAlgorithmParameters(state, newParams, operation);
     }
 
-    auto& value = WTF::get<JSC::Strong<JSC::JSObject>>(algorithmIdentifier);
+    auto& value = std::get<JSC::Strong<JSC::JSObject>>(algorithmIdentifier);
 
     auto params = convertDictionary<CryptoAlgorithmParameters>(state, value.get());
     RETURN_IF_EXCEPTION(scope, Exception { ExistingExceptionError });
@@ -949,12 +949,12 @@ void SubtleCrypto::exportKey(KeyFormat format, CryptoKey& key, Ref<DeferredPromi
             case SubtleCrypto::KeyFormat::Spki:
             case SubtleCrypto::KeyFormat::Pkcs8:
             case SubtleCrypto::KeyFormat::Raw: {
-                Vector<uint8_t>& rawKey = WTF::get<Vector<uint8_t>>(key);
+                Vector<uint8_t>& rawKey = std::get<Vector<uint8_t>>(key);
                 fulfillPromiseWithArrayBuffer(promise.releaseNonNull(), rawKey.data(), rawKey.size());
                 return;
             }
             case SubtleCrypto::KeyFormat::Jwk:
-                promise->resolve<IDLDictionary<JsonWebKey>>(WTFMove(WTF::get<JsonWebKey>(key)));
+                promise->resolve<IDLDictionary<JsonWebKey>>(WTFMove(std::get<JsonWebKey>(key)));
                 return;
             }
             ASSERT_NOT_REACHED();
@@ -1025,11 +1025,11 @@ void SubtleCrypto::wrapKey(JSC::JSGlobalObject& state, KeyFormat format, CryptoK
                 case SubtleCrypto::KeyFormat::Spki:
                 case SubtleCrypto::KeyFormat::Pkcs8:
                 case SubtleCrypto::KeyFormat::Raw:
-                    bytes = WTF::get<Vector<uint8_t>>(key);
+                    bytes = std::get<Vector<uint8_t>>(key);
                     break;
                 case SubtleCrypto::KeyFormat::Jwk: {
                     // FIXME: Converting to JS just to JSON-Stringify seems inefficient. We should find a way to go directly from the struct to JSON.
-                    auto jwk = toJS<IDLDictionary<JsonWebKey>>(*(promise->globalObject()), *(promise->globalObject()), WTFMove(WTF::get<JsonWebKey>(key)));
+                    auto jwk = toJS<IDLDictionary<JsonWebKey>>(*(promise->globalObject()), *(promise->globalObject()), WTFMove(std::get<JsonWebKey>(key)));
                     String jwkString = JSONStringify(promise->globalObject(), jwk, 0);
                     CString jwkUtf8String = jwkString.utf8(StrictConversion);
                     bytes.append(jwkUtf8String.data(), jwkUtf8String.length());

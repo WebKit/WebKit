@@ -597,7 +597,7 @@ bool Connection::sendOutputMessage(UnixMessage& outputMessage)
         for (auto& attachment : attachments) {
             if (attachment.type() == Attachment::CustomWriterType) {
                 ASSERT(std::holds_alternative<Attachment::CustomWriterFunc>(attachment.customWriter()));
-                WTF::get<Attachment::CustomWriterFunc>(attachment.customWriter())(m_socketDescriptor);
+                std::get<Attachment::CustomWriterFunc>(attachment.customWriter())(m_socketDescriptor);
             }
         }
     }

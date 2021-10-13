@@ -110,14 +110,14 @@ private:
     bool isURLSearchParams() const { return std::holds_alternative<Ref<const URLSearchParams>>(m_data); }
     bool isText() const { return std::holds_alternative<String>(m_data); }
 
-    const Blob& blobBody() const { return WTF::get<Ref<const Blob>>(m_data).get(); }
-    FormData& formDataBody() { return WTF::get<Ref<FormData>>(m_data).get(); }
-    const FormData& formDataBody() const { return WTF::get<Ref<FormData>>(m_data).get(); }
-    const ArrayBuffer& arrayBufferBody() const { return WTF::get<Ref<const ArrayBuffer>>(m_data).get(); }
-    const ArrayBufferView& arrayBufferViewBody() const { return WTF::get<Ref<const ArrayBufferView>>(m_data).get(); }
-    String& textBody() { return WTF::get<String>(m_data); }
-    const String& textBody() const { return WTF::get<String>(m_data); }
-    const URLSearchParams& urlSearchParamsBody() const { return WTF::get<Ref<const URLSearchParams>>(m_data).get(); }
+    const Blob& blobBody() const { return std::get<Ref<const Blob>>(m_data).get(); }
+    FormData& formDataBody() { return std::get<Ref<FormData>>(m_data).get(); }
+    const FormData& formDataBody() const { return std::get<Ref<FormData>>(m_data).get(); }
+    const ArrayBuffer& arrayBufferBody() const { return std::get<Ref<const ArrayBuffer>>(m_data).get(); }
+    const ArrayBufferView& arrayBufferViewBody() const { return std::get<Ref<const ArrayBufferView>>(m_data).get(); }
+    String& textBody() { return std::get<String>(m_data); }
+    const String& textBody() const { return std::get<String>(m_data); }
+    const URLSearchParams& urlSearchParamsBody() const { return std::get<Ref<const URLSearchParams>>(m_data).get(); }
 
     using Data = std::variant<std::nullptr_t, Ref<const Blob>, Ref<FormData>, Ref<const ArrayBuffer>, Ref<const ArrayBufferView>, Ref<const URLSearchParams>, String>;
     Data m_data { nullptr };

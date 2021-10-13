@@ -192,13 +192,13 @@ LeafBoxIterator boxFor(const LayoutIntegration::InlineContent& content, size_t b
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 const BoxModernPath& Box::modernPath() const
 {
-    return WTF::get<BoxModernPath>(m_pathVariant);
+    return std::get<BoxModernPath>(m_pathVariant);
 }
 #endif
 
 const BoxLegacyPath& Box::legacyPath() const
 {
-    return WTF::get<BoxLegacyPath>(m_pathVariant);
+    return std::get<BoxLegacyPath>(m_pathVariant);
 }
 
 }

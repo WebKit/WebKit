@@ -277,14 +277,14 @@ TDZEnvironment& CompactTDZEnvironment::toTDZEnvironmentSlow() const
 {
     Inflated inflated;
     {
-        auto& compact = WTF::get<Compact>(m_variables);
+        auto& compact = std::get<Compact>(m_variables);
         for (size_t i = 0; i < compact.size(); ++i) {
             auto addResult = inflated.add(compact[i]);
             ASSERT_UNUSED(addResult, addResult.isNewEntry);
         }
     }
     m_variables = Variables(WTFMove(inflated));
-    return const_cast<Inflated&>(WTF::get<Inflated>(m_variables));
+    return const_cast<Inflated&>(std::get<Inflated>(m_variables));
 }
 
 CompactTDZEnvironmentMap::Handle CompactTDZEnvironmentMap::get(const TDZEnvironment& env)

@@ -212,10 +212,10 @@ void ClipboardItemBindingsDataSource::invokeCompletionHandler()
     for (auto& itemTypeLoader : itemTypeLoaders) {
         auto type = itemTypeLoader->type();
         auto& data = itemTypeLoader->data();
-        if (std::holds_alternative<String>(data) && !!WTF::get<String>(data))
-            customData.writeString(type, WTF::get<String>(data));
+        if (std::holds_alternative<String>(data) && !!std::get<String>(data))
+            customData.writeString(type, std::get<String>(data));
         else if (std::holds_alternative<Ref<SharedBuffer>>(data))
-            customData.writeData(type, WTF::get<Ref<SharedBuffer>>(data).copyRef());
+            customData.writeData(type, std::get<Ref<SharedBuffer>>(data).copyRef());
         else {
             completionHandler(std::nullopt);
             return;
@@ -264,10 +264,10 @@ void ClipboardItemBindingsDataSource::ClipboardItemTypeLoader::sanitizeDataIfNee
     if (m_type == "text/html"_s) {
         String markupToSanitize;
         if (std::holds_alternative<Ref<SharedBuffer>>(m_data)) {
-            auto& buffer = WTF::get<Ref<SharedBuffer>>(m_data);
+            auto& buffer = std::get<Ref<SharedBuffer>>(m_data);
             markupToSanitize = String::fromUTF8(buffer->data(), buffer->size());
         } else if (std::holds_alternative<String>(m_data))
-            markupToSanitize = WTF::get<String>(m_data);
+            markupToSanitize = std::get<String>(m_data);
 
         if (markupToSanitize.isEmpty())
             return;
@@ -278,9 +278,9 @@ void ClipboardItemBindingsDataSource::ClipboardItemTypeLoader::sanitizeDataIfNee
     if (m_type == "image/png"_s) {
         RefPtr<SharedBuffer> bufferToSanitize;
         if (std::holds_alternative<Ref<SharedBuffer>>(m_data))
-            bufferToSanitize = WTF::get<Ref<SharedBuffer>>(m_data).ptr();
+            bufferToSanitize = std::get<Ref<SharedBuffer>>(m_data).ptr();
         else if (std::holds_alternative<String>(m_data))
-            bufferToSanitize = utf8Buffer(WTF::get<String>(m_data));
+            bufferToSanitize = utf8Buffer(std::get<String>(m_data));
 
         if (!bufferToSanitize || bufferToSanitize->isEmpty())
             return;

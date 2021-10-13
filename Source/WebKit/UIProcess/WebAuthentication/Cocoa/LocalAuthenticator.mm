@@ -197,7 +197,7 @@ void LocalAuthenticator::makeCredential()
     using namespace LocalAuthenticatorInternal;
     ASSERT(m_state == State::Init);
     m_state = State::RequestReceived;
-    auto& creationOptions = WTF::get<PublicKeyCredentialCreationOptions>(requestData().options);
+    auto& creationOptions = std::get<PublicKeyCredentialCreationOptions>(requestData().options);
 
     // The following implements https://www.w3.org/TR/webauthn/#op-make-cred as of 5 December 2017.
     // Skip Step 4-5 as requireResidentKey and requireUserVerification are enforced.
@@ -266,7 +266,7 @@ void LocalAuthenticator::continueMakeCredentialAfterDecidePolicy(LocalAuthentica
     ASSERT(m_state == State::RequestReceived);
     m_state = State::PolicyDecided;
 
-    auto& creationOptions = WTF::get<PublicKeyCredentialCreationOptions>(requestData().options);
+    auto& creationOptions = std::get<PublicKeyCredentialCreationOptions>(requestData().options);
 
     if (policy == LocalAuthenticatorPolicy::Disallow) {
         receiveRespond(ExceptionData { UnknownError, "Disallow local authenticator."_s });
@@ -328,7 +328,7 @@ void LocalAuthenticator::continueMakeCredentialAfterUserVerification(SecAccessCo
 
     ASSERT(m_state == State::PolicyDecided);
     m_state = State::UserVerified;
-    auto& creationOptions = WTF::get<PublicKeyCredentialCreationOptions>(requestData().options);
+    auto& creationOptions = std::get<PublicKeyCredentialCreationOptions>(requestData().options);
 
     if (!validateUserVerification(verification))
         return;
@@ -437,7 +437,7 @@ void LocalAuthenticator::continueMakeCredentialAfterAttested(Vector<uint8_t>&& c
 
     ASSERT(m_state == State::UserVerified);
     m_state = State::Attested;
-    auto& creationOptions = WTF::get<PublicKeyCredentialCreationOptions>(requestData().options);
+    auto& creationOptions = std::get<PublicKeyCredentialCreationOptions>(requestData().options);
 
     if (error) {
         receiveException({ UnknownError, makeString("Couldn't attest: ", String(error.localizedDescription)) });
@@ -467,7 +467,7 @@ void LocalAuthenticator::getAssertion()
     using namespace LocalAuthenticatorInternal;
     ASSERT(m_state == State::Init);
     m_state = State::RequestReceived;
-    auto& requestOptions = WTF::get<PublicKeyCredentialRequestOptions>(requestData().options);
+    auto& requestOptions = std::get<PublicKeyCredentialRequestOptions>(requestData().options);
 
     // The following implements https://www.w3.org/TR/webauthn/#op-get-assertion as of 5 December 2017.
     // Skip Step 2 as requireUserVerification is enforced.
@@ -549,7 +549,7 @@ void LocalAuthenticator::continueGetAssertionAfterResponseSelected(Ref<WebCore::
         return;
     }
 
-    auto& requestOptions = WTF::get<PublicKeyCredentialRequestOptions>(requestData().options);
+    auto& requestOptions = std::get<PublicKeyCredentialRequestOptions>(requestData().options);
 
     auto accessControlRef = response->accessControl();
     auto callback = [
@@ -575,7 +575,7 @@ void LocalAuthenticator::continueGetAssertionAfterUserVerification(Ref<WebCore::
         return;
 
     // Step 10.
-    auto requestOptions = WTF::get<PublicKeyCredentialRequestOptions>(requestData().options);
+    auto requestOptions = std::get<PublicKeyCredentialRequestOptions>(requestData().options);
     auto authData = buildAuthData(requestOptions.rpId, verification == LocalConnection::UserVerification::Presence ? otherGetAssertionFlags : getAssertionFlags, counter, { });
 
     // Step 11.
@@ -671,7 +671,7 @@ void LocalAuthenticator::deleteDuplicateCredential() const
 {
     using namespace LocalAuthenticatorInternal;
 
-    auto& creationOptions = WTF::get<PublicKeyCredentialCreationOptions>(requestData().options);
+    auto& creationOptions = std::get<PublicKeyCredentialCreationOptions>(requestData().options);
     m_existingCredentials.findMatching([creationOptions] (auto& credential) {
         auto* userHandle = credential->userHandle();
         ASSERT(userHandle);

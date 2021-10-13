@@ -57,17 +57,17 @@ public:
 
     bool isAuto() const
     {
-        return hasDecodingMode() && WTF::get<DecodingMode>(m_decodingModeOrSize) == DecodingMode::Auto;
+        return hasDecodingMode() && std::get<DecodingMode>(m_decodingModeOrSize) == DecodingMode::Auto;
     }
     
     bool isSynchronous() const
     {
-        return hasDecodingMode() && WTF::get<DecodingMode>(m_decodingModeOrSize) == DecodingMode::Synchronous;
+        return hasDecodingMode() && std::get<DecodingMode>(m_decodingModeOrSize) == DecodingMode::Synchronous;
     }
 
     bool isAsynchronous() const
     {
-        return hasDecodingMode() && WTF::get<DecodingMode>(m_decodingModeOrSize) == DecodingMode::Asynchronous;
+        return hasDecodingMode() && std::get<DecodingMode>(m_decodingModeOrSize) == DecodingMode::Asynchronous;
     }
 
     bool isAsynchronousCompatibleWith(const DecodingOptions& decodingOptions) const
@@ -111,7 +111,7 @@ public:
     std::optional<IntSize> sizeForDrawing() const
     {
         ASSERT(hasSize());
-        return WTF::get<std::optional<IntSize>>(m_decodingModeOrSize);
+        return std::get<std::optional<IntSize>>(m_decodingModeOrSize);
     }
 
     static int maxDimension(const IntSize& size)

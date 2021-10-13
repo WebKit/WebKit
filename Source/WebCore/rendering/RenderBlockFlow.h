@@ -608,12 +608,12 @@ inline bool RenderBlockFlow::hasLegacyLineLayout() const
 
 inline const LegacyLineLayout* RenderBlockFlow::legacyLineLayout() const
 {
-    return hasLegacyLineLayout() ? WTF::get<std::unique_ptr<LegacyLineLayout>>(m_lineLayout).get() : nullptr;
+    return hasLegacyLineLayout() ? std::get<std::unique_ptr<LegacyLineLayout>>(m_lineLayout).get() : nullptr;
 }
 
 inline LegacyLineLayout* RenderBlockFlow::legacyLineLayout()
 {
-    return hasLegacyLineLayout() ? WTF::get<std::unique_ptr<LegacyLineLayout>>(m_lineLayout).get() : nullptr;
+    return hasLegacyLineLayout() ? std::get<std::unique_ptr<LegacyLineLayout>>(m_lineLayout).get() : nullptr;
 }
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
@@ -624,12 +624,12 @@ inline bool RenderBlockFlow::hasModernLineLayout() const
 
 inline const LayoutIntegration::LineLayout* RenderBlockFlow::modernLineLayout() const
 {
-    return hasModernLineLayout() ? WTF::get<std::unique_ptr<LayoutIntegration::LineLayout>>(m_lineLayout).get() : nullptr;
+    return hasModernLineLayout() ? std::get<std::unique_ptr<LayoutIntegration::LineLayout>>(m_lineLayout).get() : nullptr;
 }
 
 inline LayoutIntegration::LineLayout* RenderBlockFlow::modernLineLayout()
 {
-    return hasModernLineLayout() ? WTF::get<std::unique_ptr<LayoutIntegration::LineLayout>>(m_lineLayout).get() : nullptr;
+    return hasModernLineLayout() ? std::get<std::unique_ptr<LayoutIntegration::LineLayout>>(m_lineLayout).get() : nullptr;
 }
 #endif
 

@@ -247,14 +247,14 @@ bool ProcessThrottler::isValidBackgroundActivity(const ProcessThrottler::Activit
 {
     if (!std::holds_alternative<UniqueRef<ProcessThrottler::BackgroundActivity>>(activity))
         return false;
-    return WTF::get<UniqueRef<ProcessThrottler::BackgroundActivity>>(activity)->isValid();
+    return std::get<UniqueRef<ProcessThrottler::BackgroundActivity>>(activity)->isValid();
 }
 
 bool ProcessThrottler::isValidForegroundActivity(const ProcessThrottler::ActivityVariant& activity)
 {
     if (!std::holds_alternative<UniqueRef<ProcessThrottler::ForegroundActivity>>(activity))
         return false;
-    return WTF::get<UniqueRef<ProcessThrottler::ForegroundActivity>>(activity)->isValid();
+    return std::get<UniqueRef<ProcessThrottler::ForegroundActivity>>(activity)->isValid();
 }
 
 ProcessThrottler::TimedActivity::TimedActivity(Seconds timeout, ProcessThrottler::ActivityVariant&& activity)

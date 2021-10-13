@@ -238,7 +238,7 @@ static bool shouldInsertAsSeparateMarker(const DocumentMarker& marker)
 #endif
 
     if (marker.type() == DocumentMarker::DraggedContent)
-        return is<RenderReplaced>(WTF::get<RefPtr<Node>>(marker.data())->renderer());
+        return is<RenderReplaced>(std::get<RefPtr<Node>>(marker.data())->renderer());
 
     return false;
 }

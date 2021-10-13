@@ -61,7 +61,7 @@ ServiceWorkerRegistrationKey ServiceWorkerJobData::registrationKey() const
 std::optional<ServiceWorkerClientIdentifier> ServiceWorkerJobData::serviceWorkerPageIdentifier() const
 {
     if (isFromServiceWorkerPage && std::holds_alternative<ServiceWorkerClientIdentifier>(sourceContext))
-        return WTF::get<ServiceWorkerClientIdentifier>(sourceContext);
+        return std::get<ServiceWorkerClientIdentifier>(sourceContext);
     return std::nullopt;
 }
 

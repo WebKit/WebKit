@@ -365,14 +365,14 @@ void Device::FrameData::View::encode(Encoder& encoder) const
     bool hasFov = std::holds_alternative<PlatformXR::Device::FrameData::Fov>(projection);
     encoder << hasFov;
     if (hasFov) {
-        encoder << WTF::get<PlatformXR::Device::FrameData::Fov>(projection);
+        encoder << std::get<PlatformXR::Device::FrameData::Fov>(projection);
         return;
     }
 
     bool hasProjectionMatrix = std::holds_alternative<PlatformXR::Device::FrameData::ProjectionMatrix>(projection);
     encoder << hasProjectionMatrix;
     if (hasProjectionMatrix) {
-        for (float f : WTF::get<PlatformXR::Device::FrameData::ProjectionMatrix>(projection))
+        for (float f : std::get<PlatformXR::Device::FrameData::ProjectionMatrix>(projection))
             encoder << f;
         return;
     }

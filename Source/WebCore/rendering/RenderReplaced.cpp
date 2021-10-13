@@ -138,7 +138,7 @@ bool RenderReplaced::shouldDrawSelectionTint() const
 inline static bool draggedContentContainsReplacedElement(const Vector<RenderedDocumentMarker*>& markers, const Element& element)
 {
     for (auto* marker : markers) {
-        if (WTF::get<RefPtr<Node>>(marker->data()) == &element)
+        if (std::get<RefPtr<Node>>(marker->data()) == &element)
             return true;
     }
     return false;

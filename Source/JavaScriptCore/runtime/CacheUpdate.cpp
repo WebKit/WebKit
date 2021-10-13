@@ -54,13 +54,13 @@ bool CacheUpdate::isGlobal() const
 const CacheUpdate::GlobalUpdate& CacheUpdate::asGlobal() const
 {
     ASSERT(isGlobal());
-    return WTF::get<GlobalUpdate>(m_update);
+    return std::get<GlobalUpdate>(m_update);
 }
 
 const CacheUpdate::FunctionUpdate& CacheUpdate::asFunction() const
 {
     ASSERT(!isGlobal());
-    return WTF::get<FunctionUpdate>(m_update);
+    return std::get<FunctionUpdate>(m_update);
 }
 
 } // namespace JSC

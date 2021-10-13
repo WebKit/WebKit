@@ -250,7 +250,7 @@ void AlternativeTextController::timerFired()
     case AlternativeTextTypeReversion: {
         if (!m_rangeWithAlternative)
             break;
-        String replacementString = WTF::get<AutocorrectionReplacement>(m_details);
+        String replacementString = std::get<AutocorrectionReplacement>(m_details);
         if (replacementString.isEmpty())
             break;
         m_isActive = true;
@@ -287,7 +287,7 @@ void AlternativeTextController::timerFired()
 #if USE(DICTATION_ALTERNATIVES)
         if (!m_rangeWithAlternative)
             return;
-        auto dictationContext = WTF::get<DictationContext>(m_details);
+        auto dictationContext = std::get<DictationContext>(m_details);
         if (!dictationContext)
             return;
         auto boundingBox = rootViewRectForRange(*m_rangeWithAlternative);
@@ -557,7 +557,7 @@ bool AlternativeTextController::respondToMarkerAtEndOfWord(const DocumentMarker&
         startAlternativeTextUITimer(AlternativeTextTypeReversion);
         break;
     case DocumentMarker::DictationAlternatives: {
-        auto& markerData = WTF::get<DocumentMarker::DictationData>(marker.data());
+        auto& markerData = std::get<DocumentMarker::DictationData>(marker.data());
         if (currentWord != markerData.originalText)
             return false;
         m_rangeWithAlternative = WTFMove(wordRange);
@@ -648,7 +648,7 @@ void AlternativeTextController::removeDictationAlternativesForMarker(const Docum
 {
 #if USE(DICTATION_ALTERNATIVES)
     if (auto* client = alternativeTextClient())
-        client->removeDictationAlternatives(WTF::get<DocumentMarker::DictationData>(marker.data()).context);
+        client->removeDictationAlternatives(std::get<DocumentMarker::DictationData>(marker.data()).context);
 #else
     UNUSED_PARAM(marker);
 #endif
@@ -658,7 +658,7 @@ Vector<String> AlternativeTextController::dictationAlternativesForMarker(const D
 {
 #if USE(DICTATION_ALTERNATIVES)
     if (auto* client = alternativeTextClient())
-        return client->dictationAlternatives(WTF::get<DocumentMarker::DictationData>(marker.data()).context);
+        return client->dictationAlternatives(std::get<DocumentMarker::DictationData>(marker.data()).context);
     return Vector<String>();
 #else
     UNUSED_PARAM(marker);

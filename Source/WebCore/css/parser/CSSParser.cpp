@@ -218,7 +218,7 @@ RefPtr<CSSValue> CSSParser::parseValueWithVariableReferences(CSSPropertyID propI
     }
 
     const auto& customPropValue = downcast<CSSCustomPropertyValue>(value);
-    const auto& valueWithReferences = WTF::get<Ref<CSSVariableReferenceValue>>(customPropValue.value()).get();
+    const auto& valueWithReferences = std::get<Ref<CSSVariableReferenceValue>>(customPropValue.value()).get();
 
     auto& name = downcast<CSSCustomPropertyValue>(value).name();
     auto* registered = builderState.document().getCSSRegisteredCustomPropertySet().get(name);

@@ -330,7 +330,7 @@ void WebPage::getPlatformEditorState(Frame& frame, EditorState& result) const
     if (selectedRange) {
         auto markers = frame.document()->markers().markersInRange(*selectedRange, DocumentMarker::MarkerType::DictationAlternatives);
         postLayoutData.dictationContextsForSelection = WTF::map(markers, [] (auto* marker) {
-            return WTF::get<DocumentMarker::DictationData>(marker->data()).context;
+            return std::get<DocumentMarker::DictationData>(marker->data()).context;
         });
     }
 #endif

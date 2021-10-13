@@ -109,7 +109,7 @@ MockAudioSharedUnit::MockAudioSharedUnit()
 void MockAudioSharedUnit::resetSampleRate()
 {
     if (auto device = MockRealtimeMediaSourceCenter::mockDeviceWithPersistentID(persistentID()))
-        setSampleRate(WTF::get<MockMicrophoneProperties>(device->properties).defaultSampleRate);
+        setSampleRate(std::get<MockMicrophoneProperties>(device->properties).defaultSampleRate);
 }
 
 bool MockAudioSharedUnit::hasAudioUnit() const

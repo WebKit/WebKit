@@ -424,12 +424,12 @@ template <typename DataType> inline bool Path::hasInlineData() const
 
 template<typename DataType> inline const DataType& Path::inlineData() const
 {
-    return WTF::get<DataType>(m_inlineData);
+    return std::get<DataType>(m_inlineData);
 }
 
 template<typename DataType> inline DataType& Path::inlineData()
 {
-    return WTF::get<DataType>(m_inlineData);
+    return std::get<DataType>(m_inlineData);
 }
 
 inline bool Path::hasInlineData() const

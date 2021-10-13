@@ -143,14 +143,14 @@ CanvasStyle CanvasStyle::createFromStringWithOverrideAlpha(const String& colorSt
 bool CanvasStyle::isEquivalentColor(const CanvasStyle& other) const
 {
     if (std::holds_alternative<Color>(m_style) && std::holds_alternative<Color>(other.m_style))
-        return WTF::get<Color>(m_style) == WTF::get<Color>(other.m_style);
+        return std::get<Color>(m_style) == std::get<Color>(other.m_style);
 
     return false;
 }
 
 bool CanvasStyle::isEquivalent(const SRGBA<float>& components) const
 {
-    return std::holds_alternative<Color>(m_style) && WTF::get<Color>(m_style) == convertColor<SRGBA<uint8_t>>(components);
+    return std::holds_alternative<Color>(m_style) && std::get<Color>(m_style) == convertColor<SRGBA<uint8_t>>(components);
 }
 
 void CanvasStyle::applyStrokeColor(GraphicsContext& context) const

@@ -207,7 +207,7 @@ ExceptionOr<Ref<FetchRequest>> DOMCache::requestFromInfo(RequestInfo&& info, boo
 {
     RefPtr<FetchRequest> request;
     if (std::holds_alternative<RefPtr<FetchRequest>>(info)) {
-        request = WTF::get<RefPtr<FetchRequest>>(info).releaseNonNull();
+        request = std::get<RefPtr<FetchRequest>>(info).releaseNonNull();
         if (request->method() != "GET" && !ignoreMethod)
             return Exception { TypeError, "Request method is not GET"_s };
     } else

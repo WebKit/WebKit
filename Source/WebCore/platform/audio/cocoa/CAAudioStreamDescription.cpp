@@ -234,7 +234,7 @@ bool CAAudioStreamDescription::operator==(const AudioStreamDescription& other) c
     if (other.platformDescription().type != PlatformDescription::CAAudioStreamBasicType)
         return false;
 
-    return operator==(*WTF::get<const AudioStreamBasicDescription*>(other.platformDescription().description));
+    return operator==(*std::get<const AudioStreamBasicDescription*>(other.platformDescription().description));
 }
 
 bool CAAudioStreamDescription::operator!=(const AudioStreamDescription& other) const

@@ -356,7 +356,7 @@ public:
     TDZEnvironment& toTDZEnvironment() const
     {
         if (std::holds_alternative<Inflated>(m_variables))
-            return const_cast<TDZEnvironment&>(WTF::get<Inflated>(m_variables));
+            return const_cast<TDZEnvironment&>(std::get<Inflated>(m_variables));
         return toTDZEnvironmentSlow();
     }
 

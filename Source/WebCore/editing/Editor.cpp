@@ -2277,7 +2277,7 @@ void Editor::advanceToNextMisspelling(bool startBeforeSelection)
         if (auto* word = std::get_if<TextCheckingHelper::MisspelledWord>(&foundItem))
             misspelledWord = WTFMove(*word);
         else
-            ungrammaticalPhrase = WTF::get<TextCheckingHelper::UngrammaticalPhrase>(WTFMove(foundItem));
+            ungrammaticalPhrase = std::get<TextCheckingHelper::UngrammaticalPhrase>(WTFMove(foundItem));
     } else {
         misspelledWord = TextCheckingHelper(*client(), spellingSearchRange).findFirstMisspelledWord();
 
@@ -2304,7 +2304,7 @@ void Editor::advanceToNextMisspelling(bool startBeforeSelection)
             if (auto* word = std::get_if<TextCheckingHelper::MisspelledWord>(&foundItem))
                 misspelledWord = WTFMove(*word);
             else
-                ungrammaticalPhrase = WTF::get<TextCheckingHelper::UngrammaticalPhrase>(WTFMove(foundItem));
+                ungrammaticalPhrase = std::get<TextCheckingHelper::UngrammaticalPhrase>(WTFMove(foundItem));
         } else {
             misspelledWord = TextCheckingHelper(*client(), spellingSearchRange).findFirstMisspelledWord();
 

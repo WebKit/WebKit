@@ -300,8 +300,8 @@ public:
 
     bool isStatement() const { return std::holds_alternative<Vector<CascadeLayerName>>(m_nameVariant); }
 
-    auto& name() const { return WTF::get<CascadeLayerName>(m_nameVariant); }
-    auto& nameList() const { return WTF::get<Vector<CascadeLayerName>>(m_nameVariant); }
+    auto& name() const { return std::get<CascadeLayerName>(m_nameVariant); }
+    auto& nameList() const { return std::get<Vector<CascadeLayerName>>(m_nameVariant); }
 
 private:
     StyleRuleLayer(Vector<CascadeLayerName>&&);

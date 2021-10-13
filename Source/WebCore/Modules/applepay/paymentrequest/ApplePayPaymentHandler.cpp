@@ -105,7 +105,7 @@ bool ApplePayPaymentHandler::handlesIdentifier(const PaymentRequest::MethodIdent
     if (!std::holds_alternative<URL>(identifier))
         return false;
 
-    auto& url = WTF::get<URL>(identifier);
+    auto& url = std::get<URL>(identifier);
     return url.host() == "apple.com" && url.path() == "/apple-pay";
 }
 
@@ -711,7 +711,7 @@ unsigned ApplePayPaymentHandler::version() const
 void ApplePayPaymentHandler::validateMerchant(URL&& validationURL)
 {
     if (validationURL.isValid())
-        m_paymentRequest->dispatchEvent(MerchantValidationEvent::create(eventNames().merchantvalidationEvent, WTF::get<URL>(m_identifier).string(), WTFMove(validationURL)).get());
+        m_paymentRequest->dispatchEvent(MerchantValidationEvent::create(eventNames().merchantvalidationEvent, std::get<URL>(m_identifier).string(), WTFMove(validationURL)).get());
 }
 
 static Ref<PaymentAddress> convert(const ApplePayPaymentContact& contact)
@@ -736,7 +736,7 @@ void ApplePayPaymentHandler::didAuthorizePayment(const Payment& payment)
         return toJSDictionary(lexicalGlobalObject, applePayPayment);
     };
 
-    m_paymentRequest->accept(WTF::get<URL>(m_identifier).string(), WTFMove(detailsFunction), convert(shippingContact), shippingContact.localizedName, shippingContact.emailAddress, shippingContact.phoneNumber);
+    m_paymentRequest->accept(std::get<URL>(m_identifier).string(), WTFMove(detailsFunction), convert(shippingContact), shippingContact.localizedName, shippingContact.emailAddress, shippingContact.phoneNumber);
 }
 
 void ApplePayPaymentHandler::didSelectShippingMethod(const ApplePayShippingMethod& shippingMethod)
@@ -762,7 +762,7 @@ void ApplePayPaymentHandler::didSelectPaymentMethod(const PaymentMethod& payment
 
     auto applePayPaymentMethod = paymentMethod.toApplePayPaymentMethod();
     m_selectedPaymentMethodType = applePayPaymentMethod.type;
-    m_paymentRequest->paymentMethodChanged(WTF::get<URL>(m_identifier).string(), [applePayPaymentMethod = WTFMove(applePayPaymentMethod)](JSC::JSGlobalObject& lexicalGlobalObject) {
+    m_paymentRequest->paymentMethodChanged(std::get<URL>(m_identifier).string(), [applePayPaymentMethod = WTFMove(applePayPaymentMethod)](JSC::JSGlobalObject& lexicalGlobalObject) {
         return toJSDictionary(lexicalGlobalObject, applePayPaymentMethod);
     });
 }
@@ -775,7 +775,7 @@ void ApplePayPaymentHandler::didChangeCouponCode(String&& couponCode)
     m_updateState = UpdateState::CouponCode;
 
     ApplePayCouponCodeDetails applePayCouponCodeDetails { WTFMove(couponCode) };
-    m_paymentRequest->paymentMethodChanged(WTF::get<URL>(m_identifier).string(), [applePayCouponCodeDetails = WTFMove(applePayCouponCodeDetails)] (JSC::JSGlobalObject& lexicalGlobalObject) {
+    m_paymentRequest->paymentMethodChanged(std::get<URL>(m_identifier).string(), [applePayCouponCodeDetails = WTFMove(applePayCouponCodeDetails)] (JSC::JSGlobalObject& lexicalGlobalObject) {
         return toJSDictionary(lexicalGlobalObject, applePayCouponCodeDetails);
     });
 }

@@ -2298,11 +2298,11 @@ start:
             if (!parseNumberResult)
                 tokenData->doubleValue = 0;
             else if (std::holds_alternative<double>(*parseNumberResult))
-                tokenData->doubleValue = WTF::get<double>(*parseNumberResult);
+                tokenData->doubleValue = std::get<double>(*parseNumberResult);
             else {
                 token = BIGINT;
                 shift();
-                tokenData->bigIntString = WTF::get<const Identifier*>(*parseNumberResult);
+                tokenData->bigIntString = std::get<const Identifier*>(*parseNumberResult);
                 tokenData->radix = 16;
             }
 
@@ -2337,11 +2337,11 @@ start:
             if (!parseNumberResult)
                 tokenData->doubleValue = 0;
             else if (std::holds_alternative<double>(*parseNumberResult))
-                tokenData->doubleValue = WTF::get<double>(*parseNumberResult);
+                tokenData->doubleValue = std::get<double>(*parseNumberResult);
             else {
                 token = BIGINT;
                 shift();
-                tokenData->bigIntString = WTF::get<const Identifier*>(*parseNumberResult);
+                tokenData->bigIntString = std::get<const Identifier*>(*parseNumberResult);
                 tokenData->radix = 2;
             }
 
@@ -2377,11 +2377,11 @@ start:
             if (!parseNumberResult)
                 tokenData->doubleValue = 0;
             else if (std::holds_alternative<double>(*parseNumberResult))
-                tokenData->doubleValue = WTF::get<double>(*parseNumberResult);
+                tokenData->doubleValue = std::get<double>(*parseNumberResult);
             else {
                 token = BIGINT;
                 shift();
-                tokenData->bigIntString = WTF::get<const Identifier*>(*parseNumberResult);
+                tokenData->bigIntString = std::get<const Identifier*>(*parseNumberResult);
                 tokenData->radix = 8;
             }
 
@@ -2418,7 +2418,7 @@ start:
         if (isASCIIOctalDigit(m_current)) {
             auto parseNumberResult = parseOctal();
             if (parseNumberResult && std::holds_alternative<double>(*parseNumberResult)) {
-                tokenData->doubleValue = WTF::get<double>(*parseNumberResult);
+                tokenData->doubleValue = std::get<double>(*parseNumberResult);
                 token = tokenTypeForIntegerLikeToken(tokenData->doubleValue);
             }
         }
@@ -2428,12 +2428,12 @@ start:
             auto parseNumberResult = parseDecimal();
             if (parseNumberResult) {
                 if (std::holds_alternative<double>(*parseNumberResult)) {
-                    tokenData->doubleValue = WTF::get<double>(*parseNumberResult);
+                    tokenData->doubleValue = std::get<double>(*parseNumberResult);
                     token = tokenTypeForIntegerLikeToken(tokenData->doubleValue);
                 } else {
                     token = BIGINT;
                     shift();
-                    tokenData->bigIntString = WTF::get<const Identifier*>(*parseNumberResult);
+                    tokenData->bigIntString = std::get<const Identifier*>(*parseNumberResult);
                     tokenData->radix = 10;
                 }
             } else {

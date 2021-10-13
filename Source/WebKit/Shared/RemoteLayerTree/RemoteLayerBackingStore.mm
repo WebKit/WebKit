@@ -462,7 +462,7 @@ void RemoteLayerBackingStore::applyBackingStoreToLayer(CALayer *layer, LayerCont
             return;
         [layer setValue:@1 forKeyPath:WKCGDisplayListEnabledKey];
         [layer setValue:@1 forKeyPath:WKCGDisplayListBifurcationEnabledKey];
-        auto data = WTF::get<IPC::SharedBufferCopy>(*m_displayListBufferHandle).buffer()->createCFData();
+        auto data = std::get<IPC::SharedBufferCopy>(*m_displayListBufferHandle).buffer()->createCFData();
         [(WKCompositingLayer *)layer _setWKContents:contents.get() withDisplayList:data.get()];
         return;
     }

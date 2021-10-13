@@ -80,7 +80,7 @@ void WebServiceWorkerFetchTaskClient::didReceiveData(Ref<SharedBuffer>&& buffer)
         if (!std::holds_alternative<Ref<SharedBuffer>>(m_responseData))
             m_responseData = buffer->copy();
         else
-            WTF::get<Ref<SharedBuffer>>(m_responseData)->append(WTFMove(buffer));
+            std::get<Ref<SharedBuffer>>(m_responseData)->append(WTFMove(buffer));
         return;
     }
 

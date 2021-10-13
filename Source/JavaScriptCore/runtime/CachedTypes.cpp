@@ -1038,10 +1038,10 @@ public:
     void encode(Encoder& encoder, const CompactTDZEnvironment& env)
     {
         if (std::holds_alternative<CompactTDZEnvironment::Compact>(env.m_variables))
-            m_variables.encode(encoder, WTF::get<CompactTDZEnvironment::Compact>(env.m_variables));
+            m_variables.encode(encoder, std::get<CompactTDZEnvironment::Compact>(env.m_variables));
         else {
             CompactTDZEnvironment::Compact compact;
-            for (auto& key : WTF::get<CompactTDZEnvironment::Inflated>(env.m_variables))
+            for (auto& key : std::get<CompactTDZEnvironment::Inflated>(env.m_variables))
                 compact.append(key);
             m_variables.encode(encoder, compact);
         }

@@ -1544,12 +1544,12 @@ void ArgumentCoder<PasteboardCustomData::Entry>::encode(Encoder& encoder, const 
     bool hasString = std::holds_alternative<String>(platformData);
     encoder << hasString;
     if (hasString)
-        encoder << WTF::get<String>(platformData);
+        encoder << std::get<String>(platformData);
 
     bool hasBuffer = std::holds_alternative<Ref<SharedBuffer>>(platformData);
     encoder << hasBuffer;
     if (hasBuffer)
-        encodeSharedBuffer(encoder, WTF::get<Ref<SharedBuffer>>(platformData).ptr());
+        encodeSharedBuffer(encoder, std::get<Ref<SharedBuffer>>(platformData).ptr());
 }
 
 bool ArgumentCoder<PasteboardCustomData::Entry>::decode(Decoder& decoder, PasteboardCustomData::Entry& data)
@@ -2745,9 +2745,9 @@ void ArgumentCoder<IDBKeyPath>::encode(Encoder& encoder, const IDBKeyPath& keyPa
     bool isString = std::holds_alternative<String>(keyPath);
     encoder << isString;
     if (isString)
-        encoder << WTF::get<String>(keyPath);
+        encoder << std::get<String>(keyPath);
     else
-        encoder << WTF::get<Vector<String>>(keyPath);
+        encoder << std::get<Vector<String>>(keyPath);
 }
 
 bool ArgumentCoder<IDBKeyPath>::decode(Decoder& decoder, IDBKeyPath& keyPath)
@@ -2775,9 +2775,9 @@ void ArgumentCoder<ServiceWorkerOrClientData>::encode(Encoder& encoder, const Se
     bool isServiceWorkerData = std::holds_alternative<ServiceWorkerData>(data);
     encoder << isServiceWorkerData;
     if (isServiceWorkerData)
-        encoder << WTF::get<ServiceWorkerData>(data);
+        encoder << std::get<ServiceWorkerData>(data);
     else
-        encoder << WTF::get<ServiceWorkerClientData>(data);
+        encoder << std::get<ServiceWorkerClientData>(data);
 }
 
 bool ArgumentCoder<ServiceWorkerOrClientData>::decode(Decoder& decoder, ServiceWorkerOrClientData& data)
@@ -2808,9 +2808,9 @@ void ArgumentCoder<ServiceWorkerOrClientIdentifier>::encode(Encoder& encoder, co
     bool isServiceWorkerIdentifier = std::holds_alternative<ServiceWorkerIdentifier>(identifier);
     encoder << isServiceWorkerIdentifier;
     if (isServiceWorkerIdentifier)
-        encoder << WTF::get<ServiceWorkerIdentifier>(identifier);
+        encoder << std::get<ServiceWorkerIdentifier>(identifier);
     else
-        encoder << WTF::get<ServiceWorkerClientIdentifier>(identifier);
+        encoder << std::get<ServiceWorkerClientIdentifier>(identifier);
 }
 
 bool ArgumentCoder<ServiceWorkerOrClientIdentifier>::decode(Decoder& decoder, ServiceWorkerOrClientIdentifier& identifier)

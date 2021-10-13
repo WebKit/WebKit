@@ -284,7 +284,7 @@ void Builder::applyProperty(CSSPropertyID id, CSSValue& value, SelectorChecker::
         customPropertyValue = downcast<CSSCustomPropertyValue>(valueToApply.ptr());
         ASSERT(customPropertyValue->isResolved());
         if (std::holds_alternative<CSSValueID>(customPropertyValue->value()))
-            customPropertyValueID = WTF::get<CSSValueID>(customPropertyValue->value());
+            customPropertyValueID = std::get<CSSValueID>(customPropertyValue->value());
         auto& name = customPropertyValue->name();
         customPropertyRegistered = m_state.document().getCSSRegisteredCustomPropertySet().get(name);
     }

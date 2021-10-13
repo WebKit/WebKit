@@ -84,10 +84,10 @@ void WatchpointsOnStructureStubInfo::ensureReferenceAndInstallWatchpoint(
     ASSERT(!!key);
     auto& watchpointVariant = holderRef->addWatchpoint(key);
     if (key.kind() == PropertyCondition::Equivalence) {
-        auto& adaptiveWatchpoint = WTF::get<AdaptiveValueStructureStubClearingWatchpoint>(watchpointVariant);
+        auto& adaptiveWatchpoint = std::get<AdaptiveValueStructureStubClearingWatchpoint>(watchpointVariant);
         adaptiveWatchpoint.install(codeBlock->vm());
     } else {
-        auto* structureTransitionWatchpoint = &WTF::get<StructureTransitionStructureStubClearingWatchpoint>(watchpointVariant);
+        auto* structureTransitionWatchpoint = &std::get<StructureTransitionStructureStubClearingWatchpoint>(watchpointVariant);
         key.object()->structure()->addTransitionWatchpoint(structureTransitionWatchpoint);
     }
 }
@@ -103,7 +103,7 @@ Watchpoint* WatchpointsOnStructureStubInfo::ensureReferenceAndAddWatchpoint(
         ASSERT(holderRef->m_stubInfo == stubInfo);
     }
     
-    return &WTF::get<StructureTransitionStructureStubClearingWatchpoint>(holderRef->addWatchpoint(ObjectPropertyCondition()));
+    return &std::get<StructureTransitionStructureStubClearingWatchpoint>(holderRef->addWatchpoint(ObjectPropertyCondition()));
 }
 
 void AdaptiveValueStructureStubClearingWatchpoint::handleFire(VM&, const FireDetail&)

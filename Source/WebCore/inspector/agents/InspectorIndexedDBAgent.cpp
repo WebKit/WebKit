@@ -121,7 +121,7 @@ public:
             return;
         }
 
-        auto databaseResult = WTF::get<RefPtr<IDBDatabase>>(resultValue);
+        auto databaseResult = std::get<RefPtr<IDBDatabase>>(resultValue);
         m_executableWithDatabase->execute(*databaseResult);
         databaseResult->close();
     }
@@ -367,7 +367,7 @@ public:
             return;
         }
 
-        auto cursor = WTF::get<RefPtr<IDBCursor>>(resultValue);
+        auto cursor = std::get<RefPtr<IDBCursor>>(resultValue);
 
         if (m_skipCount) {
             if (cursor->advance(m_skipCount).hasException())

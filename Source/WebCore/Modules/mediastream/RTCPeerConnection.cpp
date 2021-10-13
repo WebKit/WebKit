@@ -183,7 +183,7 @@ ExceptionOr<Ref<RTCRtpTransceiver>> RTCPeerConnection::addTransceiver(AddTransce
     INFO_LOG(LOGIDENTIFIER);
 
     if (std::holds_alternative<String>(withTrack)) {
-        const String& kind = WTF::get<String>(withTrack);
+        const String& kind = std::get<String>(withTrack);
         if (kind != "audio"_s && kind != "video"_s)
             return Exception { TypeError };
 
@@ -196,7 +196,7 @@ ExceptionOr<Ref<RTCRtpTransceiver>> RTCPeerConnection::addTransceiver(AddTransce
     if (isClosed())
         return Exception { InvalidStateError };
 
-    auto track = WTF::get<RefPtr<MediaStreamTrack>>(withTrack).releaseNonNull();
+    auto track = std::get<RefPtr<MediaStreamTrack>>(withTrack).releaseNonNull();
     return m_backend->addTransceiver(WTFMove(track), init);
 }
 
@@ -846,7 +846,7 @@ static inline ExceptionOr<PeerConnectionBackend::CertificateInformation> certifi
     if (std::holds_alternative<String>(algorithmIdentifier))
         return Exception { NotSupportedError, "Algorithm is not supported"_s };
 
-    auto& value = WTF::get<JSC::Strong<JSC::JSObject>>(algorithmIdentifier);
+    auto& value = std::get<JSC::Strong<JSC::JSObject>>(algorithmIdentifier);
 
     JSC::VM& vm = lexicalGlobalObject.vm();
     auto scope = DECLARE_CATCH_SCOPE(vm);

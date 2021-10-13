@@ -99,7 +99,7 @@ static ExceptionOr<void> appendToHeaderMap(const HTTPHeaderMap::HTTPHeaderMapCon
 static ExceptionOr<void> fillHeaderMap(HTTPHeaderMap& headers, const FetchHeaders::Init& headersInit, FetchHeaders::Guard guard)
 {
     if (std::holds_alternative<Vector<Vector<String>>>(headersInit)) {
-        auto& sequence = WTF::get<Vector<Vector<String>>>(headersInit);
+        auto& sequence = std::get<Vector<Vector<String>>>(headersInit);
         for (auto& header : sequence) {
             if (header.size() != 2)
                 return Exception { TypeError, "Header sub-sequence must contain exactly two items" };
@@ -108,7 +108,7 @@ static ExceptionOr<void> fillHeaderMap(HTTPHeaderMap& headers, const FetchHeader
                 return result.releaseException();
         }
     } else {
-        auto& record = WTF::get<Vector<WTF::KeyValuePair<String, String>>>(headersInit);
+        auto& record = std::get<Vector<WTF::KeyValuePair<String, String>>>(headersInit);
         for (auto& header : record) {
             auto result = appendToHeaderMap(header.key, header.value, headers, guard);
             if (result.hasException())

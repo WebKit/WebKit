@@ -125,7 +125,7 @@ bool CDMProxyClearKey::cencSetDecryptionKey(cencDecryptContext& in)
         return false;
 
     ASSERT(std::holds_alternative<Vector<uint8_t>>(keyData.value()));
-    auto& keyDataValue = WTF::get<Vector<uint8_t>>(keyData.value());
+    auto& keyDataValue = std::get<Vector<uint8_t>>(keyData.value());
 
     if (gcry_error_t cipherError = gcry_cipher_setkey(gCryptHandle(), keyDataValue.data(), keyDataValue.size())) {
 #if !LOG_DISABLED

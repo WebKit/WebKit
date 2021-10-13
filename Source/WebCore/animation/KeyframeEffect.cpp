@@ -324,20 +324,20 @@ static inline ExceptionOr<void> processIterableKeyframes(JSGlobalObject& lexical
         // When calling processKeyframeLikeObject() with the "allow lists" flag set to false, the only offset
         // alternatives we should expect are double and nullptr.
         if (std::holds_alternative<double>(keyframeLikeObject.baseProperties.offset))
-            keyframeOutput.offset = WTF::get<double>(keyframeLikeObject.baseProperties.offset);
+            keyframeOutput.offset = std::get<double>(keyframeLikeObject.baseProperties.offset);
         else
             ASSERT(std::holds_alternative<std::nullptr_t>(keyframeLikeObject.baseProperties.offset));
 
         // When calling processKeyframeLikeObject() with the "allow lists" flag set to false, the only easing
         // alternative we should expect is String.
         ASSERT(std::holds_alternative<String>(keyframeLikeObject.baseProperties.easing));
-        keyframeOutput.easing = WTF::get<String>(keyframeLikeObject.baseProperties.easing);
+        keyframeOutput.easing = std::get<String>(keyframeLikeObject.baseProperties.easing);
 
         // When calling processKeyframeLikeObject() with the "allow lists" flag set to false, the only composite
         // alternatives we should expect is CompositeOperationAuto.
         if (document.settings().webAnimationsCompositeOperationsEnabled()) {
             ASSERT(std::holds_alternative<CompositeOperationOrAuto>(keyframeLikeObject.baseProperties.composite));
-            keyframeOutput.composite = WTF::get<CompositeOperationOrAuto>(keyframeLikeObject.baseProperties.composite);
+            keyframeOutput.composite = std::get<CompositeOperationOrAuto>(keyframeLikeObject.baseProperties.composite);
         }
 
         for (auto& propertyAndValue : keyframeLikeObject.propertiesAndValues) {
@@ -438,9 +438,9 @@ static inline ExceptionOr<void> processPropertyIndexedKeyframes(JSGlobalObject& 
     //    - double?, a sequence of length one with the value of “offset” as its single item, i.e. « offset »,
     Vector<std::optional<double>> offsets;
     if (std::holds_alternative<Vector<std::optional<double>>>(propertyIndexedKeyframe.baseProperties.offset))
-        offsets = WTF::get<Vector<std::optional<double>>>(propertyIndexedKeyframe.baseProperties.offset);
+        offsets = std::get<Vector<std::optional<double>>>(propertyIndexedKeyframe.baseProperties.offset);
     else if (std::holds_alternative<double>(propertyIndexedKeyframe.baseProperties.offset))
-        offsets.append(WTF::get<double>(propertyIndexedKeyframe.baseProperties.offset));
+        offsets.append(std::get<double>(propertyIndexedKeyframe.baseProperties.offset));
     else if (std::holds_alternative<std::nullptr_t>(propertyIndexedKeyframe.baseProperties.offset))
         offsets.append(std::nullopt);
 
@@ -453,9 +453,9 @@ static inline ExceptionOr<void> processPropertyIndexedKeyframes(JSGlobalObject& 
     //    - DOMString, a sequence of length one with the value of “easing” as its single item, i.e. « easing »,
     Vector<String> easings;
     if (std::holds_alternative<Vector<String>>(propertyIndexedKeyframe.baseProperties.easing))
-        easings = WTF::get<Vector<String>>(propertyIndexedKeyframe.baseProperties.easing);
+        easings = std::get<Vector<String>>(propertyIndexedKeyframe.baseProperties.easing);
     else if (std::holds_alternative<String>(propertyIndexedKeyframe.baseProperties.easing))
-        easings.append(WTF::get<String>(propertyIndexedKeyframe.baseProperties.easing));
+        easings.append(std::get<String>(propertyIndexedKeyframe.baseProperties.easing));
 
     // 8. If easings is an empty sequence, let it be a sequence of length one containing the single value “linear”, i.e. « "linear" ».
     if (easings.isEmpty())
@@ -482,9 +482,9 @@ static inline ExceptionOr<void> processPropertyIndexedKeyframes(JSGlobalObject& 
     if (document.settings().webAnimationsCompositeOperationsEnabled()) {
         Vector<CompositeOperationOrAuto> compositeModes;
         if (std::holds_alternative<Vector<CompositeOperationOrAuto>>(propertyIndexedKeyframe.baseProperties.composite))
-            compositeModes = WTF::get<Vector<CompositeOperationOrAuto>>(propertyIndexedKeyframe.baseProperties.composite);
+            compositeModes = std::get<Vector<CompositeOperationOrAuto>>(propertyIndexedKeyframe.baseProperties.composite);
         else if (std::holds_alternative<CompositeOperationOrAuto>(propertyIndexedKeyframe.baseProperties.composite))
-            compositeModes.append(WTF::get<CompositeOperationOrAuto>(propertyIndexedKeyframe.baseProperties.composite));
+            compositeModes.append(std::get<CompositeOperationOrAuto>(propertyIndexedKeyframe.baseProperties.composite));
         if (!compositeModes.isEmpty()) {
             // 1. Let composite modes be a sequence of CompositeOperationOrAuto values assigned from the “composite” member of property-indexed keyframe. If that member is a single
             //    CompositeOperationOrAuto value operation, let composite modes be a sequence of length one, with the value of the “composite” as its single item.
@@ -515,10 +515,10 @@ ExceptionOr<Ref<KeyframeEffect>> KeyframeEffect::create(JSGlobalObject& lexicalG
         OptionalEffectTiming timing;
         auto optionsValue = options.value();
         if (std::holds_alternative<double>(optionsValue)) {
-            std::variant<double, String> duration = WTF::get<double>(optionsValue);
+            std::variant<double, String> duration = std::get<double>(optionsValue);
             timing.duration = duration;
         } else {
-            auto keyframeEffectOptions = WTF::get<KeyframeEffectOptions>(optionsValue);
+            auto keyframeEffectOptions = std::get<KeyframeEffectOptions>(optionsValue);
 
             auto setPseudoElementResult = keyframeEffect->setPseudoElement(keyframeEffectOptions.pseudoElement);
             if (setPseudoElementResult.hasException())

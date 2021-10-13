@@ -160,7 +160,7 @@ private:
         if (iterator == m_resources.end())
             return nullptr;
         ASSERT(std::holds_alternative<Ref<T>>(iterator->value));
-        return WTF::get<Ref<T>>(iterator->value).ptr();
+        return std::get<Ref<T>>(iterator->value).ptr();
     }
 
     template <typename T>

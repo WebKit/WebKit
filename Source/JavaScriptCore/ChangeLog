@@ -1,3 +1,42 @@
+2021-10-13  Alex Christensen  <achristensen@webkit.org>
+
+        Remove WTF::Variant and WTF::get
+        https://bugs.webkit.org/show_bug.cgi?id=231675
+
+        Reviewed by Chris Dumez.
+
+        * bytecode/StructureStubClearingWatchpoint.cpp:
+        (JSC::WatchpointsOnStructureStubInfo::ensureReferenceAndInstallWatchpoint):
+        (JSC::WatchpointsOnStructureStubInfo::ensureReferenceAndAddWatchpoint):
+        * jit/AssemblyHelpers.cpp:
+        (JSC::AssemblyHelpers::branchIfValue):
+        * jit/SnippetReg.h:
+        (JSC::SnippetReg::gpr const):
+        (JSC::SnippetReg::fpr const):
+        (JSC::SnippetReg::jsValueRegs const):
+        * jsc.cpp:
+        (JSC_DEFINE_HOST_FUNCTION):
+        * parser/Lexer.cpp:
+        (JSC::Lexer<T>::lexWithoutClearingLineTerminator):
+        * parser/VariableEnvironment.cpp:
+        (JSC::CompactTDZEnvironment::toTDZEnvironmentSlow const):
+        * parser/VariableEnvironment.h:
+        (JSC::CompactTDZEnvironment::toTDZEnvironment const):
+        * runtime/CacheUpdate.cpp:
+        (JSC::CacheUpdate::asGlobal const):
+        (JSC::CacheUpdate::asFunction const):
+        * runtime/CachedTypes.cpp:
+        (JSC::CachedCompactTDZEnvironment::encode):
+        * wasm/WasmLLIntGenerator.cpp:
+        (JSC::Wasm::LLIntGenerator::ControlType::isCatch):
+        (JSC::Wasm::LLIntGenerator::ControlType::targetLabelForBranch const):
+        (JSC::Wasm::LLIntGenerator::addLoop):
+        (JSC::Wasm::LLIntGenerator::addElseToUnreachable):
+        (JSC::Wasm::LLIntGenerator::addCatchToUnreachable):
+        (JSC::Wasm::LLIntGenerator::addCatchAllToUnreachable):
+        (JSC::Wasm::LLIntGenerator::addDelegateToUnreachable):
+        (JSC::Wasm::LLIntGenerator::addRethrow):
+
 2021-10-13  Diego Pino Garcia  <dpino@igalia.com>
 
         [GTK] Unreviewed, build fix for Ubuntu 18.04 after r283852

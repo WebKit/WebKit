@@ -150,14 +150,14 @@ static void processGoogleLegacyAppIdSupportExtension(const std::optional<Authent
 static String getRpId(const std::variant<PublicKeyCredentialCreationOptions, PublicKeyCredentialRequestOptions>& options)
 {
     if (std::holds_alternative<PublicKeyCredentialCreationOptions>(options))
-        return WTF::get<PublicKeyCredentialCreationOptions>(options).rp.id;
-    return WTF::get<PublicKeyCredentialRequestOptions>(options).rpId;
+        return std::get<PublicKeyCredentialCreationOptions>(options).rp.id;
+    return std::get<PublicKeyCredentialRequestOptions>(options).rpId;
 }
 
 static String getUserName(const std::variant<PublicKeyCredentialCreationOptions, PublicKeyCredentialRequestOptions>& options)
 {
     if (std::holds_alternative<PublicKeyCredentialCreationOptions>(options))
-        return WTF::get<PublicKeyCredentialCreationOptions>(options).user.name;
+        return std::get<PublicKeyCredentialCreationOptions>(options).user.name;
     return emptyString();
 }
 
@@ -287,7 +287,7 @@ void AuthenticatorManager::respondReceived(Respond&& respond)
 
     auto shouldComplete = std::holds_alternative<Ref<AuthenticatorResponse>>(respond);
     if (!shouldComplete)
-        shouldComplete = WTF::get<ExceptionData>(respond).code == InvalidStateError;
+        shouldComplete = std::get<ExceptionData>(respond).code == InvalidStateError;
     if (shouldComplete) {
         invokePendingCompletionHandler(WTFMove(respond));
         clearStateAsync();
