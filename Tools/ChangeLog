@@ -1,3 +1,18 @@
+2021-10-12  Jonathan Bedard  <jbedard@apple.com>
+
+        [AppleSilicon] Support native simulator testing
+        https://bugs.webkit.org/show_bug.cgi?id=231639
+        <rdar://problem/84170151>
+
+        Reviewed by Tim Horton.
+
+        * Scripts/webkitpy/port/ios_simulator.py:
+        (IOSSimulatorPort): Add arm64 as possible architecture.
+        (IOSSimulatorPort.architecture): Return the native system's architecture.
+        * Scripts/webkitpy/port/watch_simulator.py:
+        (WatchSimulatorPort): Add arm64_32.
+        (WatchSimulatorPort.architecture): Return the native system's 32 bit architecture.
+
 2021-10-12  Garrett Davidson  <garrett_davidson@apple.com>
 
         Adopt platform UI for WebAuthn

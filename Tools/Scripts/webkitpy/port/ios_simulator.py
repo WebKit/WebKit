@@ -38,7 +38,7 @@ class IOSSimulatorPort(IOSPort):
     port_name = "ios-simulator"
 
     FUTURE_VERSION = 'future'
-    ARCHITECTURES = ['x86_64', 'i386']
+    ARCHITECTURES = ['x86_64', 'i386', 'arm64']
     DEFAULT_ARCHITECTURE = 'x86_64'
 
     DEVICE_MANAGER = SimulatedDeviceManager
@@ -49,6 +49,12 @@ class IOSSimulatorPort(IOSPort):
         DeviceType(hardware_family='iPhone', hardware_type='7'),
     ]
     SDK = apple_additions().get_sdk('iphonesimulator') if apple_additions() else 'iphonesimulator'
+
+    def architecture(self):
+        result = self.get_option('architecture') or self.host.platform.architecture()
+        if result == 'arm64e':
+            return 'arm64'
+        return result
 
     @staticmethod
     def _version_from_name(name):
