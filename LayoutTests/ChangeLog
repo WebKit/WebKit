@@ -1,5 +1,15 @@
 2021-10-14  Ayumi Kojima  <ayumi_kojima@apple.com>
 
+        [ iOS macOS wk2 Debug ] ASSERTION FAILED: other.underlyingStringIsValid().
+        https://bugs.webkit.org/show_bug.cgi?id=231752
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+
+2021-10-14  Ayumi Kojima  <ayumi_kojima@apple.com>
+
         [ iOS EWS ] http/tests/privateClickMeasurement/attribution-conversion-through-image-redirect-ephemeral.html is a flaky crash.
         https://bugs.webkit.org/show_bug.cgi?id=231748
 
