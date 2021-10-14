@@ -71,7 +71,6 @@ inline GapLength forwardInheritedValue(const GapLength& value) { auto copy = val
 class BuilderCustom {
 public:
     // Custom handling of inherit, initial and value setting.
-    DECLARE_PROPERTY_CUSTOM_HANDLERS(AccentColor);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(AspectRatio);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(BorderImageOutset);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(BorderImageRepeat);
@@ -792,29 +791,6 @@ inline void BuilderCustom::applyValueOutlineStyle(BuilderState& builderState, CS
 
     builderState.style().setOutlineStyleIsAuto(primitiveValue);
     builderState.style().setOutlineStyle(primitiveValue);
-}
-
-inline void BuilderCustom::applyInitialAccentColor(BuilderState& builderState)
-{
-    builderState.style().setHasAutoAccentColor();
-}
-
-inline void BuilderCustom::applyInheritAccentColor(BuilderState& builderState)
-{
-    Color color = builderState.parentStyle().accentColor();
-    if (builderState.parentStyle().hasAutoAccentColor())
-        builderState.style().setHasAutoAccentColor();
-    else
-        builderState.style().setAccentColor(color);
-}
-
-inline void BuilderCustom::applyValueAccentColor(BuilderState& builderState, CSSValue& value)
-{
-    auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
-    if (primitiveValue.valueID() == CSSValueAuto)
-        builderState.style().setHasAutoAccentColor();
-    else
-        builderState.style().setAccentColor(builderState.colorFromPrimitiveValue(primitiveValue));
 }
 
 inline void BuilderCustom::applyInitialCaretColor(BuilderState& builderState)

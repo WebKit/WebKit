@@ -219,8 +219,8 @@
         "accent-color": {
             "inherited": true,
             "codegen-properties": {
+                "auto-functions": true,
                 "color-property": true,
-                "custom": "All",
                 "settings-flag": "accentColorEnabled"
             },
             "status": {
@@ -2748,7 +2748,6 @@
         },
         "flood-color": {
             "codegen-properties": {
-                "converter": "SVGColor",
                 "svg": true,
                 "color-property": true
             },
@@ -3024,7 +3023,6 @@
         },
         "lighting-color": {
             "codegen-properties": {
-                "converter": "SVGColor",
                 "svg": true,
                 "color-property": true
             }
@@ -4134,7 +4132,6 @@
         },
         "stop-color": {
             "codegen-properties": {
-                "converter": "SVGColor",
                 "svg": true,
                 "color-property": true
             },

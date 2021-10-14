@@ -145,7 +145,6 @@ public:
     static PaintOrder convertPaintOrder(BuilderState&, const CSSValue&);
     static float convertOpacity(BuilderState&, const CSSValue&);
     static String convertSVGURIReference(BuilderState&, const CSSValue&);
-    static Color convertSVGColor(BuilderState&, const CSSValue&);
     static StyleSelfAlignmentData convertSelfOrDefaultAlignmentData(BuilderState&, const CSSValue&);
     static StyleContentAlignmentData convertContentAlignmentData(BuilderState&, const CSSValue&);
     static GlyphOrientation convertGlyphOrientation(BuilderState&, const CSSValue&);
@@ -1430,11 +1429,6 @@ inline String BuilderConverter::convertSVGURIReference(BuilderState& builderStat
         s = primitiveValue.stringValue();
 
     return SVGURIReference::fragmentIdentifierFromIRIString(s, builderState.document());
-}
-
-inline Color BuilderConverter::convertSVGColor(BuilderState& builderState, const CSSValue& value)
-{
-    return builderState.colorFromPrimitiveValue(downcast<CSSPrimitiveValue>(value));
 }
 
 inline StyleSelfAlignmentData BuilderConverter::convertSelfOrDefaultAlignmentData(BuilderState&, const CSSValue& value)

@@ -1313,6 +1313,8 @@ sub generateValueSetter {
   } elsif (exists($propertiesWithStyleBuilderOptions{$name}{"conditional-converter"})) {
     $setterContent .= $indent . "    auto convertedValue = BuilderConverter::convert" . $propertiesWithStyleBuilderOptions{$name}{"conditional-converter"} . "(builderState, value);\n";
     $convertedValue = "WTFMove(convertedValue.value())";
+  } elsif ($nameIsColorProperty{$name}) {
+    $convertedValue = colorFromPrimitiveValue("downcast<CSSPrimitiveValue>(value)");
   } else {
     $convertedValue = "downcast<CSSPrimitiveValue>(value)";
   }
