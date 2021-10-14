@@ -122,7 +122,6 @@ JavaScriptCore_BUILTINS_SOURCES = \
     ${JavaScriptCore}/builtins/RegExpStringIteratorPrototype.js \
     $(JavaScriptCore)/builtins/SetIteratorPrototype.js \
     $(JavaScriptCore)/builtins/SetPrototype.js \
-    $(JavaScriptCore)/builtins/ShadowRealmPrototype.js \
     $(JavaScriptCore)/builtins/StringConstructor.js \
     $(JavaScriptCore)/builtins/StringIteratorPrototype.js \
     $(JavaScriptCore)/builtins/StringPrototype.js \
@@ -188,7 +187,6 @@ OBJECT_LUT_HEADERS = \
     ReflectObject.lut.h \
     RegExpConstructor.lut.h \
     SetPrototype.lut.h \
-    ShadowRealmPrototype.lut.h \
     StringConstructor.lut.h \
     StringPrototype.lut.h \
     SymbolConstructor.lut.h \

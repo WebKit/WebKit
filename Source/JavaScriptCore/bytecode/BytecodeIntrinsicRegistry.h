@@ -66,7 +66,6 @@ enum class LinkTimeConstant : int32_t;
     macro(isRegExpObject) \
     macro(isMap) \
     macro(isSet) \
-    macro(isShadowRealm) \
     macro(isStringIterator) \
     macro(isArrayIterator) \
     macro(isMapIterator) \

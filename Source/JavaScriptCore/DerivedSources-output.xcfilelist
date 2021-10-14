@@ -62,8 +62,6 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/ReflectObject.lut.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/RegExpConstructor.lut.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/RegExpJitTables.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/SetPrototype.lut.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/ShadowRealmObject.lut.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/ShadowRealmPrototype.lut.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/StringConstructor.lut.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/StringPrototype.lut.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/SymbolConstructor.lut.h

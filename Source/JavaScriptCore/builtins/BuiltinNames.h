@@ -62,7 +62,6 @@ namespace JSC {
     macro(Number) \
     macro(Array) \
     macro(ArrayBuffer) \
-    macro(ShadowRealm) \
     macro(RegExp) \
     macro(min) \
     macro(trunc) \
@@ -116,8 +115,6 @@ namespace JSC {
     macro(asyncGeneratorQueueItemNext) \
     macro(dateTimeFormat) \
     macro(this) \
-    macro(importInRealm) \
-    macro(evalInRealm) \
     macro(thisTimeValue) \
     macro(newTargetLocal) \
     macro(derivedConstructor) \

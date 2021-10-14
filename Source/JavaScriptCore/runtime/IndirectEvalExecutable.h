@@ -31,12 +31,8 @@ namespace JSC {
 
 class IndirectEvalExecutable final : public EvalExecutable {
 public:
-    static IndirectEvalExecutable* tryCreate(JSGlobalObject*, const SourceCode&, DerivedContextType, bool isArrowFunctionContext, EvalContextType);
-    static IndirectEvalExecutable* create(JSGlobalObject*, const SourceCode&, DerivedContextType, bool isArrowFunctionContext, EvalContextType, NakedPtr<JSObject>&);
+    static IndirectEvalExecutable* create(JSGlobalObject*, const SourceCode&, DerivedContextType, bool isArrowFunctionContext, EvalContextType);
 private:
-    template<typename ErrorHandlerFunctor>
-    inline static IndirectEvalExecutable* createImpl(JSGlobalObject*, const SourceCode&, DerivedContextType, bool isArrowFunctionContext, EvalContextType, ErrorHandlerFunctor);
-
     IndirectEvalExecutable(JSGlobalObject*, const SourceCode&, DerivedContextType, bool isArrowFunctionContext, EvalContextType);
 };
 
