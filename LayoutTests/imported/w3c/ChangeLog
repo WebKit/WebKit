@@ -1,3 +1,15 @@
+2021-10-14  Tim Nguyen  <ntim@apple.com>
+
+        Don't run focusing steps on disconnected or inert <dialog>
+        https://bugs.webkit.org/show_bug.cgi?id=231721
+
+        Reviewed by Antti Koivisto.
+
+        Marked relevant WPTs as passing.
+
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-focusing-steps-disconnected-expected.txt:
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-focusing-steps-inert-expected.txt:
+
 2021-10-14  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         AudioContext::getOutputTimestamp() uses incorrect global object as a high-res timestamp origin

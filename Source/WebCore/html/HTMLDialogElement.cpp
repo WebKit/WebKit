@@ -119,6 +119,11 @@ void HTMLDialogElement::queueCancelTask()
 // https://html.spec.whatwg.org/multipage/interactive-elements.html#dialog-focusing-steps
 void HTMLDialogElement::runFocusingSteps()
 {
+    if (!isConnected())
+        return;
+
+    // Ensure renderer and inert style are up-to-date.
+    document().updateStyleIfNeeded();
     if (renderer() && renderer()->style().effectiveInert())
         return;
 
