@@ -31,7 +31,10 @@ layer at (0,0) size 800x188
                   text run at (0,0) width 20: "X"
                 RenderInline {SPAN} at (0,0) size 60x20 [bgcolor=#00FF00]
                   RenderText {#text} at (20,0) size 60x20
-                    text run at (20,0) width 60: "\x{200B} \x{200B} \x{200B} \x{200B}"
+                    text run at (20,0) width 20: "\x{200B} "
+                    text run at (40,0) width 20: "\x{200B} "
+                    text run at (60,0) width 20: "\x{200B} "
+                    text run at (80,0) width 0: "\x{200B}"
                 RenderText {#text} at (80,0) size 20x20
                   text run at (80,0) width 20: "X"
               RenderBlock {DIV} at (0,60) size 100x20 [color=#008000]
@@ -39,7 +42,9 @@ layer at (0,0) size 800x188
                   text run at (0,0) width 20: "X"
                 RenderInline {SPAN} at (0,0) size 60x20 [bgcolor=#00FF00]
                   RenderText {#text} at (20,0) size 60x20
-                    text run at (20,0) width 60: " \x{200B} \x{200B} "
+                    text run at (20,0) width 20: " "
+                    text run at (40,0) width 20: "\x{200B} "
+                    text run at (60,0) width 20: "\x{200B} "
                 RenderText {#text} at (80,0) size 20x20
                   text run at (80,0) width 20: "X"
               RenderBlock {DIV} at (0,80) size 100x20 [color=#008000]
