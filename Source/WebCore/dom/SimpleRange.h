@@ -105,8 +105,14 @@ WEBCORE_EXPORT bool containsCrossingDocumentBoundaries(const SimpleRange&, Node&
 
 // FIXME: End of functions that are deprecated since they silently default to ComposedTree.
 
-class IntersectingNodeIterator : public std::iterator<std::forward_iterator_tag, Node> {
+class IntersectingNodeIterator {
 public:
+    using iterator_category = std::forward_iterator_tag;
+    using value_type = Node;
+    using difference_type = ptrdiff_t;
+    using pointer = value_type*;
+    using reference = value_type&;
+
     IntersectingNodeIterator(const SimpleRange&);
 
     enum QuirkFlag { DeprecatedZeroOffsetStartQuirk };

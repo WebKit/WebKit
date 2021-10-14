@@ -38,7 +38,14 @@ public:
     typedef HashSet<Ref<WeakPtrImpl<Counter>>> WeakPtrImplSet;
     typedef typename WeakPtrImplSet::AddResult AddResult;
 
-    class WeakHashSetConstIterator : public std::iterator<std::forward_iterator_tag, T, std::ptrdiff_t, const T*, const T&> {
+    class WeakHashSetConstIterator {
+    public:
+        using iterator_category = std::forward_iterator_tag;
+        using value_type = T;
+        using difference_type = ptrdiff_t;
+        using pointer = const value_type*;
+        using reference = const value_type&;
+
     private:
         WeakHashSetConstIterator(const WeakPtrImplSet& set, typename WeakPtrImplSet::const_iterator position)
             : m_position(position), m_endPosition(set.end())

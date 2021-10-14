@@ -72,7 +72,14 @@ public:
     };
 
     template <typename MapType, typename IteratorType, typename IteratorPeekPtrType, typename IteratorPeekType>
-    class WeakHashMapIteratorBase : public std::iterator<std::forward_iterator_tag, IteratorPeekType, std::ptrdiff_t, IteratorPeekPtrType, IteratorPeekType> {
+    class WeakHashMapIteratorBase {
+    public:
+        using iterator_category = std::forward_iterator_tag;
+        using value_type = IteratorPeekType;
+        using difference_type = ptrdiff_t;
+        using pointer = IteratorPeekPtrType;
+        using reference = IteratorPeekType;
+
     protected:
         WeakHashMapIteratorBase(MapType& weakHashMap, IteratorType position)
             : m_weakHashMap { weakHashMap }

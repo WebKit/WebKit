@@ -1,3 +1,22 @@
+2021-10-14  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Remove std::iterator usage
+        https://bugs.webkit.org/show_bug.cgi?id=231728
+
+        Reviewed by Keith Miller.
+
+        std::iterator<> is deprecated and defining 5 type aliases is encouraged[1].
+        With new clang, using std::iterator<> causes compile error because of deprecation warnings.
+        This patch removes std::iterator usage.
+
+        [1]: https://www.fluentcpp.com/2018/05/08/std-iterator-deprecated/
+
+        * wtf/HashIterators.h:
+        (WTF:: const const): Deleted.
+        * wtf/HashTable.h:
+        * wtf/WeakHashMap.h:
+        * wtf/WeakHashSet.h:
+
 2021-10-14  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WPE] Move getCurrentExecutablePath() and getCurrentExecutableName() to FileSystem
