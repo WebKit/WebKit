@@ -1,3 +1,12 @@
+2021-10-14  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        All the SDKVariant.xcconfig files should match
+        https://bugs.webkit.org/show_bug.cgi?id=231663
+
+        Reviewed by Youenn Fablet.
+
+        * gtest/xcode/Config/SDKVariant.xcconfig:
+
 2021-05-29  Sam Weinig  <weinig@apple.com>
 
         Remove selective compilation of libwebrtc as TestWebKitAPI depends on it for boringssl, so it is always needed
