@@ -28,10 +28,10 @@
 
 #include "CertificateInfo.h"
 #include <openssl/crypto.h>
+#include <variant>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/NeverDestroyed.h>
-#include <wtf/Variant.h>
 #include <wtf/text/StringHash.h>
 
 // all version of LibreSSL and OpenSSL prior to 1.1.0 need thread support

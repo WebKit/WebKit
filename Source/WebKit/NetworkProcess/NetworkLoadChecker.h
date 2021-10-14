@@ -34,9 +34,9 @@
 #include <WebCore/NetworkLoadInformation.h>
 #include <WebCore/ResourceError.h>
 #include <pal/SessionID.h>
+#include <variant>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Expected.h>
-#include <wtf/Variant.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {

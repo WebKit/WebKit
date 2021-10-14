@@ -27,8 +27,8 @@
 
 #include "Color.h"
 #include "Gradient.h"
+#include <variant>
 #include <wtf/HashFunctions.h>
-#include <wtf/Variant.h>
 #include <wtf/Vector.h>
 #include <wtf/text/AtomString.h>
 

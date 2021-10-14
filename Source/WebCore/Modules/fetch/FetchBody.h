@@ -34,7 +34,7 @@
 #include "FormData.h"
 #include "ReadableStream.h"
 #include "URLSearchParams.h"
-#include <wtf/Variant.h>
+#include <variant>
 
 namespace WebCore {
 

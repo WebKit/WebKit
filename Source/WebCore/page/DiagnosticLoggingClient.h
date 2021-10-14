@@ -27,10 +27,10 @@
 
 #include "DiagnosticLoggingDomain.h"
 #include "DiagnosticLoggingResultType.h"
+#include <variant>
 #include <wtf/FastMalloc.h>
 #include <wtf/HashMap.h>
 #include <wtf/RandomNumber.h>
-#include <wtf/Variant.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {

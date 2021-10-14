@@ -61,11 +61,11 @@
 #include "VTTCue.h"
 #include "VoidCallback.h"
 #include <JavaScriptCore/JSCJSValueInlines.h>
+#include <variant>
 #include <wtf/Function.h>
 #include <wtf/JSONValues.h>
 #include <wtf/Scope.h>
 #include <wtf/UUID.h>
-#include <wtf/Variant.h>
 
 #if USE(APPLE_INTERNAL_SDK)
 #include <WebKitAdditions/MediaControlsHostAdditions.h>

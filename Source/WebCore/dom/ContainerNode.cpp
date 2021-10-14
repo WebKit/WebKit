@@ -61,8 +61,8 @@
 #include "SlotAssignment.h"
 #include "TemplateContentDocumentFragment.h"
 #include <algorithm>
+#include <variant>
 #include <wtf/IsoMallocInlines.h>
-#include <wtf/Variant.h>
 
 namespace WebCore {
 

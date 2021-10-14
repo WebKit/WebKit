@@ -26,10 +26,10 @@
 #pragma once
 
 #include "Identifier.h"
+#include <variant>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/IteratorRange.h>
-#include <wtf/Variant.h>
 
 namespace JSC {
 

@@ -26,9 +26,9 @@
 #pragma once
 
 #include "CSSFontFace.h"
+#include <variant>
 #include <wtf/HashMap.h>
 #include <wtf/Observer.h>
-#include <wtf/Variant.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakHashSet.h>
 #include <wtf/text/StringHash.h>

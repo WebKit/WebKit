@@ -37,9 +37,9 @@
 #import <WebCore/ThreadCheck.h>
 #import <WebCore/WebCoreObjCExtras.h>
 #import <WebCore/WebScriptObjectPrivate.h>
+#import <variant>
 #import <wtf/GetPtr.h>
 #import <wtf/URL.h>
-#import <wtf/Variant.h>
 
 #define IMPL reinterpret_cast<WebCore::HTMLOptionsCollection*>(_internal)
 

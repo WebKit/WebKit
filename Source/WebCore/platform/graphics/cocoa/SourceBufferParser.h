@@ -31,10 +31,10 @@
 #include "SourceBufferPrivateClient.h"
 #include <JavaScriptCore/Forward.h>
 #include <pal/spi/cocoa/MediaToolboxSPI.h>
+#include <variant>
 #include <wtf/CompletionHandler.h>
 #include <wtf/RefCounted.h>
 #include <wtf/ThreadSafeRefCounted.h>
-#include <wtf/Variant.h>
 
 namespace WTF {
 class Logger;

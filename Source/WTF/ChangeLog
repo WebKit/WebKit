@@ -1,5 +1,20 @@
 2021-10-14  Alex Christensen  <achristensen@webkit.org>
 
+        Remove Variant.h
+        https://bugs.webkit.org/show_bug.cgi?id=231744
+
+        Reviewed by Darin Adler.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/LikelyDenseUnsignedIntegerSet.h:
+        * wtf/StdLibExtras.h:
+        (WTF::switchOn):
+        * wtf/Variant.h: Removed.
+        * wtf/text/TextBreakIterator.h:
+
+2021-10-14  Alex Christensen  <achristensen@webkit.org>
+
         Share IPC communication code between webpushd and adattributiond
         https://bugs.webkit.org/show_bug.cgi?id=231718
 

@@ -20,10 +20,10 @@
 #pragma once
 
 #include "BlobData.h"
+#include <variant>
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
 #include <wtf/URL.h>
-#include <wtf/Variant.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 

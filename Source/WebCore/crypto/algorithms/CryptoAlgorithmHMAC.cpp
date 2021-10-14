@@ -30,7 +30,7 @@
 
 #include "CryptoAlgorithmHmacKeyParams.h"
 #include "CryptoKeyHMAC.h"
-#include <wtf/Variant.h>
+#include <variant>
 
 namespace WebCore {
 

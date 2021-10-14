@@ -36,10 +36,10 @@
 #include "FileReaderLoader.h"
 #include "ScriptExecutionContext.h"
 #include "ScriptWrappable.h"
+#include "URLRegistry.h"
+#include <variant>
 #include <wtf/IsoMalloc.h>
 #include <wtf/URL.h>
-#include "URLRegistry.h"
-#include <wtf/Variant.h>
 
 namespace JSC {
 class ArrayBufferView;

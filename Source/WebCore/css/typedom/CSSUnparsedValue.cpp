@@ -36,8 +36,8 @@
 #include "CSSParserToken.h"
 #include "CSSParserTokenRange.h"
 #include "ExceptionOr.h"
+#include <variant>
 #include <wtf/IsoMallocInlines.h>
-#include <wtf/Variant.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringView.h>
 #include <wtf/text/WTFString.h>

@@ -28,7 +28,7 @@
 #if ENABLE(INLINE_PATH_DATA)
 
 #include "FloatPoint.h"
-#include <wtf/Variant.h>
+#include <variant>
 
 namespace WebCore {
 

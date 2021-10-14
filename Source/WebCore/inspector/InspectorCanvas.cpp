@@ -88,9 +88,9 @@
 #include <JavaScriptCore/IdentifiersFactory.h>
 #include <JavaScriptCore/ScriptCallStackFactory.h>
 #include <JavaScriptCore/TypedArrays.h>
+#include <variant>
 #include <wtf/Function.h>
 #include <wtf/RefPtr.h>
-#include <wtf/Variant.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 

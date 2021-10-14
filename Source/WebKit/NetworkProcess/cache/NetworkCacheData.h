@@ -41,8 +41,8 @@
 #endif
 
 #if USE(CURL)
+#include <variant>
 #include <wtf/Box.h>
-#include <wtf/Variant.h>
 #endif
 
 namespace WebKit {

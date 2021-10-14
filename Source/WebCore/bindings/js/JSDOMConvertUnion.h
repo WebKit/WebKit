@@ -32,7 +32,7 @@
 #include "JSDOMConvertInterface.h"
 #include "JSDOMConvertNull.h"
 #include <JavaScriptCore/IteratorOperations.h>
-#include <wtf/Variant.h>
+#include <variant>
 
 namespace WebCore {
 

@@ -30,7 +30,7 @@
 #include "CryptoAlgorithmParameters.h"
 #include <JavaScriptCore/JSObject.h>
 #include <JavaScriptCore/Strong.h>
-#include <wtf/Variant.h>
+#include <variant>
 
 namespace WebCore {
 

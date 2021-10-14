@@ -32,8 +32,8 @@
 
 #include "File.h"
 #include "TextEncoding.h"
+#include <variant>
 #include <wtf/RefCounted.h>
-#include <wtf/Variant.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {

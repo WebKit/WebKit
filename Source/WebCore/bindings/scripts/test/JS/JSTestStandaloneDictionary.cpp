@@ -36,8 +36,8 @@
 #include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/JSString.h>
 #include <JavaScriptCore/ObjectConstructor.h>
+#include <variant>
 #include <wtf/NeverDestroyed.h>
-#include <wtf/Variant.h>
 
 
 namespace WebCore {

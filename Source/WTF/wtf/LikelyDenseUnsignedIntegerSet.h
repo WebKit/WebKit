@@ -25,13 +25,13 @@
 
 #pragma once
 
+#include <variant>
 #include <wtf/Assertions.h>
 #include <wtf/BitVector.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/HashFunctions.h>
 #include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/Variant.h>
 
 namespace WTF {
 

@@ -28,8 +28,8 @@
 #include "SpeechRecognitionConnectionClientIdentifier.h"
 #include "SpeechRecognitionError.h"
 #include "SpeechRecognitionResultData.h"
+#include <variant>
 #include <wtf/EnumTraits.h>
-#include <wtf/Variant.h>
 
 namespace WebCore {
 

@@ -28,8 +28,8 @@
 
 #import "AccessibilityObjectInterface.h"
 #import <CoreGraphics/CoreGraphics.h>
+#import <variant>
 #import <wtf/RefPtr.h>
-#import <wtf/Variant.h>
 #import <wtf/WeakPtr.h>
 
 namespace WebCore {

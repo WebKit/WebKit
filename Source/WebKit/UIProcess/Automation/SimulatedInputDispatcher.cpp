@@ -33,7 +33,7 @@
 #include "WebAutomationSession.h"
 #include "WebAutomationSessionMacros.h"
 #include <WebCore/PointerEventTypeNames.h>
-#include <wtf/Variant.h>
+#include <variant>
 
 namespace WebKit {
 

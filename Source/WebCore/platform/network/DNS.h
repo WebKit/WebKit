@@ -26,8 +26,8 @@
 #pragma once
 
 #include <optional>
+#include <variant>
 #include <wtf/Forward.h>
-#include <wtf/Variant.h>
 
 #if OS(WINDOWS)
 #include <winsock2.h>

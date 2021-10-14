@@ -29,7 +29,7 @@
 #include <JavaScriptCore/JSCJSValue.h>
 #include <JavaScriptCore/SlotVisitor.h>
 #include <JavaScriptCore/Weak.h>
-#include <wtf/Variant.h>
+#include <variant>
 
 namespace WebCore {
 

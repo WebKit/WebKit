@@ -1,3 +1,21 @@
+2021-10-14  Alex Christensen  <achristensen@webkit.org>
+
+        Remove Variant.h
+        https://bugs.webkit.org/show_bug.cgi?id=231744
+
+        Reviewed by Darin Adler.
+
+        * jit/AssemblyHelpers.h:
+        * jit/SnippetReg.h:
+        * parser/Lexer.cpp:
+        * parser/VariableEnvironment.h:
+        * runtime/BytecodeCacheError.h:
+        * runtime/CachePayload.h:
+        * runtime/CacheUpdate.h:
+        * runtime/TemporalObject.h:
+        * runtime/TemporalTimeZone.h:
+        * wasm/WasmLLIntGenerator.cpp:
+
 2021-10-14  Tadeu Zagallo  <tzagallo@apple.com>
 
         Wasm LLInt should zero bytecodeIndex before throwing

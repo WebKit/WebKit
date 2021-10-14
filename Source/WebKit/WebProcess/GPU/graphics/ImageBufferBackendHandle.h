@@ -29,8 +29,8 @@
 
 #include "ShareableBitmap.h"
 #include "SharedBufferCopy.h"
+#include <variant>
 #include <wtf/MachSendRight.h>
-#include <wtf/Variant.h>
 
 namespace WebKit {
 

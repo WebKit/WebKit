@@ -30,7 +30,7 @@
 #include "CSSVariableReferenceValue.h"
 #include "Length.h"
 #include "StyleImage.h"
-#include <wtf/Variant.h>
+#include <variant>
 
 namespace WebCore {
 

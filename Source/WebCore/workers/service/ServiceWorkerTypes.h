@@ -30,8 +30,8 @@
 #include "DocumentIdentifier.h"
 #include "ProcessIdentifier.h"
 #include "ServiceWorkerIdentifier.h"
+#include <variant>
 #include <wtf/ObjectIdentifier.h>
-#include <wtf/Variant.h>
 
 namespace WebCore {
 

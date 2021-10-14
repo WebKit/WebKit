@@ -22,8 +22,8 @@
 #pragma once
 
 #include <mutex>
+#include <variant>
 #include <wtf/NeverDestroyed.h>
-#include <wtf/Variant.h>
 #include <wtf/text/StringView.h>
 #include <wtf/text/icu/TextBreakIteratorICU.h>
 

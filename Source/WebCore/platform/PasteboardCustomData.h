@@ -25,9 +25,9 @@
 
 #pragma once
 
+#include <variant>
 #include <wtf/Function.h>
 #include <wtf/HashMap.h>
-#include <wtf/Variant.h>
 #include <wtf/Vector.h>
 #include <wtf/persistence/PersistentCoders.h>
 #include <wtf/text/WTFString.h>

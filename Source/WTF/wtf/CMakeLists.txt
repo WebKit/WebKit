@@ -306,7 +306,6 @@ set(WTF_PUBLIC_HEADERS
     UnsafePointer.h
     VMTags.h
     ValueCheck.h
-    Variant.h
     Vector.h
     VectorHash.h
     VectorTraits.h

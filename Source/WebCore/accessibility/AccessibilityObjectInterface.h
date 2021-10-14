@@ -34,9 +34,9 @@
 #include "TextIteratorBehavior.h"
 #include "VisibleSelection.h"
 #include "Widget.h"
+#include <variant>
 #include <wtf/HashSet.h>
 #include <wtf/RefCounted.h>
-#include <wtf/Variant.h>
 
 #if PLATFORM(WIN)
 #include "AccessibilityObjectWrapperWin.h"

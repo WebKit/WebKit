@@ -31,8 +31,8 @@
 #include "IntersectionObserverEntry.h"
 #include "LengthBox.h"
 #include "ReducedResolutionSeconds.h"
+#include <variant>
 #include <wtf/RefCounted.h>
-#include <wtf/Variant.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 

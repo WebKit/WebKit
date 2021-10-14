@@ -39,8 +39,8 @@
 #include "ReducedResolutionSeconds.h"
 #include "ScriptExecutionContext.h"
 #include "Timer.h"
+#include <variant>
 #include <wtf/ListHashSet.h>
-#include <wtf/Variant.h>
 
 namespace JSC {
 class JSGlobalObject;

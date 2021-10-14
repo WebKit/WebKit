@@ -30,8 +30,8 @@
 
 #include "ExceptionOr.h"
 #include "HTTPHeaderMap.h"
+#include <variant>
 #include <wtf/HashTraits.h>
-#include <wtf/Variant.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {

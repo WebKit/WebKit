@@ -34,7 +34,7 @@
 #include <WebCore/PublicKeyCredentialCreationOptions.h>
 #include <WebCore/PublicKeyCredentialRequestOptions.h>
 #include <WebCore/WebAuthenticationConstants.h>
-#include <wtf/Variant.h>
+#include <variant>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
 

@@ -29,8 +29,8 @@
 #include "CSSFontFace.h"
 #include "CSSPropertyNames.h"
 #include "IDLTypes.h"
+#include <variant>
 #include <wtf/UniqueRef.h>
-#include <wtf/Variant.h>
 #include <wtf/WeakPtr.h>
 
 namespace JSC {

@@ -46,9 +46,9 @@
 #include "ScriptExecutionContext.h"
 #include "ThreadSafeDataBuffer.h"
 #include <JavaScriptCore/StrongInlines.h>
+#include <variant>
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/Scope.h>
-#include <wtf/Variant.h>
 
 namespace WebCore {
 using namespace JSC;

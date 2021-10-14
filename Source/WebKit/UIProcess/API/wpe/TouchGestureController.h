@@ -26,8 +26,8 @@
 #pragma once
 
 #include "WebWheelEvent.h"
+#include <variant>
 #include <wpe/wpe.h>
-#include <wtf/Variant.h>
 
 namespace WebKit {
 

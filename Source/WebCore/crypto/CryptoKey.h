@@ -36,10 +36,10 @@
 #include "CryptoKeyUsage.h"
 #include "CryptoRsaHashedKeyAlgorithm.h"
 #include "CryptoRsaKeyAlgorithm.h"
+#include <variant>
 #include <wtf/Forward.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/TypeCasts.h>
-#include <wtf/Variant.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 

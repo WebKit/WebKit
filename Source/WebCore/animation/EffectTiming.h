@@ -27,7 +27,7 @@
 
 #include "FillMode.h"
 #include "PlaybackDirection.h"
-#include <wtf/Variant.h>
+#include <variant>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {

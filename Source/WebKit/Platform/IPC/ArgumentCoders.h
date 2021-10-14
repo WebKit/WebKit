@@ -28,6 +28,7 @@
 #include "ArgumentCoder.h"
 #include "ArrayReference.h"
 #include <utility>
+#include <variant>
 #include <wtf/Box.h>
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/Expected.h>
@@ -36,7 +37,6 @@
 #include <wtf/OptionSet.h>
 #include <wtf/SHA1.h>
 #include <wtf/Unexpected.h>
-#include <wtf/Variant.h>
 #include <wtf/WallTime.h>
 
 namespace IPC {

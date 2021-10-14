@@ -30,8 +30,8 @@
 
 #include "InspectorCanvas.h"
 #include <JavaScriptCore/IdentifiersFactory.h>
+#include <variant>
 #include <wtf/Ref.h>
-#include <wtf/Variant.h>
 #include <wtf/text/WTFString.h>
 
 #if ENABLE(WEBGL)

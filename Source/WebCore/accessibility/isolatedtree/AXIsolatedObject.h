@@ -32,11 +32,11 @@
 #include "IntPoint.h"
 #include "LayoutRect.h"
 #include "Path.h"
+#include <variant>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/RefPtr.h>
 #include <wtf/ThreadSafeRefCounted.h>
-#include <wtf/Variant.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
 

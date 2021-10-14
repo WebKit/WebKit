@@ -22,9 +22,9 @@
 
 #include "DictationContext.h"
 #include "SimpleRange.h"
+#include <variant>
 #include <wtf/Forward.h>
 #include <wtf/OptionSet.h>
-#include <wtf/Variant.h>
 #include <wtf/text/WTFString.h>
 
 #if PLATFORM(IOS_FAMILY)

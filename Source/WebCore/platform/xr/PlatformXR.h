@@ -24,11 +24,11 @@
 #include "IntRect.h"
 #include "IntSize.h"
 #include <memory>
+#include <variant>
 #include <wtf/CompletionHandler.h>
 #include <wtf/HashMap.h>
 #include <wtf/Ref.h>
 #include <wtf/UniqueRef.h>
-#include <wtf/Variant.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
 

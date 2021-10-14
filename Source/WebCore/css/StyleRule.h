@@ -26,10 +26,10 @@
 #include "FontPaletteValues.h"
 #include "StyleProperties.h"
 #include "StyleRuleType.h"
+#include <variant>
 #include <wtf/RefPtr.h>
 #include <wtf/TypeCasts.h>
 #include <wtf/UniqueArray.h>
-#include <wtf/Variant.h>
 
 namespace WebCore {
 

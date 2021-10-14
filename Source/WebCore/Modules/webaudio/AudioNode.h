@@ -29,9 +29,9 @@
 #include "ChannelInterpretation.h"
 #include "EventTarget.h"
 #include "ExceptionOr.h"
+#include <variant>
 #include <wtf/Forward.h>
 #include <wtf/LoggerHelper.h>
-#include <wtf/Variant.h>
 
 #define DEBUG_AUDIONODE_REFERENCES 0
 

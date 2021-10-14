@@ -28,9 +28,9 @@
 #if ENABLE(WEBGL)
 
 #include <JavaScriptCore/InspectorProtocolObjects.h>
+#include <variant>
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
-#include <wtf/Variant.h>
 
 namespace WebCore {
 

@@ -32,7 +32,7 @@
 #include "MessagePort.h"
 #include "ServiceWorker.h"
 #include "ServiceWorkerClient.h"
-#include <wtf/Variant.h>
+#include <variant>
 
 namespace JSC {
 class CallFrame;

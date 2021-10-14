@@ -27,8 +27,8 @@
 #include "KeyedDecoderGeneric.h"
 
 #include "KeyedEncoderGeneric.h"
+#include <variant>
 #include <wtf/HashMap.h>
-#include <wtf/Variant.h>
 #include <wtf/Vector.h>
 #include <wtf/persistence/PersistentDecoder.h>
 #include <wtf/text/StringHash.h>

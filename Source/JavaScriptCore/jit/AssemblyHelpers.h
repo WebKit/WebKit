@@ -44,7 +44,7 @@
 #include "TagRegistersMode.h"
 #include "TypeofType.h"
 #include "VM.h"
-#include <wtf/Variant.h>
+#include <variant>
 
 namespace JSC {
 

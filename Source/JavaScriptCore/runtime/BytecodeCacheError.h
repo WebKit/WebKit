@@ -28,7 +28,7 @@
 #include "JSGlobalObject.h"
 #include "JSSourceCode.h"
 #include "ParserError.h"
-#include <wtf/Variant.h>
+#include <variant>
 #include <wtf/text/WTFString.h>
 
 namespace JSC {

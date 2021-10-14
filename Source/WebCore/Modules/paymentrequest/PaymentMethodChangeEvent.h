@@ -30,7 +30,7 @@
 #include "JSValueInWrappedObject.h"
 #include "PaymentRequestUpdateEvent.h"
 #include <JavaScriptCore/Strong.h>
-#include <wtf/Variant.h>
+#include <variant>
 #include <wtf/text/WTFString.h>
 
 namespace JSC {

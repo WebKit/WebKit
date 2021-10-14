@@ -36,8 +36,8 @@
 #endif
 
 #if USE(UNIX_DOMAIN_SOCKETS)
+#include <variant>
 #include <wtf/Function.h>
-#include <wtf/Variant.h>
 #endif
 
 namespace IPC {

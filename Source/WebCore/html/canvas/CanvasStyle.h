@@ -30,7 +30,7 @@
 #include "CanvasPattern.h"
 #include "Color.h"
 #include "ColorSerialization.h"
-#include <wtf/Variant.h>
+#include <variant>
 
 namespace WebCore {
 

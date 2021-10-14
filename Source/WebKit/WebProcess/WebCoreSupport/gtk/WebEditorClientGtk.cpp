@@ -31,7 +31,7 @@
 #include <WebCore/TextIterator.h>
 #include <WebCore/markup.h>
 #include <WebPage.h>
-#include <wtf/Variant.h>
+#include <variant>
 #include <wtf/glib/GRefPtr.h>
 
 namespace WebKit {

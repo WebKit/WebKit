@@ -31,7 +31,7 @@
 #include <wtf/URL.h>
 #include "XMLHttpRequestEventTarget.h"
 #include "XMLHttpRequestProgressEventThrottle.h"
-#include <wtf/Variant.h>
+#include <variant>
 #include <wtf/text/StringBuilder.h>
 
 namespace JSC {

@@ -29,8 +29,8 @@
 
 #include "APIObject.h"
 #include <WebCore/AuthenticatorTransport.h>
+#include <variant>
 #include <wtf/UniqueRef.h>
-#include <wtf/Variant.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 

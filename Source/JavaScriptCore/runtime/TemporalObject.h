@@ -21,7 +21,7 @@
 #pragma once
 
 #include "JSObject.h"
-#include <wtf/Variant.h>
+#include <variant>
 
 namespace JSC {
 

@@ -28,7 +28,7 @@
 #include "FontBaseline.h"
 #include "InlineIteratorLineLegacyPath.h"
 #include "InlineIteratorLineModernPath.h"
-#include <wtf/Variant.h>
+#include <variant>
 
 namespace WebCore {
 namespace InlineIterator {

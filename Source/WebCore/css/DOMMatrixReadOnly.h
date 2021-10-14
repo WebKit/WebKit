@@ -30,8 +30,8 @@
 #include "ScriptWrappable.h"
 #include "TransformationMatrix.h"
 #include <JavaScriptCore/Forward.h>
+#include <variant>
 #include <wtf/RefCounted.h>
-#include <wtf/Variant.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 

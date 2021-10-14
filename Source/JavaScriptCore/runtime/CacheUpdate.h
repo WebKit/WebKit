@@ -28,7 +28,7 @@
 #include "CachePayload.h"
 #include "CachedTypes.h"
 #include "CodeSpecializationKind.h"
-#include <wtf/Variant.h>
+#include <variant>
 
 namespace JSC {
 

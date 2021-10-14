@@ -29,8 +29,8 @@
 #include "DocumentMarker.h"
 #include "Position.h"
 #include "Timer.h"
+#include <variant>
 #include <wtf/Noncopyable.h>
-#include <wtf/Variant.h>
 
 namespace WebCore {
 

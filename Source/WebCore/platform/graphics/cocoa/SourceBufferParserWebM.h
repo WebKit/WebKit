@@ -31,6 +31,7 @@
 #include <CoreAudio/CoreAudioTypes.h>
 #include <CoreMedia/CMTime.h>
 #include <pal/spi/cf/CoreMediaSPI.h>
+#include <variant>
 #include <webm/callback.h>
 #include <webm/status.h>
 #include <webm/vp9_header_parser.h>
@@ -39,7 +40,6 @@
 #include <wtf/MediaTime.h>
 #include <wtf/RobinHoodHashSet.h>
 #include <wtf/UniqueRef.h>
-#include <wtf/Variant.h>
 #include <wtf/Vector.h>
 #include <wtf/text/AtomString.h>
 #include <wtf/text/WTFString.h>

@@ -29,8 +29,8 @@
 
 #include "SharedMemory.h"
 #include <WebCore/SharedBuffer.h>
+#include <variant>
 #include <wtf/RefPtr.h>
-#include <wtf/Variant.h>
 
 namespace IPC {
 class Decoder;

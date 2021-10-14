@@ -28,7 +28,7 @@
 #include "ClipboardItemDataSource.h"
 #include "ExceptionCode.h"
 #include "FileReaderLoaderClient.h"
-#include <wtf/Variant.h>
+#include <variant>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {

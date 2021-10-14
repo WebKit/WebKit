@@ -33,10 +33,10 @@
 #include "GraphicsTypesGL.h"
 #include "PlatformXR.h"
 #include "WebXRLayer.h"
+#include <variant>
 #include <wtf/IsoMalloc.h>
 #include <wtf/Ref.h>
 #include <wtf/RefPtr.h>
-#include <wtf/Variant.h>
 
 namespace WebCore {
 

@@ -28,10 +28,10 @@
 #include "StringAdaptors.h"
 #include <JavaScriptCore/HandleTypes.h>
 #include <JavaScriptCore/Strong.h>
+#include <variant>
 #include <wtf/Brigand.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/URL.h>
-#include <wtf/Variant.h>
 
 #if ENABLE(WEBGL)
 #include "WebGLAny.h"

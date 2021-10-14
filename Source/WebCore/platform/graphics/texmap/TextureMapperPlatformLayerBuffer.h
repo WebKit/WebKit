@@ -30,8 +30,8 @@
 #include "BitmapTextureGL.h"
 #include "TextureMapperGLHeaders.h"
 #include "TextureMapperPlatformLayer.h"
+#include <variant>
 #include <wtf/MonotonicTime.h>
-#include <wtf/Variant.h>
 
 namespace WebCore {
 

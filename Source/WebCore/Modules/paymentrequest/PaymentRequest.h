@@ -35,8 +35,8 @@
 #include "PaymentMethodChangeEvent.h"
 #include "PaymentOptions.h"
 #include "PaymentResponse.h"
+#include <variant>
 #include <wtf/URL.h>
-#include <wtf/Variant.h>
 
 namespace WebCore {
 

@@ -26,8 +26,8 @@
 
 #include "CSSValueKeywords.h"
 #include "FontDescription.h"
+#include <variant>
 #include <wtf/RefCountedArray.h>
-#include <wtf/Variant.h>
 
 #if PLATFORM(COCOA)
 #include "FontFamilySpecificationCoreText.h"

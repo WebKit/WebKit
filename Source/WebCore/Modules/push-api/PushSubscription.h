@@ -34,9 +34,9 @@
 #include "PushSubscriptionJSON.h"
 
 #include <optional>
+#include <variant>
 #include <wtf/IsoMalloc.h>
 #include <wtf/RefCounted.h>
-#include <wtf/Variant.h>
 
 namespace WebCore {
 

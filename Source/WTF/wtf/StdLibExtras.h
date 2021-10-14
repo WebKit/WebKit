@@ -29,6 +29,7 @@
 #include <cstring>
 #include <memory>
 #include <type_traits>
+#include <variant>
 #include <wtf/Assertions.h>
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/Compiler.h>
@@ -383,6 +384,12 @@ template <class... F>
 Visitor<F...> makeVisitor(F... f)
 {
     return Visitor<F...>(f...);
+}
+
+template<class V, class... F>
+auto switchOn(V&& v, F&&... f) -> decltype(std::visit(makeVisitor(std::forward<F>(f)...), std::forward<V>(v)))
+{
+    return std::visit(makeVisitor(std::forward<F>(f)...), std::forward<V>(v));
 }
 
 namespace Detail

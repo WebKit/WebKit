@@ -49,10 +49,10 @@
 #include <WebCore/MediaControlsContextMenuItem.h>
 #include <WebCore/UserInterfaceLayoutDirection.h>
 #include <WebCore/ValidationBubble.h>
+#include <variant>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Forward.h>
 #include <wtf/URL.h>
-#include <wtf/Variant.h>
 #include <wtf/WeakPtr.h>
 
 #if PLATFORM(COCOA)

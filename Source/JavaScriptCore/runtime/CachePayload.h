@@ -26,9 +26,9 @@
 #pragma once
 
 #include "VM.h"
+#include <variant>
 #include <wtf/FileSystem.h>
 #include <wtf/MallocPtr.h>
-#include <wtf/Variant.h>
 
 namespace JSC {
 

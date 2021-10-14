@@ -33,10 +33,10 @@
 #include <WebCore/MediaSample.h>
 #include <WebCore/SampleMap.h>
 #include <pal/avfoundation/MediaTimeAVFoundation.h>
+#include <variant>
 #include <wtf/CompletionHandler.h>
 #include <wtf/LoggerHelper.h>
 #include <wtf/MediaTime.h>
-#include <wtf/Variant.h>
 
 #include <pal/cocoa/MediaToolboxSoftLink.h>
 

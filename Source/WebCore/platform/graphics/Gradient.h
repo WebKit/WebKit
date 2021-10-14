@@ -31,7 +31,7 @@
 #include "Color.h"
 #include "FloatPoint.h"
 #include "GraphicsTypes.h"
-#include <wtf/Variant.h>
+#include <variant>
 #include <wtf/Vector.h>
 
 #if USE(CG)

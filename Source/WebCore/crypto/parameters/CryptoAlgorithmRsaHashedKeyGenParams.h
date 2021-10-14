@@ -28,7 +28,7 @@
 #include "CryptoAlgorithmRsaKeyGenParams.h"
 #include <JavaScriptCore/JSObject.h>
 #include <JavaScriptCore/Strong.h>
-#include <wtf/Variant.h>
+#include <variant>
 
 #if ENABLE(WEB_CRYPTO)
 

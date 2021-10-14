@@ -26,8 +26,8 @@
 #pragma once
 
 #include "IDBKey.h"
+#include <variant>
 #include <wtf/StdSet.h>
-#include <wtf/Variant.h>
 #include <wtf/text/StringHash.h>
 
 namespace WebCore {

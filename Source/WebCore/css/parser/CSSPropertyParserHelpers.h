@@ -37,8 +37,8 @@
 #include "CSSValuePool.h"
 #include "Length.h" // For ValueRange
 #include "StyleColor.h"
+#include <variant>
 #include <wtf/OptionSet.h>
-#include <wtf/Variant.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {

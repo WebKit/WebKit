@@ -36,9 +36,9 @@
 #include "ExceptionOr.h"
 #include "ScriptWrappable.h"
 #include <memory>
+#include <variant>
 #include <wtf/Forward.h>
 #include <wtf/IsoMalloc.h>
-#include <wtf/Variant.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {

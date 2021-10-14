@@ -29,8 +29,8 @@
 #include "Element.h"
 #include "NodeRareData.h"
 #include <JavaScriptCore/Identifier.h>
+#include <variant>
 #include <wtf/IsoMallocInlines.h>
-#include <wtf/Variant.h>
 
 namespace WebCore {
 

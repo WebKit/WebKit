@@ -27,10 +27,10 @@
 
 #include "IndexedDB.h"
 #include "ThreadSafeDataBuffer.h"
+#include <variant>
 #include <wtf/Forward.h>
 #include <wtf/IsoMalloc.h>
 #include <wtf/RefCounted.h>
-#include <wtf/Variant.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 

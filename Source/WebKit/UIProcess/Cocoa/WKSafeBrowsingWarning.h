@@ -25,10 +25,10 @@
 
 #import "CocoaColor.h"
 #import "WKFoundation.h"
+#import <variant>
 #import <wtf/CompletionHandler.h>
 #import <wtf/RefPtr.h>
 #import <wtf/RetainPtr.h>
-#import <wtf/Variant.h>
 #import <wtf/WeakObjCPtr.h>
 
 #if PLATFORM(MAC)

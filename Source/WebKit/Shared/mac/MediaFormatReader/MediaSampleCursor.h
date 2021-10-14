@@ -29,10 +29,10 @@
 
 #include "CoreMediaWrapped.h"
 #include <WebCore/SampleMap.h>
+#include <variant>
 #include <wtf/Identified.h>
 #include <wtf/Lock.h>
 #include <wtf/MediaTime.h>
-#include <wtf/Variant.h>
 
 DECLARE_CORE_MEDIA_TRAITS(SampleCursor);
 

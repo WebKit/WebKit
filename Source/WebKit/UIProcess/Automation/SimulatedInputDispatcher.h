@@ -30,11 +30,11 @@
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/IntPoint.h>
 #include <WebCore/IntSize.h>
+#include <variant>
 #include <wtf/CompletionHandler.h>
 #include <wtf/ListHashSet.h>
 #include <wtf/RunLoop.h>
 #include <wtf/Seconds.h>
-#include <wtf/Variant.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 

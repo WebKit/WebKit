@@ -27,8 +27,8 @@
 
 #include "IntSize.h"
 #include <optional>
+#include <variant>
 #include <wtf/EnumTraits.h>
-#include <wtf/Variant.h>
 
 namespace WebCore {
 
