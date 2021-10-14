@@ -95,7 +95,7 @@ void HTMLDialogElement::close(const String& result)
     if (isInTopLayer())
         removeFromTopLayer();
 
-    if (RefPtr element = std::exchange(m_previouslyFocusedElement, nullptr).get(); element && element->isConnected()) {
+    if (RefPtr element = std::exchange(m_previouslyFocusedElement, nullptr).get()) {
         FocusOptions options;
         options.preventScroll = true;
         element->focus(options);
