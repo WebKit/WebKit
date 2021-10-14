@@ -195,9 +195,6 @@ Shared/Cocoa/WebPreferencesDefaultValuesCocoa.mm
 
 Shared/Daemon/DaemonUtilities.mm
 
-Shared/EntryPointUtilities/Cocoa/Daemon/PCMDaemonConnectionSet.mm
-Shared/EntryPointUtilities/Cocoa/Daemon/PCMDaemonEntryPoint.mm
-
 Shared/EntryPointUtilities/Cocoa/XPCService/XPCServiceEntryPoint.mm
 Shared/EntryPointUtilities/Cocoa/XPCService/XPCServiceMain.mm
 

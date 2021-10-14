@@ -1,3 +1,13 @@
+2021-10-14  Alex Christensen  <achristensen@webkit.org>
+
+        Reduce memory use of AdAttributionDaemon
+        https://bugs.webkit.org/show_bug.cgi?id=231523
+
+        Reviewed by Brady Eidson.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/EventAttribution.mm:
+        (TestWebKitAPI::TEST):
+
 2021-10-14  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Fix build failures with newer clang

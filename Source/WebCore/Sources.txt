@@ -1543,7 +1543,6 @@ layout/formattingContexts/table/TableFormattingQuirks.cpp
 layout/formattingContexts/table/TableFormattingState.cpp
 layout/formattingContexts/table/TableGrid.cpp
 layout/formattingContexts/table/TableLayout.cpp
-loader/PrivateClickMeasurement.cpp
 loader/ApplicationManifestLoader.cpp
 loader/CanvasActivityRecord.cpp
 loader/ContentFilter.cpp
@@ -1818,9 +1817,7 @@ platform/LengthPoint.cpp
 platform/LengthSize.cpp
 platform/LocalizedStrings.cpp
 platform/LogInitialization.cpp
-platform/Logging.cpp
 platform/LowPowerModeNotifier.cpp
-platform/MIMETypeRegistry.cpp
 platform/MainThreadSharedTimer.cpp
 platform/MediaStrategy.cpp
 platform/NotImplemented.cpp
@@ -1839,7 +1836,6 @@ platform/PreviewConverter.cpp
 platform/ProcessIdentifier.cpp
 platform/ReferrerPolicy.cpp
 platform/RemoteCommandListener.cpp
-platform/RuntimeApplicationChecks.cpp
 platform/SSLKeyGenerator.cpp
 platform/ScrollAnimation.cpp
 platform/ScrollAnimationKinetic.cpp
@@ -2144,8 +2140,6 @@ platform/network/DNSResolveQueue.cpp
 platform/network/DataURLDecoder.cpp
 platform/network/FormData.cpp
 platform/network/FormDataBuilder.cpp
-platform/network/HTTPHeaderMap.cpp
-platform/network/HTTPHeaderValues.cpp
 platform/network/HTTPParsers.cpp
 platform/network/MIMEHeader.cpp
 platform/network/NetworkLoadMetrics.cpp
@@ -2167,12 +2161,7 @@ platform/network/SocketStreamHandleImpl.cpp
 platform/network/SynchronousLoaderClient.cpp
 platform/network/TimingAllowOrigin.cpp
 platform/sql/SQLiteAuthorizer.cpp
-platform/sql/SQLiteDatabase.cpp
-platform/sql/SQLiteDatabaseTracker.cpp
 platform/sql/SQLiteFileSystem.cpp
-platform/sql/SQLiteStatement.cpp
-platform/sql/SQLiteStatementAutoResetScope.cpp
-platform/sql/SQLiteTransaction.cpp
 platform/text/BidiContext.cpp
 platform/text/DateTimeFormat.cpp
 platform/text/EncodingTables.cpp

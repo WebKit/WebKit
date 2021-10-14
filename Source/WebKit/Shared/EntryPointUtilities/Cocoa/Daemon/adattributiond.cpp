@@ -23,10 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <os/availability.h>
-#include <WebKit/WKMain.h>
+#include "PCMDaemonEntryPoint.h"
 
 int main(int argc, const char** argv)
 {
-    WKPCMDaemonMain(argc, argv);
+    WebKit::PCMDaemonMain(argc, argv);
 }

@@ -538,6 +538,7 @@ TEST(PrivateClickMeasurement, DaemonDebugMode)
     while (consoleMessages.size() < 2)
         Util::spinRunLoop();
     EXPECT_WK_STREQ(consoleMessages[1], "[Private Click Measurement] Turned Debug Mode off.");
+    cleanUpDaemon(tempDir);
 }
 
 TEST(PrivateClickMeasurement, NetworkProcessDebugMode)

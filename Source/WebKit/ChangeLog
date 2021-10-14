@@ -1,3 +1,21 @@
+2021-10-14  Alex Christensen  <achristensen@webkit.org>
+
+        Reduce memory use of AdAttributionDaemon
+        https://bugs.webkit.org/show_bug.cgi?id=231523
+
+        Reviewed by Brady Eidson.
+
+        * Configurations/adattributiond.xcconfig:
+        * Shared/API/Cocoa/WKMain.h:
+        * Shared/API/Cocoa/WKMain.mm:
+        (WKXPCServiceMain):
+        (WKPCMDaemonMain): Deleted.
+        * Shared/EntryPointUtilities/Cocoa/Daemon/adattributiond.cpp: Renamed from Source/WebKit/Shared/EntryPointUtilities/Cocoa/Daemon/adattributiond.c.
+        (main):
+        * Sources.txt:
+        * SourcesCocoa.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+
 2021-10-14  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Fix build failures with newer clang
