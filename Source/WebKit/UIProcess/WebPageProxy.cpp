@@ -10715,9 +10715,8 @@ void WebPageProxy::loadServiceWorker(const URL& url)
     WEBPAGEPROXY_RELEASE_LOG(Loading, "loadServiceWorker:");
 
     m_isServiceWorkerPage = true;
-    auto securityOriginURL = SecurityOriginData::fromURL(url).toString();
     CString html = makeString("<script>navigator.serviceWorker.register('", url.string().utf8().data(), "');</script>").utf8();
-    loadData({ reinterpret_cast<const uint8_t*>(html.data()), html.length() }, "text/html"_s, "UTF-8"_s, securityOriginURL);
+    loadData({ reinterpret_cast<const uint8_t*>(html.data()), html.length() }, "text/html"_s, "UTF-8"_s, url.protocolHostAndPort());
 }
 
 #if !PLATFORM(IOS_FAMILY)

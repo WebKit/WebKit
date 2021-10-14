@@ -1,5 +1,16 @@
 2021-10-14  Chris Dumez  <cdumez@apple.com>
 
+        [WKWebView _loadServiceWorkerURL] ends up lowercasing URL host
+        https://bugs.webkit.org/show_bug.cgi?id=231742
+
+        Reviewed by Timothy Hatcher.
+
+        Extend test coverage.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ServiceWorkerBasic.mm:
+
+2021-10-14  Chris Dumez  <cdumez@apple.com>
+
         [ iOS Release ] TestWebKitAPI.WebKit.TryUsingPrewarmedProcessThatJustCrashed is a flaky timeout
         https://bugs.webkit.org/show_bug.cgi?id=229260
         <rdar://problem/82100254>

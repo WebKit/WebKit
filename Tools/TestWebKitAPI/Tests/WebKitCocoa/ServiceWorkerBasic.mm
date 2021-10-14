@@ -2697,6 +2697,8 @@ TEST(ServiceWorker, ExtensionServiceWorker)
     EXPECT_EQ(webViewConfiguration.processPool._serviceWorkerProcessCount, 1U);
     EXPECT_EQ(webViewConfiguration.processPool._webProcessCountIgnoringPrewarmedAndCached, 1U);
 
+    EXPECT_WK_STREQ([webView URL].absoluteString, @"sw-ext://ABC");
+
     // The service worker should exit if we close/deallocate the view we used to launch it.
     [webView _close];
     webView = nil;
