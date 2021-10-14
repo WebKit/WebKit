@@ -57,8 +57,6 @@ public:
         u.reg = reg;
     }
 
-    ValueLocation(const ValueLocation&) = default;
-
     static ValueLocation reg(Reg reg)
     {
         return ValueLocation(reg);
