@@ -1,3 +1,11 @@
+2021-10-14  Ali Juma  <ajuma@chromium.org>
+
+        Add my GitHub username to contributors.json
+
+        Unreviewed.
+
+        * metadata/contributors.json:
+
 2021-10-14  Víctor Manuel Jáquez Leal  <vjaquez@igalia.com>
 
         Add my GitHub username to contributors.json
