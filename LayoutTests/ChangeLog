@@ -1,3 +1,12 @@
+2021-10-14  Ayumi Kojima  <ayumi_kojima@apple.com>
+
+        [ MacOS ] http/tests/security/contentSecurityPolicy/frame-src-cross-origin-load.html is a flakey failure.
+        https://bugs.webkit.org/show_bug.cgi?id=230428
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+
 2021-10-14  Kyle Piddington  <kpiddington@apple.com>
 
         https://tankionline.com/play/ html5 engine not working: crashes. (Metal shader not working)
