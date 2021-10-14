@@ -39,7 +39,7 @@ namespace WebKit {
 using namespace WebCore;
 
 RemoteAudioSourceProviderManager::RemoteAudioSourceProviderManager()
-    : m_queue(WorkQueue::create("RemoteAudioSourceProviderManager", WorkQueue::Type::Serial, WorkQueue::QOS::UserInteractive))
+    : m_queue(WorkQueue::create("RemoteAudioSourceProviderManager", WorkQueue::QOS::UserInteractive))
 {
 }
 

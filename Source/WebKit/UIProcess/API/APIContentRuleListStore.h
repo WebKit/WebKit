@@ -36,6 +36,7 @@ class SharedBuffer;
 }
 
 namespace WTF {
+class ConcurrentWorkQueue;
 class WorkQueue;
 }
 
@@ -80,7 +81,7 @@ private:
     WTF::String defaultStorePath();
     
     const WTF::String m_storePath;
-    Ref<WTF::WorkQueue> m_compileQueue;
+    Ref<WTF::ConcurrentWorkQueue> m_compileQueue;
     Ref<WTF::WorkQueue> m_readQueue;
     Ref<WTF::WorkQueue> m_removeQueue;
 };

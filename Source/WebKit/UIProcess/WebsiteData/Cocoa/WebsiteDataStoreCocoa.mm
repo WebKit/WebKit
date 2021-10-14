@@ -71,7 +71,7 @@ static HashSet<WebsiteDataStore*>& dataStores()
 #if ENABLE(APP_BOUND_DOMAINS)
 static WorkQueue& appBoundDomainQueue()
 {
-    static auto& queue = WorkQueue::create("com.apple.WebKit.AppBoundDomains", WorkQueue::Type::Serial).leakRef();
+    static auto& queue = WorkQueue::create("com.apple.WebKit.AppBoundDomains").leakRef();
     return queue;
 }
 static std::atomic<bool> hasInitializedAppBoundDomains = false;

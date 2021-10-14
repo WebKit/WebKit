@@ -40,7 +40,7 @@ namespace WebKit {
 using namespace WebCore;
 
 RemoteCaptureSampleManager::RemoteCaptureSampleManager()
-    : m_queue(WorkQueue::create("RemoteCaptureSampleManager", WorkQueue::Type::Serial, WorkQueue::QOS::UserInteractive))
+    : m_queue(WorkQueue::create("RemoteCaptureSampleManager", WorkQueue::QOS::UserInteractive))
 {
 }
 

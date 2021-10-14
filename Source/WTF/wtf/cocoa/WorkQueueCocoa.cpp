@@ -35,7 +35,7 @@ namespace {
 
 struct DispatchWorkItem {
     WTF_MAKE_STRUCT_FAST_ALLOCATED;
-    Ref<WorkQueue> m_workQueue;
+    Ref<WorkQueueBase> m_workQueue;
     Function<void()> m_function;
     void operator()() { m_function(); }
 };
@@ -49,32 +49,27 @@ template<typename T> static void dispatchWorkItem(void* dispatchContext)
     delete item;
 }
 
-void WorkQueue::dispatch(Function<void()>&& function)
+void WorkQueueBase::dispatch(Function<void()>&& function)
 {
     dispatch_async_f(m_dispatchQueue.get(), new DispatchWorkItem { Ref { *this }, WTFMove(function) }, dispatchWorkItem<DispatchWorkItem>);
 }
 
-void WorkQueue::dispatchAfter(Seconds duration, Function<void()>&& function)
+void WorkQueueBase::dispatchAfter(Seconds duration, Function<void()>&& function)
 {
     dispatch_after_f(dispatch_time(DISPATCH_TIME_NOW, duration.nanosecondsAs<int64_t>()), m_dispatchQueue.get(), new DispatchWorkItem { Ref { *this },  WTFMove(function) }, dispatchWorkItem<DispatchWorkItem>);
 }
 
-void WorkQueue::dispatchSync(Function<void()>&& function)
+void WorkQueueBase::dispatchSync(Function<void()>&& function)
 {
     dispatch_sync_f(m_dispatchQueue.get(), new Function<void()> { WTFMove(function) }, dispatchWorkItem<Function<void()>>);
 }
 
-Ref<WorkQueue> WorkQueue::constructMainWorkQueue()
-{
-    return adoptRef(*new WorkQueue(dispatch_get_main_queue()));
-}
-
-WorkQueue::WorkQueue(OSObjectPtr<dispatch_queue_t>&& dispatchQueue)
+WorkQueueBase::WorkQueueBase(OSObjectPtr<dispatch_queue_t>&& dispatchQueue)
     : m_dispatchQueue(WTFMove(dispatchQueue))
 {
 }
 
-void WorkQueue::platformInitialize(const char* name, Type type, QOS qos)
+void WorkQueueBase::platformInitialize(const char* name, Type type, QOS qos)
 {
     dispatch_queue_attr_t attr = type == Type::Concurrent ? DISPATCH_QUEUE_CONCURRENT : DISPATCH_QUEUE_SERIAL;
     attr = dispatch_queue_attr_make_with_qos_class(attr, Thread::dispatchQOSClass(qos), 0);
@@ -82,11 +77,21 @@ void WorkQueue::platformInitialize(const char* name, Type type, QOS qos)
     dispatch_set_context(m_dispatchQueue.get(), this);
 }
 
-void WorkQueue::platformInvalidate()
+void WorkQueueBase::platformInvalidate()
 {
 }
 
-void WorkQueue::concurrentApply(size_t iterations, WTF::Function<void(size_t index)>&& function)
+WorkQueue::WorkQueue(OSObjectPtr<dispatch_queue_t>&& queue)
+    : WorkQueueBase(WTFMove(queue))
+{
+}
+
+Ref<WorkQueue> WorkQueue::constructMainWorkQueue()
+{
+    return adoptRef(*new WorkQueue(dispatch_get_main_queue()));
+}
+
+void ConcurrentWorkQueue::apply(size_t iterations, WTF::Function<void(size_t index)>&& function)
 {
     dispatch_apply(iterations, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), makeBlockPtr([function = WTFMove(function)](size_t index) {
         function(index);

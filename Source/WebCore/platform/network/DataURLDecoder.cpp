@@ -62,7 +62,7 @@ static bool shouldRemoveFragmentIdentifier(const String& mediaType)
 
 static WorkQueue& decodeQueue()
 {
-    static auto& queue = WorkQueue::create("org.webkit.DataURLDecoder", WorkQueue::Type::Serial, WorkQueue::QOS::UserInitiated).leakRef();
+    static auto& queue = WorkQueue::create("org.webkit.DataURLDecoder", WorkQueue::QOS::UserInitiated).leakRef();
     return queue;
 }
 

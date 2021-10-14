@@ -171,7 +171,7 @@ Ref<LibWebRTCCodecs> LibWebRTCCodecs::create()
 }
 
 LibWebRTCCodecs::LibWebRTCCodecs()
-    : m_queue(WorkQueue::create("LibWebRTCCodecs", WorkQueue::Type::Serial, WorkQueue::QOS::UserInteractive))
+    : m_queue(WorkQueue::create("LibWebRTCCodecs", WorkQueue::QOS::UserInteractive))
 {
 }
 

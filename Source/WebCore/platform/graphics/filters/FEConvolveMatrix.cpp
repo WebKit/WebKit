@@ -413,7 +413,7 @@ void FEConvolveMatrix::platformApplySoftware()
         int stride = clipBottom / iterations;
         int chunkCount = (clipBottom + stride - 1) / stride;
 
-        WorkQueue::concurrentApply(chunkCount, [&](size_t index) {
+        ConcurrentWorkQueue::apply(chunkCount, [&](size_t index) {
             int yStart = (stride * index);
             int yEnd = std::min<int>(stride * (index + 1), clipBottom);
 

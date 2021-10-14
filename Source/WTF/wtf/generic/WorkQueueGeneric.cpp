@@ -32,17 +32,14 @@
 
 #include <wtf/threads/BinarySemaphore.h>
 
-Ref<WorkQueue> WorkQueue::constructMainWorkQueue()
-{
-    return adoptRef(*new WorkQueue(RunLoop::main()));
-}
+namespace WTF {
 
-WorkQueue::WorkQueue(RunLoop& runLoop)
+WorkQueueBase::WorkQueueBase(RunLoop& runLoop)
     : m_runLoop(&runLoop)
 {
 }
 
-void WorkQueue::platformInitialize(const char* name, Type, QOS)
+void WorkQueueBase::platformInitialize(const char* name, Type, QOS)
 {
     BinarySemaphore semaphore;
     Thread::create(name, [&] {
@@ -53,7 +50,7 @@ void WorkQueue::platformInitialize(const char* name, Type, QOS)
     semaphore.wait();
 }
 
-void WorkQueue::platformInvalidate()
+void WorkQueueBase::platformInvalidate()
 {
     if (m_runLoop) {
         Ref<RunLoop> protector(*m_runLoop);
@@ -64,18 +61,28 @@ void WorkQueue::platformInvalidate()
     }
 }
 
-void WorkQueue::dispatch(Function<void()>&& function)
+void WorkQueueBase::dispatch(Function<void()>&& function)
 {
-    RefPtr<WorkQueue> protect(this);
-    m_runLoop->dispatch([protect, function = WTFMove(function)] {
+    m_runLoop->dispatch([protectedThis = Ref { *this }, function = WTFMove(function)] {
         function();
     });
 }
 
-void WorkQueue::dispatchAfter(Seconds delay, Function<void()>&& function)
+void WorkQueueBase::dispatchAfter(Seconds delay, Function<void()>&& function)
 {
-    RefPtr<WorkQueue> protect(this);
-    m_runLoop->dispatchAfter(delay, [protect, function = WTFMove(function)] {
+    m_runLoop->dispatchAfter(delay, [protectedThis = Ref { *this }, function = WTFMove(function)] {
         function();
     });
+}
+
+WorkQueue::WorkQueue(RunLoop& loop)
+    : WorkQueueBase(loop)
+{
+}
+
+Ref<WorkQueue> WorkQueue::constructMainWorkQueue()
+{
+    return adoptRef(*new WorkQueue(RunLoop::main()));
+}
+
 }

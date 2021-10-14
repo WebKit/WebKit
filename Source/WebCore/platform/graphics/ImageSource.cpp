@@ -323,7 +323,7 @@ void ImageSource::cachePlatformImageAtIndexAsync(PlatformImagePtr&& platformImag
 WorkQueue& ImageSource::decodingQueue()
 {
     if (!m_decodingQueue)
-        m_decodingQueue = WorkQueue::create("org.webkit.ImageDecoder", WorkQueue::Type::Serial, WorkQueue::QOS::Default);
+        m_decodingQueue = WorkQueue::create("org.webkit.ImageDecoder", WorkQueue::QOS::Default);
 
     return *m_decodingQueue;
 }

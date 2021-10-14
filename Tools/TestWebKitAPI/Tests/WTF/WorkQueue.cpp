@@ -300,7 +300,7 @@ TEST(WTF_WorkQueue, DestroyDispatchedOnDispatchQueue)
     constexpr size_t iterationCount = 10000;
     RefPtr<WorkQueue> queue[queueCount];
     for (size_t i = 0; i < queueCount; ++i)
-        queue[i] = WorkQueue::create("com.apple.WebKit.Test.destroyDispatchedOnDispatchQueue", WorkQueue::Type::Serial, WorkQueue::QOS::UserInteractive);
+        queue[i] = WorkQueue::create("com.apple.WebKit.Test.destroyDispatchedOnDispatchQueue", WorkQueue::QOS::UserInteractive);
 
     for (size_t i = 0; i < iterationCount; ++i) {
         for (size_t j = 0; j < queueCount; ++j)

@@ -39,6 +39,7 @@
 #include <WebCore/VideoTrackPrivate.h>
 #include <pal/avfoundation/MediaTimeAVFoundation.h>
 #include <wtf/LoggerHelper.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/WorkQueue.h>
 
 #include <pal/cocoa/MediaToolboxSoftLink.h>
@@ -120,10 +121,10 @@ void MediaFormatReader::startOnMainThread(MTPluginByteSourceRef byteSource)
     });
 }
 
-static WorkQueue& readerQueue()
+static ConcurrentWorkQueue& readerQueue()
 {
-    static auto& queue = WorkQueue::create("WebKit::MediaFormatReader Queue", WorkQueue::Type::Concurrent).leakRef();
-    return queue;
+    static NeverDestroyed<Ref<ConcurrentWorkQueue>> queue = ConcurrentWorkQueue::create("WebKit::MediaFormatReader Queue");
+    return queue.get();
 }
 
 void MediaFormatReader::parseByteSource(RetainPtr<MTPluginByteSourceRef>&& byteSource)

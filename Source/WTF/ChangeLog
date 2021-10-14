@@ -1,3 +1,59 @@
+2021-10-13  Jean-Yves Avenard  <jya@apple.com>
+
+        Clearly distinguish serial from concurrent WorkQueue
+        https://bugs.webkit.org/show_bug.cgi?id=231418
+        rdar://problem/84021977
+
+        Reviewed by Chris Dumez.
+
+        We split the WorkQueue code so that it becomes either a serial or concurrent one.
+        A concurrent WorkQueue doesn't guarantee the order in which the queued tasks will run.
+        That makes for a footgun if a consumer took a WorkQueue and was expecting
+        it to be a serial one.
+
+        WorkQueue (serial) and ConcurrentWorkQueue are made to both inherit from WorkQueueBase.
+        A class should inherit from either the WorkQueue or the ConcurrentWorkQueue class.
+
+        The Storage class present in NetworkCacheStore is the only code that was
+        using a WorkQueue that could be either. For this class we will pass a
+        WorkQueueBase; use of the base class directly is discouraged.
+
+        No change in observable behaviour.
+
+        * wtf/SuspendableWorkQueue.cpp:
+        (WTF::SuspendableWorkQueue::SuspendableWorkQueue):
+        * wtf/WorkQueue.cpp:
+        (WTF::WorkQueueBase::create): removed
+        (WTF::WorkQueueBase::WorkQueueBase):
+        (WTF::WorkQueueBase::~WorkQueueBase):
+        (WTF::WorkQueue::create):
+        (WTF::ConcurrentWorkQueue::create):
+        (WTF::WorkQueueBase::dispatchSync):
+        (WTF::ConcurrentWorkQueue:apply):
+        * wtf/WorkQueue.h:
+        (WTF::WorkQueueBase::dispatchQueue const):
+        (WTF::executeFunction): remove unused method declaration.
+        (WTF::WorkQueue::runLoop const):
+        (WTF::WorkQueue::WorkQueue):
+        (WTF::ConcurrentWorkQueue::ConcurrentWorkQueue):
+        * wtf/cocoa/WorkQueueCocoa.cpp:
+        (WTF::WorkQueueBase::dispatch):
+        (WTF::WorkQueueBase::dispatchAfter):
+        (WTF::WorkQueueBase::dispatchSync):
+        (WTF::WorkQueueBase::WorkQueueBase):
+        (WTF::WorkQueueBase::platformInitialize):
+        (WTF::WorkQueueBase::platformInvalidate):
+        (WTF::WorkQueue::WorkQueue):
+        (WTF::WorkQueue::constructMainWorkQueue):
+        (WTF::ConcurrentWorkQueue::apply):
+        * wtf/generic/WorkQueueGeneric.cpp:
+        (WorkQueue::WorkQueue):
+        (WorkQueueBase::WorkQueueBase):
+        (WorkQueueBase::platformInitialize):
+        (WorkQueueBase::platformInvalidate):
+        (WorkQueueBase::dispatch):
+        (WorkQueueBase::dispatchAfter):
+
 2021-10-13  Sihui Liu  <sihui_liu@apple.com>
 
         Enable FileSystemAccess and AccessHandle by default

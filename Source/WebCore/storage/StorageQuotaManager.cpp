@@ -42,7 +42,7 @@ StorageQuotaManager::StorageQuotaManager(uint64_t quota, UsageGetter&& usageGett
     : m_quota(quota)
     , m_usageGetter(WTFMove(usageGetter))
     , m_quotaIncreaseRequester(WTFMove(quotaIncreaseRequester))
-    , m_workQueue(WorkQueue::create("StorageQuotaManager Background Queue", WorkQueue::Type::Serial))
+    , m_workQueue(WorkQueue::create("StorageQuotaManager Background Queue"))
     , m_initialQuota(quota)
 {
 }

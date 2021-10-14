@@ -34,7 +34,7 @@ Ref<SuspendableWorkQueue> SuspendableWorkQueue::create(const char* name, WorkQue
 }
 
 SuspendableWorkQueue::SuspendableWorkQueue(const char* name, QOS qos)
-    : WorkQueue(name, Type::Serial, qos)
+    : WorkQueue(name, qos)
 {
     ASSERT(isMainThread());
 }
