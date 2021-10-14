@@ -1639,6 +1639,9 @@ public:
     const Editor& editor() const { return m_editor; }
     FrameSelection& selection() { return m_selection; }
     const FrameSelection& selection() const { return m_selection; }
+        
+    void setFragmentDirective(const String& fragmentDirective) { m_fragmentDirective = fragmentDirective; }
+    const String& fragmentDirective() const { return m_fragmentDirective; }
 
     void prepareCanvasesForDisplayIfNeeded();
     void clearCanvasPreparation(HTMLCanvasElement&);
@@ -2234,6 +2237,8 @@ private:
 
     UniqueRef<Editor> m_editor;
     UniqueRef<FrameSelection> m_selection;
+        
+    String m_fragmentDirective;
 
     ListHashSet<Ref<Element>> m_topLayerElements;
     UniqueRef<WhitespaceCache> m_whitespaceCache;

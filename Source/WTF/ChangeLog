@@ -1,3 +1,15 @@
+2021-10-13  Megan Gardner  <megan_gardner@apple.com>
+
+        Scroll To Text Fragment directive parsing
+        https://bugs.webkit.org/show_bug.cgi?id=231410
+
+        Reviewed by Chris Dumez.
+
+        Text directive parsing for 
+        https://wicg.github.io/scroll-to-text-fragment/
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml:
+
 2021-10-13  Chris Dumez  <cdumez@apple.com>
 
         Drop makeWeakPtr() and use WeakPtr { } directly

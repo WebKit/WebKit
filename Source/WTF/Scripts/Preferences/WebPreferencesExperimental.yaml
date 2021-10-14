@@ -1153,6 +1153,18 @@ ScreenCaptureEnabled:
       default: false
     WebCore:
       default: false
+      
+ScrollToTextFragmentEnabled:
+  type: bool
+  humanReadableName: "Scroll To Text Fragment"
+  humanReadableDescription: "Enable Scroll To Text Fragment"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
 
 ServerTimingEnabled:
   type: bool
