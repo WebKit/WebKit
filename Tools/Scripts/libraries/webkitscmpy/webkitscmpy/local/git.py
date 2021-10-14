@@ -814,7 +814,7 @@ class Git(Scm):
 
         if not code and branch:
             code = run(
-                [self.executable(), 'update-ref', branch, '{}/{}'.format(remote, branch)],
+                [self.executable(), 'fetch', remote, '{}:{}'.format(branch, branch)],
                 cwd=self.root_path,
             ).returncode
 
