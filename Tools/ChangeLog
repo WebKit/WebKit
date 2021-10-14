@@ -1,3 +1,18 @@
+2021-10-14  Chris Dumez  <cdumez@apple.com>
+
+        [ iOS Release ] TestWebKitAPI.WebKit.TryUsingPrewarmedProcessThatJustCrashed is a flaky timeout
+        https://bugs.webkit.org/show_bug.cgi?id=229260
+        <rdar://problem/82100254>
+
+        Reviewed by Youenn Fablet.
+
+        WebKit's default crash handler simply calls [webview reload] which does not reliably work
+        here because the WebProcess gets terminated so early in the page load. To make the test pass
+        reliably, it now provides its own crash handler which loads the same request again.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ProcessPreWarming.mm:
+        (TEST):
+
 2021-10-14  Jonathan Bedard  <jbedard@apple.com>
 
         [git-webkit] Reset author time when editing commits (Follow-up fix)
