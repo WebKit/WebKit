@@ -798,7 +798,7 @@ bool TranslatorVulkan::translateImpl(TIntermBlock *root,
     // is inactive.
     if (!RemoveInactiveInterfaceVariables(this, root, getAttributes(), getInputVaryings(),
                                           getOutputVariables(), getUniforms(),
-                                          getInterfaceBlocks()))
+                                          getInterfaceBlocks(), true))
     {
         return false;
     }

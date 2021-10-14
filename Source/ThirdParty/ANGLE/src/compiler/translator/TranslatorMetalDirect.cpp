@@ -865,7 +865,7 @@ bool TranslatorMetalDirect::translateImpl(TIntermBlock &root, ShCompileOptions c
     // Strip any inactive variables from the program.
     if (!RemoveInactiveInterfaceVariables(this, &root, getAttributes(), getInputVaryings(),
                                           getOutputVariables(), getUniforms(),
-                                          getInterfaceBlocks()))
+                                          getInterfaceBlocks(), false))
     {
         return false;
     }

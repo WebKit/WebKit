@@ -1,3 +1,18 @@
+2021-10-14  Kyle Piddington  <kpiddington@apple.com>
+
+        https://tankionline.com/play/ html5 engine not working: crashes. (Metal shader not working)
+        https://bugs.webkit.org/show_bug.cgi?id=231490
+
+        Add argument to RemoveInactiveInterfaceVariables to keep 
+        output fragment variables, even if they are 
+        Add a new test to  verify that this problem is fixed.
+
+        Reviewed by Kenneth Russell.
+
+        * webgl/pending/conformance2/glsl3/empty-shader-with-output-expected.txt: Added.
+        * webgl/pending/conformance2/glsl3/empty-shader-with-output.html: Added.
+        * webgl/pending/resources/webgl_test_files/conformance2/glsl3/empty-shader-with-output.html: Added.
+
 2021-10-14  Eric Hutchison  <ehutchison@apple.com>
 
         Rebaseline for fast/css/font-face-implicit-local-font.html.

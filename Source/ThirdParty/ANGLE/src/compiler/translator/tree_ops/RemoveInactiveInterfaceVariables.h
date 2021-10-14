@@ -33,7 +33,8 @@ ANGLE_NO_DISCARD bool RemoveInactiveInterfaceVariables(
     const std::vector<sh::ShaderVariable> &inputVaryings,
     const std::vector<sh::ShaderVariable> &outputVariables,
     const std::vector<sh::ShaderVariable> &uniforms,
-    const std::vector<sh::InterfaceBlock> &interfaceBlocks);
+    const std::vector<sh::InterfaceBlock> &interfaceBlocks,
+    bool removeFragmentOutputs);
 
 }  // namespace sh
 
