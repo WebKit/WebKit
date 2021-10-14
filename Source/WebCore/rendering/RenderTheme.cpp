@@ -83,13 +83,15 @@ RenderTheme::RenderTheme()
 
 void RenderTheme::adjustStyle(RenderStyle& style, const Element* element, const RenderStyle* userAgentAppearanceStyle)
 {
-    auto part = style.appearance();
+    auto part = style.effectiveAppearance();
     if (part == AutoPart) {
         part = autoAppearanceForElement(element);
-        if (part == NoControlPart) {
-            style.setEffectiveAppearance(NoControlPart);
+
+        ASSERT(part != AutoPart);
+        style.setEffectiveAppearance(part);
+
+        if (part == NoControlPart)
             return;
-        }
     }
 
     // Force inline and table display styles to be inline-block (except for table- which is block)
@@ -110,10 +112,9 @@ void RenderTheme::adjustStyle(RenderStyle& style, const Element* element, const 
             part = NoControlPart;
             break;
         }
-    }
 
-    ASSERT(part != AutoPart);
-    style.setEffectiveAppearance(part);
+        style.setEffectiveAppearance(part);
+    }
 
     if (!style.hasEffectiveAppearance())
         return;

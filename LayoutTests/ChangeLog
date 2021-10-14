@@ -1,3 +1,18 @@
+2021-10-14  Aditya Keerthi  <akeerthi@apple.com>
+
+        REGRESSION (r283858): Intense white hover state appears on playback controls on Netflix/YouTube
+        https://bugs.webkit.org/show_bug.cgi?id=231719
+        rdar://84213404
+
+        Reviewed by Tim Horton.
+
+        Added a mismatch test to ensure that animating the background color
+        of a button drops native appearance. Verified that the test passes
+        before r283858, on Safari 15, and fails on r283858.
+
+        * fast/forms/button-animation-appearance-expected-mismatch.html: Added.
+        * fast/forms/button-animation-appearance.html: Added.
+
 2021-10-14  Alan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Apply the line-gap font metrics when computing the layout bounds for inline boxes
