@@ -2236,6 +2236,7 @@
          "eocanha@gmail.com"
       ],
       "expertise" : "GStreamer, Media Source Extensions",
+      "github" : "eocanha",
       "name" : "Enrique Oca\u00f1a Gonz\u00e1lez",
       "nicks" : [
          "eocanha"
@@ -5024,8 +5025,8 @@
          "noam@webkit.org",
          "noam.rosenthal@nokia.com"
       ],
-      "github" : "noamr",
       "expertise" : "TextureMapper, coordinated graphics, images, paint timing API",
+      "github" : "noamr",
       "name" : "Noam Rosenthal",
       "nicks" : [
          "noamr"
@@ -5291,8 +5292,8 @@
          "philn@webkit.org",
          "philn@igalia.com"
       ],
-      "github" : "philn",
       "expertise" : "WebKitGTK, WPE, Media support (focused on the GStreamer implementation)",
+      "github" : "philn",
       "name" : "Philippe Normand",
       "nicks" : [
          "philn"
