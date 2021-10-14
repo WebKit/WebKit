@@ -41,6 +41,10 @@
 #include "ScrollAnimationKinetic.h"
 #endif
 
+#if HAVE(RUBBER_BANDING)
+#include "ScrollAnimationRubberBand.h"
+#endif
+
 namespace WebCore {
 
 ScrollingEffectsController::ScrollingEffectsController(ScrollingEffectsControllerClient& client)
@@ -58,7 +62,7 @@ void ScrollingEffectsController::animationCallback(MonotonicTime currentTime)
             m_currentAnimation = nullptr;
     }
 
-    updateRubberBandAnimatingState(currentTime);
+    updateRubberBandAnimatingState();
     updateKeyboardScrollingAnimatingState(currentTime);
     
     startOrStopAnimationCallbacks();
@@ -125,9 +129,8 @@ void ScrollingEffectsController::stopAnimatedScroll()
 bool ScrollingEffectsController::startMomentumScrollWithInitialVelocity(const FloatPoint& initialOffset, const FloatSize& initialVelocity, const FloatSize& initialDelta, const Function<FloatPoint(const FloatPoint&)>& destinationModifier)
 {
     if (m_currentAnimation) {
-        if (is<ScrollAnimationMomentum>(m_currentAnimation.get()))
-            m_currentAnimation->stop();
-        else
+        m_currentAnimation->stop();
+        if (!is<ScrollAnimationMomentum>(m_currentAnimation.get()))
             m_currentAnimation = nullptr;
     }
 
@@ -429,20 +432,26 @@ void ScrollingEffectsController::updateKeyboardScrollingAnimatingState(Monotonic
     m_client.keyboardScrollingAnimator()->updateKeyboardScrollPosition(currentTime);
 }
 
-void ScrollingEffectsController::scrollAnimationDidUpdate(ScrollAnimation& animation, const FloatPoint& currentOffset)
+void ScrollingEffectsController::scrollAnimationDidUpdate(ScrollAnimation& animation, const FloatPoint& scrollOffset)
 {
-    auto scrollDelta = currentOffset - m_client.scrollOffset();
+    LOG_WITH_STREAM(ScrollAnimations, stream << "ScrollingEffectsController " << this << " scrollAnimationDidUpdate " << animation << " (main thread " << isMainThread() << ") scrolling to " << scrollOffset);
 
-    LOG_WITH_STREAM(ScrollAnimations, stream << "ScrollingEffectsController " << this << " scrollAnimationDidUpdate " << animation << " (main thread " << isMainThread() << ") scrolling by " << scrollDelta);
-    UNUSED_PARAM(animation);
+    auto currentOffset = m_client.scrollOffset();
+    auto scrollDelta = scrollOffset - currentOffset;
 
-    m_client.immediateScrollBy(scrollDelta);
+    m_client.immediateScrollBy(scrollDelta, animation.clamping());
 }
 
 void ScrollingEffectsController::scrollAnimationWillStart(ScrollAnimation& animation)
 {
     LOG_WITH_STREAM(ScrollAnimations, stream << "ScrollingEffectsController " << this << " scrollAnimationWillStart " << animation);
+
+#if HAVE(RUBBER_BANDING)
+    if (is<ScrollAnimationRubberBand>(animation))
+        willStartRubberBandAnimation();
+#else
     UNUSED_PARAM(animation);
+#endif
 
     startOrStopAnimationCallbacks();
 }
@@ -450,12 +459,18 @@ void ScrollingEffectsController::scrollAnimationWillStart(ScrollAnimation& anima
 void ScrollingEffectsController::scrollAnimationDidEnd(ScrollAnimation& animation)
 {
     LOG_WITH_STREAM(ScrollAnimations, stream << "ScrollingEffectsController " << this << " scrollAnimationDidEnd " << animation);
-    UNUSED_PARAM(animation);
 
     if (usesScrollSnap() && m_isAnimatingScrollSnap) {
         m_scrollSnapState->transitionToDestinationReachedState();
         stopScrollSnapAnimation();
     }
+
+#if HAVE(RUBBER_BANDING)
+    if (is<ScrollAnimationRubberBand>(animation))
+        didStopRubberBandAnimation();
+#else
+    UNUSED_PARAM(animation);
+#endif
 
     // FIXME: Need to track state better and only call this when the running animation is for CSS smooth scrolling. Calling should be harmless, though.
     m_client.didStopAnimatedScroll();
@@ -482,7 +497,7 @@ void ScrollingEffectsController::scrollPositionChanged()
 {
 }
 
-void ScrollingEffectsController::updateRubberBandAnimatingState(MonotonicTime)
+void ScrollingEffectsController::updateRubberBandAnimatingState()
 {
 }
 

@@ -54,6 +54,7 @@ public:
         Smooth,
         Kinetic,
         Momentum,
+        RubberBand,
     };
 
     ScrollAnimation(Type animationType, ScrollAnimationClient& client)
@@ -63,6 +64,8 @@ public:
     virtual ~ScrollAnimation() = default;
     
     Type type() const { return m_animationType; }
+
+    virtual ScrollClamping clamping() const { return ScrollClamping::Clamped; }
 
     virtual bool retargetActiveAnimation(const FloatPoint& newDestinationOffset) = 0;
     virtual void stop()
@@ -75,7 +78,7 @@ public:
     virtual void updateScrollExtents() { };
     
     FloatPoint currentOffset() const { return m_currentOffset; }
-    
+
     virtual void serviceAnimation(MonotonicTime) = 0;
 
 protected:

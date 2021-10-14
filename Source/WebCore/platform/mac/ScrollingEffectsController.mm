@@ -28,6 +28,7 @@
 
 #import "Logging.h"
 #import "PlatformWheelEvent.h"
+#import "ScrollAnimationRubberBand.h"
 #import "ScrollExtents.h"
 #import "WheelEventTestMonitor.h"
 #import <pal/spi/mac/NSScrollViewSPI.h>
@@ -42,11 +43,6 @@ namespace WebCore {
 static const Seconds scrollVelocityZeroingTimeout = 100_ms;
 static const float rubberbandDirectionLockStretchRatio = 1;
 static const float rubberbandMinimumRequiredDeltaBeforeStretch = 10;
-
-static float elasticDeltaForTimeDelta(float initialPosition, float initialVelocity, Seconds elapsedTime)
-{
-    return _NSElasticDeltaForTimeDelta(initialPosition, initialVelocity, elapsedTime.seconds());
-}
 
 static float elasticDeltaForReboundDelta(float delta)
 {
@@ -142,14 +138,14 @@ bool ScrollingEffectsController::handleWheelEvent(const PlatformWheelEvent& whee
         m_stretchScrollForce.setHeight(reboundDeltaForElasticDelta(stretchAmount.height()));
         m_unappliedOverscrollDelta = { };
 
-        stopRubberbandAnimation();
+        stopRubberBandAnimation();
         updateRubberBandingState();
         return true;
     }
 
     if (wheelEvent.phase() == PlatformWheelEventPhase::Ended) {
         // FIXME: This triggers the rubberband timer even when we don't start rubberbanding.
-        startRubberbandAnimationIfNecessary();
+        startRubberBandAnimationIfNecessary();
         updateRubberBandingState();
         return true;
     }
@@ -213,7 +209,7 @@ bool ScrollingEffectsController::handleWheelEvent(const PlatformWheelEvent& whee
                 if (canStartAnimation && m_lastMomentumScrollTimestamp) {
                     m_ignoreMomentumScrolls = true;
                     m_momentumScrollInProgress = false;
-                    startRubberbandAnimationIfNecessary();
+                    startRubberBandAnimationIfNecessary();
                 }
             }
         } else {
@@ -346,21 +342,7 @@ FloatSize ScrollingEffectsController::wheelDeltaBiasingTowardsVertical(const Pla
     return deltaAlignedToDominantAxis(wheelEvent.delta());
 }
 
-static inline float roundTowardZero(float num)
-{
-    return num > 0 ? ceilf(num - 0.5f) : floorf(num + 0.5f);
-}
-
-static inline float roundToDevicePixelTowardZero(float num)
-{
-    float roundedNum = roundf(num);
-    if (fabs(num - roundedNum) < 0.125)
-        num = roundedNum;
-
-    return roundTowardZero(num);
-}
-
-void ScrollingEffectsController::updateRubberBandAnimatingState(MonotonicTime currentTime)
+void ScrollingEffectsController::updateRubberBandAnimatingState()
 {
     if (!m_isAnimatingRubberBand)
         return;
@@ -368,60 +350,10 @@ void ScrollingEffectsController::updateRubberBandAnimatingState(MonotonicTime cu
     if (isScrollSnapInProgress())
         return;
     
-    if (!m_momentumScrollInProgress || m_ignoreMomentumScrolls) {
-        auto timeDelta = currentTime - m_startTime;
-
-        if (m_startStretch.isZero()) {
-            m_startStretch = m_client.stretchAmount();
-            if (m_startStretch.isZero()) {
-                stopRubberbanding();
-                return;
-            }
-
-            m_origVelocity = m_momentumVelocity;
-
-            // Just like normal scrolling, prefer vertical rubberbanding
-            if (fabsf(m_origVelocity.height()) >= fabsf(m_origVelocity.width()))
-                m_origVelocity.setWidth(0);
-
-            // Don't rubber-band horizontally if it's not possible to scroll horizontally
-            if (!m_client.allowsHorizontalScrolling())
-                m_origVelocity.setWidth(0);
-
-            // Don't rubber-band vertically if it's not possible to scroll vertically
-            if (!m_client.allowsVerticalScrolling())
-                m_origVelocity.setHeight(0);
-
-            LOG_WITH_STREAM(ScrollAnimations, stream << "ScrollingEffectsController::updateRubberBandAnimatingState() - starting rubbberband with m_origVelocity" << m_origVelocity << " m_startStretch " << m_startStretch);
-        }
-
-        auto rubberBandDelta = FloatSize {
-            roundToDevicePixelTowardZero(elasticDeltaForTimeDelta(m_startStretch.width(), -m_origVelocity.width(), timeDelta)),
-            roundToDevicePixelTowardZero(elasticDeltaForTimeDelta(m_startStretch.height(), -m_origVelocity.height(), timeDelta))
-        };
-
-        if (fabs(rubberBandDelta.width()) >= 1 || fabs(rubberBandDelta.height()) >= 1) {
-            auto stretchDelta = rubberBandDelta - FloatSize(m_client.stretchAmount());
-
-            LOG_WITH_STREAM(ScrollAnimations, stream << "ScrollingEffectsController::updateRubberBandAnimatingState() - rubberBandDelta " << rubberBandDelta << " stretched " << m_client.stretchAmount() << " moving by " << stretchDelta);
-
-            m_client.immediateScrollBy(stretchDelta, ScrollClamping::Unclamped);
-
-            FloatSize newStretch = m_client.stretchAmount();
-
-            m_stretchScrollForce.setWidth(reboundDeltaForElasticDelta(newStretch.width()));
-            m_stretchScrollForce.setHeight(reboundDeltaForElasticDelta(newStretch.height()));
-        } else {
-            LOG_WITH_STREAM(ScrollAnimations, stream << "ScrollingEffectsController::updateRubberBandAnimatingState() - rubber band complete");
-            m_client.adjustScrollPositionToBoundsIfNecessary();
-            stopRubberbanding();
-        }
-    } else {
+    if (m_momentumScrollInProgress && !m_ignoreMomentumScrolls) {
         LOG_WITH_STREAM(ScrollAnimations, stream << "ScrollingEffectsController::updateRubberBandAnimatingState() - not animating, momentumScrollInProgress " << m_momentumScrollInProgress << " ignoreMomentumScrolls " << m_ignoreMomentumScrolls);
-        m_startTime = currentTime;
-        m_startStretch = { };
         if (!isRubberBandInProgressInternal())
-            stopRubberbandAnimation();
+            stopRubberBandAnimation();
     }
 
     updateRubberBandingState();
@@ -453,35 +385,45 @@ bool ScrollingEffectsController::isScrollSnapInProgress() const
     return false;
 }
 
-void ScrollingEffectsController::stopRubberbanding()
+void ScrollingEffectsController::stopRubberBanding()
 {
-    stopRubberbandAnimation();
-    m_stretchScrollForce = { };
-    m_startTime = { };
-    m_startStretch = { };
-    m_origVelocity = { };
+    stopRubberBandAnimation();
     updateRubberBandingState();
 }
 
-void ScrollingEffectsController::startRubberbandAnimation()
+void ScrollingEffectsController::startRubberBandAnimation(const FloatPoint& targetOffset, const FloatSize& initialVelocity, const FloatSize& initialOverscroll)
 {
-    m_client.willStartRubberBandSnapAnimation();
+    if (m_currentAnimation)
+        m_currentAnimation->stop();
 
-    setIsAnimatingRubberBand(true);
+    m_currentAnimation = makeUnique<ScrollAnimationRubberBand>(*this);
+    LOG_WITH_STREAM(ScrollAnimations, stream << "ScrollingEffectsController::startRubberBandAnimation() - starting rubbberband with targetOffset " << targetOffset << " initialVelocity " << initialVelocity << " initialOverscroll " << initialOverscroll);
+    downcast<ScrollAnimationRubberBand>(*m_currentAnimation).startRubberBandAnimation(targetOffset, initialVelocity, initialOverscroll);
+}
 
+void ScrollingEffectsController::stopRubberBandAnimation()
+{
+    if (m_isAnimatingRubberBand)
+        stopAnimatedScroll();
+
+    m_stretchScrollForce = { };
+}
+
+void ScrollingEffectsController::willStartRubberBandAnimation()
+{
+    m_isAnimatingRubberBand = true;
+    m_client.willStartRubberBandAnimation();
     m_client.deferWheelEventTestCompletionForReason(reinterpret_cast<WheelEventTestMonitor::ScrollableAreaIdentifier>(this), WheelEventTestMonitor::RubberbandInProgress);
 }
 
-void ScrollingEffectsController::stopRubberbandAnimation()
+void ScrollingEffectsController::didStopRubberBandAnimation()
 {
-    m_client.didStopRubberbandSnapAnimation();
-
-    setIsAnimatingRubberBand(false);
-
+    m_isAnimatingRubberBand = false;
+    m_client.didStopRubberBandAnimation();
     m_client.removeWheelEventTestCompletionDeferralForReason(reinterpret_cast<WheelEventTestMonitor::ScrollableAreaIdentifier>(this), WheelEventTestMonitor::RubberbandInProgress);
 }
 
-void ScrollingEffectsController::startRubberbandAnimationIfNecessary()
+void ScrollingEffectsController::startRubberBandAnimationIfNecessary()
 {
     auto timeDelta = WallTime::now() - m_lastMomentumScrollTimestamp;
     if (m_lastMomentumScrollTimestamp && timeDelta >= scrollVelocityZeroingTimeout)
@@ -490,11 +432,33 @@ void ScrollingEffectsController::startRubberbandAnimationIfNecessary()
     if (m_isAnimatingRubberBand)
         return;
 
-    m_startTime = MonotonicTime::now();
-    m_startStretch = { };
-    m_origVelocity = { };
+    auto extents = m_client.scrollExtents();
+    auto targetOffset = m_client.scrollOffset();
+    auto contrainedOffset = targetOffset.constrainedBetween(extents.minimumScrollOffset(), extents.maximumScrollOffset());
+    bool willOverscroll = targetOffset != contrainedOffset;
 
-    startRubberbandAnimation();
+    auto stretchAmount = m_client.stretchAmount();
+
+    LOG_WITH_STREAM(ScrollAnimations, stream << "ScrollingEffectsController::startRubberBandAnimationIfNecessary() - rubberBandAnimationRunning " << m_isAnimatingRubberBand << " stretchAmount " << stretchAmount << " targetOffset " << targetOffset);
+
+    if (stretchAmount.isZero() && !willOverscroll)
+        return;
+
+    auto initialVelocity = m_momentumVelocity;
+
+    // Just like normal scrolling, prefer vertical rubberbanding
+    if (fabsf(initialVelocity.height()) >= fabsf(initialVelocity.width()))
+        initialVelocity.setWidth(0);
+
+    // Don't rubber-band horizontally if it's not possible to scroll horizontally
+    if (!m_client.allowsHorizontalScrolling())
+        initialVelocity.setWidth(0);
+
+    // Don't rubber-band vertically if it's not possible to scroll vertically
+    if (!m_client.allowsVerticalScrolling())
+        initialVelocity.setHeight(0);
+
+    startRubberBandAnimation(contrainedOffset, initialVelocity, stretchAmount);
 }
 
 bool ScrollingEffectsController::shouldRubberBandOnSide(BoxSide side) const

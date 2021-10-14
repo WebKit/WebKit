@@ -87,7 +87,7 @@ private:
 
     bool shouldRubberBandOnSide(BoxSide) const final;
     void immediateScrollBy(const FloatSize&, ScrollClamping = ScrollClamping::Clamped) final;
-    void didStopRubberbandSnapAnimation() final;
+    void didStopRubberBandAnimation() final;
     void rubberBandingStateChanged(bool) final;
     void adjustScrollPositionToBoundsIfNecessary() final;
 

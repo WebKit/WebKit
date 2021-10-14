@@ -491,10 +491,11 @@ platform/mac/PowerObserverMac.cpp
 platform/mac/PublicSuffixMac.mm
 platform/mac/SSLKeyGeneratorMac.mm
 platform/mac/ScrollAnimatorMac.mm @no-unify
-platform/mac/ScrollingEffectsController.mm
+platform/mac/ScrollAnimationRubberBand.mm
 platform/mac/ScrollViewMac.mm
 platform/mac/ScrollbarsControllerMac.mm @no-unify
 platform/mac/ScrollbarThemeMac.mm @no-unify
+platform/mac/ScrollingEffectsController.mm
 platform/mac/ScrollingMomentumCalculatorMac.mm
 platform/mac/SerializedPlatformDataCueMac.mm
 platform/mac/StringUtilities.mm

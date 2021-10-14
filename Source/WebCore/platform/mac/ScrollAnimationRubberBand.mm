@@ -1,0 +1,105 @@
+/*
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1.  Redistributions of source code must retain the above copyright
+ *     notice, this list of conditions and the following disclaimer.
+ * 2.  Redistributions in binary form must reproduce the above copyright
+ *     notice, this list of conditions and the following disclaimer in the
+ *     documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+ * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#import "config.h"
+#import "ScrollAnimationRubberBand.h"
+
+#if HAVE(RUBBER_BANDING)
+
+#import "FloatPoint.h"
+#import "GeometryUtilities.h"
+#import <pal/spi/mac/NSScrollViewSPI.h>
+
+static float elasticDeltaForTimeDelta(float initialPosition, float initialVelocity, Seconds elapsedTime)
+{
+    return _NSElasticDeltaForTimeDelta(initialPosition, initialVelocity, elapsedTime.seconds());
+}
+
+namespace WebCore {
+
+static inline float roundTowardZero(float num)
+{
+    return num > 0 ? ceilf(num - 0.5f) : floorf(num + 0.5f);
+}
+
+static inline float roundToDevicePixelTowardZero(float num)
+{
+    float roundedNum = roundf(num);
+    if (fabs(num - roundedNum) < 0.125)
+        num = roundedNum;
+
+    return roundTowardZero(num);
+}
+
+ScrollAnimationRubberBand::ScrollAnimationRubberBand(ScrollAnimationClient& client)
+    : ScrollAnimation(Type::RubberBand, client)
+{
+}
+
+ScrollAnimationRubberBand::~ScrollAnimationRubberBand() = default;
+
+bool ScrollAnimationRubberBand::startRubberBandAnimation(const FloatPoint& targetOffset, const FloatSize& initialVelocity, const FloatSize& initialOverscroll)
+{
+    m_targetOffset = targetOffset;
+    m_initialVelocity = initialVelocity;
+    m_initialOverscroll = initialOverscroll;
+
+    didStart(MonotonicTime::now());
+    return true;
+}
+
+bool ScrollAnimationRubberBand::retargetActiveAnimation(const FloatPoint&)
+{
+    return false;
+}
+
+void ScrollAnimationRubberBand::updateScrollExtents()
+{
+    // FIXME: If we're rubberbanding at the bottom and the content size changes we should fix up m_targetOffset.
+}
+
+void ScrollAnimationRubberBand::serviceAnimation(MonotonicTime currentTime)
+{
+    auto elapsedTime = timeSinceStart(currentTime);
+
+    // This is very similar to ScrollingMomentumCalculator logic, but I wasn't able to get to ScrollingMomentumCalculator to
+    // give the correct behavior when starting a rubberband with initial velocity (i.e. bouncing).
+
+    auto rubberBandOffset = FloatSize {
+        roundToDevicePixelTowardZero(elasticDeltaForTimeDelta(m_initialOverscroll.width(), -m_initialVelocity.width(), elapsedTime)),
+        roundToDevicePixelTowardZero(elasticDeltaForTimeDelta(m_initialOverscroll.height(), -m_initialVelocity.height(), elapsedTime))
+    };
+
+    bool animationComplete = rubberBandOffset.isZero();
+    m_currentOffset = m_targetOffset + rubberBandOffset;
+
+    m_client.scrollAnimationDidUpdate(*this, m_currentOffset);
+
+    if (animationComplete)
+        didEnd();
+}
+
+} // namespace WebCore
+
+#endif // HAVE(RUBBER_BANDING)

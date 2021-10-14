@@ -131,7 +131,7 @@ void ScrollingTreeScrollingNodeDelegateMac::willDoProgrammaticScroll(const Float
 {
     if (scrollPositionIsNotRubberbandingEdge(targetPosition)) {
         LOG(Scrolling, "ScrollingTreeScrollingNodeDelegateMac::willDoProgrammaticScroll() - scrolling away from rubberbanding edge so stopping rubberbanding");
-        m_scrollController.stopRubberbanding();
+        m_scrollController.stopRubberBanding();
     }
 }
 
@@ -339,7 +339,7 @@ void ScrollingTreeScrollingNodeDelegateMac::immediateScrollBy(const FloatSize& d
     scrollingNode().scrollBy(delta, clamping);
 }
 
-void ScrollingTreeScrollingNodeDelegateMac::didStopRubberbandSnapAnimation()
+void ScrollingTreeScrollingNodeDelegateMac::didStopRubberBandAnimation()
 {
     // Since the rubberband timer has stopped, totalContentsSizeForRubberBand can be synchronized with totalContentsSize.
     scrollingNode().setTotalContentsSizeForRubberBand(totalContentsSize());
