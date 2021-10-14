@@ -1,3 +1,12 @@
+2021-10-14  Eric Hutchison  <ehutchison@apple.com>
+
+        Rebaseline for fast/css/font-face-implicit-local-font.html.
+        https://bugs.webkit.org/show_bug.cgi?id=231770.
+
+        Unreviewed rebaseline.
+
+        * platform/ios/fast/css/font-face-implicit-local-font-expected.txt:
+
 2021-10-14  Antti Koivisto  <antti@apple.com>
 
         [LFC][Integration] Enable inline boxes with background
