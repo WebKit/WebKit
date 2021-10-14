@@ -149,11 +149,9 @@ TextUtil::MidWordBreak TextUtil::midWordBreak(const InlineTextItem& inlineTextIt
     auto text = inlineTextItem.inlineTextBox().content();
     auto surrogatePairAwareIndex = [&] (auto index) {
         // We should never break in the middle of a surrogate pair. They are considered one joint entity.
-        RELEASE_ASSERT(index < text.length());
-        bool isLead = U16_IS_LEAD(text[index]) && (index + 1) < text.length() && U16_IS_TRAIL(text[index + 1]);
-        if (!isLead)
-            return index;
-        return ++index;
+        auto offset = index + 1;
+        U16_SET_CP_LIMIT(text, 0, offset, text.length());
+        return offset - 1;
     };
 
     auto left = startPosition;
@@ -171,15 +169,9 @@ TextUtil::MidWordBreak TextUtil::midWordBreak(const InlineTextItem& inlineTextIt
             left = middle + 1;
             leftSideWidth = width;
         } else if (width > availableWidth) {
-            auto surrogatePairAwareStart = [&] (auto index) {
-                bool isTrail = index && U16_IS_LEAD(text[index - 1]) && index < text.length() && U16_IS_TRAIL(text[index]);
-                if (!isTrail)
-                    return index;
-                RELEASE_ASSERT(index);
-                return --index;
-            };
-            // When the substring does not fit, the right side is supposed to be the start of the surrogate pair if applicable. 
-            right = surrogatePairAwareStart(middle);
+            // When the substring does not fit, the right side is supposed to be the start of the surrogate pair if applicable.
+            right = middle;
+            U16_SET_CP_START(text, 0, right);
         } else {
             right = middle + 1;
             leftSideWidth = width;
