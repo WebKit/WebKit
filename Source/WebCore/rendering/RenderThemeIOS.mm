@@ -336,8 +336,26 @@ FloatRect RenderThemeIOS::addRoundedBorderClip(const RenderObject& box, Graphics
     return border.rect();
 }
 
-void RenderThemeIOS::adjustCheckboxStyle(RenderStyle& style, const Element*) const
+void RenderThemeIOS::adjustStyleForAlternateFormControlDesignTransition(RenderStyle& style, const Element* element) const
 {
+    if (!element)
+        return;
+
+    if (!element->document().settings().alternateFormControlDesignEnabled())
+        return;
+
+#if ENABLE(CSS_TRANSFORM_STYLE_OPTIMIZED_3D)
+    // FIXME: We need to find a way to not do this for any running transition, only the UA-owned transition.
+    style.setTransformStyle3D(element->hasRunningTransitionForProperty(PseudoId::None, CSSPropertyID::CSSPropertyTranslate) || element->hovered() ? TransformStyle3D::Optimized3D : TransformStyle3D::Flat);
+#else
+    UNUSED_PARAM(style);
+#endif
+}
+
+void RenderThemeIOS::adjustCheckboxStyle(RenderStyle& style, const Element* element) const
+{
+    adjustStyleForAlternateFormControlDesignTransition(style, element);
+
     if (!style.width().isIntrinsicOrAuto() && !style.height().isAuto())
         return;
 
@@ -478,8 +496,10 @@ bool RenderThemeIOS::isControlStyled(const RenderStyle& style, const RenderStyle
     return RenderTheme::isControlStyled(style, userAgentStyle);
 }
 
-void RenderThemeIOS::adjustRadioStyle(RenderStyle& style, const Element*) const
+void RenderThemeIOS::adjustRadioStyle(RenderStyle& style, const Element* element) const
 {
+    adjustStyleForAlternateFormControlDesignTransition(style, element);
+
     if (!style.width().isIntrinsicOrAuto() && !style.height().isAuto())
         return;
 
@@ -781,6 +801,8 @@ static void adjustInputElementButtonStyle(RenderStyle& style, const HTMLInputEle
 
 void RenderThemeIOS::adjustMenuListButtonStyle(RenderStyle& style, const Element* element) const
 {
+    adjustStyleForAlternateFormControlDesignTransition(style, element);
+
     // Set the min-height to be at least MenuListMinHeight.
     if (style.height().isAuto())
         style.setMinHeight(Length(std::max(MenuListMinHeight, static_cast<int>(MenuListBaseHeight / MenuListBaseFontSize * style.fontDescription().computedSize())), LengthType::Fixed));
@@ -1200,6 +1222,8 @@ void RenderThemeIOS::adjustPressedStyle(RenderStyle& style, const Element& eleme
 
 void RenderThemeIOS::adjustButtonStyle(RenderStyle& style, const Element* element) const
 {
+    adjustStyleForAlternateFormControlDesignTransition(style, element);
+
     // If no size is specified, ensure the height of the button matches ControlBaseHeight scaled
     // with the font size. min-height is used rather than height to avoid clipping the contents of
     // the button in cases where the button contains more than one line of text.
@@ -2657,6 +2681,8 @@ String RenderThemeIOS::colorInputStyleSheet(const Settings& settings) const
 
 void RenderThemeIOS::adjustColorWellStyle(RenderStyle& style, const Element* element) const
 {
+    adjustStyleForAlternateFormControlDesignTransition(style, element);
+
     if (!element || element->document().settings().iOSFormControlRefreshEnabled())
         return;
 

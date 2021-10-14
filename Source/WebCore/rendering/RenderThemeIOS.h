@@ -203,6 +203,8 @@ private:
 
     Color systemColor(CSSValueID, OptionSet<StyleColorOptions>) const override;
 
+    void adjustStyleForAlternateFormControlDesignTransition(RenderStyle&, const Element*) const;
+
 #if USE(SYSTEM_PREVIEW)
     RetainPtr<CIContext> m_ciContext;
     std::unique_ptr<IOSurface> m_largeBadgeSurface;

@@ -46,6 +46,13 @@ CSSParserContext::CSSParserContext(CSSParserMode mode, const URL& baseURL)
     : baseURL(baseURL)
     , mode(mode)
 {
+    // FIXME: We should turn all of the features on from their WebCore Settings defaults.
+    if (mode == UASheetMode) {
+        individualTransformPropertiesEnabled = true;
+#if ENABLE(CSS_TRANSFORM_STYLE_OPTIMIZED_3D)
+        transformStyleOptimized3DEnabled = true;
+#endif
+    }
 }
 
 #if ENABLE(OVERFLOW_SCROLLING_TOUCH)
