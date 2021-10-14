@@ -158,7 +158,9 @@ void LineBoxBuilder::adjustVerticalGeometryForInlineBoxWithFallbackFonts(InlineL
     auto maxDescent = InlineLayoutUnit { };
     // If line-height computes to normal and either text-edge is leading or this is the root inline box,
     // the font's line gap metric may also be incorporated into A and D by adding half to each side as half-leading.
-    auto shouldUseLineGapToAdjustAscentDescent = inlineBox.isRootInlineBox();
+    // FIXME: We don't support the text-edge property yet, but its initial value is 'leading' which makes the line-gap adjustment always on.
+    auto isTextEdgeLeading = true;
+    auto shouldUseLineGapToAdjustAscentDescent = inlineBox.isRootInlineBox() || isTextEdgeLeading;
     for (auto* font : fallbackFontsForContent) {
         auto& fontMetrics = font->fontMetrics();
         InlineLayoutUnit ascent = fontMetrics.ascent();

@@ -1,3 +1,14 @@
+2021-10-14  Alan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Apply the line-gap font metrics when computing the layout bounds for inline boxes
+        https://bugs.webkit.org/show_bug.cgi?id=231699
+
+        Reviewed by Antti Koivisto.
+
+        * fast/inline/fallback-font-with-line-spacing-expected.html: Added.
+        * fast/inline/fallback-font-with-line-spacing.html: Added.
+        * platform/mac/fast/text/international/003-expected.txt: Progression.
+
 2021-10-13  Eric Hutchison  <ehutchison@apple.com>
 
         [ iOS15 ] fast/scrolling/ios/click-events-during-momentum-scroll-in-overflow.html is a flaky timeout.
