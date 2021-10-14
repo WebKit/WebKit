@@ -110,6 +110,7 @@ enum JSType : uint8_t {
     // End JSScope types.
 
     ModuleNamespaceObjectType,
+    ShadowRealmType,
     RegExpObjectType,
     JSDateType,
     ProxyObjectType,

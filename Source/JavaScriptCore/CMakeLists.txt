@@ -103,6 +103,8 @@ set(JavaScriptCore_OBJECT_LUT_SOURCES
     runtime/RegExpPrototype.cpp
     runtime/RegExpStringIteratorPrototype.cpp
     runtime/SetPrototype.cpp
+    runtime/ShadowRealmObject.cpp
+    runtime/ShadowRealmPrototype.cpp
     runtime/StringConstructor.cpp
     runtime/StringPrototype.cpp
     runtime/SymbolConstructor.cpp
@@ -373,6 +375,7 @@ set(JavaScriptCore_BUILTINS_SOURCES
     ${JAVASCRIPTCORE_DIR}/builtins/RegExpStringIteratorPrototype.js
     ${JAVASCRIPTCORE_DIR}/builtins/SetIteratorPrototype.js
     ${JAVASCRIPTCORE_DIR}/builtins/SetPrototype.js
+    ${JAVASCRIPTCORE_DIR}/builtins/ShadowRealmPrototype.js
     ${JAVASCRIPTCORE_DIR}/builtins/StringConstructor.js
     ${JAVASCRIPTCORE_DIR}/builtins/StringIteratorPrototype.js
     ${JAVASCRIPTCORE_DIR}/builtins/StringPrototype.js
@@ -1157,6 +1160,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/ScriptExecutable.h
     runtime/ScriptFetchParameters.h
     runtime/ScriptFetcher.h
+    runtime/ShadowRealmObject.h
     runtime/SlowPathFunction.h
     runtime/SlowPathReturnType.h
     runtime/SmallStrings.h

@@ -9,6 +9,7 @@ flags:
   Temporal: useTemporal
   array-find-from-last: useArrayFindLastMethod
   Object.hasOwn: useHasOwn
+  ShadowRealm: useShadowRealm
 skip:
   features:
     - Atomics.waitAsync
@@ -20,7 +21,6 @@ skip:
     - json-modules
     - class-static-block
     - callable-boundary-realms
-    - ShadowRealm
   paths:
     - test/built-ins/Temporal/Calendar
     - test/built-ins/Temporal/Instant

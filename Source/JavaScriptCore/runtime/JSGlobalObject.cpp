@@ -196,6 +196,9 @@
 #include "SetConstructor.h"
 #include "SetIteratorPrototype.h"
 #include "SetPrototype.h"
+#include "ShadowRealmConstructor.h"
+#include "ShadowRealmObject.h"
+#include "ShadowRealmPrototype.h"
 #include "StrictEvalActivation.h"
 #include "StringConstructor.h"
 #include "StringIteratorPrototype.h"
@@ -924,6 +927,9 @@ void JSGlobalObject::init(VM& vm)
     for (unsigned i = 0; i < NumberOfArrayIndexingModes; ++i)
         m_arrayStructureForIndexingShapeDuringAllocation[i] = m_originalArrayStructureForIndexingShape[i];
 
+    m_shadowRealmPrototype.set(vm, this, ShadowRealmPrototype::create(vm, ShadowRealmPrototype::createStructure(vm, this, m_objectPrototype.get())));
+    m_shadowRealmObjectStructure.set(vm, this, ShadowRealmObject::createStructure(vm, this, m_shadowRealmPrototype.get()));
+
     m_regExpPrototype.set(vm, this, RegExpPrototype::create(vm, this, RegExpPrototype::createStructure(vm, this, m_objectPrototype.get())));
     m_regExpStructure.set(vm, this, RegExpObject::createStructure(vm, this, m_regExpPrototype.get()));
     m_regExpMatchesArrayStructure.set(vm, this, createRegExpMatchesArrayStructure(vm, this));
@@ -1030,7 +1036,10 @@ void JSGlobalObject::init(VM& vm)
     ArrayConstructor* arrayConstructor = ArrayConstructor::create(vm, this, ArrayConstructor::createStructure(vm, this, m_functionPrototype.get()), m_arrayPrototype.get(), m_speciesGetterSetter.get());
     m_arrayConstructor.set(vm, this, arrayConstructor);
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::Array)].set(vm, this, arrayConstructor);
-    
+
+    ShadowRealmConstructor* shadowRealmConstructor = ShadowRealmConstructor::create(vm, ShadowRealmConstructor::createStructure(vm, this, m_functionPrototype.get()), m_shadowRealmPrototype.get(), m_speciesGetterSetter.get());
+    m_shadowRealmConstructor.set(vm, this, shadowRealmConstructor);
+
     RegExpConstructor* regExpConstructor = RegExpConstructor::create(vm, RegExpConstructor::createStructure(vm, this, m_functionPrototype.get()), m_regExpPrototype.get(), m_speciesGetterSetter.get());
     m_regExpConstructor.set(vm, this, regExpConstructor);
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::RegExp)].set(vm, this, regExpConstructor);
@@ -1110,6 +1119,7 @@ capitalName ## Constructor* lowerName ## Constructor = featureFlag ? capitalName
     m_functionPrototype->putDirectWithoutTransition(vm, vm.propertyNames->constructor, functionConstructor, static_cast<unsigned>(PropertyAttribute::DontEnum));
     m_arrayPrototype->putDirectWithoutTransition(vm, vm.propertyNames->constructor, arrayConstructor, static_cast<unsigned>(PropertyAttribute::DontEnum));
     m_regExpPrototype->putDirectWithoutTransition(vm, vm.propertyNames->constructor, regExpConstructor, static_cast<unsigned>(PropertyAttribute::DontEnum));
+    m_shadowRealmPrototype->putDirectWithoutTransition(vm, vm.propertyNames->constructor, shadowRealmConstructor, static_cast<unsigned>(PropertyAttribute::DontEnum));
     
     putDirectWithoutTransition(vm, vm.propertyNames->Object, objectConstructor, static_cast<unsigned>(PropertyAttribute::DontEnum));
     putDirectWithoutTransition(vm, vm.propertyNames->Function, functionConstructor, static_cast<unsigned>(PropertyAttribute::DontEnum));
@@ -1261,6 +1271,8 @@ capitalName ## Constructor* lowerName ## Constructor = featureFlag ? capitalName
         TemporalObject* temporal = TemporalObject::create(vm, TemporalObject::createStructure(vm, this));
         putDirectWithoutTransition(vm, vm.propertyNames->Temporal, temporal, static_cast<unsigned>(PropertyAttribute::DontEnum));
     }
+    if (Options::useShadowRealm())
+        putDirectWithoutTransition(vm, vm.propertyNames->ShadowRealm, shadowRealmConstructor, static_cast<unsigned>(PropertyAttribute::DontEnum));
 
     m_moduleLoader.initLater(
         [] (const Initializer<JSModuleLoader>& init) {
@@ -1432,6 +1444,12 @@ capitalName ## Constructor* lowerName ## Constructor = featureFlag ? capitalName
         });
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::hostPromiseRejectionTracker)].initLater([] (const Initializer<JSCell>& init) {
             init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 2, String(), globalFuncHostPromiseRejectionTracker));
+        });
+    m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::importInRealm)].initLater([] (const Initializer<JSCell>& init) {
+            init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 0, String(), importInRealm));
+        });
+    m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::evalInRealm)].initLater([] (const Initializer<JSCell>& init) {
+            init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 0, String(), evalInRealm));
         });
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::thisTimeValue)].initLater([] (const Initializer<JSCell>& init) {
             init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 0, String(), dateProtoFuncGetTime, DatePrototypeGetTimeIntrinsic));
@@ -2117,6 +2135,7 @@ void JSGlobalObject::visitChildrenImpl(JSCell* cell, Visitor& visitor)
     thisObject->m_URIErrorStructure.visit(visitor);
     thisObject->m_aggregateErrorStructure.visit(visitor);
     visitor.append(thisObject->m_arrayConstructor);
+    visitor.append(thisObject->m_shadowRealmConstructor);
     visitor.append(thisObject->m_regExpConstructor);
     visitor.append(thisObject->m_objectConstructor);
     visitor.append(thisObject->m_functionConstructor);
@@ -2214,6 +2233,7 @@ void JSGlobalObject::visitChildrenImpl(JSCell* cell, Visitor& visitor)
     thisObject->m_customSetterFunctionStructure.visit(visitor);
     thisObject->m_boundFunctionStructure.visit(visitor);
     thisObject->m_nativeStdFunctionStructure.visit(visitor);
+    visitor.append(thisObject->m_shadowRealmObjectStructure);
     visitor.append(thisObject->m_regExpStructure);
     visitor.append(thisObject->m_generatorFunctionStructure);
     visitor.append(thisObject->m_asyncFunctionStructure);
@@ -2566,6 +2586,13 @@ WatchpointSet& JSGlobalObject::ensureReferencedPropertyWatchpointSet(UniquedStri
 JSGlobalObject* JSGlobalObject::create(VM& vm, Structure* structure)
 {
     JSGlobalObject* globalObject = new (NotNull, allocateCell<JSGlobalObject>(vm.heap)) JSGlobalObject(vm, structure);
+    globalObject->finishCreation(vm);
+    return globalObject;
+}
+
+JSGlobalObject* JSGlobalObject::createWithCustomMethodTable(VM& vm, Structure* structure, const GlobalObjectMethodTable* methodTable)
+{
+    JSGlobalObject* globalObject = new (NotNull, allocateCell<JSGlobalObject>(vm.heap)) JSGlobalObject(vm, structure, methodTable);
     globalObject->finishCreation(vm);
     return globalObject;
 }

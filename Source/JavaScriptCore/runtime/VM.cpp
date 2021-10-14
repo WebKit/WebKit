@@ -156,6 +156,7 @@
 #include "SamplingProfiler.h"
 #include "ScopedArguments.h"
 #include "ShadowChicken.h"
+#include "ShadowRealmObject.h"
 #include "SimpleTypedArrayController.h"
 #include "SourceProviderCache.h"
 #include "StrictEvalActivation.h"
@@ -1587,6 +1588,7 @@ DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(scriptFetcherSpace, destructibleCellHeap
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(setBucketSpace, cellHeapCellType.get(), JSSet::BucketType)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(setIteratorSpace, cellHeapCellType.get(), JSSetIterator)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(setSpace, cellHeapCellType.get(), JSSet)
+DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(shadowRealmSpace, cellHeapCellType.get(), ShadowRealmObject)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(strictEvalActivationSpace, cellHeapCellType.get(), StrictEvalActivation)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(stringIteratorSpace, cellHeapCellType.get(), JSStringIterator)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(sourceCodeSpace, destructibleCellHeapCellType.get(), JSSourceCode)

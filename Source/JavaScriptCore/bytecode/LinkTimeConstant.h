@@ -78,6 +78,8 @@ class JSGlobalObject;
     v(hostPromiseRejectionTracker, nullptr) \
     v(Set, nullptr) \
     v(thisTimeValue, nullptr) \
+    v(importInRealm, nullptr) \
+    v(evalInRealm, nullptr) \
     v(isConstructor, nullptr) \
     v(sameValue, nullptr) \
     v(regExpProtoFlagsGetter, nullptr) \
