@@ -1,3 +1,26 @@
+2021-10-14  David Kilzer  <ddkilzer@apple.com>
+
+        Modernize WebDatabaseManagerClient
+        <https://webkit.org/b/231549>
+        <rdar://problem/84129168>
+
+        Reviewed by Sihui Liu.
+
+        * Storage/WebDatabaseManager.mm:
+        (-[WebDatabaseManager init]):
+        - Add WebKit namespace to
+          WebDatabaseManagerClient::sharedWebDatabaseManagerClient()
+          and convert reference into pointer.
+
+        * Storage/WebDatabaseManagerClient.h:
+        (WebKit::WebDatabaseManagerClient):
+        - Put WebDatabaseManagerClient in WebKit namespace.
+
+        * Storage/WebDatabaseManagerClient.mm:
+        - Put WebDatabaseManagerClient in WebKit namespace.
+        (WebKit::WebDatabaseManagerClient::sharedWebDatabaseManagerClient):
+        - Update to use NeverDestroyed<> and to return a reference.
+
 2021-10-13  Chris Dumez  <cdumez@apple.com>
 
         Drop makeWeakPtr() and use WeakPtr { } directly

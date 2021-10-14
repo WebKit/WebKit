@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -82,7 +82,7 @@ static NSString *databasesDirectoryPath();
     dbManager.initialize(databasesDirectoryPath());
 
     // Set the DatabaseManagerClient
-    dbManager.setClient(WebDatabaseManagerClient::sharedWebDatabaseManagerClient());
+    dbManager.setClient(&WebKit::WebDatabaseManagerClient::sharedWebDatabaseManagerClient());
 
     return self;
 }
