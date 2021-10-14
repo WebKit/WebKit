@@ -1,3 +1,11 @@
+2021-10-13  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Unreviewed, speculative build fix with new clang
+
+        Speculative since I cannot install this clang now.
+
+        * b3/B3ValueRep.h:
+
 2021-10-13  Jean-Yves Avenard  <jya@apple.com>
 
         Clearly distinguish serial from concurrent WorkQueue
