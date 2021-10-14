@@ -1,3 +1,11 @@
+2021-10-13  Tim Horton  <timothy_horton@apple.com>
+
+        Add my GitHub username to contributors.json
+
+        Unreviewed.
+
+        * metadata/contributors.json:
+
 2021-10-13  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Add my github username to contributors.json
