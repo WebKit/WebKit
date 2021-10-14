@@ -1,5 +1,25 @@
 2021-10-14  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r284145. rdar://problem/84266646
+
+    Unreviewed, speculative build fix with new clang
+    
+    Speculative since I cannot install this clang now.
+    
+    * b3/B3ValueRep.h:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@284145 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-10-13  Yusuke Suzuki  <ysuzuki@apple.com>
+
+            Unreviewed, speculative build fix with new clang
+
+            Speculative since I cannot install this clang now.
+
+            * b3/B3ValueRep.h:
+
+2021-10-14  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r284137. rdar://problem/84266646
 
     Clearly distinguish serial from concurrent WorkQueue
