@@ -1,3 +1,9 @@
+2021-10-14  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed build fix with latest SDKs.
+
+        * Source/third_party/libwebm/webm_parser/src/master_parser.h:
+
 2021-10-13  Cameron McCormack  <heycam@apple.com>
 
         Override guessed color space for incoming H.264/265 streams
