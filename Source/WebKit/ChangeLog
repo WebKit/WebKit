@@ -1,3 +1,54 @@
+2021-10-14  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [JS IPC] Make it possible to establish a stream connection using the JS IPC testing API
+        https://bugs.webkit.org/show_bug.cgi?id=231710
+
+        Reviewed by Tim Horton.
+
+        Work towards fixing IPCTestingAPI.CanReceiveIPCSemaphore and IPCTestingAPI.CanReceiveSharedMemory, which broke
+        after I refactored RemoteRenderingBackend to be a IPC stream message receiver (instead of a standard IPC message
+        receiver). To achieve this, we introduce two new JS wrapper objects to encapsulate an IPC stream client
+        connection, as well as the stream buffer used to service that connection.
+
+        This allows us to establish a streaming IPC connection from the web process to the GPU process via JS IPC API,
+        like so:
+
+        ```
+        const bufferSize = 1 << 16;
+        const streamConnection = IPC.createStreamClientConnection('GPU', bufferSize);
+        IPC.sendMessage('GPU', 0, IPC.messages.GPUConnectionToWebProcess_CreateRenderingBackend.name, [
+            { type: 'RemoteRenderingBackendCreationParameters', 'identifier': 123, 'pageProxyID': IPC.webPageProxyID, 'pageID': IPC.pageID },
+            { type: 'StreamConnectionBuffer', value: streamConnection.streamBuffer() }
+        ]);
+        ```
+
+        * WebProcess/WebPage/IPCTestingAPI.cpp:
+        (WebKit::IPCTestingAPI::JSIPCStreamClientConnection::create):
+        (WebKit::IPCTestingAPI::JSIPCStreamClientConnection::connection):
+        (WebKit::IPCTestingAPI::JSIPCStreamClientConnection::JSIPCStreamClientConnection):
+        (WebKit::IPCTestingAPI::JSIPCStreamConnectionBuffer::create):
+        (WebKit::IPCTestingAPI::JSIPCStreamConnectionBuffer::encode const):
+        (WebKit::IPCTestingAPI::JSIPCStreamConnectionBuffer::JSIPCStreamConnectionBuffer):
+        (WebKit::IPCTestingAPI::JSIPCStreamClientConnection::createJSWrapper):
+        (WebKit::IPCTestingAPI::JSIPCStreamClientConnection::wrapperClass):
+        (WebKit::IPCTestingAPI::JSIPCStreamClientConnection::unwrap):
+        (WebKit::IPCTestingAPI::JSIPCStreamClientConnection::toWrapped):
+        (WebKit::IPCTestingAPI::JSIPCStreamClientConnection::initialize):
+        (WebKit::IPCTestingAPI::JSIPCStreamClientConnection::finalize):
+        (WebKit::IPCTestingAPI::JSIPCStreamClientConnection::staticFunctions):
+        (WebKit::IPCTestingAPI::JSIPCStreamClientConnection::streamBuffer):
+        (WebKit::IPCTestingAPI::JSIPCStreamConnectionBuffer::createJSWrapper):
+        (WebKit::IPCTestingAPI::JSIPCStreamConnectionBuffer::wrapperClass):
+        (WebKit::IPCTestingAPI::JSIPCStreamConnectionBuffer::unwrap):
+        (WebKit::IPCTestingAPI::JSIPCStreamConnectionBuffer::toWrapped):
+        (WebKit::IPCTestingAPI::JSIPCStreamConnectionBuffer::initialize):
+        (WebKit::IPCTestingAPI::JSIPCStreamConnectionBuffer::finalize):
+        (WebKit::IPCTestingAPI::JSIPCStreamConnectionBuffer::staticFunctions):
+        (WebKit::IPCTestingAPI::JSIPC::staticFunctions):
+        (WebKit::IPCTestingAPI::encodeStreamConnectionBuffer):
+        (WebKit::IPCTestingAPI::encodeArgument):
+        (WebKit::IPCTestingAPI::JSIPC::createStreamClientConnection):
+
 2021-10-14  Timothy Hatcher  <timothy@apple.com>
 
         Null check the context in -[WKWebProcessPlugInFrame jsContextForServiceWorkerWorld:]

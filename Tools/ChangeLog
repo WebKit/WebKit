@@ -1,3 +1,21 @@
+2021-10-14  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [JS IPC] Make it possible to establish a stream connection using the JS IPC testing API
+        https://bugs.webkit.org/show_bug.cgi?id=231710
+
+        Reviewed by Tim Horton.
+
+        See WebKit ChangeLog for more details.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/IPCTestingAPI.mm:
+
+        Adjust these two API tests so that they actually end up creating a new remote rendering backend in the GPU
+        process, instead of failing to decode because we're missing a StreamConnectionBuffer. This allows us to make it
+        to `GPUConnectionToWebProcess::createRenderingBackend` and actually create the corresponding rendering backend;
+        however, this is still insufficient to fix the failing API tests, since there is still no mechanism to (1)
+        wait for and receive the stream wakeup semaphore in the web process, and (2) send stream messages using an
+        instance of the stream client connection.
+
 2021-10-14  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [webkitpy] The actual results reported for a flaky tests shouldn't include the expectation

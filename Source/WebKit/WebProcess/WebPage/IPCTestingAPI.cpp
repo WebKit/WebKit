@@ -36,6 +36,8 @@
 #include "MessageArgumentDescriptions.h"
 #include "NetworkProcessConnection.h"
 #include "RemoteRenderingBackendCreationParameters.h"
+#include "StreamClientConnection.h"
+#include "StreamConnectionBuffer.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebFrame.h"
 #include "WebPage.h"
@@ -91,6 +93,61 @@ private:
     static JSValueRef waitFor(JSContextRef, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
 
     IPC::Semaphore m_semaphore;
+};
+
+class JSIPCStreamClientConnection : public RefCounted<JSIPCStreamClientConnection> {
+public:
+    static Ref<JSIPCStreamClientConnection> create(IPC::Connection& connection, size_t bufferSize)
+    {
+        return adoptRef(*new JSIPCStreamClientConnection(connection, bufferSize));
+    }
+
+    JSObjectRef createJSWrapper(JSContextRef);
+    static JSIPCStreamClientConnection* toWrapped(JSContextRef, JSValueRef);
+
+    IPC::StreamClientConnection& connection() { return m_streamConnection; }
+
+private:
+    JSIPCStreamClientConnection(IPC::Connection& connection, size_t bufferSize)
+        : m_streamConnection { connection, bufferSize }
+    { }
+
+    static JSClassRef wrapperClass();
+    static JSIPCStreamClientConnection* unwrap(JSObjectRef);
+    static void initialize(JSContextRef, JSObjectRef);
+    static void finalize(JSObjectRef);
+
+    static const JSStaticFunction* staticFunctions();
+    static JSValueRef streamBuffer(JSContextRef, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
+
+    IPC::StreamClientConnection m_streamConnection;
+};
+
+class JSIPCStreamConnectionBuffer : public RefCounted<JSIPCStreamConnectionBuffer> {
+public:
+    static Ref<JSIPCStreamConnectionBuffer> create(JSIPCStreamClientConnection& streamConnection)
+    {
+        return adoptRef(*new JSIPCStreamConnectionBuffer(streamConnection));
+    }
+
+    JSObjectRef createJSWrapper(JSContextRef);
+    static JSIPCStreamConnectionBuffer* toWrapped(JSContextRef, JSValueRef);
+
+    void encode(IPC::Encoder& encoder) const { m_streamConnection->connection().streamBuffer().encode(encoder); }
+
+private:
+    JSIPCStreamConnectionBuffer(JSIPCStreamClientConnection& streamConnection)
+        : m_streamConnection(streamConnection)
+    { }
+
+    static JSClassRef wrapperClass();
+    static JSIPCStreamConnectionBuffer* unwrap(JSObjectRef);
+    static void initialize(JSContextRef, JSObjectRef);
+    static void finalize(JSObjectRef);
+
+    static const JSStaticFunction* staticFunctions();
+
+    Ref<JSIPCStreamClientConnection> m_streamConnection;
 };
 
 class JSSharedMemory : public RefCounted<JSSharedMemory> {
@@ -185,6 +242,7 @@ private:
     static JSValueRef sendMessage(JSContextRef, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
     static JSValueRef sendSyncMessage(JSContextRef, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
 
+    static JSValueRef createStreamClientConnection(JSContextRef, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
     static JSValueRef createSemaphore(JSContextRef, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
     static JSValueRef createSharedMemory(JSContextRef, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
 
@@ -276,6 +334,132 @@ const JSStaticFunction* JSIPCSemaphore::staticFunctions()
     static const JSStaticFunction functions[] = {
         { "signal", signal, kJSPropertyAttributeDontDelete | kJSPropertyAttributeReadOnly },
         { "waitFor", waitFor, kJSPropertyAttributeDontDelete | kJSPropertyAttributeReadOnly },
+        { 0, 0, 0 }
+    };
+    return functions;
+}
+
+JSObjectRef JSIPCStreamClientConnection::createJSWrapper(JSContextRef context)
+{
+    auto* globalObject = toJS(context);
+    auto& vm = globalObject->vm();
+    JSC::JSLockHolder lock(vm);
+    auto scope = DECLARE_CATCH_SCOPE(vm);
+    JSObjectRef wrapperObject = JSObjectMake(toGlobalRef(globalObject), wrapperClass(), this);
+    scope.clearException();
+    return wrapperObject;
+}
+
+JSClassRef JSIPCStreamClientConnection::wrapperClass()
+{
+    static JSClassRef jsClass;
+    if (!jsClass) {
+        JSClassDefinition definition = kJSClassDefinitionEmpty;
+        definition.className = "StreamClientConnection";
+        definition.parentClass = nullptr;
+        definition.staticValues = nullptr;
+        definition.staticFunctions = staticFunctions();
+        definition.initialize = initialize;
+        definition.finalize = finalize;
+        jsClass = JSClassCreate(&definition);
+    }
+    return jsClass;
+}
+
+inline JSIPCStreamClientConnection* JSIPCStreamClientConnection::unwrap(JSObjectRef object)
+{
+    return static_cast<JSIPCStreamClientConnection*>(JSObjectGetPrivate(object));
+}
+
+JSIPCStreamClientConnection* JSIPCStreamClientConnection::toWrapped(JSContextRef context, JSValueRef value)
+{
+    if (!context || !value || !JSValueIsObjectOfClass(context, value, wrapperClass()))
+        return nullptr;
+    return unwrap(JSValueToObject(context, value, nullptr));
+}
+
+void JSIPCStreamClientConnection::initialize(JSContextRef, JSObjectRef object)
+{
+    unwrap(object)->ref();
+}
+
+void JSIPCStreamClientConnection::finalize(JSObjectRef object)
+{
+    unwrap(object)->deref();
+}
+
+const JSStaticFunction* JSIPCStreamClientConnection::staticFunctions()
+{
+    static const JSStaticFunction functions[] = {
+        { "streamBuffer", streamBuffer, kJSPropertyAttributeDontDelete | kJSPropertyAttributeReadOnly },
+        { 0, 0, 0 }
+    };
+    return functions;
+}
+
+JSValueRef JSIPCStreamClientConnection::streamBuffer(JSContextRef context, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    RefPtr jsStreamConnection = toWrapped(context, thisObject);
+    if (!jsStreamConnection) {
+        *exception = createTypeError(context, "Wrong type"_s);
+        return JSValueMakeUndefined(context);
+    }
+
+    return JSIPCStreamConnectionBuffer::create(*jsStreamConnection)->createJSWrapper(context);
+}
+
+JSObjectRef JSIPCStreamConnectionBuffer::createJSWrapper(JSContextRef context)
+{
+    auto* globalObject = toJS(context);
+    auto& vm = globalObject->vm();
+    JSC::JSLockHolder lock(vm);
+    auto scope = DECLARE_CATCH_SCOPE(vm);
+    JSObjectRef wrapperObject = JSObjectMake(toGlobalRef(globalObject), wrapperClass(), this);
+    scope.clearException();
+    return wrapperObject;
+}
+
+JSClassRef JSIPCStreamConnectionBuffer::wrapperClass()
+{
+    static JSClassRef jsClass;
+    if (!jsClass) {
+        JSClassDefinition definition = kJSClassDefinitionEmpty;
+        definition.className = "StreamConnectionBuffer";
+        definition.parentClass = nullptr;
+        definition.staticValues = nullptr;
+        definition.staticFunctions = staticFunctions();
+        definition.initialize = initialize;
+        definition.finalize = finalize;
+        jsClass = JSClassCreate(&definition);
+    }
+    return jsClass;
+}
+
+inline JSIPCStreamConnectionBuffer* JSIPCStreamConnectionBuffer::unwrap(JSObjectRef object)
+{
+    return static_cast<JSIPCStreamConnectionBuffer*>(JSObjectGetPrivate(object));
+}
+
+JSIPCStreamConnectionBuffer* JSIPCStreamConnectionBuffer::toWrapped(JSContextRef context, JSValueRef value)
+{
+    if (!context || !value || !JSValueIsObjectOfClass(context, value, wrapperClass()))
+        return nullptr;
+    return unwrap(JSValueToObject(context, value, nullptr));
+}
+
+void JSIPCStreamConnectionBuffer::initialize(JSContextRef, JSObjectRef object)
+{
+    unwrap(object)->ref();
+}
+
+void JSIPCStreamConnectionBuffer::finalize(JSObjectRef object)
+{
+    unwrap(object)->deref();
+}
+
+const JSStaticFunction* JSIPCStreamConnectionBuffer::staticFunctions()
+{
+    static const JSStaticFunction functions[] = {
         { 0, 0, 0 }
     };
     return functions;
@@ -576,6 +760,7 @@ const JSStaticFunction* JSIPC::staticFunctions()
         { "addOutgoingMessageListener", addOutgoingMessageListener, kJSPropertyAttributeDontDelete | kJSPropertyAttributeReadOnly },
         { "sendMessage", sendMessage, kJSPropertyAttributeDontDelete | kJSPropertyAttributeReadOnly },
         { "sendSyncMessage", sendSyncMessage, kJSPropertyAttributeDontDelete | kJSPropertyAttributeReadOnly },
+        { "createStreamClientConnection", createStreamClientConnection, kJSPropertyAttributeDontDelete | kJSPropertyAttributeReadOnly },
         { "createSemaphore", createSemaphore, kJSPropertyAttributeDontDelete | kJSPropertyAttributeReadOnly },
         { "createSharedMemory", createSharedMemory, kJSPropertyAttributeDontDelete | kJSPropertyAttributeReadOnly },
         { 0, 0, 0 }
@@ -812,6 +997,16 @@ static bool encodeSharedMemory(IPC::Encoder& encoder, JSC::JSGlobalObject* globa
     return true;
 }
 
+static bool encodeStreamConnectionBuffer(IPC::Encoder& encoder, JSC::JSGlobalObject* globalObject, JSC::JSValue jsValue, JSC::CatchScope& scope)
+{
+    RefPtr jsIPCStreamConnectionBuffer = JSIPCStreamConnectionBuffer::toWrapped(toRef(globalObject), toRef(jsValue));
+    if (!jsIPCStreamConnectionBuffer)
+        return false;
+
+    jsIPCStreamConnectionBuffer->encode(encoder);
+    return true;
+}
+
 static bool encodeSemaphore(IPC::Encoder& encoder, JSC::JSGlobalObject* globalObject, JSC::JSValue jsValue, JSC::CatchScope& scope)
 {
     RefPtr jsIPCSemaphore = JSIPCSemaphore::toWrapped(toRef(globalObject), toRef(jsValue));
@@ -965,6 +1160,14 @@ static bool encodeArgument(IPC::Encoder& encoder, JSIPC& jsIPC, JSContextRef con
     auto jsValue = jsObject->get(globalObject, JSC::Identifier::fromString(vm, "value"_s));
     if (scope.exception())
         return false;
+
+    if (type == "StreamConnectionBuffer") {
+        if (!encodeStreamConnectionBuffer(encoder, globalObject, jsValue, scope)) {
+            *exception = createTypeError(context, "Failed to convert StreamConnectionBuffer"_s);
+            return false;
+        }
+        return true;
+    }
 
     if (type == "Semaphore") {
         if (!encodeSemaphore(encoder, globalObject, jsValue, scope)) {
@@ -1243,6 +1446,34 @@ JSValueRef JSIPC::sendSyncMessage(JSContextRef context, JSObjectRef, JSObjectRef
     }
 
     return JSValueMakeUndefined(context);
+}
+
+JSValueRef JSIPC::createStreamClientConnection(JSContextRef context, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    auto* globalObject = toJS(context);
+    JSC::JSLockHolder lock(globalObject->vm());
+    RefPtr jsIPC = toWrapped(context, thisObject);
+    if (!jsIPC) {
+        *exception = createTypeError(context, "Wrong type"_s);
+        return JSValueMakeUndefined(context);
+    }
+
+    if (argumentCount < 2) {
+        *exception = createTypeError(context, "Must specify the target process and buffer size as the first two arguments"_s);
+        return JSValueMakeUndefined(context);
+    }
+
+    auto connection = processTargetFromArgument(globalObject, arguments[0], exception);
+    if (!connection)
+        return JSValueMakeUndefined(context);
+
+    auto bufferSize = argumentCount ? convertToUint64(toJS(globalObject, arguments[1])) : std::optional<uint64_t> { };
+    if (!bufferSize) {
+        *exception = createTypeError(context, "Must specify the size"_s);
+        return JSValueMakeUndefined(context);
+    }
+
+    return JSIPCStreamClientConnection::create(*connection, *bufferSize)->createJSWrapper(context);
 }
 
 JSValueRef JSIPC::createSemaphore(JSContextRef context, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)

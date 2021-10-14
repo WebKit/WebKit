@@ -291,14 +291,19 @@ TEST(IPCTestingAPI, CanReceiveIPCSemaphore)
     [webView setUIDelegate:delegate.get()];
 
     done = false;
-    [webView synchronouslyLoadHTMLString:@"<!DOCTYPE html><script>"
-        "const semaphore = IPC.createSemaphore();"
-        "IPC.sendMessage('GPU', 0, IPC.messages.GPUConnectionToWebProcess_CreateRenderingBackend.name,"
-        "    [{type: 'RemoteRenderingBackendCreationParameters', 'identifier': 123, semaphore, 'pageProxyID': IPC.webPageProxyID, 'pageID': IPC.pageID}]);"
+    auto html = @"<!DOCTYPE html>"
+        "<script>"
+        "const bufferSize = 1 << 16;"
+        "const streamConnection = IPC.createStreamClientConnection('GPU', bufferSize);"
+        "IPC.sendMessage('GPU', 0, IPC.messages.GPUConnectionToWebProcess_CreateRenderingBackend.name, ["
+        "    { type: 'RemoteRenderingBackendCreationParameters', 'identifier': 123, 'pageProxyID': IPC.webPageProxyID, 'pageID': IPC.pageID },"
+        "    { type: 'StreamConnectionBuffer', value: streamConnection.streamBuffer() },"
+        "]);"
         "const result = IPC.sendSyncMessage('GPU', 123, IPC.messages.RemoteRenderingBackend_SemaphoreForGetPixelBuffer.name, 100, []);"
         "semaphore.signal();"
         "alert(result.arguments.length + ':' + result.arguments[0].type + ':' + result.arguments[0].value.waitFor(100));"
-        "</script>"];
+        "</script>";
+    [webView synchronouslyLoadHTMLString:html];
     TestWebKitAPI::Util::run(&done);
 
     EXPECT_STREQ([alertMessage UTF8String], "1:Semaphore:false");
@@ -311,13 +316,17 @@ TEST(IPCTestingAPI, CanReceiveSharedMemory)
     auto delegate = adoptNS([[IPCTestingAPIDelegate alloc] init]);
     [webView setUIDelegate:delegate.get()];
 
-    auto* html = @R"HTML(<!DOCTYPE html>
-<script>
-IPC.sendMessage('GPU', 0, IPC.messages.GPUConnectionToWebProcess_CreateRenderingBackend.name,
-    [{type: 'RemoteRenderingBackendCreationParameters', 'identifier': 123, semaphore: IPC.createSemaphore(), 'pageProxyID': IPC.webPageProxyID, 'pageID': IPC.pageID}]);
-const result = IPC.sendSyncMessage('GPU', 123, IPC.messages.RemoteRenderingBackend_UpdateSharedMemoryForGetPixelBuffer.name, 100, [{type: 'uint32_t', value: 8}]);
-alert(result.arguments.length);
-</script>)HTML";
+    auto html = @"<!DOCTYPE html>"
+        "<script>"
+        "const bufferSize = 1 << 16;"
+        "const streamConnection = IPC.createStreamClientConnection('GPU', bufferSize);"
+        "IPC.sendMessage('GPU', 0, IPC.messages.GPUConnectionToWebProcess_CreateRenderingBackend.name, ["
+        "    { type: 'RemoteRenderingBackendCreationParameters', 'identifier': 123, 'pageProxyID': IPC.webPageProxyID, 'pageID': IPC.pageID },"
+        "    { type: 'StreamConnectionBuffer', value: streamConnection.streamBuffer() },"
+        "]);"
+        "const result = IPC.sendSyncMessage('GPU', 123, IPC.messages.RemoteRenderingBackend_UpdateSharedMemoryForGetPixelBuffer.name, 100, [{type: 'uint32_t', value: 8}]);"
+        "alert(result.arguments.length);"
+        "</script>";
 
     done = false;
     [webView synchronouslyLoadHTMLString:html];
