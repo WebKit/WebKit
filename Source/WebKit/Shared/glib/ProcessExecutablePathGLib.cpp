@@ -29,14 +29,13 @@
 
 #include <glib.h>
 #include <wtf/FileSystem.h>
-#include <wtf/glib/GLibUtilities.h>
 
 namespace WebKit {
 
 #if ENABLE(DEVELOPER_MODE)
 static String getExecutablePath()
 {
-    CString executablePath = getCurrentExecutablePath();
+    CString executablePath = FileSystem::currentExecutablePath();
     if (!executablePath.isNull())
         return FileSystem::parentPath(FileSystem::stringFromFileSystemRepresentation(executablePath.data()));
     return { };

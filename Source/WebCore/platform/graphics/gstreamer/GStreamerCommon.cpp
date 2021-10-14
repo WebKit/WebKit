@@ -33,8 +33,8 @@
 #include <gst/audio/audio-info.h>
 #include <gst/gst.h>
 #include <mutex>
+#include <wtf/FileSystem.h>
 #include <wtf/Scope.h>
-#include <wtf/glib/GLibUtilities.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/glib/RunLoopSourcePriority.h>
 
@@ -257,7 +257,7 @@ bool ensureGStreamerInitialized()
         s_UIProcessCommandLineOptions.reset();
         char** argv = g_new0(char*, parameters.size() + 2);
         int argc = parameters.size() + 1;
-        argv[0] = g_strdup(getCurrentExecutableName().data());
+        argv[0] = g_strdup(FileSystem::currentExecutableName().data());
         for (unsigned i = 0; i < parameters.size(); i++)
             argv[i + 1] = g_strdup(parameters[i].utf8().data());
 

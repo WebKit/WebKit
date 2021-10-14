@@ -31,6 +31,7 @@
 #include <type_traits>
 #include <wtf/Assertions.h>
 #include <wtf/EnumTraits.h>
+#include <wtf/FastMalloc.h>
 #include <wtf/MathExtras.h>
 #include <wtf/StdLibExtras.h>
 

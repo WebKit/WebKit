@@ -2,7 +2,6 @@ set(WTF_OUTPUT_NAME WTFGTK)
 
 list(APPEND WTF_PUBLIC_HEADERS
     glib/ChassisType.h
-    glib/GLibUtilities.h
     glib/GMutexLocker.h
     glib/GRefPtr.h
     glib/GSocketMonitor.h
@@ -30,7 +29,6 @@ list(APPEND WTF_SOURCES
 
     glib/ChassisType.cpp
     glib/FileSystemGlib.cpp
-    glib/GLibUtilities.cpp
     glib/GRefPtr.cpp
     glib/GSocketMonitor.cpp
     glib/RunLoopGLib.cpp

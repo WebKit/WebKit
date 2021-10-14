@@ -30,13 +30,19 @@
 #include <sys/file.h>
 #include <wtf/EnumTraits.h>
 #include <wtf/UUID.h>
-#include <wtf/glib/GLibUtilities.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/text/ASCIIFastPath.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/WTFString.h>
+
+#if OS(WINDOWS)
+#include <windows.h>
+#else
+#include <limits.h>
+#include <unistd.h>
+#endif
 
 namespace WTF {
 
@@ -274,6 +280,53 @@ bool unlockFile(PlatformFileHandle handle)
     return result != -1;
 }
 #endif // USE(FILE_LOCK)
+
+#if OS(LINUX)
+CString currentExecutablePath()
+{
+    static char readLinkBuffer[PATH_MAX];
+    ssize_t result = readlink("/proc/self/exe", readLinkBuffer, PATH_MAX);
+    if (result == -1)
+        return { };
+    return CString(readLinkBuffer, result);
+}
+#elif OS(HURD)
+CString currentExecutablePath()
+{
+    return { };
+}
+#elif OS(UNIX)
+CString currentExecutablePath()
+{
+    static char readLinkBuffer[PATH_MAX];
+    ssize_t result = readlink("/proc/curproc/file", readLinkBuffer, PATH_MAX);
+    if (result == -1)
+        return { };
+    return CString(readLinkBuffer, result);
+}
+#elif OS(WINDOWS)
+CString currentExecutablePath()
+{
+    static WCHAR buffer[MAX_PATH];
+    DWORD length = GetModuleFileNameW(0, buffer, MAX_PATH);
+    if (!length || (length == MAX_PATH && GetLastError() == ERROR_INSUFFICIENT_BUFFER))
+        return { };
+
+    String path(buffer, length);
+    return path.utf8();
+}
+#endif
+
+CString currentExecutableName()
+{
+    auto executablePath = currentExecutablePath();
+    if (!executablePath.isNull()) {
+        GUniquePtr<char> basename(g_path_get_basename(executablePath.data()));
+        return basename.get();
+    }
+
+    return g_get_prgname();
+}
 
 } // namespace FileSystemImpl
 } // namespace WTF
