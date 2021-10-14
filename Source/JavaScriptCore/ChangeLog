@@ -1,3 +1,18 @@
+2021-10-14  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed build fix with recent SDKs.
+
+        Use std::invoke_result<> instead of std::result_of<>, as it was deprecated in C++17.
+
+        * runtime/JSCJSValue.h:
+        * runtime/JSCJSValueInlines.h:
+        (JSC::JSValue::getPropertySlot const):
+        * runtime/JSObject.h:
+        * runtime/JSObjectInlines.h:
+        (JSC::JSObject::getPropertySlot const):
+        * runtime/ParseInt.h:
+        (JSC::toStringView):
+
 2021-10-14  Zan Dobersek  <zdobersek@igalia.com>
 
         [RISCV64] Support logical operations with immediates on BaseIndex addresses in LLInt

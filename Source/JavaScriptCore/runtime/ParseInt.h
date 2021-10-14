@@ -198,7 +198,7 @@ ALWAYS_INLINE static double parseInt(StringView s, int radix)
 }
 
 template<typename CallbackWhenNoException>
-static ALWAYS_INLINE typename std::result_of<CallbackWhenNoException(StringView)>::type toStringView(JSGlobalObject* globalObject, JSValue value, CallbackWhenNoException callback)
+static ALWAYS_INLINE typename std::invoke_result<CallbackWhenNoException, StringView>::type toStringView(JSGlobalObject* globalObject, JSValue value, CallbackWhenNoException callback)
 {
     VM& vm = getVM(globalObject);
     auto scope = DECLARE_THROW_SCOPE(vm);

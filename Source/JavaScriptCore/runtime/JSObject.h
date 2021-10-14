@@ -159,8 +159,8 @@ public:
     bool getPropertySlot(JSGlobalObject*, PropertyName, PropertySlot&);
     bool getPropertySlot(JSGlobalObject*, unsigned propertyName, PropertySlot&);
     bool getPropertySlot(JSGlobalObject*, uint64_t propertyName, PropertySlot&);
-    template<typename CallbackWhenNoException> typename std::result_of<CallbackWhenNoException(bool, PropertySlot&)>::type getPropertySlot(JSGlobalObject*, PropertyName, CallbackWhenNoException) const;
-    template<typename CallbackWhenNoException> typename std::result_of<CallbackWhenNoException(bool, PropertySlot&)>::type getPropertySlot(JSGlobalObject*, PropertyName, PropertySlot&, CallbackWhenNoException) const;
+    template<typename CallbackWhenNoException> typename std::invoke_result<CallbackWhenNoException, bool, PropertySlot&>::type getPropertySlot(JSGlobalObject*, PropertyName, CallbackWhenNoException) const;
+    template<typename CallbackWhenNoException> typename std::invoke_result<CallbackWhenNoException, bool, PropertySlot&>::type getPropertySlot(JSGlobalObject*, PropertyName, PropertySlot&, CallbackWhenNoException) const;
 
     JSValue getIfPropertyExists(JSGlobalObject*, PropertyName);
 

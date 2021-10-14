@@ -1,3 +1,15 @@
+2021-10-14  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed build fix with recent SDKs.
+
+        Use std::invoke_result<> instead of std::result_of<>, as it was deprecated in C++17.
+
+        * wtf/IndexedContainerIterator.h:
+        (WTF::IndexedContainerIterator::operator* const):
+        (WTF::IndexedContainerIterator::operator*): Deleted.
+        * wtf/Vector.h:
+        * wtf/WeakHashSet.h:
+
 2021-10-14  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Remove std::iterator usage

@@ -951,14 +951,14 @@ ALWAYS_INLINE JSValue JSValue::get(JSGlobalObject* globalObject, PropertyName pr
 }
 
 template<typename CallbackWhenNoException>
-ALWAYS_INLINE typename std::result_of<CallbackWhenNoException(bool, PropertySlot&)>::type JSValue::getPropertySlot(JSGlobalObject* globalObject, PropertyName propertyName, CallbackWhenNoException callback) const
+ALWAYS_INLINE typename std::invoke_result<CallbackWhenNoException, bool, PropertySlot&>::type JSValue::getPropertySlot(JSGlobalObject* globalObject, PropertyName propertyName, CallbackWhenNoException callback) const
 {
     PropertySlot slot(asValue(), PropertySlot::InternalMethodType::Get);
     return getPropertySlot(globalObject, propertyName, slot, callback);
 }
 
 template<typename CallbackWhenNoException>
-ALWAYS_INLINE typename std::result_of<CallbackWhenNoException(bool, PropertySlot&)>::type JSValue::getPropertySlot(JSGlobalObject* globalObject, PropertyName propertyName, PropertySlot& slot, CallbackWhenNoException callback) const
+ALWAYS_INLINE typename std::invoke_result<CallbackWhenNoException, bool, PropertySlot&>::type JSValue::getPropertySlot(JSGlobalObject* globalObject, PropertyName propertyName, PropertySlot& slot, CallbackWhenNoException callback) const
 {
     auto scope = DECLARE_THROW_SCOPE(getVM(globalObject));
     bool found = getPropertySlot(globalObject, propertyName, slot);

@@ -838,7 +838,7 @@ public:
 
     void checkConsistency();
 
-    template<typename MapFunction, typename R = typename std::result_of<MapFunction(const T&)>::type> Vector<R> map(MapFunction) const;
+    template<typename MapFunction, typename R = typename std::invoke_result<MapFunction, const T&>::type> Vector<R> map(MapFunction) const;
 
     bool isHashTableDeletedValue() const { return m_size == std::numeric_limits<decltype(m_size)>::max(); }
 
@@ -1675,7 +1675,7 @@ struct CollectionInspector {
 template<typename MapFunction, typename SourceType, typename Enable = void>
 struct Mapper {
     using SourceItemType = typename CollectionInspector<SourceType>::SourceItemType;
-    using DestinationItemType = typename std::result_of<MapFunction(SourceItemType&)>::type;
+    using DestinationItemType = typename std::invoke_result<MapFunction, SourceItemType&>::type;
 
     static Vector<DestinationItemType> map(SourceType source, const MapFunction& mapFunction)
     {
@@ -1691,7 +1691,7 @@ struct Mapper {
 template<typename MapFunction, typename SourceType>
 struct Mapper<MapFunction, SourceType, typename std::enable_if<std::is_rvalue_reference<SourceType&&>::value>::type> {
     using SourceItemType = typename CollectionInspector<SourceType>::SourceItemType;
-    using DestinationItemType = typename std::result_of<MapFunction(SourceItemType&&)>::type;
+    using DestinationItemType = typename std::invoke_result<MapFunction, SourceItemType&&>::type;
 
     static Vector<DestinationItemType> map(SourceType&& source, const MapFunction& mapFunction)
     {
@@ -1734,7 +1734,7 @@ struct CompactMapTraits<RefPtr<T>> {
 template<typename MapFunction, typename SourceType, typename Enable = void>
 struct CompactMapper {
     using SourceItemType = typename CollectionInspector<SourceType>::SourceItemType;
-    using ResultItemType = typename std::result_of<MapFunction(SourceItemType&)>::type;
+    using ResultItemType = typename std::invoke_result<MapFunction, SourceItemType&>::type;
     using DestinationItemType = typename CompactMapTraits<ResultItemType>::ItemType;
 
     static Vector<DestinationItemType> compactMap(SourceType source, const MapFunction& mapFunction)
@@ -1753,7 +1753,7 @@ struct CompactMapper {
 template<typename MapFunction, typename SourceType>
 struct CompactMapper<MapFunction, SourceType, typename std::enable_if<std::is_rvalue_reference<SourceType&&>::value>::type> {
     using SourceItemType = typename CollectionInspector<SourceType>::SourceItemType;
-    using ResultItemType = typename std::result_of<MapFunction(SourceItemType&&)>::type;
+    using ResultItemType = typename std::invoke_result<MapFunction, SourceItemType&&>::type;
     using DestinationItemType = typename CompactMapTraits<ResultItemType>::ItemType;
 
     static Vector<DestinationItemType> compactMap(SourceType source, const MapFunction& mapFunction)
