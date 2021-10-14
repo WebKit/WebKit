@@ -2,4 +2,5 @@
 
 PASS Presentational hints have lower precedence than regular author style sheets
 PASS Presentational hints have lower precedence than the style attribute
+PASS Presentational hints have lower precedence than layered style
 

@@ -235,20 +235,27 @@ void RuleSetBuilder::updateCascadeLayerPriorities()
         return;
 
     auto compare = [&](auto a, auto b) {
-        while (a && b) {
-            // Identifiers are in parse order which almost corresponds to the layer priority order.
-            // The only exception is when a sublayer gets added to a layer after adding other non-sublayers.
-            // To resolve this we need look for a shared ancestor layer.
+        while (true) {
+            // Identifiers are in parse order.
             auto aParent = m_ruleSet->cascadeLayerForIdentifier(a).parentIdentifier;
             auto bParent = m_ruleSet->cascadeLayerForIdentifier(b).parentIdentifier;
-            if (aParent == bParent || aParent == b || bParent == a)
-                break;
+
+            // For sibling layers, the later layer in parse order has a higher priority.
+            if (aParent == bParent)
+                return a < b;
+
+            // For nested layers, the parent layer has a higher priority.
+            if (aParent == b)
+                return true;
+            if (a == bParent)
+                return false;
+
+            // Traverse to parent. Parent layer identifiers are always lower.
             if (aParent > bParent)
                 a = aParent;
             else
                 b = bParent;
         }
-        return a < b;
     };
 
     auto layerCount = m_ruleSet->m_cascadeLayers.size();

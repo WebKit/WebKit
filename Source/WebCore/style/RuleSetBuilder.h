@@ -74,11 +74,11 @@ private:
     Resolver* m_resolver { nullptr };
     const ShrinkToFit m_shrinkToFit { ShrinkToFit::Enable };
 
-    CascadeLayerName m_resolvedCascadeLayerName { };
-    HashMap<CascadeLayerName, RuleSet::CascadeLayerIdentifier> m_cascadeLayerIdentifierMap { };
+    CascadeLayerName m_resolvedCascadeLayerName;
+    HashMap<CascadeLayerName, RuleSet::CascadeLayerIdentifier> m_cascadeLayerIdentifierMap;
     RuleSet::CascadeLayerIdentifier m_currentCascadeLayerIdentifier { 0 };
 
-    Vector<RuleSet::ResolverMutatingRule> m_collectedResolverMutatingRules { };
+    Vector<RuleSet::ResolverMutatingRule> m_collectedResolverMutatingRules;
     bool didSeeResolverMutationWithinDynamicMediaQuery { false };
 };
 
