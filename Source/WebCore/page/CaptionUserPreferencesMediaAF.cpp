@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,12 +24,9 @@
  */
 
 #include "config.h"
-
-#if ENABLE(VIDEO)
-
-#if !USE(DIRECT2D)
-
 #include "CaptionUserPreferencesMediaAF.h"
+
+#if ENABLE(VIDEO) && !USE(DIRECT2D)
 
 #include "AudioTrackList.h"
 #include "ColorSerialization.h"
@@ -52,8 +49,12 @@
 #include <wtf/text/cf/StringConcatenateCF.h>
 #include <wtf/unicode/Collator.h>
 
+#if PLATFORM(COCOA)
+#include <pal/spi/cf/CFNotificationCenterSPI.h>
+#endif
+
 #if PLATFORM(IOS_FAMILY)
-#import "WebCoreThreadRun.h"
+#include "WebCoreThreadRun.h"
 #endif
 
 #if PLATFORM(WIN)
@@ -119,24 +120,35 @@ static std::optional<Vector<String>>& cachedPreferredLanguages()
     return preferredLanguages;
 }
 
-static void userCaptionPreferencesChangedNotificationCallback(CFNotificationCenterRef, void* observer, CFStringRef, const void *, CFDictionaryRef)
+static void userCaptionPreferencesChangedNotificationCallback(CFNotificationCenterRef, void* observer, CFStringRef, const void*, CFDictionaryRef)
 {
-#if !PLATFORM(IOS_FAMILY)
-    static_cast<CaptionUserPreferencesMediaAF*>(observer)->captionPreferencesChanged();
-#else
-    WebThreadRun(^{
-        static_cast<CaptionUserPreferencesMediaAF*>(observer)->captionPreferencesChanged();
-    });
+#if PLATFORM(COCOA)
+    RefPtr userPreferences = CaptionUserPreferencesMediaAF::extractCaptionUserPreferencesMediaAF(observer);
+#elif PLATFORM(WIN)
+    auto* userPreferences = static_cast<CaptionUserPreferencesMediaAF*>(observer);
 #endif
+    if (userPreferences) {
+#if !PLATFORM(IOS_FAMILY)
+        userPreferences->captionPreferencesChanged();
+#else
+        WebThreadRun(^{
+            userPreferences->captionPreferencesChanged();
+        });
+#endif
+    }
 }
 
-#endif
+#endif // HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
+
+Ref<CaptionUserPreferencesMediaAF> CaptionUserPreferencesMediaAF::create(PageGroup& group)
+{
+    return adoptRef(*new CaptionUserPreferencesMediaAF(group));
+}
 
 CaptionUserPreferencesMediaAF::CaptionUserPreferencesMediaAF(PageGroup& group)
     : CaptionUserPreferences(group)
 #if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
     , m_updateStyleSheetTimer(*this, &CaptionUserPreferencesMediaAF::updateTimerFired)
-    , m_listeningForPreferenceChanges(false)
 #endif
 {
     static bool initialized;
@@ -164,11 +176,19 @@ CaptionUserPreferencesMediaAF::CaptionUserPreferencesMediaAF(PageGroup& group)
 CaptionUserPreferencesMediaAF::~CaptionUserPreferencesMediaAF()
 {
 #if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
-    if (kMAXCaptionAppearanceSettingsChangedNotification)
-        CFNotificationCenterRemoveObserver(CFNotificationCenterGetLocalCenter(), this, kMAXCaptionAppearanceSettingsChangedNotification, 0);
-    if (kMAAudibleMediaSettingsChangedNotification)
-        CFNotificationCenterRemoveObserver(CFNotificationCenterGetLocalCenter(), this, kMAAudibleMediaSettingsChangedNotification, 0);
+#if PLATFORM(COCOA)
+    auto* observer = m_weakObserver.get();
+#elif PLATFORM(WIN)
+    auto* observer = this;
 #endif
+    if (observer) {
+        auto center = CFNotificationCenterGetLocalCenter();
+        if (kMAXCaptionAppearanceSettingsChangedNotification)
+            CFNotificationCenterRemoveObserver(center, observer, kMAXCaptionAppearanceSettingsChangedNotification, 0);
+        if (kMAAudibleMediaSettingsChangedNotification)
+            CFNotificationCenterRemoveObserver(center, observer, kMAAudibleMediaSettingsChangedNotification, 0);
+    }
+#endif // HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
 }
 
 #if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
@@ -286,10 +306,21 @@ void CaptionUserPreferencesMediaAF::setInterestedInCaptionPreferenceChanges()
     m_listeningForPreferenceChanges = true;
     m_registeringForNotification = true;
 
+#if PLATFORM(COCOA)
+    if (!m_weakObserver)
+        m_weakObserver = createWeakObserver(this);
+    auto* observer = m_weakObserver.get();
+    auto suspensionBehavior = static_cast<CFNotificationSuspensionBehavior>(CFNotificationSuspensionBehaviorCoalesce | _CFNotificationObserverIsObjC);
+#elif PLATFORM(WIN)
+    auto* observer = this;
+    auto suspensionBehavior = CFNotificationSuspensionBehaviorCoalesce;
+#endif
+    auto center = CFNotificationCenterGetLocalCenter();
     if (kMAXCaptionAppearanceSettingsChangedNotification)
-        CFNotificationCenterAddObserver(CFNotificationCenterGetLocalCenter(), this, userCaptionPreferencesChangedNotificationCallback, kMAXCaptionAppearanceSettingsChangedNotification, 0, CFNotificationSuspensionBehaviorCoalesce);
+        CFNotificationCenterAddObserver(center, observer, userCaptionPreferencesChangedNotificationCallback, kMAXCaptionAppearanceSettingsChangedNotification, 0, suspensionBehavior);
+
     if (canLoad_MediaAccessibility_kMAAudibleMediaSettingsChangedNotification())
-        CFNotificationCenterAddObserver(CFNotificationCenterGetLocalCenter(), this, userCaptionPreferencesChangedNotificationCallback, kMAAudibleMediaSettingsChangedNotification, 0, CFNotificationSuspensionBehaviorCoalesce);
+        CFNotificationCenterAddObserver(center, observer, userCaptionPreferencesChangedNotificationCallback, kMAAudibleMediaSettingsChangedNotification, 0, suspensionBehavior);
     m_registeringForNotification = false;
 
     // Generating and registering the caption stylesheet can be expensive and this method is called indirectly when the parser creates an audio or
@@ -964,6 +995,4 @@ Vector<RefPtr<TextTrack>> CaptionUserPreferencesMediaAF::sortedTrackListForMenu(
     
 }
 
-#endif
-
-#endif // ENABLE(VIDEO)
+#endif // ENABLE(VIDEO) && !USE(DIRECT2D)
