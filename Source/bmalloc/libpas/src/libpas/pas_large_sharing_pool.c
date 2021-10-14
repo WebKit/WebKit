@@ -1068,7 +1068,7 @@ bool pas_large_sharing_pool_allocate_and_commit(
 
     case pas_physical_memory_is_locked_by_virtual_range_common_lock:
         if (commit_log.total || pas_physical_page_sharing_pool_balance < 0) {
-            static const size_t max_num_locks_held = 2;
+            enum { max_num_locks_held = 2 };
             
             pas_lock* locks_held[max_num_locks_held];
             size_t num_locks_held;

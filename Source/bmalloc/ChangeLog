@@ -1,3 +1,45 @@
+2021-10-14  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r284208. rdar://problem/84277677
+
+    [libpas] Use `enum { ... }` instead of `static const size_t` for constant values used for array size
+    https://bugs.webkit.org/show_bug.cgi?id=231778
+    
+    Reviewed by Chris Dumez.
+    
+    Since libpas is written in C (not C++), we cannot use `static const size_t` value for array's size.
+    In C, it is not usable as a constant expression for array size. Use `enum` hack instead.
+    
+    * libpas/src/libpas/pas_generic_large_free_heap.h:
+    (pas_generic_large_free_heap_try_allocate):
+    * libpas/src/libpas/pas_large_sharing_pool.c:
+    (pas_large_sharing_pool_allocate_and_commit):
+    * libpas/src/libpas/pas_segregated_view_allocator_inlines.h:
+    (pas_segregated_view_will_start_allocating):
+    * libpas/src/libpas/pas_simple_large_free_heap.c:
+    (merge):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@284208 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-10-14  Yusuke Suzuki  <ysuzuki@apple.com>
+
+            [libpas] Use `enum { ... }` instead of `static const size_t` for constant values used for array size
+            https://bugs.webkit.org/show_bug.cgi?id=231778
+
+            Reviewed by Chris Dumez.
+
+            Since libpas is written in C (not C++), we cannot use `static const size_t` value for array's size.
+            In C, it is not usable as a constant expression for array size. Use `enum` hack instead.
+
+            * libpas/src/libpas/pas_generic_large_free_heap.h:
+            (pas_generic_large_free_heap_try_allocate):
+            * libpas/src/libpas/pas_large_sharing_pool.c:
+            (pas_large_sharing_pool_allocate_and_commit):
+            * libpas/src/libpas/pas_segregated_view_allocator_inlines.h:
+            (pas_segregated_view_will_start_allocating):
+            * libpas/src/libpas/pas_simple_large_free_heap.c:
+            (merge):
+
 2021-09-30  Filip Pizlo  <fpizlo@apple.com>
 
         [libpas] Change the names of libpas heap runtime configs to something simpler (intrinsic, primitive, typed, and flex) and add comments describing what they are (update to 32abc1fd5489e01aa1c504ae4654967047d3f072)

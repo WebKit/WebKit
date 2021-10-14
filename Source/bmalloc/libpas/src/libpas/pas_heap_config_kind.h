@@ -42,13 +42,13 @@ enum pas_heap_config_kind {
 
 typedef enum pas_heap_config_kind pas_heap_config_kind;
 
-static const unsigned pas_heap_config_kind_num_kinds =
+enum { pas_heap_config_kind_num_kinds =
     0
 #define PAS_DEFINE_HEAP_CONFIG_KIND(name, value) \
     + 1
 #include "pas_heap_config_kind.def"
 #undef PAS_DEFINE_HEAP_CONFIG_KIND
-    ;
+};
 
 static inline const char*
 pas_heap_config_kind_get_string(pas_heap_config_kind kind)
