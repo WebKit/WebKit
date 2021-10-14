@@ -468,7 +468,7 @@ void WebProcessPool::getGPUProcessConnection(WebProcessProxy& webProcessProxy, G
 #if ENABLE(IPC_TESTING_API)
     parameters.ignoreInvalidMessageForTesting = webProcessProxy.ignoreInvalidMessageForTesting();
 #endif
-    ensureGPUProcess().getGPUProcessConnection(webProcessProxy, parameters, [this, weakThis = WeakPtr { *this }, parameters, webProcessProxy = makeWeakPtr(webProcessProxy), reply = WTFMove(reply)] (auto& connectionInfo) mutable {
+    ensureGPUProcess().getGPUProcessConnection(webProcessProxy, parameters, [this, weakThis = WeakPtr { *this }, parameters, webProcessProxy = WeakPtr { webProcessProxy }, reply = WTFMove(reply)] (auto& connectionInfo) mutable {
         if (UNLIKELY(!IPC::Connection::identifierIsValid(connectionInfo.identifier()))) {
             // Retry on the next RunLoop iteration because we may be inside the WebProcessPool destructor.
             RunLoop::main().dispatch([this, weakThis = WTFMove(weakThis), webProcessProxy = WTFMove(webProcessProxy), parameters = WTFMove(parameters), reply = WTFMove(reply)] () mutable {
@@ -488,7 +488,7 @@ void WebProcessPool::getGPUProcessConnection(WebProcessProxy& webProcessProxy, G
 #if ENABLE(WEB_AUTHN)
 void WebProcessPool::getWebAuthnProcessConnection(WebProcessProxy& webProcessProxy, Messages::WebProcessProxy::GetWebAuthnProcessConnection::DelayedReply&& reply)
 {
-    WebAuthnProcessProxy::singleton().getWebAuthnProcessConnection(webProcessProxy, [this, weakThis = WeakPtr { *this }, webProcessProxy = makeWeakPtr(webProcessProxy), reply = WTFMove(reply)] (auto& connectionInfo) mutable {
+    WebAuthnProcessProxy::singleton().getWebAuthnProcessConnection(webProcessProxy, [this, weakThis = WeakPtr { *this }, webProcessProxy = WeakPtr { webProcessProxy }, reply = WTFMove(reply)] (auto& connectionInfo) mutable {
         if (UNLIKELY(!IPC::Connection::identifierIsValid(connectionInfo.identifier()) && webProcessProxy && weakThis)) {
             WEBPROCESSPOOL_RELEASE_LOG_ERROR(Process, "getWebAuthnProcessConnection: Failed first attempt, retrying");
             WebAuthnProcessProxy::singleton().getWebAuthnProcessConnection(*webProcessProxy, WTFMove(reply));
@@ -854,7 +854,7 @@ void WebProcessPool::initializeNewWebProcess(WebProcessProxy& process, WebsiteDa
 
     if (isPrewarmed == WebProcessProxy::IsPrewarmed::Yes) {
         ASSERT(!m_prewarmedProcess);
-        m_prewarmedProcess = makeWeakPtr(process);
+        m_prewarmedProcess = process;
     }
 
 #if PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)
@@ -1067,7 +1067,7 @@ Ref<WebPageProxy> WebProcessPool::createWebPage(PageClient& pageClient, Ref<API:
         process = dummyProcessProxy(pageConfiguration->websiteDataStore()->sessionID());
         if (!process) {
             process = WebProcessProxy::create(*this, pageConfiguration->websiteDataStore(), WebProcessProxy::IsPrewarmed::No, CrossOriginMode::Shared, WebProcessProxy::ShouldLaunchProcess::No);
-            m_dummyProcessProxies.add(pageConfiguration->websiteDataStore()->sessionID(), makeWeakPtr(*process));
+            m_dummyProcessProxies.add(pageConfiguration->websiteDataStore()->sessionID(), *process);
             m_processes.append(*process);
         }
     } else
@@ -1602,7 +1602,7 @@ void WebProcessPool::startedUsingGamepads(IPC::Connection& connection)
     bool wereAnyProcessesUsingGamepads = !m_processesUsingGamepads.computesEmpty();
 
     ASSERT(!m_processesUsingGamepads.contains(*proxy));
-    m_processesUsingGamepads.add(proxy);
+    m_processesUsingGamepads.add(*proxy);
 
     if (!wereAnyProcessesUsingGamepads)
         UIGamepadProvider::singleton().processPoolStartedUsingGamepads(*this);

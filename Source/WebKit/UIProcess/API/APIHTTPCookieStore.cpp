@@ -44,7 +44,7 @@ using namespace WebKit;
 namespace API {
 
 HTTPCookieStore::HTTPCookieStore(WebKit::WebsiteDataStore& websiteDataStore)
-    : m_owningDataStore(makeWeakPtr(websiteDataStore))
+    : m_owningDataStore(websiteDataStore)
 {
 }
 
@@ -158,7 +158,7 @@ private:
 
 void HTTPCookieStore::registerObserver(Observer& observer)
 {
-    m_observers.add(&observer);
+    m_observers.add(observer);
 
     if (m_cookieManagerProxyObserver || !m_owningDataStore)
         return;
@@ -167,7 +167,7 @@ void HTTPCookieStore::registerObserver(Observer& observer)
 
     m_cookieManagerProxyObserver = makeUnique<APIWebCookieManagerProxyObserver>(*this);
 
-    m_observedCookieManagerProxy = makeWeakPtr(m_owningDataStore->networkProcess().cookieManager());
+    m_observedCookieManagerProxy = m_owningDataStore->networkProcess().cookieManager();
     m_observedCookieManagerProxy->registerObserver(m_owningDataStore->sessionID(), *m_cookieManagerProxyObserver);
 }
 

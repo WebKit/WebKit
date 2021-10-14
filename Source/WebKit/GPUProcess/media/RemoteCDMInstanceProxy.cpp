@@ -53,7 +53,7 @@ RemoteCDMInstanceProxy::RemoteCDMInstanceProxy(WeakPtr<RemoteCDMProxy>&& cdm, Re
     , m_configuration(WTFMove(configuration))
     , m_identifier(identifier)
 {
-    m_instance->setClient(makeWeakPtr<CDMInstanceClient>(this));
+    m_instance->setClient(*this);
 }
 
 RemoteCDMInstanceProxy::~RemoteCDMInstanceProxy()
@@ -105,7 +105,7 @@ void RemoteCDMInstanceProxy::createSession(CompletionHandler<void(const RemoteCD
         return;
     }
     auto identifier = RemoteCDMInstanceSessionIdentifier::generate();
-    auto session = RemoteCDMInstanceSessionProxy::create(makeWeakPtr(m_cdm.get()), privSession.releaseNonNull(), identifier);
+    auto session = RemoteCDMInstanceSessionProxy::create(m_cdm.get(), privSession.releaseNonNull(), identifier);
     m_cdm->factory()->addSession(identifier, WTFMove(session));
     completion(identifier);
 }

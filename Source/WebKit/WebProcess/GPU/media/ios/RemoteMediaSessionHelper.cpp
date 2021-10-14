@@ -49,7 +49,7 @@ RemoteMediaSessionHelper::RemoteMediaSessionHelper(WebProcess& process)
 IPC::Connection& RemoteMediaSessionHelper::ensureConnection()
 {
     if (!m_gpuProcessConnection) {
-        m_gpuProcessConnection = makeWeakPtr(m_process.ensureGPUProcessConnection());
+        m_gpuProcessConnection = m_process.ensureGPUProcessConnection();
         m_gpuProcessConnection->addClient(*this);
         m_gpuProcessConnection->messageReceiverMap().addMessageReceiver(Messages::RemoteMediaSessionHelper::messageReceiverName(), *this);
         m_gpuProcessConnection->connection().send(Messages::GPUConnectionToWebProcess::EnsureMediaSessionHelper(), { });

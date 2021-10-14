@@ -78,7 +78,7 @@ static const Seconds PostAnimationDelay { 100_ms };
 
 - (void)setMediaPlayerPrivateRemote:(WebKit::MediaPlayerPrivateRemote*)mediaPlayerPrivateRemote
 {
-    _mediaPlayerPrivateRemote = makeWeakPtr(*mediaPlayerPrivateRemote);
+    _mediaPlayerPrivateRemote = *mediaPlayerPrivateRemote;
 }
 
 - (WebCore::MediaPlayerEnums::VideoGravity)videoGravity

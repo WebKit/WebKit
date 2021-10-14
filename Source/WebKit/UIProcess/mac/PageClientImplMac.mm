@@ -117,7 +117,7 @@ PageClientImpl::~PageClientImpl() = default;
 
 void PageClientImpl::setImpl(WebViewImpl& impl)
 {
-    m_impl = makeWeakPtr(impl);
+    m_impl = impl;
 }
 
 std::unique_ptr<DrawingAreaProxy> PageClientImpl::createDrawingAreaProxy(WebProcessProxy& process)

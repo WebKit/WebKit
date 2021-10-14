@@ -89,7 +89,7 @@ static bool isSameOrigin(const WebCore::ResourceRequest& request, const WebCore:
 SOAuthorizationSession::SOAuthorizationSession(SOAuthorization *soAuthorization, Ref<API::NavigationAction>&& navigationAction, WebPageProxy& page, InitiatingAction action)
     : m_soAuthorization(soAuthorization)
     , m_navigationAction(WTFMove(navigationAction))
-    , m_page(makeWeakPtr(page))
+    , m_page(page)
     , m_action(action)
 {
 }

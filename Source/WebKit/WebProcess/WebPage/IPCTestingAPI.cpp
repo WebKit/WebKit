@@ -167,8 +167,8 @@ public:
 
 private:
     JSIPC(WebPage& webPage, WebFrame& webFrame)
-        : m_webPage(makeWeakPtr(webPage))
-        , m_webFrame(makeWeakPtr(webFrame))
+        : m_webPage(webPage)
+        , m_webFrame(webFrame)
     { }
 
     static JSIPC* unwrap(JSObjectRef);
@@ -1419,7 +1419,7 @@ JSValueRef JSIPC::messages(JSContextRef context, JSObjectRef thisObject, JSStrin
 }
 
 JSMessageListener::JSMessageListener(JSIPC& jsIPC, Type type, JSContextRef context, JSObjectRef callback)
-    : m_jsIPC(makeWeakPtr(jsIPC))
+    : m_jsIPC(jsIPC)
     , m_type(type)
     , m_context(context)
     , m_callback(callback)

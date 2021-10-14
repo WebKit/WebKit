@@ -54,7 +54,7 @@ DownloadProxy::DownloadProxy(DownloadProxyMap& downloadProxyMap, WebsiteDataStor
     , m_client(client)
     , m_downloadID(DownloadID::generate())
     , m_request(resourceRequest)
-    , m_originatingPage(makeWeakPtr(originatingPage))
+    , m_originatingPage(originatingPage)
     , m_frameInfo(API::FrameInfo::create(FrameInfoData { frameInfoData }, originatingPage))
 {
 }

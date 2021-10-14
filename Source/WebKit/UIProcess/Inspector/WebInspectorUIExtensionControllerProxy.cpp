@@ -38,7 +38,7 @@
 namespace WebKit {
 
 WebInspectorUIExtensionControllerProxy::WebInspectorUIExtensionControllerProxy(WebPageProxy& inspectorPage)
-    : m_inspectorPage(makeWeakPtr(inspectorPage))
+    : m_inspectorPage(inspectorPage)
 {
     m_inspectorPage->process().addMessageReceiver(Messages::WebInspectorUIExtensionControllerProxy::messageReceiverName(), m_inspectorPage->webPageID(), *this);
 }

@@ -39,7 +39,7 @@ Ref<WebPermissionController> WebPermissionController::create(WebPage& page)
 }
 
 WebPermissionController::WebPermissionController(WebPage& page)
-    : m_page(makeWeakPtr(page))
+    : m_page(page)
 {
 }
 

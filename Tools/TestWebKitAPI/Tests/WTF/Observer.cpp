@@ -49,7 +49,7 @@ TEST(WTF_Observer, Weak)
         testValue = value;
     });
 
-    auto weakObserver = makeWeakPtr(uniqueObserver.get());
+    WeakPtr weakObserver = uniqueObserver.get();
 
     ASSERT_TRUE(static_cast<bool>(weakObserver));
 

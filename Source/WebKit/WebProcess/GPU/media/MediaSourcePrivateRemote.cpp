@@ -54,10 +54,10 @@ Ref<MediaSourcePrivateRemote> MediaSourcePrivateRemote::create(GPUProcessConnect
 }
 
 MediaSourcePrivateRemote::MediaSourcePrivateRemote(GPUProcessConnection& gpuProcessConnection, RemoteMediaSourceIdentifier identifier, RemoteMediaPlayerMIMETypeCache& mimeTypeCache, const MediaPlayerPrivateRemote& mediaPlayerPrivate, MediaSourcePrivateClient* client)
-    : m_gpuProcessConnection(makeWeakPtr(gpuProcessConnection))
+    : m_gpuProcessConnection(gpuProcessConnection)
     , m_identifier(identifier)
     , m_mimeTypeCache(mimeTypeCache)
-    , m_mediaPlayerPrivate(makeWeakPtr(mediaPlayerPrivate))
+    , m_mediaPlayerPrivate(mediaPlayerPrivate)
     , m_client(client)
 #if !RELEASE_LOG_DISABLED
     , m_logger(m_mediaPlayerPrivate->mediaPlayerLogger())

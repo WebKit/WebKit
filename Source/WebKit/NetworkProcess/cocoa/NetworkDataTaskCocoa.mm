@@ -293,7 +293,7 @@ static inline bool computeIsAlwaysOnLoggingAllowed(NetworkSession& session)
 
 NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataTaskClient& client, const NetworkLoadParameters& parameters)
     : NetworkDataTask(session, client, parameters.request, parameters.storedCredentialsPolicy, parameters.shouldClearReferrerOnHTTPSToHTTPRedirect, parameters.isMainFrameNavigation)
-    , m_sessionWrapper(makeWeakPtr(static_cast<NetworkSessionCocoa&>(session).sessionWrapperForTask(parameters.webPageProxyID, parameters.request, parameters.storedCredentialsPolicy, parameters.isNavigatingToAppBoundDomain)))
+    , m_sessionWrapper(static_cast<NetworkSessionCocoa&>(session).sessionWrapperForTask(parameters.webPageProxyID, parameters.request, parameters.storedCredentialsPolicy, parameters.isNavigatingToAppBoundDomain))
     , m_frameID(parameters.webFrameID)
     , m_pageID(parameters.webPageID)
     , m_webPageProxyID(parameters.webPageProxyID)
@@ -578,7 +578,7 @@ void NetworkDataTaskCocoa::swapSessionIfNecessary(WebCore::ResourceRequest& requ
     auto previousTask = std::exchange(m_task, nullptr);
 
     m_sessionWrapper->dataTaskMap.remove([previousTask taskIdentifier]);
-    m_sessionWrapper = makeWeakPtr(updatedSession);
+    m_sessionWrapper = updatedSession;
 
     m_task = [m_sessionWrapper->session dataTaskWithRequest:request.nsURLRequest(WebCore::HTTPBodyUpdatePolicy::UpdateHTTPBody)];
     m_sessionWrapper->dataTaskMap.add([m_task taskIdentifier], this);

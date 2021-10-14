@@ -46,7 +46,7 @@ using namespace WebCore;
 class WebPageProxy;
 
 WebFrameProxy::WebFrameProxy(WebPageProxy& page, FrameIdentifier frameID)
-    : m_page(makeWeakPtr(page))
+    : m_page(page)
     , m_frameID(frameID)
 {
     WebProcessPool::statistics().wkFrameCount++;

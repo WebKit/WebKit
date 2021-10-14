@@ -46,7 +46,7 @@ NetworkCORSPreflightChecker::NetworkCORSPreflightChecker(NetworkProcess& network
     , m_networkProcess(networkProcess)
     , m_completionCallback(WTFMove(completionCallback))
     , m_shouldCaptureExtraNetworkLoadMetrics(shouldCaptureExtraNetworkLoadMetrics)
-    , m_networkResourceLoader(makeWeakPtr(networkResourceLoader))
+    , m_networkResourceLoader(networkResourceLoader)
 {
 }
 

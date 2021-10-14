@@ -1,3 +1,16 @@
+2021-10-13  Chris Dumez  <cdumez@apple.com>
+
+        Drop makeWeakPtr() and use WeakPtr { } directly
+        https://bugs.webkit.org/show_bug.cgi?id=231679
+
+        Reviewed by Darin Adler.
+
+        * Storage/InProcessIDBServer.cpp:
+        (storageQuotaManagerSpaceRequester):
+        * WebCoreSupport/PageStorageSessionProvider.h:
+        * WebCoreSupport/WebBroadcastChannelRegistry.cpp:
+        (WebBroadcastChannelRegistry::getOrCreate):
+
 2021-10-01  Ian Anderson  <iana@apple.com>
 
         WebKitLegacy's module map files don't get installed

@@ -39,7 +39,7 @@ public:
     
 private:
     NetworkStorageSessionProvider(NetworkProcess& networkProcess, PAL::SessionID sessionID)
-        : m_networkProcess(makeWeakPtr(networkProcess))
+        : m_networkProcess(networkProcess)
         , m_sessionID(sessionID) { }
 
     WebCore::NetworkStorageSession* storageSession() const final

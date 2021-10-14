@@ -108,7 +108,7 @@ void WebFrame::initWithCoreMainFrame(WebPage& page, Frame& coreFrame)
 {
     page.send(Messages::WebPageProxy::DidCreateMainFrame(frameID()));
 
-    m_coreFrame = makeWeakPtr(coreFrame);
+    m_coreFrame = coreFrame;
     m_coreFrame->tree().setName(String());
     m_coreFrame->init();
 }
@@ -119,7 +119,7 @@ Ref<WebFrame> WebFrame::createSubframe(WebPage* page, const String& frameName, H
     page->send(Messages::WebPageProxy::DidCreateSubframe(frame->frameID()));
 
     auto coreFrame = Frame::create(page->corePage(), ownerElement, makeUniqueRef<WebFrameLoaderClient>(frame.get()));
-    frame->m_coreFrame = makeWeakPtr(coreFrame.get());
+    frame->m_coreFrame = coreFrame;
 
     coreFrame->tree().setName(frameName);
     if (ownerElement) {

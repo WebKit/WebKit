@@ -48,7 +48,7 @@
     if (!self)
         return nil;
 
-    _parent = makeWeakPtr(parent);
+    _parent = parent;
     return self;
 }
 

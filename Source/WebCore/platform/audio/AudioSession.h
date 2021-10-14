@@ -147,7 +147,7 @@ protected:
     static bool s_shouldManageAudioSessionCategory;
 };
 
-class WEBCORE_EXPORT AudioSessionRoutingArbitrationClient {
+class WEBCORE_EXPORT AudioSessionRoutingArbitrationClient : public CanMakeWeakPtr<AudioSessionRoutingArbitrationClient> {
 public:
     virtual ~AudioSessionRoutingArbitrationClient() = default;
 

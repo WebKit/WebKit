@@ -351,7 +351,7 @@ private:
     template <typename T>
     static RefType makeKeyImpl(const T& key)
     {
-        return *makeWeakPtr<KeyType>(const_cast<T&>(key)).m_impl;
+        return *key.weakPtrFactory().template createWeakPtr<T>(const_cast<T&>(key)).m_impl;
     }
 
     template <typename T>

@@ -3614,7 +3614,7 @@ static inline OptionSet<WebKit::FindOptions> toFindOptions(_WKFindOptions wkFind
 {
     THROW_IF_SUSPENDED;
 #if ENABLE(DATA_DETECTION)
-    _page->removeDataDetectedLinks([completion = makeBlockPtr(completion), page = makeWeakPtr(_page.get())] (auto& result) {
+    _page->removeDataDetectedLinks([completion = makeBlockPtr(completion), page = WeakPtr { _page.get() }] (auto& result) {
         if (page)
             page->setDataDetectionResult(result);
         if (completion)

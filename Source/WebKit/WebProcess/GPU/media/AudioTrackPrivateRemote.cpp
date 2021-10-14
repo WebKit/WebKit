@@ -37,7 +37,7 @@
 namespace WebKit {
 
 AudioTrackPrivateRemote::AudioTrackPrivateRemote(GPUProcessConnection& gpuProcessConnection, WebCore::MediaPlayerIdentifier playerIdentifier, TrackPrivateRemoteIdentifier idendifier, TrackPrivateRemoteConfiguration&& configuration)
-    : m_gpuProcessConnection(makeWeakPtr(gpuProcessConnection))
+    : m_gpuProcessConnection(gpuProcessConnection)
     , m_playerIdentifier(playerIdentifier)
     , m_idendifier(idendifier)
 {

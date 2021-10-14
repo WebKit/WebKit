@@ -90,7 +90,7 @@ bool Plugin::initialize(PluginController& pluginController, const Parameters& pa
 {
     ASSERT(!m_pluginController);
 
-    m_pluginController = makeWeakPtr(pluginController);
+    m_pluginController = pluginController;
 
     return initialize(parameters);
 }

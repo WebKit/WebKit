@@ -110,7 +110,7 @@ static bool processHasActiveRunTimeLimitation()
 
 - (void)addAssertionNeedingBackgroundTask:(ProcessAndUIAssertion&)assertion
 {
-    _assertionsNeedingBackgroundTask.add(&assertion);
+    _assertionsNeedingBackgroundTask.add(assertion);
     [self _updateBackgroundTask];
 }
 
@@ -126,7 +126,7 @@ static bool processHasActiveRunTimeLimitation()
 
     Vector<WeakPtr<ProcessAndUIAssertion>> assertionsNeedingBackgroundTask;
     for (auto& assertion : _assertionsNeedingBackgroundTask)
-        assertionsNeedingBackgroundTask.append(makeWeakPtr(assertion));
+        assertionsNeedingBackgroundTask.append(assertion);
 
     // Note that we don't expect clients to register new assertions when getting notified that the UI assertion will expire imminently.
     // If clients were to do so, then those new assertions would not get notified of the imminent suspension.

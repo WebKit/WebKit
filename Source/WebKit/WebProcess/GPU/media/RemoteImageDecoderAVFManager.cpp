@@ -50,7 +50,7 @@ RefPtr<RemoteImageDecoderAVF> RemoteImageDecoderAVFManager::createImageDecoder(S
         return nullptr;
 
     auto remoteImageDecoder = RemoteImageDecoderAVF::create(*this, *imageDecoderIdentifier, data, mimeType);
-    m_remoteImageDecoders.add(*imageDecoderIdentifier, makeWeakPtr(remoteImageDecoder.get()));
+    m_remoteImageDecoders.add(*imageDecoderIdentifier, remoteImageDecoder);
 
     return remoteImageDecoder;
 }
@@ -90,7 +90,7 @@ const char*  RemoteImageDecoderAVFManager::supplementName()
 GPUProcessConnection& RemoteImageDecoderAVFManager::ensureGPUProcessConnection()
 {
     if (!m_gpuProcessConnection) {
-        m_gpuProcessConnection = makeWeakPtr(m_process.ensureGPUProcessConnection());
+        m_gpuProcessConnection = m_process.ensureGPUProcessConnection();
         m_gpuProcessConnection->addClient(*this);
         m_gpuProcessConnection->messageReceiverMap().addMessageReceiver(Messages::RemoteImageDecoderAVFManager::messageReceiverName(), *this);
     }

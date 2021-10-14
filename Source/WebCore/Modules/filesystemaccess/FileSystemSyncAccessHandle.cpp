@@ -55,7 +55,7 @@ FileSystemSyncAccessHandle::~FileSystemSyncAccessHandle()
 void FileSystemSyncAccessHandle::truncate(unsigned long long size, DOMPromiseDeferred<void>&& promise)
 {
     m_pendingOperationCount++;
-    m_source->truncate(m_identifier, size, [weakThis = makeWeakPtr(*this), promise = WTFMove(promise)](auto result) mutable {
+    m_source->truncate(m_identifier, size, [weakThis = WeakPtr { *this }, promise = WTFMove(promise)](auto result) mutable {
         if (weakThis)
             weakThis->m_pendingOperationCount--;
 
@@ -66,7 +66,7 @@ void FileSystemSyncAccessHandle::truncate(unsigned long long size, DOMPromiseDef
 void FileSystemSyncAccessHandle::getSize(DOMPromiseDeferred<IDLUnsignedLongLong>&& promise)
 {
     m_pendingOperationCount++;
-    m_source->getSize(m_identifier, [weakThis = makeWeakPtr(*this), promise = WTFMove(promise)](auto result) mutable {
+    m_source->getSize(m_identifier, [weakThis = WeakPtr { *this }, promise = WTFMove(promise)](auto result) mutable {
         if (weakThis)
             weakThis->m_pendingOperationCount--;
 
@@ -77,7 +77,7 @@ void FileSystemSyncAccessHandle::getSize(DOMPromiseDeferred<IDLUnsignedLongLong>
 void FileSystemSyncAccessHandle::flush(DOMPromiseDeferred<void>&& promise)
 {
     m_pendingOperationCount++;
-    m_source->flush(m_identifier, [weakThis = makeWeakPtr(*this), promise = WTFMove(promise)](auto result) mutable {
+    m_source->flush(m_identifier, [weakThis = WeakPtr { *this }, promise = WTFMove(promise)](auto result) mutable {
         if (weakThis)
             weakThis->m_pendingOperationCount--;
 
@@ -91,7 +91,7 @@ void FileSystemSyncAccessHandle::close(DOMPromiseDeferred<void>&& promise)
         return promise.reject(Exception { InvalidStateError });
 
     m_pendingOperationCount++;
-    m_source->close(m_identifier, [weakThis = makeWeakPtr(*this), promise = WTFMove(promise)](auto result) mutable {
+    m_source->close(m_identifier, [weakThis = WeakPtr { *this }, promise = WTFMove(promise)](auto result) mutable {
         if (weakThis) {
             weakThis->m_pendingOperationCount--;
             weakThis->didClose();

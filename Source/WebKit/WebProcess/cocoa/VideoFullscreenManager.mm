@@ -275,7 +275,7 @@ void VideoFullscreenManager::enterVideoFullscreenForVideoElement(HTMLVideoElemen
         interface->setTargetIsFullscreen(false);
 
     if (mode == HTMLMediaElementEnums::VideoFullscreenModePictureInPicture)
-        m_videoElementInPictureInPicture = makeWeakPtr(videoElement);
+        m_videoElementInPictureInPicture = videoElement;
 
     interface->setFullscreenMode(mode);
     interface->setFullscreenStandby(standby);

@@ -41,7 +41,7 @@ using namespace WebCore;
 std::unique_ptr<RemoteCDMInstanceSessionProxy> RemoteCDMInstanceSessionProxy::create(WeakPtr<RemoteCDMProxy>&& proxy, Ref<WebCore::CDMInstanceSession>&& session, RemoteCDMInstanceSessionIdentifier identifier)
 {
     auto sessionProxy = std::unique_ptr<RemoteCDMInstanceSessionProxy>(new RemoteCDMInstanceSessionProxy(WTFMove(proxy), WTFMove(session), identifier));
-    auto client = makeWeakPtr<WebCore::CDMInstanceSessionClient>(sessionProxy.get());
+    WeakPtr<WebCore::CDMInstanceSessionClient> client = sessionProxy.get();
     sessionProxy->m_session->setClient(WTFMove(client));
     return sessionProxy;
 }

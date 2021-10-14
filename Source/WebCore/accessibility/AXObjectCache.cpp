@@ -1216,14 +1216,16 @@ void AXObjectCache::deferFocusedUIElementChangeIfNeeded(Node* oldNode, Node* new
 
 void AXObjectCache::deferMenuListValueChange(Element* element)
 {
-    m_deferredMenuListChange.add(element);
+    if (element)
+        m_deferredMenuListChange.add(*element);
     if (!m_performCacheUpdateTimer.isActive())
         m_performCacheUpdateTimer.startOneShot(0_s);
 }
 
 void AXObjectCache::deferModalChange(Element* element)
 {
-    m_deferredModalChangedList.add(element);
+    if (element)
+        m_deferredModalChangedList.add(*element);
     if (!m_performCacheUpdateTimer.isActive())
         m_performCacheUpdateTimer.startOneShot(0_s);
 }
@@ -3356,7 +3358,7 @@ void AXObjectCache::deferRecomputeIsIgnoredIfNeeded(Element* element)
         return;
     
     if (rendererNeedsDeferredUpdate(*element->renderer())) {
-        m_deferredRecomputeIsIgnoredList.add(element);
+        m_deferredRecomputeIsIgnoredList.add(*element);
         return;
     }
     recomputeIsIgnored(element->renderer());
@@ -3367,7 +3369,7 @@ void AXObjectCache::deferRecomputeIsIgnored(Element* element)
     if (!nodeAndRendererAreValid(element))
         return;
 
-    m_deferredRecomputeIsIgnoredList.add(element);
+    m_deferredRecomputeIsIgnoredList.add(*element);
 }
 
 void AXObjectCache::deferTextChangedIfNeeded(Node* node)
@@ -3388,7 +3390,7 @@ void AXObjectCache::deferSelectedChildrenChangedIfNeeded(Element& selectElement)
         return;
 
     if (rendererNeedsDeferredUpdate(*selectElement.renderer())) {
-        m_deferredSelectedChildredChangedList.add(&selectElement);
+        m_deferredSelectedChildredChangedList.add(selectElement);
         return;
     }
     selectedChildrenChanged(&selectElement);

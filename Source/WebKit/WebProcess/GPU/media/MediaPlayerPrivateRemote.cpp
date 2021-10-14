@@ -110,7 +110,7 @@ MediaPlayerPrivateRemote::MediaPlayerPrivateRemote(MediaPlayer* player, MediaPla
     , m_logIdentifier(player->mediaPlayerLogIdentifier())
     ,
 #endif
-      m_player(makeWeakPtr(*player))
+      m_player(*player)
     , m_mediaResourceLoader(*player->createResourceLoader())
 #if PLATFORM(COCOA)
     , m_videoLayerManager(makeUniqueRef<VideoLayerManagerObjC>(logger(), logIdentifier()))

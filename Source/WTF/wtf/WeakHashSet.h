@@ -91,7 +91,7 @@ public:
     template <typename U>
     AddResult add(const U& value)
     {
-        return m_set.add(*makeWeakPtr<T>(const_cast<U&>(value)).m_impl);
+        return m_set.add(*static_cast<const T&>(value).weakPtrFactory().template createWeakPtr<T>(const_cast<U&>(value)).m_impl);
     }
 
     template <typename U>
@@ -169,7 +169,7 @@ struct Mapper<MapFunction, const WeakHashSet<T> &, void> {
 template<typename T>
 inline auto copyToVector(const WeakHashSet<T>& collection) -> Vector<WeakPtr<T>>
 {
-    return WTF::map(collection, [] (auto& v) -> WeakPtr<T> { return makeWeakPtr<T>(v); });
+    return WTF::map(collection, [] (auto& v) -> WeakPtr<T> { return WeakPtr<T> { v }; });
 }
 
 

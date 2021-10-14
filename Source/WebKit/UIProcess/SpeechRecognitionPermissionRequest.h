@@ -59,7 +59,7 @@ public:
 
 private:
     SpeechRecognitionPermissionRequest(WebCore::SpeechRecognitionRequest& request, SpeechRecognitionPermissionRequestCallback&& completionHandler)
-        : m_request(makeWeakPtr(request))
+        : m_request(request)
         , m_completionHandler(WTFMove(completionHandler))
     { }
 

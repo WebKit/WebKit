@@ -620,7 +620,7 @@ void TextManipulationController::scheduleObservationUpdate()
         controller->observeParagraphs(start, end);
 
         if (controller->m_items.isEmpty() && commonAncestor) {
-            controller->m_manipulatedNodes.add(commonAncestor.get());
+            controller->m_manipulatedNodes.add(*commonAncestor);
             return;
         }
 

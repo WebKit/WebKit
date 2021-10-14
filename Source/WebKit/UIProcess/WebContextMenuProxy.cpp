@@ -38,7 +38,7 @@ namespace WebKit {
 WebContextMenuProxy::WebContextMenuProxy(WebPageProxy& page, ContextMenuContextData&& context, const UserData& userData)
     : m_context(WTFMove(context))
     , m_userData(userData)
-    , m_page(makeWeakPtr(page))
+    , m_page(page)
 {
 }
 

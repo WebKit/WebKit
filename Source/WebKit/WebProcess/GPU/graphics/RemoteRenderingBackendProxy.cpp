@@ -78,7 +78,7 @@ GPUProcessConnection& RemoteRenderingBackendProxy::ensureGPUProcessConnection()
         static constexpr auto connectionBufferSize = 1 << 21;
         m_streamConnection = makeUnique<IPC::StreamClientConnection>(gpuProcessConnection.connection(), connectionBufferSize);
         gpuProcessConnection.connection().send(Messages::GPUConnectionToWebProcess::CreateRenderingBackend(m_parameters, m_streamConnection->streamBuffer()), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
-        m_gpuProcessConnection = makeWeakPtr(gpuProcessConnection);
+        m_gpuProcessConnection = gpuProcessConnection;
     }
     return *m_gpuProcessConnection;
 }

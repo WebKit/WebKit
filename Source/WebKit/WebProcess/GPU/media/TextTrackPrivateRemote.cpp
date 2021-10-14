@@ -39,7 +39,7 @@ using namespace WebCore;
 
 TextTrackPrivateRemote::TextTrackPrivateRemote(GPUProcessConnection& gpuProcessConnection, MediaPlayerIdentifier playerIdentifier, TrackPrivateRemoteIdentifier idendifier, TextTrackPrivateRemoteConfiguration&& configuration)
     : WebCore::InbandTextTrackPrivate(configuration.cueFormat)
-    , m_gpuProcessConnection(makeWeakPtr(gpuProcessConnection))
+    , m_gpuProcessConnection(gpuProcessConnection)
     , m_playerIdentifier(playerIdentifier)
     , m_identifier(idendifier)
 {

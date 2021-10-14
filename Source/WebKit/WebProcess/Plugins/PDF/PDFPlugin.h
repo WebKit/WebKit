@@ -359,7 +359,7 @@ private:
                                         public WebCore::NetscapePlugInStreamLoaderClient {
     public:
         PDFPluginStreamLoaderClient(PDFPlugin& pdfPlugin)
-            : m_pdfPlugin(makeWeakPtr(pdfPlugin))
+            : m_pdfPlugin(pdfPlugin)
         {
         }
 

@@ -116,7 +116,7 @@
     if (!(self = [super init]))
         return nil;
 
-    _presenter = makeWeakPtr(presenter);
+    _presenter = presenter;
     _request = request;
     _shippingMethods = request.shippingMethods;
     _summaryItems = request.paymentSummaryItems;

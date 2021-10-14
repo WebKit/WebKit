@@ -47,7 +47,7 @@ using namespace WebCore;
 WebSWServerToContextConnection::WebSWServerToContextConnection(NetworkConnectionToWebProcess& connection, WebPageProxyIdentifier webPageProxyID, RegistrableDomain&& registrableDomain, std::optional<ServiceWorkerClientIdentifier> serviceWorkerPageIdentifier, SWServer& server)
     : SWServerToContextConnection(WTFMove(registrableDomain), serviceWorkerPageIdentifier)
     , m_connection(connection)
-    , m_server(makeWeakPtr(server))
+    , m_server(server)
     , m_webPageProxyID(webPageProxyID)
 {
     server.addContextConnection(*this);
@@ -188,7 +188,7 @@ void WebSWServerToContextConnection::didReceiveFetchTaskMessage(IPC::Connection&
 void WebSWServerToContextConnection::registerFetch(ServiceWorkerFetchTask& task)
 {
     ASSERT(!m_ongoingFetches.contains(task.fetchIdentifier()));
-    m_ongoingFetches.add(task.fetchIdentifier(), makeWeakPtr(task));
+    m_ongoingFetches.add(task.fetchIdentifier(), task);
 }
 
 void WebSWServerToContextConnection::unregisterFetch(ServiceWorkerFetchTask& task)

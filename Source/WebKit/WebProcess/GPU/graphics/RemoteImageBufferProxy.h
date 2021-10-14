@@ -98,7 +98,7 @@ public:
 protected:
     RemoteImageBufferProxy(const WebCore::ImageBufferBackend::Parameters& parameters, RemoteRenderingBackendProxy& remoteRenderingBackendProxy)
         : BaseConcreteImageBuffer(parameters)
-        , m_remoteRenderingBackendProxy(makeWeakPtr(remoteRenderingBackendProxy))
+        , m_remoteRenderingBackendProxy(remoteRenderingBackendProxy)
         , m_remoteDisplayList(*this, remoteRenderingBackendProxy, { { }, BaseConcreteImageBuffer::logicalSize() }, BaseConcreteImageBuffer::baseTransform())
     {
         ASSERT(m_remoteRenderingBackendProxy);

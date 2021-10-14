@@ -1139,7 +1139,7 @@ void NetworkConnectionToWebProcess::establishSWServerConnection()
     auto& server = m_networkProcess->swServerForSession(m_sessionID);
     auto connection = makeUnique<WebSWServerConnection>(m_networkProcess, server, m_connection.get(), m_webProcessIdentifier);
 
-    m_swConnection = makeWeakPtr(*connection);
+    m_swConnection = *connection;
     server.addConnection(WTFMove(connection));
 }
 

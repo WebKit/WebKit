@@ -45,8 +45,8 @@ using namespace WebCore;
 RemoteDisplayListRecorderProxy::RemoteDisplayListRecorderProxy(ImageBuffer& imageBuffer, RemoteRenderingBackendProxy& renderingBackend, const FloatRect& initialClip, const AffineTransform& initialCTM, DrawGlyphsRecorder::DeconstructDrawGlyphs deconstructDrawGlyphs)
     : DisplayList::Recorder({ }, initialClip, initialCTM, deconstructDrawGlyphs)
     , m_destinationBufferIdentifier(imageBuffer.renderingResourceIdentifier())
-    , m_imageBuffer(makeWeakPtr(imageBuffer))
-    , m_renderingBackend(makeWeakPtr(renderingBackend))
+    , m_imageBuffer(imageBuffer)
+    , m_renderingBackend(renderingBackend)
 {
 }
 

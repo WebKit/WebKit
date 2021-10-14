@@ -34,7 +34,7 @@
 
 namespace WebKit {
 
-// Use eager initialization for the WeakPtrFactory since we call makeWeakPtr() from a non-main thread.
+// Use eager initialization for the WeakPtrFactory since we construct WeakPtrs from a non-main thread.
 class WebSQLiteDatabaseTracker final : public WebCore::SQLiteDatabaseTrackerClient, public CanMakeWeakPtr<WebSQLiteDatabaseTracker, WeakPtrFactoryInitialization::Eager> {
     WTF_MAKE_NONCOPYABLE(WebSQLiteDatabaseTracker)
 public:

@@ -37,7 +37,7 @@ namespace API {
 
 InspectorExtension::InspectorExtension(const WTF::String& identifier, WebKit::WebInspectorUIExtensionControllerProxy& extensionControllerProxy)
     : m_identifier(identifier)
-    , m_extensionControllerProxy(makeWeakPtr(extensionControllerProxy))
+    , m_extensionControllerProxy(extensionControllerProxy)
 {
 }
 

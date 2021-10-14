@@ -1011,7 +1011,7 @@ static const NSUInteger orderedListSegment = 2;
     if (!(self = [super init]))
         return nil;
 
-    _impl = makeWeakPtr(impl);
+    _impl = impl;
     return self;
 }
 

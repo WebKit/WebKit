@@ -102,7 +102,7 @@ static NSArray<NSString *> *controlArray()
     self.wantsLayer = YES;
     _cachedIcons = adoptNS([[NSMutableDictionary alloc] init]);
     _pluginIdentifier = pluginIdentifier;
-    _page = makeWeakPtr(page);
+    _page = page;
     _deviceScaleFactor = page.deviceScaleFactor();
     _visible = YES;
     [self _setupLayer:self.layer];

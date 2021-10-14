@@ -50,10 +50,10 @@ Ref<RemoteSourceBufferProxy> RemoteSourceBufferProxy::create(GPUConnectionToWebP
 }
 
 RemoteSourceBufferProxy::RemoteSourceBufferProxy(GPUConnectionToWebProcess& connectionToWebProcess, RemoteSourceBufferIdentifier identifier, Ref<SourceBufferPrivate>&& sourceBufferPrivate, RemoteMediaPlayerProxy& remoteMediaPlayerProxy)
-    : m_connectionToWebProcess(makeWeakPtr(connectionToWebProcess))
+    : m_connectionToWebProcess(connectionToWebProcess)
     , m_identifier(identifier)
     , m_sourceBufferPrivate(WTFMove(sourceBufferPrivate))
-    , m_remoteMediaPlayerProxy(makeWeakPtr(remoteMediaPlayerProxy))
+    , m_remoteMediaPlayerProxy(remoteMediaPlayerProxy)
 {
     m_connectionToWebProcess->messageReceiverMap().addMessageReceiver(Messages::RemoteSourceBufferProxy::messageReceiverName(), m_identifier.toUInt64(), *this);
     m_sourceBufferPrivate->setClient(this);

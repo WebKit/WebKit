@@ -69,8 +69,8 @@ NetworkSendQueue WebSocketChannel::createMessageQueue(Document& document, WebSoc
 }
 
 WebSocketChannel::WebSocketChannel(WebPageProxyIdentifier webPageProxyID, Document& document, WebSocketChannelClient& client)
-    : m_document(makeWeakPtr(document))
-    , m_client(makeWeakPtr(client))
+    : m_document(document)
+    , m_client(client)
     , m_messageQueue(createMessageQueue(document, *this))
     , m_inspector(document)
     , m_webPageProxyID(webPageProxyID)

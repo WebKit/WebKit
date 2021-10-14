@@ -35,7 +35,7 @@ namespace WebKit {
 using namespace WebCore;
 
 MediaKeySystemPermissionRequestProxy::MediaKeySystemPermissionRequestProxy(MediaKeySystemPermissionRequestManagerProxy& manager, MediaKeySystemRequestIdentifier mediaKeySystemID, FrameIdentifier mainFrameID, FrameIdentifier frameID, Ref<WebCore::SecurityOrigin>&& topLevelDocumentOrigin, const String& keySystem)
-    : m_manager(makeWeakPtr(manager))
+    : m_manager(manager)
     , m_mediaKeySystemID(mediaKeySystemID)
     , m_mainFrameID(mainFrameID)
     , m_frameID(frameID)

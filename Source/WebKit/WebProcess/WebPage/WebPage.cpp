@@ -4600,7 +4600,7 @@ void WebPage::didChooseColor(const WebCore::Color& color)
 
 void WebPage::setActiveDataListSuggestionPicker(WebDataListSuggestionPicker& dataListSuggestionPicker)
 {
-    m_activeDataListSuggestionPicker = makeWeakPtr(&dataListSuggestionPicker);
+    m_activeDataListSuggestionPicker = dataListSuggestionPicker;
 }
 
 void WebPage::didSelectDataListOption(const String& selectedOption)
@@ -4621,7 +4621,7 @@ void WebPage::didCloseSuggestions()
 
 void WebPage::setActiveDateTimeChooser(WebDateTimeChooser& dateTimeChooser)
 {
-    m_activeDateTimeChooser = makeWeakPtr(&dateTimeChooser);
+    m_activeDateTimeChooser = dateTimeChooser;
 }
 
 void WebPage::didChooseDate(const String& date)
@@ -7326,7 +7326,7 @@ void WebPage::startTextManipulations(Vector<WebCore::TextManipulationController:
     if (!mainDocument)
         return;
 
-    mainDocument->textManipulationController().startObservingParagraphs([webPage = makeWeakPtr(*this)] (Document& document, const Vector<WebCore::TextManipulationController::ManipulationItem>& items) {
+    mainDocument->textManipulationController().startObservingParagraphs([webPage = WeakPtr { *this }] (Document& document, const Vector<WebCore::TextManipulationController::ManipulationItem>& items) {
         auto* frame = document.frame();
         if (!webPage || !frame || webPage->mainFrame() != frame)
             return;
@@ -7537,11 +7537,11 @@ void WebPage::requestTextRecognition(WebCore::Element& element, CompletionHandle
     Vector<CompletionHandler<void(RefPtr<Element>&&)>> completionHandlers;
     if (completion)
         completionHandlers.append(WTFMove(completion));
-    m_elementsPendingTextRecognition.append({ makeWeakPtr(element), WTFMove(completionHandlers) });
+    m_elementsPendingTextRecognition.append({ WeakPtr { element }, WTFMove(completionHandlers) });
 
     auto cachedImage = renderImage.cachedImage();
     auto imageURL = cachedImage ? element.document().completeURL(cachedImage->url().string()) : URL { };
-    sendWithAsyncReply(Messages::WebPageProxy::RequestTextRecognition(WTFMove(imageURL), WTFMove(bitmapHandle)), [webPage = makeWeakPtr(*this), weakElement = makeWeakPtr(element)] (auto&& result) {
+    sendWithAsyncReply(Messages::WebPageProxy::RequestTextRecognition(WTFMove(imageURL), WTFMove(bitmapHandle)), [webPage = WeakPtr { *this }, weakElement = WeakPtr { element }] (auto&& result) {
         RefPtr protectedPage { webPage.get() };
         if (!protectedPage)
             return;

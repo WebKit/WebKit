@@ -50,7 +50,7 @@ namespace WebKit {
 using namespace WebCore;
 
 ServiceWorkerFetchTask::ServiceWorkerFetchTask(WebSWServerConnection& swServerConnection, NetworkResourceLoader& loader, ResourceRequest&& request, SWServerConnectionIdentifier serverConnectionIdentifier, ServiceWorkerIdentifier serviceWorkerIdentifier, ServiceWorkerRegistrationIdentifier serviceWorkerRegistrationIdentifier, bool shouldSoftUpdate)
-    : m_swServerConnection(makeWeakPtr(swServerConnection))
+    : m_swServerConnection(swServerConnection)
     , m_loader(loader)
     , m_fetchIdentifier(WebCore::FetchIdentifier::generate())
     , m_serverConnectionIdentifier(serverConnectionIdentifier)
@@ -84,7 +84,7 @@ template<typename Message> bool ServiceWorkerFetchTask::sendToClient(Message&& m
 void ServiceWorkerFetchTask::start(WebSWServerToContextConnection& serviceWorkerConnection)
 {
     SWFETCH_RELEASE_LOG("start:");
-    m_serviceWorkerConnection = makeWeakPtr(serviceWorkerConnection);
+    m_serviceWorkerConnection = serviceWorkerConnection;
     serviceWorkerConnection.registerFetch(*this);
 
     startFetch();

@@ -41,7 +41,7 @@ namespace WebKit {
 using namespace WebCore;
 
 RemoteImageDecoderAVFProxy::RemoteImageDecoderAVFProxy(GPUConnectionToWebProcess& connectionToWebProcess)
-    : m_connectionToWebProcess(makeWeakPtr(connectionToWebProcess))
+    : m_connectionToWebProcess(connectionToWebProcess)
 {
 }
 

@@ -315,7 +315,7 @@ void StorageManagerSet::connectToLocalStorageArea(IPC::Connection& connection, P
     }
 
     auto storageAreaID = storageArea->identifier();
-    auto iter = m_storageAreas.add(storageAreaID, makeWeakPtr(storageArea)).iterator;
+    auto iter = m_storageAreas.add(storageAreaID, storageArea).iterator;
     ASSERT_UNUSED(iter, storageArea == iter->value.get());
 
     completionHandler(storageAreaID);
@@ -340,7 +340,7 @@ void StorageManagerSet::connectToTransientLocalStorageArea(IPC::Connection& conn
     }
 
     auto storageAreaID = storageArea->identifier();
-    auto iter = m_storageAreas.add(storageAreaID, makeWeakPtr(storageArea)).iterator;
+    auto iter = m_storageAreas.add(storageAreaID, storageArea).iterator;
     ASSERT_UNUSED(iter, storageArea == iter->value.get());
 
     completionHandler(storageAreaID);
@@ -365,7 +365,7 @@ void StorageManagerSet::connectToSessionStorageArea(IPC::Connection& connection,
     }
 
     auto storageAreaID = storageArea->identifier();
-    auto iter = m_storageAreas.add(storageAreaID, makeWeakPtr(storageArea)).iterator;
+    auto iter = m_storageAreas.add(storageAreaID, storageArea).iterator;
     ASSERT_UNUSED(iter, storageArea == iter->value.get());
 
     completionHandler(storageAreaID);

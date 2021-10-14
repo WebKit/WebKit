@@ -1055,7 +1055,7 @@ void FrameLoader::setOpener(Frame* opener)
         openerFrameLoader.m_openedFrames.remove(m_frame);
     }
     if (opener) {
-        opener->loader().m_openedFrames.add(&m_frame);
+        opener->loader().m_openedFrames.add(m_frame);
         if (auto* page = m_frame.page())
             page->setOpenedByDOMWithOpener(true);
     }

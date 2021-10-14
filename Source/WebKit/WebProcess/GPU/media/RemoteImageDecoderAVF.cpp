@@ -47,7 +47,7 @@ using namespace WebCore;
 
 RemoteImageDecoderAVF::RemoteImageDecoderAVF(RemoteImageDecoderAVFManager& manager, const WebCore::ImageDecoderIdentifier& identifier, const String& mimeType)
     : ImageDecoder()
-    , m_gpuProcessConnection(makeWeakPtr(manager.ensureGPUProcessConnection()))
+    , m_gpuProcessConnection(manager.ensureGPUProcessConnection())
     , m_manager(manager)
     , m_identifier(identifier)
     , m_mimeType(mimeType)

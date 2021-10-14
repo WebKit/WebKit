@@ -36,7 +36,7 @@ constexpr FramesPerSecond DefaultPreferredFramesPerSecond = 60;
 
 RemoteLayerTreeDisplayRefreshMonitor::RemoteLayerTreeDisplayRefreshMonitor(PlatformDisplayID displayID, RemoteLayerTreeDrawingArea& drawingArea)
     : DisplayRefreshMonitor(displayID)
-    , m_drawingArea(makeWeakPtr(drawingArea))
+    , m_drawingArea(drawingArea)
     , m_preferredFramesPerSecond(DefaultPreferredFramesPerSecond)
     , m_currentUpdate({ 0, m_preferredFramesPerSecond })
 {
@@ -90,7 +90,7 @@ void RemoteLayerTreeDisplayRefreshMonitor::didUpdateLayers()
 
 void RemoteLayerTreeDisplayRefreshMonitor::updateDrawingArea(RemoteLayerTreeDrawingArea& drawingArea)
 {
-    m_drawingArea = makeWeakPtr(drawingArea);
+    m_drawingArea = drawingArea;
 }
 
 std::optional<FramesPerSecond> RemoteLayerTreeDisplayRefreshMonitor::displayNominalFramesPerSecond()

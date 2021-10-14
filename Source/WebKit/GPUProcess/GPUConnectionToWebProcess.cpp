@@ -230,7 +230,7 @@ GPUConnectionToWebProcess::GPUConnectionToWebProcess(GPUProcess& gpuProcess, Web
     RELEASE_ASSERT(RunLoop::isMain());
 
 #if ENABLE(ROUTING_ARBITRATION) && HAVE(AVAUDIO_ROUTING_ARBITER)
-    gpuProcess.audioSessionManager().session().setRoutingArbitrationClient(makeWeakPtr(m_routingArbitrator.get()));
+    gpuProcess.audioSessionManager().session().setRoutingArbitrationClient(m_routingArbitrator.get());
 #endif
 
     if (!parameters.overrideLanguages.isEmpty())

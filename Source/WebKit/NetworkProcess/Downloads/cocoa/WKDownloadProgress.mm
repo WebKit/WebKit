@@ -56,7 +56,7 @@ static NSString * const countOfBytesReceivedKeyPath = @"countOfBytesReceived";
         return nil;
 
     m_task = task;
-    m_download = makeWeakPtr(download);
+    m_download = download;
 
     [task addObserver:self forKeyPath:countOfBytesExpectedToReceiveKeyPath options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionInitial context:WKDownloadProgressBytesExpectedToReceiveCountContext];
     [task addObserver:self forKeyPath:countOfBytesReceivedKeyPath options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionInitial context:WKDownloadProgressBytesReceivedContext];

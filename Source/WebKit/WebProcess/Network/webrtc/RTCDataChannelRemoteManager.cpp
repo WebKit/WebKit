@@ -185,7 +185,7 @@ RTCDataChannelRemoteManager::RemoteHandlerConnection::RemoteHandlerConnection(Re
 
 void RTCDataChannelRemoteManager::RemoteHandlerConnection::connectToSource(WebCore::RTCDataChannelRemoteHandler& handler, WebCore::ScriptExecutionContextIdentifier contextIdentifier, WebCore::RTCDataChannelIdentifier localIdentifier, WebCore::RTCDataChannelIdentifier remoteIdentifier)
 {
-    m_queue->dispatch([handler = makeWeakPtr(handler), contextIdentifier, localIdentifier]() mutable {
+    m_queue->dispatch([handler = WeakPtr { handler }, contextIdentifier, localIdentifier]() mutable {
         RTCDataChannelRemoteManager::sharedManager().m_handlers.add(localIdentifier.channelIdentifier, RemoteHandler { WTFMove(handler), contextIdentifier });
     });
     m_connection->sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::ConnectToRTCDataChannelRemoteSource { localIdentifier, remoteIdentifier }, [localIdentifier](auto&& result) {

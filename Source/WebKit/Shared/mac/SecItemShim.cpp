@@ -140,7 +140,7 @@ static OSStatus webSecItemDelete(CFDictionaryRef query)
 
 void initializeSecItemShim(NetworkProcess& process)
 {
-    globalNetworkProcess() = makeWeakPtr(process);
+    globalNetworkProcess() = process;
 
     struct _CFNFrameworksStubs stubs = {
         .version = 0,

@@ -421,7 +421,7 @@ class PageClientProtector {
     WTF_MAKE_NONCOPYABLE(PageClientProtector);
 public:
     PageClientProtector(PageClient& pageClient)
-        : m_pageClient(makeWeakPtr(pageClient))
+        : m_pageClient(pageClient)
     {
         m_pageClient->refView();
     }
@@ -463,7 +463,7 @@ Ref<WebPageProxy> WebPageProxy::create(PageClient& pageClient, WebProcessProxy& 
 WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, Ref<API::PageConfiguration>&& configuration)
     : m_identifier(Identifier::generate())
     , m_webPageID(PageIdentifier::generate())
-    , m_pageClient(makeWeakPtr(pageClient))
+    , m_pageClient(pageClient)
     , m_configuration(WTFMove(configuration))
     , m_navigationClient(makeUniqueRef<API::NavigationClient>())
     , m_historyClient(makeUniqueRef<API::HistoryClient>())
@@ -913,7 +913,7 @@ bool WebPageProxy::suspendCurrentPageIfPossible(API::Navigation& navigation, std
 
     LOG(ProcessSwapping, "WebPageProxy %" PRIu64 " created suspended page %s for process pid %i, back/forward item %s" PRIu64, identifier().toUInt64(), suspendedPage->loggingString(), m_process->processIdentifier(), fromItem ? fromItem->itemID().logString() : 0);
 
-    m_lastSuspendedPage = makeWeakPtr(*suspendedPage);
+    m_lastSuspendedPage = *suspendedPage;
 
     if (fromItem && shouldUseBackForwardCache())
         backForwardCache().addEntry(*fromItem, WTFMove(suspendedPage));
@@ -10583,7 +10583,7 @@ WebContentMode WebPageProxy::effectiveContentModeAfterAdjustingPolicies(API::Web
 
 void WebPageProxy::addObserver(WebViewDidMoveToWindowObserver& observer)
 {
-    auto result = m_webViewDidMoveToWindowObservers.add(&observer, makeWeakPtr(observer));
+    auto result = m_webViewDidMoveToWindowObservers.add(&observer, observer);
     ASSERT_UNUSED(result, result.isNewEntry);
 }
 

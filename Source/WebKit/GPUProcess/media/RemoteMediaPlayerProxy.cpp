@@ -76,7 +76,7 @@ using namespace WebCore;
 RemoteMediaPlayerProxy::RemoteMediaPlayerProxy(RemoteMediaPlayerManagerProxy& manager, MediaPlayerIdentifier identifier, Ref<IPC::Connection>&& connection, MediaPlayerEnums::MediaEngineIdentifier engineIdentifier, RemoteMediaPlayerProxyConfiguration&& configuration)
     : m_id(identifier)
     , m_webProcessConnection(WTFMove(connection))
-    , m_manager(makeWeakPtr(manager))
+    , m_manager(manager)
     , m_engineIdentifier(engineIdentifier)
     , m_updateCachedStateMessageTimer(RunLoop::main(), this, &RemoteMediaPlayerProxy::timerFired)
     , m_configuration(configuration)
@@ -912,7 +912,7 @@ void RemoteMediaPlayerProxy::setLegacyCDMSession(std::optional<RemoteLegacyCDMSe
     if (m_legacySession) {
         if (auto cdmSession = m_manager->gpuConnectionToWebProcess()->legacyCdmFactoryProxy().getSession(*m_legacySession)) {
             m_player->setCDMSession(cdmSession->session());
-            cdmSession->setPlayer(makeWeakPtr(this));
+            cdmSession->setPlayer(*this);
         }
     }
 }

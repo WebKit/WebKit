@@ -1388,7 +1388,7 @@ void NetworkProcess::preconnectTo(PAL::SessionID sessionID, WebPageProxyIdentifi
     parameters.shouldPreconnectOnly = PreconnectOnly::Yes;
 
     networkSession->networkLoadScheduler().startedPreconnectForMainResource(url, userAgent);
-    auto task = new PreconnectTask(*networkSession, WTFMove(parameters), [weakNetworkSession = makeWeakPtr(*networkSession), url, userAgent](const WebCore::ResourceError& error) {
+    auto task = new PreconnectTask(*networkSession, WTFMove(parameters), [weakNetworkSession = WeakPtr { *networkSession }, url, userAgent](const WebCore::ResourceError& error) {
         if (weakNetworkSession)
             weakNetworkSession->networkLoadScheduler().finishedPreconnectForMainResource(url, userAgent, error);
     });
@@ -1940,7 +1940,7 @@ void NetworkProcess::deleteAndRestrictWebsiteDataForRegistrableDomains(PAL::Sess
 
     if (websiteDataTypes.contains(WebsiteDataType::DiskCache)) {
         forEachNetworkSession([sessionID, fetchOptions, &domainsToDeleteAllNonCookieWebsiteDataFor, &callbackAggregator](auto& session) {
-            fetchDiskCacheEntries(session.cache(), sessionID, fetchOptions, [domainsToDeleteAllNonCookieWebsiteDataFor, callbackAggregator, session = makeWeakPtr(&session)](auto entries) mutable {
+            fetchDiskCacheEntries(session.cache(), sessionID, fetchOptions, [domainsToDeleteAllNonCookieWebsiteDataFor, callbackAggregator, session = WeakPtr { session }](auto entries) mutable {
                 if (!session)
                     return;
 
@@ -2615,7 +2615,7 @@ void NetworkProcess::simulateResourceLoadStatisticsSessionRestart(PAL::SessionID
 {
     // FIXME: Rename this to simulatePrivateClickMeasurementSessionRestart.
     if (auto* session = networkSession(sessionID)) {
-        session->recreatePrivateClickMeasurementStore([session = makeWeakPtr(*session), completionHandler = WTFMove(completionHandler)] () mutable {
+        session->recreatePrivateClickMeasurementStore([session = WeakPtr { *session }, completionHandler = WTFMove(completionHandler)] () mutable {
             if (session)
                 session->firePrivateClickMeasurementTimerImmediatelyForTesting();
             completionHandler();

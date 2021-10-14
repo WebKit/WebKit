@@ -1144,7 +1144,7 @@ void WebPage::openPDFWithPreview(PDFPluginIdentifier identifier, CompletionHandl
 
 void WebPage::createPDFHUD(PDFPlugin& plugin, const IntRect& boundingBox)
 {
-    auto addResult = m_pdfPlugInsWithHUD.add(plugin.identifier(), makeWeakPtr(plugin));
+    auto addResult = m_pdfPlugInsWithHUD.add(plugin.identifier(), plugin);
     if (addResult.isNewEntry)
         send(Messages::WebPageProxy::CreatePDFHUD(plugin.identifier(), boundingBox));
 }

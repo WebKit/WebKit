@@ -1,3 +1,19 @@
+2021-10-13  Chris Dumez  <cdumez@apple.com>
+
+        Drop makeWeakPtr() and use WeakPtr { } directly
+        https://bugs.webkit.org/show_bug.cgi?id=231679
+
+        Reviewed by Darin Adler.
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (check_callonmainthread):
+        (process_line):
+        (check_makeweakptr): Deleted.
+        * TestWebKitAPI/Tests/WTF/Observer.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WTF/WeakPtr.cpp:
+        (TestWebKitAPI::makeWeakPtr):
+
 2021-10-13  Jean-Yves Avenard  <jya@apple.com>
 
         Clearly distinguish serial from concurrent WorkQueue

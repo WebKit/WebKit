@@ -40,7 +40,7 @@ Ref<WebBroadcastChannelRegistry> WebBroadcastChannelRegistry::getOrCreate(bool p
         return *existingRegistry.get();
 
     auto registry = adoptRef(*new WebBroadcastChannelRegistry);
-    existingRegistry.get() = makeWeakPtr(registry.get());
+    existingRegistry.get() = registry;
     return registry;
 }
 

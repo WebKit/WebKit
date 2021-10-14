@@ -111,7 +111,7 @@ private:
         WTF_MAKE_FAST_ALLOCATED;
     public:
         DOMWindowObserver(WebCore::DOMWindow& window, DOMObjectCacheFrameObserver& frameObserver)
-            : m_window(makeWeakPtr(window))
+            : m_window(window)
             , m_frameObserver(frameObserver)
         {
             window.registerObserver(*this);

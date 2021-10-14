@@ -264,7 +264,7 @@ void WebAuthenticatorCoordinatorProxy::performRequest(RetainPtr<ASCCredentialReq
     auto proxy = adoptNS([allocASCAgentProxyInstance() init]);
 
     RetainPtr<NSWindow> window = m_webPageProxy.platformWindow();
-    [proxy performAuthorizationRequestsForContext:requestContext.get() withClearanceHandler:makeBlockPtr([weakThis = makeWeakPtr(*this), handler = WTFMove(handler), window = WTFMove(window)](NSXPCListenerEndpoint *daemonEnpoint, NSError *error) mutable {
+    [proxy performAuthorizationRequestsForContext:requestContext.get() withClearanceHandler:makeBlockPtr([weakThis = WeakPtr { *this }, handler = WTFMove(handler), window = WTFMove(window)](NSXPCListenerEndpoint *daemonEnpoint, NSError *error) mutable {
         auto protectedThis = weakThis.get();
 
         if (!protectedThis || !daemonEnpoint) {

@@ -37,8 +37,7 @@ class WebProcess;
 
 class AudioSessionRoutingArbitrator final
     : public WebProcessSupplement
-    , public WebCore::AudioSessionRoutingArbitrationClient
-    , public CanMakeWeakPtr<AudioSessionRoutingArbitrator> {
+    , public WebCore::AudioSessionRoutingArbitrationClient {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit AudioSessionRoutingArbitrator(WebProcess&);

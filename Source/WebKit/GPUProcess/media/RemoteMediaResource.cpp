@@ -42,8 +42,8 @@ Ref<RemoteMediaResource> RemoteMediaResource::create(RemoteMediaResourceManager&
 }
 
 RemoteMediaResource::RemoteMediaResource(RemoteMediaResourceManager& remoteMediaResourceManager, RemoteMediaPlayerProxy& remoteMediaPlayerProxy, RemoteMediaResourceIdentifier identifier)
-    : m_remoteMediaResourceManager(makeWeakPtr(remoteMediaResourceManager))
-    , m_remoteMediaPlayerProxy(makeWeakPtr(remoteMediaPlayerProxy))
+    : m_remoteMediaResourceManager(remoteMediaResourceManager)
+    , m_remoteMediaPlayerProxy(remoteMediaPlayerProxy)
     , m_id(identifier)
 {
 }

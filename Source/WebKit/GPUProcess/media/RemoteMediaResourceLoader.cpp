@@ -36,7 +36,7 @@ namespace WebKit {
 using namespace WebCore;
 
 RemoteMediaResourceLoader::RemoteMediaResourceLoader(RemoteMediaPlayerProxy& remoteMediaPlayerProxy)
-    : m_remoteMediaPlayerProxy(makeWeakPtr(remoteMediaPlayerProxy))
+    : m_remoteMediaPlayerProxy(remoteMediaPlayerProxy)
 {
 }
 

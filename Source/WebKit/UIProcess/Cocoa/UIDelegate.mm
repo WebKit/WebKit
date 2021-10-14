@@ -197,7 +197,7 @@ void UIDelegate::setDelegate(id <WKUIDelegate> delegate)
 
 #if ENABLE(CONTEXT_MENUS)
 UIDelegate::ContextMenuClient::ContextMenuClient(UIDelegate& uiDelegate)
-    : m_uiDelegate(makeWeakPtr(uiDelegate))
+    : m_uiDelegate(uiDelegate)
 {
 }
 
@@ -242,7 +242,7 @@ void UIDelegate::ContextMenuClient::menuFromProposedMenu(WebPageProxy&, NSMenu *
 #endif
 
 UIDelegate::UIClient::UIClient(UIDelegate& uiDelegate)
-    : m_uiDelegate(makeWeakPtr(uiDelegate))
+    : m_uiDelegate(uiDelegate)
 {
 }
 
@@ -423,7 +423,7 @@ void UIDelegate::UIClient::decidePolicyForGeolocationPermissionRequest(WebKit::W
     if (m_uiDelegate->m_delegateMethods.webViewRequestGeolocationPermissionForOriginDecisionHandler) {
         auto securityOrigin = WebCore::SecurityOrigin::createFromString(page.pageLoadState().activeURL());
         auto checker = CompletionHandlerCallChecker::create(delegate.get(), @selector(_webView:requestGeolocationPermissionForOrigin:initiatedByFrame:decisionHandler:));
-        auto decisionHandler = makeBlockPtr([completionHandler = std::exchange(completionHandler, nullptr), securityOrigin = securityOrigin->data(), checker = WTFMove(checker), page = makeWeakPtr(page)] (WKPermissionDecision decision) mutable {
+        auto decisionHandler = makeBlockPtr([completionHandler = std::exchange(completionHandler, nullptr), securityOrigin = securityOrigin->data(), checker = WTFMove(checker), page = WeakPtr { page }] (WKPermissionDecision decision) mutable {
             if (checker->completionHandlerHasBeenCalled())
                 return;
             checker->didCallCompletionHandler();
@@ -1061,7 +1061,7 @@ void UIDelegate::UIClient::shouldAllowDeviceOrientationAndMotionAccess(WebKit::W
 
     auto delegate = m_uiDelegate->m_delegate.get();
     auto checker = CompletionHandlerCallChecker::create(delegate.get(), @selector(webView:requestDeviceOrientationAndMotionPermissionForOrigin:initiatedByFrame:decisionHandler:));
-    auto decisionHandler = makeBlockPtr([completionHandler = WTFMove(completionHandler), securityOrigin = securityOrigin->data(), checker = WTFMove(checker), page = makeWeakPtr(page)](WKPermissionDecision decision) mutable {
+    auto decisionHandler = makeBlockPtr([completionHandler = WTFMove(completionHandler), securityOrigin = securityOrigin->data(), checker = WTFMove(checker), page = WeakPtr { page }](WKPermissionDecision decision) mutable {
         if (checker->completionHandlerHasBeenCalled())
             return;
         checker->didCallCompletionHandler();

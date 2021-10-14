@@ -42,7 +42,7 @@ void SpeechRecognitionRemoteRealtimeMediaSourceManager::addSource(SpeechRecognit
 {
     auto identifier = source.identifier();
     ASSERT(!m_sources.contains(identifier));
-    m_sources.add(identifier, makeWeakPtr(source));
+    m_sources.add(identifier, source);
 
 #if ENABLE(SANDBOX_EXTENSIONS)
     if (!captureDevice.isMockDevice()) {

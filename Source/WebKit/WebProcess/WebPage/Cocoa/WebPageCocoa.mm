@@ -272,7 +272,7 @@ void WebPage::getContentsAsAttributedString(CompletionHandler<void(const WebCore
 
 void WebPage::setRemoteObjectRegistry(WebRemoteObjectRegistry* registry)
 {
-    m_remoteObjectRegistry = makeWeakPtr(registry);
+    m_remoteObjectRegistry = registry;
 }
 
 WebRemoteObjectRegistry* WebPage::remoteObjectRegistry()

@@ -38,7 +38,7 @@ namespace WebKit {
 using namespace WebCore;
 
 AuthenticatorPresenterCoordinator::AuthenticatorPresenterCoordinator(const AuthenticatorManager& manager, const String& rpId, const TransportSet& transports, ClientDataType type, const String& username)
-    : m_manager(makeWeakPtr(manager))
+    : m_manager(manager)
 {
 #if HAVE(ASC_AUTH_UI)
     m_context = adoptNS([allocASCAuthorizationPresentationContextInstance() initWithRequestContext:nullptr appIdentifier:nullptr]);

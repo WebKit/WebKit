@@ -44,6 +44,32 @@ template<typename T> using WeakHashSet = WTF::WeakHashSet<T, WeakPtrCounter>;
 template<typename T> using WeakPtr = WTF::WeakPtr<T, WeakPtrCounter>;
 template<typename T> using WeakPtrFactory = WTF::WeakPtrFactory<T, WeakPtrCounter>;
 
+// FIXME: Drop when we support C++20. C++17 does not support template parameter deduction for aliases and WeakPtr is an alias in this file.
+template<typename T, typename = std::enable_if_t<!WTF::IsSmartPtr<T>::value>> inline auto makeWeakPtr(T& object, EnableWeakPtrThreadingAssertions enableWeakPtrThreadingAssertions = EnableWeakPtrThreadingAssertions::Yes)
+{
+    return object.weakPtrFactory().template createWeakPtr<T>(object, enableWeakPtrThreadingAssertions);
+}
+
+// FIXME: Drop when we support C++20. C++17 does not support template parameter deduction for aliases and WeakPtr is an alias in this file.
+template<typename T, typename = std::enable_if_t<!WTF::IsSmartPtr<T>::value>> inline auto makeWeakPtr(T* ptr, EnableWeakPtrThreadingAssertions enableWeakPtrThreadingAssertions = EnableWeakPtrThreadingAssertions::Yes) -> decltype(makeWeakPtr(*ptr))
+{
+    if (!ptr)
+        return { };
+    return makeWeakPtr(*ptr, enableWeakPtrThreadingAssertions);
+}
+
+// FIXME: Drop when we support C++20. C++17 does not support template parameter deduction for aliases and WeakPtr is an alias in this file.
+template<typename T, typename = std::enable_if_t<!WTF::IsSmartPtr<T>::value>> inline auto makeWeakPtr(const Ref<T>& object, EnableWeakPtrThreadingAssertions enableWeakPtrThreadingAssertions = EnableWeakPtrThreadingAssertions::Yes)
+{
+    return makeWeakPtr(object.get(), enableWeakPtrThreadingAssertions);
+}
+
+// FIXME: Drop when we support C++20. C++17 does not support template parameter deduction for aliases and WeakPtr is an alias in this file.
+template<typename T, typename = std::enable_if_t<!WTF::IsSmartPtr<T>::value>> inline auto makeWeakPtr(const RefPtr<T>& object, EnableWeakPtrThreadingAssertions enableWeakPtrThreadingAssertions = EnableWeakPtrThreadingAssertions::Yes)
+{
+    return makeWeakPtr(object.get(), enableWeakPtrThreadingAssertions);
+}
+
 struct Int : public CanMakeWeakPtr<Int> {
     Int(int i) : m_i(i) { }
     operator int() const { return m_i; }

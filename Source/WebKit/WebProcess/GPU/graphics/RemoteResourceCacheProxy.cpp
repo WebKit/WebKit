@@ -46,7 +46,7 @@ RemoteResourceCacheProxy::~RemoteResourceCacheProxy()
 
 void RemoteResourceCacheProxy::cacheImageBuffer(WebCore::ImageBuffer& imageBuffer)
 {
-    auto addResult = m_imageBuffers.add(imageBuffer.renderingResourceIdentifier(), ImageBufferState { makeWeakPtr(imageBuffer), 0 });
+    auto addResult = m_imageBuffers.add(imageBuffer.renderingResourceIdentifier(), ImageBufferState { imageBuffer, 0 });
     ASSERT_UNUSED(addResult, addResult.isNewEntry);
 }
 
@@ -109,7 +109,7 @@ void RemoteResourceCacheProxy::recordNativeImageUse(NativeImage& image)
     if (handle.isNull())
         return;
 
-    m_nativeImages.add(image.renderingResourceIdentifier(), NativeImageState { makeWeakPtr(image), 1 });
+    m_nativeImages.add(image.renderingResourceIdentifier(), NativeImageState { image, 1 });
 
     // Set itself as an observer to NativeImage, so releaseNativeImage()
     // gets called when NativeImage is being deleleted.

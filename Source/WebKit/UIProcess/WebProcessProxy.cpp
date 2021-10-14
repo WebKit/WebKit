@@ -939,7 +939,7 @@ void WebProcessProxy::processDidTerminateOrFailedToLaunch(ProcessTerminationReas
         webConnection->didClose();
 
     auto pages = copyToVectorOf<RefPtr<WebPageProxy>>(m_pageMap.values());
-    auto provisionalPages = WTF::map(m_provisionalPages, [](auto* provisionalPage) { return makeWeakPtr(provisionalPage); });
+    auto provisionalPages = WTF::map(m_provisionalPages, [](auto* provisionalPage) { return WeakPtr { provisionalPage }; });
 
     auto isResponsiveCallbacks = std::exchange(m_isResponsiveCallbacks, { });
     for (auto& callback : isResponsiveCallbacks)
@@ -1791,7 +1791,7 @@ void WebProcessProxy::createSpeechRecognitionServer(SpeechRecognitionServerIdent
     MESSAGE_CHECK(!m_speechRecognitionServerMap.contains(identifier));
 
     auto& speechRecognitionServer = m_speechRecognitionServerMap.add(identifier, nullptr).iterator->value;
-    auto permissionChecker = [weakPage = makeWeakPtr(targetPage)](auto& request, auto&& completionHandler) mutable {
+    auto permissionChecker = [weakPage = WeakPtr { targetPage }](auto& request, auto&& completionHandler) mutable {
         if (!weakPage) {
             completionHandler(WebCore::SpeechRecognitionError { SpeechRecognitionErrorType::NotAllowed, "Page no longer exists"_s });
             return;
@@ -1799,12 +1799,12 @@ void WebProcessProxy::createSpeechRecognitionServer(SpeechRecognitionServerIdent
 
         weakPage->requestSpeechRecognitionPermission(request, WTFMove(completionHandler));
     };
-    auto checkIfMockCaptureDevicesEnabled = [weakPage = makeWeakPtr(targetPage)]() {
+    auto checkIfMockCaptureDevicesEnabled = [weakPage = WeakPtr { targetPage }]() {
         return weakPage && weakPage->preferences().mockCaptureDevicesEnabled();
     };
 
 #if ENABLE(MEDIA_STREAM)
-    auto createRealtimeMediaSource = [weakPage = makeWeakPtr(targetPage)]() {
+    auto createRealtimeMediaSource = [weakPage = WeakPtr { targetPage }]() {
         return weakPage ? weakPage->createRealtimeMediaSourceForSpeechRecognition() : CaptureSourceOrError { "Page is invalid" };
     };
     speechRecognitionServer = makeUnique<SpeechRecognitionServer>(*connection(), identifier, WTFMove(permissionChecker), WTFMove(checkIfMockCaptureDevicesEnabled), WTFMove(createRealtimeMediaSource));

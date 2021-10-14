@@ -44,7 +44,7 @@
 namespace WebKit {
 
 WebInspectorUIExtensionController::WebInspectorUIExtensionController(WebCore::InspectorFrontendClient& inspectorFrontend)
-    : m_frontendClient(makeWeakPtr(inspectorFrontend))
+    : m_frontendClient(inspectorFrontend)
 {
     auto* page = inspectorFrontend.frontendPage();
     ASSERT(page);

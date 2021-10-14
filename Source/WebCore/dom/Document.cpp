@@ -7581,7 +7581,7 @@ void Document::didAssociateFormControl(Element& element)
     if (!page || !page->chrome().client().shouldNotifyOnFormChanges())
         return;
 
-    auto isNewEntry = m_associatedFormControls.add(&element).isNewEntry;
+    auto isNewEntry = m_associatedFormControls.add(element).isNewEntry;
     if (isNewEntry && !m_didAssociateFormControlsTimer.isActive())
         m_didAssociateFormControlsTimer.startOneShot(isTopDocument() || hasHadUserInteraction() ? 0_s : 1_s);
 }

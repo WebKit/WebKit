@@ -54,10 +54,10 @@ Ref<SourceBufferPrivateRemote> SourceBufferPrivateRemote::create(GPUProcessConne
 }
 
 SourceBufferPrivateRemote::SourceBufferPrivateRemote(GPUProcessConnection& gpuProcessConnection, RemoteSourceBufferIdentifier remoteSourceBufferIdentifier, const MediaSourcePrivateRemote& mediaSourcePrivate, const MediaPlayerPrivateRemote& mediaPlayerPrivate)
-    : m_gpuProcessConnection(makeWeakPtr(gpuProcessConnection))
+    : m_gpuProcessConnection(gpuProcessConnection)
     , m_remoteSourceBufferIdentifier(remoteSourceBufferIdentifier)
-    , m_mediaSourcePrivate(makeWeakPtr(mediaSourcePrivate))
-    , m_mediaPlayerPrivate(makeWeakPtr(mediaPlayerPrivate))
+    , m_mediaSourcePrivate(mediaSourcePrivate)
+    , m_mediaPlayerPrivate(mediaPlayerPrivate)
 #if !RELEASE_LOG_DISABLED
     , m_logger(m_mediaSourcePrivate->logger())
     , m_logIdentifier(m_mediaSourcePrivate->nextSourceBufferLogIdentifier())

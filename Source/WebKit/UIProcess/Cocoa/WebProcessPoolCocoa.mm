@@ -218,7 +218,7 @@ static AccessibilityPreferences accessibilityPreferences()
 #if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
 void WebProcessPool::setMediaAccessibilityPreferences(WebProcessProxy& process)
 {
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), [weakProcess = makeWeakPtr(process)] {
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), [weakProcess = WeakPtr { process }] {
         auto captionDisplayMode = WebCore::CaptionUserPreferencesMediaAF::platformCaptionDisplayMode();
         auto preferredLanguages = WebCore::CaptionUserPreferencesMediaAF::platformPreferredLanguages();
         callOnMainRunLoop([weakProcess, captionDisplayMode, preferredLanguages = WTFMove(preferredLanguages).isolatedCopy()] {
@@ -716,7 +716,7 @@ void WebProcessPool::removeCFNotificationObserver(CFStringRef name, CFNotificati
 
 void WebProcessPool::registerNotificationObservers()
 {
-    m_weakObserver = adoptNS([[WKProcessPoolWeakObserver alloc] initWithWeakPtr:makeWeakPtr(*this)]);
+    m_weakObserver = adoptNS([[WKProcessPoolWeakObserver alloc] initWithWeakPtr:*this]);
 
 #if !PLATFORM(IOS_FAMILY)
     m_powerObserver = makeUnique<WebCore::PowerObserver>([weakThis = WeakPtr { *this }] {

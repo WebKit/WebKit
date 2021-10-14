@@ -75,7 +75,7 @@ void WebPasteboardProxy::grantAccess(WebProcessProxy& process, const String& pas
         return;
     }
 
-    m_pasteboardNameToAccessInformationMap.set(pasteboardName, PasteboardAccessInformation { changeCount, {{ makeWeakPtr(process), type }} });
+    m_pasteboardNameToAccessInformationMap.set(pasteboardName, PasteboardAccessInformation { changeCount, {{ process, type }} });
 }
 
 void WebPasteboardProxy::revokeAccess(WebProcessProxy& process)
@@ -135,7 +135,7 @@ void WebPasteboardProxy::didModifyContentsOfPasteboard(IPC::Connection& connecti
     auto changeCountAndProcesses = m_pasteboardNameToAccessInformationMap.find(pasteboardName);
     if (changeCountAndProcesses != m_pasteboardNameToAccessInformationMap.end() && previousChangeCount == changeCountAndProcesses->value.changeCount) {
         if (auto accessType = changeCountAndProcesses->value.accessType(*process))
-            changeCountAndProcesses->value = PasteboardAccessInformation { newChangeCount, {{ makeWeakPtr(*process), *accessType }} };
+            changeCountAndProcesses->value = PasteboardAccessInformation { newChangeCount, {{ *process, *accessType }} };
     }
 }
 
@@ -689,7 +689,7 @@ void WebPasteboardProxy::PasteboardAccessInformation::grantAccess(WebProcessProx
     });
 
     if (matchIndex == notFound) {
-        processes.append({ makeWeakPtr(process), type });
+        processes.append({ process, type });
         return;
     }
 

@@ -37,7 +37,7 @@ namespace WebKit {
 using namespace WebCore;
 
 StorageArea::StorageArea(LocalStorageNamespace* localStorageNamespace, const SecurityOriginData& securityOrigin, unsigned quotaInBytes, Ref<SuspendableWorkQueue>&& queue)
-    : m_localStorageNamespace(makeWeakPtr(localStorageNamespace))
+    : m_localStorageNamespace(localStorageNamespace)
     , m_securityOrigin(securityOrigin)
     , m_quotaInBytes(quotaInBytes)
     , m_identifier(Identifier::generate())

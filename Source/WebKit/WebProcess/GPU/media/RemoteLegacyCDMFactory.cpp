@@ -116,8 +116,8 @@ std::unique_ptr<CDMPrivateInterface> RemoteLegacyCDMFactory::createCDM(WebCore::
     gpuProcessConnection().connection().sendSync(Messages::RemoteLegacyCDMFactoryProxy::CreateCDM(cdm->keySystem(), WTFMove(playerId)), Messages::RemoteLegacyCDMFactoryProxy::CreateCDM::Reply(identifier), { });
     if (!identifier)
         return nullptr;
-    auto remoteCDM = RemoteLegacyCDM::create(makeWeakPtr(this), identifier);
-    m_cdms.set(identifier, makeWeakPtr(remoteCDM.get()));
+    auto remoteCDM = RemoteLegacyCDM::create(*this, identifier);
+    m_cdms.set(identifier, remoteCDM.get());
     return remoteCDM;
 }
 

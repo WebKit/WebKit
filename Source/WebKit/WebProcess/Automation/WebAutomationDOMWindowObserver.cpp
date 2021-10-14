@@ -32,7 +32,7 @@
 namespace WebKit {
 
 WebAutomationDOMWindowObserver::WebAutomationDOMWindowObserver(WebCore::DOMWindow& window, WTF::Function<void(WebAutomationDOMWindowObserver&)>&& callback)
-    : m_window(makeWeakPtr(window))
+    : m_window(window)
     , m_callback(WTFMove(callback))
 {
     ASSERT(m_window->frame());

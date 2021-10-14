@@ -67,7 +67,7 @@ NetworkLoadChecker::NetworkLoadChecker(NetworkProcess& networkProcess, NetworkRe
     , m_shouldCaptureExtraNetworkLoadMetrics(shouldCaptureExtraNetworkLoadMetrics)
     , m_requestLoadType(requestLoadType)
     , m_schemeRegistry(schemeRegistry)
-    , m_networkResourceLoader(makeWeakPtr(networkResourceLoader))
+    , m_networkResourceLoader(networkResourceLoader)
 {
     m_isSameOriginRequest = isSameOrigin(m_url, m_origin.get());
     switch (options.credentials) {

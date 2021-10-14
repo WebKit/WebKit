@@ -42,10 +42,10 @@ namespace WebKit {
 using namespace WebCore;
 
 RemoteMediaSourceProxy::RemoteMediaSourceProxy(GPUConnectionToWebProcess& connectionToWebProcess, RemoteMediaSourceIdentifier identifier, bool webMParserEnabled, RemoteMediaPlayerProxy& remoteMediaPlayerProxy)
-    : m_connectionToWebProcess(makeWeakPtr(connectionToWebProcess))
+    : m_connectionToWebProcess(connectionToWebProcess)
     , m_identifier(identifier)
     , m_webMParserEnabled(webMParserEnabled)
-    , m_remoteMediaPlayerProxy(makeWeakPtr(remoteMediaPlayerProxy))
+    , m_remoteMediaPlayerProxy(remoteMediaPlayerProxy)
 {
     m_connectionToWebProcess->messageReceiverMap().addMessageReceiver(Messages::RemoteMediaSourceProxy::messageReceiverName(), m_identifier.toUInt64(), *this);
 }

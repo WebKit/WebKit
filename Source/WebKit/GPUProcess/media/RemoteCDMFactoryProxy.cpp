@@ -41,7 +41,7 @@ namespace WebKit {
 using namespace WebCore;
 
 RemoteCDMFactoryProxy::RemoteCDMFactoryProxy(GPUConnectionToWebProcess& connection)
-    : m_gpuConnectionToWebProcess(makeWeakPtr(connection))
+    : m_gpuConnectionToWebProcess(connection)
 {
 }
 
@@ -70,7 +70,7 @@ void RemoteCDMFactoryProxy::createCDM(const String& keySystem, CompletionHandler
         return;
     }
 
-    auto proxy = RemoteCDMProxy::create(makeWeakPtr(this), WTFMove(privateCDM));
+    auto proxy = RemoteCDMProxy::create(*this, WTFMove(privateCDM));
     auto identifier = RemoteCDMIdentifier::generate();
     RemoteCDMConfiguration configuration = proxy->configuration();
     addProxy(identifier, WTFMove(proxy));

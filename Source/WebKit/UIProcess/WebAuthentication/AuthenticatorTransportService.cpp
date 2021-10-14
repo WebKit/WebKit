@@ -69,7 +69,7 @@ UniqueRef<AuthenticatorTransportService> AuthenticatorTransportService::createMo
 }
 
 AuthenticatorTransportService::AuthenticatorTransportService(Observer& observer)
-    : m_observer(makeWeakPtr(observer))
+    : m_observer(observer)
 {
 }
 

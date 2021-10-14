@@ -39,7 +39,7 @@ using namespace WebCore;
 
 AudioSessionRoutingArbitrator::AudioSessionRoutingArbitrator(WebProcess& process)
     : m_process(process)
-    , m_observer([this] (AudioSession& session) { session.setRoutingArbitrationClient(makeWeakPtr(this)); })
+    , m_observer([this] (AudioSession& session) { session.setRoutingArbitrationClient(*this); })
 {
     AudioSession::addAudioSessionChangedObserver(m_observer);
 }

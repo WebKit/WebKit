@@ -391,7 +391,7 @@ void NetworkProcessProxy::didReceiveAuthenticationChallenge(PAL::SessionID sessi
     if (coreChallenge.protectionSpace().authenticationScheme() == ProtectionSpaceAuthenticationSchemeClientCertificateRequested) {
         if (auto* store = websiteDataStoreFromSessionID(sessionID)) {
             auto newSecKeyProxyStore = SecKeyProxyStore::create();
-            secKeyProxyStore = makeWeakPtr(newSecKeyProxyStore.get());
+            secKeyProxyStore = newSecKeyProxyStore;
             store->addSecKeyProxyStore(WTFMove(newSecKeyProxyStore));
         }
     }

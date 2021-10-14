@@ -52,7 +52,7 @@ void ServiceWorkerSoftUpdateLoader::start(NetworkSession* session, ServiceWorker
 ServiceWorkerSoftUpdateLoader::ServiceWorkerSoftUpdateLoader(NetworkSession& session, ServiceWorkerJobData&& jobData, bool shouldRefreshCache, ResourceRequest&& request, Handler&& completionHandler)
     : m_completionHandler(WTFMove(completionHandler))
     , m_jobData(WTFMove(jobData))
-    , m_session(makeWeakPtr(session))
+    , m_session(session)
 {
     ASSERT(!request.isConditional());
 

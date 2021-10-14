@@ -32,8 +32,7 @@
 namespace WebKit {
 
 class LocalAudioSessionRoutingArbitrator final
-    : public WebCore::AudioSessionRoutingArbitrationClient
-    , public CanMakeWeakPtr<LocalAudioSessionRoutingArbitrator> {
+    : public WebCore::AudioSessionRoutingArbitrationClient {
     WTF_MAKE_FAST_ALLOCATED;
 
     friend UniqueRef<LocalAudioSessionRoutingArbitrator> WTF::makeUniqueRefWithoutFastMallocCheck<LocalAudioSessionRoutingArbitrator>(GPUConnectionToWebProcess&);

@@ -41,7 +41,7 @@ constexpr char pathSeparator = '/';
 
 FileSystemStorageHandle::FileSystemStorageHandle(FileSystemStorageManager& manager, Type type, String&& path, String&& name)
     : m_identifier(WebCore::FileSystemHandleIdentifier::generateThreadSafe())
-    , m_manager(makeWeakPtr(manager))
+    , m_manager(manager)
     , m_type(type)
     , m_path(WTFMove(path))
     , m_name(WTFMove(name))

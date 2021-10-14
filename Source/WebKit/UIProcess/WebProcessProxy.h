@@ -551,7 +551,7 @@ private:
     public:
         WeakOrStrongPtr(T& object, IsWeak isWeak)
             : m_isWeak(isWeak)
-            , m_weakObject(makeWeakPtr(object))
+            , m_weakObject(object)
         {
             updateStrongReference();
         }

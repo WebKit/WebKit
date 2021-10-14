@@ -101,7 +101,7 @@ void RemoteAudioDestinationProxy::stopRenderingThread()
 IPC::Connection* RemoteAudioDestinationProxy::connection()
 {
     if (!m_gpuProcessConnection) {
-        m_gpuProcessConnection = makeWeakPtr(WebProcess::singleton().ensureGPUProcessConnection());
+        m_gpuProcessConnection = WebProcess::singleton().ensureGPUProcessConnection();
         m_gpuProcessConnection->addClient(*this);
 
         if (!m_gpuProcessConnection->connection().sendSync(Messages::RemoteAudioDestinationManager::CreateAudioDestination(m_inputDeviceId, m_numberOfInputChannels, numberOfOutputChannels(), sampleRate(), hardwareSampleRate(), m_renderSemaphore), Messages::RemoteAudioDestinationManager::CreateAudioDestination::Reply(m_destinationID), 0)) {

@@ -1116,7 +1116,7 @@ void WebEditorClient::requestCandidatesForSelection(const VisibleSelection& sele
     m_paragraphContextForCandidateRequest = contextForCandidateReqeuest;
 
     NSTextCheckingTypes checkingTypes = NSTextCheckingTypeSpelling | NSTextCheckingTypeReplacement | NSTextCheckingTypeCorrection;
-    auto weakEditor = makeWeakPtr(*this);
+    WeakPtr weakEditor { *this };
     m_lastCandidateRequestSequenceNumber = [[NSSpellChecker sharedSpellChecker] requestCandidatesForSelectedRange:m_rangeForCandidates inString:m_paragraphContextForCandidateRequest.get() types:checkingTypes options:nil inSpellDocumentWithTag:spellCheckerDocumentTag() completionHandler:[weakEditor](NSInteger sequenceNumber, NSArray<NSTextCheckingResult *> *candidates) {
         RunLoop::main().dispatch([weakEditor, sequenceNumber, candidates = retainPtr(candidates)] {
             if (!weakEditor)

@@ -51,7 +51,7 @@ WebAuthenticationPanel::WebAuthenticationPanel()
 
 WebAuthenticationPanel::WebAuthenticationPanel(const AuthenticatorManager& manager, const WTF::String& rpId, const TransportSet& transports, ClientDataType type, const WTF::String& userName)
     : m_client(makeUniqueRef<WebAuthenticationPanelClient>())
-    , m_weakManager(makeWeakPtr(manager))
+    , m_weakManager(manager)
     , m_rpId(rpId)
     , m_clientDataType(type)
     , m_userName(userName)
@@ -71,7 +71,7 @@ WebAuthenticationPanel::~WebAuthenticationPanel() = default;
 void WebAuthenticationPanel::handleRequest(WebAuthenticationRequestData&& request, Callback&& callback)
 {
     ASSERT(m_manager);
-    request.weakPanel = makeWeakPtr(*this);
+    request.weakPanel = *this;
     m_manager->handleRequest(WTFMove(request), WTFMove(callback));
 }
 

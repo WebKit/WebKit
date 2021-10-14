@@ -170,7 +170,7 @@ std::unique_ptr<MediaPlayerPrivateInterface> RemoteMediaPlayerManager::createRem
     gpuProcessConnection().connection().send(Messages::RemoteMediaPlayerManagerProxy::CreateMediaPlayer(identifier, remoteEngineIdentifier, proxyConfiguration), 0);
 
     auto remotePlayer = MediaPlayerPrivateRemote::create(player, remoteEngineIdentifier, identifier, *this);
-    m_players.add(identifier, makeWeakPtr(*remotePlayer));
+    m_players.add(identifier, *remotePlayer);
 
     return remotePlayer;
 }

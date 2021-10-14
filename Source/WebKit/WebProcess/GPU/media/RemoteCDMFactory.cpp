@@ -75,7 +75,7 @@ std::unique_ptr<CDMPrivate> RemoteCDMFactory::createCDM(const String& keySystem)
     gpuProcessConnection().connection().sendSync(Messages::RemoteCDMFactoryProxy::CreateCDM(keySystem), Messages::RemoteCDMFactoryProxy::CreateCDM::Reply(identifier, configuration), { });
     if (!identifier)
         return nullptr;
-    return RemoteCDM::create(makeWeakPtr(this), WTFMove(identifier), WTFMove(configuration));
+    return RemoteCDM::create(*this, WTFMove(identifier), WTFMove(configuration));
 }
 
 void RemoteCDMFactory::addSession(Ref<RemoteCDMInstanceSession>&& session)

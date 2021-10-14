@@ -62,7 +62,7 @@ RemoteRemoteCommandListener::~RemoteRemoteCommandListener()
 GPUProcessConnection& RemoteRemoteCommandListener::ensureGPUProcessConnection()
 {
     if (!m_gpuProcessConnection) {
-        m_gpuProcessConnection = makeWeakPtr(m_process.ensureGPUProcessConnection());
+        m_gpuProcessConnection = m_process.ensureGPUProcessConnection();
         m_gpuProcessConnection->addClient(*this);
         m_gpuProcessConnection->messageReceiverMap().addMessageReceiver(Messages::RemoteRemoteCommandListener::messageReceiverName(), m_identifier.toUInt64(), *this);
         m_gpuProcessConnection->connection().send(Messages::GPUConnectionToWebProcess::CreateRemoteCommandListener(m_identifier), { });

@@ -60,7 +60,7 @@ UserGestureToken::UserGestureToken(ProcessingUserGestureState state, UserGesture
 
     for (auto* ancestorFrame = documentFrame->tree().parent(); ancestorFrame; ancestorFrame = ancestorFrame->tree().parent()) {
         if (auto* ancestorDocument = ancestorFrame->document())
-            m_documentsImpactedByUserGesture.add(ancestorDocument);
+            m_documentsImpactedByUserGesture.add(*ancestorDocument);
     }
 
     auto& documentOrigin = document->securityOrigin();

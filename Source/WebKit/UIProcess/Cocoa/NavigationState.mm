@@ -111,7 +111,7 @@ NavigationState::NavigationState(WKWebView *webView)
     ASSERT(m_webView->_page);
     ASSERT(!navigationStates().contains(m_webView->_page.get()));
 
-    navigationStates().add(m_webView->_page.get(), makeWeakPtr(*this));
+    navigationStates().add(m_webView->_page.get(), *this);
     m_webView->_page->pageLoadState().addObserver(*this);
 }
 
@@ -314,7 +314,7 @@ void NavigationState::didFirstPaint()
 }
 
 NavigationState::NavigationClient::NavigationClient(NavigationState& navigationState)
-    : m_navigationState(makeWeakPtr(navigationState))
+    : m_navigationState(navigationState)
 {
 }
 
@@ -435,7 +435,7 @@ static void tryInterceptNavigation(Ref<API::NavigationAction>&& navigationAction
 #if HAVE(APP_LINKS)
     if (navigationAction->shouldOpenAppLinks()) {
         auto url = navigationAction->request().url();
-        auto* localCompletionHandler = new WTF::Function<void (bool)>([navigationAction = WTFMove(navigationAction), weakPage = makeWeakPtr(page), completionHandler = WTFMove(completionHandler)] (bool success) mutable {
+        auto* localCompletionHandler = new WTF::Function<void (bool)>([navigationAction = WTFMove(navigationAction), weakPage = WeakPtr { page }, completionHandler = WTFMove(completionHandler)] (bool success) mutable {
             ASSERT(RunLoop::isMain());
             if (!success && weakPage) {
                 trySOAuthorization(WTFMove(navigationAction), *weakPage, WTFMove(completionHandler));
@@ -1288,7 +1288,7 @@ void NavigationState::NavigationClient::decidePolicyForSOAuthorizationLoad(WebPa
 // HistoryDelegatePrivate support
     
 NavigationState::HistoryClient::HistoryClient(NavigationState& navigationState)
-    : m_navigationState(makeWeakPtr(navigationState))
+    : m_navigationState(navigationState)
 {
 }
 

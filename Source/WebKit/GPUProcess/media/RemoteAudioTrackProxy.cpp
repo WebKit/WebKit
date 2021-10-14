@@ -40,7 +40,7 @@ namespace WebKit {
 using namespace WebCore;
 
 RemoteAudioTrackProxy::RemoteAudioTrackProxy(GPUConnectionToWebProcess& connectionToWebProcess, TrackPrivateRemoteIdentifier identifier, AudioTrackPrivate& trackPrivate, MediaPlayerIdentifier mediaPlayerIdentifier)
-    : m_connectionToWebProcess(makeWeakPtr(connectionToWebProcess))
+    : m_connectionToWebProcess(connectionToWebProcess)
     , m_identifier(identifier)
     , m_trackPrivate(trackPrivate)
     , m_mediaPlayerIdentifier(mediaPlayerIdentifier)

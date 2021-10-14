@@ -76,7 +76,7 @@ void NetworkLoad::startWithScheduling()
 {
     if (!m_task || !m_task->networkSession())
         return;
-    m_scheduler = makeWeakPtr(m_task->networkSession()->networkLoadScheduler());
+    m_scheduler = m_task->networkSession()->networkLoadScheduler();
     m_scheduler->schedule(*this);
 }
 

@@ -87,7 +87,7 @@ void RadioButtonGroup::setCheckedButton(HTMLInputElement* button)
 void RadioButtonGroup::add(HTMLInputElement& button)
 {
     ASSERT(button.isRadioButton());
-    if (!m_members.add(&button).isNewEntry)
+    if (!m_members.add(button).isNewEntry)
         return;
     bool groupWasValid = isValid();
     if (button.isRequired())

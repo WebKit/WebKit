@@ -460,8 +460,8 @@ static String stringForSSLCipher(SSLCipherSuite cipher)
     if (!self)
         return nil;
 
-    _session = makeWeakPtr(session.get());
-    _sessionWrapper = makeWeakPtr(sessionWrapper);
+    _session = session.get();
+    _sessionWrapper = sessionWrapper;
     _withCredentials = withCredentials;
 
     return self;
@@ -746,7 +746,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
                 NSURLProtectionSpace *protectionSpace = challenge.protectionSpace;
                 networkDataTask->didNegotiateModernTLS(URL(URL(), makeString(String(protectionSpace.protocol), "://", String(protectionSpace.host), ':', protectionSpace.port)));
             }
-            auto decisionHandler = makeBlockPtr([weakSelf = WeakObjCPtr<WKNetworkSessionDelegate>(self), sessionCocoa = makeWeakPtr(sessionCocoa), completionHandler = makeBlockPtr(completionHandler), taskIdentifier, networkDataTask = RefPtr { networkDataTask }, negotiatedLegacyTLS](NSURLAuthenticationChallenge *challenge, OSStatus trustResult) mutable {
+            auto decisionHandler = makeBlockPtr([weakSelf = WeakObjCPtr<WKNetworkSessionDelegate>(self), sessionCocoa = WeakPtr { sessionCocoa }, completionHandler = makeBlockPtr(completionHandler), taskIdentifier, networkDataTask = RefPtr { networkDataTask }, negotiatedLegacyTLS](NSURLAuthenticationChallenge *challenge, OSStatus trustResult) mutable {
                 auto strongSelf = weakSelf.get();
                 if (!strongSelf)
                     return completionHandler(NSURLSessionAuthChallengeCancelAuthenticationChallenge, nil);
@@ -1695,7 +1695,7 @@ std::unique_ptr<WebSocketTask> NetworkSessionCocoa::createWebSocketTask(WebPageP
     // Although the WebSocket protocol allows full 64-bit lengths, Chrome and Firefox limit the length to 2^63 - 1
     task.get().maximumMessageSize = 0x7FFFFFFFFFFFFFFFull;
 
-    return makeUnique<WebSocketTask>(channel, webPageProxyID, makeWeakPtr(sessionSet), request, WTFMove(task));
+    return makeUnique<WebSocketTask>(channel, webPageProxyID, sessionSet, request, WTFMove(task));
 }
 
 void NetworkSessionCocoa::addWebSocketTask(WebPageProxyIdentifier webPageProxyID, WebSocketTask& task)
@@ -1728,7 +1728,7 @@ void NetworkSessionCocoa::addWebPageNetworkParameters(WebPageProxyIdentifier pag
         configuration.get()._attributedBundleIdentifier = parameters.attributedBundleIdentifier();
 #endif
     initializeNSURLSessionsInSet(addResult2.iterator->value.get(), configuration.get());
-    addResult1.iterator->value = makeWeakPtr(addResult2.iterator->value.get());
+    addResult1.iterator->value = addResult2.iterator->value.get();
 
     m_attributedBundleIdentifierFromPageIdentifiers.add(pageID, parameters.attributedBundleIdentifier());
 }

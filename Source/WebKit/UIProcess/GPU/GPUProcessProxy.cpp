@@ -108,7 +108,7 @@ Ref<GPUProcessProxy> GPUProcessProxy::getOrCreate()
     }
     auto gpuProcess = adoptRef(*new GPUProcessProxy);
     gpuProcess->updatePreferences();
-    singleton() = makeWeakPtr(gpuProcess.get());
+    singleton() = gpuProcess;
     return gpuProcess;
 }
 

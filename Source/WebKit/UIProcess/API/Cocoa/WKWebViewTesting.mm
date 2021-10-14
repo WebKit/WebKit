@@ -629,7 +629,7 @@
     self = [super init];
     if (!self)
         return nil;
-    m_coordinatorClient = makeWeakPtr(coordinator);
+    m_coordinatorClient = coordinator;
     return self;
 }
 

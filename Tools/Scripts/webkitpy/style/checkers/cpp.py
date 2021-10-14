@@ -2743,23 +2743,6 @@ def check_callonmainthread(filename, clean_lines, line_number, file_state, error
         error(line_number, 'runtime/callonmainthread', 4, "Use 'callOnMainRunLoopAndWait()' instead of 'callOnMainThreadAndWait()' in Source/WebKit.")
 
 
-def check_makeweakptr(clean_lines, line_number, file_state, error):
-    """Looks for use of legacy 'makeWeakPtr()'.
-
-    Args:
-      clean_lines: A CleansedLines instance containing the file.
-      line_number: The number of the line to check.
-      file_state: A _FileState instance which maintains information about
-                  the state of things in the file.
-      error: The function to call with any errors found.
-    """
-
-    line = clean_lines.elided[line_number]  # Get rid of comments and strings.
-    using_makeweakptr = search(r'\bmakeWeakPtr\s*\(', line)
-    if using_makeweakptr:
-        error(line_number, 'runtime/makeweakptr', 4, "Use WeakPtr { } directly instead of 'makeWeakPtr()'.")
-
-
 def check_ismainthread(filename, clean_lines, line_number, file_state, error):
     """Looks for use of 'isMainThread()' which should be replaced with 'isMainRunLoop()'.
 
@@ -4520,7 +4503,6 @@ def process_line(filename, file_extension,
     check_for_non_standard_constructs(clean_lines, line, class_state, error)
     check_posix_threading(clean_lines, line, error)
     check_invalid_increment(clean_lines, line, error)
-    check_makeweakptr(clean_lines, line, file_state, error)
     check_os_version_checks(filename, clean_lines, line, error)
     check_callonmainthread(filename, clean_lines, line, file_state, error)
     check_ismainthread(filename, clean_lines, line, file_state, error)

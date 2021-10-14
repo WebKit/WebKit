@@ -164,7 +164,7 @@ void CanvasBase::notifyObserversCanvasDestroyed()
 
 void CanvasBase::addDisplayBufferObserver(CanvasDisplayBufferObserver& observer)
 {
-    m_displayBufferObservers.add(&observer);
+    m_displayBufferObservers.add(observer);
 }
 
 void CanvasBase::removeDisplayBufferObserver(CanvasDisplayBufferObserver& observer)

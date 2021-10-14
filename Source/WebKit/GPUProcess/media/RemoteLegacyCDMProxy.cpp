@@ -69,7 +69,7 @@ void RemoteLegacyCDMProxy::createSession(const String& keySystem, CreateSessionC
     }
 
     auto identifier = RemoteLegacyCDMSessionIdentifier::generate();
-    auto session = RemoteLegacyCDMSessionProxy::create(makeWeakPtr(m_factory.get()), identifier, *m_cdm);
+    auto session = RemoteLegacyCDMSessionProxy::create(m_factory.get(), identifier, *m_cdm);
     m_factory->addSession(identifier, WTFMove(session));
     callback(WTFMove(identifier));
 }

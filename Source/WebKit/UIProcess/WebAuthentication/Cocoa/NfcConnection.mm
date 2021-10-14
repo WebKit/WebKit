@@ -77,7 +77,7 @@ Ref<NfcConnection> NfcConnection::create(RetainPtr<NFReaderSession>&& session, N
 NfcConnection::NfcConnection(RetainPtr<NFReaderSession>&& session, NfcService& service)
     : m_session(WTFMove(session))
     , m_delegate(adoptNS([[WKNFReaderSessionDelegate alloc] initWithConnection:*this]))
-    , m_service(makeWeakPtr(service))
+    , m_service(service)
     , m_retryTimer(RunLoop::main(), this, &NfcConnection::startPolling)
 {
     [m_session setDelegate:m_delegate.get()];

@@ -47,7 +47,7 @@ Ref<WebCore::RealtimeMediaSource> SpeechRecognitionRemoteRealtimeMediaSource::cr
 SpeechRecognitionRemoteRealtimeMediaSource::SpeechRecognitionRemoteRealtimeMediaSource(WebCore::RealtimeMediaSourceIdentifier identifier, SpeechRecognitionRemoteRealtimeMediaSourceManager& manager, const WebCore::CaptureDevice& captureDevice)
     : WebCore::RealtimeMediaSource(WebCore::RealtimeMediaSource::Type::Audio, String { captureDevice.label() }, String { captureDevice.persistentId() })
     , m_identifier(identifier)
-    , m_manager(makeWeakPtr(manager))
+    , m_manager(manager)
 #if PLATFORM(COCOA)
     , m_ringBuffer(makeUnique<WebCore::CARingBuffer>())
 #endif

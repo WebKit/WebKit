@@ -233,7 +233,7 @@ void WaylandCompositor::Surface::attachBuffer(struct wl_resource* buffer)
 
     if (buffer) {
         auto* compositorBuffer = WaylandCompositor::Buffer::getOrCreate(buffer);
-        m_pendingBuffer = makeWeakPtr(*compositorBuffer);
+        m_pendingBuffer = *compositorBuffer;
     }
 }
 
@@ -571,7 +571,7 @@ void WaylandCompositor::bindSurfaceToWebPage(WaylandCompositor::Surface* surface
 
     unbindWebPage(*webPage);
     surface->setWebPage(webPage);
-    m_pageMap.set(webPage, makeWeakPtr(*surface));
+    m_pageMap.set(webPage, *surface);
 }
 
 void WaylandCompositor::bindWebPage(WebPageProxy& webPage)

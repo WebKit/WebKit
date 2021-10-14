@@ -173,7 +173,7 @@ void WebDataListSuggestionsDropdownIOS::didSelectOption(const String& selectedOp
 
 - (void)showSuggestionsDropdown:(WebKit::WebDataListSuggestionsDropdownIOS&)dropdown activationType:(WebCore::DataListSuggestionActivationType)activationType
 {
-    _dropdown = makeWeakPtr(dropdown);
+    _dropdown = dropdown;
 }
 
 - (void)didSelectOptionAtIndex:(NSInteger)index

@@ -537,7 +537,7 @@ void WebContextMenuProxyMac::getContextMenuFromItems(const Vector<WebContextMenu
     auto imageBitmap = m_context.webHitTestResultData().imageBitmap;
 
     auto sparseMenuItems = retainPtr([NSPointerArray strongObjectsPointerArray]);
-    auto insertMenuItem = makeBlockPtr([protectedThis = Ref { *this }, weakPage = makeWeakPtr(page()), imageURL = WTFMove(imageURL), imageBitmap = WTFMove(imageBitmap), shouldUpdateQuickLookItemTitle, quickLookItemToInsertIfNeeded = WTFMove(quickLookItemToInsertIfNeeded), completionHandler = WTFMove(completionHandler), itemsRemaining = filteredItems.size(), menu = WTFMove(menu), sparseMenuItems](NSMenuItem *item, NSUInteger index) mutable {
+    auto insertMenuItem = makeBlockPtr([protectedThis = Ref { *this }, weakPage = WeakPtr { page() }, imageURL = WTFMove(imageURL), imageBitmap = WTFMove(imageBitmap), shouldUpdateQuickLookItemTitle, quickLookItemToInsertIfNeeded = WTFMove(quickLookItemToInsertIfNeeded), completionHandler = WTFMove(completionHandler), itemsRemaining = filteredItems.size(), menu = WTFMove(menu), sparseMenuItems](NSMenuItem *item, NSUInteger index) mutable {
         ASSERT(index < [sparseMenuItems count]);
         ASSERT(![sparseMenuItems pointerAtIndex:index]);
         [sparseMenuItems replacePointerAtIndex:index withPointer:item];
@@ -585,7 +585,7 @@ void WebContextMenuProxyMac::insertOrUpdateQuickLookImageItem(const URL& imageUR
     }
 
     if (shouldUpdateQuickLookItemTitle) {
-        page->computeHasImageAnalysisResults(imageURL, imageBitmap.get(), ImageAnalysisType::VisualSearch, [weakThis = WeakPtr { *this }, weakPage = makeWeakPtr(page.get()), imageURL, imageBitmap = WTFMove(imageBitmap)] (bool hasVisualSearchResults) mutable {
+        page->computeHasImageAnalysisResults(imageURL, imageBitmap.get(), ImageAnalysisType::VisualSearch, [weakThis = WeakPtr { *this }, weakPage = WeakPtr { page }, imageURL, imageBitmap = WTFMove(imageBitmap)] (bool hasVisualSearchResults) mutable {
             RefPtr protectedThis { weakThis.get() };
             if (!protectedThis)
                 return;

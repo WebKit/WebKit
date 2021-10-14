@@ -41,7 +41,7 @@ namespace WebKit {
 using namespace WebCore;
 
 WebContextMenu::WebContextMenu(WebPage& page)
-    : m_page(makeWeakPtr(page))
+    : m_page(page)
 {
 }
 

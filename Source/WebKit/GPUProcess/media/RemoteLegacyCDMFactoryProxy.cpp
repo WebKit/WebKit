@@ -42,7 +42,7 @@ namespace WebKit {
 using namespace WebCore;
 
 RemoteLegacyCDMFactoryProxy::RemoteLegacyCDMFactoryProxy(GPUConnectionToWebProcess& connection)
-    : m_gpuConnectionToWebProcess(makeWeakPtr(connection))
+    : m_gpuConnectionToWebProcess(connection)
 {
 }
 
@@ -70,7 +70,7 @@ void RemoteLegacyCDMFactoryProxy::createCDM(const String& keySystem, std::option
     if (optionalPlayerId)
         playerId = WTFMove(optionalPlayerId.value());
 
-    auto proxy = RemoteLegacyCDMProxy::create(makeWeakPtr(this), WTFMove(playerId), WTFMove(privateCDM));
+    auto proxy = RemoteLegacyCDMProxy::create(*this, WTFMove(playerId), WTFMove(privateCDM));
     auto identifier = RemoteLegacyCDMIdentifier::generate();
     addProxy(identifier, WTFMove(proxy));
     completion(WTFMove(identifier));

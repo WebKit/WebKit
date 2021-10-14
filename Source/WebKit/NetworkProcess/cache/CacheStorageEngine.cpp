@@ -260,7 +260,7 @@ void Engine::requestSpace(const WebCore::ClientOrigin& origin, uint64_t spaceReq
 
 Engine::Engine(PAL::SessionID sessionID, NetworkProcess& process, String&& rootPath)
     : m_sessionID(sessionID)
-    , m_networkProcess(makeWeakPtr(process))
+    , m_networkProcess(process)
     , m_rootPath(WTFMove(rootPath))
 {
     if (!m_rootPath.isNull())

@@ -1,3 +1,383 @@
+2021-10-13  Chris Dumez  <cdumez@apple.com>
+
+        Drop makeWeakPtr() and use WeakPtr { } directly
+        https://bugs.webkit.org/show_bug.cgi?id=231679
+
+        Reviewed by Darin Adler.
+
+        * GPUProcess/GPUConnectionToWebProcess.cpp:
+        (WebKit::GPUConnectionToWebProcess::GPUConnectionToWebProcess):
+        * GPUProcess/graphics/RemoteGraphicsContextGL.cpp:
+        (WebKit::RemoteGraphicsContextGL::RemoteGraphicsContextGL):
+        * GPUProcess/media/RemoteAudioHardwareListenerProxy.cpp:
+        (WebKit::RemoteAudioHardwareListenerProxy::RemoteAudioHardwareListenerProxy):
+        * GPUProcess/media/RemoteAudioTrackProxy.cpp:
+        (WebKit::RemoteAudioTrackProxy::RemoteAudioTrackProxy):
+        * GPUProcess/media/RemoteCDMFactoryProxy.cpp:
+        (WebKit::RemoteCDMFactoryProxy::RemoteCDMFactoryProxy):
+        (WebKit::RemoteCDMFactoryProxy::createCDM):
+        * GPUProcess/media/RemoteCDMInstanceProxy.cpp:
+        (WebKit::RemoteCDMInstanceProxy::RemoteCDMInstanceProxy):
+        (WebKit::RemoteCDMInstanceProxy::createSession):
+        * GPUProcess/media/RemoteCDMInstanceSessionProxy.cpp:
+        (WebKit::RemoteCDMInstanceSessionProxy::create):
+        * GPUProcess/media/RemoteCDMProxy.cpp:
+        (WebKit::RemoteCDMProxy::createInstance):
+        * GPUProcess/media/RemoteImageDecoderAVFProxy.cpp:
+        (WebKit::RemoteImageDecoderAVFProxy::RemoteImageDecoderAVFProxy):
+        * GPUProcess/media/RemoteLegacyCDMFactoryProxy.cpp:
+        (WebKit::RemoteLegacyCDMFactoryProxy::RemoteLegacyCDMFactoryProxy):
+        (WebKit::RemoteLegacyCDMFactoryProxy::createCDM):
+        * GPUProcess/media/RemoteLegacyCDMProxy.cpp:
+        (WebKit::RemoteLegacyCDMProxy::createSession):
+        * GPUProcess/media/RemoteMediaPlayerManagerProxy.cpp:
+        (WebKit::RemoteMediaPlayerManagerProxy::RemoteMediaPlayerManagerProxy):
+        * GPUProcess/media/RemoteMediaPlayerProxy.cpp:
+        (WebKit::RemoteMediaPlayerProxy::RemoteMediaPlayerProxy):
+        (WebKit::RemoteMediaPlayerProxy::setLegacyCDMSession):
+        * GPUProcess/media/RemoteMediaResource.cpp:
+        (WebKit::RemoteMediaResource::RemoteMediaResource):
+        * GPUProcess/media/RemoteMediaResourceLoader.cpp:
+        (WebKit::RemoteMediaResourceLoader::RemoteMediaResourceLoader):
+        * GPUProcess/media/RemoteMediaSourceProxy.cpp:
+        (WebKit::RemoteMediaSourceProxy::RemoteMediaSourceProxy):
+        * GPUProcess/media/RemoteRemoteCommandListenerProxy.cpp:
+        (WebKit::RemoteRemoteCommandListenerProxy::RemoteRemoteCommandListenerProxy):
+        * GPUProcess/media/RemoteSourceBufferProxy.cpp:
+        (WebKit::RemoteSourceBufferProxy::RemoteSourceBufferProxy):
+        * GPUProcess/media/RemoteTextTrackProxy.cpp:
+        (WebKit::RemoteTextTrackProxy::RemoteTextTrackProxy):
+        * GPUProcess/media/RemoteVideoTrackProxy.cpp:
+        (WebKit::RemoteVideoTrackProxy::RemoteVideoTrackProxy):
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::WebResourceLoadStatisticsStore):
+        * NetworkProcess/Downloads/cocoa/WKDownloadProgress.mm:
+        (-[WKDownloadProgress initWithDownloadTask:download:URL:sandboxExtension:]):
+        * NetworkProcess/NetworkCORSPreflightChecker.cpp:
+        (WebKit::NetworkCORSPreflightChecker::NetworkCORSPreflightChecker):
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::establishSWServerConnection):
+        * NetworkProcess/NetworkDataTask.cpp:
+        (WebKit::NetworkDataTask::NetworkDataTask):
+        * NetworkProcess/NetworkLoad.cpp:
+        (WebKit::NetworkLoad::startWithScheduling):
+        * NetworkProcess/NetworkLoadChecker.cpp:
+        (WebKit::NetworkLoadChecker::NetworkLoadChecker):
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::preconnectTo):
+        (WebKit::NetworkProcess::deleteAndRestrictWebsiteDataForRegistrableDomains):
+        (WebKit::NetworkProcess::simulateResourceLoadStatisticsSessionRestart):
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::sendDidReceiveResponsePotentiallyInNewBrowsingContextGroup):
+        * NetworkProcess/NetworkSocketChannel.cpp:
+        (WebKit::NetworkSocketChannel::NetworkSocketChannel):
+        * NetworkProcess/NetworkStorageSessionProvider.h:
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementClientImpl.cpp:
+        (WebKit::PCM::ClientImpl::ClientImpl):
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementConnection.cpp:
+        (WebKit::PCM::ConnectionToMachService::ConnectionToMachService):
+        * NetworkProcess/PrivateClickMeasurement/cocoa/PrivateClickMeasurementConnectionCocoa.mm:
+        (WebKit::PCM::ConnectionToMachService::initializeConnectionIfNeeded const):
+        * NetworkProcess/ServiceWorker/ServiceWorkerFetchTask.cpp:
+        (WebKit::ServiceWorkerFetchTask::ServiceWorkerFetchTask):
+        (WebKit::ServiceWorkerFetchTask::start):
+        * NetworkProcess/ServiceWorker/ServiceWorkerSoftUpdateLoader.cpp:
+        (WebKit::ServiceWorkerSoftUpdateLoader::ServiceWorkerSoftUpdateLoader):
+        * NetworkProcess/ServiceWorker/WebSWServerToContextConnection.cpp:
+        (WebKit::WebSWServerToContextConnection::WebSWServerToContextConnection):
+        (WebKit::WebSWServerToContextConnection::registerFetch):
+        * NetworkProcess/WebStorage/StorageArea.cpp:
+        (WebKit::StorageArea::StorageArea):
+        * NetworkProcess/WebStorage/StorageManagerSet.cpp:
+        (WebKit::StorageManagerSet::connectToLocalStorageArea):
+        (WebKit::StorageManagerSet::connectToTransientLocalStorageArea):
+        (WebKit::StorageManagerSet::connectToSessionStorageArea):
+        * NetworkProcess/cache/CacheStorageEngine.cpp:
+        (WebKit::CacheStorage::Engine::Engine):
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+        (WebKit::NetworkDataTaskCocoa::NetworkDataTaskCocoa):
+        (WebKit::NetworkDataTaskCocoa::swapSessionIfNecessary):
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (-[WKNetworkSessionDelegate initWithNetworkSession:wrapper:withCredentials:]):
+        (-[WKNetworkSessionDelegate URLSession:task:didReceiveChallenge:completionHandler:]):
+        (WebKit::NetworkSessionCocoa::createWebSocketTask):
+        (WebKit::NetworkSessionCocoa::addWebPageNetworkParameters):
+        * NetworkProcess/storage/FileSystemStorageHandle.cpp:
+        (WebKit::FileSystemStorageHandle::FileSystemStorageHandle):
+        * NetworkProcess/storage/FileSystemStorageHandleRegistry.cpp:
+        (WebKit::FileSystemStorageHandleRegistry::registerHandle):
+        * Platform/IPC/Connection.cpp:
+        (IPC::Connection::addMessageObserver):
+        * Platform/IPC/MessageReceiverMap.cpp:
+        (IPC::MessageReceiverMap::addMessageReceiver):
+        * Platform/cocoa/WKPaymentAuthorizationDelegate.mm:
+        (-[WKPaymentAuthorizationDelegate _initWithRequest:presenter:]):
+        * Shared/ApplePay/WebPaymentCoordinatorProxy.cpp:
+        (WebKit::WebPaymentCoordinatorProxy::showPaymentUI):
+        * Shared/WebSQLiteDatabaseTracker.h:
+        * Shared/XR/XRDeviceProxy.cpp:
+        (WebKit::XRDeviceProxy::XRDeviceProxy):
+        * Shared/mac/SecItemShim.cpp:
+        (WebKit::initializeSecItemShim):
+        * UIProcess/API/APIAttachment.cpp:
+        (API::Attachment::Attachment):
+        * UIProcess/API/APIHTTPCookieStore.cpp:
+        (API::HTTPCookieStore::HTTPCookieStore):
+        (API::HTTPCookieStore::registerObserver):
+        * UIProcess/API/APIInspectorExtension.cpp:
+        (API::InspectorExtension::InspectorExtension):
+        * UIProcess/API/APIWebAuthenticationPanel.cpp:
+        (API::WebAuthenticationPanel::WebAuthenticationPanel):
+        (API::WebAuthenticationPanel::handleRequest):
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _removeDataDetectedLinks:]):
+        * UIProcess/API/Cocoa/WKWebViewTesting.mm:
+        (-[WKMediaSessionCoordinatorHelper initWithCoordinator:]):
+        * UIProcess/API/Cocoa/_WKWebAuthenticationPanel.mm:
+        (-[_WKWebAuthenticationPanel setDelegate:]):
+        * UIProcess/API/ios/WKWebViewIOS.mm:
+        (-[WKWebView _detectDataWithTypes:completionHandler:]):
+        * UIProcess/Cocoa/GroupActivities/GroupActivitiesCoordinator.mm:
+        (-[WKGroupActivitiesCoordinatorDelegate initWithParent:]):
+        * UIProcess/Cocoa/LegacyCustomProtocolManagerClient.mm:
+        (-[WKCustomProtocolLoader initWithLegacyCustomProtocolManagerProxy:customProtocolID:request:]):
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::NavigationState):
+        (WebKit::NavigationState::NavigationClient::NavigationClient):
+        (WebKit::tryInterceptNavigation):
+        (WebKit::NavigationState::HistoryClient::HistoryClient):
+        * UIProcess/Cocoa/SOAuthorization/PopUpSOAuthorizationSession.mm:
+        (-[WKSOSecretDelegate initWithSession:]):
+        * UIProcess/Cocoa/SOAuthorization/SOAuthorizationSession.mm:
+        (WebKit::SOAuthorizationSession::SOAuthorizationSession):
+        * UIProcess/Cocoa/UIDelegate.mm:
+        (WebKit::UIDelegate::ContextMenuClient::ContextMenuClient):
+        (WebKit::UIDelegate::UIClient::UIClient):
+        (WebKit::UIDelegate::UIClient::decidePolicyForGeolocationPermissionRequest):
+        (WebKit::UIDelegate::UIClient::shouldAllowDeviceOrientationAndMotionAccess):
+        * UIProcess/Cocoa/WebPasteboardProxyCocoa.mm:
+        (WebKit::WebPasteboardProxy::grantAccess):
+        (WebKit::WebPasteboardProxy::didModifyContentsOfPasteboard):
+        (WebKit::WebPasteboardProxy::PasteboardAccessInformation::grantAccess):
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::setMediaAccessibilityPreferences):
+        (WebKit::WebProcessPool::registerNotificationObservers):
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (-[WKDOMPasteMenuDelegate initWithWebViewImpl:]):
+        * UIProcess/Downloads/DownloadProxy.cpp:
+        (WebKit::DownloadProxy::DownloadProxy):
+        * UIProcess/GPU/GPUProcessProxy.cpp:
+        (WebKit::GPUProcessProxy::getOrCreate):
+        * UIProcess/Inspector/InspectorTargetProxy.cpp:
+        (WebKit::InspectorTargetProxy::create):
+        * UIProcess/Inspector/WebInspectorUIExtensionControllerProxy.cpp:
+        (WebKit::WebInspectorUIExtensionControllerProxy::WebInspectorUIExtensionControllerProxy):
+        * UIProcess/Launcher/mac/ProcessLauncherMac.mm:
+        (WebKit::ProcessLauncher::launchProcess):
+        * UIProcess/Media/RemoteMediaSessionCoordinatorProxy.cpp:
+        (WebKit::RemoteMediaSessionCoordinatorProxy::RemoteMediaSessionCoordinatorProxy):
+        * UIProcess/MediaKeySystemPermissionRequestProxy.cpp:
+        (WebKit::MediaKeySystemPermissionRequestProxy::MediaKeySystemPermissionRequestProxy):
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::didReceiveAuthenticationChallenge):
+        * UIProcess/Network/NetworkProcessProxyCocoa.mm:
+        (WebKit::NetworkProcessProxy::XPCEventHandler::XPCEventHandler):
+        * UIProcess/PDF/WKPDFHUDView.mm:
+        (-[WKPDFHUDView initWithFrame:pluginIdentifier:page:]):
+        * UIProcess/SpeechRecognitionPermissionRequest.h:
+        (WebKit::SpeechRecognitionPermissionRequest::SpeechRecognitionPermissionRequest):
+        * UIProcess/SpeechRecognitionRemoteRealtimeMediaSource.cpp:
+        * UIProcess/SpeechRecognitionRemoteRealtimeMediaSourceManager.cpp:
+        (WebKit::SpeechRecognitionRemoteRealtimeMediaSourceManager::addSource):
+        * UIProcess/ViewGestureController.cpp:
+        (WebKit::ViewGestureController::setAlternateBackForwardListSourcePage):
+        * UIProcess/WebAuthentication/Authenticator.h:
+        (WebKit::Authenticator::setObserver):
+        * UIProcess/WebAuthentication/AuthenticatorManager.cpp:
+        (WebKit::AuthenticatorManager::runPanel):
+        (WebKit::AuthenticatorManager::dispatchPanelClientCall const):
+        * UIProcess/WebAuthentication/AuthenticatorTransportService.cpp:
+        (WebKit::AuthenticatorTransportService::AuthenticatorTransportService):
+        * UIProcess/WebAuthentication/Cocoa/AuthenticatorPresenterCoordinator.mm:
+        (WebKit::AuthenticatorPresenterCoordinator::AuthenticatorPresenterCoordinator):
+        * UIProcess/WebAuthentication/Cocoa/NfcConnection.mm:
+        (WebKit::NfcConnection::NfcConnection):
+        * UIProcess/WebAuthentication/Cocoa/WKASCAuthorizationPresenterDelegate.mm:
+        (-[WKASCAuthorizationPresenterDelegate initWithCoordinator:]):
+        * UIProcess/WebAuthentication/Cocoa/WKNFReaderSessionDelegate.mm:
+        (-[WKNFReaderSessionDelegate initWithConnection:]):
+        * UIProcess/WebAuthentication/Cocoa/WebAuthenticatorCoordinatorProxy.mm:
+        (WebKit::WebAuthenticatorCoordinatorProxy::performRequest):
+        * UIProcess/WebAuthentication/WebAuthenticatorCoordinatorProxy.cpp:
+        (WebKit::WebAuthenticatorCoordinatorProxy::makeCredential):
+        (WebKit::WebAuthenticatorCoordinatorProxy::getAssertion):
+        * UIProcess/WebAuthentication/fido/FidoService.cpp:
+        (WebKit::FidoService::getInfo):
+        * UIProcess/WebContextMenuListenerProxy.cpp:
+        (WebKit::WebContextMenuListenerProxy::WebContextMenuListenerProxy):
+        * UIProcess/WebContextMenuProxy.cpp:
+        (WebKit::WebContextMenuProxy::WebContextMenuProxy):
+        * UIProcess/WebCookieManagerProxy.cpp:
+        (WebKit::WebCookieManagerProxy::WebCookieManagerProxy):
+        * UIProcess/WebDataListSuggestionsDropdown.cpp:
+        (WebKit::WebDataListSuggestionsDropdown::WebDataListSuggestionsDropdown):
+        * UIProcess/WebDateTimePicker.cpp:
+        (WebKit::WebDateTimePicker::WebDateTimePicker):
+        * UIProcess/WebEditCommandProxy.cpp:
+        (WebKit::WebEditCommandProxy::WebEditCommandProxy):
+        * UIProcess/WebFrameProxy.cpp:
+        (WebKit::WebFrameProxy::WebFrameProxy):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::PageClientProtector::PageClientProtector):
+        (WebKit::WebPageProxy::WebPageProxy):
+        (WebKit::WebPageProxy::suspendCurrentPageIfPossible):
+        (WebKit::WebPageProxy::addObserver):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::getGPUProcessConnection):
+        (WebKit::WebProcessPool::getWebAuthnProcessConnection):
+        (WebKit::WebProcessPool::initializeNewWebProcess):
+        (WebKit::WebProcessPool::createWebPage):
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::processDidTerminateOrFailedToLaunch):
+        (WebKit::WebProcessProxy::createSpeechRecognitionServer):
+        * UIProcess/WebProcessProxy.h:
+        (WebKit::WebProcessProxy::WeakOrStrongPtr::WeakOrStrongPtr):
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::getNetworkProcessConnection):
+        * UIProcess/gtk/WaylandCompositor.cpp:
+        (WebKit::WaylandCompositor::Surface::attachBuffer):
+        (WebKit::WaylandCompositor::bindSurfaceToWebPage):
+        * UIProcess/ios/ProcessAssertionIOS.mm:
+        (-[WKProcessAssertionBackgroundTaskManager _notifyAssertionsOfImminentSuspension]):
+        * UIProcess/ios/WebDataListSuggestionsDropdownIOS.mm:
+        (-[WKDataListSuggestionsControl showSuggestionsDropdown:activationType:]):
+        * UIProcess/mac/PageClientImplMac.mm:
+        (WebKit::PageClientImpl::setImpl):
+        * UIProcess/mac/WKRevealItemPresenter.mm:
+        (-[WKRevealItemPresenter initWithWebViewImpl:item:frame:menuLocation:]):
+        * UIProcess/mac/WebContextMenuProxyMac.mm:
+        (WebKit::WebContextMenuProxyMac::getContextMenuFromItems):
+        (WebKit::WebContextMenuProxyMac::insertOrUpdateQuickLookImageItem):
+        * UIProcess/mac/WebDataListSuggestionsDropdownMac.mm:
+        (-[WKDataListSuggestionsController showSuggestionsDropdown:]):
+        * UIProcess/mac/WebDateTimePickerMac.mm:
+        (-[WKDateTimePicker showPicker:]):
+        * WebProcess/Automation/WebAutomationDOMWindowObserver.cpp:
+        (WebKit::WebAutomationDOMWindowObserver::WebAutomationDOMWindowObserver):
+        * WebProcess/GPU/graphics/RemoteDisplayListRecorderProxy.cpp:
+        (WebKit::m_renderingBackend):
+        * WebProcess/GPU/graphics/RemoteImageBufferProxy.h:
+        (WebKit::RemoteImageBufferProxy::RemoteImageBufferProxy):
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.cpp:
+        (WebKit::RemoteRenderingBackendProxy::ensureGPUProcessConnection):
+        * WebProcess/GPU/graphics/RemoteResourceCacheProxy.cpp:
+        (WebKit::RemoteResourceCacheProxy::cacheImageBuffer):
+        (WebKit::RemoteResourceCacheProxy::recordNativeImageUse):
+        * WebProcess/GPU/media/AudioTrackPrivateRemote.cpp:
+        (WebKit::AudioTrackPrivateRemote::AudioTrackPrivateRemote):
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.cpp:
+        (WebKit::MediaPlayerPrivateRemote::MediaPlayerPrivateRemote):
+        * WebProcess/GPU/media/MediaSourcePrivateRemote.cpp:
+        (WebKit::MediaSourcePrivateRemote::MediaSourcePrivateRemote):
+        * WebProcess/GPU/media/RemoteAudioDestinationProxy.cpp:
+        (WebKit::RemoteAudioDestinationProxy::connection):
+        * WebProcess/GPU/media/RemoteAudioHardwareListener.cpp:
+        (WebKit::RemoteAudioHardwareListener::RemoteAudioHardwareListener):
+        * WebProcess/GPU/media/RemoteAudioSession.cpp:
+        (WebKit::RemoteAudioSession::ensureConnection):
+        * WebProcess/GPU/media/RemoteAudioSourceProvider.cpp:
+        (WebKit::RemoteAudioSourceProvider::RemoteAudioSourceProvider):
+        * WebProcess/GPU/media/RemoteCDM.cpp:
+        (WebKit::RemoteCDM::createInstance):
+        * WebProcess/GPU/media/RemoteCDMFactory.cpp:
+        (WebKit::RemoteCDMFactory::createCDM):
+        * WebProcess/GPU/media/RemoteCDMInstance.cpp:
+        (WebKit::RemoteCDMInstance::createSession):
+        * WebProcess/GPU/media/RemoteImageDecoderAVF.cpp:
+        (WebKit::RemoteImageDecoderAVF::RemoteImageDecoderAVF):
+        * WebProcess/GPU/media/RemoteImageDecoderAVFManager.cpp:
+        (WebKit::RemoteImageDecoderAVFManager::createImageDecoder):
+        (WebKit::RemoteImageDecoderAVFManager::ensureGPUProcessConnection):
+        * WebProcess/GPU/media/RemoteLegacyCDMFactory.cpp:
+        (WebKit::RemoteLegacyCDMFactory::createCDM):
+        * WebProcess/GPU/media/RemoteMediaPlayerManager.cpp:
+        (WebKit::RemoteMediaPlayerManager::createRemoteMediaPlayer):
+        * WebProcess/GPU/media/RemoteRemoteCommandListener.cpp:
+        (WebKit::RemoteRemoteCommandListener::ensureGPUProcessConnection):
+        * WebProcess/GPU/media/SourceBufferPrivateRemote.cpp:
+        (WebKit::SourceBufferPrivateRemote::SourceBufferPrivateRemote):
+        * WebProcess/GPU/media/TextTrackPrivateRemote.cpp:
+        (WebKit::TextTrackPrivateRemote::TextTrackPrivateRemote):
+        * WebProcess/GPU/media/VideoTrackPrivateRemote.cpp:
+        (WebKit::VideoTrackPrivateRemote::VideoTrackPrivateRemote):
+        * WebProcess/GPU/media/cocoa/VideoLayerRemoteCocoa.mm:
+        (-[WKVideoLayerRemote setMediaPlayerPrivateRemote:]):
+        * WebProcess/GPU/media/ios/RemoteMediaSessionHelper.cpp:
+        (WebKit::RemoteMediaSessionHelper::ensureConnection):
+        * WebProcess/GPU/webrtc/AudioMediaStreamTrackRendererInternalUnitManager.cpp:
+        (WebKit::AudioMediaStreamTrackRendererInternalUnitManager::add):
+        * WebProcess/GPU/webrtc/SampleBufferDisplayLayer.cpp:
+        (WebKit::SampleBufferDisplayLayer::SampleBufferDisplayLayer):
+        * WebProcess/GPU/webrtc/SampleBufferDisplayLayerManager.cpp:
+        (WebKit::SampleBufferDisplayLayerManager::createLayer):
+        (WebKit::SampleBufferDisplayLayerManager::addLayer):
+        * WebProcess/InjectedBundle/API/glib/DOM/DOMObjectCache.cpp:
+        * WebProcess/Inspector/WebInspectorUIExtensionController.cpp:
+        (WebKit::WebInspectorUIExtensionController::WebInspectorUIExtensionController):
+        * WebProcess/Network/WebSocketChannel.cpp:
+        (WebKit::WebSocketChannel::WebSocketChannel):
+        * WebProcess/Network/WebSocketChannelManager.cpp:
+        (WebKit::WebSocketChannelManager::addChannel):
+        * WebProcess/Network/webrtc/RTCDataChannelRemoteManager.cpp:
+        (WebKit::RTCDataChannelRemoteManager::RemoteHandlerConnection::connectToSource):
+        * WebProcess/Plugins/PDF/PDFPlugin.h:
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (-[WKPDFPluginAccessibilityObject initWithPDFPlugin:andElement:]):
+        (WebKit::PDFPlugin::PDFPlugin):
+        * WebProcess/Plugins/Plugin.cpp:
+        (WebKit::Plugin::initialize):
+        * WebProcess/WebCoreSupport/WebDeviceOrientationUpdateProvider.cpp:
+        (WebKit::WebDeviceOrientationUpdateProvider::WebDeviceOrientationUpdateProvider):
+        (WebKit::WebDeviceOrientationUpdateProvider::deviceOrientationChanged):
+        (WebKit::WebDeviceOrientationUpdateProvider::deviceMotionChanged):
+        * WebProcess/WebCoreSupport/WebPermissionController.cpp:
+        (WebKit::WebPermissionController::WebPermissionController):
+        * WebProcess/WebCoreSupport/WebSpeechRecognitionConnection.cpp:
+        (WebKit::WebSpeechRecognitionConnection::registerClient):
+        * WebProcess/WebPage/Cocoa/WebPageCocoa.mm:
+        (WebKit::WebPage::setRemoteObjectRegistry):
+        * WebProcess/WebPage/FindController.cpp:
+        (WebKit::FindController::drawRect):
+        * WebProcess/WebPage/IPCTestingAPI.cpp:
+        (WebKit::IPCTestingAPI::JSIPC::JSIPC):
+        (WebKit::IPCTestingAPI::JSMessageListener::JSMessageListener):
+        * WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeDisplayRefreshMonitor.mm:
+        (WebKit::RemoteLayerTreeDisplayRefreshMonitor::RemoteLayerTreeDisplayRefreshMonitor):
+        (WebKit::RemoteLayerTreeDisplayRefreshMonitor::updateDrawingArea):
+        * WebProcess/WebPage/WebContextMenu.cpp:
+        (WebKit::WebContextMenu::WebContextMenu):
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::initWithCoreMainFrame):
+        (WebKit::WebFrame::createSubframe):
+        * WebProcess/WebPage/WebFrame.h:
+        (WebKit::WebFrame::setLoadListener):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::setActiveDataListSuggestionPicker):
+        (WebKit::WebPage::setActiveDateTimeChooser):
+        (WebKit::WebPage::startTextManipulations):
+        (WebKit::WebPage::requestTextRecognition):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::didFinishContentChangeObserving):
+        (WebKit::WebPage::selectTextWithGranularityAtPoint):
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::createPDFHUD):
+        * WebProcess/WebStorage/StorageAreaImpl.cpp:
+        (WebKit::StorageAreaImpl::StorageAreaImpl):
+        * WebProcess/cocoa/AudioSessionRoutingArbitrator.cpp:
+        (WebKit::AudioSessionRoutingArbitrator::AudioSessionRoutingArbitrator):
+        * WebProcess/cocoa/VideoFullscreenManager.mm:
+        (WebKit::VideoFullscreenManager::enterVideoFullscreenForVideoElement):
+
 2021-10-13  Jean-Yves Avenard  <jya@apple.com>
 
         Clearly distinguish serial from concurrent WorkQueue

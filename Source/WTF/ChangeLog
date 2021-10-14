@@ -1,3 +1,16 @@
+2021-10-13  Chris Dumez  <cdumez@apple.com>
+
+        Drop makeWeakPtr() and use WeakPtr { } directly
+        https://bugs.webkit.org/show_bug.cgi?id=231679
+
+        Reviewed by Darin Adler.
+
+        * wtf/WeakHashMap.h:
+        * wtf/WeakHashSet.h:
+        (WTF::copyToVector):
+        * wtf/WeakPtr.h:
+        (WTF::makeWeakPtr): Deleted.
+
 2021-10-13  Jean-Yves Avenard  <jya@apple.com>
 
         Clearly distinguish serial from concurrent WorkQueue

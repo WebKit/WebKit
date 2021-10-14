@@ -115,7 +115,7 @@ void EventLoop::run()
                 continue;
 
             if (group->isSuspended()) {
-                m_groupsWithSuspenedTasks.add(group);
+                m_groupsWithSuspenedTasks.add(*group);
                 remainingTasks.append(WTFMove(task));
                 continue;
             }

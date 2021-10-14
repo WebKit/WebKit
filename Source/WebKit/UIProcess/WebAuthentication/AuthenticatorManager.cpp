@@ -462,7 +462,7 @@ void AuthenticatorManager::runPanel()
 
     m_pendingRequestData.panel = API::WebAuthenticationPanel::create(*this, getRpId(options), transports, getClientDataType(options), getUserName(options));
     auto& panel = *m_pendingRequestData.panel;
-    page->uiClient().runWebAuthenticationPanel(*page, panel, *frame, FrameInfoData { m_pendingRequestData.frameInfo }, [transports = WTFMove(transports), weakPanel = makeWeakPtr(panel), weakThis = WeakPtr { *this }, this] (WebAuthenticationPanelResult result) {
+    page->uiClient().runWebAuthenticationPanel(*page, panel, *frame, FrameInfoData { m_pendingRequestData.frameInfo }, [transports = WTFMove(transports), weakPanel = WeakPtr { panel }, weakThis = WeakPtr { *this }, this] (WebAuthenticationPanelResult result) {
         // The panel address is used to determine if the current pending request is still the same.
         if (!weakThis || !weakPanel
             || (result == WebAuthenticationPanelResult::DidNotPresent)
@@ -535,7 +535,7 @@ void AuthenticatorManager::dispatchPanelClientCall(Function<void(const API::WebA
 {
     auto weakPanel = m_pendingRequestData.weakPanel;
     if (!weakPanel)
-        weakPanel = makeWeakPtr(m_pendingRequestData.panel.get());
+        weakPanel = m_pendingRequestData.panel;
     if (!weakPanel)
         return;
 

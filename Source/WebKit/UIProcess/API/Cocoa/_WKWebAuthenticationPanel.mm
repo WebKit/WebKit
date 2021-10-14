@@ -139,7 +139,7 @@ NSString * const _WKLocalAuthenticatorCredentialRelyingPartyIDKey = @"_WKLocalAu
 - (void)setDelegate:(id<_WKWebAuthenticationPanelDelegate>)delegate
 {
     auto client = WTF::makeUniqueRef<WebKit::WebAuthenticationPanelClient>(self, delegate);
-    _client = makeWeakPtr(client.get());
+    _client = client.get();
     _panel->setClient(WTFMove(client));
 }
 

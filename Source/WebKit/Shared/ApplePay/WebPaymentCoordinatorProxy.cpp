@@ -82,7 +82,7 @@ void WebPaymentCoordinatorProxy::showPaymentUI(WebCore::PageIdentifier destinati
 {
     if (auto& coordinator = activePaymentCoordinatorProxy())
         coordinator->didReachFinalState();
-    activePaymentCoordinatorProxy() = makeWeakPtr(this);
+    activePaymentCoordinatorProxy() = *this;
 
     MESSAGE_CHECK(canBegin());
     MESSAGE_CHECK(!m_destinationID);

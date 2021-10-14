@@ -118,7 +118,7 @@ RefPtr<CDMInstance> RemoteCDM::createInstance()
     m_factory->gpuProcessConnection().connection().sendSync(Messages::RemoteCDMProxy::CreateInstance(), Messages::RemoteCDMProxy::CreateInstance::Reply(identifier, configuration), m_identifier);
     if (!identifier)
         return nullptr;
-    return RemoteCDMInstance::create(makeWeakPtr(m_factory.get()), WTFMove(identifier), WTFMove(configuration));
+    return RemoteCDMInstance::create(m_factory.get(), WTFMove(identifier), WTFMove(configuration));
 }
 
 void RemoteCDM::loadAndInitialize()

@@ -34,7 +34,7 @@ namespace WebKit {
 namespace PCM {
 
 ClientImpl::ClientImpl(NetworkSession& session, NetworkProcess& networkProcess)
-    : m_networkSession(makeWeakPtr(session))
+    : m_networkSession(session)
     , m_networkProcess(networkProcess) { }
 
 void ClientImpl::broadcastConsoleMessage(JSC::MessageLevel messageLevel, const String& message)

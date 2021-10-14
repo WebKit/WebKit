@@ -61,7 +61,7 @@ bool NetworkProcessProxy::XPCEventHandler::handleXPCEvent(xpc_object_t event) co
 }
 
 NetworkProcessProxy::XPCEventHandler::XPCEventHandler(const NetworkProcessProxy& networkProcess)
-    : m_networkProcess(makeWeakPtr(networkProcess))
+    : m_networkProcess(networkProcess)
 {
 }
 

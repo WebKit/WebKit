@@ -43,7 +43,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (instancetype)initWithCoordinator:(WebKit::AuthenticatorPresenterCoordinator&)coordinator
 {
     if ((self = [super init]))
-        _coordinator = makeWeakPtr(coordinator);
+        _coordinator = coordinator;
     return self;
 }
 

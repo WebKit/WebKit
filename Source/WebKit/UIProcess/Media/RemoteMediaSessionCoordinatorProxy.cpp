@@ -60,7 +60,7 @@ RemoteMediaSessionCoordinatorProxy::RemoteMediaSessionCoordinatorProxy(WebPagePr
     , m_logIdentifier(LoggerHelper::uniqueLogIdentifier())
 #endif
 {
-    m_privateCoordinator->setClient(makeWeakPtr(this));
+    m_privateCoordinator->setClient(*this);
     m_webPageProxy.process().addMessageReceiver(Messages::RemoteMediaSessionCoordinatorProxy::messageReceiverName(), m_webPageProxy.webPageID(), *this);
 }
 

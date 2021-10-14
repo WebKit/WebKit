@@ -852,7 +852,7 @@ void Connection::enableIncomingMessagesThrottling()
 #if ENABLE(IPC_TESTING_API)
 void Connection::addMessageObserver(const MessageObserver& observer)
 {
-    m_messageObservers.append(makeWeakPtr(observer));
+    m_messageObservers.append(observer);
 }
 #endif
 

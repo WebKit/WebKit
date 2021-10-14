@@ -130,7 +130,7 @@ void MutationObserver::disconnect()
 void MutationObserver::observationStarted(MutationObserverRegistration& registration)
 {
     ASSERT(!m_registrations.contains(registration));
-    m_registrations.add(&registration);
+    m_registrations.add(registration);
 }
 
 void MutationObserver::observationEnded(MutationObserverRegistration& registration)

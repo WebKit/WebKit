@@ -49,7 +49,7 @@ std::unique_ptr<SampleBufferDisplayLayer> SampleBufferDisplayLayer::create(Sampl
 
 SampleBufferDisplayLayer::SampleBufferDisplayLayer(SampleBufferDisplayLayerManager& manager, WebCore::SampleBufferDisplayLayer::Client& client)
     : WebCore::SampleBufferDisplayLayer(client)
-    , m_manager(makeWeakPtr(manager))
+    , m_manager(manager)
     , m_connection(WebProcess::singleton().ensureGPUProcessConnection().connection())
     , m_identifier(SampleBufferDisplayLayerIdentifier::generate())
 {

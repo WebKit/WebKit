@@ -89,7 +89,7 @@ private:
 
 void AudioMediaStreamTrackRendererInternalUnitManager::add(Proxy& proxy)
 {
-    m_proxies.add(proxy.identifier(), makeWeakPtr(proxy));
+    m_proxies.add(proxy.identifier(), proxy);
 }
 
 void AudioMediaStreamTrackRendererInternalUnitManager::remove(Proxy& proxy)

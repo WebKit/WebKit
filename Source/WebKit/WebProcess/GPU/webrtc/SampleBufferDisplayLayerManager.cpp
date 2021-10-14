@@ -46,14 +46,14 @@ std::unique_ptr<WebCore::SampleBufferDisplayLayer> SampleBufferDisplayLayerManag
     if (!layer)
         return { };
 
-    m_layers.add(layer->identifier(), makeWeakPtr(*layer));
+    m_layers.add(layer->identifier(), *layer);
     return layer;
 }
 
 void SampleBufferDisplayLayerManager::addLayer(SampleBufferDisplayLayer& layer)
 {
     ASSERT(!m_layers.contains(layer.identifier()));
-    m_layers.add(layer.identifier(), makeWeakPtr(layer));
+    m_layers.add(layer.identifier(), layer);
 }
 
 void SampleBufferDisplayLayerManager::removeLayer(SampleBufferDisplayLayer& layer)

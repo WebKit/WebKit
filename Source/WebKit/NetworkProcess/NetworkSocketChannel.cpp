@@ -49,7 +49,7 @@ std::unique_ptr<NetworkSocketChannel> NetworkSocketChannel::create(NetworkConnec
 NetworkSocketChannel::NetworkSocketChannel(NetworkConnectionToWebProcess& connection, NetworkSession* session, const ResourceRequest& request, const String& protocol, WebSocketIdentifier identifier, WebPageProxyIdentifier webPageProxyID)
     : m_connectionToWebProcess(connection)
     , m_identifier(identifier)
-    , m_session(makeWeakPtr(session))
+    , m_session(session)
     , m_errorTimer(*this, &NetworkSocketChannel::sendDelayedError)
     , m_webPageProxyID(webPageProxyID)
 {

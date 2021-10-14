@@ -63,7 +63,7 @@ public:
 
     virtual ~Authenticator() = default;
 
-    void setObserver(Observer& observer) { m_observer = makeWeakPtr(observer); }
+    void setObserver(Observer& observer) { m_observer = observer; }
 
     // This operation is guaranteed to execute asynchronously.
     void handleRequest(const WebAuthenticationRequestData&);
