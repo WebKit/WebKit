@@ -1,3 +1,26 @@
+2021-10-14  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [webkitpy] The actual results reported for a flaky tests shouldn't include the expectation
+        https://bugs.webkit.org/show_bug.cgi?id=231241
+
+        Reviewed by Jonathan Bedard.
+
+        When a test is marked as flaky and fails the expectations on the
+        first run but passes on the second run (the retry) the current code
+        was adding the expectations to the actual results.
+        This is missleading and makes really hard to detect when a test stops
+        giving a specific expectation.
+
+        Instead of doing that report the actual results of the test on both runs.
+
+        * Scripts/webkitpy/layout_tests/models/test_run_results.py:
+        (TestRunResults.__init__):
+        (TestRunResults.add):
+        (TestRunResults.merge):
+        (summarize_results):
+        * Scripts/webkitpy/layout_tests/views/buildbot_results.py:
+        (BuildBotPrinter.print_unexpected_results):
+
 2021-10-14  Myles C. Maxfield  <mmaxfield@apple.com>
 
         All the SDKVariant.xcconfig files should match

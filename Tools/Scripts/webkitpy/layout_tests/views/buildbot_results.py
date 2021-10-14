@@ -146,9 +146,7 @@ class BuildBotPrinter(object):
                 for test in tests:
                     result = resultsjsonparser.result_for_test(summarized_results['tests'], test)
                     actual = result['actual'].split(" ")
-                    expected = result['expected'].split(" ")
-                    # FIXME: clean this up once the old syntax is gone
-                    new_expectations_list = [TestExpectationParser._inverted_expectation_tokens[exp] for exp in list(set(actual) | set(expected))]
+                    new_expectations_list = [TestExpectationParser._inverted_expectation_tokens[exp] for exp in list(set(actual))]
                     self._print("  %s [ %s ]" % (test, " ".join(new_expectations_list)))
                 self._print("")
             self._print("")

@@ -55,6 +55,7 @@ class TestRunResults(object):
         self.tests_by_timeline = {}
         self.results_by_name = {}  # Map of test name to the last result for the test.
         self.all_results = []  # All results from a run, including every iteration of every test.
+        self.expected_results_by_name = {}
         self.unexpected_results_by_name = {}
         self.failures_by_name = {}
         self.total_failures = 0
@@ -79,6 +80,7 @@ class TestRunResults(object):
             self.total_failures += 1
             self.failures_by_name[test_result.test_name] = test_result.failures
         if expected:
+            self.expected_results_by_name[test_result.test_name] = test_result
             self.expected += 1
             if test_result.type == test_expectations.SKIP:
                 self.expected_skips += 1
@@ -158,6 +160,7 @@ class TestRunResults(object):
         self.tests_by_timeline = merge_dict_sets(self.tests_by_timeline, test_run_results.tests_by_timeline)
         self.results_by_name.update(test_run_results.results_by_name)
         self.all_results += test_run_results.all_results
+        self.expected_results_by_name.update(test_run_results.expected_results_by_name)
         self.unexpected_results_by_name.update(test_run_results.unexpected_results_by_name)
         self.failures_by_name.update(test_run_results.failures_by_name)
         self.total_failures += test_run_results.total_failures
@@ -296,11 +299,7 @@ def summarize_results(port_obj, expectations_by_type, initial_results, retry_res
                 num_missing += 1
                 test_dict['report'] = 'MISSING'
         elif test_name in initial_results.unexpected_results_by_name:
-            if retry_results and test_name not in retry_results.unexpected_results_by_name:
-                actual.extend(expectations.model().get_expectations_string(test_name).split(" "))
-                num_flaky += 1
-                test_dict['report'] = 'FLAKY'
-            elif retry_results:
+            if retry_results and test_name in retry_results.unexpected_results_by_name:
                 retry_result_type = retry_results.unexpected_results_by_name[test_name].type
                 if result_type != retry_result_type:
                     if enabled_pixel_tests_in_retry and result_type == test_expectations.TEXT and (retry_result_type == test_expectations.IMAGE_PLUS_TEXT or retry_result_type == test_expectations.MISSING):
@@ -315,6 +314,10 @@ def summarize_results(port_obj, expectations_by_type, initial_results, retry_res
                 else:
                     num_regressions += 1
                     test_dict['report'] = 'REGRESSION'
+            elif retry_results and test_name in retry_results.expected_results_by_name:
+                actual.append(keywords[retry_results.expected_results_by_name[test_name].type])
+                num_flaky += 1
+                test_dict['report'] = 'FLAKY'
             else:
                 num_regressions += 1
                 test_dict['report'] = 'REGRESSION'
