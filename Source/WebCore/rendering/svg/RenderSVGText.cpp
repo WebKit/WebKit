@@ -89,34 +89,6 @@ const RenderSVGText* RenderSVGText::locateRenderSVGTextAncestor(const RenderObje
     return lineageOfType<RenderSVGText>(start).first();
 }
 
-LayoutRect RenderSVGText::clippedOverflowRect(const RenderLayerModelObject* repaintContainer, VisibleRectContext) const
-{
-    return SVGRenderSupport::clippedOverflowRectForRepaint(*this, repaintContainer);
-}
-
-std::optional<LayoutRect> RenderSVGText::computeVisibleRectInContainer(const LayoutRect& rect, const RenderLayerModelObject* container, VisibleRectContext context) const
-{
-    std::optional<FloatRect> adjustedRect = computeFloatVisibleRectInContainer(rect, container, context);
-    if (adjustedRect)
-        return enclosingLayoutRect(*adjustedRect);
-    return std::nullopt;
-}
-
-std::optional<FloatRect> RenderSVGText::computeFloatVisibleRectInContainer(const FloatRect& rect, const RenderLayerModelObject* container, VisibleRectContext context) const
-{
-    return SVGRenderSupport::computeFloatVisibleRectInContainer(*this, rect, container, context);
-}
-
-void RenderSVGText::mapLocalToContainer(const RenderLayerModelObject* ancestorContainer, TransformState& transformState, OptionSet<MapCoordinatesMode>, bool* wasFixed) const
-{
-    SVGRenderSupport::mapLocalToContainer(*this, ancestorContainer, transformState, wasFixed);
-}
-
-const RenderObject* RenderSVGText::pushMappingToContainer(const RenderLayerModelObject* ancestorToStopAt, RenderGeometryMap& geometryMap) const
-{
-    return SVGRenderSupport::pushMappingToContainer(*this, ancestorToStopAt, geometryMap);
-}
-
 static inline void collectLayoutAttributes(RenderObject* text, Vector<SVGTextLayoutAttributes*>& attributes)
 {
     for (RenderObject* descendant = text; descendant; descendant = descendant->nextInPreOrder(text)) {
@@ -449,12 +421,6 @@ bool RenderSVGText::nodeAtFloatPoint(const HitTestRequest& request, HitTestResul
         }
     }
 
-    return false;
-}
-
-bool RenderSVGText::nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation&, const LayoutPoint&, HitTestAction)
-{
-    ASSERT_NOT_REACHED();
     return false;
 }
 
