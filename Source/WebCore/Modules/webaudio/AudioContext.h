@@ -65,7 +65,7 @@ public:
 
     double baseLatency();
 
-    AudioTimestamp getOutputTimestamp(DOMWindow&);
+    AudioTimestamp getOutputTimestamp();
 
 #if ENABLE(VIDEO)
     ExceptionOr<Ref<MediaElementAudioSourceNode>> createMediaElementSource(HTMLMediaElement&);

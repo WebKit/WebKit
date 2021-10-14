@@ -176,18 +176,17 @@ double AudioContext::baseLatency()
     return static_cast<double>(destination().framesPerBuffer()) / sampleRate();
 }
 
-AudioTimestamp AudioContext::getOutputTimestamp(DOMWindow& window)
+AudioTimestamp AudioContext::getOutputTimestamp()
 {
-    auto& performance = window.performance();
-
     auto position = outputPosition();
 
     // The timestamp of what is currently being played (contextTime) cannot be
     // later than what is being rendered. (currentTime)
     position.position = Seconds { std::min(position.position.seconds(), currentTime()) };
 
-    auto performanceTime = performance.relativeTimeFromTimeOriginInReducedResolution(position.timestamp);
-    performanceTime = std::max(performanceTime, 0.0);
+    DOMHighResTimeStamp performanceTime = 0.0;
+    if (document() && document()->domWindow())
+        performanceTime = std::max(document()->domWindow()->performance().relativeTimeFromTimeOriginInReducedResolution(position.timestamp), 0.0);
 
     return { position.position.seconds(), performanceTime };
 }
