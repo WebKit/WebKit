@@ -1,3 +1,19 @@
+2021-10-14  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r284190. rdar://problem/84277677
+
+    Unreviewed build fix with latest SDKs.
+    
+    * Source/third_party/libwebm/webm_parser/src/master_parser.h:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@284190 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-10-14  Chris Dumez  <cdumez@apple.com>
+
+            Unreviewed build fix with latest SDKs.
+
+            * Source/third_party/libwebm/webm_parser/src/master_parser.h:
+
 2021-10-06  Youenn Fablet  <youenn@apple.com>
 
         ObjectiveC WebRTC frame buffers are autoreleased late, especially on Debug builds
