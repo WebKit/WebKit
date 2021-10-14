@@ -417,9 +417,11 @@ DialogElementEnabled:
   webcoreBinding: RuntimeEnabledFeatures
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
-      default: false
+      default: true
+    WebCore:
+      default: true
 
 # FIXME: Starting the preference name with "Disable" is inconsistent with most other preferences and should be changed.
 DisableMediaExperiencePIDInheritance:

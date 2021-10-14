@@ -1,3 +1,12 @@
+2021-10-14  Tim Nguyen  <ntim@apple.com>
+
+        Enable <dialog> element by default
+        https://bugs.webkit.org/show_bug.cgi?id=231307
+
+        Reviewed by Brent Fulgham.
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml:
+
 2021-10-14  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WPE] Bump GLib version to 2.58.3
