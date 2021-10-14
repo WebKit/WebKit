@@ -1,3 +1,21 @@
+2021-10-14  Peng Liu  <peng.liu6@apple.com>
+
+        Promote WKPreferences._needsSiteSpecificQuirks to API
+        https://bugs.webkit.org/show_bug.cgi?id=230721
+        <rdar://83255206>
+
+        Reviewed by Jer Noble.
+
+        Add a new API `WKPreferences.isSetSiteSpecificQuirksModeEnabled`.
+
+        No new tests. Updated API tests to use the new API.
+
+        * UIProcess/API/Cocoa/WKPreferences.h:
+        * UIProcess/API/Cocoa/WKPreferences.mm:
+        (-[WKPreferences isSiteSpecificQuirksModeEnabled]):
+        (-[WKPreferences setSiteSpecificQuirksModeEnabled:]):
+        * UIProcess/API/Cocoa/WKPreferencesPrivate.h:
+
 2021-10-14  Alex Christensen  <achristensen@webkit.org>
 
         Remove Variant.h

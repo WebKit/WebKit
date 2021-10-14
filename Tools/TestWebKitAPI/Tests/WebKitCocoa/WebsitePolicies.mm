@@ -958,7 +958,7 @@ TEST(WebpagePreferences, WebsitePoliciesAutoplayQuirksAsyncPolicyDelegate)
     configuration.get().allowsInlineMediaPlayback = YES;
     configuration.get()._inlineMediaPlaybackRequiresPlaysInlineAttribute = NO;
 #endif
-    [configuration preferences]._needsSiteSpecificQuirks = YES;
+    [configuration preferences].siteSpecificQuirksModeEnabled = YES;
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
     auto delegate = adoptNS([[AsyncAutoplayPoliciesDelegate alloc] init]);
@@ -1336,7 +1336,7 @@ TEST(WebpagePreferences, WebsitePoliciesCustomUserAgentAsSiteSpecificQuirksDisab
         EXPECT_TRUE([userAgentString containsString:@"(KHTML, like Gecko)"]);
     }];
     [configuration setURLSchemeHandler:schemeHandler.get() forURLScheme:@"test"];
-    [configuration preferences]._needsSiteSpecificQuirks = NO;
+    [configuration preferences].siteSpecificQuirksModeEnabled = NO;
 
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
@@ -1373,7 +1373,7 @@ TEST(WebpagePreferences, WebsitePoliciesCustomUserAgentAsSiteSpecificQuirks)
         EXPECT_STREQ("Foo Site Specific Quriks UserAgent", [[task.request valueForHTTPHeaderField:@"User-Agent"] UTF8String]);
     }];
     [configuration setURLSchemeHandler:schemeHandler.get() forURLScheme:@"test"];
-    [configuration preferences]._needsSiteSpecificQuirks = YES;
+    [configuration preferences].siteSpecificQuirksModeEnabled = YES;
 
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 

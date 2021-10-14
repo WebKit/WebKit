@@ -153,6 +153,16 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     _preferences->setTextInteractionEnabled(textInteractionEnabled);
 }
 
+- (BOOL)isSiteSpecificQuirksModeEnabled
+{
+    return _preferences->needsSiteSpecificQuirks();
+}
+
+- (void)setSiteSpecificQuirksModeEnabled:(BOOL)enabled
+{
+    _preferences->setNeedsSiteSpecificQuirks(enabled);
+}
+
 #pragma mark OS X-specific methods
 
 #if PLATFORM(MAC)
