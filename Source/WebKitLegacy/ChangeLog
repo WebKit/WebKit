@@ -1,5 +1,12 @@
 2021-10-14  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, fix up previous commit.
+
+        * Storage/InProcessIDBServer.cpp:
+        (storageQuotaManagerSpaceRequester):
+
+2021-10-14  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, very tiny partial revert of r284142 to address assertion hits on the bots.
 
         * Storage/InProcessIDBServer.cpp:

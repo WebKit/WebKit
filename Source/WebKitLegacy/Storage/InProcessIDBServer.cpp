@@ -83,7 +83,7 @@ StorageQuotaManager* InProcessIDBServer::quotaManager(const ClientOrigin& origin
 
 static inline IDBServer::IDBServer::StorageQuotaManagerSpaceRequester storageQuotaManagerSpaceRequester(InProcessIDBServer& server)
 {
-    return [server, weakServer = WeakPtr { server }](const ClientOrigin& origin, uint64_t spaceRequested) mutable {
+    return [server = &server, weakServer = WeakPtr { server }](const ClientOrigin& origin, uint64_t spaceRequested) mutable {
         auto* storageQuotaManager = weakServer ? server->quotaManager(origin) : nullptr;
         return storageQuotaManager ? storageQuotaManager->requestSpaceOnBackgroundThread(spaceRequested) : StorageQuotaManager::Decision::Deny;
     };
