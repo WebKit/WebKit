@@ -99,6 +99,8 @@ public:
     {
     }
 
+    AppHighlightRangeData& operator=(const AppHighlightRangeData&) = default;
+
     const String& identifier() const { return m_identifier; }
     const String& text() const { return m_text; }
     const NodePath& startContainer() const { return m_startContainer; }
