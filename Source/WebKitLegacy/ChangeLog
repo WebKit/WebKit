@@ -1,3 +1,10 @@
+2021-10-14  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, very tiny partial revert of r284142 to address assertion hits on the bots.
+
+        * Storage/InProcessIDBServer.cpp:
+        (storageQuotaManagerSpaceRequester):
+
 2021-10-13  Chris Dumez  <cdumez@apple.com>
 
         Drop makeWeakPtr() and use WeakPtr { } directly
