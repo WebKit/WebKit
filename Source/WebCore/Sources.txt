@@ -1686,7 +1686,6 @@ page/FrameView.cpp
 page/FrameViewLayoutContext.cpp
 page/History.cpp
 page/ImageOverlayController.cpp
-page/KeyboardScroll.cpp
 page/IntersectionObserver.cpp
 page/IntersectionObserverEntry.cpp
 page/Location.cpp
@@ -1809,6 +1808,7 @@ platform/FileHandle.cpp
 platform/FileMonitor.cpp
 platform/FileStream.cpp
 platform/FrameRateMonitor.cpp
+platform/KeyboardScroll.cpp
 platform/KeyboardScrollingAnimator.cpp
 platform/LayoutUnit.cpp
 platform/LegacySchemeRegistry.cpp
