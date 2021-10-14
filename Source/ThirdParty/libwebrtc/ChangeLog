@@ -1,5 +1,11 @@
 2021-10-14  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, fix up r284190 build fix.
+
+        * Source/third_party/libwebm/webm_parser/src/master_parser.h:
+
+2021-10-14  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed build fix with latest SDKs.
 
         * Source/third_party/libwebm/webm_parser/src/master_parser.h:
