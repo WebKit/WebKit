@@ -548,6 +548,7 @@ op(wasm_throw_from_slow_path_trampoline, macro ()
     move wasmInstance, a2
     # Slow paths and the throwException macro store the exception code in the ArgumentCountIncludingThis slot
     loadi ArgumentCountIncludingThis + PayloadOffset[cfr], a3
+    storei 0, ArgumentCountIncludingThis + TagOffset[cfr]
     cCall4(_slow_path_wasm_throw_exception)
     jumpToException()
 end)
@@ -561,6 +562,7 @@ macro wasm_throw_from_fault_handler(instance)
     move constexpr Wasm::ExceptionType::OutOfBoundsMemoryAccess, a3
     move 0, a1
     move cfr, a0
+    storei 0, ArgumentCountIncludingThis + TagOffset[cfr]
     cCall4(_slow_path_wasm_throw_exception)
     jumpToException()
 end

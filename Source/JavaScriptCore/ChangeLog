@@ -1,3 +1,20 @@
+2021-10-14  Tadeu Zagallo  <tzagallo@apple.com>
+
+        Wasm LLInt should zero bytecodeIndex before throwing
+        https://bugs.webkit.org/show_bug.cgi?id=231688
+        <rdar://84207898>
+
+        Reviewed by Yusuke Suzuki.
+
+        After r283852, the unwinder can now ask WebAssembly frames for their bytecodeIndex.
+        We do write to the bytecodeIndex when throwing from the wasm `throw` opcode, but we
+        failed to write when trapping (e.g.  throwing an OOB or Unreachable). The value of
+        the bytecodeIndex in this is case is not interesting, since these exceptions can't be
+        caught from Wasm, all we need to know is ensure there isn't an invalid left-over
+        value in that stack slot, so we zero it.
+
+        * llint/WebAssembly.asm:
+
 2021-10-14  Myles C. Maxfield  <mmaxfield@apple.com>
 
         All the SDKVariant.xcconfig files should match
