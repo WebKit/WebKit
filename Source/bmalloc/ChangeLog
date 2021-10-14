@@ -1,3 +1,22 @@
+2021-10-14  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [libpas] Use `enum { ... }` instead of `static const size_t` for constant values used for array size
+        https://bugs.webkit.org/show_bug.cgi?id=231778
+
+        Reviewed by Chris Dumez.
+
+        Since libpas is written in C (not C++), we cannot use `static const size_t` value for array's size.
+        In C, it is not usable as a constant expression for array size. Use `enum` hack instead.
+
+        * libpas/src/libpas/pas_generic_large_free_heap.h:
+        (pas_generic_large_free_heap_try_allocate):
+        * libpas/src/libpas/pas_large_sharing_pool.c:
+        (pas_large_sharing_pool_allocate_and_commit):
+        * libpas/src/libpas/pas_segregated_view_allocator_inlines.h:
+        (pas_segregated_view_will_start_allocating):
+        * libpas/src/libpas/pas_simple_large_free_heap.c:
+        (merge):
+
 2021-10-14  Myles C. Maxfield  <mmaxfield@apple.com>
 
         All the SDKVariant.xcconfig files should match

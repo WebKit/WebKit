@@ -140,7 +140,7 @@ pas_segregated_view_will_start_allocating(pas_segregated_view view,
                     return NULL;
                 }
             } else {
-                static const size_t max_num_locks_held = 1;
+                enum { max_num_locks_held = 1 };
                 pas_lock* locks_held[max_num_locks_held];
                 size_t num_locks_held;
                 bool did_lock_lock;

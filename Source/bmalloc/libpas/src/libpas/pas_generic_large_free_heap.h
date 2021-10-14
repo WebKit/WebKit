@@ -387,7 +387,7 @@ pas_generic_large_free_heap_try_allocate(
             }
         }
     } else {
-        static const size_t max_num_additions = 2;
+        enum { max_num_additions = 2 };
         pas_large_free additions[max_num_additions];
         size_t num_additions = 0;
         

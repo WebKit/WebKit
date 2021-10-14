@@ -136,7 +136,7 @@ PAS_API uint64_t pas_simple_large_free_heap_num_merge_nodes_considered;
 static void merge(pas_simple_large_free_heap* heap, pas_large_free new_free,
                   pas_large_free_heap_config* config)
 {
-    static const size_t max_num_victims = 2;
+    enum { max_num_victims = 2 };
     
     size_t victim_indices[max_num_victims];
     size_t num_victims = 0;
