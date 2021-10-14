@@ -1,3 +1,13 @@
+2021-10-14  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] Bump GLib version to 2.58.3
+        https://bugs.webkit.org/show_bug.cgi?id=231726
+
+        Reviewed by Philippe Normand.
+
+        * Source/cmake/OptionsGTK.cmake:
+        * Source/cmake/OptionsWPE.cmake:
+
 2021-10-14  Enrique Ocaña González  <eocanha@igalia.com>
 
         [contributors.json] Add eocanha github account and canonicalize

@@ -26,15 +26,5 @@
 
 WTF_EXPORT_PRIVATE CString getCurrentExecutablePath();
 WTF_EXPORT_PRIVATE CString getCurrentExecutableName();
-WTF_EXPORT_PRIVATE CString enumToString(GType, guint value);
-
-// These might be added to glib in the future, but in the meantime they're defined here.
-#ifndef GULONG_TO_POINTER
-#define GULONG_TO_POINTER(ul) ((gpointer) (gulong) (ul))
-#endif
-
-#ifndef GPOINTER_TO_ULONG
-#define GPOINTER_TO_ULONG(p) ((gulong) (p))
-#endif
 
 #endif
