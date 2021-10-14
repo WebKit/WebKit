@@ -1,3 +1,20 @@
+2021-10-14  Tim Nguyen  <ntim@apple.com>
+
+        Import new <dialog> focus-related WPT
+        https://bugs.webkit.org/show_bug.cgi?id=231736
+
+        Reviewed by Youenn Fablet.
+
+        Upstream commit: https://github.com/web-platform-tests/wpt/commit/d6ef7143ef347dcedd680fafa3a7d91e77624e0f
+
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-focusing-steps-disconnected-expected.txt: Added.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-focusing-steps-disconnected.html: Added.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-focusing-steps-inert-expected.txt: Added.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-focusing-steps-inert.html: Added.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/focus-after-close-expected.txt:
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/focus-after-close.html:
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/w3c-import.log:
+
 2021-10-13  Tim Nguyen  <ntim@apple.com>
 
         Implement <dialog> focusing steps
