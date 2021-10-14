@@ -4321,10 +4321,11 @@ float EventHandler::scrollDistance(ScrollDirection direction, ScrollGranularity 
 void EventHandler::stopKeyboardScrolling()
 {
     Ref protectedFrame = m_frame;
-    FrameView* view = m_frame.view();
+    auto* view = m_frame.view();
+    if (!view)
+        return;
 
-    KeyboardScrollingAnimator* animator = view->scrollAnimator().keyboardScrollingAnimator();
-
+    auto* animator = view->scrollAnimator().keyboardScrollingAnimator();
     if (animator)
         animator->handleKeyUpEvent();
 }
@@ -4335,12 +4336,14 @@ bool EventHandler::startKeyboardScrolling(KeyboardEvent& event)
         return false;
 
     Ref protectedFrame = m_frame;
-    FrameView* view = m_frame.view();
+    auto* view = m_frame.view();
+    if (!view)
+        return false;
 
-    KeyboardScrollingAnimator* animator = view->scrollAnimator().keyboardScrollingAnimator();
-
-    if (animator)
-        return animator->beginKeyboardScrollGesture(event);
+    auto* animator = view->scrollAnimator().keyboardScrollingAnimator();
+    auto* platformEvent = event.underlyingPlatformEvent();
+    if (animator && platformEvent)
+        return animator->beginKeyboardScrollGesture(*platformEvent);
 
     return false;
 }

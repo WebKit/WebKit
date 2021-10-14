@@ -27,11 +27,22 @@
 #include "KeyboardScrollingAnimator.h"
 
 #include "EventNames.h"
+#include "PlatformKeyboardEvent.h"
 #include "ScrollTypes.h"
 #include "ScrollableArea.h"
 #include "WritingMode.h"
 
 namespace WebCore {
+
+enum class KeyboardScrollingKey : uint8_t {
+    LeftArrow,
+    RightArrow,
+    UpArrow,
+    DownArrow,
+    Space,
+    PageUp,
+    PageDown
+};
 
 KeyboardScrollingAnimator::KeyboardScrollingAnimator(ScrollAnimator& scrollAnimator, ScrollingEffectsController& scrollController)
     : m_scrollAnimator(scrollAnimator)
@@ -158,63 +169,68 @@ float KeyboardScrollingAnimator::scrollDistance(ScrollDirection direction, Scrol
     return 0;
 }
 
-std::optional<KeyboardScroll> KeyboardScrollingAnimator::keyboardScrollForKeyboardEvent(KeyboardEvent& event) const
+static std::optional<KeyboardScrollingKey> keyboardScrollingKeyFromEvent(const PlatformKeyboardEvent& event)
 {
+    auto identifier = event.keyIdentifier();
+    if (identifier == "Left")
+        return KeyboardScrollingKey::LeftArrow;
+    if (identifier == "Right")
+        return KeyboardScrollingKey::RightArrow;
+    if (identifier == "Up")
+        return KeyboardScrollingKey::UpArrow;
+    if (identifier == "Down")
+        return KeyboardScrollingKey::DownArrow;
+    if (identifier == "PageUp")
+        return KeyboardScrollingKey::PageUp;
+    if (identifier == "PageDown")
+        return KeyboardScrollingKey::PageDown;
+
+    if (event.text().characterStartingAt(0) == ' ')
+        return KeyboardScrollingKey::Space;
+
+    return { };
+}
+
+std::optional<KeyboardScroll> KeyboardScrollingAnimator::keyboardScrollForKeyboardEvent(const PlatformKeyboardEvent& event) const
+{
+    auto key = keyboardScrollingKeyFromEvent(event);
+    if (!key)
+        return { };
+
     // FIXME (bug 227459): This logic does not account for writing-mode.
-
-    enum class Key : uint8_t { LeftArrow, RightArrow, UpArrow, DownArrow, Space, PageUp, PageDown };
-
-    Key key;
-    if (event.keyIdentifier() == "Left")
-        key = Key::LeftArrow;
-    else if (event.keyIdentifier() == "Right")
-        key = Key::RightArrow;
-    else if (event.keyIdentifier() == "Up")
-        key = Key::UpArrow;
-    else if (event.keyIdentifier() == "Down")
-        key = Key::DownArrow;
-    else if (event.charCode() == ' ')
-        key = Key::Space;
-    else if (event.keyIdentifier() == "PageUp")
-        key = Key::PageUp;
-    else if (event.keyIdentifier() == "PageDown")
-        key = Key::PageDown;
-    else
-        return std::nullopt;
-
     auto granularity = [&] {
-        switch (key) {
-        case Key::LeftArrow:
-        case Key::RightArrow:
+        switch (key.value()) {
+        case KeyboardScrollingKey::LeftArrow:
+        case KeyboardScrollingKey::RightArrow:
             return event.altKey() ? ScrollGranularity::ScrollByPage : ScrollGranularity::ScrollByLine;
-        case Key::UpArrow:
-        case Key::DownArrow:
+        case KeyboardScrollingKey::UpArrow:
+        case KeyboardScrollingKey::DownArrow:
             if (event.metaKey())
                 return ScrollGranularity::ScrollByDocument;
             if (event.altKey())
                 return ScrollGranularity::ScrollByPage;
             return ScrollGranularity::ScrollByLine;
-        case Key::Space:
-        case Key::PageUp:
-        case Key::PageDown:
+        case KeyboardScrollingKey::Space:
+        case KeyboardScrollingKey::PageUp:
+        case KeyboardScrollingKey::PageDown:
             return ScrollGranularity::ScrollByPage;
         };
         RELEASE_ASSERT_NOT_REACHED();
     }();
 
     auto direction = [&] {
-        switch (key) {
-        case Key::LeftArrow:
+        switch (key.value()) {
+        case KeyboardScrollingKey::LeftArrow:
             return ScrollDirection::ScrollLeft;
-        case Key::RightArrow:
+        case KeyboardScrollingKey::RightArrow:
             return ScrollDirection::ScrollRight;
-        case Key::UpArrow:
-        case Key::PageUp:
+        case KeyboardScrollingKey::UpArrow:
+        case KeyboardScrollingKey::PageUp:
             return ScrollDirection::ScrollUp;
-        case Key::DownArrow:
-        case Key::PageDown:
+        case KeyboardScrollingKey::DownArrow:
+        case KeyboardScrollingKey::PageDown:
             return ScrollDirection::ScrollDown;
-        case Key::Space:
+        case KeyboardScrollingKey::Space:
             return event.shiftKey() ? ScrollDirection::ScrollUp : ScrollDirection::ScrollDown;
         }
         RELEASE_ASSERT_NOT_REACHED();
@@ -236,16 +252,16 @@ std::optional<KeyboardScroll> KeyboardScrollingAnimator::keyboardScrollForKeyboa
     return scroll;
 }
 
-bool KeyboardScrollingAnimator::beginKeyboardScrollGesture(KeyboardEvent& event)
+bool KeyboardScrollingAnimator::beginKeyboardScrollGesture(const PlatformKeyboardEvent& event)
 {
     auto scroll = keyboardScrollForKeyboardEvent(event);
-
     if (!scroll)
         return false;
 
     m_currentKeyboardScroll = scroll;
 
-    if (!(event.type() == eventNames().keydownEvent || event.type() == eventNames().keypressEvent))
+    // PlatformEvent::Char is a "keypress" event.
+    if (!(event.type() == PlatformEvent::RawKeyDown || event.type() == PlatformEvent::Char))
         return false;
 
     if (m_scrollTriggeringKeyIsPressed)
