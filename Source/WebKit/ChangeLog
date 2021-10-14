@@ -1,3 +1,13 @@
+2021-10-14  Per Arne Vollan  <pvollan@apple.com>
+
+        [macOS] Crash on WP startup
+        https://bugs.webkit.org/show_bug.cgi?id=231773
+        <rdar://84218823>
+
+        Unreviewed partial revert of https://trac.webkit.org/r283375.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2021-10-14  Alex Christensen  <achristensen@webkit.org>
 
         Share IPC communication code between webpushd and adattributiond
