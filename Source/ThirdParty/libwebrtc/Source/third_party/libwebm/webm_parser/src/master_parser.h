@@ -149,7 +149,7 @@ class MasterParser : public ElementParser {
 
   using StdHashId = std::hash<std::underlying_type<Id>::type>;
 
-#if defined(WEBRTC_WEBKIT_BUILD) && defined(__clang__)
+#if defined(__clang__)
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
 #endif
@@ -166,7 +166,7 @@ class MasterParser : public ElementParser {
     }
   };
 
-#if defined(WEBRTC_WEBKIT_BUILD) && defined(__clang__)
+#if defined(__clang__)
 #pragma clang diagnostic pop
 #endif
 

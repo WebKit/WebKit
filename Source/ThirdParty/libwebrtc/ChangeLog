@@ -1,5 +1,21 @@
 2021-10-14  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r284192. rdar://problem/84277677
+
+    Unreviewed, fix up r284190 build fix.
+    
+    * Source/third_party/libwebm/webm_parser/src/master_parser.h:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@284192 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-10-14  Chris Dumez  <cdumez@apple.com>
+
+            Unreviewed, fix up r284190 build fix.
+
+            * Source/third_party/libwebm/webm_parser/src/master_parser.h:
+
+2021-10-14  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r284190. rdar://problem/84277677
 
     Unreviewed build fix with latest SDKs.
