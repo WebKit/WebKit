@@ -1,5 +1,49 @@
 2021-10-14  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r284187. rdar://problem/84277677
+
+    Unreviewed build fix with recent SDKs.
+    
+    Use std::invoke_result<> instead of std::result_of<>, as it was deprecated in C++17.
+    
+    Source/JavaScriptCore:
+    
+    * runtime/JSCJSValue.h:
+    * runtime/JSCJSValueInlines.h:
+    (JSC::JSValue::getPropertySlot const):
+    * runtime/JSObject.h:
+    * runtime/JSObjectInlines.h:
+    (JSC::JSObject::getPropertySlot const):
+    * runtime/ParseInt.h:
+    (JSC::toStringView):
+    
+    Source/WTF:
+    
+    * wtf/IndexedContainerIterator.h:
+    (WTF::IndexedContainerIterator::operator* const):
+    (WTF::IndexedContainerIterator::operator*): Deleted.
+    * wtf/Vector.h:
+    * wtf/WeakHashSet.h:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@284187 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-10-14  Chris Dumez  <cdumez@apple.com>
+
+            Unreviewed build fix with recent SDKs.
+
+            Use std::invoke_result<> instead of std::result_of<>, as it was deprecated in C++17.
+
+            * runtime/JSCJSValue.h:
+            * runtime/JSCJSValueInlines.h:
+            (JSC::JSValue::getPropertySlot const):
+            * runtime/JSObject.h:
+            * runtime/JSObjectInlines.h:
+            (JSC::JSObject::getPropertySlot const):
+            * runtime/ParseInt.h:
+            (JSC::toStringView):
+
+2021-10-14  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r284145. rdar://problem/84266646
 
     Unreviewed, speculative build fix with new clang

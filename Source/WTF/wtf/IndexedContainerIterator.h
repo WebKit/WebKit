@@ -45,7 +45,7 @@ public:
     {
     }
 
-    auto operator*() -> typename std::result_of<decltype(&Container::at)(const Container, unsigned)>::type
+    auto operator*() -> typename std::invoke_result<decltype(&Container::at), const Container, unsigned>::type
     {
         return m_container->at(m_index);
     }
