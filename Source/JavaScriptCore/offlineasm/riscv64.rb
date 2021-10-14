@@ -214,7 +214,7 @@ def riscv64EmitLoad(operands, type, mask)
             $asm.puts "#{instruction} #{operands[1].riscv64Operand}, #{operands[0].riscv64Operand}"
         end
     when [BaseIndex, RegisterID]
-        operands[0].riscv64Load(RISCV64ScratchRegister.x31, RISCV64ScratchRegister.x30)
+        operands[0].riscv64Load(RISCV64ScratchRegister.x31)
         $asm.puts "#{instruction} #{operands[1].riscv64Operand}, 0(x31)"
     else
         riscv64RaiseMismatchedOperands(operands)
@@ -241,7 +241,7 @@ def riscv64EmitStore(operands, type)
             $asm.puts "#{instruction} #{operands[0].riscv64Operand}, #{operands[1].riscv64Operand}"
         end
     when [RegisterID, BaseIndex]
-        operands[1].riscv64Load(RISCV64ScratchRegister.x31, RISCV64ScratchRegister.x30)
+        operands[1].riscv64Load(RISCV64ScratchRegister.x31)
         $asm.puts "#{instruction} #{operands[0].riscv64Operand}, 0(x31)"
     when [Immediate, Address]
         $asm.puts "li x30, #{operands[0].riscv64Operand}"
@@ -252,7 +252,7 @@ def riscv64EmitStore(operands, type)
             $asm.puts "#{instruction} x30, #{operands[1].riscv64Operand}"
         end
     when [Immediate, BaseIndex]
-        operands[1].riscv64Load(RISCV64ScratchRegister.x31, RISCV64ScratchRegister.x30)
+        operands[1].riscv64Load(RISCV64ScratchRegister.x31)
         $asm.puts "li x30, #{operands[0].riscv64Operand}"
         $asm.puts "#{instruction} x30, 0(x31)"
     else
@@ -400,7 +400,7 @@ def riscv64EmitConditionalBranch(operands, size, condition)
         end
         $asm.puts "#{instruction} x30, x31, #{operands[2].asmLabel}"
     when [RegisterID, BaseIndex, LocalLabelReference]
-        operands[1].riscv64Load(RISCV64ScratchRegister.x31, RISCV64ScratchRegister.x30)
+        operands[1].riscv64Load(RISCV64ScratchRegister.x31)
         $asm.puts "#{riscv64LoadInstruction(size)} x31, 0(x31)"
         signExtendForSize(operands[0], 'x30', size)
         $asm.puts "#{instruction} x30, x31, #{operands[2].asmLabel}"
@@ -507,7 +507,7 @@ def riscv64EmitConditionalBranchForTest(operands, size, test)
         signExtendForSize('x31', size)
         $asm.puts "#{bInstruction} x31, #{operands[2].asmLabel}"
     when [BaseIndex, LocalLabelReference]
-        operands[0].riscv64Load(RISCV64ScratchRegister.x31, RISCV64ScratchRegister.x30)
+        operands[0].riscv64Load(RISCV64ScratchRegister.x31)
         $asm.puts "#{loadInstruction} x31, 0(x31)"
         $asm.puts "#{bInstruction} x31, #{operands[1].asmLabel}"
     else
@@ -874,6 +874,17 @@ def riscv64EmitLogicalOperation(operands, size, operation)
         else
             $asm.puts "#{storeInstruction} x30, #{operands[1].riscv64Operand}"
         end
+    when [Immediate, BaseIndex]
+        operands[1].riscv64Load(RISCV64ScratchRegister.x31)
+        $asm.puts "#{loadInstruction} x30, 0(x31)"
+        if operands[0].riscv64RequiresLoad
+            $asm.puts "li x31, #{operands[0].riscv64Operand}"
+            $asm.puts "#{instruction} x30, x30, x31"
+            operands[1].riscv64Load(RISCV64ScratchRegister.x31)
+        else
+            $asm.puts "#{instruction}i x30, x30, #{operands[0].riscv64Operand}"
+        end
+        $asm.puts "#{storeInstruction} x30, 0(x31)"
     else
         riscv64RaiseMismatchedOperands(operands)
     end
@@ -967,7 +978,7 @@ def riscv64EmitFPLoad(operands, loadInstruction)
             $asm.puts "#{loadInstruction} #{operands[1].riscv64Operand}, #{operands[0].riscv64Operand}"
         end
     when [BaseIndex, FPRegisterID]
-        operands[0].riscv64Load(RISCV64ScratchRegister.x31, RISCV64ScratchRegister.x30)
+        operands[0].riscv64Load(RISCV64ScratchRegister.x31)
         $asm.puts "#{loadInstruction} #{operands[1].riscv64Operand}, 0(x31)"
     else
         riscv64RaiseMismatchedOperands(operands)
@@ -984,7 +995,7 @@ def riscv64EmitFPStore(operands, storeInstruction)
             $asm.puts "#{storeInstruction} #{operands[0].riscv64Operand}, #{operands[1].riscv64Operand}"
         end
     when [FPRegisterID, BaseIndex]
-        operands[1].riscv64Load(RISCV64ScratchRegister.x31, RISCV64ScratchRegister.x30)
+        operands[1].riscv64Load(RISCV64ScratchRegister.x31)
         $asm.puts "#{storeInstruction} #{operands[0].riscv64Operand}, 0(x31)"
     else
         riscv64RaiseMismatchedOperands(operands)
@@ -1434,14 +1445,18 @@ class Address
 end
 
 class BaseIndex
-    def riscv64Load(target, scratch)
+    def riscv64Load(target)
         case riscv64OperandTypes([base, index])
         when [RegisterID, RegisterID]
-            $asm.puts "slli #{target.riscv64Operand}, #{index.riscv64Operand}, #{scaleShift}"
-            $asm.puts "add #{target.riscv64Operand}, #{base.riscv64Operand}, #{target.riscv64Operand}"
             if offset.value != 0
-                $asm.puts "li #{scratch.riscv64Operand}, #{offset.value}"
-                $asm.puts "add #{target.riscv64Operand}, #{target.riscv64Operand}, #{scratch.riscv64Operand}"
+                $asm.puts "li #{target.riscv64Operand}, #{offset.value >> scaleShift}"
+                $asm.puts "add #{target.riscv64Operand}, #{target.riscv64Operand}, #{index.riscv64Operand}"
+                $asm.puts "slli #{target.riscv64Operand}, #{target.riscv64Operand}, #{scaleShift}"
+                $asm.puts "ori #{target.riscv64Operand}, #{target.riscv64Operand}, #{offset.value & ((1 << scaleShift) - 1)}"
+                $asm.puts "add #{target.riscv64Operand}, #{base.riscv64Operand}, #{target.riscv64Operand}"
+            else
+                $asm.puts "slli #{target.riscv64Operand}, #{index.riscv64Operand}, #{scaleShift}"
+                $asm.puts "add #{target.riscv64Operand}, #{base.riscv64Operand}, #{target.riscv64Operand}"
             end
         else
             riscv64RaiseMismatchedOperands([base, index])
@@ -1730,7 +1745,7 @@ class Instruction
             when [RegisterID, Immediate]
                 $asm.puts "jr #{operands[0].riscv64Operand}"
             when [BaseIndex, Immediate, Immediate]
-                operands[0].riscv64Load(RISCV64ScratchRegister.x31, RISCV64ScratchRegister.x30)
+                operands[0].riscv64Load(RISCV64ScratchRegister.x31)
                 $asm.puts "ld x31, 0(x31)"
                 $asm.puts "jr x31"
             when [Address, Immediate]
@@ -1859,7 +1874,7 @@ class Instruction
                     $asm.puts "addi #{operands[1].riscv64Operand}, #{operands[0].base.riscv64Operand}, #{operands[0].offset.value}"
                 end
             when [BaseIndex, RegisterID]
-                operands[0].riscv64Load(RISCV64ScratchRegister.x31, RISCV64ScratchRegister.x30)
+                operands[0].riscv64Load(RISCV64ScratchRegister.x31)
                 $asm.puts "mv #{operands[1].riscv64Operand}, x31"
             when [LabelReference, RegisterID]
                 $asm.puts "lla #{operands[1].riscv64Operand}, #{operands[0].asmLabel}"
