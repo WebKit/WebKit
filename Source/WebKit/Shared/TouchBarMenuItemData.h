@@ -50,7 +50,6 @@ enum ItemType {
 struct TouchBarMenuItemData {
     explicit TouchBarMenuItemData() = default;
     explicit TouchBarMenuItemData(const WebCore::HTMLMenuItemElement&);
-    explicit TouchBarMenuItemData(const TouchBarMenuItemData&) = default;
     
     void encode(IPC::Encoder&) const;
     static std::optional<TouchBarMenuItemData> decode(IPC::Decoder&);

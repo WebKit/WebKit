@@ -1,3 +1,16 @@
+2021-10-14  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Fix build failures with newer clang
+        https://bugs.webkit.org/show_bug.cgi?id=231783
+
+        Reviewed by Chris Dumez.
+
+        Since this is Objective-C (not Objective-C++), we cannot use `static const uint32_t` value for array size.
+        Use enum hack instead.
+
+        * DumpRenderTree/mac/LayoutTestHelper.m:
+        (displayUUIDStrings):
+
 2021-10-14  Peng Liu  <peng.liu6@apple.com>
 
         Promote WKPreferences._needsSiteSpecificQuirks to API

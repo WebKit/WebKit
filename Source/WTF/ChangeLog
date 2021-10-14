@@ -1,3 +1,16 @@
+2021-10-14  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Fix build failures with newer clang
+        https://bugs.webkit.org/show_bug.cgi?id=231783
+
+        Reviewed by Chris Dumez.
+
+        In Identified case, we make copy constructor and assignment operator protected in IdentifiedBase to hide
+        the ability to copy Identified / ThreadSafeIdentified to be copied to IdentifiedBase. So, in the derived
+        classes, we should define both copy constructor and assignment operator.
+
+        * wtf/Identified.h:
+
 2021-10-14  Alex Christensen  <achristensen@webkit.org>
 
         Remove Variant.h

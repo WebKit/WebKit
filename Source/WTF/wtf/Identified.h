@@ -61,6 +61,7 @@ protected:
     }
 
     Identified(const Identified&) = default;
+    Identified& operator=(const Identified&) = default;
 
     explicit Identified(uint64_t identifier)
         : IdentifiedBase<uint64_t, T>(identifier)
@@ -84,6 +85,7 @@ protected:
     }
 
     ThreadSafeIdentified(const ThreadSafeIdentified&) = default;
+    ThreadSafeIdentified& operator=(const ThreadSafeIdentified&) = default;
 
     explicit ThreadSafeIdentified(uint64_t identifier)
         : IdentifiedBase<uint64_t, T>(identifier)

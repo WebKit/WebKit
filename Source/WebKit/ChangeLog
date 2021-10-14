@@ -1,3 +1,15 @@
+2021-10-14  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Fix build failures with newer clang
+        https://bugs.webkit.org/show_bug.cgi?id=231783
+
+        Reviewed by Chris Dumez.
+
+        We do not need to define copy constructor and assignment operator if we would like to use the default implementation.
+        The default copy constructor and assignment operator works well for TouchBarMenuItemData, so let's drop it.
+
+        * Shared/TouchBarMenuItemData.h:
+
 2021-10-14  Peng Liu  <peng.liu6@apple.com>
 
         Promote WKPreferences._needsSiteSpecificQuirks to API
