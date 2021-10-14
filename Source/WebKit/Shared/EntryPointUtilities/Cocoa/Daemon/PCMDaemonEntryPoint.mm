@@ -27,6 +27,7 @@
 #import "PCMDaemonEntryPoint.h"
 
 #import "DaemonDecoder.h"
+#import "DaemonUtilities.h"
 #import "PCMDaemonConnectionSet.h"
 #import "PrivateClickMeasurementConnection.h"
 #import "PrivateClickMeasurementManagerInterface.h"
@@ -73,40 +74,6 @@ static void connectionEventHandler(xpc_object_t request)
     decodeMessageAndSendToManager(Daemon::Connection(xpc_dictionary_get_remote_connection(request)), messageType, encodedMessage, replySender(messageType, request));
 }
 
-static void startListeningForMachServiceConnections(const char* serviceName)
-{
-    static NeverDestroyed<OSObjectPtr<xpc_connection_t>> listener = xpc_connection_create_mach_service(serviceName, dispatch_get_main_queue(), XPC_CONNECTION_MACH_SERVICE_LISTENER);
-    xpc_connection_set_event_handler(listener.get().get(), ^(xpc_object_t peer) {
-        if (xpc_get_type(peer) != XPC_TYPE_CONNECTION)
-            return;
-
-#if USE(APPLE_INTERNAL_SDK)
-        if (!WTF::hasEntitlement(peer, "com.apple.private.webkit.adattributiond")) {
-            NSLog(@"Connection attempted without required entitlement");
-            xpc_connection_cancel(peer);
-            return;
-        }
-#endif
-
-        xpc_connection_set_event_handler(peer, ^(xpc_object_t event) {
-            if (event == XPC_ERROR_CONNECTION_INVALID)
-                NSLog(@"Failed to start listening for connections to mach service %s, likely because it is not registered with launchd", serviceName);
-            if (event == XPC_ERROR_CONNECTION_INTERRUPTED) {
-                NSLog(@"Removing peer connection %p", peer);
-                PCM::DaemonConnectionSet::singleton().remove(peer);
-                return;
-            }
-            connectionEventHandler(event);
-        });
-        xpc_connection_set_target_queue(peer, dispatch_get_main_queue());
-        xpc_connection_activate(peer);
-
-        NSLog(@"Adding peer connection %p", peer);
-        PCM::DaemonConnectionSet::singleton().add(peer);
-    });
-    xpc_connection_activate(listener.get().get());
-}
-
 static void registerScheduledActivityHandler()
 {
     NSLog(@"Registering XPC activity");
@@ -131,6 +98,16 @@ static void enterSandbox()
 #endif
 }
 
+static void connectionAdded(xpc_connection_t connection)
+{
+    PCM::DaemonConnectionSet::singleton().add(connection);
+}
+
+static void connectionRemoved(xpc_connection_t connection)
+{
+    PCM::DaemonConnectionSet::singleton().remove(connection);
+}
+
 int PCMDaemonMain(int argc, const char** argv)
 {
     if (argc < 5 || strcmp(argv[1], "--machServiceName") || strcmp(argv[3], "--storageLocation")) {
@@ -143,7 +120,7 @@ int PCMDaemonMain(int argc, const char** argv)
 
     @autoreleasepool {
         enterSandbox();
-        startListeningForMachServiceConnections(machServiceName);
+        startListeningForMachServiceConnections(machServiceName, "com.apple.private.webkit.adattributiond", connectionAdded, connectionRemoved, connectionEventHandler);
         if (startActivity)
             registerScheduledActivityHandler();
         WTF::initializeMainThread();

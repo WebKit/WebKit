@@ -193,6 +193,8 @@ Shared/Cocoa/WKNSURLRequest.mm
 Shared/Cocoa/WKObject.mm
 Shared/Cocoa/WebPreferencesDefaultValuesCocoa.mm
 
+Shared/Daemon/DaemonUtilities.mm
+
 Shared/EntryPointUtilities/Cocoa/Daemon/PCMDaemonConnectionSet.mm
 Shared/EntryPointUtilities/Cocoa/Daemon/PCMDaemonEntryPoint.mm
 

@@ -1,3 +1,28 @@
+2021-10-14  Alex Christensen  <achristensen@webkit.org>
+
+        Share IPC communication code between webpushd and adattributiond
+        https://bugs.webkit.org/show_bug.cgi?id=231718
+
+        Reviewed by Brady Eidson.
+
+        * TestWebKitAPI/SourcesCocoa.txt:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/EventAttribution.mm:
+        (TestWebKitAPI::testDaemonPList):
+        (TestWebKitAPI::currentExecutableLocation): Deleted.
+        (TestWebKitAPI::currentExecutableDirectory): Deleted.
+        * TestWebKitAPI/Tests/WebKitCocoa/WebPushDaemon.mm: Added.
+        (TestWebKitAPI::testWebPushDaemonLocation):
+        (TestWebKitAPI::testWebPushDaemonPList):
+        (TestWebKitAPI::setUpTestWebPushD):
+        (TestWebKitAPI::cleanUpTestWebPushD):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/cocoa/DaemonTestUtilities.h: Renamed from Source/WebKit/Shared/EntryPointUtilities/Cocoa/Daemon/webpushd.c.
+        * TestWebKitAPI/cocoa/DaemonTestUtilities.mm: Added.
+        (TestWebKitAPI::currentExecutableLocation):
+        (TestWebKitAPI::currentExecutableDirectory):
+        (TestWebKitAPI::registerPlistWithLaunchD):
+
 2021-10-14  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [JS IPC] Make it possible to establish a stream connection using the JS IPC testing API

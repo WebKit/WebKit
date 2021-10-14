@@ -24,6 +24,7 @@
 EditingTestHarness.mm
 WKWebViewConfigurationExtras.mm
 
+cocoa/DaemonTestUtilities.mm
 cocoa/PlatformUtilitiesCocoa.mm
 cocoa/TestCocoa.mm
 cocoa/TestDownloadDelegate.mm
@@ -40,3 +41,4 @@ Tests/WebKitCocoa/HSTS.mm
 Tests/WebKitCocoa/TestAwakener.mm
 Tests/WebKitCocoa/TLSDeprecation.mm
 Tests/WebKitCocoa/WebSocket.mm
+Tests/WebKitCocoa/WebPushDaemon.mm

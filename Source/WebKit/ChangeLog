@@ -1,3 +1,37 @@
+2021-10-14  Alex Christensen  <achristensen@webkit.org>
+
+        Share IPC communication code between webpushd and adattributiond
+        https://bugs.webkit.org/show_bug.cgi?id=231718
+
+        Reviewed by Brady Eidson.
+
+        This shares enough code from adattributiond to implement a communication protocol for webpushd.
+        Right now the protocol only has one action, EchoTwice, which echos a WTF::String twice as its reply,
+        but that is just a testable behavior that will be soon replaced by more complicated and useful behaviors.
+
+        * Configurations/webpushd.xcconfig:
+        * NetworkProcess/PrivateClickMeasurement/cocoa/PrivateClickMeasurementXPCUtilities.mm:
+        (WebKit::PCM::addVersionAndEncodedMessageToDictionary):
+        * Shared/Daemon/DaemonUtilities.h: Copied from Source/WebKit/Shared/EntryPointUtilities/Cocoa/Daemon/webpushd.c.
+        * Shared/Daemon/DaemonUtilities.mm: Added.
+        (WebKit::startListeningForMachServiceConnections):
+        (WebKit::vectorToXPCData):
+        * Shared/EntryPointUtilities/Cocoa/Daemon/PCMDaemonEntryPoint.mm:
+        (WebKit::connectionAdded):
+        (WebKit::connectionRemoved):
+        (WebKit::PCMDaemonMain):
+        (WebKit::startListeningForMachServiceConnections): Deleted.
+        * SourcesCocoa.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+        * webpushd/WebPushDaemonMain.mm: Added.
+        (WebPushD::CompletionHandler<void):
+        (WebPushD::echoTwice):
+        (WebPushD::decodeMessageAndSendReply):
+        (WebPushD::connectionEventHandler):
+        (WebPushD::connectionAdded):
+        (WebPushD::connectionRemoved):
+        (main):
+
 2021-10-14  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [JS IPC] Make it possible to establish a stream connection using the JS IPC testing API

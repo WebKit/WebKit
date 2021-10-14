@@ -23,24 +23,15 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "PrivateClickMeasurementXPCUtilities.h"
+#pragma once
 
-#import "DaemonUtilities.h"
-#import "PrivateClickMeasurementManagerInterface.h"
-#import <wtf/OSObjectPtr.h>
+#include <wtf/RetainPtr.h>
+#include <wtf/Vector.h>
+#include <wtf/spi/darwin/XPCSPI.h>
 
 namespace WebKit {
 
-namespace PCM {
-
-void addVersionAndEncodedMessageToDictionary(Vector<uint8_t>&& message, xpc_object_t dictionary)
-{
-    ASSERT(xpc_get_type(dictionary) == XPC_TYPE_DICTIONARY);
-    xpc_dictionary_set_uint64(dictionary, PCM::protocolVersionKey, PCM::protocolVersionValue);
-    xpc_dictionary_set_value(dictionary, PCM::protocolEncodedMessageKey, vectorToXPCData(WTFMove(message)).get());
-}
-
-} // namespace PCM
+void startListeningForMachServiceConnections(const char* serviceName, const char* entitlement, void(*connectionAdded)(xpc_connection_t), void(*connectionRemoved)(xpc_connection_t), void(*eventHandler)(xpc_object_t));
+RetainPtr<xpc_object_t> vectorToXPCData(Vector<uint8_t>&&);
 
 } // namespace WebKit

@@ -23,10 +23,22 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <stdio.h>
+#pragma once
 
-int main(int argc, const char** argv)
-{
-    // FIXME: Do more things here.
-    printf("webpushd is executing\n");
-}
+#import <wtf/RetainPtr.h>
+#import <wtf/spi/darwin/XPCSPI.h>
+
+@class NSDictionary;
+@class NSURL;
+
+namespace TestWebKitAPI {
+
+RetainPtr<NSURL> currentExecutableDirectory();
+
+#if HAVE(OS_LAUNCHD_JOB)
+void registerPlistWithLaunchD(RetainPtr<xpc_object_t>&&);
+#else
+void registerPlistWithLaunchD(RetainPtr<NSDictionary>&&, NSURL *tempDir);
+#endif
+
+} // namespace TestWebKitAPI

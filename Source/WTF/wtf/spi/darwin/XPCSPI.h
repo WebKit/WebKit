@@ -194,6 +194,8 @@ void xpc_dictionary_set_bool(xpc_object_t, const char* key, bool value);
 void xpc_dictionary_set_fd(xpc_object_t, const char* key, int fd);
 void xpc_dictionary_set_string(xpc_object_t, const char* key, const char* string);
 void xpc_dictionary_set_uint64(xpc_object_t, const char* key, uint64_t value);
+void xpc_dictionary_set_data(xpc_object_t, const char *key, const void *bytes,
+    size_t length);
 void xpc_dictionary_set_value(xpc_object_t, const char* key, xpc_object_t value);
 xpc_type_t xpc_get_type(xpc_object_t);
 const char* xpc_type_get_name(xpc_type_t);

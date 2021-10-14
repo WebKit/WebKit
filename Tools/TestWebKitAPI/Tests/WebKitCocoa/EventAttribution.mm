@@ -25,6 +25,7 @@
 
 #import "config.h"
 
+#import "DaemonTestUtilities.h"
 #import "HTTPServer.h"
 #import "PlatformUtilities.h"
 #import "Test.h"
@@ -43,8 +44,6 @@
 #import <WebKit/WKWebsiteDataStorePrivate.h>
 #import <WebKit/_WKInspector.h>
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
-#import <mach-o/dyld.h>
-#import <wtf/OSObjectPtr.h>
 #import <wtf/spi/darwin/XPCSPI.h>
 
 #if HAVE(RSA_BSSA)
@@ -381,23 +380,6 @@ TEST(PrivateClickMeasurement, DatabaseLocation)
 // FIXME: Get this working in the iOS simulator.
 #if PLATFORM(MAC)
 
-static RetainPtr<NSURL> currentExecutableLocation()
-{
-    uint32_t size { 0 };
-    _NSGetExecutablePath(nullptr, &size);
-    Vector<char> buffer;
-    buffer.resize(size + 1);
-    _NSGetExecutablePath(buffer.data(), &size);
-    buffer[size] = '\0';
-    auto pathString = adoptNS([[NSString alloc] initWithUTF8String:buffer.data()]);
-    return adoptNS([[NSURL alloc] initFileURLWithPath:pathString.get() isDirectory:NO]);
-}
-
-static RetainPtr<NSURL> currentExecutableDirectory()
-{
-    return [currentExecutableLocation() URLByDeletingLastPathComponent];
-}
-
 static RetainPtr<NSURL> testPCMDaemonLocation()
 {
     return [currentExecutableDirectory() URLByAppendingPathComponent:@"adattributiond" isDirectory:NO];
@@ -405,26 +387,26 @@ static RetainPtr<NSURL> testPCMDaemonLocation()
 
 #if HAVE(OS_LAUNCHD_JOB)
 
-static OSObjectPtr<xpc_object_t> testDaemonPList(NSURL *storageLocation)
+static RetainPtr<xpc_object_t> testDaemonPList(NSURL *storageLocation)
 {
-    auto plist = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
+    auto plist = adoptNS(xpc_dictionary_create(nullptr, nullptr, 0));
     xpc_dictionary_set_string(plist.get(), "_ManagedBy", "TestWebKitAPI");
     xpc_dictionary_set_string(plist.get(), "Label", "org.webkit.pcmtestdaemon");
     xpc_dictionary_set_bool(plist.get(), "LaunchOnlyOnce", true);
     xpc_dictionary_set_string(plist.get(), "StandardErrorPath", [storageLocation URLByAppendingPathComponent:@"daemon_stderr"].path.fileSystemRepresentation);
 
     {
-        auto environmentVariables = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
+        auto environmentVariables = adoptNS(xpc_dictionary_create(nullptr, nullptr, 0));
         xpc_dictionary_set_string(environmentVariables.get(), "DYLD_FRAMEWORK_PATH", currentExecutableDirectory().get().fileSystemRepresentation);
         xpc_dictionary_set_value(plist.get(), "EnvironmentVariables", environmentVariables.get());
     }
     {
-        auto machServices = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
+        auto machServices = adoptNS(xpc_dictionary_create(nullptr, nullptr, 0));
         xpc_dictionary_set_bool(machServices.get(), "org.webkit.pcmtestdaemon.service", true);
         xpc_dictionary_set_value(plist.get(), "MachServices", machServices.get());
     }
     {
-        auto programArguments = adoptOSObject(xpc_array_create(nullptr, 0));
+        auto programArguments = adoptNS(xpc_array_create(nullptr, 0));
         auto executableLocation = testPCMDaemonLocation();
         xpc_array_set_string(programArguments.get(), XPC_ARRAY_APPEND, executableLocation.get().fileSystemRepresentation);
         xpc_array_set_string(programArguments.get(), XPC_ARRAY_APPEND, "--machServiceName");
@@ -436,7 +418,7 @@ static OSObjectPtr<xpc_object_t> testDaemonPList(NSURL *storageLocation)
     return plist;
 }
 
-#else
+#else // HAVE(OS_LAUNCHD_JOB)
 
 static RetainPtr<NSDictionary> testDaemonPList(NSURL *storageLocation)
 {
@@ -456,7 +438,7 @@ static RetainPtr<NSDictionary> testDaemonPList(NSURL *storageLocation)
     };
 }
 
-#endif
+#endif // HAVE(OS_LAUNCHD_JOB)
 
 static std::pair<NSURL *, WKWebViewConfiguration *> setUpDaemon(WKWebViewConfiguration *viewConfiguration)
 {
@@ -471,20 +453,10 @@ static std::pair<NSURL *, WKWebViewConfiguration *> setUpDaemon(WKWebViewConfigu
 
     auto plist = testDaemonPList(tempDir);
 #if HAVE(OS_LAUNCHD_JOB)
-    auto launchDJob = adoptNS([[OSLaunchdJob alloc] initWithPlist:plist.get()]);
-    [launchDJob submit:&error];
+    registerPlistWithLaunchD(WTFMove(plist));
 #else
-    NSURL *plistLocation = [tempDir URLByAppendingPathComponent:@"DaemonInfo.plist"];
-    BOOL success = [fileManager createDirectoryAtURL:tempDir withIntermediateDirectories:YES attributes:nil error:&error];
-    EXPECT_TRUE(success);
-    EXPECT_NULL(error);
-    success = [plist writeToURL:plistLocation error:&error];
-    EXPECT_TRUE(success);
-    system([NSString stringWithFormat:@"launchctl unload %@ 2> /dev/null", plistLocation.path].fileSystemRepresentation);
-    system([NSString stringWithFormat:@"launchctl load %@", plistLocation.path].fileSystemRepresentation);
+    registerPlistWithLaunchD(WTFMove(plist), tempDir);
 #endif
-    EXPECT_NULL(error);
-
     auto dataStoreConfiguration = adoptNS([_WKWebsiteDataStoreConfiguration new]);
     dataStoreConfiguration.get().pcmMachServiceName = @"org.webkit.pcmtestdaemon.service";
     viewConfiguration.websiteDataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:dataStoreConfiguration.get()]).get();
