@@ -1,3 +1,14 @@
+2021-10-14  Timothy Hatcher  <timothy@apple.com>
+
+        Null check the context in -[WKWebProcessPlugInFrame jsContextForServiceWorkerWorld:]
+        https://bugs.webkit.org/show_bug.cgi?id=231758
+
+        Reviewed by Chris Dumez.
+
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInFrame.mm:
+        (-[WKWebProcessPlugInFrame jsContextForServiceWorkerWorld:]):
+        _frame->jsContextForServiceWorkerWorld() can return nullptr, so null check before using the result.
+
 2021-10-14  Myles C. Maxfield  <mmaxfield@apple.com>
 
         All the SDKVariant.xcconfig files should match

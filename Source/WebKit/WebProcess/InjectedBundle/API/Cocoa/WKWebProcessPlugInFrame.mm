@@ -73,7 +73,9 @@
 
 - (JSContext *)jsContextForServiceWorkerWorld:(WKWebProcessPlugInScriptWorld *)world
 {
-    return [JSContext contextWithJSGlobalContextRef:_frame->jsContextForServiceWorkerWorld(&[world _scriptWorld])];
+    if (auto context = _frame->jsContextForServiceWorkerWorld(&[world _scriptWorld]))
+        return [JSContext contextWithJSGlobalContextRef:context];
+    return nil;
 }
 
 - (WKWebProcessPlugInHitTestResult *)hitTest:(CGPoint)point
