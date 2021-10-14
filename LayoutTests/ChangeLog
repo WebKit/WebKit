@@ -1,3 +1,16 @@
+2021-10-13  Patrick Angle  <pangle@apple.com>
+
+        HTTP method in web inspector network tab is not what WebKit actually sent after a redirect from POST to GET
+        https://bugs.webkit.org/show_bug.cgi?id=222558
+
+        Reviewed by Michael Catanzaro.
+
+        Test that redirect requests and responses have the appropriate method and status code and the correct number of
+        redirect records were created.
+
+        * http/tests/inspector/network/resource-redirect-request-headers-expected.txt: Added.
+        * http/tests/inspector/network/resource-redirect-request-headers.html: Added.
+
 2021-10-13  Megan Gardner  <megan_gardner@apple.com>
 
         Remove adjustForIOSCaretWhenScrolling() code

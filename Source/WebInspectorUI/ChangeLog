@@ -1,3 +1,18 @@
+2021-10-13  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        HTTP method in web inspector network tab is not what WebKit actually sent after a redirect from POST to GET
+        https://bugs.webkit.org/show_bug.cgi?id=222558
+
+        Reviewed by Michael Catanzaro.
+
+        Test: http/tests/inspector/network/resource-redirect-request-headers.html
+
+        For redirects, use the previous request information combined with the new response information to create a
+        Redirect record.
+
+        * UserInterface/Models/Resource.js:
+        (WI.Resource.prototype.updateForRedirectResponse):
+
 2021-10-12  Alexey Proskuryakov  <ap@apple.com>
 
         Invoke build scripts with python3 explicitly
