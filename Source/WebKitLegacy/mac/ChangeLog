@@ -1,3 +1,22 @@
+2021-10-13  Megan Gardner  <megan_gardner@apple.com>
+
+        Remove adjustForIOSCaretWhenScrolling() code
+        https://bugs.webkit.org/show_bug.cgi?id=230454
+
+        Reviewed by Simon Fraser.
+
+        The "adjustForIOSCaretWhenScrolling" code attempted to over-scroll horizontally at the start
+        or end of an overflow scroll in order to make space for the caret to show. However, it was
+        wrong in various ways. It always did this, even for scrollers with no visible caret. It was
+        web-detectable that the scrollX for a scroller could end up as -2. And removing the code
+        doesn't result in obviously incorrect behavior.
+
+        * DOM/DOMHTML.mm:
+        (-[DOMHTMLElement setScrollXOffset:scrollYOffset:adjustForIOSCaret:]):
+        * WebView/WebFrame.mm:
+        (-[WebFrame _scrollDOMRangeToVisible:]):
+        (-[WebFrame _scrollDOMRangeToVisible:withInset:]):
+
 2021-10-13  Alex Christensen  <achristensen@webkit.org>
 
         Remove WTF::Variant and WTF::get

@@ -8,7 +8,7 @@ layer at (0,0) size 800x600
       RenderBR {BR} at (562,0) size 1x19
       RenderTextControl {INPUT} at (2,22) size 265x37 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
       RenderText {#text} at (0,0) size 0x0
-layer at (21,35) size 243x25 scrollX 270 scrollWidth 511
+layer at (21,35) size 243x25 scrollX 268 scrollWidth 511
   RenderBlock {DIV} at (11,5) size 243x25
     RenderText {#text} at (0,0) size 509x25
       text run at (0,0) width 509: "This tests that typing doesn't cut holes in the focus outline"

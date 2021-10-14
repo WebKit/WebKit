@@ -130,14 +130,9 @@
         return;
     auto* scrollableArea = layer->ensureLayerScrollableArea();
 
-    if (adjustForIOSCaret)
-        scrollableArea->setAdjustForIOSCaretWhenScrolling(true);
-
     auto scrollPositionChangeOptions = WebCore::ScrollPositionChangeOptions::createProgrammatic();
     scrollPositionChangeOptions.clamping = WebCore::ScrollClamping::Unclamped;
     scrollableArea->scrollToOffset(WebCore::ScrollOffset(x, y), scrollPositionChangeOptions);
-    if (adjustForIOSCaret)
-        scrollableArea->setAdjustForIOSCaretWhenScrolling(false);
 }
 
 - (void)absolutePosition:(int *)x :(int *)y :(int *)w :(int *)h

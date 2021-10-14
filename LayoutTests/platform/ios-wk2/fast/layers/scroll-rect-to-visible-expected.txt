@@ -19,22 +19,22 @@ layer at (0,0) size 800x664
       RenderBlock {P} at (0,56) size 784x20
         RenderText {#text} at (0,0) size 465x19
           text run at (0,0) width 465: "The letter A should be fully visible in each one of the eight boxes below."
-layer at (28,104) size 150x50 clip at (28,104) size 150x35 scrollX 52 scrollWidth 200
+layer at (28,104) size 150x50 clip at (28,104) size 150x35 scrollX 50 scrollWidth 200
   RenderBlock {DIV} at (20,96) size 150x50
     RenderBlock {DIV} at (0,0) size 200x20
       RenderText {#text} at (188,0) size 12x19
         text run at (188,0) width 12: "A"
-layer at (28,174) size 160x50 clip at (38,174) size 150x35 scrollX 52 scrollWidth 200
+layer at (28,174) size 160x50 clip at (38,174) size 150x35 scrollX 50 scrollWidth 200
   RenderBlock {DIV} at (20,166) size 160x50 [border: none (10px solid #000000)]
     RenderBlock {DIV} at (10,0) size 200x20
       RenderText {#text} at (188,0) size 12x19
         text run at (188,0) width 12: "A"
-layer at (28,244) size 160x50 clip at (28,244) size 150x35 scrollX 52 scrollWidth 200
+layer at (28,244) size 160x50 clip at (28,244) size 150x35 scrollX 50 scrollWidth 200
   RenderBlock {DIV} at (20,236) size 160x50 [border: none (10px solid #000000) none]
     RenderBlock {DIV} at (0,0) size 200x20
       RenderText {#text} at (188,0) size 12x19
         text run at (188,0) width 12: "A"
-layer at (28,314) size 150x50 clip at (28,314) size 135x35 scrollX 67 scrollWidth 200
+layer at (28,314) size 150x50 clip at (28,314) size 135x35 scrollX 65 scrollWidth 200
   RenderBlock {DIV} at (20,306) size 150x50
     RenderBlock {DIV} at (0,0) size 200x20
       RenderText {#text} at (188,0) size 12x19
