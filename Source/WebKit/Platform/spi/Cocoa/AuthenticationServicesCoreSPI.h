@@ -26,6 +26,7 @@
 #pragma once
 
 #if HAVE(UNIFIED_ASC_AUTH_UI)
+#import <AuthenticationServicesCore/AuthenticationServicesCore.h>
 #import <AuthenticationServicesCore/AuthenticationServicesCorePrivate.h>
 #elif HAVE(ASC_AUTH_UI)
 
