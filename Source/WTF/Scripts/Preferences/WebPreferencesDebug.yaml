@@ -32,6 +32,17 @@ AcceleratedDrawingEnabled:
     WebCore:
       default: false
 
+BuiltInNotifications:
+  type: bool
+  humanReadableName: "Built-In Web Notifications"
+  humanReadableDescription: "Enable built-in WebKit managed notifications"
+  webcoreBinding: none
+  condition: ENABLE(BUILT_IN_NOTIFICATIONS)
+  exposed: [ WebKit ]
+  defaultValue:
+    WebKit:
+      default: false
+      
 # FIXME: WebKit has an alternate name for this called 'ShowDebugBorders'. We should standardize on one name.
 CompositingBordersVisible:
   type: bool

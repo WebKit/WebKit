@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Igalia S.L.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,34 +25,36 @@
 
 #pragma once
 
+#if ENABLE(BUILT_IN_NOTIFICATIONS) && PLATFORM(COCOA)
+
+#include "APINotificationProvider.h"
 #include <wtf/Forward.h>
-#include <wtf/HashMap.h>
-#include <wtf/text/StringHash.h>
 
 namespace WebKit {
+
 class WebNotification;
 class WebNotificationManagerProxy;
 class WebPageProxy;
-}
 
-namespace API {
-
-class NotificationProvider {
+class WebNotificationProviderCocoa : public API::NotificationProvider {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    virtual ~NotificationProvider() = default;
+    static std::unique_ptr<WebNotificationProviderCocoa> createIfEnabled();
+    explicit WebNotificationProviderCocoa();
 
-    virtual void show(WebKit::WebPageProxy&, WebKit::WebNotification&) { }
-    virtual void cancel(WebKit::WebNotification&) { }
-    virtual void didDestroyNotification(WebKit::WebNotification&) { }
-    virtual void clearNotifications(const Vector<uint64_t>& /*notificationIDs*/) { }
+    void show(WebPageProxy&, WebNotification&) final;
+    void cancel(WebNotification&) final;
+    void didDestroyNotification(WebNotification&) final;
+    void clearNotifications(const Vector<uint64_t>& notificationIDs) final;
 
-    virtual void addNotificationManager(WebKit::WebNotificationManagerProxy&) { }
-    virtual void removeNotificationManager(WebKit::WebNotificationManagerProxy&) { }
+    void addNotificationManager(WebNotificationManagerProxy&) final;
+    void removeNotificationManager(WebNotificationManagerProxy&) final;
 
-    virtual bool isClientReplaceable() const { return true; }
+    bool isClientReplaceable() const final { return false; }
 
-    virtual HashMap<WTF::String, bool> notificationPermissions() { return HashMap<WTF::String, bool>(); };
+    HashMap<WTF::String, bool> notificationPermissions() final;
 };
 
-} // namespace API
+} // namespace WebKit
+
+#endif // ENABLE(BUILT_IN_NOTIFICATIONS) && PLATFORM(COCOA)

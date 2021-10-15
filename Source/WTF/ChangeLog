@@ -1,3 +1,13 @@
+2021-10-15  Brady Eidson  <beidson@apple.com>
+
+        WebKit Managed Notifications: Skeleton NotificationProvider.
+        <rdar://84275562> and https://bugs.webkit.org/show_bug.cgi?id=231786
+
+        Reviewed by Alex Christensen.
+
+        * Scripts/Preferences/WebPreferencesDebug.yaml:
+        * wtf/PlatformEnableCocoa.h:
+
 2021-10-15  Robin Morisset  <rmorisset@apple.com>
 
         Revert r284230, my last fixes to the watch build make it break tests

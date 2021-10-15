@@ -1,3 +1,14 @@
+2021-10-15  Brady Eidson  <beidson@apple.com>
+
+        WebKit Managed Notifications: Skeleton NotificationProvider.
+        <rdar://84275562> and https://bugs.webkit.org/show_bug.cgi?id=231786
+
+        Reviewed by Alex Christensen.
+
+        * WebCoreSupport/WebNotificationClient.mm:
+        (-[WebNotificationPolicyListener NO_RETURN_DUE_TO_ASSERT]):
+        (-[WebNotificationPolicyListener denyOnlyThisRequest]): Deleted.
+
 2021-10-14  Alex Christensen  <achristensen@webkit.org>
 
         Remove Variant.h

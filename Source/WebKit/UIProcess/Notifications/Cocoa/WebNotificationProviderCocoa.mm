@@ -23,35 +23,56 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if HAVE(UIKIT_WITH_MOUSE_SUPPORT) || ENABLE(HOVER_GESTURE_RECOGNIZER)
+#import "config.h"
+#import "WebNotificationProviderCocoa.h"
 
-#import <UIKit/UIKit.h>
-#import <WebCore/FloatPoint.h>
+#if ENABLE(BUILT_IN_NOTIFICATIONS)
+
+#import "WebPreferencesKeys.h"
 
 namespace WebKit {
-struct InteractionInformationAtPosition;
-struct InteractionInformationRequest;
+
+std::unique_ptr<WebNotificationProviderCocoa> WebNotificationProviderCocoa::createIfEnabled()
+{
+    // FIXME: Remove this defaults lookup and preferences key once feature development is complete. <rdar://84268742>
+    if ([[NSUserDefaults standardUserDefaults] boolForKey:static_cast<NSString *>(WebPreferencesKey::builtInNotificationsKey())])
+        return WTF::makeUnique<WebNotificationProviderCocoa>();
+    return nullptr;
 }
 
-@class WKHoverPlatter;
+WebNotificationProviderCocoa::WebNotificationProviderCocoa()
+{
+}
 
-@protocol WKHoverPlatterDelegate
+void WebNotificationProviderCocoa::show(WebPageProxy&, WebNotification&)
+{
+}
 
-@required
-- (void)positionInformationForHoverPlatter:(WKHoverPlatter *)hoverPlatter withRequest:(WebKit::InteractionInformationRequest&)request completionHandler:(void (^)(WebKit::InteractionInformationAtPosition))completionHandler;
+void WebNotificationProviderCocoa::cancel(WebNotification&)
+{
+}
 
-@end
+void WebNotificationProviderCocoa::didDestroyNotification(WebNotification&)
+{
+}
 
-@interface WKHoverPlatter : NSObject
+void WebNotificationProviderCocoa::clearNotifications(const Vector<uint64_t>&)
+{
+}
 
-- (instancetype)initWithView:(UIView *)view delegate:(id <WKHoverPlatterDelegate>)delegate;
+void WebNotificationProviderCocoa::addNotificationManager(WebNotificationManagerProxy&)
+{
+}
 
-- (void)dismissPlatterWithAnimation:(BOOL)withAnimation;
+void WebNotificationProviderCocoa::removeNotificationManager(WebNotificationManagerProxy&)
+{
+}
 
-- (void)invalidate;
+HashMap<WTF::String, bool> WebNotificationProviderCocoa::notificationPermissions()
+{
+    return HashMap<WTF::String, bool>();
+}
 
-@property (nonatomic, assign) WebCore::FloatPoint hoverPoint;
+} // namespace WebKit
 
-@end
-
-#endif // HAVE(UIKIT_WITH_MOUSE_SUPPORT) || ENABLE(HOVER_GESTURE_RECOGNIZER)
+#endif // ENABLE(BUILT_IN_NOTIFICATIONS)

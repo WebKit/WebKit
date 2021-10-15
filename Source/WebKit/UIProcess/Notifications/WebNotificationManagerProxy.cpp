@@ -35,6 +35,10 @@
 #include "WebProcessPool.h"
 #include "WebProcessProxy.h"
 
+#if PLATFORM(COCOA)
+#include "WebNotificationProviderCocoa.h"
+#endif
+
 namespace WebKit {
 using namespace WebCore;
 
@@ -56,12 +60,19 @@ Ref<WebNotificationManagerProxy> WebNotificationManagerProxy::create(WebProcessP
 
 WebNotificationManagerProxy::WebNotificationManagerProxy(WebProcessPool* processPool)
     : WebContextSupplement(processPool)
-    , m_provider(makeUnique<API::NotificationProvider>())
 {
+#if ENABLE(BUILT_IN_NOTIFICATIONS) && PLATFORM(COCOA)
+    m_provider = WebNotificationProviderCocoa::createIfEnabled();
+#endif
+    if (!m_provider)
+        m_provider = makeUnique<API::NotificationProvider>();
 }
 
 void WebNotificationManagerProxy::setProvider(std::unique_ptr<API::NotificationProvider>&& provider)
 {
+    if (m_provider && !m_provider->isClientReplaceable())
+        return;
+
     if (!provider) {
         m_provider = makeUnique<API::NotificationProvider>();
         return;
