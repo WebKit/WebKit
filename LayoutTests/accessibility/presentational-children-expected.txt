@@ -6,9 +6,9 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 button childrenCount: 0
 checkbox childrenCount: 0
 img childrenCount: 0
-math childrenCount: 0
 menuitemcheckbox childrenCount: 0
 menuitemradio childrenCount: 0
+meter childrenCount: 0
 option childrenCount: 0
 progressbar childrenCount: 0
 radio childrenCount: 0

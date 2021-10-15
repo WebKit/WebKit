@@ -1,5 +1,22 @@
 2021-10-15  Tyler Wilcock  <tyler_w@apple.com>
 
+        AX: role="math" elements are no longer considered to have presentational children
+        https://bugs.webkit.org/show_bug.cgi?id=231756
+
+        Reviewed by Chris Fleizach and Darin Adler.
+
+        * accessibility/math-has-non-presentational-children-expected.txt: Added.
+        * accessibility/math-has-non-presentational-children.html: Added.
+
+        * accessibility/presentational-children-expected.txt:
+        * accessibility/presentational-children.html:
+        Remove the role="math" element from this test because as of WAI-ARIA
+        1.2 role="math" is no longer considered to have presentational children.
+        Also change this test to ensure role="meter" elements are considered to 
+        have presentational children because that testcase was missing.
+
+2021-10-15  Tyler Wilcock  <tyler_w@apple.com>
+
         AX: WebKit should not expose redundant AXGroups with missing role when the label is the same as the contents
         https://bugs.webkit.org/show_bug.cgi?id=169924
 

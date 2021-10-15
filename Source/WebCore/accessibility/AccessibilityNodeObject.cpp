@@ -394,11 +394,6 @@ bool AccessibilityNodeObject::canHaveChildren() const
     case AccessibilityRole::Splitter:
     case AccessibilityRole::Meter:
         return false;
-    case AccessibilityRole::DocumentMath:
-#if ENABLE(MATHML)
-        return node()->isMathMLElement();
-#endif
-        return false;
     default:
         return true;
     }
