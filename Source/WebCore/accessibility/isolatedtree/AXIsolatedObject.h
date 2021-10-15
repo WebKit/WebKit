@@ -584,15 +584,17 @@ private:
     Path elementPath() const override { return pathAttributeValue(AXPropertyName::Path); };
     bool supportsPath() const override { return boolAttributeValue(AXPropertyName::SupportsPath); }
     TextIteratorBehaviors textIteratorBehaviorForTextRange() const override;
+
+    bool isWidget() const override { return boolAttributeValue(AXPropertyName::IsWidget); }
     Widget* widget() const override;
     PlatformWidget platformWidget() const override;
-    
+    Widget* widgetForAttachmentView() const override;
+
     HashMap<String, AXEditingStyleValueVariant> resolvedEditingStyles() const override;
 #if PLATFORM(COCOA)
     RemoteAXObjectRef remoteParentObject() const override;
     FloatRect convertRectToPlatformSpace(const FloatRect&, AccessibilityConversionSpace) const override;
 #endif
-    Widget* widgetForAttachmentView() const override;
     Page* page() const override;
     Document* document() const override;
     FrameView* documentFrameView() const override;

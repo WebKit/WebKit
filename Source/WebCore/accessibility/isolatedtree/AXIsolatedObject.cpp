@@ -418,6 +418,9 @@ void AXIsolatedObject::initializeAttributeData(AXCoreObject& object, bool isRoot
         setObjectVectorProperty(AXPropertyName::DocumentLinks, object.documentLinks());
     }
 
+    if (object.isWidget())
+        setProperty(AXPropertyName::IsWidget, true);
+
     initializePlatformProperties(object, isRoot);
 }
 
@@ -2032,9 +2035,8 @@ TextIteratorBehaviors AXIsolatedObject::textIteratorBehaviorForTextRange() const
 
 Widget* AXIsolatedObject::widget() const
 {
-    if (auto* object = associatedAXObject())
-        return object->widget();
-    return nullptr;
+    auto* object = associatedAXObject();
+    return object ? object->widget() : nullptr;
 }
 
 PlatformWidget AXIsolatedObject::platformWidget() const

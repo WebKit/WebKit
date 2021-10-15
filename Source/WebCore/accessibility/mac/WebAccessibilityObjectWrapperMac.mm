@@ -1660,15 +1660,23 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     return objectAttributes;
 }
 
-- (NSArray*)renderWidgetChildren
+- (NSArray *)renderWidgetChildren
 {
     auto* backingObject = self.axBackingObject;
-    if (!backingObject)
+    if (!backingObject || !backingObject->isWidget())
         return nil;
 
-    auto* widget = backingObject->widget();
-    if (widget && widget->accessibilityObject())
-        return @[widget->accessibilityObject()];
+    id child = Accessibility::retrieveAutoreleasedValueFromMainThread<id>([protectedSelf = retainPtr(self)] () -> RetainPtr<id> {
+        auto* backingObject = protectedSelf.get().axBackingObject;
+        if (!backingObject)
+            return nil;
+
+        auto* widget = backingObject->widget();
+        return widget ? widget->accessibilityObject() : nil;
+    });
+
+    if (child)
+        return @[child];
 
     ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     return [backingObject->platformWidget() accessibilityAttributeValue:NSAccessibilityChildrenAttribute];
@@ -2168,10 +2176,9 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         return parent->wrapper();
     }
 
-    if ([attributeName isEqualToString: NSAccessibilityChildrenAttribute] || [attributeName isEqualToString: NSAccessibilityChildrenInNavigationOrderAttribute]) {
+    if ([attributeName isEqualToString:NSAccessibilityChildrenAttribute] || [attributeName isEqualToString:NSAccessibilityChildrenInNavigationOrderAttribute]) {
         if (!self.childrenVectorSize) {
-            NSArray* children = [self renderWidgetChildren];
-            if (children != nil)
+            if (NSArray *children = [self renderWidgetChildren])
                 return children;
         }
 
@@ -3654,14 +3661,19 @@ enum class TextUnit {
     });
 }
 
-static BOOL isMatchingPlugin(AXCoreObject* axObject, const AccessibilitySearchCriteria& criteria)
+static bool isMatchingPlugin(AXCoreObject* axObject, const AccessibilitySearchCriteria& criteria)
 {
-    auto* widget = axObject->widget();
-    if (!is<PluginViewBase>(widget))
+    if (!axObject->isWidget())
         return false;
 
-    return criteria.searchKeys.contains(AccessibilitySearchKey::AnyType)
-        && (!criteria.visibleOnly || downcast<PluginViewBase>(widget)->isVisible());
+    return Accessibility::retrieveValueFromMainThread<bool>([&axObject, &criteria] () -> bool {
+        auto* widget = axObject->widget();
+        if (!is<PluginViewBase>(widget))
+            return false;
+
+        return criteria.searchKeys.contains(AccessibilitySearchKey::AnyType)
+            && (!criteria.visibleOnly || downcast<PluginViewBase>(widget)->isVisible());
+    });
 }
 
 ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN

@@ -2006,11 +2006,14 @@ Document* AccessibilityRenderObject::document() const
     return &m_renderer->document();
 }
 
+bool AccessibilityRenderObject::isWidget() const
+{
+    return widget();
+}
+
 Widget* AccessibilityRenderObject::widget() const
 {
-    if (!m_renderer || !is<RenderWidget>(*m_renderer))
-        return nullptr;
-    return downcast<RenderWidget>(*m_renderer).widget();
+    return is<RenderWidget>(m_renderer.get()) ? downcast<RenderWidget>(*m_renderer).widget() : nullptr;
 }
 
 AccessibilityObject* AccessibilityRenderObject::accessibilityParentForImageMap(HTMLMapElement* map) const

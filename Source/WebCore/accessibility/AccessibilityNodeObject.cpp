@@ -74,7 +74,6 @@
 #include "TextControlInnerElements.h"
 #include "UserGestureIndicator.h"
 #include "VisibleUnits.h"
-#include "Widget.h"
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/unicode/CharacterNames.h>

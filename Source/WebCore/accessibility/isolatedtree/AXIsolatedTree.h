@@ -228,6 +228,7 @@ enum class AXPropertyName : uint16_t {
     IsValueAutofillAvailable,
     IsVisible,
     IsVisited,
+    IsWidget,
     KeyShortcutsValue,
     Language,
     LayoutCount,

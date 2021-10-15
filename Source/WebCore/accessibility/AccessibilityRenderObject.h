@@ -50,8 +50,7 @@ class Node;
 class RenderTextControl;
 class RenderView;
 class VisibleSelection;
-class Widget;
-    
+
 class AccessibilityRenderObject : public AccessibilityNodeObject, public CanMakeWeakPtr<AccessibilityRenderObject> {
 public:
     static Ref<AccessibilityRenderObject> create(RenderObject*);
@@ -136,6 +135,8 @@ public:
     String selectedText() const override;
     String accessKey() const override;
     String actionVerb() const override;
+
+    bool isWidget() const override;
     Widget* widget() const override;
     Widget* widgetForAttachmentView() const override;
     AccessibilityChildrenVector documentLinks() override;

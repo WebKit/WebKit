@@ -442,13 +442,16 @@ public:
     String selectedText() const override { return String(); }
     String accessKey() const override { return nullAtom(); }
     String actionVerb() const override;
+
+    bool isWidget() const override { return false; }
     Widget* widget() const override { return nullptr; }
     PlatformWidget platformWidget() const override { return nullptr; }
+    Widget* widgetForAttachmentView() const override { return nullptr; }
+
 #if PLATFORM(COCOA)
     RemoteAXObjectRef remoteParentObject() const override;
     FloatRect convertRectToPlatformSpace(const FloatRect&, AccessibilityConversionSpace) const override;
 #endif
-    Widget* widgetForAttachmentView() const override { return nullptr; }
     Page* page() const override;
     Document* document() const override;
     FrameView* documentFrameView() const override;
