@@ -243,11 +243,31 @@ WI.WebInspectorExtensionController = class WebInspectorExtensionController exten
             return WI.WebInspectorExtension.ErrorCode.InvalidRequest;
         }
 
-        try {
-            return {result: InspectorFrontendHost.evaluateScriptInExtensionTab(iframe, scriptSource)};
-        } catch (error) {
-            return {error: error.message};
-        }
+        return new Promise((resolve, reject) => {
+            try {
+                // If `result` is a promise, then it came from a different frame and `instanceof Promise` won't work.
+                let result = InspectorFrontendHost.evaluateScriptInExtensionTab(iframe, scriptSource);
+                if (result?.then) {
+                    result.then((resolvedValue) => resolve({result: resolvedValue}), (errorValue) => reject({error: errorValue}));
+                    return;
+                }
+
+                resolve({result});
+            } catch (error) {
+                // Include more context in the stringification of the error.
+                const stackIndent = "  ";
+                let stackLines = (error.stack?.split("\n") || []).map((line) => `${stackIndent}${line}`);
+                let formattedMessage = [
+                    `Caught Exception: ${error.name}`,
+                    `at ${error.sourceURL || "(unknown)"}:${error.line || 0}:${error.column || 0}:`,
+                    error.message,
+                    "",
+                    "Backtrace:",
+                    ...stackLines,
+                ].join("\n");
+                reject({error: formattedMessage});
+            }
+        });
     }
 
     // Private

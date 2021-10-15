@@ -306,4 +306,92 @@ TEST(WKInspectorExtension, ExtensionTabIsPersistent)
     TestWebKitAPI::Util::run(&pendingCallbackWasCalled);
 }
 
+TEST(WKInspectorExtension, EvaluateScriptInExtensionTabCanReturnPromises)
+{
+    resetGlobalState();
+
+    auto webViewConfiguration = adoptNS([WKWebViewConfiguration new]);
+    webViewConfiguration.get().preferences._developerExtrasEnabled = YES;
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+    auto uiDelegate = adoptNS([UIDelegateForTestingInspectorExtension new]);
+
+    [webView setUIDelegate:uiDelegate.get()];
+    [webView loadHTMLString:@"<head><title>Test page to be inspected</title></head><body><p>Filler content</p></body>" baseURL:[NSURL URLWithString:@"http://example.com/"]];
+
+    [[webView _inspector] show];
+    TestWebKitAPI::Util::run(&didAttachLocalInspectorCalled);
+
+    auto extensionID = [NSUUID UUID].UUIDString;
+    auto extensionDisplayName = @"ThirdExtension";
+
+    // Register the test extension.
+    pendingCallbackWasCalled = false;
+    [[webView _inspector] registerExtensionWithID:extensionID displayName:extensionDisplayName completionHandler:^(NSError * _Nullable error, _WKInspectorExtension * _Nullable extension) {
+        EXPECT_NULL(error);
+        EXPECT_NOT_NULL(extension);
+        sharedInspectorExtension = extension;
+
+        pendingCallbackWasCalled = true;
+    }];
+    TestWebKitAPI::Util::run(&pendingCallbackWasCalled);
+
+    auto extensionDelegate = adoptNS([InspectorExtensionDelegateForTestingInspectorExtension new]);
+    [sharedInspectorExtension setDelegate:extensionDelegate.get()];
+
+    // Create and show an extension tab.
+    auto iconURL = [NSURL URLWithString:@"test-resource://ThirdExtension/InspectorExtension-TabIcon-30x30.png"];
+    auto sourceURL = [NSURL URLWithString:@"test-resource://ThirdExtension/InspectorExtension-basic-tab.html"];
+
+    pendingCallbackWasCalled = false;
+    [sharedInspectorExtension createTabWithName:@"ThirdExtension-Tab" tabIconURL:iconURL sourceURL:sourceURL completionHandler:^(NSError * _Nullable error, NSString * _Nullable extensionTabIdentifier) {
+        EXPECT_NULL(error);
+        EXPECT_NOT_NULL(extensionTabIdentifier);
+        sharedExtensionTabIdentifier = extensionTabIdentifier;
+
+        pendingCallbackWasCalled = true;
+    }];
+    TestWebKitAPI::Util::run(&pendingCallbackWasCalled);
+
+    pendingCallbackWasCalled = false;
+    didShowExtensionTabWasCalled = false;
+    [[webView _inspector] showExtensionTabWithIdentifier:sharedExtensionTabIdentifier.get() completionHandler:^(NSError * _Nullable error) {
+        EXPECT_NULL(error);
+
+        pendingCallbackWasCalled = true;
+    }];
+    TestWebKitAPI::Util::run(&pendingCallbackWasCalled);
+    TestWebKitAPI::Util::run(&didShowExtensionTabWasCalled);
+
+    auto secretString = @"Open Sesame";
+    auto scriptSource = [NSString stringWithFormat:@"Promise.resolve(\"%@\")", secretString];
+
+    pendingCallbackWasCalled = false;
+    [sharedInspectorExtension _evaluateScript:scriptSource inExtensionTabWithIdentifier:sharedExtensionTabIdentifier.get() completionHandler:^(NSError * _Nullable error, NSDictionary * _Nullable result) {
+        EXPECT_NULL(error);
+        EXPECT_NOT_NULL(result);
+        EXPECT_NS_EQUAL(result, secretString);
+
+        pendingCallbackWasCalled = true;
+    }];
+    TestWebKitAPI::Util::run(&pendingCallbackWasCalled);
+
+    pendingCallbackWasCalled = false;
+    [sharedInspectorExtension _evaluateScript:@"(((" inExtensionTabWithIdentifier:sharedExtensionTabIdentifier.get() completionHandler:^(NSError * _Nullable error, NSDictionary * _Nullable result) {
+        EXPECT_NOT_NULL(error);
+        EXPECT_NULL(result);
+
+        pendingCallbackWasCalled = true;
+    }];
+    TestWebKitAPI::Util::run(&pendingCallbackWasCalled);
+
+    // Unregister the test extension.
+    pendingCallbackWasCalled = false;
+    [[webView _inspector] unregisterExtension:sharedInspectorExtension.get() completionHandler:^(NSError * _Nullable error) {
+        EXPECT_NULL(error);
+
+        pendingCallbackWasCalled = true;
+    }];
+    TestWebKitAPI::Util::run(&pendingCallbackWasCalled);
+}
+
 #endif // ENABLE(INSPECTOR_EXTENSIONS)

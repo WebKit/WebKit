@@ -245,6 +245,8 @@ void WebInspectorUIExtensionController::evaluateScriptForExtension(const Inspect
             completionHandler({ }, std::nullopt, Inspector::ExtensionError::ContextDestroyed);
             return;
         }
+        
+        JSC::JSLockHolder lock(frontendGlobalObject);
 
         if (auto parsedError = weakThis->parseExtensionErrorFromEvaluationResult(result)) {
             auto exceptionDetails = result.value().error();
@@ -399,7 +401,7 @@ void WebInspectorUIExtensionController::evaluateScriptInExtensionTab(const Inspe
         // Expected result is either an ErrorString or {result: <any>} or {error: string}.
         auto objectResult = weakThis->unwrapEvaluationResultAsObject(result);
         if (!objectResult) {
-            LOG(Inspector, "Unexpected non-object value returned from InspectorFrontendAPI.createTabForExtension().");
+            LOG(Inspector, "Unexpected non-object value returned from InspectorFrontendAPI.evaluateScriptInExtensionTab().");
             completionHandler({ }, std::nullopt, Inspector::ExtensionError::InternalError);
             return;
         }

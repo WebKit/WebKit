@@ -176,7 +176,9 @@ void InspectorFrontendAPIDispatcher::evaluateOrQueueExpression(const String& exp
         optionalResultHandler(makeUnexpected(EvaluationError::ContextDestroyed));
         return;
     }
-        
+    
+    JSC::JSLockHolder lock(globalObject);
+    
     auto& vm = globalObject->vm();
     auto* castedPromise = JSC::jsDynamicCast<JSC::JSPromise*>(vm, result.value());
     if (!castedPromise) {

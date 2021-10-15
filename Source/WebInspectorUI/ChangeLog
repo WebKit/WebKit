@@ -1,3 +1,26 @@
+2021-10-15  BJ Burg  <bburg@apple.com>
+
+        [Cocoa] Web Inspector: handle Promise objects returned from evaluateScriptInExtensionTab
+        https://bugs.webkit.org/show_bug.cgi?id=231709
+        <rdar://problem/84224179>
+
+        Reviewed by Timothy Hatcher.
+
+        This patch improves the handling of promises and exceptions that come from
+        InspectorFrontendHost.evaluateScriptInExtensionTab().
+
+        For promises, wait for the returned promise to settle before fulfilling our returned value.
+        For errors, perform a better stringification of the Error instance. The is needed because
+        the default toString implementation leaves out most of the relevant details of the error.
+
+        * UserInterface/Controllers/WebInspectorExtensionController.js:
+        (WI.WebInspectorExtensionController.prototype.evaluateScriptInExtensionTab):
+
+        * UserInterface/Protocol/InspectorFrontendAPI.js:
+        Fix incorrect header docs for InspectorFrontendAPI.evaluateScriptForExtension.
+        Copy the improved header doc for InspectorFrontendAPI.evaluateScriptInExtensionTab
+        since it now has the same calling convention.
+
 2021-10-14  Myles C. Maxfield  <mmaxfield@apple.com>
 
         All the SDKVariant.xcconfig files should match

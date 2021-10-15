@@ -218,8 +218,10 @@ InspectorFrontendAPI = {
     },
 
     // Returns a string (WI.WebInspectorExtension.ErrorCode) if an error occurred that prevented evaluation.
-    // Returns an object with a 'result' key and value that is the result of the script evaluation.
-    // Returns an object with an 'error' key and value in the case that an exception was thrown.
+    // Returns a Promise that is resolved if the evaluation completes and rejected if there was an internal error.
+    // When the promise is fulfilled, it will be either:
+    // - resolved with an object containing a 'result' key and value that is the result of the script evaluation.
+    // - rejected with an object containing an 'error' key and value that is the exception that was thrown while evaluating script.
     evaluateScriptForExtension(extensionID, scriptSource, {frameURL, contextSecurityOrigin, useContentScriptContext} = {})
     {
         return WI.sharedApp.extensionController.evaluateScriptForExtension(extensionID, scriptSource, {frameURL, contextSecurityOrigin, useContentScriptContext});
@@ -238,8 +240,10 @@ InspectorFrontendAPI = {
     },
 
     // Returns a string (WI.WebInspectorExtension.ErrorCode) if an error occurred that prevented evaluation.
-    // Returns an object with a 'result' key and value that is the result of the script evaluation.
-    // Returns an object with an 'error' key and value in the case that an exception was thrown.
+    // Returns a Promise that is resolved if the evaluation completes and rejected if there was an internal error.
+    // When the promise is fulfilled, it will be either:
+    // - resolved with an object containing a 'result' key and value that is the result of the script evaluation.
+    // - rejected with an object containing an 'error' key and value that is the exception that was thrown while evaluating script.
     evaluateScriptInExtensionTab(extensionTabID, scriptSource)
     {
         return WI.sharedApp.extensionController.evaluateScriptInExtensionTab(extensionTabID, scriptSource);
