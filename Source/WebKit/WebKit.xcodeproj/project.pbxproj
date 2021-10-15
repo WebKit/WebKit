@@ -4573,8 +4573,6 @@
 		5C1579E927172A8B00ED5280 /* DaemonDecoder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DaemonDecoder.cpp; sourceTree = "<group>"; };
 		5C1579EA27172A8B00ED5280 /* DaemonEncoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DaemonEncoder.h; sourceTree = "<group>"; };
 		5C1579EB27172A8B00ED5280 /* DaemonDecoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DaemonDecoder.h; sourceTree = "<group>"; };
-		5C1579F227179FD800ED5280 /* DaemonUtilities.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DaemonUtilities.mm; sourceTree = "<group>"; };
-		5C1579F327179FD900ED5280 /* DaemonUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DaemonUtilities.h; sourceTree = "<group>"; };
 		5C1579F92717AF5000ED5280 /* DaemonUtilities.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DaemonUtilities.mm; sourceTree = "<group>"; };
 		5C1579FA2717AF5000ED5280 /* DaemonUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DaemonUtilities.h; sourceTree = "<group>"; };
 		5C157A0B2717CA1C00ED5280 /* WebPushDaemonMain.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebPushDaemonMain.mm; sourceTree = "<group>"; };
@@ -4618,6 +4616,7 @@
 		5C62FDF81EFC263C00CE072E /* WKURLSchemeTaskPrivate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKURLSchemeTaskPrivate.h; sourceTree = "<group>"; };
 		5C66A4B32320961300EA4D44 /* WKHTTPCookieStoreRef.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKHTTPCookieStoreRef.cpp; sourceTree = "<group>"; };
 		5C66A4B42320961400EA4D44 /* WKHTTPCookieStoreRef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKHTTPCookieStoreRef.h; sourceTree = "<group>"; };
+		5C6C815D271928DF00D4FB42 /* com.apple.webkit.adattributiond.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = com.apple.webkit.adattributiond.plist; sourceTree = "<group>"; };
 		5C6CE6D01F59BC460007C6CB /* PageClientImplCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PageClientImplCocoa.mm; sourceTree = "<group>"; };
 		5C6CE6D31F59EA350007C6CB /* PageClientImplCocoa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PageClientImplCocoa.h; sourceTree = "<group>"; };
 		5C6E7D86232361E700C2159D /* WKWebsiteDataStoreConfigurationRef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKWebsiteDataStoreConfigurationRef.h; sourceTree = "<group>"; };
@@ -9605,8 +9604,7 @@
 			isa = PBXGroup;
 			children = (
 				5CAF7AA526F93A950003F19E /* adattributiond.cpp */,
-				5C1579F327179FD900ED5280 /* DaemonUtilities.h */,
-				5C1579F227179FD800ED5280 /* DaemonUtilities.mm */,
+				5C6C815D271928DF00D4FB42 /* com.apple.webkit.adattributiond.plist */,
 				5C6289A827068EC000CF5EC6 /* PCMDaemonConnectionSet.h */,
 				5C6289A927068EC000CF5EC6 /* PCMDaemonConnectionSet.mm */,
 				5CB9310426E837FC0032B1C0 /* PCMDaemonEntryPoint.h */,
@@ -13708,6 +13706,7 @@
 				5379C7AC21E5288500E4A8F6 /* Check .xcfilelists */,
 				933170072234674500B32554 /* Create symlinks to XPC services for engineering builds */,
 				0FB94836239F31B700926A8F /* Copy Testing Headers */,
+				DFD03A29270D5F57001A996E /* Copy Daemon Plist */,
 			);
 			buildRules = (
 				535E08C422545B7200DF00CA /* PBXBuildRule */,
@@ -14536,6 +14535,26 @@
 			shellPath = /bin/sh;
 			shellScript = "Scripts/generate-derived-sources.sh\n";
 		};
+		DFD03A29270D5F57001A996E /* Copy Daemon Plist */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 12;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/Shared/EntryPointUtilities/Cocoa/Daemon/com.apple.webkit.adattributiond.plist",
+			);
+			name = "Copy Daemon Plist";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DSTROOT)/System/Library/LaunchDaemons/com.apple.webkit.adattributiond.plist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if [[ \"${WK_PLATFORM_NAME}\" == iphoneos ]]; then\n    DAEMON_PLIST_SOURCE=\"${SRCROOT}/Shared/EntryPointUtilities/Cocoa/Daemon/com.apple.webkit.adattributiond.plist\"\n    DAEMON_PLIST_DESTINATION=\"${DSTROOT}/System/Library/LaunchDaemons/com.apple.webkit.adattributiond.plist\"\n    echo \"copying adattributiond plist\"\n    echo plutil -convert binary1 -o \"${DAEMON_PLIST_DESTINATION}\" \"${DAEMON_PLIST_SOURCE}\"\n    plutil -convert binary1 -o \"${DAEMON_PLIST_DESTINATION}\" \"${DAEMON_PLIST_SOURCE}\"\nelse\n    echo \"not copying adattributiond plist\"\nfi\n";
+		};
 		E1AC2E2C20F7B95800B0897D /* Unlock Keychain */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -14627,8 +14646,8 @@
 				5C6C81502718C33500D4FB42 /* ArgumentCodersCF.cpp in Sources */,
 				5C6C81432718C07500D4FB42 /* DaemonDecoder.cpp in Sources */,
 				5C6C81442718C07A00D4FB42 /* DaemonEncoder.cpp in Sources */,
-				5C6C814A2718C10700D4FB42 /* DatabaseUtilities.cpp in Sources */,
 				5C6C815A2719077400D4FB42 /* DaemonUtilities.mm in Sources */,
+				5C6C814A2718C10700D4FB42 /* DatabaseUtilities.cpp in Sources */,
 				5C6C814D2718C16900D4FB42 /* Logging.cpp in Sources */,
 				5C6C814E2718C2F200D4FB42 /* NetworkDataTaskCocoa.mm in Sources */,
 				5C6C813E2718BC4000D4FB42 /* PCMDaemonConnectionSet.mm in Sources */,

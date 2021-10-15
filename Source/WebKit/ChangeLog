@@ -1,3 +1,18 @@
+2021-10-14  Alex Christensen  <achristensen@webkit.org>
+
+        Add AdAttributionDaemon plist on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=231309
+
+        Reviewed by John Wilander.
+
+        This adds a plist that tells launchd where to find AdAttributionDaemon and how to launch it.
+        In another patch I'll add a change to WebsiteDataStoreConfiguration to tell WebKit to use the daemon.
+
+        * Shared/EntryPointUtilities/Cocoa/Daemon/PCMDaemonEntryPoint.mm:
+        (WebKit::registerScheduledActivityHandler):
+        * Shared/EntryPointUtilities/Cocoa/Daemon/com.apple.webkit.adattributiond.plist: Added.
+        * WebKit.xcodeproj/project.pbxproj:
+
 2021-10-14  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [JS IPC] Implement a way to synchronously wait for an incoming IPC message

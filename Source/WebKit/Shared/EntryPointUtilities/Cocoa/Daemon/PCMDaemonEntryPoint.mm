@@ -79,14 +79,25 @@ static void registerScheduledActivityHandler()
     NSLog(@"Registering XPC activity");
     xpc_activity_register("com.apple.webkit.adattributiond.activity", XPC_ACTIVITY_CHECK_IN, ^(xpc_activity_t activity) {
         if (xpc_activity_get_state(activity) == XPC_ACTIVITY_STATE_CHECK_IN) {
-            xpc_object_t criteria = xpc_activity_copy_criteria(activity);
+            NSLog(@"Activity checking in");
+            auto criteria = adoptNS(xpc_activity_copy_criteria(activity));
 
-            // FIXME: set values here that align with values from the plist.
+            // These values should align with values from com.apple.webkit.adattributiond.plist
+            constexpr auto oneHourSeconds = 3600;
+            constexpr auto oneDaySeconds = 24 * oneHourSeconds;
+            xpc_dictionary_set_uint64(criteria.get(), XPC_ACTIVITY_INTERVAL, oneDaySeconds);
+            xpc_dictionary_set_uint64(criteria.get(), XPC_ACTIVITY_GRACE_PERIOD, oneHourSeconds);
+            xpc_dictionary_set_string(criteria.get(), XPC_ACTIVITY_PRIORITY, XPC_ACTIVITY_PRIORITY_MAINTENANCE);
+            xpc_dictionary_set_bool(criteria.get(), XPC_ACTIVITY_ALLOW_BATTERY, true);
+            xpc_dictionary_set_uint64(criteria.get(), XPC_ACTIVITY_RANDOM_INITIAL_DELAY, oneDaySeconds);
+            xpc_dictionary_set_bool(criteria.get(), XPC_ACTIVITY_REQUIRE_NETWORK_CONNECTIVITY, true);
+            xpc_dictionary_set_bool(criteria.get(), XPC_ACTIVITY_REPEATING, true);
 
-            xpc_activity_set_criteria(activity, criteria);
+            xpc_activity_set_criteria(activity, criteria.get());
             return;
         }
 
+        NSLog(@"XPC activity happening");
         PCM::doDailyActivityInManager();
     });
 }

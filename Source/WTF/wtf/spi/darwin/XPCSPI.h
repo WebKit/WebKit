@@ -68,6 +68,12 @@ enum {
 typedef long xpc_activity_state_t;
 typedef const struct _xpc_type_s* xpc_type_t;
 extern "C" const xpc_object_t XPC_ACTIVITY_CHECK_IN;
+extern "C" const char * const XPC_ACTIVITY_INTERVAL;
+extern "C" const char * const XPC_ACTIVITY_GRACE_PERIOD;
+extern "C" const char * const XPC_ACTIVITY_PRIORITY;
+extern "C" const char * const XPC_ACTIVITY_PRIORITY_MAINTENANCE;
+extern "C" const char * const XPC_ACTIVITY_ALLOW_BATTERY;
+extern "C" const char * const XPC_ACTIVITY_REPEATING;
 
 #if PLATFORM(IOS_FAMILY) && __has_attribute(noescape)
 #define XPC_NOESCAPE __attribute__((__noescape__))
