@@ -44,15 +44,8 @@ fast/css/webkit-named-image/apple-pay-logo-white [ Pass ]
 fast/css/getComputedStyle/computed-style-apple-pay-button.html [ Pass ]
 
 # accent-color is currently only supported on Cocoa platforms
-fast/css/accent-color/checkbox.html [ Pass ]
-fast/css/accent-color/datalist.html [ Pass ]
-fast/css/accent-color/progress.html [ Pass ]
-fast/css/accent-color/radio.html [ Pass ]
-fast/css/accent-color/range.html [ Pass ]
-fast/css/accent-color/text.html [ Pass ]
+fast/css/accent-color [ Pass ]
 imported/w3c/web-platform-tests/css/css-ui/accent-color-checkbox-checked-001.tentative.html [ Pass ]
-
-webkit.org/b/231764 fast/css/accent-color/select.html [ ImageOnlyFailure ]
 
 fast/css/ios [ Pass ]
 fast/media/ios [ Pass ]

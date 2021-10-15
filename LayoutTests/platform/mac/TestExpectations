@@ -2347,6 +2347,11 @@ fast/css/accent-color/select.html [ Pass ]
 fast/css/accent-color/text.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-ui/accent-color-checkbox-checked-001.tentative.html [ Pass ]
 
+# The following controls are not tintable on macOS
+fast/css/accent-color/button.html [ Skip ]
+fast/css/accent-color/date.html [ Skip ]
+fast/css/accent-color/submit.html [ Skip ]
+
 webkit.org/b/199350 fast/css/accent-color/datalist.html [ ImageOnlyFailure ]
 webkit.org/b/231463 fast/css/accent-color/range.html [ ImageOnlyFailure ]
 

@@ -243,4 +243,9 @@ bool HTMLButtonElement::isSubmitButton() const
     return m_type == SUBMIT;
 }
 
+bool HTMLButtonElement::isExplicitlySetSubmitButton() const
+{
+    return isSubmitButton() && hasAttributeWithoutSynchronization(HTMLNames::typeAttr);
+}
+
 } // namespace

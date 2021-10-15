@@ -199,7 +199,9 @@ private:
     void paintMenuListButtonDecorationsWithFormControlRefresh(const RenderBox&, const PaintInfo&, const FloatRect&);
 #endif
 
-    void adjustPressedStyle(RenderStyle&, const Element&) const;
+    bool isSubmitStyleButton(const Element&) const;
+
+    void adjustButtonLikeControlStyle(RenderStyle&, const Element&) const;
 
     FloatRect addRoundedBorderClip(const RenderObject& box, GraphicsContext&, const IntRect&);
 

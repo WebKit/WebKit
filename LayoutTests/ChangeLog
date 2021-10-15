@@ -1,3 +1,23 @@
+2021-10-15  Aditya Keerthi  <akeerthi@apple.com>
+
+        [iOS] Support accent-color for button-like controls
+        https://bugs.webkit.org/show_bug.cgi?id=231764
+        rdar://84261821
+
+        Reviewed by Tim Horton.
+
+        Add new tests for iOS and mark newly passing test.
+
+        * TestExpectations:
+        * fast/css/accent-color/button-expected-mismatch.html: Added.
+        * fast/css/accent-color/button.html: Added.
+        * fast/css/accent-color/date-expected-mismatch.html: Added.
+        * fast/css/accent-color/date.html: Added.
+        * fast/css/accent-color/submit-expected-mismatch.html: Added.
+        * fast/css/accent-color/submit.html: Added.
+        * platform/ios/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2021-10-15  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
 
         [GLIB] Update test expectations for known failures. Unreviewed test gardening.

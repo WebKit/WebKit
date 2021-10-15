@@ -42,6 +42,8 @@ public:
 
     RenderButton* renderer() const;
 
+    bool isExplicitlySetSubmitButton() const;
+
 private:
     HTMLButtonElement(const QualifiedName& tagName, Document&, HTMLFormElement*);
 

@@ -50,6 +50,7 @@
 #import "GraphicsContext.h"
 #import "GraphicsContextCG.h"
 #import "HTMLAttachmentElement.h"
+#import "HTMLButtonElement.h"
 #import "HTMLInputElement.h"
 #import "HTMLMeterElement.h"
 #import "HTMLNames.h"
@@ -817,7 +818,7 @@ void RenderThemeIOS::adjustMenuListButtonStyle(RenderStyle& style, const Element
     if (!element)
         return;
 
-    adjustPressedStyle(style, *element);
+    adjustButtonLikeControlStyle(style, *element);
 
     // Enforce some default styles in the case that this is a non-multiple <select> element,
     // or a date input. We don't force these if this is just an element with
@@ -1210,18 +1211,48 @@ void RenderThemeIOS::paintSearchFieldDecorations(const RenderBox& box, const Pai
 // This value matches the opacity applied to UIKit controls.
 constexpr auto pressedStateOpacity = 0.75f;
 
-void RenderThemeIOS::adjustPressedStyle(RenderStyle& style, const Element& element) const
+bool RenderThemeIOS::isSubmitStyleButton(const Element& element) const
+{
+    if (is<HTMLInputElement>(element) && downcast<HTMLInputElement>(element).isSubmitButton())
+        return true;
+
+    if (is<HTMLButtonElement>(element) && downcast<HTMLButtonElement>(element).isExplicitlySetSubmitButton())
+        return true;
+
+    return false;
+}
+
+void RenderThemeIOS::adjustButtonLikeControlStyle(RenderStyle& style, const Element& element) const
 {
 #if ENABLE(IOS_FORM_CONTROL_REFRESH)
-    if (element.document().settings().iOSFormControlRefreshEnabled() && element.active() && !element.isDisabledFormControl()) {
-        auto textColor = style.color();
-        if (textColor.isValid())
-            style.setColor(textColor.colorWithAlphaMultipliedBy(pressedStateOpacity));
+    if (!element.document().settings().iOSFormControlRefreshEnabled())
+        return;
 
-        auto backgroundColor = style.backgroundColor();
-        if (backgroundColor.isValid())
-            style.setBackgroundColor(backgroundColor.colorWithAlphaMultipliedBy(pressedStateOpacity));
+    // FIXME: Implement button-like control adjustments for the alternate design.
+    if (element.document().settings().alternateFormControlDesignEnabled())
+        return;
+
+    if (element.isDisabledFormControl())
+        return;
+
+    auto tintColor = style.effectiveAccentColor();
+    if (tintColor.isValid()) {
+        if (isSubmitStyleButton(element))
+            style.setBackgroundColor(tintColor);
+        else
+            style.setColor(tintColor);
     }
+
+    if (!element.active())
+        return;
+
+    auto textColor = style.color();
+    if (textColor.isValid())
+        style.setColor(textColor.colorWithAlphaMultipliedBy(pressedStateOpacity));
+
+    auto backgroundColor = style.backgroundColor();
+    if (backgroundColor.isValid())
+        style.setBackgroundColor(backgroundColor.colorWithAlphaMultipliedBy(pressedStateOpacity));
 #endif
 }
 
@@ -1251,7 +1282,7 @@ void RenderThemeIOS::adjustButtonStyle(RenderStyle& style, const Element* elemen
     if (!element)
         return;
 
-    adjustPressedStyle(style, *element);
+    adjustButtonLikeControlStyle(style, *element);
 
     RenderBox* box = element->renderBox();
     if (!box)
