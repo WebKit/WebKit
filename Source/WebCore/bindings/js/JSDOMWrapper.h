@@ -57,7 +57,6 @@ static_assert(NodeConstants::LastNodeType <= JSNodeTypeMask, "NodeType should be
 class JSDOMObject : public JSC::JSDestructibleObject {
 public:
     typedef JSC::JSDestructibleObject Base;
-    static constexpr bool isDOMWrapper = false;
 
     template<typename, JSC::SubspaceAccess>
     static void subspaceFor(JSC::VM&) { RELEASE_ASSERT_NOT_REACHED(); }
@@ -73,7 +72,6 @@ template<typename ImplementationClass> class JSDOMWrapper : public JSDOMObject {
 public:
     typedef JSDOMObject Base;
     typedef ImplementationClass DOMWrapped;
-    static constexpr bool isDOMWrapper = true;
     
     ImplementationClass& wrapped() const { return m_wrapped; }
     static ptrdiff_t offsetOfWrapped() { return OBJECT_OFFSETOF(JSDOMWrapper<ImplementationClass>, m_wrapped); }
@@ -88,26 +86,6 @@ private:
 };
 
 template<typename ImplementationClass> struct JSDOMWrapperConverterTraits;
-
-template<typename JSClass, typename Enable = void>
-struct JSDOMObjectInspector {
-public:
-    static constexpr bool isSimpleWrapper = false;
-    static constexpr bool isComplexWrapper = false;
-    static constexpr bool isBuiltin = true;
-};
-
-template<typename JSClass>
-struct JSDOMObjectInspector<JSClass, typename std::enable_if<JSClass::isDOMWrapper>::type> {
-private:
-    template<typename T> static constexpr auto test(int) -> decltype(T::create(), bool()) { return true; }
-    template<typename T> static constexpr bool test(...) { return false; }
-
-public:
-    static constexpr bool isSimpleWrapper = test<typename JSClass::DOMWrapped>(0);
-    static constexpr bool isComplexWrapper = !isSimpleWrapper;
-    static constexpr bool isBuiltin = false;
-};
 
 JSC::JSValue cloneAcrossWorlds(JSC::JSGlobalObject&, const JSDOMObject& owner, JSC::JSValue);
 

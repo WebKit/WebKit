@@ -8016,7 +8016,7 @@ sub AddJSBuiltinIncludesIfNeeded()
 {
     my $interface = shift;
 
-    if ($interface->extendedAttributes->{JSBuiltin} || HasJSBuiltinConstructor($interface)) {
+    if (HasJSBuiltinConstructor($interface)) {
         AddToImplIncludes($interface->type->name . "Builtins.h");
         return;
     }

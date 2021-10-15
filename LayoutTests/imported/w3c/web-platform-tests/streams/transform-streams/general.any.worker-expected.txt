@@ -23,5 +23,5 @@ PASS terminate() should do nothing after readable.cancel()
 PASS start() should not be called twice
 PASS specifying a defined readableType should throw
 PASS specifying a defined writableType should throw
-FAIL Subclassing TransformStream should work assert_true: Subclass object should be an instance of Subclass expected true got false
+PASS Subclassing TransformStream should work
 

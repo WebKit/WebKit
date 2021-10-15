@@ -27,24 +27,6 @@
 
 namespace WebCore {
 using namespace JSC;
-    
-void JSDOMBuiltinConstructorBase::callFunctionWithCurrentArguments(JSC::JSGlobalObject& lexicalGlobalObject, JSC::CallFrame& callFrame, JSC::JSObject& thisObject, JSC::JSFunction& function)
-{
-    JSC::VM& vm = lexicalGlobalObject.vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-    auto callData = JSC::getCallData(vm, &function);
-    ASSERT(callData.type != CallData::Type::None);
-
-    JSC::MarkedArgumentBuffer arguments;
-    for (unsigned i = 0; i < callFrame.argumentCount(); ++i)
-        arguments.append(callFrame.uncheckedArgument(i));
-    if (UNLIKELY(arguments.hasOverflowed())) {
-        throwOutOfMemoryError(&lexicalGlobalObject, scope);
-        return;
-    }
-    scope.release();
-    JSC::call(&lexicalGlobalObject, &function, callData, &thisObject, arguments);
-}
 
 template<typename Visitor>
 void JSDOMBuiltinConstructorBase::visitChildrenImpl(JSC::JSCell* cell, Visitor& visitor)

@@ -4,13 +4,13 @@ PASS CountQueuingStrategy: Constructor behaves as expected with strange argument
 PASS CountQueuingStrategy: highWaterMark constructor values are converted per the unrestricted double rules
 PASS CountQueuingStrategy: size is the same function across all instances
 PASS CountQueuingStrategy: size should have the right name
-FAIL CountQueuingStrategy: subclassing should work correctly assert_equals: constructor.name should be correct expected "SubClass" but got "CountQueuingStrategy"
+PASS CountQueuingStrategy: subclassing should work correctly
 PASS ByteLengthQueuingStrategy: Can construct a with a valid high water mark
 PASS ByteLengthQueuingStrategy: Constructor behaves as expected with strange arguments
 PASS ByteLengthQueuingStrategy: highWaterMark constructor values are converted per the unrestricted double rules
 PASS ByteLengthQueuingStrategy: size is the same function across all instances
 PASS ByteLengthQueuingStrategy: size should have the right name
-FAIL ByteLengthQueuingStrategy: subclassing should work correctly assert_equals: constructor.name should be correct expected "SubClass" but got "ByteLengthQueuingStrategy"
+PASS ByteLengthQueuingStrategy: subclassing should work correctly
 PASS CountQueuingStrategy: size should have the right length
 PASS ByteLengthQueuingStrategy: size should have the right length
 PASS CountQueuingStrategy: size behaves as expected with strange arguments
