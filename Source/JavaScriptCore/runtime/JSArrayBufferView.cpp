@@ -41,7 +41,7 @@ const ClassInfo JSArrayBufferView::s_info = {
 };
 
 JSArrayBufferView::ConstructionContext::ConstructionContext(
-    Structure* structure, size_t length, void* vector)
+    Structure* structure, uint32_t length, void* vector)
     : m_structure(structure)
     , m_vector(vector, length)
     , m_length(length)
@@ -54,7 +54,7 @@ JSArrayBufferView::ConstructionContext::ConstructionContext(
 }
 
 JSArrayBufferView::ConstructionContext::ConstructionContext(
-    VM& vm, Structure* structure, size_t length, unsigned elementSize,
+    VM& vm, Structure* structure, uint32_t length, uint32_t elementSize,
     InitializationMode mode)
     : m_structure(nullptr)
     , m_length(length)
@@ -81,18 +81,18 @@ JSArrayBufferView::ConstructionContext::ConstructionContext(
         return;
     }
 
-    CheckedSize size = length;
-    size *= elementSize;
-    if (size.hasOverflowed() || size > MAX_ARRAY_BUFFER_SIZE)
+    // Don't allow a typed array to use more than 2GB.
+    if (length > static_cast<unsigned>(INT_MAX) / elementSize)
         return;
-
-    m_vector = VectorType(Gigacage::tryMalloc(Gigacage::Primitive, size.value()), length);
+    
+    size_t size = static_cast<size_t>(length) * static_cast<size_t>(elementSize);
+    m_vector = VectorType(Gigacage::tryMalloc(Gigacage::Primitive, size), length);
     if (!m_vector)
         return;
     if (mode == ZeroFill)
         memset(vector(), 0, size);
     
-    vm.heap.reportExtraMemoryAllocated(size.value());
+    vm.heap.reportExtraMemoryAllocated(static_cast<size_t>(length) * elementSize);
     
     m_structure = structure;
     m_mode = OversizeTypedArray;
@@ -100,7 +100,7 @@ JSArrayBufferView::ConstructionContext::ConstructionContext(
 
 JSArrayBufferView::ConstructionContext::ConstructionContext(
     VM& vm, Structure* structure, RefPtr<ArrayBuffer>&& arrayBuffer,
-    size_t byteOffset, size_t length)
+    unsigned byteOffset, unsigned length)
     : m_structure(structure)
     , m_length(length)
     , m_mode(WastefulTypedArray)
@@ -114,7 +114,7 @@ JSArrayBufferView::ConstructionContext::ConstructionContext(
 
 JSArrayBufferView::ConstructionContext::ConstructionContext(
     Structure* structure, RefPtr<ArrayBuffer>&& arrayBuffer,
-    size_t byteOffset, size_t length, DataViewTag)
+    unsigned byteOffset, unsigned length, DataViewTag)
     : m_structure(structure)
     , m_length(length)
     , m_mode(DataViewMode)
@@ -238,16 +238,9 @@ static inline size_t elementSize(JSType type)
     return ElementSizeData[type - Int8ArrayType];
 }
 
-size_t JSArrayBufferView::byteLength() const
+unsigned JSArrayBufferView::byteLength() const
 {
-#if ASSERT_ENABLED
-    Checked<size_t> result = length();
-    result *= elementSize(type());
-    return result.value();
-#else
-    // The absence of overflow is already checked in the constructor, so I only add the extra sanity check when asserts are enabled.
     return length() * elementSize(type());
-#endif
 }
 
 ArrayBuffer* JSArrayBufferView::slowDownAndWasteMemory()
@@ -274,7 +267,7 @@ ArrayBuffer* JSArrayBufferView::slowDownAndWasteMemory()
     Structure* structure = this->structure(vm);
 
     RefPtr<ArrayBuffer> buffer;
-    size_t byteLength = this->byteLength();
+    unsigned byteLength = this->byteLength();
 
     switch (m_mode) {
     case FastTypedArray: {
@@ -322,8 +315,8 @@ RefPtr<ArrayBufferView> JSArrayBufferView::possiblySharedImpl()
     ArrayBuffer* buffer = possiblySharedBuffer();
     if (!buffer)
         return nullptr;
-    size_t byteOffset = this->byteOffset();
-    size_t length = this->length();
+    unsigned byteOffset = this->byteOffset();
+    unsigned length = this->length();
     switch (type()) {
 #define FACTORY(type) \
     case type ## ArrayType: \

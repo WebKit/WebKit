@@ -27,7 +27,6 @@
 
 #include "FourCC.h"
 #include <wtf/Forward.h>
-#include <wtf/StdIntExtras.h>
 #include <wtf/TypeCasts.h>
 
 namespace JSC {
@@ -64,10 +63,7 @@ protected:
     static bool checkedRead(R& returnValue, V& view, unsigned& offset, Endianness endianness)
     {
         bool readStatus = false;
-        size_t actualOffset = offset;
-        T value = view.template read<T>(actualOffset, endianness == LittleEndian, &readStatus);
-        RELEASE_ASSERT(isInBounds<uint32_t>(actualOffset));
-        offset = actualOffset;
+        T value = view.template read<T>(offset, endianness == LittleEndian, &readStatus);
         if (!readStatus)
             return false;
 

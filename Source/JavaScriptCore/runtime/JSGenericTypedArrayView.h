@@ -28,7 +28,6 @@
 #include "JSArrayBufferView.h"
 #include "ThrowScope.h"
 #include "ToNativeFromValue.h"
-#include <wtf/CheckedArithmetic.h>
 
 namespace JSC {
 
@@ -56,10 +55,10 @@ JS_EXPORT_PRIVATE const ClassInfo* getBigUint64ArrayClassInfo();
 //     Structure* S     // from JSCell
 //     Butterfly* B     // from JSObject
 //     ElementType* V
-//     size_t L
+//     uint32_t L
 //     TypedArrayMode M
 //
-// These fields take up a total of five pointer-width words. FIXME: Make
+// These fields take up a total of four pointer-width words. FIXME: Make
 // it take less words!
 //
 // B is usually unused but may stored some additional "overflow" data for
@@ -104,14 +103,14 @@ public:
 
     static constexpr unsigned elementSize = sizeof(typename Adaptor::Type);
 
-    static JSGenericTypedArrayView* create(JSGlobalObject*, Structure*, size_t length);
-    static JSGenericTypedArrayView* createWithFastVector(JSGlobalObject*, Structure*, size_t length, void* vector);
-    static JSGenericTypedArrayView* createUninitialized(JSGlobalObject*, Structure*, size_t length);
-    static JSGenericTypedArrayView* create(JSGlobalObject*, Structure*, RefPtr<ArrayBuffer>&&, size_t byteOffset, size_t length);
+    static JSGenericTypedArrayView* create(JSGlobalObject*, Structure*, unsigned length);
+    static JSGenericTypedArrayView* createWithFastVector(JSGlobalObject*, Structure*, unsigned length, void* vector);
+    static JSGenericTypedArrayView* createUninitialized(JSGlobalObject*, Structure*, unsigned length);
+    static JSGenericTypedArrayView* create(JSGlobalObject*, Structure*, RefPtr<ArrayBuffer>&&, unsigned byteOffset, unsigned length);
     static JSGenericTypedArrayView* create(VM&, Structure*, RefPtr<typename Adaptor::ViewType>&& impl);
     static JSGenericTypedArrayView* create(Structure*, JSGlobalObject*, RefPtr<typename Adaptor::ViewType>&& impl);
     
-    size_t byteLength() const { return m_length * sizeof(typename Adaptor::Type); }
+    unsigned byteLength() const { return m_length * sizeof(typename Adaptor::Type); }
     size_t byteSize() const { return sizeOf(m_length, sizeof(typename Adaptor::Type)); }
     
     const typename Adaptor::Type* typedVector() const
@@ -123,46 +122,46 @@ public:
         return bitwise_cast<typename Adaptor::Type*>(vector());
     }
 
-    bool inBounds(size_t i) const
+    bool inBounds(unsigned i) const
     {
         return i < m_length;
     }
 
     // These methods are meant to match indexed access methods that JSObject
     // supports - hence the slight redundancy.
-    bool canGetIndexQuickly(size_t i) const
+    bool canGetIndexQuickly(unsigned i) const
     {
         return inBounds(i) && Adaptor::canConvertToJSQuickly;
     }
-    bool canSetIndexQuickly(size_t i, JSValue value) const
+    bool canSetIndexQuickly(unsigned i, JSValue value) const
     {
         return i < m_length && value.isNumber() && Adaptor::canConvertToJSQuickly;
     }
     
-    typename Adaptor::Type getIndexQuicklyAsNativeValue(size_t i) const
+    typename Adaptor::Type getIndexQuicklyAsNativeValue(unsigned i) const
     {
         ASSERT(i < m_length);
         return typedVector()[i];
     }
     
-    JSValue getIndexQuickly(size_t i) const
+    JSValue getIndexQuickly(unsigned i) const
     {
         return Adaptor::toJSValue(nullptr, getIndexQuicklyAsNativeValue(i));
     }
     
-    void setIndexQuicklyToNativeValue(size_t i, typename Adaptor::Type value)
+    void setIndexQuicklyToNativeValue(unsigned i, typename Adaptor::Type value)
     {
         ASSERT(i < m_length);
         typedVector()[i] = value;
     }
     
-    void setIndexQuickly(size_t i, JSValue value)
+    void setIndexQuickly(unsigned i, JSValue value)
     {
         ASSERT(!value.isObject());
         setIndexQuicklyToNativeValue(i, toNativeFromValue<Adaptor>(value));
     }
     
-    bool setIndex(JSGlobalObject* globalObject, size_t i, JSValue jsValue)
+    bool setIndex(JSGlobalObject* globalObject, unsigned i, JSValue jsValue)
     {
         VM& vm = getVM(globalObject);
         auto scope = DECLARE_THROW_SCOPE(vm);
@@ -177,15 +176,9 @@ public:
         return true;
     }
 
-    static ElementType toAdaptorNativeFromValue(JSGlobalObject* globalObject, JSValue jsValue)
-    {
-        return toNativeFromValue<Adaptor>(globalObject, jsValue);
-    }
+    static ElementType toAdaptorNativeFromValue(JSGlobalObject* globalObject, JSValue jsValue) { return toNativeFromValue<Adaptor>(globalObject, jsValue); }
 
-    static std::optional<ElementType> toAdaptorNativeFromValueWithoutCoercion(JSValue jsValue)
-    {
-        return toNativeFromValueWithoutCoercion<Adaptor>(jsValue);
-    }
+    static std::optional<ElementType> toAdaptorNativeFromValueWithoutCoercion(JSValue jsValue) { return toNativeFromValueWithoutCoercion<Adaptor>(jsValue); }
 
     void sort()
     {
@@ -205,18 +198,21 @@ public:
         }
     }
 
-    bool canAccessRangeQuickly(size_t offset, size_t length)
+    bool canAccessRangeQuickly(unsigned offset, unsigned length)
     {
-        return isSumSmallerThanOrEqual(offset, length, m_length);
+        return offset <= m_length
+            && offset + length <= m_length
+            // check overflow
+            && offset + length >= offset;
     }
     
     // Like canSetQuickly, except: if it returns false, it will throw the
     // appropriate exception.
-    bool validateRange(JSGlobalObject*, size_t offset, size_t length);
+    bool validateRange(JSGlobalObject*, unsigned offset, unsigned length);
 
     // Returns true if successful, and false on error; if it returns false
     // then it will have thrown an exception.
-    bool set(JSGlobalObject*, size_t offset, JSObject*, size_t objectOffset, size_t length, CopyType = CopyType::Unobservable);
+    bool set(JSGlobalObject*, unsigned offset, JSObject*, unsigned objectOffset, unsigned length, CopyType type = CopyType::Unobservable);
     
     RefPtr<typename Adaptor::ViewType> possiblySharedTypedImpl();
     RefPtr<typename Adaptor::ViewType> unsharedTypedImpl();
@@ -322,8 +318,8 @@ private:
     // Returns true if successful, and false on error; it will throw on error.
     template<typename OtherAdaptor>
     bool setWithSpecificType(
-        JSGlobalObject*, size_t offset, JSGenericTypedArrayView<OtherAdaptor>*,
-        size_t objectOffset, size_t length, CopyType);
+        JSGlobalObject*, unsigned offset, JSGenericTypedArrayView<OtherAdaptor>*,
+        unsigned objectOffset, unsigned length, CopyType);
 
     // The ECMA 6 spec states that floating point Typed Arrays should have the following ordering:
     //
@@ -353,7 +349,7 @@ private:
     void purifyArray()
     {
         ElementType* array = typedVector();
-        for (size_t i = 0; i < m_length; i++)
+        for (unsigned i = 0; i < m_length; i++)
             array[i] = purifyNaN(array[i]);
     }
 

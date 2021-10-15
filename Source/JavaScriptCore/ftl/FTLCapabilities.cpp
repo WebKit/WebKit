@@ -170,7 +170,6 @@ inline CapabilityLevel canCompile(Node* node)
     case ReallocatePropertyStorage:
     case NukeStructureAndSetButterfly:
     case GetTypedArrayByteOffset:
-    case GetTypedArrayByteOffsetAsInt52:
     case GetPrototypeOf:
     case NotifyWrite:
     case StoreBarrier:
@@ -200,7 +199,6 @@ inline CapabilityLevel canCompile(Node* node)
     case LogicalNot:
     case AssertInBounds:
     case CheckInBounds:
-    case CheckInBoundsInt52:
     case ConstantStoragePointer:
     case Check:
     case CheckVarargs:
@@ -393,7 +391,6 @@ inline CapabilityLevel canCompile(Node* node)
     case InitializeEntrypointArguments:
     case CPUIntrinsic:
     case GetArrayLength:
-    case GetTypedArrayLengthAsInt52:
     case GetVectorLength:
     case GetByVal:
     case GetByValWithThis:

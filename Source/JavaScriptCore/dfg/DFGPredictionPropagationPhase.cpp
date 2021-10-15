@@ -986,12 +986,6 @@ private:
             break;
         }
 
-        case GetTypedArrayLengthAsInt52:
-        case GetTypedArrayByteOffsetAsInt52: {
-            setPrediction(SpecInt52Any);
-            break;
-        }
-
         case StringCharCodeAt:
         case StringCodePointAt: {
             setPrediction(SpecInt32Only);
@@ -1326,7 +1320,6 @@ private:
         case CheckTierUpAndOSREnter:
         case AssertInBounds:
         case CheckInBounds:
-        case CheckInBoundsInt52:
         case ValueToInt32:
         case DoubleRep:
         case ValueRep:

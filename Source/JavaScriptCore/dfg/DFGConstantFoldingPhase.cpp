@@ -387,8 +387,6 @@ private:
                 
                 break;
             }
-            case CheckInBoundsInt52:
-                break;
                 
             case GetMyArgumentByVal:
             case GetMyArgumentByValOutOfBounds: {

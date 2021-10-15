@@ -1713,14 +1713,6 @@ llintOpWithMetadata(op_get_by_val, OpGetByVal, macro (size, get, dispatch, metad
         finishGetByVal(scratch1, scratch2)
     end
 
-    macro setLargeTypedArray()
-        if LARGE_TYPED_ARRAYS
-            storeb 1, OpGetByVal::Metadata::m_arrayProfile.m_mayBeLargeTypedArray[t5]
-        else
-            crash()
-        end
-    end
-
     metadata(t5, t2)
 
     get(m_base, t2)
@@ -1731,7 +1723,6 @@ llintOpWithMetadata(op_get_by_val, OpGetByVal, macro (size, get, dispatch, metad
 
     get(m_property, t3)
     loadConstantOrVariableInt32(size, t3, t1, .opGetByValSlow)
-    # This sign-extension makes the bounds-checking in getByValTypedArray work even on 4GB TypedArray.
     sxi2q t1, t1
 
     loadCagedJSValue(JSObject::m_butterfly[t0], t3, numberTag)
@@ -1772,7 +1763,7 @@ llintOpWithMetadata(op_get_by_val, OpGetByVal, macro (size, get, dispatch, metad
     dispatch()
 
 .opGetByValNotIndexedStorage:
-    getByValTypedArray(t0, t1, finishIntGetByVal, finishDoubleGetByVal, setLargeTypedArray, .opGetByValSlow)
+    getByValTypedArray(t0, t1, finishIntGetByVal, finishDoubleGetByVal, .opGetByValSlow)
 
 .opGetByValSlow:
     callSlowPath(_llint_slow_path_get_by_val)

@@ -67,8 +67,6 @@ enum LocationKind {
     SetterLoc,
     StructureLoc,
     TypedArrayByteOffsetLoc,
-    TypedArrayByteOffsetInt52Loc,
-    TypedArrayLengthInt52Loc,
     PrototypeLoc,
     StackLoc,
     StackPayloadLoc,

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -1965,7 +1965,6 @@ public:
         case ArrayPush:
         case ArrayPop:
         case GetArrayLength:
-        case GetTypedArrayLengthAsInt52:
         case HasIndexedProperty:
         case EnumeratorNextUpdateIndexAndMode:
         case ArrayIndexOf:
@@ -2005,7 +2004,6 @@ public:
 
         case ArrayPop:
         case GetArrayLength:
-        case GetTypedArrayLengthAsInt52:
             return 2;
 
         case HasIndexedProperty:
@@ -2278,7 +2276,6 @@ public:
         switch (op()) {
         case GetIndexedPropertyStorage:
         case GetArrayLength:
-        case GetTypedArrayLengthAsInt52:
         case GetVectorLength:
         case InByVal:
         case PutByValDirect:

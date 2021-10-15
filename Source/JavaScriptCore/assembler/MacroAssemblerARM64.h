@@ -144,8 +144,8 @@ public:
     static constexpr RegisterID linkRegister = ARM64Registers::lr;
 
     // FIXME: Get reasonable implementations for these
-    static bool constexpr shouldBlindForSpecificArch(uint32_t value) { return value >= 0x00ffffff; }
-    static bool constexpr shouldBlindForSpecificArch(uint64_t value) { return value >= 0x00ffffff; }
+    static bool shouldBlindForSpecificArch(uint32_t value) { return value >= 0x00ffffff; }
+    static bool shouldBlindForSpecificArch(uint64_t value) { return value >= 0x00ffffff; }
 
     // Integer operations:
 
@@ -3303,11 +3303,6 @@ public:
             m_assembler.cmp<64>(left, dataTempRegister);
         }
         return Jump(makeBranch(cond));
-    }
-
-    Jump branch64(RelationalCondition cond, RegisterID left, Imm64 right)
-    {
-        return branch64(cond, left, right.asTrustedImm64());
     }
 
     Jump branch64(RelationalCondition cond, RegisterID left, Address right)

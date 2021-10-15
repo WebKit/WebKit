@@ -640,7 +640,6 @@ private:
                 case Upsilon:
                 case AssertInBounds:
                 case CheckInBounds:
-                case CheckInBoundsInt52:
                 case PhantomNewObject:
                 case PhantomNewFunction:
                 case PhantomNewGeneratorFunction:

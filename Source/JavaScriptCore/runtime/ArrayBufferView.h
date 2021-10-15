@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,7 +29,6 @@
 #include "TypedArrayType.h"
 #include <algorithm>
 #include <limits.h>
-#include <wtf/CheckedArithmetic.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
@@ -78,14 +77,14 @@ public:
 
     void* data() const { return baseAddress(); }
 
-    size_t byteOffset() const
+    unsigned byteOffset() const
     {
         if (isDetached())
             return 0;
         return m_byteOffset;
     }
 
-    size_t byteLength() const { return m_byteLength; }
+    unsigned byteLength() const { return m_byteLength; }
 
     JS_EXPORT_PRIVATE void setDetachable(bool);
     bool isDetachable() const { return m_isDetachable; }
@@ -93,18 +92,19 @@ public:
     JS_EXPORT_PRIVATE virtual ~ArrayBufferView();
 
     // Helper to verify byte offset is size aligned.
-    static bool verifyByteOffsetAlignment(size_t byteOffset, size_t elementSize)
+    static bool verifyByteOffsetAlignment(unsigned byteOffset, size_t size)
     {
-        return !(byteOffset & (elementSize - 1));
+        return !(byteOffset & (size - 1));
     }
 
-    // Helper to verify that a given sub-range of an ArrayBuffer is within range.
-    static bool verifySubRangeLength(const ArrayBuffer& buffer, size_t byteOffset, size_t numElements, unsigned elementSize)
+    // Helper to verify that a given sub-range of an ArrayBuffer is
+    // within range.
+    static bool verifySubRangeLength(const ArrayBuffer& buffer, unsigned byteOffset, unsigned numElements, size_t size)
     {
-        size_t byteLength = buffer.byteLength();
+        unsigned byteLength = buffer.byteLength();
         if (byteOffset > byteLength)
             return false;
-        size_t remainingElements = (byteLength - byteOffset) / static_cast<size_t>(elementSize);
+        unsigned remainingElements = (byteLength - byteOffset) / size;
         if (numElements > remainingElements)
             return false;
         return true;
@@ -113,48 +113,43 @@ public:
     virtual JSArrayBufferView* wrap(JSGlobalObject*, JSGlobalObject*) = 0;
     
 protected:
-    JS_EXPORT_PRIVATE ArrayBufferView(RefPtr<ArrayBuffer>&&, size_t byteOffset, size_t byteLength);
+    JS_EXPORT_PRIVATE ArrayBufferView(RefPtr<ArrayBuffer>&&, unsigned byteOffset, unsigned byteLength);
 
-    inline bool setImpl(ArrayBufferView*, size_t byteOffset);
+    inline bool setImpl(ArrayBufferView*, unsigned byteOffset);
 
-    inline bool setRangeImpl(const void* data, size_t dataByteLength, size_t byteOffset);
-    inline bool getRangeImpl(void* destination, size_t dataByteLength, size_t byteOffset);
+    inline bool setRangeImpl(const void* data, size_t dataByteLength, unsigned byteOffset);
+    inline bool getRangeImpl(void* destination, size_t dataByteLength, unsigned byteOffset);
 
-    inline bool zeroRangeImpl(size_t byteOffset, size_t rangeByteLength);
+    inline bool zeroRangeImpl(unsigned byteOffset, size_t rangeByteLength);
+
+    static inline void calculateOffsetAndLength(
+        int start, int end, unsigned arraySize,
+        unsigned* offset, unsigned* length);
 
     // Input offset is in number of elements from this array's view;
     // output offset is in number of bytes from the underlying buffer's view.
     template <typename T>
     static void clampOffsetAndNumElements(
         const ArrayBuffer& buffer,
-        size_t arrayByteOffset,
-        size_t *offset,
-        size_t *numElements)
+        unsigned arrayByteOffset,
+        unsigned *offset,
+        unsigned *numElements)
     {
-        size_t maxOffset = (std::numeric_limits<size_t>::max() - arrayByteOffset) / sizeof(T);
+        unsigned maxOffset = (UINT_MAX - arrayByteOffset) / sizeof(T);
         if (*offset > maxOffset) {
             *offset = buffer.byteLength();
             *numElements = 0;
             return;
         }
-        CheckedSize adjustedOffset = *offset;
-        adjustedOffset *= sizeof(T);
-        adjustedOffset += arrayByteOffset;
-        if (adjustedOffset.hasOverflowed() || adjustedOffset.value() > buffer.byteLength())
-            *offset = buffer.byteLength();
-        else
-            *offset = adjustedOffset.value();
-        size_t remainingElements = (buffer.byteLength() - *offset) / sizeof(T);
+        *offset = arrayByteOffset + *offset * sizeof(T);
+        *offset = std::min(buffer.byteLength(), *offset);
+        unsigned remainingElements = (buffer.byteLength() - *offset) / sizeof(T);
         *numElements = std::min(remainingElements, *numElements);
     }
 
-#if USE(LARGE_TYPED_ARRAYS)
-    uint64_t m_byteOffset : 63;
-#else
-    uint32_t m_byteOffset : 31;
-#endif
+    unsigned m_byteOffset : 31;
     bool m_isDetachable : 1;
-    UCPURegister m_byteLength;
+    unsigned m_byteLength;
 
     using BaseAddress = CagedPtr<Gigacage::Primitive, void, tagCagedPtr>;
     // This is the address of the ArrayBuffer's storage, plus the byte offset.
@@ -165,44 +160,79 @@ private:
     RefPtr<ArrayBuffer> m_buffer;
 };
 
-bool ArrayBufferView::setImpl(ArrayBufferView* array, size_t byteOffset)
+bool ArrayBufferView::setImpl(ArrayBufferView* array, unsigned byteOffset)
 {
-    if (!isSumSmallerThanOrEqual(byteOffset, array->byteLength(), byteLength()))
+    if (byteOffset > byteLength()
+        || byteOffset + array->byteLength() > byteLength()
+        || byteOffset + array->byteLength() < byteOffset) {
+        // Out of range offset or overflow
         return false;
-
+    }
+    
     uint8_t* base = static_cast<uint8_t*>(baseAddress());
     memmove(base + byteOffset, array->baseAddress(), array->byteLength());
     return true;
 }
 
-bool ArrayBufferView::setRangeImpl(const void* data, size_t dataByteLength, size_t byteOffset)
+bool ArrayBufferView::setRangeImpl(const void* data, size_t dataByteLength, unsigned byteOffset)
 {
-    if (!isSumSmallerThanOrEqual(byteOffset, dataByteLength, byteLength()))
+    if (byteOffset > byteLength()
+        || byteOffset + dataByteLength > byteLength()
+        || byteOffset + dataByteLength < byteOffset) {
+        // Out of range offset or overflow
         return false;
+    }
 
     uint8_t* base = static_cast<uint8_t*>(baseAddress());
     memmove(base + byteOffset, data, dataByteLength);
     return true;
 }
 
-bool ArrayBufferView::getRangeImpl(void* destination, size_t dataByteLength, size_t byteOffset)
+bool ArrayBufferView::getRangeImpl(void* destination, size_t dataByteLength, unsigned byteOffset)
 {
-    if (!isSumSmallerThanOrEqual(byteOffset, dataByteLength, byteLength()))
+    if (byteOffset > byteLength()
+        || byteOffset + dataByteLength > byteLength()
+        || byteOffset + dataByteLength < byteOffset) {
+        // Out of range offset or overflow
         return false;
+    }
 
     const uint8_t* base = static_cast<const uint8_t*>(baseAddress());
     memmove(destination, base + byteOffset, dataByteLength);
     return true;
 }
 
-bool ArrayBufferView::zeroRangeImpl(size_t byteOffset, size_t rangeByteLength)
+bool ArrayBufferView::zeroRangeImpl(unsigned byteOffset, size_t rangeByteLength)
 {
-    if (!isSumSmallerThanOrEqual(byteOffset, rangeByteLength, byteLength()))
+    if (byteOffset > byteLength()
+        || byteOffset + rangeByteLength > byteLength()
+        || byteOffset + rangeByteLength < byteOffset) {
+        // Out of range offset or overflow
         return false;
-
+    }
+    
     uint8_t* base = static_cast<uint8_t*>(baseAddress());
     memset(base + byteOffset, 0, rangeByteLength);
     return true;
+}
+
+void ArrayBufferView::calculateOffsetAndLength(
+    int start, int end, unsigned arraySize, unsigned* offset, unsigned* length)
+{
+    if (start < 0)
+        start += arraySize;
+    if (start < 0)
+        start = 0;
+    if (end < 0)
+        end += arraySize;
+    if (end < 0)
+        end = 0;
+    if (static_cast<unsigned>(end) > arraySize)
+        end = arraySize;
+    if (end < start)
+        end = start;
+    *offset = static_cast<unsigned>(start);
+    *length = static_cast<unsigned>(end - start);
 }
 
 } // namespace JSC

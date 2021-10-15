@@ -127,7 +127,6 @@ public:
         u.asBytes.speculation = Array::InBounds;
         u.asBytes.conversion = Array::AsIs;
         u.asBytes.action = Array::Write;
-        u.asBytes.mayBeLargeTypedArray = false;
     }
     
     explicit ArrayMode(Array::Type type, Array::Action action)
@@ -137,7 +136,6 @@ public:
         u.asBytes.speculation = Array::InBounds;
         u.asBytes.conversion = Array::AsIs;
         u.asBytes.action = action;
-        u.asBytes.mayBeLargeTypedArray = false;
     }
     
     ArrayMode(Array::Type type, Array::Class arrayClass, Array::Action action)
@@ -147,17 +145,15 @@ public:
         u.asBytes.speculation = Array::InBounds;
         u.asBytes.conversion = Array::AsIs;
         u.asBytes.action = action;
-        u.asBytes.mayBeLargeTypedArray = false;
     }
     
-    ArrayMode(Array::Type type, Array::Class arrayClass, Array::Speculation speculation, Array::Conversion conversion, Array::Action action, bool mayBeLargeTypedArray = false)
+    ArrayMode(Array::Type type, Array::Class arrayClass, Array::Speculation speculation, Array::Conversion conversion, Array::Action action)
     {
         u.asBytes.type = type;
         u.asBytes.arrayClass = arrayClass;
         u.asBytes.speculation = speculation;
         u.asBytes.conversion = conversion;
         u.asBytes.action = action;
-        u.asBytes.mayBeLargeTypedArray = mayBeLargeTypedArray;
     }
     
     ArrayMode(Array::Type type, Array::Class arrayClass, Array::Conversion conversion, Array::Action action)
@@ -167,7 +163,6 @@ public:
         u.asBytes.speculation = Array::InBounds;
         u.asBytes.conversion = conversion;
         u.asBytes.action = action;
-        u.asBytes.mayBeLargeTypedArray = false;
     }
     
     Array::Type type() const { return static_cast<Array::Type>(u.asBytes.type); }
@@ -175,7 +170,6 @@ public:
     Array::Speculation speculation() const { return static_cast<Array::Speculation>(u.asBytes.speculation); }
     Array::Conversion conversion() const { return static_cast<Array::Conversion>(u.asBytes.conversion); }
     Array::Action action() const { return static_cast<Array::Action>(u.asBytes.action); }
-    bool mayBeLargeTypedArray() const { return u.asBytes.mayBeLargeTypedArray; }
     
     unsigned asWord() const { return u.asWord; }
     
@@ -185,50 +179,35 @@ public:
     }
     
     static ArrayMode fromObserved(const ConcurrentJSLocker&, ArrayProfile*, Array::Action, bool makeSafe);
-
-    ArrayMode withType(Array::Type type) const
-    {
-        return ArrayMode(type, arrayClass(), speculation(), conversion(), action(), mayBeLargeTypedArray());
-    }
-
+    
     ArrayMode withSpeculation(Array::Speculation speculation) const
     {
-        return ArrayMode(type(), arrayClass(), speculation, conversion(), action(), mayBeLargeTypedArray());
+        return ArrayMode(type(), arrayClass(), speculation, conversion(), action());
     }
-
-    ArrayMode withConversion(Array::Conversion conversion) const
+    
+    ArrayMode withArrayClass(Array::Class arrayClass) const
     {
-        return ArrayMode(type(), arrayClass(), speculation(), conversion, action(), mayBeLargeTypedArray());
+        return ArrayMode(type(), arrayClass, speculation(), conversion(), action());
     }
-
-    ArrayMode withTypeAndConversion(Array::Type type, Array::Conversion conversion) const
-    {
-        return ArrayMode(type, arrayClass(), speculation(), conversion, action(), mayBeLargeTypedArray());
-    }
-
-    ArrayMode withArrayClassAndSpeculationAndMayBeLargeTypedArray(Array::Class arrayClass, Array::Speculation speculation, bool mayBeLargeTypedArray) const
-    {
-        return ArrayMode(type(), arrayClass, speculation, conversion(), action(), mayBeLargeTypedArray);
-    }
-
-    static Array::Speculation speculationFromProfile(const ConcurrentJSLocker& locker, ArrayProfile* profile, bool makeSafe)
-    {
-        if (makeSafe)
-            return Array::OutOfBounds;
-        else if (profile->mayStoreToHole(locker))
-            return Array::ToHole;
-        else
-            return Array::InBounds;
-    }
-
+    
     ArrayMode withSpeculationFromProfile(const ConcurrentJSLocker& locker, ArrayProfile* profile, bool makeSafe) const
     {
-        return withSpeculation(speculationFromProfile(locker, profile, makeSafe));
-    }
+        Array::Speculation mySpeculation;
 
+        if (makeSafe)
+            mySpeculation = Array::OutOfBounds;
+        else if (profile->mayStoreToHole(locker))
+            mySpeculation = Array::ToHole;
+        else
+            mySpeculation = Array::InBounds;
+        
+        return withSpeculation(mySpeculation);
+    }
+    
     ArrayMode withProfile(const ConcurrentJSLocker& locker, ArrayProfile* profile, bool makeSafe) const
     {
         Array::Class myArrayClass;
+
         if (isJSArray()) {
             if (profile->usesOriginalArrayStructures(locker) && benefitsFromOriginalArray()) {
                 ArrayModes arrayModes = profile->observedArrayModes(locker);
@@ -242,12 +221,23 @@ public:
                 myArrayClass = Array::Array;
         } else
             myArrayClass = arrayClass();
-
-        Array::Speculation speculation = speculationFromProfile(locker, profile, makeSafe);
-
-        bool largeTypedArray = profile->mayBeLargeTypedArray(locker);
-
-        return withArrayClassAndSpeculationAndMayBeLargeTypedArray(myArrayClass, speculation, largeTypedArray);
+        
+        return withArrayClass(myArrayClass).withSpeculationFromProfile(locker, profile, makeSafe);
+    }
+    
+    ArrayMode withType(Array::Type type) const
+    {
+        return ArrayMode(type, arrayClass(), speculation(), conversion(), action());
+    }
+    
+    ArrayMode withConversion(Array::Conversion conversion) const
+    {
+        return ArrayMode(type(), arrayClass(), speculation(), conversion, action());
+    }
+    
+    ArrayMode withTypeAndConversion(Array::Type type, Array::Conversion conversion) const
+    {
+        return ArrayMode(type, arrayClass(), speculation(), conversion, action());
     }
     
     static constexpr SpeculatedType unusedIndexSpeculatedType = SpecInt32Only;
@@ -536,8 +526,7 @@ public:
         return type() == other.type()
             && arrayClass() == other.arrayClass()
             && speculation() == other.speculation()
-            && conversion() == other.conversion()
-            && mayBeLargeTypedArray() == other.mayBeLargeTypedArray();
+            && conversion() == other.conversion();
     }
     
     bool operator!=(const ArrayMode& other) const
@@ -590,8 +579,7 @@ private:
             uint8_t arrayClass;
             uint8_t speculation;
             uint8_t conversion : 4;
-            uint8_t action : 1;
-            uint8_t mayBeLargeTypedArray : 1;
+            uint8_t action : 4;
         } asBytes;
         unsigned asWord;
     } u;

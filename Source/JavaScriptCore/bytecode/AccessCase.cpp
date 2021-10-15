@@ -486,6 +486,7 @@ bool AccessCase::needsScratchFPR() const
     case CustomAccessorGetter:
     case CustomValueSetter:
     case CustomAccessorSetter:
+    case IntrinsicGetter:
     case InHit:
     case InMiss:
     case CheckPrivateBrand:
@@ -528,8 +529,6 @@ bool AccessCase::needsScratchFPR() const
     case IndexedTypedArrayUint32Store:
     case IndexedTypedArrayFloat32Store:
     case IndexedTypedArrayFloat64Store:
-    // Used by TypedArrayLength/TypedArrayByteOffset in the process of boxing their result as a double
-    case IntrinsicGetter:
         return true;
     }
     RELEASE_ASSERT_NOT_REACHED();
@@ -1185,17 +1184,12 @@ void AccessCase::generateWithGuard(
 
         GPRReg propertyGPR = state.u.propertyGPR;
 
+        
         jit.load8(CCallHelpers::Address(baseGPR, JSCell::typeInfoTypeOffset()), scratchGPR);
         fallThrough.append(jit.branch32(CCallHelpers::NotEqual, scratchGPR, CCallHelpers::TrustedImm32(typeForTypedArrayType(type))));
 
-        CCallHelpers::Address addressOfLength = CCallHelpers::Address(baseGPR, JSArrayBufferView::offsetOfLength());
-        jit.signExtend32ToPtr(propertyGPR, scratchGPR);
-#if USE(LARGE_TYPED_ARRAYS)
-        // The length is a size_t, so either 32 or 64 bits depending on the platform.
-        state.failAndRepatch.append(jit.branch64(CCallHelpers::AboveOrEqual, scratchGPR, addressOfLength));
-#else
-        state.failAndRepatch.append(jit.branch32(CCallHelpers::AboveOrEqual, propertyGPR, addressOfLength));
-#endif
+        jit.load32(CCallHelpers::Address(baseGPR, JSArrayBufferView::offsetOfLength()), scratchGPR);
+        state.failAndRepatch.append(jit.branch32(CCallHelpers::AboveOrEqual, propertyGPR, scratchGPR));
 
         auto allocator = state.makeDefaultScratchAllocator(scratchGPR);
         GPRReg scratch2GPR = allocator.allocateScratchGPR();
@@ -1203,13 +1197,9 @@ void AccessCase::generateWithGuard(
         ScratchRegisterAllocator::PreservedState preservedState = allocator.preserveReusedRegistersByPushing(
             jit, ScratchRegisterAllocator::ExtraStackSpace::NoExtraSpace);
 
-#if USE(LARGE_TYPED_ARRAYS)
-        jit.load64(addressOfLength, scratchGPR);
-#else
-        jit.load32(addressOfLength, scratchGPR);
-#endif
         jit.loadPtr(CCallHelpers::Address(baseGPR, JSArrayBufferView::offsetOfVector()), scratch2GPR);
         jit.cageConditionallyAndUntag(Gigacage::Primitive, scratch2GPR, scratchGPR, scratchGPR, false);
+
         jit.signExtend32ToPtr(propertyGPR, scratchGPR);
         if (isInt(type)) {
             switch (elementSize(type)) {
@@ -1605,14 +1595,9 @@ void AccessCase::generateWithGuard(
             ready.link(&jit);
         }
 
-        CCallHelpers::Address addressOfLength = CCallHelpers::Address(baseGPR, JSArrayBufferView::offsetOfLength());
-        jit.signExtend32ToPtr(propertyGPR, scratchGPR);
-#if USE(LARGE_TYPED_ARRAYS)
-        // The length is a UCPURegister, so either 32 or 64 bits depending on the platform.
-        state.failAndRepatch.append(jit.branch64(CCallHelpers::AboveOrEqual, scratchGPR, addressOfLength));
-#else
-        state.failAndRepatch.append(jit.branch32(CCallHelpers::AboveOrEqual, propertyGPR, addressOfLength));
-#endif
+        jit.load32(CCallHelpers::Address(baseGPR, JSArrayBufferView::offsetOfLength()), scratchGPR);
+        // OutOfBounds bit of ArrayProfile will be set in the operation function.
+        state.failAndRepatch.append(jit.branch32(CCallHelpers::AboveOrEqual, propertyGPR, scratchGPR));
 
         auto allocator = state.makeDefaultScratchAllocator(scratchGPR);
         GPRReg scratch2GPR = allocator.allocateScratchGPR();
@@ -1620,13 +1605,9 @@ void AccessCase::generateWithGuard(
         ScratchRegisterAllocator::PreservedState preservedState = allocator.preserveReusedRegistersByPushing(
             jit, ScratchRegisterAllocator::ExtraStackSpace::NoExtraSpace);
 
-#if USE(LARGE_TYPED_ARRAYS)
-        jit.load64(addressOfLength, scratchGPR);
-#else
-        jit.load32(addressOfLength, scratchGPR);
-#endif
         jit.loadPtr(CCallHelpers::Address(baseGPR, JSArrayBufferView::offsetOfVector()), scratch2GPR);
         jit.cageConditionallyAndUntag(Gigacage::Primitive, scratch2GPR, scratchGPR, scratchGPR, false);
+
         jit.signExtend32ToPtr(propertyGPR, scratchGPR);
         if (isInt(type)) {
             if (isClamped(type)) {

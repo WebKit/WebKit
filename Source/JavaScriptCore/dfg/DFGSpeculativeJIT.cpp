@@ -3238,43 +3238,28 @@ static void compileClampDoubleToByte(JITCompiler& jit, GPRReg result, FPRReg sou
 
 }
 
-JITCompiler::Jump SpeculativeJIT::jumpForTypedArrayOutOfBounds(Node* node, GPRReg baseGPR, GPRReg indexGPR, GPRReg scratchGPR)
+JITCompiler::Jump SpeculativeJIT::jumpForTypedArrayOutOfBounds(Node* node, GPRReg baseGPR, GPRReg indexGPR)
 {
     if (node->op() == PutByValAlias)
         return JITCompiler::Jump();
     JSArrayBufferView* view = m_jit.graph().tryGetFoldableView(
         m_state.forNode(m_jit.graph().child(node, 0)).m_value, node->arrayMode());
     if (view) {
-        size_t length = view->length();
+        uint32_t length = view->length();
         Node* indexNode = m_jit.graph().child(node, 1).node();
-        if (indexNode->isAnyIntConstant() && indexNode->asUInt32() < length)
+        if (indexNode->isInt32Constant() && indexNode->asUInt32() < length)
             return JITCompiler::Jump();
-#if USE(LARGE_TYPED_ARRAYS)
-        m_jit.signExtend32ToPtr(indexGPR, scratchGPR);
-        return m_jit.branch64(
-            MacroAssembler::AboveOrEqual, scratchGPR, MacroAssembler::Imm64(length));
-#else
-        UNUSED_PARAM(scratchGPR);
         return m_jit.branch32(
             MacroAssembler::AboveOrEqual, indexGPR, MacroAssembler::Imm32(length));
-#endif
     }
-
-#if USE(LARGE_TYPED_ARRAYS)
-    m_jit.signExtend32ToPtr(indexGPR, scratchGPR);
-    return m_jit.branch64(
-        MacroAssembler::AboveOrEqual, scratchGPR,
-        MacroAssembler::Address(baseGPR, JSArrayBufferView::offsetOfLength()));
-#else
     return m_jit.branch32(
         MacroAssembler::AboveOrEqual, indexGPR,
         MacroAssembler::Address(baseGPR, JSArrayBufferView::offsetOfLength()));
-#endif
 }
 
-void SpeculativeJIT::emitTypedArrayBoundsCheck(Node* node, GPRReg baseGPR, GPRReg indexGPR, GPRReg scratchGPR)
+void SpeculativeJIT::emitTypedArrayBoundsCheck(Node* node, GPRReg baseGPR, GPRReg indexGPR)
 {
-    JITCompiler::Jump jump = jumpForTypedArrayOutOfBounds(node, baseGPR, indexGPR, scratchGPR);
+    JITCompiler::Jump jump = jumpForTypedArrayOutOfBounds(node, baseGPR, indexGPR);
     if (!jump.isSet())
         return;
     speculationCheck(OutOfBounds, JSValueRegs(), nullptr, jump);
@@ -3395,12 +3380,10 @@ void SpeculativeJIT::compileGetByValOnIntTypedArray(Node* node, TypedArrayType t
     SpeculateCellOperand base(this, m_graph.varArgChild(node, 0));
     SpeculateStrictInt32Operand property(this, m_graph.varArgChild(node, 1));
     StorageOperand storage(this, m_graph.varArgChild(node, 2));
-    GPRTemporary scratch(this);
 
     GPRReg baseReg = base.gpr();
     GPRReg propertyReg = property.gpr();
     GPRReg storageReg = storage.gpr();
-    GPRReg scratchGPR = scratch.gpr();
 
     std::optional<FPRTemporary> fprTemp;
     FPRReg resultFPR = InvalidFPRReg;
@@ -3414,7 +3397,7 @@ void SpeculativeJIT::compileGetByValOnIntTypedArray(Node* node, TypedArrayType t
     std::tie(resultRegs, format) = prefix(DataFormatInt32);
     bool shouldBox = format == DataFormatJS;
 
-    emitTypedArrayBoundsCheck(node, baseReg, propertyReg, scratchGPR);
+    emitTypedArrayBoundsCheck(node, baseReg, propertyReg);
     loadFromIntTypedArray(storageReg, propertyReg, resultRegs.payloadGPR(), type);
     constexpr bool canSpeculate = true;
     setIntTypedArrayLoadResult(node, resultRegs, type, canSpeculate, shouldBox, resultFPR);
@@ -3572,7 +3555,6 @@ void SpeculativeJIT::compilePutByValForIntTypedArray(GPRReg base, GPRReg propert
     ASSERT(isInt(type));
     
     StorageOperand storage(this, m_jit.graph().varArgChild(node, 3));
-    GPRTemporary scratch(this);
     GPRReg storageReg = storage.gpr();
     
     Edge valueUse = m_jit.graph().varArgChild(node, 2);
@@ -3605,7 +3587,7 @@ void SpeculativeJIT::compilePutByValForIntTypedArray(GPRReg base, GPRReg propert
     ASSERT_UNUSED(valueGPR, valueGPR != property);
     ASSERT(valueGPR != base);
     ASSERT(valueGPR != storageReg);
-    JITCompiler::Jump outOfBounds = jumpForTypedArrayOutOfBounds(node, base, property, scratch.gpr());
+    JITCompiler::Jump outOfBounds = jumpForTypedArrayOutOfBounds(node, base, property);
 
     switch (elementSize(type)) {
     case 1:
@@ -3663,12 +3645,10 @@ void SpeculativeJIT::compileGetByValOnFloatTypedArray(Node* node, TypedArrayType
     SpeculateCellOperand base(this, m_graph.varArgChild(node, 0));
     SpeculateStrictInt32Operand property(this, m_graph.varArgChild(node, 1));
     StorageOperand storage(this, m_graph.varArgChild(node, 2));
-    GPRTemporary scratch(this);
 
     GPRReg baseReg = base.gpr();
     GPRReg propertyReg = property.gpr();
     GPRReg storageReg = storage.gpr();
-    GPRReg scratchGPR = scratch.gpr();
 
     JSValueRegs resultRegs;
     DataFormat format;
@@ -3676,7 +3656,7 @@ void SpeculativeJIT::compileGetByValOnFloatTypedArray(Node* node, TypedArrayType
 
     FPRTemporary result(this);
     FPRReg resultReg = result.fpr();
-    emitTypedArrayBoundsCheck(node, baseReg, propertyReg, scratchGPR);
+    emitTypedArrayBoundsCheck(node, baseReg, propertyReg);
     switch (elementSize(type)) {
     case 4:
         m_jit.loadFloat(MacroAssembler::BaseIndex(storageReg, propertyReg, MacroAssembler::TimesFour), resultReg);
@@ -3710,12 +3690,10 @@ void SpeculativeJIT::compilePutByValForFloatTypedArray(GPRReg base, GPRReg prope
 
     SpeculateDoubleOperand valueOp(this, valueUse);
     FPRTemporary scratch(this);
-    GPRTemporary gpScratch(this);
     FPRReg valueFPR = valueOp.fpr();
     FPRReg scratchFPR = scratch.fpr();
-    GPRReg scratchGPR = gpScratch.gpr();
 
-    MacroAssembler::Jump outOfBounds = jumpForTypedArrayOutOfBounds(node, base, property, scratchGPR);
+    MacroAssembler::Jump outOfBounds = jumpForTypedArrayOutOfBounds(node, base, property);
     
     switch (elementSize(type)) {
     case 4: {
@@ -7989,7 +7967,7 @@ void SpeculativeJIT::cageTypedArrayStorage(GPRReg baseReg, GPRReg storageReg, bo
 {
     auto untagArrayPtr = [&]() {
 #if CPU(ARM64E)
-        m_jit.untagArrayPtrLength64(MacroAssembler::Address(baseReg, JSArrayBufferView::offsetOfLength()), storageReg, validateAuth);
+        m_jit.untagArrayPtrLength32(MacroAssembler::Address(baseReg, JSArrayBufferView::offsetOfLength()), storageReg, validateAuth);
 #else
         UNUSED_PARAM(validateAuth);
         UNUSED_PARAM(baseReg);
@@ -8061,6 +8039,9 @@ void SpeculativeJIT::compileGetTypedArrayByteOffset(Node* node)
     GPRReg baseGPR = base.gpr();
     GPRReg vectorGPR = vector.gpr();
     GPRReg dataGPR = data.gpr();
+    ASSERT(baseGPR != vectorGPR);
+    ASSERT(baseGPR != dataGPR);
+    ASSERT(vectorGPR != dataGPR);
 
     GPRReg arrayBufferGPR = dataGPR;
 
@@ -8100,11 +8081,6 @@ void SpeculativeJIT::compileGetTypedArrayByteOffset(Node* node)
 #if !CPU(ARM64E)
     ASSERT(!JSArrayBufferView::nullVectorPtr());
     nullVector.link(&m_jit);
-#endif
-
-#if USE(LARGE_TYPED_ARRAYS)
-    // AI promises that the result of GetTypedArrayByteOffset will be Int32, so we must uphold that promise here.
-    speculationCheck(Overflow, JSValueRegs(), nullptr, m_jit.branch32(MacroAssembler::Above, vectorGPR, TrustedImm32(std::numeric_limits<int32_t>::max())));
 #endif
 
     strictInt32Result(vectorGPR, node);
@@ -8373,17 +8349,11 @@ void SpeculativeJIT::compileGetArrayLength(Node* node)
         GPRTemporary result(this, Reuse, base);
         GPRReg baseGPR = base.gpr();
         GPRReg resultGPR = result.gpr();
-#if USE(LARGE_TYPED_ARRAYS)
-        m_jit.load64(MacroAssembler::Address(baseGPR, JSArrayBufferView::offsetOfLength()), resultGPR);
-        speculationCheck(Overflow, JSValueSource(), nullptr, m_jit.branch64(MacroAssembler::Above, resultGPR, TrustedImm64(std::numeric_limits<int32_t>::max())));
-#else
         m_jit.load32(MacroAssembler::Address(baseGPR, JSArrayBufferView::offsetOfLength()), resultGPR);
-#endif
         strictInt32Result(resultGPR, node);
         break;
     } }
 }
-
 
 void SpeculativeJIT::compileCheckIdent(Node* node)
 {
@@ -11149,24 +11119,10 @@ void SpeculativeJIT::compileNewTypedArrayWithSize(Node* node)
     auto typedArrayType = node->typedArrayType();
     RegisteredStructure structure = m_jit.graph().registerStructure(globalObject->typedArrayStructureConcurrently(typedArrayType));
     RELEASE_ASSERT(structure.get());
-
-#if USE(LARGE_TYPED_ARRAYS)
-    // The operations we call on the slow path expect a intptr_t, so int64_t on 64 bit platforms
-    SpeculateInt32Operand size(this, node->child1());
-    GPRTemporary scratch(this);
-    GPRReg sizeGPR = size.gpr();
-    GPRReg scratchGPR = scratch.gpr();
-    m_jit.signExtend32ToPtr(sizeGPR, scratchGPR);
-    emitNewTypedArrayWithSizeInRegister(node, typedArrayType, structure, scratchGPR);
-#else
+    
     SpeculateInt32Operand size(this, node->child1());
     GPRReg sizeGPR = size.gpr();
-    emitNewTypedArrayWithSizeInRegister(node, typedArrayType, structure, sizeGPR);
-#endif
-}
-
-void SpeculativeJIT::emitNewTypedArrayWithSizeInRegister(Node* node, TypedArrayType typedArrayType, RegisteredStructure structure, GPRReg sizeGPR)
-{
+    
     GPRTemporary result(this);
     GPRTemporary storage(this);
     GPRTemporary scratch(this);
@@ -11180,15 +11136,8 @@ void SpeculativeJIT::emitNewTypedArrayWithSizeInRegister(Node* node, TypedArrayT
     
     m_jit.move(TrustedImmPtr(nullptr), storageGPR);
 
-#if USE(LARGE_TYPED_ARRAYS)
-    slowCases.append(m_jit.branch64(
-        MacroAssembler::Above, sizeGPR, TrustedImm64(JSArrayBufferView::fastSizeLimit)));
-    // We assume through the rest of the fast path that the size is a 32-bit number.
-    static_assert(isInBounds<int32_t>(JSArrayBufferView::fastSizeLimit));
-#else
     slowCases.append(m_jit.branch32(
         MacroAssembler::Above, sizeGPR, TrustedImm32(JSArrayBufferView::fastSizeLimit)));
-#endif
     
     m_jit.move(sizeGPR, scratchGPR);
     m_jit.lshift32(TrustedImm32(logElementSize(typedArrayType)), scratchGPR);
@@ -11244,15 +11193,9 @@ void SpeculativeJIT::emitNewTypedArrayWithSizeInRegister(Node* node, TypedArrayT
     m_jit.storePtr(
         storageGPR,
         MacroAssembler::Address(resultGPR, JSArrayBufferView::offsetOfVector()));
-#if USE(LARGE_TYPED_ARRAYS)
-    m_jit.store64(
-        sizeGPR,
-        MacroAssembler::Address(resultGPR, JSArrayBufferView::offsetOfLength()));
-#else
     m_jit.store32(
         sizeGPR,
         MacroAssembler::Address(resultGPR, JSArrayBufferView::offsetOfLength()));
-#endif
     m_jit.store32(
         TrustedImm32(FastTypedArray),
         MacroAssembler::Address(resultGPR, JSArrayBufferView::offsetOfMode()));
@@ -14224,11 +14167,6 @@ void SpeculativeJIT::compileNewTypedArray(Node* node)
     case Int32Use:
         compileNewTypedArrayWithSize(node);
         break;
-#if USE(LARGE_TYPED_ARRAYS)
-    case Int52RepUse:
-        compileNewTypedArrayWithInt52Size(node);
-        break;
-#endif
     case UntypedUse: {
         JSValueOperand argument(this, node->child1());
         JSValueRegs argumentRegs = argument.jsValueRegs();

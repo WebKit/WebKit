@@ -898,8 +898,8 @@ ALWAYS_INLINE EncodedJSValue getByValWithIndex(JSGlobalObject* globalObject, JSC
 {
     if (base->isObject()) {
         JSObject* object = asObject(base);
-        if (JSValue result = object->tryGetIndexQuickly(index))
-            return JSValue::encode(result);
+        if (object->canGetIndexQuickly(index))
+            return JSValue::encode(object->getIndexQuickly(index));
     }
 
     if (isJSString(base) && asString(base)->canGetIndex(index))

@@ -279,12 +279,10 @@ private:
                 case PutByVal:
                 case PutByValAlias:
                 case GetArrayLength:
-                case GetTypedArrayLengthAsInt52:
                 case CheckArray:
                 case CheckDetached:
                 case GetIndexedPropertyStorage:
                 case GetTypedArrayByteOffset:
-                case GetTypedArrayByteOffsetAsInt52:
                 case Phantom:
                 case MovHint:
                 case MultiGetByOffset:
@@ -361,7 +359,6 @@ private:
                 case PutByVal:
                 case PutByValAlias:
                 case GetArrayLength:
-                case GetTypedArrayLengthAsInt52:
                 case GetIndexedPropertyStorage:
                 case Phantom:
                 case MovHint:

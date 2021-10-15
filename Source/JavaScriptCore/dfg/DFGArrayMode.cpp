@@ -209,7 +209,7 @@ ArrayMode ArrayMode::refine(
         return ArrayMode(Array::ForceExit, action());
     }
     
-    if (!isInt32Speculation(index) && !mayBeLargeTypedArray())
+    if (!isInt32Speculation(index))
         return ArrayMode(Array::Generic, action());
     
     // If we had exited because of an exotic object behavior, then don't try to specialize.
@@ -294,8 +294,6 @@ ArrayMode ArrayMode::refine(
     case Array::Float64Array:
     case Array::BigInt64Array:
     case Array::BigUint64Array:
-        // FIXME: no idea why we only preserve this out-of-bounds information for PutByVal and not GetByVal as well.
-        // https://bugs.webkit.org/show_bug.cgi?id=231276
         if (node->op() == PutByVal) {
             if (graph.hasExitSite(node->origin.semantic, OutOfBounds) || !isInBounds())
                 return typedArrayResult(withSpeculation(Array::OutOfBounds));

@@ -1,3 +1,250 @@
+2021-10-15  Robin Morisset  <rmorisset@apple.com>
+
+        Revert r284230, my last fixes to the watch build make it break tests
+        https://bugs.webkit.org/show_bug.cgi?id=231797
+
+        Unreviewed.
+
+        Revert "Allow WASM to use up to 4GB"
+
+        * assembler/AbstractMacroAssembler.cpp:
+        * assembler/AbstractMacroAssembler.h:
+        (JSC::AbstractMacroAssembler::TrustedImmPtr::TrustedImmPtr):
+        (JSC::AbstractMacroAssembler::TrustedImmPtr::asIntptr):
+        (JSC::AbstractMacroAssembler::TrustedImmPtr::asPtr):
+        (JSC::AbstractMacroAssembler::ImmPtr::ImmPtr):
+        (JSC::AbstractMacroAssembler::ImmPtr::asTrustedImmPtr):
+        (JSC::AbstractMacroAssembler::TrustedImm32::TrustedImm32):
+        (JSC::AbstractMacroAssembler::Imm32::Imm32):
+        (JSC::AbstractMacroAssembler::Imm32::asTrustedImm32 const):
+        (JSC::AbstractMacroAssembler::TrustedImm64::TrustedImm64):
+        (JSC::AbstractMacroAssembler::Imm64::Imm64):
+        (JSC::AbstractMacroAssembler::Imm64::asTrustedImm64 const):
+        (JSC::AbstractMacroAssembler::canBlind):
+        (JSC::AbstractMacroAssembler::shouldBlindForSpecificArch):
+        * assembler/MacroAssembler.h:
+        (JSC::MacroAssembler::and64):
+        (JSC::MacroAssembler::branch64): Deleted.
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::shouldBlindForSpecificArch):
+        * assembler/MacroAssemblerARM64E.h:
+        (JSC::MacroAssemblerARM64E::untagArrayPtrLength32):
+        (JSC::MacroAssemblerARM64E::untagArrayPtrLength64): Deleted.
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::canBlind):
+        (JSC::MacroAssemblerX86Common::shouldBlindForSpecificArch):
+        * bytecode/AccessCase.cpp:
+        (JSC::AccessCase::needsScratchFPR const):
+        (JSC::AccessCase::generateWithGuard):
+        * bytecode/ArrayProfile.h:
+        (JSC::UnlinkedArrayProfile::update):
+        (JSC::ArrayProfile::setMayBeLargeTypedArray): Deleted.
+        (JSC::ArrayProfile::mayBeLargeTypedArray const): Deleted.
+        (JSC::UnlinkedArrayProfile::UnlinkedArrayProfile): Deleted.
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGArgumentsEliminationPhase.cpp:
+        * dfg/DFGArrayMode.cpp:
+        (JSC::DFG::ArrayMode::refine const):
+        * dfg/DFGArrayMode.h:
+        (JSC::DFG::ArrayMode::ArrayMode):
+        (JSC::DFG::ArrayMode::action const):
+        (JSC::DFG::ArrayMode::withSpeculation const):
+        (JSC::DFG::ArrayMode::withArrayClass const):
+        (JSC::DFG::ArrayMode::withSpeculationFromProfile const):
+        (JSC::DFG::ArrayMode::withProfile const):
+        (JSC::DFG::ArrayMode::withType const):
+        (JSC::DFG::ArrayMode::withConversion const):
+        (JSC::DFG::ArrayMode::withTypeAndConversion const):
+        (JSC::DFG::ArrayMode::operator== const):
+        (JSC::DFG::ArrayMode::mayBeLargeTypedArray const): Deleted.
+        (JSC::DFG::ArrayMode::withArrayClassAndSpeculationAndMayBeLargeTypedArray const): Deleted.
+        (JSC::DFG::ArrayMode::speculationFromProfile): Deleted.
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleIntrinsicGetter):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGCommon.h:
+        (JSC::DFG::enableInt52):
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        (JSC::DFG::FixupPhase::prependGetArrayLength):
+        * dfg/DFGGenerationInfo.h:
+        * dfg/DFGHeapLocation.cpp:
+        (WTF::printInternal):
+        * dfg/DFGHeapLocation.h:
+        * dfg/DFGIntegerRangeOptimizationPhase.cpp:
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::hasStorageChild const):
+        (JSC::DFG::Node::storageChildIndex):
+        (JSC::DFG::Node::hasArrayMode):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGOperations.cpp:
+        (JSC::DFG::putByVal):
+        (JSC::DFG::newTypedArrayWithSize):
+        (JSC::DFG::JSC_DEFINE_JIT_OPERATION):
+        * dfg/DFGOperations.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSSALoweringPhase.cpp:
+        (JSC::DFG::SSALoweringPhase::handleNode):
+        (JSC::DFG::SSALoweringPhase::lowerBoundsCheck):
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::jumpForTypedArrayOutOfBounds):
+        (JSC::DFG::SpeculativeJIT::emitTypedArrayBoundsCheck):
+        (JSC::DFG::SpeculativeJIT::compileGetByValOnIntTypedArray):
+        (JSC::DFG::SpeculativeJIT::compilePutByValForIntTypedArray):
+        (JSC::DFG::SpeculativeJIT::compileGetByValOnFloatTypedArray):
+        (JSC::DFG::SpeculativeJIT::compilePutByValForFloatTypedArray):
+        (JSC::DFG::SpeculativeJIT::cageTypedArrayStorage):
+        (JSC::DFG::SpeculativeJIT::compileGetTypedArrayByteOffset):
+        (JSC::DFG::SpeculativeJIT::compileGetArrayLength):
+        (JSC::DFG::SpeculativeJIT::compileNewTypedArrayWithSize):
+        (JSC::DFG::SpeculativeJIT::compileNewTypedArray):
+        (JSC::DFG::SpeculativeJIT::emitNewTypedArrayWithSizeInRegister): Deleted.
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compileGetByVal):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        (JSC::DFG::SpeculativeJIT::compileNewTypedArrayWithInt52Size): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileGetTypedArrayLengthAsInt52): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileGetTypedArrayByteOffsetAsInt52): Deleted.
+        * dfg/DFGTypeCheckHoistingPhase.cpp:
+        (JSC::DFG::TypeCheckHoistingPhase::identifyRedundantStructureChecks):
+        (JSC::DFG::TypeCheckHoistingPhase::identifyRedundantArrayChecks):
+        * dfg/DFGValidate.cpp:
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::validateAIState):
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetTypedArrayByteOffset):
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetArrayLength):
+        (JSC::FTL::DFG::LowerDFGToB3::compilePutByVal):
+        (JSC::FTL::DFG::LowerDFGToB3::compileNewTypedArray):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCompareStrictEq):
+        (JSC::FTL::DFG::LowerDFGToB3::emitGetTypedArrayByteOffsetExceptSettingResult): Deleted.
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetTypedArrayByteOffsetAsInt52): Deleted.
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetTypedArrayLengthAsInt52): Deleted.
+        (JSC::FTL::DFG::LowerDFGToB3::compileCheckInBoundsInt52): Deleted.
+        (JSC::FTL::DFG::LowerDFGToB3::emitNewTypedArrayWithSize): Deleted.
+        * ftl/FTLOutput.h:
+        (JSC::FTL::Output::load32NonNegative):
+        (JSC::FTL::Output::load64NonNegative): Deleted.
+        * jit/IntrinsicEmitter.cpp:
+        (JSC::IntrinsicGetterAccessCase::emitIntrinsicGetter):
+        * jit/JITOperations.cpp:
+        (JSC::putByVal):
+        (JSC::getByVal):
+        * llint/LLIntOfflineAsmConfig.h:
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::getByVal):
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/ArrayBuffer.cpp:
+        (JSC::SharedArrayBufferContents::SharedArrayBufferContents):
+        (JSC::ArrayBufferContents::ArrayBufferContents):
+        (JSC::ArrayBufferContents::tryAllocate):
+        (JSC::ArrayBuffer::create):
+        (JSC::ArrayBuffer::createAdopted):
+        (JSC::ArrayBuffer::createFromBytes):
+        (JSC::ArrayBuffer::tryCreate):
+        (JSC::ArrayBuffer::createUninitialized):
+        (JSC::ArrayBuffer::tryCreateUninitialized):
+        (JSC::ArrayBuffer::createInternal):
+        (JSC::ArrayBuffer::clampValue):
+        (JSC::ArrayBuffer::clampIndex const):
+        (JSC::ArrayBuffer::sliceWithClampedIndex const):
+        * runtime/ArrayBuffer.h:
+        (JSC::ArrayBufferContents::sizeInBytes const):
+        (JSC::ArrayBuffer::byteLength const):
+        (JSC::ArrayBuffer::gcSizeEstimateInBytes const):
+        * runtime/ArrayBufferView.cpp:
+        (JSC::ArrayBufferView::ArrayBufferView):
+        * runtime/ArrayBufferView.h:
+        (JSC::ArrayBufferView::byteOffset const):
+        (JSC::ArrayBufferView::byteLength const):
+        (JSC::ArrayBufferView::verifyByteOffsetAlignment):
+        (JSC::ArrayBufferView::verifySubRangeLength):
+        (JSC::ArrayBufferView::clampOffsetAndNumElements):
+        (JSC::ArrayBufferView::setImpl):
+        (JSC::ArrayBufferView::setRangeImpl):
+        (JSC::ArrayBufferView::getRangeImpl):
+        (JSC::ArrayBufferView::zeroRangeImpl):
+        (JSC::ArrayBufferView::calculateOffsetAndLength):
+        * runtime/AtomicsObject.cpp:
+        * runtime/DataView.cpp:
+        (JSC::DataView::DataView):
+        (JSC::DataView::create):
+        * runtime/DataView.h:
+        * runtime/GenericTypedArrayView.h:
+        * runtime/GenericTypedArrayViewInlines.h:
+        (JSC::GenericTypedArrayView<Adaptor>::GenericTypedArrayView):
+        (JSC::GenericTypedArrayView<Adaptor>::create):
+        (JSC::GenericTypedArrayView<Adaptor>::tryCreate):
+        (JSC::GenericTypedArrayView<Adaptor>::createUninitialized):
+        (JSC::GenericTypedArrayView<Adaptor>::tryCreateUninitialized):
+        (JSC::GenericTypedArrayView<Adaptor>::subarray const):
+        * runtime/JSArrayBufferView.cpp:
+        (JSC::JSArrayBufferView::ConstructionContext::ConstructionContext):
+        (JSC::JSArrayBufferView::byteLength const):
+        (JSC::JSArrayBufferView::slowDownAndWasteMemory):
+        (JSC::JSArrayBufferView::possiblySharedImpl):
+        * runtime/JSArrayBufferView.h:
+        (JSC::JSArrayBufferView::sizeOf):
+        (JSC::JSArrayBufferView::ConstructionContext::length const):
+        (JSC::JSArrayBufferView::length const):
+        * runtime/JSArrayBufferViewInlines.h:
+        (JSC::JSArrayBufferView::byteOffsetImpl):
+        (JSC::JSArrayBufferView::byteOffset):
+        (JSC::JSArrayBufferView::byteOffsetConcurrently):
+        * runtime/JSCJSValue.h:
+        * runtime/JSCJSValueInlines.h:
+        (JSC::JSValue::toIndex const):
+        (JSC::JSValue::toTypedArrayIndex const): Deleted.
+        * runtime/JSDataView.cpp:
+        (JSC::JSDataView::create):
+        (JSC::JSDataView::createUninitialized):
+        (JSC::JSDataView::set):
+        (JSC::JSDataView::setIndex):
+        * runtime/JSDataView.h:
+        * runtime/JSDataViewPrototype.cpp:
+        (JSC::getData):
+        (JSC::setData):
+        * runtime/JSGenericTypedArrayView.h:
+        * runtime/JSGenericTypedArrayViewConstructorInlines.h:
+        (JSC::constructGenericTypedArrayViewWithArguments):
+        (JSC::constructGenericTypedArrayViewImpl):
+        * runtime/JSGenericTypedArrayViewInlines.h:
+        (JSC::JSGenericTypedArrayView<Adaptor>::create):
+        (JSC::JSGenericTypedArrayView<Adaptor>::createWithFastVector):
+        (JSC::JSGenericTypedArrayView<Adaptor>::createUninitialized):
+        (JSC::JSGenericTypedArrayView<Adaptor>::validateRange):
+        (JSC::JSGenericTypedArrayView<Adaptor>::setWithSpecificType):
+        (JSC::JSGenericTypedArrayView<Adaptor>::set):
+        * runtime/JSObject.h:
+        (JSC::JSObject::putByIndexInline):
+        (JSC::JSObject::tryGetIndexQuickly const):
+        (JSC::JSObject::canSetIndexQuickly):
+        (JSC::JSObject::trySetIndexQuickly): Deleted.
+        * runtime/JSObjectInlines.h:
+        (JSC::JSObject::canSetIndexQuicklyForTypedArray const):
+        (JSC::JSObject::getIndexQuicklyForTypedArray const):
+        (JSC::JSObject::setIndexQuicklyForArrayStorageIndexingType): Deleted.
+        (JSC::JSObject::trySetIndexQuicklyForTypedArray): Deleted.
+        * runtime/Operations.h:
+        (JSC::getByValWithIndex):
+        * wasm/WasmPageCount.h:
+
 2021-10-14  Robin Morisset  <rmorisset@apple.com>
 
         Allow WASM to use up to 4GB

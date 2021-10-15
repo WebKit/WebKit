@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -1043,7 +1043,6 @@ private:
                     && isFullNumberSpeculation(indexSpeculation)
                     && node->arrayMode().isSpecific()
                     && node->arrayMode().isInBounds()
-                    && !node->arrayMode().mayBeLargeTypedArray()
                     && !m_graph.hasExitSite(node->origin.semantic, Overflow)) {
 
                     Node* newIndex = m_insertionSet.insertNode(
@@ -1074,7 +1073,7 @@ private:
 
             case Array::ForceExit: {
                 // Don't force OSR because we have only seen OwnStructureMode.
-                // FIXME: We should have a better way to do this...
+                // FIXME: WE should have a better way to do this...
                 if (node->op() == EnumeratorGetByVal)
                     node->setArrayMode(node->arrayMode().withType(Array::Generic));
                 break;
@@ -1134,18 +1133,6 @@ private:
                 fixEdge<KnownStringUse>(m_graph.varArgChild(node, 0));
                 fixEdge<Int32Use>(m_graph.varArgChild(node, 1));
                 break;
-            case Array::Int8Array:
-            case Array::Int16Array:
-            case Array::Int32Array:
-            case Array::Uint8Array:
-            case Array::Uint8ClampedArray:
-            case Array::Uint16Array:
-            case Array::Uint32Array:
-            case Array::Float32Array:
-            case Array::Float64Array:
-                fixEdge<KnownCellUse>(m_graph.varArgChild(node, 0));
-                fixEdge<Int32Use>(m_graph.varArgChild(node, 1));
-                break;
             default:
                 fixEdge<KnownCellUse>(m_graph.varArgChild(node, 0));
                 fixEdge<Int32Use>(m_graph.varArgChild(node, 1));
@@ -1197,7 +1184,6 @@ private:
                     && isFullNumberSpeculation(indexSpeculation)
                     && node->arrayMode().isSpecific()
                     && node->arrayMode().isInBounds()
-                    && !node->arrayMode().mayBeLargeTypedArray()
                     && !m_graph.hasExitSite(node->origin.semantic, Overflow)) {
 
                     Node* newIndex = m_insertionSet.insertNode(
@@ -1731,13 +1717,9 @@ private:
             
         case NewTypedArray: {
             watchHavingABadTime(node);
+            
             if (node->child1()->shouldSpeculateInt32()) {
                 fixEdge<Int32Use>(node->child1());
-                node->clearFlags(NodeMustGenerate);
-                break;
-            }
-            if (node->child1()->shouldSpeculateInt52()) {
-                fixEdge<Int52RepUse>(node->child1());
                 node->clearFlags(NodeMustGenerate);
                 break;
             }
@@ -2167,23 +2149,6 @@ private:
             break;
         }
 
-        case GetTypedArrayLengthAsInt52: {
-            ArrayMode arrayMode = node->arrayMode().refine(m_graph, node, node->child1()->prediction(), ArrayMode::unusedIndexSpeculatedType);
-            ASSERT(arrayMode.isSomeTypedArrayView());
-            node->setArrayMode(arrayMode);
-            blessArrayOperation(node->child1(), Edge(), node->child2(), lengthNeedsStorage);
-
-            fixEdge<KnownCellUse>(node->child1());
-            node->setResult(NodeResultInt52);
-            break;
-        }
-
-        case GetTypedArrayByteOffsetAsInt52: {
-            fixEdge<KnownCellUse>(node->child1());
-            node->setResult(NodeResultInt52);
-            break;
-        }
-
         case GetTypedArrayByteOffset: {
             fixEdge<KnownCellUse>(node->child1());
             break;
@@ -2217,7 +2182,6 @@ private:
         case CheckTierUpAndOSREnter:
         case AssertInBounds:
         case CheckInBounds:
-        case CheckInBoundsInt52:
         case ConstantStoragePointer:
         case DoubleAsInt32:
         case ValueToInt32:
@@ -4131,6 +4095,14 @@ private:
             return;
             
         node->child2() = Edge(storage);
+    }
+    
+    Node* prependGetArrayLength(NodeOrigin origin, Node* child, ArrayMode arrayMode)
+    {
+        Node* storage = checkArray(arrayMode, origin, child, nullptr, lengthNeedsStorage);
+        return m_insertionSet.insertNode(
+            m_indexInBlock, SpecInt32Only, GetArrayLength, origin,
+            OpInfo(arrayMode.asWord()), Edge(child, KnownCellUse), Edge(storage));
     }
 
     void convertToHasIndexedProperty(Node* node)

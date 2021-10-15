@@ -325,11 +325,6 @@ private:
                         escape(node->child1(), node);
                     break;
 
-                case GetTypedArrayLengthAsInt52:
-                    // This node is only used for TypedArrays, so should not be relevant for arguments elimination
-                    escape(node->child2(), node);
-                    break;
-
                 case NewArrayWithSpread: {
                     BitVector* bitVector = node->bitVector();
                     bool isWatchingHavingABadTimeWatchpoint = m_graph.isWatchingHavingABadTimeWatchpoint(node); 

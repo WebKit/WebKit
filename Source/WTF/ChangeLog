@@ -1,3 +1,18 @@
+2021-10-15  Robin Morisset  <rmorisset@apple.com>
+
+        Revert r284230, my last fixes to the watch build make it break tests
+        https://bugs.webkit.org/show_bug.cgi?id=231797
+
+        Unreviewed.
+
+        Revert "Allow WASM to use up to 4GB"
+
+        * wtf/CheckedArithmetic.h:
+        (WTF::isInBounds):
+        (WTF::convertSafely):
+        (WTF::isSumSmallerThanOrEqual): Deleted.
+        * wtf/PlatformUse.h:
+
 2021-10-14  Alex Christensen  <achristensen@webkit.org>
 
         Add AdAttributionDaemon plist on iOS

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2009 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,17 +25,18 @@
 
 #include "config.h"
 #include "ArrayBufferView.h"
+#include <wtf/CheckedArithmetic.h>
 
 namespace JSC {
 
 ArrayBufferView::ArrayBufferView(
-    RefPtr<ArrayBuffer>&& buffer, size_t byteOffset, size_t byteLength)
+    RefPtr<ArrayBuffer>&& buffer, unsigned byteOffset, unsigned byteLength)
         : m_byteOffset(byteOffset)
         , m_isDetachable(true)
         , m_byteLength(byteLength)
         , m_buffer(WTFMove(buffer))
 {
-    Checked<size_t, CrashOnOverflow> length(byteOffset);
+    Checked<unsigned, CrashOnOverflow> length(byteOffset);
     length += byteLength;
     RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(length <= m_buffer->byteLength());
     if (m_buffer)

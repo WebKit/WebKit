@@ -1,5 +1,4 @@
-//@ skip if $memoryLimited or ($architecture != "arm64" && $architecture != "x86-64")
-//@ runDefault()
+//@ skip if $memoryLimited
 
 function test() {
 
@@ -25,21 +24,17 @@ function test() {
     for (var i = 0; i < 10000; ++i)
         foo(okArray);
 
-    let maxSize = 0x10000;
-    {
-        var result = foo(new Uint8Array(new WebAssembly.Memory({ initial: maxSize, maximum: maxSize }).buffer));
-        if (result !== void 0)
-            throw "Error: bad result at end: " + result;
-    }
-
     var ok = false;
     try {
-        var result = foo(new Uint8Array(new WebAssembly.Memory({ initial: maxSize+1, maximum: maxSize+1 }).buffer));
+        var result = foo(new Uint8Array(new WebAssembly.Memory({ initial: 0x8000, maximum: 0x8000 }).buffer));
+        if (result !== void 0)
+            throw "Error: bad result at end: " + result;
         ok = true;
     } catch (e) {
-        if (e.toString() != "RangeError: WebAssembly.Memory 'initial' page count is too large")
+        if (e.toString() != "RangeError: Out of memory")
             throw e;
     }
+
     if (ok)
         throw "Error: did not throw error";
 

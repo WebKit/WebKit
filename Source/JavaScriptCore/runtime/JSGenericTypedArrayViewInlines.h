@@ -34,7 +34,6 @@
 #include "JSGenericTypedArrayView.h"
 #include "TypeError.h"
 #include "TypedArrays.h"
-#include <wtf/CheckedArithmetic.h>
 #include <wtf/text/StringConcatenateNumbers.h>
 
 namespace JSC {
@@ -48,7 +47,7 @@ JSGenericTypedArrayView<Adaptor>::JSGenericTypedArrayView(
 
 template<typename Adaptor>
 JSGenericTypedArrayView<Adaptor>* JSGenericTypedArrayView<Adaptor>::create(
-    JSGlobalObject* globalObject, Structure* structure, size_t length)
+    JSGlobalObject* globalObject, Structure* structure, unsigned length)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -66,7 +65,7 @@ JSGenericTypedArrayView<Adaptor>* JSGenericTypedArrayView<Adaptor>::create(
 
 template<typename Adaptor>
 JSGenericTypedArrayView<Adaptor>* JSGenericTypedArrayView<Adaptor>::createWithFastVector(
-    JSGlobalObject* globalObject, Structure* structure, size_t length, void* vector)
+    JSGlobalObject* globalObject, Structure* structure, unsigned length, void* vector)
 {
     VM& vm = globalObject->vm();
     ConstructionContext context(structure, length, vector);
@@ -79,7 +78,7 @@ JSGenericTypedArrayView<Adaptor>* JSGenericTypedArrayView<Adaptor>::createWithFa
 }
 
 template<typename Adaptor>
-JSGenericTypedArrayView<Adaptor>* JSGenericTypedArrayView<Adaptor>::createUninitialized(JSGlobalObject* globalObject, Structure* structure, size_t length)
+JSGenericTypedArrayView<Adaptor>* JSGenericTypedArrayView<Adaptor>::createUninitialized(JSGlobalObject* globalObject, Structure* structure, unsigned length)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -100,17 +99,17 @@ JSGenericTypedArrayView<Adaptor>* JSGenericTypedArrayView<Adaptor>::createUninit
 template<typename Adaptor>
 JSGenericTypedArrayView<Adaptor>* JSGenericTypedArrayView<Adaptor>::create(
     JSGlobalObject* globalObject, Structure* structure, RefPtr<ArrayBuffer>&& buffer,
-    size_t byteOffset, size_t length)
+    unsigned byteOffset, unsigned length)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    size_t elementSize = sizeof(typename Adaptor::Type);
+    size_t size = sizeof(typename Adaptor::Type);
     ASSERT(buffer);
-    if (!ArrayBufferView::verifySubRangeLength(*buffer, byteOffset, length, elementSize)) {
+    if (!ArrayBufferView::verifySubRangeLength(*buffer, byteOffset, length, size)) {
         throwException(globalObject, scope, createRangeError(globalObject, "Length out of range of buffer"));
         return nullptr;
     }
-    if (!ArrayBufferView::verifyByteOffsetAlignment(byteOffset, elementSize)) {
+    if (!ArrayBufferView::verifyByteOffsetAlignment(byteOffset, size)) {
         throwException(globalObject, scope, createRangeError(globalObject, "Byte offset is not aligned"));
         return nullptr;
     }
@@ -146,7 +145,7 @@ JSGenericTypedArrayView<Adaptor>* JSGenericTypedArrayView<Adaptor>::create(
 
 template<typename Adaptor>
 bool JSGenericTypedArrayView<Adaptor>::validateRange(
-    JSGlobalObject* globalObject, size_t offset, size_t length)
+    JSGlobalObject* globalObject, unsigned offset, unsigned length)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -160,8 +159,8 @@ bool JSGenericTypedArrayView<Adaptor>::validateRange(
 template<typename Adaptor>
 template<typename OtherAdaptor>
 bool JSGenericTypedArrayView<Adaptor>::setWithSpecificType(
-    JSGlobalObject* globalObject, size_t offset, JSGenericTypedArrayView<OtherAdaptor>* other,
-    size_t otherOffset, size_t length, CopyType type)
+    JSGlobalObject* globalObject, unsigned offset, JSGenericTypedArrayView<OtherAdaptor>* other,
+    unsigned otherOffset, unsigned length, CopyType type)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -219,7 +218,7 @@ bool JSGenericTypedArrayView<Adaptor>::setWithSpecificType(
         || existingBuffer() != other->existingBuffer()
         || (elementSize == otherElementSize && vector() <= other->vector())
         || type == CopyType::LeftToRight) {
-        for (size_t i = 0; i < length; ++i) {
+        for (unsigned i = 0; i < length; ++i) {
             setIndexQuicklyToNativeValue(
                 offset + i, OtherAdaptor::template convertTo<Adaptor>(
                     other->getIndexQuicklyAsNativeValue(i + otherOffset)));
@@ -229,7 +228,7 @@ bool JSGenericTypedArrayView<Adaptor>::setWithSpecificType(
 
     // Now we either have (2B) or (3) - so first we try to cover (2B).
     if (elementSize == otherElementSize) {
-        for (size_t i = length; i--;) {
+        for (unsigned i = length; i--;) {
             setIndexQuicklyToNativeValue(
                 offset + i, OtherAdaptor::template convertTo<Adaptor>(
                     other->getIndexQuicklyAsNativeValue(i + otherOffset)));
@@ -239,11 +238,11 @@ bool JSGenericTypedArrayView<Adaptor>::setWithSpecificType(
     
     // Fail: we need an intermediate transfer buffer (i.e. case (3)).
     Vector<typename Adaptor::Type, 32> transferBuffer(length);
-    for (size_t i = length; i--;) {
+    for (unsigned i = length; i--;) {
         transferBuffer[i] = OtherAdaptor::template convertTo<Adaptor>(
             other->getIndexQuicklyAsNativeValue(i + otherOffset));
     }
-    for (size_t i = length; i--;)
+    for (unsigned i = length; i--;)
         setIndexQuicklyToNativeValue(offset + i, transferBuffer[i]);
     
     return true;
@@ -251,14 +250,14 @@ bool JSGenericTypedArrayView<Adaptor>::setWithSpecificType(
 
 template<typename Adaptor>
 bool JSGenericTypedArrayView<Adaptor>::set(
-    JSGlobalObject* globalObject, size_t offset, JSObject* object, size_t objectOffset, size_t length, CopyType type)
+    JSGlobalObject* globalObject, unsigned offset, JSObject* object, unsigned objectOffset, unsigned length, CopyType type)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     const ClassInfo* ci = object->classInfo(vm);
     if (ci->typedArrayStorageType == Adaptor::typeValue) {
-        // The super fast case: we can just memmove since we're the same type.
+        // The super fast case: we can just memcpy since we're the same type.
         JSGenericTypedArrayView* other = jsCast<JSGenericTypedArrayView*>(object);
         length = std::min(length, other->length());
         
@@ -313,11 +312,9 @@ bool JSGenericTypedArrayView<Adaptor>::set(
         if (!success)
             return false;
 
-        // Verify that we won't ever call object->get() with an index of UINT_MAX or more
-        RELEASE_ASSERT(isSumSmallerThanOrEqual(static_cast<uint64_t>(length), static_cast<uint64_t>(objectOffset), static_cast<uint64_t>(std::numeric_limits<unsigned>::max())));
         // We could optimize this case. But right now, we don't.
-        for (size_t i = 0; i < length; ++i) {
-            JSValue value = object->get(globalObject, static_cast<unsigned>(i + objectOffset));
+        for (unsigned i = 0; i < length; ++i) {
+            JSValue value = object->get(globalObject, i + objectOffset);
             RETURN_IF_EXCEPTION(scope, false);
             bool success = setIndex(globalObject, offset + i, value);
             EXCEPTION_ASSERT(!scope.exception() || !success);

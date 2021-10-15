@@ -92,7 +92,7 @@ inline bool validationEnabled()
 #endif
 }
 
-inline bool constexpr enableInt52()
+inline bool enableInt52()
 {
 #if USE(JSVALUE64)
     return true;

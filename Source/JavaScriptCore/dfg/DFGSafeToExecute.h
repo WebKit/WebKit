@@ -288,7 +288,6 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node, bool igno
     case ExtractCatchLocal:
     case AssertInBounds:
     case CheckInBounds:
-    case CheckInBoundsInt52:
     case ConstantStoragePointer:
     case Check:
     case CheckVarargs:
@@ -374,7 +373,6 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node, bool igno
     case GetByVal:
     case GetIndexedPropertyStorage:
     case GetArrayLength:
-    case GetTypedArrayLengthAsInt52:
     case GetVectorLength:
     case ArrayPop:
     case StringCharAt:
@@ -387,7 +385,6 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node, bool igno
 
     case CheckDetached:
     case GetTypedArrayByteOffset:
-    case GetTypedArrayByteOffsetAsInt52:
         return !(state.forNode(node->child1()).m_type & ~(SpecTypedArrayView));
             
     case PutByValDirect:
