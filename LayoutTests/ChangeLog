@@ -1,3 +1,12 @@
+2021-10-14  Rob Buis  <rbuis@igalia.com>
+
+        Fix grid-auto-repeat-dynamic-003.html
+        https://bugs.webkit.org/show_bug.cgi?id=231592
+
+        Reviewed by Alan Bujtas.
+
+        * TestExpectations:
+
 2021-10-14  Aditya Keerthi  <akeerthi@apple.com>
 
         [iOS] Support accent-color for controls without text
