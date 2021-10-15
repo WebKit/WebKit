@@ -1,3 +1,12 @@
+2021-10-15  Ayumi Kojima  <ayumi_kojima@apple.com>
+
+        [ iOS Catalina ] imported/w3c/web-platform-tests/css/css-transforms/crashtests/transform-marquee-resize-div-image-001.html is a flaky failure.
+        https://bugs.webkit.org/show_bug.cgi?id=231816
+
+        Unreviewed test gardning.
+
+        * platform/ios-wk2/TestExpectations:
+
 2021-10-15  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION (r276370): Elements with animated transform property might not properly rendered

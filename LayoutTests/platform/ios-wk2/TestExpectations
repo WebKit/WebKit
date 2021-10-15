@@ -1380,6 +1380,8 @@ webkit.org/b/207386 imported/w3c/web-platform-tests/css/css-transitions/properti
 imported/w3c/web-platform-tests/css/css-transforms/huge-length-tiny-scale.html [ Pass Timeout ]
 imported/w3c/web-platform-tests/css/css-transforms/transform-input-003.html [ ImageOnlyFailure ]
 
+webkit.org/b/231816 imported/w3c/web-platform-tests/css/css-transforms/crashtests/transform-marquee-resize-div-image-001.html [ Pass Failure ]
+
 webkit.org/b/207465 [ Debug ] storage/indexeddb/intversion-long-queue.html [ Pass Failure ]
 
 webkit.org/b/207466 http/wpt/service-workers/service-worker-networkprocess-crash.html [ Slow Pass Failure ]
