@@ -1,5 +1,58 @@
 2021-10-15  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r281879. rdar://problem/83954217
+
+    Improve time precision when cross-origin isolated via COOP+COEP
+    https://bugs.webkit.org/show_bug.cgi?id=228137
+    <rdar://problem/81197138>
+    
+    Reviewed by Ryosuke Niwa.
+    
+    Increase the precision of our high precision time (used by performance.now()) from
+    1ms to 20us when cross-origin isolated via COOP=same-origin + COEP=require-corp.
+    Precision remains the same (1ms) when not cross-origin isolated.
+    
+    This aligns our behavior with Firefox.
+    
+    Note that Chrome provides higher precision (100us in general and 5us when
+    cross-origin-isolated).
+    
+    * dom/ScriptExecutionContext.cpp:
+    (WebCore::ScriptExecutionContext::setCrossOriginMode):
+    * page/Performance.cpp:
+    (WebCore::Performance::reduceTimeResolution):
+    (WebCore::Performance::allowHighPrecisionTime):
+    * page/Performance.h:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@281879 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-09-01  Chris Dumez  <cdumez@apple.com>
+
+            Improve time precision when cross-origin isolated via COOP+COEP
+            https://bugs.webkit.org/show_bug.cgi?id=228137
+            <rdar://problem/81197138>
+
+            Reviewed by Ryosuke Niwa.
+
+            Increase the precision of our high precision time (used by performance.now()) from
+            1ms to 20us when cross-origin isolated via COOP=same-origin + COEP=require-corp.
+            Precision remains the same (1ms) when not cross-origin isolated.
+
+            This aligns our behavior with Firefox.
+
+            Note that Chrome provides higher precision (100us in general and 5us when
+            cross-origin-isolated).
+
+            * dom/ScriptExecutionContext.cpp:
+            (WebCore::ScriptExecutionContext::setCrossOriginMode):
+            * page/Performance.cpp:
+            (WebCore::Performance::reduceTimeResolution):
+            (WebCore::Performance::allowHighPrecisionTime):
+            * page/Performance.h:
+
+2021-10-15  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r283572. rdar://problem/83953133
 
     Web Inspector: Show color space for canvases in the Graphics tab on the overview cards

@@ -47,6 +47,7 @@
 #include "MessagePort.h"
 #include "Navigator.h"
 #include "Page.h"
+#include "Performance.h"
 #include "PublicURLManager.h"
 #include "RejectedPromiseTracker.h"
 #include "ResourceRequest.h"
@@ -628,6 +629,8 @@ ServiceWorkerContainer* ScriptExecutionContext::ensureServiceWorkerContainer()
 void ScriptExecutionContext::setCrossOriginMode(CrossOriginMode crossOriginMode)
 {
     globalCrossOriginMode = crossOriginMode;
+    if (crossOriginMode == CrossOriginMode::Isolated)
+        Performance::allowHighPrecisionTime();
 }
 
 CrossOriginMode ScriptExecutionContext::crossOriginMode()
