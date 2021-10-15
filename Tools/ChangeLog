@@ -1,3 +1,18 @@
+2021-10-15  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        REGRESSION (r284079): [Debug] IPCTestingAPI.CanReceiveSharedMemory is timing out
+        https://bugs.webkit.org/show_bug.cgi?id=231701
+        <rdar://problem/84219000>
+
+        Reviewed by Tim Horton.
+
+        Fix the failing API test by using the new `sendSyncMessage()` method on JSIPCStreamClientConnection to send
+        the "RemoteRenderingBackend::UpdateSharedMemoryForGetPixelBuffer" stream message and decode the result into a
+        buffer of shared memory.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/IPCTestingAPI.mm:
+        (TEST):
+
 2021-10-14  John Wilander  <wilander@apple.com>
 
         TestWebKitAPI.PrivateClickMeasurement.FraudPrevention is a constant timeout

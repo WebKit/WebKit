@@ -1,3 +1,49 @@
+2021-10-15  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        REGRESSION (r284079): [Debug] IPCTestingAPI.CanReceiveSharedMemory is timing out
+        https://bugs.webkit.org/show_bug.cgi?id=231701
+        <rdar://problem/84219000>
+
+        Reviewed by Tim Horton.
+
+        Implement two new methods on JSIPCStreamClientConnection: `sendMessage()` and `sendSyncMessage()`, which can be
+        used to send IPC messages through the IPC stream client connection. To do this, we match the existing methods of
+        the same names on JSIPC by creating a message encoder and sending it over the stream connection's IPC
+        connection, effectively treating all IPC messages as out-of-line.
+
+        In the future, this should be changed so that we only try to send out-of-line messages if the message itself is
+        not stream encodable; for the time being, this at least allows us to fix the failing API test, and still makes
+        it possible to test sending arbitrary IPC through the connection stream, such that we'll be able to exercise
+        WebGL and display list IPC via these special JS IPC bindings.
+
+        * Platform/IPC/StreamClientConnection.h:
+        * WebProcess/WebPage/IPCTestingAPI.cpp:
+
+        Declare several static helper functions near the top of this source file, so that we can use them in
+        JSIPCStreamClientConnection below.
+
+        (WebKit::IPCTestingAPI::JSIPCStreamClientConnection::create):
+        (WebKit::IPCTestingAPI::JSIPCStreamClientConnection::JSIPCStreamClientConnection):
+        (WebKit::IPCTestingAPI::JSIPCStreamClientConnection::staticFunctions):
+
+        Drive-by fix: make the pointer from JSIPCStreamConnectionBuffer to JSIPCStreamClientConnection a WeakPtr, to
+        prevent the stream connection buffer from keeping the client connection alive for longer than necessary. The
+        JSIPCStreamConnectionBuffer is always intended to be outlived by JSIPCStreamClientConnection when using JS IPC.
+
+        (WebKit::IPCTestingAPI::extractIPCStreamMessageInfo):
+
+        Pull logic for extracting a destination ID, message name, and IPC timeout into a common helper method.
+
+        (WebKit::IPCTestingAPI::JSIPCStreamClientConnection::prepareToSendOutOfStreamMessage):
+
+        Add a helper method that encodes the given message and prepares the stream connection for sending this as an
+        out-of-stream message by setting the destination ID (if needed) and appending the `ProcessOutOfStreamMessage`
+        message to indicate that the recipient should expect an out-of-stream message.
+
+        (WebKit::IPCTestingAPI::JSIPCStreamClientConnection::sendMessage):
+        (WebKit::IPCTestingAPI::JSIPCStreamClientConnection::sendSyncMessage):
+        (WebKit::IPCTestingAPI::JSIPC::createStreamClientConnection):
+
 2021-10-15  Brent Fulgham  <bfulgham@apple.com>
 
         [macOS] Update sandboxes to support finer-grained XPC services in the media stack

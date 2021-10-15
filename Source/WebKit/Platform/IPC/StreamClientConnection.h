@@ -34,6 +34,13 @@
 #include "StreamConnectionEncoder.h"
 #include <wtf/MonotonicTime.h>
 #include <wtf/Threading.h>
+
+namespace WebKit {
+namespace IPCTestingAPI {
+class JSIPCStreamClientConnection;
+}
+}
+
 namespace IPC {
 
 // A message stream is a half-duplex two-way stream of messages to a between the client and the
@@ -69,6 +76,8 @@ public:
     SendSyncResult sendSync(T&& message, typename T::Reply&&, ObjectIdentifier<U> destinationID, Timeout);
 
 private:
+    friend class WebKit::IPCTestingAPI::JSIPCStreamClientConnection;
+
     struct Span {
         uint8_t* data;
         size_t size;

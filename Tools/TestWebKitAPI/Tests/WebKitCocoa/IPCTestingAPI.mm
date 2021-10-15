@@ -228,6 +228,7 @@ TEST(IPCTestingAPI, CanSendInvalidSyncMessageToUIProcessWithoutTermination)
 }
 
 #if ENABLE(GPU_PROCESS)
+
 TEST(IPCTestingAPI, CanSendSyncMessageToGPUProcess)
 {
     auto webView = createWebViewWithIPCTestingAPI();
@@ -325,7 +326,7 @@ TEST(IPCTestingAPI, CanReceiveSharedMemory)
         "]);"
         "const arguments = IPC.waitForMessage('GPU', 123, IPC.messages.RemoteRenderingBackendProxy_DidCreateWakeUpSemaphoreForDisplayListStream.name, 100);"
         "streamConnection.setWakeUpSemaphore(arguments[0].value);"
-        "const result = IPC.sendSyncMessage('GPU', 123, IPC.messages.RemoteRenderingBackend_UpdateSharedMemoryForGetPixelBuffer.name, 100, [{type: 'uint32_t', value: 8}]);"
+        "const result = streamConnection.sendSyncMessage(123, IPC.messages.RemoteRenderingBackend_UpdateSharedMemoryForGetPixelBuffer.name, 100, [{type: 'uint32_t', value: 8}]);"
         "alert(result.arguments.length);"
         "</script>";
 
@@ -337,9 +338,9 @@ TEST(IPCTestingAPI, CanReceiveSharedMemory)
     EXPECT_STREQ([webView stringByEvaluatingJavaScript:@"firstReply = result.arguments[0]; firstReply.type"].UTF8String, "SharedMemory");
     EXPECT_STREQ([webView stringByEvaluatingJavaScript:@"firstReply.protection"].UTF8String, "ReadOnly");
     EXPECT_STREQ([webView stringByEvaluatingJavaScript:@"Array.from(new Uint8Array(firstReply.value.readBytes(0, 8))).toString()"].UTF8String, "0,0,0,0,0,0,0,0");
-
 }
-#endif
+
+#endif // ENABLE(GPU_PROCESS)
 
 TEST(IPCTestingAPI, CanCreateIPCSemaphore)
 {
