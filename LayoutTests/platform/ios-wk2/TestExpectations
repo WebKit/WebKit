@@ -1420,8 +1420,6 @@ webkit.org/b/207038 compositing/webgl/webgl-reflection.html [ Pass Failure ]
 
 webkit.org/b/208081 http/tests/workers/service/Client-properties-auxiliary.html [ Pass Timeout ]
 
-webkit.org/b/230376 http/tests/workers/service/client-removed-from-clients-while-in-page-cache.html [ Pass Timeout ]
-
 # webkit.org/b/208078 Continue to skip 2.0.0 on iOS WK2 until discrepancies can be addressed
 webgl/2.0.0 [ Skip ]
 
