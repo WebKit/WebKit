@@ -31,6 +31,7 @@
 #include "CSSFontSelector.h"
 #include "CSSValueList.h"
 #include "CSSValuePool.h"
+#include "CommonVM.h"
 #include "ContentSecurityPolicy.h"
 #include "Crypto.h"
 #include "FontCache.h"
@@ -79,7 +80,7 @@ static HashSet<ScriptExecutionContextIdentifier>& allWorkerGlobalScopeIdentifier
 WTF_MAKE_ISO_ALLOCATED_IMPL(WorkerGlobalScope);
 
 WorkerGlobalScope::WorkerGlobalScope(WorkerThreadType type, const WorkerParameters& params, Ref<SecurityOrigin>&& origin, WorkerThread& thread, Ref<SecurityOrigin>&& topOrigin, IDBClient::IDBConnectionProxy* connectionProxy, SocketProvider* socketProvider)
-    : WorkerOrWorkletGlobalScope(type, JSC::VM::create(), &thread)
+    : WorkerOrWorkletGlobalScope(type, isMainThread() ? Ref { commonVM() } : JSC::VM::create(), &thread)
     , m_url(params.scriptURL)
     , m_identifier(params.identifier)
     , m_userAgent(params.userAgent)

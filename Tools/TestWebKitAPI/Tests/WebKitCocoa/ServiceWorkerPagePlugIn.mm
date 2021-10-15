@@ -26,12 +26,14 @@
 #import "config.h"
 
 #import "ServiceWorkerPageProtocol.h"
+#import <JavaScriptCore/JSContextRef.h>
 #import <WebKit/WKBundlePage.h>
 #import <WebKit/WKWebProcessPlugIn.h>
 #import <WebKit/WKWebProcessPlugInBrowserContextControllerPrivate.h>
 #import <WebKit/WKWebProcessPlugInFrame.h>
 #import <WebKit/WKWebProcessPlugInFramePrivate.h>
 #import <WebKit/WKWebProcessPlugInLoadDelegate.h>
+#import <WebKit/WKWebProcessPlugInScriptWorld.h>
 #import <WebKit/_WKRemoteObjectInterface.h>
 #import <WebKit/_WKRemoteObjectRegistry.h>
 #import <wtf/RunLoop.h>
@@ -47,11 +49,20 @@
 {
     RELEASE_ASSERT(RunLoop::isMain());
     RELEASE_ASSERT(frame);
-    JSContext *jsContext = [frame jsContextForServiceWorkerWorld:scriptWorld];
-    RELEASE_ASSERT(jsContext);
-    RELEASE_ASSERT([WKWebProcessPlugInFrame lookUpFrameFromJSContext:jsContext] == frame);
+    JSContext *serviceWorkerJSContext = [frame jsContextForServiceWorkerWorld:scriptWorld];
+    RELEASE_ASSERT(serviceWorkerJSContext);
+    RELEASE_ASSERT([WKWebProcessPlugInFrame lookUpFrameFromJSContext:serviceWorkerJSContext] == frame);
 
-    JSValue *globalIsServiceWorkerGlobalScope = [jsContext evaluateScript:@"self.__proto__ === ServiceWorkerGlobalScope.prototype"];
+    JSContext *mainFrameJSContext = [frame jsContextForWorld:[WKWebProcessPlugInScriptWorld normalWorld]];
+    RELEASE_ASSERT(mainFrameJSContext);
+
+    // The main frame and the service worker should have different JSContexts but should use the same VM.
+    RELEASE_ASSERT(mainFrameJSContext != serviceWorkerJSContext);
+    RELEASE_ASSERT(JSContextGetGroup(mainFrameJSContext.JSGlobalContextRef) == JSContextGetGroup(serviceWorkerJSContext.JSGlobalContextRef));
+
+    RELEASE_ASSERT(scriptWorld == [WKWebProcessPlugInScriptWorld normalWorld]);
+
+    JSValue *globalIsServiceWorkerGlobalScope = [serviceWorkerJSContext evaluateScript:@"self.__proto__ === ServiceWorkerGlobalScope.prototype"];
     RELEASE_ASSERT(!!globalIsServiceWorkerGlobalScope);
     RELEASE_ASSERT([globalIsServiceWorkerGlobalScope toBool]);
 

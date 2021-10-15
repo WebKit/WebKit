@@ -1,3 +1,15 @@
+2021-10-14  Chris Dumez  <cdumez@apple.com>
+
+        Service workers running on the main thread should use the main VM
+        https://bugs.webkit.org/show_bug.cgi?id=231753
+
+        Reviewed by Geoffrey Garen.
+
+        Extend API test coverage.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ServiceWorkerPagePlugIn.mm:
+        (-[ServiceWorkerPagePlugIn webProcessPlugInBrowserContextController:serviceWorkerGlobalObjectIsAvailableForFrame:inScriptWorld:]):
+
 2021-10-14  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [JS IPC] Implement a way to synchronously wait for an incoming IPC message

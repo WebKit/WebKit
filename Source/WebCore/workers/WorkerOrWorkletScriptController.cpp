@@ -27,6 +27,7 @@
 #include "config.h"
 #include "WorkerOrWorkletScriptController.h"
 
+#include "CommonVM.h"
 #include "DedicatedWorkerGlobalScope.h"
 #include "EventLoop.h"
 #include "JSAudioWorkletGlobalScope.h"
@@ -68,13 +69,15 @@ WorkerOrWorkletScriptController::WorkerOrWorkletScriptController(WorkerThreadTyp
     , m_globalScope(globalScope)
     , m_globalScopeWrapper(*m_vm)
 {
-    m_vm->heap.acquireAccess(); // It's not clear that we have good discipline for heap access, so turn it on permanently.
-    {
-        JSLockHolder lock(m_vm.get());
-        m_vm->ensureTerminationException();
-    }
+    if (!isMainThread() || m_vm != &commonVM()) {
+        m_vm->heap.acquireAccess(); // It's not clear that we have good discipline for heap access, so turn it on permanently.
+        {
+            JSLockHolder lock(m_vm.get());
+            m_vm->ensureTerminationException();
+        }
 
-    JSVMClientData::initNormalWorld(m_vm.get(), type);
+        JSVMClientData::initNormalWorld(m_vm.get(), type);
+    }
 }
 
 WorkerOrWorkletScriptController::WorkerOrWorkletScriptController(WorkerThreadType type, WorkerOrWorkletGlobalScope* globalScope)
@@ -129,7 +132,8 @@ void WorkerOrWorkletScriptController::scheduleExecutionTermination()
 
         m_isTerminatingExecution = true;
     }
-    m_vm->notifyNeedTermination();
+    if (m_vm != &commonVM())
+        m_vm->notifyNeedTermination();
 }
 
 bool WorkerOrWorkletScriptController::isTerminatingExecution() const
