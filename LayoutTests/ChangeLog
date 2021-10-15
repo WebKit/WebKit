@@ -1,3 +1,13 @@
+2021-10-15  Alan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Do not break the word-wrap: break-word content on inline box boundary
+        https://bugs.webkit.org/show_bug.cgi?id=231761
+
+        Reviewed by Antti Koivisto.
+
+        * fast/inline/wordbreak-at-inline-box-boundary-expected.html: Added.
+        * fast/inline/wordbreak-at-inline-box-boundary.html: Added.
+
 2021-10-15  Robin Morisset  <rmorisset@apple.com>
 
         Revert r284230, my last fixes to the watch build make it break tests

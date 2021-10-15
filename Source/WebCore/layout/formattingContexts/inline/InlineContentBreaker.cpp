@@ -414,9 +414,17 @@ std::optional<InlineContentBreaker::PartialRun> InlineContentBreaker::tryBreakin
             }
             if (!candidateTextRun.isOverflowingRun) {
                 // When the run can be split at arbitrary position let's just return the entire run when it is intended to fit on the line.
+                // However the breaking properties only set rules for text content, so let's check if this run is adjacent to another text run.
                 ASSERT(inlineTextItem.length());
-                auto trailingPartialRunWidth = TextUtil::width(inlineTextItem, fontCascade, candidateTextRun.logicalLeft);
-                return { inlineTextItem.length(), trailingPartialRunWidth };
+                // FIXME: We may need to check if the "next" text run is visually adjacent to this non-overflowing run too (e.g. A<span style="border: 100px solid green;"></span>B)
+                if (nextTextRunIndex(runs, candidateTextRun.index)) {
+                    // We are in-between text runs. It's okay to return the entire run triggering split at the very right edge.
+                    auto trailingPartialRunWidth = TextUtil::width(inlineTextItem, fontCascade, candidateTextRun.logicalLeft);
+                    return { inlineTextItem.length(), trailingPartialRunWidth };
+                }
+                auto startPosition = inlineTextItem.start() + 1;
+                auto endPosition = inlineTextItem.end();
+                return { inlineTextItem.length() - 1, TextUtil::width(inlineTextItem, fontCascade, startPosition, endPosition, candidateTextRun.logicalLeft) };
             }
             if (!lineHasRoomForContent) {
                 // Fast path for cases when there's no room at all. The content is breakable but we don't have space for it.
@@ -467,7 +475,26 @@ std::optional<InlineContentBreaker::OverflowingTextContent::BreakingPosition> In
             // since it's either at hyphen position or the entire run is returned.
             ASSERT(partialRun->length);
             auto runIsFullyAccommodated = partialRun->length == downcast<InlineTextItem>(run.inlineItem).length();
-            return OverflowingTextContent::BreakingPosition { index, OverflowingTextContent::BreakingPosition::TrailingContent { false, runIsFullyAccommodated ? std::nullopt : partialRun } };
+            if (runIsFullyAccommodated) {
+                auto trailingRunIndex = [&] {
+                    // Try not break content at inline box boundary.
+                    // e.g. <span style="word-wrap: break-word">fits_and_we_break_at_the_right_edge</span><span>overflows</span>
+                    // we should forward the breaking index to the closing inline box.
+                    // FIXME: We may wanna skip over the visually empty inline boxes only e.g. <span style="word-wrap: break-word">fits_and_we_break_at_the_right_edge</span><span></span><span>overflows</span>
+                    auto trailingInlineBoxEndIndex = std::optional<size_t> { };
+                    for (auto candidateIndex = index + 1; candidateIndex < overflowingRunIndex; ++candidateIndex) {
+                        auto& trailingInlineItem = runs[candidateIndex].inlineItem;
+                        if (trailingInlineItem.isInlineBoxEnd())
+                            trailingInlineBoxEndIndex = candidateIndex;
+                        if (!trailingInlineItem.isInlineBoxStart() && !trailingInlineItem.isInlineBoxEnd())
+                            break;
+                    }
+                    ASSERT(!trailingInlineBoxEndIndex || *trailingInlineBoxEndIndex < overflowingRunIndex);
+                    return trailingInlineBoxEndIndex.value_or(index);
+                };
+                return OverflowingTextContent::BreakingPosition { trailingRunIndex(), OverflowingTextContent::BreakingPosition::TrailingContent { false, std::nullopt } };
+            }
+            return OverflowingTextContent::BreakingPosition { index, OverflowingTextContent::BreakingPosition::TrailingContent { false, partialRun } };
         }
     }
     return { };
