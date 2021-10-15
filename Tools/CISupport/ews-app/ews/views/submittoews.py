@@ -58,11 +58,11 @@ class SubmitToEWS(View):
 
         rc = BugzillaPatchFetcher().fetch([patch_id])
         if rc == ERR_UNABLE_TO_FETCH_PATCH:
-            return HttpResponse('EWS is unable to access patch {}. Please ensure that this patch is publicly accessible or has r? set.'.format(patch_id))
+            return HttpResponse('Set r? on patch, EWS is currently unable to access patch {}.'.format(patch_id))
         if rc == ERR_OBSOLETE_PATCH:
-            return HttpResponse('Patch {} is obsolete, not submitting to EWS.'.format(patch_id))
+            return HttpResponse('Obsolete Patch: {}, not submitting to EWS.'.format(patch_id))
         if rc == ERR_BUG_CLOSED:
-            return HttpResponse('Bug for patch {} is closed, not submitting to EWS.'.format(patch_id))
+            return HttpResponse('Closed Bug for patch: {}, not submitting to EWS.'.format(patch_id))
 
         if request.POST.get('next_action') == 'return_to_bubbles':
             return redirect('/status-bubble/{}'.format(patch_id))
