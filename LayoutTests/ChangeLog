@@ -1,3 +1,12 @@
+2021-10-15  Ayumi Kojima  <ayumi_kojima@apple.com>
+
+        [ macOS wk2 ] http/tests/xmlhttprequest/access-control-repeated-failed-preflight-crash.html is a flaky crash.
+        https://bugs.webkit.org/show_bug.cgi?id=231831
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2021-10-15  Robert Jenner  <Jenner@apple.com>
 
         REBASELINE 2 tables/mozilla tests failing constantly

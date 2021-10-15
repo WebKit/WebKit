@@ -545,6 +545,8 @@ webkit.org/b/151709 [ Release ] http/tests/xmlhttprequest/workers/methods.html [
 
 webkit.org/b/231372 [ BigSur arm64 Debug ] http/tests/xmlhttprequest/access-control-response-with-body.html [ Pass Crash ]
 
+webkit.org/b/231831 http/tests/xmlhttprequest/access-control-repeated-failed-preflight-crash.html [ Pass Crash ]
+
 ### END OF (1) Classified failures with bug reports
 ########################################
 
