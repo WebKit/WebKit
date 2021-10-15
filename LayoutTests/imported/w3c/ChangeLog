@@ -1,5 +1,518 @@
 2021-10-15  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r281769. rdar://problem/84234711
+
+    Import file-system-access tests from WPT
+    https://bugs.webkit.org/show_bug.cgi?id=229593
+    
+    Reviewed by Ryosuke Niwa.
+    
+    * resources/import-expectations.json:
+    * web-platform-tests/file-system-access/META.yml: Added.
+    * web-platform-tests/file-system-access/README.md: Added.
+    * web-platform-tests/file-system-access/idlharness.https.any-expected.txt: Added.
+    * web-platform-tests/file-system-access/idlharness.https.any.html: Added.
+    * web-platform-tests/file-system-access/idlharness.https.any.js: Added.
+    * web-platform-tests/file-system-access/idlharness.https.any.worker-expected.txt: Added.
+    * web-platform-tests/file-system-access/idlharness.https.any.worker.html: Added.
+    * web-platform-tests/file-system-access/opaque-origin.https.window-expected.txt: Added.
+    * web-platform-tests/file-system-access/opaque-origin.https.window.html: Added.
+    * web-platform-tests/file-system-access/opaque-origin.https.window.js: Added.
+    (add_iframe):
+    (async verify_does_not_exist_in_data_uri_iframe):
+    (async verify_results_from_sandboxed_child_window):
+    * web-platform-tests/file-system-access/resources/data/testfile.txt: Added.
+    * web-platform-tests/file-system-access/resources/data/w3c-import.log: Added.
+    * web-platform-tests/file-system-access/resources/local-fs-test-helpers.js: Added.
+    (const.directory_promise.async await):
+    (const.directory_promise):
+    (directory_test):
+    (async directory_test):
+    * web-platform-tests/file-system-access/resources/message-target-dedicated-worker.js: Added.
+    * web-platform-tests/file-system-access/resources/message-target-service-worker.js: Added.
+    * web-platform-tests/file-system-access/resources/message-target-shared-worker.js: Added.
+    * web-platform-tests/file-system-access/resources/message-target.html: Added.
+    * web-platform-tests/file-system-access/resources/message-target.js: Added.
+    (async receiver):
+    (add_message_event_handlers):
+    * web-platform-tests/file-system-access/resources/messaging-blob-helpers.js: Added.
+    (async create_message_target_blob_url):
+    (async create_message_target_data_uri):
+    (async create_message_target_html_without_subresources):
+    (async fetch_text):
+    * web-platform-tests/file-system-access/resources/messaging-helpers.js: Added.
+    (create_dedicated_worker):
+    (async create_service_worker):
+    (async add_iframe):
+    (async open_window):
+    (async wait_for_loaded_message):
+    (create_message_channel):
+    (async create_file_system_handles):
+    (async do_post_message_test):
+    (async do_message_port_test):
+    * web-platform-tests/file-system-access/resources/messaging-serialize-helpers.js: Added.
+    (async serialize_handles):
+    (async serialize_handle):
+    (async serialize_file_system_handle):
+    (async serialize_file_system_file_handle):
+    (async serialize_file_system_directory_handle):
+    (async assert_equals_cloned_handles):
+    (assert_equals_serialized_handles):
+    (assert_equals_serialized_handle):
+    (assert_equals_serialized_file_system_handle):
+    (assert_equals_serialized_file_system_file_handle):
+    (assert_equals_serialized_file_system_directory_handle):
+    (serialize_message_error_event):
+    (assert_equals_serialized_message_error_event):
+    * web-platform-tests/file-system-access/resources/opaque-origin-sandbox.html: Added.
+    * web-platform-tests/file-system-access/resources/sandboxed-fs-test-helpers.js: Added.
+    (async cleanupSandboxedFileSystem):
+    * web-platform-tests/file-system-access/resources/sync-access-handle-test.js: Added.
+    (async cleanupSandboxedFileSystem):
+    * web-platform-tests/file-system-access/resources/test-helpers.js: Added.
+    (navigator.userAgent.includes):
+    (async getFileSize):
+    (async getFileContents):
+    (async getDirectoryEntryCount):
+    (async getSortedDirectoryEntries):
+    (async createFileWithContents):
+    (garbageCollect):
+    * web-platform-tests/file-system-access/resources/w3c-import.log: Added.
+    * web-platform-tests/file-system-access/sandboxed_FileSystemBaseHandle-IndexedDB.https.any-expected.txt: Added.
+    * web-platform-tests/file-system-access/sandboxed_FileSystemBaseHandle-IndexedDB.https.any.html: Added.
+    * web-platform-tests/file-system-access/sandboxed_FileSystemBaseHandle-IndexedDB.https.any.js: Added.
+    * web-platform-tests/file-system-access/sandboxed_FileSystemBaseHandle-IndexedDB.https.any.worker-expected.txt: Added.
+    * web-platform-tests/file-system-access/sandboxed_FileSystemBaseHandle-IndexedDB.https.any.worker.html: Added.
+    * web-platform-tests/file-system-access/sandboxed_FileSystemBaseHandle-isSameEntry.https.any-expected.txt: Added.
+    * web-platform-tests/file-system-access/sandboxed_FileSystemBaseHandle-isSameEntry.https.any.html: Added.
+    * web-platform-tests/file-system-access/sandboxed_FileSystemBaseHandle-isSameEntry.https.any.js: Added.
+    * web-platform-tests/file-system-access/sandboxed_FileSystemBaseHandle-isSameEntry.https.any.worker-expected.txt: Added.
+    * web-platform-tests/file-system-access/sandboxed_FileSystemBaseHandle-isSameEntry.https.any.worker.html: Added.
+    * web-platform-tests/file-system-access/sandboxed_FileSystemBaseHandle-postMessage-BroadcastChannel.https.window-expected.txt: Added.
+    * web-platform-tests/file-system-access/sandboxed_FileSystemBaseHandle-postMessage-BroadcastChannel.https.window.html: Added.
+    * web-platform-tests/file-system-access/sandboxed_FileSystemBaseHandle-postMessage-BroadcastChannel.https.window.js: Added.
+    * web-platform-tests/file-system-access/sandboxed_FileSystemBaseHandle-postMessage-Error.https.window-expected.txt: Added.
+    * web-platform-tests/file-system-access/sandboxed_FileSystemBaseHandle-postMessage-Error.https.window.html: Added.
+    * web-platform-tests/file-system-access/sandboxed_FileSystemBaseHandle-postMessage-Error.https.window.js: Added.
+    * web-platform-tests/file-system-access/sandboxed_FileSystemBaseHandle-postMessage-MessagePort-frames.https.window-expected.txt: Added.
+    * web-platform-tests/file-system-access/sandboxed_FileSystemBaseHandle-postMessage-MessagePort-frames.https.window.html: Added.
+    * web-platform-tests/file-system-access/sandboxed_FileSystemBaseHandle-postMessage-MessagePort-frames.https.window.js: Added.
+    * web-platform-tests/file-system-access/sandboxed_FileSystemBaseHandle-postMessage-MessagePort-windows.https.window-expected.txt: Added.
+    * web-platform-tests/file-system-access/sandboxed_FileSystemBaseHandle-postMessage-MessagePort-windows.https.window.html: Added.
+    * web-platform-tests/file-system-access/sandboxed_FileSystemBaseHandle-postMessage-MessagePort-windows.https.window.js: Added.
+    * web-platform-tests/file-system-access/sandboxed_FileSystemBaseHandle-postMessage-MessagePort-workers.https.window-expected.txt: Added.
+    * web-platform-tests/file-system-access/sandboxed_FileSystemBaseHandle-postMessage-MessagePort-workers.https.window.html: Added.
+    * web-platform-tests/file-system-access/sandboxed_FileSystemBaseHandle-postMessage-MessagePort-workers.https.window.js: Added.
+    * web-platform-tests/file-system-access/sandboxed_FileSystemBaseHandle-postMessage-frames.https.window-expected.txt: Added.
+    * web-platform-tests/file-system-access/sandboxed_FileSystemBaseHandle-postMessage-frames.https.window.html: Added.
+    * web-platform-tests/file-system-access/sandboxed_FileSystemBaseHandle-postMessage-frames.https.window.js: Added.
+    * web-platform-tests/file-system-access/sandboxed_FileSystemBaseHandle-postMessage-windows.https.window-expected.txt: Added.
+    * web-platform-tests/file-system-access/sandboxed_FileSystemBaseHandle-postMessage-windows.https.window.html: Added.
+    * web-platform-tests/file-system-access/sandboxed_FileSystemBaseHandle-postMessage-windows.https.window.js: Added.
+    * web-platform-tests/file-system-access/sandboxed_FileSystemBaseHandle-postMessage-workers.https.window-expected.txt: Added.
+    * web-platform-tests/file-system-access/sandboxed_FileSystemBaseHandle-postMessage-workers.https.window.html: Added.
+    * web-platform-tests/file-system-access/sandboxed_FileSystemBaseHandle-postMessage-workers.https.window.js: Added.
+    * web-platform-tests/file-system-access/sandboxed_FileSystemBaseHandle-remove.https.any-expected.txt: Added.
+    * web-platform-tests/file-system-access/sandboxed_FileSystemBaseHandle-remove.https.any.html: Added.
+    * web-platform-tests/file-system-access/sandboxed_FileSystemBaseHandle-remove.https.any.js: Added.
+    * web-platform-tests/file-system-access/sandboxed_FileSystemBaseHandle-remove.https.any.worker-expected.txt: Added.
+    * web-platform-tests/file-system-access/sandboxed_FileSystemBaseHandle-remove.https.any.worker.html: Added.
+    * web-platform-tests/file-system-access/sandboxed_FileSystemDirectoryHandle-getDirectoryHandle.https.any-expected.txt: Added.
+    * web-platform-tests/file-system-access/sandboxed_FileSystemDirectoryHandle-getDirectoryHandle.https.any.html: Added.
+    * web-platform-tests/file-system-access/sandboxed_FileSystemDirectoryHandle-getDirectoryHandle.https.any.js: Added.
+    * web-platform-tests/file-system-access/sandboxed_FileSystemDirectoryHandle-getDirectoryHandle.https.any.worker-expected.txt: Added.
+    * web-platform-tests/file-system-access/sandboxed_FileSystemDirectoryHandle-getDirectoryHandle.https.any.worker.html: Added.
+    * web-platform-tests/file-system-access/sandboxed_FileSystemDirectoryHandle-getFileHandle.https.any-expected.txt: Added.
+    * web-platform-tests/file-system-access/sandboxed_FileSystemDirectoryHandle-getFileHandle.https.any.html: Added.
+    * web-platform-tests/file-system-access/sandboxed_FileSystemDirectoryHandle-getFileHandle.https.any.js: Added.
+    * web-platform-tests/file-system-access/sandboxed_FileSystemDirectoryHandle-getFileHandle.https.any.worker-expected.txt: Added.
+    * web-platform-tests/file-system-access/sandboxed_FileSystemDirectoryHandle-getFileHandle.https.any.worker.html: Added.
+    * web-platform-tests/file-system-access/sandboxed_FileSystemDirectoryHandle-iteration.https.any-expected.txt: Added.
+    * web-platform-tests/file-system-access/sandboxed_FileSystemDirectoryHandle-iteration.https.any.html: Added.
+    * web-platform-tests/file-system-access/sandboxed_FileSystemDirectoryHandle-iteration.https.any.js: Added.
+    * web-platform-tests/file-system-access/sandboxed_FileSystemDirectoryHandle-iteration.https.any.worker-expected.txt: Added.
+    * web-platform-tests/file-system-access/sandboxed_FileSystemDirectoryHandle-iteration.https.any.worker.html: Added.
+    * web-platform-tests/file-system-access/sandboxed_FileSystemDirectoryHandle-removeEntry.https.any-expected.txt: Added.
+    * web-platform-tests/file-system-access/sandboxed_FileSystemDirectoryHandle-removeEntry.https.any.html: Added.
+    * web-platform-tests/file-system-access/sandboxed_FileSystemDirectoryHandle-removeEntry.https.any.js: Added.
+    * web-platform-tests/file-system-access/sandboxed_FileSystemDirectoryHandle-removeEntry.https.any.worker-expected.txt: Added.
+    * web-platform-tests/file-system-access/sandboxed_FileSystemDirectoryHandle-removeEntry.https.any.worker.html: Added.
+    * web-platform-tests/file-system-access/sandboxed_FileSystemDirectoryHandle-resolve.https.any-expected.txt: Added.
+    * web-platform-tests/file-system-access/sandboxed_FileSystemDirectoryHandle-resolve.https.any.html: Added.
+    * web-platform-tests/file-system-access/sandboxed_FileSystemDirectoryHandle-resolve.https.any.js: Added.
+    * web-platform-tests/file-system-access/sandboxed_FileSystemDirectoryHandle-resolve.https.any.worker-expected.txt: Added.
+    * web-platform-tests/file-system-access/sandboxed_FileSystemDirectoryHandle-resolve.https.any.worker.html: Added.
+    * web-platform-tests/file-system-access/sandboxed_FileSystemFileHandle-create-sync-access-handle-dedicated-worker.https.tentative.window-expected.txt: Added.
+    * web-platform-tests/file-system-access/sandboxed_FileSystemFileHandle-create-sync-access-handle-dedicated-worker.https.tentative.window.html: Added.
+    * web-platform-tests/file-system-access/sandboxed_FileSystemFileHandle-create-sync-access-handle-dedicated-worker.https.tentative.window.js: Added.
+    * web-platform-tests/file-system-access/sandboxed_FileSystemFileHandle-getFile.https.any-expected.txt: Added.
+    * web-platform-tests/file-system-access/sandboxed_FileSystemFileHandle-getFile.https.any.html: Added.
+    * web-platform-tests/file-system-access/sandboxed_FileSystemFileHandle-getFile.https.any.js: Added.
+    * web-platform-tests/file-system-access/sandboxed_FileSystemFileHandle-getFile.https.any.worker-expected.txt: Added.
+    * web-platform-tests/file-system-access/sandboxed_FileSystemFileHandle-getFile.https.any.worker.html: Added.
+    * web-platform-tests/file-system-access/sandboxed_FileSystemFileHandle-sync-access-handle-lock.https.tentative.worker-expected.txt: Added.
+    * web-platform-tests/file-system-access/sandboxed_FileSystemFileHandle-sync-access-handle-lock.https.tentative.worker.html: Added.
+    * web-platform-tests/file-system-access/sandboxed_FileSystemFileHandle-sync-access-handle-lock.https.tentative.worker.js: Added.
+    (promise_test.async t):
+    * web-platform-tests/file-system-access/sandboxed_FileSystemSyncAccessHandle-close.https.tentative.worker-expected.txt: Added.
+    * web-platform-tests/file-system-access/sandboxed_FileSystemSyncAccessHandle-close.https.tentative.worker.html: Added.
+    * web-platform-tests/file-system-access/sandboxed_FileSystemSyncAccessHandle-close.https.tentative.worker.js: Added.
+    (sync_access_handle_test.async testCase):
+    * web-platform-tests/file-system-access/sandboxed_FileSystemSyncAccessHandle-flush.https.tentative.worker-expected.txt: Added.
+    * web-platform-tests/file-system-access/sandboxed_FileSystemSyncAccessHandle-flush.https.tentative.worker.html: Added.
+    * web-platform-tests/file-system-access/sandboxed_FileSystemSyncAccessHandle-flush.https.tentative.worker.js: Added.
+    (sync_access_handle_test.async t):
+    (sync_access_handle_test.async testCase):
+    * web-platform-tests/file-system-access/sandboxed_FileSystemSyncAccessHandle-getSize.https.tentative.worker-expected.txt: Added.
+    * web-platform-tests/file-system-access/sandboxed_FileSystemSyncAccessHandle-getSize.https.tentative.worker.html: Added.
+    * web-platform-tests/file-system-access/sandboxed_FileSystemSyncAccessHandle-getSize.https.tentative.worker.js: Added.
+    (sync_access_handle_test.async testCase):
+    * web-platform-tests/file-system-access/sandboxed_FileSystemSyncAccessHandle-read-write.https.tentative.worker-expected.txt: Added.
+    * web-platform-tests/file-system-access/sandboxed_FileSystemSyncAccessHandle-read-write.https.tentative.worker.html: Added.
+    * web-platform-tests/file-system-access/sandboxed_FileSystemSyncAccessHandle-read-write.https.tentative.worker.js: Added.
+    (sync_access_handle_test):
+    * web-platform-tests/file-system-access/sandboxed_FileSystemSyncAccessHandle-truncate.https.tentative.worker-expected.txt: Added.
+    * web-platform-tests/file-system-access/sandboxed_FileSystemSyncAccessHandle-truncate.https.tentative.worker.html: Added.
+    * web-platform-tests/file-system-access/sandboxed_FileSystemSyncAccessHandle-truncate.https.tentative.worker.js: Added.
+    (sync_access_handle_test.async testCase):
+    * web-platform-tests/file-system-access/sandboxed_FileSystemWritableFileStream-piped.https.any-expected.txt: Added.
+    * web-platform-tests/file-system-access/sandboxed_FileSystemWritableFileStream-piped.https.any.html: Added.
+    * web-platform-tests/file-system-access/sandboxed_FileSystemWritableFileStream-piped.https.any.js: Added.
+    * web-platform-tests/file-system-access/sandboxed_FileSystemWritableFileStream-piped.https.any.worker-expected.txt: Added.
+    * web-platform-tests/file-system-access/sandboxed_FileSystemWritableFileStream-piped.https.any.worker.html: Added.
+    * web-platform-tests/file-system-access/sandboxed_FileSystemWritableFileStream-write.https.any-expected.txt: Added.
+    * web-platform-tests/file-system-access/sandboxed_FileSystemWritableFileStream-write.https.any.html: Added.
+    * web-platform-tests/file-system-access/sandboxed_FileSystemWritableFileStream-write.https.any.js: Added.
+    * web-platform-tests/file-system-access/sandboxed_FileSystemWritableFileStream-write.https.any.worker-expected.txt: Added.
+    * web-platform-tests/file-system-access/sandboxed_FileSystemWritableFileStream-write.https.any.worker.html: Added.
+    * web-platform-tests/file-system-access/sandboxed_FileSystemWritableFileStream.https.any-expected.txt: Added.
+    * web-platform-tests/file-system-access/sandboxed_FileSystemWritableFileStream.https.any.html: Added.
+    * web-platform-tests/file-system-access/sandboxed_FileSystemWritableFileStream.https.any.js: Added.
+    * web-platform-tests/file-system-access/sandboxed_FileSystemWritableFileStream.https.any.worker-expected.txt: Added.
+    * web-platform-tests/file-system-access/sandboxed_FileSystemWritableFileStream.https.any.worker.html: Added.
+    * web-platform-tests/file-system-access/script-tests/FileSystemBaseHandle-IndexedDB.js: Added.
+    (directory_test.async t):
+    * web-platform-tests/file-system-access/script-tests/FileSystemBaseHandle-isSameEntry.js: Added.
+    (directory_test.async t):
+    * web-platform-tests/file-system-access/script-tests/FileSystemBaseHandle-postMessage-BroadcastChannel.js: Added.
+    (async create_broadcast_channel):
+    (directory_test.async t):
+    * web-platform-tests/file-system-access/script-tests/FileSystemBaseHandle-postMessage-Error.js: Added.
+    (async do_send_message_error_test):
+    (async do_receive_message_error_test):
+    (async do_send_and_receive_message_error_test):
+    (async do_send_message_port_error_test):
+    (async do_receive_message_port_error_test):
+    (async do_send_and_receive_message_port_error_test):
+    (directory_test.async t):
+    * web-platform-tests/file-system-access/script-tests/FileSystemBaseHandle-postMessage-MessagePort-frames.js: Added.
+    (directory_test.async t):
+    * web-platform-tests/file-system-access/script-tests/FileSystemBaseHandle-postMessage-MessagePort-windows.js: Added.
+    (directory_test.async t):
+    * web-platform-tests/file-system-access/script-tests/FileSystemBaseHandle-postMessage-MessagePort-workers.js: Added.
+    (directory_test.async t):
+    (self.SharedWorker.undefined.directory_test.async t):
+    * web-platform-tests/file-system-access/script-tests/FileSystemBaseHandle-postMessage-frames.js: Added.
+    (directory_test.async t):
+    * web-platform-tests/file-system-access/script-tests/FileSystemBaseHandle-postMessage-windows.js: Added.
+    (directory_test.async t):
+    * web-platform-tests/file-system-access/script-tests/FileSystemBaseHandle-postMessage-workers.js: Added.
+    (directory_test.async t):
+    (self.SharedWorker.undefined.directory_test.async t):
+    * web-platform-tests/file-system-access/script-tests/FileSystemBaseHandle-remove.js: Added.
+    (directory_test.async t):
+    * web-platform-tests/file-system-access/script-tests/FileSystemDirectoryHandle-getDirectoryHandle.js: Added.
+    (directory_test.async t):
+    * web-platform-tests/file-system-access/script-tests/FileSystemDirectoryHandle-getFileHandle.js: Added.
+    (directory_test.async t):
+    * web-platform-tests/file-system-access/script-tests/FileSystemDirectoryHandle-iteration.js: Added.
+    (directory_test.async t):
+    * web-platform-tests/file-system-access/script-tests/FileSystemDirectoryHandle-removeEntry.js: Added.
+    (directory_test.async t):
+    * web-platform-tests/file-system-access/script-tests/FileSystemDirectoryHandle-resolve.js: Added.
+    (directory_test.async t):
+    * web-platform-tests/file-system-access/script-tests/FileSystemFileHandle-create-sync-access-handle-dedicated-worker.js: Added.
+    (directory_test.async t):
+    * web-platform-tests/file-system-access/script-tests/FileSystemFileHandle-getFile.js: Added.
+    (directory_test.async t):
+    * web-platform-tests/file-system-access/script-tests/FileSystemSyncAccessHandle-flush.js: Added.
+    (sync_access_handle_test.async handle):
+    * web-platform-tests/file-system-access/script-tests/FileSystemWritableFileStream-piped.js: Added.
+    (directory_test.async t):
+    * web-platform-tests/file-system-access/script-tests/FileSystemWritableFileStream-write.js: Added.
+    (directory_test.async t):
+    * web-platform-tests/file-system-access/script-tests/FileSystemWritableFileStream.js: Added.
+    (directory_test.async t):
+    * web-platform-tests/file-system-access/script-tests/w3c-import.log: Added.
+    * web-platform-tests/file-system-access/showPicker-errors.https.window-expected.txt: Added.
+    * web-platform-tests/file-system-access/showPicker-errors.https.window.html: Added.
+    * web-platform-tests/file-system-access/showPicker-errors.https.window.js: Added.
+    (promise_test.async t):
+    (define_file_picker_error_tests.async promise_test):
+    (define_file_picker_error_tests.async const):
+    (define_file_picker_error_tests):
+    (define_file_picker_extension_error_test):
+    * web-platform-tests/file-system-access/w3c-import.log: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@281769 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-08-30  Sihui Liu  <sihui_liu@apple.com>
+
+            Import file-system-access tests from WPT
+            https://bugs.webkit.org/show_bug.cgi?id=229593
+
+            Reviewed by Ryosuke Niwa.
+
+            * resources/import-expectations.json:
+            * web-platform-tests/file-system-access/META.yml: Added.
+            * web-platform-tests/file-system-access/README.md: Added.
+            * web-platform-tests/file-system-access/idlharness.https.any-expected.txt: Added.
+            * web-platform-tests/file-system-access/idlharness.https.any.html: Added.
+            * web-platform-tests/file-system-access/idlharness.https.any.js: Added.
+            * web-platform-tests/file-system-access/idlharness.https.any.worker-expected.txt: Added.
+            * web-platform-tests/file-system-access/idlharness.https.any.worker.html: Added.
+            * web-platform-tests/file-system-access/opaque-origin.https.window-expected.txt: Added.
+            * web-platform-tests/file-system-access/opaque-origin.https.window.html: Added.
+            * web-platform-tests/file-system-access/opaque-origin.https.window.js: Added.
+            (add_iframe):
+            (async verify_does_not_exist_in_data_uri_iframe):
+            (async verify_results_from_sandboxed_child_window):
+            * web-platform-tests/file-system-access/resources/data/testfile.txt: Added.
+            * web-platform-tests/file-system-access/resources/data/w3c-import.log: Added.
+            * web-platform-tests/file-system-access/resources/local-fs-test-helpers.js: Added.
+            (const.directory_promise.async await):
+            (const.directory_promise):
+            (directory_test):
+            (async directory_test):
+            * web-platform-tests/file-system-access/resources/message-target-dedicated-worker.js: Added.
+            * web-platform-tests/file-system-access/resources/message-target-service-worker.js: Added.
+            * web-platform-tests/file-system-access/resources/message-target-shared-worker.js: Added.
+            * web-platform-tests/file-system-access/resources/message-target.html: Added.
+            * web-platform-tests/file-system-access/resources/message-target.js: Added.
+            (async receiver):
+            (add_message_event_handlers):
+            * web-platform-tests/file-system-access/resources/messaging-blob-helpers.js: Added.
+            (async create_message_target_blob_url):
+            (async create_message_target_data_uri):
+            (async create_message_target_html_without_subresources):
+            (async fetch_text):
+            * web-platform-tests/file-system-access/resources/messaging-helpers.js: Added.
+            (create_dedicated_worker):
+            (async create_service_worker):
+            (async add_iframe):
+            (async open_window):
+            (async wait_for_loaded_message):
+            (create_message_channel):
+            (async create_file_system_handles):
+            (async do_post_message_test):
+            (async do_message_port_test):
+            * web-platform-tests/file-system-access/resources/messaging-serialize-helpers.js: Added.
+            (async serialize_handles):
+            (async serialize_handle):
+            (async serialize_file_system_handle):
+            (async serialize_file_system_file_handle):
+            (async serialize_file_system_directory_handle):
+            (async assert_equals_cloned_handles):
+            (assert_equals_serialized_handles):
+            (assert_equals_serialized_handle):
+            (assert_equals_serialized_file_system_handle):
+            (assert_equals_serialized_file_system_file_handle):
+            (assert_equals_serialized_file_system_directory_handle):
+            (serialize_message_error_event):
+            (assert_equals_serialized_message_error_event):
+            * web-platform-tests/file-system-access/resources/opaque-origin-sandbox.html: Added.
+            * web-platform-tests/file-system-access/resources/sandboxed-fs-test-helpers.js: Added.
+            (async cleanupSandboxedFileSystem):
+            * web-platform-tests/file-system-access/resources/sync-access-handle-test.js: Added.
+            (async cleanupSandboxedFileSystem):
+            * web-platform-tests/file-system-access/resources/test-helpers.js: Added.
+            (navigator.userAgent.includes):
+            (async getFileSize):
+            (async getFileContents):
+            (async getDirectoryEntryCount):
+            (async getSortedDirectoryEntries):
+            (async createFileWithContents):
+            (garbageCollect):
+            * web-platform-tests/file-system-access/resources/w3c-import.log: Added.
+            * web-platform-tests/file-system-access/sandboxed_FileSystemBaseHandle-IndexedDB.https.any-expected.txt: Added.
+            * web-platform-tests/file-system-access/sandboxed_FileSystemBaseHandle-IndexedDB.https.any.html: Added.
+            * web-platform-tests/file-system-access/sandboxed_FileSystemBaseHandle-IndexedDB.https.any.js: Added.
+            * web-platform-tests/file-system-access/sandboxed_FileSystemBaseHandle-IndexedDB.https.any.worker-expected.txt: Added.
+            * web-platform-tests/file-system-access/sandboxed_FileSystemBaseHandle-IndexedDB.https.any.worker.html: Added.
+            * web-platform-tests/file-system-access/sandboxed_FileSystemBaseHandle-isSameEntry.https.any-expected.txt: Added.
+            * web-platform-tests/file-system-access/sandboxed_FileSystemBaseHandle-isSameEntry.https.any.html: Added.
+            * web-platform-tests/file-system-access/sandboxed_FileSystemBaseHandle-isSameEntry.https.any.js: Added.
+            * web-platform-tests/file-system-access/sandboxed_FileSystemBaseHandle-isSameEntry.https.any.worker-expected.txt: Added.
+            * web-platform-tests/file-system-access/sandboxed_FileSystemBaseHandle-isSameEntry.https.any.worker.html: Added.
+            * web-platform-tests/file-system-access/sandboxed_FileSystemBaseHandle-postMessage-BroadcastChannel.https.window-expected.txt: Added.
+            * web-platform-tests/file-system-access/sandboxed_FileSystemBaseHandle-postMessage-BroadcastChannel.https.window.html: Added.
+            * web-platform-tests/file-system-access/sandboxed_FileSystemBaseHandle-postMessage-BroadcastChannel.https.window.js: Added.
+            * web-platform-tests/file-system-access/sandboxed_FileSystemBaseHandle-postMessage-Error.https.window-expected.txt: Added.
+            * web-platform-tests/file-system-access/sandboxed_FileSystemBaseHandle-postMessage-Error.https.window.html: Added.
+            * web-platform-tests/file-system-access/sandboxed_FileSystemBaseHandle-postMessage-Error.https.window.js: Added.
+            * web-platform-tests/file-system-access/sandboxed_FileSystemBaseHandle-postMessage-MessagePort-frames.https.window-expected.txt: Added.
+            * web-platform-tests/file-system-access/sandboxed_FileSystemBaseHandle-postMessage-MessagePort-frames.https.window.html: Added.
+            * web-platform-tests/file-system-access/sandboxed_FileSystemBaseHandle-postMessage-MessagePort-frames.https.window.js: Added.
+            * web-platform-tests/file-system-access/sandboxed_FileSystemBaseHandle-postMessage-MessagePort-windows.https.window-expected.txt: Added.
+            * web-platform-tests/file-system-access/sandboxed_FileSystemBaseHandle-postMessage-MessagePort-windows.https.window.html: Added.
+            * web-platform-tests/file-system-access/sandboxed_FileSystemBaseHandle-postMessage-MessagePort-windows.https.window.js: Added.
+            * web-platform-tests/file-system-access/sandboxed_FileSystemBaseHandle-postMessage-MessagePort-workers.https.window-expected.txt: Added.
+            * web-platform-tests/file-system-access/sandboxed_FileSystemBaseHandle-postMessage-MessagePort-workers.https.window.html: Added.
+            * web-platform-tests/file-system-access/sandboxed_FileSystemBaseHandle-postMessage-MessagePort-workers.https.window.js: Added.
+            * web-platform-tests/file-system-access/sandboxed_FileSystemBaseHandle-postMessage-frames.https.window-expected.txt: Added.
+            * web-platform-tests/file-system-access/sandboxed_FileSystemBaseHandle-postMessage-frames.https.window.html: Added.
+            * web-platform-tests/file-system-access/sandboxed_FileSystemBaseHandle-postMessage-frames.https.window.js: Added.
+            * web-platform-tests/file-system-access/sandboxed_FileSystemBaseHandle-postMessage-windows.https.window-expected.txt: Added.
+            * web-platform-tests/file-system-access/sandboxed_FileSystemBaseHandle-postMessage-windows.https.window.html: Added.
+            * web-platform-tests/file-system-access/sandboxed_FileSystemBaseHandle-postMessage-windows.https.window.js: Added.
+            * web-platform-tests/file-system-access/sandboxed_FileSystemBaseHandle-postMessage-workers.https.window-expected.txt: Added.
+            * web-platform-tests/file-system-access/sandboxed_FileSystemBaseHandle-postMessage-workers.https.window.html: Added.
+            * web-platform-tests/file-system-access/sandboxed_FileSystemBaseHandle-postMessage-workers.https.window.js: Added.
+            * web-platform-tests/file-system-access/sandboxed_FileSystemBaseHandle-remove.https.any-expected.txt: Added.
+            * web-platform-tests/file-system-access/sandboxed_FileSystemBaseHandle-remove.https.any.html: Added.
+            * web-platform-tests/file-system-access/sandboxed_FileSystemBaseHandle-remove.https.any.js: Added.
+            * web-platform-tests/file-system-access/sandboxed_FileSystemBaseHandle-remove.https.any.worker-expected.txt: Added.
+            * web-platform-tests/file-system-access/sandboxed_FileSystemBaseHandle-remove.https.any.worker.html: Added.
+            * web-platform-tests/file-system-access/sandboxed_FileSystemDirectoryHandle-getDirectoryHandle.https.any-expected.txt: Added.
+            * web-platform-tests/file-system-access/sandboxed_FileSystemDirectoryHandle-getDirectoryHandle.https.any.html: Added.
+            * web-platform-tests/file-system-access/sandboxed_FileSystemDirectoryHandle-getDirectoryHandle.https.any.js: Added.
+            * web-platform-tests/file-system-access/sandboxed_FileSystemDirectoryHandle-getDirectoryHandle.https.any.worker-expected.txt: Added.
+            * web-platform-tests/file-system-access/sandboxed_FileSystemDirectoryHandle-getDirectoryHandle.https.any.worker.html: Added.
+            * web-platform-tests/file-system-access/sandboxed_FileSystemDirectoryHandle-getFileHandle.https.any-expected.txt: Added.
+            * web-platform-tests/file-system-access/sandboxed_FileSystemDirectoryHandle-getFileHandle.https.any.html: Added.
+            * web-platform-tests/file-system-access/sandboxed_FileSystemDirectoryHandle-getFileHandle.https.any.js: Added.
+            * web-platform-tests/file-system-access/sandboxed_FileSystemDirectoryHandle-getFileHandle.https.any.worker-expected.txt: Added.
+            * web-platform-tests/file-system-access/sandboxed_FileSystemDirectoryHandle-getFileHandle.https.any.worker.html: Added.
+            * web-platform-tests/file-system-access/sandboxed_FileSystemDirectoryHandle-iteration.https.any-expected.txt: Added.
+            * web-platform-tests/file-system-access/sandboxed_FileSystemDirectoryHandle-iteration.https.any.html: Added.
+            * web-platform-tests/file-system-access/sandboxed_FileSystemDirectoryHandle-iteration.https.any.js: Added.
+            * web-platform-tests/file-system-access/sandboxed_FileSystemDirectoryHandle-iteration.https.any.worker-expected.txt: Added.
+            * web-platform-tests/file-system-access/sandboxed_FileSystemDirectoryHandle-iteration.https.any.worker.html: Added.
+            * web-platform-tests/file-system-access/sandboxed_FileSystemDirectoryHandle-removeEntry.https.any-expected.txt: Added.
+            * web-platform-tests/file-system-access/sandboxed_FileSystemDirectoryHandle-removeEntry.https.any.html: Added.
+            * web-platform-tests/file-system-access/sandboxed_FileSystemDirectoryHandle-removeEntry.https.any.js: Added.
+            * web-platform-tests/file-system-access/sandboxed_FileSystemDirectoryHandle-removeEntry.https.any.worker-expected.txt: Added.
+            * web-platform-tests/file-system-access/sandboxed_FileSystemDirectoryHandle-removeEntry.https.any.worker.html: Added.
+            * web-platform-tests/file-system-access/sandboxed_FileSystemDirectoryHandle-resolve.https.any-expected.txt: Added.
+            * web-platform-tests/file-system-access/sandboxed_FileSystemDirectoryHandle-resolve.https.any.html: Added.
+            * web-platform-tests/file-system-access/sandboxed_FileSystemDirectoryHandle-resolve.https.any.js: Added.
+            * web-platform-tests/file-system-access/sandboxed_FileSystemDirectoryHandle-resolve.https.any.worker-expected.txt: Added.
+            * web-platform-tests/file-system-access/sandboxed_FileSystemDirectoryHandle-resolve.https.any.worker.html: Added.
+            * web-platform-tests/file-system-access/sandboxed_FileSystemFileHandle-create-sync-access-handle-dedicated-worker.https.tentative.window-expected.txt: Added.
+            * web-platform-tests/file-system-access/sandboxed_FileSystemFileHandle-create-sync-access-handle-dedicated-worker.https.tentative.window.html: Added.
+            * web-platform-tests/file-system-access/sandboxed_FileSystemFileHandle-create-sync-access-handle-dedicated-worker.https.tentative.window.js: Added.
+            * web-platform-tests/file-system-access/sandboxed_FileSystemFileHandle-getFile.https.any-expected.txt: Added.
+            * web-platform-tests/file-system-access/sandboxed_FileSystemFileHandle-getFile.https.any.html: Added.
+            * web-platform-tests/file-system-access/sandboxed_FileSystemFileHandle-getFile.https.any.js: Added.
+            * web-platform-tests/file-system-access/sandboxed_FileSystemFileHandle-getFile.https.any.worker-expected.txt: Added.
+            * web-platform-tests/file-system-access/sandboxed_FileSystemFileHandle-getFile.https.any.worker.html: Added.
+            * web-platform-tests/file-system-access/sandboxed_FileSystemFileHandle-sync-access-handle-lock.https.tentative.worker-expected.txt: Added.
+            * web-platform-tests/file-system-access/sandboxed_FileSystemFileHandle-sync-access-handle-lock.https.tentative.worker.html: Added.
+            * web-platform-tests/file-system-access/sandboxed_FileSystemFileHandle-sync-access-handle-lock.https.tentative.worker.js: Added.
+            (promise_test.async t):
+            * web-platform-tests/file-system-access/sandboxed_FileSystemSyncAccessHandle-close.https.tentative.worker-expected.txt: Added.
+            * web-platform-tests/file-system-access/sandboxed_FileSystemSyncAccessHandle-close.https.tentative.worker.html: Added.
+            * web-platform-tests/file-system-access/sandboxed_FileSystemSyncAccessHandle-close.https.tentative.worker.js: Added.
+            (sync_access_handle_test.async testCase):
+            * web-platform-tests/file-system-access/sandboxed_FileSystemSyncAccessHandle-flush.https.tentative.worker-expected.txt: Added.
+            * web-platform-tests/file-system-access/sandboxed_FileSystemSyncAccessHandle-flush.https.tentative.worker.html: Added.
+            * web-platform-tests/file-system-access/sandboxed_FileSystemSyncAccessHandle-flush.https.tentative.worker.js: Added.
+            (sync_access_handle_test.async t):
+            (sync_access_handle_test.async testCase):
+            * web-platform-tests/file-system-access/sandboxed_FileSystemSyncAccessHandle-getSize.https.tentative.worker-expected.txt: Added.
+            * web-platform-tests/file-system-access/sandboxed_FileSystemSyncAccessHandle-getSize.https.tentative.worker.html: Added.
+            * web-platform-tests/file-system-access/sandboxed_FileSystemSyncAccessHandle-getSize.https.tentative.worker.js: Added.
+            (sync_access_handle_test.async testCase):
+            * web-platform-tests/file-system-access/sandboxed_FileSystemSyncAccessHandle-read-write.https.tentative.worker-expected.txt: Added.
+            * web-platform-tests/file-system-access/sandboxed_FileSystemSyncAccessHandle-read-write.https.tentative.worker.html: Added.
+            * web-platform-tests/file-system-access/sandboxed_FileSystemSyncAccessHandle-read-write.https.tentative.worker.js: Added.
+            (sync_access_handle_test):
+            * web-platform-tests/file-system-access/sandboxed_FileSystemSyncAccessHandle-truncate.https.tentative.worker-expected.txt: Added.
+            * web-platform-tests/file-system-access/sandboxed_FileSystemSyncAccessHandle-truncate.https.tentative.worker.html: Added.
+            * web-platform-tests/file-system-access/sandboxed_FileSystemSyncAccessHandle-truncate.https.tentative.worker.js: Added.
+            (sync_access_handle_test.async testCase):
+            * web-platform-tests/file-system-access/sandboxed_FileSystemWritableFileStream-piped.https.any-expected.txt: Added.
+            * web-platform-tests/file-system-access/sandboxed_FileSystemWritableFileStream-piped.https.any.html: Added.
+            * web-platform-tests/file-system-access/sandboxed_FileSystemWritableFileStream-piped.https.any.js: Added.
+            * web-platform-tests/file-system-access/sandboxed_FileSystemWritableFileStream-piped.https.any.worker-expected.txt: Added.
+            * web-platform-tests/file-system-access/sandboxed_FileSystemWritableFileStream-piped.https.any.worker.html: Added.
+            * web-platform-tests/file-system-access/sandboxed_FileSystemWritableFileStream-write.https.any-expected.txt: Added.
+            * web-platform-tests/file-system-access/sandboxed_FileSystemWritableFileStream-write.https.any.html: Added.
+            * web-platform-tests/file-system-access/sandboxed_FileSystemWritableFileStream-write.https.any.js: Added.
+            * web-platform-tests/file-system-access/sandboxed_FileSystemWritableFileStream-write.https.any.worker-expected.txt: Added.
+            * web-platform-tests/file-system-access/sandboxed_FileSystemWritableFileStream-write.https.any.worker.html: Added.
+            * web-platform-tests/file-system-access/sandboxed_FileSystemWritableFileStream.https.any-expected.txt: Added.
+            * web-platform-tests/file-system-access/sandboxed_FileSystemWritableFileStream.https.any.html: Added.
+            * web-platform-tests/file-system-access/sandboxed_FileSystemWritableFileStream.https.any.js: Added.
+            * web-platform-tests/file-system-access/sandboxed_FileSystemWritableFileStream.https.any.worker-expected.txt: Added.
+            * web-platform-tests/file-system-access/sandboxed_FileSystemWritableFileStream.https.any.worker.html: Added.
+            * web-platform-tests/file-system-access/script-tests/FileSystemBaseHandle-IndexedDB.js: Added.
+            (directory_test.async t):
+            * web-platform-tests/file-system-access/script-tests/FileSystemBaseHandle-isSameEntry.js: Added.
+            (directory_test.async t):
+            * web-platform-tests/file-system-access/script-tests/FileSystemBaseHandle-postMessage-BroadcastChannel.js: Added.
+            (async create_broadcast_channel):
+            (directory_test.async t):
+            * web-platform-tests/file-system-access/script-tests/FileSystemBaseHandle-postMessage-Error.js: Added.
+            (async do_send_message_error_test):
+            (async do_receive_message_error_test):
+            (async do_send_and_receive_message_error_test):
+            (async do_send_message_port_error_test):
+            (async do_receive_message_port_error_test):
+            (async do_send_and_receive_message_port_error_test):
+            (directory_test.async t):
+            * web-platform-tests/file-system-access/script-tests/FileSystemBaseHandle-postMessage-MessagePort-frames.js: Added.
+            (directory_test.async t):
+            * web-platform-tests/file-system-access/script-tests/FileSystemBaseHandle-postMessage-MessagePort-windows.js: Added.
+            (directory_test.async t):
+            * web-platform-tests/file-system-access/script-tests/FileSystemBaseHandle-postMessage-MessagePort-workers.js: Added.
+            (directory_test.async t):
+            (self.SharedWorker.undefined.directory_test.async t):
+            * web-platform-tests/file-system-access/script-tests/FileSystemBaseHandle-postMessage-frames.js: Added.
+            (directory_test.async t):
+            * web-platform-tests/file-system-access/script-tests/FileSystemBaseHandle-postMessage-windows.js: Added.
+            (directory_test.async t):
+            * web-platform-tests/file-system-access/script-tests/FileSystemBaseHandle-postMessage-workers.js: Added.
+            (directory_test.async t):
+            (self.SharedWorker.undefined.directory_test.async t):
+            * web-platform-tests/file-system-access/script-tests/FileSystemBaseHandle-remove.js: Added.
+            (directory_test.async t):
+            * web-platform-tests/file-system-access/script-tests/FileSystemDirectoryHandle-getDirectoryHandle.js: Added.
+            (directory_test.async t):
+            * web-platform-tests/file-system-access/script-tests/FileSystemDirectoryHandle-getFileHandle.js: Added.
+            (directory_test.async t):
+            * web-platform-tests/file-system-access/script-tests/FileSystemDirectoryHandle-iteration.js: Added.
+            (directory_test.async t):
+            * web-platform-tests/file-system-access/script-tests/FileSystemDirectoryHandle-removeEntry.js: Added.
+            (directory_test.async t):
+            * web-platform-tests/file-system-access/script-tests/FileSystemDirectoryHandle-resolve.js: Added.
+            (directory_test.async t):
+            * web-platform-tests/file-system-access/script-tests/FileSystemFileHandle-create-sync-access-handle-dedicated-worker.js: Added.
+            (directory_test.async t):
+            * web-platform-tests/file-system-access/script-tests/FileSystemFileHandle-getFile.js: Added.
+            (directory_test.async t):
+            * web-platform-tests/file-system-access/script-tests/FileSystemSyncAccessHandle-flush.js: Added.
+            (sync_access_handle_test.async handle):
+            * web-platform-tests/file-system-access/script-tests/FileSystemWritableFileStream-piped.js: Added.
+            (directory_test.async t):
+            * web-platform-tests/file-system-access/script-tests/FileSystemWritableFileStream-write.js: Added.
+            (directory_test.async t):
+            * web-platform-tests/file-system-access/script-tests/FileSystemWritableFileStream.js: Added.
+            (directory_test.async t):
+            * web-platform-tests/file-system-access/script-tests/w3c-import.log: Added.
+            * web-platform-tests/file-system-access/showPicker-errors.https.window-expected.txt: Added.
+            * web-platform-tests/file-system-access/showPicker-errors.https.window.html: Added.
+            * web-platform-tests/file-system-access/showPicker-errors.https.window.js: Added.
+            (promise_test.async t):
+            (define_file_picker_error_tests.async promise_test):
+            (define_file_picker_error_tests.async const):
+            (define_file_picker_error_tests):
+            (define_file_picker_extension_error_test):
+            * web-platform-tests/file-system-access/w3c-import.log: Added.
+
+2021-10-15  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r282088. rdar://problem/84234366
 
     Import storage tests from WPT
