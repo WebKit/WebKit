@@ -8,7 +8,7 @@ Kicking off the tests:
 PASS window.e.documentURI is "http://127.0.0.1:8000/security/contentSecurityPolicy/1.1/securityviolationpolicy-block-frame-using-child-src.html"
 PASS window.e.referrer is ""
 PASS window.e.blockedURI is "http://127.0.0.1:8000/security/contentSecurityPolicy/resources/alert-fail.html"
-PASS window.e.violatedDirective is "child-src"
+PASS window.e.violatedDirective is "frame-src"
 PASS window.e.effectiveDirective is "child-src"
 PASS window.e.originalPolicy is "child-src 'none'"
 PASS window.e.sourceFile is "http://127.0.0.1:8000/security/contentSecurityPolicy/1.1/securityviolationpolicy-block-frame-using-child-src.html"

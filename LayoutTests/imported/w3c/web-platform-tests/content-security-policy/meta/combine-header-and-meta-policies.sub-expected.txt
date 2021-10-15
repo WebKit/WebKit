@@ -2,6 +2,6 @@ Test passes if both style and image are blocked and a report is generated for th
 
 
 
-FAIL Expecting logs: ["TEST COMPLETE", "violated-directive=img-src", "violated-directive=style-src-elem"] assert_unreached: unexpected log: violated-directive=style-src Reached unreachable code
+PASS Expecting logs: ["TEST COMPLETE", "violated-directive=img-src", "violated-directive=style-src-elem"]
 PASS combine-header-and-meta-policies
 

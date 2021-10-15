@@ -30,6 +30,10 @@
 
 namespace WebCore {
 
+ContentSecurityPolicyDirective::~ContentSecurityPolicyDirective()
+{
+}
+
 bool ContentSecurityPolicyDirective::isDefaultSrc() const
 {
     return this == m_directiveList.defaultSrc();

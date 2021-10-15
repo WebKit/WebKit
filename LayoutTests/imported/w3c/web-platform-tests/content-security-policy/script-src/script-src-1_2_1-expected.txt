@@ -1,6 +1,6 @@
 Inline script attached by DOM manipulation should not run without an 'unsafe-inline' script-src policy, even with default-src *
 
 
-FAIL Test that securitypolicyviolation event is fired assert_equals: expected "script-src-elem" but got "script-src"
+PASS Test that securitypolicyviolation event is fired
 PASS DOM manipulation inline tests
 

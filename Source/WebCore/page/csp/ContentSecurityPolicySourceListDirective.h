@@ -48,7 +48,11 @@ public:
 
     OptionSet<ContentSecurityPolicyHashAlgorithm> hashAlgorithmsUsed() const { return m_sourceList.hashAlgorithmsUsed(); }
 
+    void setNameForReporting(const String& name) { m_nameForReporting = name; }
+    const String& nameForReporting() const final { return !m_nameForReporting.isEmpty() ? m_nameForReporting : name(); }
+
 private:
+    String m_nameForReporting;
     ContentSecurityPolicySourceList m_sourceList;
 };
 

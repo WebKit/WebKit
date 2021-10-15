@@ -1,3 +1,3 @@
 
-FAIL Should apply the style attribute assert_true: expected true got false
+PASS Should apply the style attribute
 

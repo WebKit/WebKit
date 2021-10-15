@@ -1,3 +1,78 @@
+2021-10-15  Kate Cheney  <katherine_cheney@apple.com>
+
+        CSP: Implement src-elem and src-attr directives
+        https://bugs.webkit.org/show_bug.cgi?id=231751
+        <rdar://problem/83332874>
+
+        Reviewed by Brent Fulgham.
+
+        * web-platform-tests/content-security-policy/child-src/child-src-blocked.sub-expected.txt:
+        * web-platform-tests/content-security-policy/child-src/child-src-redirect-blocked.sub-expected.txt:
+        * web-platform-tests/content-security-policy/default-src-inline-blocked.sub-expected.txt: Added.
+        * web-platform-tests/content-security-policy/default-src/default-src-inline-blocked.sub-expected.txt:
+        * web-platform-tests/content-security-policy/generic/generic-0_1-img-src-expected.txt:
+        * web-platform-tests/content-security-policy/generic/generic-0_1-script-src-expected.txt:
+        * web-platform-tests/content-security-policy/meta/combine-header-and-meta-policies.sub-expected.txt:
+        * web-platform-tests/content-security-policy/navigation/javascript-url-navigation-inherits-csp-expected.txt:
+        * web-platform-tests/content-security-policy/navigation/to-javascript-parent-initiated-parent-csp-expected.txt:
+        * web-platform-tests/content-security-policy/reporting/report-uri-effective-directive-expected.txt:
+        * web-platform-tests/content-security-policy/script-src-attr-elem/script-src-attr-allowed-src-blocked-expected.txt:
+        * web-platform-tests/content-security-policy/script-src-attr-elem/script-src-attr-blocked-src-allowed-expected.txt:
+        * web-platform-tests/content-security-policy/script-src-attr-elem/script-src-elem-allowed-attr-blocked-expected.txt:
+        * web-platform-tests/content-security-policy/script-src-attr-elem/script-src-elem-allowed-src-blocked-expected.txt:
+        * web-platform-tests/content-security-policy/script-src-attr-elem/script-src-elem-blocked-attr-allowed-expected.txt:
+        * web-platform-tests/content-security-policy/script-src-attr-elem/script-src-elem-blocked-src-allowed-expected.txt:
+        * web-platform-tests/content-security-policy/script-src/injected-inline-script-blocked.sub-expected.txt:
+        * web-platform-tests/content-security-policy/script-src/script-src-1_1-expected.txt:
+        * web-platform-tests/content-security-policy/script-src/script-src-1_10-expected.txt:
+        * web-platform-tests/content-security-policy/script-src/script-src-1_2-expected.txt:
+        * web-platform-tests/content-security-policy/script-src/script-src-1_2_1-expected.txt:
+        * web-platform-tests/content-security-policy/script-src/script-src-report-only-policy-works-with-hash-policy-expected.txt:
+        * web-platform-tests/content-security-policy/script-src/scriptnonce-and-scripthash.sub-expected.txt:
+        * web-platform-tests/content-security-policy/script-src/scriptnonce-basic-blocked.sub-expected.txt:
+        * web-platform-tests/content-security-policy/script-src/scriptnonce-ignore-unsafeinline.sub-expected.txt:
+        * web-platform-tests/content-security-policy/script-src/srcdoc-doesnt-bypass-script-src.sub-expected.txt:
+        * web-platform-tests/content-security-policy/style-src-attr-elem/style-src-attr-allowed-src-blocked-expected.txt:
+        * web-platform-tests/content-security-policy/style-src-attr-elem/style-src-attr-blocked-src-allowed-expected.txt:
+        * web-platform-tests/content-security-policy/style-src-attr-elem/style-src-elem-allowed-attr-blocked-expected.txt:
+        * web-platform-tests/content-security-policy/style-src-attr-elem/style-src-elem-allowed-src-blocked-expected.txt:
+        * web-platform-tests/content-security-policy/style-src-attr-elem/style-src-elem-blocked-attr-allowed-expected.txt:
+        * web-platform-tests/content-security-policy/style-src-attr-elem/style-src-elem-blocked-src-allowed-expected.txt:
+        * web-platform-tests/content-security-policy/style-src/injected-inline-script-blocked.sub-expected.txt: Added.
+        * web-platform-tests/content-security-policy/style-src/injected-inline-style-blocked.sub-expected.txt:
+        * web-platform-tests/content-security-policy/style-src/inline-style-allowed-while-cloning-objects.sub-expected.txt:
+        * web-platform-tests/content-security-policy/style-src/inline-style-attribute-blocked-expected.txt: Added.
+        * web-platform-tests/content-security-policy/style-src/inline-style-attribute-blocked.sub-expected.txt:
+        * web-platform-tests/content-security-policy/style-src/style-src-hash-blocked-expected.txt:
+        * web-platform-tests/content-security-policy/style-src/style-src-injected-inline-style-blocked-expected.txt:
+        * web-platform-tests/content-security-policy/style-src/style-src-inline-style-attribute-blocked-expected.txt:
+        * web-platform-tests/content-security-policy/style-src/style-src-inline-style-blocked-expected.txt:
+        * web-platform-tests/content-security-policy/style-src/style-src-inline-style-nonce-blocked-expected.txt:
+        * web-platform-tests/content-security-policy/style-src/stylehash-basic-blocked.sub-expected.txt:
+        * web-platform-tests/content-security-policy/style-src/stylenonce-allowed.sub-expected.txt:
+        * web-platform-tests/content-security-policy/style-src/stylenonce-blocked.sub-expected.txt:
+        * web-platform-tests/content-security-policy/unsafe-hashes/javascript_src_denied_missing_unsafe_hashes-href-expected.txt:
+        * web-platform-tests/content-security-policy/unsafe-hashes/javascript_src_denied_missing_unsafe_hashes-href_blank-expected.txt:
+        * web-platform-tests/content-security-policy/unsafe-hashes/javascript_src_denied_missing_unsafe_hashes-window_open-expected.txt:
+        * web-platform-tests/content-security-policy/unsafe-hashes/javascript_src_denied_wrong_hash-href-expected.txt:
+        * web-platform-tests/content-security-policy/unsafe-hashes/javascript_src_denied_wrong_hash-href_blank-expected.txt:
+        * web-platform-tests/content-security-policy/unsafe-hashes/javascript_src_denied_wrong_hash-window_open-expected.txt:
+        * web-platform-tests/content-security-policy/unsafe-hashes/script_event_handlers_denied_missing_unsafe_hashes-expected.txt:
+        * web-platform-tests/content-security-policy/unsafe-hashes/script_event_handlers_denied_wrong_hash-expected.txt:
+        * web-platform-tests/content-security-policy/unsafe-hashes/style_attribute_denied_missing_unsafe_hashes-expected.txt:
+        * web-platform-tests/content-security-policy/unsafe-hashes/style_attribute_denied_wrong_hash-expected.txt:
+        * web-platform-tests/content-security-policy/blob/blob-urls-do-not-match-self.sub-expected.txt:
+        * web-platform-tests/content-security-policy/generic/generic-0_10_1.sub-expected.txt:
+        * web-platform-tests/content-security-policy/generic/generic-0_2_2.sub-expected.txt:
+        * web-platform-tests/content-security-policy/generic/generic-0_2_3-expected.txt:
+        * web-platform-tests/content-security-policy/script-src/script-src-report-only-policy-works-with-external-hash-policy-expected.txt:
+        * web-platform-tests/content-security-policy/style-src/style-blocked.sub-expected.txt:
+        * web-platform-tests/content-security-policy/style-src/style-src-imported-style-blocked-expected.txt:
+        * web-platform-tests/content-security-policy/style-src/style-src-injected-stylesheet-blocked.sub-expected.txt:
+        * web-platform-tests/content-security-policy/style-src/style-src-none-blocked-expected.txt:
+        * web-platform-tests/content-security-policy/style-src/style-src-stylesheet-nonce-blocked-expected.txt:
+        * web-platform-tests/content-security-policy/svg/svg-inline.sub-expected.txt:
+
 2021-10-15  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         [WebIDL] JSDOMBuiltinConstructor instances should support subclassing

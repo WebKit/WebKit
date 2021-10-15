@@ -1,4 +1,4 @@
 
 PASS Should not load inline style element with invalid nonce
-FAIL Should fire a securitypolicyviolation event assert_equals: expected "style-src" but got "style-src-elem"
+PASS Should fire a securitypolicyviolation event
 Lorem ipsum

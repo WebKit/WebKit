@@ -907,8 +907,6 @@ imported/w3c/web-platform-tests/content-security-policy/script-src/script-src-mu
 imported/w3c/web-platform-tests/content-security-policy/svg/including.sub.svg [ Skip ]
 
 # Skip Content Security Policy tests that time out
-imported/w3c/web-platform-tests/content-security-policy/script-src-attr-elem/ [ Skip ]
-imported/w3c/web-platform-tests/content-security-policy/style-src-attr-elem/ [ Skip ]
 imported/w3c/web-platform-tests/content-security-policy/navigate-to/href-location-cross-origin-allowed.sub.html [ Skip ]
 imported/w3c/web-platform-tests/content-security-policy/style-src/style-src-inline-style-nonce-blocked-error-event.html [ Skip ]
 imported/w3c/web-platform-tests/content-security-policy/securitypolicyviolation/style-sample.html [ Skip ]

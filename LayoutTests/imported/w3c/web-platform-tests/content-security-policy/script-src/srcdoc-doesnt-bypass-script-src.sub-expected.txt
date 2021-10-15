@@ -1,4 +1,4 @@
 
 
-FAIL Expecting logs: ["violated-directive=script-src-elem"] assert_unreached: unexpected log: violated-directive=script-src Reached unreachable code
+PASS Expecting logs: ["violated-directive=script-src-elem"]
 

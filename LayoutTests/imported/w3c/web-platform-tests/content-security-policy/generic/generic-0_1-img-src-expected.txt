@@ -2,5 +2,5 @@ default-src should cascade to img-src directive
 
 
 PASS Verify cascading of default-src to img-src policy
-FAIL Should fire violation events for every failed violation assert_equals: expected "img-src" but got "default-src"
+PASS Should fire violation events for every failed violation
 

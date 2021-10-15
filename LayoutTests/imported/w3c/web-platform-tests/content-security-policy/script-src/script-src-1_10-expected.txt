@@ -1,6 +1,6 @@
 data: as script src should not run with a policy that doesn't specify data: as an allowed source
 
 
-FAIL Test that securitypolicyviolation event is fired assert_equals: expected "script-src-elem" but got "default-src"
+PASS Test that securitypolicyviolation event is fired
 PASS Verify that data: as script src doesn't run with this policy
 

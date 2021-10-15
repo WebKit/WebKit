@@ -1,5 +1,5 @@
 This tests that a valid nonce disables inline JavaScript, even if 'unsafe-inline' is present.
 
 
-FAIL Expecting alerts: ["PASS (1/2)","PASS (2/2)", "violated-directive=script-src-elem"] assert_unreached: unexpected alert: violated-directive=script-src Reached unreachable code
+PASS Expecting alerts: ["PASS (1/2)","PASS (2/2)", "violated-directive=script-src-elem"]
 

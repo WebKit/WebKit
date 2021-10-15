@@ -1,5 +1,5 @@
 This tests the effect of a valid style-hash value, with one valid style and several invalid ones. It passes if the valid style is applied and a CSP violation is generated.
 
 
-FAIL Expecting alerts: ["PASS: The 'p' element's text is green, which means the style was correctly applied.", "violated-directive=style-src-elem"] assert_unreached: unexpected alert: violated-directive=style-src Reached unreachable code
+PASS Expecting alerts: ["PASS: The 'p' element's text is green, which means the style was correctly applied.", "violated-directive=style-src-elem"]
 

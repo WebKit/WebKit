@@ -8,7 +8,7 @@ Node #4
 Yet another div.
 Yet another div.
 
-FAIL Test that violation report event was fired assert_equals: expected "style-src-attr" but got "style-src"
+PASS Test that violation report event was fired
 PASS inline-style-allowed-while-cloning-objects
 FAIL inline-style-allowed-while-cloning-objects 1 null is not an object (evaluating 'node2.style.background.match(/yellow/)[0]')
 PASS inline-style-allowed-while-cloning-objects 2

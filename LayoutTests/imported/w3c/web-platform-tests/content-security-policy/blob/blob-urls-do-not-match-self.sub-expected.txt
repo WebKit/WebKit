@@ -1,5 +1,5 @@
 blob: URLs are same-origin with the page in which they were created, but explicitly do not match the 'self' or '*' source in CSP directives because they are more akin to 'unsafe-inline' content.
 
 
-FAIL Expecting logs: ["violated-directive=script-src-elem"] assert_unreached: unexpected log: violated-directive=script-src Reached unreachable code
+PASS Expecting logs: ["violated-directive=script-src-elem"]
 

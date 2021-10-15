@@ -1,5 +1,5 @@
 This tests the effect of a valid script-nonce value. It passes if a CSP violation is generated, and the two PASS alerts are executed.
 
 
-FAIL Expecting alerts: ["PASS (closely-quoted nonce)","PASS (nonce w/whitespace)", "violated-directive=script-src-elem", "violated-directive=script-src-elem", "violated-directive=script-src-elem"] assert_unreached: unexpected alert: violated-directive=script-src Reached unreachable code
+PASS Expecting alerts: ["PASS (closely-quoted nonce)","PASS (nonce w/whitespace)", "violated-directive=script-src-elem", "violated-directive=script-src-elem", "violated-directive=script-src-elem"]
 

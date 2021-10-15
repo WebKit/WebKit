@@ -1,3 +1,3 @@
 
-FAIL Violation report status OK. assert_true: violated-directive value of  "default-src" did not match frame-src. expected true got false
+PASS Violation report status OK.
 

@@ -3,6 +3,6 @@ This text should be green.
 Style that does not match a 'nonce-*' expression in 'style-src' should not be applied to the page.
 
 
-FAIL Should fire securitypolicyviolation assert_equals: expected "style-src-elem" but got "style-src"
+PASS Should fire securitypolicyviolation
 PASS stylenonce-blocked
 

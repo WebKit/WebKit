@@ -48,7 +48,10 @@ extern const char* const reportURI;
 extern const char* const sandbox;
 extern const char* const scriptSrc;
 extern const char* const scriptSrcElem;
+extern const char* const scriptSrcAttr;
 extern const char* const styleSrc;
+extern const char* const styleSrcAttr;
+extern const char* const styleSrcElem;
 extern const char* const upgradeInsecureRequests;
 extern const char* const blockAllMixedContent;
 

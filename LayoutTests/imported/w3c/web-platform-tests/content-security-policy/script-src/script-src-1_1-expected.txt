@@ -3,5 +3,5 @@ Inline script should not run without 'unsafe-inline' script-src directive, even 
 
 PASS Inline script block
 PASS Inline event handler
-FAIL Should fire policy violation events assert_unreached: Unexpected directive broken Reached unreachable code
+PASS Should fire policy violation events
 

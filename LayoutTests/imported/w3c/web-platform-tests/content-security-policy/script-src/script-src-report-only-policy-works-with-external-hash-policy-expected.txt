@@ -1,4 +1,4 @@
 
-FAIL Should fire securitypolicyviolation event assert_equals: expected "script-src-elem" but got "script-src"
+FAIL Should fire securitypolicyviolation event assert_equals: expected "report" but got "enforce"
 FAIL External script in a script tag with matching SRI hash should run. assert_true: External script ran. expected true got false
 

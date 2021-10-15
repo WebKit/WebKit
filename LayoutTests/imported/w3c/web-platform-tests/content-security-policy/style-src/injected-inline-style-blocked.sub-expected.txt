@@ -1,5 +1,5 @@
 PASS 1/2
 PASS 2/2
 
-FAIL Expecting logs: ["violated-directive=style-src-elem","PASS"] assert_unreached: unexpected log: violated-directive=style-src Reached unreachable code
+PASS Expecting logs: ["violated-directive=style-src-elem","PASS"]
 

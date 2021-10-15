@@ -1,4 +1,4 @@
 
 PASS Inline style element should not load without 'unsafe-inline'
-FAIL Should fire a securitypolicyviolation event assert_equals: expected "style-src" but got "style-src-elem"
+PASS Should fire a securitypolicyviolation event
 Lorem ipsum
