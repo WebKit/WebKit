@@ -53,5 +53,5 @@ FAIL FileSystemWritableFileStream interface: existence and properties of interfa
 FAIL FileSystemWritableFileStream interface: operation write(FileSystemWriteChunkType) assert_own_property: self does not have own property "FileSystemWritableFileStream" expected property "FileSystemWritableFileStream" missing
 FAIL FileSystemWritableFileStream interface: operation seek(unsigned long long) assert_own_property: self does not have own property "FileSystemWritableFileStream" expected property "FileSystemWritableFileStream" missing
 FAIL FileSystemWritableFileStream interface: operation truncate(unsigned long long) assert_own_property: self does not have own property "FileSystemWritableFileStream" expected property "FileSystemWritableFileStream" missing
-FAIL StorageManager interface: operation getDirectory() assert_own_property: self does not have own property "StorageManager" expected property "StorageManager" missing
+FAIL StorageManager interface: operation getDirectory() assert_own_property: interface prototype object missing non-static operation expected property "getDirectory" missing
 

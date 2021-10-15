@@ -3559,6 +3559,11 @@ IDBClient::IDBConnectionProxy* Document::idbConnectionProxy()
     return m_idbConnectionProxy.get();
 }
 
+RefPtr<StorageConnection> Document::storageConnection()
+{
+    return page() ? &page()->storageConnection() : nullptr;
+}
+
 SocketProvider* Document::socketProvider()
 {
     return m_socketProvider.get();

@@ -158,6 +158,7 @@ public:
     uint64_t perOriginStorageQuota() const { return m_resolvedConfiguration->perOriginStorageQuota(); }
     uint64_t perThirdPartyOriginStorageQuota() const;
     const String& cacheStorageDirectory() const { return m_resolvedConfiguration->cacheStorageDirectory(); }
+    const String& generalStorageDirectory() const { return m_resolvedConfiguration->generalStorageDirectory(); }
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     void clearResourceLoadStatisticsInWebProcesses(CompletionHandler<void()>&&);
@@ -344,6 +345,7 @@ public:
 #endif
     static WTF::String defaultIndexedDBDatabaseDirectory();
     static WTF::String defaultCacheStorageDirectory();
+    static WTF::String defaultGeneralStorageDirectory();
     static WTF::String defaultMediaCacheDirectory();
     static WTF::String defaultMediaKeysStorageDirectory();
     static WTF::String defaultDeviceIdHashSaltsStorageDirectory();

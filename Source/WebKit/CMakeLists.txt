@@ -27,6 +27,7 @@ set(WebKit_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/NetworkProcess/ServiceWorker"
     "${WEBKIT_DIR}/NetworkProcess/WebStorage"
     "${WEBKIT_DIR}/NetworkProcess/cache"
+    "${WEBKIT_DIR}/NetworkProcess/storage"
     "${WEBKIT_DIR}/NetworkProcess/watchos"
     "${WEBKIT_DIR}/NetworkProcess/webrtc"
     "${WEBKIT_DIR}/Platform"
@@ -172,6 +173,8 @@ set(WebKit_MESSAGES_IN_FILES
     NetworkProcess/WebStorage/StorageManagerSet
 
     NetworkProcess/cache/CacheStorageEngineConnection
+
+    NetworkProcess/storage/NetworkStorageManager
 
     NetworkProcess/webrtc/NetworkMDNSRegister
     NetworkProcess/webrtc/NetworkRTCMonitor

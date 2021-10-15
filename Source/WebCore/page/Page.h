@@ -146,10 +146,11 @@ class ScrollingCoordinator;
 class ServicesOverlayController;
 class Settings;
 class SocketProvider;
+class SpeechRecognitionProvider;
 class SpeechSynthesisClient;
 class StorageNamespace;
 class StorageNamespaceProvider;
-class SpeechRecognitionProvider;
+class StorageProvider;
 class UserContentProvider;
 class UserContentURLPattern;
 class UserInputBridge;
@@ -875,6 +876,8 @@ public:
     void cacheTextRecognitionResult(const HTMLElement&, const IntRect& containerRect, const TextRecognitionResult&);
 #endif
 
+    WEBCORE_EXPORT StorageConnection& storageConnection();
+
 private:
     struct Navigation {
         RegistrableDomain domain;
@@ -1198,6 +1201,7 @@ private:
     mutable MediaSessionGroupIdentifier m_mediaSessionGroupIdentifier;
 
     RefPtr<ReportingEndpointsCache> m_reportingEndpointsCache;
+    UniqueRef<StorageProvider> m_storageProvider;
 
 #if ENABLE(IMAGE_ANALYSIS)
     // FIXME: These should be refactored to use a weak hash map of HTMLElement to std::pair<TextRecognitionResult, IntSize>.

@@ -125,7 +125,10 @@ public:
     
     const String& cacheStorageDirectory() const { return m_cacheStorageDirectory; }
     void setCacheStorageDirectory(String&& directory) { m_cacheStorageDirectory = WTFMove(directory); }
-    
+
+    const String& generalStorageDirectory() const { return m_generalStorageDirectory; }
+    void setGeneralStorageDirectory(String&& directory) { m_generalStorageDirectory = WTFMove(directory); }
+
     const String& applicationCacheFlatFileSubdirectoryName() const { return m_applicationCacheFlatFileSubdirectoryName; }
     void setApplicationCacheFlatFileSubdirectoryName(String&& directory) { m_applicationCacheFlatFileSubdirectoryName = WTFMove(directory); }
     
@@ -181,6 +184,7 @@ private:
     IsPersistent m_isPersistent { IsPersistent::No };
 
     String m_cacheStorageDirectory;
+    String m_generalStorageDirectory;
     uint64_t m_perOriginStorageQuota { WebCore::StorageQuotaManager::defaultQuota() };
     String m_networkCacheDirectory;
     String m_applicationCacheDirectory;

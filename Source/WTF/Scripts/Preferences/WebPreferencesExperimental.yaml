@@ -1046,6 +1046,18 @@ SpringTimingFunctionEnabled:
     WebCore:
       default: false
 
+StorageAPIEnabled:
+  type: bool
+  humanReadableName: "Storage API"
+  humanReadableDescription: "Enable Storage API"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 SyntheticEditingCommandsEnabled:
   type: bool
   humanReadableName: "Synthetic Editing Commands"

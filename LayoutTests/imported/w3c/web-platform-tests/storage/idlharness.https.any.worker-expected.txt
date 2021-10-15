@@ -15,15 +15,15 @@ PASS WorkerNavigator includes NavigatorID: member names are unique
 PASS WorkerNavigator includes NavigatorLanguage: member names are unique
 PASS WorkerNavigator includes NavigatorOnLine: member names are unique
 PASS WorkerNavigator includes NavigatorConcurrentHardware: member names are unique
-FAIL StorageManager interface: existence and properties of interface object assert_own_property: self does not have own property "StorageManager" expected property "StorageManager" missing
-FAIL StorageManager interface object length assert_own_property: self does not have own property "StorageManager" expected property "StorageManager" missing
-FAIL StorageManager interface object name assert_own_property: self does not have own property "StorageManager" expected property "StorageManager" missing
-FAIL StorageManager interface: existence and properties of interface prototype object assert_own_property: self does not have own property "StorageManager" expected property "StorageManager" missing
-FAIL StorageManager interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "StorageManager" expected property "StorageManager" missing
-FAIL StorageManager interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "StorageManager" expected property "StorageManager" missing
-FAIL StorageManager interface: operation persisted() assert_own_property: self does not have own property "StorageManager" expected property "StorageManager" missing
-FAIL StorageManager interface: member persist undefined is not an Object. (evaluating 'member.name in this.get_interface_object()')
-FAIL StorageManager interface: operation estimate() assert_own_property: self does not have own property "StorageManager" expected property "StorageManager" missing
+PASS StorageManager interface: existence and properties of interface object
+PASS StorageManager interface object length
+PASS StorageManager interface object name
+PASS StorageManager interface: existence and properties of interface prototype object
+PASS StorageManager interface: existence and properties of interface prototype object's "constructor" property
+PASS StorageManager interface: existence and properties of interface prototype object's @@unscopables property
+PASS StorageManager interface: operation persisted()
+PASS StorageManager interface: member persist
+FAIL StorageManager interface: operation estimate() assert_own_property: interface prototype object missing non-static operation expected property "estimate" missing
 FAIL StorageManager must be primary interface of navigator.storage assert_equals: wrong typeof object expected "object" but got "undefined"
 FAIL Stringification of navigator.storage assert_equals: wrong typeof object expected "object" but got "undefined"
 FAIL StorageManager interface: navigator.storage must inherit property "persisted()" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
