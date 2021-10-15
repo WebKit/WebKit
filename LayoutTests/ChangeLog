@@ -1,3 +1,11 @@
+2021-10-14  Alan Bujtas  <zalan@apple.com>
+
+        WPT progression after turning on the IFC codepath for inline boxes with background decoration (r284194).
+
+        Unreviewed.
+
+        * TestExpectations:
+
 2021-10-14  Robin Morisset  <rmorisset@apple.com>
 
         Allow WASM to use up to 4GB
