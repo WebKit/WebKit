@@ -1956,8 +1956,6 @@ webkit.org/b/228670 http/wpt/service-workers/navigation-redirect-main-frame.http
 
 webkit.org/b/228165 http/wpt/webrtc/transfer-datachannel-service-worker.https.html [ Pass Failure ]
 
-webkit.org/b/230421 http/wpt/webaudio/the-audio-api/the-audioworklet-interface/context-already-rendering.html [ Pass Failure Timeout ]
-
 webkit.org/b/215398 [ Release ] imported/w3c/web-platform-tests/css/css-images/idlharness.html [ Pass Timeout ]
 
 webkit.org/b/215403 imported/w3c/web-platform-tests/css/css-grid/layout-algorithm/flex-and-intrinsic-sizes-001.html [ Pass Timeout ]
