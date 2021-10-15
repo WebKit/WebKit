@@ -1556,6 +1556,15 @@ Color RenderThemeIOS::systemColor(CSSValueID cssValueID, OptionSet<StyleColorOpt
     }).iterator->value;
 }
 
+Color RenderThemeIOS::controlTintColor(const RenderStyle& style, OptionSet<StyleColorOptions> options) const
+{
+    Color tintColor = style.effectiveAccentColor();
+    if (tintColor.isValid())
+        return tintColor;
+
+    return systemColor(CSSValueAppleSystemBlue, options);
+}
+
 #if ENABLE(ATTACHMENT_ELEMENT)
 
 const CGSize attachmentSize = { 160, 119 };
@@ -2161,7 +2170,7 @@ Color RenderThemeIOS::checkboxRadioBorderColor(OptionSet<ControlStates::States> 
     return defaultBorderColor;
 }
 
-Color RenderThemeIOS::checkboxRadioBackgroundColor(bool useAlternateDesign, OptionSet<ControlStates::States> states, OptionSet<StyleColorOptions> styleColorOptions)
+Color RenderThemeIOS::checkboxRadioBackgroundColor(bool useAlternateDesign, const RenderStyle& style, OptionSet<ControlStates::States> states, OptionSet<StyleColorOptions> styleColorOptions)
 {
     bool isEmpty = !states.containsAny({ ControlStates::States::Checked, ControlStates::States::Indeterminate });
     bool isEnabled = states.contains(ControlStates::States::Enabled);
@@ -2181,7 +2190,7 @@ Color RenderThemeIOS::checkboxRadioBackgroundColor(bool useAlternateDesign, Opti
     if (!isEnabled)
         return systemColor(isEmpty ? CSSValueWebkitControlBackground : CSSValueAppleSystemOpaqueTertiaryFill, styleColorOptions);
 
-    auto enabledBackgroundColor = systemColor(isEmpty ? CSSValueWebkitControlBackground : CSSValueAppleSystemBlue, styleColorOptions);
+    auto enabledBackgroundColor = isEmpty ? systemColor(CSSValueWebkitControlBackground, styleColorOptions) : controlTintColor(style, styleColorOptions);
     if (isPressed)
         return enabledBackgroundColor.colorWithAlphaMultipliedBy(pressedStateOpacity);
 
@@ -2271,7 +2280,7 @@ bool RenderThemeIOS::paintCheckbox(const RenderObject& box, const PaintInfo& pai
     auto controlStates = extractControlStatesForRenderer(box);
     auto styleColorOptions = box.styleColorOptions();
 
-    auto backgroundColor = checkboxRadioBackgroundColor(useAlternateDesign, controlStates, styleColorOptions);
+    auto backgroundColor = checkboxRadioBackgroundColor(useAlternateDesign, box.style(), controlStates, styleColorOptions);
 
     bool checked = controlStates.contains(ControlStates::States::Checked);
     bool indeterminate = controlStates.contains(ControlStates::States::Indeterminate);
@@ -2354,7 +2363,7 @@ bool RenderThemeIOS::paintRadio(const RenderObject& box, const PaintInfo& paintI
     auto controlStates = extractControlStatesForRenderer(box);
     auto styleColorOptions = box.styleColorOptions();
 
-    auto backgroundColor = checkboxRadioBackgroundColor(useAlternateDesign, controlStates, styleColorOptions);
+    auto backgroundColor = checkboxRadioBackgroundColor(useAlternateDesign, box.style(), controlStates, styleColorOptions);
 
     FloatRoundedRect radioRect { rect, FloatRoundedRect::Radii(rect.width() / 2, rect.height() / 2) };
 
@@ -2476,7 +2485,7 @@ bool RenderThemeIOS::paintProgressBarWithFormControlRefresh(const RenderObject& 
     }
 
     FloatRect barRect(barLeft, barTop, barWidth, barHeight);
-    context.fillRoundedRect(FloatRoundedRect(barRect, barCornerRadii), systemColor(CSSValueAppleSystemBlue, styleColorOptions).colorWithAlphaMultipliedBy(alpha));
+    context.fillRoundedRect(FloatRoundedRect(barRect, barCornerRadii), controlTintColor(renderer.style(), styleColorOptions).colorWithAlphaMultipliedBy(alpha));
 
     return false;
 }
@@ -2574,7 +2583,7 @@ bool RenderThemeIOS::paintListButton(const RenderObject& box, const PaintInfo& p
     transform.scale(scale);
     path.transform(transform);
 
-    context.setFillColor(systemColor(CSSValueAppleSystemBlue, box.styleColorOptions()));
+    context.setFillColor(controlTintColor(style, box.styleColorOptions()));
     context.fillPath(path);
 
     return false;
@@ -2638,7 +2647,7 @@ void RenderThemeIOS::paintSliderTicks(const RenderObject& box, const PaintInfo& 
                 tickRect.setY(rect.y() + tickRatio * (rect.height() - tickRect.height()));
 
             FloatRoundedRect roundedTickRect(snapRectToDevicePixels(LayoutRect(tickRect), deviceScaleFactor), tickCornerRadii);
-            context.fillRoundedRect(roundedTickRect, systemColor((value >= *optionValue) ? CSSValueAppleSystemBlue : CSSValueAppleSystemOpaqueSeparator, styleColorOptions));
+            context.fillRoundedRect(roundedTickRect, (value >= *optionValue) ? controlTintColor(box.style(), styleColorOptions) : systemColor(CSSValueAppleSystemOpaqueSeparator, styleColorOptions));
         }
     }
 }
@@ -2714,7 +2723,7 @@ bool RenderThemeIOS::paintSliderTrackWithFormControlRefresh(const RenderObject& 
     }
 
     FloatRoundedRect fillRect(trackClip, cornerRadii);
-    context.fillRoundedRect(fillRect, systemColor(CSSValueAppleSystemBlue, styleColorOptions));
+    context.fillRoundedRect(fillRect, controlTintColor(box.style(), styleColorOptions));
 
     return false;
 }

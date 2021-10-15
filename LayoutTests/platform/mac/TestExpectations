@@ -2339,7 +2339,7 @@ webkit.org/b/229517 imported/w3c/web-platform-tests/webrtc-extensions/RTCRtpSync
 
 webkit.org/b/230116 imported/w3c/web-platform-tests/webrtc-extensions/transfer-datachannel.html [ Pass Failure ]
 
-# accent-color is currently only supported on macOS
+# accent-color is currently only supported on Cocoa platforms
 fast/css/accent-color/checkbox.html [ Pass ]
 fast/css/accent-color/progress.html [ Pass ]
 fast/css/accent-color/radio.html [ Pass ]

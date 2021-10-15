@@ -1,3 +1,17 @@
+2021-10-14  Aditya Keerthi  <akeerthi@apple.com>
+
+        [iOS] Support accent-color for controls without text
+        https://bugs.webkit.org/show_bug.cgi?id=231762
+        rdar://84261702
+
+        Reviewed by Tim Horton.
+
+        Add new "Pass" results.
+
+        * TestExpectations:
+        * platform/ios/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2021-10-14  Alan Bujtas  <zalan@apple.com>
 
         WPT progression after turning on the IFC codepath for inline boxes with background decoration (r284194).

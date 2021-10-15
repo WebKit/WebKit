@@ -119,7 +119,7 @@ private:
 
 #if ENABLE(IOS_FORM_CONTROL_REFRESH)
     Color checkboxRadioBorderColor(OptionSet<ControlStates::States>, OptionSet<StyleColorOptions>);
-    Color checkboxRadioBackgroundColor(bool useAlternateDesign, OptionSet<ControlStates::States>, OptionSet<StyleColorOptions>);
+    Color checkboxRadioBackgroundColor(bool useAlternateDesign, const RenderStyle&, OptionSet<ControlStates::States>, OptionSet<StyleColorOptions>);
     RefPtr<Gradient> checkboxRadioBackgroundGradient(const FloatRect&, OptionSet<ControlStates::States>);
     Color checkboxRadioIndicatorColor(OptionSet<ControlStates::States>, OptionSet<StyleColorOptions>);
 
@@ -204,6 +204,8 @@ private:
     FloatRect addRoundedBorderClip(const RenderObject& box, GraphicsContext&, const IntRect&);
 
     Color systemColor(CSSValueID, OptionSet<StyleColorOptions>) const override;
+
+    Color controlTintColor(const RenderStyle&, OptionSet<StyleColorOptions>) const;
 
     void adjustStyleForAlternateFormControlDesignTransition(RenderStyle&, const Element*) const;
 
