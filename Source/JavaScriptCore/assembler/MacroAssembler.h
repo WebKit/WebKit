@@ -140,6 +140,9 @@ public:
 #if CPU(ARM64) || CPU(ARM_THUMB2) || CPU(X86_64) || CPU(MIPS) || CPU(RISCV64)
     using MacroAssemblerBase::branchPtr;
 #endif
+#if CPU(X86_64)
+    using MacroAssemblerBase::branch64;
+#endif
     using MacroAssemblerBase::branchSub32;
     using MacroAssemblerBase::lshift32;
     using MacroAssemblerBase::or32;
@@ -1460,6 +1463,7 @@ public:
         } else
             and64(imm.asTrustedImm32(), dest);
     }
+
 #endif // USE(JSVALUE64)
 
 #if !CPU(X86) && !CPU(X86_64) && !CPU(ARM64)
@@ -1727,7 +1731,7 @@ public:
             store64(imm.asTrustedImm64(), dest);
     }
 
-#endif // CPU(X86_64) || CPU(ARM64)
+#endif // CPU(X86_64) || CPU(ARM64) || CPU(RISCV64)
     
     void store32(Imm32 imm, Address dest)
     {
@@ -1820,6 +1824,28 @@ public:
         
         return branch32(cond, left, right.asTrustedImm32());
     }
+
+#if CPU(X86_64)
+    // Other 64-bit platforms don't need blinding, and have branch64(RelationalCondition, RegisterID, Imm64) directly defined in the right file.
+    // We cannot put this in MacroAssemblerX86_64.h, because it uses shouldBlind(), loadRoationBlindedConstant, etc.. which are only defined here and not there.
+    Jump branch64(RelationalCondition cond, RegisterID left, Imm64 right)
+    {
+        if (shouldBlind(right)) {
+            if (haveScratchRegisterForBlinding()) {
+                loadRotationBlindedConstant(rotationBlindConstant(right), scratchRegisterForBlinding());
+                return branch64(cond, left, scratchRegisterForBlinding());
+            }
+
+            // If we don't have a scratch register available for use, we'll just
+            // place a random number of nops.
+            uint32_t nopCount = random() & 3;
+            while (nopCount--)
+                nop();
+            return branch64(cond, left, right.asTrustedImm64());
+        }
+        return branch64(cond, left, right.asTrustedImm64());
+    }
+#endif // CPU(X86_64)
 
     void compare32(RelationalCondition cond, RegisterID left, Imm32 right, RegisterID dest)
     {

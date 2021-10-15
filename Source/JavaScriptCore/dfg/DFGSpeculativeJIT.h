@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -1300,9 +1300,13 @@ public:
     void compileNumberToStringWithValidRadixConstant(Node*, int32_t radix);
     void compileNewStringObject(Node*);
     void compileNewSymbol(Node*);
-    
+
+    void emitNewTypedArrayWithSizeInRegister(Node*, TypedArrayType, RegisteredStructure, GPRReg sizeGPR);
     void compileNewTypedArrayWithSize(Node*);
-    
+#if USE(LARGE_TYPED_ARRAYS)
+    void compileNewTypedArrayWithInt52Size(Node*);
+#endif
+
     void compileInt32Compare(Node*, MacroAssembler::RelationalCondition);
     void compileInt52Compare(Node*, MacroAssembler::RelationalCondition);
 #if USE(BIGINT32)
@@ -1373,6 +1377,9 @@ public:
     void compileGetGlobalThis(Node*);
 
     void compileGetArrayLength(Node*);
+#if USE(LARGE_TYPED_ARRAYS)
+    void compileGetTypedArrayLengthAsInt52(Node*);
+#endif
 
     void compileCheckTypeInfoFlags(Node*);
     void compileCheckIdent(Node*);
@@ -1431,10 +1438,13 @@ public:
     void compileArithMinMax(Node*);
     void compileConstantStoragePointer(Node*);
     void compileGetIndexedPropertyStorage(Node*);
-    JITCompiler::Jump jumpForTypedArrayOutOfBounds(Node*, GPRReg baseGPR, GPRReg indexGPR);
+    JITCompiler::Jump jumpForTypedArrayOutOfBounds(Node*, GPRReg baseGPR, GPRReg indexGPR, GPRReg scratchGPR);
     JITCompiler::Jump jumpForTypedArrayIsDetachedIfOutOfBounds(Node*, GPRReg baseGPR, JITCompiler::Jump outOfBounds);
-    void emitTypedArrayBoundsCheck(Node*, GPRReg baseGPR, GPRReg indexGPR);
+    void emitTypedArrayBoundsCheck(Node*, GPRReg baseGPR, GPRReg indexGPR, GPRReg scratchGPR);
     void compileGetTypedArrayByteOffset(Node*);
+#if USE(LARGE_TYPED_ARRAYS)
+    void compileGetTypedArrayByteOffsetAsInt52(Node*);
+#endif
     void compileGetByValOnIntTypedArray(Node*, TypedArrayType, const ScopedLambda<std::tuple<JSValueRegs, DataFormat>(DataFormat preferredFormat)>& prefix);
     void compilePutByValForIntTypedArray(GPRReg base, GPRReg property, Node*, TypedArrayType);
     void compileGetByValOnFloatTypedArray(Node*, TypedArrayType, const ScopedLambda<std::tuple<JSValueRegs, DataFormat>(DataFormat preferredFormat)>& prefix);
@@ -2427,7 +2437,7 @@ private:
     GPRReg m_gprOrInvalid;
 };
 
-// Gives you a canonical Int52 (i.e. it's left-shifted by 16, low bits zero).
+// Gives you a canonical Int52 (i.e. it's left-shifted by 12, low bits zero).
 class SpeculateInt52Operand {
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -2475,7 +2485,7 @@ private:
     GPRReg m_gprOrInvalid;
 };
 
-// Gives you a strict Int52 (i.e. the payload is in the low 48 bits, high 16 bits are sign-extended).
+// Gives you a strict Int52 (i.e. the payload is in the low 52 bits, high 12 bits are sign-extended).
 class SpeculateStrictInt52Operand {
     WTF_MAKE_FAST_ALLOCATED;
 public:

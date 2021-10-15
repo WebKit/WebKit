@@ -108,7 +108,7 @@ public:
         RELEASE_ASSERT_NOT_REACHED();
     }
 
-    static constexpr unsigned fastSizeLimit = 1000;
+    static constexpr size_t fastSizeLimit = 1000;
     using VectorPtr = CagedBarrierPtr<Gigacage::Primitive, void, tagCagedPtr>;
 
     static void* nullVectorPtr()
@@ -117,10 +117,12 @@ public:
         return null.rawBits();
     }
     
-    static size_t sizeOf(uint32_t length, uint32_t elementSize)
+    static size_t sizeOf(size_t length, unsigned elementSize)
     {
-        return (static_cast<size_t>(length) * elementSize + sizeof(EncodedJSValue) - 1)
-            & ~(sizeof(EncodedJSValue) - 1);
+        Checked<size_t> result = length;
+        result *= elementSize;
+        result += sizeof(EncodedJSValue) - 1;
+        return result.value() & ~(sizeof(EncodedJSValue) - 1);
     }
 
     static size_t allocationSize(Checked<size_t> inlineCapacity)
@@ -136,25 +138,25 @@ protected:
     public:
         enum InitializationMode { ZeroFill, DontInitialize };
         
-        JS_EXPORT_PRIVATE ConstructionContext(VM&, Structure*, uint32_t length, uint32_t elementSize, InitializationMode = ZeroFill);
+        JS_EXPORT_PRIVATE ConstructionContext(VM&, Structure*, size_t length, unsigned elementSize, InitializationMode = ZeroFill);
         
         // This is only for constructing fast typed arrays. It's used by the JIT's slow path.
-        ConstructionContext(Structure*, uint32_t length, void* vector);
+        ConstructionContext(Structure*, size_t length, void* vector);
         
         JS_EXPORT_PRIVATE ConstructionContext(
             VM&, Structure*, RefPtr<ArrayBuffer>&&,
-            unsigned byteOffset, unsigned length);
+            size_t byteOffset, size_t length);
         
         enum DataViewTag { DataView };
         ConstructionContext(
             Structure*, RefPtr<ArrayBuffer>&&,
-            unsigned byteOffset, unsigned length, DataViewTag);
+            size_t byteOffset, size_t length, DataViewTag);
         
         bool operator!() const { return !m_structure; }
         
         Structure* structure() const { return m_structure; }
         void* vector() const { return m_vector.getMayBeNull(m_length); }
-        uint32_t length() const { return m_length; }
+        size_t length() const { return m_length; }
         TypedArrayMode mode() const { return m_mode; }
         Butterfly* butterfly() const { return m_butterfly; }
         
@@ -162,7 +164,7 @@ protected:
         Structure* m_structure;
         using VectorType = CagedPtr<Gigacage::Primitive, void, tagCagedPtr>;
         VectorType m_vector;
-        uint32_t m_length;
+        size_t m_length;
         TypedArrayMode m_mode;
         Butterfly* m_butterfly;
     };
@@ -190,11 +192,11 @@ public:
     void* vector() const { return m_vector.getMayBeNull(length()); }
     void* vectorWithoutPACValidation() const { return m_vector.getUnsafe(); }
     
-    inline unsigned byteOffset();
-    inline std::optional<unsigned> byteOffsetConcurrently();
+    inline size_t byteOffset();
+    inline std::optional<size_t> byteOffsetConcurrently();
 
-    unsigned length() const { return m_length; }
-    unsigned byteLength() const;
+    size_t length() const { return m_length; }
+    size_t byteLength() const;
 
     DECLARE_EXPORT_INFO;
     
@@ -219,7 +221,7 @@ protected:
     ArrayBuffer* existingBufferInButterfly();
 
     VectorPtr m_vector;
-    uint32_t m_length;
+    size_t m_length;
     TypedArrayMode m_mode;
 };
 

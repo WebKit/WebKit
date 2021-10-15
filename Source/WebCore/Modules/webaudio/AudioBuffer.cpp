@@ -198,7 +198,7 @@ ExceptionOr<void> AudioBuffer::copyFromChannel(Ref<Float32Array>&& destination, 
     if (bufferOffset >= dataLength)
         return { };
     
-    unsigned count = dataLength - bufferOffset;
+    size_t count = dataLength - bufferOffset;
     count = std::min(destination.get().length(), count);
     
     const float* src = channelData->data();
@@ -226,7 +226,7 @@ ExceptionOr<void> AudioBuffer::copyToChannel(Ref<Float32Array>&& source, unsigne
     if (bufferOffset >= dataLength)
         return { };
     
-    unsigned count = dataLength - bufferOffset;
+    size_t count = dataLength - bufferOffset;
     count = std::min(source.get().length(), count);
     
     const float* src = source->data();

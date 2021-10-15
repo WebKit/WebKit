@@ -329,6 +329,7 @@ public:
     LValue nonNegative32(LValue loadInstruction) { return loadInstruction; }
     LValue load32NonNegative(TypedPointer pointer) { return load32(pointer); }
     LValue load32NonNegative(LValue base, const AbstractHeap& field) { return load32(base, field); }
+    LValue load64NonNegative(LValue base, const AbstractHeap& field) { return load64(base, field); }
 
     LValue equal(LValue, LValue);
     LValue notEqual(LValue, LValue);

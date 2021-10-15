@@ -3463,11 +3463,22 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case GetArrayLength: {
         JSArrayBufferView* view = m_graph.tryGetFoldableView(
             forNode(node->child1()).m_value, node->arrayMode());
-        if (view) {
+        if (view && isInBounds<int32_t>(view->length())) {
             setConstant(node, jsNumber(view->length()));
             break;
         }
         setNonCellTypeForNode(node, SpecInt32Only);
+        break;
+    }
+
+    case GetTypedArrayLengthAsInt52: {
+        JSArrayBufferView* view = m_graph.tryGetFoldableView(
+            forNode(node->child1()).m_value, node->arrayMode());
+        if (view) {
+            setConstant(node, jsNumber(view->length()));
+            break;
+        }
+        setNonCellTypeForNode(node, SpecInt52Any);
         break;
     }
 
@@ -3796,13 +3807,26 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case GetTypedArrayByteOffset: {
         JSArrayBufferView* view = m_graph.tryGetFoldableView(forNode(node->child1()).m_value);
         if (view) {
-            std::optional<unsigned> byteOffset = view->byteOffsetConcurrently();
-            if (byteOffset) {
+            std::optional<size_t> byteOffset = view->byteOffsetConcurrently();
+            if (byteOffset && isInBounds<int32_t>(byteOffset)) {
                 setConstant(node, jsNumber(*byteOffset));
                 break;
             }
         }
         setNonCellTypeForNode(node, SpecInt32Only);
+        break;
+    }
+
+    case GetTypedArrayByteOffsetAsInt52: {
+        JSArrayBufferView* view = m_graph.tryGetFoldableView(forNode(node->child1()).m_value);
+        if (view) {
+            std::optional<size_t> byteOffset = view->byteOffsetConcurrently();
+            if (byteOffset) {
+                setConstant(node, jsNumber(*byteOffset));
+                break;
+            }
+        }
+        setNonCellTypeForNode(node, SpecInt52Any);
         break;
     }
 
@@ -4106,6 +4130,11 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         // So we just arbitrarily pick Int32. In some ways, StorageResult may be the more correct
         // thing to do here. We pick NodeResultJS because it makes converting this to an identity
         // easier.
+        setNonCellTypeForNode(node, SpecInt32Only);
+        break;
+    }
+    case CheckInBoundsInt52: {
+        // See the CheckInBounds case, it does not really matter what we put here.
         setNonCellTypeForNode(node, SpecInt32Only);
         break;
     }

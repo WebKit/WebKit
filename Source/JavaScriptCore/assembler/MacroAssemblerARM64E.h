@@ -132,10 +132,10 @@ public:
         }
     }
 
-    ALWAYS_INLINE void untagArrayPtrLength32(Address length, RegisterID target, bool validateAuth)
+    ALWAYS_INLINE void untagArrayPtrLength64(Address length, RegisterID target, bool validateAuth)
     {
         auto lengthGPR = getCachedDataTempRegisterIDAndInvalidate();
-        load32(length, lengthGPR);
+        load64(length, lengthGPR);
         auto scratch = validateAuth ? getCachedMemoryTempRegisterIDAndInvalidate() : InvalidGPRReg; 
         untagArrayPtr(lengthGPR, target, validateAuth, scratch);
     }

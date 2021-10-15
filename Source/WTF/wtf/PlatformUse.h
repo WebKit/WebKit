@@ -27,6 +27,13 @@
 
 #pragma once
 
+// This is to get SIZE_MAX, which in turn is used for USE_LARGE_TYPED_ARRAYS
+#ifdef __cplusplus
+#include <cstdint>
+#else
+#include <stdint.h>
+#endif
+
 #ifndef WTF_PLATFORM_GUARD_AGAINST_INDIRECT_INCLUSION
 #error "Please #include <wtf/Platform.h> instead of this file directly."
 #endif
@@ -139,6 +146,12 @@
 #define USE_JSVALUE64 1
 #else
 #define USE_JSVALUE32_64 1
+#endif
+
+#if SIZE_MAX == UINT64_MAX
+#define USE_LARGE_TYPED_ARRAYS 1
+#else
+#define USE_LARGE_TYPED_ARRAYS 0
 #endif
 
 #if USE(JSVALUE64)

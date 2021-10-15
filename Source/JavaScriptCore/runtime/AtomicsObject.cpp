@@ -120,8 +120,7 @@ static unsigned validateAtomicAccess(JSGlobalObject* globalObject, VM& vm, JSArr
         accessIndex = accessIndexValue.toIndex(globalObject, "accessIndex");
         RETURN_IF_EXCEPTION(scope, 0);
     }
-    
-    ASSERT(typedArrayView->length() <= static_cast<unsigned>(INT_MAX));
+
     if (accessIndex >= typedArrayView->length()) {
         throwRangeError(globalObject, scope, "Access index out of bounds for atomic access."_s);
         return 0;

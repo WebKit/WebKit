@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -86,23 +86,32 @@ void IntrinsicGetterAccessCase::emitIntrinsicGetter(AccessGenerationState& state
 
     switch (intrinsic()) {
     case TypedArrayLengthIntrinsic: {
+#if USE(LARGE_TYPED_ARRAYS)
+        jit.load64(MacroAssembler::Address(state.baseGPR, JSArrayBufferView::offsetOfLength()), valueGPR);
+        jit.boxInt52(valueGPR, valueGPR, state.scratchGPR, state.scratchFPR);
+#else
         jit.load32(MacroAssembler::Address(state.baseGPR, JSArrayBufferView::offsetOfLength()), valueGPR);
         jit.boxInt32(valueGPR, valueRegs);
+#endif
         state.succeed();
         return;
     }
 
     case TypedArrayByteLengthIntrinsic: {
         TypedArrayType type = structure()->classInfo()->typedArrayStorageType;
-
+#if USE(LARGE_TYPED_ARRAYS)
+        jit.load64(MacroAssembler::Address(state.baseGPR, JSArrayBufferView::offsetOfLength()), valueGPR);
+        if (elementSize(type) > 1)
+            jit.lshift64(TrustedImm32(logElementSize(type)), valueGPR);
+        jit.boxInt52(valueGPR, valueGPR, state.scratchGPR, state.scratchFPR);
+#else
         jit.load32(MacroAssembler::Address(state.baseGPR, JSArrayBufferView::offsetOfLength()), valueGPR);
-
         if (elementSize(type) > 1) {
-            // We can use a bitshift here since we TypedArrays cannot have byteLength that overflows an int32.
-            jit.lshift32(valueGPR, Imm32(logElementSize(type)), valueGPR);
+            // We can use a bitshift here since on ADDRESS32 platforms TypedArrays cannot have byteLength that overflows an int32.
+            jit.lshift32(TrustedImm32(logElementSize(type)), valueGPR);
         }
-
         jit.boxInt32(valueGPR, valueRegs);
+#endif
         state.succeed();
         return;
     }
@@ -133,8 +142,12 @@ void IntrinsicGetterAccessCase::emitIntrinsicGetter(AccessGenerationState& state
         jit.move(TrustedImmPtr(nullptr), valueGPR);
         
         done.link(&jit);
-        
+
+#if USE(LARGE_TYPED_ARRAYS)
+        jit.boxInt52(valueGPR, valueGPR, state.scratchGPR, state.scratchFPR);
+#else
         jit.boxInt32(valueGPR, valueRegs);
+#endif
         state.succeed();
         return;
     }

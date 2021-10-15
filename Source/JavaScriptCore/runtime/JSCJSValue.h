@@ -37,6 +37,7 @@
 #include <wtf/MathExtras.h>
 #include <wtf/MediaTime.h>
 #include <wtf/Nonmovable.h>
+#include <wtf/StdIntExtras.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/TriState.h>
 
@@ -298,6 +299,7 @@ public:
     int32_t toInt32(JSGlobalObject*) const;
     uint32_t toUInt32(JSGlobalObject*) const;
     uint32_t toIndex(JSGlobalObject*, const char* errorName) const;
+    size_t toTypedArrayIndex(JSGlobalObject*, const char* errorName) const;
     double toLength(JSGlobalObject*) const;
 
     JS_EXPORT_PRIVATE JSValue toBigInt(JSGlobalObject*) const;
