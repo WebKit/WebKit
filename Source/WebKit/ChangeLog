@@ -1,3 +1,17 @@
+2021-10-15  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r283925.
+        https://bugs.webkit.org/show_bug.cgi?id=231839
+
+        Incorrect
+
+        Reverted changeset:
+
+        "[macOS] Grant access in sandbox to 'system-privilege' for
+        root"
+        https://bugs.webkit.org/show_bug.cgi?id=231501
+        https://commits.webkit.org/r283925
+
 2021-10-15  Ryan Haddad  <ryanhaddad@apple.com>
 
         Explicitly link adattributiond with Foundation and CoreFoundation
