@@ -1,3 +1,108 @@
+2021-10-15  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r283033. rdar://problem/83953190
+
+    [IOS 15] Video track does not get unmuted in case of tab was inactive less than ~500 ms
+    https://bugs.webkit.org/show_bug.cgi?id=230538
+    <rdar://problem/83355705>
+    
+    Reviewed by Eric Carlson.
+    
+    Source/WebCore:
+    
+    Add support for interrupting mock cameras.
+    Update internals to handle the case of out of main thread videoSampleAvailable calls.
+    
+    Update Page::setMuted to trigger setMuted logic even if Page muted state did not change.
+    This ensures we can restart capture in case a track is muted without the page being muted itself.
+    
+    When a source is muted and is in producing data state, it is interrupted.
+    When setMuted(false) is called, we need to uninterrupt.
+    To do so, we do a stop/start cycle
+    
+    Test: fast/mediastream/media-stream-video-track-interrupted.html
+    
+    * page/Page.cpp:
+    (WebCore::Page::setMuted):
+    * platform/mediastream/RealtimeMediaSource.cpp:
+    (WebCore::RealtimeMediaSource::setMuted):
+    * platform/mock/MockRealtimeMediaSourceCenter.cpp:
+    (WebCore::MockRealtimeMediaSourceCenter::setMockCameraIsInterrupted):
+    * platform/mock/MockRealtimeMediaSourceCenter.h:
+    * platform/mock/MockRealtimeVideoSource.cpp:
+    (WebCore::MockRealtimeVideoSource::MockRealtimeVideoSource):
+    (WebCore::MockRealtimeVideoSource::~MockRealtimeVideoSource):
+    (WebCore::MockRealtimeVideoSource::setIsInterrupted):
+    * platform/mock/MockRealtimeVideoSource.h:
+    * testing/Internals.cpp:
+    (WebCore::Internals::videoSampleAvailable):
+    * testing/Internals.h:
+    
+    Source/WebKit:
+    
+    Add support for mock capture interruption.
+    When receiving a notification that GPUProcess source is muted, we consider it is interrupted.
+    In that case, we notify the source is muted instead of calling setMuted (which would set the source as muted AND stop producing data).
+    It is important to not stop the source so that it can continue receiving interruption notifications.
+    
+    * GPUProcess/GPUProcess.cpp:
+    (WebKit::GPUProcess::setMockCameraIsInterrupted):
+    * GPUProcess/GPUProcess.h:
+    * GPUProcess/GPUProcess.messages.in:
+    * UIProcess/API/C/WKPage.cpp:
+    (WKPageIsMockRealtimeMediaSourceCenterEnabled):
+    (WKPageSetMockCameraIsInterrupted):
+    * UIProcess/API/C/WKPagePrivate.h:
+    * UIProcess/GPU/GPUProcessProxy.cpp:
+    (WebKit::GPUProcessProxy::setMockCameraIsInterrupted):
+    * UIProcess/GPU/GPUProcessProxy.h:
+    * WebProcess/cocoa/RemoteRealtimeAudioSource.h:
+    * WebProcess/cocoa/RemoteRealtimeVideoSource.h:
+    * WebProcess/cocoa/UserMediaCaptureManager.cpp:
+    (WebKit::UserMediaCaptureManager::sourceMutedChanged):
+    
+    Tools:
+    
+    Add mock API to mock camera interruption.
+    
+    * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+    * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+    (WTR::TestRunner::setMockCameraIsInterrupted):
+    * WebKitTestRunner/InjectedBundle/TestRunner.h:
+    * WebKitTestRunner/TestController.cpp:
+    (WTR::TestController::setMockCameraIsInterrupted):
+    * WebKitTestRunner/TestController.h:
+    * WebKitTestRunner/TestInvocation.cpp:
+    (WTR::TestInvocation::didReceiveSynchronousMessageFromInjectedBundle):
+    
+    LayoutTests:
+    
+    * fast/mediastream/media-stream-video-track-interrupted-expected.txt: Added.
+    * fast/mediastream/media-stream-video-track-interrupted.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@283033 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-09-24  Youenn Fablet  <youenn@apple.com>
+
+            [IOS 15] Video track does not get unmuted in case of tab was inactive less than ~500 ms
+            https://bugs.webkit.org/show_bug.cgi?id=230538
+            <rdar://problem/83355705>
+
+            Reviewed by Eric Carlson.
+
+            Add mock API to mock camera interruption.
+
+            * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+            * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+            (WTR::TestRunner::setMockCameraIsInterrupted):
+            * WebKitTestRunner/InjectedBundle/TestRunner.h:
+            * WebKitTestRunner/TestController.cpp:
+            (WTR::TestController::setMockCameraIsInterrupted):
+            * WebKitTestRunner/TestController.h:
+            * WebKitTestRunner/TestInvocation.cpp:
+            (WTR::TestInvocation::didReceiveSynchronousMessageFromInjectedBundle):
+
 2021-10-12  Alan Coon  <alancoon@apple.com>
 
         Apply patch. rdar://problem/84130892

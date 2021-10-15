@@ -3493,6 +3493,11 @@ bool TestController::isMockRealtimeMediaSourceCenterEnabled() const
     return WKPageIsMockRealtimeMediaSourceCenterEnabled(m_mainWebView->page());
 }
 
+void TestController::setMockCameraIsInterrupted(bool isInterrupted)
+{
+    WKPageSetMockCameraIsInterrupted(m_mainWebView->page(), isInterrupted);
+}
+
 struct InAppBrowserPrivacyCallbackContext {
     explicit InAppBrowserPrivacyCallbackContext(TestController& controller)
         : testController(controller)

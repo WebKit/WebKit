@@ -2203,9 +2203,6 @@ void Page::playbackControlsMediaEngineChanged()
 
 void Page::setMuted(MediaProducer::MutedStateFlags muted)
 {
-    if (m_mutedState == muted)
-        return;
-
     m_mutedState = muted;
 
     forEachDocument([] (Document& document) {

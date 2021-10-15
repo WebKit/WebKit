@@ -47,6 +47,7 @@ public:
     WEBCORE_EXPORT static void addDevice(const MockMediaDevice&);
     WEBCORE_EXPORT static void removeDevice(const String& persistentId);
     WEBCORE_EXPORT static void resetDevices();
+    WEBCORE_EXPORT static void setMockCameraIsInterrupted(bool);
 
     void setMockAudioCaptureEnabled(bool isEnabled) { m_isMockAudioCaptureEnabled = isEnabled; }
     void setMockVideoCaptureEnabled(bool isEnabled) { m_isMockVideoCaptureEnabled = isEnabled; }

@@ -67,6 +67,7 @@ public:
     void captureFailed() final;
 
     void videoSampleAvailable(WebCore::MediaSample&, WebCore::IntSize);
+    void sourceMutedChanged(bool value) { notifyMutedChange(value); }
 
 private:
     RemoteRealtimeVideoSource(WebCore::RealtimeMediaSourceIdentifier, const WebCore::CaptureDevice&, const WebCore::MediaConstraints*, String&& name, String&& hashSalt, UserMediaCaptureManager&, bool shouldCaptureInGPUProcess);

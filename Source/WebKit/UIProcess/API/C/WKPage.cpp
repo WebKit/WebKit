@@ -3154,12 +3154,21 @@ void WKPageSetMockCameraOrientation(WKPageRef pageRef, uint64_t orientation)
 #endif
 }
 
-WK_EXPORT bool WKPageIsMockRealtimeMediaSourceCenterEnabled(WKPageRef)
+bool WKPageIsMockRealtimeMediaSourceCenterEnabled(WKPageRef)
 {
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
     return MockRealtimeMediaSourceCenter::mockRealtimeMediaSourceCenterEnabled();
 #else
     return false;
+#endif
+}
+
+void WKPageSetMockCameraIsInterrupted(WKPageRef pageRef, bool isInterrupted)
+{
+    CRASH_IF_SUSPENDED;
+#if ENABLE(MEDIA_STREAM) && ENABLE(GPU_PROCESS)
+    auto& gpuProcess = toImpl(pageRef)->process().processPool().ensureGPUProcess();
+    gpuProcess.setMockCameraIsInterrupted(isInterrupted);
 #endif
 }
 

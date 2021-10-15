@@ -132,6 +132,7 @@ private:
     void clearMockMediaDevices();
     void removeMockMediaDevice(const String& persistentId);
     void resetMockMediaDevices();
+    void setMockCameraIsInterrupted(bool);
     bool setCaptureAttributionString(const String&);
 #endif
 #if PLATFORM(MAC)

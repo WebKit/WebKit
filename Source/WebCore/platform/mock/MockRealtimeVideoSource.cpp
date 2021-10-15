@@ -67,10 +67,19 @@ CaptureSourceOrError MockRealtimeVideoSource::create(String&& deviceID, String&&
 }
 #endif
 
+static HashSet<MockRealtimeVideoSource*>& allMockRealtimeVideoSource()
+{
+    static NeverDestroyed<HashSet<MockRealtimeVideoSource*>> videoSources;
+    return videoSources;
+}
+
 MockRealtimeVideoSource::MockRealtimeVideoSource(String&& deviceID, String&& name, String&& hashSalt)
     : RealtimeVideoCaptureSource(WTFMove(name), WTFMove(deviceID), WTFMove(hashSalt))
     , m_emitFrameTimer(RunLoop::current(), this, &MockRealtimeVideoSource::generateFrame)
 {
+    ASSERT(isMainThread());
+    allMockRealtimeVideoSource().add(this);
+
     auto device = MockRealtimeMediaSourceCenter::mockDeviceWithPersistentID(persistentID());
     ASSERT(device);
     m_device = *device;
@@ -91,6 +100,12 @@ MockRealtimeVideoSource::MockRealtimeVideoSource(String&& deviceID, String&& nam
     setFrameRate(properties.defaultFrameRate);
     setFacingMode(properties.facingMode);
     m_fillColor = properties.fillColor;
+}
+
+MockRealtimeVideoSource::~MockRealtimeVideoSource()
+{
+    ASSERT(isMainThread());
+    allMockRealtimeVideoSource().remove(this);
 }
 
 bool MockRealtimeVideoSource::supportsSizeAndFrameRate(std::optional<int> width, std::optional<int> height, std::optional<double> rate)
@@ -512,6 +527,19 @@ void MockRealtimeVideoSource::monitorOrientation(OrientationNotifier& notifier)
 
     notifier.addObserver(*this);
     orientationChanged(notifier.orientation());
+}
+
+void MockRealtimeVideoSource::setIsInterrupted(bool isInterrupted)
+{
+    for (auto* source : allMockRealtimeVideoSource()) {
+        if (!source->isProducingData())
+            continue;
+        if (isInterrupted)
+            source->m_emitFrameTimer.stop();
+        else
+            source->startCaptureTimer();
+        source->notifyMutedChange(isInterrupted);
+    }
 }
 
 } // namespace WebCore
