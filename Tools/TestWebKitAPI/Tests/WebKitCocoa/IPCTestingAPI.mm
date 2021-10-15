@@ -299,9 +299,8 @@ TEST(IPCTestingAPI, CanReceiveIPCSemaphore)
         "    { type: 'RemoteRenderingBackendCreationParameters', 'identifier': 123, 'pageProxyID': IPC.webPageProxyID, 'pageID': IPC.pageID },"
         "    { type: 'StreamConnectionBuffer', value: streamConnection.streamBuffer() },"
         "]);"
-        "const result = IPC.sendSyncMessage('GPU', 123, IPC.messages.RemoteRenderingBackend_SemaphoreForGetPixelBuffer.name, 100, []);"
-        "semaphore.signal();"
-        "alert(result.arguments.length + ':' + result.arguments[0].type + ':' + result.arguments[0].value.waitFor(100));"
+        "const arguments = IPC.waitForMessage('GPU', 123, IPC.messages.RemoteRenderingBackendProxy_DidCreateWakeUpSemaphoreForDisplayListStream.name, 100);"
+        "alert(arguments.length + ':' + arguments[0].type + ':' + arguments[0].value.waitFor(100));"
         "</script>";
     [webView synchronouslyLoadHTMLString:html];
     TestWebKitAPI::Util::run(&done);
@@ -324,6 +323,8 @@ TEST(IPCTestingAPI, CanReceiveSharedMemory)
         "    { type: 'RemoteRenderingBackendCreationParameters', 'identifier': 123, 'pageProxyID': IPC.webPageProxyID, 'pageID': IPC.pageID },"
         "    { type: 'StreamConnectionBuffer', value: streamConnection.streamBuffer() },"
         "]);"
+        "const arguments = IPC.waitForMessage('GPU', 123, IPC.messages.RemoteRenderingBackendProxy_DidCreateWakeUpSemaphoreForDisplayListStream.name, 100);"
+        "streamConnection.setWakeUpSemaphore(arguments[0].value);"
         "const result = IPC.sendSyncMessage('GPU', 123, IPC.messages.RemoteRenderingBackend_UpdateSharedMemoryForGetPixelBuffer.name, 100, [{type: 'uint32_t', value: 8}]);"
         "alert(result.arguments.length);"
         "</script>";

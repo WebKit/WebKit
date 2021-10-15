@@ -56,6 +56,12 @@
 #include <wtf/glib/GSocketMonitor.h>
 #endif
 
+namespace WebKit {
+namespace IPCTestingAPI {
+class JSIPC;
+}
+}
+
 namespace IPC {
 
 enum class SendOption {
@@ -507,6 +513,7 @@ private:
     HANDLE m_connectionPipe { INVALID_HANDLE_VALUE };
 #endif
     friend class StreamClientConnection;
+    friend class WebKit::IPCTestingAPI::JSIPC;
 };
 
 template<typename T>

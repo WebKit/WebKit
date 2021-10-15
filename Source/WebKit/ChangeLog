@@ -1,3 +1,43 @@
+2021-10-14  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [JS IPC] Implement a way to synchronously wait for an incoming IPC message
+        https://bugs.webkit.org/show_bug.cgi?id=231745
+
+        Reviewed by Tim Horton.
+
+        Add support for `IPC.waitForMessage()`, which blocks until we receive an incoming IPC message that matches the
+        given message name and destination ID. We use this new method to fix the failing API test
+        IPCTestingAPI.CanReceiveIPCSemaphore, which verifies that we're able to receive, decode, and call methods on
+        an IPC semaphore sent from the GPU process to the web process. In this case, we wait for the incoming
+        "RemoteRenderingBackendProxy::DidCreateWakeUpSemaphoreForDisplayListStream" message after creating the remote
+        rendering backend in the GPU process.
+
+        * Platform/IPC/Connection.h:
+        * WebProcess/WebPage/IPCTestingAPI.cpp:
+        (WebKit::IPCTestingAPI::JSIPCStreamClientConnection::setWakeUpSemaphore):
+
+        Also add a method on JSIPCStreamClientConnection to install a given IPC semaphore as the wakeup semaphore for
+        the IPC stream. We'll use this in the next patch when implementing the ability to send messages through the IPC
+        stream.
+
+        (WebKit::IPCTestingAPI::JSIPCStreamClientConnection::staticFunctions):
+        (WebKit::IPCTestingAPI::JSIPCStreamClientConnection::streamBuffer):
+
+        Drive-by fix: make sure we grab the VM lock before trying to unwrap JS objects.
+
+        (WebKit::IPCTestingAPI::JSIPC::staticFunctions):
+        (WebKit::IPCTestingAPI::JSIPC::sendMessage):
+
+        Drive-by fix: correct a minor typo in the exception message.
+
+        (WebKit::IPCTestingAPI::extractSyncIPCMessageInfo):
+
+        Pull logic for extracting an IPC::Connection, destination ID, message name, and IPC timeout into a separate
+        helper function, and use it in `waitForMessage` as well as `sendSyncMessage`.
+
+        (WebKit::IPCTestingAPI::JSIPC::waitForMessage):
+        (WebKit::IPCTestingAPI::JSIPC::sendSyncMessage):
+
 2021-10-14  Alex Christensen  <achristensen@webkit.org>
 
         Fix build after r284216

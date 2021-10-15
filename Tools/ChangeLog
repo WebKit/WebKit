@@ -1,3 +1,23 @@
+2021-10-14  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [JS IPC] Implement a way to synchronously wait for an incoming IPC message
+        https://bugs.webkit.org/show_bug.cgi?id=231745
+
+        Reviewed by Tim Horton.
+
+        Adjust an existing JS IPC test, IPCTestingAPI.CanReceiveIPCSemaphore, so that it uses the new JSIPC method to
+        wait for RemoteRenderingBackend's IPC stream wakeup semaphore to arrive. This fixes
+        IPCTestingAPI.CanReceiveIPCSemaphore (which is one of the two IPC tests that time out after r284079).
+
+        We also adjust IPCTestingAPI.CanReceiveSharedMemory to wait for and install the wakeup semaphore into the IPC
+        stream connection; however, this alone isn't sufficient to fix the test, since the test also requires the
+        ability to send synchronous messages through the IPC stream.
+
+        See WebKit ChangeLog for more details.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/IPCTestingAPI.mm:
+        (TEST):
+
 2021-10-14  Alex Christensen  <achristensen@webkit.org>
 
         Fix some iOS builds after r284203
