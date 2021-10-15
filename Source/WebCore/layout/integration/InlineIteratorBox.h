@@ -131,7 +131,7 @@ public:
     bool atEnd() const;
 
 protected:
-    BoxIterator() : m_box(BoxLegacyPath { nullptr, { } }) { };
+    BoxIterator() : m_box(BoxLegacyPath { nullptr }) { };
     BoxIterator(Box::PathVariant&&);
     BoxIterator(const Box&);
 
@@ -148,8 +148,6 @@ public:
     LeafBoxIterator& traversePreviousOnLine();
     LeafBoxIterator& traverseNextOnLineIgnoringLineBreak();
     LeafBoxIterator& traversePreviousOnLineIgnoringLineBreak();
-    LeafBoxIterator& traverseNextOnLineInLogicalOrder();
-    LeafBoxIterator& traversePreviousOnLineInLogicalOrder();
 };
 
 LeafBoxIterator boxFor(const RenderLineBreak&);

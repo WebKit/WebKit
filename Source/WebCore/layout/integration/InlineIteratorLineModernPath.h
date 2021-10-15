@@ -116,16 +116,6 @@ public:
         return runIterator;
     }
 
-    BoxModernPath logicalStartRun() const
-    {
-        return firstRun();
-    }
-
-    BoxModernPath logicalEndRun() const
-    {
-        return lastRun();
-    }
-
 private:
     void setAtEnd() { m_lineIndex = lines().size(); }
 

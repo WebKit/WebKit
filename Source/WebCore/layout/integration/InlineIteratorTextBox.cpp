@@ -99,43 +99,6 @@ TextBoxIterator firstTextBoxFor(const RenderText& text)
     return { BoxLegacyPath { text.firstTextBox() } };
 }
 
-std::pair<TextBoxIterator, LogicalOrderCache> firstTextBoxInLogicalOrderFor(const RenderText& text)
-{
-    if (!text.containsReversedText())
-        return { firstTextBoxFor(text), nullptr };
-
-    auto cache = WTF::makeUnique<LogicalOrderCacheData>();
-    for (auto textBox : textBoxesFor(text))
-        cache->boxes.append(textBox);
-
-    if (cache->boxes.isEmpty())
-        return { TextBoxIterator { }, nullptr };
-
-    std::sort(cache->boxes.begin(), cache->boxes.end(), [&](auto& a, auto& b) {
-        return a->start() < b->start();
-    });
-
-    return { cache->boxes[0], WTFMove(cache) };
-}
-
-TextBoxIterator nextTextBoxInLogicalOrder(const TextBoxIterator& textBox, LogicalOrderCache& cache)
-{
-    if (!cache)
-        return textBox->nextTextBox();
-
-    if (cache->index == cache->boxes.size() || cache->boxes[cache->index] != textBox) {
-        cache->index = cache->boxes.find(textBox);
-        ASSERT(cache->index != notFound);
-    }
-
-    cache->index++;
-
-    if (cache->index < cache->boxes.size())
-        return cache->boxes[cache->index];
-
-    return { };
-}
-
 TextBoxIterator textBoxFor(const LegacyInlineTextBox* legacyInlineTextBox)
 {
     return { BoxLegacyPath { legacyInlineTextBox } };

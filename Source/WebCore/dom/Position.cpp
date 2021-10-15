@@ -37,6 +37,7 @@
 #include "HTMLParserIdioms.h"
 #include "HTMLTableElement.h"
 #include "InlineIteratorLine.h"
+#include "InlineIteratorLogicalOrderTraversal.h"
 #include "InlineIteratorTextBox.h"
 #include "InlineRunAndOffset.h"
 #include "LegacyInlineTextBox.h"

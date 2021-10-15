@@ -36,6 +36,7 @@
 #include "HitTestLocation.h"
 #include "InlineIteratorBox.h"
 #include "InlineIteratorLine.h"
+#include "InlineIteratorLogicalOrderTraversal.h"
 #include "InlineIteratorTextBox.h"
 #include "InlineWalker.h"
 #include "LayoutIntegrationLineLayout.h"
@@ -3619,7 +3620,8 @@ VisiblePosition RenderBlockFlow::positionForPointWithInlineChildren(const Layout
     if (lastLineWithChildren) {
         // We hit this case for Mac behavior when the Y coordinate is below the last box.
         ASSERT(moveCaretToBoundary);
-        if (auto logicallyLastRun = lastLineWithChildren->logicalEndRunWithNode())
+        InlineIterator::LineLogicalOrderCache orderCache;
+        if (auto logicallyLastRun = InlineIterator::lastLeafOnLineInLogicalOrderWithNode(lastLineWithChildren, orderCache))
             return positionForRun(*this, logicallyLastRun, false);
     }
 

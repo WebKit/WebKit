@@ -48,6 +48,7 @@
 #include "HTMLNames.h"
 #include "HTMLSpanElement.h"
 #include "InlineIteratorBox.h"
+#include "InlineIteratorLogicalOrderTraversal.h"
 #include "InsertIntoTextNodeCommand.h"
 #include "InsertLineBreakCommand.h"
 #include "InsertNodeBeforeCommand.h"

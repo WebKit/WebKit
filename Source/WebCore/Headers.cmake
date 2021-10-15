@@ -807,6 +807,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     layout/integration/InlineIteratorLine.h
     layout/integration/InlineIteratorLineLegacyPath.h
     layout/integration/InlineIteratorLineModernPath.h
+    layout/integration/InlineIteratorLogicalOrderTraversal.h
     layout/integration/InlineIteratorTextBox.h
     layout/integration/LayoutIntegrationInlineContent.h
     layout/integration/LayoutIntegrationLine.h

@@ -85,17 +85,6 @@ public:
         return { m_rootInlineBox->lastLeafDescendant() };
     }
 
-
-    BoxLegacyPath logicalStartRun() const
-    {
-        return { *m_rootInlineBox, BoxLegacyPath::LogicalOrder::Start };
-    }
-
-    BoxLegacyPath logicalEndRun() const
-    {
-        return { *m_rootInlineBox, BoxLegacyPath::LogicalOrder::End };
-    }
-
 private:
     const LegacyRootInlineBox* m_rootInlineBox;
 };

@@ -115,38 +115,6 @@ LeafBoxIterator Line::lastRun() const
     });
 }
 
-LeafBoxIterator Line::logicalStartRun() const
-{
-    return WTF::switchOn(m_pathVariant, [](auto& path) -> LeafBoxIterator {
-        return { path.logicalStartRun() };
-    });
-}
-
-LeafBoxIterator Line::logicalEndRun() const
-{
-    return WTF::switchOn(m_pathVariant, [](auto& path) -> LeafBoxIterator {
-        return { path.logicalEndRun() };
-    });
-}
-
-LeafBoxIterator Line::logicalStartRunWithNode() const
-{
-    for (auto run = logicalStartRun(); run; run.traverseNextOnLineInLogicalOrder()) {
-        if (run->renderer().node())
-            return run;
-    }
-    return { };
-}
-
-LeafBoxIterator Line::logicalEndRunWithNode() const
-{
-    for (auto run = logicalEndRun(); run; run.traversePreviousOnLineInLogicalOrder()) {
-        if (run->renderer().node())
-            return run;
-    }
-    return { };
-}
-
 LeafBoxIterator Line::closestRunForPoint(const IntPoint& pointInContents, bool editableOnly) const
 {
     return closestRunForLogicalLeftPosition(isHorizontal() ? pointInContents.x() : pointInContents.y(), editableOnly);

@@ -1522,6 +1522,7 @@ layout/formattingContexts/inline/text/TextUtil.cpp
 layout/integration/InlineIteratorBox.cpp
 layout/integration/InlineIteratorInlineBox.cpp
 layout/integration/InlineIteratorLine.cpp
+layout/integration/InlineIteratorLogicalOrderTraversal.cpp
 layout/integration/InlineIteratorTextBox.cpp
 layout/integration/LayoutIntegrationBoxTree.cpp
 layout/integration/LayoutIntegrationCoverage.cpp

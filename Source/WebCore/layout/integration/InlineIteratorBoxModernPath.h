@@ -160,16 +160,6 @@ public:
             setAtEnd();
     }
 
-    void traverseNextOnLineInLogicalOrder()
-    {
-        traverseNextOnLine();
-    }
-
-    void traversePreviousOnLineInLogicalOrder()
-    {
-        traversePreviousOnLine();
-    }
-
     void traverseNextInlineBox()
     {
         ASSERT(box().isInlineBox());

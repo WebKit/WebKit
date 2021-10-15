@@ -27,6 +27,7 @@
 
 #include "CharacterRange.h"
 #include "FindOptions.h"
+#include "InlineIteratorLogicalOrderTraversal.h"
 #include "InlineIteratorTextBox.h"
 #include "SimpleRange.h"
 #include "TextIteratorBehavior.h"
@@ -151,11 +152,11 @@ private:
     // Used when there is still some pending text from the current node; when these are false and null, we go back to normal iterating.
     Node* m_nodeForAdditionalNewline { nullptr };
     InlineIterator::TextBoxIterator m_textRun;
-    InlineIterator::LogicalOrderCache m_textRunLogicalOrderCache;
+    InlineIterator::TextLogicalOrderCache m_textRunLogicalOrderCache;
 
     // Used when iterating over :first-letter text to save pointer to remaining text box.
     InlineIterator::TextBoxIterator m_remainingTextRun;
-    InlineIterator::LogicalOrderCache m_remainingTextRunLogicalOrderCache;
+    InlineIterator::TextLogicalOrderCache m_remainingTextRunLogicalOrderCache;
 
     // Used to point to RenderText object for :first-letter.
     RenderText* m_firstLetterText { nullptr };

@@ -148,22 +148,6 @@ LeafBoxIterator& LeafBoxIterator::traversePreviousOnLineIgnoringLineBreak()
     return *this;
 }
 
-LeafBoxIterator& LeafBoxIterator::traverseNextOnLineInLogicalOrder()
-{
-    WTF::switchOn(m_box.m_pathVariant, [](auto& path) {
-        path.traverseNextOnLineInLogicalOrder();
-    });
-    return *this;
-}
-
-LeafBoxIterator& LeafBoxIterator::traversePreviousOnLineInLogicalOrder()
-{
-    WTF::switchOn(m_box.m_pathVariant, [](auto& path) {
-        path.traversePreviousOnLineInLogicalOrder();
-    });
-    return *this;
-}
-
 LeafBoxIterator boxFor(const RenderLineBreak& renderer)
 {
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)

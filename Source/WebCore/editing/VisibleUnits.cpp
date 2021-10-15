@@ -33,6 +33,7 @@
 #include "HTMLNames.h"
 #include "InlineIteratorBox.h"
 #include "InlineIteratorLine.h"
+#include "InlineIteratorLogicalOrderTraversal.h"
 #include "InlineRunAndOffset.h"
 #include "NodeTraversal.h"
 #include "Range.h"
@@ -129,50 +130,50 @@ static bool isTextOrLineBreakRun(InlineIterator::LeafBoxIterator run)
     return run && (run->isText() || run->renderer().isBR());
 }
 
-static InlineIterator::LeafBoxIterator previousTextOrLineBreakRun(InlineIterator::LeafBoxIterator run)
+static InlineIterator::LeafBoxIterator previousTextOrLineBreakRun(InlineIterator::LeafBoxIterator run, InlineIterator::LineLogicalOrderCache& orderCache)
 {
     while (run) {
-        run.traversePreviousOnLineInLogicalOrder();
+        run = InlineIterator::previousLeafOnLineInLogicalOrder(run, orderCache);
         if (isTextOrLineBreakRun(run))
             return run;
     }
     return { };
 }
 
-static InlineIterator::LeafBoxIterator nextTextOrLineBreakRun(InlineIterator::LeafBoxIterator run)
+static InlineIterator::LeafBoxIterator nextTextOrLineBreakRun(InlineIterator::LeafBoxIterator run, InlineIterator::LineLogicalOrderCache& orderCache)
 {
     while (run) {
-        run.traverseNextOnLineInLogicalOrder();
+        run = InlineIterator::nextLeafOnLineInLogicalOrder(run, orderCache);
         if (isTextOrLineBreakRun(run))
             return run;
     }
     return { };
 }
 
-static InlineIterator::LeafBoxIterator startTextOrLineBreakRun(InlineIterator::LineIterator line)
+static InlineIterator::LeafBoxIterator startTextOrLineBreakRun(InlineIterator::LineIterator line, InlineIterator::LineLogicalOrderCache& orderCache)
 {
-    auto run = line->logicalStartRun();
+    auto run = InlineIterator::firstLeafOnLineInLogicalOrder(line, orderCache);
     if (isTextOrLineBreakRun(run))
         return run;
-    return nextTextOrLineBreakRun(run);
+    return nextTextOrLineBreakRun(run, orderCache);
 }
 
-static InlineIterator::LeafBoxIterator endTextOrLineBreakRun(InlineIterator::LineIterator line)
+static InlineIterator::LeafBoxIterator endTextOrLineBreakRun(InlineIterator::LineIterator line, InlineIterator::LineLogicalOrderCache& orderCache)
 {
-    auto run = line->logicalEndRun();
+    auto run = InlineIterator::lastLeafOnLineInLogicalOrder(line, orderCache);
     if (isTextOrLineBreakRun(run))
         return run;
-    return previousTextOrLineBreakRun(run);
+    return previousTextOrLineBreakRun(run, orderCache);
 }
 
-static const InlineIterator::LeafBoxIterator logicallyPreviousRun(const VisiblePosition& visiblePosition, InlineIterator::LeafBoxIterator startRun, bool& previousBoxInDifferentLine)
+static const InlineIterator::LeafBoxIterator logicallyPreviousRun(const VisiblePosition& visiblePosition, InlineIterator::LeafBoxIterator startRun, InlineIterator::LineLogicalOrderCache& orderCache, bool& previousBoxInDifferentLine)
 {
-    if (auto previousRun = previousTextOrLineBreakRun(startRun))
+    if (auto previousRun = previousTextOrLineBreakRun(startRun, orderCache))
         return previousRun;
 
     if (auto previousLine = startRun->line()->previous()) {
         // FIXME: Why isn't previousBoxInDifferentLine set here?
-        if (auto previousRun = endTextOrLineBreakRun(previousLine))
+        if (auto previousRun = endTextOrLineBreakRun(previousLine, orderCache))
             return previousRun;
     }
 
@@ -191,26 +192,26 @@ static const InlineIterator::LeafBoxIterator logicallyPreviousRun(const VisibleP
             break;
 
         if (previousLine != startRun->line()) {
-            if (auto previousRun = endTextOrLineBreakRun(previousLine)) {
+            if (auto previousRun = endTextOrLineBreakRun(previousLine, orderCache)) {
                 previousBoxInDifferentLine = true;
                 return previousRun;
             }
         }
 
-        startRun = previousLine->logicalStartRun();
+        startRun = InlineIterator::firstLeafOnLineInLogicalOrder(previousLine, orderCache);
     }
     return { };
 }
 
 
-static const InlineIterator::LeafBoxIterator logicallyNextRun(const VisiblePosition& visiblePosition, InlineIterator::LeafBoxIterator startRun, bool& nextBoxInDifferentLine)
+static const InlineIterator::LeafBoxIterator logicallyNextRun(const VisiblePosition& visiblePosition, InlineIterator::LeafBoxIterator startRun, InlineIterator::LineLogicalOrderCache& orderCache, bool& nextBoxInDifferentLine)
 {
-    if (auto nextRun = nextTextOrLineBreakRun(startRun))
+    if (auto nextRun = nextTextOrLineBreakRun(startRun, orderCache))
         return nextRun;
 
     if (auto nextLine = startRun->line()->next()) {
         // FIXME: Why isn't previousBoxInDifferentLine set here?
-        if (auto nextRun = startTextOrLineBreakRun(nextLine))
+        if (auto nextRun = startTextOrLineBreakRun(nextLine, orderCache))
             return nextRun;
     }
 
@@ -229,13 +230,13 @@ static const InlineIterator::LeafBoxIterator logicallyNextRun(const VisiblePosit
             break;
 
         if (nextLine != startRun->line()) {
-            if (auto nextRun = startTextOrLineBreakRun(nextLine)) {
+            if (auto nextRun = startTextOrLineBreakRun(nextLine, orderCache)) {
                 nextBoxInDifferentLine = true;
                 return nextRun;
             }
         }
 
-        startRun = nextLine->logicalEndRun();
+        startRun = InlineIterator::lastLeafOnLineInLogicalOrderWithNode(nextLine, orderCache);
     }
     return { };
 }
@@ -245,11 +246,12 @@ static UBreakIterator* wordBreakIteratorForMinOffsetBoundary(const VisiblePositi
 {
     previousRunInDifferentLine = false;
 
-    auto previousRun = logicallyPreviousRun(visiblePosition, textRun, previousRunInDifferentLine);
+    InlineIterator::LineLogicalOrderCache orderCache;
+    auto previousRun = logicallyPreviousRun(visiblePosition, textRun, orderCache, previousRunInDifferentLine);
     while (previousRun && !previousRun->isText()) {
         ASSERT(previousRun->renderer().isBR());
         previousRunInDifferentLine = true;
-        previousRun = logicallyPreviousRun(visiblePosition, previousRun, previousRunInDifferentLine);
+        previousRun = logicallyPreviousRun(visiblePosition, previousRun, orderCache, previousRunInDifferentLine);
     }
 
     string.clear();
@@ -269,11 +271,12 @@ static UBreakIterator* wordBreakIteratorForMaxOffsetBoundary(const VisiblePositi
 {
     nextRunInDifferentLine = false;
 
-    auto nextRun = logicallyNextRun(visiblePosition, textRun, nextRunInDifferentLine);
+    InlineIterator::LineLogicalOrderCache orderCache;
+    auto nextRun = logicallyNextRun(visiblePosition, textRun, orderCache, nextRunInDifferentLine);
     while (nextRun && !nextRun->isText()) {
         ASSERT(nextRun->renderer().isBR());
         nextRunInDifferentLine = true;
-        nextRun = logicallyNextRun(visiblePosition, nextRun, nextRunInDifferentLine);
+        nextRun = logicallyNextRun(visiblePosition, nextRun, orderCache, nextRunInDifferentLine);
     }
 
     string.clear();
@@ -746,8 +749,10 @@ static VisiblePosition startPositionForLine(const VisiblePosition& c, LineEndpoi
         return VisiblePosition();
     }
 
+    InlineIterator::LineLogicalOrderCache orderCache;
+
     Node* startNode = nullptr;
-    auto startRun = mode == UseLogicalOrdering ? line->logicalStartRunWithNode() : line->firstRun();
+    auto startRun = mode == UseLogicalOrdering ? InlineIterator::firstLeafOnLineInLogicalOrderWithNode(line, orderCache) : line->firstRun();
     // Generated content (e.g. list markers and CSS :before and :after pseudoelements) have no corresponding DOM element,
     // and so cannot be represented by a VisiblePosition. Use whatever follows instead.
     while (true) {
@@ -759,7 +764,7 @@ static VisiblePosition startPositionForLine(const VisiblePosition& c, LineEndpoi
             break;
 
         if (mode == UseLogicalOrdering)
-            startRun.traverseNextOnLineInLogicalOrder();
+            startRun = InlineIterator::nextLeafOnLineInLogicalOrder(startRun, orderCache);
         else
             startRun.traverseNextOnLine();
     }
@@ -816,8 +821,10 @@ static VisiblePosition endPositionForLine(const VisiblePosition& c, LineEndpoint
         return VisiblePosition();
     }
 
+    InlineIterator::LineLogicalOrderCache orderCache;
+
     Node* endNode = nullptr;
-    auto endRun = mode == UseLogicalOrdering ? line->logicalEndRunWithNode() : line->lastRun();
+    auto endRun = mode == UseLogicalOrdering ? InlineIterator::lastLeafOnLineInLogicalOrder(line, orderCache) : line->lastRun();
     // Generated content (e.g. list markers and CSS :before and :after pseudoelements) have no corresponding DOM element,
     // and so cannot be represented by a VisiblePosition. Use whatever precedes instead.
     while (true) {
@@ -829,7 +836,7 @@ static VisiblePosition endPositionForLine(const VisiblePosition& c, LineEndpoint
             break;
 
         if (mode == UseLogicalOrdering)
-            endRun.traversePreviousOnLineInLogicalOrder();
+            endRun = InlineIterator::previousLeafOnLineInLogicalOrder(endRun, orderCache);
         else
             endRun.traversePreviousOnLine();
     }

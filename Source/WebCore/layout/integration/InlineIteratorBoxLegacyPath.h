@@ -37,21 +37,9 @@ namespace InlineIterator {
 
 class BoxLegacyPath {
 public:
-    BoxLegacyPath(const LegacyInlineBox* inlineBox, Vector<const LegacyInlineBox*>&& sortedInlineBoxes = { }, size_t sortedInlineBoxIndex = 0)
+    BoxLegacyPath(const LegacyInlineBox* inlineBox)
         : m_inlineBox(inlineBox)
-        , m_logicalOrderCache(WTFMove(sortedInlineBoxes))
-        , m_logicalOrderCacheIndex(sortedInlineBoxIndex)
     { }
-
-    enum class LogicalOrder { Start, End };
-    BoxLegacyPath(const LegacyRootInlineBox& root, LogicalOrder order)
-        : m_logicalOrderCache(inlineBoxesInLogicalOrder(root))
-    {
-        if (!m_logicalOrderCache.isEmpty()) {
-            m_logicalOrderCacheIndex = order == LogicalOrder::Start ? 0 : m_logicalOrderCache.size() - 1;
-            m_inlineBox = m_logicalOrderCache[m_logicalOrderCacheIndex];
-        }
-    }
 
     bool isText() const { return m_inlineBox->isInlineTextBox(); }
     bool isInlineBox() const { return m_inlineBox->isInlineFlowBox(); }
@@ -98,18 +86,6 @@ public:
         m_inlineBox = m_inlineBox->previousLeafOnLine();
     }
 
-    void traverseNextOnLineInLogicalOrder()
-    {
-        initializeLogicalOrderCacheForLine();
-        traverseNextInlineBoxInCacheOrder();
-    }
-
-    void traversePreviousOnLineInLogicalOrder()
-    {
-        initializeLogicalOrderCacheForLine();
-        traversePreviousInlineBoxInCacheOrder();
-    }
-
     void traverseNextInlineBox()
     {
         m_inlineBox = inlineFlowBox()->nextLineBox();
@@ -131,49 +107,8 @@ private:
     const LegacyInlineTextBox* inlineTextBox() const { return downcast<LegacyInlineTextBox>(m_inlineBox); }
     const LegacyInlineFlowBox* inlineFlowBox() const { return downcast<LegacyInlineFlowBox>(m_inlineBox); }
 
-    static Vector<const LegacyInlineBox*> inlineBoxesInLogicalOrder(const LegacyRootInlineBox& root)
-    {
-        Vector<LegacyInlineBox*> inlineBoxes;
-        root.collectLeafBoxesInLogicalOrder(inlineBoxes);
-        return reinterpret_cast<Vector<const LegacyInlineBox*>&>(inlineBoxes);
-    }
-    void initializeLogicalOrderCacheForLine()
-    {
-        if (!m_inlineBox || !m_logicalOrderCache.isEmpty())
-            return;
-        m_logicalOrderCache = inlineBoxesInLogicalOrder(m_inlineBox->root());
-        for (m_logicalOrderCacheIndex = 0; m_logicalOrderCacheIndex < m_logicalOrderCache.size(); ++m_logicalOrderCacheIndex) {
-            if (m_logicalOrderCache[m_logicalOrderCacheIndex] == m_inlineBox)
-                return;
-        }
-        ASSERT_NOT_REACHED();
-    }
-
-    void traverseNextInlineBoxInCacheOrder();
-    void traversePreviousInlineBoxInCacheOrder();
-
     const LegacyInlineBox* m_inlineBox { nullptr };
-    RefCountedArray<const LegacyInlineBox*> m_logicalOrderCache;
-    size_t m_logicalOrderCacheIndex { 0 };
 };
-
-
-inline void BoxLegacyPath::traverseNextInlineBoxInCacheOrder()
-{
-    ASSERT(!m_logicalOrderCache.isEmpty());
-    ++m_logicalOrderCacheIndex;
-    m_inlineBox = m_logicalOrderCacheIndex < m_logicalOrderCache.size() ? m_logicalOrderCache[m_logicalOrderCacheIndex] : nullptr;
-}
-
-inline void BoxLegacyPath::traversePreviousInlineBoxInCacheOrder()
-{
-    ASSERT(!m_logicalOrderCache.isEmpty());
-    if (!m_logicalOrderCacheIndex) {
-        m_inlineBox = nullptr;
-        return;
-    }
-    m_inlineBox = m_logicalOrderCache[--m_logicalOrderCacheIndex];
-}
 
 }
 }
