@@ -751,8 +751,10 @@ namespace JSC {
 
         static MacroAssemblerCodeRef<JITThunkPtrTag> slow_op_get_from_scopeGenerator(VM&);
         static MacroAssemblerCodeRef<JITThunkPtrTag> slow_op_resolve_scopeGenerator(VM&);
-        static MacroAssemblerCodeRef<JITThunkPtrTag> generateOpGetFromScopeThunk(VM&, std::optional<ResolveType>, const char* thunkName);
-        static MacroAssemblerCodeRef<JITThunkPtrTag> generateOpResolveScopeThunk(VM&, std::optional<ResolveType>, const char* thunkName);
+        template <ResolveType>
+        static MacroAssemblerCodeRef<JITThunkPtrTag> generateOpGetFromScopeThunk(VM&);
+        template <ResolveType>
+        static MacroAssemblerCodeRef<JITThunkPtrTag> generateOpResolveScopeThunk(VM&);
 #endif // ENABLE(EXTRA_CTI_THUNKS)
 
         Jump getSlowCase(Vector<SlowCaseEntry>::iterator& iter)
