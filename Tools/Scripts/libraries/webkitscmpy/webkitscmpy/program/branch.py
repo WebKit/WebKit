@@ -62,7 +62,7 @@ class Branch(Command):
         while not commit or cls.editable(commit.branch, repository=repository):
             cnt += 1
             commit = repository.find(argument='HEAD~{}'.format(cnt), include_log=False, include_identifier=False)
-            if cnt > 1 or commit.branch != repository.branch:
+            if cnt > 1 or commit.branch != repository.branch or cls.editable(commit.branch, repository=repository):
                 log.warning('    Found {}...'.format(string_utils.pluralize(cnt, 'commit')))
             else:
                 log.warning('    No commits on editable branch')
