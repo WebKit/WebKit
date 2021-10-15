@@ -1,3 +1,20 @@
+2021-10-15  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Unreviewed, revert an unintentional sandbox change in r284079
+
+        I accidentally included the below change as a part of r284079, since it was necessary in order to avoid several
+        layout test failures on macOS Monterey:
+
+        - fast/canvas/toDataURL-supportedTypes.html
+        - fast/canvas/canvas-blending-image-over-image.html
+        - fast/canvas/canvas-blending-image-over-gradient.html
+        - fast/canvas/canvas-blending-image-over-color.html
+        - fast/canvas/toDataURL-not-empty.html
+
+        ...but forgot to revert this change when landing the final patch.
+
+        * GPUProcess/mac/com.apple.WebKit.GPUProcess.sb.in:
+
 2021-10-15  Brady Eidson  <beidson@apple.com>
 
         WebKit Managed Notifications: Skeleton NotificationProvider.
