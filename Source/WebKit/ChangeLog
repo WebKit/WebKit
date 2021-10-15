@@ -1,3 +1,15 @@
+2021-10-15  Per Arne  <pvollan@apple.com>
+
+        [iOS][GPUP] Block access to Launch Services Database service
+        https://bugs.webkit.org/show_bug.cgi?id=231504
+        <rdar://problem/84091679>
+
+        Reviewed by Brent Fulgham.
+
+        After <https://commits.webkit.org/242382@main>, access to this service is no longer required.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.GPU.sb:
+
 2021-10-15  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Unreviewed, revert an unintentional sandbox change in r284079

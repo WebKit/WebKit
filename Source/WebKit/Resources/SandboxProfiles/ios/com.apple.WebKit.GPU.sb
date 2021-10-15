@@ -532,9 +532,6 @@
 (allow ipc-posix-shm-read* (with telemetry)
        (ipc-posix-name-prefix "apple.cfprefs."))
  
-(allow mach-lookup (with telemetry)
-    (global-name "com.apple.lsd.mapdb"))
-
 ;; <rdar://problem/12413942>
 (allow file-read* (with telemetry)
        (well-known-system-group-container-literal "/systemgroup.com.apple.mobilegestaltcache/Library/Caches/com.apple.MobileGestalt.plist"))
