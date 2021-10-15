@@ -1,3 +1,14 @@
+2021-10-15  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Explicitly link adattributiond with Foundation and CoreFoundation
+        https://bugs.webkit.org/show_bug.cgi?id=231835
+
+        Reviewed by Brady Eidson.
+
+        Apply the same treatment to adattributiond as was done for webpushd in r284250.
+
+        * Configurations/adattributiond.xcconfig:
+
 2021-10-15  Garrett Davidson  <garrett_davidson@apple.com>
 
         Import AuthenticationServicesCore's public module as well
