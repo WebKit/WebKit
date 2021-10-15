@@ -46,12 +46,15 @@ except ImportError:
         "Please install webkitcorepy with `pip install webkitcorepy --extra-index-url <package index URL>`"
     )
 
-version = Version(2, 2, 11)
+version = Version(2, 2, 12)
 
 AutoInstall.register(Package('fasteners', Version(0, 15, 0)))
 AutoInstall.register(Package('monotonic', Version(1, 5)))
 AutoInstall.register(Package('whichcraft', Version(0, 6, 1)))
 AutoInstall.register(Package('xmltodict', Version(0, 11, 0)))
+
+if sys.version_info < (3, 0):
+    AutoInstall.register(Package('inspect2', Version(0, 1, 2)))
 
 from webkitscmpy.contributor import Contributor
 from webkitscmpy.commit import Commit

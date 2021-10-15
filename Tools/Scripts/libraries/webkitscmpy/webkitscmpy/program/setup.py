@@ -34,10 +34,15 @@ class Setup(Command):
     help = 'Configure local settings for the current repository'
 
     @classmethod
-    def github(cls, args, repository, **kwargs):
+    def github(cls, args, repository, additional_setup=None, **kwargs):
         log.warning('Saving GitHub credentials in system credential store...')
         username, access_token = repository.credentials(required=True)
         log.warning('GitHub credentials saved via Keyring!')
+
+        # Any additional setup passed to main
+        result = 0
+        if additional_setup:
+            result += additional_setup(args, repository)
 
         log.warning('Verifying user owned fork...')
         auth = HTTPBasicAuth(username, access_token)
@@ -48,7 +53,7 @@ class Setup(Command):
         ), auth=auth, headers=dict(Accept='application/vnd.github.v3+json'))
         if response.status_code == 200:
             log.warning("User already owns a fork of '{}'!".format(repository.name))
-            return 0
+            return result
 
         if repository.owner == username or args.defaults or Terminal.choose(
             "Create a private fork of '{}' belonging to '{}'".format(repository.name, username),
@@ -70,10 +75,10 @@ class Setup(Command):
             sys.stderr.write("Failed to create a fork of '{}' belonging to '{}'\n".format(repository.name, username))
             return 1
         log.warning("Created a private fork of '{}' belonging to '{}'!".format(repository.name, username))
-        return 0
+        return result
 
     @classmethod
-    def git(cls, args, repository, **kwargs):
+    def git(cls, args, repository, additional_setup=None, **kwargs):
         global_config = local.Git.config()
         result = 0
 
@@ -159,6 +164,10 @@ class Setup(Command):
             result += 1
         else:
             log.warning("Set git editor to '{}'".format(editor_name))
+
+        # Any additional setup passed to main
+        if additional_setup:
+            result += additional_setup(args, repository)
 
         # Only configure GitHub if the URL is a GitHub URL
         rmt = repository.remote()

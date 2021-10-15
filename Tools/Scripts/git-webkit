@@ -26,7 +26,8 @@ import os
 import sys
 
 import webkitpy
-from webkitscmpy import local, program, remote
+from webkitcorepy import run
+from webkitscmpy import local, program, remote, Contributor, log
 
 
 def is_webkit_filter(to_return):
@@ -45,10 +46,30 @@ def is_webkit_filter(to_return):
     return callback
 
 
+def additional_setup(args, repository):
+    if not isinstance(repository, local.Git):
+        return 0
+
+    log.warning('Setting merging behavior for changelogs...')
+    if run([
+        repository.executable(),
+        'config', 'merge.changelog.driver',
+        'perl {} --merge-driver -c %O %A %B'.format(os.path.join(
+            os.path.abspath(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))),
+            'OpenSource', 'Tools', 'Scripts', 'resolve-ChangeLogs',
+        )),
+    ], capture_output=True, cwd=repository.root_path).returncode:
+        sys.stderr.write('Failed to set the git merging behaivor for changelogs...\n')
+        return 1
+    log.warning('Set merging behavior for changelogs!')
+    return 0
+
+
 if '__main__' == __name__:
     sys.exit(program.main(
         path=os.path.dirname(__file__),
         identifier_template=is_webkit_filter('Canonical link: https://commits.webkit.org/{}'),
         subversion=is_webkit_filter('https://svn.webkit.org/repository/webkit'),
+        additional_setup=is_webkit_filter(additional_setup),
     ))
 

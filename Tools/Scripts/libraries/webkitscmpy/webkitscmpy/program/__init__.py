@@ -42,7 +42,10 @@ from webkitcorepy import arguments, log as webkitcorepy_log
 from webkitscmpy import local, log, remote
 
 
-def main(args=None, path=None, loggers=None, contributors=None, identifier_template=None, subversion=None):
+def main(
+    args=None, path=None, loggers=None, contributors=None,
+    identifier_template=None, subversion=None, additional_setup=None,
+):
     logging.basicConfig(level=logging.WARNING)
 
     loggers = [logging.getLogger(), webkitcorepy_log,  log] + (loggers or [])
@@ -110,6 +113,13 @@ def main(args=None, path=None, loggers=None, contributors=None, identifier_templ
     if callable(subversion):
         subversion = subversion(repository)
 
+    if sys.version_info > (3, 0):
+        import inspect
+    else:
+        import inspect2 as inspect
+    if callable(additional_setup) and list(inspect.signature(additional_setup).parameters.keys()) == ['repository']:
+        additional_setup = additional_setup(repository)
+
     if not getattr(parsed, 'main', None):
         parser.print_help()
         return -1
@@ -119,4 +129,5 @@ def main(args=None, path=None, loggers=None, contributors=None, identifier_templ
         repository=repository,
         identifier_template=identifier_template,
         subversion=subversion,
+        additional_setup=additional_setup,
     )
