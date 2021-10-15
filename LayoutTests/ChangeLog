@@ -1,5 +1,57 @@
 2021-10-15  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r281964. rdar://problem/83954640
+
+    [ BigSur arm64 Debug EWS ] ASSERTION FAILED: m_uncommittedState.state == State::Provisional
+    https://bugs.webkit.org/show_bug.cgi?id=229769
+    <rdar://problem/82645706>
+    
+    Reviewed by Alex Christensen.
+    
+    Source/WebKit:
+    
+    I am unable to reproduce the crash but we know that we're crashing when committing the load
+    after a process-swap, because the WebPageProxy doesn't know that a provisional load is going
+    on. One possible explanation for this, and the most likely one is that the WebPageProxy got
+    a DidFailProvisionalLoadForFrame IPC from the current process while the provisional load is
+    proceeding in the new provisional process. We had logic in WebPageProxy::didFailProvisionalLoadForFrame()
+    to try and discard such IPC but the check was relying on the navigationID and was therefore
+    fragile. I updated the check in didFailProvisionalLoadForFrame() to ignore all
+    DidFailProvisionalLoadForFrame IPCs for the main frame from the current process when there
+    is a ProvisionalPageProxy, without relying on the navigationID. This should be more robust
+    and will hopefully fix this flaky crash.
+    
+    No new tests, unskipped existing tests.
+    
+    * UIProcess/ProvisionalPageProxy.cpp:
+    (WebKit::ProvisionalPageProxy::didFailProvisionalLoadForFrame):
+    * UIProcess/WebPageProxy.cpp:
+    (WebKit::WebPageProxy::didFailProvisionalLoadForFrame):
+    (WebKit::WebPageProxy::didFailProvisionalLoadForFrameShared):
+    * UIProcess/WebPageProxy.h:
+    
+    LayoutTests:
+    
+    Unskip test that should no longer be flakily crashing in debug.
+    
+    * platform/mac-wk2/TestExpectations:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@281964 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-09-02  Chris Dumez  <cdumez@apple.com>
+
+            [ BigSur arm64 Debug EWS ] ASSERTION FAILED: m_uncommittedState.state == State::Provisional
+            https://bugs.webkit.org/show_bug.cgi?id=229769
+            <rdar://problem/82645706>
+
+            Reviewed by Alex Christensen.
+
+            Unskip test that should no longer be flakily crashing in debug.
+
+            * platform/mac-wk2/TestExpectations:
+
+2021-10-15  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r283033. rdar://problem/83953190
 
     [IOS 15] Video track does not get unmuted in case of tab was inactive less than ~500 ms
