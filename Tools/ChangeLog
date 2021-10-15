@@ -1,3 +1,17 @@
+2021-10-14  John Wilander  <wilander@apple.com>
+
+        TestWebKitAPI.PrivateClickMeasurement.FraudPrevention is a constant timeout
+        https://bugs.webkit.org/show_bug.cgi?id=231393
+        <rdar://problem/84000081>
+
+        Reviewed by Alex Christensen and Kate Cheney as part of https://bugs.webkit.org/show_bug.cgi?id=231553.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/EventAttribution.mm:
+        (TestWebKitAPI::TEST):
+            PrivateClickMeasurement.FraudPrevention fixed. It was missing a call to
+            _setPrivateClickMeasurementAppBundleIDForTesting() so that the app bundle ID
+            for the triggering event matches the app bundle ID where the click happened.
+
 2021-10-14  Lauro Moura  <lmoura@igalia.com>
 
         [webkitpy] Occasional exception thrown in change_result_to_failure when repeating flaky layout tests
