@@ -1,3 +1,13 @@
+2021-10-15  Per Arne Vollan  <pvollan@apple.com>
+
+        [macOS] Sort unix syscall list in WP sandbox
+        https://bugs.webkit.org/show_bug.cgi?id=231810
+        <rdar://problem/84305761>
+
+        Unreviewed formatting change. No change in behavior.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2021-10-15  BJ Burg  <bburg@apple.com>
 
         [Cocoa] Web Inspector: handle Promise objects returned from evaluateScriptInExtensionTab
