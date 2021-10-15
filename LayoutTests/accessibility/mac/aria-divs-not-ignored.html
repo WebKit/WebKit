@@ -20,7 +20,9 @@
           document.getElementById("body").focus();
           var body = accessibilityController.focusedElement;
           shouldBe("body.childAtIndex(1).role", "'AXRole: AXGroup'");
-          shouldBe("body.childAtIndex(1).subrole", "'AXSubrole: AXApplicationLog'");
+          // Because this div has nothing in it, we expect the AXEmptyGroup subrole. A role="log" element with
+          // content would have a different subrole (i.e. AXApplicationLog).
+          shouldBe("body.childAtIndex(1).subrole", "'AXSubrole: AXEmptyGroup'");
     }
 
 </script>
