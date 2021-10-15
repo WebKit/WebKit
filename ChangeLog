@@ -1,3 +1,11 @@
+2021-10-15  Jonathan Bedard  <jbedard@apple.com>
+
+        Add github username for Dewei Zhu
+
+        Unreviewed.
+
+        * metadata/contributors.json:
+
 2021-10-15  Andres Gonzalez  <andresg_22@apple.com>
 
         Change Andres Gonzalez status to reviewer.

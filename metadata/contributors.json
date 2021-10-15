@@ -1897,6 +1897,7 @@
          "dewei_zhu@apple.com"
       ],
       "expertise" : "Performance, Tools",
+      "github" : "dewei-zhu",
       "name" : "Dewei Zhu",
       "nicks" : [
          "Dewei"
@@ -6470,8 +6471,8 @@
       "emails" : [
          "vjaquez@igalia.com"
       ],
-      "github" : "ceyusa",
       "expertise" : "WebKitGTK, WPE, GStreamer",
+      "github" : "ceyusa",
       "name" : "Victor Jaquez",
       "nicks" : [
          "vjaquez",
