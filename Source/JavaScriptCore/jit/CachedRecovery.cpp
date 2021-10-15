@@ -52,7 +52,9 @@ bool CachedRecovery::loadsIntoGPR() const
 {
     switch (recovery().technique()) {
     case Int32DisplacedInJSStack:
-#if USE(JSVALUE64)
+#if USE(JSVALUE32_64)
+    case Int32TagDisplacedInJSStack:
+#elif USE(JSVALUE64)
     case Int52DisplacedInJSStack:
     case StrictInt52DisplacedInJSStack:
     case DisplacedInJSStack:

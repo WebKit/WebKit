@@ -1,3 +1,49 @@
+2021-10-15  Geza Lore  <glore@igalia.com>
+
+        [JSC][32bit] Fix CSR restore on DFG tail calls, add extra register on ARMv7
+        https://bugs.webkit.org/show_bug.cgi?id=230622
+
+        Reviewed by Saam Barati.
+
+        This patch does two things:
+
+        1. Adds an extra callee save register (CSR) to be available to DFG on
+        ARMv7. To do this properly required the following:
+
+        2. Implements the necessary shuffling in CallFrameShuffler on 32-bit
+        architectures that is required to restore CSRs properly after a tail
+        call on these architectures. This also fixes the remaining failures in
+        the 32-bit build of the unlinked baseline JIT.
+
+        * bytecode/ValueRecovery.cpp:
+        (JSC::ValueRecovery::dumpInContext const):
+        * bytecode/ValueRecovery.h:
+        (JSC::ValueRecovery::calleeSaveRegDisplacedInJSStack):
+        (JSC::ValueRecovery::isInJSStack const):
+        (JSC::ValueRecovery::dataFormat const):
+        (JSC::ValueRecovery::withLocalsOffset const):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        * jit/CachedRecovery.cpp:
+        (JSC::CachedRecovery::loadsIntoGPR const):
+        * jit/CallFrameShuffleData.cpp:
+        (JSC::CallFrameShuffleData::setupCalleeSaveRegisters):
+        * jit/CallFrameShuffleData.h:
+        * jit/CallFrameShuffler.cpp:
+        (JSC::CallFrameShuffler::CallFrameShuffler):
+        * jit/CallFrameShuffler.h:
+        (JSC::CallFrameShuffler::snapshot const):
+        (JSC::CallFrameShuffler::addNew):
+        * jit/CallFrameShuffler32_64.cpp:
+        (JSC::CallFrameShuffler::emitLoad):
+        (JSC::CallFrameShuffler::emitDisplace):
+        * jit/GPRInfo.h:
+        (JSC::GPRInfo::toRegister):
+        (JSC::GPRInfo::toIndex):
+        * jit/RegisterSet.cpp:
+        (JSC::RegisterSet::dfgCalleeSaveRegisters):
+        * llint/LowLevelInterpreter32_64.asm:
+
 2021-10-15  Robin Morisset  <rmorisset@apple.com>
 
         Revert r284230, my last fixes to the watch build make it break tests
