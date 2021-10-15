@@ -1,3 +1,12 @@
+2021-10-15  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix GTK build with ubuntu 18.04
+
+        GLib version bump in r284152 was too high for ubuntu 18.04 even though it followed our dependencies policy.
+
+        * Source/cmake/OptionsGTK.cmake:
+        * Source/cmake/OptionsWPE.cmake:
+
 2021-10-14  Ali Juma  <ajuma@chromium.org>
 
         Add my GitHub username to contributors.json
