@@ -1,5 +1,14 @@
 2021-10-14  Alex Christensen  <achristensen@webkit.org>
 
+        Fix some iOS builds after r284203
+        https://bugs.webkit.org/show_bug.cgi?id=231718
+
+        * TestWebKitAPI/cocoa/DaemonTestUtilities.h:
+        * TestWebKitAPI/cocoa/DaemonTestUtilities.mm:
+        Linker couldn't find OSLaunchdJob.  It's only used on macOS, so only build it on macOS.
+
+2021-10-14  Alex Christensen  <achristensen@webkit.org>
+
         Reduce memory use of AdAttributionDaemon
         https://bugs.webkit.org/show_bug.cgi?id=231523
 

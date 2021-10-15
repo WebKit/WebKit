@@ -35,10 +35,13 @@ namespace TestWebKitAPI {
 
 RetainPtr<NSURL> currentExecutableDirectory();
 
+// FIXME: Get this working in the iOS simulator.
+#if PLATFORM(MAC)
 #if HAVE(OS_LAUNCHD_JOB)
 void registerPlistWithLaunchD(RetainPtr<xpc_object_t>&&);
 #else
 void registerPlistWithLaunchD(RetainPtr<NSDictionary>&&, NSURL *tempDir);
+#endif
 #endif
 
 } // namespace TestWebKitAPI
