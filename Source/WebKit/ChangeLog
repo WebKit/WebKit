@@ -1,3 +1,10 @@
+2021-10-15  Kate Cheney  <katherine_cheney@apple.com>
+
+        Unreviewed maccatalyst build fix.
+
+        * GPUProcess/cocoa/GPUConnectionToWebProcessCocoa.mm:
+        (WebKit::GPUConnectionToWebProcess::setTCCIdentity):
+
 2021-10-15  Alex Christensen  <achristensen@webkit.org>
 
         Explicitly link webpushd with Foundation and CoreFoundation
