@@ -1,3 +1,14 @@
+2021-10-14  Nikos Mouchtaris  <nmouchtaris@apple.com>
+
+        Enable lazy image loading by default
+        https://bugs.webkit.org/show_bug.cgi?id=208094
+
+        Reviewed by Simon Fraser.
+
+        Turn on lazy image load by default in WebKit.
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml:
+
 2021-10-14  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Fix build failures with newer clang
