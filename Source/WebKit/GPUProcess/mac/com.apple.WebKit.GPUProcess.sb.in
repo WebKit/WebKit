@@ -879,6 +879,9 @@
     ; <rdar://problem/35509194>
     (global-name "com.apple.coremedia.endpointremotecontrolsession.xpc")
     (global-name "com.apple.coremedia.routediscoverer.xpc")
+#if __MAC_OS_X_VERSION_MIN_REQUIRED > 120000
+    (global-name "com.apple.coremedia.samplebufferconsumer.xpc")
+#endif
     (global-name "com.apple.coremedia.volumecontroller.xpc")
 )
 

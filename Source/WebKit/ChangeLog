@@ -1,3 +1,21 @@
+2021-10-15  Brent Fulgham  <bfulgham@apple.com>
+
+        [macOS] Update sandboxes to support finer-grained XPC services in the media stack
+        https://bugs.webkit.org/show_bug.cgi?id=231782
+        <rdar://problem/84275671>
+
+        Reviewed by Eric Carlson.
+
+        CoreMedia is refactoring to limit the features accessible through a given XPC service.
+        We need to add an additional service name. This new name just exposes features already
+        exposed through other XPC endpoints we already allow.
+
+        * GPUProcess/mac/com.apple.WebKit.GPUProcess.sb.in: Always allow access to the new service.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::mediaRelatedMachServices): Updated for new service name.
+        * WebProcess/com.apple.WebProcess.sb.in: Conditionally consume the new extension
+        if the GPU process is turned off.
+
 2021-10-15  Kate Cheney  <katherine_cheney@apple.com>
 
         Unreviewed maccatalyst build fix.

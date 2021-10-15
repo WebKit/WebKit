@@ -1764,6 +1764,9 @@
             "com.apple.audio.AudioComponentRegistrar" "com.apple.audio.audiohald" "com.apple.coremedia.endpoint.xpc" "com.apple.coremedia.endpointstream.xpc"
             "com.apple.coremedia.endpointplaybacksession.xpc" "com.apple.coremedia.endpointremotecontrolsession.xpc" "com.apple.coremedia.routediscoverer.xpc"
             "com.apple.coremedia.routingcontext.xpc" "com.apple.coremedia.volumecontroller.xpc" "com.apple.lskdd" "com.apple.mediaremoted.xpc" "com.apple.trustd.agent"
+#if __MAC_OS_X_VERSION_MIN_REQUIRED > 120000
+            "com.apple.coremedia.samplebufferconsumer.xpc"
+#endif
             ;;; FIXME(207716): End services to remove.
         )
     )

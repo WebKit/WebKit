@@ -8120,6 +8120,9 @@ static const Vector<ASCIILiteral>& mediaRelatedMachServices()
         "com.apple.audio.audiohald"_s, "com.apple.audio.SandboxHelper"_s, "com.apple.coremedia.endpointstream.xpc"_s, "com.apple.coremedia.endpointplaybacksession.xpc"_s,
         "com.apple.coremedia.endpointremotecontrolsession.xpc"_s, "com.apple.coremedia.videodecoder"_s,
         "com.apple.coremedia.videoencoder"_s, "com.apple.lskdd"_s, "com.apple.trustd.agent"_s,
+#if __MAC_OS_X_VERSION_MIN_REQUIRED > 120000
+        "com.apple.coremedia.samplebufferconsumer.xpc"_s,
+#endif
 #endif
     });
     return services;
