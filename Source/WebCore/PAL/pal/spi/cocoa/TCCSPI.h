@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,6 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#pragma once
+
 #if USE(APPLE_INTERNAL_SDK)
 
 #import <TCC/TCC.h>
@@ -33,5 +35,8 @@ typedef enum {
     kTCCAccessPreflightGranted,
     kTCCAccessPreflightDenied,
 } TCCAccessPreflightResult;
+
+typedef uint64_t tcc_identity_type_t;
+typedef struct { } tcc_identity_t;
 
 #endif

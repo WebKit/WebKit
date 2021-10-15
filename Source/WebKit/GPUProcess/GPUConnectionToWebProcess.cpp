@@ -188,6 +188,13 @@ private:
         return m_process.setCaptureAttributionString();
     }
 
+#if ENABLE(APP_PRIVACY_REPORT)
+    void setTCCIdentity() final
+    {
+        m_process.setTCCIdentity();
+    }
+#endif
+
 #if HAVE(IOSURFACE_SET_OWNERSHIP_IDENTITY)
     std::optional<task_id_token_t> webProcessIdentityToken() const final
     {

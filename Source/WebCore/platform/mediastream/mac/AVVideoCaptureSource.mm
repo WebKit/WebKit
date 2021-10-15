@@ -45,6 +45,7 @@
 #import <AVFoundation/AVCaptureSession.h>
 #import <AVFoundation/AVError.h>
 #import <objc/runtime.h>
+#import <pal/spi/cocoa/AVFoundationSPI.h>
 
 #import "CoreVideoSoftLink.h"
 #import <pal/cocoa/AVFoundationSoftLink.h>
@@ -422,7 +423,15 @@ bool AVVideoCaptureSource::setupSession()
 
     ALWAYS_LOG_IF(loggerPtr(), LOGIDENTIFIER);
 
+#if ENABLE(APP_PRIVACY_REPORT)
+    auto identity = RealtimeMediaSourceCenter::singleton().identity();
+    if (identity && [PAL::allocAVCaptureSessionInstance() respondsToSelector:@selector(initWithAssumedIdentity:)])
+        m_session = adoptNS([PAL::allocAVCaptureSessionInstance() initWithAssumedIdentity:*identity]);
+    else
+        m_session = adoptNS([PAL::allocAVCaptureSessionInstance() init]);
+#else
     m_session = adoptNS([PAL::allocAVCaptureSessionInstance() init]);
+#endif
 #if PLATFORM(IOS_FAMILY)
     PAL::AVCaptureSessionSetAuthorizedToUseCameraInMultipleForegroundAppLayout(m_session.get());
 #endif

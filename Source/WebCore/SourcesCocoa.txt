@@ -527,7 +527,7 @@ platform/mediastream/ios/AVAudioSessionCaptureDeviceManager.mm @no-unify
 platform/mediastream/ios/CoreAudioCaptureSourceIOS.mm
 platform/mediastream/libwebrtc/LibWebRTCProviderCocoa.cpp
 platform/mediastream/mac/AVCaptureDeviceManager.mm
-platform/mediastream/mac/AVVideoCaptureSource.mm
+platform/mediastream/mac/AVVideoCaptureSource.mm @no-unify
 platform/mediastream/mac/BaseAudioSharedUnit.cpp
 platform/mediastream/mac/CGDisplayStreamCaptureSource.cpp
 platform/mediastream/mac/CGDisplayStreamScreenCaptureSource.mm

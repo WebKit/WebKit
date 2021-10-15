@@ -34,6 +34,7 @@
 #include <WebCore/OrientationNotifier.h>
 #include <WebCore/RealtimeMediaSource.h>
 #include <WebCore/RealtimeMediaSourceIdentifier.h>
+#include <pal/spi/cocoa/TCCSPI.h>
 #include <wtf/UniqueRef.h>
 
 namespace WebCore {
@@ -60,6 +61,9 @@ public:
         virtual bool setCaptureAttributionString() { return true; }
 #if HAVE(IOSURFACE_SET_OWNERSHIP_IDENTITY)
         virtual std::optional<task_id_token_t> webProcessIdentityToken() const { return { }; };
+#endif
+#if ENABLE(APP_PRIVACY_REPORT)
+        virtual void setTCCIdentity() { }
 #endif
     };
     explicit UserMediaCaptureManagerProxy(UniqueRef<ConnectionProxy>&&);

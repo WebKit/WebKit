@@ -31,8 +31,12 @@
 #import "MediaPermissionUtilities.h"
 #import "SystemStatusSPI.h"
 #import <WebCore/LocalizedStrings.h>
+#import <WebCore/RealtimeMediaSourceCenter.h>
 #import <WebCore/RegistrableDomain.h>
 #import <WebCore/SecurityOrigin.h>
+#import <pal/spi/cocoa/LaunchServicesSPI.h>
+
+#import "TCCSoftLink.h"
 #import <pal/ios/SystemStatusSoftLink.h>
 
 namespace WebKit {
@@ -61,6 +65,26 @@ bool GPUConnectionToWebProcess::setCaptureAttributionString()
 }
 #endif // ENABLE(MEDIA_STREAM)
 
+#if ENABLE(APP_PRIVACY_REPORT)
+void GPUConnectionToWebProcess::setTCCIdentity()
+{
+    auto auditToken = gpuProcess().parentProcessConnection()->getAuditToken();
+    if (!auditToken)
+        return;
+
+    NSError *error = nil;
+    auto bundleProxy = [LSBundleProxy bundleProxyWithAuditToken:*auditToken error:&error];
+    if (error)
+        return;
+
+    tcc_identity_t identity = nil;
+    identity = tcc_identity_create(TCC_IDENTITY_CODE_BUNDLE_ID, [bundleProxy.bundleIdentifier UTF8String]);
+    if (!identity)
+        return;
+
+    WebCore::RealtimeMediaSourceCenter::singleton().setIdentity(identity);
+}
+#endif
 } // namespace WebKit
 
 #endif // ENABLE(GPU_PROCESS)

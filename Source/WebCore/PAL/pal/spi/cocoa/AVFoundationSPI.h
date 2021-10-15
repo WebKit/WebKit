@@ -31,9 +31,12 @@
 #import <AVFoundation/AVContentKeySession.h>
 #endif
 
+#import <pal/spi/cocoa/TCCSPI.h>
+
 #if USE(APPLE_INTERNAL_SDK)
 
 #import <AVFoundation/AVAssetCache_Private.h>
+#import <AVFoundation/AVCaptureSession_Private.h>
 #import <AVFoundation/AVOutputContext_Private.h>
 #import <AVFoundation/AVOutputDevice.h>
 #import <AVFoundation/AVPlayer_Private.h>
@@ -54,6 +57,7 @@
 
 #else
 
+#import <AVFoundation/AVCaptureSession.h>
 #import <AVFoundation/AVPlayer.h>
 #import <AVFoundation/AVPlayerItem.h>
 
@@ -434,4 +438,14 @@ NS_ASSUME_NONNULL_END
 @end
 
 #endif // USE(APPLE_INTERNAL_SDK)
+
+NS_ASSUME_NONNULL_BEGIN
+
+// FIXME: Move this inside the #if USE(APPLE_INTERNAL_SDK) once rdar://81297776 has been in the build for awhile.
+@interface AVCaptureSession (AVCaptureSessionPrivate)
+- (instancetype)initWithAssumedIdentity:(tcc_identity_t)tccIdentity SPI_AVAILABLE(ios(15.0)) API_UNAVAILABLE(macos, macCatalyst, watchos, tvos);
+@end
+
+NS_ASSUME_NONNULL_END
+
 #endif // HAVE(AVSAMPLEBUFFERVIDEOOUTPUT)

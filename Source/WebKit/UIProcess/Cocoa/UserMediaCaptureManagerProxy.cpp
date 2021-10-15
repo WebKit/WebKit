@@ -347,6 +347,9 @@ void UserMediaCaptureManagerProxy::startProducingData(RealtimeMediaSourceIdentif
         return;
     }
 
+#if ENABLE(APP_PRIVACY_REPORT)
+    m_connectionProxy->setTCCIdentity();
+#endif
     proxy->start();
 }
 

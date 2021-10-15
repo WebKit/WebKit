@@ -28,10 +28,10 @@
 
 #import "MediaPermissionUtilities.h"
 #import "SandboxUtilities.h"
-#import "TCCSPI.h"
 #import "WebPageProxy.h"
 #import "WebPreferences.h"
 #import <WebCore/RuntimeApplicationChecks.h>
+#import <pal/spi/cocoa/TCCSPI.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 
