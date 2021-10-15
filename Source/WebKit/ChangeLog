@@ -1,3 +1,16 @@
+2021-10-15  Alex Christensen  <achristensen@webkit.org>
+
+        Explicitly link webpushd with Foundation and CoreFoundation
+        https://bugs.webkit.org/show_bug.cgi?id=231808
+        <rdar://84302128>
+
+        Reviewed by Brady Eidson.
+
+        There is a build environment where the linker can't find a bunch of symbols from Foundation and CoreFoundation.
+        This should fix that build.
+
+        * Configurations/webpushd.xcconfig:
+
 2021-10-15  Per Arne  <pvollan@apple.com>
 
         [iOS][GPUP] Block access to Launch Services Database service
