@@ -37,6 +37,7 @@ typedef enum {
 } TCCAccessPreflightResult;
 
 typedef uint64_t tcc_identity_type_t;
-typedef struct { } tcc_identity_t;
+constexpr tcc_identity_type_t TCC_IDENTITY_CODE_BUNDLE_ID = 0;
+typedef void* tcc_identity_t;
 
 #endif

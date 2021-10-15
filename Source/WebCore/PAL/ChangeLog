@@ -1,3 +1,10 @@
+2021-10-14  Alex Christensen  <achristensen@webkit.org>
+
+        Fix non-internal iOS builds after r284220
+        https://bugs.webkit.org/show_bug.cgi?id=231621
+
+        * pal/spi/cocoa/TCCSPI.h:
+
 2021-10-14  Kate Cheney  <katherine_cheney@apple.com>
 
         Adopt attribution AVCaptureSession SPI for GPU process
