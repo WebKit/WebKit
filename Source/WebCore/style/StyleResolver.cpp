@@ -61,6 +61,7 @@
 #include "SVGElement.h"
 #include "SVGFontFaceElement.h"
 #include "Settings.h"
+#include "ShadowPseudoIds.h"
 #include "ShadowRoot.h"
 #include "SharedStringHash.h"
 #include "StyleAdjuster.h"
@@ -494,7 +495,8 @@ static bool elementTypeHasAppearanceFromUAStyle(const Element& element)
         || localName == HTMLNames::buttonTag
         || localName == HTMLNames::progressTag
         || localName == HTMLNames::selectTag
-        || localName == HTMLNames::meterTag;
+        || localName == HTMLNames::meterTag
+        || (element.isInUserAgentShadowTree() && element.shadowPseudoId() == ShadowPseudoIds::webkitListButton());
 }
 
 void Resolver::invalidateMatchedDeclarationsCache()

@@ -134,6 +134,8 @@ private:
     bool paintMeter(const RenderObject&, const PaintInfo&, const IntRect&) final;
 
 #if ENABLE(DATALIST_ELEMENT)
+    bool paintListButton(const RenderObject&, const PaintInfo&, const FloatRect&) final;
+
     void paintSliderTicks(const RenderObject&, const PaintInfo&, const FloatRect&) final;
 #endif
 

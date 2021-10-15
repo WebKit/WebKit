@@ -493,6 +493,11 @@ bool RenderThemeIOS::isControlStyled(const RenderStyle& style, const RenderStyle
     if (style.effectiveAppearance() == TextFieldPart || style.effectiveAppearance() == TextAreaPart)
         return style.backgroundLayers() != userAgentStyle.backgroundLayers();
 
+#if ENABLE(DATALIST_ELEMENT)
+    if (style.effectiveAppearance() == ListButtonPart)
+        return style.hasContent() || style.hasExplicitlyClearedContent();
+#endif
+
     return RenderTheme::isControlStyled(style, userAgentStyle);
 }
 
@@ -2529,6 +2534,51 @@ bool RenderThemeIOS::paintMeter(const RenderObject& renderer, const PaintInfo& p
 }
 
 #if ENABLE(DATALIST_ELEMENT)
+
+bool RenderThemeIOS::paintListButton(const RenderObject& box, const PaintInfo& paintInfo, const FloatRect& rect)
+{
+    auto& context = paintInfo.context();
+    GraphicsContextStateSaver stateSaver(context);
+
+    auto& style = box.style();
+
+    float paddingTop = floatValueForLength(style.paddingTop(), rect.height());
+    float paddingRight = floatValueForLength(style.paddingRight(), rect.width());
+    float paddingBottom = floatValueForLength(style.paddingBottom(), rect.height());
+    float paddingLeft = floatValueForLength(style.paddingLeft(), rect.width());
+
+    FloatRect indicatorRect = rect;
+    indicatorRect.move(paddingLeft, paddingTop);
+    indicatorRect.contract(paddingLeft + paddingRight, paddingTop + paddingBottom);
+
+    Path path;
+    path.moveTo({ 35.48, 38.029 });
+    path.addBezierCurveTo({ 36.904, 38.029 }, { 38.125, 37.5 }, { 39.223, 36.361 });
+    path.addLineTo({ 63.352, 11.987 });
+    path.addBezierCurveTo({ 64.206, 11.092 }, { 64.695, 9.993 }, { 64.695, 8.691 });
+    path.addBezierCurveTo({ 64.695, 6.046 }, { 62.579, 3.971 }, { 59.975, 3.971 });
+    path.addBezierCurveTo({ 58.714, 3.971 }, { 57.493, 4.5 }, { 56.557, 5.436 });
+    path.addLineTo({ 35.52, 26.839 });
+    path.addLineTo({ 14.443, 5.436 });
+    path.addBezierCurveTo({ 13.507, 4.5 }, { 12.327, 3.971 }, { 10.984, 3.971 });
+    path.addBezierCurveTo({ 8.38, 3.971 }, { 6.305, 6.046 }, { 6.305, 8.691 });
+    path.addBezierCurveTo({ 6.305, 9.993 }, { 6.753, 11.092 }, { 7.648, 11.987 });
+    path.addLineTo({ 31.777, 36.36 });
+    path.addBezierCurveTo({ 32.916, 37.499 }, { 34.096, 38.028 }, { 35.48, 38.028 });
+
+    const FloatSize indicatorSize(71.0f, 42.0f);
+    float scale = indicatorRect.width() / indicatorSize.width();
+
+    AffineTransform transform;
+    transform.translate(rect.center() - (indicatorSize * scale * 0.5f));
+    transform.scale(scale);
+    path.transform(transform);
+
+    context.setFillColor(systemColor(CSSValueAppleSystemBlue, box.styleColorOptions()));
+    context.fillPath(path);
+
+    return false;
+}
 
 void RenderThemeIOS::paintSliderTicks(const RenderObject& box, const PaintInfo& paintInfo, const FloatRect& rect)
 {

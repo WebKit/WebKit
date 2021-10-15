@@ -1517,6 +1517,7 @@ inline void BuilderCustom::applyValueStroke(BuilderState& builderState, CSSValue
 inline void BuilderCustom::applyInitialContent(BuilderState& builderState)
 {
     builderState.style().clearContent();
+    builderState.style().setHasExplicitlyClearedContent(true);
 }
 
 inline void BuilderCustom::applyInheritContent(BuilderState&)
@@ -1531,6 +1532,7 @@ inline void BuilderCustom::applyValueContent(BuilderState& builderState, CSSValu
         const auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
         ASSERT_UNUSED(primitiveValue, primitiveValue.valueID() == CSSValueNormal || primitiveValue.valueID() == CSSValueNone);
         builderState.style().clearContent();
+        builderState.style().setHasExplicitlyClearedContent(true);
         return;
     }
 

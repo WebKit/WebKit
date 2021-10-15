@@ -1,3 +1,16 @@
+2021-10-14  Aditya Keerthi  <akeerthi@apple.com>
+
+        [iOS] Paint <datalist> indicator in RenderTheme
+        https://bugs.webkit.org/show_bug.cgi?id=231755
+        rdar://84261604
+
+        Reviewed by Tim Horton.
+
+        Rebaseline tests.
+
+        * platform/ios-simulator/fast/forms/datalist/datalist-searchinput-appearance-expected.txt:
+        * platform/ios-simulator/fast/forms/datalist/datalist-textinput-appearance-expected.txt:
+
 2021-10-14  Eric Hutchison  <ehutchison@apple.com>
 
         [ iOS15 Mac wk2 Debug ] imported/w3c/web-platform-tests/webrtc/simulcast/basic.https.html is a flaky failure.

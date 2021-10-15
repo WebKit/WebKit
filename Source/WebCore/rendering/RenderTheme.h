@@ -357,6 +357,7 @@ protected:
 
 #if ENABLE(DATALIST_ELEMENT)
     virtual void adjustListButtonStyle(RenderStyle&, const Element*) const;
+    virtual bool paintListButton(const RenderObject&, const PaintInfo&, const FloatRect&) { return true; }
 #endif
 
     virtual void adjustProgressBarStyle(RenderStyle&, const Element*) const;

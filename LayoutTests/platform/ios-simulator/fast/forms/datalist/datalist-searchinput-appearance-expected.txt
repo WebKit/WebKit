@@ -13,4 +13,4 @@ layer at (0,0) size 800x41
 layer at (32,13) size 127x14 backgroundClip at (32,13) size 126x14 clip at (32,13) size 126x14
   RenderBlock {DIV} at (0,0) size 127x14
 layer at (151,6) size 25x28
-  RenderImage {DIV} at (134,-7) size 26x28
+  RenderBlock (relative positioned) {DIV} at (134,-7) size 26x28

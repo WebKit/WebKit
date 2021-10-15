@@ -698,7 +698,6 @@ input::-webkit-list-button {
     -webkit-user-select: none;
 #if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
     width: 11px;
-    content: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 71 42"><path fill="-apple-system-blue" d="M35.48 38.029c1.424 0 2.645-.529 3.743-1.668L63.352 11.987c.854-.895 1.343-1.994 1.343-3.296C64.695 6.046 62.579 3.971 59.975 3.971c-1.261 0-2.482.529-3.418 1.465L35.52 26.839 14.443 5.436C13.507 4.5 12.327 3.971 10.984 3.971c-2.604 0-4.679 2.075-4.679 4.72 0 1.302.448 2.401 1.343 3.296l24.129 24.373c1.139 1.139 2.319 1.668 3.703 1.668z"/></svg>');
     /* Make it easier to hit the button on iOS */
     padding: 7px;
     margin: -7px;
