@@ -42,8 +42,7 @@ log = logging.getLogger('global')
 def ucfirst(str):
     return str[:1].upper() + str[1:]
 
-
-_ALWAYS_SPECIALCASED_ENUM_VALUE_SUBSTRINGS = set(['2D', 'API', 'CSS', 'DOM', 'HTML', 'JIT', 'SRGB', 'XHR', 'XML', 'IOS', 'MacOS', 'JavaScript', 'ServiceWorker'])
+_ALWAYS_SPECIALCASED_ENUM_VALUE_SUBSTRINGS = set(['2D', 'API', 'CSS', 'DOM', 'HTML', 'JIT', 'XHR', 'XML', 'IOS', 'MacOS', 'JavaScript', 'ServiceWorker'])
 _ALWAYS_SPECIALCASED_ENUM_VALUE_LOOKUP_TABLE = dict([(s.upper(), s) for s in _ALWAYS_SPECIALCASED_ENUM_VALUE_SUBSTRINGS])
 
 _ENUM_IDENTIFIER_RENAME_MAP = {
