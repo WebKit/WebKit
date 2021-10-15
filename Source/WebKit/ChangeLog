@@ -1,3 +1,49 @@
+2021-10-14  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r284215. rdar://problem/84277677
+
+    Fix build failures with newer clang
+    https://bugs.webkit.org/show_bug.cgi?id=231783
+    
+    Reviewed by Chris Dumez.
+    
+    Source/WebKit:
+    
+    We do not need to define copy constructor and assignment operator if we would like to use the default implementation.
+    The default copy constructor and assignment operator works well for TouchBarMenuItemData, so let's drop it.
+    
+    * Shared/TouchBarMenuItemData.h:
+    
+    Source/WTF:
+    
+    In Identified case, we make copy constructor and assignment operator protected in IdentifiedBase to hide
+    the ability to copy Identified / ThreadSafeIdentified to be copied to IdentifiedBase. So, in the derived
+    classes, we should define both copy constructor and assignment operator.
+    
+    * wtf/Identified.h:
+    
+    Tools:
+    
+    Since this is Objective-C (not Objective-C++), we cannot use `static const uint32_t` value for array size.
+    Use enum hack instead.
+    
+    * DumpRenderTree/mac/LayoutTestHelper.m:
+    (displayUUIDStrings):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@284215 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-10-14  Yusuke Suzuki  <ysuzuki@apple.com>
+
+            Fix build failures with newer clang
+            https://bugs.webkit.org/show_bug.cgi?id=231783
+
+            Reviewed by Chris Dumez.
+
+            We do not need to define copy constructor and assignment operator if we would like to use the default implementation.
+            The default copy constructor and assignment operator works well for TouchBarMenuItemData, so let's drop it.
+
+            * Shared/TouchBarMenuItemData.h:
+
 2021-10-14  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r283940. rdar://problem/84158485
