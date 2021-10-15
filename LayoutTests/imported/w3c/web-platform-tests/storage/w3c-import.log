@@ -1,0 +1,35 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/storage/META.yml
+/LayoutTests/imported/w3c/web-platform-tests/storage/README.md
+/LayoutTests/imported/w3c/web-platform-tests/storage/estimate-indexeddb.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/storage/estimate-parallel.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/storage/estimate-usage-details-application-cache.https.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/storage/estimate-usage-details-caches.https.tentative.any.js
+/LayoutTests/imported/w3c/web-platform-tests/storage/estimate-usage-details-indexeddb.https.tentative.any.js
+/LayoutTests/imported/w3c/web-platform-tests/storage/estimate-usage-details-service-workers.https.tentative.window.js
+/LayoutTests/imported/w3c/web-platform-tests/storage/estimate-usage-details.https.tentative.any.js
+/LayoutTests/imported/w3c/web-platform-tests/storage/helpers.js
+/LayoutTests/imported/w3c/web-platform-tests/storage/idlharness.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/storage/opaque-origin.https.window.js
+/LayoutTests/imported/w3c/web-platform-tests/storage/permission-query.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/storage/persisted.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/storage/quotachange-in-detached-iframe.tentative.https.html
+/LayoutTests/imported/w3c/web-platform-tests/storage/storagemanager-estimate.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/storage/storagemanager-persist.https.window.js
+/LayoutTests/imported/w3c/web-platform-tests/storage/storagemanager-persist.https.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/storage/storagemanager-persisted.https.any.js

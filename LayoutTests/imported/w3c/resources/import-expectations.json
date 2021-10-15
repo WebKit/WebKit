@@ -402,7 +402,7 @@
     "web-platform-tests/shadow-dom/untriaged": "skip", 
     "web-platform-tests/speech-api": "import", 
     "web-platform-tests/staticrange": "skip", 
-    "web-platform-tests/storage": "skip", 
+    "web-platform-tests/storage": "import", 
     "web-platform-tests/streams": "import", 
     "web-platform-tests/streams/writable-streams": "skip", 
     "web-platform-tests/subresource-integrity": "import", 
