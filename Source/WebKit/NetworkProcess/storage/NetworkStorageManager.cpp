@@ -91,8 +91,8 @@ OriginStorageManager& NetworkStorageManager::localOriginStorageManager(const Web
 {
     ASSERT(!RunLoop::isMain());
 
-    return *m_localOriginStorageManagers.ensure(origin, [path = m_path, origin, salt = m_salt] {
-        return makeUnique<OriginStorageManager>(originPath(path, origin, salt));
+    return *m_localOriginStorageManagers.ensure(origin, [&] {
+        return makeUnique<OriginStorageManager>(originPath(m_path, origin, m_salt));
     }).iterator->value;
 }
 
