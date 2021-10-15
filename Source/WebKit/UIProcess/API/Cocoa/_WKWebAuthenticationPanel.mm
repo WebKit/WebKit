@@ -277,12 +277,15 @@ static RetainPtr<NSArray> getAllLocalAuthenticatorCredentialsImpl(NSString *acce
 + (void)deleteLocalAuthenticatorCredentialWithID:(NSData *)credentialID
 {
 #if ENABLE(WEB_AUTHN)
-    NSDictionary* deleteQuery = @{
+    auto deleteQuery = adoptNS([[NSMutableDictionary alloc] init]);
+    [deleteQuery setDictionary:@{
         (__bridge id)kSecClass: (__bridge id)kSecClassKey,
         (__bridge id)kSecAttrApplicationLabel: credentialID,
         (__bridge id)kSecUseDataProtectionKeychain: @YES
-    };
-    SecItemDelete((__bridge CFDictionaryRef)deleteQuery);
+    }];
+    updateQueryIfNecessary(deleteQuery.get());
+
+    SecItemDelete((__bridge CFDictionaryRef)deleteQuery.get());
 #endif
 }
 
@@ -296,15 +299,18 @@ static RetainPtr<NSArray> getAllLocalAuthenticatorCredentialsImpl(NSString *acce
 + (void)setUsernameForLocalCredentialWithID:(NSData *)credentialID username: (NSString *)username
 {
 #if ENABLE(WEB_AUTHN)
-    NSDictionary* query = @{
+    auto query = adoptNS([[NSMutableDictionary alloc] init]);
+    [query setDictionary:@{
         (__bridge id)kSecClass: (__bridge id)kSecClassKey,
         (__bridge id)kSecReturnAttributes: @YES,
         (__bridge id)kSecAttrApplicationLabel: credentialID,
         (__bridge id)kSecReturnPersistentRef : (__bridge id)kCFBooleanTrue,
         (__bridge id)kSecUseDataProtectionKeychain: @YES
-    };
+    }];
+    updateQueryIfNecessary(query.get());
+
     CFTypeRef attributesArrayRef = nullptr;
-    OSStatus status = SecItemCopyMatching((__bridge CFDictionaryRef)query, &attributesArrayRef);
+    OSStatus status = SecItemCopyMatching((__bridge CFDictionaryRef)query.get(), &attributesArrayRef);
     if (status && status != errSecItemNotFound) {
         ASSERT_NOT_REACHED();
         return;
@@ -336,11 +342,14 @@ static RetainPtr<NSArray> getAllLocalAuthenticatorCredentialsImpl(NSString *acce
     NSDictionary *updateParams = @{
         (__bridge id)kSecAttrApplicationTag: secAttrApplicationTag,
     };
-    query = @{
+
+    [query setDictionary:@{
         (__bridge id)kSecValuePersistentRef: [attributes objectForKey:(__bridge id)kSecValuePersistentRef],
         (__bridge id)kSecClass: (__bridge id)kSecClassKey,
-    };
-    status = SecItemUpdate((__bridge CFDictionaryRef)query, (__bridge CFDictionaryRef)updateParams);
+    }];
+    updateQueryIfNecessary(query.get());
+
+    status = SecItemUpdate((__bridge CFDictionaryRef)query.get(), (__bridge CFDictionaryRef)updateParams);
     if (status && status != errSecItemNotFound) {
         ASSERT_NOT_REACHED();
         return;

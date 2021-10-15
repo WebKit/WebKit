@@ -1,3 +1,17 @@
+2021-10-14  John Pascoe  <j_pascoe@apple.com>
+
+        Update deleteLocalAuthenticatorCredentialWithID and setUsernameForLocalCredentialWithID according to internal needs
+        https://bugs.webkit.org/show_bug.cgi?id=231777
+        rdar://84276065
+
+        Reviewed by Brent Fulgham.
+
+        Covered by manual tests.
+
+        * UIProcess/API/Cocoa/_WKWebAuthenticationPanel.mm:
+        (+[_WKWebAuthenticationPanel deleteLocalAuthenticatorCredentialWithID:]):
+        (+[_WKWebAuthenticationPanel setUsernameForLocalCredentialWithID:username:]):
+
 2021-10-14  Alex Christensen  <achristensen@webkit.org>
 
         Reduce memory use of AdAttributionDaemon
