@@ -1295,6 +1295,7 @@
 		5C6C814E2718C2F200D4FB42 /* NetworkDataTaskCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CBC9B8B1C65257300A8FDCF /* NetworkDataTaskCocoa.mm */; };
 		5C6C814F2718C32000D4FB42 /* WebCoreArgumentCodersMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BCE23262122C6CF300D5C35A /* WebCoreArgumentCodersMac.mm */; };
 		5C6C81502718C33500D4FB42 /* ArgumentCodersCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AAF0C4912B16334008E49E2 /* ArgumentCodersCF.cpp */; };
+		5C6C815A2719077400D4FB42 /* DaemonUtilities.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C1579F92717AF5000ED5280 /* DaemonUtilities.mm */; };
 		5C6E7D882323620500C2159D /* WKWebsiteDataStoreConfigurationRef.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C6E7D86232361E700C2159D /* WKWebsiteDataStoreConfigurationRef.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5C795D70229F373F003FF1C4 /* WKContextMenuElementInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CE0C369229F2D4A003695F0 /* WKContextMenuElementInfo.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5C795D71229F3757003FF1C4 /* WKContextMenuElementInfoPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CE0C36A229F2D4A003695F0 /* WKContextMenuElementInfoPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -14627,6 +14628,7 @@
 				5C6C81432718C07500D4FB42 /* DaemonDecoder.cpp in Sources */,
 				5C6C81442718C07A00D4FB42 /* DaemonEncoder.cpp in Sources */,
 				5C6C814A2718C10700D4FB42 /* DatabaseUtilities.cpp in Sources */,
+				5C6C815A2719077400D4FB42 /* DaemonUtilities.mm in Sources */,
 				5C6C814D2718C16900D4FB42 /* Logging.cpp in Sources */,
 				5C6C814E2718C2F200D4FB42 /* NetworkDataTaskCocoa.mm in Sources */,
 				5C6C813E2718BC4000D4FB42 /* PCMDaemonConnectionSet.mm in Sources */,
