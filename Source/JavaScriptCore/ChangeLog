@@ -1,3 +1,54 @@
+2021-10-15  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Optimize Structure::getConcurrently
+        https://bugs.webkit.org/show_bug.cgi?id=231825
+
+        Reviewed by Filip Pizlo.
+
+        From artrace data, we found that Structure::getConcurrently is taking fair amount of time
+        in Speedometer2 *in the main thread*! This is because Structure::getConcurrently is used
+        in PropertyCondition, and its validation can be called in the main thread when watched
+        Structure transition happens, ObjectPropertyConditionSet is created for IC etc.
+
+        Structure::getConcurrently is slow since it is using Structure::forEachPropertyConcurrently.
+        We can optimize Structure::getConcurrently since,
+
+            1. We do not need to track seen properties via seenProperties HashSet.
+            2. We can handle TransitionKind::PropertyDeletion.
+            3. We can use PropertyTable::get.
+
+        We are seeing consistent 0.4% improvement in Speedometer2 (I ran 120 Speedometer2 runs twice and both said 0.4% improvement).
+
+        ----------------------------------------------------------------------------------------------------------------------------------
+        |               subtest                |     ms      |     ms      |  b / a   | pValue (significance using False Discovery Rate) |
+        ----------------------------------------------------------------------------------------------------------------------------------
+        | Elm-TodoMVC                          |106.201667   |106.030000   |0.998384  | 0.666695                                         |
+        | VueJS-TodoMVC                        |21.955000    |21.985000    |1.001366  | 0.898294                                         |
+        | EmberJS-TodoMVC                      |120.720000   |119.938333   |0.993525  | 0.055063                                         |
+        | BackboneJS-TodoMVC                   |40.306667    |40.023333    |0.992971  | 0.054858                                         |
+        | Preact-TodoMVC                       |16.273333    |15.968333    |0.981258  | 0.135893                                         |
+        | AngularJS-TodoMVC                    |123.325000   |122.596667   |0.994094  | 0.079212                                         |
+        | Vanilla-ES2015-TodoMVC               |60.116667    |60.168333    |1.000859  | 0.691981                                         |
+        | Inferno-TodoMVC                      |58.945000    |58.538333    |0.993101  | 0.155753                                         |
+        | Flight-TodoMVC                       |57.846667    |57.808333    |0.999337  | 0.868408                                         |
+        | Angular2-TypeScript-TodoMVC          |38.595000    |38.260000    |0.991320  | 0.392602                                         |
+        | VanillaJS-TodoMVC                    |50.316667    |50.185000    |0.997383  | 0.609335                                         |
+        | jQuery-TodoMVC                       |208.376667   |208.933333   |1.002671  | 0.196406                                         |
+        | EmberJS-Debug-TodoMVC                |338.481667   |336.755000   |0.994899  | 0.007485                                         |
+        | React-TodoMVC                        |82.533333    |82.091667    |0.994649  | 0.037482                                         |
+        | React-Redux-TodoMVC                  |133.703333   |133.258333   |0.996672  | 0.069242                                         |
+        | Vanilla-ES2015-Babel-Webpack-TodoMVC |59.346667    |59.600000    |1.004269  | 0.203370                                         |
+        ----------------------------------------------------------------------------------------------------------------------------------
+        a mean = 282.95715
+        b mean = 284.07606
+        pValue = 0.0013877157
+        (Bigger means are better.)
+        1.004 times better
+        Results ARE significant
+
+        * runtime/Structure.cpp:
+        (JSC::Structure::getConcurrently):
+
 2021-10-15  Geza Lore  <glore@igalia.com>
 
         [JSC][32bit] Fix CSR restore on DFG tail calls, add extra register on ARMv7

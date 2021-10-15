@@ -1089,18 +1089,60 @@ PropertyTable* Structure::copyPropertyTableForPinning(VM& vm)
 
 PropertyOffset Structure::getConcurrently(UniquedStringImpl* uid, unsigned& attributes)
 {
+    Vector<Structure*, 8> structures;
+    Structure* tableStructure;
+    PropertyTable* table;
+
+    bool didFindStructure = findStructuresAndMapForMaterialization(structures, tableStructure, table);
+
+    for (auto* structure : structures) {
+        if (!structure->m_transitionPropertyName)
+            continue;
+
+        switch (structure->transitionKind()) {
+        case TransitionKind::PropertyAddition:
+        case TransitionKind::PropertyAttributeChange:
+            break;
+        case TransitionKind::PropertyDeletion:
+            if (structure->m_transitionPropertyName.get() == uid) {
+                if (didFindStructure) {
+                    assertIsHeld(tableStructure->m_lock); // Sadly Clang needs some help here.
+                    tableStructure->m_lock.unlock();
+                }
+                return invalidOffset;
+            }
+            continue;
+        case TransitionKind::SetBrand:
+            continue;
+        default:
+            ASSERT_NOT_REACHED();
+            break;
+        }
+
+        if (structure->m_transitionPropertyName.get() == uid) {
+            PropertyOffset result = structure->transitionOffset();
+            attributes = structure->transitionPropertyAttributes();
+            if (didFindStructure) {
+                assertIsHeld(tableStructure->m_lock); // Sadly Clang needs some help here.
+                tableStructure->m_lock.unlock();
+            }
+            return result;
+        }
+    }
+
     PropertyOffset result = invalidOffset;
-    
-    forEachPropertyConcurrently(
-        [&] (const PropertyMapEntry& candidate) -> bool {
-            if (candidate.key != uid)
-                return true;
-            
-            result = candidate.offset;
-            attributes = candidate.attributes;
-            return false;
-        });
-    
+
+    if (didFindStructure) {
+        assertIsHeld(tableStructure->m_lock); // Sadly Clang needs some help here.
+        // Because uid is UniquedStringImpl, it is guaranteed that the hash is already computed.
+        // So we can use PropertyTable::get even from the concurrent compilers.
+        if (auto* entry = table->get(uid)) {
+            result = entry->offset;
+            attributes = entry->attributes;
+        }
+        tableStructure->m_lock.unlock();
+    }
+
     return result;
 }
 
