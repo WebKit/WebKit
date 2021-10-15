@@ -101,7 +101,7 @@ class TestRunResults(object):
         if existing_result.type is new_result.type:
             return
 
-        self.tests_by_expectation[existing_result.type].remove(existing_result.test_name)
+        self.tests_by_expectation[existing_result.type].discard(existing_result.test_name)
         self.tests_by_expectation[new_result.type].add(new_result.test_name)
 
         had_failures = len(existing_result.failures) > 0

@@ -1,3 +1,25 @@
+2021-10-14  Lauro Moura  <lmoura@igalia.com>
+
+        [webkitpy] Occasional exception thrown in change_result_to_failure when repeating flaky layout tests
+        https://bugs.webkit.org/show_bug.cgi?id=229788
+
+        Reviewed by Jonathan Bedard.
+
+        When a iterated/repeated flaky test moves from an unexpected Failure to
+        successive unexpected Pass, the currently stored result is still the
+        Failure (likely due to r235467). This may cause change_result_to_failure
+        to raise KeyError trying to forcibly remove() the Failure result from
+        the test_by_expectations set twice.
+
+        This commit relaxes the behavior to just ask to discard the value from
+        the set.
+
+        * Scripts/webkitpy/layout_tests/controllers/layout_test_runner_unittest.py:
+        (LayoutTestRunnerTests.test_update_summary_with_result): Added test case.
+        * Scripts/webkitpy/layout_tests/models/test_run_results.py:
+        (TestRunResults.change_result_to_failure): Use set.discard to avoid
+        KeyErrors.
+
 2021-10-14  Chris Dumez  <cdumez@apple.com>
 
         Service workers running on the main thread should use the main VM
