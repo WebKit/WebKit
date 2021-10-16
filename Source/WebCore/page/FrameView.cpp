@@ -47,7 +47,6 @@
 #include "EventNames.h"
 #include "FloatRect.h"
 #include "FocusController.h"
-#include "FragmentDirectiveParser.h"
 #include "Frame.h"
 #include "FrameFlattening.h"
 #include "FrameLoader.h"
@@ -2217,25 +2216,7 @@ void FrameView::restoreScrollbar()
 
 bool FrameView::scrollToFragment(const URL& url)
 {
-    ASSERT(frame().document());
-    Ref document = *frame().document();
-    
     auto fragmentIdentifier = url.fragmentIdentifier();
-    
-    if (document->settings().scrollToTextFragmentEnabled()) {
-        FragmentDirectiveParser fragmentDirectiveParser(url);
-        
-        if (fragmentDirectiveParser.isValid()) {
-            auto fragmentDirective = fragmentDirectiveParser.fragmentDirective().toString();
-            document->setFragmentDirective(fragmentDirective);
-            
-            auto parsedTextDirectives = fragmentDirectiveParser.parsedTextDirectives();
-            // FIXME: Scroll to the range specified by the directive.
-            
-        } else
-            fragmentIdentifier = fragmentDirectiveParser.remainingURLFragment();
-    }
-    
     if (scrollToFragmentInternal(fragmentIdentifier))
         return true;
 

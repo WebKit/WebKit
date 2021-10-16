@@ -1,3 +1,15 @@
+2021-10-16  Tim Horton  <timothy_horton@apple.com>
+
+        Unreviewed, reverting r284143.
+
+        Caused a series of assertions in layout tests in EWS
+
+        Reverted changeset:
+
+        "Scroll To Text Fragment directive parsing"
+        https://bugs.webkit.org/show_bug.cgi?id=231410
+        https://commits.webkit.org/r284143
+
 2021-10-15  Basuke Suzuki  <basuke.suzuki@sony.com>
 
         Add flag to turn off Iso heap
