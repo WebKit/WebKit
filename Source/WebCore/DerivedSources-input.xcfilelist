@@ -123,6 +123,10 @@ $(PROJECT_DIR)/Modules/fetch/FetchRequestMode.idl
 $(PROJECT_DIR)/Modules/fetch/FetchRequestRedirect.idl
 $(PROJECT_DIR)/Modules/fetch/FetchResponse.idl
 $(PROJECT_DIR)/Modules/fetch/WindowOrWorkerGlobalScope+Fetch.idl
+$(PROJECT_DIR)/Modules/filesystemaccess/FileSystemDirectoryHandle.idl
+$(PROJECT_DIR)/Modules/filesystemaccess/FileSystemFileHandle.idl
+$(PROJECT_DIR)/Modules/filesystemaccess/FileSystemHandle.idl
+$(PROJECT_DIR)/Modules/filesystemaccess/StorageManager+FileSystemAccess.idl
 $(PROJECT_DIR)/Modules/gamepad/Gamepad.idl
 $(PROJECT_DIR)/Modules/gamepad/GamepadButton.idl
 $(PROJECT_DIR)/Modules/gamepad/GamepadEvent.idl

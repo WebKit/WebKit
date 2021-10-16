@@ -27,6 +27,7 @@
 #include "StorageManager.h"
 
 #include "ClientOrigin.h"
+#include "FileSystemDirectoryHandle.h"
 #include "JSDOMPromiseDeferred.h"
 #include "NavigatorBase.h"
 #include "SecurityOrigin.h"
@@ -88,6 +89,11 @@ void StorageManager::persist(DOMPromiseDeferred<IDLBoolean>&& promise)
     return connection->persist({ context->topOrigin().data(), origin->data() }, [promise = WTFMove(promise)](bool persisted) mutable {
         promise.resolve(persisted);
     });
+}
+
+void StorageManager::fileSystemAccessGetDirectory(DOMPromiseDeferred<IDLInterface<FileSystemDirectoryHandle>>&& promise)
+{
+    return promise.reject(Exception { NotSupportedError, "Not implemented"_s });
 }
 
 } // namespace WebCore
