@@ -84,12 +84,12 @@ void ScrollingEffectsController::startOrStopAnimationCallbacks()
     m_isRunningAnimatingCallback = false;
 }
 
-void ScrollingEffectsController::beginKeyboardScrolling()
+void ScrollingEffectsController::willBeginKeyboardScrolling()
 {
     setIsAnimatingKeyboardScrolling(true);
 }
 
-void ScrollingEffectsController::stopKeyboardScrolling()
+void ScrollingEffectsController::didStopKeyboardScrolling()
 {
     setIsAnimatingKeyboardScrolling(false);
 }
@@ -166,6 +166,14 @@ void ScrollingEffectsController::setIsAnimatingKeyboardScrolling(bool isAnimatin
 
     m_isAnimatingKeyboardScrolling = isAnimatingKeyboardScrolling;
     startOrStopAnimationCallbacks();
+}
+
+void ScrollingEffectsController::stopKeyboardScrolling()
+{
+    if (!m_isAnimatingKeyboardScrolling)
+        return;
+
+    m_client.keyboardScrollingAnimator()->handleKeyUpEvent();
 }
 
 void ScrollingEffectsController::contentsSizeChanged()

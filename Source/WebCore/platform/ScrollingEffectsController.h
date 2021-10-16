@@ -137,10 +137,12 @@ public:
     bool retargetAnimatedScroll(FloatPoint newDestinationOffset);
     void stopAnimatedScroll();
 
+    void stopKeyboardScrolling();
+
     bool startMomentumScrollWithInitialVelocity(const FloatPoint& initialOffset, const FloatSize& initialVelocity, const FloatSize& initialDelta, const WTF::Function<FloatPoint(const FloatPoint&)>& destinationModifier);
 
-    void beginKeyboardScrolling();
-    void stopKeyboardScrolling();
+    void willBeginKeyboardScrolling();
+    void didStopKeyboardScrolling();
     
     // Should be called periodically by the client. Started by startAnimationCallback(), stopped by stopAnimationCallback().
     void animationCallback(MonotonicTime);

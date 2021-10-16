@@ -140,7 +140,7 @@ void KeyboardScrollingAnimator::updateKeyboardScrollPosition(MonotonicTime curre
     m_scrollAnimator.scrollToPositionWithoutAnimation(newPosition);
 
     if (!m_scrollTriggeringKeyIsPressed && m_velocity.diagonalLengthSquared() < 1) {
-        m_scrollController.stopKeyboardScrolling();
+        m_scrollController.didStopKeyboardScrolling();
         m_velocity = { };
     }
 }
@@ -279,7 +279,7 @@ bool KeyboardScrollingAnimator::beginKeyboardScrollGesture(const PlatformKeyboar
     m_scrollTriggeringKeyIsPressed = true;
 
     m_idealPositionForMinimumTravel = m_scrollAnimator.currentPosition() + m_currentKeyboardScroll->offset;
-    m_scrollController.beginKeyboardScrolling();
+    m_scrollController.willBeginKeyboardScrolling();
 
     return true;
 }
