@@ -208,7 +208,7 @@ private:
 
 #if USE(GTK4)
             auto* surface = gtk_native_get_surface(GTK_NATIVE(window));
-            auto signalID = g_signal_connect(surface, "size-changed", G_CALLBACK(+[](GdkSurface*, int width, int height, GdkRectangle* targetGeometry) {
+            auto signalID = g_signal_connect(surface, "layout", G_CALLBACK(+[](GdkSurface*, int width, int height, GdkRectangle* targetGeometry) {
                 if (width == targetGeometry->width && height == targetGeometry->height)
                     RunLoop::current().stop();
             }), &geometry);

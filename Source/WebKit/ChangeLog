@@ -1,3 +1,21 @@
+2021-10-16  Lauro Moura  <lmoura@igalia.com>
+
+        [GTK4] Update signal name to monitor window resize
+        https://bugs.webkit.org/show_bug.cgi?id=231854
+
+        Reviewed by Carlos Garcia Campos.
+
+        Using size-changed (previous signal name) makes the MiniBrowser crash
+        running the WebDriver tests.
+
+        The signal name was changed in
+        https://gitlab.gnome.org/GNOME/gtk/-/commit/b7380543449ea679a2c912b66aab4855b2bb41f2,
+        as part of GTK 3.99.5.
+
+        Covered by existing tests.
+
+        * UIProcess/API/glib/WebKitUIClient.cpp:
+
 2021-10-15  Alex Christensen  <achristensen@webkit.org>
 
         Start using adattributiond on iOS
