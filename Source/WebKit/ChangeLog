@@ -1,3 +1,13 @@
+2021-10-15  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Realize Mac CMake build of WebCore and WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=231749
+
+        Reviewed by Alex Christensen.
+
+        * CMakeLists.txt:
+        * PlatformMac.cmake:
+
 2021-10-15  Eric Carlson  <eric.carlson@apple.com>
 
         [iOS] Support getDisplayMedia

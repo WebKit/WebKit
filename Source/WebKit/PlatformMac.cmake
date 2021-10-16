@@ -6,6 +6,7 @@ find_library(NETWORK_LIBRARY Network)
 find_library(SECURITY_LIBRARY Security)
 find_library(SECURITYINTERFACE_LIBRARY SecurityInterface)
 find_library(QUARTZ_LIBRARY Quartz)
+find_library(UNIFORMTYPEIDENTIFIERS_LIBRARY UniformTypeIdentifiers)
 find_library(AVFOUNDATION_LIBRARY AVFoundation)
 find_library(AVFAUDIO_LIBRARY AVFAudio HINTS ${AVFOUNDATION_LIBRARY}/Versions/*/Frameworks)
 find_library(DEVICEIDENTITY_LIBRARY DeviceIdentity HINTS ${CMAKE_OSX_SYSROOT}/System/Library/PrivateFrameworks)
@@ -22,13 +23,13 @@ include(Headers.cmake)
 
 list(APPEND WebKit_PRIVATE_LIBRARIES
     Accessibility
-    PAL
     WebKitLegacy
     ${APPLICATIONSERVICES_LIBRARY}
     ${CORESERVICES_LIBRARY}
     ${DEVICEIDENTITY_LIBRARY}
     ${NETWORK_LIBRARY}
     ${SECURITYINTERFACE_LIBRARY}
+    ${UNIFORMTYPEIDENTIFIERS_LIBRARY}
 )
 
 if (NOT AVFAUDIO_LIBRARY-NOTFOUND)
@@ -54,6 +55,8 @@ list(APPEND WebKit_SOURCES
 
     NetworkProcess/Downloads/cocoa/WKDownloadProgress.mm
 
+    Platform/IPC/cocoa/SharedFileHandleCocoa.cpp
+
     Shared/API/Cocoa/WKMain.mm
 
     Shared/Cocoa/DefaultWebBrowserChecks.mm
@@ -63,10 +66,13 @@ list(APPEND WebKit_SOURCES
     UIProcess/QuickLookThumbnailLoader.mm
     UIProcess/QuickLookThumbnailingSoftLink.mm
 
+    UIProcess/API/Cocoa/WKContentWorld.mm
     UIProcess/API/Cocoa/_WKAuthenticationExtensionsClientOutputs.mm
     UIProcess/API/Cocoa/_WKAuthenticatorAssertionResponse.mm
     UIProcess/API/Cocoa/_WKAuthenticatorAttestationResponse.mm
     UIProcess/API/Cocoa/_WKAuthenticatorResponse.mm
+    UIProcess/API/Cocoa/_WKResourceLoadStatisticsFirstParty.mm
+    UIProcess/API/Cocoa/_WKResourceLoadStatisticsThirdParty.mm
 
     UIProcess/Cocoa/PreferenceObserver.mm
     UIProcess/Cocoa/WKSafeBrowsingWarning.mm
@@ -83,12 +89,6 @@ list(APPEND WebKit_SOURCES
     WebProcess/cocoa/AudioSessionRoutingArbitrator.cpp
     WebProcess/cocoa/HandleXPCEndpointMessages.mm
     WebProcess/cocoa/LaunchServicesDatabaseManager.mm
-)
-
-list(APPEND WebKit_SOURCES
-    UIProcess/API/Cocoa/WKContentWorld.mm
-    UIProcess/API/Cocoa/_WKResourceLoadStatisticsFirstParty.mm
-    UIProcess/API/Cocoa/_WKResourceLoadStatisticsThirdParty.mm
 )
 
 list(APPEND WebKit_PRIVATE_INCLUDE_DIRECTORIES
@@ -111,6 +111,7 @@ list(APPEND WebKit_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/UIProcess/Inspector/mac"
     "${WEBKIT_DIR}/UIProcess/Launcher/mac"
     "${WEBKIT_DIR}/UIProcess/Media/cocoa"
+    "${WEBKIT_DIR}/UIProcess/Notifications/cocoa"
     "${WEBKIT_DIR}/UIProcess/PDF"
     "${WEBKIT_DIR}/UIProcess/RemoteLayerTree"
     "${WEBKIT_DIR}/UIProcess/RemoteLayerTree/cocoa"
@@ -139,14 +140,17 @@ list(APPEND WebKit_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/Shared/ios"
     "${WEBKIT_DIR}/Shared/cf"
     "${WEBKIT_DIR}/Shared/Cocoa"
+    "${WEBKIT_DIR}/Shared/Daemon"
     "${WEBKIT_DIR}/Shared/EntryPointUtilities/Cocoa/Daemon"
     "${WEBKIT_DIR}/Shared/EntryPointUtilities/Cocoa/XPCService"
     "${WEBKIT_DIR}/Shared/mac"
     "${WEBKIT_DIR}/Shared/mac/MediaFormatReader"
     "${WEBKIT_DIR}/Shared/Plugins/mac"
     "${WEBKIT_DIR}/Shared/Scrolling"
+    "${WEBKIT_DIR}/UIProcess/Cocoa/GroupActivities"
     "${WEBKIT_DIR}/UIProcess/Media"
     "${WEBKIT_DIR}/UIProcess/WebAuthentication/fido"
+    "${WEBKIT_DIR}/WebAuthnProcess/mac"
     "${WEBKIT_DIR}/WebProcess/WebAuthentication"
     "${WEBKIT_DIR}/WebProcess/cocoa"
     "${WEBKIT_DIR}/WebProcess/mac"
@@ -177,6 +181,11 @@ set(WebProcess_SOURCES
     ${XPCService_SOURCES}
 )
 
+set(NetworkProcess_SOURCES
+    NetworkProcess/EntryPoint/Cocoa/XPCService/NetworkServiceEntryPoint.mm
+    ${XPCService_SOURCES}
+)
+
 set(PluginProcess_SOURCES
     PluginProcess/EntryPoint/Cocoa/XPCService/PluginServiceEntryPoint.mm
     ${XPCService_SOURCES}
@@ -187,14 +196,17 @@ set(GPUProcess_SOURCES
     ${XPCService_SOURCES}
 )
 
-list(APPEND NetworkProcess_SOURCES
-    NetworkProcess/EntryPoint/Cocoa/XPCService/NetworkServiceEntryPoint.mm
+set(WebAuthnProcess_SOURCES
+    WebAuthnProcess/EntryPoint/Cocoa/XPCService/WebAuthnServiceEntryPoint.mm
     ${XPCService_SOURCES}
 )
 
 # FIXME: These should not have Development in production builds.
 set(WebProcess_OUTPUT_NAME com.apple.WebKit.WebContent.Development)
 set(NetworkProcess_OUTPUT_NAME com.apple.WebKit.Networking.Development)
+set(PluginProcess_OUTPUT_NAME com.apple.WebKit.Plugin.64.Development)
+set(GPUProcess_OUTPUT_NAME com.apple.WebKit.GPU.Development)
+set(WebAuthnProcess_OUTPUT_NAME com.apple.WebKit.WebAuthn.Development)
 
 set(WebProcess_INCLUDE_DIRECTORIES ${CMAKE_BINARY_DIR})
 set(NetworkProcess_INCLUDE_DIRECTORIES ${CMAKE_BINARY_DIR})
@@ -289,6 +301,12 @@ list(APPEND WebKit_PUBLIC_FRAMEWORK_HEADERS
     Shared/API/Cocoa/_WKRenderingProgressEvents.h
     Shared/API/Cocoa/_WKSameDocumentNavigationType.h
 
+    Shared/API/c/cf/WKErrorCF.h
+    Shared/API/c/cf/WKStringCF.h
+    Shared/API/c/cf/WKURLCF.h
+
+    Shared/API/c/cg/WKImageCG.h
+
     Shared/API/c/mac/WKBaseMac.h
     Shared/API/c/mac/WKCertificateInfoMac.h
     Shared/API/c/mac/WKMediaFormatReader.h
@@ -297,6 +315,11 @@ list(APPEND WebKit_PUBLIC_FRAMEWORK_HEADERS
     Shared/API/c/mac/WKURLResponseNS.h
     Shared/API/c/mac/WKWebArchiveRef.h
     Shared/API/c/mac/WKWebArchiveResource.h
+
+    UIProcess/API/C/mac/WKContextPrivateMac.h
+    UIProcess/API/C/mac/WKInspectorPrivateMac.h
+    UIProcess/API/C/mac/WKPagePrivateMac.h
+    UIProcess/API/C/mac/WKProtectionSpaceNS.h
 
     UIProcess/API/Cocoa/NSAttributedString.h
     UIProcess/API/Cocoa/NSAttributedStringPrivate.h
@@ -430,6 +453,7 @@ list(APPEND WebKit_PUBLIC_FRAMEWORK_HEADERS
     UIProcess/API/Cocoa/_WKInspectorExtension.h
     UIProcess/API/Cocoa/_WKInspectorExtensionDelegate.h
     UIProcess/API/Cocoa/_WKInspectorExtensionHost.h
+    UIProcess/API/Cocoa/_WKInspectorIBActions.h
     UIProcess/API/Cocoa/_WKInspectorPrivate.h
     UIProcess/API/Cocoa/_WKInspectorPrivateForTesting.h
     UIProcess/API/Cocoa/_WKInspectorWindow.h
@@ -782,14 +806,57 @@ function(WEBKIT_DEFINE_XPC_SERVICES)
         ${WEBKIT_DIR}/NetworkProcess/EntryPoint/Cocoa/XPCService/NetworkService/Info-OSX.plist
         ${NetworkProcess_OUTPUT_NAME})
 
+    if (ENABLE_PLUGIN_PROCESS)
+        WEBKIT_XPC_SERVICE(PluginProcess
+            "com.apple.WebKit.Plugin.64"
+            ${WEBKIT_DIR}/PluginProcess/EntryPoint/Cocoa/XPCService/PluginService.Info.plist
+            ${PluginProcess_OUTPUT_NAME})
+    endif ()
+
+    if (ENABLE_GPU_PROCESS)
+        WEBKIT_XPC_SERVICE(GPUProcess
+            "com.apple.WebKit.GPU"
+            ${WEBKIT_DIR}/GPUProcess/EntryPoint/Cocoa/XPCService/GPUService/Info-OSX.plist
+            ${GPUProcess_OUTPUT_NAME})
+    endif ()
+
+    if (ENABLE_WEB_AUTHN)
+        WEBKIT_XPC_SERVICE(WebAuthnProcess
+            "com.apple.WebKit.WebAuthn"
+            ${WEBKIT_DIR}/WebAuthnProcess/EntryPoint/Cocoa/XPCService/WebAuthnService/Info-OSX.plist
+            ${WebAuthnProcess_OUTPUT_NAME})
+    endif ()
+
     set(WebKit_RESOURCES_DIR ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebKit.framework/Versions/A/Resources)
     add_custom_command(OUTPUT ${WebKit_RESOURCES_DIR}/com.apple.WebProcess.sb COMMAND
         grep -o "^[^;]*" ${WEBKIT_DIR}/WebProcess/com.apple.WebProcess.sb.in | clang -E -P -w -include wtf/Platform.h -I ${WTF_FRAMEWORK_HEADERS_DIR} -I ${bmalloc_FRAMEWORK_HEADERS_DIR} -I ${WEBKIT_DIR} - > ${WebKit_RESOURCES_DIR}/com.apple.WebProcess.sb
         VERBATIM)
+    list(APPEND WebKit_SB_FILES ${WebKit_RESOURCES_DIR}/com.apple.WebProcess.sb)
+
     add_custom_command(OUTPUT ${WebKit_RESOURCES_DIR}/com.apple.WebKit.NetworkProcess.sb COMMAND
         grep -o "^[^;]*" ${WEBKIT_DIR}/NetworkProcess/mac/com.apple.WebKit.NetworkProcess.sb.in | clang -E -P -w -include wtf/Platform.h -I ${WTF_FRAMEWORK_HEADERS_DIR} -I ${bmalloc_FRAMEWORK_HEADERS_DIR} -I ${WEBKIT_DIR} - > ${WebKit_RESOURCES_DIR}/com.apple.WebKit.NetworkProcess.sb
         VERBATIM)
-    add_custom_target(WebKitSandboxProfiles ALL DEPENDS ${WebKit_RESOURCES_DIR}/com.apple.WebProcess.sb ${WebKit_RESOURCES_DIR}/com.apple.WebKit.NetworkProcess.sb)
+    list(APPEND WebKit_SB_FILES ${WebKit_RESOURCES_DIR}/com.apple.WebKit.NetworkProcess.sb)
+
+    if (ENABLE_PLUGIN_PROCESS)
+        add_custom_command(OUTPUT ${WebKit_RESOURCES_DIR}/com.apple.WebKit.plugin-common.sb COMMAND
+            grep -o "^[^;]*" ${WEBKIT_DIR}/PluginProcess/mac/com.apple.WebKit.plugin-common.sb.in | clang -E -P -w -include wtf/Platform.h -I ${WTF_FRAMEWORK_HEADERS_DIR} -I ${bmalloc_FRAMEWORK_HEADERS_DIR} -I ${WEBKIT_DIR} - > ${WebKit_RESOURCES_DIR}/com.apple.WebKit.plugin-common.sb
+            VERBATIM)
+        list(APPEND WebKit_SB_FILES ${WebKit_RESOURCES_DIR}/com.apple.WebKit.plugin-common.sb)
+    endif ()
+    if (ENABLE_GPU_PROCESS)
+        add_custom_command(OUTPUT ${WebKit_RESOURCES_DIR}/com.apple.WebKit.GPUProcess.sb COMMAND
+            grep -o "^[^;]*" ${WEBKIT_DIR}/GPUProcess/mac/com.apple.WebKit.GPUProcess.sb.in | clang -E -P -w -include wtf/Platform.h -I ${WTF_FRAMEWORK_HEADERS_DIR} -I ${bmalloc_FRAMEWORK_HEADERS_DIR} -I ${WEBKIT_DIR} - > ${WebKit_RESOURCES_DIR}/com.apple.WebKit.GPUProcess.sb
+            VERBATIM)
+        list(APPEND WebKit_SB_FILES ${WebKit_RESOURCES_DIR}/com.apple.WebKit.GPUProcess.sb)
+    endif ()
+    if (ENABLE_WEB_AUTHN)
+        add_custom_command(OUTPUT ${WebKit_RESOURCES_DIR}/com.apple.WebKit.WebAuthnProcess.sb COMMAND
+            grep -o "^[^;]*" ${WEBKIT_DIR}/WebAuthnProcess/mac/com.apple.WebKit.WebAuthnProcess.sb.in | clang -E -P -w -include wtf/Platform.h -I ${WTF_FRAMEWORK_HEADERS_DIR} -I ${bmalloc_FRAMEWORK_HEADERS_DIR} -I ${WEBKIT_DIR} - > ${WebKit_RESOURCES_DIR}/com.apple.WebKit.WebAuthnProcess.sb
+            VERBATIM)
+        list(APPEND WebKit_SB_FILES ${WebKit_RESOURCES_DIR}/com.apple.WebKit.WebAuthnProcess.sb)
+    endif ()
+    add_custom_target(WebKitSandboxProfiles ALL DEPENDS ${WebKit_SB_FILES})
     add_dependencies(WebKit WebKitSandboxProfiles)
 
     add_custom_command(OUTPUT ${WebKit_XPC_SERVICE_DIR}/com.apple.WebKit.WebContent.xpc/Contents/Resources/WebContentProcess.nib COMMAND

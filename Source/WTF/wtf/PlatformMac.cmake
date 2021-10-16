@@ -1,10 +1,12 @@
 find_library(COCOA_LIBRARY Cocoa)
 find_library(COREFOUNDATION_LIBRARY CoreFoundation)
 find_library(READLINE_LIBRARY Readline)
+find_library(SECURITY_LIBRARY Security)
 list(APPEND WTF_LIBRARIES
     ${COREFOUNDATION_LIBRARY}
     ${COCOA_LIBRARY}
     ${READLINE_LIBRARY}
+    ${SECURITY_LIBRARY}
 )
 
 list(APPEND WTF_PUBLIC_HEADERS
@@ -20,6 +22,7 @@ list(APPEND WTF_PUBLIC_HEADERS
     cocoa/RuntimeApplicationChecksCocoa.h
     cocoa/SoftLinking.h
     cocoa/SpanCocoa.h
+    cocoa/TollFreeBridging.h
     cocoa/TypeCastsCocoa.h
     cocoa/VectorCocoa.h
 

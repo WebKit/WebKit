@@ -385,8 +385,6 @@ set(angle_translator_lib_metal_sources
     "src/compiler/translator/TranslatorMetalDirect/Reference.h"
     "src/compiler/translator/TranslatorMetalDirect/RewriteCaseDeclarations.cpp"
     "src/compiler/translator/TranslatorMetalDirect/RewriteCaseDeclarations.h"
-    "src/compiler/translator/TranslatorMetalDirect/RewriteKeywords.cpp"
-    "src/compiler/translator/TranslatorMetalDirect/RewriteKeywords.h"
     "src/compiler/translator/TranslatorMetalDirect/RewriteOutArgs.cpp"
     "src/compiler/translator/TranslatorMetalDirect/RewriteOutArgs.h"
     "src/compiler/translator/TranslatorMetalDirect/RewritePipelines.cpp"

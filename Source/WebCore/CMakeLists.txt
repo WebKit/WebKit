@@ -2278,7 +2278,7 @@ endif ()
 
 WEBKIT_COPY_FILES(Copy_WebCoreTestSupportPrivateHeaders
     DESTINATION ${WebCore_PRIVATE_FRAMEWORK_HEADERS_DIR}/WebCoreTestSupport
-    FILES testing/js/WebCoreTestSupport.h
+    FILES testing/js/WebCoreTestSupport.h testing/cocoa/WebArchiveDumpSupport.h
     FLATTENED
 )
 list(APPEND WebCoreTestSupport_INTERFACE_DEPENDENCIES Copy_WebCoreTestSupportPrivateHeaders)
@@ -2288,7 +2288,7 @@ list(APPEND WebCoreTestSupport_PRIVATE_INCLUDE_DIRECTORIES ${WebCore_PRIVATE_INC
 list(APPEND WebCoreTestSupport_SYSTEM_INCLUDE_DIRECTORIES ${WebCore_SYSTEM_INCLUDE_DIRECTORIES})
 
 if (WebCore_LIBRARY_TYPE STREQUAL SHARED)
-    list(APPEND WebCoreTestSupport_LIBRARIES WebCore)
+    list(APPEND WebCoreTestSupport_PRIVATE_LIBRARIES WebCore)
 else ()
     list(APPEND WebCoreTestSupport_LIBRARIES ${WebCore_LIBRARIES})
     list(APPEND WebCoreTestSupport_PRIVATE_LIBRARIES ${WebCore_PRIVATE_LIBRARIES})
