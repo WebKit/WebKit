@@ -1,3 +1,15 @@
+2021-10-15  Antoine Quint  <graouts@webkit.org>
+
+        CSS Animations creation and sorting is incorrect and may lead to crash
+        https://bugs.webkit.org/show_bug.cgi?id=231812
+        <rdar://problem/82980774>
+
+        Reviewed by Dean Jackson.
+
+        Mark two progressions in a test that now passes entirely.
+
+        * web-platform-tests/css/css-animations/Element-getAnimations-dynamic-changes.tentative-expected.txt:
+
 2021-10-15  Kate Cheney  <katherine_cheney@apple.com>
 
         CSP: Implement src-elem and src-attr directives

@@ -134,9 +134,9 @@ static bool compareCSSAnimations(const CSSAnimation& a, const CSSAnimation& b)
     auto& bBackingAnimation = b.backingAnimation();
     for (size_t i = 0; i < cssAnimationList->size(); ++i) {
         auto& animation = cssAnimationList->animation(i);
-        if (animation == aBackingAnimation)
+        if (&animation == &aBackingAnimation)
             return true;
-        if (animation == bBackingAnimation)
+        if (&animation == &bBackingAnimation)
             return false;
     }
 

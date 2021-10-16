@@ -59,7 +59,8 @@ public:
     {
         return !m_directionSet && !m_durationSet && !m_fillModeSet
             && !m_nameSet && !m_playStateSet && !m_iterationCountSet
-            && !m_delaySet && !m_timingFunctionSet && !m_propertySet;
+            && !m_delaySet && !m_timingFunctionSet && !m_propertySet
+            && !m_isNone;
     }
 
     bool isEmptyOrZeroDuration() const

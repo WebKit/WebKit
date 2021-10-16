@@ -52,7 +52,6 @@ void AnimationList::fillUnsetProperties()
     FILL_UNSET_PROPERTY(isFillModeSet, fillMode, setFillMode);
     FILL_UNSET_PROPERTY(isIterationCountSet, iterationCount, setIterationCount);
     FILL_UNSET_PROPERTY(isPlayStateSet, playState, setPlayState);
-    FILL_UNSET_PROPERTY(isNameSet, name, setName);
     FILL_UNSET_PROPERTY(isTimingFunctionSet, timingFunction, setTimingFunction);
     FILL_UNSET_PROPERTY(isPropertySet, property, setProperty);
 }

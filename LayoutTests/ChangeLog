@@ -1,3 +1,18 @@
+2021-10-15  Antoine Quint  <graouts@webkit.org>
+
+        CSS Animations creation and sorting is incorrect and may lead to crash
+        https://bugs.webkit.org/show_bug.cgi?id=231812
+        <rdar://problem/82980774>
+
+        Reviewed by Dean Jackson.
+
+        Add a new test that used to crash before the source change.
+
+        * animations/animation-remove-element-crash.html: Remove a line that was now a failure since only a
+        single animation should be created.
+        * webanimations/css-animation-sorting-crash-expected.txt: Added.
+        * webanimations/css-animation-sorting-crash.html: Added.
+
 2021-10-15  Antti Koivisto  <antti@apple.com>
 
         [LFC][Integration] Enable inline boxes with borders
