@@ -93,9 +93,6 @@ public:
     LegacyInlineBox* firstLeafDescendant() const;
     LegacyInlineBox* lastLeafDescendant() const;
 
-    typedef void (*CustomInlineBoxRangeReverse)(void* userData, Vector<LegacyInlineBox*>::iterator first, Vector<LegacyInlineBox*>::iterator last);
-    void collectLeafBoxesInLogicalOrder(Vector<LegacyInlineBox*>&, CustomInlineBoxRangeReverse customReverseImplementation = nullptr, void* userData = nullptr) const;
-
     void setConstructed() final
     {
         LegacyInlineBox::setConstructed();

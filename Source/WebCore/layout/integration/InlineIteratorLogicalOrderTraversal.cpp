@@ -92,48 +92,11 @@ TextBoxIterator nextTextBoxInLogicalOrder(const TextBoxIterator& textBox, TextLo
 static LineLogicalOrderCache makeLineLogicalOrderCache(const LineIterator& line)
 {
     auto cache = WTF::makeUnique<LineLogicalOrderCacheData>();
+
     cache->line = line;
-
-    auto& boxes = cache->boxes;
-
-    unsigned char minLevel = 128;
-    unsigned char maxLevel = 0;
-
-    for (auto box = line->firstRun(); box; box = box.traverseNextOnLine()) {
-        minLevel = std::min(minLevel, box->bidiLevel());
-        maxLevel = std::max(maxLevel, box->bidiLevel());
-        boxes.append(box);
-    }
-
-    if (!maxLevel)
-        return cache;
-
-    if (line->containingBlock().style().rtlOrdering() == Order::Visual)
-        return cache;
-
-    // Reverse of reordering of the line (L2 according to Bidi spec):
-    // L2. From the highest level found in the text to the lowest odd level on each line,
-    // reverse any contiguous sequence of characters that are at that level or higher.
-
-    // Reversing the reordering of the line is only done up to the lowest odd level.
-    if (!(minLevel % 2))
-        ++minLevel;
-
-    auto end = boxes.end();
-    for (; minLevel <= maxLevel; ++minLevel) {
-        auto box = boxes.begin();
-        while (box < end) {
-            while (box < end && (*box)->bidiLevel() < minLevel)
-                ++box;
-
-            auto first = box;
-            while (box < end && (*box)->bidiLevel() >= minLevel)
-                ++box;
-
-            auto last = box;
-            std::reverse(first, last);
-        }
-    }
+    cache->boxes = leafBoxesInLogicalOrder(line, [](auto first, auto last) {
+        std::reverse(first, last);
+    });
 
     return cache;
 }
@@ -178,9 +141,6 @@ LeafBoxIterator nextLeafOnLineInLogicalOrder(const LeafBoxIterator& box, LineLog
 {
     updateLineLogicalOrderCacheIfNeeded(box, cache);
 
-    if (!cache)
-        return box->nextOnLine();
-
     cache->index++;
 
     if (cache->index < cache->boxes.size())
@@ -192,9 +152,6 @@ LeafBoxIterator nextLeafOnLineInLogicalOrder(const LeafBoxIterator& box, LineLog
 LeafBoxIterator previousLeafOnLineInLogicalOrder(const LeafBoxIterator& box, LineLogicalOrderCache& cache)
 {
     updateLineLogicalOrderCacheIfNeeded(box, cache);
-
-    if (!cache)
-        return box->previousOnLine();
 
     if (!cache->index)
         return { };
