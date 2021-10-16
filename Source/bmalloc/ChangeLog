@@ -1,3 +1,19 @@
+2021-10-15  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [libpas] Enable libpas on macOS
+        https://bugs.webkit.org/show_bug.cgi?id=231815
+
+        Reviewed by Saam Barati.
+
+        Enabling libpas on x64 macOS. Previously, we enabled it only on AppleSilicon.
+        This helps stressing libpas on fuzzers more. And it offers large performance
+        improvement.
+
+        1. Speedometer2 is 2.1% improved on low-end macOS (MBA8,2) and 1.7% improved on high-end macOS (MBP14,1).
+        2. JetStream2 is neutral on both.
+
+        * bmalloc/BPlatform.h:
+
 2021-10-14  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [libpas] Use `enum { ... }` instead of `static const size_t` for constant values used for array size
