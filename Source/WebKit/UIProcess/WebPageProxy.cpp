@@ -4933,11 +4933,9 @@ void WebPageProxy::didCommitLoadForFrame(FrameIdentifier frameID, FrameInfoData&
     // plugin is handling page scaling itself) so we should reset it to the default
     // for standard main frame loads.
     if (frame->isMainFrame()) {
-        if (frameLoadType == FrameLoadType::Standard) {
-            m_pageScaleFactor = 1;
-            m_pluginScaleFactor = 1;
-            m_mainFramePluginHandlesPageScaleGesture = false;
-        }
+        m_pageScaleFactor = 1;
+        m_pluginScaleFactor = 1;
+        m_mainFramePluginHandlesPageScaleGesture = false;
 #if ENABLE(POINTER_LOCK)
         requestPointerUnlock();
 #endif
