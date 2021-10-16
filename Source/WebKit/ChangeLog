@@ -1,5 +1,22 @@
 2021-10-15  Alex Christensen  <achristensen@webkit.org>
 
+        Start using adattributiond on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=231829
+
+        Reviewed by Brady Eidson.
+
+        This makes one small change to use adattributiond on iOS by default instead of the network process.
+        The rest of this patch is to keep the tests doing what they used to.
+
+        * UIProcess/API/C/WKWebsiteDataStoreConfigurationRef.cpp:
+        (WKWebsiteDataStoreConfigurationCopyPCMMachServiceName):
+        (WKWebsiteDataStoreConfigurationSetPCMMachServiceName):
+        * UIProcess/API/C/WKWebsiteDataStoreConfigurationRef.h:
+        * UIProcess/WebsiteData/WebsiteDataStoreConfiguration.cpp:
+        (WebKit::WebsiteDataStoreConfiguration::WebsiteDataStoreConfiguration):
+
+2021-10-15  Alex Christensen  <achristensen@webkit.org>
+
         Use attributedBundleIdentifier instead of applicationBundleIdentifier when present for handling PCM attribution
         https://bugs.webkit.org/show_bug.cgi?id=231827
 

@@ -179,3 +179,13 @@ void WKWebsiteDataStoreConfigurationSetStaleWhileRevalidateEnabled(WKWebsiteData
 {
     WebKit::toImpl(configuration)->setStaleWhileRevalidateEnabled(enabled);
 }
+
+WKStringRef WKWebsiteDataStoreConfigurationCopyPCMMachServiceName(WKWebsiteDataStoreConfigurationRef configuration)
+{
+    return WebKit::toCopiedAPI(WebKit::toImpl(configuration)->pcmMachServiceName());
+}
+
+void WKWebsiteDataStoreConfigurationSetPCMMachServiceName(WKWebsiteDataStoreConfigurationRef configuration, WKStringRef name)
+{
+    WebKit::toImpl(configuration)->setPCMMachServiceName(name ? WebKit::toImpl(name)->string() : String());
+}

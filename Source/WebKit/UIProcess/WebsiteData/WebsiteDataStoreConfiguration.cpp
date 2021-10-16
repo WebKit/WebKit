@@ -51,7 +51,9 @@ WebsiteDataStoreConfiguration::WebsiteDataStoreConfiguration(IsPersistent isPers
 #if ENABLE(ARKIT_INLINE_PREVIEW)
         setModelElementCacheDirectory(WebsiteDataStore::defaultModelElementCacheDirectory());
 #endif
-        // FIXME: Give m_pcmMachServiceName a default value and remove PCM::ManagerInterface once rdar://80701098 is closed.
+#if PLATFORM(IOS)
+        setPCMMachServiceName("com.apple.webkit.adattributiond.service");
+#endif
     }
 }
 

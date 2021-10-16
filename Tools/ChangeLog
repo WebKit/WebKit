@@ -1,5 +1,22 @@
 2021-10-15  Alex Christensen  <achristensen@webkit.org>
 
+        Start using adattributiond on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=231829
+
+        Reviewed by Brady Eidson.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/EventAttribution.mm:
+        (TestWebKitAPI::configurationWithoutUsingDaemon):
+        (TestWebKitAPI::webViewWithoutUsingDaemon):
+        (TestWebKitAPI::runBasicPCMTest):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/PrivateClickMeasurement.mm:
+        (webViewWithResourceLoadStatisticsEnabledInNetworkProcess):
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::configureWebsiteDataStoreTemporaryDirectories):
+
+2021-10-15  Alex Christensen  <achristensen@webkit.org>
+
         Use attributedBundleIdentifier instead of applicationBundleIdentifier when present for handling PCM attribution
         https://bugs.webkit.org/show_bug.cgi?id=231827
 

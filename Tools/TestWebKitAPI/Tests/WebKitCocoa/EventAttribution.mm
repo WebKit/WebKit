@@ -120,6 +120,20 @@ static void clearState()
     [[NSFileManager defaultManager] removeItemAtURL:adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]).get()._resourceLoadStatisticsDirectory error:nil];
 }
 
+static RetainPtr<WKWebViewConfiguration> configurationWithoutUsingDaemon()
+{
+    auto dataStoreConfiguration = adoptNS([_WKWebsiteDataStoreConfiguration new]);
+    dataStoreConfiguration.get().pcmMachServiceName = nil;
+    auto configuration = adoptNS([WKWebViewConfiguration new]);
+    configuration.get().websiteDataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:dataStoreConfiguration.get()]).get();
+    return configuration;
+}
+
+static RetainPtr<WKWebView> webViewWithoutUsingDaemon()
+{
+    return adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:configurationWithoutUsingDaemon().get()]);
+}
+
 void runBasicPCMTest(WKWebViewConfiguration *configuration, Function<void(WKWebView *, const HTTPServer&)>&& addAttributionToWebView, bool setTestAppBundleID = true)
 {
     clearState();
@@ -156,7 +170,7 @@ void runBasicPCMTest(WKWebViewConfiguration *configuration, Function<void(WKWebV
     }, HTTPServer::Protocol::Https);
     NSURL *serverURL = server.request().URL;
 
-    auto webView = configuration ? adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration]) : adoptNS([WKWebView new]);
+    auto webView = configuration ? adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration]) : webViewWithoutUsingDaemon();
     webView.get().navigationDelegate = delegateAllowingAllTLS();
     addAttributionToWebView(webView.get(), server);
     [[webView configuration].websiteDataStore _setResourceLoadStatisticsEnabled:YES];
@@ -310,7 +324,7 @@ TEST(PrivateClickMeasurement, FraudPrevention)
     }, HTTPServer::Protocol::Https);
     NSURL *serverURL = server.request().URL;
 
-    auto webView = adoptNS([WKWebView new]);
+    auto webView = webViewWithoutUsingDaemon();
     webView.get().navigationDelegate = delegateAllowingAllTLS();
     [webView _addEventAttributionWithSourceID:42 destinationURL:exampleURL() sourceDescription:@"test source description" purchaser:@"test purchaser" reportEndpoint:serverURL optionalNonce:@"ABCDEFabcdef0123456789" applicationBundleID:@"test.bundle.id" ephemeral:NO];
     [[webView configuration].websiteDataStore _setResourceLoadStatisticsEnabled:YES];
@@ -362,7 +376,8 @@ TEST(PrivateClickMeasurement, DatabaseLocation)
     @autoreleasepool {
         auto dataStoreConfiguration = adoptNS([_WKWebsiteDataStoreConfiguration new]);
         dataStoreConfiguration.get().privateClickMeasurementStorageDirectory = tempDir;
-        auto viewConfiguration = adoptNS([WKWebViewConfiguration new]);
+        dataStoreConfiguration.get().pcmMachServiceName = nil;
+        auto viewConfiguration = configurationWithoutUsingDaemon();
         auto dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:dataStoreConfiguration.get()]);
         viewConfiguration.get().websiteDataStore = dataStore.get();
         runBasicPCMTest(viewConfiguration.get(), [](WKWebView *webView, const HTTPServer& server) {
@@ -506,7 +521,7 @@ static void attemptConnectionInProcessWithoutEntitlement()
 
 TEST(PrivateClickMeasurement, DaemonBasicFunctionality)
 {
-    auto [tempDir, configuration] = setUpDaemon(adoptNS([WKWebViewConfiguration new]).autorelease());
+    auto [tempDir, configuration] = setUpDaemon(configurationWithoutUsingDaemon().autorelease());
     attemptConnectionInProcessWithoutEntitlement();
     runBasicPCMTest(configuration, [](WKWebView *webView, const HTTPServer& server) {
         [webView _addEventAttributionWithSourceID:42 destinationURL:exampleURL() sourceDescription:@"test source description" purchaser:@"test purchaser" reportEndpoint:server.request().URL optionalNonce:nil applicationBundleID:@"test.bundle.id" ephemeral:NO];

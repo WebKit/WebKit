@@ -78,6 +78,9 @@ WK_EXPORT void WKWebsiteDataStoreConfigurationSetTestingSessionEnabled(WKWebsite
 WK_EXPORT bool WKWebsiteDataStoreConfigurationGetStaleWhileRevalidateEnabled(WKWebsiteDataStoreConfigurationRef configuration);
 WK_EXPORT void WKWebsiteDataStoreConfigurationSetStaleWhileRevalidateEnabled(WKWebsiteDataStoreConfigurationRef configuration, bool enabled);
 
+WK_EXPORT WKStringRef WKWebsiteDataStoreConfigurationCopyPCMMachServiceName(WKWebsiteDataStoreConfigurationRef configuration);
+WK_EXPORT void WKWebsiteDataStoreConfigurationSetPCMMachServiceName(WKWebsiteDataStoreConfigurationRef configuration, WKStringRef name);
+
 #ifdef __cplusplus
 }
 #endif
