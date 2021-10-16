@@ -49,7 +49,7 @@ public:
 
     RefPtr<MediaSample> convertMediaSample(MediaSample&, const IntSize&);
     RefPtr<MediaSample> createMediaSample(CGImageRef, const MediaTime&, const IntSize&, MediaSample::VideoRotation = MediaSample::VideoRotation::None, bool mirrored = false);
-    RefPtr<MediaSample> createMediaSample(CMSampleBufferRef, const IntSize&, MediaSample::VideoRotation = MediaSample::VideoRotation::None, bool mirrored = false);
+    RefPtr<MediaSample> createMediaSample(CMSampleBufferRef, const MediaTime&, const IntSize&, MediaSample::VideoRotation = MediaSample::VideoRotation::None, bool mirrored = false);
 
 #if !PLATFORM(MACCATALYST)
     WEBCORE_EXPORT RefPtr<MediaSample> createMediaSample(IOSurfaceRef, const MediaTime&, const IntSize&, MediaSample::VideoRotation = MediaSample::VideoRotation::None, bool mirrored = false);
@@ -67,7 +67,7 @@ private:
     RetainPtr<CMSampleBufferRef> createCMSampleBuffer(IOSurfaceRef, const MediaTime&, const IntSize&);
 #endif
 
-    RetainPtr<CMSampleBufferRef> convertCMSampleBuffer(CMSampleBufferRef, const IntSize&);
+    RetainPtr<CMSampleBufferRef> convertCMSampleBuffer(CMSampleBufferRef, const IntSize&, const MediaTime* = nullptr);
     RetainPtr<CMSampleBufferRef> createCMSampleBuffer(CVPixelBufferRef, const MediaTime&, const IntSize&);
     RetainPtr<CMSampleBufferRef> createCMSampleBuffer(CGImageRef, const MediaTime&, const IntSize&);
 

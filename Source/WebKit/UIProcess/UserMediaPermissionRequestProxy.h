@@ -45,8 +45,10 @@ public:
 
     void allow(const String& audioDeviceUID, const String& videoDeviceUID);
     void allow();
-    void prompt();
-    void doDefaultAction() { prompt(); }
+    void promptForGetUserMedia();
+    void promptForGetDisplayMedia();
+    bool canPromptForGetDisplayMedia();
+    void doDefaultAction();
     enum class UserMediaAccessDenialReason { NoConstraints, UserMediaDisabled, NoCaptureDevices, InvalidConstraint, HardwareError, PermissionDenied, OtherFailure };
     void deny(UserMediaAccessDenialReason = UserMediaAccessDenialReason::UserMediaDisabled);
 

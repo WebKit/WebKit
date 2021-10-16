@@ -34,10 +34,11 @@
 
 #if PLATFORM(MAC)
 #include "CGDisplayStreamScreenCaptureSource.h"
-#include <CoreGraphics/CGDirectDisplay.h>
 #endif
 
-#include "CoreVideoSoftLink.h"
+#if PLATFORM(IOS)
+#include "ReplayKitCaptureSource.h"
+#endif
 
 namespace WebCore {
 
@@ -61,6 +62,8 @@ void DisplayCaptureManagerCocoa::updateDisplayCaptureDevices()
 {
 #if PLATFORM(MAC)
     CGDisplayStreamScreenCaptureSource::screenCaptureDevices(m_devices);
+#elif PLATFORM(IOS)
+    ReplayKitCaptureSource::screenCaptureDevices(m_devices);
 #endif
 }
 

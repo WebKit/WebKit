@@ -163,6 +163,9 @@
 /* Allow button title in user media prompt */
 "Allow (usermedia)" = "Allow";
 
+/* Allow button title in screen sharing prompt */
+"Allow (screensharing)" = "Allow";
+
 /* Message for requesting cross-site cookie and website data access. */
 "Allow “%@” and “%@” to use cookies and website data while browsing “%@”?" = "Allow “%@” and “%@” to use cookies and website data while browsing “%@”?";
 
@@ -183,6 +186,9 @@
 
 /* Message for user microphone access prompt */
 "Allow “%@” to use your microphone?" = "Allow “%@” to use your microphone?";
+
+/* Message for screen sharing prompt. */
+"Allow “%@” to observe your screen?" = "Allow “%@” to observe your screen?";
 
 /* WKErrorUnknown description */
 "An unknown error occurred" = "An unknown error occurred";
@@ -390,6 +396,9 @@
 
 /* Disallow button title in user media prompt */
 "Don’t Allow (usermedia)" = "Don’t Allow";
+
+/* Disallow button title in screen sharing prompt */
+"Don’t Allow (screensharing)" = "Don’t Allow";
 
 /* Download Audio To Disk context menu item */
 "Download Audio" = "Download Audio";

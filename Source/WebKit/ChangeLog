@@ -1,3 +1,33 @@
+2021-10-15  Eric Carlson  <eric.carlson@apple.com>
+
+        [iOS] Support getDisplayMedia
+        https://bugs.webkit.org/show_bug.cgi?id=231455
+        <rdar://problem/84044495>
+
+        Reviewed by Youenn Fablet and Jer Noble.
+
+        * UIProcess/Cocoa/MediaPermissionUtilities.mm:
+        (WebKit::alertMessageText): Add text for default screen capture prompt.
+        (WebKit::allowButtonText): Ditto.
+        (WebKit::doNotAllowButtonText): Ditto.
+
+        * UIProcess/Cocoa/UIDelegate.mm:
+        (WebKit::UIDelegate::UIClient::decidePolicyForUserMediaPermissionRequest): Call
+        default getDisplayMedia prompt if the delegate doesn't implement the private
+        prompt selector.
+
+        * UIProcess/MediaPermissionUtilities.h:
+        * UIProcess/UserMediaPermissionRequestProxy.cpp:
+        (WebKit::UserMediaPermissionRequestProxy::promptForGetDisplayMedia): New default
+        getDisplayMedia prompt.
+        (WebKit::UserMediaPermissionRequestProxy::promptForGetUserMedia): 
+        (WebKit::UserMediaPermissionRequestProxy::doDefaultAction): Call promptForGetDisplayMedia
+        or promptForGetUserMedia according to the request type.
+        (WebKit::UserMediaPermissionRequestProxy::canPromptForGetDisplayMedia):
+        (WebKit::UserMediaPermissionRequestProxy::prompt): Deleted.
+        * UIProcess/UserMediaPermissionRequestProxy.h:
+        (WebKit::UserMediaPermissionRequestProxy::doDefaultAction): Deleted.
+
 2021-10-15  Jer Noble  <jer.noble@apple.com>
 
         [iOS] Screen Sharing doesn't switch to AirPlay when <video> enters fullscreen mode

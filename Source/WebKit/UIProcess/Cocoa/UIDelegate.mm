@@ -1117,6 +1117,11 @@ void UIDelegate::UIClient::decidePolicyForUserMediaPermissionRequest(WebPageProx
         return;
     }
 
+    if (request.requiresDisplayCapture() && request.canPromptForGetDisplayMedia()) {
+        request.promptForGetDisplayMedia();
+        return;
+    }
+
     // FIXME: Provide a specific delegate for display capture.
     if (!request.requiresDisplayCapture() && respondsToRequestMediaCapturePermission) {
         auto checker = CompletionHandlerCallChecker::create(delegate, @selector(webView:requestMediaCapturePermissionForOrigin:initiatedByFrame:type:decisionHandler:));
@@ -1127,7 +1132,7 @@ void UIDelegate::UIClient::decidePolicyForUserMediaPermissionRequest(WebPageProx
 
             switch (decision) {
             case WKPermissionDecisionPrompt:
-                protectedRequest->prompt();
+                protectedRequest->promptForGetUserMedia();
                 break;
             case WKPermissionDecisionGrant: {
                 const String& videoDeviceUID = protectedRequest->requiresVideoCapture() ? protectedRequest->videoDeviceUIDs().first() : String();

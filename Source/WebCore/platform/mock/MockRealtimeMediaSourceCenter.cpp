@@ -43,7 +43,7 @@
 
 #if PLATFORM(COCOA)
 #include "CoreAudioCaptureSource.h"
-#include "DisplayCaptureSourceMac.h"
+#include "DisplayCaptureSourceCocoa.h"
 #include "MockRealtimeVideoSourceMac.h"
 #endif
 
@@ -115,14 +115,14 @@ private:
 };
 
 #if PLATFORM(MAC)
-class MockDisplayCapturer final : public DisplayCaptureSourceMac::Capturer {
+class MockDisplayCapturer final : public DisplayCaptureSourceCocoa::Capturer {
 public:
     explicit MockDisplayCapturer(const CaptureDevice&);
 
 private:
     bool start() final;
     void stop() final  { m_source->stop(); }
-    DisplayCaptureSourceMac::DisplayFrameType generateFrame() final;
+    DisplayCaptureSourceCocoa::DisplayFrameType generateFrame() final;
     RealtimeMediaSourceSettings::DisplaySurfaceType surfaceType() const final { return RealtimeMediaSourceSettings::DisplaySurfaceType::Monitor; }
     void commitConfiguration(const RealtimeMediaSourceSettings&) final;
     CaptureDevice::DeviceType deviceType() const final { return CaptureDevice::DeviceType::Screen; }
@@ -152,7 +152,7 @@ void MockDisplayCapturer::commitConfiguration(const RealtimeMediaSourceSettings&
     m_settings = settings;
 }
 
-DisplayCaptureSourceMac::DisplayFrameType MockDisplayCapturer::generateFrame()
+DisplayCaptureSourceCocoa::DisplayFrameType MockDisplayCapturer::generateFrame()
 {
     if (auto* imageBuffer = m_source->imageBuffer())
         return imageBuffer->copyNativeImage();
@@ -186,7 +186,7 @@ public:
         case CaptureDevice::DeviceType::Screen:
         case CaptureDevice::DeviceType::Window:
 #if PLATFORM(MAC)
-            return DisplayCaptureSourceMac::create(UniqueRef<DisplayCaptureSourceMac::Capturer>(makeUniqueRef<MockDisplayCapturer>(device)), device, constraints);
+            return DisplayCaptureSourceCocoa::create(UniqueRef<DisplayCaptureSourceCocoa::Capturer>(makeUniqueRef<MockDisplayCapturer>(device)), device, constraints);
 #elif USE(GSTREAMER)
             return MockDisplayCaptureSourceGStreamer::create(device, constraints);
 #else

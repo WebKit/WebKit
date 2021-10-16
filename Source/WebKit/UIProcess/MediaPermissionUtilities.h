@@ -54,7 +54,8 @@ enum class MediaPermissionReason {
     Microphone,
     DeviceOrientation,
     Geolocation,
-    SpeechRecognition
+    SpeechRecognition,
+    ScreenCapture
 };
 
 #if PLATFORM(COCOA)

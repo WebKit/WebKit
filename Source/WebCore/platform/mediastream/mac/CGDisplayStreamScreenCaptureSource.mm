@@ -75,7 +75,7 @@ static std::optional<CGDirectDisplayID> updateDisplayID(CGDirectDisplayID displa
     return std::nullopt;
 }
 
-Expected<UniqueRef<DisplayCaptureSourceMac::Capturer>, String> CGDisplayStreamScreenCaptureSource::create(const String& deviceID)
+Expected<UniqueRef<DisplayCaptureSourceCocoa::Capturer>, String> CGDisplayStreamScreenCaptureSource::create(const String& deviceID)
 {
     auto displayID = parseInteger<uint32_t>(deviceID);
     if (!displayID)
@@ -85,7 +85,7 @@ Expected<UniqueRef<DisplayCaptureSourceMac::Capturer>, String> CGDisplayStreamSc
     if (!actualDisplayID)
         return makeUnexpected("Invalid display ID"_s);
 
-    return UniqueRef<DisplayCaptureSourceMac::Capturer>(makeUniqueRef<CGDisplayStreamScreenCaptureSource>(actualDisplayID.value()));
+    return UniqueRef<DisplayCaptureSourceCocoa::Capturer>(makeUniqueRef<CGDisplayStreamScreenCaptureSource>(actualDisplayID.value()));
 }
 
 CGDisplayStreamScreenCaptureSource::CGDisplayStreamScreenCaptureSource(uint32_t displayID)

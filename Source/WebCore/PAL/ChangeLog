@@ -1,3 +1,15 @@
+2021-10-15  Eric Carlson  <eric.carlson@apple.com>
+
+        [iOS] Support getDisplayMedia
+        https://bugs.webkit.org/show_bug.cgi?id=231455
+        <rdar://problem/84044495>
+
+        Reviewed by Youenn Fablet and Jer Noble.
+
+        * PAL.xcodeproj/project.pbxproj:
+        * pal/ios/ReplayKitSoftLink.h: Added.
+        * pal/ios/ReplayKitSoftLink.mm: Added.
+
 2021-10-14  Alex Christensen  <achristensen@webkit.org>
 
         Fix non-internal iOS builds after r284220

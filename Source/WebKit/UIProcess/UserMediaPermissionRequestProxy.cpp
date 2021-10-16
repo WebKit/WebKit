@@ -140,7 +140,25 @@ String convertEnumerationToString(UserMediaPermissionRequestProxy::UserMediaAcce
     return values[static_cast<size_t>(enumerationValue)];
 }
 
-void UserMediaPermissionRequestProxy::prompt()
+void UserMediaPermissionRequestProxy::promptForGetDisplayMedia()
+{
+#if ENABLE(MEDIA_STREAM) && PLATFORM(COCOA)
+    ASSERT(m_manager && canPromptForGetDisplayMedia());
+    if (!m_manager || !canPromptForGetDisplayMedia()) {
+        deny(UserMediaAccessDenialReason::PermissionDenied);
+        return;
+    }
+
+    alertForPermission(m_manager->page(), MediaPermissionReason::ScreenCapture, topLevelDocumentSecurityOrigin().data(), [this, protectedThis = Ref { *this }](bool granted) {
+        if (!granted)
+            deny(UserMediaAccessDenialReason::PermissionDenied);
+        else
+            allow();
+    });
+#endif
+}
+
+void UserMediaPermissionRequestProxy::promptForGetUserMedia()
 {
 #if ENABLE(MEDIA_STREAM) && PLATFORM(COCOA)
     ASSERT(m_manager);
@@ -149,23 +167,42 @@ void UserMediaPermissionRequestProxy::prompt()
         return;
     }
 
-    if (requiresDisplayCapture()) {
-        // FIXME: Implement getDisplayMedia prompt, for now deny.
-        deny(UserMediaAccessDenialReason::PermissionDenied);
-        return;
-    }
-
     MediaPermissionReason reason = MediaPermissionReason::Camera;
     if (requiresAudioCapture())
         reason = requiresVideoCapture() ? MediaPermissionReason::CameraAndMicrophone : MediaPermissionReason::Microphone;
+
     alertForPermission(m_manager->page(), reason, topLevelDocumentSecurityOrigin().data(), [this, protectedThis = Ref { *this }](bool granted) {
         if (!granted)
             deny(UserMediaAccessDenialReason::PermissionDenied);
         else
             allow();
     });
+#endif
+}
+
+void UserMediaPermissionRequestProxy::doDefaultAction()
+{
+#if ENABLE(MEDIA_STREAM) && PLATFORM(COCOA)
+    if (requiresDisplayCapture()) {
+        if (!canPromptForGetDisplayMedia()) {
+            deny(UserMediaAccessDenialReason::PermissionDenied);
+            return;
+        }
+
+        promptForGetDisplayMedia();
+    } else
+        promptForGetUserMedia();
 #else
     deny();
+#endif
+}
+
+bool UserMediaPermissionRequestProxy::canPromptForGetDisplayMedia()
+{
+#if ENABLE(MEDIA_STREAM) && PLATFORM(IOS)
+    return true;
+#else
+    return false;
 #endif
 }
 

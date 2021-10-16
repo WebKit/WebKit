@@ -27,6 +27,8 @@
 
 #if PLATFORM(COCOA)
 
+#include <CoreAudio/CoreAudioTypes.h>
+
 #if USE(APPLE_INTERNAL_SDK)
 #include <CoreAudio/AudioHardwarePriv.h>
 #else

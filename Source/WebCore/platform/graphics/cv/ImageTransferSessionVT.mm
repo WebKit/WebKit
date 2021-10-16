@@ -108,7 +108,7 @@ RetainPtr<CVPixelBufferRef> ImageTransferSessionVT::convertPixelBuffer(CVPixelBu
     return outputBuffer;
 }
 
-RetainPtr<CMSampleBufferRef> ImageTransferSessionVT::convertCMSampleBuffer(CMSampleBufferRef sourceBuffer, const IntSize& size)
+RetainPtr<CMSampleBufferRef> ImageTransferSessionVT::convertCMSampleBuffer(CMSampleBufferRef sourceBuffer, const IntSize& size, const MediaTime* sampleTime)
 {
     if (!sourceBuffer)
         return nullptr;
@@ -140,6 +140,14 @@ RetainPtr<CMSampleBufferRef> ImageTransferSessionVT::convertCMSampleBuffer(CMSam
         if (status != noErr) {
             RELEASE_LOG(Media, "ImageTransferSessionVT::convertCMSampleBuffer: CMSampleBufferGetSampleTimingInfoArray failed with error code: %d", static_cast<int>(status));
             return nullptr;
+        }
+
+        if (sampleTime) {
+            auto cmTime = PAL::toCMTime(*sampleTime);
+            for (auto& timing : timingInfoArray) {
+                timing.presentationTimeStamp = cmTime;
+                timing.decodeTimeStamp = cmTime;
+            }
         }
         timeingInfoPtr = timingInfoArray.data();
     }
@@ -287,9 +295,9 @@ RefPtr<MediaSample> ImageTransferSessionVT::createMediaSample(CGImageRef image, 
     return MediaSampleAVFObjC::create(sampleBuffer.get(), rotation, mirrored);
 }
 
-RefPtr<MediaSample> ImageTransferSessionVT::createMediaSample(CMSampleBufferRef buffer, const IntSize& size, MediaSample::VideoRotation rotation, bool mirrored)
+RefPtr<MediaSample> ImageTransferSessionVT::createMediaSample(CMSampleBufferRef buffer, const MediaTime& sampleTime, const IntSize& size, MediaSample::VideoRotation rotation, bool mirrored)
 {
-    auto sampleBuffer = convertCMSampleBuffer(buffer, size);
+    auto sampleBuffer = convertCMSampleBuffer(buffer, size, &sampleTime);
     if (!sampleBuffer)
         return nullptr;
 
