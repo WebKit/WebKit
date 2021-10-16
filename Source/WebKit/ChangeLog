@@ -1,3 +1,15 @@
+2021-10-15  Per Arne Vollan  <pvollan@apple.com>
+
+        [macOS] Add telemetry for system calls in WP
+        https://bugs.webkit.org/show_bug.cgi?id=231836
+        <rdar://problem/84317842>
+
+        Reviewed by Brent Fulgham.
+
+        Add telemetry for system calls in WP to understand in which context they are being used.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2021-10-15  Ross Kirsling  <ross.kirsling@sony.com>
 
         Realize Mac CMake build of WebCore and WebKit

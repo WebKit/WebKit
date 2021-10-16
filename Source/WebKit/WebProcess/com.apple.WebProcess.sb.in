@@ -1862,179 +1862,182 @@
 
 (when (defined? 'syscall-unix)
     (deny syscall-unix (with send-signal SIGKILL))
+    (allow syscall-unix (syscall-number
+        SYS___disable_threadsignal
+        SYS___mac_syscall
+        SYS___pthread_sigmask
+        SYS___semwait_signal
+        SYS_access
+        SYS_bsdthread_create
+        SYS_bsdthread_ctl
+        SYS_bsdthread_terminate
+        SYS_csrctl
+        SYS_exit
+        SYS_faccessat ;; <rdar://problem/56690456>
+        SYS_fcntl
+        SYS_fcntl_nocancel
+        SYS_fgetxattr
+        SYS_fileport_makefd
+        SYS_flock
+        SYS_fsgetpath
+        SYS_fstat64
+        SYS_fstatat64
+        SYS_fstatfs64
+        SYS_ftruncate
+        SYS_getattrlist
+        SYS_getattrlistbulk
+        SYS_getaudit_addr
+        SYS_getdirentries64
+        SYS_getentropy
+        SYS_geteuid
+        SYS_getfsstat64
+        SYS_getgid
+        SYS_gethostuuid
+        SYS_getrlimit
+        SYS_getrusage
+        SYS_gettimeofday
+        SYS_getuid
+        SYS_getxattr
+        SYS_issetugid
+        SYS_kdebug_trace
+        SYS_kdebug_trace64
+        SYS_kdebug_trace_string ;; Needed for performance sampling, see <rdar://problem/48829655>.
+        SYS_kevent_id
+        SYS_kevent_qos
+        SYS_kqueue_workloop_ctl ;; <rdar://problem/50999499>
+        SYS_listxattr
+        SYS_lseek
+        SYS_lstat64
+        SYS_madvise
+        SYS_mincore
+        SYS_mkdir
+        SYS_mmap
+        SYS_mprotect
+        SYS_msync
+        SYS_munmap
+        SYS_pathconf
+        SYS_pread
+        SYS_psynch_cvbroad
+        SYS_psynch_cvclrprepost
+        SYS_psynch_cvsignal
+        SYS_psynch_cvwait
+        SYS_psynch_mutexdrop
+        SYS_psynch_mutexwait
+        SYS_psynch_rw_unlock
+        SYS_psynch_rw_wrlock
+        SYS_read
+        SYS_read_nocancel
+        SYS_readlink
+        SYS_rename
+        SYS_sendto
+        SYS_sigaltstack
+        SYS_sigprocmask
+        SYS_socket
+        SYS_stat64
+        SYS_statfs64
+        SYS_thread_selfid
+        SYS_ulock_wait
+        SYS_ulock_wake
+        SYS_umask
+        SYS_work_interval_ctl
+        SYS_workq_kernreturn))
+
     (allow syscall-unix
-        (syscall-number SYS___disable_threadsignal)
-        (syscall-number SYS___mac_syscall)
-        (syscall-number SYS___pthread_kill)
-        (syscall-number SYS___pthread_markcancel)
-        (syscall-number SYS___pthread_sigmask)
-        (syscall-number SYS___semwait_signal)
-        (syscall-number SYS___semwait_signal_nocancel)
-        (syscall-number SYS_abort_with_payload)
-        (syscall-number SYS_access)
-        (syscall-number SYS_bsdthread_create)
-        (syscall-number SYS_bsdthread_ctl)
-        (syscall-number SYS_bsdthread_terminate)
-        (syscall-number SYS_change_fdguard_np)
-        (syscall-number SYS_chmod)
-        (syscall-number SYS_chmod_extended)
-        (syscall-number SYS_close)
-        (syscall-number SYS_close_nocancel)
-        (syscall-number SYS_connect)
-        (syscall-number SYS_connect_nocancel)
-        (syscall-number SYS_connectx)
-        (syscall-number SYS_csops)
-        (syscall-number SYS_csops_audittoken)
-        (syscall-number SYS_csrctl)
-        (syscall-number SYS_dup)
-        (syscall-number SYS_exit)
-        (syscall-number SYS_faccessat) ;; <rdar://problem/56690456>
-        (syscall-number SYS_fchmod)
-        (syscall-number SYS_fcntl)
-        (syscall-number SYS_fcntl_nocancel)
-        (syscall-number SYS_fgetattrlist) ;; <rdar://problem/50931110>
-        (syscall-number SYS_fgetxattr)
-        (syscall-number SYS_fileport_makefd)
-        (syscall-number SYS_fileport_makeport)
-        (syscall-number SYS_flock)
-        (syscall-number SYS_fsetxattr) ;; <rdar://problem/56332491>
-        (syscall-number SYS_fsgetpath)
-        (syscall-number SYS_fstat64)
-        (syscall-number SYS_fstat64_extended) ;; <rdar://problem/61310019>
-        (syscall-number SYS_fstatat64)
-        (syscall-number SYS_fstatfs64)
-        (syscall-number SYS_fsync)
-        (syscall-number SYS_ftruncate)
-        (syscall-number SYS_getattrlist)
-        (syscall-number SYS_getattrlistbulk)
-        (syscall-number SYS_getaudit_addr)
-        (syscall-number SYS_getdirentries64)
-        (syscall-number SYS_getegid)
-        (syscall-number SYS_getentropy)
-        (syscall-number SYS_geteuid)
-        (syscall-number SYS_getfsstat64)
-        (syscall-number SYS_getgid)
-        (syscall-number SYS_gethostuuid)
-        (syscall-number SYS_getpeername)
-        (syscall-number SYS_getpriority) ;; rdar://81727094. Required for CoreAudio AudioOutputUnitStart call. Remove when GPU process is enabled by default.
-        (syscall-number SYS_getrlimit)
-        (syscall-number SYS_getrusage)
-        (syscall-number SYS_getsockopt)
-        (syscall-number SYS_gettid) ;; Needed for base system, see <rdar://problem/48651255>
-        (syscall-number SYS_gettimeofday)
-        (syscall-number SYS_getuid)
-        (syscall-number SYS_getxattr)
-        (syscall-number SYS_guarded_close_np)
-        (syscall-number SYS_guarded_open_np)
-        (syscall-number SYS_guarded_pwrite_np)
-        (syscall-number SYS_guarded_write_np)
-        (syscall-number SYS_ioctl)
-        (syscall-number SYS_issetugid)
-        (syscall-number SYS_kdebug_trace)
-        (syscall-number SYS_kdebug_trace64)
-        (syscall-number SYS_kdebug_trace_string) ;; Needed for performance sampling, see <rdar://problem/48829655>.
-        (syscall-number SYS_kevent)
-        (syscall-number SYS_kevent_id)
-        (syscall-number SYS_kevent_qos)
-        (syscall-number SYS_kqueue) ;; <rdar://problem/49609201>
-        (syscall-number SYS_kqueue_workloop_ctl) ;; <rdar://problem/50999499>
-        (syscall-number SYS_listxattr)
-        (syscall-number SYS_lseek)
-        (syscall-number SYS_lstat64)
-        (syscall-number SYS_lstat64_extended)
-        (syscall-number SYS_lstat_extended)
-        (syscall-number SYS_madvise)
-        (syscall-number SYS_memorystatus_control) ;; Needed for memory measurement infrastructure, see <rdar://problem/48647263>
-        (syscall-number SYS_mincore)
-        (syscall-number SYS_mkdir)
-        (syscall-number SYS_mkdirat)
-        (syscall-number SYS_mlock)
-        (syscall-number SYS_mmap)
-        (syscall-number SYS_mprotect)
-        (syscall-number SYS_msync)
-        (syscall-number SYS_munlock)
-        (syscall-number SYS_munmap)
-        (syscall-number SYS_necp_client_action)
-        (syscall-number SYS_necp_open)
-        (syscall-number SYS_open)
-        (syscall-number SYS_open_dprotected_np) ;; <rdar://problem/74473824>
-        (syscall-number SYS_open_nocancel)
-        (syscall-number SYS_openat)
-        (syscall-number SYS_openat_nocancel)
-        (syscall-number SYS_pathconf)
-        (syscall-number SYS_pipe)
-        (syscall-number SYS_pread)
-        (syscall-number SYS_proc_info)
-        (syscall-number SYS_proc_rlimit_control)
-        (syscall-number SYS_process_policy)
-        (syscall-number SYS_psynch_cvbroad)
-        (syscall-number SYS_psynch_cvclrprepost)
-        (syscall-number SYS_psynch_cvsignal)
-        (syscall-number SYS_psynch_cvwait)
-        (syscall-number SYS_psynch_mutexdrop)
-        (syscall-number SYS_psynch_mutexwait)
-        (syscall-number SYS_psynch_rw_rdlock) ;; <rdar://problem/49060359>
-        (syscall-number SYS_psynch_rw_unlock)
-        (syscall-number SYS_psynch_rw_wrlock)
-        (syscall-number SYS_pwrite)
-        (syscall-number SYS_quotactl) ;; <rdar://problem/49945031>
-        (syscall-number SYS_read)
-        (syscall-number SYS_read_nocancel)
-        (syscall-number SYS_readlink)
-        (syscall-number SYS_recvfrom)
-        (syscall-number SYS_recvfrom_nocancel)
-        (syscall-number SYS_rename)
-        (syscall-number SYS_rmdir)
-        (syscall-number SYS_select)
-        (syscall-number SYS_select_nocancel)
-        (syscall-number SYS_sem_post)
-        (syscall-number SYS_sem_wait)
-        (syscall-number SYS_sendmsg_nocancel)
-        (syscall-number SYS_sendto)
-        (syscall-number SYS_sendto_nocancel)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 120000
+        (with telemetry-backtrace)
+#endif
+        (syscall-number
+            SYS___pthread_kill
+            SYS___pthread_markcancel
+            SYS___semwait_signal_nocancel
+            SYS_abort_with_payload
+            SYS_change_fdguard_np
+            SYS_chmod
+            SYS_chmod_extended
+            SYS_close
+            SYS_close_nocancel
+            SYS_connect
+            SYS_connect_nocancel
+            SYS_connectx
+            SYS_csops
+            SYS_csops_audittoken
+            SYS_dup
+            SYS_fchmod
+            SYS_fgetattrlist ;; <rdar://problem/50931110>
+            SYS_fileport_makeport
+            SYS_fsetxattr ;; <rdar://problem/56332491>
+            SYS_fstat64_extended ;; <rdar://problem/61310019>
+            SYS_fsync
+            SYS_getegid
+            SYS_getpeername
+            SYS_getpriority ;; rdar://81727094. Required for CoreAudio AudioOutputUnitStart call. Remove when GPU process is enabled by default.
+            SYS_getsockopt
+            SYS_gettid ;; Needed for base system, see <rdar://problem/48651255>
+            SYS_guarded_close_np
+            SYS_guarded_open_np
+            SYS_guarded_pwrite_np
+            SYS_guarded_write_np
+            SYS_ioctl
+            SYS_kevent
+            SYS_kqueue ;; <rdar://problem/49609201>
+            SYS_lstat64_extended
+            SYS_lstat_extended
+            SYS_memorystatus_control ;; Needed for memory measurement infrastructure, see <rdar://problem/48647263>
+            SYS_mkdirat
+            SYS_mlock
+            SYS_munlock
+            SYS_necp_client_action
+            SYS_necp_open
+            SYS_open
+            SYS_open_dprotected_np ;; <rdar://problem/74473824>
+            SYS_open_nocancel
+            SYS_openat
+            SYS_openat_nocancel
+            SYS_pipe
+            SYS_proc_info
+            SYS_proc_rlimit_control
+            SYS_process_policy
+            SYS_psynch_rw_rdlock ;; <rdar://problem/49060359>
+            SYS_pwrite
+            SYS_quotactl ;; <rdar://problem/49945031>
+            SYS_recvfrom
+            SYS_recvfrom_nocancel
+            SYS_rmdir
+            SYS_select
+            SYS_select_nocancel
+            SYS_sem_post
+            SYS_sem_wait
+            SYS_sendmsg_nocancel
+            SYS_sendto_nocancel
 #if __MAC_OS_X_VERSION_MIN_REQUIRED < 120000
-        (syscall-number SYS_setattrlist) ;; rdar://problem/74162777
+            SYS_setattrlist ;; rdar://problem/74162777
 #endif
-        (syscall-number SYS_setpriority)
-        (syscall-number SYS_setrlimit)
-        (syscall-number SYS_setsockopt)
-        (syscall-number SYS_shm_open)
-        (syscall-number SYS_shutdown)
-        (syscall-number SYS_sigaction)
-        (syscall-number SYS_sigaltstack)
-        (syscall-number SYS_sigprocmask)
-        (syscall-number SYS_sigreturn)
-        (syscall-number SYS_socket)
-        (syscall-number SYS_socketpair)
-        (syscall-number SYS_stat64)
-        (syscall-number SYS_stat64_extended) ;; <rdar://problem/50473330>
-        (syscall-number SYS_statfs64)
-        (syscall-number SYS_sysctl)
-        (syscall-number SYS_sysctlbyname)
-        (syscall-number SYS_terminate_with_payload) ;; <rdar://problem/50026580>
-        (syscall-number SYS_thread_selfid)
-        (syscall-number SYS_thread_selfusage)
-        (syscall-number SYS_ulock_wait)
+            SYS_setpriority
+            SYS_setrlimit
+            SYS_setsockopt
+            SYS_shm_open
+            SYS_shutdown
+            SYS_sigaction
+            SYS_sigreturn
+            SYS_socketpair
+            SYS_stat64_extended ;; <rdar://problem/50473330>
+            SYS_sysctl
+            SYS_sysctlbyname
+            SYS_terminate_with_payload ;; <rdar://problem/50026580>
+            SYS_thread_selfusage
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 110000
-        (syscall-number SYS_ulock_wait2) ;; <rdar://problem/58743778>
+            SYS_ulock_wait2 ;; <rdar://problem/58743778>
 #endif
-        (syscall-number SYS_ulock_wake)
-        (syscall-number SYS_umask)
-        (syscall-number SYS_unlink)
-        (syscall-number SYS_work_interval_ctl)
-        (syscall-number SYS_workq_kernreturn)
-        (syscall-number SYS_write)
-        (syscall-number SYS_write_nocancel)
-        (syscall-number SYS_writev)
-    )
+            SYS_unlink
+            SYS_write
+            SYS_write_nocancel
+            SYS_writev))
 
     (if (equal? (param "CPU") "arm64")
-        (allow syscall-unix
-            (syscall-number SYS_fileport_makefd)
-            (syscall-number SYS_guarded_open_dprotected_np) ;; <rdar://problem/65897905>
-            (syscall-number SYS_mremap_encrypted)
-        )
-    )
+        (allow syscall-unix (syscall-number
+            SYS_fileport_makefd
+            SYS_guarded_open_dprotected_np ;; <rdar://problem/65897905>
+            SYS_mremap_encrypted)))
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED > 101500
     (if (defined? 'SYS_objc_bp_assist_cfg_np)
@@ -2078,66 +2081,70 @@
     (allow mach-kernel-endpoint
         (apply-message-filter
             (deny mach-message-send (with telemetry))
-            (allow mach-message-send (kernel-mig-routine
-                _mach_make_memory_entry
-                clock_get_time
-                host_get_io_master
-                host_info
-                host_request_notification
-                io_connect_add_client
-                io_connect_async_method
-                io_connect_map_memory_into_task
-                io_connect_method
-                io_connect_method_var_output
-                io_connect_set_notification_port_64
-                io_iterator_is_valid
-                io_iterator_next
-                io_object_conforms_to
-                io_registry_create_iterator
-                io_registry_entry_create_iterator
-                io_registry_entry_from_path
-                io_registry_entry_get_child_iterator
-                io_registry_entry_get_name
-                io_registry_entry_get_name_in_plane
-                io_registry_entry_get_parent_iterator
-                io_registry_entry_get_properties_bin_buf
-                io_registry_entry_get_property_bin_buf
-                io_registry_entry_get_property_bytes
-                io_registry_entry_get_registry_entry_id
-                io_registry_get_root_entry
-                io_server_version
-                io_service_add_interest_notification_64
-                io_service_add_notification_bin_64
-                io_service_close
-                io_service_get_matching_service_bin
-                io_service_get_matching_services_bin
-                io_service_open_extended
-                mach_exception_raise
-                mach_memory_entry_ownership
-                mach_port_get_context_from_user
-                mach_port_get_refs
-                mach_port_request_notification
-                mach_port_set_attributes
-                mach_vm_copy
-                mach_vm_map_external
-                mach_vm_region
-                mach_vm_region_recurse
-                mach_vm_remap_external
-                semaphore_create
-                semaphore_destroy
-                task_create_identity_token
-                task_get_special_port_from_user
-                task_info_from_user
-                task_policy_set
-                task_restartable_ranges_synchronize
-                task_threads_from_user
-                thread_get_state_to_user
-                thread_info
-                thread_policy
-                thread_policy_set
-                thread_resume
-                thread_set_exception_ports
-                thread_suspend
+            (allow mach-message-send
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 120000
+                (with telemetry-backtrace)
+#endif
+                (kernel-mig-routine
+                    _mach_make_memory_entry
+                    clock_get_time
+                    host_get_io_master
+                    host_info
+                    host_request_notification
+                    io_connect_add_client
+                    io_connect_async_method
+                    io_connect_map_memory_into_task
+                    io_connect_method
+                    io_connect_method_var_output
+                    io_connect_set_notification_port_64
+                    io_iterator_is_valid
+                    io_iterator_next
+                    io_object_conforms_to
+                    io_registry_create_iterator
+                    io_registry_entry_create_iterator
+                    io_registry_entry_from_path
+                    io_registry_entry_get_child_iterator
+                    io_registry_entry_get_name
+                    io_registry_entry_get_name_in_plane
+                    io_registry_entry_get_parent_iterator
+                    io_registry_entry_get_properties_bin_buf
+                    io_registry_entry_get_property_bin_buf
+                    io_registry_entry_get_property_bytes
+                    io_registry_entry_get_registry_entry_id
+                    io_registry_get_root_entry
+                    io_server_version
+                    io_service_add_interest_notification_64
+                    io_service_add_notification_bin_64
+                    io_service_close
+                    io_service_get_matching_service_bin
+                    io_service_get_matching_services_bin
+                    io_service_open_extended
+                    mach_exception_raise
+                    mach_memory_entry_ownership
+                    mach_port_get_context_from_user
+                    mach_port_get_refs
+                    mach_port_request_notification
+                    mach_port_set_attributes
+                    mach_vm_copy
+                    mach_vm_map_external
+                    mach_vm_region
+                    mach_vm_region_recurse
+                    mach_vm_remap_external
+                    semaphore_create
+                    semaphore_destroy
+                    task_create_identity_token
+                    task_get_special_port_from_user
+                    task_info_from_user
+                    task_policy_set
+                    task_restartable_ranges_synchronize
+                    task_threads_from_user
+                    thread_get_state_to_user
+                    thread_info
+                    thread_policy
+                    thread_policy_set
+                    thread_resume
+                    thread_set_exception_ports
+                    thread_suspend
                 )
             )
         )
@@ -2160,7 +2167,6 @@
         MSC__kernelrpc_mach_port_deallocate_trap
         MSC__kernelrpc_mach_port_destruct_trap
         MSC__kernelrpc_mach_port_extract_member_trap
-        MSC__kernelrpc_mach_port_get_attributes_trap
         MSC__kernelrpc_mach_port_guard_trap
         MSC__kernelrpc_mach_port_insert_member_trap
         MSC__kernelrpc_mach_port_insert_right_trap
@@ -2177,7 +2183,6 @@
         MSC_host_self_trap
         MSC_mach_generate_activity_id
         MSC_mach_msg_trap
-        MSC_mach_msg_overwrite_trap
         MSC_mach_reply_port
         MSC_mach_voucher_extract_attr_recipe_trap
         MSC_mk_timer_arm
@@ -2188,14 +2193,19 @@
         MSC_semaphore_signal_trap
         MSC_semaphore_timedwait_trap
         MSC_semaphore_wait_trap
-        MSC_swtch_pri
         MSC_syscall_thread_switch
         MSC_task_name_for_pid
         MSC_thread_get_special_reply_port
-        MSC_thread_self_trap
-        )
-    )
-)
+        MSC_thread_self_trap))
+
+    (allow syscall-mach
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 120000
+        (with telemetry-backtrace)
+#endif
+        (machtrap-number
+            MSC__kernelrpc_mach_port_get_attributes_trap
+            MSC_mach_msg_overwrite_trap
+            MSC_swtch_pri)))
 #endif // HAVE(SANDBOX_MESSAGE_FILTERING)
 
 (if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES")
