@@ -44,6 +44,7 @@ public:
     void stopReceivingMessageFromConnection(IPC::Connection&);
 
     PAL::SessionID sessionID() const { return m_sessionID; }
+    void clearStorageForTesting(CompletionHandler<void()>&&);
 
 private:
     NetworkStorageManager(PAL::SessionID, const String& path);
