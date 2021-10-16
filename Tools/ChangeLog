@@ -1,3 +1,14 @@
+2021-10-15  Alex Christensen  <achristensen@webkit.org>
+
+        Use attributedBundleIdentifier instead of applicationBundleIdentifier when present for handling PCM attribution
+        https://bugs.webkit.org/show_bug.cgi?id=231827
+
+        Reviewed by Brady Eidson.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/EventAttribution.mm:
+        (TestWebKitAPI::runBasicPCMTest):
+        (TestWebKitAPI::TEST):
+
 2021-10-15  Ross Kirsling  <ross.kirsling@sony.com>
 
         Realize Mac CMake build of WebCore and WebKit

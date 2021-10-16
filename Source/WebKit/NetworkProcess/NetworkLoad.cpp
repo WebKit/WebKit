@@ -317,4 +317,11 @@ void NetworkLoad::setH2PingCallback(const URL& url, CompletionHandler<void(Expec
         completionHandler(makeUnexpected(internalError(url)));
 }
 
+String NetworkLoad::attributedBundleIdentifier(WebPageProxyIdentifier pageID)
+{
+    if (m_task)
+        return m_task->attributedBundleIdentifier(pageID);
+    return { };
+}
+
 } // namespace WebKit

@@ -55,7 +55,7 @@
 
 @implementation WKWebView (WKTesting)
 
-- (void)_addEventAttributionWithSourceID:(uint8_t)sourceID destinationURL:(NSURL *)destination sourceDescription:(NSString *)sourceDescription purchaser:(NSString *)purchaser reportEndpoint:(NSURL *)reportEndpoint optionalNonce:(NSString *)nonce applicationBundleID:(NSString *)bundleID
+- (void)_addEventAttributionWithSourceID:(uint8_t)sourceID destinationURL:(NSURL *)destination sourceDescription:(NSString *)sourceDescription purchaser:(NSString *)purchaser reportEndpoint:(NSURL *)reportEndpoint optionalNonce:(NSString *)nonce applicationBundleID:(NSString *)bundleID ephemeral:(BOOL)ephemeral
 {
     WebCore::PrivateClickMeasurement measurement(
         WebCore::PrivateClickMeasurement::SourceID(sourceID),
@@ -63,7 +63,7 @@
         WebCore::PrivateClickMeasurement::AttributionDestinationSite(destination),
         bundleID,
         WallTime::now(),
-        WebCore::PrivateClickMeasurement::AttributionEphemeral::No
+        ephemeral ? WebCore::PrivateClickMeasurement::AttributionEphemeral::Yes : WebCore::PrivateClickMeasurement::AttributionEphemeral::No
     );
     if (nonce)
         measurement.setEphemeralSourceNonce({ nonce });

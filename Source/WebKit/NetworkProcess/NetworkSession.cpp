@@ -331,12 +331,12 @@ void NetworkSession::storePrivateClickMeasurement(WebCore::PrivateClickMeasureme
     privateClickMeasurement().storeUnattributed(WTFMove(unattributedPrivateClickMeasurement), [] { });
 }
 
-void NetworkSession::handlePrivateClickMeasurementConversion(PrivateClickMeasurement::AttributionTriggerData&& attributionTriggerData, const URL& requestURL, const WebCore::ResourceRequest& redirectRequest)
+void NetworkSession::handlePrivateClickMeasurementConversion(PrivateClickMeasurement::AttributionTriggerData&& attributionTriggerData, const URL& requestURL, const WebCore::ResourceRequest& redirectRequest, String&& attributedBundleIdentifier)
 {
+    String appBundleID = WTFMove(attributedBundleIdentifier);
 #if PLATFORM(COCOA)
-    auto appBundleID = WebCore::applicationBundleIdentifier();
-#else
-    auto appBundleID = String();
+    if (appBundleID.isEmpty())
+        appBundleID = WebCore::applicationBundleIdentifier();
 #endif
 
     if (m_ephemeralMeasurement) {

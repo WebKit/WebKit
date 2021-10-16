@@ -60,6 +60,7 @@ public:
 
     const NetworkLoadParameters& parameters() const { return m_parameters; }
     const URL& url() const { return parameters().request.url(); }
+    String attributedBundleIdentifier(WebPageProxyIdentifier);
 
     void continueWillSendRequest(WebCore::ResourceRequest&&);
 

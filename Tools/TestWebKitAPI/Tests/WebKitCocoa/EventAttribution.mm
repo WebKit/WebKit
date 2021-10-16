@@ -120,7 +120,7 @@ static void clearState()
     [[NSFileManager defaultManager] removeItemAtURL:adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]).get()._resourceLoadStatisticsDirectory error:nil];
 }
 
-void runBasicPCMTest(WKWebViewConfiguration *configuration, Function<void(WKWebView *, const HTTPServer&)>&& addAttributionToWebView)
+void runBasicPCMTest(WKWebViewConfiguration *configuration, Function<void(WKWebView *, const HTTPServer&)>&& addAttributionToWebView, bool setTestAppBundleID = true)
 {
     clearState();
     [WKWebsiteDataStore _setNetworkProcessSuspensionAllowedForTesting:NO];
@@ -163,10 +163,13 @@ void runBasicPCMTest(WKWebViewConfiguration *configuration, Function<void(WKWebV
     [[webView configuration].websiteDataStore _trustServerForLocalPCMTesting:secTrustFromCertificateChain(@[(id)testCertificate().get()]).get()];
     [webView _setPrivateClickMeasurementAttributionReportURLsForTesting:serverURL destinationURL:exampleURL() completionHandler:^{
         [webView _setPrivateClickMeasurementOverrideTimerForTesting:YES completionHandler:^{
-            [webView _setPrivateClickMeasurementAppBundleIDForTesting:@"test.bundle.id" completionHandler:^{
-                NSString *html = [NSString stringWithFormat:@"<script>fetch('%@conversionRequestBeforeRedirect',{mode:'no-cors'})</script>", serverURL];
+            NSString *html = [NSString stringWithFormat:@"<script>fetch('%@conversionRequestBeforeRedirect',{mode:'no-cors'})</script>", serverURL];
+            if (setTestAppBundleID) {
+                [webView _setPrivateClickMeasurementAppBundleIDForTesting:@"test.bundle.id" completionHandler:^{
+                    [webView loadHTMLString:html baseURL:exampleURL()];
+                }];
+            } else
                 [webView loadHTMLString:html baseURL:exampleURL()];
-            }];
         }];
     }];
     Util::run(&done);
@@ -309,7 +312,7 @@ TEST(PrivateClickMeasurement, FraudPrevention)
 
     auto webView = adoptNS([WKWebView new]);
     webView.get().navigationDelegate = delegateAllowingAllTLS();
-    [webView _addEventAttributionWithSourceID:42 destinationURL:exampleURL() sourceDescription:@"test source description" purchaser:@"test purchaser" reportEndpoint:serverURL optionalNonce:@"ABCDEFabcdef0123456789" applicationBundleID:@"test.bundle.id"];
+    [webView _addEventAttributionWithSourceID:42 destinationURL:exampleURL() sourceDescription:@"test source description" purchaser:@"test purchaser" reportEndpoint:serverURL optionalNonce:@"ABCDEFabcdef0123456789" applicationBundleID:@"test.bundle.id" ephemeral:NO];
     [[webView configuration].websiteDataStore _setResourceLoadStatisticsEnabled:YES];
     [[webView configuration].websiteDataStore _trustServerForLocalPCMTesting:secTrustFromCertificateChain(@[(id)testCertificate().get()]).get()];
 
@@ -332,8 +335,17 @@ TEST(PrivateClickMeasurement, FraudPrevention)
 TEST(PrivateClickMeasurement, Basic)
 {
     runBasicPCMTest(nil, [](WKWebView *webView, const HTTPServer& server) {
-        [webView _addEventAttributionWithSourceID:42 destinationURL:exampleURL() sourceDescription:@"test source description" purchaser:@"test purchaser" reportEndpoint:server.request().URL optionalNonce:nil applicationBundleID:@"test.bundle.id"];
+        [webView _addEventAttributionWithSourceID:42 destinationURL:exampleURL() sourceDescription:@"test source description" purchaser:@"test purchaser" reportEndpoint:server.request().URL optionalNonce:nil applicationBundleID:@"test.bundle.id" ephemeral:NO];
     });
+}
+
+TEST(PrivateClickMeasurement, EphemeralWithAttributedBundleIdentifier)
+{
+    auto configuration = adoptNS([WKWebViewConfiguration new]);
+    configuration.get()._attributedBundleIdentifier = @"other.test.bundle.id";
+    runBasicPCMTest(configuration.get(), [](WKWebView *webView, const HTTPServer& server) {
+        [webView _addEventAttributionWithSourceID:42 destinationURL:exampleURL() sourceDescription:@"test source description" purchaser:@"test purchaser" reportEndpoint:server.request().URL optionalNonce:nil applicationBundleID:@"other.test.bundle.id" ephemeral:YES];
+    }, false);
 }
 
 TEST(PrivateClickMeasurement, DatabaseLocation)
@@ -354,7 +366,7 @@ TEST(PrivateClickMeasurement, DatabaseLocation)
         auto dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:dataStoreConfiguration.get()]);
         viewConfiguration.get().websiteDataStore = dataStore.get();
         runBasicPCMTest(viewConfiguration.get(), [](WKWebView *webView, const HTTPServer& server) {
-            [webView _addEventAttributionWithSourceID:42 destinationURL:exampleURL() sourceDescription:@"test source description" purchaser:@"test purchaser" reportEndpoint:server.request().URL optionalNonce:nil applicationBundleID:@"test.bundle.id"];
+            [webView _addEventAttributionWithSourceID:42 destinationURL:exampleURL() sourceDescription:@"test source description" purchaser:@"test purchaser" reportEndpoint:server.request().URL optionalNonce:nil applicationBundleID:@"test.bundle.id" ephemeral:NO];
         });
         originalNetworkProcessPid = [dataStore _networkProcessIdentifier];
         EXPECT_GT(originalNetworkProcessPid, 0);
@@ -497,7 +509,7 @@ TEST(PrivateClickMeasurement, DaemonBasicFunctionality)
     auto [tempDir, configuration] = setUpDaemon(adoptNS([WKWebViewConfiguration new]).autorelease());
     attemptConnectionInProcessWithoutEntitlement();
     runBasicPCMTest(configuration, [](WKWebView *webView, const HTTPServer& server) {
-        [webView _addEventAttributionWithSourceID:42 destinationURL:exampleURL() sourceDescription:@"test source description" purchaser:@"test purchaser" reportEndpoint:server.request().URL optionalNonce:nil applicationBundleID:@"test.bundle.id"];
+        [webView _addEventAttributionWithSourceID:42 destinationURL:exampleURL() sourceDescription:@"test source description" purchaser:@"test purchaser" reportEndpoint:server.request().URL optionalNonce:nil applicationBundleID:@"test.bundle.id" ephemeral:NO];
     });
     cleanUpDaemon(tempDir);
 }
