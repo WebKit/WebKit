@@ -1,3 +1,14 @@
+2021-10-16  Tim Horton  <timothy_horton@apple.com>
+
+        WebKit ignores inherited GCC_PREPROCESSOR_DEFINITIONS
+        https://bugs.webkit.org/show_bug.cgi?id=231867
+
+        Reviewed by Sam Weinig.
+
+        * Configurations/BaseTarget.xcconfig:
+        Add a $(inherited) here like in every other project, so that we don't
+        just drop defines that come from above.
+
 2021-10-16  Simon Fraser  <simon.fraser@apple.com>
 
         Page zoom is messed up after navigating back from a PDF
