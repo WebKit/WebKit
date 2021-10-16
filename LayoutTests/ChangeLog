@@ -1,3 +1,12 @@
+2021-10-16  Alan Bujtas  <zalan@apple.com>
+
+        Undo some rebaseline in r284296.
+
+        Unreviewed.
+
+        * platform/mac-bigsur/fast/text/capitalize-boundaries-expected.txt:
+        * platform/mac-catalina/fast/text/capitalize-boundaries-expected.txt:
+
 2021-10-16  Simon Fraser  <simon.fraser@apple.com>
 
         Make sure child layers of top layer elements are rendered and correctly z-ordered (top-layer-stacking.html fails)
