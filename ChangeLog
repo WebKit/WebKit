@@ -1,3 +1,12 @@
+2021-10-16  Angelos Oikonomopoulos  <angelos@igalia.com>
+
+        Add my github username to contributors.json
+        https://bugs.webkit.org/show_bug.cgi?id=231861
+
+        Unreviewed.
+
+        * metadata/contributors.json:
+
 2021-10-16  Caitlin Potter  <caitp@igalia.com>
 
         Add github username for myself
