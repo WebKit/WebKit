@@ -680,14 +680,12 @@ String AccessibilityRenderObject::textUnderElement(AccessibilityTextUnderElement
             if (Frame* frame = nodeDocument->frame()) {
                 // catch stale WebCoreAXObject (see <rdar://problem/3960196>)
                 if (frame->document() != nodeDocument)
-                    return { };
+                    return String();
 
-                // Renderers referenced by accessibility objects could get destroyed if TextIterator ends up triggering
-                // a style update or layout here. See also AXObjectCache::deferTextChangedIfNeeded().
-                if (nodeDocument->childNeedsStyleRecalc())
-                    return { };
+                // Renders referenced by accessibility objects could get destroyed, if TextIterator ends up triggering
+                // style update/layout here. See also AXObjectCache::deferTextChangedIfNeeded().
+                ASSERT_WITH_SECURITY_IMPLICATION(!nodeDocument->childNeedsStyleRecalc());
                 ASSERT_WITH_SECURITY_IMPLICATION(!nodeDocument->view()->layoutContext().isInRenderTreeLayout());
-
                 return plainText(*textRange, textIteratorBehaviorForTextRange());
             }
         }

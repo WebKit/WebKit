@@ -114,28 +114,6 @@ bool AccessibilityObject::accessibilityIgnoreAttachment() const
     return true;
 }
 
-static bool shouldIgnoreGroup(const AccessibilityObject& axObject)
-{
-    if (!axObject.isGroup() && axObject.roleValue() != AccessibilityRole::Div)
-        return false;
-
-    // Never ignore a <div> with event listeners attached to it (e.g. onclick).
-    if (axObject.node() && axObject.node()->hasEventListeners())
-        return false;
-
-    auto* first = axObject.firstChild();
-    if (first && first == axObject.lastChild() && first->roleValue() == AccessibilityRole::StaticText) {
-        Vector<AccessibilityText> axText;
-        axObject.accessibilityText(axText);
-        // Don't expose <div>s whose only child is text that has the same content as the <div>s accessibility text.
-        // Instead, we should expose the text element directly.
-        auto firstText = axText.size() ? axText[0].text : String();
-        if (first->stringValue() == firstText)
-            return true;
-    }
-    return false;
-}
-
 AccessibilityObjectInclusion AccessibilityObject::accessibilityPlatformIncludesObject() const
 {
     if (isMenuListPopup() || isMenuListOption())
@@ -164,9 +142,6 @@ AccessibilityObjectInclusion AccessibilityObject::accessibilityPlatformIncludesO
         }
     }
     
-    if (shouldIgnoreGroup(*this))
-        return AccessibilityObjectInclusion::IgnoreObject;
-
     return AccessibilityObjectInclusion::DefaultBehavior;
 }
     
