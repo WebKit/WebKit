@@ -1564,11 +1564,6 @@ void NetworkProcessProxy::resetQuota(PAL::SessionID sessionID, CompletionHandler
     sendWithAsyncReply(Messages::NetworkProcess::ResetQuota(sessionID), WTFMove(completionHandler));
 }
 
-void NetworkProcessProxy::clearStorage(PAL::SessionID sessionID, CompletionHandler<void()>&& completionHandler)
-{
-    sendWithAsyncReply(Messages::NetworkProcess::ClearStorage(sessionID), WTFMove(completionHandler));
-}
-
 #if ENABLE(APP_BOUND_DOMAINS)
 void NetworkProcessProxy::hasAppBoundSession(PAL::SessionID sessionID, CompletionHandler<void(bool)>&& completionHandler)
 {

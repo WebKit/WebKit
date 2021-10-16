@@ -196,7 +196,7 @@ fast/speechrecognition/permission-error.html [ Skip ]
 fast/speechrecognition/start-recognition-then-stop.html [ Skip ]
 fast/speechrecognition/start-second-recognition.html [ Skip ]
 fast/speechrecognition/ios/ [ Skip ]
-imported/w3c/web-platform-tests/file-system-access/ [ Skip ]
+imported/w3c/web-platform-tests/storage/ [ Skip ]
 
 # app-privacy-report tests rely on WebKitAdditions
 http/tests/app-privacy-report/ [ Skip ]

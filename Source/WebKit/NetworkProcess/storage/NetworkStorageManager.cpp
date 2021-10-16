@@ -111,16 +111,5 @@ void NetworkStorageManager::persist(const WebCore::ClientOrigin& origin, Complet
     completionHandler(true);
 }
 
-void NetworkStorageManager::clearStorageForTesting(CompletionHandler<void()>&& completionHandler)
-{
-    ASSERT(RunLoop::isMain());
-    m_queue->dispatch([this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)]() mutable {
-        m_localOriginStorageManagers.clear();
-        m_sessionOriginStorageManagers.clear();
-
-        RunLoop::main().dispatch(WTFMove(completionHandler));
-    });
-}
-
 } // namespace WebKit
 

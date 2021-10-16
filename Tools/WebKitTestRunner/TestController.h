@@ -282,7 +282,6 @@ public:
     void terminateServiceWorkers();
 
     void resetQuota();
-    void clearStorage();
 
     void removeAllSessionCredentials();
 
