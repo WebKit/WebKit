@@ -1,3 +1,16 @@
+2021-10-15  Robert Jenner  <Jenner@apple.com>
+
+        REBASELINE: fast/text/capitalize-boundaries.html is a constant text failure
+        https://bugs.webkit.org/show_bug.cgi?id=228200
+
+        Unreviewed test gardening/rebase.
+
+        * platform/ios-wk2/fast/text/capitalize-boundaries-expected.txt:
+        * platform/mac-bigsur/fast/text/capitalize-boundaries-expected.txt:
+        * platform/mac-catalina/fast/text/capitalize-boundaries-expected.txt:
+        * platform/mac/fast/text/capitalize-boundaries-expected.png: Added.
+        * platform/mac/fast/text/capitalize-boundaries-expected.txt:
+
 2021-10-15  Ayumi Kojima  <ayumi_kojima@apple.com>
 
         [ iOS 15 ] Rebaselining platform/ios/ios/fast/text/opticalFontWithWeight.html.
