@@ -851,7 +851,11 @@ void MediaPlayerPrivateRemote::setVideoFullscreenMode(MediaPlayer::VideoFullscre
 
 void MediaPlayerPrivateRemote::videoFullscreenStandbyChanged()
 {
-    connection().send(Messages::RemoteMediaPlayerProxy::VideoFullscreenStandbyChanged(), m_id);
+    RefPtr player = m_player.get();
+    if (!player)
+        return;
+
+    connection().send(Messages::RemoteMediaPlayerProxy::VideoFullscreenStandbyChanged(player->isVideoFullscreenStandby()), m_id);
 }
 #endif
 

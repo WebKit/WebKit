@@ -60,7 +60,7 @@ messages -> RemoteMediaPlayerProxy NotRefCounted {
     UpdateVideoFullscreenInlineImage()
     SetVideoFullscreenMode(WebCore::MediaPlayer::VideoFullscreenMode mode)
     SetVideoFullscreenGravity(enum:uint8_t WebCore::MediaPlayerEnums::VideoGravity gravity)
-    VideoFullscreenStandbyChanged()
+    VideoFullscreenStandbyChanged(bool standby)
 #endif
 
     SetBufferingPolicy(WebCore::MediaPlayer::BufferingPolicy policy)
