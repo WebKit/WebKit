@@ -1,3 +1,12 @@
+2021-10-16  Tetsuharu Ohzeki  <tetsuharu.ohzeki@gmail.com>
+
+        Add github username for tetsuharuohzeki to contributors.json
+        https://bugs.webkit.org/show_bug.cgi?id=231864
+
+        Reviewed by Fujii Hironori.
+
+        * metadata/contributors.json:
+
 2021-10-16  Angelos Oikonomopoulos  <angelos@igalia.com>
 
         Add my github username to contributors.json
