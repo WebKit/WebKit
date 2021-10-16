@@ -7,10 +7,10 @@ layer at (0,0) size 800x600
         RenderInline {SPAN} at (0,0) size 177x419 [bgcolor=#C0C0C0] [border: (2px solid #000000)]
           RenderText {#text} at (3,18) size 50x115
             text run at (3,18) width 50: "  "
-          RenderBR {BR} at (53,1) size 0x115
+          RenderBR {BR} at (53,18) size 0x115
           RenderText {#text} at (1,168) size 125x115
             text run at (1,168) width 125: "     "
-          RenderBR {BR} at (126,151) size 0x115
+          RenderBR {BR} at (126,168) size 0x115
           RenderText {#text} at (1,318) size 175x115
             text run at (1,318) width 175: "       "
         RenderText {#text} at (0,0) size 0x0

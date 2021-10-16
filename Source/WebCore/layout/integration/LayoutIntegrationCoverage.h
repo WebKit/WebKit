@@ -98,7 +98,7 @@ enum class AvoidanceReason : uint64_t {
     ChildBoxHasUnsupportedStyle                  = 1LLU  << 57,
     UnsupportedImageMap                          = 1LLU  << 58,
     InlineBoxNeedsLayer                          = 1LLU  << 59,
-    InlineBoxHasBorderOrBorderImage              = 1LLU  << 60,
+    BoxDecorationBreakClone                      = 1LLU  << 60,
     // Unused                                    = 1LLU  << 61,
     EndOfReasons                                 = 1LLU  << 62
 };
