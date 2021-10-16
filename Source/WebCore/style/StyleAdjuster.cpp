@@ -316,8 +316,7 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
 
         // Top layer elements are always position: absolute; unless the position is set to fixed.
         // https://fullscreen.spec.whatwg.org/#new-stacking-layer
-        bool isInTopLayer = isInTopLayerOrBackdrop(style, m_element);
-        if (style.position() != PositionType::Absolute && style.position() != PositionType::Fixed && isInTopLayer)
+        if (style.position() != PositionType::Absolute && style.position() != PositionType::Fixed && isInTopLayerOrBackdrop(style, m_element))
             style.setPosition(PositionType::Absolute);
 
         // Absolute/fixed positioned elements, floating elements and the document element need block-like outside display.
@@ -382,7 +381,8 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
             || style.hasIsolation()
             || style.position() == PositionType::Sticky
             || style.position() == PositionType::Fixed
-            || style.willChangeCreatesStackingContext())
+            || style.willChangeCreatesStackingContext()
+            || isInTopLayerOrBackdrop(style, m_element))
             style.setUsedZIndex(0);
     }
 

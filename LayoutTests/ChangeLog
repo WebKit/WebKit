@@ -1,3 +1,16 @@
+2021-10-16  Simon Fraser  <simon.fraser@apple.com>
+
+        Make sure child layers of top layer elements are rendered and correctly z-ordered (top-layer-stacking.html fails)
+        https://bugs.webkit.org/show_bug.cgi?id=231832
+
+        Reviewed by Antoine Quint.
+
+        Ref test that compares a dialog with positioned children and one with children place
+        with margins.
+
+        * fast/layers/dialog-is-stacking-context-expected.html: Added.
+        * fast/layers/dialog-is-stacking-context.html: Added.
+
 2021-10-15  Antoine Quint  <graouts@webkit.org>
 
         Accelerated animations on ::backdrop shouldn't affect <dialog> (backdrop-animate-002.html fails)
