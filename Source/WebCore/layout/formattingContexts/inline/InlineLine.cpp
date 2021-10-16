@@ -57,8 +57,25 @@ void Line::initialize(const Vector<InlineItem>& lineSpanningInlineBoxes)
     m_runs.clear();
     resetTrailingContent();
     auto appendLineSpanningInlineBoxes = [&] {
-        for (auto& inlineBoxStartItem : lineSpanningInlineBoxes)
-            m_runs.append({ inlineBoxStartItem });
+        for (auto& inlineBoxStartItem : lineSpanningInlineBoxes) {
+            auto shouldCheckForMarginBorderAndPadding = false;
+#if ENABLE(CSS_BOX_DECORATION_BREAK)
+            shouldCheckForMarginBorderAndPadding = inlineBoxStartItem.style().boxDecorationBreak() == BoxDecorationBreak::Clone;
+#endif
+            if (!shouldCheckForMarginBorderAndPadding) {
+                m_runs.append({ inlineBoxStartItem, contentLogicalRight(), { } });
+                continue;
+            }
+            // https://drafts.csswg.org/css-break/#break-decoration
+            // clone: Each box fragment is independently wrapped with the border, padding, and margin.
+            auto& inlineBoxGeometry = formattingContext().geometryForBox(inlineBoxStartItem.layoutBox());
+            auto runLogicalLeft = contentLogicalRight();
+            auto marginBorderAndPadding = inlineBoxGeometry.marginStart() + inlineBoxGeometry.borderLeft() + inlineBoxGeometry.paddingLeft().value_or(0_lu);
+            m_runs.append({ inlineBoxStartItem, runLogicalLeft, marginBorderAndPadding });
+            // Do not let negative margin make the content shorter than it already is.
+            auto runLogicalRight = runLogicalLeft + marginBorderAndPadding;
+            m_contentLogicalWidth = std::max(m_contentLogicalWidth, runLogicalRight);
+        }
     };
     appendLineSpanningInlineBoxes();
 }
@@ -515,9 +532,11 @@ Line::Run::Run(const InlineItem& zeroWidhtInlineItem, InlineLayoutUnit logicalLe
 {
 }
 
-Line::Run::Run(const InlineItem& lineSpanningInlineBoxItem)
+Line::Run::Run(const InlineItem& lineSpanningInlineBoxItem, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth)
     : m_type(Type::LineSpanningInlineBoxStart)
     , m_layoutBox(&lineSpanningInlineBoxItem.layoutBox())
+    , m_logicalLeft(logicalLeft)
+    , m_logicalWidth(logicalWidth)
 {
     ASSERT(lineSpanningInlineBoxItem.isInlineBoxStart());
 }
