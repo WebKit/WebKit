@@ -78,8 +78,7 @@ void InlineDisplayContentBuilder::createBoxesAndUpdateGeometryForLineContent(con
             return !lineIndex ? layoutBox.firstLineStyle() : layoutBox.style();
         }();
 
-        switch (lineRun.type()) {
-        case InlineItem::Type::Text: {
+        if (lineRun.isText()) {
             auto textRunRect = lineBox.logicalRectForTextRun(lineRun);
             textRunRect.moveBy(lineBoxLogicalTopLeft);
 
@@ -110,9 +109,9 @@ void InlineDisplayContentBuilder::createBoxesAndUpdateGeometryForLineContent(con
                 , inkOverflow()
                 , lineRun.expansion()
                 , InlineDisplay::Box::Text { text->start, text->length, content, adjustedContentToRender(), text->needsHyphen } });
-            break;
+            continue;
         }
-        case InlineItem::Type::SoftLineBreak: {
+        if (lineRun.isSoftLineBreak()) {
             auto softLineBreakRunRect = lineBox.logicalRectForTextRun(lineRun);
             softLineBreakRunRect.moveBy(lineBoxLogicalTopLeft);
 
@@ -127,7 +126,7 @@ void InlineDisplayContentBuilder::createBoxesAndUpdateGeometryForLineContent(con
                 , InlineDisplay::Box::Text { text->start, text->length, downcast<InlineTextBox>(layoutBox).content() } });
             break;
         }
-        case InlineItem::Type::HardLineBreak: {
+        if (lineRun.isHardLineBreak()) {
             // Only hard linebreaks have associated layout boxes.
             auto lineBreakBoxRect = lineBox.logicalRectForLineBreakBox(layoutBox);
             lineBreakBoxRect.moveBy(lineBoxLogicalTopLeft);
@@ -136,9 +135,9 @@ void InlineDisplayContentBuilder::createBoxesAndUpdateGeometryForLineContent(con
             auto& boxGeometry = formattingState.boxGeometry(layoutBox);
             boxGeometry.setLogicalTopLeft(toLayoutPoint(lineBreakBoxRect.topLeft()));
             boxGeometry.setContentBoxHeight(toLayoutUnit(lineBreakBoxRect.height()));
-            break;
+            continue;
         }
-        case InlineItem::Type::Box: {
+        if (lineRun.isBox()) {
             ASSERT(layoutBox.isAtomicInlineLevelBox());
             auto& boxGeometry = formattingState.boxGeometry(layoutBox);
             auto logicalBorderBox = lineBox.logicalBorderBoxForAtomicInlineLevelBox(layoutBox, boxGeometry);
@@ -161,9 +160,9 @@ void InlineDisplayContentBuilder::createBoxesAndUpdateGeometryForLineContent(con
                 boxes[m_inlineBoxIndexMap.get(&parentInlineBox)].adjustInkOverflow(logicalBorderBox);
             };
             adjustParentInlineBoxInkOverflow();
-            break;
+            continue;
         }
-        case InlineItem::Type::InlineBoxStart: {
+        if (lineRun.isInlineBoxStart()) {
             // This inline box showed up first on this line.
             auto& boxGeometry = formattingState.boxGeometry(layoutBox);
             auto inlineBoxBorderBox = lineBox.logicalBorderBoxForInlineBox(layoutBox, boxGeometry);
@@ -185,12 +184,9 @@ void InlineDisplayContentBuilder::createBoxesAndUpdateGeometryForLineContent(con
             boxGeometry.setContentBoxHeight(contentBoxHeight);
             auto contentBoxWidth = logicalRect.width() - (boxGeometry.horizontalBorder() + boxGeometry.horizontalPadding().value_or(0_lu));
             boxGeometry.setContentBoxWidth(contentBoxWidth);
-            break;
+            continue;
         }
-        default:
-            ASSERT(lineRun.isInlineBoxEnd() || lineRun.isWordBreakOpportunity());
-            break;
-        }
+        ASSERT(lineRun.isInlineBoxEnd() || lineRun.isWordBreakOpportunity() || lineRun.isLineSpanningInlineBoxStart());
     }
 }
 

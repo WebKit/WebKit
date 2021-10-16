@@ -292,19 +292,50 @@ LineBuilder::IntrinsicContent LineBuilder::computedIntrinsicWidth(const InlineIt
     return { committedRange, m_line.contentLogicalWidth(), m_floats };
 }
 
-void LineBuilder::initialize(const UsedConstraints& lineConstraints, bool isFirstLine, size_t leadingInlineTextItemIndex, size_t partialLeadingContentLength, std::optional<InlineLayoutUnit> overflowingLogicalWidth)
+void LineBuilder::initialize(const UsedConstraints& lineConstraints, bool isFirstLine, size_t leadingInlineItemIndex, size_t partialLeadingContentLength, std::optional<InlineLayoutUnit> overflowingLogicalWidth)
 {
     m_isFirstLine = isFirstLine;
     m_floats.clear();
+    m_lineSpanningInlineBoxes.clear();
     m_wrapOpportunityList.clear();
 
-    m_line.initialize();
+    auto createLineSpanningInlineBoxes = [&] {
+        auto isRootLayoutBox = [&](auto& containerBox) {
+            return &containerBox == &root();
+        };
+        // An inline box may not necessarily start on the current line:
+        // <span>first line<br>second line<span>with some more embedding<br> forth line</span></span>
+        // We need to make sure that there's an [InlineBoxStart] for every inline box that's present on the current line.
+        // We only have to do it on the first run as any subsequent inline content is either at the same/higher nesting level.
+        auto& firstInlineItem = m_inlineItems[leadingInlineItemIndex];
+        // If the parent is the formatting root, we can stop here. This is root inline box content, there's no nesting inline box from the previous line(s)
+        // unless the inline box closing is forced over to the current line.
+        // e.g.
+        // <span>normally the inline box closing forms a continuous content</span>
+        // <span>unless it's forced to the next line<br></span>
+        auto firstInlineItemIsLineSpanning = firstInlineItem.isInlineBoxEnd();
+        if (!firstInlineItemIsLineSpanning && isRootLayoutBox(firstInlineItem.layoutBox().parent()))
+            return;
+        Vector<const Box*> spanningLayoutBoxList;
+        if (firstInlineItemIsLineSpanning)
+            spanningLayoutBoxList.append(&firstInlineItem.layoutBox());
+        auto* ancestor = &firstInlineItem.layoutBox().parent();
+        while (!isRootLayoutBox(*ancestor)) {
+            spanningLayoutBoxList.append(ancestor);
+            ancestor = &ancestor->parent();
+        }
+        for (auto* spanningInlineBox : WTF::makeReversedRange(spanningLayoutBoxList))
+            m_lineSpanningInlineBoxes.append({ *spanningInlineBox, InlineItem::Type::InlineBoxStart });
+    };
+    createLineSpanningInlineBoxes();
+    m_line.initialize(m_lineSpanningInlineBoxes);
+
     m_lineLogicalRect = lineConstraints.logicalRect;
     m_contentIsConstrainedByFloat = lineConstraints.isConstrainedByFloat;
 
     if (partialLeadingContentLength) {
         ASSERT(!isFirstLine);
-        m_partialLeadingTextItem = downcast<InlineTextItem>(m_inlineItems[leadingInlineTextItemIndex]).right(partialLeadingContentLength, overflowingLogicalWidth);
+        m_partialLeadingTextItem = downcast<InlineTextItem>(m_inlineItems[leadingInlineItemIndex]).right(partialLeadingContentLength, overflowingLogicalWidth);
         m_overflowingLogicalWidth = { };
     } else {
         m_partialLeadingTextItem = { };
@@ -386,7 +417,7 @@ LineBuilder::InlineItemRange LineBuilder::close(const InlineItemRange& needsLayo
     if (runsExpandHorizontally)
         m_line.applyRunExpansion(horizontalAvailableSpace);
     auto lineEndsWithHyphen = false;
-    if (!m_line.runs().isEmpty()) {
+    if (m_line.hasContent()) {
         auto& lastTextContent = m_line.runs().last().textContent();
         lineEndsWithHyphen = lastTextContent && lastTextContent->needsHyphen;
     }
@@ -707,7 +738,7 @@ LineBuilder::Result LineBuilder::handleInlineContent(InlineContentBreaker& inlin
         return std::isnan(availableWidthForContent) ? maxInlineLayoutUnit() : availableWidthForContent;
     }();
     // While the floats are not considered to be on the line, they make the line contentful for line breaking.
-    auto lineHasContent = !m_line.runs().isEmpty() || m_contentIsConstrainedByFloat;
+    auto lineHasContent = m_line.hasContent() || m_contentIsConstrainedByFloat;
     auto lineStatus = InlineContentBreaker::LineStatus { m_line.contentLogicalRight(), availableWidth, m_line.trimmableTrailingWidth(), m_line.trailingSoftHyphenWidth(), m_line.isTrailingRunFullyTrimmable(), lineHasContent, !m_wrapOpportunityList.isEmpty() };
     auto result = inlineContentBreaker.processInlineContent(continuousInlineContent, lineStatus);
     auto& candidateRuns = continuousInlineContent.runs();
@@ -721,7 +752,7 @@ LineBuilder::Result LineBuilder::handleInlineContent(InlineContentBreaker& inlin
             auto& trailingRun = candidateRuns.last();
             // FIXME: There must be a way to decide if the trailing run actually ended up on the line.
             // Let's just deal with collapsed leading whitespace for now.
-            if (!m_line.runs().isEmpty() && TextUtil::isWrappingAllowed(trailingRun.style))
+            if (m_line.hasContent() && TextUtil::isWrappingAllowed(trailingRun.style))
                 m_wrapOpportunityList.append(&trailingRun.inlineItem);
         }
         return { result.isEndOfLine, { candidateRuns.size(), false } };
@@ -826,7 +857,7 @@ size_t LineBuilder::rebuildLine(const InlineItemRange& layoutRange, const Inline
     ASSERT(!m_wrapOpportunityList.isEmpty());
     // We might already have added floats. They shrink the available horizontal space for the line.
     // Let's just reuse what the line has at this point.
-    m_line.initialize();
+    m_line.initialize(m_lineSpanningInlineBoxes);
     auto currentItemIndex = layoutRange.start;
     if (m_partialLeadingTextItem) {
         m_line.append(*m_partialLeadingTextItem, m_partialLeadingTextItem->style(), inlineItemWidth(*m_partialLeadingTextItem, { }));

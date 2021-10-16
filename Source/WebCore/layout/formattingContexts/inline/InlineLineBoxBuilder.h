@@ -60,8 +60,6 @@ private:
     const Box& rootBox() const { return formattingContext().root(); }
     LayoutState& layoutState() const { return formattingContext().layoutState(); }
 
-    bool isRootLayoutBox(const ContainerBox& containerBox) const { return &containerBox == &rootBox(); }
-
 private:
     const InlineFormattingContext& m_inlineFormattingContext;
 };

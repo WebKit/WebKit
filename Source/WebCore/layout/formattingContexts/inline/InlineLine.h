@@ -42,9 +42,11 @@ public:
     Line(const InlineFormattingContext&);
     ~Line();
 
-    void initialize();
+    void initialize(const Vector<InlineItem>& lineSpanningInlineBoxes);
 
     void append(const InlineItem&, const RenderStyle&, InlineLayoutUnit logicalWidth);
+
+    bool hasContent() const { return !m_runs.isEmpty() && !m_runs.last().isLineSpanningInlineBoxStart(); }
 
     InlineLayoutUnit contentLogicalWidth() const { return m_contentLogicalWidth; }
     InlineLayoutUnit contentLogicalRight() const { return m_runs.isEmpty() ? 0.0f : m_runs.last().logicalRight(); }
@@ -62,15 +64,26 @@ public:
     void applyRunExpansion(InlineLayoutUnit horizontalAvailableSpace);
 
     struct Run {
-        bool isText() const { return m_type == InlineItem::Type::Text; }
-        bool isBox() const { return m_type == InlineItem::Type::Box; }
+        enum class Type : uint8_t {
+            Text,
+            HardLineBreak,
+            SoftLineBreak,
+            WordBreakOpportunity,
+            AtomicBox,
+            InlineBoxStart,
+            InlineBoxEnd,
+            LineSpanningInlineBoxStart
+        };
+
+        bool isText() const { return m_type == Type::Text; }
+        bool isBox() const { return m_type == Type::AtomicBox; }
         bool isLineBreak() const { return isHardLineBreak() || isSoftLineBreak(); }
-        bool isSoftLineBreak() const  { return m_type == InlineItem::Type::SoftLineBreak; }
-        bool isHardLineBreak() const { return m_type == InlineItem::Type::HardLineBreak; }
-        bool isWordBreakOpportunity() const { return m_type == InlineItem::Type::WordBreakOpportunity; }
-        bool isInlineBoxStart() const { return m_type == InlineItem::Type::InlineBoxStart; }
-        bool isInlineBoxEnd() const { return m_type == InlineItem::Type::InlineBoxEnd; }
-        auto type() const { return m_type; }
+        bool isSoftLineBreak() const  { return m_type == Type::SoftLineBreak; }
+        bool isHardLineBreak() const { return m_type == Type::HardLineBreak; }
+        bool isWordBreakOpportunity() const { return m_type == Type::WordBreakOpportunity; }
+        bool isInlineBoxStart() const { return m_type == Type::InlineBoxStart; }
+        bool isLineSpanningInlineBoxStart() const { return m_type == Type::LineSpanningInlineBoxStart; }
+        bool isInlineBoxEnd() const { return m_type == Type::InlineBoxEnd; }
 
         const Box& layoutBox() const { return *m_layoutBox; }
         struct Text {
@@ -101,6 +114,7 @@ public:
         Run(const InlineSoftLineBreakItem&, InlineLayoutUnit logicalLeft);
         Run(const InlineItem&, const RenderStyle&, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth);
         Run(const InlineItem&, InlineLayoutUnit logicalLeft);
+        Run(const InlineItem& lineSpanningInlineBoxItem);
 
         void expand(const InlineTextItem&, InlineLayoutUnit logicalWidth);
         void moveHorizontally(InlineLayoutUnit offset) { m_logicalLeft += offset; }
@@ -124,7 +138,7 @@ public:
         InlineLayoutUnit trailingLetterSpacing() const;
         void removeTrailingLetterSpacing();
 
-        InlineItem::Type m_type { InlineItem::Type::Text };
+        Type m_type { Type::Text };
         const Box* m_layoutBox { nullptr };
         InlineLayoutUnit m_logicalLeft { 0 };
         InlineLayoutUnit m_logicalWidth { 0 };

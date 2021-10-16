@@ -35,7 +35,16 @@ namespace Layout {
 
 class InlineItem {
 public:
-    enum class Type : uint8_t { Text, HardLineBreak, SoftLineBreak, WordBreakOpportunity, Box, Float, InlineBoxStart, InlineBoxEnd };
+    enum class Type : uint8_t {
+        Text,
+        HardLineBreak,
+        SoftLineBreak,
+        WordBreakOpportunity,
+        Box,
+        InlineBoxStart,
+        InlineBoxEnd,
+        Float
+    };
     InlineItem(const Box& layoutBox, Type);
 
     Type type() const { return m_type; }

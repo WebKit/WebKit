@@ -254,43 +254,6 @@ InlineLayoutUnit LineBoxBuilder::constructAndAlignInlineLevelBoxes(LineBox& line
         return !lineIndex ? layoutBox.firstLineStyle() : layoutBox.style();
     };
 
-    auto createLineSpanningInlineBoxes = [&] {
-        if (runs.isEmpty())
-            return;
-        // An inline box may not necessarily start on the current line:
-        // <span id=outer>line break<br>this content's parent inline box('outer') <span id=inner>starts on the previous line</span></span>
-        // We need to make sure that there's an InlineLevelBox for every inline box that's present on the current line.
-        // In nesting case we need to create InlineLevelBoxes for the inline box ancestors.
-        // We only have to do it on the first run as any subsequent inline content is either at the same/higher nesting level or
-        // nested with a [inline box start] run.
-        auto& firstRun = runs[0];
-        auto& firstRunParentLayoutBox = firstRun.layoutBox().parent();
-        // If the parent is the formatting root, we can stop here. This is root inline box content, there's no nesting inline box from the previous line(s)
-        // unless the inline box closing is forced over to the current line.
-        // e.g.
-        // <span>normally the inline box closing forms a continuous content</span>
-        // <span>unless it's forced to the next line<br></span>
-        auto firstRunNeedsInlineBox = firstRun.isInlineBoxEnd();
-        if (!firstRunNeedsInlineBox && isRootLayoutBox(firstRunParentLayoutBox))
-            return;
-        Vector<const Box*> layoutBoxesWithoutInlineBoxes;
-        if (firstRunNeedsInlineBox)
-            layoutBoxesWithoutInlineBoxes.append(&firstRun.layoutBox());
-        auto* ancestor = &firstRunParentLayoutBox;
-        while (!isRootLayoutBox(*ancestor)) {
-            layoutBoxesWithoutInlineBoxes.append(ancestor);
-            ancestor = &ancestor->parent();
-        }
-        // Construct the missing LineBox::InlineBoxes starting with the topmost layout box.
-        for (auto* layoutBox : WTF::makeReversedRange(layoutBoxesWithoutInlineBoxes)) {
-            auto inlineBox = InlineLevelBox::createInlineBox(*layoutBox, styleToUse(*layoutBox), rootInlineBox.logicalLeft(), rootInlineBox.logicalWidth(), InlineLevelBox::LineSpanningInlineBox::Yes);
-            setInitialVerticalGeometryForInlineBox(inlineBox);
-            updateCanUseSimplifiedAlignment(inlineBox);
-            lineBox.addInlineLevelBox(WTFMove(inlineBox));
-        }
-    };
-    createLineSpanningInlineBoxes();
-
     auto lineHasContent = false;
     for (auto& run : runs) {
         auto& layoutBox = run.layoutBox();
@@ -299,14 +262,16 @@ InlineLayoutUnit LineBoxBuilder::constructAndAlignInlineLevelBoxes(LineBox& line
             ASSERT(!lineHasContent);
             if (run.isText() || run.isBox() || run.isSoftLineBreak() || run.isHardLineBreak())
                 return true;
+            if (run.isLineSpanningInlineBoxStart())
+                return false;
+            if (run.isWordBreakOpportunity())
+                return false;
             auto& inlineBoxGeometry = formattingContext().geometryForBox(layoutBox);
             // Even negative horizontal margin makes the line "contentful".
             if (run.isInlineBoxStart())
                 return inlineBoxGeometry.marginStart() || inlineBoxGeometry.borderLeft() || inlineBoxGeometry.paddingLeft().value_or(0_lu);
             if (run.isInlineBoxEnd())
                 return inlineBoxGeometry.marginEnd() || inlineBoxGeometry.borderRight() || inlineBoxGeometry.paddingRight().value_or(0_lu);
-            if (run.isWordBreakOpportunity())
-                return false;
             ASSERT_NOT_REACHED();
             return true;
         };
@@ -342,6 +307,13 @@ InlineLayoutUnit LineBoxBuilder::constructAndAlignInlineLevelBoxes(LineBox& line
             atomicInlineLevelBox.setLayoutBounds(InlineLevelBox::LayoutBounds { ascent, marginBoxHeight - ascent });
             updateCanUseSimplifiedAlignment(atomicInlineLevelBox, inlineLevelBoxGeometry);
             lineBox.addInlineLevelBox(WTFMove(atomicInlineLevelBox));
+            continue;
+        }
+        if (run.isLineSpanningInlineBoxStart()) {
+            auto inlineBox = InlineLevelBox::createInlineBox(layoutBox, style, logicalLeft, rootInlineBox.logicalWidth(), InlineLevelBox::LineSpanningInlineBox::Yes);
+            setInitialVerticalGeometryForInlineBox(inlineBox);
+            updateCanUseSimplifiedAlignment(inlineBox);
+            lineBox.addInlineLevelBox(WTFMove(inlineBox));
             continue;
         }
         if (run.isInlineBoxStart()) {
