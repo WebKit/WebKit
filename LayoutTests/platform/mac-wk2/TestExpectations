@@ -1680,8 +1680,6 @@ webkit.org/b/231386 [ BigSur ] http/tests/resourceLoadStatistics/website-data-re
 webkit.org/b/231600 [ Release ] imported/w3c/web-platform-tests/css/cssom-view/scroll-behavior-main-frame-window.html [ Pass Failure ]
 webkit.org/b/231600 [ Release ] imported/w3c/web-platform-tests/css/cssom-view/scroll-behavior-main-frame-root.html [ Failure ]
 
-webkit.org/b/231752 [ Debug ] imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-049.html [ Pass Crash ]
-
 webkit.org/b/231765 [ Release ] http/tests/resourceLoadStatistics/website-data-removal-for-site-navigated-to-with-link-decoration.html [ Pass Timeout ]
 
 webkit.org/b/231780 [ Debug ] imported/w3c/web-platform-tests/webrtc/simulcast/basic.https.html [ Pass Failure ]

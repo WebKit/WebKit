@@ -1,3 +1,11 @@
+2021-10-16  Tim Horton  <timothy_horton@apple.com>
+
+        Unreviewed, revert r284181
+        
+        No longer needed because the root cause was reverted.
+
+        * platform/mac-wk2/TestExpectations:
+
 2021-10-16  Alan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Adjust the logical left side of the line with line spanning inline boxes
