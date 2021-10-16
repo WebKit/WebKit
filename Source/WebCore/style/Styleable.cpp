@@ -39,6 +39,9 @@
 #include "Element.h"
 #include "KeyframeEffect.h"
 #include "KeyframeEffectStack.h"
+#include "RenderElement.h"
+#include "RenderListItem.h"
+#include "RenderListMarker.h"
 #include "RenderStyle.h"
 #include "StylePropertyShorthand.h"
 #include "StyleResolver.h"
@@ -47,6 +50,64 @@
 #include "WebAnimationUtilities.h"
 
 namespace WebCore {
+
+const std::optional<const Styleable> Styleable::fromRenderer(const RenderElement& renderer)
+{
+    switch (renderer.style().styleType()) {
+    case PseudoId::Backdrop:
+        for (auto& topLayerElement : renderer.document().topLayerElements()) {
+            if (topLayerElement->renderer() && topLayerElement->renderer()->backdropRenderer() == &renderer)
+                return Styleable(topLayerElement.get(), PseudoId::Backdrop);
+        }
+        break;
+    case PseudoId::Marker:
+        if (auto* parent = renderer.parent()) {
+            ASSERT(parent->element());
+            ASSERT(is<RenderListItem>(parent));
+            ASSERT(downcast<RenderListItem>(*parent).markerRenderer() == &renderer);
+            return Styleable(*parent->element(), PseudoId::Marker);
+        }
+        break;
+    case PseudoId::After:
+    case PseudoId::Before:
+    case PseudoId::None:
+        if (auto* element = renderer.element())
+            return fromElement(*element);
+        break;
+    default:
+        return std::nullopt;
+    }
+
+    return std::nullopt;
+}
+
+RenderElement* Styleable::renderer() const
+{
+    switch (pseudoId) {
+    case PseudoId::After:
+        if (auto* afterPseudoElement = element.afterPseudoElement())
+            return afterPseudoElement->renderer();
+        break;
+    case PseudoId::Backdrop:
+        if (auto* hostRenderer = element.renderer())
+            return hostRenderer->backdropRenderer().get();
+        break;
+    case PseudoId::Before:
+        if (auto* beforePseudoElement = element.beforePseudoElement())
+            return beforePseudoElement->renderer();
+        break;
+    case PseudoId::Marker:
+        if (is<RenderListItem>(element.renderer()))
+            return downcast<RenderListItem>(*element.renderer()).markerRenderer();
+        break;
+    case PseudoId::None:
+        return element.renderer();
+    default:
+        ASSERT_NOT_REACHED();
+    }
+
+    return nullptr;
+}
 
 void Styleable::animationWasAdded(WebAnimation& animation) const
 {

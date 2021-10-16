@@ -1873,7 +1873,9 @@ Document* KeyframeEffect::document() const
 
 RenderElement* KeyframeEffect::renderer() const
 {
-    return targetElementOrPseudoElement() ? targetElementOrPseudoElement()->renderer() : nullptr;
+    if (auto target = targetStyleable())
+        return target->renderer();
+    return nullptr;
 }
 
 const RenderStyle& KeyframeEffect::currentStyle() const

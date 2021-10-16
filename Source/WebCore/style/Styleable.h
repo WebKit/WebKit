@@ -28,13 +28,13 @@
 #include "Element.h"
 #include "KeyframeEffectStack.h"
 #include "PseudoElement.h"
-#include "RenderElement.h"
 #include "RenderStyleConstants.h"
 #include "WebAnimationTypes.h"
 
 namespace WebCore {
 
 class KeyframeEffectStack;
+class RenderElement;
 class RenderStyle;
 class WebAnimation;
 
@@ -56,12 +56,7 @@ struct Styleable {
         return Styleable(element, element.pseudoId());
     }
 
-    static const std::optional<const Styleable> fromRenderer(const RenderElement& renderer)
-    {
-        if (auto* element = renderer.element())
-            return fromElement(*element);
-        return std::nullopt;
-    }
+    static const std::optional<const Styleable> fromRenderer(const RenderElement&);
 
     bool operator==(const Styleable& other) const
     {
@@ -72,6 +67,8 @@ struct Styleable {
     {
         return !(*this == other);
     }
+
+    RenderElement* renderer() const;
 
     KeyframeEffectStack* keyframeEffectStack() const
     {
