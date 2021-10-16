@@ -152,6 +152,7 @@ my (
     $spellcheckSupport,
     $streamsAPISupport,
     $svgFontsSupport,
+    $isoMallocSupport,
     $systemMallocSupport,
     $telephoneNumberDetectionSupport,
     $textAutosizingSupport,
@@ -559,6 +560,9 @@ my @features = (
 
     { option => "gstreamer-gl", desc => "Toggle GStreamer GL support",
       define => "USE_GSTREAMER_GL", value => \$gstreamerGLSupport },
+
+    { option => "iso-malloc", desc => "Toggle IsoMalloc support",
+      define => "USE_ISO_MALLOC", value => \$isoMallocSupport },
 
     { option => "system-malloc", desc => "Toggle system allocator instead of bmalloc",
       define => "USE_SYSTEM_MALLOC", value => \$systemMallocSupport },

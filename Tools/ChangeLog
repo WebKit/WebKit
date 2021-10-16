@@ -1,3 +1,14 @@
+2021-10-15  Basuke Suzuki  <basuke.suzuki@sony.com>
+
+        Add flag to turn off Iso heap
+        https://bugs.webkit.org/show_bug.cgi?id=231823
+
+        Reviewed by Yusuke Suzuki.
+
+        Added --(no-)iso-malloc feature flag for cmake build.
+
+        * Scripts/webkitperl/FeatureList.pm:
+
 2021-10-15  Alex Christensen  <achristensen@webkit.org>
 
         Start using adattributiond on iOS

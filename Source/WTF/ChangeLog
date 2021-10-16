@@ -1,3 +1,16 @@
+2021-10-15  Basuke Suzuki  <basuke.suzuki@sony.com>
+
+        Add flag to turn off Iso heap
+        https://bugs.webkit.org/show_bug.cgi?id=231823
+
+        Reviewed by Yusuke Suzuki.
+
+        If this flag is off, then all allocations are replaced with FastMalloc.
+
+        * wtf/IsoMalloc.h:
+        * wtf/IsoMallocInlines.h:
+        * wtf/PlatformUse.h:
+
 2021-10-15  Ross Kirsling  <ross.kirsling@sony.com>
 
         Realize Mac CMake build of WebCore and WebKit

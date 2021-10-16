@@ -1,3 +1,15 @@
+2021-10-15  Basuke Suzuki  <basuke.suzuki@sony.com>
+
+        Add flag to turn off Iso heap
+        https://bugs.webkit.org/show_bug.cgi?id=231823
+
+        Reviewed by Yusuke Suzuki.
+
+        Added USE_ISO_MALLOC feature flags which is on by default for most platforms.
+
+        * Source/cmake/OptionsPlayStation.cmake:
+        * Source/cmake/WebKitFeatures.cmake:
+
 2021-10-15  Ross Kirsling  <ross.kirsling@sony.com>
 
         Realize Mac CMake build of WebCore and WebKit
