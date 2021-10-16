@@ -266,11 +266,11 @@ LineBuilder::LineBuilder(const InlineFormattingContext& inlineFormattingContext,
 {
 }
 
-LineBuilder::LineContent LineBuilder::layoutInlineContent(const InlineItemRange& needsLayoutRange, size_t partialLeadingContentLength, std::optional<InlineLayoutUnit> overflowLogicalWidth, const InlineRect& initialLineLogicalRect, bool isFirstLine)
+LineBuilder::LineContent LineBuilder::layoutInlineContent(const InlineItemRange& needsLayoutRange, size_t partialLeadingContentLength, std::optional<InlineLayoutUnit> overflowingLogicalWidth, const InlineRect& initialLineLogicalRect, bool isFirstLine)
 {
-    initialize(initialConstraintsForLine(initialLineLogicalRect, isFirstLine), isFirstLine);
+    initialize(initialConstraintsForLine(initialLineLogicalRect, isFirstLine), isFirstLine, needsLayoutRange.start, partialLeadingContentLength, overflowingLogicalWidth);
 
-    auto committedContent = placeInlineContent(needsLayoutRange, partialLeadingContentLength, overflowLogicalWidth);
+    auto committedContent = placeInlineContent(needsLayoutRange);
     auto committedRange = close(needsLayoutRange, committedContent);
 
     auto isLastLine = isLastLineWithInlineContent(committedRange, needsLayoutRange.end, committedContent.partialTrailingContentLength);
@@ -286,25 +286,33 @@ LineBuilder::LineContent LineBuilder::layoutInlineContent(const InlineItemRange&
 
 LineBuilder::IntrinsicContent LineBuilder::computedIntrinsicWidth(const InlineItemRange& needsLayoutRange, InlineLayoutUnit availableWidth)
 {
-    initialize({ { { }, { availableWidth, maxInlineLayoutUnit() } }, false }, false);
-    auto committedContent = placeInlineContent(needsLayoutRange, { }, { });
+    initialize({ { { }, { availableWidth, maxInlineLayoutUnit() } }, false }, false, { }, { }, { });
+    auto committedContent = placeInlineContent(needsLayoutRange);
     auto committedRange = close(needsLayoutRange, committedContent);
     return { committedRange, m_line.contentLogicalWidth(), m_floats };
 }
 
-void LineBuilder::initialize(const UsedConstraints& lineConstraints, bool isFirstLine)
+void LineBuilder::initialize(const UsedConstraints& lineConstraints, bool isFirstLine, size_t leadingInlineTextItemIndex, size_t partialLeadingContentLength, std::optional<InlineLayoutUnit> overflowingLogicalWidth)
 {
     m_isFirstLine = isFirstLine;
     m_floats.clear();
-    m_partialLeadingTextItem = { };
     m_wrapOpportunityList.clear();
 
     m_line.initialize();
     m_lineLogicalRect = lineConstraints.logicalRect;
     m_contentIsConstrainedByFloat = lineConstraints.isConstrainedByFloat;
+
+    if (partialLeadingContentLength) {
+        ASSERT(!isFirstLine);
+        m_partialLeadingTextItem = downcast<InlineTextItem>(m_inlineItems[leadingInlineTextItemIndex]).right(partialLeadingContentLength, overflowingLogicalWidth);
+        m_overflowingLogicalWidth = { };
+    } else {
+        m_partialLeadingTextItem = { };
+        m_overflowingLogicalWidth = overflowingLogicalWidth;
+    }
 }
 
-LineBuilder::CommittedContent LineBuilder::placeInlineContent(const InlineItemRange& needsLayoutRange, size_t partialLeadingContentLength, std::optional<InlineLayoutUnit> leadingLogicalWidth)
+LineBuilder::CommittedContent LineBuilder::placeInlineContent(const InlineItemRange& needsLayoutRange)
 {
     auto lineCandidate = LineCandidate { layoutState().shouldIgnoreTrailingLetterSpacing() };
     auto inlineContentBreaker = InlineContentBreaker { };
@@ -316,7 +324,7 @@ LineBuilder::CommittedContent LineBuilder::placeInlineContent(const InlineItemRa
         // 2. Apply floats and shrink the available horizontal space e.g. <span>intru_<div style="float: left"></div>sive_float</span>.
         // 3. Check if the content fits the line and commit the content accordingly (full, partial or not commit at all).
         // 4. Return if we are at the end of the line either by not being able to fit more content or because of an explicit line break.
-        candidateContentForLine(lineCandidate, currentItemIndex, needsLayoutRange, partialLeadingContentLength, std::exchange(leadingLogicalWidth, std::nullopt), m_line.contentLogicalRight());
+        candidateContentForLine(lineCandidate, currentItemIndex, needsLayoutRange, m_line.contentLogicalRight());
         // Now check if we can put this content on the current line.
         auto result = Result { };
         if (lineCandidate.floatItem) {
@@ -355,7 +363,6 @@ LineBuilder::CommittedContent LineBuilder::placeInlineContent(const InlineItemRa
             return { committedInlineItemCount, result.partialTrailingContentLength, result.overflowLogicalWidth };
         }
         currentItemIndex = needsLayoutRange.start + committedInlineItemCount + m_floats.size();
-        partialLeadingContentLength = { };
     }
     // Looks like we've run out of runs.
     return { committedInlineItemCount, { } };
@@ -471,7 +478,7 @@ LineBuilder::UsedConstraints LineBuilder::initialConstraintsForLine(const Inline
     return UsedConstraints { { initialLineLogicalRect.top(), lineLogicalLeft, lineLogicalRight - lineLogicalLeft, initialLineLogicalRect.height() }, lineIsConstrainedByFloat };
 }
 
-void LineBuilder::candidateContentForLine(LineCandidate& lineCandidate, size_t currentInlineItemIndex, const InlineItemRange& layoutRange, size_t partialLeadingContentLength, std::optional<InlineLayoutUnit> leadingLogicalWidth, InlineLayoutUnit currentLogicalRight)
+void LineBuilder::candidateContentForLine(LineCandidate& lineCandidate, size_t currentInlineItemIndex, const InlineItemRange& layoutRange, InlineLayoutUnit currentLogicalRight)
 {
     ASSERT(currentInlineItemIndex < layoutRange.end);
     lineCandidate.reset();
@@ -482,12 +489,11 @@ void LineBuilder::candidateContentForLine(LineCandidate& lineCandidate, size_t c
     // softWrapOpportunityIndex == layoutRange.end means we don't have any wrap opportunity in this content.
     ASSERT(softWrapOpportunityIndex <= layoutRange.end);
 
-    if (partialLeadingContentLength) {
-        ASSERT(!m_isFirstLine);
+    auto isLineStart = currentInlineItemIndex == layoutRange.start;
+    if (isLineStart && m_partialLeadingTextItem) {
+        ASSERT(!m_overflowingLogicalWidth);
         // Handle leading partial content first (overflowing text from the previous line).
-        // Construct a partial leading inline item.
-        m_partialLeadingTextItem = downcast<InlineTextItem>(m_inlineItems[currentInlineItemIndex]).right(partialLeadingContentLength);
-        auto itemWidth = leadingLogicalWidth ? *std::exchange(leadingLogicalWidth, std::nullopt) : inlineItemWidth(*m_partialLeadingTextItem, currentLogicalRight);
+        auto itemWidth = inlineItemWidth(*m_partialLeadingTextItem, currentLogicalRight);
         lineCandidate.inlineContent.appendInlineItem(*m_partialLeadingTextItem, m_partialLeadingTextItem->style(), itemWidth);
         currentLogicalRight += itemWidth;
         ++currentInlineItemIndex;
@@ -505,8 +511,7 @@ void LineBuilder::candidateContentForLine(LineCandidate& lineCandidate, size_t c
             continue;
         }
         if (inlineItem.isText() || inlineItem.isInlineBoxStart() || inlineItem.isInlineBoxEnd()) {
-            ASSERT(!leadingLogicalWidth || inlineItem.isText());
-            auto logicalWidth = leadingLogicalWidth ? *std::exchange(leadingLogicalWidth, std::nullopt) : inlineItemWidth(inlineItem, currentLogicalRight);
+            auto logicalWidth = m_overflowingLogicalWidth ? *std::exchange(m_overflowingLogicalWidth, std::nullopt) : inlineItemWidth(inlineItem, currentLogicalRight);
             lineCandidate.inlineContent.appendInlineItem(inlineItem, style, logicalWidth);
             currentLogicalRight += logicalWidth;
             if (is<InlineTextItem>(inlineItem) && downcast<InlineTextItem>(inlineItem).isWordSeparator()) {

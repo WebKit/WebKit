@@ -63,7 +63,7 @@ public:
         size_t nonSpanningInlineLevelBoxCount { 0 };
         const Line::RunList& runs;
     };
-    LineContent layoutInlineContent(const InlineItemRange&, size_t partialLeadingContentLength, std::optional<InlineLayoutUnit> leadingLogicalWidth, const InlineRect& initialLineLogicalRect, bool isFirstLine);
+    LineContent layoutInlineContent(const InlineItemRange&, size_t partialLeadingContentLength, std::optional<InlineLayoutUnit> overflowingLogicalWidth, const InlineRect& initialLineLogicalRect, bool isFirstLine);
 
     struct IntrinsicContent {
         InlineItemRange inlineItemRange;
@@ -73,7 +73,7 @@ public:
     IntrinsicContent computedIntrinsicWidth(const InlineItemRange&, InlineLayoutUnit availableWidth);
 
 private:
-    void candidateContentForLine(LineCandidate&, size_t inlineItemIndex, const InlineItemRange& needsLayoutRange, size_t overflowLength, std::optional<InlineLayoutUnit> leadingLogicalWidth, InlineLayoutUnit currentLogicalRight);
+    void candidateContentForLine(LineCandidate&, size_t inlineItemIndex, const InlineItemRange& needsLayoutRange, InlineLayoutUnit currentLogicalRight);
     size_t nextWrapOpportunity(size_t startIndex, const LineBuilder::InlineItemRange& layoutRange) const;
 
     struct Result {
@@ -98,13 +98,13 @@ private:
     size_t rebuildLine(const InlineItemRange& needsLayoutRange, const InlineItem& lastInlineItemToAdd);
     size_t rebuildLineForTrailingSoftHyphen(const InlineItemRange& layoutRange);
     void commitPartialContent(const InlineContentBreaker::ContinuousContent::RunList&, const InlineContentBreaker::Result::PartialTrailingContent&);
-    void initialize(const UsedConstraints&, bool isFirstLine);
+    void initialize(const UsedConstraints&, bool isFirstLine, size_t leadingInlineTextItemIndex, size_t partialLeadingContentLength, std::optional<InlineLayoutUnit> overflowingLogicalWidth);
     struct CommittedContent {
         size_t inlineItemCount { 0 };
         size_t partialTrailingContentLength { 0 };
         std::optional<InlineLayoutUnit> overflowLogicalWidth { };
     };
-    CommittedContent placeInlineContent(const InlineItemRange&, size_t partialLeadingContentLength, std::optional<InlineLayoutUnit> overflowLogicalWidth);
+    CommittedContent placeInlineContent(const InlineItemRange&);
     InlineItemRange close(const InlineItemRange& needsLayoutRange, const CommittedContent&);
 
     InlineLayoutUnit inlineItemWidth(const InlineItem&, InlineLayoutUnit contentLogicalLeft) const;
@@ -129,6 +129,7 @@ private:
     const InlineItems& m_inlineItems;
     FloatList m_floats;
     std::optional<InlineTextItem> m_partialLeadingTextItem;
+    std::optional<InlineLayoutUnit> m_overflowingLogicalWidth;
     Vector<const InlineItem*> m_wrapOpportunityList;
     unsigned m_successiveHyphenatedLineCount { 0 };
     bool m_contentIsConstrainedByFloat { false };
