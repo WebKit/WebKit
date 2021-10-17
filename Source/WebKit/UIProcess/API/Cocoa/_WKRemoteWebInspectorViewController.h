@@ -40,7 +40,7 @@ NS_ASSUME_NONNULL_BEGIN
 WK_CLASS_AVAILABLE(macos(10.12.3))
 @interface _WKRemoteWebInspectorViewController : NSObject <_WKInspectorExtensionHost, _WKInspectorIBActions>
 
-@property (nonatomic, assign) id <_WKRemoteWebInspectorViewControllerDelegate> delegate;
+@property (nonatomic, weak) id <_WKRemoteWebInspectorViewControllerDelegate> delegate;
 
 @property (nonatomic, readonly, retain) NSWindow *window;
 @property (nonatomic, readonly, retain) WKWebView *webView;

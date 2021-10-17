@@ -1,3 +1,17 @@
+2021-10-16  David Kilzer  <ddkilzer@apple.com>
+
+        _WKRemoteWebInspectorViewController leaks an instance variable and should use a weak delegate
+        <https://webkit.org/b/231830>
+        <rdar://problem/84316056>
+
+        Reviewed by Brent Fulgham.
+
+        * UIProcess/API/Cocoa/_WKRemoteWebInspectorViewController.h:
+        - Use a weak reference for the delegate.
+        * UIProcess/API/Cocoa/_WKRemoteWebInspectorViewController.mm:
+        (-[_WKRemoteWebInspectorViewController dealloc]): Add.
+        - Fix leak by releasing _configuration instance variable.
+
 2021-10-16  Tim Horton  <timothy_horton@apple.com>
 
         WebKit ignores inherited GCC_PREPROCESSOR_DEFINITIONS
