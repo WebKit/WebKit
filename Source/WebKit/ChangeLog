@@ -1,5 +1,31 @@
 2021-10-16  David Kilzer  <ddkilzer@apple.com>
 
+        [WebAuthn] Many Objective-C classes leak their instance variables
+        <https://webkit.org/b/231834>
+        <rdar://problem/84317190>
+
+        Reviewed by Brent Fulgham.
+
+        * UIProcess/API/Cocoa/_WKAuthenticationExtensionsClientInputs.mm:
+        (-[_WKAuthenticationExtensionsClientInputs dealloc]):
+        * UIProcess/API/Cocoa/_WKPublicKeyCredentialCreationOptions.mm:
+        (-[_WKPublicKeyCredentialCreationOptions dealloc]):
+        * UIProcess/API/Cocoa/_WKPublicKeyCredentialDescriptor.mm:
+        (-[_WKPublicKeyCredentialDescriptor dealloc]):
+        * UIProcess/API/Cocoa/_WKPublicKeyCredentialEntity.mm:
+        (-[_WKPublicKeyCredentialEntity dealloc]):
+        * UIProcess/API/Cocoa/_WKPublicKeyCredentialParameters.mm:
+        (-[_WKPublicKeyCredentialParameters dealloc]):
+        * UIProcess/API/Cocoa/_WKPublicKeyCredentialRelyingPartyEntity.mm:
+        (-[_WKPublicKeyCredentialRelyingPartyEntity dealloc]):
+        * UIProcess/API/Cocoa/_WKPublicKeyCredentialRequestOptions.mm:
+        (-[_WKPublicKeyCredentialRequestOptions dealloc]):
+        * UIProcess/API/Cocoa/_WKPublicKeyCredentialUserEntity.mm:
+        (-[_WKPublicKeyCredentialUserEntity dealloc]):
+        - Add -dealloc methods that release instance variables.
+
+2021-10-16  David Kilzer  <ddkilzer@apple.com>
+
         _WKRemoteWebInspectorViewController leaks an instance variable and should use a weak delegate
         <https://webkit.org/b/231830>
         <rdar://problem/84316056>
