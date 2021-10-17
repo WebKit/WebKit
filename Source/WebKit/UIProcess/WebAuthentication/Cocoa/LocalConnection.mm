@@ -176,8 +176,9 @@ RetainPtr<SecKeyRef> LocalConnection::createCredentialPrivateKey(LAContext *cont
     };
 
     if (context) {
-        privateKeyAttributes = adoptNS([privateKeyAttributes mutableCopy]);
-        ((NSMutableDictionary *)privateKeyAttributes.get())[(id)kSecUseAuthenticationContext] = context;
+        auto mutableCopy = adoptNS([privateKeyAttributes mutableCopy]);
+        mutableCopy.get()[(id)kSecUseAuthenticationContext] = context;
+        privateKeyAttributes = mutableCopy;
     }
 
     NSDictionary *attributes = @{

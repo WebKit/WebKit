@@ -1,3 +1,16 @@
+2021-10-17  David Kilzer  <ddkilzer@apple.com>
+
+        Follow-up: WebKit::LocalConnection::createCredentialPrivateKey leaks an NSMutableDictionary
+        <https://webkit.org/b/231814>
+        <rdar://problem/84307054>
+
+        Unreviewed follow-up to address Darin's comments.
+
+        * UIProcess/WebAuthentication/Cocoa/LocalConnection.mm:
+        (WebKit::LocalConnection::createCredentialPrivateKey const):
+        - Remove need for C-style cast by using a local variable for the
+          mutable copy of the NSDictionary.
+
 2021-10-17  BJ Burg  <bburg@apple.com>
 
         [Cocoa] Web Inspector: remove _WKInspectorExtensionPrivateForTesting
