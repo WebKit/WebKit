@@ -1,0 +1,94 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/accessibility-helper.js"></script>
+</head>
+<body>
+
+<div id="content" role="group">
+    <!-- First, test role="group" elements. -->
+    <div id="aria-label-group" role="group" aria-label="Blue cheese">
+        Blue cheese
+    </div>
+
+    <div id="title-group" role="group" title="Oranges">
+        Oranges
+    </div>
+
+    <div id="click-handler-group" role="group" aria-label="Group click handler" onclick="emptyClickHandler()">
+        Group click handler
+    </div>
+
+    <!-- Also test role-less generic divs. -->
+    <div id="aria-label-div" aria-label="Jello">
+        Jello
+    </div>
+
+    <div id="title-div" title="Broccoli">
+        Broccoli
+    </div>
+
+    <div id="click-handler-div" aria-label="Div click handler" onclick="emptyClickHandler()">
+        Div click handler
+    </div>
+</div>
+
+<script>
+    description("This test ensures WebKit ignores groups with redundant accessibility text.");
+    const emptyClickHandler = () => {};
+
+    if (window.accessibilityController) {
+
+        var contentContainer = accessibilityController.accessibleElementById("content");
+
+        var ariaLabelGroup = accessibilityController.accessibleElementById("aria-label-group");
+        var clickHandlerGroup = accessibilityController.accessibleElementById("click-handler-group");
+        var titleGroup = accessibilityController.accessibleElementById("title-group");
+
+        var ariaLabelDiv = accessibilityController.accessibleElementById("aria-label-div");
+        var clickHandlerDiv = accessibilityController.accessibleElementById("click-handler-div");
+        var titleDiv = accessibilityController.accessibleElementById("title-div");
+
+        // We shouldn't be able to get an accessible element for these groups because they should be ignored.
+        shouldBeTrue("!ariaLabelGroup");
+        shouldBeTrue("!titleGroup");
+        shouldBeTrue("!ariaLabelDiv");
+        shouldBeTrue("!titleDiv");
+        // But any group with an event handler should always be exposed.
+        shouldBe("typeof clickHandlerGroup", "'object'");
+        shouldBe("typeof clickHandlerDiv", "'object'");
+
+        // Ensure we can search for the text within the ignored groups.
+        var resultElement = contentContainer.uiElementForSearchPredicate(contentContainer, true, "AXAnyTypeSearchKey", "", false);
+        shouldBe("resultElement.role", "'AXRole: AXStaticText'");
+        shouldBe("resultElement.stringValue", "'AXValue: Blue cheese'");
+
+        resultElement = contentContainer.uiElementForSearchPredicate(resultElement, true, "AXAnyTypeSearchKey", "", false);
+        shouldBe("resultElement.role", "'AXRole: AXStaticText'");
+        shouldBe("resultElement.stringValue", "'AXValue: Oranges'");
+
+        // Ensure the only accessible content exposed via `children` is the text elements and event handler groups.
+        shouldBe("contentContainer.childrenCount", "6");
+        shouldBe("contentContainer.childAtIndex(0).stringValue", "'AXValue: Blue cheese'");
+        shouldBe("contentContainer.childAtIndex(0).role", "'AXRole: AXStaticText'");
+
+        shouldBe("contentContainer.childAtIndex(1).stringValue", "'AXValue: Oranges'");
+        shouldBe("contentContainer.childAtIndex(1).role", "'AXRole: AXStaticText'");
+
+        shouldBe("contentContainer.childAtIndex(2).role", "'AXRole: AXGroup'");
+
+        shouldBe("contentContainer.childAtIndex(3).stringValue", "'AXValue: Jello'");
+        shouldBe("contentContainer.childAtIndex(3).role", "'AXRole: AXStaticText'");
+
+        shouldBe("contentContainer.childAtIndex(4).stringValue", "'AXValue: Broccoli'");
+        shouldBe("contentContainer.childAtIndex(4).role", "'AXRole: AXStaticText'");
+
+        shouldBe("contentContainer.childAtIndex(5).role", "'AXRole: AXGroup'");
+
+        document.getElementById("content").style.visibility = "hidden";
+    }
+</script>
+</body>
+</html>
+

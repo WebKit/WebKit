@@ -1,0 +1,30 @@
+This test ensures WebKit ignores groups with redundant accessibility text.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS !ariaLabelGroup is true
+PASS !titleGroup is true
+PASS !ariaLabelDiv is true
+PASS !titleDiv is true
+PASS typeof clickHandlerGroup is 'object'
+PASS typeof clickHandlerDiv is 'object'
+PASS resultElement.role is 'AXRole: AXStaticText'
+PASS resultElement.stringValue is 'AXValue: Blue cheese'
+PASS resultElement.role is 'AXRole: AXStaticText'
+PASS resultElement.stringValue is 'AXValue: Oranges'
+PASS contentContainer.childrenCount is 6
+PASS contentContainer.childAtIndex(0).stringValue is 'AXValue: Blue cheese'
+PASS contentContainer.childAtIndex(0).role is 'AXRole: AXStaticText'
+PASS contentContainer.childAtIndex(1).stringValue is 'AXValue: Oranges'
+PASS contentContainer.childAtIndex(1).role is 'AXRole: AXStaticText'
+PASS contentContainer.childAtIndex(2).role is 'AXRole: AXGroup'
+PASS contentContainer.childAtIndex(3).stringValue is 'AXValue: Jello'
+PASS contentContainer.childAtIndex(3).role is 'AXRole: AXStaticText'
+PASS contentContainer.childAtIndex(4).stringValue is 'AXValue: Broccoli'
+PASS contentContainer.childAtIndex(4).role is 'AXRole: AXStaticText'
+PASS contentContainer.childAtIndex(5).role is 'AXRole: AXGroup'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
