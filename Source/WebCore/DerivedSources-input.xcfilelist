@@ -123,10 +123,6 @@ $(PROJECT_DIR)/Modules/fetch/FetchRequestMode.idl
 $(PROJECT_DIR)/Modules/fetch/FetchRequestRedirect.idl
 $(PROJECT_DIR)/Modules/fetch/FetchResponse.idl
 $(PROJECT_DIR)/Modules/fetch/WindowOrWorkerGlobalScope+Fetch.idl
-$(PROJECT_DIR)/Modules/filesystemaccess/FileSystemDirectoryHandle.idl
-$(PROJECT_DIR)/Modules/filesystemaccess/FileSystemFileHandle.idl
-$(PROJECT_DIR)/Modules/filesystemaccess/FileSystemHandle.idl
-$(PROJECT_DIR)/Modules/filesystemaccess/StorageManager+FileSystemAccess.idl
 $(PROJECT_DIR)/Modules/gamepad/Gamepad.idl
 $(PROJECT_DIR)/Modules/gamepad/GamepadButton.idl
 $(PROJECT_DIR)/Modules/gamepad/GamepadEvent.idl
@@ -413,7 +409,6 @@ $(PROJECT_DIR)/Modules/speech/SpeechSynthesis.idl
 $(PROJECT_DIR)/Modules/speech/SpeechSynthesisEvent.idl
 $(PROJECT_DIR)/Modules/speech/SpeechSynthesisUtterance.idl
 $(PROJECT_DIR)/Modules/speech/SpeechSynthesisVoice.idl
-$(PROJECT_DIR)/Modules/storage/StorageManager.idl
 $(PROJECT_DIR)/Modules/streams/ByteLengthQueuingStrategy.idl
 $(PROJECT_DIR)/Modules/streams/ByteLengthQueuingStrategy.js
 $(PROJECT_DIR)/Modules/streams/CountQueuingStrategy.idl
@@ -1141,8 +1136,6 @@ $(PROJECT_DIR)/page/NavigatorOnLine.idl
 $(PROJECT_DIR)/page/NavigatorPlugins.idl
 $(PROJECT_DIR)/page/NavigatorServiceWorker.idl
 $(PROJECT_DIR)/page/NavigatorShare.idl
-$(PROJECT_DIR)/page/NavigatorStorage.idl
-$(PROJECT_DIR)/page/NavigatorStorageManager.idl
 $(PROJECT_DIR)/page/Performance+NavigationTiming.idl
 $(PROJECT_DIR)/page/Performance+PerformanceTimeline.idl
 $(PROJECT_DIR)/page/Performance+ResourceTiming.idl

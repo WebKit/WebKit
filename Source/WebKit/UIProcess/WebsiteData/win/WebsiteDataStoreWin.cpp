@@ -56,11 +56,6 @@ String WebsiteDataStore::defaultCacheStorageDirectory()
     return FileSystem::pathByAppendingComponent(FileSystem::localUserSpecificStorageDirectory(), "CacheStorage");
 }
 
-String WebsiteDataStore::defaultGeneralStorageDirectory()
-{
-    return FileSystem::pathByAppendingComponent(FileSystem::localUserSpecificStorageDirectory(), "Storage");
-}
-
 String WebsiteDataStore::defaultNetworkCacheDirectory()
 {
     return FileSystem::pathByAppendingComponent(FileSystem::localUserSpecificStorageDirectory(), "NetworkCache");

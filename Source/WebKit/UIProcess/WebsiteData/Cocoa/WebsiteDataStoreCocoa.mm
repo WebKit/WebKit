@@ -271,11 +271,6 @@ WTF::String WebsiteDataStore::defaultCacheStorageDirectory()
     return cacheDirectoryFileSystemRepresentation("CacheStorage");
 }
 
-String WebsiteDataStore::defaultGeneralStorageDirectory()
-{
-    return cacheDirectoryFileSystemRepresentation("Storage");
-}
-
 WTF::String WebsiteDataStore::defaultNetworkCacheDirectory()
 {
     return cacheDirectoryFileSystemRepresentation("NetworkCache");

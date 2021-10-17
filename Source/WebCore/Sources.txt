@@ -58,9 +58,6 @@ Modules/fetch/FetchLoader.cpp
 Modules/fetch/FetchRequest.cpp
 Modules/fetch/FetchResponse.cpp
 Modules/fetch/WindowOrWorkerGlobalScopeFetch.cpp
-Modules/filesystemaccess/FileSystemDirectoryHandle.cpp
-Modules/filesystemaccess/FileSystemFileHandle.cpp
-Modules/filesystemaccess/FileSystemHandle.cpp
 Modules/geolocation/GeoNotifier.cpp
 Modules/geolocation/Geolocation.cpp
 Modules/geolocation/GeolocationController.cpp
@@ -225,7 +222,6 @@ Modules/speech/SpeechSynthesis.cpp
 Modules/speech/SpeechSynthesisEvent.cpp
 Modules/speech/SpeechSynthesisUtterance.cpp
 Modules/speech/SpeechSynthesisVoice.cpp
-Modules/storage/StorageManager.cpp
 Modules/streams/ReadableStreamSink.cpp
 Modules/streams/ReadableStreamSource.cpp
 Modules/webaudio/AnalyserNode.cpp
@@ -2980,14 +2976,11 @@ JSFileList.cpp
 JSFileReader.cpp
 JSFileReaderSync.cpp
 JSFileSystemDirectoryEntry.cpp
-JSFileSystemDirectoryHandle.cpp
 JSFileSystemDirectoryReader.cpp
 JSFileSystemEntriesCallback.cpp
 JSFileSystemEntry.cpp
 JSFileSystemEntryCallback.cpp
 JSFileSystemFileEntry.cpp
-JSFileSystemFileHandle.cpp
-JSFileSystemHandle.cpp
 JSFillMode.cpp
 JSFocusEvent.cpp
 JSFocusOptions.cpp
@@ -3565,7 +3558,6 @@ JSStereoPannerNode.cpp
 JSStereoPannerOptions.cpp
 JSStaticRange.cpp
 JSStorage.cpp
-JSStorageManager.cpp
 JSStorageEvent.cpp
 JSStringCallback.cpp
 JSStyleMedia.cpp

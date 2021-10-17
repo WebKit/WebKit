@@ -56,11 +56,6 @@ String WebsiteDataStore::defaultCacheStorageDirectory()
     return { };
 }
 
-String WebsiteDataStore::defaultGeneralStorageDirectory()
-{
-    return { };
-}
-
 String WebsiteDataStore::defaultNetworkCacheDirectory()
 {
     return { };

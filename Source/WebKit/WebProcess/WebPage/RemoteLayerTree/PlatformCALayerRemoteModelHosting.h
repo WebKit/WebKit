@@ -43,9 +43,9 @@ private:
     
     void populateCreationProperties(RemoteLayerTreeTransaction::LayerCreationProperties&, const RemoteLayerTreeContext&, WebCore::PlatformCALayer::LayerType) override;
     
-    void dumpAdditionalProperties(TextStream&, OptionSet<WebCore::PlatformLayerTreeAsTextFlags>) final;
+    void dumpAdditionalProperties(TextStream&, OptionSet<PlatformLayerTreeAsTextFlags>) final;
 
-    Ref<WebCore::Model> m_model;
+    Ref<Model> m_model;
 };
 
 } // namespace WebKit

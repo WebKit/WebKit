@@ -135,7 +135,6 @@
 #include "StorageArea.h"
 #include "StorageNamespace.h"
 #include "StorageNamespaceProvider.h"
-#include "StorageProvider.h"
 #include "StyleAdjuster.h"
 #include "StyleResolver.h"
 #include "StyleScope.h"
@@ -328,7 +327,6 @@ Page::Page(PageConfiguration&& pageConfiguration)
     , m_shouldRelaxThirdPartyCookieBlocking(pageConfiguration.shouldRelaxThirdPartyCookieBlocking)
     , m_httpsUpgradeEnabled(pageConfiguration.httpsUpgradeEnabled)
     , m_reportingEndpointsCache(WTFMove(pageConfiguration.reportingEndpointsCache))
-    , m_storageProvider(WTFMove(pageConfiguration.storageProvider))
 {
     updateTimerThrottlingState();
 
@@ -3693,10 +3691,5 @@ void Page::resetTextRecognitionResults()
 }
 
 #endif // ENABLE(IMAGE_ANALYSIS)
-
-StorageConnection& Page::storageConnection()
-{
-    return m_storageProvider->storageConnection();
-}
 
 } // namespace WebCore

@@ -36,7 +36,6 @@ WebsiteDataStoreConfiguration::WebsiteDataStoreConfiguration(IsPersistent isPers
     if (isPersistent == IsPersistent::Yes && willCopyPaths == WillCopyPathsFromExistingConfiguration::No) {
         setApplicationCacheDirectory(WebsiteDataStore::defaultApplicationCacheDirectory());
         setCacheStorageDirectory(WebsiteDataStore::defaultCacheStorageDirectory());
-        setGeneralStorageDirectory(WebsiteDataStore::defaultGeneralStorageDirectory());
         setNetworkCacheDirectory(WebsiteDataStore::defaultNetworkCacheDirectory());
         setAlternativeServicesDirectory(WebsiteDataStore::defaultAlternativeServicesDirectory());
         setMediaCacheDirectory(WebsiteDataStore::defaultMediaCacheDirectory());
@@ -63,7 +62,6 @@ Ref<WebsiteDataStoreConfiguration> WebsiteDataStoreConfiguration::copy() const
     copy->m_networkCacheSpeculativeValidationEnabled = this->m_networkCacheSpeculativeValidationEnabled;
     copy->m_staleWhileRevalidateEnabled = this->m_staleWhileRevalidateEnabled;
     copy->m_cacheStorageDirectory = this->m_cacheStorageDirectory;
-    copy->m_generalStorageDirectory = this->m_generalStorageDirectory;
     copy->m_perOriginStorageQuota = this->m_perOriginStorageQuota;
     copy->m_networkCacheDirectory = this->m_networkCacheDirectory;
     copy->m_applicationCacheDirectory = this->m_applicationCacheDirectory;

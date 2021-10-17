@@ -47,8 +47,8 @@ void WebsiteDataStoreParameters::encode(IPC::Encoder& encoder) const
 #endif
 
     encoder << localStorageDirectory << localStorageDirectoryExtensionHandle;
+
     encoder << cacheStorageDirectory << cacheStorageDirectoryExtensionHandle;
-    encoder << generalStorageDirectory << generalStorageDirectoryHandle;
 
     encoder << perOriginStorageQuota;
     encoder << perThirdPartyOriginStorageQuota;
@@ -131,18 +131,6 @@ std::optional<WebsiteDataStoreParameters> WebsiteDataStoreParameters::decode(IPC
     if (!cacheStorageDirectoryExtensionHandle)
         return std::nullopt;
     parameters.cacheStorageDirectoryExtensionHandle = WTFMove(*cacheStorageDirectoryExtensionHandle);
-
-    std::optional<String> generalStorageDirectory;
-    decoder >> generalStorageDirectory;
-    if (!generalStorageDirectory)
-        return std::nullopt;
-    parameters.generalStorageDirectory = WTFMove(*generalStorageDirectory);
-
-    std::optional<SandboxExtension::Handle> generalStorageDirectoryHandle;
-    decoder >> generalStorageDirectoryHandle;
-    if (!generalStorageDirectoryHandle)
-        return std::nullopt;
-    parameters.generalStorageDirectoryHandle = WTFMove(*generalStorageDirectoryHandle);
 
     std::optional<uint64_t> perOriginStorageQuota;
     decoder >> perOriginStorageQuota;

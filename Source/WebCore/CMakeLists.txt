@@ -31,7 +31,6 @@ set(WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/Modules/encryptedmedia/legacy"
     "${WEBCORE_DIR}/Modules/entriesapi"
     "${WEBCORE_DIR}/Modules/fetch"
-    "${WEBCORE_DIR}/Modules/filesystemaccess"
     "${WEBCORE_DIR}/Modules/geolocation"
     "${WEBCORE_DIR}/Modules/highlight"
     "${WEBCORE_DIR}/Modules/indexeddb"
@@ -53,7 +52,6 @@ set(WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/Modules/plugins"
     "${WEBCORE_DIR}/Modules/remoteplayback"
     "${WEBCORE_DIR}/Modules/speech"
-    "${WEBCORE_DIR}/Modules/storage"
     "${WEBCORE_DIR}/Modules/streams"
     "${WEBCORE_DIR}/Modules/webaudio"
     "${WEBCORE_DIR}/Modules/webauthn"
@@ -194,7 +192,6 @@ set(WebCore_IDL_INCLUDES
     Modules/encryptedmedia/legacy
     Modules/entriesapi
     Modules/fetch
-    Modules/filesystemaccess
     Modules/geolocation
     Modules/highlight
     Modules/indexeddb
@@ -205,7 +202,6 @@ set(WebCore_IDL_INCLUDES
     Modules/notifications
     Modules/paymentrequest
     Modules/speech
-    Modules/storage
     Modules/streams
     Modules/webaudio
     Modules/webdatabase
@@ -283,11 +279,6 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/fetch/FetchRequestRedirect.idl
     Modules/fetch/FetchResponse.idl
     Modules/fetch/WindowOrWorkerGlobalScope+Fetch.idl
-
-    Modules/filesystemaccess/FileSystemDirectoryHandle.idl
-    Modules/filesystemaccess/FileSystemFileHandle.idl
-    Modules/filesystemaccess/FileSystemHandle.idl
-    Modules/filesystemaccess/StorageManager+FileSystemAccess.idl
 
     Modules/geolocation/Geolocation.idl
     Modules/geolocation/GeolocationCoordinates.idl
@@ -489,8 +480,6 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/speech/SpeechSynthesisEvent.idl
     Modules/speech/SpeechSynthesisUtterance.idl
     Modules/speech/SpeechSynthesisVoice.idl
-
-    Modules/storage/StorageManager.idl
 
     Modules/streams/ByteLengthQueuingStrategy.idl
     Modules/streams/CountQueuingStrategy.idl
@@ -1069,7 +1058,6 @@ set(WebCore_NON_SVG_IDL_FILES
     page/NavigatorPlugins.idl
     page/NavigatorServiceWorker.idl
     page/NavigatorShare.idl
-    page/NavigatorStorage.idl
     page/Performance+NavigationTiming.idl
     page/Performance+PerformanceTimeline.idl
     page/Performance+ResourceTiming.idl

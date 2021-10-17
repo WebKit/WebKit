@@ -47,7 +47,6 @@
 #include "NetworkResourceLoader.h"
 #include "NetworkSession.h"
 #include "NetworkSessionCreationParameters.h"
-#include "NetworkStorageManager.h"
 #include "PreconnectTask.h"
 #include "PrivateClickMeasurementStore.h"
 #include "RemoteNetworkingContext.h"
@@ -401,8 +400,6 @@ void NetworkProcess::createNetworkConnectionToWebProcess(ProcessIdentifier ident
 
     m_storageManagerSet->addConnection(connection.connection());
     webIDBServer(sessionID).addConnection(connection.connection(), identifier);
-    if (auto manager = m_storageManagers.get(sessionID))
-        manager->startReceivingMessageFromConnection(connection.connection());
 }
 
 void NetworkProcess::clearCachedCredentials(PAL::SessionID sessionID)
@@ -418,7 +415,6 @@ void NetworkProcess::addWebsiteDataStore(WebsiteDataStoreParameters&& parameters
 {
     auto sessionID = parameters.networkSessionParameters.sessionID;
 
-    addStorageManagerForSession(sessionID, parameters.generalStorageDirectory, parameters.generalStorageDirectoryHandle);
     addSessionStorageQuotaManager(sessionID, parameters.perOriginStorageQuota, parameters.perThirdPartyOriginStorageQuota, parameters.cacheStorageDirectory, parameters.cacheStorageDirectoryExtensionHandle);
 
     addIndexedDatabaseSession(sessionID, parameters.indexedDatabaseDirectory, parameters.indexedDatabaseDirectoryExtensionHandle);
@@ -449,19 +445,6 @@ void NetworkProcess::removeSessionStorageQuotaManager(PAL::SessionID sessionID)
     Locker locker { m_sessionStorageQuotaManagersLock };
     ASSERT(m_sessionStorageQuotaManagers.contains(sessionID));
     m_sessionStorageQuotaManagers.remove(sessionID);
-}
-
-void NetworkProcess::addStorageManagerForSession(PAL::SessionID sessionID, const String& generalStoragePath, SandboxExtension::Handle& generalStoragePathHandle)
-{
-    m_storageManagers.ensure(sessionID, [&] {
-        SandboxExtension::consumePermanently(generalStoragePathHandle);
-        return NetworkStorageManager::create(sessionID, generalStoragePath);
-    });
-}
-
-void NetworkProcess::removeStorageManagerForSession(PAL::SessionID sessionID)
-{
-    m_storageManagers.remove(sessionID);
 }
 
 void NetworkProcess::forEachNetworkSession(const Function<void(NetworkSession&)>& functor)
@@ -574,7 +557,6 @@ void NetworkProcess::destroySession(PAL::SessionID sessionID)
     m_storageManagerSet->remove(sessionID);
     if (auto server = m_webIDBServers.take(sessionID))
         server->close();
-    removeStorageManagerForSession(sessionID);
 }
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
@@ -2422,14 +2404,6 @@ void NetworkProcess::resetQuota(PAL::SessionID sessionID, CompletionHandler<void
     completionHandler();
 }
 
-void NetworkProcess::clearStorage(PAL::SessionID sessionID, CompletionHandler<void()>&& completionHandler)
-{
-    if (auto manager = m_storageManagers.get(sessionID))
-        manager->clearStorageForTesting(WTFMove(completionHandler));
-    else
-        completionHandler();
-}
-
 void NetworkProcess::renameOriginInWebsiteData(PAL::SessionID sessionID, const URL& oldName, const URL& newName, OptionSet<WebsiteDataType> dataTypes, CompletionHandler<void()>&& completionHandler)
 {
     auto aggregator = CallbackAggregator::create(WTFMove(completionHandler));
@@ -2719,9 +2693,6 @@ void NetworkProcess::connectionToWebProcessClosed(IPC::Connection& connection, P
 
     if (auto* server = m_webIDBServers.get(sessionID))
         server->removeConnection(connection);
-
-    if (auto manager = m_storageManagers.get(sessionID))
-        manager->stopReceivingMessageFromConnection(connection);
 }
 
 NetworkConnectionToWebProcess* NetworkProcess::webProcessConnection(ProcessIdentifier identifier) const

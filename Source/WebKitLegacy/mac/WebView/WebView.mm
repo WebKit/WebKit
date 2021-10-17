@@ -151,7 +151,6 @@
 #import <WebCore/DragData.h>
 #import <WebCore/DragItem.h>
 #import <WebCore/DummySpeechRecognitionProvider.h>
-#import <WebCore/DummyStorageProvider.h>
 #import <WebCore/Editing.h>
 #import <WebCore/Editor.h>
 #import <WebCore/Event.h>
@@ -1542,8 +1541,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
         makeUniqueRef<WebFrameLoaderClient>(),
         makeUniqueRef<WebCore::DummySpeechRecognitionProvider>(),
         makeUniqueRef<WebCore::MediaRecorderProvider>(),
-        WebBroadcastChannelRegistry::getOrCreate([[self preferences] privateBrowsingEnabled]),
-        makeUniqueRef<WebCore::DummyStorageProvider>()
+        WebBroadcastChannelRegistry::getOrCreate([[self preferences] privateBrowsingEnabled])
     );
 #if !PLATFORM(IOS_FAMILY)
     pageConfiguration.chromeClient = new WebChromeClient(self);
@@ -1821,8 +1819,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
         makeUniqueRef<WebFrameLoaderClient>(),
         makeUniqueRef<WebCore::DummySpeechRecognitionProvider>(),
         makeUniqueRef<WebCore::MediaRecorderProvider>(),
-        WebBroadcastChannelRegistry::getOrCreate([[self preferences] privateBrowsingEnabled]),
-        makeUniqueRef<WebCore::DummyStorageProvider>()
+        WebBroadcastChannelRegistry::getOrCreate([[self preferences] privateBrowsingEnabled])
     );
     pageConfiguration.chromeClient = new WebChromeClientIOS(self);
 #if ENABLE(DRAG_SUPPORT)

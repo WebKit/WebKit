@@ -107,7 +107,6 @@ class NetworkConnectionToWebProcess;
 class NetworkProcessSupplement;
 class NetworkProximityManager;
 class NetworkResourceLoader;
-class NetworkStorageManager;
 class ProcessAssertion;
 class StorageManagerSet;
 class WebPageNetworkParameters;
@@ -309,7 +308,6 @@ public:
     void syncLocalStorage(CompletionHandler<void()>&&);
 
     void resetQuota(PAL::SessionID, CompletionHandler<void()>&&);
-    void clearStorage(PAL::SessionID, CompletionHandler<void()>&&);
     void renameOriginInWebsiteData(PAL::SessionID, const URL&, const URL&, OptionSet<WebsiteDataType>, CompletionHandler<void()>&&);
 
 #if ENABLE(SERVICE_WORKER)
@@ -544,9 +542,6 @@ private:
     void addSessionStorageQuotaManager(PAL::SessionID, uint64_t defaultQuota, uint64_t defaultThirdPartyQuota, const String& cacheRootPath, SandboxExtension::Handle&);
     void removeSessionStorageQuotaManager(PAL::SessionID);
 
-    void addStorageManagerForSession(PAL::SessionID, const String& path, SandboxExtension::Handle&);
-    void removeStorageManagerForSession(PAL::SessionID);
-
     // Connections to WebProcesses.
     HashMap<WebCore::ProcessIdentifier, Ref<NetworkConnectionToWebProcess>> m_webProcessConnections;
 
@@ -619,8 +614,6 @@ private:
 
     bool m_privateClickMeasurementEnabled { true };
     bool m_ftpEnabled { false };
-
-    HashMap<PAL::SessionID, Ref<NetworkStorageManager>> m_storageManagers;
 };
 
 } // namespace WebKit

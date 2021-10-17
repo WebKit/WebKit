@@ -28,7 +28,6 @@ navigator.serviceWorker is OK
 navigator.setLoggedIn() is OK
 navigator.setLoggedOut() is OK
 navigator.share() is OK
-navigator.storage is OK
 navigator.userAgent is OK
 navigator.vendor is OK
 navigator.vendorSub is OK
@@ -61,7 +60,6 @@ navigator.serviceWorker is OK
 navigator.setLoggedIn() is OK
 navigator.setLoggedOut() is OK
 navigator.share() is OK
-navigator.storage is OK
 navigator.userAgent is OK
 navigator.vendor is OK
 navigator.vendorSub is OK

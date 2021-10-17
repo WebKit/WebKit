@@ -1,8 +1,8 @@
 
-FAIL returning early from an iteration doesn't crash promise_test: Unhandled rejection with value: object "NotSupportedError: Not implemented"
-FAIL @@asyncIterator: full iteration works promise_test: Unhandled rejection with value: object "NotSupportedError: Not implemented"
-FAIL entries: full iteration works promise_test: Unhandled rejection with value: object "NotSupportedError: Not implemented"
-FAIL values: full iteration works promise_test: Unhandled rejection with value: object "NotSupportedError: Not implemented"
-FAIL keys: full iteration works promise_test: Unhandled rejection with value: object "NotSupportedError: Not implemented"
-FAIL iteration while iterator gets garbage collected promise_test: Unhandled rejection with value: object "NotSupportedError: Not implemented"
+FAIL returning early from an iteration doesn't crash promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.storage.getDirectory')"
+FAIL @@asyncIterator: full iteration works promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.storage.getDirectory')"
+FAIL entries: full iteration works promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.storage.getDirectory')"
+FAIL values: full iteration works promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.storage.getDirectory')"
+FAIL keys: full iteration works promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.storage.getDirectory')"
+FAIL iteration while iterator gets garbage collected promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.storage.getDirectory')"
 

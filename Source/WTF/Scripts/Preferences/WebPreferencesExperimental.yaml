@@ -425,18 +425,6 @@ FetchAPIKeepAliveEnabled:
     WebKit:
       default: true
 
-FileSystemAccessEnabled:
-  type: bool
-  humanReadableName: "File System Access API"
-  humanReadableDescription: "Enable File System Access API"
-  defaultValue:
-    WebKitLegacy:
-      default: false
-    WebKit:
-      default: false
-    WebCore:
-      default: false
-
 FocusVisibleEnabled:
   type: bool
   humanReadableName: ":focus-visible pseudo-class"
@@ -1054,18 +1042,6 @@ SpringTimingFunctionEnabled:
       default: false
     WebKit:
       "ENABLE(EXPERIMENTAL_FEATURES)" : true
-      default: false
-    WebCore:
-      default: false
-
-StorageAPIEnabled:
-  type: bool
-  humanReadableName: "Storage API"
-  humanReadableDescription: "Enable Storage API"
-  defaultValue:
-    WebKitLegacy:
-      default: false
-    WebKit:
       default: false
     WebCore:
       default: false

@@ -825,8 +825,6 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFileReaderSync.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFileReaderSync.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFileSystemDirectoryEntry.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFileSystemDirectoryEntry.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFileSystemDirectoryHandle.cpp
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFileSystemDirectoryHandle.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFileSystemDirectoryReader.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFileSystemDirectoryReader.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFileSystemEntriesCallback.cpp
@@ -837,10 +835,6 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFileSystemEntryCallback.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFileSystemEntryCallback.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFileSystemFileEntry.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFileSystemFileEntry.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFileSystemFileHandle.cpp
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFileSystemFileHandle.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFileSystemHandle.cpp
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFileSystemHandle.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFillMode.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFillMode.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFocusEvent.cpp
@@ -1413,8 +1407,6 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigatorServiceWorker.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigatorServiceWorker.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigatorShare.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigatorShare.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigatorStorage.cpp
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigatorStorage.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigatorWebDriver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigatorWebDriver.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigatorWebXR.cpp
@@ -2179,10 +2171,6 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSStorage.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSStorage.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSStorageEvent.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSStorageEvent.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSStorageManager.cpp
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSStorageManager.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSStorageManager+FileSystemAccess.cpp
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSStorageManager+FileSystemAccess.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSStringCallback.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSStringCallback.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSStyleMedia.cpp

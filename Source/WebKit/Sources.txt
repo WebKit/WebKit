@@ -109,9 +109,6 @@ NetworkProcess/ServiceWorker/WebSWOriginStore.cpp @no-unify
 NetworkProcess/ServiceWorker/WebSWServerConnection.cpp @no-unify
 NetworkProcess/ServiceWorker/WebSWServerToContextConnection.cpp @no-unify
 
-NetworkProcess/storage/NetworkStorageManager.cpp
-NetworkProcess/storage/OriginStorageManager.cpp
-
 NetworkProcess/WebStorage/LocalStorageDatabase.cpp
 NetworkProcess/WebStorage/LocalStorageDatabaseTracker.cpp
 NetworkProcess/WebStorage/LocalStorageNamespace.cpp
@@ -711,7 +708,6 @@ WebProcess/WebCoreSupport/WebSearchPopupMenu.cpp
 WebProcess/WebCoreSupport/WebUserMediaClient.cpp
 WebProcess/WebCoreSupport/WebSpeechRecognitionConnection.cpp
 WebProcess/WebCoreSupport/WebSpeechSynthesisClient.cpp
-WebProcess/WebCoreSupport/WebStorageConnection.cpp
 
 WebProcess/WebPage/DrawingArea.cpp
 WebProcess/WebPage/EventDispatcher.cpp

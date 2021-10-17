@@ -45,7 +45,6 @@
 #include "DocumentLoader.h"
 #include "DragClient.h"
 #include "DummySpeechRecognitionProvider.h"
-#include "DummyStorageProvider.h"
 #include "EditorClient.h"
 #include "EmptyFrameLoaderClient.h"
 #include "FileChooser.h"
@@ -1194,8 +1193,7 @@ PageConfiguration pageConfigurationWithEmptyClients(PAL::SessionID sessionID)
         makeUniqueRef<EmptyFrameLoaderClient>(),
         makeUniqueRef<DummySpeechRecognitionProvider>(),
         makeUniqueRef<EmptyMediaRecorderProvider>(),
-        EmptyBroadcastChannelRegistry::create(),
-        makeUniqueRef<DummyStorageProvider>()
+        EmptyBroadcastChannelRegistry::create()
     };
 
     static NeverDestroyed<EmptyChromeClient> dummyChromeClient;

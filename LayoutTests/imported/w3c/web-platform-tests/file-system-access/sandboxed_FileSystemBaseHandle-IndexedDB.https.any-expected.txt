@@ -1,7 +1,7 @@
 
-FAIL Store handle in IndexedDB and read from pending transaction. promise_test: Unhandled rejection with value: object "NotSupportedError: Not implemented"
-FAIL Store handle in IndexedDB and read from new transaction. promise_test: Unhandled rejection with value: object "NotSupportedError: Not implemented"
-FAIL Store handles and blobs in IndexedDB. promise_test: Unhandled rejection with value: object "NotSupportedError: Not implemented"
-FAIL Store handle in IndexedDB and read using a cursor. promise_test: Unhandled rejection with value: object "NotSupportedError: Not implemented"
-FAIL Store handle in IndexedDB using inline keys. promise_test: Unhandled rejection with value: object "NotSupportedError: Not implemented"
+FAIL Store handle in IndexedDB and read from pending transaction. promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.storage.getDirectory')"
+FAIL Store handle in IndexedDB and read from new transaction. promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.storage.getDirectory')"
+FAIL Store handles and blobs in IndexedDB. promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.storage.getDirectory')"
+FAIL Store handle in IndexedDB and read using a cursor. promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.storage.getDirectory')"
+FAIL Store handle in IndexedDB using inline keys. promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.storage.getDirectory')"
 

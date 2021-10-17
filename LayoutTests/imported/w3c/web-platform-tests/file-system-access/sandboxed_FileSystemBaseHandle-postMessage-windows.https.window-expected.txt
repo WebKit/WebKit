@@ -1,5 +1,5 @@
 
-FAIL Send and receive messages using a same origin window. promise_test: Unhandled rejection with value: object "NotSupportedError: Not implemented"
-FAIL Send and receive messages using a blob window. promise_test: Unhandled rejection with value: object "NotSupportedError: Not implemented"
-FAIL Send and receive messages using a sandboxed same origin window. promise_test: Unhandled rejection with value: object "NotSupportedError: Not implemented"
+FAIL Send and receive messages using a same origin window. promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.storage.getDirectory')"
+FAIL Send and receive messages using a blob window. promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.storage.getDirectory')"
+FAIL Send and receive messages using a sandboxed same origin window. promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.storage.getDirectory')"
 

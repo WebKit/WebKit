@@ -1,10 +1,10 @@
 
-FAIL isSameEntry for identical directory handles returns true promise_test: Unhandled rejection with value: object "NotSupportedError: Not implemented"
-FAIL isSameEntry for different directories returns false promise_test: Unhandled rejection with value: object "NotSupportedError: Not implemented"
-FAIL isSameEntry for different handles for the same directory promise_test: Unhandled rejection with value: object "NotSupportedError: Not implemented"
-FAIL isSameEntry for identical file handles returns true promise_test: Unhandled rejection with value: object "NotSupportedError: Not implemented"
-FAIL isSameEntry for different files returns false promise_test: Unhandled rejection with value: object "NotSupportedError: Not implemented"
-FAIL isSameEntry for different handles for the same file promise_test: Unhandled rejection with value: object "NotSupportedError: Not implemented"
-FAIL isSameEntry comparing a file to a file in a different directory returns false promise_test: Unhandled rejection with value: object "NotSupportedError: Not implemented"
-FAIL isSameEntry comparing a file to a directory returns false promise_test: Unhandled rejection with value: object "NotSupportedError: Not implemented"
+FAIL isSameEntry for identical directory handles returns true promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.storage.getDirectory')"
+FAIL isSameEntry for different directories returns false promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.storage.getDirectory')"
+FAIL isSameEntry for different handles for the same directory promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.storage.getDirectory')"
+FAIL isSameEntry for identical file handles returns true promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.storage.getDirectory')"
+FAIL isSameEntry for different files returns false promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.storage.getDirectory')"
+FAIL isSameEntry for different handles for the same file promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.storage.getDirectory')"
+FAIL isSameEntry comparing a file to a file in a different directory returns false promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.storage.getDirectory')"
+FAIL isSameEntry comparing a file to a directory returns false promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.storage.getDirectory')"
 

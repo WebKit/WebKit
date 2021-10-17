@@ -30,7 +30,6 @@
 #include "Document.h"
 #include "RuntimeEnabledFeatures.h"
 #include "ServiceWorkerContainer.h"
-#include "StorageManager.h"
 #include <mutex>
 #include <wtf/Language.h>
 #include <wtf/NeverDestroyed.h>
@@ -138,14 +137,6 @@ Vector<String> NavigatorBase::languages()
 {
     // We intentionally expose only the primary language for privacy reasons.
     return { defaultLanguage() };
-}
-
-StorageManager& NavigatorBase::storage()
-{
-    if (!m_storageManager)
-        m_storageManager = StorageManager::create(*this);
-
-    return *m_storageManager;
 }
 
 #if ENABLE(SERVICE_WORKER)
