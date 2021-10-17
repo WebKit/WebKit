@@ -1074,7 +1074,7 @@ void SamplingProfiler::reportTopFunctions(PrintStream& out)
             hash = stream.toString();
         } else
             hash = "<nil>"_s;
-        intptr_t sourceID = frame.sourceID();
+        SourceID sourceID = frame.sourceID();
         if (Options::samplingProfilerIgnoreExternalSourceID()) {
             if (sourceID != internalSourceID)
                 sourceID = aggregatedExternalSourceID;

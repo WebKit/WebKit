@@ -29,4 +29,7 @@ namespace JSC {
 
 using SourceID = uint32_t;
 
+static constexpr SourceID internalSourceID = std::numeric_limits<SourceID>::max();
+static constexpr SourceID aggregatedExternalSourceID = std::numeric_limits<SourceID>::max() - 1;
+
 } // namespace JSC

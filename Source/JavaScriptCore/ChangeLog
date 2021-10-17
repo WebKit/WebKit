@@ -1,3 +1,20 @@
+2021-10-16  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Use SourceID in SamplingProfiler
+        https://bugs.webkit.org/show_bug.cgi?id=231855
+
+        Reviewed by Mark Lam.
+
+        SamplingProfiler was still using intptr_t. We replace it with SourceID.
+        We also define internalSourceID and aggregatedExternalSourceID in SourceID.h.
+        They are special SourceID internally used in SamplingProfiler.
+
+        * bytecode/SourceID.h:
+        * runtime/SamplingProfiler.cpp:
+        (JSC::SamplingProfiler::StackFrame::sourceID):
+        (JSC::SamplingProfiler::reportTopFunctions):
+        * runtime/SamplingProfiler.h:
+
 2021-10-16  Robin Morisset  <rmorisset@apple.com>
 
         Allow WASM to use up to 4GB
