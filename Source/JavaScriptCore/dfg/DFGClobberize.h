@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -153,6 +153,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         case EnumeratorHasOwnProperty:
         case GetIndexedPropertyStorage:
         case GetArrayLength:
+        case GetTypedArrayLengthAsInt52:
         case GetVectorLength:
         case InByVal:
         case PutByValDirect:
@@ -239,6 +240,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case ToBoolean:
     case LogicalNot:
     case CheckInBounds:
+    case CheckInBoundsInt52:
     case DoubleRep:
     case ValueRep:
     case Int52Rep:
@@ -1337,6 +1339,11 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         def(HeapLocation(TypedArrayByteOffsetLoc, MiscFields, node->child1()), LazyNode(node));
         return;
 
+    case GetTypedArrayByteOffsetAsInt52:
+        read(MiscFields);
+        def(HeapLocation(TypedArrayByteOffsetInt52Loc, MiscFields, node->child1()), LazyNode(node));
+        return;
+
     case GetPrototypeOf: {
         switch (node->child1().useKind()) {
         case ArrayUse:
@@ -1442,6 +1449,14 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
             def(HeapLocation(ArrayLengthLoc, MiscFields, node->child1()), LazyNode(node));
             return;
         }
+    }
+
+    case GetTypedArrayLengthAsInt52: {
+        ArrayMode mode = node->arrayMode();
+        RELEASE_ASSERT(mode.isSomeTypedArrayView());
+        read(MiscFields);
+        def(HeapLocation(TypedArrayLengthInt52Loc, MiscFields, node->child1()), LazyNode(node));
+        return;
     }
 
     case GetVectorLength: {

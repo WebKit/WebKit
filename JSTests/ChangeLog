@@ -1,3 +1,42 @@
+2021-10-16  Robin Morisset  <rmorisset@apple.com>
+
+        Allow WASM to use up to 4GB
+        https://bugs.webkit.org/show_bug.cgi?id=229353
+        rdar://81603447
+
+        Reviewed by Yusuke Suzuki.
+
+        The big-wasm-memory/wasm-memory-requested... tests used to simply expect an OOM at 2GB.
+        They now expect success at 4GB, and failure at 4GB+1.
+        The exceptions they expect are now more specific, as previously there was a rounding issue that was causing the specific exceptions not to be thrown (resulting in the generic OOM exception later in the code).
+        Finally I made them only run on 64-bit platforms since we don't support typed arrays >=2GB on 32-bits, and I made them only run in one configuration since they can take a little bit of time.
+
+        I also added a few new tests, specifically checking our handling of large typed arrays, and especially of indices above INT32_MAX.
+
+        * stress/big-wasm-memory-grow-no-max.js:
+        (test):
+        * stress/big-wasm-memory-grow.js:
+        (test):
+        * stress/big-wasm-memory.js:
+        (test):
+        * stress/typed-array-always-large.js: Added.
+        (getArrayLength):
+        (getByVal):
+        (putByVal):
+        (test):
+        * stress/typed-array-eventually-large.js: Added.
+        (getArrayLength):
+        (getByVal):
+        (putByVal):
+        (test):
+        * stress/typed-array-large-eventually-oob.js: Added.
+        (getArrayLength):
+        (getByVal):
+        (putByVal):
+        (test):
+        * wasm/regress/wasm-memory-requested-more-than-MAX_ARRAY_BUFFER_SIZE-2.js:
+        * wasm/regress/wasm-memory-requested-more-than-MAX_ARRAY_BUFFER_SIZE.js:
+
 2021-10-15  Robin Morisset  <rmorisset@apple.com>
 
         Revert r284230, my last fixes to the watch build make it break tests

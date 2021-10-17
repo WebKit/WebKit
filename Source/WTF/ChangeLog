@@ -1,3 +1,18 @@
+2021-10-16  Robin Morisset  <rmorisset@apple.com>
+
+        Allow WASM to use up to 4GB
+        https://bugs.webkit.org/show_bug.cgi?id=229353
+        rdar://81603447
+
+        Reviewed by Yusuke Suzuki.
+
+        Made some of CheckedArithmetic constexpr, and added isSumSmallerThanOrEqual since it is a commonly used test in ArrayBuffer and easy to get wrong in terms of overflow.
+
+        * wtf/CheckedArithmetic.h:
+        (WTF::isInBounds):
+        (WTF::convertSafely):
+        (WTF::isSumSmallerThanOrEqual):
+
 2021-10-16  Tim Horton  <timothy_horton@apple.com>
 
         Unreviewed, reverting r284143.

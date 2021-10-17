@@ -261,8 +261,12 @@ namespace JSC { namespace DFG {
     macro(MultiPutByOffset, NodeMustGenerate) \
     macro(MultiDeleteByOffset, NodeMustGenerate | NodeResultJS) \
     macro(GetArrayLength, NodeResultInt32) \
+    /* This is only relevant for TypedArrays, as they are the only ones that can have a length that does not fit in 32 bits. */ \
+    /* GetTypedArrayLengthAsInt52 and GetTypedArrayByteOffsetAsInt52 change to returning Int52 in Fixup. Doing it before causes validation failures. */ \
+    macro(GetTypedArrayLengthAsInt52, NodeResultJS) \
     macro(GetVectorLength, NodeResultInt32) \
     macro(GetTypedArrayByteOffset, NodeResultInt32) \
+    macro(GetTypedArrayByteOffsetAsInt52, NodeResultJS) \
     macro(GetScope, NodeResultJS) \
     macro(SkipScope, NodeResultJS) \
     macro(ResolveScope, NodeResultJS | NodeMustGenerate) \
@@ -286,6 +290,7 @@ namespace JSC { namespace DFG {
     macro(CheckBadValue, NodeMustGenerate) \
     macro(AssertInBounds, NodeMustGenerate) \
     macro(CheckInBounds, NodeMustGenerate | NodeResultJS) \
+    macro(CheckInBoundsInt52, NodeMustGenerate | NodeResultJS) \
     macro(CheckIdent, NodeMustGenerate) \
     macro(CheckTypeInfoFlags, NodeMustGenerate) /* Takes an OpInfo with the flags you want to test are set */\
     macro(CheckJSCast, NodeMustGenerate) /* This is the same as jsCast but as a speculation rather than assertion */\

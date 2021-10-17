@@ -185,6 +185,7 @@ bool doesGC(Graph& graph, Node* node)
     case NotifyWrite:
     case AssertInBounds:
     case CheckInBounds:
+    case CheckInBoundsInt52:
     case ConstantStoragePointer:
     case Check:
     case CheckVarargs:
@@ -197,10 +198,12 @@ bool doesGC(Graph& graph, Node* node)
     case GetGetter:
     case GetSetter:
     case GetArrayLength:
+    case GetTypedArrayLengthAsInt52:
     case GetVectorLength:
     case StringCharCodeAt:
     case StringCodePointAt:
     case GetTypedArrayByteOffset:
+    case GetTypedArrayByteOffsetAsInt52:
     case GetPrototypeOf:
     case PutStructure:
     case GetByOffset:

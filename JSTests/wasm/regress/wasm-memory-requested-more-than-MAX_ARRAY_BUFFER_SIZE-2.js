@@ -76,13 +76,13 @@ class WasmModuleBuilder {
 var exception;
 try {
     var module = new WasmModuleBuilder();
-    module.addMemory(32768);
+    module.addMemory((2**16) + 1);
     module.instantiate();
 } catch (e) {
     exception = e;
 }
 
-if (exception != "RangeError: Out of memory") {
+if (exception != "CompileError: WebAssembly.Module doesn't parse at byte 15: Memory's initial page count of 65537 is invalid (evaluating 'new WebAssembly.Module(this.toBuffer())')") {
     print(exception);
     throw "FAILED";
 }

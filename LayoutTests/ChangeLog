@@ -1,3 +1,19 @@
+2021-10-16  Robin Morisset  <rmorisset@apple.com>
+
+        Allow WASM to use up to 4GB
+        https://bugs.webkit.org/show_bug.cgi?id=229353
+        rdar://81603447
+
+        Reviewed by Yusuke Suzuki.
+
+        Rebaselined three following tests as different or fewer error messages appear on the console.
+        Also changed currentVersion in serialized-script-value.html from 9 to 10.
+
+        * fast/canvas/canvas-getImageData-invalid-result-buffer-crash-expected.txt:
+        * fast/storage/serialized-script-value.html:
+        * webaudio/OfflineAudioContext-bad-buffer-crash-expected.txt:
+        * webaudio/OfflineAudioContext/bad-buffer-length-expected.txt:
+
 2021-10-16  Tim Horton  <timothy_horton@apple.com>
 
         Unreviewed, revert r284181

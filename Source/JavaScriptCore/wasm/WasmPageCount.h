@@ -27,6 +27,8 @@
 
 #if ENABLE(WEBASSEMBLY)
 
+#include "ArrayBuffer.h"
+
 #include <limits.h>
 
 namespace WTF {
@@ -96,7 +98,7 @@ public:
 
     static constexpr uint32_t pageSize = 64 * KB;
 private:
-    static constexpr uint32_t maxPageCount = static_cast<uint32_t>((1ull << 32) / pageSize);
+    static constexpr uint32_t maxPageCount = static_cast<uint32_t>(MAX_ARRAY_BUFFER_SIZE / static_cast<uint64_t>(pageSize));
 
     uint32_t m_pageCount;
 };

@@ -99,7 +99,7 @@ inline ResultType JSArrayBufferView::byteOffsetImpl()
     ptrdiff_t delta =
         bitwise_cast<uint8_t*>(vectorWithoutPACValidation()) - static_cast<uint8_t*>(buffer->data());
 
-    unsigned result = static_cast<unsigned>(delta);
+    size_t result = static_cast<size_t>(delta);
     if (requester == Mutator)
         ASSERT(static_cast<ptrdiff_t>(result) == delta);
     else {
@@ -110,14 +110,14 @@ inline ResultType JSArrayBufferView::byteOffsetImpl()
     return result;
 }
 
-inline unsigned JSArrayBufferView::byteOffset()
+inline size_t JSArrayBufferView::byteOffset()
 {
-    return byteOffsetImpl<Mutator, unsigned>();
+    return byteOffsetImpl<Mutator, size_t>();
 }
 
-inline std::optional<unsigned> JSArrayBufferView::byteOffsetConcurrently()
+inline std::optional<size_t> JSArrayBufferView::byteOffsetConcurrently()
 {
-    return byteOffsetImpl<ConcurrentThread, std::optional<unsigned>>();
+    return byteOffsetImpl<ConcurrentThread, std::optional<size_t>>();
 }
 
 inline RefPtr<ArrayBufferView> JSArrayBufferView::toWrapped(VM& vm, JSValue value)
