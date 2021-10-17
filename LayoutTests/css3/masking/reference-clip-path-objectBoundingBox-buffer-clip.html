@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        .clipper {
+            position: absolute;
+            top: 100px;
+            left: 100px;
+            width: 200px;
+            height: 200px;
+            clip-path: url(#clipper);
+            background: lime;
+        }
+        
+        .clipper > div {
+            position: absolute;
+            width: 200px;
+            height: 200px;
+            background-color: blue;
+        }
+        
+        .above {
+            top: -100px;
+            left: -100px;
+        }
+
+        .below {
+            top: 100px;
+            left: 100px;
+        }
+    </style>
+</head>
+<body>
+  <div class="clipper">
+    <div class="below"></div>
+    <div class="above"></div>
+  </div>
+    <svg height="0" width="0">
+    <clipPath id="clipper" clipPathUnits="objectBoundingBox">
+        <!--Two rects triggers the buffer-based clipping in RenderSVGResourceClipper::applyClippingToContext() -->
+      <rect x="0.25" y="-0.25" width="0.25" height="1"/>
+      <rect x="0.25" y="0.25" width="0.5" height="1.5"/>
+    </clipPath>
+  </svg>
+</body>
+</html>

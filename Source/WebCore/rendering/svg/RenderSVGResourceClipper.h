@@ -45,7 +45,9 @@ public:
     // clipPath can be clipped too, but don't have a boundingBox or repaintRect. So we can't call
     // applyResource directly and use the rects from the object, since they are empty for RenderSVGResources
     // FIXME: We made applyClippingToContext public because we cannot call applyResource on HTML elements (it asserts on RenderObject::objectBoundingBox)
-    bool applyClippingToContext(GraphicsContext&, RenderElement&, const FloatRect&, float effectiveZoom = 1);
+    // objectBoundingBox ia used to compute clip path geometry when clipPathUnits="objectBoundingBox".
+    // clippedContentBounds is the bounds of the content to which clipping is being applied.
+    bool applyClippingToContext(GraphicsContext&, RenderElement&, const FloatRect& objectBoundingBox, const FloatRect& clippedContentBounds, float effectiveZoom = 1);
     FloatRect resourceBoundingBox(const RenderObject&) override;
 
     RenderSVGResourceType resourceType() const override { return ClipperResourceType; }
@@ -59,20 +61,22 @@ private:
 
     struct ClipperData {
         FloatRect objectBoundingBox;
+        FloatRect clippedContentBounds;
         AffineTransform absoluteTransform;
         RefPtr<ImageBuffer> imageBuffer;
         
         ClipperData() = default;
-        ClipperData(RefPtr<ImageBuffer>&& buffer, const FloatRect& boundingBox, const AffineTransform& transform)
+        ClipperData(RefPtr<ImageBuffer>&& buffer, const FloatRect& boundingBox, const FloatRect& clippedBounds, const AffineTransform& transform)
             : objectBoundingBox(boundingBox)
+            , clippedContentBounds(clippedBounds)
             , absoluteTransform(transform)
             , imageBuffer(WTFMove(buffer))
         {
         }
 
-        bool isValidForGeometry(const FloatRect& boundingBox, const AffineTransform& transform) const
+        bool isValidForGeometry(const FloatRect& boundingBox, const FloatRect& clippedBounds, const AffineTransform& transform) const
         {
-            return imageBuffer && objectBoundingBox == boundingBox && absoluteTransform == transform;
+            return imageBuffer && objectBoundingBox == boundingBox && clippedContentBounds == clippedBounds && absoluteTransform == transform;
         }
     };
 

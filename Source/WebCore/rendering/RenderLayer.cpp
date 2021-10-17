@@ -3182,15 +3182,19 @@ bool RenderLayer::setupClipPath(GraphicsContext& context, const LayerPaintingInf
     if (is<RenderSVGRoot>(renderer()))
         return false;
 
+    if (!is<RenderBox>(renderer()))
+        return false;
+
     // It's not clear that this geometry is correct: https://github.com/w3c/csswg-drafts/issues/5786
-    auto rootRelativeBounds = calculateLayerBounds(paintingInfo.rootLayer, offsetFromRoot, { UseLocalClipRectIfPossible });
+    auto clipPathObjectBoundingBox = computeReferenceRectFromBox(downcast<RenderBox>(renderer()), CSSBoxType::BorderBox, offsetFromRoot);
 
     auto& style = renderer().style();
     LayoutSize paintingOffsetFromRoot = LayoutSize(snapSizeToDevicePixel(offsetFromRoot + paintingInfo.subpixelOffset, LayoutPoint(), renderer().document().deviceScaleFactor()));
     ASSERT(style.clipPath());
     if (is<ShapeClipPathOperation>(*style.clipPath()) || (is<BoxClipPathOperation>(*style.clipPath()) && is<RenderBox>(renderer()))) {
         WindRule windRule;
-        Path path = computeClipPath(paintingOffsetFromRoot, rootRelativeBounds, windRule);
+        // FIXME: Should probably pixel-snap clipPathObjectBoundingBox here.
+        Path path = computeClipPath(paintingOffsetFromRoot, clipPathObjectBoundingBox, windRule);
         context.save();
         context.clipPath(path, windRule);
         return true;
@@ -3200,11 +3204,15 @@ bool RenderLayer::setupClipPath(GraphicsContext& context, const LayerPaintingInf
         auto& referenceClipPathOperation = downcast<ReferenceClipPathOperation>(*style.clipPath());
         if (auto* clipperRenderer = renderer().ensureReferencedSVGResources().referencedClipperRenderer(renderer().document(), referenceClipPathOperation)) {
             context.save();
-            auto referenceBox = snapRectToDevicePixels(rootRelativeBounds, renderer().document().deviceScaleFactor());
+            auto referenceBox = snapRectToDevicePixels(clipPathObjectBoundingBox, renderer().document().deviceScaleFactor());
             auto offset = referenceBox.location();
+
+            auto clippedContentBounds = FloatRect(calculateLayerBounds(paintingInfo.rootLayer, offsetFromRoot, { UseLocalClipRectIfPossible }));
+            clippedContentBounds.moveBy(-offset);
+
             context.translate(offset);
-            FloatRect svgReferenceBox { {}, referenceBox.size() };
-            clipperRenderer->applyClippingToContext(context, renderer(), svgReferenceBox, renderer().style().effectiveZoom());
+            FloatRect clipPathReferenceBox { { }, referenceBox.size() };
+            clipperRenderer->applyClippingToContext(context, renderer(), clipPathReferenceBox, clippedContentBounds, renderer().style().effectiveZoom());
             context.translate(-offset);
             return true;
         }
