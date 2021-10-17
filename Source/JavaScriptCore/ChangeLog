@@ -1,3 +1,145 @@
+2021-10-16  Mark Lam  <mark.lam@apple.com>
+
+        Make LLIntAssembly.h more readable.
+        https://bugs.webkit.org/show_bug.cgi?id=231876
+
+        Reviewed by Yusuki Suzuki.
+
+        In this patch, I did the following:
+
+        1. Changed `CodeOrigin` to only dump the filename, and not the full path.
+
+        2. Deferred printing the ".loc" metadata in `$asm.debugAnnotation` till we format
+           the line to dump in `$asm.formatDump`.  This enabled the ".loc" metadata to be
+           dumped on the same line as the asm instruction.
+
+        3. Changed `$asm.codeOrigin` to not dump multiple codeOrigin comments.  The only
+           times when there appears to be "multiple" codeOrigins for any given instruction
+           is if the instruction before it was elided, thereby leaving the elided
+           instruction's codeOrigin to be mis-attributed to the subsequent instruction.
+
+        4. Moved the MIPS `Assembler.putStr` method to asm.rb.  This method was already
+           commonly used in arm.rb and arm64.rb previously.  Hence, it belongs in common
+           code.
+
+           Also enhanced it to support indenting by the column width of ".loc" debug
+           annotations if `$enableDebugAnnotations` is true.  This keeps the ".loc" column
+           on the left clear of other content, thereby making it easy to visually filter
+           out that column when scanning through the generated asm code.
+
+        5. Changed some code that called `outp.puts` directly to call `$asm.putStr` instead.
+           This yields the nice alignment for easy visual filtering described in (4). 
+
+        6. Changed `$preferredCommentStartColumn` to be at column 40 to make the generated
+           asm code more compact.  However, if the backend is the C_LOOP, then change it
+           back to 60 because C_LOOP code is more verbose and need the extra space.
+
+        Demo time:
+        Before this patch, LLIntAssembly.h looks like this:
+        ```
+        #if !OFFLINE_ASM_X86 && !OFFLINE_ASM_X86_WIN && !OFFLINE_ASM_X86_64 && !OFFLINE_ASM_X86_64_WIN && !OFFLINE_ASM_ARMv7 && !OFFLINE_ASM_ARM64 && OFFLINE_ASM_ARM64E && !OFFLINE_ASM_MIPS && !OFFLINE_ASM_RISCV64 && !OFFLINE_ASM_C_LOOP && !OFFLINE_ASM_C_LOOP_WIN && !OFFLINE_ASM_ARMv7k && !OFFLINE_ASM_ARMv7s && OFFLINE_ASM_JSVALUE64 && !OFFLINE_ASM_BIGINT32 && OFFLINE_ASM_GIGACAGE_ENABLED && !OFFLINE_ASM_ASSERT_ENABLED && !OFFLINE_ASM_TRACING && OFFLINE_ASM_ADDRESS64 && OFFLINE_ASM_JIT && OFFLINE_ASM_WEBASSEMBLY && OFFLINE_ASM_HAVE_FAST_TLS && OFFLINE_ASM_WEBASSEMBLY_B3JIT
+        OFFLINE_ASM_BEGIN
+        OFFLINE_ASM_GLOBAL_LABEL(llintPCRangeStart)
+        ".file 1 \"/Users/mlam/ws1/OpenSource/Source/JavaScriptCore/llint/LowLevelInterpreter.asm\"\n"
+        ".file 2 \"/Users/mlam/ws1/OpenSource/WebKitBuild/Release/DerivedSources/JavaScriptCore/InitBytecodes.asm\"\n"
+        ".file 3 \"/Users/mlam/ws1/OpenSource/Source/JavaScriptCore/llint/LowLevelInterpreter64.asm\"\n"
+        ".file 4 \"/Users/mlam/ws1/OpenSource/Source/JavaScriptCore/llint/LowLevelInterpreter32_64.asm\"\n"
+        ".file 5 \"/Users/mlam/ws1/OpenSource/WebKitBuild/Release/DerivedSources/JavaScriptCore/InitWasm.asm\"\n"
+        ".file 6 \"/Users/mlam/ws1/OpenSource/Source/JavaScriptCore/llint/WebAssembly.asm\"\n"
+        ".file 7 \"/Users/mlam/ws1/OpenSource/WebKitBuild/Release/usr/local/include/WebKitAdditions/LowLevelInterpreterAdditions.asm\"\n"
+        ".loc 1 1672\n"
+            "\tbrk #0xc471\n"                                        // JavaScriptCore/llint/LowLevelInterpreter.asm:1672
+        ".loc 1 1681\n"
+
+        OFFLINE_ASM_GLOBAL_LABEL(vmEntryToJavaScript)
+        ".loc 1 1066\n"
+            "\tpacibsp\n"                                            // JavaScriptCore/llint/LowLevelInterpreter.asm:1066
+        ".loc 1 1070\n"
+            "\tstp x29, x30, [sp, #-16]!\n"                          // JavaScriptCore/llint/LowLevelInterpreter.asm:1070
+        ".loc 1 1075\n"
+            "\tmov x29, sp\n"                                        // JavaScriptCore/llint/LowLevelInterpreter.asm:1075
+        ".loc 1 1090\n"
+            "\tsub sp, x29, #176\n"                                  // JavaScriptCore/llint/LowLevelInterpreter.asm:1090
+        ".loc 3 169\n"
+            "\tmovz x13, #48040, lsl #0\n"                           // JavaScriptCore/llint/LowLevelInterpreter64.asm:169
+        ".loc 3 169\n"
+            "\tadd x17, x1, x13, lsl #0\n"                           // JavaScriptCore/llint/LowLevelInterpreter64.asm:169
+        ".loc 3 169\n"
+            "\tldr w4, [x17, #0]\n"                                  // JavaScriptCore/llint/LowLevelInterpreter64.asm:169
+        ".loc 3 170\n"
+            "\tcbnz w4, " LOCAL_LABEL_STRING(_offlineasm_doVMEntry__checkVMEntryPermission) "\n" // JavaScriptCore/llint/LowLevelInterpreter64.asm:170
+        ".loc 3 172\n"
+            "\tstr x1, [sp, #0]\n"                                   // JavaScriptCore/llint/LowLevelInterpreter64.asm:172
+
+        ...
+
+        ".loc 3 309\n"
+            "\tmov x3, x0\n"                                         // JavaScriptCore/llint/LowLevelInterpreter64.asm:309
+        ".loc 1 1\n"
+        #if OS(DARWIN)
+            "\tL_offlineasm_loh_adrp_1:\n"                           // JavaScriptCore/llint/LowLevelInterpreter.asm:1
+            "\tadrp x2, " LOCAL_REFERENCE(g_config) "@GOTPAGE\n"
+            "\tL_offlineasm_loh_ldr_1:\n"
+            "\tldr x2, [x2, " LOCAL_REFERENCE(g_config) "@GOTPAGEOFF]\n"
+        #elif OS(LINUX)
+            "\tadrp x2, :got:" LOCAL_REFERENCE(g_config) "\n"
+            "\tldr x2, [x2, :got_lo12:" LOCAL_REFERENCE(g_config) "]\n"
+        #else
+        #error Missing globaladdr implementation
+        #endif
+        ".loc 1 1\n"
+            "\tadd x2, x2, #3072\n"                                  // JavaScriptCore/llint/LowLevelInterpreter.asm:1
+        ```
+
+        After this patch, LLIntAssembly.h looks like this:
+        ```
+        #if !OFFLINE_ASM_X86 && !OFFLINE_ASM_X86_WIN && !OFFLINE_ASM_X86_64 && !OFFLINE_ASM_X86_64_WIN && !OFFLINE_ASM_ARMv7 && !OFFLINE_ASM_ARM64 && OFFLINE_ASM_ARM64E && !OFFLINE_ASM_MIPS && !OFFLINE_ASM_RISCV64 && !OFFLINE_ASM_C_LOOP && !OFFLINE_ASM_C_LOOP_WIN && !OFFLINE_ASM_ARMv7k && !OFFLINE_ASM_ARMv7s && OFFLINE_ASM_JSVALUE64 && !OFFLINE_ASM_BIGINT32 && OFFLINE_ASM_GIGACAGE_ENABLED && !OFFLINE_ASM_ASSERT_ENABLED && !OFFLINE_ASM_TRACING && OFFLINE_ASM_ADDRESS64 && OFFLINE_ASM_JIT && OFFLINE_ASM_WEBASSEMBLY && OFFLINE_ASM_HAVE_FAST_TLS && OFFLINE_ASM_WEBASSEMBLY_B3JIT
+
+                          OFFLINE_ASM_BEGIN
+                          OFFLINE_ASM_GLOBAL_LABEL(llintPCRangeStart)
+                          ".file 1 \"/Users/mlam/ws1/OpenSource/Source/JavaScriptCore/llint/LowLevelInterpreter.asm\"\n"
+                          ".file 2 \"/Users/mlam/ws1/OpenSource/WebKitBuild/Release/DerivedSources/JavaScriptCore/InitBytecodes.asm\"\n"
+                          ".file 3 \"/Users/mlam/ws1/OpenSource/Source/JavaScriptCore/llint/LowLevelInterpreter64.asm\"\n"
+                          ".file 4 \"/Users/mlam/ws1/OpenSource/Source/JavaScriptCore/llint/LowLevelInterpreter32_64.asm\"\n"
+                          ".file 5 \"/Users/mlam/ws1/OpenSource/WebKitBuild/Release/DerivedSources/JavaScriptCore/InitWasm.asm\"\n"
+                          ".file 6 \"/Users/mlam/ws1/OpenSource/Source/JavaScriptCore/llint/WebAssembly.asm\"\n"
+                          ".file 7 \"/Users/mlam/ws1/OpenSource/WebKitBuild/Release/usr/local/include/WebKitAdditions/LowLevelInterpreterAdditions.asm\"\n"
+        ".loc 1 1672\n"       "brk #0xc471 \n"                     // LowLevelInterpreter.asm:1672
+
+        ".loc 1 1681\n"   OFFLINE_ASM_GLOBAL_LABEL(vmEntryToJavaScript)
+        ".loc 1 1066\n"       "pacibsp \n"                         // LowLevelInterpreter.asm:1066
+        ".loc 1 1070\n"       "stp x29, x30, [sp, #-16]! \n"       // LowLevelInterpreter.asm:1070
+        ".loc 1 1075\n"       "mov x29, sp \n"                     // LowLevelInterpreter.asm:1075
+        ".loc 1 1090\n"       "sub sp, x29, #176 \n"               // LowLevelInterpreter.asm:1090
+        ".loc 3 169\n"        "movz x13, #48040, lsl #0 \n"        // LowLevelInterpreter64.asm:169
+                              "add x17, x1, x13, lsl #0 \n"
+                              "ldr w4, [x17, #0] \n"
+        ".loc 3 170\n"        "cbnz w4, " LOCAL_LABEL_STRING(_offlineasm_doVMEntry__checkVMEntryPermission) " \n" // LowLevelInterpreter64.asm:170
+        ".loc 3 172\n"        "str x1, [sp, #0] \n"                // LowLevelInterpreter64.asm:172
+
+        ...
+
+        ".loc 3 309\n"        "mov x3, x0 \n"                      // LowLevelInterpreter64.asm:309
+                          #if OS(DARWIN)
+        ".loc 1 1\n"          "L_offlineasm_loh_adrp_1: \n"        // LowLevelInterpreter.asm:1
+                              "adrp x2, " LOCAL_REFERENCE(g_config) "@GOTPAGE \n"
+                              "L_offlineasm_loh_ldr_1: \n"
+                              "ldr x2, [x2, " LOCAL_REFERENCE(g_config) "@GOTPAGEOFF] \n"
+                          #elif OS(LINUX)
+                              "adrp x2, :got:" LOCAL_REFERENCE(g_config) " \n"
+                              "ldr x2, [x2, :got_lo12:" LOCAL_REFERENCE(g_config) "] \n"
+                          #else
+                          #error Missing globaladdr implementation
+                          #endif
+        ".loc 1 1\n"          "add x2, x2, #3072 \n"
+        ```
+
+        * offlineasm/asm.rb:
+        * offlineasm/cloop.rb:
+        * offlineasm/config.rb:
+        * offlineasm/mips.rb:
+        * offlineasm/parser.rb:
+
 2021-10-16  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Use SourceID in SamplingProfiler

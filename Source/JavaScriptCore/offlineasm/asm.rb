@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-# Copyright (C) 2011, 2016 Apple Inc. All rights reserved.
+# Copyright (C) 2011-2021 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -43,7 +43,6 @@ class Assembler
     end
 
     def resetAsm
-        @commentState = :none
         @comment = nil
         @internalComment = nil
         @annotation = nil
@@ -53,16 +52,19 @@ class Assembler
         @deferredActions = []
         @deferredNextLabelActions = []
         @count = 0
+        @debugAnnotationStr = nil
+        @lastDebugAnnotationStr = nil
 
         @newlineSpacerState = :none
         @lastlabel = ""
     end
 
     def enterAsm
-        @outp.puts "OFFLINE_ASM_BEGIN" if !$emitWinAsm
+        @outp.puts ""
+        putStr "OFFLINE_ASM_BEGIN" if !$emitWinAsm
 
         if !$emitWinAsm
-            @outp.puts "OFFLINE_ASM_GLOBAL_LABEL(llintPCRangeStart)"
+            putStr "OFFLINE_ASM_GLOBAL_LABEL(llintPCRangeStart)"
         else
             putsProc("llintPCRangeStart", "")
             putsProcEndIfNeeded
@@ -74,7 +76,7 @@ class Assembler
     def leaveAsm
         putsProcEndIfNeeded if $emitWinAsm
         if !$emitWinAsm
-            @outp.puts "OFFLINE_ASM_GLOBAL_LABEL(llintPCRangeEnd)"
+            putStr "OFFLINE_ASM_GLOBAL_LABEL(llintPCRangeEnd)"
         else
             putsProc("llintPCRangeEnd", "")
             putsProcEndIfNeeded
@@ -84,7 +86,7 @@ class Assembler
             | action |
             action.call()
         }
-        @outp.puts "OFFLINE_ASM_END" if !$emitWinAsm
+        putStr "OFFLINE_ASM_END" if !$emitWinAsm
         @state = :cpp
     end
     
@@ -121,7 +123,8 @@ class Assembler
             result += separator if result != ""
             result += "#{@internalComment}"
         end
-        if @codeOrigin and $enableCodeOriginComments
+        if $enableCodeOriginComments and @codeOrigin and @codeOrigin != @lastCodeOrigin
+            @lastCodeOrigin = @codeOrigin
             result += separator if result != ""
             result += "#{@codeOrigin}"
         end
@@ -130,7 +133,6 @@ class Assembler
         end
 
         # Reset all the components that we've just sent to be dumped.
-        @commentState = :none
         @comment = nil
         @annotation = nil
         @codeOrigin = nil
@@ -145,11 +147,22 @@ class Assembler
     end
     
     def formatDump(dumpStr, comment, commentColumns=$preferredCommentStartColumn)
+        result = ""
         if comment.length > 0
-            "%-#{commentColumns}s %s" % [dumpStr, comment]
+            result = "%-#{commentColumns}s %s" % [dumpStr, comment]
         else
-            dumpStr
+            result = dumpStr
         end
+        if $enableDebugAnnotations
+            if @debugAnnotationStr and @debugAnnotationStr != @lastDebugAnnotationStr
+                result = "%-#{$preferredDebugAnnotationColumns}s%s" % [@debugAnnotationStr, result]
+            else
+                result = "%-#{$preferredDebugAnnotationColumns}s%s" % ["", result]
+            end
+            @lastDebugAnnotationStr = @debugAnnotationStr
+            @debugAnnotationStr = nil
+        end
+        result
     end
 
     # private method for internal use only.
@@ -176,11 +189,19 @@ class Assembler
             @outp.puts comment
         end
     end
-    
+
+    def putStr(str)
+        if $enableDebugAnnotations
+            @outp.puts "%-#{$preferredDebugAnnotationColumns}s%s" % ["", str]
+        else
+            @outp.puts str
+        end
+    end
+
     def puts(*line)
         raise unless @state == :asm
         if !$emitWinAsm
-            @outp.puts(formatDump("    \"\\t" + line.join('') + "\\n\"", lastComment))
+            @outp.puts(formatDump("    \"" + line.join('') + " \\n\"", lastComment))
         else
             @outp.puts(formatDump("    " + line.join(''), lastComment))
         end
@@ -295,22 +316,7 @@ class Assembler
     end
     
     def codeOrigin(text)
-        case @commentState
-        when :none
-            @codeOrigin = text
-            @commentState = :one
-        when :one
-            if $enableCodeOriginComments
-                @outp.puts "    " + $commentPrefix + " #{@codeOrigin}"
-                @outp.puts "    " + $commentPrefix + " #{text}"
-            end
-            @codeOrigin = nil
-            @commentState = :many
-        when :many
-            @outp.puts $commentPrefix + " #{text}" if $enableCodeOriginComments
-        else
-            raise
-        end
+        @codeOrigin = text
     end
 
     def comment(text)
@@ -322,7 +328,7 @@ class Assembler
     end
 
     def debugAnnotation(text)
-        @outp.puts text
+        @debugAnnotationStr = text
     end
 end
 
@@ -405,6 +411,7 @@ File.open(outputFlnm, "w") {
             # affect the generation for any other backend.
             if backend == "C_LOOP" || backend == "C_LOOP_WIN"
                 $enableDebugAnnotations = false
+                $preferredCommentStartColumn = 60
             end
 
             lowLevelAST = lowLevelAST.demacroify({})
