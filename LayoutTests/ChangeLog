@@ -1,3 +1,11 @@
+2021-10-17  Alan Bujtas  <zalan@apple.com>
+
+        IFC progression (inline box borders).
+
+        Unreviewed.
+
+        * TestExpectations:
+
 2021-10-17  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WinCairo] Unreviewed test gardening
