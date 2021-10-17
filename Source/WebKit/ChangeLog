@@ -1,3 +1,22 @@
+2021-10-17  BJ Burg  <bburg@apple.com>
+
+        [Cocoa] Web Inspector: remove _WKInspectorExtensionPrivateForTesting
+        https://bugs.webkit.org/show_bug.cgi?id=231784
+        <rdar://problem/84280608>
+
+        Reviewed by Timothy Hatcher.
+
+        Promote the only method to be API for _WKInspectorExtension. It is needed
+        to implement some parts of the devtools API.
+
+        * SourcesCocoa.txt:
+        * UIProcess/API/Cocoa/_WKInspectorExtension.h:
+        * UIProcess/API/Cocoa/_WKInspectorExtension.mm:
+        (-[_WKInspectorExtension evaluateScript:inTabWithIdentifier:completionHandler:]):
+        * UIProcess/API/Cocoa/_WKInspectorExtensionPrivateForTesting.h: Removed.
+        * UIProcess/API/Cocoa/_WKInspectorExtensionTesting.mm: Removed.
+        * WebKit.xcodeproj/project.pbxproj:
+
 2021-10-16  David Kilzer  <ddkilzer@apple.com>
 
         [WebAuthn] Many Objective-C classes leak their instance variables

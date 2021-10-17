@@ -66,6 +66,16 @@ WK_CLASS_AVAILABLE(macos(12.0))
 - (void)evaluateScript:(NSString *)scriptSource frameURL:(NSURL *)frameURL contextSecurityOrigin:(NSURL *)contextSecurityOrigin useContentScriptContext:(BOOL)useContentScriptContext completionHandler:(void(^)(NSError * _Nullable, NSDictionary * _Nullable result))completionHandler;
 
 /**
+ * @abstract Evaluates JavaScript in the context of a Web Inspector tab created by this _WKInspectorExtension.
+ * @param scriptSource The JavaScript code to be evaluated.
+ * @param tabIdentifier Identifier for the Web Inspector tab in which to evaluate JavaScript.
+ * @param completionHandler A block to invoke when the operation completes or fails.
+ * @discussion The completionHandler is passed an NSJSONSerialization-compatible NSObject representing the evaluation result, or an error.
+ * scriptSource is treated as a top-level evaluation.
+ */
+- (void)evaluateScript:(NSString *)scriptSource inTabWithIdentifier:(NSString *)tabIdentifier completionHandler:(void(^)(NSError * _Nullable, NSDictionary * _Nullable result))completionHandler;
+
+/**
  * @abstract Reloads the inspected page on behalf of the _WKInspectorExtension.
  * @param ignoreCache If YES, reloads the page while ignoring the cache.
  * @param userAgent If specified, overrides the user agent to be sent in the `User-Agent` header and returned by calls to `navigator.userAgent` made by scripts running in the page. This only affects the next navigation.

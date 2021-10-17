@@ -288,7 +288,6 @@ UIProcess/API/Cocoa/_WKInspectorConfiguration.mm
 UIProcess/API/Cocoa/_WKInspectorTesting.mm
 UIProcess/API/Cocoa/_WKInspectorDebuggableInfo.mm
 UIProcess/API/Cocoa/_WKInspectorExtension.mm
-UIProcess/API/Cocoa/_WKInspectorExtensionTesting.mm
 UIProcess/API/Cocoa/_WKInspectorWindow.mm
 UIProcess/API/Cocoa/_WKInternalDebugFeature.mm
 UIProcess/API/Cocoa/_WKLinkIconParameters.mm

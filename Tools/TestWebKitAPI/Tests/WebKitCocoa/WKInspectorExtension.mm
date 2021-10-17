@@ -36,7 +36,6 @@
 #import <WebKit/_WKInspectorConfiguration.h>
 #import <WebKit/_WKInspectorExtension.h>
 #import <WebKit/_WKInspectorExtensionDelegate.h>
-#import <WebKit/_WKInspectorExtensionPrivateForTesting.h>
 #import <WebKit/_WKInspectorPrivateForTesting.h>
 #import <wtf/RetainPtr.h>
 
@@ -158,7 +157,7 @@ TEST(WKInspectorExtension, CanEvaluateScriptInExtensionTab)
     // Read back a value that is set in the <iframe>'s script context.
     pendingCallbackWasCalled = false;
     auto scriptSource2 = @"window._secretValue";
-    [sharedInspectorExtension _evaluateScript:scriptSource2 inExtensionTabWithIdentifier:sharedExtensionTabIdentifier.get() completionHandler:^(NSError * _Nullable error, NSDictionary * _Nullable result) {
+    [sharedInspectorExtension evaluateScript:scriptSource2 inTabWithIdentifier:sharedExtensionTabIdentifier.get() completionHandler:^(NSError * _Nullable error, NSDictionary * _Nullable result) {
         EXPECT_NULL(error);
         EXPECT_NOT_NULL(result);
         EXPECT_NS_EQUAL(result[@"answer"], @42);
@@ -170,7 +169,7 @@ TEST(WKInspectorExtension, CanEvaluateScriptInExtensionTab)
     // Check to see that script is actually being evaluated in the <iframe>'s script context.
     pendingCallbackWasCalled = false;
     auto scriptSource3 = @"window.top !== window";
-    [sharedInspectorExtension _evaluateScript:scriptSource3 inExtensionTabWithIdentifier:sharedExtensionTabIdentifier.get() completionHandler:^(NSError * _Nullable error, NSDictionary * _Nullable result) {
+    [sharedInspectorExtension evaluateScript:scriptSource3 inTabWithIdentifier:sharedExtensionTabIdentifier.get() completionHandler:^(NSError * _Nullable error, NSDictionary * _Nullable result) {
         EXPECT_NULL(error);
         EXPECT_NOT_NULL(result);
         EXPECT_NS_EQUAL(result, @YES);
@@ -249,7 +248,7 @@ TEST(WKInspectorExtension, ExtensionTabIsPersistent)
 
     // Read back a value that is unique to the <iframe>'s script context.
     pendingCallbackWasCalled = false;
-    [sharedInspectorExtension _evaluateScript:scriptSource inExtensionTabWithIdentifier:sharedExtensionTabIdentifier.get() completionHandler:^(NSError * _Nullable error, NSDictionary * _Nullable result) {
+    [sharedInspectorExtension evaluateScript:scriptSource inTabWithIdentifier:sharedExtensionTabIdentifier.get() completionHandler:^(NSError * _Nullable error, NSDictionary * _Nullable result) {
         EXPECT_NULL(error);
         EXPECT_NOT_NULL(result);
         evaluationResult = result;
@@ -265,7 +264,7 @@ TEST(WKInspectorExtension, ExtensionTabIsPersistent)
     // Check the unique value again, while the <iframe> is being hidden. If the <iframe> is
     // detached from the DOM, then this evaluation will fail or hang.
     pendingCallbackWasCalled = false;
-    [sharedInspectorExtension _evaluateScript:scriptSource inExtensionTabWithIdentifier:sharedExtensionTabIdentifier.get() completionHandler:^(NSError * _Nullable error, NSDictionary * _Nullable result) {
+    [sharedInspectorExtension evaluateScript:scriptSource inTabWithIdentifier:sharedExtensionTabIdentifier.get() completionHandler:^(NSError * _Nullable error, NSDictionary * _Nullable result) {
         EXPECT_NULL(error);
         EXPECT_NOT_NULL(result);
         EXPECT_NS_EQUAL(result, evaluationResult.get());
@@ -287,7 +286,7 @@ TEST(WKInspectorExtension, ExtensionTabIsPersistent)
 
     // Check the unique value again after reselecting the extension tab.
     pendingCallbackWasCalled = false;
-    [sharedInspectorExtension _evaluateScript:scriptSource inExtensionTabWithIdentifier:sharedExtensionTabIdentifier.get() completionHandler:^(NSError * _Nullable error, NSDictionary * _Nullable result) {
+    [sharedInspectorExtension evaluateScript:scriptSource inTabWithIdentifier:sharedExtensionTabIdentifier.get() completionHandler:^(NSError * _Nullable error, NSDictionary * _Nullable result) {
         EXPECT_NULL(error);
         EXPECT_NOT_NULL(result);
         EXPECT_NS_EQUAL(result, evaluationResult.get());
@@ -366,7 +365,7 @@ TEST(WKInspectorExtension, EvaluateScriptInExtensionTabCanReturnPromises)
     auto scriptSource = [NSString stringWithFormat:@"Promise.resolve(\"%@\")", secretString];
 
     pendingCallbackWasCalled = false;
-    [sharedInspectorExtension _evaluateScript:scriptSource inExtensionTabWithIdentifier:sharedExtensionTabIdentifier.get() completionHandler:^(NSError * _Nullable error, NSDictionary * _Nullable result) {
+    [sharedInspectorExtension evaluateScript:scriptSource inTabWithIdentifier:sharedExtensionTabIdentifier.get() completionHandler:^(NSError * _Nullable error, NSDictionary * _Nullable result) {
         EXPECT_NULL(error);
         EXPECT_NOT_NULL(result);
         EXPECT_NS_EQUAL(result, secretString);
@@ -376,7 +375,7 @@ TEST(WKInspectorExtension, EvaluateScriptInExtensionTabCanReturnPromises)
     TestWebKitAPI::Util::run(&pendingCallbackWasCalled);
 
     pendingCallbackWasCalled = false;
-    [sharedInspectorExtension _evaluateScript:@"(((" inExtensionTabWithIdentifier:sharedExtensionTabIdentifier.get() completionHandler:^(NSError * _Nullable error, NSDictionary * _Nullable result) {
+    [sharedInspectorExtension evaluateScript:@"(((" inTabWithIdentifier:sharedExtensionTabIdentifier.get() completionHandler:^(NSError * _Nullable error, NSDictionary * _Nullable result) {
         EXPECT_NOT_NULL(error);
         EXPECT_NULL(result);
 
