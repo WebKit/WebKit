@@ -1,5 +1,18 @@
 2021-10-17  David Kilzer  <ddkilzer@apple.com>
 
+        Build fix #3: Adopt attribution AVCaptureSession SPI for GPU process
+        https://bugs.webkit.org/show_bug.cgi?id=231621
+        <rdar://problem/80748535>
+
+        Unreviewed build fix.
+
+        * wtf/PlatformHave.h:
+        (HAVE_TCC_IOS_14_BIG_SUR_SPI): Add.
+        - Used for TCC.framework SPI available in iOS 14 and macOS 11
+          Big Sur and later.
+
+2021-10-17  David Kilzer  <ddkilzer@apple.com>
+
         Add tests for WTF::OSObjectPtr/adoptOSObject in Cocoa with and without ARC
         <https://webkit.org/b/231819>
         <rdar://problem/84312692>

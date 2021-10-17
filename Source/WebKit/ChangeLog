@@ -1,5 +1,19 @@
 2021-10-17  David Kilzer  <ddkilzer@apple.com>
 
+        Build fix #3: Adopt attribution AVCaptureSession SPI for GPU process
+        https://bugs.webkit.org/show_bug.cgi?id=231621
+        <rdar://problem/80748535>
+
+        Unreviewed build fix.
+
+        * Shared/Cocoa/TCCSoftLink.h:
+        (tcc_identity_create):
+        * Shared/Cocoa/TCCSoftLink.mm:
+        (tcc_identity_create):
+        - Use HAVE(TCC_IOS_14_BIG_SUR_SPI).
+
+2021-10-17  David Kilzer  <ddkilzer@apple.com>
+
         Follow-up: WebKit::LocalConnection::createCredentialPrivateKey leaks an NSMutableDictionary
         <https://webkit.org/b/231814>
         <rdar://problem/84307054>

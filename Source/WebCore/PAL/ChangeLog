@@ -1,3 +1,14 @@
+2021-10-17  David Kilzer  <ddkilzer@apple.com>
+
+        Build fix #3: Adopt attribution AVCaptureSession SPI for GPU process
+        https://bugs.webkit.org/show_bug.cgi?id=231621
+        <rdar://problem/80748535>
+
+        Unreviewed build fix.
+
+        * pal/spi/cocoa/TCCSPI.h:
+        - Use HAVE(TCC_IOS_14_BIG_SUR_SPI).
+
 2021-10-15  Ross Kirsling  <ross.kirsling@sony.com>
 
         Realize Mac CMake build of WebCore and WebKit
