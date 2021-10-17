@@ -1,3 +1,18 @@
+2021-10-17  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo] Unreviewed test gardening
+
+        * platform/wincairo/fast/css/font-face-opentype-expected.txt:
+        * platform/wincairo/fast/text/basic/015-expected.txt:
+        * platform/wincairo/fast/text/whitespace/004-expected.txt:
+        * platform/wincairo/fast/text/whitespace/005-expected.txt:
+        * platform/wincairo/fast/text/whitespace/006-expected.txt:
+        * platform/wincairo/fast/text/whitespace/007-expected.txt:
+        * platform/wincairo/fast/text/whitespace/010-expected.txt:
+        * platform/wincairo/fast/text/whitespace/011-expected.txt:
+        * platform/wincairo/fast/text/whitespace/015-expected.txt:
+        * platform/wincairo/fast/text/whitespace/016-expected.txt:
+
 2021-10-17  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION (r270850): Reference clip path clips in the wrong place when inside non-visible overflow
