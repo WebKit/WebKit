@@ -209,9 +209,6 @@ static void printReason(AvoidanceReason reason, TextStream& stream)
     case AvoidanceReason::BoxDecorationBreakClone:
         stream << "webkit-box-decoration-break: clone";
         break;
-    case AvoidanceReason::InlineBoxHasBackgroundClipText:
-        stream << "inline box has background-clip: text";
-        break;
     default:
         break;
     }
@@ -481,8 +478,6 @@ static OptionSet<AvoidanceReason> canUseForRenderInlineChild(const RenderInline&
     if (style.boxDecorationBreak() == BoxDecorationBreak::Clone)
         SET_REASON_AND_RETURN_IF_NEEDED(BoxDecorationBreakClone, reasons, includeReasons);
 #endif
-    if (style.backgroundClip() == FillBox::Text)
-        SET_REASON_AND_RETURN_IF_NEEDED(InlineBoxHasBackgroundClipText, reasons, includeReasons);
     if (style.hasOutline())
         SET_REASON_AND_RETURN_IF_NEEDED(ContentHasOutline, reasons, includeReasons);
     if (renderInline.isInFlowPositioned())

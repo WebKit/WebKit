@@ -1,3 +1,13 @@
+2021-10-17  Antti Koivisto  <antti@apple.com>
+
+        [LFC][Integration] Support background-clip:text on inline boxes
+        https://bugs.webkit.org/show_bug.cgi?id=231877
+
+        Reviewed by Alan Bujtas.
+
+        * fast/inline/inline-background-clip-text-expected.html: Added.
+        * fast/inline/inline-background-clip-text.html: Added.
+
 2021-10-16  Robin Morisset  <rmorisset@apple.com>
 
         Allow WASM to use up to 4GB

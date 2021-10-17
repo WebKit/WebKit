@@ -47,6 +47,10 @@ public:
     InlineBoxIterator nextInlineBox() const;
     InlineBoxIterator previousInlineBox() const;
     InlineBoxIterator iterator() const;
+
+    LeafBoxIterator firstLeafBox() const;
+    LeafBoxIterator lastLeafBox() const;
+    LeafBoxIterator endLeafBox() const;
 };
 
 class InlineBoxIterator : public BoxIterator {

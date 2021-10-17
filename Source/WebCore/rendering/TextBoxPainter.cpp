@@ -56,8 +56,8 @@ TextBoxPainter::TextBoxPainter(const LayoutIntegration::InlineContent& inlineCon
 }
 #endif
 
-TextBoxPainter::TextBoxPainter(InlineIterator::TextBoxIterator&& textBox, PaintInfo& paintInfo, const LayoutPoint& paintOffset)
-    : m_textBox(WTFMove(textBox))
+TextBoxPainter::TextBoxPainter(const InlineIterator::TextBoxIterator& textBox, PaintInfo& paintInfo, const LayoutPoint& paintOffset)
+    : m_textBox(textBox)
     , m_renderer(m_textBox->renderer())
     , m_document(m_renderer.document())
     , m_style(m_textBox->style())

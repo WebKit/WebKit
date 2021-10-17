@@ -50,6 +50,8 @@ public:
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
     TextBoxPainter(const LayoutIntegration::InlineContent&, const InlineDisplay::Box&, PaintInfo&, const LayoutPoint& paintOffset);
 #endif
+    TextBoxPainter(const InlineIterator::TextBoxIterator&, PaintInfo&, const LayoutPoint& paintOffset);
+
     ~TextBoxPainter();
 
     void paint();
@@ -57,8 +59,6 @@ public:
     static FloatRect calculateUnionOfAllDocumentMarkerBounds(const LegacyInlineTextBox&);
 
 private:
-    TextBoxPainter(InlineIterator::TextBoxIterator&&, PaintInfo&, const LayoutPoint& paintOffset);
-
     auto& textBox() const { return *m_textBox; }
 
     void paintBackground();

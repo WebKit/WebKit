@@ -96,6 +96,16 @@ public:
         m_inlineBox = inlineFlowBox()->prevLineBox();
     }
 
+    BoxLegacyPath firstLeafBoxForInlineBox() const
+    {
+        return { inlineFlowBox()->firstLeafDescendant() };
+    }
+
+    BoxLegacyPath lastLeafBoxForInlineBox() const
+    {
+        return { inlineFlowBox()->lastLeafDescendant() };
+    }
+
     bool operator==(const BoxLegacyPath& other) const { return m_inlineBox == other.m_inlineBox; }
 
     bool atEnd() const { return !m_inlineBox; }

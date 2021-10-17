@@ -91,7 +91,7 @@ enum class AvoidanceReason : uint64_t {
     MultiColumnFlowIsFloating                    = 1LLU  << 50,
     // Unused                                    = 1LLU  << 51,
     // Unused                                    = 1LLU  << 52,
-    InlineBoxHasBackgroundClipText               = 1LLU  << 53,
+    // Unused                                    = 1LLU  << 53,
     UnsupportedFieldset                          = 1LLU  << 54,
     ChildBoxIsFloatingOrPositioned               = 1LLU  << 55,
     ContentIsSVG                                 = 1LLU  << 56,

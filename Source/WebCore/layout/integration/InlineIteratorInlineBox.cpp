@@ -59,6 +59,27 @@ InlineBoxIterator InlineBox::previousInlineBox() const
     return InlineBoxIterator(*this).traversePreviousInlineBox();
 }
 
+LeafBoxIterator InlineBox::firstLeafBox() const
+{
+    return WTF::switchOn(m_pathVariant, [](auto& path) -> LeafBoxIterator {
+        return { path.firstLeafBoxForInlineBox() };
+    });
+}
+
+LeafBoxIterator InlineBox::lastLeafBox() const
+{
+    return WTF::switchOn(m_pathVariant, [](auto& path) -> LeafBoxIterator {
+        return { path.lastLeafBoxForInlineBox() };
+    });
+}
+
+LeafBoxIterator InlineBox::endLeafBox() const
+{
+    if (auto last = lastLeafBox())
+        return last->nextOnLine();
+    return { };
+}
+
 InlineBoxIterator::InlineBoxIterator(Box::PathVariant&& pathVariant)
     : BoxIterator(WTFMove(pathVariant))
 {
