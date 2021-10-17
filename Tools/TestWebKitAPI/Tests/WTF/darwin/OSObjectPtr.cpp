@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,38 +27,68 @@
 
 #include <wtf/OSObjectPtr.h>
 
-#include <dispatch/dispatch.h>
 #include <CoreFoundation/CoreFoundation.h>
+#include <dispatch/dispatch.h>
+
+#if __has_feature(objc_arc) && !defined(NDEBUG)
+// Debug builds with ARC enabled cause objects to be autoreleased
+// when assigning adoptNS() result to a different RetainPtr<> type,
+// and when calling RetainPtr<>::get().
+#define AUTORELEASEPOOL_FOR_ARC_DEBUG @autoreleasepool
+#else
+#define AUTORELEASEPOOL_FOR_ARC_DEBUG
+#endif
+
+#ifndef OS_OBJECT_PTR_TEST_NAME
+#define OS_OBJECT_PTR_TEST_NAME OSObjectPtr
+#endif
 
 namespace TestWebKitAPI {
 
-TEST(OSObjectPtr, AdoptOSObject)
+TEST(OS_OBJECT_PTR_TEST_NAME, AdoptOSObject)
 {
     OSObjectPtr<dispatch_queue_t> foo = adoptOSObject(dispatch_queue_create(0, DISPATCH_QUEUE_SERIAL));
-
-    EXPECT_EQ(1, CFGetRetainCount(foo.get()));
+    uintptr_t fooPtr;
+    AUTORELEASEPOOL_FOR_ARC_DEBUG {
+        fooPtr = reinterpret_cast<uintptr_t>(foo.get());
+    }
+    EXPECT_EQ(1, CFGetRetainCount((CFTypeRef)fooPtr));
 }
 
-TEST(OSObjectPtr, RetainRelease)
+TEST(OS_OBJECT_PTR_TEST_NAME, RetainRelease)
 {
     dispatch_queue_t foo = dispatch_queue_create(0, DISPATCH_QUEUE_SERIAL);
-    EXPECT_EQ(1, CFGetRetainCount(foo));
+    auto fooPtr = reinterpret_cast<uintptr_t>(foo);
+    EXPECT_EQ(1, CFGetRetainCount((CFTypeRef)fooPtr));
 
-    WTF::retainOSObject(foo);
-    EXPECT_EQ(2, CFGetRetainCount(foo));
+    WTF::retainOSObject(foo); // Does nothing under ARC.
+#if __has_feature(objc_arc)
+    EXPECT_EQ(1, CFGetRetainCount((CFTypeRef)fooPtr));
+#else
+    EXPECT_EQ(2, CFGetRetainCount((CFTypeRef)fooPtr));
+#endif
 
-    WTF::releaseOSObject(foo);
-    EXPECT_EQ(1, CFGetRetainCount(foo));
+    WTF::releaseOSObject(foo); // Does nothing under ARC.
+    EXPECT_EQ(1, CFGetRetainCount((CFTypeRef)fooPtr));
+
+    WTF::releaseOSObject(foo); // Balance dispatch_queue_create() without ARC.
 }
 
-TEST(OSObjectPtr, LeakRef)
+TEST(OS_OBJECT_PTR_TEST_NAME, LeakRef)
 {
     OSObjectPtr<dispatch_queue_t> foo = adoptOSObject(dispatch_queue_create(0, DISPATCH_QUEUE_SERIAL));
-    EXPECT_EQ(1, CFGetRetainCount(foo.get()));
+    uintptr_t fooPtr;
+    AUTORELEASEPOOL_FOR_ARC_DEBUG {
+        fooPtr = reinterpret_cast<uintptr_t>(foo.get());
+    }
+    EXPECT_EQ(1, CFGetRetainCount((CFTypeRef)fooPtr));
 
-    dispatch_queue_t queue = foo.leakRef();
+    dispatch_queue_t queue;
+    AUTORELEASEPOOL_FOR_ARC_DEBUG {
+        queue = foo.leakRef();
+    }
     EXPECT_EQ(nullptr, foo.get());
-    EXPECT_EQ(1, CFGetRetainCount(queue));
+    EXPECT_EQ(1, CFGetRetainCount((CFTypeRef)fooPtr));
 
     WTF::releaseOSObject(queue);
 }

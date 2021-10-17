@@ -1,3 +1,23 @@
+2021-10-17  David Kilzer  <ddkilzer@apple.com>
+
+        Add tests for WTF::OSObjectPtr/adoptOSObject in Cocoa with and without ARC
+        <https://webkit.org/b/231819>
+        <rdar://problem/84312692>
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        - Add OSObjectPtrCocoa.mm and OSObjectPtrCocoaARC.mm source
+          files to the project.
+        * TestWebKitAPI/Tests/WTF/darwin/OSObjectPtr.cpp:
+        (TestWebKitAPI::TEST):
+        - Make code work when compiled with ARC enabled.
+        - Fix a pre-existing leak of dispatch_queue_t in RetainRelease
+          test.
+        * TestWebKitAPI/Tests/WTF/darwin/OSObjectPtrCocoa.mm: Add.
+        * TestWebKitAPI/Tests/WTF/darwin/OSObjectPtrCocoaARC.mm: Add.
+        - Add test files that #include OSObjectPtr.cpp.
+
 2021-10-17  BJ Burg  <bburg@apple.com>
 
         [Cocoa] Web Inspector: remove _WKInspectorExtensionPrivateForTesting

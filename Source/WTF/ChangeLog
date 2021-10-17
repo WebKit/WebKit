@@ -1,3 +1,17 @@
+2021-10-17  David Kilzer  <ddkilzer@apple.com>
+
+        Add tests for WTF::OSObjectPtr/adoptOSObject in Cocoa with and without ARC
+        <https://webkit.org/b/231819>
+        <rdar://problem/84312692>
+
+        Reviewed by Darin Adler.
+
+        * wtf/OSObjectPtr.h:
+        (WTF::adoptOSObject):
+        - Rename when building with ARC enabled to prevent leaks or
+          over-releases when linking ARC and non-ARC code.
+        - Add WARN_UNUSED_RETURN attribute to match WTF::adoptNS().
+
 2021-10-16  Robin Morisset  <rmorisset@apple.com>
 
         Allow WASM to use up to 4GB
