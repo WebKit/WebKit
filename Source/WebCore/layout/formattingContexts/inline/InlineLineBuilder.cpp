@@ -734,7 +734,16 @@ LineBuilder::Result LineBuilder::handleInlineContent(InlineContentBreaker& inlin
         return adjustedLineLogicalRect;
     }();
     auto availableWidth = [&] {
-        auto availableWidthForContent = lineLogicalRectForCandidateContent.width() - m_line.contentLogicalRight();
+        auto contentLogicalRight = m_line.contentLogicalRight();
+        auto& lineSpanningInlineBoxEnds = m_line.lineSpanningInlineBoxRunEnds();
+        if (!lineSpanningInlineBoxEnds.isEmpty() && inlineContent.hasInlineLevelBox()) {
+            // We may try to commit a line spanning inline box end here. Let's not account for its logical width twice.
+            for (auto& run : continuousInlineContent.runs()) {
+                if (run.inlineItem.isInlineBoxEnd())
+                    contentLogicalRight -= lineSpanningInlineBoxEnds.get(&run.inlineItem.layoutBox());
+            }
+        }
+        auto availableWidthForContent = lineLogicalRectForCandidateContent.width() - contentLogicalRight;
         return std::isnan(availableWidthForContent) ? maxInlineLayoutUnit() : availableWidthForContent;
     }();
     // While the floats are not considered to be on the line, they make the line contentful for line breaking.

@@ -52,6 +52,8 @@ Line::~Line()
 
 void Line::initialize(const Vector<InlineItem>& lineSpanningInlineBoxes)
 {
+    m_lineSpanningInlineBoxRunEnds.clear();
+    m_lineSpanningInlineBoxRunEndWidth = { };
     m_nonSpanningInlineLevelBoxCount = 0;
     m_contentLogicalWidth = { };
     m_runs.clear();
@@ -63,18 +65,23 @@ void Line::initialize(const Vector<InlineItem>& lineSpanningInlineBoxes)
             shouldCheckForMarginBorderAndPadding = inlineBoxStartItem.style().boxDecorationBreak() == BoxDecorationBreak::Clone;
 #endif
             if (!shouldCheckForMarginBorderAndPadding) {
-                m_runs.append({ inlineBoxStartItem, contentLogicalRight(), { } });
+                m_runs.append({ inlineBoxStartItem, lastRunLogicalRight(), { } });
                 continue;
             }
             // https://drafts.csswg.org/css-break/#break-decoration
             // clone: Each box fragment is independently wrapped with the border, padding, and margin.
             auto& inlineBoxGeometry = formattingContext().geometryForBox(inlineBoxStartItem.layoutBox());
-            auto runLogicalLeft = contentLogicalRight();
-            auto marginBorderAndPadding = inlineBoxGeometry.marginStart() + inlineBoxGeometry.borderLeft() + inlineBoxGeometry.paddingLeft().value_or(0_lu);
-            m_runs.append({ inlineBoxStartItem, runLogicalLeft, marginBorderAndPadding });
+            auto runLogicalLeft = lastRunLogicalRight();
+            auto marginBorderAndPaddingStart = inlineBoxGeometry.marginStart() + inlineBoxGeometry.borderLeft() + inlineBoxGeometry.paddingLeft().value_or(0_lu);
+            m_runs.append({ inlineBoxStartItem, runLogicalLeft, marginBorderAndPaddingStart });
             // Do not let negative margin make the content shorter than it already is.
-            auto runLogicalRight = runLogicalLeft + marginBorderAndPadding;
+            auto runLogicalRight = runLogicalLeft + marginBorderAndPaddingStart;
             m_contentLogicalWidth = std::max(m_contentLogicalWidth, runLogicalRight);
+
+            auto marginBorderAndPaddingEnd = inlineBoxGeometry.marginEnd() + inlineBoxGeometry.borderRight() + inlineBoxGeometry.paddingRight().value_or(0_lu);
+            m_lineSpanningInlineBoxRunEnds.add(&inlineBoxStartItem.layoutBox(), marginBorderAndPaddingEnd);
+            m_lineSpanningInlineBoxRunEndWidth += marginBorderAndPaddingEnd;
+            m_contentLogicalWidth += marginBorderAndPaddingEnd;
         }
     };
     appendLineSpanningInlineBoxes();
@@ -269,7 +276,7 @@ void Line::appendInlineBoxStart(const InlineItem& inlineItem, const RenderStyle&
 {
     // This is really just a placeholder to mark the start of the inline box <span>.
     ++m_nonSpanningInlineLevelBoxCount;
-    appendNonBreakableSpace(inlineItem, style, contentLogicalRight(), logicalWidth);
+    appendNonBreakableSpace(inlineItem, style, lastRunLogicalRight(), logicalWidth);
 }
 
 void Line::appendInlineBoxEnd(const InlineItem& inlineItem, const RenderStyle& style, InlineLayoutUnit logicalWidth)
@@ -280,10 +287,18 @@ void Line::appendInlineBoxEnd(const InlineItem& inlineItem, const RenderStyle& s
             return;
         m_contentLogicalWidth -= m_trimmableTrailingContent.removePartiallyTrimmableContent();
     };
+    auto removeFromLineSpanningInlineBoxListIfApplicable = [&] {
+        ASSERT(!m_lineSpanningInlineBoxRunEnds.contains(&inlineItem.layoutBox()) || m_lineSpanningInlineBoxRunEnds.get(&inlineItem.layoutBox()) == logicalWidth);
+        auto inlineBoxEnd = m_lineSpanningInlineBoxRunEnds.remove(&inlineItem.layoutBox());
+        // This inline box end now contributes to the line content width in the regular way.
+        m_contentLogicalWidth -= inlineBoxEnd;
+        m_lineSpanningInlineBoxRunEndWidth -= inlineBoxEnd;
+    };
     // Prevent trailing letter-spacing from spilling out of the inline box.
     // https://drafts.csswg.org/css-text-3/#letter-spacing-property See example 21.
     removeTrailingLetterSpacing();
-    appendNonBreakableSpace(inlineItem, style, contentLogicalRight(), logicalWidth);
+    removeFromLineSpanningInlineBoxListIfApplicable();
+    appendNonBreakableSpace(inlineItem, style, lastRunLogicalRight(), logicalWidth);
 }
 
 void Line::appendTextContent(const InlineTextItem& inlineTextItem, const RenderStyle& style, InlineLayoutUnit logicalWidth)
@@ -330,7 +345,7 @@ void Line::appendTextContent(const InlineTextItem& inlineTextItem, const RenderS
     auto oldContentLogicalWidth = contentLogicalWidth();
     if (needsNewRun) {
         // Note, negative words spacing may cause glyph overlap.
-        auto runLogicalLeft = contentLogicalRight() + (inlineTextItem.isWordSeparator() ? style.fontCascade().wordSpacing() : 0.0f);
+        auto runLogicalLeft = lastRunLogicalRight() + (inlineTextItem.isWordSeparator() ? style.fontCascade().wordSpacing() : 0.0f);
         m_runs.append({ inlineTextItem, style, runLogicalLeft, logicalWidth });
         m_contentLogicalWidth = std::max(oldContentLogicalWidth, runLogicalLeft + logicalWidth);
     } else {
@@ -367,14 +382,14 @@ void Line::appendNonReplacedInlineLevelBox(const InlineItem& inlineItem, const R
     ++m_nonSpanningInlineLevelBoxCount;
     auto marginStart = formattingContext().geometryForBox(inlineItem.layoutBox()).marginStart();
     if (marginStart >= 0) {
-        m_runs.append({ inlineItem, style, contentLogicalRight(), marginBoxLogicalWidth });
+        m_runs.append({ inlineItem, style, lastRunLogicalRight(), marginBoxLogicalWidth });
         return;
     }
     // Negative margin-start pulls the content to the logical left direction.
     // Negative margin also squeezes the margin box, we need to stretch it to make sure the subsequent content won't overlap.
     // e.g. <img style="width: 100px; margin-left: -100px;"> pulls the replaced box to -100px with the margin box width of 0px.
     // Instead we need to position it at -100px and size it to 100px so the subsequent content starts at 0px. 
-    m_runs.append({ inlineItem, style, contentLogicalRight() + marginStart, marginBoxLogicalWidth - marginStart });
+    m_runs.append({ inlineItem, style, lastRunLogicalRight() + marginStart, marginBoxLogicalWidth - marginStart });
 }
 
 void Line::appendReplacedInlineLevelBox(const InlineItem& inlineItem, const RenderStyle& style, InlineLayoutUnit marginBoxLogicalWidth)
@@ -389,16 +404,16 @@ void Line::appendLineBreak(const InlineItem& inlineItem)
     m_trailingSoftHyphenWidth = { };
     if (inlineItem.isHardLineBreak()) {
         ++m_nonSpanningInlineLevelBoxCount;
-        return m_runs.append({ inlineItem, contentLogicalRight() });
+        return m_runs.append({ inlineItem, lastRunLogicalRight() });
     }
     // Soft line breaks (preserved new line characters) require inline text boxes for compatibility reasons.
     ASSERT(inlineItem.isSoftLineBreak());
-    m_runs.append({ downcast<InlineSoftLineBreakItem>(inlineItem), contentLogicalRight() });
+    m_runs.append({ downcast<InlineSoftLineBreakItem>(inlineItem), lastRunLogicalRight() });
 }
 
 void Line::appendWordBreakOpportunity(const InlineItem& inlineItem)
 {
-    m_runs.append({ inlineItem, contentLogicalRight() });
+    m_runs.append({ inlineItem, lastRunLogicalRight() });
 }
 
 void Line::addTrailingHyphen(InlineLayoutUnit hyphenLogicalWidth)
