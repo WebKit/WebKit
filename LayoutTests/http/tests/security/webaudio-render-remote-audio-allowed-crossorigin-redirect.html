@@ -37,11 +37,13 @@
         }, 30);
 
         audio.addEventListener("ended", event => {
-            clearInterval(intervalToken);
-            context.suspend().then(() => {
-                shouldNotBe("outputArray", "silentArray");
-                finishJSTest();
-            });
+            setTimeout(function() {
+                clearInterval(intervalToken);
+                context.suspend().then(() => {
+                    shouldNotBe("outputArray", "silentArray");
+                    finishJSTest();
+                });
+            }, 100);
         });
     }
     window.addEventListener('load', go);

@@ -1,3 +1,15 @@
+2021-10-18  Enrique Ocaña González  <eocanha@igalia.com>
+
+        [GLIB][GStreamer] test http/tests/security/webaudio-render-remote-audio-allowed-crossorigin-redirect.html is a flaky timeout since r278004
+        https://bugs.webkit.org/show_bug.cgi?id=229219
+        <rdar://problem/82059333>
+
+        Reviewed by Philippe Normand.
+
+        Give some more time to the frequency analyzer to detect activity.
+
+        * http/tests/security/webaudio-render-remote-audio-allowed-crossorigin-redirect.html:
+
 2021-10-18  Kiet Ho  <tho22@apple.com>
 
         Implement parsing and animation support for offset-distance, offset-position, offset-anchor
