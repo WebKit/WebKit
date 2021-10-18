@@ -2161,6 +2161,11 @@ void WebsiteDataStore::resetQuota(CompletionHandler<void()>&& completionHandler)
     networkProcess().resetQuota(m_sessionID, [callbackAggregator] { });
 }
 
+void WebsiteDataStore::clearStorage(CompletionHandler<void()>&& completionHandler)
+{
+    networkProcess().clearStorage(m_sessionID, WTFMove(completionHandler));
+}
+
 #if !PLATFORM(COCOA)
 WTF::String WebsiteDataStore::defaultMediaCacheDirectory()
 {

@@ -353,6 +353,7 @@ public:
     static bool http3Enabled();
 
     void resetQuota(CompletionHandler<void()>&&);
+    void clearStorage(CompletionHandler<void()>&&);
 
 #if ENABLE(APP_BOUND_DOMAINS)
     void hasAppBoundSession(CompletionHandler<void(bool)>&&) const;

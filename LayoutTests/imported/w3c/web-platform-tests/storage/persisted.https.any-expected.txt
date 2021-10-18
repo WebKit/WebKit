@@ -1,4 +1,4 @@
 
 PASS persisted() method exists and returns a Promise
-FAIL persisted() returns a promise and resolves as boolean with false assert_equals: expected false but got true
+PASS persisted() returns a promise and resolves as boolean with false
 
