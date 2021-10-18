@@ -1,3 +1,16 @@
+2021-10-18  Andres Gonzalez  <andresg_22@apple.com>
+
+        Set isolated tree mode to secondary AX thread in LayoutTests.
+        https://bugs.webkit.org/show_bug.cgi?id=231763
+
+        Reviewed by Chris Fleizach.
+
+        Isolated tree mode was enabled for LayoutTests but set to run on the
+        main thread. Change it to run on the AX thread.
+
+        * WebKitTestRunner/InjectedBundle/mac/AccessibilityControllerMac.mm:
+        (WTR::AccessibilityController::updateIsolatedTreeMode):
+
 2021-10-18  Alex Christensen  <achristensen@webkit.org>
 
         [ iOS15 Monterey ] TestWTF.WTF_URLExtras.URLExtras is a constant failure
