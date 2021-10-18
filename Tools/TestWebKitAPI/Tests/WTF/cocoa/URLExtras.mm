@@ -25,6 +25,7 @@
 
 #import "config.h"
 
+#import "Test.h"
 #import "WTFStringUtilities.h"
 #import <wtf/URL.h>
 #import <wtf/Vector.h>
@@ -66,8 +67,6 @@ static NSURL *literalURL(const char* literal)
     return WTF::URLWithData(literalAsData(literal), nil);
 }
 
-// FIXME: Re-enable this test once webkit.org/b/231454 is resolved.
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 120000) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED < 150000)
 TEST(WTF_URLExtras, URLExtras)
 {
     EXPECT_STREQ("http://site.com", originalDataAsString(literalURL("http://site.com")));
@@ -80,10 +79,13 @@ TEST(WTF_URLExtras, URLExtras)
     EXPECT_STREQ("-a.example.com", [WTF::decodeHostName(@"-a.example.com") UTF8String]);
     EXPECT_STREQ("a-.example.com", [WTF::decodeHostName(@"a-.example.com") UTF8String]);
     EXPECT_STREQ("ab--cd.example.com", [WTF::decodeHostName(@"ab--cd.example.com") UTF8String]);
+#if HAVE(NSURL_EMPTY_PUNYCODE_CHECK)
+    EXPECT_NULL([WTF::decodeHostName(@"xn--.example.com") UTF8String]);
+#else
     EXPECT_STREQ(".example.com", [WTF::decodeHostName(@"xn--.example.com") UTF8String]);
+#endif
     EXPECT_STREQ("a..example.com", [WTF::decodeHostName(@"a..example.com") UTF8String]);
 }
-#endif
     
 TEST(WTF_URLExtras, URLExtras_Spoof)
 {

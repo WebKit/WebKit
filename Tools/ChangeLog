@@ -1,3 +1,16 @@
+2021-10-18  Alex Christensen  <achristensen@webkit.org>
+
+        [ iOS15 Monterey ] TestWTF.WTF_URLExtras.URLExtras is a constant failure
+        https://bugs.webkit.org/show_bug.cgi?id=231454
+
+        Reviewed by Chris Dumez.
+
+        The behavior of NSURL changed to disallow empty punycode in the host.
+        This is fine, but we need to update our test expectations.
+
+        * TestWebKitAPI/Tests/WTF/cocoa/URLExtras.mm:
+        (TestWebKitAPI::TEST):
+
 2021-10-18  Jonathan Bedard  <jbedard@apple.com>
 
         [webkitscmpy] Allow repositories to define custom setup commands (Follow0-up)
