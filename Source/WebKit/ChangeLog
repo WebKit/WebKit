@@ -1,3 +1,17 @@
+2021-10-18  David Kilzer  <ddkilzer@apple.com>
+
+        Bug 231882: WebKit::GPUConnectionToWebProcess::setTCCIdentity() leaks a tcc_identity_t
+        <https://webkit.org/b/231882>
+        <rdar://problem/84350854>
+
+        Reviewed by Chris Dumez.
+
+        * GPUProcess/cocoa/GPUConnectionToWebProcessCocoa.mm:
+        (WebKit::GPUConnectionToWebProcess::setTCCIdentity):
+        - Use WTF::adoptOSObject() to fix the leak.
+        - Expand the scope of !PLATFORM(MACCATALYST) since none of this
+          code needs to run on the MacCatalyst platform.
+
 2021-10-18  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         Cocoa GraphicsContextGLOpenGL should not use WebGLLayer

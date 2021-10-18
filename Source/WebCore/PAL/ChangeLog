@@ -1,3 +1,14 @@
+2021-10-18  David Kilzer  <ddkilzer@apple.com>
+
+        Bug 231882: WebKit::GPUConnectionToWebProcess::setTCCIdentity() leaks a tcc_identity_t
+        <https://webkit.org/b/231882>
+        <rdar://problem/84350854>
+
+        Reviewed by Chris Dumez.
+
+        * pal/spi/cocoa/TCCSPI.h:
+        - Properly declare tcc_identity_t as an OSObject.
+
 2021-10-18  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GLIB] Simplify SleepDisabler by checking if we are under sandbox
