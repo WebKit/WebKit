@@ -1,3 +1,18 @@
+2021-10-18  Russell Epstein  <repstein@apple.com>
+
+        Apply patch. rdar://problem/84313358
+
+    2021-10-18  Alex Christensen  <achristensen@webkit.org>
+
+            Use attributedBundleIdentifier instead of applicationBundleIdentifier when present for handling PCM attribution
+            https://bugs.webkit.org/show_bug.cgi?id=231827
+
+            Reviewed by John Wilander.
+
+            * TestWebKitAPI/Tests/WebKitCocoa/EventAttribution.mm:
+            (TestWebKitAPI::runBasicPCMTest):
+            (TestWebKitAPI::TEST):
+
 2021-10-15  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r283033. rdar://problem/83953190

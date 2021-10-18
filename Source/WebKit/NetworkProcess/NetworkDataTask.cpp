@@ -175,4 +175,11 @@ void NetworkDataTask::restrictRequestReferrerToOriginIfNeeded(WebCore::ResourceR
 #endif
 }
 
+String NetworkDataTask::attributedBundleIdentifier(WebPageProxyIdentifier pageID)
+{
+    if (auto* session = networkSession())
+        return session->attributedBundleIdentifierFromPageIdentifier(pageID);
+    return { };
+}
+
 } // namespace WebKit

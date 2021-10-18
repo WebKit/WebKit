@@ -80,7 +80,7 @@ static NSURL *exampleURL()
     return [NSURL URLWithString:@"https://example.com/"];
 }
 
-void runBasicEventAttributionTest(WKWebViewConfiguration *configuration, Function<void(WKWebView *, const HTTPServer&)>&& addAttributionToWebView)
+void runBasicEventAttributionTest(WKWebViewConfiguration *configuration, Function<void(WKWebView *, const HTTPServer&)>&& addAttributionToWebView, bool setTestAppBundleID = true)
 {
     [WKWebsiteDataStore _setNetworkProcessSuspensionAllowedForTesting:NO];
     bool done = false;
@@ -121,10 +121,13 @@ void runBasicEventAttributionTest(WKWebViewConfiguration *configuration, Functio
     [[webView configuration].websiteDataStore _allowTLSCertificateChain:@[(id)testCertificate().get()] forHost:serverURL.host];
     [webView _setPrivateClickMeasurementAttributionReportURLsForTesting:serverURL destinationURL:exampleURL() completionHandler:^{
         [webView _setPrivateClickMeasurementOverrideTimerForTesting:YES completionHandler:^{
-            [webView _setPrivateClickMeasurementAppBundleIDForTesting:@"test.bundle.id" completionHandler:^{
-                NSString *html = [NSString stringWithFormat:@"<script>fetch('%@conversionRequestBeforeRedirect',{mode:'no-cors'})</script>", serverURL];
+            NSString *html = [NSString stringWithFormat:@"<script>fetch('%@conversionRequestBeforeRedirect',{mode:'no-cors'})</script>", serverURL];
+            if (setTestAppBundleID) {
+                [webView _setPrivateClickMeasurementAppBundleIDForTesting:@"test.bundle.id" completionHandler:^{
+                    [webView loadHTMLString:html baseURL:exampleURL()];
+                }];
+            } else
                 [webView loadHTMLString:html baseURL:exampleURL()];
-            }];
         }];
     }];
     Util::run(&done);
@@ -266,7 +269,7 @@ TEST(EventAttribution, FraudPrevention)
     NSURL *serverURL = server.request().URL;
 
     auto webView = adoptNS([WKWebView new]);
-    [webView _addEventAttributionWithSourceID:42 destinationURL:exampleURL() sourceDescription:@"test source description" purchaser:@"test purchaser" reportEndpoint:serverURL optionalNonce:@"ABCDEFabcdef0123456789" applicationBundleID:@"test.bundle.id"];
+    [webView _addEventAttributionWithSourceID:42 destinationURL:exampleURL() sourceDescription:@"test source description" purchaser:@"test purchaser" reportEndpoint:serverURL optionalNonce:@"ABCDEFabcdef0123456789" applicationBundleID:@"test.bundle.id" ephemeral:NO];
     [[webView configuration].websiteDataStore _setResourceLoadStatisticsEnabled:YES];
     [[webView configuration].websiteDataStore _allowTLSCertificateChain:@[(id)testCertificate().get()] forHost:serverURL.host];
 
@@ -289,8 +292,17 @@ TEST(EventAttribution, FraudPrevention)
 TEST(EventAttribution, Basic)
 {
     runBasicEventAttributionTest(nil, [](WKWebView *webView, const HTTPServer& server) {
-        [webView _addEventAttributionWithSourceID:42 destinationURL:exampleURL() sourceDescription:@"test source description" purchaser:@"test purchaser" reportEndpoint:server.request().URL optionalNonce:nil applicationBundleID:@"test.bundle.id"];
+        [webView _addEventAttributionWithSourceID:42 destinationURL:exampleURL() sourceDescription:@"test source description" purchaser:@"test purchaser" reportEndpoint:server.request().URL optionalNonce:nil applicationBundleID:@"test.bundle.id" ephemeral:NO];
     });
+}
+
+TEST(PrivateClickMeasurement, EphemeralWithAttributedBundleIdentifier)
+{
+    auto configuration = adoptNS([WKWebViewConfiguration new]);
+    configuration.get()._attributedBundleIdentifier = @"other.test.bundle.id";
+    runBasicEventAttributionTest(configuration.get(), [](WKWebView *webView, const HTTPServer& server) {
+        [webView _addEventAttributionWithSourceID:42 destinationURL:exampleURL() sourceDescription:@"test source description" purchaser:@"test purchaser" reportEndpoint:server.request().URL optionalNonce:nil applicationBundleID:@"other.test.bundle.id" ephemeral:YES];
+    }, false);
 }
 
 TEST(EventAttribution, DatabaseLocation)
@@ -311,7 +323,7 @@ TEST(EventAttribution, DatabaseLocation)
         auto dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:dataStoreConfiguration.get()]);
         viewConfiguration.get().websiteDataStore = dataStore.get();
         runBasicEventAttributionTest(viewConfiguration.get(), [](WKWebView *webView, const HTTPServer& server) {
-            [webView _addEventAttributionWithSourceID:42 destinationURL:exampleURL() sourceDescription:@"test source description" purchaser:@"test purchaser" reportEndpoint:server.request().URL optionalNonce:nil applicationBundleID:@"test.bundle.id"];
+            [webView _addEventAttributionWithSourceID:42 destinationURL:exampleURL() sourceDescription:@"test source description" purchaser:@"test purchaser" reportEndpoint:server.request().URL optionalNonce:nil applicationBundleID:@"test.bundle.id" ephemeral:NO];
         });
         originalNetworkProcessPid = [dataStore _networkProcessIdentifier];
         EXPECT_GT(originalNetworkProcessPid, 0);

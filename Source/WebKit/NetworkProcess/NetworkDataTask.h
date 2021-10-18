@@ -27,6 +27,7 @@
 
 #include "DownloadID.h"
 #include "SandboxExtension.h"
+#include "WebPageProxyIdentifier.h"
 #include <WebCore/Credential.h>
 #include <WebCore/FrameLoaderTypes.h>
 #include <WebCore/NetworkLoadMetrics.h>
@@ -135,6 +136,7 @@ public:
     virtual void setH2PingCallback(const URL&, CompletionHandler<void(Expected<WTF::Seconds, WebCore::ResourceError>&&)>&&);
 
     virtual void setPriority(WebCore::ResourceLoadPriority) { }
+    String attributedBundleIdentifier(WebPageProxyIdentifier);
 
     PAL::SessionID sessionID() const;
 

@@ -1071,8 +1071,10 @@ void NetworkResourceLoader::continueWillSendRedirectedRequest(ResourceRequest&& 
     ASSERT(!isSynchronous());
 
     NetworkSession* networkSession = nullptr;
-    if (privateClickMeasurementAttributionTriggerData && (networkSession = m_connection->networkProcess().networkSession(sessionID())))
-        networkSession->handlePrivateClickMeasurementConversion(WTFMove(*privateClickMeasurementAttributionTriggerData), request.url(), redirectRequest);
+    if (privateClickMeasurementAttributionTriggerData && (networkSession = m_connection->networkProcess().networkSession(sessionID()))) {
+        auto attributedBundleIdentifier = m_networkLoad ? m_networkLoad->attributedBundleIdentifier(m_parameters.webPageProxyID) : String();
+        networkSession->handlePrivateClickMeasurementConversion(WTFMove(*privateClickMeasurementAttributionTriggerData), request.url(), redirectRequest, WTFMove(attributedBundleIdentifier));
+    }
 
     if (m_isKeptAlive) {
         continueWillSendRequest(WTFMove(redirectRequest), false);

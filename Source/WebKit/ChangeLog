@@ -1,5 +1,36 @@
 2021-10-18  Russell Epstein  <repstein@apple.com>
 
+        Apply patch. rdar://problem/84313358
+
+    2021-10-18  Alex Christensen  <achristensen@webkit.org>
+
+            Use attributedBundleIdentifier instead of applicationBundleIdentifier when present for handling PCM attribution
+            https://bugs.webkit.org/show_bug.cgi?id=231827
+
+            Reviewed by John Wilander.
+
+            This is the same identifier that SafariViewController uses in _setEphemeralUIEventAttribution:forApplicationWithBundleID:
+            If we don't do this, then SafariViewController looks in the database for PCMs from com.apple.SafariViewService and doesn't find any and doesn't send any reports.
+
+            * NetworkProcess/NetworkDataTask.cpp:
+            (WebKit::NetworkDataTask::attributedBundleIdentifier):
+            * NetworkProcess/NetworkDataTask.h:
+            * NetworkProcess/NetworkLoad.cpp:
+            (WebKit::NetworkLoad::attributedBundleIdentifier):
+            * NetworkProcess/NetworkLoad.h:
+            * NetworkProcess/NetworkResourceLoader.cpp:
+            (WebKit::NetworkResourceLoader::continueWillSendRedirectedRequest):
+            * NetworkProcess/NetworkResourceLoader.h:
+            * NetworkProcess/NetworkSession.cpp:
+            (WebKit::NetworkSession::handlePrivateClickMeasurementConversion):
+            * NetworkProcess/NetworkSession.h:
+            * UIProcess/API/Cocoa/WKWebViewPrivateForTesting.h:
+            * UIProcess/API/Cocoa/WKWebViewTesting.mm:
+            (-[WKWebView _addEventAttributionWithSourceID:destinationURL:sourceDescription:purchaser:reportEndpoint:optionalNonce:applicationBundleID:ephemeral:]):
+            (-[WKWebView _addEventAttributionWithSourceID:destinationURL:sourceDescription:purchaser:reportEndpoint:optionalNonce:applicationBundleID:]): Deleted.
+
+2021-10-18  Russell Epstein  <repstein@apple.com>
+
         Apply patch. rdar://problem/84124701
 
     2021-10-18  Kimmo Kinnunen  <kkinnunen@apple.com>
