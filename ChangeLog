@@ -1,3 +1,11 @@
+2021-10-18  Miguel Gomez  <magomez@igalia.com>
+
+        Add my github username to contributors.json
+
+        Unreviewed.
+
+        * metadata/contributors.json:
+
 2021-10-16  Tetsuharu Ohzeki  <tetsuharu.ohzeki@gmail.com>
 
         Add github username for tetsuharuohzeki to contributors.json
