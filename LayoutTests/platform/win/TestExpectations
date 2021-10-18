@@ -2912,6 +2912,7 @@ fast/repaint/block-inputrange-repaint.html [ Pass Failure ]
 
 fast/inline/padding-ellipsis-right.html [ ImageOnlyFailure ]
 fast/inline/inline-background-clip-text.html [ ImageOnlyFailure ]
+fast/inline/inline-background-clip-text-multiline.html [ ImageOnlyFailure ]
 
 # This test hardcodes the result of a platform-dependent font lookup algorithm.
 fast/text/fallback-language-han.html [ Skip ]

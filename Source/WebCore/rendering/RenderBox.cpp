@@ -1883,7 +1883,7 @@ void RenderBox::paintFillLayers(const PaintInfo& paintInfo, const Color& color, 
 void RenderBox::paintFillLayer(const PaintInfo& paintInfo, const Color& c, const FillLayer& fillLayer, const LayoutRect& rect,
     BackgroundBleedAvoidance bleedAvoidance, CompositeOperator op, RenderElement* backgroundObject, BaseBackgroundColorUsage baseBgColorUsage)
 {
-    paintFillLayerExtended(paintInfo, c, fillLayer, rect, bleedAvoidance, { }, LayoutSize(), op, backgroundObject, baseBgColorUsage);
+    paintFillLayerExtended(paintInfo, c, fillLayer, rect, bleedAvoidance, { }, { }, op, backgroundObject, baseBgColorUsage);
 }
 
 static StyleImage* findLayerUsedImage(WrappedImagePtr image, const FillLayer& layers)

@@ -298,7 +298,7 @@ void InlineBoxPainter::paintFillLayer(const Color& color, const FillLayer& fillL
     bool hasSingleLine = !m_inlineBox.previousInlineBox() && !m_inlineBox.nextInlineBox();
 
     if (!hasFillImageOrBorderRadious || hasSingleLine || m_isRootInlineBox) {
-        renderer().paintFillLayerExtended(m_paintInfo, color, fillLayer, rect, BackgroundBleedNone, m_inlineBox, rect.size(), op);
+        renderer().paintFillLayerExtended(m_paintInfo, color, fillLayer, rect, BackgroundBleedNone, m_inlineBox, { }, op);
         return;
     }
 
@@ -306,7 +306,7 @@ void InlineBoxPainter::paintFillLayer(const Color& color, const FillLayer& fillL
     if (renderer().style().boxDecorationBreak() == BoxDecorationBreak::Clone) {
         GraphicsContextStateSaver stateSaver(m_paintInfo.context());
         m_paintInfo.context().clip({ rect.x(), rect.y(), LayoutUnit(m_inlineBox.rect().width()), LayoutUnit(m_inlineBox.rect().height()) });
-        renderer().paintFillLayerExtended(m_paintInfo, color, fillLayer, rect, BackgroundBleedNone, m_inlineBox, rect.size(), op);
+        renderer().paintFillLayerExtended(m_paintInfo, color, fillLayer, rect, BackgroundBleedNone, m_inlineBox, { }, op);
         return;
     }
 #endif
@@ -332,14 +332,16 @@ void InlineBoxPainter::paintFillLayer(const Color& color, const FillLayer& fillL
         for (auto box = m_inlineBox.iterator(); box; box.traversePreviousInlineBox())
             totalLogicalWidth += box->logicalWidth();
     }
-    LayoutUnit stripX = rect.x() - (isHorizontal() ? logicalOffsetOnLine : 0_lu);
-    LayoutUnit stripY = rect.y() - (isHorizontal() ? 0_lu : logicalOffsetOnLine);
-    LayoutUnit stripWidth = isHorizontal() ? totalLogicalWidth : LayoutUnit(m_inlineBox.rect().width());
-    LayoutUnit stripHeight = isHorizontal() ? LayoutUnit(m_inlineBox.rect().height()) : totalLogicalWidth;
+    LayoutRect backgroundImageStrip {
+        rect.x() - (isHorizontal() ? logicalOffsetOnLine : 0_lu),
+        rect.y() - (isHorizontal() ? 0_lu : logicalOffsetOnLine),
+        isHorizontal() ? totalLogicalWidth : LayoutUnit(m_inlineBox.rect().width()),
+        isHorizontal() ? LayoutUnit(m_inlineBox.rect().height()) : totalLogicalWidth
+    };
 
     GraphicsContextStateSaver stateSaver(m_paintInfo.context());
-    m_paintInfo.context().clip({ rect.x(), rect.y(), LayoutUnit(m_inlineBox.rect().width()), LayoutUnit(m_inlineBox.rect().height()) });
-    renderer().paintFillLayerExtended(m_paintInfo, color, fillLayer, LayoutRect(stripX, stripY, stripWidth, stripHeight), BackgroundBleedNone, m_inlineBox, rect.size(), op);
+    m_paintInfo.context().clip(FloatRect { rect });
+    renderer().paintFillLayerExtended(m_paintInfo, color, fillLayer, rect, BackgroundBleedNone, m_inlineBox, backgroundImageStrip, op);
 }
 
 void InlineBoxPainter::paintBoxShadow(ShadowStyle shadowStyle, const LayoutRect& paintRect)
