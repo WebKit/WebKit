@@ -5,8 +5,6 @@
 // Based on:
 // https://github.com/llvm/llvm-project/blob/d480f968/flang/unittests/Evaluate/uint128.cpp
 
-#define AVOID_NATIVE_INT128_T 1
-
 #include "config.h"
 #include <wtf/Int128.h>
 
@@ -14,32 +12,35 @@
 
 namespace TestWebKitAPI {
 
+using NonNativeInt128 = WTF::Int128Impl<true>;
+using NonNativeUInt128 = WTF::Int128Impl<false>;
+
 static void TestUnary(std::uint64_t x)
 {
-    UInt128 n {x};
+    NonNativeUInt128 n { x };
     EXPECT_EQ(x, static_cast<std::uint64_t>(n));
     EXPECT_EQ(~x, static_cast<std::uint64_t>(~n));
     EXPECT_EQ(-x, static_cast<std::uint64_t>(-n));
     EXPECT_EQ(!x, static_cast<std::uint64_t>(!n));
     EXPECT_TRUE(n == n);
-    EXPECT_TRUE(n + n == n * static_cast<UInt128>(2));
-    EXPECT_TRUE(n - n == static_cast<UInt128>(0));
-    EXPECT_TRUE(n + n == n << static_cast<UInt128>(1));
-    EXPECT_TRUE(n + n == n << static_cast<UInt128>(1));
+    EXPECT_TRUE(n + n == n * static_cast<NonNativeUInt128>(2));
+    EXPECT_TRUE(n - n == static_cast<NonNativeUInt128>(0));
+    EXPECT_TRUE(n + n == n << static_cast<NonNativeUInt128>(1));
+    EXPECT_TRUE(n + n == n << static_cast<NonNativeUInt128>(1));
     EXPECT_TRUE((n + n) - n == n);
-    EXPECT_TRUE(((n + n) >> static_cast<UInt128>(1)) == n);
+    EXPECT_TRUE(((n + n) >> static_cast<NonNativeUInt128>(1)) == n);
     if (x) {
-        EXPECT_TRUE(static_cast<UInt128>(0) / n == static_cast<UInt128>(0));
-        EXPECT_TRUE(static_cast<UInt128>(n - 1) / n == static_cast<UInt128>(0));
-        EXPECT_TRUE(static_cast<UInt128>(n) / n == static_cast<UInt128>(1));
-        EXPECT_TRUE(static_cast<UInt128>(n + n - 1) / n == static_cast<UInt128>(1));
-        EXPECT_TRUE(static_cast<UInt128>(n + n) / n == static_cast<UInt128>(2));
+        EXPECT_TRUE(static_cast<NonNativeUInt128>(0) / n == static_cast<NonNativeUInt128>(0));
+        EXPECT_TRUE(static_cast<NonNativeUInt128>(n - 1) / n == static_cast<NonNativeUInt128>(0));
+        EXPECT_TRUE(static_cast<NonNativeUInt128>(n) / n == static_cast<NonNativeUInt128>(1));
+        EXPECT_TRUE(static_cast<NonNativeUInt128>(n + n - 1) / n == static_cast<NonNativeUInt128>(1));
+        EXPECT_TRUE(static_cast<NonNativeUInt128>(n + n) / n == static_cast<NonNativeUInt128>(2));
     }
 }
 
 static void TestBinary(std::uint64_t x, std::uint64_t y)
 {
-    UInt128 m {x}, n {y};
+    NonNativeUInt128 m { x }, n { y };
     EXPECT_EQ(x, static_cast<std::uint64_t>(m));
     EXPECT_EQ(y, static_cast<std::uint64_t>(n));
     EXPECT_EQ(x & y, static_cast<std::uint64_t>(m & n));
@@ -64,21 +65,20 @@ TEST(WTF_Int128, Basic)
 }
 
 #if HAVE(INT128_T)
-static __uint128_t ToNative(UInt128 n)
+static __uint128_t ToNative(NonNativeUInt128 n)
 {
     return static_cast<__uint128_t>(static_cast<std::uint64_t>(n >> 64)) << 64 |
         static_cast<std::uint64_t>(n);
 }
 
-static UInt128 FromNative(__uint128_t n)
+static NonNativeUInt128 FromNative(__uint128_t n)
 {
-    return UInt128 {static_cast<std::uint64_t>(n >> 64)} << 64 |
-        UInt128 {static_cast<std::uint64_t>(n)};
+    return NonNativeUInt128 { static_cast<std::uint64_t>(n >> 64)} << 64 | NonNativeUInt128 { static_cast<std::uint64_t>(n) };
 }
 
 static void TestVsNative(__uint128_t x, __uint128_t y)
 {
-    UInt128 m {FromNative(x)}, n {FromNative(y)};
+    NonNativeUInt128 m { FromNative(x) }, n { FromNative(y) };
     EXPECT_TRUE(ToNative(m) == x);
     EXPECT_TRUE(ToNative(n) == y);
     EXPECT_TRUE(ToNative(~m) == ~x);
@@ -113,7 +113,7 @@ TEST(WTF_Int128, VsNative)
 
     for (int j {0}; j < 128; ++j) {
         for (int k {0}; k < 128; ++k) {
-            __uint128_t m {1}, n {1};
+            __uint128_t m { 1 }, n { 1 };
             m <<= j;
             n <<= k;
             TestVsNative(m, n);

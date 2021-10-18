@@ -10,12 +10,6 @@
 
 #pragma once
 
-// Define AVOID_NATIVE_INT128_T to force the use of Int128Impl below instead of
-// the C++ compiler's native 128-bit unsigned integer type, if it has one.
-#ifndef AVOID_NATIVE_INT128_T
-#define AVOID_NATIVE_INT128_T 0
-#endif
-
 #include <cstdint>
 #include <type_traits>
 #include <wtf/LeadingZeroBitCount.h>
@@ -266,7 +260,7 @@ private:
     std::uint64_t low_ {0}, high_ {0};
 };
 
-#if !AVOID_NATIVE_INT128_T && HAVE(INT128_T)
+#if HAVE(INT128_T)
 using UInt128 = __uint128_t;
 using Int128 = __int128_t;
 #else
