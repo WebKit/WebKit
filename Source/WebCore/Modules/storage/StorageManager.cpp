@@ -42,44 +42,52 @@ Ref<StorageManager> StorageManager::create(NavigatorBase& navigator)
 }
 
 StorageManager::StorageManager(NavigatorBase& navigator)
-    : m_navigator(navigator)
+    : m_navigator(makeWeakPtr(navigator))
 {
-}
-
-static ClientOrigin clientOrigin(ScriptExecutionContext& context)
-{
-    auto* origin = context.securityOrigin();
-    return { context.topOrigin().data(), origin ? origin->data() : SecurityOriginData { } };
 }
 
 void StorageManager::persisted(DOMPromiseDeferred<IDLBoolean>&& promise)
 {
-    auto context = m_navigator.scriptExecutionContext();
+    if (!m_navigator)
+        return promise.reject(Exception { InvalidStateError, "Navigator does not exist"_s });
+
+    auto context = m_navigator->scriptExecutionContext();
     if (!context)
         return promise.reject(Exception { InvalidStateError, "The context is invalid"_s });
 
-    if (auto connection = context->storageConnection()) {
-        return connection->persisted(clientOrigin(*context), [promise = WTFMove(promise)](bool persisted) mutable {
-            promise.resolve(persisted);
-        });
-    }
+    auto connection = context->storageConnection();
+    if (!connection)
+        return promise.reject(Exception { InvalidStateError, "The connection is invalid"_s });
 
-    return promise.reject(Exception { InvalidStateError, "The connection is invalid"_s });
+    auto* origin = context->securityOrigin();
+    if (!origin)
+        return promise.reject(Exception { InvalidStateError, "Origin is invalid"_s });
+
+    return connection->persisted({ context->topOrigin().data(), origin->data() }, [promise = WTFMove(promise)](bool persisted) mutable {
+        promise.resolve(persisted);
+    });
 }
 
 void StorageManager::persist(DOMPromiseDeferred<IDLBoolean>&& promise)
 {
-    auto context = m_navigator.scriptExecutionContext();
+    if (!m_navigator)
+        return promise.reject(Exception { InvalidStateError, "Navigator does not exist"_s });
+
+    auto context = m_navigator->scriptExecutionContext();
     if (!context)
         return promise.reject(Exception { InvalidStateError, "The context is invalid"_s });
 
-    if (auto connection = context->storageConnection()) {
-        return connection->persist(clientOrigin(*context), [promise = WTFMove(promise)](bool persisted) mutable {
-            promise.resolve(persisted);
-        });
-    }
+    auto connection = context->storageConnection();
+    if (!connection)
+        return promise.reject(Exception { InvalidStateError, "The connection is invalid"_s });
 
-    return promise.reject(Exception { InvalidStateError, "The connection is invalid"_s });
+    auto* origin = context->securityOrigin();
+    if (!origin)
+        return promise.reject(Exception { InvalidStateError, "Origin is invalid"_s });
+
+    return connection->persist({ context->topOrigin().data(), origin->data() }, [promise = WTFMove(promise)](bool persisted) mutable {
+        promise.resolve(persisted);
+    });
 }
 
 } // namespace WebCore

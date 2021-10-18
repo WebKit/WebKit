@@ -27,6 +27,7 @@
 
 #include "IDLTypes.h"
 #include <wtf/IsoMalloc.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
@@ -43,7 +44,7 @@ public:
 private:
     explicit StorageManager(NavigatorBase&);
 
-    NavigatorBase& m_navigator;
+    WeakPtr<NavigatorBase> m_navigator;
 };
 
 } // namespace WebCore
