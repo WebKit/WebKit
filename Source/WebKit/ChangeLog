@@ -1,5 +1,50 @@
 2021-10-18  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r284382. rdar://problem/84384768
+
+    Web process occasionally crashes under `RemoteDisplayListRecorderProxy::recordRestore()`
+    https://bugs.webkit.org/show_bug.cgi?id=231900
+    
+    Reviewed by Tim Horton.
+    
+    It's apparently possible for a RemoteImageBufferProxy in the web process to outlive RemoteRenderingBackendProxy.
+    Before the IPC stream refactoring in r284079, we were robust against this possibility because
+    RemoteImageBufferProxy checked for a null rendering backend in `canAppendItemOfType` and returned `false`, which
+    prevented us from trying to call into the rendering backend. However, I accidentally omitted this null check
+    in the new RemoteDisplayListRecorderProxy, which currently assumes that `m_renderingBackend` is always non-null
+    when sending any IPC stream messages.
+    
+    Fix this crash by restoring the null check for the weak `m_renderingBackend` pointer. I only observed this crash
+    once locally and, unfortunately, haven't been able to come up with a test case that consistently reproduces it.
+    
+    * WebProcess/GPU/graphics/RemoteDisplayListRecorderProxy.h:
+    (WebKit::RemoteDisplayListRecorderProxy::send):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@284382 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-10-18  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+            Web process occasionally crashes under `RemoteDisplayListRecorderProxy::recordRestore()`
+            https://bugs.webkit.org/show_bug.cgi?id=231900
+
+            Reviewed by Tim Horton.
+
+            It's apparently possible for a RemoteImageBufferProxy in the web process to outlive RemoteRenderingBackendProxy.
+            Before the IPC stream refactoring in r284079, we were robust against this possibility because
+            RemoteImageBufferProxy checked for a null rendering backend in `canAppendItemOfType` and returned `false`, which
+            prevented us from trying to call into the rendering backend. However, I accidentally omitted this null check
+            in the new RemoteDisplayListRecorderProxy, which currently assumes that `m_renderingBackend` is always non-null
+            when sending any IPC stream messages.
+
+            Fix this crash by restoring the null check for the weak `m_renderingBackend` pointer. I only observed this crash
+            once locally and, unfortunately, haven't been able to come up with a test case that consistently reproduces it.
+
+            * WebProcess/GPU/graphics/RemoteDisplayListRecorderProxy.h:
+            (WebKit::RemoteDisplayListRecorderProxy::send):
+
+2021-10-18  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r284383. rdar://problem/84377173
 
     Revert r284216

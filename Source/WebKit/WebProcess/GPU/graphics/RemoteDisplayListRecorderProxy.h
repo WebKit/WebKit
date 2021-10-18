@@ -55,6 +55,9 @@ private:
     template<typename T>
     void send(T&& message)
     {
+        if (UNLIKELY(!m_renderingBackend))
+            return;
+
         m_needsFlush = true;
         m_renderingBackend->sendToStream(WTFMove(message), m_destinationBufferIdentifier);
     }
