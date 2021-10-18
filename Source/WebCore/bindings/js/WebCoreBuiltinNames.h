@@ -98,9 +98,12 @@ namespace WebCore {
     macro(FetchEvent) \
     macro(FileSystem) \
     macro(FileSystemDirectoryEntry) \
+    macro(FileSystemDirectoryHandle) \
     macro(FileSystemDirectoryReader) \
     macro(FileSystemEntry) \
     macro(FileSystemFileEntry) \
+    macro(FileSystemFileHandle) \
+    macro(FileSystemHandle) \
     macro(Gamepad) \
     macro(GamepadButton) \
     macro(GamepadEvent) \
@@ -239,6 +242,7 @@ namespace WebCore {
     macro(StylePropertyMapReadOnly) \
     macro(StylePropertyMap) \
     macro(StorageManager) \
+    macro(StorageManagerFileSystemAccess) \
     macro(SubtleCrypto) \
     macro(TextDecoderStream) \
     macro(TextDecoderStreamDecoder) \
