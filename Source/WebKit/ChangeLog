@@ -1,3 +1,17 @@
+2021-10-18  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GLIB] Simplify SleepDisabler by checking if we are under sandbox
+        https://bugs.webkit.org/show_bug.cgi?id=231670
+
+        Reviewed by Adrian Perez de Castro.
+
+        Move functions to check if running inside a sandbox to WTF.
+
+        * UIProcess/Launcher/glib/ProcessLauncherGLib.cpp:
+        (WebKit::isInsideDocker): Deleted.
+        (WebKit::isInsideFlatpak): Deleted.
+        (WebKit::isInsideSnap): Deleted.
+
 2021-10-18  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] fast/mediastream/video-rotation tests are failing due to missing TestController::takeViewPortSnapshot

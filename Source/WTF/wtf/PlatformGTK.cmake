@@ -8,6 +8,7 @@ list(APPEND WTF_PUBLIC_HEADERS
     glib/GTypedefs.h
     glib/GUniquePtr.h
     glib/RunLoopSourcePriority.h
+    glib/Sandbox.h
     glib/SocketConnection.h
     glib/WTFGType.h
 )
@@ -32,6 +33,7 @@ list(APPEND WTF_SOURCES
     glib/GRefPtr.cpp
     glib/GSocketMonitor.cpp
     glib/RunLoopGLib.cpp
+    glib/Sandbox.cpp
     glib/SocketConnection.cpp
     glib/URLGLib.cpp
 

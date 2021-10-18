@@ -1,3 +1,23 @@
+2021-10-18  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GLIB] Simplify SleepDisabler by checking if we are under sandbox
+        https://bugs.webkit.org/show_bug.cgi?id=231670
+
+        Reviewed by Adrian Perez de Castro.
+
+        Move function to check if running inside a sandbox and add shouldUsePortal() to check whether portal sandbox
+        should be used. WEBKIT_USE_PORTAL environment variable can be used to force the use of portals when not running
+        under the sandbox.
+
+        * wtf/PlatformGTK.cmake:
+        * wtf/PlatformWPE.cmake:
+        * wtf/glib/Sandbox.cpp: Added.
+        (WTF::isInsideFlatpak):
+        (WTF::isInsideDocker):
+        (WTF::isInsideSnap):
+        (WTF::shouldUsePortal):
+        * wtf/glib/Sandbox.h: Added.
+
 2021-10-18  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Remove AVOID_NATIVE_INT128_T

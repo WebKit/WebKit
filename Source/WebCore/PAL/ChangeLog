@@ -1,3 +1,24 @@
+2021-10-18  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GLIB] Simplify SleepDisabler by checking if we are under sandbox
+        https://bugs.webkit.org/show_bug.cgi?id=231670
+
+        Reviewed by Adrian Perez de Castro.
+
+        Current implementation always tries to connect to ScreenSaver interface and if that fails tries with the portal
+        one. It's simpler to check if we are under sandbox and it avoids a connection that we know is always going to
+        fail.
+
+        * pal/system/glib/SleepDisablerGLib.cpp:
+        (PAL::SleepDisablerGLib::SleepDisablerGLib):
+        (PAL::SleepDisablerGLib::acquireInhibitor):
+        (PAL::SleepDisablerGLib::releaseInhibitor):
+        (PAL::SleepDisablerGLib::acquireInhibitorViaScreenSaverProxy): Deleted.
+        (PAL::SleepDisablerGLib::acquireInhibitorViaInhibitPortalProxy): Deleted.
+        (PAL::SleepDisablerGLib::releaseInhibitorViaScreenSaverProxy): Deleted.
+        (PAL::SleepDisablerGLib::releaseInhibitorViaInhibitPortalProxy): Deleted.
+        * pal/system/glib/SleepDisablerGLib.h:
+
 2021-10-17  David Kilzer  <ddkilzer@apple.com>
 
         Build fix #3: Adopt attribution AVCaptureSession SPI for GPU process
