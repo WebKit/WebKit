@@ -1,3 +1,15 @@
+2021-10-18  Ayumi Kojima  <ayumi_kojima@apple.com>
+
+        [ iOS 15 ] Rebaselining 4 fast tests.
+        https://bugs.webkit.org/show_bug.cgi?id=231901
+
+        Unreviewed test gardening.
+
+        * fast/backgrounds/border-radius-split-background-expected.txt: Added.
+        * fast/backgrounds/border-radius-split-background-image-expected.txt: Added.
+        * fast/borders/border-styles-split-expected.txt: Added.
+        * fast/text/basic/015-expected.txt: Added.
+
 2021-10-18  Simon Fraser  <simon.fraser@apple.com>
 
         Cleanup css3/filters/backdrop/backdrop-filter-with-clip-path.html expected results
