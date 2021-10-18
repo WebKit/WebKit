@@ -1,4 +1,4 @@
 
-FAIL test SyncAccessHandle.getSize after SyncAccessHandle.write promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.storage.getDirectory')"
-FAIL test createSyncAccessHandle.getSize with pending operation promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.storage.getDirectory')"
+FAIL test SyncAccessHandle.getSize after SyncAccessHandle.write promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+FAIL test createSyncAccessHandle.getSize with pending operation promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
 

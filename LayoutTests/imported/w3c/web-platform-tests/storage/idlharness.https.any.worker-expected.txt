@@ -24,11 +24,11 @@ PASS StorageManager interface: existence and properties of interface prototype o
 PASS StorageManager interface: operation persisted()
 PASS StorageManager interface: member persist
 FAIL StorageManager interface: operation estimate() assert_own_property: interface prototype object missing non-static operation expected property "estimate" missing
-FAIL StorageManager must be primary interface of navigator.storage assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL Stringification of navigator.storage assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL StorageManager interface: navigator.storage must inherit property "persisted()" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL StorageManager interface: navigator.storage must not have property "persist" obj is not an Object. (evaluating 'member.name in obj')
-FAIL StorageManager interface: navigator.storage must inherit property "estimate()" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL WorkerNavigator interface: attribute storage assert_true: The prototype object must have a property "storage" expected true got false
-FAIL WorkerNavigator interface: navigator must inherit property "storage" with the proper type assert_inherits: property "storage" not found in prototype chain
+PASS StorageManager must be primary interface of navigator.storage
+PASS Stringification of navigator.storage
+PASS StorageManager interface: navigator.storage must inherit property "persisted()" with the proper type
+PASS StorageManager interface: navigator.storage must not have property "persist"
+FAIL StorageManager interface: navigator.storage must inherit property "estimate()" with the proper type assert_inherits: property "estimate" not found in prototype chain
+PASS WorkerNavigator interface: attribute storage
+PASS WorkerNavigator interface: navigator must inherit property "storage" with the proper type
 

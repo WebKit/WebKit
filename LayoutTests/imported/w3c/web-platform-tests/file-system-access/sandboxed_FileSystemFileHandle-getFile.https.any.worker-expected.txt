@@ -1,4 +1,4 @@
 
-FAIL getFile() provides a file that can be sliced promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.storage.getDirectory')"
-FAIL getFile() returns last modified time promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.storage.getDirectory')"
+FAIL getFile() provides a file that can be sliced promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+FAIL getFile() returns last modified time promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
 

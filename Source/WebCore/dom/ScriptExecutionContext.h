@@ -116,7 +116,6 @@ public:
     virtual void disableWebAssembly(const String& errorMessage) = 0;
 
     virtual IDBClient::IDBConnectionProxy* idbConnectionProxy() = 0;
-    virtual StorageConnection* storageConnection() { return nullptr; }
 
     virtual SocketProvider* socketProvider() = 0;
 

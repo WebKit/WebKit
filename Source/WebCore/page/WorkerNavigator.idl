@@ -37,3 +37,4 @@ WorkerNavigator includes NavigatorID;
 WorkerNavigator includes NavigatorLanguage;
 WorkerNavigator includes NavigatorOnLine;
 WorkerNavigator includes NavigatorServiceWorker;
+WorkerNavigator includes NavigatorStorage;

@@ -43,17 +43,17 @@ private:
             return adoptRef(*new DummyStorageConnection());
         }
 
-        void getPersisted(const ClientOrigin&, CompletionHandler<void(bool)>&& completionHandler) final
+        void getPersisted(const ClientOrigin&, StorageConnection::PersistCallback&& completionHandler) final
         {
             completionHandler(false);
         }
 
-        void persist(const ClientOrigin&, CompletionHandler<void(bool)>&& completionHandler) final
+        void persist(const ClientOrigin&, StorageConnection::PersistCallback&& completionHandler) final
         {
             completionHandler(false);
         }
 
-        void fileSystemGetDirectory(const ClientOrigin&, CompletionHandler<void(WebCore::ExceptionOr<Ref<WebCore::FileSystemHandleImpl>>&&)>&& completionHandler) final
+        void fileSystemGetDirectory(const ClientOrigin&, StorageConnection::GetDirectoryCallback&& completionHandler) final
         {
             completionHandler(Exception { NotSupportedError });
         }

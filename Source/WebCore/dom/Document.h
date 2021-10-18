@@ -701,7 +701,7 @@ public:
     void disableWebAssembly(const String& errorMessage) final;
 
     IDBClient::IDBConnectionProxy* idbConnectionProxy() final;
-    StorageConnection* storageConnection() final;
+    StorageConnection* storageConnection();
     SocketProvider* socketProvider() final;
     RefPtr<RTCDataChannelRemoteHandlerConnection> createRTCDataChannelRemoteHandlerConnection() final;
 
