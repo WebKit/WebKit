@@ -1,3 +1,13 @@
+2021-10-18  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitscmpy] Allow repositories to define custom setup commands (Follow0-up)
+        https://bugs.webkit.org/show_bug.cgi?id=231345
+        <rdar://problem/83960249>
+
+        Unreviewed follow-up fix.
+
+        * Scripts/git-webkit: Do not specify OpenSource in Tools/Scripts path.
+
 2021-10-18  Alex Christensen  <achristensen@webkit.org>
 
         Regression (r284304) : [ iOS 15 Release ] http/tests/privateClickMeasurement tests are failing
