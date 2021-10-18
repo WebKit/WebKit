@@ -454,7 +454,7 @@ void MockRealtimeVideoSource::generateFrame()
     GraphicsContext& context = buffer->context();
     GraphicsContextStateSaver stateSaver(context);
 
-    auto size = this->size();
+    auto size = this->captureSize();
     FloatRect frameRect(FloatPoint(), size);
 
     context.fillRect(FloatRect(FloatPoint(), size), m_fillColor);
