@@ -936,10 +936,8 @@ static void putByVal(JSGlobalObject* globalObject, JSValue baseValue, JSValue su
         uint32_t i = *index;
         if (baseValue.isObject()) {
             JSObject* object = asObject(baseValue);
-            if (object->canSetIndexQuickly(i, value)) {
-                object->setIndexQuickly(vm, i, value);
+            if (object->trySetIndexQuickly(vm, i, value, arrayProfile))
                 return;
-            }
 
             if (arrayProfile)
                 arrayProfile->setOutOfBounds();
@@ -2341,21 +2339,22 @@ ALWAYS_INLINE static JSValue getByVal(JSGlobalObject* globalObject, CallFrame* c
         }
     }
 
-    if (std::optional<int32_t> index = subscript.tryGetAsInt32()) {
-        int32_t i = *index;
+    if (std::optional<uint32_t> index = subscript.tryGetAsUint32Index()) {
+        uint32_t i = *index;
         if (isJSString(baseValue)) {
-            if (i >= 0 && asString(baseValue)->canGetIndex(i))
+            if (asString(baseValue)->canGetIndex(i))
                 RELEASE_AND_RETURN(scope, asString(baseValue)->getIndex(globalObject, i));
             if (arrayProfile)
                 arrayProfile->setOutOfBounds();
         } else if (baseValue.isObject()) {
             JSObject* object = asObject(baseValue);
-            if (object->canGetIndexQuickly(static_cast<uint32_t>(i)))
-                return object->getIndexQuickly(i);
+            if (JSValue result = object->tryGetIndexQuickly(i, arrayProfile))
+                return result;
 
             bool skipMarkingOutOfBounds = false;
 
-            if (object->indexingType() == ArrayWithContiguous && i >= 0 && static_cast<uint32_t>(i) < object->butterfly()->publicLength()) {
+            if (object->indexingType() == ArrayWithContiguous
+                && static_cast<uint32_t>(i) < object->butterfly()->publicLength()) {
                 // FIXME: expand this to ArrayStorage, Int32, and maybe Double:
                 // https://bugs.webkit.org/show_bug.cgi?id=182940
                 auto* globalObject = object->globalObject(vm);
@@ -2371,8 +2370,7 @@ ALWAYS_INLINE static JSValue getByVal(JSGlobalObject* globalObject, CallFrame* c
             }
         }
 
-        if (i >= 0)
-            RELEASE_AND_RETURN(scope, baseValue.get(globalObject, static_cast<uint32_t>(i)));
+        RELEASE_AND_RETURN(scope, baseValue.get(globalObject, i));
     } else if (subscript.isNumber() && baseValue.isCell() && arrayProfile)
         arrayProfile->setOutOfBounds();
 

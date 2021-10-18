@@ -94,6 +94,7 @@
 #include <JavaScriptCore/WasmModule.h>
 #include <JavaScriptCore/YarrFlags.h>
 #include <limits>
+#include <wtf/CheckedArithmetic.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/MainThread.h>
 #include <wtf/RunLoop.h>
@@ -342,8 +343,9 @@ static unsigned countUsages(CryptoKeyUsageBitmap usages)
  * Version 7. added support for File's lastModified attribute.
  * Version 8. added support for ImageData's colorSpace attribute.
  * Version 9. added support for ImageBitmap color space.
+ * Version 10. changed the length (and offsets) of ArrayBuffers (and ArrayBufferViews) from 32 to 64 bits
  */
-static const unsigned CurrentVersion = 9;
+static const unsigned CurrentVersion = 10;
 static const unsigned TerminatorTag = 0xFFFFFFFF;
 static const unsigned StringPoolTag = 0xFFFFFFFE;
 static const unsigned NonIndexPropertiesTag = 0xFFFFFFFD;
@@ -399,7 +401,7 @@ static const unsigned StringDataIs8BitFlag = 0x80000000;
  *    | ObjectReference
  *    | MessagePortReferenceTag <value:uint32_t>
  *    | ArrayBuffer
- *    | ArrayBufferViewTag ArrayBufferViewSubtag <byteOffset:uint32_t> <byteLength:uint32_t> (ArrayBuffer | ObjectReference)
+ *    | ArrayBufferViewTag ArrayBufferViewSubtag <byteOffset:uint64_t> <byteLength:uint64_t> (ArrayBuffer | ObjectReference)
  *    | CryptoKeyTag <wrappedKeyLength:uint32_t> <factor:byte{wrappedKeyLength}>
  *    | DOMPoint
  *    | DOMRect
@@ -463,7 +465,7 @@ static const unsigned StringDataIs8BitFlag = 0x80000000;
  *    ObjectReferenceTag <opIndex:IndexType>
  *
  * ArrayBuffer :-
- *    ArrayBufferTag <length:uint32_t> <contents:byte{length}>
+ *    ArrayBufferTag <length:uint64_t> <contents:byte{length}>
  *    ArrayBufferTransferTag <value:uint32_t>
  *    SharedArrayBufferTag <value:uint32_t>
  *
@@ -998,8 +1000,10 @@ private:
             return false;
 
         RefPtr<ArrayBufferView> arrayBufferView = toPossiblySharedArrayBufferView(vm, obj);
-        write(static_cast<uint32_t>(arrayBufferView->byteOffset()));
-        write(static_cast<uint32_t>(arrayBufferView->byteLength()));
+        uint64_t byteOffset = arrayBufferView->byteOffset();
+        write(byteOffset);
+        uint64_t byteLength = arrayBufferView->byteLength();
+        write(byteLength);
         RefPtr<ArrayBuffer> arrayBuffer = arrayBufferView->possiblySharedBuffer();
         if (!arrayBuffer) {
             code = SerializationReturnCode::ValidationError;
@@ -1131,8 +1135,13 @@ private:
         write(static_cast<double>(buffer->resolutionScale()));
         write(buffer->colorSpace());
 
-        write(static_cast<uint32_t>(arrayBuffer->byteLength()));
-        write(static_cast<const uint8_t*>(arrayBuffer->data()), arrayBuffer->byteLength());
+        CheckedUint32 byteLength = arrayBuffer->byteLength();
+        if (byteLength.hasOverflowed()) {
+            code = SerializationReturnCode::ValidationError;
+            return;
+        }
+        write(byteLength);
+        write(static_cast<const uint8_t*>(arrayBuffer->data()), byteLength);
     }
 
 #if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
@@ -1263,8 +1272,13 @@ private:
                 write(ImageDataTag);
                 write(data->width());
                 write(data->height());
-                write(data->data().length());
-                write(data->data().data(), data->data().length());
+                CheckedUint32 dataLength = data->data().length();
+                if (dataLength.hasOverflowed()) {
+                    code = SerializationReturnCode::DataCloneError;
+                    return true;
+                }
+                write(dataLength);
+                write(data->data().data(), dataLength);
                 write(data->colorSpace());
                 return true;
             }
@@ -1311,8 +1325,9 @@ private:
                 }
                 
                 write(ArrayBufferTag);
-                write(arrayBuffer->byteLength());
-                write(static_cast<const uint8_t*>(arrayBuffer->data()), arrayBuffer->byteLength());
+                uint64_t byteLength = arrayBuffer->byteLength();
+                write(byteLength);
+                write(static_cast<const uint8_t*>(arrayBuffer->data()), byteLength);
                 return true;
             }
             if (obj->inherits<JSArrayBufferView>(vm)) {
@@ -1502,7 +1517,7 @@ private:
         writeLittleEndian(m_buffer, i);
     }
 
-    void write(unsigned long long i)
+    void write(uint64_t i)
     {
         writeLittleEndian(m_buffer, i);
     }
@@ -2391,7 +2406,7 @@ private:
         return true;
     }
 
-    bool read(unsigned long long& i)
+    bool read(uint64_t& i)
     {
         return readLittleEndian(i);
     }
@@ -2555,9 +2570,10 @@ private:
         return true;
     }
 
-    bool readArrayBuffer(RefPtr<ArrayBuffer>& arrayBuffer)
+    template<typename LengthType>
+    bool readArrayBufferImpl(RefPtr<ArrayBuffer>& arrayBuffer)
     {
-        uint32_t length;
+        LengthType length;
         if (!read(length))
             return false;
         if (m_ptr + length > m_end)
@@ -2569,15 +2585,23 @@ private:
         return true;
     }
 
-    bool readArrayBufferView(VM& vm, JSValue& arrayBufferView)
+    bool readArrayBuffer(RefPtr<ArrayBuffer>& arrayBuffer)
+    {
+        if (m_version < 10)
+            return readArrayBufferImpl<uint32_t>(arrayBuffer);
+        return readArrayBufferImpl<uint64_t>(arrayBuffer);
+    }
+
+    template <typename LengthType>
+    bool readArrayBufferViewImpl(VM& vm, JSValue& arrayBufferView)
     {
         ArrayBufferViewSubtag arrayBufferViewSubtag;
         if (!readArrayBufferViewSubtag(arrayBufferViewSubtag))
             return false;
-        uint32_t byteOffset;
+        LengthType byteOffset;
         if (!read(byteOffset))
             return false;
-        uint32_t byteLength;
+        LengthType byteLength;
         if (!read(byteLength))
             return false;
         JSObject* arrayBufferObj = asObject(readTerminal());
@@ -2587,7 +2611,7 @@ private:
         unsigned elementSize = typedArrayElementSize(arrayBufferViewSubtag);
         if (!elementSize)
             return false;
-        unsigned length = byteLength / elementSize;
+        LengthType length = byteLength / elementSize;
         if (length * elementSize != byteLength)
             return false;
 
@@ -2632,6 +2656,13 @@ private:
         default:
             return false;
         }
+    }
+
+    bool readArrayBufferView(VM& vm, JSValue& arrayBufferView)
+    {
+        if (m_version < 10)
+            return readArrayBufferViewImpl<uint32_t>(vm, arrayBufferView);
+        return readArrayBufferViewImpl<uint64_t>(vm, arrayBufferView);
     }
 
     bool read(Vector<uint8_t>& result)
@@ -3345,7 +3376,7 @@ private:
         auto colorSpace = DestinationColorSpace::SRGB();
         RefPtr<ArrayBuffer> arrayBuffer;
 
-        if (!read(serializationState) || !read(logicalWidth) || !read(logicalHeight) || !read(resolutionScale) || (m_version > 8 && !read(colorSpace)) || !readArrayBuffer(arrayBuffer)) {
+        if (!read(serializationState) || !read(logicalWidth) || !read(logicalHeight) || !read(resolutionScale) || (m_version > 8 && !read(colorSpace)) || !readArrayBufferImpl<uint32_t>(arrayBuffer)) {
             fail();
             return JSValue();
         }

@@ -196,8 +196,9 @@ void RealtimeAnalyser::getByteFrequencyData(Uint8Array& destinationArray)
     doFFTAnalysisIfNecessary();
     
     // Convert from linear magnitude to unsigned-byte decibels.
-    unsigned sourceLength = magnitudeBuffer().size();
-    size_t length = std::min(sourceLength, destinationArray.length());
+    size_t sourceLength = magnitudeBuffer().size();
+    size_t destinationLength = destinationArray.length();
+    size_t length = std::min(sourceLength, destinationLength);
     if (length > 0) {
         const double rangeScaleFactor = m_maxDecibels == m_minDecibels ? 1 : 1 / (m_maxDecibels - m_minDecibels);
         const double minDecibels = m_minDecibels;
@@ -227,8 +228,9 @@ void RealtimeAnalyser::getFloatTimeDomainData(Float32Array& destinationArray)
 {
     ASSERT(isMainThread());
     
-    unsigned fftSize = this->fftSize();
-    size_t length = std::min(fftSize, destinationArray.length());
+    size_t destinationLength = destinationArray.length();
+    size_t fftSize = this->fftSize();
+    size_t length = std::min(fftSize, destinationLength);
     if (length > 0) {
         bool isInputBufferGood = m_inputBuffer.size() == InputBufferSize && m_inputBuffer.size() > fftSize;
         ASSERT(isInputBufferGood);
@@ -251,8 +253,9 @@ void RealtimeAnalyser::getByteTimeDomainData(Uint8Array& destinationArray)
 {
     ASSERT(isMainThread());
 
-    unsigned fftSize = this->fftSize();
-    size_t length = std::min(fftSize, destinationArray.length());
+    size_t destinationLength = destinationArray.length();
+    size_t fftSize = this->fftSize();
+    size_t length = std::min(fftSize, destinationLength);
     if (length > 0) {
         bool isInputBufferGood = m_inputBuffer.size() == InputBufferSize && m_inputBuffer.size() > fftSize;
         ASSERT(isInputBufferGood);

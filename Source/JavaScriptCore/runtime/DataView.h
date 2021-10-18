@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,7 +32,7 @@ namespace JSC {
 
 class DataView final : public ArrayBufferView {
 public:
-    JS_EXPORT_PRIVATE static Ref<DataView> create(RefPtr<ArrayBuffer>&&, unsigned byteOffset, unsigned length);
+    JS_EXPORT_PRIVATE static Ref<DataView> create(RefPtr<ArrayBuffer>&&, size_t byteOffset, size_t length);
     static Ref<DataView> create(RefPtr<ArrayBuffer>&&);
     
     TypedArrayType getType() const final
@@ -43,7 +43,7 @@ public:
     JSArrayBufferView* wrap(JSGlobalObject*, JSGlobalObject*) final;
     
     template<typename T>
-    T get(unsigned offset, bool littleEndian, bool* status = nullptr)
+    T get(size_t offset, bool littleEndian, bool* status = nullptr)
     {
         if (status) {
             if (offset + sizeof(T) > byteLength()) {
@@ -59,7 +59,7 @@ public:
     }
     
     template<typename T>
-    T read(unsigned& offset, bool littleEndian, bool* status = nullptr)
+    T read(size_t& offset, bool littleEndian, bool* status = nullptr)
     {
         T result = this->template get<T>(offset, littleEndian, status);
         if (!status || *status)
@@ -68,7 +68,7 @@ public:
     }
     
     template<typename T>
-    void set(unsigned offset, T value, bool littleEndian, bool* status = nullptr)
+    void set(size_t offset, T value, bool littleEndian, bool* status = nullptr)
     {
         if (status) {
             if (offset + sizeof(T) > byteLength()) {
@@ -83,7 +83,7 @@ public:
     }
 
 private:
-    DataView(RefPtr<ArrayBuffer>&&, unsigned byteOffset, unsigned byteLength);
+    DataView(RefPtr<ArrayBuffer>&&, size_t byteOffset, size_t byteLength);
 };
 
 } // namespace JSC

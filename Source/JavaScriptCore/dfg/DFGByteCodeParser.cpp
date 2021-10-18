@@ -3806,8 +3806,17 @@ bool ByteCodeParser::handleDOMJITCall(Node* callTarget, Operand result, const DO
 template<typename ChecksFunctor>
 bool ByteCodeParser::handleIntrinsicGetter(Operand result, SpeculatedType prediction, const GetByVariant& variant, Node* thisNode, const ChecksFunctor& insertChecks)
 {
+#if USE(LARGE_TYPED_ARRAYS)
+    static_assert(enableInt52());
+#endif
+
     switch (variant.intrinsic()) {
     case TypedArrayByteLengthIntrinsic: {
+        bool willNeedGetTypedArrayLengthAsInt52 = !isInt32Speculation(prediction) || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, Overflow);
+#if !USE(LARGE_TYPED_ARRAYS)
+        if (willNeedGetTypedArrayLengthAsInt52)
+            return false;
+#endif
         insertChecks();
 
         TypedArrayType type = (*variant.structureSet().begin())->classInfo()->typedArrayStorageType;
@@ -3821,26 +3830,30 @@ bool ByteCodeParser::handleIntrinsicGetter(Operand result, SpeculatedType predic
             ASSERT(arrayType != Array::Generic);
         });
 
-        Node* lengthNode = addToGraph(GetArrayLength, OpInfo(ArrayMode(arrayType, Array::Read).asWord()), thisNode);
+        NodeType op = willNeedGetTypedArrayLengthAsInt52 ? GetTypedArrayLengthAsInt52 : GetArrayLength;
+        Node* lengthNode = addToGraph(op, OpInfo(ArrayMode(arrayType, Array::Read).asWord()), thisNode);
         // Our ArrayMode shouldn't cause us to exit here so we should be ok to exit without effects.
         m_exitOK = true;
         addToGraph(ExitOK);
-
 
         if (!logSize) {
             set(result, lengthNode);
             return true;
         }
 
-        // We can use a BitLShift here because typed arrays will never have a byteLength
-        // that overflows int32.
-        Node* shiftNode = jsConstant(jsNumber(logSize));
-        set(result, addToGraph(ArithBitLShift, lengthNode, shiftNode));
+        // We cannot use a BitLShift here because typed arrays may have a byteLength that overflows Int32.
+        Node* typeSize = jsConstant(jsNumber(1 << logSize));
+        set(result, addToGraph(ArithMul, lengthNode, typeSize));
 
         return true;
     }
 
     case TypedArrayLengthIntrinsic: {
+        bool willNeedGetTypedArrayLengthAsInt52 = !isInt32Speculation(prediction) || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, Overflow);
+#if !USE(LARGE_TYPED_ARRAYS)
+        if (willNeedGetTypedArrayLengthAsInt52)
+            return false;
+#endif
         insertChecks();
 
         TypedArrayType type = (*variant.structureSet().begin())->classInfo()->typedArrayStorageType;
@@ -3852,13 +3865,19 @@ bool ByteCodeParser::handleIntrinsicGetter(Operand result, SpeculatedType predic
             ASSERT(arrayType != Array::Generic);
         });
 
-        set(result, addToGraph(GetArrayLength, OpInfo(ArrayMode(arrayType, Array::Read).asWord()), thisNode));
+        NodeType op = willNeedGetTypedArrayLengthAsInt52 ? GetTypedArrayLengthAsInt52 : GetArrayLength;
+        set(result, addToGraph(op, OpInfo(ArrayMode(arrayType, Array::Read).asWord()), thisNode));
 
         return true;
 
     }
 
     case TypedArrayByteOffsetIntrinsic: {
+        bool willNeedGetTypedArrayByteOffsetAsInt52 = !isInt32Speculation(prediction) || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, Overflow);
+#if !USE(LARGE_TYPED_ARRAYS)
+        if (willNeedGetTypedArrayByteOffsetAsInt52)
+            return false;
+#endif
         insertChecks();
 
         TypedArrayType type = (*variant.structureSet().begin())->classInfo()->typedArrayStorageType;
@@ -3870,7 +3889,8 @@ bool ByteCodeParser::handleIntrinsicGetter(Operand result, SpeculatedType predic
             ASSERT(arrayType != Array::Generic);
         });
 
-        set(result, addToGraph(GetTypedArrayByteOffset, OpInfo(ArrayMode(arrayType, Array::Read).asWord()), thisNode));
+        NodeType op = willNeedGetTypedArrayByteOffsetAsInt52 ? GetTypedArrayByteOffsetAsInt52 : GetTypedArrayByteOffset;
+        set(result, addToGraph(op, OpInfo(ArrayMode(arrayType, Array::Read).asWord()), thisNode));
 
         return true;
     }

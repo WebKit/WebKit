@@ -217,6 +217,10 @@ if JSVALUE64
     const StructureEntropyBitsShift = constexpr StructureIDTable::s_entropyBitsShiftForStructurePointer
 end
 
+if LARGE_TYPED_ARRAYS
+    const SmallTypedArrayMaxLength = constexpr ArrayProfile::s_smallTypedArrayMaxLength
+end
+
 const maxFrameExtentForSlowPathCall = constexpr maxFrameExtentForSlowPathCall
 
 if X86_64 or X86_64_WIN or ARM64 or ARM64E
@@ -1242,7 +1246,8 @@ macro arrayProfile(offset, cellAndIndexingType, metadata, scratch)
     loadb JSCell::m_indexingTypeAndMisc[cell], indexingType
 end
 
-macro getByValTypedArray(base, index, finishIntGetByVal, finishDoubleGetByVal, slowPath)
+# Note that index is already sign-extended to be a register width.
+macro getByValTypedArray(base, index, finishIntGetByVal, finishDoubleGetByVal, setLargeTypedArray, slowPath)
     # First lets check if we even have a typed array. This lets us do some boilerplate up front.
     loadb JSCell::m_type[base], t2
     subi FirstTypedArrayType, t2
@@ -1253,11 +1258,26 @@ macro getByValTypedArray(base, index, finishIntGetByVal, finishDoubleGetByVal, s
     if ARM64E
         const length = t6
         const scratch = t7
-        loadi JSArrayBufferView::m_length[base], length
-        biaeq index, length, slowPath
+        if LARGE_TYPED_ARRAYS
+            loadq JSArrayBufferView::m_length[base], length
+            bqaeq index, length, slowPath
+        else
+            loadi JSArrayBufferView::m_length[base], length
+            biaeq index, length, slowPath
+        end
     else
         # length and scratch are intentionally undefined on this branch because they are not used on other platforms.
-        biaeq index, JSArrayBufferView::m_length[base], slowPath
+        if LARGE_TYPED_ARRAYS
+            bqaeq index, JSArrayBufferView::m_length[base], slowPath
+        else
+            biaeq index, JSArrayBufferView::m_length[base], slowPath
+        end
+    end
+
+    if LARGE_TYPED_ARRAYS
+        bqbeq index, SmallTypedArrayMaxLength, .smallTypedArray
+        setLargeTypedArray()
+.smallTypedArray:
     end
 
     loadp JSArrayBufferView::m_vector[base], t3

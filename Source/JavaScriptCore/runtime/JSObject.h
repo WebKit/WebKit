@@ -60,6 +60,7 @@ inline JSCell* getJSFunction(JSValue value)
     return nullptr;
 }
 
+class ArrayProfile;
 class Exception;
 class GetterSetter;
 class InternalFunction;
@@ -211,10 +212,8 @@ public:
     ALWAYS_INLINE bool putByIndexInline(JSGlobalObject* globalObject, unsigned propertyName, JSValue value, bool shouldThrow)
     {
         VM& vm = getVM(globalObject);
-        if (canSetIndexQuickly(propertyName, value)) {
-            setIndexQuickly(vm, propertyName, value);
+        if (trySetIndexQuickly(vm, propertyName, value))
             return true;
-        }
         return methodTable(vm)->putByIndex(this, globalObject, propertyName, value, shouldThrow);
     }
 
@@ -289,7 +288,7 @@ public:
     }
 
     bool canGetIndexQuicklyForTypedArray(unsigned) const;
-    JSValue getIndexQuicklyForTypedArray(unsigned) const;
+    JSValue getIndexQuicklyForTypedArray(unsigned, ArrayProfile* = nullptr) const;
     
     bool canGetIndexQuickly(unsigned i) const
     {
@@ -345,14 +344,15 @@ public:
             return JSValue();
         }
     }
-        
-    JSValue tryGetIndexQuickly(unsigned i) const
+
+    // Uses the (optional) array profile to set the m_mayBeLargeTypedArray bit when relevant
+    JSValue tryGetIndexQuickly(unsigned i, ArrayProfile* arrayProfile = nullptr) const
     {
         const Butterfly* butterfly = this->butterfly();
         switch (indexingType()) {
         case ALL_BLANK_INDEXING_TYPES:
             if (canGetIndexQuicklyForTypedArray(i))
-                return getIndexQuicklyForTypedArray(i);
+                return getIndexQuicklyForTypedArray(i, arrayProfile);
             break;
         case ALL_UNDECIDED_INDEXING_TYPES:
             break;
@@ -411,35 +411,73 @@ public:
         return get(globalObject, i);
     }
 
-    bool canSetIndexQuicklyForTypedArray(unsigned, JSValue) const;
     void setIndexQuicklyForTypedArray(unsigned, JSValue);
-        
-    bool canSetIndexQuickly(unsigned i, JSValue value)
+    void setIndexQuicklyForArrayStorageIndexingType(VM&, unsigned, JSValue);
+
+    // Return true to indicate success
+    // Use the (optional) array profile to set the m_mayBeLargeTypedArray bit when relevant
+    bool trySetIndexQuicklyForTypedArray(unsigned, JSValue, ArrayProfile*);
+    bool trySetIndexQuickly(VM& vm, unsigned i, JSValue v, ArrayProfile* arrayProfile = nullptr)
     {
         Butterfly* butterfly = this->butterfly();
         switch (indexingMode()) {
         case ALL_BLANK_INDEXING_TYPES:
-            return canSetIndexQuicklyForTypedArray(i, value);
+            return trySetIndexQuicklyForTypedArray(i, v, arrayProfile);
         case ALL_UNDECIDED_INDEXING_TYPES:
             return false;
-        case ALL_WRITABLE_INT32_INDEXING_TYPES:
-        case ALL_WRITABLE_DOUBLE_INDEXING_TYPES:
-        case ALL_WRITABLE_CONTIGUOUS_INDEXING_TYPES:
+        case ALL_WRITABLE_INT32_INDEXING_TYPES: {
+            if (i >= butterfly->vectorLength())
+                return false;
+            if (!v.isInt32()) {
+                convertInt32ToDoubleOrContiguousWhilePerformingSetIndex(vm, i, v);
+                return true;
+            }
+            FALLTHROUGH;
+        }
+        case ALL_WRITABLE_CONTIGUOUS_INDEXING_TYPES: {
+            if (i >= butterfly->vectorLength())
+                return false;
+            butterfly->contiguous().at(this, i).setWithoutWriteBarrier(v);
+            if (i >= butterfly->publicLength())
+                butterfly->setPublicLength(i + 1);
+            vm.heap.writeBarrier(this, v);
+            return true;
+        }
+        case ALL_WRITABLE_DOUBLE_INDEXING_TYPES: {
+            if (i >= butterfly->vectorLength())
+                return false;
+            if (!v.isNumber()) {
+                convertDoubleToContiguousWhilePerformingSetIndex(vm, i, v);
+                return true;
+            }
+            double value = v.asNumber();
+            if (value != value) {
+                convertDoubleToContiguousWhilePerformingSetIndex(vm, i, v);
+                return true;
+            }
+            butterfly->contiguousDouble().at(this, i) = value;
+            if (i >= butterfly->publicLength())
+                butterfly->setPublicLength(i + 1);
+            return true;
+        }
         case NonArrayWithArrayStorage:
         case ArrayWithArrayStorage:
-            return i < butterfly->vectorLength();
+            if (i >= butterfly->vectorLength())
+                return false;
+            setIndexQuicklyForArrayStorageIndexingType(vm, i, v);
+            return true;
         case NonArrayWithSlowPutArrayStorage:
         case ArrayWithSlowPutArrayStorage:
-            return i < butterfly->arrayStorage()->vectorLength()
-                && !!butterfly->arrayStorage()->m_vector[i];
-        default:
-            if (isCopyOnWrite(indexingMode()))
+            if (i >= butterfly->arrayStorage()->vectorLength() || !butterfly->arrayStorage()->m_vector[i])
                 return false;
-            RELEASE_ASSERT_NOT_REACHED();
+            setIndexQuicklyForArrayStorageIndexingType(vm, i, v);
+            return true;
+        default:
+            RELEASE_ASSERT(isCopyOnWrite(indexingMode()));
             return false;
         }
     }
-        
+
     void setIndexQuickly(VM& vm, unsigned i, JSValue v)
     {
         Butterfly* butterfly = m_butterfly.get();
