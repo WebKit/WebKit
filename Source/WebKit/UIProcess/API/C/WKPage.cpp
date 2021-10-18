@@ -3147,14 +3147,12 @@ void WKPageSetPrivateClickMeasurementAppBundleIDForTesting(WKPageRef pageRef, WK
 void WKPageSetMockCameraOrientation(WKPageRef pageRef, uint64_t orientation)
 {
     CRASH_IF_SUSPENDED;
-#if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
     toImpl(pageRef)->setOrientationForMediaCapture(orientation);
-#endif
 }
 
 bool WKPageIsMockRealtimeMediaSourceCenterEnabled(WKPageRef)
 {
-#if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
+#if (PLATFORM(COCOA) || USE(GSTREAMER)) && ENABLE(MEDIA_STREAM)
     return MockRealtimeMediaSourceCenter::mockRealtimeMediaSourceCenterEnabled();
 #else
     return false;

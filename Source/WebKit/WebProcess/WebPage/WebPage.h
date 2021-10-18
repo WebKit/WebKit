@@ -1223,6 +1223,9 @@ public:
 #if ENABLE(VIDEO) && USE(GSTREAMER)
     void requestInstallMissingMediaPlugins(const String& details, const String& description, WebCore::MediaPlayerRequestInstallMissingPluginsCallback&);
 #endif
+#if ENABLE(MEDIA_STREAM) && USE(GSTREAMER)
+    void setOrientationForMediaCapture(uint64_t rotation);
+#endif
 
     void addUserScript(String&& source, InjectedBundleScriptWorld&, WebCore::UserContentInjectedFrames, WebCore::UserScriptInjectionTime);
     void addUserStyleSheet(const String& source, WebCore::UserContentInjectedFrames);

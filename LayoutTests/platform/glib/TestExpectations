@@ -676,9 +676,6 @@ webkit.org/b/230415 fast/mediastream/RTCPeerConnection-iceconnectionstatechange-
 webkit.org/b/79203 fast/mediastream/RTCRtpSender-replaceTrack.html [ Failure ]
 webkit.org/b/187603 fast/mediastream/media-stream-track-source-failure.html [ Timeout Failure Pass ]
 webkit.org/b/231057 fast/mediastream/media-stream-video-track-interrupted.html [ Failure ]
-# Not exactly GStreamer (missing helper method to take viewport screenshot)
-webkit.org/b/231059 fast/mediastream/video-rotation-gpu-process-crash.html [ Failure ]
-webkit.org/b/231059 fast/mediastream/video-rotation.html [ Failure ]
 webkit.org/b/231061 fast/mediastream/captureStream/canvas3d.html [ Timeout ]
 
 webkit.org/b/223508 imported/w3c/web-platform-tests/mediacapture-streams/MediaStream-MediaElement-srcObject.https.html [ Failure Pass ]
@@ -1730,6 +1727,7 @@ webkit.org/b/193623 accessibility/set-selected-editable.html [ Skip ]
 
 # No support for GPUProcess yet
 fast/mediastream/captureInGPUProcess.html [ Skip ]
+fast/mediastream/video-rotation-gpu-process-crash.html [ Skip ]
 
 # Payment Request
 imported/w3c/web-platform-tests/payment-request [ Skip ]

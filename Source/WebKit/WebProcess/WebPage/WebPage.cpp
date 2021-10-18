@@ -4812,7 +4812,16 @@ void WebPage::captureDevicesChanged()
     m_userMediaPermissionRequestManager->captureDevicesChanged();
 }
 
-#endif
+#if USE(GSTREAMER)
+void WebPage::setOrientationForMediaCapture(uint64_t rotation)
+{
+    m_page->forEachDocument([&](auto& document) {
+        document.orientationChanged(rotation);
+    });
+}
+#endif // USE(GSTREAMER)
+
+#endif // ENABLE(MEDIA_STREAM)
 
 #if ENABLE(ENCRYPTED_MEDIA)
 void WebPage::mediaKeySystemWasGranted(MediaKeySystemRequestIdentifier mediaKeySystemID, CompletionHandler<void()>&& completionHandler)

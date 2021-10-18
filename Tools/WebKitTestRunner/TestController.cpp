@@ -3611,7 +3611,9 @@ void TestController::installCustomMenuAction(const String&, bool)
 void TestController::setAllowedMenuActions(const Vector<String>&)
 {
 }
+#endif
 
+#if !PLATFORM(COCOA) && !PLATFORM(GTK) && !PLATFORM(WPE)
 WKRetainPtr<WKStringRef> TestController::takeViewPortSnapshot()
 {
     return adoptWK(WKStringCreateWithUTF8CString("not implemented"));

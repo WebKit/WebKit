@@ -47,8 +47,6 @@ async function validateSnapshot()
     canvas.getContext('2d').drawImage(image, 0, 0);
     const data = canvas.getContext('2d').getImageData(0, 0, canvas.width, canvas.height).data;
 
-    document.body.appendChild(canvas);
-
     // We expect to have a green horizontal line until getting some white.
     let j = 100;
     if (!isPixelGreen(100, j, canvas, data))
@@ -67,6 +65,14 @@ async function validateSnapshot()
     return i === canvas.height;
 }
 
+async function waitFor(element, type) {
+    return new Promise(resolve => {
+        element.addEventListener(type, event => {
+            resolve(event);
+        }, { once: true });
+    });
+}
+
 onload = async () => {
     try {
         video.srcObject = await navigator.mediaDevices.getUserMedia({video: {width: 400, height: 200} });
@@ -80,19 +86,20 @@ onload = async () => {
         while (video.videoWidth !== 200 && ++counter < 100)
             await new Promise(resolve => setTimeout(resolve, 50));
 
+        await waitFor(video, 'timeupdate');
         counter = 0;
         let isValidSnapshot = false;
         do {
             await new Promise(resolve => setTimeout(resolve, 50));
-            isValidSnapshot = await validateSnapshot();
-        } while (++counter < 50 && !isValidSnapshot)
+            try {
+                isValidSnapshot = await validateSnapshot();
+            } catch (e) { }
+        } while (++counter < 100 && !isValidSnapshot)
 
-        log.innerHTML = counter < 50 ? "PASS" : "FAIL";
+        log.innerHTML = counter < 100 ? "PASS" : "FAIL";
 
-         if (counter < 50) {
+        if (counter < 100)
             document.body.removeChild(image);
-            document.body.removeChild(canvas);
-         }
     } catch (e) {
         console.log(e);
     }

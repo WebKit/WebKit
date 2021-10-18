@@ -34,6 +34,7 @@
 #include <wtf/RunLoop.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GUniquePtr.h>
+#include <wtf/text/Base64.h>
 #include <wtf/text/WTFString.h>
 
 namespace WTR {
@@ -156,6 +157,17 @@ bool TestController::platformResetStateToConsistentValues(const TestOptions&)
 TestFeatures TestController::platformSpecificFeatureDefaultsForTest(const TestCommand&) const
 {
     return { };
+}
+
+WKRetainPtr<WKStringRef> TestController::takeViewPortSnapshot()
+{
+    Vector<unsigned char> output;
+    cairo_surface_write_to_png_stream(mainWebView()->windowSnapshotImage(), [](void* output, const unsigned char* data, unsigned length) -> cairo_status_t {
+        reinterpret_cast<Vector<unsigned char>*>(output)->append(data, length);
+        return CAIRO_STATUS_SUCCESS;
+    }, &output);
+    auto uri = makeString("data:image/png;base64,", base64Encoded(output.data(), output.size()));
+    return adoptWK(WKStringCreateWithUTF8CString(uri.utf8().data()));
 }
 
 } // namespace WTR

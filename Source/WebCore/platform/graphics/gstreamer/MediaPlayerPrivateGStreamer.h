@@ -216,6 +216,8 @@ public:
     void updateEnabledAudioTrack();
     void playbin3SendSelectStreamsIfAppropriate();
 
+    void updateVideoOrientation(const GstTagList*);
+
     // Append pipeline interface
     // FIXME: Use the client interface pattern, AppendPipeline does not need the full interface to this class just for this function.
     bool handleNeedContextMessage(GstMessage*);

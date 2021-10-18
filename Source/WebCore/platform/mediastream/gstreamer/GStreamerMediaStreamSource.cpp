@@ -280,6 +280,18 @@ public:
             updateBlackFrame(caps);
         }
 
+        auto videoRotation = sample.videoRotation();
+        bool videoMirrored = sample.videoMirrored();
+        if (m_videoRotation != videoRotation || m_videoMirrored != videoMirrored) {
+            m_videoRotation = videoRotation;
+            m_videoMirrored = videoMirrored;
+
+            auto orientation = makeString(videoMirrored ? "flip-" : "", "rotate-", m_videoRotation);
+            GST_DEBUG_OBJECT(m_src.get(), "Pushing orientation tag: %s", orientation.utf8().data());
+            auto pad = adoptGRef(gst_element_get_static_pad(m_src.get(), "src"));
+            gst_pad_push_event(pad.get(), gst_event_new_tag(gst_tag_list_new(GST_TAG_IMAGE_ORIENTATION, orientation.utf8().data(), nullptr)));
+        }
+
         if (m_track.enabled()) {
             GST_TRACE_OBJECT(m_src.get(), "Pushing video frame from enabled track");
             pushSample(gstSample);
@@ -339,6 +351,8 @@ private:
     RefPtr<VideoTrackPrivateMediaStream> m_videoTrack;
     IntSize m_lastKnownSize;
     GRefPtr<GstSample> m_blackFrame;
+    MediaSample::VideoRotation m_videoRotation { MediaSample::VideoRotation::None };
+    bool m_videoMirrored { false };
 };
 
 struct _WebKitMediaStreamSrcPrivate {

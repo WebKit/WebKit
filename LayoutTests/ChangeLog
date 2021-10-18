@@ -1,3 +1,23 @@
+2021-10-18  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] fast/mediastream/video-rotation tests are failing due to missing TestController::takeViewPortSnapshot
+        https://bugs.webkit.org/show_bug.cgi?id=231059
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        The video-rotation.html test was prone to flakyness in GStreamer ports, so a few changes were made:
+
+        - don't append canvas to the page, that can "poison" future viewport snapshots
+        - wait for a timeupdate before checking the first snapshot, that gives us some margin, so
+        the player might have repainted
+        - catch validation errors so they're not logged to the console, that would introduce result
+        diffs in case the first validation was not successful
+        - try at most 100 validations attempts. Ideally it would be nicer to rely on the
+        requestVideoFrameCallback API for this.
+
+        * fast/mediastream/video-rotation.html:
+        * platform/glib/TestExpectations:
+
 2021-10-18  Tim Nguyen  <ntim@apple.com>
 
         Fix mouse selection on modal <dialog> text nodes

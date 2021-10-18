@@ -2945,26 +2945,16 @@ void MediaPlayerPrivateGStreamer::repaint()
     m_drawCondition.notifyOne();
 }
 
-static ImageOrientation getVideoOrientation(GstElement* sink)
+static ImageOrientation getVideoOrientation(const GstTagList* tagList)
 {
-    GRefPtr<GstPad> pad = adoptGRef(gst_element_get_static_pad(sink, "sink"));
-    ASSERT(pad);
-    GRefPtr<GstEvent> tagsEvent = adoptGRef(gst_pad_get_sticky_event(pad.get(), GST_EVENT_TAG, 0));
-    if (!tagsEvent) {
-        GST_DEBUG_OBJECT(pad.get(), "No sticky tag event, applying no rotation.");
-        return ImageOrientation::None;
-    }
-
-    GstTagList* tagList;
-    gst_event_parse_tag(tagsEvent.get(), &tagList);
     ASSERT(tagList);
     GUniqueOutPtr<gchar> tag;
     if (!gst_tag_list_get_string(tagList, GST_TAG_IMAGE_ORIENTATION, &tag.outPtr())) {
-        GST_DEBUG_OBJECT(pad.get(), "No image_orientation tag, applying no rotation.");
+        GST_DEBUG("No image_orientation tag, applying no rotation.");
         return ImageOrientation::None;
     }
 
-    GST_DEBUG_OBJECT(pad.get(), "Found image_orientation tag: %s", tag.get());
+    GST_DEBUG("Found image_orientation tag: %s", tag.get());
     if (!g_strcmp0(tag.get(), "flip-rotate-0"))
         return ImageOrientation::OriginTopRight;
     if (!g_strcmp0(tag.get(), "rotate-180"))
@@ -2984,6 +2974,20 @@ static ImageOrientation getVideoOrientation(GstElement* sink)
     return ImageOrientation::None;
 }
 
+void MediaPlayerPrivateGStreamer::updateVideoOrientation(const GstTagList* tagList)
+{
+    GST_DEBUG_OBJECT(pipeline(), "Updating orientation from %" GST_PTR_FORMAT, tagList);
+    setVideoSourceOrientation(getVideoOrientation(tagList));
+
+    // If the video is tagged as rotated 90 or 270 degrees, swap width and height.
+    if (m_videoSourceOrientation.usesWidthAsHeight())
+        m_videoSize = m_videoSize.transposedSize();
+
+    callOnMainThreadAndWait([this] {
+        m_player->sizeChanged();
+    });
+}
+
 void MediaPlayerPrivateGStreamer::updateVideoSizeAndOrientationFromCaps(const GstCaps* caps)
 {
     ASSERT(isMainThread());
@@ -3001,7 +3005,17 @@ void MediaPlayerPrivateGStreamer::updateVideoSizeAndOrientationFromCaps(const Gs
         return;
     }
 
-    setVideoSourceOrientation(getVideoOrientation(m_videoSink.get()));
+    auto pad = adoptGRef(gst_element_get_static_pad(m_videoSink.get(), "sink"));
+    ASSERT(pad);
+    auto tagsEvent = adoptGRef(gst_pad_get_sticky_event(pad.get(), GST_EVENT_TAG, 0));
+    auto orientation = ImageOrientation::None;
+    if (tagsEvent) {
+        GstTagList* tagList;
+        gst_event_parse_tag(tagsEvent.get(), &tagList);
+        orientation = getVideoOrientation(tagList);
+    }
+
+    setVideoSourceOrientation(orientation);
     // If the video is tagged as rotated 90 or 270 degrees, swap width and height.
     if (m_videoSourceOrientation.usesWidthAsHeight())
         originalSize = originalSize.transposedSize();

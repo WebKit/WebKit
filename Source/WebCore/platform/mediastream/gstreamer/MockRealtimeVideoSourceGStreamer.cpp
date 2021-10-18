@@ -152,7 +152,7 @@ void MockRealtimeVideoSourceGStreamer::updateSampleBuffer()
     if (!pixelBuffer)
         return;
 
-    auto sample = MediaSampleGStreamer::createImageSample(WTFMove(*pixelBuffer), size(), frameRate());
+    auto sample = MediaSampleGStreamer::createImageSample(WTFMove(*pixelBuffer), size(), frameRate(), sampleRotation());
     sample->offsetTimestampsBy(MediaTime::createWithDouble((elapsedTime() + 100_ms).seconds()));
     dispatchMediaSampleToObservers(sample.get());
 }

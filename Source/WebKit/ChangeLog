@@ -1,3 +1,24 @@
+2021-10-18  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] fast/mediastream/video-rotation tests are failing due to missing TestController::takeViewPortSnapshot
+        https://bugs.webkit.org/show_bug.cgi?id=231059
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Implement setOrientationForMediaCapture for GStreamer ports. Because media capture runs in
+        the WebProcess for those ports, we need a new IPC message, sent from the UIProcess to the
+        WebProcess.
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetMockCameraOrientation):
+        (WKPageIsMockRealtimeMediaSourceCenterEnabled):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::setOrientationForMediaCapture):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::setOrientationForMediaCapture):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2021-10-18  Tim Nguyen  <ntim@apple.com>
 
         Fix mouse selection on modal <dialog> text nodes

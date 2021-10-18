@@ -10734,13 +10734,17 @@ void WebPageProxy::getProcessDisplayName(CompletionHandler<void(String&&)>&& com
 
 void WebPageProxy::setOrientationForMediaCapture(uint64_t orientation)
 {
-#if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
+#if ENABLE(MEDIA_STREAM)
+#if PLATFORM(COCOA)
     if (auto* proxy = m_process->userMediaCaptureManagerProxy())
         proxy->setOrientation(orientation);
 
     auto* gpuProcess = m_process->processPool().gpuProcess();
     if (gpuProcess && preferences().captureVideoInGPUProcessEnabled())
         gpuProcess->setOrientationForMediaCapture(orientation);
+#elif USE(GSTREAMER)
+    send(Messages::WebPage::SetOrientationForMediaCapture(orientation));
+#endif
 #endif
 }
 
