@@ -6645,11 +6645,12 @@
    {
       "emails" : [
          "xan.lopez@gmail.com",
-         "xan@gnome.org",
+         "xan@igalia.com",
          "xan@webkit.org",
          "xlopez@igalia.com"
       ],
-      "expertise" : "WebKitGTK, Soup HTTP Backend, libsoup Contributor, WebKit a11y (focused on the ATK implementation), Epiphany/WebKit maintainer",
+      "expertise" : "JSC, WebKitGTK/WPE",
+      "github": "xanlpz",
       "name" : "Xan Lopez",
       "nicks" : [
          "xan"
