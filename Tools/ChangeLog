@@ -1,3 +1,20 @@
+2021-10-18  Alex Christensen  <achristensen@webkit.org>
+
+        [ iOS15 ] TestWebKitAPI.WebKit.HTTPSProxy is a flaky, but frequent, timeout
+        https://bugs.webkit.org/show_bug.cgi?id=231396
+
+        Reviewed by Chris Dumez.
+
+        Something was happening that was very timing dependent that was causing this test to time out.
+        I think it was because the proxy framer was receiving an incomplete HTTP request.
+        To fix this, I look at the bytes received and if it wasn't a complete HTTP request, wait for the rest of the message.
+        I was unable to reproduce the timeout after this change and only rarely reproduced the timeout without this change.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/Proxy.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/cocoa/HTTPServer.mm:
+        (TestWebKitAPI::proxyDefinition):
+
 2021-10-18  Chris Dumez  <cdumez@apple.com>
 
         Add a callback to know when the service worker loads via -[WKWebView _loadServiceWorker:]

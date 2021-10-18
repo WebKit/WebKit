@@ -39,8 +39,6 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/text/StringConcatenateNumbers.h>
 
-#if HAVE(SSL)
-
 @interface ProxyDelegate : NSObject <WKNavigationDelegate, WKUIDelegate>
 - (NSString *)waitForAlert;
 @end
@@ -75,8 +73,6 @@
 
 namespace TestWebKitAPI {
 
-// FIXME: Re-enable this test once webkit.org/b/231396 is resolved.
-#if PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED < 150000
 TEST(WebKit, HTTPSProxy)
 {
     HTTPServer server(HTTPServer::respondWithOK, HTTPServer::Protocol::HttpsProxy);
@@ -94,7 +90,6 @@ TEST(WebKit, HTTPSProxy)
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/"]]];
     EXPECT_WK_STREQ([delegate waitForAlert], "success!");
 }
-#endif
 
 TEST(WebKit, SOCKS5)
 {
@@ -241,12 +236,6 @@ TEST(WebKit, SecureProxyConnection)
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/"]]];
     TestWebKitAPI::Util::run(&receivedValidClientHello);
 }
-
-} // namespace TestWebKitAPI
-
-#endif // HAVE(SSL)
-
-namespace TestWebKitAPI {
 
 TEST(WebKit, RelaxThirdPartyCookieBlocking)
 {

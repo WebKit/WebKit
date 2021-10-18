@@ -56,9 +56,13 @@ static RetainPtr<nw_protocol_definition_t> proxyDefinition(HTTPServer::Protocol 
 {
     return adoptNS(nw_framer_create_definition("HttpsProxy", NW_FRAMER_CREATE_FLAGS_DEFAULT, [protocol] (nw_framer_t framer) -> nw_framer_start_result_t {
         __block bool askedForCredentials = false;
+        __block Vector<char> requestBuffer;
         nw_framer_set_input_handler(framer, ^size_t(nw_framer_t framer) {
             __block RetainPtr<nw_framer_t> retainedFramer = framer;
             nw_framer_parse_input(framer, 1, std::numeric_limits<uint32_t>::max(), nullptr, ^size_t(uint8_t* buffer, size_t bufferLength, bool) {
+                requestBuffer.append(reinterpret_cast<const char*>(buffer), bufferLength);
+                if (!strnstr(requestBuffer.data(), "\r\n\r\n", requestBuffer.size()))
+                    return bufferLength;
                 if (protocol == HTTPServer::Protocol::HttpsProxyWithAuthentication) {
                     if (!std::exchange(askedForCredentials, true)) {
                         const char* challengeResponse =
@@ -68,9 +72,10 @@ static RetainPtr<nw_protocol_definition_t> proxyDefinition(HTTPServer::Protocol 
                             "\r\n";
                         auto response = adoptNS(dispatch_data_create(challengeResponse, strlen(challengeResponse), nullptr, nullptr));
                         nw_framer_write_output_data(retainedFramer.get(), response.get());
+                        requestBuffer = { };
                         return bufferLength;
                     }
-                    EXPECT_TRUE(strnstr(reinterpret_cast<const char*>(buffer), "Proxy-Authorization: Basic dGVzdHVzZXI6dGVzdHBhc3N3b3Jk", bufferLength));
+                    EXPECT_TRUE(strnstr(requestBuffer.data(), "Proxy-Authorization: Basic dGVzdHVzZXI6dGVzdHBhc3N3b3Jk", requestBuffer.size()));
                 }
                 const char* negotiationResponse = ""
                     "HTTP/1.1 200 Connection Established\r\n"
