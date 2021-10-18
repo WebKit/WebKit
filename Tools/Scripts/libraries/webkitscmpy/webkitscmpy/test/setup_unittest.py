@@ -21,6 +21,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import os
+import sys
 
 from webkitcorepy import Editor, OutputCapture, testing
 from webkitcorepy.mocks import Terminal as MockTerminal
@@ -143,3 +144,37 @@ Added remote 'fork'
 Fetching 'https://github.example.com/username/WebKit.git'
 '''.format(repository=self.path),
         )
+
+    def test_commit_message(self):
+        with OutputCapture(), mocks.local.Git(self.path) as git, mocks.local.Svn():
+            self.assertEqual(0, program.main(
+                args=('setup', '--defaults'),
+                path=self.path,
+                hooks=os.path.join(os.path.abspath(os.path.dirname(__file__)), 'hooks')
+            ))
+            pcm = os.path.join(self.path, '.git', 'hooks', 'prepare-commit-msg')
+            self.assertTrue(os.path.isfile(pcm))
+            os.rename(pcm, os.path.join(os.path.dirname(pcm), 'prepare_commit_msg.py'))
+
+            sys.path.insert(0, os.path.dirname(pcm))
+
+            try:
+                from prepare_commit_msg import main
+                self.assertEqual(
+                    main(os.path.join(self.path, 'COMMIT_MESSAGE')),
+                    0,
+                )
+                with open(os.path.join(self.path, 'COMMIT_MESSAGE'), 'r') as file:
+                    self.assertEqual(
+                        file.read(),
+                        '''Generated commit message
+# Please populate the above commit message. Lines starting
+# with '#' will be ignored
+
+# 'On branch main
+# Your branch is up to date with 'origin/main'.
+# 
+# nothing to commit, working tree clean
+''')
+            finally:
+                sys.path.remove(os.path.dirname(pcm))

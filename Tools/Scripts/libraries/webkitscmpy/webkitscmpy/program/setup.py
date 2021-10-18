@@ -20,10 +20,12 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import os
 import requests
 import sys
 
 from .command import Command
+from jinja2 import Template
 from requests.auth import HTTPBasicAuth
 from webkitcorepy import arguments, run, Editor, Terminal
 from webkitscmpy import log, local, remote
@@ -78,7 +80,7 @@ class Setup(Command):
         return result
 
     @classmethod
-    def git(cls, args, repository, additional_setup=None, **kwargs):
+    def git(cls, args, repository, additional_setup=None, hooks=None, **kwargs):
         global_config = local.Git.config()
         result = 0
 
@@ -145,6 +147,26 @@ class Setup(Command):
         ).returncode:
             sys.stderr.write('Failed to use {} as the merge strategy\n'.format('merge commits' if args.merge else 'rebase'))
             result += 1
+
+        if hooks:
+            for hook in os.listdir(hooks):
+                source_path = os.path.join(hooks, hook)
+                if not os.path.isfile(source_path):
+                    continue
+                log.warning('Configuring and copying hook {}'.format(source_path))
+                with open(source_path, 'r') as f:
+                    contents = Template(f.read()).render(
+                        git=local.Git.executable(),
+                        location=source_path,
+                        python=os.path.basename(sys.executable),
+                    )
+
+                target = os.path.join(repository.root_path, '.git', 'hooks', hook)
+                if not os.path.exists(os.path.dirname(target)):
+                    os.makedirs(os.path.dirname(target))
+                with open(target, 'w') as f:
+                    f.write(contents)
+                    f.write('\n')
 
         log.warning('Setting git editor for {}...'.format(repository.root_path))
         editor_name = 'default' if args.defaults else Terminal.choose(

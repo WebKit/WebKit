@@ -44,7 +44,7 @@ from webkitscmpy import local, log, remote
 
 def main(
     args=None, path=None, loggers=None, contributors=None,
-    identifier_template=None, subversion=None, additional_setup=None,
+    identifier_template=None, subversion=None, additional_setup=None, hooks=None,
 ):
     logging.basicConfig(level=logging.WARNING)
 
@@ -112,6 +112,8 @@ def main(
         identifier_template = identifier_template(repository)
     if callable(subversion):
         subversion = subversion(repository)
+    if callable(hooks):
+        hooks = hooks(repository)
 
     if sys.version_info > (3, 0):
         import inspect
@@ -130,4 +132,5 @@ def main(
         identifier_template=identifier_template,
         subversion=subversion,
         additional_setup=additional_setup,
+        hooks=hooks,
     )
