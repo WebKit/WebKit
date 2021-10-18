@@ -1,3 +1,25 @@
+2021-10-18  Russell Epstein  <repstein@apple.com>
+
+        Apply patch. rdar://problem/84124706
+
+    2021-10-18  David Kilzer  <ddkilzer@apple.com>
+
+            [WebRTC] Leak or over-release of CFPixelBufferRef returned from webrtc::createPixelBufferFromFrame()
+            <https://webkit.org/b/229661>
+            <rdar://problem/82507827>
+
+            Reviewed by Eric Carlson.
+
+            * WebProcess/GPU/webrtc/LibWebRTCCodecs.cpp:
+            (WebKit::LibWebRTCCodecs::encodeFrame):
+            - Use adoptCF() to prevent a leak since
+              webrtc::createPixelBufferFromFrame() always returns a +1
+              retained CVPixelBufferRef now.
+            - Change the functor to return a +1 retained CVPixelBufferRef.
+            - Reuse `pixelBuffer` to store the converted CVPixelBufferRef
+              since this object needs to be kept alive until after the
+              send() method is called.
+
 2021-10-15  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r281964. rdar://problem/83954640

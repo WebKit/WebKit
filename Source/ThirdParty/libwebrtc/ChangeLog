@@ -1,3 +1,50 @@
+2021-10-18  Russell Epstein  <repstein@apple.com>
+
+        Apply patch. rdar://problem/84124706
+
+    2021-10-18  David Kilzer  <ddkilzer@apple.com>
+
+            [WebRTC] Leak or over-release of CFPixelBufferRef returned from webrtc::createPixelBufferFromFrame()
+            <https://webkit.org/b/229661>
+            <rdar://problem/82507827>
+
+            Reviewed by Eric Carlson.
+
+            * Configurations/libwebrtc.iOS.exp:
+            * Configurations/libwebrtc.iOSsim.exp:
+            * Configurations/libwebrtc.mac.exp:
+            - Update export symbol for rename from pixelBufferFromFrame() to
+              createPixelBufferFromFrame().
+
+            * Source/webrtc/sdk/WebKit/WebKitDecoderReceiver.cpp:
+            (webrtc::WebKitDecoderReceiver::Decoded):
+            - Update to call renamed createPixelBufferFromFrame() function.
+              This method already released the returned CFPixelBufferRef, so
+              it did not require any more changes.  Also, its functor
+              returned a +1 retained CFPixelBufferRef, so it did not need to
+              change, either.
+
+            * Source/webrtc/sdk/WebKit/WebKitUtilities.h:
+            - Include <CoreFoundation/CFBase.h> for CF_RETURNS_RETAINED.
+            (webrtc::createPixelBufferFromFrame):
+            - Name const std::function<>& as `createPixelBuffer` to describe
+              its behavior.
+            - Add CF_RETURNS_RETAINED to describe memory management of the
+              returned object.
+            * Source/webrtc/sdk/WebKit/WebKitUtilities.mm:
+            (webrtc::pixelBufferFromFrame):
+            - Rename to createPixelBufferFromFrame().
+            (webrtc::createPixelBufferFromFrame):
+            - Rename from pixelBufferFromFrame().
+            - Rename const std::function<>& argument to `createPixelBuffer`
+              to describe its behavior of returning a +1 retained
+              CVPixelBufferRef.
+            - Fix last return statement to return a +1 retained
+              CFPixelBufferRef if it is not nullptr.
+
+            * WebKit/libwebrtc.diff:
+            - Update diff for WebKitUtilities.{h|mm}.
+
 2021-10-17  Kocsen Chung  <kocsen_chung@apple.com>
 
         Cherry-pick r284082. rdar://problem/84351872

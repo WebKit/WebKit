@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -160,7 +160,7 @@ OSStatus WebKitDecoderReceiver::decoderFailed(int error)
 
 int32_t WebKitDecoderReceiver::Decoded(VideoFrame& frame)
 {
-    auto pixelBuffer = pixelBufferFromFrame(frame, [this](size_t width, size_t height, BufferType type) -> CVPixelBufferRef {
+    auto pixelBuffer = createPixelBufferFromFrame(frame, [this](size_t width, size_t height, BufferType type) -> CVPixelBufferRef {
         auto pixelBufferPool = this->pixelBufferPool(width, height, type == BufferType::I010);
         if (!pixelBufferPool)
             return nullptr;

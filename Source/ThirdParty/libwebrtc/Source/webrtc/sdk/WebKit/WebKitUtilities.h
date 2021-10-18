@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,6 +27,7 @@
 
 #include "api/video/video_frame_buffer.h"
 #include "api/scoped_refptr.h"
+#include <CoreFoundation/CFBase.h>
 #include <functional>
 
 using CVPixelBufferRef = struct __CVBuffer*;
@@ -46,7 +47,7 @@ void setH264HardwareEncoderAllowed(bool);
 bool isH264HardwareEncoderAllowed();
 
 enum class BufferType { I420, I010 };
-CVPixelBufferRef pixelBufferFromFrame(const VideoFrame&, const std::function<CVPixelBufferRef(size_t, size_t, BufferType)>&);
+CVPixelBufferRef createPixelBufferFromFrame(const VideoFrame&, const std::function<CVPixelBufferRef(size_t, size_t, BufferType)>& createPixelBuffer) CF_RETURNS_RETAINED;
 rtc::scoped_refptr<webrtc::VideoFrameBuffer> pixelBufferToFrame(CVPixelBufferRef);
 
 }

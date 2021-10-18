@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -144,7 +144,7 @@ static bool CopyVideoFrameToPixelBuffer(const webrtc::I010BufferInterface* frame
     return true;
 }
 
-CVPixelBufferRef pixelBufferFromFrame(const VideoFrame& frame, const std::function<CVPixelBufferRef(size_t, size_t, BufferType)>& makePixelBuffer)
+CVPixelBufferRef createPixelBufferFromFrame(const VideoFrame& frame, const std::function<CVPixelBufferRef(size_t, size_t, BufferType)>& createPixelBuffer)
 {
     auto buffer = frame.video_frame_buffer();
     if (buffer->type() != VideoFrameBuffer::Type::kNative) {
@@ -154,7 +154,7 @@ CVPixelBufferRef pixelBufferFromFrame(const VideoFrame& frame, const std::functi
             return nullptr;
         }
 
-        auto pixelBuffer = makePixelBuffer(buffer->width(), buffer->height(), type == VideoFrameBuffer::Type::kI420 ? BufferType::I420 : BufferType::I010);
+        auto pixelBuffer = createPixelBuffer(buffer->width(), buffer->height(), type == VideoFrameBuffer::Type::kI420 ? BufferType::I420 : BufferType::I010);
         if (!pixelBuffer) {
             RTC_LOG(WARNING) << "Pixel buffer creation failed.";
             return nullptr;
@@ -172,7 +172,7 @@ CVPixelBufferRef pixelBufferFromFrame(const VideoFrame& frame, const std::functi
         return nullptr;
 
     auto *rtcPixelBuffer = (RTCCVPixelBuffer *)frameBuffer;
-    return rtcPixelBuffer.pixelBuffer;
+    return CVPixelBufferRetain(rtcPixelBuffer.pixelBuffer);
 }
 
 }
