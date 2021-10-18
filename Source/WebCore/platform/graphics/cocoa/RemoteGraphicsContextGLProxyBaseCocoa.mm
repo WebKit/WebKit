@@ -32,6 +32,11 @@
 #import "WebGLLayer.h"
 #import <wtf/BlockObjCExceptions.h>
 
+#if ENABLE(MEDIA_STREAM)
+#import "CVUtilities.h"
+#import "MediaSampleAVFObjC.h"
+#endif
+
 namespace WebCore {
 
 void RemoteGraphicsContextGLProxyBase::platformInitialize()
@@ -62,6 +67,21 @@ GraphicsContextGLIOSurfaceSwapChain& RemoteGraphicsContextGLProxyBase::platformS
 {
     return [m_webGLLayer swapChain];
 }
+
+#if ENABLE(MEDIA_STREAM)
+RefPtr<MediaSample> RemoteGraphicsContextGLProxyBase::paintCompositedResultsToMediaSample()
+{
+    auto& sc = platformSwapChain();
+    auto& displayBuffer = sc.displayBuffer();
+    if (!displayBuffer.surface)
+        return nullptr;
+    sc.markDisplayBufferInUse();
+    auto pixelBuffer = createCVPixelBuffer(displayBuffer.surface->surface());
+    if (!pixelBuffer)
+        return nullptr;
+    return MediaSampleAVFObjC::createImageSample(WTFMove(*pixelBuffer), MediaSampleAVFObjC::VideoRotation::UpsideDown, true);
+}
+#endif
 
 }
 #endif

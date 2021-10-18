@@ -97,13 +97,6 @@ GCGLbitfield RemoteGraphicsContextGLProxyBase::getBuffersToAutoClear() const
     return m_buffersToAutoClear;
 }
 
-void RemoteGraphicsContextGLProxyBase::enablePreserveDrawingBuffer()
-{
-    // Redeclared for export reasons.
-    // FIXME: The whole function should be removed.
-    GraphicsContextGL::enablePreserveDrawingBuffer();
-}
-
 bool RemoteGraphicsContextGLProxyBase::supports(const String& name)
 {
     waitUntilInitialized();
@@ -154,6 +147,13 @@ void RemoteGraphicsContextGLProxyBase::getnUniformfvEXT(GCGLuint, GCGLint, GCGLs
 
 void RemoteGraphicsContextGLProxyBase::getnUniformivEXT(GCGLuint, GCGLint, GCGLsizei, GCGLint*)
 {
+}
+#endif
+
+#if ENABLE(MEDIA_STREAM) && !PLATFORM(COCOA)
+RefPtr<MediaSample> RemoteGraphicsContextGLProxyBase::paintCompositedResultsToMediaSample()
+{
+    return nullptr;
 }
 #endif
 }

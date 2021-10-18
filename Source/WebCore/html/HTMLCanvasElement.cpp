@@ -758,6 +758,13 @@ RefPtr<ImageData> HTMLCanvasElement::getImageData()
 RefPtr<MediaSample> HTMLCanvasElement::toMediaSample()
 {
 #if PLATFORM(COCOA) || USE(GSTREAMER)
+#if ENABLE(WEBGL)
+    if (is<WebGLRenderingContextBase>(m_context.get())) {
+        if (RuntimeEnabledFeatures::sharedFeatures().webAPIStatisticsEnabled())
+            ResourceLoadObserver::shared().logCanvasRead(document());
+        return downcast<WebGLRenderingContextBase>(*m_context).paintCompositedResultsToMediaSample();
+    }
+#endif
     auto* imageBuffer = buffer();
     if (!imageBuffer)
         return nullptr;

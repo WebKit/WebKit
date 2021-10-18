@@ -1,3 +1,105 @@
+2021-10-18  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r283238. rdar://problem/83955650
+
+    MediaStream canvas.captureStream() fails for WebGL
+    https://bugs.webkit.org/show_bug.cgi?id=230613
+    <rdar://82307293>
+    
+    Patch by Kimmo Kinnunen <kkinnunen@apple.com> on 2021-09-29
+    Reviewed by Youenn Fablet.
+    
+    .:
+    
+    Add a manual test to interact with media stream
+    captureStream() behavior until the implementation is
+    testable.
+    
+    * ManualTests/mediastream/mediastream-canvas-to-video.html: Added.
+    
+    Source/WebCore:
+    
+    Remove previous incorrect behavior of turning on "preservesDrawingBuffer"
+    and sampling the drawing buffer. The drawing buffer is not what should
+    ever be touched, rather it's the display buffer that should be available.
+    
+    Implement sampling of WebGL display buffer for
+    media stream capture. The upon sampling, obtain a shared
+    reference to the
+    display buffer, passes it to media sample consuming process and mark
+    the WebGL context display buffer non-eligible for recycling as
+    new drawing buffer.
+    
+    Currently the implementation is displayed correctly for
+    WebGL contents that is premultiplied. Unpremultiplied
+    content is fixed in the associated bugs.
+    
+    Note: there are bugs preventing robust use of the API,
+    listed in the associated bugs. As such, testing is not expanded
+    in this bug.
+    
+    Tested by
+    ManualTests/mediastream/mediastream-canvas-to-video.html (added)
+    
+    https://webrtc.github.io/samples/src/content/capture/canvas-video/
+    (Refresh the page or hide the window until MediaPlayer initialization
+    flakyness lets rendering happen)
+    
+    The test LayoutTests/fast/mediastream/captureStream/canvas3d.html
+    cannot yet be used to test the implementation as the rest of the
+    captureStream() and playback implementation is so flaky.
+    
+    * Modules/mediastream/CanvasCaptureMediaStreamTrack.cpp:
+    (WebCore::CanvasCaptureMediaStreamTrack::Source::canvasChanged):
+    * html/HTMLCanvasElement.cpp:
+    (WebCore::HTMLCanvasElement::toMediaSample):
+    * html/canvas/WebGLRenderingContextBase.cpp:
+    (WebCore::WebGLRenderingContextBase::paintCompositedResultsToMediaSample):
+    * html/canvas/WebGLRenderingContextBase.h:
+    (WebCore::WebGLRenderingContextBase::isPreservingDrawingBuffer const):
+    * platform/graphics/GraphicsContextGL.cpp:
+    * platform/graphics/GraphicsContextGL.h:
+    * platform/graphics/RemoteGraphicsContextGLProxyBase.cpp:
+    (WebCore::RemoteGraphicsContextGLProxyBase::paintCompositedResultsToMediaSample):
+    * platform/graphics/RemoteGraphicsContextGLProxyBase.h:
+    * platform/graphics/avfoundation/objc/MediaSampleAVFObjC.h:
+    * platform/graphics/avfoundation/objc/MediaSampleAVFObjC.mm:
+    (WebCore::MediaSampleAVFObjC::createImageSample):
+    * platform/graphics/cocoa/GraphicsContextGLIOSurfaceSwapChain.cpp:
+    (WebCore::GraphicsContextGLIOSurfaceSwapChain::present):
+    * platform/graphics/cocoa/GraphicsContextGLIOSurfaceSwapChain.h:
+    * platform/graphics/cocoa/GraphicsContextGLOpenGLCocoa.mm:
+    (WebCore::GraphicsContextGLOpenGL::paintCompositedResultsToMediaSample):
+    * platform/graphics/cocoa/RemoteGraphicsContextGLProxyBaseCocoa.mm:
+    (WebCore::RemoteGraphicsContextGLProxyBase::paintCompositedResultsToMediaSample):
+    * platform/graphics/opengl/GraphicsContextGLOpenGL.cpp:
+    (WebCore::GraphicsContextGLOpenGL::paintCompositedResultsToMediaSample):
+    * platform/graphics/opengl/GraphicsContextGLOpenGL.h:
+    
+    LayoutTests:
+    
+    Add new expectations, a warning was removed.
+    CONSOLE MESSAGE: Turning drawing buffer preservation for the WebGL canvas being captured
+    
+    * fast/mediacapturefromelement/CanvasCaptureMediaStream-webgl-events-expected.txt:
+    * fast/mediastream/captureStream/canvas3d-expected.txt:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@283238 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-09-29  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+            MediaStream canvas.captureStream() fails for WebGL
+            https://bugs.webkit.org/show_bug.cgi?id=230613
+            <rdar://82307293>
+
+            Reviewed by Youenn Fablet.
+
+            Add new expectations, a warning was removed.
+            CONSOLE MESSAGE: Turning drawing buffer preservation for the WebGL canvas being captured
+
+            * fast/mediacapturefromelement/CanvasCaptureMediaStream-webgl-events-expected.txt:
+            * fast/mediastream/captureStream/canvas3d-expected.txt:
+
 2021-10-15  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r281964. rdar://problem/83954640

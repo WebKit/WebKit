@@ -37,6 +37,11 @@ const GraphicsContextGLIOSurfaceSwapChain::Buffer& GraphicsContextGLIOSurfaceSwa
     return m_displayBuffer;
 }
 
+void GraphicsContextGLIOSurfaceSwapChain::markDisplayBufferInUse()
+{
+    m_displayBufferInUse = true;
+}
+
 GraphicsContextGLIOSurfaceSwapChain::Buffer GraphicsContextGLIOSurfaceSwapChain::recycleBuffer()
 {
     if (m_spareBuffer.surface) {
@@ -56,6 +61,10 @@ void* GraphicsContextGLIOSurfaceSwapChain::detachClient()
 void GraphicsContextGLIOSurfaceSwapChain::present(Buffer&& buffer)
 {
     m_spareBuffer = std::exchange(m_displayBuffer, WTFMove(buffer));
+    if (m_displayBufferInUse) {
+        m_displayBufferInUse = false;
+        m_spareBuffer.surface.reset();
+    }
 }
 
 }
