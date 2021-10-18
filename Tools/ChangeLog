@@ -1,3 +1,13 @@
+2021-10-18  Alex Christensen  <achristensen@webkit.org>
+
+        Regression (r284304) : [ iOS 15 Release ] http/tests/privateClickMeasurement tests are failing
+        https://bugs.webkit.org/show_bug.cgi?id=231898
+
+        Use the SPI I made to keep the tests having old behavior of using the network process instead of the daemon.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::configureWebsiteDataStoreTemporaryDirectories):
+
 2021-10-18  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] fast/mediastream/video-rotation tests are failing due to missing TestController::takeViewPortSnapshot

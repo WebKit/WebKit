@@ -604,6 +604,7 @@ void TestController::configureWebsiteDataStoreTemporaryDirectories(WKWebsiteData
         WKWebsiteDataStoreConfigurationSetNetworkCacheSpeculativeValidationEnabled(configuration, true);
         WKWebsiteDataStoreConfigurationSetStaleWhileRevalidateEnabled(configuration, true);
         WKWebsiteDataStoreConfigurationSetTestingSessionEnabled(configuration, true);
+        WKWebsiteDataStoreConfigurationSetPCMMachServiceName(configuration, nullptr);
     }
 }
 
