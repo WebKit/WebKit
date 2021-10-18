@@ -213,6 +213,11 @@ bool truncateFile(PlatformFileHandle handle, long long offset)
     return g_seekable_truncate(G_SEEKABLE(g_io_stream_get_output_stream(G_IO_STREAM(handle))), offset, nullptr, nullptr);
 }
 
+bool flushFile(PlatformFileHandle handle)
+{
+    return g_output_stream_flush(g_io_stream_get_output_stream(G_IO_STREAM(handle)), nullptr, nullptr);
+}
+
 int writeToFile(PlatformFileHandle handle, const void* data, int length)
 {
     if (!length)

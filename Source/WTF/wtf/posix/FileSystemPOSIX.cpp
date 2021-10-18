@@ -118,6 +118,11 @@ bool truncateFile(PlatformFileHandle handle, long long offset)
     return !ftruncate(handle, offset);
 }
 
+bool flushFile(PlatformFileHandle handle)
+{
+    return !fsync(handle);
+}
+
 int writeToFile(PlatformFileHandle handle, const void* data, int length)
 {
     do {

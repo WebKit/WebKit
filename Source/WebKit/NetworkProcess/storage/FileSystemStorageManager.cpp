@@ -86,15 +86,21 @@ void FileSystemStorageManager::connectionClosed(IPC::Connection::UniqueID connec
 {
     ASSERT(!RunLoop::isMain());
 
-    auto handles = m_handlesByConnection.find(connection);
-    if (handles == m_handlesByConnection.end())
+    auto connectionHandles = m_handlesByConnection.find(connection);
+    if (connectionHandles == m_handlesByConnection.end())
         return;
 
-    for (auto handleIdentifier : handles->value) {
-        auto handle = m_handles.take(handleIdentifier);
-        m_registry.unregisterHandle(handleIdentifier);
+    auto identifiers = connectionHandles->value;
+    for (auto identifier : identifiers) {
+        auto handle = m_handles.take(identifier);
+        m_registry.unregisterHandle(identifier);
     }
-    m_handlesByConnection.remove(handles);
+
+    m_lockMap.removeIf([&identifiers](auto& entry) {
+        return identifiers.contains(entry.value);
+    });
+
+    m_handlesByConnection.remove(connectionHandles);
 }
 
 Expected<WebCore::FileSystemHandleIdentifier, FileSystemStorageError> FileSystemStorageManager::getDirectory(IPC::Connection::UniqueID connection)
@@ -102,6 +108,25 @@ Expected<WebCore::FileSystemHandleIdentifier, FileSystemStorageError> FileSystem
     ASSERT(!RunLoop::isMain());
 
     return createHandle(connection, FileSystemStorageHandle::Type::Directory, String { m_path }, { }, true);
+}
+
+bool FileSystemStorageManager::acquireLockForFile(const String& path, WebCore::FileSystemHandleIdentifier identifier)
+{
+    if (m_lockMap.contains(path))
+        return false;
+
+    m_lockMap.add(path, identifier);
+    return true;
+}
+
+bool FileSystemStorageManager::releaseLockForFile(const String& path, WebCore::FileSystemHandleIdentifier identifier)
+{
+    if (auto lockedByIdentifier = m_lockMap.get(path); lockedByIdentifier == identifier) {
+        m_lockMap.remove(path);
+        return true;
+    }
+
+    return false;
 }
 
 } // namespace WebKit

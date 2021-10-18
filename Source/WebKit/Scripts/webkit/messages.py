@@ -282,6 +282,7 @@ def types_that_cannot_be_forward_declared():
         'WebCore::DocumentOrWorkerIdentifier',
         'WebCore::FetchIdentifier',
         'WebCore::FileSystemHandleIdentifier',
+        'WebCore::FileSystemSyncAccessHandleIdentifier',
         'WebCore::FrameIdentifier',
         'WebCore::GraphicsContextGLAttributes',
         'WebCore::ImageDecoderIdentifier',

@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include <WebCore/ExceptionCode.h>
+#include <WebCore/ExceptionOr.h>
 #include <wtf/EnumTraits.h>
 
 namespace WebKit {
@@ -34,26 +34,37 @@ enum class FileSystemStorageError : uint8_t {
     FileNotFound,
     InvalidName,
     InvalidModification,
+    InvalidState,
     TypeMismatch,
     Unknown
 };
 
-inline WebCore::ExceptionCode convertToExceptionCode(FileSystemStorageError error)
+inline WebCore::Exception convertToException(FileSystemStorageError error)
 {
     switch (error) {
     case FileSystemStorageError::FileNotFound:
-        return WebCore::ExceptionCode::NotFoundError;
+        return WebCore::Exception { WebCore::NotFoundError };
     case FileSystemStorageError::InvalidModification:
-        return WebCore::ExceptionCode::InvalidModificationError;
+        return WebCore::Exception { WebCore::InvalidModificationError };
     case FileSystemStorageError::TypeMismatch:
-        return WebCore::ExceptionCode::TypeError;
+        return WebCore::Exception { WebCore::TypeError };
     case FileSystemStorageError::InvalidName:
-        return WebCore::ExceptionCode::UnknownError;
+        return WebCore::Exception { WebCore::UnknownError, "Name is invalid" };
+    case FileSystemStorageError::InvalidState:
+        return WebCore::Exception { WebCore::InvalidStateError };
     case FileSystemStorageError::Unknown:
         break;
     }
 
-    return WebCore::ExceptionCode::UnknownError;
+    return WebCore::Exception { WebCore::UnknownError };
+}
+
+inline WebCore::ExceptionOr<void> convertToExceptionOr(std::optional<FileSystemStorageError> error)
+{
+    if (!error)
+        return { };
+
+    return convertToException(*error);
 }
 
 } // namespace WebKit
@@ -66,6 +77,7 @@ template<> struct EnumTraits<WebKit::FileSystemStorageError> {
         WebKit::FileSystemStorageError::FileNotFound,
         WebKit::FileSystemStorageError::InvalidName,
         WebKit::FileSystemStorageError::InvalidModification,
+        WebKit::FileSystemStorageError::InvalidState,
         WebKit::FileSystemStorageError::TypeMismatch,
         WebKit::FileSystemStorageError::Unknown
     >;

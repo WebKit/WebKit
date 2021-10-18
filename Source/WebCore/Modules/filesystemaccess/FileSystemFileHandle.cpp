@@ -27,7 +27,9 @@
 #include "FileSystemFileHandle.h"
 
 #include "FileSystemStorageConnection.h"
+#include "FileSystemSyncAccessHandle.h"
 #include "JSDOMPromiseDeferred.h"
+#include "JSFileSystemSyncAccessHandle.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -47,6 +49,42 @@ FileSystemFileHandle::FileSystemFileHandle(String&& name, FileSystemHandleIdenti
 void FileSystemFileHandle::getFile(DOMPromiseDeferred<IDLInterface<File>>&& promise)
 {
     promise.reject(Exception { NotSupportedError, "Not implemented"_s });
+}
+
+void FileSystemFileHandle::createSyncAccessHandle(DOMPromiseDeferred<IDLInterface<FileSystemSyncAccessHandle>>&& promise)
+{
+    connection().createSyncAccessHandle(identifier(), [protectedThis = Ref { *this }, promise = WTFMove(promise)](auto result) mutable {
+        if (result.hasException())
+            return promise.reject(result.releaseException());
+
+        promise.resolve(FileSystemSyncAccessHandle::create(protectedThis.get(), result.returnValue()));
+    });
+}
+
+void FileSystemFileHandle::getSize(FileSystemSyncAccessHandleIdentifier accessHandleIdentifier, DOMPromiseDeferred<IDLUnsignedLongLong>&& promise)
+{
+    connection().getSize(identifier(), accessHandleIdentifier, [promise = WTFMove(promise)](auto result) mutable {
+        promise.settle(WTFMove(result));
+    });
+}
+
+void FileSystemFileHandle::truncate(FileSystemSyncAccessHandleIdentifier accessHandleIdentifier, unsigned long long size, DOMPromiseDeferred<void>&& promise)
+{
+    connection().truncate(identifier(), accessHandleIdentifier, size, [promise = WTFMove(promise)](auto result) mutable {
+        promise.settle(WTFMove(result));
+    });
+}
+
+void FileSystemFileHandle::flush(FileSystemSyncAccessHandleIdentifier accessHandleIdentifier, DOMPromiseDeferred<void>&& promise)
+{
+    connection().flush(identifier(), accessHandleIdentifier, [promise = WTFMove(promise)](auto result) mutable {
+        promise.settle(WTFMove(result));
+    });
+}
+
+void FileSystemFileHandle::close(FileSystemSyncAccessHandleIdentifier accessHandleIdentifier, CompletionHandler<void(ExceptionOr<void>&&)>&& completionHandler)
+{
+    connection().close(identifier(), accessHandleIdentifier, WTFMove(completionHandler));
 }
 
 } // namespace WebCore

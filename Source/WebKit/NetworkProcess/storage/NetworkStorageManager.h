@@ -30,6 +30,7 @@
 #include "OriginStorageManager.h"
 #include <WebCore/ClientOrigin.h>
 #include <WebCore/FileSystemHandleIdentifier.h>
+#include <WebCore/FileSystemSyncAccessHandleIdentifier.h>
 #include <pal/SessionID.h>
 
 namespace WebCore {
@@ -69,6 +70,11 @@ private:
     void getDirectoryHandle(IPC::Connection&, WebCore::FileSystemHandleIdentifier, String&& name, bool createIfNecessary, CompletionHandler<void(Expected<WebCore::FileSystemHandleIdentifier, FileSystemStorageError>)>&&);
     void removeEntry(WebCore::FileSystemHandleIdentifier, const String& name, bool deleteRecursively, CompletionHandler<void(std::optional<FileSystemStorageError>)>&&);
     void resolve(WebCore::FileSystemHandleIdentifier, WebCore::FileSystemHandleIdentifier, CompletionHandler<void(Expected<Vector<String>, FileSystemStorageError>)>&&);
+    void createSyncAccessHandle(WebCore::FileSystemHandleIdentifier, CompletionHandler<void(Expected<WebCore::FileSystemSyncAccessHandleIdentifier, FileSystemStorageError>)>&&);
+    void getSizeForAccessHandle(WebCore::FileSystemHandleIdentifier, WebCore::FileSystemSyncAccessHandleIdentifier, CompletionHandler<void(Expected<uint64_t, FileSystemStorageError>)>&&);
+    void truncateForAccessHandle(WebCore::FileSystemHandleIdentifier, WebCore::FileSystemSyncAccessHandleIdentifier, uint64_t size, CompletionHandler<void(std::optional<FileSystemStorageError>)>&&);
+    void flushForAccessHandle(WebCore::FileSystemHandleIdentifier, WebCore::FileSystemSyncAccessHandleIdentifier, CompletionHandler<void(std::optional<FileSystemStorageError>)>&&);
+    void closeAccessHandle(WebCore::FileSystemHandleIdentifier, WebCore::FileSystemSyncAccessHandleIdentifier, CompletionHandler<void(std::optional<FileSystemStorageError>)>&&);
 
     PAL::SessionID m_sessionID;
     Ref<WorkQueue> m_queue;

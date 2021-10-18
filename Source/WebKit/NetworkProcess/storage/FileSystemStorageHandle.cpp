@@ -28,6 +28,7 @@
 
 #include "FileSystemStorageError.h"
 #include "FileSystemStorageManager.h"
+#include <wtf/Scope.h>
 
 namespace WebKit {
 
@@ -137,6 +138,81 @@ Expected<Vector<String>, FileSystemStorageError> FileSystemStorageHandle::resolv
 
     auto restPath = path.substring(m_path.length());
     return restPath.split(pathSeparator);
+}
+
+Expected<WebCore::FileSystemSyncAccessHandleIdentifier, FileSystemStorageError> FileSystemStorageHandle::createSyncAccessHandle()
+{
+    if (!m_manager)
+        return makeUnexpected(FileSystemStorageError::Unknown);
+
+    bool acquired = m_manager->acquireLockForFile(m_path, m_identifier);
+    if (!acquired)
+        return makeUnexpected(FileSystemStorageError::InvalidState);
+
+    ASSERT(!m_activeSyncAccessHandle);
+    m_activeSyncAccessHandle = WebCore::FileSystemSyncAccessHandleIdentifier::generateThreadSafe();
+    return *m_activeSyncAccessHandle;
+}
+
+Expected<uint64_t, FileSystemStorageError> FileSystemStorageHandle::getSize(WebCore::FileSystemSyncAccessHandleIdentifier accessHandleIdentifier)
+{
+    if (!m_manager)
+        return makeUnexpected(FileSystemStorageError::Unknown);
+
+    if (!m_activeSyncAccessHandle || *m_activeSyncAccessHandle != accessHandleIdentifier)
+        return makeUnexpected(FileSystemStorageError::Unknown);
+
+    auto size = FileSystem::fileSize(m_path);
+    if (!size)
+        return makeUnexpected(FileSystemStorageError::Unknown);
+
+    return size.value();
+}
+
+std::optional<FileSystemStorageError> FileSystemStorageHandle::truncate(WebCore::FileSystemSyncAccessHandleIdentifier accessHandleIdentifier, uint64_t size)
+{
+    if (!m_manager)
+        return FileSystemStorageError::Unknown;
+
+    if (!m_activeSyncAccessHandle || *m_activeSyncAccessHandle != accessHandleIdentifier)
+        return FileSystemStorageError::Unknown;
+
+    auto handle = FileSystem::openFile(m_path, FileSystem::FileOpenMode::ReadWrite);
+    auto closeFileScope = makeScopeExit([&] {
+        FileSystem::closeFile(handle);
+    });
+
+    auto result = FileSystem::truncateFile(handle, size);
+    if (!result)
+        return FileSystemStorageError::Unknown;
+
+    return std::nullopt;
+}
+
+std::optional<FileSystemStorageError> FileSystemStorageHandle::flush(WebCore::FileSystemSyncAccessHandleIdentifier accessHandleIdentifier)
+{
+    if (!m_manager)
+        return FileSystemStorageError::Unknown;
+
+    if (!m_activeSyncAccessHandle || *m_activeSyncAccessHandle != accessHandleIdentifier)
+        return FileSystemStorageError::Unknown;
+
+    // FIXME: when write operation is implemented, perform actual flush here.
+    return std::nullopt;
+}
+
+std::optional<FileSystemStorageError> FileSystemStorageHandle::close(WebCore::FileSystemSyncAccessHandleIdentifier accessHandleIdentifier)
+{
+    if (!m_manager)
+        return FileSystemStorageError::Unknown;
+
+    if (!m_activeSyncAccessHandle || *m_activeSyncAccessHandle != accessHandleIdentifier)
+        return FileSystemStorageError::Unknown;
+
+    m_manager->releaseLockForFile(m_path, m_identifier);
+    m_activeSyncAccessHandle = std::nullopt;
+
+    return std::nullopt;
 }
 
 } // namespace WebKit

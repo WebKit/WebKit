@@ -56,7 +56,7 @@ void WebStorageConnection::fileSystemGetDirectory(const WebCore::ClientOrigin& o
     auto& connection = WebProcess::singleton().ensureNetworkProcessConnection().connection();
     connection.sendWithAsyncReply(Messages::NetworkStorageManager::FileSystemGetDirectory(origin), [completionHandler = WTFMove(completionHandler)](auto result) mutable {
         if (!result)
-            return completionHandler(WebCore::Exception { convertToExceptionCode(result.error()) });
+            return completionHandler(convertToException(result.error()));
 
         auto identifier = result.value();
         if (!identifier.isValid())

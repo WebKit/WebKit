@@ -41,6 +41,8 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     Modules/filesystemaccess/FileSystemHandle.h
     Modules/filesystemaccess/FileSystemHandleIdentifier.h
     Modules/filesystemaccess/FileSystemStorageConnection.h
+    Modules/filesystemaccess/FileSystemSyncAccessHandle.h
+    Modules/filesystemaccess/FileSystemSyncAccessHandleIdentifier.h
     Modules/filesystemaccess/StorageManagerFileSystemAccess.h
     Modules/filesystemaccess/WorkerFileSystemStorageConnection.h
     Modules/filesystemaccess/WorkerFileSystemStorageConnectionCallbackIdentifier.h

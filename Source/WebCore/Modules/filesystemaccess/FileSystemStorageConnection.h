@@ -26,6 +26,7 @@
 #pragma once
 
 #include "FileSystemHandleIdentifier.h"
+#include "FileSystemSyncAccessHandleIdentifier.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
@@ -38,15 +39,24 @@ template<typename> class ExceptionOr;
 class FileSystemStorageConnection : public ThreadSafeRefCounted<FileSystemStorageConnection> {
 public:
     virtual ~FileSystemStorageConnection() { }
+
     using SameEntryCallback = CompletionHandler<void(ExceptionOr<bool>&&)>;
     using GetHandleCallback = CompletionHandler<void(ExceptionOr<FileSystemHandleIdentifier>&&)>;
-    using RemoveEntryCallback = CompletionHandler<void(ExceptionOr<void>&&)>;
     using ResolveCallback = CompletionHandler<void(ExceptionOr<Vector<String>>&&)>;
+    using GetAccessHandleCallback = CompletionHandler<void(ExceptionOr<FileSystemSyncAccessHandleIdentifier>&&)>;
+    using VoidCallback = CompletionHandler<void(ExceptionOr<void>&&)>;
+    using IntegerCallback = CompletionHandler<void(ExceptionOr<uint64_t>&&)>;
+
     virtual void isSameEntry(FileSystemHandleIdentifier, FileSystemHandleIdentifier, SameEntryCallback&&) = 0;
     virtual void getFileHandle(FileSystemHandleIdentifier, const String& name, bool createIfNecessary, GetHandleCallback&&) = 0;
     virtual void getDirectoryHandle(FileSystemHandleIdentifier, const String& name, bool createIfNecessary, GetHandleCallback&&) = 0;
-    virtual void removeEntry(FileSystemHandleIdentifier, const String& name, bool deleteRecursively, RemoveEntryCallback&&) = 0;
+    virtual void removeEntry(FileSystemHandleIdentifier, const String& name, bool deleteRecursively, VoidCallback&&) = 0;
     virtual void resolve(FileSystemHandleIdentifier, FileSystemHandleIdentifier, ResolveCallback&&) = 0;
+    virtual void createSyncAccessHandle(FileSystemHandleIdentifier, GetAccessHandleCallback&&) = 0;
+    virtual void getSize(FileSystemHandleIdentifier, FileSystemSyncAccessHandleIdentifier, IntegerCallback&&) = 0;
+    virtual void truncate(FileSystemHandleIdentifier, FileSystemSyncAccessHandleIdentifier, uint64_t size, VoidCallback&&) = 0;
+    virtual void flush(FileSystemHandleIdentifier, FileSystemSyncAccessHandleIdentifier, VoidCallback&&) = 0;
+    virtual void close(FileSystemHandleIdentifier, FileSystemSyncAccessHandleIdentifier, VoidCallback&&) = 0;
 };
 
 } // namespace WebCore
