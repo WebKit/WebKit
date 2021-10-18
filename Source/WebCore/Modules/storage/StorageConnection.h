@@ -25,12 +25,13 @@
 
 #pragma once
 
+#include "FileSystemHandleIdentifier.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
 namespace WebCore {
 
-class FileSystemHandleImpl;
+class FileSystemStorageConnection;
 template<typename> class ExceptionOr;
 struct ClientOrigin;
 
@@ -40,7 +41,7 @@ public:
     using PersistCallback = CompletionHandler<void(bool)>;
     virtual void getPersisted(const ClientOrigin&, PersistCallback&&) = 0;
     virtual void persist(const ClientOrigin&, PersistCallback&& completionHandler) { completionHandler(false); }
-    using GetDirectoryCallback = CompletionHandler<void(ExceptionOr<Ref<FileSystemHandleImpl>>&&)>;
+    using GetDirectoryCallback = CompletionHandler<void(ExceptionOr<std::pair<FileSystemHandleIdentifier, RefPtr<FileSystemStorageConnection>>>)>;
     virtual void fileSystemGetDirectory(const ClientOrigin&, GetDirectoryCallback&&) = 0;
 };
 

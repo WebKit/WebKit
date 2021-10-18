@@ -59,6 +59,7 @@
 #include "WebConnectionToUIProcess.h"
 #include "WebCookieJar.h"
 #include "WebCoreArgumentCoders.h"
+#include "WebFileSystemStorageConnection.h"
 #include "WebFrame.h"
 #include "WebFrameNetworkingContext.h"
 #include "WebGamepadProvider.h"
@@ -1206,6 +1207,20 @@ void WebProcess::networkProcessConnectionClosed(NetworkProcessConnection* connec
             paymentCoordinator->networkProcessConnectionClosed();
 #endif
     }
+
+    // Recreate a new connection with valid IPC connection on next operation.
+    if (m_fileSystemStorageConnection) {
+        m_fileSystemStorageConnection->connectionClosed();
+        m_fileSystemStorageConnection = nullptr;
+    }
+}
+
+WebFileSystemStorageConnection& WebProcess::fileSystemStorageConnection()
+{
+    if (!m_fileSystemStorageConnection)
+        m_fileSystemStorageConnection = WebFileSystemStorageConnection::create(ensureNetworkProcessConnection().connection());
+
+    return *m_fileSystemStorageConnection;
 }
 
 WebLoaderStrategy& WebProcess::webLoaderStrategy()

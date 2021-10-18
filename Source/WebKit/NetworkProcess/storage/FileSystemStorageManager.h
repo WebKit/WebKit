@@ -26,7 +26,7 @@
 #pragma once
 
 #include "FileSystemStorageHandle.h"
-#include "FileSystemStorageHandleIdentifier.h"
+#include <WebCore/FileSystemHandleIdentifier.h>
 
 namespace WebKit {
 
@@ -39,16 +39,16 @@ public:
     FileSystemStorageManager(String&& path, FileSystemStorageHandleRegistry&);
     ~FileSystemStorageManager();
 
-    Expected<FileSystemStorageHandleIdentifier, FileSystemStorageError> createHandle(IPC::Connection::UniqueID, FileSystemStorageHandle::Type, String&& path, String&& name, bool createIfNecessary);
-    const String& getPath(FileSystemStorageHandleIdentifier);
+    Expected<WebCore::FileSystemHandleIdentifier, FileSystemStorageError> createHandle(IPC::Connection::UniqueID, FileSystemStorageHandle::Type, String&& path, String&& name, bool createIfNecessary);
+    const String& getPath(WebCore::FileSystemHandleIdentifier);
     void connectionClosed(IPC::Connection::UniqueID);
-    Expected<FileSystemStorageHandleIdentifier, FileSystemStorageError> getDirectory(IPC::Connection::UniqueID);
+    Expected<WebCore::FileSystemHandleIdentifier, FileSystemStorageError> getDirectory(IPC::Connection::UniqueID);
 
 private:
     String m_path;
     FileSystemStorageHandleRegistry& m_registry;
-    HashMap<IPC::Connection::UniqueID, HashSet<FileSystemStorageHandleIdentifier>> m_handlesByConnection;
-    HashMap<FileSystemStorageHandleIdentifier, std::unique_ptr<FileSystemStorageHandle>> m_handles;
+    HashMap<IPC::Connection::UniqueID, HashSet<WebCore::FileSystemHandleIdentifier>> m_handlesByConnection;
+    HashMap<WebCore::FileSystemHandleIdentifier, std::unique_ptr<FileSystemStorageHandle>> m_handles;
 };
 
 } // namespace WebKit

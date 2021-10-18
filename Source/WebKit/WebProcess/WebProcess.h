@@ -139,6 +139,7 @@ class WebCacheStorageProvider;
 class WebCookieJar;
 class WebCompiledContentRuleListData;
 class WebConnectionToUIProcess;
+class WebFileSystemStorageConnection;
 class WebFrame;
 class WebLoaderStrategy;
 class WebPage;
@@ -244,6 +245,7 @@ public:
     void networkProcessConnectionClosed(NetworkProcessConnection*);
     NetworkProcessConnection* existingNetworkProcessConnection() { return m_networkProcessConnection.get(); }
     WebLoaderStrategy& webLoaderStrategy();
+    WebFileSystemStorageConnection& fileSystemStorageConnection();
 
 #if ENABLE(GPU_PROCESS)
     GPUProcessConnection& ensureGPUProcessConnection();
@@ -645,6 +647,7 @@ private:
     String m_uiProcessBundleIdentifier;
     RefPtr<NetworkProcessConnection> m_networkProcessConnection;
     WebLoaderStrategy& m_webLoaderStrategy;
+    RefPtr<WebFileSystemStorageConnection> m_fileSystemStorageConnection;
 
 #if ENABLE(GPU_PROCESS)
     RefPtr<GPUProcessConnection> m_gpuProcessConnection;

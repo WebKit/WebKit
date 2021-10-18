@@ -27,7 +27,6 @@
 #include "WorkerStorageConnection.h"
 
 #include "ClientOrigin.h"
-#include "FileSystemHandleImpl.h"
 #include "WorkerGlobalScope.h"
 #include "WorkerLoaderProxy.h"
 #include "WorkerThread.h"

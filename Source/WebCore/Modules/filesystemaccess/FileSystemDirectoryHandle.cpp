@@ -26,7 +26,7 @@
 #include "config.h"
 #include "FileSystemDirectoryHandle.h"
 
-#include "FileSystemHandleImpl.h"
+#include "FileSystemStorageConnection.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSFileSystemDirectoryHandle.h"
 #include "JSFileSystemFileHandle.h"
@@ -36,49 +36,49 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(FileSystemDirectoryHandle);
 
-Ref<FileSystemDirectoryHandle> FileSystemDirectoryHandle::create(String&& name, Ref<FileSystemHandleImpl>&& impl)
+Ref<FileSystemDirectoryHandle> FileSystemDirectoryHandle::create(String&& name, FileSystemHandleIdentifier identifier, Ref<FileSystemStorageConnection>&& connection)
 {
-    return adoptRef(*new FileSystemDirectoryHandle(WTFMove(name), WTFMove(impl)));
+    return adoptRef(*new FileSystemDirectoryHandle(WTFMove(name), identifier, WTFMove(connection)));
 }
 
-FileSystemDirectoryHandle::FileSystemDirectoryHandle(String&& name, Ref<FileSystemHandleImpl>&& impl)
-    : FileSystemHandle(FileSystemHandle::Kind::Directory, WTFMove(name), WTFMove(impl))
+FileSystemDirectoryHandle::FileSystemDirectoryHandle(String&& name, FileSystemHandleIdentifier identifier, Ref<FileSystemStorageConnection>&& connection)
+    : FileSystemHandle(FileSystemHandle::Kind::Directory, WTFMove(name), identifier, WTFMove(connection))
 {
 }
 
 void FileSystemDirectoryHandle::getFileHandle(const String& name, std::optional<FileSystemDirectoryHandle::GetFileOptions> options, DOMPromiseDeferred<IDLInterface<FileSystemFileHandle>>&& promise)
 {
     bool createIfNecessary = options ? options->create : false;
-    impl().getFileHandle(name, createIfNecessary, [name, promise = WTFMove(promise)](auto result) mutable {
+    connection().getFileHandle(identifier(), name, createIfNecessary, [connection = Ref { connection() }, name, promise = WTFMove(promise)](auto result) mutable {
         if (result.hasException())
             return promise.reject(result.releaseException());
 
-        promise.resolve(FileSystemFileHandle::create(String { name }, result.releaseReturnValue()));
+        promise.resolve(FileSystemFileHandle::create(String { name }, result.returnValue(), WTFMove(connection)));
     });
 }
 
 void FileSystemDirectoryHandle::getDirectoryHandle(const String& name, std::optional<FileSystemDirectoryHandle::GetDirectoryOptions> options, DOMPromiseDeferred<IDLInterface<FileSystemDirectoryHandle>>&& promise)
 {
     bool createIfNecessary = options ? options->create : false;
-    impl().getDirectoryHandle(name, createIfNecessary, [name, promise = WTFMove(promise)](auto result) mutable {
+    connection().getDirectoryHandle(identifier(), name, createIfNecessary, [connection = Ref { connection() }, name, promise = WTFMove(promise)](auto result) mutable {
         if (result.hasException())
             return promise.reject(result.releaseException());
 
-        promise.resolve(FileSystemDirectoryHandle::create(String { name }, result.releaseReturnValue()));
+        promise.resolve(FileSystemDirectoryHandle::create(String { name }, result.returnValue(), WTFMove(connection)));
     });
 }
 
 void FileSystemDirectoryHandle::removeEntry(const String& name, std::optional<FileSystemDirectoryHandle::RemoveOptions> options, DOMPromiseDeferred<void>&& promise)
 {
     bool deleteRecursively = options ? options->recursive : false;
-    impl().removeEntry(name, deleteRecursively, [promise = WTFMove(promise)](auto result) mutable {
+    connection().removeEntry(identifier(), name, deleteRecursively, [promise = WTFMove(promise)](auto result) mutable {
         promise.settle(WTFMove(result));
     });
 }
 
 void FileSystemDirectoryHandle::resolve(const FileSystemHandle& handle, DOMPromiseDeferred<IDLSequence<IDLUSVString>>&& promise)
 {
-    impl().resolve(handle.impl(), [promise = WTFMove(promise)](auto result) mutable {
+    connection().resolve(identifier(), handle.identifier(), [promise = WTFMove(promise)](auto result) mutable {
         if (result.hasException())
             return promise.reject(result.releaseException());
 

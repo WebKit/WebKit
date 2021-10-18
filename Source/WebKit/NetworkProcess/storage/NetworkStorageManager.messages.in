@@ -26,10 +26,10 @@
  messages -> NetworkStorageManager {
     Persisted(struct WebCore::ClientOrigin origin) -> (bool persisted) Async
     Persist(struct WebCore::ClientOrigin origin) -> (bool persisted) Async
-    FileSystemGetDirectory(struct WebCore::ClientOrigin origin) -> (Expected<WebKit::FileSystemStorageHandleIdentifier, WebKit::FileSystemStorageError> result) Async WantsConnection
-    IsSameEntry(WebKit::FileSystemStorageHandleIdentifier identifier, WebKit::FileSystemStorageHandleIdentifier targetIdentifier) -> (bool result) Async
-    GetFileHandle(WebKit::FileSystemStorageHandleIdentifier identifier, String name, bool createIfNecessary) -> (Expected<WebKit::FileSystemStorageHandleIdentifier, WebKit::FileSystemStorageError> result) Async WantsConnection
-    GetDirectoryHandle(WebKit::FileSystemStorageHandleIdentifier identifier, String name, bool createIfNecessary) -> (Expected<WebKit::FileSystemStorageHandleIdentifier, WebKit::FileSystemStorageError> result) Async WantsConnection
-    RemoveEntry(WebKit::FileSystemStorageHandleIdentifier identifier, String name, bool deleteRecursively) -> (std::optional<WebKit::FileSystemStorageError> result) Async
-    Resolve(WebKit::FileSystemStorageHandleIdentifier identifier, WebKit::FileSystemStorageHandleIdentifier targetIdentifier) -> (Expected<Vector<String>, WebKit::FileSystemStorageError> result) Async
+    FileSystemGetDirectory(struct WebCore::ClientOrigin origin) -> (Expected<WebCore::FileSystemHandleIdentifier, WebKit::FileSystemStorageError> result) Async WantsConnection
+    IsSameEntry(WebCore::FileSystemHandleIdentifier identifier, WebCore::FileSystemHandleIdentifier targetIdentifier) -> (bool result) Async
+    GetFileHandle(WebCore::FileSystemHandleIdentifier identifier, String name, bool createIfNecessary) -> (Expected<WebCore::FileSystemHandleIdentifier, WebKit::FileSystemStorageError> result) Async WantsConnection
+    GetDirectoryHandle(WebCore::FileSystemHandleIdentifier identifier, String name, bool createIfNecessary) -> (Expected<WebCore::FileSystemHandleIdentifier, WebKit::FileSystemStorageError> result) Async WantsConnection
+    RemoveEntry(WebCore::FileSystemHandleIdentifier identifier, String name, bool deleteRecursively) -> (std::optional<WebKit::FileSystemStorageError> result) Async
+    Resolve(WebCore::FileSystemHandleIdentifier identifier, WebCore::FileSystemHandleIdentifier targetIdentifier) -> (Expected<Vector<String>, WebKit::FileSystemStorageError> result) Async
 }

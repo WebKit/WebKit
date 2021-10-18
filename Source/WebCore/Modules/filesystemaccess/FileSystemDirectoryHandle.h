@@ -46,14 +46,14 @@ public:
         bool recursive { false };
     };
 
-    WEBCORE_EXPORT static Ref<FileSystemDirectoryHandle> create(String&&, Ref<FileSystemHandleImpl>&&);
+    WEBCORE_EXPORT static Ref<FileSystemDirectoryHandle> create(String&&, FileSystemHandleIdentifier, Ref<FileSystemStorageConnection>&&);
     void getFileHandle(const String& name, std::optional<GetFileOptions>, DOMPromiseDeferred<IDLInterface<FileSystemFileHandle>>&&);
     void getDirectoryHandle(const String& name, std::optional<GetDirectoryOptions>, DOMPromiseDeferred<IDLInterface<FileSystemDirectoryHandle>>&&);
     void removeEntry(const String& name, std::optional<RemoveOptions>, DOMPromiseDeferred<void>&&);
     void resolve(const FileSystemHandle&, DOMPromiseDeferred<IDLSequence<IDLUSVString>>&&);
 
 private:
-    FileSystemDirectoryHandle(String&&, Ref<FileSystemHandleImpl>&&);
+    FileSystemDirectoryHandle(String&&, FileSystemHandleIdentifier, Ref<FileSystemStorageConnection>&&);
 };
 
 } // namespace WebCore
