@@ -1,3 +1,18 @@
+2021-10-18  Jonathan Bedard  <jbedard@apple.com>
+
+        [run-api-tests] Use temporary symlink when listing tests
+        https://bugs.webkit.org/show_bug.cgi?id=230560
+
+        Reviewed by Dewei Zhu.
+
+        * Scripts/webkitpy/api_tests/manager.py:
+        (Manager._collect_tests): Copy binary when listing tests to make debuging easier.
+        * Scripts/webkitpy/common/system/filesystem.py:
+        (FileSystem.copyfile): Return copyfile result.
+        (FileSystem.copymode): Invoke shutil.copymode.
+        * Scripts/webkitpy/common/system/filesystem_mock.py:
+        (MockFileSystem.copymode):
+
 2021-10-18  Andres Gonzalez  <andresg_22@apple.com>
 
         Set isolated tree mode to secondary AX thread in LayoutTests.
