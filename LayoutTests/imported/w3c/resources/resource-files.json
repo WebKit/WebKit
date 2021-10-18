@@ -2897,6 +2897,7 @@
         "web-platform-tests/shadow-dom/declarative/support/declarative-child-frame.html",
         "web-platform-tests/shadow-dom/event-on-pseudo-element-crash.html",
         "web-platform-tests/shadow-dom/imperative-slot-api-crash.html",
+        "web-platform-tests/shadow-dom/imperative-slot-assign-not-slotable-crash.html",
         "web-platform-tests/shadow-dom/nested-slot-remove-crash.html",
         "web-platform-tests/shadow-dom/user-agent-shadow-root-crash.html",
         "web-platform-tests/svg/animations/end-of-time-crash.html",

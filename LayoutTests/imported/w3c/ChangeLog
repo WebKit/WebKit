@@ -1,3 +1,34 @@
+2021-10-18  Tim Nguyen  <ntim@apple.com>
+
+        Re-import shadow-dom WPT
+        https://bugs.webkit.org/show_bug.cgi?id=231845
+
+        Reviewed by Antoine Quint.
+
+        Upstream commit: https://github.com/web-platform-tests/wpt/commit/deaab24d4e359f4264ba8843fa87a558ed9e0b81
+
+        The flakiness of focus-pseudo-matches-on-shadow-host.html was due to not waiting for the "update rendering"
+        steps for autofocus to happen, which is flaky with the new autofocus behavior. This has been fixed by a Gecko
+        committer who had the issue on their side as well:
+
+        https://github.com/web-platform-tests/wpt/commit/7555902a6e5c2b2f285bc6d0e2e05b5f3229af6a
+
+        * resources/resource-files.json:
+        * web-platform-tests/shadow-dom/declarative/declarative-shadow-dom-attachment.tentative.html:
+        * web-platform-tests/shadow-dom/focus/blur-on-shadow-host-delegatesFocus-expected.txt: Added.
+        * web-platform-tests/shadow-dom/focus/blur-on-shadow-host-delegatesFocus.html: Added.
+        * web-platform-tests/shadow-dom/focus/click-focus-delegatesFocus-click-method-expected.txt: Removed.
+        * web-platform-tests/shadow-dom/focus/click-focus-delegatesFocus-click-method.html: Removed.
+        * web-platform-tests/shadow-dom/focus/click-focus-delegatesFocus-click-expected.txt: Added.
+        * web-platform-tests/shadow-dom/focus/click-focus-delegatesFocus-click.html: Added.
+        * web-platform-tests/shadow-dom/focus/focus-pseudo-matches-on-shadow-host.html:
+        * web-platform-tests/shadow-dom/focus/focus-pseudo-on-shadow-host-2.html:
+        * web-platform-tests/shadow-dom/focus/focus-selector-delegatesFocus-expected.txt:
+        * web-platform-tests/shadow-dom/focus/focus-selector-delegatesFocus.html:
+        * web-platform-tests/shadow-dom/focus/focus-tab-on-shadow-host-expected.txt: Added.
+        * web-platform-tests/shadow-dom/focus/focus-tab-on-shadow-host.html: Added.
+        * web-platform-tests/shadow-dom/focus/w3c-import.log:
+
 2021-10-15  Antoine Quint  <graouts@webkit.org>
 
         CSS Animations creation and sorting is incorrect and may lead to crash
