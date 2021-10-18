@@ -1,3 +1,21 @@
+2021-10-18  Simon Fraser  <simon.fraser@apple.com>
+
+        Cleanup css3/filters/backdrop/backdrop-filter-with-clip-path.html expected results
+        https://bugs.webkit.org/show_bug.cgi?id=217804
+
+        Reviewed by Alexey Proskuryakov.
+
+        Change the test to use invert() instead of blur() on backdrop-filter.
+
+        Test still fails on iOS; looks like some pixel snapping issues.
+
+        * css3/filters/backdrop/backdrop-filter-with-clip-path-expected.html: Renamed from LayoutTests/platform/ios/css3/filters/backdrop/backdrop-filter-with-clip-path-expected.html.
+        * css3/filters/backdrop/backdrop-filter-with-clip-path-expected.txt: Removed.
+        * css3/filters/backdrop/backdrop-filter-with-clip-path.html:
+        * platform/glib/css3/filters/backdrop/backdrop-filter-with-clip-path-expected.txt: Removed.
+        * platform/mac/css3/filters/backdrop/backdrop-filter-with-clip-path-expected.png: Removed.
+        * platform/wpe/css3/filters/backdrop/backdrop-filter-with-clip-path-expected.txt: Removed.
+
 2021-10-18  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] fast/mediastream/video-rotation tests are failing due to missing TestController::takeViewPortSnapshot
