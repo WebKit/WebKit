@@ -1,5 +1,5 @@
 
-FAIL test createSyncAccessHandle.truncate with pending operation promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
-FAIL test SyncAccessHandle.truncate with different sizes promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
-FAIL test SyncAccessHandle.truncate after SyncAccessHandle.write promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+FAIL test createSyncAccessHandle.truncate with pending operation promise_test: Unhandled rejection with value: object "TypeError: dir.values is not a function. (In 'dir.values()', 'dir.values' is undefined)"
+FAIL test SyncAccessHandle.truncate with different sizes promise_test: Unhandled rejection with value: object "TypeError: dir.values is not a function. (In 'dir.values()', 'dir.values' is undefined)"
+FAIL test SyncAccessHandle.truncate after SyncAccessHandle.write promise_test: Unhandled rejection with value: object "TypeError: dir.values is not a function. (In 'dir.values()', 'dir.values' is undefined)"
 

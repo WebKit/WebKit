@@ -1,6 +1,6 @@
 
-FAIL Test flush on an empty file. promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
-FAIL SyncAccessHandle.read returns bytes written by SyncAccessHandle.write after SyncAccessHandle.flush promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
-FAIL SyncAccessHandle.read fails when there is a pending SyncAccessHandle.flush promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
-FAIL SyncAccessHandle.write fails when there is a pending SyncAccessHandle.flush promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+FAIL Test flush on an empty file. promise_test: Unhandled rejection with value: object "TypeError: dir.values is not a function. (In 'dir.values()', 'dir.values' is undefined)"
+FAIL SyncAccessHandle.read returns bytes written by SyncAccessHandle.write after SyncAccessHandle.flush promise_test: Unhandled rejection with value: object "TypeError: dir.values is not a function. (In 'dir.values()', 'dir.values' is undefined)"
+FAIL SyncAccessHandle.read fails when there is a pending SyncAccessHandle.flush promise_test: Unhandled rejection with value: object "TypeError: dir.values is not a function. (In 'dir.values()', 'dir.values' is undefined)"
+FAIL SyncAccessHandle.write fails when there is a pending SyncAccessHandle.flush promise_test: Unhandled rejection with value: object "TypeError: dir.values is not a function. (In 'dir.values()', 'dir.values' is undefined)"
 

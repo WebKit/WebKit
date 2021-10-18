@@ -27,9 +27,11 @@
 #include "WorkerStorageConnection.h"
 
 #include "ClientOrigin.h"
+#include "WorkerFileSystemStorageConnection.h"
 #include "WorkerGlobalScope.h"
 #include "WorkerLoaderProxy.h"
 #include "WorkerThread.h"
+#include <wtf/Scope.h>
 
 namespace WebCore {
 
@@ -48,6 +50,10 @@ void WorkerStorageConnection::scopeClosed()
     auto getPersistedCallbacks = std::exchange(m_getPersistedCallbacks, { });
     for (auto& callback : getPersistedCallbacks.values())
         callback(false);
+
+    auto getDirectoryCallbacks = std::exchange(m_getDirectoryCallbacks, { });
+    for (auto& callback : getDirectoryCallbacks.values())
+        callback(Exception { InvalidStateError });
 
     m_scope = nullptr;
 }
@@ -79,12 +85,45 @@ void WorkerStorageConnection::didGetPersisted(uint64_t callbackIdentifier, bool 
         callback(persisted);
 }
 
-void WorkerStorageConnection::fileSystemGetDirectory(const ClientOrigin&, StorageConnection::GetDirectoryCallback&& completionHandler)
+void WorkerStorageConnection::fileSystemGetDirectory(const ClientOrigin& origin, StorageConnection::GetDirectoryCallback&& completionHandler)
 {
     ASSERT(m_scope);
+    
+    auto callbackIdentifier = ++m_lastCallbackIdentifier;
+    m_getDirectoryCallbacks.add(callbackIdentifier, WTFMove(completionHandler));
 
-    // FIXME: implement this when FileSystemHandle is supported in Worker.
-    return completionHandler(Exception { NotSupportedError });
+    callOnMainThread([callbackIdentifier, workerThread = Ref { m_scope->thread() }, origin = origin.isolatedCopy()]() mutable {
+        auto mainThreadConnection = workerThread->workerLoaderProxy().storageConnection();
+        auto mainThreadCallback = [callbackIdentifier, workerThread = WTFMove(workerThread)](auto result) mutable {
+            workerThread->runLoop().postTaskForMode([callbackIdentifier, result = crossThreadCopy(result)] (auto& scope) mutable {
+                downcast<WorkerGlobalScope>(scope).storageConnection().didGetDirectory(callbackIdentifier, WTFMove(result));
+            }, WorkerRunLoop::defaultMode());
+        };
+        mainThreadConnection->fileSystemGetDirectory(origin, WTFMove(mainThreadCallback));
+    });
+}
+
+void WorkerStorageConnection::didGetDirectory(uint64_t callbackIdentifier, ExceptionOr<StorageConnection::DirectoryInfo>&& result)
+{
+    RefPtr<FileSystemStorageConnection> mainThreadFileSystemStorageConnection = result.hasException() ? nullptr : result.returnValue().second;
+    auto releaseConnectionScope = makeScopeExit([connection = mainThreadFileSystemStorageConnection]() mutable {
+        if (connection)
+            callOnMainThread([connection = WTFMove(connection)]() { });
+    });
+
+    auto callback = m_getDirectoryCallbacks.take(callbackIdentifier);
+    if (!callback)
+        return;
+
+    if (result.hasException())
+        return callback(WTFMove(result));
+
+    if (!m_scope)
+        return callback(Exception { InvalidStateError });
+    releaseConnectionScope.release();
+
+    auto& workerFileSystemStorageConnection = m_scope->getFileSystemStorageConnection(Ref { *mainThreadFileSystemStorageConnection });
+    callback(StorageConnection::DirectoryInfo { result.returnValue().first, Ref { workerFileSystemStorageConnection } });
 }
 
 } // namespace WebCore

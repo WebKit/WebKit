@@ -42,6 +42,8 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     Modules/filesystemaccess/FileSystemHandleIdentifier.h
     Modules/filesystemaccess/FileSystemStorageConnection.h
     Modules/filesystemaccess/StorageManagerFileSystemAccess.h
+    Modules/filesystemaccess/WorkerFileSystemStorageConnection.h
+    Modules/filesystemaccess/WorkerFileSystemStorageConnectionCallbackIdentifier.h
 
     Modules/geolocation/Geolocation.h
     Modules/geolocation/GeolocationClient.h
@@ -154,6 +156,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     Modules/storage/StorageConnection.h
     Modules/storage/StorageManager.h
     Modules/storage/StorageProvider.h
+    Modules/storage/WorkerStorageConnection.h
 
     Modules/streams/ReadableStreamSink.h
     Modules/streams/ReadableStreamSource.h

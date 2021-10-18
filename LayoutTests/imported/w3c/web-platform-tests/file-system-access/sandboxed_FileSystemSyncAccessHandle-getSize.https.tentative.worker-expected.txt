@@ -1,4 +1,4 @@
 
-FAIL test SyncAccessHandle.getSize after SyncAccessHandle.write promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
-FAIL test createSyncAccessHandle.getSize with pending operation promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+FAIL test SyncAccessHandle.getSize after SyncAccessHandle.write promise_test: Unhandled rejection with value: object "TypeError: dir.values is not a function. (In 'dir.values()', 'dir.values' is undefined)"
+FAIL test createSyncAccessHandle.getSize with pending operation promise_test: Unhandled rejection with value: object "TypeError: dir.values is not a function. (In 'dir.values()', 'dir.values' is undefined)"
 

@@ -35,6 +35,7 @@
 #include <wtf/Assertions.h>
 #include <wtf/Forward.h>
 #include <wtf/HashSet.h>
+#include <wtf/ObjectIdentifier.h>
 #include <wtf/RefPtr.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/text/WTFString.h>
@@ -98,6 +99,14 @@ template<typename T> struct CrossThreadCopierBase<false, true, T> {
 
 template<> struct CrossThreadCopierBase<false, false, WTF::ASCIILiteral> {
     typedef WTF::ASCIILiteral Type;
+    static Type copy(const Type& source)
+    {
+        return source;
+    }
+};
+
+template<typename T> struct CrossThreadCopierBase<false, false, ObjectIdentifier<T>> {
+    typedef ObjectIdentifier<T> Type;
     static Type copy(const Type& source)
     {
         return source;

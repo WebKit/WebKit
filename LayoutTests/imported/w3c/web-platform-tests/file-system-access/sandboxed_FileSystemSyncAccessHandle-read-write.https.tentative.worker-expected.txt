@@ -1,10 +1,10 @@
 
-FAIL Test reading an empty file through a sync access handle. promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
-FAIL Test writing and reading through a sync access handle. promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
-FAIL Test second write that is bigger than the first write promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
-FAIL Test second write that is smaller than the first write promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
-FAIL Test initial write with an offset promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
-FAIL Test overwriting the file at an offset promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
-FAIL Test read at an offset promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
-FAIL Test reading at a negative offset fails. promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+FAIL Test reading an empty file through a sync access handle. promise_test: Unhandled rejection with value: object "TypeError: dir.values is not a function. (In 'dir.values()', 'dir.values' is undefined)"
+FAIL Test writing and reading through a sync access handle. promise_test: Unhandled rejection with value: object "TypeError: dir.values is not a function. (In 'dir.values()', 'dir.values' is undefined)"
+FAIL Test second write that is bigger than the first write promise_test: Unhandled rejection with value: object "TypeError: dir.values is not a function. (In 'dir.values()', 'dir.values' is undefined)"
+FAIL Test second write that is smaller than the first write promise_test: Unhandled rejection with value: object "TypeError: dir.values is not a function. (In 'dir.values()', 'dir.values' is undefined)"
+FAIL Test initial write with an offset promise_test: Unhandled rejection with value: object "TypeError: dir.values is not a function. (In 'dir.values()', 'dir.values' is undefined)"
+FAIL Test overwriting the file at an offset promise_test: Unhandled rejection with value: object "TypeError: dir.values is not a function. (In 'dir.values()', 'dir.values' is undefined)"
+FAIL Test read at an offset promise_test: Unhandled rejection with value: object "TypeError: dir.values is not a function. (In 'dir.values()', 'dir.values' is undefined)"
+FAIL Test reading at a negative offset fails. promise_test: Unhandled rejection with value: object "TypeError: dir.values is not a function. (In 'dir.values()', 'dir.values' is undefined)"
 

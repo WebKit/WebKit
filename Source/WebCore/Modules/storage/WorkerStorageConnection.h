@@ -40,6 +40,7 @@ public:
 private:
     explicit WorkerStorageConnection(WorkerGlobalScope&);
     void didGetPersisted(uint64_t callbackIdentifier, bool result);
+    void didGetDirectory(uint64_t callbackIdentifier, ExceptionOr<StorageConnection::DirectoryInfo>&&);
 
     // StorageConnection
     void getPersisted(const ClientOrigin&, StorageConnection::PersistCallback&&) final;
@@ -48,6 +49,7 @@ private:
     WeakPtr<WorkerGlobalScope> m_scope;
     uint64_t m_lastCallbackIdentifier { 0 };
     HashMap<uint64_t, StorageConnection::PersistCallback> m_getPersistedCallbacks;
+    HashMap<uint64_t, StorageConnection::GetDirectoryCallback> m_getDirectoryCallbacks;
 };
 
 } // namespace WebCore
