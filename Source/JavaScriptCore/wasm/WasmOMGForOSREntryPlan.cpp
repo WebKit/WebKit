@@ -91,16 +91,20 @@ void OMGForOSREntryPlan::work(CompilationEffort)
         return;
     }
 
+    InternalFunction* internalFunction = parseAndCompileResult->get();
+    Vector<CodeLocationLabel<ExceptionHandlerPtrTag>> exceptionHandlerLocations;
+    computeExceptionHandlerLocations(exceptionHandlerLocations, internalFunction, context, linkBuffer);
+
     omgEntrypoint.compilation = makeUnique<Compilation>(
         FINALIZE_WASM_CODE_FOR_MODE(CompilationMode::OMGForOSREntryMode, linkBuffer, JITCompilationPtrTag, "WebAssembly OMGForOSREntry function[%i] %s name %s", m_functionIndex, signature.toString().ascii().data(), makeString(IndexOrName(functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace))).ascii().data()),
         WTFMove(context.wasmEntrypointByproducts));
 
-    omgEntrypoint.calleeSaveRegisters = WTFMove(parseAndCompileResult.value()->entrypoint.calleeSaveRegisters);
+    omgEntrypoint.calleeSaveRegisters = WTFMove(internalFunction->entrypoint.calleeSaveRegisters);
 
     ASSERT(m_codeBlock.ptr() == m_module->codeBlockFor(mode()));
-    Ref<OMGForOSREntryCallee> callee = OMGForOSREntryCallee::create(WTFMove(omgEntrypoint), functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace), osrEntryScratchBufferSize, m_loopIndex, WTFMove(unlinkedCalls));
+    Ref<OMGForOSREntryCallee> callee = OMGForOSREntryCallee::create(WTFMove(omgEntrypoint), functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace), osrEntryScratchBufferSize, m_loopIndex, WTFMove(unlinkedCalls), WTFMove(internalFunction->stackmaps), WTFMove(internalFunction->exceptionHandlers), WTFMove(exceptionHandlerLocations));
     {
-        MacroAssembler::repatchPointer(parseAndCompileResult.value()->calleeMoveLocation, CalleeBits::boxWasm(callee.ptr()));
+        MacroAssembler::repatchPointer(internalFunction->calleeMoveLocation, CalleeBits::boxWasm(callee.ptr()));
 
         Locker locker { m_codeBlock->m_lock };
         for (auto& call : callee->wasmToWasmCallsites()) {

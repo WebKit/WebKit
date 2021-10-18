@@ -188,6 +188,8 @@ $(PROJECT_DIR)/wasm/generateWasmOpsHeader.py
 $(PROJECT_DIR)/wasm/js/JSWebAssembly.cpp
 $(PROJECT_DIR)/wasm/js/WebAssemblyCompileErrorConstructor.cpp
 $(PROJECT_DIR)/wasm/js/WebAssemblyCompileErrorPrototype.cpp
+$(PROJECT_DIR)/wasm/js/WebAssemblyExceptionConstructor.cpp
+$(PROJECT_DIR)/wasm/js/WebAssemblyExceptionPrototype.cpp
 $(PROJECT_DIR)/wasm/js/WebAssemblyGlobalConstructor.cpp
 $(PROJECT_DIR)/wasm/js/WebAssemblyGlobalPrototype.cpp
 $(PROJECT_DIR)/wasm/js/WebAssemblyInstanceConstructor.cpp
@@ -202,6 +204,8 @@ $(PROJECT_DIR)/wasm/js/WebAssemblyRuntimeErrorConstructor.cpp
 $(PROJECT_DIR)/wasm/js/WebAssemblyRuntimeErrorPrototype.cpp
 $(PROJECT_DIR)/wasm/js/WebAssemblyTableConstructor.cpp
 $(PROJECT_DIR)/wasm/js/WebAssemblyTablePrototype.cpp
+$(PROJECT_DIR)/wasm/js/WebAssemblyTagConstructor.cpp
+$(PROJECT_DIR)/wasm/js/WebAssemblyTagPrototype.cpp
 $(PROJECT_DIR)/wasm/wasm.json
 $(PROJECT_DIR)/yarr/create_regex_tables
 $(PROJECT_DIR)/yarr/generateYarrCanonicalizeUnicode

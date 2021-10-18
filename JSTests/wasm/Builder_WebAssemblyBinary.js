@@ -143,6 +143,10 @@ const emitters = {
             case "Global":
                 putGlobalType(bin, entry.globalDescription);
                 break;
+            case "Exception":
+                put(bin, "varuint32", entry.tag);
+                put(bin, "varuint32", entry.type);
+                break;
             }
         }
     },
@@ -185,6 +189,7 @@ const emitters = {
             case "Function":
             case "Memory":
             case "Table":
+            case "Exception":
                 put(bin, "varuint32", entry.index);
                 break;
             default: throw new Error(`Implementation problem: unexpected kind ${entry.kind}`);
@@ -252,6 +257,14 @@ const emitters = {
             put(bin, "varuint32", datum.data.length);
             for (const byte of datum.data)
                 put(bin, "uint8", byte);
+        }
+    },
+
+    Exception: (section, bin) => {
+        put(bin, "varuint32", section.data.length);
+        for (const exn of section.data) {
+            put(bin, "varuint32", exn.tag);
+            put(bin, "varuint32", exn.type);
         }
     },
 };

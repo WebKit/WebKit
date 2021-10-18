@@ -92,6 +92,8 @@ auto SectionParser::parseImport() -> PartialResult
     WASM_PARSER_FAIL_IF(!m_info->globals.tryReserveCapacity(importCount), "can't allocate enough memory for ", importCount, " globals"); // FIXME this over-allocates when we fix the FIXMEs below.
     WASM_PARSER_FAIL_IF(!m_info->imports.tryReserveCapacity(importCount), "can't allocate enough memory for ", importCount, " imports"); // FIXME this over-allocates when we fix the FIXMEs below.
     WASM_PARSER_FAIL_IF(!m_info->importFunctionSignatureIndices.tryReserveCapacity(importCount), "can't allocate enough memory for ", importCount, " import function signatures"); // FIXME this over-allocates when we fix the FIXMEs below.
+    if (Options::useWebAssemblyExceptions())
+        WASM_PARSER_FAIL_IF(!m_info->importExceptionSignatureIndices.tryReserveCapacity(importCount), "can't allocate enough memory for ", importCount, " import exception signatures"); // FIXME this over-allocates when we fix the FIXMEs below.
 
     for (uint32_t importNumber = 0; importNumber < importCount; ++importNumber) {
         uint32_t moduleLen;
@@ -141,6 +143,21 @@ auto SectionParser::parseImport() -> PartialResult
                 global.bindingMode = GlobalInformation::BindingMode::Portable;
             kindIndex = m_info->globals.size();
             m_info->globals.uncheckedAppend(WTFMove(global));
+            break;
+        }
+        case ExternalKind::Exception: {
+            WASM_PARSER_FAIL_IF(!Options::useWebAssemblyExceptions(), "wasm exceptions are not enabled");
+
+            uint8_t tagType;
+            WASM_PARSER_FAIL_IF(!parseUInt8(tagType), "can't get ", importNumber, "th Import exception's tag type");
+            WASM_PARSER_FAIL_IF(tagType, importNumber, "th Import exception has tag type ", tagType, " but the only supported tag type is 0");
+
+            uint32_t exceptionSignatureIndex;
+            WASM_PARSER_FAIL_IF(!parseVarUInt32(exceptionSignatureIndex), "can't get ", importNumber, "th Import's exception signature in module '", moduleString, "' field '", fieldString, "'");
+            WASM_PARSER_FAIL_IF(exceptionSignatureIndex >= m_info->usedSignatures.size(), "invalid exception signature for ", importNumber, "th Import, ", exceptionSignatureIndex, " is out of range of ", m_info->usedSignatures.size(), " in module '", moduleString, "' field '", fieldString, "'");
+            kindIndex = m_info->importExceptionSignatureIndices.size();
+            SignatureIndex signatureIndex = SignatureInformation::get(m_info->usedSignatures[exceptionSignatureIndex]);
+            m_info->importExceptionSignatureIndices.uncheckedAppend(signatureIndex);
             break;
         }
         }
@@ -357,6 +374,13 @@ auto SectionParser::parseExport() -> PartialResult
             GlobalInformation& global = m_info->globals[kindIndex];
             if (global.mutability == GlobalInformation::Mutability::Mutable)
                 global.bindingMode = GlobalInformation::BindingMode::Portable;
+            break;
+        }
+        case ExternalKind::Exception: {
+            WASM_PARSER_FAIL_IF(!Options::useWebAssemblyExceptions(), "wasm exceptions are not enabled");
+
+            WASM_PARSER_FAIL_IF(kindIndex >= m_info->exceptionIndexSpaceSize(), exportNumber, "th Export has invalid exception number ", kindIndex, " it exceeds the exception index space ", m_info->exceptionIndexSpaceSize(), ", named '", fieldString, "'");
+            m_info->addDeclaredException(kindIndex);
             break;
         }
         }
@@ -831,6 +855,29 @@ auto SectionParser::parseDataCount() -> PartialResult
     return { };
 }
 
+auto SectionParser::parseException() -> PartialResult
+{
+    WASM_PARSER_FAIL_IF(!Options::useWebAssemblyExceptions(), "wasm exceptions are not enabled");
+
+    uint32_t exceptionCount;
+    WASM_PARSER_FAIL_IF(!parseVarUInt32(exceptionCount), "can't get Exception section's count");
+    WASM_PARSER_FAIL_IF(exceptionCount > maxExceptions, "Export section's count is too big ", exceptionCount, " maximum ", maxExceptions);
+    WASM_PARSER_FAIL_IF(!m_info->internalExceptionSignatureIndices.tryReserveCapacity(exceptionCount), "can't allocate enough memory for ", exceptionCount, " exceptions");
+
+    for (uint32_t exceptionNumber = 0; exceptionNumber < exceptionCount; ++exceptionNumber) {
+        uint8_t tagType;
+        WASM_PARSER_FAIL_IF(!parseUInt8(tagType), "can't get ", exceptionNumber, "th Exception tag type");
+        WASM_PARSER_FAIL_IF(tagType, exceptionNumber, "th Exception has tag type ", tagType, " but the only supported tag type is 0");
+
+        uint32_t typeNumber;
+        WASM_PARSER_FAIL_IF(!parseVarUInt32(typeNumber), "can't get ", exceptionNumber, "th Exception's type number");
+        WASM_PARSER_FAIL_IF(typeNumber >= m_info->usedSignatures.size(), exceptionNumber, "th Exception type number is invalid ", typeNumber);
+        SignatureIndex signatureIndex = SignatureInformation::get(m_info->usedSignatures[typeNumber]);
+        m_info->internalExceptionSignatureIndices.uncheckedAppend(signatureIndex);
+    }
+
+    return { };
+}
 auto SectionParser::parseCustom() -> PartialResult
 {
     CustomSection section;

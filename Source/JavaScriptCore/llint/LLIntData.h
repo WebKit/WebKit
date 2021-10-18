@@ -323,6 +323,24 @@ ALWAYS_INLINE MacroAssemblerCodePtr<tag> getWide32CodePtr(WasmOpcodeID opcodeID)
 }
 
 template<PtrTag tag>
+ALWAYS_INLINE MacroAssemblerCodeRef<tag> getCodeRef(WasmOpcodeID opcodeID)
+{
+    return MacroAssemblerCodeRef<tag>::createSelfManagedCodeRef(getCodePtr<tag>(opcodeID));
+}
+
+template<PtrTag tag>
+ALWAYS_INLINE MacroAssemblerCodeRef<tag> getWide16CodeRef(WasmOpcodeID opcodeID)
+{
+    return MacroAssemblerCodeRef<tag>::createSelfManagedCodeRef(getWide16CodePtr<tag>(opcodeID));
+}
+
+template<PtrTag tag>
+ALWAYS_INLINE MacroAssemblerCodeRef<tag> getWide32CodeRef(WasmOpcodeID opcodeID)
+{
+    return MacroAssemblerCodeRef<tag>::createSelfManagedCodeRef(getWide32CodePtr<tag>(opcodeID));
+}
+
+template<PtrTag tag>
 ALWAYS_INLINE LLIntCode getCodeFunctionPtr(WasmOpcodeID opcodeID)
 {
 #if COMPILER(MSVC)

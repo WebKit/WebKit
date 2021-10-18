@@ -113,6 +113,8 @@ set(JavaScriptCore_OBJECT_LUT_SOURCES
     wasm/js/JSToWasmICCallee.cpp
     wasm/js/WebAssemblyCompileErrorConstructor.cpp
     wasm/js/WebAssemblyCompileErrorPrototype.cpp
+    wasm/js/WebAssemblyExceptionConstructor.cpp
+    wasm/js/WebAssemblyExceptionPrototype.cpp
     wasm/js/WebAssemblyGlobalConstructor.cpp
     wasm/js/WebAssemblyGlobalPrototype.cpp
     wasm/js/WebAssemblyInstanceConstructor.cpp
@@ -127,6 +129,8 @@ set(JavaScriptCore_OBJECT_LUT_SOURCES
     wasm/js/WebAssemblyRuntimeErrorPrototype.cpp
     wasm/js/WebAssemblyTableConstructor.cpp
     wasm/js/WebAssemblyTablePrototype.cpp
+    wasm/js/WebAssemblyTagConstructor.cpp
+    wasm/js/WebAssemblyTagPrototype.cpp
 )
 
 set(JavaScriptCore_FRAMEWORKS
@@ -589,6 +593,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
 
     b3/B3Common.h
     b3/B3Type.h
+    b3/B3ValueRep.h
 
     bindings/ScriptFunctionCall.h
     bindings/ScriptObject.h
@@ -1199,6 +1204,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     wasm/WasmFaultSignalHandler.h
     wasm/WasmFormat.h
     wasm/WasmFunctionCodeBlock.h
+    wasm/WasmHandlerInfo.h
     wasm/WasmIndexOrName.h
     wasm/WasmLLIntTierUpCounter.h
     wasm/WasmMemory.h
@@ -1207,12 +1213,14 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     wasm/WasmModule.h
     wasm/WasmName.h
     wasm/WasmNameSection.h
+    wasm/WasmOSREntryData.h
     wasm/WasmPageCount.h
     wasm/WasmSections.h
     wasm/WasmSignature.h
     wasm/WasmStreamingCompiler.h
     wasm/WasmStreamingParser.h
     wasm/WasmTierUpCount.h
+    wasm/WasmValueLocation.h
 
     wasm/js/JSWebAssembly.h
     wasm/js/JSWebAssemblyMemory.h

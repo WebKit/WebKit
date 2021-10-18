@@ -54,21 +54,14 @@ void genericUnwind(VM& vm, CallFrame* callFrame)
 
     Exception* exception = scope.exception();
     RELEASE_ASSERT(exception);
-    HandlerInfo* handler = vm.interpreter->unwind(vm, callFrame, exception); // This may update callFrame.
+    CatchInfo handler = vm.interpreter->unwind(vm, callFrame, exception); // This may update callFrame.
 
     void* catchRoutine;
     const Instruction* catchPCForInterpreter = nullptr;
-    if (handler) {
-        // handler->target is meaningless for getting a code offset when catching
-        // the exception in a DFG/FTL frame. This bytecode target offset could be
-        // something that's in an inlined frame, which means an array access
-        // with this bytecode offset in the machine frame is utterly meaningless
-        // and can cause an overflow. OSR exit properly exits to handler->target
-        // in the proper frame.
-        if (!JITCode::isOptimizingJIT(callFrame->codeBlock()->jitType()))
-            catchPCForInterpreter = callFrame->codeBlock()->instructions().at(handler->target).ptr();
+    if (handler.m_valid) {
+        catchPCForInterpreter = handler.m_catchPCForInterpreter;
 #if ENABLE(JIT)
-        catchRoutine = handler->nativeCode.executableAddress();
+        catchRoutine = handler.m_nativeCode.executableAddress();
 #else
         if (catchPCForInterpreter->isWide32())
             catchRoutine = LLInt::getWide32CodePtr(catchPCForInterpreter->opcodeID());

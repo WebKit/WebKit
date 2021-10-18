@@ -78,51 +78,9 @@ JSC_DEFINE_HOST_FUNCTION(callWebAssemblyFunction, (JSGlobalObject* globalObject,
     Wasm::Instance* wasmInstance = &instance->instance();
 
     for (unsigned argIndex = 0; argIndex < signature.argumentCount(); ++argIndex) {
-        JSValue arg = callFrame->argument(argIndex);
-        switch (signature.argument(argIndex).kind) {
-        case Wasm::TypeKind::I32:
-            arg = JSValue::decode(arg.toInt32(globalObject));
-            break;
-        case Wasm::TypeKind::TypeIdx:
-        case Wasm::TypeKind::Funcref: {
-            bool isNullable = signature.argument(argIndex).isNullable();
-            WebAssemblyFunction* wasmFunction = nullptr;
-            WebAssemblyWrapperFunction* wasmWrapperFunction = nullptr;
-            if (!isWebAssemblyHostFunction(vm, arg, wasmFunction, wasmWrapperFunction) && (!isNullable || !arg.isNull()))
-                return JSValue::encode(throwException(globalObject, scope, createJSWebAssemblyRuntimeError(globalObject, vm, "Funcref must be an exported wasm function")));
-            if (signature.argument(argIndex).kind == Wasm::TypeKind::TypeIdx && (wasmFunction || wasmWrapperFunction)) {
-                Wasm::SignatureIndex paramIndex = signature.argument(argIndex).index;
-                Wasm::SignatureIndex argIndex;
-                if (wasmFunction)
-                    argIndex = wasmFunction->signatureIndex();
-                else
-                    argIndex = wasmWrapperFunction->signatureIndex();
-                if (paramIndex != argIndex)
-                    return JSValue::encode(throwException(globalObject, scope, createJSWebAssemblyRuntimeError(globalObject, vm, "Argument function did not match the reference type")));
-            }
-            break;
-        }
-        case Wasm::TypeKind::Externref:
-            if (!signature.argument(argIndex).isNullable() && arg.isNull())
-                return JSValue::encode(throwException(globalObject, scope, createJSWebAssemblyRuntimeError(globalObject, vm, "Non-null Externref cannot be null")));
-            break;
-        case Wasm::TypeKind::I64:
-            arg = JSValue::decode(bitwise_cast<uint64_t>(arg.toBigInt64(globalObject)));
-            break;
-        case Wasm::TypeKind::F32:
-            arg = JSValue::decode(bitwise_cast<uint32_t>(arg.toFloat(globalObject)));
-            break;
-        case Wasm::TypeKind::F64:
-            arg = JSValue::decode(bitwise_cast<uint64_t>(arg.toNumber(globalObject)));
-            break;
-        case Wasm::TypeKind::Void:
-        case Wasm::TypeKind::Func:
-        case Wasm::TypeKind::RefNull:
-        case Wasm::TypeKind::Ref:
-            RELEASE_ASSERT_NOT_REACHED();
-        }
+        uint64_t value = fromJSValue(globalObject, signature.argument(argIndex), callFrame->argument(argIndex));
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
-        boxedArgs.append(arg);
+        boxedArgs.append(JSValue::decode(value));
     }
 
     // When we don't use fast TLS to store the context, the JS
@@ -152,10 +110,6 @@ JSC_DEFINE_HOST_FUNCTION(callWebAssemblyFunction, (JSGlobalObject* globalObject,
     ASSERT(wasmFunction->instance());
     ASSERT(&wasmFunction->instance()->instance() == vm.wasmContext.load());
     EncodedJSValue rawResult = vmEntryToWasm(wasmFunction->jsEntrypoint(MustCheckArity).executableAddress(), &vm, &protoCallFrame);
-    // We need to make sure this is in a register or on the stack since it's stored in Vector<JSValue>.
-    // This probably isn't strictly necessary, since the WebAssemblyFunction* should keep the instance
-    // alive. But it's good hygiene.
-    instance->use();
     if (prevWasmInstance != wasmInstance) {
         // This is just for some extra safety instead of leaving a cached
         // value in there. If we ever forget to set the value to be a real
@@ -167,6 +121,11 @@ JSC_DEFINE_HOST_FUNCTION(callWebAssemblyFunction, (JSGlobalObject* globalObject,
     }
     vm.wasmContext.store(prevWasmInstance, vm.softStackLimit());
     RETURN_IF_EXCEPTION(scope, { });
+
+    // We need to make sure this is in a register or on the stack since it's stored in Vector<JSValue>.
+    // This probably isn't strictly necessary, since the WebAssemblyFunction* should keep the instance
+    // alive. But it's good hygiene.
+    instance->use();
 
     return rawResult;
 }

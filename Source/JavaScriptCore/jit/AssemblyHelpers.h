@@ -401,6 +401,8 @@ public:
     }
 
     void restoreCalleeSavesFromEntryFrameCalleeSavesBuffer(EntryFrame*&);
+    void restoreCalleeSavesFromVMEntryFrameCalleeSavesBuffer(GPRReg vmGPR, GPRReg scratchGPR);
+    void restoreCalleeSavesFromVMEntryFrameCalleeSavesBufferImpl(GPRReg entryFrame, const RegisterSet& skipList);
 
     void copyLLIntBaselineCalleeSavesFromFrameOrRegisterToEntryFrameCalleeSavesBuffer(EntryFrame*&, const TempRegisterSet& usedRegisters = { RegisterSet::stubUnavailableRegisters() });
 

@@ -29,11 +29,13 @@
 
 #include "CodeLocation.h"
 #include "Identifier.h"
+#include "JSString.h"
 #include "MacroAssemblerCodeRef.h"
 #include "RegisterAtOffsetList.h"
 #include "WasmMemoryInformation.h"
 #include "WasmName.h"
 #include "WasmNameSection.h"
+#include "WasmOSREntryData.h"
 #include "WasmOps.h"
 #include "WasmPageCount.h"
 #include "WasmSignature.h"
@@ -50,6 +52,7 @@ namespace Wasm {
 
 struct CompilationContext;
 struct ModuleInformation;
+struct UnlinkedHandlerInfo;
 
 using BlockSignature = const Signature*;
 
@@ -75,6 +78,19 @@ inline bool isValueType(Type type)
         break;
     }
     return false;
+}
+
+inline JSString* typeToString(VM& vm, TypeKind type)
+{
+#define TYPE_CASE(macroName, value, b3, inc, wasmName) \
+    case TypeKind::macroName: \
+        return jsNontrivialString(vm, #wasmName); \
+
+    switch (type) {
+        FOR_EACH_WASM_TYPE(TYPE_CASE)
+    }
+
+#undef TYPE_CASE
 }
 
 inline bool isSubtype(Type sub, Type parent)
@@ -116,6 +132,7 @@ enum class ExternalKind : uint8_t {
     Table = 1,
     Memory = 2,
     Global = 3,
+    Exception = 4,
 };
 
 template<typename Int>
@@ -126,6 +143,7 @@ inline bool isValidExternalKind(Int val)
     case static_cast<Int>(ExternalKind::Table):
     case static_cast<Int>(ExternalKind::Memory):
     case static_cast<Int>(ExternalKind::Global):
+    case static_cast<Int>(ExternalKind::Exception):
         return true;
     }
     return false;
@@ -135,6 +153,7 @@ static_assert(static_cast<int>(ExternalKind::Function) == 0, "Wasm needs Functio
 static_assert(static_cast<int>(ExternalKind::Table)    == 1, "Wasm needs Table to have the value 1");
 static_assert(static_cast<int>(ExternalKind::Memory)   == 2, "Wasm needs Memory to have the value 2");
 static_assert(static_cast<int>(ExternalKind::Global)   == 3, "Wasm needs Global to have the value 3");
+static_assert(static_cast<int>(ExternalKind::Exception)   == 4, "Wasm needs Exception to have the value 4");
 
 inline const char* makeString(ExternalKind kind)
 {
@@ -143,6 +162,7 @@ inline const char* makeString(ExternalKind kind)
     case ExternalKind::Table: return "table";
     case ExternalKind::Memory: return "memory";
     case ExternalKind::Global: return "global";
+    case ExternalKind::Exception: return "tag";
     }
     RELEASE_ASSERT_NOT_REACHED();
     return "?";
@@ -373,6 +393,8 @@ struct Entrypoint {
 struct InternalFunction {
     WTF_MAKE_STRUCT_FAST_ALLOCATED;
     CodeLocationDataLabelPtr<WasmEntryPtrTag> calleeMoveLocation;
+    StackMaps stackmaps;
+    Vector<UnlinkedHandlerInfo> exceptionHandlers;
     Entrypoint entrypoint;
 };
 

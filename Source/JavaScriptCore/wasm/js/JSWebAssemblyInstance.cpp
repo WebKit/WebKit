@@ -216,6 +216,7 @@ JSWebAssemblyInstance* JSWebAssemblyInstance::tryCreate(VM& vm, JSGlobalObject* 
         case Wasm::ExternalKind::Function:
         case Wasm::ExternalKind::Global:
         case Wasm::ExternalKind::Table:
+        case Wasm::ExternalKind::Exception:
             continue;
         case Wasm::ExternalKind::Memory:
             break;
@@ -242,6 +243,7 @@ JSWebAssemblyInstance* JSWebAssemblyInstance::tryCreate(VM& vm, JSGlobalObject* 
         case Wasm::ExternalKind::Function:
         case Wasm::ExternalKind::Global:
         case Wasm::ExternalKind::Table:
+        case Wasm::ExternalKind::Exception:
             break;
 
         case Wasm::ExternalKind::Memory: {

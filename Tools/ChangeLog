@@ -1,5 +1,19 @@
 2021-10-18  Russell Epstein  <repstein@apple.com>
 
+        Apply patch. rdar://problem/84351845
+
+    2021-10-18  Tadeu Zagallo  <tzagallo@apple.com>
+
+            Implement the WebAssembly exception handling proposal
+            https://bugs.webkit.org/show_bug.cgi?id=229681
+            <rdar://81603387>
+
+            Reviewed by Keith Miller.
+
+            * Scripts/run-jsc-stress-tests:
+
+2021-10-18  Russell Epstein  <repstein@apple.com>
+
         Apply patch. rdar://problem/84313358
 
     2021-10-18  Alex Christensen  <achristensen@webkit.org>

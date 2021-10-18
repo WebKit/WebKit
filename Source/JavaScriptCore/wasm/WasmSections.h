@@ -45,7 +45,8 @@ namespace JSC { namespace Wasm {
     macro(Element,    9, "Elements section") \
     macro(Code,      10, "Function bodies (code)") \
     macro(Data,      11, "Data segments") \
-    macro(DataCount, 12, "Data count")
+    macro(DataCount, 12, "Data count") \
+    macro(Exception, 13, "Exception declarations") \
 
 enum class Section : uint8_t {
     // It's important that Begin is less than every other section number and that Custom is greater.
@@ -90,6 +91,10 @@ inline bool validateOrder(Section previousKnown, Section next)
     ASSERT(isKnownSection(previousKnown) || previousKnown == Section::Begin);
     if (previousKnown == Section::DataCount && next == Section::Code)
         return true;
+    if (previousKnown == Section::Exception)
+        return next >= Section::Global;
+    if (next == Section::Exception)
+        return previousKnown <= Section::Memory;
     return static_cast<uint8_t>(previousKnown) < static_cast<uint8_t>(next);
 }
 

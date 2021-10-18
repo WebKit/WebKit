@@ -27,8 +27,8 @@
 
 #if ENABLE(WEBASSEMBLY_B3JIT)
 
+#include "B3Type.h"
 #include "B3ValueRep.h"
-#include "WasmFormat.h"
 #include <wtf/Vector.h>
 
 namespace JSC { namespace Wasm {
@@ -47,6 +47,9 @@ private:
     B3::Type m_type;
 };
 
+using StackMap = Vector<OSREntryValue>;
+using StackMaps = HashMap<CallSiteIndex, StackMap>;
+
 class OSREntryData {
     WTF_MAKE_NONCOPYABLE(OSREntryData);
     WTF_MAKE_FAST_ALLOCATED;
@@ -59,12 +62,12 @@ public:
 
     uint32_t functionIndex() const { return m_functionIndex; }
     uint32_t loopIndex() const { return m_loopIndex; }
-    Vector<OSREntryValue>& values() { return m_values; }
+    StackMap& values() { return m_values; }
 
 private:
     uint32_t m_functionIndex;
     uint32_t m_loopIndex;
-    Vector<OSREntryValue> m_values;
+    StackMap m_values;
 };
 
 } } // namespace JSC::Wasm

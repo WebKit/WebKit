@@ -29,6 +29,8 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "BytecodeStructs.h"
+#include "JITExceptions.h"
+#include "JSWebAssemblyException.h"
 #include "JSWebAssemblyInstance.h"
 #include "LLIntData.h"
 #include "WasmBBQPlan.h"
@@ -584,6 +586,111 @@ WASM_SLOW_PATH_DECL(memory_atomic_notify)
     if (result < 0)
         WASM_THROW(Wasm::ExceptionType::OutOfBoundsMemoryAccess);
     WASM_RETURN(result);
+}
+
+WASM_SLOW_PATH_DECL(throw)
+{
+    instance->storeTopCallFrame(callFrame);
+
+    JSWebAssemblyInstance* jsInstance = instance->owner<JSWebAssemblyInstance>();
+    JSGlobalObject* globalObject = jsInstance->globalObject();
+    VM& vm = globalObject->vm();
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+
+    auto instruction = pc->as<WasmThrow, WasmOpcodeTraits>();
+    const Wasm::Tag& tag = instance->tag(instruction.m_exceptionIndex);
+
+    FixedVector<uint64_t> values(tag.parameterCount());
+    for (unsigned i = 0; i < tag.parameterCount(); ++i)
+        values[i] = READ((instruction.m_firstValue - i)).encodedJSValue();
+
+    JSWebAssemblyException* exception = JSWebAssemblyException::create(vm, globalObject->webAssemblyExceptionStructure(), tag, WTFMove(values));
+    throwException(globalObject, throwScope, exception);
+
+    genericUnwind(vm, callFrame);
+    ASSERT(!!vm.callFrameForCatch);
+    ASSERT(!!vm.targetMachinePCForThrow);
+    // FIXME: We could make this better:
+    // This is a total hack, but the llint (both op_catch and llint_handle_uncaught_exception)
+    // require a cell in the callee field to load the VM. (The baseline JIT does not require
+    // this since it is compiled with a constant VM pointer.) We could make the calling convention
+    // for exceptions first load callFrameForCatch info call frame register before jumping
+    // to the exception handler. If we did this, we could remove this terrible hack.
+    // https://bugs.webkit.org/show_bug.cgi?id=170440
+    vm.calleeForWasmCatch = callFrame->callee();
+    bitwise_cast<uint64_t*>(callFrame)[static_cast<int>(CallFrameSlot::callee)] = bitwise_cast<uint64_t>(jsInstance->module());
+    WASM_RETURN_TWO(vm.targetMachinePCForThrow, nullptr);
+}
+
+WASM_SLOW_PATH_DECL(rethrow)
+{
+    instance->storeTopCallFrame(callFrame);
+
+    JSWebAssemblyInstance* jsInstance = instance->owner<JSWebAssemblyInstance>();
+    JSGlobalObject* globalObject = jsInstance->globalObject();
+    VM& vm = globalObject->vm();
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+
+    auto instruction = pc->as<WasmRethrow, WasmOpcodeTraits>();
+    JSValue exception = READ(instruction.m_exception).jsValue();
+    throwException(globalObject, throwScope, exception);
+
+    genericUnwind(vm, callFrame);
+    ASSERT(!!vm.callFrameForCatch);
+    ASSERT(!!vm.targetMachinePCForThrow);
+    // FIXME: We could make this better:
+    // This is a total hack, but the llint (both op_catch and llint_handle_uncaught_exception)
+    // require a cell in the callee field to load the VM. (The baseline JIT does not require
+    // this since it is compiled with a constant VM pointer.) We could make the calling convention
+    // for exceptions first load callFrameForCatch info call frame register before jumping
+    // to the exception handler. If we did this, we could remove this terrible hack.
+    // https://bugs.webkit.org/show_bug.cgi?id=170440
+    vm.calleeForWasmCatch = callFrame->callee();
+    bitwise_cast<uint64_t*>(callFrame)[static_cast<int>(CallFrameSlot::callee)] = bitwise_cast<uint64_t>(jsInstance->module());
+    WASM_RETURN_TWO(vm.targetMachinePCForThrow, nullptr);
+}
+
+WASM_SLOW_PATH_DECL(retrieve_and_clear_exception)
+{
+    UNUSED_PARAM(callFrame);
+    JSWebAssemblyInstance* jsInstance = instance->owner<JSWebAssemblyInstance>();
+    JSGlobalObject* globalObject = jsInstance->globalObject();
+    VM& vm = globalObject->vm();
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+
+    RELEASE_ASSERT(!!throwScope.exception());
+
+    Exception* exception = throwScope.exception();
+    JSValue thrownValue = exception->value();
+    void* payload = nullptr;
+
+    const auto& handleCatchAll = [&](const auto& instruction) {
+        callFrame->uncheckedR(instruction.m_exception) = thrownValue;
+    };
+
+    const auto& handleCatch = [&](const auto& instruction) {
+        JSWebAssemblyException* wasmException = jsDynamicCast<JSWebAssemblyException*>(vm, thrownValue);
+        RELEASE_ASSERT(!!wasmException);
+        payload = bitwise_cast<void*>(wasmException->payload().data());
+        callFrame->uncheckedR(instruction.m_exception) = thrownValue;
+    };
+
+    if (pc->is<WasmCatch, WasmOpcodeTraits>())
+        handleCatch(pc->as<WasmCatch, WasmOpcodeTraits>());
+    else if (pc->is<WasmCatchAll, WasmOpcodeTraits>())
+        handleCatchAll(pc->as<WasmCatchAll, WasmOpcodeTraits>());
+    else if (pc->is<WasmCatchNoTls, WasmOpcodeTraits>())
+        handleCatch(pc->as<WasmCatchNoTls, WasmOpcodeTraits>());
+    else if (pc->is<WasmCatchAllNoTls, WasmOpcodeTraits>())
+        handleCatchAll(pc->as<WasmCatchAllNoTls, WasmOpcodeTraits>());
+    else
+        RELEASE_ASSERT_NOT_REACHED();
+
+    // We want to clear the exception here rather than in the catch prologue
+    // JIT code because clearing it also entails clearing a bit in an Atomic
+    // bit field in VMTraps.
+    throwScope.clearException();
+    WASM_RETURN_TWO(pc, payload);
 }
 
 extern "C" SlowPathReturnType slow_path_wasm_throw_exception(CallFrame* callFrame, const Instruction* pc, Wasm::Instance* instance, Wasm::ExceptionType exceptionType)

@@ -32,7 +32,9 @@
 #include "WasmCompilationMode.h"
 #include "WasmFormat.h"
 #include "WasmFunctionCodeBlock.h"
+#include "WasmHandlerInfo.h"
 #include "WasmIndexOrName.h"
+#include "WasmLLIntTierUpCounter.h"
 #include "WasmTierUpCount.h"
 #include <wtf/ThreadSafeRefCounted.h>
 
@@ -59,6 +61,10 @@ public:
     virtual RegisterAtOffsetList* calleeSaveRegisters() = 0;
     virtual std::tuple<void*, void*> range() const = 0;
 
+    const HandlerInfo* handlerForIndex(Instance&, unsigned, const Tag*);
+
+    bool hasExceptionHandlers() const { return !!m_exceptionHandlers.size(); }
+
 #if ENABLE(WEBASSEMBLY_B3JIT)
     virtual void setOSREntryCallee(Ref<OMGForOSREntryCallee>&&)
     {
@@ -68,6 +74,8 @@ public:
 
     void dump(PrintStream&) const;
 
+    virtual FunctionCodeBlock* functionCodeBlock() const { return 0; }
+
 protected:
     JS_EXPORT_PRIVATE Callee(Wasm::CompilationMode);
     JS_EXPORT_PRIVATE Callee(Wasm::CompilationMode, size_t, std::pair<const Name*, RefPtr<NameSection>>&&);
@@ -75,6 +83,9 @@ protected:
 private:
     CompilationMode m_compilationMode;
     IndexOrName m_indexOrName;
+
+protected:
+    Vector<HandlerInfo> m_exceptionHandlers;
 };
 
 class JITCallee : public Callee {
@@ -99,44 +110,6 @@ private:
     Wasm::Entrypoint m_entrypoint;
 };
 
-#if ENABLE(WEBASSEMBLY_B3JIT)
-class OMGCallee final : public JITCallee {
-public:
-    static Ref<OMGCallee> create(Wasm::Entrypoint&& entrypoint, size_t index, std::pair<const Name*, RefPtr<NameSection>>&& name, Vector<UnlinkedWasmToWasmCall>&& unlinkedCalls)
-    {
-        return adoptRef(*new OMGCallee(WTFMove(entrypoint), index, WTFMove(name), WTFMove(unlinkedCalls)));
-    }
-
-private:
-    OMGCallee(Wasm::Entrypoint&& entrypoint, size_t index, std::pair<const Name*, RefPtr<NameSection>>&& name, Vector<UnlinkedWasmToWasmCall>&& unlinkedCalls)
-        : JITCallee(Wasm::CompilationMode::OMGMode, WTFMove(entrypoint), index, WTFMove(name), WTFMove(unlinkedCalls))
-    {
-    }
-};
-
-class OMGForOSREntryCallee final : public JITCallee {
-public:
-    static Ref<OMGForOSREntryCallee> create(Wasm::Entrypoint&& entrypoint, size_t index, std::pair<const Name*, RefPtr<NameSection>>&& name, unsigned osrEntryScratchBufferSize, uint32_t loopIndex, Vector<UnlinkedWasmToWasmCall>&& unlinkedCalls)
-    {
-        return adoptRef(*new OMGForOSREntryCallee(WTFMove(entrypoint), index, WTFMove(name), osrEntryScratchBufferSize, loopIndex, WTFMove(unlinkedCalls)));
-    }
-
-    unsigned osrEntryScratchBufferSize() const { return m_osrEntryScratchBufferSize; }
-    uint32_t loopIndex() const { return m_loopIndex; }
-
-private:
-    OMGForOSREntryCallee(Wasm::Entrypoint&& entrypoint, size_t index, std::pair<const Name*, RefPtr<NameSection>>&& name, unsigned osrEntryScratchBufferSize, uint32_t loopIndex, Vector<UnlinkedWasmToWasmCall>&& unlinkedCalls)
-        : JITCallee(Wasm::CompilationMode::OMGForOSREntryMode, WTFMove(entrypoint), index, WTFMove(name), WTFMove(unlinkedCalls))
-        , m_osrEntryScratchBufferSize(osrEntryScratchBufferSize)
-        , m_loopIndex(loopIndex)
-    {
-    }
-
-    unsigned m_osrEntryScratchBufferSize;
-    uint32_t m_loopIndex;
-};
-#endif
-
 class EmbedderEntrypointCallee final : public JITCallee {
 public:
     static Ref<EmbedderEntrypointCallee> create(Wasm::Entrypoint&& entrypoint)
@@ -151,12 +124,72 @@ private:
     }
 };
 
+
 #if ENABLE(WEBASSEMBLY_B3JIT)
-class BBQCallee final : public JITCallee {
+class OptimizingJITCallee : public JITCallee {
 public:
-    static Ref<BBQCallee> create(Wasm::Entrypoint&& entrypoint, size_t index, std::pair<const Name*, RefPtr<NameSection>>&& name, std::unique_ptr<TierUpCount>&& tierUpCount, Vector<UnlinkedWasmToWasmCall>&& unlinkedCalls)
+    const Vector<OSREntryValue>& stackmap(CallSiteIndex) const;
+
+protected:
+    OptimizingJITCallee(Wasm::CompilationMode mode, Wasm::Entrypoint&& entrypoint, size_t index, std::pair<const Name*, RefPtr<NameSection>>&& name, Vector<UnlinkedWasmToWasmCall>&& unlinkedCalls, HashMap<CallSiteIndex, Vector<OSREntryValue>>&& stackmaps, Vector<UnlinkedHandlerInfo>&& exceptionHandlers, Vector<CodeLocationLabel<ExceptionHandlerPtrTag>>&& exceptionHandlerLocations)
+        : JITCallee(mode, WTFMove(entrypoint), index, WTFMove(name), WTFMove(unlinkedCalls))
+        , m_stackmaps(WTFMove(stackmaps))
+        , m_unlinkedExceptionHandlers(WTFMove(exceptionHandlers))
+        , m_exceptionHandlerLocations(WTFMove(exceptionHandlerLocations))
     {
-        return adoptRef(*new BBQCallee(WTFMove(entrypoint), index, WTFMove(name), WTFMove(tierUpCount), WTFMove(unlinkedCalls)));
+        RELEASE_ASSERT(m_unlinkedExceptionHandlers.size() == m_exceptionHandlerLocations.size());
+        linkExceptionHandlers();
+    }
+
+private:
+    void linkExceptionHandlers();
+
+    HashMap<CallSiteIndex, Vector<OSREntryValue>> m_stackmaps;
+    Vector<UnlinkedHandlerInfo> m_unlinkedExceptionHandlers;
+    Vector<CodeLocationLabel<ExceptionHandlerPtrTag>> m_exceptionHandlerLocations;
+};
+
+class OMGCallee final : public OptimizingJITCallee {
+public:
+    static Ref<OMGCallee> create(Wasm::Entrypoint&& entrypoint, size_t index, std::pair<const Name*, RefPtr<NameSection>>&& name, Vector<UnlinkedWasmToWasmCall>&& unlinkedCalls, HashMap<CallSiteIndex, Vector<OSREntryValue>>&& stackmaps, Vector<UnlinkedHandlerInfo>&& exceptionHandlers, Vector<CodeLocationLabel<ExceptionHandlerPtrTag>>&& exceptionHandlerLocations)
+    {
+        return adoptRef(*new OMGCallee(WTFMove(entrypoint), index, WTFMove(name), WTFMove(unlinkedCalls), WTFMove(stackmaps), WTFMove(exceptionHandlers), WTFMove(exceptionHandlerLocations)));
+    }
+
+private:
+    OMGCallee(Wasm::Entrypoint&& entrypoint, size_t index, std::pair<const Name*, RefPtr<NameSection>>&& name, Vector<UnlinkedWasmToWasmCall>&& unlinkedCalls, HashMap<CallSiteIndex, Vector<OSREntryValue>>&& stackmaps, Vector<UnlinkedHandlerInfo>&& exceptionHandlers, Vector<CodeLocationLabel<ExceptionHandlerPtrTag>>&& exceptionHandlerLocations)
+        : OptimizingJITCallee(Wasm::CompilationMode::OMGMode, WTFMove(entrypoint), index, WTFMove(name), WTFMove(unlinkedCalls), WTFMove(stackmaps), WTFMove(exceptionHandlers), WTFMove(exceptionHandlerLocations))
+    {
+    }
+};
+
+class OMGForOSREntryCallee final : public OptimizingJITCallee {
+public:
+    static Ref<OMGForOSREntryCallee> create(Wasm::Entrypoint&& entrypoint, size_t index, std::pair<const Name*, RefPtr<NameSection>>&& name, unsigned osrEntryScratchBufferSize, uint32_t loopIndex, Vector<UnlinkedWasmToWasmCall>&& unlinkedCalls, HashMap<CallSiteIndex, Vector<OSREntryValue>>&& stackmaps, Vector<UnlinkedHandlerInfo>&& exceptionHandlers, Vector<CodeLocationLabel<ExceptionHandlerPtrTag>>&& exceptionHandlerLocations)
+    {
+        return adoptRef(*new OMGForOSREntryCallee(WTFMove(entrypoint), index, WTFMove(name), osrEntryScratchBufferSize, loopIndex, WTFMove(unlinkedCalls), WTFMove(stackmaps), WTFMove(exceptionHandlers), WTFMove(exceptionHandlerLocations)));
+    }
+
+    unsigned osrEntryScratchBufferSize() const { return m_osrEntryScratchBufferSize; }
+    uint32_t loopIndex() const { return m_loopIndex; }
+
+private:
+    OMGForOSREntryCallee(Wasm::Entrypoint&& entrypoint, size_t index, std::pair<const Name*, RefPtr<NameSection>>&& name, unsigned osrEntryScratchBufferSize, uint32_t loopIndex, Vector<UnlinkedWasmToWasmCall>&& unlinkedCalls, HashMap<CallSiteIndex, Vector<OSREntryValue>>&& stackmaps, Vector<UnlinkedHandlerInfo>&& exceptionHandlers, Vector<CodeLocationLabel<ExceptionHandlerPtrTag>>&& exceptionHandlerLocations)
+        : OptimizingJITCallee(Wasm::CompilationMode::OMGForOSREntryMode, WTFMove(entrypoint), index, WTFMove(name), WTFMove(unlinkedCalls), WTFMove(stackmaps), WTFMove(exceptionHandlers), WTFMove(exceptionHandlerLocations))
+        , m_osrEntryScratchBufferSize(osrEntryScratchBufferSize)
+        , m_loopIndex(loopIndex)
+    {
+    }
+
+    unsigned m_osrEntryScratchBufferSize;
+    uint32_t m_loopIndex;
+};
+
+class BBQCallee final : public OptimizingJITCallee {
+public:
+    static Ref<BBQCallee> create(Wasm::Entrypoint&& entrypoint, size_t index, std::pair<const Name*, RefPtr<NameSection>>&& name, std::unique_ptr<TierUpCount>&& tierUpCount, Vector<UnlinkedWasmToWasmCall>&& unlinkedCalls, HashMap<CallSiteIndex, Vector<OSREntryValue>>&& stackmaps, Vector<UnlinkedHandlerInfo>&& exceptionHandlers, Vector<CodeLocationLabel<ExceptionHandlerPtrTag>>&& exceptionHandlerLocations)
+    {
+        return adoptRef(*new BBQCallee(WTFMove(entrypoint), index, WTFMove(name), WTFMove(tierUpCount), WTFMove(unlinkedCalls), WTFMove(stackmaps), WTFMove(exceptionHandlers), WTFMove(exceptionHandlerLocations)));
     }
 
     OMGForOSREntryCallee* osrEntryCallee() { return m_osrEntryCallee.get(); }
@@ -177,8 +210,8 @@ public:
     TierUpCount* tierUpCount() { return m_tierUpCount.get(); }
 
 private:
-    BBQCallee(Wasm::Entrypoint&& entrypoint, size_t index, std::pair<const Name*, RefPtr<NameSection>>&& name, std::unique_ptr<TierUpCount>&& tierUpCount, Vector<UnlinkedWasmToWasmCall>&& unlinkedCalls)
-        : JITCallee(Wasm::CompilationMode::BBQMode, WTFMove(entrypoint), index, WTFMove(name), WTFMove(unlinkedCalls))
+    BBQCallee(Wasm::Entrypoint&& entrypoint, size_t index, std::pair<const Name*, RefPtr<NameSection>>&& name, std::unique_ptr<TierUpCount>&& tierUpCount, Vector<UnlinkedWasmToWasmCall>&& unlinkedCalls, HashMap<CallSiteIndex, Vector<OSREntryValue>>&& stackmaps, Vector<UnlinkedHandlerInfo>&& exceptionHandlers, Vector<CodeLocationLabel<ExceptionHandlerPtrTag>>&& exceptionHandlerLocations)
+        : OptimizingJITCallee(Wasm::CompilationMode::BBQMode, WTFMove(entrypoint), index, WTFMove(name), WTFMove(unlinkedCalls), WTFMove(stackmaps), WTFMove(exceptionHandlers), WTFMove(exceptionHandlerLocations))
         , m_tierUpCount(WTFMove(tierUpCount))
     {
     }
@@ -218,15 +251,13 @@ public:
     }
 
     LLIntTierUpCounter& tierUpCounter() { return m_codeBlock->tierUpCounter(); }
+    FunctionCodeBlock* functionCodeBlock() const final { return m_codeBlock.get(); }
 #endif
 
 private:
-    LLIntCallee(std::unique_ptr<FunctionCodeBlock> codeBlock, size_t index, std::pair<const Name*, RefPtr<NameSection>>&& name)
-        : Callee(Wasm::CompilationMode::LLIntMode, index, WTFMove(name))
-        , m_codeBlock(WTFMove(codeBlock))
-    {
-        RELEASE_ASSERT(m_codeBlock);
-    }
+    LLIntCallee(std::unique_ptr<FunctionCodeBlock>, size_t index, std::pair<const Name*, RefPtr<NameSection>>&&);
+
+    void linkExceptionHandlers();
 
 #if ENABLE(WEBASSEMBLY_B3JIT)
     RefPtr<JITCallee> m_replacement;

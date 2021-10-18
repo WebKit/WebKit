@@ -29,6 +29,7 @@
 #include "LLIntCommon.h"
 #include "LLIntData.h"
 #include "LLIntThunks.h"
+#include "WasmContext.h"
 
 #if LLINT_TRACING
 #include "CatchScope.h"
@@ -47,6 +48,18 @@ Instruction* returnToThrow(VM& vm)
     }
 #endif
     return LLInt::exceptionInstructions();
+}
+
+Instruction* wasmReturnToThrow(VM& vm)
+{
+    UNUSED_PARAM(vm);
+#if LLINT_TRACING
+    if (UNLIKELY(Options::traceLLIntSlowPath())) {
+        auto scope = DECLARE_CATCH_SCOPE(vm);
+        dataLog("Throwing exception ", JSValue(scope.exception()), " (returnToThrow).\n");
+    }
+#endif
+    return LLInt::wasmExceptionInstructions();
 }
 
 MacroAssemblerCodeRef<ExceptionHandlerPtrTag> callToThrow(VM& vm)
@@ -91,5 +104,37 @@ MacroAssemblerCodeRef<ExceptionHandlerPtrTag> handleCatch(OpcodeSize size)
     RELEASE_ASSERT_NOT_REACHED();
     return {};
 }
+
+#if ENABLE(WEBASSEMBLY)
+MacroAssemblerCodeRef<ExceptionHandlerPtrTag> handleWasmCatch(OpcodeSize size)
+{
+    WasmOpcodeID opcode = Wasm::Context::useFastTLS() ? wasm_catch : wasm_catch_no_tls;
+    switch (size) {
+    case OpcodeSize::Narrow:
+        return LLInt::getCodeRef<ExceptionHandlerPtrTag>(opcode);
+    case OpcodeSize::Wide16:
+        return LLInt::getWide16CodeRef<ExceptionHandlerPtrTag>(opcode);
+    case OpcodeSize::Wide32:
+        return LLInt::getWide32CodeRef<ExceptionHandlerPtrTag>(opcode);
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+    return { };
+}
+
+MacroAssemblerCodeRef<ExceptionHandlerPtrTag> handleWasmCatchAll(OpcodeSize size)
+{
+    WasmOpcodeID opcode = Wasm::Context::useFastTLS() ? wasm_catch_all : wasm_catch_all_no_tls;
+    switch (size) {
+    case OpcodeSize::Narrow:
+        return LLInt::getCodeRef<ExceptionHandlerPtrTag>(opcode);
+    case OpcodeSize::Wide16:
+        return LLInt::getWide16CodeRef<ExceptionHandlerPtrTag>(opcode);
+    case OpcodeSize::Wide32:
+        return LLInt::getWide32CodeRef<ExceptionHandlerPtrTag>(opcode);
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+    return { };
+}
+#endif // ENABLE(WEBASSEMBLY)
 
 } } // namespace JSC::LLInt

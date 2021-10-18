@@ -652,9 +652,47 @@ void AssemblyHelpers::restoreCalleeSavesFromEntryFrameCalleeSavesBuffer(EntryFra
 #endif
 
     loadPtr(&topEntryFrame, scratch);
-    addPtr(TrustedImm32(EntryFrame::calleeSaveRegistersBufferOffset()), scratch);
+    restoreCalleeSavesFromVMEntryFrameCalleeSavesBufferImpl(scratch, skipList);
 
-    LoadRegSpooler spooler(*this, scratch);
+    // Restore the callee save value of the scratch.
+    RegisterAtOffset entry = allCalleeSaves->at(scratchGPREntryIndex);
+    ASSERT(!dontRestoreRegisters.get(entry.reg()));
+    ASSERT(entry.reg().isGPR());
+    ASSERT(scratch == entry.reg().gpr());
+#if CPU(ARM64)
+    RegisterAtOffset entry2 = allCalleeSaves->at(scratchGPREntryIndex + 1);
+    ASSERT_UNUSED(entry2, !dontRestoreRegisters.get(entry2.reg()));
+    ASSERT(entry2.reg().isGPR());
+    ASSERT(unusedNextSlotGPR == entry2.reg().gpr());
+    loadPair64(scratch, TrustedImm32(entry.offset()), scratch, unusedNextSlotGPR);
+#else
+    loadPtr(Address(scratch, entry.offset()), scratch);
+#endif
+
+#else
+    UNUSED_PARAM(topEntryFrame);
+#endif // NUMBER_OF_CALLEE_SAVES_REGISTERS > 0
+}
+
+void AssemblyHelpers::restoreCalleeSavesFromVMEntryFrameCalleeSavesBuffer(GPRReg vmGPR, GPRReg scratchGPR)
+{
+#if NUMBER_OF_CALLEE_SAVES_REGISTERS > 0
+    loadPtr(Address(vmGPR, VM::topEntryFrameOffset()), scratchGPR);
+    restoreCalleeSavesFromVMEntryFrameCalleeSavesBufferImpl(scratchGPR, RegisterSet::stackRegisters());
+#else
+    UNUSED_PARAM(vmGPR);
+#endif // NUMBER_OF_CALLEE_SAVES_REGISTERS > 0
+}
+
+void AssemblyHelpers::restoreCalleeSavesFromVMEntryFrameCalleeSavesBufferImpl(GPRReg entryFrameGPR, const RegisterSet& skipList)
+{
+#if NUMBER_OF_CALLEE_SAVES_REGISTERS > 0
+    addPtr(TrustedImm32(EntryFrame::calleeSaveRegistersBufferOffset()), entryFrameGPR);
+
+    RegisterAtOffsetList* allCalleeSaves = RegisterSet::vmCalleeSaveRegisterOffsets();
+    unsigned registerCount = allCalleeSaves->size();
+
+    LoadRegSpooler spooler(*this, entryFrameGPR);
 
     // Restore all callee saves except for the scratch.
     unsigned i = 0;
@@ -676,23 +714,9 @@ void AssemblyHelpers::restoreCalleeSavesFromEntryFrameCalleeSavesBuffer(EntryFra
     }
     spooler.finalizeFPR();
 
-    // Restore the callee save value of the scratch.
-    RegisterAtOffset entry = allCalleeSaves->at(scratchGPREntryIndex);
-    ASSERT(!dontRestoreRegisters.get(entry.reg()));
-    ASSERT(entry.reg().isGPR());
-    ASSERT(scratch == entry.reg().gpr());
-#if CPU(ARM64)
-    RegisterAtOffset entry2 = allCalleeSaves->at(scratchGPREntryIndex + 1);
-    ASSERT_UNUSED(entry2, !dontRestoreRegisters.get(entry2.reg()));
-    ASSERT(entry2.reg().isGPR());
-    ASSERT(unusedNextSlotGPR == entry2.reg().gpr());
-    loadPair64(scratch, TrustedImm32(entry.offset()), scratch, unusedNextSlotGPR);
 #else
-    loadPtr(Address(scratch, entry.offset()), scratch);
-#endif
-
-#else
-    UNUSED_PARAM(topEntryFrame);
+    UNUSED_PARAM(vmGPR);
+    UNUSED_PARAM(skipList);
 #endif // NUMBER_OF_CALLEE_SAVES_REGISTERS > 0
 }
 

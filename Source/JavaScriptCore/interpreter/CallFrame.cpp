@@ -130,7 +130,8 @@ unsigned CallFrame::callSiteBitsAsBytecodeOffset() const
 
 BytecodeIndex CallFrame::bytecodeIndex() const
 {
-    ASSERT(!callee().isWasm());
+    if (callee().isWasm())
+        return callSiteIndex().bytecodeIndex();
     if (!codeBlock())
         return BytecodeIndex(0);
 #if ENABLE(DFG_JIT)

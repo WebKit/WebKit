@@ -37,6 +37,7 @@
 #include "JSWebAssemblyInstance.h"
 #include "JSWebAssemblyLinkError.h"
 #include "JSWebAssemblyModule.h"
+#include "JSWebAssemblyTag.h"
 #include "ObjectConstructor.h"
 #include "WasmSignatureInlines.h"
 #include "WebAssemblyFunction.h"
@@ -130,6 +131,7 @@ void WebAssemblyModuleRecord::linkImpl(JSGlobalObject* globalObject, JSObject* i
         case Wasm::ExternalKind::Function:
         case Wasm::ExternalKind::Global:
         case Wasm::ExternalKind::Table:
+        case Wasm::ExternalKind::Exception:
             break;
         case Wasm::ExternalKind::Memory:
             continue;
@@ -363,7 +365,7 @@ void WebAssemblyModuleRecord::linkImpl(JSGlobalObject* globalObject, JSObject* i
         }
 
         case Wasm::ExternalKind::Table: {
-            // 7. Otherwise (i is a table import):
+            // 7. If i is a table import:
             JSWebAssemblyTable* table = jsDynamicCast<JSWebAssemblyTable*>(vm, value);
             // i. If v is not a WebAssembly.Table object, throw a WebAssembly.LinkError.
             if (!table)
@@ -394,6 +396,20 @@ void WebAssemblyModuleRecord::linkImpl(JSGlobalObject* globalObject, JSObject* i
             break;
         }
 
+        case Wasm::ExternalKind::Exception: {
+            JSWebAssemblyTag* tag = jsDynamicCast<JSWebAssemblyTag*>(vm, value);
+            if (!tag)
+                return exception(createJSWebAssemblyLinkError(globalObject, vm, importFailMessage(import, "Tag import", "is not an instance of WebAssembly.Tag")));
+
+            Wasm::SignatureIndex expectedSignatureIndex = moduleInformation.importExceptionSignatureIndices[import.kindIndex];
+
+            if (expectedSignatureIndex != tag->tag().signature().index())
+                return exception(createJSWebAssemblyLinkError(globalObject, vm, importFailMessage(import, "imported Tag", "signature doesn't match the imported WebAssembly Tag's signature")));
+
+            m_instance->instance().addTag(tag->tag());
+            break;
+        }
+
         case Wasm::ExternalKind::Memory:
             break;
         }
@@ -420,6 +436,9 @@ void WebAssemblyModuleRecord::linkImpl(JSGlobalObject* globalObject, JSObject* i
             RETURN_IF_EXCEPTION(scope, void());
         }
     }
+
+    for (Wasm::SignatureIndex signatureIndex : moduleInformation.internalExceptionSignatureIndices)
+        m_instance->instance().addTag(Wasm::Tag::create(Wasm::SignatureInformation::get(signatureIndex)));
 
     unsigned functionImportCount = codeBlock->functionImportCount();
     auto makeFunctionWrapper = [&] (uint32_t index) -> JSValue {
@@ -555,6 +574,10 @@ void WebAssemblyModuleRecord::linkImpl(JSGlobalObject* globalObject, JSObject* i
             default:
                 RELEASE_ASSERT_NOT_REACHED();
             }
+            break;
+        }
+        case Wasm::ExternalKind::Exception: {
+            exportedValue = JSWebAssemblyTag::create(vm, globalObject, globalObject->m_webAssemblyTagStructure.get(globalObject), m_instance->instance().tag(exp.kindIndex));
             break;
         }
         }

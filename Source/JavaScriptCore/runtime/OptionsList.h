@@ -554,6 +554,7 @@ bool canUseWebAssemblyFastMemory();
     v(Bool, useDataICSharing, false, Normal, nullptr) \
     v(Bool, useTemporal, false, Normal, "Expose the Temporal object.") \
     v(Bool, useArrayFindLastMethod, false, Normal, "Expose the findLast() and findLastIndex() methods on Array and %TypedArray%.") \
+    v(Bool, useWebAssemblyExceptions, true, Normal, "Allow the new section and instructions from the wasm exception handling spec.") \
 
 
 enum OptionEquivalence {

@@ -98,7 +98,7 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM& vm
         unsigned marshalledGPRs = 0;
         unsigned marshalledFPRs = 0;
         unsigned calleeFrameOffset = CallFrameSlot::firstArgument * static_cast<int>(sizeof(Register));
-        unsigned frOffset = CallFrame::headerSizeInRegisters * static_cast<int>(sizeof(Register));
+        unsigned frOffset = CallFrameSlot::firstArgument * static_cast<int>(sizeof(Register));
         for (unsigned argNum = 0; argNum < argCount; ++argNum) {
             Type argType = signature.argument(argNum);
             switch (argType.kind) {
@@ -162,7 +162,7 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM& vm
         unsigned marshalledGPRs = 0;
         unsigned marshalledFPRs = 0;
         unsigned calleeFrameOffset = CallFrameSlot::firstArgument * static_cast<int>(sizeof(Register));
-        unsigned frOffset = CallFrame::headerSizeInRegisters * static_cast<int>(sizeof(Register));
+        unsigned frOffset = CallFrameSlot::firstArgument * static_cast<int>(sizeof(Register));
 
         auto marshallFPR = [&] (FPRReg fprReg) {
             jit.purifyNaN(fprReg);

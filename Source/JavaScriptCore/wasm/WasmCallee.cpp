@@ -28,6 +28,7 @@
 
 #if ENABLE(WEBASSEMBLY)
 
+#include "LLIntExceptions.h"
 #include "WasmCalleeRegistry.h"
 #include "WasmCallingConvention.h"
 
@@ -56,6 +57,12 @@ void Callee::dump(PrintStream& out) const
     out.print(makeString(m_indexOrName));
 }
 
+const HandlerInfo* Callee::handlerForIndex(Instance& instance, unsigned index, const Tag* tag)
+{
+    ASSERT(hasExceptionHandlers());
+    return HandlerInfo::handlerForIndex(instance, m_exceptionHandlers, index, tag);
+}
+
 JITCallee::JITCallee(Wasm::CompilationMode compilationMode, Entrypoint&& entrypoint)
     : Callee(compilationMode)
     , m_entrypoint(WTFMove(entrypoint))
@@ -67,6 +74,32 @@ JITCallee::JITCallee(Wasm::CompilationMode compilationMode, Entrypoint&& entrypo
     , m_wasmToWasmCallsites(WTFMove(unlinkedCalls))
     , m_entrypoint(WTFMove(entrypoint))
 {
+}
+
+LLIntCallee::LLIntCallee(std::unique_ptr<FunctionCodeBlock> codeBlock, size_t index, std::pair<const Name*, RefPtr<NameSection>>&& name)
+    : Callee(Wasm::CompilationMode::LLIntMode, index, WTFMove(name))
+    , m_codeBlock(WTFMove(codeBlock))
+{
+    linkExceptionHandlers();
+}
+
+void LLIntCallee::linkExceptionHandlers()
+{
+    if (size_t count = m_codeBlock->numberOfExceptionHandlers()) {
+        m_exceptionHandlers.resizeToFit(count);
+        for (size_t i = 0; i < count; i++) {
+            const UnlinkedHandlerInfo& unlinkedHandler = m_codeBlock->exceptionHandler(i);
+            HandlerInfo& handler = m_exceptionHandlers[i];
+            auto& instruction = *m_codeBlock->instructions().at(unlinkedHandler.m_target).ptr();
+            CodeLocationLabel<ExceptionHandlerPtrTag> target;
+            if (unlinkedHandler.m_type == HandlerType::Catch)
+                target = CodeLocationLabel<ExceptionHandlerPtrTag>(LLInt::handleWasmCatch(instruction.width<WasmOpcodeTraits>()).code());
+            else
+                target = CodeLocationLabel<ExceptionHandlerPtrTag>(LLInt::handleWasmCatchAll(instruction.width<WasmOpcodeTraits>()).code());
+
+            handler.initialize(unlinkedHandler, target);
+        }
+    }
 }
 
 void LLIntCallee::setEntrypoint(MacroAssemblerCodePtr<WasmEntryPtrTag> entrypoint)
@@ -103,6 +136,36 @@ std::tuple<void*, void*> LLIntCallee::range() const
 {
     return { nullptr, nullptr };
 }
+
+void OptimizingJITCallee::linkExceptionHandlers()
+{
+    size_t count = m_unlinkedExceptionHandlers.size();
+    m_exceptionHandlers.resizeToFit(count);
+    for (size_t i = 0; i < count; i++) {
+        HandlerInfo& handler = m_exceptionHandlers[i];
+        const UnlinkedHandlerInfo& unlinkedHandler = m_unlinkedExceptionHandlers[i];
+        CodeLocationLabel<ExceptionHandlerPtrTag> location = m_exceptionHandlerLocations[i];
+        handler.initialize(unlinkedHandler, location);
+    }
+    m_unlinkedExceptionHandlers.clear();
+    m_exceptionHandlerLocations.clear();
+}
+
+const Vector<OSREntryValue>& OptimizingJITCallee::stackmap(CallSiteIndex callSiteIndex) const
+{
+    auto iter = m_stackmaps.find(callSiteIndex);
+    if (iter == m_stackmaps.end()) {
+        for (auto pair : m_stackmaps) {
+            dataLog(pair.key.bits(), ": ");
+            for (auto value : pair.value)
+                dataLog(value, ", ");
+            dataLogLn("");
+        }
+    }
+    RELEASE_ASSERT(iter != m_stackmaps.end());
+    return iter->value;
+}
+
 
 } } // namespace JSC::Wasm
 

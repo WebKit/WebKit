@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,8 +28,10 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "BytecodeConventions.h"
+#include "HandlerInfo.h"
 #include "InstructionStream.h"
 #include "MacroAssemblerCodeRef.h"
+#include "WasmHandlerInfo.h"
 #include "WasmLLIntTierUpCounter.h"
 #include "WasmOps.h"
 #include <wtf/HashMap.h>
@@ -120,6 +122,10 @@ public:
     const JumpTable& jumpTable(unsigned tableIndex) const;
     unsigned numberOfJumpTables() const;
 
+    size_t numberOfExceptionHandlers() const { return m_exceptionHandlers.size(); }
+    UnlinkedHandlerInfo& exceptionHandler(int index) { return m_exceptionHandlers[index]; }
+    void addExceptionHandler(const UnlinkedHandlerInfo& handler) { m_exceptionHandlers.append(handler); }
+
 private:
     using OutOfLineJumpTargets = HashMap<InstructionStream::Offset, int>;
 
@@ -139,6 +145,7 @@ private:
     OutOfLineJumpTargets m_outOfLineJumpTargets;
     LLIntTierUpCounter m_tierUpCounter;
     Vector<JumpTable> m_jumpTables;
+    Vector<UnlinkedHandlerInfo> m_exceptionHandlers;
 };
 
 } } // namespace JSC::Wasm

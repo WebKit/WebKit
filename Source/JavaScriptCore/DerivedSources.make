@@ -194,6 +194,8 @@ OBJECT_LUT_HEADERS = \
     TemporalObject.lut.h \
     WebAssemblyCompileErrorConstructor.lut.h \
     WebAssemblyCompileErrorPrototype.lut.h \
+    WebAssemblyExceptionConstructor.lut.h \
+    WebAssemblyExceptionPrototype.lut.h \
     WebAssemblyGlobalConstructor.lut.h \
     WebAssemblyGlobalPrototype.lut.h \
     WebAssemblyInstanceConstructor.lut.h \
@@ -208,6 +210,8 @@ OBJECT_LUT_HEADERS = \
     WebAssemblyRuntimeErrorPrototype.lut.h \
     WebAssemblyTableConstructor.lut.h \
     WebAssemblyTablePrototype.lut.h \
+    WebAssemblyTagConstructor.lut.h \
+    WebAssemblyTagPrototype.lut.h \
 #
 
 $(OBJECT_LUT_HEADERS): %.lut.h : %.cpp $(JavaScriptCore)/create_hash_table

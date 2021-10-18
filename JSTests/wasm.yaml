@@ -45,6 +45,8 @@
   cmd: runWebAssembly unless parseRunCommands
 - path: wasm/self-test/
   cmd: runWebAssemblySuite unless parseRunCommands
+- path: wasm/v8/
+  cmd: runWebAssemblySuite(:no_module, "mjsunit.js") unless parseRunCommands
 
 - path: wasm/references-spec-tests/elem.wast.js
   cmd: runWebAssemblyReferenceSpecTest :normal

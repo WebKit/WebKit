@@ -256,6 +256,7 @@ macro throwException(exception)
 end
 
 macro callWasmSlowPath(slowPath)
+    storei PC, ArgumentCountIncludingThis + TagOffset[cfr]
     prepareStateForCCall()
     move cfr, a0
     move PC, a1
@@ -274,12 +275,23 @@ macro callWasmCallSlowPath(slowPath, action)
     action(r0, r1)
 end
 
+macro restoreStackPointerAfterCall()
+    loadp CodeBlock[cfr], ws1
+    loadi Wasm::FunctionCodeBlock::m_numCalleeLocals[ws1], ws1
+    lshiftp 3, ws1
+    addp maxFrameExtentForSlowPathCall, ws1
+    subp cfr, ws1, sp
+end
+
 macro wasmPrologue(codeBlockGetter, codeBlockSetter, loadWasmInstance)
     # Set up the call frame and check if we should OSR.
     preserveCallerPCAndCFR()
     preserveCalleeSavesUsedByWasm()
     loadWasmInstance()
     reloadMemoryRegistersFromInstance(wasmInstance, ws0, ws1)
+
+    loadp Wasm::Instance::m_owner[wasmInstance], ws0
+    storep ws0, ThisArgumentOffset[cfr]
 
     codeBlockGetter(ws0)
     codeBlockSetter(ws0)
@@ -333,13 +345,17 @@ macro traceExecution()
     end
 end
 
-# Less convenient, but required for opcodes that collide with reserved instructions (e.g. wasm_nop)
-macro unprefixedWasmOp(opcodeName, opcodeStruct, fn)
-    commonOp(opcodeName, traceExecution, macro(size)
+macro commonWasmOp(opcodeName, opcodeStruct, prologue, fn)
+    commonOp(opcodeName, prologue, macro(size)
         fn(macro(fn2)
             fn2(opcodeName, opcodeStruct, size)
         end)
     end)
+end
+
+# Less convenient, but required for opcodes that collide with reserved instructions (e.g. wasm_nop)
+macro unprefixedWasmOp(opcodeName, opcodeStruct, fn)
+    commonWasmOp(opcodeName, opcodeStruct, traceExecution, fn)
 end
 
 macro wasmOp(opcodeName, opcodeStruct, fn)
@@ -512,6 +528,16 @@ op(wasm_function_prologue_no_tls, macro ()
     wasmNextInstruction()
 end)
 
+macro jumpToException()
+    if ARM64E
+        move r0, a0
+        leap JSCConfig + constexpr JSC::offsetOfJSCConfigGateMap + (constexpr Gate::exceptionHandler) * PtrSize, a1
+        jmp [a1], NativeToJITGatePtrTag # ExceptionHandlerPtrTag
+    else
+        jmp r0, ExceptionHandlerPtrTag
+    end
+end
+
 op(wasm_throw_from_slow_path_trampoline, macro ()
     loadp Wasm::Instance::m_pointerToTopEntryFrame[wasmInstance], t5
     loadp [t5], t5
@@ -524,14 +550,7 @@ op(wasm_throw_from_slow_path_trampoline, macro ()
     loadi ArgumentCountIncludingThis + PayloadOffset[cfr], a3
     storei 0, ArgumentCountIncludingThis + TagOffset[cfr]
     cCall4(_slow_path_wasm_throw_exception)
-
-    if ARM64E
-        move r0, a0
-        leap JSCConfig + constexpr JSC::offsetOfJSCConfigGateMap + (constexpr Gate::exceptionHandler) * PtrSize, a1
-        jmp [a1], NativeToJITGatePtrTag # ExceptionHandlerPtrTag
-    else
-        jmp r0, ExceptionHandlerPtrTag
-    end
+    jumpToException()
 end)
 
 macro wasm_throw_from_fault_handler(instance)
@@ -545,14 +564,7 @@ macro wasm_throw_from_fault_handler(instance)
     move cfr, a0
     storei 0, ArgumentCountIncludingThis + TagOffset[cfr]
     cCall4(_slow_path_wasm_throw_exception)
-
-    if ARM64E
-        move r0, a0
-        leap JSCConfig + constexpr JSC::offsetOfJSCConfigGateMap + (constexpr Gate::exceptionHandler) * PtrSize, a1
-        jmp [a1], NativeToJITGatePtrTag # ExceptionHandlerPtrTag
-    else
-        jmp r0, ExceptionHandlerPtrTag
-    end
+    jumpToException()
 end
 
 op(wasm_throw_from_fault_handler_trampoline_fastTLS, macro ()
@@ -772,11 +784,11 @@ macro slowPathForWasmCall(ctx, slowPath, storeWasmInstance)
 
             # Load registers from stack
             forEachArgumentGPR(macro (offset, gpr)
-                loadq CallFrameHeaderSize + offset[sp, ws1, 8], gpr
+                loadq CallFrameHeaderSize + 8 + offset[sp, ws1, 8], gpr
             end)
 
             forEachArgumentFPR(macro (offset, fpr)
-                loadd CallFrameHeaderSize + offset[sp, ws1, 8], fpr
+                loadd CallFrameHeaderSize + 8 + offset[sp, ws1, 8], fpr
             end)
 
             addp CallerFrameAndPCSize, sp
@@ -813,11 +825,7 @@ macro slowPathForWasmCall(ctx, slowPath, storeWasmInstance)
                 defineReturnLabel(opcodeName, size)
             end)
 
-            loadp CodeBlock[cfr], ws1
-            loadi Wasm::FunctionCodeBlock::m_numCalleeLocals[ws1], ws1
-            lshiftp 3, ws1
-            addp maxFrameExtentForSlowPathCall, ws1
-            subp cfr, ws1, sp
+            restoreStackPointerAfterCall()
 
             # We need to set PC to load information from the instruction stream, but we
             # need to preserve its current value since it might contain a return value
@@ -838,11 +846,11 @@ macro slowPathForWasmCall(ctx, slowPath, storeWasmInstance)
             wgetu(ctx, m_numberOfStackArgs, ws0)
             move memoryBase, PC
             forEachArgumentGPR(macro (offset, gpr)
-                storeq gpr, CallFrameHeaderSize + offset[ws1, ws0, 8]
+                storeq gpr, CallFrameHeaderSize + 8 + offset[ws1, ws0, 8]
             end)
 
             forEachArgumentFPR(macro (offset, fpr)
-                stored fpr, CallFrameHeaderSize + offset[ws1, ws0, 8]
+                stored fpr, CallFrameHeaderSize + 8 + offset[ws1, ws0, 8]
             end)
 
             loadi ArgumentCountIncludingThis + TagOffset[cfr], PC
@@ -2805,4 +2813,115 @@ wasmAtomicCompareExchangeOps(_cmpxchg, Cmpxchg,
 wasmOp(atomic_fence, WasmDropKeep, macro(ctx)
     fence
     dispatch(ctx)
+end)
+
+wasmOp(throw, WasmThrow, macro(ctx)
+    loadp Wasm::Instance::m_pointerToTopEntryFrame[wasmInstance], t5
+    loadp [t5], t5
+    copyCalleeSavesToEntryFrameCalleeSavesBuffer(t5)
+
+    callWasmSlowPath(_slow_path_wasm_throw)
+    jumpToException()
+end)
+
+wasmOp(rethrow, WasmRethrow, macro(ctx)
+    callWasmSlowPath(_slow_path_wasm_rethrow)
+    jumpToException()
+end)
+
+macro catchImpl(ctx, storeWasmInstance)
+    loadp Callee[cfr], t3
+    convertCalleeToVM(t3)
+    restoreCalleeSavesFromVMEntryFrameCalleeSavesBuffer(t3, t0)
+
+    loadp VM::calleeForWasmCatch[t3], ws1
+    storep 0, VM::calleeForWasmCatch[t3]
+    storep ws1, Callee[cfr]
+
+    loadp VM::callFrameForCatch[t3], cfr
+    storep 0, VM::callFrameForCatch[t3]
+
+    restoreStackPointerAfterCall()
+
+    loadp ThisArgumentOffset[cfr], wasmInstance
+    loadp JSWebAssemblyInstance::m_instance[wasmInstance], wasmInstance
+    storeWasmInstance(wasmInstance)
+    reloadMemoryRegistersFromInstance(wasmInstance, ws0, ws1)
+
+    loadp CodeBlock[cfr], PB
+    loadp Wasm::FunctionCodeBlock::m_instructionsRawPointer[PB], PB
+    loadp VM::targetInterpreterPCForThrow[t3], PC
+    subp PB, PC
+
+    callWasmSlowPath(_slow_path_wasm_retrieve_and_clear_exception)
+    move r1, t1
+
+    wgetu(ctx, m_startOffset, t2)
+    wgetu(ctx, m_argumentCount, t3)
+
+    lshifti 3, t2
+    subp cfr, t2, t2
+
+.copyLoop:
+    btiz t3, .done
+    loadq [t1], t6
+    storeq t6, [t2]
+    subi 1, t3
+    # FIXME: Use arm store-add/sub instructions in wasm LLInt catch
+    # https://bugs.webkit.org/show_bug.cgi?id=231210
+    subp 8, t2
+    addp 8, t1
+    jmp .copyLoop
+
+.done:
+    traceExecution()
+
+    dispatch(ctx)
+end
+
+commonWasmOp(wasm_catch, WasmCatch, macro() end, macro(ctx)
+    catchImpl(ctx, storeWasmInstanceToTLS)
+end)
+
+commonWasmOp(wasm_catch_no_tls, WasmCatch, macro() end, macro(ctx)
+    catchImpl(ctx, macro(instance) end)
+end)
+
+macro catchAllImpl(ctx, storeWasmInstance)
+    loadp Callee[cfr], t3
+    convertCalleeToVM(t3)
+    restoreCalleeSavesFromVMEntryFrameCalleeSavesBuffer(t3, t0)
+
+    loadp VM::calleeForWasmCatch[t3], ws1
+    storep 0, VM::calleeForWasmCatch[t3]
+    storep ws1, Callee[cfr]
+
+    loadp VM::callFrameForCatch[t3], cfr
+    storep 0, VM::callFrameForCatch[t3]
+
+    restoreStackPointerAfterCall()
+
+    loadp ThisArgumentOffset[cfr], wasmInstance
+    loadp JSWebAssemblyInstance::m_instance[wasmInstance], wasmInstance
+    storeWasmInstance(wasmInstance)
+    reloadMemoryRegistersFromInstance(wasmInstance, ws0, ws1)
+
+    loadp CodeBlock[cfr], PB
+    loadp Wasm::FunctionCodeBlock::m_instructionsRawPointer[PB], PB
+    loadp VM::targetInterpreterPCForThrow[t3], PC
+    subp PB, PC
+
+    callWasmSlowPath(_slow_path_wasm_retrieve_and_clear_exception)
+
+    traceExecution()
+
+    dispatch(ctx)
+end
+
+commonWasmOp(wasm_catch_all, WasmCatchAll, macro() end, macro(ctx)
+    catchAllImpl(ctx, storeWasmInstanceToTLS)
+end)
+
+commonWasmOp(wasm_catch_all_no_tls, WasmCatchAll, macro() end, macro(ctx)
+    catchAllImpl(ctx, macro(instance) end)
 end)

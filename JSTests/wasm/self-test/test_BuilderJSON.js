@@ -140,11 +140,6 @@ const assertOpThrows = (opFn, message) => {
     assert.eq(j.section[0].data.length, 0);
 })();
 
-(function ImportBeforeTypeSections() {
-    const b = (new Builder()).Import().End();
-    assert.throws(() => b.Type(), Error, `Expected: "2" > "1": Bad section ordering: "Import" cannot precede "Type"`);
-})();
-
 (function ImportFunctionWithoutTypeSection() {
     const i = (new Builder()).Import();
     assert.throws(() => i.Function("foo", "bar", 0), Error, `Shouldn't be undefined: Can not use type 0 if a type section is not present`);
