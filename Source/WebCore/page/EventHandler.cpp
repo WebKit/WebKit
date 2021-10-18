@@ -475,7 +475,7 @@ static VisibleSelection expandSelectionToRespectSelectOnMouseDown(Node& targetNo
 
 bool EventHandler::updateSelectionForMouseDownDispatchingSelectStart(Node* targetNode, const VisibleSelection& selection, TextGranularity granularity)
 {
-    if (Position::nodeIsInertOrUserSelectNone(targetNode))
+    if (Position::nodeIsUserSelectNone(targetNode))
         return false;
 
     if (!dispatchSelectStart(targetNode)) {
@@ -715,12 +715,12 @@ bool EventHandler::canMouseDownStartSelect(const MouseEventWithHitTestResults& e
         if (!page->chrome().client().shouldUseMouseEventForSelection(event.event()))
             return false;
     }
-    
+
     if (!node || !node->renderer())
         return true;
 
     if (HTMLElement::isImageOverlayText(*node))
-        return node->renderer()->style().userSelect() != UserSelect::None;
+        return node->renderer()->style().userSelectIncludingInert() != UserSelect::None;
 
     return node->canStartSelection() || Position::nodeIsUserSelectAll(node.get());
 }
@@ -1522,7 +1522,7 @@ std::optional<Cursor> EventHandler::selectCursor(const HitTestResult& result, bo
     case CursorType::Auto: {
         if (HTMLElement::isImageOverlayText(node.get())) {
             auto* renderer = node->renderer();
-            if (renderer && renderer->style().userSelect() != UserSelect::None)
+            if (renderer && renderer->style().userSelectIncludingInert() != UserSelect::None)
                 return iBeam;
         }
 

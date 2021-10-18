@@ -1,3 +1,25 @@
+2021-10-18  Tim Nguyen  <ntim@apple.com>
+
+        Fix mouse selection on modal <dialog> text nodes
+        https://bugs.webkit.org/show_bug.cgi?id=231741
+
+        Reviewed by Antti Koivisto.
+
+        Tests:
+        - editing/selection/modal-dialog-select-paragraph.html (tests this bug)
+        - imported/w3c/web-platform-tests/inert/inert-node-is-unselectable.tentative.html (tests what
+        the canStartSelection check was supposed to fix)
+
+        The inert check in Node::canStartSelection() was too restrictive, which caused this bug to happen because
+        we set the root node as inert and then reset it for the modal <dialog> itself, causing the text in the
+        <dialog> to be unselectable. Instead, just mirror how -webkit-user-select: none; is implemented by
+        introducing RenderStyle::userSelectIncludingInert().
+
+        * WebProcess/InjectedBundle/DOM/InjectedBundleNodeHandle.cpp:
+        (WebKit::InjectedBundleNodeHandle::isSelectableTextNode const):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::selectionPositionInformation):
+
 2021-10-18  David Kilzer  <ddkilzer@apple.com>
 
         Use-after-move of m_sockets in NetworkRTCProvider::close()

@@ -764,7 +764,7 @@ static Node::Editability computeEditabilityFromComputedStyle(const Node& startNo
             continue;
         // Elements with user-select: all style are considered atomic
         // therefore non editable.
-        if (treatment == Node::UserSelectAllIsAlwaysNonEditable && style->userSelect() == UserSelect::All)
+        if (treatment == Node::UserSelectAllIsAlwaysNonEditable && style->userSelectIncludingInert() == UserSelect::All)
             return Node::Editability::ReadOnly;
         switch (style->userModify()) {
         case UserModify::ReadOnly:
@@ -1130,12 +1130,10 @@ bool Node::canStartSelection() const
 
     if (renderer()) {
         const RenderStyle& style = renderer()->style();
-        if (style.effectiveInert())
-            return false;
 
         // We allow selections to begin within an element that has -webkit-user-select: none set,
         // but if the element is draggable then dragging should take priority over selection.
-        if (style.userDrag() == UserDrag::Element && style.userSelect() == UserSelect::None)
+        if (style.userDrag() == UserDrag::Element && style.userSelectIncludingInert() == UserSelect::None)
             return false;
     }
     return parentOrShadowHostNode() ? parentOrShadowHostNode()->canStartSelection() : true;

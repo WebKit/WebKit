@@ -1,0 +1,3 @@
+This text should be selectable with the mouse.
+
+PASS: all dialog text is selected

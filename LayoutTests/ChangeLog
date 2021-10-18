@@ -1,3 +1,23 @@
+2021-10-18  Tim Nguyen  <ntim@apple.com>
+
+        Fix mouse selection on modal <dialog> text nodes
+        https://bugs.webkit.org/show_bug.cgi?id=231741
+
+        Reviewed by Antti Koivisto.
+
+        Tests:
+        - editing/selection/modal-dialog-select-paragraph.html (tests this bug)
+        - imported/w3c/web-platform-tests/inert/inert-node-is-unselectable.tentative.html (tests what
+        the canStartSelection check was supposed to fix)
+
+        The inert check in Node::canStartSelection() was too restrictive, which caused this bug to happen because
+        we set the root node as inert and then reset it for the modal <dialog> itself, causing the text in the
+        <dialog> to be unselectable. Instead, just mirror how -webkit-user-select: none; is implemented by
+        introducing RenderStyle::userSelectIncludingInert().
+
+        * editing/selection/modal-dialog-select-paragraph-expected.txt: Added.
+        * editing/selection/modal-dialog-select-paragraph.html: Added.
+
 2021-10-18  Enrique Ocaña González  <eocanha@igalia.com>
 
         [GLIB][GStreamer] test http/tests/security/webaudio-render-remote-audio-allowed-crossorigin-redirect.html is a flaky timeout since r278004
