@@ -49,9 +49,8 @@ my @testCases =
 
 # This test should only be run on Windows
 if ($^O ne 'MSWin32' && $^O ne 'cygwin') {
-    plan(tests => 1);
-    is(1, 1, 'do nothing for non-Windows builds.');
-    exit 0;    
+    plan skip_all => 'do nothing for non-Windows builds.';
+    exit 0;
 }
 
 my $TOOLS_PATH = $ENV{'WEBKIT_LIBRARIES'};
@@ -61,9 +60,8 @@ my $VERSION_STAMP_EXEC = File::Spec->catfile($TOOLS_PATH, 'tools', 'VersionStamp
 
 # Test can only be run if VersionStamper.exe exists
 unless (-e $VERSION_STAMP_EXEC) {
-    plan(tests => 1);
-    is(1, 1, 'do nothing for Windows builds lacking the VersionStamp.exe utility.');
-    exit 0;    
+    plan skip_all => 'do nothing for Windows builds lacking the VersionStamp.exe utility.';
+    exit 0;
 }
 
 my $testCasesCount = scalar(@testCases) * 2;
@@ -71,15 +69,13 @@ plan(tests => $testCasesCount);
 
 foreach my $testCase (@testCases) {
     my $testOutputDir = tempdir(CLEANUP => 1);
-    `RC_ProjectSourceVersion="$testCase->{'RC_ProjectSourceVersion'}" perl $AUTO_VERSION_SCRIPT $testOutputDir`;
+    $ENV{RC_ProjectSourceVersion} = $testCase->{'RC_ProjectSourceVersion'};
+    `perl $AUTO_VERSION_SCRIPT $testOutputDir`;
+    delete $ENV{RC_ProjectSourceVersion};
 
-    my $command;
-    if (defined($testCase->{'RC_PROJECTBUILDVERSION'})) {
-        $command="RC_PROJECTBUILDVERSION=\"$testCase->{'RC_PROJECTBUILDVERSION'}\" ";
-    }
-    $command .= "perl $VERSION_STAMP_SCRIPT $testOutputDir $testOutputDir";
-
-    my @versionStamperOutput = qx($command 2>&1);
+    $ENV{RC_PROJECTBUILDVERSION} = $testCase->{'RC_PROJECTBUILDVERSION'} if defined($testCase->{'RC_PROJECTBUILDVERSION'});
+    my @versionStamperOutput = qx(perl $VERSION_STAMP_SCRIPT $testOutputDir $testOutputDir 2>&1);
+    delete $ENV{RC_PROJECTBUILDVERSION};
 
     foreach my $line (@versionStamperOutput) {
         if ($line !~ m/RC_PROJECTBUILDVERSION/) {

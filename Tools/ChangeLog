@@ -1,3 +1,18 @@
+2021-10-18  Basuke Suzuki  <basuke@mac.com>
+
+        [webkitperl] Fix webkitperl on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=231374
+
+        Reviewed by Fujii Hironori.
+
+        Set WEBKIT_LIBRARIES environment variable before run if it is not defined.
+        Shell-style environment variables settings are not available on Windows. Replace them by setting
+        %ENV directly.
+
+        * Scripts/test-webkitperl:
+        * Scripts/webkitperl/auto-version_unittest/autoVersionTests.pl:
+        * Scripts/webkitperl/auto-version_unittest/versionStampTests.pl:
+
 2021-10-18  Basuke Suzuki  <basuke.suzuki@sony.com>
 
         [webkitperl] Stop using LoadAsModule.pm

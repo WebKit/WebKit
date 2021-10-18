@@ -63,6 +63,11 @@ if (shouldUseFlatpak()) {
 my $sourceRootDir = File::Spec->catfile($FindBin::Bin, "../..");
 chdir($sourceRootDir);
 
+# WEBKIT_LIBRARIES is needed to run some tests on Windows
+if (isAnyWindows() && !defined $ENV{WEBKIT_LIBRARIES}) {
+    $ENV{WEBKIT_LIBRARIES} = File::Spec->catfile($sourceRootDir, "WebKitLibraries", "win");
+}
+
 # Relative to root
 my $pattern = "Tools/Scripts/webkitperl/*_unittest/*.pl";
 
