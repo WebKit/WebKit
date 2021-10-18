@@ -1,3 +1,27 @@
+2021-10-18  Chris Dumez  <cdumez@apple.com>
+
+        Add a callback to know when the service worker loads via -[WKWebView _loadServiceWorker:]
+        https://bugs.webkit.org/show_bug.cgi?id=231771
+        <rdar://problem/84274364>
+
+        Reviewed by Alex Christensen.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _loadServiceWorker:completionHandler:]):
+        (-[WKWebView _loadServiceWorker:]): Deleted.
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didFailProvisionalLoadForFrameShared):
+        (WebKit::WebPageProxy::didFinishServiceWorkerPageRegistration):
+        (WebKit::WebPageProxy::didFailLoadForFrame):
+        (WebKit::WebPageProxy::resetStateAfterProcessExited):
+        (WebKit::WebPageProxy::loadServiceWorker):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::didFinishServiceWorkerPageRegistration):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+
 2021-10-18  Alex Christensen  <achristensen@webkit.org>
 
         Revert r284216

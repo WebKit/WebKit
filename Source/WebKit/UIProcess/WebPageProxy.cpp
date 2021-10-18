@@ -4806,6 +4806,8 @@ void WebPageProxy::didFailProvisionalLoadForFrameShared(Ref<WebProcessProxy>&& p
         pageClient().didFailProvisionalLoadForMainFrame();
         if (navigation)
             navigation->setClientNavigationActivity(nullptr);
+
+        callServiceWorkerLaunchCompletionHandlerIfNecessary();
     }
 
     frame.didFailProvisionalLoad();
@@ -4827,6 +4829,25 @@ void WebPageProxy::didFailProvisionalLoadForFrameShared(Ref<WebProcessProxy>&& p
     // If the provisional page's load fails then we destroy the provisional page.
     if (m_provisionalPage && m_provisionalPage->mainFrame() == &frame && willContinueLoading == WillContinueLoading::No)
         m_provisionalPage = nullptr;
+}
+
+#if ENABLE(SERVICE_WORKER)
+void WebPageProxy::didFinishServiceWorkerPageRegistration(bool success)
+{
+    ASSERT(m_isServiceWorkerPage);
+    ASSERT(m_serviceWorkerLaunchCompletionHandler);
+
+    if (m_serviceWorkerLaunchCompletionHandler)
+        m_serviceWorkerLaunchCompletionHandler(success);
+}
+#endif
+
+void WebPageProxy::callServiceWorkerLaunchCompletionHandlerIfNecessary()
+{
+#if ENABLE(SERVICE_WORKER)
+    if (m_isServiceWorkerPage && m_serviceWorkerLaunchCompletionHandler)
+        m_serviceWorkerLaunchCompletionHandler(false);
+#endif
 }
 
 #if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
@@ -5092,6 +5113,8 @@ void WebPageProxy::didFailLoadForFrame(FrameIdentifier frameID, FrameInfoData&& 
         pageClient().didFailNavigation(navigation.get());
         if (navigation)
             navigation->setClientNavigationActivity(nullptr);
+
+        callServiceWorkerLaunchCompletionHandlerIfNecessary();
     }
 }
 
@@ -7845,6 +7868,9 @@ void WebPageProxy::resetState(ResetStateReason resetStateReason)
     if (resetStateReason != ResetStateReason::NavigationSwap)
         m_contextIDForVisibilityPropagationInWebProcess = 0;
 #endif
+
+    if (resetStateReason != ResetStateReason::NavigationSwap)
+        callServiceWorkerLaunchCompletionHandlerIfNecessary();
 
     if (m_openPanelResultListener) {
         m_openPanelResultListener->invalidate();
@@ -10708,16 +10734,26 @@ void WebPageProxy::setNeedsDOMWindowResizeEvent()
     send(Messages::WebPage::SetNeedsDOMWindowResizeEvent());
 }
 
-void WebPageProxy::loadServiceWorker(const URL& url)
+void WebPageProxy::loadServiceWorker(const URL& url, CompletionHandler<void(bool success)>&& completionHandler)
 {
+#if ENABLE(SERVICE_WORKER)
     if (m_isClosed)
-        return;
+        return completionHandler(false);
 
     WEBPAGEPROXY_RELEASE_LOG(Loading, "loadServiceWorker:");
 
+    if (m_serviceWorkerLaunchCompletionHandler)
+        return completionHandler(false);
+
     m_isServiceWorkerPage = true;
+    m_serviceWorkerLaunchCompletionHandler = WTFMove(completionHandler);
+
     CString html = makeString("<script>navigator.serviceWorker.register('", url.string().utf8().data(), "');</script>").utf8();
     loadData({ reinterpret_cast<const uint8_t*>(html.data()), html.length() }, "text/html"_s, "UTF-8"_s, url.protocolHostAndPort());
+#else
+    UNUSED_PARAM(url);
+    completionHandler(false);
+#endif
 }
 
 #if !PLATFORM(IOS_FAMILY)

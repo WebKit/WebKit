@@ -2677,9 +2677,14 @@ TEST(ServiceWorker, ExtensionServiceWorker)
     [[webView _remoteObjectRegistry] registerExportedObject:object.get() interface:interface];
 
     // The service worker script should get loaded over the custom scheme handler.
+    done = false;
     didStartURLSchemeTask = false;
-    [webView _loadServiceWorker:[NSURL URLWithString:@"sw-ext://ABC/sw.js"]];
-    TestWebKitAPI::Util::run(&didStartURLSchemeTask);
+    [webView _loadServiceWorker:[NSURL URLWithString:@"sw-ext://ABC/sw.js"] completionHandler:^(BOOL success) {
+        EXPECT_TRUE(success);
+        EXPECT_TRUE(didStartURLSchemeTask);
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
 
     // The injected bundle should have been notified that the service worker's global object was available.
     TestWebKitAPI::Util::run(&serviceWorkerGlobalObjectIsAvailable);
@@ -2704,4 +2709,116 @@ TEST(ServiceWorker, ExtensionServiceWorker)
     webView = nil;
     while (webViewConfiguration.processPool._serviceWorkerProcessCount)
         TestWebKitAPI::Util::spinRunLoop(10);
+}
+
+TEST(ServiceWorker, ExtensionServiceWorkerFailureBadScript)
+{
+    [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
+
+    // Start with a clean slate data store
+    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    auto schemeHandler = adoptNS([ServiceWorkerSchemeHandler new]);
+    [schemeHandler addMappingFromURLString:@"sw-ext://ABC/bad-sw.js" toData:"1 = 1;"];
+
+    WKWebViewConfiguration *webViewConfiguration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"ServiceWorkerPagePlugIn"];
+    [webViewConfiguration setURLSchemeHandler:schemeHandler.get() forURLScheme:@"sw-ext"];
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration]);
+
+    auto object = adoptNS([[ServiceWorkerPageRemoteObject alloc] init]);
+    _WKRemoteObjectInterface *interface = [_WKRemoteObjectInterface remoteObjectInterfaceWithProtocol:@protocol(ServiceWorkerPageProtocol)];
+    [[webView _remoteObjectRegistry] registerExportedObject:object.get() interface:interface];
+
+    // The service worker script should get loaded over the custom scheme handler.
+    done = false;
+    didStartURLSchemeTask = false;
+    [webView _loadServiceWorker:[NSURL URLWithString:@"sw-ext://ABC/bad-sw.js"] completionHandler:^(BOOL success) {
+        EXPECT_FALSE(success);
+        EXPECT_TRUE(didStartURLSchemeTask);
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+}
+
+TEST(ServiceWorker, ExtensionServiceWorkerFailureBadURL)
+{
+    [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
+
+    // Start with a clean slate data store
+    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    WKWebViewConfiguration *webViewConfiguration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"ServiceWorkerPagePlugIn"];
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration]);
+
+    auto object = adoptNS([[ServiceWorkerPageRemoteObject alloc] init]);
+    _WKRemoteObjectInterface *interface = [_WKRemoteObjectInterface remoteObjectInterfaceWithProtocol:@protocol(ServiceWorkerPageProtocol)];
+    [[webView _remoteObjectRegistry] registerExportedObject:object.get() interface:interface];
+
+    done = false;
+    [webView _loadServiceWorker:[NSURL URLWithString:@"https://ABC/does-not-exist.js"] completionHandler:^(BOOL success) {
+        EXPECT_FALSE(success);
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+}
+
+TEST(ServiceWorker, ExtensionServiceWorkerFailureViewClosed)
+{
+    [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
+
+    // Start with a clean slate data store
+    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    WKWebViewConfiguration *webViewConfiguration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"ServiceWorkerPagePlugIn"];
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration]);
+
+    auto object = adoptNS([[ServiceWorkerPageRemoteObject alloc] init]);
+    _WKRemoteObjectInterface *interface = [_WKRemoteObjectInterface remoteObjectInterfaceWithProtocol:@protocol(ServiceWorkerPageProtocol)];
+    [[webView _remoteObjectRegistry] registerExportedObject:object.get() interface:interface];
+
+    [webView _loadServiceWorker:[NSURL URLWithString:@"https://ABC/does-not-exist.js"] completionHandler:^(BOOL success) {
+        EXPECT_FALSE(success);
+        done = true;
+    }];
+    [webView _close];
+    TestWebKitAPI::Util::run(&done);
+}
+
+TEST(ServiceWorker, ExtensionServiceWorkerFailureViewDestroyed)
+{
+    [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
+
+    // Start with a clean slate data store
+    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    @autoreleasepool {
+        WKWebViewConfiguration *webViewConfiguration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"ServiceWorkerPagePlugIn"];
+        auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration]);
+
+        auto object = adoptNS([[ServiceWorkerPageRemoteObject alloc] init]);
+        _WKRemoteObjectInterface *interface = [_WKRemoteObjectInterface remoteObjectInterfaceWithProtocol:@protocol(ServiceWorkerPageProtocol)];
+        [[webView _remoteObjectRegistry] registerExportedObject:object.get() interface:interface];
+
+        [webView _loadServiceWorker:[NSURL URLWithString:@"https://ABC/does-not-exist.js"] completionHandler:^(BOOL success) {
+            EXPECT_FALSE(success);
+            done = true;
+        }];
+    }
+    TestWebKitAPI::Util::run(&done);
 }

@@ -1939,6 +1939,17 @@ void WebFrameLoaderClient::didCreateWindow(DOMWindow& window)
     webPage->send(Messages::WebPageProxy::DidCreateWindow(m_frame->frameID(), window.identifier()));
 }
 
+#if ENABLE(SERVICE_WORKER)
+void WebFrameLoaderClient::didFinishServiceWorkerPageRegistration(bool success)
+{
+    auto* webPage = m_frame->page();
+    if (!webPage)
+        return;
+
+    webPage->send(Messages::WebPageProxy::DidFinishServiceWorkerPageRegistration(success));
+}
+#endif
+
 #if ENABLE(APP_BOUND_DOMAINS)
 bool WebFrameLoaderClient::shouldEnableInAppBrowserPrivacyProtections() const
 {

@@ -1,3 +1,15 @@
+2021-10-18  Chris Dumez  <cdumez@apple.com>
+
+        Add a callback to know when the service worker loads via -[WKWebView _loadServiceWorker:]
+        https://bugs.webkit.org/show_bug.cgi?id=231771
+        <rdar://problem/84274364>
+
+        Reviewed by Alex Christensen.
+
+        Add API test coverage.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ServiceWorkerBasic.mm:
+
 2021-10-18  Basuke Suzuki  <basuke@mac.com>
 
         [webkitperl] Fix webkitperl on Windows

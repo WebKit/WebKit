@@ -105,6 +105,7 @@ private:
 
     void notifyFailedFetchingScript(ServiceWorkerJob&, const ResourceError&);
     void destroyJob(ServiceWorkerJob&);
+    void willSettleRegistrationPromise(bool success);
 
     DocumentOrWorkerIdentifier contextIdentifier() final;
 

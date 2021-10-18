@@ -556,7 +556,7 @@ public:
     void remoteInspectorInformationDidChange();
 #endif
 
-    void loadServiceWorker(const URL&);
+    void loadServiceWorker(const URL&, CompletionHandler<void(bool success)>&&);
 
 #if ENABLE(FULLSCREEN_API)
     WebFullScreenManagerProxy* fullScreenManager();
@@ -2520,6 +2520,11 @@ private:
     void resetSpeechSynthesizer();
 #endif
 
+#if ENABLE(SERVICE_WORKER)
+    void didFinishServiceWorkerPageRegistration(bool success);
+#endif
+    void callServiceWorkerLaunchCompletionHandlerIfNecessary();
+
 #if PLATFORM(IOS_FAMILY)
     static bool isInHardwareKeyboardMode();
     void clearAudibleActivity();
@@ -3014,7 +3019,10 @@ private:
 
     bool m_needsFontAttributes { false };
     bool m_mayHaveUniversalFileReadSandboxExtension { false };
+#if ENABLE(SERVICE_WORKER)
     bool m_isServiceWorkerPage { false };
+    CompletionHandler<void(bool)> m_serviceWorkerLaunchCompletionHandler;
+#endif
 
     RunLoop::Timer<WebPageProxy> m_tryCloseTimeoutTimer;
 

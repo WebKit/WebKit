@@ -34,6 +34,8 @@
 #include "EventLoop.h"
 #include "EventNames.h"
 #include "Exception.h"
+#include "FrameLoader.h"
+#include "FrameLoaderClient.h"
 #include "IDLTypes.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSServiceWorkerRegistration.h"
@@ -191,6 +193,16 @@ void ServiceWorkerContainer::addRegistration(const String& relativeScriptURL, co
     scheduleJob(makeUnique<ServiceWorkerJob>(*this, WTFMove(promise), WTFMove(jobData)));
 }
 
+void ServiceWorkerContainer::willSettleRegistrationPromise(bool success)
+{
+    auto* context = scriptExecutionContext();
+    Page* page = is<Document>(context) ? downcast<Document>(*context).page() : nullptr;
+    if (!page || !page->isServiceWorkerPage())
+        return;
+
+    page->mainFrame().loader().client().didFinishServiceWorkerPageRegistration(success);
+}
+
 void ServiceWorkerContainer::unregisterRegistration(ServiceWorkerRegistrationIdentifier registrationIdentifier, DOMPromiseDeferred<IDLBoolean>&& promise)
 {
     ASSERT(!m_isStopped);
@@ -334,6 +346,9 @@ void ServiceWorkerContainer::jobFailedWithException(ServiceWorkerJob& job, const
 
     CONTAINER_RELEASE_LOG_ERROR("jobFailedWithException: Job %" PRIu64 " failed with error %s", job.identifier().toUInt64(), exception.message().utf8().data());
 
+    if (job.data().type == ServiceWorkerJobType::Register)
+        willSettleRegistrationPromise(false);
+
     auto promise = job.takePromise();
     if (!promise)
         return;
@@ -356,9 +371,10 @@ void ServiceWorkerContainer::jobResolvedWithRegistration(ServiceWorkerJob& job, 
     ASSERT(m_creationThread.ptr() == &Thread::current());
     ASSERT_WITH_MESSAGE(job.hasPromise() || job.data().type == ServiceWorkerJobType::Update, "Only soft updates have no promise");
 
-    if (job.data().type == ServiceWorkerJobType::Register)
+    if (job.data().type == ServiceWorkerJobType::Register) {
         CONTAINER_RELEASE_LOG("jobResolvedWithRegistration: Registration job %" PRIu64 " succeeded", job.identifier().toUInt64());
-    else {
+        willSettleRegistrationPromise(true);
+    } else {
         ASSERT(job.data().type == ServiceWorkerJobType::Update);
         CONTAINER_RELEASE_LOG("jobResolvedWithRegistration: Update job %" PRIu64 " succeeded", job.identifier().toUInt64());
     }
@@ -474,6 +490,9 @@ void ServiceWorkerContainer::jobFailedLoadingScript(ServiceWorkerJob& job, const
     ASSERT_WITH_MESSAGE(job.hasPromise() || job.data().type == ServiceWorkerJobType::Update, "Only soft updates have no promise");
 
     CONTAINER_RELEASE_LOG_ERROR("jobFinishedLoadingScript: Failed to fetch script for job %" PRIu64 ", error: %s", job.identifier().toUInt64(), error.localizedDescription().utf8().data());
+
+    if (job.data().type == ServiceWorkerJobType::Register)
+        willSettleRegistrationPromise(false);
 
     if (auto promise = job.takePromise()) {
         queueTaskKeepingObjectAlive(*this, TaskSource::DOMManipulation, [promise = WTFMove(promise), exception = WTFMove(exception)]() mutable {
