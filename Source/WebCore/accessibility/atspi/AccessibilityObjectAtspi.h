@@ -22,6 +22,7 @@
 #if ENABLE(ACCESSIBILITY) && USE(ATSPI)
 #include "AccessibilityAtspi.h"
 #include "AccessibilityObjectInterface.h"
+#include "IntRect.h"
 #include <wtf/Atomics.h>
 #include <wtf/Lock.h>
 #include <wtf/OptionSet.h>
@@ -42,7 +43,8 @@ public:
     ~AccessibilityObjectAtspi() = default;
 
     enum class Interface : uint8_t {
-        Accessible = 1 << 0
+        Accessible = 1 << 0,
+        Component = 1 << 1
     };
     const OptionSet<Interface>& interfaces() const { return m_interfaces; }
 
@@ -75,6 +77,11 @@ public:
     HashMap<String, String> attributes() const;
     HashMap<uint32_t, Vector<RefPtr<AccessibilityObjectAtspi>>> relationMap() const;
 
+    AccessibilityObjectAtspi* hitTest(const IntPoint&, uint32_t) const;
+    IntRect elementRect(uint32_t) const;
+    void scrollToMakeVisible(uint32_t) const;
+    void scrollToPoint(const IntPoint&, uint32_t) const;
+
 private:
     explicit AccessibilityObjectAtspi(AXCoreObject*);
 
@@ -89,9 +96,13 @@ private:
     void buildRelationSet(GVariantBuilder*) const;
     void buildInterfaces(GVariantBuilder*) const;
 
+    bool focus() const;
+    float opacity() const;
+
     static OptionSet<Interface> interfacesForObject(AXCoreObject&);
 
     static GDBusInterfaceVTable s_accessibleFunctions;
+    static GDBusInterfaceVTable s_componentFunctions;
 
     AXCoreObject* m_axObject { nullptr };
     AXCoreObject* m_coreObject { nullptr };

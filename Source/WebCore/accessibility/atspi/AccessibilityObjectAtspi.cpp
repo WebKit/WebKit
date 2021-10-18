@@ -41,7 +41,7 @@ Ref<AccessibilityObjectAtspi> AccessibilityObjectAtspi::create(AXCoreObject* cor
 
 OptionSet<AccessibilityObjectAtspi::Interface> AccessibilityObjectAtspi::interfacesForObject(AXCoreObject& coreObject)
 {
-    OptionSet<Interface> interfaces = { Interface::Accessible };
+    OptionSet<Interface> interfaces = { Interface::Accessible, Interface::Component };
 
     return interfaces;
 }
@@ -425,6 +425,8 @@ const String& AccessibilityObjectAtspi::path()
         Vector<std::pair<GDBusInterfaceInfo*, GDBusInterfaceVTable*>> interfaces;
         if (m_interfaces.contains(Interface::Accessible))
             interfaces.append({ const_cast<GDBusInterfaceInfo*>(&webkit_accessible_interface), &s_accessibleFunctions });
+        if (m_interfaces.contains(Interface::Component))
+            interfaces.append({ const_cast<GDBusInterfaceInfo*>(&webkit_component_interface), &s_componentFunctions });
         m_path = atspiRoot->atspi().registerObject(*this, WTFMove(interfaces));
     }
 
@@ -1036,6 +1038,8 @@ void AccessibilityObjectAtspi::buildInterfaces(GVariantBuilder* builder) const
     RELEASE_ASSERT(!isMainThread());
     if (m_interfaces.contains(Interface::Accessible))
         g_variant_builder_add(builder, "s", webkit_accessible_interface.name);
+    if (m_interfaces.contains(Interface::Component))
+        g_variant_builder_add(builder, "s", webkit_component_interface.name);
 }
 
 void AccessibilityObjectAtspi::serialize(GVariantBuilder* builder) const

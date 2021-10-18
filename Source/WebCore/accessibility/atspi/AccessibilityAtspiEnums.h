@@ -231,6 +231,33 @@ enum Relation {
     LastDefinedRelation,
 };
 
+enum CoordinateType {
+    ScreenCoordinates,
+    WindowCoordinates,
+    ParentCoordinates,
+};
+
+enum ComponentLayer {
+    InvalidLayer,
+    BackgroundLayer,
+    CanvasLayer,
+    WidgetLayer,
+    MdiLayer,
+    PopupLayer,
+    OverlayLayer,
+    WindowLayer,
+};
+
+enum ScrollType {
+    TopLeft,
+    BottomRight,
+    TopEdge,
+    BottomEdge,
+    LeftEdge,
+    RightEdge,
+    Anywhere
+};
+
 } // namespace Atspi
 } // namespace WebCore
 

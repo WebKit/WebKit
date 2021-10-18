@@ -74,12 +74,14 @@
 
   <method name="ScrollTo">
     <arg direction="in" name="type" type="u"/>
+    <arg direction="out" type="b"/>
   </method>
 
   <method name="ScrollToPoint">
     <arg direction="in" name="type" type="u"/>
     <arg direction="in" name="x" type="i"/>
     <arg direction="in" name="y" type="i"/>
+    <arg direction="out" type="b"/>
   </method>
 
 </interface>

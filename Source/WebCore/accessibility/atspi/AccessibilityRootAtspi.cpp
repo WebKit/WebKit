@@ -118,6 +118,7 @@ GDBusInterfaceVTable AccessibilityRootAtspi::s_accessibleFunctions = {
             GVariantBuilder builder = G_VARIANT_BUILDER_INIT(G_VARIANT_TYPE("as"));
 
             g_variant_builder_add(&builder, "s", webkit_accessible_interface.name);
+            g_variant_builder_add(&builder, "s", webkit_component_interface.name);
             g_dbus_method_invocation_return_value(invocation, g_variant_new("(as)", &builder));
         }
     },
@@ -156,6 +157,7 @@ void AccessibilityRootAtspi::registerObject(CompletionHandler<void(const String&
     RELEASE_ASSERT(isMainThread());
     Vector<std::pair<GDBusInterfaceInfo*, GDBusInterfaceVTable*>> interfaces;
     interfaces.append({ const_cast<GDBusInterfaceInfo*>(&webkit_accessible_interface), &s_accessibleFunctions });
+    interfaces.append({ const_cast<GDBusInterfaceInfo*>(&webkit_component_interface), &s_componentFunctions });
     m_atspi.registerRoot(*this, WTFMove(interfaces), WTFMove(completionHandler));
 }
 
@@ -236,6 +238,7 @@ void AccessibilityRootAtspi::serialize(GVariantBuilder* builder) const
 
     GVariantBuilder interfaces = G_VARIANT_BUILDER_INIT(G_VARIANT_TYPE("as"));
     g_variant_builder_add(&interfaces, "s", webkit_accessible_interface.name);
+    g_variant_builder_add(&interfaces, "s", webkit_component_interface.name);
     g_variant_builder_add(builder, "@as", g_variant_new("as", &interfaces));
 
     g_variant_builder_add(builder, "s", "");
@@ -249,6 +252,72 @@ void AccessibilityRootAtspi::serialize(GVariantBuilder* builder) const
     g_variant_builder_add(&states, "u", static_cast<uint32_t>(atspiStates & 0xffffffff));
     g_variant_builder_add(&states, "u", static_cast<uint32_t>(atspiStates >> 32));
     g_variant_builder_add(builder, "@au", g_variant_builder_end(&states));
+}
+
+GDBusInterfaceVTable AccessibilityRootAtspi::s_componentFunctions = {
+    // method_call
+    [](GDBusConnection*, const gchar*, const gchar*, const gchar*, const gchar* methodName, GVariant* parameters, GDBusMethodInvocation* invocation, gpointer userData) {
+        RELEASE_ASSERT(!isMainThread());
+        auto& rootObject = *static_cast<AccessibilityRootAtspi*>(userData);
+        if (!g_strcmp0(methodName, "Contains"))
+            g_dbus_method_invocation_return_error_literal(invocation, G_DBUS_ERROR, G_DBUS_ERROR_NOT_SUPPORTED, "");
+        else if (!g_strcmp0(methodName, "GetAccessibleAtPoint"))
+            g_dbus_method_invocation_return_error_literal(invocation, G_DBUS_ERROR, G_DBUS_ERROR_NOT_SUPPORTED, "");
+        else if (!g_strcmp0(methodName, "GetExtents")) {
+            uint32_t coordinateType;
+            g_variant_get(parameters, "(u)", &coordinateType);
+            auto rect = rootObject.frameRect(coordinateType);
+            g_dbus_method_invocation_return_value(invocation, g_variant_new("((iiii))", rect.x(), rect.y(), rect.width(), rect.height()));
+        } else if (!g_strcmp0(methodName, "GetPosition")) {
+            uint32_t coordinateType;
+            g_variant_get(parameters, "(u)", &coordinateType);
+            auto rect = rootObject.frameRect(coordinateType);
+            g_dbus_method_invocation_return_value(invocation, g_variant_new("((ii))", rect.x(), rect.y()));
+        } else if (!g_strcmp0(methodName, "GetSize")) {
+            auto rect = rootObject.frameRect(Atspi::CoordinateType::ParentCoordinates);
+            g_dbus_method_invocation_return_value(invocation, g_variant_new("((ii))", rect.width(), rect.height()));
+        } else if (!g_strcmp0(methodName, "GetLayer"))
+            g_dbus_method_invocation_return_value(invocation, g_variant_new("(u)", Atspi::ComponentLayer::WidgetLayer));
+        else if (!g_strcmp0(methodName, "GetMDIZOrder"))
+            g_dbus_method_invocation_return_value(invocation, g_variant_new("(n)", 0));
+        else if (!g_strcmp0(methodName, "GrabFocus"))
+            g_dbus_method_invocation_return_error_literal(invocation, G_DBUS_ERROR, G_DBUS_ERROR_NOT_SUPPORTED, "");
+        else if (!g_strcmp0(methodName, "GetAlpha"))
+            g_dbus_method_invocation_return_value(invocation, g_variant_new("(d)", 1.0));
+        else if ((!g_strcmp0(methodName, "SetExtents")) || !g_strcmp0(methodName, "SetPosition") || !g_strcmp0(methodName, "SetSize") || !g_strcmp0(methodName, "ScrollTo") || !g_strcmp0(methodName, "ScrollToPoint"))
+            g_dbus_method_invocation_return_error_literal(invocation, G_DBUS_ERROR, G_DBUS_ERROR_NOT_SUPPORTED, "");
+    },
+    // get_property
+    nullptr,
+    // set_property,
+    nullptr,
+    // padding
+    nullptr
+};
+
+IntRect AccessibilityRootAtspi::frameRect(uint32_t coordinateType) const
+{
+    RELEASE_ASSERT(!isMainThread());
+    return Accessibility::retrieveValueFromMainThread<IntRect>([this, coordinateType]() -> IntRect {
+        if (!m_page)
+            return { };
+
+        auto* frameView = m_page->mainFrame().view();
+        if (!frameView)
+            return { };
+
+        auto frameRect = frameView->frameRect();
+        switch (coordinateType) {
+        case Atspi::CoordinateType::ScreenCoordinates:
+            return frameView->contentsToScreen(frameRect);
+        case Atspi::CoordinateType::WindowCoordinates:
+            return frameView->contentsToWindow(frameRect);
+        case Atspi::CoordinateType::ParentCoordinates:
+            return frameRect;
+        }
+
+        RELEASE_ASSERT_NOT_REACHED();
+    });
 }
 
 } // namespace WebCore

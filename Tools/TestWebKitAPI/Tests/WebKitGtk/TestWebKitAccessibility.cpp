@@ -713,6 +713,96 @@ static void testAccessibleStateChanged(AccessibilityTest* test, gconstpointer)
     events = { };
 }
 
+static void testComponentHitTest(AccessibilityTest* test, gconstpointer)
+{
+    test->showInWindow();
+    GUniquePtr<char> baseDir(g_strdup_printf("file://%s/", Test::getResourcesDir().data()));
+    test->loadHtml(
+        "<html>"
+        "  <body>"
+        "    <img style='position:absolute; left:1; top:1' src='blank.ico' width=5 height=5></img>"
+        "  </body>"
+        "</html>",
+        baseDir.get());
+    test->waitUntilLoadFinished();
+
+    auto testApp = test->findTestApplication();
+    g_assert_true(ATSPI_IS_ACCESSIBLE(testApp.get()));
+
+    auto documentWeb = test->findDocumentWeb(testApp.get());
+    g_assert_true(ATSPI_IS_ACCESSIBLE(documentWeb.get()));
+    g_assert_cmpint(atspi_accessible_get_child_count(documentWeb.get(), nullptr), ==, 1);
+
+    auto img = adoptGRef(atspi_accessible_get_child_at_index(documentWeb.get(), 0, nullptr));
+    g_assert_true(ATSPI_IS_COMPONENT(img.get()));
+    GUniquePtr<AtspiRect> rect(atspi_component_get_extents(ATSPI_COMPONENT(img.get()), ATSPI_COORD_TYPE_WINDOW, nullptr));
+    g_assert_nonnull(rect.get());
+    g_assert_cmpuint(rect->x, ==, 1);
+    g_assert_cmpuint(rect->y, ==, 1);
+    g_assert_cmpuint(rect->width, ==, 5);
+    g_assert_cmpuint(rect->height, ==, 5);
+    GUniquePtr<AtspiPoint> point(atspi_component_get_position(ATSPI_COMPONENT(img.get()), ATSPI_COORD_TYPE_WINDOW, nullptr));
+    g_assert_nonnull(point.get());
+    g_assert_cmpuint(rect->x, ==, point->x);
+    g_assert_cmpuint(rect->y, ==, point->y);
+    GUniquePtr<AtspiPoint> size(atspi_component_get_size(ATSPI_COMPONENT(img.get()), nullptr));
+    g_assert_nonnull(size.get());
+    g_assert_cmpuint(size->x, ==, rect->width);
+    g_assert_cmpuint(size->y, ==, rect->height);
+    g_assert_true(atspi_component_contains(ATSPI_COMPONENT(img.get()), rect->x, rect->y, ATSPI_COORD_TYPE_WINDOW, nullptr));
+    g_assert_false(atspi_component_contains(ATSPI_COMPONENT(img.get()), rect->x + rect->width, rect->y + rect->height, ATSPI_COORD_TYPE_WINDOW, nullptr));
+    auto accessible = adoptGRef(atspi_component_get_accessible_at_point(ATSPI_COMPONENT(documentWeb.get()), rect->x, rect->y, ATSPI_COORD_TYPE_WINDOW, nullptr));
+    g_assert_true(accessible.get() == img.get());
+    accessible = adoptGRef(atspi_component_get_accessible_at_point(ATSPI_COMPONENT(documentWeb.get()), rect->x + rect->width, rect->y + rect->height, ATSPI_COORD_TYPE_WINDOW, nullptr));
+    g_assert_true(accessible.get() == documentWeb.get());
+}
+
+static void testComponentScrollTo(AccessibilityTest* test, gconstpointer)
+{
+    test->showInWindow(640, 480);
+    GUniquePtr<char> baseDir(g_strdup_printf("file://%s/", Test::getResourcesDir().data()));
+    test->loadHtml(
+        "<html>"
+        "  <body>"
+        "    <p>Top</p>"
+        "    <img src='blank.ico' width=200 height=600></img>"
+        "    <p>Bottom</p>"
+        "  </body>"
+        "</html>",
+        baseDir.get());
+    test->waitUntilLoadFinished();
+
+    auto testApp = test->findTestApplication();
+    g_assert_true(ATSPI_IS_ACCESSIBLE(testApp.get()));
+
+    auto documentWeb = test->findDocumentWeb(testApp.get());
+    g_assert_true(ATSPI_IS_ACCESSIBLE(documentWeb.get()));
+    g_assert_cmpint(atspi_accessible_get_child_count(documentWeb.get(), nullptr), ==, 3);
+
+    auto top = adoptGRef(atspi_accessible_get_child_at_index(documentWeb.get(), 0, nullptr));
+    g_assert_true(ATSPI_IS_COMPONENT(top.get()));
+    GUniquePtr<AtspiPoint> topPositionBeforeScrolling(atspi_component_get_position(ATSPI_COMPONENT(top.get()), ATSPI_COORD_TYPE_WINDOW, nullptr));
+    g_assert_cmpint(topPositionBeforeScrolling->y, >, 0);
+    g_assert_cmpint(topPositionBeforeScrolling->y, <, 480);
+
+    auto bottom = adoptGRef(atspi_accessible_get_child_at_index(documentWeb.get(), 2, nullptr));
+    g_assert_true(ATSPI_IS_COMPONENT(bottom.get()));
+    GUniquePtr<AtspiPoint> bottomPositionBeforeScrolling(atspi_component_get_position(ATSPI_COMPONENT(bottom.get()), ATSPI_COORD_TYPE_WINDOW, nullptr));
+    g_assert_cmpint(bottomPositionBeforeScrolling->y, >, 480);
+
+    atspi_component_scroll_to(ATSPI_COMPONENT(bottom.get()), ATSPI_SCROLL_ANYWHERE, nullptr);
+
+    GUniquePtr<AtspiPoint> topPositionAfterScrolling(atspi_component_get_position(ATSPI_COMPONENT(top.get()), ATSPI_COORD_TYPE_WINDOW, nullptr));
+    g_assert_cmpint(topPositionAfterScrolling->y, <, 0);
+    GUniquePtr<AtspiPoint> bottomPositionAfterScrolling(atspi_component_get_position(ATSPI_COMPONENT(bottom.get()), ATSPI_COORD_TYPE_WINDOW, nullptr));
+    g_assert_cmpint(bottomPositionAfterScrolling->y, <, 480);
+
+    atspi_component_scroll_to_point(ATSPI_COMPONENT(top.get()), ATSPI_COORD_TYPE_WINDOW, topPositionBeforeScrolling->x, topPositionBeforeScrolling->y, nullptr);
+    topPositionAfterScrolling.reset(atspi_component_get_position(ATSPI_COMPONENT(top.get()), ATSPI_COORD_TYPE_WINDOW, nullptr));
+    g_assert_cmpint(topPositionBeforeScrolling->x, ==, topPositionAfterScrolling->x);
+    g_assert_cmpint(topPositionBeforeScrolling->y, ==, topPositionAfterScrolling->y);
+}
+
 void beforeAll()
 {
     AccessibilityTest::add("WebKitAccessibility", "accessible/basic-hierarchy", testAccessibleBasicHierarchy);
@@ -721,6 +811,8 @@ void beforeAll()
     AccessibilityTest::add("WebKitAccessibility", "accessible/attributes", testAccessibleAttributes);
     AccessibilityTest::add("WebKitAccessibility", "accessible/state", testAccessibleState);
     AccessibilityTest::add("WebKitAccessibility", "accessible/state-changed", testAccessibleStateChanged);
+    AccessibilityTest::add("WebKitAccessibility", "component/hit-test", testComponentHitTest);
+    AccessibilityTest::add("WebKitAccessibility", "component/scroll-to", testComponentScrollTo);
 }
 
 void afterAll()

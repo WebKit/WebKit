@@ -21,6 +21,7 @@
 
 #if ENABLE(ACCESSIBILITY) && USE(ATSPI)
 #include "AccessibilityAtspi.h"
+#include "IntRect.h"
 #include <wtf/FastMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/WeakPtr.h>
@@ -54,7 +55,10 @@ public:
 private:
     AccessibilityRootAtspi(Page&, AccessibilityAtspi&);
 
+    IntRect frameRect(uint32_t) const;
+
     static GDBusInterfaceVTable s_accessibleFunctions;
+    static GDBusInterfaceVTable s_componentFunctions;
 
     AccessibilityAtspi& m_atspi;
     WeakPtr<Page> m_page;
