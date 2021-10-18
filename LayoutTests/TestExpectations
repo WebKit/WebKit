@@ -4162,9 +4162,7 @@ webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/vertic
 webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/vertical-alignment-srl-034.xht [ ImageOnlyFailure ]
 webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/vertical-alignment-srl-040.xht [ ImageOnlyFailure ]
 
-webkit.org/b/219343 imported/w3c/web-platform-tests/css/css-flexbox/flex-aspect-ratio-img-column-012.html [ ImageOnlyFailure ]
 webkit.org/b/219343 imported/w3c/web-platform-tests/css/css-flexbox/flex-aspect-ratio-img-column-015.html [ ImageOnlyFailure ]
-webkit.org/b/219343 imported/w3c/web-platform-tests/css/css-flexbox/flex-aspect-ratio-img-row-007.html [ ImageOnlyFailure ]
 webkit.org/b/219343 imported/w3c/web-platform-tests/css/css-flexbox/flex-aspect-ratio-img-row-010.html [ ImageOnlyFailure ]
 webkit.org/b/219343 imported/w3c/web-platform-tests/css/css-flexbox/aspect-ratio-intrinsic-size-005.html [ ImageOnlyFailure ]
 
@@ -4190,7 +4188,6 @@ webkit.org/b/221473 imported/w3c/web-platform-tests/css/css-flexbox/table-as-ite
 webkit.org/b/221473 imported/w3c/web-platform-tests/css/css-flexbox/table-as-item-inflexible-in-column-1.html [ ImageOnlyFailure ]
 webkit.org/b/221473 imported/w3c/web-platform-tests/css/css-flexbox/table-as-item-inflexible-in-column-2.html [ ImageOnlyFailure ]
 webkit.org/b/221473 imported/w3c/web-platform-tests/css/css-flexbox/table-as-item-inflexible-in-row-2.html [ ImageOnlyFailure ]
-webkit.org/b/221473 imported/w3c/web-platform-tests/css/css-flexbox/table-as-item-min-height-1.html [ ImageOnlyFailure ]
 
 # SVGs as flex items.
 webkit.org/b/221474 imported/w3c/web-platform-tests/css/css-flexbox/svg-root-as-flex-item-002.html [ ImageOnlyFailure ]

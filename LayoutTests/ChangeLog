@@ -1,3 +1,13 @@
+2021-10-15  Sergio Villar Senin  <svillar@igalia.com>
+
+        [css-flexbox] Do not clamp flex base size with {min|max}-{height|width}
+        https://bugs.webkit.org/show_bug.cgi?id=225590
+        <rdar://problem/78100329>
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        * TestExpectations: Unskipped 3 tests that are now passing.
+
 2021-10-18  Tyler Wilcock  <tyler_w@apple.com>
 
         AX: Return AXEmptyGroup subrole for groups with no accessible content

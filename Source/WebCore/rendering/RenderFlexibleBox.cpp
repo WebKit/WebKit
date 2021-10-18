@@ -996,32 +996,58 @@ void RenderFlexibleBox::clearCachedMainSizeForChild(const RenderBox& child)
     m_intrinsicSizeAlongMainAxis.remove(&child);
 }
 
-// This is a RAII class that is used to temporarily set the flex basis as the child size in the main axis.
-class ScopedFlexBasisAsChildMainSize {
+// This is a RAII class that is used to temporarily set the flex basis as the child size in the main axis. Apart from that
+// the min|max-size restrictions are ignored for this computation. See https://drafts.csswg.org/css-flexbox/#algo-main-item
+// for further details.
+class ScopedUnboundedBoxWithFlexBasisAsChildMainSize {
 public:
-    ScopedFlexBasisAsChildMainSize(RenderBox& child, Length flexBasis, bool mainAxisIsInlineAxis)
+    ScopedUnboundedBoxWithFlexBasisAsChildMainSize(RenderBox& child, Length flexBasis, bool mainAxisIsInlineAxis)
         : m_child(child)
+        , m_isHorizontalWritingModeInParallelFlow(mainAxisIsInlineAxis == child.isHorizontalWritingMode())
         , m_mainAxisIsInlineAxis(mainAxisIsInlineAxis)
     {
+        if (m_isHorizontalWritingModeInParallelFlow) {
+            m_originalMinSize = m_child.style().minWidth();
+            m_originalMaxSize = m_child.style().maxWidth();
+            m_child.mutableStyle().setMinWidth(RenderStyle::initialMinSize());
+            m_child.mutableStyle().setMaxWidth(RenderStyle::initialMaxSize());
+        } else {
+            m_originalMinSize = m_child.style().minHeight();
+            m_originalMaxSize = m_child.style().maxHeight();
+            m_child.mutableStyle().setMinHeight(RenderStyle::initialMinSize());
+            m_child.mutableStyle().setMaxHeight(RenderStyle::initialMaxSize());
+        }
+
         if (m_mainAxisIsInlineAxis) {
-            m_originalLength = m_child.style().logicalWidth();
+            m_originalSize = m_child.style().logicalWidth();
             m_child.mutableStyle().setLogicalWidth(Length(flexBasis));
             return;
         }
-        m_originalLength = m_child.style().logicalHeight();
+        m_originalSize = m_child.style().logicalHeight();
         m_child.mutableStyle().setLogicalHeight(Length(flexBasis));
     }
-    ~ScopedFlexBasisAsChildMainSize()
+    ~ScopedUnboundedBoxWithFlexBasisAsChildMainSize()
     {
+        if (m_isHorizontalWritingModeInParallelFlow) {
+            m_child.mutableStyle().setMinWidth(Length(m_originalMinSize));
+            m_child.mutableStyle().setMaxWidth(Length(m_originalMaxSize));
+        } else {
+            m_child.mutableStyle().setMinHeight(Length(m_originalMinSize));
+            m_child.mutableStyle().setMaxHeight(Length(m_originalMaxSize));
+        }
+
         if (m_mainAxisIsInlineAxis)
-            m_child.mutableStyle().setLogicalWidth(Length(m_originalLength));
+            m_child.mutableStyle().setLogicalWidth(Length(m_originalSize));
         else
-            m_child.mutableStyle().setLogicalHeight(Length(m_originalLength));
+            m_child.mutableStyle().setLogicalHeight(Length(m_originalSize));
     }
 private:
     RenderBox& m_child;
+    bool m_isHorizontalWritingModeInParallelFlow;
     bool m_mainAxisIsInlineAxis;
-    Length m_originalLength;
+    Length m_originalSize;
+    Length m_originalMinSize;
+    Length m_originalMaxSize;
 };
 
 // https://drafts.csswg.org/css-flexbox/#algo-main-item
@@ -1043,7 +1069,7 @@ LayoutUnit RenderFlexibleBox::computeFlexBaseSizeForChild(RenderBox& child, Layo
 
     // 9.3.2 E. Otherwise, size the item into the available space using its used flex basis in place of its main size.
     {
-        ScopedFlexBasisAsChildMainSize flexBasisScope(child, flexBasis, mainAxisIsChildInlineAxis(child));
+        ScopedUnboundedBoxWithFlexBasisAsChildMainSize flexBasisScope(child, flexBasis, mainAxisIsChildInlineAxis(child));
         if (mainAxisIsChildInlineAxis(child))
             return child.maxPreferredLogicalWidth() - mainAxisBorderAndPadding;
 
