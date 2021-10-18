@@ -126,10 +126,10 @@ void NetworkRTCProvider::close()
     m_rtcMonitor.stopUpdating();
 
     callOnRTCNetworkThread([this]() {
-        auto sockets = WTFMove(m_sockets);
-        for (auto& socket : m_sockets)
+        auto sockets = std::exchange(m_sockets, { });
+        for (auto& socket : sockets)
             socket.second->close();
-        ASSERT(sockets.empty());
+        ASSERT(m_sockets.empty());
 #if PLATFORM(COCOA)
         m_attributedBundleIdentifiers.clear();
 #endif

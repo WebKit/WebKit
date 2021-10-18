@@ -1,3 +1,18 @@
+2021-10-18  David Kilzer  <ddkilzer@apple.com>
+
+        Use-after-move of m_sockets in NetworkRTCProvider::close()
+        <https://webkit.org/b/231779>
+        <rdar://problem/84278026>
+
+        Reviewed by Youenn Fablet.
+
+        * NetworkProcess/webrtc/NetworkRTCProvider.cpp:
+        (WebKit::NetworkRTCProvider::close):
+        - Replace WTFMove() with std::exchange() to make it clear that
+          m_sockets will be emptied, then iterate on `sockets` to close
+          them.  Update ASSERT() to check that no sockets were added
+          to m_sockets during the loop.
+
 2021-10-17  David Kilzer  <ddkilzer@apple.com>
 
         Build fix #3: Adopt attribution AVCaptureSession SPI for GPU process
