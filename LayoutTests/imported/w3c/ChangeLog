@@ -1,3 +1,14 @@
+2021-10-18  Chris Dumez  <cdumez@apple.com>
+
+        Resync web-platform-tests/common from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=231908
+
+        Reviewed by Alex Christensen.
+
+        Resync web-platform-tests/common from upstream 4250f160c0cb9ef2caba63.
+
+        * web-platform-tests/common/*: Updated.
+
 2021-10-18  Kiet Ho  <tho22@apple.com>
 
         Implement parsing and animation support for offset-distance, offset-position, offset-anchor
