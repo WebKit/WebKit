@@ -1,3 +1,14 @@
+2021-10-18  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] PutByVal's child5 should be KnownInt32Use / Int52RepUse in FTL
+        https://bugs.webkit.org/show_bug.cgi?id=231884
+        rdar://84357099
+
+        Reviewed by Robin Morisset.
+
+        * stress/put-by-val-known-int32.js: Added.
+        (new.Uint8Array.1000000.map):
+
 2021-10-16  Robin Morisset  <rmorisset@apple.com>
 
         Allow WASM to use up to 4GB

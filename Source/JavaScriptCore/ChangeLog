@@ -1,3 +1,16 @@
+2021-10-18  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] PutByVal's child5 should be KnownInt32Use / Int52RepUse in FTL
+        https://bugs.webkit.org/show_bug.cgi?id=231884
+        rdar://84357099
+
+        Reviewed by Robin Morisset.
+
+        The child5 of PutByVal should be KnownInt32Use or Int52RepUse.
+
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compilePutByVal):
+
 2021-10-16  Mark Lam  <mark.lam@apple.com>
 
         Make LLIntAssembly.h more readable.

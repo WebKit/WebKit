@@ -6076,7 +6076,7 @@ IGNORE_CLANG_WARNINGS_END
                         RELEASE_ASSERT(sizeof(size_t) == sizeof(uint64_t));
                         isOutOfBoundsCondition = m_out.aboveOrEqual(m_out.signExt32To64(index), lowStrictInt52(child5));
                     } else {
-                        ASSERT(child5.useKind() == Int32Use);
+                        DFG_ASSERT(m_graph, m_node, child5.useKind() == KnownInt32Use, child5.useKind());
                         isOutOfBoundsCondition = m_out.aboveOrEqual(index, lowInt32(child5));
                     }
                     m_out.branch(isOutOfBoundsCondition, unsure(isOutOfBounds), unsure(isInBounds));
