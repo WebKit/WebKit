@@ -37,6 +37,7 @@ namespace WebCore {
 
 class ScriptExecutionContext;
 class ServiceWorkerContainer;
+class StorageManager;
 
 class NavigatorBase : public RefCounted<NavigatorBase>, public ContextDestructionObserver, public CanMakeWeakPtr<NavigatorBase> {
 public:
@@ -58,8 +59,13 @@ public:
     static String language();
     static Vector<String> languages();
 
+    ExceptionOr<StorageManager&> storage();
+
 protected:
     explicit NavigatorBase(ScriptExecutionContext*);
+
+private:
+    RefPtr<StorageManager> m_storageManager;
 
 #if ENABLE(SERVICE_WORKER)
 public:

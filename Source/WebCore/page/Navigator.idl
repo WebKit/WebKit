@@ -38,3 +38,4 @@ Navigator includes NavigatorCookies;
 Navigator includes NavigatorPlugins;
 Navigator includes NavigatorServiceWorker;
 Navigator includes NavigatorShare;
+Navigator includes NavigatorStorage;

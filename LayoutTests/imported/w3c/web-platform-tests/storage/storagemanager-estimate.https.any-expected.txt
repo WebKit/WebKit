@@ -1,5 +1,5 @@
 
-FAIL estimate() method returns a Promise undefined is not an object (evaluating 'navigator.storage.estimate')
-FAIL estimate() resolves to dictionary with members undefined is not an object (evaluating 'navigator.storage.estimate')
-FAIL estimate() shows usage increase after 1MB IndexedDB record is stored promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.storage.estimate')"
+FAIL estimate() method returns a Promise navigator.storage.estimate is not a function. (In 'navigator.storage.estimate()', 'navigator.storage.estimate' is undefined)
+FAIL estimate() resolves to dictionary with members navigator.storage.estimate is not a function. (In 'navigator.storage.estimate()', 'navigator.storage.estimate' is undefined)
+FAIL estimate() shows usage increase after 1MB IndexedDB record is stored promise_test: Unhandled rejection with value: object "TypeError: navigator.storage.estimate is not a function. (In 'navigator.storage.estimate()', 'navigator.storage.estimate' is undefined)"
 
