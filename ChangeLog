@@ -1,3 +1,12 @@
+2021-10-18  Rob Buis  <rbuis@igalia.com>
+
+        Add my github username to contributors.json
+        https://bugs.webkit.org/show_bug.cgi?id=231889
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        * metadata/contributors.json:
+
 2021-10-18  Xan Lopez  <xan@igalia.com>
 
         Add my github username to contributors.json
