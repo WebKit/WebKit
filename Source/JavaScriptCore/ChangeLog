@@ -1,5 +1,20 @@
 2021-10-18  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] Use USE(LARGE_TYPED_ARRAY)
+        https://bugs.webkit.org/show_bug.cgi?id=231885
+
+        Reviewed by Sam Weinig.
+
+        Fix USE(ADDRESS64) with USE(LARGE_TYPED_ARRAY). USE(ADDRESS64) is not correct (it should be CPU(ADDRESS64)).
+        It is coverted by JSTests/stress/typed-array-large-eventually-oob.js.
+
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileCompareStrictEq):
+
+2021-10-18  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] PutByVal's child5 should be KnownInt32Use / Int52RepUse in FTL
         https://bugs.webkit.org/show_bug.cgi?id=231884
         rdar://84357099
