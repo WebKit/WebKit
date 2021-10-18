@@ -1,3 +1,44 @@
+2021-10-18  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        Cocoa GraphicsContextGLOpenGL should not use WebGLLayer
+        https://bugs.webkit.org/show_bug.cgi?id=231804
+
+        Reviewed by Dean Jackson.
+
+        Implement changes so that GPU process side GraphicsContextGLOpenGL,
+        the new class GPUProcessGraphicsContextGL, does not use
+        WebGLLayer. Instead, the swap chain is in GraphicsContextGLOpenGL
+        and the GPUProcessGraphicsContextGL exposes a function to extract
+        the display buffer out to be sent to WebContent process.
+
+        * GPUProcess/graphics/GPUProcessGraphicsContextGL.h: Added.
+        Add a simpler class for GPUProcess side GraphicsContextGLOpenGL
+        instance, one that can get the display buffer from the instance.
+
+        * GPUProcess/graphics/RemoteGraphicsContextGL.h:
+        * GPUProcess/graphics/RemoteGraphicsContextGLCocoa.cpp:
+        (WebKit::RemoteGraphicsContextGLCocoa::platformWorkQueueInitialize):
+        (WebKit::RemoteGraphicsContextGLCocoa::prepareForDisplay):
+        * GPUProcess/graphics/RemoteGraphicsContextGLWin.cpp:
+        (WebKit::RemoteGraphicsContextGLWin::platformWorkQueueInitialize):
+        * SourcesCocoa.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/GPU/graphics/RemoteGraphicsContextGLProxy.cpp:
+        (WebKit::RemoteGraphicsContextGLProxy::~RemoteGraphicsContextGLProxy):
+        (WebKit::RemoteGraphicsContextGLProxy::prepareForDisplay):
+        Move Cocoa implemenation to an Objective-C++ file.
+
+        * WebProcess/GPU/graphics/cocoa/RemoteGraphicsContextGLProxyCocoa.mm: Added.
+        (WebKit::RemoteGraphicsContextGLProxy::prepareForDisplay):
+        Set the display buffer contents directly to the WebGLLayer after
+        prepare.
+
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugInBrowserContextController.mm:
+        * WebProcess/Plugins/PDF/PDFPluginPasswordField.mm:
+        * WebProcess/WebPage/RemoteLayerTree/PlatformCALayerRemoteModelHosting.mm:
+        (WebKit::PlatformCALayerRemoteModelHosting::dumpAdditionalProperties):
+        Unified build fixes.
+
 2021-10-18  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GLIB] Simplify SleepDisabler by checking if we are under sandbox

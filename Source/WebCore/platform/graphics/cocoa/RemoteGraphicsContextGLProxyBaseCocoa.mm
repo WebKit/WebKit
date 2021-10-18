@@ -43,9 +43,9 @@ void RemoteGraphicsContextGLProxyBase::platformInitialize()
 {
     auto attrs = contextAttributes();
     BEGIN_BLOCK_OBJC_EXCEPTIONS
-        m_webGLLayer = adoptNS([[WebGLLayer alloc] initWithDevicePixelRatio:attrs.devicePixelRatio contentsOpaque:!attrs.alpha]);
+    m_webGLLayer = adoptNS([[WebGLLayer alloc] initWithDevicePixelRatio:attrs.devicePixelRatio contentsOpaque:!attrs.alpha]);
 #ifndef NDEBUG
-        [m_webGLLayer setName:@"WebGL Layer"];
+    [m_webGLLayer setName:@"WebGL Layer"];
 #endif
     END_BLOCK_OBJC_EXCEPTIONS
 }
@@ -63,20 +63,12 @@ GraphicsContextGLCV* RemoteGraphicsContextGLProxyBase::asCV()
 }
 #endif
 
-GraphicsContextGLIOSurfaceSwapChain& RemoteGraphicsContextGLProxyBase::platformSwapChain()
-{
-    return [m_webGLLayer swapChain];
-}
-
 #if ENABLE(MEDIA_STREAM)
 RefPtr<MediaSample> RemoteGraphicsContextGLProxyBase::paintCompositedResultsToMediaSample()
 {
-    auto& sc = platformSwapChain();
-    auto& displayBuffer = sc.displayBuffer();
-    if (!displayBuffer.surface)
+    if (!m_displayBuffer)
         return nullptr;
-    sc.markDisplayBufferInUse();
-    auto pixelBuffer = createCVPixelBuffer(displayBuffer.surface->surface());
+    auto pixelBuffer = createCVPixelBuffer(m_displayBuffer->surface());
     if (!pixelBuffer)
         return nullptr;
     return MediaSampleAVFObjC::createImageSample(WTFMove(*pixelBuffer), MediaSampleAVFObjC::VideoRotation::UpsideDown, true);

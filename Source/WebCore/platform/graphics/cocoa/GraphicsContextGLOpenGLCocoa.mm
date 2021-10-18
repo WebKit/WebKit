@@ -36,7 +36,6 @@
 #import "GraphicsContextGLOpenGLManager.h"
 #import "Logging.h"
 #import "RuntimeApplicationChecks.h"
-#import "WebGLLayer.h"
 #import <CoreGraphics/CGBitmapContext.h>
 #import <Metal/Metal.h>
 #import <pal/spi/cocoa/MetalSPI.h>
@@ -193,29 +192,7 @@ static bool needsEAGLOnMac()
 }
 #endif
 
-RefPtr<GraphicsContextGLOpenGL> GraphicsContextGLOpenGL::create(GraphicsContextGLAttributes attrs, HostWindow* hostWindow)
-{
-    // Make space for the incoming context if we're full.
-    GraphicsContextGLOpenGLManager::sharedManager().recycleContextIfNecessary();
-    if (GraphicsContextGLOpenGLManager::sharedManager().hasTooManyContexts())
-        return nullptr;
-
-    RefPtr<GraphicsContextGLOpenGL> context = adoptRef(new GraphicsContextGLOpenGL(attrs, hostWindow, nullptr));
-
-    if (!context->m_contextObj)
-        return nullptr;
-
-    GraphicsContextGLOpenGLManager::sharedManager().addContext(context.get());
-
-    return context;
-}
-
-Ref<GraphicsContextGLOpenGL> GraphicsContextGLOpenGL::createForGPUProcess(const GraphicsContextGLAttributes& attrs, GraphicsContextGLIOSurfaceSwapChain* swapChain)
-{
-    return adoptRef(*new GraphicsContextGLOpenGL(attrs, nullptr, swapChain));
-}
-
-GraphicsContextGLOpenGL::GraphicsContextGLOpenGL(GraphicsContextGLAttributes attrs, HostWindow*, GraphicsContextGLIOSurfaceSwapChain* swapChain)
+GraphicsContextGLOpenGL::GraphicsContextGLOpenGL(GraphicsContextGLAttributes attrs)
     : GraphicsContextGL(attrs)
 {
     m_isForWebGL2 = attrs.webGLVersion == GraphicsContextGLWebGLVersion::WebGL2;
@@ -353,18 +330,6 @@ GraphicsContextGLOpenGL::GraphicsContextGLOpenGL(GraphicsContextGLAttributes att
     validateAttributes();
     attrs = contextAttributes(); // They may have changed during validation.
 
-    if (swapChain)
-        m_swapChain = swapChain;
-    else {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS
-        m_webGLLayer = adoptNS([[WebGLLayer alloc] initWithDevicePixelRatio:attrs.devicePixelRatio contentsOpaque:!attrs.alpha]);
-#ifndef NDEBUG
-        [m_webGLLayer setName:@"WebGL Layer"];
-#endif
-    END_BLOCK_OBJC_EXCEPTIONS
-        m_swapChain = &[m_webGLLayer swapChain];
-    }
-
     // Create the texture that will be used for the framebuffer.
     GLenum textureTarget = drawingBufferTextureTarget();
 
@@ -439,20 +404,28 @@ GraphicsContextGLOpenGL::~GraphicsContextGLOpenGL()
     }
     if (m_displayBufferPbuffer)
         EGL_DestroySurface(m_displayObj, m_displayBufferPbuffer);
-    if (m_swapChain) {
-        auto recycledBuffer = m_swapChain->recycleBuffer();
-        if (recycledBuffer.handle)
-            EGL_DestroySurface(m_displayObj, recycledBuffer.handle);
-        auto contentsHandle = m_swapChain->detachClient();
-        if (contentsHandle)
-            EGL_DestroySurface(m_displayObj, contentsHandle);
-    }
+    auto recycledBuffer = m_swapChain.recycleBuffer();
+    if (recycledBuffer.handle)
+        EGL_DestroySurface(m_displayObj, recycledBuffer.handle);
+    auto contentsHandle = m_swapChain.detachClient();
+    if (contentsHandle)
+        EGL_DestroySurface(m_displayObj, contentsHandle);
     if (m_contextObj) {
         makeCurrent(m_displayObj, EGL_NO_CONTEXT);
         EGL_DestroyContext(m_displayObj, m_contextObj);
     }
     ASSERT(currentContext != this);
     LOG(WebGL, "Destroyed a GraphicsContextGLOpenGL (%p).", this);
+}
+
+bool GraphicsContextGLOpenGL::isValid() const
+{
+    return m_texture;
+}
+
+PlatformLayer* GraphicsContextGLOpenGL::platformLayer() const
+{
+    return nullptr;
 }
 
 GCGLenum GraphicsContextGLOpenGL::drawingBufferTextureTarget()
@@ -567,12 +540,10 @@ bool GraphicsContextGLOpenGL::reshapeDisplayBufferBacking()
         m_displayBufferPbuffer = EGL_NO_SURFACE;
     }
     // Reset the future recycled buffer now, because it most likely will not be reusable at the time it will be reused.
-    if (m_swapChain) {
-        auto recycledBuffer = m_swapChain->recycleBuffer();
-        if (recycledBuffer.handle)
-            EGL_DestroySurface(m_displayObj, recycledBuffer.handle);
-        recycledBuffer.surface.reset();
-    }
+    auto recycledBuffer = m_swapChain.recycleBuffer();
+    if (recycledBuffer.handle)
+        EGL_DestroySurface(m_displayObj, recycledBuffer.handle);
+    recycledBuffer.surface.reset();
     return allocateAndBindDisplayBufferBacking();
 }
 
@@ -724,10 +695,10 @@ void GraphicsContextGLOpenGL::prepareForDisplay()
     // The IOSurface will be used from other graphics subsystem, so flush GL commands.
     gl::Flush();
 
-    auto recycledBuffer = m_swapChain->recycleBuffer();
+    auto recycledBuffer = m_swapChain.recycleBuffer();
 
     EGL_ReleaseTexImage(m_displayObj, m_displayBufferPbuffer, EGL_BACK_BUFFER);
-    m_swapChain->present({ WTFMove(m_displayBufferBacking), m_displayBufferPbuffer });
+    m_swapChain.present({ WTFMove(m_displayBufferBacking), m_displayBufferPbuffer });
     m_displayBufferPbuffer = EGL_NO_SURFACE;
 
     bool hasNewBacking = false;
@@ -763,7 +734,7 @@ GraphicsContextGLCV* GraphicsContextGLOpenGL::asCV()
 
 std::optional<PixelBuffer> GraphicsContextGLOpenGL::readCompositedResults()
 {
-    auto& displayBuffer = m_swapChain->displayBuffer();
+    auto& displayBuffer = m_swapChain.displayBuffer();
     if (!displayBuffer.surface || !displayBuffer.handle)
         return std::nullopt;
     if (displayBuffer.surface->size() != getInternalFramebufferSize())
@@ -795,12 +766,12 @@ std::optional<PixelBuffer> GraphicsContextGLOpenGL::readCompositedResults()
 #if ENABLE(MEDIA_STREAM)
 RefPtr<MediaSample> GraphicsContextGLOpenGL::paintCompositedResultsToMediaSample()
 {
-    auto &displayBuffer = m_swapChain->displayBuffer();
+    auto &displayBuffer = m_swapChain.displayBuffer();
     if (!displayBuffer.surface || !displayBuffer.handle)
         return nullptr;
     if (displayBuffer.surface->size() != getInternalFramebufferSize())
         return nullptr;
-    m_swapChain->markDisplayBufferInUse();
+    m_swapChain.markDisplayBufferInUse();
     auto pixelBuffer = createCVPixelBuffer(displayBuffer.surface->surface());
     if (!pixelBuffer)
         return nullptr;

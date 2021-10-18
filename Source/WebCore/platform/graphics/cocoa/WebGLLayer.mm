@@ -31,23 +31,8 @@
 #import "GraphicsLayer.h"
 #import "GraphicsLayerCA.h"
 #import "PlatformCALayer.h"
-#import <pal/spi/cocoa/QuartzCoreSPI.h>
 
-class WebGLLayerSwapChain final : public WebCore::GraphicsContextGLIOSurfaceSwapChain {
-public:
-    explicit WebGLLayerSwapChain(WebGLLayer* layer)  : m_layer(layer) { };
-    ~WebGLLayerSwapChain() override = default;
-    void present(Buffer&&) override;
-
-    WebCore::IOSurface* displaySurface() { return m_displayBuffer.surface.get(); }
-private:
-    WebGLLayer* const m_layer;
-};
-
-@implementation WebGLLayer {
-    BOOL _preparedForDisplay;
-    std::optional<WebGLLayerSwapChain> _swapChain;
-}
+@implementation WebGLLayer
 
 - (id)initWithDevicePixelRatio:(float)devicePixelRatio contentsOpaque:(bool)contentsOpaque
 {
@@ -55,7 +40,6 @@ private:
     self.transform = CATransform3DIdentity;
     self.contentsOpaque = contentsOpaque;
     self.contentsScale = devicePixelRatio;
-    _swapChain.emplace(self);
     return self;
 }
 
@@ -75,37 +59,15 @@ private:
     [super setAnchorPoint:CGPointMake(p.x, 1.0 - p.y)];
 }
 
-- (WebCore::GraphicsContextGLIOSurfaceSwapChain&) swapChain
-{
-    return _swapChain.value();
-}
-
-- (void)prepareForDisplay
-{
-    [self setNeedsDisplay];
-    _preparedForDisplay = YES;
-}
-
 - (void)display
 {
-    if (_swapChain->displaySurface() && _preparedForDisplay) {
-        self.contents = _swapChain->displaySurface()->asLayerContents();
-        [self reloadValueForKeyPath:@"contents"];
-    }
+    // Show the self.contents as the contents by not doing anything in this function.
     auto layer = WebCore::PlatformCALayer::platformCALayerForLayer((__bridge void*)self);
     if (layer && layer->owner())
         layer->owner()->platformCALayerLayerDidDisplay(layer.get());
 
-    _preparedForDisplay = NO;
 }
 
 @end
-
-void WebGLLayerSwapChain::present(Buffer&& buffer)
-{
-    ASSERT(!m_spareBuffer.surface);
-    GraphicsContextGLIOSurfaceSwapChain::present(WTFMove(buffer));
-    [m_layer prepareForDisplay];
-}
 
 #endif // ENABLE(WEBGL)

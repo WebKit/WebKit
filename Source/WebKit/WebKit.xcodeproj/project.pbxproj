@@ -4806,6 +4806,8 @@
 		7AFBD36221E50F39005DBACB /* WebResourceLoadStatisticsStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebResourceLoadStatisticsStore.h; path = Classifier/WebResourceLoadStatisticsStore.h; sourceTree = "<group>"; };
 		7AFBD36D21E546E3005DBACB /* PersistencyUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PersistencyUtils.h; sourceTree = "<group>"; };
 		7AFBD36E21E546E3005DBACB /* PersistencyUtils.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PersistencyUtils.cpp; sourceTree = "<group>"; };
+		7B16191227198AA900C40EAC /* RemoteGraphicsContextGLProxyCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = RemoteGraphicsContextGLProxyCocoa.mm; sourceTree = "<group>"; };
+		7B1619132719AE7600C40EAC /* GPUProcessGraphicsContextGL.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GPUProcessGraphicsContextGL.h; sourceTree = "<group>"; };
 		7B1DB26525668CE0000E26BC /* ArrayReference.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArrayReference.h; sourceTree = "<group>"; };
 		7B483F1B25CDDA9B00120486 /* MessageReceiveQueueMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MessageReceiveQueueMap.h; sourceTree = "<group>"; };
 		7B483F1C25CDDA9B00120486 /* MessageReceiveQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MessageReceiveQueue.h; sourceTree = "<group>"; };
@@ -9198,6 +9200,7 @@
 			children = (
 				F4094CBC255304AF003D73E3 /* DisplayListReaderHandle.cpp */,
 				F4094CBB255304AF003D73E3 /* DisplayListReaderHandle.h */,
+				7B1619132719AE7600C40EAC /* GPUProcessGraphicsContextGL.h */,
 				55AD09432408A0E600DE4D2F /* PlatformRemoteImageBuffer.h */,
 				1CC54AFD270F9654005BF8BE /* QualifiedRenderingResourceIdentifier.h */,
 				1CBF9012271018B5000C457D /* QualifiedResourceHeap.h */,
@@ -9670,6 +9673,7 @@
 				2D25F32825758E9000231A8B /* ImageBufferShareableIOSurfaceBackend.h */,
 				727A7F342407857D004D2931 /* ImageBufferShareableMappedIOSurfaceBackend.cpp */,
 				727A7F352407857F004D2931 /* ImageBufferShareableMappedIOSurfaceBackend.h */,
+				7B16191227198AA900C40EAC /* RemoteGraphicsContextGLProxyCocoa.mm */,
 			);
 			path = cocoa;
 			sourceTree = "<group>";

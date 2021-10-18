@@ -29,6 +29,10 @@
 #if ENABLE(GPU_PROCESS) && ENABLE(WEBGL)
 #include "NotImplemented.h"
 
+#if PLATFORM(COCOA)
+#include "IOSurface.h"
+#endif
+
 namespace WebCore {
 
 RemoteGraphicsContextGLProxyBase::RemoteGraphicsContextGLProxyBase(const GraphicsContextGLAttributes& attrs)

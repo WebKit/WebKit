@@ -63,6 +63,7 @@
 #import <WebCore/HTMLInputElement.h>
 #import <WebCore/WebCoreObjCExtras.h>
 #import <wtf/WeakObjCPtr.h>
+#import <wtf/cocoa/VectorCocoa.h>
 
 @interface NSObject (WKDeprecatedDelegateMethods)
 - (void)webProcessPlugInBrowserContextController:(WKWebProcessPlugInBrowserContextController *)controller didSameDocumentNavigationForFrame:(WKWebProcessPlugInFrame *)frame;

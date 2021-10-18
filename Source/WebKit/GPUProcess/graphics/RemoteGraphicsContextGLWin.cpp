@@ -57,7 +57,7 @@ RemoteGraphicsContextGLWin::RemoteGraphicsContextGLWin(GPUConnectionToWebProcess
 
 void RemoteGraphicsContextGLWin::platformWorkQueueInitialize(WebCore::GraphicsContextGLAttributes&& attributes)
 {
-    m_context = GraphicsContextGLOpenGL::createForGPUProcess(WTFMove(attributes));
+    m_context = GPUProcessGraphicsContextGLOpenGL::create(WTFMove(attributes));
 }
 
 void RemoteGraphicsContextGL::prepareForDisplay(CompletionHandler<void()>&& completionHandler)

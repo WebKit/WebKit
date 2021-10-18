@@ -388,6 +388,7 @@ platform/graphics/cocoa/WebActionDisablingCALayerDelegate.mm
 platform/graphics/cocoa/WebCoreCALayerExtras.mm
 platform/graphics/cocoa/WebCoreDecompressionSession.mm
 platform/graphics/cocoa/WebGLLayer.mm
+platform/graphics/cocoa/WebProcessGraphicsContextGLOpenGLCocoa.mm
 platform/graphics/cocoa/VideoTrackPrivateWebM.cpp
 platform/graphics/coretext/DrawGlyphsRecorderCoreText.cpp
 platform/graphics/coretext/FontCascadeCoreText.cpp

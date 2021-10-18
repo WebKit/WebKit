@@ -66,7 +66,7 @@
 
 namespace WebCore {
 
-RefPtr<GraphicsContextGLOpenGL> GraphicsContextGLOpenGL::create(GraphicsContextGLAttributes attributes, HostWindow* hostWindow)
+RefPtr<GraphicsContextGLOpenGL> GraphicsContextGLOpenGL::create(GraphicsContextGLAttributes attributes, HostWindow*)
 {
     static bool initialized = false;
     static bool success = true;
@@ -85,7 +85,7 @@ RefPtr<GraphicsContextGLOpenGL> GraphicsContextGLOpenGL::create(GraphicsContextG
         return nullptr;
 
     // Create the GraphicsContextGLOpenGL object first in order to establist a current context on this thread.
-    auto context = adoptRef(new GraphicsContextGLOpenGL(attributes, hostWindow));
+    auto context = adoptRef(new GraphicsContextGLOpenGL(attributes));
 
 #if USE(LIBEPOXY) && USE(OPENGL_ES) && ENABLE(WEBGL2)
     // Bail if GLES3 was requested but cannot be provided.
@@ -98,13 +98,8 @@ RefPtr<GraphicsContextGLOpenGL> GraphicsContextGLOpenGL::create(GraphicsContextG
     return context;
 }
 
-Ref<GraphicsContextGLOpenGL> GraphicsContextGLOpenGL::createForGPUProcess(const GraphicsContextGLAttributes& attributes)
-{
-    return adoptRef(*new GraphicsContextGLOpenGL(attributes, nullptr));
-}
-
 #if USE(ANGLE)
-GraphicsContextGLOpenGL::GraphicsContextGLOpenGL(GraphicsContextGLAttributes attributes, HostWindow*)
+GraphicsContextGLOpenGL::GraphicsContextGLOpenGL(GraphicsContextGLAttributes attributes)
     : GraphicsContextGL(attributes)
 {
 #if ENABLE(WEBGL2)
@@ -173,7 +168,7 @@ GraphicsContextGLOpenGL::GraphicsContextGLOpenGL(GraphicsContextGLAttributes att
     gl::ClearColor(0, 0, 0, 0);
 }
 #else
-GraphicsContextGLOpenGL::GraphicsContextGLOpenGL(GraphicsContextGLAttributes attributes, HostWindow*)
+GraphicsContextGLOpenGL::GraphicsContextGLOpenGL(GraphicsContextGLAttributes attributes)
     : GraphicsContextGL(attributes)
 {
 #if USE(NICOSIA)

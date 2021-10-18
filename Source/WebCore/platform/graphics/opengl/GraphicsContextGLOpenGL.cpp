@@ -47,6 +47,13 @@
 
 namespace WebCore {
 
+#if !PLATFORM(COCOA)
+bool GraphicsContextGLOpenGL::isValid() const
+{
+    return true;
+}
+#endif
+
 void GraphicsContextGLOpenGL::resetBuffersToAutoClear()
 {
     GCGLuint buffers = GraphicsContextGL::COLOR_BUFFER_BIT;

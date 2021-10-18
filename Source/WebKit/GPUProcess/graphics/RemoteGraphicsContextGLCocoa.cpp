@@ -73,20 +73,22 @@ RemoteGraphicsContextGLCocoa::RemoteGraphicsContextGLCocoa(GPUConnectionToWebPro
 void RemoteGraphicsContextGLCocoa::platformWorkQueueInitialize(WebCore::GraphicsContextGLAttributes&& attributes)
 {
     assertIsCurrent(m_streamThread);
-    m_context = GraphicsContextGLOpenGL::createForGPUProcess(WTFMove(attributes), &m_swapChain);
+    m_context = GPUProcessGraphicsContextGLOpenGL::create(WTFMove(attributes));
 }
 
 void RemoteGraphicsContextGLCocoa::prepareForDisplay(CompletionHandler<void(WTF::MachSendRight&&)>&& completionHandler)
 {
     assertIsCurrent(m_streamThread);
     m_context->prepareForDisplay();
+    IOSurface* displayBuffer = m_context->displayBuffer();
     MachSendRight sendRight;
-    if (auto* surface = m_swapChain.displayBuffer().surface.get()) {
+    if (displayBuffer) {
+        m_context->markDisplayBufferInUse();
 #if HAVE(IOSURFACE_SET_OWNERSHIP_IDENTITY)
         // Mark the IOSurface as being owned by the WebProcess even though it was constructed by the GPUProcess so that Jetsam knows which process to kill.
-        surface->setOwnershipIdentity(m_webProcessIdentityToken);
+        displayBuffer->setOwnershipIdentity(m_webProcessIdentityToken);
 #endif
-        sendRight = surface->createSendRight();
+        sendRight = displayBuffer->createSendRight();
     }
     completionHandler(WTFMove(sendRight));
 }

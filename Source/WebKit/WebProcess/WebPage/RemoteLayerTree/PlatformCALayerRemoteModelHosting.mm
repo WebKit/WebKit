@@ -66,9 +66,9 @@ void PlatformCALayerRemoteModelHosting::populateCreationProperties(RemoteLayerTr
     properties.model = m_model.ptr();
 }
 
-void PlatformCALayerRemoteModelHosting::dumpAdditionalProperties(TextStream& ts, OptionSet<PlatformLayerTreeAsTextFlags> flags)
+void PlatformCALayerRemoteModelHosting::dumpAdditionalProperties(TextStream& ts, OptionSet<WebCore::PlatformLayerTreeAsTextFlags> flags)
 {
-    if (flags.contains(PlatformLayerTreeAsTextFlags::IncludeModels))
+    if (flags.contains(WebCore::PlatformLayerTreeAsTextFlags::IncludeModels))
         ts << indent << "(model data size " << m_model->data()->size() << ")\n";
 }
 

@@ -333,6 +333,7 @@ list(APPEND WebCore_SOURCES
     platform/graphics/cocoa/WebCoreDecompressionSession.mm
     platform/graphics/cocoa/WebGLLayer.mm
     platform/graphics/cocoa/WebMAudioUtilitiesCocoa.mm
+    platform/graphics/cocoa/WebProcessGraphicsContextGLOpenGLCocoa.mm
 
     platform/graphics/coretext/FontCascadeCoreText.cpp
     platform/graphics/coretext/FontCoreText.cpp

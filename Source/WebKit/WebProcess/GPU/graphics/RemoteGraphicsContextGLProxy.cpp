@@ -67,9 +67,6 @@ RemoteGraphicsContextGLProxy::RemoteGraphicsContextGLProxy(GPUProcessConnection&
 RemoteGraphicsContextGLProxy::~RemoteGraphicsContextGLProxy()
 {
     disconnectGpuProcessIfNeeded();
-#if PLATFORM(COCOA)
-    platformSwapChain().recycleBuffer();
-#endif
 }
 
 void RemoteGraphicsContextGLProxy::reshape(int width, int height)
@@ -83,32 +80,19 @@ void RemoteGraphicsContextGLProxy::reshape(int width, int height)
         markContextLost();
 }
 
+#if !PLATFORM(COCOA)
 void RemoteGraphicsContextGLProxy::prepareForDisplay()
 {
     if (isContextLost())
         return;
-#if PLATFORM(COCOA)
-    MachSendRight displayBufferSendRight;
-    auto sendResult = sendSync(Messages::RemoteGraphicsContextGL::PrepareForDisplay(), Messages::RemoteGraphicsContextGL::PrepareForDisplay::Reply(displayBufferSendRight));
-    if (!sendResult) {
-        markContextLost();
-        return;
-    }
-    auto displayBuffer = IOSurface::createFromSendRight(WTFMove(displayBufferSendRight), WebCore::DestinationColorSpace::SRGB());
-    if (displayBuffer) {
-        auto& sc = platformSwapChain();
-        sc.recycleBuffer();
-        sc.present({ WTFMove(displayBuffer), nullptr });
-    }
-#else
     auto sendResult = sendSync(Messages::RemoteGraphicsContextGL::PrepareForDisplay(), Messages::RemoteGraphicsContextGL::PrepareForDisplay::Reply());
     if (!sendResult) {
         markContextLost();
         return;
     }
-#endif
     markLayerComposited();
 }
+#endif
 
 void RemoteGraphicsContextGLProxy::ensureExtensionEnabled(const String& extension)
 {

@@ -45,6 +45,7 @@ namespace WebCore {
 
 #if PLATFORM(COCOA)
 class GraphicsContextGLIOSurfaceSwapChain;
+class IOSurface;
 #endif
 
 // A base class for RemoteGraphicsContextGL proxy side implementation
@@ -91,15 +92,13 @@ protected:
     virtual void waitUntilInitialized() = 0;
     virtual void ensureExtensionEnabled(const String&) = 0;
     virtual void notifyMarkContextChanged() = 0;
-#if PLATFORM(COCOA)
-    GraphicsContextGLIOSurfaceSwapChain& platformSwapChain();
-#endif
 
-private:
-    void platformInitialize();
 #if PLATFORM(COCOA)
     RetainPtr<WebGLLayer> m_webGLLayer;
+    std::unique_ptr<IOSurface> m_displayBuffer;
 #endif
+private:
+    void platformInitialize();
 
     // Guarded by waitUntilInitialized().
     HashSet<String> m_availableExtensions;

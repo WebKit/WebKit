@@ -37,6 +37,7 @@
 #include <wtf/UniqueRef.h>
 
 #if PLATFORM(COCOA)
+#include "GraphicsContextGLIOSurfaceSwapChain.h"
 #include "IOSurface.h"
 #endif
 
@@ -67,7 +68,6 @@
 OBJC_CLASS CALayer;
 OBJC_CLASS WebGLLayer;
 namespace WebCore {
-class GraphicsContextGLIOSurfaceSwapChain;
 class GraphicsContextGLCVANGLE;
 }
 #endif // PLATFORM(COCOA)
@@ -97,22 +97,18 @@ class TextureMapperGCGLPlatformLayer;
 
 typedef WTF::HashMap<CString, uint64_t> ShaderNameHash;
 
-class WEBCORE_EXPORT GraphicsContextGLOpenGL final : public GraphicsContextGL
+class WEBCORE_EXPORT GraphicsContextGLOpenGL : public GraphicsContextGL
 {
 public:
     static RefPtr<GraphicsContextGLOpenGL> create(GraphicsContextGLAttributes, HostWindow*);
     virtual ~GraphicsContextGLOpenGL();
-
 #if PLATFORM(COCOA)
-    static Ref<GraphicsContextGLOpenGL> createForGPUProcess(const GraphicsContextGLAttributes&, GraphicsContextGLIOSurfaceSwapChain*);
-
-    CALayer* platformLayer() const final { return reinterpret_cast<CALayer*>(m_webGLLayer.get()); }
+    PlatformLayer* platformLayer() const override;
     PlatformGraphicsContextGLDisplay platformDisplay() const { return m_displayObj; }
     PlatformGraphicsContextGLConfig platformConfig() const { return m_configObj; }
     static GCGLenum drawingBufferTextureTargetQuery();
     static GCGLint EGLDrawingBufferTextureTarget();
 #else
-    static Ref<GraphicsContextGLOpenGL> createForGPUProcess(const GraphicsContextGLAttributes&);
     PlatformLayer* platformLayer() const final;
 #endif
 #if USE(ANGLE)
@@ -518,7 +514,7 @@ public:
 
     unsigned textureSeed(GCGLuint texture) { return m_state.textureSeedCount.count(texture); }
 
-    void prepareForDisplay() final;
+    void prepareForDisplay() override;
 
 #if ENABLE(VIDEO) && USE(AVFOUNDATION)
     GraphicsContextGLCV* asCV() final;
@@ -538,13 +534,13 @@ public:
 #endif
 #endif
 
-private:
+protected:
+    GraphicsContextGLOpenGL(GraphicsContextGLAttributes);
+    bool isValid() const;
 #if PLATFORM(COCOA)
-    GraphicsContextGLOpenGL(GraphicsContextGLAttributes, HostWindow*, GraphicsContextGLIOSurfaceSwapChain* = nullptr);
-#else
-    GraphicsContextGLOpenGL(GraphicsContextGLAttributes, HostWindow*);
+    GraphicsContextGLIOSurfaceSwapChain m_swapChain;
 #endif
-
+private:
     // Called once by all the public entry points that eventually call OpenGL.
     // Called once by all the public entry points of ExtensionsGL that eventually call OpenGL.
     bool makeContextCurrent() WARN_UNUSED_RETURN;
@@ -586,9 +582,7 @@ private:
 
 
 #if PLATFORM(COCOA)
-    GraphicsContextGLIOSurfaceSwapChain* m_swapChain { nullptr };
     // TODO: this should be removed once the context draws to a image buffer. See https://bugs.webkit.org/show_bug.cgi?id=218179 .
-    RetainPtr<WebGLLayer> m_webGLLayer;
     EGLDisplay m_displayObj { nullptr };
     PlatformGraphicsContextGL m_contextObj { nullptr };
     PlatformGraphicsContextGLConfig m_configObj { nullptr };

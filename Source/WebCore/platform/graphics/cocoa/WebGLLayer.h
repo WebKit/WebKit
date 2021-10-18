@@ -23,20 +23,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "GraphicsContextGLIOSurfaceSwapChain.h"
 #import <QuartzCore/QuartzCore.h>
-#import <memory>
-#import <wtf/NakedPtr.h>
 
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 
-// A layer class implementing front buffer management of a 3-buffering swap
-// chain of IOSurfaces.
+// A layer class showing one IOSurface.
 @interface WebGLLayer : CALayer
 
 - (id)initWithDevicePixelRatio:(float)devicePixelRatio contentsOpaque:(bool)contentsOpaque;
-
-- (WebCore::GraphicsContextGLIOSurfaceSwapChain&) swapChain;
 
 @end
 
