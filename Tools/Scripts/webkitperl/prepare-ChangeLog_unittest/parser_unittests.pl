@@ -31,11 +31,20 @@ use File::Temp qw(tempfile);
 use FindBin;
 use Getopt::Long;
 use Test::More;
-use lib File::Spec->catdir($FindBin::Bin, "..");
-use LoadAsModule qw(PrepareChangeLog prepare-ChangeLog);
+use lib File::Spec->catdir($FindBin::Bin, "..", "..");
+use VCSUtils;
+use webkitperl::changelog qw(
+    get_function_line_ranges_for_cpp
+    get_selector_line_ranges_for_css
+    get_function_line_ranges_for_java
+    get_function_line_ranges_for_javascript
+    get_function_line_ranges_for_perl
+    get_function_line_ranges_for_python
+    get_function_line_ranges_for_swift
+);
+use webkitperl::dirs;
 
 sub captureOutput($);
-sub convertAbsolutePathToRelativeUnixPath($$);
 sub readTestFiles($);
 
 use constant EXPECTED_RESULTS_SUFFIX => "-expected.txt";
@@ -69,7 +78,7 @@ foreach my $testFile (sort @testFiles) {
 plan(tests => scalar @testSet);
 foreach my $test (@testSet) {
     open FH, "< $test->{inputFile}" or die "Cannot open $test->{inputFile}: $!";
-    my $parser = eval "\\&PrepareChangeLog::$test->{method}";
+    my $parser = eval "\\&$test->{method}";
     my @ranges;
     my ($stdout, $stderr) = captureOutput(sub { @ranges = $parser->(\*FH, $test->{inputFile}); });
     close FH;
@@ -130,11 +139,10 @@ sub captureOutput($)
     return ($stdout, $stderr);
 }
 
-sub convertAbsolutePathToRelativeUnixPath($$)
-{
+sub convertAbsolutePathToRelativeUnixPath {
     my ($string, $path) = @_;
-    my $sourceDir = LoadAsModule::unixPath(LoadAsModule::sourceDir());
-    my $relativeUnixPath = LoadAsModule::unixPath($path);
+    my $sourceDir = unixPath(sourceDir());
+    my $relativeUnixPath = unixPath($path);
     $sourceDir .= "/" unless $sourceDir =~ m-/$-;
     my $quotedSourceDir = quotemeta($sourceDir);
     $relativeUnixPath  =~ s/$quotedSourceDir//;

@@ -1,3 +1,103 @@
+2021-10-18  Basuke Suzuki  <basuke.suzuki@sony.com>
+
+        [webkitperl] Stop using LoadAsModule.pm
+        https://bugs.webkit.org/show_bug.cgi?id=231868
+
+        Reviewed by Jonathan Bedard.
+
+        This module load a script file as module with a bit tricky way. It prevents the proper
+        usage of package after all. The purpose of this module is to test routines defined in the
+        script. It just be wrong with such way. If you have something to test, it should be separated
+        as a module and be imported to the script. Then unit test can load the module and can test
+        without any sort of trouble.
+
+        * Scripts/filter-build-webkit:
+        (setOutputFormatOption):
+        (shouldShowSubsequentLine): Moved to webkitperl/build/output.pm.
+        (shouldIgnoreLine): Ditto.
+        * Scripts/prepare-ChangeLog:
+        (generateFunctionLists):
+        (fetchBugXMLData):
+        (openChangeLogs):
+        (method_decl_to_selector):
+        (diffCommand):
+        (statusCommand):
+        (propertyChangeDescription):
+        (normalizeLineEndings):
+        (actuallyGenerateFunctionLists): Moved to webkitperl/changelog.
+        (computeModifiedFunctions): Ditto.
+        (fetchBugDescriptionFromBugXMLData): Ditto.
+        (fetchRadarURLFromBugXMLData): Ditto.
+        (get_function_line_ranges): Ditto.
+        (get_function_line_ranges_for_cpp): Ditto.
+        (delete_namespaces_from_ranges_for_cpp): Ditto.
+        (is_function_in_namespace): Ditto.
+        (get_function_line_ranges_for_java): Ditto.
+        (get_function_line_ranges_for_javascript): Ditto.
+        (get_function_line_ranges_for_perl): Ditto.
+        (get_function_line_ranges_for_python): Ditto.
+        (get_selector_line_ranges_for_css): Ditto.
+        (get_function_line_ranges_for_swift): Ditto.
+        (parseSwiftFunctionArgs): Ditto.
+        (attributeCommand): Ditto.
+        (extractLineRangeAfterChange): Ditto.
+        (extractLineRangeBeforeChange): Ditto.
+        (decodeEntities): Ditto.
+        * Scripts/run-leaks:
+        (main):
+        (removeMatchingRecords):
+        (runLeaks): Moved to webkitperl/leaks.pm.
+        (parseLeaksOutput): Ditto.
+        (reportError): Deleted. Use Carp::croak instead.
+        * Scripts/webkitdirs.pm:
+        (determineBaseProductDir):
+        (determineCurrentSVNRevision):
+        (chdirWebKit):
+        (determineSourceDir): Moved to webkitperl/dirs.pm.
+        (setSourceDir): Ditto.
+        (sourceDir): Ditto.
+        * Scripts/webkitperl/LoadAsModule.pm: Removed.
+        * Scripts/webkitperl/build/output.pm: Extracted from Tools/Scripts/filter-build-webkit.
+        (shouldShowSubsequentLine):
+        (shouldIgnoreLine):
+        * Scripts/webkitperl/changelog.pm: Extracted from Tools/Scripts/prepare-ChangeLog.
+        (actuallyGenerateFunctionLists):
+        (extractLineRangeAfterChange):
+        (extractLineRangeBeforeChange):
+        (attributeCommand):
+        (fetchBugDescriptionFromBugXMLData):
+        (fetchRadarURLFromBugXMLData):
+        (computeModifiedFunctions):
+        (get_function_line_ranges):
+        (get_function_line_ranges_for_cpp):
+        (delete_namespaces_from_ranges_for_cpp):
+        (is_function_in_namespace):
+        (get_function_line_ranges_for_java):
+        (get_function_line_ranges_for_javascript):
+        (get_function_line_ranges_for_perl):
+        (get_function_line_ranges_for_python):
+        (get_selector_line_ranges_for_css):
+        (get_function_line_ranges_for_swift):
+        (parseSwiftFunctionArgs):
+        (decodeEntities):
+        * Scripts/webkitperl/dirs.pm: Extracted from Tools/Scripts/webkitdirs.
+        (sourceDir):
+        (setSourceDir):
+        (determineSourceDir):
+        * Scripts/webkitperl/filter-build-webkit_unittest/shouldIgnoreLine_unittests.pl:
+        * Scripts/webkitperl/leaks.pm: Copied from Tools/Scripts/run-leaks.
+        (runLeaks):
+        (parseLeaksOutput):
+        * Scripts/webkitperl/prepare-ChangeLog_unittest/extractLineRangeBeforeAndAfterChange.pl:
+        * Scripts/webkitperl/prepare-ChangeLog_unittest/fetchRadarURLFromBugXMLData.pl:
+        * Scripts/webkitperl/prepare-ChangeLog_unittest/filenameWithParentheses.pl:
+        * Scripts/webkitperl/prepare-ChangeLog_unittest/generateFunctionLists.pl:
+        * Scripts/webkitperl/prepare-ChangeLog_unittest/parser_unittests.pl:
+        (convertAbsolutePathToRelativeUnixPath):
+        * Scripts/webkitperl/run-leaks_unittest/run-leaks-report-v1.0.pl:
+        * Scripts/webkitperl/run-leaks_unittest/run-leaks-report-v2.0-new.pl:
+        * Scripts/webkitperl/run-leaks_unittest/run-leaks-report-v2.0-old.pl:
+
 2021-10-18  Jonathan Bedard  <jbedard@apple.com>
 
         [run-api-tests] Use temporary symlink when listing tests

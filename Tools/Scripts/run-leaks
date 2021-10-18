@@ -33,11 +33,12 @@ use warnings;
 
 use File::Basename;
 use Getopt::Long;
+use Carp;
+use FindBin;
+use lib $FindBin::RealBin;
+use webkitperl::leaks qw(runLeaks, parseLeaksOutput);
 
-sub runLeaks($$);
-sub parseLeaksOutput(\@);
 sub removeMatchingRecords(\@$\@);
-sub reportError($);
 
 sub main()
 {
@@ -71,7 +72,7 @@ sub main()
     }
 
     if (!$pidOrExecutableName) {
-        reportError("Missing argument: pid | executable.");
+        carp "Missing argument: pid | executable.";
         print STDERR $usage;
         return 1;
     }
@@ -83,9 +84,6 @@ sub main()
     }
 
     my $parsedOutput = parseLeaksOutput(@$leaksOutput);
-    if (!$parsedOutput) {
-        return 1;
-    }
 
     # Filter output.
     # FIXME: Adjust the overall leak count in the output accordingly. This will affect callers, notably leakdetector.py.
@@ -114,111 +112,6 @@ sub main()
 
 exit(main());
 
-# Returns the output of the leaks tool in list form.
-sub runLeaks($$)
-{
-    my ($target, $memgraphPath) = @_;
-
-    if (defined $memgraphPath) {
-        `/usr/bin/leaks \"$target\" --outputGraph=\"$memgraphPath\"`;
-        $target = $memgraphPath;
-    }
-
-    # To get a result we can parse, we need to pass --list to all versions of the leaks tool
-    # that recognize it, but there is no certain way to tell in advance (the version of the
-    # tool is not always tied to OS version, and --help doesn't document the option in some
-    # of the tool versions where it's supported and needed).
-    my @leaksOutput = `/usr/bin/leaks \"$target\" --list`;
-
-    # FIXME: Remove the fallback once macOS Mojave is the oldest supported version.
-    my $leaksExitCode = $? >> 8;
-    if ($leaksExitCode > 1) {
-        @leaksOutput = `/usr/bin/leaks \"$target\"`;
-    }
-
-    return \@leaksOutput;
-}
-
-# Returns a list of hash references with the keys { address, size, type, callStack, leaksOutput }
-sub parseLeaksOutput(\@)
-{
-    my ($leaksOutput) = @_;
-
-    # Format:
-    #   Process 00000: 1234 nodes malloced for 1234 KB
-    #   Process 00000: XX leaks for XXX total leaked bytes.    
-    #   Leak: 0x00000000 size=1234 [instance of 'blah']
-    #       0x00000000 0x00000000 0x00000000 0x00000000 a..d.e.e
-    #       ...
-    #       Call stack: leak_caller() | leak() | malloc
-    #
-    #   We treat every line except for  Process 00000: and Leak: as optional
-
-    my $leakCount;
-    my @parsedOutput = ();
-    my $parsingLeak = 0;
-    my $parsedLeakCount = 0;
-    for my $line (@$leaksOutput) {
-        if ($line =~ /^Process \d+: (\d+) leaks?/) {
-            $leakCount = $1;
-        }
-
-        if ($line eq "\n") {
-            $parsingLeak = 0;
-        }
-
-        if ($line =~ /^Leak: /) {
-            $parsingLeak = 1;
-            $parsedLeakCount++;
-            my ($address) = ($line =~ /Leak: ([[:xdigit:]x]+)/);
-            if (!defined($address)) {
-                reportError("Could not parse Leak address.");
-                return;
-            }
-
-            my ($size) = ($line =~ /size=([[:digit:]]+)/);
-            if (!defined($size)) {
-                reportError("Could not parse Leak size.");
-                return;
-            }
-
-            # FIXME: This code seems wrong, the leaks tool doesn't actually use single quotes.
-            # We should reconcile with other format changes that happened since, such as the
-            # addition of zone information.
-            my ($type) = ($line =~ /'([^']+)'/); #'
-            if (!defined($type)) {
-                $type = ""; # The leaks tool sometimes omits the type.
-            }
-
-            my %leak = (
-                "address" => $address,
-                "size" => $size,
-                "type" => $type,
-                "callStack" => "", # The leaks tool sometimes omits the call stack.
-                "leaksOutput" => $line
-            );
-            push(@parsedOutput, \%leak);
-        } elsif ($parsingLeak) {
-            $parsedOutput[$#parsedOutput]->{"leaksOutput"} .= $line;
-            if ($line =~ /Call stack:/) {
-                $parsedOutput[$#parsedOutput]->{"callStack"} = $line;
-            }
-        } else {
-            my %nonLeakLine = (
-                "leaksOutput" => $line
-            );
-            push(@parsedOutput, \%nonLeakLine);
-        }
-    }
-    
-    if ($parsedLeakCount != $leakCount) {
-        reportError("Parsed leak count ($parsedLeakCount) does not match leak count reported by leaks tool ($leakCount).");
-        return;
-    }
-
-    return \@parsedOutput;
-}
-
 sub removeMatchingRecords(\@$\@)
 {
     my ($recordList, $key, $regexpList) = @_;
@@ -235,11 +128,4 @@ sub removeMatchingRecords(\@$\@)
         
         $i++;
     }
-}
-
-sub reportError($)
-{
-    my ($errorMessage) = @_;
-    
-    print STDERR basename($0) . ": $errorMessage\n";
 }

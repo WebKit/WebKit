@@ -27,8 +27,11 @@ use warnings;
 
 use Test::More;
 use FindBin;
-use lib File::Spec->catdir($FindBin::Bin, "..");
-use LoadAsModule qw(PrepareChangeLog prepare-ChangeLog);
+use lib File::Spec->catdir($FindBin::Bin, "..", "..");
+use webkitperl::changelog qw(
+    extractLineRangeBeforeChange
+    extractLineRangeAfterChange
+);
 
 my @testCaseHashRefs = (
 ####
@@ -197,10 +200,10 @@ foreach my $testCase (@testCaseHashRefs) {
     my $expectedResults = $testCase->{expectedResults};
 
     my $testNameStart = "extractLineRangeBeforeChange(): $testCase->{testName}: comparing";
-    my @got = PrepareChangeLog::extractLineRangeBeforeChange($testCase->{inputText});
+    my @got = extractLineRangeBeforeChange($testCase->{inputText});
     is_deeply(\@got, $expectedResults->{beforeChange}, "$testNameStart return value.");
 
     $testNameStart = "extractLineRangeAfterChange(): $testCase->{testName}: comparing";
-    @got = PrepareChangeLog::extractLineRangeAfterChange($testCase->{inputText});
+    @got = extractLineRangeAfterChange($testCase->{inputText});
     is_deeply(\@got, $expectedResults->{afterChange}, "$testNameStart return value.");
 }

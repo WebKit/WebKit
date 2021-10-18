@@ -31,13 +31,10 @@ use warnings;
 use English;
 use FindBin;
 use Test::More;
-use lib File::Spec->catdir($FindBin::Bin, "..");
-use LoadAsModule qw(FilterBuildWebKit filter-build-webkit);
+use lib File::Spec->catdir($FindBin::RealBin, "..", "..");
+use webkitperl::build::output qw(shouldIgnoreLine);
 
 sub description($);
-
-@FilterBuildWebKit::EXPORT_OK = qw(shouldIgnoreLine);
-FilterBuildWebKit->import(@FilterBuildWebKit::EXPORT_OK);
 
 #
 # Test whitespace

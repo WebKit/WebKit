@@ -47,6 +47,7 @@ use List::Util;
 use POSIX;
 use Time::HiRes qw(usleep);
 use VCSUtils;
+use webkitperl::dirs;
 
 BEGIN {
    use Exporter   ();
@@ -145,7 +146,6 @@ my $xcodeSDKPlatformName;
 my $simulatorIdiom;
 my $configurationForVisualStudio;
 my $configurationProductDir;
-my $sourceDir;
 my $currentSVNRevision;
 my $didLoadIPhoneSimulatorNotification;
 my $nmPath;
@@ -195,24 +195,6 @@ sub sdkPlatformDirectory($)
     return $sdkPlatformDirectory;
 }
 
-sub determineSourceDir
-{
-    return if $sourceDir;
-    $sourceDir = $FindBin::Bin;
-    $sourceDir =~ s|/+$||; # Remove trailing '/' as we would die later
-
-    # walks up path checking each directory to see if it is the main WebKit project dir, 
-    # defined by containing Sources, WebCore, and JavaScriptCore.
-    until ((-d File::Spec->catdir($sourceDir, "Source") && -d File::Spec->catdir($sourceDir, "Source", "WebCore") && -d File::Spec->catdir($sourceDir, "Source", "JavaScriptCore")) || (-d File::Spec->catdir($sourceDir, "Internal") && -d File::Spec->catdir($sourceDir, "OpenSource")))
-    {
-        if ($sourceDir !~ s|/[^/]+$||) {
-            die "Could not find top level webkit directory above source directory using FindBin.\n";
-        }
-    }
-
-    $sourceDir = File::Spec->catdir($sourceDir, "OpenSource") if -d File::Spec->catdir($sourceDir, "OpenSource");
-}
-
 sub currentPerlPath()
 {
     my $thisPerl = $^X;
@@ -220,12 +202,6 @@ sub currentPerlPath()
         $thisPerl .= $Config{_exe} unless $thisPerl =~ m/$Config{_exe}$/i;
     }
     return $thisPerl;
-}
-
-# used for scripts which are stored in a non-standard location
-sub setSourceDir($)
-{
-    ($sourceDir) = @_;
 }
 
 sub determineNinjaVersion
@@ -257,8 +233,8 @@ sub readXcodeUserDefault($)
 sub determineBaseProductDir
 {
     return if defined $baseProductDir;
-    determineSourceDir();
 
+    my $sourceDir = sourceDir();
     my $setSharedPrecompsDir;
     my $indexDataStoreDir;
     $baseProductDir = $ENV{"WEBKIT_OUTPUTDIR"};
@@ -856,28 +832,20 @@ sub determineCurrentSVNRevision
     # We always update the current SVN revision here, and leave the caching
     # to currentSVNRevision(), so that changes to the SVN revision while the
     # script is running can be picked up by calling this function again.
-    determineSourceDir();
-    $currentSVNRevision = svnRevisionForDirectory($sourceDir);
+    $currentSVNRevision = svnRevisionForDirectory(sourceDir());
     return $currentSVNRevision;
 }
 
 
 sub chdirWebKit
 {
-    determineSourceDir();
-    chdir $sourceDir or die;
+    chdir sourceDir() or die;
 }
 
 sub baseProductDir
 {
     determineBaseProductDir();
     return $baseProductDir;
-}
-
-sub sourceDir
-{
-    determineSourceDir();
-    return $sourceDir;
 }
 
 sub productDir

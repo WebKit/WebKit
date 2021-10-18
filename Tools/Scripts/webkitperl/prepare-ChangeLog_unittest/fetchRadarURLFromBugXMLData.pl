@@ -27,8 +27,8 @@ use warnings;
 
 use Test::More;
 use FindBin;
-use lib File::Spec->catdir($FindBin::Bin, "..");
-use LoadAsModule qw(PrepareChangeLog prepare-ChangeLog);
+use lib File::Spec->catdir($FindBin::Bin, "..", "..");
+use webkitperl::changelog qw(fetchRadarURLFromBugXMLData);
 
 # NOTE: A Bugzilla Comment XML looks like:
 #
@@ -156,6 +156,6 @@ plan(tests => $testCasesCount);
 
 foreach my $testCase (@testCaseHashRefs) {
     my $expected = $testCase->{expected};
-    my $got = PrepareChangeLog::fetchRadarURLFromBugXMLData(152839, $testCase->{inputText});
+    my $got = fetchRadarURLFromBugXMLData(152839, $testCase->{inputText});
     is($got, $expected, $testCase->{testName});
 }

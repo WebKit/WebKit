@@ -30,10 +30,9 @@ use warnings;
 use File::Temp;
 use FindBin;
 use Test::More;
+use lib File::Spec->catdir($FindBin::Bin, "..", "..");
+use webkitperl::changelog qw(attributeCommand);
 use VCSUtils;
-
-use lib File::Spec->catdir($FindBin::Bin, "..");
-use LoadAsModule qw(PrepareChangeLog prepare-ChangeLog);
 
 plan(tests => 1);
 
@@ -54,7 +53,7 @@ writeFileWithContent(File::Spec->catfile($temporaryDirectory, ".gitattributes"),
 my $attributeCache = {};
 my $result = 0;
 chdir $temporaryDirectory;
-$result = PrepareChangeLog::attributeCommand($attributeCache, $filename, "foo");
+$result = attributeCommand($attributeCache, $filename, "foo");
 chdir '..';
 
 is($result, 1, "Should successfully get foo attribute from file with parentheses in name.");
