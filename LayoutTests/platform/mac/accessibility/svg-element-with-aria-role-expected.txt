@@ -5,7 +5,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 test1: AXRole: AXGroup AXSubrole: AXDocument
-test2: AXRole: AXGroup AXSubrole:
+test2: AXRole: AXGroup AXSubrole: AXEmptyGroup
 test3: AXRole: AXButton AXSubrole:
 PASS successfullyParsed is true
 

@@ -1,0 +1,92 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/accessibility-helper.js"></script>
+</head>
+<body>
+
+<div id="content">
+    <div id="empty-group-with-title" role="group" title="Group title"></div>
+
+    <div id="empty-div-with-label" aria-label="Div label"></div>
+
+    <div id="empty-group-with-title-and-br" role="group" title="Group title">
+        <!-- BR tags are ignored, so include one here to ensure we skip ignored content. -->
+        <br />
+    </div>
+
+    <div id="group-with-direct-text-descendant" role="group" aria-label="Group label">
+        Child text
+    </div>
+
+    <div id="group-with-non-empty-div" role="group" title="Group title">
+        <div>
+            Group title
+        </div>
+    </div>
+
+    <div id="group-with-heading" role="group" aria-label="Group label">
+        <h1>
+            <div>Hello world</div>
+        </h1>
+    </div>
+
+    <div id="group-with-contenteditable" role="group" aria-label="Group label">
+        <div contenteditable="true"></div>
+    </div>
+
+    <div id="group-with-empty-table" role="group" aria-label="Group label">
+        <table>
+            <thead>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+
+    <div id="group-with-nested-content" role="group" aria-label="Group label">
+        <!-- BR tags are ignored, so include one here to ensure we skip ignored content. -->
+        <br />
+        <div>
+            <div>
+                Text
+            </div>
+        </div>
+    </div>
+
+    <div id="group-with-image" role="group" aria-label="Group label">
+        <img src="resources/cake.png" onload="runTest()">
+    </div>
+</div>
+
+<script>
+    description("This test ensures WebKit properly reports groups as empty (or not empty).")
+
+    var group;
+    const runTest = () => {
+        if (window.accessibilityController) {
+            const groupShouldBeEmpty = (id, shouldBeEmpty) => {
+                group = accessibilityController.accessibleElementById(id);
+                debug(`Testing element with ID: ${id}`);
+                shouldBe("group.subrole", shouldBeEmpty ? "'AXSubrole: AXEmptyGroup'" : "'AXSubrole: AXApplicationGroup'");
+            };
+
+            groupShouldBeEmpty("empty-group-with-title", true);
+            groupShouldBeEmpty("empty-div-with-label", true);
+            groupShouldBeEmpty("empty-group-with-title-and-br", true);
+            groupShouldBeEmpty("group-with-direct-text-descendant", false);
+            groupShouldBeEmpty("group-with-non-empty-div", false);
+            groupShouldBeEmpty("group-with-heading", false);
+            groupShouldBeEmpty("group-with-contenteditable", false);
+            groupShouldBeEmpty("group-with-empty-table", false);
+            groupShouldBeEmpty("group-with-nested-content", false);
+            groupShouldBeEmpty("group-with-image", false);
+
+            document.getElementById("content").style.visibility = "hidden";
+        }
+    }
+</script>
+</body>
+</html>
+

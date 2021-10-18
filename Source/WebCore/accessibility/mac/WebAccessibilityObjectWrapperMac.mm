@@ -1842,6 +1842,10 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     if (backingObject->isMeter())
         return @"AXMeter";
 
+    // Treat any group without exposed children as empty.
+    if ([[self role] isEqual:NSAccessibilityGroupRole] && !backingObject->children().size())
+        return @"AXEmptyGroup";
+
     AccessibilityRole role = backingObject->roleValue();
     if (role == AccessibilityRole::HorizontalRule)
         return NSAccessibilityContentSeparatorSubrole;
