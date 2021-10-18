@@ -27,8 +27,11 @@
 #include "StorageManager.h"
 
 #include "ClientOrigin.h"
+#include "ExceptionOr.h"
 #include "FileSystemDirectoryHandle.h"
+#include "FileSystemHandleImpl.h"
 #include "JSDOMPromiseDeferred.h"
+#include "JSFileSystemDirectoryHandle.h"
 #include "NavigatorBase.h"
 #include "SecurityOrigin.h"
 #include <wtf/IsoMallocInlines.h>
@@ -47,53 +50,68 @@ StorageManager::StorageManager(NavigatorBase& navigator)
 {
 }
 
-void StorageManager::persisted(DOMPromiseDeferred<IDLBoolean>&& promise)
+struct ConnectionInfo {
+    StorageConnection& connection;
+    ClientOrigin origin;
+};
+
+static ExceptionOr<ConnectionInfo> connectionInfo(NavigatorBase* navigator)
 {
-    if (!m_navigator)
-        return promise.reject(Exception { InvalidStateError, "Navigator does not exist"_s });
+    if (!navigator)
+        return Exception { InvalidStateError, "Navigator does not exist"_s };
 
-    auto context = m_navigator->scriptExecutionContext();
+    auto context = navigator->scriptExecutionContext();
     if (!context)
-        return promise.reject(Exception { InvalidStateError, "The context is invalid"_s });
-
-    auto connection = context->storageConnection();
-    if (!connection)
-        return promise.reject(Exception { InvalidStateError, "The connection is invalid"_s });
+        return Exception { InvalidStateError, "Context is invalid"_s };
 
     auto* origin = context->securityOrigin();
     if (!origin)
-        return promise.reject(Exception { InvalidStateError, "Origin is invalid"_s });
+        return Exception { InvalidStateError, "Origin is invalid"_s };
+    
+    auto connection = context->storageConnection();
+    if (!connection)
+        return Exception { InvalidStateError, "Connection is invalid"_s };
 
-    return connection->persisted({ context->topOrigin().data(), origin->data() }, [promise = WTFMove(promise)](bool persisted) mutable {
+    return ConnectionInfo { *connection, { context->topOrigin().data(), origin->data() } };
+}
+
+void StorageManager::persisted(DOMPromiseDeferred<IDLBoolean>&& promise)
+{
+    auto connectionInfoOrException = connectionInfo(m_navigator.get());
+    if (connectionInfoOrException.hasException())
+        return promise.reject(connectionInfoOrException.releaseException());
+
+    auto connectionInfo = connectionInfoOrException.releaseReturnValue();
+    connectionInfo.connection.getPersisted(connectionInfo.origin, [promise = WTFMove(promise)](bool persisted) mutable {
         promise.resolve(persisted);
     });
 }
 
 void StorageManager::persist(DOMPromiseDeferred<IDLBoolean>&& promise)
 {
-    if (!m_navigator)
-        return promise.reject(Exception { InvalidStateError, "Navigator does not exist"_s });
+    auto connectionInfoOrException = connectionInfo(m_navigator.get());
+    if (connectionInfoOrException.hasException())
+        return promise.reject(connectionInfoOrException.releaseException());
 
-    auto context = m_navigator->scriptExecutionContext();
-    if (!context)
-        return promise.reject(Exception { InvalidStateError, "The context is invalid"_s });
-
-    auto connection = context->storageConnection();
-    if (!connection)
-        return promise.reject(Exception { InvalidStateError, "The connection is invalid"_s });
-
-    auto* origin = context->securityOrigin();
-    if (!origin)
-        return promise.reject(Exception { InvalidStateError, "Origin is invalid"_s });
-
-    return connection->persist({ context->topOrigin().data(), origin->data() }, [promise = WTFMove(promise)](bool persisted) mutable {
+    auto connectionInfo = connectionInfoOrException.releaseReturnValue();
+    connectionInfo.connection.persist(connectionInfo.origin, [promise = WTFMove(promise)](bool persisted) mutable {
         promise.resolve(persisted);
     });
 }
 
 void StorageManager::fileSystemAccessGetDirectory(DOMPromiseDeferred<IDLInterface<FileSystemDirectoryHandle>>&& promise)
 {
-    return promise.reject(Exception { NotSupportedError, "Not implemented"_s });
+    auto connectionInfoOrException = connectionInfo(m_navigator.get());
+    if (connectionInfoOrException.hasException())
+        return promise.reject(connectionInfoOrException.releaseException());
+
+    auto connectionInfo = connectionInfoOrException.releaseReturnValue();
+    connectionInfo.connection.fileSystemGetDirectory(connectionInfo.origin, [promise = WTFMove(promise)](auto result) mutable {
+        if (result.hasException())
+            return promise.reject(result.releaseException());
+
+        promise.resolve(FileSystemDirectoryHandle::create({ }, result.releaseReturnValue()));
+    });
 }
 
 } // namespace WebCore

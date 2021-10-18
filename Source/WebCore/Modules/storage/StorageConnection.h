@@ -30,13 +30,16 @@
 
 namespace WebCore {
 
+class FileSystemHandleImpl;
+template<typename> class ExceptionOr;
 struct ClientOrigin;
 
 class StorageConnection : public RefCounted<StorageConnection> {
 public:
     virtual ~StorageConnection() = default;
-    virtual void persisted(ClientOrigin&&, CompletionHandler<void(bool)>&&) = 0;
-    virtual void persist(ClientOrigin&&, CompletionHandler<void(bool)>&&) = 0;
+    virtual void getPersisted(const ClientOrigin&, CompletionHandler<void(bool)>&&) = 0;
+    virtual void persist(const ClientOrigin&, CompletionHandler<void(bool)>&&) = 0;
+    virtual void fileSystemGetDirectory(const ClientOrigin&, CompletionHandler<void(ExceptionOr<Ref<FileSystemHandleImpl>>&&)>&&) = 0;
 };
 
 } // namespace WebCore

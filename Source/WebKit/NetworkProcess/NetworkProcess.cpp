@@ -461,7 +461,8 @@ void NetworkProcess::addStorageManagerForSession(PAL::SessionID sessionID, const
 
 void NetworkProcess::removeStorageManagerForSession(PAL::SessionID sessionID)
 {
-    m_storageManagers.remove(sessionID);
+    if (auto manager = m_storageManagers.take(sessionID))
+        manager->close();
 }
 
 void NetworkProcess::forEachNetworkSession(const Function<void(NetworkSession&)>& functor)

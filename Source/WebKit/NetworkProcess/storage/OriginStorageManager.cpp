@@ -26,6 +26,9 @@
 #include "config.h"
 #include "OriginStorageManager.h"
 
+#include "FileSystemStorageHandleRegistry.h"
+#include "FileSystemStorageManager.h"
+
 namespace WebKit {
 
 enum class OriginStorageManager::StorageBucketMode : bool { BestEffort, Persistent };
@@ -38,12 +41,34 @@ public:
         , m_identifier(identifier)
     {
     }
+
     StorageBucketMode mode() const { return m_mode; }
     void setMode(StorageBucketMode mode) { m_mode = mode; }
+
+    void connectionClosed(IPC::Connection::UniqueID connection)
+    {
+        if (m_fileSystemStorageManager)
+            m_fileSystemStorageManager->connectionClosed(connection);
+    }
+
+    String typeStoragePath(const String& storageIdentifier) const
+    {
+        return m_rootPath.isEmpty() ? emptyString() : FileSystem::pathByAppendingComponent(m_rootPath, storageIdentifier);
+    }
+
+    FileSystemStorageManager& fileSystemStorageManager(FileSystemStorageHandleRegistry& registry)
+    {
+        if (!m_fileSystemStorageManager)
+            m_fileSystemStorageManager = makeUnique<FileSystemStorageManager>(typeStoragePath("FileSystem"), registry);
+
+        return *m_fileSystemStorageManager;
+    }
+
 private:
     String m_rootPath;
     String m_identifier;
     StorageBucketMode m_mode { StorageBucketMode::BestEffort };
+    std::unique_ptr<FileSystemStorageManager> m_fileSystemStorageManager;
 };
 
 OriginStorageManager::OriginStorageManager(String&& path)
@@ -53,14 +78,29 @@ OriginStorageManager::OriginStorageManager(String&& path)
 
 OriginStorageManager::~OriginStorageManager() = default;
 
-void OriginStorageManager::persist()
+void OriginStorageManager::connectionClosed(IPC::Connection::UniqueID connection)
 {
-    m_persisted = true;
-    
+    if (m_defaultBucket)
+        m_defaultBucket->connectionClosed(connection);
+}
+
+OriginStorageManager::StorageBucket& OriginStorageManager::defaultBucket()
+{
     if (!m_defaultBucket)
         m_defaultBucket = makeUnique<StorageBucket>(m_path, "default"_s);
 
-    m_defaultBucket->setMode(StorageBucketMode::Persistent);
+    return *m_defaultBucket;
+}
+
+void OriginStorageManager::persist()
+{
+    m_persisted = true;
+    defaultBucket().setMode(StorageBucketMode::Persistent);
+}
+
+FileSystemStorageManager& OriginStorageManager::fileSystemStorageManager(FileSystemStorageHandleRegistry& registry)
+{
+    return defaultBucket().fileSystemStorageManager(registry);
 }
 
 } // namespace WebKit

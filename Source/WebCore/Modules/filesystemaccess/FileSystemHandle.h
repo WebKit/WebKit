@@ -31,29 +31,32 @@
 namespace WebCore {
 
 template<typename> class DOMPromiseDeferred;
+
+class FileSystemHandleImpl;
 enum class PermissionState : uint8_t;
 
 class FileSystemHandle : public RefCounted<FileSystemHandle> {
     WTF_MAKE_ISO_ALLOCATED(FileSystemHandle);
 public:
+    virtual ~FileSystemHandle();
+
     enum class Kind : uint8_t {
         File,
         Directory
     };
-
-    virtual ~FileSystemHandle() = default;
-
     Kind kind() const { return m_kind; }
     const String& name() const { return m_name; }
+    FileSystemHandleImpl& impl() const { return m_impl.get(); }
 
-    void isSameEntry(const FileSystemHandle&, DOMPromiseDeferred<IDLBoolean>&&);
+    void isSameEntry(FileSystemHandle&, DOMPromiseDeferred<IDLBoolean>&&) const;
 
 protected:
-    FileSystemHandle(Kind, String&& name);
+    FileSystemHandle(Kind, String&& name, Ref<FileSystemHandleImpl>&&);
 
 private:
     Kind m_kind { Kind::File };
     String m_name;
+    Ref<FileSystemHandleImpl> m_impl;
 };
 
 } // namespace WebCore

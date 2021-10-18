@@ -1,4 +1,4 @@
 
-FAIL Send and receive messages using a dedicated worker. promise_test: Unhandled rejection with value: object "NotSupportedError: Not implemented"
-FAIL Send and receive messages using a service worker. promise_test: Unhandled rejection with value: object "NotSupportedError: Not implemented"
+FAIL Send and receive messages using a dedicated worker. promise_test: Unhandled rejection with value: object "TypeError: dir.values is not a function. (In 'dir.values()', 'dir.values' is undefined)"
+FAIL Send and receive messages using a service worker. promise_test: Unhandled rejection with value: object "TypeError: dir.values is not a function. (In 'dir.values()', 'dir.values' is undefined)"
 

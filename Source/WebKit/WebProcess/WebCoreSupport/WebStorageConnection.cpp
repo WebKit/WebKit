@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WebStorageConnection.h"
 
+#include "FileSystemStorageHandleProxy.h"
 #include "NetworkProcessConnection.h"
 #include "NetworkStorageManagerMessages.h"
 #include "WebProcess.h"
@@ -38,14 +39,29 @@ Ref<WebStorageConnection> WebStorageConnection::create()
     return adoptRef(*new WebStorageConnection);
 }
 
-void WebStorageConnection::persisted(WebCore::ClientOrigin&& origin, CompletionHandler<void(bool)>&& completionHandler)
+void WebStorageConnection::getPersisted(const WebCore::ClientOrigin& origin, CompletionHandler<void(bool)>&& completionHandler)
 {
     connection().sendWithAsyncReply(Messages::NetworkStorageManager::Persisted(origin), WTFMove(completionHandler));
 }
 
-void WebStorageConnection::persist(WebCore::ClientOrigin&& origin, CompletionHandler<void(bool)>&& completionHandler)
+void WebStorageConnection::persist(const WebCore::ClientOrigin& origin, CompletionHandler<void(bool)>&& completionHandler)
 {
     connection().sendWithAsyncReply(Messages::NetworkStorageManager::Persist(origin), WTFMove(completionHandler));
+}
+
+void WebStorageConnection::fileSystemGetDirectory(const WebCore::ClientOrigin& origin, CompletionHandler<void(WebCore::ExceptionOr<Ref<WebCore::FileSystemHandleImpl>>&&)>&& completionHandler)
+{
+    auto& connection = WebProcess::singleton().ensureNetworkProcessConnection().connection();
+    connection.sendWithAsyncReply(Messages::NetworkStorageManager::FileSystemGetDirectory(origin), [weakConnection = makeWeakPtr(connection), completionHandler = WTFMove(completionHandler)](auto result) mutable {
+        if (!result)
+            return completionHandler(WebCore::Exception { convertToExceptionCode(result.error()) });
+
+        if (!weakConnection || !result.value().isValid())
+            return completionHandler(WebCore::Exception { WebCore::UnknownError, "Connection is lost"_s });
+
+        Ref<WebCore::FileSystemHandleImpl> impl = FileSystemStorageHandleProxy::create(result.value(), *weakConnection);
+        return completionHandler(WTFMove(impl));
+    });
 }
 
 IPC::Connection& WebStorageConnection::connection()

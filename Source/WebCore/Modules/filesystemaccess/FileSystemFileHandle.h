@@ -34,11 +34,15 @@ class File;
 class FileSystemFileHandle final : public FileSystemHandle {
     WTF_MAKE_ISO_ALLOCATED(FileSystemFileHandle);
 public:
-    static Ref<FileSystemFileHandle> create(String&&);
+    WEBCORE_EXPORT static Ref<FileSystemFileHandle> create(String&&, Ref<FileSystemHandleImpl>&&);
     void getFile(DOMPromiseDeferred<IDLInterface<File>>&&);
 
 private:
-    explicit FileSystemFileHandle(String&&);
+    FileSystemFileHandle(String&&, Ref<FileSystemHandleImpl>&&);
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::FileSystemFileHandle)
+    static bool isType(const WebCore::FileSystemHandle& handle) { return handle.kind() == WebCore::FileSystemHandle::Kind::File; }
+SPECIALIZE_TYPE_TRAITS_END()

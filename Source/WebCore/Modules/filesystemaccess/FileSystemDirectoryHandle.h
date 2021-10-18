@@ -31,7 +31,7 @@ namespace WebCore {
 
 class FileSystemFileHandle;
 
-class FileSystemDirectoryHandle : public FileSystemHandle {
+class FileSystemDirectoryHandle final : public FileSystemHandle {
     WTF_MAKE_ISO_ALLOCATED(FileSystemDirectoryHandle);
 public:
     struct GetFileOptions {
@@ -46,14 +46,18 @@ public:
         bool recursive { false };
     };
 
-    static Ref<FileSystemDirectoryHandle> create(String&&);
+    WEBCORE_EXPORT static Ref<FileSystemDirectoryHandle> create(String&&, Ref<FileSystemHandleImpl>&&);
     void getFileHandle(const String& name, std::optional<GetFileOptions>, DOMPromiseDeferred<IDLInterface<FileSystemFileHandle>>&&);
     void getDirectoryHandle(const String& name, std::optional<GetDirectoryOptions>, DOMPromiseDeferred<IDLInterface<FileSystemDirectoryHandle>>&&);
     void removeEntry(const String& name, std::optional<RemoveOptions>, DOMPromiseDeferred<void>&&);
     void resolve(const FileSystemHandle&, DOMPromiseDeferred<IDLSequence<IDLUSVString>>&&);
 
 private:
-    explicit FileSystemDirectoryHandle(String&&);
+    FileSystemDirectoryHandle(String&&, Ref<FileSystemHandleImpl>&&);
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::FileSystemDirectoryHandle)
+    static bool isType(const WebCore::FileSystemHandle& handle) { return handle.kind() == WebCore::FileSystemHandle::Kind::Directory; }
+SPECIALIZE_TYPE_TRAITS_END()

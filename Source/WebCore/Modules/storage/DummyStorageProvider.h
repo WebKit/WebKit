@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "FileSystemHandleImpl.h"
 #include "StorageProvider.h"
 
 namespace WebCore {
@@ -42,14 +43,19 @@ private:
             return adoptRef(*new DummyStorageConnection());
         }
 
-        void persisted(ClientOrigin&&, CompletionHandler<void(bool)>&& completionHandler)
+        void getPersisted(const ClientOrigin&, CompletionHandler<void(bool)>&& completionHandler) final
         {
             completionHandler(false);
         }
 
-        void persist(ClientOrigin&&, CompletionHandler<void(bool)>&& completionHandler)
+        void persist(const ClientOrigin&, CompletionHandler<void(bool)>&& completionHandler) final
         {
             completionHandler(false);
+        }
+
+        void fileSystemGetDirectory(const ClientOrigin&, CompletionHandler<void(WebCore::ExceptionOr<Ref<WebCore::FileSystemHandleImpl>>&&)>&& completionHandler) final
+        {
+            completionHandler(Exception { NotSupportedError });
         }
     };
 

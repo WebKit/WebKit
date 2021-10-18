@@ -312,6 +312,8 @@ def types_that_cannot_be_forward_declared():
         'WebKit::ContentWorldIdentifier',
         'WebKit::DisplayLinkObserverID',
         'WebKit::DownloadID',
+        'WebKit::FileSystemStorageError',
+        'WebKit::FileSystemStorageHandleIdentifier',
         'WebKit::GeolocationIdentifier',
         'WebKit::GraphicsContextGLIdentifier',
         'WebKit::ImageBufferBackendHandle',

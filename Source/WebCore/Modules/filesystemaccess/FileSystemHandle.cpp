@@ -33,15 +33,23 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(FileSystemHandle);
 
-FileSystemHandle::FileSystemHandle(FileSystemHandle::Kind kind, String&& name)
+FileSystemHandle::FileSystemHandle(FileSystemHandle::Kind kind, String&& name, Ref<FileSystemHandleImpl>&& impl)
     : m_kind(kind)
     , m_name(WTFMove(name))
+    , m_impl(WTFMove(impl))
 {
 }
 
-void FileSystemHandle::isSameEntry(const FileSystemHandle&, DOMPromiseDeferred<IDLBoolean>&& promise)
+FileSystemHandle::~FileSystemHandle() = default;
+
+void FileSystemHandle::isSameEntry(FileSystemHandle& handle, DOMPromiseDeferred<IDLBoolean>&& promise) const
 {
-    promise.reject(Exception { NotSupportedError, "Not implemented"_s });
+    if (m_kind != handle.kind() || m_name != handle.name())
+        return promise.resolve(false);
+
+    m_impl->isSameEntry(handle.impl(), [promise = WTFMove(promise)](auto result) mutable {
+        promise.settle(WTFMove(result));
+    });
 }
 
 } // namespace WebCore

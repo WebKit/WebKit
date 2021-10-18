@@ -26,6 +26,7 @@
 #include "config.h"
 #include "FileSystemFileHandle.h"
 
+#include "FileSystemHandleImpl.h"
 #include "JSDOMPromiseDeferred.h"
 #include <wtf/IsoMallocInlines.h>
 
@@ -33,13 +34,13 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(FileSystemFileHandle);
 
-Ref<FileSystemFileHandle> FileSystemFileHandle::create(String&& name)
+Ref<FileSystemFileHandle> FileSystemFileHandle::create(String&& name, Ref<FileSystemHandleImpl>&& impl)
 {
-    return adoptRef(*new FileSystemFileHandle(WTFMove(name)));
+    return adoptRef(*new FileSystemFileHandle(WTFMove(name), WTFMove(impl)));
 }
 
-FileSystemFileHandle::FileSystemFileHandle(String&& name)
-    : FileSystemHandle(FileSystemHandle::Kind::File, WTFMove(name))
+FileSystemFileHandle::FileSystemFileHandle(String&& name, Ref<FileSystemHandleImpl>&& impl)
+    : FileSystemHandle(FileSystemHandle::Kind::File, WTFMove(name), WTFMove(impl))
 {
 }
 
