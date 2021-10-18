@@ -33,6 +33,7 @@
 #import "LibWebRTCCodecsMessages.h"
 #import "LibWebRTCCodecsProxyMessages.h"
 #import "WebCoreArgumentCoders.h"
+#import <WebCore/CVUtilities.h>
 #import <WebCore/LibWebRTCProvider.h>
 #import <WebCore/RemoteVideoSample.h>
 #import <webrtc/sdk/WebKit/WebKitDecoder.h>
@@ -207,12 +208,13 @@ void LibWebRTCCodecsProxy::encodeFrame(RTCEncoderIdentifier identifier, WebCore:
     if (!encoder)
         return;
 
-    if (!m_imageTransferSession || m_imageTransferSession->pixelFormat() != sample.videoFormat())
-        m_imageTransferSession = WebCore::ImageTransferSessionVT::create(sample.videoFormat());
-
 #if !PLATFORM(MACCATALYST)
-    auto pixelBuffer = m_imageTransferSession->createPixelBuffer(sample.surface());
-    webrtc::encodeLocalEncoderFrame(encoder, pixelBuffer.get(), sample.time().toTimeScale(1000000).timeValue(), timeStamp, toWebRTCVideoRotation(sample.rotation()), shouldEncodeAsKeyFrame);
+    if (!sample.surface())
+        return;
+    auto pixelBuffer = WebCore::createCVPixelBuffer(sample.surface());
+    if (!pixelBuffer)
+        return;
+    webrtc::encodeLocalEncoderFrame(encoder, pixelBuffer->get(), sample.time().toTimeScale(1000000).timeValue(), timeStamp, toWebRTCVideoRotation(sample.rotation()), shouldEncodeAsKeyFrame);
 #endif
 }
 

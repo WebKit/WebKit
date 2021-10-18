@@ -33,7 +33,6 @@
 #include "MessageReceiver.h"
 #include "RTCDecoderIdentifier.h"
 #include "RTCEncoderIdentifier.h"
-#include <WebCore/ImageTransferSessionVT.h>
 #include <WebCore/PixelBufferConformerCV.h>
 #include <map>
 #include <webrtc/api/video/video_codec_type.h>
@@ -149,7 +148,6 @@ private:
     Vector<Function<void()>> m_tasksToDispatchAfterEstablishingConnection;
 
     Ref<WorkQueue> m_queue;
-    std::unique_ptr<WebCore::ImageTransferSessionVT> m_imageTransferSession;
     std::unique_ptr<WebCore::PixelBufferConformerCV> m_pixelBufferConformer;
     RetainPtr<CVPixelBufferPoolRef> m_pixelBufferPool;
     size_t m_pixelBufferPoolWidth { 0 };

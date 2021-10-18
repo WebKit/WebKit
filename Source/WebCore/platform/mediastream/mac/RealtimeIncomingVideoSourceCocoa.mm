@@ -30,6 +30,7 @@
 
 #if USE(LIBWEBRTC)
 
+#import "CVUtilities.h"
 #import "Logging.h"
 #import "MediaSampleAVFObjC.h"
 #import "RealtimeVideoUtilities.h"
@@ -39,6 +40,7 @@ ALLOW_UNUSED_PARAMETERS_BEGIN
 #import <webrtc/sdk/WebKit/WebKitUtilities.h>
 ALLOW_UNUSED_PARAMETERS_END
 
+#import "CoreVideoSoftLink.h"
 #import <pal/cf/CoreMediaSoftLink.h>
 
 namespace WebCore {
@@ -98,10 +100,12 @@ CVPixelBufferPoolRef RealtimeIncomingVideoSourceCocoa::pixelBufferPool(size_t wi
         case webrtc::BufferType::I010:
             poolBufferType = kCVPixelFormatType_420YpCbCr10BiPlanarVideoRange;
         }
-        m_pixelBufferPool = createPixelBufferPool(width, height, poolBufferType);
-        m_pixelBufferPoolWidth = width;
-        m_pixelBufferPoolHeight = height;
-        m_pixelBufferPoolBufferType = bufferType;
+        if (auto pool = createIOSurfaceCVPixelBufferPool(width, height, poolBufferType)) {
+            m_pixelBufferPool = WTFMove(*pool);
+            m_pixelBufferPoolWidth = width;
+            m_pixelBufferPoolHeight = height;
+            m_pixelBufferPoolBufferType = bufferType;
+        }
     }
     return m_pixelBufferPool.get();
 }
