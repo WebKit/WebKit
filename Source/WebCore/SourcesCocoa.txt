@@ -177,6 +177,7 @@ inspector/mac/PageDebuggerMac.mm
 loader/archive/cf/LegacyWebArchive.cpp
 loader/archive/cf/LegacyWebArchiveMac.mm
 loader/cocoa/DiskCacheMonitorCocoa.mm
+loader/cocoa/PrivateClickMeasurementCocoa.mm
 loader/cocoa/SubresourceLoaderCocoa.mm
 loader/ios/LegacyPreviewLoader.mm
 loader/mac/DocumentLoaderMac.cpp
@@ -488,6 +489,7 @@ platform/mac/PlatformSpeechSynthesizerMac.mm
 platform/mac/PlaybackSessionInterfaceMac.mm @no-unify
 platform/mac/PluginBlocklist.mm
 platform/mac/PowerObserverMac.cpp
+platform/mac/PublicSuffixMac.mm
 platform/mac/SSLKeyGeneratorMac.mm
 platform/mac/ScrollAnimatorMac.mm @no-unify
 platform/mac/ScrollAnimationRubberBand.mm
@@ -550,6 +552,7 @@ platform/mediastream/mac/WebAudioSourceProviderCocoa.mm
 platform/mock/MediaPlaybackTargetMock.cpp
 platform/mock/MediaPlaybackTargetPickerMock.cpp
 platform/mock/MockAudioDestinationCocoa.cpp
+platform/network/cf/CertificateInfoCFNet.cpp
 platform/network/cf/DNSResolveQueueCFNet.cpp
 platform/network/cf/FormDataStreamCFNet.cpp
 platform/network/cf/NetworkStorageSessionCFNet.cpp

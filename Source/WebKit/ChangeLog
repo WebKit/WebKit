@@ -1,3 +1,53 @@
+2021-10-18  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r284383. rdar://problem/84377173
+
+    Revert r284216
+    https://webkit.org/b/231523
+    <rdar://84342878>
+    
+    Source/WebCore:
+    
+    * CMakeLists.txt:
+    * Configurations/WebCore.xcconfig:
+    * Sources.txt:
+    * SourcesCocoa.txt:
+    * WebCore.xcodeproj/project.pbxproj:
+    
+    Source/WebKit:
+    
+    There is an internal build configuration that doesn't know how to find libWebCoreStatic.a
+    and I have reason to believe that this is not necessary anyways.
+    
+    * Configurations/adattributiond.xcconfig:
+    * Shared/API/Cocoa/WKMain.h:
+    * Shared/API/Cocoa/WKMain.mm:
+    (WKAdAttributionDaemonMain):
+    * Sources.txt:
+    * SourcesCocoa.txt:
+    * WebKit.xcodeproj/project.pbxproj:
+    
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@284383 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-10-18  Alex Christensen  <achristensen@webkit.org>
+
+            Revert r284216
+            https://webkit.org/b/231523
+            <rdar://84342878>
+
+            There is an internal build configuration that doesn't know how to find libWebCoreStatic.a
+            and I have reason to believe that this is not necessary anyways.
+
+            * Configurations/adattributiond.xcconfig:
+            * Shared/API/Cocoa/WKMain.h:
+            * Shared/API/Cocoa/WKMain.mm:
+            (WKAdAttributionDaemonMain):
+            * Sources.txt:
+            * SourcesCocoa.txt:
+            * WebKit.xcodeproj/project.pbxproj:
+
 2021-10-18  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GLIB] Simplify SleepDisabler by checking if we are under sandbox

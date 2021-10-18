@@ -23,9 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "PCMDaemonEntryPoint.h"
+#include <os/availability.h>
+#include <WebKit/WKMain.h>
 
 int main(int argc, const char** argv)
 {
-    WebKit::PCMDaemonMain(argc, argv);
+    WKAdAttributionDaemonMain(argc, argv);
 }

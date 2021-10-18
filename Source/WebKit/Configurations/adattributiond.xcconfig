@@ -25,7 +25,7 @@
 
 PRODUCT_NAME = adattributiond;
 
-OTHER_LDFLAGS = -framework CFNetwork -framework Security -framework Foundation -framework CoreFoundation -l WTF -l WebCoreStatic -l icucore -l sqlite3 -l PAL;
+OTHER_LDFLAGS = -framework WebKit;
 FRAMEWORK_SEARCH_PATHS = $(BUILT_PRODUCTS_DIR);
 
 WK_PROCESSED_XCENT_FILE=$(TEMP_FILE_DIR)/$(FULL_PRODUCT_NAME).entitlements

@@ -33,3 +33,8 @@ int WKXPCServiceMain(int argc, const char** argv)
 {
     return WebKit::XPCServiceMain(argc, argv);
 }
+
+int WKAdAttributionDaemonMain(int argc, const char** argv)
+{
+    return WebKit::PCMDaemonMain(argc, argv);
+}
