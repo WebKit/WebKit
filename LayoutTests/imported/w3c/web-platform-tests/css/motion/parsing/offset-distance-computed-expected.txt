@@ -1,8 +1,8 @@
 
-FAIL Property offset-distance value '10px' assert_true: offset-distance doesn't seem to be supported in the computed style expected true got false
-FAIL Property offset-distance value '20%' assert_true: offset-distance doesn't seem to be supported in the computed style expected true got false
-FAIL Property offset-distance value 'calc(40% - 30px)' assert_true: offset-distance doesn't seem to be supported in the computed style expected true got false
-FAIL Property offset-distance value '0' assert_true: offset-distance doesn't seem to be supported in the computed style expected true got false
-FAIL Property offset-distance value 'calc(10px - 0.5em)' assert_true: offset-distance doesn't seem to be supported in the computed style expected true got false
-FAIL Property offset-distance value 'calc(10px + 0.5em)' assert_true: offset-distance doesn't seem to be supported in the computed style expected true got false
+PASS Property offset-distance value '10px'
+PASS Property offset-distance value '20%'
+PASS Property offset-distance value 'calc(40% - 30px)'
+PASS Property offset-distance value '0'
+PASS Property offset-distance value 'calc(10px - 0.5em)'
+PASS Property offset-distance value 'calc(10px + 0.5em)'
 

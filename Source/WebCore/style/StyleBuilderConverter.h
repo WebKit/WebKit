@@ -75,7 +75,8 @@ public:
     template<typename T> static T convertLineWidth(BuilderState&, const CSSValue&);
     static float convertSpacing(BuilderState&, const CSSValue&);
     static LengthSize convertRadius(BuilderState&, const CSSValue&);
-    static LengthPoint convertObjectPosition(BuilderState&, const CSSValue&);
+    static LengthPoint convertPosition(BuilderState&, const CSSValue&);
+    static LengthPoint convertPositionOrAuto(BuilderState&, const CSSValue&);
     static OptionSet<TextDecoration> convertTextDecoration(BuilderState&, const CSSValue&);
     template<typename T> static T convertNumber(BuilderState&, const CSSValue&);
     template<typename T> static T convertNumberOrAuto(BuilderState&, const CSSValue&);
@@ -399,7 +400,7 @@ inline Length BuilderConverter::convertPositionComponent(BuilderState& builderSt
     return length;
 }
 
-inline LengthPoint BuilderConverter::convertObjectPosition(BuilderState& builderState, const CSSValue& value)
+inline LengthPoint BuilderConverter::convertPosition(BuilderState& builderState, const CSSValue& value)
 {
     auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
     Pair* pair = primitiveValue.pairValue();
@@ -410,6 +411,16 @@ inline LengthPoint BuilderConverter::convertObjectPosition(BuilderState& builder
     Length lengthY = convertPositionComponent<CSSValueTop, CSSValueBottom>(builderState, *pair->second());
 
     return LengthPoint(lengthX, lengthY);
+}
+
+inline LengthPoint BuilderConverter::convertPositionOrAuto(BuilderState& builderState, const CSSValue& value)
+{
+    auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
+
+    if (primitiveValue.isPair())
+        return convertPosition(builderState, value);
+
+    return LengthPoint(Length(LengthType::Auto), Length(LengthType::Auto));
 }
 
 inline OptionSet<TextDecoration> BuilderConverter::convertTextDecoration(BuilderState&, const CSSValue& value)

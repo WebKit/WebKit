@@ -235,6 +235,10 @@ public:
     GapLength columnGap;
     GapLength rowGap;
 
+    Length offsetDistance;
+    LengthPoint offsetPosition;
+    LengthPoint offsetAnchor;
+
 private:
     StyleRareNonInheritedData();
     StyleRareNonInheritedData(const StyleRareNonInheritedData&);

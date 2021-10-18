@@ -1440,6 +1440,22 @@ static Element* styleElementForNode(Node* node)
     return composedTreeAncestors(*node).first();
 }
 
+static Ref<CSSValue> valueForPosition(const RenderStyle& style, const LengthPoint& position)
+{
+    auto list = CSSValueList::createSpaceSeparated();
+    list->append(zoomAdjustedPixelValueForLength(position.x(), style));
+    list->append(zoomAdjustedPixelValueForLength(position.y(), style));
+    return list;
+}
+
+static Ref<CSSValue> valueForPositionOrAuto(const RenderStyle& style, const LengthPoint& position)
+{
+    if (position.x().isAuto() && position.y().isAuto())
+        return CSSValuePool::singleton().createIdentifierValue(CSSValueAuto);
+
+    return valueForPosition(style, position);
+}
+
 ComputedStyleExtractor::ComputedStyleExtractor(Node* node, bool allowVisitedStyle, PseudoId pseudoElementSpecifier)
     : m_element(styleElementForNode(node))
     , m_pseudoElementSpecifier(pseudoElementSpecifier)
@@ -3161,12 +3177,14 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
             return zoomAdjustedPixelValueForLength(style.minWidth(), style);
         case CSSPropertyObjectFit:
             return cssValuePool.createValue(style.objectFit());
-        case CSSPropertyObjectPosition: {
-            auto list = CSSValueList::createSpaceSeparated();
-            list->append(zoomAdjustedPixelValueForLength(style.objectPosition().x(), style));
-            list->append(zoomAdjustedPixelValueForLength(style.objectPosition().y(), style));
-            return list;
-        }
+        case CSSPropertyObjectPosition:
+            return valueForPosition(style, style.objectPosition());
+        case CSSPropertyOffsetDistance:
+            return cssValuePool.createValue(style.offsetDistance(), style);
+        case CSSPropertyOffsetPosition:
+            return valueForPositionOrAuto(style, style.offsetPosition());
+        case CSSPropertyOffsetAnchor:
+            return valueForPositionOrAuto(style, style.offsetAnchor());
         case CSSPropertyOpacity:
             return cssValuePool.createValue(style.opacity(), CSSUnitType::CSS_NUMBER);
         case CSSPropertyOrphans:

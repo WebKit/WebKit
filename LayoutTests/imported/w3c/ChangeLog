@@ -1,3 +1,42 @@
+2021-10-18  Kiet Ho  <tho22@apple.com>
+
+        Implement parsing and animation support for offset-distance, offset-position, offset-anchor
+        https://bugs.webkit.org/show_bug.cgi?id=231491
+
+        Reviewed by Antoine Quint.
+
+        Updated relevant test expectations.
+
+        * web-platform-tests/css/css-cascade/all-prop-initial-xml-expected.txt:
+        * web-platform-tests/css/cssom/cssstyledeclaration-csstext-expected.txt:
+        * web-platform-tests/css/cssom/getComputedStyle-detached-subtree-expected.txt:
+        * web-platform-tests/css/motion/animation/offset-anchor-composition-expected.txt:
+        * web-platform-tests/css/motion/animation/offset-anchor-interpolation-expected.txt:
+        * web-platform-tests/css/motion/animation/offset-distance-composition-expected.txt:
+        * web-platform-tests/css/motion/animation/offset-distance-interpolation-expected.txt:
+        * web-platform-tests/css/motion/animation/offset-position-composition-expected.txt:
+        * web-platform-tests/css/motion/animation/offset-position-interpolation-expected.txt:
+        * web-platform-tests/css/motion/animation/offset-position-interpolation.html:
+          Fixed test to accept other length expressions as equivalent.
+        * web-platform-tests/css/motion/inheritance-expected.txt:
+        * web-platform-tests/css/motion/offset-supports-calc-expected.txt:
+        * web-platform-tests/css/motion/parsing/offset-anchor-computed-expected.txt:
+        * web-platform-tests/css/motion/parsing/offset-anchor-parsing-valid-expected.txt:
+        * web-platform-tests/css/motion/parsing/offset-anchor-parsing-valid.html:
+          Fixed test to accept "center" as an alternative to "center center",
+          "calc(20% + 10px) center" as an alternative to "calc(10px + 20%) center".
+        * web-platform-tests/css/motion/parsing/offset-distance-computed-expected.txt:
+        * web-platform-tests/css/motion/parsing/offset-distance-parsing-valid-expected.txt:
+        * web-platform-tests/css/motion/parsing/offset-position-computed-expected.txt:
+        * web-platform-tests/css/motion/parsing/offset-position-parsing-valid-expected.txt:
+        * web-platform-tests/css/motion/parsing/offset-position-parsing-valid.html:
+          Fixed test to accept "center" as an alternative to "center center",
+          "calc(20% + 10px) center" as an alternative to "calc(10px + 20%) center".
+        * web-platform-tests/css/motion/parsing/offset-shorthand-expected.txt:
+        * web-platform-tests/web-animations/animation-model/animation-types/accumulation-per-property-002-expected.txt:
+        * web-platform-tests/web-animations/animation-model/animation-types/addition-per-property-002-expected.txt:
+        * web-platform-tests/web-animations/animation-model/animation-types/interpolation-per-property-002-expected.txt:
+
 2021-10-18  Tim Nguyen  <ntim@apple.com>
 
         Re-import shadow-dom WPT

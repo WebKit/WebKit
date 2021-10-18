@@ -1,3 +1,20 @@
+2021-10-18  Kiet Ho  <tho22@apple.com>
+
+        Implement parsing and animation support for offset-distance, offset-position, offset-anchor
+        https://bugs.webkit.org/show_bug.cgi?id=231491
+
+        Reviewed by Antoine Quint.
+
+        Update platform-specific test expectations to accommodate for newly added CSS properties.
+
+        * platform/gtk/imported/w3c/web-platform-tests/css/cssom/cssstyledeclaration-csstext-expected.txt:
+        * platform/gtk/imported/w3c/web-platform-tests/css/cssom/getComputedStyle-detached-subtree-expected.txt:
+        * platform/ios-wk2/imported/w3c/web-platform-tests/css/cssom/cssstyledeclaration-csstext-expected.txt:
+        * platform/ios-wk2/imported/w3c/web-platform-tests/css/cssom/getComputedStyle-detached-subtree-expected.txt:
+        * platform/ios/imported/w3c/web-platform-tests/css/cssom/cssstyledeclaration-csstext-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/css/cssom/cssstyledeclaration-csstext-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/css/cssom/getComputedStyle-detached-subtree-expected.txt:
+
 2021-09-24  Sergio Villar Senin  <svillar@igalia.com>
 
         [css-flexbox] Improve & simplify the flex-basis computation

@@ -258,6 +258,18 @@ CSSIndividualTransformPropertiesEnabled:
     WebCore:
       default: true
 
+CSSMotionPathEnabled:
+  type: bool
+  humanReadableName: "CSS Motion Path"
+  humanReadableDescription: "Enable CSS Motion Path support"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 CSSOMViewSmoothScrollingEnabled:
   type: bool
   humanReadableName: "CSSOM View Smooth Scrolling"

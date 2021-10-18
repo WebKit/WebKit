@@ -3550,11 +3550,41 @@
         },
         "object-position": {
             "codegen-properties": {
-                "converter": "ObjectPosition"
+                "converter": "Position"
             },
             "specification": {
                 "category": "css-images",
                 "url": "https://www.w3.org/TR/css3-images/#object-position"
+            }
+        },
+        "offset-distance": {
+            "codegen-properties": {
+                "converter": "Length",
+                "settings-flag": "cssMotionPathEnabled"
+            },
+            "specification": {
+                "category": "css-motion-path",
+                "url": "https://drafts.fxtf.org/motion-1/#offset-distance-property"
+            }
+        },
+        "offset-position": {
+            "codegen-properties": {
+                "converter": "PositionOrAuto",
+                "settings-flag": "cssMotionPathEnabled"
+            },
+            "specification": {
+                "category": "css-motion-path",
+                "url": "https://drafts.fxtf.org/motion-1/#offset-position-property"
+            }
+        },
+        "offset-anchor": {
+            "codegen-properties": {
+                "converter": "PositionOrAuto",
+                "settings-flag": "cssMotionPathEnabled"
+            },
+            "specification": {
+                "category": "css-motion-path",
+                "url": "https://drafts.fxtf.org/motion-1/#offset-anchor-property"
             }
         },
         "opacity": {
@@ -7808,6 +7838,12 @@
             "shortname": "CSS Masking",
             "longname": "CSS Masking Module",
             "url": "https://www.w3.org/TR/css-masking-1/"
+        },
+        "css-motion-path": {
+            "shortname": "CSS Motion Path",
+            "longname": "CSS Motion Path Module",
+            "url": "https://drafts.fxtf.org/motion-1/",
+            "status": "experimental"
         },
         "css-multicol": {
             "shortname": "CSS Multi-column Layout",

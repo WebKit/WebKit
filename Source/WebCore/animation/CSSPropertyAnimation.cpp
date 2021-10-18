@@ -885,7 +885,7 @@ static bool canInterpolateLengthVariants(const GapLength& from, const GapLength&
     return canInterpolateLengths(from.length(), to.length(), isLengthPercentage);
 }
 
-class LengthPointPropertyWrapper final : public PropertyWrapperGetter<LengthPoint> {
+class LengthPointPropertyWrapper : public PropertyWrapperGetter<LengthPoint> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     LengthPointPropertyWrapper(CSSPropertyID property, LengthPoint (RenderStyle::*getter)() const, void (RenderStyle::*setter)(LengthPoint&&))
@@ -901,6 +901,28 @@ private:
     }
 
     void (RenderStyle::*m_setter)(LengthPoint&&);
+};
+
+// This class extends LengthPointPropertyWrapper to accommodate `auto` value expressed as
+// LengthPoint(Length(LengthType::Auto), Length(LengthType::Auto)). This is used for 
+// offset-anchor and offset-position, which allows `auto`, and is expressed like so.
+class LengthPointOrAutoPropertyWrapper final : public LengthPointPropertyWrapper {
+public:
+    LengthPointOrAutoPropertyWrapper(CSSPropertyID property, LengthPoint (RenderStyle::*getter)() const, void (RenderStyle::*setter)(LengthPoint&&))
+        : LengthPointPropertyWrapper(property, getter, setter)
+    {
+    }
+
+private:
+    // Check if it's possible to interpolate between the from and to values. In particular,
+    // it's only possible if they're both not auto.
+    bool canInterpolate(const RenderStyle& from, const RenderStyle& to) const override 
+    {
+        bool fromIsAuto = value(from).x().isAuto() && value(from).y().isAuto();
+        bool toIsAuto = value(to).x().isAuto() && value(to).y().isAuto();
+
+        return (!fromIsAuto && !toIsAuto); 
+    }
 };
 
 template <typename T>
@@ -2578,6 +2600,10 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
 #endif
         new PropertyWrapperAspectRatio,
         new DiscretePropertyWrapper<FontPalette>(CSSPropertyFontPalette, &RenderStyle::fontPalette, &RenderStyle::setFontPalette),
+
+        new LengthPropertyWrapper(CSSPropertyOffsetDistance, &RenderStyle::offsetDistance, &RenderStyle::setOffsetDistance, LengthPropertyWrapper::Flags::IsLengthPercentage),
+        new LengthPointOrAutoPropertyWrapper(CSSPropertyOffsetPosition, &RenderStyle::offsetPosition, &RenderStyle::setOffsetPosition),
+        new LengthPointOrAutoPropertyWrapper(CSSPropertyOffsetAnchor, &RenderStyle::offsetAnchor, &RenderStyle::setOffsetAnchor)
     };
     const unsigned animatableLonghandPropertiesCount = WTF_ARRAY_LENGTH(animatableLonghandPropertyWrappers);
 

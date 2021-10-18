@@ -46,6 +46,15 @@ PASS object-fit (type: discrete) has testInterpolation function
 PASS object-fit uses discrete animation when animating between "fill" and "contain" with linear easing
 PASS object-fit uses discrete animation when animating between "fill" and "contain" with effect easing
 PASS object-fit uses discrete animation when animating between "fill" and "contain" with keyframe easing
+PASS offset-distance (type: lengthPercentageOrCalc) has testInterpolation function
+PASS offset-distance supports animating as a length
+PASS offset-distance supports animating as a length of rem
+PASS offset-distance supports animating as a percentage
+PASS offset-distance supports animating as combination units "px" and "%"
+PASS offset-distance supports animating as combination units "%" and "em"
+PASS offset-distance supports animating as combination units "em" and "rem"
+PASS offset-distance supports animating as combination units "px" and "calc"
+PASS offset-distance supports animating as a calc
 PASS order (type: integer) has testInterpolation function
 PASS order supports animating as an integer
 PASS outline-color (type: color) has testInterpolation function

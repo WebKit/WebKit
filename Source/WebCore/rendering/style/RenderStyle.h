@@ -1885,6 +1885,18 @@ public:
     const Color& accentColor() const { return m_rareInheritedData->accentColor; }
     bool hasAutoAccentColor() const { return m_rareInheritedData->hasAutoAccentColor; }
 
+    const Length& offsetDistance() const { return m_rareNonInheritedData->offsetDistance; }
+    void setOffsetDistance(Length&& distance) { SET_VAR(m_rareNonInheritedData, offsetDistance, WTFMove(distance)); }
+    static Length initialOffsetDistance() { return Length(0, LengthType::Fixed); }
+
+    LengthPoint offsetPosition() const { return m_rareNonInheritedData->offsetPosition; }
+    void setOffsetPosition(LengthPoint&& position) { SET_VAR(m_rareNonInheritedData, offsetPosition, WTFMove(position)); }
+    static LengthPoint initialOffsetPosition() { return LengthPoint(Length(LengthType::Auto), Length(LengthType::Auto)); }
+
+    LengthPoint offsetAnchor() const { return m_rareNonInheritedData->offsetAnchor; }
+    void setOffsetAnchor(LengthPoint&& position) { SET_VAR(m_rareNonInheritedData, offsetAnchor, WTFMove(position)); }
+    static LengthPoint initialOffsetAnchor() { return LengthPoint(Length(LengthType::Auto), Length(LengthType::Auto)); }
+
 private:
     struct NonInheritedFlags {
         bool operator==(const NonInheritedFlags&) const;

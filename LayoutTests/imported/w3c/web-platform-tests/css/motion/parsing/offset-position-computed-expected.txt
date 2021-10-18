@@ -1,16 +1,16 @@
 
-FAIL Property offset-position value 'auto' assert_true: offset-position doesn't seem to be supported in the computed style expected true got false
-FAIL Property offset-position value 'left bottom' assert_true: offset-position doesn't seem to be supported in the computed style expected true got false
-FAIL Property offset-position value 'center center' assert_true: offset-position doesn't seem to be supported in the computed style expected true got false
-FAIL Property offset-position value 'right center' assert_true: offset-position doesn't seem to be supported in the computed style expected true got false
-FAIL Property offset-position value 'center top' assert_true: offset-position doesn't seem to be supported in the computed style expected true got false
-FAIL Property offset-position value 'center bottom' assert_true: offset-position doesn't seem to be supported in the computed style expected true got false
-FAIL Property offset-position value 'calc(5em + 20%) center' assert_true: offset-position doesn't seem to be supported in the computed style expected true got false
-FAIL Property offset-position value 'right 3em' assert_true: offset-position doesn't seem to be supported in the computed style expected true got false
-FAIL Property offset-position value '10px 20%' assert_true: offset-position doesn't seem to be supported in the computed style expected true got false
-FAIL Property offset-position value 'left -10px top -20%' assert_true: offset-position doesn't seem to be supported in the computed style expected true got false
-FAIL Property offset-position value 'right 10% bottom 5em' assert_true: offset-position doesn't seem to be supported in the computed style expected true got false
-FAIL Property offset-position value 'top 10px right -20%' assert_true: offset-position doesn't seem to be supported in the computed style expected true got false
-FAIL Property offset-position value 'left 10% bottom 2em' assert_true: offset-position doesn't seem to be supported in the computed style expected true got false
-FAIL Property offset-position value 'calc(10px - 0.5em) calc(10px + 0.5em)' assert_true: offset-position doesn't seem to be supported in the computed style expected true got false
+PASS Property offset-position value 'auto'
+PASS Property offset-position value 'left bottom'
+PASS Property offset-position value 'center center'
+PASS Property offset-position value 'right center'
+PASS Property offset-position value 'center top'
+PASS Property offset-position value 'center bottom'
+PASS Property offset-position value 'calc(5em + 20%) center'
+PASS Property offset-position value 'right 3em'
+PASS Property offset-position value '10px 20%'
+PASS Property offset-position value 'left -10px top -20%'
+PASS Property offset-position value 'right 10% bottom 5em'
+PASS Property offset-position value 'top 10px right -20%'
+PASS Property offset-position value 'left 10% bottom 2em'
+PASS Property offset-position value 'calc(10px - 0.5em) calc(10px + 0.5em)'
 

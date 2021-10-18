@@ -1,3 +1,12 @@
+2021-10-18  Kiet Ho  <tho22@apple.com>
+
+        Implement parsing and animation support for offset-distance, offset-position, offset-anchor
+        https://bugs.webkit.org/show_bug.cgi?id=231491
+
+        Reviewed by Antoine Quint.
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml: Add new preference for CSS Motion Path support.
+
 2021-10-17  Dean Jackson  <dino@apple.com>
 
         [WebXR] Stubs for WebXR Hand Input Module

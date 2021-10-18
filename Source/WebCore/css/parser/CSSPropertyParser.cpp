@@ -3991,6 +3991,14 @@ static RefPtr<CSSValue> consumeColorScheme(CSSParserTokenRange& range)
 
 #endif
 
+static RefPtr<CSSPrimitiveValue> consumePositionOrAuto(CSSParserTokenRange& range, CSSParserMode parserMode, UnitlessQuirk unitless, PositionSyntax positionSyntax)
+{
+    if (range.peek().id() == CSSValueAuto)
+        return consumeIdent(range);
+
+    return consumePosition(range, parserMode, unitless, positionSyntax);
+}
+
 RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSSPropertyID currentShorthand)
 {
     if (CSSParserFastPaths::isKeywordPropertyID(property)) {
@@ -4331,6 +4339,11 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSS
         if (auto parsedValue = consumeNumber(m_range, ValueRange::All))
             return parsedValue;
         return consumePercent(m_range, ValueRange::All);
+    case CSSPropertyOffsetDistance:
+        return consumeLengthOrPercent(m_range, m_context.mode, ValueRange::All, UnitlessQuirk::Forbid);
+    case CSSPropertyOffsetPosition:
+    case CSSPropertyOffsetAnchor:
+        return consumePositionOrAuto(m_range, m_context.mode, UnitlessQuirk::Forbid, PositionSyntax::Position);
     case CSSPropertyWebkitBoxFlex:
         return consumeNumber(m_range, ValueRange::All);
     case CSSPropertyBaselineShift:

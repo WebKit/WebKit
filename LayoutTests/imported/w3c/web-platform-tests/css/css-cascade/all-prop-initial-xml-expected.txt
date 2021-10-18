@@ -195,6 +195,9 @@ PASS min-width
 PASS mix-blend-mode
 PASS object-fit
 PASS object-position
+PASS offset-anchor
+PASS offset-distance
+PASS offset-position
 PASS opacity
 PASS order
 PASS orphans
