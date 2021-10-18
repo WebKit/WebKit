@@ -15,7 +15,6 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/tools/webdriver/webdriver/__init__.py
-/LayoutTests/imported/w3c/web-platform-tests/tools/webdriver/webdriver/bidi.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/webdriver/webdriver/client.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/webdriver/webdriver/error.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/webdriver/webdriver/protocol.py

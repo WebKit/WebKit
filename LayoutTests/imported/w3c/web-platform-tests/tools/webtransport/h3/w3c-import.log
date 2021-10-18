@@ -15,5 +15,7 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/tools/webtransport/h3/__init__.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/webtransport/h3/capsule.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/webtransport/h3/handler.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/webtransport/h3/test_capsule.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/webtransport/h3/webtransport_h3_server.py

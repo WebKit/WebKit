@@ -118,6 +118,12 @@ def executor_kwargs(logger, test_type, test_environment, run_info_data,
         "--headless" not in chrome_options["args"]):
         chrome_options["args"].append("--headless")
 
+    # For WebTransport tests.
+    webtranport_h3_port = test_environment.config.ports.get('webtransport-h3')
+    if webtranport_h3_port is not None:
+        chrome_options["args"].append(
+            "--origin-to-force-quic-on=web-platform.test:{}".format(webtranport_h3_port[0]))
+
     executor_kwargs["capabilities"] = capabilities
 
     return executor_kwargs
