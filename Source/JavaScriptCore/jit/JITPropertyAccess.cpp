@@ -1961,14 +1961,15 @@ void JIT::emit_op_resolve_scope(const Instruction* currentInstruction)
     if (profiledResolveType == ModuleVar) 
         loadPtrFromMetadata(bytecode, OpResolveScope::Metadata::offsetOfLexicalEnvironment(), regT0);
     else {
-        ptrdiff_t metadataOffset = m_unlinkedCodeBlock->metadata().offsetInMetadataTable(bytecode);
+        uint32_t metadataOffset = m_unlinkedCodeBlock->metadata().offsetInMetadataTable(bytecode);
 
         constexpr GPRReg metadataGPR = regT2;
         constexpr GPRReg scopeGPR = regT0;
         constexpr GPRReg bytecodeOffsetGPR = regT5;
 
         emitGetVirtualRegister(scope, scopeGPR);
-        move(TrustedImmPtr(metadataOffset), metadataGPR);
+        addPtr(TrustedImm32(metadataOffset), s_metadataGPR, metadataGPR);
+
         move(TrustedImm32(bytecodeOffset), bytecodeOffsetGPR);
 
         MacroAssemblerCodeRef<JITThunkPtrTag> code;
@@ -2014,10 +2015,6 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::generateOpResolveScopeThunk(VM& vm)
     UNUSED_PARAM(bytecodeOffsetGPR);
 
     jit.tagReturnAddress();
-
-    jit.loadPtr(addressFor(CallFrameSlot::codeBlock), regT3);
-    jit.loadPtr(Address(regT3, CodeBlock::offsetOfMetadataTable()), regT3);
-    jit.addPtr(regT3, metadataGPR);
 
     JumpList slowCase;
 
@@ -2368,10 +2365,10 @@ void JIT::emit_op_get_from_scope(const Instruction* currentInstruction)
     constexpr GPRReg scopeGPR = regT2;
     constexpr GPRReg bytecodeOffsetGPR = regT5;
 
-    ptrdiff_t metadataOffset = m_unlinkedCodeBlock->metadata().offsetInMetadataTable(bytecode);
+    uint32_t metadataOffset = m_unlinkedCodeBlock->metadata().offsetInMetadataTable(bytecode);
 
     emitGetVirtualRegister(scope, scopeGPR);
-    move(TrustedImmPtr(metadataOffset), metadataGPR);
+    addPtr(TrustedImm32(metadataOffset), s_metadataGPR, metadataGPR);
     move(TrustedImm32(bytecodeOffset), bytecodeOffsetGPR);
 
     MacroAssemblerCodeRef<JITThunkPtrTag> code;
@@ -2410,10 +2407,6 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::generateOpGetFromScopeThunk(VM& vm)
     CCallHelpers jit;
 
     jit.tagReturnAddress();
-
-    jit.loadPtr(addressFor(CallFrameSlot::codeBlock), regT3);
-    jit.loadPtr(Address(regT3, CodeBlock::offsetOfMetadataTable()), regT3);
-    jit.addPtr(regT3, metadataGPR);
 
     JumpList slowCase;
 
