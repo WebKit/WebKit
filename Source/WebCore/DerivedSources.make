@@ -499,10 +499,15 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/websockets/WebSocket.idl \
     $(WebCore)/Modules/webxr/Navigator+WebXR.idl \
     $(WebCore)/Modules/webxr/WebXRBoundedReferenceSpace.idl \
+    $(WebCore)/Modules/webxr/WebXRFrame+HandInput.idl \
     $(WebCore)/Modules/webxr/WebXRFrame.idl \
+    $(WebCore)/Modules/webxr/WebXRHand.idl \
     $(WebCore)/Modules/webxr/WebXRInputSource+Gamepad.idl \
     $(WebCore)/Modules/webxr/WebXRInputSource.idl \
     $(WebCore)/Modules/webxr/WebXRInputSourceArray.idl \
+    $(WebCore)/Modules/webxr/WebXRInputSource+HandInput.idl \
+    $(WebCore)/Modules/webxr/WebXRJointPose.idl \
+    $(WebCore)/Modules/webxr/WebXRJointSpace.idl \
     $(WebCore)/Modules/webxr/WebXRLayer.idl \
     $(WebCore)/Modules/webxr/WebXRPose.idl \
     $(WebCore)/Modules/webxr/WebXRReferenceSpace.idl \
@@ -519,6 +524,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/webxr/XREnvironmentBlendMode.idl \
     $(WebCore)/Modules/webxr/XREye.idl \
     $(WebCore)/Modules/webxr/XRFrameRequestCallback.idl \
+    $(WebCore)/Modules/webxr/XRHandJoint.idl \
     $(WebCore)/Modules/webxr/XRHandedness.idl \
     $(WebCore)/Modules/webxr/XRInputSourceEvent.idl \
     $(WebCore)/Modules/webxr/XRInputSourcesChangeEvent.idl \

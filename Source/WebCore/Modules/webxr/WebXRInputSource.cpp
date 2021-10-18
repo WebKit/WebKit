@@ -86,6 +86,18 @@ void WebXRInputSource::update(double timestamp, const PlatformXR::Device::FrameD
 #if ENABLE(GAMEPAD)
     m_gamepad->updateFromPlatformGamepad(WebXRGamepad(timestamp, m_connectTime, source));
 #endif
+
+#if ENABLE(WEBXR_HANDS)
+    if (source.simulateHand) {
+        // FIXME: This currently creates an object just for use in testing.
+        // The real implementation will use actual data and only be visible
+        // if hand-tracking was requested at session start.
+        if (!m_hand)
+            m_hand = WebXRHand::create(*this);
+    } else
+        m_hand = nullptr;
+#endif
+
 }
 
 bool WebXRInputSource::requiresInputSourceChange(const InputSource& source)

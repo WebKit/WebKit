@@ -1660,6 +1660,19 @@ WebXRGamepadsModuleEnabled:
     WebCore:
       default: false
 
+WebXRHandInputModuleEnabled:
+  type: bool
+  humanReadableName: "WebXR Hand Input Module"
+  humanReadableDescription: "Adds support for the Hands Input Module for WebXR"
+  condition: ENABLE(WEBXR_HANDS)
+  defaultValue:
+    WebKitLegacy:
+      default: WebKit::defaultWebXREnabled()
+    WebKit:
+      default: WebKit::defaultWebXREnabled()
+    WebCore:
+      default: false
+
 WheelEventGesturesBecomeNonBlocking:
   type: bool
   humanReadableName: "Wheel Event gestures become non-blocking"

@@ -636,6 +636,10 @@
 #define ENABLE_WEBXR 1
 #endif
 
+#if !defined(ENABLE_WEBXR_HANDS)
+#define ENABLE_WEBXR_HANDS 1
+#endif
+
 #if !defined(ENABLE_WEB_API_STATISTICS)
 #define ENABLE_WEB_API_STATISTICS 1
 #endif

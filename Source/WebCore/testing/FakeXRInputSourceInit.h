@@ -45,6 +45,9 @@ struct FakeXRInputSourceInit {
     bool selectionClicked { false };
     Vector<FakeXRButtonStateInit> supportedButtons;
     FakeXRRigidTransformInit gripOrigin;
+#if ENABLE(WEBXR_HANDS)
+    bool simulateHand { false };
+#endif
 };
 
 } // namespace WebCore

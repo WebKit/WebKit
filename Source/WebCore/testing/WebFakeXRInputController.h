@@ -79,6 +79,9 @@ private:
     bool m_connected { true };
     bool m_primarySelected { false };
     bool m_simulateSelect { false };
+#if ENABLE(WEBXR_HANDS)
+    bool m_simulateHand { false };
+#endif
 };
 
 } // namespace WebCore

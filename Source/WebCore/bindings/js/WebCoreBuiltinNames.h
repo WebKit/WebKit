@@ -310,10 +310,13 @@ namespace WebCore {
     macro(XMLHttpRequest) \
     macro(XRBoundedReferenceSpace) \
     macro(XRFrame) \
+    macro(XRHand) \
     macro(XRInputSource) \
     macro(XRInputSourceArray) \
     macro(XRInputSourceEvent) \
     macro(XRInputSourcesChangeEvent) \
+    macro(XRJointPose) \
+    macro(XRJointSpace) \
     macro(XRLayer) \
     macro(XRPose) \
     macro(XRReferenceSpace) \

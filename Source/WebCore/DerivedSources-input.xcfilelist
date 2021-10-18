@@ -598,10 +598,15 @@ $(PROJECT_DIR)/Modules/websockets/CloseEvent.idl
 $(PROJECT_DIR)/Modules/websockets/WebSocket.idl
 $(PROJECT_DIR)/Modules/webxr/Navigator+WebXR.idl
 $(PROJECT_DIR)/Modules/webxr/WebXRBoundedReferenceSpace.idl
+$(PROJECT_DIR)/Modules/webxr/WebXRFrame+HandInput.idl
 $(PROJECT_DIR)/Modules/webxr/WebXRFrame.idl
 $(PROJECT_DIR)/Modules/webxr/WebXRInputSource+Gamepad.idl
+$(PROJECT_DIR)/Modules/webxr/WebXRHand.idl
+$(PROJECT_DIR)/Modules/webxr/WebXRInputSource+HandInput.idl
 $(PROJECT_DIR)/Modules/webxr/WebXRInputSource.idl
 $(PROJECT_DIR)/Modules/webxr/WebXRInputSourceArray.idl
+$(PROJECT_DIR)/Modules/webxr/WebXRJointPose.idl
+$(PROJECT_DIR)/Modules/webxr/WebXRJointSpace.idl
 $(PROJECT_DIR)/Modules/webxr/WebXRLayer.idl
 $(PROJECT_DIR)/Modules/webxr/WebXRPose.idl
 $(PROJECT_DIR)/Modules/webxr/WebXRReferenceSpace.idl
@@ -618,6 +623,7 @@ $(PROJECT_DIR)/Modules/webxr/WebXRWebGLLayer.idl
 $(PROJECT_DIR)/Modules/webxr/XREnvironmentBlendMode.idl
 $(PROJECT_DIR)/Modules/webxr/XREye.idl
 $(PROJECT_DIR)/Modules/webxr/XRFrameRequestCallback.idl
+$(PROJECT_DIR)/Modules/webxr/XRHandJoint.idl
 $(PROJECT_DIR)/Modules/webxr/XRHandedness.idl
 $(PROJECT_DIR)/Modules/webxr/XRInputSourceEvent.idl
 $(PROJECT_DIR)/Modules/webxr/XRInputSourcesChangeEvent.idl

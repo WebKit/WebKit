@@ -30,6 +30,7 @@
 #include "DOMHighResTimeStamp.h"
 #include "ExceptionOr.h"
 #include "PlatformXR.h"
+#include <JavaScriptCore/Float32Array.h>
 #include <wtf/IsoMalloc.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
@@ -38,6 +39,8 @@
 namespace WebCore {
 
 class Document;
+class WebXRJointPose;
+class WebXRJointSpace;
 class WebXRPose;
 class WebXRReferenceSpace;
 class WebXRSession;
@@ -55,6 +58,12 @@ public:
 
     ExceptionOr<RefPtr<WebXRViewerPose>> getViewerPose(const Document&, const WebXRReferenceSpace&);
     ExceptionOr<RefPtr<WebXRPose>> getPose(const Document&, const WebXRSpace&, const WebXRSpace&);
+
+#if ENABLE(WEBXR_HANDS)
+    ExceptionOr<RefPtr<WebXRJointPose>> getJointPose(const WebXRJointSpace&, const WebXRSpace&);
+    ExceptionOr<bool> fillJointRadii(const Vector<RefPtr<WebXRJointSpace>>, const Float32Array&);
+    ExceptionOr<bool> fillPoses(const Vector<RefPtr<WebXRSpace>>, const WebXRSpace&, const Float32Array&);
+#endif
 
     void setTime(DOMHighResTimeStamp time) { m_time = time; }
 

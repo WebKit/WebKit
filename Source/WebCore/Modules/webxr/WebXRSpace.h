@@ -51,6 +51,9 @@ public:
 
     virtual bool isReferenceSpace() const { return false; }
     virtual bool isBoundedReferenceSpace() const { return false; }
+#if ENABLE(WEBXR_HANDS)
+    virtual bool isJointSpace() const { return false; }
+#endif
 
 protected:
     WebXRSpace(Document&, Ref<WebXRRigidTransform>&&);

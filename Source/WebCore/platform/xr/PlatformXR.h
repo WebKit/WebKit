@@ -78,6 +78,38 @@ enum class XRTargetRayMode {
     Screen,
 };
 
+#if ENABLE(WEBXR_HANDS)
+
+enum class HandJoint : unsigned {
+    Wrist,
+    ThumbMetacarpal,
+    ThumbPhalanxProximal,
+    ThumbPhalanxDistal,
+    ThumbTip,
+    IndexFingerMetacarpal,
+    IndexFingerPhalanxProximal,
+    IndexFingerPhalanxIntermediate,
+    IndexFingerPhalanxDistal,
+    IndexFingerTip,
+    MiddleFingerMetacarpal,
+    MiddleFingerPhalanxProximal,
+    MiddleFingerPhalanxIntermediate,
+    MiddleFingerPhalanxDistal,
+    MiddleFingerTip,
+    RingFingerMetacarpal,
+    RingFingerPhalanxProximal,
+    RingFingerPhalanxIntermediate,
+    RingFingerPhalanxDistal,
+    RingFingerTip,
+    PinkyFingerMetacarpal,
+    PinkyFingerPhalanxProximal,
+    PinkyFingerPhalanxIntermediate,
+    PinkyFingerPhalanxDistal,
+    PinkyFingerTip
+};
+
+#endif
+
 class TrackingAndRenderingClient;
 
 class Device : public ThreadSafeRefCounted<Device>, public CanMakeWeakPtr<Device> {
@@ -208,6 +240,10 @@ public:
             std::optional<InputSourcePose> gripOrigin;
             Vector<InputSourceButton> buttons;
             Vector<float> axes;
+#if ENABLE(WEBXR_HANDS)
+            // FIXME: Actually hold some hand data.
+            bool simulateHand { false };
+#endif
 
             template<class Encoder> void encode(Encoder&) const;
             template<class Decoder> static std::optional<InputSource> decode(Decoder&);

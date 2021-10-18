@@ -29,6 +29,8 @@
 #if ENABLE(WEBXR)
 
 #include "WebXRBoundedReferenceSpace.h"
+#include "WebXRJointPose.h"
+#include "WebXRJointSpace.h"
 #include "WebXRReferenceSpace.h"
 #include "WebXRSession.h"
 #include "WebXRViewerPose.h"
@@ -257,6 +259,30 @@ TransformationMatrix WebXRFrame::matrixFromPose(const PlatformXR::Device::FrameD
     matrix.multiply(TransformationMatrix::fromQuaternion(pose.orientation.x, pose.orientation.y, pose.orientation.z, pose.orientation.w));
     return matrix;
 }
+
+#if ENABLE(WEBXR_HANDS)
+
+// https://immersive-web.github.io/webxr-hand-input/#dom-xrframe-getjointpose
+ExceptionOr<RefPtr<WebXRJointPose>> WebXRFrame::getJointPose(const WebXRJointSpace& joint, const WebXRSpace& baseSpace)
+{
+    UNUSED_PARAM(joint);
+    UNUSED_PARAM(baseSpace);
+    return nullptr;
+}
+
+// https://immersive-web.github.io/webxr-hand-input/#dom-xrframe-filljointradii
+ExceptionOr<bool> WebXRFrame::fillJointRadii(const Vector<RefPtr<WebXRJointSpace>>, const Float32Array&)
+{
+    return true;
+}
+
+// https://immersive-web.github.io/webxr-hand-input/#dom-xrframe-fillposes
+ExceptionOr<bool> WebXRFrame::fillPoses(const Vector<RefPtr<WebXRSpace>>, const WebXRSpace&, const Float32Array&)
+{
+    return true;
+}
+
+#endif
 
 } // namespace WebCore
 

@@ -51,6 +51,9 @@ WebFakeXRInputController::WebFakeXRInputController(PlatformXR::InputSourceHandle
     , m_profiles(init.profiles)
     , m_primarySelected(init.selectionStarted)
     , m_simulateSelect(init.selectionClicked)
+#if ENABLE(WEBXR_HANDS)
+    , m_simulateHand(init.simulateHand)
+#endif
 {
     setPointerOrigin(init.pointerOrigin, false);
     setGripOrigin(init.gripOrigin, false);
@@ -106,6 +109,9 @@ InputSource WebFakeXRInputController::getFrameData()
     state.profiles = m_profiles;
     state.pointerOrigin = m_pointerOrigin;
     state.gripOrigin = m_gripOrigin;
+#if ENABLE(WEBXR_HANDS)
+    state.simulateHand = m_simulateHand;
+#endif
 
     if (m_simulateSelect)
         m_primarySelected = true;

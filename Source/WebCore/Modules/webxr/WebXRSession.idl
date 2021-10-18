@@ -30,6 +30,7 @@
     ActiveDOMObject,
     SecureContext,
     Exposed=Window,
+    JSCustomMarkFunction,
     InterfaceName=XRSession
 ] interface WebXRSession : EventTarget {
     // Attributes

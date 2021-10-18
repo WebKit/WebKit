@@ -1,3 +1,16 @@
+2021-10-17  Dean Jackson  <dino@apple.com>
+
+        [WebXR] Stubs for WebXR Hand Input Module
+        https://bugs.webkit.org/show_bug.cgi?id=231123
+        <rdar://problem/83802135>
+
+        Reviewed by Sam Weinig.
+
+        New test that checks an XRHand object can survive garbage collection.
+
+        * http/wpt/webxr/xrHandInput_gc-expected.txt: Added.
+        * http/wpt/webxr/xrHandInput_gc.html: Added.
+
 2021-10-17  Alan Bujtas  <zalan@apple.com>
 
         IFC progression (inline box borders).

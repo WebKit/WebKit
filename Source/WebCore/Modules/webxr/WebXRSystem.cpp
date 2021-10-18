@@ -291,6 +291,9 @@ std::optional<WebXRSystem::ResolvedRequestedFeatures> WebXRSystem::resolveReques
             if (sessionFeature.isNull())
                 continue;
 
+            // FIXME: This is only testing for XRReferenceSpaceType features. It
+            // needs to handle optional features like "hand-tracking".
+
             // 2. If feature is not a valid feature descriptor, perform the following steps
             //   2.1. Let s be the result of calling ? ToString(feature).
             //   2.2. If s is not a valid feature descriptor or is undefined, (return null|continue to next entry).

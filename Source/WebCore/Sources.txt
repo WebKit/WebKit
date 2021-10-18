@@ -362,9 +362,12 @@ Modules/webxr/NavigatorWebXR.cpp
 Modules/webxr/WebXRBoundedReferenceSpace.cpp
 Modules/webxr/WebXRFrame.cpp
 Modules/webxr/WebXRGamepad.cpp
+Modules/webxr/WebXRHand.cpp
 Modules/webxr/WebXRInputSource.cpp
 Modules/webxr/WebXRInputSourceArray.cpp
 Modules/webxr/WebXRInputSpace.cpp
+Modules/webxr/WebXRJointPose.cpp
+Modules/webxr/WebXRJointSpace.cpp
 Modules/webxr/WebXRLayer.cpp
 Modules/webxr/WebXROpaqueFramebuffer.cpp
 Modules/webxr/WebXRPose.cpp
@@ -562,6 +565,7 @@ bindings/js/JSUndoItemCustom.cpp
 bindings/js/JSWebAnimationCustom.cpp
 bindings/js/JSWebGL2RenderingContextCustom.cpp
 bindings/js/JSWebGLRenderingContextCustom.cpp
+bindings/js/JSWebXRSessionCustom.cpp
 bindings/js/JSWebXRReferenceSpaceCustom.cpp
 bindings/js/JSWebXRRigidTransformCustom.cpp
 bindings/js/JSWebXRSpaceCustom.cpp
@@ -3782,8 +3786,11 @@ JSWebKitTransitionEvent.cpp
 JSWebSocket.cpp
 JSWebXRBoundedReferenceSpace.cpp
 JSWebXRFrame.cpp
+JSWebXRHand.cpp
 JSWebXRInputSource.cpp
 JSWebXRInputSourceArray.cpp
+JSWebXRJointPose.cpp
+JSWebXRJointSpace.cpp
 JSWebXRLayer.cpp
 JSWebXRPose.cpp
 JSWebXRReferenceSpace.cpp
@@ -3825,6 +3832,7 @@ JSXPathResult.cpp
 JSXREnvironmentBlendMode.cpp
 JSXREye.cpp
 JSXRFrameRequestCallback.cpp
+JSXRHandJoint.cpp
 JSXRHandedness.cpp
 JSXRInputSourceEvent.cpp
 JSXRInputSourcesChangeEvent.cpp
