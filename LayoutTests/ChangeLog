@@ -1,5 +1,17 @@
 2021-10-18  Ayumi Kojima  <ayumi_kojima@apple.com>
 
+        [ iOS 15 ] Rebaselining 4 fast tests.
+        https://bugs.webkit.org/show_bug.cgi?id=231901
+
+        Unreviewed test gardening.
+
+        * platform/ios/fast/backgrounds/border-radius-split-background-expected.txt:
+        * platform/ios/fast/backgrounds/border-radius-split-background-image-expected.txt:
+        * platform/ios/fast/borders/border-styles-split-expected.txt:
+        * platform/ios/fast/text/basic/015-expected.txt:
+
+2021-10-18  Ayumi Kojima  <ayumi_kojima@apple.com>
+
         Unreviewed, reverting r284377.
 
         Reverting because the expected.txt files are in the wrong

@@ -35,9 +35,9 @@ layer at (0,0) size 800x600
           text run at (0,0) width 489: "The first line should break after the letter u, so that the gray border does not "
           text run at (488,0) width 184: "extend beyond the cyan box."
       RenderBlock {DIV} at (0,214) size 87x42 [border: (1px solid #00FFFF)]
-        RenderInline {SPAN} at (0,0) size 70x39 [border: none (30px solid #C0C0C0) none]
-          RenderText {#text} at (1,1) size 70x39
-            text run at (1,1) width 70: "Loremipsu"
+        RenderInline {SPAN} at (0,0) size 72x39 [border: none (30px solid #C0C0C0) none]
+          RenderText {#text} at (1,1) size 72x39
+            text run at (1,1) width 72: "Loremipsu"
             text run at (1,21) width 13: "m"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {HR} at (0,264) size 784x2 [border: (1px inset #000000)]
