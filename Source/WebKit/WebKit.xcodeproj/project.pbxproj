@@ -1278,25 +1278,6 @@
 		5C5D238C227A2CDA000B9BDA /* _WKCustomHeaderFields.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C5D2389227A1892000B9BDA /* _WKCustomHeaderFields.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5C62FDF91EFC271C00CE072E /* WKURLSchemeTaskPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C62FDF81EFC263C00CE072E /* WKURLSchemeTaskPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5C66A4B52320962400EA4D44 /* WKHTTPCookieStoreRef.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C66A4B42320961400EA4D44 /* WKHTTPCookieStoreRef.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		5C6C813D2718BC2300D4FB42 /* PCMDaemonEntryPoint.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CB9310526E837FD0032B1C0 /* PCMDaemonEntryPoint.mm */; };
-		5C6C813E2718BC4000D4FB42 /* PCMDaemonConnectionSet.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C6289A927068EC000CF5EC6 /* PCMDaemonConnectionSet.mm */; };
-		5C6C81412718C05000D4FB42 /* PrivateClickMeasurementManagerInterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CB9310626E839A90032B1C0 /* PrivateClickMeasurementManagerInterface.cpp */; };
-		5C6C81422718C06C00D4FB42 /* ArgumentCoders.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3D610413A7F03A00F95D4E /* ArgumentCoders.cpp */; };
-		5C6C81432718C07500D4FB42 /* DaemonDecoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C1579E927172A8B00ED5280 /* DaemonDecoder.cpp */; };
-		5C6C81442718C07A00D4FB42 /* DaemonEncoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C1579E827172A8A00ED5280 /* DaemonEncoder.cpp */; };
-		5C6C81452718C08C00D4FB42 /* PrivateClickMeasurementManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6BD05864220CE8C2000BED5C /* PrivateClickMeasurementManager.cpp */; };
-		5C6C81462718C09E00D4FB42 /* PrivateClickMeasurementDaemonClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CB930F726E802150032B1C0 /* PrivateClickMeasurementDaemonClient.cpp */; };
-		5C6C81472718C0D500D4FB42 /* PrivateClickMeasurementXPCUtilities.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CB9310826E841CB0032B1C0 /* PrivateClickMeasurementXPCUtilities.mm */; };
-		5C6C81482718C0E200D4FB42 /* PrivateClickMeasurementStore.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C826D6726D46B43008AEC91 /* PrivateClickMeasurementStore.cpp */; };
-		5C6C81492718C0F000D4FB42 /* PrivateClickMeasurementDatabase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C826D6A26D482EA008AEC91 /* PrivateClickMeasurementDatabase.cpp */; };
-		5C6C814A2718C10700D4FB42 /* DatabaseUtilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C826D6E26D58A16008AEC91 /* DatabaseUtilities.cpp */; };
-		5C6C814B2718C14000D4FB42 /* PrivateClickMeasurementNetworkLoaderCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CB930F226E7EEE00032B1C0 /* PrivateClickMeasurementNetworkLoaderCocoa.mm */; };
-		5C6C814C2718C16200D4FB42 /* PrivateClickMeasurementDebugInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CBE909026D7FB7C005A2E95 /* PrivateClickMeasurementDebugInfo.cpp */; };
-		5C6C814D2718C16900D4FB42 /* Logging.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51A7F2F4125BF8D4008AEB1D /* Logging.cpp */; };
-		5C6C814E2718C2F200D4FB42 /* NetworkDataTaskCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CBC9B8B1C65257300A8FDCF /* NetworkDataTaskCocoa.mm */; };
-		5C6C814F2718C32000D4FB42 /* WebCoreArgumentCodersMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BCE23262122C6CF300D5C35A /* WebCoreArgumentCodersMac.mm */; };
-		5C6C81502718C33500D4FB42 /* ArgumentCodersCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AAF0C4912B16334008E49E2 /* ArgumentCodersCF.cpp */; };
-		5C6C815A2719077400D4FB42 /* DaemonUtilities.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C1579F92717AF5000ED5280 /* DaemonUtilities.mm */; };
 		5C6E7D882323620500C2159D /* WKWebsiteDataStoreConfigurationRef.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C6E7D86232361E700C2159D /* WKWebsiteDataStoreConfigurationRef.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5C795D70229F373F003FF1C4 /* WKContextMenuElementInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CE0C369229F2D4A003695F0 /* WKContextMenuElementInfo.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5C795D71229F3757003FF1C4 /* WKContextMenuElementInfoPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CE0C36A229F2D4A003695F0 /* WKContextMenuElementInfoPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -14653,25 +14634,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				5CAF7AA726F93AB00003F19E /* adattributiond.cpp in Sources */,
-				5C6C81422718C06C00D4FB42 /* ArgumentCoders.cpp in Sources */,
-				5C6C81502718C33500D4FB42 /* ArgumentCodersCF.cpp in Sources */,
-				5C6C81432718C07500D4FB42 /* DaemonDecoder.cpp in Sources */,
-				5C6C81442718C07A00D4FB42 /* DaemonEncoder.cpp in Sources */,
-				5C6C815A2719077400D4FB42 /* DaemonUtilities.mm in Sources */,
-				5C6C814A2718C10700D4FB42 /* DatabaseUtilities.cpp in Sources */,
-				5C6C814D2718C16900D4FB42 /* Logging.cpp in Sources */,
-				5C6C814E2718C2F200D4FB42 /* NetworkDataTaskCocoa.mm in Sources */,
-				5C6C813E2718BC4000D4FB42 /* PCMDaemonConnectionSet.mm in Sources */,
-				5C6C813D2718BC2300D4FB42 /* PCMDaemonEntryPoint.mm in Sources */,
-				5C6C81462718C09E00D4FB42 /* PrivateClickMeasurementDaemonClient.cpp in Sources */,
-				5C6C81492718C0F000D4FB42 /* PrivateClickMeasurementDatabase.cpp in Sources */,
-				5C6C814C2718C16200D4FB42 /* PrivateClickMeasurementDebugInfo.cpp in Sources */,
-				5C6C81452718C08C00D4FB42 /* PrivateClickMeasurementManager.cpp in Sources */,
-				5C6C81412718C05000D4FB42 /* PrivateClickMeasurementManagerInterface.cpp in Sources */,
-				5C6C814B2718C14000D4FB42 /* PrivateClickMeasurementNetworkLoaderCocoa.mm in Sources */,
-				5C6C81482718C0E200D4FB42 /* PrivateClickMeasurementStore.cpp in Sources */,
-				5C6C81472718C0D500D4FB42 /* PrivateClickMeasurementXPCUtilities.mm in Sources */,
-				5C6C814F2718C32000D4FB42 /* WebCoreArgumentCodersMac.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

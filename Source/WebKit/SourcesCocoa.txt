@@ -161,6 +161,9 @@ Shared/Authentication/cocoa/AuthenticationChallengeDispositionCocoa.mm
 Shared/Authentication/cocoa/AuthenticationManagerCocoa.mm
 Shared/Authentication/cocoa/ClientCertificateAuthenticationXPCConstants.cpp
 
+Shared/EntryPointUtilities/Cocoa/Daemon/PCMDaemonConnectionSet.mm
+Shared/EntryPointUtilities/Cocoa/Daemon/PCMDaemonEntryPoint.mm
+
 Shared/Cocoa/APIDataCocoa.mm
 Shared/Cocoa/APIObject.mm
 Shared/Cocoa/ArgumentCodersCocoa.mm

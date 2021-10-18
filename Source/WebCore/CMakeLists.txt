@@ -2226,23 +2226,6 @@ list(APPEND WebCore_SOURCES ${WebCore_DERIVED_SOURCES_DIR}/XMLNSNames.cpp)
 GENERATE_DOM_NAMES(XML ${WEBCORE_DIR}/xml/xmlattrs.in)
 list(APPEND WebCore_SOURCES ${WebCore_DERIVED_SOURCES_DIR}/XMLNames.cpp)
 
-list(APPEND WebCore_SOURCES
-    loader/PrivateClickMeasurement.cpp
-
-    platform/Logging.cpp
-    platform/MIMETypeRegistry.cpp
-    platform/RuntimeApplicationChecks.cpp
-
-    platform/network/HTTPHeaderMap.cpp
-    platform/network/HTTPHeaderValues.cpp
-
-    platform/sql/SQLiteDatabase.cpp
-    platform/sql/SQLiteDatabaseTracker.cpp
-    platform/sql/SQLiteStatement.cpp
-    platform/sql/SQLiteStatementAutoResetScope.cpp
-    platform/sql/SQLiteTransaction.cpp
-)
-
 WEBKIT_COMPUTE_SOURCES(WebCore)
 
 if (MSVC)

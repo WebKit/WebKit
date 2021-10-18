@@ -1,3 +1,20 @@
+2021-10-18  Alex Christensen  <achristensen@webkit.org>
+
+        Revert r284216
+        https://webkit.org/b/231523
+        <rdar://84342878>
+
+        There is an internal build configuration that doesn't know how to find libWebCoreStatic.a
+        and I have reason to believe that this is not necessary anyways.
+
+        * Configurations/adattributiond.xcconfig:
+        * Shared/API/Cocoa/WKMain.h:
+        * Shared/API/Cocoa/WKMain.mm:
+        (WKAdAttributionDaemonMain):
+        * Sources.txt:
+        * SourcesCocoa.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+
 2021-10-18  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Web process occasionally crashes under `RemoteDisplayListRecorderProxy::recordRestore()`
