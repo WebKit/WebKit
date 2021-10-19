@@ -34,8 +34,10 @@ AccessHandleEnabled:
     WebKitLegacy:
       default: false
     WebKit:
+      "PLATFORM(COCOA)" : true
       default: false
     WebCore:
+      "PLATFORM(COCOA)" : true
       default: false
 
 AccessibilityObjectModelEnabled:
@@ -445,8 +447,10 @@ FileSystemAccessEnabled:
     WebKitLegacy:
       default: false
     WebKit:
+      "PLATFORM(COCOA)" : true
       default: false
     WebCore:
+      "PLATFORM(COCOA)" : true
       default: false
 
 FocusVisibleEnabled:
