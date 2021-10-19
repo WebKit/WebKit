@@ -1,0 +1,13 @@
+CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'report-to'.
+
+CONSOLE MESSAGE: Refused to load https://localhost:9443/reporting/resources/missing1.png because it does not appear in the img-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to load https://localhost:9443/reporting/resources/missing2.png because it does not appear in the img-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'report-to'.
+
+CONSOLE MESSAGE: Refused to load https://localhost:9443/reporting/resources/missing3.png because it does not appear in the img-src directive of the Content Security Policy.
+Bug test main frame
+
+
+
+FAIL Reports should be sent to the correct endpoints assert_equals: First endpoint should receive two reports expected 2 but got 0
+

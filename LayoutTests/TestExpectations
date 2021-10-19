@@ -611,6 +611,7 @@ imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-eleme
 imported/w3c/web-platform-tests/html/semantics/forms/historical-search-event.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-summary-element/anchor-with-inline-element.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/parse-error.tentative.html [ Skip ]
+imported/w3c/web-platform-tests/reporting/cross-origin-same-site-credentials.https.sub.html [ Skip ]
 imported/w3c/web-platform-tests/reporting/path-absolute-endpoint.https.sub.html [ Skip ]
 imported/w3c/web-platform-tests/workers/interfaces/WorkerGlobalScope/onerror/message-module-Error.html [ Skip ]
 [ Debug ] imported/w3c/web-platform-tests/css/css-backgrounds/background-size/background-size-near-zero-svg.html [ Skip ]

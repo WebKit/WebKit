@@ -1,0 +1,11 @@
+CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'report-to'.
+
+CONSOLE MESSAGE: Refused to load https://localhost:9443/reporting/resources/fail.png because it does not appear in the img-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to load https://localhost:9443/reporting/resources/fail.png because it does not appear in the img-src directive of the Content Security Policy.
+ This should be written into the document
+
+PASS Test that image does not load
+FAIL csp violation report observed Can't find variable: ReportingObserver
+FAIL document policy violation observed promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ReportingObserver"
+FAIL Reporting endpoints received reports. assert_unreached: A report of csp-violation from https://localhost:9443/reporting/document-reporting-named-endpoints.https.sub.html is not found. Reached unreachable code
+

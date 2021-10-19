@@ -15,6 +15,19 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/reporting/resources/README.md
+/LayoutTests/imported/w3c/web-platform-tests/reporting/resources/csp-error.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/reporting/resources/csp-error.https.sub.html.sub.headers
 /LayoutTests/imported/w3c/web-platform-tests/reporting/resources/fail.png
+/LayoutTests/imported/w3c/web-platform-tests/reporting/resources/first-csp-report.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/reporting/resources/first-csp-report.https.sub.html.sub.headers
+/LayoutTests/imported/w3c/web-platform-tests/reporting/resources/generate-csp-report.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/reporting/resources/generate-csp-report.https.sub.html.sub.headers
+/LayoutTests/imported/w3c/web-platform-tests/reporting/resources/generate-report-once.py
+/LayoutTests/imported/w3c/web-platform-tests/reporting/resources/generate-report.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/reporting/resources/middle-frame.https.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/reporting/resources/report-helper.js
 /LayoutTests/imported/w3c/web-platform-tests/reporting/resources/report.py
+/LayoutTests/imported/w3c/web-platform-tests/reporting/resources/same-origin-report.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/reporting/resources/same-origin-report.https.sub.html.sub.headers
+/LayoutTests/imported/w3c/web-platform-tests/reporting/resources/second-csp-report.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/reporting/resources/second-csp-report.https.sub.html.sub.headers
