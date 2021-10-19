@@ -106,13 +106,13 @@ public:
     PlatformLayer* platformLayer() const override;
     PlatformGraphicsContextGLDisplay platformDisplay() const { return m_displayObj; }
     PlatformGraphicsContextGLConfig platformConfig() const { return m_configObj; }
-    static GCGLenum drawingBufferTextureTargetQuery();
-    static GCGLint EGLDrawingBufferTextureTarget();
+    static GCGLenum drawingBufferTextureTargetQueryForDrawingTarget(GCGLenum drawingTarget);
+    static GCGLint EGLDrawingBufferTextureTargetForDrawingTarget(GCGLenum drawingTarget);
 #else
     PlatformLayer* platformLayer() const final;
 #endif
 #if USE(ANGLE)
-    static GCGLenum drawingBufferTextureTarget();
+    GCGLenum drawingBufferTextureTarget();
 #endif
     enum class ReleaseThreadResourceBehavior {
         // Releases current context after GraphicsContextGLOpenGL calls done in the thread.
@@ -749,6 +749,9 @@ private:
     GCGLuint m_preserveDrawingBufferTexture { 0 };
     // Attaches m_texture when m_preserveDrawingBufferTexture is non-zero.
     GCGLuint m_preserveDrawingBufferFBO { 0 };
+    // Queried at display startup.
+    EGLint m_drawingBufferTextureTarget { -1 };
+
 #endif
 
     // A bitmask of GL buffer bits (GL_COLOR_BUFFER_BIT,

@@ -477,7 +477,7 @@ GraphicsContextGLCVANGLE::GraphicsContextGLCVANGLE(GraphicsContextGLOpenGL& owne
         EGL_DestroyContext(display, context);
     });
 
-    const bool useTexture2D = GraphicsContextGLOpenGL::drawingBufferTextureTarget() == GL_TEXTURE_2D;
+    const bool useTexture2D = m_owner.drawingBufferTextureTarget() == GL_TEXTURE_2D;
 
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
     if (!useTexture2D) {
@@ -623,7 +623,7 @@ bool GraphicsContextGLCVANGLE::copyPixelBufferToTexture(CVPixelBufferRef image, 
     auto uvPlaneWidth = IOSurfaceGetWidthOfPlane(surface, 1);
     auto uvPlaneHeight = IOSurfaceGetHeightOfPlane(surface, 1);
 
-    GLenum videoTextureTarget = GraphicsContextGLOpenGL::drawingBufferTextureTarget();
+    GLenum videoTextureTarget = m_owner.drawingBufferTextureTarget();
 
     GLuint uvTexture = 0;
     gl::GenTextures(1, &uvTexture);

@@ -415,6 +415,7 @@ GraphicsContextGLOpenGL::~GraphicsContextGLOpenGL()
         EGL_DestroyContext(m_displayObj, m_contextObj);
     }
     ASSERT(currentContext != this);
+    m_drawingBufferTextureTarget = -1;
     LOG(WebGL, "Destroyed a GraphicsContextGLOpenGL (%p).", this);
 }
 
@@ -430,41 +431,42 @@ PlatformLayer* GraphicsContextGLOpenGL::platformLayer() const
 
 GCGLenum GraphicsContextGLOpenGL::drawingBufferTextureTarget()
 {
-#if PLATFORM(MACCATALYST)
-    if (needsEAGLOnMac())
+    if (m_drawingBufferTextureTarget == -1)
+        EGL_GetConfigAttrib(m_displayObj, m_configObj, EGL_BIND_TO_TEXTURE_TARGET_ANGLE, &m_drawingBufferTextureTarget);
+
+    switch (m_drawingBufferTextureTarget) {
+    case EGL_TEXTURE_2D:
         return TEXTURE_2D;
-    return TEXTURE_RECTANGLE_ARB;
-#elif PLATFORM(MAC)
-    return TEXTURE_RECTANGLE_ARB;
-#else
-    return TEXTURE_2D;
-#endif
+    case EGL_TEXTURE_RECTANGLE_ANGLE:
+        return TEXTURE_RECTANGLE_ARB;
+
+    }
+    ASSERT_WITH_MESSAGE(false, "Invalid enum returned from EGL_GetConfigAttrib");
+    return 0;
 }
 
-GCGLenum GraphicsContextGLOpenGL::drawingBufferTextureTargetQuery()
+GCGLenum GraphicsContextGLOpenGL::drawingBufferTextureTargetQueryForDrawingTarget(GCGLenum drawingTarget)
 {
-#if PLATFORM(MACCATALYST)
-    if (needsEAGLOnMac())
+    switch (drawingTarget) {
+    case TEXTURE_2D:
         return TEXTURE_BINDING_2D;
-    return TEXTURE_BINDING_RECTANGLE_ARB;
-#elif PLATFORM(MAC)
-    return TEXTURE_BINDING_RECTANGLE_ARB;
-#else
-    return TEXTURE_BINDING_2D;
-#endif
+    case TEXTURE_RECTANGLE_ARB:
+        return TEXTURE_BINDING_RECTANGLE_ARB;
+    }
+    ASSERT_WITH_MESSAGE(false, "Invalid drawing target");
+    return -1;
 }
 
-GCGLint GraphicsContextGLOpenGL::EGLDrawingBufferTextureTarget()
+GCGLint GraphicsContextGLOpenGL::EGLDrawingBufferTextureTargetForDrawingTarget(GCGLenum drawingTarget)
 {
-#if PLATFORM(MACCATALYST)
-    if (needsEAGLOnMac())
+    switch (drawingTarget) {
+    case TEXTURE_2D:
         return EGL_TEXTURE_2D;
-    return EGL_TEXTURE_RECTANGLE_ANGLE;
-#elif PLATFORM(MAC)
-    return EGL_TEXTURE_RECTANGLE_ANGLE;
-#else
-    return EGL_TEXTURE_2D;
-#endif
+    case TEXTURE_RECTANGLE_ARB:
+        return EGL_TEXTURE_RECTANGLE_ANGLE;
+    }
+    ASSERT_WITH_MESSAGE(false, "Invalid drawing target");
+    return 0;
 }
 
 bool GraphicsContextGLOpenGL::makeContextCurrent()
@@ -562,7 +564,7 @@ bool GraphicsContextGLOpenGL::allocateAndBindDisplayBufferBacking()
         EGL_WIDTH, size.width(),
         EGL_HEIGHT, size.height(),
         EGL_IOSURFACE_PLANE_ANGLE, 0,
-        EGL_TEXTURE_TARGET, WebCore::GraphicsContextGLOpenGL::EGLDrawingBufferTextureTarget(),
+        EGL_TEXTURE_TARGET, EGLDrawingBufferTextureTargetForDrawingTarget(drawingBufferTextureTarget()),
         EGL_TEXTURE_INTERNAL_FORMAT_ANGLE, usingAlpha ? GL_BGRA_EXT : GL_RGB,
         EGL_TEXTURE_FORMAT, EGL_TEXTURE_RGBA,
         EGL_TEXTURE_TYPE_ANGLE, GL_UNSIGNED_BYTE,
@@ -579,7 +581,7 @@ bool GraphicsContextGLOpenGL::allocateAndBindDisplayBufferBacking()
 bool GraphicsContextGLOpenGL::bindDisplayBufferBacking(std::unique_ptr<IOSurface> backing, void* pbuffer)
 {
     GCGLenum textureTarget = drawingBufferTextureTarget();
-    ScopedRestoreTextureBinding restoreBinding(drawingBufferTextureTargetQuery(), textureTarget, textureTarget != TEXTURE_RECTANGLE_ARB);
+    ScopedRestoreTextureBinding restoreBinding(drawingBufferTextureTargetQueryForDrawingTarget(drawingBufferTextureTarget()), textureTarget, textureTarget != TEXTURE_RECTANGLE_ARB);
     gl::BindTexture(textureTarget, m_texture);
     if (!EGL_BindTexImage(m_displayObj, pbuffer, EGL_BACK_BUFFER)) {
         EGL_DestroySurface(m_displayObj, pbuffer);
@@ -746,7 +748,7 @@ std::optional<PixelBuffer> GraphicsContextGLOpenGL::readCompositedResults()
     // the IOSurface be unrefenced after the draw call finishes.
     ScopedTexture texture;
     GCGLenum textureTarget = drawingBufferTextureTarget();
-    ScopedRestoreTextureBinding restoreBinding(drawingBufferTextureTargetQuery(), textureTarget, textureTarget != TEXTURE_RECTANGLE_ARB);
+    ScopedRestoreTextureBinding restoreBinding(drawingBufferTextureTargetQueryForDrawingTarget(drawingBufferTextureTarget()), textureTarget, textureTarget != TEXTURE_RECTANGLE_ARB);
     gl::BindTexture(textureTarget, texture);
     if (!EGL_BindTexImage(m_displayObj, displayBuffer.handle, EGL_BACK_BUFFER))
         return std::nullopt;

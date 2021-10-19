@@ -123,7 +123,7 @@ void WebXROpaqueFramebuffer::startFrame(const PlatformXR::Device::FrameData::Lay
     ASSERT(data.surface);
 
     auto gCGL = static_cast<GraphicsContextGLOpenGL*>(m_context.graphicsContextGL());
-    GCGLenum textureTarget = GraphicsContextGLOpenGL::drawingBufferTextureTarget();
+    GCGLenum textureTarget = gCGL->drawingBufferTextureTarget();
 
 
     if (!m_opaqueTexture)
