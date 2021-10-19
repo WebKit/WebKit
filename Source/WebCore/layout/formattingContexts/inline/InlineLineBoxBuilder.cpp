@@ -310,7 +310,14 @@ InlineLayoutUnit LineBoxBuilder::constructAndAlignInlineLevelBoxes(LineBox& line
             continue;
         }
         if (run.isLineSpanningInlineBoxStart()) {
-            auto inlineBox = InlineLevelBox::createInlineBox(layoutBox, style, logicalLeft, rootInlineBox.logicalWidth(), InlineLevelBox::LineSpanningInlineBox::Yes);
+            auto marginStart = InlineLayoutUnit { };
+#if ENABLE(CSS_BOX_DECORATION_BREAK)
+            if (style.boxDecorationBreak() == BoxDecorationBreak::Clone)
+                marginStart = formattingContext().geometryForBox(layoutBox).marginStart();
+#endif
+            auto adjustedLogicalStart = logicalLeft + marginStart;
+            auto logicalWidth = rootInlineBox.logicalWidth() - adjustedLogicalStart;
+            auto inlineBox = InlineLevelBox::createInlineBox(layoutBox, style, adjustedLogicalStart, logicalWidth, InlineLevelBox::LineSpanningInlineBox::Yes);
             setInitialVerticalGeometryForInlineBox(inlineBox);
             updateCanUseSimplifiedAlignment(inlineBox);
             lineBox.addInlineLevelBox(WTFMove(inlineBox));

@@ -49,7 +49,7 @@ public:
     bool hasContent() const { return !m_runs.isEmpty() && !m_runs.last().isLineSpanningInlineBoxStart(); }
 
     InlineLayoutUnit contentLogicalWidth() const { return m_contentLogicalWidth; }
-    InlineLayoutUnit contentLogicalRight() const { return lastRunLogicalRight() + m_lineSpanningInlineBoxRunEndWidth; }
+    InlineLayoutUnit contentLogicalRight() const { return lastRunLogicalRight() + m_clonedEndDecorationWidthForInlineBoxRuns; }
     size_t nonSpanningInlineLevelBoxCount() const { return m_nonSpanningInlineLevelBoxCount; }
 
     InlineLayoutUnit trimmableTrailingWidth() const { return m_trimmableTrailingContent.width(); }
@@ -156,13 +156,12 @@ public:
     };
     using RunList = Vector<Run, 10>;
     const RunList& runs() const { return m_runs; }
-    using LineSpanningInlineBoxRunEnds = HashMap<const Box*, InlineLayoutUnit>;
-    const LineSpanningInlineBoxRunEnds& lineSpanningInlineBoxRunEnds() const { return m_lineSpanningInlineBoxRunEnds; }
+    using InlineBoxListWithClonedDecorationEnd = HashMap<const Box*, InlineLayoutUnit>;
+    const InlineBoxListWithClonedDecorationEnd& inlineBoxListWithClonedDecorationEnd() const { return m_inlineBoxListWithClonedDecorationEnd; }
 
 private:
     InlineLayoutUnit lastRunLogicalRight() const { return m_runs.isEmpty() ? 0.0f : m_runs.last().logicalRight(); }
 
-    void appendNonBreakableSpace(const InlineItem&, const RenderStyle&, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth);
     void appendTextContent(const InlineTextItem&, const RenderStyle&, InlineLayoutUnit logicalWidth);
     void appendNonReplacedInlineLevelBox(const InlineItem&, const RenderStyle&, InlineLayoutUnit marginBoxLogicalWidth);
     void appendReplacedInlineLevelBox(const InlineItem&, const RenderStyle&, InlineLayoutUnit marginBoxLogicalWidth);
@@ -171,6 +170,8 @@ private:
     void appendLineBreak(const InlineItem&);
     void appendWordBreakOpportunity(const InlineItem&);
 
+    InlineLayoutUnit addBorderAndPaddingEndForInlineBoxDecorationClone(const InlineItem& inlineBoxStartItem);
+    InlineLayoutUnit removeBorderAndPaddingEndForInlineBoxDecorationClone(const InlineItem& inlineBoxEndItem);
     void removeTrailingTrimmableContent();
     void visuallyCollapseHangingOverflow(InlineLayoutUnit horizontalAvailableSpace);
 
@@ -220,8 +221,8 @@ private:
     InlineLayoutUnit m_contentLogicalWidth { 0 };
     size_t m_nonSpanningInlineLevelBoxCount { 0 };
     std::optional<InlineLayoutUnit> m_trailingSoftHyphenWidth { 0 };
-    LineSpanningInlineBoxRunEnds m_lineSpanningInlineBoxRunEnds;
-    InlineLayoutUnit m_lineSpanningInlineBoxRunEndWidth { 0 };
+    InlineBoxListWithClonedDecorationEnd m_inlineBoxListWithClonedDecorationEnd;
+    InlineLayoutUnit m_clonedEndDecorationWidthForInlineBoxRuns { 0 };
 };
 
 inline void Line::TrimmableTrailingContent::reset()
