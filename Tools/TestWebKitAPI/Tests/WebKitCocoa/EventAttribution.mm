@@ -355,7 +355,7 @@ TEST(PrivateClickMeasurement, Basic)
 
 TEST(PrivateClickMeasurement, EphemeralWithAttributedBundleIdentifier)
 {
-    auto configuration = adoptNS([WKWebViewConfiguration new]);
+    auto configuration = configurationWithoutUsingDaemon();
     configuration.get()._attributedBundleIdentifier = @"other.test.bundle.id";
     runBasicPCMTest(configuration.get(), [](WKWebView *webView, const HTTPServer& server) {
         [webView _addEventAttributionWithSourceID:42 destinationURL:exampleURL() sourceDescription:@"test source description" purchaser:@"test purchaser" reportEndpoint:server.request().URL optionalNonce:nil applicationBundleID:@"other.test.bundle.id" ephemeral:YES];

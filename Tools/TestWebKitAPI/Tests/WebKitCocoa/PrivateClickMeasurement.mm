@@ -39,10 +39,12 @@
 static RetainPtr<WKWebView> webViewWithResourceLoadStatisticsEnabledInNetworkProcess()
 {
     auto *sharedProcessPool = [WKProcessPool _sharedProcessPool];
-    auto *dataStore = [WKWebsiteDataStore defaultDataStore];
-    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto dataStoreConfiguration = adoptNS([_WKWebsiteDataStoreConfiguration new]);
+    dataStoreConfiguration.get().pcmMachServiceName = nil;
+    auto dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:dataStoreConfiguration.get()]);
+    auto configuration = adoptNS([WKWebViewConfiguration new]);
     [configuration setProcessPool: sharedProcessPool];
-    configuration.get().websiteDataStore = dataStore;
+    configuration.get().websiteDataStore = dataStore.get();
 
     // We need an active NetworkProcess to perform PCM operations.
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);

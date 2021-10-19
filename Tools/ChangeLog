@@ -1,5 +1,18 @@
 2021-10-19  Alex Christensen  <achristensen@webkit.org>
 
+        Fix iOS API tests after r284304
+        https://bugs.webkit.org/show_bug.cgi?id=231829
+
+        Part of the original commit that told the tests to continue doing what they were doing before was omitted.
+        This commits that.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/EventAttribution.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/PrivateClickMeasurement.mm:
+        (webViewWithResourceLoadStatisticsEnabledInNetworkProcess):
+
+2021-10-19  Alex Christensen  <achristensen@webkit.org>
+
         Use JSONValues instead of a JSC::VM to parse WKContentRuleLists
         https://bugs.webkit.org/show_bug.cgi?id=231704
 
