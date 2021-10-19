@@ -1,8 +1,8 @@
 
-FAIL returning early from an iteration doesn't crash promise_test: Unhandled rejection with value: object "TypeError: dir.values is not a function. (In 'dir.values()', 'dir.values' is undefined)"
-FAIL @@asyncIterator: full iteration works promise_test: Unhandled rejection with value: object "TypeError: dir.values is not a function. (In 'dir.values()', 'dir.values' is undefined)"
-FAIL entries: full iteration works promise_test: Unhandled rejection with value: object "TypeError: dir.values is not a function. (In 'dir.values()', 'dir.values' is undefined)"
-FAIL values: full iteration works promise_test: Unhandled rejection with value: object "TypeError: dir.values is not a function. (In 'dir.values()', 'dir.values' is undefined)"
-FAIL keys: full iteration works promise_test: Unhandled rejection with value: object "TypeError: dir.values is not a function. (In 'dir.values()', 'dir.values' is undefined)"
-FAIL iteration while iterator gets garbage collected promise_test: Unhandled rejection with value: object "TypeError: dir.values is not a function. (In 'dir.values()', 'dir.values' is undefined)"
+FAIL returning early from an iteration doesn't crash promise_test: Unhandled rejection with value: object "NotSupportedError: getFile is not implemented"
+FAIL @@asyncIterator: full iteration works promise_test: Unhandled rejection with value: object "NotSupportedError: getFile is not implemented"
+FAIL entries: full iteration works promise_test: Unhandled rejection with value: object "NotSupportedError: getFile is not implemented"
+FAIL values: full iteration works promise_test: Unhandled rejection with value: object "NotSupportedError: getFile is not implemented"
+FAIL keys: full iteration works promise_test: Unhandled rejection with value: object "NotSupportedError: getFile is not implemented"
+FAIL iteration while iterator gets garbage collected promise_test: Unhandled rejection with value: object "NotSupportedError: getFile is not implemented"
 

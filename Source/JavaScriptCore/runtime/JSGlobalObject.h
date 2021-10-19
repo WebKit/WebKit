@@ -690,6 +690,7 @@ public:
     JSFunction* resolvePromiseFunction() const;
     JSFunction* rejectPromiseFunction() const;
     JSFunction* promiseProtoThenFunction() const;
+    JSFunction* performPromiseThenFunction() const;
     JSFunction* objectProtoValueOfFunction() const { return m_objectProtoValueOfFunction.get(); }
     JSFunction* numberProtoToStringFunction() const { return m_numberProtoToStringFunction.getInitializedOnMainThread(this); }
     JSFunction* functionProtoHasInstanceSymbolFunction() const { return m_functionProtoHasInstanceSymbolFunction.get(); }

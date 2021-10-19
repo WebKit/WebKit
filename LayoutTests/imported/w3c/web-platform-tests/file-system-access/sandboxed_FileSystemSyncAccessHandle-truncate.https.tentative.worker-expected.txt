@@ -1,5 +1,5 @@
 
-FAIL test createSyncAccessHandle.truncate with pending operation promise_test: Unhandled rejection with value: object "TypeError: dir.values is not a function. (In 'dir.values()', 'dir.values' is undefined)"
-FAIL test SyncAccessHandle.truncate with different sizes promise_test: Unhandled rejection with value: object "TypeError: dir.values is not a function. (In 'dir.values()', 'dir.values' is undefined)"
-FAIL test SyncAccessHandle.truncate after SyncAccessHandle.write promise_test: Unhandled rejection with value: object "TypeError: dir.values is not a function. (In 'dir.values()', 'dir.values' is undefined)"
+FAIL test createSyncAccessHandle.truncate with pending operation assert_unreached: Should have rejected: undefined Reached unreachable code
+PASS test SyncAccessHandle.truncate with different sizes
+FAIL test SyncAccessHandle.truncate after SyncAccessHandle.write promise_test: Unhandled rejection with value: object "TypeError: handle.write is not a function. (In 'handle.write(writeBuffer, {at: 0})', 'handle.write' is undefined)"
 

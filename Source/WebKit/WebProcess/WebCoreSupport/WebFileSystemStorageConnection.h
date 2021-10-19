@@ -25,10 +25,34 @@
 
 #pragma once
 
+#include "Connection.h"
+#include "FileSystemStorageError.h"
 #include <WebCore/FileSystemStorageConnection.h>
 
 namespace IPC {
 class Connection;
+
+template<> struct AsyncReplyError<Expected<WebCore::FileSystemHandleIdentifier, WebKit::FileSystemStorageError>> {
+    static Expected<WebCore::FileSystemHandleIdentifier, WebKit::FileSystemStorageError> create()
+    {
+        return makeUnexpected(WebKit::FileSystemStorageError::Unknown);
+    }
+};
+
+template<> struct AsyncReplyError<Expected<Vector<String>, WebKit::FileSystemStorageError>> {
+    static Expected<Vector<String>, WebKit::FileSystemStorageError> create()
+    {
+        return makeUnexpected(WebKit::FileSystemStorageError::Unknown);
+    }
+};
+
+template<> struct AsyncReplyError<Expected<std::pair<String, bool>, WebKit::FileSystemStorageError>> {
+    static Expected<std::pair<String, bool>, WebKit::FileSystemStorageError> create()
+    {
+        return makeUnexpected(WebKit::FileSystemStorageError::Unknown);
+    }
+};
+
 }
 
 namespace WebCore {
@@ -53,6 +77,8 @@ private:
     void getDirectoryHandle(WebCore::FileSystemHandleIdentifier, const String& name, bool createIfNecessary, WebCore::FileSystemStorageConnection::GetHandleCallback&&);
     void removeEntry(WebCore::FileSystemHandleIdentifier, const String& name, bool deleteRecursively, WebCore::FileSystemStorageConnection::VoidCallback&&);
     void resolve(WebCore::FileSystemHandleIdentifier, WebCore::FileSystemHandleIdentifier, WebCore::FileSystemStorageConnection::ResolveCallback&&);
+    void getHandleNames(WebCore::FileSystemHandleIdentifier, FileSystemStorageConnection::GetHandleNamesCallback&&);
+    void getHandle(WebCore::FileSystemHandleIdentifier, const String& name, FileSystemStorageConnection::GetHandleWithTypeCallback&&);
 
     void createSyncAccessHandle(WebCore::FileSystemHandleIdentifier, WebCore::FileSystemStorageConnection::GetAccessHandleCallback&&) final;
     void getSize(WebCore::FileSystemHandleIdentifier, WebCore::FileSystemSyncAccessHandleIdentifier, WebCore::FileSystemStorageConnection::IntegerCallback&&) final;

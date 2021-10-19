@@ -855,6 +855,10 @@ imported/w3c/web-platform-tests/html/semantics/links/links-created-by-a-and-area
 # Newly imported test that is flaky on WebKit2 only.
 imported/w3c/web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/no_window_open_when_term_nesting_level_nonzero.window.html [ Pass Failure ]
 
+webkit.org/b/231348 [ Release ] imported/w3c/web-platform-tests/file-system-access/sandboxed_FileSystemBaseHandle-postMessage-windows.https.window.html [ Pass Failure ]
+webkit.org/b/231349 [ Release ] imported/w3c/web-platform-tests/file-system-access/sandboxed_FileSystemBaseHandle-postMessage-MessagePort-windows.https.window.html [ Pass Failure ]
+webkit.org/b/231350 [ Release ] imported/w3c/web-platform-tests/file-system-access/sandboxed_FileSystemFileHandle-create-sync-access-handle-dedicated-worker.https.tentative.window.html [ Pass Failure ]
+
 # Closed port web socket delays are only supported on wk2.
 http/tests/websocket/tests/hybi/closed-port-delay.html [ Pass ]
 

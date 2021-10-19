@@ -62,8 +62,13 @@ Expected<WebCore::FileSystemHandleIdentifier, FileSystemStorageError> FileSystem
             return makeUnexpected(FileSystemStorageError::Unknown);
 
         auto existingHandleType = (existingFileType.value() == FileSystem::FileType::Regular) ? FileSystemStorageHandle::Type::File : FileSystemStorageHandle::Type::Directory;
-        if (existingHandleType != type)
-            return makeUnexpected(FileSystemStorageError::TypeMismatch);
+        if (type == FileSystemStorageHandle::Type::Any)
+            type = existingHandleType;
+        else {
+            // Requesting type and existing type should be a match.
+            if (existingHandleType != type)
+                return makeUnexpected(FileSystemStorageError::TypeMismatch);
+        }
     }
 
     auto newHandle = makeUnique<FileSystemStorageHandle>(*this, type, WTFMove(path), WTFMove(name));
@@ -80,6 +85,12 @@ const String& FileSystemStorageManager::getPath(WebCore::FileSystemHandleIdentif
 {
     auto handle = m_handles.find(identifier);
     return handle == m_handles.end() ? emptyString() : handle->value->path();
+}
+
+FileSystemStorageHandle::Type FileSystemStorageManager::getType(WebCore::FileSystemHandleIdentifier identifier)
+{
+    auto handle = m_handles.find(identifier);
+    return handle == m_handles.end() ? FileSystemStorageHandle::Type::Any : handle->value->type();
 }
 
 void FileSystemStorageManager::connectionClosed(IPC::Connection::UniqueID connection)

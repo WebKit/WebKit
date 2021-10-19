@@ -276,5 +276,27 @@ void NetworkStorageManager::closeAccessHandle(WebCore::FileSystemHandleIdentifie
     completionHandler(handle->close(accessHandleIdentifier));
 }
 
+void NetworkStorageManager::getHandleNames(WebCore::FileSystemHandleIdentifier identifier, CompletionHandler<void(Expected<Vector<String>, FileSystemStorageError>)>&& completionHandler)
+{
+    ASSERT(!RunLoop::isMain());
+
+    auto handle = m_fileSystemStorageHandleRegistry->getHandle(identifier);
+    if (!handle)
+        return completionHandler(makeUnexpected(FileSystemStorageError::Unknown));
+
+    completionHandler(handle->getHandleNames());
+}
+
+void NetworkStorageManager::getHandle(IPC::Connection& connection, WebCore::FileSystemHandleIdentifier identifier, String&& name, CompletionHandler<void(Expected<std::pair<WebCore::FileSystemHandleIdentifier, bool>, FileSystemStorageError>)>&& completionHandler)
+{
+    ASSERT(!RunLoop::isMain());
+
+    auto handle = m_fileSystemStorageHandleRegistry->getHandle(identifier);
+    if (!handle)
+        return completionHandler(makeUnexpected(FileSystemStorageError::Unknown));
+
+    completionHandler(handle->getHandle(connection.uniqueID(), WTFMove(name)));
+}
+
 } // namespace WebKit
 

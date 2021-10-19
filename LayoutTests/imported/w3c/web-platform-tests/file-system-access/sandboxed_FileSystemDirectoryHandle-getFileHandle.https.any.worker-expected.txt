@@ -1,13 +1,19 @@
 
-FAIL getFileHandle(create=false) rejects for non-existing files promise_test: Unhandled rejection with value: object "TypeError: dir.values is not a function. (In 'dir.values()', 'dir.values' is undefined)"
-FAIL getFileHandle(create=true) creates an empty file for non-existing files promise_test: Unhandled rejection with value: object "TypeError: dir.values is not a function. (In 'dir.values()', 'dir.values' is undefined)"
-FAIL getFileHandle(create=false) returns existing files promise_test: Unhandled rejection with value: object "TypeError: dir.values is not a function. (In 'dir.values()', 'dir.values' is undefined)"
-FAIL getFileHandle(create=true) returns existing files without erasing promise_test: Unhandled rejection with value: object "TypeError: dir.values is not a function. (In 'dir.values()', 'dir.values' is undefined)"
-FAIL getFileHandle(create=false) when a directory already exists with the same name promise_test: Unhandled rejection with value: object "TypeError: dir.values is not a function. (In 'dir.values()', 'dir.values' is undefined)"
-FAIL getFileHandle(create=true) when a directory already exists with the same name promise_test: Unhandled rejection with value: object "TypeError: dir.values is not a function. (In 'dir.values()', 'dir.values' is undefined)"
-FAIL getFileHandle() with empty name promise_test: Unhandled rejection with value: object "TypeError: dir.values is not a function. (In 'dir.values()', 'dir.values' is undefined)"
-FAIL getFileHandle() with "." name promise_test: Unhandled rejection with value: object "TypeError: dir.values is not a function. (In 'dir.values()', 'dir.values' is undefined)"
-FAIL getFileHandle() with ".." name promise_test: Unhandled rejection with value: object "TypeError: dir.values is not a function. (In 'dir.values()', 'dir.values' is undefined)"
-FAIL getFileHandle(create=false) with a path separator when the file exists. promise_test: Unhandled rejection with value: object "TypeError: dir.values is not a function. (In 'dir.values()', 'dir.values' is undefined)"
-FAIL getFileHandle(create=true) with a path separator promise_test: Unhandled rejection with value: object "TypeError: dir.values is not a function. (In 'dir.values()', 'dir.values' is undefined)"
+PASS getFileHandle(create=false) rejects for non-existing files
+FAIL getFileHandle(create=true) creates an empty file for non-existing files promise_test: Unhandled rejection with value: object "NotSupportedError: getFile is not implemented"
+FAIL getFileHandle(create=false) returns existing files promise_test: Unhandled rejection with value: object "NotSupportedError: getFile is not implemented"
+FAIL getFileHandle(create=true) returns existing files without erasing promise_test: Unhandled rejection with value: object "NotSupportedError: getFile is not implemented"
+FAIL getFileHandle(create=false) when a directory already exists with the same name promise_rejects_dom: function "function () { throw e }" threw object "TypeError: Type error" that is not a DOMException TypeMismatchError: property "code" is equal to undefined, expected 17
+FAIL getFileHandle(create=true) when a directory already exists with the same name promise_rejects_dom: function "function () { throw e }" threw object "TypeError: Type error" that is not a DOMException TypeMismatchError: property "code" is equal to undefined, expected 17
+PASS getFileHandle() with empty name
+FAIL getFileHandle() with "." name promise_rejects_js: function "function () { throw e }" threw object "UnknownError: Name is invalid" ("UnknownError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL getFileHandle() with ".." name promise_rejects_js: function "function () { throw e }" threw object "UnknownError: Name is invalid" ("UnknownError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL getFileHandle(create=false) with a path separator when the file exists. promise_test: Unhandled rejection with value: object "NotSupportedError: getFile is not implemented"
+FAIL getFileHandle(create=true) with a path separator promise_rejects_js: getFileHandle(create=true) must reject names containing "/" function "function () { throw e }" threw object "UnknownError: Name is invalid" ("UnknownError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
 

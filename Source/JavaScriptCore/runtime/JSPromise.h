@@ -84,6 +84,7 @@ public:
     JS_EXPORT_PRIVATE void rejectAsHandled(JSGlobalObject*, JSValue);
     JS_EXPORT_PRIVATE void reject(JSGlobalObject*, Exception*);
     JS_EXPORT_PRIVATE void rejectAsHandled(JSGlobalObject*, Exception*);
+    JS_EXPORT_PRIVATE void performPromiseThen(JSGlobalObject*, JSFunction*, JSFunction*, JSValue);
 
     JS_EXPORT_PRIVATE JSPromise* rejectWithCaughtException(JSGlobalObject*, ThrowScope&);
 
@@ -95,6 +96,8 @@ public:
         JSFunction* reject { nullptr };
     };
     static DeferredData createDeferredData(JSGlobalObject*, JSPromiseConstructor*);
+    JS_EXPORT_PRIVATE static JSValue createNewPromiseCapability(JSGlobalObject*, JSPromiseConstructor*);
+    JS_EXPORT_PRIVATE static DeferredData convertCapabilityToDeferredData(JSGlobalObject*, JSValue);
 
     DECLARE_VISIT_CHILDREN;
 

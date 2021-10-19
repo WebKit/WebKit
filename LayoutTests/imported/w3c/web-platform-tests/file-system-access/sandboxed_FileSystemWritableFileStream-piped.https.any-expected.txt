@@ -1,10 +1,10 @@
 
-FAIL can be piped to with a string promise_test: Unhandled rejection with value: object "TypeError: dir.values is not a function. (In 'dir.values()', 'dir.values' is undefined)"
-FAIL can be piped to with an ArrayBuffer promise_test: Unhandled rejection with value: object "TypeError: dir.values is not a function. (In 'dir.values()', 'dir.values' is undefined)"
-FAIL can be piped to with a Blob promise_test: Unhandled rejection with value: object "TypeError: dir.values is not a function. (In 'dir.values()', 'dir.values' is undefined)"
-FAIL can be piped to with a param object with write command promise_test: Unhandled rejection with value: object "TypeError: dir.values is not a function. (In 'dir.values()', 'dir.values' is undefined)"
-FAIL can be piped to with a param object with multiple commands promise_test: Unhandled rejection with value: object "TypeError: dir.values is not a function. (In 'dir.values()', 'dir.values' is undefined)"
-FAIL multiple operations can be queued promise_test: Unhandled rejection with value: object "TypeError: dir.values is not a function. (In 'dir.values()', 'dir.values' is undefined)"
-FAIL plays well with fetch promise_test: Unhandled rejection with value: object "TypeError: dir.values is not a function. (In 'dir.values()', 'dir.values' is undefined)"
-FAIL abort() aborts write promise_test: Unhandled rejection with value: object "TypeError: dir.values is not a function. (In 'dir.values()', 'dir.values' is undefined)"
+FAIL can be piped to with a string promise_test: Unhandled rejection with value: object "NotSupportedError: getFile is not implemented"
+FAIL can be piped to with an ArrayBuffer promise_test: Unhandled rejection with value: object "NotSupportedError: getFile is not implemented"
+FAIL can be piped to with a Blob promise_test: Unhandled rejection with value: object "NotSupportedError: getFile is not implemented"
+FAIL can be piped to with a param object with write command promise_test: Unhandled rejection with value: object "NotSupportedError: getFile is not implemented"
+FAIL can be piped to with a param object with multiple commands promise_test: Unhandled rejection with value: object "NotSupportedError: getFile is not implemented"
+FAIL multiple operations can be queued promise_test: Unhandled rejection with value: object "NotSupportedError: getFile is not implemented"
+FAIL plays well with fetch promise_test: Unhandled rejection with value: object "NotSupportedError: getFile is not implemented"
+FAIL abort() aborts write promise_test: Unhandled rejection with value: object "NotSupportedError: getFile is not implemented"
 

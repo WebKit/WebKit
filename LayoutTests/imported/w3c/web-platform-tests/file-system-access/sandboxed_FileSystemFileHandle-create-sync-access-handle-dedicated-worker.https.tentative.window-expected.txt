@@ -1,3 +1,3 @@
 
-FAIL Attempt to create a sync access handle. promise_test: Unhandled rejection with value: object "TypeError: dir.values is not a function. (In 'dir.values()', 'dir.values' is undefined)"
+FAIL Attempt to create a sync access handle. promise_test: Unhandled rejection with value: object "DataCloneError: The object can not be cloned."
 

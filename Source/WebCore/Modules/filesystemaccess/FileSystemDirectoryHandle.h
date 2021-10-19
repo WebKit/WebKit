@@ -30,6 +30,7 @@
 namespace WebCore {
 
 class FileSystemFileHandle;
+template<typename> class ExceptionOr;
 
 class FileSystemDirectoryHandle final : public FileSystemHandle {
     WTF_MAKE_ISO_ALLOCATED(FileSystemDirectoryHandle);
@@ -51,6 +52,29 @@ public:
     void getDirectoryHandle(const String& name, std::optional<GetDirectoryOptions>, DOMPromiseDeferred<IDLInterface<FileSystemDirectoryHandle>>&&);
     void removeEntry(const String& name, std::optional<RemoveOptions>, DOMPromiseDeferred<void>&&);
     void resolve(const FileSystemHandle&, DOMPromiseDeferred<IDLSequence<IDLUSVString>>&&);
+
+    void getHandleNames(CompletionHandler<void(ExceptionOr<Vector<String>>&&)>&&);
+    void getHandle(const String& name, CompletionHandler<void(ExceptionOr<Ref<FileSystemHandle>>&&)>&&);
+
+    class Iterator : public RefCounted<FileSystemDirectoryHandle::Iterator> {
+    public:
+        static Ref<Iterator> create(FileSystemDirectoryHandle&);
+        using Result = std::optional<WTF::KeyValuePair<String, Ref<FileSystemHandle>>>;
+        void next(CompletionHandler<void(ExceptionOr<Result>&&)>&&);
+    private:
+        explicit Iterator(FileSystemDirectoryHandle& source)
+            : m_source(source)
+        {
+        }
+        void advance(CompletionHandler<void(ExceptionOr<Result>&&)>&&);
+
+        Ref<FileSystemDirectoryHandle> m_source;
+        size_t m_index { 0 };
+        Vector<String> m_keys;
+        bool m_isInitialized { false };
+        bool m_isWaitingForResult { false };
+    };
+    Ref<Iterator> createIterator();
 
 private:
     FileSystemDirectoryHandle(String&&, FileSystemHandleIdentifier, Ref<FileSystemStorageConnection>&&);

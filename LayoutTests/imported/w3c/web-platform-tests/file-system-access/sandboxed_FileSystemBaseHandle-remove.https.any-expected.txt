@@ -1,9 +1,9 @@
 
-FAIL remove() to remove a file promise_test: Unhandled rejection with value: object "TypeError: dir.values is not a function. (In 'dir.values()', 'dir.values' is undefined)"
-FAIL remove() on an already removed file should fail promise_test: Unhandled rejection with value: object "TypeError: dir.values is not a function. (In 'dir.values()', 'dir.values' is undefined)"
-FAIL remove() to remove an empty directory promise_test: Unhandled rejection with value: object "TypeError: dir.values is not a function. (In 'dir.values()', 'dir.values' is undefined)"
-FAIL remove() on an already removed directory should fail promise_test: Unhandled rejection with value: object "TypeError: dir.values is not a function. (In 'dir.values()', 'dir.values' is undefined)"
-FAIL remove() on a non-empty directory should fail promise_test: Unhandled rejection with value: object "TypeError: dir.values is not a function. (In 'dir.values()', 'dir.values' is undefined)"
-FAIL remove() on a directory recursively should delete all sub-items promise_test: Unhandled rejection with value: object "TypeError: dir.values is not a function. (In 'dir.values()', 'dir.values' is undefined)"
-FAIL remove() on a file should ignore the recursive option promise_test: Unhandled rejection with value: object "TypeError: dir.values is not a function. (In 'dir.values()', 'dir.values' is undefined)"
+FAIL remove() to remove a file promise_test: Unhandled rejection with value: object "NotSupportedError: getFile is not implemented"
+FAIL remove() on an already removed file should fail promise_test: Unhandled rejection with value: object "NotSupportedError: getFile is not implemented"
+FAIL remove() to remove an empty directory promise_test: Unhandled rejection with value: object "NotSupportedError: getFile is not implemented"
+FAIL remove() on an already removed directory should fail promise_test: Unhandled rejection with value: object "TypeError: dir.remove is not a function. (In 'dir.remove()', 'dir.remove' is undefined)"
+FAIL remove() on a non-empty directory should fail promise_test: Unhandled rejection with value: object "NotSupportedError: getFile is not implemented"
+FAIL remove() on a directory recursively should delete all sub-items promise_test: Unhandled rejection with value: object "NotSupportedError: getFile is not implemented"
+FAIL remove() on a file should ignore the recursive option promise_test: Unhandled rejection with value: object "NotSupportedError: getFile is not implemented"
 
