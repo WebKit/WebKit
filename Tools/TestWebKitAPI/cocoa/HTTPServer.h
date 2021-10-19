@@ -32,6 +32,8 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/text/StringHash.h>
 
+OBJC_CLASS NSURLRequest;
+
 namespace TestWebKitAPI {
 
 class Connection;
@@ -57,6 +59,9 @@ public:
     static void respondWithOK(Connection);
     static void respondWithChallengeThenOK(Connection);
     static String parsePath(const Vector<char>& request);
+
+    static Vector<uint8_t> testPrivateKey();
+    static Vector<uint8_t> testCertificate();
 
 private:
     static RetainPtr<nw_parameters_t> listenerParameters(Protocol, CertificateVerifier&&, RetainPtr<SecIdentityRef>&&, std::optional<uint16_t> port);

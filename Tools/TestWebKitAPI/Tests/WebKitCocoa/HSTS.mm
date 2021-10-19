@@ -27,7 +27,6 @@
 
 #import "HTTPServer.h"
 #import "PlatformUtilities.h"
-#import "TCPServer.h"
 #import "TestNavigationDelegate.h"
 #import "TestUIDelegate.h"
 #import "Utilities.h"
@@ -37,15 +36,9 @@
 
 namespace TestWebKitAPI {
 
-#if HAVE(SSL)
+#if HAVE(CFNETWORK_NSURLSESSION_HSTS_WITH_UNTRUSTED_ROOT)
 
-static bool hasRadar80550123()
-{
-    // FIXME: Replace this with a HAS macro once rdar://80550123 is in a build.
-    return [[NSURLSessionConfiguration ephemeralSessionConfiguration] respondsToSelector:@selector(_allowsHSTSWithUntrustedRootCertificate)];
-}
-
-std::pair<RetainPtr<WKWebView>, RetainPtr<TestNavigationDelegate>> hstsWebViewAndDelegate(const TCPServer& httpsServer, const HTTPServer& httpServer)
+std::pair<RetainPtr<WKWebView>, RetainPtr<TestNavigationDelegate>> hstsWebViewAndDelegate(const HTTPServer& httpsServer, const HTTPServer& httpServer)
 {
     auto storeConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] initNonPersistentConfiguration]);
     [storeConfiguration setHTTPSProxy:[NSURL URLWithString:[NSString stringWithFormat:@"https://127.0.0.1:%d/", httpsServer.port()]]];
@@ -65,28 +58,14 @@ std::pair<RetainPtr<WKWebView>, RetainPtr<TestNavigationDelegate>> hstsWebViewAn
     return { WTFMove(webView), WTFMove(delegate) };
 }
 
-static TCPServer hstsServer(size_t replies)
+static HTTPServer hstsServer()
 {
-    // FIXME: Use nw_framer_t to support HTTPS proxies in HTTPServer and remove TCPServer.
-    return TCPServer(TCPServer::Protocol::HTTPSProxy, [=] (SSL* ssl) {
-        for (size_t i = 0; i < replies; i++) {
-            TCPServer::read(ssl);
-            const char* response =
-                "HTTP/1.1 200 OK\r\n"
-                "Content-Length: 0\r\n"
-                "Strict-Transport-Security: max-age=31536000\r\n"
-                "\r\n";
-            TCPServer::write(ssl, response, strlen(response));
-        }
-    });
+    return HTTPServer({{ "/", {{{"Strict-Transport-Security" , "max-age=31536000"}}, "" }}}, HTTPServer::Protocol::HttpsProxy);
 }
 
 TEST(HSTS, Basic)
 {
-    if (!hasRadar80550123())
-        return;
-
-    auto httpsServer = hstsServer(2);
+    auto httpsServer = hstsServer();
 
     HTTPServer httpServer({{ "http://example.com/", { {{ "Strict-Transport-Security", "max-age=31536000"}}, "hi" }}});
 
@@ -114,10 +93,7 @@ TEST(HSTS, Basic)
 
 TEST(HSTS, ThirdParty)
 {
-    if (!hasRadar80550123())
-        return;
-
-    auto httpsServer = hstsServer(1);
+    auto httpsServer = hstsServer();
 
     const char* html = "<script>"
         "var xhr = new XMLHttpRequest();"
@@ -144,10 +120,7 @@ TEST(HSTS, ThirdParty)
 
 TEST(HSTS, CrossOriginRedirect)
 {
-    if (!hasRadar80550123())
-        return;
-
-    auto httpsServer = hstsServer(2);
+    auto httpsServer = hstsServer();
 
     HTTPServer httpServer({
         { "http://example.com/", { "hi" }},
@@ -166,6 +139,6 @@ TEST(HSTS, CrossOriginRedirect)
     EXPECT_EQ(httpServer.totalRequests(), 1u);
 }
 
-#endif // HAVE(SSL)
+#endif // HAVE(CFNETWORK_NSURLSESSION_HSTS_WITH_UNTRUSTED_ROOT)
 
 } // namespace TestWebKitAPI

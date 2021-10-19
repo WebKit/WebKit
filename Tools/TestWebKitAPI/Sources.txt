@@ -23,6 +23,5 @@
 
 JavaScriptTest.cpp
 PlatformUtilities.cpp
-TCPServer.cpp
 TestsController.cpp
 

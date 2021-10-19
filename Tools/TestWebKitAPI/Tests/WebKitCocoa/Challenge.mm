@@ -27,7 +27,6 @@
 
 #import "HTTPServer.h"
 #import "PlatformUtilities.h"
-#import "TCPServer.h"
 #import "Test.h"
 #import "TestNavigationDelegate.h"
 #import "TestWKWebView.h"
@@ -49,7 +48,7 @@ static bool navigationFinished;
 
 RetainPtr<SecCertificateRef> testCertificate()
 {
-    auto certificateBytes = TestWebKitAPI::TCPServer::testCertificate();
+    auto certificateBytes = TestWebKitAPI::HTTPServer::testCertificate();
     return adoptCF(SecCertificateCreateWithData(nullptr, (__bridge CFDataRef)[NSData dataWithBytes:certificateBytes.data() length:certificateBytes.size()]));
 }
 
@@ -74,7 +73,7 @@ static RetainPtr<SecIdentityRef> createTestIdentity(const Vector<uint8_t>& priva
 
 RetainPtr<SecIdentityRef> testIdentity()
 {
-    return createTestIdentity(TestWebKitAPI::TCPServer::testPrivateKey(), TestWebKitAPI::TCPServer::testCertificate());
+    return createTestIdentity(TestWebKitAPI::HTTPServer::testPrivateKey(), TestWebKitAPI::HTTPServer::testCertificate());
 }
 
 RetainPtr<SecIdentityRef> testIdentity2()
@@ -399,7 +398,6 @@ TEST(Challenge, BasicPersistentCredential)
     EXPECT_NULL(removedCredential);
 }
 
-#if HAVE(SSL)
 static void verifyCertificateAndPublicKey(SecTrustRef trust)
 {
     EXPECT_NOT_NULL(trust);
@@ -656,5 +654,3 @@ TEST(WebKit, ErrorSecureCoding)
 }
 
 } // namespace TestWebKitAPI
-
-#endif // HAVE(SSL)

@@ -1,3 +1,35 @@
+2021-10-18  Alex Christensen  <achristensen@webkit.org>
+
+        Remove TCPServer
+        https://bugs.webkit.org/show_bug.cgi?id=231912
+
+        Reviewed by Chris Dumez.
+
+        It has been replaced by HTTPServer, which doesn't time out in its destructor when not everything is perfect,
+        and which does its logic on the main thread.  It also doesn't use boringssl directly, so we can compile it on watchOS and tvOS.
+
+        * TestWebKitAPI/Sources.txt:
+        * TestWebKitAPI/TCPServer.cpp: Removed.
+        * TestWebKitAPI/TCPServer.h: Removed.
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/Challenge.mm:
+        (testCertificate):
+        (testIdentity):
+        * TestWebKitAPI/Tests/WebKitCocoa/ContentRuleListNotification.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/HSTS.mm:
+        (TestWebKitAPI::hstsWebViewAndDelegate):
+        (TestWebKitAPI::hstsServer):
+        (TestWebKitAPI::TEST):
+        (TestWebKitAPI::hasRadar80550123): Deleted.
+        * TestWebKitAPI/Tests/WebKitCocoa/Proxy.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/ServiceWorkerTCPServer.h:
+        (ServiceWorkerTCPServer::respondToRequests):
+        * TestWebKitAPI/cocoa/HTTPServer.h:
+        * TestWebKitAPI/cocoa/HTTPServer.mm:
+        (TestWebKitAPI::HTTPServer::testCertificate):
+        (TestWebKitAPI::HTTPServer::testPrivateKey):
+
 2021-10-18  Jonathan Bedard  <jbedard@apple.com>
 
         [Python-3] Invoke webkit-patch with Python 3 by default (Revert)

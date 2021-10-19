@@ -23,10 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "TCPServer.h"
+#import "HTTPServer.h"
 #import <wtf/text/WTFString.h>
 
-class ServiceWorkerTCPServer : public TestWebKitAPI::TCPServer {
+class ServiceWorkerTCPServer : public TestWebKitAPI::HTTPServer {
 public:
     struct ResourceInfo {
         const char* mimeType { nullptr };
@@ -40,28 +40,13 @@ public:
         : ServiceWorkerTCPServer(WTFMove(firstConnection), WTFMove(secondConnection), { }, connections, WTFMove(expectedUserAgents)) { }
 
     ServiceWorkerTCPServer(Vector<ResourceInfo>&& firstConnection, Vector<ResourceInfo>&& secondConnection, Vector<ResourceInfo>&& thirdConnection, size_t connections = 3, Vector<String>&& expectedUserAgents = { })
-        : TCPServer([this, firstConnection = WTFMove(firstConnection), secondConnection = WTFMove(secondConnection), thirdConnection = WTFMove(thirdConnection), expectedUserAgents = WTFMove(expectedUserAgents)] (int socket) mutable {
-            auto respondToRequests = [this, socket] (Vector<ResourceInfo>&& vector, const String& expectedUserAgent) {
-                for (auto& info : vector) {
-                    auto request = TCPServer::read(socket);
-                    if (!expectedUserAgent.isNull()) {
-                        EXPECT_TRUE(strnstr((const char*)request.data(), makeString("User-Agent: ", expectedUserAgent).utf8().data(), request.size()));
-                        m_userAgentsChecked++;
-                    }
-                    NSString *format = @"HTTP/1.1 200 OK\r\n"
-                    "Content-Type: %s\r\n"
-                    "Content-Length: %d\r\n\r\n"
-                    "%s";
-                    NSString *response = [NSString stringWithFormat:format, info.mimeType, strlen(info.response), info.response];
-                    TCPServer::write(socket, response.UTF8String, response.length);
-                }
-            };
+        : TestWebKitAPI::HTTPServer([this, firstConnection = WTFMove(firstConnection), secondConnection = WTFMove(secondConnection), thirdConnection = WTFMove(thirdConnection), expectedUserAgents = WTFMove(expectedUserAgents)] (TestWebKitAPI::Connection connection) mutable {
             if (!firstConnection.isEmpty())
-                return respondToRequests(std::exchange(firstConnection, { }), !expectedUserAgents.isEmpty() ? expectedUserAgents[0] : String());
+                return respondToRequests(connection, std::exchange(firstConnection, { }), !expectedUserAgents.isEmpty() ? expectedUserAgents[0] : String());
             if (!secondConnection.isEmpty())
-                return respondToRequests(std::exchange(secondConnection, { }), expectedUserAgents.size() > 1 ? expectedUserAgents[1] : String());
-            respondToRequests(std::exchange(thirdConnection, { }), { });
-        }, connections) { }
+                return respondToRequests(connection, std::exchange(secondConnection, { }), expectedUserAgents.size() > 1 ? expectedUserAgents[1] : String());
+            respondToRequests(connection, std::exchange(thirdConnection, { }), { });
+        }) { }
 
     NSURLRequest *request() { return requestWithFormat(@"http://127.0.0.1:%d/main.html"); }
     NSURLRequest *requestWithLocalhost() { return requestWithFormat(@"http://localhost:%d/main.html"); }
@@ -69,6 +54,29 @@ public:
     size_t userAgentsChecked() const { return m_userAgentsChecked; }
 
 private:
+    void respondToRequests(TestWebKitAPI::Connection& connection, Vector<ResourceInfo>&& vector, const String& expectedUserAgent, size_t vectorIndex = 0)
+    {
+        if (vectorIndex >= vector.size()) {
+            connection.terminate();
+            return;
+        }
+        connection.receiveHTTPRequest([=, vector = WTFMove(vector)] (Vector<char>&& request) mutable {
+            if (!expectedUserAgent.isNull()) {
+                EXPECT_TRUE(strnstr((const char*)request.data(), makeString("User-Agent: ", expectedUserAgent).utf8().data(), request.size()));
+                m_userAgentsChecked++;
+            }
+            NSString *format = @"HTTP/1.1 200 OK\r\n"
+            "Content-Type: %s\r\n"
+            "Content-Length: %d\r\n\r\n"
+            "%s";
+            auto& info = vector[vectorIndex];
+            NSString *response = [NSString stringWithFormat:format, info.mimeType, strlen(info.response), info.response];
+            connection.send(response, [=, vector = WTFMove(vector)] () mutable {
+                respondToRequests(connection, WTFMove(vector), expectedUserAgent, vectorIndex + 1);
+            });
+        });
+    }
+
     NSURLRequest *requestWithFormat(NSString *format) { return [NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:format, port()]]]; }
-    std::atomic<size_t> m_userAgentsChecked { 0 };
+    size_t m_userAgentsChecked { 0 };
 };
