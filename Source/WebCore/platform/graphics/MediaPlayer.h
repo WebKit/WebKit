@@ -469,6 +469,7 @@ public:
 #endif
 
     RefPtr<NativeImage> nativeImageForCurrentTime();
+    DestinationColorSpace colorSpace();
 
     using MediaPlayerEnums::NetworkState;
     NetworkState networkState();

@@ -191,6 +191,7 @@ protected:
     std::unique_ptr<PlatformTimeRanges> buffered() const override;
     bool didLoadingProgress() const override;
     void paint(GraphicsContext&, const FloatRect&) override = 0;
+    DestinationColorSpace colorSpace() override = 0;
     void paintCurrentFrameInContext(GraphicsContext&, const FloatRect&) override = 0;
     void setPreload(MediaPlayer::Preload) override;
     PlatformLayer* platformLayer() const override { return 0; }

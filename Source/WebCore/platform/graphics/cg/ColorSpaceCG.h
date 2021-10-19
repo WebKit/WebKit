@@ -26,9 +26,11 @@
 #pragma once
 
 #include "ColorSpace.h"
+#include <CoreGraphics/CoreGraphics.h>
 #include <optional>
+#include <wtf/cf/TypeCastsCF.h>
 
-typedef struct CGColorSpace *CGColorSpaceRef;
+WTF_DECLARE_CF_TYPE_TRAIT(CGColorSpace);
 
 namespace WebCore {
 

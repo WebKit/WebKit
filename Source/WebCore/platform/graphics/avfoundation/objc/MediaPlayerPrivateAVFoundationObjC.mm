@@ -36,6 +36,7 @@
 #import "AuthenticationChallenge.h"
 #import "CDMInstanceFairPlayStreamingAVFObjC.h"
 #import "CDMSessionAVFoundationObjC.h"
+#import "CVUtilities.h"
 #import "ColorSpaceCG.h"
 #import "Cookie.h"
 #import "DeprecatedGlobalSettings.h"
@@ -2589,6 +2590,15 @@ RefPtr<NativeImage> MediaPlayerPrivateAVFoundationObjC::nativeImageForCurrentTim
 {
     updateLastImage(UpdateType::UpdateSynchronously);
     return m_lastImage;
+}
+
+DestinationColorSpace MediaPlayerPrivateAVFoundationObjC::colorSpace()
+{
+    updateLastImage(UpdateType::UpdateSynchronously);
+    if (!m_lastPixelBuffer)
+        return DestinationColorSpace::SRGB();
+
+    return DestinationColorSpace(createCGColorSpaceForCVPixelBuffer(m_lastPixelBuffer.get()));
 }
 
 void MediaPlayerPrivateAVFoundationObjC::waitForVideoOutputMediaDataWillChange()

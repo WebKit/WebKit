@@ -298,6 +298,11 @@ std::optional<VideoPlaybackQualityMetrics> MockMediaPlayerMediaSource::videoPlay
     return m_mediaSourcePrivate ? m_mediaSourcePrivate->videoPlaybackQualityMetrics() : std::nullopt;
 }
 
+DestinationColorSpace MockMediaPlayerMediaSource::colorSpace()
+{
+    return DestinationColorSpace::SRGB();
+}
+
 }
 
 #endif

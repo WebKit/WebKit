@@ -320,6 +320,7 @@ ImageDrawResult SVGImage::drawInternal(GraphicsContext& context, const FloatRect
         context.setCompositeOperation(CompositeOperator::SourceOver, BlendMode::Normal);
     }
 
+    // FIXME: We should honor options.orientation(), since ImageBitmap's flipY handling relies on it. https://bugs.webkit.org/show_bug.cgi?id=231001
     FloatSize scale(dstRect.size() / srcRect.size());
     
     // We can only draw the entire frame, clipped to the rect we want. So compute where the top left

@@ -907,6 +907,11 @@ void MediaPlayerPrivateAVFoundationCF::paint(GraphicsContext& context, const Flo
     m_videoFrameHasDrawn = true;
 }
 
+DestinationColorSpace MediaPlayerPrivateAVFoundationCF::colorSpace()
+{
+    return DestinationColorSpace::SRGB();
+}
+
 #if HAVE(AVFOUNDATION_LOADER_DELEGATE) && ENABLE(LEGACY_ENCRYPTED_MEDIA)
 
 static bool keySystemIsSupported(const String& keySystem)

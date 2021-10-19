@@ -26,6 +26,7 @@
 #include "config.h"
 #include "PixelBufferConformerCV.h"
 
+#include "CVUtilities.h"
 #include "GraphicsContextCG.h"
 #include "ImageBufferUtilitiesCG.h"
 #include "Logging.h"
@@ -165,6 +166,8 @@ RetainPtr<CGImageRef> PixelBufferConformerCV::createImageFromPixelBuffer(CVPixel
     if (!byteLength)
         return nullptr;
 
+    auto colorSpace = createCGColorSpaceForCVPixelBuffer(rawBuffer);
+
     CVPixelBufferInfo* info = new CVPixelBufferInfo();
     info->pixelBuffer = WTFMove(buffer);
     info->lockCount = 0;
@@ -172,7 +175,7 @@ RetainPtr<CGImageRef> PixelBufferConformerCV::createImageFromPixelBuffer(CVPixel
     CGDataProviderDirectCallbacks providerCallbacks = { 0, CVPixelBufferGetBytePointerCallback, CVPixelBufferReleaseBytePointerCallback, 0, CVPixelBufferReleaseInfoCallback };
     RetainPtr<CGDataProviderRef> provider = adoptCF(CGDataProviderCreateDirect(info, byteLength, &providerCallbacks));
 
-    return adoptCF(CGImageCreate(width, height, 8, 32, bytesPerRow, sRGBColorSpaceRef(), bitmapInfo, provider.get(), nullptr, false, kCGRenderingIntentDefault));
+    return adoptCF(CGImageCreate(width, height, 8, 32, bytesPerRow, colorSpace.get(), bitmapInfo, provider.get(), nullptr, false, kCGRenderingIntentDefault));
 }
 
 }

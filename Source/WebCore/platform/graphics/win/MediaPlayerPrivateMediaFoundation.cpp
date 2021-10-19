@@ -358,6 +358,11 @@ void MediaPlayerPrivateMediaFoundation::paint(GraphicsContext& context, const Fl
         m_presenter->paintCurrentFrame(context, rect);
 }
 
+DestinationColorSpace MediaPlayerPrivateMediaFoundation::colorSpace()
+{
+    return DestinationColorSpace::SRGB();
+}
+
 bool MediaPlayerPrivateMediaFoundation::createSession()
 {
     if (FAILED(MFStartup(MF_VERSION, MFSTARTUP_FULL)))

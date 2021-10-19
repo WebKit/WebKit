@@ -157,6 +157,7 @@ public:
     void setSize(const IntSize&) final { }
 
     void paint(GraphicsContext&, const FloatRect&) final { }
+    DestinationColorSpace colorSpace() final { return DestinationColorSpace::SRGB(); }
 
     bool hasSingleSecurityOrigin() const final { return true; }
 };
@@ -1071,6 +1072,11 @@ RetainPtr<CVPixelBufferRef> MediaPlayer::pixelBufferForCurrentTime()
 RefPtr<NativeImage> MediaPlayer::nativeImageForCurrentTime()
 {
     return m_private->nativeImageForCurrentTime();
+}
+
+DestinationColorSpace MediaPlayer::colorSpace()
+{
+    return m_private->colorSpace();
 }
 
 MediaPlayer::SupportsType MediaPlayer::supportsType(const MediaEngineSupportParameters& parameters)

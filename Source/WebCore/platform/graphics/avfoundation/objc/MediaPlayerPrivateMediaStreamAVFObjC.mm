@@ -1007,6 +1007,12 @@ void MediaPlayerPrivateMediaStreamAVFObjC::paintCurrentFrameInContext(GraphicsCo
     context.drawNativeImage(*image, imageRect.size(), transformedDestRect, imageRect);
 }
 
+DestinationColorSpace MediaPlayerPrivateMediaStreamAVFObjC::colorSpace()
+{
+    updateCurrentFrameImage();
+    return m_imagePainter.cgImage ? m_imagePainter.cgImage->colorSpace() : DestinationColorSpace::SRGB();
+}
+
 void MediaPlayerPrivateMediaStreamAVFObjC::updateLayersAsNeeded()
 {
     if (m_player->renderingCanBeAccelerated())

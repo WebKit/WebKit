@@ -259,6 +259,7 @@ private:
     bool videoOutputHasAvailableFrame();
     void paintWithVideoOutput(GraphicsContext&, const FloatRect&);
     RefPtr<NativeImage> nativeImageForCurrentTime() final;
+    DestinationColorSpace colorSpace() final;
     void waitForVideoOutputMediaDataWillChange();
 
     RetainPtr<CVPixelBufferRef> pixelBufferForCurrentTime() final;

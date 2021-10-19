@@ -311,7 +311,8 @@ private:
     void currentTimeChanged(const MediaTime&);
 
 #if PLATFORM(COCOA)
-    void nativeImageForCurrentTime(CompletionHandler<void(std::optional<WTF::MachSendRight>&&)>&&);
+    void nativeImageForCurrentTime(CompletionHandler<void(std::optional<WTF::MachSendRight>&&, WebCore::DestinationColorSpace)>&&);
+    void colorSpace(CompletionHandler<void(WebCore::DestinationColorSpace)>&&);
 #endif
 #if USE(AVFOUNDATION)
     void pixelBufferForCurrentTimeIfChanged(CompletionHandler<void(std::optional<RetainPtr<CVPixelBufferRef>>&&)>&&);

@@ -182,6 +182,7 @@ public:
     virtual RetainPtr<CVPixelBufferRef> pixelBufferForCurrentTime() { return nullptr; }
 #endif
     virtual RefPtr<NativeImage> nativeImageForCurrentTime() { return nullptr; }
+    virtual DestinationColorSpace colorSpace() = 0;
 
     virtual void setPreload(MediaPlayer::Preload) { }
 

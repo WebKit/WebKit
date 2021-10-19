@@ -1,3 +1,42 @@
+2021-10-19  Cameron McCormack  <heycam@apple.com>
+
+        Ensure CanvasRenderingContext2D.drawImage(video) uses the right color space
+        https://bugs.webkit.org/show_bug.cgi?id=229025
+        <rdar://problem/81828490>
+
+        Reviewed by Sam Weinig.
+
+        * TestExpectations:
+        texture-corner-case-videos.html relies on incorrect color space handling
+        with drawImage() on a 2D canvas and so now fails.
+
+        * platform/glib/TestExpectations:
+        * platform/ios-14/TestExpectations:
+        * platform/ios-device/TestExpectations:
+        * platform/ios/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+        * platform/mac/TestExpectations:
+        New tests pass only on macOS Monterey+ and iOS 15+.
+
+        * fast/canvas/canvas-createPattern-video-loading-expected.txt:
+        * fast/canvas/canvas-createPattern-video-loading.html:
+        * fast/canvas/canvas-createPattern-video-modify-expected.txt:
+        * fast/canvas/canvas-createPattern-video-modify.html:
+        * media/video-canvas-createPattern-expected.txt:
+        * media/video-canvas-createPattern.html:
+        * media/video-canvas-drawing-output-expected.txt:
+        * media/video-canvas-drawing-output.html:
+        * media/video-orientation-canvas-expected.txt:
+        * media/video-orientation-canvas.html:
+        Update some tests to check for correctly converted color values.
+
+        * platform/mac/media/video-canvas-createPattern-expected.png: Removed.
+        * platform/wpe/media/video-canvas-createPattern-expected.png: Removed.
+
+        * platform/mac-wk1/imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/createImageBitmap-flipY-expected.txt:
+        An existing failure that changed a bit. This is
+        https://bugs.webkit.org/show_bug.cgi?id=231001.
+
 2021-10-18  Jean-Yves Avenard  <jya@apple.com>
 
         WebM with invalid size should fail to load with error

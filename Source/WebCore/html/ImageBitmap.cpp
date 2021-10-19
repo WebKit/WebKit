@@ -509,8 +509,12 @@ void ImageBitmap::createPromise(ScriptExecutionContext& scriptExecutionContext, 
 
     auto outputSize = outputSizeForSourceRectangle(sourceRectangle, options);
 
-    // FIXME: Add support for color spaces / pixel formats to ImageBitmap.
-    auto bitmapData = video->createBufferForPainting(outputSize, bufferRenderingMode, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
+    auto colorSpace = video->colorSpace();
+    if (!colorSpace)
+        colorSpace = DestinationColorSpace::SRGB();
+
+    // FIXME: Add support for pixel formats to ImageBitmap.
+    auto bitmapData = video->createBufferForPainting(outputSize, bufferRenderingMode, *colorSpace, PixelFormat::BGRA8);
     if (!bitmapData) {
         resolveWithBlankImageBuffer(scriptExecutionContext, !taintsOrigin(scriptExecutionContext.securityOrigin(), *video), WTFMove(promise));
         return;

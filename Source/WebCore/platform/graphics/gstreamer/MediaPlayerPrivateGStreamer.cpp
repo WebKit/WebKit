@@ -3282,6 +3282,11 @@ void MediaPlayerPrivateGStreamer::paint(GraphicsContext& context, const FloatRec
     context.drawImage(gstImage->image(), rect, imageRect, { gstImage->hasAlpha() ? CompositeOperator::SourceOver : CompositeOperator::Copy, m_videoSourceOrientation });
 }
 
+DestinationColorSpace MediaPlayerPrivateGStreamer::colorSpace()
+{
+    return DestinationColorSpace::SRGB();
+}
+
 #if USE(GSTREAMER_GL)
 bool MediaPlayerPrivateGStreamer::copyVideoTextureToPlatformTexture(GraphicsContextGL* context, PlatformGLObject outputTexture, GCGLenum outputTarget, GCGLint level, GCGLenum internalFormat, GCGLenum format, GCGLenum type, bool premultiplyAlpha, bool flipY)
 {

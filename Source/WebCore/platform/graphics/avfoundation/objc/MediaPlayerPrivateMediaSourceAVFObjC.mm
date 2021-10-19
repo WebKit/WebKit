@@ -731,6 +731,12 @@ RetainPtr<CVPixelBufferRef> MediaPlayerPrivateMediaSourceAVFObjC::pixelBufferFor
     return m_lastPixelBuffer;
 }
 
+DestinationColorSpace MediaPlayerPrivateMediaSourceAVFObjC::colorSpace()
+{
+    updateLastImage();
+    return m_lastImage ? m_lastImage->colorSpace() : DestinationColorSpace::SRGB();
+}
+
 bool MediaPlayerPrivateMediaSourceAVFObjC::hasAvailableVideoFrame() const
 {
     return m_hasAvailableVideoFrame;

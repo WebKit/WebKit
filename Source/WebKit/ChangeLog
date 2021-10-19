@@ -1,3 +1,47 @@
+2021-10-19  Cameron McCormack  <heycam@apple.com>
+
+        Ensure CanvasRenderingContext2D.drawImage(video) uses the right color space
+        https://bugs.webkit.org/show_bug.cgi?id=229025
+        <rdar://problem/81828490>
+
+        Reviewed by Sam Weinig.
+
+        When GPU process media handling is enabled, ctx.drawImage(video)
+        calls work by sending a NativeImageForCurrentTime message to the GPU
+        process, which returns an IOSurface around which a CGImage is created.
+        There's no good way to get the color space off the IOSurface, so we
+        add a second return argument to NativeImageForCurrentTime to indicate
+        the color space used.
+
+        ImageBitmap creates an ImageBuffer for that image to be painted into,
+        and for that we also need to know the color space of the video. The
+        code that sends NativeImageForCurrentTime and then paints the
+        resulting image into the GraphicsContext is further down. So we add
+        a separate IPC message that gets the color space of the video's
+        current frame. (It would be better if we could avoid a second
+        synchronous IPC message call, but either ImageBitmap's scaling and
+        cropping code, or the ImageBuffer creation call, would need to be moved
+        down into MediaPlayerPrivateRemote::paintCurrentFrameInContext, which
+        doesn't seem like the right place for it.)
+
+        * GPUProcess/media/RemoteImageDecoderAVFProxy.cpp:
+        (WebKit::RemoteImageDecoderAVFProxy::createFrameImageAtIndex):
+        * GPUProcess/media/RemoteImageDecoderAVFProxy.h:
+        * GPUProcess/media/RemoteMediaPlayerProxy.h:
+        * GPUProcess/media/RemoteMediaPlayerProxy.messages.in:
+        * GPUProcess/media/cocoa/RemoteMediaPlayerProxyCocoa.mm:
+        (WebKit::RemoteMediaPlayerProxy::nativeImageForCurrentTime):
+        (WebKit::RemoteMediaPlayerProxy::colorSpace):
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.cpp:
+        (WebKit::MediaPlayerPrivateRemote::colorSpace):
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.h:
+        * WebProcess/GPU/media/cocoa/MediaPlayerPrivateRemoteCocoa.mm:
+        (WebKit::MediaPlayerPrivateRemote::nativeImageForCurrentTime): Add a
+        second return argument to NativeImageForCurrentTime to indicate the
+        color space of the returned IOSurface.
+        (WebKit::MediaPlayerPrivateRemote::colorSpace): Add a new IPC message to
+        get the color space of a video's current frame.
+
 2021-10-18  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r284413.

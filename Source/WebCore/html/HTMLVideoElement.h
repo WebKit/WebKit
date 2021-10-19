@@ -78,6 +78,7 @@ public:
     void paintCurrentFrameInContext(GraphicsContext&, const FloatRect&);
 
     WEBCORE_EXPORT RefPtr<NativeImage> nativeImageForCurrentTime();
+    std::optional<DestinationColorSpace> colorSpace() const;
 
     WEBCORE_EXPORT bool shouldDisplayPosterImage() const;
 

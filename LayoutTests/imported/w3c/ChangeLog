@@ -1,3 +1,33 @@
+2021-10-19  Cameron McCormack  <heycam@apple.com>
+
+        Ensure CanvasRenderingContext2D.drawImage(video) uses the right color space
+        https://bugs.webkit.org/show_bug.cgi?id=229025
+        <rdar://problem/81828490>
+
+        Reviewed by Sam Weinig.
+
+        Add some new WPTs for drawImage(video).
+
+        * web-platform-tests/html/canvas/element/manual/imagebitmap/createImageBitmap-drawImage.html:
+        * web-platform-tests/html/canvas/element/manual/imagebitmap/createImageBitmap-flipY.html:
+        Updated tests to check that video color space conversion is done
+        correctly.
+
+        * web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-drawImage-ImageBitmap-video-expected.txt: Added.
+        * web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-drawImage-ImageBitmap-video.html: Added.
+        * web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-drawImage-video-expected.txt: Added.
+        * web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-drawImage-video.html: Added.
+        * web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3.js:
+        (pixelsApproximatelyEqual): Tweaked threshold to pass video tests on iOS.
+        * web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/resources/Rec2020-222000000.mp4: Added.
+        * web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/resources/Rec2020-222000000.webm: Added.
+        * web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/resources/Rec2020-3FF000000.mp4: Added.
+        * web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/resources/Rec2020-3FF000000.webm: Added.
+        * web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/resources/sRGB-BB0000.mp4: Added.
+        * web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/resources/sRGB-BB0000.webm: Added.
+        * web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/resources/sRGB-FF0100.mp4: Added.
+        * web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/resources/sRGB-FF0100.webm: Added.
+
 2021-10-18  Antoine Quint  <graouts@webkit.org>
 
         box-shadow and text-shadow do not yield float values while interpolating

@@ -284,6 +284,15 @@ void HTMLVideoElement::mediaPlayerFirstVideoFrameAvailable()
         renderer->updateFromElement();
 }
 
+std::optional<DestinationColorSpace> HTMLVideoElement::colorSpace() const
+{
+    RefPtr<MediaPlayer> player = HTMLMediaElement::player();
+    if (!player)
+        return std::nullopt;
+
+    return player->colorSpace();
+}
+
 RefPtr<ImageBuffer> HTMLVideoElement::createBufferForPainting(const FloatSize& size, RenderingMode renderingMode, const DestinationColorSpace& colorSpace, PixelFormat pixelFormat) const
 {
     auto* hostWindow = document().view() && document().view()->root() ? document().view()->root()->hostWindow() : nullptr;

@@ -996,6 +996,12 @@ RefPtr<NativeImage> MediaPlayerPrivateRemote::nativeImageForCurrentTime()
     notImplemented();
     return nullptr;
 }
+
+DestinationColorSpace MediaPlayerPrivateRemote::colorSpace()
+{
+    notImplemented();
+    return DestinationColorSpace::SRGB();
+}
 #endif
 
 bool MediaPlayerPrivateRemote::hasAvailableVideoFrame() const

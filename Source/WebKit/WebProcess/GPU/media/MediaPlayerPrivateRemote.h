@@ -290,6 +290,7 @@ private:
     RetainPtr<CVPixelBufferRef> pixelBufferForCurrentTime() final;
 #endif
     RefPtr<WebCore::NativeImage> nativeImageForCurrentTime() final;
+    WebCore::DestinationColorSpace colorSpace() final;
 
     WebCore::MediaPlayerIdentifier identifier() const final;
 

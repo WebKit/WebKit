@@ -83,32 +83,42 @@ void RemoteMediaPlayerProxy::setVideoInlineSizeFenced(const WebCore::FloatSize& 
     setVideoInlineSizeIfPossible(*m_inlineLayerHostingContext, size);
 }
 
-void RemoteMediaPlayerProxy::nativeImageForCurrentTime(CompletionHandler<void(std::optional<WTF::MachSendRight>&&)>&& completionHandler)
+void RemoteMediaPlayerProxy::nativeImageForCurrentTime(CompletionHandler<void(std::optional<WTF::MachSendRight>&&, WebCore::DestinationColorSpace)>&& completionHandler)
 {
     if (!m_player) {
-        completionHandler(std::nullopt);
+        completionHandler(std::nullopt, DestinationColorSpace::SRGB());
         return;
     }
 
     auto nativeImage = m_player->nativeImageForCurrentTime();
     if (!nativeImage) {
-        completionHandler(std::nullopt);
+        completionHandler(std::nullopt, DestinationColorSpace::SRGB());
         return;
     }
 
     auto platformImage = nativeImage->platformImage();
     if (!platformImage) {
-        completionHandler(std::nullopt);
+        completionHandler(std::nullopt, DestinationColorSpace::SRGB());
         return;
     }
 
     auto surface = WebCore::IOSurface::createFromImage(platformImage.get());
     if (!surface) {
-        completionHandler(std::nullopt);
+        completionHandler(std::nullopt, DestinationColorSpace::SRGB());
         return;
     }
 
-    completionHandler(surface->createSendRight());
+    completionHandler(surface->createSendRight(), nativeImage->colorSpace());
+}
+
+void RemoteMediaPlayerProxy::colorSpace(CompletionHandler<void(WebCore::DestinationColorSpace)>&& completionHandler)
+{
+    if (!m_player) {
+        completionHandler(DestinationColorSpace::SRGB());
+        return;
+    }
+
+    completionHandler(m_player->colorSpace());
 }
 
 #if USE(AVFOUNDATION)

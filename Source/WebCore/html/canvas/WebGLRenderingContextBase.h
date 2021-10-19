@@ -621,10 +621,10 @@ protected:
         LRUImageBufferCache(int capacity);
         // Returns pointer to a cleared image buffer that is owned by the cache. The pointer is valid until next call.
         // Using fillOperator == CompositeOperator::Copy can be used to omit the clear of the buffer.
-        ImageBuffer* imageBuffer(const IntSize&, CompositeOperator fillOperator = CompositeOperator::SourceOver);
+        ImageBuffer* imageBuffer(const IntSize&, DestinationColorSpace, CompositeOperator fillOperator = CompositeOperator::SourceOver);
     private:
         void bubbleToFront(size_t idx);
-        Vector<RefPtr<ImageBuffer>> m_buffers;
+        Vector<std::optional<std::pair<DestinationColorSpace, Ref<ImageBuffer>>>> m_buffers;
     };
     LRUImageBufferCache m_generatedImageCache { 0 };
 

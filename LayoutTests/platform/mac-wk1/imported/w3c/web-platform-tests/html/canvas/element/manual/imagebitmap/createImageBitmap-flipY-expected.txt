@@ -8,7 +8,7 @@ PASS createImageBitmap from an HTMLVideoElement from a data URL imageOrientation
 PASS createImageBitmap from a bitmap HTMLImageElement imageOrientation: "none", and drawImage on the created ImageBitmap
 PASS createImageBitmap from a bitmap HTMLImageElement imageOrientation: "flipY", and drawImage on the created ImageBitmap
 PASS createImageBitmap from a vector HTMLImageElement imageOrientation: "none", and drawImage on the created ImageBitmap
-FAIL createImageBitmap from a vector HTMLImageElement imageOrientation: "flipY", and drawImage on the created ImageBitmap assert_approx_equals: Red channel of the pixel at (5, 15) expected 255 +/- 10 but got 0
+FAIL createImageBitmap from a vector HTMLImageElement imageOrientation: "flipY", and drawImage on the created ImageBitmap assert_approx_equals: Red channel of the pixel at (5, 5) expected 0 +/- 1 but got 255
 FAIL createImageBitmap from a bitmap SVGImageElement imageOrientation: "none", and drawImage on the created ImageBitmap promise_test: Unhandled rejection with value: object "TypeError: Type error"
 FAIL createImageBitmap from a bitmap SVGImageElement imageOrientation: "flipY", and drawImage on the created ImageBitmap promise_test: Unhandled rejection with value: object "TypeError: Type error"
 FAIL createImageBitmap from a vector SVGImageElement imageOrientation: "none", and drawImage on the created ImageBitmap promise_test: Unhandled rejection with value: object "TypeError: Type error"

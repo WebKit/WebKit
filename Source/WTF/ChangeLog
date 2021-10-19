@@ -1,3 +1,13 @@
+2021-10-19  Cameron McCormack  <heycam@apple.com>
+
+        Ensure CanvasRenderingContext2D.drawImage(video) uses the right color space
+        https://bugs.webkit.org/show_bug.cgi?id=229025
+        <rdar://problem/81828490>
+
+        Reviewed by Sam Weinig.
+
+        * wtf/PlatformHave.h: Add HAVE_CVBUFFERCOPYATTACHMENTS.
+
 2021-10-18  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r284240.

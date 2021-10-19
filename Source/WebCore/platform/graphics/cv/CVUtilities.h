@@ -30,6 +30,7 @@
 #include <wtf/Expected.h>
 #include <wtf/RetainPtr.h>
 
+using CGColorSpaceRef = struct CGColorSpace*;
 using CVPixelBufferPoolRef = struct __CVPixelBufferPool*;
 using CVPixelBufferRef = struct __CVBuffer*;
 
@@ -43,4 +44,5 @@ WEBCORE_EXPORT Expected<RetainPtr<CVPixelBufferRef>, CVReturn> createCVPixelBuff
 
 WEBCORE_EXPORT Expected<RetainPtr<CVPixelBufferRef>, CVReturn> createCVPixelBuffer(IOSurfaceRef);
 
+RetainPtr<CGColorSpaceRef> createCGColorSpaceForCVPixelBuffer(CVPixelBufferRef);
 }
