@@ -1,3 +1,15 @@
+2021-10-18  Filip Pizlo  <fpizlo@apple.com>
+
+        StringBuffer should really know that strings might be 8-bit
+        https://bugs.webkit.org/show_bug.cgi?id=231937
+
+        Reviewed by Yusuke Suzuki.
+
+        We somehow forgot to change this to use CharType instead of UChar.
+
+        * wtf/text/StringBuffer.h:
+        (WTF::StringBuffer::resize):
+
 2021-10-19  Cameron McCormack  <heycam@apple.com>
 
         Ensure CanvasRenderingContext2D.drawImage(video) uses the right color space
