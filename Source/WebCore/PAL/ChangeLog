@@ -1,3 +1,15 @@
+2021-10-19  David Kilzer  <ddkilzer@apple.com>
+
+        REGRESSION (r284220): [PAL] TCCSPI.h should be a project header, not a private header
+        <https://webkit.org/b/231977>
+        <rdar://problem/84425384>
+
+        Reviewed by Wenson Hsieh.
+
+        * PAL.xcodeproj/project.pbxproj:
+        - Change TCCSPI.h from a private header to a project header.
+          PAL uses a build phase script to install its headers.
+
 2021-10-18  David Kilzer  <ddkilzer@apple.com>
 
         Bug 231882: WebKit::GPUConnectionToWebProcess::setTCCIdentity() leaks a tcc_identity_t
