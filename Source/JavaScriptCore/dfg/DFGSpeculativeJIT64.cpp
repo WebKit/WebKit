@@ -3640,7 +3640,7 @@ void SpeculativeJIT::compile(Node* node)
         
         SpeculateCellOperand base(this, baseEdge);
         SpeculateStrictInt32Operand index(this, indexEdge);
-        GPRTemporary scratch;
+        GPRTemporary scratch (this);
 
         baseGPR = base.gpr();
         indexGPR = index.gpr();

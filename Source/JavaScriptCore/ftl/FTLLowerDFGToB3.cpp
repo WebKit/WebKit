@@ -4877,8 +4877,7 @@ private:
         setInt32(m_out.castToInt32(result));
     }
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wmissing-noreturn"
+IGNORE_CLANG_WARNINGS_BEGIN("missing-noreturn")
     void compileGetTypedArrayByteOffsetAsInt52()
     {
         // The preprocessor chokes on RELEASE_ASSERT(USE(LARGE_TYPED_ARRAYS)), this is equivalent.
@@ -4886,7 +4885,7 @@ private:
         LValue result = emitGetTypedArrayByteOffsetExceptSettingResult();
         setStrictInt52(result);
     }
-#pragma clang diagnostic pop
+IGNORE_CLANG_WARNINGS_END
 
     void compileGetPrototypeOf()
     {
@@ -5088,8 +5087,7 @@ private:
         }
     }
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wmissing-noreturn"
+IGNORE_CLANG_WARNINGS_BEGIN("missing-noreturn")
     void compileGetTypedArrayLengthAsInt52()
     {
         RELEASE_ASSERT(m_node->arrayMode().isSomeTypedArrayView());
@@ -5097,7 +5095,7 @@ private:
         RELEASE_ASSERT(sizeof(size_t) == sizeof(uint64_t));
         setStrictInt52(m_out.load64NonNegative(lowCell(m_node->child1()), m_heaps.JSArrayBufferView_length));
     }
-#pragma clang diagnostic pop
+IGNORE_CLANG_WARNINGS_END
 
     void compileGetVectorLength()
     {
@@ -5144,8 +5142,7 @@ private:
         // we dominate them.
     }
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wmissing-noreturn"
+IGNORE_CLANG_WARNINGS_BEGIN("missing-noreturn")
     void compileCheckInBoundsInt52()
     {
         // The preprocessor chokes on RELEASE_ASSERT(USE(LARGE_TYPED_ARRAYS)), this is equivalent.
@@ -5158,7 +5155,7 @@ private:
         // depend on our value. Users of this node just need to maintain that
         // we dominate them.
     }
-#pragma clang diagnostic pop
+IGNORE_CLANG_WARNINGS_END
 
     LValue compileGetByValImpl()
     {

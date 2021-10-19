@@ -27,13 +27,6 @@
 
 #pragma once
 
-// This is to get SIZE_MAX, which in turn is used for USE_LARGE_TYPED_ARRAYS
-#ifdef __cplusplus
-#include <cstdint>
-#else
-#include <stdint.h>
-#endif
-
 #ifndef WTF_PLATFORM_GUARD_AGAINST_INDIRECT_INCLUSION
 #error "Please #include <wtf/Platform.h> instead of this file directly."
 #endif
@@ -152,7 +145,10 @@
 #define USE_JSVALUE32_64 1
 #endif
 
-#if SIZE_MAX == UINT64_MAX
+// FIXME: this should instead be based on SIZE_MAX == UINT64_MAX
+// But this requires including <cstdint> and Platform.h is included in all kind of weird places, including non-cpp files
+// And in practice CPU(ADDRESS64) is equivalent on all platforms we support (verified by static_asserts in ArrayBuffer.h)
+#if CPU(ADDRESS64)
 #define USE_LARGE_TYPED_ARRAYS 1
 #else
 #define USE_LARGE_TYPED_ARRAYS 0

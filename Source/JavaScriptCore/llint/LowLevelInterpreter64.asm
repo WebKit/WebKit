@@ -1715,7 +1715,7 @@ llintOpWithMetadata(op_get_by_val, OpGetByVal, macro (size, get, dispatch, metad
 
     macro setLargeTypedArray()
         if LARGE_TYPED_ARRAYS
-            storeb 1, OpGetByVal::Metadata::m_arrayProfile.m_mayBeLargeTypedArray[t5]
+            storeb 1, OpGetByVal::Metadata::m_arrayProfile + ArrayProfile::m_mayBeLargeTypedArray[t5]
         else
             crash()
         end

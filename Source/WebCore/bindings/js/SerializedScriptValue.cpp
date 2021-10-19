@@ -912,7 +912,6 @@ private:
 #if USE(BIGINT32)
     void dumpBigInt32Data(int32_t integer)
     {
-        static_assert(sizeof(uint64_t) == sizeof(unsigned long long));
         write(static_cast<uint8_t>(integer < 0));
         if (!integer) {
             write(static_cast<uint32_t>(0)); // Length-in-uint64_t
@@ -922,18 +921,17 @@ private:
         int64_t value = static_cast<int64_t>(integer);
         if (value < 0)
             value = -value;
-        write(static_cast<unsigned long long>(value));
+        write(static_cast<uint64_t>(value));
     }
 #endif
 
     void dumpHeapBigIntData(JSBigInt* bigInt)
     {
-        static_assert(sizeof(uint64_t) == sizeof(unsigned long long));
         write(static_cast<uint8_t>(bigInt->sign()));
         if constexpr (sizeof(JSBigInt::Digit) == sizeof(uint64_t)) {
             write(static_cast<uint32_t>(bigInt->length()));
             for (unsigned index = 0; index < bigInt->length(); ++index)
-                write(static_cast<unsigned long long>(bigInt->digit(index)));
+                write(static_cast<uint64_t>(bigInt->digit(index)));
         } else {
             ASSERT(sizeof(JSBigInt::Digit) == sizeof(uint32_t));
             uint32_t lengthInUint64 = bigInt->length() / 2;
@@ -946,12 +944,12 @@ private:
                     value = bigInt->digit(index);
                 else {
                     value = (static_cast<uint64_t>(bigInt->digit(index)) << 32) | value;
-                    write(static_cast<unsigned long long>(value));
+                    write(static_cast<uint64_t>(value));
                     value = 0;
                 }
             }
             if (bigInt->length() & 0x1)
-                write(static_cast<unsigned long long>(value));
+                write(static_cast<uint64_t>(value));
         }
     }
 
@@ -1265,7 +1263,9 @@ private:
                 m_blobHandles.append(blob->handle());
                 write(blob->url().string());
                 write(blob->type());
-                write(blob->size());
+                static_assert(sizeof(uint64_t) == sizeof(decltype(blob->size())));
+                uint64_t size = blob->size();
+                write(size);
                 return true;
             }
             if (auto* data = JSImageData::toWrapped(vm, obj)) {
@@ -3442,8 +3442,7 @@ private:
 #if USE(BIGINT32)
         static_assert(sizeof(JSBigInt::Digit) == sizeof(uint64_t));
         if (lengthInUint64 == 1) {
-            static_assert(sizeof(unsigned long long) == sizeof(uint64_t));
-            unsigned long long digit64 = 0;
+            uint64_t digit64 = 0;
             if (!read(digit64))
                 return JSValue();
             if (sign) {
@@ -3478,8 +3477,7 @@ private:
                 return JSValue();
             }
             for (uint32_t index = 0; index < lengthInUint64; ++index) {
-                static_assert(sizeof(unsigned long long) == sizeof(uint64_t));
-                unsigned long long digit64 = 0;
+                uint64_t digit64 = 0;
                 if (!read(digit64))
                     return JSValue();
                 bigInt->setDigit(index, digit64);
@@ -3492,8 +3490,7 @@ private:
                 return JSValue();
             }
             for (uint32_t index = 0; index < lengthInUint64; ++index) {
-                static_assert(sizeof(unsigned long long) == sizeof(uint64_t));
-                unsigned long long digit64 = 0;
+                uint64_t digit64 = 0;
                 if (!read(digit64))
                     return JSValue();
                 bigInt->setDigit(index * 2, static_cast<uint32_t>(digit64));
@@ -3649,7 +3646,7 @@ private:
             CachedStringRef type;
             if (!readStringData(type))
                 return JSValue();
-            unsigned long long size = 0;
+            uint64_t size = 0;
             if (!read(size))
                 return JSValue();
             if (!m_canCreateDOMObject)
