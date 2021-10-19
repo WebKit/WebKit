@@ -1,3 +1,22 @@
+2021-10-19  Chris Dumez  <cdumez@apple.com>
+
+        cachedCGColor() and nsColor() should return smart pointers
+        https://bugs.webkit.org/show_bug.cgi?id=231909
+
+        Reviewed by Tim Horton.
+
+        r276283 attempted to make cachedCGColor() and nsColor() thread-safe but the fix was incomplete
+        since those functions return unretained objects that can be released from the cache on any
+        other thread. This patch updates cachedCGColor() and nsColor() to return a RetainPtr to address
+        the issue.
+
+        * DOM/DOMRGBColor.mm:
+        (-[DOMRGBColor color]):
+        * WebView/WebFrame.mm:
+        (-[WebFrame _bodyBackgroundColor]):
+        * WebView/WebView.mm:
+        (-[WebView updateTextTouchBar]):
+
 2021-10-18  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r284240.

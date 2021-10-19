@@ -52,7 +52,7 @@ namespace WebCore {
 
 static void setCGFillColor(CGContextRef context, const Color& color)
 {
-    CGContextSetFillColorWithColor(context, cachedCGColor(color));
+    CGContextSetFillColorWithColor(context, cachedCGColor(color).get());
 }
 
 inline CGAffineTransform getUserToBaseCTM(CGContextRef context)
@@ -1072,7 +1072,7 @@ static void setCGShadow(const GraphicsContext& graphicsContext, const FloatSize&
     if (!color.isValid())
         CGContextSetShadow(context, CGSizeMake(xOffset, yOffset), blurRadius);
     else
-        CGContextSetShadowWithColor(context, CGSizeMake(xOffset, yOffset), blurRadius, cachedCGColor(color));
+        CGContextSetShadowWithColor(context, CGSizeMake(xOffset, yOffset), blurRadius, cachedCGColor(color).get());
 }
 
 void GraphicsContextCG::didUpdateState(const GraphicsContextState& state, GraphicsContextState::StateChangeFlags flags)
@@ -1083,7 +1083,7 @@ void GraphicsContextCG::didUpdateState(const GraphicsContextState& state, Graphi
         CGContextSetLineWidth(context, std::max(state.strokeThickness, 0.f));
 
     if (flags.contains(GraphicsContextState::StrokeColorChange))
-        CGContextSetStrokeColorWithColor(context, cachedCGColor(state.strokeColor));
+        CGContextSetStrokeColorWithColor(context, cachedCGColor(state.strokeColor).get());
 
     if (flags.contains(GraphicsContextState::FillColorChange))
         setCGFillColor(context, state.fillColor);

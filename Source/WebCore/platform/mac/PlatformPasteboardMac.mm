@@ -369,7 +369,7 @@ int64_t PlatformPasteboard::setURL(const PasteboardURL& pasteboardURL)
 
 int64_t PlatformPasteboard::setColor(const Color& color)
 {
-    NSColor *pasteboardColor = nsColor(color);
+    auto pasteboardColor = nsColor(color);
     [pasteboardColor writeToPasteboard:m_pasteboard.get()];
     return changeCount();
 }

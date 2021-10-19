@@ -315,8 +315,8 @@ public:
     WebCore::DestinationColorSpace colorSpace();
 
     void setUnderlayColor(NSColor *);
-    NSColor *underlayColor() const;
-    NSColor *pageExtendedBackgroundColor() const;
+    RetainPtr<NSColor> underlayColor() const;
+    RetainPtr<NSColor> pageExtendedBackgroundColor() const;
     
     _WKRectEdge pinnedState();
     _WKRectEdge rubberBandingEnabled();

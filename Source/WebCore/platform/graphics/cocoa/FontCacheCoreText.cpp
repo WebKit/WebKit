@@ -483,7 +483,7 @@ static void addAttributesForCustomFontPalettes(CFMutableDictionaryRef attributes
             int64_t rawIndex = pair.first; // There is no kCFNumberUIntType.
             auto number = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberSInt64Type, &rawIndex));
             auto colorObject = cachedCGColor(color);
-            CFDictionaryAddValue(overrideDictionary.get(), number.get(), colorObject);
+            CFDictionaryAddValue(overrideDictionary.get(), number.get(), colorObject.get());
         }
         if (CFDictionaryGetCount(overrideDictionary.get()))
             CFDictionaryAddValue(attributes, kCTFontPaletteColorsAttribute, overrideDictionary.get());

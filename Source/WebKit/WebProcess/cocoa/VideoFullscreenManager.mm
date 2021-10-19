@@ -294,7 +294,7 @@ void VideoFullscreenManager::enterVideoFullscreenForVideoElement(HTMLVideoElemen
         [videoLayer setDelegate:[WebActionDisablingCALayerDelegate shared]];
         [videoLayer setName:@"Web Video Fullscreen Layer"];
         [videoLayer setPosition:CGPointMake(0, 0)];
-        [videoLayer setBackgroundColor:cachedCGColor(WebCore::Color::transparentBlack)];
+        [videoLayer setBackgroundColor:cachedCGColor(WebCore::Color::transparentBlack).get()];
 
         // Set a scale factor here to make convertRect:toLayer:nil take scale factor into account. <rdar://problem/18316542>.
         // This scale factor is inverted in the hosting process.

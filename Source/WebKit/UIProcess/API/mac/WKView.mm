@@ -1328,7 +1328,7 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(NSUs
 
 - (NSColor *)underlayColor
 {
-    return _data->_impl->underlayColor();
+    return _data->_impl->underlayColor().autorelease();
 }
 
 - (void)setUnderlayColor:(NSColor *)underlayColor
@@ -1516,7 +1516,7 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(NSUs
 
 - (NSColor *)_pageExtendedBackgroundColor
 {
-    return _data->_impl->pageExtendedBackgroundColor();
+    return _data->_impl->pageExtendedBackgroundColor().autorelease();
 }
 
 - (BOOL)isUsingUISideCompositing

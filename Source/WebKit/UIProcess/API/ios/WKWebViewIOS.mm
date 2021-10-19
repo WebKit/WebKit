@@ -544,7 +544,7 @@ static WebCore::Color scrollViewBackgroundColor(WKWebView *webView, AllowPageBac
     if (_scrollViewBackgroundColor != newScrollViewBackgroundColor) {
         _scrollViewBackgroundColor = newScrollViewBackgroundColor;
 
-        auto uiBackgroundColor = adoptNS([[UIColor alloc] initWithCGColor:cachedCGColor(newScrollViewBackgroundColor)]);
+        auto uiBackgroundColor = adoptNS([[UIColor alloc] initWithCGColor:cachedCGColor(newScrollViewBackgroundColor).get()]);
         [_scrollView setBackgroundColor:uiBackgroundColor.get()];
     }
 

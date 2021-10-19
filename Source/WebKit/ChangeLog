@@ -1,3 +1,46 @@
+2021-10-19  Chris Dumez  <cdumez@apple.com>
+
+        cachedCGColor() and nsColor() should return smart pointers
+        https://bugs.webkit.org/show_bug.cgi?id=231909
+
+        Reviewed by Tim Horton.
+
+        r276283 attempted to make cachedCGColor() and nsColor() thread-safe but the fix was incomplete
+        since those functions return unretained objects that can be released from the cache on any
+        other thread. This patch updates cachedCGColor() and nsColor() to return a RetainPtr to address
+        the issue.
+
+        * Shared/RemoteLayerTree/RemoteLayerTreePropertyApplier.mm:
+        (WebKit::cgColorFromColor):
+        (WebKit::RemoteLayerTreePropertyApplier::applyPropertiesToLayer):
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView themeColor]):
+        (-[WKWebView underPageBackgroundColor]):
+        (-[WKWebView _pageExtendedBackgroundColor]):
+        (-[WKWebView _sampledPageTopColor]):
+        * UIProcess/API/Cocoa/_WKApplicationManifest.mm:
+        (-[_WKApplicationManifest themeColor]):
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView underlayColor]):
+        (-[WKView _pageExtendedBackgroundColor]):
+        * UIProcess/API/mac/WKWebViewMac.mm:
+        (-[WKWebView _underlayColor]):
+        * UIProcess/Cocoa/WebViewImpl.h:
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::updateTextTouchBar):
+        (WebKit::WebViewImpl::underlayColor const):
+        (WebKit::WebViewImpl::pageExtendedBackgroundColor const):
+        * UIProcess/PDF/WKPDFHUDView.mm:
+        (-[WKPDFHUDView _setupLayer:]):
+        * UIProcess/mac/WebColorPickerMac.mm:
+        (WebKit::WebColorPickerMac::setSelectedColor):
+        (WebKit::WebColorPickerMac::showColorPicker):
+        (-[WKColorPopoverMac setAndShowPicker:withColor:suggestions:]):
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::setAccentColor):
+        * WebProcess/cocoa/VideoFullscreenManager.mm:
+        (WebKit::VideoFullscreenManager::enterVideoFullscreenForVideoElement):
+
 2021-10-19  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         Update seccomp filters with latest changes from flatpak

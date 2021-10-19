@@ -163,7 +163,7 @@ LocalSampleBufferDisplayLayer::LocalSampleBufferDisplayLayer(RetainPtr<AVSampleB
 
 void LocalSampleBufferDisplayLayer::initialize(bool hideRootLayer, IntSize size, CompletionHandler<void(bool didSucceed)>&& callback)
 {
-    m_sampleBufferDisplayLayer.get().backgroundColor = cachedCGColor(Color::black);
+    m_sampleBufferDisplayLayer.get().backgroundColor = cachedCGColor(Color::black).get();
     m_sampleBufferDisplayLayer.get().anchorPoint = { .5, .5 };
     m_sampleBufferDisplayLayer.get().needsDisplayOnBoundsChange = YES;
     m_sampleBufferDisplayLayer.get().videoGravity = AVLayerVideoGravityResizeAspectFill;
@@ -171,7 +171,7 @@ void LocalSampleBufferDisplayLayer::initialize(bool hideRootLayer, IntSize size,
     m_rootLayer = adoptNS([[CALayer alloc] init]);
     m_rootLayer.get().hidden = hideRootLayer;
 
-    m_rootLayer.get().backgroundColor = cachedCGColor(Color::black);
+    m_rootLayer.get().backgroundColor = cachedCGColor(Color::black).get();
     m_rootLayer.get().needsDisplayOnBoundsChange = YES;
 
     m_rootLayer.get().bounds = CGRectMake(0, 0, size.width(), size.height());

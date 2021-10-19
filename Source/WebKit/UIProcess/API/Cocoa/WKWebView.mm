@@ -1770,12 +1770,12 @@ static _WKSelectionAttributes selectionAttributes(const WebKit::EditorState& edi
     auto themeColor = _page->themeColor();
     if (!themeColor.isValid())
         return nil;
-    return WebCore::platformColor(themeColor);
+    return WebCore::platformColor(themeColor).autorelease();
 }
 
 - (CocoaColor *)underPageBackgroundColor
 {
-    return WebCore::platformColor(_page->underPageBackgroundColor());
+    return WebCore::platformColor(_page->underPageBackgroundColor()).autorelease();
 }
 
 - (void)setUnderPageBackgroundColor:(CocoaColor *)underPageBackgroundColorOverride
@@ -3272,7 +3272,7 @@ static inline OptionSet<WebKit::FindOptions> toFindOptions(_WKFindOptions wkFind
     auto pageExtendedBackgroundColor = _page->pageExtendedBackgroundColor();
     if (!pageExtendedBackgroundColor.isValid())
         return nil;
-    return WebCore::platformColor(pageExtendedBackgroundColor);
+    return WebCore::platformColor(pageExtendedBackgroundColor).autorelease();
 }
 
 - (CocoaColor *)_sampledPageTopColor
@@ -3280,7 +3280,7 @@ static inline OptionSet<WebKit::FindOptions> toFindOptions(_WKFindOptions wkFind
     auto sampledPageTopColor = _page->sampledPageTopColor();
     if (!sampledPageTopColor.isValid())
         return nil;
-    return WebCore::platformColor(sampledPageTopColor);
+    return WebCore::platformColor(sampledPageTopColor).autorelease();
 }
 
 - (id <_WKInputDelegate>)_inputDelegate

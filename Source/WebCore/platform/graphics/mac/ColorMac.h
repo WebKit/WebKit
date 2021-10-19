@@ -38,7 +38,7 @@ namespace WebCore {
 
 WEBCORE_EXPORT Color colorFromNSColor(NSColor *);
 Color semanticColorFromNSColor(NSColor *);
-WEBCORE_EXPORT NSColor *nsColor(const Color&);
+WEBCORE_EXPORT RetainPtr<NSColor> nsColor(const Color&);
 
 WEBCORE_EXPORT bool usesTestModeFocusRingColor();
 WEBCORE_EXPORT void setUsesTestModeFocusRingColor(bool);

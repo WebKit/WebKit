@@ -2012,7 +2012,7 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius,
     if (![_highlightView superview])
         return;
 
-    [_highlightView setColor:adoptNS([[UIColor alloc] initWithCGColor:cachedCGColor(_tapHighlightInformation.color)]).get()];
+    [_highlightView setColor:adoptNS([[UIColor alloc] initWithCGColor:cachedCGColor(_tapHighlightInformation.color).get()]).get()];
 
     auto& highlightedQuads = _tapHighlightInformation.quads;
     bool allRectilinear = true;
@@ -3691,7 +3691,7 @@ WEBCORE_COMMAND_FOR_WEBVIEW(pasteAndMatchStyle);
     if (!_page->editorState().isMissingPostLayoutData) {
         WebCore::Color caretColor = _page->editorState().postLayoutData().caretColor;
         if (caretColor.isValid())
-            return [UIColor colorWithCGColor:cachedCGColor(caretColor)];
+            return [UIColor colorWithCGColor:cachedCGColor(caretColor).get()];
     }
     return [self _inheritedInteractionTintColor];
 }
@@ -8597,7 +8597,7 @@ static RetainPtr<UITargetedPreview> createFallbackTargetedPreview(UIView *rootVi
     if (_positionInformation.isLink && _positionInformation.linkIndicator.contentImage) {
         auto indicator = _positionInformation.linkIndicator;
         auto textIndicatorImage = uiImageForImage(indicator.contentImage.get());
-        targetedPreview = createTargetedPreview(textIndicatorImage.get(), self, self.containerForContextMenuHintPreviews, indicator.textBoundingRectInRootViewCoordinates, indicator.textRectsInBoundingRectCoordinates, [UIColor colorWithCGColor:cachedCGColor(indicator.estimatedBackgroundColor)]);
+        targetedPreview = createTargetedPreview(textIndicatorImage.get(), self, self.containerForContextMenuHintPreviews, indicator.textBoundingRectInRootViewCoordinates, indicator.textRectsInBoundingRectCoordinates, [UIColor colorWithCGColor:cachedCGColor(indicator.estimatedBackgroundColor).get()]);
     } else if ((_positionInformation.isAttachment || _positionInformation.isImage) && _positionInformation.image) {
         auto cgImage = _positionInformation.image->makeCGImageCopy();
         auto image = adoptNS([[UIImage alloc] initWithCGImage:cgImage.get()]);

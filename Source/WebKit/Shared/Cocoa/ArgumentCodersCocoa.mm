@@ -291,7 +291,7 @@ static inline std::optional<RetainPtr<id>> decodeColorInternal(Decoder& decoder)
     Color color;
     if (!decoder.decode(color))
         return std::nullopt;
-    return { adoptNS([[UIColor alloc] initWithCGColor:cachedCGColor(color)]) };
+    return { adoptNS([[UIColor alloc] initWithCGColor:cachedCGColor(color).get()]) };
 }
 #endif
 

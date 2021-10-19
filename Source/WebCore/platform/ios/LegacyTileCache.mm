@@ -568,7 +568,7 @@ void LegacyTileCache::drawLayer(LegacyTileLayer* layer, CGContextRef context, Dr
         CGContextSaveGState(context);
 
         CGContextTranslateCTM(context, frame.origin.x, frame.origin.y);
-        CGContextSetFillColorWithColor(context, cachedCGColor(colorForGridTileBorder([layer tileGrid])));
+        CGContextSetFillColorWithColor(context, cachedCGColor(colorForGridTileBorder([layer tileGrid])).get());
         
         CGRect labelBounds = [layer bounds];
         labelBounds.size.width = 10 + 12 * strlen(text);

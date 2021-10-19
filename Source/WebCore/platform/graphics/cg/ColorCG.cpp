@@ -172,7 +172,7 @@ static RetainPtr<CGColorRef> createCGColor(const Color& color)
     return adoptCF(CGColorCreate(cgColorSpace, cgFloatComponents));
 }
 
-CGColorRef cachedCGColor(const Color& color)
+RetainPtr<CGColorRef> cachedCGColor(const Color& color)
 {
     if (auto srgb = color.tryGetAsSRGBABytes()) {
         switch (PackedColor::RGBA { *srgb }.value) {
@@ -182,7 +182,7 @@ CGColorRef cachedCGColor(const Color& color)
             std::call_once(onceFlag, [] {
                 transparentCGColor.construct(createCGColor(Color::transparentBlack));
             });
-            return transparentCGColor.get().get();
+            return transparentCGColor.get();
         }
         case PackedColor::RGBA { Color::black }.value: {
             static LazyNeverDestroyed<RetainPtr<CGColorRef>> blackCGColor;
@@ -190,7 +190,7 @@ CGColorRef cachedCGColor(const Color& color)
             std::call_once(onceFlag, [] {
                 blackCGColor.construct(createCGColor(Color::black));
             });
-            return blackCGColor.get().get();
+            return blackCGColor.get();
         }
         case PackedColor::RGBA { Color::white }.value: {
             static LazyNeverDestroyed<RetainPtr<CGColorRef>> whiteCGColor;
@@ -198,7 +198,7 @@ CGColorRef cachedCGColor(const Color& color)
             std::call_once(onceFlag, [] {
                 whiteCGColor.construct(createCGColor(Color::white));
             });
-            return whiteCGColor.get().get();
+            return whiteCGColor.get();
         }
         }
     }
@@ -207,7 +207,7 @@ CGColorRef cachedCGColor(const Color& color)
     Locker locker { cachedColorLock };
 
     static NeverDestroyed<TinyLRUCache<Color, RetainPtr<CGColorRef>, 32>> cache;
-    return cache.get().get(color).get();
+    return cache.get().get(color);
 }
 
 ColorComponents<float, 4> platformConvertColorComponents(ColorSpace inputColorSpace, ColorComponents<float, 4> inputColorComponents, const DestinationColorSpace& outputColorSpace)

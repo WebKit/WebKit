@@ -37,7 +37,7 @@ namespace WebCore {
 
 #if USE(APPKIT)
 
-NSColor *platformColor(const Color& color)
+RetainPtr<NSColor> platformColor(const Color& color)
 {
     return nsColor(color);
 }
@@ -46,9 +46,9 @@ NSColor *platformColor(const Color& color)
 
 #if PLATFORM(IOS_FAMILY)
 
-UIColor *platformColor(const Color& color)
+RetainPtr<UIColor> platformColor(const Color& color)
 {
-    return [PAL::getUIColorClass() _disambiguated_due_to_CIImage_colorWithCGColor:cachedCGColor(color)];
+    return [PAL::getUIColorClass() _disambiguated_due_to_CIImage_colorWithCGColor:cachedCGColor(color).get()];
 }
 
 #endif

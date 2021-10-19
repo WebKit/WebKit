@@ -602,7 +602,7 @@ void ScrollbarThemeMac::setUpOverhangAreaBackground(CALayer *layer, const Color&
     static CGColorRef cachedLinenBackgroundColor = linenBackgroundColor().leakRef();
     // We operate on the CALayer directly here, since GraphicsLayer doesn't have the concept
     // of pattern images, and we know that WebCore won't touch this layer.
-    layer.backgroundColor = customBackgroundColor.isValid() ? cachedCGColor(customBackgroundColor) : cachedLinenBackgroundColor;
+    layer.backgroundColor = customBackgroundColor.isValid() ? cachedCGColor(customBackgroundColor).get() : cachedLinenBackgroundColor;
 }
 
 void ScrollbarThemeMac::removeOverhangAreaBackground(CALayer *layer)

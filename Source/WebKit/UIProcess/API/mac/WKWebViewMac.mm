@@ -1355,7 +1355,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
 - (NSColor *)_underlayColor
 {
-    return _impl->underlayColor();
+    return _impl->underlayColor().autorelease();
 }
 
 - (void)_setUnderlayColor:(NSColor *)underlayColor

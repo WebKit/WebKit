@@ -114,7 +114,7 @@ void GraphicsContextCG::drawFocusRing(const Vector<FloatRect>& rects, float widt
 {
     float radius = (width - 1) / 2.0f;
     offset += radius;
-    CGColorRef colorRef = color.isValid() ? cachedCGColor(color) : nullptr;
+    auto colorRef = color.isValid() ? cachedCGColor(color) : nullptr;
 
     auto focusRingPath = adoptCF(CGPathCreateMutable());
     unsigned rectCount = rects.size();
@@ -131,7 +131,7 @@ void GraphicsContextCG::drawFocusRing(const Vector<FloatRect>& rects, float widt
     // Find out from CG if this is their bug.
     CGContextSetRGBFillColor(context, 0, 0, 0, 0);
 
-    CGContextSetFocusRingWithColor(context, radius, colorRef, 0, (CFDictionaryRef)0);
+    CGContextSetFocusRingWithColor(context, radius, colorRef.get(), 0, (CFDictionaryRef)0);
     CGContextFillPath(context);
 
     CGContextRestoreGState(context);
