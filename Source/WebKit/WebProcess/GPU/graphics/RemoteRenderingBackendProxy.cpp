@@ -127,7 +127,9 @@ bool RemoteRenderingBackendProxy::waitForDidFlush()
 
 void RemoteRenderingBackendProxy::createRemoteImageBuffer(ImageBuffer& imageBuffer)
 {
-    sendToStream(Messages::RemoteRenderingBackend::CreateImageBuffer(imageBuffer.logicalSize(), imageBuffer.renderingMode(), imageBuffer.resolutionScale(), imageBuffer.colorSpace(), imageBuffer.pixelFormat(), imageBuffer.renderingResourceIdentifier()));
+    // FIXME: This should be an normal (async) stream message. However, doing so may cause subsequent out-of-stream messages sent to the newly created image
+    // buffer to be dropped by the IPC connection. For the time being, work around this by using sync IPC (see <https://webkit.org/b/231681> for more details).
+    sendSyncToStream(Messages::RemoteRenderingBackend::CreateImageBuffer(imageBuffer.logicalSize(), imageBuffer.renderingMode(), imageBuffer.resolutionScale(), imageBuffer.colorSpace(), imageBuffer.pixelFormat(), imageBuffer.renderingResourceIdentifier()), Messages::RemoteRenderingBackend::CreateImageBuffer::Reply(), 3_s);
 }
 
 RefPtr<ImageBuffer> RemoteRenderingBackendProxy::createImageBuffer(const FloatSize& size, RenderingMode renderingMode, float resolutionScale, const DestinationColorSpace& colorSpace, PixelFormat pixelFormat)

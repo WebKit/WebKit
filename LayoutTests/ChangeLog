@@ -1,3 +1,16 @@
+2021-10-19  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        REGRESSION (r284079): fast/canvas/gradient-with-clip.html and fast/canvas/gradient-text-with-shadow.html are flaky failures
+        https://bugs.webkit.org/show_bug.cgi?id=231681
+        rdar://84202478
+
+        Reviewed by Kimmo Kinnunen.
+
+        Remove the flaky failure entries in test expectations. See WebKit2 ChangeLog for more details.
+
+        * platform/ios-wk2/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+
 2021-10-19  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
 
         [GTK] Update test expectations for still-failing CSS web platform tests

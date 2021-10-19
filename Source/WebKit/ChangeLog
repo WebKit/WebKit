@@ -1,3 +1,51 @@
+2021-10-19  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        REGRESSION (r284079): fast/canvas/gradient-with-clip.html and fast/canvas/gradient-text-with-shadow.html are flaky failures
+        https://bugs.webkit.org/show_bug.cgi?id=231681
+        rdar://84202478
+
+        Reviewed by Kimmo Kinnunen.
+
+        These tests occasionally fail when we time out while waiting for the pixel buffer to be populated underneath
+        `RemoteImageBufferProxy::getPixelBuffer`; this happens because the GPU process sometimes halts (and never
+        resumes) while processing stream messages, and consequently never ends up processing the GetPixelBuffer IPC
+        stream message that's necessary to populate the shared memory buffer for GetPixelBuffer.
+
+        This, in turn, happens when the IPC stream buffer is about to exhaust all available capacity (i.e. the write
+        cursor is nearing the end of the 2MB buffer), and as a result, we send messages that would normally be encoded
+        in the IPC stream as out-of-line IPC messages instead, which are received in the GPU process on the IPC thread
+        and appended to the receive queue corresponding to the destination ID in `Connection::processIncomingMessage()`.
+
+        If we happen to have sent `RemoteRenderingBackend::CreateImageBuffer(a)` right before exhausting capacity and
+        sending out-of-line messages targeting the RemoteDisplayListRecorder corresponding to the newly created image
+        buffer `a`, we'll end up with a race condition where the IPC thread may receive the out-of-line messages meant
+        for the new remote display list destination *before* the new remote display list has added itself as an IPC
+        receive queue by calling into `StreamServerConnection::startReceivingMessages()`.
+
+        In this particular scenario (where we "lose" the race), `Connection::processIncomingMessage` will skip past the
+        early return where it would normally find its corresponding receive queue via `m_receiveQueues.get(*message)`,
+        and instead falls through to `Connection::SyncMessageState::processIncomingMessage()`, which will attempt to
+        dispatch the incoming message to the Connection's client (GPUConnectionToWebProcess). Of course, the
+        GPUConnectionToWebProcess isn't aware of how to process this incoming message, so it simply gets dropped. By the
+        time the receive queue is added for the new RemoteDisplayListRecorder, we'll observe a ProcessOutOfStreamMessage
+        and end up waiting forever for this out-of-line message to be added to the receive queue, but this never ends up
+        happening because it has already been received and dropped by GPUConnectionToWebProcess.
+
+        To address the flaky tests in the short term, we work around this issue by making `CreateImageBuffer` a sync
+        message, so we guarantee that any subsequent messages sent to the image buffer's RemoteDisplayListRecorder will
+        not be dropped. In the (slightly) longer term, we should turn this back into an async stream message, and add a
+        mechanism to redirect all receiver-less RemoteDisplayListRecorder messages to a separate queue.
+
+        * GPUProcess/graphics/RemoteRenderingBackend.cpp:
+        (WebKit::RemoteRenderingBackend::createImageBuffer):
+        * GPUProcess/graphics/RemoteRenderingBackend.h:
+        * GPUProcess/graphics/RemoteRenderingBackend.messages.in:
+
+        Make `CreateImageBuffer` a synchronous stream message for now.
+
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.cpp:
+        (WebKit::RemoteRenderingBackendProxy::createRemoteImageBuffer):
+
 2021-10-19  Youenn Fablet  <youenn@apple.com>
 
         Guarantee order of WebSocket events in case of being resumed
