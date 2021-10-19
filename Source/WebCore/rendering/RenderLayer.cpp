@@ -3139,7 +3139,7 @@ bool RenderLayer::setupFontSubpixelQuantization(GraphicsContext& context, bool& 
     return false;
 }
 
-Path RenderLayer::computeClipPath(const LayoutSize& offsetFromRoot, LayoutRect& rootRelativeBounds, WindRule& windRule) const
+std::pair<Path, WindRule> RenderLayer::computeClipPath(const LayoutSize& offsetFromRoot, const LayoutRect& rootRelativeBoundsForNonBoxes) const
 {
     const RenderStyle& style = renderer().style();
     float deviceScaleFactor = renderer().document().deviceScaleFactor();
@@ -3151,26 +3151,25 @@ Path RenderLayer::computeClipPath(const LayoutSize& offsetFromRoot, LayoutRect& 
         if (is<RenderBox>(renderer())) {
             referenceBox = downcast<RenderBox>(renderer()).referenceBox(clipPath.referenceBox());
             referenceBox.move(offsetFromRoot);
-        } else
-            referenceBox = rootRelativeBounds;
+        } else {
+            // Reference box for inlines is not well defined: https://github.com/w3c/csswg-drafts/issues/6383
+            referenceBox = rootRelativeBoundsForNonBoxes;
+        }
 
-        FloatRect snappedReferenceBox = snapRectToDevicePixels(referenceBox, deviceScaleFactor);
-
-        windRule = clipPath.windRule();
-        return clipPath.pathForReferenceRect(snappedReferenceBox);
+        auto snappedReferenceBox = snapRectToDevicePixels(referenceBox, deviceScaleFactor);
+        return { clipPath.pathForReferenceRect(snappedReferenceBox), clipPath.windRule() };
     }
 
     if (is<BoxClipPathOperation>(*style.clipPath()) && is<RenderBox>(renderer())) {
         auto& clipPath = downcast<BoxClipPathOperation>(*style.clipPath());
 
-        FloatRoundedRect shapeRect = computeRoundedRectForBoxShape(clipPath.referenceBox(), downcast<RenderBox>(renderer())).pixelSnappedRoundedRectForPainting(deviceScaleFactor);
+        auto shapeRect = computeRoundedRectForBoxShape(clipPath.referenceBox(), downcast<RenderBox>(renderer())).pixelSnappedRoundedRectForPainting(deviceScaleFactor);
         shapeRect.move(offsetFromRoot);
 
-        windRule = WindRule::NonZero;
-        return clipPath.pathForReferenceRect(shapeRect);
+        return { clipPath.pathForReferenceRect(shapeRect), WindRule::NonZero };
     }
 
-    return Path();
+    return { Path(), WindRule::NonZero };
 }
 
 bool RenderLayer::setupClipPath(GraphicsContext& context, const LayerPaintingInfo& paintingInfo, const LayoutSize& offsetFromRoot)
@@ -3182,19 +3181,14 @@ bool RenderLayer::setupClipPath(GraphicsContext& context, const LayerPaintingInf
     if (is<RenderSVGRoot>(renderer()))
         return false;
 
-    if (!is<RenderBox>(renderer()))
-        return false;
-
-    // It's not clear that this geometry is correct: https://github.com/w3c/csswg-drafts/issues/5786
-    auto clipPathObjectBoundingBox = computeReferenceRectFromBox(downcast<RenderBox>(renderer()), CSSBoxType::BorderBox, offsetFromRoot);
+    auto clippedContentBounds = calculateLayerBounds(paintingInfo.rootLayer, offsetFromRoot, { UseLocalClipRectIfPossible });
 
     auto& style = renderer().style();
     LayoutSize paintingOffsetFromRoot = LayoutSize(snapSizeToDevicePixel(offsetFromRoot + paintingInfo.subpixelOffset, LayoutPoint(), renderer().document().deviceScaleFactor()));
     ASSERT(style.clipPath());
     if (is<ShapeClipPathOperation>(*style.clipPath()) || (is<BoxClipPathOperation>(*style.clipPath()) && is<RenderBox>(renderer()))) {
-        WindRule windRule;
-        // FIXME: Should probably pixel-snap clipPathObjectBoundingBox here.
-        Path path = computeClipPath(paintingOffsetFromRoot, clipPathObjectBoundingBox, windRule);
+        // clippedContentBounds is used as the reference box for inlines, which is also poorly specified: https://github.com/w3c/csswg-drafts/issues/6383.
+        auto [path, windRule] = computeClipPath(paintingOffsetFromRoot, clippedContentBounds);
         context.save();
         context.clipPath(path, windRule);
         return true;
@@ -3203,16 +3197,19 @@ bool RenderLayer::setupClipPath(GraphicsContext& context, const LayerPaintingInf
     if (is<ReferenceClipPathOperation>(style.clipPath())) {
         auto& referenceClipPathOperation = downcast<ReferenceClipPathOperation>(*style.clipPath());
         if (auto* clipperRenderer = renderer().ensureReferencedSVGResources().referencedClipperRenderer(renderer().document(), referenceClipPathOperation)) {
+            // Use the border box as the reference box, even though this is not clearly specified: https://github.com/w3c/csswg-drafts/issues/5786.
+            // clippedContentBounds is used as the reference box for inlines, which is also poorly specified: https://github.com/w3c/csswg-drafts/issues/6383.
+            auto referenceBox = computeReferenceBox(renderer(), CSSBoxType::BorderBox, offsetFromRoot, clippedContentBounds);
+            auto snappedReferenceBox = snapRectToDevicePixels(referenceBox, renderer().document().deviceScaleFactor());
+            auto offset = snappedReferenceBox.location();
+
+            auto snappedClippingBounds = snapRectToDevicePixels(clippedContentBounds, renderer().document().deviceScaleFactor());
+            snappedClippingBounds.moveBy(-offset);
+
             context.save();
-            auto referenceBox = snapRectToDevicePixels(clipPathObjectBoundingBox, renderer().document().deviceScaleFactor());
-            auto offset = referenceBox.location();
-
-            auto clippedContentBounds = FloatRect(calculateLayerBounds(paintingInfo.rootLayer, offsetFromRoot, { UseLocalClipRectIfPossible }));
-            clippedContentBounds.moveBy(-offset);
-
             context.translate(offset);
             FloatRect clipPathReferenceBox { { }, referenceBox.size() };
-            clipperRenderer->applyClippingToContext(context, renderer(), clipPathReferenceBox, clippedContentBounds, renderer().style().effectiveZoom());
+            clipperRenderer->applyClippingToContext(context, renderer(), clipPathReferenceBox, snappedClippingBounds, renderer().style().effectiveZoom());
             context.translate(-offset);
             return true;
         }

@@ -1,5 +1,65 @@
 2021-10-19  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r284490. rdar://problem/84434069
+
+    Regression(r284336): [ iOS 15 ] system-preview/badge.html is image failing
+    https://bugs.webkit.org/show_bug.cgi?id=231916
+    
+    Reviewed by Antti Koivisto.
+    Source/WebCore:
+    
+    In r284336 I made clip-path not apply to non-RenderBoxes, which disabled it on inlines,
+    breaking the system-preview/badge.html test.
+    
+    The spec says it applies to all elements, so this behavior change was incorrect.
+    
+    Revert back to using calculateLayerBounds() as the fallback rect to use for inlines, and add
+    tests for this. This rectangle is obviously incorrect (for example, it's affected by text
+    shadow), but leave it for now until https://github.com/w3c/csswg-drafts/issues/6383 is
+    resolved.
+    
+    I also failed to see that computeClipPath() was already computing the reference box
+    internally, so clean up the code with some comments to make it more clear that the result of
+    calculateLayerBounds() is used only as the fallback for inlines, as well as for the buffer
+    bounds for the applyClippingToContext() code path.
+    
+    Tests: css3/masking/clip-path-on-inline.html
+           css3/masking/clip-path-on-split-inline.html
+    
+    * rendering/RenderLayer.cpp:
+    (WebCore::RenderLayer::computeClipPath const):
+    (WebCore::RenderLayer::setupClipPath):
+    * rendering/RenderLayer.h:
+    * rendering/RenderLayerBacking.cpp:
+    (WebCore::RenderLayerBacking::updateMaskingLayerGeometry):
+    
+    LayoutTests:
+    
+    Tests for clip-path on a single-box inline, and a split inline.
+    
+    * css3/masking/clip-path-on-inline-expected.html: Added.
+    * css3/masking/clip-path-on-inline.html: Added.
+    * css3/masking/clip-path-on-split-inline-expected.html: Added.
+    * css3/masking/clip-path-on-split-inline.html: Added.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@284490 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-10-19  Simon Fraser  <simon.fraser@apple.com>
+
+            Regression(r284336): [ iOS 15 ] system-preview/badge.html is image failing
+            https://bugs.webkit.org/show_bug.cgi?id=231916
+
+            Reviewed by Antti Koivisto.
+
+            Tests for clip-path on a single-box inline, and a split inline.
+
+            * css3/masking/clip-path-on-inline-expected.html: Added.
+            * css3/masking/clip-path-on-inline.html: Added.
+            * css3/masking/clip-path-on-split-inline-expected.html: Added.
+            * css3/masking/clip-path-on-split-inline.html: Added.
+
+2021-10-19  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r284483. rdar://problem/84428759
 
     LayoutTests/imported/w3c:
