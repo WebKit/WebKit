@@ -89,7 +89,7 @@ void Line::resetTrailingContent()
     m_trailingSoftHyphenWidth = { };
 }
 
-void Line::removeCollapsibleContent(InlineLayoutUnit horizontalAvailableSpace)
+void Line::removeTrimmableContent(InlineLayoutUnit horizontalAvailableSpace)
 {
     removeTrailingTrimmableContent();
     visuallyCollapseHangingOverflow(horizontalAvailableSpace);
