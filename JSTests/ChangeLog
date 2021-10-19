@@ -1,5 +1,41 @@
 2021-10-18  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r284348. rdar://problem/84398090
+
+    [JSC] PutByVal's child5 should be KnownInt32Use / Int52RepUse in FTL
+    https://bugs.webkit.org/show_bug.cgi?id=231884
+    rdar://84357099
+    
+    Reviewed by Robin Morisset.
+    
+    JSTests:
+    
+    * stress/put-by-val-known-int32.js: Added.
+    (new.Uint8Array.1000000.map):
+    
+    Source/JavaScriptCore:
+    
+    The child5 of PutByVal should be KnownInt32Use or Int52RepUse.
+    
+    * ftl/FTLLowerDFGToB3.cpp:
+    (JSC::FTL::DFG::LowerDFGToB3::compilePutByVal):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@284348 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-10-18  Yusuke Suzuki  <ysuzuki@apple.com>
+
+            [JSC] PutByVal's child5 should be KnownInt32Use / Int52RepUse in FTL
+            https://bugs.webkit.org/show_bug.cgi?id=231884
+            rdar://84357099
+
+            Reviewed by Robin Morisset.
+
+            * stress/put-by-val-known-int32.js: Added.
+            (new.Uint8Array.1000000.map):
+
+2021-10-18  Russell Epstein  <repstein@apple.com>
+
         Apply patch. rdar://problem/84351845
 
     2021-10-18  Tadeu Zagallo  <tzagallo@apple.com>
