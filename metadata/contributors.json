@@ -619,6 +619,7 @@
          "andresg_22@apple.com"
       ],
       "expertise" : "Accessibility",
+      "github" : "AndresGonzalezApple",
       "name" : "Andres Gonzalez",
       "nicks" : [
          "andresg"
@@ -1416,6 +1417,7 @@
          "cfleizach@apple.com"
       ],
       "expertise" : "Accessibility",
+      "github" : "fleizach",
       "name" : "Chris Fleizach",
       "nicks" : [
          "cfleizach"
@@ -5826,7 +5828,7 @@
          "sergio@webkit.org"
       ],
       "expertise" : "WebKitGTK port, CSS Grid Layout, Flexbox",
-      "github": "svillar",
+      "github" : "svillar",
       "name" : "Sergio Villar Senin",
       "nicks" : [
          "svillar"
@@ -6433,6 +6435,21 @@
    },
    {
       "emails" : [
+         "tyler.wilcock@protonmail.com",
+         "twilco.o@protonmail.com",
+         "tyler.l.wilcock@gmail.com",
+         "tyler_w@apple.com",
+         "tylerw_22@apple.com"
+      ],
+      "expertise" : "Accessibility",
+      "github" : "twilco",
+      "name" : "Tyler Wilcock",
+      "nicks" : [
+         "twilco"
+      ]
+   },
+   {
+      "emails" : [
          "ich@liebefonts.com"
       ],
       "name" : "Ulrike Rausch"
@@ -6653,7 +6670,7 @@
          "xlopez@igalia.com"
       ],
       "expertise" : "JSC, WebKitGTK/WPE",
-      "github": "xanlpz",
+      "github" : "xanlpz",
       "name" : "Xan Lopez",
       "nicks" : [
          "xan"
