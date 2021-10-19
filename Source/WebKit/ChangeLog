@@ -1,3 +1,27 @@
+2021-10-18  John Pascoe  <j_pascoe@apple.com>
+
+        [WebAuthn] Obtain consent to create new credential when platform authenticator in excludedCredentials
+        https://bugs.webkit.org/show_bug.cgi?id=219813
+        <rdar://problem/72484635>
+
+        Currently, whenever the platform authenticator is within excludedCredentials during makeCredential we
+        always return NotAllowedError and merely flash a consent screen. This does not match the spec per Step 3.1
+        of makeCredential (https://w3c.github.io/webauthn/#sctn-op-make-cred). Instead, we should always obtain consent
+        and return a different error depending on consent was obtained.
+
+        A fixme to add this was inadvertently removed in  https://bugs.webkit.org/attachment.cgi?id=393180&action=prettypatch
+
+        Reviewed by Brent Fulgham.
+
+        Added api test TestWebKitAPI.WebAuthenticationPanel.LADuplicateCredentialWithConsent 
+
+        * UIProcess/API/Cocoa/_WKWebAuthenticationPanel.h:
+        * UIProcess/WebAuthentication/Cocoa/LocalAuthenticator.mm:
+        (WebKit::LocalAuthenticator::makeCredential):
+        * UIProcess/WebAuthentication/Cocoa/WebAuthenticationPanelClient.mm:
+        (WebKit::wkWebAuthenticationPanelUpdate):
+        * UIProcess/WebAuthentication/WebAuthenticationFlags.h:
+
 2021-10-18  Chris Dumez  <cdumez@apple.com>
 
         Add a callback to know when the service worker loads via -[WKWebView _loadServiceWorker:]

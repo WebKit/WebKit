@@ -74,6 +74,8 @@ static _WKWebAuthenticationPanelUpdate wkWebAuthenticationPanelUpdate(WebAuthent
         return _WKWebAuthenticationPanelUpdateLAError;
     if (status == WebAuthenticationStatus::LAExcludeCredentialsMatched)
         return _WKWebAuthenticationPanelUpdateLAExcludeCredentialsMatched;
+    if (status == WebAuthenticationStatus::LAExcludeCredentialsMatchedWithConsent)
+        return _WKWebAuthenticationPanelUpdateLAExcludeCredentialsMatchedWithConsent;
     if (status == WebAuthenticationStatus::LANoCredential)
         return _WKWebAuthenticationPanelUpdateLANoCredential;
     ASSERT_NOT_REACHED();

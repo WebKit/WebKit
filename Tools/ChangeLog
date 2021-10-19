@@ -1,3 +1,22 @@
+2021-10-18  John Pascoe  <j_pascoe@apple.com>
+
+        [WebAuthn] Obtain consent to create new credential when platform authenticator in excludedCredentials
+        https://bugs.webkit.org/show_bug.cgi?id=219813
+        <rdar://problem/72484635>
+
+        Currently, whenever the platform authenticator is within excludedCredentials during makeCredential we
+        always return NotAllowedError and merely flash a consent screen. This does not match the spec per Step 3.1
+        of makeCredential (https://w3c.github.io/webauthn/#sctn-op-make-cred). Instead, we should always obtain consent
+        and return a different error depending on consent was obtained.
+
+        This adds a test to confirm a different path is taken whenever consent is obtained.
+
+        Reviewed by Brent Fulgham.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/_WKWebAuthenticationPanel.mm:
+        (-[TestWebAuthenticationPanelDelegate panel:updateWebAuthenticationPanel:]):
+        (TestWebKitAPI::TEST):
+
 2021-10-18  Alex Christensen  <achristensen@webkit.org>
 
         [ iOS15 ] TestWebKitAPI.WebKit.HTTPSProxy is a flaky, but frequent, timeout
