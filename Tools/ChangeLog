@@ -1,3 +1,13 @@
+2021-10-18  Jonathan Bedard  <jbedard@apple.com>
+
+        [Python-3] Invoke webkit-patch with Python 3 by default (Revert)
+        https://bugs.webkit.org/show_bug.cgi?id=231591
+        <rdar://problem/84153640>
+
+        Reverted to fix webkitbot.
+
+        * Scripts/webkit-patch:
+
 2021-10-18  John Pascoe  <j_pascoe@apple.com>
 
         [WebAuthn] Obtain consent to create new credential when platform authenticator in excludedCredentials
