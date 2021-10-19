@@ -108,9 +108,12 @@ VPATH = \
     $(WEBKITADDITIONS_HEADER_SEARCH_PATHS) \
 #
 
-PYTHON = python3
-PERL = perl
-RUBY = ruby
+# Workaround for rdar://84212106.
+find_tool = $(realpath $(shell xcrun --sdk $(SDK_NAME) -f $(1)))
+
+PYTHON := $(call find_tool,python3)
+PERL := perl
+RUBY := ruby
 
 ifeq ($(OS),Windows_NT)
     DELETE = cmd //C del

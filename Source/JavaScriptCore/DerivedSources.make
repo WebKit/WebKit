@@ -24,10 +24,13 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-PYTHON = python3
-PERL = perl
-RUBY = ruby
-DELETE = rm -f
+# Workaround for rdar://84212106.
+find_tool = $(realpath $(shell xcrun --sdk $(SDK_NAME) -f $(1)))
+
+PYTHON := $(call find_tool,python3)
+PERL := perl
+RUBY := ruby
+DELETE := rm -f
 
 ifneq ($(SDKROOT),)
     SDK_FLAGS = -isysroot $(SDKROOT)
