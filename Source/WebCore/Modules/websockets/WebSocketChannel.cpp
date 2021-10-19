@@ -139,6 +139,9 @@ String WebSocketChannel::extensions()
 
 ThreadableWebSocketChannel::SendResult WebSocketChannel::send(const String& message)
 {
+    if (m_outgoingFrameQueueStatus != OutgoingFrameQueueOpen)
+        return ThreadableWebSocketChannel::SendSuccess;
+
     LOG(Network, "WebSocketChannel %p send() Sending String '%s'", this, message.utf8().data());
     CString utf8 = message.utf8(StrictConversionReplacingUnpairedSurrogatesWithFFFD);
     enqueueTextFrame(utf8);
@@ -154,6 +157,9 @@ ThreadableWebSocketChannel::SendResult WebSocketChannel::send(const String& mess
 
 ThreadableWebSocketChannel::SendResult WebSocketChannel::send(const ArrayBuffer& binaryData, unsigned byteOffset, unsigned byteLength)
 {
+    if (m_outgoingFrameQueueStatus != OutgoingFrameQueueOpen)
+        return ThreadableWebSocketChannel::SendSuccess;
+
     LOG(Network, "WebSocketChannel %p send() Sending ArrayBuffer %p byteOffset=%u byteLength=%u", this, &binaryData, byteOffset, byteLength);
     enqueueRawFrame(WebSocketFrame::OpCodeBinary, static_cast<const uint8_t*>(binaryData.data()) + byteOffset, byteLength);
     processOutgoingFrameQueue();
@@ -162,6 +168,9 @@ ThreadableWebSocketChannel::SendResult WebSocketChannel::send(const ArrayBuffer&
 
 ThreadableWebSocketChannel::SendResult WebSocketChannel::send(Blob& binaryData)
 {
+    if (m_outgoingFrameQueueStatus != OutgoingFrameQueueOpen)
+        return ThreadableWebSocketChannel::SendSuccess;
+
     LOG(Network, "WebSocketChannel %p send() Sending Blob '%s'", this, binaryData.url().string().utf8().data());
     enqueueBlobFrame(WebSocketFrame::OpCodeBinary, binaryData);
     processOutgoingFrameQueue();
@@ -170,6 +179,9 @@ ThreadableWebSocketChannel::SendResult WebSocketChannel::send(Blob& binaryData)
 
 bool WebSocketChannel::send(const uint8_t* data, int length)
 {
+    if (m_outgoingFrameQueueStatus != OutgoingFrameQueueOpen)
+        return ThreadableWebSocketChannel::SendSuccess;
+
     LOG(Network, "WebSocketChannel %p send() Sending uint8_t* data=%p length=%d", this, data, length);
     enqueueRawFrame(WebSocketFrame::OpCodeBinary, data, length);
     processOutgoingFrameQueue();

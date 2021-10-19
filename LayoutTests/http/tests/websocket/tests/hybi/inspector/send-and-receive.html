@@ -9,7 +9,7 @@ let webSocket = null;
 
 function createWebSocketConnection()
 {
-    webSocket = new WebSocket("ws://127.0.0.1:8880/websocket/tests/hybi/inspector/echo");
+    webSocket = new WebSocket("ws://127.0.0.1:8880/websocket/tests/hybi/echo");
 
     webSocket.onopen = function()
     {

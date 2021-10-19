@@ -232,7 +232,6 @@ void WebSocketChannel::disconnect()
 {
     m_client = nullptr;
     m_document = nullptr;
-    m_pendingTasks.clear();
     m_messageQueue.clear();
 
     m_inspector.didCloseWebSocket(m_document.get());
@@ -247,13 +246,6 @@ void WebSocketChannel::didConnect(String&& subprotocol, String&& extensions)
 
     if (!m_client)
         return;
-
-    if (m_isSuspended) {
-        enqueueTask([this, subprotocol = WTFMove(subprotocol), extensions = WTFMove(extensions)] () mutable {
-            didConnect(WTFMove(subprotocol), WTFMove(extensions));
-        });
-        return;
-    }
 
     m_subprotocol = WTFMove(subprotocol);
     m_extensions = WTFMove(extensions);
@@ -286,13 +278,6 @@ void WebSocketChannel::didReceiveText(String&& message)
     if (!m_client)
         return;
 
-    if (m_isSuspended) {
-        enqueueTask([this, message = WTFMove(message)] () mutable {
-            didReceiveText(WTFMove(message));
-        });
-        return;
-    }
-
     auto utf8Message = message.utf8();
     m_inspector.didReceiveWebSocketFrame(m_document.get(), createWebSocketFrameForWebInspector(utf8Message.dataAsUInt8Ptr(), utf8Message.length(), WebSocketFrame::OpCode::OpCodeText));
 
@@ -307,14 +292,6 @@ void WebSocketChannel::didReceiveBinaryData(IPC::DataReference&& data)
     if (!m_client)
         return;
 
-    if (m_isSuspended) {
-        enqueueTask([this, data = data.vector()] () mutable {
-            if (!m_isClosing && m_client)
-                m_client->didReceiveBinaryData(WTFMove(data));
-        });
-        return;
-    }
-
     m_inspector.didReceiveWebSocketFrame(m_document.get(), createWebSocketFrameForWebInspector(data.data(), data.size(), WebSocketFrame::OpCode::OpCodeBinary));
 
     m_client->didReceiveBinaryData(data.vector());
@@ -324,13 +301,6 @@ void WebSocketChannel::didClose(unsigned short code, String&& reason)
 {
     if (!m_client)
         return;
-
-    if (m_isSuspended) {
-        enqueueTask([this, code, reason = WTFMove(reason)] () mutable {
-            didClose(code, WTFMove(reason));
-        });
-        return;
-    }
 
     WebSocketFrame closingFrame(WebSocketFrame::OpCodeClose, true, false, false);
     m_inspector.didReceiveWebSocketFrame(m_document.get(), closingFrame);
@@ -364,13 +334,6 @@ void WebSocketChannel::didReceiveMessageError(String&& errorMessage)
     if (!m_client)
         return;
 
-    if (m_isSuspended) {
-        enqueueTask([this, errorMessage = WTFMove(errorMessage)] () mutable {
-            didReceiveMessageError(WTFMove(errorMessage));
-        });
-        return;
-    }
-
     logErrorMessage(errorMessage);
     m_client->didReceiveMessageError();
 }
@@ -382,44 +345,20 @@ void WebSocketChannel::networkProcessCrashed()
 
 void WebSocketChannel::suspend()
 {
-    m_isSuspended = true;
 }
 
 void WebSocketChannel::resume()
 {
-    Ref protectedThis { *this };
-    m_isSuspended = false;
-    while (!m_isSuspended && !m_pendingTasks.isEmpty())
-        m_pendingTasks.takeFirst()();
-}
-
-void WebSocketChannel::enqueueTask(Function<void()>&& task)
-{
-    m_pendingTasks.append(WTFMove(task));
 }
 
 void WebSocketChannel::didSendHandshakeRequest(ResourceRequest&& request)
 {
-    if (m_isSuspended) {
-        enqueueTask([this, request = WTFMove(request)]() mutable {
-            didSendHandshakeRequest(WTFMove(request));
-        });
-        return;
-    }
-
     m_inspector.willSendWebSocketHandshakeRequest(m_document.get(), request);
     m_handshakeRequest = WTFMove(request);
 }
 
 void WebSocketChannel::didReceiveHandshakeResponse(ResourceResponse&& response)
 {
-    if (m_isSuspended) {
-        enqueueTask([this, response = WTFMove(response)]() mutable {
-            didReceiveHandshakeResponse(WTFMove(response));
-        });
-        return;
-    }
-
     m_inspector.didReceiveWebSocketHandshakeResponse(m_document.get(), response);
     m_handshakeResponse = WTFMove(response);
 }

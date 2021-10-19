@@ -33,10 +33,8 @@
 #include "ActiveDOMObject.h"
 #include "EventTarget.h"
 #include "ExceptionOr.h"
-#include "Timer.h"
 #include <wtf/URL.h>
 #include "WebSocketChannelClient.h"
-#include <wtf/Deque.h>
 #include <wtf/HashSet.h>
 #include <wtf/Lock.h>
 
@@ -101,9 +99,7 @@ public:
 private:
     explicit WebSocket(ScriptExecutionContext&);
 
-    void resumeTimerFired();
-    void dispatchOrQueueErrorEvent();
-    void dispatchOrQueueEvent(Ref<Event>&&);
+    void dispatchErrorEventIfNeeded();
 
     void contextDestroyed() final;
     void suspend(ReasonForSuspension) final;
@@ -142,9 +138,6 @@ private:
     String m_subprotocol;
     String m_extensions;
 
-    Timer m_resumeTimer;
-    bool m_shouldDelayEventFiring { false };
-    Deque<Ref<Event>> m_pendingEvents;
     bool m_dispatchedErrorEvent { false };
     RefPtr<PendingActivity<WebSocket>> m_pendingActivity;
 };

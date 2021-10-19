@@ -1,3 +1,15 @@
+2021-10-19  Youenn Fablet  <youenn@apple.com>
+
+        Guarantee order of WebSocket events in case of being resumed
+        https://bugs.webkit.org/show_bug.cgi?id=231664
+
+        Reviewed by Chris Dumez.
+
+        * http/tests/websocket/tests/hybi/inspector/send-and-receive.html:
+        The WebSocket server was racing to close the connection with the User Agent.
+        The patch queueing a task to fire events is further amplifying this race.
+        To make the test non flaky, we use an echo server that waits for User Agent to close the connection.
+
 2021-10-19  Ayumi Kojima  <ayumi_kojima@apple.com>
 
         [ iOS ] http/tests/cache/disk-cache/redirect-chain-limits.html is a flaky timeout.
