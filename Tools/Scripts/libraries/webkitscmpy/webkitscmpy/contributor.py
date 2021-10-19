@@ -35,6 +35,7 @@ class Contributor(object):
     SVN_AUTHOR_RE = re.compile(r'r(?P<revision>\d+) \| (?P<email>.*) \| (?P<date>.*) \| \d+ lines?')
     SVN_AUTHOR_Q_RE = re.compile(r'r(?P<revision>\d+) \| (?P<email>.*) \| (?P<date>.*)')
     SVN_PATCH_FROM_RE = re.compile(r'Patch by (?P<author>.*) <(?P<email>.*)> on \d+-\d+-\d+')
+    REVIEWER = 'reviewer'
 
     class Encoder(json.JSONEncoder):
 
@@ -68,6 +69,8 @@ class Contributor(object):
                 created.github = contributor.get('github', created.github)
                 created.bitbucket = contributor.get('bitbucket', created.bitbucket)
 
+                result.statuses.add(created.status)
+
                 if created.github:
                     result[created.github] = created
                 if created.bitbucket:
@@ -85,6 +88,7 @@ class Contributor(object):
 
         def __init__(self):
             super(Contributor.Mapping, self).__init__(lambda: None)
+            self.statuses = set()
 
         def save(self, file):
             alias_to_name = defaultdict(list)
@@ -110,6 +114,8 @@ class Contributor(object):
             result.status = contributor.status or result.status
             result.github = contributor.github or result.github
             result.bitbucket = contributor.bitbucket or result.bitbucket
+
+            self.statuses.add(result.status)
 
             if result.github:
                 self[result.github] = result

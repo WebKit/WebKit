@@ -493,6 +493,22 @@ Reviewed by NOBODY (OOPS!).
             self.assertEqual(pr.approvers, [Contributor('Eager Reviewer', ['ereviewer@webkit.org'])])
             self.assertEqual(pr.blockers, [Contributor('Suspicious Reviewer', ['sreviewer@webkit.org'])])
 
+    def test_approvers_status(self):
+        with self.webserver():
+            repo = remote.GitHub(self.remote)
+            repo.contributors.add(Contributor(
+                'Suspicious Reviewer', ['sreviewer@webkit.org'],
+                github='sreviewer', status=Contributor.REVIEWER,
+            ))
+            pr = repo.pull_requests.get(1)
+            self.assertEqual(pr.reviewers, [
+                Contributor('Eager Reviewer', ['ereviewer@webkit.org']),
+                Contributor('Reluctant Reviewer', ['rreviewer@webkit.org']),
+                Contributor('Suspicious Reviewer', ['sreviewer@webkit.org']),
+            ])
+            self.assertEqual(pr.approvers, [])
+            self.assertEqual(pr.blockers, [Contributor('Suspicious Reviewer', ['sreviewer@webkit.org'])])
+
 
 class TestNetworkPullRequestBitBucket(unittest.TestCase):
     remote = 'https://bitbucket.example.com/projects/WEBKIT/repos/webkit'
@@ -573,4 +589,20 @@ Reviewed by NOBODY (OOPS!).
                 Contributor('Suspicious Reviewer', ['sreviewer@webkit.org']),
             ])
             self.assertEqual(pr.approvers, [Contributor('Eager Reviewer', ['ereviewer@webkit.org'])])
+            self.assertEqual(pr.blockers, [Contributor('Suspicious Reviewer', ['sreviewer@webkit.org'])])
+
+    def test_approvers_status(self):
+        with self.webserver():
+            repo = remote.BitBucket(self.remote)
+            repo.contributors.add(Contributor(
+                'Suspicious Reviewer', ['sreviewer@webkit.org'],
+                github='sreviewer', status=Contributor.REVIEWER,
+            ))
+            pr = repo.pull_requests.get(1)
+            self.assertEqual(pr.reviewers, [
+                Contributor('Eager Reviewer', ['ereviewer@webkit.org']),
+                Contributor('Reluctant Reviewer', ['rreviewer@webkit.org']),
+                Contributor('Suspicious Reviewer', ['sreviewer@webkit.org']),
+            ])
+            self.assertEqual(pr.approvers, [])
             self.assertEqual(pr.blockers, [Contributor('Suspicious Reviewer', ['sreviewer@webkit.org'])])
