@@ -1,3 +1,26 @@
+2021-10-13  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] Crash in WebCore::MediaPlayerPrivateGStreamer::sourceSetup when loading reddit video
+        https://bugs.webkit.org/show_bug.cgi?id=231519
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Since this GStreamer commit:
+        https://gitlab.freedesktop.org/gstreamer/gst-plugins-base/-/commit/52bca104e447309898ca8904b3914211ec7d4114
+
+        and starting from GStreamer 1.20, the playbin::source-setup signal is emitted before the
+        source element is added to the pipeline, so this gave us the opportunity to refactor our
+        code handling the downloadbuffer configuration, using the existing deep-element-added signal
+        handler.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::~MediaPlayerPrivateGStreamer):
+        (WebCore::MediaPlayerPrivateGStreamer::sourceSetup):
+        (WebCore::MediaPlayerPrivateGStreamer::configureDownloadBuffer):
+        (WebCore::MediaPlayerPrivateGStreamer::createGSTPlayBin):
+        (WebCore::MediaPlayerPrivateGStreamer::uriDecodeBinElementAddedCallback): Deleted.
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h:
+
 2021-09-15  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Fix size calculation in ImageBufferCairoImageSurfaceBackend::create()

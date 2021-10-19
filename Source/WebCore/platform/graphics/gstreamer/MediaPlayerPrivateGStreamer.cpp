@@ -200,9 +200,6 @@ MediaPlayerPrivateGStreamer::~MediaPlayerPrivateGStreamer()
     if (m_fillTimer.isActive())
         m_fillTimer.stop();
 
-    if (WEBKIT_IS_WEB_SRC(m_source.get()) && GST_OBJECT_PARENT(m_source.get()))
-        g_signal_handlers_disconnect_by_func(GST_ELEMENT_PARENT(m_source.get()), reinterpret_cast<gpointer>(uriDecodeBinElementAddedCallback), this);
-
     auto* sink = audioSink();
     if (sink && !WEBKIT_IS_AUDIO_SINK(sink))
         g_signal_handlers_disconnect_by_func(G_OBJECT(sink), reinterpret_cast<gpointer>(setAudioStreamPropertiesCallback), this);
@@ -874,16 +871,10 @@ void MediaPlayerPrivateGStreamer::sourceSetup(GstElement* sourceElement)
 {
     GST_DEBUG_OBJECT(pipeline(), "Source element set-up for %s", GST_ELEMENT_NAME(sourceElement));
 
-    if (WEBKIT_IS_WEB_SRC(m_source.get()) && GST_OBJECT_PARENT(m_source.get()))
-        g_signal_handlers_disconnect_by_func(GST_ELEMENT_PARENT(m_source.get()), reinterpret_cast<gpointer>(uriDecodeBinElementAddedCallback), this);
-
     m_source = sourceElement;
 
     if (WEBKIT_IS_WEB_SRC(m_source.get())) {
         webKitWebSrcSetMediaPlayer(WEBKIT_WEB_SRC_CAST(m_source.get()), m_player, m_referrer);
-        g_signal_connect(GST_ELEMENT_PARENT(m_source.get()), "element-added", G_CALLBACK(uriDecodeBinElementAddedCallback), this);
-        // This will set the multiqueue size to the default value.
-        g_object_set(GST_ELEMENT_PARENT(m_source.get()), "buffer-size", 2 * MB, nullptr);
 #if ENABLE(MEDIA_STREAM)
     } else if (WEBKIT_IS_MEDIA_STREAM_SRC(sourceElement)) {
         auto stream = m_streamPrivate.get();
@@ -2118,14 +2109,13 @@ void MediaPlayerPrivateGStreamer::processTableOfContentsEntry(GstTocEntry* entry
         processTableOfContentsEntry(static_cast<GstTocEntry*>(i->data));
 }
 
-void MediaPlayerPrivateGStreamer::uriDecodeBinElementAddedCallback(GstBin* bin, GstElement* element, MediaPlayerPrivateGStreamer* player)
+void MediaPlayerPrivateGStreamer::configureDownloadBuffer(GstElement* element)
 {
-    if (g_strcmp0(G_OBJECT_TYPE_NAME(element), "GstDownloadBuffer"))
-        return;
+    GUniquePtr<char> elementName(gst_element_get_name(element));
+    RELEASE_ASSERT(g_str_has_prefix(elementName.get(), "downloadbuffer"));
 
-    player->m_downloadBuffer = element;
-    g_signal_handlers_disconnect_by_func(bin, reinterpret_cast<gpointer>(uriDecodeBinElementAddedCallback), player);
-    g_signal_connect_swapped(element, "notify::temp-location", G_CALLBACK(downloadBufferFileCreatedCallback), player);
+    m_downloadBuffer = element;
+    g_signal_connect_swapped(element, "notify::temp-location", G_CALLBACK(downloadBufferFileCreatedCallback), this);
 
     // Set the GstDownloadBuffer size to our preferred value controls the thresholds for buffering events.
     g_object_set(element, "max-size-bytes", 100 * KB, nullptr);
@@ -2135,10 +2125,10 @@ void MediaPlayerPrivateGStreamer::uriDecodeBinElementAddedCallback(GstBin* bin, 
 
     GUniquePtr<char> newDownloadTemplate(g_build_filename(G_DIR_SEPARATOR_S, "var", "tmp", "WebKit-Media-XXXXXX", nullptr));
     g_object_set(element, "temp-template", newDownloadTemplate.get(), nullptr);
-    GST_DEBUG_OBJECT(player->pipeline(), "Reconfigured file download template from '%s' to '%s'", oldDownloadTemplate.get(), newDownloadTemplate.get());
+    GST_DEBUG_OBJECT(pipeline(), "Reconfigured file download template from '%s' to '%s'", oldDownloadTemplate.get(), newDownloadTemplate.get());
 
     String newDownloadPrefixPath = newDownloadTemplate.get();
-    player->purgeOldDownloadFiles(newDownloadPrefixPath.replace("XXXXXX", ""));
+    purgeOldDownloadFiles(newDownloadPrefixPath.replace("XXXXXX", ""));
 }
 
 void MediaPlayerPrivateGStreamer::downloadBufferFileCreatedCallback(MediaPlayerPrivateGStreamer* player)
@@ -2699,10 +2689,22 @@ void MediaPlayerPrivateGStreamer::createGSTPlayBin(const URL& url)
 
     g_signal_connect(GST_BIN_CAST(m_pipeline.get()), "deep-element-added", G_CALLBACK(+[](GstBin*, GstBin* subBin, GstElement* element, MediaPlayerPrivateGStreamer* player) {
         GUniquePtr<char> binName(gst_element_get_name(GST_ELEMENT_CAST(subBin)));
+        GUniquePtr<char> elementName(gst_element_get_name(element));
+
+        if (g_str_has_prefix(elementName.get(), "downloadbuffer")) {
+            player->configureDownloadBuffer(element);
+            return;
+        }
+
+        if (g_str_has_prefix(elementName.get(), "uridecodebin")) {
+            // This will set the multiqueue size to the default value.
+            g_object_set(element, "buffer-size", 2 * MB, nullptr);
+            return;
+        }
+
         if (!g_str_has_prefix(binName.get(), "decodebin"))
             return;
 
-        GUniquePtr<char> elementName(gst_element_get_name(element));
         if (g_str_has_prefix(elementName.get(), "v4l2"))
             player->m_videoDecoderPlatform = GstVideoDecoderPlatform::Video4Linux;
         else if (g_str_has_prefix(elementName.get(), "imxvpudec"))
