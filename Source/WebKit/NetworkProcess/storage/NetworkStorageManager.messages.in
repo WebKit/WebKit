@@ -33,7 +33,7 @@
     RemoveEntry(WebCore::FileSystemHandleIdentifier identifier, String name, bool deleteRecursively) -> (std::optional<WebKit::FileSystemStorageError> result) Async
     Resolve(WebCore::FileSystemHandleIdentifier identifier, WebCore::FileSystemHandleIdentifier targetIdentifier) -> (Expected<Vector<String>, WebKit::FileSystemStorageError> result) Async
 
-    CreateSyncAccessHandle(WebCore::FileSystemHandleIdentifier identifier) -> (Expected<WebCore::FileSystemSyncAccessHandleIdentifier, WebKit::FileSystemStorageError> result) Async
+    CreateSyncAccessHandle(WebCore::FileSystemHandleIdentifier identifier) -> (Expected<std::pair<WebCore::FileSystemSyncAccessHandleIdentifier, IPC::SharedFileHandle>, WebKit::FileSystemStorageError> result) Async
     GetSizeForAccessHandle(WebCore::FileSystemHandleIdentifier identifier, WebCore::FileSystemSyncAccessHandleIdentifier accessHandleIdentifier) -> (Expected<uint64_t, WebKit::FileSystemStorageError> result) Async
     TruncateForAccessHandle(WebCore::FileSystemHandleIdentifier identifier, WebCore::FileSystemSyncAccessHandleIdentifier accessHandleIdentifier, uint64_t size) -> (std::optional<WebKit::FileSystemStorageError> result) Async
     FlushForAccessHandle(WebCore::FileSystemHandleIdentifier identifier, WebCore::FileSystemSyncAccessHandleIdentifier accessHandleIdentifier) -> (std::optional<WebKit::FileSystemStorageError> result) Async

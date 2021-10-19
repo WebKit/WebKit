@@ -1,0 +1,29 @@
+[Worker] This test checks read and write capabilities of FileSystemSyncAccessHandle.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Starting worker: resources/sync-access-handle-read-write.js
+PASS [Worker] fileSize is 0
+[Worker] test read() and write():
+PASS [Worker] writeSize is writeBuffer.byteLength
+PASS [Worker] readSize is readBuffer.byteLength
+PASS [Worker] readText is "This is first sentence."
+PASS [Worker] writeSize is writeBuffer.byteLength
+PASS [Worker] readSize is readBuffer.byteLength
+PASS [Worker] readText is "This is second sentence."
+PASS [Worker] readSize is readBuffer.byteLength
+PASS [Worker] readText is "This is first sentence.This is second sentence."
+PASS [Worker] accessHandle.read(new ArrayBuffer(1), { "at" : Number.MAX_SAFE_INTEGER }) threw exception InvalidStateError: Failed to read at offset.
+PASS [Worker] accessHandle.write(new ArrayBuffer(1), { "at" : Number.MAX_SAFE_INTEGER }) threw exception InvalidStateError: Failed to write at offset.
+[Worker] test flush():
+PASS [Worker] fileSize is totalWriteSize
+[Worker] test truncate():
+PASS [Worker] fileSize is 4
+[Worker] test write() with pending operation:
+[Worker] accessHandle.truncate(0)
+PASS [Worker] accessHandle.read(readBuffer, { "at" : 0 }) threw exception InvalidStateError: Access handle has unfinished operation.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

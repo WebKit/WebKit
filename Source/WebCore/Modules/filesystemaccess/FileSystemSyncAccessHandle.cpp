@@ -34,14 +34,15 @@
 
 namespace WebCore {
 
-Ref<FileSystemSyncAccessHandle> FileSystemSyncAccessHandle::create(FileSystemFileHandle& source, FileSystemSyncAccessHandleIdentifier identifier)
+Ref<FileSystemSyncAccessHandle> FileSystemSyncAccessHandle::create(FileSystemFileHandle& source, FileSystemSyncAccessHandleIdentifier identifier, FileSystem::PlatformFileHandle file)
 {
-    return adoptRef(*new FileSystemSyncAccessHandle(source, identifier));
+    return adoptRef(*new FileSystemSyncAccessHandle(source, identifier, file));
 }
 
-FileSystemSyncAccessHandle::FileSystemSyncAccessHandle(FileSystemFileHandle& source, FileSystemSyncAccessHandleIdentifier identifier)
+FileSystemSyncAccessHandle::FileSystemSyncAccessHandle(FileSystemFileHandle& source, FileSystemSyncAccessHandleIdentifier identifier, FileSystem::PlatformFileHandle file)
     : m_source(source)
     , m_identifier(identifier)
+    , m_file(file)
 {
 }
 
@@ -53,17 +54,35 @@ FileSystemSyncAccessHandle::~FileSystemSyncAccessHandle()
 
 void FileSystemSyncAccessHandle::truncate(unsigned long long size, DOMPromiseDeferred<void>&& promise)
 {
-    m_source->truncate(m_identifier, size, WTFMove(promise));
+    m_pendingOperationCount++;
+    m_source->truncate(m_identifier, size, [weakThis = makeWeakPtr(*this), promise = WTFMove(promise)](auto result) mutable {
+        if (weakThis)
+            weakThis->m_pendingOperationCount--;
+
+        promise.settle(WTFMove(result));
+    });
 }
 
 void FileSystemSyncAccessHandle::getSize(DOMPromiseDeferred<IDLUnsignedLongLong>&& promise)
 {
-    m_source->getSize(m_identifier, WTFMove(promise));
+    m_pendingOperationCount++;
+    m_source->getSize(m_identifier, [weakThis = makeWeakPtr(*this), promise = WTFMove(promise)](auto result) mutable {
+        if (weakThis)
+            weakThis->m_pendingOperationCount--;
+
+        promise.settle(WTFMove(result));
+    });
 }
 
 void FileSystemSyncAccessHandle::flush(DOMPromiseDeferred<void>&& promise)
 {
-    m_source->flush(m_identifier, WTFMove(promise));
+    m_pendingOperationCount++;
+    m_source->flush(m_identifier, [weakThis = makeWeakPtr(*this), promise = WTFMove(promise)](auto result) mutable {
+        if (weakThis)
+            weakThis->m_pendingOperationCount--;
+
+        promise.settle(WTFMove(result));
+    });
 }
 
 void FileSystemSyncAccessHandle::close(DOMPromiseDeferred<void>&& promise)
@@ -71,9 +90,12 @@ void FileSystemSyncAccessHandle::close(DOMPromiseDeferred<void>&& promise)
     if (m_isClosed)
         return promise.reject(Exception { InvalidStateError });
 
+    m_pendingOperationCount++;
     m_source->close(m_identifier, [weakThis = makeWeakPtr(*this), promise = WTFMove(promise)](auto result) mutable {
-        if (weakThis)
+        if (weakThis) {
+            weakThis->m_pendingOperationCount--;
             weakThis->didClose();
+        }
 
         promise.settle(WTFMove(result));
     });
@@ -82,6 +104,48 @@ void FileSystemSyncAccessHandle::close(DOMPromiseDeferred<void>&& promise)
 void FileSystemSyncAccessHandle::didClose()
 {
     m_isClosed = true;
+}
+
+ExceptionOr<unsigned long long> FileSystemSyncAccessHandle::read(BufferSource&& buffer, FileSystemSyncAccessHandle::FilesystemReadWriteOptions options)
+{
+    ASSERT(!isMainThread());
+
+    if (m_file == FileSystem::invalidPlatformFileHandle || m_isClosed)
+        return Exception { InvalidStateError };
+
+    if (m_pendingOperationCount)
+        return Exception { InvalidStateError, "Access handle has unfinished operation"_s };
+
+    int result = FileSystem::seekFile(m_file, options.at, FileSystem::FileSeekOrigin::Beginning);
+    if (result == -1)
+        return Exception { InvalidStateError, "Failed to read at offset"_s };
+
+    result = FileSystem::readFromFile(m_file, buffer.mutableData(), buffer.length());
+    if (result == -1)
+        return Exception { InvalidStateError, "Failed to read from file"_s };
+
+    return result;
+}
+
+ExceptionOr<unsigned long long> FileSystemSyncAccessHandle::write(BufferSource&& buffer, FileSystemSyncAccessHandle::FilesystemReadWriteOptions options)
+{
+    ASSERT(!isMainThread());
+
+    if (m_file == FileSystem::invalidPlatformFileHandle || m_isClosed)
+        return Exception { InvalidStateError };
+
+    if (m_pendingOperationCount)
+        return Exception { InvalidStateError, "Access handle has unfinished operation"_s };
+
+    int result = FileSystem::seekFile(m_file, options.at, FileSystem::FileSeekOrigin::Beginning);
+    if (result == -1)
+        return Exception { InvalidStateError, "Failed to write at offset"_s };
+
+    result = FileSystem::writeToFile(m_file, buffer.data(), buffer.length());
+    if (result == -1)
+        return Exception { InvalidStateError, "Failed to write to file"_s };
+
+    return result;
 }
 
 } // namespace WebCore

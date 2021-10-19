@@ -166,6 +166,7 @@ Platform/IPC/SharedBufferDataReference.cpp @no-unify
 Platform/IPC/StreamClientConnection.cpp @no-unify
 Platform/IPC/StreamConnectionBuffer.cpp @no-unify
 Platform/IPC/StreamConnectionWorkQueue.cpp @no-unify
+Platform/IPC/SharedFileHandle.cpp @no-unify
 Platform/IPC/StreamServerConnection.cpp @no-unify
 Platform/IPC/StringReference.cpp @no-unify
 

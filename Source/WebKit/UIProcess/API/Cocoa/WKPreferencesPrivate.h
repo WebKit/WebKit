@@ -173,6 +173,9 @@ typedef NS_ENUM(NSInteger, _WKPitchCorrectionAlgorithm) {
 @property (nonatomic, setter=_setMediaSessionEnabled:) BOOL _mediaSessionEnabled WK_API_AVAILABLE(macos(12.0), ios(15.0));
 @property (nonatomic, getter=_isExtensibleSSOEnabled, setter=_setExtensibleSSOEnabled:) BOOL _extensibleSSOEnabled WK_API_AVAILABLE(macos(12.0), ios(15.0));
 @property (nonatomic, setter=_setRequiresPageVisibilityToPlayAudio:) BOOL _requiresPageVisibilityToPlayAudio WK_API_AVAILABLE(macos(12.0), ios(15.0));
+@property (nonatomic, setter=_setFileSystemAccessEnabled:) BOOL _fileSystemAccessEnabled WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+@property (nonatomic, setter=_setStorageAPIEnabled:) BOOL _storageAPIEnabled WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+@property (nonatomic, setter=_setAccessHandleEnabled:) BOOL _accessHandleEnabled WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 #if !TARGET_OS_IPHONE
 @property (nonatomic, setter=_setWebGLEnabled:) BOOL _webGLEnabled WK_API_AVAILABLE(macos(10.13.4));

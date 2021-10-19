@@ -1474,11 +1474,14 @@
 		9321D58A1A38F196008052BE /* WKImmediateActionTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 9321D5891A38F196008052BE /* WKImmediateActionTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9323611E1B015DA800FA9232 /* _WKOverlayScrollbarStyle.h in Headers */ = {isa = PBXBuildFile; fileRef = 9323611D1B015DA800FA9232 /* _WKOverlayScrollbarStyle.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93261161214054F4000806E7 /* WebIDBConnectionToClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 939288DD21404D6C00EBBA33 /* WebIDBConnectionToClient.h */; };
+		932BC60E271E252A00F6BE94 /* SharedFileHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 93122C852710CCDE001D819F /* SharedFileHandle.h */; };
 		933DF82E1B3BC09000AEA9E3 /* WKImagePreviewViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 933DF82D1B3BC09000AEA9E3 /* WKImagePreviewViewController.h */; };
 		933E835523A07C0600DEF289 /* WebIDBServer.h in Headers */ = {isa = PBXBuildFile; fileRef = 933E835323A07BF800DEF289 /* WebIDBServer.h */; };
 		933E835A23A1AE2800DEF289 /* WebIDBServerMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 933E835923A1ADF500DEF289 /* WebIDBServerMessages.h */; };
 		933E835B23A1B75000DEF289 /* WebIDBServerMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 933E835823A1ADF500DEF289 /* WebIDBServerMessageReceiver.cpp */; };
 		9342589A255B535A0059EEDD /* MediaPermissionUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 93425898255B534B0059EEDD /* MediaPermissionUtilities.h */; };
+		93468E6B2714AF47009983E3 /* SharedFileHandle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93468E6A2714AF47009983E3 /* SharedFileHandle.cpp */; };
+		93468E6D2714AF88009983E3 /* SharedFileHandleCocoa.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93468E6C2714AF88009983E3 /* SharedFileHandleCocoa.cpp */; };
 		934B724419F5B9BE00AE96D6 /* WKActionMenuItemTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 934B724319F5B9BE00AE96D6 /* WKActionMenuItemTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9354242C2703BDCB005CA72C /* WebFileSystemStorageConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 9354242A2703BDCB005CA72C /* WebFileSystemStorageConnection.h */; };
 		9356F2DC2152B6B500E6D5DF /* WebSWClientConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 517A53021F4793B200DCDC0A /* WebSWClientConnection.h */; };
@@ -4892,6 +4895,7 @@
 		93085DCC26E2E902000EC6A7 /* NetworkStorageManagerMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkStorageManagerMessageReceiver.cpp; sourceTree = "<group>"; };
 		93085DCD26E2E902000EC6A7 /* NetworkStorageManagerMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkStorageManagerMessages.h; sourceTree = "<group>"; };
 		93085DCE26E2E902000EC6A7 /* NetworkStorageManagerMessagesReplies.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkStorageManagerMessagesReplies.h; sourceTree = "<group>"; };
+		93122C852710CCDE001D819F /* SharedFileHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SharedFileHandle.h; sourceTree = "<group>"; };
 		931A075026F06310004474CD /* FileSystemStorageManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileSystemStorageManager.h; sourceTree = "<group>"; };
 		931A075126F06310004474CD /* FileSystemStorageManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FileSystemStorageManager.cpp; sourceTree = "<group>"; };
 		931A075226F06AB4004474CD /* FileSystemStorageHandle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FileSystemStorageHandle.cpp; sourceTree = "<group>"; };
@@ -4910,6 +4914,8 @@
 		933E835923A1ADF500DEF289 /* WebIDBServerMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebIDBServerMessages.h; path = DerivedSources/WebKit2/WebIDBServerMessages.h; sourceTree = BUILT_PRODUCTS_DIR; };
 		9342588F2555DCA50059EEDD /* MediaPermissionUtilities.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = MediaPermissionUtilities.mm; sourceTree = "<group>"; };
 		93425898255B534B0059EEDD /* MediaPermissionUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaPermissionUtilities.h; sourceTree = "<group>"; };
+		93468E6A2714AF47009983E3 /* SharedFileHandle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SharedFileHandle.cpp; sourceTree = "<group>"; };
+		93468E6C2714AF88009983E3 /* SharedFileHandleCocoa.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SharedFileHandleCocoa.cpp; sourceTree = "<group>"; };
 		934B724319F5B9BE00AE96D6 /* WKActionMenuItemTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKActionMenuItemTypes.h; sourceTree = "<group>"; };
 		9354242A2703BDCB005CA72C /* WebFileSystemStorageConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebFileSystemStorageConnection.h; sourceTree = "<group>"; };
 		9354242B2703BDCB005CA72C /* WebFileSystemStorageConnection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebFileSystemStorageConnection.cpp; sourceTree = "<group>"; };
@@ -7277,6 +7283,8 @@
 				5CC5DB9121488E16006CB8A8 /* SharedBufferCopy.h */,
 				2DC1855EDBFB850BA0B6D06D /* SharedBufferDataReference.cpp */,
 				2DC1881ACBCAB5D57C5C6EF0 /* SharedBufferDataReference.h */,
+				93468E6A2714AF47009983E3 /* SharedFileHandle.cpp */,
+				93122C852710CCDE001D819F /* SharedFileHandle.h */,
 				7B73123625CC8524003B2796 /* StreamClientConnection.cpp */,
 				7B73123325CC8523003B2796 /* StreamClientConnection.h */,
 				7B73123425CC8524003B2796 /* StreamConnectionBuffer.cpp */,
@@ -10997,6 +11005,7 @@
 				1A6D86BF1DF75265007745E8 /* MachMessage.cpp */,
 				1A6D86C01DF75265007745E8 /* MachMessage.h */,
 				BCC56F771159957D001CCAF9 /* MachPort.h */,
+				93468E6C2714AF88009983E3 /* SharedFileHandleCocoa.cpp */,
 			);
 			path = cocoa;
 			sourceTree = "<group>";
@@ -12753,6 +12762,7 @@
 				C0CE72A11247E71D00BC0EC4 /* WebPageMessages.h in Headers */,
 				2D5C9D0619C81D8F00B3C5C1 /* WebPageOverlay.h in Headers */,
 				46C392292316EC4D008EED9B /* WebPageProxyIdentifier.h in Headers */,
+				932BC60E271E252A00F6BE94 /* SharedFileHandle.h in Headers */,
 				BCBD3915125BB1A800D2C29F /* WebPageProxyMessages.h in Headers */,
 				512127C41908239A00DAF35C /* WebPasteboardOverrides.h in Headers */,
 				7C4694D11A51E36800AD5845 /* WebPasteboardProxy.h in Headers */,
@@ -14429,6 +14439,8 @@
 				2D92A787212B6AB100F493FD /* ShareableBitmap.cpp in Sources */,
 				2DC18FEBF337B9671C88E3CD /* SharedBufferCopy.cpp in Sources */,
 				2DC181245B549343BC98164C /* SharedBufferDataReference.cpp in Sources */,
+				93468E6B2714AF47009983E3 /* SharedFileHandle.cpp in Sources */,
+				93468E6D2714AF88009983E3 /* SharedFileHandleCocoa.cpp in Sources */,
 				A1ADAFB62368E6A8009CB776 /* SharedMemory.cpp in Sources */,
 				575B1BB923CE9C0B0020639A /* SimulatedInputDispatcher.cpp in Sources */,
 				2DE6943D18BD2A68005C15E5 /* SmartMagnificationControllerMessageReceiver.cpp in Sources */,

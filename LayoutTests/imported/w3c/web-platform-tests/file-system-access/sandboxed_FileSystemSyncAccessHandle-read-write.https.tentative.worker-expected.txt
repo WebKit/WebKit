@@ -1,10 +1,10 @@
 
-FAIL Test reading an empty file through a sync access handle. promise_test: Unhandled rejection with value: object "TypeError: handle.read is not a function. (In 'handle.read(readBuffer, {at: 0})', 'handle.read' is undefined)"
-FAIL Test writing and reading through a sync access handle. promise_test: Unhandled rejection with value: object "InvalidStateError: The object is in an invalid state."
-FAIL Test second write that is bigger than the first write promise_test: Unhandled rejection with value: object "InvalidStateError: The object is in an invalid state."
-FAIL Test second write that is smaller than the first write promise_test: Unhandled rejection with value: object "InvalidStateError: The object is in an invalid state."
-FAIL Test initial write with an offset promise_test: Unhandled rejection with value: object "InvalidStateError: The object is in an invalid state."
-FAIL Test overwriting the file at an offset promise_test: Unhandled rejection with value: object "InvalidStateError: The object is in an invalid state."
-FAIL Test read at an offset promise_test: Unhandled rejection with value: object "InvalidStateError: The object is in an invalid state."
-FAIL Test reading at a negative offset fails. promise_test: Unhandled rejection with value: object "InvalidStateError: The object is in an invalid state."
+PASS Test reading an empty file through a sync access handle.
+PASS Test writing and reading through a sync access handle.
+PASS Test second write that is bigger than the first write
+PASS Test second write that is smaller than the first write
+PASS Test initial write with an offset
+PASS Test overwriting the file at an offset
+PASS Test read at an offset
+FAIL Test reading at a negative offset fails. assert_throws_dom: function "() => handle.read(readBuffer, { at: -1 })" threw object "TypeError: Value -1 is outside the range [0, 9007199254740991]" that is not a DOMException NotSupportedError: property "code" is equal to undefined, expected 9
 

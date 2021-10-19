@@ -47,7 +47,7 @@ public:
     void didIsSameEntry(CallbackIdentifier, ExceptionOr<bool>&&);
     void didGetHandle(CallbackIdentifier, ExceptionOr<FileSystemHandleIdentifier>&&);
     void didResolve(CallbackIdentifier, ExceptionOr<Vector<String>>&&);
-    void didCreateSyncAccessHandle(CallbackIdentifier, ExceptionOr<FileSystemSyncAccessHandleIdentifier>&& result);
+    void didCreateSyncAccessHandle(CallbackIdentifier, ExceptionOr<std::pair<FileSystemSyncAccessHandleIdentifier, FileSystem::PlatformFileHandle>>&&);
     void completeVoidCallback(CallbackIdentifier, ExceptionOr<void>&& result);
     void completeIntegerCallback(CallbackIdentifier, ExceptionOr<uint64_t>&& result);
     void didGetHandleNames(CallbackIdentifier, ExceptionOr<Vector<String>>&&);

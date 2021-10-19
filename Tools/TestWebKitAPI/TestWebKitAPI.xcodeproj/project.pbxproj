@@ -842,6 +842,7 @@
 		931C281E22BC579A001D98C4 /* opendatabase-always-exists.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 931C281B22BC5583001D98C4 /* opendatabase-always-exists.html */; };
 		9329AA291DE3F81E003ABD07 /* TextBreakIterator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9329AA281DE3F81E003ABD07 /* TextBreakIterator.cpp */; };
 		932AE53D1D371047005DFFAF /* focus-inputs.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 93575C551D30366E000D604D /* focus-inputs.html */; };
+		932BC610271E256000F6BE94 /* FileSystemAccess.mm in Sources */ = {isa = PBXBuildFile; fileRef = 932BC60F271E256000F6BE94 /* FileSystemAccess.mm */; };
 		9332EF942649BB68009F5D6D /* StringToIntegerConversion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9332EF932649BB68009F5D6D /* StringToIntegerConversion.cpp */; };
 		933D631D1FCB76200032ECD6 /* Hasher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 933D631B1FCB76180032ECD6 /* Hasher.cpp */; };
 		9342589C255B609B0059EEDD /* SpeechRecognition.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9342589B255B609A0059EEDD /* SpeechRecognition.mm */; };
@@ -2543,6 +2544,7 @@
 		931C281B22BC5583001D98C4 /* opendatabase-always-exists.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "opendatabase-always-exists.html"; sourceTree = "<group>"; };
 		931C281C22BC55A7001D98C4 /* WebSQLBasics.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebSQLBasics.mm; sourceTree = "<group>"; };
 		9329AA281DE3F81E003ABD07 /* TextBreakIterator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextBreakIterator.cpp; sourceTree = "<group>"; };
+		932BC60F271E256000F6BE94 /* FileSystemAccess.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileSystemAccess.mm; sourceTree = "<group>"; };
 		9331407B17B4419000F083B1 /* DidNotHandleKeyDown.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DidNotHandleKeyDown.cpp; sourceTree = "<group>"; };
 		9332EF932649BB68009F5D6D /* StringToIntegerConversion.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StringToIntegerConversion.cpp; sourceTree = "<group>"; };
 		933D631B1FCB76180032ECD6 /* Hasher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Hasher.cpp; sourceTree = "<group>"; };
@@ -3236,6 +3238,7 @@
 				08FB779DFE84155DC02AAC07 /* External Frameworks and Libraries */,
 				1AB674ADFE9D54B511CA2CBB /* Products */,
 				7C83E0281D0A5CDF00FEBCF3 /* Frameworks */,
+				932BC60D271E239800F6BE94 /* Recovered References */,
 			);
 			name = TestWebKitAPI;
 			sourceTree = "<group>";
@@ -3494,6 +3497,7 @@
 				CA2879DA226E6986001026F5 /* IndexedDBSuspendImminently.mm */,
 				CA5B94D62191005B0059FE38 /* IndexedDBTempFileSize.mm */,
 				CA97B3922193663B0045DF6F /* IndexedDBUserDelete.mm */,
+				932BC60F271E256000F6BE94 /* FileSystemAccess.mm */,
 				F460F659261117E70064F2B6 /* InjectedBundleHitTestPlugIn.mm */,
 				F460F65A2611183F0064F2B6 /* InjectedBundleHitTestProtocol.h */,
 				0E404A8A2166DDF8008271BA /* InjectedBundleNodeHandleIsSelectElement.mm */,
@@ -3919,6 +3923,13 @@
 				37C7CC2B1EA4146B007BD956 /* WeakLinking.cpp */,
 			);
 			path = darwin;
+			sourceTree = "<group>";
+		};
+		932BC60D271E239800F6BE94 /* Recovered References */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = "Recovered References";
 			sourceTree = "<group>";
 		};
 		9BD5111A1FE8E10200D2B630 /* mac */ = {
@@ -5515,6 +5526,7 @@
 				2E92B8FA2164A0C1005B64F0 /* FontAttributes.mm in Sources */,
 				F456AB1C213EDBA300CB2CEF /* FontManagerTests.mm in Sources */,
 				1C81802725FB09E200608B3E /* FontRegistrySandboxCheck.mm in Sources */,
+				932BC610271E256000F6BE94 /* FileSystemAccess.mm in Sources */,
 				1CF59AE321E68932006E37EC /* ForceLightAppearanceInBundle.mm in Sources */,
 				7CCE7EF51A411AE600447C4C /* ForceRepaint.cpp in Sources */,
 				F4FA282A24CD012700618A46 /* FormValidation.mm in Sources */,

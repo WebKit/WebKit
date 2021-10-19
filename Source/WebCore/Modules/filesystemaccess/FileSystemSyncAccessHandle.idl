@@ -33,6 +33,8 @@
     Promise<unsigned long long> getSize();
     Promise<undefined> flush();
     Promise<undefined> close();
+    unsigned long long read([AllowShared] BufferSource buffer, FilesystemReadWriteOptions options);
+    unsigned long long write([AllowShared] BufferSource buffer, FilesystemReadWriteOptions options);
 };
 
 dictionary FilesystemReadWriteOptions {

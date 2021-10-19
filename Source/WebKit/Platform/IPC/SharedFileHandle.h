@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Igalia S.L.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,47 +25,34 @@
 
 #pragma once
 
-#include <JavaScriptCore/ArrayBuffer.h>
-#include <JavaScriptCore/ArrayBufferView.h>
-#include <wtf/RefPtr.h>
-#include <wtf/Variant.h>
+#include <fcntl.h>
+#include <wtf/FileSystem.h>
 
-namespace WebCore {
+namespace IPC {
 
-class BufferSource {
+class Decoder;
+class Encoder;
+
+class SharedFileHandle {
 public:
-    using VariantType = WTF::Variant<RefPtr<JSC::ArrayBufferView>, RefPtr<JSC::ArrayBuffer>>;
+    static std::optional<SharedFileHandle> create(FileSystem::PlatformFileHandle);
 
-    BufferSource() { }
-    BufferSource(VariantType&& variant)
-        : m_variant(WTFMove(variant))
-    { }
+    SharedFileHandle() = default;
+    FileSystem::PlatformFileHandle handle() { return m_handle; }
 
-    const VariantType& variant() const { return m_variant; }
+    void encode(Encoder&) const;
 
-    const uint8_t* data() const
-    {
-        return WTF::visit([](auto& buffer) -> const uint8_t* {
-            return buffer ? static_cast<const uint8_t*>(buffer->data()) : nullptr;
-        }, m_variant);
-    }
+    static std::optional<SharedFileHandle> decode(Decoder&);
     
-    void* mutableData() const
-    {
-        return WTF::visit([](auto& buffer) -> void* {
-            return buffer->data();
-        }, m_variant);
-    }
-
-    size_t length() const
-    {
-        return WTF::visit([](auto& buffer) -> size_t {
-            return buffer ? buffer->byteLength() : 0;
-        }, m_variant);
-    }
-
 private:
-    VariantType m_variant;
+    explicit SharedFileHandle(FileSystem::PlatformFileHandle handle)
+        : m_handle(handle)
+    {
+    }
+
+    FileSystem::PlatformFileHandle m_handle { FileSystem::invalidPlatformFileHandle };
 };
 
-} // namespace WebCore
+} // namespace IPC
+
+

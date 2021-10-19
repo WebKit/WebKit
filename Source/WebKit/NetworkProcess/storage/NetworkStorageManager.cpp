@@ -221,7 +221,7 @@ void NetworkStorageManager::resolve(WebCore::FileSystemHandleIdentifier identifi
     completionHandler(handle->resolve(targetIdentifier));
 }
 
-void NetworkStorageManager::createSyncAccessHandle(WebCore::FileSystemHandleIdentifier identifier, CompletionHandler<void(Expected<WebCore::FileSystemSyncAccessHandleIdentifier, FileSystemStorageError>)>&& completionHandler)
+void NetworkStorageManager::createSyncAccessHandle(WebCore::FileSystemHandleIdentifier identifier, CompletionHandler<void(Expected<AccessHandleInfo, FileSystemStorageError>)>&& completionHandler)
 {
     ASSERT(!RunLoop::isMain());
 

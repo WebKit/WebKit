@@ -25,14 +25,17 @@
 
 #pragma once
 
+#include "BufferSource.h"
 #include "FileSystemSyncAccessHandleIdentifier.h"
 #include "IDLTypes.h"
+#include <wtf/FileSystem.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
 class FileSystemFileHandle;
 template<typename> class DOMPromiseDeferred;
+template<typename> class ExceptionOr;
 
 class FileSystemSyncAccessHandle : public RefCounted<FileSystemSyncAccessHandle>, public CanMakeWeakPtr<FileSystemSyncAccessHandle> {
 public:
@@ -40,7 +43,7 @@ public:
         unsigned long long at;
     };
 
-    static Ref<FileSystemSyncAccessHandle> create(FileSystemFileHandle&, FileSystemSyncAccessHandleIdentifier);
+    static Ref<FileSystemSyncAccessHandle> create(FileSystemFileHandle&, FileSystemSyncAccessHandleIdentifier, FileSystem::PlatformFileHandle);
     ~FileSystemSyncAccessHandle();
 
     void truncate(unsigned long long size, DOMPromiseDeferred<void>&&);
@@ -48,13 +51,17 @@ public:
     void flush(DOMPromiseDeferred<void>&&);
     void close(DOMPromiseDeferred<void>&&);
     void didClose();
+    ExceptionOr<unsigned long long> read(BufferSource&&, FilesystemReadWriteOptions);
+    ExceptionOr<unsigned long long> write(BufferSource&&, FilesystemReadWriteOptions);
 
 private:
-    FileSystemSyncAccessHandle(FileSystemFileHandle&, FileSystemSyncAccessHandleIdentifier);
+    FileSystemSyncAccessHandle(FileSystemFileHandle&, FileSystemSyncAccessHandleIdentifier, FileSystem::PlatformFileHandle);
 
     Ref<FileSystemFileHandle> m_source;
     FileSystemSyncAccessHandleIdentifier m_identifier;
     bool m_isClosed { false };
+    uint64_t m_pendingOperationCount { 0 };
+    FileSystem::PlatformFileHandle m_file;
 };
 
 } // namespace WebCore

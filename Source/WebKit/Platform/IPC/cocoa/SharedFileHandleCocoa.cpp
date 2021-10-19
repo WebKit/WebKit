@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Igalia S.L.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,49 +23,41 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "SharedFileHandle.h"
 
-#include <JavaScriptCore/ArrayBuffer.h>
-#include <JavaScriptCore/ArrayBufferView.h>
-#include <wtf/RefPtr.h>
-#include <wtf/Variant.h>
+#include "MachPort.h"
+#include <pal/spi/cocoa/FilePortSPI.h>
 
-namespace WebCore {
+namespace IPC {
 
-class BufferSource {
-public:
-    using VariantType = WTF::Variant<RefPtr<JSC::ArrayBufferView>, RefPtr<JSC::ArrayBuffer>>;
+std::optional<SharedFileHandle> SharedFileHandle::create(FileSystem::PlatformFileHandle handle)
+{
+    return SharedFileHandle { handle };
+}
 
-    BufferSource() { }
-    BufferSource(VariantType&& variant)
-        : m_variant(WTFMove(variant))
-    { }
-
-    const VariantType& variant() const { return m_variant; }
-
-    const uint8_t* data() const
-    {
-        return WTF::visit([](auto& buffer) -> const uint8_t* {
-            return buffer ? static_cast<const uint8_t*>(buffer->data()) : nullptr;
-        }, m_variant);
+void SharedFileHandle::encode(Encoder& encoder) const
+{
+    mach_port_name_t fileport = MACH_PORT_NULL;
+    if (fileport_makeport(m_handle, &fileport) == -1) {
+        encoder << MachPort();
+        return;
     }
+
+    encoder << MachPort(fileport, MACH_MSG_TYPE_MOVE_SEND);
+}
+
+std::optional<SharedFileHandle> SharedFileHandle::decode(Decoder& decoder)
+{
+    MachPort machPort;
+    if (!decoder.decode(machPort))
+        return std::nullopt;
     
-    void* mutableData() const
-    {
-        return WTF::visit([](auto& buffer) -> void* {
-            return buffer->data();
-        }, m_variant);
-    }
+    int fd = fileport_makefd(machPort.port());
+    if (fd == -1)
+        return SharedFileHandle { };
 
-    size_t length() const
-    {
-        return WTF::visit([](auto& buffer) -> size_t {
-            return buffer ? buffer->byteLength() : 0;
-        }, m_variant);
-    }
+    return SharedFileHandle::create(fileport_makefd(machPort.port()));
+}
 
-private:
-    VariantType m_variant;
-};
-
-} // namespace WebCore
+} // namespace IPC
