@@ -121,19 +121,19 @@ void MockLibWebRTCPeerConnectionForIceCandidates::sendCandidates()
 
     // Let's gather candidates
     LibWebRTCProvider::callOnWebRTCSignalingThread([this]() {
-        MockLibWebRTCIceCandidate candidate("candidate:2013266431 1 udp 2013266432 192.168.0.100 38838 typ host generation 0", "1");
+        MockLibWebRTCIceCandidate candidate("candidate:2013266431 1 udp 2013266432 e7588693-48a3-434d-a5e3-64159095e03b.local 38838 typ host generation 0", "1");
         m_observer.OnIceCandidate(&candidate);
     });
 
     LibWebRTCProvider::callOnWebRTCSignalingThread([this]() {
-        MockLibWebRTCIceCandidate candidate("candidate:1019216383 1 tcp 1019216384 192.168.0.100 9 typ host tcptype passive generation 0", "1");
+        MockLibWebRTCIceCandidate candidate("candidate:1019216383 1 tcp 1019216384 d7588693-48a3-434d-a5e3-64159095e03b.local 9 typ host tcptype passive generation 0", "1");
         m_observer.OnIceCandidate(&candidate);
-        MockLibWebRTCIceCandidate candidateSSLTcp("candidate:1019216384 1 ssltcp 1019216385 192.168.0.100 49888 typ host generation 0", "1");
+        MockLibWebRTCIceCandidate candidateSSLTcp("candidate:1019216384 1 ssltcp 1019216385 c7588693-48a3-434d-a5e3-64159095e03b.local 49888 typ host generation 0", "1");
         m_observer.OnIceCandidate(&candidateSSLTcp);
     });
 
     LibWebRTCProvider::callOnWebRTCSignalingThread([this]() {
-        MockLibWebRTCIceCandidate candidate("candidate:1677722111 1 tcp 1677722112 172.18.0.1 47989 typ srflx raddr 192.168.0.100 rport 47989 generation 0", "1");
+        MockLibWebRTCIceCandidate candidate("candidate:1677722111 1 tcp 1677722112 172.18.0.1 47989 typ srflx raddr 0.0.0.0 rport 0 generation 0", "1");
         m_observer.OnIceCandidate(&candidate);
     });
 
@@ -221,7 +221,7 @@ static rtc::scoped_refptr<webrtc::PeerConnectionInterface> createConnection(cons
     if (testCase == "ICECandidates")
         return new rtc::RefCountedObject<MockLibWebRTCPeerConnectionForIceCandidates>(observer);
 
-    if (testCase == "ICECandidatesWithDelay")
+    if (testCase == "MDNSICECandidatesWithDelay")
         return new rtc::RefCountedObject<MockLibWebRTCPeerConnectionForIceCandidates>(observer, 1000);
 
     if (testCase == "ICEConnectionState")

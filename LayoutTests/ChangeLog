@@ -1,3 +1,15 @@
+2021-10-19  Youenn Fablet  <youenn@apple.com>
+
+        [ wk2 ] 2 page-cache layout-tests are flakey crashing
+        https://bugs.webkit.org/show_bug.cgi?id=224558
+        <rdar://problem/76652825>
+
+        Reviewed by Eric Carlson.
+
+        * fast/mediastream/RTCPeerConnection-icecandidate-event-expected.txt: Rebasing after mock changes.
+        * platform/mac-wk2/TestExpectations:
+        * webrtc/peerconnection-new-candidate-page-cache.html:
+
 2021-10-19  Martin Robinson  <mrobinson@igalia.com>
 
         [css-scroll-snap] Triggering a layout during scroll causes jittery scrolling on iOS

@@ -1422,10 +1422,6 @@ webkit.org/b/224294 [ Debug ] inspector/indexeddb/requestDatabaseNames.html [ Pa
 
 webkit.org/b/224463 [ BigSur arm64 ] webrtc/disable-encryption.html [ Pass Timeout ]
 
-# webkit.org/b/224558 The following two page-cache tests are flakey crasing:
-webrtc/peerconnection-new-candidate-page-cache.html [ Pass Crash ]
-http/tests/navigation/page-cache-mediastream.html [ Pass Crash ]
-
 webkit.org/b/224633 media/presentationmodechanged-fired-once.html [ Pass Timeout ]
 
 webkit.org/b/224690 compositing/video/video-border-radius-clipping.html [ Pass ImageOnlyFailure ]
