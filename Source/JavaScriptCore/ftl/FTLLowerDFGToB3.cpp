@@ -17225,7 +17225,7 @@ IGNORE_CLANG_WARNINGS_END
         auto doUntagArrayPtr = [&](LValue taggedPtr) {
 #if CPU(ARM64E)
             if (kind == Gigacage::Primitive) {
-#if USE(ADDRESS64)
+#if USE(LARGE_TYPED_ARRAYS)
                 LValue size = m_out.load64(base, m_heaps.JSArrayBufferView_length);
 #else
                 LValue size = m_out.load32(base, m_heaps.JSArrayBufferView_length);

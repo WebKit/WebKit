@@ -4373,7 +4373,7 @@ void SpeculativeJIT::compile(Node* node)
         break;
 
     case GetTypedArrayLengthAsInt52:
-#if USE(ADDRESS64)
+#if USE(LARGE_TYPED_ARRAYS)
         compileGetTypedArrayLengthAsInt52(node);
 #else
         RELEASE_ASSERT_NOT_REACHED();
