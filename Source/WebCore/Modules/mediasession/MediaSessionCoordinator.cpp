@@ -33,9 +33,12 @@
 #include "JSDOMPromiseDeferred.h"
 #include "JSMediaSessionCoordinatorState.h"
 #include "Logging.h"
+#include "MediaMetadata.h"
 #include "MediaSession.h"
 #include "MediaSessionCoordinatorPrivate.h"
+#include <wtf/CompletionHandler.h>
 #include <wtf/Logger.h>
+#include <wtf/LoggerHelper.h>
 #include <wtf/Seconds.h>
 
 static const Seconds CommandTimeTolerance = 50_ms;

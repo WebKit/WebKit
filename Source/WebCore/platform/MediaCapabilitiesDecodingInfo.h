@@ -47,9 +47,16 @@ struct MediaCapabilitiesDecodingInfo : MediaCapabilitiesInfo {
 
     MediaDecodingConfiguration supportedConfiguration;
 
+    MediaCapabilitiesDecodingInfo isolatedCopy() const;
+
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static std::optional<MediaCapabilitiesDecodingInfo> decode(Decoder&);
 };
+
+inline MediaCapabilitiesDecodingInfo MediaCapabilitiesDecodingInfo::isolatedCopy() const
+{
+    return { MediaCapabilitiesInfo::isolatedCopy(), supportedConfiguration.isolatedCopy() };
+}
 
 template<class Encoder>
 void MediaCapabilitiesDecodingInfo::encode(Encoder& encoder) const

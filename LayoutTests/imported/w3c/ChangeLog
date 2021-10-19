@@ -1,3 +1,22 @@
+2021-10-19  Youenn Fablet  <youenn@apple.com>
+
+        Expose MediaCapabilities to Workers
+        https://bugs.webkit.org/show_bug.cgi?id=231574
+
+        Reviewed by Eric Carlson.
+
+        Allow running encoding tests in workers as well as in window.
+
+        * web-platform-tests/media-capabilities/decodingInfo.any.worker-expected.txt:
+        * web-platform-tests/media-capabilities/encodingInfo.any-expected.txt: Added.
+        * web-platform-tests/media-capabilities/encodingInfo.any.html: Added.
+        * web-platform-tests/media-capabilities/encodingInfo.any.js: Added.
+        * web-platform-tests/media-capabilities/encodingInfo.any.worker-expected.txt: Added.
+        * web-platform-tests/media-capabilities/encodingInfo.any.worker.html: Added.
+        * web-platform-tests/media-capabilities/encodingInfo-expected: Removed.
+        * web-platform-tests/media-capabilities/encodingInfo.html: Removed.
+        * web-platform-tests/media-capabilities/idlharness.any.worker-expected.txt:
+
 2021-10-18  Sergio Villar Senin  <svillar@igalia.com>
 
         [css-flexbox] Add flex-basis: content support

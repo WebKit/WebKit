@@ -131,6 +131,7 @@ Modules/indexeddb/shared/IDBTransactionInfo.cpp
 Modules/indexeddb/shared/IndexKey.cpp
 Modules/mediacapabilities/MediaCapabilities.cpp
 Modules/mediacapabilities/NavigatorMediaCapabilities.cpp
+Modules/mediacapabilities/WorkerNavigatorMediaCapabilities.cpp
 Modules/mediasession/MediaMetadata.cpp
 Modules/mediasession/MediaSession.cpp
 Modules/mediasession/MediaSessionCoordinator.cpp

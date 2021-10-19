@@ -177,6 +177,7 @@ $(PROJECT_DIR)/Modules/mediacapabilities/MediaEncodingType.idl
 $(PROJECT_DIR)/Modules/mediacapabilities/Navigator+MediaCapabilities.idl
 $(PROJECT_DIR)/Modules/mediacapabilities/TransferFunction.idl
 $(PROJECT_DIR)/Modules/mediacapabilities/VideoConfiguration.idl
+$(PROJECT_DIR)/Modules/mediacapabilities/WorkerNavigator+MediaCapabilities.idl
 $(PROJECT_DIR)/Modules/mediacontrols/MediaControlsHost.idl
 $(PROJECT_DIR)/Modules/mediarecorder/BlobEvent.idl
 $(PROJECT_DIR)/Modules/mediarecorder/MediaRecorder.idl

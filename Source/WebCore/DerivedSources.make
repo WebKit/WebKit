@@ -203,6 +203,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/mediacapabilities/Navigator+MediaCapabilities.idl \
     $(WebCore)/Modules/mediacapabilities/TransferFunction.idl \
     $(WebCore)/Modules/mediacapabilities/VideoConfiguration.idl \
+    $(WebCore)/Modules/mediacapabilities/WorkerNavigator+MediaCapabilities.idl \
     $(WebCore)/Modules/mediacontrols/MediaControlsHost.idl \
     $(WebCore)/Modules/mediarecorder/BlobEvent.idl \
     $(WebCore)/Modules/mediarecorder/MediaRecorder.idl \

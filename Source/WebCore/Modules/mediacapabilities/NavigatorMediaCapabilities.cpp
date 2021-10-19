@@ -32,7 +32,7 @@
 namespace WebCore {
 
 NavigatorMediaCapabilities::NavigatorMediaCapabilities()
-    : m_mediaCapabilities(adoptRef(*new MediaCapabilities()))
+    : m_mediaCapabilities(MediaCapabilities::create())
 {
 }
 

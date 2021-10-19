@@ -34,9 +34,16 @@ struct MediaCapabilitiesInfo {
     bool smooth { false };
     bool powerEfficient { false };
 
+    MediaCapabilitiesInfo isolatedCopy() const;
+
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static std::optional<MediaCapabilitiesInfo> decode(Decoder&);
 };
+
+inline MediaCapabilitiesInfo MediaCapabilitiesInfo::isolatedCopy() const
+{
+    return *this;
+}
 
 template<class Encoder>
 void MediaCapabilitiesInfo::encode(Encoder& encoder) const

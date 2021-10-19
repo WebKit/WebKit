@@ -2495,6 +2495,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWorkerGlobalScope.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWorkerGlobalScope.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWorkerLocation.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWorkerLocation.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWorkerNavigator+MediaCapabilities.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWorkerNavigator+MediaCapabilities.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWorkerNavigator.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWorkerNavigator.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWorkerOptions.cpp

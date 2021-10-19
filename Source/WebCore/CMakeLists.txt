@@ -345,6 +345,7 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/mediacapabilities/Navigator+MediaCapabilities.idl
     Modules/mediacapabilities/TransferFunction.idl
     Modules/mediacapabilities/VideoConfiguration.idl
+    Modules/mediacapabilities/WorkerNavigator+MediaCapabilities.idl
 
     Modules/mediacontrols/MediaControlsHost.idl
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,19 +25,29 @@
 
 #pragma once
 
+#include "MediaEngineConfigurationFactory.h"
+#include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
 class DeferredPromise;
-class Document;
-struct MediaDecodingConfiguration;
-struct MediaEncodingConfiguration;
+class ScriptExecutionContext;
 
-class MediaCapabilities : public RefCounted<MediaCapabilities> {
+class MediaCapabilities : public RefCounted<MediaCapabilities>, public CanMakeWeakPtr<MediaCapabilities> {
 public:
-    void decodingInfo(Document&, MediaDecodingConfiguration&&, Ref<DeferredPromise>&&);
-    void encodingInfo(Document&, MediaEncodingConfiguration&&, Ref<DeferredPromise>&&);
+    static Ref<MediaCapabilities> create() { return adoptRef(*new MediaCapabilities); }
+
+    void decodingInfo(ScriptExecutionContext&, MediaDecodingConfiguration&&, Ref<DeferredPromise>&&);
+    void encodingInfo(ScriptExecutionContext&, MediaEncodingConfiguration&&, Ref<DeferredPromise>&&);
+
+private:
+    MediaCapabilities() = default;
+
+    uint64_t m_nextTaskIdentifier { 0 };
+    HashMap<uint64_t, MediaEngineConfigurationFactory::DecodingConfigurationCallback> m_decodingTasks;
+    HashMap<uint64_t, MediaEngineConfigurationFactory::EncodingConfigurationCallback> m_encodingTasks;
 };
 
 } // namespace WebCore

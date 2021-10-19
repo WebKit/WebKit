@@ -64,6 +64,7 @@
 #include "Settings.h"
 #include "WebCoreJSClientData.h"
 #include "WorkerGlobalScope.h"
+#include "WorkerLoaderProxy.h"
 #include "WorkerNavigator.h"
 #include "WorkerOrWorkletGlobalScope.h"
 #include "WorkerOrWorkletScriptController.h"
@@ -680,6 +681,29 @@ bool ScriptExecutionContext::ensureOnContextThread(ScriptExecutionContextIdentif
 
     task.performTask(*context);
     return true;
+}
+
+void ScriptExecutionContext::postTaskToResponsibleDocument(Function<void(Document&)>&& callback)
+{
+    if (is<Document>(this)) {
+        callback(downcast<Document>(*this));
+        return;
+    }
+
+    ASSERT(is<WorkerOrWorkletGlobalScope>(this));
+    if (!is<WorkerOrWorkletGlobalScope>(this))
+        return;
+
+    auto* thread = downcast<WorkerOrWorkletGlobalScope>(this)->workerOrWorkletThread();
+    if (thread) {
+        thread->workerLoaderProxy().postTaskToLoader([callback = WTFMove(callback)](auto&& context) {
+            callback(downcast<Document>(context));
+        });
+        return;
+    }
+
+    if (auto document = downcast<WorkletGlobalScope>(this)->responsibleDocument())
+        callback(*document);
 }
 
 } // namespace WebCore

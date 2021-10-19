@@ -223,6 +223,8 @@ public:
         });
     }
 
+    void postTaskToResponsibleDocument(Function<void(Document&)>&&);
+
     // Gets the next id in a circular sequence from 1 to 2^31-1.
     int circularSequentialID();
 

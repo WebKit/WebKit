@@ -168,13 +168,57 @@ static bool isValidMediaConfiguration(const MediaConfiguration& configuration)
     return true;
 }
 
-void MediaCapabilities::decodingInfo(Document& document, MediaDecodingConfiguration&& configuration, Ref<DeferredPromise>&& promise)
+static void gatherDecodingInfo(Document& document, MediaDecodingConfiguration&& configuration, MediaEngineConfigurationFactory::DecodingConfigurationCallback&& callback)
+{
+    RELEASE_LOG_INFO(Media, "Gathering decoding MediaCapabilities");
+    MediaEngineConfigurationFactory::DecodingConfigurationCallback decodingCallback = [callback = WTFMove(callback)](auto&& result) mutable {
+        RELEASE_LOG_INFO(Media, "Finished gathering decoding MediaCapabilities");
+        callback(WTFMove(result));
+    };
+
+    if (!document.settings().mediaCapabilitiesExtensionsEnabled() && configuration.video)
+        configuration.video.value().alphaChannel.reset();
+
+#if ENABLE(VP9)
+    configuration.canExposeVP9 = document.settings().vp9DecoderEnabled();
+#endif
+
+#if ENABLE(WEB_RTC)
+    if (configuration.type == MediaDecodingType::WebRTC) {
+        if (auto* page = document.page())
+            page->libWebRTCProvider().createDecodingConfiguration(WTFMove(configuration), WTFMove(decodingCallback));
+        return;
+    }
+#else
+    UNUSED_PARAM(document);
+#endif
+    MediaEngineConfigurationFactory::createDecodingConfiguration(WTFMove(configuration), WTFMove(decodingCallback));
+}
+
+static void gatherEncodingInfo(Document& document, MediaEncodingConfiguration&& configuration, MediaEngineConfigurationFactory::EncodingConfigurationCallback&& callback)
+{
+    RELEASE_LOG_INFO(Media, "Gathering encoding MediaCapabilities");
+    MediaEngineConfigurationFactory::EncodingConfigurationCallback encodingCallback = [callback = WTFMove(callback)](auto&& result) mutable {
+        RELEASE_LOG_INFO(Media, "Finished gathering encoding MediaCapabilities");
+        callback(WTFMove(result));
+    };
+
+#if ENABLE(WEB_RTC)
+    if (configuration.type == MediaEncodingType::WebRTC) {
+        if (auto* page = document.page())
+            page->libWebRTCProvider().createEncodingConfiguration(WTFMove(configuration), WTFMove(encodingCallback));
+        return;
+    }
+#else
+    UNUSED_PARAM(document);
+#endif
+    MediaEngineConfigurationFactory::createEncodingConfiguration(WTFMove(configuration), WTFMove(encodingCallback));
+}
+
+void MediaCapabilities::decodingInfo(ScriptExecutionContext& context, MediaDecodingConfiguration&& configuration, Ref<DeferredPromise>&& promise)
 {
     // 2.4 Media Capabilities Interface
     // https://wicg.github.io/media-capabilities/#media-capabilities-interface
-
-    auto identifier = WTF::Logger::LogSiteIdentifier("MediaCapabilities", __func__, this);
-    Ref<Logger> logger = document.logger();
 
     // 1. If configuration is not a valid MediaConfiguration, return a Promise rejected with a TypeError.
     // 2. If configuration.video is present and is not a valid video configuration, return a Promise rejected with a TypeError.
@@ -192,50 +236,43 @@ void MediaCapabilities::decodingInfo(Document& document, MediaDecodingConfigurat
     // effects such as enabling different decoding modules.
     // 3. If configuration.audio is present and is not a valid audio configuration, return a Promise rejected with a TypeError.
     if (!isValidMediaConfiguration(configuration)) {
-#if !RELEASE_LOG_DISABLED
-        logger->info(LogMedia, identifier, " - Rejected. configuration: ", configuration);
-#endif
+        RELEASE_LOG_INFO(Media, "Invalid decoding media configuration");
         promise->reject(TypeError);
         return;
     }
-
-    if (!document.settings().mediaCapabilitiesExtensionsEnabled() && configuration.video)
-        configuration.video.value().alphaChannel.reset();
-
-#if ENABLE(VP9)
-    configuration.canExposeVP9 = document.settings().vp9DecoderEnabled();
-#endif
 
     // 4. Let p be a new promise.
     // 5. In parallel, run the create a MediaCapabilitiesInfo algorithm with configuration and resolve p with its result.
     // 6. Return p.
 
-    MediaEngineConfigurationFactory::DecodingConfigurationCallback callback = [promise = WTFMove(promise), identifier = WTFMove(identifier), logger = WTFMove(logger), document = Ref { document }](auto info) mutable {
-#if !RELEASE_LOG_DISABLED
-        logger->info(LogMedia, identifier, "::callback() - Resolved. info: ", info);
-#endif
-        document->eventLoop().queueTask(TaskSource::MediaElement, [promise = WTFMove(promise), info = WTFMove(info)] () mutable {
+    MediaEngineConfigurationFactory::DecodingConfigurationCallback callback = [promise = WTFMove(promise), context = Ref { context }](auto info) mutable {
+        context->eventLoop().queueTask(TaskSource::MediaElement, [promise = WTFMove(promise), info = WTFMove(info)] () mutable {
             promise->resolve<IDLDictionary<MediaCapabilitiesDecodingInfo>>(WTFMove(info));
         });
     };
 
-#if ENABLE(WEB_RTC)
-    if (configuration.type == MediaDecodingType::WebRTC) {
-        if (auto* page = document.page())
-            page->libWebRTCProvider().createDecodingConfiguration(WTFMove(configuration), WTFMove(callback));
+    if (is<Document>(context)) {
+        gatherDecodingInfo(downcast<Document>(context), WTFMove(configuration), WTFMove(callback));
         return;
     }
-#endif
-    MediaEngineConfigurationFactory::createDecodingConfiguration(WTFMove(configuration), WTFMove(callback));
+
+    m_decodingTasks.add(++m_nextTaskIdentifier, WTFMove(callback));
+    context.postTaskToResponsibleDocument([configuration = WTFMove(configuration).isolatedCopy(), contextIdentifier = context.contextIdentifier(), weakThis = WeakPtr { this }, taskIdentifier = m_nextTaskIdentifier](auto& document) mutable {
+        gatherDecodingInfo(document, WTFMove(configuration), [contextIdentifier, weakThis = WTFMove(weakThis), taskIdentifier](auto&& result) mutable {
+            ScriptExecutionContext::postTaskTo(contextIdentifier, [weakThis = WTFMove(weakThis), taskIdentifier, result = WTFMove(result).isolatedCopy()](auto&) mutable {
+                if (!weakThis)
+                    return;
+                if (auto callback = weakThis->m_decodingTasks.take(taskIdentifier))
+                    callback(WTFMove(result));
+            });
+        });
+    });
 }
 
-void MediaCapabilities::encodingInfo(Document& document, MediaEncodingConfiguration&& configuration, Ref<DeferredPromise>&& promise)
+void MediaCapabilities::encodingInfo(ScriptExecutionContext& context, MediaEncodingConfiguration&& configuration, Ref<DeferredPromise>&& promise)
 {
     // 2.4 Media Capabilities Interface
     // https://wicg.github.io/media-capabilities/#media-capabilities-interface
-
-    auto identifier = WTF::Logger::LogSiteIdentifier("MediaCapabilities", __func__, this);
-    Ref<Logger> logger = document.logger();
 
     // 1. If configuration is not a valid MediaConfiguration, return a Promise rejected with a TypeError.
     // 2. If configuration.video is present and is not a valid video configuration, return a Promise rejected with a TypeError.
@@ -256,6 +293,7 @@ void MediaCapabilities::encodingInfo(Document& document, MediaEncodingConfigurat
     // device’s power source has side effects such as enabling different
     // encoding modules.
     if (!isValidMediaConfiguration(configuration)) {
+        RELEASE_LOG_INFO(Media, "Invalid encoding media configuration");
         promise->reject(TypeError);
         return;
     }
@@ -264,24 +302,28 @@ void MediaCapabilities::encodingInfo(Document& document, MediaEncodingConfigurat
     // 5. In parallel, run the create a MediaCapabilitiesInfo algorithm with configuration and resolve p with its result.
     // 6. Return p.
 
-    MediaEngineConfigurationFactory::EncodingConfigurationCallback callback = [promise = WTFMove(promise), identifier = WTFMove(identifier), logger = WTFMove(logger), document = Ref { document }](auto info) mutable {
-#if !RELEASE_LOG_DISABLED
-        logger->info(LogMedia, identifier, "::callback() - Resolved. info: ", info);
-#endif
-        document->eventLoop().queueTask(TaskSource::MediaElement, [promise = WTFMove(promise), info = WTFMove(info)] () mutable {
+    MediaEngineConfigurationFactory::EncodingConfigurationCallback callback = [promise = WTFMove(promise), context = Ref { context }](auto info) mutable {
+        context->eventLoop().queueTask(TaskSource::MediaElement, [promise = WTFMove(promise), info = WTFMove(info)] () mutable {
             promise->resolve<IDLDictionary<MediaCapabilitiesEncodingInfo>>(WTFMove(info));
         });
     };
 
-#if ENABLE(WEB_RTC)
-    if (configuration.type == MediaEncodingType::WebRTC) {
-        if (auto* page = document.page())
-            page->libWebRTCProvider().createEncodingConfiguration(WTFMove(configuration), WTFMove(callback));
+    if (is<Document>(context)) {
+        gatherEncodingInfo(downcast<Document>(context), WTFMove(configuration), WTFMove(callback));
         return;
     }
-#endif
 
-    MediaEngineConfigurationFactory::createEncodingConfiguration(WTFMove(configuration), WTFMove(callback));
+    m_encodingTasks.add(++m_nextTaskIdentifier, WTFMove(callback));
+    context.postTaskToResponsibleDocument([configuration = WTFMove(configuration).isolatedCopy(), contextIdentifier = context.contextIdentifier(), weakThis = WeakPtr { this }, taskIdentifier = m_nextTaskIdentifier](auto& document) mutable {
+        gatherEncodingInfo(document, WTFMove(configuration), [contextIdentifier, weakThis = WTFMove(weakThis), taskIdentifier](auto&& result) mutable {
+            ScriptExecutionContext::postTaskTo(contextIdentifier, [weakThis = WTFMove(weakThis), taskIdentifier, result = WTFMove(result).isolatedCopy()](auto&) mutable {
+                if (!weakThis)
+                    return;
+                if (auto callback = weakThis->m_encodingTasks.take(taskIdentifier))
+                    callback(WTFMove(result));
+            });
+        });
+    });
 }
 
 }
