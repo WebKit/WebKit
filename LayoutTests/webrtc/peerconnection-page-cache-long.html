@@ -37,7 +37,7 @@ window.addEventListener("pageshow", t.step_func(async (event) => {
     t.pc1.onicecandidate = (e) => t.pc2.addIceCandidate(e.candidate);
     t.pc2.onicecandidate = (e) => t.pc1.addIceCandidate(e.candidate);
 
-    const offer = await t.pc1.createOffer();
+    const offer = await t.pc1.createOffer({ iceRestart: true });
     await t.pc1.setLocalDescription(offer);
     await t.pc2.setRemoteDescription(offer);
 

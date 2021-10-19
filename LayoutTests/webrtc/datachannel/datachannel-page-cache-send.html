@@ -18,6 +18,10 @@ window.addEventListener("pageshow", async function(event) {
     if (!event.persisted)
         return;
 
+    const offer = await pc1.createOffer({ iceRestart: true });
+    await pc1.setLocalDescription(offer);
+    await pc2.setRemoteDescription(offer);
+
     const answer = await pc2.createAnswer();
     await pc2.setLocalDescription(answer);
     await pc1.setRemoteDescription(answer);
