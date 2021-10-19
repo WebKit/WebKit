@@ -1,5 +1,37 @@
 2021-10-19  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r284495. rdar://problem/84433820
+
+    Unreviewed, reverting r284099.
+    https://bugs.webkit.org/show_bug.cgi?id=231984
+    
+    Introduced build failure
+    
+    Reverted changeset:
+    
+    "[iOS] Stop including 'util.sb' in the WebContent process'
+    sandbox"
+    https://bugs.webkit.org/show_bug.cgi?id=231570
+    https://commits.webkit.org/r284099
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@284495 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-10-19  Commit Queue  <commit-queue@webkit.org>
+
+            Unreviewed, reverting r284099.
+            https://bugs.webkit.org/show_bug.cgi?id=231984
+
+            Introduced build failure
+
+            Reverted changeset:
+
+            "[iOS] Stop including 'util.sb' in the WebContent process'
+            sandbox"
+            https://bugs.webkit.org/show_bug.cgi?id=231570
+            https://commits.webkit.org/r284099
+
+2021-10-19  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r284483. rdar://problem/84428759
 
     LayoutTests/imported/w3c:

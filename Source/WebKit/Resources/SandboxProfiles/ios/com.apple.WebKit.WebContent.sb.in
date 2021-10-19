@@ -30,12 +30,12 @@
 ;; Silence spurious logging due to rdar://20117923 and rdar://72366475
 (deny system-privilege (privilege-id PRIV_GLOBAL_PROC_INFO) (with no-report))
 
-#include "Shared/Sandbox/util.sb"
-
 ;;;
 ;;; The following rules were originally contained in 'common.sb'. We are duplicating them here so we can
 ;;; remove unneeded sandbox extensions.
 ;;;
+
+(import "util.sb")
 
 (define-once (allow-read-and-issue-generic-extensions . filters)
     (allow file-read*
