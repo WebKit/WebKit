@@ -1,3 +1,14 @@
+2021-10-19  Saam Barati  <sbarati@apple.com>
+
+        canDoFastSpread should also check that the Structure is from the global object we're watching
+        https://bugs.webkit.org/show_bug.cgi?id=231976
+        <rdar://84340372>
+
+        Reviewed by Keith Miller.
+
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::canDoFastSpread):
+
 2021-10-19  Chris Dumez  <cdumez@apple.com>
 
         [clang 13] Suppress sign comparison warnings
