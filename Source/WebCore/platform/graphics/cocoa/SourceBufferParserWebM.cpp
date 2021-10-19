@@ -834,6 +834,39 @@ Status SourceBufferParserWebM::OnElementBegin(const ElementMetadata& metadata, A
 
     INFO_LOG_IF_POSSIBLE(LOGIDENTIFIER, "state(", oldState, "->", m_state, "), id(", metadata.id, "), position(", metadata.position, "), headerSize(", metadata.header_size, "), size(", metadata.size, ")");
 
+    // Apply some sanity check; libwebm::StringParser will read the content into a std::string and ByteParser into a std::vector
+    std::optional<size_t> maxElementSizeAllowed;
+    switch (metadata.id) {
+    case Id::kChapterStringUid:
+    case Id::kChapString:
+    case Id::kChapLanguage:
+    case Id::kChapCountry:
+    case Id::kDocType:
+    case Id::kTitle:
+    case Id::kMuxingApp:
+    case Id::kWritingApp:
+    case Id::kTagName:
+    case Id::kTagLanguage:
+    case Id::kTagString:
+    case Id::kTargetType:
+    case Id::kName:
+    case Id::kLanguage:
+    case Id::kCodecId:
+    case Id::kCodecName:
+        maxElementSizeAllowed = 1 * 1024 * 1024; // 1MiB
+        break;
+    case Id::kBlockAdditional:
+    case Id::kContentEncKeyId:
+    case Id::kProjectionPrivate:
+    case Id::kTagBinary:
+        maxElementSizeAllowed = 16 * 1024 * 1024; // 16MiB
+        break;
+    default:
+        break;
+    }
+    if (maxElementSizeAllowed && metadata.size >= *maxElementSizeAllowed)
+        return Status(Status::kNotEnoughMemory);
+
     return Status(Status::kOkCompleted);
 }
 
