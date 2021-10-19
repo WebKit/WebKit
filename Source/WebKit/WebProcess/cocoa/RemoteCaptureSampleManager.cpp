@@ -104,6 +104,19 @@ void RemoteCaptureSampleManager::addSource(Ref<RemoteRealtimeVideoSource>&& sour
     });
 }
 
+void RemoteCaptureSampleManager::addSource(Ref<RemoteRealtimeDisplaySource>&& source)
+{
+    ASSERT(WTF::isMainRunLoop());
+    setConnection(source->connection());
+
+    m_queue->dispatch([this, protectedThis = Ref { *this }, source = WTFMove(source)]() mutable {
+        auto identifier = source->identifier();
+
+        ASSERT(!m_videoSources.contains(identifier));
+        m_videoSources.add(identifier, makeUnique<RemoteVideo>(WTFMove(source)));
+    });
+}
+
 void RemoteCaptureSampleManager::removeSource(WebCore::RealtimeMediaSourceIdentifier identifier)
 {
     ASSERT(WTF::isMainRunLoop());
@@ -215,7 +228,7 @@ void RemoteCaptureSampleManager::RemoteAudio::setStorage(const SharedMemory::Han
     startThread();
 }
 
-RemoteCaptureSampleManager::RemoteVideo::RemoteVideo(Ref<RemoteRealtimeVideoSource>&& source)
+RemoteCaptureSampleManager::RemoteVideo::RemoteVideo(Source&& source)
     : m_source(WTFMove(source))
 {
 }
@@ -235,8 +248,11 @@ void RemoteCaptureSampleManager::RemoteVideo::videoSampleAvailable(RemoteVideoSa
         ASSERT_NOT_REACHED();
         return;
     }
-
-    m_source->videoSampleAvailable(*sampleRef, remoteSample.size());
+    switchOn(m_source, [&](Ref<RemoteRealtimeVideoSource>& source) {
+        source->videoSampleAvailable(*sampleRef, remoteSample.size());
+    }, [&](Ref<RemoteRealtimeDisplaySource>& source) {
+        source->remoteVideoSampleAvailable(*sampleRef);
+    });
 }
 
 }

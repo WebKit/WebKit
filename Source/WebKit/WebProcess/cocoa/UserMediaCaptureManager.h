@@ -44,6 +44,7 @@ class RemoteVideoSample;
 namespace WebKit {
 
 class RemoteRealtimeAudioSource;
+class RemoteRealtimeDisplaySource;
 class RemoteRealtimeVideoSource;
 class WebProcess;
 
@@ -58,11 +59,10 @@ public:
     void didReceiveMessageFromGPUProcess(IPC::Connection& connection, IPC::Decoder& decoder) { didReceiveMessage(connection, decoder); }
     void setupCaptureProcesses(bool shouldCaptureAudioInUIProcess, bool shouldCaptureAudioInGPUProcess, bool shouldCaptureVideoInUIProcess, bool shouldCaptureVideoInGPUProcess, bool shouldCaptureDisplayInUIProcess);
 
-    void addAudioSource(Ref<RemoteRealtimeAudioSource>&&);
-    void removeAudioSource(WebCore::RealtimeMediaSourceIdentifier);
-
-    void addVideoSource(Ref<RemoteRealtimeVideoSource>&&);
-    void removeVideoSource(WebCore::RealtimeMediaSourceIdentifier);
+    void addSource(Ref<RemoteRealtimeAudioSource>&&);
+    void addSource(Ref<RemoteRealtimeVideoSource>&&);
+    void addSource(Ref<RemoteRealtimeDisplaySource>&&);
+    void removeSource(WebCore::RealtimeMediaSourceIdentifier);
 
     RemoteCaptureSampleManager& remoteCaptureSampleManager() { return m_remoteCaptureSampleManager; }
 
@@ -129,8 +129,8 @@ private:
     void applyConstraintsSucceeded(WebCore::RealtimeMediaSourceIdentifier, WebCore::RealtimeMediaSourceSettings&&);
     void applyConstraintsFailed(WebCore::RealtimeMediaSourceIdentifier, String&&, String&&);
 
-    HashMap<WebCore::RealtimeMediaSourceIdentifier, Ref<RemoteRealtimeAudioSource>> m_audioSources;
-    HashMap<WebCore::RealtimeMediaSourceIdentifier, Ref<RemoteRealtimeVideoSource>> m_videoSources;
+    using Source = std::variant<std::nullptr_t, Ref<RemoteRealtimeAudioSource>, Ref<RemoteRealtimeVideoSource>, Ref<RemoteRealtimeDisplaySource>>;
+    HashMap<WebCore::RealtimeMediaSourceIdentifier, Source> m_sources;
     WebProcess& m_process;
     NoOpCaptureDeviceManager m_noOpCaptureDeviceManager;
     AudioFactory m_audioFactory;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,32 +30,25 @@
 #include "GPUProcessConnection.h"
 #include "RemoteRealtimeMediaSourceProxy.h"
 #include <WebCore/CaptureDevice.h>
+#include <WebCore/RealtimeMediaSource.h>
 #include <WebCore/RealtimeMediaSourceIdentifier.h>
-#include <wtf/Deque.h>
-
-namespace IPC {
-class Connection;
-}
 
 namespace WebCore {
-class CAAudioStreamDescription;
-class ImageTransferSessionVT;
 struct MediaConstraints;
-class RemoteVideoSample;
 }
 
 namespace WebKit {
 
 class UserMediaCaptureManager;
 
-class RemoteRealtimeAudioSource final : public WebCore::RealtimeMediaSource
+class RemoteRealtimeDisplaySource final : public WebCore::RealtimeMediaSource
 #if ENABLE(GPU_PROCESS)
     , public GPUProcessConnection::Client
 #endif
 {
 public:
     static Ref<WebCore::RealtimeMediaSource> create(const WebCore::CaptureDevice&, const WebCore::MediaConstraints*, String&& name, String&& hashSalt, UserMediaCaptureManager&, bool shouldCaptureInGPUProcess);
-    ~RemoteRealtimeAudioSource();
+    ~RemoteRealtimeDisplaySource();
 
     WebCore::RealtimeMediaSourceIdentifier identifier() const { return m_proxy.identifier(); }
     IPC::Connection* connection() { return m_proxy.connection(); }
@@ -68,11 +61,11 @@ public:
     void captureStopped();
     void captureFailed() final;
 
-    void remoteAudioSamplesAvailable(const MediaTime&, const WebCore::PlatformAudioData&, const WebCore::AudioStreamDescription&, size_t);
+    void remoteVideoSampleAvailable(WebCore::MediaSample& sample) { videoSampleAvailable(sample); }
     void sourceMutedChanged(bool value) { notifyMutedChange(value); }
 
 private:
-    RemoteRealtimeAudioSource(WebCore::RealtimeMediaSourceIdentifier, const WebCore::CaptureDevice&, const WebCore::MediaConstraints*, String&& name, String&& hashSalt, UserMediaCaptureManager&, bool shouldCaptureInGPUProcess);
+    RemoteRealtimeDisplaySource(WebCore::RealtimeMediaSourceIdentifier, const WebCore::CaptureDevice&, const WebCore::MediaConstraints*, String&& name, String&& hashSalt, UserMediaCaptureManager&, bool shouldCaptureInGPUProcess);
 
     // RealtimeMediaSource
     void startProducingData() final { m_proxy.startProducingData(); }

@@ -48,7 +48,7 @@ using namespace WebCore;
 Ref<RealtimeVideoCaptureSource> RemoteRealtimeVideoSource::create(const CaptureDevice& device, const MediaConstraints* constraints, String&& name, String&& hashSalt, UserMediaCaptureManager& manager, bool shouldCaptureInGPUProcess)
 {
     auto source = adoptRef(*new RemoteRealtimeVideoSource(RealtimeMediaSourceIdentifier::generate(), device, constraints, WTFMove(name), WTFMove(hashSalt), manager, shouldCaptureInGPUProcess));
-    manager.addVideoSource(source.copyRef());
+    manager.addSource(source.copyRef());
     manager.remoteCaptureSampleManager().addSource(source.copyRef());
     source->createRemoteMediaSource();
     return source;
@@ -148,7 +148,7 @@ const RealtimeMediaSourceCapabilities& RemoteRealtimeVideoSource::capabilities()
 void RemoteRealtimeVideoSource::hasEnded()
 {
     m_proxy.hasEnded();
-    m_manager.removeVideoSource(identifier());
+    m_manager.removeSource(identifier());
     m_manager.remoteCaptureSampleManager().removeSource(identifier());
 }
 

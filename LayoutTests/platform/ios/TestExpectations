@@ -2741,6 +2741,7 @@ fast/mediastream/screencapture-user-gesture.html [ Skip ]
 fast/mediastream/getDisplayMedia-max-constraints1.html [ Skip ]
 fast/mediastream/getDisplayMedia-max-constraints2.html [ Skip ]
 fast/mediastream/getDisplayMedia-max-constraints3.html [ Skip ]
+fast/mediastream/getDisplayMedia-size.html [ Skip ]
 
 webkit.org/b/177401 webrtc/captureCanvas-webrtc.html [ Pass Timeout Failure ]
 

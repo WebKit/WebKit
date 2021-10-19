@@ -31,6 +31,7 @@
 #include "IPCSemaphore.h"
 #include "MessageReceiver.h"
 #include "RemoteRealtimeAudioSource.h"
+#include "RemoteRealtimeDisplaySource.h"
 #include "RemoteRealtimeVideoSource.h"
 #include "SharedMemory.h"
 #include <WebCore/CAAudioStreamDescription.h>
@@ -55,6 +56,7 @@ public:
 
     void addSource(Ref<RemoteRealtimeAudioSource>&&);
     void addSource(Ref<RemoteRealtimeVideoSource>&&);
+    void addSource(Ref<RemoteRealtimeDisplaySource>&&);
     void removeSource(WebCore::RealtimeMediaSourceIdentifier);
 
     void didUpdateSourceConnection(IPC::Connection*);
@@ -100,12 +102,13 @@ private:
     class RemoteVideo {
         WTF_MAKE_FAST_ALLOCATED;
     public:
-        explicit RemoteVideo(Ref<RemoteRealtimeVideoSource>&&);
+        using Source = std::variant<Ref<RemoteRealtimeVideoSource>, Ref<RemoteRealtimeDisplaySource>>;
+        explicit RemoteVideo(Source&&);
 
         void videoSampleAvailable(WebCore::RemoteVideoSample&&);
 
     private:
-        Ref<RemoteRealtimeVideoSource> m_source;
+        Source m_source;
         std::unique_ptr<WebCore::ImageTransferSessionVT> m_imageTransferSession;
     };
 
