@@ -59,6 +59,7 @@ inline LayoutUnit minimumValueForLength(const Length& length, LayoutUnit maximum
         return LayoutUnit(length.nonNanCalculatedValue(maximumValue));
     case LengthType::FillAvailable:
     case LengthType::Auto:
+    case LengthType::Content:
         return 0;
     case LengthType::Relative:
     case LengthType::Intrinsic:

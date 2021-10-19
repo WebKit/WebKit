@@ -34,6 +34,7 @@
 #include "FlexibleBoxAlgorithm.h"
 #include "HitTestResult.h"
 #include "LayoutRepainter.h"
+#include "Length.h"
 #include "RenderBox.h"
 #include "RenderChildIterator.h"
 #include "RenderLayer.h"
@@ -917,7 +918,7 @@ bool RenderFlexibleBox::canComputePercentageFlexBasis(const RenderBox& child, co
 
 bool RenderFlexibleBox::childMainSizeIsDefinite(const RenderBox& child, const Length& flexBasis)
 {
-    if (flexBasis.isAuto())
+    if (flexBasis.isAuto() || flexBasis.isContent())
         return false;
     if (isColumnFlow() && (flexBasis.isIntrinsic() || flexBasis.type() == LengthType::Intrinsic))
         return false;
@@ -935,7 +936,8 @@ bool RenderFlexibleBox::childHasComputableAspectRatio(const RenderBox& child) co
 
 bool RenderFlexibleBox::childHasComputableAspectRatioAndCrossSizeIsConsideredDefinite(const RenderBox& child)
 {
-    return childHasComputableAspectRatio(child)
+    auto flexBasis = flexBasisForChild(child);
+    return childHasComputableAspectRatio(child) && (flexBasis.isContent() || flexBasis.isAuto())
         && (childCrossSizeIsDefinite(child, crossSizeLengthForChild(MainOrPreferredSize, child)) || childCrossSizeShouldUseContainerCrossSize(child));
 }
 
@@ -1069,7 +1071,7 @@ LayoutUnit RenderFlexibleBox::computeFlexBaseSizeForChild(RenderBox& child, Layo
 
     // 9.3.2 E. Otherwise, size the item into the available space using its used flex basis in place of its main size.
     {
-        ScopedUnboundedBoxWithFlexBasisAsChildMainSize flexBasisScope(child, flexBasis, mainAxisIsChildInlineAxis(child));
+        ScopedUnboundedBoxWithFlexBasisAsChildMainSize flexBasisScope(child, flexBasis.isContent() ? Length(LengthType::MaxContent) : flexBasis, mainAxisIsChildInlineAxis(child));
         if (mainAxisIsChildInlineAxis(child))
             return child.maxPreferredLogicalWidth() - mainAxisBorderAndPadding;
 

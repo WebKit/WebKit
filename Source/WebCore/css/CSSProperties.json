@@ -5671,7 +5671,7 @@
                 "aliases": [
                     "-webkit-flex-basis"
                 ],
-                "converter": "LengthOrAuto"
+                "converter": "LengthSizing"
             },
             "specification": {
                 "category": "css-flexbox",

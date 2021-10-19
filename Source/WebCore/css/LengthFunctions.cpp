@@ -49,6 +49,7 @@ LayoutUnit valueForLength(const Length& length, LayoutUnit maximumValue)
     case LengthType::Relative:
     case LengthType::Intrinsic:
     case LengthType::MinIntrinsic:
+    case LengthType::Content:
     case LengthType::MinContent:
     case LengthType::MaxContent:
     case LengthType::FitContent:
@@ -76,6 +77,7 @@ float floatValueForLength(const Length& length, LayoutUnit maximumValue)
     case LengthType::Relative:
     case LengthType::Intrinsic:
     case LengthType::MinIntrinsic:
+    case LengthType::Content:
     case LengthType::MinContent:
     case LengthType::MaxContent:
     case LengthType::FitContent:
@@ -102,6 +104,7 @@ float floatValueForLength(const Length& length, float maximumValue)
     case LengthType::Relative:
     case LengthType::Intrinsic:
     case LengthType::MinIntrinsic:
+    case LengthType::Content:
     case LengthType::MinContent:
     case LengthType::MaxContent:
     case LengthType::FitContent:

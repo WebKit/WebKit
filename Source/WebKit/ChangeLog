@@ -1,3 +1,17 @@
+2021-10-18  Sergio Villar Senin  <svillar@igalia.com>
+
+        [css-flexbox] Add flex-basis: content support
+        https://bugs.webkit.org/show_bug.cgi?id=221479
+        <rdar://problem/74279369>
+
+        Reviewed by Javier Fernandez.
+
+        Handle LengthType::Content in encode/decode functions.
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<Length>::encode):
+        (IPC::ArgumentCoder<Length>::decode):
+
 2021-10-19  Cameron McCormack  <heycam@apple.com>
 
         Ensure CanvasRenderingContext2D.drawImage(video) uses the right color space

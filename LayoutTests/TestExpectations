@@ -4210,14 +4210,6 @@ webkit.org/b/221478 imported/w3c/web-platform-tests/css/css-flexbox/dynamic-base
 webkit.org/b/221478 imported/w3c/web-platform-tests/css/css-flexbox/dynamic-baseline-change.html [ ImageOnlyFailure ]
 webkit.org/b/221478 imported/w3c/web-platform-tests/css/css-flexbox/synthesize-vrl-baseline.html [ ImageOnlyFailure ]
 
-# flex-basis:content.
-webkit.org/b/221479 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-flex-basis-content-001a.html [ ImageOnlyFailure ]
-webkit.org/b/221479 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-flex-basis-content-001b.html [ ImageOnlyFailure ]
-webkit.org/b/221479 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-flex-basis-content-002a.html [ ImageOnlyFailure ]
-webkit.org/b/221479 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-flex-basis-content-002b.html [ ImageOnlyFailure ]
-webkit.org/b/221479 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-flex-basis-content-003a.html [ ImageOnlyFailure ]
-webkit.org/b/221479 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-flex-basis-content-004a.html [ ImageOnlyFailure ]
-
 # Flex item's min|max content contributions
 webkit.org/b/230747 imported/w3c/web-platform-tests/css/css-flexbox/flex-container-max-content-001.html [ ImageOnlyFailure ]
 webkit.org/b/230747 imported/w3c/web-platform-tests/css/css-flexbox/flex-container-min-content-001.html [ ImageOnlyFailure ]

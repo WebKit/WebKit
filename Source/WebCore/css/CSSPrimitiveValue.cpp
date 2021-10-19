@@ -37,6 +37,7 @@
 #include "Counter.h"
 #include "DeprecatedCSSOMPrimitiveValue.h"
 #include "FontCascade.h"
+#include "Length.h"
 #include "Node.h"
 #include "Pair.h"
 #include "Rect.h"
@@ -290,6 +291,7 @@ CSSPrimitiveValue::CSSPrimitiveValue(const Length& length, const RenderStyle& st
 {
     switch (length.type()) {
     case LengthType::Auto:
+    case LengthType::Content:
     case LengthType::Intrinsic:
     case LengthType::MinIntrinsic:
     case LengthType::MinContent:
@@ -344,6 +346,10 @@ void CSSPrimitiveValue::init(const Length& length)
     case LengthType::Auto:
         setPrimitiveUnitType(CSSUnitType::CSS_VALUE_ID);
         m_value.valueID = CSSValueAuto;
+        return;
+    case LengthType::Content:
+        setPrimitiveUnitType(CSSUnitType::CSS_VALUE_ID);
+        m_value.valueID = CSSValueContent;
         return;
     case LengthType::Fixed:
         setPrimitiveUnitType(CSSUnitType::CSS_PX);
