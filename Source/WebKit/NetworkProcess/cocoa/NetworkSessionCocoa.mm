@@ -97,6 +97,8 @@ using namespace WebKit;
 CFStringRef const WebKit2HTTPProxyDefaultsKey = static_cast<CFStringRef>(@"WebKit2HTTPProxy");
 CFStringRef const WebKit2HTTPSProxyDefaultsKey = static_cast<CFStringRef>(@"WebKit2HTTPSProxy");
 
+constexpr unsigned maxNumberOfIsolatedSessions { 10 };
+
 static NSURLSessionResponseDisposition toNSURLSessionResponseDisposition(WebCore::PolicyAction disposition)
 {
     switch (disposition) {
@@ -1402,17 +1404,28 @@ SessionWrapper& NetworkSessionCocoa::sessionWrapperForTask(WebPageProxyIdentifie
     auto shouldBeConsideredAppBound = isNavigatingToAppBoundDomain ? *isNavigatingToAppBoundDomain : NavigatingToAppBoundDomain::Yes;
     if (isParentProcessAFullWebBrowser(networkProcess()))
         shouldBeConsideredAppBound = NavigatingToAppBoundDomain::No;
+#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
+    if (auto* storageSession = networkStorageSession()) {
+        auto firstParty = WebCore::RegistrableDomain(request.firstPartyForCookies());
+        if (storageSession->shouldBlockThirdPartyCookiesButKeepFirstPartyCookiesFor(firstParty))
+            return sessionSetForPage(webPageProxyID).isolatedSession(storedCredentialsPolicy, firstParty, shouldBeConsideredAppBound, *this);
+    } else
+        ASSERT_NOT_REACHED();
+#endif
 
 #if ENABLE(APP_BOUND_DOMAINS)
     if (shouldBeConsideredAppBound == NavigatingToAppBoundDomain::Yes)
         return appBoundSession(webPageProxyID, storedCredentialsPolicy);
 #endif
 
-    auto firstParty = WebCore::RegistrableDomain(request.firstPartyForCookies());
-    if (firstParty.isEmpty())
-        firstParty = WebCore::RegistrableDomain(request.url());
-
-    return sessionSetForPage(webPageProxyID).isolatedSession(storedCredentialsPolicy, firstParty, shouldBeConsideredAppBound, *this);
+    switch (storedCredentialsPolicy) {
+    case WebCore::StoredCredentialsPolicy::Use:
+        return sessionSetForPage(webPageProxyID).sessionWithCredentialStorage;
+    case WebCore::StoredCredentialsPolicy::DoNotUse:
+        return sessionSetForPage(webPageProxyID).sessionWithoutCredentialStorage;
+    case WebCore::StoredCredentialsPolicy::EphemeralStateless:
+        return initializeEphemeralStatelessSessionIfNeeded(webPageProxyID, NavigatingToAppBoundDomain::No);
+    }
 }
 
 #if ENABLE(APP_BOUND_DOMAINS)
@@ -1469,35 +1482,43 @@ SessionWrapper& NetworkSessionCocoa::isolatedSession(WebPageProxyIdentifier webP
 
 SessionWrapper& SessionSet::isolatedSession(WebCore::StoredCredentialsPolicy storedCredentialsPolicy, const WebCore::RegistrableDomain& firstPartyDomain, NavigatingToAppBoundDomain isNavigatingToAppBoundDomain, NetworkSessionCocoa& session)
 {
-    auto addResult = isolatedSessions.ensure(firstPartyDomain, [this, &session, isNavigatingToAppBoundDomain] {
+    auto& entry = isolatedSessions.ensure(firstPartyDomain, [this, &session, isNavigatingToAppBoundDomain] {
         auto newEntry = makeUnique<IsolatedSession>();
         newEntry->sessionWithCredentialStorage.initialize(sessionWithCredentialStorage.session.get().configuration, session, WebCore::StoredCredentialsPolicy::Use, isNavigatingToAppBoundDomain);
         newEntry->sessionWithoutCredentialStorage.initialize(sessionWithoutCredentialStorage.session.get().configuration, session, WebCore::StoredCredentialsPolicy::DoNotUse, isNavigatingToAppBoundDomain);
         return newEntry;
-    });
+    }).iterator->value;
 
-    auto now = MonotonicTime::now();
-    auto& isolatedSession = addResult.iterator->value;
-    isolatedSession->lastUsed = now;
+    entry->lastUsed = WallTime::now();
 
     auto& sessionWrapper = [&] (auto storedCredentialsPolicy) -> SessionWrapper& {
         switch (storedCredentialsPolicy) {
         case WebCore::StoredCredentialsPolicy::Use:
             LOG(NetworkSession, "Using isolated NSURLSession with credential storage.");
-            return isolatedSession->sessionWithCredentialStorage;
+            return entry->sessionWithCredentialStorage;
         case WebCore::StoredCredentialsPolicy::DoNotUse:
             LOG(NetworkSession, "Using isolated NSURLSession without credential storage.");
-            return isolatedSession->sessionWithoutCredentialStorage;
+            return entry->sessionWithoutCredentialStorage;
         case WebCore::StoredCredentialsPolicy::EphemeralStateless:
             return initializeEphemeralStatelessSessionIfNeeded(isNavigatingToAppBoundDomain, session);
         }
     } (storedCredentialsPolicy);
 
-    if (addResult.isNewEntry) {
-        isolatedSessions.removeIf([&](auto& entry) {
-            return (now - entry.value->lastUsed) > 10_min;
-        });
+    if (isolatedSessions.size() > maxNumberOfIsolatedSessions) {
+        WebCore::RegistrableDomain keyToRemove;
+        auto oldestTimestamp = WallTime::now();
+        for (auto& key : isolatedSessions.keys()) {
+            auto timestamp = isolatedSessions.get(key)->lastUsed;
+            if (timestamp < oldestTimestamp) {
+                oldestTimestamp = timestamp;
+                keyToRemove = key;
+            }
+        }
+        LOG(NetworkSession, "About to remove isolated NSURLSession.");
+        isolatedSessions.remove(keyToRemove);
     }
+
+    RELEASE_ASSERT(isolatedSessions.size() <= maxNumberOfIsolatedSessions);
 
     return sessionWrapper;
 }
