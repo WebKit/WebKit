@@ -2210,5 +2210,7 @@ webkit.org/b/230509 fast/events/ios/dom-update-on-keydown-quirk.html [ Pass Fail
 
 webkit.org/b/231714 fast/scrolling/ios/click-events-during-momentum-scroll-in-overflow.html [ Pass Timeout ]
 
+webkit.org/b/231961 fast/inline/inline-background-clip-text-multiline.html [ ImageOnlyFailure ]
+
 webkit.org/b/231780 [ Debug ] imported/w3c/web-platform-tests/webrtc/simulcast/basic.https.html [ Pass Failure ]
 
