@@ -1,3 +1,12 @@
+2021-10-19  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
+
+        [GTK] Update test expectations for still-failing CSS web platform tests
+        https://bugs.webkit.org/show_bug.cgi?id=231964
+
+        Unreviewed test gardening.
+
+        * platform/gtk/TestExpectations:
+
 2021-10-19  John Wilander  <wilander@apple.com>
 
         http/tests/resourceLoadStatistics/sandboxed-nesting-iframe-with-non-sandboxed-iframe-redirect-ip-to-localhost-to-ip.html is a flaky failure
