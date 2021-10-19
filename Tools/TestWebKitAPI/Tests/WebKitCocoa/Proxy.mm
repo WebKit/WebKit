@@ -73,6 +73,8 @@
 
 namespace TestWebKitAPI {
 
+// FIXME: https://bugs.webkit.org/show_bug.cgi?id=231396 Make this not time out on iOS bots.
+#if PLATFORM(MAC)
 TEST(WebKit, HTTPSProxy)
 {
     HTTPServer server(HTTPServer::respondWithOK, HTTPServer::Protocol::HttpsProxy);
@@ -90,6 +92,7 @@ TEST(WebKit, HTTPSProxy)
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/"]]];
     EXPECT_WK_STREQ([delegate waitForAlert], "success!");
 }
+#endif
 
 TEST(WebKit, SOCKS5)
 {

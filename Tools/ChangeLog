@@ -1,3 +1,12 @@
+2021-10-19  Alex Christensen  <achristensen@webkit.org>
+
+        Re-disable WebKit.HTTPSProxy API test on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=231396
+
+        Yesterday's attempt at making it not time out does not appear to have worked.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/Proxy.mm:
+
 2021-10-19  Yusuke Suzuki  <ysuzuki@apple.com>
 
         DumpRenderTree should not use WK methods
