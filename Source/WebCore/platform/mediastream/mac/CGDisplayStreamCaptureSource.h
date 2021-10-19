@@ -46,11 +46,14 @@ public:
 
 protected:
     using FrameAvailableCallback = void (^)(CGDisplayStreamFrameStatus, uint64_t, IOSurfaceRef, CGDisplayStreamUpdateRef);
-    virtual RetainPtr<CGDisplayStreamRef> createDisplayStream(FrameAvailableCallback, dispatch_queue_t) = 0;
+    virtual RetainPtr<CGDisplayStreamRef> createDisplayStream() = 0;
     virtual bool checkDisplayStream() { return true; }
 
     CGDisplayStreamRef displayStream() const { return m_displayStream.get(); }
     void invalidateDisplayStream() { m_displayStream = nullptr; }
+
+    FrameAvailableCallback frameAvailableHandler();
+    dispatch_queue_t captureQueue();
 
     uint32_t width() const { return m_width; }
     uint32_t height() const { return m_height; }
@@ -67,7 +70,6 @@ private:
 
     void displayWasReconfigured(CGDirectDisplayID, CGDisplayChangeSummaryFlags);
     bool startDisplayStream();
-    FrameAvailableCallback frameAvailableHandler();
 
     void newFrame(CGDisplayStreamFrameStatus, RetainPtr<IOSurfaceRef>&&);
 

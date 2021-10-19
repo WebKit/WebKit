@@ -60,7 +60,7 @@ private:
 #endif
 
     // CGDisplayStreamCaptureSource
-    RetainPtr<CGDisplayStreamRef> createDisplayStream(FrameAvailableCallback, dispatch_queue_t) final;
+    RetainPtr<CGDisplayStreamRef> createDisplayStream() final;
     bool checkDisplayStream() final;
 
     RetainPtr<CGDisplayStreamRef> m_displayStream;

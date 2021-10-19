@@ -81,11 +81,8 @@ bool CGDisplayStreamCaptureSource::startDisplayStream()
     if (!checkDisplayStream())
         return false;
 
-    if (!m_captureQueue)
-        m_captureQueue = adoptOSObject(dispatch_queue_create("CGDisplayStreamCaptureSource Capture Queue", DISPATCH_QUEUE_SERIAL));
-
     if (!m_displayStream) {
-        m_displayStream = createDisplayStream(frameAvailableHandler(), m_captureQueue.get());
+        m_displayStream = createDisplayStream();
         if (!m_displayStream)
             return false;
 
@@ -179,7 +176,14 @@ CGDisplayStreamFrameAvailableHandler CGDisplayStreamCaptureSource::frameAvailabl
     };
 
     return m_frameAvailableHandler.get();
+}
 
+dispatch_queue_t CGDisplayStreamCaptureSource::captureQueue()
+{
+    if (!m_captureQueue)
+        m_captureQueue = adoptOSObject(dispatch_queue_create("CGDisplayStreamCaptureSource Capture Queue", DISPATCH_QUEUE_SERIAL));
+
+    return m_captureQueue.get();
 }
 
 } // namespace WebCore

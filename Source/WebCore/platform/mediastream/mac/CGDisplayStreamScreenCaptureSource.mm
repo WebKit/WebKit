@@ -111,7 +111,7 @@ bool CGDisplayStreamScreenCaptureSource::checkDisplayStream()
     return true;
 }
 
-RetainPtr<CGDisplayStreamRef> CGDisplayStreamScreenCaptureSource::createDisplayStream(FrameAvailableCallback frameAvailableHandler, dispatch_queue_t queue)
+RetainPtr<CGDisplayStreamRef> CGDisplayStreamScreenCaptureSource::createDisplayStream()
 {
     static const int screenQueueMaximumLength = 6;
 
@@ -139,7 +139,7 @@ RetainPtr<CGDisplayStreamRef> CGDisplayStreamScreenCaptureSource::createDisplayS
         (__bridge NSString *)kCGDisplayStreamShowCursor : @YES,
     };
 
-    return adoptCF(CGDisplayStreamCreateWithDispatchQueue(m_displayID, width, height, preferedPixelBufferFormat(), (__bridge CFDictionaryRef)streamOptions, queue, frameAvailableHandler));
+    return adoptCF(CGDisplayStreamCreateWithDispatchQueue(m_displayID, width, height, preferedPixelBufferFormat(), (__bridge CFDictionaryRef)streamOptions, captureQueue(), frameAvailableHandler()));
 }
 
 IntSize CGDisplayStreamScreenCaptureSource::intrinsicSize() const
