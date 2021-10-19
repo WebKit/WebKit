@@ -1,5 +1,5 @@
 /*
-* Copyright (C) 2020 Apple Inc. All rights reserved.
+* Copyright (C) 2020-2021 Apple Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions
@@ -42,6 +42,7 @@
 #import <CoreImage/CIFilter.h>
 #import <CoreImage/CoreImage.h>
 #import <wtf/NeverDestroyed.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 
 namespace WebCore {
 
@@ -54,7 +55,7 @@ std::unique_ptr<FilterEffectRendererCoreImage> FilterEffectRendererCoreImage::tr
 
 RetainPtr<CIContext> FilterEffectRendererCoreImage::sharedCIContext()
 {
-    static NeverDestroyed<RetainPtr<CIContext>> ciContext = [CIContext contextWithOptions: @{ kCIContextWorkingColorSpace: (__bridge id)CGColorSpaceCreateWithName(kCGColorSpaceSRGB)}];
+    static NeverDestroyed<RetainPtr<CIContext>> ciContext = [CIContext contextWithOptions:@{ kCIContextWorkingColorSpace: bridge_id_cast(adoptCF(CGColorSpaceCreateWithName(kCGColorSpaceSRGB))).get() }];
     return ciContext;
 }
 
