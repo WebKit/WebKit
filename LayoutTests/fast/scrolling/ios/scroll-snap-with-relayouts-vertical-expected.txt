@@ -1,0 +1,6 @@
+PASS vertical drag snapped to next snap point
+PASS relayouts should not have snapped back
+PASS successfullyParsed is true
+
+TEST COMPLETE
+1678

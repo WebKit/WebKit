@@ -1,3 +1,16 @@
+2021-10-19  Martin Robinson  <mrobinson@igalia.com>
+
+        [css-scroll-snap] Triggering a layout during scroll causes jittery scrolling on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=173887
+        <rdar://problem/67153673>
+
+        Reviewed by Simon Fraser.
+
+        * fast/scrolling/ios/scroll-snap-with-relayouts-horizontal-expected.txt: Added.
+        * fast/scrolling/ios/scroll-snap-with-relayouts-horizontal.html: Added.
+        * fast/scrolling/ios/scroll-snap-with-relayouts-vertical-expected.txt: Added.
+        * fast/scrolling/ios/scroll-snap-with-relayouts-vertical.html: Added.
+
 2021-10-19  Rob Buis  <rbuis@igalia.com>
 
         Remove support for some SVG properties

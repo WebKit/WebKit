@@ -1,0 +1,6 @@
+PASS horizontal drag snapped to next snap point
+PASS relayouts should not caused the scroll area to snap back
+PASS successfullyParsed is true
+
+TEST COMPLETE
+980

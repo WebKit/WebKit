@@ -99,6 +99,7 @@ public:
     bool hasActiveSnapPoint() const;
     CGPoint nearestActiveContentInsetAdjustedSnapOffset(CGFloat topInset, const CGPoint&) const;
     bool shouldSetScrollViewDecelerationRateFast() const;
+    void setRootNodeIsInUserScroll(bool);
 #endif
 
     String scrollingTreeAsText() const;

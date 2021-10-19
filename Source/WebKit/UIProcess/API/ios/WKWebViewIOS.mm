@@ -1631,6 +1631,8 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     CGFloat scrollDecelerationFactor = (coordinator && coordinator->shouldSetScrollViewDecelerationRateFast()) ? UIScrollViewDecelerationRateFast : UIScrollViewDecelerationRateNormal;
     scrollView.horizontalScrollDecelerationFactor = scrollDecelerationFactor;
     scrollView.verticalScrollDecelerationFactor = scrollDecelerationFactor;
+
+    coordinator->setRootNodeIsInUserScroll(true);
 #endif
 }
 
@@ -1641,6 +1643,10 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 
     [self _scheduleVisibleContentRectUpdate];
     [_contentView didFinishScrolling];
+
+#if ENABLE(ASYNC_SCROLLING)
+    _page->scrollingCoordinatorProxy()->setRootNodeIsInUserScroll(false);
+#endif
 }
 
 - (void)scrollViewWillEndDragging:(UIScrollView *)scrollView withVelocity:(CGPoint)velocity targetContentOffset:(inout CGPoint *)targetContentOffset
