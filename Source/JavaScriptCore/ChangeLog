@@ -1,3 +1,14 @@
+2021-10-18  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Wasm Table can take arbitrary default value
+        https://bugs.webkit.org/show_bug.cgi?id=231933
+        rdar://84327812
+
+        Reviewed by Robin Morisset.
+
+        * wasm/WasmTable.cpp:
+        (JSC::Wasm::Table::grow):
+
 2021-10-19  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed build fix.
