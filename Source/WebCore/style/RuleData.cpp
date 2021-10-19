@@ -134,25 +134,25 @@ static bool computeContainsUncommonAttributeSelector(const CSSSelector& rootSele
     return false;
 }
 
-static inline PropertyAllowlistType determinePropertyAllowlistType(const CSSSelector* selector)
+static inline PropertyAllowlist determinePropertyAllowlist(const CSSSelector* selector)
 {
     for (const CSSSelector* component = selector; component; component = component->tagHistory()) {
 #if ENABLE(VIDEO)
         if (component->match() == CSSSelector::PseudoElement && (component->pseudoElementType() == CSSSelector::PseudoElementCue || component->value() == ShadowPseudoIds::cue()))
-            return PropertyAllowlistCue;
+            return PropertyAllowlist::Cue;
 #endif
         if (component->match() == CSSSelector::PseudoElement && component->pseudoElementType() == CSSSelector::PseudoElementMarker)
-            return PropertyAllowlistMarker;
+            return propertyAllowlistForPseudoId(PseudoId::Marker);
 
         if (const auto* selectorList = selector->selectorList()) {
             for (const auto* subSelector = selectorList->first(); subSelector; subSelector = CSSSelectorList::next(subSelector)) {
-                auto allowlistType = determinePropertyAllowlistType(subSelector);
-                if (allowlistType != PropertyAllowlistNone)
+                auto allowlistType = determinePropertyAllowlist(subSelector);
+                if (allowlistType != PropertyAllowlist::None)
                     return allowlistType;
             }
         }
     }
-    return PropertyAllowlistNone;
+    return PropertyAllowlist::None;
 }
 
 RuleData::RuleData(const StyleRule& styleRule, unsigned selectorIndex, unsigned selectorListIndex, unsigned position)
@@ -164,7 +164,7 @@ RuleData::RuleData(const StyleRule& styleRule, unsigned selectorIndex, unsigned 
     , m_canMatchPseudoElement(selectorCanMatchPseudoElement(*selector()))
     , m_containsUncommonAttributeSelector(computeContainsUncommonAttributeSelector(*selector()))
     , m_linkMatchType(SelectorChecker::determineLinkMatchType(selector()))
-    , m_propertyAllowlistType(determinePropertyAllowlistType(selector()))
+    , m_propertyAllowlist(static_cast<unsigned>(determinePropertyAllowlist(selector())))
     , m_isEnabled(true)
     , m_descendantSelectorIdentifierHashes(SelectorFilter::collectHashes(*selector()))
 {

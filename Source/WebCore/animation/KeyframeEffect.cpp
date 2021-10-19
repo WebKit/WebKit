@@ -47,6 +47,7 @@
 #include "JSKeyframeEffect.h"
 #include "KeyframeEffectStack.h"
 #include "Logging.h"
+#include "PropertyAllowlist.h"
 #include "PseudoElement.h"
 #include "RenderBox.h"
 #include "RenderBoxModelObject.h"
@@ -1291,6 +1292,9 @@ bool KeyframeEffect::isCurrentlyAffectingProperty(CSSPropertyID property, Accele
         return false;
 
     if (!m_blendingKeyframes.properties().contains(property))
+        return false;
+
+    if (m_pseudoId == PseudoId::Marker && !Style::isValidMarkerStyleProperty(property))
         return false;
 
     return m_phaseAtLastApplication == AnimationEffectPhase::Active;

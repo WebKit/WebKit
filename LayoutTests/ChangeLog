@@ -1,3 +1,93 @@
+2021-10-19  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r284466. rdar://problem/84424869
+
+    REGRESSION(r284313): ::marker accelerated animations are broken
+    https://bugs.webkit.org/show_bug.cgi?id=231906
+    <rdar://problem/84383279>
+    
+    Reviewed by Antti Koivisto.
+    
+    LayoutTests/imported/w3c:
+    
+    WPT now reflect that we correctly do not animate the opacity property and correctly account for
+    other ineffective properties on ::marker, such as line-height.
+    
+    * web-platform-tests/css/css-pseudo/marker-animate-expected.txt:
+    * web-platform-tests/css/css-pseudo/parsing/marker-supported-properties-in-animation-expected.txt:
+    
+    Source/WebCore:
+    
+    Test: webanimations/marker-opacity-animation-no-effect.html
+    
+    We incorrectly supported animations for all known CSS properties on a ::marker since we added
+    support for animation of ::marker, and with r284313 we started returning the correct renderer
+    for ::marker pseudo-elements which meant that accelerated opacity animations started running
+    for the first time.
+    
+    We now correctly ignore disallowed properties for ::marker when animating with those changes.
+    
+    First, in Style::Resolver::styleForKeyframe(), we pass the relevant allowlist to the MatchResult's
+    authorDeclarations when adding the keyframe properties.
+    
+    Then, in KeyframeEffect::isCurrentlyAffectingProperty() we call isValidMarkerStyleProperty() in
+    case we're being called for a ::marker pseudo-element.
+    
+    To be able to obtain the allowlist and call isValidMarkerStyleProperty() in those two questions,
+    we had to refactor the related code into a dedicated PropertyAllowlist file and enum.
+    
+    * Sources.txt:
+    * WebCore.xcodeproj/project.pbxproj:
+    * animation/KeyframeEffect.cpp:
+    (WebCore::KeyframeEffect::isCurrentlyAffectingProperty const):
+    * style/ElementRuleCollector.cpp:
+    (WebCore::Style::ElementRuleCollector::transferMatchedRules):
+    * style/ElementRuleCollector.h:
+    * style/PropertyAllowlist.cpp: Added.
+    (WebCore::Style::propertyAllowlistForPseudoId):
+    (WebCore::Style::isValidMarkerStyleProperty):
+    (WebCore::Style::isValidCueStyleProperty):
+    * style/PropertyAllowlist.h: Added.
+    * style/PropertyCascade.cpp:
+    (WebCore::Style::PropertyCascade::addMatch):
+    (WebCore::Style::isValidMarkerStyleProperty): Deleted.
+    (WebCore::Style::isValidCueStyleProperty): Deleted.
+    * style/RuleData.cpp:
+    (WebCore::Style::determinePropertyAllowlist):
+    (WebCore::Style::RuleData::RuleData):
+    (WebCore::Style::determinePropertyAllowlistType): Deleted.
+    * style/RuleData.h:
+    (WebCore::Style::RuleData::propertyAllowlist const):
+    (): Deleted.
+    (WebCore::Style::RuleData::propertyAllowlistType const): Deleted.
+    * style/StyleResolver.cpp:
+    (WebCore::Style::Resolver::styleForKeyframe):
+    
+    LayoutTests:
+    
+    Add a new test that checks we do not visually account for an opacity animation on a ::marker
+    pseudo-element.
+    
+    * webanimations/marker-opacity-animation-no-effect-expected.html: Added.
+    * webanimations/marker-opacity-animation-no-effect.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@284466 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-10-19  Antoine Quint  <graouts@webkit.org>
+
+            REGRESSION(r284313): ::marker accelerated animations are broken
+            https://bugs.webkit.org/show_bug.cgi?id=231906
+            <rdar://problem/84383279>
+
+            Reviewed by Antti Koivisto.
+
+            Add a new test that checks we do not visually account for an opacity animation on a ::marker
+            pseudo-element.
+
+            * webanimations/marker-opacity-animation-no-effect-expected.html: Added.
+            * webanimations/marker-opacity-animation-no-effect.html: Added.
+
 2021-10-18  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] fast/mediastream/video-rotation tests are failing due to missing TestController::takeViewPortSnapshot

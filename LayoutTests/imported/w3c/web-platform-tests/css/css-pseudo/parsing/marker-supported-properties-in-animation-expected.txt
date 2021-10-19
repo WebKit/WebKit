@@ -1,5 +1,5 @@
 
-FAIL Animation of font in ::marker assert_in_array: value "italic normal 500 expanded 15px/35px -webkit-standard" not in array ["italic small-caps 500 expanded 15px / 35px Ahem", "italic small-caps 500 expanded 15px/35px Ahem"]
+FAIL Animation of font in ::marker assert_in_array: value "italic normal 500 expanded 15px/normal -webkit-standard" not in array ["italic small-caps 500 expanded 15px / 35px Ahem", "italic small-caps 500 expanded 15px/35px Ahem"]
 FAIL Animation of font-family in ::marker assert_equals: expected "Ahem" but got "-webkit-standard"
 FAIL Animation of font-feature-settings in ::marker assert_equals: expected "\"smcp\"" but got "normal"
 FAIL Animation of font-kerning in ::marker assert_equals: expected "none" but got "auto"
@@ -15,7 +15,7 @@ FAIL Animation of font-variant-ligatures in ::marker assert_equals: expected "hi
 FAIL Animation of font-variant-numeric in ::marker assert_equals: expected "slashed-zero" but got "tabular-nums"
 FAIL Animation of font-variant-position in ::marker assert_equals: expected "sub" but got "normal"
 PASS Animation of font-weight in ::marker
-PASS Animation of line-height in ::marker
+FAIL Animation of line-height in ::marker assert_equals: expected "35px" but got "normal"
 FAIL Animation of white-space in ::marker assert_equals: expected "nowrap" but got "normal"
 FAIL Animation of color in ::marker assert_equals: expected "rgb(50, 150, 100)" but got "rgb(0, 0, 0)"
 FAIL Animation of text-combine-upright in ::marker assert_true: text-combine-upright doesn't seem to be supported in the computed style expected true got false
