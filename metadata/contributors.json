@@ -5825,7 +5825,8 @@
          "svillar@igalia.com",
          "sergio@webkit.org"
       ],
-      "expertise" : "WebKitGTK port, WebKit2, CSS Grid Layout, libsoup",
+      "expertise" : "WebKitGTK port, CSS Grid Layout, Flexbox",
+      "github": "svillar",
       "name" : "Sergio Villar Senin",
       "nicks" : [
          "svillar"

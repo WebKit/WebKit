@@ -1,3 +1,11 @@
+2021-10-19  Sergio Villar Senin  <svillar@igalia.com>
+
+        Add my github username to contributors.json
+
+        Unreviewed.
+
+        * metadata/contributors.json:
+
 2021-10-18  Ms2ger  <Ms2ger@igalia.com>
 
         Add my github username to contributors.json
