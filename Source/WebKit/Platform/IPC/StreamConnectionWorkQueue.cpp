@@ -106,6 +106,7 @@ void StreamConnectionWorkQueue::wakeUpProcessingThread()
 
 void StreamConnectionWorkQueue::processStreams()
 {
+    Ref protectedThis = *this;
     constexpr size_t defaultMessageLimit = 1000;
     bool hasMoreToProcess = false;
     do {

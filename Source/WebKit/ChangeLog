@@ -1,3 +1,44 @@
+2021-10-18  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        GPU process occasionally crashes under `StreamConnectionWorkQueue::processStreams()` in layout tests
+        https://bugs.webkit.org/show_bug.cgi?id=231897
+
+        Reviewed by Simon Fraser.
+
+        Certain layout tests (e.g. in `LayoutTests/compositing`) currently cause the GPU process to crash on the remote
+        rendering backend thread ("RemoteRenderingBackend work queue") in `StreamConnectionWorkQueue::processStreams()`.
+        This happens because the `dispatch()` call to delete cached resources underneath `~RemoteRenderingBackend()`
+        may fire after the destructor is finished running (thereby destroying `m_workQueue` itself). This leaves the
+        stream work queue in a bad state and causes various crashes when the function is eventually dispatched.
+
+        Since StreamConnectionWorkQueue is already ThreadSafeRefCounted, it doesn't make sense to directly store
+        StreamConnectionWorkQueue as a member of RemoteRenderingBackend; to fix these crashes, we make `m_workQueue` on
+        RemoteRenderingBackend a strong Ref, and additionally make `StreamConnectionWorkQueue::processStreams()` protect
+        itself to avoid destroying the work queue in the middle of processing.
+
+        * GPUProcess/graphics/RemoteRenderingBackend.cpp:
+
+        Drive-by fix: remove an unnecessary header include.
+
+        (WebKit::RemoteRenderingBackend::RemoteRenderingBackend):
+        (WebKit::RemoteRenderingBackend::~RemoteRenderingBackend):
+
+        Ensure that the work queue is protected through the final dispatch call that deletes cached resources, and also
+        explicitly `stop()` the work queue when this is done to ensure that the thread permanently stops waiting for
+        additional work.
+
+        (WebKit::RemoteRenderingBackend::dispatch):
+        * GPUProcess/graphics/RemoteRenderingBackend.h:
+
+        Replace the IPC::StreamConnectionWorkQueue member with a Ref instead, so that it isn't immediately destroyed
+        when the rendering backend is destroyed, and can instead be protected by strong references on the stack.
+
+        * Platform/IPC/StreamConnectionWorkQueue.cpp:
+        (IPC::StreamConnectionWorkQueue::processStreams):
+        * Platform/IPC/StreamConnectionWorkQueue.h:
+
+        Add a boilerplate `StreamConnectionWorkQueue::create()` function that returns a Ref.
+
 2021-10-18  John Pascoe  <j_pascoe@apple.com>
 
         [WebAuthn] Obtain consent to create new credential when platform authenticator in excludedCredentials

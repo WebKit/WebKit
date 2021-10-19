@@ -38,6 +38,11 @@ namespace IPC {
 
 class StreamConnectionWorkQueue final : public FunctionDispatcher {
 public:
+    static Ref<StreamConnectionWorkQueue> create(const char* name)
+    {
+        return adoptRef(*new StreamConnectionWorkQueue(name));
+    }
+
     StreamConnectionWorkQueue(const char*);
     ~StreamConnectionWorkQueue() = default;
     void addStreamConnection(StreamServerConnectionBase&);
