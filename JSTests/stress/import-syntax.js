@@ -29,7 +29,7 @@ async function testSyntax(script, message) {
 
 testSyntaxError(`import)`, `SyntaxError: Unexpected token ')'. import call expects exactly one argument.`);
 testSyntaxError(`new import(`, `SyntaxError: Cannot use new with import.`);
-testSyntaxError(`import.hello()`, `SyntaxError: Unexpected identifier 'hello'. "import." can only followed with meta.`);
+testSyntaxError(`import.hello()`, `SyntaxError: Unexpected identifier 'hello'. "import." can only be followed with meta.`);
 testSyntaxError(`import[`, `SyntaxError: Unexpected token '['. import call expects exactly one argument.`);
 testSyntaxError(`import<`, `SyntaxError: Unexpected token '<'. import call expects exactly one argument.`);
 

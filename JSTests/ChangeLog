@@ -1,3 +1,39 @@
+2021-10-18  Phillip Mates  <pmates@igalia.com>
+
+        Test coverage for JSC shadow realms implementation
+        https://bugs.webkit.org/show_bug.cgi?id=230602
+
+        Reviewed by Yusuke Suzuki.
+
+        * modules/import-meta-syntax.js:
+        (shouldThrow):
+        * stress/eval-indirect.js: Added.
+        (shouldBe):
+        (shouldThrow):
+        * stress/import-syntax.js:
+        * stress/resources/shadow-realm-example-module.js: Added.
+        (putInGlobal):
+        (getFromGlobal):
+        (getAnObject):
+        (getCallCount):
+        * stress/shadow-realm-evaluate.js: Added.
+        (shouldBe):
+        (shouldThrow):
+        (assertionFn):
+        (shouldBe.String):
+        (shouldBe.globalObjectFor.doEval):
+        (shouldBe.globalObjectFor):
+        * stress/shadow-realm-import-value.js: Added.
+        (shouldBe):
+        (shouldThrow):
+        (async shouldThrowAsync):
+        (async const):
+        (doImport):
+        * stress/shadow-realm.js: Added.
+        (shouldBe):
+        (throw.new.Error):
+        * test262/config.yaml:
+
 2021-10-18  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] PutByVal's child5 should be KnownInt32Use / Int52RepUse in FTL

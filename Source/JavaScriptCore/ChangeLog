@@ -1,3 +1,92 @@
+2021-10-18  Phillip Mates  <pmates@igalia.com>
+
+        shadow realms implementation
+        https://bugs.webkit.org/show_bug.cgi?id=230602
+
+        Reviewed by Yusuke Suzuki.
+
+        Implementation of the Shadow Realms proposal (stage 3 in TC39) [1]
+
+        Main APIs added are
+         - `new ShadowRealm()`
+           creates an object that has its own global object and module graph.
+         - ShadowRealm.prototype.evaluate(sourceText)
+           this allows for evaluating code in the context of the realm, which
+           has its own module graph and global object.
+         - ShadowRealm.prototype.importValue(specifier, exportName)
+           this allows importing module exports in the the context of the
+           realm, which has its own module graph and global object.
+
+        The main detail of the Shadow Realm implementation is that values
+        passed between realms must be either primitives or wrapped callables.
+        Wrapped callables themselves are callables that check that their
+        arguments and return values are also either primitives or wrapped
+        callables. This detail is implemented via JS builtins + a few new
+        intrinsics.
+
+        Can be enabled using `--useShadowRealm=true`
+
+        [1]: https://github.com/tc39/proposal-shadowrealm
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * builtins/BuiltinNames.h:
+        * builtins/ShadowRealmPrototype.js: Added.
+        (globalPrivate.wrap.wrapped):
+        (globalPrivate.wrap):
+        (evaluate):
+        (importValue):
+        * bytecode/BytecodeIntrinsicRegistry.h:
+        * bytecode/LinkTimeConstant.h:
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::BytecodeGenerator::emitIsShadowRealm):
+        * bytecompiler/NodesCodegen.cpp:
+        * jsc.cpp:
+        (JSC_DEFINE_HOST_FUNCTION):
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseMemberExpression):
+        * runtime/CommonIdentifiers.h:
+        * runtime/IndirectEvalExecutable.cpp:
+        (JSC::IndirectEvalExecutable::createImpl):
+        (JSC::IndirectEvalExecutable::create):
+        (JSC::IndirectEvalExecutable::tryCreate):
+        * runtime/IndirectEvalExecutable.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        (JSC::JSGlobalObject::visitChildrenImpl):
+        (JSC::JSGlobalObject::createWithCustomMethodTable):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::shadowRealmPrototype const):
+        (JSC::JSGlobalObject::shadowRealmStructure const):
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/JSType.cpp:
+        (WTF::printInternal):
+        * runtime/JSType.h:
+        * runtime/OptionsList.h:
+        * runtime/ShadowRealmConstructor.cpp: Added.
+        (JSC::ShadowRealmConstructor::ShadowRealmConstructor):
+        (JSC::ShadowRealmConstructor::finishCreation):
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/ShadowRealmConstructor.h: Added.
+        * runtime/ShadowRealmObject.cpp: Added.
+        (JSC::ShadowRealmObject::ShadowRealmObject):
+        (JSC::ShadowRealmObject::visitChildrenImpl):
+        (JSC::ShadowRealmObject::create):
+        (JSC::ShadowRealmObject::finishCreation):
+        * runtime/ShadowRealmObject.h: Added.
+        * runtime/ShadowRealmPrototype.cpp: Added.
+        (JSC::ShadowRealmPrototype::ShadowRealmPrototype):
+        (JSC::ShadowRealmPrototype::finishCreation):
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/ShadowRealmPrototype.h: Added.
+        * runtime/VM.cpp:
+        * runtime/VM.h:
+
 2021-10-18  Saam Barati  <sbarati@apple.com>
 
         Don't load metadata base pointer in EXTRA_CTI_THUNKS

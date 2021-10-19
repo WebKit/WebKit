@@ -50,6 +50,7 @@ $(PROJECT_DIR)/builtins/RegExpPrototype.js
 $(PROJECT_DIR)/builtins/RegExpStringIteratorPrototype.js
 $(PROJECT_DIR)/builtins/SetIteratorPrototype.js
 $(PROJECT_DIR)/builtins/SetPrototype.js
+$(PROJECT_DIR)/builtins/ShadowRealmPrototype.js
 $(PROJECT_DIR)/builtins/StringConstructor.js
 $(PROJECT_DIR)/builtins/StringIteratorPrototype.js
 $(PROJECT_DIR)/builtins/StringPrototype.js
