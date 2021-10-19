@@ -1,3 +1,7 @@
+2021-10-19  Russell Epstein  <repstein@apple.com>
+
+        Revert r283931. rdar://problem/83953710
+
 2021-10-18  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r284230. rdar://problem/84351866
