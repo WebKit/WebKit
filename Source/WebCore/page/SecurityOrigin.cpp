@@ -98,8 +98,8 @@ static bool shouldTreatAsUniqueOrigin(const URL& url)
 
     // FIXME: Do we need to unwrap the URL further?
     URL innerURL = SecurityOrigin::shouldUseInnerURL(url) ? SecurityOrigin::extractInnerURL(url) : url;
-
-    // FIXME: Check whether innerURL is valid.
+    if (!innerURL.isValid())
+        return true;
 
     // For edge case URLs that were probably misparsed, make sure that the origin is unique.
     // This is an additional safety net against bugs in URL parsing, and for network back-ends that parse URLs differently,

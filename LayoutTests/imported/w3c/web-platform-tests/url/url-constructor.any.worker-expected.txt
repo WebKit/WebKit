@@ -590,6 +590,7 @@ PASS Parsing: <non-special://[1:2::3]:80/> against <about:blank>
 PASS Parsing: <non-special://[:80/> against <about:blank>
 PASS Parsing: <blob:https://example.com:443/> against <about:blank>
 PASS Parsing: <blob:d3958f5c-0777-0845-9dcf-2cb28783acaf> against <about:blank>
+PASS Parsing: <blob:> against <about:blank>
 PASS Parsing: <http://0x7f.0.0.0x7g> against <about:blank>
 PASS Parsing: <http://0X7F.0.0.0X7G> against <about:blank>
 PASS Parsing: <http://[::127.0.0.0.1]> against <about:blank>
