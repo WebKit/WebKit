@@ -92,8 +92,6 @@ rect: style.getPropertyValue(color-interpolation) : sRGB
 rect: style.getPropertyCSSValue(color-interpolation) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(color-interpolation-filters) : linearRGB
 rect: style.getPropertyCSSValue(color-interpolation-filters) : [object CSSPrimitiveValue]
-rect: style.getPropertyValue(color-rendering) : auto
-rect: style.getPropertyCSSValue(color-rendering) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(column-count) : auto
 rect: style.getPropertyCSSValue(column-count) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(column-fill) : balance
@@ -614,8 +612,6 @@ g: style.getPropertyValue(color-interpolation) : sRGB
 g: style.getPropertyCSSValue(color-interpolation) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(color-interpolation-filters) : linearRGB
 g: style.getPropertyCSSValue(color-interpolation-filters) : [object CSSPrimitiveValue]
-g: style.getPropertyValue(color-rendering) : auto
-g: style.getPropertyCSSValue(color-rendering) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(column-count) : auto
 g: style.getPropertyCSSValue(column-count) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(column-fill) : balance

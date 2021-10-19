@@ -215,8 +215,7 @@ StyleDifference SVGRenderStyle::diff(const SVGRenderStyle& other) const
         return StyleDifference::Repaint;
 
     // Changes of these flags only cause repaints.
-    if (m_inheritedFlags.colorRendering != other.m_inheritedFlags.colorRendering
-        || m_inheritedFlags.shapeRendering != other.m_inheritedFlags.shapeRendering
+    if (m_inheritedFlags.shapeRendering != other.m_inheritedFlags.shapeRendering
         || m_inheritedFlags.clipRule != other.m_inheritedFlags.clipRule
         || m_inheritedFlags.fillRule != other.m_inheritedFlags.fillRule
         || m_inheritedFlags.colorInterpolation != other.m_inheritedFlags.colorInterpolation

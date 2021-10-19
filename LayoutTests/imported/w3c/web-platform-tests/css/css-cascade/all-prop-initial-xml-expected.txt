@@ -86,7 +86,6 @@ PASS clip-rule
 PASS color
 PASS color-interpolation
 PASS color-interpolation-filters
-PASS color-rendering
 PASS color-scheme
 PASS column-count
 PASS column-fill

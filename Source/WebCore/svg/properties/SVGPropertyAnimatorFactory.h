@@ -139,8 +139,6 @@ private:
             Pair { SVGNames::clip_ruleAttr->impl(),                   { SVGValueProperty<String>::create, SVGPropertyAnimatorFactory::createStringAnimator } },
             Pair { SVGNames::color_interpolationAttr->impl(),         { SVGValueProperty<String>::create, SVGPropertyAnimatorFactory::createStringAnimator } },
             Pair { SVGNames::color_interpolation_filtersAttr->impl(), { SVGValueProperty<String>::create, SVGPropertyAnimatorFactory::createStringAnimator } },
-            Pair { SVGNames::color_profileAttr->impl(),               { SVGValueProperty<String>::create, SVGPropertyAnimatorFactory::createStringAnimator } },
-            Pair { SVGNames::color_renderingAttr->impl(),             { SVGValueProperty<String>::create, SVGPropertyAnimatorFactory::createStringAnimator } },
             Pair { SVGNames::cursorAttr->impl(),                      { SVGValueProperty<String>::create, SVGPropertyAnimatorFactory::createStringAnimator } },
             Pair { SVGNames::displayAttr->impl(),                     { SVGValueProperty<String>::create, SVGPropertyAnimatorFactory::createStringAnimator } },
             Pair { SVGNames::dominant_baselineAttr->impl(),           { SVGValueProperty<String>::create, SVGPropertyAnimatorFactory::createStringAnimator } },

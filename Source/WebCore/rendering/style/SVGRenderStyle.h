@@ -94,7 +94,6 @@ public:
     void setClipRule(WindRule val) { m_inheritedFlags.clipRule = static_cast<unsigned>(val); }
     void setColorInterpolation(ColorInterpolation val) { m_inheritedFlags.colorInterpolation = static_cast<unsigned>(val); }
     void setColorInterpolationFilters(ColorInterpolation val) { m_inheritedFlags.colorInterpolationFilters = static_cast<unsigned>(val); }
-    void setColorRendering(ColorRendering val) { m_inheritedFlags.colorRendering = static_cast<unsigned>(val); }
     void setFillRule(WindRule val) { m_inheritedFlags.fillRule = static_cast<unsigned>(val); }
     void setShapeRendering(ShapeRendering val) { m_inheritedFlags.shapeRendering = static_cast<unsigned>(val); }
     void setTextAnchor(TextAnchor val) { m_inheritedFlags.textAnchor = static_cast<unsigned>(val); }
@@ -140,7 +139,6 @@ public:
     WindRule clipRule() const { return static_cast<WindRule>(m_inheritedFlags.clipRule); }
     ColorInterpolation colorInterpolation() const { return static_cast<ColorInterpolation>(m_inheritedFlags.colorInterpolation); }
     ColorInterpolation colorInterpolationFilters() const { return static_cast<ColorInterpolation>(m_inheritedFlags.colorInterpolationFilters); }
-    ColorRendering colorRendering() const { return static_cast<ColorRendering>(m_inheritedFlags.colorRendering); }
     WindRule fillRule() const { return static_cast<WindRule>(m_inheritedFlags.fillRule); }
     ShapeRendering shapeRendering() const { return static_cast<ShapeRendering>(m_inheritedFlags.shapeRendering); }
     TextAnchor textAnchor() const { return static_cast<TextAnchor>(m_inheritedFlags.textAnchor); }
@@ -203,7 +201,6 @@ private:
         bool operator==(const InheritedFlags&) const;
         bool operator!=(const InheritedFlags& other) const { return !(*this == other); }
 
-        unsigned colorRendering : 2; // ColorRendering
         unsigned shapeRendering : 2; // ShapeRendering
         unsigned clipRule : 1; // WindRule
         unsigned fillRule : 1; // WindRule
@@ -424,7 +421,6 @@ inline void SVGRenderStyle::setMarkerEndResource(const String& resource)
 inline void SVGRenderStyle::setBitDefaults()
 {
     m_inheritedFlags.clipRule = static_cast<unsigned>(initialClipRule());
-    m_inheritedFlags.colorRendering = static_cast<unsigned>(initialColorRendering());
     m_inheritedFlags.fillRule = static_cast<unsigned>(initialFillRule());
     m_inheritedFlags.shapeRendering = static_cast<unsigned>(initialShapeRendering());
     m_inheritedFlags.textAnchor = static_cast<unsigned>(initialTextAnchor());
@@ -444,8 +440,7 @@ inline void SVGRenderStyle::setBitDefaults()
 
 inline bool SVGRenderStyle::InheritedFlags::operator==(const InheritedFlags& other) const
 {
-    return colorRendering == other.colorRendering
-        && shapeRendering == other.shapeRendering
+    return shapeRendering == other.shapeRendering
         && clipRule == other.clipRule
         && fillRule == other.fillRule
         && textAnchor == other.textAnchor

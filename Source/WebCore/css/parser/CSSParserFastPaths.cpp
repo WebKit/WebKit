@@ -630,8 +630,6 @@ bool CSSParserFastPaths::isValidKeywordPropertyAndValue(CSSPropertyID propertyId
     case CSSPropertyColorInterpolation:
     case CSSPropertyColorInterpolationFilters:
         return valueID == CSSValueAuto || valueID == CSSValueSRGB || valueID == CSSValueLinearRGB;
-    case CSSPropertyColorRendering:
-        return valueID == CSSValueAuto || valueID == CSSValueOptimizeSpeed || valueID == CSSValueOptimizeQuality;
     case CSSPropertyDirection: // ltr | rtl
         return valueID == CSSValueLtr || valueID == CSSValueRtl;
     case CSSPropertyDominantBaseline:
@@ -1008,7 +1006,6 @@ bool CSSParserFastPaths::isKeywordPropertyID(CSSPropertyID propertyId)
     case CSSPropertyClipRule:
     case CSSPropertyColorInterpolation:
     case CSSPropertyColorInterpolationFilters:
-    case CSSPropertyColorRendering:
     case CSSPropertyDominantBaseline:
     case CSSPropertyFillRule:
     case CSSPropertyMaskType:

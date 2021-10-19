@@ -4126,7 +4126,6 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         case CSSPropertyBufferedRendering:
         case CSSPropertyClipRule:
         case CSSPropertyMask:
-        case CSSPropertyEnableBackground:
         case CSSPropertyFloodColor:
         case CSSPropertyFloodOpacity:
         case CSSPropertyLightingColor:
@@ -4134,8 +4133,6 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         case CSSPropertyStopOpacity:
         case CSSPropertyColorInterpolation:
         case CSSPropertyColorInterpolationFilters:
-        case CSSPropertyColorProfile:
-        case CSSPropertyColorRendering:
         case CSSPropertyFill:
         case CSSPropertyFillOpacity:
         case CSSPropertyFillRule:

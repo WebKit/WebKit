@@ -160,9 +160,6 @@ yellowgreen
 
 // CSS_PROP_MASK
 // CSS_PROP_OPACITY
-// CSS_PROP_ENABLE_BACKGROUND
-accumulate
-new
 
 // CSS_PROP_FILTER
 // CSS_PROP_FLOOD_COLOR
@@ -183,14 +180,6 @@ linearRGB
 //auto
 //sRGB
 //linearRGB
-
-// CSS_PROP_COLOR_PROFILE
-//sRGB
-
-// CSS_PROP_COLOR_RENDERING
-//auto
-//optimizeSpeed
-//optimizeQuality
 
 //// CSS_PROP_FILL
 //currentColor

@@ -2479,35 +2479,6 @@
                 "url": "https://www.w3.org/TR/SVG11/painting.html#ColorInterpolationFiltersProperty"
             }
         },
-        "color-profile": {
-            "codegen-properties": {
-                "skip-builder": true,
-                "svg": true
-            },
-            "status": {
-                "status": "not implemented",
-                "enabled-by-default": true
-            },
-            "specification": {
-                "category": "svg",
-                "url": "https://www.w3.org/TR/SVG11/color.html#ColorProfileProperty"
-            }
-        },
-        "color-rendering": {
-            "inherited": true,
-            "values": [
-                "auto",
-                "optimizespeed",
-                "optimizequality"
-            ],
-            "codegen-properties": {
-                "svg": true
-            },
-            "specification": {
-                "category": "svg",
-                "url": "https://www.w3.org/TR/SVG11/painting.html#ColorRenderingProperty"
-            }
-        },
         "content": {
             "codegen-properties": {
                 "custom": "All"
@@ -2670,18 +2641,6 @@
             "specification": {
                 "category": "css-22",
                 "url": "https://www.w3.org/TR/CSS2/tables.html#empty-cells"
-            }
-        },
-        "enable-background": {
-            "codegen-properties": {
-                "skip-builder": true
-            },
-            "status": {
-                "status": "not implemented",
-                "enabled-by-default": true
-            },
-            "specification": {
-                "category": "svg"
             }
         },
         "fallback": {

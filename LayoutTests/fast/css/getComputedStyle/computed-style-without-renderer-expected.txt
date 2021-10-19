@@ -46,7 +46,6 @@ clip-rule: nonzero
 color: rgb(0, 0, 0)
 color-interpolation: sRGB
 color-interpolation-filters: linearRGB
-color-rendering: auto
 column-count: auto
 column-fill: balance
 column-gap: normal
