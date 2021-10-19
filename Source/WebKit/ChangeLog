@@ -1,3 +1,17 @@
+2021-10-19  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r284099.
+        https://bugs.webkit.org/show_bug.cgi?id=231984
+
+        Introduced build failure
+
+        Reverted changeset:
+
+        "[iOS] Stop including 'util.sb' in the WebContent process'
+        sandbox"
+        https://bugs.webkit.org/show_bug.cgi?id=231570
+        https://commits.webkit.org/r284099
+
 2021-10-19  Garrett Davidson  <garrett_davidson@apple.com>
 
         WebAuthn Platform UI callbacks are not guaranteed to happen on the main thread
