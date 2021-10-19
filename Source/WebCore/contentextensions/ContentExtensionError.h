@@ -37,7 +37,6 @@ enum class ContentExtensionError {
     JSONInvalid = 1,
     
     // JSON semantics error
-    JSONTopLevelStructureNotAnObject,
     JSONTopLevelStructureNotAnArray,
     JSONInvalidObjectInTopLevelArray,
     JSONInvalidRule,

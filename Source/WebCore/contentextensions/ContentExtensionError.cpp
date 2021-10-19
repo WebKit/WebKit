@@ -49,8 +49,6 @@ const std::error_category& contentExtensionErrorCategory()
             switch (static_cast<ContentExtensionError>(errorCode)) {
             case ContentExtensionError::JSONInvalid:
                 return "Failed to parse the JSON String.";
-            case ContentExtensionError::JSONTopLevelStructureNotAnObject:
-                return "Invalid input, the top level structure is not an object.";
             case ContentExtensionError::JSONTopLevelStructureNotAnArray:
                 return "Invalid input, the top level structure is not an array.";
             case ContentExtensionError::JSONInvalidObjectInTopLevelArray:

@@ -1463,7 +1463,7 @@ TEST_F(ContentExtensionTest, MatchesEverything)
 TEST_F(ContentExtensionTest, InvalidJSON)
 {
     checkCompilerError("[", ContentExtensions::ContentExtensionError::JSONInvalid);
-    checkCompilerError("123", ContentExtensions::ContentExtensionError::JSONTopLevelStructureNotAnObject);
+    checkCompilerError("123", ContentExtensions::ContentExtensionError::JSONTopLevelStructureNotAnArray);
     checkCompilerError("{}", ContentExtensions::ContentExtensionError::JSONTopLevelStructureNotAnArray);
     // FIXME: Add unit test for JSONInvalidRule if that is possible to hit.
     checkCompilerError("[]", ContentExtensions::ContentExtensionError::JSONContainsNoRules);
