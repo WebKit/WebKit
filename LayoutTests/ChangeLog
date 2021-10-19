@@ -1,3 +1,12 @@
+2021-10-19  Ayumi Kojima  <ayumi_kojima@apple.com>
+
+        Regression(r283935 - r283938): [ macOS wk1 ] imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-autofocus-multiple-times.html is a flaky failure.
+        https://bugs.webkit.org/show_bug.cgi?id=231918
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
 2021-10-19  Simon Fraser  <simon.fraser@apple.com>
 
         Regression(r284336): [ iOS 15 ] system-preview/badge.html is image failing
