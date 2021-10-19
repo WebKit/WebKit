@@ -1,3 +1,15 @@
+2021-10-18  Cameron McCormack  <heycam@apple.com>
+
+        Make createImageBitmap() take EXIF orientation into account correctly
+        https://bugs.webkit.org/show_bug.cgi?id=231063
+        <rdar://problem/83753956>
+
+        Reviewed by Myles Maxfield and Said Abou-Hallawa.
+
+        * web-platform-tests/html/canvas/element/manual/imagebitmap/createImageBitmap-exif-orientation-expected.txt: Added.
+        * web-platform-tests/html/canvas/element/manual/imagebitmap/createImageBitmap-exif-orientation.html: Added.
+        * web-platform-tests/html/canvas/element/manual/imagebitmap/resources/squares.jpg: Added.
+
 2021-10-18  Chris Dumez  <cdumez@apple.com>
 
         Resync web-platform-tests/tools from upstream
