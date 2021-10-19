@@ -1,3 +1,15 @@
+2021-10-19  Rob Buis  <rbuis@igalia.com>
+
+        Unskip passing flex-basis: content + aspect ratio WPT tests
+        https://bugs.webkit.org/show_bug.cgi?id=231947
+
+        Reviewed by Sergio Villar Senin.
+
+        Unskip passing flex-basis: content + aspect ratio WPT tests. These test cases did not work
+        before because there was no support for flex-basis: content, but since r284440 they pass.
+
+        * TestExpectations:
+
 2021-10-19  Youenn Fablet  <youenn@apple.com>
 
         [ wk2 ] 2 page-cache layout-tests are flakey crashing
