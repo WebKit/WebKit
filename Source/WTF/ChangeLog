@@ -1,3 +1,19 @@
+2021-10-19  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Remove old GCC workaround for Allocator
+        https://bugs.webkit.org/show_bug.cgi?id=231978
+
+        Reviewed by Darin Adler.
+
+        This is for old GCC. Since our GCC baseline is 8.3.0, this is no longer necessary.
+
+        * wtf/FastMalloc.h:
+        (WTF::FastAllocator::deallocate):
+        (WTF::FastAllocator::construct): Deleted.
+        (WTF::FastAllocator::destroy): Deleted.
+        (WTF::FastAllocator::max_size const): Deleted.
+        (WTF::FastAllocator::select_on_container_copy_construction const): Deleted.
+
 2021-10-18  Filip Pizlo  <fpizlo@apple.com>
 
         StringBuffer should really know that strings might be 8-bit
