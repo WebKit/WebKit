@@ -25,10 +25,8 @@ import requests
 import six
 import sys
 
-import json
-
 from webkitcorepy import decorators
-from webkitscmpy import Commit, PullRequest
+from webkitscmpy import Commit, Contributor, PullRequest
 from webkitscmpy.remote.scm import Scm
 
 
@@ -58,13 +56,14 @@ class BitBucket(Scm):
             result._reviewers = []
             result._approvers = []
             result._blockers = []
+            needs_status = Contributor.REVIEWER in self.repository.contributors.statuses
             for rdata in data.get('reviewers', []):
                 reviewer = self.repository.contributors.create(
                     rdata['user']['displayName'],
                     rdata['user'].get('emailAddress', None),
                 )
                 result._reviewers.append(reviewer)
-                if rdata.get('approved', False):
+                if rdata.get('approved', False) and (not needs_status or reviewer.status == Contributor.REVIEWER):
                     result._approvers.append(reviewer)
                 if rdata.get('status') == 'NEEDS_WORK':
                     result._blockers.append(reviewer)

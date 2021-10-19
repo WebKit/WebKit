@@ -162,7 +162,7 @@ class GitHub(Scm):
                 return Contributor(username)
 
             data = response.json()
-            result = self.repository.contributors.create(data.get('name', username), data.get('email'))
+            result = self.repository.contributors.create(data.get('name', username) or username, data.get('email'))
             result.github = username
             self.repository.contributors[username] = result
             return result
@@ -172,10 +172,11 @@ class GitHub(Scm):
             pull_request._reviewers = [self._contributor(user['login']) for user in response.get('users', [])]
             pull_request._approvers = []
             pull_request._blockers = []
+            needs_status = Contributor.REVIEWER in self.repository.contributors.statuses
             for review in self.repository.request('pulls/{}/reviews'.format(pull_request.number)):
                 contributor = self._contributor(review['user']['login'])
                 pull_request._reviewers.append(contributor)
-                if review.get('state') == 'APPROVED':
+                if review.get('state') == 'APPROVED' and (not needs_status or contributor.status == Contributor.REVIEWER):
                     pull_request._approvers.append(contributor)
                 elif review.get('state') == 'CHANGES_REQUESTED':
                     pull_request._blockers.append(contributor)

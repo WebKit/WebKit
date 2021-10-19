@@ -1,3 +1,26 @@
+2021-10-19  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitscmpy] Filter approvers by status
+        https://bugs.webkit.org/show_bug.cgi?id=231843
+        <rdar://problem/84320934>
+
+        Reviewed by Dewei Zhu.
+
+        If a project defines statuses for it's contributors, we only want
+        to allow reviewers to approve changes.
+
+        * Scripts/libraries/webkitscmpy/webkitscmpy/contributor.py:
+        (Contributor): Add reviewer status.
+        (Contributor.Mapping.load): Keep track of possible statuses.
+        (Contributor.Mapping.__init__): Ditto.
+        (Contributor.Mapping.add): Ditto.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/remote/bitbucket.py:
+        (BitBucket.PRGenerator.PullRequest): If a project defines a reviewer status, enforce it.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/remote/git_hub.py:
+        (GitHub.PRGenerator._contributor): Handle case where no name is defined.
+        (GitHub.PRGenerator.reviewers): If a project defines a reviewer status, enforce it.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/pull_request_unittest.py:
+
 2021-10-19  Alex Christensen  <achristensen@webkit.org>
 
         Fix iOS API tests after r284304
