@@ -30,9 +30,9 @@ use warnings;
 
 use File::Spec;
 use FindBin;
-use lib File::Spec->catdir($FindBin::Bin, "..", "..");
+use lib File::Spec->catdir($FindBin::Bin, "..");
 use Test::More;
-use webkitperl::leaks qw(parseLeaksOutput);
+use LoadAsModule qw(RunLeaks run-leaks);
 
 my @input = split(/\n/, <<EOF);
 leaks Report Version:  2.0
@@ -118,7 +118,7 @@ EOF
   },
 ];
 
-my $actualOutput = parseLeaksOutput(@input);
+my $actualOutput = RunLeaks::parseLeaksOutput(@input);
 
 plan(tests => 1);
 is_deeply($actualOutput, $expectedOutput, "leaks Report Version 2.0 (old)");

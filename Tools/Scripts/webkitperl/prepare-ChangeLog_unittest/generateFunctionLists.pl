@@ -28,9 +28,10 @@ use warnings;
 use File::Temp;
 use FindBin;
 use Test::More;
-use lib File::Spec->catdir($FindBin::Bin, "..", "..");
-use webkitperl::changelog qw(actuallyGenerateFunctionLists);
 use VCSUtils;
+
+use lib File::Spec->catdir($FindBin::Bin, "..");
+use LoadAsModule qw(PrepareChangeLog prepare-ChangeLog);
 
 my $EXAMPLE_CPP = <<EOF;
 #include <cassert>
@@ -535,7 +536,7 @@ foreach my $testCase (@testCaseHashRefs) {
     );
     my %functionLists;
     discardOutput(sub {
-        actuallyGenerateFunctionLists([$filename], \%functionLists, undef, undef, undef, \%delegateHash);
+        PrepareChangeLog::actuallyGenerateFunctionLists([$filename], \%functionLists, undef, undef, undef, \%delegateHash);
     });
     chomp(my $expected = $testCase->{expected});
     is($functionLists{$filename}, $expected, $testCase->{testName});

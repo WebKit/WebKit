@@ -1,3 +1,15 @@
+2021-10-18  Jonathan Bedard  <jbedard@apple.com>
+
+        Unreviewed, reverting r284399.
+
+        Breaks commit message generation
+
+        Reverted changeset:
+
+        "[webkitperl] Stop using LoadAsModule.pm"
+        https://bugs.webkit.org/show_bug.cgi?id=231868
+        https://commits.webkit.org/r284399
+
 2021-10-18  Alex Christensen  <achristensen@webkit.org>
 
         Remove TCPServer
