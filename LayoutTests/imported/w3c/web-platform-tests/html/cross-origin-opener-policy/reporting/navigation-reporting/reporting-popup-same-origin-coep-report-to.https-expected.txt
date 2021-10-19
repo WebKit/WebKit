@@ -1,4 +1,3 @@
->
 
 PASS coop reporting test reporting same origin with report-to to SAME_ORIGIN with same-origin; report-to="coop-popup-report-endpoint", require-corp, ,
 PASS coop reporting test reporting same origin with report-to to SAME_ORIGIN with same-origin; report-to="coop-popup-report-endpoint", , ,

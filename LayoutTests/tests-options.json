@@ -2672,6 +2672,9 @@
     "imported/w3c/web-platform-tests/html/cross-origin-opener-policy/coep.https.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/html/cross-origin-opener-policy/coop-csp-sandbox-navigate.https.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/html/cross-origin-opener-policy/coop-navigated-history-popup.https.html": [
         "slow"
     ],

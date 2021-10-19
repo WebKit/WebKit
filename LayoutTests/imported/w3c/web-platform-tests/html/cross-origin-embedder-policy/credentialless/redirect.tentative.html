@@ -3,8 +3,8 @@
 <script src="/resources/testharnessreport.js"></script>
 <script src="/common/get-host-info.sub.js"></script>
 <script src="/common/utils.js"></script>
+<script src="/common/dispatcher/dispatcher.js"></script>
 <script src="./resources/common.js"></script>
-<script src="./resources/dispatcher.js"></script>
 
 <script>
 const same_origin = get_host_info().HTTPS_ORIGIN;
@@ -42,8 +42,10 @@ let redirectTest = function(name,
 
 promise_test_parallel(async test => {
   await Promise.all([
-    setCookie(same_origin, cookie_key, cookie_same_origin),
-    setCookie(cross_origin, cookie_key, cookie_cross_origin),
+    setCookie(same_origin, cookie_key, cookie_same_origin +
+      cookie_same_site_none),
+    setCookie(cross_origin, cookie_key, cookie_cross_origin +
+      cookie_same_site_none),
   ]);
 
   redirectTest("same-origin -> same-origin",
@@ -51,7 +53,7 @@ promise_test_parallel(async test => {
   redirectTest("same-origin -> cross-origin",
     same_origin, cross_origin, undefined)
   redirectTest("cross-origin -> same-origin",
-    cross_origin, same_origin, cookie_same_origin);
+    cross_origin, same_origin, undefined);
   redirectTest("cross-origin -> cross-origin",
     cross_origin, cross_origin, undefined);
 }, "Setup");

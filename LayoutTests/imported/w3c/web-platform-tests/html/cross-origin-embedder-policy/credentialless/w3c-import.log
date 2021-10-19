@@ -35,4 +35,5 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/credentialless/service-worker-coep-none-proxy.tentative.https.html
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/credentialless/service-worker.tentative.https.html
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/credentialless/shared-worker.tentative.https.html
-/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/credentialless/video.tentative.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/credentialless/video.tentative.https.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/credentialless/video.tentative.https.window.js.headers

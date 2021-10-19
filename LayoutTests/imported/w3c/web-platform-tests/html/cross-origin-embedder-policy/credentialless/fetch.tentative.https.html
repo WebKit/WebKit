@@ -2,8 +2,8 @@
 <script src="/resources/testharnessreport.js"></script>
 <script src="/common/get-host-info.sub.js"></script>
 <script src="/common/utils.js"></script>
+<script src="/common/dispatcher/dispatcher.js"></script>
 <script src="./resources/common.js"></script>
-<script src="./resources/dispatcher.js"></script>
 <script>
 
 promise_test(async test => {
@@ -14,8 +14,10 @@ promise_test(async test => {
   const cookie_cross_origin = "cross_origin";
 
   await Promise.all([
-    setCookie(same_origin, cookie_key, cookie_same_origin),
-    setCookie(cross_origin, cookie_key, cookie_cross_origin),
+    setCookie(same_origin, cookie_key, cookie_same_origin +
+      cookie_same_site_none),
+    setCookie(cross_origin, cookie_key, cookie_cross_origin +
+      cookie_same_site_none),
   ]);
 
   // One window with COEP:none. (control)

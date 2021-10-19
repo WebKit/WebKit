@@ -19,9 +19,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/resources/coop-coep.py
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/resources/coop-same-origin-repeated.asis
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/resources/csp-sandbox.py
-/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/resources/dispatcher.js
-/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/resources/dispatcher.py
-/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/resources/executor.html
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/resources/iframe-popup.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/resources/javascript-url-same-origin.https.html
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/resources/postback.html
@@ -29,5 +26,4 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/resources/redirect.py
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/resources/resource-cleanup.html
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/resources/resource-popup.html
-/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/resources/sw_executor.js
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/resources/universal-worker.js

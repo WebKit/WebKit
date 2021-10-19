@@ -20,3 +20,4 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/anonymous-iframe/require-corp-embed-anonymous-iframe.tentative.https.html
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/anonymous-iframe/require-corp-embed-anonymous-iframe.tentative.https.html.headers
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/anonymous-iframe/serviceworker-partitioning.tentative.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/anonymous-iframe/sharedworker-partitioning.tentative.https.html

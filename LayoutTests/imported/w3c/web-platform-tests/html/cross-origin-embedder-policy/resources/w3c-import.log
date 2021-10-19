@@ -19,12 +19,15 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/resources/cache-storage-reporting.js
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/resources/coep-frame.html
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/resources/coep-frame.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/resources/corp-image.py
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/resources/cross-origin-isolated-frame.html
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/resources/cross-origin-isolated-worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/resources/dedicated-worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/resources/empty-coep.py
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/resources/fetch-in-dedicated-worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/resources/iframe.html
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/resources/load-corp-images.html
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/resources/load-corp-images.html.headers
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/resources/navigate-none.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/resources/navigate-require-corp-same-site.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/resources/navigate-require-corp-same-site.sub.html.headers

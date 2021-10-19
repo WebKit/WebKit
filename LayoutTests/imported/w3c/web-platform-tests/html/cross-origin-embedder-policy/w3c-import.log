@@ -52,13 +52,15 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/reporting-navigation.https.html
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/reporting-subresource-corp.https.html
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/reporting-to-endpoint.https.html
-/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/reporting-to-endpoint.https.html.sub.headers
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/reporting-to-endpoint.https.html.headers
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/reporting-to-frame-owner.https.html
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/reporting-to-worker-owner.https.html
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/require-corp-about-blank.https.html
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/require-corp-about-blank.https.html.headers
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/require-corp-about-srcdoc.https.html
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/require-corp-about-srcdoc.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/require-corp-cached-images.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/require-corp-cached-images.https.html.headers
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/require-corp-load-from-cache-storage.https.html
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/require-corp-load-from-cache-storage.https.html.headers
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/require-corp-sw-from-none.https.html

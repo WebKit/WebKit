@@ -16,3 +16,4 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/anonymous-iframe/resources/common.js
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/anonymous-iframe/resources/serviceworker-partitioning-helper.js
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/anonymous-iframe/resources/sharedworker-partitioning-helper.js

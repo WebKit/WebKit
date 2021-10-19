@@ -14,11 +14,5 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/credentialless/resources/cacheable-response.py
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/credentialless/resources/common.js
-/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/credentialless/resources/dispatcher.js
-/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/credentialless/resources/dispatcher.py
-/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/credentialless/resources/executor.html
-/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/credentialless/resources/executor.js
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/credentialless/resources/iframeTest.js
-/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/credentialless/resources/sw_executor.js
