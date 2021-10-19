@@ -2107,8 +2107,8 @@ static void initializeRoleMap()
         { "deletion"_s, AccessibilityRole::Deletion },
         { "dialog"_s, AccessibilityRole::ApplicationDialog },
         { "directory"_s, AccessibilityRole::Directory },
-        // The 'doc-*' roles are defined the ARIA DPUB mobile: https://www.w3.org/TR/dpub-aam-1.0/ 
-        // Editor's draft is currently at https://rawgit.com/w3c/aria/master/dpub-aam/dpub-aam.html 
+        // The 'doc-*' roles are defined the ARIA DPUB mobile: https://www.w3.org/TR/dpub-aam-1.0
+        // Editor's draft is currently at https://w3c.github.io/dpub-aam
         { "doc-abstract"_s, AccessibilityRole::ApplicationTextGroup },
         { "doc-acknowledgments"_s, AccessibilityRole::LandmarkDocRegion },
         { "doc-afterword"_s, AccessibilityRole::LandmarkDocRegion },
@@ -3276,7 +3276,7 @@ TextIteratorBehaviors AccessibilityObject::textIteratorBehaviorForTextRange() co
 AccessibilityRole AccessibilityObject::buttonRoleType() const
 {
     // If aria-pressed is present, then it should be exposed as a toggle button.
-    // http://www.w3.org/TR/wai-aria/states_and_properties#aria-pressed
+    // https://www.w3.org/TR/wai-aria#aria-pressed
     if (pressedIsPresent())
         return AccessibilityRole::ToggleButton;
     if (hasPopup())
@@ -3300,7 +3300,7 @@ bool AccessibilityObject::accessibilityIsIgnoredByDefault() const
 }
 
 // ARIA component of hidden definition.
-// http://www.w3.org/TR/wai-aria/terms#def_hidden
+// https://www.w3.org/TR/wai-aria/#dfn-hidden
 bool AccessibilityObject::isAXHidden() const
 {
     if (isFocused())
@@ -3312,7 +3312,7 @@ bool AccessibilityObject::isAXHidden() const
 }
 
 // DOM component of hidden definition.
-// http://www.w3.org/TR/wai-aria/terms#def_hidden
+// https://www.w3.org/TR/wai-aria/#dfn-hidden
 bool AccessibilityObject::isDOMHidden() const
 {
     RenderObject* renderer = this->renderer();
