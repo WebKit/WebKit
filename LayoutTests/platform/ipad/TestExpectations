@@ -113,3 +113,8 @@ webkit.org/b/231611 [ Debug ] imported/w3c/web-platform-tests/webrtc-encoded-tra
 webkit.org/b/231616 [ Debug ] compositing/layer-creation/scale-rotation-transition-overlap.html [ Pass Failure Timeout ]
 
 webkit.org/b/231640 [ Debug ] webrtc/video-mute.html [ Pass Timeout ]
+
+webkit.org/b/231959 media/video-canvas-createPattern.html [ Failure ]
+webkit.org/b/231959 fast/canvas/canvas-createPattern-video-modify.html [ Failure ]
+webkit.org/b/231959 imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/createImageBitmap-drawImage.html [ Failure ]
+webkit.org/b/231959 imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/createImageBitmap-flipY.html [ Failure ]
