@@ -1,5 +1,52 @@
 2021-10-19  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r284489. rdar://problem/84439180
+
+    WebAuthn Platform UI callbacks are not guaranteed to happen on the main thread
+    https://bugs.webkit.org/show_bug.cgi?id=231963
+    <rdar://84420452>
+    
+    Patch by Garrett Davidson <garrett_davidson@apple.com> on 2021-10-19
+    Reviewed by Brent Fulgham.
+    
+    - The clearanceHandler is not guaranteed to happen on the main thread, but
+    weakThis.get() needs to happen there.
+    
+    - `proxy` needs to stay alive for the whole transaction, otherwise it will tear
+    down the connection and cancel the request, so explicitly capture it everywhere.
+    
+    - Start logging if we get an error from clearanceHandler.
+    
+    Covered by existing tests.
+    
+    * UIProcess/WebAuthentication/Cocoa/WebAuthenticatorCoordinatorProxy.mm:
+    (WebKit::WebAuthenticatorCoordinatorProxy::performRequest):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@284489 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-10-19  Garrett Davidson  <garrett_davidson@apple.com>
+
+            WebAuthn Platform UI callbacks are not guaranteed to happen on the main thread
+            https://bugs.webkit.org/show_bug.cgi?id=231963
+            <rdar://84420452>
+
+            Reviewed by Brent Fulgham.
+
+            - The clearanceHandler is not guaranteed to happen on the main thread, but
+            weakThis.get() needs to happen there.
+
+            - `proxy` needs to stay alive for the whole transaction, otherwise it will tear
+            down the connection and cancel the request, so explicitly capture it everywhere.
+
+            - Start logging if we get an error from clearanceHandler.
+
+            Covered by existing tests.
+
+            * UIProcess/WebAuthentication/Cocoa/WebAuthenticatorCoordinatorProxy.mm:
+            (WebKit::WebAuthenticatorCoordinatorProxy::performRequest):
+
+2021-10-19  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r284495. rdar://problem/84433820
 
     Unreviewed, reverting r284099.
