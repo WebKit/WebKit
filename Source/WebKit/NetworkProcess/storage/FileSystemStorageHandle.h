@@ -50,6 +50,7 @@ public:
     Type type() const { return m_type; }
 
     bool isSameEntry(WebCore::FileSystemHandleIdentifier);
+    std::optional<FileSystemStorageError> move(WebCore::FileSystemHandleIdentifier, const String& newName);
     Expected<WebCore::FileSystemHandleIdentifier, FileSystemStorageError> getFileHandle(IPC::Connection::UniqueID, String&& name, bool createIfNecessary);
     Expected<WebCore::FileSystemHandleIdentifier, FileSystemStorageError> getDirectoryHandle(IPC::Connection::UniqueID, String&& name, bool createIfNecessary);
     std::optional<FileSystemStorageError> removeEntry(const String& name, bool deleteRecursively);

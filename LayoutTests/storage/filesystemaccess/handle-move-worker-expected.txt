@@ -1,0 +1,25 @@
+[Worker] This test checks move() of FileSystemHandle.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Starting worker: resources/handle-move.js
+[Worker] Test basic move:
+PASS [Worker] fileHandle.name is "file"
+PASS [Worker] fileHandle.name is "newFile"
+PASS [Worker] getFileHandleError.toString() is "NotFoundError: The object can not be found here."
+PASS [Worker] fileHandle2.name is "newFile"
+PASS [Worker] fileHandle2.kind is "file"
+[Worker] Test move to a file handle:
+PASS [Worker] moveFileError.toString() is "TypeMismatchError: The type of an object was incompatible with the expected type of the parameter associated to the object."
+[Worker] Test move to a destination with existing file:
+PASS [Worker] moveFileError.toString() is "UnknownError: The operation failed for an unknown transient reason (e.g. out of memory)."
+[Worker] Test move with an invalid name:
+PASS [Worker] moveFileError.toString() is "UnknownError: Name is invalid"
+PASS [Worker] moveFileError.toString() is "UnknownError: Name is invalid"
+[Worker] Test move with open access handle:
+PASS [Worker] moveFileError.toString() is "InvalidStateError: The object is in an invalid state."
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

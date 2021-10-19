@@ -366,4 +366,24 @@ void WorkerFileSystemStorageConnection::didGetHandleWithType(CallbackIdentifier 
         callback(WTFMove(result));
 }
 
+void WorkerFileSystemStorageConnection::move(FileSystemHandleIdentifier identifier, FileSystemHandleIdentifier destinationIdentifier, const String& newName, VoidCallback&& callback)
+{
+    if (!m_scope)
+        return callback(Exception { InvalidStateError });
+
+    auto callbackIdentifier = CallbackIdentifier::generateThreadSafe();
+    m_voidCallbacks.add(callbackIdentifier, WTFMove(callback));
+
+    callOnMainThread([callbackIdentifier, workerThread = Ref { m_scope->thread() }, mainThreadConnection = m_mainThreadConnection, identifier, destinationIdentifier, name = crossThreadCopy(newName)]() mutable {
+        auto mainThreadCallback = [callbackIdentifier, workerThread = WTFMove(workerThread)](auto result) mutable {
+            workerThread->runLoop().postTaskForMode([callbackIdentifier, result = crossThreadCopy(result)] (auto& scope) mutable {
+                if (auto connection = downcast<WorkerGlobalScope>(scope).fileSystemStorageConnection())
+                    connection->completeVoidCallback(callbackIdentifier, WTFMove(result));
+            }, WorkerRunLoop::defaultMode());
+        };
+
+        mainThreadConnection->move(identifier, destinationIdentifier, name, WTFMove(mainThreadCallback));
+    });
+}
+
 } // namespace WebCore
