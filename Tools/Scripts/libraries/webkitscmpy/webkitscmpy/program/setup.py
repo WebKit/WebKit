@@ -131,7 +131,7 @@ class Setup(Command):
         log.warning('Set better Objective-C diffing behavior!')
 
         if args.defaults or Terminal.choose(
-            'Auto-color status, diff, and branch?'.format(email),
+            'Auto-color status, diff, and branch?',
             default='Yes',
         ) == 'Yes':
             for command in ('status', 'diff', 'branch'):
@@ -186,6 +186,24 @@ class Setup(Command):
             result += 1
         else:
             log.warning("Set git editor to '{}'".format(editor_name))
+
+        # Pushing to http repositories is difficult, offer to change http checkouts to ssh
+        http_remote = local.Git.HTTP_REMOTE.match(repository.url())
+        if http_remote and not args.defaults and Terminal.choose(
+            "http based remotes will prompt for your password when pushing,\nwould you like to convert to a ssh remote?",
+            default='Yes',
+        ) == 'Yes':
+            if run([
+                local.Git.executable(), 'config', 'remote.origin.url',
+                'git@{}:{}.git'.format(http_remote.group('host'), http_remote.group('path')),
+            ], capture_output=True, cwd=repository.root_path).returncode:
+                sys.stderr.write("Failed to change remote to ssh remote '{}'\n".format(
+                    'git@{}:{}.git'.format(http_remote.group('host'), http_remote.group('path'))
+                ))
+                result += 1
+            else:
+                # Force reset cache
+                repository.url(cached=False)
 
         # Any additional setup passed to main
         if additional_setup:

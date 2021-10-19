@@ -25,7 +25,7 @@ import sys
 
 from webkitcorepy import Editor, OutputCapture, testing
 from webkitcorepy.mocks import Terminal as MockTerminal
-from webkitscmpy import program, mocks
+from webkitscmpy import local, program, mocks
 
 
 class TestSetup(testing.PathTestCase):
@@ -95,8 +95,10 @@ Using the default git editor
 
     def test_github_checkout(self):
         with OutputCapture() as captured, mocks.remote.GitHub() as remote, \
-            MockTerminal.input('n', 'committer@webkit.org', 'n', 'Committer', 'n', '1', 'y'), \
-            mocks.local.Git(self.path, remote='https://{}'.format(remote.remote)) as repo:
+            MockTerminal.input('n', 'committer@webkit.org', 'n', 'Committer', 'n', '1', 'y', 'y'), \
+            mocks.local.Git(self.path, remote='https://{}.git'.format(remote.remote)) as repo:
+
+            self.assertEqual('https://github.example.com/WebKit/WebKit.git', local.Git(self.path).url())
 
             self.assertEqual(0, program.main(
                 args=('setup',),
@@ -107,6 +109,7 @@ Using the default git editor
             self.assertNotIn('color.status', config)
             self.assertEqual('Committer', config.get('user.name', ''))
             self.assertEqual('committer@webkit.org', config.get('user.email', ''))
+            self.assertEqual('git@github.example.com:WebKit/WebKit.git', local.Git(self.path).url())
 
         programs = ['default'] + [p.name for p in Editor.programs()]
         self.assertEqual(
@@ -119,10 +122,12 @@ Auto-color status, diff, and branch? (Yes/No):
 Pick a commit message editor:
     {}
 : 
+http based remotes will prompt for your password when pushing,
+would you like to convert to a ssh remote? (Yes/No): 
 Create a private fork of 'WebKit' belonging to 'username' (Yes/No): 
 '''.format('\n    '.join(['{}) {}'.format(count + 1, programs[count]) for count in range(len(programs))])))
         self.assertEqual(captured.stderr.getvalue(), '')
-        self.maxDiff = None
+
         self.assertEqual(
             captured.root.log.getvalue(),
             '''Setting git user email for {repository}...
@@ -141,7 +146,7 @@ Created a private fork of 'WebKit' belonging to 'username'!
 Adding forked remote as 'username' and 'fork'...
 Added remote 'username'
 Added remote 'fork'
-Fetching 'https://github.example.com/username/WebKit.git'
+Fetching 'git@github.example.com:username/WebKit.git'
 '''.format(repository=self.path),
         )
 

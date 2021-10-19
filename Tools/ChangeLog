@@ -1,3 +1,17 @@
+2021-10-19  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitscmpy] Override http url with ssh url
+        https://bugs.webkit.org/show_bug.cgi?id=231965
+        <rdar://problem/84422393>
+
+        Reviewed by Ryan Haddad.
+
+        * Scripts/libraries/webkitscmpy/webkitscmpy/local/git.py:
+        (Git): Exclude / from hostname.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/program/setup.py:
+        (Setup.git): Prompt user to switch to ssh checkout.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/setup_unittest.py:
+
 2021-10-19  Ryan Haddad  <ryanhaddad@apple.com>
 
         [EWS] Move EWS bots to iOS 15 / watchOS 8 / tvOS 15
