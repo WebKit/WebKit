@@ -41,11 +41,7 @@ struct RTCFrameDecodeParams {
 - (void)setError:(OSStatus)error;
 @end
 
-static void overrideColorSpaceAttachmentsIfNeeded(CVImageBufferRef imageBuffer) {
-  auto guess = CVBufferGetAttachment(imageBuffer, (CFStringRef)@"ColorInfoGuessedBy", nullptr);
-  if (!guess || !CFEqual(guess, (CFStringRef)@"VideoToolbox"))
-    return;
-
+static void overrideColorSpaceAttachments(CVImageBufferRef imageBuffer) {
   CVBufferRemoveAttachment(imageBuffer, kCVImageBufferCGColorSpaceKey);
   CVBufferSetAttachment(imageBuffer, kCVImageBufferColorPrimariesKey, kCVImageBufferColorPrimaries_ITU_R_709_2, kCVAttachmentMode_ShouldPropagate);
   CVBufferSetAttachment(imageBuffer, kCVImageBufferTransferFunctionKey, kCVImageBufferTransferFunction_sRGB, kCVAttachmentMode_ShouldPropagate);
@@ -69,7 +65,7 @@ void decompressionOutputCallback(void *decoderRef,
     return;
   }
 
-  overrideColorSpaceAttachmentsIfNeeded(imageBuffer);
+  overrideColorSpaceAttachments(imageBuffer);
 
   std::unique_ptr<RTCFrameDecodeParams> decodeParams(reinterpret_cast<RTCFrameDecodeParams *>(params));
   // TODO(tkchin): Handle CVO properly.
