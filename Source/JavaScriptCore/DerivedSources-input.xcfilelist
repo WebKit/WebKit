@@ -166,6 +166,7 @@ $(PROJECT_DIR)/runtime/ObjectConstructor.cpp
 $(PROJECT_DIR)/runtime/ReflectObject.cpp
 $(PROJECT_DIR)/runtime/RegExpConstructor.cpp
 $(PROJECT_DIR)/runtime/SetPrototype.cpp
+$(PROJECT_DIR)/runtime/ShadowRealmPrototype.cpp
 $(PROJECT_DIR)/runtime/StringConstructor.cpp
 $(PROJECT_DIR)/runtime/StringPrototype.cpp
 $(PROJECT_DIR)/runtime/SymbolConstructor.cpp
