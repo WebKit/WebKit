@@ -1,92 +1,185 @@
 2021-10-19  Alan Coon  <alancoon@apple.com>
 
-        Cherry-pick r284466. rdar://problem/84424869
+        Cherry-pick r284483. rdar://problem/84428759
 
-    REGRESSION(r284313): ::marker accelerated animations are broken
-    https://bugs.webkit.org/show_bug.cgi?id=231906
-    <rdar://problem/84383279>
-    
-    Reviewed by Antti Koivisto.
-    
     LayoutTests/imported/w3c:
+    Origin of opaque blob: URLs ends up as empty string
+    https://bugs.webkit.org/show_bug.cgi?id=231942
     
-    WPT now reflect that we correctly do not animate the opacity property and correctly account for
-    other ineffective properties on ::marker, such as line-height.
+    Patch by Alex Christensen <achristensen@webkit.org> on 2021-10-19
+    Reviewed by Tim Horton.
     
-    * web-platform-tests/css/css-pseudo/marker-animate-expected.txt:
-    * web-platform-tests/css/css-pseudo/parsing/marker-supported-properties-in-animation-expected.txt:
+    * web-platform-tests/url/a-element-expected.txt:
+    * web-platform-tests/url/a-element-origin-expected.txt:
+    * web-platform-tests/url/a-element-origin-xhtml-expected.txt:
+    * web-platform-tests/url/a-element-xhtml-expected.txt:
+    * web-platform-tests/url/resources/urltestdata.json:
+    * web-platform-tests/url/url-constructor.any-expected.txt:
+    * web-platform-tests/url/url-constructor.any.worker-expected.txt:
+    * web-platform-tests/url/url-origin.any-expected.txt:
+    * web-platform-tests/url/url-origin.any.worker-expected.txt:
     
     Source/WebCore:
+    Fix leak of CGColorSpaceRef in FilterEffectRendererCoreImage::sharedCIContext()
+    <https://webkit.org/b/231902>
+    <rdar://problem/84375203>
     
-    Test: webanimations/marker-opacity-animation-no-effect.html
+    Patch by David Kilzer <ddkilzer@apple.com> on 2021-10-19
+    Reviewed by Wenson Hsieh.
     
-    We incorrectly supported animations for all known CSS properties on a ::marker since we added
-    support for animation of ::marker, and with r284313 we started returning the correct renderer
-    for ::marker pseudo-elements which meant that accelerated opacity animations started running
-    for the first time.
+    * platform/graphics/coreimage/FilterEffectRendererCoreImage.mm:
+    (WebCore::FilterEffectRendererCoreImage::sharedCIContext):
+    - Use adoptCF() to fix the leak.
     
-    We now correctly ignore disallowed properties for ::marker when animating with those changes.
+    Source/WebKit:
+    REGRESSION (r284079): fast/canvas/gradient-with-clip.html and fast/canvas/gradient-text-with-shadow.html are flaky failures
+    https://bugs.webkit.org/show_bug.cgi?id=231681
+    rdar://84202478
     
-    First, in Style::Resolver::styleForKeyframe(), we pass the relevant allowlist to the MatchResult's
-    authorDeclarations when adding the keyframe properties.
+    Patch by Wenson Hsieh <wenson_hsieh@apple.com> on 2021-10-19
+    Reviewed by Kimmo Kinnunen.
     
-    Then, in KeyframeEffect::isCurrentlyAffectingProperty() we call isValidMarkerStyleProperty() in
-    case we're being called for a ::marker pseudo-element.
+    These tests occasionally fail when we time out while waiting for the pixel buffer to be populated underneath
+    `RemoteImageBufferProxy::getPixelBuffer`; this happens because the GPU process sometimes halts (and never
+    resumes) while processing stream messages, and consequently never ends up processing the GetPixelBuffer IPC
+    stream message that's necessary to populate the shared memory buffer for GetPixelBuffer.
     
-    To be able to obtain the allowlist and call isValidMarkerStyleProperty() in those two questions,
-    we had to refactor the related code into a dedicated PropertyAllowlist file and enum.
+    This, in turn, happens when the IPC stream buffer is about to exhaust all available capacity (i.e. the write
+    cursor is nearing the end of the 2MB buffer), and as a result, we send messages that would normally be encoded
+    in the IPC stream as out-of-line IPC messages instead, which are received in the GPU process on the IPC thread
+    and appended to the receive queue corresponding to the destination ID in `Connection::processIncomingMessage()`.
     
-    * Sources.txt:
-    * WebCore.xcodeproj/project.pbxproj:
-    * animation/KeyframeEffect.cpp:
-    (WebCore::KeyframeEffect::isCurrentlyAffectingProperty const):
-    * style/ElementRuleCollector.cpp:
-    (WebCore::Style::ElementRuleCollector::transferMatchedRules):
-    * style/ElementRuleCollector.h:
-    * style/PropertyAllowlist.cpp: Added.
-    (WebCore::Style::propertyAllowlistForPseudoId):
-    (WebCore::Style::isValidMarkerStyleProperty):
-    (WebCore::Style::isValidCueStyleProperty):
-    * style/PropertyAllowlist.h: Added.
-    * style/PropertyCascade.cpp:
-    (WebCore::Style::PropertyCascade::addMatch):
-    (WebCore::Style::isValidMarkerStyleProperty): Deleted.
-    (WebCore::Style::isValidCueStyleProperty): Deleted.
-    * style/RuleData.cpp:
-    (WebCore::Style::determinePropertyAllowlist):
-    (WebCore::Style::RuleData::RuleData):
-    (WebCore::Style::determinePropertyAllowlistType): Deleted.
-    * style/RuleData.h:
-    (WebCore::Style::RuleData::propertyAllowlist const):
-    (): Deleted.
-    (WebCore::Style::RuleData::propertyAllowlistType const): Deleted.
-    * style/StyleResolver.cpp:
-    (WebCore::Style::Resolver::styleForKeyframe):
+    If we happen to have sent `RemoteRenderingBackend::CreateImageBuffer(a)` right before exhausting capacity and
+    sending out-of-line messages targeting the RemoteDisplayListRecorder corresponding to the newly created image
+    buffer `a`, we'll end up with a race condition where the IPC thread may receive the out-of-line messages meant
+    for the new remote display list destination *before* the new remote display list has added itself as an IPC
+    receive queue by calling into `StreamServerConnection::startReceivingMessages()`.
+    
+    In this particular scenario (where we "lose" the race), `Connection::processIncomingMessage` will skip past the
+    early return where it would normally find its corresponding receive queue via `m_receiveQueues.get(*message)`,
+    and instead falls through to `Connection::SyncMessageState::processIncomingMessage()`, which will attempt to
+    dispatch the incoming message to the Connection's client (GPUConnectionToWebProcess). Of course, the
+    GPUConnectionToWebProcess isn't aware of how to process this incoming message, so it simply gets dropped. By the
+    time the receive queue is added for the new RemoteDisplayListRecorder, we'll observe a ProcessOutOfStreamMessage
+    and end up waiting forever for this out-of-line message to be added to the receive queue, but this never ends up
+    happening because it has already been received and dropped by GPUConnectionToWebProcess.
+    
+    To address the flaky tests in the short term, we work around this issue by making `CreateImageBuffer` a sync
+    message, so we guarantee that any subsequent messages sent to the image buffer's RemoteDisplayListRecorder will
+    not be dropped. In the (slightly) longer term, we should turn this back into an async stream message, and add a
+    mechanism to redirect all receiver-less RemoteDisplayListRecorder messages to a separate queue.
+    
+    * GPUProcess/graphics/RemoteRenderingBackend.cpp:
+    (WebKit::RemoteRenderingBackend::createImageBuffer):
+    * GPUProcess/graphics/RemoteRenderingBackend.h:
+    * GPUProcess/graphics/RemoteRenderingBackend.messages.in:
+    
+    Make `CreateImageBuffer` a synchronous stream message for now.
+    
+    * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.cpp:
+    (WebKit::RemoteRenderingBackendProxy::createRemoteImageBuffer):
     
     LayoutTests:
+    Resync web-platform-tests/reporting from upstream
+    https://bugs.webkit.org/show_bug.cgi?id=231957
     
-    Add a new test that checks we do not visually account for an opacity animation on a ::marker
-    pseudo-element.
+    Reviewed by Alex Christensen.
     
-    * webanimations/marker-opacity-animation-no-effect-expected.html: Added.
-    * webanimations/marker-opacity-animation-no-effect.html: Added.
+    Resync web-platform-tests/reporting from upstream 207e223d74fdc1f1.
     
+    * TestExpectations:
     
-    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@284466 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@284483 268f45cc-cd09-0410-ab3c-d52691b4dbfc
 
-    2021-10-19  Antoine Quint  <graouts@webkit.org>
+    2021-10-19  Alan Coon  <alancoon@apple.com>
 
-            REGRESSION(r284313): ::marker accelerated animations are broken
-            https://bugs.webkit.org/show_bug.cgi?id=231906
-            <rdar://problem/84383279>
+            Cherry-pick r284466. rdar://problem/84424869
 
-            Reviewed by Antti Koivisto.
+        REGRESSION(r284313): ::marker accelerated animations are broken
+        https://bugs.webkit.org/show_bug.cgi?id=231906
+        <rdar://problem/84383279>
 
-            Add a new test that checks we do not visually account for an opacity animation on a ::marker
-            pseudo-element.
+        Reviewed by Antti Koivisto.
 
-            * webanimations/marker-opacity-animation-no-effect-expected.html: Added.
-            * webanimations/marker-opacity-animation-no-effect.html: Added.
+        LayoutTests/imported/w3c:
+
+        WPT now reflect that we correctly do not animate the opacity property and correctly account for
+        other ineffective properties on ::marker, such as line-height.
+
+        * web-platform-tests/css/css-pseudo/marker-animate-expected.txt:
+        * web-platform-tests/css/css-pseudo/parsing/marker-supported-properties-in-animation-expected.txt:
+
+        Source/WebCore:
+
+        Test: webanimations/marker-opacity-animation-no-effect.html
+
+        We incorrectly supported animations for all known CSS properties on a ::marker since we added
+        support for animation of ::marker, and with r284313 we started returning the correct renderer
+        for ::marker pseudo-elements which meant that accelerated opacity animations started running
+        for the first time.
+
+        We now correctly ignore disallowed properties for ::marker when animating with those changes.
+
+        First, in Style::Resolver::styleForKeyframe(), we pass the relevant allowlist to the MatchResult's
+        authorDeclarations when adding the keyframe properties.
+
+        Then, in KeyframeEffect::isCurrentlyAffectingProperty() we call isValidMarkerStyleProperty() in
+        case we're being called for a ::marker pseudo-element.
+
+        To be able to obtain the allowlist and call isValidMarkerStyleProperty() in those two questions,
+        we had to refactor the related code into a dedicated PropertyAllowlist file and enum.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * animation/KeyframeEffect.cpp:
+        (WebCore::KeyframeEffect::isCurrentlyAffectingProperty const):
+        * style/ElementRuleCollector.cpp:
+        (WebCore::Style::ElementRuleCollector::transferMatchedRules):
+        * style/ElementRuleCollector.h:
+        * style/PropertyAllowlist.cpp: Added.
+        (WebCore::Style::propertyAllowlistForPseudoId):
+        (WebCore::Style::isValidMarkerStyleProperty):
+        (WebCore::Style::isValidCueStyleProperty):
+        * style/PropertyAllowlist.h: Added.
+        * style/PropertyCascade.cpp:
+        (WebCore::Style::PropertyCascade::addMatch):
+        (WebCore::Style::isValidMarkerStyleProperty): Deleted.
+        (WebCore::Style::isValidCueStyleProperty): Deleted.
+        * style/RuleData.cpp:
+        (WebCore::Style::determinePropertyAllowlist):
+        (WebCore::Style::RuleData::RuleData):
+        (WebCore::Style::determinePropertyAllowlistType): Deleted.
+        * style/RuleData.h:
+        (WebCore::Style::RuleData::propertyAllowlist const):
+        (): Deleted.
+        (WebCore::Style::RuleData::propertyAllowlistType const): Deleted.
+        * style/StyleResolver.cpp:
+        (WebCore::Style::Resolver::styleForKeyframe):
+
+        LayoutTests:
+
+        Add a new test that checks we do not visually account for an opacity animation on a ::marker
+        pseudo-element.
+
+        * webanimations/marker-opacity-animation-no-effect-expected.html: Added.
+        * webanimations/marker-opacity-animation-no-effect.html: Added.
+
+
+        git-svn-id: https://svn.webkit.org/repository/webkit/trunk@284466 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+        2021-10-19  Antoine Quint  <graouts@webkit.org>
+
+                REGRESSION(r284313): ::marker accelerated animations are broken
+                https://bugs.webkit.org/show_bug.cgi?id=231906
+                <rdar://problem/84383279>
+
+                Reviewed by Antti Koivisto.
+
+                Add a new test that checks we do not visually account for an opacity animation on a ::marker
+                pseudo-element.
+
+                * webanimations/marker-opacity-animation-no-effect-expected.html: Added.
+                * webanimations/marker-opacity-animation-no-effect.html: Added.
 
 2021-10-18  Philippe Normand  <pnormand@igalia.com>
 
@@ -2848,19 +2941,6 @@
 
         * platform/mac-wk1/TestExpectations:
         * platform/mac-wk2/TestExpectations:
-
-2021-10-04  Chris Dumez  <cdumez@apple.com>
-
-        Use isolated NSURLSessions for each first party registrable domain
-        https://bugs.webkit.org/show_bug.cgi?id=230750
-        <rdar://83159358>
-
-        Reviewed by Alex Christensen.
-
-        This test is now passing more checks on WebKit2 but still completely fails on WebKit1 so I am
-        adding a WK1-specific baseline.
-
-        * platform/mac-wk1/imported/w3c/web-platform-tests/fetch/connection-pool/network-partition-key-expected.txt: Copied from LayoutTests/imported/w3c/web-platform-tests/fetch/connection-pool/network-partition-key-expected.txt.
 
 2021-10-04  Ayumi Kojima  <ayumi_kojima@apple.com>
 

@@ -455,7 +455,11 @@ void SWServer::resolveUnregistrationJob(const ServiceWorkerJobData& jobData, con
 
 URL static inline originURL(const SecurityOrigin& origin)
 {
-    return URL(URL(), origin.data().toString());
+    URL url;
+    url.setProtocol(origin.protocol());
+    url.setHost(origin.host());
+    url.setPort(origin.port());
+    return url;
 }
 
 void SWServer::startScriptFetch(const ServiceWorkerJobData& jobData, SWServerRegistration& registration)
