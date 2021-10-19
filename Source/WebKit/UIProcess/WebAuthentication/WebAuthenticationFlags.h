@@ -48,7 +48,6 @@ enum class WebAuthenticationStatus : uint8_t {
     PinInvalid,
     LAError,
     LAExcludeCredentialsMatched,
-    LAExcludeCredentialsMatchedWithConsent,
     LANoCredential,
 };
 
