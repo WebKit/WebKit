@@ -160,8 +160,6 @@ struct UIEdgeInsets;
 
 - (void)_webView:(WKWebView *)webView startXRSessionWithCompletionHandler:(void (^)(id))completionHandler WK_API_AVAILABLE(macos(12.0), ios(15.0));
 
-- (void)_webView:(WKWebView *)webView requestNotificationPermissionForSecurityOrigin:(WKSecurityOrigin *)securityOrigin decisionHandler:(void (^)(BOOL))decisionHandler WK_API_AVAILABLE(macos(10.13.4), ios(WK_IOS_TBA));
-
 #if TARGET_OS_IPHONE
 
 - (BOOL)_webView:(WKWebView *)webView shouldIncludeAppLinkActionsForElement:(_WKActivatedElementInfo *)element WK_API_AVAILABLE(ios(9.0));
@@ -244,6 +242,7 @@ struct UIEdgeInsets;
 - (CGFloat)_webViewFooterHeight:(WKWebView *)webView WK_API_AVAILABLE(macos(10.13.4));
 - (void)_webView:(WKWebView *)webView drawHeaderInRect:(CGRect)rect forPageWithTitle:(NSString *)title URL:(NSURL *)url WK_API_AVAILABLE(macos(10.13.4));
 - (void)_webView:(WKWebView *)webView drawFooterInRect:(CGRect)rect forPageWithTitle:(NSString *)title URL:(NSURL *)url WK_API_AVAILABLE(macos(10.13.4));
+- (void)_webView:(WKWebView *)webView requestNotificationPermissionForSecurityOrigin:(WKSecurityOrigin *)securityOrigin decisionHandler:(void (^)(BOOL))decisionHandler WK_API_AVAILABLE(macos(10.13.4));
 - (void)_webView:(WKWebView *)webview mouseDidMoveOverElement:(_WKHitTestResult *)hitTestResult withFlags:(NSEventModifierFlags)flags userInfo:(id <NSSecureCoding>)userInfo;
 - (void)_webView:(WKWebView *)webView didExceedBackgroundResourceLimitWhileInForeground:(_WKResourceLimit)limit WK_API_AVAILABLE(macos(10.13.4));
 - (void)_webView:(WKWebView *)webView setResizable:(BOOL)isResizable WK_API_AVAILABLE(macos(10.13.4));

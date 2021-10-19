@@ -104,9 +104,6 @@ private:
         void didResignInputElementStrongPasswordAppearance(WebPageProxy&, API::Object*) final;
         bool takeFocus(WebPageProxy*, WKFocusDirection) final;
         void handleAutoplayEvent(WebPageProxy&, WebCore::AutoplayEvent, OptionSet<WebCore::AutoplayEventFlags>) final;
-
-        void decidePolicyForNotificationPermissionRequest(WebPageProxy&, API::SecurityOrigin&, CompletionHandler<void(bool allowed)>&&) final;
-
 #if PLATFORM(MAC)
         void showPage(WebPageProxy*) final;
         void focus(WebPageProxy*) final;
@@ -125,6 +122,7 @@ private:
         void drawHeader(WebPageProxy&, WebFrameProxy&, WebCore::FloatRect&&) final;
         void drawFooter(WebPageProxy&, WebFrameProxy&, WebCore::FloatRect&&) final;
 
+        void decidePolicyForNotificationPermissionRequest(WebPageProxy&, API::SecurityOrigin&, CompletionHandler<void(bool allowed)>&&) final;
         void unavailablePluginButtonClicked(WebPageProxy&, WKPluginUnavailabilityReason, API::Dictionary&) final;
         void mouseDidMoveOverElement(WebPageProxy&, const WebHitTestResultData&, OptionSet<WebEvent::Modifier>, API::Object*);
         void didClickAutoFillButton(WebPageProxy&, API::Object*) final;
@@ -196,7 +194,6 @@ private:
         bool webViewDidResignInputElementStrongPasswordAppearanceWithUserInfo : 1;
         bool webViewTakeFocus : 1;
         bool webViewHandleAutoplayEventWithFlags : 1;
-        bool webViewRequestNotificationPermissionForSecurityOriginDecisionHandler : 1;
 #if PLATFORM(MAC)
         bool showWebView : 1;
         bool focusWebView : 1;
@@ -218,6 +215,7 @@ private:
         bool webViewDidExceedBackgroundResourceLimitWhileInForeground : 1;
         bool webViewSaveDataToFileSuggestedFilenameMimeTypeOriginatingURL : 1;
         bool webViewRunOpenPanelWithParametersInitiatedByFrameCompletionHandler : 1;
+        bool webViewRequestNotificationPermissionForSecurityOriginDecisionHandler : 1;
         bool webViewConfigurationForLocalInspector : 1;
         bool webViewDidAttachLocalInspector : 1;
         bool webViewWillCloseLocalInspector : 1;

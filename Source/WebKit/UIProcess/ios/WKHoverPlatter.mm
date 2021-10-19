@@ -28,13 +28,10 @@
 
 #if HAVE(UIKIT_WITH_MOUSE_SUPPORT) || ENABLE(HOVER_GESTURE_RECOGNIZER)
 
-#import "InteractionInformationAtPosition.h"
-#import "InteractionInformationRequest.h"
 #import "WKHoverPlatterParameters.h"
 #import <WebCore/PathUtilities.h>
 #import <WebCore/WebCoreCALayerExtras.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
-#import <wtf/WeakObjCPtr.h>
 
 static RetainPtr<CABasicAnimation> createBaseAnimation()
 {

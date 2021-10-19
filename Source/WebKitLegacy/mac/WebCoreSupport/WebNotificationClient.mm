@@ -192,7 +192,7 @@ uint64_t WebNotificationClient::notificationIDForTesting(WebCore::Notification* 
 }
 
 #if PLATFORM(IOS_FAMILY)
-- (void)denyOnlyThisRequest NO_RETURN_DUE_TO_ASSERT
+- (void)denyOnlyThisRequest
 {
     ASSERT_NOT_REACHED();
 }

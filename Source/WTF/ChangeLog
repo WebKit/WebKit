@@ -1,3 +1,16 @@
+2021-10-18  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r284240.
+        https://bugs.webkit.org/show_bug.cgi?id=231931
+
+        NeedDifferentArchitectureToWorkWithWebpushd
+
+        Reverted changeset:
+
+        "WebKit Managed Notifications: Skeleton NotificationProvider."
+        https://bugs.webkit.org/show_bug.cgi?id=231786
+        https://commits.webkit.org/r284240
+
 2021-10-18  Alex Christensen  <achristensen@webkit.org>
 
         Remove TCPServer

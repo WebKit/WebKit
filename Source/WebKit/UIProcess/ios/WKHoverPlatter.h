@@ -25,14 +25,6 @@
 
 #if HAVE(UIKIT_WITH_MOUSE_SUPPORT) || ENABLE(HOVER_GESTURE_RECOGNIZER)
 
-#import <UIKit/UIKit.h>
-#import <WebCore/FloatPoint.h>
-
-namespace WebKit {
-struct InteractionInformationAtPosition;
-struct InteractionInformationRequest;
-}
-
 @class WKHoverPlatter;
 
 @protocol WKHoverPlatterDelegate

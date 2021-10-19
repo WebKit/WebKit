@@ -50,8 +50,6 @@ public:
     virtual void addNotificationManager(WebKit::WebNotificationManagerProxy&) { }
     virtual void removeNotificationManager(WebKit::WebNotificationManagerProxy&) { }
 
-    virtual bool isClientReplaceable() const { return true; }
-
     virtual HashMap<WTF::String, bool> notificationPermissions() { return HashMap<WTF::String, bool>(); };
 };
 
