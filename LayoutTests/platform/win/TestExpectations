@@ -1248,6 +1248,8 @@ webkit.org/b/21796 editing/selection/drag-in-iframe.html [ Skip ]
 # These test fail due to 'notifyDone' not being executed.
 webkit.org/b/121509 editing/spelling/grammar-paste.html [ Skip ]
 
+webkit.org/b/231962 editing/selection/modal-dialog-select-paragraph.html [ Failure ]
+
 ###### Command enabling
 editing/execCommand/enabling-and-selection-2.html [ Failure ]
 webkit.org/b/101539 editing/execCommand/switch-list-type-with-orphaned-li.html [ Failure ]
