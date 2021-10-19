@@ -1,3 +1,17 @@
+2021-10-19  Antoine Quint  <graouts@webkit.org>
+
+        REGRESSION(r284313): ::marker accelerated animations are broken
+        https://bugs.webkit.org/show_bug.cgi?id=231906
+        <rdar://problem/84383279>
+
+        Reviewed by Antti Koivisto.
+
+        Add a new test that checks we do not visually account for an opacity animation on a ::marker
+        pseudo-element.
+
+        * webanimations/marker-opacity-animation-no-effect-expected.html: Added.
+        * webanimations/marker-opacity-animation-no-effect.html: Added.
+
 2021-10-19  Ayumi Kojima  <ayumi_kojima@apple.com>
 
         [ iOS Win ] editing/selection/modal-dialog-select-paragraph.html is failing.

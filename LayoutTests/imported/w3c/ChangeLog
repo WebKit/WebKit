@@ -1,3 +1,17 @@
+2021-10-19  Antoine Quint  <graouts@webkit.org>
+
+        REGRESSION(r284313): ::marker accelerated animations are broken
+        https://bugs.webkit.org/show_bug.cgi?id=231906
+        <rdar://problem/84383279>
+
+        Reviewed by Antti Koivisto.
+
+        WPT now reflect that we correctly do not animate the opacity property and correctly account for
+        other ineffective properties on ::marker, such as line-height.
+
+        * web-platform-tests/css/css-pseudo/marker-animate-expected.txt:
+        * web-platform-tests/css/css-pseudo/parsing/marker-supported-properties-in-animation-expected.txt:
+
 2021-10-19  Rob Buis  <rbuis@igalia.com>
 
         Remove support for some SVG properties

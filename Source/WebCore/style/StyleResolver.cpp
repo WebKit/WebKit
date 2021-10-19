@@ -263,7 +263,7 @@ std::unique_ptr<RenderStyle> Resolver::styleForKeyframe(const Element& element, 
     RELEASE_ASSERT(!m_isDeleted);
 
     MatchResult result;
-    result.authorDeclarations.append({ &keyframe->properties() });
+    result.authorDeclarations.append({ &keyframe->properties(), SelectorChecker::MatchAll, propertyAllowlistForPseudoId(elementStyle->styleType()) });
 
     auto state = State(element, nullptr, m_overrideDocumentElementStyle);
 

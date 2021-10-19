@@ -2491,6 +2491,7 @@ style/InlineTextBoxStyle.cpp
 style/InspectorCSSOMWrappers.cpp
 style/MatchedDeclarationsCache.cpp
 style/PageRuleCollector.cpp
+style/PropertyAllowlist.cpp
 style/PropertyCascade.cpp
 style/PseudoClassChangeInvalidation.cpp
 style/RuleData.cpp

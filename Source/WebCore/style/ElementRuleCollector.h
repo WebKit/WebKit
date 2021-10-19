@@ -22,6 +22,7 @@
 #pragma once
 
 #include "MediaQueryEvaluator.h"
+#include "PropertyAllowlist.h"
 #include "RuleSet.h"
 #include "SelectorChecker.h"
 #include "StyleScopeOrdinal.h"
@@ -68,7 +69,7 @@ struct MatchedRule {
 struct MatchedProperties {
     RefPtr<const StyleProperties> properties;
     uint16_t linkMatchType { SelectorChecker::MatchAll };
-    uint16_t allowlistType { PropertyAllowlistNone };
+    PropertyAllowlist allowlistType { PropertyAllowlist::None };
     ScopeOrdinal styleScopeOrdinal { ScopeOrdinal::Element };
 };
 

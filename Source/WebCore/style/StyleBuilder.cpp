@@ -33,6 +33,7 @@
 #include "CSSFontSelector.h"
 #include "CSSPaintImageValue.h"
 #include "CSSValuePool.h"
+#include "Document.h"
 #include "HTMLElement.h"
 #include "PaintWorkletGlobalScope.h"
 #include "Settings.h"

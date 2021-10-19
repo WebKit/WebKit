@@ -30,6 +30,7 @@
 #include "CSSPrimitiveValueMappings.h"
 #include "CSSValuePool.h"
 #include "PaintWorkletGlobalScope.h"
+#include "PropertyAllowlist.h"
 #include "StyleBuilderGenerated.h"
 #include "StylePropertyShorthand.h"
 
@@ -69,95 +70,6 @@ static inline bool shouldApplyPropertyInParseOrder(CSSPropertyID propertyID)
         return false;
     }
 }
-
-// https://www.w3.org/TR/css-pseudo-4/#marker-pseudo (Editor's Draft, 25 July 2017)
-// FIXME: this is outdated, see https://bugs.webkit.org/show_bug.cgi?id=218791.
-static inline bool isValidMarkerStyleProperty(CSSPropertyID id)
-{
-    switch (id) {
-    case CSSPropertyColor:
-    case CSSPropertyFontFamily:
-    case CSSPropertyFontFeatureSettings:
-    case CSSPropertyFontSize:
-    case CSSPropertyFontStretch:
-    case CSSPropertyFontStyle:
-    case CSSPropertyFontSynthesis:
-    case CSSPropertyFontVariantAlternates:
-    case CSSPropertyFontVariantCaps:
-    case CSSPropertyFontVariantEastAsian:
-    case CSSPropertyFontVariantLigatures:
-    case CSSPropertyFontVariantNumeric:
-    case CSSPropertyFontVariantPosition:
-    case CSSPropertyFontWeight:
-#if ENABLE(VARIATION_FONTS)
-    case CSSPropertyFontOpticalSizing:
-    case CSSPropertyFontVariationSettings:
-#endif
-    case CSSPropertyAnimationDuration:
-    case CSSPropertyAnimationTimingFunction:
-    case CSSPropertyAnimationDelay:
-    case CSSPropertyAnimationIterationCount:
-    case CSSPropertyAnimationDirection:
-    case CSSPropertyAnimationFillMode:
-    case CSSPropertyAnimationPlayState:
-    case CSSPropertyAnimationName:
-    case CSSPropertyTransitionDuration:
-    case CSSPropertyTransitionTimingFunction:
-    case CSSPropertyTransitionDelay:
-    case CSSPropertyTransitionProperty:
-        return true;
-    default:
-        break;
-    }
-    return false;
-}
-
-#if ENABLE(VIDEO)
-static inline bool isValidCueStyleProperty(CSSPropertyID id)
-{
-    switch (id) {
-    case CSSPropertyBackground:
-    case CSSPropertyBackgroundAttachment:
-    case CSSPropertyBackgroundClip:
-    case CSSPropertyBackgroundColor:
-    case CSSPropertyBackgroundImage:
-    case CSSPropertyBackgroundOrigin:
-    case CSSPropertyBackgroundPosition:
-    case CSSPropertyBackgroundPositionX:
-    case CSSPropertyBackgroundPositionY:
-    case CSSPropertyBackgroundRepeat:
-    case CSSPropertyBackgroundSize:
-    case CSSPropertyColor:
-    case CSSPropertyFont:
-    case CSSPropertyFontFamily:
-    case CSSPropertyFontSize:
-    case CSSPropertyFontStyle:
-    case CSSPropertyFontVariantCaps:
-    case CSSPropertyFontWeight:
-    case CSSPropertyLineHeight:
-    case CSSPropertyOpacity:
-    case CSSPropertyOutline:
-    case CSSPropertyOutlineColor:
-    case CSSPropertyOutlineOffset:
-    case CSSPropertyOutlineStyle:
-    case CSSPropertyOutlineWidth:
-    case CSSPropertyVisibility:
-    case CSSPropertyWhiteSpace:
-    case CSSPropertyTextDecoration:
-    case CSSPropertyTextShadow:
-    case CSSPropertyBorderStyle:
-    case CSSPropertyPaintOrder:
-    case CSSPropertyStrokeLinejoin:
-    case CSSPropertyStrokeLinecap:
-    case CSSPropertyStrokeColor:
-    case CSSPropertyStrokeWidth:
-        return true;
-    default:
-        break;
-    }
-    return false;
-}
-#endif
 
 PropertyCascade::PropertyCascade(const MatchResult& matchResult, OptionSet<CascadeLevel> cascadeLevels, IncludedProperties includedProperties, Direction direction)
     : m_matchResult(matchResult)
@@ -259,7 +171,7 @@ void PropertyCascade::setDeferred(CSSPropertyID id, CSSValue& cssValue, unsigned
 bool PropertyCascade::addMatch(const MatchedProperties& matchedProperties, CascadeLevel cascadeLevel, bool important)
 {
     auto& styleProperties = *matchedProperties.properties;
-    auto propertyAllowlistType = static_cast<PropertyAllowlistType>(matchedProperties.allowlistType);
+    auto propertyAllowlist = matchedProperties.allowlistType;
     bool hasImportantProperties = false;
 
     for (unsigned i = 0, count = styleProperties.propertyCount(); i < count; ++i) {
@@ -279,10 +191,10 @@ bool PropertyCascade::addMatch(const MatchedProperties& matchedProperties, Casca
         CSSPropertyID propertyID = current.id();
 
 #if ENABLE(VIDEO)
-        if (propertyAllowlistType == PropertyAllowlistCue && !isValidCueStyleProperty(propertyID))
+        if (propertyAllowlist == PropertyAllowlist::Cue && !isValidCueStyleProperty(propertyID))
             continue;
 #endif
-        if (propertyAllowlistType == PropertyAllowlistMarker && !isValidMarkerStyleProperty(propertyID))
+        if (propertyAllowlist == PropertyAllowlist::Marker && !isValidMarkerStyleProperty(propertyID))
             continue;
 
         if (shouldApplyPropertyInParseOrder(propertyID))
