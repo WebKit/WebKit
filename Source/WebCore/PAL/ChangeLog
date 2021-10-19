@@ -1,3 +1,32 @@
+2021-10-19  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r284494. rdar://problem/84439983
+
+    REGRESSION (r284220): [PAL] TCCSPI.h should be a project header, not a private header
+    <https://webkit.org/b/231977>
+    <rdar://problem/84425384>
+    
+    Reviewed by Wenson Hsieh.
+    
+    * PAL.xcodeproj/project.pbxproj:
+    - Change TCCSPI.h from a private header to a project header.
+      PAL uses a build phase script to install its headers.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@284494 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-10-19  David Kilzer  <ddkilzer@apple.com>
+
+            REGRESSION (r284220): [PAL] TCCSPI.h should be a project header, not a private header
+            <https://webkit.org/b/231977>
+            <rdar://problem/84425384>
+
+            Reviewed by Wenson Hsieh.
+
+            * PAL.xcodeproj/project.pbxproj:
+            - Change TCCSPI.h from a private header to a project header.
+              PAL uses a build phase script to install its headers.
+
 2021-10-18  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GLIB] Simplify SleepDisabler by checking if we are under sandbox
