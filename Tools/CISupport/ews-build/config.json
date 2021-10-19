@@ -42,12 +42,12 @@
     { "name": "ews118", "platform": "mac-catalina" },
     { "name": "ews119", "platform": "mac-catalina" },
     { "name": "ews120", "platform": "mac-catalina" },
-    { "name": "ews121", "platform": "ios-simulator-14" },
-    { "name": "ews122", "platform": "ios-simulator-14" },
-    { "name": "ews123", "platform": "ios-simulator-14" },
-    { "name": "ews124", "platform": "ios-simulator-14" },
-    { "name": "ews125", "platform": "ios-simulator-14" },
-    { "name": "ews126", "platform": "ios-simulator-14" },
+    { "name": "ews121", "platform": "ios-simulator-15" },
+    { "name": "ews122", "platform": "ios-simulator-15" },
+    { "name": "ews123", "platform": "ios-simulator-15" },
+    { "name": "ews124", "platform": "ios-simulator-15" },
+    { "name": "ews125", "platform": "ios-simulator-15" },
+    { "name": "ews126", "platform": "ios-simulator-15" },
     { "name": "ews127", "platform": "mac-catalina" },
     { "name": "ews128", "platform": "mac-catalina" },
     { "name": "ews150", "platform": "*" },
@@ -70,7 +70,7 @@
     { "name": "ews167", "platform": "*" },
     { "name": "ews168", "platform": "*" },
     { "name": "ews169", "platform": "mac-bigsur" },
-    { "name": "ews170", "platform": "tvos-simulator-14" },
+    { "name": "ews170", "platform": "tvos-simulator-15" },
     { "name": "ews171", "platform": "mac-bigsur" },
     { "name": "ews172", "platform": "mac-bigsur" },
     { "name": "ews173", "platform": "mac-bigsur" },
@@ -118,23 +118,23 @@
       "workernames": ["igalia5-gtk-wk2-ews", "igalia6-gtk-wk2-ews", "igalia7-gtk-wk2-ews", "igalia8-gtk-wk2-ews", "igalia9-gtk-wk2-ews"]
     },
     {
-      "name": "iOS-14-Build-EWS", "shortname": "ios", "icon": "buildOnly",
-      "factory": "iOSEmbeddedBuildFactory", "platform": "ios-14",
+      "name": "iOS-15-Build-EWS", "shortname": "ios", "icon": "buildOnly",
+      "factory": "iOSEmbeddedBuildFactory", "platform": "ios-15",
       "configuration": "release", "architectures": ["arm64"],
       "workernames": ["ews152", "ews154", "ews108", "ews109"]
     },
     {
-      "name": "iOS-14-Simulator-Build-EWS", "shortname": "ios-sim", "icon": "buildOnly",
-      "factory": "iOSBuildFactory", "platform": "ios-simulator-14",
+      "name": "iOS-15-Simulator-Build-EWS", "shortname": "ios-sim", "icon": "buildOnly",
+      "factory": "iOSBuildFactory", "platform": "ios-simulator-15",
       "configuration": "release", "architectures": ["x86_64"],
-      "triggers": ["api-tests-ios-sim-ews", "ios-14-sim-wk2-tests-ews"],
+      "triggers": ["api-tests-ios-sim-ews", "ios-15-sim-wk2-tests-ews"],
       "workernames": ["ews152", "ews154", "ews156", "ews157", "ews108", "ews109"]
     },
     {
-      "name": "iOS-14-Simulator-WK2-Tests-EWS", "shortname": "ios-wk2", "icon": "testOnly",
-      "factory": "iOSTestsFactory", "platform": "ios-simulator-14",
+      "name": "iOS-15-Simulator-WK2-Tests-EWS", "shortname": "ios-wk2", "icon": "testOnly",
+      "factory": "iOSTestsFactory", "platform": "ios-simulator-15",
       "configuration": "release", "architectures": ["x86_64"],
-      "triggered_by": ["ios-14-sim-build-ews"],
+      "triggered_by": ["ios-15-sim-build-ews"],
       "workernames": ["ews121", "ews122", "ews123", "ews124", "ews125", "ews126"]
     },
     {
@@ -194,26 +194,26 @@
       "workernames": ["ews112", "ews113", "ews115", "ews117"]
     },
     {
-      "name": "watchOS-7-Build-EWS", "shortname": "watch", "icon": "buildOnly",
-      "factory": "watchOSBuildFactory", "platform": "watchos-7",
+      "name": "watchOS-8-Build-EWS", "shortname": "watch", "icon": "buildOnly",
+      "factory": "watchOSBuildFactory", "platform": "watchos-8",
       "configuration": "release", "architectures": ["arm64_32", "armv7k"],
       "workernames": ["ews163", "ews164", "ews165"]
     },
     {
-      "name": "watchOS-7-Simulator-Build-EWS", "shortname": "watch-sim", "icon": "buildOnly",
-      "factory": "watchOSBuildFactory", "platform": "watchos-simulator-7",
+      "name": "watchOS-8-Simulator-Build-EWS", "shortname": "watch-sim", "icon": "buildOnly",
+      "factory": "watchOSBuildFactory", "platform": "watchos-simulator-8",
       "configuration": "release", "architectures": ["i386"],
       "workernames": ["ews164", "ews165", "ews166"]
     },
     {
-      "name": "tvOS-14-Build-EWS", "shortname": "tv", "icon": "buildOnly",
-      "factory": "tvOSBuildFactory", "platform": "tvos-14",
+      "name": "tvOS-15-Build-EWS", "shortname": "tv", "icon": "buildOnly",
+      "factory": "tvOSBuildFactory", "platform": "tvos-15",
       "configuration": "release", "architectures": ["arm64"],
       "workernames": ["ews167", "ews168"]
     },
     {
-      "name": "tvOS-14-Simulator-Build-EWS", "shortname": "tv-sim", "icon": "buildOnly",
-      "factory": "tvOSBuildFactory", "platform": "tvos-simulator-14",
+      "name": "tvOS-15-Simulator-Build-EWS", "shortname": "tv-sim", "icon": "buildOnly",
+      "factory": "tvOSBuildFactory", "platform": "tvos-simulator-15",
       "configuration": "release", "architectures": ["arm64"],
       "workernames": ["ews168", "ews170"]
     },
@@ -294,7 +294,7 @@
     {
       "name": "API-Tests-iOS-Simulator-EWS", "shortname": "api-ios", "icon": "testOnly",
       "factory": "APITestsFactory", "platform": "*",
-      "triggered_by": ["ios-14-sim-build-ews"],
+      "triggered_by": ["ios-15-sim-build-ews"],
       "workernames": ["ews156", "ews157", "ews158", "ews159"]
     },
     {
@@ -325,11 +325,11 @@
     {
       "type": "Try_Userpass", "name": "try", "port": 5555,
       "builderNames": [
-            "Apply-WatchList-EWS", "Bindings-Tests-EWS", "GTK-Build-EWS", "iOS-14-Build-EWS", "iOS-14-Simulator-Build-EWS",
+            "Apply-WatchList-EWS", "Bindings-Tests-EWS", "GTK-Build-EWS", "iOS-15-Build-EWS", "iOS-15-Simulator-Build-EWS",
             "JSC-ARMv7-32bits-Build-EWS", "JSC-i386-32bits-EWS", "JSC-MIPSEL-32bits-Build-EWS", "JSC-Tests-EWS",
             "macOS-AppleSilicon-Big-Sur-Debug-Build-EWS", "macOS-Catalina-Debug-Build-EWS", "macOS-Catalina-Release-Build-EWS",
-            "Services-EWS", "Style-EWS", "tvOS-14-Build-EWS", "tvOS-14-Simulator-Build-EWS", "watchOS-7-Build-EWS",
-            "watchOS-7-Simulator-Build-EWS", "WPE-EWS", "WebKitPerl-Tests-EWS", "WebKitPy-Tests-EWS", "WinCairo-EWS", "Windows-EWS"
+            "Services-EWS", "Style-EWS", "tvOS-15-Build-EWS", "tvOS-15-Simulator-Build-EWS", "watchOS-8-Build-EWS",
+            "watchOS-8-Simulator-Build-EWS", "WPE-EWS", "WebKitPerl-Tests-EWS", "WebKitPy-Tests-EWS", "WinCairo-EWS", "Windows-EWS"
       ]
     },
     {
@@ -369,12 +369,12 @@
       "builderNames": ["macOS-AppleSilicon-Big-Sur-Debug-WK2-Tests-EWS"]
     },
     {
-      "type": "Triggerable", "name": "ios-14-sim-build-ews",
-      "builderNames": ["iOS-14-Simulator-Build-EWS"]
+      "type": "Triggerable", "name": "ios-15-sim-build-ews",
+      "builderNames": ["iOS-15-Simulator-Build-EWS"]
     },
     {
-      "type": "Triggerable", "name": "ios-14-sim-wk2-tests-ews",
-      "builderNames": ["iOS-14-Simulator-WK2-Tests-EWS"]
+      "type": "Triggerable", "name": "ios-15-sim-wk2-tests-ews",
+      "builderNames": ["iOS-15-Simulator-WK2-Tests-EWS"]
     },
     {
       "type": "Triggerable", "name": "api-tests-ios-sim-ews",

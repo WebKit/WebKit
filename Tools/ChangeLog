@@ -1,3 +1,14 @@
+2021-10-19  Ryan Haddad  <ryanhaddad@apple.com>
+
+        [EWS] Move EWS bots to iOS 15 / watchOS 8 / tvOS 15
+        https://bugs.webkit.org/show_bug.cgi?id=231925
+
+        Reviewed by NOBODY (OOPS!).
+
+        * CISupport/ews-build/config.json:
+        * CISupport/ews-build/factories_unittest.py:
+        (TestExpectedBuildSteps):
+
 2021-10-19  Alex Christensen  <achristensen@webkit.org>
 
         Fix iOS API tests after r284304
