@@ -575,7 +575,6 @@ String RegistrationDatabase::importRecords()
         }
 
         auto script = scriptStorage().retrieve(*key, scriptURL);
-        ASSERT(script);
         if (!script) {
             RELEASE_LOG_ERROR(ServiceWorker, "RegistrationDatabase::importRecords: Failed to retrieve main script for %s from disk", scriptURL.string().utf8().data());
             continue;
