@@ -623,7 +623,7 @@ const ShadowData* TextBoxPainter::debugTextShadow() const
     if (!textBox().legacyInlineBox())
         return nullptr;
 
-    static NeverDestroyed<ShadowData> debugTextShadow(IntPoint(0, 0), 10, 20, ShadowStyle::Normal, true, SRGBA<uint8_t> { 150, 0, 0, 190 });
+    static NeverDestroyed<ShadowData> debugTextShadow(LengthPoint(Length(LengthType::Fixed), Length(LengthType::Fixed)), Length(10, LengthType::Fixed), Length(20, LengthType::Fixed), ShadowStyle::Normal, true, SRGBA<uint8_t> { 150, 0, 0, 190 });
     return &debugTextShadow.get();
 }
 

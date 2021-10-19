@@ -1,3 +1,24 @@
+2021-10-18  Antoine Quint  <graouts@webkit.org>
+
+        box-shadow and text-shadow do not yield float values while interpolating
+        https://bugs.webkit.org/show_bug.cgi?id=230347
+        <rdar://problem/83319111>
+
+        Reviewed by Simon Fraser.
+
+        Add some new WPT tests for float and calc() values for box-shadow and text-shadow while
+        interpolating and update output for still-failing composite operations tests. The new tests
+        have already landed in WPT with https://github.com/web-platform-tests/wpt/pull/30823.
+
+        * web-platform-tests/css/css-backgrounds/animations/box-shadow-composition-expected.txt:
+        * web-platform-tests/css/css-backgrounds/animations/box-shadow-interpolation-expected.txt:
+        * web-platform-tests/css/css-backgrounds/animations/box-shadow-interpolation.html:
+        * web-platform-tests/css/css-backgrounds/box-shadow-calc-expected.html: Added.
+        * web-platform-tests/css/css-backgrounds/box-shadow-calc.html: Added.
+        * web-platform-tests/css/css-transitions/animations/text-shadow-composition-expected.txt:
+        * web-platform-tests/css/css-transitions/animations/text-shadow-interpolation-expected.txt:
+        * web-platform-tests/css/css-transitions/animations/text-shadow-interpolation.html:
+
 2021-10-18  Cameron McCormack  <heycam@apple.com>
 
         Make createImageBitmap() take EXIF orientation into account correctly

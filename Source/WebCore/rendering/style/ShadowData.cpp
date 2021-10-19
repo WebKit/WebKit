@@ -28,7 +28,7 @@
 namespace WebCore {
 
 ShadowData::ShadowData(const ShadowData& o)
-    : m_location(o.m_location)
+    : m_location(o.m_location.x(), o.m_location.y())
     , m_spread(o.m_spread)
     , m_radius(o.m_radius)
     , m_color(o.m_color)
@@ -61,12 +61,12 @@ bool ShadowData::operator==(const ShadowData& o) const
 static inline void calculateShadowExtent(const ShadowData* shadow, LayoutUnit additionalOutlineSize, LayoutUnit& shadowLeft, LayoutUnit& shadowRight, LayoutUnit& shadowTop, LayoutUnit& shadowBottom)
 {
     do {
-        LayoutUnit extentAndSpread = shadow->paintingExtent() + shadow->spread() + additionalOutlineSize;
+        LayoutUnit extentAndSpread = shadow->paintingExtent() + LayoutUnit(shadow->spread().value()) + additionalOutlineSize;
         if (shadow->style() == ShadowStyle::Normal) {
-            shadowLeft = std::min(shadow->x() - extentAndSpread, shadowLeft);
-            shadowRight = std::max(shadow->x() + extentAndSpread, shadowRight);
-            shadowTop = std::min(shadow->y() - extentAndSpread, shadowTop);
-            shadowBottom = std::max(shadow->y() + extentAndSpread, shadowBottom);
+            shadowLeft = std::min(LayoutUnit(shadow->x().value()) - extentAndSpread, shadowLeft);
+            shadowRight = std::max(LayoutUnit(shadow->x().value()) + extentAndSpread, shadowRight);
+            shadowTop = std::min(LayoutUnit(shadow->y().value()) - extentAndSpread, shadowTop);
+            shadowBottom = std::max(LayoutUnit(shadow->y().value()) + extentAndSpread, shadowBottom);
         }
 
         shadow = shadow->next();

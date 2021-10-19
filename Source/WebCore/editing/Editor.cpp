@@ -4036,7 +4036,7 @@ FontAttributes Editor::fontAttributesAtSelectionStart()
         attributes.foregroundColor = foregroundColor;
 
     if (auto* shadowData = style->textShadow())
-        attributes.fontShadow = { shadowData->color(), { static_cast<float>(shadowData->x()), static_cast<float>(shadowData->y()) }, static_cast<double>(shadowData->radius()) };
+        attributes.fontShadow = { shadowData->color(), { shadowData->x().value(), shadowData->y().value() }, shadowData->radius().value() };
 
     switch (style->verticalAlign()) {
     case VerticalAlign::Baseline:

@@ -703,8 +703,8 @@ static void applyBoxShadowForBackground(GraphicsContext& context, const RenderSt
     while (boxShadow->style() != ShadowStyle::Normal)
         boxShadow = boxShadow->next();
 
-    FloatSize shadowOffset(boxShadow->x(), boxShadow->y());
-    context.setShadow(shadowOffset, boxShadow->radius(), style.colorByApplyingColorFilter(boxShadow->color()), boxShadow->isWebkitBoxShadow() ? ShadowRadiusMode::Legacy : ShadowRadiusMode::Default);
+    FloatSize shadowOffset(boxShadow->x().value(), boxShadow->y().value());
+    context.setShadow(shadowOffset, boxShadow->radius().value(), style.colorByApplyingColorFilter(boxShadow->color()), boxShadow->isWebkitBoxShadow() ? ShadowRadiusMode::Legacy : ShadowRadiusMode::Default);
 }
 
 InterpolationQuality RenderBoxModelObject::chooseInterpolationQuality(GraphicsContext& context, Image& image, const void* layer, const LayoutSize& size)
@@ -2354,7 +2354,7 @@ bool RenderBoxModelObject::boxShadowShouldBeAppliedToBackground(const LayoutPoin
             return false;
         hasOneNormalBoxShadow = true;
 
-        if (currentShadow->spread())
+        if (!currentShadow->spread().isZero())
             return false;
     }
 
@@ -2429,10 +2429,10 @@ void RenderBoxModelObject::paintBoxShadow(const PaintInfo& info, const LayoutRec
         if (shadow->style() != shadowStyle)
             continue;
 
-        LayoutSize shadowOffset(shadow->x(), shadow->y());
+        LayoutSize shadowOffset(shadow->x().value(), shadow->y().value());
         LayoutUnit shadowPaintingExtent = shadow->paintingExtent();
-        LayoutUnit shadowSpread = shadow->spread();
-        int shadowRadius = shadow->radius();
+        LayoutUnit shadowSpread = LayoutUnit(shadow->spread().value());
+        auto shadowRadius = shadow->radius().value();
 
         if (shadowOffset.isZero() && !shadowRadius && !shadowSpread)
             continue;

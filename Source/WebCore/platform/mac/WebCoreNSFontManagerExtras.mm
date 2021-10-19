@@ -30,6 +30,7 @@
 
 #import "ColorMac.h"
 #import "FontAttributeChanges.h"
+#import "LayoutUnit.h"
 #import <AppKit/NSFontManager.h>
 
 namespace WebCore {
@@ -136,7 +137,7 @@ FontAttributeChanges computedFontAttributeChanges(NSFontManager *fontManager, id
 
     NSShadow *convertedShadow = [convertedAttributesA objectForKey:NSShadowAttributeName];
     if (convertedShadow) {
-        FloatSize offset { static_cast<float>(convertedShadow.shadowOffset.width), static_cast<float>(convertedShadow.shadowOffset.height) };
+        FloatSize offset { LayoutUnit::fromFloatRound(static_cast<float>(convertedShadow.shadowOffset.width)).toFloat(), LayoutUnit::fromFloatRound(static_cast<float>(convertedShadow.shadowOffset.height)).toFloat() };
         changes.setShadow({ colorFromNSColor(convertedShadow.shadowColor ?: NSColor.blackColor), offset, convertedShadow.shadowBlurRadius });
     } else if (![convertedAttributesB objectForKey:NSShadowAttributeName])
         changes.setShadow({ });

@@ -55,7 +55,7 @@ void LegacyEllipsisBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffs
     bool setShadow = false;
     if (lineStyle.textShadow()) {
         Color shadowColor = lineStyle.colorByApplyingColorFilter(lineStyle.textShadow()->color());
-        context.setShadow(LayoutSize(lineStyle.textShadow()->x(), lineStyle.textShadow()->y()), lineStyle.textShadow()->radius(), shadowColor);
+        context.setShadow(LayoutSize(lineStyle.textShadow()->x().value(), lineStyle.textShadow()->y().value()), lineStyle.textShadow()->radius().value(), shadowColor);
         setShadow = true;
     }
 

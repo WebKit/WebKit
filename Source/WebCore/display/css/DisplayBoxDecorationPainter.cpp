@@ -1268,10 +1268,10 @@ void BoxDecorationPainter::paintBoxShadow(PaintingContext& paintingContext, Shad
 
     auto paintNormalShadow = [&](const ShadowData& shadow) {
         // FIXME: Snapping here isn't ideal. It would be better to compute a rect which is border rect + offset + spread, and snap that at tree building time.
-        auto shadowOffset = roundSizeToDevicePixels({ shadow.x(), shadow.y() }, paintingContext.deviceScaleFactor);
+        auto shadowOffset = roundSizeToDevicePixels({ shadow.x().value(), shadow.y().value() }, paintingContext.deviceScaleFactor);
         float shadowPaintingExtent = ceilToDevicePixel(shadow.paintingExtent(), paintingContext.deviceScaleFactor);
-        float shadowSpread = roundToDevicePixel(shadow.spread(), paintingContext.deviceScaleFactor);
-        int shadowRadius = shadow.radius();
+        float shadowSpread = roundToDevicePixel(shadow.spread().value(), paintingContext.deviceScaleFactor);
+        auto shadowRadius = shadow.radius();
 
         auto fillRect = borderRect;
         fillRect.inflate(shadowSpread);
@@ -1298,7 +1298,7 @@ void BoxDecorationPainter::paintBoxShadow(PaintingContext& paintingContext, Shad
         auto shadowRectOrigin = fillRect.rect().location() + shadowOffset;
         auto adjustedShadowOffset = shadowRectOrigin - adjustedFillRect.rect().location();
 
-        paintingContext.context.setShadow(adjustedShadowOffset, shadowRadius, shadow.color(), shadow.isWebkitBoxShadow() ? ShadowRadiusMode::Legacy : ShadowRadiusMode::Default);
+        paintingContext.context.setShadow(adjustedShadowOffset, shadowRadius.value(), shadow.color(), shadow.isWebkitBoxShadow() ? ShadowRadiusMode::Legacy : ShadowRadiusMode::Default);
 
         if (hasBorderRadius) {
             // If the box is opaque, it is unnecessary to clip it out. However, doing so saves time
@@ -1339,10 +1339,10 @@ void BoxDecorationPainter::paintBoxShadow(PaintingContext& paintingContext, Shad
     };
 
     auto paintInsetShadow = [&](const ShadowData& shadow) {
-        auto shadowOffset = roundSizeToDevicePixels({ shadow.x(), shadow.y() }, paintingContext.deviceScaleFactor);
+        auto shadowOffset = roundSizeToDevicePixels({ shadow.x().value(), shadow.y().value() }, paintingContext.deviceScaleFactor);
         float shadowPaintingExtent = ceilToDevicePixel(shadow.paintingExtent(), paintingContext.deviceScaleFactor);
-        float shadowSpread = roundToDevicePixel(shadow.spread(), paintingContext.deviceScaleFactor);
-        int shadowRadius = shadow.radius();
+        float shadowSpread = roundToDevicePixel(shadow.spread().value(), paintingContext.deviceScaleFactor);
+        auto shadowRadius = shadow.radius();
 
         auto holeRect = borderRect.rect();
         holeRect.inflate(-shadowSpread);
@@ -1409,7 +1409,7 @@ void BoxDecorationPainter::paintBoxShadow(PaintingContext& paintingContext, Shad
         paintingContext.context.translate(extraOffset);
         shadowOffset -= extraOffset;
 
-        paintingContext.context.setShadow(shadowOffset, shadowRadius, shadow.color(), shadow.isWebkitBoxShadow() ? ShadowRadiusMode::Legacy : ShadowRadiusMode::Default);
+        paintingContext.context.setShadow(shadowOffset, shadowRadius.value(), shadow.color(), shadow.isWebkitBoxShadow() ? ShadowRadiusMode::Legacy : ShadowRadiusMode::Default);
         paintingContext.context.fillRectWithRoundedHole(shadowCastingRect, roundedHoleRect, fillColor);
     };
 
@@ -1418,8 +1418,8 @@ void BoxDecorationPainter::paintBoxShadow(PaintingContext& paintingContext, Shad
         if (shadow->style() != shadowStyle)
             continue;
 
-        LayoutSize shadowOffset(shadow->x(), shadow->y());
-        if (shadowOffset.isZero() && !shadow->radius() && !shadow->spread())
+        LayoutSize shadowOffset(shadow->x().value(), shadow->y().value());
+        if (shadowOffset.isZero() && shadow->radius().isZero() && shadow->spread().isZero())
             continue;
 
         if (shadow->style() == ShadowStyle::Normal)
