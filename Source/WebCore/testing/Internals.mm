@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -154,7 +154,7 @@ bool Internals::hasSandboxIOKitOpenAccessToClass(const String& process, const St
 #if ENABLE(WEBGL) && PLATFORM(COCOA)
 bool Internals::platformSupportsMetal(bool isWebGL2)
 {
-    auto device = MTLCreateSystemDefaultDevice();
+    auto device = adoptNS(MTLCreateSystemDefaultDevice());
 
     if (device) {
 #if PLATFORM(IOS_FAMILY) && !PLATFORM(IOS_FAMILY_SIMULATOR)
