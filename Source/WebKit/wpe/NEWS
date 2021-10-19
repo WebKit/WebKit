@@ -1,3 +1,13 @@
+=================
+WPE WebKit 2.34.0
+=================
+
+What's new in WPE WebKit 2.34.0?
+
+  - Use the right display refresh monitor for animations in accelerated compositng mode.
+  - Fix several issues in JavaScriptCore on 32bit systems.
+  - Prefer python3 over python2 in CMake.
+
 ==================
 WPE WebKit 2.33.90
 ==================
