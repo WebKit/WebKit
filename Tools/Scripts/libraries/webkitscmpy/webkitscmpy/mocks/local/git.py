@@ -442,6 +442,17 @@ nothing to commit, working tree clean
                     stderr='usage: git [--version] [--help]...\n',
                 ),
             ), mocks.Subprocess.Route(
+                self.executable, 'status',
+                generator=lambda *args, **kwargs:
+                    mocks.ProcessCompletion(
+                        returncode=0,
+                        stdout=''''On branch {branch}
+Your branch is up to date with 'origin/{branch}'.
+
+nothing to commit, working tree clean
+'''.format(branch=self.branch),
+                    ),
+            ), mocks.Subprocess.Route(
                 self.executable,
                 completion=mocks.ProcessCompletion(
                     returncode=128,

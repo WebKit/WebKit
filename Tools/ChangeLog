@@ -1,3 +1,25 @@
+2021-10-14  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitscmpy] Generate commit message template
+        https://bugs.webkit.org/show_bug.cgi?id=231023
+        <rdar://problem/83722871>
+
+        Reviewed by Dewei Zhu.
+
+        * Scripts/git-webkit: Use prepare-ChangeLog to generate commit messages.
+        * Scripts/hooks/prepare-commit-msg: Added.
+        * Scripts/libraries/webkitscmpy/setup.py: Bump version, add jinja.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/__init__.py: Ditto.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/mocks/local/git.py:
+        (Git.__init__): Add unbound status mock.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/program/__init__.py:
+        (main): Pass hooks to sub-programs.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/program/setup.py:
+        (Setup.git): iterate through the directory of provided hooks and render with jinja2.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/hooks/prepare-commit-msg: Added.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/setup_unittest.py:
+        (TestSetup.test_commit_message):
+
 2021-10-19  Jonathan Bedard  <jbedard@apple.com>
 
         [webkitscmpy] Filter approvers by status

@@ -1,0 +1,45 @@
+#!/usr/bin/env {{ python }}
+
+import os
+import subprocess
+import sys
+
+
+def message(source=None, sha=None):
+    return 'Generated commit message'
+
+
+def main(file_name=None, source=None, sha=None):
+    if source and source != 'commit':
+        return 0
+
+    with open(file_name, 'w') as commit_message_file:
+        if sha:
+            commit_message_file.write(subprocess.check_output(
+                ['{{ git }}', 'log', 'HEAD', '-1', '--pretty=format:%B'],
+                **(dict(encoding='utf-8') if sys.version_info > (3, 5) else dict())
+            ))
+        else:
+            commit_message_file.write(message(source=source, sha=sha))
+
+        commit_message_file.write('''
+# Please populate the above commit message. Lines starting
+# with '#' will be ignored
+
+''')
+        if sha:
+            for line in message(source=source, sha=sha).splitlines():
+                commit_message_file.write('# {}\n'.format(line))
+            commit_message_file.write('\n')
+        for line in subprocess.check_output(
+            ['{{ git }}', 'status'],
+            **(dict(encoding='utf-8') if sys.version_info > (3, 5) else dict())
+        ).splitlines():
+            commit_message_file.write('# {}\n'.format(line))
+
+    return 0
+
+
+if __name__ == '__main__':
+    sys.exit(main(*sys.argv[1:]))
+
