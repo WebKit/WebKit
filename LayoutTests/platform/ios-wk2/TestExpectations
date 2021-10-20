@@ -1375,6 +1375,8 @@ webkit.org/b/228167 media/media-fragments/TC0003.html [ Pass Crash ]
 
 webkit.org/b/228171 media/media-usage-state-private-browsing.html [ Pass Crash ]
 
+webkit.org/b/232025 [ Release ] media/media-can-play-mpeg-audio.html [ Pass Failure ]
+
 # <rdar://problem/56761171> [ iOS ] Layout Test fast/css-custom-paint/simple-hidpi.html is a Flaky Failure (203637)
 webkit.org/b/203637 fast/css-custom-paint/simple-hidpi.html [ Pass ImageOnlyFailure ]
 

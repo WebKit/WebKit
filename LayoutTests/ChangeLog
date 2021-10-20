@@ -1,3 +1,12 @@
+2021-10-20  Ayumi Kojima  <ayumi_kojima@apple.com>
+
+        [ iOS Release ] media/media-can-play-mpeg-audio.html is a flaky failure.
+        https://bugs.webkit.org/show_bug.cgi?id=232025
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+
 2021-10-20  Rob Buis  <rbuis@igalia.com>
 
         Fix percentages on orthogonal replaced children
