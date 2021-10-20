@@ -753,6 +753,8 @@ webkit.org/b/179853 imported/blink/fast/text/international-iteration-simple-text
 
 webkit.org/b/230062 fast/text/FontFaceSet-check-after-style-update.html [ Pass Failure ]
 
+webkit.org/b/232046 [ BigSur Debug ] fast/selectors/pseudo-element-inside-any.html [ Pass Crash ]
+
 # Skip anything related to WebAuthN
 http/wpt/credential-management/ [ Skip ]
 http/wpt/webauthn/ [ Skip ]
