@@ -1,3 +1,14 @@
+2021-10-20  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        Suppress a -Wreturn-type warning
+        https://bugs.webkit.org/show_bug.cgi?id=229681
+        <rdar://81603387>
+
+        Unreviewed.
+
+        * wasm/WasmFormat.h:
+        (JSC::Wasm::typeToString):
+
 2021-10-19  Tadeu Zagallo  <tzagallo@apple.com>
 
         Address post-landing feedback to wasm exceptions

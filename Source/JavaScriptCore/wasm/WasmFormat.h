@@ -90,6 +90,8 @@ inline JSString* typeToString(VM& vm, TypeKind type)
     }
 
 #undef TYPE_CASE
+
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 inline bool isSubtype(Type sub, Type parent)
