@@ -40,6 +40,7 @@
 #include <wtf/Condition.h>
 #include <wtf/Lock.h>
 #include <wtf/SystemTracing.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebKit {
 
