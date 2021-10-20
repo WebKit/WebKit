@@ -1,3 +1,30 @@
+2021-10-20  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        It should be possible to format C++ code to project style with WebKit tools
+        https://bugs.webkit.org/show_bug.cgi?id=230397
+
+        Reviewed by Jonathan Bedard.
+
+        Add capability to run clang-format for lines changed by
+        a patch.
+        Supports workflow of:
+            webkit-patch format -g HEAD
+            git commit -a --amend --no-edit
+
+        * Scripts/webkitpy/tool/commands/__init__.py:
+        * Scripts/webkitpy/tool/commands/format.py: Added.
+        (Format):
+        * Scripts/webkitpy/tool/steps/__init__.py:
+        * Scripts/webkitpy/tool/steps/formatcppfiles.py: Added.
+        (_is_formatted):
+        (_ranges):
+        (FormatCppFiles):
+        (FormatCppFiles.options):
+        (FormatCppFiles.__init__):
+        (FormatCppFiles.run):
+        * Scripts/webkitpy/tool/steps/options.py:
+        (Options):
+
 2021-10-19  Jonathan Bedard  <jbedard@apple.com>
 
         [webkitscmpy] Override http url with ssh url

@@ -2,6 +2,7 @@
 
 from webkitpy.tool.commands.applywatchlistlocal import ApplyWatchListLocal
 from webkitpy.tool.commands.download import *
+from webkitpy.tool.commands.format import Format
 from webkitpy.tool.commands.prettydiff import PrettyDiff
 from webkitpy.tool.commands.queries import *
 from webkitpy.tool.commands.queues import *
