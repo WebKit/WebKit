@@ -88,7 +88,7 @@ void ScrollingStatePositionedNode::updateConstraints(const AbsolutePositionConst
     setPropertyChanged(Property::LayoutConstraintData);
 }
 
-void ScrollingStatePositionedNode::dumpProperties(TextStream& ts, ScrollingStateTreeAsTextBehavior behavior) const
+void ScrollingStatePositionedNode::dumpProperties(TextStream& ts, OptionSet<ScrollingStateTreeAsTextBehavior> behavior) const
 {
     ts << "Positioned node";
     ScrollingStateNode::dumpProperties(ts, behavior);
@@ -96,7 +96,7 @@ void ScrollingStatePositionedNode::dumpProperties(TextStream& ts, ScrollingState
     ts.dumpProperty("layout constraints", m_constraints);
     ts.dumpProperty("related overflow nodes", m_relatedOverflowScrollingNodes.size());
 
-    if (behavior & ScrollingStateTreeAsTextBehaviorIncludeNodeIDs) {
+    if (behavior & ScrollingStateTreeAsTextBehavior::IncludeNodeIDs) {
         if (!m_relatedOverflowScrollingNodes.isEmpty()) {
             TextStream::GroupScope scope(ts);
             ts << "overflow nodes";

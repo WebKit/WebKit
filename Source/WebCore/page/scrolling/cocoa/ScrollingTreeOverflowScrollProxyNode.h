@@ -48,7 +48,7 @@ protected:
     void commitStateBeforeChildren(const ScrollingStateNode&) override;
     void applyLayerPositions() override;
 
-    WEBCORE_EXPORT void dumpProperties(TextStream&, ScrollingStateTreeAsTextBehavior) const override;
+    WEBCORE_EXPORT void dumpProperties(TextStream&, OptionSet<ScrollingStateTreeAsTextBehavior>) const override;
 
     ScrollingNodeID m_overflowScrollingNodeID { 0 };
     RetainPtr<CALayer> m_layer;

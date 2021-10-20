@@ -44,7 +44,7 @@ private:
     void commitStateBeforeChildren(const ScrollingStateNode&) final;
     void applyLayerPositions() final;
 
-    WEBCORE_EXPORT void dumpProperties(WTF::TextStream&, ScrollingStateTreeAsTextBehavior) const override;
+    WEBCORE_EXPORT void dumpProperties(WTF::TextStream&, OptionSet<ScrollingStateTreeAsTextBehavior>) const override;
 };
 
 } // namespace WebCore

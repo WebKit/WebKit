@@ -306,7 +306,7 @@ public:
 
     size_t indexOfChild(ScrollingStateNode&) const;
 
-    String scrollingStateTreeAsText(ScrollingStateTreeAsTextBehavior = ScrollingStateTreeAsTextBehaviorNormal) const;
+    String scrollingStateTreeAsText(OptionSet<ScrollingStateTreeAsTextBehavior> = { }) const;
 
 protected:
     ScrollingStateNode(const ScrollingStateNode&, ScrollingStateTree&);
@@ -315,11 +315,11 @@ protected:
     void setPropertyChangedInternal(Property property) { m_changedProperties.add(property); }
     void setPropertiesChangedInternal(OptionSet<Property> properties) { m_changedProperties.add(properties); }
 
-    virtual void dumpProperties(WTF::TextStream&, ScrollingStateTreeAsTextBehavior) const;
+    virtual void dumpProperties(WTF::TextStream&, OptionSet<ScrollingStateTreeAsTextBehavior>) const;
     virtual OptionSet<Property> applicableProperties() const;
 
 private:
-    void dump(WTF::TextStream&, ScrollingStateTreeAsTextBehavior) const;
+    void dump(WTF::TextStream&, OptionSet<ScrollingStateTreeAsTextBehavior>) const;
 
     const ScrollingNodeType m_nodeType;
     const ScrollingNodeID m_nodeID;

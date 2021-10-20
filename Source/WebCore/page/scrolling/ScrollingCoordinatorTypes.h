@@ -31,7 +31,7 @@
 
 namespace WebCore {
 
-enum class SynchronousScrollingReason {
+enum class SynchronousScrollingReason : uint8_t {
     // Flags for frame scrolling.
     ForcedOnMainThread                                          = 1 << 0,
     HasViewportConstrainedObjectsWithoutSupportingFixedLayers   = 1 << 1,
@@ -53,14 +53,15 @@ enum class ScrollingNodeType : uint8_t {
     Positioned
 };
 
-enum ScrollingStateTreeAsTextBehaviorFlags {
-    ScrollingStateTreeAsTextBehaviorNormal                  = 0,
-    ScrollingStateTreeAsTextBehaviorIncludeLayerIDs         = 1 << 0,
-    ScrollingStateTreeAsTextBehaviorIncludeNodeIDs          = 1 << 1,
-    ScrollingStateTreeAsTextBehaviorIncludeLayerPositions   = 1 << 2,
-    ScrollingStateTreeAsTextBehaviorDebug                   = ScrollingStateTreeAsTextBehaviorIncludeLayerIDs | ScrollingStateTreeAsTextBehaviorIncludeNodeIDs | ScrollingStateTreeAsTextBehaviorIncludeLayerPositions
+enum class ScrollingStateTreeAsTextBehavior : uint8_t {
+    IncludeLayerIDs         = 1 << 0,
+    IncludeNodeIDs          = 1 << 1,
+    IncludeLayerPositions   = 1 << 2,
 };
-typedef unsigned ScrollingStateTreeAsTextBehavior;
+
+constexpr auto debugScrollingStateTreeAsTextBehaviors = OptionSet<ScrollingStateTreeAsTextBehavior> {
+    ScrollingStateTreeAsTextBehavior::IncludeLayerIDs, ScrollingStateTreeAsTextBehavior::IncludeNodeIDs, ScrollingStateTreeAsTextBehavior::IncludeLayerPositions
+};
 
 enum class ScrollingLayerPositionAction {
     Set,

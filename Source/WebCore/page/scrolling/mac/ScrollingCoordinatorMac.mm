@@ -114,7 +114,7 @@ void ScrollingCoordinatorMac::commitTreeStateIfNeeded()
     if (!scrollingStateTree()->hasChangedProperties())
         return;
 
-    LOG_WITH_STREAM(ScrollingTree, stream << scrollingStateTreeAsText(ScrollingStateTreeAsTextBehaviorDebug));
+    LOG_WITH_STREAM(ScrollingTree, stream << scrollingStateTreeAsText(debugScrollingStateTreeAsTextBehaviors));
 
     auto stateTree = scrollingStateTree()->commit(LayerRepresentation::PlatformLayerRepresentation);
     scrollingTree()->commitTreeState(WTFMove(stateTree));

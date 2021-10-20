@@ -309,13 +309,13 @@ void ScrollingStateFrameScrollingNode::setScrollingPerformanceTestingEnabled(boo
     setPropertyChanged(Property::ScrollingPerformanceTestingEnabled);
 }
 
-void ScrollingStateFrameScrollingNode::dumpProperties(TextStream& ts, ScrollingStateTreeAsTextBehavior behavior) const
+void ScrollingStateFrameScrollingNode::dumpProperties(TextStream& ts, OptionSet<ScrollingStateTreeAsTextBehavior> behavior) const
 {
     ts << "Frame scrolling node";
     
     ScrollingStateScrollingNode::dumpProperties(ts, behavior);
     
-    if (behavior & ScrollingStateTreeAsTextBehaviorIncludeLayerIDs) {
+    if (behavior & ScrollingStateTreeAsTextBehavior::IncludeLayerIDs) {
         ts.dumpProperty("root contents layer ID", m_rootContentsLayer.layerID());
         if (m_counterScrollingLayer.layerID())
             ts.dumpProperty("counter scrolling layer ID", m_counterScrollingLayer.layerID());

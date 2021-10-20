@@ -92,7 +92,7 @@ void ScrollingTreeOverflowScrollProxyNode::applyLayerPositions()
         });
 }
 
-void ScrollingTreeOverflowScrollProxyNode::dumpProperties(TextStream& ts, ScrollingStateTreeAsTextBehavior behavior) const
+void ScrollingTreeOverflowScrollProxyNode::dumpProperties(TextStream& ts, OptionSet<ScrollingStateTreeAsTextBehavior> behavior) const
 {
     ts << "overflow scroll proxy node";
     ScrollingTreeNode::dumpProperties(ts, behavior);
@@ -102,7 +102,7 @@ void ScrollingTreeOverflowScrollProxyNode::dumpProperties(TextStream& ts, Scroll
         ts.dumpProperty("related overflow scrolling node scroll position", scrollPosition);
     }
 
-    if (behavior & ScrollingStateTreeAsTextBehaviorIncludeNodeIDs)
+    if (behavior & ScrollingStateTreeAsTextBehavior::IncludeNodeIDs)
         ts.dumpProperty("overflow scrolling node", m_overflowScrollingNodeID);
 }
 

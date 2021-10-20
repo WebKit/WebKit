@@ -40,7 +40,7 @@ public:
 
     virtual ~ScrollingStateFrameHostingNode();
 
-    void dumpProperties(WTF::TextStream&, ScrollingStateTreeAsTextBehavior) const override;
+    void dumpProperties(WTF::TextStream&, OptionSet<ScrollingStateTreeAsTextBehavior>) const override;
 
 private:
     ScrollingStateFrameHostingNode(ScrollingStateTree&, ScrollingNodeID);

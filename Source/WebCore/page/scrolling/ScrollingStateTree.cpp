@@ -407,7 +407,7 @@ void showScrollingStateTree(const WebCore::ScrollingStateTree* tree)
         return;
     }
 
-    String output = rootNode->scrollingStateTreeAsText(WebCore::ScrollingStateTreeAsTextBehaviorDebug);
+    String output = rootNode->scrollingStateTreeAsText(WebCore::debugScrollingStateTreeAsTextBehaviors);
     WTFLogAlways("%s\n", output.utf8().data());
 }
 

@@ -160,8 +160,8 @@ public:
     bool hasSynchronousScrollingReasons(ScrollingNodeID nodeID) const { return !!synchronousScrollingReasons(nodeID); }
 
     virtual void reconcileViewportConstrainedLayerPositions(ScrollingNodeID, const LayoutRect&, ScrollingLayerPositionAction) { }
-    virtual String scrollingStateTreeAsText(ScrollingStateTreeAsTextBehavior = ScrollingStateTreeAsTextBehaviorNormal) const;
-    virtual String scrollingTreeAsText(ScrollingStateTreeAsTextBehavior = ScrollingStateTreeAsTextBehaviorNormal) const;
+    virtual String scrollingStateTreeAsText(OptionSet<ScrollingStateTreeAsTextBehavior> = { }) const;
+    virtual String scrollingTreeAsText(OptionSet<ScrollingStateTreeAsTextBehavior> = { }) const;
     virtual bool isRubberBandInProgress(ScrollingNodeID) const { return false; }
     virtual bool isUserScrollInProgress(ScrollingNodeID) const { return false; }
     virtual bool isScrollSnapInProgress(ScrollingNodeID) const { return false; }

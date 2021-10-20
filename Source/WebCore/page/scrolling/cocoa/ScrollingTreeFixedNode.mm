@@ -129,13 +129,13 @@ void ScrollingTreeFixedNode::applyLayerPositions()
     [m_layer _web_setLayerTopLeftPosition:layerPosition - m_constraints.alignmentOffset()];
 }
 
-void ScrollingTreeFixedNode::dumpProperties(TextStream& ts, ScrollingStateTreeAsTextBehavior behavior) const
+void ScrollingTreeFixedNode::dumpProperties(TextStream& ts, OptionSet<ScrollingStateTreeAsTextBehavior> behavior) const
 {
     ts << "fixed node";
     ScrollingTreeNode::dumpProperties(ts, behavior);
     ts.dumpProperty("fixed constraints", m_constraints);
     
-    if (behavior & ScrollingStateTreeAsTextBehaviorIncludeLayerPositions) {
+    if (behavior & ScrollingStateTreeAsTextBehavior::IncludeLayerPositions) {
         FloatRect layerBounds = [m_layer bounds];
         FloatPoint anchorPoint = [m_layer anchorPoint];
         FloatPoint position = [m_layer position];

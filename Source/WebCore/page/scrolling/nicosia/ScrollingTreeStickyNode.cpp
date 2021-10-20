@@ -89,14 +89,14 @@ void ScrollingTreeStickyNode::applyLayerPositions()
         });
 }
 
-void ScrollingTreeStickyNode::dumpProperties(TextStream& ts, ScrollingStateTreeAsTextBehavior behavior) const
+void ScrollingTreeStickyNode::dumpProperties(TextStream& ts, OptionSet<ScrollingStateTreeAsTextBehavior> behavior) const
 {
     ts << "sticky node";
 
     ScrollingTreeNode::dumpProperties(ts, behavior);
     ts.dumpProperty("sticky constraints", m_constraints);
 
-    if (behavior & ScrollingStateTreeAsTextBehaviorIncludeLayerPositions) {
+    if (behavior & ScrollingStateTreeAsTextBehavior::IncludeLayerPositions) {
         FloatPoint layerTopLeft;
         ASSERT(m_layer);
         m_layer->accessCommitted(

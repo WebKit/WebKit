@@ -108,13 +108,13 @@ void ScrollingTreeFixedNode::applyLayerPositions()
         });
 }
 
-void ScrollingTreeFixedNode::dumpProperties(TextStream& ts, ScrollingStateTreeAsTextBehavior behavior) const
+void ScrollingTreeFixedNode::dumpProperties(TextStream& ts, OptionSet<ScrollingStateTreeAsTextBehavior> behavior) const
 {
     ts << "fixed node";
     ScrollingTreeNode::dumpProperties(ts, behavior);
     ts.dumpProperty("fixed constraints", m_constraints);
 
-    if (behavior & ScrollingStateTreeAsTextBehaviorIncludeLayerPositions) {
+    if (behavior & ScrollingStateTreeAsTextBehavior::IncludeLayerPositions) {
         FloatPoint layerTopLeft;
         ASSERT(m_layer);
         m_layer->accessCommitted(

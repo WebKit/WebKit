@@ -98,7 +98,7 @@ void ScrollingTreePositionedNode::applyLayerPositions()
         });
 }
 
-void ScrollingTreePositionedNode::dumpProperties(TextStream& ts, ScrollingStateTreeAsTextBehavior behavior) const
+void ScrollingTreePositionedNode::dumpProperties(TextStream& ts, OptionSet<ScrollingStateTreeAsTextBehavior> behavior) const
 {
     ts << "positioned node";
     ScrollingTreeNode::dumpProperties(ts, behavior);
@@ -106,7 +106,7 @@ void ScrollingTreePositionedNode::dumpProperties(TextStream& ts, ScrollingStateT
     ts.dumpProperty("layout constraints", m_constraints);
     ts.dumpProperty("related overflow nodes", m_relatedOverflowScrollingNodes.size());
 
-    if (behavior & ScrollingStateTreeAsTextBehaviorIncludeNodeIDs) {
+    if (behavior & ScrollingStateTreeAsTextBehavior::IncludeNodeIDs) {
         if (!m_relatedOverflowScrollingNodes.isEmpty()) {
             TextStream::GroupScope scope(ts);
             ts << "overflow nodes";

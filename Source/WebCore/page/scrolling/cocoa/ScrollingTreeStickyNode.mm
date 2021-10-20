@@ -124,14 +124,14 @@ FloatSize ScrollingTreeStickyNode::scrollDeltaSinceLastCommit() const
     return layerPosition - m_constraints.layerPositionAtLastLayout();
 }
 
-void ScrollingTreeStickyNode::dumpProperties(TextStream& ts, ScrollingStateTreeAsTextBehavior behavior) const
+void ScrollingTreeStickyNode::dumpProperties(TextStream& ts, OptionSet<ScrollingStateTreeAsTextBehavior> behavior) const
 {
     ts << "sticky node";
 
     ScrollingTreeNode::dumpProperties(ts, behavior);
     ts.dumpProperty("sticky constraints", m_constraints);
 
-    if (behavior & ScrollingStateTreeAsTextBehaviorIncludeLayerPositions) {
+    if (behavior & ScrollingStateTreeAsTextBehavior::IncludeLayerPositions) {
         FloatRect layerBounds = [m_layer bounds];
         FloatPoint anchorPoint = [m_layer anchorPoint];
         FloatPoint position = [m_layer position];

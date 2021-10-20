@@ -154,7 +154,7 @@ FloatSize ScrollingStateStickyNode::scrollDeltaSinceLastCommit(const LayoutRect&
     return layerPosition - m_constraints.layerPositionAtLastLayout();
 }
 
-void ScrollingStateStickyNode::dumpProperties(TextStream& ts, ScrollingStateTreeAsTextBehavior behavior) const
+void ScrollingStateStickyNode::dumpProperties(TextStream& ts, OptionSet<ScrollingStateTreeAsTextBehavior> behavior) const
 {
     ts << "Sticky node";
     ScrollingStateNode::dumpProperties(ts, behavior);

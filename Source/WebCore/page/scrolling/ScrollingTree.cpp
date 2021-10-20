@@ -323,7 +323,7 @@ void ScrollingTree::commitTreeState(std::unique_ptr<ScrollingStateTree>&& scroll
     
     didCommitTree();
 
-    LOG_WITH_STREAM(ScrollingTree, stream << "committed ScrollingTree" << scrollingTreeAsText(ScrollingStateTreeAsTextBehaviorDebug));
+    LOG_WITH_STREAM(ScrollingTree, stream << "committed ScrollingTree" << scrollingTreeAsText(debugScrollingStateTreeAsTextBehaviors));
 }
 
 void ScrollingTree::updateTreeFromStateNodeRecursive(const ScrollingStateNode* stateNode, CommitTreeState& state)
@@ -734,7 +734,7 @@ std::optional<unsigned> ScrollingTree::nominalFramesPerSecond()
     return m_treeState.nominalFramesPerSecond;
 }
 
-String ScrollingTree::scrollingTreeAsText(ScrollingStateTreeAsTextBehavior behavior)
+String ScrollingTree::scrollingTreeAsText(OptionSet<ScrollingStateTreeAsTextBehavior> behavior)
 {
     TextStream ts(TextStream::LineMode::MultipleLine);
 
@@ -752,10 +752,10 @@ String ScrollingTree::scrollingTreeAsText(ScrollingStateTreeAsTextBehavior behav
         
         if (m_rootNode) {
             TextStream::GroupScope scope(ts);
-            m_rootNode->dump(ts, behavior | ScrollingStateTreeAsTextBehaviorIncludeLayerPositions);
+            m_rootNode->dump(ts, behavior | ScrollingStateTreeAsTextBehavior::IncludeLayerPositions);
         }
         
-        if (behavior & ScrollingStateTreeAsTextBehaviorIncludeNodeIDs) {
+        if (behavior & ScrollingStateTreeAsTextBehavior::IncludeNodeIDs) {
             if (!m_overflowRelatedNodesMap.isEmpty()) {
                 TextStream::GroupScope scope(ts);
                 ts << "overflow related nodes";

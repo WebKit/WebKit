@@ -84,9 +84,9 @@ bool ScrollingTreeNode::isRootNode() const
     return m_scrollingTree.rootNode() == this;
 }
 
-void ScrollingTreeNode::dumpProperties(TextStream& ts, ScrollingStateTreeAsTextBehavior behavior) const
+void ScrollingTreeNode::dumpProperties(TextStream& ts, OptionSet<ScrollingStateTreeAsTextBehavior> behavior) const
 {
-    if (behavior & ScrollingStateTreeAsTextBehaviorIncludeNodeIDs)
+    if (behavior & ScrollingStateTreeAsTextBehavior::IncludeNodeIDs)
         ts.dumpProperty("nodeID", scrollingNodeID());
 }
 
@@ -108,7 +108,7 @@ ScrollingTreeScrollingNode* ScrollingTreeNode::enclosingScrollingNodeIncludingSe
     return downcast<ScrollingTreeScrollingNode>(node);
 }
 
-void ScrollingTreeNode::dump(TextStream& ts, ScrollingStateTreeAsTextBehavior behavior) const
+void ScrollingTreeNode::dump(TextStream& ts, OptionSet<ScrollingStateTreeAsTextBehavior> behavior) const
 {
     dumpProperties(ts, behavior);
 

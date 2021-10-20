@@ -356,12 +356,12 @@ ScrollingNodeID ScrollingCoordinator::uniqueScrollingNodeID()
     return uniqueScrollingNodeID++;
 }
 
-String ScrollingCoordinator::scrollingStateTreeAsText(ScrollingStateTreeAsTextBehavior) const
+String ScrollingCoordinator::scrollingStateTreeAsText(OptionSet<ScrollingStateTreeAsTextBehavior>) const
 {
     return emptyString();
 }
 
-String ScrollingCoordinator::scrollingTreeAsText(ScrollingStateTreeAsTextBehavior) const
+String ScrollingCoordinator::scrollingTreeAsText(OptionSet<ScrollingStateTreeAsTextBehavior>) const
 {
     return emptyString();
 }

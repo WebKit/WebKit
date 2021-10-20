@@ -325,7 +325,7 @@ void ScrollingTreeScrollingNode::wasScrolledByDelegatedScrolling(const FloatPoin
     scrollingTree().setNeedsApplyLayerPositionsAfterCommit();
 }
 
-void ScrollingTreeScrollingNode::dumpProperties(TextStream& ts, ScrollingStateTreeAsTextBehavior behavior) const
+void ScrollingTreeScrollingNode::dumpProperties(TextStream& ts, OptionSet<ScrollingStateTreeAsTextBehavior> behavior) const
 {
     ScrollingTreeNode::dumpProperties(ts, behavior);
     ts.dumpProperty("scrollable area size", m_scrollableAreaSize);
