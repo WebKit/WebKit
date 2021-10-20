@@ -66,6 +66,10 @@ typedef struct _WebKitAccessible AccessibilityObjectWrapper;
 class AccessibilityObjectWrapper;
 #endif
 
+namespace PAL {
+class SessionID;
+}
+
 namespace WTF {
 class TextStream;
 }
@@ -1503,7 +1507,7 @@ public:
     virtual void clearIsIgnoredFromParentData() = 0;
     virtual void setIsIgnoredFromParentDataForChild(AXCoreObject*) = 0;
     
-    virtual uint64_t sessionID() const = 0;
+    virtual PAL::SessionID sessionID() const = 0;
     virtual String documentURI() const = 0;
     virtual String documentEncoding() const = 0;
     virtual AccessibilityChildrenVector documentLinks() = 0;

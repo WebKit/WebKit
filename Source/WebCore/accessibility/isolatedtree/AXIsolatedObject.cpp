@@ -30,6 +30,7 @@
 
 #include "AXIsolatedTree.h"
 #include "AXLogger.h"
+#include <pal/SessionID.h>
 
 #if PLATFORM(COCOA)
 #include <pal/spi/cocoa/AccessibilitySupportSoftLink.h>
@@ -412,7 +413,7 @@ void AXIsolatedObject::initializeAttributeData(AXCoreObject& object, bool isRoot
 
     if (isRoot) {
         setObjectProperty(AXPropertyName::WebArea, object.webAreaObject());
-        setProperty(AXPropertyName::SessionID, object.sessionID());
+        setProperty(AXPropertyName::SessionID, object.sessionID().isolatedCopy());
         setProperty(AXPropertyName::DocumentURI, object.documentURI().isolatedCopy());
         setProperty(AXPropertyName::DocumentEncoding, object.documentEncoding().isolatedCopy());
         setObjectVectorProperty(AXPropertyName::DocumentLinks, object.documentLinks());
@@ -610,11 +611,11 @@ void AXIsolatedObject::classList(Vector<String>& list) const
     list.appendVector(classList.split(" "));
 }
 
-uint64_t AXIsolatedObject::sessionID() const
+PAL::SessionID AXIsolatedObject::sessionID() const
 {
     if (auto root = tree()->rootNode())
-        return root->uint64AttributeValue(AXPropertyName::SessionID);
-    return 0;
+        return root->sessionIDAttributeValue(AXPropertyName::SessionID);
+    return PAL::SessionID(PAL::SessionID::SessionConstants::HashTableEmptyValueID);
 }
 
 String AXIsolatedObject::documentURI() const
@@ -824,6 +825,15 @@ AXCoreObject* AXIsolatedObject::objectAttributeValue(AXPropertyName propertyName
     );
 
     return tree()->nodeForID(nodeID).get();
+}
+
+PAL::SessionID AXIsolatedObject::sessionIDAttributeValue(AXPropertyName propertyName) const
+{
+    auto value = m_propertyMap.get(propertyName);
+    return WTF::switchOn(value,
+        [] (PAL::SessionID& typedValue) -> PAL::SessionID { return typedValue; },
+        [] (auto&) { return PAL::SessionID(PAL::SessionID::SessionConstants::HashTableEmptyValueID); }
+    );
 }
 
 template<typename T>

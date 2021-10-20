@@ -84,6 +84,7 @@
 #include "TextIterator.h"
 #include "UserGestureIndicator.h"
 #include "VisibleUnits.h"
+#include <pal/SessionID.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RobinHoodHashSet.h>
 #include <wtf/StdLibExtras.h>
@@ -3469,13 +3470,13 @@ String AccessibilityObject::documentEncoding() const
     return String();
 }
 
-uint64_t AccessibilityObject::sessionID() const
+PAL::SessionID AccessibilityObject::sessionID() const
 {
     if (auto* document = topDocument()) {
         if (auto* page = document->page())
-            return page->sessionID().toUInt64();
+            return page->sessionID();
     }
-    return 0;
+    return PAL::SessionID(PAL::SessionID::SessionConstants::HashTableEmptyValueID);
 }
 
 String AccessibilityObject::tagName() const
