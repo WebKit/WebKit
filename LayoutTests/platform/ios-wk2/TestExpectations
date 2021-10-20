@@ -2235,3 +2235,4 @@ webkit.org/b/231961 fast/inline/inline-background-clip-text-multiline.html [ Ima
 
 webkit.org/b/231780 [ Debug ] imported/w3c/web-platform-tests/webrtc/simulcast/basic.https.html [ Pass Failure ]
 
+webkit.org/b/232048 http/tests/privateClickMeasurement/attribution-conversion-through-image-redirect-in-new-window.html [ Pass Crash ]
