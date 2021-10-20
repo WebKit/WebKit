@@ -659,7 +659,9 @@ void BitmapImage::imageFrameAvailableAtIndex(size_t index)
 
 DestinationColorSpace BitmapImage::colorSpace()
 {
-    return nativeImage()->colorSpace();
+    if (auto nativeImage = this->nativeImage())
+        return nativeImage->colorSpace();
+    return DestinationColorSpace::SRGB();
 }
 
 unsigned BitmapImage::decodeCountForTesting() const

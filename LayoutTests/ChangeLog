@@ -1,3 +1,16 @@
+2021-10-20  John Cunningham  <johncunningham@apple.com>
+
+        Avoid null pointer dereference when creating ImageBitmap from a null image.
+        https://bugs.webkit.org/show_bug.cgi?id=231794
+
+        Reviewed by Said Abou-Hallawa.
+
+        If the image is null, we can reject the promise earlier. Default to sRGB when a
+        BitmapImage's nativeImage is null.
+
+        * fast/canvas/createImageBitmap-invalid-image-blob-crash-expected.txt: Added.
+        * fast/canvas/createImageBitmap-invalid-image-blob-crash.html: Added.
+
 2021-10-19  Ben Nham  <nham@apple.com>
 
         Add NetworkProcess stubs for push subscriptions
