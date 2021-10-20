@@ -34,7 +34,7 @@ if (isServiceWorker) {
         if (registration) {
             await serviceWorkerRegistration.unregister();
         }
-        registration = await navigator.serviceWorker.register("pushManager-worker.js");
+        registration = await navigator.serviceWorker.register("emptyWorker.js");
         pushManager = registration.pushManager;
 
         let serviceWorker = registration.installing;

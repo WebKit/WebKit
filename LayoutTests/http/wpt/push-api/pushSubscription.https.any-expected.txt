@@ -1,3 +1,5 @@
 
+PASS wait for active service worker
 PASS PushSubscription getters
+PASS unregister service worker
 

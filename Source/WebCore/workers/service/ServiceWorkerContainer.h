@@ -32,6 +32,8 @@
 #include "EventTarget.h"
 #include "IDLTypes.h"
 #include "JSDOMPromiseDeferred.h"
+#include "PushPermissionState.h"
+#include "PushSubscription.h"
 #include "SWClientConnection.h"
 #include "SWServer.h"
 #include "ServiceWorkerJobClient.h"
@@ -82,6 +84,11 @@ public:
 
     void addRegistration(ServiceWorkerRegistration&);
     void removeRegistration(ServiceWorkerRegistration&);
+
+    void subscribeToPushService(ServiceWorkerRegistration&, const Vector<uint8_t>& applicationServerKey, DOMPromiseDeferred<IDLInterface<PushSubscription>>&&);
+    void unsubscribeFromPushService(ServiceWorkerRegistrationIdentifier, DOMPromiseDeferred<IDLBoolean>&&);
+    void getPushSubscription(ServiceWorkerRegistration&, DOMPromiseDeferred<IDLNullable<IDLInterface<PushSubscription>>>&&);
+    void getPushPermissionState(ServiceWorkerRegistrationIdentifier, DOMPromiseDeferred<IDLEnumeration<PushPermissionState>>&&);
 
     ServiceWorkerJob* job(ServiceWorkerJobIdentifier);
 

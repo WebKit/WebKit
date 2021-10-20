@@ -38,19 +38,18 @@
 namespace WebCore {
 
 class PushSubscriptionOptions : public RefCounted<PushSubscriptionOptions> {
-    WTF_MAKE_ISO_ALLOCATED_EXPORT(PushSubscriptionOptions, WEBCORE_EXPORT);
+    WTF_MAKE_ISO_ALLOCATED(PushSubscriptionOptions);
 public:
     template<typename... Args> static Ref<PushSubscriptionOptions> create(Args&&... args) { return adoptRef(*new PushSubscriptionOptions(std::forward<Args>(args)...)); }
-    WEBCORE_EXPORT ~PushSubscriptionOptions();
+    ~PushSubscriptionOptions();
 
     bool userVisibleOnly() const;
     const Vector<uint8_t>& serverVAPIDPublicKey() const;
     ExceptionOr<RefPtr<JSC::ArrayBuffer>> applicationServerKey() const;
 
 private:
-    WEBCORE_EXPORT PushSubscriptionOptions(bool userVisibleOnly, Vector<uint8_t>&&applicationServerKey);
+    explicit PushSubscriptionOptions(Vector<uint8_t>&&applicationServerKey);
 
-    bool m_userVisibleOnly;
     Vector<uint8_t> m_serverVAPIDPublicKey;
     mutable RefPtr<JSC::ArrayBuffer> m_applicationServerKey;
 };

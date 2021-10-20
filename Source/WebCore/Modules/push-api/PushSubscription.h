@@ -41,6 +41,8 @@
 namespace WebCore {
 
 class PushSubscriptionOptions;
+class ServiceWorkerContainer;
+class ServiceWorkerRegistration;
 
 class PushSubscription : public RefCounted<PushSubscription> {
     WTF_MAKE_ISO_ALLOCATED_EXPORT(PushSubscription, WEBCORE_EXPORT);
@@ -57,8 +59,9 @@ public:
     PushSubscriptionJSON toJSON() const;
 
 private:
-    WEBCORE_EXPORT PushSubscription(String&& endpoint, std::optional<EpochTimeStamp> expirationTime, Ref<PushSubscriptionOptions>&&, Vector<uint8_t>&& clientECDHPublicKey, Vector<uint8_t>&& auth);
+    WEBCORE_EXPORT PushSubscription(Ref<ServiceWorkerRegistration>&&, String&& endpoint, std::optional<EpochTimeStamp> expirationTime, Vector<uint8_t>&& serverVAPIDPublicKey, Vector<uint8_t>&& clientECDHPublicKey, Vector<uint8_t>&& auth);
 
+    Ref<ServiceWorkerRegistration> m_serviceWorkerRegistration;
     String m_endpoint;
     std::optional<EpochTimeStamp> m_expirationTime;
     Ref<PushSubscriptionOptions> m_options;

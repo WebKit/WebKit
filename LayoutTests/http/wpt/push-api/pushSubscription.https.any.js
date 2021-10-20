@@ -14,17 +14,37 @@ function bytesFrom(buf) {
     return Array.from(new Uint8Array(buf));
 }
 
-test(() => {
+let registration = null;
+
+promise_test(async (test) => {
+    registration = await navigator.serviceWorker.getRegistration();
+    if (registration) {
+        await serviceWorkerRegistration.unregister();
+    }
+    registration = await navigator.serviceWorker.register("emptyWorker.js");
+    assert_true(!registration.active, "service worker should be installing");
+
+    let serviceWorker = registration.installing || registration.waiting;
+    assert_true(!!serviceWorker, "registration should be associated with a service worker");
+
+    return new Promise(resolve => {
+        serviceWorker.addEventListener("statechange", () => {
+            if (serviceWorker.state === "activated")
+                resolve();
+        });
+    });
+}, "wait for active service worker");
+
+promise_test(() => {
     assert_true(!!window.internals, "test requires internals");
 
-    let userVisibleOnly = true;
-    let subscription = window.internals.createPushSubscription(endpoint, expirationTime, userVisibleOnly, key1Buffer, key2Buffer, authBuffer);
+    let subscription = window.internals.createPushSubscription(registration, endpoint, expirationTime, key1Buffer, key2Buffer, authBuffer);
     assert_true(subscription instanceof PushSubscription);
 
     assert_equals(subscription.endpoint, endpoint);
     assert_equals(subscription.expirationTime, expirationTime);
     assert_true(subscription.options === subscription.options, "options should always return same object");
-    assert_equals(subscription.options.userVisibleOnly, userVisibleOnly);
+    assert_equals(subscription.options.userVisibleOnly, true);
     assert_true(subscription.options.applicationServerKey === subscription.options.applicationServerKey, "applicationServerKey should return same object");
     assert_array_equals(bytesFrom(subscription.options.applicationServerKey), bytesFrom(key1Buffer));
     assert_array_equals(bytesFrom(subscription.getKey('p256dh')), bytesFrom(key2Buffer));
@@ -37,4 +57,8 @@ test(() => {
     assert_equals(Object.keys(obj.keys).length, 2);
     assert_equals(obj.keys.p256dh, key2Base64URL);
     assert_equals(obj.keys.auth, authBase64URL);
+
+    return new Promise(resolve => resolve());
 }, "PushSubscription getters");
+
+promise_test((test) => registration.unregister(), "unregister service worker");

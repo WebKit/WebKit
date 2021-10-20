@@ -224,6 +224,7 @@ Modules/pictureinpicture/PictureInPictureWindow.cpp
 Modules/push-api/PushEvent.cpp
 Modules/push-api/PushMessageData.cpp
 Modules/push-api/PushSubscription.cpp
+Modules/push-api/PushSubscriptionData.cpp
 Modules/push-api/PushSubscriptionOptions.cpp
 Modules/push-api/PushManager.cpp
 Modules/push-api/ServiceWorkerRegistrationPushAPI.cpp

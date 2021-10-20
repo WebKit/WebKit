@@ -23,43 +23,54 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "PushSubscriptionOptions.h"
+#pragma once
 
 #if ENABLE(SERVICE_WORKER)
 
-#include <wtf/IsoMallocInlines.h>
+#include "EpochTimeStamp.h"
+
+#include <wtf/Forward.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(PushSubscriptionOptions);
+struct PushSubscriptionData {
+    String endpoint;
+    std::optional<WebCore::EpochTimeStamp> expirationTime;
+    Vector<uint8_t> serverVAPIDPublicKey;
+    Vector<uint8_t> clientECDHPublicKey;
+    Vector<uint8_t> sharedAuthenticationSecret;
 
-PushSubscriptionOptions::PushSubscriptionOptions(Vector<uint8_t>&& serverVAPIDPublicKey)
-    : m_serverVAPIDPublicKey(WTFMove(serverVAPIDPublicKey))
+    WEBCORE_EXPORT PushSubscriptionData isolatedCopy() const;
+
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static std::optional<PushSubscriptionData> decode(Decoder&);
+};
+
+template<class Encoder>
+void PushSubscriptionData::encode(Encoder& encoder) const
 {
+    encoder << endpoint;
+    encoder << expirationTime;
+    encoder << serverVAPIDPublicKey;
+    encoder << clientECDHPublicKey;
+    encoder << sharedAuthenticationSecret;
 }
 
-PushSubscriptionOptions::~PushSubscriptionOptions() = default;
-
-bool PushSubscriptionOptions::userVisibleOnly() const
+template<class Decoder>
+std::optional<PushSubscriptionData> PushSubscriptionData::decode(Decoder& decoder)
 {
-    return true;
-}
-
-const Vector<uint8_t>& PushSubscriptionOptions::serverVAPIDPublicKey() const
-{
-    return m_serverVAPIDPublicKey;
-}
-
-ExceptionOr<RefPtr<JSC::ArrayBuffer>> PushSubscriptionOptions::applicationServerKey() const
-{
-    if (!m_applicationServerKey) {
-        m_applicationServerKey = ArrayBuffer::tryCreate(m_serverVAPIDPublicKey.data(), m_serverVAPIDPublicKey.size());
-        if (!m_applicationServerKey)
-            return Exception { OutOfMemoryError };
-    }
-
-    return m_applicationServerKey.copyRef();
+    PushSubscriptionData result;
+    if (!decoder.decode(result.endpoint))
+        return std::nullopt;
+    if (!decoder.decode(result.expirationTime))
+        return std::nullopt;
+    if (!decoder.decode(result.serverVAPIDPublicKey))
+        return std::nullopt;
+    if (!decoder.decode(result.clientECDHPublicKey))
+        return std::nullopt;
+    if (!decoder.decode(result.sharedAuthenticationSecret))
+        return std::nullopt;
+    return result;
 }
 
 } // namespace WebCore

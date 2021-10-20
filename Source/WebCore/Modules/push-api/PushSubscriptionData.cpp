@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,28 +23,25 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// FIXME: The spec IDL exposes this on Worker in addition to Window.
-// We don't currently support nested workers.
+#include "config.h"
+#include "PushSubscriptionData.h"
 
-[
-    ActiveDOMObject,
-    SecureContext,
-    Exposed=(Window,ServiceWorker),
-    ExportMacro=WEBCORE_EXPORT,
-    Conditional=SERVICE_WORKER,
-    EnabledAtRuntime=ServiceWorkerEnabled,
-    GenerateIsReachable=Impl,
-] interface ServiceWorkerRegistration : EventTarget {
-    readonly attribute ServiceWorker? installing;
-    readonly attribute ServiceWorker? waiting;
-    readonly attribute ServiceWorker? active;
+#if ENABLE(SERVICE_WORKER)
 
-    readonly attribute USVString scope;
-    readonly attribute ServiceWorkerUpdateViaCache updateViaCache;
+namespace WebCore {
 
-    [NewObject] Promise<undefined> update();
-    [NewObject] Promise<boolean> unregister();
+PushSubscriptionData PushSubscriptionData::isolatedCopy() const
+{
+    PushSubscriptionData result;
+    result.endpoint = endpoint.isolatedCopy();
+    result.expirationTime = expirationTime;
+    result.serverVAPIDPublicKey = serverVAPIDPublicKey;
+    result.clientECDHPublicKey = clientECDHPublicKey;
+    result.sharedAuthenticationSecret = sharedAuthenticationSecret;
 
-    // event
-    attribute EventHandler onupdatefound;
-};
+    return result;
+}
+
+} // namespace WebCore
+
+#endif // ENABLE(SERVICE_WORKER)

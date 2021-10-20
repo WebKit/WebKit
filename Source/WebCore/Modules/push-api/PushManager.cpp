@@ -100,7 +100,7 @@ void PushManager::subscribe(ScriptExecutionContext& scriptExecutionContext, std:
     }
     
 #if ENABLE(WEB_CRYPTO)
-    auto keyData = keyDataResult.releaseReturnValue();
+    auto keyData = keyDataResult.returnValue();
     auto key = CryptoKeyEC::importRaw(CryptoAlgorithmIdentifier::ECDSA, "P-256"_s, WTFMove(keyData), false, CryptoKeyUsageVerify);
 #else
     auto key = nullptr;
@@ -116,18 +116,18 @@ void PushManager::subscribe(ScriptExecutionContext& scriptExecutionContext, std:
         return;
     }
     
-    promise.reject(Exception { NotAllowedError, "Push permission was denied"_s });
+    m_serviceWorkerRegistration.subscribeToPushService(keyDataResult.releaseReturnValue(), WTFMove(promise));
 }
 
 void PushManager::getSubscription(DOMPromiseDeferred<IDLNullable<IDLInterface<PushSubscription>>>&& promise)
 {
-    promise.resolve(nullptr);
+    m_serviceWorkerRegistration.getPushSubscription(WTFMove(promise));
 }
 
 void PushManager::permissionState(std::optional<PushSubscriptionOptionsInit>&& options, DOMPromiseDeferred<IDLEnumeration<PushPermissionState>>&& promise)
 {
     UNUSED_PARAM(options);
-    promise.resolve(PushPermissionState::Denied);
+    m_serviceWorkerRegistration.getPushPermissionState(WTFMove(promise));
 }
 
 } // namespace WebCore

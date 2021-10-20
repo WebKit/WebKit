@@ -46,6 +46,11 @@ messages -> WebSWServerConnection NotRefCounted {
 
     SetThrottleState(bool isThrottleable)
     StoreRegistrationsOnDisk() -> () Async
+
+    SubscribeToPushService(WebCore::ServiceWorkerRegistrationIdentifier identifier, Vector<uint8_t> applicationServerKey) -> (Expected<WebCore::PushSubscriptionData, WebCore::ExceptionData> result) Async
+    UnsubscribeFromPushService(WebCore::ServiceWorkerRegistrationIdentifier identifier) -> (Expected<bool, WebCore::ExceptionData> result) Async
+    GetPushSubscription(WebCore::ServiceWorkerRegistrationIdentifier identifier) -> (Expected<std::optional<WebCore::PushSubscriptionData>, WebCore::ExceptionData> result) Async
+    GetPushPermissionState(WebCore::ServiceWorkerRegistrationIdentifier identifier) -> (Expected<uint8_t, WebCore::ExceptionData> result) Async 
 }
 
 #endif // ENABLE(SERVICE_WORKER)

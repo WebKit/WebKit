@@ -38,12 +38,14 @@
 #include "FrameLoaderClient.h"
 #include "IDLTypes.h"
 #include "JSDOMPromiseDeferred.h"
+#include "JSPushSubscription.h"
 #include "JSServiceWorkerRegistration.h"
 #include "LegacySchemeRegistry.h"
 #include "Logging.h"
 #include "MessageEvent.h"
 #include "NavigatorBase.h"
 #include "Page.h"
+#include "PushSubscriptionOptions.h"
 #include "ResourceError.h"
 #include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
@@ -548,6 +550,55 @@ void ServiceWorkerContainer::removeRegistration(ServiceWorkerRegistration& regis
 
     m_swConnection->removeServiceWorkerRegistrationInServer(registration.identifier());
     m_registrations.remove(registration.identifier());
+}
+
+static Ref<PushSubscription> createPushSubscriptionFromData(Ref<ServiceWorkerRegistration> registration, PushSubscriptionData&& data)
+{
+    return PushSubscription::create(WTFMove(registration), WTFMove(data.endpoint), data.expirationTime, WTFMove(data.serverVAPIDPublicKey), WTFMove(data.clientECDHPublicKey), WTFMove(data.sharedAuthenticationSecret));
+}
+
+void ServiceWorkerContainer::subscribeToPushService(ServiceWorkerRegistration& registration, const Vector<uint8_t>& applicationServerKey, DOMPromiseDeferred<IDLInterface<PushSubscription>>&& promise)
+{
+    ensureSWClientConnection().subscribeToPushService(registration.identifier(), applicationServerKey, [protectedRegistration = Ref { registration }, promise = WTFMove(promise)](auto&& result) mutable {
+        if (result.hasException()) {
+            promise.reject(result.releaseException());
+            return;
+        }
+        
+        promise.resolve(createPushSubscriptionFromData(WTFMove(protectedRegistration), result.releaseReturnValue()));
+    });
+}
+
+void ServiceWorkerContainer::unsubscribeFromPushService(ServiceWorkerRegistrationIdentifier identifier, DOMPromiseDeferred<IDLBoolean>&& promise)
+{
+    ensureSWClientConnection().unsubscribeFromPushService(identifier, [promise = WTFMove(promise)](auto&& result) mutable {
+        promise.settle(WTFMove(result));
+    });
+}
+
+void ServiceWorkerContainer::getPushSubscription(ServiceWorkerRegistration& registration, DOMPromiseDeferred<IDLNullable<IDLInterface<PushSubscription>>>&& promise)
+{
+    ensureSWClientConnection().getPushSubscription(registration.identifier(), [protectedRegistration = Ref { registration }, promise = WTFMove(promise)](auto&& result) mutable {
+        if (result.hasException()) {
+            promise.reject(result.releaseException());
+            return;
+        }
+
+        auto optionalPushSubscriptionData = result.releaseReturnValue();
+        if (!optionalPushSubscriptionData) {
+            promise.resolve(nullptr);
+            return;
+        }
+
+        promise.resolve(createPushSubscriptionFromData(WTFMove(protectedRegistration), WTFMove(*optionalPushSubscriptionData)).ptr());
+    });
+}
+
+void ServiceWorkerContainer::getPushPermissionState(ServiceWorkerRegistrationIdentifier identifier, DOMPromiseDeferred<IDLEnumeration<PushPermissionState>>&& promise)
+{
+    ensureSWClientConnection().getPushPermissionState(identifier, [promise = WTFMove(promise)](auto&& result) mutable {
+        promise.settle(WTFMove(result));
+    });
 }
 
 void ServiceWorkerContainer::queueTaskToDispatchControllerChangeEvent()

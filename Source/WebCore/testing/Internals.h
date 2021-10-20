@@ -124,7 +124,9 @@ class TextTrackCueGeneric;
 #endif
 
 #if ENABLE(SERVICE_WORKER)
+class PushSubscription;
 class ServiceWorker;
+class ServiceWorkerRegistration;
 #endif
 
 #if ENABLE(WEB_RTC)
@@ -142,10 +144,6 @@ struct MediaSessionActionDetails;
 class MediaSessionCoordinator;
 class MockMediaSessionCoordinator;
 #endif
-#endif
-
-#if ENABLE(SERVICE_WORKER)
-class PushSubscription;
 #endif
 
 template<typename IDLType> class DOMPromiseDeferred;
@@ -1199,7 +1197,7 @@ public:
     void retainTextIteratorForDocumentContent();
 
 #if ENABLE(SERVICE_WORKER)
-    RefPtr<PushSubscription> createPushSubscription(const String& endpoint, std::optional<EpochTimeStamp> expirationTime, bool userVisibleOnly, const ArrayBuffer& serverVAPIDPublicKey, const ArrayBuffer& clientECDHPublicKey, const ArrayBuffer& auth);
+    RefPtr<PushSubscription> createPushSubscription(Ref<ServiceWorkerRegistration>&&, const String& endpoint, std::optional<EpochTimeStamp> expirationTime, const ArrayBuffer& serverVAPIDPublicKey, const ArrayBuffer& clientECDHPublicKey, const ArrayBuffer& auth);
 #endif
 
 private:

@@ -1066,5 +1066,5 @@ enum AutoplayPolicy {
 
     undefined retainTextIteratorForDocumentContent();
 
-    [Conditional=SERVICE_WORKER] PushSubscription createPushSubscription(USVString endpoint, EpochTimeStamp? expirationTime, boolean userVisibleOnly, ArrayBuffer serverVAPIDPublicKey, ArrayBuffer clientECDHPublicKey, ArrayBuffer auth);
+    [Conditional=SERVICE_WORKER] PushSubscription createPushSubscription(ServiceWorkerRegistration registration, USVString endpoint, EpochTimeStamp? expirationTime, ArrayBuffer serverVAPIDPublicKey, ArrayBuffer clientECDHPublicKey, ArrayBuffer auth);
 };

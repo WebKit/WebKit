@@ -30,6 +30,7 @@
 
 #include "Exception.h"
 #include "PushSubscriptionOptions.h"
+#include "ServiceWorkerContainer.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/text/Base64.h>
 
@@ -37,10 +38,11 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(PushSubscription);
 
-PushSubscription::PushSubscription(String&& endpoint, std::optional<EpochTimeStamp> expirationTime, Ref<PushSubscriptionOptions>&& options, Vector<uint8_t>&& clientECDHPublicKey, Vector<uint8_t>&& sharedAuthenticationSecret)
-    : m_endpoint(WTFMove(endpoint))
+PushSubscription::PushSubscription(Ref<ServiceWorkerRegistration>&& registration, String&& endpoint, std::optional<EpochTimeStamp> expirationTime, Vector<uint8_t>&& serverVAPIDPublicKey, Vector<uint8_t>&& clientECDHPublicKey, Vector<uint8_t>&& sharedAuthenticationSecret)
+    : m_serviceWorkerRegistration(WTFMove(registration))
+    , m_endpoint(WTFMove(endpoint))
     , m_expirationTime(expirationTime)
-    , m_options(WTFMove(options))
+    , m_options(PushSubscriptionOptions::create(WTFMove(serverVAPIDPublicKey)))
     , m_clientECDHPublicKey(WTFMove(clientECDHPublicKey))
     , m_sharedAuthenticationSecret(WTFMove(sharedAuthenticationSecret))
 {
@@ -86,7 +88,7 @@ ExceptionOr<RefPtr<JSC::ArrayBuffer>> PushSubscription::getKey(PushEncryptionKey
 
 void PushSubscription::unsubscribe(DOMPromiseDeferred<IDLBoolean>&& promise)
 {
-    promise.reject(Exception { NotSupportedError, "Not implemented"_s });
+    m_serviceWorkerRegistration->unsubscribeFromPushService(WTFMove(promise));
 }
 
 PushSubscriptionJSON PushSubscription::toJSON() const

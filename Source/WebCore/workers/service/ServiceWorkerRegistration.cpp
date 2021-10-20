@@ -161,6 +161,46 @@ void ServiceWorkerRegistration::unregister(Ref<DeferredPromise>&& promise)
     m_container->unregisterRegistration(identifier(), WTFMove(promise));
 }
 
+void ServiceWorkerRegistration::subscribeToPushService(const Vector<uint8_t>& applicationServerKey, DOMPromiseDeferred<IDLInterface<PushSubscription>>&& promise)
+{
+    if (isContextStopped()) {
+        promise.reject(Exception(InvalidStateError));
+        return;
+    }
+
+    m_container->subscribeToPushService(*this, applicationServerKey, WTFMove(promise));
+}
+
+void ServiceWorkerRegistration::unsubscribeFromPushService(DOMPromiseDeferred<IDLBoolean>&& promise)
+{
+    if (isContextStopped()) {
+        promise.reject(Exception(InvalidStateError));
+        return;
+    }
+
+    m_container->unsubscribeFromPushService(identifier(), WTFMove(promise));
+}
+
+void ServiceWorkerRegistration::getPushSubscription(DOMPromiseDeferred<IDLNullable<IDLInterface<PushSubscription>>>&& promise)
+{
+    if (isContextStopped()) {
+        promise.reject(Exception(InvalidStateError));
+        return;
+    }
+
+    m_container->getPushSubscription(*this, WTFMove(promise));
+}
+
+void ServiceWorkerRegistration::getPushPermissionState(DOMPromiseDeferred<IDLEnumeration<PushPermissionState>>&& promise)
+{
+    if (isContextStopped()) {
+        promise.reject(Exception(InvalidStateError));
+        return;
+    }
+
+    m_container->getPushPermissionState(identifier(), WTFMove(promise));
+}
+
 void ServiceWorkerRegistration::updateStateFromServer(ServiceWorkerRegistrationState state, RefPtr<ServiceWorker>&& serviceWorker)
 {
     switch (state) {

@@ -264,6 +264,42 @@ void WebSWClientConnection::storeRegistrationsOnDiskForTesting(CompletionHandler
     sendWithAsyncReply(Messages::WebSWServerConnection::StoreRegistrationsOnDisk { }, WTFMove(callback));
 }
 
+void WebSWClientConnection::subscribeToPushService(WebCore::ServiceWorkerRegistrationIdentifier registrationIdentifier, const Vector<uint8_t>& applicationServerKey, SubscribeToPushServiceCallback&& callback)
+{
+    sendWithAsyncReply(Messages::WebSWServerConnection::SubscribeToPushService { registrationIdentifier, applicationServerKey }, [callback = WTFMove(callback)](auto&& result) mutable {
+        if (!result.has_value())
+            return callback(result.error().toException());
+        callback(WTFMove(*result));
+    });
+}
+
+void WebSWClientConnection::unsubscribeFromPushService(WebCore::ServiceWorkerRegistrationIdentifier registrationIdentifier, UnsubscribeFromPushServiceCallback&& callback)
+{
+    sendWithAsyncReply(Messages::WebSWServerConnection::UnsubscribeFromPushService { registrationIdentifier }, [callback = WTFMove(callback)](auto&& result) mutable {
+        if (!result.has_value())
+            return callback(result.error().toException());
+        callback(*result);
+    });
+}
+
+void WebSWClientConnection::getPushSubscription(WebCore::ServiceWorkerRegistrationIdentifier registrationIdentifier, GetPushSubscriptionCallback&& callback)
+{
+    sendWithAsyncReply(Messages::WebSWServerConnection::GetPushSubscription { registrationIdentifier }, [callback = WTFMove(callback)](auto&& result) mutable {
+        if (!result.has_value())
+            return callback(result.error().toException());
+        callback(WTFMove(*result));
+    });
+}
+
+void WebSWClientConnection::getPushPermissionState(WebCore::ServiceWorkerRegistrationIdentifier registrationIdentifier, GetPushPermissionStateCallback&& callback)
+{
+    sendWithAsyncReply(Messages::WebSWServerConnection::GetPushPermissionState { registrationIdentifier }, [callback = WTFMove(callback)](auto&& result) mutable {
+        if (!result.has_value())
+            return callback(result.error().toException());
+        callback(static_cast<PushPermissionState>(*result));
+    });
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(SERVICE_WORKER)
