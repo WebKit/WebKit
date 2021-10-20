@@ -1,3 +1,12 @@
+2021-10-20  Alan Bujtas  <zalan@apple.com>
+
+        [TestExpectation] Re-group css-text WPT failures
+        https://bugs.webkit.org/show_bug.cgi?id=232027
+
+        Reviewed by Antti Koivisto.
+
+        * TestExpectations:
+
 2021-10-20  Beth Dakin  <bdakin@apple.com> and Dana Estra <destra@apple.com>
 
         macOS key-driven smooth scrolling does not stop when focus changes
