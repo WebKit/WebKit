@@ -1,5 +1,5 @@
 
-FAIL Property font value 'italic small-caps 900 expanded 25px / 50px Ahem' in ::marker assert_in_array: value "italic small-caps 900 expanded 25px/normal Ahem" not in array ["italic small-caps 900 expanded 25px / 50px Ahem", "italic small-caps 900 expanded 25px/50px Ahem"]
+PASS Property font value 'italic small-caps 900 expanded 25px / 50px Ahem' in ::marker
 PASS Property font-family value 'Ahem' in ::marker
 PASS Property font-feature-settings value '"smcp"' in ::marker
 FAIL Property font-kerning value 'none' in ::marker assert_equals: expected "none" but got "auto"
@@ -15,13 +15,13 @@ PASS Property font-variant-ligatures value 'historical-ligatures' in ::marker
 PASS Property font-variant-numeric value 'slashed-zero' in ::marker
 PASS Property font-variant-position value 'sub' in ::marker
 PASS Property font-weight value '900' in ::marker
-FAIL Property line-height value '50px' in ::marker assert_equals: expected "50px" but got "normal"
-FAIL Property white-space value 'nowrap' in ::marker assert_equals: expected "nowrap" but got "normal"
+PASS Property line-height value '50px' in ::marker
+PASS Property white-space value 'nowrap' in ::marker
 PASS Property color value 'rgb(0, 100, 200)' in ::marker
 FAIL Property text-combine-upright value 'all' in ::marker assert_true: text-combine-upright doesn't seem to be supported in the computed style expected true got false
-FAIL Property unicode-bidi value 'plaintext' in ::marker assert_equals: expected "plaintext" but got "normal"
-FAIL Property direction value 'rtl' in ::marker assert_equals: expected "rtl" but got "ltr"
-FAIL Property content value '"foo"' in ::marker assert_equals: expected "\"foo\"" but got ""
+PASS Property unicode-bidi value 'plaintext' in ::marker
+PASS Property direction value 'rtl' in ::marker
+PASS Property content value '"foo"' in ::marker
 FAIL Property animation value '1s linear 2s infinite alternate forwards paused anim' in ::marker assert_equals: expected "1s linear 2s infinite alternate forwards paused anim" but got ""
 PASS Property animation-delay value '1s' in ::marker
 PASS Property animation-direction value 'alternate' in ::marker
@@ -37,19 +37,19 @@ PASS Property transition-duration value '2s' in ::marker
 PASS Property transition-property value 'display' in ::marker
 PASS Property transition-timing-function value 'linear' in ::marker
 FAIL Property hyphens value 'none' in ::marker assert_true: hyphens doesn't seem to be supported in the computed style expected true got false
-FAIL Property letter-spacing value '10px' in ::marker assert_equals: expected "10px" but got "normal"
-FAIL Property line-break value 'anywhere' in ::marker assert_equals: expected "anywhere" but got "auto"
-FAIL Property overflow-wrap value 'anywhere' in ::marker assert_equals: expected "anywhere" but got "normal"
-FAIL Property tab-size value '10px' in ::marker assert_equals: expected "10px" but got "8"
-FAIL Property text-transform value 'uppercase' in ::marker assert_equals: expected "uppercase" but got "none"
-FAIL Property word-break value 'break-word' in ::marker assert_equals: expected "break-word" but got "normal"
-FAIL Property word-spacing value '10px' in ::marker assert_equals: expected "10px" but got "0px"
-FAIL Property text-decoration-skip-ink value 'none' in ::marker assert_equals: expected "none" but got "auto"
+PASS Property letter-spacing value '10px' in ::marker
+PASS Property line-break value 'anywhere' in ::marker
+PASS Property overflow-wrap value 'anywhere' in ::marker
+PASS Property tab-size value '10px' in ::marker
+PASS Property text-transform value 'uppercase' in ::marker
+PASS Property word-break value 'break-word' in ::marker
+PASS Property word-spacing value '10px' in ::marker
+PASS Property text-decoration-skip-ink value 'none' in ::marker
 FAIL Property text-emphasis value 'dot rgb(0, 255, 0)' in ::marker assert_equals: expected "dot rgb(0, 255, 0)" but got ""
-FAIL Property text-emphasis-color value 'rgb(0, 255, 0)' in ::marker assert_equals: expected "rgb(0, 255, 0)" but got "rgb(0, 0, 0)"
-FAIL Property text-emphasis-position value 'under left' in ::marker assert_equals: expected "under left" but got "over right"
-FAIL Property text-emphasis-style value 'dot' in ::marker assert_equals: expected "dot" but got "none"
-FAIL Property text-shadow value 'rgb(0, 255, 0) 1px 2px 3px' in ::marker assert_equals: expected "rgb(0, 255, 0) 1px 2px 3px" but got "none"
+PASS Property text-emphasis-color value 'rgb(0, 255, 0)' in ::marker
+PASS Property text-emphasis-position value 'under left' in ::marker
+FAIL Property text-emphasis-style value 'dot' in ::marker assert_equals: expected "dot" but got "filled dot"
+PASS Property text-shadow value 'rgb(0, 255, 0) 1px 2px 3px' in ::marker
 PASS Property display value 'none' in ::marker
 PASS Property position value 'absolute' in ::marker
 PASS Property float value 'right' in ::marker

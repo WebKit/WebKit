@@ -36,12 +36,15 @@ PropertyAllowlist propertyAllowlistForPseudoId(PseudoId pseudoId)
     return PropertyAllowlist::None;
 }
 
-// https://www.w3.org/TR/css-pseudo-4/#marker-pseudo (Editor's Draft, 25 July 2017)
+// https://drafts.csswg.org/css-lists-3/#marker-properties (Editor's Draft, 14 July 2021)
 // FIXME: this is outdated, see https://bugs.webkit.org/show_bug.cgi?id=218791.
 bool isValidMarkerStyleProperty(CSSPropertyID id)
 {
     switch (id) {
     case CSSPropertyColor:
+    case CSSPropertyContent:
+    case CSSPropertyDirection:
+    case CSSPropertyFont:
     case CSSPropertyFontFamily:
     case CSSPropertyFontFeatureSettings:
     case CSSPropertyFontSize:
@@ -59,6 +62,24 @@ bool isValidMarkerStyleProperty(CSSPropertyID id)
     case CSSPropertyFontOpticalSizing:
     case CSSPropertyFontVariationSettings:
 #endif
+    case CSSPropertyWebkitHyphens:
+    case CSSPropertyLetterSpacing:
+    case CSSPropertyLineBreak:
+    case CSSPropertyLineHeight:
+    case CSSPropertyListStyle:
+    case CSSPropertyOverflowWrap:
+    case CSSPropertyTabSize:
+    case CSSPropertyTextDecorationSkipInk:
+    case CSSPropertyWebkitTextEmphasis:
+    case CSSPropertyWebkitTextEmphasisColor:
+    case CSSPropertyWebkitTextEmphasisPosition:
+    case CSSPropertyWebkitTextEmphasisStyle:
+    case CSSPropertyTextShadow:
+    case CSSPropertyTextTransform:
+    case CSSPropertyUnicodeBidi:
+    case CSSPropertyWordBreak:
+    case CSSPropertyWordSpacing:
+    case CSSPropertyWhiteSpace:
     case CSSPropertyAnimationDuration:
     case CSSPropertyAnimationTimingFunction:
     case CSSPropertyAnimationDelay:
