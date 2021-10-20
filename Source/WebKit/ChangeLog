@@ -1,5 +1,39 @@
 2021-10-20  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r284570. rdar://problem/84479714
+
+    Remove com.apple.webkit.adattributiond.plist from build temporarily
+    https://bugs.webkit.org/show_bug.cgi?id=232045
+    
+    Reviewed by Tim Horton.
+    
+    There are some problems with the internal verifiers that will take some time to resolve.
+    Until they are resolved, don't install the plist and don't tell the network process to connect to the daemon registered by the plist.
+    
+    * UIProcess/WebsiteData/WebsiteDataStoreConfiguration.cpp:
+    (WebKit::WebsiteDataStoreConfiguration::WebsiteDataStoreConfiguration):
+    * WebKit.xcodeproj/project.pbxproj:
+    
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@284570 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-10-20  Alex Christensen  <achristensen@webkit.org>
+
+            Remove com.apple.webkit.adattributiond.plist from build temporarily
+            https://bugs.webkit.org/show_bug.cgi?id=232045
+
+            Reviewed by Tim Horton.
+
+            There are some problems with the internal verifiers that will take some time to resolve.
+            Until they are resolved, don't install the plist and don't tell the network process to connect to the daemon registered by the plist.
+
+            * UIProcess/WebsiteData/WebsiteDataStoreConfiguration.cpp:
+            (WebKit::WebsiteDataStoreConfiguration::WebsiteDataStoreConfiguration):
+            * WebKit.xcodeproj/project.pbxproj:
+
+2021-10-20  Alan Coon  <alancoon@apple.com>
+
         Revert r284079. rdar://problem/84478842
 
 2021-10-19  Alan Coon  <alancoon@apple.com>
