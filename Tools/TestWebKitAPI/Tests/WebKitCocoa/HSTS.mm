@@ -63,6 +63,8 @@ static HTTPServer hstsServer()
     return HTTPServer({{ "/", {{{"Strict-Transport-Security" , "max-age=31536000"}}, "" }}}, HTTPServer::Protocol::HttpsProxy);
 }
 
+// FIXME: https://bugs.webkit.org/show_bug.cgi?id=232003 Make this test stop timing out on iOS.
+#if PLATFORM(MAC)
 TEST(HSTS, Basic)
 {
     auto httpsServer = hstsServer();
@@ -138,6 +140,7 @@ TEST(HSTS, CrossOriginRedirect)
     EXPECT_WK_STREQ(webView.get().URL.absoluteString, "https://example.com/");
     EXPECT_EQ(httpServer.totalRequests(), 1u);
 }
+#endif // PLATFORM(MAC)
 
 #endif // HAVE(CFNETWORK_NSURLSESSION_HSTS_WITH_UNTRUSTED_ROOT)
 
