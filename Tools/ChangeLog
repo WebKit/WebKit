@@ -1,5 +1,12 @@
 2021-10-20  Alex Christensen  <achristensen@webkit.org>
 
+        Fix iOS build after r284539
+        https://bugs.webkit.org/show_bug.cgi?id=232003
+
+        * TestWebKitAPI/Tests/WebKitCocoa/HSTS.mm:
+
+2021-10-20  Alex Christensen  <achristensen@webkit.org>
+
         Skip timing out tests on iOS while I investigate.
         https://bugs.webkit.org/show_bug.cgi?id=232003
 
