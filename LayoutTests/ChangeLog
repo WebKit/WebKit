@@ -1,3 +1,12 @@
+2021-10-20  Eric Hutchison  <ehutchison@apple.com>
+
+        Update test expectations for compositing/scrolling/async-overflow-scrolling/overflow-scroll-paint-order-sibling.html.
+        https://bugs.webkit.org/show_bug.cgi?id=232022.
+
+        Unreviewed test gardening.
+
+        * gpu-process/TestExpectations:
+
 2021-10-20  Ayumi Kojima  <ayumi_kojima@apple.com>
 
         [ iOS macOS wk2 ] imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting/navigation-reporting/report-only-four-reports.https.html is a flaky failure.
