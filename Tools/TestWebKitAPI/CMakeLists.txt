@@ -82,6 +82,7 @@ set(TestWTF_SOURCES
     Tests/WTF/RobinHoodHashSet.cpp
     Tests/WTF/RunLoop.cpp
     Tests/WTF/SHA1.cpp
+    Tests/WTF/SafeStrerror.cpp
     Tests/WTF/SaturatedArithmeticOperations.cpp
     Tests/WTF/Scope.cpp
     Tests/WTF/ScopedLambda.cpp

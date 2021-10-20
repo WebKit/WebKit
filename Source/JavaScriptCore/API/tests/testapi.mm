@@ -39,6 +39,7 @@
 #import "JSWrapperMapTests.h"
 #import "Regress141275.h"
 #import "Regress141809.h"
+#import <wtf/SafeStrerror.h>
 #import <wtf/spi/darwin/DataVaultSPI.h>
 
 
@@ -2448,7 +2449,7 @@ static NSURL *resolvePathToScripts()
         const size_t maxLength = 10000;
         char cwd[maxLength];
         if (!getcwd(cwd, maxLength)) {
-            NSLog(@"getcwd errored with code: %s", strerror(errno));
+            NSLog(@"getcwd errored with code: %s", safeStrerror(errno).data());
             exit(1);
         }
         NSURL *cwdURL = [NSURL fileURLWithPath:[NSString stringWithFormat:@"%s", cwd]];

@@ -1,3 +1,14 @@
+2021-10-20  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        Do not use strerror()
+        https://bugs.webkit.org/show_bug.cgi?id=231913
+
+        Reviewed by Chris Dumez.
+
+        * TestWebKitAPI/CMakeLists.txt:
+        * TestWebKitAPI/Tests/WTF/SafeStrerror.cpp: Added.
+        (TestWebKitAPI::TEST):
+
 2021-10-20  John Pascoe  <j_pascoe@apple.com>
         [WebAuthn] Obtain consent to create new credential when platform authenticator in excludedCredentials
         https://bugs.webkit.org/show_bug.cgi?id=219813

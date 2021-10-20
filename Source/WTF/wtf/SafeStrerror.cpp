@@ -1,5 +1,5 @@
-/*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+/* 
+ * Copyright (C) 2021 Red Hat Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,62 +24,38 @@
  */
 
 #include "config.h"
-#include "BytecodeCacheError.h"
-
 #include <wtf/SafeStrerror.h>
 
-namespace JSC {
+#include <cstring>
+#include <type_traits>
+#include <wtf/Platform.h>
+#include <wtf/text/CString.h>
 
-bool BytecodeCacheError::StandardError::isValid() const
+namespace WTF {
+
+CString safeStrerror(int errnum)
 {
-    return true;
+    constexpr size_t bufferLength = 1024;
+    char* cstringBuffer = nullptr;
+    auto result = CString::newUninitialized(bufferLength, cstringBuffer);
+#if OS(WINDOWS)
+    strerror_s(cstringBuffer, bufferLength, errnum);
+#else
+    auto ret = strerror_r(errnum, cstringBuffer, bufferLength);
+    if constexpr (std::is_same<decltype(ret), char*>::value) {
+        // We have GNU strerror_r(), which returns char*. This may or may not be a pointer into
+        // cstringBuffer. We also have to be careful because this has to compile even if ret is
+        // an int, hence the reinterpret_casts.
+        char* message = reinterpret_cast<char*>(ret);
+        if (message != cstringBuffer)
+            strncpy(cstringBuffer, message, bufferLength);
+    } else {
+        // We have POSIX strerror_r, which returns int and may fail.
+        if (ret)
+            snprintf(cstringBuffer, bufferLength, "%s %d", "Unknown error", errnum);
+    }
+#endif // OS(WINDOWS)
+    return result;
 }
 
-String BytecodeCacheError::StandardError::message() const
-{
-    return safeStrerror(m_errno).data();
-}
-
-bool BytecodeCacheError::WriteError::isValid() const
-{
-    return true;
-}
-
-String BytecodeCacheError::WriteError::message() const
-{
-    return makeString("Could not write the full cache file to disk. Only wrote ", String::number(m_written), " of the expected ", String::number(m_expected), " bytes.");
-}
-
-BytecodeCacheError& BytecodeCacheError::operator=(const ParserError& error)
-{
-    m_error = error;
-    return *this;
-}
-
-BytecodeCacheError& BytecodeCacheError::operator=(const StandardError& error)
-{
-    m_error = error;
-    return *this;
-}
-
-BytecodeCacheError& BytecodeCacheError::operator=(const WriteError& error)
-{
-    m_error = error;
-    return *this;
-}
-
-bool BytecodeCacheError::isValid() const
-{
-    return WTF::switchOn(m_error, [](const auto& error) {
-        return error.isValid();
-    });
-}
-
-String BytecodeCacheError::message() const
-{
-    return WTF::switchOn(m_error, [](const auto& error) {
-        return error.message();
-    });
-}
-
-} // namespace JSC
+} // namespace WTF

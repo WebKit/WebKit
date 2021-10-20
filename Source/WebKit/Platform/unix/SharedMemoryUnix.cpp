@@ -41,6 +41,7 @@
 #include <unistd.h>
 #include <wtf/Assertions.h>
 #include <wtf/RandomNumber.h>
+#include <wtf/SafeStrerror.h>
 #include <wtf/UniStdExtras.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
@@ -165,7 +166,7 @@ RefPtr<SharedMemory> SharedMemory::allocate(size_t size)
 {
     int fileDescriptor = createSharedMemory();
     if (fileDescriptor == -1) {
-        WTFLogAlways("Failed to create shared memory: %s", strerror(errno));
+        WTFLogAlways("Failed to create shared memory: %s", safeStrerror(errno).data());
         return nullptr;
     }
 

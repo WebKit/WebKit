@@ -1,3 +1,28 @@
+2021-10-20  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        Do not use strerror()
+        https://bugs.webkit.org/show_bug.cgi?id=231913
+
+        Reviewed by Chris Dumez.
+
+        Add a new safeStrerror function that we can use without worrying about thread safety.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/SafeStrerror.cpp: Added.
+        (WTF::safeStrerror):
+        * wtf/SafeStrerror.h: Added.
+        * wtf/linux/RealTimeThreads.cpp:
+        (WTF::RealTimeThreads::promoteThreadToRealTime):
+        * wtf/playstation/FileSystemPlayStation.cpp:
+        (WTF::FileSystemImpl::deleteFile):
+        * wtf/posix/FileSystemPOSIX.cpp:
+        (WTF::FileSystemImpl::deleteFile):
+        * wtf/posix/ThreadingPOSIX.cpp:
+        (WTF::Thread::establishHandle):
+        * wtf/threads/Signals.cpp:
+        (WTF::jscSignalHandler):
+
 2021-10-20  Youenn Fablet  <youenn@apple.com>
 
         Add support for requestVideoFrameCallback API and MediaStreamTrack-based backend support

@@ -384,7 +384,7 @@ void jscSignalHandler(int sig, siginfo_t* info, void* ucontext)
         sigfillset(&defaultAction.sa_mask);
         defaultAction.sa_flags = 0;
         auto result = sigaction(sig, &defaultAction, nullptr);
-        dataLogLnIf(result == -1, "Unable to restore the default handler while proccessing signal ", sig, " the process is probably deadlocked. (errno: ", strerror(errno), ")");
+        dataLogLnIf(result == -1, "Unable to restore the default handler while processing signal ", sig, " the process is probably deadlocked. (errno: ", errno, ")");
     };
 
     // This shouldn't happen but we might as well be careful.

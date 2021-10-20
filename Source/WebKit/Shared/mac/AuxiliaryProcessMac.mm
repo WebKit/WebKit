@@ -51,6 +51,7 @@
 #import <wtf/DataLog.h>
 #import <wtf/FileSystem.h>
 #import <wtf/RandomNumber.h>
+#import <wtf/SafeStrerror.h>
 #import <wtf/Scope.h>
 #import <wtf/SoftLinking.h>
 #import <wtf/SystemTracing.h>
@@ -251,7 +252,7 @@ static std::optional<CString> setAndSerializeSandboxParameters(const SandboxInit
         const char* name = initializationParameters.name(i);
         const char* value = initializationParameters.value(i);
         if (sandbox_set_param(sandboxParameters.get(), name, value)) {
-            WTFLogAlways("%s: Could not set sandbox parameter: %s\n", getprogname(), strerror(errno));
+            WTFLogAlways("%s: Could not set sandbox parameter: %s\n", getprogname(), safeStrerror(errno).data());
             CRASH();
         }
         builder.append(name, ':', value, ':');
@@ -271,13 +272,13 @@ static String sandboxDataVaultParentDirectory()
     char temp[PATH_MAX];
     size_t length = confstr(_CS_DARWIN_USER_CACHE_DIR, temp, sizeof(temp));
     if (!length) {
-        WTFLogAlways("%s: Could not retrieve user temporary directory path: %s\n", getprogname(), strerror(errno));
+        WTFLogAlways("%s: Could not retrieve user temporary directory path: %s\n", getprogname(), safeStrerror(errno).data());
         exit(EX_NOPERM);
     }
     RELEASE_ASSERT(length <= sizeof(temp));
     char resolvedPath[PATH_MAX];
     if (!realpath(temp, resolvedPath)) {
-        WTFLogAlways("%s: Could not canonicalize user temporary directory path: %s\n", getprogname(), strerror(errno));
+        WTFLogAlways("%s: Could not canonicalize user temporary directory path: %s\n", getprogname(), safeStrerror(errno).data());
         exit(EX_NOPERM);
     }
     return resolvedPath;
@@ -373,7 +374,7 @@ static bool ensureSandboxCacheDirectory(const SandboxInfo& info)
         if (!makeDataVault())
             return false;
     } else {
-        WTFLogAlways("%s: Sandbox directory couldn't be created: ", getprogname(), strerror(errno));
+        WTFLogAlways("%s: Sandbox directory couldn't be created: ", getprogname(), safeStrerror(errno).data());
         return false;
     }
 #else
@@ -521,7 +522,7 @@ static bool tryApplyCachedSandbox(const SandboxInfo& info)
     setNotifyOptions();
 
     if (sandbox_apply(&profile)) {
-        WTFLogAlways("%s: Could not apply cached sandbox: %s\n", getprogname(), strerror(errno));
+        WTFLogAlways("%s: Could not apply cached sandbox: %s\n", getprogname(), safeStrerror(errno).data());
         return false;
     }
 
@@ -623,7 +624,7 @@ static bool applySandbox(const AuxiliaryProcessInitializationParameters& paramet
     setNotifyOptions();
     
     if (sandbox_apply(sandboxProfile.get())) {
-        WTFLogAlways("%s: Could not apply compiled sandbox: %s\n", getprogname(), strerror(errno));
+        WTFLogAlways("%s: Could not apply compiled sandbox: %s\n", getprogname(), safeStrerror(errno).data());
         CRASH();
     }
 

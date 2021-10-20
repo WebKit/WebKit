@@ -36,6 +36,7 @@
 
 #include <errno.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/SafeStrerror.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/ThreadingPrimitives.h>
 #include <wtf/WTFConfig.h>
@@ -305,7 +306,7 @@ bool Thread::establishHandle(NewThreadContext* context, std::optional<size_t> st
         struct sched_param param = { 0 };
         error = pthread_setschedparam(threadHandle, policy | SCHED_RESET_ON_FORK, &param);
         if (error)
-            LOG_ERROR("Failed to set sched policy %d for thread %d: %s", policy, threadHandle, strerror(error));
+            LOG_ERROR("Failed to set sched policy %d for thread %d: %s", policy, threadHandle, safeStrerror(error).data());
     }
 #elif !HAVE(QOS_CLASSES)
     UNUSED_PARAM(qos);

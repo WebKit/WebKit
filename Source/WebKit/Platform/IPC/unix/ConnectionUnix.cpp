@@ -37,6 +37,7 @@
 #include <fcntl.h>
 #include <poll.h>
 #include <wtf/Assertions.h>
+#include <wtf/SafeStrerror.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/UniStdExtras.h>
 
@@ -352,7 +353,7 @@ void Connection::readyReadHandler()
             }
 
             if (m_isConnected) {
-                WTFLogAlways("Error receiving IPC message on socket %d in process %d: %s", m_socketDescriptor, getpid(), strerror(errno));
+                WTFLogAlways("Error receiving IPC message on socket %d in process %d: %s", m_socketDescriptor, getpid(), safeStrerror(errno).data());
                 connectionDidClose();
             }
             return;
@@ -589,7 +590,7 @@ bool Connection::sendOutputMessage(UnixMessage& outputMessage)
         }
 
         if (m_isConnected)
-            WTFLogAlways("Error sending IPC message: %s", strerror(errno));
+            WTFLogAlways("Error sending IPC message: %s", safeStrerror(errno).data());
         return false;
     }
 

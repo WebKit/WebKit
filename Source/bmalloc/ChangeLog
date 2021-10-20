@@ -1,3 +1,13 @@
+2021-10-20  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        Do not use strerror()
+        https://bugs.webkit.org/show_bug.cgi?id=231913
+
+        Reviewed by Chris Dumez.
+
+        * libpas/src/libpas/pas_page_malloc.c:
+        (pas_page_malloc_commit):
+
 2021-10-20  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [WPE] Reenable -fvisibility=hidden and -fvisibility-inlines-hidden

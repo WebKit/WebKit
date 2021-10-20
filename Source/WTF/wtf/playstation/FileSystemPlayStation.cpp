@@ -37,6 +37,7 @@
 #include <sys/statvfs.h>
 #include <sys/types.h>
 #include <unistd.h>
+#include <wtf/SafeStrerror.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WTF {
@@ -88,7 +89,7 @@ bool deleteFile(const String& path)
     // unlink(...) returns 0 on successful deletion of the path and non-zero in any other case (including invalid permissions or non-existent file)
     bool unlinked = !unlink(fsRep.data());
     if (!unlinked && errno != ENOENT)
-        LOG_ERROR("File failed to delete. Error message: %s", strerror(errno));
+        LOG_ERROR("File failed to delete. Error message: %s", safeStrerror(errno).data());
 
     return unlinked;
 }

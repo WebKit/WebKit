@@ -30,6 +30,7 @@
 #include <signal.h>
 #include <string.h>
 #include <wtf/MainThread.h>
+#include <wtf/SafeStrerror.h>
 
 #if USE(GLIB)
 #include <gio/gio.h>
@@ -127,7 +128,7 @@ void RealTimeThreads::promoteThreadToRealTime(const Thread& thread)
 #if USE(GLIB)
         realTimeKitMakeThreadRealTime(getpid(), thread.id(), param.sched_priority);
 #else
-        LOG_ERROR("Failed to set thread %d as real time: %s", thread.id(), strerror(error));
+        LOG_ERROR("Failed to set thread %d as real time: %s", thread.id(), safeStrerror(error).data());
 #endif
     }
 }

@@ -176,7 +176,7 @@ void pas_page_malloc_commit(void* ptr, size_t size)
     if (pas_page_malloc_mprotect_decommitted) {
         result = mprotect((void*)base_as_int, end_as_int - base_as_int, PROT_READ | PROT_WRITE);
         if (result) {
-            pas_log("Could not mprotect on commit: %s\n", strerror(errno));
+            pas_log("Could not mprotect on commit: error code %d\n", result);
             PAS_ASSERT(!result);
         }
     }

@@ -1,5 +1,29 @@
 2021-10-20  Michael Catanzaro  <mcatanzaro@gnome.org>
 
+        Do not use strerror()
+        https://bugs.webkit.org/show_bug.cgi?id=231913
+
+        Reviewed by Chris Dumez.
+
+        * API/JSScript.mm:
+        (-[JSScript writeCache:]):
+        * API/tests/testapi.mm:
+        (resolvePathToScripts):
+        * jsc.cpp:
+        * runtime/BytecodeCacheError.cpp:
+        (JSC::BytecodeCacheError::StandardError::message const):
+        * tools/FunctionAllowlist.cpp:
+        (JSC::FunctionAllowlist::FunctionAllowlist):
+        * tools/FunctionOverrides.cpp:
+        (JSC::FunctionOverrides::parseOverridesInFile):
+        * wasm/WasmMemory.cpp:
+        (JSC::Wasm::MemoryHandle::~MemoryHandle):
+        (JSC::Wasm::Memory::tryCreate):
+        (JSC::Wasm::Memory::growShared):
+        (JSC::Wasm::Memory::grow):
+
+2021-10-20  Michael Catanzaro  <mcatanzaro@gnome.org>
+
         Suppress a -Wreturn-type warning
         https://bugs.webkit.org/show_bug.cgi?id=229681
         <rdar://81603387>
