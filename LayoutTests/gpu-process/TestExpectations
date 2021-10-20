@@ -27,3 +27,6 @@ fast/canvas/webgl/lose-context-on-timeout.html [ Slow Pass ]
 [ iOS ] compositing/shared-backing/sharing-child-contributes-to-overlap.html [ ImageOnlyFailure ]
 [ iOS ] compositing/scrolling/async-overflow-scrolling/overflow-scroll-paint-order-sibling.html [ ImageOnlyFailure ]
 
+[ iOS ] css3/color-filters/color-filter-composition-underline-color.html [ ImageOnlyFailure ]
+[ iOS ] css3/color-filters/color-filter-sepia.html [ Pass ImageOnlyFailure ]
+
