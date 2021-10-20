@@ -1923,6 +1923,9 @@ webkit.org/b/231603 fast/scrolling/ios/reconcile-layer-position-recursive.html [
 
 webkit.org/b/231641 fast/scrolling/ios/scroll-snap-with-momentum-scroll-in-overflow-scroll-area.html [ Pass Failure ]
 
+webkit.org/b/232014 fast/scrolling/ios/scroll-snap-with-relayouts-vertical.html [ Pass Failure ]
+webkit.org/b/232014 fast/scrolling/ios/scroll-snap-with-relayouts-horizontal.html [ Pass Failure ]
+
 webkit.org/b/230988 [ Debug ] fast/selectors/is-backtracking.html [ Timeout ]
 webkit.org/b/230988 [ Debug ] fast/selectors/matches-backtracking.html [ Timeout ]
 
