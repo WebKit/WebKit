@@ -32,10 +32,10 @@
 namespace WebCore {
 
 struct ImagePaintingOptions {
-    template<typename... Options>
-    ImagePaintingOptions(Options... options)
+    template<typename First, typename... Rest, typename = std::enable_if_t<!std::is_same_v<std::decay_t<First>, ImagePaintingOptions>>>
+    ImagePaintingOptions(First first, Rest... rest)
     {
-        setOption(options...);
+        setOption(first, rest...);
     }
 
     template<typename... Overrides>
