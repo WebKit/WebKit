@@ -1247,6 +1247,9 @@ webkit.org/b/171331 http/tests/preload/single_download_preload.html [ Pass Failu
 
 webkit.org/b/171638 [ Release ] http/tests/xmlhttprequest/methods.html [ Pass Timeout ]
 
+webkit.org/b/232017 [ Debug ] http/tests/xmlhttprequest/xhr-and-parse-large-document.html [ Slow ]
+webkit.org/b/232017 [ Debug ] http/tests/xmlhttprequest/xhr-large-document.html [ Slow ]
+
 webkit.org/b/171830 [ Debug ] http/tests/websocket/tests/hybi/workers/close.html [ Pass Failure ]
 
 webkit.org/b/230522 http/tests/websocket/tests/hybi/alert-in-event-handler.html [ Pass Crash ]

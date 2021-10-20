@@ -1,3 +1,12 @@
+2021-10-20  Ayumi Kojima  <ayumi_kojima@apple.com>
+
+        [ iOS Debug ] http/tests/xmlhttprequest tests are flaky timing out.
+        https://bugs.webkit.org/show_bug.cgi?id=232017
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+
 2021-10-20  Antti Koivisto  <antti@apple.com>
 
         fast/images/text-recognition/mac/select-rotated-transparent-image-overlay.html is failing
