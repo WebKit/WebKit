@@ -1,3 +1,24 @@
+2021-10-20  Justin Michaud  <justin_michaud@apple.com>
+
+        We should watch isHavingABadTime if we read from the structureCache
+        https://bugs.webkit.org/show_bug.cgi?id=232019
+
+        Reviewed by Yusuke Suzuki.
+
+        We should lock the structure cache when we clear it, and the compiler thread should
+        watch isHavingABadTime in the case that the cache might get cleared.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::haveABadTime):
+        * runtime/StructureCache.cpp:
+        (JSC::StructureCache::clear):
+        * runtime/StructureCache.h:
+        (JSC::StructureCache::clear): Deleted.
+
 2021-10-20  Michael Saboff  <msaboff@apple.com>
 
         Add missing overflow checks to DFGIntegerRangeOptimizationPhase::isEquivalentTo()
