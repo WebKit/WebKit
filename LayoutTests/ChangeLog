@@ -1,3 +1,16 @@
+2021-10-20  John Pascoe  <j_pascoe@apple.com>
+
+        WebAuthn] Obtain consent to create new credential when platform authenticator in excludedCredentials
+        https://bugs.webkit.org/show_bug.cgi?id=219813
+        <rdar://problem/72484635>
+
+        Reviewed by Brent Fulgham.
+
+        Modify layout tests to reflect different exception returned when consent is provided
+
+        * http/wpt/webauthn/public-key-credential-create-failure-local-silent.https.html:
+        * http/wpt/webauthn/public-key-credential-create-failure-local.https.html:
+
 2021-10-20  Alan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Sometimes "arbitrary mid work break" does not mean "any position"
