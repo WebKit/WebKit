@@ -1938,7 +1938,11 @@ public:
     bool acceptsFirstMouse(int eventNumber, const WebMouseEvent&);
 #endif
 
+#if ENABLE(SERVICE_WORKER)
     bool isServiceWorkerPage() const { return m_isServiceWorkerPage; }
+#else
+    bool isServiceWorkerPage() const { return false; }
+#endif
 
     void dispatchWheelEventWithoutScrolling(const WebWheelEvent&, CompletionHandler<void(bool)>&&);
 

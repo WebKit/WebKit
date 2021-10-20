@@ -1,3 +1,18 @@
+2021-10-19  Jigen Zhou  <jigen.zhou@sony.com>
+
+        Fix build break after r284406 if ENABLE_SERVICE_WORKER=OFF
+        https://bugs.webkit.org/show_bug.cgi?id=231968
+
+        Reviewed by Don Olmstead.
+
+        r284406 made m_isServiceWorkerPage of WebPageProxy not available if !ENABLE(SERVICE_WORKER), 
+        but the change was incomplete and can cause build failure if ENABLE_SERVICE_WORKER=OFF. 
+        This patch avoids accessing m_isServiceWorkerPage if !ENABLE(SERVICE_WORKER) in WebPageProxy 
+        methods isServiceWorkerPage, loadDataWithNavigationShared, and resetStateAfterProcessExited.  
+
+        * UIProcess/WebPageProxy.cpp:
+        * UIProcess/WebPageProxy.h:
+
 2021-10-19  Don Olmstead  <don.olmstead@sony.com>
 
         Non-unified build fixes, mid October 2021 edition

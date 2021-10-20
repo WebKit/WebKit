@@ -1534,7 +1534,7 @@ void WebPageProxy::loadDataWithNavigationShared(Ref<WebProcessProxy>&& process, 
     loadParameters.websitePolicies = WTFMove(websitePolicies);
     loadParameters.shouldOpenExternalURLsPolicy = shouldOpenExternalURLsPolicy;
     loadParameters.isNavigatingToAppBoundDomain = isNavigatingToAppBoundDomain;
-    loadParameters.isServiceWorkerLoad = m_isServiceWorkerPage;
+    loadParameters.isServiceWorkerLoad = isServiceWorkerPage();
     addPlatformLoadParameters(process, loadParameters);
 
     process->markProcessAsRecentlyUsed();
@@ -7996,7 +7996,9 @@ void WebPageProxy::resetStateAfterProcessExited(ProcessTerminationReason termina
 
     m_hasRunningProcess = false;
     m_areActiveDOMObjectsAndAnimationsSuspended = false;
+#if ENABLE(SERVICE_WORKER)
     m_isServiceWorkerPage = false;
+#endif
 
     m_userScriptsNotified = false;
     m_hasActiveAnimatedScroll = false;
