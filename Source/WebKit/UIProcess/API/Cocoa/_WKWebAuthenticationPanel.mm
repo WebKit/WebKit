@@ -337,10 +337,11 @@ static RetainPtr<NSArray> getAllLocalAuthenticatorCredentialsImpl(NSString *acce
         return;
     }
     auto updatedTag = cbor::CBORWriter::write(cbor::CBORValue(WTFMove(updatedUserMap)));
-    auto secAttrApplicationTag = [NSData dataWithBytesNoCopy:updatedTag->data() length:updatedTag->size()];
+
+    auto secAttrApplicationTag = adoptNS([[NSData alloc] initWithBytes:updatedTag->data() length:updatedTag->size()]);
 
     NSDictionary *updateParams = @{
-        (__bridge id)kSecAttrApplicationTag: secAttrApplicationTag,
+        (__bridge id)kSecAttrApplicationTag: secAttrApplicationTag.get(),
     };
 
     [query setDictionary:@{
