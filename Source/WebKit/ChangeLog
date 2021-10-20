@@ -1,3 +1,24 @@
+2021-10-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] UserInteractive threads are not Real-time in Linux
+        https://bugs.webkit.org/show_bug.cgi?id=220115
+
+        Reviewed by Michael Catanzaro.
+
+        Enable real time threads in the web process only when there's a visible page.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::createWebPage):
+        (WebKit::WebProcess::removeWebPage):
+        (WebKit::WebProcess::pageActivityStateDidChange):
+        (WebKit::WebProcess::platformInitializeProcess): Deleted.
+        * WebProcess/glib/WebProcessGLib.cpp:
+        (WebKit::WebProcess::platformInitializeProcess):
+        * WebProcess/playstation/WebProcessPlayStation.cpp:
+        (WebKit::WebProcess::platformInitializeProcess):
+        * WebProcess/win/WebProcessWin.cpp:
+        (WebKit::WebProcess::platformInitializeProcess):
+
 2021-10-20  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         REGRESSION(r276635): [GTK] local HTML file is downloaded instead of displayed if any application has ever called g_desktop_app_info_set_as_default_for_extension(info, "html")

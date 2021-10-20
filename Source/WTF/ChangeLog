@@ -1,3 +1,37 @@
+2021-10-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] UserInteractive threads are not Real-time in Linux
+        https://bugs.webkit.org/show_bug.cgi?id=220115
+
+        Reviewed by Michael Catanzaro.
+
+        Add RealTimeThreads singleton to register real time threads.
+
+        * wtf/PlatformGTK.cmake:
+        * wtf/PlatformJSCOnly.cmake:
+        * wtf/PlatformWPE.cmake:
+        * wtf/Threading.cpp:
+        (WTF::Thread::setCurrentThreadIsUserInteractive):
+        * wtf/generic/WorkQueueGeneric.cpp:
+        (WTF::WorkQueueBase::platformInitialize):
+        * wtf/linux/RealTimeThreads.cpp: Added.
+        (WTF::RealTimeThreads::singleton):
+        (WTF::RealTimeThreads::RealTimeThreads):
+        (WTF::RealTimeThreads::registerThread):
+        (WTF::RealTimeThreads::setEnabled):
+        (WTF::RealTimeThreads::promoteThreadToRealTime):
+        (WTF::RealTimeThreads::demoteThreadFromRealTime):
+        (WTF::RealTimeThreads::demoteAllThreadsFromRealTime):
+        (WTF::isRunningInSandbox):
+        (WTF::realTimeKitGetProperty):
+        (WTF::RealTimeThreads::realTimeKitMakeThreadRealTime):
+        (WTF::RealTimeThreads::scheduleDiscardRealTimeKitProxy):
+        (WTF::RealTimeThreads::discardRealTimeKitProxyTimerFired):
+        * wtf/linux/RealTimeThreads.h: Added.
+        * wtf/posix/ThreadingPOSIX.cpp:
+        (WTF::schedPolicy):
+        (WTF::Thread::establishHandle):
+
 2021-10-19  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Remove old GCC workaround for Allocator

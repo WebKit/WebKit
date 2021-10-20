@@ -39,6 +39,10 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters&)
 {
 }
 
+void WebProcess::platformInitializeProcess(const AuxiliaryProcessInitializationParameters&)
+{
+}
+
 void WebProcess::platformSetWebsiteDataStoreParameters(WebProcessDataStoreParameters&&)
 {
 }

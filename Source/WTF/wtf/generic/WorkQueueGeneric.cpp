@@ -39,14 +39,14 @@ WorkQueueBase::WorkQueueBase(RunLoop& runLoop)
 {
 }
 
-void WorkQueueBase::platformInitialize(const char* name, Type, QOS)
+void WorkQueueBase::platformInitialize(const char* name, Type, QOS qos)
 {
     BinarySemaphore semaphore;
     Thread::create(name, [&] {
         m_runLoop = &RunLoop::current();
         semaphore.signal();
         m_runLoop->run();
-    })->detach();
+    }, ThreadType::Unknown, qos)->detach();
     semaphore.wait();
 }
 

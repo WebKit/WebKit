@@ -42,7 +42,13 @@
 #include <wtf/WordLock.h>
 
 #if OS(LINUX)
+#include <sched.h>
 #include <sys/prctl.h>
+#include <sys/syscall.h>
+#include <wtf/linux/RealTimeThreads.h>
+#ifndef SCHED_RESET_ON_FORK
+#define SCHED_RESET_ON_FORK 0x40000000
+#endif
 #endif
 
 #if !COMPILER(MSVC)
@@ -67,10 +73,6 @@
 #if OS(DARWIN)
 #include <mach/mach_traps.h>
 #include <mach/thread_switch.h>
-#endif
-
-#if OS(LINUX)
-#include <sys/syscall.h>
 #endif
 
 namespace WTF {
@@ -260,6 +262,24 @@ dispatch_qos_class_t Thread::dispatchQOSClass(QOS qos)
 }
 #endif
 
+#if OS(LINUX)
+static int schedPolicy(Thread::QOS qos)
+{
+    switch (qos) {
+    case Thread::QOS::UserInteractive:
+        return SCHED_RR;
+    case Thread::QOS::UserInitiated:
+    case Thread::QOS::Default:
+        return SCHED_OTHER;
+    case Thread::QOS::Utility:
+        return SCHED_BATCH;
+    case Thread::QOS::Background:
+        return SCHED_IDLE;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+}
+#endif
+
 bool Thread::establishHandle(NewThreadContext* context, std::optional<size_t> stackSize, QOS qos)
 {
     pthread_t threadHandle;
@@ -267,8 +287,6 @@ bool Thread::establishHandle(NewThreadContext* context, std::optional<size_t> st
     pthread_attr_init(&attr);
 #if HAVE(QOS_CLASSES)
     pthread_attr_set_qos_class_np(&attr, dispatchQOSClass(qos), 0);
-#else
-    UNUSED_PARAM(qos);
 #endif
     if (stackSize)
         pthread_attr_setstacksize(&attr, stackSize.value());
@@ -278,6 +296,21 @@ bool Thread::establishHandle(NewThreadContext* context, std::optional<size_t> st
         LOG_ERROR("Failed to create pthread at entry point %p with context %p", wtfThreadEntryPoint, context);
         return false;
     }
+
+#if OS(LINUX)
+    int policy = schedPolicy(qos);
+    if (policy == SCHED_RR)
+        RealTimeThreads::singleton().registerThread(*this);
+    else {
+        struct sched_param param = { 0 };
+        error = pthread_setschedparam(threadHandle, policy | SCHED_RESET_ON_FORK, &param);
+        if (error)
+            LOG_ERROR("Failed to set sched policy %d for thread %d: %s", policy, threadHandle, strerror(error));
+    }
+#elif !HAVE(QOS_CLASSES)
+    UNUSED_PARAM(qos);
+#endif
+
     establishPlatformSpecificHandle(threadHandle);
     return true;
 }
