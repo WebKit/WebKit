@@ -1,3 +1,13 @@
+2021-10-20  Eric Hutchison  <ehutchison@apple.com>
+
+        Unreviewed, reverting r284551.
+
+        TestExpectations file not recognized
+
+        Reverted changeset:
+
+        https://commits.webkit.org/r284551
+
 2021-10-20  Ayumi Kojima  <ayumi_kojima@apple.com>
 
         [ iOS Release ] media/media-can-play-mpeg-audio.html is a flaky failure.
