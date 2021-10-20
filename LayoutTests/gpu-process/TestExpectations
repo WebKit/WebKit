@@ -32,4 +32,7 @@ fast/canvas/webgl/lose-context-on-timeout.html [ Slow Pass ]
 
 [ iOS ] css3/color-filters/color-filter-composition-underline-color.html [ ImageOnlyFailure ]
 [ iOS ] css3/color-filters/color-filter-sepia.html [ Pass ImageOnlyFailure ]
+[ iOS ] fast/borders/hidpi-border-clipping-right-after-move.html [ ImageOnlyFailure ]
+[ iOS ] fast/css/content-counter-010.htm [ ImageOnlyFailure ]
+
 
