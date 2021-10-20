@@ -2626,15 +2626,8 @@ webkit.org/b/186045 imported/w3c/web-platform-tests/css/css-animations/animation
 webkit.org/b/195345 imported/w3c/web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-anywhere-003.html [ ImageOnlyFailure ]
 webkit.org/b/195345 imported/w3c/web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-min-content-size-002.html [ ImageOnlyFailure ]
 
-webkit.org/b/197409 imported/w3c/web-platform-tests/css/css-text/word-break/word-break-break-all-016.html [ ImageOnlyFailure ]
-webkit.org/b/197409 imported/w3c/web-platform-tests/css/css-text/word-break/word-break-break-all-019.html [ ImageOnlyFailure ]
-webkit.org/b/197411 imported/w3c/web-platform-tests/css/css-text/word-break/word-break-break-all-018.html [ ImageOnlyFailure ]
-webkit.org/b/197411 imported/w3c/web-platform-tests/css/css-text/word-break/word-break-break-all-021.html [ ImageOnlyFailure ]
-webkit.org/b/197411 imported/w3c/web-platform-tests/css/css-text/word-break/word-break-break-all-022.html [ ImageOnlyFailure ]
 webkit.org/b/197430 imported/w3c/web-platform-tests/css/css-text/word-break/word-break-break-all-023.html [ ImageOnlyFailure ]
 webkit.org/b/197430 imported/w3c/web-platform-tests/css/css-text/word-break/word-break-break-all-024.html [ ImageOnlyFailure ]
-webkit.org/b/197430 imported/w3c/web-platform-tests/css/css-text/word-break/word-break-break-all-026.html [ ImageOnlyFailure ]
-webkit.org/b/197430 imported/w3c/web-platform-tests/css/css-text/word-break/word-break-break-all-027.html [ ImageOnlyFailure ]
 
 ########################################
 ### START OF display: contents failures

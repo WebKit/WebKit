@@ -297,6 +297,46 @@ static bool isWrappableRun(const InlineContentBreaker::ContinuousContent::Run& r
     return TextUtil::isWrappingAllowed(run.style);
 }
 
+static TextUtil::MidWordBreak midWordBreak(const InlineContentBreaker::ContinuousContent::Run& textRun, InlineLayoutUnit runLogicalLeft, InlineLayoutUnit availableWidth)
+{
+    auto& inlineTextItem = downcast<InlineTextItem>(textRun.inlineItem);
+    auto& style = textRun.style;
+    ASSERT(style.lineBreak() == LineBreak::Anywhere || style.wordBreak() == WordBreak::BreakAll || style.wordBreak() == WordBreak::BreakWord || style.overflowWrap() == OverflowWrap::BreakWord || style.overflowWrap() == OverflowWrap::Anywhere);
+
+    auto midWordBreak = TextUtil::midWordBreak(inlineTextItem, style.fontCascade(), textRun.logicalWidth, availableWidth, runLogicalLeft);
+    if (!midWordBreak.length || midWordBreak.length == inlineTextItem.length())
+        return midWordBreak;
+
+    auto canBreakBetweenAnyTypographicCharacterUnit = style.lineBreak() == LineBreak::Anywhere || style.wordBreak() == WordBreak::BreakWord || style.overflowWrap() == OverflowWrap::BreakWord || style.overflowWrap() == OverflowWrap::Anywhere;
+    if (canBreakBetweenAnyTypographicCharacterUnit)
+        return midWordBreak;
+
+    // Find out if the candidate position for arbitrary breaking is valid. We can't always break between any characters.
+    auto text = inlineTextItem.inlineTextBox().content();
+    const auto left = midWordBreak.start;
+    auto right = left + midWordBreak.length;
+    for (; right > left; --right) {
+        auto isBreakable = [](auto character) {
+            // FIXME: This should include all the cases from https://unicode.org/reports/tr14
+            // Use a breaking matrix similar to lineBreakTable in BreakLines.cpp
+            // Also see kBreakAllLineBreakClassTable in third_party/blink/renderer/platform/text/text_break_iterator.cc
+            if (character == noBreakSpace)
+                return false;
+            auto isPunctuation = U_GET_GC_MASK(character) & (U_GC_PS_MASK | U_GC_PE_MASK | U_GC_PI_MASK | U_GC_PF_MASK | U_GC_PO_MASK);
+            return character == reverseSolidus || !isPunctuation;
+        };
+        U16_SET_CP_START(text, left, right);
+        if (isBreakable(text[right]))
+            break;
+    }
+    RELEASE_ASSERT(right >= left);
+    if (left + midWordBreak.length == right)
+        return midWordBreak;
+    if (left == right)
+        return { left, { }, { } };
+    return { left, right - left, TextUtil::width(inlineTextItem, style.fontCascade(), left, right, runLogicalLeft) };
+}
+
 struct CandidateTextRunForBreaking {
     size_t index { 0 };
     bool isOverflowingRun { true };
@@ -360,7 +400,7 @@ std::optional<InlineContentBreaker::PartialRun> InlineContentBreaker::tryBreakin
                 auto endPosition = inlineTextItem.end();
                 return PartialRun { inlineTextItem.length() - 1, TextUtil::width(inlineTextItem, fontCascade, startPosition, endPosition, candidateTextRun.logicalLeft) };
             }
-            auto midWordBreak = TextUtil::midWordBreak(inlineTextItem, fontCascade, candidateRun.logicalWidth, availableWidth, candidateTextRun.logicalLeft);
+            auto midWordBreak = WebCore::Layout::midWordBreak(candidateRun, candidateTextRun.logicalLeft, availableWidth);
             return PartialRun { midWordBreak.length, midWordBreak.logicalWidth };
         };
         return tryBreakingAtArbitraryPositionWithinWords();
