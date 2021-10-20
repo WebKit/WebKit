@@ -1916,6 +1916,7 @@ webkit.org/b/229874 imported/w3c/web-platform-tests/css/css-sizing/percentage-he
 webkit.org/b/214512 imported/w3c/web-platform-tests/css/geometry/DOMMatrix2DInit-validate-fixup.html [ Pass Failure ]
 
 webkit.org/b/230959 fast/scrolling/ios/click-events-after-long-press-during-momentum-scroll-in-overflow.html [ Pass Timeout ]
+webkit.org/b/230959 fast/scrolling/ios/click-events-after-long-press-during-momentum-scroll-in-main-frame.html [ Pass Timeout ]
 
 webkit.org/b/214598 fast/scrolling/ios/autoscroll-input-when-very-zoomed.html [ Pass Failure ]
 
