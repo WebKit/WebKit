@@ -1,3 +1,13 @@
+2021-10-20  Ayumi Kojima  <ayumi_kojima@apple.com>
+
+        [ iOS macOS wk2 ]webanimations/marker-opacity-animation-no-effect.html is a flaky image failure.
+        https://bugs.webkit.org/show_bug.cgi?id=232040
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+
 2021-10-20  Eric Hutchison  <ehutchison@apple.com>
 
         [ iOS15 gpuprocess ] 2 css/color-filter tests are image-only failing.
