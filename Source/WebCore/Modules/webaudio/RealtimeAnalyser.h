@@ -25,6 +25,7 @@
 #pragma once
 
 #include "AudioArray.h"
+#include "AudioBus.h"
 #include <JavaScriptCore/Forward.h>
 #include <memory>
 #include <wtf/Forward.h>
@@ -32,7 +33,6 @@
 
 namespace WebCore {
 
-class AudioBus;
 class FFTFrame;
 
 class RealtimeAnalyser {
