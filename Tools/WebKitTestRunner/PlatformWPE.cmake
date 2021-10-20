@@ -34,6 +34,7 @@ list(APPEND WebKitTestRunner_LIBRARIES
 )
 
 list(APPEND WebKitTestRunnerInjectedBundle_LIBRARIES
+    $<TARGET_OBJECTS:JavaScriptCore>
     ${ATK_LIBRARIES}
     ${GLIB_LIBRARIES}
     Cairo::Cairo

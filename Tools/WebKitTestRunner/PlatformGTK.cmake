@@ -35,6 +35,10 @@ list(APPEND WebKitTestRunnerInjectedBundle_LIBRARIES
     GTK::GTK
 )
 
+list(APPEND WebKitTestRunner_FRAMEWORKS
+    WebKit
+)
+
 list(APPEND WebKitTestRunnerInjectedBundle_SOURCES
     InjectedBundle/atk/AccessibilityControllerAtk.cpp
     InjectedBundle/atk/AccessibilityNotificationHandlerAtk.cpp

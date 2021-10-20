@@ -1,3 +1,16 @@
+2021-10-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [WPE] Reenable -fvisibility=hidden and -fvisibility-inlines-hidden
+        https://bugs.webkit.org/show_bug.cgi?id=222860
+
+        Reviewed by Don Olmstead.
+
+        * TestRunnerShared/CMakeLists.txt:
+        * TestWebKitAPI/PlatformWPE.cmake:
+        * TestWebKitAPI/glib/CMakeLists.txt:
+        * WebKitTestRunner/CMakeLists.txt:
+        * WebKitTestRunner/PlatformWPE.cmake:
+
 2021-10-20  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         It should be possible to format C++ code to project style with WebKit tools

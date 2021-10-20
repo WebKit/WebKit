@@ -111,7 +111,12 @@ set(TestJSC_PRIVATE_INCLUDE_DIRECTORIES
 set(TestJSC_LIBRARIES
     ${GLIB_LIBRARIES}
     ${GLIB_GMODULE_LIBRARIES}
-    WebKit::JavaScriptCore
+)
+
+set(TestJSC_FRAMEWORKS
+    JavaScriptCore
+    WTF
+    bmalloc
 )
 
 set(TestJSC_DEFINITIONS

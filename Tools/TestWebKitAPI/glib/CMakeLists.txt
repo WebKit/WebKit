@@ -29,7 +29,6 @@ set(WebKitGLibAPITests_SYSTEM_INCLUDE_DIRECTORIES
 )
 
 set(WebKitAPITest_LIBRARIES
-    WebKit::JavaScriptCore
     WebKit::WebKit
 )
 
@@ -46,7 +45,6 @@ set(WebKitGLibAPITest_LIBRARIES
 
 set(WebKitGLibAPITestExtension_LIBRARIES
     ${GLIB_LIBRARIES}
-    WebKit::JavaScriptCore
     WebKit::WebKit
 )
 
@@ -191,6 +189,8 @@ endmacro()
 if (PORT STREQUAL "WPE" AND ENABLE_WPE_QT_API)
     set(WPEQtAPITests_INCLUDE_DIRECTORIES
         ${CMAKE_BINARY_DIR}
+        ${JavaScriptCoreGLib_DERIVED_SOURCES_DIR}
+        ${JavaScriptCoreGLib_FRAMEWORK_HEADERS_DIR}
         ${GLIB_INCLUDE_DIRS}
         ${LIBSOUP_INCLUDE_DIRS}
         ${Qt5Test_INCLUDE_DIRS}
