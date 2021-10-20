@@ -1,5 +1,14 @@
 2021-10-20  Eric Hutchison  <ehutchison@apple.com>
 
+        [ iOS15 GPUProcess ] compositing/shared-backing/sharing-child-contributes-to-overlap.html is a constant image-only failure.
+        https://bugs.webkit.org/show_bug.cgi?id=232022.
+
+        Unreviewed test gardening.
+
+        * gpu-process/TestExpectations:
+
+2021-10-20  Eric Hutchison  <ehutchison@apple.com>
+
         Unreviewed, reverting r284551.
 
         TestExpectations file not recognized

@@ -23,3 +23,5 @@ webgl/max-active-contexts-webglcontextlost-prevent-default.html [ Timeout ]
 
 fast/canvas/webgl/lose-context-on-timeout-async.html [ Slow Pass ]
 fast/canvas/webgl/lose-context-on-timeout.html [ Slow Pass ]
+
+[ iOS ] compositing/shared-backing/sharing-child-contributes-to-overlap.html [ ImageOnlyFailure ]
