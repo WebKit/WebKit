@@ -1174,6 +1174,8 @@ webkit.org/b/161631 imported/w3c/web-platform-tests/html/browsers/browsing-the-w
 
 webkit.org/b/230407 imported/w3c/web-platform-tests/html/dom/idlharness.https.html [ Pass Failure ]
 
+webkit.org/b/232028 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting/navigation-reporting/report-only-four-reports.https.html [ Pass Failure ]
+
 # Newly imported WPT tests that are timing out on iOS.
 imported/w3c/web-platform-tests/html/semantics/forms/the-button-element/button-activate-keyup-prevented.html [ Skip ]
 imported/w3c/web-platform-tests/uievents/click/auxclick_event.html [ Skip ]
