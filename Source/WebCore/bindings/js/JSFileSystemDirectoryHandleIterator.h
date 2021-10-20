@@ -34,7 +34,7 @@ namespace WebCore {
 class FileSystemHandle;
 
 struct JSFileSystemDirectoryHandleIteratorTraits {
-    static constexpr JSDOMAsyncIteratorType type = JSDOMAsyncIteratorType::Map;
+    static constexpr JSDOMIteratorType type = JSDOMIteratorType::Map;
     using KeyType = IDLByteString;
     using ValueType = IDLInterface<FileSystemHandle>;
 };
