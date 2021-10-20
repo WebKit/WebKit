@@ -432,6 +432,14 @@ void GPUProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Connect
     if (xpc_connection_t connection = this->connection()->xpcConnection())
         m_throttler.didConnectToProcess(xpc_connection_get_pid(connection));
 #endif
+
+#if PLATFORM(COCOA)
+    auto it = m_sessionIDs.begin();
+    if (it != m_sessionIDs.end()) {
+        auto webSiteDataStore = WebsiteDataStore::existingDataStoreForSessionID(*m_sessionIDs.begin());
+        m_hasSentLaunchServicesDatabase = webSiteDataStore->sendNetworkProcessXPCEndpointToProcess(*this);
+    }
+#endif
 }
 
 void GPUProcessProxy::updateProcessAssertion()
@@ -498,7 +506,8 @@ void GPUProcessProxy::addSession(const WebsiteDataStore& store)
     m_sessionIDs.add(store.sessionID());
 
 #if PLATFORM(COCOA)
-    store.sendNetworkProcessXPCEndpointToProcess(*this);
+    if (!m_hasSentLaunchServicesDatabase)
+        m_hasSentLaunchServicesDatabase = store.sendNetworkProcessXPCEndpointToProcess(*this);
 #endif
 }
 

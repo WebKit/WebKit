@@ -280,7 +280,7 @@ public:
     void dispatchOnQueue(Function<void()>&&);
 
 #if PLATFORM(COCOA)
-    void sendNetworkProcessXPCEndpointToProcess(AuxiliaryProcessProxy&) const;
+    bool sendNetworkProcessXPCEndpointToProcess(AuxiliaryProcessProxy&) const;
     void sendNetworkProcessXPCEndpointToAllProcesses();
     
     static bool useNetworkLoader();

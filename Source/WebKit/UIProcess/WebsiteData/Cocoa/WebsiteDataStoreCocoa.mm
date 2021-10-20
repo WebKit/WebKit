@@ -598,17 +598,18 @@ bool WebsiteDataStore::networkProcessHasEntitlementForTesting(const String& enti
     return WTF::hasEntitlement(networkProcess().connection()->xpcConnection(), entitlement.utf8().data());
 }
 
-void WebsiteDataStore::sendNetworkProcessXPCEndpointToProcess(AuxiliaryProcessProxy& process) const
+bool WebsiteDataStore::sendNetworkProcessXPCEndpointToProcess(AuxiliaryProcessProxy& process) const
 {
     if (process.state() != AuxiliaryProcessProxy::State::Running)
-        return;
+        return false;
     auto* connection = process.connection();
     if (!connection)
-        return;
+        return false;
     auto message = networkProcess().xpcEndpointMessage();
     if (!message)
-        return;
+        return false;
     xpc_connection_send_message(connection->xpcConnection(), message);
+    return true;
 }
 
 void WebsiteDataStore::sendNetworkProcessXPCEndpointToAllProcesses()

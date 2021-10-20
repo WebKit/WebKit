@@ -1,3 +1,24 @@
+2021-10-20  Per Arne Vollan <pvollan@apple.com>
+
+        Launch Services database is not always sent to GPUP
+        https://bugs.webkit.org/show_bug.cgi?id=232047
+        <rdar://problem/84480229>
+
+        Reviewed by Brent Fulgham.
+
+        Currently, the XPC endpoint for receiving the Launch Services database is being sent to GPUP in GPUProcessProxy::addSession.
+        If GPUP has not finished launching at that point, the endpoint will not be sent on the first page load. This is addressed by
+        sending the XPC endpoint in GPUProcessProxy::didFinishLaunching, since the XPC connection over which the XPC endpoint is
+        being sent is available then.
+
+        * UIProcess/GPU/GPUProcessProxy.cpp:
+        (WebKit::GPUProcessProxy::didFinishLaunching):
+        (WebKit::GPUProcessProxy::addSession):
+        * UIProcess/GPU/GPUProcessProxy.h:
+        * UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm:
+        (WebKit::WebsiteDataStore::sendNetworkProcessXPCEndpointToProcess const):
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+
 2021-10-20  John Pascoe  <j_pascoe@apple.com>
 
         Fix crash when calling setUsernameForLocalCredentialWithID
