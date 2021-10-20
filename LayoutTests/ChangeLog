@@ -1,5 +1,14 @@
 2021-10-20  Ayumi Kojima  <ayumi_kojima@apple.com>
 
+        [ macOS wk1 ] imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-autofocus.html is a flaky failure.
+        https://bugs.webkit.org/show_bug.cgi?id=232042
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
+2021-10-20  Ayumi Kojima  <ayumi_kojima@apple.com>
+
         [ iOS macOS wk2 ]webanimations/marker-opacity-animation-no-effect.html is a flaky image failure.
         https://bugs.webkit.org/show_bug.cgi?id=232040
 
