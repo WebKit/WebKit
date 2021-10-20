@@ -27,6 +27,7 @@
 
 #include "InlineIteratorLine.h"
 #include "InlineIteratorTextBox.h"
+#include "RenderBlockFlow.h"
 
 namespace WebCore {
 namespace InlineIterator {
