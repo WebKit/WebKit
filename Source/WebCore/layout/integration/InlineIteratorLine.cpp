@@ -159,7 +159,7 @@ LeafBoxIterator Line::closestRunForLogicalLeftPosition(int leftPosition, bool ed
 
 int Line::blockDirectionPointInLine() const
 {
-    return !containingBlock().style().isFlippedBlocksWritingMode() ? std::max(top(), selectionTop()) : std::min(bottom(), selectionBottom());
+    return !containingBlock().style().isFlippedBlocksWritingMode() ? std::max(top(), selectionTopForHitTesting()) : std::min(bottom(), selectionBottom());
 }
 
 LayoutUnit Line::selectionTopAdjustedForPrecedingBlock() const

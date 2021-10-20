@@ -1,3 +1,19 @@
+2021-10-20  Antti Koivisto  <antti@apple.com>
+
+        fast/images/text-recognition/mac/select-rotated-transparent-image-overlay.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=232008
+        rdar://84276269
+
+        Reviewed by Alan Bujtas.
+
+        * fast/block/line-layout/selection-highlight-overlap.html:
+
+        Adopt to the updated legacy behavior.
+
+        * fast/images/text-recognition/mac/select-rotated-transparent-image-overlay.html:
+
+        Change the test so it isn't affected by the behavior change.
+
 2021-10-20  Ayumi Kojima  <ayumi_kojima@apple.com>
 
         Regression (r282211): [ macOS wk2 ] css3/filters/blur-various-radii.html is a flaky image failure.
