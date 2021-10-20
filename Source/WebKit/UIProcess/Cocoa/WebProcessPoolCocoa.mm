@@ -41,8 +41,6 @@
 #import "TextChecker.h"
 #import "UserInterfaceIdiom.h"
 #import "WKBrowsingContextControllerInternal.h"
-#import "WKMouseDeviceObserver.h"
-#import "WKStylusDeviceObserver.h"
 #import "WebAuthnProcessMessages.h"
 #import "WebAuthnProcessProxy.h"
 #import "WebBackForwardCache.h"
@@ -103,6 +101,14 @@
 
 #if ENABLE(GPU_PROCESS)
 #import "GPUProcessMessages.h"
+#endif
+
+#if HAVE(MOUSE_DEVICE_OBSERVATION)
+#import "WKMouseDeviceObserver.h"
+#endif
+
+#if HAVE(STYLUS_DEVICE_OBSERVATION)
+#import "WKStylusDeviceObserver.h"
 #endif
 
 #if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)

@@ -31,7 +31,6 @@
 #import "PlaybackSessionManagerProxy.h"
 #import "UserMediaProcessManager.h"
 #import "ViewGestureController.h"
-#import "WKWebViewIOS.h"
 #import "WebPageProxy.h"
 #import "WebProcessPool.h"
 #import "WebProcessProxy.h"
@@ -41,6 +40,14 @@
 #import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/ValidationBubble.h>
 #import <wtf/RetainPtr.h>
+
+#if PLATFORM(MAC)
+#import "WKWebViewMac.h"
+#endif
+
+#if PLATFORM(IOS_FAMILY)
+#import "WKWebViewIOS.h"
+#endif
 
 #if ENABLE(MEDIA_SESSION_COORDINATOR)
 @interface WKMediaSessionCoordinatorHelper : NSObject <_WKMediaSessionCoordinatorDelegate>

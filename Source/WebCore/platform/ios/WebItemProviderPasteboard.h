@@ -23,7 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#if TARGET_OS_IPHONE
 #import <WebCore/AbstractPasteboard.h>
+#endif
 
 #if TARGET_OS_IOS
 

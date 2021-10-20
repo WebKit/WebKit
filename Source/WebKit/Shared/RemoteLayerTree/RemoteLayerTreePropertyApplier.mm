@@ -29,7 +29,6 @@
 #import "PlatformCAAnimationRemote.h"
 #import "PlatformCALayerRemote.h"
 #import "RemoteLayerTreeHost.h"
-#import "RemoteLayerTreeViews.h"
 #import <QuartzCore/QuartzCore.h>
 #import <WebCore/PlatformCAFilters.h>
 #import <WebCore/ScrollbarThemeMac.h>
@@ -46,6 +45,7 @@ static void configureSeparatedLayer(CALayer *) { }
 #endif
 
 #if PLATFORM(IOS_FAMILY)
+#import "RemoteLayerTreeViews.h"
 #import <UIKit/UIView.h>
 #import <UIKitSPI.h>
 #endif

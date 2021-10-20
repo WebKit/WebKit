@@ -103,7 +103,6 @@ list(APPEND WebKit_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/UIProcess/API/C/mac"
     "${WEBKIT_DIR}/UIProcess/API/Cocoa"
     "${WEBKIT_DIR}/UIProcess/API/mac"
-    "${WEBKIT_DIR}/UIProcess/API/ios"
     "${WEBKIT_DIR}/UIProcess/Authentication/cocoa"
     "${WEBKIT_DIR}/UIProcess/Cocoa"
     "${WEBKIT_DIR}/UIProcess/Cocoa/SOAuthorization"
@@ -115,10 +114,8 @@ list(APPEND WebKit_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/UIProcess/PDF"
     "${WEBKIT_DIR}/UIProcess/RemoteLayerTree"
     "${WEBKIT_DIR}/UIProcess/RemoteLayerTree/cocoa"
-    "${WEBKIT_DIR}/UIProcess/RemoteLayerTree/ios"
     "${WEBKIT_DIR}/UIProcess/RemoteLayerTree/mac"
     "${WEBKIT_DIR}/UIProcess/WebAuthentication/Cocoa"
-    "${WEBKIT_DIR}/UIProcess/ios"
     "${WEBKIT_DIR}/Platform/cg"
     "${WEBKIT_DIR}/Platform/classifier"
     "${WEBKIT_DIR}/Platform/classifier/cocoa"
@@ -126,7 +123,6 @@ list(APPEND WebKit_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/Platform/mac"
     "${WEBKIT_DIR}/Platform/unix"
     "${WEBKIT_DIR}/Platform/spi/Cocoa"
-    "${WEBKIT_DIR}/Platform/spi/ios"
     "${WEBKIT_DIR}/Platform/spi/mac"
     "${WEBKIT_DIR}/Platform/IPC/mac"
     "${WEBKIT_DIR}/Platform/IPC/cocoa"
@@ -137,7 +133,6 @@ list(APPEND WebKit_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/Shared/API/c/mac"
     "${WEBKIT_DIR}/Shared/ApplePay/cocoa/"
     "${WEBKIT_DIR}/Shared/Authentication/cocoa"
-    "${WEBKIT_DIR}/Shared/ios"
     "${WEBKIT_DIR}/Shared/cf"
     "${WEBKIT_DIR}/Shared/Cocoa"
     "${WEBKIT_DIR}/Shared/Daemon"
@@ -227,8 +222,6 @@ set(WebKit_FORWARDING_HEADERS_FILES
 list(APPEND WebKit_MESSAGES_IN_FILES
     GPUProcess/media/RemoteImageDecoderAVFProxy
 
-    GPUProcess/media/ios/RemoteMediaSessionHelperProxy
-
     NetworkProcess/CustomProtocols/LegacyCustomProtocolManager
 
     Shared/API/Cocoa/RemoteObjectRegistry
@@ -260,8 +253,6 @@ list(APPEND WebKit_MESSAGES_IN_FILES
     WebProcess/ApplePay/WebPaymentCoordinator
 
     WebProcess/GPU/media/RemoteImageDecoderAVFManager
-
-    WebProcess/GPU/media/ios/RemoteMediaSessionHelper
 
     WebProcess/Inspector/WebInspectorUIExtensionController
 
@@ -501,8 +492,6 @@ list(APPEND WebKit_PUBLIC_FRAMEWORK_HEADERS
     UIProcess/API/Cocoa/_WKWebsiteDataStoreConfiguration.h
     UIProcess/API/Cocoa/_WKWebsiteDataStoreDelegate.h
 
-    UIProcess/API/ios/WKWebViewPrivateForTestingIOS.h
-
     UIProcess/API/mac/WKWebViewPrivateForTestingMac.h
 
     UIProcess/Cocoa/WKShareSheet.h
@@ -559,7 +548,6 @@ set(WebKit_FORWARDING_HEADERS_DIRECTORIES
     UIProcess/API/C/Cocoa
     UIProcess/API/C/mac
     UIProcess/API/cpp
-    UIProcess/API/ios
 
     WebProcess/InjectedBundle/API/Cocoa
     WebProcess/InjectedBundle/API/c

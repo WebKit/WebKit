@@ -29,7 +29,6 @@
 #if ENABLE(GPU_PROCESS)
 
 #import "MediaPermissionUtilities.h"
-#import "SystemStatusSPI.h"
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/RealtimeMediaSourceCenter.h>
 #import <WebCore/RegistrableDomain.h>
@@ -37,8 +36,12 @@
 #import <pal/spi/cocoa/LaunchServicesSPI.h>
 #import <wtf/OSObjectPtr.h>
 
-#import "TCCSoftLink.h"
+#if HAVE(SYSTEM_STATUS)
+#import "SystemStatusSPI.h"
 #import <pal/ios/SystemStatusSoftLink.h>
+#endif
+
+#import "TCCSoftLink.h"
 
 namespace WebKit {
 

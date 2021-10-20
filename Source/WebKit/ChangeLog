@@ -1,3 +1,25 @@
+2021-10-20  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Mac CMake build should not need to include iOS headers
+        https://bugs.webkit.org/show_bug.cgi?id=231998
+
+        Reviewed by Alex Christensen.
+
+        * GPUProcess/cocoa/GPUConnectionToWebProcessCocoa.mm:
+        * PlatformMac.cmake:
+        * Shared/RemoteLayerTree/RemoteLayerTreePropertyApplier.mm:
+        * Shared/RemoteLayerTree/RemoteLayerTreeTransaction.h:
+        * Shared/RemoteLayerTree/RemoteLayerTreeTransaction.mm:
+        (WebKit::RemoteLayerTreeTransaction::encode const):
+        (WebKit::RemoteLayerTreeTransaction::decode):
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        * UIProcess/API/Cocoa/WKWebViewPrivateForTesting.h:
+        * UIProcess/API/Cocoa/WKWebViewTesting.mm:
+        * UIProcess/Cocoa/UIDelegate.mm:
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/WebPage/WebPage.h:
+
 2021-10-20  Antti Koivisto  <antti@apple.com>
 
         Don't re-evaluate viewport dependent media queries if the viewport doesn't change

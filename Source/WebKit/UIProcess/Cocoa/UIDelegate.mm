@@ -35,7 +35,6 @@
 #import "MediaUtilities.h"
 #import "NativeWebWheelEvent.h"
 #import "NavigationActionData.h"
-#import "TapHandlingResult.h"
 #import "UserMediaPermissionCheckProxy.h"
 #import "UserMediaPermissionRequestManagerProxy.h"
 #import "UserMediaPermissionRequestProxy.h"
@@ -46,9 +45,8 @@
 #import "WKOpenPanelParametersInternal.h"
 #import "WKSecurityOriginInternal.h"
 #import "WKStorageAccessAlert.h"
-#import <WebKit/WKUIDelegatePrivate.h>
+#import "WKUIDelegatePrivate.h"
 #import "WKWebViewConfigurationInternal.h"
-#import "WKWebViewIOS.h"
 #import "WKWebViewInternal.h"
 #import "WKWindowFeaturesInternal.h"
 #import "WebEventFactory.h"
@@ -66,6 +64,11 @@
 #import <WebCore/SecurityOrigin.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/URL.h>
+
+#if PLATFORM(IOS_FAMILY)
+#import "TapHandlingResult.h"
+#import "WKWebViewIOS.h"
+#endif
 
 #import <pal/cocoa/AVFoundationSoftLink.h>
 

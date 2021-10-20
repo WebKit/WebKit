@@ -1,3 +1,12 @@
+2021-10-20  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Mac CMake build should not need to include iOS headers
+        https://bugs.webkit.org/show_bug.cgi?id=231998
+
+        Reviewed by Alex Christensen.
+
+        * pal/PlatformMac.cmake:
+
 2021-10-19  David Kilzer  <ddkilzer@apple.com>
 
         REGRESSION (r284220): [PAL] TCCSPI.h should be a project header, not a private header

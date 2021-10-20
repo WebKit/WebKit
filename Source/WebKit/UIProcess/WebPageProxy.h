@@ -137,6 +137,7 @@
 #endif
 
 #if PLATFORM(IOS_FAMILY)
+#include "DynamicViewportSizeUpdate.h"
 #include "GestureTypes.h"
 #include "WebAutocorrectionContext.h"
 #include <WebCore/InspectorOverlay.h>
@@ -155,7 +156,6 @@
 #endif
 
 #if PLATFORM(COCOA)
-#include "DynamicViewportSizeUpdate.h"
 #include "RemoteLayerTreeNode.h"
 #include <wtf/WeakObjCPtr.h>
 #endif

@@ -643,7 +643,9 @@ void RemoteLayerTreeTransaction::encode(IPC::Encoder& encoder) const
     if (m_editorState)
         encoder << *m_editorState;
 
+#if PLATFORM(IOS_FAMILY)
     encoder << m_dynamicViewportSizeUpdateID;
+#endif
 }
 
 bool RemoteLayerTreeTransaction::decode(IPC::Decoder& decoder, RemoteLayerTreeTransaction& result)
@@ -780,8 +782,10 @@ bool RemoteLayerTreeTransaction::decode(IPC::Decoder& decoder, RemoteLayerTreeTr
         result.setEditorState(editorState);
     }
 
+#if PLATFORM(IOS_FAMILY)
     if (!decoder.decode(result.m_dynamicViewportSizeUpdateID))
         return false;
+#endif
 
     return true;
 }

@@ -83,8 +83,6 @@
 #import "WKUserContentControllerInternal.h"
 #import "WKWebViewConfigurationInternal.h"
 #import "WKWebViewContentProvider.h"
-#import "WKWebViewPrivateForTestingIOS.h"
-#import "WKWebViewIOS.h"
 #import "WKWebViewMac.h"
 #import "WKWebpagePreferencesInternal.h"
 #import "WKWebsiteDataStoreInternal.h"
@@ -168,6 +166,8 @@
 #import "WKContentViewInteraction.h"
 #import "WKScrollView.h"
 #import "WKWebViewContentProviderRegistry.h"
+#import "WKWebViewIOS.h"
+#import "WKWebViewPrivateForTestingIOS.h"
 #import <MobileCoreServices/MobileCoreServices.h>
 #import <UIKit/UIApplication.h>
 #import <pal/spi/cf/CFNotificationCenterSPI.h>

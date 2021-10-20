@@ -126,6 +126,7 @@ typedef struct _AtkObject AtkObject;
 #endif
 
 #if PLATFORM(IOS_FAMILY)
+#include "DynamicViewportSizeUpdate.h"
 #include "GestureTypes.h"
 #include <WebCore/InspectorOverlay.h>
 #include <WebCore/IntPointHash.h>
@@ -159,7 +160,6 @@ typedef struct _AtkObject AtkObject;
 #endif
 
 #if PLATFORM(COCOA)
-#include "DynamicViewportSizeUpdate.h"
 #include <WebCore/VisibleSelection.h>
 #include <wtf/RetainPtr.h>
 OBJC_CLASS CALayer;

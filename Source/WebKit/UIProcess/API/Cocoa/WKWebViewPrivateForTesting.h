@@ -23,8 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#if TARGET_OS_IPHONE
 #import "WKWebViewPrivateForTestingIOS.h"
+#else
 #import "WKWebViewPrivateForTestingMac.h"
+#endif
 
 NS_ASSUME_NONNULL_BEGIN
 

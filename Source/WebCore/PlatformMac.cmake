@@ -93,7 +93,6 @@ list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/bridge/objc"
     "${WEBCORE_DIR}/crypto/mac"
     "${WEBCORE_DIR}/editing/cocoa"
-    "${WEBCORE_DIR}/editing/ios"
     "${WEBCORE_DIR}/editing/mac"
     "${WEBCORE_DIR}/html/shadow/cocoa"
     "${WEBCORE_DIR}/layout/tableformatting"
@@ -134,7 +133,6 @@ list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/platform/mediastream/mac"
     "${WEBCORE_DIR}/platform/network/cocoa"
     "${WEBCORE_DIR}/platform/network/cf"
-    "${WEBCORE_DIR}/platform/network/ios"
     "${WEBCORE_DIR}/platform/network/mac"
     "${WEBCORE_DIR}/platform/text/cf"
     "${WEBCORE_DIR}/platform/text/cocoa"
@@ -142,7 +140,6 @@ list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/platform/spi/cf"
     "${WEBCORE_DIR}/platform/spi/cg"
     "${WEBCORE_DIR}/platform/spi/cocoa"
-    "${WEBCORE_DIR}/platform/spi/ios"
     "${WEBCORE_DIR}/platform/spi/mac"
     "${WEBCORE_DIR}/plugins/mac"
     "${WebCore_PRIVATE_FRAMEWORK_HEADERS_DIR}"
@@ -583,8 +580,6 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/audio/cocoa/MediaSessionManagerCocoa.h
     platform/audio/cocoa/WebAudioBufferList.h
 
-    platform/audio/ios/MediaSessionManagerIOS.h
-
     platform/audio/mac/SharedRoutingArbitrator.h
 
     platform/cf/MediaAccessibilitySoftLink.h
@@ -679,13 +674,6 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/mac/ScopedHighPerformanceGPURequest.h
     platform/graphics/mac/SwitchingGPUClient.h
     platform/graphics/mac/WebLayer.h
-
-    platform/ios/LocalizedDeviceModel.h
-    platform/ios/PlaybackSessionInterfaceAVKit.h
-    platform/ios/WebAVPlayerController.h
-
-    platform/ios/wak/FloatingPointEnvironment.h
-    platform/ios/wak/WebCoreThreadRun.h
 
     platform/mac/DynamicLinkerInterposing.h
     platform/mac/HIDDevice.h

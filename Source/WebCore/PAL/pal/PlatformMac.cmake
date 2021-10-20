@@ -21,8 +21,6 @@ list(APPEND PAL_PUBLIC_HEADERS
     cocoa/UsageTrackingSoftLink.h
     cocoa/VisionKitCoreSoftLink.h
 
-    ios/SystemStatusSoftLink.h
-
     mac/DataDetectorsSoftLink.h
     mac/LookupSoftLink.h
     mac/QuickLookUISoftLink.h
@@ -96,9 +94,6 @@ list(APPEND PAL_PUBLIC_HEADERS
     spi/cocoa/VisionKitCoreSPI.h
     spi/cocoa/WebFilterEvaluatorSPI.h
     spi/cocoa/pthreadSPI.h
-
-    spi/ios/DataDetectorsUISPI.h
-    spi/ios/GraphicsServicesSPI.h
 
     spi/mac/CoreUISPI.h
     spi/mac/DataDetectorsSPI.h
