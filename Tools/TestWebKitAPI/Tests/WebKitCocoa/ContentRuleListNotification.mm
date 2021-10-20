@@ -494,8 +494,6 @@ TEST(ContentRuleList, LegacyVersionAndName)
     TestWebKitAPI::Util::run(&gotSource);
 }
 
-// FIXME: https://bugs.webkit.org/show_bug.cgi?id=232003 Make this test stop timing out on iOS.
-#if PLATFORM(MAC)
 TEST(WebKit, RedirectToPlaintextHTTPSUpgrade)
 {
     using namespace TestWebKitAPI;
@@ -517,4 +515,3 @@ TEST(WebKit, RedirectToPlaintextHTTPSUpgrade)
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://download/originalRequest"]]];
     EXPECT_WK_STREQ([webView _test_waitForAlert], "success!");
 }
-#endif // PLATFORM(MAC)

@@ -1,3 +1,24 @@
+2021-10-20  Alex Christensen  <achristensen@webkit.org>
+
+        REGRESSION (r284418): [iOS] TestWebKitAPI.HSTS.Basic, TestWebKitAPI.HSTS.CrossOriginRedirect, TestWebKitAPI.HSTS.ThirdParty, and TestWebKitAPI.WebKit.RedirectToPlaintextHTTPSUpgrade timing out
+        https://bugs.webkit.org/show_bug.cgi?id=232003
+
+        Reviewed by Chris Dumez.
+
+        I observed that sometimes the framer's nw_framer_input_handler_t is called after calling nw_framer_pass_through_input.
+        To fix this, I instead call nw_framer_deliver_input_no_copy myself to pass through the data inside my nw_framer_input_handler_t.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ContentRuleListNotification.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/HSTS.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/Proxy.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/ResourceLoadStatistics.mm:
+        (TEST):
+        * TestWebKitAPI/cocoa/HTTPServer.mm:
+        (TestWebKitAPI::proxyDefinition):
+
 2021-10-20  Roy Reapor  <rreapor@apple.com>
 
         Benchmarks harness could fail if pyobjc-core module is upgraded without upgrading other pyobjc-frameworks

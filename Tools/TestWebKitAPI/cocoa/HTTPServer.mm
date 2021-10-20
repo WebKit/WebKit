@@ -55,37 +55,47 @@ struct HTTPServer::RequestData : public ThreadSafeRefCounted<RequestData, WTF::D
 static RetainPtr<nw_protocol_definition_t> proxyDefinition(HTTPServer::Protocol protocol)
 {
     return adoptNS(nw_framer_create_definition("HttpsProxy", NW_FRAMER_CREATE_FLAGS_DEFAULT, [protocol] (nw_framer_t framer) -> nw_framer_start_result_t {
-        __block bool askedForCredentials = false;
-        __block Vector<char> requestBuffer;
+
+        __block enum class State {
+            WillRequestCredentials,
+            DidRequestCredentials,
+            WillNotRequestCredentials,
+            PassThrough
+        } state { protocol == HTTPServer::Protocol::HttpsProxyWithAuthentication ? State::WillRequestCredentials : State::WillNotRequestCredentials };
+
         nw_framer_set_input_handler(framer, ^size_t(nw_framer_t framer) {
             __block RetainPtr<nw_framer_t> retainedFramer = framer;
-            nw_framer_parse_input(framer, 1, std::numeric_limits<uint32_t>::max(), nullptr, ^size_t(uint8_t* buffer, size_t bufferLength, bool) {
-                requestBuffer.append(reinterpret_cast<const char*>(buffer), bufferLength);
-                if (!strnstr(requestBuffer.data(), "\r\n\r\n", requestBuffer.size()))
-                    return bufferLength;
-                if (protocol == HTTPServer::Protocol::HttpsProxyWithAuthentication) {
-                    if (!std::exchange(askedForCredentials, true)) {
-                        const char* challengeResponse =
-                            "HTTP/1.1 407 Proxy Authentication Required\r\n"
-                            "Proxy-Authenticate: Basic realm=\"testrealm\"\r\n"
-                            "Content-Length: 0\r\n"
-                            "\r\n";
-                        auto response = adoptNS(dispatch_data_create(challengeResponse, strlen(challengeResponse), nullptr, nullptr));
-                        nw_framer_write_output_data(retainedFramer.get(), response.get());
-                        requestBuffer = { };
-                        return bufferLength;
-                    }
-                    EXPECT_TRUE(strnstr(requestBuffer.data(), "Proxy-Authorization: Basic dGVzdHVzZXI6dGVzdHBhc3N3b3Jk", requestBuffer.size()));
+            nw_framer_pass_through_output(framer);
+            nw_framer_parse_input(framer, 1, std::numeric_limits<uint32_t>::max(), nullptr, ^size_t(uint8_t* buffer, size_t bufferLength, bool isComplete) {
+                switch (state) {
+                case State::WillRequestCredentials: {
+                    const char* challengeResponse =
+                        "HTTP/1.1 407 Proxy Authentication Required\r\n"
+                        "Proxy-Authenticate: Basic realm=\"testrealm\"\r\n"
+                        "Content-Length: 0\r\n"
+                        "\r\n";
+                    auto response = adoptNS(dispatch_data_create(challengeResponse, strlen(challengeResponse), nullptr, nullptr));
+                    nw_framer_write_output_data(retainedFramer.get(), response.get());
+                    state = State::DidRequestCredentials;
+                    break;
                 }
-                const char* negotiationResponse = ""
-                    "HTTP/1.1 200 Connection Established\r\n"
-                    "Connection: close\r\n\r\n";
-                auto response = adoptNS(dispatch_data_create(negotiationResponse, strlen(negotiationResponse), nullptr, nullptr));
-                nw_framer_write_output_data(retainedFramer.get(), response.get());
-                nw_framer_mark_ready(retainedFramer.get());
-                nw_framer_pass_through_input(retainedFramer.get());
-                nw_framer_pass_through_output(retainedFramer.get());
-                retainedFramer = nullptr;
+                case State::DidRequestCredentials:
+                    EXPECT_TRUE(strnstr(reinterpret_cast<const char*>(buffer), "Proxy-Authorization: Basic dGVzdHVzZXI6dGVzdHBhc3N3b3Jk\r\n", bufferLength));
+                    FALLTHROUGH;
+                case State::WillNotRequestCredentials: {
+                    const char* negotiationResponse = ""
+                        "HTTP/1.1 200 Connection Established\r\n"
+                        "Connection: close\r\n\r\n";
+                    auto response = adoptNS(dispatch_data_create(negotiationResponse, strlen(negotiationResponse), nullptr, nullptr));
+                    nw_framer_write_output_data(retainedFramer.get(), response.get());
+                    nw_framer_mark_ready(retainedFramer.get());
+                    state = State::PassThrough;
+                    break;
+                }
+                case State::PassThrough:
+                    nw_framer_deliver_input_no_copy(retainedFramer.get(), bufferLength, adoptNS(nw_framer_message_create(retainedFramer.get())).get(), isComplete);
+                    return 0;
+                }
                 return bufferLength;
             });
             return 0;
