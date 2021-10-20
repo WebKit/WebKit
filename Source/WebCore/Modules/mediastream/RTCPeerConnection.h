@@ -159,6 +159,8 @@ public:
 
     // 8.2 Statistics API
     void getStats(MediaStreamTrack*, Ref<DeferredPromise>&&);
+    // Used for testing
+    WEBCORE_EXPORT void gatherDecoderImplementationName(Function<void(String&&)>&&);
 
     // EventTarget
     EventTargetInterface eventTargetInterface() const final { return RTCPeerConnectionEventTargetInterfaceType; }

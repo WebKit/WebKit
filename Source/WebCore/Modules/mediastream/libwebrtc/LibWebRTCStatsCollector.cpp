@@ -634,10 +634,15 @@ static inline void initializeRTCStatsReportBackingMap(DOMMapAdapter& report, con
 void LibWebRTCStatsCollector::OnStatsDelivered(const rtc::scoped_refptr<const webrtc::RTCStatsReport>& rtcReport)
 {
     callOnMainThread([this, protectedThis = rtc::scoped_refptr<LibWebRTCStatsCollector>(this), rtcReport]() {
-        m_callback(RTCStatsReport::create([rtcReport](auto& mapAdapter) {
-            if (rtcReport)
-                initializeRTCStatsReportBackingMap(mapAdapter, *rtcReport);
-        }));
+        m_callback(rtcReport);
+    });
+}
+
+Ref<RTCStatsReport> LibWebRTCStatsCollector::createReport(const rtc::scoped_refptr<const webrtc::RTCStatsReport>& rtcReport)
+{
+    return RTCStatsReport::create([rtcReport](auto& mapAdapter) {
+        if (rtcReport)
+            initializeRTCStatsReportBackingMap(mapAdapter, *rtcReport);
     });
 }
 

@@ -31,6 +31,7 @@
 #import "WebKitUtilities.h"
 #import "api/video_codecs/video_decoder.h"
 #import "api/video_codecs/video_decoder_factory.h"
+#import "api/video_codecs/video_decoder_software_fallback_wrapper.h"
 #import "modules/video_coding/codecs/h264/include/h264.h"
 #import "modules/video_coding/include/video_error_codes.h"
 #import "sdk/objc/components/video_codec/RTCVideoDecoderH264.h"
@@ -124,8 +125,10 @@ private:
 
 class RemoteVideoDecoder final : public webrtc::VideoDecoder {
 public:
-    explicit RemoteVideoDecoder(WebKitVideoDecoder);
+    RemoteVideoDecoder(WebKitVideoDecoder, bool isVP9);
     ~RemoteVideoDecoder();
+
+    bool isVP9() const { return m_isVP9; }
 
 private:
     int32_t InitDecode(const VideoCodec*, int32_t number_of_cores) final;
@@ -135,6 +138,7 @@ private:
     const char* ImplementationName() const final { return "RemoteVideoToolBox"; }
 
     WebKitVideoDecoder m_internalDecoder;
+    bool m_isVP9 { false };
 };
 
 struct VideoDecoderCallbacks {
@@ -158,8 +162,9 @@ void setVideoDecoderCallbacks(VideoDecoderCreateCallback createCallback, VideoDe
     callbacks.registerDecodeCompleteCallback = registerDecodeCompleteCallback;
 }
 
-RemoteVideoDecoder::RemoteVideoDecoder(WebKitVideoDecoder internalDecoder)
+RemoteVideoDecoder::RemoteVideoDecoder(WebKitVideoDecoder internalDecoder, bool isVP9)
     : m_internalDecoder(internalDecoder)
+    , m_isVP9(isVP9)
 {
 }
 
@@ -193,6 +198,11 @@ int32_t RemoteVideoDecoder::Decode(const EncodedImage& input_image, bool missing
         encodedWidth = rtc::dchecked_cast<uint16_t>(input_image._encodedWidth);
         encodedHeight = rtc::dchecked_cast<uint16_t>(input_image._encodedHeight);
     }
+
+    // VP9 VTB does not support SVC
+    if (m_isVP9 && input_image._frameType == VideoFrameType::kVideoFrameKey && input_image.SpatialIndex() && *input_image.SpatialIndex() > 0)
+        return WEBRTC_VIDEO_CODEC_FALLBACK_SOFTWARE;
+
     return videoDecoderCallbacks().decodeCallback(m_internalDecoder, input_image.Timestamp(), input_image.data(), input_image.size(), encodedWidth, encodedHeight);
 }
 
@@ -226,7 +236,10 @@ std::unique_ptr<VideoDecoder> RemoteVideoDecoderFactory::CreateVideoDecoder(cons
     if (!identifier)
         return m_internalFactory->CreateVideoDecoder(format);
 
-    return std::make_unique<RemoteVideoDecoder>(identifier);
+    auto decoder = std::make_unique<RemoteVideoDecoder>(identifier, format.name == "VP9");
+    if (!decoder->isVP9())
+        return decoder;
+    return webrtc::CreateVideoDecoderSoftwareFallbackWrapper(m_internalFactory->CreateVideoDecoder(format), std::move(decoder));
 }
 
 std::unique_ptr<webrtc::VideoDecoderFactory> createWebKitDecoderFactory(WebKitH265 supportsH265, WebKitVP9 supportsVP9, WebKitVP9VTB supportsVP9VTB)

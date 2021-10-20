@@ -67,6 +67,7 @@ private:
     std::unique_ptr<RTCDataChannelHandler> createDataChannelHandler(const String&, const RTCDataChannelInit&) final;
     void restartIce() final;
     bool setConfiguration(MediaEndpointConfiguration&&) final;
+    void gatherDecoderImplementationName(Function<void(String&&)>&&) final;
     void getStats(Ref<DeferredPromise>&&) final;
     void getStats(RTCRtpSender&, Ref<DeferredPromise>&&) final;
     void getStats(RTCRtpReceiver&, Ref<DeferredPromise>&&) final;

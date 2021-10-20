@@ -523,6 +523,11 @@ void RTCPeerConnection::getStats(MediaStreamTrack* selector, Ref<DeferredPromise
     m_backend->getStats(WTFMove(promise));
 }
 
+void RTCPeerConnection::gatherDecoderImplementationName(Function<void(String&&)>&& callback)
+{
+    m_backend->gatherDecoderImplementationName(WTFMove(callback));
+}
+
 ExceptionOr<Ref<RTCDataChannel>> RTCPeerConnection::createDataChannel(String&& label, RTCDataChannelInit&& options)
 {
     ALWAYS_LOG(LOGIDENTIFIER);

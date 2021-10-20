@@ -85,6 +85,7 @@ public:
     void doSetRemoteDescription(const RTCSessionDescription&);
     void doCreateOffer(const RTCOfferOptions&);
     void doCreateAnswer();
+    void gatherDecoderImplementationName(Function<void(String&&)>&&);
     void getStats(Ref<DeferredPromise>&&);
     void getStats(webrtc::RtpReceiverInterface&, Ref<DeferredPromise>&&);
     void getStats(webrtc::RtpSenderInterface&, Ref<DeferredPromise>&&);

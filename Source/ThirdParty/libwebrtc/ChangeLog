@@ -1,3 +1,15 @@
+2021-10-20  Youenn Fablet  <youenn@apple.com>
+
+        WebRTC p2p call, VP9-SVC only low layer decoded on receiver side
+        https://bugs.webkit.org/show_bug.cgi?id=231071
+        <rdar://problem/83763291>
+
+        Reviewed by Eric Carlson.
+
+        In case VP9 SVC is used, fallback to software decoder for now.
+
+        * Source/webrtc/sdk/WebKit/WebKitDecoder.mm:
+
 2021-10-18  Cameron McCormack  <heycam@apple.com>
 
         Always set color space for incoming H.264/265 streams

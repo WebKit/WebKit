@@ -1,3 +1,14 @@
+2021-10-20  Youenn Fablet  <youenn@apple.com>
+
+        WebRTC p2p call, VP9-SVC only low layer decoded on receiver side
+        https://bugs.webkit.org/show_bug.cgi?id=231071
+        <rdar://problem/83763291>
+
+        Reviewed by Eric Carlson.
+
+        * webrtc/vp9-svc-expected.txt: Added.
+        * webrtc/vp9-svc.html: Added.
+
 2021-10-20  John Cunningham  <johncunningham@apple.com>
 
         Avoid null pointer dereference when creating ImageBitmap from a null image.

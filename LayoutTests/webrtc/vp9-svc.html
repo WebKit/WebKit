@@ -1,0 +1,85 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>VP9 SVC in WebRTC</title>
+        <script src="../resources/testharness.js"></script>
+        <script src="../resources/testharnessreport.js"></script>
+    </head>
+    <body>
+        <video id="video" autoplay playsInline width="320" height="240"></video>
+        <script src ="routines.js"></script>
+        <script>
+function enableVP9SVC(sdp)
+{
+    const firstSsrc = sdp.match(/a=ssrc:(\d+)/);
+    if (firstSsrc && firstSsrc.length > 1) {
+        let simGroup = 'a=ssrc-group:SIM';
+        const ssrc = firstSsrc[1];
+        simGroup += ` ${ssrc}`;
+        const ssrcLinesTemplate = sdp.match(new RegExp(`a=ssrc:${ssrc}(.+)`, 'g'));
+        for (let i = 0; i < 2 ; ++i) {
+            const ssrc1 = '' + Math.floor(Math.random() * 0xffffffff);
+            simGroup += ` ${ssrc1}`;
+            sdp += ssrcLinesTemplate.join('\r\n').replace(new RegExp(`a=ssrc:${ssrc}(.+)`, 'g'), `a=ssrc:${ssrc1}$1`) + '\r\n';
+        }
+        sdp += `${simGroup}\r\n`;
+    }
+    return sdp;
+}
+
+async function testVP9Decoder(useVP9SVC)
+{
+    let receivingConnection;
+    const codecs = RTCRtpSender.getCapabilities("video").codecs;
+    const vp9Codecs = codecs.filter(codec => codec.mimeType === "video/VP9");
+
+    if (!vp9Codecs.length)
+        return;
+
+    const localStream = await navigator.mediaDevices.getUserMedia({video: {width: 1280, height: 720}});
+    const remoteStream = await new Promise((resolve, reject) => {
+        track = localStream.getVideoTracks()[0];
+
+        createConnections((firstConnection) => {
+            firstConnection.addTrack(track, localStream);
+            const codecs = RTCRtpSender.getCapabilities('video').codecs.filter(c => c.mimeType.includes('VP9'));
+            firstConnection.getTransceivers()[0].setCodecPreferences(codecs);
+        }, (secondConnection) => {
+            receivingConnection = secondConnection;
+            secondConnection.ontrack = (trackEvent) => {
+                remoteTrack = trackEvent.track;
+                resolve(trackEvent.streams[0]);
+            };
+        }, { observeOffer : (offer) => {
+            if (useVP9SVC)
+                offer.sdp = enableVP9SVC(offer.sdp);
+            return offer;
+        }
+        });
+        setTimeout(() => reject("Test timed out"), 5000);
+    });
+    video.srcObject = remoteStream;
+    await video.play();
+
+    let counter = 0;
+    while (video.videoWidth !== 1280 && ++counter < 100)
+       await new Promise(resolve => setTimeout(resolve, 50));
+    assert_equals(video.videoWidth, 1280);
+    assert_equals(video.videoHeight, 720);
+
+    if (!window.internals || !window.internals.isSupportingVP9VTB())
+        return;
+    assert_equals(await internals.isVP9VTBDeccoderUsed(receivingConnection), !useVP9SVC);
+}
+
+promise_test(async () => {
+    return testVP9Decoder(false); 
+}, "Use VP9 without SVC");
+
+promise_test(async () => {
+    return testVP9Decoder(true); 
+}, "Use VP9 with SVC");
+        </script>
+    </body>
+</html>

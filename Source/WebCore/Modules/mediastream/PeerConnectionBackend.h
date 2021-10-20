@@ -109,6 +109,7 @@ public:
     virtual void restartIce() = 0;
     virtual bool setConfiguration(MediaEndpointConfiguration&&) = 0;
 
+    virtual void gatherDecoderImplementationName(Function<void(String&&)>&&) = 0;
     virtual void getStats(Ref<DeferredPromise>&&) = 0;
     virtual void getStats(RTCRtpSender&, Ref<DeferredPromise>&&) = 0;
     virtual void getStats(RTCRtpReceiver&, Ref<DeferredPromise>&&) = 0;
