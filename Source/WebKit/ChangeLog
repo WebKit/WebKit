@@ -1,3 +1,20 @@
+2021-10-20  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        REGRESSION(r276635): [GTK] local HTML file is downloaded instead of displayed if any application has ever called g_desktop_app_info_set_as_default_for_extension(info, "html")
+        https://bugs.webkit.org/show_bug.cgi?id=230797
+
+        Reviewed by Carlos Garcia Campos.
+
+        Let's revert this change. Disabling content sniffing prevents WebKit from distinguishing
+        between different content types with the same file extension, which is something it needs
+        to be able to do. In this bug report, it is conflating text/html with
+        application/x-extension-html, but it could just as well confuse text/html with
+        application/xhtml+xml, causing rendering issues. I don't think we can remove the content
+        sniffing.
+
+        * NetworkProcess/soup/NetworkDataTaskSoup.cpp:
+        (WebKit::NetworkDataTaskSoup::didGetFileInfo):
+
 2021-10-13  Adrian Perez de Castro  <aperez@igalia.com>
 
         [GTK] Opening emoji chooser crashes UI process with GTK 3.24.30
