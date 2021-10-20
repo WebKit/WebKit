@@ -1,3 +1,21 @@
+2021-10-20  Said Abou-Hallawa  <said@apple.com>
+
+        [iOS] Ensure the CA transaction has been synchronously committed before snapshotting it
+        https://bugs.webkit.org/show_bug.cgi?id=230085
+        <rdar://81800118>
+
+        Reviewed by Tim Horton.
+
+        Because committing the CA transaction may be an asynchronous operation,
+        we need to ensure the CALayer is fully updated before snapshotting it.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView takeSnapshotWithConfiguration:completionHandler:]):
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/API/ios/WKWebViewIOS.mm:
+        (-[WKWebView _snapshotRectAfterScreenUpdates:rectInViewCoordinates:intoImageOfWidth:completionHandler:]):
+        (-[WKWebView _snapshotRect:intoImageOfWidth:completionHandler:]):
+
 2021-10-20  Ross Kirsling  <ross.kirsling@sony.com>
 
         Mac CMake build should not need to include iOS headers
