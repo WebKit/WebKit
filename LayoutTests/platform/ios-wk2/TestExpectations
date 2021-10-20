@@ -2094,8 +2094,8 @@ webkit.org/b/227998 imported/w3c/web-platform-tests/html/semantics/embedded-cont
 
 webkit.org/b/227762 imported/w3c/web-platform-tests/html/interaction/focus/the-autofocus-attribute/document-with-fragment-valid.html [ Pass Failure ]
 
-webkit.org/b/231959 [ Release ] imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-drawImage-ImageBitmap-video.html [ Failure ]
-webkit.org/b/231959 [ Release ] imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-drawImage-video.html [ Failure ]
+webkit.org/b/231959 imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-drawImage-ImageBitmap-video.html [ Failure ]
+webkit.org/b/231959 imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-drawImage-video.html [ Failure ]
 
 webkit.org/b/226789 imported/w3c/web-platform-tests/webstorage/event_case_sensitive.html [ Pass Failure ]
 
