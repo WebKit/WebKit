@@ -1,3 +1,14 @@
+2021-10-20  Michael Saboff  <msaboff@apple.com>
+
+        Add missing overflow checks to DFGIntegerRangeOptimizationPhase::isEquivalentTo()
+        https://bugs.webkit.org/show_bug.cgi?id=232024
+
+        Reviewed by Tadeu Zagallo.
+
+        Added overflow check before comparing for equality.
+
+        * dfg/DFGIntegerRangeOptimizationPhase.cpp:
+
 2021-10-20  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         Do not use strerror()
