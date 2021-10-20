@@ -2147,18 +2147,17 @@ VisiblePosition AccessibilityRenderObject::visiblePositionForIndex(int index) co
     
 int AccessibilityRenderObject::indexForVisiblePosition(const VisiblePosition& position) const
 {
+    if (!m_renderer)
+        return 0;
+
     if (isNativeTextControl())
         return downcast<RenderTextControl>(*m_renderer).textFormControlElement().indexForVisiblePosition(position);
 
-    if (!isTextControl())
-        return 0;
-    
-    Node* node = m_renderer->node();
-    if (!node)
+    if (!allowsTextRanges() && !is<RenderText>(*m_renderer))
         return 0;
 
-    Position indexPosition = position.deepEquivalent();
-    if (indexPosition.isNull() || highestEditableRoot(indexPosition, HasEditableAXRole) != node)
+    Node* node = m_renderer->node();
+    if (!node)
         return 0;
 
 #if USE(ATK)
