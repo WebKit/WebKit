@@ -30,8 +30,6 @@
 #include "Decoder.h"
 #include "GPUConnectionToWebProcess.h"
 #include "Logging.h"
-#include "RemoteDisplayListRecorder.h"
-#include "ScopedActiveMessageReceiveQueue.h"
 #include <WebCore/ConcreteImageBuffer.h>
 #include <WebCore/DisplayList.h>
 #include <WebCore/DisplayListItems.h>
@@ -56,9 +54,8 @@ public:
         : BaseConcreteImageBuffer(parameters, WTFMove(backend), renderingResourceIdentifier.object())
         , m_remoteRenderingBackend(remoteRenderingBackend)
         , m_renderingResourceIdentifier(renderingResourceIdentifier)
-        , m_remoteDisplayList({ RemoteDisplayListRecorder::create(*this, renderingResourceIdentifier, renderingResourceIdentifier.processIdentifier(), remoteRenderingBackend) })
     {
-        m_remoteRenderingBackend.didCreateImageBufferBackend(m_backend->createImageBufferBackendHandle(), renderingResourceIdentifier, *m_remoteDisplayList.get());
+        m_remoteRenderingBackend.didCreateImageBufferBackend(m_backend->createImageBufferBackendHandle(), renderingResourceIdentifier);
     }
 
     ~RemoteImageBuffer()
@@ -80,9 +77,41 @@ public:
 private:
     friend class RemoteRenderingBackend;
 
+    bool apply(WebCore::DisplayList::ItemHandle item, WebCore::GraphicsContext& context)
+    {
+        if (item.is<WebCore::DisplayList::GetPixelBuffer>()) {
+            auto& getPixelBufferItem = item.get<WebCore::DisplayList::GetPixelBuffer>();
+            auto pixelBuffer = BaseConcreteImageBuffer::getPixelBuffer(getPixelBufferItem.outputFormat(), getPixelBufferItem.srcRect());
+            m_remoteRenderingBackend.populateGetPixelBufferSharedMemory(WTFMove(pixelBuffer));
+            return true;
+        }
+
+        if (item.is<WebCore::DisplayList::PutPixelBuffer>()) {
+            auto& putPixelBufferItem = item.get<WebCore::DisplayList::PutPixelBuffer>();
+            putPixelBuffer(putPixelBufferItem.pixelBuffer(), putPixelBufferItem.srcRect(), putPixelBufferItem.destPoint(), putPixelBufferItem.destFormat());
+            return true;
+        }
+
+        if (item.is<WebCore::DisplayList::FlushContext>()) {
+            BaseConcreteImageBuffer::flushContext();
+            auto identifier = item.get<WebCore::DisplayList::FlushContext>().identifier();
+            LOG_WITH_STREAM(SharedDisplayLists, stream << "Acknowledging Flush{" << identifier << "} in Image(" << m_renderingResourceIdentifier << ")");
+            m_remoteRenderingBackend.didFlush(identifier, m_renderingResourceIdentifier);
+            return true;
+        }
+
+        if (item.is<WebCore::DisplayList::MetaCommandChangeItemBuffer>()) {
+            auto nextBufferIdentifier = item.get<WebCore::DisplayList::MetaCommandChangeItemBuffer>().identifier();
+            LOG_WITH_STREAM(SharedDisplayLists, stream << "Switching to Items[" << nextBufferIdentifier << "]");
+            m_remoteRenderingBackend.setNextItemBufferToRead(nextBufferIdentifier, m_renderingResourceIdentifier);
+            return true;
+        }
+
+        return m_remoteRenderingBackend.applyMediaItem(item, context);
+    }
+
     RemoteRenderingBackend& m_remoteRenderingBackend;
     QualifiedRenderingResourceIdentifier m_renderingResourceIdentifier;
-    IPC::ScopedActiveMessageReceiveQueue<RemoteDisplayListRecorder> m_remoteDisplayList;
 };
 
 } // namespace WebKit

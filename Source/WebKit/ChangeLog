@@ -1,3 +1,7 @@
+2021-10-20  Alan Coon  <alancoon@apple.com>
+
+        Revert r284079. rdar://problem/84478842
+
 2021-10-19  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r284489. rdar://problem/84439180

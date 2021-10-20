@@ -55,10 +55,7 @@ void RemoteDisplayListRecorder::startListeningForIPC()
 {
     ASSERT(!m_isListeningForIPC);
     m_isListeningForIPC = true;
-    // FIXME: Can we avoid synchronous dispatch here by adjusting the assertion in `Connection::enqueueMatchingMessagesToMessageReceiveQueue`?
-    callOnMainRunLoopAndWait([&] {
-        m_renderingBackend->streamConnection().startReceivingMessages(*this, Messages::RemoteDisplayListRecorder::messageReceiverName(), m_imageBufferIdentifier.object().toUInt64());
-    });
+    // FIXME: Not implemented yet.
 }
 
 void RemoteDisplayListRecorder::stopListeningForIPC()
@@ -66,7 +63,7 @@ void RemoteDisplayListRecorder::stopListeningForIPC()
     if (!m_isListeningForIPC)
         return;
 
-    m_renderingBackend->streamConnection().stopReceivingMessages(Messages::RemoteDisplayListRecorder::messageReceiverName(), m_imageBufferIdentifier.object().toUInt64());
+    // FIXME: Not implemented yet.
     m_isListeningForIPC = false;
 }
 
