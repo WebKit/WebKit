@@ -1,3 +1,18 @@
+2021-10-19  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [CMake] Align OptionsMac with Xcode build
+        https://bugs.webkit.org/show_bug.cgi?id=231982
+
+        Reviewed by Don Olmstead.
+
+        * Source/cmake/OptionsMac.cmake:
+        Ensure that the listed options (1) are not redundant with the defaults in WebKitFeatures.cmake and
+        (2) match the options for the Xcode build as closely as possible.
+
+        * Source/cmake/WebKitFeatures.cmake:
+        Remove an outdated feature, ENABLE_APPLE_PAY_SESSION_V9,
+        and let ENABLE_MAC_GESTURE_EVENTS be handled by PlatformEnable, since it depends on USE_APPLE_INTERNAL_SDK.
+
 2021-10-19  Tyler Wilcock  <tyler_w@apple.com>
 
         Add AX team GitHub usernames to contributors.json

@@ -665,6 +665,7 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/cocoa/VP9UtilitiesCocoa.h
     platform/graphics/cocoa/WebActionDisablingCALayerDelegate.h
     platform/graphics/cocoa/WebCoreCALayerExtras.h
+    platform/graphics/cocoa/WebGLLayer.h
     platform/graphics/cocoa/WebMAudioUtilitiesCocoa.h
 
     platform/graphics/cv/CVUtilities.h

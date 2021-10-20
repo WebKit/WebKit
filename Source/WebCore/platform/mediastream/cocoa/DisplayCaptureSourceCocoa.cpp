@@ -29,6 +29,7 @@
 #if ENABLE(MEDIA_STREAM) && PLATFORM(COCOA)
 
 #include "CGDisplayStreamScreenCaptureSource.h"
+#include "CoreVideoSoftLink.h"
 #include "ImageTransferSessionVT.h"
 #include "Logging.h"
 #include "MediaSampleAVFObjC.h"
@@ -38,12 +39,12 @@
 #include "RealtimeMediaSourceSettings.h"
 #include "RealtimeVideoUtilities.h"
 #include "RemoteVideoSample.h"
-#include "ReplayKitCaptureSource.h"
 #include "Timer.h"
 #include <CoreMedia/CMSync.h>
 #include <IOSurface/IOSurfaceRef.h>
 #include <mach/mach_time.h>
 #include <pal/avfoundation/MediaTimeAVFoundation.h>
+#include <pal/cf/CoreMediaSoftLink.h>
 #include <pal/spi/cf/CoreAudioSPI.h>
 #include <pal/spi/cg/CoreGraphicsSPI.h>
 #include <pal/spi/cocoa/IOSurfaceSPI.h>
@@ -51,8 +52,9 @@
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
 
-#include "CoreVideoSoftLink.h"
-#include <pal/cf/CoreMediaSoftLink.h>
+#if PLATFORM(IOS)
+#include "ReplayKitCaptureSource.h"
+#endif
 
 namespace WebCore {
 
