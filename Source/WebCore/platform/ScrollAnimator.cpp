@@ -234,6 +234,11 @@ bool ScrollAnimator::handleWheelEvent(const PlatformWheelEvent& e)
 #endif
 }
 
+void ScrollAnimator::stopKeyboardScrollAnimation()
+{
+    m_scrollController.stopKeyboardScrolling();
+}
+
 #if ENABLE(TOUCH_EVENTS)
 bool ScrollAnimator::handleTouchEvent(const PlatformTouchEvent&)
 {

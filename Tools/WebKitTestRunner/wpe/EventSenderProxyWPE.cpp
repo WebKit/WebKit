@@ -327,6 +327,14 @@ void EventSenderProxy::keyDown(WKStringRef keyRef, WKEventModifiers wkModifiers,
     free(entries);
 }
 
+void EventSenderProxy::rawKeyDown(WKStringRef key, WKEventModifiers modifiers, unsigned keyLocation)
+{
+}
+
+void EventSenderProxy::rawKeyUp(WKStringRef key, WKEventModifiers modifiers, unsigned keyLocation)
+{
+}
+
 void EventSenderProxy::addTouchPoint(int x, int y)
 {
     struct wpe_input_touch_event_raw rawEvent { wpe_input_touch_event_type_down, secToMsTimestamp(m_time), static_cast<int>(m_touchEvents.size()), static_cast<int32_t>(x), static_cast<int32_t>(y) };

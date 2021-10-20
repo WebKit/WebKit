@@ -1,3 +1,50 @@
+2021-10-20  Beth Dakin  <bdakin@apple.com> and Dana Estra <destra@apple.com>
+
+        macOS key-driven smooth scrolling does not stop when focus changes
+        https://bugs.webkit.org/show_bug.cgi?id=228302
+
+        Reviewed by Simon Fraser.
+
+        This patch adds support for rawKeyUp and rawKeyDown to the macOS versions of WKTR and DRT.
+
+        * DumpRenderTree/mac/EventSendingController.mm:
+        (+[EventSendingController initialize]):
+        (+[EventSendingController isSelectorExcludedFromWebScript:]):
+        (+[EventSendingController webScriptNameForSelector:]):
+        (-[EventSendingController rawKeyDown:withModifiers:withLocation:]):
+        (-[EventSendingController rawKeyDownWrapper:withModifiers:withLocation:]):
+        (-[EventSendingController rawKeyUp:withModifiers:withLocation:]):
+        (-[EventSendingController rawKeyUpWrapper:withModifiers:withLocation:]):
+        * WebKitTestRunner/EventSenderProxy.h:
+        * WebKitTestRunner/InjectedBundle/Bindings/EventSendingController.idl:
+        * WebKitTestRunner/InjectedBundle/EventSendingController.cpp:
+        (WTR::createRawKeyDownMessageBody):
+        (WTR::createRawKeyUpMessageBody):
+        (WTR::EventSendingController::rawKeyDown):
+        (WTR::EventSendingController::rawKeyUp):
+        * WebKitTestRunner/InjectedBundle/EventSendingController.h:
+        * WebKitTestRunner/InjectedBundle/ios/EventSenderProxyIOS.mm:
+        (WTR::EventSenderProxy::rawKeyDown):
+        (WTR::EventSenderProxy::rawKeyUp):
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::didReceiveRawKeyDownMessageFromInjectedBundle):
+        (WTR::TestController::didReceiveRawKeyUpMessageFromInjectedBundle):
+        (WTR::TestController::didReceiveMessageFromInjectedBundle):
+        (WTR::TestController::didReceiveSynchronousMessageFromInjectedBundle):
+        * WebKitTestRunner/TestController.h:
+        * WebKitTestRunner/gtk/EventSenderProxyGtk.cpp:
+        (WTR::EventSenderProxy::rawKeyDown):
+        (WTR::EventSenderProxy::rawKeyUp):
+        * WebKitTestRunner/mac/EventSenderProxy.mm:
+        (WTR::EventSenderProxy::rawKeyDown):
+        (WTR::EventSenderProxy::rawKeyUp):
+        * WebKitTestRunner/win/EventSenderProxyWin.cpp:
+        (WTR::EventSenderProxy::rawKeyDown):
+        (WTR::EventSenderProxy::rawKeyUp):
+        * WebKitTestRunner/wpe/EventSenderProxyWPE.cpp:
+        (WTR::EventSenderProxy::rawKeyDown):
+        (WTR::EventSenderProxy::rawKeyUp):
+
 2021-10-20  Alex Christensen  <achristensen@webkit.org>
 
         REGRESSION (r284418): [iOS] TestWebKitAPI.HSTS.Basic, TestWebKitAPI.HSTS.CrossOriginRedirect, TestWebKitAPI.HSTS.ThirdParty, and TestWebKitAPI.WebKit.RedirectToPlaintextHTTPSUpgrade timing out

@@ -659,6 +659,46 @@ void EventSenderProxy::keyDown(WKStringRef key, WKEventModifiers modifiers, unsi
     [NSApp _setCurrentEvent:nil];
 }
 
+void EventSenderProxy::rawKeyDown(WKStringRef key, WKEventModifiers modifiers, unsigned keyLocation)
+{
+    RetainPtr<ModifierKeys> modifierKeys = [ModifierKeys modifierKeysWithKey:toWTFString(key) modifiers:buildModifierFlags(modifiers) keyLocation:keyLocation];
+
+    NSEvent *event = [NSEvent keyEventWithType:NSEventTypeKeyDown
+        location:NSMakePoint(5, 5)
+        modifierFlags:modifierKeys->modifierFlags
+        timestamp:absoluteTimeForEventTime(currentEventTime())
+        windowNumber:[m_testController->mainWebView()->platformWindow() windowNumber]
+        context:[NSGraphicsContext currentContext]
+        characters:modifierKeys->eventCharacter.get()
+        charactersIgnoringModifiers:modifierKeys->charactersIgnoringModifiers.get()
+        isARepeat:NO
+        keyCode:modifierKeys->keyCode];
+
+    [NSApp _setCurrentEvent:event];
+    [[m_testController->mainWebView()->platformWindow() firstResponder] keyDown:event];
+    [NSApp _setCurrentEvent:nil];
+}
+
+void EventSenderProxy::rawKeyUp(WKStringRef key, WKEventModifiers modifiers, unsigned keyLocation)
+{
+    RetainPtr<ModifierKeys> modifierKeys = [ModifierKeys modifierKeysWithKey:toWTFString(key) modifiers:buildModifierFlags(modifiers) keyLocation:keyLocation];
+
+    NSEvent *event = [NSEvent keyEventWithType:NSEventTypeKeyUp
+        location:NSMakePoint(5, 5)
+        modifierFlags:modifierKeys->modifierFlags
+        timestamp:absoluteTimeForEventTime(currentEventTime())
+        windowNumber:[m_testController->mainWebView()->platformWindow() windowNumber]
+        context:[NSGraphicsContext currentContext]
+        characters:modifierKeys->eventCharacter.get()
+        charactersIgnoringModifiers:modifierKeys->charactersIgnoringModifiers.get()
+        isARepeat:NO
+        keyCode:modifierKeys->keyCode];
+
+    [NSApp _setCurrentEvent:event];
+    [[m_testController->mainWebView()->platformWindow() firstResponder] keyUp:event];
+    [NSApp _setCurrentEvent:nil];
+}
+
 void EventSenderProxy::mouseScrollBy(int x, int y)
 {
     auto cgScrollEvent = adoptCF(CGEventCreateScrollWheelEvent2(0, kCGScrollEventUnitLine, 2, y, x, 0));

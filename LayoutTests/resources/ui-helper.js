@@ -344,6 +344,30 @@ window.UIHelper = class UIHelper {
         }
     }
 
+    static rawKeyDown(key, modifiers=[])
+    {
+        if (!this.isWebKit2() || !this.isIOSFamily()) {
+            eventSender.rawKeyDown(key, modifiers);
+            return Promise.resolve();
+        }
+
+        return new Promise((resolve) => {
+            testRunner.runUIScript(`uiController.rawKeyDown("${key}", ${JSON.stringify(modifiers)});`, resolve);
+        });
+    }
+
+    static rawKeyUp(key, modifiers=[])
+    {
+        if (!this.isWebKit2() || !this.isIOSFamily()) {
+            eventSender.rawKeyUp(key, modifiers);
+            return Promise.resolve();
+        }
+
+        return new Promise((resolve) => {
+            testRunner.runUIScript(`uiController.rawKeyUp("${key}", ${JSON.stringify(modifiers)});`, resolve);
+        });
+    }
+
     static keyDown(key, modifiers=[])
     {
         if (!this.isWebKit2() || !this.isIOSFamily()) {

@@ -70,6 +70,8 @@ public:
     void leapForward(int milliseconds);
 
     void keyDown(WKStringRef key, WKEventModifiers, unsigned location);
+    void rawKeyDown(WKStringRef key, WKEventModifiers, unsigned location);
+    void rawKeyUp(WKStringRef key, WKEventModifiers, unsigned location);
 
 #if PLATFORM(COCOA)
     unsigned mouseButtonsCurrentlyDown() const { return m_mouseButtonsCurrentlyDown; }

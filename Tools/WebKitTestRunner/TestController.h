@@ -441,6 +441,8 @@ private:
     WKRetainPtr<WKTypeRef> getInjectedBundleInitializationUserData();
 
     void didReceiveKeyDownMessageFromInjectedBundle(WKDictionaryRef messageBodyDictionary, bool synchronous);
+    void didReceiveRawKeyDownMessageFromInjectedBundle(WKDictionaryRef messageBodyDictionary, bool synchronous);
+    void didReceiveRawKeyUpMessageFromInjectedBundle(WKDictionaryRef messageBodyDictionary, bool synchronous);
 
     // WKContextClient
     static void networkProcessDidCrash(WKContextRef, const void*);

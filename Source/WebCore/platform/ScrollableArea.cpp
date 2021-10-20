@@ -219,6 +219,11 @@ bool ScrollableArea::handleWheelEventForScrolling(const PlatformWheelEvent& whee
     return handledEvent;
 }
 
+void ScrollableArea::stopKeyboardScrollAnimation()
+{
+    scrollAnimator().stopKeyboardScrollAnimation();
+}
+
 #if ENABLE(TOUCH_EVENTS)
 bool ScrollableArea::handleTouchEvent(const PlatformTouchEvent& touchEvent)
 {

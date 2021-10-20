@@ -1,3 +1,27 @@
+2021-10-20  Beth Dakin  <bdakin@apple.com> and Dana Estra <destra@apple.com>
+
+        macOS key-driven smooth scrolling does not stop when focus changes
+        https://bugs.webkit.org/show_bug.cgi?id=228302
+
+        Reviewed by Simon Fraser.
+
+        EventHandlerDrivenSmoothKeyboardScrollingEnabled keys are WK2 only right now, so skip the new 
+        test in general.
+        * TestExpectations:
+
+        New test that verifies this bug is resolved.
+        * fast/scrolling/unfocusing-page-while-keyboard-scrolling-expected.txt: Added.
+        * fast/scrolling/unfocusing-page-while-keyboard-scrolling.html: Added.
+
+        Do run the test for mac-wk2. rawKeyDown / rawKeyUp are currently not implemented 
+        elsewhere.
+        * platform/mac-wk2/TestExpectations:
+
+        New support for rawKeyDown in order to simulate holding the key down.
+        * resources/ui-helper.js:
+        (window.UIHelper.rawKeyDown):
+        (window.UIHelper.rawKeyUp):
+
 2021-10-20  Eric Hutchison  <ehutchison@apple.com>
 
         [ iOS15 EWS ] http/tests/privateClickMeasurement/attribution-conversion-through-image-redirect-in-new-window.html is crashing.

@@ -45,7 +45,11 @@ interface EventSendingController {
 
     undefined leapForward(long milliseconds);
 
+    // keyDown is really keyUpAndDown, and perhaps should be renamed to reflect that.
+    // rawKeyDown is just the keyDown, and rawKeyUp is just the keyUp
     undefined keyDown(DOMString key, object modifierArray, long location);
+    undefined rawKeyDown(DOMString key, object modifierArray, long location);
+    undefined rawKeyUp(DOMString key, object modifierArray, long location);
     undefined scheduleAsynchronousKeyDown(DOMString key);
 
     // Zoom functions.

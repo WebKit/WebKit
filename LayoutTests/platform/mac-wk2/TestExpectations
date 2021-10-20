@@ -42,6 +42,8 @@ fast/media/mq-prefers-reduced-motion-live-update.html [ Pass ]
 fast/media/mq-prefers-contrast-live-update.html [ Pass ]
 fast/media/mq-prefers-contrast.html [ Pass ]
 
+fast/scrolling/unfocusing-page-while-keyboard-scrolling.html [ Pass ]
+
 http/tests/ssl/applepay [ Pass ]
 
 # APPLE_PAY_INSTALLMENTS was first available in Catalina.

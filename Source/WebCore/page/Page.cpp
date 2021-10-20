@@ -2366,11 +2366,34 @@ void Page::setActivityState(OptionSet<ActivityState::Flag> activityState)
     for (auto& observer : m_activityStateChangeObservers)
         observer.activityStateDidChange(oldActivityState, m_activityState);
 
-    if (wasVisibleAndActive != isVisibleAndActive())
+    if (wasVisibleAndActive != isVisibleAndActive()) {
         PlatformMediaSessionManager::updateNowPlayingInfoIfNecessary();
+        stopKeyboardScrollAnimation();
+    }
 
     if (m_performanceMonitor)
         m_performanceMonitor->activityStateChanged(oldActivityState, activityState);
+}
+
+void Page::stopKeyboardScrollAnimation()
+{
+    for (auto* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
+        auto* frameView = frame->view();
+        if (!frameView)
+            continue;
+
+        frameView->stopKeyboardScrollAnimation();
+
+        auto scrollableAreas = frameView->scrollableAreas();
+        if (!scrollableAreas)
+            continue;
+
+        for (auto& scrollableArea : *scrollableAreas) {
+            // First call stopAsyncAnimatedScroll() to prepare for the keyboard scroller running on the scrolling thread.
+            scrollableArea->stopAsyncAnimatedScroll();
+            scrollableArea->stopKeyboardScrollAnimation();
+        }
+    }
 }
 
 bool Page::isVisibleAndActive() const

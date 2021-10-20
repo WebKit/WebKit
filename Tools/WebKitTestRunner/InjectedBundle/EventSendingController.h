@@ -68,6 +68,8 @@ public:
     void callAfterScrollingCompletes(JSValueRef functionCallback);
 
     void keyDown(JSStringRef key, JSValueRef modifierArray, int location);
+    void rawKeyDown(JSStringRef key, JSValueRef modifierArray, int location);
+    void rawKeyUp(JSStringRef key, JSValueRef modifierArray, int location);
     void scheduleAsynchronousKeyDown(JSStringRef key);
 
     void textZoomIn();

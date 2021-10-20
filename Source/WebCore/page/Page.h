@@ -906,6 +906,8 @@ private:
     void setIsVisibleInternal(bool);
     void setIsVisuallyIdleInternal(bool);
 
+    void stopKeyboardScrollAnimation();
+
     enum ShouldHighlightMatches { DoNotHighlightMatches, HighlightMatches };
     enum ShouldMarkMatches { DoNotMarkMatches, MarkMatches };
 

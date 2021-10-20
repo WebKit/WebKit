@@ -97,6 +97,7 @@ fast/forms/enterkeyhint-attribute-values.html [ Skip ]
 fast/scrolling/keyboard-scrolling-distance-downArrow.html [ Skip ]
 fast/scrolling/keyboard-scrolling-distance-pageDown.html [ Skip ]
 fast/scrolling/keyboard-scrolling-last-timestamp.html [ Skip ]
+fast/scrolling/unfocusing-page-while-keyboard-scrolling.html [ Skip ]
 
 # Highlighting marked text ranges from layout tests is only supported in WebKit2.
 editing/input/composition-highlights.html [ Skip ]

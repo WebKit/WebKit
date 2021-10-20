@@ -85,6 +85,8 @@ public:
 
     virtual bool processWheelEventForScrollSnap(const PlatformWheelEvent&) { return false; }
 
+    void stopKeyboardScrollAnimation();
+    
 #if PLATFORM(COCOA)
     virtual void handleWheelEventPhase(PlatformWheelEventPhase) { }
 #endif

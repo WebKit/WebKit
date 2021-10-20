@@ -301,9 +301,39 @@ static WKRetainPtr<WKMutableDictionaryRef> createKeyDownMessageBody(JSStringRef 
     return body;
 }
 
+static WKRetainPtr<WKMutableDictionaryRef> createRawKeyDownMessageBody(JSStringRef key, WKEventModifiers modifiers, int location)
+{
+    auto body = adoptWK(WKMutableDictionaryCreate());
+    setValue(body, "SubMessage", "RawKeyDown");
+    setValue(body, "Key", key);
+    setValue(body, "Modifiers", adoptWK(WKUInt64Create(modifiers)));
+    setValue(body, "Location", adoptWK(WKUInt64Create(location)));
+    return body;
+}
+
+static WKRetainPtr<WKMutableDictionaryRef> createRawKeyUpMessageBody(JSStringRef key, WKEventModifiers modifiers, int location)
+{
+    auto body = adoptWK(WKMutableDictionaryCreate());
+    setValue(body, "SubMessage", "RawKeyUp");
+    setValue(body, "Key", key);
+    setValue(body, "Modifiers", adoptWK(WKUInt64Create(modifiers)));
+    setValue(body, "Location", adoptWK(WKUInt64Create(location)));
+    return body;
+}
+
 void EventSendingController::keyDown(JSStringRef key, JSValueRef modifierArray, int location)
 {
     postSynchronousPageMessage("EventSender", createKeyDownMessageBody(key, parseModifierArray(modifierArray), location));
+}
+
+void EventSendingController::rawKeyDown(JSStringRef key, JSValueRef modifierArray, int location)
+{
+    postSynchronousPageMessage("EventSender", createRawKeyDownMessageBody(key, parseModifierArray(modifierArray), location));
+}
+
+void EventSendingController::rawKeyUp(JSStringRef key, JSValueRef modifierArray, int location)
+{
+    postSynchronousPageMessage("EventSender", createRawKeyUpMessageBody(key, parseModifierArray(modifierArray), location));
 }
 
 void EventSendingController::scheduleAsynchronousKeyDown(JSStringRef key)

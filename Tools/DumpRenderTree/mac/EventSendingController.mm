@@ -196,6 +196,8 @@ static NSDraggingSession *drt_WebHTMLView_beginDraggingSessionWithItemsEventSour
         @"focus",
         @"input",
         @"keydown",
+        @"rawkeydown",
+        @"rawkeyup",
         @"keypress",
         @"keyup",
         @"load",
@@ -239,6 +241,8 @@ static NSDraggingSession *drt_WebHTMLView_beginDraggingSessionWithItemsEventSour
             || aSelector == @selector(enableDOMUIEventLogging:)
             || aSelector == @selector(fireKeyboardEventsToElement:)
             || aSelector == @selector(keyDown:withModifiers:withLocation:)
+            || aSelector == @selector(rawKeyDown:withModifiers:withLocation:)
+            || aSelector == @selector(rawKeyUp:withModifiers:withLocation:)
             || aSelector == @selector(leapForward:)
             || aSelector == @selector(mouseDown:withModifiers:)
             || aSelector == @selector(mouseMoveToX:Y:)
@@ -300,6 +304,10 @@ static NSDraggingSession *drt_WebHTMLView_beginDraggingSessionWithItemsEventSour
         return @"fireKeyboardEventsToElement";
     if (aSelector == @selector(keyDown:withModifiers:withLocation:))
         return @"keyDown";
+    if (aSelector == @selector(rawKeyDown:withModifiers:withLocation:))
+        return @"rawKeyDown";
+    if (aSelector == @selector(rawKeyUp:withModifiers:withLocation:))
+        return @"rawKeyUp";
     if (aSelector == @selector(scheduleAsynchronousKeyDown:withModifiers:withLocation:))
         return @"scheduleAsynchronousKeyDown";
     if (aSelector == @selector(leapForward:))
@@ -1020,6 +1028,76 @@ static NSUInteger swizzledEventPressedMouseButtons()
 - (void)keyDownWrapper:(NSString *)character withModifiers:(WebScriptObject *)modifiers withLocation:(unsigned long)location
 {
     [self keyDown:character withModifiers:modifiers withLocation:location];
+}
+
+- (void)rawKeyDown:(NSString *)character withModifiers:(WebScriptObject *)modifiers withLocation:(unsigned long)location
+{
+    RetainPtr<ModifierKeys> modifierKeys = [ModifierKeys modifierKeysWithKey:character modifiers:buildModifierFlags(modifiers) keyLocation:location];
+
+    [[[mainFrame frameView] documentView] layout];
+
+#if !PLATFORM(IOS_FAMILY)
+    auto event = retainPtr([NSEvent keyEventWithType:NSEventTypeKeyDown
+        location:NSMakePoint(5, 5)
+        modifierFlags:modifierKeys->modifierFlags
+        timestamp:[self currentEventTime]
+        windowNumber:[[[mainFrame webView] window] windowNumber]
+        context:[NSGraphicsContext currentContext]
+        characters:modifierKeys->eventCharacter.get()
+        charactersIgnoringModifiers:modifierKeys->charactersIgnoringModifiers.get()
+        isARepeat:NO
+        keyCode:modifierKeys->keyCode]);
+#else
+    auto event = adoptNS([[WebEvent alloc] initWithKeyEventType:WebEventKeyDown timeStamp:[self currentEventTime] characters:modifierKeys->eventCharacter.get() charactersIgnoringModifiers:modifierKeys->charactersIgnoringModifiers.get() modifiers:(WebEventFlags)modifierKeys->modifierFlags isRepeating:NO withFlags:0 withInputManagerHint:nil keyCode:[character characterAtIndex:0] isTabKey:([character characterAtIndex:0] == '\t')]);
+#endif
+
+#if !PLATFORM(IOS_FAMILY)
+    [NSApp _setCurrentEvent:event.get()];
+#endif
+    [[[[mainFrame webView] window] firstResponder] keyDown:event.get()];
+#if !PLATFORM(IOS_FAMILY)
+    [NSApp _setCurrentEvent:nil];
+#endif
+}
+
+- (void)rawKeyDownWrapper:(NSString *)character withModifiers:(WebScriptObject *)modifiers withLocation:(unsigned long)location
+{
+    [self rawKeyDown:character withModifiers:modifiers withLocation:location];
+}
+
+- (void)rawKeyUp:(NSString *)character withModifiers:(WebScriptObject *)modifiers withLocation:(unsigned long)location
+{
+    RetainPtr<ModifierKeys> modifierKeys = [ModifierKeys modifierKeysWithKey:character modifiers:buildModifierFlags(modifiers) keyLocation:location];
+
+    [[[mainFrame frameView] documentView] layout];
+
+#if !PLATFORM(IOS_FAMILY)
+    auto event = retainPtr([NSEvent keyEventWithType:NSEventTypeKeyUp
+        location:NSMakePoint(5, 5)
+        modifierFlags:modifierKeys->modifierFlags
+        timestamp:[self currentEventTime]
+        windowNumber:[[[mainFrame webView] window] windowNumber]
+        context:[NSGraphicsContext currentContext]
+        characters:modifierKeys->eventCharacter.get()
+        charactersIgnoringModifiers:modifierKeys->charactersIgnoringModifiers.get()
+        isARepeat:NO
+        keyCode:modifierKeys->keyCode]);
+#else
+    auto event = adoptNS([[WebEvent alloc] initWithKeyEventType:WebEventKeyUp timeStamp:[self currentEventTime] characters:modifierKeys->eventCharacter.get() charactersIgnoringModifiers:modifierKeys->charactersIgnoringModifiers.get() modifiers:(WebEventFlags)modifierKeys->modifierFlags isRepeating:NO withFlags:0 withInputManagerHint:nil keyCode:[character characterAtIndex:0] isTabKey:([character characterAtIndex:0] == '\t')]);
+#endif
+
+#if !PLATFORM(IOS_FAMILY)
+    [NSApp _setCurrentEvent:event.get()];
+#endif
+    [[[[mainFrame webView] window] firstResponder] keyUp:event.get()];
+#if !PLATFORM(IOS_FAMILY)
+    [NSApp _setCurrentEvent:nil];
+#endif
+}
+
+- (void)rawKeyUpWrapper:(NSString *)character withModifiers:(WebScriptObject *)modifiers withLocation:(unsigned long)location
+{
+    [self rawKeyUp:character withModifiers:modifiers withLocation:location];
 }
 
 - (void)scheduleAsynchronousKeyDown:(NSString *)character withModifiers:(WebScriptObject *)modifiers withLocation:(unsigned long)location
