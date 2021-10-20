@@ -34,6 +34,7 @@
 #include "RenderTable.h"
 #include "RenderTextFragment.h"
 #include "RenderTreeBuilder.h"
+#include "StyleChange.h"
 
 namespace WebCore {
 

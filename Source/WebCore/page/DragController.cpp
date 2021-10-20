@@ -28,6 +28,8 @@
 
 #include "HTMLAnchorElement.h"
 #include "SVGAElement.h"
+#include "SVGElementTypeHelpers.h"
+
 
 #if ENABLE(DRAG_SUPPORT)
 #include "CachedImage.h"
@@ -81,7 +83,6 @@
 #include "RenderView.h"
 #include "ReplaceSelectionCommand.h"
 #include "ResourceRequest.h"
-#include "SVGElementTypeHelpers.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
 #include "ShadowRoot.h"

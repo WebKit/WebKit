@@ -28,6 +28,7 @@
 #include "ActiveDOMObject.h"
 
 #include "Document.h"
+#include "Event.h"
 #include "EventLoop.h"
 #include "ScriptExecutionContext.h"
 

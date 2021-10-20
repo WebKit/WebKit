@@ -31,6 +31,7 @@
 #include "config.h"
 #include "DOMFormData.h"
 
+#include "Document.h"
 #include "HTMLFormControlElement.h"
 #include "HTMLFormElement.h"
 

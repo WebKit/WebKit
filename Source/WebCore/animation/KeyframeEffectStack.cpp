@@ -31,6 +31,7 @@
 #include "KeyframeEffect.h"
 #include "WebAnimation.h"
 #include "WebAnimationUtilities.h"
+#include <wtf/PointerComparison.h>
 
 namespace WebCore {
 

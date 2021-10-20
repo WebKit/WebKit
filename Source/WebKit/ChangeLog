@@ -1,3 +1,13 @@
+2021-10-19  Don Olmstead  <don.olmstead@sony.com>
+
+        Non-unified build fixes, mid October 2021 edition
+        https://bugs.webkit.org/show_bug.cgi?id=231915
+
+        Unreviewed non-unified build fixes.
+
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementConnection.cpp:
+        * WebProcess/GPU/graphics/RemoteDisplayListRecorderProxy.cpp:
+
 2021-10-19  Ross Kirsling  <ross.kirsling@sony.com>
 
         [CMake] Align OptionsMac with Xcode build

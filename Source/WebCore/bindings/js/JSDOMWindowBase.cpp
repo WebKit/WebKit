@@ -30,6 +30,7 @@
 #include "DOMWindow.h"
 #include "Document.h"
 #include "Element.h"
+#include "Event.h"
 #include "EventLoop.h"
 #include "FetchResponse.h"
 #include "Frame.h"

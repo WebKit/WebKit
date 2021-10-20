@@ -26,6 +26,8 @@
 #include "config.h"
 #include "PrivateClickMeasurementConnection.h"
 
+#include "NetworkSession.h"
+
 namespace WebKit {
 
 namespace PCM {

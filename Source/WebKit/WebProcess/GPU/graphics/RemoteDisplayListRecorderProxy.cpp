@@ -29,6 +29,7 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "RemoteDisplayListRecorderMessages.h"
+#include "WebCoreArgumentCoders.h"
 #include <WebCore/DisplayList.h>
 #include <WebCore/DisplayListDrawingContext.h>
 #include <WebCore/DisplayListItems.h>

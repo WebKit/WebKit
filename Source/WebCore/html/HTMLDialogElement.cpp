@@ -25,11 +25,15 @@
 
 #include "config.h"
 #include "HTMLDialogElement.h"
+
+#include "DocumentInlines.h"
 #include "EventLoop.h"
 #include "EventNames.h"
 #include "FocusOptions.h"
-
+#include "GCReachableRef.h"
 #include "HTMLNames.h"
+#include "RenderElement.h"
+#include "TypedElementDescendantIterator.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
