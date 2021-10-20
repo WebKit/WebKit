@@ -1,3 +1,21 @@
+2021-10-19  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        Update seccomp filters with latest changes from flatpak
+        https://bugs.webkit.org/show_bug.cgi?id=231479
+
+        Reviewed by Adrian Perez de Castro.
+
+        Additionally, let's fix a minor inconsistency in our error-handling code: all but one of
+        our codepaths carefully free and close resources, but the process is about to crash so
+        there's not really any reason to do so. The code is slightly simpler if we don't bother.
+
+        The seemingly-extraneous include order changes are required to placate the style checker.
+
+        * UIProcess/Launcher/glib/BubblewrapLauncher.cpp:
+        (WebKit::seccompStrerror):
+        (WebKit::setupSeccomp):
+        * UIProcess/Launcher/glib/Syscalls.h: Added.
+
 2021-09-17  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update OptionsGTK.cmake and NEWS for 2.32.4 release
