@@ -1,3 +1,16 @@
+2021-10-20  Antti Koivisto  <antti@apple.com>
+
+        Don't re-evaluate viewport dependent media queries if the viewport doesn't change
+        https://bugs.webkit.org/show_bug.cgi?id=231949
+        rdar://77240171
+
+        Reviewed by Alan Bujtas.
+
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::handlePreferenceChange):
+
+        Remember to signal accessibility settings change on this code path too.
+
 2021-10-20  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         Do not use strerror()

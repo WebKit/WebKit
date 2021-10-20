@@ -27,6 +27,7 @@
 
 #pragma once
 
+#include "IntSize.h"
 #include "MediaQueryExpression.h"
 #include <wtf/WeakPtr.h>
 
@@ -54,6 +55,10 @@ struct MediaQueryDynamicResults {
     }
     bool isEmpty() const { return viewport.isEmpty() && appearance.isEmpty() && accessibilitySettings.isEmpty(); }
 };
+
+using MediaQueryViewportState = std::tuple<IntSize, float, bool>;
+
+MediaQueryViewportState mediaQueryViewportStateForDocument(const Document&);
 
 // Some of the constructors are used for cases where the device characteristics are not known.
 // These  can be used to prune the loading of stylesheets to only those which are not already known to not match.

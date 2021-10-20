@@ -1132,8 +1132,11 @@ void WebProcess::handlePreferenceChange(const String& domain, const String& key,
 
 #if USE(APPKIT)
     auto cfKey = key.createCFString();
-    if (CFEqual(cfKey.get(), kAXInterfaceReduceMotionKey) || CFEqual(cfKey.get(), kAXInterfaceIncreaseContrastKey) || key == invertColorsPreferenceKey())
+    if (CFEqual(cfKey.get(), kAXInterfaceReduceMotionKey) || CFEqual(cfKey.get(), kAXInterfaceIncreaseContrastKey) || key == invertColorsPreferenceKey()) {
         [NSWorkspace _invalidateAccessibilityDisplayValues];
+        for (auto& page : m_pageMap.values())
+            page->accessibilitySettingsDidChange();
+    }
 #endif
 
     AuxiliaryProcess::handlePreferenceChange(domain, key, value);

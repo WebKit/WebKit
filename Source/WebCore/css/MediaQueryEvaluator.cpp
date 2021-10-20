@@ -110,6 +110,12 @@ static bool isAppearanceDependent(const AtomString& mediaFeature)
     ;
 }
 
+MediaQueryViewportState mediaQueryViewportStateForDocument(const Document& document)
+{
+    // These things affect evaluation of viewport dependent media queries.
+    return { document.view()->layoutSize(), document.frame()->pageZoomFactor(), document.printing() };
+}
+
 MediaQueryEvaluator::MediaQueryEvaluator(bool mediaFeatureResult)
     : m_fallbackResult(mediaFeatureResult)
 {
