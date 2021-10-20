@@ -32,6 +32,7 @@
 #include "WebProcessCreationParameters.h"
 
 #if ENABLE(NOTIFICATIONS)
+#include "NotificationManagerMessageHandlerMessages.h"
 #include "WebNotification.h"
 #include "WebNotificationManagerMessages.h"
 #include "WebPageProxyMessages.h"
@@ -149,7 +150,7 @@ bool WebNotificationManager::show(Notification* notification, WebPage* page)
     auto it = m_notificationContextMap.add(notification->scriptExecutionContext(), Vector<uint64_t>()).iterator;
     it->value.append(notificationID);
 
-    m_process.parentProcessConnection()->send(Messages::WebPageProxy::ShowNotification(notification->title(), notification->body(), notification->icon().string(), notification->tag(), notification->lang(), notification->dir(), notification->scriptExecutionContext()->securityOrigin()->toString(), notificationID), page->identifier());
+    m_process.parentProcessConnection()->send(Messages::NotificationManagerMessageHandler::ShowNotification(notification->title(), notification->body(), notification->icon().string(), notification->tag(), notification->lang(), notification->dir(), notification->scriptExecutionContext()->securityOrigin()->toString(), notificationID), page->identifier());
     return true;
 #else
     UNUSED_PARAM(notification);
@@ -168,7 +169,7 @@ void WebNotificationManager::cancel(Notification* notification, WebPage* page)
     if (!notificationID)
         return;
     
-    m_process.parentProcessConnection()->send(Messages::WebPageProxy::CancelNotification(notificationID), page->identifier());
+    m_process.parentProcessConnection()->send(Messages::NotificationManagerMessageHandler::CancelNotification(notificationID), page->identifier());
 #else
     UNUSED_PARAM(notification);
     UNUSED_PARAM(page);
@@ -183,7 +184,7 @@ void WebNotificationManager::clearNotifications(WebCore::ScriptExecutionContext*
         return;
 
     Vector<uint64_t>& notificationIDs = it->value;
-    m_process.parentProcessConnection()->send(Messages::WebPageProxy::ClearNotifications(notificationIDs), page->identifier());
+    m_process.parentProcessConnection()->send(Messages::NotificationManagerMessageHandler::ClearNotifications(notificationIDs), page->identifier());
     size_t count = notificationIDs.size();
     for (size_t i = 0; i < count; ++i) {
         RefPtr<Notification> notification = m_notificationIDMap.take(notificationIDs[i]);
@@ -211,7 +212,7 @@ void WebNotificationManager::didDestroyNotification(Notification* notification, 
 
     m_notificationIDMap.remove(notificationID);
     removeNotificationFromContextMap(notificationID, notification);
-    m_process.parentProcessConnection()->send(Messages::WebPageProxy::DidDestroyNotification(notificationID), page->identifier());
+    m_process.parentProcessConnection()->send(Messages::NotificationManagerMessageHandler::DidDestroyNotification(notificationID), page->identifier());
 #else
     UNUSED_PARAM(notification);
     UNUSED_PARAM(page);

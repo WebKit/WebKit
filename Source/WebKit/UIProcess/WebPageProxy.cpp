@@ -77,6 +77,7 @@
 #include "NavigationActionData.h"
 #include "NetworkProcessMessages.h"
 #include "NetworkProcessProxy.h"
+#include "NotificationManagerMessageHandlerMessages.h"
 #include "NotificationPermissionRequest.h"
 #include "NotificationPermissionRequestManager.h"
 #include "PageClient.h"
@@ -516,6 +517,7 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, Ref
     , m_ignoresAppBoundDomains(m_configuration->ignoresAppBoundDomains())
     , m_limitsNavigationsToAppBoundDomains(m_configuration->limitsNavigationsToAppBoundDomains())
 #endif
+    , m_notificationManagerMessageHandler(*this)
 {
     WEBPAGEPROXY_RELEASE_LOG(Loading, "constructor:");
 
@@ -546,7 +548,7 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, Ref
     if (hasRunningProcess())
         didAttachToRunningProcess();
 
-    m_process->addMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_webPageID, *this);
+    addAllMessageReceivers();
 
 #if PLATFORM(IOS_FAMILY)
     DeprecatedGlobalSettings::setDisableScreenSizeOverride(m_preferences->disableScreenSizeOverride());
@@ -618,6 +620,18 @@ WebPageProxy::~WebPageProxy()
     if (m_preferences->mediaSessionCoordinatorEnabled())
         GroupActivitiesSessionNotifier::sharedNotifier().removeWebPage(*this);
 #endif
+}
+
+void WebPageProxy::addAllMessageReceivers()
+{
+    m_process->addMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_webPageID, *this);
+    m_process->addMessageReceiver(Messages::NotificationManagerMessageHandler::messageReceiverName(), m_webPageID, m_notificationManagerMessageHandler);
+}
+
+void WebPageProxy::removeAllMessageReceivers()
+{
+    m_process->removeMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_webPageID);
+    m_process->removeMessageReceiver(Messages::NotificationManagerMessageHandler::messageReceiverName(), m_webPageID);
 }
 
 // FIXME: Should return a const PageClient& and add a separate non-const
@@ -841,7 +855,7 @@ void WebPageProxy::launchProcess(const RegistrableDomain& registrableDomain, Pro
     m_inspector->reset();
 
     m_process->removeWebPage(*this, WebProcessProxy::EndsUsingDataStore::Yes);
-    m_process->removeMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_webPageID);
+    removeAllMessageReceivers();
 
     auto& processPool = m_process->processPool();
 
@@ -853,7 +867,7 @@ void WebPageProxy::launchProcess(const RegistrableDomain& registrableDomain, Pro
     m_hasRunningProcess = true;
 
     m_process->addExistingWebPage(*this, WebProcessProxy::BeginsUsingDataStore::Yes);
-    m_process->addMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_webPageID, *this);
+    addAllMessageReceivers();
 
 #if ENABLE(IPC_TESTING_API)
     if (m_preferences->store().getBoolValueForKey(WebPreferencesKey::ipcTestingAPIEnabledKey()))
@@ -964,7 +978,7 @@ void WebPageProxy::swapToProvisionalPage(std::unique_ptr<ProvisionalPageProxy> p
     m_mainFrame = provisionalPage->mainFrame();
 
     m_process->addExistingWebPage(*this, WebProcessProxy::BeginsUsingDataStore::No);
-    m_process->addMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_webPageID, *this);
+    addAllMessageReceivers();
 
     finishAttachingToWebProcess(ProcessLaunchReason::ProcessSwap);
 
@@ -1192,7 +1206,7 @@ void WebPageProxy::close()
         protectedProcess->send(Messages::WebPage::Close(), destinationID);
     });
     m_process->removeWebPage(*this, WebProcessProxy::EndsUsingDataStore::Yes);
-    m_process->removeMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_webPageID);
+    removeAllMessageReceivers();
     m_process->processPool().supplement<WebNotificationManagerProxy>()->clearNotifications(this);
 
     // Null out related WebPageProxy to avoid leaks.
@@ -3613,7 +3627,7 @@ void WebPageProxy::commitProvisionalPage(FrameIdentifier frameID, FrameInfoData&
 
     resetStateAfterProcessTermination(ProcessTerminationReason::NavigationSwap);
 
-    m_process->removeMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_webPageID);
+    removeAllMessageReceivers();
     auto* navigation = navigationState().navigation(m_provisionalPage->navigationID());
     bool didSuspendPreviousPage = navigation && !m_provisionalPage->shouldClosePreviousPageAfterCommit() ? suspendCurrentPageIfPossible(*navigation, mainFrameIDInPreviousProcess, m_provisionalPage->processSwapRequestedByClient(), shouldDelayClosingUntilFirstLayerFlush) : false;
     m_process->removeWebPage(*this, m_websiteDataStore.ptr() == &m_provisionalPage->process().websiteDataStore() ? WebProcessProxy::EndsUsingDataStore::No : WebProcessProxy::EndsUsingDataStore::Yes);

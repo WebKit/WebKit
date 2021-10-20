@@ -69,6 +69,7 @@
 #include "WebCoreArgumentCoders.h"
 #include "WebDataListSuggestionsDropdown.h"
 #include "WebFrameProxy.h"
+#include "WebNotificationManagerMessageHandler.h"
 #include "WebPageCreationParameters.h"
 #include "WebPageDiagnosticLoggingClient.h"
 #include "WebPageInjectedBundleClient.h"
@@ -1990,9 +1991,17 @@ public:
     bool isQuarantinedAndNotUserApproved(const String&);
 #endif
 
+    void showNotification(const String& title, const String& body, const String& iconURL, const String& tag, const String& lang, WebCore::NotificationDirection, const String& originString, uint64_t notificationID);
+    void cancelNotification(uint64_t notificationID);
+    void clearNotifications(const Vector<uint64_t>& notificationIDs);
+    void didDestroyNotification(uint64_t notificationID);
+
 private:
     WebPageProxy(PageClient&, WebProcessProxy&, Ref<API::PageConfiguration>&&);
     void platformInitialize();
+
+    void addAllMessageReceivers();
+    void removeAllMessageReceivers();
 
     void notifyProcessPoolToPrewarm();
     bool shouldUseBackForwardCache() const;
@@ -2185,10 +2194,6 @@ private:
     RefPtr<API::Navigation> launchProcessForReload();
 
     void requestNotificationPermission(const String& originString, CompletionHandler<void(bool allowed)>&&);
-    void showNotification(const String& title, const String& body, const String& iconURL, const String& tag, const String& lang, WebCore::NotificationDirection, const String& originString, uint64_t notificationID);
-    void cancelNotification(uint64_t notificationID);
-    void clearNotifications(const Vector<uint64_t>& notificationIDs);
-    void didDestroyNotification(uint64_t notificationID);
 
     void didChangeContentSize(const WebCore::IntSize&);
     void didChangeIntrinsicContentSize(const WebCore::IntSize&);
@@ -3122,6 +3127,8 @@ private:
 #endif
 
     WindowKind m_windowKind { WindowKind::Unparented };
+
+    WebNotificationManagerMessageHandler m_notificationManagerMessageHandler;
 };
 
 #ifdef __OBJC__

@@ -494,6 +494,7 @@ UIProcess/Media/MediaUsageManager.cpp
 UIProcess/Media/RemoteMediaSessionCoordinatorProxy.cpp
 
 UIProcess/Notifications/WebNotification.cpp
+UIProcess/Notifications/WebNotificationManagerMessageHandler.cpp
 UIProcess/Notifications/WebNotificationManagerProxy.cpp
 UIProcess/Notifications/WebNotificationProvider.cpp
 

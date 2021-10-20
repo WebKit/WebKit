@@ -1,3 +1,51 @@
+2021-10-20  Brady Eidson  <beidson@apple.com>
+
+        Factor out some Notifications-specific messages from WebPageProxy messages
+        https://bugs.webkit.org/show_bug.cgi?id=232021
+
+        Reviewed by Alex Christensen.
+
+        In a future patch, there will be a runtime switch where WebContent sometimes sends these Notification
+        related messages to an objecting in Networking, and othertimes sends them to a WebPageProxy in the UIProcess.
+
+        To accomodate this switch, let's split them out into their own Notifications specific object and messages.
+        
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * Sources.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+
+        * Shared/Notifications/NotificationManagerMessageHandler.h: Added.
+        * Shared/Notifications/NotificationManagerMessageHandler.messages.in: Added.
+
+        * UIProcess/Notifications/WebNotificationManagerMessageHandler.cpp: Added.
+        (WebKit::WebNotificationManagerMessageHandler::WebNotificationManagerMessageHandler):
+        (WebKit::WebNotificationManagerMessageHandler::showNotification):
+        (WebKit::WebNotificationManagerMessageHandler::cancelNotification):
+        (WebKit::WebNotificationManagerMessageHandler::clearNotifications):
+        (WebKit::WebNotificationManagerMessageHandler::didDestroyNotification):
+        * UIProcess/Notifications/WebNotificationManagerMessageHandler.h: Added.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::m_notificationManagerMessageHandler):
+        (WebKit::WebPageProxy::addAllMessageReceivers):
+        (WebKit::WebPageProxy::removeAllMessageReceivers):
+        (WebKit::WebPageProxy::launchProcess):
+        (WebKit::WebPageProxy::swapToProvisionalPage):
+        (WebKit::WebPageProxy::close):
+        (WebKit::WebPageProxy::commitProvisionalPage):
+        (WebKit::m_limitsNavigationsToAppBoundDomains): Deleted.
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+
+        * WebProcess/Notifications/WebNotificationManager.cpp:
+        (WebKit::WebNotificationManager::show):
+        (WebKit::WebNotificationManager::cancel):
+        (WebKit::WebNotificationManager::clearNotifications):
+        (WebKit::WebNotificationManager::didDestroyNotification):
+
 2021-10-20  David Kilzer  <ddkilzer@apple.com>
 
         WebKit Objective-C classes should use weak delegates

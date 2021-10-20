@@ -47,6 +47,7 @@ VPATH = \
     $(WebKit2)/Shared/ApplePay \
     $(WebKit2)/Shared/Authentication \
     $(WebKit2)/Shared/mac \
+    $(WebKit2)/Shared/Notifications \
     $(WebKit2)/WebAuthnProcess \
     $(WebKit2)/WebAuthnProcess/mac \
     $(WebKit2)/WebProcess/ApplePay \
@@ -147,6 +148,7 @@ MESSAGE_RECEIVERS = \
 	Shared/API/Cocoa/RemoteObjectRegistry \
 	Shared/ApplePay/WebPaymentCoordinatorProxy \
 	Shared/Authentication/AuthenticationManager \
+	Shared/Notifications/NotificationManagerMessageHandler \
 	Shared/WebConnection \
 	UIProcess/WebFullScreenManagerProxy \
 	UIProcess/RemoteLayerTree/RemoteLayerTreeDrawingAreaProxy \

@@ -44,6 +44,7 @@ set(WebKit_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/Shared/Databases/IndexedDB"
     "${WEBKIT_DIR}/Shared/FileAPI"
     "${WEBKIT_DIR}/Shared/Gamepad"
+    "${WEBKIT_DIR}/Shared/Notifications"
     "${WEBKIT_DIR}/Shared/Plugins"
     "${WEBKIT_DIR}/Shared/Plugins/Netscape"
     "${WEBKIT_DIR}/Shared/Plugins/Netscape/x11"
@@ -191,6 +192,8 @@ set(WebKit_MESSAGES_IN_FILES
     Shared/WebConnection
 
     Shared/Authentication/AuthenticationManager
+
+    Shared/Notifications/NotificationManagerMessageHandler
 
     Shared/Plugins/NPObjectMessageReceiver
 
