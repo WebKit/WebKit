@@ -195,9 +195,6 @@ public:
 
     std::unique_ptr<FunctionCodeBlock> finalize();
 
-    template<typename Opcode>
-    void repatch(const CatchRewriteInfo&);
-
     template<typename ExpressionListA, typename ExpressionListB>
     void unifyValuesWithBlock(const ExpressionListA& destinations, const ExpressionListB& values)
     {
@@ -206,7 +203,7 @@ public:
         for (size_t i = 0; i < destinations.size(); ++i) {
             auto& src = values[offset + i];
             auto& dst = destinations[i];
-            if ((VirtualRegister)src != (VirtualRegister)dst)
+            if (static_cast<VirtualRegister>(src) != static_cast<VirtualRegister>(dst))
                 WasmMov::emit(this, dst, src);
         }
     }
@@ -500,7 +497,6 @@ private:
     Checked<unsigned> m_stackSize { 0 };
     Checked<unsigned> m_maxStackSize { 0 };
     Checked<unsigned> m_tryDepth { 0 };
-    Checked<unsigned> m_maxTryDepth { 0 };
     bool m_usesExceptions { false };
 };
 
@@ -545,18 +541,6 @@ LLIntGenerator::LLIntGenerator(ModuleInformation& info, unsigned functionIndex, 
     m_maxStackSize = numberOfLLIntCalleeSaveRegisters;
 
     WasmEnter::emit(this);
-}
-
-template<typename Opcode>
-void LLIntGenerator::repatch(const CatchRewriteInfo& info)
-{
-    auto ref = m_writer.ref(info.m_instructionOffset);
-    Opcode* instruction = ref->cast<Opcode, WasmOpcodeTraits>();
-    VirtualRegister exceptionRegister = virtualRegisterForLocal(m_maxStackSize + info.m_tryDepth - 1);
-    instruction->setException(exceptionRegister, []() {
-        RELEASE_ASSERT_NOT_REACHED();
-        return VirtualRegister();
-    });
 }
 
 std::unique_ptr<FunctionCodeBlock> LLIntGenerator::finalize()
@@ -1061,8 +1045,6 @@ auto LLIntGenerator::addTry(BlockSignature signature, Stack& enclosingStack, Con
 {
     m_usesExceptions = true;
     ++m_tryDepth;
-    if (m_maxTryDepth < m_tryDepth)
-        m_maxTryDepth = m_tryDepth;
 
     splitStack(signature, enclosingStack, newStack);
     Ref<Label> tryLabel = newEmittedLabel();
@@ -1191,6 +1173,10 @@ auto LLIntGenerator::addDelegateToUnreachable(ControlType& target, ControlType& 
 auto LLIntGenerator::addThrow(unsigned exceptionIndex, Vector<ExpressionType>& args, Stack&) -> PartialResult
 {
     m_usesExceptions = true;
+    // We have to materialize the arguments here since it might include constants or
+    // delayed moves, but the wasm_throw opcode expects all the arguments to be contiguous
+    // in the stack. The reason we don't call materializeConstantsAndLocals here is that
+    // it expects a stack, not a vector of ExpressionType arguments.
     walkExpressionStack(args, [&](VirtualRegister& arg, VirtualRegister slot) {
         if (arg == slot)
             return;

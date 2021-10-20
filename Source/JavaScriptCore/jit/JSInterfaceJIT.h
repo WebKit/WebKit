@@ -57,7 +57,6 @@ namespace JSC {
         void emitPutToCallFrameHeader(RegisterID from, VirtualRegister entry);
         void emitPutToCallFrameHeader(void* value, VirtualRegister entry);
         void emitPutCellToCallFrameHeader(RegisterID from, VirtualRegister entry);
-        void convertCalleeToVM(RegisterID callee);
 
         VM* vm() const { return m_vm; }
 
@@ -157,19 +156,6 @@ namespace JSC {
 #else
         store64(from, addressFor(entry));
 #endif
-    }
-
-    ALWAYS_INLINE void JSInterfaceJIT::convertCalleeToVM(RegisterID callee)
-    {
-        auto preciseAllocationCase = branchTestPtr(CCallHelpers::NonZero, callee, CCallHelpers::TrustedImm32(PreciseAllocation::halfAlignment));
-        andPtr(CCallHelpers::TrustedImmPtr(MarkedBlock::blockMask), callee);
-        loadPtr(CCallHelpers::Address(callee, MarkedBlock::offsetOfFooter + MarkedBlock::Footer::offsetOfVM()), callee);
-        auto loadedCase = jump();
-
-        preciseAllocationCase.link(this);
-        loadPtr(CCallHelpers::Address(callee, PreciseAllocation::offsetOfWeakSet() + WeakSet::offsetOfVM() - PreciseAllocation::headerSize()), callee);
-
-        loadedCase.link(this);
     }
 
 } // namespace JSC

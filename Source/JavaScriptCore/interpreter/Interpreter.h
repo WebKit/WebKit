@@ -90,16 +90,14 @@ struct HandlerInfo;
     };
 
     struct CatchInfo {
-        CatchInfo()
-            : m_valid(false)
-        { }
+        CatchInfo() = default;
 
         CatchInfo(const HandlerInfo*, CodeBlock*);
 #if ENABLE(WEBASSEMBLY)
         CatchInfo(const Wasm::HandlerInfo*, const Wasm::Callee*);
 #endif
 
-        bool m_valid;
+        bool m_valid { false };
         HandlerType m_type;
 #if ENABLE(JIT)
         MacroAssemblerCodePtr<ExceptionHandlerPtrTag> m_nativeCode;

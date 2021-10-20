@@ -2825,11 +2825,15 @@ wasmOp(throw, WasmThrow, macro(ctx)
 end)
 
 wasmOp(rethrow, WasmRethrow, macro(ctx)
+    loadp Wasm::Instance::m_pointerToTopEntryFrame[wasmInstance], t5
+    loadp [t5], t5
+    copyCalleeSavesToEntryFrameCalleeSavesBuffer(t5)
+
     callWasmSlowPath(_slow_path_wasm_rethrow)
     jumpToException()
 end)
 
-macro catchImpl(ctx, storeWasmInstance)
+macro commonCatchImpl(ctx, storeWasmInstance)
     loadp Callee[cfr], t3
     convertCalleeToVM(t3)
     restoreCalleeSavesFromVMEntryFrameCalleeSavesBuffer(t3, t0)
@@ -2854,6 +2858,17 @@ macro catchImpl(ctx, storeWasmInstance)
     subp PB, PC
 
     callWasmSlowPath(_slow_path_wasm_retrieve_and_clear_exception)
+end
+
+macro catchAllImpl(ctx, storeWasmInstance)
+    commonCatchImpl(ctx, storeWasmInstance)
+    traceExecution()
+    dispatch(ctx)
+end
+
+macro catchImpl(ctx, storeWasmInstance)
+    commonCatchImpl(ctx, storeWasmInstance)
+
     move r1, t1
 
     wgetu(ctx, m_startOffset, t2)
@@ -2875,7 +2890,6 @@ macro catchImpl(ctx, storeWasmInstance)
 
 .done:
     traceExecution()
-
     dispatch(ctx)
 end
 
@@ -2886,37 +2900,6 @@ end)
 commonWasmOp(wasm_catch_no_tls, WasmCatch, macro() end, macro(ctx)
     catchImpl(ctx, macro(instance) end)
 end)
-
-macro catchAllImpl(ctx, storeWasmInstance)
-    loadp Callee[cfr], t3
-    convertCalleeToVM(t3)
-    restoreCalleeSavesFromVMEntryFrameCalleeSavesBuffer(t3, t0)
-
-    loadp VM::calleeForWasmCatch[t3], ws1
-    storep 0, VM::calleeForWasmCatch[t3]
-    storep ws1, Callee[cfr]
-
-    loadp VM::callFrameForCatch[t3], cfr
-    storep 0, VM::callFrameForCatch[t3]
-
-    restoreStackPointerAfterCall()
-
-    loadp ThisArgumentOffset[cfr], wasmInstance
-    loadp JSWebAssemblyInstance::m_instance[wasmInstance], wasmInstance
-    storeWasmInstance(wasmInstance)
-    reloadMemoryRegistersFromInstance(wasmInstance, ws0, ws1)
-
-    loadp CodeBlock[cfr], PB
-    loadp Wasm::FunctionCodeBlock::m_instructionsRawPointer[PB], PB
-    loadp VM::targetInterpreterPCForThrow[t3], PC
-    subp PB, PC
-
-    callWasmSlowPath(_slow_path_wasm_retrieve_and_clear_exception)
-
-    traceExecution()
-
-    dispatch(ctx)
-end
 
 commonWasmOp(wasm_catch_all, WasmCatchAll, macro() end, macro(ctx)
     catchAllImpl(ctx, storeWasmInstanceToTLS)

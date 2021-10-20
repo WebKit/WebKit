@@ -74,7 +74,7 @@ public:
 
     void dump(PrintStream&) const;
 
-    virtual FunctionCodeBlock* functionCodeBlock() const { return 0; }
+    virtual FunctionCodeBlock* llintFunctionCodeBlock() const { return nullptr; }
 
 protected:
     JS_EXPORT_PRIVATE Callee(Wasm::CompilationMode);
@@ -251,7 +251,7 @@ public:
     }
 
     LLIntTierUpCounter& tierUpCounter() { return m_codeBlock->tierUpCounter(); }
-    FunctionCodeBlock* functionCodeBlock() const final { return m_codeBlock.get(); }
+    FunctionCodeBlock* llintFunctionCodeBlock() const final { return m_codeBlock.get(); }
 #endif
 
 private:

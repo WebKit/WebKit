@@ -910,7 +910,7 @@ JSC_DEFINE_JIT_OPERATION(operationWasmDataDrop, void, (Instance* instance, unsig
     instance->dataDrop(dataSegmentIndex);
 }
 
-JSC_DEFINE_JIT_OPERATION(operationWasmThrow, void*, (Instance* instance, CallFrame* callFrame, unsigned exceptionIndex, EncodedJSValue* arguments))
+JSC_DEFINE_JIT_OPERATION(operationWasmThrow, void*, (Instance* instance, CallFrame* callFrame, unsigned exceptionIndex, uint64_t* arguments))
 {
     instance->storeTopCallFrame(callFrame);
 
