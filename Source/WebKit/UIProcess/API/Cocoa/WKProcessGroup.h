@@ -52,6 +52,6 @@ WK_CLASS_DEPRECATED_WITH_REPLACEMENT("WKProcessPool", macos(10.10, 10.14.4), ios
 
 #pragma mark Delegates
 
-@property (assign) id <WKProcessGroupDelegate> delegate;
+@property (nonatomic, weak) id <WKProcessGroupDelegate> delegate;
 
 @end

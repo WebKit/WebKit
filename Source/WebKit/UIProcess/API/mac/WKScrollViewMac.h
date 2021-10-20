@@ -37,7 +37,7 @@
 
 @interface WKScrollView : NSScrollView
 
-@property (assign, nonatomic) id <WKScrollViewDelegate> delegate;
+@property (weak, nonatomic) id <WKScrollViewDelegate> delegate;
 @property (readonly, nonatomic) CGPoint contentOffset;
 
 @end

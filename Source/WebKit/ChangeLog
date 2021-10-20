@@ -1,3 +1,21 @@
+2021-10-20  David Kilzer  <ddkilzer@apple.com>
+
+        WebKit Objective-C classes should use weak delegates
+        <https://webkit.org/b/231956>
+        <rdar://problem/84416233>
+
+        Reviewed by Brent Fulgham.
+
+        * UIProcess/API/Cocoa/WKConnection.h:
+        * UIProcess/API/Cocoa/WKProcessGroup.h:
+        * UIProcess/API/mac/WKScrollViewMac.h:
+        - Change `delegate` property from `assign` to `weak` to document
+          that WeakObjCPtr<> is used to store the value.
+
+        * UIProcess/ios/forms/WKFileUploadPanel.h:
+        - Change `delegate` property from `assign` to `weak` to make the
+          instance variable weak.
+
 2021-10-20  Said Abou-Hallawa  <said@apple.com>
 
         [iOS] Ensure the CA transaction has been synchronously committed before snapshotting it
