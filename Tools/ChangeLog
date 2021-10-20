@@ -1,3 +1,14 @@
+2021-10-20  Roy Reapor  <rreapor@apple.com>
+
+        Benchmarks harness could fail if pyobjc-core module is upgraded without upgrading other pyobjc-frameworks
+        https://bugs.webkit.org/show_bug.cgi?id=231983
+
+        Reviewed by Jonathan Bedard.
+
+        * Scripts/webkitpy/benchmark_runner/browser_driver/osx_browser_driver.py:
+        (OSXBrowserDriver.prepare_env): Use autoinstalled Quartz module
+        (OSXBrowserDriver._terminate_processes):  Use autoinstalled AppKit module
+
 2021-10-20  Alex Christensen  <achristensen@webkit.org>
 
         Fix iOS build after r284539

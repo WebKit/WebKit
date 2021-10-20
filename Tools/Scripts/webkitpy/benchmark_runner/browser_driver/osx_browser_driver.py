@@ -21,8 +21,8 @@ class OSXBrowserDriver(BrowserDriver):
 
     def prepare_env(self, config):
         self.close_browsers()
-        from Quartz import CGWarpMouseCursorPosition
-        CGWarpMouseCursorPosition((10, 0))
+        from webkitpy.autoinstalled.pyobjc_frameworks import Quartz
+        Quartz.CGWarpMouseCursorPosition((10, 0))
         self.updated_dock_animation_defaults = write_defaults('com.apple.dock', 'launchanim', False)
         if self.updated_dock_animation_defaults:
             self._terminate_processes('Dock', 'com.apple.dock')
@@ -61,9 +61,9 @@ class OSXBrowserDriver(BrowserDriver):
 
     @classmethod
     def _terminate_processes(cls, process_name, bundle_id):
-        from AppKit import NSRunningApplication
+        from webkitpy.autoinstalled.pyobjc_frameworks import AppKit
         _log.info('Closing all processes with name %s' % process_name)
-        for app in NSRunningApplication.runningApplicationsWithBundleIdentifier_(bundle_id):
+        for app in AppKit.NSRunningApplication.runningApplicationsWithBundleIdentifier_(bundle_id):
             app.terminate()
             # Give the app time to close
             time.sleep(2)
