@@ -321,6 +321,8 @@ public:
     virtual bool supportsPauseAtHostTime() const { return false; }
     virtual bool playAtHostTime(const MonotonicTime&) { return false; }
     virtual bool pauseAtHostTime(const MonotonicTime&) { return false; }
+
+    virtual std::optional<VideoFrameMetadata> videoFrameMetadata() { return { }; }
 };
 
 }

@@ -1015,6 +1015,7 @@ $(PROJECT_DIR)/html/HTMLLinkElement.idl
 $(PROJECT_DIR)/html/HTMLMapElement.idl
 $(PROJECT_DIR)/html/HTMLMarqueeElement.idl
 $(PROJECT_DIR)/html/HTMLMediaElement+AudioOutput.idl
+$(PROJECT_DIR)/html/HTMLMediaElement+RequestVideoFrameCallback.idl
 $(PROJECT_DIR)/html/HTMLMediaElement.idl
 $(PROJECT_DIR)/html/HTMLMenuElement.idl
 $(PROJECT_DIR)/html/HTMLMenuItemElement.idl
@@ -1054,6 +1055,7 @@ $(PROJECT_DIR)/html/HTMLTitleElement.idl
 $(PROJECT_DIR)/html/HTMLTrackElement.idl
 $(PROJECT_DIR)/html/HTMLUListElement.idl
 $(PROJECT_DIR)/html/HTMLUnknownElement.idl
+$(PROJECT_DIR)/html/HTMLVideoElement+RequestVideoFrameCallback.idl
 $(PROJECT_DIR)/html/HTMLVideoElement.idl
 $(PROJECT_DIR)/html/ImageBitmap.idl
 $(PROJECT_DIR)/html/ImageBitmapOptions.idl
@@ -1069,6 +1071,8 @@ $(PROJECT_DIR)/html/TextMetrics.idl
 $(PROJECT_DIR)/html/TimeRanges.idl
 $(PROJECT_DIR)/html/URLSearchParams.idl
 $(PROJECT_DIR)/html/ValidityState.idl
+$(PROJECT_DIR)/html/VideoFrameMetadata.idl
+$(PROJECT_DIR)/html/VideoFrameRequestCallback.idl
 $(PROJECT_DIR)/html/VoidCallback.idl
 $(PROJECT_DIR)/html/WebKitMediaKeyError.idl
 $(PROJECT_DIR)/html/canvas/ANGLEInstancedArrays.idl

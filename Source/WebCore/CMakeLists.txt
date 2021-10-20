@@ -1037,6 +1037,7 @@ set(WebCore_NON_SVG_IDL_FILES
     html/HTMLTrackElement.idl
     html/HTMLUListElement.idl
     html/HTMLUnknownElement.idl
+    html/HTMLVideoElement+RequestVideoFrameCallback.idl
     html/HTMLVideoElement.idl
     html/ImageBitmap.idl
     html/ImageBitmapOptions.idl
@@ -1052,6 +1053,8 @@ set(WebCore_NON_SVG_IDL_FILES
     html/TimeRanges.idl
     html/URLSearchParams.idl
     html/ValidityState.idl
+    html/VideoFrameMetadata.idl
+    html/VideoFrameRequestCallback.idl
     html/VoidCallback.idl
 
     html/canvas/CanvasCompositing.idl

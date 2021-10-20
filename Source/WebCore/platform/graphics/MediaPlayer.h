@@ -36,6 +36,7 @@
 #include "PlatformLayer.h"
 #include "SecurityOriginData.h"
 #include "Timer.h"
+#include "VideoFrameMetadata.h"
 #include "VideoPlaybackQualityMetrics.h"
 #include <JavaScriptCore/Forward.h>
 #include <wtf/CompletionHandler.h>
@@ -678,6 +679,8 @@ public:
 
     MediaPlayerIdentifier identifier() const;
     bool hasMediaEngine() const;
+
+    std::optional<VideoFrameMetadata> videoFrameMetadata();
 
 private:
     MediaPlayer(MediaPlayerClient&);

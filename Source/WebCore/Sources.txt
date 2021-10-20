@@ -3744,6 +3744,8 @@ JSVTTRegion.cpp
 JSVTTRegionList.cpp
 JSValidityState.cpp
 JSVideoConfiguration.cpp
+JSVideoFrameMetadata.cpp
+JSVideoFrameRequestCallback.cpp
 JSVideoPlaybackQuality.cpp
 JSVideoTrack.cpp
 JSVideoTrackList.cpp

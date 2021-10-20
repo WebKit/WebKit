@@ -1,3 +1,17 @@
+2021-10-20  Youenn Fablet  <youenn@apple.com>
+
+        Add support for requestVideoFrameCallback API and MediaStreamTrack-based backend support
+        https://bugs.webkit.org/show_bug.cgi?id=231803
+
+        Reviewed by Eric Carlson.
+
+        Add temporary getter/setter of rvfc feature flag.
+
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetRequestVideoFrameCallbackEnabled):
+        (WKPreferencesGetRequestVideoFrameCallbackEnabled):
+        * UIProcess/API/C/WKPreferencesRef.h:
+
 2021-10-20  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [WPE] Reenable -fvisibility=hidden and -fvisibility-inlines-hidden

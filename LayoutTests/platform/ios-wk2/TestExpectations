@@ -138,6 +138,15 @@ http/tests/resourceLoadStatistics/cname-cloaking-top-no-cname-sub-1p-cname.html 
 http/tests/resourceLoadStatistics/cname-cloaking-top-no-cname-sub-3p-cname.html [ Pass ]
 http/tests/resourceLoadStatistics/cname-cloaking-top-no-cname-sub-no-cname.html [ Pass ]
 
+imported/w3c/web-platform-tests/video-rvfc [ Pass ]
+# Timing out tests until we add regular video streaming backend support.
+imported/w3c/web-platform-tests/video-rvfc/request-video-frame-callback-before-xr-session.https.html [ Skip ]
+imported/w3c/web-platform-tests/video-rvfc/request-video-frame-callback-dom.html [ Skip ]
+imported/w3c/web-platform-tests/video-rvfc/request-video-frame-callback-during-xr-session.https.html [ Skip ]
+imported/w3c/web-platform-tests/video-rvfc/request-video-frame-callback-parallel.html [ Skip ]
+imported/w3c/web-platform-tests/video-rvfc/request-video-frame-callback-repeating.html [ Skip ]
+imported/w3c/web-platform-tests/video-rvfc/request-video-frame-callback.html [ Skip ]
+
 #//////////////////////////////////////////////////////////////////////////////////////////
 # End platform-specific directories.
 #//////////////////////////////////////////////////////////////////////////////////////////

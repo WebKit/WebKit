@@ -117,6 +117,7 @@
 #include "HTMLStyleElement.h"
 #include "HTMLTitleElement.h"
 #include "HTMLUnknownElement.h"
+#include "HTMLVideoElement.h"
 #include "HTTPHeaderNames.h"
 #include "HTTPParsers.h"
 #include "HashChangeEvent.h"
@@ -6737,6 +6738,32 @@ void Document::serviceRequestAnimationFrameCallbacks()
 {
     if (m_scriptedAnimationController && domWindow())
         m_scriptedAnimationController->serviceRequestAnimationFrameCallbacks(domWindow()->frozenNowTimestamp());
+}
+
+void Document::serviceRequestVideoFrameCallbacks()
+{
+#if ENABLE(VIDEO)
+    if (!domWindow())
+        return;
+
+    bool isServicingRequestVideoFrameCallbacks = false;
+    forEachMediaElement([now = domWindow()->frozenNowTimestamp(), &isServicingRequestVideoFrameCallbacks](auto& element) {
+        if (!is<HTMLVideoElement>(element))
+            return;
+
+        auto& videoElement = downcast<HTMLVideoElement>(element);
+        if (videoElement.shouldServiceRequestVideoFrameCallbacks()) {
+            isServicingRequestVideoFrameCallbacks = true;
+            videoElement.serviceRequestVideoFrameCallbacks(now);
+        }
+    });
+
+    if (!isServicingRequestVideoFrameCallbacks)
+        return;
+
+    if (auto* page = this->page())
+        page->scheduleRenderingUpdate(RenderingUpdateStep::VideoFrameCallbacks);
+#endif
 }
 
 void Document::windowScreenDidChange(PlatformDisplayID displayID)

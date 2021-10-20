@@ -355,6 +355,10 @@ WK_EXPORT void WKPreferencesSetRemotePlaybackEnabled(WKPreferencesRef preference
 WK_EXPORT bool WKPreferencesGetShouldUseServiceWorkerShortTimeout(WKPreferencesRef preferencesRef);
 WK_EXPORT void WKPreferencesSetShouldUseServiceWorkerShortTimeout(WKPreferencesRef preferencesRef, bool enabled);
 
+// Defaults to false.
+WK_EXPORT bool WKPreferencesGetRequestVideoFrameCallbackEnabled(WKPreferencesRef preferencesRef);
+WK_EXPORT void WKPreferencesSetRequestVideoFrameCallbackEnabled(WKPreferencesRef preferencesRef, bool enabled);
+
 #ifdef __cplusplus
 }
 #endif

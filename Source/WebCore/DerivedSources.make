@@ -906,6 +906,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/html/HTMLUListElement.idl \
     $(WebCore)/html/HTMLUnknownElement.idl \
     $(WebCore)/html/HTMLVideoElement.idl \
+    $(WebCore)/html/HTMLVideoElement+RequestVideoFrameCallback.idl \
     $(WebCore)/html/ImageBitmap.idl \
     $(WebCore)/html/ImageBitmapOptions.idl \
     $(WebCore)/html/ImageData.idl \
@@ -920,6 +921,8 @@ JS_BINDING_IDLS := \
     $(WebCore)/html/TimeRanges.idl \
     $(WebCore)/html/URLSearchParams.idl \
     $(WebCore)/html/ValidityState.idl \
+    $(WebCore)/html/VideoFrameMetadata.idl \
+    $(WebCore)/html/VideoFrameRequestCallback.idl \
     $(WebCore)/html/VoidCallback.idl \
     $(WebCore)/html/WebKitMediaKeyError.idl \
     $(WebCore)/html/canvas/ANGLEInstancedArrays.idl \

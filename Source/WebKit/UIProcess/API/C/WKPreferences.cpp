@@ -2226,3 +2226,12 @@ bool WKPreferencesGetXSSAuditorEnabled(WKPreferencesRef)
     return false;
 }
 
+void WKPreferencesSetRequestVideoFrameCallbackEnabled(WKPreferencesRef preferencesRef, bool enabled)
+{
+    toImpl(preferencesRef)->setRequestVideoFrameCallbackEnabled(enabled);
+}
+
+bool WKPreferencesGetRequestVideoFrameCallbackEnabled(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->requestVideoFrameCallbackEnabled();
+}

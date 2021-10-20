@@ -1585,6 +1585,10 @@ void Page::updateRendering()
     // FIXME: Run the fullscreen steps.
     m_renderingUpdateRemainingSteps.last().remove(RenderingUpdateStep::Fullscreen);
 
+    runProcessingStep(RenderingUpdateStep::VideoFrameCallbacks, [] (Document& document) {
+        document.serviceRequestVideoFrameCallbacks();
+    });
+
     runProcessingStep(RenderingUpdateStep::AnimationFrameCallbacks, [] (Document& document) {
         document.serviceRequestAnimationFrameCallbacks();
     });
@@ -3626,6 +3630,7 @@ WTF::TextStream& operator<<(WTF::TextStream& ts, RenderingUpdateStep step)
 #if ENABLE(ASYNC_SCROLLING)
     case RenderingUpdateStep::ScrollingTreeUpdate: ts << "ScrollingTreeUpdate"; break;
 #endif
+    case RenderingUpdateStep::VideoFrameCallbacks: ts << "VideoFrameCallbacks"; break;
     }
     return ts;
 }

@@ -863,8 +863,11 @@ static void setWebPreferencesForTestOptions(WebPreferences *preferences, const W
         [preferences _resetForTesting];
 
         if (enableAllExperimentalFeatures) {
-            for (WebFeature *feature in [WebPreferences _experimentalFeatures])
-                [preferences _setEnabled:YES forFeature:feature];
+            for (WebFeature *feature in [WebPreferences _experimentalFeatures]) {
+                // FIXME: We disable rvfc by default. Enable it when the video backend support is good enough.
+                auto enabled = [feature.name isEqual:@"RequestVideoFrameCallback"] ? NO : YES;
+                [preferences _setEnabled:enabled forFeature:feature];
+            }
         }
 
         if (persistentUserStyleSheetLocation()) {

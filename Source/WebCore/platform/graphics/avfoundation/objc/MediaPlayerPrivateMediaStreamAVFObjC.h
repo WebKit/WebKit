@@ -160,6 +160,7 @@ private:
 
     void setBufferingPolicy(MediaPlayer::BufferingPolicy) override;
     void audioOutputDeviceChanged() final;
+    std::optional<VideoFrameMetadata> videoFrameMetadata() final;
 
     MediaPlayer::ReadyState currentReadyState();
     void updateReadyState();
@@ -279,6 +280,9 @@ private:
     bool m_isVisibleInViewPort { false };
     bool m_haveSeenMetadata { false };
     bool m_waitingForFirstImage { false };
+
+    uint64_t m_sampleCount { 0 };
+    uint64_t m_lastVideoFrameMetadataSampleCount { 0 };
 };
     
 }

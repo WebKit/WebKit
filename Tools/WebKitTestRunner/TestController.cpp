@@ -897,6 +897,9 @@ void TestController::resetPreferencesToConsistentValues(const TestOptions& optio
         if (enableAllExperimentalFeatures)
             WKPreferencesEnableAllExperimentalFeatures(preferences);
 
+        // FIXME: We disable rvfc by default. Enable it when the video backend support is good enough.
+        WKPreferencesSetRequestVideoFrameCallbackEnabled(preferences, false);
+
         WKPreferencesResetAllInternalDebugFeatures(preferences);
 
         WKPreferencesSetProcessSwapOnNavigationEnabled(preferences, options.shouldEnableProcessSwapOnNavigation());

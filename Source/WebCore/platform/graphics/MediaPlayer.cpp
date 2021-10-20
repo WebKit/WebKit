@@ -1716,6 +1716,11 @@ MediaPlayerIdentifier MediaPlayer::identifier() const
     return m_private->identifier();
 }
 
+std::optional<VideoFrameMetadata> MediaPlayer::videoFrameMetadata()
+{
+    return m_private->videoFrameMetadata();
+}
+
 String MediaPlayer::elementId() const
 {
     return client().mediaPlayerElementId();

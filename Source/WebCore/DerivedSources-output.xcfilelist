@@ -995,6 +995,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHTMLMediaElement+AudioOutput.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHTMLMediaElement+AudioOutput.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHTMLMediaElement+RemotePlayback.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHTMLMediaElement+RemotePlayback.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHTMLMediaElement+RequestVideoFrameCallback.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHTMLMediaElement+RequestVideoFrameCallback.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHTMLMediaElement.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHTMLMediaElement.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHTMLMenuElement.cpp
@@ -1075,6 +1077,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHTMLUnknownElement.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHTMLUnknownElement.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHTMLVideoElement+PictureInPicture.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHTMLVideoElement+PictureInPicture.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHTMLVideoElement+RequestVideoFrameCallback.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHTMLVideoElement+RequestVideoFrameCallback.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHTMLVideoElement.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHTMLVideoElement.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHashChangeEvent.cpp
@@ -2307,6 +2311,10 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSValidityState.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSValidityState.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSVideoConfiguration.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSVideoConfiguration.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSVideoFrameMetadata.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSVideoFrameMetadata.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSVideoFrameRequestCallback.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSVideoFrameRequestCallback.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSVideoPlaybackQuality.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSVideoPlaybackQuality.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSVideoTrack+MediaSource.cpp

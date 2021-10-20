@@ -39,6 +39,7 @@
 #include "MediaPlayer.h"
 #include "MediaProducer.h"
 #include "MediaUniqueIdentifier.h"
+#include "ReducedResolutionSeconds.h"
 #include "TextTrackClient.h"
 #include "VideoTrackClient.h"
 #include "VisibilityChangeClient.h"

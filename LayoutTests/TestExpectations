@@ -216,6 +216,9 @@ fast/harness/uiscriptcontroller [ Skip ]
 imported/w3c/web-platform-tests/dom/events/scrolling [ Skip ]
 imported/w3c/web-platform-tests/dom/events/document-level-touchmove-event-listener-passive-by-default.tentative.html [ Skip ]
 
+# Only Mac and iOS WK2 have an implementation right now.
+imported/w3c/web-platform-tests/video-rvfc [ Skip ]
+
 # This test only makes sense on Mac
 fast/attachment/attachment-subtitle-resize.html [ Skip ]
 

@@ -1114,6 +1114,7 @@ public:
     void resumeScriptedAnimationControllerCallbacks();
 
     void serviceRequestAnimationFrameCallbacks();
+    void serviceRequestVideoFrameCallbacks();
 
     void windowScreenDidChange(PlatformDisplayID);
 

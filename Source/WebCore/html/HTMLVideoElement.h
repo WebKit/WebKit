@@ -29,6 +29,7 @@
 
 #include "HTMLMediaElement.h"
 #include "Supplementable.h"
+#include "VideoFrameRequestCallback.h"
 #include <memory>
 
 namespace WebCore {
@@ -38,6 +39,7 @@ class HTMLImageLoader;
 class ImageBuffer;
 class RenderVideo;
 class PictureInPictureObserver;
+class VideoFrameRequestCallback;
 
 enum class PixelFormat : uint8_t;
 enum class RenderingMode : bool;
@@ -110,6 +112,12 @@ public:
 
     RenderVideo* renderer() const;
 
+    bool shouldServiceRequestVideoFrameCallbacks() const { return !m_videoFrameRequests.isEmpty(); }
+    void serviceRequestVideoFrameCallbacks(ReducedResolutionSeconds);
+
+    unsigned requestVideoFrameCallback(Ref<VideoFrameRequestCallback>&&);
+    void cancelVideoFrameCallback(unsigned);
+
 private:
     HTMLVideoElement(const QualifiedName&, Document&, bool createdByParser);
 
@@ -148,6 +156,22 @@ private:
 #if ENABLE(PICTURE_IN_PICTURE_API)
     PictureInPictureObserver* m_pictureInPictureObserver { nullptr };
 #endif
+
+    struct VideoFrameRequest {
+        WTF_MAKE_STRUCT_FAST_ALLOCATED;
+        VideoFrameRequest(unsigned identifier, Ref<VideoFrameRequestCallback>&& callback)
+            : identifier(identifier)
+            , callback(WTFMove(callback))
+        {
+        }
+
+        unsigned identifier { 0 };
+        Ref<VideoFrameRequestCallback> callback;
+        bool cancelled { false };
+    };
+    Vector<UniqueRef<VideoFrameRequest>> m_videoFrameRequests;
+    unsigned m_nextVideoFrameRequestIndex { 0 };
+    bool m_isRunningVideoFrameRequests { false };
 };
 
 } // namespace WebCore

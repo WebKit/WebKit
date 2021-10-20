@@ -215,6 +215,7 @@ enum class RenderingUpdateStep : uint16_t {
     ScrollingTreeUpdate             = 1 << 13,
 #endif
     FlushAutofocusCandidates        = 1 << 14,
+    VideoFrameCallbacks             = 1 << 15,
 };
 
 constexpr OptionSet<RenderingUpdateStep> updateRenderingSteps = {

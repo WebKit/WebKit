@@ -1,0 +1,10 @@
+
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT Test we can register a video.rVFC callback. Test timed out
+TIMEOUT Test video.rVFC callbacks run before window.rAF callbacks. Test timed out
+TIMEOUT Test we can cancel a video.rVFC request. Test timed out
+PASS Test invalid calls to the video.rVFC API.
+TIMEOUT Test video.rVFC does not stop when switching sources. Test timed out
+

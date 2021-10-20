@@ -761,6 +761,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     html/URLDecomposition.h
     html/URLRegistry.h
     html/ValidityState.h
+    html/VideoFrameRequestCallback.h
     html/VoidCallback.h
 
     html/canvas/ImageBitmapRenderingContextSettings.h
@@ -1187,6 +1188,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/UserAgent.h
     platform/UserInterfaceLayoutDirection.h
     platform/ValidationBubble.h
+    platform/VideoFrameMetadata.h
     platform/WebGLStateTracker.h
     platform/Widget.h
     platform/WindowsKeyboardCodes.h

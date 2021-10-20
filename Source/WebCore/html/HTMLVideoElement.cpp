@@ -586,6 +586,56 @@ void HTMLVideoElement::exitToFullscreenModeWithoutAnimationIfPossible(HTMLMediaE
 }
 #endif
 
+unsigned HTMLVideoElement::requestVideoFrameCallback(Ref<VideoFrameRequestCallback>&& callback)
+{
+    auto identifier = ++m_nextVideoFrameRequestIndex;
+    m_videoFrameRequests.append(makeUniqueRef<VideoFrameRequest>(identifier, WTFMove(callback)));
+
+    if (auto* page = document().page())
+        page->scheduleRenderingUpdate(RenderingUpdateStep::VideoFrameCallbacks);
+
+    return identifier;
+}
+
+void HTMLVideoElement::cancelVideoFrameCallback(unsigned identifier)
+{
+    auto index = m_videoFrameRequests.findMatching([identifier](auto& request) { return request->identifier == identifier; });
+    if (index == notFound)
+        return;
+    if (m_isRunningVideoFrameRequests) {
+        m_videoFrameRequests[index]->cancelled = true;
+        return;
+    }
+    m_videoFrameRequests.remove(index);
+}
+
+void HTMLVideoElement::serviceRequestVideoFrameCallbacks(ReducedResolutionSeconds now)
+{
+    if (!player())
+        return;
+
+    auto videoFrameMetadata = player()->videoFrameMetadata();
+    if (!videoFrameMetadata)
+        return;
+
+    Ref protectedThis { *this };
+
+    // We store the size before calling callbacks as we do not want to call newly added callbacks.
+    auto callbackCount = m_videoFrameRequests.size();
+
+    m_isRunningVideoFrameRequests = true;
+    for (size_t index = 0; index < callbackCount; ++index) {
+        auto& request = m_videoFrameRequests[index];
+        if (!request->cancelled) {
+            request->callback->handleEvent(now.value(), *videoFrameMetadata);
+            request->cancelled = true;
+        }
+    }
+    m_isRunningVideoFrameRequests = false;
+
+    m_videoFrameRequests.removeAllMatching([](auto& callback) { return callback->cancelled; });
+}
+
 }
 
 #endif

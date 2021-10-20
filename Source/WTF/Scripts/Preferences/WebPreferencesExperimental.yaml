@@ -1127,6 +1127,18 @@ RequestSubmitEnabled:
     WebCore:
       default: false
 
+RequestVideoFrameCallbackEnabled:
+  type: bool
+  humanReadableName: "RequestVideoFrameCallback"
+  humanReadableDescription: "Enable RequestVideoFrameCallback API"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 # FIXME: This is on by default in WebKit2. Perhaps we should consider turning it on for WebKitLegacy as well.
 ResizeObserverEnabled:
   type: bool

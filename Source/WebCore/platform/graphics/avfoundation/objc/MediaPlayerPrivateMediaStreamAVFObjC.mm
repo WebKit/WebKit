@@ -316,6 +316,8 @@ void MediaPlayerPrivateMediaStreamAVFObjC::processNewVideoSample(MediaSample& sa
             updateReadyState();
     }
 
+    ++m_sampleCount;
+
     if (m_displayMode != LivePreview && !m_waitingForFirstImage)
         return;
 
@@ -1092,6 +1094,22 @@ void MediaPlayerPrivateMediaStreamAVFObjC::rootLayerBoundsDidChange()
 WTFLogChannel& MediaPlayerPrivateMediaStreamAVFObjC::logChannel() const
 {
     return LogMedia;
+}
+
+std::optional<VideoFrameMetadata> MediaPlayerPrivateMediaStreamAVFObjC::videoFrameMetadata()
+{
+    if (m_sampleCount == m_lastVideoFrameMetadataSampleCount)
+        return { };
+    m_lastVideoFrameMetadataSampleCount = m_sampleCount;
+
+    VideoFrameMetadata metadata;
+    metadata.width = m_intrinsicSize.width();
+    metadata.height = m_intrinsicSize.height();
+    metadata.presentedFrames = m_sampleCount;
+
+    // FIXME: It would be good to expose more video frame metadata.
+
+    return metadata;
 }
 
 }
