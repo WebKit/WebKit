@@ -51,7 +51,7 @@
  @property delegate
  @abstract A delegate object conforming to WebPDFViewPlaceholderDelegate that will be informed about various state changes.
  */
-@property (assign) NSObject<WebPDFViewPlaceholderDelegate> *delegate;
+@property (weak) NSObject<WebPDFViewPlaceholderDelegate> *delegate;
 
 /*!
  @property pageRects

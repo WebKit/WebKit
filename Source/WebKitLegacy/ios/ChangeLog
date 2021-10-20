@@ -1,3 +1,19 @@
+2021-10-20  David Kilzer  <ddkilzer@apple.com>
+
+        WebPDFViewPlaceholder should use a weak delegate
+        <https://webkit.org/b/231927>
+
+        Reviewed by Tim Horton.
+
+        * WebView/WebPDFViewPlaceholder.h:
+        (WebPDFViewPlaceholder.delegate):
+        - Mark property as `weak` instead of `assign`.
+        * WebView/WebPDFViewPlaceholder.mm:
+        (WebPDFViewPlaceholder._dataSource):
+        (WebPDFViewPlaceholder._delegate):
+        - Mark instance variables as as `_weak` to match `delegate`
+          property and based on comment for `_dataSource`.
+
 2021-10-13  Alex Christensen  <achristensen@webkit.org>
 
         Remove WTF::Variant and WTF::get
