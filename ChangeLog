@@ -1,3 +1,15 @@
+2021-10-20  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        Add ObjC as supported .clang-format language
+        https://bugs.webkit.org/show_bug.cgi?id=230401
+
+        Reviewed by Jonathan Bedard.
+
+        Add ObjC and change few properties useful
+        for ObjC formatting.
+
+        * .clang-format:
+
 2021-10-20  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [WPE] Reenable -fvisibility=hidden and -fvisibility-inlines-hidden
