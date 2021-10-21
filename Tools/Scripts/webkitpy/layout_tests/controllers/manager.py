@@ -50,7 +50,7 @@ from collections import defaultdict, OrderedDict
 from webkitcorepy.string_utils import pluralize
 
 from webkitpy.common.iteration_compatibility import iteritems, itervalues
-from webkitpy.layout_tests.controllers.layout_test_finder import LayoutTestFinder
+from webkitpy.layout_tests.controllers.layout_test_finder_legacy import LayoutTestFinder
 from webkitpy.layout_tests.controllers.layout_test_runner import LayoutTestRunner
 from webkitpy.layout_tests.controllers.test_result_writer import TestResultWriter
 from webkitpy.layout_tests.layout_package import json_layout_results_generator

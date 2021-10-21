@@ -49,7 +49,7 @@ from webkitpy.common.net.buildbot import BuildBot
 from webkitpy.common.net.regressionwindow import RegressionWindow
 from webkitpy.common.system.crashlogs import CrashLogs
 from webkitpy.common.system.user import User
-from webkitpy.layout_tests.controllers.layout_test_finder import LayoutTestFinder
+from webkitpy.layout_tests.controllers.layout_test_finder_legacy import LayoutTestFinder
 from webkitpy.layout_tests.models.test_expectations import TestExpectations
 from webkitpy.port import platform_options, configuration_options
 from webkitpy.tool.commands.abstractsequencedcommand import AbstractSequencedCommand

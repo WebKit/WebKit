@@ -1,3 +1,45 @@
+2021-10-21  Sam Sneddon  <gsnedders@apple.com>
+
+        Move layout_test_finder to layout_test_finder_legacy
+        https://bugs.webkit.org/show_bug.cgi?id=232018
+
+        Reviewed by Darin Adler.
+
+        This is a simple rename; no further changes.
+
+        * Scripts/open-layout-test:
+        * Scripts/webkitpy/layout_tests/controllers/layout_test_finder_legacy.py: Renamed from Tools/Scripts/webkitpy/layout_tests/controllers/layout_test_finder.py.
+        (_is_reference_html_file):
+        (_has_supported_extension):
+        (LayoutTestFinder):
+        (LayoutTestFinder.__init__):
+        (LayoutTestFinder.find_tests):
+        (LayoutTestFinder.find_tests_by_path):
+        (LayoutTestFinder._expanded_paths):
+        (LayoutTestFinder._real_tests):
+        (LayoutTestFinder._is_test_file):
+        (LayoutTestFinder._is_w3c_resource_file):
+        (LayoutTestFinder._strip_test_dir_prefixes):
+        (LayoutTestFinder._strip_test_dir_prefix):
+        (LayoutTestFinder._read_test_names_from_file):
+        (LayoutTestFinder._strip_comments):
+        * Scripts/webkitpy/layout_tests/controllers/layout_test_finder_legacy_unittest.py: Renamed from Tools/Scripts/webkitpy/layout_tests/controllers/layout_test_finder_unittest.py.
+        (MockLayoutTestFinder):
+        (MockLayoutTestFinder._real_tests):
+        (LayoutTestFinderTests):
+        (LayoutTestFinderTests.make_finder):
+        (LayoutTestFinderTests.test_supported_test_extensions):
+        (LayoutTestFinderTests.test_is_reference_html_file):
+        (LayoutTestFinderTests.test_find_no_paths_specified):
+        (LayoutTestFinderTests.test_find_one_test):
+        (LayoutTestFinderTests.test_find_glob):
+        (LayoutTestFinderTests.test_find_with_skipped_directories):
+        (LayoutTestFinderTests.test_find_with_skipped_directories_2):
+        (LayoutTestFinderTests.test_is_test_file):
+        (LayoutTestFinderTests.test_is_w3c_resource_file):
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        * Scripts/webkitpy/tool/commands/queries.py:
+
 2021-10-21  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix GTK build with old version of ATSPI after r284367.

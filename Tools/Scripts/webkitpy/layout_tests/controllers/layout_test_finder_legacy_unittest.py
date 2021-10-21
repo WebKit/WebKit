@@ -30,7 +30,7 @@ from collections import OrderedDict
 
 from webkitpy.common.host_mock import MockHost
 from webkitpy.common.system.filesystem_mock import MockFileSystem
-from webkitpy.layout_tests.controllers.layout_test_finder import LayoutTestFinder, Port, _is_reference_html_file, _supported_test_extensions
+from webkitpy.layout_tests.controllers.layout_test_finder_legacy import LayoutTestFinder, Port, _is_reference_html_file, _supported_test_extensions
 from webkitpy.port.test import add_unit_tests_to_mock_filesystem, TestPort
 
 
