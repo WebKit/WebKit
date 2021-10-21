@@ -1,3 +1,15 @@
+2021-10-21  Simon Fraser  <simon.fraser@apple.com>
+
+        Content offset in this codepen when switching tabs
+        https://bugs.webkit.org/show_bug.cgi?id=231989
+
+        Reviewed by Tim Horton.
+
+        New baselines.
+
+        * tiled-drawing/scrolling/clamp-out-of-bounds-scrolls-expected.txt:
+        * tiled-drawing/scrolling/scrolling-tree-after-scroll-expected.txt:
+
 2021-10-21  John Wilander  <wilander@apple.com>
 
         PCM: Change expectation to pass so we can investigate http/tests/privateClickMeasurement/attribution-conversion-through-image-redirect-in-new-window.html

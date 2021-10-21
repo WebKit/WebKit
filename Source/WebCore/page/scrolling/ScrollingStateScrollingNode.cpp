@@ -143,6 +143,11 @@ void ScrollingStateScrollingNode::setScrollPosition(const FloatPoint& scrollPosi
     setPropertyChanged(Property::ScrollPosition);
 }
 
+void ScrollingStateScrollingNode::syncScrollPosition(const FloatPoint& scrollPosition)
+{
+    m_scrollPosition = scrollPosition;
+}
+
 void ScrollingStateScrollingNode::setScrollOrigin(const IntPoint& scrollOrigin)
 {
     if (m_scrollOrigin == scrollOrigin)
@@ -204,6 +209,11 @@ void ScrollingStateScrollingNode::setRequestedScrollData(const RequestedScrollDa
     // Scroll position requests are imperative, not stateful, so we can't early return here.
     m_requestedScrollData = scrollData;
     setPropertyChanged(Property::RequestedScrollPosition);
+}
+
+bool ScrollingStateScrollingNode::hasScrollPositionRequest() const
+{
+    return hasChangedProperty(Property::RequestedScrollPosition) && m_requestedScrollData.requestType == ScrollRequestType::PositionUpdate;
 }
 
 void ScrollingStateScrollingNode::setIsMonitoringWheelEvents(bool isMonitoringWheelEvents)
