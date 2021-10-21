@@ -118,6 +118,20 @@ bool ScrollingEffectsController::retargetAnimatedScroll(FloatPoint newDestinatio
     return downcast<ScrollAnimationSmooth>(*m_currentAnimation).retargetActiveAnimation(newDestinationOffset);
 }
 
+bool ScrollingEffectsController::retargetAnimatedScrollBy(FloatSize offset)
+{
+    if (!is<ScrollAnimationSmooth>(m_currentAnimation.get()))
+        return false;
+
+    LOG_WITH_STREAM(ScrollAnimations, stream << "ScrollingEffectsController " << this << " retargetAnimatedScrollBy " << offset);
+
+    ASSERT(m_currentAnimation->isActive());
+    if (auto destinationOffset = m_currentAnimation->destinationOffset())
+        return m_currentAnimation->retargetActiveAnimation(*destinationOffset + offset);
+
+    return false;
+}
+
 void ScrollingEffectsController::stopAnimatedScroll()
 {
     LOG_WITH_STREAM(ScrollAnimations, stream << "ScrollingEffectsController " << this << " stopAnimatedScroll");
@@ -351,10 +365,7 @@ bool ScrollingEffectsController::handleWheelEvent(const PlatformWheelEvent& whee
 
 #if ENABLE(SMOOTH_SCROLLING)
     if (m_client.scrollAnimationEnabled() && !m_inScrollGesture) {
-        if (is<ScrollAnimationSmooth>(m_currentAnimation.get())) {
-            auto lastDestinationOffset = downcast<ScrollAnimationSmooth>(*m_currentAnimation).destinationOffset();
-            retargetAnimatedScroll(lastDestinationOffset + FloatSize { deltaX, deltaY });
-        } else
+        if (!retargetAnimatedScrollBy({ deltaX, deltaY }))
             startAnimatedScrollToDestination(scrollOffset, scrollOffset + FloatSize { deltaX, deltaY });
         return true;
     }

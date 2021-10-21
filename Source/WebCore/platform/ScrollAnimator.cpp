@@ -89,6 +89,9 @@ bool ScrollAnimator::scroll(ScrollbarOrientation orientation, ScrollGranularity 
     }
 
     if (m_scrollableArea.scrollAnimatorEnabled() && platformAllowsScrollAnimation() && !behavior.contains(ScrollBehavior::NeverAnimate)) {
+        if (m_scrollController.retargetAnimatedScrollBy(delta))
+            return true;
+
         auto startOffset = offsetFromPosition(m_currentPosition);
         auto extents = scrollExtents();
         auto destinationOffset = (startOffset + delta).constrainedBetween(extents.minimumScrollOffset(), extents.maximumScrollOffset());

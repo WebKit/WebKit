@@ -78,6 +78,7 @@ public:
     virtual void updateScrollExtents() { };
     
     FloatPoint currentOffset() const { return m_currentOffset; }
+    virtual std::optional<FloatPoint> destinationOffset() const { return std::nullopt; }
 
     virtual void serviceAnimation(MonotonicTime) = 0;
 

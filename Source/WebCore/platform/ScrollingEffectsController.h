@@ -135,6 +135,7 @@ public:
 
     bool startAnimatedScrollToDestination(FloatPoint startOffset, FloatPoint destinationOffset);
     bool retargetAnimatedScroll(FloatPoint newDestinationOffset);
+    bool retargetAnimatedScrollBy(FloatSize);
     void stopAnimatedScroll();
 
     void stopKeyboardScrolling();

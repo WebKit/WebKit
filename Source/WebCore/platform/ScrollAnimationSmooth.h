@@ -41,11 +41,9 @@ public:
     bool startAnimatedScrollToDestination(const FloatPoint& fromOffset, const FloatPoint& destinationOffset);
     bool retargetActiveAnimation(const FloatPoint& newOffset) final;
 
-    const FloatPoint& destinationOffset() const { return m_destinationOffset; }
+    std::optional<FloatPoint> destinationOffset() const final { return m_destinationOffset; }
 
 private:
-
-    bool startOrRetargetAnimation(const ScrollExtents&, const FloatPoint& destinationOffset);
 
     void updateScrollExtents() final;
     void serviceAnimation(MonotonicTime) final;
@@ -59,7 +57,7 @@ private:
     FloatPoint m_startOffset;
     FloatPoint m_destinationOffset;
 
-    RefPtr<TimingFunction> m_easeInOutTimingFunction;
+    RefPtr<TimingFunction> m_timingFunction;
 };
 
 } // namespace WebCore
