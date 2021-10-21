@@ -279,7 +279,7 @@ public:
     const Frame& mainFrame() const { return m_mainFrame.get(); }
 
     bool openedByDOM() const;
-    void setOpenedByDOM();
+    WEBCORE_EXPORT void setOpenedByDOM();
 
     bool openedByDOMWithOpener() const { return m_openedByDOMWithOpener; }
     void setOpenedByDOMWithOpener(bool value) { m_openedByDOMWithOpener = value; }

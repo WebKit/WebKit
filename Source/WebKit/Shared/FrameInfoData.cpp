@@ -35,6 +35,7 @@ void FrameInfoData::encode(IPC::Encoder& encoder) const
     encoder << isMainFrame;
     encoder << request;
     encoder << securityOrigin;
+    encoder << frameName;
     encoder << frameID;
     encoder << parentFrameID;
 }
@@ -56,6 +57,11 @@ std::optional<FrameInfoData> FrameInfoData::decode(IPC::Decoder& decoder)
     if (!securityOrigin)
         return std::nullopt;
 
+    std::optional<String> frameName;
+    decoder >> frameName;
+    if (!frameName)
+        return std::nullopt;
+
     std::optional<std::optional<WebCore::FrameIdentifier>> frameID;
     decoder >> frameID;
     if (!frameID)
@@ -70,6 +76,7 @@ std::optional<FrameInfoData> FrameInfoData::decode(IPC::Decoder& decoder)
         WTFMove(*isMainFrame),
         WTFMove(*request),
         WTFMove(*securityOrigin),
+        WTFMove(*frameName),
         WTFMove(*frameID),
         WTFMove(*parentFrameID)
     }};

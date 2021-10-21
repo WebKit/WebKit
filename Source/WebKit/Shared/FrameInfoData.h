@@ -43,6 +43,7 @@ struct FrameInfoData {
     bool isMainFrame { false };
     WebCore::ResourceRequest request;
     WebCore::SecurityOriginData securityOrigin;
+    String frameName;
     std::optional<WebCore::FrameIdentifier> frameID;
     std::optional<WebCore::FrameIdentifier> parentFrameID;
 };

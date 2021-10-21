@@ -491,6 +491,14 @@ WKPageRef TestController::createOtherPage(PlatformWebView* parentView, WKPageCon
     };
     WKPageSetPageNavigationClient(newPage, &pageNavigationClient.base);
 
+    WKPageInjectedBundleClientV1 injectedBundleClient = {
+        { 1, this },
+        didReceivePageMessageFromInjectedBundle,
+        nullptr,
+        didReceiveSynchronousPageMessageFromInjectedBundleWithListener,
+    };
+    WKPageSetPageInjectedBundleClient(newPage, &injectedBundleClient.base);
+
     view->didInitializeClients();
 
     TestController::singleton().updateWindowScaleForTest(view.ptr(), *TestController::singleton().m_currentInvocation);
@@ -1572,7 +1580,16 @@ WKTypeRef TestController::getInjectedBundleInitializationUserData(WKContextRef, 
 
 void TestController::didReceivePageMessageFromInjectedBundle(WKPageRef page, WKStringRef messageName, WKTypeRef messageBody, const void* clientInfo)
 {
-    static_cast<TestController*>(const_cast<void*>(clientInfo))->didReceiveMessageFromInjectedBundle(messageName, messageBody);
+    auto* testController = static_cast<TestController*>(const_cast<void*>(clientInfo));
+    if (page != testController->mainWebView()->page()) {
+        // If this is a Done message from an auxiliary view in its own WebProcess (due to process-swapping), we need to notify the injected bundle of the main WebView
+        // that the test is done.
+        if (WKStringIsEqualToUTF8CString(messageName, "Done") && testController->m_currentInvocation)
+            WKPagePostMessageToInjectedBundle(testController->mainWebView()->page(), toWK("NotifyDone").get(), nullptr);
+        if (!WKStringIsEqualToUTF8CString(messageName, "TextOutput"))
+            return;
+    }
+    testController->didReceiveMessageFromInjectedBundle(messageName, messageBody);
 }
 
 void TestController::didReceiveSynchronousPageMessageFromInjectedBundleWithListener(WKPageRef page, WKStringRef messageName, WKTypeRef messageBody, WKMessageListenerRef listener, const void* clientInfo)

@@ -1,3 +1,15 @@
+2021-10-21  Chris Dumez  <cdumez@apple.com>
+
+        WebKit should process-swap for initial navigation of a popup if it has no opener
+        https://bugs.webkit.org/show_bug.cgi?id=231990
+        <rdar://84425504>
+
+        Reviewed by Brent Fulgham.
+
+        * web-platform-tests/html/cross-origin-opener-policy/coop-coep-sandbox.https-expected.txt:
+        * web-platform-tests/html/cross-origin-opener-policy/coop-sandbox.https-expected.txt:
+        Rebaseline tests due to minor logging differences.
+
 2021-10-20  Alex Christensen  <achristensen@webkit.org>
 
         URLParser should reject hosts with C0 control characters or U+007F

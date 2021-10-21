@@ -37,6 +37,10 @@ class Decoder;
 class Encoder;
 }
 
+namespace WebCore {
+typedef int SandboxFlags;
+}
+
 namespace WebKit {
 
 struct NavigationActionData {
@@ -62,6 +66,7 @@ struct NavigationActionData {
     WebCore::LockHistory lockHistory { WebCore::LockHistory::No };
     WebCore::LockBackForwardList lockBackForwardList { WebCore::LockBackForwardList::No };
     WTF::String clientRedirectSourceForHistory;
+    WebCore::SandboxFlags effectiveSandboxFlags { 0 };
     std::optional<WebCore::PrivateClickMeasurement> privateClickMeasurement;
 };
 

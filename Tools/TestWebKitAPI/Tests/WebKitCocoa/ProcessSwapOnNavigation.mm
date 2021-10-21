@@ -86,6 +86,7 @@ static HashSet<pid_t> seenPIDs;
 static bool willPerformClientRedirect;
 static bool didPerformClientRedirect;
 static bool shouldConvertToDownload;
+static bool didCloseWindow;
 static RetainPtr<NSURL> clientRedirectSourceURL;
 static RetainPtr<NSURL> clientRedirectDestinationURL;
 
@@ -241,8 +242,16 @@ static RetainPtr<WKWebView> createdWebView;
 {
     createdWebView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration]);
     [createdWebView setNavigationDelegate:_navigationDelegate.get()];
+    [createdWebView setUIDelegate:self];
     didCreateWebView = true;
     return createdWebView.get();
+}
+
+- (void)webViewDidClose:(WKWebView *)webView
+{
+    EXPECT_EQ(createdWebView.get(), webView);
+    createdWebView = nullptr;
+    didCloseWindow = true;
 }
 
 - (void)webView:(WKWebView *)webView runJavaScriptAlertPanelWithMessage:(NSString *)message initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)())completionHandler
@@ -456,7 +465,16 @@ static const char* windowOpenSameSiteNoOpenerTestBytes = R"PSONRESOURCE(
 <script>
 window.onload = function() {
     if (!opener)
-        window.open("pson://www.webkit.org/main.html", "_blank", "noopener");
+        window.open("pson://www.webkit.org/popup.html", "_blank", "noopener");
+}
+</script>
+)PSONRESOURCE";
+
+static const char* windowOpenWithNameSameSiteNoOpenerTestBytes = R"PSONRESOURCE(
+<script>
+window.onload = function() {
+    if (!opener)
+        window.open("pson://www.webkit.org/popup.html", "foo", "noopener");
 }
 </script>
 )PSONRESOURCE";
@@ -1283,7 +1301,8 @@ TEST(ProcessSwap, CrossOriginButSameSiteWindowOpenNoOpener)
     auto pid2 = [createdWebView _webProcessIdentifier];
     EXPECT_TRUE(!!pid2);
 
-    EXPECT_EQ(pid1, pid2);
+    // Since there is no opener, we process-swap, even though the navigation is same-site.
+    EXPECT_NE(pid1, pid2);
 }
 
 TEST(ProcessSwap, CrossSiteWindowOpenWithOpener)
@@ -1327,7 +1346,9 @@ TEST(ProcessSwap, CrossSiteWindowOpenWithOpener)
     EXPECT_NE(pid1, pid2);
 }
 
-TEST(ProcessSwap, SameSiteWindowOpenNoOpener)
+enum class ExpectSwap { No, Yes };
+enum class WindowHasName : bool { No, Yes };
+static void runSameSiteWindowOpenNoOpenerTest(WindowHasName windowHasName, ExpectSwap expectSwap)
 {
     auto processPoolConfiguration = psonProcessPoolConfiguration();
     auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
@@ -1335,7 +1356,11 @@ TEST(ProcessSwap, SameSiteWindowOpenNoOpener)
     auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [webViewConfiguration setProcessPool:processPool.get()];
     [webViewConfiguration preferences].javaScriptCanOpenWindowsAutomatically = YES;
-    auto handler = adoptNS([[PSONScheme alloc] initWithBytes:windowOpenSameSiteNoOpenerTestBytes]);
+    auto handler = adoptNS([[PSONScheme alloc] init]);
+    if (windowHasName == WindowHasName::Yes)
+        [handler addMappingFromURLString:@"pson://www.webkit.org/main.html" toData:windowOpenWithNameSameSiteNoOpenerTestBytes];
+    else
+        [handler addMappingFromURLString:@"pson://www.webkit.org/main.html" toData:windowOpenSameSiteNoOpenerTestBytes];
     [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"PSON"];
 
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
@@ -1363,7 +1388,37 @@ TEST(ProcessSwap, SameSiteWindowOpenNoOpener)
     auto pid2 = [createdWebView _webProcessIdentifier];
     EXPECT_TRUE(!!pid2);
 
-    EXPECT_EQ(pid1, pid2);
+    // Since there is no opener, we process-swap, even though the navigation is same-site.
+    if (expectSwap == ExpectSwap::Yes)
+        EXPECT_NE(pid1, pid2);
+    else
+        EXPECT_EQ(pid1, pid2);
+
+    done = false;
+    request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.webkit.org/popup2.html"]];
+    [createdWebView loadRequest:request];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+    EXPECT_EQ(pid2, [createdWebView _webProcessIdentifier]);
+
+    // Since the window was opened via JS, it should be able to close itself.
+    didCloseWindow = false;
+    [createdWebView evaluateJavaScript:@"window.close()" completionHandler:nil];
+    TestWebKitAPI::Util::run(&didCloseWindow);
+}
+
+TEST(ProcessSwap, SameSiteWindowOpenNoOpener)
+{
+    // We process-swap even though the navigation is same-site, because the popup has no opener.
+    runSameSiteWindowOpenNoOpenerTest(WindowHasName::No, ExpectSwap::Yes);
+}
+
+TEST(ProcessSwap, SameSiteWindowOpenWithNameNoOpener)
+{
+    // We currently do no process-swap when navigating same-site a popup without opener if the window
+    // has a name. We should be able to support this but we would need to pass the window name over
+    // to the new process.
+    runSameSiteWindowOpenNoOpenerTest(WindowHasName::Yes, ExpectSwap::No);
 }
 
 TEST(ProcessSwap, CrossSiteBlankTargetWithOpener)
@@ -1523,7 +1578,8 @@ TEST(ProcessSwap, SameSiteBlankTargetNoOpener)
     auto pid2 = [createdWebView _webProcessIdentifier];
     EXPECT_TRUE(!!pid2);
 
-    EXPECT_EQ(pid1, pid2);
+    // Since there is no opener, we process-swap, even though the navigation is same-site.
+    EXPECT_NE(pid1, pid2);
 }
 
 TEST(ProcessSwap, ServerRedirectFromNewWebView)
@@ -5253,7 +5309,6 @@ TEST(ProcessSwap, OpenerLinkAfterAPIControlledProcessSwappingOfOpenee)
     done = false;
 }
 
-enum class ExpectSwap { No, Yes };
 static void runProcessSwapDueToRelatedWebViewTest(NSURL* relatedViewURL, NSURL* targetURL, ExpectSwap expectSwap)
 {
     auto processPoolConfiguration = psonProcessPoolConfiguration();
@@ -6269,7 +6324,9 @@ TEST(ProcessSwap, GoBackToSuspendedPageWithMainFrameIDThatIsNotOne)
     // New WKWebView has now navigated to webkit.org.
     EXPECT_WK_STREQ(@"pson://www.webkit.org/main2.html", [[createdWebView URL] absoluteString]);
     auto pid2 = [createdWebView _webProcessIdentifier];
-    EXPECT_EQ(pid1, pid2);
+
+    // We process-swap since there is no opener relationship.
+    EXPECT_NE(pid1, pid2);
 
     // Click link in new WKWebView so that it navigates cross-site to apple.com.
     [createdWebView evaluateJavaScript:@"testLink.click()" completionHandler:nil];
@@ -6288,7 +6345,7 @@ TEST(ProcessSwap, GoBackToSuspendedPageWithMainFrameIDThatIsNotOne)
 
     EXPECT_WK_STREQ(@"pson://www.webkit.org/main2.html", [[createdWebView URL] absoluteString]);
     auto pid4 = [createdWebView _webProcessIdentifier];
-    EXPECT_EQ(pid1, pid4); // Should have process-swapped to the original "suspended" process.
+    EXPECT_EQ(pid2, pid4); // Should have process-swapped to the original "suspended" process.
 
     // Do a fragment navigation in the original WKWebView and make sure this does not crash.
     request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.webkit.org/main1.html#testLink"]];
@@ -6298,7 +6355,7 @@ TEST(ProcessSwap, GoBackToSuspendedPageWithMainFrameIDThatIsNotOne)
 
     EXPECT_WK_STREQ(@"pson://www.webkit.org/main1.html#testLink", [[webView1 URL] absoluteString]);
     auto pid5 = [createdWebView _webProcessIdentifier];
-    EXPECT_EQ(pid1, pid5);
+    EXPECT_EQ(pid2, pid5);
 }
 
 #endif // PLATFORM(MAC)

@@ -1,3 +1,38 @@
+2021-10-21  Chris Dumez  <cdumez@apple.com>
+
+        WebKit should process-swap for initial navigation of a popup if it has no opener
+        https://bugs.webkit.org/show_bug.cgi?id=231990
+        <rdar://84425504>
+
+        Reviewed by Brent Fulgham.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+        (-[PSONUIDelegate webView:createWebViewWithConfiguration:forNavigationAction:windowFeatures:]):
+        (-[PSONUIDelegate webViewDidClose:]):
+        Updated existing API tests to reflect behavior change.
+        Also extend an API test to make sure that a popup opened by JS can still close itself
+        via JS (by calling window.close()), even in the case where we process swap.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::didReceiveMessageToPage):
+        (WTR::InjectedBundle::outputText):
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.h:
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::InjectedBundlePage::dump):
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::createOtherPage):
+        (WTR::TestController::didReceivePageMessageFromInjectedBundle):
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::didReceiveMessageFromInjectedBundle):
+        We have some tests that open a new popup with 'noopener' and the popup would be the
+        one to call `testRunner.notifyDone()`. This used to work fine when the popup would
+        end up in the same WebProcess because the injected bundle would know which page is
+        the main test page and use that one. However, now that we process-swap, the popup
+        page would think it is the main test page and try to dump its own output. However,
+        the UIProcess wasn't listening for messages from auxiliary pages' injected bundles.
+        The UIProcess now listens for those messages and asks the main test page to dump
+        its output when an auxiliary page in another process says the test is done.
+
 2021-10-21  Simon Fraser  <simon.fraser@apple.com>
 
         run-webkit-tests --ios-simulator --print-expectations fails

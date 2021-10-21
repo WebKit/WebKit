@@ -120,6 +120,7 @@ struct WebPageCreationParameters {
     
     float mediaVolume;
     WebCore::MediaProducerMutedStateFlags muted;
+    bool openedByDOM { false };
     bool mayStartMediaWhenInWindow;
     bool mediaPlaybackIsSuspended { false };
 

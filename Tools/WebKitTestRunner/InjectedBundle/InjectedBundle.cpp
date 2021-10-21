@@ -437,6 +437,11 @@ void InjectedBundle::didReceiveMessageToPage(WKBundlePageRef page, WKStringRef m
         return;
     }
 
+    if (WKStringIsEqualToUTF8CString(messageName, "NotifyDone")) {
+        InjectedBundle::page()->dump();
+        return;
+    }
+
     if (WKStringIsEqualToUTF8CString(messageName, "CallUISideScriptCallback")) {
         auto messageBodyDictionary = dictionaryValue(messageBody);
         auto callbackID = uint64Value(messageBodyDictionary, "CallbackID");
@@ -589,7 +594,7 @@ void InjectedBundle::dumpToStdErr(const String& output)
     postPageMessage("DumpToStdErr", string ? string->data() : "Out of memory\n");
 }
 
-void InjectedBundle::outputText(const String& output)
+void InjectedBundle::outputText(const String& output, IsFinalTestOutput isFinalTestOutput)
 {
     if (m_state != Testing)
         return;
@@ -600,7 +605,8 @@ void InjectedBundle::outputText(const String& output)
     // We use WKBundlePagePostMessageIgnoringFullySynchronousMode() instead of WKBundlePagePostMessage() to make sure that all text output
     // is done via asynchronous IPC, even if the connection is in fully synchronous mode due to a WKBundlePagePostSynchronousMessageForTesting()
     // call. Otherwise, messages logged via sync and async IPC may end up out of order and cause flakiness.
-    WKBundlePagePostMessageIgnoringFullySynchronousMode(page()->page(), toWK("TextOutput").get(), toWK(string ? string->data() : "Out of memory\n").get());
+    auto messageName = isFinalTestOutput == IsFinalTestOutput::Yes ? toWK("FinalTextOutput") : toWK("TextOutput");
+    WKBundlePagePostMessageIgnoringFullySynchronousMode(page()->page(), messageName.get(), toWK(string ? string->data() : "Out of memory\n").get());
 }
 
 void InjectedBundle::postNewBeforeUnloadReturnValue(bool value)

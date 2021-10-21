@@ -81,7 +81,8 @@ public:
     bool shouldDumpPixels() const { return m_dumpPixels; }
     bool dumpJSConsoleLogInStdErr() const { return m_dumpJSConsoleLogInStdErr; };
 
-    void outputText(const String&);
+    enum class IsFinalTestOutput : bool { No, Yes };
+    void outputText(const String&, IsFinalTestOutput = IsFinalTestOutput::No);
     void dumpToStdErr(const String&);
     void postNewBeforeUnloadReturnValue(bool);
     void postAddChromeInputField();

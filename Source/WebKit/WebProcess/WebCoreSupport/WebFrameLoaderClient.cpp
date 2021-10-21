@@ -968,6 +968,7 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const Navigat
         navigationAction.initiatedByMainFrame() == InitiatedByMainFrame::Yes,
         ResourceRequest { requester.url },
         requester.securityOrigin->data(),
+        { },
         WTFMove(originatingFrameID),
         WTFMove(parentFrameID),
     };
@@ -1012,6 +1013,7 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const Navigat
         documentLoader = static_cast<WebDocumentLoader*>(coreFrame->loader().documentLoader());
 
     navigationActionData.clientRedirectSourceForHistory = documentLoader->clientRedirectSourceForHistory();
+    navigationActionData.effectiveSandboxFlags = coreFrame->loader().effectiveSandboxFlags();
 
     // Notify the UIProcess.
     Ref protector { *coreFrame };

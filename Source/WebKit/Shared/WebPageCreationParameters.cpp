@@ -65,6 +65,7 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << topContentInset;
     encoder << mediaVolume;
     encoder << muted;
+    encoder << openedByDOM;
     encoder << mayStartMediaWhenInWindow;
     encoder << mediaPlaybackIsSuspended;
     encoder << minimumSizeForAutoLayout;
@@ -290,6 +291,8 @@ std::optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::
         return std::nullopt;
     parameters.muted = *mutedStateFlags;
 
+    if (!decoder.decode(parameters.openedByDOM))
+        return std::nullopt;
     if (!decoder.decode(parameters.mayStartMediaWhenInWindow))
         return std::nullopt;
     if (!decoder.decode(parameters.mediaPlaybackIsSuspended))

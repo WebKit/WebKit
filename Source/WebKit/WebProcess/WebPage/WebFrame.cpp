@@ -193,6 +193,7 @@ FrameInfoData WebFrame::info() const
         // FIXME: This should use the full request.
         ResourceRequest(url()),
         SecurityOriginData::fromFrame(m_coreFrame.get()),
+        m_coreFrame ? m_coreFrame->tree().name().string() : String(),
         m_frameID,
         parent ? std::optional<WebCore::FrameIdentifier> { parent->frameID() } : std::nullopt,
     };

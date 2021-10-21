@@ -726,6 +726,9 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     if (parameters.mediaPlaybackIsSuspended)
         m_page->suspendAllMediaPlayback();
 
+    if (parameters.openedByDOM)
+        m_page->setOpenedByDOM();
+
     m_page->setGroupName(m_pageGroup->identifier());
     m_page->setDeviceScaleFactor(parameters.deviceScaleFactor);
     m_page->setUserInterfaceLayoutDirection(m_userInterfaceLayoutDirection);
@@ -1732,6 +1735,9 @@ void WebPage::loadRequest(LoadParameters&& loadParameters)
     frameLoadRequest.setLockBackForwardList(loadParameters.lockBackForwardList);
     frameLoadRequest.setClientRedirectSourceForHistory(loadParameters.clientRedirectSourceForHistory);
     frameLoadRequest.setIsRequestFromClientOrUserInput();
+
+    if (loadParameters.effectiveSandboxFlags)
+        corePage()->mainFrame().loader().forceSandboxFlags(loadParameters.effectiveSandboxFlags);
 
     corePage()->userInputBridge().loadRequest(WTFMove(frameLoadRequest));
 

@@ -846,7 +846,7 @@ void InjectedBundlePage::dump()
             injectedBundle.setRepaintRects(adoptWK(WKBundlePageCopyTrackedRepaintRects(m_page)).get());
     }
 
-    injectedBundle.outputText(stringBuilder.toString());
+    injectedBundle.outputText(stringBuilder.toString(), InjectedBundle::IsFinalTestOutput::Yes);
     injectedBundle.done();
 }
 
