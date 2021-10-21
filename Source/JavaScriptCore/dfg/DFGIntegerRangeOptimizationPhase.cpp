@@ -568,6 +568,9 @@ public:
 
         switch (other.m_kind) {
         case Equal:
+            if (differenceOverflows<int>(otherEffectiveRight, thisRight))
+                return *this;
+
             // Return a version of *this that is Equal to other's constant.
             return Relationship(m_left, m_right, Equal, otherEffectiveRight - thisRight);
 

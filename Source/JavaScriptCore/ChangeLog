@@ -1,3 +1,14 @@
+2021-10-21  Michael Saboff  <msaboff@apple.com>
+
+        Add missing overflow check to DFGIntegerRangeOptimizationPhase::filterConstant()
+        https://bugs.webkit.org/show_bug.cgi?id=232058
+
+        Reviewed by Robin Morisset.
+
+        Added overflow check.
+
+        * dfg/DFGIntegerRangeOptimizationPhase.cpp:
+
 2021-10-20  Yusuke Suzuki  <ysuzuki@apple.com>
 
         *IsSane API's could take in the Structure's we're consulting, or they can be out parameters, so we don't rely on the CPU's memory ordering
