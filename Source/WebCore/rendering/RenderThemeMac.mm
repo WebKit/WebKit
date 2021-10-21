@@ -988,6 +988,65 @@ void RenderThemeMac::paintListButtonForInput(const RenderObject& o, GraphicsCont
 {
     // We can't paint an NSComboBoxCell since they are not height-resizable.
     const auto& input = downcast<HTMLInputElement>(*(o.generatingNode()));
+
+#if HAVE(LARGE_CONTROL_SIZE)
+    LocalDefaultSystemAppearance localAppearance(o.useDarkAppearance(), o.style().effectiveAccentColor());
+
+    const FloatSize comboBoxSize { 40, 19 };
+    const FloatSize comboBoxButtonSize { 16, 16 };
+    const FloatPoint comboBoxButtonInset { 5, 1 };
+    constexpr auto comboBoxButtonCornerRadii = 4;
+
+    const FloatSize desiredComboBoxButtonSize { 12, 12 };
+    constexpr auto desiredComboBoxInset = 2;
+
+    float deviceScaleFactor = o.document().deviceScaleFactor();
+
+    auto comboBoxImageBuffer = ImageBuffer::createCompatibleBuffer(comboBoxSize, deviceScaleFactor, DestinationColorSpace::SRGB(), context);
+    if (!comboBoxImageBuffer)
+        return;
+
+    ContextContainer cgContextContainer(comboBoxImageBuffer->context());
+    CGContextRef cgContext = cgContextContainer.context();
+
+    NSString *coreUIState;
+    if (input.isPresentingAttachedView())
+        coreUIState = (__bridge NSString *)kCUIStatePressed;
+    else if (auto* buttonElement = input.dataListButtonElement())
+        coreUIState = (__bridge NSString *)(buttonElement->active() ? kCUIStatePressed : kCUIStateActive);
+    else
+        coreUIState = (__bridge NSString *)kCUIStateActive;
+
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+    [[NSAppearance currentAppearance] _drawInRect:NSMakeRect(0, 0, comboBoxSize.width(), comboBoxSize.height()) context:cgContext options:@{
+    ALLOW_DEPRECATED_DECLARATIONS_END
+        (__bridge NSString *)kCUIWidgetKey : (__bridge NSString *)kCUIWidgetButtonComboBox,
+        (__bridge NSString *)kCUISizeKey : (__bridge NSString *)kCUISizeRegular,
+        (__bridge NSString *)kCUIStateKey : coreUIState,
+        (__bridge NSString *)kCUIUserInterfaceLayoutDirectionKey : (__bridge NSString *)kCUIUserInterfaceLayoutDirectionLeftToRight,
+    }];
+
+    auto comboBoxButtonImageBuffer = ImageBuffer::createCompatibleBuffer(desiredComboBoxButtonSize, deviceScaleFactor, DestinationColorSpace::SRGB(), context);
+    if (!comboBoxButtonImageBuffer)
+        return;
+
+    auto& comboBoxButtonContext = comboBoxButtonImageBuffer->context();
+
+    comboBoxButtonContext.scale(desiredComboBoxButtonSize.width() / comboBoxButtonSize.width());
+    comboBoxButtonContext.clipRoundedRect(FloatRoundedRect(FloatRect(FloatPoint::zero(), comboBoxButtonSize), FloatRoundedRect::Radii(comboBoxButtonCornerRadii)));
+    comboBoxButtonContext.translate(comboBoxButtonInset.scaled(-1));
+    comboBoxButtonContext.drawConsumingImageBuffer(WTFMove(comboBoxImageBuffer), FloatPoint::zero(), ImagePaintingOptions { ImageOrientation::OriginBottomRight });
+
+    FloatPoint listButtonLocation;
+    float listButtonY = r.center().y() - desiredComboBoxButtonSize.height() / 2;
+    if (o.style().isLeftToRightDirection())
+        listButtonLocation = { r.maxX() - desiredComboBoxButtonSize.width() - desiredComboBoxInset, listButtonY };
+    else
+        listButtonLocation = { r.x() + desiredComboBoxInset, listButtonY };
+
+    GraphicsContextStateSaver stateSaver(context);
+    context.drawConsumingImageBuffer(WTFMove(comboBoxButtonImageBuffer), listButtonLocation);
+#else
     NSCell *listButton = this->listButton();
 
     NSRect listButtonFrame = NSMakeRect(r.maxX() - listButtonWidth, r.y(), listButtonWidth, r.height());
@@ -1020,6 +1079,7 @@ void RenderThemeMac::paintListButtonForInput(const RenderObject& o, GraphicsCont
     imageRect.setY(NSMidY(listButtonFrame) - imageRect.height() / 2);
 
     context.drawImage(*image, imageRect);
+#endif // HAVE(LARGE_CONTROL_SIZE)
 }
 
 void RenderThemeMac::adjustListButtonStyle(RenderStyle& style, const Element*) const

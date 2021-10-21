@@ -1,3 +1,13 @@
+2021-10-21  Aditya Keerthi  <akeerthi@apple.com>
+
+        [macOS] Update appearance of <datalist> indicator
+        https://bugs.webkit.org/show_bug.cgi?id=232031
+        rdar://84474135
+
+        Reviewed by Wenson Hsieh.
+
+        * pal/spi/mac/CoreUISPI.h:
+
 2021-10-20  Ross Kirsling  <ross.kirsling@sony.com>
 
         Mac CMake build should not need to include iOS headers
