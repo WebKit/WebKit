@@ -1,3 +1,18 @@
+2021-10-21  Per Arne Vollan <pvollan@apple.com>
+
+        Launch Services database is not always sent to GPUP
+        https://bugs.webkit.org/show_bug.cgi?id=232047
+        <rdar://problem/84480229>
+
+        Unreviewed, address post commit review feedback.
+
+        Address review feedback. Also rename a data member which had a misleading name.
+
+        * UIProcess/GPU/GPUProcessProxy.cpp:
+        (WebKit::GPUProcessProxy::didFinishLaunching):
+        (WebKit::GPUProcessProxy::addSession):
+        * UIProcess/GPU/GPUProcessProxy.h:
+
 2021-10-19  Darin Adler  <darin@apple.com>
 
         [Cocoa] Merge and simplify the nsColor family of functions
