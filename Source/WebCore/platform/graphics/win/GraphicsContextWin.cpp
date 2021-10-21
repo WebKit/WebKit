@@ -56,7 +56,7 @@ HDC GraphicsContext::getWindowsContext(const IntRect& dstRect, bool supportAlpha
     HDC hdc = nullptr;
 #if !USE(CAIRO)
     hdc = deprecatedPrivateContext()->m_hdc;
-    if (hdc && isInTransparencyLayer()) {
+    if (hdc && !isInTransparencyLayer()) {
         deprecatedPrivateContext()->flush();
         deprecatedPrivateContext()->save();
         return deprecatedPrivateContext()->m_hdc;
