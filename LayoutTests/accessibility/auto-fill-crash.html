@@ -17,14 +17,24 @@
 
     if (window.accessibilityController) {
         var axTextField = accessibilityController.accessibleElementById("textfield");
-        var childrenCountExpected = accessibilityController.platformName == "atk" ? "2" : "3";
+        var childrenCountExpected = accessibilityController.platformName == "atk" ? "1" : "2";
         window.internals.setShowAutoFillButton(document.getElementById("textfield"), "Contacts");
-        shouldBe("accessibilityController.accessibleElementById('textfield').childrenCount", childrenCountExpected);
+        var textFieldAxObject = accessibilityController.accessibleElementById('textfield');
+        shouldBe("textFieldAxObject.childrenCount", childrenCountExpected);
+        // Verify the autofill button is represented in the accessibility tree.
+        shouldBe("textFieldAxObject.childAtIndex(childrenCountExpected - 1).description", "'AXDescription: contact info AutoFill'");
+
+        var platform = accessibilityController.platformName;
+        // Windows expects 2 children.
+        childrenCountExpected = "2";
+        if (platform == "mac" || platform == "ios")
+            childrenCountExpected = "1"
+        else if (platform == "atk")
+            childrenCountExpected = "0"
 
         // Don't crash!
-        childrenCountExpected = accessibilityController.platformName == "atk" ? "0" : "1";
         window.internals.setShowAutoFillButton(document.getElementById("textfield"), "None");
-        shouldBe("accessibilityController.accessibleElementById('textfield').childrenCount", childrenCountExpected);
+        shouldBe("textFieldAxObject.childrenCount", childrenCountExpected);
     }
 
 </script>

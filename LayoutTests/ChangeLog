@@ -1,3 +1,18 @@
+2021-10-21  Tyler Wilcock  <tyler_w@apple.com>
+
+        AX: Remove redundant insert of autofill button child in AccessibilityRenderObject::addTextFieldChildren
+        https://bugs.webkit.org/show_bug.cgi?id=232033
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/auto-fill-crash-expected.txt:
+        * accessibility/auto-fill-crash.html:
+        * platform/glib/accessibility/auto-fill-crash-expected.txt:
+        Expect one less child because we no longer insert a redundant button
+        into the accessibility tree. Also add an expectation confirming the
+        autofill button is actually a part of the accessibility tree.
+        * platform/win/accessibility/auto-fill-crash-expected.txt: Added.
+
 2021-10-21  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, drop test from TestExpectations that no longer exists.
