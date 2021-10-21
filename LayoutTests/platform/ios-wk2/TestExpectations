@@ -2021,8 +2021,6 @@ http/tests/resourceLoadStatistics/exemptDomains/ [ Pass ]
 
 webkit.org/b/228164 [ Debug ] http/tests/resourceLoadStatistics/website-data-removal-for-site-with-user-interaction.html [ Pass Crash ]
 
-webkit.org/b/231586 http/tests/resourceLoadStatistics/switch-session-on-navigation-to-prevalent-without-interaction.py [ Pass Failure ]
-
 webkit.org/b/216492 [ Debug ] imported/w3c/web-platform-tests/selection/extend-20.html [ Slow ]
 
 webkit.org/b/231299 [ Debug ] imported/w3c/web-platform-tests/selection/extend-00.html [ Slow ]
