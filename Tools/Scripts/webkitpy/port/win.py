@@ -142,7 +142,13 @@ class WinPort(ApplePort):
 
     def environment_for_api_tests(self):
         env = super(WinPort, self).environment_for_api_tests()
-        for variable in ['SYSTEMROOT', 'WEBKIT_LIBRARIES']:
+        variables_to_copy = [
+            'SYSTEMROOT',
+            'TEMP',
+            'TMP',
+            'WEBKIT_LIBRARIES',
+        ]
+        for variable in variables_to_copy:
             self._copy_value_from_environ_if_set(env, variable)
         return env
 

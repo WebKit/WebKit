@@ -1,5 +1,21 @@
 2021-10-21  Fujii Hironori  <Hironori.Fujii@sony.com>
 
+        [Win] TestWTF.FileSystemTest.* are timing out if run-api-tests is run by a normal user
+        https://bugs.webkit.org/show_bug.cgi?id=232065
+
+        Reviewed by Jonathan Bedard.
+
+        run-api-tests script didn't pass TEMP and TMP env vars to
+        TestWTF.exe. Then, generateTemporaryPath in
+        wtf/win/FileSystemWin.cpp never finished because a normal user
+        can't create a file in the Windows system directory.
+
+        * Scripts/webkitpy/port/win.py:
+        (WinPort.environment_for_api_tests): Added TEMP and TMP to the env
+        var list to inherit.
+
+2021-10-21  Fujii Hironori  <Hironori.Fujii@sony.com>
+
         [Win Python] REGRESSION(r284398): run-api-tests: FileNotFoundError raised: [WinError 2] The system cannot find the file specified
         https://bugs.webkit.org/show_bug.cgi?id=232037
 
