@@ -1,3 +1,19 @@
+2021-10-21  Enrique Ocaña González  <eocanha@igalia.com>
+
+        REGRESSION(r282059) [GStreamer] Test media/media-source/media-source-stalled-holds-sleep-assertion.html timeouts
+        https://bugs.webkit.org/show_bug.cgi?id=229979
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Detect stall by monitoring currentTime instead of listening to the 'stall' event. This is needed after
+        removing emission of 'stall' event in GStreamer ports after https://bugs.webkit.org/show_bug.cgi?id=226882
+
+        Also remove initial seek, which is irrelevant to the test purpose and causes troubles in GStreamer ports.
+
+        * media/media-source/media-source-stalled-holds-sleep-assertion-expected.txt: Updated expectations.
+        * media/media-source/media-source-stalled-holds-sleep-assertion.html: Monitor currentTime instead of stall event, remove initial seek.
+        * platform/glib/TestExpectations: Removed timeout expectation.
+
 2021-10-20  Antti Koivisto  <antti@apple.com>
 
         [ iOS ] fast/inline/inline-background-clip-text-multiline.html is image failing

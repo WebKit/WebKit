@@ -2511,8 +2511,6 @@ webkit.org/b/206753 imported/w3c/web-platform-tests/css/css-backgrounds/backgrou
 
 webkit.org/b/229764 animations/background-position.html [ ImageOnlyFailure Pass ]
 
-webkit.org/b/229979 media/media-source/media-source-stalled-holds-sleep-assertion.html [ Timeout ]
-
 webkit.org/b/230315 imported/w3c/web-platform-tests/mathml/presentation-markup/direction/direction-006.html [ ImageOnlyFailure ]
 
 webkit.org/b/231818 imported/w3c/web-platform-tests/file-system-access/sandboxed_FileSystemFileHandle-sync-access-handle-lock.https.tentative.worker.html [ Failure ]
