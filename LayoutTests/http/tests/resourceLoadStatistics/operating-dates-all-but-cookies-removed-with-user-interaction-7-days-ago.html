@@ -230,10 +230,10 @@
     const otherOrigin = "http://localhost:8000"
     const topFrameOrigin = "http://127.0.0.2:8000";
     const timeStamp = Math.round((new Date()).getTime() / 1000);
-    function finishTest() {
+    async function finishTest() {
         if (!testRunner.isStatisticsHasHadUserInteraction(originUnderTest))
             addOutput("FAIL: " + originUnderTest + " doesn't have user interaction after processing.");
-        resetCookies();
+        await resetCookiesITP();
         setEnableFeature(false, function() {
             testRunner.notifyDone();
         });

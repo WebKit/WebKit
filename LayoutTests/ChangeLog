@@ -1,3 +1,29 @@
+2021-10-21  Kate Cheney  <katherine_cheney@apple.com>
+
+        http/tests/resourceLoadStatistics/website-data-removal-for-site-navigated-to-with-link-decoration.html is a flaky timeout
+        https://bugs.webkit.org/show_bug.cgi?id=231971
+        <rdar://problem/84270108>
+
+        Reviewed by John Wilander.
+
+        Update ITP tests to wait for resetCookies() to finish before ending
+        the test. Flaky timeouts were being caused by resetCookies() being
+        partially finished which resets the top loading frame checked in
+        TestRunner::notifyDone().
+
+        * http/tests/cookies/resources/delete-cookie.py: Added.
+        (delete_cookie):
+        * http/tests/resourceLoadStatistics/operating-dates-all-but-cookies-not-removed-with-user-interaction-6-days-ago.html:
+        * http/tests/resourceLoadStatistics/operating-dates-all-but-cookies-removed-with-user-interaction-7-days-ago.html:
+        * http/tests/resourceLoadStatistics/operating-dates-all-website-data-removed.html:
+        * http/tests/resourceLoadStatistics/resources/util.js:
+        (async resetCookiesITP.setUp):
+        (async resetCookiesITP):
+        * http/tests/resourceLoadStatistics/standalone-web-application-exempt-from-website-data-deletion.html:
+        * http/tests/resourceLoadStatistics/website-data-removal-for-site-navigated-to-with-link-decoration.html:
+        * http/tests/resourceLoadStatistics/website-data-removal-for-site-with-user-interaction.html:
+        * http/tests/resourceLoadStatistics/website-data-removal-for-site-without-user-interaction.html:
+
 2021-10-21  Ayumi Kojima  <ayumi_kojima@apple.com>
 
         [ iOS macOS wk2 ]compositing/video/video-border-radius-clipping.html is a flakey image failure.

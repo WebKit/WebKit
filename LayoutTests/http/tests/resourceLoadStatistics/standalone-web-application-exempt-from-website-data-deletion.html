@@ -228,8 +228,8 @@
         });
     }
 
-    function finishTest() {
-        resetCookies();
+    async function finishTest() {
+        await resetCookiesITP();
         testRunner.setStatisticsFirstPartyWebsiteDataRemovalMode(false, function() {
             setEnableFeature(false, function() {
                 testRunner.notifyDone();

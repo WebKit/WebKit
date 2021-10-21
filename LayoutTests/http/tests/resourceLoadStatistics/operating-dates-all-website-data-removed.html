@@ -227,10 +227,10 @@
     }
 
     const originUnderTest  = "http://127.0.0.1:8000";
-    function finishTest() {
+    async function finishTest() {
         if (testRunner.isStatisticsHasHadUserInteraction(originUnderTest))
             addOutput("FAIL: " + originUnderTest + " still has user interaction after processing.");
-        resetCookies();
+        await resetCookiesITP();
         setEnableFeature(false, function() {
             testRunner.notifyDone();
         });
