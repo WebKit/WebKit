@@ -57,6 +57,7 @@
 #import <pal/crypto/CryptoDigest.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/text/Base64.h>
 
@@ -214,11 +215,11 @@ static RetainPtr<NSArray> getAllLocalAuthenticatorCredentialsImpl(NSString *acce
 {
     auto query = adoptNS([[NSMutableDictionary alloc] init]);
     [query setDictionary:@{
-        (__bridge id)kSecClass: (__bridge id)kSecClassKey,
-        (__bridge id)kSecAttrKeyClass: (__bridge id)kSecAttrKeyClassPrivate,
+        (__bridge id)kSecClass: bridge_id_cast(kSecClassKey),
+        (__bridge id)kSecAttrKeyClass: bridge_id_cast(kSecAttrKeyClassPrivate),
         (__bridge id)kSecAttrAccessGroup: accessGroup,
         (__bridge id)kSecReturnAttributes: @YES,
-        (__bridge id)kSecMatchLimit: (__bridge id)kSecMatchLimitAll,
+        (__bridge id)kSecMatchLimit: bridge_id_cast(kSecMatchLimitAll),
         (__bridge id)kSecUseDataProtectionKeychain: @YES
     }];
     updateQueryIfNecessary(query.get());
@@ -231,7 +232,7 @@ static RetainPtr<NSArray> getAllLocalAuthenticatorCredentialsImpl(NSString *acce
 
     auto result = adoptNS([[NSMutableArray alloc] init]);
     for (NSDictionary *attributes in (NSArray *)attributesArrayRef) {
-        auto decodedResponse = cbor::CBORReader::read(vectorFromNSData(attributes[(__bridge id)kSecAttrApplicationTag]));
+        auto decodedResponse = cbor::CBORReader::read(vectorFromNSData(attributes[bridge_id_cast(kSecAttrApplicationTag)]));
         if (!decodedResponse || !decodedResponse->isMap()) {
             ASSERT_NOT_REACHED();
             return nullptr;
@@ -247,8 +248,8 @@ static RetainPtr<NSArray> getAllLocalAuthenticatorCredentialsImpl(NSString *acce
 
         [result addObject:@{
             _WKLocalAuthenticatorCredentialNameKey: username,
-            _WKLocalAuthenticatorCredentialIDKey: attributes[(__bridge id)kSecAttrApplicationLabel],
-            _WKLocalAuthenticatorCredentialRelyingPartyIDKey: attributes[(__bridge id)kSecAttrLabel]
+            _WKLocalAuthenticatorCredentialIDKey: attributes[bridge_id_cast(kSecAttrApplicationLabel)],
+            _WKLocalAuthenticatorCredentialRelyingPartyIDKey: attributes[bridge_id_cast(kSecAttrLabel)]
         }];
     }
 
@@ -279,7 +280,7 @@ static RetainPtr<NSArray> getAllLocalAuthenticatorCredentialsImpl(NSString *acce
 #if ENABLE(WEB_AUTHN)
     auto deleteQuery = adoptNS([[NSMutableDictionary alloc] init]);
     [deleteQuery setDictionary:@{
-        (__bridge id)kSecClass: (__bridge id)kSecClassKey,
+        (__bridge id)kSecClass: bridge_id_cast(kSecClassKey),
         (__bridge id)kSecAttrApplicationLabel: credentialID,
         (__bridge id)kSecUseDataProtectionKeychain: @YES
     }];
@@ -301,10 +302,10 @@ static RetainPtr<NSArray> getAllLocalAuthenticatorCredentialsImpl(NSString *acce
 #if ENABLE(WEB_AUTHN)
     auto query = adoptNS([[NSMutableDictionary alloc] init]);
     [query setDictionary:@{
-        (__bridge id)kSecClass: (__bridge id)kSecClassKey,
+        (__bridge id)kSecClass: bridge_id_cast(kSecClassKey),
         (__bridge id)kSecReturnAttributes: @YES,
         (__bridge id)kSecAttrApplicationLabel: credentialID,
-        (__bridge id)kSecReturnPersistentRef : (__bridge id)kCFBooleanTrue,
+        (__bridge id)kSecReturnPersistentRef : bridge_id_cast(kCFBooleanTrue),
         (__bridge id)kSecUseDataProtectionKeychain: @YES
     }];
     updateQueryIfNecessary(query.get());
@@ -316,7 +317,7 @@ static RetainPtr<NSArray> getAllLocalAuthenticatorCredentialsImpl(NSString *acce
         return;
     }
     NSDictionary *attributes = (__bridge NSDictionary *)attributesArrayRef;
-    auto decodedResponse = cbor::CBORReader::read(vectorFromNSData(attributes[(__bridge id)kSecAttrApplicationTag]));
+    auto decodedResponse = cbor::CBORReader::read(vectorFromNSData(attributes[bridge_id_cast(kSecAttrApplicationTag)]));
     if (!decodedResponse || !decodedResponse->isMap()) {
         ASSERT_NOT_REACHED();
         return;
@@ -345,8 +346,8 @@ static RetainPtr<NSArray> getAllLocalAuthenticatorCredentialsImpl(NSString *acce
     };
 
     [query setDictionary:@{
-        (__bridge id)kSecValuePersistentRef: [attributes objectForKey:(__bridge id)kSecValuePersistentRef],
-        (__bridge id)kSecClass: (__bridge id)kSecClassKey,
+        (__bridge id)kSecValuePersistentRef: [attributes objectForKey:bridge_id_cast(kSecValuePersistentRef)],
+        (__bridge id)kSecClass: bridge_id_cast(kSecClassKey),
     }];
     updateQueryIfNecessary(query.get());
 

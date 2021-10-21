@@ -1,3 +1,19 @@
+2021-10-21  John Pascoe  <j_pascoe@apple.com>
+
+        Followup: Fix crash when calling setUsernameForLocalCredentialWithID
+        https://bugs.webkit.org/show_bug.cgi?id=232057
+        <rdar://problem/84507268>
+
+        Reviewed by David Kilzer.
+
+        Follow up to address David's comment.
+
+        * UIProcess/API/Cocoa/_WKWebAuthenticationPanel.mm:
+        (getAllLocalAuthenticatorCredentialsImpl):
+        (+[_WKWebAuthenticationPanel deleteLocalAuthenticatorCredentialWithID:]):
+        (+[_WKWebAuthenticationPanel setUsernameForLocalCredentialWithID:username:]):
+        - Use <wtf/cocoa/TypeCastsCocoa.h>
+
 2021-10-21  Chris Dumez  <cdumez@apple.com>
 
         WebKit should process-swap for initial navigation of a popup if it has no opener
