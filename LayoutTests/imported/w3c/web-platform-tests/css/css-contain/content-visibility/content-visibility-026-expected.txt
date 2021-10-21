@@ -1,6 +1,6 @@
 
 FAIL content-visibility: hidden adds contain: size layout style; assert_equals: expected "size layout style paint" but got "none"
 FAIL content-visibility: auto adds contain: size layout style paint; assert_equals: initial onscreen expected "size layout style paint" but got "none"
-FAIL content-visibility: auto adds contain: size layout style paint, can't be overridden assert_equals: expected "size layout style paint" but got "none"
+FAIL content-visibility: auto adds contain: size layout style paint, can't be overridden assert_equals: expected "size layout style paint" but got "style"
 FAIL content-visibility keeps all containment even when shorthands are specified assert_equals: expected "size layout style paint" but got "paint"
 

@@ -4,12 +4,12 @@ PASS Property contain value 'strict'
 PASS Property contain value 'content'
 PASS Property contain value 'size'
 PASS Property contain value 'layout'
-FAIL Property contain value 'style' assert_true: 'style' is a supported value for contain. expected true got false
+PASS Property contain value 'style'
 PASS Property contain value 'paint'
 PASS Property contain value 'size layout'
-FAIL Property contain value 'style paint' assert_true: 'style paint' is a supported value for contain. expected true got false
-FAIL Property contain value 'layout style paint' assert_true: 'layout style paint' is a supported value for contain. expected true got false
-FAIL Property contain value 'size layout style paint' assert_true: 'size layout style paint' is a supported value for contain. expected true got false
+PASS Property contain value 'style paint'
+PASS Property contain value 'layout style paint'
+PASS Property contain value 'size layout style paint'
 PASS Property contain value 'size layout paint'
 PASS Property contain value 'layout paint'
 

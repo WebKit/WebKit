@@ -4,10 +4,10 @@ PASS e.style['contain'] = "strict" should set the property value
 PASS e.style['contain'] = "content" should set the property value
 PASS e.style['contain'] = "size" should set the property value
 PASS e.style['contain'] = "layout" should set the property value
-FAIL e.style['contain'] = "style" should set the property value assert_not_equals: property should be set got disallowed value ""
+PASS e.style['contain'] = "style" should set the property value
 PASS e.style['contain'] = "paint" should set the property value
 PASS e.style['contain'] = "layout size" should set the property value
-FAIL e.style['contain'] = "paint style" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['contain'] = "layout style paint" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['contain'] = "layout paint style size" should set the property value assert_not_equals: property should be set got disallowed value ""
+PASS e.style['contain'] = "paint style" should set the property value
+PASS e.style['contain'] = "layout style paint" should set the property value
+PASS e.style['contain'] = "layout paint style size" should set the property value
 

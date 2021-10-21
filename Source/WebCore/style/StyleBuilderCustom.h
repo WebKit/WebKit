@@ -1277,6 +1277,9 @@ inline void BuilderCustom::applyValueContain(BuilderState& builderState, CSSValu
         case CSSValuePaint:
             containment.add(Containment::Paint);
             break;
+        case CSSValueStyle:
+            containment.add(Containment::Style);
+            break;
         default:
             break;
         };

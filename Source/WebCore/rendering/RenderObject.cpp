@@ -2539,3 +2539,10 @@ bool WebCore::shouldApplySizeContainment(const WebCore::RenderObject& renderer)
 {
     return renderer.style().containsSize() && (!renderer.isInline() || renderer.isAtomicInlineLevelBox()) && !renderer.isRubyText() && (!renderer.isTablePart() || renderer.isTableCaption()) && !renderer.isTable();
 }
+
+bool WebCore::shouldApplyStyleContainment(const WebCore::RenderObject& renderer)
+{
+    if (!renderer.style().containsStyle())
+        return false;
+    return (!renderer.isInline() || renderer.isAtomicInlineLevelBox()) && !renderer.isRubyText() && (!renderer.isTablePart() || renderer.isTableCaption()) && !renderer.isTable();
+}

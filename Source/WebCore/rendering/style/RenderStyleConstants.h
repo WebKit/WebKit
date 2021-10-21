@@ -1241,6 +1241,7 @@ enum class Containment : uint8_t {
     Layout   = 1 << 0,
     Paint    = 1 << 1,
     Size     = 1 << 2,
+    Style    = 1 << 3,
 };
 
 CSSBoxType transformBoxToCSSBoxType(TransformBox);

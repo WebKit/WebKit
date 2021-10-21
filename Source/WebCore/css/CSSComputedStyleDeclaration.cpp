@@ -3572,6 +3572,8 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
                 list->append(cssValuePool.createIdentifierValue(CSSValueSize));
             if (containment & Containment::Layout)
                 list->append(cssValuePool.createIdentifierValue(CSSValueLayout));
+            if (containment & Containment::Style)
+                list->append(cssValuePool.createIdentifierValue(CSSValueStyle));
             if (containment & Containment::Paint)
                 list->append(cssValuePool.createIdentifierValue(CSSValuePaint));
             return list;

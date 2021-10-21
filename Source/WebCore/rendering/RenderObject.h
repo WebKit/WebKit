@@ -1208,6 +1208,7 @@ void printGraphicsLayerTreeForLiveDocuments();
 
 bool shouldApplyLayoutContainment(const RenderObject&);
 bool shouldApplySizeContainment(const RenderObject&);
+bool shouldApplyStyleContainment(const RenderObject&);
 
 } // namespace WebCore
 
