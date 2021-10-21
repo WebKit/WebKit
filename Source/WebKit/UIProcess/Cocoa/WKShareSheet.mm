@@ -329,7 +329,7 @@ static void appendFilesAsShareableURLs(RetainPtr<NSMutableArray>&& shareDataArra
     NSString *randomDirectory = createCanonicalUUIDString();
     if (![randomDirectory length] || !temporaryDirectory)
         return nil;
-    NSURL *dataPath = [temporaryDirectory URLByAppendingPathComponent:randomDirectory];
+    NSURL *dataPath = [temporaryDirectory URLByAppendingPathComponent:randomDirectory isDirectory:YES];
     
     if (![[NSFileManager defaultManager] createDirectoryAtURL:dataPath withIntermediateDirectories:NO attributes:nil error:nil])
         return nil;
@@ -346,7 +346,7 @@ static void appendFilesAsShareableURLs(RetainPtr<NSMutableArray>&& shareDataArra
     if (!temporaryDirectoryForFile)
         return nil;
     
-    NSURL *fileURL = [temporaryDirectoryForFile URLByAppendingPathComponent:fileName];
+    NSURL *fileURL = [temporaryDirectoryForFile URLByAppendingPathComponent:fileName isDirectory:NO];
 
     if (![fileData writeToURL:fileURL options:NSDataWritingAtomic error:nil])
         return nil;
