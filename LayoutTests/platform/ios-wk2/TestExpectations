@@ -1276,6 +1276,8 @@ webkit.org/b/175939 [ Debug ] editing/execCommand/forward-delete-read-write-canv
 
 webkit.org/b/173608 webrtc/video-replace-muted-track.html [ Skip ]
 
+webkit.org/b/232097 webrtc/multi-video.html [ Pass Timeout ]
+
 webkit.org/b/231451 [ Debug ] webrtc/receiver-track-should-stay-live-even-if-receiver-is-inactive.html [ Pass Crash ]
 
 webkit.org/b/187388 animations/needs-layout.html [ Pass ImageOnlyFailure ]
