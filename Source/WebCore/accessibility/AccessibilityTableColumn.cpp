@@ -202,7 +202,7 @@ void AccessibilityTableColumn::addChildren()
         if (m_children.size() > 0 && m_children.last() == cell)
             continue;
             
-        m_children.append(cell);
+        addChild(cell);
     }
 }
     

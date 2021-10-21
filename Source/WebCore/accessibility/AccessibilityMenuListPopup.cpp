@@ -96,11 +96,8 @@ void AccessibilityMenuListPopup::addChildren()
 
     m_haveChildren = true;
 
-    for (const auto& listItem : downcast<HTMLSelectElement>(*selectNode).listItems()) {
-        // FIXME: Why does AccessibilityListBox::addChildren check accessibilityIsIgnored but this does not?
-        if (auto option = menuListOptionAccessibilityObject(listItem))
-            m_children.append(option);
-    }
+    for (const auto& listItem : downcast<HTMLSelectElement>(*selectNode).listItems())
+        addChild(menuListOptionAccessibilityObject(listItem));
 }
 
 void AccessibilityMenuListPopup::childrenChanged()

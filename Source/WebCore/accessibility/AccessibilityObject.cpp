@@ -483,7 +483,14 @@ static void appendAccessibilityObject(AXCoreObject* object, AccessibilityObject:
     if (object)
         results.append(object);
 }
-    
+
+#ifndef NDEBUG
+static bool isTableComponent(AXCoreObject& axObject)
+{
+    return axObject.isTable() || axObject.isTableColumn() || axObject.isTableRow() || axObject.isTableCell();
+}
+#endif
+
 void AccessibilityObject::insertChild(AXCoreObject* child, unsigned index)
 {
     if (!child)
@@ -516,7 +523,9 @@ void AccessibilityObject::insertChild(AXCoreObject* child, unsigned index)
         for (size_t i = 0; i < length; ++i)
             m_children.insert(index + i, children[i]);
     } else {
-        ASSERT(child->parentObject() == this);
+        // Table component child-parent relationships often don't line up properly, hence the need for methods
+        // like parentTable() and parentRow(). Exclude them from this ASSERT.
+        ASSERT((!isTableComponent(*child) && !isTableComponent(*this)) ? child->parentObject() == this : true);
         m_children.insert(index, child);
     }
     

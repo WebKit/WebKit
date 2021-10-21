@@ -82,8 +82,7 @@ void AccessibilityMenuList::addChildren()
     }
 
     m_haveChildren = true;
-    m_children.append(list);
-
+    addChild(list);
     list->addChildren();
 }
 
