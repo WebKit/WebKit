@@ -88,6 +88,52 @@ using namespace HTMLNames;
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(Resolver);
 
+class Resolver::State {
+public:
+    State() { }
+    State(const Element& element, const RenderStyle* parentStyle, const RenderStyle* documentElementStyle = nullptr)
+        : m_element(&element)
+        , m_parentStyle(parentStyle)
+    {
+        bool resetStyleInheritance = hasShadowRootParent(element) && downcast<ShadowRoot>(element.parentNode())->resetStyleInheritance();
+        if (resetStyleInheritance)
+            m_parentStyle = nullptr;
+
+        auto& document = element.document();
+        auto* documentElement = document.documentElement();
+        if (!documentElement || documentElement == &element)
+            m_rootElementStyle = document.renderStyle();
+        else
+            m_rootElementStyle = documentElementStyle ? documentElementStyle : documentElement->renderStyle();
+    }
+
+    const Element* element() const { return m_element; }
+
+    void setStyle(std::unique_ptr<RenderStyle> style) { m_style = WTFMove(style); }
+    RenderStyle* style() const { return m_style.get(); }
+    std::unique_ptr<RenderStyle> takeStyle() { return WTFMove(m_style); }
+
+    void setParentStyle(std::unique_ptr<RenderStyle> parentStyle)
+    {
+        m_ownedParentStyle = WTFMove(parentStyle);
+        m_parentStyle = m_ownedParentStyle.get();
+    }
+    const RenderStyle* parentStyle() const { return m_parentStyle; }
+    const RenderStyle* rootElementStyle() const { return m_rootElementStyle; }
+
+    const RenderStyle* userAgentAppearanceStyle() const { return m_userAgentAppearanceStyle.get(); }
+    void setUserAgentAppearanceStyle(std::unique_ptr<RenderStyle> style) { m_userAgentAppearanceStyle = WTFMove(style); }
+
+private:
+    const Element* m_element { nullptr };
+    std::unique_ptr<RenderStyle> m_style;
+    const RenderStyle* m_parentStyle { nullptr };
+    std::unique_ptr<const RenderStyle> m_ownedParentStyle;
+    const RenderStyle* m_rootElementStyle { nullptr };
+
+    std::unique_ptr<RenderStyle> m_userAgentAppearanceStyle;
+};
+
 Ref<Resolver> Resolver::create(Document& document)
 {
     return adoptRef(*new Resolver(document));
@@ -157,33 +203,6 @@ Resolver::~Resolver()
     RELEASE_ASSERT(!m_document.isResolvingTreeStyle());
     RELEASE_ASSERT(!m_isDeleted);
     m_isDeleted = true;
-}
-
-Resolver::State::State(const Element& element, const RenderStyle* parentStyle, const RenderStyle* documentElementStyle)
-    : m_element(&element)
-    , m_parentStyle(parentStyle)
-{
-    bool resetStyleInheritance = hasShadowRootParent(element) && downcast<ShadowRoot>(element.parentNode())->resetStyleInheritance();
-    if (resetStyleInheritance)
-        m_parentStyle = nullptr;
-
-    auto& document = element.document();
-    auto* documentElement = document.documentElement();
-    if (!documentElement || documentElement == &element)
-        m_rootElementStyle = document.renderStyle();
-    else
-        m_rootElementStyle = documentElementStyle ? documentElementStyle : documentElement->renderStyle();
-}
-
-inline void Resolver::State::setStyle(std::unique_ptr<RenderStyle> style)
-{
-    m_style = WTFMove(style);
-}
-
-inline void Resolver::State::setParentStyle(std::unique_ptr<RenderStyle> parentStyle)
-{
-    m_ownedParentStyle = WTFMove(parentStyle);
-    m_parentStyle = m_ownedParentStyle.get();
 }
 
 static inline bool isAtShadowBoundary(const Element& element)
@@ -420,7 +439,7 @@ std::unique_ptr<RenderStyle> Resolver::styleForPage(int pageIndex)
     state.setStyle(RenderStyle::createPtr());
     state.style()->inheritFrom(*state.rootElementStyle());
 
-    PageRuleCollector collector(state, m_ruleSets);
+    PageRuleCollector collector(m_ruleSets, state.rootElementStyle()->direction());
     collector.matchAllPageRules(pageIndex);
 
     auto& result = collector.matchResult();

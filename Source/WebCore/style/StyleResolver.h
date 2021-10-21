@@ -145,38 +145,9 @@ public:
     void setSharedBetweenShadowTrees() { m_isSharedBetweenShadowTrees = true; }
 
 private:
-    friend class PageRuleCollector;
-
     Resolver(Document&);
 
-    class State {
-    public:
-        State() { }
-        State(const Element&, const RenderStyle* parentStyle, const RenderStyle* documentElementStyle = nullptr);
-
-    public:
-        const Element* element() const { return m_element; }
-
-        void setStyle(std::unique_ptr<RenderStyle>);
-        RenderStyle* style() const { return m_style.get(); }
-        std::unique_ptr<RenderStyle> takeStyle() { return WTFMove(m_style); }
-
-        void setParentStyle(std::unique_ptr<RenderStyle>);
-        const RenderStyle* parentStyle() const { return m_parentStyle; }
-        const RenderStyle* rootElementStyle() const { return m_rootElementStyle; }
-
-        const RenderStyle* userAgentAppearanceStyle() const { return m_userAgentAppearanceStyle.get(); }
-        void setUserAgentAppearanceStyle(std::unique_ptr<RenderStyle> style) { m_userAgentAppearanceStyle = WTFMove(style); }
-
-    private:
-        const Element* m_element { nullptr };
-        std::unique_ptr<RenderStyle> m_style;
-        const RenderStyle* m_parentStyle { nullptr };
-        std::unique_ptr<const RenderStyle> m_ownedParentStyle;
-        const RenderStyle* m_rootElementStyle { nullptr };
-
-        std::unique_ptr<RenderStyle> m_userAgentAppearanceStyle;
-    };
+    class State;
 
     BuilderContext builderContext(const State&);
 
