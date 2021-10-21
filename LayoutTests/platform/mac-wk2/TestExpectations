@@ -1240,6 +1240,8 @@ webkit.org/b/230691 [ Release ] imported/w3c/web-platform-tests/html/cross-origi
 
 webkit.org/b/232028 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting/navigation-reporting/report-only-four-reports.https.html [ Pass Failure ]
 
+webkit.org/b/232105 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/iframe-popup-same-origin-to-same-origin.https.html [ Pass Failure Crash ]
+
 webkit.org/b/230113 [ BigSur+ Debug arm64 ] svg/animations/animate-elem-14-t-drt.html [ Pass Crash ]
 
 # rdar://66806059 (REGRESSION (20A2321a-20A2348b): 4 fast hidpi tests are a flaky image failure)
