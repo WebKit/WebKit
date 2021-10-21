@@ -1,3 +1,17 @@
+2021-10-20  Antti Koivisto  <antti@apple.com>
+
+        [ iOS ] fast/inline/inline-background-clip-text-multiline.html is image failing
+        https://bugs.webkit.org/show_bug.cgi?id=231961
+        <rdar://problem/84418611>
+
+        Unreviewed.
+
+        Fix the test to not depend on font rendering details.
+
+        * fast/inline/inline-background-clip-text-multiline-expected.html:
+        * fast/inline/inline-background-clip-text-multiline.html:
+        * platform/ios-wk2/TestExpectations:
+
 2021-10-20  Ayumi Kojima  <ayumi_kojima@apple.com>
 
         [ macOS ] imported/w3c/web-platform-tests/xhr/event-upload-progress-crossorigin.any.html is a flaky failure.
