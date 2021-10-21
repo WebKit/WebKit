@@ -1,3 +1,16 @@
+2021-10-21  Antoine Quint  <graouts@webkit.org>
+
+        CSSPropertyZoom needs wrapper that ensures it's always blended into a positive value.
+        https://bugs.webkit.org/show_bug.cgi?id=232020
+        <rdar://problem/84469930>
+
+        Reviewed by Antti Koivisto.
+
+        Add a test that would crash prior to the source change.
+
+        * webanimations/zoom-animation-crash-expected.txt: Added.
+        * webanimations/zoom-animation-crash.html: Added.
+
 2021-10-21  Enrique Ocaña González  <eocanha@igalia.com>
 
         REGRESSION(r282059) [GStreamer] Test media/media-source/media-source-stalled-holds-sleep-assertion.html timeouts
