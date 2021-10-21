@@ -1,5 +1,23 @@
 2021-10-21  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] Make GetTypedArrayLengthAsInt52 and GetTypedArrayByteOffsetAsInt52 NodeResultInt52
+        https://bugs.webkit.org/show_bug.cgi?id=232100
+
+        Reviewed by Robin Morisset.
+
+        This patch makes GetTypedArrayLengthAsInt52 and GetTypedArrayByteOffsetAsInt52 have NodeResultInt52 by default.
+        And DFG validation should skip Int52 validation before fixup phase, as we are doing for double results.
+
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGSSALoweringPhase.cpp:
+        (JSC::DFG::SSALoweringPhase::handleNode):
+        (JSC::DFG::SSALoweringPhase::lowerBoundsCheck):
+        * dfg/DFGValidate.cpp:
+
+2021-10-21  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] Inserted GetTypedArrayLengthAsInt52 for PutByVal should have NodeResultInt52
         https://bugs.webkit.org/show_bug.cgi?id=232059
 

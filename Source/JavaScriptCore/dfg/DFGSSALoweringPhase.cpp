@@ -105,7 +105,6 @@ private:
                     Node* length = m_insertionSet.insertNode(
                         m_nodeIndex, SpecInt52Any, GetTypedArrayLengthAsInt52, m_node->origin,
                         OpInfo(m_node->arrayMode().asWord()), base, storage);
-                    length->setResult(NodeResultInt52);
                     m_graph.varArgChild(m_node, 4) = Edge(length, Int52RepUse);
                 } else {
 #endif
@@ -154,7 +153,6 @@ private:
             Node* length = m_insertionSet.insertNode(
                 m_nodeIndex, SpecInt52Any, GetTypedArrayLengthAsInt52, m_node->origin,
                 OpInfo(m_node->arrayMode().asWord()), Edge(base.node(), KnownCellUse), storage);
-            length->setResult(NodeResultInt52);
             // The return type is a dummy since this node does not actually return anything.
             checkInBounds = m_insertionSet.insertNode(
                 m_nodeIndex, SpecInt32Only, CheckInBoundsInt52, m_node->origin,

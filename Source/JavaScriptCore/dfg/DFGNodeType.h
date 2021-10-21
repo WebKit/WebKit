@@ -262,11 +262,10 @@ namespace JSC { namespace DFG {
     macro(MultiDeleteByOffset, NodeMustGenerate | NodeResultJS) \
     macro(GetArrayLength, NodeResultInt32) \
     /* This is only relevant for TypedArrays, as they are the only ones that can have a length that does not fit in 32 bits. */ \
-    /* GetTypedArrayLengthAsInt52 and GetTypedArrayByteOffsetAsInt52 change to returning Int52 in Fixup. Doing it before causes validation failures. */ \
-    macro(GetTypedArrayLengthAsInt52, NodeResultJS) \
+    macro(GetTypedArrayLengthAsInt52, NodeResultInt52) \
     macro(GetVectorLength, NodeResultInt32) \
     macro(GetTypedArrayByteOffset, NodeResultInt32) \
-    macro(GetTypedArrayByteOffsetAsInt52, NodeResultJS) \
+    macro(GetTypedArrayByteOffsetAsInt52, NodeResultInt52) \
     macro(GetScope, NodeResultJS) \
     macro(SkipScope, NodeResultJS) \
     macro(ResolveScope, NodeResultJS | NodeMustGenerate) \
