@@ -455,6 +455,10 @@ void NetworkSession::allowTLSCertificateChainForLocalPCMTesting(const WebCore::C
 void NetworkSession::setPrivateClickMeasurementAppBundleIDForTesting(String&& appBundleIDForTesting)
 {
 #if PLATFORM(COCOA)
+    // FIXME: Remove this logging once https://bugs.webkit.org/show_bug.cgi?id=232048 has been resolved.
+    auto appBundleID = WebCore::applicationBundleIdentifier();
+    if (!isRunningTest(appBundleID))
+        WTFLogAlways("isRunningTest() returned false. appBundleID is %s.", appBundleID.isEmpty() ? "empty" : appBundleID.utf8().data());
     RELEASE_ASSERT(isRunningTest(WebCore::applicationBundleIdentifier()));
 #endif
     privateClickMeasurement().setPrivateClickMeasurementAppBundleIDForTesting(WTFMove(appBundleIDForTesting));

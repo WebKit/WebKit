@@ -1,3 +1,17 @@
+2021-10-21  John Wilander  <wilander@apple.com>
+
+        PCM: Add temporary logging when isRunningTest() assertion is about to fail to be able to investigate
+        https://bugs.webkit.org/show_bug.cgi?id=232108
+
+        Unreviewed. Just adding logging for test-only functionality.
+
+        This patch adds logging to when we are about to fail the assert of isRunningTest() in
+        WebKit::NetworkSession::setPrivateClickMeasurementAppBundleIDForTesting)(). This is
+        added to help investigate https://bugs.webkit.org/show_bug.cgi?id=232048.
+
+        * NetworkProcess/NetworkSession.cpp:
+        (WebKit::NetworkSession::setPrivateClickMeasurementAppBundleIDForTesting):
+
 2021-10-21  Simon Fraser  <simon.fraser@apple.com>
 
         Rare crash under DisplayLink::displayLinkCallback()
