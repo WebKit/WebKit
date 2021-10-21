@@ -78,7 +78,7 @@ GPUProcessConnection& RemoteRenderingBackendProxy::ensureGPUProcessConnection()
         gpuProcessConnection.addClient(*this);
         gpuProcessConnection.messageReceiverMap().addMessageReceiver(Messages::RemoteRenderingBackendProxy::messageReceiverName(), renderingBackendIdentifier().toUInt64(), *this);
         gpuProcessConnection.connection().send(Messages::GPUConnectionToWebProcess::CreateRenderingBackend(m_parameters), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
-        m_gpuProcessConnection = makeWeakPtr(gpuProcessConnection);
+        m_gpuProcessConnection = gpuProcessConnection;
     }
     return *m_gpuProcessConnection;
 }

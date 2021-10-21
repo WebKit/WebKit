@@ -100,7 +100,7 @@ public:
 protected:
     RemoteImageBufferProxy(const WebCore::ImageBufferBackend::Parameters& parameters, RemoteRenderingBackendProxy& remoteRenderingBackendProxy)
         : BaseDisplayListImageBuffer(parameters, this)
-        , m_remoteRenderingBackendProxy(makeWeakPtr(remoteRenderingBackendProxy))
+        , m_remoteRenderingBackendProxy(remoteRenderingBackendProxy)
     {
         ASSERT(m_remoteRenderingBackendProxy);
         m_remoteRenderingBackendProxy->remoteResourceCacheProxy().cacheImageBuffer(*this);
