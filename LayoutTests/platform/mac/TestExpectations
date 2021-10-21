@@ -2259,9 +2259,6 @@ webkit.org/b/226299 [ BigSur ] http/tests/performance/performance-resource-timin
 [ Monterey ] imported/w3c/web-platform-tests/css/css-text-decor/text-underline-offset-variable.html [ Pass ImageOnlyFailure ]
 [ Monterey ] imported/w3c/web-platform-tests/css/css-text-decor/text-underline-position-from-font-variable.html [ Pass ImageOnlyFailure ]
 
-# rdar://80333758 (REGRESSION: [ Monterey ] crypto/subtle/rsaes-pkcs1-v1_5-import-jwk-public-key-leading-zero.html is a constant timeout)
-[ Monterey ] crypto/subtle/rsaes-pkcs1-v1_5-import-jwk-public-key-leading-zero.html [ Timeout ]
-
 # rdar://80340581 ([ Monterey ] http/tests/preload/onload_event.html is a flaky failure)
 [ Monterey ] http/tests/preload/onload_event.html [ Pass Failure ]
 
