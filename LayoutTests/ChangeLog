@@ -1,3 +1,18 @@
+2021-10-21  Sihui Liu  <sihui_liu@apple.com>
+
+        FileSystemSyncAccessHandle should close platform file handle on close()
+        https://bugs.webkit.org/show_bug.cgi?id=232067
+        <rdar://problem/84517013>
+
+        Reviewed by Youenn Fablet.
+
+        * storage/filesystemaccess/resources/sync-access-handle-close.js: Added.
+        (finishTest):
+        (async testFunctions):
+        (async test):
+        * storage/filesystemaccess/sync-access-handle-close-worker-expected.txt: Added.
+        * storage/filesystemaccess/sync-access-handle-close-worker.html: Added.
+
 2021-10-21  Ayumi Kojima  <ayumi_kojima@apple.com>
 
         [ iOS ] http/wpt/service-workers/skipFetchEvent.https.html is a flaky failure.

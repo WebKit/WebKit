@@ -26,6 +26,7 @@
 #pragma once
 
 #include "BufferSource.h"
+#include "ExceptionOr.h"
 #include "FileSystemSyncAccessHandleIdentifier.h"
 #include "IDLTypes.h"
 #include <wtf/FileSystem.h>
@@ -35,7 +36,6 @@ namespace WebCore {
 
 class FileSystemFileHandle;
 template<typename> class DOMPromiseDeferred;
-template<typename> class ExceptionOr;
 
 class FileSystemSyncAccessHandle : public RefCounted<FileSystemSyncAccessHandle>, public CanMakeWeakPtr<FileSystemSyncAccessHandle> {
 public:
@@ -50,18 +50,20 @@ public:
     void getSize(DOMPromiseDeferred<IDLUnsignedLongLong>&&);
     void flush(DOMPromiseDeferred<void>&&);
     void close(DOMPromiseDeferred<void>&&);
-    void didClose();
+    void didClose(ExceptionOr<void>&&);
     ExceptionOr<unsigned long long> read(BufferSource&&, FilesystemReadWriteOptions);
     ExceptionOr<unsigned long long> write(BufferSource&&, FilesystemReadWriteOptions);
 
 private:
     FileSystemSyncAccessHandle(FileSystemFileHandle&, FileSystemSyncAccessHandleIdentifier, FileSystem::PlatformFileHandle);
+    bool isClosingOrClosed() const;
 
     Ref<FileSystemFileHandle> m_source;
     FileSystemSyncAccessHandleIdentifier m_identifier;
-    bool m_isClosed { false };
     uint64_t m_pendingOperationCount { 0 };
     FileSystem::PlatformFileHandle m_file;
+    std::optional<ExceptionOr<void>> m_closeResult;
+    Vector<DOMPromiseDeferred<void>> m_closePromises;
 };
 
 } // namespace WebCore

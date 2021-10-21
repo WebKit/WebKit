@@ -58,6 +58,9 @@ void FileSystemFileHandle::createSyncAccessHandle(DOMPromiseDeferred<IDLInterfac
             return promise.reject(result.releaseException());
 
         auto resultValue = result.releaseReturnValue();
+        if (resultValue.second == FileSystem::invalidPlatformFileHandle)
+            return promise.reject(Exception { UnknownError, "Invalid platform file handle"_s });
+
         promise.settle(FileSystemSyncAccessHandle::create(protectedThis.get(), resultValue.first, resultValue.second));
     });
 }
