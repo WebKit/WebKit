@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "CompositeOperation.h"
 #include "IntPoint.h"
 #include "LayoutPoint.h"
 
@@ -33,10 +34,12 @@ namespace WebCore {
 struct BlendingContext {
     double progress { 0 };
     bool isDiscrete { false };
+    CompositeOperation compositeOperation { CompositeOperation::Replace };
 
-    BlendingContext(double progress = 0, bool isDiscrete = false)
+    BlendingContext(double progress = 0, bool isDiscrete = false, CompositeOperation compositeOperation = CompositeOperation::Replace)
         : progress(progress)
         , isDiscrete(isDiscrete)
+        , compositeOperation(compositeOperation)
     {
     }
 };

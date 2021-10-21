@@ -24,6 +24,7 @@
 
 #pragma once
 
+#include "CompositeOperation.h"
 #include "FloatSize.h"
 #include "TransformationMatrix.h"
 #include <wtf/Forward.h>

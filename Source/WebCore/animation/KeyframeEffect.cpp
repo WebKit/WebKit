@@ -1423,7 +1423,7 @@ void KeyframeEffect::setAnimatedPropertiesInStyle(RenderStyle& targetStyle, doub
     // progress which already accounts for the transition's timing function.
     if (m_blendingKeyframesSource == BlendingKeyframesSource::CSSTransition) {
         ASSERT(properties.size() == 1);
-        CSSPropertyAnimation::blendProperties(this, *properties.begin(), targetStyle, *m_blendingKeyframes[0].style(), *m_blendingKeyframes[1].style(), iterationProgress);
+        CSSPropertyAnimation::blendProperties(this, *properties.begin(), targetStyle, *m_blendingKeyframes[0].style(), *m_blendingKeyframes[1].style(), iterationProgress, CompositeOperation::Replace);
         return;
     }
 
@@ -1537,7 +1537,7 @@ void KeyframeEffect::setAnimatedPropertiesInStyle(RenderStyle& targetStyle, doub
         if (intervalEndpoints.size() == 1) {
             auto keyframeIndex = intervalEndpoints[0];
             auto keyframeStyle = !keyframeIndex ? &targetStyle : m_blendingKeyframes[keyframeIndex.value()].style();
-            CSSPropertyAnimation::blendProperties(this, cssPropertyId, targetStyle, *keyframeStyle, *keyframeStyle, 0);
+            CSSPropertyAnimation::blendProperties(this, cssPropertyId, targetStyle, *keyframeStyle, *keyframeStyle, 0, CompositeOperation::Replace);
             continue;
         }
 
@@ -1568,7 +1568,7 @@ void KeyframeEffect::setAnimatedPropertiesInStyle(RenderStyle& targetStyle, doub
         //     distance as the interpolation parameter p.
         auto startStyle = !startKeyframeIndex ? &targetStyle : m_blendingKeyframes[startKeyframeIndex.value()].style();
         auto endStyle = !endKeyframeIndex ? &targetStyle : m_blendingKeyframes[endKeyframeIndex.value()].style();
-        CSSPropertyAnimation::blendProperties(this, cssPropertyId, targetStyle, *startStyle, *endStyle, transformedDistance);
+        CSSPropertyAnimation::blendProperties(this, cssPropertyId, targetStyle, *startStyle, *endStyle, transformedDistance, CompositeOperation::Replace);
     }
 }
 

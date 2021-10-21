@@ -87,7 +87,7 @@ Ref<TransformOperation> RotateTransformOperation::blend(const TransformOperation
         (toOp ? toOp->m_angle : 0));
     
     // Blend them
-    toT.blend(fromT, context.progress);
+    toT.blend(fromT, context.progress, context.compositeOperation);
     
     // Extract the result as a quaternion
     TransformationMatrix::Decomposed4Type decomp;

@@ -47,7 +47,7 @@ public:
 
     static HashSet<CSSPropertyID> animatableShorthandsAffectingProperty(CSSPropertyID);
 
-    static void blendProperties(const CSSPropertyBlendingClient*, CSSPropertyID, RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, double progress);
+    static void blendProperties(const CSSPropertyBlendingClient*, CSSPropertyID, RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, double progress, CompositeOperation);
 };
 
 } // namespace WebCore

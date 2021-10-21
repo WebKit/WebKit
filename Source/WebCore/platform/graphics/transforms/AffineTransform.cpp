@@ -349,7 +349,7 @@ Region AffineTransform::mapRegion(const Region& region) const
     return mappedRegion;
 }
 
-void AffineTransform::blend(const AffineTransform& from, double progress)
+void AffineTransform::blend(const AffineTransform& from, double progress, CompositeOperation)
 {
     DecomposedType srA, srB;
 

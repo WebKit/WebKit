@@ -26,6 +26,7 @@
 
 #pragma once
 
+#include "CompositeOperation.h"
 #include <array>
 #include <optional>
 #include <wtf/FastMalloc.h>
@@ -134,7 +135,7 @@ public:
     bool isInvertible() const; // If you call this this, you're probably doing it wrong.
     WEBCORE_EXPORT std::optional<AffineTransform> inverse() const;
 
-    WEBCORE_EXPORT void blend(const AffineTransform& from, double progress);
+    WEBCORE_EXPORT void blend(const AffineTransform& from, double progress, CompositeOperation = CompositeOperation::Replace);
 
     WEBCORE_EXPORT TransformationMatrix toTransformationMatrix() const;
 

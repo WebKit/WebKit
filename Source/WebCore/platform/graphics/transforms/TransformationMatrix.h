@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "CompositeOperation.h"
 #include "FloatPoint.h"
 #include "FloatPoint3D.h"
 #include "IntPoint.h"
@@ -327,9 +328,9 @@ public:
     bool decompose4(Decomposed4Type&) const;
     void recompose4(const Decomposed4Type&);
 
-    WEBCORE_EXPORT void blend(const TransformationMatrix& from, double progress);
-    WEBCORE_EXPORT void blend2(const TransformationMatrix& from, double progress);
-    WEBCORE_EXPORT void blend4(const TransformationMatrix& from, double progress);
+    WEBCORE_EXPORT void blend(const TransformationMatrix& from, double progress, CompositeOperation = CompositeOperation::Replace);
+    WEBCORE_EXPORT void blend2(const TransformationMatrix& from, double progress, CompositeOperation = CompositeOperation::Replace);
+    WEBCORE_EXPORT void blend4(const TransformationMatrix& from, double progress, CompositeOperation = CompositeOperation::Replace);
 
     bool isAffine() const
     {

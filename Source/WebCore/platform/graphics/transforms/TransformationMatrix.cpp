@@ -1635,13 +1635,13 @@ AffineTransform TransformationMatrix::toAffineTransform() const
                            m_matrix[1][1], m_matrix[3][0], m_matrix[3][1]);
 }
 
-static inline void blendFloat(double& from, double to, double progress)
+static inline void blendFloat(double& from, double to, double progress, CompositeOperation)
 {
     if (from != to)
         from = from + (to - from) * progress;
 }
 
-void TransformationMatrix::blend2(const TransformationMatrix& from, double progress)
+void TransformationMatrix::blend2(const TransformationMatrix& from, double progress, CompositeOperation compositeOperation)
 {
     Decomposed2Type fromDecomp;
     Decomposed2Type toDecomp;
@@ -1671,20 +1671,20 @@ void TransformationMatrix::blend2(const TransformationMatrix& from, double progr
             toDecomp.angle -= 360;
     }
 
-    blendFloat(fromDecomp.m11, toDecomp.m11, progress);
-    blendFloat(fromDecomp.m12, toDecomp.m12, progress);
-    blendFloat(fromDecomp.m21, toDecomp.m21, progress);
-    blendFloat(fromDecomp.m22, toDecomp.m22, progress);
-    blendFloat(fromDecomp.translateX, toDecomp.translateX, progress);
-    blendFloat(fromDecomp.translateY, toDecomp.translateY, progress);
-    blendFloat(fromDecomp.scaleX, toDecomp.scaleX, progress);
-    blendFloat(fromDecomp.scaleY, toDecomp.scaleY, progress);
-    blendFloat(fromDecomp.angle, toDecomp.angle, progress);
+    blendFloat(fromDecomp.m11, toDecomp.m11, progress, compositeOperation);
+    blendFloat(fromDecomp.m12, toDecomp.m12, progress, compositeOperation);
+    blendFloat(fromDecomp.m21, toDecomp.m21, progress, compositeOperation);
+    blendFloat(fromDecomp.m22, toDecomp.m22, progress, compositeOperation);
+    blendFloat(fromDecomp.translateX, toDecomp.translateX, progress, compositeOperation);
+    blendFloat(fromDecomp.translateY, toDecomp.translateY, progress, compositeOperation);
+    blendFloat(fromDecomp.scaleX, toDecomp.scaleX, progress, compositeOperation);
+    blendFloat(fromDecomp.scaleY, toDecomp.scaleY, progress, compositeOperation);
+    blendFloat(fromDecomp.angle, toDecomp.angle, progress, compositeOperation);
 
     recompose2(fromDecomp);
 }
 
-void TransformationMatrix::blend4(const TransformationMatrix& from, double progress)
+void TransformationMatrix::blend4(const TransformationMatrix& from, double progress, CompositeOperation compositeOperation)
 {
     Decomposed4Type fromDecomp;
     Decomposed4Type toDecomp;
@@ -1694,26 +1694,26 @@ void TransformationMatrix::blend4(const TransformationMatrix& from, double progr
         return;
     }
 
-    blendFloat(fromDecomp.scaleX, toDecomp.scaleX, progress);
-    blendFloat(fromDecomp.scaleY, toDecomp.scaleY, progress);
-    blendFloat(fromDecomp.scaleZ, toDecomp.scaleZ, progress);
-    blendFloat(fromDecomp.skewXY, toDecomp.skewXY, progress);
-    blendFloat(fromDecomp.skewXZ, toDecomp.skewXZ, progress);
-    blendFloat(fromDecomp.skewYZ, toDecomp.skewYZ, progress);
-    blendFloat(fromDecomp.translateX, toDecomp.translateX, progress);
-    blendFloat(fromDecomp.translateY, toDecomp.translateY, progress);
-    blendFloat(fromDecomp.translateZ, toDecomp.translateZ, progress);
-    blendFloat(fromDecomp.perspectiveX, toDecomp.perspectiveX, progress);
-    blendFloat(fromDecomp.perspectiveY, toDecomp.perspectiveY, progress);
-    blendFloat(fromDecomp.perspectiveZ, toDecomp.perspectiveZ, progress);
-    blendFloat(fromDecomp.perspectiveW, toDecomp.perspectiveW, progress);
+    blendFloat(fromDecomp.scaleX, toDecomp.scaleX, progress, compositeOperation);
+    blendFloat(fromDecomp.scaleY, toDecomp.scaleY, progress, compositeOperation);
+    blendFloat(fromDecomp.scaleZ, toDecomp.scaleZ, progress, compositeOperation);
+    blendFloat(fromDecomp.skewXY, toDecomp.skewXY, progress, compositeOperation);
+    blendFloat(fromDecomp.skewXZ, toDecomp.skewXZ, progress, compositeOperation);
+    blendFloat(fromDecomp.skewYZ, toDecomp.skewYZ, progress, compositeOperation);
+    blendFloat(fromDecomp.translateX, toDecomp.translateX, progress, compositeOperation);
+    blendFloat(fromDecomp.translateY, toDecomp.translateY, progress, compositeOperation);
+    blendFloat(fromDecomp.translateZ, toDecomp.translateZ, progress, compositeOperation);
+    blendFloat(fromDecomp.perspectiveX, toDecomp.perspectiveX, progress, compositeOperation);
+    blendFloat(fromDecomp.perspectiveY, toDecomp.perspectiveY, progress, compositeOperation);
+    blendFloat(fromDecomp.perspectiveZ, toDecomp.perspectiveZ, progress, compositeOperation);
+    blendFloat(fromDecomp.perspectiveW, toDecomp.perspectiveW, progress, compositeOperation);
 
     slerp(&fromDecomp.quaternionX, &toDecomp.quaternionX, progress);
 
     recompose4(fromDecomp);
 }
 
-void TransformationMatrix::blend(const TransformationMatrix& from, double progress)
+void TransformationMatrix::blend(const TransformationMatrix& from, double progress, CompositeOperation compositeOperation)
 {
     if (!progress) {
         *this = from;
@@ -1727,9 +1727,9 @@ void TransformationMatrix::blend(const TransformationMatrix& from, double progre
         return;
 
     if (from.isAffine() && isAffine())
-        blend2(from, progress);
+        blend2(from, progress, compositeOperation);
     else
-        blend4(from, progress);
+        blend4(from, progress, compositeOperation);
 }
 
 bool TransformationMatrix::decompose2(Decomposed2Type& decomp) const

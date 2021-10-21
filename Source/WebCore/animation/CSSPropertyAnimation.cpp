@@ -43,6 +43,7 @@
 #include "CalculationValue.h"
 #include "ClipPathOperation.h"
 #include "ColorBlending.h"
+#include "CompositeOperation.h"
 #include "FloatConversion.h"
 #include "FontCascade.h"
 #include "FontSelectionAlgorithm.h"
@@ -75,8 +76,8 @@ namespace WebCore {
 struct CSSPropertyBlendingContext : BlendingContext {
     const CSSPropertyBlendingClient* client { nullptr };
 
-    CSSPropertyBlendingContext(double progress, bool isDiscrete, const CSSPropertyBlendingClient* client)
-        : BlendingContext(progress, isDiscrete)
+    CSSPropertyBlendingContext(double progress, bool isDiscrete, CompositeOperation compositeOperation, const CSSPropertyBlendingClient* client)
+        : BlendingContext(progress, isDiscrete, compositeOperation)
         , client(client)
     {
     }
@@ -592,7 +593,7 @@ public:
 
     virtual bool isShorthandWrapper() const { return false; }
     virtual bool equals(const RenderStyle&, const RenderStyle&) const = 0;
-    virtual bool canInterpolate(const RenderStyle&, const RenderStyle&) const { return true; }
+    virtual bool canInterpolate(const RenderStyle&, const RenderStyle&, CompositeOperation) const { return true; }
     virtual void blend(RenderStyle&, const RenderStyle&, const RenderStyle&, const CSSPropertyBlendingContext&) const = 0;
     
 #if !LOG_DISABLED
@@ -693,7 +694,7 @@ public:
     }
 
 private:
-    bool canInterpolate(const RenderStyle&, const RenderStyle&) const final { return false; }
+    bool canInterpolate(const RenderStyle&, const RenderStyle&, CompositeOperation) const final { return false; }
 
     void (RenderStyle::*m_setter)(T);
 };
@@ -705,7 +706,7 @@ public:
     GridTemplateTracksWrapper();
 
 private:
-    bool canInterpolate(const RenderStyle&, const RenderStyle&) const final { return false; }
+    bool canInterpolate(const RenderStyle&, const RenderStyle&, CompositeOperation) const final { return false; }
 
     bool equals(const RenderStyle& a, const RenderStyle& b) const override
     {
@@ -777,7 +778,7 @@ public:
     }
 
 private:
-    bool canInterpolate(const RenderStyle&, const RenderStyle&) const final { return false; }
+    bool canInterpolate(const RenderStyle&, const RenderStyle&, CompositeOperation) const final { return false; }
 
     bool equals(const RenderStyle& a, const RenderStyle& b) const override
     {
@@ -854,7 +855,7 @@ public:
     }
 
 protected:
-    bool canInterpolate(const RenderStyle& from, const RenderStyle& to) const override
+    bool canInterpolate(const RenderStyle& from, const RenderStyle& to, CompositeOperation) const override
     {
         return canInterpolateLengths(value(from), value(to), m_flags.contains(Flags::IsLengthPercentage));
     }
@@ -916,7 +917,7 @@ public:
 private:
     // Check if it's possible to interpolate between the from and to values. In particular,
     // it's only possible if they're both not auto.
-    bool canInterpolate(const RenderStyle& from, const RenderStyle& to) const override 
+    bool canInterpolate(const RenderStyle& from, const RenderStyle& to, CompositeOperation) const final
     {
         bool fromIsAuto = value(from).x().isAuto() && value(from).y().isAuto();
         bool toIsAuto = value(to).x().isAuto() && value(to).y().isAuto();
@@ -936,7 +937,7 @@ public:
     }
 
 private:
-    bool canInterpolate(const RenderStyle& from, const RenderStyle& to) const final
+    bool canInterpolate(const RenderStyle& from, const RenderStyle& to, CompositeOperation) const final
     {
         return canInterpolateLengthVariants(this->value(from), this->value(to));
     }
@@ -964,7 +965,7 @@ public:
     {
     }
 
-    bool canInterpolate(const RenderStyle& from, const RenderStyle& to) const override
+    bool canInterpolate(const RenderStyle& from, const RenderStyle& to, CompositeOperation) const override
     {
         if (m_flags.contains(Flags::UsesFillKeyword) && from.borderImage().fill() != to.borderImage().fill())
             return false;
@@ -1006,9 +1007,9 @@ public:
     }
 
 private:
-    bool canInterpolate(const RenderStyle& from, const RenderStyle& to) const final
+    bool canInterpolate(const RenderStyle& from, const RenderStyle& to, CompositeOperation compositeOperation) const final
     {
-        return from.hasClip() && to.hasClip() && LengthBoxPropertyWrapper::canInterpolate(from, to);
+        return from.hasClip() && to.hasClip() && LengthBoxPropertyWrapper::canInterpolate(from, to, compositeOperation);
     }
 
     void blend(RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, const CSSPropertyBlendingContext& context) const final
@@ -1061,7 +1062,7 @@ private:
         return value(a) == value(b);
     }
 
-    bool canInterpolate(const RenderStyle& from, const RenderStyle& to) const final
+    bool canInterpolate(const RenderStyle& from, const RenderStyle& to, CompositeOperation) const final
     {
         auto fromVariationSettings = value(from);
         auto toVariationSettings = value(to);
@@ -1104,7 +1105,7 @@ private:
         return *shapeA == *shapeB;
     }
 
-    bool canInterpolate(const RenderStyle& from, const RenderStyle& to) const final
+    bool canInterpolate(const RenderStyle& from, const RenderStyle& to, CompositeOperation) const final
     {
         auto* fromShape = value(from);
         auto* toShape = value(to);
@@ -1141,7 +1142,7 @@ private:
         return arePointingToEqualData(imageA, imageB);
     }
 
-    bool canInterpolate(const RenderStyle& from, const RenderStyle& to) const final
+    bool canInterpolate(const RenderStyle& from, const RenderStyle& to, CompositeOperation) const final
     {
         return value(from) && value(to);
     }
@@ -1264,7 +1265,7 @@ private:
         return true;
     }
 
-    bool canInterpolate(const RenderStyle& from, const RenderStyle& to) const final
+    bool canInterpolate(const RenderStyle& from, const RenderStyle& to, CompositeOperation) const final
     {
         const ShadowData* fromShadow = (from.*m_getter)();
         const ShadowData* toShadow = (to.*m_getter)();
@@ -1497,14 +1498,14 @@ private:
             && PropertyWrapperMaybeInvalidColor::equals(a, b);
     }
 
-    bool canInterpolate(const RenderStyle& from, const RenderStyle& to) const final
+    bool canInterpolate(const RenderStyle& from, const RenderStyle& to, CompositeOperation) const final
     {
         return !from.hasAutoAccentColor() && !to.hasAutoAccentColor();
     }
 
     void blend(RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, const CSSPropertyBlendingContext& context) const final
     {
-        if (canInterpolate(from, to)) {
+        if (canInterpolate(from, to, context.compositeOperation)) {
             PropertyWrapperMaybeInvalidColor::blend(destination, from, to, context);
             return;
         }
@@ -1541,7 +1542,7 @@ private:
             && PropertyWrapperVisitedAffectedColor::equals(a, b);
     }
 
-    bool canInterpolate(const RenderStyle& from, const RenderStyle& to) const final
+    bool canInterpolate(const RenderStyle& from, const RenderStyle& to, CompositeOperation) const final
     {
         return canInterpolateCaretColor(from, to, false) || canInterpolateCaretColor(from, to, true);
     }
@@ -1843,7 +1844,7 @@ private:
         return true;
     }
 
-    bool canInterpolate(const RenderStyle& from, const RenderStyle& to) const final
+    bool canInterpolate(const RenderStyle& from, const RenderStyle& to, CompositeOperation) const final
     {
         auto* fromLayer = &(from.*m_layersGetter)();
         auto* toLayer = &(to.*m_layersGetter)();
@@ -1958,7 +1959,7 @@ private:
         return a.flexBasis() == b.flexBasis() && a.flexGrow() == b.flexGrow() && a.flexShrink() == b.flexShrink();
     }
 
-    bool canInterpolate(const RenderStyle& from, const RenderStyle& to) const final
+    bool canInterpolate(const RenderStyle& from, const RenderStyle& to, CompositeOperation) const final
     {
         return from.flexGrow() != to.flexGrow() && from.flexShrink() != to.flexShrink() && canInterpolateLengths(from.flexBasis(), to.flexBasis(), false);
     }
@@ -2060,7 +2061,7 @@ public:
     }
 
 private:
-    bool canInterpolate(const RenderStyle& from, const RenderStyle& to) const final
+    bool canInterpolate(const RenderStyle& from, const RenderStyle& to, CompositeOperation) const final
     {
         return from.fontItalic() && to.fontItalic() && from.fontDescription().fontStyleAxis() == FontStyleAxis::slnt && to.fontDescription().fontStyleAxis() == FontStyleAxis::slnt;
     }
@@ -2099,7 +2100,7 @@ public:
     }
 
 private:
-    bool canInterpolate(const RenderStyle& from, const RenderStyle& to) const final
+    bool canInterpolate(const RenderStyle& from, const RenderStyle& to, CompositeOperation) const final
     {
         return !(from.*m_autoGetter)() && !(to.*m_autoGetter)();
     }
@@ -2154,9 +2155,9 @@ public:
     }
 
 private:
-    bool canInterpolate(const RenderStyle& from, const RenderStyle& to) const final
+    bool canInterpolate(const RenderStyle& from, const RenderStyle& to, CompositeOperation compositeOperation) const final
     {
-        return from.verticalAlign() == VerticalAlign::Length && to.verticalAlign() == VerticalAlign::Length && LengthPropertyWrapper::canInterpolate(from, to);
+        return from.verticalAlign() == VerticalAlign::Length && to.verticalAlign() == VerticalAlign::Length && LengthPropertyWrapper::canInterpolate(from, to, compositeOperation);
     }
 
     void blend(RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, const CSSPropertyBlendingContext& context) const final
@@ -2176,13 +2177,13 @@ public:
     }
 
 private:
-    bool canInterpolate(const RenderStyle& from, const RenderStyle& to) const final
+    bool canInterpolate(const RenderStyle& from, const RenderStyle& to, CompositeOperation compositeOperation) const final
     {
         if (from.textIndentLine() != to.textIndentLine())
             return false;
         if (from.textIndentType() != to.textIndentType())
             return false;
-        return LengthPropertyWrapper::canInterpolate(from, to);
+        return LengthPropertyWrapper::canInterpolate(from, to, compositeOperation);
     }
 
     void blend(RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, const CSSPropertyBlendingContext& context) const final
@@ -2203,11 +2204,11 @@ public:
     }
 
 private:
-    bool canInterpolate(const RenderStyle& from, const RenderStyle& to) const final
+    bool canInterpolate(const RenderStyle& from, const RenderStyle& to, CompositeOperation compositeOperation) const final
     {
         if (!from.hasPerspective() || !to.hasPerspective())
             return false;
-        return NonNegativeFloatPropertyWrapper::canInterpolate(from, to);
+        return NonNegativeFloatPropertyWrapper::canInterpolate(from, to, compositeOperation);
     }
 
     void blend(RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, const CSSPropertyBlendingContext& context) const final
@@ -2228,7 +2229,7 @@ public:
     }
 
 private:
-    bool canInterpolate(const RenderStyle& from, const RenderStyle& to) const final
+    bool canInterpolate(const RenderStyle& from, const RenderStyle& to, CompositeOperation) const final
     {
         return value(from).isSpaces() == value(to).isSpaces();
     }
@@ -2258,7 +2259,7 @@ public:
         return a.aspectRatioType() == b.aspectRatioType() && a.aspectRatioWidth() == b.aspectRatioWidth() && a.aspectRatioHeight() == b.aspectRatioHeight();
     }
 
-    bool canInterpolate(const RenderStyle& from, const RenderStyle& to) const final
+    bool canInterpolate(const RenderStyle& from, const RenderStyle& to, CompositeOperation) const final
     {
         return (from.aspectRatioType() == AspectRatioType::Ratio && to.aspectRatioType() == AspectRatioType::Ratio) || (from.aspectRatioType() == AspectRatioType::AutoAndRatio && to.aspectRatioType() == AspectRatioType::AutoAndRatio);
     }
@@ -2700,7 +2701,7 @@ static bool gatherEnclosingShorthandProperties(CSSPropertyID property, Animation
     return contained;
 }
 
-void CSSPropertyAnimation::blendProperties(const CSSPropertyBlendingClient* client, CSSPropertyID property, RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, double progress)
+void CSSPropertyAnimation::blendProperties(const CSSPropertyBlendingClient* client, CSSPropertyID property, RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, double progress, CompositeOperation compositeOperation)
 {
     ASSERT(property != CSSPropertyInvalid);
 
@@ -2709,10 +2710,13 @@ void CSSPropertyAnimation::blendProperties(const CSSPropertyBlendingClient* clie
         // https://drafts.csswg.org/web-animations-1/#discrete
         // The property's values cannot be meaningfully combined, thus it is not additive and
         // interpolation swaps from Va to Vb at 50% (p=0.5).
-        auto isDiscrete = !wrapper->canInterpolate(from, to);
-        if (isDiscrete)
+        auto isDiscrete = !wrapper->canInterpolate(from, to, compositeOperation);
+        if (isDiscrete) {
+            // If we want additive, we should specify progress at 0 actually and return from.
             progress = progress < 0.5 ? 0 : 1;
-        wrapper->blend(destination, from, to, { progress, isDiscrete, client });
+            compositeOperation = CompositeOperation::Replace;
+        }
+        wrapper->blend(destination, from, to, { progress, isDiscrete, compositeOperation, client });
 #if !LOG_DISABLED
         wrapper->logBlend(from, to, destination, progress);
 #endif
@@ -2754,7 +2758,7 @@ bool CSSPropertyAnimation::canPropertyBeInterpolated(CSSPropertyID property, con
 {
     AnimationPropertyWrapperBase* wrapper = CSSPropertyAnimationWrapperMap::singleton().wrapperForProperty(property);
     if (wrapper)
-        return wrapper->canInterpolate(from, to);
+        return wrapper->canInterpolate(from, to, CompositeOperation::Replace);
     return false;
 }
 
