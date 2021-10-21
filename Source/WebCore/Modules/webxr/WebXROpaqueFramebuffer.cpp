@@ -125,7 +125,6 @@ void WebXROpaqueFramebuffer::startFrame(const PlatformXR::Device::FrameData::Lay
     auto gCGL = static_cast<GraphicsContextGLOpenGL*>(m_context.graphicsContextGL());
     GCGLenum textureTarget = gCGL->drawingBufferTextureTarget();
 
-
     if (!m_opaqueTexture)
         m_opaqueTexture = gCGL->createTexture();
 
@@ -157,14 +156,15 @@ void WebXROpaqueFramebuffer::startFrame(const PlatformXR::Device::FrameData::Lay
         return;
     }
 
-    // Now set up the framebuffer to use the texture that points to the IOSurface. The depth and
-    // stencil buffers were attached by startFrame.
-    gl.framebufferTexture2D(GL::FRAMEBUFFER, GL::COLOR_ATTACHMENT0, GL::TEXTURE_2D, m_opaqueTexture, 0);
-
-    // FIXME: This is assuming multisampling is turned off and we're rendering directly into the framebuffer.
+    // If we're not multisampling, set up the framebuffer to use the texture that points to the IOSurface. The depth and
+    // stencil buffers were attached by setupFramebuffer. If we are multisampling, the framebuffer was initialized in setupFramebuffer,
+    // and we'll resolve into the m_opaqueTexture in endFrame.
+    if (!m_multisampleColorBuffer)
+        gl.framebufferTexture2D(GL::FRAMEBUFFER, GL::COLOR_ATTACHMENT0, GL::TEXTURE_2D, m_opaqueTexture, 0);
 
     // At this point the framebuffer should be "complete".
     ASSERT(gl.checkFramebufferStatus(GL::FRAMEBUFFER) == GL::FRAMEBUFFER_COMPLETE);
+
 #else
     m_opaqueTexture = data.opaqueTexture;
 
@@ -190,28 +190,6 @@ void WebXROpaqueFramebuffer::endFrame()
 
     auto& gl = *m_context.graphicsContextGL();
 
-#if USE(IOSURFACE_FOR_XR_LAYER_DATA)
-    // FIXME: We have to call finish rather than flush because we only want to disconnect
-    // the IOSurface and signal the DeviceProxy when we know the content has been rendered.
-    // It might be possible to set this up so the completion of the rendering triggers
-    // the endFrame call.
-    gl.finish();
-
-    if (m_ioSurfaceTextureHandle) {
-        auto gCGL = static_cast<GraphicsContextGLOpenGL*>(&gl);
-        if (m_ioSurfaceTextureHandleIsShared) {
-#if !PLATFORM(IOS_FAMILY_SIMULATOR)
-            gCGL->detachIOSurfaceFromSharedTexture(m_ioSurfaceTextureHandle);
-#else
-            ASSERT_NOT_REACHED();
-#endif
-        } else
-            gCGL->destroyPbufferAndDetachIOSurface(m_ioSurfaceTextureHandle);
-        m_ioSurfaceTextureHandle = nullptr;
-        m_ioSurfaceTextureHandleIsShared = false;
-    }
-#else
-
     if (m_multisampleColorBuffer) {
 #if !USE(ANGLE)
         // FIXME: These may be needed when using ANGLE, but it didn't compile in the initial implementation.
@@ -234,12 +212,30 @@ void WebXROpaqueFramebuffer::endFrame()
         gl.bindFramebuffer(GL::DRAW_FRAMEBUFFER, m_resolvedFBO);
         gl.framebufferTexture2D(GL::FRAMEBUFFER, GL::COLOR_ATTACHMENT0, GL::TEXTURE_2D, m_opaqueTexture, 0);
 
-        // Resolve multisample framebuffer
         gl.bindFramebuffer(GL::READ_FRAMEBUFFER, m_framebuffer->object());
-        gl.blitFramebuffer(0, 0, m_width, m_height, 0, 0, m_width, m_height, GL::COLOR_BUFFER_BIT, GL::LINEAR);
+        gl.blitFramebuffer(0, 0, m_width, m_height, 0, 0, m_width, m_height, GL::COLOR_BUFFER_BIT, GL::NEAREST);
     }
 
-    gl.flush();
+    // FIXME: We have to call finish rather than flush because we only want to disconnect
+    // the IOSurface and signal the DeviceProxy when we know the content has been rendered.
+    // It might be possible to set this up so the completion of the rendering triggers
+    // the endFrame call.
+    gl.finish();
+
+#if USE(IOSURFACE_FOR_XR_LAYER_DATA)
+    if (m_ioSurfaceTextureHandle) {
+        auto gCGL = static_cast<GraphicsContextGLOpenGL*>(&gl);
+        if (m_ioSurfaceTextureHandleIsShared) {
+#if !PLATFORM(IOS_FAMILY_SIMULATOR)
+            gCGL->detachIOSurfaceFromSharedTexture(m_ioSurfaceTextureHandle);
+#else
+            ASSERT_NOT_REACHED();
+#endif
+        } else
+            gCGL->destroyPbufferAndDetachIOSurface(m_ioSurfaceTextureHandle);
+        m_ioSurfaceTextureHandle = nullptr;
+        m_ioSurfaceTextureHandleIsShared = false;
+    }
 #endif
 }
 
