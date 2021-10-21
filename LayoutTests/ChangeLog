@@ -1,3 +1,13 @@
+2021-10-21  Ayumi Kojima  <ayumi_kojima@apple.com>
+
+        [ iOS macOS Debug ] imported/w3c/web-platform-tests/html/dom/idlharness.worker.html is a flaky failure.
+        https://bugs.webkit.org/show_bug.cgi?id=231030
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2021-10-21  Eric Hutchison  <ehutchison@apple.com>
 
         [ iOS15 EWS ] imported/w3c/web-platform-tests/websockets/Close-1000.any.html is a flaky crash.
