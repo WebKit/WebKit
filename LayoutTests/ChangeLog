@@ -1,3 +1,13 @@
+2021-10-21  John Wilander  <wilander@apple.com>
+
+        PCM: Change expectation to pass so we can investigate http/tests/privateClickMeasurement/attribution-conversion-through-image-redirect-in-new-window.html
+        https://bugs.webkit.org/show_bug.cgi?id=232115
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+            Removed expectation added in https://trac.webkit.org/changeset/284572/webkit.
+
 2021-10-21  Sihui Liu  <sihui_liu@apple.com>
 
         FileSystemSyncAccessHandle should close platform file handle on close()

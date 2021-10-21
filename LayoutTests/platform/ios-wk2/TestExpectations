@@ -2230,8 +2230,6 @@ webkit.org/b/231714 fast/scrolling/ios/click-events-during-momentum-scroll-in-ov
 
 webkit.org/b/231780 [ Debug ] imported/w3c/web-platform-tests/webrtc/simulcast/basic.https.html [ Pass Failure ]
 
-webkit.org/b/232048 http/tests/privateClickMeasurement/attribution-conversion-through-image-redirect-in-new-window.html [ Pass Crash ]
-
 webkit.org/b/232099 imported/w3c/web-platform-tests/websockets/Close-1000.any.html [ Pass Crash ]
 
 webkit.org/b/232102 http/tests/privateClickMeasurement/attribution-conversion-through-image-redirect-with-priority.html [ Pass Crash ]
