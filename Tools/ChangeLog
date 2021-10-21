@@ -1,3 +1,13 @@
+2021-10-21  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix GTK build with old version of ATSPI after r284367.
+
+        There's not API to check ATSPI version, so check if ATSPI_SCROLLTYPE_COUNT is defined to know if component
+        scroll API is available.
+
+        * TestWebKitAPI/Tests/WebKitGtk/TestWebKitAccessibility.cpp:
+        (beforeAll):
+
 2021-10-20  Brady Eidson  <beidson@apple.com>
 
         WebKit Managed Notifications: Skeleton NotificationProvider

@@ -757,6 +757,7 @@ static void testComponentHitTest(AccessibilityTest* test, gconstpointer)
     g_assert_true(accessible.get() == documentWeb.get());
 }
 
+#ifdef ATSPI_SCROLLTYPE_COUNT
 static void testComponentScrollTo(AccessibilityTest* test, gconstpointer)
 {
     test->showInWindow(640, 480);
@@ -802,6 +803,7 @@ static void testComponentScrollTo(AccessibilityTest* test, gconstpointer)
     g_assert_cmpint(topPositionBeforeScrolling->x, ==, topPositionAfterScrolling->x);
     g_assert_cmpint(topPositionBeforeScrolling->y, ==, topPositionAfterScrolling->y);
 }
+#endif
 
 void beforeAll()
 {
@@ -812,7 +814,9 @@ void beforeAll()
     AccessibilityTest::add("WebKitAccessibility", "accessible/state", testAccessibleState);
     AccessibilityTest::add("WebKitAccessibility", "accessible/state-changed", testAccessibleStateChanged);
     AccessibilityTest::add("WebKitAccessibility", "component/hit-test", testComponentHitTest);
+#ifdef ATSPI_SCROLLTYPE_COUNT
     AccessibilityTest::add("WebKitAccessibility", "component/scroll-to", testComponentScrollTo);
+#endif
 }
 
 void afterAll()
