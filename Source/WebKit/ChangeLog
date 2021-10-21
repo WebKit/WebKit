@@ -1,3 +1,9 @@
+2021-10-21  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update OptionsGTK.cmake and NEWS for 2.34.1 release
+
+        * gtk/NEWS: Add release notes for 2.34.1.
+
 2021-10-20  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         REGRESSION(r276635): [GTK] local HTML file is downloaded instead of displayed if any application has ever called g_desktop_app_info_set_as_default_for_extension(info, "html")

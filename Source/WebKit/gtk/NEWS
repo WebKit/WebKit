@@ -1,4 +1,15 @@
 ================
+WebKitGTK 2.34.1
+================
+
+What's new in WebKitGTK 2.34.1?
+
+  - Update user agent browser versions.
+  - Fix a crash with GTK >= 3.24.30.
+  - Fix a crash when loading videos on reddit.
+  - Fix file type detection when application calls g_desktop_app_info_set_as_default_for_extension() passing html.
+
+================
 WebKitGTK 2.34.0
 ================
 
