@@ -1,4 +1,15 @@
 =================
+WPE WebKit 2.34.1
+=================
+
+What's new in WPE WebKit 2.34.0?
+
+  - Update User-Agent browser versions.
+  - Fix a crash when loading videos on Reddit.
+  - Fix file type detection when application calls
+    g_desktop_app_info_set_as_default_for_extension() passing HTML.
+
+=================
 WPE WebKit 2.34.0
 =================
 
