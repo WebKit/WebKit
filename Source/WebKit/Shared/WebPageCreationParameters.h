@@ -169,6 +169,7 @@ struct WebPageCreationParameters {
     WebCore::FloatSize availableScreenSize;
     WebCore::FloatSize overrideScreenSize;
     float textAutosizingWidth;
+    WebCore::FloatSize minimumUnobscuredSize;
     WebCore::FloatSize maximumUnobscuredSize;
     int32_t deviceOrientation { 0 };
     bool keyboardIsAttached { false };

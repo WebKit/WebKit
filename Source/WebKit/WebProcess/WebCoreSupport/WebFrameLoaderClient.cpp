@@ -1559,7 +1559,7 @@ void WebFrameLoaderClient::transitionToCommittedForNewPage()
     }
 
     if (auto viewportSizeForViewportUnits = webPage->viewportSizeForCSSViewportUnits())
-        view->setViewportSizeForCSSViewportUnits(*viewportSizeForViewportUnits);
+        view->setSizeForCSSLargeViewportUnits(*viewportSizeForViewportUnits);
     view->setProhibitsScrolling(shouldDisableScrolling);
     view->setVisualUpdatesAllowedByClient(!webPage->shouldExtendIncrementalRenderingSuppression());
 #if PLATFORM(COCOA)

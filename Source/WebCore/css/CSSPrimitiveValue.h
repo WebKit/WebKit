@@ -111,10 +111,6 @@ public:
     bool isX() const { return primitiveType() == CSSUnitType::CSS_X; }
     bool isResolution() const { return unitCategory(primitiveType()) == CSSUnitCategory::Resolution; }
     bool isViewportPercentageLength() const { return isViewportPercentageLength(primitiveUnitType()); }
-    bool isViewportPercentageWidth() const { return primitiveUnitType() == CSSUnitType::CSS_VW; }
-    bool isViewportPercentageHeight() const { return primitiveUnitType() == CSSUnitType::CSS_VH; }
-    bool isViewportPercentageMax() const { return primitiveUnitType() == CSSUnitType::CSS_VMAX; }
-    bool isViewportPercentageMin() const { return primitiveUnitType() == CSSUnitType::CSS_VMIN; }
     bool isValueID() const { return primitiveUnitType() == CSSUnitType::CSS_VALUE_ID; }
     bool isFlex() const { return primitiveType() == CSSUnitType::CSS_FR; }
     bool isCustomIdent() const { return primitiveUnitType() == CSSUnitType::CustomIdent; }
@@ -315,10 +311,7 @@ constexpr bool CSSPrimitiveValue::isResolution(CSSUnitType type)
 
 constexpr bool CSSPrimitiveValue::isViewportPercentageLength(CSSUnitType type)
 {
-    return type == CSSUnitType::CSS_VW
-        || type == CSSUnitType::CSS_VH
-        || type == CSSUnitType::CSS_VMIN
-        || type == CSSUnitType::CSS_VMAX;
+    return type >= CSSUnitType::CSS_VW && type <= CSSUnitType::CSS_DVMAX;
 }
 
 template<typename T> inline Ref<CSSPrimitiveValue> CSSPrimitiveValue::create(T&& value)

@@ -93,10 +93,9 @@ unsigned short DeprecatedCSSOMPrimitiveValue::primitiveType() const
     case CSSUnitType::CSS_VMIN:                         return CSS_VMIN;
     case CSSUnitType::CSS_VW:                           return CSS_VW;
     case CSSUnitType::CSS_X:                            return 37;
-    }
 
-    ASSERT_NOT_REACHED();
-    return CSS_UNKNOWN;
+    default:                                            return CSS_UNKNOWN;
+    }
 }
 
 ExceptionOr<float> DeprecatedCSSOMPrimitiveValue::getFloatValue(unsigned short unitType) const

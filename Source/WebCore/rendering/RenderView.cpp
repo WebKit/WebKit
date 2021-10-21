@@ -697,9 +697,24 @@ float RenderView::zoomFactor() const
     return frameView().frame().pageZoomFactor();
 }
 
-IntSize RenderView::viewportSizeForCSSViewportUnits() const
+IntSize RenderView::sizeForCSSSmallViewportUnits() const
 {
-    return frameView().viewportSizeForCSSViewportUnits();
+    return frameView().sizeForCSSSmallViewportUnits();
+}
+
+IntSize RenderView::sizeForCSSLargeViewportUnits() const
+{
+    return frameView().sizeForCSSLargeViewportUnits();
+}
+
+IntSize RenderView::sizeForCSSDynamicViewportUnits() const
+{
+    return frameView().sizeForCSSDynamicViewportUnits();
+}
+
+IntSize RenderView::sizeForCSSDefaultViewportUnits() const
+{
+    return frameView().sizeForCSSDefaultViewportUnits();
 }
 
 Node* RenderView::nodeForHitTest() const

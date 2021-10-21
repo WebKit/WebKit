@@ -8259,6 +8259,7 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
     parameters.overrideScreenSize = overrideScreenSize();
     parameters.textAutosizingWidth = textAutosizingWidth();
     parameters.mimeTypesWithCustomContentProviders = pageClient().mimeTypesWithCustomContentProviders();
+    parameters.minimumUnobscuredSize = m_minimumUnobscuredSize;
     parameters.maximumUnobscuredSize = m_maximumUnobscuredSize;
     parameters.deviceOrientation = m_deviceOrientation;
     parameters.keyboardIsAttached = isInHardwareKeyboardMode();

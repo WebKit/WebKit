@@ -72,6 +72,9 @@ public:
     float width() const { return m_width; }
     float height() const { return m_height; }
 
+    float minDimension() const { return std::min(m_width, m_height); }
+    float maxDimension() const { return std::max(m_width, m_height); }
+
     bool hasIntrinsicWidth = false;
     bool hasIntrinsicHeight = false;
 

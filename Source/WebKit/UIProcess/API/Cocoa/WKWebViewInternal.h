@@ -155,6 +155,8 @@ class ViewGestureController;
 
     std::optional<CGSize> _viewLayoutSizeOverride;
     std::optional<WebCore::FloatSize> _lastSentViewLayoutSize;
+    std::optional<CGSize> _minimumUnobscuredSizeOverride;
+    std::optional<WebCore::FloatSize> _lastSentMinimumUnobscuredSize;
     std::optional<CGSize> _maximumUnobscuredSizeOverride;
     std::optional<WebCore::FloatSize> _lastSentMaximumUnobscuredSize;
     CGRect _inputViewBoundsInWindow;

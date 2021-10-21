@@ -264,7 +264,7 @@ void WebPageProxy::scrollingNodeScrollDidEndScroll()
     pageClient().scrollingNodeScrollDidEndScroll();
 }
 
-void WebPageProxy::dynamicViewportSizeUpdate(const FloatSize& viewLayoutSize, const WebCore::FloatSize& maximumUnobscuredSize, const FloatRect& targetExposedContentRect, const FloatRect& targetUnobscuredRect, const FloatRect& targetUnobscuredRectInScrollViewCoordinates, const WebCore::FloatBoxExtent& unobscuredSafeAreaInsets, double targetScale, int32_t deviceOrientation, double minimumEffectiveDeviceWidth, DynamicViewportSizeUpdateID dynamicViewportSizeUpdateID)
+void WebPageProxy::dynamicViewportSizeUpdate(const FloatSize& viewLayoutSize, const WebCore::FloatSize& minimumUnobscuredSize, const WebCore::FloatSize& maximumUnobscuredSize, const FloatRect& targetExposedContentRect, const FloatRect& targetUnobscuredRect, const FloatRect& targetUnobscuredRectInScrollViewCoordinates, const WebCore::FloatBoxExtent& unobscuredSafeAreaInsets, double targetScale, int32_t deviceOrientation, double minimumEffectiveDeviceWidth, DynamicViewportSizeUpdateID dynamicViewportSizeUpdateID)
 {
     if (!hasRunningProcess())
         return;
@@ -273,7 +273,7 @@ void WebPageProxy::dynamicViewportSizeUpdate(const FloatSize& viewLayoutSize, co
 
     m_viewportConfigurationViewLayoutSize = viewLayoutSize;
     m_process->send(Messages::WebPage::DynamicViewportSizeUpdate(viewLayoutSize,
-        maximumUnobscuredSize, targetExposedContentRect, targetUnobscuredRect,
+        minimumUnobscuredSize, maximumUnobscuredSize, targetExposedContentRect, targetUnobscuredRect,
         targetUnobscuredRectInScrollViewCoordinates, unobscuredSafeAreaInsets,
         targetScale, deviceOrientation, minimumEffectiveDeviceWidth, dynamicViewportSizeUpdateID), m_webPageID);
 
@@ -298,6 +298,14 @@ void WebPageProxy::setForceAlwaysUserScalable(bool userScalable)
 
     if (hasRunningProcess())
         m_process->send(Messages::WebPage::SetForceAlwaysUserScalable(userScalable), m_webPageID);
+}
+
+void WebPageProxy::setMinimumUnobscuredSize(const WebCore::FloatSize& size)
+{
+    m_minimumUnobscuredSize = size;
+
+    if (hasRunningProcess())
+        m_process->send(Messages::WebPage::SetMinimumUnobscuredSize(size), m_webPageID);
 }
 
 void WebPageProxy::setMaximumUnobscuredSize(const WebCore::FloatSize& size)

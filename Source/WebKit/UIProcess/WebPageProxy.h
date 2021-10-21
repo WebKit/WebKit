@@ -818,9 +818,11 @@ public:
     void scrollingNodeScrollWillStartScroll();
     void scrollingNodeScrollDidEndScroll();
 
-    void dynamicViewportSizeUpdate(const WebCore::FloatSize& viewLayoutSize, const WebCore::FloatSize& maximumUnobscuredSize, const WebCore::FloatRect& targetExposedContentRect, const WebCore::FloatRect& targetUnobscuredRect, const WebCore::FloatRect& targetUnobscuredRectInScrollViewCoordinates, const WebCore::FloatBoxExtent& unobscuredSafeAreaInsets, double targetScale, int32_t deviceOrientation, double minimumEffectiveDeviceWidth, DynamicViewportSizeUpdateID);
+    void dynamicViewportSizeUpdate(const WebCore::FloatSize& viewLayoutSize, const WebCore::FloatSize& minimumUnobscuredSize, const WebCore::FloatSize& maximumUnobscuredSize, const WebCore::FloatRect& targetExposedContentRect, const WebCore::FloatRect& targetUnobscuredRect, const WebCore::FloatRect& targetUnobscuredRectInScrollViewCoordinates, const WebCore::FloatBoxExtent& unobscuredSafeAreaInsets, double targetScale, int32_t deviceOrientation, double minimumEffectiveDeviceWidth, DynamicViewportSizeUpdateID);
 
     void setViewportConfigurationViewLayoutSize(const WebCore::FloatSize&, double scaleFactor, double minimumEffectiveDeviceWidth);
+    void setMinimumUnobscuredSize(const WebCore::FloatSize&);
+    WebCore::FloatSize minimumUnobscuredSize() const { return m_minimumUnobscuredSize; }
     void setMaximumUnobscuredSize(const WebCore::FloatSize&);
     WebCore::FloatSize maximumUnobscuredSize() const { return m_maximumUnobscuredSize; }
     void setDeviceOrientation(int32_t);
@@ -2989,6 +2991,7 @@ private:
 #if PLATFORM(IOS_FAMILY)
     Function<bool()> m_deviceOrientationUserPermissionHandlerForTesting;
     bool m_waitingForPostLayoutEditorStateUpdateAfterFocusingElement { false };
+    WebCore::FloatSize m_minimumUnobscuredSize;
     WebCore::FloatSize m_maximumUnobscuredSize;
     bool m_lastObservedStateWasBackground { false };
 #endif

@@ -3434,6 +3434,12 @@ void WebPage::setViewportConfigurationViewLayoutSize(const FloatSize& size, doub
     viewportConfigurationChanged(zoomToInitialScale);
 }
 
+void WebPage::setMinimumUnobscuredSize(const FloatSize& minimumUnobscuredSize)
+{
+    m_minimumUnobscuredSize = minimumUnobscuredSize;
+    updateViewportSizeForCSSViewportUnits();
+}
+
 void WebPage::setMaximumUnobscuredSize(const FloatSize& maximumUnobscuredSize)
 {
     m_maximumUnobscuredSize = maximumUnobscuredSize;
@@ -3453,7 +3459,7 @@ void WebPage::setOverrideViewportArguments(const std::optional<WebCore::Viewport
     m_page->setOverrideViewportArguments(arguments);
 }
 
-void WebPage::dynamicViewportSizeUpdate(const FloatSize& viewLayoutSize, const WebCore::FloatSize& maximumUnobscuredSize, const FloatRect& targetExposedContentRect, const FloatRect& targetUnobscuredRect, const WebCore::FloatRect& targetUnobscuredRectInScrollViewCoordinates, const WebCore::FloatBoxExtent& targetUnobscuredSafeAreaInsets, double targetScale, int32_t deviceOrientation, double minimumEffectiveDeviceWidth, DynamicViewportSizeUpdateID dynamicViewportSizeUpdateID)
+void WebPage::dynamicViewportSizeUpdate(const FloatSize& viewLayoutSize, const WebCore::FloatSize& minimumUnobscuredSize, const WebCore::FloatSize& maximumUnobscuredSize, const FloatRect& targetExposedContentRect, const FloatRect& targetUnobscuredRect, const WebCore::FloatRect& targetUnobscuredRectInScrollViewCoordinates, const WebCore::FloatBoxExtent& targetUnobscuredSafeAreaInsets, double targetScale, int32_t deviceOrientation, double minimumEffectiveDeviceWidth, DynamicViewportSizeUpdateID dynamicViewportSizeUpdateID)
 {
     SetForScope<bool> dynamicSizeUpdateGuard(m_inDynamicSizeUpdate, true);
     // FIXME: this does not handle the cases where the content would change the content size or scroll position from JavaScript.
@@ -3501,6 +3507,7 @@ void WebPage::dynamicViewportSizeUpdate(const FloatSize& viewLayoutSize, const W
     if (setFixedLayoutSize(newLayoutSize))
         resetTextAutosizing();
 
+    setMinimumUnobscuredSize(minimumUnobscuredSize);
     setMaximumUnobscuredSize(maximumUnobscuredSize);
     m_page->setUnobscuredSafeAreaInsets(targetUnobscuredSafeAreaInsets);
 
@@ -3847,13 +3854,19 @@ void WebPage::viewportConfigurationChanged(ZoomToInitialScale zoomToInitialScale
 
 void WebPage::updateViewportSizeForCSSViewportUnits()
 {
+    FloatSize smallestUnobscuredSize = m_minimumUnobscuredSize;
+    if (smallestUnobscuredSize.isEmpty())
+        smallestUnobscuredSize = m_viewportConfiguration.viewLayoutSize();
+
     FloatSize largestUnobscuredSize = m_maximumUnobscuredSize;
     if (largestUnobscuredSize.isEmpty())
         largestUnobscuredSize = m_viewportConfiguration.viewLayoutSize();
 
     FrameView& frameView = *mainFrameView();
+    smallestUnobscuredSize.scale(1 / m_viewportConfiguration.initialScaleIgnoringContentSize());
     largestUnobscuredSize.scale(1 / m_viewportConfiguration.initialScaleIgnoringContentSize());
-    frameView.setViewportSizeForCSSViewportUnits(roundedIntSize(largestUnobscuredSize));
+    frameView.setSizeForCSSSmallViewportUnits(roundedIntSize(smallestUnobscuredSize));
+    frameView.setSizeForCSSLargeViewportUnits(roundedIntSize(largestUnobscuredSize));
 }
 
 void WebPage::applicationWillResignActive()

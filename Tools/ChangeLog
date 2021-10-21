@@ -1,3 +1,30 @@
+2021-10-21  Devin Rousso  <drousso@apple.com>
+
+        [css-values-4] Support small (sv*), large (lv*) and dynamic (dv*) viewport units
+        https://bugs.webkit.org/show_bug.cgi?id=219287
+        <rdar://problem/71857370>
+
+        Reviewed by Simon Fraser.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/CSSViewportUnits.mm: Added.
+        (evaluateForInt):
+        (getElementHeight):
+        (TEST.CSSViewportUnits.AllSame):
+        (TEST.CSSViewportUnits.EmptyUnobscuredSizeOverrides):
+        (TEST.CSSViewportUnits.SameUnobscuredSizeOverrides):
+        (TEST.CSSViewportUnits.DifferentUnobscuredSizeOverrides):
+        * TestWebKitAPI/Tests/WebKitCocoa/CSSViewportUnits.html: Added.
+
+        * TestWebKitAPI/Tests/WebCore/FloatSizeTests.cpp:
+        (TEST.FloatSize.MinDimension): Added.
+        (TEST.FloatSize.MaxDimension): Added.
+        * TestWebKitAPI/Tests/WebCore/IntSizeTests.cpp:
+        (TEST.IntSize.MinDimension): Added.
+        (TEST.IntSize.MaxDimension): Added.
+        Add utility/helper methods for returning the minimum/maximum of the width vs height.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+
 2021-10-21  Chris Dumez  <cdumez@apple.com>
 
         WebKit should process-swap for initial navigation of a popup if it has no opener

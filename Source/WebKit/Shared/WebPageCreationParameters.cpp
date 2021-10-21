@@ -106,6 +106,7 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << availableScreenSize;
     encoder << overrideScreenSize;
     encoder << textAutosizingWidth;
+    encoder << minimumUnobscuredSize;
     encoder << maximumUnobscuredSize;
     encoder << deviceOrientation;
     encoder << keyboardIsAttached;
@@ -379,6 +380,8 @@ std::optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::
     if (!decoder.decode(parameters.overrideScreenSize))
         return std::nullopt;
     if (!decoder.decode(parameters.textAutosizingWidth))
+        return std::nullopt;
+    if (!decoder.decode(parameters.minimumUnobscuredSize))
         return std::nullopt;
     if (!decoder.decode(parameters.maximumUnobscuredSize))
         return std::nullopt;

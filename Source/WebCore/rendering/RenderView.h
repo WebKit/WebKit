@@ -143,7 +143,10 @@ public:
 
     bool shouldPaintBaseBackground() const;
 
-    IntSize viewportSizeForCSSViewportUnits() const;
+    IntSize sizeForCSSSmallViewportUnits() const;
+    IntSize sizeForCSSLargeViewportUnits() const;
+    IntSize sizeForCSSDynamicViewportUnits() const;
+    IntSize sizeForCSSDefaultViewportUnits() const;
 
     bool hasQuotesNeedingUpdate() const { return m_hasQuotesNeedingUpdate; }
     void setHasQuotesNeedingUpdate(bool b) { m_hasQuotesNeedingUpdate = b; }

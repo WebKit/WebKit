@@ -893,6 +893,8 @@
 		93FCDB34263631560046DD7D /* SortedArrayMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93FCDB33263631560046DD7D /* SortedArrayMap.cpp */; };
 		95095F20262FFFA50000D920 /* SampledPageTopColor.mm in Sources */ = {isa = PBXBuildFile; fileRef = 95095F1F262FFFA50000D920 /* SampledPageTopColor.mm */; };
 		950E4CC1252E75240071659F /* iOSStylusSupport.mm in Sources */ = {isa = PBXBuildFile; fileRef = 950E4CC0252E75230071659F /* iOSStylusSupport.mm */; };
+		952F7165270BD97E00D00DCC /* CSSViewportUnits.mm in Sources */ = {isa = PBXBuildFile; fileRef = 952F7164270BD97E00D00DCC /* CSSViewportUnits.mm */; };
+		952F7167270BD9CB00D00DCC /* CSSViewportUnits.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 952F7166270BD99700D00DCC /* CSSViewportUnits.html */; };
 		953ABB3525C0D682004C8B73 /* WKWebViewUnderPageBackgroundColor.mm in Sources */ = {isa = PBXBuildFile; fileRef = 953ABB3425C0D681004C8B73 /* WKWebViewUnderPageBackgroundColor.mm */; };
 		958B70E126C46EDC00B2022B /* NSAttributedStringWebKitAdditions.mm in Sources */ = {isa = PBXBuildFile; fileRef = 958B70E026C46EDC00B2022B /* NSAttributedStringWebKitAdditions.mm */; };
 		95A524952581A10D00461FE9 /* WKWebViewThemeColor.mm in Sources */ = {isa = PBXBuildFile; fileRef = 95A524942581A10D00461FE9 /* WKWebViewThemeColor.mm */; };
@@ -1466,6 +1468,7 @@
 				9B62630C1F8C25C8007EE29B /* copy-url.html in Copy Resources */,
 				7AEAD4811E20122700416EFE /* CrossPartitionFileSchemeAccess.html in Copy Resources */,
 				4995A6F025E8772000E5F0A9 /* csp-document-uri-report.html in Copy Resources */,
+				952F7167270BD9CB00D00DCC /* CSSViewportUnits.html in Copy Resources */,
 				2DDD4DA4270B8B3500659A61 /* cube.usdz in Copy Resources */,
 				F4AB578A1F65165400DB0DA1 /* custom-draggable-div.html in Copy Resources */,
 				290F4275172A221C00939FF0 /* custom-protocol-sync-xhr.html in Copy Resources */,
@@ -2641,6 +2644,8 @@
 		93FCDB33263631560046DD7D /* SortedArrayMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SortedArrayMap.cpp; sourceTree = "<group>"; };
 		95095F1F262FFFA50000D920 /* SampledPageTopColor.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SampledPageTopColor.mm; sourceTree = "<group>"; };
 		950E4CC0252E75230071659F /* iOSStylusSupport.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = iOSStylusSupport.mm; sourceTree = "<group>"; };
+		952F7164270BD97E00D00DCC /* CSSViewportUnits.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CSSViewportUnits.mm; sourceTree = "<group>"; };
+		952F7166270BD99700D00DCC /* CSSViewportUnits.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = CSSViewportUnits.html; sourceTree = "<group>"; };
 		953ABB3425C0D681004C8B73 /* WKWebViewUnderPageBackgroundColor.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebViewUnderPageBackgroundColor.mm; sourceTree = "<group>"; };
 		958B70E026C46EDC00B2022B /* NSAttributedStringWebKitAdditions.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = NSAttributedStringWebKitAdditions.mm; sourceTree = "<group>"; };
 		95A524942581A10D00461FE9 /* WKWebViewThemeColor.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebViewThemeColor.mm; sourceTree = "<group>"; };
@@ -3494,6 +3499,7 @@
 				1C79201B234BDD9B001EAF23 /* CopyRTF.mm */,
 				9B7A37C21F8AEBA5004AA228 /* CopyURL.mm */,
 				510A921D24DB38ED00BFD89C /* CreateWebArchive.mm */,
+				952F7164270BD97E00D00DCC /* CSSViewportUnits.mm */,
 				46A911582108E66B0078D40D /* CustomUserAgent.mm */,
 				2DC4CF761D2D9DD800ECCC94 /* DataDetection.mm */,
 				518EE51C20A78D3300E024F3 /* DecidePolicyForNavigationAction.mm */,
@@ -4057,6 +4063,7 @@
 				9B1056421F9047CC00D5583F /* copy-html.html */,
 				9B62630B1F8C2510007EE29B /* copy-url.html */,
 				4995A6EF25E876A300E5F0A9 /* csp-document-uri-report.html */,
+				952F7166270BD99700D00DCC /* CSSViewportUnits.html */,
 				F4AB57891F65164B00DB0DA1 /* custom-draggable-div.html */,
 				F47DFB2421A8704A00021FB6 /* data-detectors.html */,
 				F486B1CF1F6794FF00F34BDD /* DataTransfer-setDragImage.html */,
@@ -5506,6 +5513,7 @@
 				510A921E24DB38F300BFD89C /* CreateWebArchive.mm in Sources */,
 				7AEAD47F1E20116C00416EFE /* CrossPartitionFileSchemeAccess.mm in Sources */,
 				7CCE7EDB1A411A9200447C4C /* CSSParser.cpp in Sources */,
+				952F7165270BD97E00D00DCC /* CSSViewportUnits.mm in Sources */,
 				5758597F23A2527A00C74572 /* CtapPinTest.cpp in Sources */,
 				572B403421769A88000AD43E /* CtapRequestTest.cpp in Sources */,
 				572B404421781B43000AD43E /* CtapResponseTest.cpp in Sources */,

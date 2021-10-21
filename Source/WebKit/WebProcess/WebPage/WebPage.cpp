@@ -871,6 +871,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
 
 #if PLATFORM(IOS_FAMILY)
     setViewportConfigurationViewLayoutSize(parameters.viewportConfigurationViewLayoutSize, parameters.viewportConfigurationLayoutSizeScaleFactor, parameters.viewportConfigurationMinimumEffectiveDeviceWidth);
+    setMinimumUnobscuredSize(parameters.minimumUnobscuredSize);
     setMaximumUnobscuredSize(parameters.maximumUnobscuredSize);
 #endif
 
@@ -6266,7 +6267,7 @@ void WebPage::setViewportSizeForCSSViewportUnits(std::optional<WebCore::IntSize>
 
     m_viewportSizeForCSSViewportUnits = viewportSize;
     if (m_viewportSizeForCSSViewportUnits)
-        corePage()->mainFrame().view()->setViewportSizeForCSSViewportUnits(*m_viewportSizeForCSSViewportUnits);
+        corePage()->mainFrame().view()->setSizeForCSSLargeViewportUnits(*m_viewportSizeForCSSViewportUnits);
 }
 
 bool WebPage::isSmartInsertDeleteEnabled()

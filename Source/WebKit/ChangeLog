@@ -1,5 +1,66 @@
 2021-10-21  Devin Rousso  <drousso@apple.com>
 
+        [css-values-4] Support small (sv*), large (lv*) and dynamic (dv*) viewport units
+        https://bugs.webkit.org/show_bug.cgi?id=219287
+        <rdar://problem/71857370>
+
+        Reviewed by Simon Fraser.
+
+        Spec: <https://drafts.csswg.org/css-values-4/#viewport-variants>
+
+        Tests: CSSViewportUnits.AllSame
+               CSSViewportUnits.EmptyUnobscuredSizeOverrides
+               CSSViewportUnits.SameUnobscuredSizeOverrides
+               CSSViewportUnits.DifferentUnobscuredSizeOverrides
+
+        * UIProcess/API/Cocoa/WKWebViewInternal.h:
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/API/ios/WKWebViewIOS.mm:
+        (-[WKWebView _processWillSwapOrDidExit]):
+        (-[WKWebView _dispatchSetMinimumUnobscuredSize:]): Added.
+        (-[WKWebView _frameOrBoundsChanged]):
+        (activeMinimumUnobscuredSize): Added.
+        (-[WKWebView _didCompleteAnimatedResize]):
+        (-[WKWebView _minimumUnobscuredSizeOverride]): Added.
+        (-[WKWebView _setMinimumUnobscuredSizeOverride:]): Added.
+        (-[WKWebView _beginAnimatedResizeWithUpdates:]):
+        (-[WKWebView _overrideLayoutParametersWithMinimumLayoutSize:maximumUnobscuredSizeOverride:]):
+        (-[WKWebView _clearOverrideLayoutParameters]):
+        When this value is set from `-[WKWebView _overrideLayoutParametersWithMinimumLayoutSize:maximumUnobscuredSizeOverride:]`
+        it should be used as the value for "small viewport" `svw`/`svh`/`svmin`/`svmax`, but only
+        from that codepath. Dynamic viewport changes should not update it as they don't necessarily
+        represent a change in the minimum/maximum viewport size, just the current size.
+        "large viewport" `lvw`/`lvh`/`lvmin`/`lvmax` and "dynamic viewport" `dvw`/`dvh`/`dvmin`/`dvmax`
+        (as well as the existing "UA-default viewport" `vw`/`vh`/`vmin`/`vmax`) can be derived from
+        existing logic.
+        See the WebCore ChangeLog for more information.
+
+        * Shared/WebPageCreationParameters.h:
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode):
+        (WebKit::WebPageCreationParameters::decode):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::creationParameters):
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::dynamicViewportSizeUpdate):
+        (WebKit::WebPageProxy::setMinimumUnobscuredSize): Added.
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+        (WebKit::WebPage::setViewportSizeForCSSViewportUnits):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::setMinimumUnobscuredSize): Added.
+        (WebKit::WebPage::dynamicViewportSizeUpdate):
+        (WebKit::WebPage::updateViewportSizeForCSSViewportUnits):
+        Add piping from the UIProcess to the WebProcess for the new minimum unobscured size override.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::transitionToCommittedForNewPage):
+        Drive-by: Rename `setViewportSizeForCSSViewportUnits` to `setSizeForCSSLargeViewportUnits` for clarity.
+
+2021-10-21  Devin Rousso  <drousso@apple.com>
+
         [iOS] Zooming out should use the page's background color instead of fading
         https://bugs.webkit.org/show_bug.cgi?id=232036
         <rdar://problem/81926190>

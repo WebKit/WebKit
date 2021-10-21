@@ -93,6 +93,28 @@ TEST(IntSize, FloatSizeConstruction)
     testGetAndSet(test);
 }
 
+TEST(IntSize, MinDimension)
+{
+    WebCore::IntSize test(1024, 768);
+
+    EXPECT_EQ(768, test.minDimension());
+
+    test.scale(1.0f, 2.0f);
+
+    EXPECT_EQ(1024, test.minDimension());
+}
+
+TEST(IntSize, MaxDimension)
+{
+    WebCore::IntSize test(1024, 768);
+
+    EXPECT_EQ(1024, test.maxDimension());
+
+    test.scale(1.0f, 2.0f);
+
+    EXPECT_EQ(1536, test.maxDimension());
+}
+
 TEST(IntSize, DiagonalLengthAndArea)
 {
     WebCore::IntSize test(1024, 768);

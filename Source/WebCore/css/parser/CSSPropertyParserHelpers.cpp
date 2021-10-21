@@ -492,6 +492,18 @@ static std::optional<LengthRaw> consumeLengthRawWithKnownTokenTypeDimension(CSSP
     case CSSUnitType::CSS_VH:
     case CSSUnitType::CSS_VMIN:
     case CSSUnitType::CSS_VMAX:
+    case CSSUnitType::CSS_SVW:
+    case CSSUnitType::CSS_SVH:
+    case CSSUnitType::CSS_SVMIN:
+    case CSSUnitType::CSS_SVMAX:
+    case CSSUnitType::CSS_LVW:
+    case CSSUnitType::CSS_LVH:
+    case CSSUnitType::CSS_LVMIN:
+    case CSSUnitType::CSS_LVMAX:
+    case CSSUnitType::CSS_DVW:
+    case CSSUnitType::CSS_DVH:
+    case CSSUnitType::CSS_DVMIN:
+    case CSSUnitType::CSS_DVMAX:
     case CSSUnitType::CSS_Q:
         break;
     default:

@@ -31,6 +31,7 @@
 #include "config.h"
 #include "CSSToLengthConversionData.h"
 
+#include "FloatSize.h"
 #include "RenderStyle.h"
 #include "RenderView.h"
 
@@ -43,50 +44,48 @@ float CSSToLengthConversionData::zoom() const
     return *m_zoom;
 }
 
-double CSSToLengthConversionData::viewportWidthFactor() const
+FloatSize CSSToLengthConversionData::defaultViewportFactor() const
 {
     if (m_viewportDependencyDetectionStyle)
         m_viewportDependencyDetectionStyle->setHasViewportUnits();
 
     if (!m_renderView)
-        return 0;
+        return { };
 
-    return m_renderView->viewportSizeForCSSViewportUnits().width() / 100.0;
+    return m_renderView->sizeForCSSDefaultViewportUnits() / 100.0;
 }
 
-double CSSToLengthConversionData::viewportHeightFactor() const
+FloatSize CSSToLengthConversionData::smallViewportFactor() const
 {
     if (m_viewportDependencyDetectionStyle)
         m_viewportDependencyDetectionStyle->setHasViewportUnits();
 
     if (!m_renderView)
-        return 0;
+        return { };
 
-    return m_renderView->viewportSizeForCSSViewportUnits().height() / 100.0;
+    return m_renderView->sizeForCSSSmallViewportUnits() / 100.0;
 }
 
-double CSSToLengthConversionData::viewportMinFactor() const
+FloatSize CSSToLengthConversionData::largeViewportFactor() const
 {
     if (m_viewportDependencyDetectionStyle)
         m_viewportDependencyDetectionStyle->setHasViewportUnits();
 
     if (!m_renderView)
-        return 0;
+        return { };
 
-    IntSize viewportSizeForCSSViewportUnits = m_renderView->viewportSizeForCSSViewportUnits();
-    return std::min(viewportSizeForCSSViewportUnits.width(), viewportSizeForCSSViewportUnits.height()) / 100.0;
+    return m_renderView->sizeForCSSLargeViewportUnits() / 100.0;
 }
 
-double CSSToLengthConversionData::viewportMaxFactor() const
+FloatSize CSSToLengthConversionData::dynamicViewportFactor() const
 {
     if (m_viewportDependencyDetectionStyle)
         m_viewportDependencyDetectionStyle->setHasViewportUnits();
 
     if (!m_renderView)
-        return 0;
+        return { };
 
-    IntSize viewportSizeForCSSViewportUnits = m_renderView->viewportSizeForCSSViewportUnits();
-    return std::max(viewportSizeForCSSViewportUnits.width(), viewportSizeForCSSViewportUnits.height()) / 100.0;
+    return m_renderView->sizeForCSSDynamicViewportUnits() / 100.0;
 }
 
 } // namespace WebCore

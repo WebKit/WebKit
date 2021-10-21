@@ -138,6 +138,18 @@ TextStream& operator<<(TextStream& ts, CSSUnitType unitType)
     case CSSUnitType::CSS_VH: ts << "vh"; break;
     case CSSUnitType::CSS_VMIN: ts << "vmin"; break;
     case CSSUnitType::CSS_VMAX: ts << "vmax"; break;
+    case CSSUnitType::CSS_SVW: ts << "svw"; break;
+    case CSSUnitType::CSS_SVH: ts << "svh"; break;
+    case CSSUnitType::CSS_SVMIN: ts << "svmin"; break;
+    case CSSUnitType::CSS_SVMAX: ts << "svmax"; break;
+    case CSSUnitType::CSS_LVW: ts << "lvw"; break;
+    case CSSUnitType::CSS_LVH: ts << "lvh"; break;
+    case CSSUnitType::CSS_LVMIN: ts << "lvmin"; break;
+    case CSSUnitType::CSS_LVMAX: ts << "lvmax"; break;
+    case CSSUnitType::CSS_DVW: ts << "dvw"; break;
+    case CSSUnitType::CSS_DVH: ts << "dvh"; break;
+    case CSSUnitType::CSS_DVMIN: ts << "dvmin"; break;
+    case CSSUnitType::CSS_DVMAX: ts << "dvmax"; break;
     case CSSUnitType::CSS_DPPX: ts << "dppx"; break;
     case CSSUnitType::CSS_X: ts << "x"; break;
     case CSSUnitType::CSS_DPI: ts << "dpi"; break;

@@ -74,6 +74,9 @@ public:
     int width() const { return m_width; }
     int height() const { return m_height; }
 
+    float minDimension() const { return std::min(m_width, m_height); }
+    float maxDimension() const { return std::max(m_width, m_height); }
+
     void setWidth(int width) { m_width = width; }
     void setHeight(int height) { m_height = height; }
 
