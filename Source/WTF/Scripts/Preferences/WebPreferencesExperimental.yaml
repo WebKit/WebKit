@@ -32,11 +32,14 @@ AccentColorEnabled:
   humanReadableDescription: "Enable accent-color CSS property"
   defaultValue:
     WebKitLegacy:
-      default: true
+      "PLATFORM(COCOA)" : true
+      default: false
     WebKit:
-      default: true
+      "PLATFORM(COCOA)" : true
+      default: false
     WebCore:
-      default: true
+      "PLATFORM(COCOA)" : true
+      default: false
 
 AccessHandleEnabled:
   type: bool
