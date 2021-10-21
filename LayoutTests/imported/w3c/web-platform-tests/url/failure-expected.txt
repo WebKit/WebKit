@@ -312,6 +312,18 @@ PASS XHR: http://ho%7Cst/ should throw
 PASS sendBeacon(): http://ho%7Cst/ should throw
 PASS Location's href: http://ho%7Cst/ should throw
 PASS window.open(): http://ho%7Cst/ should throw
+PASS URL's constructor's base argument: http://!"$&'()*+,-.;=_`{}~/ should throw
+PASS URL's href: http://!"$&'()*+,-.;=_`{}~/ should throw
+PASS XHR: http://!"$&'()*+,-.;=_`{}~/ should throw
+PASS sendBeacon(): http://!"$&'()*+,-.;=_`{}~/ should throw
+PASS Location's href: http://!"$&'()*+,-.;=_`{}~/ should throw
+PASS window.open(): http://!"$&'()*+,-.;=_`{}~/ should throw
+PASS URL's constructor's base argument: sc://!"$&'()*+,-.;=_`{}~/ should throw
+PASS URL's href: sc://!"$&'()*+,-.;=_`{}~/ should throw
+PASS XHR: sc://!"$&'()*+,-.;=_`{}~/ should throw
+PASS sendBeacon(): sc://!"$&'()*+,-.;=_`{}~/ should throw
+PASS Location's href: sc://!"$&'()*+,-.;=_`{}~/ should throw
+PASS window.open(): sc://!"$&'()*+,-.;=_`{}~/ should throw
 PASS URL's constructor's base argument: ftp://example.com%80/ should throw
 PASS URL's href: ftp://example.com%80/ should throw
 PASS XHR: ftp://example.com%80/ should throw

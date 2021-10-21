@@ -1,3 +1,24 @@
+2021-10-20  Alex Christensen  <achristensen@webkit.org>
+
+        URLParser should reject hosts with C0 control characters or U+007F
+        https://bugs.webkit.org/show_bug.cgi?id=232034
+
+        Reviewed by Tim Horton.
+
+        * web-platform-tests/url/a-element-origin-expected.txt:
+        * web-platform-tests/url/a-element-origin-xhtml-expected.txt:
+        * web-platform-tests/url/failure-expected.txt:
+        * web-platform-tests/url/resources/urltestdata.json:
+        * web-platform-tests/url/url-character-sets.any-expected.txt: Added.
+        * web-platform-tests/url/url-character-sets.any.html: Added.
+        * web-platform-tests/url/url-character-sets.any.js: Added.
+        (cp.test):
+        * web-platform-tests/url/url-character-sets.any.worker-expected.txt: Added.
+        * web-platform-tests/url/url-character-sets.any.worker.html: Added.
+        * web-platform-tests/url/url-origin.any-expected.txt:
+        * web-platform-tests/url/url-origin.any.worker-expected.txt:
+        * web-platform-tests/url/url-setters-stripping.any.js:
+
 2021-10-20  Youenn Fablet  <youenn@apple.com>
 
         Add support for requestVideoFrameCallback API and MediaStreamTrack-based backend support

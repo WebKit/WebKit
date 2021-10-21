@@ -1,3 +1,17 @@
+2021-10-20  Alex Christensen  <achristensen@webkit.org>
+
+        URLParser should reject hosts with C0 control characters or U+007F
+        https://bugs.webkit.org/show_bug.cgi?id=232034
+
+        Reviewed by Tim Horton.
+
+        This matches Chrome and Firefox and was proposed to the standard at
+        https://github.com/whatwg/url/issues/627
+
+        * wtf/URLParser.cpp:
+        (WTF::isC0Control):
+        (WTF::isForbiddenHostCodePoint):
+
 2021-10-20  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         Do not use strerror()

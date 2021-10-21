@@ -264,8 +264,6 @@ PASS Parsing origin: <wow:%NBD> against <about:blank>
 PASS Parsing origin: <wow:%1G> against <about:blank>
 PASS Parsing origin: <wow:￿> against <about:blank>
 PASS Parsing origin: <http://example.com/U+d800𐟾U+dfff﷐﷏﷯ﷰ￾￿?U+d800𐟾U+dfff﷐﷏﷯ﷰ￾￿> against <about:blank>
-PASS Parsing origin: <http://!"$&'()*+,-.;=_`{}~/> against <about:blank>
-PASS Parsing origin: <sc://!"$&'()*+,-.;=_`{}~/> against <about:blank>
 PASS Parsing origin: <ftp://%e2%98%83> against <about:blank>
 PASS Parsing origin: <https://%e2%98%83> against <about:blank>
 PASS Parsing origin: <http://127.0.0.1:10100/relative_import.html> against <about:blank>
