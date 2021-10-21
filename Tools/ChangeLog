@@ -1,3 +1,19 @@
+2021-10-21  Simon Fraser  <simon.fraser@apple.com>
+
+        run-webkit-tests --ios-simulator --print-expectations fails
+        https://bugs.webkit.org/show_bug.cgi?id=232035
+
+        Reviewed by Jonathan Bedard.
+        
+        self._port.supported_device_types(), which _collect_tests() uses (despite its argument)
+        returns a different set of devices than self._port.DEFAULT_DEVICE_TYPES which caused
+        using those as hash keys to throw. So have print_expectations() and print_summary()
+        just use self._port.supported_device_types().
+
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        (Manager.print_expectations):
+        (Manager.print_summary):
+
 2021-10-21  Chris Lord  <clord@igalia.com>
 
         [WPE][GTK] Enable smooth scrolling by default

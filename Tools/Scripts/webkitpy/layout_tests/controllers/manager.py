@@ -756,7 +756,7 @@ class Manager(object):
             self._print_expectation_line_for_test(format_string, test, device_type=device_type)
 
     def print_expectations(self, args):
-        device_type_list = self._port.DEFAULT_DEVICE_TYPES or [self._port.DEVICE_TYPE]
+        device_type_list = self._port.supported_device_types()
 
         try:
             tests_to_run_by_device, aggregate_tests_to_skip = self._collect_tests(args, device_type_list)
@@ -780,7 +780,7 @@ class Manager(object):
         return 0
 
     def print_summary(self, args):
-        device_type_list = self._port.DEFAULT_DEVICE_TYPES or [self._port.DEVICE_TYPE]
+        device_type_list = self._port.supported_device_types()
         test_stats = {}
 
         try:
