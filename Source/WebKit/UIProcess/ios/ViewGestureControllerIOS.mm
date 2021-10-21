@@ -42,6 +42,7 @@
 #import "WebPageProxy.h"
 #import "WebProcessProxy.h"
 #import <UIKit/UIScreenEdgePanGestureRecognizer.h>
+#import <WebCore/ColorCocoa.h>
 #import <WebCore/IOSurface.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <wtf/WeakObjCPtr.h>
@@ -225,7 +226,7 @@ void ViewGestureController::beginSwipeGesture(_UINavigationInteractiveTransition
             [m_snapshotView layer].contents = snapshot->asLayerContents();
         WebCore::Color coreColor = snapshot->backgroundColor();
         if (coreColor.isValid())
-            backgroundColor = adoptNS([[UIColor alloc] initWithCGColor:WebCore::cachedCGColor(coreColor).get()]);
+            backgroundColor = cocoaColor(coreColor);
     }
 
     [m_snapshotView setBackgroundColor:backgroundColor.get()];

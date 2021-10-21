@@ -38,7 +38,7 @@
 #import "WebPageProxy.h"
 #import "_WKActivatedElementInfoInternal.h"
 #import "_WKTextInputContextInternal.h"
-#import <WebCore/ColorIOS.h>
+#import <WebCore/ColorCocoa.h>
 #import <WebCore/ColorSerialization.h>
 #import <WebCore/ElementContext.h>
 #import <wtf/SortedArrayMap.h>
@@ -478,7 +478,7 @@ static void dumpUIView(TextStream& ts, UIView *view)
     if (!backgroundColor)
         return nil;
 
-    return WebCore::serializationForCSS(WebCore::colorFromUIColor(backgroundColor));
+    return serializationForCSS(WebCore::colorFromCocoaColor(backgroundColor));
 }
 
 @end

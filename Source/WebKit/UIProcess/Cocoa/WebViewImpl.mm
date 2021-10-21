@@ -949,7 +949,7 @@ static const NSUInteger orderedListSegment = 2;
         return;
 
     _textColor = self.colorPickerItem.color;
-    _webViewImpl->page().executeEditCommand("ForeColor", WebCore::serializationForHTML(WebCore::colorFromNSColor(_textColor.get())));
+    _webViewImpl->page().executeEditCommand("ForeColor", WebCore::serializationForHTML(WebCore::colorFromCocoaColor(_textColor.get())));
 }
 
 - (NSViewController *)textListViewController
@@ -1315,7 +1315,7 @@ void WebViewImpl::updateTextTouchBar()
             [m_textTouchBarItemController setTextIsBold:(bool)(m_page->editorState().postLayoutData().typingAttributes & AttributeBold)];
             [m_textTouchBarItemController setTextIsItalic:(bool)(m_page->editorState().postLayoutData().typingAttributes & AttributeItalics)];
             [m_textTouchBarItemController setTextIsUnderlined:(bool)(m_page->editorState().postLayoutData().typingAttributes & AttributeUnderline)];
-            [m_textTouchBarItemController setTextColor:nsColor(editorState.postLayoutData().textColor).get()];
+            [m_textTouchBarItemController setTextColor:cocoaColor(editorState.postLayoutData().textColor).get()];
             [[m_textTouchBarItemController textListTouchBarViewController] setCurrentListType:(ListType)m_page->editorState().postLayoutData().enclosingListType];
             [m_textTouchBarItemController setCurrentTextAlignment:nsTextAlignmentFromTextAlignment((TextAlignment)editorState.postLayoutData().textAlignment)];
         }
@@ -2622,25 +2622,17 @@ WebCore::DestinationColorSpace WebViewImpl::colorSpace()
 
 void WebViewImpl::setUnderlayColor(NSColor *underlayColor)
 {
-    m_page->setUnderlayColor(WebCore::colorFromNSColor(underlayColor));
+    m_page->setUnderlayColor(WebCore::colorFromCocoaColor(underlayColor));
 }
 
 RetainPtr<NSColor> WebViewImpl::underlayColor() const
 {
-    WebCore::Color webColor = m_page->underlayColor();
-    if (!webColor.isValid())
-        return nil;
-
-    return WebCore::nsColor(webColor);
+    return cocoaColorOrNil(m_page->underlayColor()).autorelease();
 }
 
 RetainPtr<NSColor> WebViewImpl::pageExtendedBackgroundColor() const
 {
-    WebCore::Color color = m_page->pageExtendedBackgroundColor();
-    if (!color.isValid())
-        return nil;
-
-    return WebCore::nsColor(color);
+    return cocoaColorOrNil(m_page->pageExtendedBackgroundColor()).autorelease();
 }
 
 void WebViewImpl::setOverlayScrollbarStyle(std::optional<WebCore::ScrollbarOverlayStyle> scrollbarStyle)
@@ -3182,7 +3174,7 @@ void WebViewImpl::changeFontColorFromSender(id sender)
         return;
 
     WebCore::FontAttributeChanges changes;
-    changes.setForegroundColor(WebCore::colorFromNSColor((NSColor *)color));
+    changes.setForegroundColor(WebCore::colorFromCocoaColor((NSColor *)color));
     m_page->changeFontAttributes(WTFMove(changes));
 }
 
@@ -5015,8 +5007,8 @@ static Vector<WebCore::CompositionUnderline> extractUnderlines(NSAttributedStrin
         if (NSNumber *style = [attrs objectForKey:NSUnderlineStyleAttributeName]) {
             WebCore::Color color = WebCore::Color::black;
             WebCore::CompositionUnderlineColor compositionUnderlineColor = WebCore::CompositionUnderlineColor::TextColor;
-            if (NSColor *colorAttr = [attrs objectForKey:NSUnderlineColorAttributeName]) {
-                color = WebCore::colorFromNSColor(colorAttr);
+            if (NSColor *colorAttribute = [attrs objectForKey:NSUnderlineColorAttributeName]) {
+                color = WebCore::colorFromCocoaColor(colorAttribute);
                 compositionUnderlineColor = WebCore::CompositionUnderlineColor::GivenColor;
             }
             result.append(WebCore::CompositionUnderline(range.location, NSMaxRange(range), compositionUnderlineColor, color, style.intValue > 1));

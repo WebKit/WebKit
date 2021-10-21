@@ -910,7 +910,7 @@ RetainPtr<PlatformColor> HTMLConverter::_colorForElement(Element& element, CSSPr
     Color result = _caches->colorPropertyValueForNode(element, propertyId);
     if (!result.isValid())
         return nil;
-    auto platformResult = platformColor(result);
+    auto platformResult = cocoaColor(result);
     if ([[PlatformColorClass clearColor] isEqual:platformResult.get()] || ([platformResult alphaComponent] == 0.0))
         return nil;
     return platformResult;
@@ -2426,13 +2426,13 @@ AttributedString editingAttributedString(const SimpleRange& range, IncludeImages
 
         Color foregroundColor = style.visitedDependentColorWithColorFilter(CSSPropertyColor);
         if (foregroundColor.isVisible())
-            [attrs setObject:nsColor(foregroundColor).get() forKey:NSForegroundColorAttributeName];
+            [attrs setObject:cocoaColor(foregroundColor).get() forKey:NSForegroundColorAttributeName];
         else
             [attrs removeObjectForKey:NSForegroundColorAttributeName];
 
         Color backgroundColor = style.visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor);
         if (backgroundColor.isVisible())
-            [attrs setObject:nsColor(backgroundColor).get() forKey:NSBackgroundColorAttributeName];
+            [attrs setObject:cocoaColor(backgroundColor).get() forKey:NSBackgroundColorAttributeName];
         else
             [attrs removeObjectForKey:NSBackgroundColorAttributeName];
 

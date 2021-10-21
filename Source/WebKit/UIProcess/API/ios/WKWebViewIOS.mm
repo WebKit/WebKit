@@ -53,6 +53,7 @@
 #import "WebIOSEventFactory.h"
 #import "WebPageProxy.h"
 #import "_WKActivatedElementInfoInternal.h"
+#import <WebCore/ColorCocoa.h>
 #import <WebCore/GraphicsContextCG.h>
 #import <WebCore/IOSurface.h>
 #import <WebCore/LocalCurrentTraitCollection.h>
@@ -535,9 +536,7 @@ static WebCore::Color scrollViewBackgroundColor(WKWebView *webView, AllowPageBac
     auto newScrollViewBackgroundColor = scrollViewBackgroundColor(self, AllowPageBackgroundColorOverride::Yes);
     if (_scrollViewBackgroundColor != newScrollViewBackgroundColor) {
         _scrollViewBackgroundColor = newScrollViewBackgroundColor;
-
-        auto uiBackgroundColor = adoptNS([[UIColor alloc] initWithCGColor:cachedCGColor(newScrollViewBackgroundColor).get()]);
-        [_scrollView setBackgroundColor:uiBackgroundColor.get()];
+        [_scrollView setBackgroundColor:cocoaColor(newScrollViewBackgroundColor).get()];
     }
 
     // Update the indicator style based on the lightness/darkness of the background color.

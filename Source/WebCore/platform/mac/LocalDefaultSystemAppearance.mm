@@ -46,7 +46,7 @@ LocalDefaultSystemAppearance::LocalDefaultSystemAppearance(bool useDarkAppearanc
     NSAppearance *appearance = [NSAppearance appearanceNamed:m_usingDarkAppearance ? NSAppearanceNameDarkAqua : NSAppearanceNameAqua];
 
     if (tintColor.isValid())
-        appearance = [appearance appearanceByApplyingTintColor:nsColor(tintColor).get()];
+        appearance = [appearance appearanceByApplyingTintColor:cocoaColor(tintColor).get()];
 
     [NSAppearance setCurrentAppearance:appearance];
     ALLOW_DEPRECATED_DECLARATIONS_END

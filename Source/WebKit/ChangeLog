@@ -1,3 +1,94 @@
+2021-10-19  Darin Adler  <darin@apple.com>
+
+        [Cocoa] Merge and simplify the nsColor family of functions
+        https://bugs.webkit.org/show_bug.cgi?id=231992
+
+        Reviewed by Anders Carlsson.
+
+        * Shared/Cocoa/ArgumentCodersCocoa.mm:
+        (IPC::encodeColorInternal): Merged the NSColor and UIColor
+        implementations into a single one that uses CocoaColor.
+        (IPC::decodeColorInternal): Ditto.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView themeColor]): Use cocoaColorOrNil instead
+        of isValid and platformColor.
+        (-[WKWebView underPageBackgroundColor]): Use cocoaColor
+        instead of platformColor.
+        (-[WKWebView _pageExtendedBackgroundColor]): Use cocoaColorOrNil
+        instead of isValid and platformColor.
+        (-[WKWebView _sampledPageTopColor]): Ditto.
+
+        * UIProcess/API/Cocoa/_WKApplicationManifest.mm:
+        (-[_WKApplicationManifest themeColor]): Use cocoaColor instead
+        of platformColor.
+
+        * UIProcess/API/ios/WKWebViewIOS.mm:
+        (-[WKWebView _updateScrollViewBackground]): Use cocoaColor instead
+        of -[UIColor initWithCGColor:] and cachedCGColor.
+
+        * UIProcess/API/ios/WKWebViewTestingIOS.mm:
+        (-[WKWebView _serializedSelectionCaretBackgroundColorForTesting]):
+        Use colorFromCocoaColor instead of colorFromUIColor.
+
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (-[WKTextTouchBarItemController _wkChangeColor:]): Use cocoaColor
+        instead of nsColor.
+        (WebKit::WebViewImpl::updateTextTouchBar): Use colorFromCocoaColor
+        instead of colorFromNSColor.
+        (WebKit::WebViewImpl::setUnderlayColor): Use cocoaColorOrNil instead
+        of isValid and nsColor.
+        (WebKit::WebViewImpl::underlayColor const): Ditto.
+        (WebKit::WebViewImpl::pageExtendedBackgroundColor const): Ditto.
+        (WebKit::WebViewImpl::changeFontColorFromSender): Ditto.
+        (WebKit::extractUnderlines): Use colorFromCocoaColor instead of
+        colorFromNSColor.
+
+        * UIProcess/ios/DragDropInteractionState.mm:
+        (WebKit::DragDropInteractionState::deliverDelayedDropPreview): Use
+        cocoaColor instead of +[UIColor colorWithCGColor:] and cachedCGColor.
+        (WebKit::DragDropInteractionState::previewForDragItem const): Ditto.
+
+        * UIProcess/ios/ViewGestureControllerIOS.mm:
+        (WebKit::ViewGestureController::beginSwipeGesture): Use cocoaColor
+        instead of -[UIColor initWithCGColor:] and cachedCGColor.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _updateTapHighlight]): Use cocoaColor instead of
+        -[UIColor initWithCGColor:] and cachedCGColor.
+        (-[WKContentView _cascadeInteractionTintColor]): Use cocoaColor
+        instead of +[UIColor colorWithCGColor:] and cachedCGColor.
+        (compositionHighlights): Use colorFromCocoaColor instead of
+        colorFromUIColor.
+        (-[WKContentView _createTargetedContextMenuHintPreviewIfPossible]): Use
+        cocoaColor instead of +[UIColor colorWithCGColor:] and cachedCGColor.
+
+        * UIProcess/ios/forms/WKFormColorControl.mm:
+        (-[WKColorPicker focusedElementSuggestedColors]): Use createNSArray
+        and cocoaColor instead of +[NSMutableArray array], a for loop,
+        -[NSMutableArray addObject:], +[UIColor colorWithCGColor:], and cachedCGColor
+        (-[WKColorPicker updateColorPickerState]): Use cocoaColor instead of
+        +[UIColor colorWithCGColor:] and cachedCGColor.
+
+        * UIProcess/mac/PageClientImplMac.mm:
+        (WebKit::PageClientImpl::accentColor): Use cocoaColor instead of nsColor.
+
+        * UIProcess/mac/WebColorPickerMac.mm:
+        (WebKit::WebColorPickerMac::setSelectedColor): Use cocoaColor instead of nsColor.
+        (WebKit::WebColorPickerMac::showColorPicker): Ditto.
+        (-[WKColorPopoverMac setAndShowPicker:withColor:suggestions:]): Ditto.
+        (-[WKColorPopoverMac didChooseColor:]): Ditto.
+
+        * WebProcess/Plugins/PDF/PDFPluginChoiceAnnotation.mm:
+        (WebKit::PDFPluginChoiceAnnotation::createAnnotationElement): Use
+        colorFromCocoaColor instead of colorFromNSColor
+        * WebProcess/Plugins/PDF/PDFPluginTextAnnotation.mm:
+        (WebKit::PDFPluginTextAnnotation::createAnnotationElement): Ditto.
+
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::setAccentColor): Use cocoaColorOrNil instead of
+        isValid and nsColor.
+
 2021-10-21  Devin Rousso  <drousso@apple.com>
 
         [css-values-4] Support small (sv*), large (lv*) and dynamic (dv*) viewport units

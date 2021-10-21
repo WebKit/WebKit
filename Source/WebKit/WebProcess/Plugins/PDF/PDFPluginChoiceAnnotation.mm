@@ -76,7 +76,7 @@ Ref<Element> PDFPluginChoiceAnnotation::createAnnotationElement()
     auto& styledElement = downcast<StyledElement>(element.get());
 
     // FIXME: Match font weight and style as well?
-    styledElement.setInlineStyleProperty(CSSPropertyColor, serializationForHTML(colorFromNSColor(choiceAnnotation.fontColor)));
+    styledElement.setInlineStyleProperty(CSSPropertyColor, serializationForHTML(colorFromCocoaColor(choiceAnnotation.fontColor)));
     styledElement.setInlineStyleProperty(CSSPropertyFontFamily, choiceAnnotation.font.familyName);
 
     NSArray *choices = choiceAnnotation.choices;

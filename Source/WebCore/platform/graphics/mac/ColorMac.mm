@@ -103,7 +103,7 @@ static std::optional<SRGBA<uint8_t>> makeSimpleColorFromNSColor(NSColor *color)
     return convertColor<SRGBA<uint8_t>>(SRGBA<float> { static_cast<float>(redComponent), static_cast<float>(greenComponent), static_cast<float>(blueComponent), static_cast<float>(alpha) });
 }
 
-Color colorFromNSColor(NSColor *color)
+Color colorFromCocoaColor(NSColor *color)
 {
     return makeSimpleColorFromNSColor(color);
 }
@@ -113,7 +113,7 @@ Color semanticColorFromNSColor(NSColor *color)
     return Color(makeSimpleColorFromNSColor(color), Color::Flags::Semantic);
 }
 
-RetainPtr<NSColor> nsColor(const Color& color)
+RetainPtr<NSColor> cocoaColor(const Color& color)
 {
     if (auto srgb = color.tryGetAsSRGBABytes()) {
         switch (PackedColor::RGBA { *srgb }.value) {

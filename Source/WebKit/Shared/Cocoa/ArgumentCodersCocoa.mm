@@ -34,17 +34,12 @@
 #import "CoreTextHelpers.h"
 #import <CoreText/CTFont.h>
 #import <CoreText/CTFontDescriptor.h>
+#import <WebCore/ColorCocoa.h>
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/HashSet.h>
 #import <wtf/cf/CFURLExtras.h>
 #import <wtf/cocoa/NSURLExtras.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
-
-#if USE(APPKIT)
-#import <WebCore/ColorMac.h>
-#else
-#import <WebCore/ColorIOS.h>
-#endif
 
 #if PLATFORM(IOS_FAMILY)
 #import <UIKit/UIColor.h>
@@ -267,10 +262,9 @@ static std::optional<RetainPtr<id>> decodeArrayInternal(Decoder& decoder, NSArra
 
 #pragma mark - NSColor / UIColor
 
-#if USE(APPKIT)
-static inline void encodeColorInternal(Encoder& encoder, NSColor *color)
+static inline void encodeColorInternal(Encoder& encoder, CocoaColor *color)
 {
-    encoder << colorFromNSColor(color);
+    encoder << colorFromCocoaColor(color);
 }
 
 static inline std::optional<RetainPtr<id>> decodeColorInternal(Decoder& decoder)
@@ -278,22 +272,8 @@ static inline std::optional<RetainPtr<id>> decodeColorInternal(Decoder& decoder)
     Color color;
     if (!decoder.decode(color))
         return std::nullopt;
-    return { nsColor(color) };
+    return { cocoaColor(color) };
 }
-#else
-static inline void encodeColorInternal(Encoder& encoder, UIColor *color)
-{
-    encoder << colorFromUIColor(color);
-}
-
-static inline std::optional<RetainPtr<id>> decodeColorInternal(Decoder& decoder)
-{
-    Color color;
-    if (!decoder.decode(color))
-        return std::nullopt;
-    return { adoptNS([[UIColor alloc] initWithCGColor:cachedCGColor(color).get()]) };
-}
-#endif
 
 #pragma mark - NSData
 

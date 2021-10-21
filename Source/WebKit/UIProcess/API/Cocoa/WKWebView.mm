@@ -1768,15 +1768,12 @@ static _WKSelectionAttributes selectionAttributes(const WebKit::EditorState& edi
 
 - (CocoaColor *)themeColor
 {
-    auto themeColor = _page->themeColor();
-    if (!themeColor.isValid())
-        return nil;
-    return WebCore::platformColor(themeColor).autorelease();
+    return cocoaColorOrNil(_page->themeColor()).autorelease();
 }
 
 - (CocoaColor *)underPageBackgroundColor
 {
-    return WebCore::platformColor(_page->underPageBackgroundColor()).autorelease();
+    return cocoaColor(_page->underPageBackgroundColor()).autorelease();
 }
 
 - (void)setUnderPageBackgroundColor:(CocoaColor *)underPageBackgroundColorOverride
@@ -3270,18 +3267,12 @@ static inline OptionSet<WebKit::FindOptions> toFindOptions(_WKFindOptions wkFind
 // FIXME: Remove old `-[WKWebView _pageExtendedBackgroundColor]` SPI <rdar://77789732>
 - (CocoaColor *)_pageExtendedBackgroundColor
 {
-    auto pageExtendedBackgroundColor = _page->pageExtendedBackgroundColor();
-    if (!pageExtendedBackgroundColor.isValid())
-        return nil;
-    return WebCore::platformColor(pageExtendedBackgroundColor).autorelease();
+    return cocoaColorOrNil(_page->pageExtendedBackgroundColor()).autorelease();
 }
 
 - (CocoaColor *)_sampledPageTopColor
 {
-    auto sampledPageTopColor = _page->sampledPageTopColor();
-    if (!sampledPageTopColor.isValid())
-        return nil;
-    return WebCore::platformColor(sampledPageTopColor).autorelease();
+    return cocoaColorOrNil(_page->sampledPageTopColor()).autorelease();
 }
 
 - (id <_WKInputDelegate>)_inputDelegate

@@ -91,10 +91,10 @@ RetainPtr<NSDictionary> FontAttributes::createDictionary() const
         attributes[NSFontAttributeName] = font.get();
 
     if (foregroundColor.isValid())
-        attributes[NSForegroundColorAttributeName] = platformColor(foregroundColor).get();
+        attributes[NSForegroundColorAttributeName] = cocoaColor(foregroundColor).get();
 
     if (backgroundColor.isValid())
-        attributes[NSBackgroundColorAttributeName] = platformColor(backgroundColor).get();
+        attributes[NSBackgroundColorAttributeName] = cocoaColor(backgroundColor).get();
 
     if (fontShadow.color.isValid() && (!fontShadow.offset.isZero() || fontShadow.blurRadius))
         attributes[NSShadowAttributeName] = fontShadow.createShadow().get();

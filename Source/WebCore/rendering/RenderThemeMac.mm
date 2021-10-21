@@ -287,17 +287,17 @@ NSView *RenderThemeMac::documentViewFor(const RenderObject& o) const
 Color RenderThemeMac::platformActiveSelectionBackgroundColor(OptionSet<StyleColorOptions> options) const
 {
     LocalDefaultSystemAppearance localAppearance(options.contains(StyleColorOptions::UseDarkAppearance));
-    return colorFromNSColor([NSColor selectedTextBackgroundColor]);
+    return colorFromCocoaColor([NSColor selectedTextBackgroundColor]);
 }
 
 Color RenderThemeMac::platformInactiveSelectionBackgroundColor(OptionSet<StyleColorOptions> options) const
 {
 #if HAVE(OS_DARK_MODE_SUPPORT)
     LocalDefaultSystemAppearance localAppearance(options.contains(StyleColorOptions::UseDarkAppearance));
-    return colorFromNSColor([NSColor unemphasizedSelectedTextBackgroundColor]);
+    return colorFromCocoaColor([NSColor unemphasizedSelectedTextBackgroundColor]);
 #else
     UNUSED_PARAM(options);
-    return colorFromNSColor([NSColor unemphasizedSelectedContentBackgroundColor]);
+    return colorFromCocoaColor([NSColor unemphasizedSelectedContentBackgroundColor]);
 #endif
 }
 
@@ -323,7 +323,7 @@ Color RenderThemeMac::platformActiveSelectionForegroundColor(OptionSet<StyleColo
 {
     LocalDefaultSystemAppearance localAppearance(options.contains(StyleColorOptions::UseDarkAppearance));
     if (localAppearance.usingDarkAppearance())
-        return colorFromNSColor([NSColor selectedTextColor]);
+        return colorFromCocoaColor([NSColor selectedTextColor]);
     return { };
 }
 
@@ -332,7 +332,7 @@ Color RenderThemeMac::platformInactiveSelectionForegroundColor(OptionSet<StyleCo
 #if HAVE(OS_DARK_MODE_SUPPORT)
     LocalDefaultSystemAppearance localAppearance(options.contains(StyleColorOptions::UseDarkAppearance));
     if (localAppearance.usingDarkAppearance())
-        return colorFromNSColor([NSColor unemphasizedSelectedTextColor]);
+        return colorFromCocoaColor([NSColor unemphasizedSelectedTextColor]);
     return { };
 #else
     UNUSED_PARAM(options);
@@ -344,11 +344,11 @@ Color RenderThemeMac::platformActiveListBoxSelectionBackgroundColor(OptionSet<St
 {
 #if HAVE(OS_DARK_MODE_SUPPORT)
     LocalDefaultSystemAppearance localAppearance(options.contains(StyleColorOptions::UseDarkAppearance));
-    return colorFromNSColor([NSColor selectedContentBackgroundColor]);
+    return colorFromCocoaColor([NSColor selectedContentBackgroundColor]);
 #else
     UNUSED_PARAM(options);
     ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    return colorFromNSColor([NSColor alternateSelectedControlColor]);
+    return colorFromCocoaColor([NSColor alternateSelectedControlColor]);
     ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
 }
@@ -360,24 +360,24 @@ Color RenderThemeMac::platformInactiveListBoxSelectionBackgroundColor(OptionSet<
 #else
     UNUSED_PARAM(options);
 #endif
-    return colorFromNSColor([NSColor unemphasizedSelectedContentBackgroundColor]);
+    return colorFromCocoaColor([NSColor unemphasizedSelectedContentBackgroundColor]);
 
 }
 
 Color RenderThemeMac::platformActiveListBoxSelectionForegroundColor(OptionSet<StyleColorOptions> options) const
 {
     LocalDefaultSystemAppearance localAppearance(options.contains(StyleColorOptions::UseDarkAppearance));
-    return colorFromNSColor([NSColor alternateSelectedControlTextColor]);
+    return colorFromCocoaColor([NSColor alternateSelectedControlTextColor]);
 }
 
 Color RenderThemeMac::platformInactiveListBoxSelectionForegroundColor(OptionSet<StyleColorOptions> options) const
 {
 #if HAVE(OS_DARK_MODE_SUPPORT)
     LocalDefaultSystemAppearance localAppearance(options.contains(StyleColorOptions::UseDarkAppearance));
-    return colorFromNSColor([NSColor unemphasizedSelectedTextColor]);
+    return colorFromCocoaColor([NSColor unemphasizedSelectedTextColor]);
 #else
     UNUSED_PARAM(options);
-    return colorFromNSColor([NSColor selectedControlTextColor]);
+    return colorFromCocoaColor([NSColor selectedControlTextColor]);
 #endif
 }
 
@@ -387,13 +387,13 @@ Color RenderThemeMac::platformFocusRingColor(OptionSet<StyleColorOptions> option
         return oldAquaFocusRingColor();
     LocalDefaultSystemAppearance localAppearance(options.contains(StyleColorOptions::UseDarkAppearance));
     // The color is expected to be opaque, since CoreGraphics will apply opacity when drawing (because opacity is normally animated).
-    return colorFromNSColor([NSColor keyboardFocusIndicatorColor]).opaqueColor();
+    return colorFromCocoaColor([NSColor keyboardFocusIndicatorColor]).opaqueColor();
 }
 
 Color RenderThemeMac::platformTextSearchHighlightColor(OptionSet<StyleColorOptions> options) const
 {
     LocalDefaultSystemAppearance localAppearance(options.contains(StyleColorOptions::UseDarkAppearance));
-    return colorFromNSColor([NSColor findHighlightColor]);
+    return colorFromCocoaColor([NSColor findHighlightColor]);
 }
 
 #if ENABLE(APP_HIGHLIGHTS)
@@ -407,7 +407,7 @@ Color RenderThemeMac::platformAppHighlightColor(OptionSet<StyleColorOptions>) co
 Color RenderThemeMac::platformDefaultButtonTextColor(OptionSet<StyleColorOptions> options) const
 {
     LocalDefaultSystemAppearance localAppearance(options.contains(StyleColorOptions::UseDarkAppearance));
-    return colorFromNSColor([NSColor alternateSelectedControlTextColor]);
+    return colorFromCocoaColor([NSColor alternateSelectedControlTextColor]);
 }
 
 static Color activeButtonTextColor()
@@ -2357,7 +2357,7 @@ static Color titleTextColorForAttachment(const RenderAttachment& attachment, Att
     
     if (style == AttachmentLayoutStyle::Selected) {
         if (attachment.frame().selection().isFocusedAndActive())
-            result = colorFromNSColor([NSColor alternateSelectedControlTextColor]);
+            result = colorFromCocoaColor([NSColor alternateSelectedControlTextColor]);
         else
             result = attachmentTitleInactiveTextColor;
     }
@@ -2411,7 +2411,7 @@ void AttachmentLayout::layOutTitle(const RenderAttachment& attachment)
 
     NSDictionary *textAttributes = @{
         (__bridge id)kCTFontAttributeName: (__bridge id)font.get(),
-        (__bridge id)kCTForegroundColorAttributeName: (__bridge NSColor *)cachedCGColor(titleTextColorForAttachment(attachment, style)).get()
+        (__bridge id)kCTForegroundColorAttributeName: (__bridge id)cachedCGColor(titleTextColorForAttachment(attachment, style)).get()
     };
     RetainPtr<NSAttributedString> attributedTitle = adoptNS([[NSAttributedString alloc] initWithString:title attributes:textAttributes]);
     RetainPtr<CTFramesetterRef> titleFramesetter = adoptCF(CTFramesetterCreateWithAttributedString((CFAttributedStringRef)attributedTitle.get()));
@@ -2470,7 +2470,7 @@ void AttachmentLayout::layOutSubtitle(const RenderAttachment& attachment)
     auto font = adoptCF(CTFontCreateUIFontForLanguage(kCTFontUIFontSystem, attachmentSubtitleFontSize, language));
     NSDictionary *textAttributes = @{
         (__bridge id)kCTFontAttributeName: (__bridge id)font.get(),
-        (__bridge id)kCTForegroundColorAttributeName: (__bridge NSColor *)cachedCGColor(subtitleColor).get()
+        (__bridge id)kCTForegroundColorAttributeName: (__bridge id)cachedCGColor(subtitleColor).get()
     };
     RetainPtr<NSAttributedString> attributedSubtitleText = adoptNS([[NSAttributedString alloc] initWithString:subtitleText attributes:textAttributes]);
     subtitleLine = adoptCF(CTLineCreateWithAttributedString((CFAttributedStringRef)attributedSubtitleText.get()));
@@ -2659,7 +2659,7 @@ static void paintAttachmentTitleBackground(const RenderAttachment& attachment, G
     Color backgroundColor;
     if (attachment.frame().selection().isFocusedAndActive()) {
         ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-        backgroundColor = colorFromNSColor([NSColor alternateSelectedControlColor]);
+        backgroundColor = colorFromCocoaColor([NSColor alternateSelectedControlColor]);
         ALLOW_DEPRECATED_DECLARATIONS_END
     } else
         backgroundColor = attachmentTitleInactiveBackgroundColor;

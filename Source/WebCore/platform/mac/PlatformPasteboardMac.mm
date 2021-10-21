@@ -305,7 +305,7 @@ String PlatformPasteboard::platformPasteboardTypeForSafeTypeForDOMToReadAndWrite
 
 Color PlatformPasteboard::color()
 {
-    return colorFromNSColor([NSColor colorFromPasteboard:m_pasteboard.get()]);
+    return colorFromCocoaColor([NSColor colorFromPasteboard:m_pasteboard.get()]);
 }
 
 URL PlatformPasteboard::url()
@@ -369,8 +369,7 @@ int64_t PlatformPasteboard::setURL(const PasteboardURL& pasteboardURL)
 
 int64_t PlatformPasteboard::setColor(const Color& color)
 {
-    auto pasteboardColor = nsColor(color);
-    [pasteboardColor writeToPasteboard:m_pasteboard.get()];
+    [cocoaColor(color) writeToPasteboard:m_pasteboard.get()];
     return changeCount();
 }
 

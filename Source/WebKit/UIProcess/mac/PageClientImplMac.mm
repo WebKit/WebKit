@@ -1019,7 +1019,7 @@ void PageClientImpl::makeViewBlank(bool makeBlank)
 #if HAVE(APP_ACCENT_COLORS)
 WebCore::Color PageClientImpl::accentColor()
 {
-    return WebCore::colorFromNSColor([NSApp _effectiveAccentColor]);
+    return WebCore::colorFromCocoaColor([NSApp _effectiveAccentColor]);
 }
 #endif
 
