@@ -40,6 +40,7 @@ function wrap(target)
         };
         delete wrapped['name'];
         delete wrapped['length'];
+        @moveToCallerRealm(wrapped);
         return wrapped;
     } else if (@isObject(target)) {
         @throwTypeError("value passing between realms must be callable or primitive");

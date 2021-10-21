@@ -122,4 +122,21 @@ JSC_DEFINE_HOST_FUNCTION(evalInRealm, (JSGlobalObject* globalObject, CallFrame* 
     RELEASE_AND_RETURN(scope, JSValue::encode(result));
 }
 
+JSC_DEFINE_HOST_FUNCTION(moveToCallerRealm, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSValue thisValue = callFrame->argument(0);
+    ShadowRealmObject* thisRealm = jsDynamicCast<ShadowRealmObject*>(vm, thisValue);
+    ASSERT(thisRealm);
+
+    JSValue wrappedFnArg = callFrame->argument(1);
+    JSFunction wrappedFn = jsDynamicCast<JSFunction>(vm, wrappedFnArg);
+    JSGlobalObject* callerRealm = callFrame->callerFrame()->jsCallee()->structure(vm)->globalObject();
+    bool isBuiltin = false;
+    wrappedFn.setPrototype(vm, callerRealm, callerRealm->strictFunctionStructure(isBuiltin)->storedPrototype());
+    RETURN_IF_EXCEPTION(scope, { });
+}
+
 } // namespace JSC

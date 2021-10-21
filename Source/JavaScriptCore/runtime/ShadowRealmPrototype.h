@@ -62,5 +62,6 @@ private:
 
 JSC_DECLARE_HOST_FUNCTION(importInRealm);
 JSC_DECLARE_HOST_FUNCTION(evalInRealm);
+JSC_DECLARE_HOST_FUNCTION(moveToCallerRealm);
 
 } // namespace JSC

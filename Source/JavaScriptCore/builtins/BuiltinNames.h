@@ -118,6 +118,7 @@ namespace JSC {
     macro(this) \
     macro(importInRealm) \
     macro(evalInRealm) \
+    macro(moveToCallerRealm) \
     macro(thisTimeValue) \
     macro(newTargetLocal) \
     macro(derivedConstructor) \

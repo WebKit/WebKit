@@ -80,6 +80,7 @@ class JSGlobalObject;
     v(thisTimeValue, nullptr) \
     v(importInRealm, nullptr) \
     v(evalInRealm, nullptr) \
+    v(moveToCallerRealm, nullptr) \
     v(isConstructor, nullptr) \
     v(sameValue, nullptr) \
     v(regExpProtoFlagsGetter, nullptr) \
