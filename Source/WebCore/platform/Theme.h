@@ -34,6 +34,7 @@ namespace WebCore {
 class Color;
 class ControlStates;
 class FloatRect;
+class FloatSize;
 class FontCascade;
 class FontCascadeDescription;
 class GraphicsContext;
@@ -78,7 +79,7 @@ public:
     // amount is also scaled by the zoomFactor.
     virtual void inflateControlPaintRect(ControlPart, const ControlStates&, FloatRect& zoomedRect, float zoomFactor) const;
 
-    virtual void drawNamedImage(const String&, GraphicsContext&, const FloatRect&) const;
+    virtual void drawNamedImage(const String&, GraphicsContext&, const FloatSize&) const;
 
     virtual bool userPrefersContrast() const;
     virtual bool userPrefersReducedMotion() const;

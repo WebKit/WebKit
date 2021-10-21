@@ -1,3 +1,30 @@
+2021-10-21  Devin Rousso  <drousso@apple.com>
+
+        REGRESSION(r283864): Apple Pay named images are missing
+        https://bugs.webkit.org/show_bug.cgi?id=232050
+        <rdar://problem/84413831>
+
+        Reviewed by Andy Estes.
+
+        * fast/css/webkit-named-image/apple-pay-logo-black/offset.html: Added.
+        * fast/css/webkit-named-image/apple-pay-logo-black/offset-expected-mismatch.html: Added.
+        * fast/css/webkit-named-image/apple-pay-logo-white/offset.html: Added.
+        * fast/css/webkit-named-image/apple-pay-logo-white/offset-expected-mismatch.html: Added.
+
+        * fast/css/webkit-named-image/apple-pay-logo-white/background-size-centered.html:
+        * fast/css/webkit-named-image/apple-pay-logo-white/background-size-centered-expected-mismatch.html:
+        * fast/css/webkit-named-image/apple-pay-logo-white/background-size.html:
+        * fast/css/webkit-named-image/apple-pay-logo-white/background-size-expected-mismatch.html:
+        * fast/css/webkit-named-image/apple-pay-logo-white/basic.html:
+        * fast/css/webkit-named-image/apple-pay-logo-white/basic-expected-mismatch.html:
+        * fast/css/webkit-named-image/apple-pay-logo-white/container-larger-height.html:
+        * fast/css/webkit-named-image/apple-pay-logo-white/container-larger-height-expected-mismatch.html:
+        * fast/css/webkit-named-image/apple-pay-logo-white/container-larger-width.html:
+        * fast/css/webkit-named-image/apple-pay-logo-white/container-larger-width-expected-mismatch.html:
+        * fast/css/webkit-named-image/apple-pay-logo-white/mask.html:
+        * fast/css/webkit-named-image/apple-pay-logo-white/mask-expected-mismatch.html:
+        Drive-by: fix these to also have `background-color: black;` in the `-expected-mismatch.html`.
+
 2021-10-21  Kate Cheney  <katherine_cheney@apple.com>
 
         crypto/subtle/rsaes-pkcs1-v1_5-import-jwk-public-key-leading-zero.html is a constant timeout

@@ -108,33 +108,33 @@ static CGPDFPageRef applePayButtonLogoWhite()
     return logoPage;
 };
 
-static void drawApplePayButton(GraphicsContext& context, CGPDFPageRef page, const FloatRect& rect)
+static void drawApplePayButton(GraphicsContext& context, CGPDFPageRef page, const FloatSize& size)
 {
-    auto imageBuffer = ImageBuffer::createCompatibleBuffer(rect.size(), context);
+    auto imageBuffer = ImageBuffer::createCompatibleBuffer(size, context);
     if (!imageBuffer)
         return;
 
     CGSize pdfSize = CGPDFPageGetBoxRect(page, kCGPDFMediaBox).size;
 
     auto& imageContext = imageBuffer->context();
-    fitContextToBox(imageContext, FloatSize(pdfSize), rect.size());
+    fitContextToBox(imageContext, FloatSize(pdfSize), size);
     imageContext.translate(0, pdfSize.height);
     imageContext.scale(FloatSize(1, -1));
     CGContextDrawPDFPage(imageContext.platformContext(), page);
 
-    context.drawConsumingImageBuffer(WTFMove(imageBuffer), rect);
+    context.drawConsumingImageBuffer(WTFMove(imageBuffer), FloatRect(FloatPoint::zero(), size));
 };
 
 #endif
 
-void ThemeCocoa::drawNamedImage(const String& name, GraphicsContext& context, const FloatRect& rect) const
+void ThemeCocoa::drawNamedImage(const String& name, GraphicsContext& context, const FloatSize& size) const
 {
     if (name == "wireless-playback") {
         GraphicsContextStateSaver stateSaver(context);
         context.setFillColor(Color::black);
 
         FloatSize wirelessPlaybackSrcSize(32, 24.016);
-        fitContextToBox(context, wirelessPlaybackSrcSize, rect.size());
+        fitContextToBox(context, wirelessPlaybackSrcSize, size);
 
         Path outline;
         outline.moveTo(FloatPoint(24.066, 18));
@@ -164,20 +164,20 @@ void ThemeCocoa::drawNamedImage(const String& name, GraphicsContext& context, co
 #if ENABLE(APPLE_PAY)
     if (name == "apple-pay-logo-black") {
         if (auto logo = applePayButtonLogoBlack()) {
-            drawApplePayButton(context, logo, rect);
+            drawApplePayButton(context, logo, size);
             return;
         }
     }
 
     if (name == "apple-pay-logo-white") {
         if (auto logo = applePayButtonLogoWhite()) {
-            drawApplePayButton(context, logo, rect);
+            drawApplePayButton(context, logo, size);
             return;
         }
     }
 #endif
 
-    Theme::drawNamedImage(name, context, rect);
+    Theme::drawNamedImage(name, context, size);
 }
 
 }
