@@ -276,10 +276,10 @@ static void testWebKitSettings(Test*, gconstpointer)
     webkit_settings_set_enable_page_cache(settings, FALSE);
     g_assert_false(webkit_settings_get_enable_page_cache(settings));
 
-    // By default, smooth scrolling is disabled.
-    g_assert_false(webkit_settings_get_enable_smooth_scrolling(settings));
-    webkit_settings_set_enable_smooth_scrolling(settings, TRUE);
+    // By default, smooth scrolling is enabled.
     g_assert_true(webkit_settings_get_enable_smooth_scrolling(settings));
+    webkit_settings_set_enable_smooth_scrolling(settings, FALSE);
+    g_assert_false(webkit_settings_get_enable_smooth_scrolling(settings));
 
     // By default, writing of console messages to stdout is disabled.
     g_assert_false(webkit_settings_get_enable_write_console_messages_to_stdout(settings));

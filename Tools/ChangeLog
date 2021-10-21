@@ -1,3 +1,16 @@
+2021-10-21  Chris Lord  <clord@igalia.com>
+
+        [WPE][GTK] Enable smooth scrolling by default
+        https://bugs.webkit.org/show_bug.cgi?id=220512
+
+        Reviewed by Carlos Garcia Campos.
+
+        Smooth scrolling is default on on GTK now, so reverse the logic in the
+        test for the efficacy of the related setting.
+
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebKitSettings.cpp:
+        (testWebKitSettings):
+
 2021-10-21  Sam Sneddon  <gsnedders@apple.com>
 
         Move layout_test_finder to layout_test_finder_legacy

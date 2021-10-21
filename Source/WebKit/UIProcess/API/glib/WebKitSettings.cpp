@@ -1252,7 +1252,7 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
             "enable-smooth-scrolling",
             _("Enable smooth scrolling"),
             _("Whether to enable smooth scrolling"),
-            FALSE,
+            TRUE,
             readWriteConstructParamFlags);
 
     /**
