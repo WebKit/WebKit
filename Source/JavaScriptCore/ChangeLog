@@ -1,5 +1,43 @@
 2021-10-20  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        *IsSane API's could take in the Structure's we're consulting, or they can be out parameters, so we don't rely on the CPU's memory ordering
+        https://bugs.webkit.org/show_bug.cgi?id=231996
+
+        Reviewed by Filip Pizlo.
+
+        objectPrototypeIsSane, arrayPrototypeChainIsSane, and stringPrototypeChainIsSane reloads structures from prototype objects while the caller
+        is already getting them and validating them. This introduces a race condition where structure transition happens just before calling these
+        APIs and we will see different structures which are already validated. This is simply wrong: if we validate one structure, then we should
+        continue using that and we should put a watchpoint on this structure. We should not reload structures from the prototype again.
+
+        We add Concurrently postfix to these functions, and passing structures to these APIs to continue using these structures instead of reloading
+        it from prototype objects. This eliminate the race condition we had, and this removes the necessity of load-load-fence on watchpoint state
+        retrieval.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGArgumentsEliminationPhase.cpp:
+        * dfg/DFGArrayMode.cpp:
+        (JSC::DFG::ArrayMode::refine const):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleIntrinsicCall):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        (JSC::DFG::FixupPhase::setSaneChainIfPossible):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileGetByValOnString):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileStringCharAtImpl):
+        * runtime/JSGlobalObject.h:
+        * runtime/JSGlobalObjectInlines.h:
+        (JSC::JSGlobalObject::objectPrototypeIsSane):
+        (JSC::JSGlobalObject::arrayPrototypeChainIsSaneConcurrently):
+        (JSC::JSGlobalObject::stringPrototypeChainIsSaneConcurrently):
+        (JSC::JSGlobalObject::arrayPrototypeChainIsSane):
+        (JSC::JSGlobalObject::stringPrototypeChainIsSane):
+
+2021-10-20  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] ArithAbs should care about INT32_MIN
         https://bugs.webkit.org/show_bug.cgi?id=232051
         rdar://84338648

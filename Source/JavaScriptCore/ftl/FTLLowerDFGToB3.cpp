@@ -8927,7 +8927,7 @@ IGNORE_CLANG_WARNINGS_END
             Structure* objectPrototypeStructure = globalObject->objectPrototype()->structure(vm());
             WTF::dependentLoadLoadFence();
 
-            if (globalObject->stringPrototypeChainIsSane()) {
+            if (globalObject->stringPrototypeChainIsSaneConcurrently(stringPrototypeStructure, objectPrototypeStructure)) {
                 // FIXME: This could be captured using a Speculation mode that means
                 // "out-of-bounds loads return a trivial value", something like
                 // OutOfBoundsSaneChain.

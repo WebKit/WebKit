@@ -260,10 +260,10 @@ ArrayMode ArrayMode::refine(
             && !graph.hasExitSite(node->origin.semantic, OutOfBounds)
             && arrayPrototypeStructure->transitionWatchpointSetIsStillValid()
             && objectPrototypeStructure->transitionWatchpointSetIsStillValid()
-            && globalObject->arrayPrototypeChainIsSane()) {
+            && globalObject->arrayPrototypeChainIsSaneConcurrently(arrayPrototypeStructure, objectPrototypeStructure)) {
             graph.registerAndWatchStructureTransition(arrayPrototypeStructure);
             graph.registerAndWatchStructureTransition(objectPrototypeStructure);
-            if (globalObject->arrayPrototypeChainIsSane())
+            if (globalObject->arrayPrototypeChainIsSaneConcurrently(arrayPrototypeStructure, objectPrototypeStructure))
                 return withSpeculation(Array::InBoundsSaneChain);
         }
         return ArrayMode(Array::Generic, action());

@@ -1044,7 +1044,9 @@ public:
         
     void haveABadTime(VM&);
         
-    bool objectPrototypeIsSane();
+    static bool objectPrototypeIsSaneConcurrently(Structure* objectPrototypeStructure);
+    bool arrayPrototypeChainIsSaneConcurrently(Structure* arrayPrototypeStructure, Structure* objectPrototypeStructure);
+    bool stringPrototypeChainIsSaneConcurrently(Structure* stringPrototypeStructure, Structure* objectPrototypeStructure);
     bool arrayPrototypeChainIsSane();
     bool stringPrototypeChainIsSane();
 

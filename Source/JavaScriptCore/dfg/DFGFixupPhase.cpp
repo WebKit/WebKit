@@ -1679,7 +1679,7 @@ private:
             if (node->child1()->shouldSpeculateArray()
                 && arrayPrototypeStructure->transitionWatchpointSetIsStillValid()
                 && objectPrototypeStructure->transitionWatchpointSetIsStillValid()
-                && globalObject->arrayPrototypeChainIsSane()
+                && globalObject->arrayPrototypeChainIsSaneConcurrently(arrayPrototypeStructure, objectPrototypeStructure)
                 && m_graph.isWatchingArrayIteratorProtocolWatchpoint(node->child1().node())
                 && m_graph.isWatchingHavingABadTimeWatchpoint(node->child1().node())) {
                 m_graph.registerAndWatchStructureTransition(objectPrototypeStructure);
@@ -3783,7 +3783,7 @@ private:
         Structure* objectPrototypeStructure = globalObject->objectPrototype()->structure(vm());
         if (arrayPrototypeStructure->transitionWatchpointSetIsStillValid()
             && objectPrototypeStructure->transitionWatchpointSetIsStillValid()
-            && globalObject->arrayPrototypeChainIsSane()) {
+            && globalObject->arrayPrototypeChainIsSaneConcurrently(arrayPrototypeStructure, objectPrototypeStructure)) {
             m_graph.registerAndWatchStructureTransition(arrayPrototypeStructure);
             m_graph.registerAndWatchStructureTransition(objectPrototypeStructure);
             node->setArrayMode(node->arrayMode().withSpeculation(speculation));

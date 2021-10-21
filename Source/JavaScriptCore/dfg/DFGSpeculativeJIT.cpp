@@ -2651,11 +2651,11 @@ void SpeculativeJIT::compileGetByValOnString(Node* node, const ScopedLambda<std:
         Structure* objectPrototypeStructure = globalObject->objectPrototype()->structure(vm);
         WTF::dependentLoadLoadFence();
 
-        if (globalObject->stringPrototypeChainIsSane()) {
+        if (globalObject->stringPrototypeChainIsSaneConcurrently(stringPrototypeStructure, objectPrototypeStructure)) {
             // FIXME: This could be captured using a Speculation mode that means "out-of-bounds
             // loads return a trivial value". Something like OutOfBoundsSaneChain. This should
             // speculate that we don't take negative out-of-bounds, or better yet, it should rely
-            // on a stringPrototypeChainIsSane() guaranteeing that the prototypes have no negative
+            // on a stringPrototypeChainIsSaneConcurrently() guaranteeing that the prototypes have no negative
             // indexed properties either.
             // https://bugs.webkit.org/show_bug.cgi?id=144668
             m_jit.graph().registerAndWatchStructureTransition(stringPrototypeStructure);
