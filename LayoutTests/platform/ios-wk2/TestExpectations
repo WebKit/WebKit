@@ -1475,12 +1475,7 @@ webkit.org/b/208587 scrollingcoordinator/ios/fixed-frame-overflow-swipe.html [ P
 
 webkit.org/b/208590 [ Debug ] fast/events/beforeunload-prompt.html [ Pass Crash ]
 
-webkit.org/b/228038 media/modern-media-controls/media-documents/media-document-video-with-initial-audio-layout.html [ Pass Timeout ]
-webkit.org/b/228038 [ Debug ] media/non-existent-video-playback-interrupted.html  [ Pass Crash ]
-webkit.org/b/228038 [ Debug ] media/media-can-play-av1.html  [ Pass Crash ] 
-webkit.org/b/228038 [ Debug ] media/modern-media-controls/mute-button/mute-button.html  [ Pass Crash ] 
-webkit.org/b/228038 [ Debug ] fast/mediastream/audio-bad-sampleRate.html  [ Pass Crash ] 
-webkit.org/b/228038 [ Debug ] media/media-blocked-by-willsendrequest.html  [ Pass Crash ] 
+webkit.org/b/232106 media/modern-media-controls/media-documents/media-document-video-with-initial-audio-layout.html [ Pass Timeout ]
 
 webkit.org/b/231618 [ Release ] fast/mediastream/apply-constraints-video.html [ Pass Failure ]
 
