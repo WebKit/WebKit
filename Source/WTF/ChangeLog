@@ -1,3 +1,13 @@
+2021-10-21  Aditya Keerthi  <akeerthi@apple.com>
+
+        [Cocoa] Enable 'accent-color' by default
+        https://bugs.webkit.org/show_bug.cgi?id=232032
+        rdar://84474404
+
+        Reviewed by Wenson Hsieh.
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml:
+
 2021-10-21  Chris Lord  <clord@igalia.com>
 
         [WPE][GTK] Enable smooth scrolling by default
