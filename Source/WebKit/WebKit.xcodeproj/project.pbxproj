@@ -1036,6 +1036,7 @@
 		512935E41288D97800A4B695 /* InjectedBundlePageContextMenuClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 512935E21288D97800A4B695 /* InjectedBundlePageContextMenuClient.h */; };
 		5129EB1223D0DE7B00AF1CD7 /* ContentWorldShared.h in Headers */ = {isa = PBXBuildFile; fileRef = 5129EB1123D0DE7800AF1CD7 /* ContentWorldShared.h */; };
 		512E34E5130B4D0500ABD19A /* WKApplicationCacheManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 517A33B4130B308C00F80CB5 /* WKApplicationCacheManager.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		512ECC3527196ADB00089B66 /* PrivateClickMeasurementConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CB930FE26E802160032B1C0 /* PrivateClickMeasurementConnection.h */; };
 		512F589712A8838800629530 /* AuthenticationChallengeProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 512F588F12A8838800629530 /* AuthenticationChallengeProxy.h */; };
 		512F589912A8838800629530 /* AuthenticationDecisionListener.h in Headers */ = {isa = PBXBuildFile; fileRef = 512F589112A8838800629530 /* AuthenticationDecisionListener.h */; };
 		512F589B12A8838800629530 /* WebCredential.h in Headers */ = {isa = PBXBuildFile; fileRef = 512F589312A8838800629530 /* WebCredential.h */; };
@@ -1059,6 +1060,7 @@
 		51452704271FBA40000467B6 /* NotificationManagerMessageHandlerMessagesReplies.h in Headers */ = {isa = PBXBuildFile; fileRef = 51452700271FBA34000467B6 /* NotificationManagerMessageHandlerMessagesReplies.h */; };
 		51452705271FBA40000467B6 /* NotificationManagerMessageHandlerMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 51452701271FBA35000467B6 /* NotificationManagerMessageHandlerMessages.h */; };
 		51452708271FBEC6000467B6 /* WebNotificationManagerMessageHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 51452707271FBEC1000467B6 /* WebNotificationManagerMessageHandler.h */; };
+		514526ED271E1647000467B6 /* NetworkNotificationManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 514526EB271E1626000467B6 /* NetworkNotificationManager.h */; };
 		51489CC32370DBFA0044E68A /* WKFindResult.h in Headers */ = {isa = PBXBuildFile; fileRef = 51489CC12370DACC0044E68A /* WKFindResult.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		51489CC7237237800044E68A /* WKFindResultInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 51489CC6237237780044E68A /* WKFindResultInternal.h */; };
 		514AB9F02360D2A900EDC396 /* WKFindConfiguration.h in Headers */ = {isa = PBXBuildFile; fileRef = 514AB9EF235FA59B00EDC396 /* WKFindConfiguration.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -4172,6 +4174,8 @@
 		51452702271FBA36000467B6 /* NotificationManagerMessageHandlerMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NotificationManagerMessageHandlerMessageReceiver.cpp; sourceTree = "<group>"; };
 		51452706271FBEC1000467B6 /* WebNotificationManagerMessageHandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebNotificationManagerMessageHandler.cpp; sourceTree = "<group>"; };
 		51452707271FBEC1000467B6 /* WebNotificationManagerMessageHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebNotificationManagerMessageHandler.h; sourceTree = "<group>"; };
+		514526EB271E1626000467B6 /* NetworkNotificationManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkNotificationManager.h; sourceTree = "<group>"; };
+		514526EC271E1627000467B6 /* NetworkNotificationManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkNotificationManager.cpp; sourceTree = "<group>"; };
 		51489CC12370DACC0044E68A /* WKFindResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKFindResult.h; sourceTree = "<group>"; };
 		51489CC22370DACC0044E68A /* WKFindResult.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKFindResult.mm; sourceTree = "<group>"; };
 		51489CC6237237780044E68A /* WKFindResultInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKFindResultInternal.h; sourceTree = "<group>"; };
@@ -8887,6 +8891,7 @@
 				939288E021404DF000EBBA33 /* IndexedDB */,
 				2DA944BB188511DD00ED86DB /* ios */,
 				510CC7DC16138E2900D03ED3 /* mac */,
+				514526EA271E1610000467B6 /* Notifications */,
 				5C01BC3526D46AD400FEB42F /* PrivateClickMeasurement */,
 				93BA04D92151ADCD007F455F /* ServiceWorker */,
 				93085DC226E1BB65000EC6A7 /* storage */,
@@ -9044,6 +9049,15 @@
 				512F589512A8838800629530 /* WebProtectionSpace.h */,
 			);
 			path = Authentication;
+			sourceTree = "<group>";
+		};
+		514526EA271E1610000467B6 /* Notifications */ = {
+			isa = PBXGroup;
+			children = (
+				514526EC271E1627000467B6 /* NetworkNotificationManager.cpp */,
+				514526EB271E1626000467B6 /* NetworkNotificationManager.h */,
+			);
+			path = Notifications;
 			sourceTree = "<group>";
 		};
 		515BE1721D53FDB900DD7C68 /* Gamepad */ = {
@@ -12740,6 +12754,7 @@
 				F4517D7B26FBCD39004C8475 /* RemoteRenderingBackendMessagesReplies.h in Headers */,
 				F414CE2D269DE6EA00BD216A /* RemoteRenderingBackendState.h in Headers */,
 				0F594790187B3B3A00437857 /* RemoteScrollingCoordinator.h in Headers */,
+				512ECC3527196ADB00089B66 /* PrivateClickMeasurementConnection.h in Headers */,
 				0F5947A8187B517600437857 /* RemoteScrollingCoordinatorMessages.h in Headers */,
 				0F59479B187B3B6000437857 /* RemoteScrollingCoordinatorProxy.h in Headers */,
 				0F5947A4187B3B7D00437857 /* RemoteScrollingCoordinatorTransaction.h in Headers */,
@@ -12880,6 +12895,7 @@
 				5742A318253648E500B7BA14 /* WebAuthnProcess.h in Headers */,
 				572EBBD52536C885000552B3 /* WebAuthnProcessConnection.h in Headers */,
 				572EBBCC2536B04F000552B3 /* WebAuthnProcessConnectionInfo.h in Headers */,
+				514526ED271E1647000467B6 /* NetworkNotificationManager.h in Headers */,
 				5742A30825358A0400B7BA14 /* WebAuthnProcessCreationParameters.h in Headers */,
 				572EBBC22536A60A000552B3 /* WebAuthnProcessMessages.h in Headers */,
 				572EBBC92536AFD5000552B3 /* WebAuthnProcessProxy.h in Headers */,

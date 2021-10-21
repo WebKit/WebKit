@@ -78,6 +78,7 @@ WK_CLASS_AVAILABLE(macos(10.13), ios(11.0))
 @property (nonatomic) BOOL enableInAppBrowserPrivacyForTesting WK_API_AVAILABLE(macos(12.0), ios(15.0));
 @property (nonatomic) BOOL allowsHSTSWithUntrustedRootCertificate WK_API_AVAILABLE(macos(12.0), ios(15.0));
 @property (nonatomic, nullable, copy, setter=setPCMMachServiceName:) NSString *pcmMachServiceName WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+@property (nonatomic, nullable, copy, setter=setWebPushMachServiceName:) NSString *webPushMachServiceName WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 @property (nonatomic, nullable, copy) NSURL *alternativeServicesStorageDirectory WK_API_AVAILABLE(macos(11.0), ios(14.0));
 @property (nonatomic, nullable, copy) NSURL *standaloneApplicationURL WK_API_AVAILABLE(macos(11.0), ios(14.0));

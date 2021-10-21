@@ -186,6 +186,9 @@ public:
     void setPCMMachServiceName(String&& name) { m_pcmMachServiceName = WTFMove(name); }
     const String& pcmMachServiceName() const { return m_pcmMachServiceName; }
 
+    void setWebPushMachServiceName(String&& name) { m_webPushMachServiceName = WTFMove(name); }
+    const String& webPushMachServiceName() const { return m_webPushMachServiceName; }
+
 private:
     IsPersistent m_isPersistent { IsPersistent::No };
 
@@ -240,6 +243,7 @@ private:
     bool m_enableInAppBrowserPrivacyForTesting { false };
     bool m_allowsHSTSWithUntrustedRootCertificate { false };
     String m_pcmMachServiceName;
+    String m_webPushMachServiceName;
 #if PLATFORM(COCOA)
     RetainPtr<CFDictionaryRef> m_proxyConfiguration;
 #endif

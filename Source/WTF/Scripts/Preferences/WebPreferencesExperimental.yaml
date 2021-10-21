@@ -138,6 +138,18 @@ BroadcastChannelOriginPartitioningEnabled:
     WebCore:
       default: true
 
+BuiltInNotificationsEnabled:
+  type: bool
+  humanReadableName: "Built-In Web Notifications"
+  humanReadableDescription: "Enable built-in WebKit managed notifications"
+  webcoreBinding: RuntimeEnabledFeatures
+  condition: ENABLE(BUILT_IN_NOTIFICATIONS)
+  defaultValue:
+    WebCore:
+      default: false
+    WebKit:
+      default: false
+
 CFNetworkNetworkLoaderEnabled:
   type: bool
   humanReadableName: "Experimental network loader"

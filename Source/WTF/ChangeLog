@@ -1,3 +1,13 @@
+2021-10-20  Brady Eidson  <beidson@apple.com>
+
+        WebKit Managed Notifications: Skeleton NotificationProvider
+        https://bugs.webkit.org/show_bug.cgi?id=231786
+
+        Reviewed by Alex Christensen.
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml:
+        * wtf/PlatformEnableCocoa.h:
+
 2021-10-20  Alex Christensen  <achristensen@webkit.org>
 
         URLParser should reject hosts with C0 control characters or U+007F

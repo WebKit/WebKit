@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,6 +27,7 @@
 
 #include "AppPrivacyReport.h"
 #include "NavigatingToAppBoundDomain.h"
+#include "NetworkNotificationManager.h"
 #include "NetworkResourceLoadIdentifier.h"
 #include "PrefetchCache.h"
 #include "PrivateClickMeasurementManagerInterface.h"
@@ -257,6 +258,10 @@ protected:
 #endif
 
     HashMap<WebPageProxyIdentifier, String> m_attributedBundleIdentifierFromPageIdentifiers;
+
+#if ENABLE(BUILT_IN_NOTIFICATIONS)
+    NetworkNotificationManager m_notificationManager;
+#endif
 };
 
 } // namespace WebKit

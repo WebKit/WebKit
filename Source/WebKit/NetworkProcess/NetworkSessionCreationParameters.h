@@ -104,6 +104,7 @@ struct NetworkSessionCreationParameters {
     bool useNetworkLoader { false };
     bool allowsHSTSWithUntrustedRootCertificate { false };
     String pcmMachServiceName;
+    String webPushMachServiceName;
     bool enablePrivateClickMeasurementDebugMode { false };
 
     ResourceLoadStatisticsParameters resourceLoadStatisticsParameters;

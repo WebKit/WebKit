@@ -1,3 +1,64 @@
+2021-10-20  Brady Eidson  <beidson@apple.com>
+
+        WebKit Managed Notifications: Skeleton NotificationProvider
+        https://bugs.webkit.org/show_bug.cgi?id=231786
+
+        Reviewed by Alex Christensen.
+
+        Currently, notification messages route from WebContent to the UI process.
+
+        When "WebKit-managed built-in notifications" are enabled, notification requests will route from
+        WebContent to Networking instead.
+
+        From there they will head off to webpushd to be handled.
+
+        This patch just sets up the switch where messages can optionally head off to the Networking
+        process instead of the UIProcess.
+
+        (It also lays the SPI groundwork for the webpushd mach service name)
+
+        * NetworkProcess/NetworkSession.cpp:
+        (WebKit::NetworkSession::NetworkSession):
+        (WebKit::NetworkSession::~NetworkSession):
+        * NetworkProcess/NetworkSession.h:
+
+        * NetworkProcess/NetworkSessionCreationParameters.cpp:
+        (WebKit::NetworkSessionCreationParameters::encode const):
+        (WebKit::NetworkSessionCreationParameters::decode):
+        * NetworkProcess/NetworkSessionCreationParameters.h:
+
+        * NetworkProcess/Notifications/NetworkNotificationManager.cpp: Added.
+        (WebKit::NetworkNotificationManager::NetworkNotificationManager):
+        (WebKit::NetworkNotificationManager::showNotification):
+        (WebKit::NetworkNotificationManager::cancelNotification):
+        (WebKit::NetworkNotificationManager::clearNotifications):
+        (WebKit::NetworkNotificationManager::didDestroyNotification):
+        * NetworkProcess/Notifications/NetworkNotificationManager.h: Added.
+
+        * NetworkProcess/WebStorage/LocalStorageDatabase.cpp: Unified build fixup.
+
+        * Sources.txt:
+
+        * UIProcess/API/Cocoa/_WKWebsiteDataStoreConfiguration.h:
+        * UIProcess/API/Cocoa/_WKWebsiteDataStoreConfiguration.mm:
+        (-[_WKWebsiteDataStoreConfiguration webPushMachServiceName]):
+        (-[_WKWebsiteDataStoreConfiguration setWebPushMachServiceName:]):
+
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::parameters):
+        * UIProcess/WebsiteData/WebsiteDataStoreConfiguration.h:
+        (WebKit::WebsiteDataStoreConfiguration::setWebPushMachServiceName):
+        (WebKit::WebsiteDataStoreConfiguration::webPushMachServiceName const):
+
+        * WebKit.xcodeproj/project.pbxproj:
+
+        * WebProcess/Notifications/WebNotificationManager.cpp:
+        (WebKit::sendNotificationMessage):
+        (WebKit::WebNotificationManager::show):
+        (WebKit::WebNotificationManager::cancel):
+        (WebKit::WebNotificationManager::clearNotifications):
+        (WebKit::WebNotificationManager::didDestroyNotification):
+
 2021-10-20  Per Arne Vollan <pvollan@apple.com>
 
         Launch Services database is not always sent to GPUP

@@ -32,6 +32,7 @@
 #include "WebProcessCreationParameters.h"
 
 #if ENABLE(NOTIFICATIONS)
+#include "NetworkProcessConnection.h"
 #include "NotificationManagerMessageHandlerMessages.h"
 #include "WebNotification.h"
 #include "WebNotificationManagerMessages.h"
@@ -39,6 +40,7 @@
 #include <WebCore/Document.h>
 #include <WebCore/Notification.h>
 #include <WebCore/Page.h>
+#include <WebCore/RuntimeEnabledFeatures.h>
 #include <WebCore/ScriptExecutionContext.h>
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/Settings.h>
@@ -137,6 +139,17 @@ uint64_t WebNotificationManager::notificationIDForTesting(Notification* notifica
 #endif
 }
 
+#if ENABLE(NOTIFICATIONS)
+template<typename U> bool sendNotificationMessage(WebProcess& process, U&& message, WebPage& page)
+{
+#if ENABLE(BUILT_IN_NOTIFICATIONS)
+    if (RuntimeEnabledFeatures::sharedFeatures().builtInNotificationsEnabled())
+        return process.ensureNetworkProcessConnection().connection().send(WTFMove(message), page.sessionID().toUInt64());
+#endif
+    return process.parentProcessConnection()->send(WTFMove(message), page.identifier());
+}
+#endif // ENABLE(NOTIFICATIONS)
+
 bool WebNotificationManager::show(Notification* notification, WebPage* page)
 {
 #if ENABLE(NOTIFICATIONS)
@@ -150,7 +163,7 @@ bool WebNotificationManager::show(Notification* notification, WebPage* page)
     auto it = m_notificationContextMap.add(notification->scriptExecutionContext(), Vector<uint64_t>()).iterator;
     it->value.append(notificationID);
 
-    m_process.parentProcessConnection()->send(Messages::NotificationManagerMessageHandler::ShowNotification(notification->title(), notification->body(), notification->icon().string(), notification->tag(), notification->lang(), notification->dir(), notification->scriptExecutionContext()->securityOrigin()->toString(), notificationID), page->identifier());
+    sendNotificationMessage(m_process, Messages::NotificationManagerMessageHandler::ShowNotification(notification->title(), notification->body(), notification->icon().string(), notification->tag(), notification->lang(), notification->dir(), notification->scriptExecutionContext()->securityOrigin()->toString(), notificationID), *page);
     return true;
 #else
     UNUSED_PARAM(notification);
@@ -169,7 +182,7 @@ void WebNotificationManager::cancel(Notification* notification, WebPage* page)
     if (!notificationID)
         return;
     
-    m_process.parentProcessConnection()->send(Messages::NotificationManagerMessageHandler::CancelNotification(notificationID), page->identifier());
+    sendNotificationMessage(m_process, Messages::NotificationManagerMessageHandler::CancelNotification(notificationID), *page);
 #else
     UNUSED_PARAM(notification);
     UNUSED_PARAM(page);
@@ -184,7 +197,7 @@ void WebNotificationManager::clearNotifications(WebCore::ScriptExecutionContext*
         return;
 
     Vector<uint64_t>& notificationIDs = it->value;
-    m_process.parentProcessConnection()->send(Messages::NotificationManagerMessageHandler::ClearNotifications(notificationIDs), page->identifier());
+    sendNotificationMessage(m_process, Messages::NotificationManagerMessageHandler::ClearNotifications(notificationIDs), *page);
     size_t count = notificationIDs.size();
     for (size_t i = 0; i < count; ++i) {
         RefPtr<Notification> notification = m_notificationIDMap.take(notificationIDs[i]);
@@ -212,7 +225,7 @@ void WebNotificationManager::didDestroyNotification(Notification* notification, 
 
     m_notificationIDMap.remove(notificationID);
     removeNotificationFromContextMap(notificationID, notification);
-    m_process.parentProcessConnection()->send(Messages::NotificationManagerMessageHandler::DidDestroyNotification(notificationID), page->identifier());
+    sendNotificationMessage(m_process, Messages::NotificationManagerMessageHandler::DidDestroyNotification(notificationID), *page);
 #else
     UNUSED_PARAM(notification);
     UNUSED_PARAM(page);

@@ -192,6 +192,9 @@ void NetworkConnectionToWebProcess::didReceiveMessage(IPC::Connection& connectio
     // For security reasons, Messages::NetworkProcess IPC is only supposed to come from the UIProcess.
     ASSERT(decoder.messageReceiverName() != Messages::NetworkProcess::messageReceiverName());
 
+    if (m_networkProcess->messageReceiverMap().dispatchMessage(connection, decoder))
+        return;
+
     if (decoder.messageReceiverName() == Messages::NetworkConnectionToWebProcess::messageReceiverName()) {
         didReceiveNetworkConnectionToWebProcessMessage(connection, decoder);
         return;

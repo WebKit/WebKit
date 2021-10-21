@@ -89,6 +89,7 @@ void NetworkSessionCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << useNetworkLoader;
     encoder << allowsHSTSWithUntrustedRootCertificate;
     encoder << pcmMachServiceName;
+    encoder << webPushMachServiceName;
     encoder << enablePrivateClickMeasurementDebugMode;
     encoder << resourceLoadStatisticsParameters;
 }
@@ -306,6 +307,11 @@ std::optional<NetworkSessionCreationParameters> NetworkSessionCreationParameters
     decoder >> pcmMachServiceName;
     if (!pcmMachServiceName)
         return std::nullopt;
+
+    std::optional<String> webPushMachServiceName;
+    decoder >> webPushMachServiceName;
+    if (!webPushMachServiceName)
+        return std::nullopt;
     
     std::optional<bool> enablePrivateClickMeasurementDebugMode;
     decoder >> enablePrivateClickMeasurementDebugMode;
@@ -367,6 +373,7 @@ std::optional<NetworkSessionCreationParameters> NetworkSessionCreationParameters
         , WTFMove(*useNetworkLoader)
         , WTFMove(*allowsHSTSWithUntrustedRootCertificate)
         , WTFMove(*pcmMachServiceName)
+        , WTFMove(*webPushMachServiceName)
         , WTFMove(*enablePrivateClickMeasurementDebugMode)
         , WTFMove(*resourceLoadStatisticsParameters)
     }};

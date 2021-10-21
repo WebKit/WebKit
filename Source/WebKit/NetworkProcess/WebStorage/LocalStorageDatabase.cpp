@@ -34,6 +34,7 @@
 #include <wtf/FileSystem.h>
 #include <wtf/HashMap.h>
 #include <wtf/RefPtr.h>
+#include <wtf/RunLoop.h>
 #include <wtf/SuspendableWorkQueue.h>
 
 namespace WebKit {

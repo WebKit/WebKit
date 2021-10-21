@@ -541,6 +541,16 @@ static void checkURLArgument(NSURL *url)
     _configuration->setPCMMachServiceName(name);
 }
 
+- (NSString *)webPushMachServiceName
+{
+    return _configuration->webPushMachServiceName();
+}
+
+- (void)setWebPushMachServiceName:(NSString *)name
+{
+    _configuration->setWebPushMachServiceName(name);
+}
+
 - (BOOL)allLoadsBlockedByDeviceManagementRestrictionsForTesting
 {
     return _configuration->allLoadsBlockedByDeviceManagementRestrictionsForTesting();

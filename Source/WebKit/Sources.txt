@@ -97,6 +97,8 @@ NetworkProcess/Downloads/PendingDownload.cpp
 NetworkProcess/IndexedDB/WebIDBConnectionToClient.cpp
 NetworkProcess/IndexedDB/WebIDBServer.cpp
 
+NetworkProcess/Notifications/NetworkNotificationManager.cpp
+
 NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementClientImpl.cpp
 NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementDatabase.cpp
 NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementDebugInfo.cpp

@@ -34,6 +34,7 @@
 #include "NetworkResourceLoadParameters.h"
 #include "NetworkResourceLoader.h"
 #include "NetworkSessionCreationParameters.h"
+#include "NotificationManagerMessageHandlerMessages.h"
 #include "PingLoad.h"
 #include "PrivateClickMeasurementClientImpl.h"
 #include "PrivateClickMeasurementManager.h"
@@ -122,6 +123,9 @@ NetworkSession::NetworkSession(NetworkProcess& networkProcess, const NetworkSess
     , m_testSpeedMultiplier(parameters.testSpeedMultiplier)
     , m_allowsServerPreconnect(parameters.allowsServerPreconnect)
     , m_shouldRunServiceWorkersOnMainThreadForTesting(parameters.shouldRunServiceWorkersOnMainThreadForTesting)
+#if ENABLE(BUILT_IN_NOTIFICATIONS)
+    , m_notificationManager(*this, parameters.webPushMachServiceName)
+#endif
 {
     if (!m_sessionID.isEphemeral()) {
         String networkCacheDirectory = parameters.networkCacheDirectory;
@@ -153,6 +157,10 @@ NetworkSession::NetworkSession(NetworkProcess& networkProcess, const NetworkSess
 #if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
     setResourceLoadStatisticsEnabled(parameters.resourceLoadStatisticsParameters.enabled);
 #endif
+
+#if ENABLE(BUILT_IN_NOTIFICATIONS)
+    m_networkProcess->addMessageReceiver(Messages::NotificationManagerMessageHandler::messageReceiverName(), m_sessionID.toUInt64(), m_notificationManager);
+#endif
 }
 
 NetworkSession::~NetworkSession()
@@ -162,6 +170,10 @@ NetworkSession::~NetworkSession()
 #endif
     for (auto& loader : std::exchange(m_keptAliveLoads, { }))
         loader->abort();
+
+#if ENABLE(BUILT_IN_NOTIFICATIONS)
+    m_networkProcess->removeMessageReceiver(Messages::NotificationManagerMessageHandler::messageReceiverName(), m_sessionID.toUInt64());
+#endif
 }
 
 #if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
