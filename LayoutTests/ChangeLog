@@ -1,3 +1,12 @@
+2021-10-21  Ayumi Kojima  <ayumi_kojima@apple.com>
+
+        [ iOS macOS wk2 ]compositing/video/video-border-radius-clipping.html is a flakey image failure.
+        https://bugs.webkit.org/show_bug.cgi?id=224690
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+
 2021-10-21  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
 
         [GTK] Update test baselines after r284521
