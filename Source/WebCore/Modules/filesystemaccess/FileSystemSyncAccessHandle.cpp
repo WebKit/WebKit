@@ -52,12 +52,18 @@ FileSystemSyncAccessHandle::~FileSystemSyncAccessHandle()
         return;
 
     ASSERT(m_closePromises.isEmpty());
-    m_source->close(m_identifier, [](auto) { });
+    closeInternal([](auto) { });
 }
 
 bool FileSystemSyncAccessHandle::isClosingOrClosed() const
 {
     return m_closeResult || !m_closePromises.isEmpty();
+}
+
+void FileSystemSyncAccessHandle::closeInternal(CompletionHandler<void(ExceptionOr<void>&&)>&& completionHandler)
+{
+    FileSystem::closeFile(m_file);
+    m_source->close(m_identifier, WTFMove(completionHandler));
 }
 
 void FileSystemSyncAccessHandle::truncate(unsigned long long size, DOMPromiseDeferred<void>&& promise)
@@ -112,11 +118,8 @@ void FileSystemSyncAccessHandle::close(DOMPromiseDeferred<void>&& promise)
     if (isClosing)
         return;
 
-    FileSystem::closeFile(m_file);
-    m_file = FileSystem::invalidPlatformFileHandle;
-
     m_pendingOperationCount++;
-    m_source->close(m_identifier, [this, protectedThis = Ref { *this }](auto result) mutable {
+    closeInternal([this, protectedThis = Ref { *this }](auto result) mutable {
         m_pendingOperationCount--;
         didClose(WTFMove(result));
     });

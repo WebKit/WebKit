@@ -1,3 +1,18 @@
+2021-10-22  Sihui Liu  <sihui_liu@apple.com>
+
+        Followup to r284652: ensure file handle is closed in web process
+        https://bugs.webkit.org/show_bug.cgi?id=232127
+
+        Reviewed by Youenn Fablet.
+
+        * NetworkProcess/storage/FileSystemStorageHandle.cpp:
+        (WebKit::FileSystemStorageHandle::~FileSystemStorageHandle):
+        (WebKit::FileSystemStorageHandle::createSyncAccessHandle):
+        (WebKit::FileSystemStorageHandle::close):
+        * NetworkProcess/storage/FileSystemStorageHandle.h:
+        * Platform/IPC/cocoa/SharedFileHandleCocoa.cpp: an extra fd is created here and does not get closed.
+        (IPC::SharedFileHandle::decode):
+
 2021-10-22  Youenn Fablet  <youenn@apple.com>
 
         REGRESSION (Safari 15 - iOS15): [WebRTC] Increased audio latency while playing webrtc audio stream over audio element

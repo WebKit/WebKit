@@ -1,3 +1,18 @@
+2021-10-22  Sihui Liu  <sihui_liu@apple.com>
+
+        Followup to r284652: ensure file handle is closed in web process
+        https://bugs.webkit.org/show_bug.cgi?id=232127
+
+        Reviewed by Youenn Fablet.
+
+        * storage/filesystemaccess/resources/sync-access-handle-close.js:
+        (testSyncFunction):
+        (async testAsyncFunction):
+        (async testFunctions):
+        (async testMultipleHandles):
+        (async test):
+        * storage/filesystemaccess/sync-access-handle-close-worker-expected.txt:
+
 2021-10-22  Chris Dumez  <cdumez@apple.com>
 
         [ iOS15 iPad Debug ] imported/w3c/web-platform-tests/webmessaging/MessagePort_onmessage_start.any.worker.html is a flaky failure (reached unreachable code)

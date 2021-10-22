@@ -44,6 +44,7 @@ class FileSystemStorageHandle : public CanMakeWeakPtr<FileSystemStorageHandle, W
 public:
     enum class Type : uint8_t { File, Directory, Any };
     FileSystemStorageHandle(FileSystemStorageManager&, Type, String&& path, String&& name);
+    ~FileSystemStorageHandle();
 
     WebCore::FileSystemHandleIdentifier identifier() const { return m_identifier; }
     const String& path() const { return m_path; }

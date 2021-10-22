@@ -57,6 +57,7 @@ public:
 private:
     FileSystemSyncAccessHandle(FileSystemFileHandle&, FileSystemSyncAccessHandleIdentifier, FileSystem::PlatformFileHandle);
     bool isClosingOrClosed() const;
+    void closeInternal(CompletionHandler<void(ExceptionOr<void>&&)>&&);
 
     Ref<FileSystemFileHandle> m_source;
     FileSystemSyncAccessHandleIdentifier m_identifier;
