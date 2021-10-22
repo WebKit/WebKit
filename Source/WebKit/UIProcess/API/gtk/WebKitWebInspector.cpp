@@ -46,7 +46,7 @@ using namespace WebKit;
  *
  * <informalexample><programlisting>
  * /<!-- -->* Enable the developer extras *<!-- -->/
- * WebKitSettings *setting = webkit_web_view_get_settings (WEBKIT_WEB_VIEW(my_webview));
+ * WebKitSettings *settings = webkit_web_view_get_settings (WEBKIT_WEB_VIEW(my_webview));
  * g_object_set (G_OBJECT(settings), "enable-developer-extras", TRUE, NULL);
  *
  * /<!-- -->* Load some data or reload to be able to inspect the page*<!-- -->/

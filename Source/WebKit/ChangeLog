@@ -1,3 +1,9 @@
+2021-10-22  Alberto Garcia  <berto@igalia.com>
+
+        Unreviewed, fix typo in the WebKitWebInspector documentation.
+
+        * UIProcess/API/gtk/WebKitWebInspector.cpp:
+
 2021-10-22  Youenn Fablet  <youenn@apple.com>
 
         Audio over peer connection becomes latent when changing the output
