@@ -2330,8 +2330,6 @@ webkit.org/b/228364 media/track/track-in-band-duplicate-tracks-when-source-chang
 
 webkit.org/b/228642 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/javascript-url.https.html [ Pass Failure ]
 
-webkit.org/b/231030 [ Debug ] imported/w3c/web-platform-tests/html/dom/idlharness.worker.html [ Pass Failure ]
-
 webkit.org/b/229517 imported/w3c/web-platform-tests/webrtc-extensions/RTCRtpSynchronizationSource-captureTimestamp.html [ Pass Failure ]
 webkit.org/b/229517 imported/w3c/web-platform-tests/webrtc-extensions/RTCRtpSynchronizationSource-senderCaptureTimeOffset.html [ Pass Failure ]
 

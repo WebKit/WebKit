@@ -1098,7 +1098,8 @@ webkit.org/b/206178 [ Mojave ] editing/spelling/spellcheck-attribute.html [ Pass
 webkit.org/b/190350 [ Mojave ] storage/indexeddb/database-odd-names.html [ Failure ]
 [ Mojave ] editing/mac/input/firstrectforcharacterrange-styled.html [ Failure ]
 
-webkit.org/b/206503 [ Catalina Debug ] imported/w3c/web-platform-tests/html/dom/idlharness.worker.html [ Failure ]
+webkit.org/b/231030 [ Debug ] imported/w3c/web-platform-tests/html/dom/idlharness.worker.html [ Pass Failure DumpJSConsoleLogInStdErr ]
+
 webkit.org/b/205412 [ Mojave Debug ] webgl/1.0.3/conformance/rendering/many-draw-calls.html [ Timeout ]
 
 webkit.org/b/212851 [ Mojave Release ] js/dom/unhandled-promise-rejection-console-no-report.html [ Pass Failure ]
