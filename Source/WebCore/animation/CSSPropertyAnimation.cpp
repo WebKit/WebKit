@@ -41,7 +41,6 @@
 #include "CSSPropertyNames.h"
 #include "CachedImage.h"
 #include "CalculationValue.h"
-#include "ClipPathOperation.h"
 #include "ColorBlending.h"
 #include "CompositeOperation.h"
 #include "FloatConversion.h"
@@ -55,6 +54,7 @@
 #include "Logging.h"
 #include "Matrix3DTransformOperation.h"
 #include "MatrixTransformOperation.h"
+#include "PathOperation.h"
 #include "RenderBox.h"
 #include "RenderStyle.h"
 #include "StyleCachedImage.h"
@@ -271,22 +271,22 @@ static RefPtr<TranslateTransformOperation> blendFunc(TranslateTransformOperation
     return nullptr;
 }
 
-static inline RefPtr<ClipPathOperation> blendFunc(ClipPathOperation* from, ClipPathOperation* to, const CSSPropertyBlendingContext& context)
+static inline RefPtr<PathOperation> blendFunc(PathOperation* from, PathOperation* to, const CSSPropertyBlendingContext& context)
 {
     if (!from || !to)
         return to;
 
     // Other clip-path operations than BasicShapes can not be animated.
-    if (from->type() != ClipPathOperation::Shape || to->type() != ClipPathOperation::Shape)
+    if (from->type() != PathOperation::Shape || to->type() != PathOperation::Shape)
         return to;
 
-    const BasicShape& fromShape = downcast<ShapeClipPathOperation>(*from).basicShape();
-    const BasicShape& toShape = downcast<ShapeClipPathOperation>(*to).basicShape();
+    const BasicShape& fromShape = downcast<ShapePathOperation>(*from).basicShape();
+    const BasicShape& toShape = downcast<ShapePathOperation>(*to).basicShape();
 
     if (!fromShape.canBlend(toShape))
         return to;
 
-    return ShapeClipPathOperation::create(toShape.blend(fromShape, context));
+    return ShapePathOperation::create(toShape.blend(fromShape, context));
 }
 
 static inline RefPtr<ShapeValue> blendFunc(ShapeValue* from, ShapeValue* to, const CSSPropertyBlendingContext& context)
@@ -1019,11 +1019,11 @@ private:
     }
 };
 
-class PropertyWrapperClipPath final : public RefCountedPropertyWrapper<ClipPathOperation> {
+class PropertyWrapperClipPath final : public RefCountedPropertyWrapper<PathOperation> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    PropertyWrapperClipPath(CSSPropertyID property, ClipPathOperation* (RenderStyle::*getter)() const, void (RenderStyle::*setter)(RefPtr<ClipPathOperation>&&))
-        : RefCountedPropertyWrapper<ClipPathOperation>(property, getter, setter)
+    PropertyWrapperClipPath(CSSPropertyID property, PathOperation* (RenderStyle::*getter)() const, void (RenderStyle::*setter)(RefPtr<PathOperation>&&))
+        : RefCountedPropertyWrapper<PathOperation>(property, getter, setter)
     {
     }
 

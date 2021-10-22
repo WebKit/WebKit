@@ -1590,7 +1590,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     plugins/nptypes.h
 
     rendering/BreakLines.h
-    rendering/ClipPathOperation.h
     rendering/ClipRect.h
     rendering/EventRegion.h
     rendering/FloatingObjects.h
@@ -1614,6 +1613,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     rendering/PaintFrequencyTracker.h
     rendering/PaintInfo.h
     rendering/PaintPhase.h
+    rendering/PathOperation.h
     rendering/RenderAttachment.h
     rendering/RenderBlock.h
     rendering/RenderBlockFlow.h

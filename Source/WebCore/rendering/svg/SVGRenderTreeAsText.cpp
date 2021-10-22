@@ -572,8 +572,8 @@ void writeResources(TextStream& ts, const RenderObject& renderer, OptionSet<Rend
             ts << " " << masker->resourceBoundingBox(renderer) << "\n";
         }
     }
-    if (style.clipPath() && is<ReferenceClipPathOperation>(style.clipPath())) {
-        auto resourceClipPath = downcast<ReferenceClipPathOperation>(style.clipPath());
+    if (style.clipPath() && is<ReferencePathOperation>(style.clipPath())) {
+        auto resourceClipPath = downcast<ReferencePathOperation>(style.clipPath());
         AtomString id = resourceClipPath->fragment();
         if (RenderSVGResourceClipper* clipper = getRenderSVGResourceById<RenderSVGResourceClipper>(renderer.document(), id)) {
             ts << indent << " ";

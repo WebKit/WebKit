@@ -26,7 +26,6 @@
 #include "RenderBox.h"
 
 #include "CSSFontSelector.h"
-#include "ClipPathOperation.h"
 #include "ControlStates.h"
 #include "Document.h"
 #include "Editing.h"
@@ -54,6 +53,7 @@
 #include "LegacyInlineElementBox.h"
 #include "Page.h"
 #include "PaintInfo.h"
+#include "PathOperation.h"
 #include "RenderBoxFragmentInfo.h"
 #include "RenderChildIterator.h"
 #include "RenderDeprecatedFlexibleBox.h"
@@ -1385,16 +1385,16 @@ bool RenderBox::hitTestClipPath(const HitTestLocation& hitTestLocation, const La
     auto offsetFromHitTestRoot = toLayoutSize(accumulatedOffset + location());
     auto hitTestLocationInLocalCoordinates = hitTestLocation.point() - offsetFromHitTestRoot;
     switch (style().clipPath()->type()) {
-    case ClipPathOperation::Shape: {
-        auto& clipPath = downcast<ShapeClipPathOperation>(*style().clipPath());
+    case PathOperation::Shape: {
+        auto& clipPath = downcast<ShapePathOperation>(*style().clipPath());
         auto referenceBoxRect = referenceBox(clipPath.referenceBox());
         if (!clipPath.pathForReferenceRect(referenceBoxRect).contains(hitTestLocationInLocalCoordinates, clipPath.windRule()))
             return false;
         break;
     }
-    case ClipPathOperation::Reference: {
-        const auto& referenceClipPathOperation = downcast<ReferenceClipPathOperation>(*style().clipPath());
-        auto* element = document().getElementById(referenceClipPathOperation.fragment());
+    case PathOperation::Reference: {
+        const auto& referencePathOperation = downcast<ReferencePathOperation>(*style().clipPath());
+        auto* element = document().getElementById(referencePathOperation.fragment());
         if (!element || !element->renderer())
             break;
         if (!is<SVGClipPathElement>(*element))
@@ -1404,7 +1404,7 @@ bool RenderBox::hitTestClipPath(const HitTestLocation& hitTestLocation, const La
             return false;
         break;
     }
-    case ClipPathOperation::Box:
+    case PathOperation::Box:
         break;
     }
 

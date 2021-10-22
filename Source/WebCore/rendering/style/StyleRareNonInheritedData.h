@@ -25,13 +25,13 @@
 #pragma once
 
 #include "CSSPropertyNames.h"
-#include "ClipPathOperation.h"
 #include "CounterDirectives.h"
 #include "FillLayer.h"
 #include "GapLength.h"
 #include "LengthPoint.h"
 #include "LineClampValue.h"
 #include "NinePieceImage.h"
+#include "PathOperation.h"
 #include "RotateTransformOperation.h"
 #include "ScaleTransformOperation.h"
 #include "ShapeValue.h"
@@ -164,7 +164,7 @@ public:
 
     int order;
 
-    RefPtr<ClipPathOperation> clipPath;
+    RefPtr<PathOperation> clipPath;
 
     Color textDecorationColor;
     Color visitedLinkTextDecorationColor;

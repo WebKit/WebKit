@@ -38,7 +38,7 @@
 
 namespace WebCore {
 
-class ClipPathOperation : public RefCounted<ClipPathOperation> {
+class PathOperation : public RefCounted<PathOperation> {
 public:
     enum OperationType {
         Reference,
@@ -46,16 +46,16 @@ public:
         Box
     };
 
-    virtual ~ClipPathOperation() = default;
+    virtual ~PathOperation() = default;
 
-    virtual bool operator==(const ClipPathOperation&) const = 0;
-    bool operator!=(const ClipPathOperation& o) const { return !(*this == o); }
+    virtual bool operator==(const PathOperation&) const = 0;
+    bool operator!=(const PathOperation& o) const { return !(*this == o); }
 
     OperationType type() const { return m_type; }
-    bool isSameType(const ClipPathOperation& o) const { return o.type() == m_type; }
+    bool isSameType(const PathOperation& o) const { return o.type() == m_type; }
 
 protected:
-    explicit ClipPathOperation(OperationType type)
+    explicit PathOperation(OperationType type)
         : m_type(type)
     {
     }
@@ -63,27 +63,27 @@ protected:
     OperationType m_type;
 };
 
-class ReferenceClipPathOperation final : public ClipPathOperation {
+class ReferencePathOperation final : public PathOperation {
 public:
-    static Ref<ReferenceClipPathOperation> create(const String& url, const String& fragment)
+    static Ref<ReferencePathOperation> create(const String& url, const String& fragment)
     {
-        return adoptRef(*new ReferenceClipPathOperation(url, fragment));
+        return adoptRef(*new ReferencePathOperation(url, fragment));
     }
 
     const String& url() const { return m_url; }
     const String& fragment() const { return m_fragment; }
 
 private:
-    bool operator==(const ClipPathOperation& other) const override
+    bool operator==(const PathOperation& other) const override
     {
         if (!isSameType(other))
             return false;
-        auto& referenceClip = downcast<ReferenceClipPathOperation>(other);
+        auto& referenceClip = downcast<ReferencePathOperation>(other);
         return m_url == referenceClip.m_url;
     }
 
-    ReferenceClipPathOperation(const String& url, const String& fragment)
-        : ClipPathOperation(Reference)
+    ReferencePathOperation(const String& url, const String& fragment)
+        : PathOperation(Reference)
         , m_url(url)
         , m_fragment(fragment)
     {
@@ -93,32 +93,32 @@ private:
     String m_fragment;
 };
 
-class ShapeClipPathOperation final : public ClipPathOperation {
+class ShapePathOperation final : public PathOperation {
 public:
-    static Ref<ShapeClipPathOperation> create(Ref<BasicShape>&& shape)
+    static Ref<ShapePathOperation> create(Ref<BasicShape>&& shape)
     {
-        return adoptRef(*new ShapeClipPathOperation(WTFMove(shape)));
+        return adoptRef(*new ShapePathOperation(WTFMove(shape)));
     }
 
     const BasicShape& basicShape() const { return m_shape; }
     WindRule windRule() const { return m_shape.get().windRule(); }
-    const Path& pathForReferenceRect(const FloatRect& boundingRect) { return m_shape.get().path(boundingRect); }
+    const Path& pathForReferenceRect(const FloatRect& boundingRect) const { return m_shape.get().path(boundingRect); }
 
     void setReferenceBox(CSSBoxType referenceBox) { m_referenceBox = referenceBox; }
     CSSBoxType referenceBox() const { return m_referenceBox; }
 
 private:
-    bool operator==(const ClipPathOperation& other) const override
+    bool operator==(const PathOperation& other) const override
     {
         if (!isSameType(other))
             return false;
-        auto& shapeClip = downcast<ShapeClipPathOperation>(other);
+        auto& shapeClip = downcast<ShapePathOperation>(other);
         return m_referenceBox == shapeClip.referenceBox()
             && (m_shape.ptr() == shapeClip.m_shape.ptr() || m_shape.get() == shapeClip.m_shape.get());
     }
 
-    explicit ShapeClipPathOperation(Ref<BasicShape>&& shape)
-        : ClipPathOperation(Shape)
+    explicit ShapePathOperation(Ref<BasicShape>&& shape)
+        : PathOperation(Shape)
         , m_shape(WTFMove(shape))
         , m_referenceBox(CSSBoxType::BoxMissing)
     {
@@ -128,11 +128,11 @@ private:
     CSSBoxType m_referenceBox;
 };
 
-class BoxClipPathOperation final : public ClipPathOperation {
+class BoxPathOperation final : public PathOperation {
 public:
-    static Ref<BoxClipPathOperation> create(CSSBoxType referenceBox)
+    static Ref<BoxPathOperation> create(CSSBoxType referenceBox)
     {
-        return adoptRef(*new BoxClipPathOperation(referenceBox));
+        return adoptRef(*new BoxPathOperation(referenceBox));
     }
 
     const Path pathForReferenceRect(const FloatRoundedRect& boundingRect) const
@@ -144,16 +144,16 @@ public:
     CSSBoxType referenceBox() const { return m_referenceBox; }
 
 private:
-    bool operator==(const ClipPathOperation& other) const override
+    bool operator==(const PathOperation& other) const override
     {
         if (!isSameType(other))
             return false;
-        auto& boxClip = downcast<BoxClipPathOperation>(other);
+        auto& boxClip = downcast<BoxPathOperation>(other);
         return m_referenceBox == boxClip.m_referenceBox;
     }
 
-    explicit BoxClipPathOperation(CSSBoxType referenceBox)
-        : ClipPathOperation(Box)
+    explicit BoxPathOperation(CSSBoxType referenceBox)
+        : PathOperation(Box)
         , m_referenceBox(referenceBox)
     {
     }
@@ -165,9 +165,9 @@ private:
 
 #define SPECIALIZE_TYPE_TRAITS_CLIP_PATH_OPERATION(ToValueTypeName, predicate) \
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ToValueTypeName) \
-    static bool isType(const WebCore::ClipPathOperation& operation) { return operation.type() == WebCore::predicate; } \
+    static bool isType(const WebCore::PathOperation& operation) { return operation.type() == WebCore::predicate; } \
 SPECIALIZE_TYPE_TRAITS_END()
 
-SPECIALIZE_TYPE_TRAITS_CLIP_PATH_OPERATION(ReferenceClipPathOperation, ClipPathOperation::Reference)
-SPECIALIZE_TYPE_TRAITS_CLIP_PATH_OPERATION(ShapeClipPathOperation, ClipPathOperation::Shape)
-SPECIALIZE_TYPE_TRAITS_CLIP_PATH_OPERATION(BoxClipPathOperation, ClipPathOperation::Box)
+SPECIALIZE_TYPE_TRAITS_CLIP_PATH_OPERATION(ReferencePathOperation, PathOperation::Reference)
+SPECIALIZE_TYPE_TRAITS_CLIP_PATH_OPERATION(ShapePathOperation, PathOperation::Shape)
+SPECIALIZE_TYPE_TRAITS_CLIP_PATH_OPERATION(BoxPathOperation, PathOperation::Box)

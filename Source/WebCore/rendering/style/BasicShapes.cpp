@@ -494,4 +494,3 @@ TextStream& operator<<(TextStream& ts, const BasicShape& shape)
 }
 
 } // namespace WebCore
-

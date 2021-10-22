@@ -397,4 +397,3 @@ bool CSSBasicShapeInset::equals(const CSSBasicShape& shape) const
 }
 
 } // namespace WebCore
-

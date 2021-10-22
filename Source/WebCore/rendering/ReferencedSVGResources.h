@@ -35,7 +35,7 @@ namespace WebCore {
 
 class CSSSVGResourceElementClient;
 class Document;
-class ReferenceClipPathOperation;
+class ReferencePathOperation;
 class ReferenceFilterOperation;
 class RenderElement;
 class RenderSVGResourceClipper;
@@ -55,7 +55,7 @@ public:
     void updateReferencedResources(Document&, const Vector<std::pair<AtomString, QualifiedName>>&);
 
     // Clipping needs a renderer, filters use an element.
-    RenderSVGResourceClipper* referencedClipperRenderer(Document&, const ReferenceClipPathOperation&);
+    RenderSVGResourceClipper* referencedClipperRenderer(Document&, const ReferencePathOperation&);
     SVGFilterElement* referencedFilterElement(Document&, const ReferenceFilterOperation&);
 
 private:

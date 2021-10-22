@@ -3793,17 +3793,17 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
             auto* operation = style.clipPath();
             if (!operation)
                 return cssValuePool.createIdentifierValue(CSSValueNone);
-            if (is<ReferenceClipPathOperation>(*operation))
-                return CSSPrimitiveValue::create(downcast<ReferenceClipPathOperation>(*operation).url(), CSSUnitType::CSS_URI);
+            if (is<ReferencePathOperation>(*operation))
+                return CSSPrimitiveValue::create(downcast<ReferencePathOperation>(*operation).url(), CSSUnitType::CSS_URI);
             auto list = CSSValueList::createSpaceSeparated();
-            if (is<ShapeClipPathOperation>(*operation)) {
-                auto& shapeOperation = downcast<ShapeClipPathOperation>(*operation);
+            if (is<ShapePathOperation>(*operation)) {
+                auto& shapeOperation = downcast<ShapePathOperation>(*operation);
                 list->append(valueForBasicShape(style, shapeOperation.basicShape()));
                 if (shapeOperation.referenceBox() != CSSBoxType::BoxMissing)
                     list->append(cssValuePool.createValue(shapeOperation.referenceBox()));
             }
-            if (is<BoxClipPathOperation>(*operation))
-                list->append(cssValuePool.createValue(downcast<BoxClipPathOperation>(*operation).referenceBox()));
+            if (is<BoxPathOperation>(*operation))
+                list->append(cssValuePool.createValue(downcast<BoxPathOperation>(*operation).referenceBox()));
             return list;
         }
         case CSSPropertyShapeMargin:

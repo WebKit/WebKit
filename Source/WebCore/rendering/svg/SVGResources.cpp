@@ -20,8 +20,8 @@
 #include "config.h"
 #include "SVGResources.h"
 
-#include "ClipPathOperation.h"
 #include "FilterOperation.h"
+#include "PathOperation.h"
 #include "RenderSVGResourceClipper.h"
 #include "RenderSVGResourceFilter.h"
 #include "RenderSVGResourceMarker.h"
@@ -219,10 +219,10 @@ bool SVGResources::buildCachedResources(const RenderElement& renderer, const Ren
 
     bool foundResources = false;
     if (clipperFilterMaskerTags().contains(tagName)) {
-        if (is<ReferenceClipPathOperation>(style.clipPath())) {
+        if (is<ReferencePathOperation>(style.clipPath())) {
             // FIXME: -webkit-clip-path should support external resources
             // https://bugs.webkit.org/show_bug.cgi?id=127032
-            auto& clipPath = downcast<ReferenceClipPathOperation>(*style.clipPath());
+            auto& clipPath = downcast<ReferencePathOperation>(*style.clipPath());
             AtomString id(clipPath.fragment());
             if (setClipper(getRenderSVGResourceById<RenderSVGResourceClipper>(document, id)))
                 foundResources = true;

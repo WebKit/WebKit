@@ -1615,7 +1615,7 @@ void RenderLayerBacking::updateMaskingLayerGeometry()
     
     if (!m_maskLayer->drawsContent()) {
         if (renderer().hasClipPath()) {
-            ASSERT(renderer().style().clipPath()->type() != ClipPathOperation::Reference);
+            ASSERT(renderer().style().clipPath()->type() != PathOperation::Reference);
 
             // FIXME: Use correct reference box for inlines: https://bugs.webkit.org/show_bug.cgi?id=129047, https://github.com/w3c/csswg-drafts/issues/6383
             LayoutRect boundingBox = m_owningLayer.boundingBox(&m_owningLayer);
@@ -2256,7 +2256,7 @@ bool RenderLayerBacking::updateMaskingLayer(bool hasMask, bool hasClipPath)
         
         if (hasClipPath) {
             // If we have a mask, we need to paint the combined clip-path and mask into the mask layer.
-            if (hasMask || renderer().style().clipPath()->type() == ClipPathOperation::Reference || !GraphicsLayer::supportsLayerType(GraphicsLayer::Type::Shape))
+            if (hasMask || renderer().style().clipPath()->type() == PathOperation::Reference || !GraphicsLayer::supportsLayerType(GraphicsLayer::Type::Shape))
                 maskPhases.add(GraphicsLayerPaintingPhase::ClipPath);
         }
 
