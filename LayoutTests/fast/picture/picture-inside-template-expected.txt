@@ -1,0 +1,9 @@
+PASS successfullyParsed is true
+
+TEST COMPLETE
+PASS document.getElementById("canary").clientWidth is 75
+PASS currentSrcFileName("canary") is "blue_rect.jpg?0"
+PASS document.getElementById("simple").clientWidth is 800
+PASS currentSrcFileName("simple") is "image-set-2x.png?2"
+
+

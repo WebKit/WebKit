@@ -1,3 +1,13 @@
+2021-10-21  Cathie Chen  <cathiechen@igalia.com>
+
+        The intrisic size of picture image inside a template is always zero
+        https://bugs.webkit.org/show_bug.cgi?id=227682
+
+        Reviewed by Darin Adler.
+
+        * fast/picture/picture-inside-template-expected.txt: Added.
+        * fast/picture/picture-inside-template.html: Added.
+
 2021-10-21  Gabriel Nava Marino  <gnavamarino@apple.com>
 
         Two null box iterators from different paths fail to compare equal
