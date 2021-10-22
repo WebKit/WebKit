@@ -394,11 +394,8 @@ void AccessibilityTable::addChildren()
     if (HTMLTableElement* tableElement = this->tableElement()) {
         if (auto caption = tableElement->caption()) {
             AccessibilityObject* axCaption = axObjectCache()->getOrCreate(caption.get());
-            // While `addChild` won't insert ignored children, we still need this accessibilityIsIgnored
-            // check so that `addChild` doesn't try to add the caption's children in its stead. Basically,
-            // explicitly checking accessibilityIsIgnored() ignores the caption and any of its children.
             if (axCaption && !axCaption->accessibilityIsIgnored())
-                addChild(axCaption);
+                m_children.append(axCaption);
         }
     }
 
@@ -423,9 +420,13 @@ void AccessibilityTable::addChildren()
         column.setColumnIndex(i);
         column.setParent(this);
         m_columns.append(&column);
-        addChild(&column);
+        if (!column.accessibilityIsIgnored())
+            m_children.append(&column);
     }
-    addChild(headerContainer());
+
+    auto* headerContainerObject = headerContainer();
+    if (headerContainerObject && !headerContainerObject->accessibilityIsIgnored())
+        m_children.append(headerContainerObject);
 
     // Sometimes the cell gets the wrong role initially because it is created before the parent
     // determines whether it is an accessibility table. Iterate all the cells and allow them to
@@ -450,7 +451,8 @@ void AccessibilityTable::addTableCellChild(AccessibilityObject* rowObject, HashS
     
     row.setRowIndex(static_cast<int>(m_rows.size()));
     m_rows.append(&row);
-    addChild(&row);
+    if (!row.accessibilityIsIgnored())
+        m_children.append(&row);
     appendedRows.add(&row);
         
     // store the maximum number of columns

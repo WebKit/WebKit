@@ -91,12 +91,12 @@ void AccessibilitySpinButton::addChildren()
     auto& incrementor = downcast<AccessibilitySpinButtonPart>(*cache->create(AccessibilityRole::SpinButtonPart));
     incrementor.setIsIncrementor(true);
     incrementor.setParent(this);
-    addChild(&incrementor);
+    m_children.append(&incrementor);
 
     auto& decrementor = downcast<AccessibilitySpinButtonPart>(*cache->create(AccessibilityRole::SpinButtonPart));
     decrementor.setIsIncrementor(false);
     decrementor.setParent(this);
-    addChild(&decrementor);
+    m_children.append(&decrementor);
 }
     
 void AccessibilitySpinButton::step(int amount)

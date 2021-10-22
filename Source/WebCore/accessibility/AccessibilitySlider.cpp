@@ -100,7 +100,7 @@ void AccessibilitySlider::addChildren()
     if (thumb.accessibilityIsIgnored())
         cache->remove(thumb.objectID());
     else
-        addChild(&thumb);
+        m_children.append(&thumb);
 }
 
 const AtomString& AccessibilitySlider::getAttribute(const QualifiedName& attribute) const
