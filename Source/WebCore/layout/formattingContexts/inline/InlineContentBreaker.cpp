@@ -97,15 +97,19 @@ static inline bool isVisuallyEmptyWhitespaceContent(const InlineContentBreaker::
 {
     // [<span></span> ] [<span> </span>] [ <span style="padding: 0px;"></span>] are all considered visually empty whitespace content.
     // [<span style="border: 1px solid red"></span> ] while this is whitespace content only, it is not considered visually empty.
-    // Due to commit boundary rules, we just need to check the first non-typeless inline item (can't have both [img] and [text])
+    ASSERT(!continuousContent.runs().isEmpty());
+    auto hasWhitespace = false;
     for (auto& run : continuousContent.runs()) {
         auto& inlineItem = run.inlineItem;
-        // FIXME: check for padding border etc.
+        // FIXME: check if visual decoration makes a difference here e.g. padding border.
         if (inlineItem.isInlineBoxStart() || inlineItem.isInlineBoxEnd())
             continue;
-        return inlineItem.isText() && downcast<InlineTextItem>(inlineItem).isWhitespace();
+        auto isWhitespace = inlineItem.isText() && downcast<InlineTextItem>(inlineItem).isWhitespace();
+        if (!isWhitespace)
+            return false;
+        hasWhitespace = true;
     }
-    return false;
+    return hasWhitespace;
 }
 
 static inline bool isNonContentRunsOnly(const InlineContentBreaker::ContinuousContent& continuousContent)
@@ -173,16 +177,17 @@ InlineContentBreaker::Result InlineContentBreaker::processOverflowingContent(con
     ASSERT(!continuousContent.runs().isEmpty());
 
     ASSERT(continuousContent.logicalWidth() > lineStatus.availableWidth);
-    if (continuousContent.hasTrailingCollapsibleContent()) {
-        ASSERT(hasTrailingTextContent(overflowContent));
-        // First check if the content fits without the trailing collapsible part.
-        if (continuousContent.nonCollapsibleLogicalWidth() <= lineStatus.availableWidth)
-            return { Result::Action::Keep, IsEndOfLine::No };
-        // Now check if we can trim the line too.
-        if (lineStatus.hasFullyCollapsibleTrailingRun && continuousContent.isFullyCollapsible()) {
+    if (continuousContent.hasCollapsibleContent()) {
+        if (lineStatus.hasFullyCollapsibleTrailingContent && continuousContent.isFullyCollapsible()) {
             // If this new content is fully collapsible, it should surely fit.
             return { Result::Action::Keep, IsEndOfLine::No };
         }
+        // Check if the content fits if we collapsed it.
+        auto spaceRequired = continuousContent.logicalWidth() - continuousContent.trailingCollapsibleWidth();
+        if (lineStatus.hasFullyCollapsibleTrailingContent)
+            spaceRequired -= continuousContent.leadingCollapsibleWidth();
+        if (spaceRequired <= lineStatus.availableWidth)
+            return { Result::Action::Keep, IsEndOfLine::No };
     } else if (lineStatus.collapsibleWidth && isNonContentRunsOnly(continuousContent)) {
         // Let's see if the non-content runs fit when the line has trailing collapsible content.
         // "text content <span style="padding: 1px"></span>" <- the <span></span> runs could fit after collapsing the trailing whitespace.
@@ -649,29 +654,30 @@ OptionSet<InlineContentBreaker::WordBreakRule> InlineContentBreaker::wordBreakBe
 void InlineContentBreaker::ContinuousContent::append(const InlineItem& inlineItem, const RenderStyle& style, InlineLayoutUnit logicalWidth, std::optional<InlineLayoutUnit> collapsibleWidth)
 {
     ASSERT(inlineItem.isText() || inlineItem.isBox() || inlineItem.isInlineBoxStart() || inlineItem.isInlineBoxEnd());
+    auto isLeadingCollapsible = collapsibleWidth && (m_runs.isEmpty() || isFullyCollapsible());
     m_runs.append({ inlineItem, style, logicalWidth });
     m_logicalWidth = clampTo<InlineLayoutUnit>(m_logicalWidth + logicalWidth);
     if (!collapsibleWidth) {
         if (inlineItem.isText() || inlineItem.isBox()) {
             // Inline boxes do not prevent the trailing content from getting collapsed.
-            m_collapsibleLogicalWidth = { };
+            m_trailingCollapsibleWidth = { };
         }
         return;
     }
     ASSERT(*collapsibleWidth <= logicalWidth);
-    if (*collapsibleWidth == logicalWidth) {
-        // Fully collapsible run.
-        m_collapsibleLogicalWidth += logicalWidth;
+    if (isLeadingCollapsible) {
+        ASSERT(!m_trailingCollapsibleWidth);
+        m_leadingCollapsibleWidth += *collapsibleWidth;
         return;
     }
-    // Partially collapsible run.
-    m_collapsibleLogicalWidth = *collapsibleWidth;
+    m_trailingCollapsibleWidth = *collapsibleWidth == logicalWidth ? m_trailingCollapsibleWidth + logicalWidth : *collapsibleWidth;
 }
 
 void InlineContentBreaker::ContinuousContent::reset()
 {
     m_logicalWidth = { };
-    m_collapsibleLogicalWidth = { };
+    m_leadingCollapsibleWidth = { };
+    m_trailingCollapsibleWidth = { };
     m_runs.clear();
 }
 }

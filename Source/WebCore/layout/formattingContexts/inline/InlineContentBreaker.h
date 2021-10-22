@@ -77,12 +77,12 @@ public:
     // see https://drafts.csswg.org/css-text-3/#line-break-details
     struct ContinuousContent {
         InlineLayoutUnit logicalWidth() const { return m_logicalWidth; }
-        InlineLayoutUnit collapsibleLogicalWidth() const { return m_collapsibleLogicalWidth; }
-        InlineLayoutUnit nonCollapsibleLogicalWidth() const { return logicalWidth() - collapsibleLogicalWidth(); }
-        bool hasTrailingCollapsibleContent() const { return !!collapsibleLogicalWidth(); }
-        bool isFullyCollapsible() const { return logicalWidth() == collapsibleLogicalWidth(); }
+        InlineLayoutUnit leadingCollapsibleWidth() const { return m_leadingCollapsibleWidth; }
+        InlineLayoutUnit trailingCollapsibleWidth() const { return m_trailingCollapsibleWidth; }
+        bool hasCollapsibleContent() const { return trailingCollapsibleWidth() > 0 || leadingCollapsibleWidth() > 0; }
+        bool isFullyCollapsible() const { return logicalWidth() == trailingCollapsibleWidth() + leadingCollapsibleWidth(); }
 
-        void append(const InlineItem&, const RenderStyle&, InlineLayoutUnit logicalWidth, std::optional<InlineLayoutUnit> collapsibleWidth);
+        void append(const InlineItem&, const RenderStyle&, InlineLayoutUnit logicalWidth, std::optional<InlineLayoutUnit> collapsibleWidth = std::nullopt);
         void reset();
 
         struct Run {
@@ -100,7 +100,8 @@ public:
     private:
         RunList m_runs;
         InlineLayoutUnit m_logicalWidth { 0 };
-        InlineLayoutUnit m_collapsibleLogicalWidth { 0 };
+        InlineLayoutUnit m_leadingCollapsibleWidth { 0 };
+        InlineLayoutUnit m_trailingCollapsibleWidth { 0 };
     };
 
     struct LineStatus {
@@ -108,7 +109,7 @@ public:
         InlineLayoutUnit availableWidth { 0 };
         InlineLayoutUnit collapsibleWidth { 0 };
         std::optional<InlineLayoutUnit> trailingSoftHyphenWidth;
-        bool hasFullyCollapsibleTrailingRun { false };
+        bool hasFullyCollapsibleTrailingContent { false };
         bool hasContent { false };
         bool hasWrapOpportunityAtPreviousPosition { false };
     };
