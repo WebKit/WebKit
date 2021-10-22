@@ -123,7 +123,7 @@ public:
     void setComposite(CompositeOperation compositeOperation) { m_compositeOperation = compositeOperation; }
 
     void getAnimatedStyle(std::unique_ptr<RenderStyle>& animatedStyle);
-    void apply(RenderStyle& targetStyle, const RenderStyle* parentElementStyle, std::optional<Seconds> = std::nullopt) override;
+    void apply(RenderStyle& targetStyle, const Style::ResolutionContext&, std::optional<Seconds> = std::nullopt) override;
     void invalidate() override;
     void animationDidTick() final;
     void animationDidPlay() final;
@@ -154,7 +154,7 @@ public:
 #endif
     bool colorFilterFunctionListsMatch() const override { return m_colorFilterFunctionListsMatch; }
 
-    void computeDeclarativeAnimationBlendingKeyframes(const RenderStyle* oldStyle, const RenderStyle& newStyle, const RenderStyle* parentElementStyle);
+    void computeDeclarativeAnimationBlendingKeyframes(const RenderStyle* oldStyle, const RenderStyle& newStyle, const Style::ResolutionContext&);
     const KeyframeList& blendingKeyframes() const { return m_blendingKeyframes; }
     const HashSet<CSSPropertyID>& animatedProperties();
     bool animatesProperty(CSSPropertyID) const;
@@ -198,8 +198,8 @@ private:
     void computeStackingContextImpact();
     void computeSomeKeyframesUseStepsTimingFunction();
     void clearBlendingKeyframes();
-    void updateBlendingKeyframes(RenderStyle& elementStyle, const RenderStyle* parentElementStyle);
-    void computeCSSAnimationBlendingKeyframes(const RenderStyle& unanimatedStyle, const RenderStyle* parentElementStyle);
+    void updateBlendingKeyframes(RenderStyle& elementStyle, const Style::ResolutionContext&);
+    void computeCSSAnimationBlendingKeyframes(const RenderStyle& unanimatedStyle, const Style::ResolutionContext&);
     void computeCSSTransitionBlendingKeyframes(const RenderStyle* oldStyle, const RenderStyle& newStyle);
     void computeAcceleratedPropertiesState();
     void setBlendingKeyframes(KeyframeList&);

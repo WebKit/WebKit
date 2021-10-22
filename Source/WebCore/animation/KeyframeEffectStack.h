@@ -36,6 +36,10 @@ namespace WebCore {
 class KeyframeEffect;
 class RenderStyle;
 
+namespace Style {
+struct ResolutionContext;
+}
+
 class KeyframeEffectStack {
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -50,7 +54,7 @@ public:
     void setCSSAnimationList(RefPtr<const AnimationList>&&);
     bool isCurrentlyAffectingProperty(CSSPropertyID) const;
     bool requiresPseudoElement() const;
-    OptionSet<AnimationImpact> applyKeyframeEffects(RenderStyle& targetStyle, const RenderStyle& previousLastStyleChangeEventStyle, const RenderStyle* parentElementStyle);
+    OptionSet<AnimationImpact> applyKeyframeEffects(RenderStyle& targetStyle, const RenderStyle& previousLastStyleChangeEventStyle, const Style::ResolutionContext&);
     bool hasEffectWithImplicitKeyframes() const;
 
     void stopAcceleratingTransformRelatedProperties(UseAcceleratedAction);

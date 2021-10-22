@@ -75,7 +75,7 @@ public:
 protected:
     DeclarativeAnimation(const Styleable&, const Animation&);
 
-    virtual void initialize(const RenderStyle* oldStyle, const RenderStyle& newStyle, const RenderStyle* parentElementStyle);
+    virtual void initialize(const RenderStyle* oldStyle, const RenderStyle& newStyle, const Style::ResolutionContext&);
     virtual void syncPropertiesWithBackingAnimation();
     // elapsedTime is the animation's current time at the time the event is added and is exposed through the DOM API, timelineTime is the animations'
     // timeline current time and is not exposed through the DOM API but used by the DocumentTimeline for sorting events before dispatch. 

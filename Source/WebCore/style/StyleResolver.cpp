@@ -159,7 +159,7 @@ Resolver::Resolver(Document& document)
         m_mediaQueryEvaluator = MediaQueryEvaluator { };
 
     if (auto* documentElement = m_document.documentElement()) {
-        m_rootDefaultStyle = styleForElement(*documentElement, m_document.renderStyle(), nullptr, RuleMatchingBehavior::MatchOnlyUserAgentRules).renderStyle;
+        m_rootDefaultStyle = styleForElement(*documentElement, { m_document.renderStyle() }, RuleMatchingBehavior::MatchOnlyUserAgentRules).renderStyle;
         // Turn off assertion against font lookups during style resolver initialization. We may need root style font for media queries.
         m_document.fontSelector().incrementIsComputingRootStyleFont();
         m_rootDefaultStyle->fontCascade().update(&m_document.fontSelector());
@@ -218,9 +218,9 @@ BuilderContext Resolver::builderContext(const State& state)
     };
 }
 
-ElementStyle Resolver::styleForElement(const Element& element, const RenderStyle* parentStyle, const RenderStyle* parentBoxStyle, RuleMatchingBehavior matchingBehavior, const SelectorFilter* selectorFilter)
+ElementStyle Resolver::styleForElement(const Element& element, const ResolutionContext& context, RuleMatchingBehavior matchingBehavior)
 {
-    auto state = State(element, parentStyle, m_overrideDocumentElementStyle);
+    auto state = State(element, context.parentStyle, context.documentElementStyle);
 
     if (state.parentStyle()) {
         state.setStyle(RenderStyle::createPtr());
@@ -245,7 +245,7 @@ ElementStyle Resolver::styleForElement(const Element& element, const RenderStyle
 
     UserAgentStyle::ensureDefaultStyleSheetsForElement(element);
 
-    ElementRuleCollector collector(element, m_ruleSets, selectorFilter);
+    ElementRuleCollector collector(element, m_ruleSets, context.selectorFilter);
     collector.setMedium(&m_mediaQueryEvaluator);
 
     if (matchingBehavior == RuleMatchingBehavior::MatchOnlyUserAgentRules)
@@ -264,7 +264,7 @@ ElementStyle Resolver::styleForElement(const Element& element, const RenderStyle
 
     applyMatchedProperties(state, collector.matchResult());
 
-    Adjuster adjuster(document(), *state.parentStyle(), parentBoxStyle, &element);
+    Adjuster adjuster(document(), *state.parentStyle(), context.parentBoxStyle, &element);
     adjuster.adjust(*state.style(), state.userAgentAppearanceStyle());
 
     if (state.style()->hasViewportUnits())
@@ -273,15 +273,15 @@ ElementStyle Resolver::styleForElement(const Element& element, const RenderStyle
     return { state.takeStyle(), WTFMove(elementStyleRelations) };
 }
 
-std::unique_ptr<RenderStyle> Resolver::styleForKeyframe(const Element& element, const RenderStyle* elementStyle, const RenderStyle* parentElementStyle, const StyleRuleKeyframe* keyframe, KeyframeValue& keyframeValue)
+std::unique_ptr<RenderStyle> Resolver::styleForKeyframe(const Element& element, const RenderStyle* elementStyle, const ResolutionContext& context, const StyleRuleKeyframe* keyframe, KeyframeValue& keyframeValue)
 {
     MatchResult result;
     result.authorDeclarations.append({ &keyframe->properties(), SelectorChecker::MatchAll, propertyAllowlistForPseudoId(elementStyle->styleType()) });
 
-    auto state = State(element, nullptr, m_overrideDocumentElementStyle);
+    auto state = State(element, nullptr, context.documentElementStyle);
 
     state.setStyle(RenderStyle::clonePtr(*elementStyle));
-    state.setParentStyle(RenderStyle::clonePtr(parentElementStyle ? *parentElementStyle : *elementStyle));
+    state.setParentStyle(RenderStyle::clonePtr(context.parentStyle ? *context.parentStyle : *elementStyle));
 
     Builder builder(*state.style(), builderContext(state), result, { CascadeLevel::Author });
     builder.applyAllProperties();
@@ -307,7 +307,7 @@ bool Resolver::isAnimationNameValid(const String& name)
     return m_keyframesRuleMap.find(AtomString(name).impl()) != m_keyframesRuleMap.end();
 }
 
-void Resolver::keyframeStylesForAnimation(const Element& element, const RenderStyle* elementStyle, const RenderStyle* parentElementStyle, KeyframeList& list)
+void Resolver::keyframeStylesForAnimation(const Element& element, const RenderStyle* elementStyle, const ResolutionContext& context, KeyframeList& list)
 {
     list.clear();
 
@@ -369,7 +369,7 @@ void Resolver::keyframeStylesForAnimation(const Element& element, const RenderSt
         // Add this keyframe style to all the indicated key times
         for (auto key : keyframe->keys()) {
             KeyframeValue keyframeValue(0, nullptr);
-            keyframeValue.setStyle(styleForKeyframe(element, elementStyle, parentElementStyle, keyframe.ptr(), keyframeValue));
+            keyframeValue.setStyle(styleForKeyframe(element, elementStyle, context, keyframe.ptr(), keyframeValue));
             keyframeValue.setKey(key);
             if (auto timingFunctionCSSValue = keyframe->properties().getPropertyCSSValue(CSSPropertyAnimationTimingFunction))
                 keyframeValue.setTimingFunction(TimingFunction::createFromCSSValue(*timingFunctionCSSValue.get()));
@@ -377,12 +377,12 @@ void Resolver::keyframeStylesForAnimation(const Element& element, const RenderSt
         }
     }
 
-    list.fillImplicitKeyframes(element, *this, elementStyle, parentElementStyle);
+    list.fillImplicitKeyframes(element, *this, elementStyle, context.parentStyle);
 }
 
-std::unique_ptr<RenderStyle> Resolver::pseudoStyleForElement(const Element& element, const PseudoElementRequest& pseudoElementRequest, const RenderStyle& parentStyle, const RenderStyle* parentBoxStyle, const SelectorFilter* selectorFilter)
+std::unique_ptr<RenderStyle> Resolver::pseudoStyleForElement(const Element& element, const PseudoElementRequest& pseudoElementRequest, const ResolutionContext& context)
 {
-    auto state = State(element, &parentStyle, m_overrideDocumentElementStyle);
+    auto state = State(element, context.parentStyle, context.documentElementStyle);
 
     if (state.parentStyle()) {
         state.setStyle(RenderStyle::createPtr());
@@ -392,7 +392,7 @@ std::unique_ptr<RenderStyle> Resolver::pseudoStyleForElement(const Element& elem
         state.setParentStyle(RenderStyle::clonePtr(*state.style()));
     }
 
-    ElementRuleCollector collector(element, m_ruleSets, selectorFilter);
+    ElementRuleCollector collector(element, m_ruleSets, context.selectorFilter);
     collector.setPseudoElementRequest(pseudoElementRequest);
     collector.setMedium(&m_mediaQueryEvaluator);
     collector.matchUARules();
@@ -411,7 +411,7 @@ std::unique_ptr<RenderStyle> Resolver::pseudoStyleForElement(const Element& elem
 
     applyMatchedProperties(state, collector.matchResult());
 
-    Adjuster adjuster(document(), *state.parentStyle(), parentBoxStyle, nullptr);
+    Adjuster adjuster(document(), *state.parentStyle(), context.parentBoxStyle, nullptr);
     adjuster.adjust(*state.style(), state.userAgentAppearanceStyle());
 
     if (state.style()->hasViewportUnits())

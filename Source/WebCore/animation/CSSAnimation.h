@@ -38,7 +38,7 @@ class RenderStyle;
 class CSSAnimation final : public DeclarativeAnimation {
     WTF_MAKE_ISO_ALLOCATED(CSSAnimation);
 public:
-    static Ref<CSSAnimation> create(const Styleable&, const Animation&, const RenderStyle* oldStyle, const RenderStyle& newStyle, const RenderStyle* parentElementStyle);
+    static Ref<CSSAnimation> create(const Styleable&, const Animation&, const RenderStyle* oldStyle, const RenderStyle& newStyle, const Style::ResolutionContext&);
     ~CSSAnimation() = default;
 
     bool isCSSAnimation() const override { return true; }

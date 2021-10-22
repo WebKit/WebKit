@@ -45,6 +45,7 @@ class ShadowRoot;
 namespace Style {
 
 class Resolver;
+struct ResolutionContext;
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(TreeResolverScope);
 class TreeResolver {
@@ -55,13 +56,13 @@ public:
     std::unique_ptr<Update> resolve();
 
 private:
-    std::unique_ptr<RenderStyle> styleForStyleable(const Styleable&, const RenderStyle& inheritedStyle);
+    std::unique_ptr<RenderStyle> styleForStyleable(const Styleable&, const ResolutionContext&);
 
     void resolveComposedTree();
 
     ElementUpdates resolveElement(Element&);
 
-    static ElementUpdate createAnimatedElementUpdate(std::unique_ptr<RenderStyle>, const Styleable&, Change, const RenderStyle& parentStyle, const RenderStyle* parentBoxStyle);
+    static ElementUpdate createAnimatedElementUpdate(std::unique_ptr<RenderStyle>, const Styleable&, Change, const ResolutionContext&);
     std::optional<ElementUpdate> resolvePseudoStyle(Element&, const ElementUpdate&, PseudoId);
 
     struct Scope : RefCounted<Scope> {
@@ -99,8 +100,10 @@ private:
     void popParent();
     void popParentsToDepth(unsigned depth);
 
+    ResolutionContext makeResolutionContext();
+    ResolutionContext makeResolutionContextForPseudoElement(const ElementUpdate&);
     const RenderStyle* parentBoxStyle() const;
-    const RenderStyle* parentBoxStyleForPseudo(const ElementUpdate&) const;
+    const RenderStyle* parentBoxStyleForPseudoElement(const ElementUpdate&) const;
 
     Document& m_document;
     std::unique_ptr<RenderStyle> m_documentElementStyle;

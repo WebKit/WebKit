@@ -47,6 +47,10 @@
 
 namespace WebCore {
 
+namespace Style {
+struct ResolutionContext;
+}
+
 class AnimationEffect : public RefCounted<AnimationEffect>, public CanMakeWeakPtr<AnimationEffect> {
 public:
     virtual ~AnimationEffect();
@@ -61,7 +65,7 @@ public:
     ExceptionOr<void> bindingsUpdateTiming(std::optional<OptionalEffectTiming>);
     ExceptionOr<void> updateTiming(std::optional<OptionalEffectTiming>);
 
-    virtual void apply(RenderStyle& targetStyle, const RenderStyle* parentElementStyle, std::optional<Seconds> = std::nullopt) = 0;
+    virtual void apply(RenderStyle& targetStyle, const Style::ResolutionContext&, std::optional<Seconds> = std::nullopt) = 0;
     virtual void invalidate() = 0;
     virtual void animationDidTick() = 0;
     virtual void animationDidPlay() = 0;

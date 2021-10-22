@@ -255,7 +255,7 @@ std::unique_ptr<RenderStyle> RenderElement::computeFirstLineStyle() const
         if (!composedTreeParentElement)
             return nullptr;
 
-        auto style = composedTreeParentElement->styleResolver().styleForElement(*composedTreeParentElement, &parentStyle).renderStyle;
+        auto style = composedTreeParentElement->styleResolver().styleForElement(*composedTreeParentElement, { &parentStyle }).renderStyle;
         ASSERT(style->display() == DisplayType::Contents);
 
         // We act as if there was an unstyled <span> around the text node. Only styling happens via inheritance.
@@ -264,7 +264,7 @@ std::unique_ptr<RenderStyle> RenderElement::computeFirstLineStyle() const
         return firstLineStyle;
     }
 
-    return rendererForFirstLineStyle.element()->styleResolver().styleForElement(*element(), &parentStyle).renderStyle;
+    return rendererForFirstLineStyle.element()->styleResolver().styleForElement(*element(), { &parentStyle }).renderStyle;
 }
 
 const RenderStyle& RenderElement::firstLineStyle() const
@@ -1531,7 +1531,7 @@ std::unique_ptr<RenderStyle> RenderElement::getUncachedPseudoStyle(const Style::
 
     auto& styleResolver = element()->styleResolver();
 
-    std::unique_ptr<RenderStyle> style = styleResolver.pseudoStyleForElement(*element(), pseudoElementRequest, *parentStyle);
+    std::unique_ptr<RenderStyle> style = styleResolver.pseudoStyleForElement(*element(), pseudoElementRequest, { parentStyle });
 
     if (style)
         Style::loadPendingResources(*style, document(), element());

@@ -88,15 +88,12 @@ TreeResolver::Scope::Scope(ShadowRoot& shadowRoot, Scope& enclosingScope)
     , shadowRoot(&shadowRoot)
     , enclosingScope(&enclosingScope)
 {
-    resolver->setOverrideDocumentElementStyle(enclosingScope.resolver->overrideDocumentElementStyle());
 }
 
 TreeResolver::Scope::~Scope()
 {
     if (!shadowRoot)
         resolver->document().setIsResolvingTreeStyle(false);
-
-    resolver->setOverrideDocumentElementStyle(nullptr);
 }
 
 TreeResolver::Parent::Parent(Document& document)
@@ -129,13 +126,13 @@ void TreeResolver::popScope()
     return m_scopeStack.removeLast();
 }
 
-std::unique_ptr<RenderStyle> TreeResolver::styleForStyleable(const Styleable& styleable, const RenderStyle& inheritedStyle)
+std::unique_ptr<RenderStyle> TreeResolver::styleForStyleable(const Styleable& styleable, const ResolutionContext& resolutionContext)
 {
     auto& element = styleable.element;
 
     if (element.hasCustomStyleResolveCallbacks()) {
         RenderStyle* shadowHostStyle = scope().shadowRoot ? m_update->elementStyle(*scope().shadowRoot->host()) : nullptr;
-        if (auto customStyle = element.resolveCustomStyle(inheritedStyle, shadowHostStyle)) {
+        if (auto customStyle = element.resolveCustomStyle(resolutionContext, shadowHostStyle)) {
             if (customStyle->relations)
                 commitRelations(WTFMove(customStyle->relations), *m_update);
 
@@ -146,7 +143,7 @@ std::unique_ptr<RenderStyle> TreeResolver::styleForStyleable(const Styleable& st
     if (auto style = scope().sharingResolver.resolve(styleable, *m_update))
         return style;
 
-    auto elementStyle = scope().resolver->styleForElement(element, &inheritedStyle, parentBoxStyle(), RuleMatchingBehavior::MatchAllRules, &scope().selectorFilter);
+    auto elementStyle = scope().resolver->styleForElement(element, resolutionContext);
 
     if (elementStyle.relations)
         commitRelations(WTFMove(elementStyle.relations), *m_update);
@@ -210,8 +207,10 @@ ElementUpdates TreeResolver::resolveElement(Element& element)
     if (!element.rendererIsEverNeeded() && !element.hasDisplayContents())
         return { };
 
+    auto resolutionContext = makeResolutionContext();
+
     Styleable styleable { element, PseudoId::None };
-    auto newStyle = styleForStyleable(styleable, parent().style);
+    auto newStyle = styleForStyleable(styleable, resolutionContext);
 
     if (!affectsRenderedSubtree(element, *newStyle))
         return { };
@@ -223,12 +222,11 @@ ElementUpdates TreeResolver::resolveElement(Element& element)
         m_document.setHasNodesWithNonFinalStyle();
     }
 
-    auto update = createAnimatedElementUpdate(WTFMove(newStyle), styleable, parent().change, parent().style, parentBoxStyle());
+    auto update = createAnimatedElementUpdate(WTFMove(newStyle), styleable, parent().change, resolutionContext);
     auto descendantsToResolve = computeDescendantsToResolve(update.change, element.styleValidity(), parent().descendantsToResolve);
 
     if (&element == m_document.documentElement()) {
         m_documentElementStyle = RenderStyle::clonePtr(*update.style);
-        scope().resolver->setOverrideDocumentElementStyle(m_documentElementStyle.get());
 
         if (!existingStyle || existingStyle->computedFontPixelSize() != update.style->computedFontPixelSize()) {
             // "rem" units are relative to the document element's font size so we need to recompute everything.
@@ -286,10 +284,9 @@ std::optional<ElementUpdate> TreeResolver::resolvePseudoStyle(Element& element, 
     if (!elementUpdate.style->hasPseudoStyle(pseudoId))
         return { };
 
-    auto& parentStyle = *elementUpdate.style;
-    auto* parentBoxStyle = parentBoxStyleForPseudo(elementUpdate);
+    auto resolutionContext = makeResolutionContextForPseudoElement(elementUpdate);
 
-    auto pseudoStyle = scope().resolver->pseudoStyleForElement(element, { pseudoId }, parentStyle, parentBoxStyle, &scope().selectorFilter);
+    auto pseudoStyle = scope().resolver->pseudoStyleForElement(element, { pseudoId }, resolutionContext);
     if (!pseudoStyle)
         return { };
 
@@ -297,7 +294,27 @@ std::optional<ElementUpdate> TreeResolver::resolvePseudoStyle(Element& element, 
     if (!pseudoElementRendererIsNeeded(pseudoStyle.get()) && !hasAnimations)
         return { };
 
-    return createAnimatedElementUpdate(WTFMove(pseudoStyle), { element, pseudoId }, elementUpdate.change, parentStyle, parentBoxStyle);
+    return createAnimatedElementUpdate(WTFMove(pseudoStyle), { element, pseudoId }, elementUpdate.change, resolutionContext);
+}
+
+ResolutionContext TreeResolver::makeResolutionContext()
+{
+    return {
+        &parent().style,
+        parentBoxStyle(),
+        m_documentElementStyle.get(),
+        &scope().selectorFilter
+    };
+}
+
+ResolutionContext TreeResolver::makeResolutionContextForPseudoElement(const ElementUpdate& elementUpdate)
+{
+    return {
+        elementUpdate.style.get(),
+        parentBoxStyleForPseudoElement(elementUpdate),
+        m_documentElementStyle.get(),
+        &scope().selectorFilter
+    };
 }
 
 const RenderStyle* TreeResolver::parentBoxStyle() const
@@ -314,7 +331,7 @@ const RenderStyle* TreeResolver::parentBoxStyle() const
     return nullptr;
 }
 
-const RenderStyle* TreeResolver::parentBoxStyleForPseudo(const ElementUpdate& elementUpdate) const
+const RenderStyle* TreeResolver::parentBoxStyleForPseudoElement(const ElementUpdate& elementUpdate) const
 {
     switch (elementUpdate.style->display()) {
     case DisplayType::None:
@@ -326,7 +343,7 @@ const RenderStyle* TreeResolver::parentBoxStyleForPseudo(const ElementUpdate& el
     }
 }
 
-ElementUpdate TreeResolver::createAnimatedElementUpdate(std::unique_ptr<RenderStyle> newStyle, const Styleable& styleable, Change parentChange, const RenderStyle& parentStyle, const RenderStyle* parentBoxStyle)
+ElementUpdate TreeResolver::createAnimatedElementUpdate(std::unique_ptr<RenderStyle> newStyle, const Styleable& styleable, Change parentChange, const ResolutionContext& resolutionContext)
 {
     auto& element = styleable.element;
     auto& document = element.document();
@@ -345,7 +362,7 @@ ElementUpdate TreeResolver::createAnimatedElementUpdate(std::unique_ptr<RenderSt
         // to use CSS Animations as defined in the previous style change event. As such, we update CSS Animations after CSS Transitions
         // such that when CSS Transitions are updated the CSS Animations data is the same as during the previous style change event.
         if ((oldStyle && oldStyle->hasAnimations()) || newStyle->hasAnimations())
-            styleable.updateCSSAnimations(oldStyle, *newStyle, &parentStyle);
+            styleable.updateCSSAnimations(oldStyle, *newStyle, resolutionContext);
     }
 
     // Now we can update all Web animations, which will include CSS Animations as well
@@ -356,10 +373,10 @@ ElementUpdate TreeResolver::createAnimatedElementUpdate(std::unique_ptr<RenderSt
         styleable.setLastStyleChangeEventStyle(RenderStyle::clonePtr(*newStyle));
         // Apply all keyframe effects to the new style.
         auto animatedStyle = RenderStyle::clonePtr(*newStyle);
-        animationImpact = styleable.applyKeyframeEffects(*animatedStyle, *previousLastStyleChangeEventStyle, &parentStyle);
+        animationImpact = styleable.applyKeyframeEffects(*animatedStyle, *previousLastStyleChangeEventStyle, resolutionContext);
         newStyle = WTFMove(animatedStyle);
 
-        Adjuster adjuster(document, parentStyle, parentBoxStyle, styleable.pseudoId == PseudoId::None ? &element : nullptr);
+        Adjuster adjuster(document, *resolutionContext.parentStyle, resolutionContext.parentBoxStyle, styleable.pseudoId == PseudoId::None ? &element : nullptr);
         adjuster.adjustAnimatedStyle(*newStyle, animationImpact);
     } else
         styleable.setLastStyleChangeEventStyle(nullptr);

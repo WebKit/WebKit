@@ -85,9 +85,9 @@ struct Styleable {
         return element.hasKeyframeEffects(pseudoId);
     }
 
-    OptionSet<AnimationImpact> applyKeyframeEffects(RenderStyle& targetStyle, const RenderStyle& previousLastStyleChangeEventStyle, const RenderStyle* parentElementStyle) const
+    OptionSet<AnimationImpact> applyKeyframeEffects(RenderStyle& targetStyle, const RenderStyle& previousLastStyleChangeEventStyle, const Style::ResolutionContext& resolutionContext) const
     {
-        return element.ensureKeyframeEffectStack(pseudoId).applyKeyframeEffects(targetStyle, previousLastStyleChangeEventStyle, parentElementStyle);
+        return element.ensureKeyframeEffectStack(pseudoId).applyKeyframeEffects(targetStyle, previousLastStyleChangeEventStyle, resolutionContext);
     }
 
     const AnimationCollection* animations() const
@@ -155,7 +155,7 @@ struct Styleable {
 
     void removeDeclarativeAnimationFromListsForOwningElement(WebAnimation&) const;
 
-    void updateCSSAnimations(const RenderStyle* currentStyle, const RenderStyle& afterChangeStyle, const RenderStyle* parentElementStyle) const;
+    void updateCSSAnimations(const RenderStyle* currentStyle, const RenderStyle& afterChangeStyle, const Style::ResolutionContext&) const;
     void updateCSSTransitions(const RenderStyle& currentStyle, const RenderStyle& newStyle) const;
 };
 

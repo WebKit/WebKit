@@ -119,14 +119,14 @@ void KeyframeList::fillImplicitKeyframes(const Element& element, Style::Resolver
     auto initialSize = size();
     if (initialSize > 0 && m_keyframes[0].key()) {
         KeyframeValue keyframeValue(0, nullptr);
-        keyframeValue.setStyle(styleResolver.styleForKeyframe(element, elementStyle, parentElementStyle, &zeroPercentKeyframe(), keyframeValue));
+        keyframeValue.setStyle(styleResolver.styleForKeyframe(element, elementStyle, { parentElementStyle }, &zeroPercentKeyframe(), keyframeValue));
         insert(WTFMove(keyframeValue));
     }
 
     // If the 100% keyframe is missing, create it (but only if there is at least one other keyframe).
     if (initialSize > 0 && (m_keyframes[size() - 1].key() != 1)) {
         KeyframeValue keyframeValue(1, nullptr);
-        keyframeValue.setStyle(styleResolver.styleForKeyframe(element, elementStyle, parentElementStyle, &hundredPercentKeyframe(), keyframeValue));
+        keyframeValue.setStyle(styleResolver.styleForKeyframe(element, elementStyle, { parentElementStyle }, &hundredPercentKeyframe(), keyframeValue));
         insert(WTFMove(keyframeValue));
     }
 }

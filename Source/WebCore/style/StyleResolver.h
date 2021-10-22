@@ -80,17 +80,25 @@ struct ElementStyle {
     std::unique_ptr<Relations> relations;
 };
 
+struct ResolutionContext {
+    const RenderStyle* parentStyle;
+    const RenderStyle* parentBoxStyle { nullptr };
+    // This needs to be provided during style resolution when up-to-date document element style is not available via DOM.
+    const RenderStyle* documentElementStyle { nullptr };
+    const SelectorFilter* selectorFilter { nullptr };
+};
+
 class Resolver : public RefCounted<Resolver> {
     WTF_MAKE_ISO_ALLOCATED(Resolver);
 public:
     static Ref<Resolver> create(Document&);
     ~Resolver();
 
-    ElementStyle styleForElement(const Element&, const RenderStyle* parentStyle, const RenderStyle* parentBoxStyle = nullptr, RuleMatchingBehavior = RuleMatchingBehavior::MatchAllRules, const SelectorFilter* = nullptr);
+    ElementStyle styleForElement(const Element&, const ResolutionContext&, RuleMatchingBehavior = RuleMatchingBehavior::MatchAllRules);
 
-    void keyframeStylesForAnimation(const Element&, const RenderStyle* elementStyle, const RenderStyle* parentElementStyle, KeyframeList&);
+    void keyframeStylesForAnimation(const Element&, const RenderStyle* elementStyle, const ResolutionContext&, KeyframeList&);
 
-    WEBCORE_EXPORT std::unique_ptr<RenderStyle> pseudoStyleForElement(const Element&, const PseudoElementRequest&, const RenderStyle& parentStyle, const RenderStyle* parentBoxStyle = nullptr, const SelectorFilter* = nullptr);
+    WEBCORE_EXPORT std::unique_ptr<RenderStyle> pseudoStyleForElement(const Element&, const PseudoElementRequest&, const ResolutionContext&);
 
     std::unique_ptr<RenderStyle> styleForPage(int pageIndex);
     std::unique_ptr<RenderStyle> defaultStyleForElement(const Element*);
@@ -106,12 +114,9 @@ public:
 
     const MediaQueryEvaluator& mediaQueryEvaluator() const { return m_mediaQueryEvaluator; }
 
-    const RenderStyle* overrideDocumentElementStyle() const { return m_overrideDocumentElementStyle; }
-    void setOverrideDocumentElementStyle(const RenderStyle* style) { m_overrideDocumentElementStyle = style; }
-
     void addCurrentSVGFontFaceRules();
 
-    std::unique_ptr<RenderStyle> styleForKeyframe(const Element&, const RenderStyle* elementStyle, const RenderStyle* parentElementStyle, const StyleRuleKeyframe*, KeyframeValue&);
+    std::unique_ptr<RenderStyle> styleForKeyframe(const Element&, const RenderStyle* elementStyle, const ResolutionContext&, const StyleRuleKeyframe*, KeyframeValue&);
     bool isAnimationNameValid(const String&);
 
     // These methods will give back the set of rules that matched for a given element (or a pseudo-element).
@@ -163,8 +168,6 @@ private:
     std::unique_ptr<RenderStyle> m_rootDefaultStyle;
 
     Document& m_document;
-
-    const RenderStyle* m_overrideDocumentElementStyle { nullptr };
 
     InspectorCSSOMWrappers m_inspectorCSSOMWrappers;
 

@@ -1227,14 +1227,14 @@ void WebAnimation::tick()
         m_effect->animationDidTick();
 }
 
-void WebAnimation::resolve(RenderStyle& targetStyle, const RenderStyle* parentElementStyle, std::optional<Seconds> startTime)
+void WebAnimation::resolve(RenderStyle& targetStyle, const Style::ResolutionContext& resolutionContext, std::optional<Seconds> startTime)
 {
     if (!m_shouldSkipUpdatingFinishedStateWhenResolving)
         updateFinishedState(DidSeek::No, SynchronouslyNotify::Yes);
     m_shouldSkipUpdatingFinishedStateWhenResolving = false;
 
     if (m_effect)
-        m_effect->apply(targetStyle, parentElementStyle, startTime);
+        m_effect->apply(targetStyle, resolutionContext, startTime);
 }
 
 void WebAnimation::setSuspended(bool isSuspended)
@@ -1426,12 +1426,12 @@ ExceptionOr<void> WebAnimation::commitStyles()
             if (effectInStack->animation() != this && !compareAnimationsByCompositeOrder(*effectInStack->animation(), *this))
                 break;
             if (effectInStack->animatedProperties().contains(property))
-                effectInStack->animation()->resolve(*animatedStyle, nullptr);
+                effectInStack->animation()->resolve(*animatedStyle, { nullptr });
             if (effectInStack->animation() == this)
                 break;
         }
         if (m_replaceState == ReplaceState::Removed)
-            effect->animation()->resolve(*animatedStyle, nullptr);
+            effect->animation()->resolve(*animatedStyle, { nullptr });
         if (auto cssValue = computedStyleExtractor.valueForPropertyInStyle(*animatedStyle, property, renderer))
             inlineStyle->setPropertyInternal(property, cssValue->cssText(), false);
     }

@@ -2262,9 +2262,9 @@ std::unique_ptr<RenderStyle> Document::styleForElementIgnoringPendingStylesheets
     auto& resolver = element.styleResolver();
 
     if (pseudoElementSpecifier != PseudoId::None)
-        return resolver.pseudoStyleForElement(element, { pseudoElementSpecifier }, *parentStyle);
+        return resolver.pseudoStyleForElement(element, { pseudoElementSpecifier }, { parentStyle });
 
-    auto elementStyle = resolver.styleForElement(element, parentStyle);
+    auto elementStyle = resolver.styleForElement(element, { parentStyle });
     if (elementStyle.relations) {
         Style::Update emptyUpdate(*this);
         Style::commitRelations(WTFMove(elementStyle.relations), emptyUpdate);
