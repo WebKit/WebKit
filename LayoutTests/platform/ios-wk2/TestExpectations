@@ -2234,3 +2234,5 @@ webkit.org/b/232099 imported/w3c/web-platform-tests/websockets/Close-1000.any.ht
 
 webkit.org/b/232102 http/tests/privateClickMeasurement/attribution-conversion-through-image-redirect-with-priority.html [ Pass Crash ]
 
+webkit.org/b/232120 imported/w3c/web-platform-tests/content-security-policy/script-src/script-src-multiple-policies-multiple-hashing-algorithms.html [ Pass Failure ]
+
