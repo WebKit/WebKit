@@ -655,7 +655,6 @@ private:
 
     unsigned m_barrierThreshold { Options::forceFencedBarrier() ? tautologicalThreshold : blackThreshold };
 
-    VM& m_vm;
     Seconds m_lastFullGCLength { 10_ms };
     Seconds m_lastEdenGCLength { 10_ms };
 

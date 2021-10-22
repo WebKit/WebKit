@@ -1,3 +1,38 @@
+2021-10-22  Mark Lam  <mark.lam@apple.com>
+
+        Remove unneeded Heap::m_vm.
+        https://bugs.webkit.org/show_bug.cgi?id=232132
+
+        Reviewed by Yusuke Suzuki.
+
+        Heap::vm() already computes the associated VM& using offset math.  This entails
+        subtracting a constant from Heap's this pointer, which is faster than loading from
+        a field.
+
+        * heap/Heap.cpp:
+        (JSC::Heap::Heap):
+        (JSC::Heap::lastChanceToFinalize):
+        (JSC::Heap::releaseDelayedReleasedObjects):
+        (JSC::Heap::protect):
+        (JSC::Heap::unprotect):
+        (JSC::Heap::finalizeUnconditionalFinalizers):
+        (JSC::Heap::completeAllJITPlans):
+        (JSC::Heap::iterateExecutingAndCompilingCodeBlocks):
+        (JSC::Heap::gatherJSStackRoots):
+        (JSC::Heap::gatherScratchBufferRoots):
+        (JSC::Heap::removeDeadCompilerWorklistEntries):
+        (JSC::Heap::gatherExtraHeapData):
+        (JSC::Heap::deleteAllCodeBlocks):
+        (JSC::Heap::deleteAllUnlinkedCodeBlocks):
+        (JSC::Heap::finishChangingPhase):
+        (JSC::Heap::collectInMutatorThread):
+        (JSC::Heap::finishRelinquishingConn):
+        (JSC::Heap::deleteSourceProviderCaches):
+        (JSC::Heap::didFinishCollection):
+        (JSC::Heap::isValidAllocation):
+        (JSC::Heap::addCoreConstraints):
+        * heap/Heap.h:
+
 2021-10-21  Saam Barati  <sbarati@apple.com>
 
         Clean up some code around checking the state of Watchpoints
