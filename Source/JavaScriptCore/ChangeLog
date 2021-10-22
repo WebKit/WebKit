@@ -1,3 +1,18 @@
+2021-10-22  Robin Morisset  <rmorisset@apple.com>
+
+        --reportBytecodeCompileTimes=1 should correctly report the bytecode size
+        https://bugs.webkit.org/show_bug.cgi?id=232118
+
+        Reviewed by Michael Saboff.
+
+        generate() calls m_writer.finalize() which moves m_instructions, so when we later query its size we get 0.
+        The solution is simply to put the size in an out-parameter just before calling finalize().
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::generate):
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::BytecodeGenerator::generate):
+
 2021-10-22  Mark Lam  <mark.lam@apple.com>
 
         Remove unneeded Heap::m_vm.
