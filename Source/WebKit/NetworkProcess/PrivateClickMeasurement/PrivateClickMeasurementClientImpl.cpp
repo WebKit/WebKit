@@ -29,9 +29,7 @@
 #include "NetworkProcess.h"
 #include "NetworkSession.h"
 
-namespace WebKit {
-
-namespace PCM {
+namespace WebKit::PCM {
 
 ClientImpl::ClientImpl(NetworkSession& session, NetworkProcess& networkProcess)
     : m_networkSession(session)
@@ -59,6 +57,4 @@ bool ClientImpl::debugModeEnabled() const
         && !m_networkSession->sessionID().isEphemeral();
 }
 
-} // namespace PCM
-
-} // namespace WebKit
+} // namespace WebKit::PCM

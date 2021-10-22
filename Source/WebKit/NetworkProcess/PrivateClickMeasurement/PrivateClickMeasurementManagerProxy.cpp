@@ -31,9 +31,7 @@
 #include "PrivateClickMeasurementConnection.h"
 #include "WebCoreArgumentCoders.h"
 
-namespace WebKit {
-
-namespace PCM {
+namespace WebKit::PCM {
 
 template<MessageType messageType, typename... Args>
 void ManagerProxy::sendMessage(Args&&... args) const
@@ -165,6 +163,4 @@ void ManagerProxy::allowTLSCertificateChainForLocalPCMTesting(const WebCore::Cer
     sendMessage<MessageType::AllowTLSCertificateChainForLocalPCMTesting>(certificateInfo);
 }
 
-} // namespace PCM
-
-} // namespace WebKit
+} // namespace WebKit::PCM

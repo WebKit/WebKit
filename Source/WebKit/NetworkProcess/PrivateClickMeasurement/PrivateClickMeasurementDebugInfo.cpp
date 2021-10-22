@@ -26,9 +26,7 @@
 #include "config.h"
 #include "PrivateClickMeasurementDebugInfo.h"
 
-namespace WebKit {
-
-namespace PCM {
+namespace WebKit::PCM {
 
 DebugInfo DebugInfo::isolatedCopy() const
 {
@@ -40,6 +38,4 @@ DebugInfo::Message DebugInfo::Message::isolatedCopy() const
     return { messageLevel, message.isolatedCopy() };
 }
 
-} // namespace PCM
-
-} // namespace WebKit
+} // namespace WebKit::PCM

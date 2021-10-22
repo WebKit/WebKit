@@ -30,9 +30,7 @@
 #include "PCMDaemonConnectionSet.h"
 #endif
 
-namespace WebKit {
-
-namespace PCM {
+namespace WebKit::PCM {
 
 void DaemonClient::broadcastConsoleMessage(JSC::MessageLevel level, const String& message)
 {
@@ -57,7 +55,5 @@ bool DaemonClient::debugModeEnabled() const
     return false;
 #endif
 }
-
-} // namespace PCM
 
 } // namespace WebKit

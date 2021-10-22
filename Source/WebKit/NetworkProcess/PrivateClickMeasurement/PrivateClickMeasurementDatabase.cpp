@@ -34,9 +34,7 @@
 #include <WebCore/SQLiteStatementAutoResetScope.h>
 #include <WebCore/SQLiteTransaction.h>
 
-namespace WebKit {
-
-namespace PCM {
+namespace WebKit::PCM {
 
 constexpr auto setUnattributedPrivateClickMeasurementAsExpiredQuery = "UPDATE UnattributedPrivateClickMeasurement SET timeOfAdClick = -1.0"_s;
 constexpr auto insertUnattributedPrivateClickMeasurementQuery = "INSERT OR REPLACE INTO UnattributedPrivateClickMeasurement (sourceSiteDomainID, destinationSiteDomainID, "
@@ -759,6 +757,4 @@ void Database::addMissingColumnToTable(const String& tableName, const String& co
     }
 }
 
-} // namespace PCM
-
-} // namespace WebKit
+} // namespace WebKit::PCM

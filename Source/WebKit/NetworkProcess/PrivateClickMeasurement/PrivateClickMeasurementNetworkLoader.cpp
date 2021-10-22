@@ -30,9 +30,7 @@
 #include <WebCore/ResourceError.h>
 #include <WebCore/ResourceResponse.h>
 
-namespace WebKit {
-
-namespace PCM {
+namespace WebKit::PCM {
 
 #if !PLATFORM(COCOA)
 void NetworkLoader::start(URL&&, RefPtr<JSON::Object>&&, WebCore::PrivateClickMeasurement::PcmDataCarried, Callback&& completionHandler)
@@ -48,6 +46,4 @@ void NetworkLoader::allowTLSCertificateChainForLocalPCMTesting(const WebCore::Ce
 
 #endif
 
-} // namespace PCM
-
-} // namespace WebKit
+} // namespace WebKit::PCM

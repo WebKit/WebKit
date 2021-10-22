@@ -31,8 +31,7 @@
 #import <wtf/OSObjectPtr.h>
 #import <wtf/RunLoop.h>
 
-namespace WebKit {
-namespace PCM {
+namespace WebKit::PCM {
 
 DaemonConnectionSet& DaemonConnectionSet::singleton()
 {
@@ -91,5 +90,4 @@ void DaemonConnectionSet::broadcastConsoleMessage(JSC::MessageLevel messageLevel
         xpc_connection_send_message(connection.get(), dictionary.get());
 }
 
-} // namespace PCM
-} // namespace WebKit
+} // namespace WebKit::PCM

@@ -38,9 +38,7 @@
 #include "PCMDaemonConnectionSet.h"
 #endif
 
-namespace WebKit {
-
-namespace PCM {
+namespace WebKit::PCM {
 
 namespace MessageInfo {
 
@@ -312,6 +310,4 @@ void decodeMessageAndSendToManager(const Daemon::Connection& connection, Message
     }
 }
 
-} // namespace PCM
-
-} // namespace WebKit
+} // namespace WebKit::PCM

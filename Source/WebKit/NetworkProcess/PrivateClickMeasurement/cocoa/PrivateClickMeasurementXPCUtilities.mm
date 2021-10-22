@@ -30,9 +30,7 @@
 #import "PrivateClickMeasurementManagerInterface.h"
 #import <wtf/OSObjectPtr.h>
 
-namespace WebKit {
-
-namespace PCM {
+namespace WebKit::PCM {
 
 void addVersionAndEncodedMessageToDictionary(Vector<uint8_t>&& message, xpc_object_t dictionary)
 {
@@ -40,7 +38,5 @@ void addVersionAndEncodedMessageToDictionary(Vector<uint8_t>&& message, xpc_obje
     xpc_dictionary_set_uint64(dictionary, PCM::protocolVersionKey, PCM::protocolVersionValue);
     xpc_dictionary_set_value(dictionary, PCM::protocolEncodedMessageKey, vectorToXPCData(WTFMove(message)).get());
 }
-
-} // namespace PCM
 
 } // namespace WebKit

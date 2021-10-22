@@ -35,9 +35,7 @@ class ResourceError;
 class ResourceResponse;
 }
 
-namespace WebKit {
-
-namespace PCM {
+namespace WebKit::PCM {
 
 class NetworkLoader {
     WTF_MAKE_FAST_ALLOCATED;
@@ -47,6 +45,4 @@ public:
     static void allowTLSCertificateChainForLocalPCMTesting(const WebCore::CertificateInfo&);
 };
 
-} // namespace PCM
-
-} // namespace WebKit
+} // namespace WebKit::PCM

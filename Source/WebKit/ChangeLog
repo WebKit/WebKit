@@ -1,3 +1,29 @@
+2021-10-22  Alex Christensen  <achristensen@webkit.org>
+
+        Use C++17 nested namespace syntax for WebKit::PCM
+        https://bugs.webkit.org/show_bug.cgi?id=232162
+
+        Reviewed by Yusuke Suzuki.
+
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementClientImpl.cpp:
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementConnection.cpp:
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementDaemonClient.cpp:
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementDaemonClient.h:
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementDatabase.cpp:
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementDatabase.h:
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementDebugInfo.cpp:
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementDebugInfo.h:
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementManagerInterface.cpp:
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementManagerProxy.cpp:
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementNetworkLoader.cpp:
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementNetworkLoader.h:
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementStore.cpp:
+        * NetworkProcess/PrivateClickMeasurement/cocoa/PrivateClickMeasurementConnectionCocoa.mm:
+        * NetworkProcess/PrivateClickMeasurement/cocoa/PrivateClickMeasurementNetworkLoaderCocoa.mm:
+        * NetworkProcess/PrivateClickMeasurement/cocoa/PrivateClickMeasurementXPCUtilities.h:
+        * NetworkProcess/PrivateClickMeasurement/cocoa/PrivateClickMeasurementXPCUtilities.mm:
+        * Shared/EntryPointUtilities/Cocoa/Daemon/PCMDaemonConnectionSet.mm:
+
 2021-10-22  Per Arne Vollan  <pvollan@apple.com>
 
         [iOS] Add required syscall

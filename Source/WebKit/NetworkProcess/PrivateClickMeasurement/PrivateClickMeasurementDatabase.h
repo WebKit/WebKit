@@ -29,9 +29,7 @@
 #include <WebCore/PrivateClickMeasurement.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
-namespace WebKit {
-
-namespace PCM {
+namespace WebKit::PCM {
 
 struct DebugInfo;
 
@@ -104,6 +102,4 @@ private:
     mutable Statement m_insertObservedDomainStatement;
 };
 
-} // namespace PCM
-
-} // namespace WebKit
+} // namespace WebKit::PCM
