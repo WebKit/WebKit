@@ -25,8 +25,8 @@ import objc
 from webkitscmpy import AutoInstall, Package, Version
 
 pyobjc_core_version = Version.from_string(objc.__version__)
-AutoInstall.register(Package('Cocoa', pyobjc_core_version, pypi_name='pyobjc-framework-Cocoa'))
-AutoInstall.register(Package('Quartz', pyobjc_core_version, pypi_name='pyobjc-framework-Quartz'))
+AutoInstall.register(Package('Cocoa', pyobjc_core_version, pypi_name='pyobjc-framework-Cocoa', wheel=True))
+AutoInstall.register(Package('Quartz', pyobjc_core_version, pypi_name='pyobjc-framework-Quartz', wheel=True))
 
 # Modules from pyobjc-framework-Cocoa
 # Note, the module (`import_name`) provided to `AutoInstall.register`

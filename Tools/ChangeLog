@@ -1,3 +1,14 @@
+2021-10-22  Roy Reapor  <rreapor@apple.com>
+
+        webkitpy/autoinstalled/pyobjc_frameworks.py should install wheel distribution
+        https://bugs.webkit.org/show_bug.cgi?id=232156
+
+        Reviewed by Stephanie Lewis.
+
+        Install wheel version of framweorks.
+
+        * Scripts/webkitpy/autoinstalled/pyobjc_frameworks.py:
+
 2021-10-22  Ayumi Kojima  <ayumi_kojima@apple.com>
 
         Unreviewed, reverting r284654.
