@@ -172,9 +172,6 @@ private:
 
     bool m_matchAuthorAndUserStyles { true };
     bool m_isSharedBetweenShadowTrees { false };
-
-    // See if we still have crashes where Resolver gets deleted early.
-    bool m_isDeleted { false };
 };
 
 inline bool Resolver::hasSelectorForAttribute(const Element& element, const AtomString &attributeName) const

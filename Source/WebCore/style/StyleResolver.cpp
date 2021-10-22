@@ -201,8 +201,6 @@ void Resolver::addKeyframeStyle(Ref<StyleRuleKeyframes>&& rule)
 Resolver::~Resolver()
 {
     RELEASE_ASSERT(!m_document.isResolvingTreeStyle());
-    RELEASE_ASSERT(!m_isDeleted);
-    m_isDeleted = true;
 }
 
 static inline bool isAtShadowBoundary(const Element& element)
@@ -222,8 +220,6 @@ BuilderContext Resolver::builderContext(const State& state)
 
 ElementStyle Resolver::styleForElement(const Element& element, const RenderStyle* parentStyle, const RenderStyle* parentBoxStyle, RuleMatchingBehavior matchingBehavior, const SelectorFilter* selectorFilter)
 {
-    RELEASE_ASSERT(!m_isDeleted);
-
     auto state = State(element, parentStyle, m_overrideDocumentElementStyle);
 
     if (state.parentStyle()) {
@@ -279,8 +275,6 @@ ElementStyle Resolver::styleForElement(const Element& element, const RenderStyle
 
 std::unique_ptr<RenderStyle> Resolver::styleForKeyframe(const Element& element, const RenderStyle* elementStyle, const RenderStyle* parentElementStyle, const StyleRuleKeyframe* keyframe, KeyframeValue& keyframeValue)
 {
-    RELEASE_ASSERT(!m_isDeleted);
-
     MatchResult result;
     result.authorDeclarations.append({ &keyframe->properties(), SelectorChecker::MatchAll, propertyAllowlistForPseudoId(elementStyle->styleType()) });
 
@@ -428,8 +422,6 @@ std::unique_ptr<RenderStyle> Resolver::pseudoStyleForElement(const Element& elem
 
 std::unique_ptr<RenderStyle> Resolver::styleForPage(int pageIndex)
 {
-    RELEASE_ASSERT(!m_isDeleted);
-
     auto* documentElement = m_document.documentElement();
     if (!documentElement)
         return RenderStyle::createPtr();
