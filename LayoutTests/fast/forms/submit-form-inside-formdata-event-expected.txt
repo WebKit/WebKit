@@ -1,0 +1,12 @@
+Tests submitting the form again from inside the formdata event.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS counter is 1
+PASS counter is 2
+PASS The frame was navigated
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

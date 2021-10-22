@@ -1,3 +1,15 @@
+2021-10-21  Chris Dumez  <cdumez@apple.com>
+
+        RELEASE_ASSERT(result) under FormSubmission::create()
+        https://bugs.webkit.org/show_bug.cgi?id=232112
+
+        Reviewed by Geoffrey Garen.
+
+        Add layout test coverage.
+
+        * fast/forms/submit-form-inside-formdata-event-expected.txt: Added.
+        * fast/forms/submit-form-inside-formdata-event.html: Added.
+
 2021-10-21  Simon Fraser  <simon.fraser@apple.com>
 
         Content offset in this codepen when switching tabs

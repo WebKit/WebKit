@@ -1,0 +1,32 @@
+<DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script>
+description("Tests submitting the form again from inside the formdata event.");
+jsTestIsAsync = true;
+
+onload = () => {
+    let form = document.getElementById("testForm");
+    let frame = document.getElementById("testFrame");
+    frame.onload = () => {
+        testPassed("The frame was navigated");
+        finishJSTest();
+    };
+    counter = 0;
+    form.addEventListener('formdata', e => {
+        ++counter;
+        form.submit();
+    });
+    form.submit();
+    shouldBe("counter", "1");
+    new FormData(form);
+    shouldBe("counter", "2");
+}
+</script>
+<iframe id="testFrame" name="testFrame" style="display:none"></iframe>
+<form id="testForm" action="resources/test.txt" target="testFrame" style="display:none">
+    <input name="foo" value="bar">
+<form>
+</body>
+</html>

@@ -378,6 +378,9 @@ void HTMLFormElement::submit(Event* event, bool activateSubmitButton, bool proce
     if (!isConnected())
         return;
 
+    if (m_isConstructingEntryList)
+        return;
+
     RefPtr<FrameView> view = document().view();
     RefPtr<Frame> frame = document().frame();
     if (!view || !frame)
