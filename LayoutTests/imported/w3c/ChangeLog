@@ -1,3 +1,17 @@
+2021-10-22  Chris Dumez  <cdumez@apple.com>
+
+        [ iOS15 iPad Debug ] imported/w3c/web-platform-tests/webmessaging/MessagePort_onmessage_start.any.worker.html is a flaky failure (reached unreachable code)
+        https://bugs.webkit.org/show_bug.cgi?id=231609
+        <rdar://problem/84164701>
+
+        Reviewed by Youenn Fablet.
+
+        Merge https://github.com/web-platform-tests/wpt/pull/31317 from upstream WPT to address
+        test flakiness.
+
+        * web-platform-tests/webmessaging/MessagePort_onmessage_start.any.js:
+        (async_test):
+
 2021-10-21  Cathie Chen  <cathiechen@igalia.com>
 
         The intrisic size of picture image inside a template is always zero

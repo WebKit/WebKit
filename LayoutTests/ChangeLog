@@ -1,3 +1,15 @@
+2021-10-22  Chris Dumez  <cdumez@apple.com>
+
+        [ iOS15 iPad Debug ] imported/w3c/web-platform-tests/webmessaging/MessagePort_onmessage_start.any.worker.html is a flaky failure (reached unreachable code)
+        https://bugs.webkit.org/show_bug.cgi?id=231609
+        <rdar://problem/84164701>
+
+        Reviewed by Youenn Fablet.
+
+        Unskip test that should no longer be flaky.
+
+        * platform/ipad/TestExpectations:
+
 2021-10-22  Ayumi Kojima  <ayumi_kojima@apple.com>
 
         Unreviewed, reverting r284654.

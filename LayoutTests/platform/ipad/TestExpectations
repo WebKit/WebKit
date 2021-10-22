@@ -109,8 +109,6 @@ webkit.org/b/232090 imported/w3c/web-platform-tests/html/canvas/element/manual/i
 
 webkit.org/b/230419 platform/ipad/media/modern-media-controls/media-documents/media-document-video-ios-sizing.html [ Pass Timeout Crash ]
 
-webkit.org/b/231609 imported/w3c/web-platform-tests/webmessaging/MessagePort_onmessage_start.any.worker.html [ Pass Failure ]
-
 webkit.org/b/231611 [ Debug ] imported/w3c/web-platform-tests/webrtc-encoded-transform/sframe-transform-in-worker.https.html [ Pass Failure ]
 
 webkit.org/b/231616 [ Debug ] compositing/layer-creation/scale-rotation-transition-overlap.html [ Pass Failure Timeout ]
