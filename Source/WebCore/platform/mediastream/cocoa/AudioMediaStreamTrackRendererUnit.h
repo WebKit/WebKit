@@ -31,8 +31,10 @@
 #include <wtf/Forward.h>
 #include <wtf/HashSet.h>
 #include <wtf/Lock.h>
+#include <wtf/Observer.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/Vector.h>
+#include <wtf/WeakHashSet.h>
 
 namespace WebCore {
 
@@ -48,16 +50,19 @@ public:
     AudioMediaStreamTrackRendererUnit();
     ~AudioMediaStreamTrackRendererUnit();
 
-    using CreateInternalUnitFunction = Function<UniqueRef<AudioMediaStreamTrackRendererInternalUnit>(AudioMediaStreamTrackRendererInternalUnit::RenderCallback&&)>;
+    using CreateInternalUnitFunction = Function<UniqueRef<AudioMediaStreamTrackRendererInternalUnit>(AudioMediaStreamTrackRendererInternalUnit::RenderCallback&&, AudioMediaStreamTrackRendererInternalUnit::ResetCallback&&)>;
     WEBCORE_EXPORT static void setCreateInternalUnitFunction(CreateInternalUnitFunction&&);
 
     WEBCORE_EXPORT void render(size_t sampleCount, AudioBufferList&, uint64_t sampleTime, double hostTime, AudioUnitRenderActionFlags&);
+    void reset();
 
     void setAudioOutputDevice(const String&);
 
     void addSource(Ref<AudioSampleDataSource>&&);
     void removeSource(AudioSampleDataSource&);
 
+    using ResetObserver = Observer<void()>;
+    void addResetObserver(ResetObserver& observer) { m_resetObservers.add(observer); }
     void retrieveFormatDescription(CompletionHandler<void(const CAAudioStreamDescription*)>&&);
 
 private:
@@ -73,6 +78,7 @@ private:
     bool m_hasPendingRenderSources WTF_GUARDED_BY_LOCK(m_pendingRenderSourcesLock) { false };
     Lock m_pendingRenderSourcesLock;
     UniqueRef<AudioMediaStreamTrackRendererInternalUnit> m_internalUnit;
+    WeakHashSet<ResetObserver> m_resetObservers;
 };
 
 }

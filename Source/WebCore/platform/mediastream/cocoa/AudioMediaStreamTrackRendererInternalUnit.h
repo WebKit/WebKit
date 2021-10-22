@@ -40,7 +40,8 @@ public:
     virtual ~AudioMediaStreamTrackRendererInternalUnit() = default;
 
     using RenderCallback = Function<OSStatus(size_t sampleCount, AudioBufferList&, uint64_t sampleTime, double hostTime, AudioUnitRenderActionFlags&)>;
-    WEBCORE_EXPORT static UniqueRef<AudioMediaStreamTrackRendererInternalUnit> createLocalInternalUnit(RenderCallback&&);
+    using ResetCallback = Function<void()>;
+    WEBCORE_EXPORT static UniqueRef<AudioMediaStreamTrackRendererInternalUnit> createLocalInternalUnit(RenderCallback&&, ResetCallback&&);
 
     virtual void start() = 0;
     virtual void stop() = 0;

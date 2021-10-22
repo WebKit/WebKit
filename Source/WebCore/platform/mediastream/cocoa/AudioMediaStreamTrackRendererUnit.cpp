@@ -46,16 +46,17 @@ void AudioMediaStreamTrackRendererUnit::setCreateInternalUnitFunction(CreateInte
 
 static UniqueRef<AudioMediaStreamTrackRendererInternalUnit> createInternalUnit(AudioMediaStreamTrackRendererUnit& unit)
 {
-    AudioMediaStreamTrackRendererInternalUnit::RenderCallback callback = [&unit](auto sampleCount, auto& list, auto sampleTime, auto hostTime, auto& flags) {
+    AudioMediaStreamTrackRendererInternalUnit::RenderCallback renderCallback = [&unit](auto sampleCount, auto& list, auto sampleTime, auto hostTime, auto& flags) {
         unit.render(sampleCount, list, sampleTime, hostTime, flags);
         return 0;
     };
+    AudioMediaStreamTrackRendererInternalUnit::ResetCallback startCallback = [&unit]() { unit.reset(); };
 
     auto& function = getCreateInternalUnitFunction();
     if (function)
-        return function(WTFMove(callback));
+        return function(WTFMove(renderCallback), WTFMove(startCallback));
 
-    return AudioMediaStreamTrackRendererInternalUnit::createLocalInternalUnit(WTFMove(callback));
+    return AudioMediaStreamTrackRendererInternalUnit::createLocalInternalUnit(WTFMove(renderCallback), WTFMove(startCallback));
 }
 
 AudioMediaStreamTrackRendererUnit& AudioMediaStreamTrackRendererUnit::singleton()
@@ -135,6 +136,16 @@ void AudioMediaStreamTrackRendererUnit::stop()
     ASSERT(isMainThread());
 
     m_internalUnit->stop();
+}
+
+void AudioMediaStreamTrackRendererUnit::reset()
+{
+    RELEASE_LOG(WebRTC, "AudioMediaStreamTrackRendererUnit::reset");
+    ASSERT(isMainThread());
+
+    m_resetObservers.forEach([](auto& observer) {
+        observer();
+    });
 }
 
 void AudioMediaStreamTrackRendererUnit::retrieveFormatDescription(CompletionHandler<void(const CAAudioStreamDescription*)>&& callback)

@@ -1310,7 +1310,7 @@ void WebProcess::gpuProcessConnectionClosed(GPUProcessConnection& connection)
 
 #if ENABLE(MEDIA_STREAM) && PLATFORM(COCOA)
     if (m_audioMediaStreamTrackRendererInternalUnitManager)
-        m_audioMediaStreamTrackRendererInternalUnitManager->gpuProcessConnectionClosed();
+        m_audioMediaStreamTrackRendererInternalUnitManager->restartAllUnits();
 #endif
 }
 

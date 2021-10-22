@@ -36,7 +36,10 @@
 
 namespace WebCore {
 
-AudioMediaStreamTrackRendererCocoa::AudioMediaStreamTrackRendererCocoa() = default;
+AudioMediaStreamTrackRendererCocoa::AudioMediaStreamTrackRendererCocoa()
+    : m_resetObserver([this] { reset(); })
+{
+}
 
 AudioMediaStreamTrackRendererCocoa::~AudioMediaStreamTrackRendererCocoa() = default;
 
@@ -72,11 +75,17 @@ void AudioMediaStreamTrackRendererCocoa::setVolume(float volume)
         m_dataSource->setVolume(volume);
 }
 
+void AudioMediaStreamTrackRendererCocoa::reset()
+{
+    if (m_dataSource)
+        m_dataSource->recomputeSampleOffset();
+}
+
 void AudioMediaStreamTrackRendererCocoa::setAudioOutputDevice(const String& deviceId)
 {
     // FIXME: We should create a unit for ourselves here or use the default unit if deviceId is matching.
     AudioMediaStreamTrackRendererUnit::singleton().setAudioOutputDevice(deviceId);
-    m_shouldReset = true;
+    m_shouldRecreateDataSource = true;
 }
 
 static unsigned pollSamplesCount()
@@ -92,7 +101,7 @@ void AudioMediaStreamTrackRendererCocoa::pushSamples(const MediaTime& sampleTime
 {
     ASSERT(!isMainThread());
     ASSERT(description.platformDescription().type == PlatformDescription::CAAudioStreamBasicType);
-    if (!m_dataSource || m_shouldReset || !m_dataSource->inputDescription() || *m_dataSource->inputDescription() != description) {
+    if (!m_dataSource || m_shouldRecreateDataSource || !m_dataSource->inputDescription() || *m_dataSource->inputDescription() != description) {
         DisableMallocRestrictionsForCurrentThreadScope scope;
 
         // FIXME: For non libwebrtc sources, we can probably reduce poll samples count to 2.
@@ -120,10 +129,11 @@ void AudioMediaStreamTrackRendererCocoa::pushSamples(const MediaTime& sampleTime
                 AudioMediaStreamTrackRendererUnit::singleton().removeSource(*oldSource);
 
             newSource->setVolume(volume());
+            AudioMediaStreamTrackRendererUnit::singleton().addResetObserver(m_resetObserver);
             AudioMediaStreamTrackRendererUnit::singleton().addSource(WTFMove(newSource));
         });
         m_dataSource = WTFMove(dataSource);
-        m_shouldReset = false;
+        m_shouldRecreateDataSource = false;
     }
 
     m_dataSource->pushSamples(sampleTime, audioData, sampleCount);

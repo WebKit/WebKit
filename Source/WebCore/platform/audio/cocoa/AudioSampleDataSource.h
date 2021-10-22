@@ -70,6 +70,8 @@ public:
 
     const CAAudioStreamDescription* inputDescription() const { return m_inputDescription ? &m_inputDescription.value() : nullptr; }
 
+    void recomputeSampleOffset() { m_shouldComputeOutputSampleOffset = true; }
+
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final { return m_logger; }
     const void* logIdentifier() const final { return m_logIdentifier; }

@@ -1,3 +1,23 @@
+2021-10-22  Youenn Fablet  <youenn@apple.com>
+
+        Audio over peer connection becomes latent when changing the output
+        https://bugs.webkit.org/show_bug.cgi?id=231110
+        <rdar://problem/84049005>
+
+        Reviewed by Eric Carlson.
+
+        When detecting an audio timeline change, send it from GPUProcess to WebProcess.
+        Let the WebProcess reset the sources to properly restart.
+
+        * GPUProcess/webrtc/RemoteAudioMediaStreamTrackRendererInternalUnitManager.cpp:
+        * WebProcess/GPU/GPUProcessConnection.cpp:
+        * WebProcess/GPU/GPUProcessConnection.h:
+        * WebProcess/GPU/GPUProcessConnection.messages.in:
+        * WebProcess/GPU/webrtc/AudioMediaStreamTrackRendererInternalUnitManager.cpp:
+        * WebProcess/GPU/webrtc/AudioMediaStreamTrackRendererInternalUnitManager.h:
+        * WebProcess/WebProcess.cpp:
+        * WebProcess/cocoa/UserMediaCaptureManager.cpp:
+
 2021-10-22  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         StreamConnectionWorkQueue is not thread-safe

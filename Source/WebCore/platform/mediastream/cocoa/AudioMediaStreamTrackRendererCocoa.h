@@ -28,6 +28,7 @@
 #if ENABLE(MEDIA_STREAM)
 
 #include "AudioMediaStreamTrackRenderer.h"
+#include "AudioMediaStreamTrackRendererUnit.h"
 #include "Logging.h"
 #include <wtf/WeakPtr.h>
 
@@ -55,9 +56,12 @@ private:
     void setVolume(float) final;
     void setAudioOutputDevice(const String&) final;
 
+    void reset();
+
     std::unique_ptr<CAAudioStreamDescription> m_outputDescription;
     RefPtr<AudioSampleDataSource> m_dataSource;
-    bool m_shouldReset { false };
+    bool m_shouldRecreateDataSource { false };
+    WebCore::AudioMediaStreamTrackRendererUnit::ResetObserver m_resetObserver;
 };
 
 }

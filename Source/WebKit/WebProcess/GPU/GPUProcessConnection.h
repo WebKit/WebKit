@@ -74,6 +74,7 @@ public:
 #endif
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
     SampleBufferDisplayLayerManager& sampleBufferDisplayLayerManager();
+    void resetAudioMediaStreamTrackRendererInternalUnit(AudioMediaStreamTrackRendererInternalUnitIdentifier);
 #endif
 
     RemoteMediaPlayerManager& mediaPlayerManager();

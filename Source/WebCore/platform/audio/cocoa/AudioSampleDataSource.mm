@@ -234,7 +234,8 @@ bool AudioSampleDataSource::pullSamplesInternal(AudioBufferList& buffer, size_t 
     if (m_shouldComputeOutputSampleOffset) {
         uint64_t buffered = endFrame - startFrame;
         if (m_isFirstPull) {
-            if (buffered >= m_waitToStartForPushCount * m_lastPushedSampleCount) {
+            auto minimumBuffer = m_waitToStartForPushCount * m_lastPushedSampleCount;
+            if (buffered >= minimumBuffer) {
                 m_outputSampleOffset = startFrame - timeStamp;
                 m_shouldComputeOutputSampleOffset = false;
                 m_endFrameWhenNotEnoughData = 0;
