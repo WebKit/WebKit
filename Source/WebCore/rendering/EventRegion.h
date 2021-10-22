@@ -56,6 +56,37 @@ private:
     Vector<IntRect> m_clipStack;
 };
 
+class EventRegionContextStateSaver {
+public:
+    EventRegionContextStateSaver(EventRegionContext* context)
+        : m_context(context)
+    {
+    }
+    
+    ~EventRegionContextStateSaver()
+    {
+        if (!m_context)
+            return;
+
+        if (m_pushedClip)
+            m_context->popClip();
+    }
+    
+    void pushClip(const IntRect& clipRect)
+    {
+        ASSERT(!m_pushedClip);
+        if (m_context)
+            m_context->pushClip(clipRect);
+        m_pushedClip = true;
+    }
+
+    EventRegionContext* context() const { return m_context; }
+
+private:
+    EventRegionContext* m_context;
+    bool m_pushedClip { false };
+};
+
 class EventRegion {
 public:
     WEBCORE_EXPORT EventRegion();
