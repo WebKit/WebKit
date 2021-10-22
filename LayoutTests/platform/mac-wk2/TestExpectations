@@ -1688,3 +1688,5 @@ webkit.org/b/231600 [ Release ] imported/w3c/web-platform-tests/css/cssom-view/s
 webkit.org/b/231765 [ Release ] http/tests/resourceLoadStatistics/website-data-removal-for-site-navigated-to-with-link-decoration.html [ Pass Timeout ]
 
 webkit.org/b/231780 [ Debug ] imported/w3c/web-platform-tests/webrtc/simulcast/basic.https.html [ Pass Failure ]
+
+webkit.org/b/232151 [ BigSur Debug ] http/tests/security/window-opened-from-sandboxed-iframe-should-inherit-sandbox.html [ Failure ]
