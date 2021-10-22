@@ -109,9 +109,9 @@ inline void Heap::writeBarrier(const JSCell* from, JSCell* to)
 #endif
     if (!from)
         return;
-    if (!isWithinThreshold(from->cellState(), barrierThreshold()))
-        return;
     if (LIKELY(!to))
+        return;
+    if (!isWithinThreshold(from->cellState(), barrierThreshold()))
         return;
     writeBarrierSlowPath(from);
 }

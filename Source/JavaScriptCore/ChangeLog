@@ -1,3 +1,16 @@
+2021-10-22  Mark Lam  <mark.lam@apple.com>
+
+        Change Heap::writeBarrier() to do the cheaper check first.
+        https://bugs.webkit.org/show_bug.cgi?id=232172
+
+        Reviewed by Robin Morisset.
+
+        It's cheaper to do a check using incoming args (which are already loaded in
+        registers) than to do a check which requires memory loads.
+
+        * heap/HeapInlines.h:
+        (JSC::Heap::writeBarrier):
+
 2021-10-22  Asumu Takikawa  <asumu@igalia.com>
 
         Change WebAssembly module import linking time to evaluate step.
