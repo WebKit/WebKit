@@ -1139,7 +1139,6 @@ void RenderLayer::setRepaintRects(const LayerRepaintRects& rects)
 
 void RenderLayer::clearRepaintRects()
 {
-    ASSERT(!m_visibleContentStatusDirty);
     m_repaintRectsValid = false;
 }
 
