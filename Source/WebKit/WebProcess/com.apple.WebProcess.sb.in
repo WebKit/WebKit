@@ -1933,6 +1933,7 @@
         (syscall-number SYS_kdebug_trace)
         (syscall-number SYS_kdebug_trace64)
         (syscall-number SYS_kdebug_trace_string) ;; Needed for performance sampling, see <rdar://problem/48829655>.
+        (syscall-number SYS_kdebug_typefilter)
         (syscall-number SYS_kevent)
         (syscall-number SYS_kevent_id)
         (syscall-number SYS_kevent_qos)
@@ -2041,11 +2042,6 @@
         (allow syscall-unix (syscall-number SYS_objc_bp_assist_cfg_np)))
 #endif
 )
-
-(with-filter (system-attribute apple-internal)
-    (when (defined? 'syscall-unix)
-        (allow syscall-unix
-            (syscall-number SYS_kdebug_typefilter))))
 
 #if USE(APPLE_INTERNAL_SDK)
 #include <WebKitAdditions/WebContentSandboxAdditionsMac.sb>

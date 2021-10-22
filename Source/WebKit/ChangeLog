@@ -1,3 +1,15 @@
+2021-10-22  Per Arne Vollan <pvollan@apple.com>
+
+        [macOS] Add needed syscall
+        https://bugs.webkit.org/show_bug.cgi?id=232110
+        <rdar://84519690>
+
+        Reviewed by Brent Fulgham.
+
+        Add required syscall in WP sandbox.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2021-10-22  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         StreamConnectionWorkQueue::processStreams() has a incorrect protection ref
