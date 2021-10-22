@@ -1,3 +1,15 @@
+2021-10-22  Per Arne Vollan  <pvollan@apple.com>
+
+        [iOS] Add required syscall
+        https://bugs.webkit.org/show_bug.cgi?id=232153
+        <rdar://84523250>
+
+        Reviewed by Brent Fulgham.
+
+        Add required syscall to WP sandbox on iOS.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb.in:
+
 2021-10-22  Takashi Komori  <Takashi.Komori@sony.com>
 
         WKErrorRef.h does't have some error definitions
