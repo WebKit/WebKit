@@ -1,5 +1,15 @@
 2021-10-22  Alan Bujtas  <zalan@apple.com>
 
+        [LFC][IFC] Add missing isAtSoftWrapOpportunity check when between two whitespace inline items
+        https://bugs.webkit.org/show_bug.cgi?id=232055
+
+        Reviewed by Antti Koivisto.
+
+        * fast/inline/white-space-nowrap-and-normal-inline-box-expected.html: Added.
+        * fast/inline/white-space-nowrap-and-normal-inline-box.html: Added.
+
+2021-10-22  Alan Bujtas  <zalan@apple.com>
+
         FontCascade::widthForSimpleText fails to produce matching measured width for monospace font
         https://bugs.webkit.org/show_bug.cgi?id=232104
         <rdar://83991027>

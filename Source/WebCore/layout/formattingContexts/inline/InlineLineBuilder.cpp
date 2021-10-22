@@ -92,12 +92,16 @@ static inline bool isAtSoftWrapOpportunity(const InlineFormattingContext& inline
     if (current.isText() && next.isText()) {
         auto& currentInlineTextItem = downcast<InlineTextItem>(current);
         auto& nextInlineTextItem = downcast<InlineTextItem>(next);
+        if (currentInlineTextItem.isWhitespace() && nextInlineTextItem.isWhitespace()) {
+            // <span> </span><span> </span>. Depending on the styles, there may or may not be a soft wrap opportunity between these 2 whitespace content.
+            return TextUtil::isWrappingAllowed(currentInlineTextItem.style()) || TextUtil::isWrappingAllowed(nextInlineTextItem.style());
+        }
         if (currentInlineTextItem.isWhitespace()) {
-            // [ ][text] : after [whitespace] position is a soft wrap opportunity.
+            // " <span>text</span>" : after [whitespace] position is a soft wrap opportunity.
             return TextUtil::isWrappingAllowed(currentInlineTextItem.style());
         }
         if (nextInlineTextItem.isWhitespace()) {
-            // [text][ ] (<span>text</span> )
+            // "<span>text</span> "
             // white-space: break-spaces: line breaking opportunity exists after every preserved white space character, but not before.
             return TextUtil::isWrappingAllowed(nextInlineTextItem.style()) && nextInlineTextItem.style().whiteSpace() != WhiteSpace::BreakSpaces;
         }
