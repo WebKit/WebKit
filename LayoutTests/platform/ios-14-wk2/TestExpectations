@@ -15,8 +15,6 @@ webkit.org/b/230060 [ Release ] fast/shapes/shape-outside-floats/shape-outside-b
 
 webkit.org/b/230099 fast/sub-pixel/auto-table-layout-should-avoid-text-wrapping.html [ Pass Crash ]
 
-webkit.org/b/225528 http/wpt/fetch/fetch-response-body-stop-in-worker.html [ Pass Crash ]
-
 webkit.org/b/230514 imported/w3c/web-platform-tests/html/webappapis/structured-clone/structured-clone.any.html [ Pass Crash ]
 
 webkit.org/b/230696 imported/w3c/web-platform-tests/webrtc/RTCDataChannel-close.html [ Pass Failure ]
