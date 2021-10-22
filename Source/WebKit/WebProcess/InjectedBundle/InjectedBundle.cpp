@@ -142,7 +142,7 @@ void InjectedBundle::postSynchronousMessage(const String& messageName, API::Obje
 
     auto& webProcess = WebProcess::singleton();
     if (!webProcess.parentProcessConnection()->sendSync(Messages::WebProcessPool::HandleSynchronousMessage(messageName, UserData(webProcess.transformObjectsToHandles(messageBody))),
-        Messages::WebProcessPool::HandleSynchronousMessage::Reply(returnUserData), 0))
+        Messages::WebProcessPool::HandleSynchronousMessage::Reply(returnUserData), 0, IPC::Timeout::infinity(), IPC::SendSyncOption::InformPlatformProcessWillSuspend))
         returnData = nullptr;
     else
         returnData = webProcess.transformHandlesToObjects(returnUserData.object());
