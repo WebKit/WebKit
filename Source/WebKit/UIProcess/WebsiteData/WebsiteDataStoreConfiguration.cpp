@@ -51,6 +51,9 @@ WebsiteDataStoreConfiguration::WebsiteDataStoreConfiguration(IsPersistent isPers
 #if ENABLE(ARKIT_INLINE_PREVIEW)
         setModelElementCacheDirectory(WebsiteDataStore::defaultModelElementCacheDirectory());
 #endif
+#if PLATFORM(IOS)
+        setPCMMachServiceName("com.apple.webkit.adattributiond.service");
+#endif
     }
 }
 

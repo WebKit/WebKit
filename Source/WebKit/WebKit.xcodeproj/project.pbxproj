@@ -14582,7 +14582,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "echo \"not copying adattributiond plist\"\n";
+			shellScript = "if [[ \"${WK_PLATFORM_NAME}\" == iphoneos ]]; then\n    DAEMON_PLIST_SOURCE=\"${SRCROOT}/Shared/EntryPointUtilities/Cocoa/Daemon/com.apple.webkit.adattributiond.plist\"\n    DAEMON_PLIST_DESTINATION=\"${DSTROOT}/System/Library/LaunchDaemons/com.apple.webkit.adattributiond.plist\"\n    echo \"copying adattributiond plist\"\n    echo plutil -convert binary1 -o \"${DAEMON_PLIST_DESTINATION}\" \"${DAEMON_PLIST_SOURCE}\"\n    plutil -convert binary1 -o \"${DAEMON_PLIST_DESTINATION}\" \"${DAEMON_PLIST_SOURCE}\"\nelse\n    echo \"not copying adattributiond plist\"\nfi\n";
 		};
 		E1AC2E2C20F7B95800B0897D /* Unlock Keychain */ = {
 			isa = PBXShellScriptBuildPhase;
