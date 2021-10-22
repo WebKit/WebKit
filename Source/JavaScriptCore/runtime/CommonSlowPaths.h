@@ -118,21 +118,6 @@ inline JSValue opEnumeratorGetByVal(JSGlobalObject* globalObject, JSValue baseVa
     case JSPropertyNameEnumerator::GenericMode: {
         if (arrayProfile && baseValue.isCell() && mode != JSPropertyNameEnumerator::OwnStructureMode)
             arrayProfile->observeStructureID(baseValue.asCell()->structureID());
-#if USE(JSVALUE32_64)
-        if (!propertyNameValue.isCell()) {
-            // This branch is only needed because we use this method
-            // both as a slow_path and as a DFG call op. We'll end up
-            // here if propertyName is not a cell then we are in
-            // index+named mode, so do what RecoverNameAndGetVal
-            // does. This can probably be removed if we re-enable the
-            // optimizations for enumeratorGetByVal in DFG, see bug
-            // #230189.
-            JSString* string = enumerator->propertyNameAtIndex(index);
-            auto propertyName = string->toIdentifier(globalObject);
-            RETURN_IF_EXCEPTION(scope, { });
-            RELEASE_AND_RETURN(scope, baseValue.get(globalObject, propertyName));
-        }
-#endif
         JSString* string = asString(propertyNameValue);
         auto propertyName = string->toIdentifier(globalObject);
         RETURN_IF_EXCEPTION(scope, { });

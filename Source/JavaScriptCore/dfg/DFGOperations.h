@@ -90,7 +90,6 @@ JSC_DECLARE_JIT_OPERATION(operationArithRound, EncodedJSValue, (JSGlobalObject*,
 JSC_DECLARE_JIT_OPERATION(operationArithFloor, EncodedJSValue, (JSGlobalObject*, EncodedJSValue));
 JSC_DECLARE_JIT_OPERATION(operationArithCeil, EncodedJSValue, (JSGlobalObject*, EncodedJSValue));
 JSC_DECLARE_JIT_OPERATION(operationArithTrunc, EncodedJSValue, (JSGlobalObject*, EncodedJSValue));
-JSC_DECLARE_JIT_OPERATION(operationGetByValCell, EncodedJSValue, (JSGlobalObject*, JSCell*, EncodedJSValue encodedProperty));
 JSC_DECLARE_JIT_OPERATION(operationGetByValObjectInt, EncodedJSValue, (JSGlobalObject*, JSObject*, int32_t));
 JSC_DECLARE_JIT_OPERATION(operationGetByValStringInt, EncodedJSValue, (JSGlobalObject*, JSString*, int32_t));
 JSC_DECLARE_JIT_OPERATION(operationGetByValObjectString, EncodedJSValue, (JSGlobalObject*, JSCell*, JSCell* string));
@@ -111,8 +110,7 @@ JSC_DECLARE_JIT_OPERATION(operationEnumeratorNextUpdateIndexAndMode, EncodedJSVa
 JSC_DECLARE_JIT_OPERATION(operationEnumeratorNextUpdatePropertyName, JSString*, (JSGlobalObject*, uint32_t, int32_t, JSPropertyNameEnumerator*));
 JSC_DECLARE_JIT_OPERATION(operationEnumeratorInByVal, EncodedJSValue, (JSGlobalObject*, EncodedJSValue, EncodedJSValue, uint32_t, int32_t));
 JSC_DECLARE_JIT_OPERATION(operationEnumeratorHasOwnProperty, EncodedJSValue, (JSGlobalObject*, EncodedJSValue, EncodedJSValue, uint32_t, int32_t));
-JSC_DECLARE_JIT_OPERATION(operationEnumeratorRecoverNameAndGetByVal, EncodedJSValue, (JSGlobalObject*, JSCell*, uint32_t, JSPropertyNameEnumerator*));
-JSC_DECLARE_JIT_OPERATION(operationEnumeratorGetByValGeneric, EncodedJSValue, (JSGlobalObject*, EncodedJSValue, EncodedJSValue, uint32_t, int32_t, JSPropertyNameEnumerator*));
+JSC_DECLARE_JIT_OPERATION(operationEnumeratorRecoverNameAndGetByVal, EncodedJSValue, (JSGlobalObject*, EncodedJSValue, uint32_t, JSPropertyNameEnumerator*));
 
 JSC_DECLARE_JIT_OPERATION(operationNewRegexpWithLastIndex, JSCell*, (JSGlobalObject*, JSCell*, EncodedJSValue));
 JSC_DECLARE_JIT_OPERATION(operationNewArray, char*, (JSGlobalObject*, Structure*, void*, size_t));

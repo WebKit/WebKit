@@ -1124,9 +1124,6 @@ private:
                         break;
                     }
                 }
-#if USE(JSVALUE32_64)
-                fixEdge<CellUse>(m_graph.varArgChild(node, 0)); // Speculating cell due to register pressure on 32-bit.
-#endif
                 break;
             case Array::ForceExit:
                 break;

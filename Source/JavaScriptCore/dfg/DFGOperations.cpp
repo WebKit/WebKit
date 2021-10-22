@@ -749,35 +749,6 @@ JSC_DEFINE_JIT_OPERATION(operationArithTrunc, EncodedJSValue, (JSGlobalObject* g
     return JSValue::encode(jsNumber(truncatedValueOfArgument));
 }
 
-JSC_DEFINE_JIT_OPERATION(operationGetByValCell, EncodedJSValue, (JSGlobalObject* globalObject, JSCell* base, EncodedJSValue encodedProperty))
-{
-    VM& vm = globalObject->vm();
-    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
-    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    JSValue property = JSValue::decode(encodedProperty);
-
-    if (std::optional<uint32_t> index = property.tryGetAsUint32Index())
-        RELEASE_AND_RETURN(scope, getByValWithIndex(globalObject, base, *index));
-
-    if (property.isString()) {
-        Structure& structure = *base->structure(vm);
-        if (JSCell::canUseFastGetOwnProperty(structure)) {
-            RefPtr<AtomStringImpl> existingAtomString = asString(property)->toExistingAtomString(globalObject);
-            RETURN_IF_EXCEPTION(scope, encodedJSValue());
-            if (existingAtomString) {
-                if (JSValue result = base->fastGetOwnProperty(vm, structure, existingAtomString.get()))
-                    return JSValue::encode(result);
-            }
-        }
-    }
-
-    auto propertyName = property.toPropertyKey(globalObject);
-    RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    RELEASE_AND_RETURN(scope, JSValue::encode(JSValue(base).get(globalObject, propertyName)));
-}
-
 ALWAYS_INLINE EncodedJSValue getByValCellInt(JSGlobalObject* globalObject, VM& vm, JSCell* base, int32_t index)
 {
     if (index < 0) {
@@ -2507,7 +2478,7 @@ JSC_DEFINE_JIT_OPERATION(operationEnumeratorNextUpdatePropertyName, JSString*, (
     return result;
 }
 
-JSC_DEFINE_JIT_OPERATION(operationEnumeratorRecoverNameAndGetByVal, EncodedJSValue, (JSGlobalObject* globalObject, JSCell* base, uint32_t index, JSPropertyNameEnumerator* enumerator))
+JSC_DEFINE_JIT_OPERATION(operationEnumeratorRecoverNameAndGetByVal, EncodedJSValue, (JSGlobalObject* globalObject, EncodedJSValue baseValue, uint32_t index, JSPropertyNameEnumerator* enumerator))
 {
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
@@ -2518,7 +2489,8 @@ JSC_DEFINE_JIT_OPERATION(operationEnumeratorRecoverNameAndGetByVal, EncodedJSVal
     PropertyName propertyName = string->toIdentifier(globalObject);
     // This should only really return for TerminationException since we know string is backed by a UUID.
     RETURN_IF_EXCEPTION(scope, { });
-    JSObject* object = base->toObject(globalObject);
+    JSValue base = JSValue::decode(baseValue);
+    JSObject* object = base.toObject(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
 
     RELEASE_AND_RETURN(scope, JSValue::encode(object->get(globalObject, propertyName)));
@@ -2537,19 +2509,6 @@ JSC_DEFINE_JIT_OPERATION(operationEnumeratorInByVal, EncodedJSValue, (JSGlobalOb
 
     JSString* propertyName = jsSecureCast<JSString*>(vm, JSValue::decode(propertyNameValue));
     RELEASE_AND_RETURN(scope, JSValue::encode(jsBoolean(CommonSlowPaths::opInByVal(globalObject, base, propertyName))));
-}
-
-JSC_DEFINE_JIT_OPERATION(operationEnumeratorGetByValGeneric, EncodedJSValue, (JSGlobalObject* globalObject, EncodedJSValue baseValue, EncodedJSValue propertyNameValue, uint32_t index, int32_t modeNumber, JSPropertyNameEnumerator* enumerator))
-{
-    VM& vm = globalObject->vm();
-    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
-    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    JSValue property = JSValue::decode(propertyNameValue);
-    JSPropertyNameEnumerator::Flag mode = static_cast<JSPropertyNameEnumerator::Flag>(modeNumber);
-    JSValue base = JSValue::decode(baseValue);
-    RELEASE_AND_RETURN(scope, JSValue::encode(CommonSlowPaths::opEnumeratorGetByVal(globalObject, base, property, index, mode, enumerator)));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationEnumeratorHasOwnProperty, EncodedJSValue, (JSGlobalObject* globalObject, EncodedJSValue baseValue, EncodedJSValue propertyNameValue, uint32_t index, int32_t modeNumber))

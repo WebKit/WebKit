@@ -1,3 +1,33 @@
+2021-10-22  Mikhail R. Gadelha  <mikhail@igalia.com>
+
+        [JSC][32bit] Re-enable compileEnumeratorGetByVal fast path
+        https://bugs.webkit.org/show_bug.cgi?id=232052
+
+        Reviewed by Yusuke Suzuki.
+
+        In https://bugs.webkit.org/show_bug.cgi?id=229543, the compileEnumeratorGetByVal
+        fast path had to be disabled in 32 bits due to not having enough registers.
+        There are enough registers available now, so we can re-enable the fast path and
+        removed the speculation that the baseEdge of both enumeratorGetByVal and
+        getByVal is a Cell in 32 bits.
+
+        I've also updated the 32 bits version of compileGetByVal to be closer to the 64
+        bits version: using DFG_CRASH instead of RELEASE_ASSERT_NOT_REACHED, using nullptr
+        instead of 0, and removed some whitespaces.
+
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGOperations.cpp:
+        (JSC::DFG::JSC_DEFINE_JIT_OPERATION):
+        * dfg/DFGOperations.h:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileEnumeratorGetByVal):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compileGetByVal):
+        (JSC::DFG::SpeculativeJIT::compileEnumeratorGetByVal): Deleted.
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compileEnumeratorGetByVal): Deleted.
+
 2021-10-22  Saam Barati  <sbarati@apple.com>
 
         canDoFastSpread should also check that the Structure is from the global object we're watching
