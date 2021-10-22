@@ -1,3 +1,14 @@
+2021-10-21  Eric Carlson  <eric.carlson@apple.com>
+
+        Add GitHub name to contributors.json
+        https://bugs.webkit.org/show_bug.cgi?id=232131
+
+        Add my github username to contributors.json
+
+        Unreviewed.
+
+        * metadata/contributors.json:
+
 2021-10-21  Chris Lord  <clord@igalia.com>
 
         [WPE][GTK] Enable smooth scrolling by default
