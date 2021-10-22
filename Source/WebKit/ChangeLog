@@ -1,5 +1,17 @@
 2021-10-21  Alex Christensen  <achristensen@webkit.org>
 
+        Add webpushd plist
+        https://bugs.webkit.org/show_bug.cgi?id=231981
+
+        Reviewed by Brady Eidson.
+
+        This can be done once rdar://83086960 is approved.
+
+        * WebKit.xcodeproj/project.pbxproj:
+        * webpushd/com.apple.webkit.webpushd.plist: Added.
+
+2021-10-21  Alex Christensen  <achristensen@webkit.org>
+
         Unreviewed, reverting r284570.
 
         No longer needed

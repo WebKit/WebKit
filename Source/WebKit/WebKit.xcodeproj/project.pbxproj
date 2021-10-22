@@ -4687,6 +4687,7 @@
 		5CB9310626E839A90032B1C0 /* PrivateClickMeasurementManagerInterface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PrivateClickMeasurementManagerInterface.cpp; sourceTree = "<group>"; };
 		5CB9310726E841CB0032B1C0 /* PrivateClickMeasurementXPCUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrivateClickMeasurementXPCUtilities.h; sourceTree = "<group>"; };
 		5CB9310826E841CB0032B1C0 /* PrivateClickMeasurementXPCUtilities.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PrivateClickMeasurementXPCUtilities.mm; sourceTree = "<group>"; };
+		5CBB6D4D271F67CC00FD1A5D /* com.apple.webkit.webpushd.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = com.apple.webkit.webpushd.plist; sourceTree = "<group>"; };
 		5CBC9B891C6524A500A8FDCF /* NetworkDataTask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkDataTask.h; sourceTree = "<group>"; };
 		5CBC9B8B1C65257300A8FDCF /* NetworkDataTaskCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = NetworkDataTaskCocoa.mm; sourceTree = "<group>"; };
 		5CBE908F26D7FB62005A2E95 /* PrivateClickMeasurementDebugInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrivateClickMeasurementDebugInfo.h; sourceTree = "<group>"; };
@@ -9575,6 +9576,7 @@
 		5C157A0A2717C9F100ED5280 /* webpushd */ = {
 			isa = PBXGroup;
 			children = (
+				5CBB6D4D271F67CC00FD1A5D /* com.apple.webkit.webpushd.plist */,
 				5C157A0B2717CA1C00ED5280 /* WebPushDaemonMain.mm */,
 			);
 			path = webpushd;
@@ -12526,7 +12528,6 @@
 				1A6D86C21DF75265007745E8 /* MachMessage.h in Headers */,
 				BCC56F791159957D001CCAF9 /* MachPort.h in Headers */,
 				1A24B5F311F531E800C38269 /* MachUtilities.h in Headers */,
-				514526FF271FB7EC000467B6 /* NotificationManagerMessageHandler.h in Headers */,
 				A15799BE2584433200528236 /* MediaFormatReader.h in Headers */,
 				9ACC07B125C815D800DC6386 /* MediaKeySystemPermissionRequest.h in Headers */,
 				9ACC07AD25C8132D00DC6386 /* MediaKeySystemPermissionRequestManager.h in Headers */,
@@ -12561,7 +12562,6 @@
 				1ADCB86B189831B30022EE5A /* NavigationActionData.h in Headers */,
 				57FD318022B35158008D0E8B /* NavigationSOAuthorizationSession.h in Headers */,
 				1ABC3DF61899E437004F0626 /* NavigationState.h in Headers */,
-				51452708271FBEC6000467B6 /* WebNotificationManagerMessageHandler.h in Headers */,
 				57B826442304F14000B72EB0 /* NearFieldSoftLink.h in Headers */,
 				57B826412304EB3E00B72EB0 /* NearFieldSPI.h in Headers */,
 				1A6FBA2A11E6862700DB1371 /* NetscapeBrowserFuncs.h in Headers */,
@@ -12592,9 +12592,9 @@
 				83D454D71BE9D3C4006C93BD /* NetworkLoadClient.h in Headers */,
 				839149651BEA838500D2D953 /* NetworkLoadParameters.h in Headers */,
 				E47FC8A025B8331C005495FC /* NetworkLoadScheduler.h in Headers */,
+				514526ED271E1647000467B6 /* NetworkNotificationManager.h in Headers */,
 				5179556A162876F300FA43B6 /* NetworkProcess.h in Headers */,
 				517CF0E4163A486C00C2950E /* NetworkProcessConnectionMessages.h in Headers */,
-				51452704271FBA40000467B6 /* NotificationManagerMessageHandlerMessagesReplies.h in Headers */,
 				5C1426ED1C23F80900D41183 /* NetworkProcessCreationParameters.h in Headers */,
 				5163199516289A6300E22F00 /* NetworkProcessMessages.h in Headers */,
 				E14A954A16E016A40068DE82 /* NetworkProcessPlatformStrategies.h in Headers */,
@@ -12615,6 +12615,9 @@
 				93085DDF26E5BCF1000EC6A7 /* NetworkStorageManagerMessagesReplies.h in Headers */,
 				570DAAC22303730300E8FC04 /* NfcConnection.h in Headers */,
 				570DAAAE23026F5C00E8FC04 /* NfcService.h in Headers */,
+				514526FF271FB7EC000467B6 /* NotificationManagerMessageHandler.h in Headers */,
+				51452705271FBA40000467B6 /* NotificationManagerMessageHandlerMessages.h in Headers */,
+				51452704271FBA40000467B6 /* NotificationManagerMessageHandlerMessagesReplies.h in Headers */,
 				31A2EC5614899C0900810D71 /* NotificationPermissionRequest.h in Headers */,
 				3131261F148FF82C00BA2A39 /* NotificationPermissionRequestManager.h in Headers */,
 				1A2D848B127F6A49001EB962 /* NPIdentifierData.h in Headers */,
@@ -12691,6 +12694,7 @@
 				C15CBB3623F3777100300CC7 /* PreferenceObserver.h in Headers */,
 				AAB145E6223F931200E489D8 /* PrefetchCache.h in Headers */,
 				E1CC1B9012D7EADF00625838 /* PrintInfo.h in Headers */,
+				512ECC3527196ADB00089B66 /* PrivateClickMeasurementConnection.h in Headers */,
 				5C826D6C26D482F2008AEC91 /* PrivateClickMeasurementDatabase.h in Headers */,
 				6BD05865220CE8C2000BED5C /* PrivateClickMeasurementManager.h in Headers */,
 				57FE688C260ABB3D00BF45E4 /* PrivateClickMeasurementNetworkLoader.h in Headers */,
@@ -12754,7 +12758,6 @@
 				F4517D7B26FBCD39004C8475 /* RemoteRenderingBackendMessagesReplies.h in Headers */,
 				F414CE2D269DE6EA00BD216A /* RemoteRenderingBackendState.h in Headers */,
 				0F594790187B3B3A00437857 /* RemoteScrollingCoordinator.h in Headers */,
-				512ECC3527196ADB00089B66 /* PrivateClickMeasurementConnection.h in Headers */,
 				0F5947A8187B517600437857 /* RemoteScrollingCoordinatorMessages.h in Headers */,
 				0F59479B187B3B6000437857 /* RemoteScrollingCoordinatorProxy.h in Headers */,
 				0F5947A4187B3B7D00437857 /* RemoteScrollingCoordinatorTransaction.h in Headers */,
@@ -12827,7 +12830,6 @@
 				9368EEDF2303A9ED00BDB11A /* StorageManagerSetMessages.h in Headers */,
 				465F4E06230B2E95003CEDB7 /* StorageNamespaceIdentifier.h in Headers */,
 				7B73123C25CC8525003B2796 /* StreamClientConnection.h in Headers */,
-				51452705271FBA40000467B6 /* NotificationManagerMessageHandlerMessages.h in Headers */,
 				7B73123A25CC8525003B2796 /* StreamConnectionBuffer.h in Headers */,
 				7B73124225CC8525003B2796 /* StreamConnectionEncoder.h in Headers */,
 				7B73123E25CC8525003B2796 /* StreamConnectionWorkQueue.h in Headers */,
@@ -12895,7 +12897,6 @@
 				5742A318253648E500B7BA14 /* WebAuthnProcess.h in Headers */,
 				572EBBD52536C885000552B3 /* WebAuthnProcessConnection.h in Headers */,
 				572EBBCC2536B04F000552B3 /* WebAuthnProcessConnectionInfo.h in Headers */,
-				514526ED271E1647000467B6 /* NetworkNotificationManager.h in Headers */,
 				5742A30825358A0400B7BA14 /* WebAuthnProcessCreationParameters.h in Headers */,
 				572EBBC22536A60A000552B3 /* WebAuthnProcessMessages.h in Headers */,
 				572EBBC92536AFD5000552B3 /* WebAuthnProcessProxy.h in Headers */,
@@ -13028,6 +13029,7 @@
 				31A2EC49148997C200810D71 /* WebNotification.h in Headers */,
 				310999C7146C9E3D0029DEB9 /* WebNotificationClient.h in Headers */,
 				31312621148FF82C00BA2A39 /* WebNotificationManager.h in Headers */,
+				51452708271FBEC6000467B6 /* WebNotificationManagerMessageHandler.h in Headers */,
 				31BA924E148831260062EDB5 /* WebNotificationManagerMessages.h in Headers */,
 				31A2EC4B148997C200810D71 /* WebNotificationManagerProxy.h in Headers */,
 				31A2EC4E148997C200810D71 /* WebNotificationProvider.h in Headers */,
@@ -13735,7 +13737,7 @@
 				5379C7AC21E5288500E4A8F6 /* Check .xcfilelists */,
 				933170072234674500B32554 /* Create symlinks to XPC services for engineering builds */,
 				0FB94836239F31B700926A8F /* Copy Testing Headers */,
-				DFD03A29270D5F57001A996E /* Copy Daemon Plist */,
+				DFD03A29270D5F57001A996E /* Copy Daemon Plists */,
 			);
 			buildRules = (
 				535E08C422545B7200DF00CA /* PBXBuildRule */,
@@ -14564,7 +14566,7 @@
 			shellPath = /bin/sh;
 			shellScript = "Scripts/generate-derived-sources.sh\n";
 		};
-		DFD03A29270D5F57001A996E /* Copy Daemon Plist */ = {
+		DFD03A29270D5F57001A996E /* Copy Daemon Plists */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 12;
 			files = (
@@ -14574,7 +14576,7 @@
 			inputPaths = (
 				"$(SRCROOT)/Shared/EntryPointUtilities/Cocoa/Daemon/com.apple.webkit.adattributiond.plist",
 			);
-			name = "Copy Daemon Plist";
+			name = "Copy Daemon Plists";
 			outputFileListPaths = (
 			);
 			outputPaths = (
@@ -14582,7 +14584,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [[ \"${WK_PLATFORM_NAME}\" == iphoneos ]]; then\n    DAEMON_PLIST_SOURCE=\"${SRCROOT}/Shared/EntryPointUtilities/Cocoa/Daemon/com.apple.webkit.adattributiond.plist\"\n    DAEMON_PLIST_DESTINATION=\"${DSTROOT}/System/Library/LaunchDaemons/com.apple.webkit.adattributiond.plist\"\n    echo \"copying adattributiond plist\"\n    echo plutil -convert binary1 -o \"${DAEMON_PLIST_DESTINATION}\" \"${DAEMON_PLIST_SOURCE}\"\n    plutil -convert binary1 -o \"${DAEMON_PLIST_DESTINATION}\" \"${DAEMON_PLIST_SOURCE}\"\nelse\n    echo \"not copying adattributiond plist\"\nfi\n";
+			shellScript = "if [[ \"${WK_PLATFORM_NAME}\" == iphoneos ]]; then\n    ADATTRIBUTIOND_PLIST_SOURCE=\"${SRCROOT}/Shared/EntryPointUtilities/Cocoa/Daemon/com.apple.webkit.adattributiond.plist\"\n    ADATTRIBUTIOND_PLIST_DESTINATION=\"${DSTROOT}/System/Library/LaunchDaemons/com.apple.webkit.adattributiond.plist\"\n    echo \"copying adattributiond plist\"\n    echo plutil -convert binary1 -o \"${ADATTRIBUTIOND_PLIST_DESTINATION}\" \"${ADATTRIBUTIOND_PLIST_SOURCE}\"\n    plutil -convert binary1 -o \"${ADATTRIBUTIOND_PLIST_DESTINATION}\" \"${ADATTRIBUTIOND_PLIST_SOURCE}\"\nelse\n    echo \"not copying adattributiond plist\"\nfi\n\nif [[ \"${WK_PLATFORM_NAME}\" == iphoneos || \"${WK_PLATFORM_NAME}\" == macosx ]]; then\n    WEBPUSHD_PLIST_SOURCE=\"${SRCROOT}/webpushd/com.apple.webkit.webpushd.plist\"\n    WEBPUSHD_PLIST_DESTINATION=\"${DSTROOT}/System/Library/LaunchDaemons/com.apple.webkit.webpushd.plist\"\n    echo \"copying webpushd plist\"\n    echo plutil -convert binary1 -o \"${WEBPUSHD_PLIST_DESTINATION}\" \"${WEBPUSHD_PLIST_SOURCE}\"\n    plutil -convert binary1 -o \"${WEBPUSHD_PLIST_DESTINATION}\" \"${WEBPUSHD_PLIST_SOURCE}\"\nelse\n    echo \"not copying webpushd plist\"\nfi\n";
 		};
 		E1AC2E2C20F7B95800B0897D /* Unlock Keychain */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -14679,7 +14681,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				5790A67125679F1A0077C5A7 /* _WKAuthenticationExtensionsClientInputs.mm in Sources */,
-				51452703271FBA3A000467B6 /* NotificationManagerMessageHandlerMessageReceiver.cpp in Sources */,
 				5790A67D2567A13E0077C5A7 /* _WKAuthenticationExtensionsClientOutputs.mm in Sources */,
 				5790A6892567A28A0077C5A7 /* _WKAuthenticatorAssertionResponse.mm in Sources */,
 				5790A6852567A21E0077C5A7 /* _WKAuthenticatorAttestationResponse.mm in Sources */,
@@ -14765,6 +14766,7 @@
 				31F060E11654318500F3281C /* NetworkSocketChannelMessageReceiver.cpp in Sources */,
 				5C0B17781E7C880E00E9123C /* NetworkSocketStreamMessageReceiver.cpp in Sources */,
 				93085DD226E2F58D000EC6A7 /* NetworkStorageManagerMessageReceiver.cpp in Sources */,
+				51452703271FBA3A000467B6 /* NotificationManagerMessageHandlerMessageReceiver.cpp in Sources */,
 				2D92A790212B6AD400F493FD /* NPIdentifierData.cpp in Sources */,
 				2D913446212CF9F000128AFD /* NPJSObject.cpp in Sources */,
 				2D92A791212B6AD400F493FD /* NPObjectMessageReceiver.cpp in Sources */,
