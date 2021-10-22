@@ -44,7 +44,8 @@ public:
 
     enum class Interface : uint8_t {
         Accessible = 1 << 0,
-        Component = 1 << 1
+        Component = 1 << 1,
+        Text = 1 << 2
     };
     const OptionSet<Interface>& interfaces() const { return m_interfaces; }
 
@@ -82,6 +83,32 @@ public:
     void scrollToMakeVisible(uint32_t) const;
     void scrollToPoint(const IntPoint&, uint32_t) const;
 
+    String text() const;
+    enum class TextGranularity {
+        Character,
+        WordStart,
+        WordEnd,
+        SentenceStart,
+        SentenceEnd,
+        LineStart,
+        LineEnd,
+        Paragraph
+    };
+    IntPoint boundaryOffset(unsigned, TextGranularity) const;
+    IntRect boundsForRange(unsigned, unsigned, uint32_t) const;
+    struct TextAttributes {
+        HashMap<String, String> attributes;
+        int startOffset;
+        int endOffset;
+    };
+    TextAttributes textAttributes(std::optional<unsigned> = std::nullopt, bool = false) const;
+    IntPoint selectedRange() const;
+    void setSelectedRange(unsigned, unsigned);
+    void textInserted(const String&, const VisiblePosition&);
+    void textDeleted(const String&, const VisiblePosition&);
+    void textAttributesChanged();
+    void selectionChanged(const VisibleSelection&);
+
 private:
     explicit AccessibilityObjectAtspi(AXCoreObject*);
 
@@ -99,10 +126,25 @@ private:
     bool focus() const;
     float opacity() const;
 
+    static TextGranularity atspiBoundaryToTextGranularity(uint32_t);
+    static TextGranularity atspiGranularityToTextGranularity(uint32_t);
+    CString text(int, int) const;
+    CString textAtOffset(int, TextGranularity, int&, int&) const;
+    int characterAtOffset(int) const;
+    IntRect textExtents(int, int, uint32_t) const;
+    int offsetAtPoint(const IntPoint&, uint32_t) const;
+    IntPoint boundsForSelection(const VisibleSelection&) const;
+    bool selectionBounds(int&, int&) const;
+    bool selectRange(int, int);
+    TextAttributes textAttributesWithUTF8Offset(std::optional<int> = std::nullopt, bool = false) const;
+    bool scrollToMakeVisible(int, int, uint32_t) const;
+    bool scrollToPoint(int, int, uint32_t, int, int) const;
+
     static OptionSet<Interface> interfacesForObject(AXCoreObject&);
 
     static GDBusInterfaceVTable s_accessibleFunctions;
     static GDBusInterfaceVTable s_componentFunctions;
+    static GDBusInterfaceVTable s_textFunctions;
 
     AXCoreObject* m_axObject { nullptr };
     AXCoreObject* m_coreObject { nullptr };

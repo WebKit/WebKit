@@ -56,6 +56,11 @@ public:
 
     void stateChanged(AccessibilityObjectAtspi&, const char*, bool);
 
+    void textChanged(AccessibilityObjectAtspi&, const char*, CString&&, unsigned, unsigned);
+    void textAttributesChanged(AccessibilityObjectAtspi&);
+    void textCaretMoved(AccessibilityObjectAtspi&, unsigned);
+    void textSelectionChanged(AccessibilityObjectAtspi&);
+
     static const char* localizedRoleName(AccessibilityRole);
 
 private:

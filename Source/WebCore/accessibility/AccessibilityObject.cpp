@@ -3273,8 +3273,8 @@ bool AccessibilityObject::pressedIsPresent() const
 TextIteratorBehaviors AccessibilityObject::textIteratorBehaviorForTextRange() const
 {
     TextIteratorBehaviors behaviors { TextIteratorBehavior::IgnoresStyleVisibility };
-    
-#if USE(ATK)
+
+#if USE(ATK) || USE(ATSPI)
     // We need to emit replaced elements for GTK, and present
     // them with the 'object replacement character' (0xFFFC).
     behaviors.add(TextIteratorBehavior::EmitsObjectReplacementCharacters);

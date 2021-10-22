@@ -1409,7 +1409,7 @@ void AXObjectCache::postTextStateChangeNotification(Node* node, const AXTextStat
     if (!node)
         return;
 
-#if PLATFORM(COCOA)
+#if PLATFORM(COCOA) || USE(ATSPI)
     stopCachingComputedObjectAttributes();
 
     postTextStateChangeNotification(getOrCreate(node), intent, selection);
@@ -1428,9 +1428,10 @@ void AXObjectCache::postTextStateChangeNotification(const Position& position, co
 
     stopCachingComputedObjectAttributes();
 
-#if PLATFORM(COCOA)
+#if PLATFORM(COCOA) || USE(ATSPI)
     AccessibilityObject* object = getOrCreate(node);
     if (object && object->accessibilityIsIgnored()) {
+#if PLATFORM(COCOA)
         if (position.atLastEditingPositionForNode()) {
             if (AccessibilityObject* nextSibling = object->nextSiblingUnignored(1))
                 object = nextSibling;
@@ -1438,6 +1439,13 @@ void AXObjectCache::postTextStateChangeNotification(const Position& position, co
             if (AccessibilityObject* previousSibling = object->previousSiblingUnignored(1))
                 object = previousSibling;
         }
+#elif USE(ATSPI)
+        // ATSPI doesn't expose text nodes, so we need the parent
+        // object which is the one implementing the text interface.
+        auto* parent = object->parentObjectUnignored();
+        if (is<AccessibilityObject>(parent))
+            object = downcast<AccessibilityObject>(parent);
+#endif
     }
 
     postTextStateChangeNotification(object, intent, selection);
@@ -1451,7 +1459,7 @@ void AXObjectCache::postTextStateChangeNotification(AccessibilityObject* object,
     AXTRACE("AXObjectCache::postTextStateChangeNotification");
     stopCachingComputedObjectAttributes();
 
-#if PLATFORM(COCOA)
+#if PLATFORM(COCOA) || USE(ATSPI)
     if (object) {
         if (isPasswordFieldOrContainedByPasswordField(object))
             return;
@@ -1490,7 +1498,7 @@ void AXObjectCache::postTextStateChangeNotification(Node* node, AXTextEditType t
     stopCachingComputedObjectAttributes();
 
     AccessibilityObject* object = getOrCreate(node);
-#if PLATFORM(COCOA)
+#if PLATFORM(COCOA) || USE(ATSPI)
     if (object) {
         if (enqueuePasswordValueChangeNotification(object))
             return;
@@ -1525,7 +1533,7 @@ void AXObjectCache::postTextReplacementNotification(Node* node, AXTextEditType d
     stopCachingComputedObjectAttributes();
 
     AccessibilityObject* object = getOrCreate(node);
-#if PLATFORM(COCOA)
+#if PLATFORM(COCOA) || USE(ATSPI)
     if (object) {
         if (enqueuePasswordValueChangeNotification(object))
             return;
@@ -1544,7 +1552,7 @@ void AXObjectCache::postTextReplacementNotificationForTextControl(HTMLTextFormCo
     stopCachingComputedObjectAttributes();
 
     AccessibilityObject* object = getOrCreate(&textControl);
-#if PLATFORM(COCOA)
+#if PLATFORM(COCOA) || USE(ATSPI)
     if (object) {
         if (enqueuePasswordValueChangeNotification(object))
             return;
@@ -1560,6 +1568,7 @@ void AXObjectCache::postTextReplacementNotificationForTextControl(HTMLTextFormCo
 
 bool AXObjectCache::enqueuePasswordValueChangeNotification(AccessibilityObject* object)
 {
+#if PLATFORM(COCOA)
     if (!isPasswordFieldOrContainedByPasswordField(object))
         return false;
 
@@ -1575,6 +1584,10 @@ bool AXObjectCache::enqueuePasswordValueChangeNotification(AccessibilityObject* 
         m_passwordNotificationPostTimer.startOneShot(accessibilityPasswordValueChangeNotificationInterval);
 
     return true;
+#else
+    UNUSED_PARAM(object);
+    return false;
+#endif
 }
 
 void AXObjectCache::frameLoadingEventNotification(Frame* frame, AXLoadingEvent loadingEvent)
@@ -3463,7 +3476,7 @@ AXAttributeCacheEnabler::~AXAttributeCacheEnabler()
         m_cache->stopCachingComputedObjectAttributes();
 }
 
-#if !PLATFORM(COCOA)
+#if !PLATFORM(COCOA) && !USE(ATSPI)
 AXTextChange AXObjectCache::textChangeForEditType(AXTextEditType type)
 {
     switch (type) {

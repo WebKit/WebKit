@@ -21,6 +21,7 @@
 #include "AXObjectCache.h"
 
 #if ENABLE(ACCESSIBILITY) && USE(ATSPI)
+#include "AXTextStateChangeIntent.h"
 #include "AccessibilityObject.h"
 #include "AccessibilityObjectAtspi.h"
 #include "AccessibilityRenderObject.h"
@@ -185,8 +186,93 @@ void AXObjectCache::postPlatformNotification(AXCoreObject* coreObject, AXNotific
     }
 }
 
-void AXObjectCache::nodeTextChangePlatformNotification(AccessibilityObject* object, AXTextChange textChange, unsigned offset, const String& text)
+void AXObjectCache::postTextStateChangePlatformNotification(AXCoreObject* coreObject, const AXTextStateChangeIntent&, const VisibleSelection& selection)
 {
+    RELEASE_ASSERT(isMainThread());
+    if (!coreObject)
+        coreObject = rootWebArea();
+
+    if (!coreObject)
+        return;
+
+    auto* wrapper = coreObject->wrapper();
+    if (!wrapper)
+        return;
+
+    wrapper->selectionChanged(selection);
+}
+
+void AXObjectCache::postTextStateChangePlatformNotification(AccessibilityObject* coreObject, AXTextEditType editType, const String& text, const VisiblePosition& position)
+{
+    RELEASE_ASSERT(isMainThread());
+    if (text.isEmpty())
+        return;
+
+    auto* wrapper = coreObject->wrapper();
+    if (!wrapper)
+        return;
+
+    switch (editType) {
+    case AXTextEditTypeDelete:
+    case AXTextEditTypeCut:
+        wrapper->textDeleted(text, position);
+        break;
+    case AXTextEditTypeInsert:
+    case AXTextEditTypeTyping:
+    case AXTextEditTypeDictation:
+    case AXTextEditTypePaste:
+        wrapper->textInserted(text, position);
+        break;
+    case AXTextEditTypeAttributesChange:
+        wrapper->textAttributesChanged();
+        break;
+    case AXTextEditTypeUnknown:
+        break;
+    }
+}
+
+void AXObjectCache::postTextReplacementPlatformNotificationForTextControl(AXCoreObject* coreObject, const String& deletedText, const String& insertedText, HTMLTextFormControlElement&)
+{
+    RELEASE_ASSERT(isMainThread());
+    if (!coreObject)
+        coreObject = rootWebArea();
+
+    if (!coreObject)
+        return;
+
+    if (deletedText.isEmpty() && insertedText.isEmpty())
+        return;
+
+    auto* wrapper = coreObject->wrapper();
+    if (!wrapper)
+        return;
+
+    if (!deletedText.isEmpty())
+        wrapper->textDeleted(deletedText, coreObject->visiblePositionForIndex(0));
+    if (!insertedText.isEmpty())
+        wrapper->textInserted(insertedText, coreObject->visiblePositionForIndex(insertedText.length()));
+}
+
+void AXObjectCache::postTextReplacementPlatformNotification(AXCoreObject* coreObject, AXTextEditType, const String& deletedText, AXTextEditType, const String& insertedText, const VisiblePosition& position)
+{
+    RELEASE_ASSERT(isMainThread());
+    if (!coreObject)
+        coreObject = rootWebArea();
+
+    if (!coreObject)
+        return;
+
+    if (deletedText.isEmpty() && insertedText.isEmpty())
+        return;
+
+    auto* wrapper = coreObject->wrapper();
+    if (!wrapper)
+        return;
+
+    if (!deletedText.isEmpty())
+        wrapper->textDeleted(deletedText, position);
+    if (!insertedText.isEmpty())
+        wrapper->textInserted(insertedText, position);
 }
 
 void AXObjectCache::frameLoadingEventPlatformNotification(AccessibilityObject* object, AXLoadingEvent loadingEvent)

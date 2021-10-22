@@ -258,6 +258,24 @@ enum ScrollType {
     Anywhere
 };
 
+enum TextBoundaryType {
+    CharBoundary,
+    WordStartBoundary,
+    WordEndBoundary,
+    SentenceStartBoundary,
+    SentenceEndBoundary,
+    LineStartBoundary,
+    LineEndBoundary
+};
+
+enum TextGranularityType {
+    CharGranularity,
+    WordGranularity,
+    SentenceGranularity,
+    LineGranularity,
+    ParagraphGranularity
+};
+
 } // namespace Atspi
 } // namespace WebCore
 

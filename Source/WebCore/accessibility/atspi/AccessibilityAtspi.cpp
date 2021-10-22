@@ -167,6 +167,54 @@ void AccessibilityAtspi::stateChanged(AccessibilityObjectAtspi& atspiObject, con
     });
 }
 
+void AccessibilityAtspi::textChanged(AccessibilityObjectAtspi& atspiObject, const char* changeType, CString&& text, unsigned offset, unsigned length)
+{
+    RELEASE_ASSERT(isMainThread());
+    m_queue->dispatch([this, atspiObject = Ref { atspiObject }, changeType = CString(changeType), text = WTFMove(text), offset, length] {
+        if (!m_connection)
+            return;
+
+        g_dbus_connection_emit_signal(m_connection.get(), nullptr, atspiObject->path().utf8().data(), "org.a11y.atspi.Event.Object", "TextChanged",
+            g_variant_new("(siiva{sv})", changeType.data(), offset, length, g_variant_new_string(text.data()), nullptr), nullptr);
+    });
+}
+
+void AccessibilityAtspi::textAttributesChanged(AccessibilityObjectAtspi& atspiObject)
+{
+    RELEASE_ASSERT(isMainThread());
+    m_queue->dispatch([this, atspiObject = Ref { atspiObject }] {
+        if (!m_connection)
+            return;
+
+        g_dbus_connection_emit_signal(m_connection.get(), nullptr, atspiObject->path().utf8().data(), "org.a11y.atspi.Event.Object", "TextAttributesChanged",
+            g_variant_new("(siiva{sv})", "", 0, 0, g_variant_new_string(""), nullptr), nullptr);
+    });
+}
+
+void AccessibilityAtspi::textCaretMoved(AccessibilityObjectAtspi& atspiObject, unsigned caretOffset)
+{
+    RELEASE_ASSERT(isMainThread());
+    m_queue->dispatch([this, atspiObject = Ref { atspiObject }, caretOffset] {
+        if (!m_connection)
+            return;
+
+        g_dbus_connection_emit_signal(m_connection.get(), nullptr, atspiObject->path().utf8().data(), "org.a11y.atspi.Event.Object", "TextCaretMoved",
+            g_variant_new("(siiva{sv})", "", caretOffset, 0, g_variant_new_string(""), nullptr), nullptr);
+    });
+}
+
+void AccessibilityAtspi::textSelectionChanged(AccessibilityObjectAtspi& atspiObject)
+{
+    RELEASE_ASSERT(isMainThread());
+    m_queue->dispatch([this, atspiObject = Ref { atspiObject }] {
+        if (!m_connection)
+            return;
+
+        g_dbus_connection_emit_signal(m_connection.get(), nullptr, atspiObject->path().utf8().data(), "org.a11y.atspi.Event.Object", "TextSelectionChanged",
+            g_variant_new("(siiva{sv})", "", 0, 0, g_variant_new_string(""), nullptr), nullptr);
+    });
+}
+
 struct RoleNameEntry {
     const char* name;
     const char* localizedName;

@@ -398,7 +398,7 @@ protected:
 
     void platformPerformDeferredCacheUpdate();
 
-#if PLATFORM(COCOA)
+#if PLATFORM(COCOA) || USE(ATSPI)
     void postTextStateChangePlatformNotification(AXCoreObject*, const AXTextStateChangeIntent&, const VisibleSelection&);
     void postTextStateChangePlatformNotification(AccessibilityObject*, AXTextEditType, const String&, const VisiblePosition&);
     void postTextReplacementPlatformNotificationForTextControl(AXCoreObject*, const String& deletedText, const String& insertedText, HTMLTextFormControlElement&);

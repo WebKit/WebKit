@@ -603,7 +603,7 @@ void HTMLTextFormControlElement::setInnerTextValue(const String& value)
                 innerText->appendChild(HTMLBRElement::create(document()));
         }
 
-#if ENABLE(ACCESSIBILITY) && PLATFORM(COCOA)
+#if ENABLE(ACCESSIBILITY) && (PLATFORM(COCOA) || USE(ATSPI))
         if (textIsChanged && renderer()) {
             if (AXObjectCache* cache = document().existingAXObjectCache())
                 cache->deferTextReplacementNotificationForTextControl(*this, previousValue);

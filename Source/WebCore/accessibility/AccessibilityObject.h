@@ -833,7 +833,7 @@ inline void AccessibilityObject::updateBackingStore() { }
 inline void AccessibilityObject::detachPlatformWrapper(AccessibilityDetachmentType) { }
 #endif
 
-#if !(ENABLE(ACCESSIBILITY) && USE(ATK))
+#if !(ENABLE(ACCESSIBILITY) && (USE(ATK) || USE(ATSPI)))
 inline bool AccessibilityObject::allowsTextRanges() const { return true; }
 inline unsigned AccessibilityObject::getLengthForTextRange() const { return text().length(); }
 #endif

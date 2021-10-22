@@ -2160,7 +2160,7 @@ int AccessibilityRenderObject::indexForVisiblePosition(const VisiblePosition& po
     if (!node)
         return 0;
 
-#if USE(ATK)
+#if USE(ATK) || USE(ATSPI)
     // We need to consider replaced elements for GTK, as they will be
     // presented with the 'object replacement character' (0xFFFC).
     bool forSelectionPreservation = true;

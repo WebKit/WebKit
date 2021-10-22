@@ -34,7 +34,15 @@ struct AtspiEventDeleter {
     }
 };
 
+struct AtspiTextRangeDeleter {
+    void operator()(AtspiTextRange* range) const
+    {
+        g_boxed_free(ATSPI_TYPE_TEXT_RANGE, range);
+    }
+};
+
 using UniqueAtspiEvent = std::unique_ptr<AtspiEvent, AtspiEventDeleter>;
+using UniqueAtspiTextRange = std::unique_ptr<AtspiTextRange, AtspiTextRangeDeleter>;
 
 class AccessibilityTest : public WebViewTest {
 public:
@@ -98,17 +106,18 @@ public:
         m_eventSource = nullptr;
     }
 
-    void startEventMonitor(AtspiAccessible* source, const Vector<const char*>& events)
+    void startEventMonitor(AtspiAccessible* source, Vector<CString>&& events)
     {
         m_eventMonitor.source = source;
+        m_eventMonitor.eventTypes = WTFMove(events);
         m_eventMonitor.listener = adoptGRef(atspi_event_listener_new([](AtspiEvent* event, gpointer userData) {
             auto* test = static_cast<AccessibilityTest*>(userData);
             if (event->source == test->m_eventMonitor.source)
                 test->m_eventMonitor.events.append(static_cast<AtspiEvent*>(g_boxed_copy(ATSPI_TYPE_EVENT, event)));
         }, this, nullptr));
 
-        for (const auto* event : events)
-            atspi_event_listener_register(m_eventMonitor.listener.get(), event, nullptr);
+        for (const auto& event : m_eventMonitor.eventTypes)
+            atspi_event_listener_register(m_eventMonitor.listener.get(), event.data(), nullptr);
     }
 
     Vector<UniqueAtspiEvent> stopEventMonitor(unsigned expectedEvents, std::optional<Seconds> timeout = std::nullopt)
@@ -119,8 +128,20 @@ public:
             g_main_context_iteration(nullptr, timeout ? FALSE : TRUE);
 
         auto events = WTFMove(m_eventMonitor.events);
-        m_eventMonitor = { nullptr, { }, nullptr };
+        for (const auto& event : m_eventMonitor.eventTypes)
+            atspi_event_listener_deregister(m_eventMonitor.listener.get(), event.data(), nullptr);
+        m_eventMonitor = { nullptr, { }, { }, nullptr };
         return events;
+    }
+
+    static AtspiEvent* findEvent(const Vector<UniqueAtspiEvent>& events, const char* eventType)
+    {
+        for (const auto& event : events) {
+            if (!g_strcmp0(event->type, eventType))
+                return event.get();
+        }
+
+        return nullptr;
     }
 
     static unsigned stateSetSize(AtspiStateSet* stateSet)
@@ -136,6 +157,7 @@ private:
 
     struct {
         GRefPtr<AtspiEventListener> listener;
+        Vector<CString> eventTypes;
         Vector<UniqueAtspiEvent> events;
         AtspiAccessible* source { nullptr };
     } m_eventMonitor;
@@ -805,6 +827,694 @@ static void testComponentScrollTo(AccessibilityTest* test, gconstpointer)
 }
 #endif
 
+static void testTextBasic(AccessibilityTest* test, gconstpointer)
+{
+    test->showInWindow();
+    test->loadHtml(
+        "<html>"
+        "  <body>"
+        "    <p>This is a line of text</p>"
+        "  </body>"
+        "</html>",
+        nullptr);
+    test->waitUntilLoadFinished();
+
+    auto testApp = test->findTestApplication();
+    g_assert_true(ATSPI_IS_ACCESSIBLE(testApp.get()));
+
+    auto documentWeb = test->findDocumentWeb(testApp.get());
+    g_assert_true(ATSPI_IS_ACCESSIBLE(documentWeb.get()));
+    g_assert_cmpint(atspi_accessible_get_child_count(documentWeb.get(), nullptr), ==, 1);
+
+    auto p = adoptGRef(atspi_accessible_get_child_at_index(documentWeb.get(), 0, nullptr));
+    g_assert_true(ATSPI_IS_TEXT(p.get()));
+    auto length = atspi_text_get_character_count(ATSPI_TEXT(p.get()), nullptr);
+    g_assert_cmpint(length, ==, 22);
+    GUniquePtr<char> text(atspi_text_get_text(ATSPI_TEXT(p.get()), 0, length, nullptr));
+    g_assert_cmpstr(text.get(), ==, "This is a line of text");
+    text.reset(atspi_text_get_text(ATSPI_TEXT(p.get()), 0, -1, nullptr));
+    g_assert_cmpstr(text.get(), ==, "This is a line of text");
+    text.reset(atspi_text_get_text(ATSPI_TEXT(p.get()), 5, 7, nullptr));
+    g_assert_cmpstr(text.get(), ==, "is");
+    text.reset(atspi_text_get_text(ATSPI_TEXT(p.get()), 0, -2, nullptr));
+    g_assert_cmpstr(text.get(), ==, "");
+    text.reset(atspi_text_get_text(ATSPI_TEXT(p.get()), -5, 23, nullptr));
+    g_assert_cmpstr(text.get(), ==, "");
+}
+
+static void testTextSurrogatePair(AccessibilityTest* test, gconstpointer)
+{
+#if USE(ATK)
+    g_test_skip("Surrogate pairs are not correctly handled by WebKit when using ATK");
+    return;
+#endif
+
+    test->showInWindow();
+    test->loadHtml(
+        "<html>"
+        "  <body>"
+        "    <p>This contains a &#x1D306; symbol</p>"
+        "    <input value='This contains a &#x1D306; symbol'/>"
+        "  </body>"
+        "</html>",
+        nullptr);
+    test->waitUntilLoadFinished();
+
+    auto testApp = test->findTestApplication();
+    g_assert_true(ATSPI_IS_ACCESSIBLE(testApp.get()));
+
+    auto documentWeb = test->findDocumentWeb(testApp.get());
+    g_assert_true(ATSPI_IS_ACCESSIBLE(documentWeb.get()));
+    g_assert_cmpint(atspi_accessible_get_child_count(documentWeb.get(), nullptr), ==, 2);
+
+    auto p = adoptGRef(atspi_accessible_get_child_at_index(documentWeb.get(), 0, nullptr));
+    g_assert_true(ATSPI_IS_TEXT(p.get()));
+    auto length = atspi_text_get_character_count(ATSPI_TEXT(p.get()), nullptr);
+    g_assert_cmpint(length, ==, 24);
+    GUniquePtr<char> text(atspi_text_get_text(ATSPI_TEXT(p.get()), 0, length, nullptr));
+    g_assert_cmpstr(text.get(), ==, "This contains a 𝌆 symbol");
+    text.reset(atspi_text_get_text(ATSPI_TEXT(p.get()), 16, 17, nullptr));
+    g_assert_cmpstr(text.get(), ==, "𝌆");
+
+    auto section = adoptGRef(atspi_accessible_get_child_at_index(documentWeb.get(), 1, nullptr));
+    g_assert_true(ATSPI_IS_ACCESSIBLE(section.get()));
+    g_assert_cmpint(atspi_accessible_get_child_count(section.get(), nullptr), ==, 1);
+    auto input = adoptGRef(atspi_accessible_get_child_at_index(section.get(), 0, nullptr));
+    g_assert_true(ATSPI_IS_TEXT(input.get()));
+    length = atspi_text_get_character_count(ATSPI_TEXT(input.get()), nullptr);
+    g_assert_cmpint(length, ==, 24);
+    text.reset(atspi_text_get_text(ATSPI_TEXT(input.get()), 0, length, nullptr));
+    g_assert_cmpstr(text.get(), ==, "This contains a 𝌆 symbol");
+    text.reset(atspi_text_get_text(ATSPI_TEXT(input.get()), 16, 17, nullptr));
+    g_assert_cmpstr(text.get(), ==, "𝌆");
+}
+
+static void testTextIterator(AccessibilityTest* test, gconstpointer)
+{
+    test->showInWindow(800, 600);
+    test->loadHtml(
+        "<html>"
+        "  <body>"
+        "    <p>Text of first sentence.   This is the second sentence.<br>And this is the next paragraph.</p>"
+        "  </body>"
+        "</html>",
+        nullptr);
+    test->waitUntilLoadFinished();
+
+    auto testApp = test->findTestApplication();
+    g_assert_true(ATSPI_IS_ACCESSIBLE(testApp.get()));
+
+    auto documentWeb = test->findDocumentWeb(testApp.get());
+    g_assert_true(ATSPI_IS_ACCESSIBLE(documentWeb.get()));
+    g_assert_cmpint(atspi_accessible_get_child_count(documentWeb.get(), nullptr), ==, 1);
+
+    auto p = adoptGRef(atspi_accessible_get_child_at_index(documentWeb.get(), 0, nullptr));
+    g_assert_true(ATSPI_IS_TEXT(p.get()));
+    auto length = atspi_text_get_character_count(ATSPI_TEXT(p.get()), nullptr);
+    g_assert_cmpint(length, ==, 84);
+    GUniquePtr<char> text(atspi_text_get_text(ATSPI_TEXT(p.get()), 0, length, nullptr));
+    g_assert_cmpstr(text.get(), ==, "Text of first sentence. This is the second sentence.\nAnd this is the next paragraph.");
+
+    // Character granularity.
+    UniqueAtspiTextRange range(atspi_text_get_string_at_offset(ATSPI_TEXT(p.get()), 0, ATSPI_TEXT_GRANULARITY_CHAR, nullptr));
+    g_assert_cmpstr(range->content, ==, "T");
+    g_assert_cmpint(range->start_offset, ==, 0);
+    g_assert_cmpint(range->end_offset, ==, 1);
+    range.reset(atspi_text_get_string_at_offset(ATSPI_TEXT(p.get()), 83, ATSPI_TEXT_GRANULARITY_CHAR, nullptr));
+    g_assert_cmpstr(range->content, ==, ".");
+    g_assert_cmpint(range->start_offset, ==, 83);
+    g_assert_cmpint(range->end_offset, ==, 84);
+    range.reset(atspi_text_get_string_at_offset(ATSPI_TEXT(p.get()), 84, ATSPI_TEXT_GRANULARITY_CHAR, nullptr));
+    g_assert_cmpstr(range->content, ==, "");
+    g_assert_cmpint(range->start_offset, ==, 84);
+    g_assert_cmpint(range->end_offset, ==, 84);
+    range.reset(atspi_text_get_string_at_offset(ATSPI_TEXT(p.get()), 85, ATSPI_TEXT_GRANULARITY_CHAR, nullptr));
+    g_assert_cmpstr(range->content, ==, "");
+#if USE(ATSPI)
+    g_assert_cmpint(range->start_offset, ==, 0);
+    g_assert_cmpint(range->end_offset, ==, 0);
+#else
+    // FIXME: ATK returns wrong offsets in this case.
+    g_assert_cmpint(range->start_offset, ==, 84);
+    g_assert_cmpint(range->end_offset, ==, 84);
+#endif
+    range.reset(atspi_text_get_string_at_offset(ATSPI_TEXT(p.get()), -1, ATSPI_TEXT_GRANULARITY_CHAR, nullptr));
+    g_assert_cmpstr(range->content, ==, "");
+    g_assert_cmpint(range->start_offset, ==, 0);
+    g_assert_cmpint(range->end_offset, ==, 0);
+
+    // Word granularity.
+    range.reset(atspi_text_get_string_at_offset(ATSPI_TEXT(p.get()), 0, ATSPI_TEXT_GRANULARITY_WORD, nullptr));
+    g_assert_cmpstr(range->content, ==, "Text ");
+    g_assert_cmpint(range->start_offset, ==, 0);
+    g_assert_cmpint(range->end_offset, ==, 5);
+    range.reset(atspi_text_get_string_at_offset(ATSPI_TEXT(p.get()), 4, ATSPI_TEXT_GRANULARITY_WORD, nullptr));
+    g_assert_cmpstr(range->content, ==, "Text ");
+    g_assert_cmpint(range->start_offset, ==, 0);
+    g_assert_cmpint(range->end_offset, ==, 5);
+    range.reset(atspi_text_get_string_at_offset(ATSPI_TEXT(p.get()), 5, ATSPI_TEXT_GRANULARITY_WORD, nullptr));
+    g_assert_cmpstr(range->content, ==, "of ");
+    g_assert_cmpint(range->start_offset, ==, 5);
+    g_assert_cmpint(range->end_offset, ==, 8);
+    range.reset(atspi_text_get_string_at_offset(ATSPI_TEXT(p.get()), 40, ATSPI_TEXT_GRANULARITY_WORD, nullptr));
+    g_assert_cmpstr(range->content, ==, "second ");
+    g_assert_cmpint(range->start_offset, ==, 36);
+    g_assert_cmpint(range->end_offset, ==, 43);
+    range.reset(atspi_text_get_string_at_offset(ATSPI_TEXT(p.get()), 16, ATSPI_TEXT_GRANULARITY_WORD, nullptr));
+    g_assert_cmpstr(range->content, ==, "sentence. ");
+    g_assert_cmpint(range->start_offset, ==, 14);
+    g_assert_cmpint(range->end_offset, ==, 24);
+    range.reset(atspi_text_get_string_at_offset(ATSPI_TEXT(p.get()), 74, ATSPI_TEXT_GRANULARITY_WORD, nullptr));
+    g_assert_cmpstr(range->content, ==, "paragraph.");
+    g_assert_cmpint(range->start_offset, ==, 74);
+    g_assert_cmpint(range->end_offset, ==, 84);
+    range.reset(atspi_text_get_string_at_offset(ATSPI_TEXT(p.get()), 83, ATSPI_TEXT_GRANULARITY_WORD, nullptr));
+    g_assert_cmpstr(range->content, ==, "paragraph.");
+    g_assert_cmpint(range->start_offset, ==, 74);
+    g_assert_cmpint(range->end_offset, ==, 84);
+    range.reset(atspi_text_get_string_at_offset(ATSPI_TEXT(p.get()), 80, ATSPI_TEXT_GRANULARITY_WORD, nullptr));
+    g_assert_cmpstr(range->content, ==, "paragraph.");
+    g_assert_cmpint(range->start_offset, ==, 74);
+    g_assert_cmpint(range->end_offset, ==, 84);
+
+    // Sentence granularity.
+    range.reset(atspi_text_get_string_at_offset(ATSPI_TEXT(p.get()), 0, ATSPI_TEXT_GRANULARITY_SENTENCE, nullptr));
+    g_assert_cmpstr(range->content, ==, "Text of first sentence. ");
+    g_assert_cmpint(range->start_offset, ==, 0);
+    g_assert_cmpint(range->end_offset, ==, 24);
+    range.reset(atspi_text_get_string_at_offset(ATSPI_TEXT(p.get()), 23, ATSPI_TEXT_GRANULARITY_SENTENCE, nullptr));
+    g_assert_cmpstr(range->content, ==, "Text of first sentence. ");
+    g_assert_cmpint(range->start_offset, ==, 0);
+    g_assert_cmpint(range->end_offset, ==, 24);
+    range.reset(atspi_text_get_string_at_offset(ATSPI_TEXT(p.get()), 24, ATSPI_TEXT_GRANULARITY_SENTENCE, nullptr));
+    g_assert_cmpstr(range->content, ==, "This is the second sentence.\n");
+    g_assert_cmpint(range->start_offset, ==, 24);
+    g_assert_cmpint(range->end_offset, ==, 53);
+    range.reset(atspi_text_get_string_at_offset(ATSPI_TEXT(p.get()), 40, ATSPI_TEXT_GRANULARITY_SENTENCE, nullptr));
+    g_assert_cmpstr(range->content, ==, "This is the second sentence.\n");
+    g_assert_cmpint(range->start_offset, ==, 24);
+    g_assert_cmpint(range->end_offset, ==, 53);
+    range.reset(atspi_text_get_string_at_offset(ATSPI_TEXT(p.get()), 53, ATSPI_TEXT_GRANULARITY_SENTENCE, nullptr));
+    g_assert_cmpstr(range->content, ==, "And this is the next paragraph.");
+    g_assert_cmpint(range->start_offset, ==, 53);
+    g_assert_cmpint(range->end_offset, ==, 84);
+    range.reset(atspi_text_get_string_at_offset(ATSPI_TEXT(p.get()), 83, ATSPI_TEXT_GRANULARITY_SENTENCE, nullptr));
+    g_assert_cmpstr(range->content, ==, "And this is the next paragraph.");
+    g_assert_cmpint(range->start_offset, ==, 53);
+    g_assert_cmpint(range->end_offset, ==, 84);
+
+    // Line granularity.
+    range.reset(atspi_text_get_string_at_offset(ATSPI_TEXT(p.get()), 0, ATSPI_TEXT_GRANULARITY_LINE, nullptr));
+    g_assert_cmpstr(range->content, ==, "Text of first sentence. This is the second sentence.\n");
+    g_assert_cmpint(range->start_offset, ==, 0);
+    g_assert_cmpint(range->end_offset, ==, 53);
+    range.reset(atspi_text_get_string_at_offset(ATSPI_TEXT(p.get()), 83, ATSPI_TEXT_GRANULARITY_LINE, nullptr));
+    g_assert_cmpstr(range->content, ==, "And this is the next paragraph.");
+    g_assert_cmpint(range->start_offset, ==, 53);
+    g_assert_cmpint(range->end_offset, ==, 84);
+
+#if USE(ATSPI) // ATK doesn't implement paragraph granularity.
+    // Paragraph granularity.
+    range.reset(atspi_text_get_string_at_offset(ATSPI_TEXT(p.get()), 0, ATSPI_TEXT_GRANULARITY_PARAGRAPH, nullptr));
+    g_assert_cmpstr(range->content, ==, "Text of first sentence. This is the second sentence.");
+    g_assert_cmpint(range->start_offset, ==, 0);
+    g_assert_cmpint(range->end_offset, ==, 52);
+    range.reset(atspi_text_get_string_at_offset(ATSPI_TEXT(p.get()), 83, ATSPI_TEXT_GRANULARITY_PARAGRAPH, nullptr));
+    g_assert_cmpstr(range->content, ==, "And this is the next paragraph.");
+    g_assert_cmpint(range->start_offset, ==, 53);
+    g_assert_cmpint(range->end_offset, ==, 84);
+#endif
+
+    // Using a text control now.
+    test->loadHtml(
+        "<html>"
+        "  <body>"
+        "    <input value='Text of input field'/>"
+        "  </body>"
+        "</html>",
+        nullptr);
+    test->waitUntilLoadFinished();
+
+    documentWeb = test->findDocumentWeb(testApp.get());
+    g_assert_true(ATSPI_IS_ACCESSIBLE(documentWeb.get()));
+    g_assert_cmpint(atspi_accessible_get_child_count(documentWeb.get(), nullptr), ==, 1);
+
+    auto section = adoptGRef(atspi_accessible_get_child_at_index(documentWeb.get(), 0, nullptr));
+    g_assert_true(ATSPI_IS_ACCESSIBLE(section.get()));
+    g_assert_cmpint(atspi_accessible_get_child_count(section.get(), nullptr), ==, 1);
+    auto input = adoptGRef(atspi_accessible_get_child_at_index(section.get(), 0, nullptr));
+    g_assert_true(ATSPI_IS_TEXT(input.get()));
+    length = atspi_text_get_character_count(ATSPI_TEXT(input.get()), nullptr);
+    g_assert_cmpint(length, ==, 19);
+    text.reset(atspi_text_get_text(ATSPI_TEXT(input.get()), 0, length, nullptr));
+    g_assert_cmpstr(text.get(), ==, "Text of input field");
+
+    range.reset(atspi_text_get_string_at_offset(ATSPI_TEXT(input.get()), 0, ATSPI_TEXT_GRANULARITY_CHAR, nullptr));
+    g_assert_cmpstr(range->content, ==, "T");
+    g_assert_cmpint(range->start_offset, ==, 0);
+    g_assert_cmpint(range->end_offset, ==, 1);
+    range.reset(atspi_text_get_string_at_offset(ATSPI_TEXT(input.get()), 18, ATSPI_TEXT_GRANULARITY_CHAR, nullptr));
+    g_assert_cmpstr(range->content, ==, "d");
+    g_assert_cmpint(range->start_offset, ==, 18);
+    g_assert_cmpint(range->end_offset, ==, 19);
+
+    range.reset(atspi_text_get_string_at_offset(ATSPI_TEXT(input.get()), 0, ATSPI_TEXT_GRANULARITY_WORD, nullptr));
+    g_assert_cmpstr(range->content, ==, "Text ");
+    g_assert_cmpint(range->start_offset, ==, 0);
+    g_assert_cmpint(range->end_offset, ==, 5);
+    range.reset(atspi_text_get_string_at_offset(ATSPI_TEXT(input.get()), 16, ATSPI_TEXT_GRANULARITY_WORD, nullptr));
+    g_assert_cmpstr(range->content, ==, "field");
+    g_assert_cmpint(range->start_offset, ==, 14);
+    g_assert_cmpint(range->end_offset, ==, 19);
+}
+
+static void testTextExtents(AccessibilityTest* test, gconstpointer)
+{
+    test->showInWindow();
+    test->loadHtml(
+        "<html>"
+        "  <body>"
+        "    <p>Text</p>"
+        "  </body>"
+        "</html>",
+        nullptr);
+    test->waitUntilLoadFinished();
+
+    auto testApp = test->findTestApplication();
+    g_assert_true(ATSPI_IS_ACCESSIBLE(testApp.get()));
+
+    auto documentWeb = test->findDocumentWeb(testApp.get());
+    g_assert_true(ATSPI_IS_ACCESSIBLE(documentWeb.get()));
+    g_assert_cmpint(atspi_accessible_get_child_count(documentWeb.get(), nullptr), ==, 1);
+
+    auto p = adoptGRef(atspi_accessible_get_child_at_index(documentWeb.get(), 0, nullptr));
+    g_assert_true(ATSPI_IS_TEXT(p.get()));
+    GUniquePtr<AtspiRect> firstCharRect(atspi_text_get_character_extents(ATSPI_TEXT(p.get()), 0, ATSPI_COORD_TYPE_WINDOW, nullptr));
+    g_assert_nonnull(firstCharRect.get());
+    g_assert_cmpuint(firstCharRect->x, >, 0);
+    g_assert_cmpuint(firstCharRect->y, >, 0);
+    g_assert_cmpuint(firstCharRect->width, >, 0);
+    g_assert_cmpuint(firstCharRect->height, >, 0);
+    GUniquePtr<AtspiRect> lastCharRect(atspi_text_get_character_extents(ATSPI_TEXT(p.get()), 3, ATSPI_COORD_TYPE_WINDOW, nullptr));
+    g_assert_nonnull(lastCharRect.get());
+    g_assert_cmpuint(lastCharRect->x, >, firstCharRect->x);
+    g_assert_cmpuint(lastCharRect->y, ==, firstCharRect->y);
+    g_assert_cmpuint(lastCharRect->width, >, 0);
+    g_assert_cmpuint(lastCharRect->height, >, 0);
+    GUniquePtr<AtspiRect> rangeRect(atspi_text_get_range_extents(ATSPI_TEXT(p.get()), 0, 4, ATSPI_COORD_TYPE_WINDOW, nullptr));
+    g_assert_nonnull(rangeRect.get());
+    g_assert_cmpuint(rangeRect->x, ==, firstCharRect->x);
+    g_assert_cmpuint(rangeRect->y, ==, firstCharRect->y);
+    g_assert_cmpuint(rangeRect->width, >, 0);
+    g_assert_cmpuint(rangeRect->height, >, 0);
+#if USE(ATSPI) // Offset at point is broken with ATK.
+    auto offset = atspi_text_get_offset_at_point(ATSPI_TEXT(p.get()), firstCharRect->x, firstCharRect->y, ATSPI_COORD_TYPE_WINDOW, nullptr);
+    g_assert_cmpint(offset, ==, 0);
+    offset = atspi_text_get_offset_at_point(ATSPI_TEXT(p.get()), firstCharRect->x + firstCharRect->width, firstCharRect->y, ATSPI_COORD_TYPE_WINDOW, nullptr);
+    g_assert_cmpint(offset, ==, 1);
+    offset = atspi_text_get_offset_at_point(ATSPI_TEXT(p.get()), lastCharRect->x, lastCharRect->y, ATSPI_COORD_TYPE_WINDOW, nullptr);
+    g_assert_cmpint(offset, ==, 3);
+    offset = atspi_text_get_offset_at_point(ATSPI_TEXT(p.get()), lastCharRect->x + lastCharRect->width, lastCharRect->y, ATSPI_COORD_TYPE_WINDOW, nullptr);
+    g_assert_cmpint(offset, ==, 4);
+#endif
+}
+
+static void testTextSelections(AccessibilityTest* test, gconstpointer)
+{
+    test->showInWindow(800, 600);
+    test->loadHtml(
+        "<html>"
+        "  <body>"
+        "    <p>This is a line of text</p>"
+        "    <input value='This is text input value'/>"
+        "  </body>"
+        "</html>",
+        nullptr);
+    test->waitUntilLoadFinished();
+
+    auto testApp = test->findTestApplication();
+    g_assert_true(ATSPI_IS_ACCESSIBLE(testApp.get()));
+
+    auto documentWeb = test->findDocumentWeb(testApp.get());
+    g_assert_true(ATSPI_IS_ACCESSIBLE(documentWeb.get()));
+    g_assert_cmpint(atspi_accessible_get_child_count(documentWeb.get(), nullptr), ==, 2);
+
+    auto p = adoptGRef(atspi_accessible_get_child_at_index(documentWeb.get(), 0, nullptr));
+    g_assert_true(ATSPI_IS_TEXT(p.get()));
+
+    auto selectionCount = atspi_text_get_n_selections(ATSPI_TEXT(p.get()), nullptr);
+    g_assert_cmpuint(selectionCount, ==, 0);
+    auto caretOffset = atspi_text_get_caret_offset(ATSPI_TEXT(p.get()), nullptr);
+#if USE(ATSPI)
+    g_assert_cmpint(caretOffset, ==, -1);
+#else
+    g_assert_cmpint(caretOffset, ==, 0);
+#endif
+
+    GUniquePtr<AtspiRange> selection(atspi_text_get_selection(ATSPI_TEXT(p.get()), 0, nullptr));
+    g_assert_nonnull(selection.get());
+    g_assert_cmpint(selection->start_offset, ==, 0);
+    g_assert_cmpint(selection->end_offset, ==, 0);
+
+    g_assert_true(atspi_text_set_selection(ATSPI_TEXT(p.get()), 0, 5, 14, nullptr));
+    selectionCount = atspi_text_get_n_selections(ATSPI_TEXT(p.get()), nullptr);
+    g_assert_cmpuint(selectionCount, ==, 1);
+    caretOffset = atspi_text_get_caret_offset(ATSPI_TEXT(p.get()), nullptr);
+    g_assert_cmpint(caretOffset, ==, 14);
+    selection.reset(atspi_text_get_selection(ATSPI_TEXT(p.get()), 0, nullptr));
+    g_assert_nonnull(selection.get());
+    g_assert_cmpint(selection->start_offset, ==, 5);
+    g_assert_cmpint(selection->end_offset, ==, 14);
+    GUniquePtr<char> text(atspi_text_get_text(ATSPI_TEXT(p.get()), selection->start_offset, selection->end_offset, nullptr));
+    g_assert_cmpstr(text.get(), ==, "is a line");
+
+    g_assert_true(atspi_text_remove_selection(ATSPI_TEXT(p.get()), 0, nullptr));
+    selectionCount = atspi_text_get_n_selections(ATSPI_TEXT(p.get()), nullptr);
+    g_assert_cmpuint(selectionCount, ==, 0);
+    caretOffset = atspi_text_get_caret_offset(ATSPI_TEXT(p.get()), nullptr);
+    g_assert_cmpint(caretOffset, ==, 14);
+    g_assert_true(atspi_text_set_caret_offset(ATSPI_TEXT(p.get()), 0, nullptr));
+    caretOffset = atspi_text_get_caret_offset(ATSPI_TEXT(p.get()), nullptr);
+    g_assert_cmpint(caretOffset, ==, 0);
+
+    auto section = adoptGRef(atspi_accessible_get_child_at_index(documentWeb.get(), 1, nullptr));
+    g_assert_true(ATSPI_IS_ACCESSIBLE(section.get()));
+    g_assert_cmpint(atspi_accessible_get_child_count(section.get(), nullptr), ==, 1);
+    auto input = adoptGRef(atspi_accessible_get_child_at_index(section.get(), 0, nullptr));
+    g_assert_true(ATSPI_IS_TEXT(input.get()));
+    g_assert_true(atspi_text_set_caret_offset(ATSPI_TEXT(input.get()), 5, nullptr));
+    caretOffset = atspi_text_get_caret_offset(ATSPI_TEXT(input.get()), nullptr);
+    g_assert_cmpint(caretOffset, ==, 5);
+    g_assert_true(atspi_text_set_selection(ATSPI_TEXT(input.get()), 0, 5, 12, nullptr));
+    selectionCount = atspi_text_get_n_selections(ATSPI_TEXT(input.get()), nullptr);
+    g_assert_cmpuint(selectionCount, ==, 1);
+    caretOffset = atspi_text_get_caret_offset(ATSPI_TEXT(input.get()), nullptr);
+    g_assert_cmpint(caretOffset, ==, 12);
+    selection.reset(atspi_text_get_selection(ATSPI_TEXT(input.get()), 0, nullptr));
+    g_assert_nonnull(selection.get());
+    g_assert_cmpint(selection->start_offset, ==, 5);
+    g_assert_cmpint(selection->end_offset, ==, 12);
+    text.reset(atspi_text_get_text(ATSPI_TEXT(input.get()), selection->start_offset, selection->end_offset, nullptr));
+    g_assert_cmpstr(text.get(), ==, "is text");
+}
+
+static void testTextAttributes(AccessibilityTest* test, gconstpointer)
+{
+    test->showInWindow(800, 600);
+    test->loadHtml(
+        "<html>"
+        "  <body>"
+        "    <p>This is a <b>line</b> of text</p>"
+        "  </body>"
+        "</html>",
+        nullptr);
+    test->waitUntilLoadFinished();
+
+    auto testApp = test->findTestApplication();
+    g_assert_true(ATSPI_IS_ACCESSIBLE(testApp.get()));
+
+    auto documentWeb = test->findDocumentWeb(testApp.get());
+    g_assert_true(ATSPI_IS_ACCESSIBLE(documentWeb.get()));
+    g_assert_cmpint(atspi_accessible_get_child_count(documentWeb.get(), nullptr), ==, 1);
+
+    auto p = adoptGRef(atspi_accessible_get_child_at_index(documentWeb.get(), 0, nullptr));
+    g_assert_true(ATSPI_IS_TEXT(p.get()));
+
+    // Including default attributes.
+    int startOffset, endOffset;
+    GRefPtr<GHashTable> attributes = adoptGRef(atspi_text_get_attribute_run(ATSPI_TEXT(p.get()), 0, TRUE, &startOffset, &endOffset, nullptr));
+    g_assert_nonnull(attributes.get());
+    g_assert_cmpuint(g_hash_table_size(attributes.get()), >, 1);
+    g_assert_cmpstr(static_cast<const char*>(g_hash_table_lookup(attributes.get(), "weight")), ==, "400");
+    g_assert_cmpint(startOffset, ==, 0);
+    g_assert_cmpint(endOffset, ==, 10);
+
+    attributes = adoptGRef(atspi_text_get_attribute_run(ATSPI_TEXT(p.get()), 12, TRUE, &startOffset, &endOffset, nullptr));
+    g_assert_nonnull(attributes.get());
+    g_assert_cmpuint(g_hash_table_size(attributes.get()), >, 1);
+    g_assert_cmpstr(static_cast<const char*>(g_hash_table_lookup(attributes.get(), "weight")), ==, "700");
+    GUniquePtr<char> value(atspi_text_get_attribute_value(ATSPI_TEXT(p.get()), 11, const_cast<char*>("weight"), nullptr));
+    g_assert_cmpstr(value.get(), ==, "700");
+    g_assert_cmpint(startOffset, ==, 10);
+    g_assert_cmpint(endOffset, ==, 14);
+
+    attributes = adoptGRef(atspi_text_get_attribute_run(ATSPI_TEXT(p.get()), 16, TRUE, &startOffset, &endOffset, nullptr));
+    g_assert_nonnull(attributes.get());
+    g_assert_cmpuint(g_hash_table_size(attributes.get()), >, 1);
+    g_assert_cmpstr(static_cast<const char*>(g_hash_table_lookup(attributes.get(), "weight")), ==, "400");
+    g_assert_cmpint(startOffset, ==, 14);
+    g_assert_cmpint(endOffset, ==, 22);
+
+    // Without default attributes.
+    attributes = adoptGRef(atspi_text_get_attribute_run(ATSPI_TEXT(p.get()), 0, FALSE, &startOffset, &endOffset, nullptr));
+    g_assert_nonnull(attributes.get());
+    g_assert_cmpuint(g_hash_table_size(attributes.get()), ==, 0);
+    g_assert_cmpint(startOffset, ==, 0);
+    g_assert_cmpint(endOffset, ==, 10);
+
+    attributes = adoptGRef(atspi_text_get_attribute_run(ATSPI_TEXT(p.get()), 12, FALSE, &startOffset, &endOffset, nullptr));
+    g_assert_nonnull(attributes.get());
+    g_assert_cmpuint(g_hash_table_size(attributes.get()), ==, 1);
+    g_assert_cmpstr(static_cast<const char*>(g_hash_table_lookup(attributes.get(), "weight")), ==, "700");
+    g_assert_cmpint(startOffset, ==, 10);
+    g_assert_cmpint(endOffset, ==, 14);
+
+    attributes = adoptGRef(atspi_text_get_attribute_run(ATSPI_TEXT(p.get()), 16, FALSE, &startOffset, &endOffset, nullptr));
+    g_assert_nonnull(attributes.get());
+    g_assert_cmpuint(g_hash_table_size(attributes.get()), ==, 0);
+    g_assert_cmpint(startOffset, ==, 14);
+    g_assert_cmpint(endOffset, ==, 22);
+
+    // Only default attributes.
+    attributes = adoptGRef(atspi_text_get_default_attributes(ATSPI_TEXT(p.get()), nullptr));
+    g_assert_nonnull(attributes.get());
+    g_assert_cmpuint(g_hash_table_size(attributes.get()), >, 1);
+    g_assert_cmpstr(static_cast<const char*>(g_hash_table_lookup(attributes.get(), "weight")), ==, "400");
+
+#if USE(ATSPI)
+    // Atspi implementation handles ranges with the same attributes as one run.
+    test->loadHtml(
+        "<html>"
+        "  <body>"
+        "    <p>This is a <b>li</b><b>ne</b> of text</p>"
+        "  </body>"
+        "</html>",
+        nullptr);
+    test->waitUntilLoadFinished();
+
+    documentWeb = test->findDocumentWeb(testApp.get());
+    g_assert_true(ATSPI_IS_ACCESSIBLE(documentWeb.get()));
+    g_assert_cmpint(atspi_accessible_get_child_count(documentWeb.get(), nullptr), ==, 1);
+
+    p = adoptGRef(atspi_accessible_get_child_at_index(documentWeb.get(), 0, nullptr));
+    g_assert_true(ATSPI_IS_TEXT(p.get()));
+
+    attributes = adoptGRef(atspi_text_get_attribute_run(ATSPI_TEXT(p.get()), 0, TRUE, &startOffset, &endOffset, nullptr));
+    g_assert_nonnull(attributes.get());
+    g_assert_cmpuint(g_hash_table_size(attributes.get()), >, 1);
+    g_assert_cmpstr(static_cast<const char*>(g_hash_table_lookup(attributes.get(), "weight")), ==, "400");
+    g_assert_cmpint(startOffset, ==, 0);
+    g_assert_cmpint(endOffset, ==, 10);
+
+    attributes = adoptGRef(atspi_text_get_attribute_run(ATSPI_TEXT(p.get()), 12, TRUE, &startOffset, &endOffset, nullptr));
+    g_assert_nonnull(attributes.get());
+    g_assert_cmpuint(g_hash_table_size(attributes.get()), >, 1);
+    g_assert_cmpstr(static_cast<const char*>(g_hash_table_lookup(attributes.get(), "weight")), ==, "700");
+    g_assert_cmpint(startOffset, ==, 10);
+    g_assert_cmpint(endOffset, ==, 14);
+
+    attributes = adoptGRef(atspi_text_get_attribute_run(ATSPI_TEXT(p.get()), 16, TRUE, &startOffset, &endOffset, nullptr));
+    g_assert_nonnull(attributes.get());
+    g_assert_cmpuint(g_hash_table_size(attributes.get()), >, 1);
+    g_assert_cmpstr(static_cast<const char*>(g_hash_table_lookup(attributes.get(), "weight")), ==, "400");
+    g_assert_cmpint(startOffset, ==, 14);
+    g_assert_cmpint(endOffset, ==, 22);
+
+#endif
+}
+
+static void testTextStateChanged(AccessibilityTest* test, gconstpointer)
+{
+    test->showInWindow(800, 600);
+    test->loadHtml(
+        "<html>"
+        "  <body>"
+        "    <p>This is a line of text</p>"
+        "    <input value='This is a text field'/>"
+        "    <div contenteditable=true>This is content editable</div>"
+        "  </body>"
+        "</html>",
+        nullptr);
+    test->waitUntilLoadFinished();
+
+    auto testApp = test->findTestApplication();
+    g_assert_true(ATSPI_IS_ACCESSIBLE(testApp.get()));
+
+    auto documentWeb = test->findDocumentWeb(testApp.get());
+    g_assert_true(ATSPI_IS_ACCESSIBLE(documentWeb.get()));
+    g_assert_cmpint(atspi_accessible_get_child_count(documentWeb.get(), nullptr), ==, 3);
+
+    // Text caret moved.
+    auto p = adoptGRef(atspi_accessible_get_child_at_index(documentWeb.get(), 0, nullptr));
+    g_assert_true(ATSPI_IS_TEXT(p.get()));
+    test->startEventMonitor(p.get(), { "object:text-caret-moved" });
+    g_assert_true(atspi_text_set_caret_offset(ATSPI_TEXT(p.get()), 10, nullptr));
+    auto events = test->stopEventMonitor(1);
+    g_assert_cmpuint(events.size(), ==, 1);
+    g_assert_cmpstr(events[0]->type, ==, "object:text-caret-moved");
+    g_assert_cmpuint(events[0]->detail1, ==, 10);
+
+    auto section = adoptGRef(atspi_accessible_get_child_at_index(documentWeb.get(), 1, nullptr));
+    g_assert_true(ATSPI_IS_ACCESSIBLE(section.get()));
+    g_assert_cmpint(atspi_accessible_get_child_count(section.get(), nullptr), ==, 1);
+    auto input = adoptGRef(atspi_accessible_get_child_at_index(section.get(), 0, nullptr));
+    g_assert_true(ATSPI_IS_TEXT(input.get()));
+    test->startEventMonitor(input.get(), { "object:text-caret-moved" });
+    g_assert_true(atspi_text_set_caret_offset(ATSPI_TEXT(input.get()), 5, nullptr));
+    events = test->stopEventMonitor(1);
+    g_assert_cmpuint(events.size(), ==, 1);
+    g_assert_cmpstr(events[0]->type, ==, "object:text-caret-moved");
+    g_assert_cmpuint(events[0]->detail1, ==, 5);
+
+    auto div = adoptGRef(atspi_accessible_get_child_at_index(documentWeb.get(), 2, nullptr));
+    g_assert_true(ATSPI_IS_TEXT(div.get()));
+    test->startEventMonitor(div.get(), { "object:text-caret-moved" });
+    g_assert_true(atspi_text_set_caret_offset(ATSPI_TEXT(div.get()), 15, nullptr));
+    events = test->stopEventMonitor(1);
+    g_assert_cmpuint(events.size(), ==, 1);
+    g_assert_cmpstr(events[0]->type, ==, "object:text-caret-moved");
+    g_assert_cmpuint(events[0]->detail1, ==, 15);
+
+#if USE(ATSPI) // Selection changed seems to be broken with ATK.
+    // Selection changed.
+    test->startEventMonitor(p.get(), { "object:text-selection-changed", "object:text-caret-moved" });
+    g_assert_true(atspi_text_set_selection(ATSPI_TEXT(p.get()), 0, 10, 15, nullptr));
+    events = test->stopEventMonitor(2);
+    g_assert_cmpuint(events.size(), ==, 2);
+    auto* event = AccessibilityTest::findEvent(events, "object:text-caret-moved");
+    g_assert_nonnull(event);
+    g_assert_cmpuint(event->detail1, ==, 15);
+    g_assert_nonnull(AccessibilityTest::findEvent(events, "object:text-selection-changed"));
+
+    test->startEventMonitor(input.get(), { "object:text-selection-changed", "object:text-caret-moved" });
+    g_assert_true(atspi_text_set_selection(ATSPI_TEXT(input.get()), 0, 5, 10, nullptr));
+    events = test->stopEventMonitor(2);
+    g_assert_cmpuint(events.size(), ==, 2);
+    event = AccessibilityTest::findEvent(events, "object:text-caret-moved");
+    g_assert_nonnull(event);
+    g_assert_cmpuint(event->detail1, ==, 10);
+    g_assert_nonnull(AccessibilityTest::findEvent(events, "object:text-selection-changed"));
+
+    test->startEventMonitor(div.get(), { "object:text-selection-changed", "object:text-caret-moved" });
+    g_assert_true(atspi_text_set_selection(ATSPI_TEXT(div.get()), 0, 15, 18, nullptr));
+    events = test->stopEventMonitor(2);
+    g_assert_cmpuint(events.size(), ==, 2);
+    event = AccessibilityTest::findEvent(events, "object:text-caret-moved");
+    g_assert_nonnull(event);
+    g_assert_cmpuint(event->detail1, ==, 18);
+    g_assert_nonnull(AccessibilityTest::findEvent(events, "object:text-selection-changed"));
+#endif
+
+    // Text changed.
+    g_assert_true(atspi_text_set_caret_offset(ATSPI_TEXT(input.get()), 5, nullptr));
+    test->startEventMonitor(input.get(), { "object:text-changed:insert", "object:text-changed:delete" });
+    test->keyStroke(GDK_KEY_a);
+    events = test->stopEventMonitor(1);
+    g_assert_cmpuint(events.size(), ==, 1);
+    g_assert_cmpstr(events[0]->type, ==, "object:text-changed:insert");
+#if USE(ATSPI)
+    g_assert_cmpuint(events[0]->detail1, ==, 5);
+#endif
+    g_assert_cmpuint(events[0]->detail2, ==, 1);
+    g_assert_true(G_VALUE_HOLDS_STRING(&events[0]->any_data));
+    g_assert_cmpstr(g_value_get_string(&events[0]->any_data), ==, "a");
+    g_assert_true(atspi_text_set_caret_offset(ATSPI_TEXT(input.get()), 0, nullptr));
+    test->startEventMonitor(input.get(), { "object:text-changed:insert", "object:text-changed:delete" });
+    test->keyStroke(GDK_KEY_Delete);
+    events = test->stopEventMonitor(1);
+    g_assert_cmpuint(events.size(), ==, 1);
+    g_assert_cmpstr(events[0]->type, ==, "object:text-changed:delete");
+    g_assert_cmpuint(events[0]->detail1, ==, 0);
+    g_assert_cmpuint(events[0]->detail2, ==, 1);
+    g_assert_true(G_VALUE_HOLDS_STRING(&events[0]->any_data));
+    g_assert_cmpstr(g_value_get_string(&events[0]->any_data), ==, "T");
+
+    g_assert_true(atspi_text_set_caret_offset(ATSPI_TEXT(div.get()), 10, nullptr));
+    test->startEventMonitor(div.get(), { "object:text-changed:insert", "object:text-changed:delete" });
+    test->keyStroke(GDK_KEY_b);
+    events = test->stopEventMonitor(1);
+    g_assert_cmpuint(events.size(), ==, 1);
+    g_assert_cmpstr(events[0]->type, ==, "object:text-changed:insert");
+#if USE(ATSPI)
+    g_assert_cmpuint(events[0]->detail1, ==, 10);
+#endif
+    g_assert_cmpuint(events[0]->detail2, ==, 1);
+    g_assert_true(G_VALUE_HOLDS_STRING(&events[0]->any_data));
+    g_assert_cmpstr(g_value_get_string(&events[0]->any_data), ==, "b");
+    g_assert_true(atspi_text_set_caret_offset(ATSPI_TEXT(div.get()), 15, nullptr));
+    test->startEventMonitor(div.get(), { "object:text-changed:insert", "object:text-changed:delete" });
+    test->keyStroke(GDK_KEY_BackSpace);
+    events = test->stopEventMonitor(1);
+    g_assert_cmpuint(events.size(), ==, 1);
+    g_assert_cmpstr(events[0]->type, ==, "object:text-changed:delete");
+#if USE(ATSPI)
+    g_assert_cmpuint(events[0]->detail1, ==, 14);
+#endif
+    g_assert_cmpuint(events[0]->detail2, ==, 1);
+    g_assert_true(G_VALUE_HOLDS_STRING(&events[0]->any_data));
+    g_assert_cmpstr(g_value_get_string(&events[0]->any_data), ==, "n");
+
+    // Text replaced.
+    g_assert_true(atspi_text_set_selection(ATSPI_TEXT(input.get()), 0, 5, 10, nullptr));
+    test->startEventMonitor(input.get(), { "object:text-changed:insert", "object:text-changed:delete" });
+    test->keyStroke(GDK_KEY_c);
+    events = test->stopEventMonitor(2);
+    g_assert_cmpuint(events.size(), ==, 2);
+    g_assert_cmpstr(events[0]->type, ==, "object:text-changed:delete");
+    g_assert_cmpuint(events[0]->detail1, ==, 6);
+    g_assert_cmpuint(events[0]->detail2, ==, 5);
+    g_assert_true(G_VALUE_HOLDS_STRING(&events[0]->any_data));
+    g_assert_cmpstr(g_value_get_string(&events[0]->any_data), ==, "is a ");
+    g_assert_cmpstr(events[1]->type, ==, "object:text-changed:insert");
+#if USE(ATSPI)
+    g_assert_cmpuint(events[1]->detail1, ==, 5);
+#endif
+    g_assert_cmpuint(events[1]->detail2, ==, 1);
+    g_assert_true(G_VALUE_HOLDS_STRING(&events[1]->any_data));
+    g_assert_cmpstr(g_value_get_string(&events[1]->any_data), ==, "c");
+
+    g_assert_true(atspi_text_set_selection(ATSPI_TEXT(div.get()), 0, 10, 18, nullptr));
+    test->startEventMonitor(div.get(), { "object:text-changed:insert", "object:text-changed:delete" });
+    test->keyStroke(GDK_KEY_Delete);
+    events = test->stopEventMonitor(1);
+    g_assert_cmpuint(events.size(), ==, 1);
+    g_assert_cmpstr(events[0]->type, ==, "object:text-changed:delete");
+#if USE(ATSPI)
+    g_assert_cmpuint(events[0]->detail1, ==, 10);
+#endif
+    g_assert_cmpuint(events[0]->detail2, ==, 8);
+    g_assert_true(G_VALUE_HOLDS_STRING(&events[0]->any_data));
+    g_assert_cmpstr(g_value_get_string(&events[0]->any_data), ==, "bntet ed");
+
+#if USE(ATSPI)
+    // Text input value changed.
+    test->startEventMonitor(input.get(), { "object:text-changed:insert", "object:text-changed:delete" });
+    test->runJavaScriptAndWaitUntilFinished("document.getElementsByTagName('input')[0].value = 'foo';", nullptr);
+    events = test->stopEventMonitor(2);
+    g_assert_cmpuint(events.size(), ==, 2);
+    g_assert_cmpstr(events[0]->type, ==, "object:text-changed:delete");
+    g_assert_cmpuint(events[0]->detail1, ==, 0);
+    g_assert_cmpuint(events[0]->detail2, ==, 16);
+    g_assert_true(G_VALUE_HOLDS_STRING(&events[0]->any_data));
+    g_assert_cmpstr(g_value_get_string(&events[0]->any_data), ==, "his actext field");
+    g_assert_cmpstr(events[1]->type, ==, "object:text-changed:insert");
+    g_assert_cmpuint(events[1]->detail1, ==, 0);
+    g_assert_cmpuint(events[1]->detail2, ==, 3);
+    g_assert_true(G_VALUE_HOLDS_STRING(&events[1]->any_data));
+    g_assert_cmpstr(g_value_get_string(&events[1]->any_data), ==, "foo");
+#endif
+}
+
 void beforeAll()
 {
     AccessibilityTest::add("WebKitAccessibility", "accessible/basic-hierarchy", testAccessibleBasicHierarchy);
@@ -817,6 +1527,13 @@ void beforeAll()
 #ifdef ATSPI_SCROLLTYPE_COUNT
     AccessibilityTest::add("WebKitAccessibility", "component/scroll-to", testComponentScrollTo);
 #endif
+    AccessibilityTest::add("WebKitAccessibility", "text/basic", testTextBasic);
+    AccessibilityTest::add("WebKitAccessibility", "text/surrogate-pair", testTextSurrogatePair);
+    AccessibilityTest::add("WebKitAccessibility", "text/iterator", testTextIterator);
+    AccessibilityTest::add("WebKitAccessibility", "text/extents", testTextExtents);
+    AccessibilityTest::add("WebKitAccessibility", "text/selections", testTextSelections);
+    AccessibilityTest::add("WebKitAccessibility", "text/attributes", testTextAttributes);
+    AccessibilityTest::add("WebKitAccessibility", "text/state-changed", testTextStateChanged);
 }
 
 void afterAll()

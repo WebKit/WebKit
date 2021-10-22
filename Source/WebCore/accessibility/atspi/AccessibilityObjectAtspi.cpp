@@ -21,6 +21,7 @@
 #include "AccessibilityObjectAtspi.h"
 
 #if ENABLE(ACCESSIBILITY) && USE(ATSPI)
+#include "AXIsolatedObject.h"
 #include "AccessibilityAtspiEnums.h"
 #include "AccessibilityObjectInterface.h"
 #include "AccessibilityRootAtspi.h"
@@ -28,6 +29,7 @@
 #include "ElementInlines.h"
 #include "RenderAncestorIterator.h"
 #include "RenderBlock.h"
+#include "RenderObject.h"
 #include <glib/gi18n-lib.h>
 #include <wtf/MainThread.h>
 #include <wtf/UUID.h>
@@ -39,9 +41,47 @@ Ref<AccessibilityObjectAtspi> AccessibilityObjectAtspi::create(AXCoreObject* cor
     return adoptRef(*new AccessibilityObjectAtspi(coreObject));
 }
 
+static inline bool roleIsTextType(AccessibilityRole role)
+{
+    return role == AccessibilityRole::Paragraph
+        || role == AccessibilityRole::Heading
+        || role == AccessibilityRole::Div
+        || role == AccessibilityRole::Cell
+        || role == AccessibilityRole::Link
+        || role == AccessibilityRole::WebCoreLink
+        || role == AccessibilityRole::ListItem
+        || role == AccessibilityRole::Pre
+        || role == AccessibilityRole::GridCell
+        || role == AccessibilityRole::TextGroup
+        || role == AccessibilityRole::ApplicationTextGroup
+        || role == AccessibilityRole::ApplicationGroup;
+}
+
 OptionSet<AccessibilityObjectAtspi::Interface> AccessibilityObjectAtspi::interfacesForObject(AXCoreObject& coreObject)
 {
     OptionSet<Interface> interfaces = { Interface::Accessible, Interface::Component };
+
+    RenderObject* renderer = coreObject.isAccessibilityRenderObject() ? coreObject.renderer() : nullptr;
+    if (coreObject.roleValue() == AccessibilityRole::StaticText || coreObject.roleValue() == AccessibilityRole::ColorWell)
+        interfaces.add(Interface::Text);
+    else if (coreObject.isTextControl() || coreObject.isNonNativeTextControl())
+        interfaces.add(Interface::Text);
+    else if (!coreObject.isWebArea()) {
+        if (coreObject.roleValue() != AccessibilityRole::Table) {
+            if ((renderer && renderer->childrenInline()) || roleIsTextType(coreObject.roleValue()) || coreObject.isMathToken())
+                interfaces.add(Interface::Text);
+        }
+
+        // Add the Text interface for list items whose first accessible child has a text renderer.
+        if (coreObject.roleValue() == AccessibilityRole::ListItem) {
+            const auto& children = coreObject.children();
+            if (!children.isEmpty()) {
+                auto childInterfaces = interfacesForObject(*children[0]);
+                if (childInterfaces.contains(Interface::Text))
+                    interfaces.add(Interface::Text);
+            }
+        }
+    }
 
     return interfaces;
 }
@@ -427,6 +467,8 @@ const String& AccessibilityObjectAtspi::path()
             interfaces.append({ const_cast<GDBusInterfaceInfo*>(&webkit_accessible_interface), &s_accessibleFunctions });
         if (m_interfaces.contains(Interface::Component))
             interfaces.append({ const_cast<GDBusInterfaceInfo*>(&webkit_component_interface), &s_componentFunctions });
+        if (m_interfaces.contains(Interface::Text))
+            interfaces.append({ const_cast<GDBusInterfaceInfo*>(&webkit_text_interface), &s_textFunctions });
         m_path = atspiRoot->atspi().registerObject(*this, WTFMove(interfaces));
     }
 
@@ -1040,6 +1082,8 @@ void AccessibilityObjectAtspi::buildInterfaces(GVariantBuilder* builder) const
         g_variant_builder_add(builder, "s", webkit_accessible_interface.name);
     if (m_interfaces.contains(Interface::Component))
         g_variant_builder_add(builder, "s", webkit_component_interface.name);
+    if (m_interfaces.contains(Interface::Text))
+        g_variant_builder_add(builder, "s", webkit_text_interface.name);
 }
 
 void AccessibilityObjectAtspi::serialize(GVariantBuilder* builder) const
