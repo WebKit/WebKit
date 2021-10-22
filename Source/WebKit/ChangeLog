@@ -1,3 +1,32 @@
+2021-10-22  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        StreamConnectionWorkQueue::processStreams() has a incorrect protection ref
+        https://bugs.webkit.org/show_bug.cgi?id=232070
+
+        Reviewed by Wenson Hsieh.
+
+        * GPUProcess/graphics/RemoteRenderingBackend.cpp:
+        (WebKit::RemoteRenderingBackend::~RemoteRenderingBackend):
+        Additionally remove redundant protection ref from `RemoteRenderingBackend`
+        cleanup task. Since `m_workQueue->stop()` is run after dispatching the
+        task, and since `stop()` waits until queue has executed the
+        all the tasks, the `m_workQueue` ref outlives the protection ref.
+
+        * Platform/IPC/StreamConnectionWorkQueue.cpp:
+        (IPC::StreamConnectionWorkQueue::processStreams):
+        Remove the redundant protection ref so it does not cause confusion.
+        The protection ref cannot hold the last ref, as that would mean
+        that the `StreamConnectionWorkQueue` thread would run the code to
+        destroy the work queue itself. There has to be a external ref for
+        `queue->stop()` that outlives the protection ref, as the `stop()` will
+        wait until the queue thread stops.
+
+        (IPC::StreamConnectionWorkQueue::stopAndWaitForCompletion):
+        (IPC::StreamConnectionWorkQueue::stop): Deleted.
+        * Platform/IPC/StreamConnectionWorkQueue.h:
+        Rename `stop()` to `stopAndWaitForCompletion()` to signify what
+        the function does.
+
 2021-10-22  Alberto Garcia  <berto@igalia.com>
 
         Unreviewed, fix typo in the WebKitWebInspector documentation.

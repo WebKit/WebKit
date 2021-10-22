@@ -49,7 +49,7 @@ public:
     void removeStreamConnection(StreamServerConnectionBase&);
 
     void dispatch(WTF::Function<void()>&&) final;
-    void stop();
+    void stopAndWaitForCompletion();
 
     void wakeUp();
 

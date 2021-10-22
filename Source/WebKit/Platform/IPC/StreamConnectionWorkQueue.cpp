@@ -35,7 +35,7 @@ StreamConnectionWorkQueue::StreamConnectionWorkQueue(const char* name)
 
 StreamConnectionWorkQueue::~StreamConnectionWorkQueue()
 {
-    // `StreamConnectionWorkQueue::stop()` should be called if anything has been dispatched or listened to.
+    // `StreamConnectionWorkQueue::stopAndWaitForCompletion()` should be called if anything has been dispatched or listened to.
     ASSERT(!m_processingThread);
 }
 
@@ -75,7 +75,7 @@ void StreamConnectionWorkQueue::removeStreamConnection(StreamServerConnectionBas
     wakeUp();
 }
 
-void StreamConnectionWorkQueue::stop()
+void StreamConnectionWorkQueue::stopAndWaitForCompletion()
 {
     m_shouldQuit = true;
     RefPtr<Thread> processingThread;
@@ -117,7 +117,6 @@ void StreamConnectionWorkQueue::startProcessingThread()
 
 void StreamConnectionWorkQueue::processStreams()
 {
-    Ref protectedThis = *this;
     constexpr size_t defaultMessageLimit = 1000;
     bool hasMoreToProcess = false;
     do {

@@ -98,8 +98,8 @@ RemoteRenderingBackend::~RemoteRenderingBackend()
 {
     // Make sure we destroy the ResourceCache on the WorkQueue since it gets populated on the WorkQueue.
     // Make sure rendering resource request is released after destroying the cache.
-    m_workQueue->dispatch([workQueue = m_workQueue.copyRef(), renderingResourcesRequest = WTFMove(m_renderingResourcesRequest), remoteResourceCache = WTFMove(m_remoteResourceCache)] { });
-    m_workQueue->stop();
+    m_workQueue->dispatch([renderingResourcesRequest = WTFMove(m_renderingResourcesRequest), remoteResourceCache = WTFMove(m_remoteResourceCache)] { });
+    m_workQueue->stopAndWaitForCompletion();
 }
 
 void RemoteRenderingBackend::stopListeningForIPC()
