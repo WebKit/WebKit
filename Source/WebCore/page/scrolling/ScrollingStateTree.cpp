@@ -176,7 +176,7 @@ ScrollingNodeID ScrollingStateTree::insertNode(ScrollingNodeType nodeType, Scrol
 
         if (parentID) {
             if (auto unparentedNode = m_unparentedNodes.take(newNodeID)) {
-                LOG_WITH_STREAM(ScrollingTree, stream << "ScrollingStateTree " << this << " insertNode reattaching node " << newNodeID);
+                LOG_WITH_STREAM(ScrollingTree, stream << "ScrollingStateTree " << this << " insertNode " << newNodeID << " getting node from unparented nodes");
                 newNode = unparentedNode.get();
                 nodeWasReattachedRecursive(*unparentedNode);
 

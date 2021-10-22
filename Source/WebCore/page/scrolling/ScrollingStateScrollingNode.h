@@ -54,9 +54,6 @@ public:
     const FloatPoint& scrollPosition() const { return m_scrollPosition; }
     WEBCORE_EXPORT void setScrollPosition(const FloatPoint&);
 
-    // Does not trigger a scrolling tree commit.
-    WEBCORE_EXPORT void syncScrollPosition(const FloatPoint&);
-
     const IntPoint& scrollOrigin() const { return m_scrollOrigin; }
     WEBCORE_EXPORT void setScrollOrigin(const IntPoint&);
 
@@ -80,8 +77,6 @@ public:
 
     const RequestedScrollData& requestedScrollData() const { return m_requestedScrollData; }
     WEBCORE_EXPORT void setRequestedScrollData(const RequestedScrollData&);
-
-    WEBCORE_EXPORT bool hasScrollPositionRequest() const;
 
     bool isMonitoringWheelEvents() const { return m_isMonitoringWheelEvents; }
     WEBCORE_EXPORT void setIsMonitoringWheelEvents(bool);

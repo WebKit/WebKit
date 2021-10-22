@@ -1,3 +1,15 @@
+2021-10-22  Ayumi Kojima  <ayumi_kojima@apple.com>
+
+        Unreviewed, reverting r284654.
+
+        Reverting because this commit caused scrolling tests to fail
+
+        Reverted changeset:
+
+        "Content offset in this codepen when switching tabs"
+        https://bugs.webkit.org/show_bug.cgi?id=231989
+        https://commits.webkit.org/r284654
+
 2021-10-22  Alan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Check the parent style for content wrapping when collecting wrap opportunities

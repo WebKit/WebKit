@@ -451,12 +451,6 @@ void AsyncScrollingCoordinator::updateScrollPositionAfterAsyncScroll(ScrollingNo
             m_page->editorClient().subFrameScrollPositionChanged();
     }
 
-    auto* node = m_scrollingStateTree->stateNodeForID(scrollingNodeID);
-    if (is<ScrollingStateScrollingNode>(node)) {
-        auto& scrollingNode = downcast<ScrollingStateScrollingNode>(*node);
-        scrollingNode.syncScrollPosition(scrollPosition);
-    }
-
     if (scrollingNodeID == frameView.scrollingNodeID()) {
         reconcileScrollingState(frameView, scrollPosition, layoutViewportOrigin, scrollType, ViewportRectStability::Stable, scrollingLayerPositionAction);
         return;

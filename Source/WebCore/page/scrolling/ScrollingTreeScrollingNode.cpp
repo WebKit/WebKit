@@ -67,7 +67,7 @@ void ScrollingTreeScrollingNode::commitStateBeforeChildren(const ScrollingStateN
 
     if (state.hasChangedProperty(ScrollingStateNode::Property::ScrollPosition)) {
         m_lastCommittedScrollPosition = state.scrollPosition();
-        if (m_isFirstCommit && !state.hasScrollPositionRequest())
+        if (m_isFirstCommit && !state.hasChangedProperty(ScrollingStateNode::Property::RequestedScrollPosition))
             m_currentScrollPosition = m_lastCommittedScrollPosition;
     }
 
@@ -336,10 +336,7 @@ void ScrollingTreeScrollingNode::dumpProperties(TextStream& ts, OptionSet<Scroll
         ts.dumpProperty("reachable content size", m_reachableContentsSize);
     ts.dumpProperty("last committed scroll position", m_lastCommittedScrollPosition);
 
-    if (!m_currentScrollPosition.isZero())
-        ts.dumpProperty("scroll position", m_currentScrollPosition);
-
-    if (!m_scrollOrigin.isZero())
+    if (m_scrollOrigin != IntPoint())
         ts.dumpProperty("scroll origin", m_scrollOrigin);
 
     if (m_snapOffsetsInfo.horizontalSnapOffsets.size())
