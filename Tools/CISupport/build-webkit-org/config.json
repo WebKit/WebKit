@@ -136,7 +136,7 @@
                       "platform": "mac-bigsur", "configuration": "release", "architectures": ["x86_64", "arm64"],
                       "triggers": [
                           "bigsur-applesilicon-release-tests-test262" ,"bigsur-release-tests-test262", "bigsur-release-tests-wk1", "bigsur-release-tests-wk2",
-                          "bigsur-release-applesilicon-tests-wk1", "bigsur-release-applesilicon-tests-wk2", "bigsur-applesilicon-release-tests-jsc", "bigsur-release-tests-wk2-webgl"
+                          "bigsur-release-applesilicon-tests-wk1", "bigsur-release-applesilicon-tests-wk2", "bigsur-applesilicon-release-tests-jsc", "bigsur-release-tests-wk2-webgl-gpuprocess"
                       ],
                       "workernames": ["bot121", "bot124"]
                     },
@@ -168,9 +168,9 @@
                       "additionalArguments": ["--no-retry-failures"],
                       "workernames": ["bot1022", "bot1023"]
                     },
-                    { "name": "Apple-BigSur-Release-WK2-WebGL-Tests", "factory": "TestAllButJSCFactory", "builddir": "bigsur-release-tests-wk2-webgl",
+                    { "name": "Apple-BigSur-Release-WK2-WebGL-GPUProcess-Tests", "factory": "TestAllButJSCFactory", "builddir": "bigsur-release-tests-wk2-webgl-gpuprocess",
                       "platform": "mac-bigsur", "configuration": "release", "architectures": ["x86_64", "arm64"],
-                      "additionalArguments": ["--no-retry-failures", "--webgl-test-suite"],
+                      "additionalArguments": ["--no-retry-failures", "--webgl-test-suite", "--use-gpu-process"],
                       "workernames": ["bot302"]
                     },
                     { "name": "Apple-BigSur-Debug-Build", "factory": "BuildFactory", "builddir": "bigsur-debug",
@@ -592,8 +592,8 @@
                     { "type": "Triggerable", "name": "bigsur-release-applesilicon-tests-wk2",
                       "builderNames": ["Apple-BigSur-Release-AppleSilicon-WK2-Tests"]
                     },
-                    { "type": "Triggerable", "name": "bigsur-release-tests-wk2-webgl",
-                      "builderNames": ["Apple-BigSur-Release-WK2-WebGL-Tests"]
+                    { "type": "Triggerable", "name": "bigsur-release-tests-wk2-webgl-gpuprocess",
+                      "builderNames": ["Apple-BigSur-Release-WK2-WebGL-GPUProcess-Tests"]
                     },
                     { "type": "Triggerable", "name": "bigsur-debug-tests-wk1",
                       "builderNames": ["Apple-BigSur-Debug-WK1-Tests"]

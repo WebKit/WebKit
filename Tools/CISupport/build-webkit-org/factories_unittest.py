@@ -168,7 +168,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'builtins-generator-tests',
             'trigger-crash-log-submission'
         ],
-        'Apple-BigSur-Release-WK2-WebGL-Tests': [
+        'Apple-BigSur-Release-WK2-WebGL-GPUProcess-Tests': [
             'configure-build',
             'configuration',
             'clean-and-update-working-directory',
