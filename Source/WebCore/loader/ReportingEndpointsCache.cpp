@@ -157,6 +157,7 @@ void ReportingEndpointsCache::addEndpointFromDictionary(const SecurityOriginData
             return HashMap<String, Endpoint> { };
         }).iterator->value;
         endpointsForOrigin.add(WTFMove(group), Endpoint(WTFMove(endpointURL), Seconds { static_cast<double>(*maxAge) }));
+        return;
     }
 }
 
