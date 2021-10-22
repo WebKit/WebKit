@@ -374,22 +374,56 @@ void AppendPipeline::handleEndOfAppend()
     sourceBufferPrivate().didReceiveAllPendingSamples();
 }
 
+static MediaTime bufferTimeToStreamTime(const GstSegment* segment, GstClockTime bufferTime)
+{
+    if (bufferTime == GST_CLOCK_TIME_NONE)
+        return MediaTime::invalidTime();
+
+    guint64 streamTime;
+    int sign = gst_segment_to_stream_time_full(segment, GST_FORMAT_TIME, bufferTime, &streamTime);
+    if (!sign) {
+        GST_ERROR("Couldn't map buffer time %" GST_TIME_FORMAT " to segment %" GST_PTR_FORMAT, GST_TIME_ARGS(bufferTime), segment);
+        return MediaTime::invalidTime();
+    }
+    return MediaTime(sign * streamTime, GST_SECOND);
+}
+
 void AppendPipeline::appsinkNewSample(const Track& track, GRefPtr<GstSample>&& sample)
 {
     ASSERT(isMainThread());
 
-    if (UNLIKELY(!gst_sample_get_buffer(sample.get()))) {
+    GstBuffer* buffer = gst_sample_get_buffer(sample.get());
+    if (UNLIKELY(!buffer)) {
         GST_WARNING("Received sample without buffer from appsink.");
         return;
     }
 
-    if (!GST_BUFFER_PTS_IS_VALID(gst_sample_get_buffer(sample.get()))) {
+    if (!GST_BUFFER_PTS_IS_VALID(buffer)) {
         // When demuxing Vorbis, matroskademux creates several PTS-less frames with header information. We don't need those.
         GST_DEBUG("Ignoring sample without PTS: %" GST_PTR_FORMAT, gst_sample_get_buffer(sample.get()));
         return;
     }
 
+    GstSegment* segment = gst_sample_get_segment(sample.get());
     auto mediaSample = MediaSampleGStreamer::create(WTFMove(sample), track.presentationSize, track.trackId);
+
+    if (segment && (segment->time || segment->start)) {
+        // MP4 has the concept of edit lists, where some buffer time needs to be offsetted, often very slightly,
+        // to get exact timestamps.
+        MediaTime pts = bufferTimeToStreamTime(segment, GST_BUFFER_PTS(buffer));
+        MediaTime dts = bufferTimeToStreamTime(segment, GST_BUFFER_DTS(buffer));
+        GST_TRACE_OBJECT(track.appsinkPad.get(), "Mapped buffer to segment, PTS %" GST_TIME_FORMAT " -> %s DTS %" GST_TIME_FORMAT " -> %s",
+            GST_TIME_ARGS(GST_BUFFER_PTS(buffer)), pts.toString().utf8().data(), GST_TIME_ARGS(GST_BUFFER_DTS(buffer)), dts.toString().utf8().data());
+        mediaSample->setTimestamps(pts, dts);
+    } else if (!GST_BUFFER_DTS(buffer) && GST_BUFFER_PTS(buffer) > 0 && GST_BUFFER_PTS(buffer) <= 100'000'000) {
+        // Because a track presentation time starting at some close to zero, but not exactly zero time can cause unexpected
+        // results for applications, we extend the duration of this first sample to the left so that it starts at zero.
+        // This is relevant for files that should have an edit list but don't, or when using GStreamer < 1.16, where
+        // edit lists are not parsed in push-mode.
+
+        GST_DEBUG("Extending first sample of track '%s' to make it start at PTS=0 %" GST_PTR_FORMAT, track.trackId.string().utf8().data(), buffer);
+        mediaSample->extendToTheBeginning();
+    }
 
     GST_TRACE("append: trackId=%s PTS=%s DTS=%s DUR=%s presentationSize=%.0fx%.0f",
         mediaSample->trackID().string().utf8().data(),
@@ -397,25 +431,6 @@ void AppendPipeline::appsinkNewSample(const Track& track, GRefPtr<GstSample>&& s
         mediaSample->decodeTime().toString().utf8().data(),
         mediaSample->duration().toString().utf8().data(),
         mediaSample->presentationSize().width(), mediaSample->presentationSize().height());
-
-    // Hack, rework when GStreamer >= 1.16 becomes a requirement:
-    // We're not applying edit lists. GStreamer < 1.16 doesn't emit the correct segments to do so.
-    // GStreamer fix in https://gitlab.freedesktop.org/gstreamer/gst-plugins-good/-/commit/c2a0da8096009f0f99943f78dc18066965be60f9
-    // Also, in order to apply them we would need to convert the timestamps to stream time, which we're not currently
-    // doing for consistency between GStreamer versions.
-    //
-    // In consequence, the timestamps we're handling here are unedited track time. In track time, the first sample is
-    // guaranteed to have DTS == 0, but in the case of streams with B-frames, often PTS > 0. Edit lists fix this by
-    // offsetting all timestamps by that amount in movie time, but we can't do that if we don't have access to them.
-    // (We could assume the track PTS of the sample with track DTS = 0 is the offset, but we don't have any guarantee
-    // we will get appended that sample first, or ever).
-    //
-    // Because a track presentation time starting at some close to zero, but not exactly zero time can cause unexpected
-    // results for applications, we extend the duration of this first sample to the left so that it starts at zero.
-    if (mediaSample->decodeTime() == MediaTime::zeroTime() && mediaSample->presentationTime() > MediaTime::zeroTime() && mediaSample->presentationTime() <= MediaTime(1, 10)) {
-        GST_DEBUG("Extending first sample to make it start at PTS=0");
-        mediaSample->extendToTheBeginning();
-    }
 
     m_sourceBufferPrivate.didReceiveSample(mediaSample.get());
 }

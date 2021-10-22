@@ -1,3 +1,15 @@
+2021-10-22  Alicia Boya García  <aboya@igalia.com>
+
+        [MSE][GStreamer] Honor MP4 edit lists, bis
+        https://bugs.webkit.org/show_bug.cgi?id=231019
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Update expectations for mediasource-remove.html in the GStreamer
+        ports, as a couple subtests get fixed.
+
+        * platform/glib/imported/w3c/web-platform-tests/media-source/mediasource-remove-expected.txt:
+
 2021-10-22  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, drop custom iOS expectations for noopener-noreferrer-sizing.window.html.

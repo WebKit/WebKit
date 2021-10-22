@@ -150,7 +150,7 @@ public:
 protected:
     // The following method should never be called directly and be overridden instead.
     WEBCORE_EXPORT virtual void append(Vector<unsigned char>&&);
-    virtual MediaTime timeFudgeFactor() const { return {2002, 24000}; }
+    virtual MediaTime timeFudgeFactor() const { return { 1, 10 }; }
     virtual bool isActive() const { return false; }
     virtual bool isSeeking() const { return false; }
     virtual MediaTime currentMediaTime() const { return { }; }

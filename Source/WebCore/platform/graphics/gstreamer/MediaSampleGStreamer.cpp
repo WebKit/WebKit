@@ -72,7 +72,8 @@ MediaSampleGStreamer::MediaSampleGStreamer(GRefPtr<GstSample>&& sample, const Fl
     }
 
     m_size = gst_buffer_get_size(buffer);
-    m_sample = sample;
+    m_sample = adoptGRef(gst_sample_new(buffer, gst_sample_get_caps(sample.get()), nullptr,
+        gst_sample_get_info(sample.get()) ? gst_structure_copy(gst_sample_get_info(sample.get())) : nullptr));
 
     if (GST_BUFFER_FLAG_IS_SET(buffer, GST_BUFFER_FLAG_DELTA_UNIT))
         m_flags = MediaSample::None;
