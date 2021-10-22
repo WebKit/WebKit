@@ -609,7 +609,7 @@ void WTFReleaseLogStackTrace(WTFLogChannel* channel)
                 out.printf("%-3d %p %s", frameNumber, stackFrame, demangled->mangledName());
             else
                 out.printf("%-3d %p", frameNumber, stackFrame);
-#if USE(JOURNALD)
+#if ENABLE(JOURNALD_LOG)
             sd_journal_send("WEBKIT_SUBSYSTEM=%s", channel->subsystem, "WEBKIT_CHANNEL=%s", channel->name, "MESSAGE=%s", out.toCString().data(), nullptr);
 #else
             fprintf(stderr, "[%s:%s:-] %s\n", channel->subsystem, channel->name, out.toCString().data());

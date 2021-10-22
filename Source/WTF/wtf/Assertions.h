@@ -51,7 +51,7 @@
 #include <os/log.h>
 #endif
 
-#if USE(JOURNALD)
+#if ENABLE(JOURNALD_LOG)
 #define SD_JOURNAL_SUPPRESS_LOCATION
 #include <systemd/sd-journal.h>
 #endif
@@ -98,11 +98,11 @@ extern "C" void _ReadWriteBarrier(void);
 #if ENABLE(RELEASE_LOG)
 #define RELEASE_LOG_DISABLED 0
 #else
-#define RELEASE_LOG_DISABLED !(USE(OS_LOG) || USE(JOURNALD))
+#define RELEASE_LOG_DISABLED !(USE(OS_LOG) || ENABLE(JOURNALD_LOG))
 #endif
 
 #ifndef VERBOSE_RELEASE_LOG
-#define VERBOSE_RELEASE_LOG USE(JOURNALD)
+#define VERBOSE_RELEASE_LOG ENABLE(JOURNALD_LOG)
 #endif
 
 #if COMPILER(GCC_COMPATIBLE)
@@ -565,7 +565,7 @@ constexpr bool assertionFailureDueToUnreachableCode = false;
         os_log(LOG_CHANNEL(channel).osLogChannel, __VA_ARGS__); \
 } while (0)
 
-#elif USE(JOURNALD)
+#elif ENABLE(JOURNALD_LOG)
 
 #define PUBLIC_LOG_STRING "s"
 #define PRIVATE_LOG_STRING "s"

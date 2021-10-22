@@ -22,71 +22,78 @@
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #[=======================================================================[.rst:
-FindSystemd
+FindJournald
 -----------
 
-Find Systemd headers and libraries.
+Find Journald-compatible headers and libraries.
 
 Imported Targets
 ^^^^^^^^^^^^^^^^
 
-``Systemd::Systemd``
-  The Systemd library, if found.
+``Journald::Journald``
+  The library where Journald symbols reside, if found.
 
 Result Variables
 ^^^^^^^^^^^^^^^^
 
 This will define the following variables in your project:
 
-``Systemd_FOUND``
-  true if (the requested version of) Systemd is available.
-``Systemd_VERSION``
-  the version of Systemd.
-``Systemd_LIBRARIES``
-  the libraries to link against to use Systemd.
-``Systemd_INCLUDE_DIRS``
-  where to find the Systemd headers.
-``Systemd_COMPILE_OPTIONS``
+``Journald_FOUND``
+  true if (the requested version of) Journald is available.
+``Journald_VERSION``
+  the version of the library where Journald symbols reside.
+``Journald_LIBRARIES``
+  the libraries to link against to use Journald.
+``Journald_INCLUDE_DIRS``
+  where to find the Journald headers.
+``Journald_COMPILE_OPTIONS``
   this should be passed to target_compile_options(), if the
   target is not used for linking
 
 #]=======================================================================]
-
 find_package(PkgConfig QUIET)
 
+# libelogind provides compatible pc and header files
 pkg_check_modules(PC_SYSTEMD QUIET libsystemd)
-set(Systemd_COMPILE_OPTIONS ${PC_SYSTEMD_CFLAGS_OTHER})
-set(Systemd_VERSION ${PC_SYSTEMD_VERSION})
+set(Journald_COMPILE_OPTIONS ${PC_SYSTEMD_CFLAGS_OTHER})
+set(Journald_VERSION ${PC_SYSTEMD_VERSION})
 
-find_path(Systemd_INCLUDE_DIR
+find_path(Journald_INCLUDE_DIR
     NAMES systemd/sd-journal.h
     HINTS ${PC_SYSTEMD_INCLUDEDIR} ${PC_SYSTEMD_INCLUDE_DIRS}
 )
 
-find_library(Systemd_LIBRARY
-    NAMES ${Systemd_NAMES} systemd
+find_library(Journald_LIBRARY
+    NAMES ${Journald_NAMES} systemd
     HINTS ${PC_SYSTEMD_LIBDIR} ${PC_SYSTEMD_LIBRARY_DIRS}
 )
 
-include(FindPackageHandleStandardArgs)
-find_package_handle_standard_args(Systemd
-    FOUND_VAR Systemd_FOUND
-    REQUIRED_VARS Systemd_LIBRARY Systemd_INCLUDE_DIR
-    VERSION_VAR Systemd_VERSION
-)
-
-if (Systemd_LIBRARY AND NOT TARGET Systemd::Systemd)
-    add_library(Systemd::Systemd UNKNOWN IMPORTED GLOBAL)
-    set_target_properties(Systemd::Systemd PROPERTIES
-        IMPORTED_LOCATION "${Systemd_LIBRARY}"
-        INTERFACE_COMPILE_OPTIONS "${Systemd_COMPILE_OPTIONS}"
-        INTERFACE_INCLUDE_DIRECTORIES "${Systemd_INCLUDE_DIR}"
+if (NOT Journald_LIBRARY)
+    find_library(Journald_LIBRARY
+        NAMES ${Journald_NAMES} elogind
+        HINTS ${PC_SYSTEMD_LIBDIR} ${PC_SYSTEMD_LIBRARY_DIRS}
     )
 endif ()
 
-mark_as_advanced(Systemd_INCLUDE_DIR Systemd_LIBRARY)
+include(FindPackageHandleStandardArgs)
+find_package_handle_standard_args(Journald
+    FOUND_VAR Journald_FOUND
+    REQUIRED_VARS Journald_LIBRARY Journald_INCLUDE_DIR
+    VERSION_VAR Journald_VERSION
+)
 
-if (Systemd_FOUND)
-    set(Systemd_LIBRARIES ${Systemd_LIBRARY})
-    set(Systemd_INCLUDE_DIRS ${Systemd_INCLUDE_DIR})
+if (Journald_LIBRARY AND NOT TARGET Journald::Journald)
+    add_library(Journald::Journald UNKNOWN IMPORTED GLOBAL)
+    set_target_properties(Journald::Journald PROPERTIES
+        IMPORTED_LOCATION "${Journald_LIBRARY}"
+        INTERFACE_COMPILE_OPTIONS "${Journald_COMPILE_OPTIONS}"
+        INTERFACE_INCLUDE_DIRECTORIES "${Journald_INCLUDE_DIR}"
+    )
+endif ()
+
+mark_as_advanced(Journald_INCLUDE_DIR Journald_LIBRARY)
+
+if (Journald_FOUND)
+    set(Journald_LIBRARIES ${Journald_LIBRARY})
+    set(Journald_INCLUDE_DIRS ${Journald_INCLUDE_DIR})
 endif ()

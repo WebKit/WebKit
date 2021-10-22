@@ -1,3 +1,16 @@
+2021-10-22  Pablo Correa Gómez  <ablocorrea@hotmail.com>
+
+        Enable logging under non-systemd linux distros
+        https://bugs.webkit.org/show_bug.cgi?id=232080
+
+        Reviewed by Michael Catanzaro.
+
+        * Source/cmake/FindJournald.cmake: Renamed from Source/cmake/FindSystemd.cmake.
+        * Source/cmake/OptionsGTK.cmake: Replace USE_SYSTEMD for
+        ENABLE_JOURNALD_LOG
+        * Source/cmake/OptionsWPE.cmake: Replace USE_SYSTEMD for
+        ENABLE_JOURNALD_LOG
+
 2021-10-21  Eric Carlson  <eric.carlson@apple.com>
 
         Add GitHub name to contributors.json

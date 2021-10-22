@@ -52,8 +52,8 @@ list(APPEND WTF_LIBRARIES
     ZLIB::ZLIB
 )
 
-if (Systemd_FOUND)
-    list(APPEND WTF_LIBRARIES Systemd::Systemd)
+if (Journald_FOUND)
+    list(APPEND WTF_LIBRARIES Journald::Journald)
 endif ()
 
 list(APPEND WTF_SYSTEM_INCLUDE_DIRECTORIES
