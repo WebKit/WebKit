@@ -1,4 +1,0 @@
-
-FAIL window.open() with noopener should have equal viewport width and height assert_equals: expected 980 but got 800
-FAIL window.open() with noreferrer should have equal viewport width and height assert_equals: expected 980 but got 800
-

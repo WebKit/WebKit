@@ -1,3 +1,13 @@
+2021-10-22  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, drop custom iOS expectations for noopener-noreferrer-sizing.window.html.
+
+        It looks like the test is now passing on iOS/iPhone too, not just macOS and iOS/iPad.
+
+        * platform/ios-wk2/TestExpectations:
+        * platform/ios-wk2/imported/w3c/web-platform-tests/html/browsers/the-window-object/noopener-noreferrer-sizing.window-expected.txt: Removed.
+        * platform/ipad/imported/w3c/web-platform-tests/html/browsers/the-window-object/noopener-noreferrer-sizing.window-expected.txt: Removed.
+
 2021-10-22  Eric Hutchison  <ehutchison@apple.com>
 
         Update test expectations for imported/w3c/web-platform-tests/content-security-policy/script-src/script-src-multiple-policies-multiple-hashing-algorithms.html.

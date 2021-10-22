@@ -2235,6 +2235,5 @@ webkit.org/b/232102 http/tests/privateClickMeasurement/attribution-conversion-th
 webkit.org/b/232120 imported/w3c/web-platform-tests/content-security-policy/script-src/script-src-multiple-policies-multiple-hashing-algorithms.html [ Pass Failure DumpJSConsoleLogInStdErr ]
 
 webkit.org/b/232151 http/tests/security/window-opened-from-sandboxed-iframe-should-inherit-sandbox.html [ Failure ]
-webkit.org/b/232151 imported/w3c/web-platform-tests/html/browsers/the-window-object/noopener-noreferrer-sizing.window.html  [ Pass Failure ]
 
 webkit.org/b/225528 http/wpt/fetch/fetch-response-body-stop-in-worker.html [ Pass Crash ]
