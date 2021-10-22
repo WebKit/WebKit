@@ -1,3 +1,13 @@
+2021-10-22  Alan Bujtas  <zalan@apple.com>
+
+        FontCascade::widthForSimpleText fails to produce matching measured width for monospace font
+        https://bugs.webkit.org/show_bug.cgi?id=232104
+        <rdar://83991027>
+
+        Reviewed by Antti Koivisto.
+
+        * platform/ios-wk2/TestExpectations:
+
 2021-10-21  Cathie Chen  <cathiechen@igalia.com>
 
         The intrisic size of picture image inside a template is always zero
