@@ -1,5 +1,14 @@
 2021-10-22  Eric Hutchison  <ehutchison@apple.com>
 
+        Update test expectations for imported/w3c/web-platform-tests/content-security-policy/script-src/script-src-multiple-policies-multiple-hashing-algorithms.html.
+        https://bugs.webkit.org/show_bug.cgi?id=232120.
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+
+2021-10-22  Eric Hutchison  <ehutchison@apple.com>
+
         http/wpt/fetch/fetch-response-body-stop-in-worker.html is failing on iOS15 was well.
         https://bugs.webkit.org/show_bug.cgi?id=225528.
 
