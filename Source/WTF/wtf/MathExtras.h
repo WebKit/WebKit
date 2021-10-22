@@ -136,6 +136,9 @@ constexpr inline double grad2rad(double g) { return deg2rad(grad2deg(g)); }
 constexpr inline float rad2grad(float r) { return deg2grad(rad2deg(r)); }
 constexpr inline float grad2rad(float g) { return deg2rad(grad2deg(g)); }
 
+inline double roundTowardsPositiveInfinity(double value) { return std::floor(value + 0.5); }
+inline float roundTowardsPositiveInfinity(float value) { return std::floor(value + 0.5f); }
+
 // std::numeric_limits<T>::min() returns the smallest positive value for floating point types
 template<typename T> constexpr T defaultMinimumForClamp() { return std::numeric_limits<T>::min(); }
 template<> constexpr float defaultMinimumForClamp() { return -std::numeric_limits<float>::max(); }

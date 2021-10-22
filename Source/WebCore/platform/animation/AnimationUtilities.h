@@ -45,13 +45,13 @@ struct BlendingContext {
 };
 
 inline int blend(int from, int to, const BlendingContext& context)
-{  
-    return static_cast<int>(lround(static_cast<double>(from) + static_cast<double>(to - from) * context.progress));
+{
+    return static_cast<int>(roundTowardsPositiveInfinity(from + (static_cast<double>(to) - from) * context.progress));
 }
 
 inline unsigned blend(unsigned from, unsigned to, const BlendingContext& context)
 {
-    return static_cast<unsigned>(lround(to > from ? static_cast<double>(from) + static_cast<double>(to - from) * context.progress : static_cast<double>(from) - static_cast<double>(from - to) * context.progress));
+    return static_cast<unsigned>(lround(to > from ? from + (static_cast<double>(to) - from) * context.progress : from - (static_cast<double>(from) - to) * context.progress));
 }
 
 inline double blend(double from, double to, const BlendingContext& context)

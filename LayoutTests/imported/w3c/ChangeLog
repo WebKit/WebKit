@@ -1,3 +1,23 @@
+2021-10-22  Joonghun Park  <pjh0718@gmail.com>
+
+        Integer interpolation in animations should be rounded towards positive infinity, not away from zero.
+        https://bugs.webkit.org/show_bug.cgi?id=232013
+
+        Currently, interpolation of <integer> is rounding away from 0.
+        The interpolation's result should be rounded according to the spec,
+        https://drafts.csswg.org/css-values-4/#combine-integers, which is
+
+        "the result is converted to an <integer> by rounding
+        to the nearest integer, with values halfway between
+        adjacent integers rounded towards positive infinity."
+
+        Reviewed by Darin Adler.
+
+        * web-platform-tests/css/css-values/integer_interpolation_round_half_towards_positive_infinity_order-expected.txt: Added.
+        * web-platform-tests/css/css-values/integer_interpolation_round_half_towards_positive_infinity_order.html: Added.
+        * web-platform-tests/css/css-values/integer_interpolation_round_half_towards_positive_infinity_z_index-expected.txt: Added.
+        * web-platform-tests/css/css-values/integer_interpolation_round_half_towards_positive_infinity_z_index.html: Added.
+
 2021-10-22  Chris Dumez  <cdumez@apple.com>
 
         Regression (r284610?): [ iOS BigSur wk2 ]imported/w3c/web-platform-tests/html/cross-origin-opener-policy/coop-csp-sandbox.https.html is a flaky failure
