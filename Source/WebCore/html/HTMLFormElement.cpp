@@ -402,6 +402,10 @@ void HTMLFormElement::submit(Event* event, bool activateSubmitButton, bool proce
 
     auto shouldLockHistory = processingUserGesture ? LockHistory::No : LockHistory::Yes;
     auto formSubmission = FormSubmission::create(*this, submitter, m_attributes, event, shouldLockHistory, trigger);
+
+    if (!isConnected())
+        return;
+
     if (m_plannedFormSubmission)
         m_plannedFormSubmission->cancel();
 

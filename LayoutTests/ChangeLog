@@ -1,3 +1,15 @@
+2021-10-21  Chris Dumez  <cdumez@apple.com>
+
+        Form submission should be cancelled if the form gets detached from inside the formdata event handler
+        https://bugs.webkit.org/show_bug.cgi?id=232114
+
+        Reviewed by Alex Christensen.
+
+        Add layout test coverage.
+
+        * fast/forms/remove-form-inside-formdata-event-expected.txt: Added.
+        * fast/forms/remove-form-inside-formdata-event.html: Added.
+
 2021-10-21  Eric Hutchison  <ehutchison@apple.com>
 
         [ iOS15 Sim EWS ]imported/w3c/web-platform-tests/content-security-policy/script-src/script-src-multiple-policies-multiple-hashing-algorithms.html is a text failure.
