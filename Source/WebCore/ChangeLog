@@ -1,3 +1,58 @@
+2021-10-22  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r283952. rdar://problem/84533339
+
+    [COOP] Crash under ReportingEndpointsCache::addEndpointFromDictionary()
+    https://bugs.webkit.org/show_bug.cgi?id=231537
+    <rdar://83530643>
+    
+    Reviewed by Geoffrey Garen.
+    
+    Source/WebCore:
+    
+    Make sure we don't crash under addEndpointFromDictionary() when the Report-To HTTP header
+    contains more than one endpoint URL for a given group.
+    
+    The loop inside addEndpointFromDictionary() should bail as soon as we find a viable
+    endpoint URL (since we don't currently support having several URLs for a given group).
+    The crash was due to a use-after-move of the |group|.
+    
+    Test: http/wpt/cross-origin-opener-policy/report-to-multiple-endpoints.html
+    
+    * loader/ReportingEndpointsCache.cpp:
+    (WebCore::ReportingEndpointsCache::addEndpointFromDictionary):
+    
+    LayoutTests:
+    
+    Add layout test coverage.
+    
+    * http/wpt/cross-origin-opener-policy/report-to-multiple-endpoints-expected.txt: Added.
+    * http/wpt/cross-origin-opener-policy/report-to-multiple-endpoints.html: Added.
+    * http/wpt/cross-origin-opener-policy/report-to-multiple-endpoints.html.headers: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@283952 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-10-11  Chris Dumez  <cdumez@apple.com>
+
+            [COOP] Crash under ReportingEndpointsCache::addEndpointFromDictionary()
+            https://bugs.webkit.org/show_bug.cgi?id=231537
+            <rdar://83530643>
+
+            Reviewed by Geoffrey Garen.
+
+            Make sure we don't crash under addEndpointFromDictionary() when the Report-To HTTP header
+            contains more than one endpoint URL for a given group.
+
+            The loop inside addEndpointFromDictionary() should bail as soon as we find a viable
+            endpoint URL (since we don't currently support having several URLs for a given group).
+            The crash was due to a use-after-move of the |group|.
+
+            Test: http/wpt/cross-origin-opener-policy/report-to-multiple-endpoints.html
+
+            * loader/ReportingEndpointsCache.cpp:
+            (WebCore::ReportingEndpointsCache::addEndpointFromDictionary):
+
 2021-10-21  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r284201. rdar://problem/83670287
