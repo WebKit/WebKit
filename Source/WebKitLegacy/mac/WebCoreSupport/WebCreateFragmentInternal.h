@@ -25,9 +25,15 @@
 
 #pragma once
 
+#if defined(__cplusplus)
+
+#import <Foundation/Foundation.h>
+
 namespace WebCore {
 class Document;
 struct FragmentAndResources;
 }
 
 extern "C" void _WebCreateFragment(WebCore::Document&, NSAttributedString *, WebCore::FragmentAndResources&);
+
+#endif

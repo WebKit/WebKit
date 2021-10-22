@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WebDeviceOrientationProvider.h"
+#import <WebKitLegacy/WebDeviceOrientationProvider.h>
+#import <objc/NSObject.h>
 
 @class WebDeviceOrientationProviderMockInternal;
 @class WebDeviceOrientation;
