@@ -1,3 +1,80 @@
+2021-10-22  Asumu Takikawa  <asumu@igalia.com>
+
+        Change WebAssembly module import linking time to evaluate step.
+        https://bugs.webkit.org/show_bug.cgi?id=231114
+
+        Reviewed by Yusuke Suzuki.
+
+        Added test cases based on Wasm/ESM proposal examples from:
+
+          https://github.com/WebAssembly/esm-integration/blob/main/proposals/esm-integration/EXAMPLES.md
+
+        The new tests cases cover the bindings made for both JS<->Wasm
+        and Wasm<->JS cyclic module cases, and importing values from JS
+        into Wasm modules. The tests do not cover importing memory values
+        as this does not work yet.
+
+        * wasm/modules/wasm-js-cycle.js:
+        * wasm/modules/wasm-js-cycle/entry-global.wasm:
+        * wasm/modules/wasm-js-cycle/entry-global.wat:
+        * wasm/modules/wasm-js-cycle/entry-table.wasm:
+        * wasm/modules/wasm-js-cycle/entry-table.wat:
+        * wasm/modules/wasm-js-cycle/global.js:
+        (from.string_appeared_here.export.incrementGlobal): Deleted.
+        * wasm/modules/wasm-js-cycle/table.js:
+        (from.string_appeared_here.export.setTable): Deleted.
+
+        * wasm/modules/js-wasm-cycle.js:
+        (then):
+        * wasm/modules/js-wasm-cycle/entry-function.js: Added.
+        (f):
+        * wasm/modules/js-wasm-cycle/entry-i32-global.js: Added.
+        * wasm/modules/js-wasm-cycle/entry-i32-value.js: Added.
+        * wasm/modules/js-wasm-cycle/entry-memory.js: Added.
+        * wasm/modules/js-wasm-cycle/entry-table.js: Added.
+        * wasm/modules/js-wasm-cycle/entry-wasm-global.js: Added.
+        (f):
+        * wasm/modules/js-wasm-cycle/entry-wasm-memory.js: Added.
+        (f):
+        * wasm/modules/js-wasm-cycle/entry-wasm-table.js: Added.
+        (f):
+        * wasm/modules/js-wasm-cycle/function.wasm: Added.
+        * wasm/modules/js-wasm-cycle/function.wat: Added.
+        * wasm/modules/js-wasm-cycle/i32-global.wasm: Added.
+        * wasm/modules/js-wasm-cycle/i32-global.wat: Added.
+        * wasm/modules/js-wasm-cycle/i32-value.wasm: Added.
+        * wasm/modules/js-wasm-cycle/i32-value.wat: Added.
+        * wasm/modules/js-wasm-cycle/memory.wasm: Added.
+        * wasm/modules/js-wasm-cycle/memory.wat: Added.
+        * wasm/modules/js-wasm-cycle/table.wasm: Added.
+        * wasm/modules/js-wasm-cycle/table.wat: Added.
+        * wasm/modules/js-wasm-cycle/wasm-global.wasm: Added.
+        * wasm/modules/js-wasm-cycle/wasm-global.wat: Added.
+        * wasm/modules/js-wasm-cycle/wasm-memory.wasm: Added.
+        * wasm/modules/js-wasm-cycle/wasm-memory.wat: Added.
+        * wasm/modules/js-wasm-cycle/wasm-table.wasm: Added.
+        * wasm/modules/js-wasm-cycle/wasm-table.wat: Added.
+        * wasm/modules/wasm-imports-js-exports.js:
+        * wasm/modules/wasm-imports-js-exports/global.js: Added.
+        * wasm/modules/wasm-imports-js-exports/global.wasm: Added.
+        * wasm/modules/wasm-imports-js-exports/global.wat: Added.
+        * wasm/modules/wasm-imports-js-exports/table.js: Added.
+        * wasm/modules/wasm-imports-js-exports/table.wasm: Added.
+        * wasm/modules/wasm-imports-js-exports/table.wat: Added.
+        * wasm/modules/wasm-js-cycle.js:
+        * wasm/modules/wasm-js-cycle/entry-global.wasm: Added.
+        * wasm/modules/wasm-js-cycle/entry-global.wat: Added.
+        * wasm/modules/wasm-js-cycle/entry-memory.wasm: Added.
+        * wasm/modules/wasm-js-cycle/entry-memory.wat: Added.
+        * wasm/modules/wasm-js-cycle/entry-table.wasm: Added.
+        * wasm/modules/wasm-js-cycle/entry-table.wat: Added.
+        * wasm/modules/wasm-js-cycle/global.js: Added.
+        (export.incrementGlobal):
+        * wasm/modules/wasm-js-cycle/memory.js: Added.
+        (from.string_appeared_here.export.setMemory):
+        * wasm/modules/wasm-js-cycle/table.js: Added.
+        (export.setTable):
+
 2021-10-21  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Inserted GetTypedArrayLengthAsInt52 for PutByVal should have NodeResultInt52

@@ -1,3 +1,27 @@
+2021-10-22  Asumu Takikawa  <asumu@igalia.com>
+
+        Change WebAssembly module import linking time to evaluate step.
+        https://bugs.webkit.org/show_bug.cgi?id=231114
+
+        Reviewed by Yusuke Suzuki.
+
+        Moves the Wasm module import linking code to execute in the
+        module evaluation step, which is the behavior specified in the
+        Wasm/ESM-integration proposal:
+
+          https://github.com/WebAssembly/esm-integration/tree/main/proposals/esm-integration#evaluate
+
+        * runtime/AbstractModuleRecord.cpp:
+        (JSC::AbstractModuleRecord::link):
+        (JSC::AbstractModuleRecord::evaluate):
+        * wasm/js/JSWebAssemblyInstance.cpp:
+        (JSC::JSWebAssemblyInstance::finalizeCreation):
+        * wasm/js/WebAssemblyModuleRecord.cpp:
+        (JSC::WebAssemblyModuleRecord::link):
+        (JSC::WebAssemblyModuleRecord::initializeImportsAndExports):
+        (JSC::WebAssemblyModuleRecord::linkImpl): Deleted.
+        * wasm/js/WebAssemblyModuleRecord.h:
+
 2021-10-22  Mikhail R. Gadelha  <mikhail@igalia.com>
 
         [JSC][32bit] Re-enable compileEnumeratorGetByVal fast path

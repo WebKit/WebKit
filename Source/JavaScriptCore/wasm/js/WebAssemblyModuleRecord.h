@@ -59,13 +59,13 @@ public:
     static WebAssemblyModuleRecord* create(JSGlobalObject*, VM&, Structure*, const Identifier&, const Wasm::ModuleInformation&);
 
     void prepareLink(VM&, JSWebAssemblyInstance*);
-    Synchronousness link(JSGlobalObject*, JSValue scriptFetcher, JSObject* importObject, Wasm::CreationMode);
+    Synchronousness link(JSGlobalObject*, JSValue scriptFetcher);
+    void initializeImportsAndExports(JSGlobalObject*, JSObject* importObject, Wasm::CreationMode);
     JS_EXPORT_PRIVATE JSValue evaluate(JSGlobalObject*);
 
     JSObject* exportsObject() const { return m_exportsObject.get(); }
 
 private:
-    void linkImpl(JSGlobalObject*, JSObject* importObject, Wasm::CreationMode);
     WebAssemblyModuleRecord(VM&, Structure*, const Identifier&);
 
     void finishCreation(JSGlobalObject*, VM&, const Wasm::ModuleInformation&);

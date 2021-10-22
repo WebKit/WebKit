@@ -143,7 +143,9 @@ void JSWebAssemblyInstance::finalizeCreation(VM& vm, JSGlobalObject* globalObjec
     m_moduleRecord->prepareLink(vm, this);
 
     if (creationMode == Wasm::CreationMode::FromJS) {
-        m_moduleRecord->link(globalObject, jsNull(), importObject, creationMode);
+        m_moduleRecord->link(globalObject, jsNull());
+        RETURN_IF_EXCEPTION(scope, void());
+        m_moduleRecord->initializeImportsAndExports(globalObject, importObject, creationMode);
         RETURN_IF_EXCEPTION(scope, void());
 
         JSValue startResult = m_moduleRecord->evaluate(globalObject);

@@ -98,13 +98,22 @@ void WebAssemblyModuleRecord::prepareLink(VM& vm, JSWebAssemblyInstance* instanc
     m_instance.set(vm, this, instance);
 }
 
-Synchronousness WebAssemblyModuleRecord::link(JSGlobalObject* globalObject, JSValue, JSObject* importObject, Wasm::CreationMode creationMode)
+Synchronousness WebAssemblyModuleRecord::link(JSGlobalObject* globalObject, JSValue)
 {
-    linkImpl(globalObject, importObject, creationMode);
+    VM& vm = globalObject->vm();
+
+    RELEASE_ASSERT(m_instance);
+
+    JSWebAssemblyModule* module = m_instance->module();
+    SymbolTable* exportSymbolTable = module->exportSymbolTable();
+
+    JSModuleEnvironment* moduleEnvironment = JSModuleEnvironment::create(vm, globalObject, nullptr, exportSymbolTable, jsTDZValue(), this);
+    setModuleEnvironment(globalObject, moduleEnvironment);
+
     return Synchronousness::Sync;
 }
 
-void WebAssemblyModuleRecord::linkImpl(JSGlobalObject* globalObject, JSObject* importObject, Wasm::CreationMode creationMode)
+void WebAssemblyModuleRecord::initializeImportsAndExports(JSGlobalObject* globalObject, JSObject* importObject, Wasm::CreationMode creationMode)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -515,12 +524,10 @@ void WebAssemblyModuleRecord::linkImpl(JSGlobalObject* globalObject, JSObject* i
         }
     }
 
-    SymbolTable* exportSymbolTable = module->exportSymbolTable();
-
     // Let exports be a list of (string, JS value) pairs that is mapped from each external value e in instance.exports as follows:
     // https://webassembly.github.io/spec/js-api/index.html#create-an-exports-object
     JSObject* exportsObject = constructEmptyObject(vm, globalObject->nullPrototypeObjectStructure());
-    JSModuleEnvironment* moduleEnvironment = JSModuleEnvironment::create(vm, globalObject, nullptr, exportSymbolTable, JSValue(), this);
+    JSModuleEnvironment* moduleEnvironment = this->moduleEnvironment();
     for (const auto& exp : moduleInformation.exports) {
         JSValue exportedValue;
         switch (exp.kind) {
@@ -620,9 +627,6 @@ void WebAssemblyModuleRecord::linkImpl(JSGlobalObject* globalObject, JSObject* i
             m_startFunction.set(vm, this, function);
         }
     }
-
-    scope.release();
-    setModuleEnvironment(globalObject, moduleEnvironment);
 }
 
 template <typename Scope, typename M, typename N, typename ...Args>
