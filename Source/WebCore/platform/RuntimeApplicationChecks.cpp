@@ -75,6 +75,11 @@ void setAuxiliaryProcessType(AuxiliaryProcessType type)
     auxiliaryProcessType() = type;
 }
 
+void setAuxiliaryProcessTypeForTesting(std::optional<AuxiliaryProcessType> type)
+{
+    auxiliaryProcessType() = type;
+}
+
 bool checkAuxiliaryProcessType(AuxiliaryProcessType type)
 {
     auto currentType = auxiliaryProcessType();

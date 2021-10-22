@@ -86,26 +86,33 @@ bool GraphicsContextGLOpenGL::releaseThreadResources(ReleaseThreadResourceBehavi
     // Unset the EGL current context, since the next access might be from another thread, and the
     // context cannot be current on multiple threads.
     if (releaseBehavior == ReleaseThreadResourceBehavior::ReleaseCurrentContext) {
-        if (EGL_GetCurrentContext() == EGL_NO_CONTEXT)
+        EGLDisplay display = EGL_GetCurrentDisplay();
+        if (display == EGL_NO_DISPLAY)
             return true;
         // At the time of writing, ANGLE does not flush on MakeCurrent. Since we are
         // potentially switching threads, we should flush.
         // Note: Here we assume also that ANGLE has only one platform context -- otherwise
         // we would need to flush each EGL context that has been used.
         gl::Flush();
-        EGLDisplay display = EGL_GetDisplay(EGL_DEFAULT_DISPLAY);
-        if (display == EGL_NO_DISPLAY)
-            return true;
         return EGL_MakeCurrent(display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
     }
     if (releaseBehavior == ReleaseThreadResourceBehavior::TerminateAndReleaseThreadResources) {
-        EGLDisplay display = EGL_GetDisplay(EGL_DEFAULT_DISPLAY);
-        if (display != EGL_NO_DISPLAY) {
-            if (EGL_GetCurrentContext() != EGL_NO_CONTEXT) {
-                ASSERT_NOT_REACHED(); // All resources must have been destroyed.
-                EGL_MakeCurrent(display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
-            }
-            EGL_Terminate(display);
+        EGLDisplay currentDisplay = EGL_GetCurrentDisplay();
+        if (currentDisplay != EGL_NO_DISPLAY) {
+            ASSERT_NOT_REACHED(); // All resources must have been destroyed.
+            EGL_MakeCurrent(currentDisplay, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
+        }
+        constexpr EGLNativeDisplayType nativeDisplays[] = {
+            defaultDisplay,
+#if PLATFORM(COCOA)
+            lowPowerDisplay,
+            highPerformanceDisplay
+#endif
+        };
+        for (auto nativeDisplay : nativeDisplays) {
+            EGLDisplay display = EGL_GetDisplay(nativeDisplay);
+            if (display != EGL_NO_DISPLAY)
+                EGL_Terminate(display);
         }
     }
     // Called when we do not know if we will ever see another call from this thread again.

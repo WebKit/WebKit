@@ -90,7 +90,7 @@ WK_UIKITMACHELPER_LDFLAGS_maccatalyst = -framework UIKitMacHelper;
 
 OTHER_CPLUSPLUSFLAGS = $(inherited) -isystem $(SDKROOT)/System/Library/Frameworks/System.framework/PrivateHeaders;
 
-OTHER_LDFLAGS = $(inherited) -lgtest -force_load $(BUILT_PRODUCTS_DIR)/libTestWebKitAPI.a -framework JavaScriptCore -framework WebKit -lWebCoreTestSupport $(WK_APPSERVERSUPPORT_LDFLAGS) $(WK_AUTHKIT_LDFLAGS) -framework Network $(WK_HID_LDFLAGS) $(WK_OPENGL_LDFLAGS) $(WK_PDFKIT_LDFLAGS) $(WK_SYSTEM_LDFLAGS) $(WK_UIKITMACHELPER_LDFLAGS) $(WK_VISIONKITCORE_LDFLAGS) $(OTHER_LDFLAGS_PLATFORM_$(WK_COCOA_TOUCH));
+OTHER_LDFLAGS = $(inherited) -lgtest -force_load $(BUILT_PRODUCTS_DIR)/libTestWebKitAPI.a -framework JavaScriptCore -framework WebKit -lWebCoreTestSupport -framework Metal $(WK_APPSERVERSUPPORT_LDFLAGS) $(WK_AUTHKIT_LDFLAGS) -framework Network $(WK_HID_LDFLAGS) $(WK_OPENGL_LDFLAGS) $(WK_PDFKIT_LDFLAGS) $(WK_SYSTEM_LDFLAGS) $(WK_UIKITMACHELPER_LDFLAGS) $(WK_VISIONKITCORE_LDFLAGS) $(OTHER_LDFLAGS_PLATFORM_$(WK_COCOA_TOUCH));
 OTHER_LDFLAGS_PLATFORM_ = -framework Cocoa -framework Carbon;
 
 // FIXME: This should not be built on iOS. Instead we should create and use a TestWebKitAPI application.

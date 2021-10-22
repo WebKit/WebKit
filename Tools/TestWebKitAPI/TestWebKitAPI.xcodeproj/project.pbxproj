@@ -609,6 +609,7 @@
 		7B2739F32632AB640040F182 /* ThreadAssertionsTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B2739F22632AB640040F182 /* ThreadAssertionsTest.cpp */; };
 		7B774906267CCE72009873B4 /* TestRunnerTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B774904267CCE68009873B4 /* TestRunnerTests.cpp */; };
 		7B7D096A2519F8F90017A078 /* WebGLNoCrashOnOtherThreadAccess.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7B7D09692519F8F90017A078 /* WebGLNoCrashOnOtherThreadAccess.mm */; };
+		7BA3936C271EDFCA0015911C /* TestGraphicsContextGLOpenGLCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7BA3936B271EDFCA0015911C /* TestGraphicsContextGLOpenGLCocoa.mm */; };
 		7C1AF7951E8DCBAB002645B9 /* PrepareForMoveToWindow.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7C1AF7931E8DCBAB002645B9 /* PrepareForMoveToWindow.mm */; };
 		7C3965061CDD74F90094DBB8 /* ColorTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C3965051CDD74F90094DBB8 /* ColorTests.cpp */; };
 		7C3DB8E41D12129B00AE8CC3 /* CommandBackForward.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7C3DB8E21D12129B00AE8CC3 /* CommandBackForward.mm */; };
@@ -2517,6 +2518,8 @@
 		7B2739F22632AB640040F182 /* ThreadAssertionsTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ThreadAssertionsTest.cpp; sourceTree = "<group>"; };
 		7B774904267CCE68009873B4 /* TestRunnerTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TestRunnerTests.cpp; sourceTree = "<group>"; };
 		7B7D09692519F8F90017A078 /* WebGLNoCrashOnOtherThreadAccess.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WebGLNoCrashOnOtherThreadAccess.mm; sourceTree = "<group>"; };
+		7BA3936B271EDFCA0015911C /* TestGraphicsContextGLOpenGLCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TestGraphicsContextGLOpenGLCocoa.mm; sourceTree = "<group>"; };
+		7BA3936D271EEC530015911C /* WebCoreUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebCoreUtilities.h; sourceTree = "<group>"; };
 		7C1AF7931E8DCBAB002645B9 /* PrepareForMoveToWindow.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PrepareForMoveToWindow.mm; sourceTree = "<group>"; };
 		7C3965051CDD74F90094DBB8 /* ColorTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ColorTests.cpp; sourceTree = "<group>"; };
 		7C3DB8E21D12129B00AE8CC3 /* CommandBackForward.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CommandBackForward.mm; sourceTree = "<group>"; };
@@ -3318,6 +3321,7 @@
 				BC131AA8117131FC00B69727 /* TestsController.cpp */,
 				BCB9E7C711234E3A00A137E0 /* TestsController.h */,
 				7C83E0361D0A5F7000FEBCF3 /* Utilities.h */,
+				7BA3936D271EEC530015911C /* WebCoreUtilities.h */,
 				7CBD5A2222DE42A6004A9E32 /* WTFStringUtilities.cpp */,
 				44A622C114A0E2B60048515B /* WTFStringUtilities.h */,
 			);
@@ -4985,6 +4989,7 @@
 				57F1C91025DDD51900E8F6EA /* PrivateClickMeasurementCocoa.mm */,
 				5769C50A1D9B0001000847FB /* SerializedCryptoKeyWrap.mm */,
 				A17991861E1C994E00A505ED /* SharedBuffer.mm */,
+				7BA3936B271EDFCA0015911C /* TestGraphicsContextGLOpenGLCocoa.mm */,
 				CD89D0381C4EDB2A00040A04 /* WebCoreNSURLSession.mm */,
 			);
 			path = cocoa;
@@ -5910,6 +5915,7 @@
 				F46128CB211D475100D9FADB /* TestDraggingInfo.mm in Sources */,
 				F4E0A2B82122847400AF7C7F /* TestFilePromiseReceiver.mm in Sources */,
 				F4F5BB5221667BAA002D06B9 /* TestFontOptions.mm in Sources */,
+				7BA3936C271EDFCA0015911C /* TestGraphicsContextGLOpenGLCocoa.mm in Sources */,
 				F45E15762112CE6200307E82 /* TestInputDelegate.mm in Sources */,
 				F45D3891215A7B4B002A2979 /* TestInspectorBar.mm in Sources */,
 				516281252325C18000BB7E42 /* TestPDFDocument.mm in Sources */,

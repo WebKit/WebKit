@@ -1,3 +1,29 @@
+2021-10-22  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        WebGL low-power and high-performance contexts should use different ANGLE Metal EGLDisplays
+        https://bugs.webkit.org/show_bug.cgi?id=231012
+        <rdar://problem/83971417>
+
+        Reviewed by Dean Jackson.
+
+        Add a API test to test GraphicsContextGLOpenGL
+        Cocoa implementation regarding the bug where
+        the GraphicsContextGLOpenGL instances would use
+        the GPU that was selected by the first instance.
+
+        * TestWebKitAPI/Configurations/TestWebKitAPI.xcconfig:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebCore/cocoa/TestGraphicsContextGLOpenGLCocoa.mm: Added.
+        (TestWebKitAPI::WebCore::TestedGraphicsContextGLOpenGL::create):
+        (TestWebKitAPI::WebCore::TestedGraphicsContextGLOpenGL::TestedGraphicsContextGLOpenGL):
+        (TestWebKitAPI::hasMultipleGPUs):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/WebCoreUtilities.h: Added.
+        (TestWebKitAPI::ScopedSetAuxiliaryProcessTypeForTesting::ScopedSetAuxiliaryProcessTypeForTesting):
+        (TestWebKitAPI::ScopedSetAuxiliaryProcessTypeForTesting::~ScopedSetAuxiliaryProcessTypeForTesting):
+        Add a utility state setter to set the process type for the
+        duration of a test.
+
 2021-10-21  Ryan Haddad  <ryanhaddad@apple.com>
 
         WebGL bot should run tests with GPU Process enabled
