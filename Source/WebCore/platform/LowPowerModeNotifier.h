@@ -34,7 +34,7 @@ OBJC_CLASS WebLowPowerModeObserver;
 
 #if USE(GLIB)
 #include <wtf/glib/GRefPtr.h>
-typedef struct _GDBusProxy GDBusProxy;
+typedef struct _GPowerProfileMonitor GPowerProfileMonitor;
 #endif
 
 namespace WebCore {
@@ -56,14 +56,10 @@ private:
     RetainPtr<WebLowPowerModeObserver> m_observer;
     LowPowerModeChangeCallback m_callback;
 #elif USE(GLIB)
-    void updateWarningLevel();
-    void warningLevelChanged();
-    static void gPropertiesChangedCallback(LowPowerModeNotifier*, GVariant* changedProperties);
-
-    GRefPtr<GDBusProxy> m_displayDeviceProxy;
-    GRefPtr<GCancellable> m_cancellable;
+#if GLIB_CHECK_VERSION(2, 69, 1)
     LowPowerModeChangeCallback m_callback;
-    bool m_lowPowerModeEnabled { false };
+    GRefPtr<GPowerProfileMonitor> m_powerProfileMonitor;
+#endif
 #endif
 };
 
