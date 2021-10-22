@@ -1,3 +1,19 @@
+2021-10-22  Chris Dumez  <cdumez@apple.com>
+
+        Regression (r284610): [ iOS BigSur wk2 ] http/tests/security/window-opened-from-sandboxed-iframe-should-inherit-sandbox.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=232151
+        <rdar://problem/84552682>
+
+        Reviewed by Ryan Haddad.
+
+        The test expects a CONSOLE message to get logged to indicate that a load was blocked.
+        Rely on `internals.setConsoleMessageListener` to wait for this CONSOLE message instead
+        of using a timer in order the address the flakiness.
+
+        * http/tests/security/window-opened-from-sandboxed-iframe-should-inherit-sandbox.html:
+        * platform/ios-wk2/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+
 2021-10-22  Ryan Haddad  <ryanhaddad@apple.com>
 
         [iOS EWS] imported/w3c/web-platform-tests/file-system-access/sandboxed_FileSystemSyncAccessHandle-close.https.tentative.worker.html is a flaky failure

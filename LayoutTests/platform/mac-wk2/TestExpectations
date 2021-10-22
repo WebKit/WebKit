@@ -1171,9 +1171,6 @@ media/modern-media-controls/scrubber-support/scrubber-support-media-api.html [ P
 # <rdar://problem/61463671> [ macOS wk2 ] tiled-drawing/scrolling/fast-scroll-mainframe-zoom.html is a flaky failure
 [ Mojave ] tiled-drawing/scrolling/fast-scroll-mainframe-zoom.html [ Pass Failure ]
 
-# <rdar://problem/61833992> REGRESSION: (20A267) http/tests/security/window-opened-from-sandboxed-iframe-should-inherit-sandbox.html
-[ BigSur+ ] http/tests/security/window-opened-from-sandboxed-iframe-should-inherit-sandbox.html [ Pass Failure ]
-
 # <rdar://problem/63626512> REGRESSION(20A279-20A291a): webrtc/simulcast-h264.html is a constant timeout
 webrtc/simulcast-h264.html [ Pass Timeout ]
 
@@ -1689,4 +1686,3 @@ webkit.org/b/231765 [ Release ] http/tests/resourceLoadStatistics/website-data-r
 
 webkit.org/b/231780 [ Debug ] imported/w3c/web-platform-tests/webrtc/simulcast/basic.https.html [ Pass Failure ]
 
-webkit.org/b/232151 [ BigSur Debug ] http/tests/security/window-opened-from-sandboxed-iframe-should-inherit-sandbox.html [ Failure ]

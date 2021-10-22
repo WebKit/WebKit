@@ -25,7 +25,13 @@
         clickEvent.initEvent("click", true, true);
         theLink.dispatchEvent(clickEvent);
 
-        setTimeout(wrapUp, 500);
+        var iframeContentWindow = document.getElementById("theIframe").contentWindow;
+        if (iframeContentWindow.internals) {
+            iframeContentWindow.internals.setConsoleMessageListener((msg) => {
+                setTimeout(wrapUp, 0);
+            });
+        } else
+            setTimeout(wrapUp, 1000);
     }
 </script>
 <iframe onload="run()" id="theIframe" sandbox="allow-same-origin allow-popups" src="resources/anchor-tag-with-blank-target.html"></iframe>
