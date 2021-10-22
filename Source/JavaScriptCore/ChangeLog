@@ -1,3 +1,19 @@
+2021-10-22  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] GetTypedArrayLengthAsInt52 must be inserted only when we ensure that input is TypedArray via array-mode-based filtering
+        https://bugs.webkit.org/show_bug.cgi?id=232168
+        rdar://84366658
+
+        Reviewed by Robin Morisset.
+
+        GetTypedArrayLengthAsInt52 works only when input is TypedArray, which should be validated via array-mode (and already inserted checks in fixup).
+        Accidentally we were inserting it without checking typed-array condition in SSA lowering phase. This patch adds a condition which ensures it
+        is TypedArray.
+
+        * dfg/DFGSSALoweringPhase.cpp:
+        (JSC::DFG::SSALoweringPhase::handleNode):
+        (JSC::DFG::SSALoweringPhase::lowerBoundsCheck):
+
 2021-10-22  Mark Lam  <mark.lam@apple.com>
 
         Change Heap::writeBarrier() to do the cheaper check first.

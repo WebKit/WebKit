@@ -1,3 +1,14 @@
+2021-10-22  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] GetTypedArrayLengthAsInt52 must be inserted only when we ensure that input is TypedArray via array-mode-based filtering
+        https://bugs.webkit.org/show_bug.cgi?id=232168
+        rdar://84366658
+
+        Reviewed by Robin Morisset.
+
+        * stress/gettypedarraylengthasint52-must-be-emitted-for-typedarray.js: Added.
+        (foo):
+
 2021-10-22  Asumu Takikawa  <asumu@igalia.com>
 
         Change WebAssembly module import linking time to evaluate step.
