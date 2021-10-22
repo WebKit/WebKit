@@ -44,7 +44,7 @@ public:
     }
 
     StreamConnectionWorkQueue(const char*);
-    ~StreamConnectionWorkQueue() = default;
+    ~StreamConnectionWorkQueue();
     void addStreamConnection(StreamServerConnectionBase&);
     void removeStreamConnection(StreamServerConnectionBase&);
 
@@ -55,17 +55,16 @@ public:
 
     Semaphore& wakeUpSemaphore();
 private:
-    void wakeUpProcessingThread();
+    void startProcessingThread() WTF_REQUIRES_LOCK(m_lock);
     void processStreams();
 
     const char* const m_name;
 
     Semaphore m_wakeUpSemaphore;
-    RefPtr<Thread> m_processingThread;
-
     std::atomic<bool> m_shouldQuit { false };
 
     Lock m_lock;
+    RefPtr<Thread> m_processingThread WTF_GUARDED_BY_LOCK(m_lock);
     Deque<Function<void()>> m_functions WTF_GUARDED_BY_LOCK(m_lock);
     HashSet<Ref<StreamServerConnectionBase>> m_connections WTF_GUARDED_BY_LOCK(m_lock);
 };

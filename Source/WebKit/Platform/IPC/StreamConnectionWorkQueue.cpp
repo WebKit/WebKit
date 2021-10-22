@@ -33,45 +33,61 @@ StreamConnectionWorkQueue::StreamConnectionWorkQueue(const char* name)
 {
 }
 
+StreamConnectionWorkQueue::~StreamConnectionWorkQueue()
+{
+    // `StreamConnectionWorkQueue::stop()` should be called if anything has been dispatched or listened to.
+    ASSERT(!m_processingThread);
+}
+
 void StreamConnectionWorkQueue::dispatch(WTF::Function<void()>&& function)
 {
+    ASSERT(!m_shouldQuit); // Re-entering during shutdown not supported.
     {
         Locker locker { m_lock };
         m_functions.append(WTFMove(function));
-        ASSERT(!m_shouldQuit); // Re-entering during shutdown not supported.
+        if (!m_shouldQuit && !m_processingThread) {
+            startProcessingThread();
+            return;
+        }
     }
-    wakeUpProcessingThread();
-
+    wakeUp();
 }
+
 void StreamConnectionWorkQueue::addStreamConnection(StreamServerConnectionBase& connection)
 {
     {
         Locker locker { m_lock };
         m_connections.add(connection);
-        ASSERT(!m_shouldQuit); // Re-entering during shutdown not supported.
+        if (!m_shouldQuit && !m_processingThread) {
+            startProcessingThread();
+            return;
+        }
     }
-    wakeUpProcessingThread();
+    wakeUp();
 }
 
 void StreamConnectionWorkQueue::removeStreamConnection(StreamServerConnectionBase& connection)
 {
-    ASSERT(m_processingThread);
     {
         Locker locker { m_lock };
         m_connections.remove(connection);
-        ASSERT(!m_shouldQuit); // Re-entering during shutdown not supported.
     }
-    m_wakeUpSemaphore.signal();
+    wakeUp();
 }
 
 void StreamConnectionWorkQueue::stop()
 {
     m_shouldQuit = true;
-    if (!m_processingThread)
+    RefPtr<Thread> processingThread;
+    {
+        Locker locker { m_lock };
+        processingThread = WTFMove(m_processingThread);
+    }
+    if (!processingThread)
         return;
-    m_wakeUpSemaphore.signal();
-    m_processingThread->waitForCompletion();
-    m_processingThread = nullptr;
+    ASSERT(Thread::current().uid() != processingThread->uid());
+    wakeUp();
+    processingThread->waitForCompletion();
 }
 
 void StreamConnectionWorkQueue::wakeUp()
@@ -84,13 +100,8 @@ IPC::Semaphore& StreamConnectionWorkQueue::wakeUpSemaphore()
     return m_wakeUpSemaphore;
 }
 
-void StreamConnectionWorkQueue::wakeUpProcessingThread()
+void StreamConnectionWorkQueue::startProcessingThread()
 {
-    if (m_processingThread) {
-        m_wakeUpSemaphore.signal();
-        return;
-    }
-
     auto task = [this]() mutable {
         for (;;) {
             processStreams();

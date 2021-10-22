@@ -1,3 +1,33 @@
+2021-10-22  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        StreamConnectionWorkQueue is not thread-safe
+        https://bugs.webkit.org/show_bug.cgi?id=232068
+
+        Reviewed by Wenson Hsieh.
+
+        Make StreamConnectionWorkQueue thread-safe so that
+        addStreamConnection works from multiple threads.
+        In the future, this will be called when a new RemoteDisplayListRecorder is
+        added during the StreamConnectionWorkQueue message processing
+        invocation for RemoteRenderingBackend::createRemoteImageBuffer.
+
+        * Platform/IPC/StreamConnectionWorkQueue.cpp:
+        (IPC::StreamConnectionWorkQueue::~StreamConnectionWorkQueue):
+        (IPC::StreamConnectionWorkQueue::dispatch):
+        (IPC::StreamConnectionWorkQueue::addStreamConnection):
+        (IPC::StreamConnectionWorkQueue::removeStreamConnection):
+        Change semantics so that adding and removing connections during
+        shutdown is ok. This is required for simpler code since
+        during stop we must dispatch all pending messages, but during
+        message code we might have unconditional start listening when
+        the message creates a new RemoteDisplayListRecorder.
+        As a consequence it's not an error to add a connection,
+        stop and destroy the work queue without removing it.
+        (IPC::StreamConnectionWorkQueue::stop):
+        (IPC::StreamConnectionWorkQueue::startProcessingThread):
+        (IPC::StreamConnectionWorkQueue::wakeUpProcessingThread): Deleted.
+        * Platform/IPC/StreamConnectionWorkQueue.h:
+
 2021-10-21  Alex Christensen  <achristensen@webkit.org>
 
         Add webpushd plist
