@@ -29,7 +29,7 @@
 #pragma once
 
 #ifdef __OBJC__
-#import <Foundation/Foundation.h>
+@class NSBundle;
 typedef NSString *WebLocalizedStringType;
 #else
 #ifdef __cplusplus

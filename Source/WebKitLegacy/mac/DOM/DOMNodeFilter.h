@@ -24,7 +24,6 @@
  */
 
 #import <WebKitLegacy/WebKitAvailability.h>
-#import <objc/NSObject.h>
 
 @class DOMNode;
 

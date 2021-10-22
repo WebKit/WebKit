@@ -23,8 +23,6 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <objc/NSObject.h>
-
 @class WebGeolocationPositionInternal;
 
 @interface WebGeolocationPosition : NSObject

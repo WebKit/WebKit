@@ -26,11 +26,10 @@
 #ifndef WAKResponder_h
 #define WAKResponder_h
 
-#import <Foundation/Foundation.h>
-
 #if TARGET_OS_IPHONE
 
-#import <WebCore/WKTypes.h>
+#import "WKTypes.h"
+#import <Foundation/Foundation.h>
 
 @class WebEvent;
 

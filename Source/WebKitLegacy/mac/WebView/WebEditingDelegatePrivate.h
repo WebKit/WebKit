@@ -28,9 +28,6 @@
 
 #import <WebKitLegacy/WebEditingDelegate.h>
 
-#if TARGET_OS_IPHONE
-@class DOMDocumentFragment;
-#endif
 @class DOMHTMLElement;
 
 @interface NSObject (WebViewEditingDelegatePrivate)

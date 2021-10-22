@@ -26,8 +26,6 @@
 #ifndef WebKitPluginHostTypes_h
 #define WebKitPluginHostTypes_h
 
-#include <stdint.h>
-
 typedef uint8_t* plist_bytes_t;
 typedef uint8_t* application_name_t;
 

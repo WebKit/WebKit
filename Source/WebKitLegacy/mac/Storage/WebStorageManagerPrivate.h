@@ -23,8 +23,6 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Foundation/Foundation.h>
-
 extern NSString * const WebStorageDirectoryDefaultsKey;
 extern NSString * const WebStorageDidModifyOriginNotification;
 

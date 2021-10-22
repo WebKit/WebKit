@@ -30,9 +30,8 @@
 
 #if !TARGET_OS_IPHONE
 #import <AppKit/AppKit.h>
-#endif
-
 @class WebFrame;
+#endif
 
 /*!
     This informal protocol enables a plug-in to request that its containing application

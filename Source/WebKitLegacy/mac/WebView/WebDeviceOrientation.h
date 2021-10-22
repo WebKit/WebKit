@@ -23,8 +23,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <objc/NSObject.h>
-#import <stdbool.h>
 
 @class WebDeviceOrientationInternal;
 

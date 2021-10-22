@@ -26,11 +26,10 @@
 #ifndef WAKAppKitStubs_h
 #define WAKAppKitStubs_h
 
-#import <Foundation/Foundation.h>
-
 #if TARGET_OS_IPHONE
 
 #import <CoreGraphics/CoreGraphics.h>
+#import <Foundation/Foundation.h>
 
 #ifndef NSClipView
 #define NSClipView WAKClipView

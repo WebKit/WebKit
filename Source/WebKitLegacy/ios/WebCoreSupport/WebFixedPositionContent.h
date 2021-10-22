@@ -23,7 +23,6 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <CoreGraphics/CoreGraphics.h>
 #import <Foundation/Foundation.h>
 
 @class CALayer;
