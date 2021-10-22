@@ -770,13 +770,20 @@ LineBuilder::Result LineBuilder::handleInlineContent(InlineContentBreaker& inlin
         m_lineLogicalRect = lineLogicalRectForCandidateContent;
         for (auto& run : candidateRuns)
             m_line.append(run.inlineItem, run.style, run.logicalWidth);
-        if (lineCandidate.inlineContent.hasTrailingSoftWrapOpportunity()) {
-            // Check if we are allowed to wrap at this position.
+        // We are keeping this content on the line but we need to check if we could have wrapped here
+        // in order to be able to revert back to this positon if needed.
+        // Let's just ignore cases like collapsed leading whitespace for now.
+        if (lineCandidate.inlineContent.hasTrailingSoftWrapOpportunity() && m_line.hasContent()) {
             auto& trailingRun = candidateRuns.last();
-            // FIXME: There must be a way to decide if the trailing run actually ended up on the line.
-            // Let's just deal with collapsed leading whitespace for now.
-            if (m_line.hasContent() && TextUtil::isWrappingAllowed(trailingRun.style))
-                m_wrapOpportunityList.append(&trailingRun.inlineItem);
+            auto& trailingInlineItem = trailingRun.inlineItem;
+            // Note that wrapping here could be driven both by the style of the parent and the inline item itself.
+            // e.g inline boxes set the wrapping rules for their content and not for themselves.
+            auto& parentStyle = trailingInlineItem.layoutBox().parent().style();
+            auto isWrapOpportunity = TextUtil::isWrappingAllowed(parentStyle);
+            if (!isWrapOpportunity && (trailingInlineItem.isInlineBoxStart() || trailingInlineItem.isInlineBoxEnd()))
+                isWrapOpportunity = TextUtil::isWrappingAllowed(trailingRun.style);
+            if (isWrapOpportunity)
+                m_wrapOpportunityList.append(&trailingInlineItem);
         }
         return { result.isEndOfLine, { candidateRuns.size(), false } };
     }
