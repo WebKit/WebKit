@@ -40,8 +40,25 @@ StreamServerConnectionBase::StreamServerConnectionBase(Connection& connection, S
 
 void StreamServerConnectionBase::startReceivingMessagesImpl(ReceiverName receiverName, uint64_t destinationID)
 {
-    m_connection->addMessageReceiveQueue(*this, receiverName, destinationID);
+    // FIXME: Can we avoid synchronous dispatch here by adjusting the assertion in `Connection::enqueueMatchingMessagesToMessageReceiveQueue`?
+    callOnMainRunLoopAndWait([&] {
+        m_connection->addMessageReceiveQueue(*this, receiverName, destinationID);
+    });
     m_workQueue.addStreamConnection(*this);
+}
+
+void StreamServerConnectionBase::startReceivingMessagesImpl(ReceiverName receiverName)
+{
+    callOnMainRunLoopAndWait([&] {
+        m_connection->addMessageReceiveQueue(*this, receiverName);
+    });
+    m_workQueue.addStreamConnection(*this);
+}
+
+void StreamServerConnectionBase::stopReceivingMessagesImpl(ReceiverName receiverName)
+{
+    m_connection->removeMessageReceiveQueue(receiverName);
+    m_workQueue.removeStreamConnection(*this);
 }
 
 void StreamServerConnectionBase::stopReceivingMessagesImpl(ReceiverName receiverName, uint64_t destinationID)

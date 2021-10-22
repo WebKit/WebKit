@@ -1,3 +1,61 @@
+2021-10-22  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        RemoteRenderingBackend::CreateImageBuffer should be an async IPC stream message
+        https://bugs.webkit.org/show_bug.cgi?id=231970
+
+        Reviewed by Kimmo Kinnunen.
+
+        This patch reverts the changes in r284476, which worked around a race when adding receive queues for newly
+        created IPC stream destinations and simultaneously dispatching IPC messages to those destinations. Rather than
+        making the IPC message that creates and adds the new image buffer's RemoteDisplayListRecorder synchronous, we
+        instead keep that message async and make adjustments to ensure that incoming out-of-stream IPC messages for
+        RemoteDisplayListRecorder can always be mapped to an appropriate receive queue. See below for more details.
+
+        * GPUProcess/graphics/RemoteDisplayListRecorder.cpp:
+        (WebKit::RemoteDisplayListRecorder::startListeningForIPC):
+
+        Move the main runloop bounce down to `StreamServerConnectionBase::startReceivingMessagesImpl()` instead (to deal
+        with the fact that `addMessageReceiveQueue` currently needs to be invoked on the main runloop). This allows us
+        to call `StreamServerConnection::startReceivingMessages()` from the processing queue while creating a remote
+        image buffer, which (in turn) ensures that incoming out-of-stream messages from the IPC thread will be sent to
+        the correct RemoteDisplayListRecorder destination by the time they're dispatched on the work queue thread.
+
+        * GPUProcess/graphics/RemoteRenderingBackend.cpp:
+        (WebKit::RemoteRenderingBackend::startListeningForIPC):
+        (WebKit::RemoteRenderingBackend::stopListeningForIPC):
+
+        Additionally register a "0-destination" receiver to ensure that all RemoteDisplayListRecorder messages (even
+        without pre-existing destinations) will be enqueued on the same IPC stream connection as this remote rendering
+        backend.
+
+        (WebKit::RemoteRenderingBackend::createImageBuffer):
+        * GPUProcess/graphics/RemoteRenderingBackend.h:
+        * GPUProcess/graphics/RemoteRenderingBackend.messages.in:
+
+        Make `CreateImageBuffer` an async stream message once again.
+
+        * Platform/IPC/StreamConnectionWorkQueue.cpp:
+        (IPC::StreamConnectionWorkQueue::processStreams):
+        * Platform/IPC/StreamConnectionWorkQueue.h:
+
+        Change `m_connections` into a HashCountedSet (from a HashSet), to ensure that the same server connection object
+        can be added to and removed from the work queue multiple times, without removing the connection from the map
+        early.
+
+        * Platform/IPC/StreamServerConnection.cpp:
+        (IPC::StreamServerConnectionBase::startReceivingMessagesImpl):
+        (IPC::StreamServerConnectionBase::stopReceivingMessagesImpl):
+        * Platform/IPC/StreamServerConnection.h:
+        (IPC::StreamServerConnection::startReceivingMessages):
+        (IPC::StreamServerConnection::stopReceivingMessages):
+
+        Add new methods to start and stop receiving all messages for a given ReceiverName, regardless of incoming
+        destination ID. RemoteRenderingBackend now uses this to register a "catch-all" listener for all
+        RemoteDisplayListRecorder messages.
+
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.cpp:
+        (WebKit::RemoteRenderingBackendProxy::createRemoteImageBuffer):
+
 2021-10-22  Sihui Liu  <sihui_liu@apple.com>
 
         Followup to r284652: ensure file handle is closed in web process

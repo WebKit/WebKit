@@ -62,6 +62,9 @@ protected:
     void startReceivingMessagesImpl(ReceiverName, uint64_t destinationID);
     void stopReceivingMessagesImpl(ReceiverName, uint64_t destinationID);
 
+    void startReceivingMessagesImpl(ReceiverName);
+    void stopReceivingMessagesImpl(ReceiverName);
+
     // MessageReceiveQueue
     void enqueueMessage(Connection&, std::unique_ptr<Decoder>&&) final;
 
@@ -144,6 +147,9 @@ public:
     // Stops the message receipt. Note: already received messages might still be delivered.
     void stopReceivingMessages(ReceiverName, uint64_t destinationID);
 
+    inline void startReceivingMessages(ReceiverName);
+    inline void stopReceivingMessages(ReceiverName);
+
     // StreamServerConnectionBase overrides.
     DispatchResult dispatchStreamMessages(size_t messageLimit) final;
 
@@ -160,5 +166,15 @@ private:
     ReceiversMap m_receivers WTF_GUARDED_BY_LOCK(m_receiversLock);
     uint64_t m_currentDestinationID { 0 };
 };
+
+void StreamServerConnection::startReceivingMessages(ReceiverName receiverName)
+{
+    StreamServerConnectionBase::startReceivingMessagesImpl(receiverName);
+}
+
+void StreamServerConnection::stopReceivingMessages(ReceiverName receiverName)
+{
+    StreamServerConnectionBase::stopReceivingMessagesImpl(receiverName);
+}
 
 }

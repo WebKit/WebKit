@@ -23,7 +23,7 @@
 #if ENABLE(GPU_PROCESS)
 
 messages -> RemoteRenderingBackend NotRefCounted Stream {
-    CreateImageBuffer(WebCore::FloatSize logicalSize, WebCore::RenderingMode renderingMode, float resolutionScale, WebCore::DestinationColorSpace colorSpace, enum:uint8_t WebCore::PixelFormat pixelFormat, WebCore::RenderingResourceIdentifier renderingResourceIdentifier) -> () Synchronous
+    CreateImageBuffer(WebCore::FloatSize logicalSize, WebCore::RenderingMode renderingMode, float resolutionScale, WebCore::DestinationColorSpace colorSpace, enum:uint8_t WebCore::PixelFormat pixelFormat, WebCore::RenderingResourceIdentifier renderingResourceIdentifier)
     UpdateSharedMemoryForGetPixelBuffer(uint32_t byteCount) -> (WebKit::SharedMemory::IPCHandle handle) Synchronous NotStreamEncodableReply
     SemaphoreForGetPixelBuffer() -> (IPC::Semaphore semaphore) Synchronous NotStreamEncodableReply
     UpdateSharedMemoryAndSemaphoreForGetPixelBuffer(uint32_t byteCount) -> (WebKit::SharedMemory::IPCHandle handle, IPC::Semaphore semaphore) Synchronous NotStreamEncodableReply

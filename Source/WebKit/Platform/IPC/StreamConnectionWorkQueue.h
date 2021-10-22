@@ -30,7 +30,7 @@
 #include <atomic>
 #include <wtf/Deque.h>
 #include <wtf/FunctionDispatcher.h>
-#include <wtf/HashSet.h>
+#include <wtf/HashCountedSet.h>
 #include <wtf/Lock.h>
 #include <wtf/Threading.h>
 
@@ -66,7 +66,7 @@ private:
     Lock m_lock;
     RefPtr<Thread> m_processingThread WTF_GUARDED_BY_LOCK(m_lock);
     Deque<Function<void()>> m_functions WTF_GUARDED_BY_LOCK(m_lock);
-    HashSet<Ref<StreamServerConnectionBase>> m_connections WTF_GUARDED_BY_LOCK(m_lock);
+    HashCountedSet<Ref<StreamServerConnectionBase>> m_connections WTF_GUARDED_BY_LOCK(m_lock);
 };
 
 }

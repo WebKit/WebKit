@@ -121,11 +121,11 @@ void StreamConnectionWorkQueue::processStreams()
     bool hasMoreToProcess = false;
     do {
         Deque<WTF::Function<void()>> functions;
-        HashSet<Ref<StreamServerConnectionBase>> connections;
+        Vector<Ref<StreamServerConnectionBase>> connections;
         {
             Locker locker { m_lock };
             functions.swap(m_functions);
-            connections = m_connections;
+            connections = copyToVector(m_connections.values());
         }
         for (auto& function : functions)
             WTFMove(function)();
