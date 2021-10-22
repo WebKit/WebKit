@@ -3548,6 +3548,8 @@ webkit.org/b/229397 imported/w3c/web-platform-tests/css/css-writing-modes/clip-r
 webkit.org/b/229397 imported/w3c/web-platform-tests/css/css-writing-modes/clip-rect-vrl-006.xht [ ImageOnlyFailure ]
 webkit.org/b/229397 imported/w3c/web-platform-tests/css/css-writing-modes/clip-rect-vrl-008.xht [ ImageOnlyFailure ]
 
+webkit.org/b/232181 imported/w3c/web-platform-tests/file-system-access/sandboxed_FileSystemSyncAccessHandle-close.https.tentative.worker.html [ Pass Failure ]
+
 # These three tests will be fixed by rdar://80384564.
 editing/selection/ios/change-selection-by-tapping-with-existing-selection.html  [ Failure ]
 editing/selection/preserve-selection-when-clicking-button.html [ Failure ]
