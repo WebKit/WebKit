@@ -200,20 +200,28 @@ static void testAccessibleBasicHierarchy(AccessibilityTest* test, gconstpointer)
     name.reset(atspi_accessible_get_name(h1.get(), nullptr));
     g_assert_cmpstr(name.get(), ==, "This is a test");
     g_assert_cmpint(atspi_accessible_get_role(h1.get(), nullptr), ==, ATSPI_ROLE_HEADING);
+    name.reset(atspi_accessible_get_localized_role_name(h1.get(), nullptr));
+    g_assert_cmpstr(name.get(), ==, "heading");
 
     auto p1 = adoptGRef(atspi_accessible_get_child_at_index(documentWeb.get(), 1, nullptr));
     g_assert_true(ATSPI_IS_ACCESSIBLE(p1.get()));
     g_assert_cmpint(atspi_accessible_get_role(p1.get(), nullptr), ==, ATSPI_ROLE_PARAGRAPH);
+    name.reset(atspi_accessible_get_localized_role_name(p1.get(), nullptr));
+    g_assert_cmpstr(name.get(), ==, "paragraph");
 
     auto p2 = adoptGRef(atspi_accessible_get_child_at_index(documentWeb.get(), 2, nullptr));
     g_assert_true(ATSPI_IS_ACCESSIBLE(p2.get()));
     g_assert_cmpint(atspi_accessible_get_role(p2.get(), nullptr), ==, ATSPI_ROLE_PARAGRAPH);
+    name.reset(atspi_accessible_get_localized_role_name(p2.get(), nullptr));
+    g_assert_cmpstr(name.get(), ==, "paragraph");
 
     auto link = adoptGRef(atspi_accessible_get_child_at_index(p2.get(), 0, nullptr));
     g_assert_true(ATSPI_IS_ACCESSIBLE(link.get()));
     name.reset(atspi_accessible_get_name(link.get(), nullptr));
     g_assert_cmpstr(name.get(), ==, "a link");
     g_assert_cmpint(atspi_accessible_get_role(link.get(), nullptr), ==, ATSPI_ROLE_LINK);
+    name.reset(atspi_accessible_get_localized_role_name(link.get(), nullptr));
+    g_assert_cmpstr(name.get(), ==, "link");
 
     test->loadHtml(
         "<html>"
