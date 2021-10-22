@@ -48,6 +48,9 @@ BoxIterator::BoxIterator(const Box& run)
 
 bool BoxIterator::operator==(const BoxIterator& other) const
 {
+    if (atEnd() && other.atEnd())
+        return true;
+
     return m_box.m_pathVariant == other.m_box.m_pathVariant;
 }
 
