@@ -5546,8 +5546,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
                         Structure* structure = rareData->objectAllocationStructure();
                         JSObject* prototype = rareData->objectAllocationPrototype();
                         if (structure
-                            && (structure->hasMonoProto() || prototype)
-                            && rareData->allocationProfileWatchpointSet().isStillValid()) {
+                            && (structure->hasMonoProto() || prototype)) {
 
                             m_graph.freeze(rareData);
                             m_graph.watchpoints().addLazily(rareData->allocationProfileWatchpointSet());
@@ -5628,8 +5627,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
                             Structure* structure = rareData->internalFunctionAllocationStructure();
                             if (structure
                                 && structure->classInfo() == (bytecode.m_isInternalPromise ? JSInternalPromise::info() : JSPromise::info())
-                                && structure->globalObject() == globalObject
-                                && rareData->allocationProfileWatchpointSet().isStillValid()) {
+                                && structure->globalObject() == globalObject) {
                                 m_graph.freeze(rareData);
                                 m_graph.watchpoints().addLazily(rareData->allocationProfileWatchpointSet());
 
@@ -9012,8 +9010,7 @@ void ByteCodeParser::handleCreateInternalFieldObject(const ClassInfo* classInfo,
                 Structure* structure = rareData->internalFunctionAllocationStructure();
                 if (structure
                     && structure->classInfo() == classInfo
-                    && structure->globalObject() == globalObject
-                    && rareData->allocationProfileWatchpointSet().isStillValid()) {
+                    && structure->globalObject() == globalObject) {
                     m_graph.freeze(rareData);
                     m_graph.watchpoints().addLazily(rareData->allocationProfileWatchpointSet());
 

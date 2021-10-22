@@ -736,9 +736,7 @@ private:
                                 Structure* structure = rareData->objectAllocationStructure();
                                 JSObject* prototype = rareData->objectAllocationPrototype();
                                 if (structure
-                                    && (structure->hasMonoProto() || prototype)
-                                    && rareData->allocationProfileWatchpointSet().isStillValid()) {
-
+                                    && (structure->hasMonoProto() || prototype)) {
                                     m_graph.freeze(rareData);
                                     m_graph.watchpoints().addLazily(rareData->allocationProfileWatchpointSet());
                                     node->convertToNewObject(m_graph.registerStructure(structure));
@@ -758,7 +756,6 @@ private:
                                     }
                                     changed = true;
                                     break;
-
                                 }
                             }
                         }
@@ -781,8 +778,7 @@ private:
                                 Structure* structure = rareData->internalFunctionAllocationStructure();
                                 if (structure
                                     && structure->classInfo() == (node->isInternalPromise() ? JSInternalPromise::info() : JSPromise::info())
-                                    && structure->globalObject() == globalObject
-                                    && rareData->allocationProfileWatchpointSet().isStillValid()) {
+                                    && structure->globalObject() == globalObject) {
                                     m_graph.freeze(rareData);
                                     m_graph.watchpoints().addLazily(rareData->allocationProfileWatchpointSet());
                                     node->convertToNewInternalFieldObject(m_graph.registerStructure(structure));
@@ -807,8 +803,7 @@ private:
                                     Structure* structure = rareData->internalFunctionAllocationStructure();
                                     if (structure
                                         && structure->classInfo() == classInfo
-                                        && structure->globalObject() == globalObject
-                                        && rareData->allocationProfileWatchpointSet().isStillValid()) {
+                                        && structure->globalObject() == globalObject) {
                                         m_graph.freeze(rareData);
                                         m_graph.watchpoints().addLazily(rareData->allocationProfileWatchpointSet());
                                         node->convertToNewInternalFieldObjectWithInlineFields(newOp, m_graph.registerStructure(structure));

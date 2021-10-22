@@ -1,3 +1,36 @@
+2021-10-21  Saam Barati  <sbarati@apple.com>
+
+        Clean up some code around checking the state of Watchpoints
+        https://bugs.webkit.org/show_bug.cgi?id=232111
+
+        Reviewed by Yusuke Suzuki.
+
+        No need to have state() and stateOnJSThread(), since they're now the same.
+        Also, there is no need to check the allocation watchpoint twice for the
+        function/internal function allocation profiles.
+
+        * bytecode/Watchpoint.h:
+        (JSC::WatchpointSet::isStillValid const):
+        (JSC::WatchpointSet::stateOnJSThread const): Deleted.
+        (JSC::WatchpointSet::isStillValidOnJSThread const): Deleted.
+        (JSC::InlineWatchpointSet::stateOnJSThread const): Deleted.
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        (JSC::DFG::ByteCodeParser::handleCreateInternalFieldObject):
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+        * runtime/ArrayPrototype.cpp:
+        (JSC::speciesWatchpointIsValid):
+        (JSC::canUseDefaultArrayJoinForToString):
+        * runtime/InferredValue.h:
+        (JSC::InferredValue::notifyWrite):
+        (JSC::InferredValue::stateOnJSThread const): Deleted.
+        * runtime/JSArrayBufferPrototypeInlines.h:
+        (JSC::speciesWatchpointIsValid):
+        * runtime/ObjectPropertyChangeAdaptiveWatchpoint.h:
+
 2021-10-21  Mark Lam  <mark.lam@apple.com>
 
         Remove an unused field: Heap::m_copyingRememberedSet.

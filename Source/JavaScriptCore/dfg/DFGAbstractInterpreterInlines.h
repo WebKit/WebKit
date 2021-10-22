@@ -3042,8 +3042,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                         Structure* structure = rareData->internalFunctionAllocationStructure();
                         if (structure
                             && structure->classInfo() == (node->isInternalPromise() ? JSInternalPromise::info() : JSPromise::info())
-                            && structure->globalObject() == globalObject
-                            && rareData->allocationProfileWatchpointSet().isStillValid()) {
+                            && structure->globalObject() == globalObject) {
                             m_graph.freeze(rareData);
                             m_graph.watchpoints().addLazily(rareData->allocationProfileWatchpointSet());
                             m_state.setShouldTryConstantFolding(true);
@@ -3071,8 +3070,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                             Structure* structure = rareData->internalFunctionAllocationStructure();
                             if (structure
                                 && structure->classInfo() == classInfo
-                                && structure->globalObject() == globalObject
-                                && rareData->allocationProfileWatchpointSet().isStillValid()) {
+                                && structure->globalObject() == globalObject) {
                                 m_graph.freeze(rareData);
                                 m_graph.watchpoints().addLazily(rareData->allocationProfileWatchpointSet());
                                 m_state.setShouldTryConstantFolding(true);

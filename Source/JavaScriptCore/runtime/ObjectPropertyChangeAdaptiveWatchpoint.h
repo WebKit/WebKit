@@ -38,7 +38,7 @@ public:
         , m_owner(owner)
         , m_watchpointSet(watchpointSet)
     {
-        RELEASE_ASSERT(watchpointSet.stateOnJSThread() == IsWatched);
+        RELEASE_ASSERT(watchpointSet.state() == IsWatched);
     }
 
 private:

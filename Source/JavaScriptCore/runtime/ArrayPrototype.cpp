@@ -186,15 +186,15 @@ static ALWAYS_INLINE bool speciesWatchpointIsValid(VM& vm, JSObject* thisObject)
     JSGlobalObject* globalObject = thisObject->globalObject(vm);
     ArrayPrototype* arrayPrototype = globalObject->arrayPrototype();
 
-    if (globalObject->arraySpeciesWatchpointSet().stateOnJSThread() == ClearWatchpoint) {
+    if (globalObject->arraySpeciesWatchpointSet().state() == ClearWatchpoint) {
         dataLogLnIf(ArrayPrototypeInternal::verbose, "Initializing Array species watchpoints for Array.prototype: ", pointerDump(arrayPrototype), " with structure: ", pointerDump(arrayPrototype->structure(vm)), "\nand Array: ", pointerDump(globalObject->arrayConstructor()), " with structure: ", pointerDump(globalObject->arrayConstructor()->structure(vm)));
         globalObject->tryInstallArraySpeciesWatchpoint();
-        ASSERT(globalObject->arraySpeciesWatchpointSet().stateOnJSThread() != ClearWatchpoint);
+        ASSERT(globalObject->arraySpeciesWatchpointSet().state() != ClearWatchpoint);
     }
 
     return !thisObject->hasCustomProperties(vm)
         && arrayPrototype == thisObject->getPrototypeDirect(vm)
-        && globalObject->arraySpeciesWatchpointSet().stateOnJSThread() == IsWatched;
+        && globalObject->arraySpeciesWatchpointSet().state() == IsWatched;
 }
 
 enum class SpeciesConstructResult : uint8_t {
@@ -583,7 +583,7 @@ inline bool canUseDefaultArrayJoinForToString(VM& vm, JSObject* thisObject)
 {
     JSGlobalObject* globalObject = thisObject->globalObject();
 
-    if (globalObject->arrayJoinWatchpointSet().stateOnJSThread() != IsWatched)
+    if (globalObject->arrayJoinWatchpointSet().state() != IsWatched)
         return false;
 
     Structure* structure = thisObject->structure(vm);

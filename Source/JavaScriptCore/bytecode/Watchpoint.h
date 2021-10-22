@@ -190,17 +190,14 @@ public:
         return adoptRef(*new WatchpointSet(state));
     }
     
-    // Fast way of getting the state, which only works from the main thread.
-    WatchpointState stateOnJSThread() const
-    {
-        return static_cast<WatchpointState>(m_state);
-    }
-    
-    // It is safe to call this from another thread. It may return an old
-    // state. Guarantees that if *first* read the state() of the thing being
-    // watched and it returned IsWatched and *second* you actually read its
-    // value then it's safe to assume that if the state being watched changes
-    // then also the watchpoint state() will change to IsInvalidated.
+    // It is always safe to call this from the main thread.
+    // It is also safe to call this from another thread. It may return an old
+    // state. Generally speaking, a safe pattern to use in a concurrent compiler
+    // thread is:
+    // if (watchpoint.isValid()) {
+    //     watch(watchpoint);
+    //     do optimizations;
+    // }
     WatchpointState state() const
     {
         WatchpointState result = static_cast<WatchpointState>(m_state);
@@ -216,11 +213,6 @@ public:
     bool isStillValid() const
     {
         return state() != IsInvalidated;
-    }
-    // Fast way of testing isStillValid(), which only works from the main thread.
-    bool isStillValidOnJSThread() const
-    {
-        return stateOnJSThread() != IsInvalidated;
     }
     // Like isStillValid(), may be called from another thread.
     bool hasBeenInvalidated() const { return !isStillValid(); }
@@ -340,18 +332,7 @@ public:
         freeFat();
     }
     
-    // Fast way of getting the state, which only works from the main thread.
-    WatchpointState stateOnJSThread() const
-    {
-        uintptr_t data = m_data;
-        if (isFat(data))
-            return fat(data)->stateOnJSThread();
-        return decodeState(data);
-    }
-
-    // It is safe to call this from another thread. It may return a prior state,
-    // but that should be fine since you should only perform actions based on the
-    // state if you also add a watchpoint.
+    // See comment about state() in Watchpoint above.
     WatchpointState state() const
     {
         uintptr_t data = m_data;

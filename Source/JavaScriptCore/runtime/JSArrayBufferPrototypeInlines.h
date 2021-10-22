@@ -39,15 +39,15 @@ ALWAYS_INLINE bool speciesWatchpointIsValid(VM& vm, JSObject* thisObject, ArrayB
     JSGlobalObject* globalObject = thisObject->globalObject(vm);
     auto* prototype = globalObject->arrayBufferPrototype(mode);
 
-    if (globalObject->arrayBufferSpeciesWatchpointSet(mode).stateOnJSThread() == ClearWatchpoint) {
+    if (globalObject->arrayBufferSpeciesWatchpointSet(mode).state() == ClearWatchpoint) {
         dataLogLnIf(JSArrayBufferPrototypeInternal::verbose, "Initializing ArrayBuffer species watchpoints for ArrayBuffer.prototype: ", pointerDump(prototype), " with structure: ", pointerDump(prototype->structure(vm)), "\nand ArrayBuffer: ", pointerDump(globalObject->arrayBufferConstructor(mode)), " with structure: ", pointerDump(globalObject->arrayBufferConstructor(mode)->structure(vm)));
         globalObject->tryInstallArrayBufferSpeciesWatchpoint(mode);
-        ASSERT(globalObject->arrayBufferSpeciesWatchpointSet(mode).stateOnJSThread() != ClearWatchpoint);
+        ASSERT(globalObject->arrayBufferSpeciesWatchpointSet(mode).state() != ClearWatchpoint);
     }
 
     return !thisObject->hasCustomProperties(vm)
         && prototype == thisObject->getPrototypeDirect(vm)
-        && globalObject->arrayBufferSpeciesWatchpointSet(mode).stateOnJSThread() == IsWatched;
+        && globalObject->arrayBufferSpeciesWatchpointSet(mode).state() == IsWatched;
 }
 
 ALWAYS_INLINE std::optional<JSValue> arrayBufferSpeciesConstructor(JSGlobalObject* globalObject, JSArrayBuffer* thisObject, ArrayBufferSharingMode mode)
