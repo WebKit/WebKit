@@ -1,3 +1,18 @@
+2021-10-22  Justin Michaud  <justin_michaud@apple.com>
+
+        Fix nits from 232019
+        https://bugs.webkit.org/show_bug.cgi?id=232180
+
+        Reviewed by Saam Barati.
+
+        We only need one write barrier, since we only need to guarantee that we read the status of the write barrier before we read from the structure cache.
+        If we are delayed in watching the watchpoint, it does not change any of the interleavings.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+
 2021-10-22  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] GetTypedArrayLengthAsInt52 must be inserted only when we ensure that input is TypedArray via array-mode-based filtering

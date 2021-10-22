@@ -839,15 +839,13 @@ private:
                     else if (base.isObject()) {
                         // Having a bad time clears the structureCache, and so it should invalidate this structure.
                         bool isHavingABadTime = globalObject->isHavingABadTime();
-                        WTF::loadLoadFence();
-                        if (!isHavingABadTime)
-                            m_graph.watchpoints().addLazily(globalObject->havingABadTimeWatchpoint());
                         // Normally, we would always install a watchpoint. In this case, however, if we haveABadTime, we
                         // still want to optimize. There is no watchpoint for that case though, so we need to make sure this load
                         // does not get hoisted above the check.
                         WTF::loadLoadFence();
-                        structure = globalObject->vm().structureCache
-                            .emptyObjectStructureConcurrently(globalObject, base.getObject(), JSFinalObject::defaultInlineCapacity());
+                        if (!isHavingABadTime)
+                            m_graph.watchpoints().addLazily(globalObject->havingABadTimeWatchpoint());
+                        structure = globalObject->vm().structureCache.emptyObjectStructureConcurrently(globalObject, base.getObject(), JSFinalObject::defaultInlineCapacity());
                     }
                     
                     if (structure) {
