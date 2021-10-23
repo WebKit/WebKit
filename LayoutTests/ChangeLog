@@ -1,3 +1,14 @@
+2021-10-22  Said Abou-Hallawa  <said@apple.com>
+
+        [GPU Process] REGRESSION: Drawing a large SVG image on a canvas may take too much memory
+        https://bugs.webkit.org/show_bug.cgi?id=230886
+        rdar://83628607
+
+        Reviewed by Simon Fraser.
+
+        * fast/canvas/canvas-draw-large-svg-image-expected.html: Added.
+        * fast/canvas/canvas-draw-large-svg-image.html: Added.
+
 2021-10-22  Gabriel Nava Marino  <gnavamarino@apple.com>
 
         Check if start and end positions are still valid after updating them through mergeStartWithPreviousIfIdentical
