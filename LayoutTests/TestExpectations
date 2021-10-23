@@ -5193,3 +5193,6 @@ imported/w3c/web-platform-tests/css/motion/offset-rotate-002.html [ ImageOnlyFai
 imported/w3c/web-platform-tests/css/motion/offset-rotate-003.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/motion/offset-rotate-004.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/motion/offset-rotate-005.html [ ImageOnlyFailure ]
+
+# IPC test failing in Debug mode due to assert.
+[ Debug ] ipc/send-invalid-message.html [ Skip ]

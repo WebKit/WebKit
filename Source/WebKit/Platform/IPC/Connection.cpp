@@ -936,6 +936,9 @@ void Connection::sendOutgoingMessages()
 
 void Connection::dispatchSyncMessage(Decoder& decoder)
 {
+    // FIXME: If the message is invalid, we should send back a SyncMessageError.
+    // Currently we just wait for a timeout to happen, which will block the WebContent process.
+
     ASSERT(isMainRunLoop());
     ASSERT(decoder.isSyncMessage());
 
@@ -969,7 +972,6 @@ void Connection::dispatchSyncMessage(Decoder& decoder)
         wasHandled = m_client.didReceiveSyncMessage(*this, decoder, replyEncoder);
     }
 
-    // FIXME: If the message was invalid, we should send back a SyncMessageError.
 #if ENABLE(IPC_TESTING_API)
     ASSERT(decoder.isValid() || m_ignoreInvalidMessageForTesting);
 #else

@@ -1,3 +1,20 @@
+2021-10-23  Brandon Stewart  <brandonstewart@apple.com>
+
+        WebContent crash when sending invalid IPC message using IPC testing API
+        https://bugs.webkit.org/show_bug.cgi?id=232060
+
+        Reviewed by Wenson Hsieh.
+
+        Do not trigger a crash in WebContent Process when sending an invalid IPC message using the
+        IPC testing API.
+
+        Test: ipc/send-invalid-message.html
+
+        * Platform/IPC/Connection.cpp:
+        (IPC::Connection::dispatchSyncMessage):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeConnection):
+
 2021-10-22  Jean-Yves Avenard  <jya@apple.com>
 
         video appears blank with only audio playing if video element isn't appended to the dom tree
