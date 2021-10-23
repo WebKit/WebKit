@@ -2,5 +2,5 @@
 FAIL Make sure that relList based feature detection is working for <link> assert_true: tag = LINK, link type = modulepreload must be supported expected true got false
 PASS Make sure that relList based feature detection is working for <a>
 PASS Make sure that relList based feature detection is working for <area>
-FAIL Make sure that relList based feature detection is working for <form> undefined is not an object (evaluating 'element.relList.contains')
+PASS Make sure that relList based feature detection is working for <form>
 

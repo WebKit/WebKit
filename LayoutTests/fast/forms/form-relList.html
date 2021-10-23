@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script>
+description("Tests for the HTMLFormElement.relList attribute.");
+
+let form = document.createElement("form");
+shouldBeTrue("form.relList.supports('noopener')");
+shouldBeTrue("form.relList.supports('noreferrer')");
+shouldBeFalse("form.relList.supports('foo')");
+shouldBeEqualToString("form.rel", "");
+shouldBe("form.relList.length", "0");
+evalAndLog("form.rel = 'noopener noreferrer';");
+shouldBeEqualToString("form.rel", "noopener noreferrer");
+shouldBeEqualToString("form.getAttribute('rel')", "noopener noreferrer");
+shouldBe("form.relList.length", "2");
+shouldBeTrue("form.relList.contains('noopener')");
+shouldBeTrue("form.relList.contains('noreferrer')");
+shouldBeFalse("form.relList.contains('foo')");
+evalAndLog("form.setAttribute('rel', '');");
+shouldBeEqualToString("form.rel", "");
+shouldBeEqualToString("form.getAttribute('rel')", "");
+shouldBe("form.relList.length", "0");
+shouldBeFalse("form.relList.contains('noopener')");
+shouldBeFalse("form.relList.contains('noreferrer')");
+shouldBeFalse("form.relList.contains('foo')");
+evalAndLog("form.setAttribute('rel', 'noreferrer');");
+shouldBeEqualToString("form.rel", "noreferrer");
+shouldBeEqualToString("form.getAttribute('rel')", "noreferrer");
+shouldBe("form.relList.length", "1");
+shouldBeFalse("form.relList.contains('noopener')");
+shouldBeTrue("form.relList.contains('noreferrer')");
+shouldBeFalse("form.relList.contains('foo')");
+evalAndLog("form.relList = 'noopener';");
+shouldBeEqualToString("form.rel", "noopener");
+shouldBeEqualToString("form.getAttribute('rel')", "noopener");
+shouldBe("form.relList.length", "1");
+shouldBeTrue("form.relList.contains('noopener')");
+shouldBeFalse("form.relList.contains('noreferrer')");
+shouldBeFalse("form.relList.contains('foo')");
+</script>
+</body>
+</html>

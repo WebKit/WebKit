@@ -26,6 +26,7 @@
 #include "HTMLFormElement.h"
 
 #include "DOMFormData.h"
+#include "DOMTokenList.h"
 #include "DOMWindow.h"
 #include "DiagnosticLoggingClient.h"
 #include "Document.h"
@@ -68,6 +69,23 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLFormElement);
 
 using namespace HTMLNames;
+
+struct FormRelAttributes {
+    bool noopener { false };
+    bool noreferrer { false };
+};
+
+static FormRelAttributes parseFormRelAttributes(StringView string)
+{
+    FormRelAttributes attributes;
+    for (auto token : string.split(' ')) {
+        if (equalIgnoringASCIICase(token, "noopener"))
+            attributes.noopener = true;
+        else if (equalIgnoringASCIICase(token, "noreferrer"))
+            attributes.noreferrer = true;
+    }
+    return attributes;
+}
 
 HTMLFormElement::HTMLFormElement(const QualifiedName& tagName, Document& document)
     : HTMLElement(tagName, document)
@@ -406,6 +424,14 @@ void HTMLFormElement::submit(Event* event, bool activateSubmitButton, bool proce
     if (!isConnected())
         return;
 
+    auto relAttributes = parseFormRelAttributes(getAttribute(HTMLNames::relAttr));
+    // FIXME: According to the specification, having `target=blank` without `rel="opener"` should suppress the opener.
+    // However, this is not currently implemented as it is causing some WPT tests to fail (https://github.com/whatwg/html/issues/7256).
+    if (relAttributes.noopener || relAttributes.noreferrer)
+        formSubmission->setNewFrameOpenerPolicy(NewFrameOpenerPolicy::Suppress);
+    if (relAttributes.noreferrer)
+        formSubmission->setReferrerPolicy(ReferrerPolicy::NoReferrer);
+
     if (m_plannedFormSubmission)
         m_plannedFormSubmission->cancel();
 
@@ -514,6 +540,9 @@ void HTMLFormElement::parseAttribute(const QualifiedName& name, const AtomString
             document().registerForDocumentSuspensionCallbacks(*this);
         else
             document().unregisterForDocumentSuspensionCallbacks(*this);
+    } else if (name == relAttr) {
+        if (m_relList)
+            m_relList->associatedAttributeValueChanged(value);
     } else
         HTMLElement::parseAttribute(name, value);
 }
@@ -714,6 +743,16 @@ String HTMLFormElement::method() const
 void HTMLFormElement::setMethod(const String& value)
 {
     setAttributeWithoutSynchronization(methodAttr, value);
+}
+
+DOMTokenList& HTMLFormElement::relList()
+{
+    if (!m_relList) {
+        m_relList = makeUnique<DOMTokenList>(*this, HTMLNames::relAttr, [](Document&, StringView token) {
+            return equalIgnoringASCIICase(token, "noreferrer") || equalIgnoringASCIICase(token, "noopener") || equalIgnoringASCIICase(token, "opener");
+        });
+    }
+    return *m_relList;
 }
 
 String HTMLFormElement::target() const

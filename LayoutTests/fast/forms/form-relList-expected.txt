@@ -1,0 +1,42 @@
+Tests for the HTMLFormElement.relList attribute.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS form.relList.supports('noopener') is true
+PASS form.relList.supports('noreferrer') is true
+PASS form.relList.supports('foo') is false
+PASS form.rel is ""
+PASS form.relList.length is 0
+form.rel = 'noopener noreferrer';
+PASS form.rel is "noopener noreferrer"
+PASS form.getAttribute('rel') is "noopener noreferrer"
+PASS form.relList.length is 2
+PASS form.relList.contains('noopener') is true
+PASS form.relList.contains('noreferrer') is true
+PASS form.relList.contains('foo') is false
+form.setAttribute('rel', '');
+PASS form.rel is ""
+PASS form.getAttribute('rel') is ""
+PASS form.relList.length is 0
+PASS form.relList.contains('noopener') is false
+PASS form.relList.contains('noreferrer') is false
+PASS form.relList.contains('foo') is false
+form.setAttribute('rel', 'noreferrer');
+PASS form.rel is "noreferrer"
+PASS form.getAttribute('rel') is "noreferrer"
+PASS form.relList.length is 1
+PASS form.relList.contains('noopener') is false
+PASS form.relList.contains('noreferrer') is true
+PASS form.relList.contains('foo') is false
+form.relList = 'noopener';
+PASS form.rel is "noopener"
+PASS form.getAttribute('rel') is "noopener"
+PASS form.relList.length is 1
+PASS form.relList.contains('noopener') is true
+PASS form.relList.contains('noreferrer') is false
+PASS form.relList.contains('foo') is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

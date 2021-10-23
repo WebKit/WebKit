@@ -33,6 +33,8 @@
     [CEReactions=NotNeeded, Reflect] attribute DOMString name;
     [CEReactions=NotNeeded, Reflect] attribute boolean noValidate;
     [CEReactions=NotNeeded, Reflect] attribute DOMString target;
+    [CEReactions, Reflect] attribute DOMString rel;
+    [SameObject, PutForwards=value] readonly attribute DOMTokenList relList;
 
     readonly attribute HTMLFormControlsCollection elements;
     readonly attribute unsigned long length;

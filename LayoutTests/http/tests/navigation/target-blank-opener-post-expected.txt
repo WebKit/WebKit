@@ -1,5 +1,5 @@
-CONSOLE MESSAGE: Referrer: http://127.0.0.1:8000/navigation/target-blank-opener-post.html
+CONSOLE MESSAGE: Referrer: PASS
 CONSOLE MESSAGE: window.opener: PASS
-Test that rel="noreferrer" is unsupported by form elements, and that window.opener is available when form submission opens a new window.
+Test that rel="noreferrer" is supported by form elements.
 
 

@@ -102,6 +102,8 @@ public:
     WEBCORE_EXPORT String method() const;
     WEBCORE_EXPORT void setMethod(const String&);
 
+    DOMTokenList& relList();
+
     String target() const final;
     String effectiveTarget(const Event*, HTMLFormControlElement* submitter) const;
 
@@ -186,6 +188,7 @@ private:
     Vector<WeakPtr<HTMLImageElement>> m_imageElements;
     WeakHashSet<HTMLFormControlElement> m_invalidAssociatedFormControls;
     WeakPtr<FormSubmission> m_plannedFormSubmission;
+    std::unique_ptr<DOMTokenList> m_relList;
 
     bool m_wasUserSubmitted { false };
     bool m_isSubmittingOrPreparingForSubmission { false };
