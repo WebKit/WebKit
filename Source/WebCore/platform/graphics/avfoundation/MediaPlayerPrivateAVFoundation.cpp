@@ -95,23 +95,26 @@ MediaPlayerPrivateAVFoundation::~MediaPlayerPrivateAVFoundation()
 MediaPlayerPrivateAVFoundation::MediaRenderingMode MediaPlayerPrivateAVFoundation::currentRenderingMode() const
 {
     if (platformLayer())
-        return MediaRenderingToLayer;
+        return MediaRenderingMode::MediaRenderingToLayer;
 
     if (hasContextRenderer())
-        return MediaRenderingToContext;
+        return MediaRenderingMode::MediaRenderingToContext;
 
-    return MediaRenderingNone;
+    return MediaRenderingMode::MediaRenderingNone;
 }
 
 MediaPlayerPrivateAVFoundation::MediaRenderingMode MediaPlayerPrivateAVFoundation::preferredRenderingMode() const
 {
     if (assetStatus() == MediaPlayerAVAssetStatusUnknown)
-        return MediaRenderingNone;
+        return MediaRenderingMode::MediaRenderingNone;
+
+    if (m_readyState >= MediaPlayer::ReadyState::HaveMetadata && !haveBeenAskedToPaint())
+        return MediaRenderingMode::MediaRenderingToLayer;
 
     if (supportsAcceleratedRendering() && m_player->renderingCanBeAccelerated())
-        return MediaRenderingToLayer;
+        return MediaRenderingMode::MediaRenderingToLayer;
 
-    return MediaRenderingToContext;
+    return MediaRenderingMode::MediaRenderingToContext;
 }
 
 void MediaPlayerPrivateAVFoundation::setUpVideoRendering()
@@ -122,27 +125,29 @@ void MediaPlayerPrivateAVFoundation::setUpVideoRendering()
     MediaRenderingMode currentMode = currentRenderingMode();
     MediaRenderingMode preferredMode = preferredRenderingMode();
 
-    if (currentMode == preferredMode && currentMode != MediaRenderingNone)
+    if (currentMode == preferredMode && currentMode != MediaRenderingMode::MediaRenderingNone)
         return;
 
+    ALWAYS_LOG(LOGIDENTIFIER, preferredMode);
+
     switch (preferredMode) {
-    case MediaRenderingNone:
+    case MediaRenderingMode::MediaRenderingNone:
         tearDownVideoRendering();
         break;
 
-    case MediaRenderingToContext:
+    case MediaRenderingMode::MediaRenderingToContext:
         destroyVideoLayer();
         createContextVideoRenderer();
         break;
 
-    case MediaRenderingToLayer:
+    case MediaRenderingMode::MediaRenderingToLayer:
         destroyContextVideoRenderer();
         createVideoLayer();
         break;
     }
 
     // If using a movie layer, inform the client so the compositing tree is updated.
-    if (currentMode == MediaRenderingToLayer || preferredMode == MediaRenderingToLayer)
+    if (currentMode == MediaRenderingMode::MediaRenderingToLayer || preferredMode == MediaRenderingMode::MediaRenderingToLayer)
         setNeedsRenderingModeChanged();
 }
 
@@ -151,6 +156,8 @@ void MediaPlayerPrivateAVFoundation::setNeedsRenderingModeChanged()
     if (m_needsRenderingModeChanged)
         return;
     m_needsRenderingModeChanged = true;
+
+    ALWAYS_LOG(LOGIDENTIFIER);
 
     queueTaskOnEventLoop([weakThis = WeakPtr { *this }] {
         if (weakThis)
@@ -462,7 +469,7 @@ void MediaPlayerPrivateAVFoundation::prepareForRendering()
 
     setUpVideoRendering();
 
-    if (currentRenderingMode() == MediaRenderingToLayer || preferredRenderingMode() == MediaRenderingToLayer)
+    if (currentRenderingMode() == MediaRenderingMode::MediaRenderingToLayer || preferredRenderingMode() == MediaRenderingMode::MediaRenderingToLayer)
         setNeedsRenderingModeChanged();
 }
 
@@ -586,10 +593,12 @@ void MediaPlayerPrivateAVFoundation::setPageIsVisible(bool visible)
     if (m_visible == visible)
         return;
 
+    ALWAYS_LOG(LOGIDENTIFIER, visible);
+
     m_visible = visible;
     if (visible)
         setUpVideoRendering();
-    
+
     platformSetVisible(visible);
 }
 
@@ -1120,6 +1129,20 @@ const HashSet<String, ASCIICaseInsensitiveHash>& MediaPlayerPrivateAVFoundation:
         "video/x-mpg"_s,
     });
     return cache;
+}
+
+String convertEnumerationToString(MediaPlayerPrivateAVFoundation::MediaRenderingMode enumerationValue)
+{
+    static const NeverDestroyed<String> values[] = {
+        MAKE_STATIC_STRING_IMPL("MediaRenderingNone"),
+        MAKE_STATIC_STRING_IMPL("MediaRenderingToContext"),
+        MAKE_STATIC_STRING_IMPL("MediaRenderingToLayer"),
+    };
+    static_assert(static_cast<size_t>(MediaPlayerPrivateAVFoundation::MediaRenderingMode::MediaRenderingNone) == 0, "MediaRenderingMode::MediaRenderingNone is not 0 as expected");
+    static_assert(static_cast<size_t>(MediaPlayerPrivateAVFoundation::MediaRenderingMode::MediaRenderingToContext) == 1, "MediaRenderingMode::MediaRenderingToContext is not 1 as expected");
+    static_assert(static_cast<size_t>(MediaPlayerPrivateAVFoundation::MediaRenderingMode::MediaRenderingToLayer) == 2, "MediaRenderingMode::MediaRenderingToLayer is not 2 as expected");
+    ASSERT(static_cast<size_t>(enumerationValue) < WTF_ARRAY_LENGTH(values));
+    return values[static_cast<size_t>(enumerationValue)];
 }
 
 } // namespace WebCore

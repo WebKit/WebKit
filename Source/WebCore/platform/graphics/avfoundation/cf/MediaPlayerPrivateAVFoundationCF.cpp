@@ -869,7 +869,7 @@ void MediaPlayerPrivateAVFoundationCF::paintCurrentFrameInContext(GraphicsContex
     if (!metaDataAvailable() || context.paintingDisabled())
         return;
 
-    if (currentRenderingMode() == MediaRenderingToLayer && !imageGenerator(m_avfWrapper)) {
+    if (currentRenderingMode() == MediaRenderingMode::MediaRenderingToLayer && !imageGenerator(m_avfWrapper)) {
         // We're being told to render into a context, but we already have the
         // video layer, which probably means we've been called from <canvas>.
         createContextVideoRenderer();

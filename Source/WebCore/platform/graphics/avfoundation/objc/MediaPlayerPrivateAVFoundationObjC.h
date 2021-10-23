@@ -340,6 +340,7 @@ private:
     bool supportsPauseAtHostTime() const final { return true; }
     bool playAtHostTime(const MonotonicTime&) final;
     bool pauseAtHostTime(const MonotonicTime&) final;
+    bool haveBeenAskedToPaint() const { return m_haveBeenAskedToPaint; }
 
     RetainPtr<AVURLAsset> m_avAsset;
     RetainPtr<AVPlayer> m_avPlayer;
@@ -449,6 +450,7 @@ private:
     bool m_runningModalPaint { false };
     bool m_haveProcessedChapterTracks { false };
     bool m_waitForVideoOutputMediaDataWillChangeTimedOut { false };
+    bool m_haveBeenAskedToPaint { false };
 };
 
 }

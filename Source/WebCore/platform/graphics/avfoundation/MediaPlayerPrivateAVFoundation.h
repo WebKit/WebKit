@@ -153,6 +153,12 @@ public:
     WTFLogChannel& logChannel() const final;
 #endif
 
+    enum class MediaRenderingMode : uint8_t {
+        MediaRenderingNone,
+        MediaRenderingToContext,
+        MediaRenderingToLayer
+    };
+
 protected:
     explicit MediaPlayerPrivateAVFoundation(MediaPlayer*);
     virtual ~MediaPlayerPrivateAVFoundation();
@@ -271,7 +277,6 @@ protected:
     static bool isUnsupportedMIMEType(const String&);
     static const HashSet<String, ASCIICaseInsensitiveHash>& staticMIMETypeList();
 
-protected:
     void updateStates();
 
     void setHasVideo(bool);
@@ -286,7 +291,6 @@ protected:
     void setNetworkState(MediaPlayer::NetworkState);
     void setReadyState(MediaPlayer::ReadyState);
 
-    enum MediaRenderingMode { MediaRenderingNone, MediaRenderingToContext, MediaRenderingToLayer };
     MediaRenderingMode currentRenderingMode() const;
     MediaRenderingMode preferredRenderingMode() const;
 
@@ -295,6 +299,7 @@ protected:
     bool isReadyForVideoSetup() const;
     virtual void setUpVideoRendering();
     virtual void tearDownVideoRendering();
+    virtual bool haveBeenAskedToPaint() const { return false; }
     bool hasSetUpVideoRendering() const;
 
     void mainThreadCallback();
@@ -375,6 +380,24 @@ private:
     bool m_needsRenderingModeChanged { false };
 };
 
+String convertEnumerationToString(MediaPlayerPrivateAVFoundation::MediaRenderingMode);
+
 } // namespace WebCore
+
+namespace WTF {
+
+template<typename Type>
+struct LogArgument;
+
+template<> struct EnumTraits<WebCore::MediaPlayerPrivateAVFoundation::MediaRenderingMode> {
+using values = EnumValues<
+    WebCore::MediaPlayerPrivateAVFoundation::MediaRenderingMode,
+    WebCore::MediaPlayerPrivateAVFoundation::MediaRenderingMode::MediaRenderingNone,
+    WebCore::MediaPlayerPrivateAVFoundation::MediaRenderingMode::MediaRenderingToContext,
+    WebCore::MediaPlayerPrivateAVFoundation::MediaRenderingMode::MediaRenderingToLayer
+    >;
+};
+
+}; // namespace WTF
 
 #endif // ENABLE(VIDEO) && USE(AVFOUNDATION)

@@ -637,6 +637,8 @@ void MediaPlayerPrivateAVFoundationObjC::createAVPlayerLayer()
     if (!m_avPlayer)
         return;
 
+    ALWAYS_LOG(LOGIDENTIFIER);
+
     m_videoLayer = adoptNS([PAL::allocAVPlayerLayerInstance() init]);
     [m_videoLayer setPlayer:m_avPlayer.get()];
 
@@ -690,7 +692,7 @@ MediaTime MediaPlayerPrivateAVFoundationObjC::getStartDate() const
 
 bool MediaPlayerPrivateAVFoundationObjC::hasAvailableVideoFrame() const
 {
-    if (currentRenderingMode() == MediaRenderingToLayer)
+    if (currentRenderingMode() == MediaRenderingMode::MediaRenderingToLayer)
         return m_cachedIsReadyForDisplay;
 
     if (m_videoOutput && (m_lastPixelBuffer || [m_videoOutput hasNewPixelBufferForItemTime:[m_avPlayerItem currentTime]]))
@@ -1834,7 +1836,7 @@ void MediaPlayerPrivateAVFoundationObjC::paint(GraphicsContext& context, const F
         return;
 
     // We can ignore the request if we are already rendering to a layer.
-    if (currentRenderingMode() == MediaRenderingToLayer)
+    if (currentRenderingMode() == MediaRenderingMode::MediaRenderingToLayer)
         return;
 
     // paint() is best effort, so only paint if we already have an image generator or video output available.
@@ -2496,6 +2498,8 @@ bool MediaPlayerPrivateAVFoundationObjC::updateLastPixelBuffer()
 {
     if (!m_avPlayerItem || readyState() < MediaPlayer::ReadyState::HaveCurrentData)
         return false;
+
+    m_haveBeenAskedToPaint = true;
 
     if (!m_videoOutput)
         createVideoOutput();
