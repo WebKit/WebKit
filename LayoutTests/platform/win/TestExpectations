@@ -4723,3 +4723,6 @@ webkit.org/b/230727 fast/images/exif-orientation-composited.html [ Pass ImageOnl
 webkit.org/b/230838 svg/as-background-image/svg-as-background-body.html [ Pass Crash ]
 
 webkit.org/b/231921 http/wpt/webxr/xrHandInput_gc.html [ Pass Failure ]
+
+webkit.org/b/232188 fast/ruby/generated-before-counter-doesnt-crash.html [ Pass Failure ]
+
