@@ -150,13 +150,6 @@ InlineContentBreaker::Result InlineContentBreaker::processInlineContent(const Co
     auto processCandidateContent = [&] {
         if (candidateContent.logicalWidth() <= lineStatus.availableWidth)
             return Result { Result::Action::Keep };
-#if USE_FLOAT_AS_INLINE_LAYOUT_UNIT
-        // 1. Preferred width computation sums up floats while line breaker subtracts them.
-        // 2. Available space is inherently a LayoutUnit based value (coming from block/flex etc layout) and it is the result of a floored float.
-        // These can all lead to epsilon-scale differences.
-        if (candidateContent.logicalWidth() <= lineStatus.availableWidth + LayoutUnit::epsilon())
-            return Result { Result::Action::Keep };
-#endif
         return processOverflowingContent(candidateContent, lineStatus);
     };
 
@@ -595,7 +588,7 @@ InlineContentBreaker::OverflowingTextContent InlineContentBreaker::processOverfl
     auto overflowingRunIndex = runs.size(); 
     for (size_t index = 0; index < runs.size(); ++index) {
         auto runLogicalWidth = runs[index].logicalWidth;
-        if (nonOverflowingContentWidth + runLogicalWidth  > lineStatus.availableWidth) {
+        if (nonOverflowingContentWidth + runLogicalWidth > lineStatus.availableWidth) {
             overflowingRunIndex = index;
             break;
         }

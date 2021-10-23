@@ -704,12 +704,18 @@ void LineBuilder::handleFloatContent(const InlineItem& floatItem)
     m_contentIsConstrainedByFloat = true;
     auto floatBoxWidth = inlineItemWidth(floatItem, { });
     if (floatBox.isLeftFloatingPositioned())
-        m_lineLogicalRect.setLeft(m_lineLogicalRect.left() + floatBoxWidth);    
+        m_lineLogicalRect.setLeft(m_lineLogicalRect.left() + floatBoxWidth);
     m_lineLogicalRect.expandHorizontally(-floatBoxWidth);
 }
 
 static inline InlineLayoutUnit availableWidth(const LineCandidate::InlineContent& candidateContent, const Line& line, InlineLayoutUnit availableWidthForContent)
 {
+#if USE_FLOAT_AS_INLINE_LAYOUT_UNIT
+    // 1. Preferred width computation sums up floats while line breaker subtracts them.
+    // 2. Available space is inherently a LayoutUnit based value (coming from block/flex etc layout) and it is the result of a floored float.
+    // These can all lead to epsilon-scale differences.
+    availableWidthForContent += LayoutUnit::epsilon();
+#endif
     auto availableWidth = availableWidthForContent - line.contentLogicalRight();
     auto& inlineBoxListWithClonedDecorationEnd = line.inlineBoxListWithClonedDecorationEnd();
     if (candidateContent.hasInlineLevelBox() && !inlineBoxListWithClonedDecorationEnd.isEmpty()) {
@@ -771,7 +777,7 @@ LineBuilder::Result LineBuilder::handleInlineContent(InlineContentBreaker& inlin
         for (auto& run : candidateRuns)
             m_line.append(run.inlineItem, run.style, run.logicalWidth);
         // We are keeping this content on the line but we need to check if we could have wrapped here
-        // in order to be able to revert back to this positon if needed.
+        // in order to be able to revert back to this position if needed.
         // Let's just ignore cases like collapsed leading whitespace for now.
         if (lineCandidate.inlineContent.hasTrailingSoftWrapOpportunity() && m_line.hasContent()) {
             auto& trailingRun = candidateRuns.last();
@@ -916,7 +922,7 @@ size_t LineBuilder::rebuildLineForTrailingSoftHyphen(const InlineItemRange& layo
         auto committedCount = rebuildLine(layoutRange, softWrapOpportunityItem);
         auto availableWidth = m_lineLogicalRect.width() - m_line.contentLogicalRight();
         auto trailingSoftHyphenWidth = m_line.trailingSoftHyphenWidth();
-        // Check if the trailing hyphen now fits the line (or we don't need hyhen anymore).
+        // Check if the trailing hyphen now fits the line (or we don't need hyphen anymore).
         if (!trailingSoftHyphenWidth || trailingSoftHyphenWidth <= availableWidth) {
             if (trailingSoftHyphenWidth)
                 m_line.addTrailingHyphen(*trailingSoftHyphenWidth);
