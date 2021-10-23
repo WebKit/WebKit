@@ -1686,3 +1686,7 @@ webkit.org/b/231765 [ Release ] http/tests/resourceLoadStatistics/website-data-r
 
 webkit.org/b/231780 [ Debug ] imported/w3c/web-platform-tests/webrtc/simulcast/basic.https.html [ Pass Failure ]
 
+webkit.org/b/229569 [ Catalina Release ] imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-perfect-negotiation-stress-glare.https.html [ Pass Crash ]
+
+
+
