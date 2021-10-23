@@ -1,0 +1,28 @@
+<style>
+  span {
+    display: table-cell;
+  }
+  :not(span) {
+    float: left;
+  }
+  ::first-letter {
+    width: 0;
+  }
+  :first-child {
+    -webkit-user-select: none;
+  }
+</style>
+<script>
+  onload = () => {
+    document.execCommand('SelectAll');
+    document.designMode = 'on';
+    document.execCommand('InsertText', false, 'aa');
+    document.execCommand('InsertOrderedList');
+    document.execCommand('CreateLink', false, '#xyz');
+    document.execCommand('JustifyFull');
+    document.execCommand('CreateLink', false, '#');
+    document.write("PASS");
+    if (window.testRunner)
+        testRunner.dumpAsText();
+  };
+</script>

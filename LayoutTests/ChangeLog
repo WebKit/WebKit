@@ -1,3 +1,13 @@
+2021-10-22  Gabriel Nava Marino  <gnavamarino@apple.com>
+
+        Check if start and end positions are still valid after updating them through mergeStartWithPreviousIfIdentical
+        https://bugs.webkit.org/show_bug.cgi?id=232177
+
+        Reviewed by Alan Bujtas.
+
+        * fast/editing/create-link-inline-style-change-crash-001-expected.txt: Added.
+        * fast/editing/create-link-inline-style-change-crash-001.html: Added.
+
 2021-10-22  Simon Fraser  <simon.fraser@apple.com>
 
         Content offset in this codepen when switching tabs
