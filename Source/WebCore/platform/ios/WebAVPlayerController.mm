@@ -55,6 +55,8 @@ static double WebAVPlayerControllerLiveStreamMinimumTargetDuration = 1.0; // Min
 static double WebAVPlayerControllerLiveStreamSeekableTimeRangeMinimumDuration = 30.0;
 
 @implementation WebAVPlayerController {
+    WeakPtr<WebCore::PlaybackSessionModel> _delegate;
+    WeakPtr<WebCore::PlaybackSessionInterfaceAVKit> _playbackSessionInterface;
     double _defaultPlaybackRate;
     double _rate;
     BOOL _liveStreamEventModePossible;
@@ -156,6 +158,26 @@ static double WebAVPlayerControllerLiveStreamSeekableTimeRangeMinimumDuration = 
         self.delegate->play();
     else
         self.delegate->pause();
+}
+
+- (WebCore::PlaybackSessionModel*)delegate
+{
+    return _delegate.get();
+}
+
+- (void)setDelegate:(WebCore::PlaybackSessionModel*)delegate
+{
+    _delegate = WeakPtr { delegate };
+}
+
+- (WebCore::PlaybackSessionInterfaceAVKit*)playbackSessionInterface
+{
+    return _playbackSessionInterface.get();
+}
+
+- (void)setPlaybackSessionInterface:(WebCore::PlaybackSessionInterfaceAVKit*)playbackSessionInterface
+{
+    _playbackSessionInterface = WeakPtr { playbackSessionInterface };
 }
 
 - (double)defaultPlaybackRate

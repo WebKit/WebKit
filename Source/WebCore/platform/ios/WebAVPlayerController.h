@@ -45,9 +45,9 @@ WEBCORE_EXPORT @interface WebAVPlayerController : NSObject {
 
 - (void)setAllowsPictureInPicture:(BOOL)allowsPictureInPicture;
 
-@property (retain) AVPlayerController* playerControllerProxy;
-@property (assign) WebCore::PlaybackSessionModel* delegate;
-@property (assign) WebCore::PlaybackSessionInterfaceAVKit* playbackSessionInterface;
+@property (retain) AVPlayerController *playerControllerProxy;
+@property (assign /*weak*/) WebCore::PlaybackSessionModel* delegate;
+@property (assign /*weak*/) WebCore::PlaybackSessionInterfaceAVKit* playbackSessionInterface;
 
 @property (readonly) BOOL canScanForward;
 @property BOOL canScanBackward;
