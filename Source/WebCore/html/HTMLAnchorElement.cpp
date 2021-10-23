@@ -321,7 +321,7 @@ DOMTokenList& HTMLAnchorElement::relList()
             if (equalIgnoringASCIICase(token, "ar"))
                 return true;
 #endif
-            return equalIgnoringASCIICase(token, "noreferrer") || equalIgnoringASCIICase(token, "noopener");
+            return equalIgnoringASCIICase(token, "noreferrer") || equalIgnoringASCIICase(token, "noopener") || equalIgnoringASCIICase(token, "opener");
         });
     }
     return *m_relList;

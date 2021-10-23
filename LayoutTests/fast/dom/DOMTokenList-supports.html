@@ -13,8 +13,8 @@ var link = document.createElement("link");
 shouldBe("link.relList.__proto__", "DOMTokenList.prototype");
 var linkRelSupportedValues = ["alternate", "dns-prefetch", "icon", "stylesheet"];
 for (var i = 0; i < linkRelSupportedValues.length; i++) {
-    shouldBeTrue("link.relList.supports(linkRelSupportedValues[i])");
-    shouldBeTrue("link.relList.supports(linkRelSupportedValues[i].toUpperCase())");
+    shouldBeTrue("link.relList.supports('" + linkRelSupportedValues[i] + "')");
+    shouldBeTrue("link.relList.supports('" + linkRelSupportedValues[i].toUpperCase() + "')");
 }
 shouldBeFalse("link.relList.supports('unsupported')");
 
@@ -22,10 +22,10 @@ debug("");
 debug("* HTMLAnchorElement.relList");
 var anchor = document.createElement("a");
 shouldBe("anchor.relList.__proto__", "DOMTokenList.prototype");
-var anchorRelSupportedValues = ["noreferrer", "noopener"];
+var anchorRelSupportedValues = ["noreferrer", "noopener", "opener"];
 for (var i = 0; i < anchorRelSupportedValues.length; i++) {
-    shouldBeTrue("anchor.relList.supports(anchorRelSupportedValues[i])");
-    shouldBeTrue("anchor.relList.supports(anchorRelSupportedValues[i].toUpperCase())");
+    shouldBeTrue("anchor.relList.supports('" + anchorRelSupportedValues[i] + "')");
+    shouldBeTrue("anchor.relList.supports('" + anchorRelSupportedValues[i].toUpperCase() + "')");
 }
 shouldBeFalse("anchor.relList.supports('unsupported')");
 
@@ -35,8 +35,8 @@ var area = document.createElement("area");
 shouldBe("area.relList.__proto__", "DOMTokenList.prototype");
 var areaRelSupportedValues = ["noreferrer", "noopener"];
 for (var i = 0; i < areaRelSupportedValues.length; i++) {
-    shouldBeTrue("area.relList.supports(areaRelSupportedValues[i])");
-    shouldBeTrue("area.relList.supports(areaRelSupportedValues[i].toUpperCase())");
+    shouldBeTrue("area.relList.supports('" + areaRelSupportedValues[i] + "')");
+    shouldBeTrue("area.relList.supports('" + areaRelSupportedValues[i].toUpperCase() + "')");
 }
 shouldBeFalse("area.relList.supports('unsupported')");
 
@@ -46,8 +46,8 @@ var iframe = document.createElement("iframe");
 shouldBe("iframe.sandbox.__proto__", "DOMTokenList.prototype");
 var iframeSandboxSupportedValues = ["allow-forms", "allow-same-origin", "allow-scripts", "allow-top-navigation", "allow-pointer-lock", "allow-popups"];
 for (var i = 0; i < iframeSandboxSupportedValues.length; i++) {
-    shouldBeTrue("iframe.sandbox.supports(iframeSandboxSupportedValues[i])");
-    shouldBeTrue("iframe.sandbox.supports(iframeSandboxSupportedValues[i].toUpperCase())");
+    shouldBeTrue("iframe.sandbox.supports('" + iframeSandboxSupportedValues[i] + "')");
+    shouldBeTrue("iframe.sandbox.supports('" + iframeSandboxSupportedValues[i].toUpperCase() + "')");
 }
 shouldBeFalse("iframe.sandbox.supports('unsupported')");
 
@@ -68,8 +68,8 @@ if (link.dropzone) {
     shouldBe("link.dropzone.__proto__", "DOMTokenList.prototype");
     var dropzoneSupportedValues = ["copy", "move", "link"];
     for (var i = 0; i < dropzoneSupportedValues.length; i++) {
-        shouldBeTrue("link.dropzone.supports(dropzoneSupportedValues[i])");
-        shouldBeTrue("link.dropzone.supports(dropzoneSupportedValues[i].toUpperCase())");
+        shouldBeTrue("link.dropzone.supports('" + dropzoneSupportedValues[i] + "')");
+        shouldBeTrue("link.dropzone.supports('" + dropzoneSupportedValues[i].toUpperCase() + "')");
     }
     shouldBeFalse("link.dropzone.supports('unsupported')");
 } else
