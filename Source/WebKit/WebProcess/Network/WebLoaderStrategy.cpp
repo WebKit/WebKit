@@ -768,16 +768,17 @@ void WebLoaderStrategy::didFinishPingLoad(WebCore::ResourceLoaderIdentifier ping
 
 void WebLoaderStrategy::preconnectTo(FrameLoader& frameLoader, const URL& url, StoredCredentialsPolicy storedCredentialsPolicy, PreconnectCompletionHandler&& completionHandler)
 {
-    ASSERT(completionHandler);
     auto* webFrameLoaderClient = toWebFrameLoaderClient(frameLoader.client());
     if (!webFrameLoaderClient) {
-        completionHandler(internalError(url));
+        if (completionHandler)
+            completionHandler(internalError(url));
         return;
     }
     auto& webFrame = webFrameLoaderClient->webFrame();
     auto* webPage = webFrame.page();
     if (!webPage) {
-        completionHandler(internalError(url));
+        if (completionHandler)
+            completionHandler(internalError(url));
         return;
     }
 

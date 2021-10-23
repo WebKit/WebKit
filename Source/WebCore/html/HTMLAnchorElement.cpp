@@ -40,9 +40,11 @@
 #include "HTMLParserIdioms.h"
 #include "HTMLPictureElement.h"
 #include "KeyboardEvent.h"
+#include "LoaderStrategy.h"
 #include "MouseEvent.h"
 #include "PingLoader.h"
 #include "PlatformMouseEvent.h"
+#include "PlatformStrategies.h"
 #include "PrivateClickMeasurement.h"
 #include "RegistrableDomain.h"
 #include "RenderImage.h"
@@ -537,6 +539,12 @@ void HTMLAnchorElement::handleClick(Event& event)
     frame->loader().changeLocation(completedURL, effectiveTarget, &event, referrerPolicy, document().shouldOpenExternalURLsPolicyToPropagate(), newFrameOpenerPolicy, downloadAttribute, systemPreviewInfo, WTFMove(privateClickMeasurement));
 
     sendPings(completedURL);
+
+    // Preconnect to the link's target for improved page load time.
+    if (completedURL.protocolIsInHTTPFamily()) {
+        auto storageCredentialsPolicy = frame->page() && frame->page()->canUseCredentialStorage() ? StoredCredentialsPolicy::Use : StoredCredentialsPolicy::DoNotUse;
+        platformStrategies()->loaderStrategy()->preconnectTo(frame->loader(), completedURL, storageCredentialsPolicy, nullptr);
+    }
 }
 
 // Falls back to using <base> element's target if the anchor does not have one.
