@@ -57,7 +57,7 @@ std::optional<SharedFileHandle> SharedFileHandle::decode(Decoder& decoder)
     if (fd == -1)
         return SharedFileHandle { };
 
-    return SharedFileHandle::create(fileport_makefd(machPort.port()));
+    return SharedFileHandle::create(fd);
 }
 
 } // namespace IPC
