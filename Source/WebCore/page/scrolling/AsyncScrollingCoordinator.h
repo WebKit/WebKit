@@ -101,6 +101,7 @@ private:
     WEBCORE_EXPORT void frameViewRootLayerDidChange(FrameView&) override;
     WEBCORE_EXPORT void frameViewVisualViewportChanged(FrameView&) override;
     WEBCORE_EXPORT void frameViewEventTrackingRegionsChanged(FrameView&) override;
+    WEBCORE_EXPORT void frameViewWillBeDetached(FrameView&) override;
 
     WEBCORE_EXPORT bool requestScrollPositionUpdate(ScrollableArea&, const ScrollPosition&, ScrollType, ScrollClamping) final;
     WEBCORE_EXPORT bool requestAnimatedScrollToPosition(ScrollableArea&, const ScrollPosition&, ScrollClamping) final;

@@ -1,3 +1,30 @@
+2021-10-22  Simon Fraser  <simon.fraser@apple.com>
+
+        Content offset in this codepen when switching tabs
+        https://bugs.webkit.org/show_bug.cgi?id=231989
+
+        Reviewed by Tim Horton.
+
+        API test that scrolls an iframe via wheel events, then detached and re-attaches the view.
+
+        The two wheel scrolls are necessary to exercise the "stale ScrollingStateScrollingNode
+        scroll position" issue.
+
+        The scrolling tree dumps validate the layout viewport part of the fix.
+
+        Also correct some functions where the sense of 'isWaitingForJavaScript' was flipped.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/mac/ScrollingCoordinatorTests.mm: Added.
+        (TestWebKitAPI::synthesizeWheelEvents):
+        (TestWebKitAPI::waitForScrollEventAndReturnScrollY):
+        (TestWebKitAPI::scrollingTreeElidingLastCommittedScrollPosition):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/cocoa/TestWKWebView.mm:
+        (-[WKWebView objectByEvaluatingJavaScript:]):
+        (-[WKWebView objectByEvaluatingJavaScriptWithUserGesture:]):
+        (-[WKWebView objectByCallingAsyncFunction:withArguments:error:]):
+
 2021-10-22  Ryan Haddad  <ryanhaddad@apple.com>
 
         [ iOS15 EWS ] TestWebKitAPI.AppPrivacyReport.LoadSimulatedRequest tests are timing out

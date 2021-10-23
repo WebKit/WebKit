@@ -206,6 +206,11 @@ void ScrollingStateScrollingNode::setRequestedScrollData(const RequestedScrollDa
     setPropertyChanged(Property::RequestedScrollPosition);
 }
 
+bool ScrollingStateScrollingNode::hasScrollPositionRequest() const
+{
+    return hasChangedProperty(Property::RequestedScrollPosition) && m_requestedScrollData.requestType == ScrollRequestType::PositionUpdate;
+}
+
 void ScrollingStateScrollingNode::setIsMonitoringWheelEvents(bool isMonitoringWheelEvents)
 {
     if (isMonitoringWheelEvents == m_isMonitoringWheelEvents)

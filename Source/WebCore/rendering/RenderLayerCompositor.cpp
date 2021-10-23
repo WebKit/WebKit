@@ -4244,6 +4244,9 @@ void RenderLayerCompositor::detachRootLayer()
     if (!m_rootContentsLayer || m_rootLayerAttachment == RootLayerUnattached)
         return;
 
+    if (auto* scrollingCoordinator = this->scrollingCoordinator())
+        scrollingCoordinator->frameViewWillBeDetached(m_renderView.frameView());
+
     switch (m_rootLayerAttachment) {
     case RootLayerAttachedViaEnclosingFrame: {
         // The layer will get unhooked up via RenderLayerBacking::updateConfiguration()
@@ -4257,13 +4260,19 @@ void RenderLayerCompositor::detachRootLayer()
             ownerElement->scheduleInvalidateStyleAndLayerComposition();
 
         if (auto frameRootScrollingNodeID = m_renderView.frameView().scrollingNodeID()) {
-            if (auto* scrollingCoordinator = this->scrollingCoordinator())
+            if (auto* scrollingCoordinator = this->scrollingCoordinator()) {
+                scrollingCoordinator->frameViewWillBeDetached(m_renderView.frameView());
                 scrollingCoordinator->unparentNode(frameRootScrollingNodeID);
+            }
         }
         break;
     }
     case RootLayerAttachedViaChromeClient: {
         auto& frame = m_renderView.frameView().frame();
+
+        if (auto* scrollingCoordinator = this->scrollingCoordinator())
+            scrollingCoordinator->frameViewWillBeDetached(m_renderView.frameView());
+
         page().chrome().client().attachRootGraphicsLayer(frame, nullptr);
     }
     break;

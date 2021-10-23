@@ -184,6 +184,21 @@ void AsyncScrollingCoordinator::frameViewVisualViewportChanged(FrameView& frameV
     frameScrollingNode.setVisualViewportIsSmallerThanLayoutViewport(visualViewportIsSmallerThanLayoutViewport(frameView));
 }
 
+void AsyncScrollingCoordinator::frameViewWillBeDetached(FrameView& frameView)
+{
+    ASSERT(isMainThread());
+    ASSERT(m_page);
+
+    if (!coordinatesScrollingForFrameView(frameView))
+        return;
+
+    auto* scrollingNode = downcast<ScrollingStateScrollingNode>(m_scrollingStateTree->stateNodeForID(frameView.scrollingNodeID()));
+    if (!scrollingNode)
+        return;
+
+    scrollingNode->setScrollPosition(frameView.scrollPosition());
+}
+
 void AsyncScrollingCoordinator::updateIsMonitoringWheelEventsForFrameView(const FrameView& frameView)
 {
     auto* page = frameView.frame().page();
