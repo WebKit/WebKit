@@ -1,3 +1,64 @@
+2021-10-22  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r284652. rdar://problem/84517013
+
+    FileSystemSyncAccessHandle should close platform file handle on close()
+    https://bugs.webkit.org/show_bug.cgi?id=232067
+    <rdar://problem/84517013>
+    
+    Reviewed by Youenn Fablet.
+    
+    LayoutTests/imported/w3c:
+    
+    * web-platform-tests/file-system-access/sandboxed_FileSystemSyncAccessHandle-close.https.tentative.worker-expected.txt:
+    
+    Source/WebCore:
+    
+    This patch also ensures no request is sent after close() is called.
+    
+    Test: storage/filesystemaccess/sync-access-handle-close-worker.html
+    
+    * Modules/filesystemaccess/FileSystemFileHandle.cpp:
+    (WebCore::FileSystemFileHandle::createSyncAccessHandle):
+    * Modules/filesystemaccess/FileSystemSyncAccessHandle.cpp:
+    (WebCore::FileSystemSyncAccessHandle::FileSystemSyncAccessHandle):
+    (WebCore::FileSystemSyncAccessHandle::~FileSystemSyncAccessHandle):
+    (WebCore::FileSystemSyncAccessHandle::isClosingOrClosed const):
+    (WebCore::FileSystemSyncAccessHandle::truncate):
+    (WebCore::FileSystemSyncAccessHandle::getSize):
+    (WebCore::FileSystemSyncAccessHandle::flush):
+    (WebCore::FileSystemSyncAccessHandle::close):
+    (WebCore::FileSystemSyncAccessHandle::didClose):
+    (WebCore::FileSystemSyncAccessHandle::read):
+    (WebCore::FileSystemSyncAccessHandle::write):
+    * Modules/filesystemaccess/FileSystemSyncAccessHandle.h:
+    
+    LayoutTests:
+    
+    * storage/filesystemaccess/resources/sync-access-handle-close.js: Added.
+    (finishTest):
+    (async testFunctions):
+    (async test):
+    * storage/filesystemaccess/sync-access-handle-close-worker-expected.txt: Added.
+    * storage/filesystemaccess/sync-access-handle-close-worker.html: Added.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@284652 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-10-21  Sihui Liu  <sihui_liu@apple.com>
+
+            FileSystemSyncAccessHandle should close platform file handle on close()
+            https://bugs.webkit.org/show_bug.cgi?id=232067
+            <rdar://problem/84517013>
+
+            Reviewed by Youenn Fablet.
+
+            * storage/filesystemaccess/resources/sync-access-handle-close.js: Added.
+            (finishTest):
+            (async testFunctions):
+            (async test):
+            * storage/filesystemaccess/sync-access-handle-close-worker-expected.txt: Added.
+            * storage/filesystemaccess/sync-access-handle-close-worker.html: Added.
+
 2021-10-19  Russell Epstein  <repstein@apple.com>
 
         Revert r283931. rdar://problem/83953710

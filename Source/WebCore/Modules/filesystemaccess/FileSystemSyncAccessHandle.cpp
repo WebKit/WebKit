@@ -27,7 +27,6 @@
 #include "FileSystemSyncAccessHandle.h"
 
 #include "BufferSource.h"
-#include "ExceptionOr.h"
 #include "FileSystemFileHandle.h"
 #include "JSDOMPromiseDeferred.h"
 #include <wtf/CompletionHandler.h>
@@ -44,16 +43,28 @@ FileSystemSyncAccessHandle::FileSystemSyncAccessHandle(FileSystemFileHandle& sou
     , m_identifier(identifier)
     , m_file(file)
 {
+    ASSERT(m_file != FileSystem::invalidPlatformFileHandle);
 }
 
 FileSystemSyncAccessHandle::~FileSystemSyncAccessHandle()
 {
-    if (!m_isClosed)
-        m_source->close(m_identifier, [](auto) { });
+    if (m_closeResult)
+        return;
+
+    ASSERT(m_closePromises.isEmpty());
+    m_source->close(m_identifier, [](auto) { });
+}
+
+bool FileSystemSyncAccessHandle::isClosingOrClosed() const
+{
+    return m_closeResult || !m_closePromises.isEmpty();
 }
 
 void FileSystemSyncAccessHandle::truncate(unsigned long long size, DOMPromiseDeferred<void>&& promise)
 {
+    if (isClosingOrClosed())
+        return promise.reject(Exception { InvalidStateError, "AccessHandle is closing or closed"_s });
+
     m_pendingOperationCount++;
     m_source->truncate(m_identifier, size, [weakThis = makeWeakPtr(*this), promise = WTFMove(promise)](auto result) mutable {
         if (weakThis)
@@ -65,6 +76,9 @@ void FileSystemSyncAccessHandle::truncate(unsigned long long size, DOMPromiseDef
 
 void FileSystemSyncAccessHandle::getSize(DOMPromiseDeferred<IDLUnsignedLongLong>&& promise)
 {
+    if (isClosingOrClosed())
+        return promise.reject(Exception { InvalidStateError, "AccessHandle is closing or closed"_s });
+
     m_pendingOperationCount++;
     m_source->getSize(m_identifier, [weakThis = makeWeakPtr(*this), promise = WTFMove(promise)](auto result) mutable {
         if (weakThis)
@@ -76,6 +90,9 @@ void FileSystemSyncAccessHandle::getSize(DOMPromiseDeferred<IDLUnsignedLongLong>
 
 void FileSystemSyncAccessHandle::flush(DOMPromiseDeferred<void>&& promise)
 {
+    if (isClosingOrClosed())
+        return promise.reject(Exception { InvalidStateError, "AccessHandle is closing or closed"_s });
+
     m_pendingOperationCount++;
     m_source->flush(m_identifier, [weakThis = makeWeakPtr(*this), promise = WTFMove(promise)](auto result) mutable {
         if (weakThis)
@@ -87,31 +104,39 @@ void FileSystemSyncAccessHandle::flush(DOMPromiseDeferred<void>&& promise)
 
 void FileSystemSyncAccessHandle::close(DOMPromiseDeferred<void>&& promise)
 {
-    if (m_isClosed)
-        return promise.reject(Exception { InvalidStateError });
+    if (m_closeResult)
+        return promise.settle(ExceptionOr<void> { *m_closeResult });
+    
+    auto isClosing = !m_closePromises.isEmpty();
+    m_closePromises.append(WTFMove(promise));
+    if (isClosing)
+        return;
+
+    FileSystem::closeFile(m_file);
+    m_file = FileSystem::invalidPlatformFileHandle;
 
     m_pendingOperationCount++;
-    m_source->close(m_identifier, [weakThis = makeWeakPtr(*this), promise = WTFMove(promise)](auto result) mutable {
-        if (weakThis) {
-            weakThis->m_pendingOperationCount--;
-            weakThis->didClose();
-        }
-
-        promise.settle(WTFMove(result));
+    m_source->close(m_identifier, [this, protectedThis = Ref { *this }](auto result) mutable {
+        m_pendingOperationCount--;
+        didClose(WTFMove(result));
     });
 }
 
-void FileSystemSyncAccessHandle::didClose()
+void FileSystemSyncAccessHandle::didClose(ExceptionOr<void>&& result)
 {
-    m_isClosed = true;
+    m_closeResult = WTFMove(result);
+
+    auto promises = std::exchange(m_closePromises, { });
+    for (auto promise : promises)
+        promise.settle(ExceptionOr<void> { *m_closeResult });
 }
 
 ExceptionOr<unsigned long long> FileSystemSyncAccessHandle::read(BufferSource&& buffer, FileSystemSyncAccessHandle::FilesystemReadWriteOptions options)
 {
     ASSERT(!isMainThread());
 
-    if (m_file == FileSystem::invalidPlatformFileHandle || m_isClosed)
-        return Exception { InvalidStateError };
+    if (isClosingOrClosed())
+        return Exception { InvalidStateError, "AccessHandle is closing or closed"_s };
 
     if (m_pendingOperationCount)
         return Exception { InvalidStateError, "Access handle has unfinished operation"_s };
@@ -131,8 +156,8 @@ ExceptionOr<unsigned long long> FileSystemSyncAccessHandle::write(BufferSource&&
 {
     ASSERT(!isMainThread());
 
-    if (m_file == FileSystem::invalidPlatformFileHandle || m_isClosed)
-        return Exception { InvalidStateError };
+    if (isClosingOrClosed())
+        return Exception { InvalidStateError, "AccessHandle is closing or closed"_s };
 
     if (m_pendingOperationCount)
         return Exception { InvalidStateError, "Access handle has unfinished operation"_s };

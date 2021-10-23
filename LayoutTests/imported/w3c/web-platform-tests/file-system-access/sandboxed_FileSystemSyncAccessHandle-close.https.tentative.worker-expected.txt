@@ -1,14 +1,14 @@
 
-FAIL SyncAccessHandle.close is idempotent promise_test: Unhandled rejection with value: object "InvalidStateError: The object is in an invalid state."
-FAIL SyncAccessHandle.close is idempotent when called immediately promise_test: Unhandled rejection with value: object "UnknownError: The operation failed for an unknown transient reason (e.g. out of memory)."
-FAIL SyncAccessHandle.read fails after SyncAccessHandle.close settles promise_test: Unhandled rejection with value: object "InvalidStateError: The object is in an invalid state."
-FAIL SyncAccessHandle.read fails immediately after calling SyncAccessHandle.close promise_test: Unhandled rejection with value: object "InvalidStateError: The object is in an invalid state."
-FAIL SyncAccessHandle.write fails after SyncAccessHandle.close settles promise_test: Unhandled rejection with value: object "InvalidStateError: The object is in an invalid state."
-FAIL SyncAccessHandle.write fails immediately after calling SyncAccessHandle.close promise_test: Unhandled rejection with value: object "InvalidStateError: The object is in an invalid state."
-FAIL SyncAccessHandle.flush fails after SyncAccessHandle.close settles promise_rejects_dom: function "function () { throw e }" threw object "UnknownError: The operation failed for an unknown transient reason (e.g. out of memory)." that is not a DOMException InvalidStateError: property "code" is equal to 0, expected 11
-FAIL SyncAccessHandle.flush fails immediately after calling SyncAccessHandle.close promise_rejects_dom: function "function () { throw e }" threw object "UnknownError: The operation failed for an unknown transient reason (e.g. out of memory)." that is not a DOMException InvalidStateError: property "code" is equal to 0, expected 11
-FAIL SyncAccessHandle.getSize fails after SyncAccessHandle.close settles promise_rejects_dom: function "function () { throw e }" threw object "UnknownError: The operation failed for an unknown transient reason (e.g. out of memory)." that is not a DOMException InvalidStateError: property "code" is equal to 0, expected 11
-FAIL SyncAccessHandle.getSize fails immediately after calling SyncAccessHandle.close promise_rejects_dom: function "function () { throw e }" threw object "UnknownError: The operation failed for an unknown transient reason (e.g. out of memory)." that is not a DOMException InvalidStateError: property "code" is equal to 0, expected 11
-FAIL SyncAccessHandle.truncate fails after SyncAccessHandle.close settles promise_rejects_dom: function "function () { throw e }" threw object "UnknownError: The operation failed for an unknown transient reason (e.g. out of memory)." that is not a DOMException InvalidStateError: property "code" is equal to 0, expected 11
-FAIL SyncAccessHandle.truncate fails immediately after calling SyncAccessHandle.close promise_rejects_dom: function "function () { throw e }" threw object "UnknownError: The operation failed for an unknown transient reason (e.g. out of memory)." that is not a DOMException InvalidStateError: property "code" is equal to 0, expected 11
+PASS SyncAccessHandle.close is idempotent
+PASS SyncAccessHandle.close is idempotent when called immediately
+PASS SyncAccessHandle.read fails after SyncAccessHandle.close settles
+PASS SyncAccessHandle.read fails immediately after calling SyncAccessHandle.close
+PASS SyncAccessHandle.write fails after SyncAccessHandle.close settles
+PASS SyncAccessHandle.write fails immediately after calling SyncAccessHandle.close
+PASS SyncAccessHandle.flush fails after SyncAccessHandle.close settles
+PASS SyncAccessHandle.flush fails immediately after calling SyncAccessHandle.close
+PASS SyncAccessHandle.getSize fails after SyncAccessHandle.close settles
+PASS SyncAccessHandle.getSize fails immediately after calling SyncAccessHandle.close
+PASS SyncAccessHandle.truncate fails after SyncAccessHandle.close settles
+PASS SyncAccessHandle.truncate fails immediately after calling SyncAccessHandle.close
 
