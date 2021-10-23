@@ -1,3 +1,54 @@
+2021-10-22  Ian Anderson  <iana@apple.com>
+
+        Add a module map file for PrivateFrameworks/WebKitLegacy
+        https://bugs.webkit.org/show_bug.cgi?id=230735
+
+        Reviewed by David Kilzer.
+
+        Define modules for the Cocoa Touch environment. macOS can't define
+        modules in WebKitLegacy because it's a nested framework on that
+        platform.
+        Set up the modules verifier tool for Apple Internal (it's not supported
+        in the public Xcode). Don't enable it yet because some of the Safari
+        builders use too old of an Xcode.
+        Add the Apple Internal guards for NSURLDownload from WebDownload.h
+        NSURLDownloadSPI.h so it can be included in the module.
+        WebCreateFragmentInternal.h is an Objective-C++ header, but the
+        WebKitLegacy module should be usable by plain Objective-C clients.
+        C++ guards so that it can be included in the module.
+        Switch a few quoted includes to framework style angle includes, which
+        are required for modules.
+        Add some missing includes.
+
+        * Configurations/WebKitLegacy.xcconfig:
+        * DOM/DOMEventListener.h:
+        * DOM/DOMEventTarget.h:
+        * DOM/DOMNodeFilter.h:
+        * DOM/DOMXPathNSResolver.h:
+        * DOM/WebDOMOperationsPrivate.h:
+        * History/WebHistoryItemPrivate.h:
+        * Misc/NSURLDownloadSPI.h:
+        * Misc/WebCache.h:
+        * Misc/WebDownload.h:
+        * Misc/WebKitErrorsPrivate.h:
+        * Misc/WebLocalizableStrings.h:
+        * Misc/WebUserContentURLPattern.h:
+        * Plugins/Hosted/WebKitPluginHostTypes.h:
+        * Plugins/WebPlugin.h:
+        * Plugins/WebPluginContainer.h:
+        * Storage/WebDatabaseManagerPrivate.h:
+        * Storage/WebDatabaseQuotaManager.h:
+        * Storage/WebStorageManagerPrivate.h:
+        * WebCoreSupport/WebCreateFragmentInternal.h:
+        * WebCoreSupport/WebSecurityOriginPrivate.h:
+        * WebView/WebDeviceOrientation.h:
+        * WebView/WebDeviceOrientationProvider.h:
+        * WebView/WebDeviceOrientationProviderMock.h:
+        * WebView/WebEditingDelegatePrivate.h:
+        * WebView/WebFormDelegatePrivate.h:
+        * WebView/WebGeolocationPosition.h:
+        * WebView/WebResourceLoadDelegatePrivate.h:
+
 2021-10-22  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r284713.

@@ -26,15 +26,15 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Foundation/Foundation.h>
-#import <WebKitLegacy/WebKitAvailability.h>
-
 #ifndef WebDownload_h
 #define WebDownload_h
 
-#if (defined TARGET_OS_MACCATALYST && TARGET_OS_MACCATALYST)
+#import <Foundation/Foundation.h>
+#import <WebKitLegacy/WebKitAvailability.h>
+
+#if defined(TARGET_OS_MACCATALYST) && TARGET_OS_MACCATALYST
 #import <CFNetwork/CFNSURLConnection.h>
-#elif !TARGET_OS_IPHONE || (defined USE_APPLE_INTERNAL_SDK && USE_APPLE_INTERNAL_SDK)
+#elif !TARGET_OS_IPHONE || (defined(USE_APPLE_INTERNAL_SDK) && USE_APPLE_INTERNAL_SDK)
 #import <Foundation/NSURLDownload.h>
 #else
 #import <WebKitLegacy/NSURLDownloadSPI.h>

@@ -1036,6 +1036,8 @@
 		848DFF860365FE6A00CA2ACA /* WebPluginViewFactory.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebPluginViewFactory.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		84AE905F062DE6A80075BBF9 /* WebDOMOperationsPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebDOMOperationsPrivate.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		84CA5F7E042685E800CA2ACA /* WebKitErrorsPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebKitErrorsPrivate.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		84E2901126FC3D99005139F2 /* WebKitLegacy.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = WebKitLegacy.modulemap; sourceTree = "<group>"; };
+		84E2901226FC3DA4005139F2 /* WebKitLegacy.private.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = WebKitLegacy.private.modulemap; sourceTree = "<group>"; };
 		930D02BB06275F640076701E /* WebViewInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebViewInternal.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		930D02BD06275F710076701E /* WebFrameInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebFrameInternal.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		93154EF103A41270008635CE /* WebPanelAuthenticationHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebPanelAuthenticationHandler.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -1644,6 +1646,7 @@
 				1C68F63F095B5F9C00C2984E /* WebInspector */,
 				089C1665FE841158C02AAC07 /* Resources */,
 				7C02320E251B8E3A00BA7BB6 /* Scripts */,
+				534F75362578AAE8005BE7D8 /* Modules */,
 				0867D69AFE84028FC02AAC07 /* Frameworks and Libraries */,
 				034768DFFF38A50411DB9C8B /* Products */,
 				1C904FCE0BA9DCF20081E9D0 /* Configurations */,
@@ -1918,6 +1921,15 @@
 				51E94C3506C0321200A9B09E /* WebPDFView.mm */,
 			);
 			name = PDF;
+			sourceTree = "<group>";
+		};
+		534F75362578AAE8005BE7D8 /* Modules */ = {
+			isa = PBXGroup;
+			children = (
+				84E2901126FC3D99005139F2 /* WebKitLegacy.modulemap */,
+				84E2901226FC3DA4005139F2 /* WebKitLegacy.private.modulemap */,
+			);
+			path = Modules;
 			sourceTree = "<group>";
 		};
 		6508A4A7099B375F00BCBF45 /* Default Delegates */ = {

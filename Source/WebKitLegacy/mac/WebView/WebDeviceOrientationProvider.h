@@ -23,6 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import <objc/NSObject.h>
+
 @class WebDeviceOrientation;
 
 @protocol WebDeviceOrientationProvider <NSObject>

@@ -26,6 +26,8 @@
 #ifndef WKContentObservation_h
 #define WKContentObservation_h
 
+#include <TargetConditionals.h>
+
 #if TARGET_OS_IPHONE
 
 #ifdef __cplusplus
