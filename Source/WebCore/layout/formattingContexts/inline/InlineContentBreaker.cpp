@@ -306,13 +306,14 @@ static TextUtil::MidWordBreak midWordBreak(const InlineContentBreaker::Continuou
 {
     auto& inlineTextItem = downcast<InlineTextItem>(textRun.inlineItem);
     auto& style = textRun.style;
-    ASSERT(style.lineBreak() == LineBreak::Anywhere || style.wordBreak() == WordBreak::BreakAll || style.wordBreak() == WordBreak::BreakWord || style.overflowWrap() == OverflowWrap::BreakWord || style.overflowWrap() == OverflowWrap::Anywhere);
+    auto lineBreak = style.lineBreak();
+    ASSERT(lineBreak == LineBreak::Anywhere || style.wordBreak() == WordBreak::BreakAll || style.wordBreak() == WordBreak::BreakWord || style.overflowWrap() == OverflowWrap::BreakWord || style.overflowWrap() == OverflowWrap::Anywhere);
 
     auto midWordBreak = TextUtil::midWordBreak(inlineTextItem, style.fontCascade(), textRun.logicalWidth, availableWidth, runLogicalLeft);
     if (!midWordBreak.length || midWordBreak.length == inlineTextItem.length())
         return midWordBreak;
 
-    auto canBreakBetweenAnyTypographicCharacterUnit = style.lineBreak() == LineBreak::Anywhere || style.wordBreak() == WordBreak::BreakWord || style.overflowWrap() == OverflowWrap::BreakWord || style.overflowWrap() == OverflowWrap::Anywhere;
+    auto canBreakBetweenAnyTypographicCharacterUnit = lineBreak == LineBreak::Anywhere || style.wordBreak() == WordBreak::BreakWord || style.overflowWrap() == OverflowWrap::BreakWord || style.overflowWrap() == OverflowWrap::Anywhere;
     if (canBreakBetweenAnyTypographicCharacterUnit)
         return midWordBreak;
 
@@ -321,17 +322,25 @@ static TextUtil::MidWordBreak midWordBreak(const InlineContentBreaker::Continuou
     const auto left = midWordBreak.start;
     auto right = left + midWordBreak.length;
     for (; right > left; --right) {
-        auto isBreakable = [](auto character) {
+        auto canBreakBefore = [&](auto character) {
             // FIXME: This should include all the cases from https://unicode.org/reports/tr14
             // Use a breaking matrix similar to lineBreakTable in BreakLines.cpp
             // Also see kBreakAllLineBreakClassTable in third_party/blink/renderer/platform/text/text_break_iterator.cc
+            if (lineBreak != LineBreak::Loose) {
+                // The following breaks are allowed for loose line breaking if the preceding character belongs to the Unicode
+                // line breaking class ID, and are otherwise forbidden:
+                // ‐ U+2010, – U+2013
+                // https://drafts.csswg.org/css-text/#line-break-property
+                if (character == hyphen || character == endash)
+                    return false;
+            }
             if (character == noBreakSpace)
                 return false;
             auto isPunctuation = U_GET_GC_MASK(character) & (U_GC_PS_MASK | U_GC_PE_MASK | U_GC_PI_MASK | U_GC_PF_MASK | U_GC_PO_MASK);
             return character == reverseSolidus || !isPunctuation;
         };
         U16_SET_CP_START(text, left, right);
-        if (isBreakable(text[right]))
+        if (canBreakBefore(text[right]))
             break;
     }
     RELEASE_ASSERT(right >= left);
