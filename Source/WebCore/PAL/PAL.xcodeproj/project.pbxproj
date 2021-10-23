@@ -169,7 +169,6 @@
 		A10826F91F576292004772AC /* WebPanel.h in Headers */ = {isa = PBXBuildFile; fileRef = A10826F71F576292004772AC /* WebPanel.h */; };
 		A10826FA1F576292004772AC /* WebPanel.mm in Sources */ = {isa = PBXBuildFile; fileRef = A10826F81F576292004772AC /* WebPanel.mm */; };
 		A10826FE1F58A433004772AC /* NSGraphicsSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = A10826FD1F58A433004772AC /* NSGraphicsSPI.h */; };
-		A1175B491F6AFF8E00C4B9F0 /* SpeechSynthesisSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = A1175B481F6AFF8E00C4B9F0 /* SpeechSynthesisSPI.h */; };
 		A1175B4B1F6B2D7E00C4B9F0 /* NSCellSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = A1175B4A1F6B2D7E00C4B9F0 /* NSCellSPI.h */; };
 		A1175B4E1F6B337300C4B9F0 /* PopupMenu.h in Headers */ = {isa = PBXBuildFile; fileRef = A1175B4C1F6B337300C4B9F0 /* PopupMenu.h */; };
 		A1175B4F1F6B337300C4B9F0 /* PopupMenu.mm in Sources */ = {isa = PBXBuildFile; fileRef = A1175B4D1F6B337300C4B9F0 /* PopupMenu.mm */; };
@@ -396,7 +395,6 @@
 		A10826F71F576292004772AC /* WebPanel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebPanel.h; sourceTree = "<group>"; };
 		A10826F81F576292004772AC /* WebPanel.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WebPanel.mm; sourceTree = "<group>"; };
 		A10826FD1F58A433004772AC /* NSGraphicsSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NSGraphicsSPI.h; sourceTree = "<group>"; };
-		A1175B481F6AFF8E00C4B9F0 /* SpeechSynthesisSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SpeechSynthesisSPI.h; sourceTree = "<group>"; };
 		A1175B4A1F6B2D7E00C4B9F0 /* NSCellSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NSCellSPI.h; sourceTree = "<group>"; };
 		A1175B4C1F6B337300C4B9F0 /* PopupMenu.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PopupMenu.h; sourceTree = "<group>"; };
 		A1175B4D1F6B337300C4B9F0 /* PopupMenu.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PopupMenu.mm; sourceTree = "<group>"; };
@@ -643,7 +641,6 @@
 				0C7785841F45130F00F4EBB6 /* NSWindowSPI.h */,
 				0C7785851F45130F00F4EBB6 /* PIPSPI.h */,
 				0C7785871F45130F00F4EBB6 /* QuickLookMacSPI.h */,
-				A1175B481F6AFF8E00C4B9F0 /* SpeechSynthesisSPI.h */,
 				71B1141F26823ACD004D6701 /* SystemPreviewSPI.h */,
 				0C7785881F45130F00F4EBB6 /* TelephonyUtilitiesSPI.h */,
 			);
@@ -1012,7 +1009,6 @@
 				A3788E981F05B6CE00679425 /* Sound.h in Headers */,
 				93B38EBE25821CB600198E63 /* SpeechSoftLink.h in Headers */,
 				93B38EC225821D2200198E63 /* SpeechSPI.h in Headers */,
-				A1175B491F6AFF8E00C4B9F0 /* SpeechSynthesisSPI.h in Headers */,
 				0C5AF9211F43A4C7002EAC02 /* SQLite3SPI.h in Headers */,
 				71B1142026823ACD004D6701 /* SystemPreviewSPI.h in Headers */,
 				31308B1420A21705003FB929 /* SystemPreviewSPI.h in Headers */,

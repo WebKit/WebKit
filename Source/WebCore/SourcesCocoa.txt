@@ -256,6 +256,7 @@ platform/cocoa/ParentalControlsContentFilter.mm
 platform/cocoa/PasteboardCocoa.mm
 platform/cocoa/PasteboardCustomDataCocoa.mm
 platform/cocoa/PlatformPasteboardCocoa.mm
+platform/cocoa/PlatformSpeechSynthesizerCocoa.mm @no-unify
 platform/cocoa/PlaybackSessionModelMediaElement.mm
 platform/cocoa/PowerSourceNotifier.mm
 platform/cocoa/RemoteCommandListenerCocoa.mm
@@ -439,7 +440,6 @@ platform/ios/PasteboardIOS.mm
 platform/ios/PlatformEventFactoryIOS.mm @no-unify
 platform/ios/PlatformPasteboardIOS.mm
 platform/ios/PlatformScreenIOS.mm
-platform/ios/PlatformSpeechSynthesizerIOS.mm @no-unify
 platform/ios/PlaybackSessionInterfaceAVKit.mm @no-unify
 platform/ios/PreviewConverterIOS.mm
 platform/ios/QuickLook.mm
@@ -486,7 +486,6 @@ platform/mac/PasteboardWriter.mm
 platform/mac/PlatformEventFactoryMac.mm
 platform/mac/PlatformPasteboardMac.mm
 platform/mac/PlatformScreenMac.mm
-platform/mac/PlatformSpeechSynthesizerMac.mm
 platform/mac/PlaybackSessionInterfaceMac.mm @no-unify
 platform/mac/PluginBlocklist.mm
 platform/mac/PowerObserverMac.cpp

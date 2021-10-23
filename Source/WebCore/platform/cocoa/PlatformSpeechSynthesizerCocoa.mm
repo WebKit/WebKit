@@ -25,11 +25,17 @@
 #import "config.h"
 #import "PlatformSpeechSynthesizer.h"
 
-#if ENABLE(SPEECH_SYNTHESIS) && PLATFORM(IOS_FAMILY)
+#if ENABLE(SPEECH_SYNTHESIS) && PLATFORM(COCOA)
 
 #import "PlatformSpeechSynthesisUtterance.h"
 #import "PlatformSpeechSynthesisVoice.h"
-#import <AVFoundation/AVSpeechSynthesis.h>
+
+#if __has_include(<AVFAudio/AVSpeechSynthesis.h>)
+#import <AVFAudio/AVSpeechSynthesis.h>
+#else
+#import <AVFoundation/AVFoundation.h>
+#endif
+
 #import <pal/spi/cocoa/AXSpeechManagerSPI.h>
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/RetainPtr.h>
@@ -63,8 +69,7 @@ static float getAVSpeechUtteranceMaximumSpeechRate()
 #define AVSpeechUtteranceDefaultSpeechRate getAVSpeechUtteranceDefaultSpeechRate()
 #define AVSpeechUtteranceMaximumSpeechRate getAVSpeechUtteranceMaximumSpeechRate()
 
-@interface WebSpeechSynthesisWrapper : NSObject<AVSpeechSynthesizerDelegate>
-{
+@interface WebSpeechSynthesisWrapper : NSObject<AVSpeechSynthesizerDelegate> {
     WebCore::PlatformSpeechSynthesizer* m_synthesizerObject;
     // Hold a Ref to the utterance so that it won't disappear until the synth is done with it.
     RefPtr<WebCore::PlatformSpeechSynthesisUtterance> m_utterance;
@@ -191,10 +196,10 @@ static float getAVSpeechUtteranceMaximumSpeechRate()
         return;
 
     // Clear the m_utterance variable in case finish speaking kicks off a new speaking job immediately.
-    RefPtr<WebCore::PlatformSpeechSynthesisUtterance> platformUtterance = m_utterance;
+    RefPtr<WebCore::PlatformSpeechSynthesisUtterance> protectedUtterance = m_utterance;
     m_utterance = nullptr;
 
-    m_synthesizerObject->client()->didFinishSpeaking(*platformUtterance);
+    m_synthesizerObject->client()->didFinishSpeaking(*protectedUtterance);
 }
 
 - (void)speechSynthesizer:(AVSpeechSynthesizer *)synthesizer didPauseSpeechUtterance:(AVSpeechUtterance *)utterance
@@ -225,10 +230,10 @@ static float getAVSpeechUtteranceMaximumSpeechRate()
         return;
 
     // Clear the m_utterance variable in case finish speaking kicks off a new speaking job immediately.
-    RefPtr<WebCore::PlatformSpeechSynthesisUtterance> platformUtterance = m_utterance;
+    RefPtr<WebCore::PlatformSpeechSynthesisUtterance> protectedUtterance = m_utterance;
     m_utterance = nullptr;
 
-    m_synthesizerObject->client()->didFinishSpeaking(*platformUtterance);
+    m_synthesizerObject->client()->didFinishSpeaking(*protectedUtterance);
 }
 
 - (void)speechSynthesizer:(AVSpeechSynthesizer *)synthesizer willSpeakRangeOfSpeechString:(NSRange)characterRange utterance:(AVSpeechUtterance *)utterance
@@ -239,7 +244,7 @@ static float getAVSpeechUtteranceMaximumSpeechRate()
     if (!m_utterance)
         return;
 
-    // iOS only supports word boundaries.
+    // AVSpeechSynthesizer only supports word boundaries.
     m_synthesizerObject->client()->boundaryEventOccurred(*m_utterance, WebCore::SpeechBoundary::SpeechWordBoundary, characterRange.location);
 }
 
@@ -275,7 +280,9 @@ void PlatformSpeechSynthesizer::initializeVoiceList()
             includeVoice = voice.quality == AVSpeechSynthesisVoiceQualityDefault;
         if (includeVoice)
 #else
-        if (voice.quality == AVSpeechSynthesisVoiceQualityDefault)
+        // AVSpeechSynthesis on macOS does not support quality property correctly.
+        if (voice.quality == AVSpeechSynthesisVoiceQualityDefault
+            || (TARGET_OS_OSX && ![voiceURI hasSuffix:@"premium"]))
 #endif
             m_voiceList.append(PlatformSpeechSynthesisVoice::create(voiceURI, name, language, true, isDefault));
     }
@@ -312,4 +319,4 @@ void PlatformSpeechSynthesizer::resetState()
 
 } // namespace WebCore
 
-#endif // ENABLE(SPEECH_SYNTHESIS) && PLATFORM(IOS_FAMILY)
+#endif // ENABLE(SPEECH_SYNTHESIS) && PLATFORM(COCOA)

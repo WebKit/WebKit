@@ -1,3 +1,17 @@
+2021-10-23  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Unify speech synthesizer platform usage for Mac/iOS
+        https://bugs.webkit.org/show_bug.cgi?id=231895
+        <rdar://problem/84372479>
+
+        Reviewed by Andres Gonzalez.
+
+        * PAL.xcodeproj/project.pbxproj:
+        * pal/cocoa/AVFoundationSoftLink.h:
+        * pal/cocoa/AVFoundationSoftLink.mm:
+        * pal/spi/cocoa/AXSpeechManagerSPI.h:
+        * pal/spi/mac/SpeechSynthesisSPI.h: Removed.
+
 2021-10-21  Aditya Keerthi  <akeerthi@apple.com>
 
         [macOS] Update appearance of <datalist> indicator
