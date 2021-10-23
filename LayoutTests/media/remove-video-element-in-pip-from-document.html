@@ -25,6 +25,7 @@
 
             waitForEventOnce('enterpictureinpicture', event => {
                 window.pipWindow = event.pictureInPictureWindow;
+                testExpected('window.internals.mediaPlayerRenderingCanBeAccelerated(video)', true);
                 testExpected('pipWindow.width', 0, '>');
                 testExpected('pipWindow.height', 0, '>');
 

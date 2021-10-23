@@ -314,6 +314,7 @@ private:
 
     bool supportsAcceleratedRendering() const final;
     void acceleratedRenderingStateChanged() final;
+    void checkAcceleratedRenderingState();
 
     void setShouldMaintainAspectRatio(bool) final;
 
@@ -397,7 +398,7 @@ private:
     bool supportsPauseAtHostTime() const final { return m_configuration.supportsPauseAtHostTime; }
     bool playAtHostTime(const MonotonicTime&) final;
     bool pauseAtHostTime(const MonotonicTime&) final;
-
+    void updateConfiguration(RemoteMediaPlayerConfiguration&&);
 
     WeakPtr<WebCore::MediaPlayer> m_player;
     Ref<WebCore::PlatformMediaResourceLoader> m_mediaResourceLoader;

@@ -1,3 +1,23 @@
+2021-10-22  Jean-Yves Avenard  <jya@apple.com>
+
+        video appears blank with only audio playing if video element isn't appended to the dom tree
+        https://bugs.webkit.org/show_bug.cgi?id=232124
+        rdar://83438282
+
+        Reviewed by Eric Carlson.
+
+        Ensure that we inform the GPU process whenever
+        MediaPlayer::renderingCanBeAccelerated value could have changed.
+
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.cpp:
+        (WebKit::MediaPlayerPrivateRemote::load):
+        (WebKit::MediaPlayerPrivateRemote::readyStateChanged):
+        (WebKit::MediaPlayerPrivateRemote::checkAcceleratedRenderingState):
+        (WebKit::MediaPlayerPrivateRemote::updateConfiguration):
+        (WebKit::MediaPlayerPrivateRemote::setVideoFullscreenLayer):
+        (WebKit::MediaPlayerPrivateRemote::setVideoFullscreenGravity):
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.h:
+
 2021-10-22  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Inform AX when the injected bundle sends a synchronous message

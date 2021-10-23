@@ -278,6 +278,8 @@ webkit.org/b/202617 imported/w3c/web-platform-tests/picture-in-picture [ Skip ]
 media/picture-in-picture [ Skip ]
 
 media/remove-video-element-in-pip-from-document.html [ Skip ]
+# This test is only relevent on iPhone where videos always play in fullscreen.
+media/video-element-fullscreen-not-in-dom-accelerated-iphone.html [ Skip ]
 
 # Shared Workers are unsupported
 imported/w3c/web-platform-tests/secure-contexts/basic-shared-worker.html [ Skip ]

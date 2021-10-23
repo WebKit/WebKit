@@ -224,6 +224,8 @@ media/video-does-not-loop.html [ WontFix ]
 # This test uses movie matricies, which AVFoundation and QTKit64 do not support.
 media/video-size-intrinsic-scale.html [ WontFix ]
 
+media/video-element-fullscreen-not-in-dom-accelerated-iphone.html [ Pass ]
+
 # MediaSource is not currently supported on iOS.
 media/media-source
 http/tests/media/media-source [ Skip ]

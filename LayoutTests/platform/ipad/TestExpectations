@@ -46,6 +46,9 @@ fast/forms/ios/disabled-options-in-multi-select-picker.html
 media/modern-media-controls/media-documents/media-document-audio-ios-sizing.html [ Skip ]
 media/modern-media-controls/media-documents/media-document-video-iphone-sizing.html [ Skip ]
 
+# This test is designed for iPhone and would timeout on iPad
+media/video-element-fullscreen-not-in-dom-accelerated-iphone.html [ Skip ]
+
 # This test is iPad-specific
 media/modern-media-controls/media-documents/media-document-video-ipad-sizing.html [ Pass ]
 

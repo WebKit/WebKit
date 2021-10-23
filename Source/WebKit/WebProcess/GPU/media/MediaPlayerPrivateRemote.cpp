@@ -209,7 +209,7 @@ void MediaPlayerPrivateRemote::load(const URL& url, const ContentType& contentTy
         if (!player)
             return;
 
-        m_configuration = WTFMove(configuration);
+        updateConfiguration(WTFMove(configuration));
         player->mediaEngineUpdated();
     }, m_id);
 }
@@ -354,9 +354,7 @@ void MediaPlayerPrivateRemote::readyStateChanged(RemoteMediaPlayerState&& state)
     updateCachedState(WTFMove(state));
     if (RefPtr player = m_player.get()) {
         player->readyStateChanged();
-        bool renderingCanBeAccelerated = player->renderingCanBeAccelerated();
-        if (m_renderingCanBeAccelerated != renderingCanBeAccelerated)
-            acceleratedRenderingStateChanged();
+        checkAcceleratedRenderingState();
     }
 }
 
@@ -474,10 +472,26 @@ bool MediaPlayerPrivateRemote::supportsAcceleratedRendering() const
 
 void MediaPlayerPrivateRemote::acceleratedRenderingStateChanged()
 {
-    if (RefPtr player = m_player.get()) {
-        m_renderingCanBeAccelerated = player->renderingCanBeAccelerated();
+    if (m_player) {
+        m_renderingCanBeAccelerated = m_player->renderingCanBeAccelerated();
         connection().send(Messages::RemoteMediaPlayerProxy::AcceleratedRenderingStateChanged(m_renderingCanBeAccelerated), m_id);
     }
+}
+
+void MediaPlayerPrivateRemote::checkAcceleratedRenderingState()
+{
+    if (m_player) {
+        bool renderingCanBeAccelerated = m_player->renderingCanBeAccelerated();
+        if (m_renderingCanBeAccelerated != renderingCanBeAccelerated)
+            acceleratedRenderingStateChanged();
+    }
+}
+
+void MediaPlayerPrivateRemote::updateConfiguration(RemoteMediaPlayerConfiguration&& configuration)
+{
+    m_configuration = WTFMove(configuration);
+    // player->renderingCanBeAccelerated() result is dependent on m_configuration.supportsAcceleratedRendering value.
+    checkAcceleratedRenderingState();
 }
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
@@ -768,7 +782,7 @@ void MediaPlayerPrivateRemote::load(const URL& url, const ContentType& contentTy
             if (!player)
                 return;
 
-            m_configuration = WTFMove(configuration);
+            updateConfiguration(WTFMove(configuration));
             player->mediaEngineUpdated();
         }, m_id);
         m_mediaSourcePrivate = MediaSourcePrivateRemote::create(m_manager.gpuProcessConnection(), identifier, m_manager.typeCache(m_remoteEngineIdentifier), *this, client);
@@ -823,6 +837,8 @@ void MediaPlayerPrivateRemote::setVideoFullscreenLayer(PlatformLayer* videoFulls
 #if PLATFORM(COCOA)
     m_videoLayerManager->setVideoFullscreenLayer(videoFullscreenLayer, WTFMove(completionHandler), nullptr);
 #endif
+    // A Fullscreen layer has been set, this could update the value returned by player->renderingCanBeAccelerated().
+    checkAcceleratedRenderingState();
 }
 
 void MediaPlayerPrivateRemote::updateVideoFullscreenInlineImage()

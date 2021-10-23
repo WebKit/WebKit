@@ -5212,12 +5212,14 @@ void HTMLMediaElement::mediaPlayerSizeChanged()
 
 bool HTMLMediaElement::mediaPlayerRenderingCanBeAccelerated()
 {
+#if ENABLE(VIDEO_PRESENTATION_MODE)
     // This function must return "true" when the video is playing in the
-    // picture-in-picture window. Otherwise, the MediaPlayerPrivate* may
-    // destroy the video layer.
-    if (m_videoFullscreenMode == VideoFullscreenModePictureInPicture)
+    // picture-in-picture window or if it is in fullscreen.
+    // Otherwise, the MediaPlayerPrivate* may destroy the video layer if
+    // the no longer in the DOM.
+    if (m_videoFullscreenLayer)
         return true;
-
+#endif
     auto* renderer = this->renderer();
     return is<RenderVideo>(renderer)
         && downcast<RenderVideo>(*renderer).view().compositor().canAccelerateVideoRendering(downcast<RenderVideo>(*renderer));
