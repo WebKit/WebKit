@@ -1,3 +1,30 @@
+2021-10-23  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [WTF] Replace current LLVM flang's Int128 with abseil-cpp's Int128
+        https://bugs.webkit.org/show_bug.cgi?id=232129
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/CMakeLists.txt:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WTF/Int128.cpp:
+        (TestWebKitAPI::TYPED_TEST):
+        (TestWebKitAPI::TEST):
+        (TestWebKitAPI::ToNativeUInt128):
+        (TestWebKitAPI::FromNativeUInt128):
+        (TestWebKitAPI::ToNativeInt128):
+        (TestWebKitAPI::FromNativeInt128):
+        (TestWebKitAPI::TestBinaryUInt128):
+        (TestWebKitAPI::TestBinaryInt128):
+        (TestWebKitAPI::TestVsNativeUInt128):
+        (TestWebKitAPI::TestVsNativeInt128):
+        (TestWebKitAPI::TestUnary): Deleted.
+        (TestWebKitAPI::TestBinary): Deleted.
+        (TestWebKitAPI::ToNative): Deleted.
+        (TestWebKitAPI::FromNative): Deleted.
+        (TestWebKitAPI::TestVsNative): Deleted.
+        * TestWebKitAPI/Tests/WTF/LeadingZeroBitCount.cpp: Removed.
+
 2021-10-22  Simon Fraser  <simon.fraser@apple.com>
 
         Content offset in this codepen when switching tabs

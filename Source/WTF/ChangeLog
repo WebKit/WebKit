@@ -1,3 +1,169 @@
+2021-10-23  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [WTF] Replace current LLVM flang's Int128 with abseil-cpp's Int128
+        https://bugs.webkit.org/show_bug.cgi?id=232129
+
+        Reviewed by Darin Adler.
+
+        We found that flang's signed Int128 implementation is not tested,
+        and it has several issues about sign extension and division.
+
+        Instead, we import abseil-cpp[1]'s int128 implementation.
+        abseil-cpp is more battle-tested, and abseil is already used
+        in WebKit too (ANGLE and libwebrtc use abseil-cpp as their utility
+        library).
+
+        For Apple readers, abseil-cpp for WebKit is approved in OSS-351.
+
+        [1]: https://github.com/abseil/abseil-cpp
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/Int128.cpp: Added.
+        (WTF::UInt128Impl::UInt128Impl):
+        (WTF::operator/):
+        (WTF::operator%):
+        (WTF::operator<<):
+        (WTF::Int128Impl::Int128Impl):
+        * wtf/Int128.h:
+        (WTF::UInt128Max):
+        (std::numeric_limits<WTF::UInt128Impl>::min):
+        (std::numeric_limits<WTF::UInt128Impl>::lowest):
+        (std::numeric_limits<WTF::UInt128Impl>::max):
+        (std::numeric_limits<WTF::UInt128Impl>::epsilon):
+        (std::numeric_limits<WTF::UInt128Impl>::round_error):
+        (std::numeric_limits<WTF::UInt128Impl>::infinity):
+        (std::numeric_limits<WTF::UInt128Impl>::quiet_NaN):
+        (std::numeric_limits<WTF::UInt128Impl>::signaling_NaN):
+        (std::numeric_limits<WTF::UInt128Impl>::denorm_min):
+        (WTF::Int128Max):
+        (WTF::Int128Min):
+        (std::numeric_limits<WTF::Int128Impl>::min):
+        (std::numeric_limits<WTF::Int128Impl>::lowest):
+        (std::numeric_limits<WTF::Int128Impl>::max):
+        (std::numeric_limits<WTF::Int128Impl>::epsilon):
+        (std::numeric_limits<WTF::Int128Impl>::round_error):
+        (std::numeric_limits<WTF::Int128Impl>::infinity):
+        (std::numeric_limits<WTF::Int128Impl>::quiet_NaN):
+        (std::numeric_limits<WTF::Int128Impl>::signaling_NaN):
+        (std::numeric_limits<WTF::Int128Impl>::denorm_min):
+        (WTF::MakeUInt128):
+        (WTF::UInt128Impl::operator=):
+        (WTF::UInt128Impl::operator<<=):
+        (WTF::UInt128Impl::operator>>=):
+        (WTF::UInt128Impl::operator+=):
+        (WTF::UInt128Impl::operator-=):
+        (WTF::UInt128Impl::operator*=):
+        (WTF::UInt128Impl::operator/=):
+        (WTF::UInt128Impl::operator%=):
+        (WTF::UInt128Low64):
+        (WTF::UInt128High64):
+        (WTF::UInt128Impl::UInt128Impl):
+        (WTF::UInt128Impl::operator bool const):
+        (WTF::UInt128Impl::operator char const):
+        (WTF::UInt128Impl::operator signed char const):
+        (WTF::UInt128Impl::operator unsigned char const):
+        (WTF::UInt128Impl::operator char16_t const):
+        (WTF::UInt128Impl::operator char32_t const):
+        (WTF::UInt128Impl::operator ABSL_INTERNAL_WCHAR_T const):
+        (WTF::UInt128Impl::operator short const):
+        (WTF::UInt128Impl::operator unsigned short const):
+        (WTF::UInt128Impl::operator int const):
+        (WTF::UInt128Impl::operator unsigned int const):
+        (WTF::UInt128Impl::operator long const):
+        (WTF::UInt128Impl::operator unsigned long const):
+        (WTF::UInt128Impl::operator long long const):
+        (WTF::UInt128Impl::operator unsigned long long const):
+        (WTF::UInt128Impl::operator float const):
+        (WTF::UInt128Impl::operator double const):
+        (WTF::UInt128Impl::operator long double const):
+        (WTF::operator==):
+        (WTF::operator!=):
+        (WTF::operator<):
+        (WTF::operator>):
+        (WTF::operator<=):
+        (WTF::operator>=):
+        (WTF::operator+):
+        (WTF::operator-):
+        (WTF::operator!):
+        (WTF::operator~):
+        (WTF::operator|):
+        (WTF::operator&):
+        (WTF::operator^):
+        (WTF::UInt128Impl::operator|=):
+        (WTF::UInt128Impl::operator&=):
+        (WTF::UInt128Impl::operator^=):
+        (WTF::operator<<):
+        (WTF::operator>>):
+        (WTF::int128_internal::AddResult):
+        (WTF::int128_internal::SubstructResult):
+        (WTF::operator*):
+        (WTF::UInt128Impl::operator++):
+        (WTF::UInt128Impl::operator--):
+        (WTF::MakeInt128):
+        (WTF::Int128Impl::operator=):
+        (WTF::Int128Impl::operator+=):
+        (WTF::Int128Impl::operator-=):
+        (WTF::Int128Impl::operator*=):
+        (WTF::Int128Impl::operator/=):
+        (WTF::Int128Impl::operator%=):
+        (WTF::Int128Impl::operator|=):
+        (WTF::Int128Impl::operator&=):
+        (WTF::Int128Impl::operator^=):
+        (WTF::Int128Impl::operator<<=):
+        (WTF::Int128Impl::operator>>=):
+        (WTF::int128_internal::BitCastToSigned):
+        (WTF::Int128Low64):
+        (WTF::Int128High64):
+        (WTF::Int128Impl::Int128Impl):
+        (WTF::Int128Impl::operator bool const):
+        (WTF::Int128Impl::operator char const):
+        (WTF::Int128Impl::operator signed char const):
+        (WTF::Int128Impl::operator unsigned char const):
+        (WTF::Int128Impl::operator char16_t const):
+        (WTF::Int128Impl::operator char32_t const):
+        (WTF::Int128Impl::operator ABSL_INTERNAL_WCHAR_T const):
+        (WTF::Int128Impl::operator short const):
+        (WTF::Int128Impl::operator unsigned short const):
+        (WTF::Int128Impl::operator int const):
+        (WTF::Int128Impl::operator unsigned int const):
+        (WTF::Int128Impl::operator long const):
+        (WTF::Int128Impl::operator unsigned long const):
+        (WTF::Int128Impl::operator long long const):
+        (WTF::Int128Impl::operator unsigned long long const):
+        (WTF::Int128Impl::operator float const):
+        (WTF::Int128Impl::operator double const):
+        (WTF::Int128Impl::operator long double const):
+        (WTF::int128_internal::SignedAddResult):
+        (WTF::int128_internal::SignedSubstructResult):
+        (WTF::Int128Impl::operator++):
+        (WTF::Int128Impl::operator--):
+        (WTF::Int128Impl::operator+ const): Deleted.
+        (WTF::Int128Impl::operator~ const): Deleted.
+        (WTF::Int128Impl::operator- const): Deleted.
+        (WTF::Int128Impl::operator! const): Deleted.
+        (WTF::Int128Impl::operator std::uint64_t const): Deleted.
+        (WTF::Int128Impl::operator std::int64_t const): Deleted.
+        (WTF::Int128Impl::high const): Deleted.
+        (WTF::Int128Impl::low const): Deleted.
+        (WTF::Int128Impl::operator& const): Deleted.
+        (WTF::Int128Impl::operator |  const): Deleted.
+        (WTF::Int128Impl::operator^ const): Deleted.
+        (WTF::Int128Impl::operator<< const): Deleted.
+        (WTF::Int128Impl::operator>> const): Deleted.
+        (WTF::Int128Impl::operator* const): Deleted.
+        (WTF::Int128Impl::operator/ const): Deleted.
+        (WTF::Int128Impl::operator% const): Deleted.
+        (WTF::Int128Impl::operator< const): Deleted.
+        (WTF::Int128Impl::operator<= const): Deleted.
+        (WTF::Int128Impl::operator== const): Deleted.
+        (WTF::Int128Impl::operator!= const): Deleted.
+        (WTF::Int128Impl::operator>= const): Deleted.
+        (WTF::Int128Impl::operator> const): Deleted.
+        (WTF::Int128Impl::leadingZeroes const): Deleted.
+        * wtf/LeadingZeroBitCount.cpp: Removed.
+        * wtf/LeadingZeroBitCount.h: Removed.
+
 2021-10-23  Alan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Breaking before hyphen is only allowed when line-break is loose

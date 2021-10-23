@@ -116,7 +116,6 @@ set(WTF_PUBLIC_HEADERS
     KeyValuePair.h
     LEBDecoder.h
     Language.h
-    LeadingZeroBitCount.h
     LikelyDenseUnsignedIntegerSet.h
     ListDump.h
     ListHashSet.h
@@ -425,10 +424,10 @@ set(WTF_SOURCES
     GregorianDateTime.cpp
     HashTable.cpp
     HexNumber.cpp
+    Int128.cpp
     JSONValues.cpp
     JSValueMalloc.cpp
     Language.cpp
-    LeadingZeroBitCount.cpp
     LikelyDenseUnsignedIntegerSet.cpp
     Lock.cpp
     LockedPrintStream.cpp

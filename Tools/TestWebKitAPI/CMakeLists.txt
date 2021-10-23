@@ -54,7 +54,6 @@ set(TestWTF_SOURCES
     Tests/WTF/IteratorRange.cpp
     Tests/WTF/JSONValue.cpp
     Tests/WTF/LEBDecoder.cpp
-    Tests/WTF/LeadingZeroBitCount.cpp
     Tests/WTF/LifecycleLogger.cpp
     Tests/WTF/LineEnding.cpp
     Tests/WTF/ListHashSet.cpp
