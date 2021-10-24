@@ -32,7 +32,15 @@
 namespace WebCore {
 
 struct ImagePaintingOptions {
-    template<typename First, typename... Rest, typename = std::enable_if_t<!std::is_same_v<std::decay_t<First>, ImagePaintingOptions>>>
+    template<typename Type> static constexpr bool isOptionType =
+        std::is_same_v<Type, CompositeOperator>
+        || std::is_same_v<Type, BlendMode>
+        || std::is_same_v<Type, DecodingMode>
+        || std::is_same_v<Type, ImageOrientation>
+        || std::is_same_v<Type, ImageOrientation::Orientation>
+        || std::is_same_v<Type, InterpolationQuality>;
+
+    template<typename First, typename... Rest, typename = std::enable_if_t<isOptionType<std::decay_t<First>>>>
     ImagePaintingOptions(First first, Rest... rest)
     {
         setOption(first, rest...);
