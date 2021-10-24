@@ -1,3 +1,25 @@
+2021-10-24  Alexey Shvayka  <ashvayka@apple.com>
+
+        InternalFunction::createSubclassStructure() should use prototype's global object
+        https://bugs.webkit.org/show_bug.cgi?id=231874
+
+        Reviewed by Yusuke Suzuki.
+
+        In case NewTarget has a cross-realm "prototype" object, even though the instance
+        structure is created with correct [[Prototype]], it's m_globalObject is of NewTarget's
+        realm instead of prototype's.
+
+        That is observable in various places, including when calling CustomAccessor, fast paths
+        for iteration protocol / collection constructors, isHavingABadTime() handling etc.
+
+        This patch fixes structure's global object to be correct: per spec [1], we fallback to
+        NewTarget's realm only if "prototype" is a primitive.
+
+        [1]: https://tc39.es/ecma262/#sec-getprototypefromconstructor (step 3.b)
+
+        * runtime/InternalFunction.cpp:
+        (JSC::InternalFunction::createSubclassStructure):
+
 2021-10-22  Justin Michaud  <justin_michaud@apple.com>
 
         Fix nits from 232019
