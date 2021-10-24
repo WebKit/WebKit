@@ -98,6 +98,7 @@ const TestFeatures& TestOptions::defaults()
             { "MediaDevicesEnabled", true },
             { "MediaPreloadingEnabled", true },
             { "MediaSourceEnabled", mediaSourceEnabledValue },
+            { "MockScrollAnimatorEnabled", false },
             { "MockCaptureDevicesEnabled", true },
             { "MockScrollbarsEnabled", true },
             { "ModernMediaControlsEnabled", true },

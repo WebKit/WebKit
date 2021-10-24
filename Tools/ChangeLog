@@ -1,3 +1,16 @@
+2021-10-24  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
+
+        REGRESSION(r282686) [GTK] Tests are flaky due to spurious "MainFrameView: mouseEnteredContentArea" messages in the log
+        https://bugs.webkit.org/show_bug.cgi?id=232142
+
+        Add MockScrollAnimatorEnabled to the list of preferences to reset
+        between tests in TestOptions.cpp.
+
+        Reviewed by Carlos Garcia Campos.
+
+        * WebKitTestRunner/TestOptions.cpp:
+        (WTR::TestOptions::defaults):
+
 2021-10-23  Simon Fraser  <simon.fraser@apple.com>
 
         Add an ImageDiff option to print out WPT-style pixel differences
