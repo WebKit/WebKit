@@ -1,3 +1,16 @@
+2021-10-24  Ian Anderson  <iana@apple.com>
+
+        Enable the modules verifier for WebKitLegacy in Apple internal when using a new enough Xcode
+        https://bugs.webkit.org/show_bug.cgi?id=232190
+
+        Reviewed by David Kilzer.
+
+        Add WK_XCODE_VERSION_BEFORE_13_1 build settings to WebKitLegacy and then
+        use them to enable the modules verifier in Xcode 13.1 and later.
+
+        * Configurations/Base.xcconfig:
+        * Configurations/WebKitLegacy.xcconfig:
+
 2021-10-22  Ian Anderson  <iana@apple.com>
 
         Add a module map file for PrivateFrameworks/WebKitLegacy
