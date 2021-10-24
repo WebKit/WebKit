@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,6 +29,7 @@
 #import <wtf/URLParser.h>
 #import <wtf/cf/CFURLExtras.h>
 #import <wtf/cocoa/NSURLExtras.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/text/CString.h>
 
 @interface NSString (WTFNSURLExtras)
@@ -37,17 +38,17 @@
 
 namespace WTF {
 
-URL::URL(NSURL *url)
+URL::URL(NSURL *cocoaURL)
 {
-    if (!url) {
+    if (!cocoaURL) {
         invalidate();
         return;
     }
 
     // FIXME: Why is it OK to ignore base URL here?
-    CString urlBytes;
-    WTF::getURLBytes((__bridge CFURLRef)url, urlBytes);
-    URLParser parser(urlBytes.data());
+    CString bytes;
+    WTF::getURLBytes(bridge_cast(cocoaURL), bytes);
+    URLParser parser(bytes.data());
     *this = parser.result();
 }
 
@@ -65,7 +66,7 @@ RetainPtr<CFURLRef> URL::createCFURL() const
 
     if (isEmpty()) {
         // We use the toll-free bridge between NSURL and CFURL to create a CFURLRef supporting both empty and null values.
-        return (__bridge CFURLRef)adoptNS([[NSURL alloc] initWithString:@""]).get();
+        return bridge_cast(adoptNS([[NSURL alloc] initWithString:@""]));
     }
 
     RetainPtr<CFURLRef> cfURL;

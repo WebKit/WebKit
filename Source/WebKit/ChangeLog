@@ -1,3 +1,37 @@
+2021-10-24  Darin Adler  <darin@apple.com>
+
+        [Cocoa] Adopt bridge_cast and makeVector in a few more places, including cases where adoptCF/NS was used incorrectly
+        https://bugs.webkit.org/show_bug.cgi?id=232200
+
+        Reviewed by Anders Carlsson.
+
+        * Shared/Cocoa/ArgumentCodersCocoa.mm:
+        (-[WKSecureCodingURLWrapper encodeWithCoder:]): Use bridge_cast.
+        (-[WKSecureCodingURLWrapper initWithCoder:]): Use bridge_cast
+        after calling adoptCF rather than first doing a bridging cast and
+        then doing adoptNS and relying on it correctly adopting a CF object.
+        This fixes an ARC incompatibility.
+        (IPC::encodeDataInternal): Use bridge_cast.
+        (IPC::decodeDataInternal): Use bridge_cast/WTFMove instead of
+        adoptNS/cast/leakRef. This fixes an ARC incompatibility
+        (IPC::encodeDateInternal): Use bridge_cast.
+        (IPC::decodeDateInternal): Use bridge_cast/WTFMove as above.
+        (IPC::encodeNumberInternal): Use bridge_cast.
+        (IPC::decodeNumberInternal): Use bridge_cast/WTFMove as above.
+        (IPC::decodeSecureCodingInternal): Use bridge_cast.
+        (IPC::encodeStringInternal): Use bridge_cast.
+        (IPC::decodeStringInternal): Use bridge_cast/WTFMove as above.
+        (IPC::encodeURLInternal): Use bridge_cast.
+        (IPC::decodeURLInternal): Use bridge_cast/WTFMove as above.
+
+        * UIProcess/API/Cocoa/WKConnection.mm:
+        (didReceiveMessage): Use bridge_cast and remove unneeded use of
+        RetainPtr/get on the body.
+
+        * UIProcess/Plugins/mac/PluginInfoStoreMac.mm:
+        (WebKit::PluginInfoStore::pluginPathsInDirectory): Use bridge_cast
+        and makeVectort.
+
 2021-10-23  Dean Jackson  <dino@apple.com>
 
         Disable PiP when HAVE(UIKIT_WEBKIT_INTERNALS)

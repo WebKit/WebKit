@@ -34,6 +34,8 @@
 #import <WebCore/PluginBlocklist.h>
 #import <pwd.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
+#import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/text/CString.h>
 
 namespace WebKit {
@@ -55,14 +57,10 @@ Vector<String> PluginInfoStore::pluginsDirectories()
     
 Vector<String> PluginInfoStore::pluginPathsInDirectory(const String& directory)
 {
-    Vector<String> pluginPaths;
-
-    RetainPtr<CFStringRef> directoryCFString = directory.createCFString();
-    NSArray *filenames = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:(__bridge NSString *)directoryCFString.get() error:nil];
-    for (NSString *filename in filenames)
-        pluginPaths.append([(__bridge NSString *)directoryCFString.get() stringByAppendingPathComponent:filename]);
-    
-    return pluginPaths;
+    auto directoryNSString = bridge_cast(directory.createCFString());
+    return makeVector([[NSFileManager defaultManager] contentsOfDirectoryAtPath:directoryNSString.get() error:nil], [&] (id filename) -> std::optional<String> {
+        return [directoryNSString stringByAppendingPathComponent:filename];
+    });
 }
 
 Vector<String> PluginInfoStore::individualPluginPaths()

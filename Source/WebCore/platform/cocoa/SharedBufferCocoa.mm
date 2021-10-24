@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,6 +31,7 @@
 #import <JavaScriptCore/InitializeThreading.h>
 #import <string.h>
 #import <wtf/MainThread.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
 @interface WebCoreSharedBufferData : NSData
@@ -84,19 +85,19 @@
 
 namespace WebCore {
 
-Ref<SharedBuffer> SharedBuffer::create(NSData *nsData)
+Ref<SharedBuffer> SharedBuffer::create(NSData *data)
 {
-    return adoptRef(*new SharedBuffer((__bridge CFDataRef)nsData));
+    return adoptRef(*new SharedBuffer(bridge_cast(data)));
 }
 
-void SharedBuffer::append(NSData *nsData)
+void SharedBuffer::append(NSData *data)
 {
-    return append((__bridge CFDataRef)nsData);
+    return append(bridge_cast(data));
 }
 
 RetainPtr<NSData> SharedBuffer::createNSData() const
 {
-    return adoptNS((NSData *)createCFData().leakRef());
+    return bridge_cast(createCFData());
 }
 
 RetainPtr<CFDataRef> SharedBuffer::createCFData() const
@@ -105,13 +106,12 @@ RetainPtr<CFDataRef> SharedBuffer::createCFData() const
     if (!m_segments.size())
         return adoptCF(CFDataCreate(nullptr, nullptr, 0));
     ASSERT(m_segments.size() == 1);
-    return adoptCF((__bridge CFDataRef)m_segments[0].segment->createNSData().leakRef());
+    return bridge_cast(m_segments[0].segment->createNSData());
 }
 
 RefPtr<SharedBuffer> SharedBuffer::createFromReadingFile(const String& filePath)
 {
-    NSData *resourceData = [NSData dataWithContentsOfFile:filePath];
-    if (resourceData) 
+    if (auto resourceData = [NSData dataWithContentsOfFile:filePath])
         return SharedBuffer::create(resourceData);
     return nullptr;
 }

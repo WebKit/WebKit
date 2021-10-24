@@ -1,3 +1,15 @@
+2021-10-24  Darin Adler  <darin@apple.com>
+
+        [Cocoa] Adopt bridge_cast and makeVector in a few more places, including cases where adoptCF/NS was used incorrectly
+        https://bugs.webkit.org/show_bug.cgi?id=232200
+
+        Reviewed by Anders Carlsson.
+
+        * wtf/cocoa/URLCocoa.mm:
+        (WTF::URL::URL): Use bridge_cast.
+        (WTF::URL::createCFURL const): Ditto, using the RetainPtr version to avoid
+        retain count churn.
+
 2021-10-23  Alan Bujtas  <zalan@apple.com>
 
         Addressing post-commit review (r284744).

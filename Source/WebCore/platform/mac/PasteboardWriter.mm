@@ -33,20 +33,21 @@
 #import "PasteboardWriterData.h"
 #import "SharedBuffer.h"
 #import <pal/spi/mac/NSPasteboardSPI.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 
 namespace WebCore {
 
 static RetainPtr<NSString> toUTI(NSString *pasteboardType)
 {
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    return adoptNS((__bridge NSString *)UTTypeCreatePreferredIdentifierForTag(kUTTagClassNSPboardType, (__bridge CFStringRef)pasteboardType, nullptr));
+    return bridge_cast(adoptCF(UTTypeCreatePreferredIdentifierForTag(kUTTagClassNSPboardType, bridge_cast(pasteboardType), nullptr)));
 ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 static RetainPtr<NSString> toUTIUnlessAlreadyUTI(NSString *type)
 {
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    if (UTTypeIsDeclared((__bridge CFStringRef)type) || UTTypeIsDynamic((__bridge CFStringRef)type)) {
+    if (UTTypeIsDeclared(bridge_cast(type)) || UTTypeIsDynamic(bridge_cast(type))) {
         // This is already a UTI.
         return type;
     }
@@ -62,9 +63,9 @@ RetainPtr<id <NSPasteboardWriting>> createPasteboardWriter(const PasteboardWrite
     if (auto& plainText = data.plainText()) {
         [pasteboardItem setString:plainText->text forType:NSPasteboardTypeString];
         if (plainText->canSmartCopyOrDelete) {
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-            auto smartPasteType = adoptNS((__bridge NSString *)UTTypeCreatePreferredIdentifierForTag(kUTTagClassNSPboardType, (__bridge CFStringRef)_NXSmartPaste, nullptr));
-ALLOW_DEPRECATED_DECLARATIONS_END
+            ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+            auto smartPasteType = bridge_cast(adoptCF(UTTypeCreatePreferredIdentifierForTag(kUTTagClassNSPboardType, bridge_cast(_NXSmartPaste), nullptr)));
+            ALLOW_DEPRECATED_DECLARATIONS_END
             [pasteboardItem setData:[NSData data] forType:smartPasteType.get()];
         }
     }
@@ -106,15 +107,15 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     if (auto& webContent = data.webContent()) {
         if (webContent->canSmartCopyOrDelete) {
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-            auto smartPasteType = adoptNS((__bridge NSString *)UTTypeCreatePreferredIdentifierForTag(kUTTagClassNSPboardType, (__bridge CFStringRef)_NXSmartPaste, nullptr));
-ALLOW_DEPRECATED_DECLARATIONS_END
+            ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+            auto smartPasteType = bridge_cast(adoptCF(UTTypeCreatePreferredIdentifierForTag(kUTTagClassNSPboardType, bridge_cast(_NXSmartPaste), nullptr)));
+            ALLOW_DEPRECATED_DECLARATIONS_END
             [pasteboardItem setData:[NSData data] forType:smartPasteType.get()];
         }
         if (webContent->dataInWebArchiveFormat) {
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-            auto webArchiveType = adoptNS((__bridge NSString *)UTTypeCreatePreferredIdentifierForTag(kUTTagClassNSPboardType, (__bridge CFStringRef)@"Apple Web Archive pasteboard type", nullptr));
-ALLOW_DEPRECATED_DECLARATIONS_END
+            ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+            auto webArchiveType = bridge_cast(adoptCF(UTTypeCreatePreferredIdentifierForTag(kUTTagClassNSPboardType, CFSTR("Apple Web Archive pasteboard type"), nullptr)));
+            ALLOW_DEPRECATED_DECLARATIONS_END
             [pasteboardItem setData:webContent->dataInWebArchiveFormat->createNSData().get() forType:webArchiveType.get()];
         }
         if (webContent->dataInRTFDFormat)
