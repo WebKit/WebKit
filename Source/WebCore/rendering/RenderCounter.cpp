@@ -79,18 +79,11 @@ static RenderElement* previousInPreOrder(const RenderElement& renderer)
     Element* previous = ElementTraversal::previousIncludingPseudo(*renderer.element());
     Element* styleContainAncestor = ancestorStyleContainmentObject(*renderer.element());
 
-    while (true) {
-        while (previous && !previous->renderer())
-            previous = ElementTraversal::previousIncludingPseudo(*previous, styleContainAncestor);
-        if (!previous)
-            return nullptr;
-        Element* previousStyleContainAncestor = ancestorStyleContainmentObject(*previous);
-        if (previousStyleContainAncestor == styleContainAncestor)
-            return previous->renderer();
-        if (!previousStyleContainAncestor)
-            return nullptr;
-        previous = previousStyleContainAncestor;
-    }
+    while (previous && !previous->renderer())
+        previous = ElementTraversal::previousIncludingPseudo(*previous, styleContainAncestor);
+    if (!previous)
+        return nullptr;
+    return previous->renderer();
 }
 
 static inline Element* parentOrPseudoHostElement(const RenderElement& renderer)
