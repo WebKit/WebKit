@@ -1,4 +1,5 @@
 /*
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  * Copyright (C) 2017 Igalia S.L.
  * Copyright (C) 2005, 2007, 2015 Apple Inc. All rights reserved.
  * Copyright (C) 2005 Ben La Monica <ben.lamonica@gmail.com>.  All rights reserved.
@@ -48,7 +49,7 @@ using namespace ImageDiff;
 #define FORMAT_SIZE_T "zu"
 #endif
 
-static int processImages(std::unique_ptr<PlatformImage>&& actualImage, std::unique_ptr<PlatformImage>&& baselineImage, float tolerance)
+static int processImages(std::unique_ptr<PlatformImage>&& actualImage, std::unique_ptr<PlatformImage>&& baselineImage, float tolerance, bool printDifference)
 {
     if (!actualImage->isCompatible(*baselineImage)) {
         if (actualImage->width() != baselineImage->width() || actualImage->height() != baselineImage->height()) {
@@ -62,21 +63,25 @@ static int processImages(std::unique_ptr<PlatformImage>&& actualImage, std::uniq
         return EXIT_FAILURE;
     }
 
-    float difference = 100.0f;
-    auto diffImage = actualImage->difference(*baselineImage, difference);
-    if (difference <= tolerance)
-        difference = 0.0f;
+    PlatformImage::Difference differenceData = { 100, 0, 0 };
+    auto diffImage = actualImage->difference(*baselineImage, differenceData);
+    float legacyDifference = differenceData.percentageDifference;
+    if (legacyDifference <= tolerance)
+        legacyDifference = 0.0f;
     else {
-        difference = roundf(difference * 100.0f) / 100.0f;
-        difference = std::max<float>(difference, 0.01f); // round to 2 decimal places
+        legacyDifference = roundf(legacyDifference * 100.0f) / 100.0f;
+        legacyDifference = std::max<float>(legacyDifference, 0.01f); // round to 2 decimal places
     }
 
-    if (difference > 0.0f) {
+    if (legacyDifference > 0.0f) {
         if (diffImage)
             diffImage->writeAsPNGToStdout();
-        fprintf(stdout, "diff: %01.2f%% failed\n", difference);
+        fprintf(stdout, "diff: %01.2f%% failed\n", legacyDifference);
     } else
-        fprintf(stdout, "diff: %01.2f%% passed\n", difference);
+        fprintf(stdout, "diff: %01.2f%% passed\n", legacyDifference);
+
+    if (printDifference)
+        fprintf(stdout, "maxDifference=%u; totalPixels=%lu\n", differenceData.maxDifference, differenceData.totalPixels);
 
     return EXIT_SUCCESS;
 }
@@ -90,6 +95,7 @@ int main(int argc, const char* argv[])
 
     float tolerance = 0.0f;
     bool verbose = false;
+    bool printDifference = false;
 
     for (int i = 1; i < argc; ++i) {
         if (!strcmp(argv[i], "-t") || !strcmp(argv[i], "--tolerance")) {
@@ -111,9 +117,14 @@ int main(int argc, const char* argv[])
             continue;
         }
 
+        if (!strcmp(argv[i], "-d") || !strcmp(argv[i], "--difference")) {
+            printDifference = true;
+            continue;
+        }
+
         if (!strcmp(argv[i], "-h") || !strcmp(argv[i], "--help")) {
             fprintf(stdout,
-                "usage: ImageDiff [-h] [-t TOLERANCE] [-v] ([actualImage baselineImage] | <stdin>)\n" \
+                "usage: ImageDiff [-h] [-v] [-d] [-t TOLERANCE] ([actualImage baselineImage] | <stdin>)\n" \
                 "\n" \
                 "Reads two PNG-encoded images and compares them. If two file path arguments are supplied, \n" \
                 "reads from the specified files, otherwise from <stdin> where each file is preceded by \n" \
@@ -122,6 +133,7 @@ int main(int argc, const char* argv[])
                 "optional arguments:\n" \
                 "  -h, --help            show this help message and exit\n" \
                 "  -v, --verbose         print diagnostic information to stderr\n" \
+                "  -d, --difference      print WPT-style maxDifference and totalPixels data\n" \
                 "  -t, --tolerance TOLERANCE\n" \
                 "                        compare the images with the given tolerance\n"
             );
@@ -158,7 +170,7 @@ int main(int argc, const char* argv[])
             if (verbose)
                 fprintf(stderr, "Comparing files actual: %s and baseline: %s\n", file1Path, file2Path);
 
-            return processImages(std::move(actualImage), std::move(baselineImage), tolerance);
+            return processImages(std::move(actualImage), std::move(baselineImage), tolerance, printDifference);
         }
     }
 
@@ -206,7 +218,7 @@ int main(int argc, const char* argv[])
         if (actualImage && baselineImage) {
             if (verbose)
                 fprintf(stderr, "ImageDiff: processing images\n");
-            auto result = processImages(std::exchange(actualImage, { }), std::exchange(baselineImage, { }), tolerance);
+            auto result = processImages(std::exchange(actualImage, { }), std::exchange(baselineImage, { }), tolerance, printDifference);
             if (result != EXIT_SUCCESS)
                 return result;
         }

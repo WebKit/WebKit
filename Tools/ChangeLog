@@ -1,3 +1,23 @@
+2021-10-23  Simon Fraser  <simon.fraser@apple.com>
+
+        Add an ImageDiff option to print out WPT-style pixel differences
+        https://bugs.webkit.org/show_bug.cgi?id=232212
+
+        Reviewed by Darin Adler.
+        
+        When passed `--difference`, ImageDiff will compute and print out the "maxDifference=;totalPixels="
+        values documented at https://web-platform-tests.org/writing-tests/reftests.html. With these values,
+        there is no built-in tolerance as there is with the legacy difference computation.
+
+        Rename variables related to the legacy computation.
+
+        * ImageDiff/ImageDiff.cpp:
+        (processImages):
+        (main):
+        * ImageDiff/PlatformImage.cpp:
+        (ImageDiff::PlatformImage::difference):
+        * ImageDiff/PlatformImage.h:
+
 2021-10-24  Simon Fraser  <simon.fraser@apple.com>
 
         Allow ImageDiff to read from files

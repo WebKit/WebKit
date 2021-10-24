@@ -51,9 +51,19 @@ public:
     size_t height() const;
     size_t rowBytes() const;
     bool hasAlpha() const;
+
     unsigned char* pixels() const;
     bool isCompatible(const PlatformImage&) const;
-    std::unique_ptr<PlatformImage> difference(const PlatformImage&, float& percentageDifference);
+
+    struct Difference {
+        float percentageDifference { 0 }; // Legacy different measure.
+
+        // WPT-style difference: https://web-platform-tests.org/writing-tests/reftests.html.
+        unsigned maxDifference { 0 };
+        size_t totalPixels { 0 };
+    };
+    std::unique_ptr<PlatformImage> difference(const PlatformImage&, Difference&);
+
     void writeAsPNGToStdout();
 
 private:
