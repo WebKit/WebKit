@@ -412,11 +412,14 @@
    },
    {
       "emails" : [
+         "ashvayka@apple.com",
          "shvaikalesh@gmail.com"
       ],
       "expertise" : "JavaScript/ECMAScript, JavaScript DOM Bindings",
+      "github" : "shvaikalesh",
       "name" : "Alexey Shvayka",
       "nicks" : [
+         "ashvayka",
          "shvaikalesh"
       ],
       "status" : "reviewer"

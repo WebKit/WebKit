@@ -1,3 +1,11 @@
+2021-10-24  Alexey Shvayka  <ashvayka@apple.com>
+
+        Add my GitHub username to contributors.json and update credentials
+
+        Unreviewed.
+
+        * metadata/contributors.json:
+
 2021-10-22  Guillaume Emont  <guijemont@igalia.com>
 
         Add Guillaume Emont's github username to contributors.json
