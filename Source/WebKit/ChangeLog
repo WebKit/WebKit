@@ -1,3 +1,56 @@
+2021-10-24  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        REGRESSION (iOS 15): Safari shows zoom callout even if -webkit-user-select is none
+        https://bugs.webkit.org/show_bug.cgi?id=231161
+        rdar://83863266
+
+        Reviewed by Darin Adler.
+
+        Make several minor tweaks to prevent the text interaction assistant's loupe gesture from beginning when long
+        pressing inside content with `-webkit-user-select: none;`. Importantly, this prevents both the text
+        interaction's haptic feedback and the text selection magnifier UI (introduced in iOS 15) from showing up. See
+        comments below for more details.
+
+        Test: editing/selection/ios/do-not-allow-text-selection-in-user-select-none.html
+
+        * Shared/ios/InteractionInformationAtPosition.h:
+        (WebKit::InteractionInformationAtPosition::isSelectable const):
+
+        Add a helper method to return whether the `selectability` flag is equal to `Selectable`, and use this in places
+        where we current check the `isSelectable` flag.
+
+        * Shared/ios/InteractionInformationAtPosition.mm:
+        (WebKit::InteractionInformationAtPosition::encode const):
+        (WebKit::InteractionInformationAtPosition::decode):
+
+        Break the current `isSelectable` flag out into different enum types, which enumerate the reasons why we might
+        need to treat hit-tested content as non-user-selectable. Importantly, this allows us to only early return inside
+        `-textInteractionGesture:shouldBeginAtPoint:` below if the element has an explicit `-webkit-user-select: none;`,
+        and not because of the other reasons (i.e. large element bounds or the fact that we're long pressing editable
+        text while not editing).
+
+        This nuance is important in order to continue allowing the loupe gesture (which manifests as a floating caret)
+        to begin when long pressing inside a focused a text field.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView hasSelectablePositionAtPoint:]):
+        (-[WKContentView textInteractionGesture:shouldBeginAtPoint:]):
+
+        Return NO here in the case where we're recognizing a loupe gesture (i.e. long press) inside content with
+        `-webkit-user-select: none;` (by consulting the new `selectability` enumeration). This allows us to prevent both
+        haptic feedback as well as the new magnifier UI from triggering when long pressing inside content that has
+        explicitly disabled text selection.
+
+        (-[WKContentView closestPositionToPoint:]):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::selectionPositionInformation):
+        (WebKit::WebPage::positionInformation):
+
+        Additionally populate the `selectability` flag even when long pressing inside images and links. Instead of
+        putting the call to `selectionPositionInformation` behind the `isLink`/`isImage` check, move that condition into
+        `selectionPositionInformation` in the form of an early return, and always populate `selectability` in either
+        case.
+
 2021-10-24  Darin Adler  <darin@apple.com>
 
         [Cocoa] Adopt bridge_cast and makeVector in a few more places, including cases where adoptCF/NS was used incorrectly

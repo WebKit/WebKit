@@ -53,7 +53,15 @@ struct InteractionInformationAtPosition {
 
     bool canBeValid { true };
     std::optional<bool> nodeAtPositionHasDoubleClickHandler;
-    bool isSelectable { false };
+
+    enum class Selectability : uint8_t {
+        Selectable,
+        UnselectableDueToFocusableElement,
+        UnselectableDueToLargeElementBounds,
+        UnselectableDueToUserSelectNone,
+    };
+    Selectability selectability { Selectability::Selectable };
+
     bool isSelected { false };
     bool prefersDraggingOverTextSelection { false };
     bool isNearMarkedText { false };
@@ -107,10 +115,26 @@ struct InteractionInformationAtPosition {
     // we can fetch the cheap information and copy the snapshots into the new response).
     void mergeCompatibleOptionalInformation(const InteractionInformationAtPosition& oldInformation);
 
+    bool isSelectable() const { return selectability == Selectability::Selectable; }
+
     void encode(IPC::Encoder&) const;
     static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, InteractionInformationAtPosition&);
 };
 
-}
+} // namespace WebKit
+
+namespace WTF {
+
+template<> struct EnumTraits<WebKit::InteractionInformationAtPosition::Selectability> {
+    using values = EnumValues<
+        WebKit::InteractionInformationAtPosition::Selectability,
+        WebKit::InteractionInformationAtPosition::Selectability::Selectable,
+        WebKit::InteractionInformationAtPosition::Selectability::UnselectableDueToFocusableElement,
+        WebKit::InteractionInformationAtPosition::Selectability::UnselectableDueToLargeElementBounds,
+        WebKit::InteractionInformationAtPosition::Selectability::UnselectableDueToUserSelectNone
+    >;
+};
+
+} // namespace WTF
 
 #endif // PLATFORM(IOS_FAMILY)
