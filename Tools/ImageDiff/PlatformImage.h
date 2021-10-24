@@ -37,6 +37,7 @@ namespace ImageDiff {
 class PlatformImage {
 public:
     static std::unique_ptr<PlatformImage> createFromStdin(size_t);
+    static std::unique_ptr<PlatformImage> createFromFile(const char* filePath);
     static std::unique_ptr<PlatformImage> createFromDiffData(void*, size_t width, size_t height);
 
 #if defined(USE_CAIRO) && USE_CAIRO

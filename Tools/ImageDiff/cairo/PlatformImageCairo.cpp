@@ -31,6 +31,17 @@
 
 namespace ImageDiff {
 
+std::unique_ptr<PlatformImage> PlatformImage::createFromFile(const char* filePath)
+{
+    cairo_surface_t* surface = cairo_image_surface_create_from_png(filePath);
+    if (cairo_surface_status(surface) != CAIRO_STATUS_SUCCESS) {
+        cairo_surface_destroy(surface);
+        return nullptr;
+    }
+
+    return std::make_unique<PlatformImage>(surface);
+}
+
 std::unique_ptr<PlatformImage> PlatformImage::createFromStdin(size_t)
 {
     cairo_surface_t* surface = cairo_image_surface_create_from_png_stream(

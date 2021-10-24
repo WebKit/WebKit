@@ -48,6 +48,39 @@ using namespace ImageDiff;
 #define FORMAT_SIZE_T "zu"
 #endif
 
+static int processImages(std::unique_ptr<PlatformImage>&& actualImage, std::unique_ptr<PlatformImage>&& baselineImage, float tolerance)
+{
+    if (!actualImage->isCompatible(*baselineImage)) {
+        if (actualImage->width() != baselineImage->width() || actualImage->height() != baselineImage->height()) {
+            fprintf(stderr, "Error: test and reference images have different sizes. Test image is %" FORMAT_SIZE_T "x%" FORMAT_SIZE_T ", reference image is %" FORMAT_SIZE_T "x%" FORMAT_SIZE_T "\n",
+                actualImage->width(), actualImage->height(), baselineImage->width(), baselineImage->height());
+        } else if (actualImage->hasAlpha() != baselineImage->hasAlpha()) {
+            fprintf(stderr, "Error: test and reference images differ in alpha. Test image %s alpha, reference image %s alpha.\n",
+                actualImage->hasAlpha() ? "has" : "does not have", baselineImage->hasAlpha() ? "has" : "does not have");
+        }
+
+        return EXIT_FAILURE;
+    }
+
+    float difference = 100.0f;
+    auto diffImage = actualImage->difference(*baselineImage, difference);
+    if (difference <= tolerance)
+        difference = 0.0f;
+    else {
+        difference = roundf(difference * 100.0f) / 100.0f;
+        difference = std::max<float>(difference, 0.01f); // round to 2 decimal places
+    }
+
+    if (difference > 0.0f) {
+        if (diffImage)
+            diffImage->writeAsPNGToStdout();
+        fprintf(stdout, "diff: %01.2f%% failed\n", difference);
+    } else
+        fprintf(stdout, "diff: %01.2f%% passed\n", difference);
+
+    return EXIT_SUCCESS;
+}
+
 int main(int argc, const char* argv[])
 {
 #ifdef _WIN32
@@ -56,14 +89,76 @@ int main(int argc, const char* argv[])
 #endif
 
     float tolerance = 0.0f;
+    bool verbose = false;
 
     for (int i = 1; i < argc; ++i) {
         if (!strcmp(argv[i], "-t") || !strcmp(argv[i], "--tolerance")) {
             if (i >= argc - 1)
-                exit(1);
-            tolerance = strtof(argv[i + 1], 0);
+                return EXIT_FAILURE;
+            
+            char* readEnd = NULL;
+            tolerance = strtof(argv[i + 1], &readEnd);
+            if (readEnd == argv[i + 1]) {
+                fprintf(stderr, "Failed to read numberic tolerance value from %s\n", argv[i + 1]);
+                return EXIT_FAILURE;
+            }
             ++i;
             continue;
+        }
+
+        if (!strcmp(argv[i], "-v") || !strcmp(argv[i], "--verbose")) {
+            verbose = true;
+            continue;
+        }
+
+        if (!strcmp(argv[i], "-h") || !strcmp(argv[i], "--help")) {
+            fprintf(stdout,
+                "usage: ImageDiff [-h] [-t TOLERANCE] [-v] ([actualImage baselineImage] | <stdin>)\n" \
+                "\n" \
+                "Reads two PNG-encoded images and compares them. If two file path arguments are supplied, \n" \
+                "reads from the specified files, otherwise from <stdin> where each file is preceded by \n" \
+                "a \"Content-Length:\" header.\n" \
+                "\n" \
+                "optional arguments:\n" \
+                "  -h, --help            show this help message and exit\n" \
+                "  -v, --verbose         print diagnostic information to stderr\n" \
+                "  -t, --tolerance TOLERANCE\n" \
+                "                        compare the images with the given tolerance\n"
+            );
+            return EXIT_SUCCESS;
+        }
+
+        if (i < argc - 1) {
+            const char* file1Path = argv[i];
+            const char* file2Path = argv[i + 1];
+
+            if (file1Path[0] ==  '-') {
+                fprintf(stderr, "Ambiguous file path argument %s\n", file1Path);
+                return EXIT_FAILURE;
+            }
+
+            if (file2Path[0] ==  '-') {
+                fprintf(stderr, "Ambiguous file path argument %s\n", file2Path);
+                return EXIT_FAILURE;
+            }
+
+            auto actualImage = PlatformImage::createFromFile(file1Path);
+            auto baselineImage = PlatformImage::createFromFile(file2Path);
+
+            if (!actualImage) {
+                fprintf(stderr, "Failed to create image from %s\n", file1Path);
+                return EXIT_FAILURE;
+            }
+
+            if (!baselineImage) {
+                fprintf(stderr, "Failed to create image from %s\n", file2Path);
+                return EXIT_FAILURE;
+            }
+            
+            if (verbose)
+                fprintf(stderr, "Comparing files actual: %s and baseline: %s\n", file1Path, file2Path);
+
+            return processImages(std::move(actualImage), std::move(baselineImage), tolerance);
         }
     }
 
@@ -72,6 +167,9 @@ int main(int argc, const char* argv[])
     std::unique_ptr<PlatformImage> baselineImage;
 
     while (fgets(buffer, sizeof(buffer), stdin)) {
+        if (verbose)
+            fprintf(stderr, "ImageDiff: read %" FORMAT_SIZE_T " bytes from stdin %s", strlen(buffer), buffer);
+
         // Convert the first newline into a NUL character so that strtok doesn't produce it.
         char* newLineCharacter = strchr(buffer, '\n');
         if (newLineCharacter)
@@ -87,11 +185,17 @@ int main(int argc, const char* argv[])
             }
 
             if (!actualImage) {
+                if (verbose)
+                    fprintf(stderr, "Reading %d bytes of actual image data\n", imageSize);
+
                 if (!(actualImage = PlatformImage::createFromStdin(imageSize))) {
                     fprintf(stderr, "Error: could not read actual image.\n");
                     return EXIT_FAILURE;
                 }
             } else if (!baselineImage) {
+                if (verbose)
+                    fprintf(stderr, "Reading %d bytes of baseline image data\n", imageSize);
+
                 if (!(baselineImage = PlatformImage::createFromStdin(imageSize))) {
                     fprintf(stderr, "Error: could not read baseline image.\n");
                     return EXIT_FAILURE;
@@ -100,38 +204,12 @@ int main(int argc, const char* argv[])
         }
 
         if (actualImage && baselineImage) {
-            if (!actualImage->isCompatible(*baselineImage)) {
-                if (actualImage->width() != baselineImage->width() || actualImage->height() != baselineImage->height()) {
-                    fprintf(stderr, "Error: test and reference images have different sizes. Test image is %" FORMAT_SIZE_T "x%" FORMAT_SIZE_T ", reference image is %" FORMAT_SIZE_T "x%" FORMAT_SIZE_T "\n",
-                        actualImage->width(), actualImage->height(), baselineImage->width(), baselineImage->height());
-                } else if (actualImage->hasAlpha() != baselineImage->hasAlpha()) {
-                    fprintf(stderr, "Error: test and reference images differ in alpha. Test image %s alpha, reference image %s alpha.\n",
-                        actualImage->hasAlpha() ? "has" : "does not have", baselineImage->hasAlpha() ? "has" : "does not have");
-                }
-
-                return EXIT_FAILURE;
-            }
-
-            float difference = 100.0f;
-            std::unique_ptr<PlatformImage> diffImage = actualImage->difference(*baselineImage, difference);
-            if (difference <= tolerance)
-                difference = 0.0f;
-            else {
-                difference = roundf(difference * 100.0f) / 100.0f;
-                difference = std::max<float>(difference, 0.01f); // round to 2 decimal places
-            }
-
-            if (difference > 0.0f) {
-                if (diffImage)
-                    diffImage->writeAsPNGToStdout();
-                fprintf(stdout, "diff: %01.2f%% failed\n", difference);
-            } else
-                fprintf(stdout, "diff: %01.2f%% passed\n", difference);
-
-            actualImage = nullptr;
-            baselineImage = nullptr;
+            if (verbose)
+                fprintf(stderr, "ImageDiff: processing images\n");
+            auto result = processImages(std::exchange(actualImage, { }), std::exchange(baselineImage, { }), tolerance);
+            if (result != EXIT_SUCCESS)
+                return result;
         }
-
         fflush(stdout);
     }
 

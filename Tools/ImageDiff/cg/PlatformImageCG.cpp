@@ -71,6 +71,15 @@ static const CFStringRef kUTTypePNG = CFSTR("public.png");
 
 namespace ImageDiff {
 
+std::unique_ptr<PlatformImage> PlatformImage::createFromFile(const char* filePath)
+{
+    auto dataProvider = CGDataProviderCreateWithFilename(filePath);
+    auto image = CGImageCreateWithPNGDataProvider(dataProvider, 0, false, kCGRenderingIntentDefault);
+    CGDataProviderRelease(dataProvider);
+
+    return std::make_unique<PlatformImage>(image);
+}
+
 std::unique_ptr<PlatformImage> PlatformImage::createFromStdin(size_t imageSize)
 {
     unsigned char buffer[2048];

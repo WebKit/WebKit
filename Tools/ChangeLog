@@ -1,3 +1,24 @@
+2021-10-24  Simon Fraser  <simon.fraser@apple.com>
+
+        Allow ImageDiff to read from files
+        https://bugs.webkit.org/show_bug.cgi?id=232201
+
+        Reviewed by Darin Adler.
+        
+        For improved hackability when working on pixel tolerance, allow ImageDiff to read from
+        files by adding support for reading two file path arguments.
+
+        Also add some nice --help output, and preliminary support for --verbose.
+
+        * ImageDiff/ImageDiff.cpp:
+        (processImages):
+        (main):
+        * ImageDiff/PlatformImage.h:
+        * ImageDiff/cairo/PlatformImageCairo.cpp:
+        (ImageDiff::PlatformImage::createFromFile):
+        * ImageDiff/cg/PlatformImageCG.cpp:
+        (ImageDiff::PlatformImage::createFromFile):
+
 2021-10-23  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [WTF] Replace current LLVM flang's Int128 with abseil-cpp's Int128
