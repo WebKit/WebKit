@@ -1,3 +1,88 @@
+2021-10-23  Phillip Mates  <pmates@igalia.com>
+
+        update test262
+        https://bugs.webkit.org/show_bug.cgi?id=232005
+
+        Reviewed by Yusuke Suzuki.
+
+        * test262/expectations.yaml:
+        * test262/latest-changes-summary.txt:
+        * test262/test/built-ins/Array/prototype/concat/Array.prototype.concat_large-typed-array.js:
+        (concatTypedArray):
+        * test262/test/built-ins/Array/prototype/concat/Array.prototype.concat_small-typed-array.js:
+        (concatTypedArray):
+        * test262/test/built-ins/Array/prototype/copyWithin/non-negative-target-and-start.js:
+        * test262/test/built-ins/Function/internals/Call/class-ctor-realm.js:
+        * test262/test/built-ins/Object/getOwnPropertyNames/15.2.3.4-4-44.js:
+        * test262/test/built-ins/Object/getOwnPropertyNames/15.2.3.4-4-49.js:
+        * test262/test/built-ins/Object/getOwnPropertyNames/15.2.3.4-4-b-2.js:
+        * test262/test/built-ins/ShadowRealm/prototype/evaluate/globalthis-available-properties.js: Added.
+        * test262/test/built-ins/ShadowRealm/prototype/evaluate/globalthis-config-only-properties.js: Added.
+        (const.remainingNames.names.filter.name.esNonConfigValues.includes):
+        (hasOwn.call):
+        * test262/test/built-ins/ShadowRealm/prototype/evaluate/globalthis-orginary-object.js: Added.
+        * test262/test/built-ins/ShadowRealm/prototype/evaluate/throws-error-from-ctor-realm.js: Added.
+        * test262/test/built-ins/ShadowRealm/prototype/evaluate/validates-realm-object.js:
+        * test262/test/built-ins/ShadowRealm/prototype/evaluate/wrapped-function-proto-from-caller-realm.js:
+        (checkArgWrapperFn.realm.evaluate.string_appeared_here.assert.sameValue.checkArgWrapperFn):
+        * test262/test/built-ins/ShadowRealm/prototype/importValue/not-constructor.js:
+        * test262/test/built-ins/Temporal/PlainDate/prototype/since/largestunit-higher-units.js:
+        * test262/test/built-ins/Temporal/PlainMonthDay/prototype/toPlainDate/basic.js:
+        * test262/test/intl402/NumberFormat/prototype/format/signDisplay-currency-de-DE.js:
+        * test262/test/intl402/NumberFormat/prototype/format/signDisplay-currency-en-US.js:
+        * test262/test/intl402/NumberFormat/prototype/format/signDisplay-currency-ja-JP.js:
+        * test262/test/intl402/NumberFormat/prototype/format/signDisplay-currency-ko-KR.js:
+        * test262/test/intl402/NumberFormat/prototype/format/signDisplay-currency-zh-TW.js:
+        * test262/test/intl402/NumberFormat/prototype/formatToParts/signDisplay-currency-de-DE.js:
+        * test262/test/intl402/NumberFormat/prototype/formatToParts/signDisplay-currency-en-US.js:
+        * test262/test/intl402/NumberFormat/prototype/formatToParts/signDisplay-currency-ja-JP.js:
+        * test262/test/intl402/NumberFormat/prototype/formatToParts/signDisplay-currency-ko-KR.js:
+        * test262/test/intl402/NumberFormat/prototype/formatToParts/signDisplay-currency-zh-TW.js:
+        * test262/test/intl402/Temporal/Instant/prototype/toLocaleString/locales-undefined.js: Renamed from JSTests/test262/test/built-ins/Temporal/Instant/prototype/toLocaleString/locales-undefined.js.
+        * test262/test/intl402/Temporal/Instant/prototype/toLocaleString/options-undefined.js: Renamed from JSTests/test262/test/built-ins/Temporal/Instant/prototype/toLocaleString/options-undefined.js.
+        * test262/test/intl402/Temporal/PlainDate/prototype/toLocaleString/locales-undefined.js: Renamed from JSTests/test262/test/built-ins/Temporal/PlainDate/prototype/toLocaleString/locales-undefined.js.
+        * test262/test/intl402/Temporal/PlainDate/prototype/toLocaleString/options-undefined.js: Renamed from JSTests/test262/test/built-ins/Temporal/PlainDate/prototype/toLocaleString/options-undefined.js.
+        * test262/test/intl402/Temporal/PlainDateTime/prototype/toLocaleString/locales-undefined.js: Renamed from JSTests/test262/test/built-ins/Temporal/PlainDateTime/prototype/toLocaleString/locales-undefined.js.
+        * test262/test/intl402/Temporal/PlainDateTime/prototype/toLocaleString/options-undefined.js: Renamed from JSTests/test262/test/built-ins/Temporal/PlainDateTime/prototype/toLocaleString/options-undefined.js.
+        * test262/test/intl402/Temporal/PlainMonthDay/prototype/toLocaleString/locales-undefined.js: Renamed from JSTests/test262/test/built-ins/Temporal/PlainMonthDay/prototype/toLocaleString/locales-undefined.js.
+        * test262/test/intl402/Temporal/PlainMonthDay/prototype/toLocaleString/options-undefined.js: Renamed from JSTests/test262/test/built-ins/Temporal/PlainMonthDay/prototype/toLocaleString/options-undefined.js.
+        * test262/test/intl402/Temporal/PlainTime/prototype/toLocaleString/locales-undefined.js: Renamed from JSTests/test262/test/built-ins/Temporal/PlainTime/prototype/toLocaleString/locales-undefined.js.
+        * test262/test/intl402/Temporal/PlainTime/prototype/toLocaleString/options-undefined.js: Renamed from JSTests/test262/test/built-ins/Temporal/PlainTime/prototype/toLocaleString/options-undefined.js.
+        * test262/test/intl402/Temporal/PlainYearMonth/prototype/toLocaleString/locales-undefined.js: Renamed from JSTests/test262/test/built-ins/Temporal/PlainYearMonth/prototype/toLocaleString/locales-undefined.js.
+        * test262/test/intl402/Temporal/PlainYearMonth/prototype/toLocaleString/options-undefined.js: Renamed from JSTests/test262/test/built-ins/Temporal/PlainYearMonth/prototype/toLocaleString/options-undefined.js.
+        * test262/test/intl402/Temporal/ZonedDateTime/prototype/toLocaleString/locales-undefined.js: Renamed from JSTests/test262/test/built-ins/Temporal/ZonedDateTime/prototype/toLocaleString/locales-undefined.js.
+        * test262/test/intl402/Temporal/ZonedDateTime/prototype/toLocaleString/options-undefined.js: Renamed from JSTests/test262/test/built-ins/Temporal/ZonedDateTime/prototype/toLocaleString/options-undefined.js.
+        * test262/test/language/computed-property-names/basics/number.js:
+        * test262/test/language/computed-property-names/basics/string.js:
+        * test262/test/language/computed-property-names/basics/symbol.js:
+        * test262/test/language/computed-property-names/class/method/generator.js:
+        * test262/test/language/computed-property-names/class/method/number.js:
+        * test262/test/language/computed-property-names/class/method/string.js:
+        * test262/test/language/computed-property-names/class/method/symbol.js:
+        * test262/test/language/computed-property-names/object/method/generator.js:
+        * test262/test/language/computed-property-names/object/method/number.js:
+        * test262/test/language/computed-property-names/object/method/string.js:
+        * test262/test/language/computed-property-names/object/method/symbol.js:
+        * test262/test/language/computed-property-names/to-name-side-effects/numbers-object.js:
+        * test262/test/language/computed-property-names/to-name-side-effects/object.js:
+        * test262/test/language/identifiers/part-unicode-14.0.0-escaped.js: Added.
+        * test262/test/language/identifiers/part-unicode-14.0.0.js: Added.
+        * test262/test/language/identifiers/start-unicode-14.0.0-escaped.js: Added.
+        * test262/test/language/identifiers/start-unicode-14.0.0.js: Added.
+        * test262/test/language/rest-parameters/arrow-function.js:
+        * test262/test/language/rest-parameters/no-alias-arguments.js:
+        (f):
+        * test262/test/language/rest-parameters/with-new-target.js:
+        (Base):
+        (Child):
+        * test262/test/language/statements/class/definition/fn-length-static-precedence-order.js:
+        * test262/test/language/statements/class/definition/fn-name-static-precedence-order.js:
+        * test262/test/language/statements/class/static-init-arguments-functions.js:
+        * test262/test/language/statements/class/static-init-arguments-methods.js:
+        * test262/test/language/statements/class/subclass/builtin-objects/Array/contructor-calls-super-multiple-arguments.js:
+        * test262/test/language/statements/class/subclass/builtin-objects/Array/regular-subclassing.js:
+        * test262/test262-Revision.txt:
+
 2021-10-22  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] GetTypedArrayLengthAsInt52 must be inserted only when we ensure that input is TypedArray via array-mode-based filtering

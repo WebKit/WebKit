@@ -17,5 +17,5 @@ const r = new ShadowRealm();
 const bogus = {};
 
 assert.throws(TypeError, function() {
-  r.evaluate.call(bogus, '');
+  r.evaluate.call(bogus, 'This is invalid code and should not be evaluated');
 }, 'throws a TypeError if this is not a ShadowRealm object');

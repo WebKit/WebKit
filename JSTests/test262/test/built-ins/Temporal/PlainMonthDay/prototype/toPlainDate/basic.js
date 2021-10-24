@@ -15,7 +15,7 @@ TemporalHelpers.assertPlainDate(d, 2002, 1, "M01", 22);
 assert.throws(TypeError, () => md.toPlainDate({ something: 'nothing' }), "missing fields");
 
 const leapDay = Temporal.PlainMonthDay.from('02-29');
-TemporalHelpers.assertPlainDate(leapDay.toPlainDate({ year: 2019 }), 2019, 2, "M02", 28);
+assert.throws(RangeError, () => leapDay.toPlainDate({ year: 2019 }));
 TemporalHelpers.assertPlainDate(leapDay.toPlainDate({ year: 2020 }), 2020, 2, "M02", 29);
 
 const options = {
@@ -24,4 +24,4 @@ const options = {
     return "";
   }
 };
-TemporalHelpers.assertPlainDate(leapDay.toPlainDate({ year: 2019 }, options), 2019, 2, "M02", 28);
+TemporalHelpers.assertPlainDate(leapDay.toPlainDate({ year: 2020 }, options), 2020, 2, "M02", 29);

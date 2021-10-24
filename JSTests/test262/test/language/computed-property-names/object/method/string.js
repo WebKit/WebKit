@@ -21,7 +21,7 @@ assert.sameValue(object.a(), 'A', "`object.a()` returns `'A'`. Defined as `a() {
 assert.sameValue(object.b(), 'B', "`object.b()` returns `'B'`. Defined as `['b']() { return 'B'; }`");
 assert.sameValue(object.c(), 'C', "`object.c()` returns `'C'`. Defined as `c() { return 'C'; }`");
 assert.sameValue(object.d(), 'D', "`object.d()` returns `'D'`. Defined as `[ID('d')]() { return 'D'; }`");
-assert(
-  compareArray(Object.getOwnPropertyNames(object), ['a', 'b', 'c', 'd']),
-  "`compareArray(Object.getOwnPropertyNames(object), ['a', 'b', 'c', 'd'])` returns `true`"
+assert.compareArray(
+  Object.getOwnPropertyNames(object),
+  ['a', 'b', 'c', 'd']
 );

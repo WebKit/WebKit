@@ -24,7 +24,7 @@ assert.sameValue(new C()[2](), 'D', "`new C()[2]()` returns `'D'`, from `[ID(2)]
 
 assert.sameValue(Object.keys(C.prototype).length, 0, "No enum keys from C.prototype");
 
-assert(
-  compareArray(Object.getOwnPropertyNames(C.prototype), ['1', '2', 'constructor', 'a', 'c']),
-  "`compareArray(Object.getOwnPropertyNames(C.prototype), ['1', '2', 'constructor', 'a', 'c'])` returns `true`"
+assert.compareArray(
+  Object.getOwnPropertyNames(C.prototype),
+  ['1', '2', 'constructor', 'a', 'c']
 );

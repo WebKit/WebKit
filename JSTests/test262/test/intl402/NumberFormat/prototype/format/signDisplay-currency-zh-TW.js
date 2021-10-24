@@ -3,7 +3,7 @@
 
 /*---
 esid: sec-intl.numberformat.prototype.format
-description: Checks handling of the compactDisplay option to the NumberFormat constructor.
+description: Checks handling of the signDisplay option to the NumberFormat constructor.
 locale: [zh-TW]
 features: [Intl.NumberFormat-unified]
 ---*/

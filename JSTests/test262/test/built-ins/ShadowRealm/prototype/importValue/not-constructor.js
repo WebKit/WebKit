@@ -27,5 +27,5 @@ assert.throws(TypeError, () => {
 const r = new ShadowRealm();
 
 assert.throws(TypeError, () => {
-  new r.imporValue("./import-value_FIXTURE.js", "x");
-}, '`new r.imporValue("...")` throws TypeError');
+  new r.importValue("./import-value_FIXTURE.js", "x");
+}, '`new r.importValue("...")` throws TypeError');

@@ -3,7 +3,7 @@
 
 /*---
 esid: sec-intl.numberformat.prototype.formattoparts
-description: Checks handling of the compactDisplay option to the NumberFormat constructor.
+description: Checks handling of the signDisplay option to the NumberFormat constructor.
 locale: [ko-KR]
 features: [Intl.NumberFormat-unified]
 ---*/
@@ -60,11 +60,11 @@ const tests = [
 
 for (const [signDisplay, negative, negativeNearZero, negativeZero, zero, positiveNearZero, positive] of tests) {
   const nf = new Intl.NumberFormat("ko-KR", { style: "currency", currency: "USD", currencySign: "accounting", signDisplay });
-  verifyFormatParts(nf.formatToParts(-987), negative);
-  verifyFormatParts(nf.formatToParts(-0.0001), negativeNearZero);
-  verifyFormatParts(nf.formatToParts(-0), negativeZero);
-  verifyFormatParts(nf.formatToParts(0), zero);
-  verifyFormatParts(nf.formatToParts(0.0001), positiveNearZero);
-  verifyFormatParts(nf.formatToParts(987), positive);
+  verifyFormatParts(nf.formatToParts(-987), negative, "negative");
+  verifyFormatParts(nf.formatToParts(-0.0001), negativeNearZero, "negativeNearZero");
+  verifyFormatParts(nf.formatToParts(-0), negativeZero, "negativeZero");
+  verifyFormatParts(nf.formatToParts(0), zero, "zero");
+  verifyFormatParts(nf.formatToParts(0.0001), positiveNearZero, "positiveNearZero");
+  verifyFormatParts(nf.formatToParts(987), positive, "positive");
 }
 
