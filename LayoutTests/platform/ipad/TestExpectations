@@ -107,9 +107,6 @@ webkit.org/b/229566 imported/w3c/web-platform-tests/html/semantics/interactive-e
 
 webkit.org/b/228663 fast/canvas/canvas-color-space-display-p3.html [ ImageOnlyFailure ]
 
-webkit.org/b/232090 fast/canvas/canvas-createPattern-video-loading.html [ Failure ]
-webkit.org/b/232090 imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/canvas-createImageBitmap-video-resize.html [ Failure ]
-
 webkit.org/b/230419 platform/ipad/media/modern-media-controls/media-documents/media-document-video-ios-sizing.html [ Pass Timeout Crash ]
 
 webkit.org/b/231611 [ Debug ] imported/w3c/web-platform-tests/webrtc-encoded-transform/sframe-transform-in-worker.https.html [ Pass Failure ]
@@ -117,8 +114,3 @@ webkit.org/b/231611 [ Debug ] imported/w3c/web-platform-tests/webrtc-encoded-tra
 webkit.org/b/231616 [ Debug ] compositing/layer-creation/scale-rotation-transition-overlap.html [ Pass Failure Timeout ]
 
 webkit.org/b/231640 [ Debug ] webrtc/video-mute.html [ Pass Timeout ]
-
-webkit.org/b/231959 media/video-canvas-createPattern.html [ Failure ]
-webkit.org/b/231959 fast/canvas/canvas-createPattern-video-modify.html [ Failure ]
-webkit.org/b/231959 imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/createImageBitmap-drawImage.html [ Failure ]
-webkit.org/b/231959 imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/createImageBitmap-flipY.html [ Failure ]
