@@ -68,7 +68,7 @@ public:
     ExceptionOr<void> advance(unsigned);
     ExceptionOr<void> continueFunction(JSC::JSGlobalObject&, JSC::JSValue key);
     ExceptionOr<void> continuePrimaryKey(JSC::JSGlobalObject&, JSC::JSValue key, JSC::JSValue primaryKey);
-    ExceptionOr<Ref<IDBRequest>> deleteFunction(JSC::JSGlobalObject&);
+    ExceptionOr<Ref<IDBRequest>> deleteFunction();
 
     ExceptionOr<void> continueFunction(const IDBKeyData&);
 

@@ -818,34 +818,32 @@ void IDBTransaction::didRenameIndexOnServer(const IDBResultData& resultData)
     ASSERT_UNUSED(resultData, resultData.type() == IDBResultType::RenameIndexSuccess || resultData.type() == IDBResultType::Error);
 }
 
-Ref<IDBRequest> IDBTransaction::requestOpenCursor(JSGlobalObject& state, IDBObjectStore& objectStore, const IDBCursorInfo& info)
+Ref<IDBRequest> IDBTransaction::requestOpenCursor(IDBObjectStore& objectStore, const IDBCursorInfo& info)
 {
     LOG(IndexedDB, "IDBTransaction::requestOpenCursor");
     ASSERT(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
 
     if (info.cursorType() == IndexedDB::CursorType::KeyOnly)
-        return doRequestOpenCursor(state, IDBCursor::create(objectStore, info));
+        return doRequestOpenCursor(IDBCursor::create(objectStore, info));
 
-    return doRequestOpenCursor(state, IDBCursorWithValue::create(objectStore, info));
+    return doRequestOpenCursor(IDBCursorWithValue::create(objectStore, info));
 }
 
-Ref<IDBRequest> IDBTransaction::requestOpenCursor(JSGlobalObject& state, IDBIndex& index, const IDBCursorInfo& info)
+Ref<IDBRequest> IDBTransaction::requestOpenCursor(IDBIndex& index, const IDBCursorInfo& info)
 {
     LOG(IndexedDB, "IDBTransaction::requestOpenCursor");
     ASSERT(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
 
     if (info.cursorType() == IndexedDB::CursorType::KeyOnly)
-        return doRequestOpenCursor(state, IDBCursor::create(index, info));
+        return doRequestOpenCursor(IDBCursor::create(index, info));
 
-    return doRequestOpenCursor(state, IDBCursorWithValue::create(index, info));
+    return doRequestOpenCursor(IDBCursorWithValue::create(index, info));
 }
 
-Ref<IDBRequest> IDBTransaction::doRequestOpenCursor(JSGlobalObject& state, Ref<IDBCursor>&& cursor)
+Ref<IDBRequest> IDBTransaction::doRequestOpenCursor(Ref<IDBCursor>&& cursor)
 {
     ASSERT(isActive());
     ASSERT(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
-
-    ASSERT_UNUSED(state, scriptExecutionContext() == scriptExecutionContextFromExecState(&state));
 
     auto request = IDBRequest::create(*scriptExecutionContext(), cursor.get(), *this);
     addRequest(request.get());
@@ -926,13 +924,11 @@ void IDBTransaction::didIterateCursorOnServer(IDBRequest& request, const IDBResu
     completeCursorRequest(request, resultData);
 }
 
-Ref<IDBRequest> IDBTransaction::requestGetAllObjectStoreRecords(JSC::JSGlobalObject& state, IDBObjectStore& objectStore, const IDBKeyRangeData& keyRangeData, IndexedDB::GetAllType getAllType, std::optional<uint32_t> count)
+Ref<IDBRequest> IDBTransaction::requestGetAllObjectStoreRecords(IDBObjectStore& objectStore, const IDBKeyRangeData& keyRangeData, IndexedDB::GetAllType getAllType, std::optional<uint32_t> count)
 {
     LOG(IndexedDB, "IDBTransaction::requestGetAllObjectStoreRecords");
     ASSERT(isActive());
     ASSERT(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
-
-    ASSERT_UNUSED(state, scriptExecutionContext() == scriptExecutionContextFromExecState(&state));
 
     auto request = IDBRequest::create(*scriptExecutionContext(), objectStore, *this);
     addRequest(request.get());
@@ -949,13 +945,12 @@ Ref<IDBRequest> IDBTransaction::requestGetAllObjectStoreRecords(JSC::JSGlobalObj
     return request;
 }
 
-Ref<IDBRequest> IDBTransaction::requestGetAllIndexRecords(JSC::JSGlobalObject& state, IDBIndex& index, const IDBKeyRangeData& keyRangeData, IndexedDB::GetAllType getAllType, std::optional<uint32_t> count)
+Ref<IDBRequest> IDBTransaction::requestGetAllIndexRecords(IDBIndex& index, const IDBKeyRangeData& keyRangeData, IndexedDB::GetAllType getAllType, std::optional<uint32_t> count)
 {
     LOG(IndexedDB, "IDBTransaction::requestGetAllIndexRecords");
     ASSERT(isActive());
     ASSERT(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
 
-    ASSERT_UNUSED(state, scriptExecutionContext() == scriptExecutionContextFromExecState(&state));
 
     auto request = IDBRequest::create(*scriptExecutionContext(), index, *this);
     addRequest(request.get());
@@ -1005,14 +1000,12 @@ void IDBTransaction::didGetAllRecordsOnServer(IDBRequest& request, const IDBResu
     completeNoncursorRequest(request, resultData);
 }
 
-Ref<IDBRequest> IDBTransaction::requestGetRecord(JSGlobalObject& state, IDBObjectStore& objectStore, const IDBGetRecordData& getRecordData)
+Ref<IDBRequest> IDBTransaction::requestGetRecord(IDBObjectStore& objectStore, const IDBGetRecordData& getRecordData)
 {
     LOG(IndexedDB, "IDBTransaction::requestGetRecord");
     ASSERT(isActive());
     ASSERT(!getRecordData.keyRangeData.isNull);
     ASSERT(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
-
-    ASSERT_UNUSED(state, scriptExecutionContext() == scriptExecutionContextFromExecState(&state));
 
     IndexedDB::ObjectStoreRecordType type = getRecordData.type == IDBGetRecordDataType::KeyAndValue ? IndexedDB::ObjectStoreRecordType::ValueOnly : IndexedDB::ObjectStoreRecordType::KeyOnly;
 
@@ -1029,30 +1022,28 @@ Ref<IDBRequest> IDBTransaction::requestGetRecord(JSGlobalObject& state, IDBObjec
     return request;
 }
 
-Ref<IDBRequest> IDBTransaction::requestGetValue(JSGlobalObject& state, IDBIndex& index, const IDBKeyRangeData& range)
+Ref<IDBRequest> IDBTransaction::requestGetValue(IDBIndex& index, const IDBKeyRangeData& range)
 {
     LOG(IndexedDB, "IDBTransaction::requestGetValue");
     ASSERT(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
 
-    return requestIndexRecord(state, index, IndexedDB::IndexRecordType::Value, range);
+    return requestIndexRecord(index, IndexedDB::IndexRecordType::Value, range);
 }
 
-Ref<IDBRequest> IDBTransaction::requestGetKey(JSGlobalObject& state, IDBIndex& index, const IDBKeyRangeData& range)
+Ref<IDBRequest> IDBTransaction::requestGetKey(IDBIndex& index, const IDBKeyRangeData& range)
 {
     LOG(IndexedDB, "IDBTransaction::requestGetValue");
     ASSERT(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
 
-    return requestIndexRecord(state, index, IndexedDB::IndexRecordType::Key, range);
+    return requestIndexRecord(index, IndexedDB::IndexRecordType::Key, range);
 }
 
-Ref<IDBRequest> IDBTransaction::requestIndexRecord(JSGlobalObject& state, IDBIndex& index, IndexedDB::IndexRecordType type, const IDBKeyRangeData& range)
+Ref<IDBRequest> IDBTransaction::requestIndexRecord(IDBIndex& index, IndexedDB::IndexRecordType type, const IDBKeyRangeData& range)
 {
     LOG(IndexedDB, "IDBTransaction::requestGetValue");
     ASSERT(isActive());
     ASSERT(!range.isNull);
     ASSERT(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
-
-    ASSERT_UNUSED(state, scriptExecutionContext() == scriptExecutionContextFromExecState(&state));
 
     auto request = IDBRequest::createIndexGet(*scriptExecutionContext(), index, type, *this);
     addRequest(request.get());
@@ -1110,14 +1101,12 @@ void IDBTransaction::didGetRecordOnServer(IDBRequest& request, const IDBResultDa
     completeNoncursorRequest(request, resultData);
 }
 
-Ref<IDBRequest> IDBTransaction::requestCount(JSGlobalObject& state, IDBObjectStore& objectStore, const IDBKeyRangeData& range)
+Ref<IDBRequest> IDBTransaction::requestCount(IDBObjectStore& objectStore, const IDBKeyRangeData& range)
 {
     LOG(IndexedDB, "IDBTransaction::requestCount (IDBObjectStore)");
     ASSERT(isActive());
     ASSERT(!range.isNull);
     ASSERT(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
-
-    ASSERT_UNUSED(state, scriptExecutionContext() == scriptExecutionContextFromExecState(&state));
 
     auto request = IDBRequest::create(*scriptExecutionContext(), objectStore, *this);
     addRequest(request.get());
@@ -1132,14 +1121,12 @@ Ref<IDBRequest> IDBTransaction::requestCount(JSGlobalObject& state, IDBObjectSto
     return request;
 }
 
-Ref<IDBRequest> IDBTransaction::requestCount(JSGlobalObject& state, IDBIndex& index, const IDBKeyRangeData& range)
+Ref<IDBRequest> IDBTransaction::requestCount(IDBIndex& index, const IDBKeyRangeData& range)
 {
     LOG(IndexedDB, "IDBTransaction::requestCount (IDBIndex)");
     ASSERT(isActive());
     ASSERT(!range.isNull);
     ASSERT(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
-
-    ASSERT_UNUSED(state, scriptExecutionContext() == scriptExecutionContextFromExecState(&state));
 
     auto request = IDBRequest::create(*scriptExecutionContext(), index, *this);
     addRequest(request.get());
@@ -1171,14 +1158,12 @@ void IDBTransaction::didGetCountOnServer(IDBRequest& request, const IDBResultDat
     completeNoncursorRequest(request, resultData);
 }
 
-Ref<IDBRequest> IDBTransaction::requestDeleteRecord(JSGlobalObject& state, IDBObjectStore& objectStore, const IDBKeyRangeData& range)
+Ref<IDBRequest> IDBTransaction::requestDeleteRecord(IDBObjectStore& objectStore, const IDBKeyRangeData& range)
 {
     LOG(IndexedDB, "IDBTransaction::requestDeleteRecord");
     ASSERT(isActive());
     ASSERT(!range.isNull);
     ASSERT(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
-
-    ASSERT_UNUSED(state, scriptExecutionContext() == scriptExecutionContextFromExecState(&state));
 
     auto request = IDBRequest::create(*scriptExecutionContext(), objectStore, *this);
     addRequest(request.get());
@@ -1209,13 +1194,11 @@ void IDBTransaction::didDeleteRecordOnServer(IDBRequest& request, const IDBResul
     completeNoncursorRequest(request, resultData);
 }
 
-Ref<IDBRequest> IDBTransaction::requestClearObjectStore(JSGlobalObject& state, IDBObjectStore& objectStore)
+Ref<IDBRequest> IDBTransaction::requestClearObjectStore(IDBObjectStore& objectStore)
 {
     LOG(IndexedDB, "IDBTransaction::requestClearObjectStore");
     ASSERT(isActive());
     ASSERT(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
-
-    ASSERT_UNUSED(state, scriptExecutionContext() == scriptExecutionContextFromExecState(&state));
 
     auto request = IDBRequest::create(*scriptExecutionContext(), objectStore, *this);
     addRequest(request.get());
@@ -1249,15 +1232,13 @@ void IDBTransaction::didClearObjectStoreOnServer(IDBRequest& request, const IDBR
     completeNoncursorRequest(request, resultData);
 }
 
-Ref<IDBRequest> IDBTransaction::requestPutOrAdd(JSGlobalObject& state, IDBObjectStore& objectStore, RefPtr<IDBKey>&& key, SerializedScriptValue& value, IndexedDB::ObjectStoreOverwriteMode overwriteMode)
+Ref<IDBRequest> IDBTransaction::requestPutOrAdd(IDBObjectStore& objectStore, RefPtr<IDBKey>&& key, SerializedScriptValue& value, IndexedDB::ObjectStoreOverwriteMode overwriteMode)
 {
     LOG(IndexedDB, "IDBTransaction::requestPutOrAdd");
     ASSERT(isActive());
     ASSERT(!isReadOnly());
     ASSERT(objectStore.info().autoIncrement() || key);
     ASSERT(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
-
-    ASSERT_UNUSED(state, scriptExecutionContext() == scriptExecutionContextFromExecState(&state));
 
     auto request = IDBRequest::create(*scriptExecutionContext(), objectStore, *this);
     addRequest(request.get());

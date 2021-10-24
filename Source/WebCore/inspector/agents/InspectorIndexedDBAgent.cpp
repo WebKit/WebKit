@@ -461,7 +461,6 @@ public:
 
         TransactionActivator activator(idbTransaction.get());
         RefPtr<IDBRequest> idbRequest;
-        auto* exec = context() ? context()->globalObject() : nullptr;
         if (!m_indexName.isEmpty()) {
             auto idbIndex = indexForObjectStore(idbObjectStore.get(), m_indexName);
             if (!idbIndex) {
@@ -469,17 +468,13 @@ public:
                 return;
             }
 
-            if (exec) {
-                auto result = idbIndex->openCursor(*exec, m_idbKeyRange.get(), IDBCursorDirection::Next);
-                if (!result.hasException())
-                    idbRequest = result.releaseReturnValue();
-            }
+            auto result = idbIndex->openCursor(m_idbKeyRange.get(), IDBCursorDirection::Next);
+            if (!result.hasException())
+                idbRequest = result.releaseReturnValue();
         } else {
-            if (exec) {
-                auto result = idbObjectStore->openCursor(*exec, m_idbKeyRange.get(), IDBCursorDirection::Next);
-                if (!result.hasException())
-                    idbRequest = result.releaseReturnValue();
-            }
+            auto result = idbObjectStore->openCursor(m_idbKeyRange.get(), IDBCursorDirection::Next);
+            if (!result.hasException())
+                idbRequest = result.releaseReturnValue();
         }
 
         if (!idbRequest) {
@@ -703,15 +698,11 @@ public:
         }
 
         TransactionActivator activator(idbTransaction.get());
-        RefPtr<IDBRequest> idbRequest;
-        if (auto* exec = context() ? context()->globalObject() : nullptr) {
-            auto result = idbObjectStore->clear(*exec);
-            ASSERT(!result.hasException());
-            if (result.hasException()) {
-                m_requestCallback->sendFailure(makeString("Could not clear object store '", m_objectStoreName, "': ", static_cast<int>(result.releaseException().code())));
-                return;
-            }
-            idbRequest = result.releaseReturnValue();
+        auto result = idbObjectStore->clear();
+        ASSERT(!result.hasException());
+        if (result.hasException()) {
+            m_requestCallback->sendFailure(makeString("Could not clear object store '", m_objectStoreName, "': ", static_cast<int>(result.releaseException().code())));
+            return;
         }
 
         idbTransaction->addEventListener(eventNames().completeEvent, ClearObjectStoreListener::create(m_requestCallback.copyRef()), false);

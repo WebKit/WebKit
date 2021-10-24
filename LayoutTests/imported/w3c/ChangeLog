@@ -1,5 +1,17 @@
 2021-10-24  Alexey Shvayka  <shvaikalesh@gmail.com>
 
+        Assertions in IDBTransaction::request*() methods fail on cross-realm methods
+        https://bugs.webkit.org/show_bug.cgi?id=230128
+
+        Reviewed by Sihui Liu.
+
+        * web-platform-tests/IndexedDB/idbindex-cross-realm-methods-expected.txt: Added.
+        * web-platform-tests/IndexedDB/idbindex-cross-realm-methods.html: Added.
+        * web-platform-tests/IndexedDB/idbobjectstore-cross-realm-methods-expected.txt: Added.
+        * web-platform-tests/IndexedDB/idbobjectstore-cross-realm-methods.html: Added.
+
+2021-10-24  Alexey Shvayka  <shvaikalesh@gmail.com>
+
         document.open() and friends use incorrect document as a source for reseted document's URL
         https://bugs.webkit.org/show_bug.cgi?id=230131
 

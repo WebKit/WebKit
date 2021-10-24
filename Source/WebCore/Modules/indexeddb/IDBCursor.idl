@@ -40,5 +40,5 @@
     [CallWith=GlobalObject] undefined continuePrimaryKey(any key, any primaryKey);
 
     [NewObject, CallWith=GlobalObject] IDBRequest update(any value);
-    [NewObject, CallWith=GlobalObject, ImplementedAs=deleteFunction] IDBRequest delete();
+    [NewObject, ImplementedAs=deleteFunction] IDBRequest delete();
 };
