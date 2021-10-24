@@ -94,14 +94,14 @@ void AccessibilityARIAGrid::addRowDescendant(AXCoreObject* rowChild, HashSet<Acc
 
 void AccessibilityARIAGrid::addChildren()
 {
-    ASSERT(!m_haveChildren); 
+    ASSERT(!m_childrenInitialized); 
     
     if (!isExposable()) {
         AccessibilityRenderObject::addChildren();
         return;
     }
     
-    m_haveChildren = true;
+    m_childrenInitialized = true;
     if (!m_renderer)
         return;
     

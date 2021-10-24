@@ -1249,7 +1249,7 @@ public:
     Vector<AXID> childrenIDs();
 
     virtual bool canHaveChildren() const = 0;
-    virtual bool hasChildren() const = 0;
+    virtual bool childrenInitialized() const = 0;
     virtual void updateChildrenIfNecessary() = 0;
     virtual void setNeedsToUpdateChildren() = 0;
     virtual void setNeedsToUpdateSubtree() = 0;
@@ -1625,7 +1625,7 @@ template<typename T, typename U> inline T retrieveAutoreleasedValueFromMainThrea
 
 inline bool AXCoreObject::isDescendantOfObject(const AXCoreObject* axObject) const
 {
-    return axObject && axObject->hasChildren()
+    return axObject && axObject->childrenInitialized()
         && Accessibility::findAncestor<AXCoreObject>(*this, false, [axObject] (const AXCoreObject& object) {
             return &object == axObject;
         }) != nullptr;

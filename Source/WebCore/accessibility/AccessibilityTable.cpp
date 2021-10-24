@@ -381,9 +381,9 @@ void AccessibilityTable::addChildren()
         return;
     }
     
-    ASSERT(!m_haveChildren); 
+    ASSERT(!m_childrenInitialized); 
     
-    m_haveChildren = true;
+    m_childrenInitialized = true;
     if (!is<RenderTable>(renderer()))
         return;
     

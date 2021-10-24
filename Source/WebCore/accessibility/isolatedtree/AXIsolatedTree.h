@@ -118,7 +118,6 @@ enum class AXPropertyName : uint16_t {
     HasARIAValueNow,
     HasApplePDFAnnotationAttribute,
     HasBoldFont,
-    HasChildren,
     HasHighlighting,
     HasItalicFont,
     HasPlainText,

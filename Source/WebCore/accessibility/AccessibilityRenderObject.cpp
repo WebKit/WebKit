@@ -3385,9 +3385,9 @@ void AccessibilityRenderObject::addCanvasChildren()
         return;
 
     // If it's a canvas, it won't have rendered children, but it might have accessible fallback content.
-    // Clear m_haveChildren because AccessibilityNodeObject::addChildren will expect it to be false.
+    // Clear m_childrenInitialized because AccessibilityNodeObject::addChildren will expect it to be false.
     ASSERT(!m_children.size());
-    m_haveChildren = false;
+    m_childrenInitialized = false;
     AccessibilityNodeObject::addChildren();
 }
 
@@ -3490,7 +3490,7 @@ void AccessibilityRenderObject::updateRoleAfterChildrenCreation()
         if (!menuItemCount)
             m_role = AccessibilityRole::Group;
     }
-    if (role == AccessibilityRole::SVGRoot && !hasChildren())
+    if (role == AccessibilityRole::SVGRoot && !children().size())
         m_role = AccessibilityRole::Image;
 }
     
@@ -3498,9 +3498,9 @@ void AccessibilityRenderObject::addChildren()
 {
     // If the need to add more children in addition to existing children arises, 
     // childrenChanged should have been called, leaving the object with no children.
-    ASSERT(!m_haveChildren); 
+    ASSERT(!m_childrenInitialized); 
 
-    m_haveChildren = true;
+    m_childrenInitialized = true;
     
     if (!canHaveChildren())
         return;
@@ -3689,7 +3689,7 @@ void AccessibilityRenderObject::selectedChildren(AccessibilityChildrenVector& re
 
 void AccessibilityRenderObject::ariaListboxVisibleChildren(AccessibilityChildrenVector& result)      
 {
-    if (!hasChildren())
+    if (!childrenInitialized())
         addChildren();
     
     for (const auto& child : children()) {

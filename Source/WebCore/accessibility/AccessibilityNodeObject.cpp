@@ -342,12 +342,12 @@ void AccessibilityNodeObject::addChildren()
 {
     // If the need to add more children in addition to existing children arises, 
     // childrenChanged should have been called, leaving the object with no children.
-    ASSERT(!m_haveChildren); 
+    ASSERT(!m_childrenInitialized); 
     
     if (!m_node)
         return;
 
-    m_haveChildren = true;
+    m_childrenInitialized = true;
 
     // The only time we add children from the DOM tree to a node with a renderer is when it's a canvas.
     if (renderer() && !m_node->hasTagName(canvasTag))

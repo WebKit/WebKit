@@ -1686,7 +1686,7 @@ const AccessibilityObject::AccessibilityChildrenVector& AccessibilityObject::chi
 
 void AccessibilityObject::updateChildrenIfNecessary()
 {
-    if (!hasChildren()) {
+    if (!childrenInitialized()) {
         // Enable the cache in case we end up adding a lot of children, we don't want to recompute axIsIgnored each time.
         AXAttributeCacheEnabler enableCache(axObjectCache());
         addChildren();
@@ -1700,7 +1700,7 @@ void AccessibilityObject::clearChildren()
         child->detachFromParent();
     
     m_children.clear();
-    m_haveChildren = false;
+    m_childrenInitialized = false;
 }
 
 AccessibilityObject* AccessibilityObject::anchorElementForNode(Node* node)

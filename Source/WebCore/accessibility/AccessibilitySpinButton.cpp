@@ -45,9 +45,9 @@ AccessibilitySpinButton::~AccessibilitySpinButton() = default;
     
 AXCoreObject* AccessibilitySpinButton::incrementButton()
 {
-    if (!m_haveChildren)
+    if (!m_childrenInitialized)
         addChildren();
-    if (!m_haveChildren)
+    if (!m_childrenInitialized)
         return nullptr;
 
     ASSERT(m_children.size() == 2);
@@ -57,9 +57,9 @@ AXCoreObject* AccessibilitySpinButton::incrementButton()
    
 AXCoreObject* AccessibilitySpinButton::decrementButton()
 {
-    if (!m_haveChildren)
+    if (!m_childrenInitialized)
         addChildren();
-    if (!m_haveChildren)
+    if (!m_childrenInitialized)
         return nullptr;
     
     ASSERT(m_children.size() == 2);
@@ -86,7 +86,7 @@ void AccessibilitySpinButton::addChildren()
     if (!cache)
         return;
     
-    m_haveChildren = true;
+    m_childrenInitialized = true;
     
     auto& incrementor = downcast<AccessibilitySpinButtonPart>(*cache->create(AccessibilityRole::SpinButtonPart));
     incrementor.setIsIncrementor(true);

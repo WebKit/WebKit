@@ -63,9 +63,9 @@ bool AccessibilityTableHeaderContainer::computeAccessibilityIsIgnored() const
 
 void AccessibilityTableHeaderContainer::addChildren()
 {
-    ASSERT(!m_haveChildren); 
+    ASSERT(!m_childrenInitialized); 
     
-    m_haveChildren = true;
+    m_childrenInitialized = true;
     if (!is<AccessibilityTable>(m_parent))
         return;
 

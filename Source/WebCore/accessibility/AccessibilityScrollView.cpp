@@ -185,8 +185,8 @@ bool AccessibilityScrollView::computeAccessibilityIsIgnored() const
 
 void AccessibilityScrollView::addChildren()
 {
-    ASSERT(!m_haveChildren);
-    m_haveChildren = true;
+    ASSERT(!m_childrenInitialized);
+    m_childrenInitialized = true;
     
     addChild(webAreaObject());
     updateScrollbars();    

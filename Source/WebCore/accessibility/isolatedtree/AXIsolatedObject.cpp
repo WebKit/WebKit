@@ -163,7 +163,6 @@ void AXIsolatedObject::initializeAttributeData(AXCoreObject& object, bool isRoot
     setProperty(AXPropertyName::LayoutCount, object.layoutCount());
     setProperty(AXPropertyName::EstimatedLoadingProgress, object.estimatedLoadingProgress());
     setProperty(AXPropertyName::SupportsARIAOwns, object.supportsARIAOwns());
-    setProperty(AXPropertyName::HasChildren, object.hasChildren());
     setProperty(AXPropertyName::HasPopup, object.hasPopup());
     setProperty(AXPropertyName::PopupValue, object.popupValue().isolatedCopy());
     setProperty(AXPropertyName::PressedIsPresent, object.pressedIsPresent());

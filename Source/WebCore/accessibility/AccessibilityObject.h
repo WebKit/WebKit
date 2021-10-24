@@ -495,7 +495,7 @@ public:
     void insertChild(AXCoreObject*, unsigned, DescendIfIgnored = DescendIfIgnored::Yes) override;
 
     bool canHaveChildren() const override { return true; }
-    bool hasChildren() const override { return m_haveChildren; }
+    bool childrenInitialized() const override { return m_childrenInitialized; }
     void updateChildrenIfNecessary() override;
     void setNeedsToUpdateChildren() override { }
     void setNeedsToUpdateSubtree() override { }
@@ -811,7 +811,7 @@ private:
     AXID m_id { 0 };
 protected: // FIXME: Make the data members private.
     AccessibilityChildrenVector m_children;
-    mutable bool m_haveChildren { false };
+    mutable bool m_childrenInitialized { false };
     AccessibilityRole m_role { AccessibilityRole::Unknown };
 private:
     AccessibilityObjectInclusion m_lastKnownIsIgnoredValue { AccessibilityObjectInclusion::DefaultBehavior };

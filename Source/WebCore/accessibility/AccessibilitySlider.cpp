@@ -86,9 +86,9 @@ AccessibilityOrientation AccessibilitySlider::orientation() const
     
 void AccessibilitySlider::addChildren()
 {
-    ASSERT(!m_haveChildren); 
+    ASSERT(!m_childrenInitialized); 
     
-    m_haveChildren = true;
+    m_childrenInitialized = true;
 
     AXObjectCache* cache = m_renderer->document().axObjectCache();
 
