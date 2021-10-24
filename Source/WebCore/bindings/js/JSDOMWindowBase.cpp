@@ -337,16 +337,6 @@ DOMWindow& legacyActiveDOMWindowForAccessor(JSGlobalObject& fallbackGlobalObject
     return asJSDOMWindow(&legacyActiveGlobalObjectForAccessor(fallbackGlobalObject, fallbackGlobalObject.vm().topCallFrame))->wrapped();
 }
 
-Document* responsibleDocument(VM& vm, CallFrame& callFrame)
-{
-    CallerFunctor functor;
-    callFrame.iterate(vm, functor);
-    auto* callerFrame = functor.callerFrame();
-    if (!callerFrame)
-        return nullptr;
-    return asJSDOMWindow(callerFrame->lexicalGlobalObject(vm))->wrapped().document();
-}
-
 void JSDOMWindowBase::fireFrameClearedWatchpointsForWindow(DOMWindow* window)
 {
     JSC::VM& vm = commonVM();

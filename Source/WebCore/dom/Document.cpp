@@ -2917,21 +2917,21 @@ ExceptionOr<RefPtr<WindowProxy>> Document::openForBindings(DOMWindow& activeWind
     return m_domWindow->open(activeWindow, firstWindow, url, name, features);
 }
 
-ExceptionOr<Document&> Document::openForBindings(Document* responsibleDocument, const String&, const String&)
+ExceptionOr<Document&> Document::openForBindings(Document* entryDocument, const String&, const String&)
 {
     if (!isHTMLDocument() || m_throwOnDynamicMarkupInsertionCount)
         return Exception { InvalidStateError };
 
-    auto result = open(responsibleDocument);
+    auto result = open(entryDocument);
     if (UNLIKELY(result.hasException()))
         return result.releaseException();
 
     return *this;
 }
 
-ExceptionOr<void> Document::open(Document* responsibleDocument)
+ExceptionOr<void> Document::open(Document* entryDocument)
 {
-    if (responsibleDocument && !responsibleDocument->securityOrigin().isSameOriginAs(securityOrigin()))
+    if (entryDocument && !entryDocument->securityOrigin().isSameOriginAs(securityOrigin()))
         return Exception { SecurityError };
 
     if (m_ignoreOpensDuringUnloadCount)
@@ -2960,16 +2960,16 @@ ExceptionOr<void> Document::open(Document* responsibleDocument)
 
     removeAllEventListeners();
 
-    if (responsibleDocument && isFullyActive()) {
-        auto newURL = responsibleDocument->url();
-        if (responsibleDocument != this)
+    if (entryDocument && isFullyActive()) {
+        auto newURL = entryDocument->url();
+        if (entryDocument != this)
             newURL.removeFragmentIdentifier();
         setURL(newURL);
-        auto newCookieURL = responsibleDocument->cookieURL();
-        if (responsibleDocument != this)
+        auto newCookieURL = entryDocument->cookieURL();
+        if (entryDocument != this)
             newCookieURL.removeFragmentIdentifier();
         setCookieURL(newCookieURL);
-        setSecurityOriginPolicy(responsibleDocument->securityOriginPolicy());
+        setSecurityOriginPolicy(entryDocument->securityOriginPolicy());
     }
 
     implicitOpen();
@@ -3308,7 +3308,7 @@ void Document::enqueuePaintTimingEntryIfNeeded()
     m_didEnqueueFirstContentfulPaint = true;
 }
 
-ExceptionOr<void> Document::write(Document* responsibleDocument, SegmentedString&& text)
+ExceptionOr<void> Document::write(Document* entryDocument, SegmentedString&& text)
 {
     if (m_activeParserWasAborted)
         return { };
@@ -3326,7 +3326,7 @@ ExceptionOr<void> Document::write(Document* responsibleDocument, SegmentedString
         return { };
 
     if (!hasInsertionPoint) {
-        auto result = open(responsibleDocument);
+        auto result = open(entryDocument);
         if (UNLIKELY(result.hasException()))
             return result.releaseException();
     }
@@ -3336,7 +3336,7 @@ ExceptionOr<void> Document::write(Document* responsibleDocument, SegmentedString
     return { };
 }
 
-ExceptionOr<void> Document::write(Document* responsibleDocument, Vector<String>&& strings)
+ExceptionOr<void> Document::write(Document* entryDocument, Vector<String>&& strings)
 {
     if (!isHTMLDocument() || m_throwOnDynamicMarkupInsertionCount)
         return Exception { InvalidStateError };
@@ -3345,10 +3345,10 @@ ExceptionOr<void> Document::write(Document* responsibleDocument, Vector<String>&
     for (auto& string : strings)
         text.append(WTFMove(string));
 
-    return write(responsibleDocument, WTFMove(text));
+    return write(entryDocument, WTFMove(text));
 }
 
-ExceptionOr<void> Document::writeln(Document* responsibleDocument, Vector<String>&& strings)
+ExceptionOr<void> Document::writeln(Document* entryDocument, Vector<String>&& strings)
 {
     if (!isHTMLDocument() || m_throwOnDynamicMarkupInsertionCount)
         return Exception { InvalidStateError };
@@ -3358,7 +3358,7 @@ ExceptionOr<void> Document::writeln(Document* responsibleDocument, Vector<String
         text.append(WTFMove(string));
 
     text.append("\n"_s);
-    return write(responsibleDocument, WTFMove(text));
+    return write(entryDocument, WTFMove(text));
 }
 
 Seconds Document::minimumDOMTimerInterval() const

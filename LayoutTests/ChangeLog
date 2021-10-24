@@ -1,3 +1,26 @@
+2021-10-24  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        document.open() and friends use incorrect document as a source for reseted document's URL
+        https://bugs.webkit.org/show_bug.cgi?id=230131
+
+        Reviewed by Chris Dumez.
+
+        * http/tests/security/aboutBlank/security-context-grandchildren-lexical.html:
+        * http/tests/security/aboutBlank/security-context-grandchildren-write-lexical.html:
+        * http/tests/security/aboutBlank/security-context-grandchildren-writeln-lexical.html:
+        Tweak javascript: URLs to evaluate as `undefined` so the tests could be run in Firefox.
+
+        * http/tests/security/aboutBlank/security-context-grandchildren-lexical-expected.txt:
+        * http/tests/security/aboutBlank/security-context-grandchildren-write-lexical-expected.txt:
+        * http/tests/security/aboutBlank/security-context-grandchildren-writeln-lexical-expected.txt:
+        Align expectations with Blink and Gecko.
+
+        * http/tests/security/resources/parent-document-open.html: Added.
+        * http/tests/security/xss-DENIED-xsl-document-securityOrigin.xml:
+        The test relied on behavior that wasn't spec-compliant, causing timeouts once document.open() is fixed.
+        This patch preserves the test semantics of calling document.open() with iframe's global object.
+        Similar Blink bug: crbug.com/579493.
+
 2021-10-23  Rob Buis  <rbuis@igalia.com>
 
         Null check in traverseNodesForSerialization

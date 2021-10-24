@@ -5965,10 +5965,10 @@ sub GenerateCallWith
         push(@$outputArray, $indent . "    return" . ($returnValue ? " " . $returnValue : "") . ";\n");
         push(@callWithArgs, "*incumbentDocument");
     }
-    if ($codeGenerator->ExtendedAttributeContains($callWith, "ResponsibleDocument")) {
+    if ($codeGenerator->ExtendedAttributeContains($callWith, "EntryDocument")) {
         AddToImplIncludes("DOMWindow.h");
         AddToImplIncludes("JSDOMWindowBase.h");
-        push(@callWithArgs, "responsibleDocument(${globalObject}->vm(), $callFrameReference)");
+        push(@callWithArgs, "firstDOMWindow(*$globalObject).document()");
     }
     if ($codeGenerator->ExtendedAttributeContains($callWith, "ActiveWindow")) {
         AddToImplIncludes("DOMWindow.h");
