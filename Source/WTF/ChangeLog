@@ -1,3 +1,9 @@
+2021-10-23  Alan Bujtas  <zalan@apple.com>
+
+        Addressing post-commit review (r284744).
+
+        * wtf/unicode/CharacterNames.h:
+
 2021-10-23  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [WTF] Replace current LLVM flang's Int128 with abseil-cpp's Int128

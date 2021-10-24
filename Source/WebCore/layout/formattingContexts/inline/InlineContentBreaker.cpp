@@ -324,7 +324,7 @@ static TextUtil::MidWordBreak midWordBreak(const InlineContentBreaker::Continuou
                 // line breaking class ID, and are otherwise forbidden:
                 // ‐ U+2010, – U+2013
                 // https://drafts.csswg.org/css-text/#line-break-property
-                if (character == hyphen || character == endash)
+                if (character == hyphen || character == enDash)
                     return false;
             }
             if (character == noBreakSpace)
