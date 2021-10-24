@@ -109,7 +109,7 @@ AccessibilityTable* AccessibilityTableRow::parentTable() const
     
     return nullptr;
 }
-    
+
 AXCoreObject* AccessibilityTableRow::headerObject()
 {
     if (!m_renderer || !m_renderer->isTableRow())
@@ -150,10 +150,12 @@ AXCoreObject* AccessibilityTableRow::headerObject()
 void AccessibilityTableRow::addChildren()
 {
     // If the element specifies its cells through aria-owns, return that first.
-    AccessibilityChildrenVector ariaOwns;
-    ariaOwnsElements(ariaOwns);
-    if (ariaOwns.size())
-        m_children = WTFMove(ariaOwns);
+    AccessibilityChildrenVector ariaOwnedElements;
+    ariaOwnsElements(ariaOwnedElements);
+    if (ariaOwnedElements.size()) {
+        for (auto& ariaOwnedElement : ariaOwnedElements)
+            addChild(ariaOwnedElement.get(), DescendIfIgnored::No);
+    }
     else
         AccessibilityRenderObject::addChildren();
     

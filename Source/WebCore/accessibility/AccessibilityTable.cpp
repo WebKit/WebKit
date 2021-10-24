@@ -394,8 +394,7 @@ void AccessibilityTable::addChildren()
     if (HTMLTableElement* tableElement = this->tableElement()) {
         if (auto caption = tableElement->caption()) {
             AccessibilityObject* axCaption = axObjectCache()->getOrCreate(caption.get());
-            if (axCaption && !axCaption->accessibilityIsIgnored())
-                m_children.append(axCaption);
+            addChild(axCaption, DescendIfIgnored::No);
         }
     }
 
@@ -420,13 +419,9 @@ void AccessibilityTable::addChildren()
         column.setColumnIndex(i);
         column.setParent(this);
         m_columns.append(&column);
-        if (!column.accessibilityIsIgnored())
-            m_children.append(&column);
+        addChild(&column, DescendIfIgnored::No);
     }
-
-    auto* headerContainerObject = headerContainer();
-    if (headerContainerObject && !headerContainerObject->accessibilityIsIgnored())
-        m_children.append(headerContainerObject);
+    addChild(headerContainer(), DescendIfIgnored::No);
 
     // Sometimes the cell gets the wrong role initially because it is created before the parent
     // determines whether it is an accessibility table. Iterate all the cells and allow them to
@@ -451,8 +446,7 @@ void AccessibilityTable::addTableCellChild(AccessibilityObject* rowObject, HashS
     
     row.setRowIndex(static_cast<int>(m_rows.size()));
     m_rows.append(&row);
-    if (!row.accessibilityIsIgnored())
-        m_children.append(&row);
+    addChild(&row, DescendIfIgnored::No);
     appendedRows.add(&row);
         
     // store the maximum number of columns

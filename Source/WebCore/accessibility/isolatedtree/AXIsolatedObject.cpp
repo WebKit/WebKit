@@ -2143,12 +2143,12 @@ void AXIsolatedObject::addChildren()
     ASSERT_NOT_REACHED();
 }
 
-void AXIsolatedObject::addChild(AXCoreObject*)
+void AXIsolatedObject::addChild(AXCoreObject*, DescendIfIgnored)
 {
     ASSERT_NOT_REACHED();
 }
 
-void AXIsolatedObject::insertChild(AXCoreObject*, unsigned)
+void AXIsolatedObject::insertChild(AXCoreObject*, unsigned, DescendIfIgnored)
 {
     ASSERT_NOT_REACHED();
 }

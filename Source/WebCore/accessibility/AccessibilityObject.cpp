@@ -483,8 +483,15 @@ static void appendAccessibilityObject(AXCoreObject* object, AccessibilityObject:
     if (object)
         results.append(object);
 }
-    
-void AccessibilityObject::insertChild(AXCoreObject* child, unsigned index)
+
+#ifndef NDEBUG
+static bool isTableComponent(AXCoreObject& axObject)
+{
+    return axObject.isTable() || axObject.isTableColumn() || axObject.isTableRow() || axObject.isTableCell();
+}
+#endif
+
+void AccessibilityObject::insertChild(AXCoreObject* child, unsigned index, DescendIfIgnored descendIfIgnored)
 {
     if (!child)
         return;
@@ -511,12 +518,16 @@ void AccessibilityObject::insertChild(AXCoreObject* child, unsigned index)
     
     setIsIgnoredFromParentDataForChild(child);
     if (child->accessibilityIsIgnored()) {
-        const auto& children = child->children();
-        size_t length = children.size();
-        for (size_t i = 0; i < length; ++i)
-            m_children.insert(index + i, children[i]);
+        if (descendIfIgnored == DescendIfIgnored::Yes) {
+            const auto& children = child->children();
+            size_t length = children.size();
+            for (size_t i = 0; i < length; ++i)
+                m_children.insert(index + i, children[i]);
+        }
     } else {
-        ASSERT(child->parentObject() == this);
+        // Table component child-parent relationships often don't line up properly, hence the need for methods
+        // like parentTable() and parentRow(). Exclude them from this ASSERT.
+        ASSERT((!isTableComponent(*child) && !isTableComponent(*this)) ? child->parentObject() == this : true);
         m_children.insert(index, child);
     }
     
@@ -524,9 +535,9 @@ void AccessibilityObject::insertChild(AXCoreObject* child, unsigned index)
     child->clearIsIgnoredFromParentData();
 }
     
-void AccessibilityObject::addChild(AXCoreObject* child)
+void AccessibilityObject::addChild(AXCoreObject* child, DescendIfIgnored descendIfIgnored)
 {
-    insertChild(child, m_children.size());
+    insertChild(child, m_children.size(), descendIfIgnored);
 }
     
 void AccessibilityObject::findMatchingObjects(AccessibilitySearchCriteria* criteria, AccessibilityChildrenVector& results)

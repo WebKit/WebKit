@@ -67,14 +67,7 @@ bool AccessibilityARIAGrid::addTableCellChild(AXCoreObject* child, HashSet<Acces
     
     row.setRowIndex((int)m_rows.size());
     m_rows.append(&row);
-
-    // Try adding the row if it's not ignoring accessibility,
-    // otherwise add its children (the cells) as the grid's children.
-    if (!row.accessibilityIsIgnored())
-        m_children.append(&row);
-    else
-        m_children.appendVector(row.children());
-
+    addChild(&row);
     appendedRows.add(&row);
     return true;
 }
@@ -142,13 +135,10 @@ void AccessibilityARIAGrid::addChildren()
         column.setColumnIndex(i);
         column.setParent(this);
         m_columns.append(&column);
-        if (!column.accessibilityIsIgnored())
-            m_children.append(&column);
+        addChild(&column, DescendIfIgnored::No);
     }
 
-    auto* headerContainerObject = headerContainer();
-    if (headerContainerObject && !headerContainerObject->accessibilityIsIgnored())
-        m_children.append(headerContainerObject);
+    addChild(headerContainer(), DescendIfIgnored::No);
 }
     
 } // namespace WebCore

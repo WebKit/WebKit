@@ -3283,7 +3283,7 @@ void AccessibilityRenderObject::addImageMapChildren()
         areaObject.setHTMLMapElement(map);
         areaObject.setParent(this);
         if (!areaObject.accessibilityIsIgnored())
-            m_children.append(&areaObject);
+            addChild(&areaObject);
         else
             axObjectCache()->remove(areaObject.objectID());
     }
@@ -3310,7 +3310,7 @@ void AccessibilityRenderObject::addTextFieldChildren()
     auto& axSpinButton = downcast<AccessibilitySpinButton>(*axObjectCache()->create(AccessibilityRole::SpinButton));
     axSpinButton.setSpinButtonElement(downcast<SpinButtonElement>(spinButtonElement));
     axSpinButton.setParent(this);
-    m_children.append(&axSpinButton);
+    addChild(&axSpinButton);
 }
     
 bool AccessibilityRenderObject::isSVGImage() const
@@ -3374,12 +3374,7 @@ void AccessibilityRenderObject::addRemoteSVGChildren()
     // In order to connect the AX hierarchy from the SVG root element from the loaded resource
     // the parent must be set, because there's no other way to get back to who created the image.
     root->setParent(this);
-    
-    if (root->accessibilityIsIgnored()) {
-        for (const auto& child : root->children())
-            m_children.append(child);
-    } else
-        m_children.append(root);
+    addChild(root);
 }
 
 void AccessibilityRenderObject::addCanvasChildren()

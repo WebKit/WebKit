@@ -73,7 +73,8 @@ void AccessibilityTableHeaderContainer::addChildren()
     if (!parentTable.isExposable())
         return;
 
-    m_children = parentTable.columnHeaders();
+    for (auto& columnHeader : parentTable.columnHeaders())
+        addChild(columnHeader.get());
 
     for (const auto& child : m_children)
         m_headerRect.unite(child->elementRect());

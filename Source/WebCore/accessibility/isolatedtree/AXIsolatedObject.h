@@ -607,8 +607,8 @@ private:
     void childrenChanged() override;
     void updateAccessibilityRole() override;
     void addChildren() override;
-    void addChild(AXCoreObject*) override;
-    void insertChild(AXCoreObject*, unsigned) override;
+    void addChild(AXCoreObject*, DescendIfIgnored = DescendIfIgnored::Yes) override;
+    void insertChild(AXCoreObject*, unsigned, DescendIfIgnored = DescendIfIgnored::Yes) override;
     bool canHaveChildren() const override;
     bool hasChildren() const override { return boolAttributeValue(AXPropertyName::HasChildren); }
     void setNeedsToUpdateChildren() override;

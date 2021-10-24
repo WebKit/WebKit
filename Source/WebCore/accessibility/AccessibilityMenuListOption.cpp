@@ -39,6 +39,7 @@ using namespace HTMLNames;
 
 AccessibilityMenuListOption::AccessibilityMenuListOption(HTMLOptionElement& element)
     : m_element(element)
+    , m_parent(nullptr)
 {
 }
 
@@ -68,8 +69,8 @@ bool AccessibilityMenuListOption::isVisible() const
         return false;
 
     // In a single-option select with the popup collapsed, only the selected item is considered visible.
-    auto parent = m_element->document().axObjectCache()->getOrCreate(m_element->ownerSelectElement());
-    return parent && (!parent->isOffScreen() || isSelected());
+    auto ownerSelectElement = m_element->document().axObjectCache()->getOrCreate(m_element->ownerSelectElement());
+    return ownerSelectElement && (!ownerSelectElement->isOffScreen() || isSelected());
 }
 
 bool AccessibilityMenuListOption::isOffScreen() const
@@ -109,9 +110,10 @@ bool AccessibilityMenuListOption::computeAccessibilityIsIgnored() const
 LayoutRect AccessibilityMenuListOption::elementRect() const
 {
     AccessibilityObject* parent = parentObject();
+    // Our parent should've been set to be a menu-list popup before this method is called.
+    ASSERT(parent && parent->isMenuListPopup());
     if (!parent)
         return boundingBoxRect();
-    ASSERT(parent->isMenuListPopup());
 
     AccessibilityObject* grandparent = parent->parentObject();
     if (!grandparent)

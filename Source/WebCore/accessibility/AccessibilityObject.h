@@ -491,8 +491,8 @@ public:
     void updateAccessibilityRole() override { }
     const AccessibilityChildrenVector& children(bool updateChildrenIfNeeded = true) override;
     void addChildren() override { }
-    void addChild(AXCoreObject*) override;
-    void insertChild(AXCoreObject*, unsigned) override;
+    void addChild(AXCoreObject*, DescendIfIgnored = DescendIfIgnored::Yes) override;
+    void insertChild(AXCoreObject*, unsigned, DescendIfIgnored = DescendIfIgnored::Yes) override;
 
     bool canHaveChildren() const override { return true; }
     bool hasChildren() const override { return m_haveChildren; }

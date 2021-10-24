@@ -1238,9 +1238,14 @@ public:
     virtual void updateAccessibilityRole() = 0;
 
     virtual const AccessibilityChildrenVector& children(bool updateChildrenIfNeeded = true) = 0;
+
+    enum class DescendIfIgnored : uint8_t {
+        No,
+        Yes
+    };
     virtual void addChildren() = 0;
-    virtual void addChild(AXCoreObject*) = 0;
-    virtual void insertChild(AXCoreObject*, unsigned) = 0;
+    virtual void addChild(AXCoreObject*, DescendIfIgnored = DescendIfIgnored::Yes) = 0;
+    virtual void insertChild(AXCoreObject*, unsigned, DescendIfIgnored = DescendIfIgnored::Yes) = 0;
     Vector<AXID> childrenIDs();
 
     virtual bool canHaveChildren() const = 0;
