@@ -1,5 +1,31 @@
 2021-10-25  Null  <null@apple.com>
 
+        Cherry-pick r284467. rdar://problem/84327812
+
+    Wasm Table can take arbitrary default value
+    https://bugs.webkit.org/show_bug.cgi?id=231933
+    rdar://84327812
+    
+    Reviewed by Robin Morisset.
+    
+    * wasm/WasmTable.cpp:
+    (JSC::Wasm::Table::grow):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@284467 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-10-18  Yusuke Suzuki  <ysuzuki@apple.com>
+
+            Wasm Table can take arbitrary default value
+            https://bugs.webkit.org/show_bug.cgi?id=231933
+            rdar://84327812
+
+            Reviewed by Robin Morisset.
+
+            * wasm/WasmTable.cpp:
+            (JSC::Wasm::Table::grow):
+
+2021-10-25  Null  <null@apple.com>
+
         Cherry-pick r282984. rdar://problem/77587429
 
     Web Inspector: Graphics: add instrumentation for new `CanvasRenderingContext2DSettings`
