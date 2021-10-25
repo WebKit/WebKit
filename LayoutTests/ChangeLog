@@ -1,3 +1,12 @@
+2021-10-25  Alan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Check across inline box boundaries for breakable position
+        https://bugs.webkit.org/show_bug.cgi?id=232219
+
+        Reviewed by Antti Koivisto.
+
+        * TestExpectations:
+
 2021-10-25  Chris Lord  <clord@igalia.com>
 
         [GTK][WPE] REGRESSION(r284596): Scrolling sometimes jumps to the top of the page during smooth mouse-wheel scrolling

@@ -84,15 +84,6 @@ static inline std::optional<size_t> nextTextRunIndex(const InlineContentBreaker:
     return { };
 }
 
-static inline std::optional<size_t> previousTextRunIndex(const InlineContentBreaker::ContinuousContent::RunList& runs, size_t startIndex)
-{
-    for (auto index = startIndex; index--;) {
-        if (runs[index].inlineItem.isText())
-            return index;
-    }
-    return { };
-}
-
 static inline bool isVisuallyEmptyWhitespaceContent(const InlineContentBreaker::ContinuousContent& continuousContent)
 {
     // [<span></span> ] [<span> </span>] [ <span style="padding: 0px;"></span>] are all considered visually empty whitespace content.
@@ -295,53 +286,80 @@ static bool isWrappableRun(const InlineContentBreaker::ContinuousContent::Run& r
     return TextUtil::isWrappingAllowed(run.style);
 }
 
-static TextUtil::WordBreakLeft midWordBreak(const InlineContentBreaker::ContinuousContent::Run& textRun, InlineLayoutUnit runLogicalLeft, InlineLayoutUnit availableWidth)
+static inline bool canBreakBefore(UChar32 character, LineBreak lineBreak)
 {
+    // FIXME: This should include all the cases from https://unicode.org/reports/tr14
+    // Use a breaking matrix similar to lineBreakTable in BreakLines.cpp
+    // Also see kBreakAllLineBreakClassTable in third_party/blink/renderer/platform/text/text_break_iterator.cc
+    if (lineBreak != LineBreak::Loose) {
+        // The following breaks are allowed for loose line breaking if the preceding character belongs to the Unicode
+        // line breaking class ID, and are otherwise forbidden:
+        // ‐ U+2010, – U+2013
+        // https://drafts.csswg.org/css-text/#line-break-property
+        if (character == hyphen || character == enDash)
+            return false;
+    }
+    if (character == noBreakSpace)
+        return false;
+    auto isPunctuation = U_GET_GC_MASK(character) & (U_GC_PS_MASK | U_GC_PE_MASK | U_GC_PI_MASK | U_GC_PF_MASK | U_GC_PO_MASK);
+    return character == reverseSolidus || !isPunctuation;
+}
+
+static inline std::optional<size_t> lastValidBreakingPosition(const InlineContentBreaker::ContinuousContent::RunList& runs, size_t textRunIndex)
+{
+    auto& textRun = runs[textRunIndex];
     auto& inlineTextItem = downcast<InlineTextItem>(textRun.inlineItem);
-    auto& style = textRun.style;
-    auto lineBreak = style.lineBreak();
-    ASSERT(lineBreak == LineBreak::Anywhere || style.wordBreak() == WordBreak::BreakAll || style.wordBreak() == WordBreak::BreakWord || style.overflowWrap() == OverflowWrap::BreakWord || style.overflowWrap() == OverflowWrap::Anywhere);
+    ASSERT(inlineTextItem.length());
+    auto lineBreak = textRun.style.lineBreak();
 
-    auto wordBreak = TextUtil::breakWord(inlineTextItem, style.fontCascade(), textRun.logicalWidth, availableWidth, runLogicalLeft);
-    if (!wordBreak.length || wordBreak.length == inlineTextItem.length())
-        return wordBreak;
+    auto adjactentTextRunIndex = nextTextRunIndex(runs, textRunIndex);
+    if (!adjactentTextRunIndex)
+        return inlineTextItem.end();
 
-    auto canBreakBetweenAnyTypographicCharacterUnit = lineBreak == LineBreak::Anywhere || style.wordBreak() == WordBreak::BreakWord || style.overflowWrap() == OverflowWrap::BreakWord || style.overflowWrap() == OverflowWrap::Anywhere;
-    if (canBreakBetweenAnyTypographicCharacterUnit)
-        return wordBreak;
+    auto& nextInlineTextItem = downcast<InlineTextItem>(runs[*adjactentTextRunIndex].inlineItem);
+    auto canBreakAtRunBoundary = nextInlineTextItem.isWhitespace() ? nextInlineTextItem.style().whiteSpace() != WhiteSpace::BreakSpaces :
+        canBreakBefore(nextInlineTextItem.inlineTextBox().content()[nextInlineTextItem.start()], lineBreak);
+    if (canBreakAtRunBoundary)
+        return inlineTextItem.end();
 
     // Find out if the candidate position for arbitrary breaking is valid. We can't always break between any characters.
     auto text = inlineTextItem.inlineTextBox().content();
+    auto left = inlineTextItem.start();
+    for (auto index = inlineTextItem.end() - 1; index > left; --index) {
+        U16_SET_CP_START(text, left, index);
+        // We should never find surrogates/segments across inline items.
+        ASSERT(index > inlineTextItem.start());
+        if (canBreakBefore(text[index], lineBreak))
+            return index;
+    }
+    return { };
+}
+
+static std::optional<TextUtil::WordBreakLeft> midWordBreak(const InlineContentBreaker::ContinuousContent::Run& textRun, InlineLayoutUnit runLogicalLeft, InlineLayoutUnit availableWidth)
+{
+    ASSERT(textRun.style.wordBreak() == WordBreak::BreakAll);
+    auto& inlineTextItem = downcast<InlineTextItem>(textRun.inlineItem);
+
+    auto wordBreak = TextUtil::breakWord(inlineTextItem, textRun.style.fontCascade(), textRun.logicalWidth, availableWidth, runLogicalLeft);
+    if (!wordBreak.length || wordBreak.length == inlineTextItem.length())
+        return { };
+
+    // Find out if the candidate position for arbitrary breaking is valid. We can't always break between any characters.
+    auto lineBreak = textRun.style.lineBreak();
+    auto text = inlineTextItem.inlineTextBox().content();
+    if (canBreakBefore(text[inlineTextItem.start() + wordBreak.length], lineBreak))
+        return wordBreak;
+
     const auto left = inlineTextItem.start();
     auto right = left + wordBreak.length;
     for (; right > left; --right) {
-        auto canBreakBefore = [&](auto character) {
-            // FIXME: This should include all the cases from https://unicode.org/reports/tr14
-            // Use a breaking matrix similar to lineBreakTable in BreakLines.cpp
-            // Also see kBreakAllLineBreakClassTable in third_party/blink/renderer/platform/text/text_break_iterator.cc
-            if (lineBreak != LineBreak::Loose) {
-                // The following breaks are allowed for loose line breaking if the preceding character belongs to the Unicode
-                // line breaking class ID, and are otherwise forbidden:
-                // ‐ U+2010, – U+2013
-                // https://drafts.csswg.org/css-text/#line-break-property
-                if (character == hyphen || character == enDash)
-                    return false;
-            }
-            if (character == noBreakSpace)
-                return false;
-            auto isPunctuation = U_GET_GC_MASK(character) & (U_GC_PS_MASK | U_GC_PE_MASK | U_GC_PI_MASK | U_GC_PF_MASK | U_GC_PO_MASK);
-            return character == reverseSolidus || !isPunctuation;
-        };
         U16_SET_CP_START(text, left, right);
-        if (canBreakBefore(text[right]))
+        if (canBreakBefore(text[right], lineBreak))
             break;
     }
-    RELEASE_ASSERT(right >= left);
-    if (left + wordBreak.length == right)
-        return wordBreak;
     if (left == right)
         return { };
-    return { right - left, TextUtil::width(inlineTextItem, style.fontCascade(), left, right, runLogicalLeft) };
+    return TextUtil::WordBreakLeft { right - left, TextUtil::width(inlineTextItem, textRun.style.fontCascade(), left, right, runLogicalLeft) };
 }
 
 struct CandidateTextRunForBreaking {
@@ -373,42 +391,31 @@ std::optional<InlineContentBreaker::PartialRun> InlineContentBreaker::tryBreakin
             }
 
             if (!inlineTextItem.length()) {
-                // Empty text runs may be breakable based on style, but in practice we can't really split them any further.
-                return PartialRun { };
+                // Empty/single character text runs may be breakable based on style, but in practice we can't really split them any further.
+                return { };
             }
 
-            if (!candidateTextRun.isOverflowingRun) {
-                // When the run can be split at arbitrary position we would normally just return the entire run when it is intended to fit on the line
-                // but here we have to check for mid-word break.
-                auto nextIndex = nextTextRunIndex(runs, candidateTextRun.index);
-                if (!nextIndex || !downcast<InlineTextItem>(runs[*nextIndex].inlineItem).isWhitespace())
-                    return PartialRun { inlineTextItem.length(), TextUtil::width(inlineTextItem, fontCascade, candidateTextRun.logicalLeft) };
-                // We've got room for the run but we have to try to break it mid-word.
-                if (inlineTextItem.length() == 1) {
-                    // We can't mid-word break a single character.
-                    return { };
+            if (candidateTextRun.isOverflowingRun) {
+                if (lineHasRoomForContent) {
+                    // Try to break the overflowing run mid-word.
+                    if (auto wordBreak = midWordBreak(candidateRun, candidateTextRun.logicalLeft, availableWidth))
+                        return PartialRun { wordBreak->length, wordBreak->logicalWidth };
                 }
-                auto startPosition = inlineTextItem.start();
-                auto endPosition = inlineTextItem.end() - 1;
-                return PartialRun { inlineTextItem.length() - 1, TextUtil::width(inlineTextItem, fontCascade, startPosition, endPosition, candidateTextRun.logicalLeft) };
-            }
-
-            if (!lineHasRoomForContent) {
-                auto previousIndex = previousTextRunIndex(runs, candidateTextRun.index);
-                if (!previousIndex || !downcast<InlineTextItem>(runs[*previousIndex].inlineItem).isWhitespace()) {
-                    // Fast path for cases when there's no room at all. We can break this content at the start.
+                if (canBreakBefore(inlineTextItem.inlineTextBox().content()[inlineTextItem.start()], style.lineBreak()))
                     return PartialRun { };
-                }
-                if (inlineTextItem.length() == 1) {
-                    // We can't mid-word break a single character.
-                    return { };
-                }
-                auto startPosition = inlineTextItem.start() + 1;
-                auto endPosition = inlineTextItem.end();
-                return PartialRun { inlineTextItem.length() - 1, TextUtil::width(inlineTextItem, fontCascade, startPosition, endPosition, candidateTextRun.logicalLeft) };
+                return { };
             }
-            auto midWordBreak = WebCore::Layout::midWordBreak(candidateRun, candidateTextRun.logicalLeft, availableWidth);
-            return PartialRun { midWordBreak.length, midWordBreak.logicalWidth };
+
+            // This is a non-overflowing content.
+            ASSERT(lineHasRoomForContent);
+            if (auto breakingPosition = lastValidBreakingPosition(runs, candidateTextRun.index)) {
+                ASSERT(*breakingPosition <= inlineTextItem.end());
+                auto trailingLength = *breakingPosition - inlineTextItem.start();
+                auto startPosition = inlineTextItem.start();
+                auto endPosition = startPosition + trailingLength;
+                return PartialRun { trailingLength, TextUtil::width(inlineTextItem, fontCascade, startPosition, endPosition, candidateTextRun.logicalLeft) };
+            }
+            return { };
         };
         return tryBreakingAtArbitraryPositionWithinWords();
     }
