@@ -552,12 +552,13 @@ bool CompositeEditCommand::isRemovableBlock(const Node* node)
     return false;
 }
 
-void CompositeEditCommand::insertNodeBefore(Ref<Node>&& insertChild, Node& refChild, ShouldAssumeContentIsAlwaysEditable shouldAssumeContentIsAlwaysEditable)
+bool CompositeEditCommand::insertNodeBefore(Ref<Node>&& insertChild, Node& refChild, ShouldAssumeContentIsAlwaysEditable shouldAssumeContentIsAlwaysEditable)
 {
     RefPtr parent { refChild.parentNode() };
     if (!parent || (!parent->hasEditableStyle() && parent->renderer()))
-        return;
+        return false;
     applyCommandToComposite(InsertNodeBeforeCommand::create(WTFMove(insertChild), refChild, shouldAssumeContentIsAlwaysEditable, editingAction()));
+    return true;
 }
 
 void CompositeEditCommand::insertNodeAfter(Ref<Node>&& insertChild, Node& refChild)

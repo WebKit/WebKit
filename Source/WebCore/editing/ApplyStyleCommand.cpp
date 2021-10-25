@@ -1319,8 +1319,7 @@ bool ApplyStyleCommand::surroundNodeRangeWithElement(Node& startNode, Node& endN
     Ref<Node> protectedStartNode = startNode;
     Ref<Element> element = WTFMove(elementToInsert);
 
-    insertNodeBefore(element.copyRef(), startNode);
-    if (!element->isContentRichlyEditable()) {
+    if (!insertNodeBefore(element.copyRef(), startNode) || !element->isContentRichlyEditable()) {
         removeNode(element);
         return false;
     }

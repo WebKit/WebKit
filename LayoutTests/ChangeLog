@@ -1,3 +1,13 @@
+2021-10-25  Gabriel Nava Marino  <gnavamarino@apple.com>
+
+        ASSERT(node) triggered after surroundNodeRangeWithElement for node without editable style 
+        https://bugs.webkit.org/show_bug.cgi?id=232133
+
+        Reviewed by Wenson Hsieh.
+
+        * fast/editing/apply-relative-font-style-change-crash-003-expected.txt: Added.
+        * fast/editing/apply-relative-font-style-change-crash-003.html: Added.
+
 2021-10-25  Ayumi Kojima  <ayumi_kojima@apple.com>
 
         [ iOS Debug ] fast/selectors/ backtracking tests are timing out.
