@@ -1,3 +1,74 @@
+2021-10-25  Null  <null@apple.com>
+
+        Cherry-pick r282984. rdar://problem/77587429
+
+    Web Inspector: Graphics: add instrumentation for new `CanvasRenderingContext2DSettings`
+    https://bugs.webkit.org/show_bug.cgi?id=225180
+    <rdar://problem/77587429>
+    
+    Reviewed by BJ Burg.
+    
+    Source/JavaScriptCore:
+    
+    * inspector/protocol/Canvas.json:
+    Add `colorSpace` and `desynchronized` to `Canvas.ContextAttributes`.
+    
+    Source/WebCore:
+    
+    * inspector/InspectorCanvas.cpp:
+    (WebCore::buildObjectForCanvasContextAttributes): Added.
+    (WebCore::InspectorCanvas::buildObjectForCanvas):
+    (WebCore::InspectorCanvas::buildInitialState):
+    Unify the two cases where we fetch canvas attributes into a single method so that both get
+    the same data. This means that the canvas recorder now also uses `Canvas.ContextAttributes`.
+    
+    LayoutTests:
+    
+    * inspector/canvas/context-attributes-expected.txt:
+    * inspector/canvas/recording-2d-frameCount-expected.txt:
+    * inspector/canvas/recording-2d-full-expected.txt:
+    * inspector/canvas/recording-2d-memoryLimit-expected.txt:
+    * inspector/canvas/recording-bitmaprenderer-frameCount-expected.txt:
+    * inspector/canvas/recording-bitmaprenderer-full-expected.txt:
+    * inspector/canvas/recording-bitmaprenderer-memoryLimit-expected.txt:
+    * inspector/canvas/recording-html-2d-expected.txt:
+    * inspector/canvas/recording-webgl-frameCount-expected.txt:
+    * inspector/canvas/recording-webgl-full-expected.txt:
+    * inspector/canvas/recording-webgl-memoryLimit-expected.txt:
+    * inspector/canvas/recording-webgl-snapshots-expected.txt:
+    * inspector/canvas/recording-webgl2-frameCount-expected.txt:
+    * inspector/canvas/recording-webgl2-full-expected.txt:
+    * inspector/canvas/recording-webgl2-memoryLimit-expected.txt:
+    * inspector/canvas/recording-webgl2-snapshots-expected.txt:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@282984 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-09-23  Devin Rousso  <drousso@apple.com>
+
+            Web Inspector: Graphics: add instrumentation for new `CanvasRenderingContext2DSettings`
+            https://bugs.webkit.org/show_bug.cgi?id=225180
+            <rdar://problem/77587429>
+
+            Reviewed by BJ Burg.
+
+            * inspector/canvas/context-attributes-expected.txt:
+            * inspector/canvas/recording-2d-frameCount-expected.txt:
+            * inspector/canvas/recording-2d-full-expected.txt:
+            * inspector/canvas/recording-2d-memoryLimit-expected.txt:
+            * inspector/canvas/recording-bitmaprenderer-frameCount-expected.txt:
+            * inspector/canvas/recording-bitmaprenderer-full-expected.txt:
+            * inspector/canvas/recording-bitmaprenderer-memoryLimit-expected.txt:
+            * inspector/canvas/recording-html-2d-expected.txt:
+            * inspector/canvas/recording-webgl-frameCount-expected.txt:
+            * inspector/canvas/recording-webgl-full-expected.txt:
+            * inspector/canvas/recording-webgl-memoryLimit-expected.txt:
+            * inspector/canvas/recording-webgl-snapshots-expected.txt:
+            * inspector/canvas/recording-webgl2-frameCount-expected.txt:
+            * inspector/canvas/recording-webgl2-full-expected.txt:
+            * inspector/canvas/recording-webgl2-memoryLimit-expected.txt:
+            * inspector/canvas/recording-webgl2-snapshots-expected.txt:
+
 2021-10-22  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r283952. rdar://problem/84558050
