@@ -104,6 +104,9 @@ void RemoteMediaPlayerProxy::invalidate()
         m_sandboxExtension = nullptr;
     }
     m_renderingResourcesRequest = { };
+#if USE(AVFOUNDATION)
+    m_pixelBufferForCurrentTime = nullptr;
+#endif
 }
 
 void RemoteMediaPlayerProxy::getConfiguration(RemoteMediaPlayerConfiguration& configuration)

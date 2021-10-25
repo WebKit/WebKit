@@ -126,7 +126,7 @@ messages -> RemoteMediaPlayerProxy NotRefCounted {
     NativeImageForCurrentTime() -> (std::optional<MachSendRight> sendRight) Synchronous
 #endif
 #if USE(AVFOUNDATION)
-    PixelBufferForCurrentTime() -> (RetainPtr<CVPixelBufferRef> pixelBuffer) Synchronous
+    PixelBufferForCurrentTimeIfChanged() -> (std::optional<RetainPtr<CVPixelBufferRef>> pixelBuffer) Synchronous
 #endif
 
     PlayAtHostTime(MonotonicTime time)

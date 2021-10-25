@@ -1,5 +1,86 @@
 2021-10-25  Null  <null@apple.com>
 
+        Cherry-pick r284102. rdar://problem/84630200
+
+    WebGL video texture upload is very slow due to excessive transfer of the video pixel buffer
+    https://bugs.webkit.org/show_bug.cgi?id=231425
+    
+    Patch by Kimmo Kinnunen <kkinnunen@apple.com> on 2021-10-13
+    Reviewed by Youenn Fablet.
+    
+    Typical WebGL content requests the videos to be uploaded to a texture
+    once per render loop update, even though the video has not changed.
+    The video pixel buffer is slow to transfer across IPC. It should be transferred
+    only when it has changed.
+    
+    MediaPlayerPrivateAVFoundationObjC and MediaPlayerPrivateMediaSourceAVFObjC hold
+    the last requested pixel buffer ref. They will update it or discard it only
+    when pixelBufferForCurrentTime() is called.
+    
+    Cache the pixel buffer to MediaPlayerPrivateRemote (GPUP side proxy)
+    Cache the pixel buffer to RemoteMediaPlayerProxy (WebP side proxy)
+    
+    The caches increase the total memory use only during the duration
+    of the call, since after the ref has been updated, it refers
+    to the one always held in the original objects (MediaPlayerPrivateAVFoundationObjC
+    and MediaPlayerPrivateMediaSourceAVFObjC)
+    
+    No new tests, fixes a perf regression wrt GPUP media.
+    
+    * GPUProcess/media/RemoteMediaPlayerProxy.cpp:
+    (WebKit::RemoteMediaPlayerProxy::invalidate):
+    * GPUProcess/media/RemoteMediaPlayerProxy.h:
+    * GPUProcess/media/RemoteMediaPlayerProxy.messages.in:
+    * GPUProcess/media/cocoa/RemoteMediaPlayerProxyCocoa.mm:
+    (WebKit::RemoteMediaPlayerProxy::nativeImageForCurrentTime):
+    (WebKit::RemoteMediaPlayerProxy::pixelBufferForCurrentTimeIfChanged):
+    (WebKit::RemoteMediaPlayerProxy::pixelBufferForCurrentTime): Deleted.
+    * WebProcess/GPU/media/MediaPlayerPrivateRemote.h:
+    * WebProcess/GPU/media/cocoa/MediaPlayerPrivateRemoteCocoa.mm:
+    (WebKit::MediaPlayerPrivateRemote::pixelBufferForCurrentTime):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@284102 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-10-13  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+            WebGL video texture upload is very slow due to excessive transfer of the video pixel buffer
+            https://bugs.webkit.org/show_bug.cgi?id=231425
+
+            Reviewed by Youenn Fablet.
+
+            Typical WebGL content requests the videos to be uploaded to a texture
+            once per render loop update, even though the video has not changed.
+            The video pixel buffer is slow to transfer across IPC. It should be transferred
+            only when it has changed.
+
+            MediaPlayerPrivateAVFoundationObjC and MediaPlayerPrivateMediaSourceAVFObjC hold
+            the last requested pixel buffer ref. They will update it or discard it only
+            when pixelBufferForCurrentTime() is called.
+
+            Cache the pixel buffer to MediaPlayerPrivateRemote (GPUP side proxy)
+            Cache the pixel buffer to RemoteMediaPlayerProxy (WebP side proxy)
+
+            The caches increase the total memory use only during the duration
+            of the call, since after the ref has been updated, it refers
+            to the one always held in the original objects (MediaPlayerPrivateAVFoundationObjC
+            and MediaPlayerPrivateMediaSourceAVFObjC)
+
+            No new tests, fixes a perf regression wrt GPUP media.
+
+            * GPUProcess/media/RemoteMediaPlayerProxy.cpp:
+            (WebKit::RemoteMediaPlayerProxy::invalidate):
+            * GPUProcess/media/RemoteMediaPlayerProxy.h:
+            * GPUProcess/media/RemoteMediaPlayerProxy.messages.in:
+            * GPUProcess/media/cocoa/RemoteMediaPlayerProxyCocoa.mm:
+            (WebKit::RemoteMediaPlayerProxy::nativeImageForCurrentTime):
+            (WebKit::RemoteMediaPlayerProxy::pixelBufferForCurrentTimeIfChanged):
+            (WebKit::RemoteMediaPlayerProxy::pixelBufferForCurrentTime): Deleted.
+            * WebProcess/GPU/media/MediaPlayerPrivateRemote.h:
+            * WebProcess/GPU/media/cocoa/MediaPlayerPrivateRemoteCocoa.mm:
+            (WebKit::MediaPlayerPrivateRemote::pixelBufferForCurrentTime):
+
+2021-10-25  Null  <null@apple.com>
+
         Cherry-pick r283975. rdar://problem/84630618
 
     Error the encoder in case we cannot create a RemoteVideoSample
