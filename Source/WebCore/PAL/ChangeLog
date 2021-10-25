@@ -1,3 +1,17 @@
+2021-10-25  Ayumi Kojima  <ayumi_kojima@apple.com>
+
+        Unreviewed, reverting r284742.
+
+        Reverting because this commit may have casued a regression on
+        imported/w3c/web-platform-tests/speech-api/SpeechSynthesis-
+        speak-events.html
+
+        Reverted changeset:
+
+        "AX: Unify speech synthesizer platform usage for Mac/iOS"
+        https://bugs.webkit.org/show_bug.cgi?id=231895
+        https://commits.webkit.org/r284742
+
 2021-10-23  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Unify speech synthesizer platform usage for Mac/iOS
