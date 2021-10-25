@@ -1929,6 +1929,9 @@ webkit.org/b/232014 fast/scrolling/ios/scroll-snap-with-relayouts-horizontal.htm
 
 webkit.org/b/231391 [ Debug ] fast/selectors/is-complex.html [ Slow ]
 
+webkit.org/b/230988 [ Debug ] fast/selectors/is-backtracking.html [ Timeout ]
+webkit.org/b/230988 [ Debug ] fast/selectors/matches-backtracking.html [ Timeout ]
+
 http/tests/in-app-browser-privacy/ [ Pass ]
 
 webkit.org/b/175193 fast/images/async-image-body-background-image.html [ Pass Timeout ]
