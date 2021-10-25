@@ -21,6 +21,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import os
+import time
 
 from datetime import datetime
 from webkitcorepy import run, testing, LoggerCapture, OutputCapture
@@ -317,32 +318,34 @@ class TestGit(testing.PathTestCase):
                 ], cwd=self.path, capture_output=True, encoding='utf-8').stdout,
                 '''commit d8bce26fa65c6fc8f39c17927abb77f69fab82fc
 Author:     Jonathan Bedard <jbedard@apple.com>
-AuthorDate: Sat Oct 03 03:46:40 2020 +0000
+AuthorDate: {time_a}
 Commit:     Jonathan Bedard <jbedard@apple.com>
-CommitDate: Sat Oct 03 03:46:40 2020 +0000
+CommitDate: {time_a}
 
     Patch Series
     git-svn-id: https://svn.example.org/repository/repository/trunk@9 268f45cc-cd09-0410-ab3c-d52691b4dbfc
 
 commit bae5d1e90999d4f916a8a15810ccfa43f37a2fd6
 Author:     Jonathan Bedard <jbedard@apple.com>
-AuthorDate: Sat Oct 03 03:46:40 2020 +0000
+AuthorDate: {time_a}
 Commit:     Jonathan Bedard <jbedard@apple.com>
-CommitDate: Sat Oct 03 03:46:40 2020 +0000
+CommitDate: {time_a}
 
     8th commit
     git-svn-id: https://svn.example.org/repository/repository/trunk@8 268f45cc-cd09-0410-ab3c-d52691b4dbfc
 
 commit 1abe25b443e985f93b90d830e4a7e3731336af4d
 Author:     Jonathan Bedard <jbedard@apple.com>
-AuthorDate: Sat Oct 03 02:23:20 2020 +0000
+AuthorDate: {time_b}
 Commit:     Jonathan Bedard <jbedard@apple.com>
-CommitDate: Sat Oct 03 02:23:20 2020 +0000
+CommitDate: {time_b}
 
     4th commit
     git-svn-id: https://svn.example.org/repository/repository/trunk@4 268f45cc-cd09-0410-ab3c-d52691b4dbfc
-'''
-            )
+'''.format(
+                time_a=datetime.utcfromtimestamp(1601668000 + time.timezone).strftime('%a %b %d %H:%M:%S %Y +0000'),
+                time_b=datetime.utcfromtimestamp(1601663000 + time.timezone).strftime('%a %b %d %H:%M:%S %Y +0000'),
+            ))
 
     def test_branch_log(self):
         with mocks.local.Git(self.path, git_svn=True):
@@ -352,18 +355,18 @@ CommitDate: Sat Oct 03 02:23:20 2020 +0000
                 ], cwd=self.path, capture_output=True, encoding='utf-8').stdout,
                 '''commit 790725a6d79e28db2ecdde29548d2262c0bd059d
 Author:     Jonathan Bedard <jbedard@apple.com>
-AuthorDate: Sat Oct 03 03:30:00 2020 +0000
+AuthorDate: {time_a}
 Commit:     Jonathan Bedard <jbedard@apple.com>
-CommitDate: Sat Oct 03 03:30:00 2020 +0000
+CommitDate: {time_a}
 
     7th commit
     git-svn-id: https://svn.example.org/repository/repository/trunk@7 268f45cc-cd09-0410-ab3c-d52691b4dbfc
 
 commit 3cd32e352410565bb543821fbf856a6d3caad1c4
 Author:     Jonathan Bedard <jbedard@apple.com>
-AuthorDate: Sat Oct 03 02:40:00 2020 +0000
+AuthorDate: {time_b}
 Commit:     Jonathan Bedard <jbedard@apple.com>
-CommitDate: Sat Oct 03 02:40:00 2020 +0000
+CommitDate: {time_b}
 
     5th commit
         Cherry pick
@@ -372,14 +375,17 @@ CommitDate: Sat Oct 03 02:40:00 2020 +0000
 
 commit a30ce8494bf1ac2807a69844f726be4a9843ca55
 Author:     Jonathan Bedard <jbedard@apple.com>
-AuthorDate: Sat Oct 03 02:06:40 2020 +0000
+AuthorDate: {time_c}
 Commit:     Jonathan Bedard <jbedard@apple.com>
-CommitDate: Sat Oct 03 02:06:40 2020 +0000
+CommitDate: {time_c}
 
     3rd commit
     git-svn-id: https://svn.example.org/repository/repository/trunk@3 268f45cc-cd09-0410-ab3c-d52691b4dbfc
-'''
-            )
+'''.format(
+                time_a=datetime.utcfromtimestamp(1601667000 + time.timezone).strftime('%a %b %d %H:%M:%S %Y +0000'),
+                time_b=datetime.utcfromtimestamp(1601664000 + time.timezone).strftime('%a %b %d %H:%M:%S %Y +0000'),
+                time_c=datetime.utcfromtimestamp(1601662000 + time.timezone).strftime('%a %b %d %H:%M:%S %Y +0000'),
+            ))
 
     def test_cache(self):
         for mock in [mocks.local.Git(self.path), mocks.local.Git(self.path, git_svn=True)]:
