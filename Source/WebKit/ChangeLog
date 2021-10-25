@@ -1,5 +1,60 @@
 2021-10-25  Null  <null@apple.com>
 
+        Cherry-pick r284294. rdar://problem/84630302
+
+    [iOS] Screen Sharing doesn't switch to AirPlay when <video> enters fullscreen mode
+    https://bugs.webkit.org/show_bug.cgi?id=231807
+    <rdar://82995799>
+    
+    Reviewed by Eric Carlson.
+    
+    WebKit will allow AVPlayer to switch to AirPlay Video mode from Screen Sharing when a
+    <video> element is in fullscreen mode. However, the fullscreen state this code depends on
+    is not stored in the GPU process.
+    
+    Implement RemoteMediaPlayerProxy::mediaPlayerFullscreenMode()
+    and ::mediaPlayerIsVideoFullscreenStandby().
+    
+    * GPUProcess/media/RemoteMediaPlayerProxy.cpp:
+    (WebKit::RemoteMediaPlayerProxy::setVideoFullscreenMode):
+    (WebKit::RemoteMediaPlayerProxy::videoFullscreenStandbyChanged):
+    (WebKit::RemoteMediaPlayerProxy::mediaPlayerFullscreenMode const):
+    (WebKit::RemoteMediaPlayerProxy::mediaPlayerIsVideoFullscreenStandby const):
+    * GPUProcess/media/RemoteMediaPlayerProxy.h:
+    * GPUProcess/media/RemoteMediaPlayerProxy.messages.in:
+    * WebProcess/GPU/media/MediaPlayerPrivateRemote.cpp:
+    (WebKit::MediaPlayerPrivateRemote::videoFullscreenStandbyChanged):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@284294 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-10-15  Jer Noble  <jer.noble@apple.com>
+
+            [iOS] Screen Sharing doesn't switch to AirPlay when <video> enters fullscreen mode
+            https://bugs.webkit.org/show_bug.cgi?id=231807
+            <rdar://82995799>
+
+            Reviewed by Eric Carlson.
+
+            WebKit will allow AVPlayer to switch to AirPlay Video mode from Screen Sharing when a
+            <video> element is in fullscreen mode. However, the fullscreen state this code depends on
+            is not stored in the GPU process.
+
+            Implement RemoteMediaPlayerProxy::mediaPlayerFullscreenMode()
+            and ::mediaPlayerIsVideoFullscreenStandby().
+
+            * GPUProcess/media/RemoteMediaPlayerProxy.cpp:
+            (WebKit::RemoteMediaPlayerProxy::setVideoFullscreenMode):
+            (WebKit::RemoteMediaPlayerProxy::videoFullscreenStandbyChanged):
+            (WebKit::RemoteMediaPlayerProxy::mediaPlayerFullscreenMode const):
+            (WebKit::RemoteMediaPlayerProxy::mediaPlayerIsVideoFullscreenStandby const):
+            * GPUProcess/media/RemoteMediaPlayerProxy.h:
+            * GPUProcess/media/RemoteMediaPlayerProxy.messages.in:
+            * WebProcess/GPU/media/MediaPlayerPrivateRemote.cpp:
+            (WebKit::MediaPlayerPrivateRemote::videoFullscreenStandbyChanged):
+
+2021-10-25  Null  <null@apple.com>
+
         Cherry-pick r284102. rdar://problem/84630200
 
     WebGL video texture upload is very slow due to excessive transfer of the video pixel buffer

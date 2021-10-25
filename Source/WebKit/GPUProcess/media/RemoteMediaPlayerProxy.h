@@ -103,7 +103,7 @@ public:
 #if ENABLE(VIDEO_PRESENTATION_MODE)
     void updateVideoFullscreenInlineImage();
     void setVideoFullscreenMode(WebCore::MediaPlayer::VideoFullscreenMode);
-    void videoFullscreenStandbyChanged();
+    void videoFullscreenStandbyChanged(bool);
 #endif
 
     void setBufferingPolicy(WebCore::MediaPlayer::BufferingPolicy);
@@ -354,6 +354,8 @@ private:
 
     bool m_bufferedChanged { true };
     bool m_renderingCanBeAccelerated { false };
+    WebCore::MediaPlayer::VideoFullscreenMode m_fullscreenMode { WebCore::MediaPlayer::VideoFullscreenModeNone };
+    bool m_videoFullscreenStandby { false };
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA) && ENABLE(ENCRYPTED_MEDIA)
     bool m_shouldContinueAfterKeyNeeded { false };
