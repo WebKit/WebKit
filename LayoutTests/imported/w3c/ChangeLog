@@ -1,3 +1,15 @@
+2021-10-25  Ziran Sun  <zsun@igalia.com>
+
+        [CSS-grid] Need to set prefer width dirty for the child that has constraints to the grid area
+        https://bugs.webkit.org/show_bug.cgi?id=232140
+
+        Reviewed by Sergio Villar Senin.
+
+        Update the test expectation file for the following tests. These tests are now passing.
+        * web-platform-tests/css/css-grid/grid-items/grid-items-percentage-paddings-002-expected.txt:
+        * web-platform-tests/css/css-grid/grid-items/grid-items-percentage-paddings-vertical-lr-002-expected.txt:
+        * web-platform-tests/css/css-grid/grid-items/grid-items-percentage-paddings-vertical-rl-002-expected.txt:
+
 2021-10-25  Tim Nguyen  <ntim@apple.com>
 
         Fix imported/w3c/web-platform-tests/css/selectors/focus-visible-009.html flaky failure on macOS wk1

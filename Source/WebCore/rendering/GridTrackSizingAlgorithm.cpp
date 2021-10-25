@@ -809,8 +809,15 @@ LayoutUnit GridTrackSizingAlgorithmStrategy::minContentForChild(RenderBox& child
         return child.minPreferredLogicalWidth() + GridLayoutFunctions::marginLogicalSizeForChild(*renderGrid(), childInlineDirection, child) + m_algorithm.baselineOffsetForChild(child, gridAxisForDirection(direction()));
     }
 
-    if (updateOverridingContainingBlockContentSizeForChild(child, childInlineDirection))
+    if (updateOverridingContainingBlockContentSizeForChild(child, childInlineDirection)) {
         child.setNeedsLayout(MarkOnlyThis);
+        // For a child with relative width constraints to the grid area, such as percentaged paddings, we reset the overridingContainingBlockContentSizeForChild value for columns when we are executing a definite strategy
+        // for columns. Since we have updated the overridingContainingBlockContentSizeForChild inline-axis/width value here, we might need to recompute the child's relative width. For some cases, we probably will not
+        // be able to do it during the RenderGrid::layoutGridItems() function as the grid area does't change there any more. Also, as we are doing a layout inside GridTrackSizingAlgorithmStrategy::logicalHeightForChild()
+        // function, let's take the advantage and set it here. 
+        if (shouldClearOverridingContainingBlockContentSizeForChild(child, childInlineDirection))
+            child.setPreferredLogicalWidthsDirty(true);
+    }
     return logicalHeightForChild(child);
 }
 
