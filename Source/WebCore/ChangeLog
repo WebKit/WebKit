@@ -1,5 +1,42 @@
 2021-10-25  Null  <null@apple.com>
 
+        Cherry-pick r284007. rdar://problem/84630339
+
+    Cocoa GraphicsContextGLOpenGL uses depth and stencil for pbuffers on ANGLE Metal
+    https://bugs.webkit.org/show_bug.cgi?id=231424
+    
+    Patch by Kimmo Kinnunen <kkinnunen@apple.com> on 2021-10-12
+    Reviewed by Dean Jackson.
+    
+    ANGLE Metal allocates depth and stencil buffers when a pbuffer is bound to
+    a texture via eglBindTexImage.
+    To side-step this performance issue, allocate the gl context with EGLConfig
+    that disables depth and stencil. The config is used for the video texture
+    upload context, video texture upload pbuffers as well as other pbuffers.
+    
+    * platform/graphics/cocoa/GraphicsContextGLOpenGLCocoa.mm:
+    (WebCore::GraphicsContextGLOpenGL::GraphicsContextGLOpenGL):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@284007 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-10-12  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+            Cocoa GraphicsContextGLOpenGL uses depth and stencil for pbuffers on ANGLE Metal
+            https://bugs.webkit.org/show_bug.cgi?id=231424
+
+            Reviewed by Dean Jackson.
+
+            ANGLE Metal allocates depth and stencil buffers when a pbuffer is bound to
+            a texture via eglBindTexImage.
+            To side-step this performance issue, allocate the gl context with EGLConfig
+            that disables depth and stencil. The config is used for the video texture
+            upload context, video texture upload pbuffers as well as other pbuffers.
+
+            * platform/graphics/cocoa/GraphicsContextGLOpenGLCocoa.mm:
+            (WebCore::GraphicsContextGLOpenGL::GraphicsContextGLOpenGL):
+
+2021-10-25  Null  <null@apple.com>
+
         Cherry-pick r283979. rdar://problem/84630712
 
     WebGL first clear is lost when scissor is used for preserveDrawingBuffer:true in some conditions
