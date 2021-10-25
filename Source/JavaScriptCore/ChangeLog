@@ -1,5 +1,36 @@
 2021-10-25  Null  <null@apple.com>
 
+        Cherry-pick r284699. rdar://problem/84340372
+
+    canDoFastSpread should also check that the Structure is from the global object we're watching
+    https://bugs.webkit.org/show_bug.cgi?id=231976
+    <rdar://84340372>
+    
+    Reviewed by Keith Miller.
+    
+    Just reorder the checks for clarity.
+    
+    * dfg/DFGGraph.cpp:
+    (JSC::DFG::Graph::canDoFastSpread):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@284699 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-10-22  Saam Barati  <sbarati@apple.com>
+
+            canDoFastSpread should also check that the Structure is from the global object we're watching
+            https://bugs.webkit.org/show_bug.cgi?id=231976
+            <rdar://84340372>
+
+            Reviewed by Keith Miller.
+
+            Just reorder the checks for clarity.
+
+            * dfg/DFGGraph.cpp:
+            (JSC::DFG::Graph::canDoFastSpread):
+
+2021-10-25  Null  <null@apple.com>
+
         Cherry-pick r284623. rdar://problem/84375007
 
     Add missing overflow check to DFGIntegerRangeOptimizationPhase::filterConstant()
