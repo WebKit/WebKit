@@ -1,5 +1,186 @@
 2021-10-25  Null  <null@apple.com>
 
+        Cherry-pick r283592. rdar://problem/84625519
+
+    [iOS] Transcode videos selected from UIImagePickerController
+    https://bugs.webkit.org/show_bug.cgi?id=230639
+    rdar://79665678
+    
+    Reviewed by Tim Horton.
+    
+    Source/WebCore:
+    
+    * en.lproj/Localizable.strings:
+    
+    Add a localizable string for the message displayed while transcoding
+    video.
+    
+    Source/WebCore/PAL:
+    
+    Add AVFoundation API needed to transcode video.
+    
+    * pal/cocoa/AVFoundationSoftLink.h:
+    * pal/cocoa/AVFoundationSoftLink.mm:
+    
+    Source/WebKit:
+    
+    File inputs on iOS allow users to choose images/videos from the system
+    photo picker, using UIImagePickerController. In single selection mode,
+    UIImagePickerController transcodes the selected video to H.264. However,
+    in multiple selection mode, video is not transcoded and is left in its
+    original format.
+    
+    Today, videos on most iOS devices are encoded with HEVC by default.
+    However, some sites, such as Twitter, only accept H.264 encoded video.
+    Thus, the current video upload behavior is problematic, as users may be
+    unable to upload video.
+    
+    Unfortunately, the photo picking functionality of UIImagePickerController
+    is deprecated. The best solution would be to adopt PHPickerViewController,
+    the replacement API, which performs transcoding when retrieving selected
+    items (regardless of single/multiple selection). However,
+    PHPickerViewController currently lacks other functionality that WebKit
+    requires, preventing adoption.
+    
+    Consequently, the short term solution is to transcode the videos in
+    WebKit, ensuring H.264 encoded video is always provided to sites. See
+    below for implementation details.
+    
+    * Platform/spi/ios/PhotosUISPI.h: Added.
+    * UIProcess/ios/forms/WKFileUploadPanel.mm:
+    (-[_WKFileUploadItem setFileURL:]):
+    
+    Add a setter to update the file URL. Called after transcoding a _WKFileUploadItem.
+    
+    (-[WKFileUploadMediaTranscoder initWithItems:videoCount:completionHandler:]):
+    
+    Introduce WKFileUploadMediaTranscoder to manage transcoding of videos
+    and the display of progress UI. Transcoding is performed serially
+    (one video at a time), but occurs off the main thread.
+    
+    (-[WKFileUploadMediaTranscoder start]):
+    
+    Begin transcoding. Run a timer to update the progress UI, as
+    AVAssetExportSession does not provide progress updates on its own.
+    
+    The progress UI is implemented using PUActivityProgressController, to
+    match system Photos UI.
+    
+    (-[WKFileUploadMediaTranscoder _processItemAtIndex:]):
+    
+    Transcode a single video, using AVAssetExportSession. If transcoding
+    fails for any reason, the original video is used as a fallback.
+    Transcoding can also be cancelled using the progress UI, in which case
+    no more videos are processed.
+    
+    (-[WKFileUploadMediaTranscoder _finishedProcessing]):
+    (-[WKFileUploadMediaTranscoder _dismissProgress]):
+    (-[WKFileUploadMediaTranscoder _updateProgress:]):
+    (-[WKFileUploadMediaTranscoder _temporaryDirectoryCreateIfNecessary]):
+    (-[WKFileUploadPanel _chooseMediaItems:]):
+    
+    Refactor the common aspects of single/multiple media selection into a
+    single method.
+    
+    (-[WKFileUploadPanel imagePickerController:didFinishPickingMediaWithInfo:]):
+    (-[WKFileUploadPanel imagePickerController:didFinishPickingMultipleMediaWithInfo:]):
+    (-[WKFileUploadPanel _processMediaInfoDictionaries:successBlock:failureBlock:]):
+    (-[WKFileUploadPanel _processMediaInfoDictionaries:atIndex:processedResults:successBlock:failureBlock:]):
+    (-[WKFileUploadPanel _uploadItemFromMediaInfo:successBlock:failureBlock:]):
+    
+    Remove redundant platform conditional.
+    
+    (-[WKFileUploadPanel _uploadMediaItemsTranscodingVideo:]):
+    
+    If any videos were selected, transcode them prior to uploading.
+    
+    * WebKit.xcodeproj/project.pbxproj:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@283592 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-10-05  Aditya Keerthi  <akeerthi@apple.com>
+
+            [iOS] Transcode videos selected from UIImagePickerController
+            https://bugs.webkit.org/show_bug.cgi?id=230639
+            rdar://79665678
+
+            Reviewed by Tim Horton.
+
+            File inputs on iOS allow users to choose images/videos from the system
+            photo picker, using UIImagePickerController. In single selection mode,
+            UIImagePickerController transcodes the selected video to H.264. However,
+            in multiple selection mode, video is not transcoded and is left in its
+            original format.
+
+            Today, videos on most iOS devices are encoded with HEVC by default.
+            However, some sites, such as Twitter, only accept H.264 encoded video.
+            Thus, the current video upload behavior is problematic, as users may be
+            unable to upload video.
+
+            Unfortunately, the photo picking functionality of UIImagePickerController
+            is deprecated. The best solution would be to adopt PHPickerViewController,
+            the replacement API, which performs transcoding when retrieving selected
+            items (regardless of single/multiple selection). However,
+            PHPickerViewController currently lacks other functionality that WebKit
+            requires, preventing adoption.
+
+            Consequently, the short term solution is to transcode the videos in
+            WebKit, ensuring H.264 encoded video is always provided to sites. See
+            below for implementation details.
+
+            * Platform/spi/ios/PhotosUISPI.h: Added.
+            * UIProcess/ios/forms/WKFileUploadPanel.mm:
+            (-[_WKFileUploadItem setFileURL:]):
+
+            Add a setter to update the file URL. Called after transcoding a _WKFileUploadItem.
+
+            (-[WKFileUploadMediaTranscoder initWithItems:videoCount:completionHandler:]):
+
+            Introduce WKFileUploadMediaTranscoder to manage transcoding of videos
+            and the display of progress UI. Transcoding is performed serially
+            (one video at a time), but occurs off the main thread.
+
+            (-[WKFileUploadMediaTranscoder start]):
+
+            Begin transcoding. Run a timer to update the progress UI, as
+            AVAssetExportSession does not provide progress updates on its own.
+
+            The progress UI is implemented using PUActivityProgressController, to
+            match system Photos UI.
+
+            (-[WKFileUploadMediaTranscoder _processItemAtIndex:]):
+
+            Transcode a single video, using AVAssetExportSession. If transcoding
+            fails for any reason, the original video is used as a fallback.
+            Transcoding can also be cancelled using the progress UI, in which case
+            no more videos are processed.
+
+            (-[WKFileUploadMediaTranscoder _finishedProcessing]):
+            (-[WKFileUploadMediaTranscoder _dismissProgress]):
+            (-[WKFileUploadMediaTranscoder _updateProgress:]):
+            (-[WKFileUploadMediaTranscoder _temporaryDirectoryCreateIfNecessary]):
+            (-[WKFileUploadPanel _chooseMediaItems:]):
+
+            Refactor the common aspects of single/multiple media selection into a
+            single method.
+
+            (-[WKFileUploadPanel imagePickerController:didFinishPickingMediaWithInfo:]):
+            (-[WKFileUploadPanel imagePickerController:didFinishPickingMultipleMediaWithInfo:]):
+            (-[WKFileUploadPanel _processMediaInfoDictionaries:successBlock:failureBlock:]):
+            (-[WKFileUploadPanel _processMediaInfoDictionaries:atIndex:processedResults:successBlock:failureBlock:]):
+            (-[WKFileUploadPanel _uploadItemFromMediaInfo:successBlock:failureBlock:]):
+
+            Remove redundant platform conditional.
+
+            (-[WKFileUploadPanel _uploadMediaItemsTranscodingVideo:]):
+
+            If any videos were selected, transcode them prior to uploading.
+
+            * WebKit.xcodeproj/project.pbxproj:
+
+2021-10-25  Null  <null@apple.com>
+
         Cherry-pick r283515. rdar://problem/84624826
 
     [WebAuthn] Prefer internal user verification if available over pin entry.

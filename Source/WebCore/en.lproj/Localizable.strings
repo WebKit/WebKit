@@ -754,6 +754,9 @@
 /* Description of the PostScript type supported by the PDF pseudo plug-in. Visible in the Installed Plug-ins page in Safari. */
 "PostScript" = "PostScript";
 
+/* Title for file upload progress view */
+"Preparing (file upload)" = "Preparing…";
+
 /* Title for Quick Look action button */
 "Quick Look" = "Quick Look";
 
