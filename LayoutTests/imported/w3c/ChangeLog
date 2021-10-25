@@ -1,3 +1,15 @@
+2021-10-25  Tim Nguyen  <ntim@apple.com>
+
+        Fix imported/w3c/web-platform-tests/css/selectors/focus-visible-009.html flaky failure on macOS wk1
+        https://bugs.webkit.org/show_bug.cgi?id=231647
+
+        Reviewed by Antti Koivisto.
+
+        This only tests a CSS selector feature, use `waitUntilStableAutofocusState()` helper which is more stable on wk1
+        to make this test pass.
+
+        * web-platform-tests/css/selectors/focus-visible-009.html:
+
 2021-10-24  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Assertions in IDBTransaction::request*() methods fail on cross-realm methods
