@@ -1,5 +1,75 @@
 2021-10-25  Null  <null@apple.com>
 
+        Cherry-pick r284532. rdar://problem/84625267
+
+    Source/WebKit:
+    [WebAuthn] Obtain consent to create new credential when platform authenticator in excludedCredentials
+    https://bugs.webkit.org/show_bug.cgi?id=219813
+    <rdar://problem/72484635>
+    
+    Patch by John Pascoe <j_pascoe@apple.com> on 2021-10-20
+    Reviewed by Brent Fulgham.
+    
+    Currently, whenever the platform authenticator is within excludedCredentials during makeCredential we
+    always return NotAllowedError and merely flash a consent screen. This does not match the spec per Step 3.1
+    of makeCredential (https://w3c.github.io/webauthn/#sctn-op-make-cred). Instead, we should always obtain consent
+    and return a different error depending on consent was obtained.
+    
+    A fixme to add this was inadvertently removed in https://bugs.webkit.org/attachment.cgi?id=393180&action=prettypatch
+    
+    Added api test TestWebKitAPI.WebAuthenticationPanel.LADuplicateCredentialWithConsent
+    
+    * UIProcess/WebAuthentication/Cocoa/LocalAuthenticator.mm:
+    (WebKit::LocalAuthenticator::makeCredential):
+    
+    Tools:
+    [WebAuthn] Obtain consent to create new credential when platform authenticator in excludedCredentials
+    https://bugs.webkit.org/show_bug.cgi?id=219813
+    <rdar://problem/72484635>
+    
+    Patch by John Pascoe <j_pascoe@apple.com> on 2021-10-20
+    Reviewed by Brent Fulgham.
+    
+    Currently, whenever the platform authenticator is within excludedCredentials during makeCredential we
+    always return NotAllowedError and merely flash a consent screen. This does not match the spec per Step 3.1
+    of makeCredential (https://w3c.github.io/webauthn/#sctn-op-make-cred). Instead, we should always obtain consent
+    and return a different error depending on consent was obtained.
+    
+    This adds a test to confirm a different path is taken whenever consent is obtained.
+    
+    * TestWebKitAPI/Tests/WebKitCocoa/_WKWebAuthenticationPanel.mm:
+    (TestWebKitAPI::TEST):
+    
+    LayoutTests:
+    WebAuthn] Obtain consent to create new credential when platform authenticator in excludedCredentials
+    https://bugs.webkit.org/show_bug.cgi?id=219813
+    <rdar://problem/72484635>
+    
+    Patch by John Pascoe <j_pascoe@apple.com> on 2021-10-20
+    Reviewed by Brent Fulgham.
+    
+    Modify layout tests to reflect different exception returned when consent is provided
+    
+    * http/wpt/webauthn/public-key-credential-create-failure-local-silent.https.html:
+    * http/wpt/webauthn/public-key-credential-create-failure-local.https.html:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@284532 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-10-20  John Pascoe  <j_pascoe@apple.com>
+
+            WebAuthn] Obtain consent to create new credential when platform authenticator in excludedCredentials
+            https://bugs.webkit.org/show_bug.cgi?id=219813
+            <rdar://problem/72484635>
+
+            Reviewed by Brent Fulgham.
+
+            Modify layout tests to reflect different exception returned when consent is provided
+
+            * http/wpt/webauthn/public-key-credential-create-failure-local-silent.https.html:
+            * http/wpt/webauthn/public-key-credential-create-failure-local.https.html:
+
+2021-10-25  Null  <null@apple.com>
+
         Cherry-pick r284247. rdar://problem/84629726
 
     REGRESSION (r276370): Elements with animated transform property might not properly rendered
