@@ -1,3 +1,55 @@
+2021-10-25  Null  <null@apple.com>
+
+        Cherry-pick r284436. rdar://problem/83753956
+
+    Make createImageBitmap() take EXIF orientation into account correctly
+    https://bugs.webkit.org/show_bug.cgi?id=231063
+    <rdar://problem/83753956>
+    
+    Reviewed by Myles Maxfield and Said Abou-Hallawa.
+    
+    LayoutTests/imported/w3c:
+    
+    * web-platform-tests/html/canvas/element/manual/imagebitmap/createImageBitmap-exif-orientation-expected.txt: Added.
+    * web-platform-tests/html/canvas/element/manual/imagebitmap/createImageBitmap-exif-orientation.html: Added.
+    * web-platform-tests/html/canvas/element/manual/imagebitmap/resources/squares.jpg: Added.
+    
+    Source/WebCore:
+    
+    Test: imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/createImageBitmap-exif-orientation.html
+    
+    This makes us treat {imageOrientation:"none"} as meaning "apply EXIF
+    orientation without any additional transformation", and
+    {imageOrientation:"flipY"} as meaning "apply EXIF orientation and then
+    apply an additional vertical flip". This behavior matches Firefox;
+    https://github.com/whatwg/html/issues/7210 is open on clarifying this
+    behavior in the HTML spec.
+    
+    * html/ImageBitmap.cpp:
+    (WebCore::ImageBitmap::createPromise):
+    (WebCore::ImageBitmap::createFromBuffer):
+    (WebCore::imageOrientationForOrientation): Deleted.
+    * html/ImageBitmapOptions.h:
+    (WebCore::ImageBitmapOptions::resolvedImageOrientation const):
+    * html/ImageBitmapOptions.idl:
+    * platform/graphics/ImageOrientation.h:
+    (WebCore::ImageOrientation::withFlippedY const):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@284436 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-10-18  Cameron McCormack  <heycam@apple.com>
+
+            Make createImageBitmap() take EXIF orientation into account correctly
+            https://bugs.webkit.org/show_bug.cgi?id=231063
+            <rdar://problem/83753956>
+
+            Reviewed by Myles Maxfield and Said Abou-Hallawa.
+
+            * web-platform-tests/html/canvas/element/manual/imagebitmap/createImageBitmap-exif-orientation-expected.txt: Added.
+            * web-platform-tests/html/canvas/element/manual/imagebitmap/createImageBitmap-exif-orientation.html: Added.
+            * web-platform-tests/html/canvas/element/manual/imagebitmap/resources/squares.jpg: Added.
+
 2021-10-19  Russell Epstein  <repstein@apple.com>
 
         Revert r283931. rdar://problem/83953710
