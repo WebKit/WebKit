@@ -1,5 +1,16 @@
 2021-10-25  Chris Dumez  <cdumez@apple.com>
 
+        imported/w3c/web-platform-tests/html/semantics/forms/form-submission-0/form-submission-algorithm.html is timing out
+        https://bugs.webkit.org/show_bug.cgi?id=232117
+
+        Reviewed by Alex Christensen.
+
+        Unskip test that no longer times out.
+
+        * TestExpectations:
+
+2021-10-25  Chris Dumez  <cdumez@apple.com>
+
         Regression (r284610): [ iOS BigSur wk2 ] http/tests/security/window-opened-from-sandboxed-iframe-should-inherit-sandbox.html is failing
         https://bugs.webkit.org/show_bug.cgi?id=232151
         <rdar://problem/84552682>

@@ -1,3 +1,17 @@
+2021-10-25  Chris Dumez  <cdumez@apple.com>
+
+        imported/w3c/web-platform-tests/html/semantics/forms/form-submission-0/form-submission-algorithm.html is timing out
+        https://bugs.webkit.org/show_bug.cgi?id=232117
+
+        Reviewed by Alex Christensen.
+
+        Merge https://github.com/web-platform-tests/wpt/pull/31359 from upstream WPT to address the timeout and
+        rebaseline the test now that it is fully passing.
+
+        * web-platform-tests/html/semantics/forms/form-submission-0/form-submission-algorithm-expected.txt:
+        * web-platform-tests/html/semantics/forms/form-submission-0/resources/targetted-form.js:
+        (populateForm):
+
 2021-10-25  Alex Christensen  <achristensen@webkit.org>
 
         WebKit ought to be able to play videos without Content-Length HTTP header fields and without range support
