@@ -26,6 +26,23 @@
 WebKitBuildbot = function()
 {
     const queueInfo = {
+        "Apple-Monterey-Release-Build": {platform: Dashboard.Platform.macOSMonterey, debug: false, builder: true, architecture: Buildbot.BuildArchitecture.SixtyFourBit},
+        "Apple-Monterey-Debug-Build": {platform: Dashboard.Platform.macOSMonterey, debug: true, builder: true, architecture: Buildbot.BuildArchitecture.SixtyFourBit},
+        "Apple-Monterey-Debug-WK1-Tests": {platform: Dashboard.Platform.macOSMonterey, debug: true, tester: true, testCategory: Buildbot.TestCategory.WebKit1},
+        "Apple-Monterey-Debug-WK2-Tests": {platform: Dashboard.Platform.macOSMonterey, debug: true, tester: true, testCategory: Buildbot.TestCategory.WebKit2},
+        "Apple-Monterey-Release-WK1-Tests": {platform: Dashboard.Platform.macOSMonterey, debug: false, tester: true, testCategory: Buildbot.TestCategory.WebKit1},
+        "Apple-Monterey-Release-WK2-Tests": {platform: Dashboard.Platform.macOSMonterey, debug: false, tester: true, testCategory: Buildbot.TestCategory.WebKit2},
+        "Apple-Monterey-Debug-AppleSilicon-WK1-Tests": {platform: Dashboard.Platform.macOSMonterey, debug: true, tester: true, testCategory: Buildbot.TestCategory.WebKit1, heading: "Debug AppleSilicon"},
+        "Apple-Monterey-Debug-AppleSilicon-WK2-Tests": {platform: Dashboard.Platform.macOSMonterey, debug: true, tester: true, testCategory: Buildbot.TestCategory.WebKit2, heading: "Debug AppleSilicon"},
+        "Apple-Monterey-Release-AppleSilicon-WK1-Tests": {platform: Dashboard.Platform.macOSMonterey, debug: false, tester: true, testCategory: Buildbot.TestCategory.WebKit1, heading: "Release AppleSilicon"},
+        "Apple-Monterey-Release-AppleSilicon-WK2-Tests": {platform: Dashboard.Platform.macOSMonterey, debug: false, tester: true, testCategory: Buildbot.TestCategory.WebKit2, heading: "Release AppleSilicon"},
+        "Apple-Monterey JSC": {platform: Dashboard.Platform.macOSMonterey, heading: "JavaScript", combinedQueues: {
+            "Apple-Monterey-Debug-Test262-Tests": {heading: "Debug Test262 (Tests)"},
+            "Apple-Monterey-Release-Test262-Tests": {heading: "Release Test262 (Tests)"},
+            "Apple-Monterey-AppleSilicon-Release-Test262-Tests": {heading: "Release arm64 Test262 (Tests)"},
+            "Apple-Monterey-AppleSilicon-Debug-JSC-Tests": {heading: "Debug arm64 JSC (Tests)"},
+            "Apple-Monterey-AppleSilicon-Release-JSC-Tests": {heading: "Release arm64 JSC (Tests)"},
+        }},
         "Apple-BigSur-Release-Build": {platform: Dashboard.Platform.macOSBigSur, debug: false, builder: true, architecture: Buildbot.BuildArchitecture.SixtyFourBit},
         "Apple-BigSur-Debug-Build": {platform: Dashboard.Platform.macOSBigSur, debug: true, builder: true, architecture: Buildbot.BuildArchitecture.SixtyFourBit},
         "Apple-BigSur-Debug-WK1-Tests": {platform: Dashboard.Platform.macOSBigSur, debug: true, tester: true, testCategory: Buildbot.TestCategory.WebKit1},
@@ -36,13 +53,6 @@ WebKitBuildbot = function()
         "Apple-BigSur-Debug-AppleSilicon-WK2-Tests": {platform: Dashboard.Platform.macOSBigSur, debug: true, tester: true, testCategory: Buildbot.TestCategory.WebKit2, heading: "Debug AppleSilicon"},
         "Apple-BigSur-Release-AppleSilicon-WK1-Tests": {platform: Dashboard.Platform.macOSBigSur, debug: false, tester: true, testCategory: Buildbot.TestCategory.WebKit1, heading: "Release AppleSilicon"},
         "Apple-BigSur-Release-AppleSilicon-WK2-Tests": {platform: Dashboard.Platform.macOSBigSur, debug: false, tester: true, testCategory: Buildbot.TestCategory.WebKit2, heading: "Release AppleSilicon"},
-        "Apple-BigSur JSC": {platform: Dashboard.Platform.macOSBigSur, heading: "JavaScript", combinedQueues: {
-            "Apple-BigSur-Debug-Test262-Tests": {heading: "Debug Test262 (Tests)"},
-            "Apple-BigSur-Release-Test262-Tests": {heading: "Release Test262 (Tests)"},
-            "Apple-BigSur-AppleSilicon-Release-Test262-Tests": {heading: "Release arm64 Test262 (Tests)"},
-            "Apple-BigSur-AppleSilicon-Debug-JSC-Tests": {heading: "Debug arm64 JSC (Tests)"},
-            "Apple-BigSur-AppleSilicon-Release-JSC-Tests": {heading: "Release arm64 JSC (Tests)"},
-        }},
         "Apple-Catalina-Debug-Build": {platform: Dashboard.Platform.macOSCatalina, debug: true, builder: true, architecture: Buildbot.BuildArchitecture.SixtyFourBit},
         "Apple-Catalina-Release-Build": {platform: Dashboard.Platform.macOSCatalina, debug: false, builder: true, architecture: Buildbot.BuildArchitecture.SixtyFourBit},
         "Apple-Catalina-Debug-WK1-Tests": {platform: Dashboard.Platform.macOSCatalina, debug: true, tester: true, testCategory: Buildbot.TestCategory.WebKit1},

@@ -1,3 +1,18 @@
+2021-10-25  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Bring up queues for Monterey
+        https://bugs.webkit.org/show_bug.cgi?id=232186
+
+        Reviewed by Alexey Proskuryakov.
+
+        * CISupport/build-webkit-org/config.json:
+        * CISupport/build-webkit-org/factories_unittest.py:
+        (TestExpectedBuildSteps):
+        * CISupport/build-webkit-org/public_html/dashboard/Scripts/WebKitBuildbot.js:
+        (WebKitBuildbot):
+        * CISupport/build-webkit-org/wkbuild.py:
+        (_should_file_trigger_build):
+
 2021-10-25  Jonathan Bedard  <jbedard@apple.com>
 
         [webkitscmpy] Log based tests fail in different timezones
