@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <script src="../../../resources/js-test-pre.js"></script>
+  <title>Repeated mouse-wheel scrolling does not scroll to top of page</title>
+  <style>
+    body {
+      margin: 0;
+      height: 5000px;
+    }
+  </style>
+</head>
+<body>
+</body>
+<script>
+var wheelTick = 40;
+var expectedMinimum;
+var expectedScrollTop;
+var testsPassed = 0;
+var testDescription;
+
+function triggerNextTest() {
+    if (testsPassed)
+        debug("PASS " + testDescription);
+
+    switch (testsPassed) {
+    case 0:
+        testDescription = "Scroll downwards by 1 tick"
+        expectedMinimum = 0;
+        expectedScrollTop = wheelTick;
+        eventSender.mouseScrollBy(0, -1);
+        return;
+
+    case 1:
+        testDescription = "Scroll downwards by another tick"
+        expectedMinimum = expectedScrollTop;
+        expectedScrollTop = wheelTick * 2;
+        eventSender.mouseScrollBy(0, -1);
+        return;
+
+    case 2:
+        testDescription = "Scroll downwards by two more ticks, interrupting the first"
+        expectedMinimum = expectedScrollTop;
+        expectedScrollTop = wheelTick * 4;
+        eventSender.mouseScrollBy(0, -1);
+        eventSender.mouseScrollBy(0, -1);
+        return;
+    }
+
+    isSuccessfullyParsed();
+    testRunner.notifyDone();
+
+    return;
+}
+
+function scrollEventCallback() {
+    if (document.scrollingElement.scrollTop < expectedMinimum)
+        debug("FAIL Repeated mouse-wheel scrolling doesn't go backwards");
+    if (document.scrollingElement.scrollTop == expectedScrollTop) {
+        ++testsPassed;
+        if (window.testRunner)
+            triggerNextTest();
+    }
+}
+
+
+document.addEventListener("scroll", scrollEventCallback, false);
+
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+}
+
+if (window.eventSender) {
+    triggerNextTest();
+}
+</script>
+</html>

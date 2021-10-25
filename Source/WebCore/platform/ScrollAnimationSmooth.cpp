@@ -55,7 +55,7 @@ bool ScrollAnimationSmooth::startAnimatedScrollToDestination(const FloatPoint& f
     auto extents = m_client.scrollExtentsForAnimation(*this);
 
     m_startTime = MonotonicTime::now();
-    m_startOffset = fromOffset;
+    m_currentOffset = m_startOffset = fromOffset;
     m_destinationOffset = destinationOffset.constrainedBetween(extents.minimumScrollOffset(), extents.maximumScrollOffset());
     m_duration = durationFromDistance(m_destinationOffset - m_startOffset);
     downcast<CubicBezierTimingFunction>(*m_timingFunction).setTimingFunctionPreset(CubicBezierTimingFunction::TimingFunctionPreset::EaseInOut);
