@@ -1,3 +1,11 @@
+2021-10-25  Jonathan Bedard  <jbedard@apple.com>
+
+        Add GitHub usernames for bedison and darinadler
+
+        Unreviewed.
+
+        * metadata/contributors.json: Add beidson and darinadler.
+
 2021-10-25  Zan Dobersek  <zdobersek@igalia.com>
 
         Add zdobersek's GitHub name to contributors.json
