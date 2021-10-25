@@ -1,3 +1,23 @@
+2021-10-25  Mikhail R. Gadelha  <mikhail@igalia.com>
+
+        [JSC][32bit] Don't speculate Cell on PutByVal
+        https://bugs.webkit.org/show_bug.cgi?id=232242
+
+        Reviewed by Yusuke Suzuki.
+
+        This patch is similar to https://bugs.webkit.org/show_bug.cgi?id=232052
+        but smaller: given that we have more registers available, we don't have
+        to speculate Cells anymore.
+
+        This patch removes the Cell speculation during the DFG FixUp phase and
+        adjust the operationPutByVal* calls to use the generic version (instead
+        of the Cell versions).
+
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+
 2021-10-25  Geza Lore  <gezalore@gmail.com>
 
         [JSC][32bit] Use DataIC in Baseline JIT

@@ -2740,18 +2740,18 @@ void SpeculativeJIT::compile(Node* node)
                     }
                 }
 
-                SpeculateCellOperand base(this, child1); // Save a register, speculate cell. We'll probably be right.
+                JSValueOperand base(this, child1);
                 JSValueOperand property(this, child2);
                 JSValueOperand value(this, child3);
-                GPRReg baseGPR = base.gpr();
+                JSValueRegs baseRegs = base.jsValueRegs();
                 JSValueRegs propertyRegs = property.jsValueRegs();
                 JSValueRegs valueRegs = value.jsValueRegs();
 
                 flushRegisters();
                 if (node->op() == PutByValDirect)
-                    callOperation(node->ecmaMode().isStrict() ? operationPutByValDirectCellStrict : operationPutByValDirectCellNonStrict, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), baseGPR, propertyRegs, valueRegs);
+                    callOperation(node->ecmaMode().isStrict() ? operationPutByValDirectStrict : operationPutByValDirectNonStrict, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), baseRegs,  propertyRegs, valueRegs);
                 else
-                    callOperation(node->ecmaMode().isStrict() ? operationPutByValCellStrict : operationPutByValCellNonStrict, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), baseGPR, propertyRegs, valueRegs);
+                    callOperation(node->ecmaMode().isStrict() ? operationPutByValStrict : operationPutByValNonStrict, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), baseRegs,  propertyRegs, valueRegs);
                 m_jit.exceptionCheck();
 
                 noResult(node);

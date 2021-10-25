@@ -1252,12 +1252,6 @@ private:
                         break;
                     }
                 }
-#if USE(JSVALUE32_64)
-                // Due to register pressure on 32-bit, we speculate cell and
-                // ignore the base-is-not-cell case entirely by letting the
-                // baseline JIT handle it.
-                fixEdge<CellUse>(child1);
-#endif
                 break;
             case Array::Int32:
                 fixEdge<KnownCellUse>(child1);
