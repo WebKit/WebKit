@@ -1493,3 +1493,6 @@ webkit.org/b/231684 [ Catalina Debug ] requestidlecallback/requestidlecallback-d
 
 webkit.org/b/232277 [ Catalina ] imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/playing-the-media-resource/pause-remove-from-document.html [ Pass Failure ]
 webkit.org/b/232277 [ Catalina ] imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/playing-the-media-resource/pause-remove-from-document-different-load.html [ Pass Failure ]
+
+webkit.org/b/232283 imported/w3c/web-platform-tests/media-capabilities/decodingInfo.webrtc.html [ Pass Failure ]
+webkit.org/b/232283 imported/w3c/web-platform-tests/media-capabilities/encodingInfo.webrtc.html [ Pass Failure ]

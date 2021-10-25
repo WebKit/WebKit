@@ -1,3 +1,12 @@
+2021-10-25  Eric Hutchison  <ehutchison@apple.com>
+
+        [ Mac wk1 ] 2 media-capabilities/webrtc tests are flaky failures.
+        https://bugs.webkit.org/show_bug.cgi?id=232283.
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
 2021-10-25  Chris Fleizach  <cfleizach@apple.com>
 
         WebKit should use img@title as label even if img@alt is exlicitly empty
