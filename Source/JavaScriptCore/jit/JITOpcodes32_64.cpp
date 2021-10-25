@@ -152,28 +152,41 @@ void JIT::emit_op_instanceof(const Instruction* currentInstruction)
     VirtualRegister value = bytecode.m_value;
     VirtualRegister proto = bytecode.m_prototype;
 
-    // Load the operands into registers.
-    // We use regT0 for baseVal since we will be done with this first, and we can then use it for the result.
-    emitLoadPayload(value, regT2);
-    emitLoadPayload(proto, regT1);
+    using BaselineInstanceofRegisters::resultGPR;
+    using BaselineInstanceofRegisters::valueJSR;
+    using BaselineInstanceofRegisters::protoJSR;
+    using BaselineInstanceofRegisters::stubInfoGPR;
+    using BaselineInstanceofRegisters::scratch1GPR;
+    using BaselineInstanceofRegisters::scratch2GPR;
+
+    emitLoadPayload(value, valueJSR.payloadGPR());
+    emitLoadPayload(proto, protoJSR.payloadGPR());
 
     // Check that proto are cells. baseVal must be a cell - this is checked by the get_by_id for Symbol.hasInstance.
     emitJumpSlowCaseIfNotJSCell(value);
     emitJumpSlowCaseIfNotJSCell(proto);
     
     JITInstanceOfGenerator gen(
-        m_profiledCodeBlock, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex),
+        nullptr, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex),
         RegisterSet::stubUnavailableRegisters(),
-        regT0, // result
-        regT2, // value
-        regT1, // proto
-        InvalidGPRReg,
-        regT3, regT4); // scratch
-    gen.generateFastPath(*this);
-    addSlowCase(gen.slowPathJump());
+        resultGPR,
+        valueJSR.payloadGPR(),
+        protoJSR.payloadGPR(),
+        stubInfoGPR,
+        scratch1GPR, scratch2GPR);
+
+    UnlinkedStructureStubInfo* stubInfo = m_unlinkedStubInfos.add();
+    stubInfo->accessType = AccessType::InstanceOf;
+    stubInfo->bytecodeIndex = m_bytecodeIndex;
+    JITConstantPool::Constant stubInfoIndex = addToConstantPool(JITConstantPool::Type::StructureStubInfo, stubInfo);
+    gen.m_unlinkedStubInfoConstantIndex = stubInfoIndex;
+    gen.m_unlinkedStubInfo = stubInfo;
+
+    gen.generateBaselineDataICFastPath(*this, stubInfoIndex, stubInfoGPR);
+    addSlowCase();
     m_instanceOfs.append(gen);
     
-    emitStoreBool(dst, regT0);
+    emitStoreBool(dst, resultGPR);
 }
 
 void JIT::emit_op_instanceof_custom(const Instruction*)
@@ -192,12 +205,30 @@ void JIT::emitSlow_op_instanceof(const Instruction* currentInstruction, Vector<S
     VirtualRegister proto = bytecode.m_prototype;
     
     JITInstanceOfGenerator& gen = m_instanceOfs[m_instanceOfIndex++];
-    
+
     Label coldPathBegin = label();
-    emitLoadTag(value, regT0);
-    emitLoadTag(proto, regT3);
-    Call call = callOperation(operationInstanceOfOptimize, dst, m_profiledCodeBlock->globalObject(), gen.stubInfo(), JSValueRegs(regT0, regT2), JSValueRegs(regT3, regT1));
-    gen.reportSlowPathCall(coldPathBegin, call);
+
+    using SlowOperation = decltype(operationInstanceOfOptimize);
+    constexpr GPRReg globalObjectGPR = preferredArgumentGPR<SlowOperation, 0>();
+    constexpr GPRReg stubInfoGPR = preferredArgumentGPR<SlowOperation, 1>();
+    using BaselineInstanceofRegisters::valueJSR;
+    using BaselineInstanceofRegisters::protoJSR;
+    static_assert(valueJSR == preferredArgumentJSR<SlowOperation, 2>());
+    // Proto will be passed on stack, just make sure no overlap
+    static_assert(!protoJSR.uses(globalObjectGPR));
+    static_assert(!protoJSR.uses(stubInfoGPR));
+    static_assert(!valueJSR.uses(globalObjectGPR));
+    static_assert(!valueJSR.uses(stubInfoGPR));
+
+    loadGlobalObject(globalObjectGPR);
+    loadConstant(gen.m_unlinkedStubInfoConstantIndex, stubInfoGPR);
+    emitLoadTag(value, valueJSR.tagGPR());
+    emitLoadTag(proto, protoJSR.tagGPR());
+    callOperation<SlowOperation>(
+        Address(stubInfoGPR, StructureStubInfo::offsetOfSlowOperation()),
+        dst,
+        globalObjectGPR, stubInfoGPR, valueJSR, protoJSR);
+    gen.reportSlowPathCall(coldPathBegin, Call());
 }
 
 void JIT::emitSlow_op_instanceof_custom(const Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)

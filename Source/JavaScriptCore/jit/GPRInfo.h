@@ -69,15 +69,21 @@ public:
     bool operator!() const { return m_gpr == InvalidGPRReg; }
     explicit operator bool() const { return m_gpr != InvalidGPRReg; }
 
-    bool operator==(JSValueRegs other) { return m_gpr == other.m_gpr; }
-    bool operator!=(JSValueRegs other) { return !(*this == other); }
+    constexpr bool operator==(JSValueRegs other) const { return m_gpr == other.m_gpr; }
+    constexpr bool operator!=(JSValueRegs other) const { return !(*this == other); }
     
     GPRReg gpr() const { return m_gpr; }
-    GPRReg tagGPR() const { return InvalidGPRReg; }
-    GPRReg payloadGPR() const { return m_gpr; }
+    constexpr GPRReg tagGPR() const { return InvalidGPRReg; }
+    constexpr GPRReg payloadGPR() const { return m_gpr; }
     
-    bool uses(GPRReg gpr) const { return m_gpr == gpr; }
-    
+    constexpr bool uses(GPRReg gpr) const
+    {
+        if (gpr == InvalidGPRReg)
+            return false;
+        return m_gpr == gpr;
+    }
+    constexpr bool overlaps(JSValueRegs other) const { return uses(other.payloadGPR()); }
+
     void dump(PrintStream&) const;
     
 private:
@@ -166,7 +172,7 @@ public:
     {
     }
     
-    JSValueRegs(GPRReg tagGPR, GPRReg payloadGPR)
+    constexpr JSValueRegs(GPRReg tagGPR, GPRReg payloadGPR)
         : m_tagGPR(tagGPR)
         , m_payloadGPR(payloadGPR)
     {
@@ -177,7 +183,7 @@ public:
         return JSValueRegs(gpr1, gpr2);
     }
     
-    static JSValueRegs payloadOnly(GPRReg gpr)
+    static constexpr JSValueRegs payloadOnly(GPRReg gpr)
     {
         return JSValueRegs(InvalidGPRReg, gpr);
     }
@@ -189,15 +195,15 @@ public:
             || static_cast<GPRReg>(m_payloadGPR) != InvalidGPRReg;
     }
 
-    bool operator==(JSValueRegs other) const
+    constexpr bool operator==(JSValueRegs other) const
     {
         return m_tagGPR == other.m_tagGPR
             && m_payloadGPR == other.m_payloadGPR;
     }
-    bool operator!=(JSValueRegs other) const { return !(*this == other); }
+    constexpr bool operator!=(JSValueRegs other) const { return !(*this == other); }
     
-    GPRReg tagGPR() const { return m_tagGPR; }
-    GPRReg payloadGPR() const { return m_payloadGPR; }
+    constexpr GPRReg tagGPR() const { return m_tagGPR; }
+    constexpr GPRReg payloadGPR() const { return m_payloadGPR; }
     GPRReg gpr(WhichValueWord which) const
     {
         switch (which) {
@@ -210,8 +216,17 @@ public:
         return tagGPR();
     }
 
-    bool uses(GPRReg gpr) const { return m_tagGPR == gpr || m_payloadGPR == gpr; }
-    
+    constexpr bool uses(GPRReg gpr) const
+    {
+        if (gpr == InvalidGPRReg)
+            return false;
+        return m_tagGPR == gpr || m_payloadGPR == gpr;
+    }
+    constexpr bool overlaps(JSValueRegs other) const
+    {
+        return uses(other.payloadGPR()) || uses(other.tagGPR());
+    }
+
     void dump(PrintStream&) const;
     
 private:

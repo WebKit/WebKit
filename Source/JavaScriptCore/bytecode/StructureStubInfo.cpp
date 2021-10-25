@@ -434,7 +434,6 @@ ALWAYS_INLINE void StructureStubInfo::setCacheType(const ConcurrentJSLockerBase&
 
 void StructureStubInfo::initializeFromUnlinkedStructureStubInfo(CodeBlock*, UnlinkedStructureStubInfo& unlinkedStubInfo)
 {
-#if USE(JSVALUE64)
     accessType = unlinkedStubInfo.accessType;
     start = unlinkedStubInfo.start;
     doneLocation = unlinkedStubInfo.doneLocation;
@@ -445,8 +444,8 @@ void StructureStubInfo::initializeFromUnlinkedStructureStubInfo(CodeBlock*, Unli
 
     usedRegisters = RegisterSet::stubUnavailableRegisters();
     if (accessType == AccessType::GetById && unlinkedStubInfo.bytecodeIndex.checkpoint()) {
-        // For iterator_next, we can't clobber the "dontClobberRegister" register either.
-        usedRegisters.add(BaselineGetByIdRegisters::dontClobberRegister);
+        // For iterator_next, we can't clobber the "dontClobberJSR" register either.
+        usedRegisters.set(BaselineGetByIdRegisters::dontClobberJSR);
     }
 
     switch (accessType) {
@@ -480,13 +479,13 @@ void StructureStubInfo::initializeFromUnlinkedStructureStubInfo(CodeBlock*, Unli
     case AccessType::GetByIdWithThis:
         m_slowOperation = operationGetByIdWithThisOptimize;
         break;
-    case AccessType::HasPrivateName: 
+    case AccessType::HasPrivateName:
         m_slowOperation = operationHasPrivateNameOptimize;
         break;
     case AccessType::HasPrivateBrand: 
         m_slowOperation = operationHasPrivateBrandOptimize;
         break;
-    case AccessType::GetPrivateName: 
+    case AccessType::GetPrivateName:
         m_slowOperation = operationGetPrivateNameOptimize;
         break;
     case AccessType::PutById:
@@ -543,96 +542,152 @@ void StructureStubInfo::initializeFromUnlinkedStructureStubInfo(CodeBlock*, Unli
     switch (accessType) {
     case AccessType::DeleteByVal:
         hasConstantIdentifier = false;
-        baseGPR = BaselineDelByValRegisters::base;
-        regs.propertyGPR = BaselineDelByValRegisters::property;
-        valueGPR = BaselineDelByValRegisters::result;
-        m_stubInfoGPR = BaselineDelByValRegisters::stubInfo;
+        baseGPR = BaselineDelByValRegisters::baseJSR.payloadGPR();
+        regs.propertyGPR = BaselineDelByValRegisters::propertyJSR.payloadGPR();
+        valueGPR = BaselineDelByValRegisters::resultJSR.payloadGPR();
+        m_stubInfoGPR = BaselineDelByValRegisters::stubInfoGPR;
+#if USE(JSVALUE32_64)
+        baseTagGPR = BaselineDelByValRegisters::baseJSR.tagGPR();
+        v.propertyTagGPR = BaselineDelByValRegisters::propertyJSR.tagGPR();
+        valueTagGPR = BaselineDelByValRegisters::resultJSR.tagGPR();
+#endif
         break;
     case AccessType::DeleteByID:
         hasConstantIdentifier = true;
-        baseGPR = BaselineDelByIdRegisters::base;
+        baseGPR = BaselineDelByIdRegisters::baseJSR.payloadGPR();
         regs.propertyGPR = InvalidGPRReg;
-        valueGPR = BaselineDelByIdRegisters::result;
-        m_stubInfoGPR = BaselineDelByIdRegisters::stubInfo;
+        valueGPR = BaselineDelByIdRegisters::resultJSR.payloadGPR();
+        m_stubInfoGPR = BaselineDelByIdRegisters::stubInfoGPR;
+#if USE(JSVALUE32_64)
+        baseTagGPR = BaselineDelByIdRegisters::baseJSR.tagGPR();
+        v.propertyTagGPR = InvalidGPRReg;
+        valueTagGPR = BaselineDelByIdRegisters::resultJSR.tagGPR();
+#endif
         break;
     case AccessType::GetByVal:
     case AccessType::GetPrivateName:
         hasConstantIdentifier = false;
-        baseGPR = BaselineGetByValRegisters::base;
-        regs.propertyGPR = BaselineGetByValRegisters::property;
-        valueGPR = BaselineGetByValRegisters::result;
-        m_stubInfoGPR = BaselineGetByValRegisters::stubInfo;
+        baseGPR = BaselineGetByValRegisters::baseJSR.payloadGPR();
+        regs.propertyGPR = BaselineGetByValRegisters::propertyJSR.payloadGPR();
+        valueGPR = BaselineGetByValRegisters::resultJSR.payloadGPR();
+        m_stubInfoGPR = BaselineGetByValRegisters::stubInfoGPR;
+#if USE(JSVALUE32_64)
+        baseTagGPR = BaselineGetByValRegisters::baseJSR.tagGPR();
+        v.propertyTagGPR = BaselineGetByValRegisters::propertyJSR.tagGPR();
+        valueTagGPR = BaselineGetByValRegisters::resultJSR.tagGPR();
+#endif
         break;
     case AccessType::InstanceOf:
         hasConstantIdentifier = false;
         prototypeIsKnownObject = false;
+#if USE(JSVALUE64)
         baseGPR = BaselineInstanceofRegisters::value;
         valueGPR = BaselineInstanceofRegisters::result;
         regs.prototypeGPR = BaselineInstanceofRegisters::proto;
         m_stubInfoGPR = BaselineInstanceofRegisters::stubInfo;
+#elif USE(JSVALUE32_64)
+        baseGPR = BaselineInstanceofRegisters::valueJSR.payloadGPR();
+        valueGPR = BaselineInstanceofRegisters::resultGPR;
+        regs.prototypeGPR = BaselineInstanceofRegisters::protoJSR.payloadGPR();
+        m_stubInfoGPR = BaselineInstanceofRegisters::stubInfoGPR;
+        baseTagGPR = InvalidGPRReg;
+        valueTagGPR = InvalidGPRReg;
+        v.propertyTagGPR = InvalidGPRReg;
+#endif
         break;
     case AccessType::InByVal:
     case AccessType::HasPrivateName: 
     case AccessType::HasPrivateBrand: 
         hasConstantIdentifier = false;
-        baseGPR = BaselineInByValRegisters::base;
-        regs.propertyGPR = BaselineInByValRegisters::property;
-        valueGPR = BaselineInByValRegisters::result;
-        m_stubInfoGPR = BaselineInByValRegisters::stubInfo;
+        baseGPR = BaselineInByValRegisters::baseJSR.payloadGPR();
+        regs.propertyGPR = BaselineInByValRegisters::propertyJSR.payloadGPR();
+        valueGPR = BaselineInByValRegisters::resultJSR.payloadGPR();
+        m_stubInfoGPR = BaselineInByValRegisters::stubInfoGPR;
+#if USE(JSVALUE32_64)
+        baseTagGPR = BaselineInByValRegisters::baseJSR.tagGPR();
+        v.propertyTagGPR = BaselineInByValRegisters::propertyJSR.tagGPR();
+        valueTagGPR = BaselineInByValRegisters::resultJSR.tagGPR();
+#endif
         break;
     case AccessType::InById:
         hasConstantIdentifier = true;
         regs.thisGPR = InvalidGPRReg;
-        baseGPR = BaselineInByIdRegisters::base;
-        valueGPR = BaselineInByIdRegisters::result;
-        m_stubInfoGPR = BaselineInByIdRegisters::stubInfo;
+        baseGPR = BaselineInByIdRegisters::baseJSR.payloadGPR();
+        valueGPR = BaselineInByIdRegisters::resultJSR.payloadGPR();
+        m_stubInfoGPR = BaselineInByIdRegisters::stubInfoGPR;
+#if USE(JSVALUE32_64)
+        v.thisTagGPR = InvalidGPRReg;
+        baseTagGPR = BaselineInByIdRegisters::baseJSR.tagGPR();
+        valueTagGPR = BaselineInByIdRegisters::resultJSR.tagGPR();
+#endif
         break;
     case AccessType::TryGetById:
     case AccessType::GetByIdDirect:
     case AccessType::GetById:
         hasConstantIdentifier = true;
         regs.thisGPR = InvalidGPRReg;
-        baseGPR = BaselineGetByIdRegisters::base;
-        valueGPR = BaselineGetByIdRegisters::result;
-        m_stubInfoGPR = BaselineGetByIdRegisters::stubInfo;
+        baseGPR = BaselineGetByIdRegisters::baseJSR.payloadGPR();
+        valueGPR = BaselineGetByIdRegisters::resultJSR.payloadGPR();
+        m_stubInfoGPR = BaselineGetByIdRegisters::stubInfoGPR;
+#if USE(JSVALUE32_64)
+        v.thisTagGPR = InvalidGPRReg;
+        baseTagGPR = BaselineGetByIdRegisters::baseJSR.tagGPR();
+        valueTagGPR = BaselineGetByIdRegisters::resultJSR.tagGPR();
+#endif
         break;
     case AccessType::GetByIdWithThis:
         hasConstantIdentifier = true;
-        baseGPR = BaselineGetByIdWithThisRegisters::base;
-        valueGPR = BaselineGetByIdWithThisRegisters::result;
-        regs.thisGPR = BaselineGetByIdWithThisRegisters::thisValue;
-        m_stubInfoGPR = BaselineGetByIdWithThisRegisters::stubInfo;
+        baseGPR = BaselineGetByIdWithThisRegisters::baseJSR.payloadGPR();
+        valueGPR = BaselineGetByIdWithThisRegisters::resultJSR.payloadGPR();
+        regs.thisGPR = BaselineGetByIdWithThisRegisters::thisJSR.payloadGPR();
+        m_stubInfoGPR = BaselineGetByIdWithThisRegisters::stubInfoGPR;
+#if USE(JSVALUE32_64)
+        baseTagGPR = BaselineGetByIdWithThisRegisters::baseJSR.tagGPR();
+        valueTagGPR = BaselineGetByIdWithThisRegisters::resultJSR.tagGPR();
+        v.thisTagGPR = BaselineGetByIdWithThisRegisters::thisJSR.tagGPR();
+#endif
         break;
     case AccessType::PutById:
         hasConstantIdentifier = true;
         regs.thisGPR = InvalidGPRReg;
-        baseGPR = BaselinePutByIdRegisters::base;
-        valueGPR = BaselinePutByIdRegisters::value;
-        m_stubInfoGPR = BaselinePutByIdRegisters::stubInfo;
+        baseGPR = BaselinePutByIdRegisters::baseJSR.payloadGPR();
+        valueGPR = BaselinePutByIdRegisters::valueJSR.payloadGPR();
+        m_stubInfoGPR = BaselinePutByIdRegisters::stubInfoGPR;
+#if USE(JSVALUE32_64)
+        v.thisTagGPR = InvalidGPRReg;
+        baseTagGPR = BaselinePutByIdRegisters::baseJSR.tagGPR();
+        valueTagGPR = BaselinePutByIdRegisters::valueJSR.tagGPR();
+#endif
         break;
     case AccessType::PutByVal:
     case AccessType::PutPrivateName:
         hasConstantIdentifier = false;
-        baseGPR = BaselinePutByValRegisters::base;
-        regs.propertyGPR = BaselinePutByValRegisters::property;
-        valueGPR = BaselinePutByValRegisters::value;
-        m_stubInfoGPR = BaselinePutByValRegisters::stubInfo;
+        baseGPR = BaselinePutByValRegisters::baseJSR.payloadGPR();
+        regs.propertyGPR = BaselinePutByValRegisters::propertyJSR.payloadGPR();
+        valueGPR = BaselinePutByValRegisters::valueJSR.payloadGPR();
+        m_stubInfoGPR = BaselinePutByValRegisters::stubInfoGPR;
         if (accessType == AccessType::PutByVal)
-            m_arrayProfileGPR = BaselinePutByValRegisters::profile;
+            m_arrayProfileGPR = BaselinePutByValRegisters::profileGPR;
+#if USE(JSVALUE32_64)
+        baseTagGPR = BaselinePutByValRegisters::baseJSR.tagGPR();
+        v.propertyTagGPR = BaselinePutByValRegisters::propertyJSR.tagGPR();
+        valueTagGPR = BaselinePutByValRegisters::valueJSR.tagGPR();
+#endif
         break;
     case AccessType::SetPrivateBrand:
     case AccessType::CheckPrivateBrand:
         hasConstantIdentifier = false;
         valueGPR = InvalidGPRReg;
-        baseGPR = BaselinePrivateBrandRegisters::base;
-        regs.brandGPR = BaselinePrivateBrandRegisters::brand;
-        m_stubInfoGPR = BaselinePrivateBrandRegisters::stubInfo;
+        baseGPR = BaselinePrivateBrandRegisters::baseJSR.payloadGPR();
+        regs.brandGPR = BaselinePrivateBrandRegisters::brandJSR.payloadGPR();
+        m_stubInfoGPR = BaselinePrivateBrandRegisters::stubInfoGPR;
+#if USE(JSVALUE32_64)
+        valueTagGPR = InvalidGPRReg;
+        baseTagGPR = BaselinePrivateBrandRegisters::baseJSR.tagGPR();
+        v.brandTagGPR = BaselinePrivateBrandRegisters::brandJSR.tagGPR();
+#endif
         break;
     }
-#else
-    UNUSED_PARAM(unlinkedStubInfo);
-    ASSERT_NOT_REACHED();
-#endif
 }
 
 #if ASSERT_ENABLED

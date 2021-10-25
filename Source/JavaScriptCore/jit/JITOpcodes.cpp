@@ -371,26 +371,6 @@ void JIT::emit_op_is_object(const Instruction* currentInstruction)
     emitPutVirtualRegister(dst);
 }
 
-void JIT::emit_op_ret(const Instruction* currentInstruction)
-{
-    ASSERT(callFrameRegister != regT1);
-    ASSERT(regT1 != returnValueGPR);
-    ASSERT(returnValueGPR != callFrameRegister);
-
-    // Return the result in %eax.
-    auto bytecode = currentInstruction->as<OpRet>();
-    emitGetVirtualRegister(bytecode.m_value, returnValueGPR);
-
-#if !ENABLE(EXTRA_CTI_THUNKS)
-    checkStackPointerAlignment();
-    emitRestoreCalleeSaves();
-    emitFunctionEpilogue();
-    ret();
-#else
-    emitNakedNearJump(vm().getCTIStub(op_ret_handlerGenerator).code());
-#endif
-}
-
 #if ENABLE(EXTRA_CTI_THUNKS)
 MacroAssemblerCodeRef<JITThunkPtrTag> JIT::op_ret_handlerGenerator(VM&)
 {

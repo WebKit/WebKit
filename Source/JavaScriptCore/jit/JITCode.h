@@ -162,12 +162,8 @@ public:
 
     static bool useDataIC(JITType jitType)
     {
-#if USE(JSVALUE64)
         if (JITCode::isBaselineCode(jitType))
             return true;
-#else
-        UNUSED_PARAM(jitType);
-#endif
         if (!Options::useDataIC())
             return false;
         return Options::useDataICInOptimizingJIT();

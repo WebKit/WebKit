@@ -304,8 +304,11 @@ MacroAssembler::JumpList CallLinkInfo::emitFastPathImpl(CallLinkInfo* callLinkIn
     CCallHelpers::JumpList slowPath;
 
     if (useDataIC == UseDataIC::Yes) {
+        // FIXME: This scratch register is not generally safe to use on ARMv7, as the macro
+        //        assembler always assumes it is available. At the moment, it does happen to work
+        //        with the code below.
         GPRReg scratchGPR = jit.scratchRegister();
-        jit.loadPtr(CCallHelpers::Address(callLinkInfoGPR, offsetOfCallee()), scratchGPR); 
+        jit.loadPtr(CCallHelpers::Address(callLinkInfoGPR, offsetOfCallee()), scratchGPR);
         CCallHelpers::Jump goPolymorphic;
         {
             DisallowMacroScratchRegisterUsage disallowScratch(jit);
@@ -365,9 +368,6 @@ MacroAssembler::JumpList CallLinkInfo::emitTailCallFastPath(CCallHelpers& jit, G
 MacroAssembler::JumpList CallLinkInfo::emitDataICFastPath(CCallHelpers& jit, GPRReg calleeGPR, GPRReg callLinkInfoGPR)
 {
     RELEASE_ASSERT(callLinkInfoGPR != InvalidGPRReg);
-#if USE(JSVALUE32_64)
-    RELEASE_ASSERT_NOT_REACHED(); // Uses DataIC
-#endif
     return emitFastPathImpl(nullptr, jit, calleeGPR, callLinkInfoGPR, UseDataIC::Yes, false, nullptr);
 }
 

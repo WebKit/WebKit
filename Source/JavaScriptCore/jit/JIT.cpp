@@ -800,13 +800,11 @@ void JIT::compileAndLinkWithoutFinalizing(JITCompilationEffort effort)
                     continue;
                 int offset = CallFrame::argumentOffsetIncludingThis(argument) * static_cast<int>(sizeof(Register));
 #if USE(JSVALUE64)
-                JSValueRegs resultRegs = JSValueRegs(regT0);
-                load64(Address(callFrameRegister, offset), resultRegs.payloadGPR());
+                constexpr JSValueRegs resultRegs { regT0 };
 #elif USE(JSVALUE32_64)
-                JSValueRegs resultRegs = JSValueRegs(regT1, regT0);
-                load32(Address(callFrameRegister, offset + OBJECT_OFFSETOF(JSValue, u.asBits.payload)), resultRegs.payloadGPR());
-                load32(Address(callFrameRegister, offset + OBJECT_OFFSETOF(JSValue, u.asBits.tag)), resultRegs.tagGPR());
+                constexpr JSValueRegs resultRegs { regT1, regT0 };
 #endif
+                loadValue(Address(callFrameRegister, offset), resultRegs);
                 storeValue(resultRegs, Address(regT2, argument * sizeof(ValueProfile) + ValueProfile::offsetOfFirstBucket()));
             }
         }
@@ -939,7 +937,6 @@ void JIT::link()
             patchBuffer.link(record.from, record.callee);
     }
 
-#if USE(JSVALUE64)
     auto finalizeICs = [&] (auto& generators) {
         for (auto& gen : generators) {
             gen.m_unlinkedStubInfo->start = patchBuffer.locationOf<JITStubRoutinePtrTag>(gen.m_start);
@@ -959,31 +956,10 @@ void JIT::link()
     finalizeICs(m_inByVals);
     finalizeICs(m_instanceOfs);
     finalizeICs(m_privateBrandAccesses);
-#else
-    finalizeInlineCaches(m_getByIds, patchBuffer);
-    finalizeInlineCaches(m_getByVals, patchBuffer);
-    finalizeInlineCaches(m_getByIdsWithThis, patchBuffer);
-    finalizeInlineCaches(m_putByIds, patchBuffer);
-    finalizeInlineCaches(m_putByVals, patchBuffer);
-    finalizeInlineCaches(m_delByIds, patchBuffer);
-    finalizeInlineCaches(m_delByVals, patchBuffer);
-    finalizeInlineCaches(m_inByIds, patchBuffer);
-    finalizeInlineCaches(m_inByVals, patchBuffer);
-    finalizeInlineCaches(m_instanceOfs, patchBuffer);
-    finalizeInlineCaches(m_privateBrandAccesses, patchBuffer);
-#endif
 
     for (auto& compilationInfo : m_callCompilationInfo) {
-#if USE(JSVALUE64)
         UnlinkedCallLinkInfo& info = *compilationInfo.unlinkedCallLinkInfo;
         info.doneLocation = patchBuffer.locationOf<JSInternalPtrTag>(compilationInfo.doneLocation);
-#else
-        CallLinkInfo& info = *compilationInfo.callLinkInfo;
-        info.setCodeLocations(
-            patchBuffer.locationOf<JSInternalPtrTag>(compilationInfo.slowPathStart),
-            patchBuffer.locationOf<JSInternalPtrTag>(compilationInfo.doneLocation));
-#endif
-
     }
 
     JITCodeMapBuilder jitCodeMapBuilder;

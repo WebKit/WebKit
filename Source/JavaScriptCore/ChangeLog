@@ -1,3 +1,126 @@
+2021-10-25  Geza Lore  <gezalore@gmail.com>
+
+        [JSC][32bit] Use DataIC in Baseline JIT
+        https://bugs.webkit.org/show_bug.cgi?id=232079
+
+        Reviewed by Yusuke Suzuki.
+
+        This patch ports the JSVALUE32_64 baseline JIT to use DataICs.
+
+        The majority of the involved opcodes (all but one) could be easily
+        modified to use a common implementation between JSVALUE64 and
+        JSVALUE32_64 platforms by abstracting over machine registers holding a
+        JSValue using JSValueReg types instead of GPRReg.
+
+        The only non-trivial additional abstraction needed was over the ideal
+        argument registers used in a function call, so loading the arguments
+        from memory can put them straight in the ABI specific argument
+        register whenever possible, or appropriate temporaries otherwise. For
+        this I added CCallHelpers::preferredArgumentGPR (for passing host
+        pointers and other primitive types that fit in a machine register on
+        the host platform), and CCallHelpers::preferredArgumentJSR (for
+        passing JSValue/EncodedJSValue). Please see the description of these
+        in the code.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * assembler/ARMv7Assembler.h:
+        (JSC::ARMv7Assembler::strb):
+        * bytecode/CallLinkInfo.cpp:
+        (JSC::CallLinkInfo::emitFastPathImpl):
+        (JSC::CallLinkInfo::emitDataICFastPath):
+        * bytecode/StructureStubInfo.cpp:
+        (JSC::StructureStubInfo::initializeFromUnlinkedStructureStubInfo):
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::branchIfNotObject):
+        * jit/CCallHelpers.h:
+        (JSC::CCallHelpers::sizeOfArg):
+        (JSC::CCallHelpers::pickJSR):
+        (JSC::CCallHelpers::preferredArgumentJSR):
+        (JSC::CCallHelpers::preferredArgumentGPR):
+        * jit/CallFrameShuffler.h:
+        * jit/GPRInfo.h:
+        (JSC::JSValueRegs::operator== const):
+        (JSC::JSValueRegs::operator!= const):
+        (JSC::JSValueRegs::tagGPR const):
+        (JSC::JSValueRegs::payloadGPR const):
+        (JSC::JSValueRegs::uses const):
+        (JSC::JSValueRegs::overlaps const):
+        (JSC::JSValueRegs::JSValueRegs):
+        (JSC::JSValueRegs::payloadOnly):
+        * jit/JIT.cpp:
+        (JSC::JIT::compileAndLinkWithoutFinalizing):
+        (JSC::JIT::link):
+        * jit/JIT.h:
+        * jit/JITCall.cpp:
+        (JSC::JIT::emit_op_ret):
+        (JSC::JIT::emitPutCallResult):
+        (JSC::JIT::compileSetupFrame):
+        (JSC::JIT::compileCallEval):
+        (JSC::JIT::compileCallEvalSlowCase):
+        (JSC::JIT::compileTailCall):
+        (JSC::JIT::compileOpCall):
+        (JSC::JIT::emit_op_iterator_open):
+        (JSC::JIT::emitSlow_op_iterator_open):
+        (JSC::JIT::emit_op_iterator_next):
+        (JSC::JIT::emitSlow_op_iterator_next):
+        * jit/JITCall32_64.cpp: Removed.
+        * jit/JITCode.h:
+        (JSC::JITCode::useDataIC):
+        * jit/JITInlineCacheGenerator.cpp:
+        (JSC::generateGetByIdInlineAccess):
+        (JSC::JITGetByIdGenerator::generateBaselineDataICFastPath):
+        (JSC::JITGetByIdWithThisGenerator::generateBaselineDataICFastPath):
+        (JSC::JITPutByIdGenerator::generateBaselineDataICFastPath):
+        (JSC::JITInByIdGenerator::generateBaselineDataICFastPath):
+        * jit/JITInlineCacheGenerator.h:
+        * jit/JITInlines.h:
+        (JSC::JIT::emitArrayProfilingSiteWithCell):
+        (JSC::JIT::emitJumpSlowCaseIfNotJSCell):
+        * jit/JITOpcodes.cpp:
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_instanceof):
+        (JSC::JIT::emitSlow_op_instanceof):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_get_by_val):
+        (JSC::JIT::generateGetByValSlowCase):
+        (JSC::JIT::slow_op_get_by_val_prepareCallGenerator):
+        (JSC::JIT::emit_op_get_private_name):
+        (JSC::JIT::emitSlow_op_get_private_name):
+        (JSC::JIT::emit_op_set_private_brand):
+        (JSC::JIT::emitSlow_op_set_private_brand):
+        (JSC::JIT::emit_op_check_private_brand):
+        (JSC::JIT::emitSlow_op_check_private_brand):
+        (JSC::JIT::emit_op_put_by_val):
+        (JSC::JIT::emit_op_put_by_val_direct):
+        (JSC::JIT::emitSlow_op_put_by_val):
+        (JSC::JIT::slow_op_put_by_val_prepareCallGenerator):
+        (JSC::JIT::emit_op_put_private_name):
+        (JSC::JIT::emitSlow_op_put_private_name):
+        (JSC::JIT::slow_op_put_private_name_prepareCallGenerator):
+        (JSC::JIT::emit_op_del_by_id):
+        (JSC::JIT::emitSlow_op_del_by_id):
+        (JSC::JIT::emit_op_del_by_val):
+        (JSC::JIT::emitSlow_op_del_by_val):
+        (JSC::JIT::emit_op_try_get_by_id):
+        (JSC::JIT::emitSlow_op_try_get_by_id):
+        (JSC::JIT::emit_op_get_by_id_direct):
+        (JSC::JIT::emitSlow_op_get_by_id_direct):
+        (JSC::JIT::emit_op_get_by_id):
+        (JSC::JIT::emitSlow_op_get_by_id):
+        (JSC::JIT::emit_op_get_by_id_with_this):
+        (JSC::JIT::emitSlow_op_get_by_id_with_this):
+        (JSC::JIT::emit_op_put_by_id):
+        (JSC::JIT::emitSlow_op_put_by_id):
+        (JSC::JIT::emit_op_in_by_id):
+        (JSC::JIT::emitSlow_op_in_by_id):
+        (JSC::JIT::emit_op_in_by_val):
+        (JSC::JIT::emitSlow_op_in_by_val):
+        (JSC::JIT::emitHasPrivate):
+        (JSC::JIT::emitHasPrivateSlow):
+        (JSC::JIT::emit_op_enumerator_get_by_val):
+        * jit/JITPropertyAccess32_64.cpp:
+
 2021-10-24  Alexey Shvayka  <ashvayka@apple.com>
 
         InternalFunction::createSubclassStructure() should use prototype's global object

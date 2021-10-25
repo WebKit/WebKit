@@ -642,7 +642,6 @@ jit/JITBitAndGenerator.cpp
 jit/JITBitOrGenerator.cpp
 jit/JITBitXorGenerator.cpp
 jit/JITCall.cpp
-jit/JITCall32_64.cpp
 jit/JITCode.cpp
 jit/JITCompilation.cpp
 jit/JITCompilationKey.cpp

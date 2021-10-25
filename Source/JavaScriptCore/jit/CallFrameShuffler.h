@@ -46,6 +46,7 @@ public:
 
     // Any register that has been locked or acquired must be released
     // before calling prepareForTailCall() or prepareForSlowPath().
+    // Unless you know the register is not the target of a recovery.
     void lockGPR(GPRReg gpr)
     {
         ASSERT(!m_lockedRegisters.get(gpr));

@@ -3446,7 +3446,6 @@
 		146AAB370B66A94400E55F16 /* JSStringRefCF.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSStringRefCF.cpp; sourceTree = "<group>"; };
 		146B14DB12EB5B12001BEC1B /* ConservativeRoots.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConservativeRoots.cpp; sourceTree = "<group>"; };
 		146FA5A81378F6B0003627A3 /* HandleTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HandleTypes.h; sourceTree = "<group>"; };
-		146FE51111A710430087AE66 /* JITCall32_64.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JITCall32_64.cpp; sourceTree = "<group>"; };
 		1471482E20D323640090E630 /* JSWrapperMapTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSWrapperMapTests.h; path = API/tests/JSWrapperMapTests.h; sourceTree = "<group>"; };
 		1471482F20D323650090E630 /* JSWrapperMapTests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = JSWrapperMapTests.mm; path = API/tests/JSWrapperMapTests.mm; sourceTree = "<group>"; };
 		147341CB1DC02D7200AA29BA /* ExecutableBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExecutableBase.h; sourceTree = "<group>"; };
@@ -6365,7 +6364,6 @@
 				FE3A06AF1C10CB6F00390FDD /* JITBitXorGenerator.cpp */,
 				FE3A06B01C10CB6F00390FDD /* JITBitXorGenerator.h */,
 				86CC85A20EE79B7400288682 /* JITCall.cpp */,
-				146FE51111A710430087AE66 /* JITCall32_64.cpp */,
 				0F8F94431667635200D61971 /* JITCode.cpp */,
 				86CCEFDD0F413F8900FD7F9E /* JITCode.h */,
 				0FFB80BB20A794700006AAF6 /* JITCodeInlines.h */,
