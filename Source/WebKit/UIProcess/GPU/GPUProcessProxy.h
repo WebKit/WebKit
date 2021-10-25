@@ -94,6 +94,7 @@ public:
     void updatePreferences();
 
     void terminateForTesting();
+    void webProcessConnectionCountForTesting(CompletionHandler<void(uint64_t)>&&);
 
 private:
     explicit GPUProcessProxy();

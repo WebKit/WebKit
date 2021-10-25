@@ -149,12 +149,11 @@ private:
     void startListeningForIPC();
     void didReceiveStreamMessage(IPC::StreamServerConnectionBase&, IPC::Decoder&) final;
 
-    Ref<WebCore::ImageBuffer> m_imageBuffer;
+    WeakPtr<WebCore::ImageBuffer> m_imageBuffer;
     QualifiedRenderingResourceIdentifier m_imageBufferIdentifier;
     WebCore::ProcessIdentifier m_webProcessIdentifier;
-    Ref<RemoteRenderingBackend> m_renderingBackend;
+    RefPtr<RemoteRenderingBackend> m_renderingBackend;
     RefPtr<WebCore::ImageBuffer> m_maskImageBuffer;
-    bool m_isListeningForIPC { false };
 };
 
 } // namespace WebKit

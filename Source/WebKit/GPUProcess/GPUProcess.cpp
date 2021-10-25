@@ -498,6 +498,11 @@ void GPUProcess::setVorbisDecoderEnabled(bool enabled)
 }
 #endif
 
+void GPUProcess::webProcessConnectionCountForTesting(CompletionHandler<void(uint64_t)>&& completionHandler)
+{
+    completionHandler(GPUConnectionToWebProcess::objectCountForTesting());
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(GPU_PROCESS)

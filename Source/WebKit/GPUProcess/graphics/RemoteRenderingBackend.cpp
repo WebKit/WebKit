@@ -108,6 +108,11 @@ void RemoteRenderingBackend::startListeningForIPC()
 void RemoteRenderingBackend::stopListeningForIPC()
 {
     ASSERT(RunLoop::isMain());
+    // Make sure we destroy the ResourceCache on the WorkQueue since it gets populated on the WorkQueue.
+    // Make sure rendering resource request is released after destroying the cache.
+    m_workQueue->dispatch([renderingResourcesRequest = WTFMove(m_renderingResourcesRequest), remoteResourceCache = WTFMove(m_remoteResourceCache)] { });
+    m_workQueue->stopAndWaitForCompletion();
+
     m_streamConnection->stopReceivingMessages(Messages::RemoteRenderingBackend::messageReceiverName(), m_renderingBackendIdentifier.toUInt64());
     m_streamConnection->stopReceivingMessages(Messages::RemoteDisplayListRecorder::messageReceiverName());
 
@@ -117,11 +122,6 @@ void RemoteRenderingBackend::stopListeningForIPC()
         for (auto& remoteContext : std::exchange(m_remoteDisplayLists, { }))
             remoteContext.value->stopListeningForIPC();
     }
-
-    // Make sure we destroy the ResourceCache on the WorkQueue since it gets populated on the WorkQueue.
-    // Make sure rendering resource request is released after destroying the cache.
-    m_workQueue->dispatch([renderingResourcesRequest = WTFMove(m_renderingResourcesRequest), remoteResourceCache = WTFMove(m_remoteResourceCache)] { });
-    m_workQueue->stopAndWaitForCompletion();
 }
 
 void RemoteRenderingBackend::dispatch(Function<void()>&& task)

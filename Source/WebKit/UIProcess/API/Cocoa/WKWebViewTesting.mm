@@ -27,6 +27,7 @@
 #import "WKWebViewPrivateForTesting.h"
 
 #import "AudioSessionRoutingArbitratorProxy.h"
+#import "GPUProcessProxy.h"
 #import "MediaSessionCoordinatorProxyPrivate.h"
 #import "PlaybackSessionManagerProxy.h"
 #import "UserMediaProcessManager.h"
@@ -420,6 +421,19 @@
 {
     _page->clearAppPrivacyReportTestingData([completionHandler = makeBlockPtr(completionHandler)] {
         completionHandler();
+    });
+}
+
+- (void)_gpuToWebProcessConnectionCountForTesting:(void(^)(NSUInteger))completionHandler
+{
+    RefPtr gpuProcess = _page->process().processPool().gpuProcess();
+    if (!gpuProcess) {
+        completionHandler(0);
+        return;
+    }
+
+    gpuProcess->webProcessConnectionCountForTesting([completionHandler = makeBlockPtr(completionHandler)](uint64_t count) {
+        completionHandler(count);
     });
 }
 

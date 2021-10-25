@@ -1,3 +1,72 @@
+2021-10-25  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        REGRESSION (r284079): Audio continues playing on hulu.com in private browsing mode after closing the tab
+        https://bugs.webkit.org/show_bug.cgi?id=232113
+        rdar://84399283
+
+        Reviewed by Chris Dumez.
+
+        I inadvertently introduced a ref-counting cycle between RemoteRenderingBackend and RemoteDisplayListRecorder
+        after IPC stream refactoring in r284079, since RemoteDisplayListRecorder directly strongly refs the rendering
+        backend, and the rendering backend indirectly holds on to RemoteDisplayListRecorders through remote image
+        buffers in the resource cache. Since RemoteRenderingBackend also strongly refs  GPUConnectionToWebProcess as
+        well, this caused the entire GPUConnectionToWebProcess to leak after tearing down the connected web process, if
+        the web process ever installed a remote rendering backend for 2D canvas.
+
+        To avoid this cycle, turn RemoteDisplayListRecorder's `m_renderingBackend` into a RefPtr instead of a Ref, and
+        clear it out in `stopListeningForIPC()`. This also means that we no longer need a separate boolean flag to
+        ensure that `RemoteDisplayListRecorder::stopListeningForIPC()` is idempotent, so we also remove
+        `m_isListeningForIPC` altogether.
+
+        Test: GPUProcess.DoNotLeakConnectionAfterClosingWebPage
+
+        * GPUProcess/GPUConnectionToWebProcess.cpp:
+        (WebKit::GPUConnectionToWebProcess::GPUConnectionToWebProcess):
+        (WebKit::GPUConnectionToWebProcess::~GPUConnectionToWebProcess):
+        * GPUProcess/GPUConnectionToWebProcess.h:
+        (WebKit::GPUConnectionToWebProcess::objectCountForTesting):
+        * GPUProcess/GPUProcess.cpp:
+        (WebKit::GPUProcess::webProcessConnectionCountForTesting):
+
+        Add support for a testing-only SPI hook to ask for the live GPUConnectionToWebProcess count. This retrieves a
+        statically incremented/decremented count of the GPUConnectionToWebProcess instances that exist in the GPU
+        process; importantly, this is different from asking the GPUProcess for the number of connections in
+        `m_webProcessConnections`, since the latter will be 0 even when one or more GPUConnectionToWebProcesses are
+        still alive.
+
+        * GPUProcess/GPUProcess.h:
+        * GPUProcess/GPUProcess.messages.in:
+        * GPUProcess/graphics/RemoteDisplayListRecorder.cpp:
+        (WebKit::RemoteDisplayListRecorder::RemoteDisplayListRecorder):
+
+        Also fix a leak caused by RemoteDisplayListRecorder and RemoteImageBuffer strongly reffing each other. Since
+        RemoteImageBuffer owns RemoteDisplayListRecorder, the backpointer from RemoteDisplayListRecorder to the image
+        buffer should be weak, not strong.
+
+        (WebKit::RemoteDisplayListRecorder::startListeningForIPC):
+        (WebKit::RemoteDisplayListRecorder::stopListeningForIPC):
+        (WebKit::RemoteDisplayListRecorder::paintFrameForMedia):
+        * GPUProcess/graphics/RemoteDisplayListRecorder.h:
+        (): Deleted.
+        * GPUProcess/graphics/RemoteRenderingBackend.cpp:
+        (WebKit::RemoteRenderingBackend::stopListeningForIPC):
+
+        Adjust this logic to ensure that we finish pending work and destroy cached resources *right before* we stop
+        listening for all stream IPC messages. Since RemoteDisplayListRecorder now clears out its pointer to the
+        rendering backend in `stopListeningForIPC()`, we'll need to ensure that any pending IPC stream messages that
+        might cause RemoteDisplayListRecorder to call into the back end are processed before we sever the IPC stream
+        connection for good by removing all receivers.
+
+        * UIProcess/API/Cocoa/WKWebViewPrivateForTesting.h:
+
+        Add the new testing SPI (see above for more details).
+
+        * UIProcess/API/Cocoa/WKWebViewTesting.mm:
+        (-[WKWebView _gpuToWebProcessConnectionCountForTesting:]):
+        * UIProcess/GPU/GPUProcessProxy.cpp:
+        (WebKit::GPUProcessProxy::webProcessConnectionCountForTesting):
+        * UIProcess/GPU/GPUProcessProxy.h:
+
 2021-10-25  Sam Sneddon  <gsnedders@apple.com>
 
         [Python] rename assertEquals/assertNotEquals

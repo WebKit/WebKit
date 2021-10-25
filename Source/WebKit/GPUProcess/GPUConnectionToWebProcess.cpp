@@ -248,6 +248,8 @@ GPUConnectionToWebProcess::GPUConnectionToWebProcess(GPUProcess& gpuProcess, Web
     // reply from the GPU process, which would be unsafe.
     m_connection->setOnlySendMessagesAsDispatchWhenWaitingForSyncReplyWhenProcessingSuchAMessage(true);
     m_connection->open();
+
+    ++gObjectCountForTesting;
 }
 
 GPUConnectionToWebProcess::~GPUConnectionToWebProcess()
@@ -262,7 +264,11 @@ GPUConnectionToWebProcess::~GPUConnectionToWebProcess()
 #if PLATFORM(COCOA) && USE(LIBWEBRTC)
     m_libWebRTCCodecsProxy->close();
 #endif
+
+    --gObjectCountForTesting;
 }
+
+uint64_t GPUConnectionToWebProcess::gObjectCountForTesting = 0;
 
 void GPUConnectionToWebProcess::didClose(IPC::Connection& connection)
 {

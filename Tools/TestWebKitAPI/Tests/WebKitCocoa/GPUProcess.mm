@@ -282,6 +282,21 @@ TEST(GPUProcess, OnlyLaunchesGPUProcessWhenNecessaryMediaFeatureDetection)
     EXPECT_EQ([configuration.get().processPool _gpuProcessIdentifier], 0);
 }
 
+TEST(GPUProcess, DoNotLeakConnectionAfterClosingWebPage)
+{
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    WKPreferencesSetBoolValueForKeyForTesting((__bridge WKPreferencesRef)[configuration preferences], true, WKStringCreateWithUTF8CString("UseGPUProcessForCanvasRenderingEnabled"));
+    WKPreferencesSetBoolValueForKeyForTesting((__bridge WKPreferencesRef)[configuration preferences], false, WKStringCreateWithUTF8CString("UseGPUProcessForDOMRenderingEnabled"));
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 400) configuration:configuration.get()]);
+    [webView synchronouslyLoadTestPageNamed:@"canvas-image-data"];
+    EXPECT_EQ(1U, [webView gpuToWebProcessConnectionCount]);
+    [webView _close];
+
+    while ([webView gpuToWebProcessConnectionCount])
+        TestWebKitAPI::Util::sleep(0.1);
+}
+
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
 TEST(GPUProcess, LegacyCDM)
 {

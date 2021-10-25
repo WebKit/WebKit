@@ -37,7 +37,7 @@ RemoteDisplayListRecorder::RemoteDisplayListRecorder(ImageBuffer& imageBuffer, Q
     : m_imageBuffer(imageBuffer)
     , m_imageBufferIdentifier(imageBufferIdentifier)
     , m_webProcessIdentifier(webProcessIdentifier)
-    , m_renderingBackend(renderingBackend)
+    , m_renderingBackend(&renderingBackend)
 {
 }
 
@@ -53,18 +53,13 @@ GraphicsContext& RemoteDisplayListRecorder::drawingContext()
 
 void RemoteDisplayListRecorder::startListeningForIPC()
 {
-    ASSERT(!m_isListeningForIPC);
-    m_isListeningForIPC = true;
     m_renderingBackend->streamConnection().startReceivingMessages(*this, Messages::RemoteDisplayListRecorder::messageReceiverName(), m_imageBufferIdentifier.object().toUInt64());
 }
 
 void RemoteDisplayListRecorder::stopListeningForIPC()
 {
-    if (!m_isListeningForIPC)
-        return;
-
-    m_renderingBackend->streamConnection().stopReceivingMessages(Messages::RemoteDisplayListRecorder::messageReceiverName(), m_imageBufferIdentifier.object().toUInt64());
-    m_isListeningForIPC = false;
+    if (auto renderingBackend = std::exchange(m_renderingBackend, { }))
+        renderingBackend->streamConnection().stopReceivingMessages(Messages::RemoteDisplayListRecorder::messageReceiverName(), m_imageBufferIdentifier.object().toUInt64());
 }
 
 void RemoteDisplayListRecorder::save()
@@ -426,7 +421,7 @@ void RemoteDisplayListRecorder::putPixelBuffer(const IntRect& srcRect, const Int
 
 void RemoteDisplayListRecorder::paintFrameForMedia(MediaPlayerIdentifier identifier, const FloatRect& destination)
 {
-    m_renderingBackend->performWithMediaPlayerOnMainThread(identifier, [imageBuffer = m_imageBuffer.copyRef(), destination](MediaPlayer& player) {
+    m_renderingBackend->performWithMediaPlayerOnMainThread(identifier, [imageBuffer = RefPtr { m_imageBuffer.get() }, destination](MediaPlayer& player) {
         // It is currently not safe to call paintFrameForMedia() off the main thread.
         imageBuffer->context().paintFrameForMedia(player, destination);
     });

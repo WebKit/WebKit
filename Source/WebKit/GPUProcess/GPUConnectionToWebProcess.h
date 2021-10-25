@@ -170,6 +170,8 @@ public:
     void releaseGraphicsContextGLForTesting(GraphicsContextGLIdentifier);
 #endif
 
+    static uint64_t objectCountForTesting() { return gObjectCountForTesting; }
+
     using RemoteRenderingBackendMap = HashMap<RenderingBackendIdentifier, IPC::ScopedActiveMessageReceiveQueue<RemoteRenderingBackend>>;
     const RemoteRenderingBackendMap& remoteRenderingBackendMap() const { return m_remoteRenderingBackendMap; }
 
@@ -241,6 +243,8 @@ private:
 #if PLATFORM(MAC) && ENABLE(WEBGL)
     void dispatchDisplayWasReconfigured();
 #endif
+
+    static uint64_t gObjectCountForTesting;
 
     RefPtr<Logger> m_logger;
 

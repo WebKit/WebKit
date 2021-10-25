@@ -100,6 +100,8 @@ public:
 
     const String& applicationVisibleName() const { return m_applicationVisibleName; }
 
+    void webProcessConnectionCountForTesting(CompletionHandler<void(uint64_t)>&&);
+
 private:
     void lowMemoryHandler(Critical, Synchronous);
 

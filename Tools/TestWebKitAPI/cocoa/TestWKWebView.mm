@@ -154,6 +154,18 @@ static NSString *overrideBundleIdentifier(id, SEL)
 
 #endif // PLATFORM(IOS_FAMILY)
 
+- (NSUInteger)gpuToWebProcessConnectionCount
+{
+    __block bool done = false;
+    __block NSUInteger count = 0;
+    [self _gpuToWebProcessConnectionCountForTesting:^(NSUInteger result) {
+        done = true;
+        count = result;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    return count;
+}
+
 - (NSString *)contentsAsString
 {
     __block bool done = false;
