@@ -1,3 +1,46 @@
+2021-10-25  Null  <null@apple.com>
+
+        Cherry-pick r284644. rdar://problem/84153991
+
+    Rare crash under DisplayLink::displayLinkCallback()
+    https://bugs.webkit.org/show_bug.cgi?id=232101
+    <rdar://84153991>
+    
+    Reviewed by Tim Horton.
+    
+    The crash was a divide by zero under m_currentUpdate.nextUpdate(), indicating that
+    m_currentUpdate.updatesPerSecond was zero. Previous assumptions that this was caused
+    by weird display configs were wrong. The actual issue is a race condition where
+    the callback can fire while we're still inside CVDisplayLinkStart(), or at least
+    before we've updated m_currentUpdate.
+    
+    The fix is to initialize m_currentUpdate before we call CVDisplayLinkStart().
+    
+    * UIProcess/mac/DisplayLink.cpp:
+    (WebKit::DisplayLink::addObserver):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@284644 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-10-21  Simon Fraser  <simon.fraser@apple.com>
+
+            Rare crash under DisplayLink::displayLinkCallback()
+            https://bugs.webkit.org/show_bug.cgi?id=232101
+            <rdar://84153991>
+
+            Reviewed by Tim Horton.
+
+            The crash was a divide by zero under m_currentUpdate.nextUpdate(), indicating that
+            m_currentUpdate.updatesPerSecond was zero. Previous assumptions that this was caused
+            by weird display configs were wrong. The actual issue is a race condition where
+            the callback can fire while we're still inside CVDisplayLinkStart(), or at least
+            before we've updated m_currentUpdate.
+
+            The fix is to initialize m_currentUpdate before we call CVDisplayLinkStart().
+
+            * UIProcess/mac/DisplayLink.cpp:
+            (WebKit::DisplayLink::addObserver):
+
 2021-10-19  Russell Epstein  <repstein@apple.com>
 
         Revert r283931. rdar://problem/83953710
