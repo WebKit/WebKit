@@ -1,3 +1,26 @@
+2021-10-25  John Wilander  <wilander@apple.com>
+
+        Remove assert failure expectations after r284846 landed
+        https://bugs.webkit.org/show_bug.cgi?id=232048
+        <rdar://problem/84479642>
+        https://bugs.webkit.org/show_bug.cgi?id=232102
+        <rdar://problem/84521189>
+        https://bugs.webkit.org/show_bug.cgi?id=231255
+        <rdar://problem/83903881>
+        https://bugs.webkit.org/show_bug.cgi?id=231431
+        <rdar://problem/84029425>
+
+        Unreviewed test gardening.
+
+        Depends on this fix: https://trac.webkit.org/changeset/284846/webkit
+
+        * NetworkProcess/NetworkSession.cpp:
+        (WebKit::NetworkSession::setPrivateClickMeasurementAppBundleIDForTesting):
+            Removed comment with Bugzilla reference.
+            I decided to keep the logging since it was so useful in finding the root
+            cause of the assertion crashes. Logging is only triggered when we will
+            fail the assertion.
+
 2021-10-25  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Rename a few variable and parameter names in WKContentViewInteraction.mm
