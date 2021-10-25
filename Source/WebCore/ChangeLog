@@ -1,5 +1,44 @@
 2021-10-25  Null  <null@apple.com>
 
+        Cherry-pick r283628. rdar://problem/83729357
+
+    CoreAudioSharedUnit should not clear its persistentID when device capture changes
+    https://bugs.webkit.org/show_bug.cgi?id=231280
+    
+    Reviewed by Eric Carlson.
+    
+    Manually tested.
+    
+    * platform/mediastream/mac/CoreAudioCaptureSource.cpp:
+    (WebCore::CoreAudioSharedUnit::cleanupAudioUnit):
+    Partially reverting https://commits.webkit.org/r280702 which was clearing m_persistentID in cleanUpAudioUnit.
+    The issue is that when unit is capturing and is changing capturing device, it will set m_persistentID then cleanUpAudioUnit
+    as part of its reconfiguration. This was making m_persistentID being empty.
+    When starting to capture, we often receive a notification of changed devices and we would check whether the new devices set
+    contains m_persistentID. If not (which is the case since m_persistentID is empty), we would fail the capture.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@283628 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-10-06  Youenn Fablet  <youenn@apple.com>
+
+            CoreAudioSharedUnit should not clear its persistentID when device capture changes
+            https://bugs.webkit.org/show_bug.cgi?id=231280
+
+            Reviewed by Eric Carlson.
+
+            Manually tested.
+
+            * platform/mediastream/mac/CoreAudioCaptureSource.cpp:
+            (WebCore::CoreAudioSharedUnit::cleanupAudioUnit):
+            Partially reverting https://commits.webkit.org/r280702 which was clearing m_persistentID in cleanUpAudioUnit.
+            The issue is that when unit is capturing and is changing capturing device, it will set m_persistentID then cleanUpAudioUnit
+            as part of its reconfiguration. This was making m_persistentID being empty.
+            When starting to capture, we often receive a notification of changed devices and we would check whether the new devices set
+            contains m_persistentID. If not (which is the case since m_persistentID is empty), we would fail the capture.
+
+2021-10-25  Null  <null@apple.com>
+
         Cherry-pick r283590. rdar://problem/80837616
 
     ASSERT(m_callback->hasCallback()) under IntersectionObserver::notify()
