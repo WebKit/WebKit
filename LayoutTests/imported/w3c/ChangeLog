@@ -1,5 +1,22 @@
 2021-10-25  Chris Dumez  <cdumez@apple.com>
 
+        Form navigations with target=_blank should not have an opener
+        https://bugs.webkit.org/show_bug.cgi?id=232243
+
+        Reviewed by Sam Weinig.
+
+        Merge https://github.com/web-platform-tests/wpt/pull/31368 from upstream WPT to fix outdated expectations in
+        WPT tests.
+
+        * web-platform-tests/content-security-policy/form-action/form-action-self-allowed-target-blank.html:
+        * web-platform-tests/content-security-policy/form-action/form-action-src-allowed-target-blank.sub.html:
+        * web-platform-tests/content-security-policy/form-action/form-action-src-redirect-allowed-target-blank.sub.html:
+        * web-platform-tests/html/semantics/forms/form-submission-target/resources/reltester.js:
+        (formUsesTargetBlank):
+        (relTester):
+
+2021-10-25  Chris Dumez  <cdumez@apple.com>
+
         imported/w3c/web-platform-tests/html/semantics/forms/form-submission-0/form-submission-algorithm.html is timing out
         https://bugs.webkit.org/show_bug.cgi?id=232117
 

@@ -26,6 +26,7 @@ async_test(t => {
     f.action = "http://127.0.0.1:8000/cookies/resources/post-cookies-to-opener.py";
     f.method = "POST";
     f.target = "_blank";
+    f.rel = "opener";
     window.onload = t.step_func(f.submit.bind(f));
     document.body.appendChild(f);
 }, "'127.0.0.1' is same-site with itself, so samesite cookies are sent via POST.");

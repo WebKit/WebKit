@@ -73,6 +73,7 @@ using namespace HTMLNames;
 struct FormRelAttributes {
     bool noopener { false };
     bool noreferrer { false };
+    bool opener { false };
 };
 
 static FormRelAttributes parseFormRelAttributes(StringView string)
@@ -83,6 +84,8 @@ static FormRelAttributes parseFormRelAttributes(StringView string)
             attributes.noopener = true;
         else if (equalIgnoringASCIICase(token, "noreferrer"))
             attributes.noreferrer = true;
+        else if (equalIgnoringASCIICase(token, "opener"))
+            attributes.opener = true;
     }
     return attributes;
 }
@@ -425,9 +428,7 @@ void HTMLFormElement::submit(Event* event, bool activateSubmitButton, bool proce
         return;
 
     auto relAttributes = parseFormRelAttributes(getAttribute(HTMLNames::relAttr));
-    // FIXME: According to the specification, having `target=blank` without `rel="opener"` should suppress the opener.
-    // However, this is not currently implemented as it is causing some WPT tests to fail (https://github.com/whatwg/html/issues/7256).
-    if (relAttributes.noopener || relAttributes.noreferrer)
+    if (relAttributes.noopener || relAttributes.noreferrer || (!relAttributes.opener && document().settings().blankAnchorTargetImpliesNoOpenerEnabled() && equalIgnoringASCIICase(formSubmission->target(), "_blank")))
         formSubmission->setNewFrameOpenerPolicy(NewFrameOpenerPolicy::Suppress);
     if (relAttributes.noreferrer)
         formSubmission->setReferrerPolicy(ReferrerPolicy::NoReferrer);
