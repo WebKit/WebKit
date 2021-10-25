@@ -28,6 +28,7 @@
 #include "IDLTypes.h"
 #include "ImageBitmapBacking.h"
 #include "ScriptWrappable.h"
+#include <atomic>
 #include <wtf/RefCounted.h>
 
 namespace JSC {
@@ -108,6 +109,7 @@ public:
 
     static Vector<std::optional<ImageBitmapBacking>> detachBitmaps(Vector<RefPtr<ImageBitmap>>&&);
 
+    size_t memoryCost() const;
 private:
     friend class ImageBitmapImageObserver;
     friend class PendingImageBitmap;
@@ -130,8 +132,10 @@ private:
     static void createPromise(ScriptExecutionContext&, RefPtr<ImageData>&, ImageBitmapOptions&&, std::optional<IntRect>, Promise&&);
     static void createPromise(ScriptExecutionContext&, RefPtr<CSSStyleImageValue>&, ImageBitmapOptions&&, std::optional<IntRect>, Promise&&);
     static void createFromBuffer(ScriptExecutionContext&, Ref<ArrayBuffer>&&, String mimeType, long long expectedContentLength, const URL&, ImageBitmapOptions&&, std::optional<IntRect>, Promise&&);
+    void updateMemoryCost();
 
     std::optional<ImageBitmapBacking> m_backingStore;
+    std::atomic<size_t> m_memoryCost { 0 };
 };
 
 }

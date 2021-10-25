@@ -846,6 +846,7 @@ ImageBitmap::ImageBitmap(std::optional<ImageBitmapBacking>&& backingStore)
     : m_backingStore(WTFMove(backingStore))
 {
     ASSERT_IMPLIES(m_backingStore, m_backingStore->buffer());
+    updateMemoryCost();
 }
 
 ImageBitmap::~ImageBitmap()
@@ -858,7 +859,10 @@ ImageBitmap::~ImageBitmap()
 
 std::optional<ImageBitmapBacking> ImageBitmap::takeImageBitmapBacking()
 {
-    return std::exchange(m_backingStore, std::nullopt);
+    auto result = std::exchange(m_backingStore, std::nullopt);
+    if (result)
+        updateMemoryCost();
+    return result;
 }
 
 RefPtr<ImageBuffer> ImageBitmap::takeImageBuffer()
@@ -867,6 +871,22 @@ RefPtr<ImageBuffer> ImageBitmap::takeImageBuffer()
         return backingStore->takeImageBuffer();
     ASSERT(isDetached());
     return nullptr;
+}
+
+void ImageBitmap::updateMemoryCost()
+{
+    if (m_backingStore) {
+        if (auto imageBuffer = m_backingStore->buffer()) {
+            m_memoryCost = imageBuffer->memoryCost();
+            return;
+        }
+    }
+    m_memoryCost = 0;
+}
+
+size_t ImageBitmap::memoryCost() const
+{
+    return m_memoryCost;
 }
 
 } // namespace WebCore
