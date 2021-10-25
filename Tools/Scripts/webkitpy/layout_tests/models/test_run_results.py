@@ -58,6 +58,7 @@ class TestRunResults(object):
         self.expected_results_by_name = {}
         self.unexpected_results_by_name = {}
         self.failures_by_name = {}
+        self.repeated_results_by_name = {}  # Map of test name to a list of results, when a tests is run more than once (like when passing --repeat-each)
         self.total_failures = 0
         self.expected_skips = 0
         for expectation in test_expectations.TestExpectations.EXPECTATIONS.values():
@@ -70,6 +71,9 @@ class TestRunResults(object):
 
     def add(self, test_result, expected):
         self.tests_by_expectation[test_result.type].add(test_result.test_name)
+        if test_result.test_name not in self.repeated_results_by_name:
+            self.repeated_results_by_name[test_result.test_name] = set()
+        self.repeated_results_by_name[test_result.test_name].add(test_result.type)
         self.results_by_name[test_result.test_name] = self.results_by_name.get(test_result.test_name, test_result)
         if test_result.is_other_crash:
             return
@@ -158,6 +162,7 @@ class TestRunResults(object):
         self.unexpected_timeouts += test_run_results.unexpected_timeouts
         self.tests_by_expectation = merge_dict_sets(self.tests_by_expectation, test_run_results.tests_by_expectation)
         self.tests_by_timeline = merge_dict_sets(self.tests_by_timeline, test_run_results.tests_by_timeline)
+        self.repeated_results_by_name = merge_dict_sets(self.repeated_results_by_name, test_run_results.repeated_results_by_name)
         self.results_by_name.update(test_run_results.results_by_name)
         self.all_results += test_run_results.all_results
         self.expected_results_by_name.update(test_run_results.expected_results_by_name)
@@ -315,12 +320,23 @@ def summarize_results(port_obj, expectations_by_type, initial_results, retry_res
                     num_regressions += 1
                     test_dict['report'] = 'REGRESSION'
             elif retry_results and test_name in retry_results.expected_results_by_name:
-                actual.append(keywords[retry_results.expected_results_by_name[test_name].type])
+                retry_result_name = keywords[retry_results.expected_results_by_name[test_name].type]
+                if retry_result_name not in actual:
+                    actual.append(retry_result_name)
                 num_flaky += 1
                 test_dict['report'] = 'FLAKY'
             else:
                 num_regressions += 1
                 test_dict['report'] = 'REGRESSION'
+
+        # If a test was run more than once on the initial_results (for example with --repeat-each),
+        # check for possible flakiness there and also account in "actual" for the extra results.
+        for repeated_result in initial_results.repeated_results_by_name[test_name]:
+            repeated_result_name = keywords[repeated_result]
+            if repeated_result_name not in actual:
+                actual.append(repeated_result_name)
+                if test_name in initial_results.unexpected_results_by_name:
+                    test_dict['report'] = 'FLAKY'
 
         test_dict['expected'] = expected
         test_dict['actual'] = " ".join(actual)

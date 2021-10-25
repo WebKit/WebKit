@@ -1,3 +1,25 @@
+2021-10-25  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [webkitpy] webkit-test-runner doesn't report all results when a test is run several times
+        https://bugs.webkit.org/show_bug.cgi?id=231790
+
+        Reviewed by Jonathan Bedard.
+
+        WTR was only picking one of the failure results when a test was run more than once
+        (for example with the flag --repeat-each=X), so it was not reporting all the values
+        that the test generated. This is a major issue when searching for flaky tests.
+
+        This patch adds a dictionary to store all the results of a given test on the repeated
+        repeats and then it ensures those values are taken into account when reporting the
+        final results for the test. It marks the test as flaky if more than one different value
+        was generated.
+
+        * Scripts/webkitpy/layout_tests/models/test_run_results.py:
+        (TestRunResults.__init__):
+        (TestRunResults.add):
+        (TestRunResults.merge):
+        (summarize_results):
+
 2021-10-25  Aakash Jain  <aakash_jain@apple.com>
 
         Add support for fast-cq mode to webkit-patch land-safely command
