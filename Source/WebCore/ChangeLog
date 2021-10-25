@@ -1,5 +1,44 @@
 2021-10-25  Null  <null@apple.com>
 
+        Cherry-pick r283299. rdar://problem/84629227
+
+    Cocoa GraphicsContextGLOpenGL should be more robust in destruction
+    https://bugs.webkit.org/show_bug.cgi?id=230940
+    
+    Patch by Kimmo Kinnunen <kkinnunen@apple.com> on 2021-09-29
+    Reviewed by Antti Koivisto.
+    
+    Delete resources based on checking if they exist, not based on
+    a flag that should cause them to exist. Currently the constructor can return early,
+    so various resources might not exist even if their flag condition would
+    indicate they should.
+    
+    No new tests, refactor.
+    
+    * platform/graphics/cocoa/GraphicsContextGLOpenGLCocoa.mm:
+    (WebCore::GraphicsContextGLOpenGL::~GraphicsContextGLOpenGL):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@283299 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-09-29  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+            Cocoa GraphicsContextGLOpenGL should be more robust in destruction
+            https://bugs.webkit.org/show_bug.cgi?id=230940
+
+            Reviewed by Antti Koivisto.
+
+            Delete resources based on checking if they exist, not based on
+            a flag that should cause them to exist. Currently the constructor can return early,
+            so various resources might not exist even if their flag condition would
+            indicate they should.
+
+            No new tests, refactor.
+
+            * platform/graphics/cocoa/GraphicsContextGLOpenGLCocoa.mm:
+            (WebCore::GraphicsContextGLOpenGL::~GraphicsContextGLOpenGL):
+
+2021-10-25  Null  <null@apple.com>
+
         Cherry-pick r283515. rdar://problem/84624826
 
     [WebAuthn] Prefer internal user verification if available over pin entry.

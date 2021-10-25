@@ -427,19 +427,18 @@ GraphicsContextGLOpenGL::~GraphicsContextGLOpenGL()
 {
     GraphicsContextGLOpenGLManager::sharedManager().removeContext(this);
     if (makeContextCurrent()) {
-        GraphicsContextGLAttributes attrs = contextAttributes();
-        gl::DeleteTextures(1, &m_texture);
-
-        if (attrs.antialias) {
+        if (m_texture)
+            gl::DeleteTextures(1, &m_texture);
+        if (m_multisampleColorBuffer)
             gl::DeleteRenderbuffers(1, &m_multisampleColorBuffer);
-            if (attrs.stencil || attrs.depth)
-                gl::DeleteRenderbuffers(1, &m_multisampleDepthStencilBuffer);
+        if (m_multisampleDepthStencilBuffer)
+            gl::DeleteRenderbuffers(1, &m_multisampleDepthStencilBuffer);
+        if (m_multisampleFBO)
             gl::DeleteFramebuffers(1, &m_multisampleFBO);
-        } else {
-            if (attrs.stencil || attrs.depth)
-                gl::DeleteRenderbuffers(1, &m_depthStencilBuffer);
-        }
-        gl::DeleteFramebuffers(1, &m_fbo);
+        if (m_depthStencilBuffer)
+            gl::DeleteRenderbuffers(1, &m_depthStencilBuffer);
+        if (m_fbo)
+            gl::DeleteFramebuffers(1, &m_fbo);
         if (m_preserveDrawingBufferTexture)
             gl::DeleteTextures(1, &m_preserveDrawingBufferTexture);
         if (m_preserveDrawingBufferFBO)
@@ -451,8 +450,9 @@ GraphicsContextGLOpenGL::~GraphicsContextGLOpenGL()
         for (auto& fence : m_frameCompletionFences)
             fence.abandon();
     }
-    if (m_displayBufferPbuffer) {
+    if (m_displayBufferPbuffer)
         EGL_DestroySurface(m_displayObj, m_displayBufferPbuffer);
+    if (m_swapChain) {
         auto recycledBuffer = m_swapChain->recycleBuffer();
         if (recycledBuffer.handle)
             EGL_DestroySurface(m_displayObj, recycledBuffer.handle);
@@ -463,8 +463,8 @@ GraphicsContextGLOpenGL::~GraphicsContextGLOpenGL()
     if (m_contextObj) {
         clearCurrentContext();
         EGL_DestroyContext(m_displayObj, m_contextObj);
-    } else
-        ASSERT(currentContext != this);
+    }
+    ASSERT(currentContext != this);
     LOG(WebGL, "Destroyed a GraphicsContextGLOpenGL (%p).", this);
 }
 
