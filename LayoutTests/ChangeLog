@@ -1,5 +1,14 @@
 2021-10-25  Eric Hutchison  <ehutchison@apple.com>
 
+        Update test expectations for fast/scrolling/mac/scrollbars/overlay-scrollbar-hovered.html.
+        https://bugs.webkit.org/show_bug.cgi?id=232282.
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
+2021-10-25  Eric Hutchison  <ehutchison@apple.com>
+
         [ Catalina wk1 ] 2 embedded-content/media-elements are flaky failures.
         https://bugs.webkit.org/show_bug.cgi?id=232277.
 
