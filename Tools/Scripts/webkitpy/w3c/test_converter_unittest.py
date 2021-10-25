@@ -368,13 +368,13 @@ CONTENT OF TEST
 
         # Verify the original paths are gone, and the new paths are present.
         orig_path_pattern = re.compile('\"/resources/testharness')
-        self.assertEquals(len(converted.findAll(src=orig_path_pattern)), 0, 'testharness src path was not converted')
-        self.assertEquals(len(converted.findAll(href=orig_path_pattern)), 0, 'testharness href path was not converted')
+        self.assertEqual(len(converted.findAll(src=orig_path_pattern)), 0, 'testharness src path was not converted')
+        self.assertEqual(len(converted.findAll(href=orig_path_pattern)), 0, 'testharness href path was not converted')
 
         new_relpath = os.path.relpath(resources_dir, test_path).replace(os.sep, '/')
         relpath_pattern = re.compile(new_relpath)
-        self.assertEquals(len(converted.findAll(src=relpath_pattern)), num_src_paths, 'testharness src relative path not correct')
-        self.assertEquals(len(converted.findAll(href=relpath_pattern)), num_href_paths, 'testharness href relative path not correct')
+        self.assertEqual(len(converted.findAll(src=relpath_pattern)), num_src_paths, 'testharness src relative path not correct')
+        self.assertEqual(len(converted.findAll(href=relpath_pattern)), num_href_paths, 'testharness href relative path not correct')
 
     def verify_prefixed_properties(self, converted, test_properties):
         self.assertEqual(len(set(converted[0])), len(set(test_properties)), 'Incorrect number of properties converted')

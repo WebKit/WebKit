@@ -86,7 +86,7 @@ class TestConfigurationTest(unittest.TestCase):
 
     def test_eq(self):
         self.assertEqual(TestConfiguration('xp', 'x86', 'release'), TestConfiguration('xp', 'x86', 'release'))
-        self.assertNotEquals(TestConfiguration('xp', 'x86', 'release'), TestConfiguration('xp', 'x86', 'debug'))
+        self.assertNotEqual(TestConfiguration('xp', 'x86', 'release'), TestConfiguration('xp', 'x86', 'debug'))
 
     def test_values(self):
         config = TestConfiguration('xp', 'x86', 'release')

@@ -1,3 +1,24 @@
+2021-10-25  Sam Sneddon  <gsnedders@apple.com>
+
+        [Python] rename assertEquals/assertNotEquals
+        https://bugs.webkit.org/show_bug.cgi?id=232214
+
+        Reviewed by Alexey Proskuryakov.
+
+        This is assert(Not)?Equals -> assert(\1)Equal
+
+        Python 3.11 (currently CPython main branch) removes the deprecated
+        aliases assertEquals/assertNotEquals. These have long been deprecated,
+        and the modern names exist all the way back to Python 2.7, hence there's
+        no reason not to switch.
+
+        * Scripts/webkit/messages_unittest.py:
+        (GeneratedFileContentsTest.assertGeneratedFileContentsEqual):
+        * Scripts/webkit/model_unittest.py:
+        * Scripts/webkit/parser_unittest.py:
+        (ParsingTest.check_message):
+        (ParsingTest.test_receiver):
+
 2021-10-24  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         RemoteRenderingBackend should not send IPC in the middle of destruction

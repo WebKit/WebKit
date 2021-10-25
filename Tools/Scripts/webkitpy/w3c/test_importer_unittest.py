@@ -345,7 +345,7 @@ class TestImporterTest(unittest.TestCase):
 
         fs = self.import_downloaded_tests(['--no-fetch', '--import-all', '-d', 'w3c'], FAKE_FILES)
         self.assertFalse(fs.exists('/mock-checkout/LayoutTests/w3c/web-platform-tests/t/new-manual.html'))
-        self.assertEquals(tests_options, fs.read_text_file('/mock-checkout/LayoutTests/tests-options.json'))
+        self.assertEqual(tests_options, fs.read_text_file('/mock-checkout/LayoutTests/tests-options.json'))
 
     def test_webkit_test_runner_options(self):
         FAKE_FILES = {

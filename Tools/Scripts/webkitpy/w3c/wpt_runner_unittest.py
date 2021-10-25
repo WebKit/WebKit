@@ -127,9 +127,9 @@ class WPTRunnerTest(unittest.TestCase):
             self._expected_wpt_args = expected_wpt_args
 
         def __call__(self, script_name, wpt_checkout, wpt_args):
-            self._test_case.assertEquals(script_name, "wptrunner_unittest")
-            self._test_case.assertEquals(wpt_checkout, self._expected_wpt_checkout)
-            self._test_case.assertEquals(wpt_args, self._expected_wpt_args)
+            self._test_case.assertEqual(script_name, "wptrunner_unittest")
+            self._test_case.assertEqual(wpt_checkout, self._expected_wpt_checkout)
+            self._test_case.assertEqual(wpt_args, self._expected_wpt_args)
 
     class TestInstance(object):
         def __init__(self, options, spawn_wpt_func=None):
@@ -154,7 +154,7 @@ class WPTRunnerTest(unittest.TestCase):
         self.assertTrue(instance.runner.prepare_wpt_checkout())
 
         expected_wpt_checkout = "/mock-checkout/WebKitBuild/w3c-tests/web-platform-tests"
-        self.assertEquals(instance.runner._options.wpt_checkout, expected_wpt_checkout)
+        self.assertEqual(instance.runner._options.wpt_checkout, expected_wpt_checkout)
         self.assertTrue(instance.host.filesystem.isdir(expected_wpt_checkout))
 
     def test_prepare_wpt_checkout_specified_path(self):
@@ -166,7 +166,7 @@ class WPTRunnerTest(unittest.TestCase):
         instance.host.filesystem.maybe_make_directory(specified_wpt_checkout)
 
         self.assertTrue(instance.runner.prepare_wpt_checkout())
-        self.assertEquals(instance.runner._options.wpt_checkout, specified_wpt_checkout)
+        self.assertEqual(instance.runner._options.wpt_checkout, specified_wpt_checkout)
 
     def test_run(self):
         # Tests the run() method. Files are mocked to the point that helper methods don't fail.

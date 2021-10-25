@@ -158,19 +158,19 @@ class SummarizedResultsTest(unittest.TestCase):
     def test_svn_revision_exists(self):
         self.port._options.builder_name = 'dummy builder'
         summary = summarized_results(self.port, expected=False, passing=False, flaky=False)
-        self.assertNotEquals(summary['revision'], '')
+        self.assertNotEqual(summary['revision'], '')
 
     def test_svn_revision(self):
         with mocks.local.Svn(path='/'), mocks.local.Git():
             self.port._options.builder_name = 'dummy builder'
             summary = summarized_results(self.port, expected=False, passing=False, flaky=False)
-            self.assertEquals(summary['revision'], '6')
+            self.assertEqual(summary['revision'], '6')
 
     def test_svn_revision_git(self):
         with mocks.local.Svn(), mocks.local.Git(path='/', git_svn=True), OutputCapture():
             self.port._options.builder_name = 'dummy builder'
             summary = summarized_results(self.port, expected=False, passing=False, flaky=False)
-            self.assertEquals(summary['revision'], '9')
+            self.assertEqual(summary['revision'], '9')
 
     def test_summarized_results_wontfix(self):
         self.port._options.builder_name = 'dummy builder'

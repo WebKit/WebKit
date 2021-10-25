@@ -95,7 +95,7 @@ class TestExpectationsTestCase(unittest.TestCase):
         elif expected_output:
             self.assertEqual(expected_output, self._error_collector.get_errors())
         else:
-            self.assertNotEquals('', self._error_collector.get_errors())
+            self.assertNotEqual('', self._error_collector.get_errors())
 
         # Note that a patch might change a line that introduces errors elsewhere, but we
         # don't want to lint the whole file (it can unfairly punish patches for pre-existing errors).

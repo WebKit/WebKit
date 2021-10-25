@@ -133,7 +133,7 @@ class TestParserTest(unittest.TestCase):
         self.assertTrue('reference' in test_info.keys(), 'did not find a reference file')
         self.assertTrue(test_info['reference'].startswith(test_path), 'reference path is not correct')
         self.assertTrue('reference_support_info' in test_info.keys(), 'there should be reference_support_info for this test')
-        self.assertEquals(len(test_info['reference_support_info']['files']), 4, 'there should be 4 support files in this reference')
+        self.assertEqual(len(test_info['reference_support_info']['files']), 4, 'there should be 4 support files in this reference')
         self.assertFalse('jstest' in test_info.keys(), 'test should not have been analyzed as a jstest')
 
     def test_analyze_jstest(self):

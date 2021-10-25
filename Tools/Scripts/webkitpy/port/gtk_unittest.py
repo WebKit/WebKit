@@ -101,7 +101,7 @@ class GtkPortTest(port_testcase.PortTestCase):
             "/mock-build/lib/libwebkit2gtk-5.0.so": ""
         })
         with OutputCapture() as _:
-            self.assertEquals(port.expectations_files(),
+            self.assertEqual(port.expectations_files(),
                               ['/mock-checkout/LayoutTests/TestExpectations',
                                '/mock-checkout/LayoutTests/platform/wk2/TestExpectations',
                                '/mock-checkout/LayoutTests/platform/glib/TestExpectations',
@@ -115,7 +115,7 @@ class GtkPortTest(port_testcase.PortTestCase):
         })
 
         with OutputCapture() as _:
-            self.assertEquals(port.expectations_files(),
+            self.assertEqual(port.expectations_files(),
                               ['/mock-checkout/LayoutTests/TestExpectations',
                                '/mock-checkout/LayoutTests/platform/wk2/TestExpectations',
                                '/mock-checkout/LayoutTests/platform/glib/TestExpectations',
@@ -129,9 +129,9 @@ class GtkPortTest(port_testcase.PortTestCase):
         })
 
         with OutputCapture() as captured:
-            self.assertEquals(port.expectations_files(),
+            self.assertEqual(port.expectations_files(),
                               ['/mock-checkout/LayoutTests/TestExpectations',
                                '/mock-checkout/LayoutTests/platform/wk2/TestExpectations',
                                '/mock-checkout/LayoutTests/platform/glib/TestExpectations',
                                '/mock-checkout/LayoutTests/platform/gtk/TestExpectations'])
-            self.assertEquals(captured.root.log.getvalue(), 'Multiple WebKit2GTK libraries found. Skipping GTK4 detection.\n')
+            self.assertEqual(captured.root.log.getvalue(), 'Multiple WebKit2GTK libraries found. Skipping GTK4 detection.\n')

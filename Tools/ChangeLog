@@ -1,3 +1,79 @@
+2021-10-25  Sam Sneddon  <gsnedders@apple.com>
+
+        [Python] rename assertEquals/assertNotEquals
+        https://bugs.webkit.org/show_bug.cgi?id=232214
+
+        Reviewed by Alexey Proskuryakov.
+
+        This is assert(Not)?Equals -> assert(\1)Equal
+
+        Python 3.11 (currently CPython main branch) removes the deprecated
+        aliases assertEquals/assertNotEquals. These have long been deprecated,
+        and the modern names exist all the way back to Python 2.7, hence there's
+        no reason not to switch.
+
+        * Scripts/libraries/webkitcorepy/webkitcorepy/tests/task_pool_unittest.py:
+        (TaskPoolUnittest.test_multiple):
+        * Scripts/webkitpy/common/attribute_saver_unittest.py:
+        (AttributeSaverTest.test_class):
+        (AttributeSaverTest.test_normal_default):
+        (AttributeSaverTest.test_normal_value):
+        (AttributeSaverTest.test_normal_value_on_exception):
+        (AttributeSaverTest.test_normal_value_on_normal_exit):
+        (AttributeSaverTest.test_normal_value_with_finally_on_exception):
+        (AttributeSaverTest.test_normal_value_with_finally_on_normal_exit):
+        (AttributeSaverTest.test_normal_value_with_else_on_exception):
+        (AttributeSaverTest.test_normal_value_with_else_on_normal_exit):
+        * Scripts/webkitpy/common/checkout/scm/stub_repository_unittest.py:
+        (StubRepositoryTest.test_find_checkout_root):
+        * Scripts/webkitpy/layout_tests/models/test_configuration_unittest.py:
+        (TestConfigurationTest.test_eq):
+        * Scripts/webkitpy/layout_tests/models/test_expectations_unittest.py:
+        (MiscTests.test_parse_warnings_are_logged_if_not_in_lint_mode):
+        * Scripts/webkitpy/layout_tests/models/test_run_results_unittest.py:
+        (SummarizedResultsTest.test_svn_revision_exists):
+        (SummarizedResultsTest.test_svn_revision):
+        (SummarizedResultsTest.test_svn_revision_git):
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+        (RunTest.test_tests_options):
+        * Scripts/webkitpy/layout_tests/servers/http_server_unittest.py:
+        (TestHttpServer.test_win32_start_and_stop):
+        * Scripts/webkitpy/port/driver_unittest.py:
+        * Scripts/webkitpy/port/gtk_unittest.py:
+        (GtkPortTest.test_gtk4_expectations_binary_only):
+        (GtkPortTest.test_gtk3_expectations_binary_only):
+        (GtkPortTest.test_gtk_expectations_both_binaries):
+        * Scripts/webkitpy/style/checkers/test_expectations_unittest.py:
+        (TestExpectationsTestCase.assert_lines_lint):
+        * Scripts/webkitpy/tool/steps/preparechangelog_unittest.py:
+        * Scripts/webkitpy/w3c/test_converter_unittest.py:
+        (verify_test_harness_paths):
+        * Scripts/webkitpy/w3c/test_exporter_unittest.py:
+        (TestExporterTest.test_export):
+        (TestExporterTest.test_export_with_specific_branch):
+        * Scripts/webkitpy/w3c/test_importer_unittest.py:
+        * Scripts/webkitpy/w3c/test_parser_unittest.py:
+        * Scripts/webkitpy/w3c/wpt_runner_unittest.py:
+        (WPTRunnerTest.MockSpawnWPT.__call__):
+        (WPTRunnerTest.test_prepare_wpt_checkout):
+        (WPTRunnerTest.test_prepare_wpt_checkout_specified_path):
+        * Scripts/webkitpy/xcode/device_type_unittest.py:
+        (DeviceTypeTest.test_iphone_initialization):
+        (DeviceTypeTest.test_ipad_initialization):
+        (DeviceTypeTest.test_generic_ios_device):
+        (DeviceTypeTest.test_watch_initialization):
+        (DeviceTypeTest.test_tv_initialization):
+        * Scripts/webkitpy/xcode/sdk_unittest.py:
+        (SDKTest.test_iphoneos):
+        (SDKTest.test_iphonesim):
+        (SDKTest.test_macos):
+        (SDKTest.test_appletvos):
+        (SDKTest.test_appletvsim):
+        (SDKTest.test_watchos):
+        (SDKTest.test_watchsimulator):
+        (SDKTest.test_prodos):
+        * Scripts/webkitpy/xcode/simulated_device_unittest.py:
+
 2021-10-24  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
 
         REGRESSION(r282686) [GTK] Tests are flaky due to spurious "MainFrameView: mouseEnteredContentArea" messages in the log

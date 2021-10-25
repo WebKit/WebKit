@@ -822,9 +822,9 @@ class RunTest(unittest.TestCase, StreamTestingMixin):
         details, _, _ = logging_run(['failures/expected/timeout.html',
                                      'failures/unexpected/timeout.html'],
                                     host=host)
-        self.assertEquals(details.initial_results.slow_tests,
+        self.assertEqual(details.initial_results.slow_tests,
                           {'failures/unexpected/timeout.html'})
-        self.assertEquals(details.retry_results.slow_tests,
+        self.assertEqual(details.retry_results.slow_tests,
                           {'failures/unexpected/timeout.html'})
 
     def serial_test_no_http_and_force(self):

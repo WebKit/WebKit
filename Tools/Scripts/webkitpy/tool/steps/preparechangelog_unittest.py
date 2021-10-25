@@ -115,7 +115,7 @@ class PrepareChangeLogTest(changelog_unittest.ChangeLogTest):
             step._tool.filesystem.write_text_file(path, start_file)
             step._resolve_existing_entry(path)
             actual_output = step._tool.filesystem.read_text_file(path)
-            self.assertEquals(actual_output, end_file)
+            self.assertEqual(actual_output, end_file)
 
     def test_ensure_bug_url(self):
         step = PrepareChangeLog(MockTool(), MockOptions())
