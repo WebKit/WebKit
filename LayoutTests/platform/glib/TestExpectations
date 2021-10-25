@@ -363,6 +363,12 @@ accessibility/nested-textareas-value-changed-notifications.html [ Skip ]
 
 webkit.org/b/229261 accessibility/element-line-rects-and-text.html [ Missing ]
 
+webkit.org/b/232249 accessibility/video-element-url-attribute.html [ Failure ]
+
+webkit.org/b/232255 accessibility/math-has-non-presentational-children.html [ Failure ]
+
+webkit.org/b/232256 accessibility/auto-fill-crash.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Accessibility-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////

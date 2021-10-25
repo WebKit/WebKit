@@ -1870,8 +1870,8 @@ PASS HTMLFormElement interface: attribute method
 PASS HTMLFormElement interface: attribute name
 PASS HTMLFormElement interface: attribute noValidate
 PASS HTMLFormElement interface: attribute target
-FAIL HTMLFormElement interface: attribute rel assert_true: The prototype object must have a property "rel" expected true got false
-FAIL HTMLFormElement interface: attribute relList assert_true: The prototype object must have a property "relList" expected true got false
+PASS HTMLFormElement interface: attribute rel
+PASS HTMLFormElement interface: attribute relList
 PASS HTMLFormElement interface: attribute elements
 PASS HTMLFormElement interface: attribute length
 PASS HTMLFormElement interface: operation submit()
@@ -1890,8 +1890,8 @@ PASS HTMLFormElement interface: document.createElement("form") must inherit prop
 PASS HTMLFormElement interface: document.createElement("form") must inherit property "name" with the proper type
 PASS HTMLFormElement interface: document.createElement("form") must inherit property "noValidate" with the proper type
 PASS HTMLFormElement interface: document.createElement("form") must inherit property "target" with the proper type
-FAIL HTMLFormElement interface: document.createElement("form") must inherit property "rel" with the proper type assert_inherits: property "rel" not found in prototype chain
-FAIL HTMLFormElement interface: document.createElement("form") must inherit property "relList" with the proper type assert_inherits: property "relList" not found in prototype chain
+PASS HTMLFormElement interface: document.createElement("form") must inherit property "rel" with the proper type
+PASS HTMLFormElement interface: document.createElement("form") must inherit property "relList" with the proper type
 PASS HTMLFormElement interface: document.createElement("form") must inherit property "elements" with the proper type
 PASS HTMLFormElement interface: document.createElement("form") must inherit property "length" with the proper type
 PASS HTMLFormElement interface: document.createElement("form") must inherit property "submit()" with the proper type

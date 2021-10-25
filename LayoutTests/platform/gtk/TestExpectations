@@ -125,8 +125,6 @@ imported/w3c/web-platform-tests/service-workers/service-worker/fetch-audio-taint
 
 # Accessibility
 webkit.org/b/214341 [ Debug ] accessibility/datalist.html [ Crash ]
-webkit.org/b/215405 accessibility/gtk/caret-browsing-select-focus.html [ Failure ]
-webkit.org/b/215405 accessibility/gtk/combobox-descendants-orientation-crash.html [ Failure ]
 webkit.org/b/215405 accessibility/gtk/text-for-range-combo-box.html [ Failure ]
 webkit.org/b/223862 accessibility/gtk/text-for-range-embedded-objects.html [ Failure ]
 webkit.org/b/223862 accessibility/gtk/text-for-range-entry-and-password.html [ Failure ]
