@@ -1,3 +1,16 @@
+2021-10-25  Kyle Piddington  <kpiddington@apple.com>
+
+        REGRESSION (iOS 15), safari604.1: Could not link the shader program
+        https://bugs.webkit.org/show_bug.cgi?id=231475
+
+        Renaming regex incorrectly substituted an attribute. 
+        Update to require exact attribute match
+
+        Reviewed by Dean Jackson
+
+        * src/libANGLE/renderer/metal/mtl_glslang_mtl_utils.mm:
+        (rx::mtl::updateShaderAttributes):
+
 2021-10-15  Ross Kirsling  <ross.kirsling@sony.com>
 
         Realize Mac CMake build of WebCore and WebKit
