@@ -2376,7 +2376,7 @@ void MediaPlayerPrivateAVFoundationObjC::updateVideoTracks()
     if (m_visualGroup)
         determineChangedTracksFromNewTracksAndOldItems(m_visualGroup.get(), m_videoTracks, Vector<String>(), &VideoTrackPrivateAVFObjC::create, player(), &MediaPlayer::removeVideoTrack, &MediaPlayer::addVideoTrack);
 
-    for (auto& track : m_audioTracks)
+    for (auto& track : m_videoTracks)
         track->resetPropertiesFromTrack();
 
     // In case the video track content changed, we may be able to perform a readback again.

@@ -71,6 +71,7 @@ public:
     MediaSelectionOptionAVFObjC* mediaSelectionOption();
 
 private:
+    friend class MediaPlayerPrivateAVFoundationObjC;
     explicit VideoTrackPrivateAVFObjC(AVPlayerItemTrack*);
     explicit VideoTrackPrivateAVFObjC(AVAssetTrack*);
     explicit VideoTrackPrivateAVFObjC(MediaSelectionOptionAVFObjC&);
