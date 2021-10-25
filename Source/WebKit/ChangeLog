@@ -1,3 +1,22 @@
+2021-10-25  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Rename a few variable and parameter names in WKContentViewInteraction.mm
+        https://bugs.webkit.org/show_bug.cgi?id=232275
+
+        Reviewed by Tim Horton.
+
+        The `ProceedWithTextSelectionInImage` enum flag was being stored in a variable named
+        `ProceedWithTextSelectionInImage` in a few places, likely due to mass renaming when upstreaming WebKit support
+        for Live Text. Rename this so that we use lowercase for these variable names.
+
+        No change in behavior.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _dragInteraction:prepareForSession:completion:]):
+        (-[WKContentView _doAfterPendingImageAnalysis:]):
+        (-[WKContentView _invokeAllActionsToPerformAfterPendingImageAnalysis:]):
+        (-[WKContentView _contextMenuInteraction:configurationForMenuAtLocation:completion:]):
+
 2021-10-25  Alex Christensen  <achristensen@webkit.org>
 
         Use xpc_connection_copy_invalidation_reason where available for debugging daemon connection failures

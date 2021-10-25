@@ -8860,9 +8860,9 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
 
     [self cleanUpDragSourceSessionState];
 
-    auto prepareForSession = [weakSelf = WeakObjCPtr<WKContentView>(self), session = retainPtr(session), completion = makeBlockPtr(completion)] (WebKit::ProceedWithTextSelectionInImage ProceedWithTextSelectionInImage) {
+    auto prepareForSession = [weakSelf = WeakObjCPtr<WKContentView>(self), session = retainPtr(session), completion = makeBlockPtr(completion)] (WebKit::ProceedWithTextSelectionInImage proceedWithTextSelectionInImage) {
         auto strongSelf = weakSelf.get();
-        if (!strongSelf || ProceedWithTextSelectionInImage == WebKit::ProceedWithTextSelectionInImage::Yes)
+        if (!strongSelf || proceedWithTextSelectionInImage == WebKit::ProceedWithTextSelectionInImage::Yes)
             return;
 
         auto dragOrigin = [session locationInView:strongSelf.get()];
@@ -9821,7 +9821,7 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
     [_imageAnalysisDeferringGestureRecognizer endDeferral:shouldPreventGestures];
 }
 
-- (void)_doAfterPendingImageAnalysis:(void(^)(WebKit::ProceedWithTextSelectionInImage ProceedWithTextSelectionInImage))block
+- (void)_doAfterPendingImageAnalysis:(void(^)(WebKit::ProceedWithTextSelectionInImage))block
 {
     if (self.hasPendingImageAnalysisRequest)
         _actionsToPerformAfterPendingImageAnalysis.append(makeBlockPtr(block));
@@ -9829,12 +9829,12 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
         block(WebKit::ProceedWithTextSelectionInImage::No);
 }
 
-- (void)_invokeAllActionsToPerformAfterPendingImageAnalysis:(WebKit::ProceedWithTextSelectionInImage)ProceedWithTextSelectionInImage
+- (void)_invokeAllActionsToPerformAfterPendingImageAnalysis:(WebKit::ProceedWithTextSelectionInImage)proceedWithTextSelectionInImage
 {
     _pendingImageAnalysisRequestIdentifier = std::nullopt;
     _elementPendingImageAnalysis = std::nullopt;
     for (auto block : std::exchange(_actionsToPerformAfterPendingImageAnalysis, { }))
-        block(ProceedWithTextSelectionInImage);
+        block(proceedWithTextSelectionInImage);
 }
 
 #endif // ENABLE(IMAGE_ANALYSIS)
@@ -10860,9 +10860,9 @@ static UIMenu *menuFromLegacyPreviewOrDefaultActions(UIViewController *previewVi
     if (!self.webView.configuration._longPressActionsEnabled)
         return completion(nil);
 
-    auto getConfigurationAndContinue = [weakSelf = WeakObjCPtr<WKContentView>(self), interaction = retainPtr(interaction), completion = makeBlockPtr(completion), triggeredByImageAnalysisTimeout] (WebKit::ProceedWithTextSelectionInImage ProceedWithTextSelectionInImage) {
+    auto getConfigurationAndContinue = [weakSelf = WeakObjCPtr<WKContentView>(self), interaction = retainPtr(interaction), completion = makeBlockPtr(completion), triggeredByImageAnalysisTimeout] (WebKit::ProceedWithTextSelectionInImage proceedWithTextSelectionInImage) {
         auto strongSelf = weakSelf.get();
-        if (!strongSelf || ProceedWithTextSelectionInImage == WebKit::ProceedWithTextSelectionInImage::Yes) {
+        if (!strongSelf || proceedWithTextSelectionInImage == WebKit::ProceedWithTextSelectionInImage::Yes) {
             completion(nil);
             return;
         }
