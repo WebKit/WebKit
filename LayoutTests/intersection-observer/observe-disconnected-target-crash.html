@@ -1,0 +1,20 @@
+<p>This test passes if it doesn't crash.</p>
+<script>
+  if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+  }
+  onload = async () => {
+    for (let i = 0; i < 8; i++) {
+      document.createElement('div');
+    }
+    for (let i = 0; i < 8; i++) {
+      new IntersectionObserver(() => {});
+    }
+    let intersectionObserver = new IntersectionObserver(() => {});
+    await intersectionObserver.observe(document.createElement('div'));
+    new ImageData(1000, 10000);
+    if (window.testRunner)
+      testRunner.notifyDone();
+  };
+</script>

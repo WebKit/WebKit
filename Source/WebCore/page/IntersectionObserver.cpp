@@ -170,6 +170,11 @@ void IntersectionObserver::observe(Element& target)
     bool hadObservationTargets = hasObservationTargets();
     m_observationTargets.append(makeWeakPtr(target));
 
+    // Per the specification, we should dispatch at least one observation for the target. For this reason, we make sure to keep the
+    // target alive until this first observation. This, in turn, will keep the IntersectionObserver's JS wrapper alive via
+    // isReachableFromOpaqueRoots(), so the callback stays alive.
+    m_targetsWaitingForFirstObservation.append(target);
+
     auto* document = trackingDocument();
     if (!hadObservationTargets)
         document->addIntersectionObserver(*this);
@@ -183,6 +188,7 @@ void IntersectionObserver::unobserve(Element& target)
 
     bool removed = m_observationTargets.removeFirst(&target);
     ASSERT_UNUSED(removed, removed);
+    m_targetsWaitingForFirstObservation.removeFirstMatching([&](auto& pendingTarget) { return pendingTarget.ptr() == &target; });
 
     if (!hasObservationTargets()) {
         if (auto* document = trackingDocument())
@@ -208,6 +214,7 @@ auto IntersectionObserver::takeRecords() -> TakenRecords
 void IntersectionObserver::targetDestroyed(Element& target)
 {
     m_observationTargets.removeFirst(&target);
+    m_targetsWaitingForFirstObservation.removeFirstMatching([&](auto& pendingTarget) { return pendingTarget.ptr() == &target; });
     if (!hasObservationTargets()) {
         if (auto* document = trackingDocument())
             document->removeIntersectionObserver(*this);
@@ -233,6 +240,7 @@ void IntersectionObserver::removeAllTargets()
         ASSERT_UNUSED(removed, removed);
     }
     m_observationTargets.clear();
+    m_targetsWaitingForFirstObservation.clear();
 }
 
 void IntersectionObserver::rootDestroyed()
@@ -274,6 +282,7 @@ void IntersectionObserver::notify()
     }
 
     auto takenRecords = takeRecords();
+    auto targetsWaitingForFirstObservation = std::exchange(m_targetsWaitingForFirstObservation, { });
 
     // FIXME: The JSIntersectionObserver wrapper should be kept alive as long as the intersection observer can fire events.
     ASSERT(m_callback->hasCallback());
@@ -299,7 +308,7 @@ bool IntersectionObserver::isReachableFromOpaqueRoots(JSC::AbstractSlotVisitor& 
         if (visitor.containsOpaqueRoot(target->opaqueRoot()))
             return true;
     }
-    return false;
+    return !m_targetsWaitingForFirstObservation.isEmpty();
 }
 
 } // namespace WebCore

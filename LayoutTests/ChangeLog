@@ -1,5 +1,71 @@
 2021-10-25  Null  <null@apple.com>
 
+        Cherry-pick r283590. rdar://problem/80837616
+
+    ASSERT(m_callback->hasCallback()) under IntersectionObserver::notify()
+    https://bugs.webkit.org/show_bug.cgi?id=231235
+    <rdar://80837616>
+    
+    Reviewed by Ryosuke Niwa.
+    
+    Source/WebCore:
+    
+    IntersectionObserver's JS callback stays alive as long as its JS wrapper and
+    its JS wrapper's lifetime relies on the IntersectionObserver::isReachableFromOpaqueRoots()
+    implementation. isReachableFromOpaqueRoots() keeps the wrapper alive as long
+    as the JS wrappers of observation / pending targets are alive. However, as per specification,
+    we always need to dispatch an observation for an observation target, even if that target
+    is not connected. Our code was already taking care of dispatching such observation. However,
+    there was nothing keeping the observation target alive in this case and thus nothing keeping
+    the JS callback alive either.
+    
+    To address the issue, I am introducing a new m_targetsWaitingForFirstObservation data member
+    which holds a strong ref to the observation target until the next time we call notify().
+    This makes sure that the observation target (and its JS wrapper) stays alive long enough for
+    us to dispatch the first observation for it. I also updated isReachableFromOpaqueRoots() to
+    return true as long as m_targetsWaitingForFirstObservation is non-empty so that the
+    IntersectionObserver's JS wrapper (and thus the JS callback) stay alive long enough too.
+    
+    Tests: intersection-observer/observe-disconnected-target-crash.html
+           intersection-observer/observe-disconnected-target.html
+    
+    * page/IntersectionObserver.cpp:
+    (WebCore::IntersectionObserver::observe):
+    (WebCore::IntersectionObserver::unobserve):
+    (WebCore::IntersectionObserver::removeAllTargets):
+    (WebCore::IntersectionObserver::notify):
+    (WebCore::IntersectionObserver::isReachableFromOpaqueRoots const):
+    * page/IntersectionObserver.h:
+    
+    LayoutTests:
+    
+    Add layout test coverage both for the crash and the Web facing behavior.
+    
+    * intersection-observer/observe-disconnected-target-crash-expected.txt: Added.
+    * intersection-observer/observe-disconnected-target-crash.html: Added.
+    * intersection-observer/observe-disconnected-target-expected.txt: Added.
+    * intersection-observer/observe-disconnected-target.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@283590 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-10-05  Chris Dumez  <cdumez@apple.com>
+
+            ASSERT(m_callback->hasCallback()) under IntersectionObserver::notify()
+            https://bugs.webkit.org/show_bug.cgi?id=231235
+            <rdar://80837616>
+
+            Reviewed by Ryosuke Niwa.
+
+            Add layout test coverage both for the crash and the Web facing behavior.
+
+            * intersection-observer/observe-disconnected-target-crash-expected.txt: Added.
+            * intersection-observer/observe-disconnected-target-crash.html: Added.
+            * intersection-observer/observe-disconnected-target-expected.txt: Added.
+            * intersection-observer/observe-disconnected-target.html: Added.
+
+2021-10-25  Null  <null@apple.com>
+
         Cherry-pick r282984. rdar://problem/77587429
 
     Web Inspector: Graphics: add instrumentation for new `CanvasRenderingContext2DSettings`
