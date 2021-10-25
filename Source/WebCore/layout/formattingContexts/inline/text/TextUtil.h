@@ -51,12 +51,11 @@ public:
     using FallbackFontList = HashSet<const Font*>;
     static FallbackFontList fallbackFontsForRun(const Line::Run&, const RenderStyle&);
 
-    struct MidWordBreak {
-        size_t start { 0 };
+    struct WordBreakLeft {
         size_t length { 0 };
         InlineLayoutUnit logicalWidth { 0 };
     };
-    static MidWordBreak midWordBreak(const InlineTextItem&, const FontCascade&, InlineLayoutUnit textWidth, InlineLayoutUnit availableWidth, InlineLayoutUnit contentLogicalLeft);
+    static WordBreakLeft breakWord(const InlineTextItem&, const FontCascade&, InlineLayoutUnit textWidth, InlineLayoutUnit availableWidth, InlineLayoutUnit contentLogicalLeft);
 
     static unsigned findNextBreakablePosition(LazyLineBreakIterator&, unsigned startPosition, const RenderStyle&);
     static LineBreakIteratorMode lineBreakIteratorMode(LineBreak);

@@ -295,25 +295,25 @@ static bool isWrappableRun(const InlineContentBreaker::ContinuousContent::Run& r
     return TextUtil::isWrappingAllowed(run.style);
 }
 
-static TextUtil::MidWordBreak midWordBreak(const InlineContentBreaker::ContinuousContent::Run& textRun, InlineLayoutUnit runLogicalLeft, InlineLayoutUnit availableWidth)
+static TextUtil::WordBreakLeft midWordBreak(const InlineContentBreaker::ContinuousContent::Run& textRun, InlineLayoutUnit runLogicalLeft, InlineLayoutUnit availableWidth)
 {
     auto& inlineTextItem = downcast<InlineTextItem>(textRun.inlineItem);
     auto& style = textRun.style;
     auto lineBreak = style.lineBreak();
     ASSERT(lineBreak == LineBreak::Anywhere || style.wordBreak() == WordBreak::BreakAll || style.wordBreak() == WordBreak::BreakWord || style.overflowWrap() == OverflowWrap::BreakWord || style.overflowWrap() == OverflowWrap::Anywhere);
 
-    auto midWordBreak = TextUtil::midWordBreak(inlineTextItem, style.fontCascade(), textRun.logicalWidth, availableWidth, runLogicalLeft);
-    if (!midWordBreak.length || midWordBreak.length == inlineTextItem.length())
-        return midWordBreak;
+    auto wordBreak = TextUtil::breakWord(inlineTextItem, style.fontCascade(), textRun.logicalWidth, availableWidth, runLogicalLeft);
+    if (!wordBreak.length || wordBreak.length == inlineTextItem.length())
+        return wordBreak;
 
     auto canBreakBetweenAnyTypographicCharacterUnit = lineBreak == LineBreak::Anywhere || style.wordBreak() == WordBreak::BreakWord || style.overflowWrap() == OverflowWrap::BreakWord || style.overflowWrap() == OverflowWrap::Anywhere;
     if (canBreakBetweenAnyTypographicCharacterUnit)
-        return midWordBreak;
+        return wordBreak;
 
     // Find out if the candidate position for arbitrary breaking is valid. We can't always break between any characters.
     auto text = inlineTextItem.inlineTextBox().content();
-    const auto left = midWordBreak.start;
-    auto right = left + midWordBreak.length;
+    const auto left = inlineTextItem.start();
+    auto right = left + wordBreak.length;
     for (; right > left; --right) {
         auto canBreakBefore = [&](auto character) {
             // FIXME: This should include all the cases from https://unicode.org/reports/tr14
@@ -337,11 +337,11 @@ static TextUtil::MidWordBreak midWordBreak(const InlineContentBreaker::Continuou
             break;
     }
     RELEASE_ASSERT(right >= left);
-    if (left + midWordBreak.length == right)
-        return midWordBreak;
+    if (left + wordBreak.length == right)
+        return wordBreak;
     if (left == right)
-        return { left, { }, { } };
-    return { left, right - left, TextUtil::width(inlineTextItem, style.fontCascade(), left, right, runLogicalLeft) };
+        return { };
+    return { right - left, TextUtil::width(inlineTextItem, style.fontCascade(), left, right, runLogicalLeft) };
 }
 
 struct CandidateTextRunForBreaking {
@@ -435,7 +435,7 @@ std::optional<InlineContentBreaker::PartialRun> InlineContentBreaker::tryBreakin
                 auto availableWidthExcludingHyphen = availableWidth - hyphenWidth;
                 if (availableWidthExcludingHyphen <= 0 || !enoughWidthForHyphenation(availableWidthExcludingHyphen, fontCascade.pixelSize()))
                     return { };
-                leftSideLength = TextUtil::midWordBreak(inlineTextItem, fontCascade, candidateRun.logicalWidth, availableWidthExcludingHyphen, candidateTextRun.logicalLeft).length;
+                leftSideLength = TextUtil::breakWord(inlineTextItem, fontCascade, candidateRun.logicalWidth, availableWidthExcludingHyphen, candidateTextRun.logicalLeft).length;
             }
             if (leftSideLength < limitBefore)
                 return { };
@@ -477,8 +477,8 @@ std::optional<InlineContentBreaker::PartialRun> InlineContentBreaker::tryBreakin
                 // Fast path for cases when there's no room at all. The content is breakable but we don't have space for it.
                 return { };
             }
-            auto midWordBreak = TextUtil::midWordBreak(inlineTextItem, fontCascade, candidateRun.logicalWidth, availableWidth, candidateTextRun.logicalLeft);
-            return { midWordBreak.length, midWordBreak.logicalWidth };
+            auto wordBreak = TextUtil::breakWord(inlineTextItem, fontCascade, candidateRun.logicalWidth, availableWidth, candidateTextRun.logicalLeft);
+            return { wordBreak.length, wordBreak.logicalWidth };
         };
         // With arbitrary breaking there's always a valid breaking position (even if it is before the first position).
         return tryBreakingAtArbitraryPosition();

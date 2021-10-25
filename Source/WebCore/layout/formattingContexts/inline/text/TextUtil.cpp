@@ -139,7 +139,7 @@ TextUtil::FallbackFontList TextUtil::fallbackFontsForRun(const Line::Run& run, c
     return fallbackFonts;
 }
 
-TextUtil::MidWordBreak TextUtil::midWordBreak(const InlineTextItem& inlineTextItem, const FontCascade& fontCascade, InlineLayoutUnit textWidth, InlineLayoutUnit availableWidth, InlineLayoutUnit contentLogicalLeft)
+TextUtil::WordBreakLeft TextUtil::breakWord(const InlineTextItem& inlineTextItem, const FontCascade& fontCascade, InlineLayoutUnit textWidth, InlineLayoutUnit availableWidth, InlineLayoutUnit contentLogicalLeft)
 {
     ASSERT(availableWidth >= 0);
     auto startPosition = inlineTextItem.start();
@@ -178,7 +178,8 @@ TextUtil::MidWordBreak TextUtil::midWordBreak(const InlineTextItem& inlineTextIt
             break;
         }
     }
-    return { startPosition, right - startPosition, leftSideWidth };
+    RELEASE_ASSERT(right >= startPosition);
+    return { right - startPosition, leftSideWidth };
 }
 
 unsigned TextUtil::findNextBreakablePosition(LazyLineBreakIterator& lineBreakIterator, unsigned startPosition, const RenderStyle& style)
