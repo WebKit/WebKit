@@ -1,5 +1,51 @@
 2021-10-25  Null  <null@apple.com>
 
+        Cherry-pick r283979. rdar://problem/84630712
+
+    WebGL first clear is lost when scissor is used for preserveDrawingBuffer:true in some conditions
+    https://bugs.webkit.org/show_bug.cgi?id=230618
+    <rdar://problem/83668270>
+    
+    Patch by Kimmo Kinnunen <kkinnunen@apple.com> on 2021-10-12
+    Reviewed by Dean Jackson.
+    
+    Source/WebCore:
+    
+    Disable scissor for the duration of the blit from drawing buffer
+    to display buffer.
+    Not testable via WebGL conformance test suite as it affects the compositing.
+    
+    Test: webgl/gl-clear-preserve-drawing-buffer-bug.html
+    
+    * platform/graphics/angle/GraphicsContextGLANGLE.cpp:
+    (WebCore::GraphicsContextGLOpenGL::prepareTextureImpl):
+    
+    LayoutTests:
+    
+    Add a pixel test to verify that scissor is not applied when blitting drawing buffer
+    to display buffer in preserveDrawingBuffer: true case.
+    
+    * webgl/gl-clear-preserve-drawing-buffer-bug-expected.html: Added.
+    * webgl/gl-clear-preserve-drawing-buffer-bug.html: Added.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@283979 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-10-12  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+            WebGL first clear is lost when scissor is used for preserveDrawingBuffer:true in some conditions
+            https://bugs.webkit.org/show_bug.cgi?id=230618
+            <rdar://problem/83668270>
+
+            Reviewed by Dean Jackson.
+
+            Add a pixel test to verify that scissor is not applied when blitting drawing buffer
+            to display buffer in preserveDrawingBuffer: true case.
+
+            * webgl/gl-clear-preserve-drawing-buffer-bug-expected.html: Added.
+            * webgl/gl-clear-preserve-drawing-buffer-bug.html: Added.
+
+2021-10-25  Null  <null@apple.com>
+
         Cherry-pick r282627. rdar://problem/84630078
 
     webgl/2.0.y/conformance/extensions/webgl-compressed-texture-s3tc-srgb.html fails on Intel+AMD Metal

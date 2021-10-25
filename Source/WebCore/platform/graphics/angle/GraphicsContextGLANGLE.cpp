@@ -486,6 +486,8 @@ void GraphicsContextGLOpenGL::prepareTextureImpl()
 #else
     if (m_preserveDrawingBufferTexture) {
         // Blit m_preserveDrawingBufferTexture into m_texture.
+        TemporaryANGLESetting scopedScissor(GL_SCISSOR_TEST, GL_FALSE);
+        TemporaryANGLESetting scopedDither(GL_DITHER, GL_FALSE);
         gl::BindFramebuffer(GL_DRAW_FRAMEBUFFER_ANGLE, m_preserveDrawingBufferFBO);
         gl::BindFramebuffer(GL_READ_FRAMEBUFFER_ANGLE, m_fbo);
         gl::BlitFramebufferANGLE(0, 0, m_currentWidth, m_currentHeight, 0, 0, m_currentWidth, m_currentHeight, GL_COLOR_BUFFER_BIT, GL_NEAREST);
