@@ -1,5 +1,38 @@
 2021-10-25  Null  <null@apple.com>
 
+        Cherry-pick r284712. rdar://problem/81586485
+
+    AX: Inform AX when the injected bundle sends a synchronous message
+    https://bugs.webkit.org/show_bug.cgi?id=232159
+    
+    Reviewed by Andres Gonzalez.
+    
+    When an injected bundle sends a synchronous message we need to inform accessibility clients, so they don't get
+    stuck trying to message the WebContent process. This is already handled for synchronous messages
+    generated from the WebPage.
+    
+    * WebProcess/InjectedBundle/InjectedBundle.cpp:
+    (WebKit::InjectedBundle::postSynchronousMessage):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@284712 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-10-22  Chris Fleizach  <cfleizach@apple.com>
+
+            AX: Inform AX when the injected bundle sends a synchronous message
+            https://bugs.webkit.org/show_bug.cgi?id=232159
+
+            Reviewed by Andres Gonzalez.
+
+            When an injected bundle sends a synchronous message we need to inform accessibility clients, so they don't get
+            stuck trying to message the WebContent process. This is already handled for synchronous messages
+            generated from the WebPage.
+
+            * WebProcess/InjectedBundle/InjectedBundle.cpp:
+            (WebKit::InjectedBundle::postSynchronousMessage):
+
+2021-10-25  Null  <null@apple.com>
+
         Cherry-pick r284644. rdar://problem/84153991
 
     Rare crash under DisplayLink::displayLinkCallback()
