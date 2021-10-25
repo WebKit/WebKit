@@ -307,10 +307,10 @@ class Port(object):
         If an error occurs (like ImageDiff isn't found, or crashes, we log an error and return True (for a diff).
         """
         if not actual_contents and not expected_contents:
-            return ImageDiffResult(None, 0, None)
+            return ImageDiffResult(passed=True, diff_image=None, difference=0)
 
         if not actual_contents or not expected_contents:
-            return ImageDiffResult(True, 0, None)
+            return ImageDiffResult(passed=False, diff_image=b'', difference=1)
 
         if not self._image_differ:
             self._image_differ = image_diff.ImageDiffer(self)

@@ -1,3 +1,46 @@
+2021-10-25  Simon Fraser  <simon.fraser@apple.com>
+
+        webkitpy: Add an explicit ImageDiffResult.passed rather than relying on diff_image being non-None
+        https://bugs.webkit.org/show_bug.cgi?id=232266
+
+        Reviewed by Jonathan Bedard.
+        
+        A ref test was considered failing if it ImageDiffResult.diff_image was not None, allowing
+        for confusing unit tests that used a value of True for diff_image.
+
+        Fix by giving ImageDiffResult an explicit 'passes' field, and testing it rather than
+        diff_image.
+
+        Also used named arguments when creating ImageDiffResults for readability.
+
+        * Scripts/webkitpy/layout_tests/controllers/single_test_runner.py:
+        (SingleTestRunner._compare_image): Use `diff_result.passed` as truth for whether the test passed,
+        and only store the error_string in failure cases (which allows ImageDiff to spew diagnostic errors
+        without triggering failures).
+        (SingleTestRunner._compare_output_with_reference):
+        * Scripts/webkitpy/layout_tests/controllers/test_result_writer_unittest.py:
+        (TestResultWriterTest.test_reftest_diff_image.ImageDiffTestPort.diff_image):
+        (TestResultWriterTest):
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+        (RunTest.test_tolerance.ImageDiffTestPort.diff_image):
+        * Scripts/webkitpy/port/base.py:
+        (Port.diff_image):
+        * Scripts/webkitpy/port/image_diff.py:
+        (ImageDiffResult.__init__):
+        (ImageDiffResult.__eq__):
+        (ImageDiffResult.__repr__):
+        (ImageDiffer._read):
+        * Scripts/webkitpy/port/port_testcase.py:
+        (PortTestCase.integration_test_image_diff):
+        (PortTestCase.test_diff_image__missing_both):
+        (PortTestCase.test_diff_image__missing_actual):
+        (PortTestCase.test_diff_image__missing_expected):
+        (PortTestCase.test_diff_image):
+        (PortTestCase.test_diff_image_passed):
+        (PortTestCase.test_diff_image_failed):
+        (PortTestCase.test_diff_image_crashed):
+        * Scripts/webkitpy/port/test.py:
+
 2021-10-25  Alex Christensen  <achristensen@webkit.org>
 
         WebKit ought to be able to play videos without Content-Length HTTP header fields and without range support

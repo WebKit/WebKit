@@ -408,20 +408,23 @@ class TestPort(Port):
         actual_contents = string_utils.encode(actual_contents)
         diffed = actual_contents != expected_contents
         if not actual_contents and not expected_contents:
-            return ImageDiffResult(None, 0, None)
+            return ImageDiffResult(passed=True, diff_image=None, difference=0)
 
         if not actual_contents or not expected_contents:
-            return ImageDiffResult(True, 0, None)
+            return ImageDiffResult(passed=False, diff_image=b'', difference=0)
 
         if b'ref' in expected_contents:
             assert tolerance == 0
         if diffed:
-            return ImageDiffResult("< {}\n---\n> {}\n".format(
-                string_utils.decode(expected_contents, target_type=str),
-                string_utils.decode(actual_contents, target_type=str),
-            ), 1, None)
+            return ImageDiffResult(
+                passed=False,
+                diff_image="< {}\n---\n> {}\n".format(
+                    string_utils.decode(expected_contents, target_type=str),
+                    string_utils.decode(actual_contents, target_type=str),
+                ),
+                difference=1)
 
-        return ImageDiffResult(None, 0, None)
+        return ImageDiffResult(passed=True, diff_image=None, difference=0)
 
     def layout_tests_dir(self):
         return LAYOUT_TEST_DIR

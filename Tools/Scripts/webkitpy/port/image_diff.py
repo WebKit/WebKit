@@ -40,14 +40,16 @@ _log = logging.getLogger(__name__)
 
 
 class ImageDiffResult(object):
-    def __init__(self, diff_image, difference, error_string):
+    def __init__(self, passed, diff_image, difference, error_string=None):
+        self.passed = passed
         self.diff_image = diff_image
         self.diff_percent = difference
         self.error_string = error_string
 
     def __eq__(self, other):
         if isinstance(other, self.__class__):
-            return (self.diff_image == other.diff_image and
+            return (self.passed == other.passed and
+                    self.diff_image == other.diff_image and
                     self.diff_percent == other.diff_percent and
                     self.error_string == other.error_string)
 
@@ -57,7 +59,7 @@ class ImageDiffResult(object):
         return not self.__eq__(other)
 
     def __repr__(self):
-        return 'ImageDiffResult({} {} {})'.format(self.diff_image, self.diff_percent, self.error_string)
+        return 'ImageDiffResult(Passed {} {} {} {})'.format(self.passed, self.diff_image, self.diff_percent, self.error_string)
 
 class ImageDiffer(object):
     def __init__(self, port):
@@ -128,10 +130,10 @@ class ImageDiffer(object):
         if output and output.startswith(b'diff'):
             m = re.match(b'diff: (.+)% (passed|failed)', output)
             if m.group(2) == b'passed':
-                return ImageDiffResult(None, 0, None)
+                return ImageDiffResult(passed=True, diff_image=None, difference=0)
             diff_percent = float(string_utils.decode(m.group(1), target_type=str))
 
-        return ImageDiffResult(output_image, diff_percent, err_str or None)
+        return ImageDiffResult(passed=False, diff_image=output_image, difference=diff_percent, error_string=err_str or None)
 
     def stop(self):
         if self._process:

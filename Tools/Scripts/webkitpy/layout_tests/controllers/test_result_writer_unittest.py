@@ -42,7 +42,7 @@ class TestResultWriterTest(unittest.TestCase):
         class ImageDiffTestPort(TestPort):
             def diff_image(self, expected_contents, actual_contents, tolerance=None):
                 used_tolerance_values.append(tolerance)
-                return ImageDiffResult(True, 1, None)
+                return ImageDiffResult(passed=False, diff_image=b'', difference=1)
 
         host = MockHost()
         port = ImageDiffTestPort(host)
