@@ -63,6 +63,12 @@ FileSystemStorageHandle::FileSystemStorageHandle(FileSystemStorageManager& manag
     }
 }
 
+FileSystemStorageHandle::~FileSystemStorageHandle()
+{
+    if (m_handle != FileSystem::invalidPlatformFileHandle)
+        FileSystem::closeFile(m_handle);
+}
+
 bool FileSystemStorageHandle::isSameEntry(WebCore::FileSystemHandleIdentifier identifier)
 {
     auto path = m_manager->getPath(identifier);
@@ -165,7 +171,6 @@ Expected<FileSystemStorageHandle::AccessHandleInfo, FileSystemStorageError> File
     auto ipcHandle = IPC::SharedFileHandle::create(m_handle);
     if (!ipcHandle) {
         FileSystem::closeFile(m_handle);
-        m_handle = FileSystem::invalidPlatformFileHandle;
         return makeUnexpected(FileSystemStorageError::BackendNotSupported);
     }
 
@@ -223,15 +228,14 @@ std::optional<FileSystemStorageError> FileSystemStorageHandle::flush(WebCore::Fi
 
 std::optional<FileSystemStorageError> FileSystemStorageHandle::close(WebCore::FileSystemSyncAccessHandleIdentifier accessHandleIdentifier)
 {
-    if (!m_manager)
-        return FileSystemStorageError::Unknown;
-
     if (!m_activeSyncAccessHandle || *m_activeSyncAccessHandle != accessHandleIdentifier)
         return FileSystemStorageError::Unknown;
 
     ASSERT(m_handle != FileSystem::invalidPlatformFileHandle);
     FileSystem::closeFile(m_handle);
-    m_handle = FileSystem::invalidPlatformFileHandle;
+
+    if (!m_manager)
+        return FileSystemStorageError::Unknown;
 
     m_manager->releaseLockForFile(m_path, m_identifier);
     m_activeSyncAccessHandle = std::nullopt;

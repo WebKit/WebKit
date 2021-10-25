@@ -1,5 +1,64 @@
 2021-10-25  Null  <null@apple.com>
 
+        Cherry-pick r284692. rdar://problem/84553142
+
+    Followup to r284652: ensure file handle is closed in web process
+    https://bugs.webkit.org/show_bug.cgi?id=232127
+    
+    Reviewed by Youenn Fablet.
+    
+    Source/WebCore:
+    
+    Covered by test: storage/filesystemaccess/sync-access-handle-close-worker.html
+    
+    * Modules/filesystemaccess/FileSystemSyncAccessHandle.cpp:
+    (WebCore::FileSystemSyncAccessHandle::~FileSystemSyncAccessHandle): make sure file handle is closed when
+    FileSystemSyncAccessHandle is destroyed.
+    (WebCore::FileSystemSyncAccessHandle::closeInternal):
+    (WebCore::FileSystemSyncAccessHandle::close):
+    * Modules/filesystemaccess/FileSystemSyncAccessHandle.h:
+    
+    Source/WebKit:
+    
+    * NetworkProcess/storage/FileSystemStorageHandle.cpp:
+    (WebKit::FileSystemStorageHandle::~FileSystemStorageHandle):
+    (WebKit::FileSystemStorageHandle::createSyncAccessHandle):
+    (WebKit::FileSystemStorageHandle::close):
+    * NetworkProcess/storage/FileSystemStorageHandle.h:
+    * Platform/IPC/cocoa/SharedFileHandleCocoa.cpp: an extra fd is created here and does not get closed.
+    (IPC::SharedFileHandle::decode):
+    
+    LayoutTests:
+    
+    * storage/filesystemaccess/resources/sync-access-handle-close.js:
+    (testSyncFunction):
+    (async testAsyncFunction):
+    (async testFunctions):
+    (async testMultipleHandles):
+    (async test):
+    * storage/filesystemaccess/sync-access-handle-close-worker-expected.txt:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@284692 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-10-22  Sihui Liu  <sihui_liu@apple.com>
+
+            Followup to r284652: ensure file handle is closed in web process
+            https://bugs.webkit.org/show_bug.cgi?id=232127
+
+            Reviewed by Youenn Fablet.
+
+            Covered by test: storage/filesystemaccess/sync-access-handle-close-worker.html
+
+            * Modules/filesystemaccess/FileSystemSyncAccessHandle.cpp:
+            (WebCore::FileSystemSyncAccessHandle::~FileSystemSyncAccessHandle): make sure file handle is closed when
+            FileSystemSyncAccessHandle is destroyed.
+            (WebCore::FileSystemSyncAccessHandle::closeInternal):
+            (WebCore::FileSystemSyncAccessHandle::close):
+            * Modules/filesystemaccess/FileSystemSyncAccessHandle.h:
+
+2021-10-25  Null  <null@apple.com>
+
         Cherry-pick r284652. rdar://problem/84517013
 
     FileSystemSyncAccessHandle should close platform file handle on close()

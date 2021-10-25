@@ -5,17 +5,25 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 Starting worker: resources/sync-access-handle-close.js
 [Worker] test after invoking close():
-PASS [Worker] await accessHandle.close() threw exception SyntaxError: Unexpected identifier 'accessHandle'.
-PASS [Worker] await accessHandle.getSize() threw exception SyntaxError: Unexpected identifier 'accessHandle'.
-PASS [Worker] await accessHandle.flush() threw exception SyntaxError: Unexpected identifier 'accessHandle'.
-PASS [Worker] await accessHandle.read(new ArrayBuffer(1), { "at" : 0 }) threw exception SyntaxError: Unexpected identifier 'accessHandle'.
-PASS [Worker] await accessHandle.write(new ArrayBuffer(1), { "at" : 0 }) threw exception SyntaxError: Unexpected identifier 'accessHandle'.
+[Worker] testing getSize
+PASS [Worker] error.toString() is "InvalidStateError: AccessHandle is closing or closed"
+[Worker] testing flush
+PASS [Worker] error.toString() is "InvalidStateError: AccessHandle is closing or closed"
+[Worker] testing read
+PASS [Worker] error.toString() is "InvalidStateError: AccessHandle is closing or closed"
+[Worker] testing write
+PASS [Worker] error.toString() is "InvalidStateError: AccessHandle is closing or closed"
 [Worker] test after close() is done:
-PASS [Worker] await accessHandle.close() threw exception SyntaxError: Unexpected identifier 'accessHandle'.
-PASS [Worker] await accessHandle.getSize() threw exception SyntaxError: Unexpected identifier 'accessHandle'.
-PASS [Worker] await accessHandle.flush() threw exception SyntaxError: Unexpected identifier 'accessHandle'.
-PASS [Worker] await accessHandle.read(new ArrayBuffer(1), { "at" : 0 }) threw exception SyntaxError: Unexpected identifier 'accessHandle'.
-PASS [Worker] await accessHandle.write(new ArrayBuffer(1), { "at" : 0 }) threw exception SyntaxError: Unexpected identifier 'accessHandle'.
+[Worker] testing getSize
+PASS [Worker] error.toString() is "InvalidStateError: AccessHandle is closing or closed"
+[Worker] testing flush
+PASS [Worker] error.toString() is "InvalidStateError: AccessHandle is closing or closed"
+[Worker] testing read
+PASS [Worker] error.toString() is "InvalidStateError: AccessHandle is closing or closed"
+[Worker] testing write
+PASS [Worker] error.toString() is "InvalidStateError: AccessHandle is closing or closed"
+[Worker] test closing multiple handles:
+[Worker] Create and close access handles successfully
 PASS successfullyParsed is true
 
 TEST COMPLETE
