@@ -1,5 +1,44 @@
 2021-10-25  Null  <null@apple.com>
 
+        Cherry-pick r282627. rdar://problem/84630078
+
+    webgl/2.0.y/conformance/extensions/webgl-compressed-texture-s3tc-srgb.html fails on Intel+AMD Metal
+    https://bugs.webkit.org/show_bug.cgi?id=229941
+    
+    Zero-initialize compressed textures explicitly, as they aren't implicitly initalized in Metal.
+    Reviewed by Kenneth Russell <kbr@chromium.org>.
+    
+    Source/ThirdParty/ANGLE:
+    
+    * src/libANGLE/renderer/metal/mtl_utils.h:
+    * src/libANGLE/renderer/metal/mtl_utils.mm:
+    (rx::mtl::GetCompressedBufferForTextureWithFormat):
+    (rx::mtl::InitializeCompressedTextureContents):
+    (rx::mtl::InitializeTextureContents):
+    
+    LayoutTests:
+    
+    * TestExpectations:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@282627 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-09-16  Kyle Piddington  <kpiddington@apple.com>
+
+            webgl/2.0.y/conformance/extensions/webgl-compressed-texture-s3tc-srgb.html fails on Intel+AMD Metal
+            https://bugs.webkit.org/show_bug.cgi?id=229941
+
+            Zero-initialize compressed textures explicitly, as they aren't implicitly initalized in Metal.
+            Reviewed by Kenneth Russell <kbr@chromium.org>.
+
+            * src/libANGLE/renderer/metal/mtl_utils.h:
+            * src/libANGLE/renderer/metal/mtl_utils.mm:
+            (rx::mtl::GetCompressedBufferForTextureWithFormat):
+            (rx::mtl::InitializeCompressedTextureContents):
+            (rx::mtl::InitializeTextureContents):
+
+2021-10-25  Null  <null@apple.com>
+
         Cherry-pick r281547. rdar://problem/84629691
 
     ANGLE Metal infinities and NaNs generated with incorrect syntax

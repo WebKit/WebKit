@@ -103,6 +103,82 @@ GLint GetSliceOrDepth(const ImageNativeIndex &index)
 
 }
 
+bool GetCompressedBufferSizeAndRowLengthForTextureWithFormat(const TextureRef &texture,
+                                                             const Format &textureObjFormat,
+                                                             const ImageNativeIndex &index,
+                                                             size_t *bytesPerRowOut,
+                                                             size_t *bytesPerImageOut)
+{
+    gl::Extents size = texture->size(index);
+    GLuint bufferSizeInBytes;
+    uint32_t bufferRowLength;
+    if (!textureObjFormat.intendedInternalFormat().computeCompressedImageSize(size,
+                                                                              &bufferSizeInBytes))
+    {
+        return false;
+    }
+    if (!textureObjFormat.intendedInternalFormat().computeBufferRowLength(size.width,
+                                                                          &bufferRowLength))
+    {
+        return false;
+    }
+    *bytesPerImageOut = bufferSizeInBytes;
+    *bytesPerRowOut   = bufferRowLength;
+    return true;
+}
+
+static angle::Result InitializeCompressedTextureContents(const gl::Context *context,
+                                                         const TextureRef &texture,
+                                                         const Format &textureObjFormat,
+                                                         const ImageNativeIndex &index,
+                                                         const uint layer,
+                                                         const uint startDepth)
+{
+    assert(textureObjFormat.actualAngleFormat().isBlock);
+    size_t bytesPerRow   = 0;
+    size_t bytesPerImage = 0;
+
+    if (!GetCompressedBufferSizeAndRowLengthForTextureWithFormat(texture, textureObjFormat, index,
+                                                                 &bytesPerRow, &bytesPerImage))
+    {
+        return angle::Result::Stop;
+    }
+    ContextMtl *contextMtl = mtl::GetImpl(context);
+    gl::Extents extents    = texture->size(index);
+    if (texture->isCPUAccessible())
+    {
+        angle::MemoryBuffer buffer;
+        if (!buffer.resize(bytesPerImage))
+        {
+            return angle::Result::Stop;
+        }
+        buffer.fill(0);
+        for (NSUInteger d = 0; d < static_cast<NSUInteger>(extents.depth); ++d)
+        {
+            auto mtlTextureRegion     = MTLRegionMake2D(0, 0, extents.width, extents.height);
+            mtlTextureRegion.origin.z = d + startDepth;
+            texture->replaceRegion(contextMtl, mtlTextureRegion, index.getNativeLevel(), layer,
+                                   buffer.data(), bytesPerRow, 0);
+        }
+    }
+    else
+    {
+        mtl::BufferRef zeroBuffer;
+        ANGLE_TRY(mtl::Buffer::MakeBuffer(contextMtl, bytesPerImage, nullptr, &zeroBuffer));
+        mtl::BlitCommandEncoder *blitEncoder = contextMtl->getBlitCommandEncoder();
+        for (NSUInteger d = 0; d < static_cast<NSUInteger>(extents.depth); ++d)
+        {
+            auto blitOrigin = MTLOriginMake(0, 0, d + startDepth);
+            blitEncoder->copyBufferToTexture(zeroBuffer, 0, bytesPerRow, 0,
+                                             MTLSizeMake(extents.width, extents.height, 1), texture,
+                                             layer, index.getNativeLevel(), blitOrigin, 0);
+        }
+
+        blitEncoder->endEncoding();
+    }
+    return angle::Result::Continue;
+}
+
 angle::Result InitializeTextureContents(const gl::Context *context,
                                         const TextureRef &texture,
                                         const Format &textureObjFormat,
@@ -118,13 +194,15 @@ angle::Result InitializeTextureContents(const gl::Context *context,
 #if TARGET_OS_SIMULATOR
     forceGPUInitialization = true;
 #endif // TARGET_OS_SIMULATOR
-    
+
     // This function is called in many places to initialize the content of a texture.
     // So it's better we do the sanity check here instead of let the callers do it themselves:
-    if (!textureObjFormat.valid() || actualAngleFormat.isBlock || actualAngleFormat.depthBits > 0 ||
+    // TODO: (kpiddington) update InitializeTextureContents with an upstreamed version that handles
+    // depth/stencil textures.
+    if (!textureObjFormat.valid() || actualAngleFormat.depthBits > 0 ||
         actualAngleFormat.stencilBits > 0)
     {
-        // If dst format is compressed, ignore.
+        // Depth or stencil textures need an updated path.
         return angle::Result::Continue;
     }
 
@@ -150,6 +228,12 @@ angle::Result InitializeTextureContents(const gl::Context *context,
                 UNREACHABLE();
                 break;
         }
+    }
+
+    if (actualAngleFormat.isBlock)
+    {
+        return InitializeCompressedTextureContents(context, texture, textureObjFormat, index, layer,
+                                                   startDepth);
     }
 
     if (texture->isCPUAccessible() && index.getType() != gl::TextureType::_2DMultisample &&
