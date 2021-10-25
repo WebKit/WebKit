@@ -1,5 +1,46 @@
 2021-10-25  Null  <null@apple.com>
 
+        Cherry-pick r284125. rdar://problem/84630015
+
+    Upstream ANGLE: PrimitiveRestart tests fail due to incorrect draw commands
+    https://bugs.webkit.org/show_bug.cgi?id=231626
+    <rdar:/problem/84167241>
+    
+    Primitive restart draw commands were being encoded
+    incorrectly. Single element ranges were being disregarded,
+    and a maximum draw size was not being enforced when the
+    index buffer was aliased / reused.
+    
+    Cherry-pick from upstream anglebug.com/6535
+    
+    Reviewed by Kenneth Russell.
+    
+    * src/libANGLE/renderer/metal/VertexArrayMtl.mm:
+    (rx::VertexArrayMtl::getDrawIndices):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@284125 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-10-13  Kyle Piddington  <kpiddington@apple.com>
+
+            Upstream ANGLE: PrimitiveRestart tests fail due to incorrect draw commands
+            https://bugs.webkit.org/show_bug.cgi?id=231626
+            <rdar:/problem/84167241>
+
+            Primitive restart draw commands were being encoded
+            incorrectly. Single element ranges were being disregarded,
+            and a maximum draw size was not being enforced when the
+            index buffer was aliased / reused.
+
+            Cherry-pick from upstream anglebug.com/6535
+
+            Reviewed by Kenneth Russell.
+
+            * src/libANGLE/renderer/metal/VertexArrayMtl.mm:
+            (rx::VertexArrayMtl::getDrawIndices):
+
+2021-10-25  Null  <null@apple.com>
+
         Cherry-pick r282627. rdar://problem/84630078
 
     webgl/2.0.y/conformance/extensions/webgl-compressed-texture-s3tc-srgb.html fails on Intel+AMD Metal
