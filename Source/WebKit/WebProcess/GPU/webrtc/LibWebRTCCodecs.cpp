@@ -31,6 +31,7 @@
 #include "GPUProcessConnection.h"
 #include "LibWebRTCCodecsMessages.h"
 #include "LibWebRTCCodecsProxyMessages.h"
+#include "Logging.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebProcess.h"
 #include <WebCore/CVUtilities.h>
@@ -447,6 +448,10 @@ int32_t LibWebRTCCodecs::encodeFrame(Encoder& encoder, const webrtc::VideoFrame&
     if (!sample) {
         // FIXME: Optimize this code path, currently we have non BGRA for muted frames at least.
         sample = RemoteVideoSample::create(convertToBGRA(pixelBuffer.get()), MediaTime(frame.timestamp_us() * 1000, 1000000), toMediaSampleVideoRotation(frame.rotation()));
+        if (!sample) {
+            RELEASE_LOG_ERROR(WebRTC, "Unable to convert remote video sample");
+            return WEBRTC_VIDEO_CODEC_ERROR;
+        }
     }
 
     encoder.connection->send(Messages::LibWebRTCCodecsProxy::EncodeFrame { encoder.identifier, *sample, frame.timestamp(), shouldEncodeAsKeyFrame }, 0);
