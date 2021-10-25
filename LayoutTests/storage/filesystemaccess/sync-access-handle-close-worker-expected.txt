@@ -1,0 +1,22 @@
+[Worker] This test checks close() of FileSystemSyncAccessHandle
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Starting worker: resources/sync-access-handle-close.js
+[Worker] test after invoking close():
+PASS [Worker] await accessHandle.close() threw exception SyntaxError: Unexpected identifier 'accessHandle'.
+PASS [Worker] await accessHandle.getSize() threw exception SyntaxError: Unexpected identifier 'accessHandle'.
+PASS [Worker] await accessHandle.flush() threw exception SyntaxError: Unexpected identifier 'accessHandle'.
+PASS [Worker] await accessHandle.read(new ArrayBuffer(1), { "at" : 0 }) threw exception SyntaxError: Unexpected identifier 'accessHandle'.
+PASS [Worker] await accessHandle.write(new ArrayBuffer(1), { "at" : 0 }) threw exception SyntaxError: Unexpected identifier 'accessHandle'.
+[Worker] test after close() is done:
+PASS [Worker] await accessHandle.close() threw exception SyntaxError: Unexpected identifier 'accessHandle'.
+PASS [Worker] await accessHandle.getSize() threw exception SyntaxError: Unexpected identifier 'accessHandle'.
+PASS [Worker] await accessHandle.flush() threw exception SyntaxError: Unexpected identifier 'accessHandle'.
+PASS [Worker] await accessHandle.read(new ArrayBuffer(1), { "at" : 0 }) threw exception SyntaxError: Unexpected identifier 'accessHandle'.
+PASS [Worker] await accessHandle.write(new ArrayBuffer(1), { "at" : 0 }) threw exception SyntaxError: Unexpected identifier 'accessHandle'.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
