@@ -1490,3 +1490,6 @@ webkit.org/b/230848 [ Catalina BigSur Debug ] webrtc/datachannel/datachannel-gc.
 webkit.org/b/230905 [ Catalina BigSur ] imported/w3c/web-platform-tests/css/css-cascade/layer-counter-style-override.html [ Pass Failure ]
 
 webkit.org/b/231684 [ Catalina Debug ] requestidlecallback/requestidlecallback-document-gc.html [ Pass Crash ]
+
+webkit.org/b/232277 [ Catalina ] imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/playing-the-media-resource/pause-remove-from-document.html [ Pass Failure ]
+webkit.org/b/232277 [ Catalina ] imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/playing-the-media-resource/pause-remove-from-document-different-load.html [ Pass Failure ]
