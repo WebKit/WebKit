@@ -1,5 +1,53 @@
 2021-10-25  Null  <null@apple.com>
 
+        Cherry-pick r284247. rdar://problem/84629726
+
+    REGRESSION (r276370): Elements with animated transform property might not properly rendered
+    https://bugs.webkit.org/show_bug.cgi?id=230753
+    
+    Reviewed by Myles C. Maxfield.
+    
+    Source/WebCore:
+    
+    The change in r276370 was incorrect, resulting in the geometry map being used when
+    an element had a transform and `transform-style: preserves-3d`.
+    
+    Fix by going back to testing for the presence of the various transform properties which
+    affect geometry. hasTransformRelatedProperty() is still useful as a fast bit-check.
+    
+    Test: fast/repaint/transform-preserve-3d-repaint.html
+    
+    * rendering/RenderGeometryMap.cpp:
+    (WebCore::canMapBetweenRenderersViaLayers):
+    
+    LayoutTests:
+    
+    * fast/repaint/transform-preserve-3d-repaint-expected.txt: Added.
+    * fast/repaint/transform-preserve-3d-repaint.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@284247 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-10-15  Simon Fraser  <simon.fraser@apple.com>
+
+            REGRESSION (r276370): Elements with animated transform property might not properly rendered
+            https://bugs.webkit.org/show_bug.cgi?id=230753
+
+            Reviewed by Myles C. Maxfield.
+
+            The change in r276370 was incorrect, resulting in the geometry map being used when
+            an element had a transform and `transform-style: preserves-3d`.
+
+            Fix by going back to testing for the presence of the various transform properties which
+            affect geometry. hasTransformRelatedProperty() is still useful as a fast bit-check.
+
+            Test: fast/repaint/transform-preserve-3d-repaint.html
+
+            * rendering/RenderGeometryMap.cpp:
+            (WebCore::canMapBetweenRenderersViaLayers):
+
+2021-10-25  Null  <null@apple.com>
+
         Cherry-pick r284007. rdar://problem/84630339
 
     Cocoa GraphicsContextGLOpenGL uses depth and stencil for pbuffers on ANGLE Metal
