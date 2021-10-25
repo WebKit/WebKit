@@ -138,6 +138,10 @@ extern "C" void xpc_activity_register(const char *identifier, xpc_object_t crite
 extern "C" const char * const XPC_ACTIVITY_RANDOM_INITIAL_DELAY;
 extern "C" const char * const XPC_ACTIVITY_REQUIRE_NETWORK_CONNECTIVITY;
 
+#if HAVE(XPC_CONNECTION_COPY_INVALIDATION_REASON)
+extern "C" char * xpc_connection_copy_invalidation_reason(xpc_connection_t connection);
+#endif
+
 #if OS_OBJECT_USE_OBJC
 OS_OBJECT_DECL(os_transaction);
 #else

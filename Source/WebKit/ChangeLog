@@ -1,3 +1,15 @@
+2021-10-25  Alex Christensen  <achristensen@webkit.org>
+
+        Use xpc_connection_copy_invalidation_reason where available for debugging daemon connection failures
+        https://bugs.webkit.org/show_bug.cgi?id=232152
+
+        Reviewed by Brady Eidson.
+
+        * Platform/IPC/cocoa/DaemonConnectionCocoa.mm:
+        (WebKit::Daemon::ConnectionToMachService<Traits>::initializeConnectionIfNeeded const):
+        * Shared/Daemon/DaemonUtilities.mm:
+        (WebKit::startListeningForMachServiceConnections):
+
 2021-10-25  Kate Cheney  <katherine_cheney@apple.com>
 
         [App Privacy Report] CORS preflight requests attributed incorrectly

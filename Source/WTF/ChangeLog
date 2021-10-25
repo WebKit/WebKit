@@ -1,3 +1,13 @@
+2021-10-25  Alex Christensen  <achristensen@webkit.org>
+
+        Use xpc_connection_copy_invalidation_reason where available for debugging daemon connection failures
+        https://bugs.webkit.org/show_bug.cgi?id=232152
+
+        Reviewed by Brady Eidson.
+
+        * wtf/PlatformHave.h:
+        * wtf/spi/darwin/XPCSPI.h:
+
 2021-10-25  Ayumi Kojima  <ayumi_kojima@apple.com>
 
         Unreviewed, reverting r284742.

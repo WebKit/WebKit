@@ -63,8 +63,14 @@ void ConnectionToMachService<Traits>::initializeConnectionIfNeeded() const
     xpc_connection_set_event_handler(m_connection.get(), [weakThis = WeakPtr { *this }](xpc_object_t event) {
         if (!weakThis)
             return;
-        if (event == XPC_ERROR_CONNECTION_INVALID)
+        if (event == XPC_ERROR_CONNECTION_INVALID) {
+#if HAVE(XPC_CONNECTION_COPY_INVALIDATION_REASON)
+            auto reason = std::unique_ptr<char[]>(xpc_connection_copy_invalidation_reason(weakThis->m_connection.get()));
+            WTFLogAlways("Failed to connect to mach service %s, reason: %s", weakThis->m_machServiceName.data(), reason.get());
+#else
             WTFLogAlways("Failed to connect to mach service %s, likely because it is not registered with launchd", weakThis->m_machServiceName.data());
+#endif
+        }
         if (event == XPC_ERROR_CONNECTION_INTERRUPTED) {
             // Daemon crashed, we will need to make a new connection to a new instance of the daemon.
             weakThis->m_connection = nullptr;

@@ -47,8 +47,14 @@ void startListeningForMachServiceConnections(const char* serviceName, const char
 #endif
 
         xpc_connection_set_event_handler(peer, ^(xpc_object_t event) {
-            if (event == XPC_ERROR_CONNECTION_INVALID)
+            if (event == XPC_ERROR_CONNECTION_INVALID) {
+#if HAVE(XPC_CONNECTION_COPY_INVALIDATION_REASON)
+                auto reason = std::unique_ptr<char[]>(xpc_connection_copy_invalidation_reason(peer));
+                NSLog(@"Failed to start listening for connections to mach service %s, reason: %s", serviceName, reason.get());
+#else
                 NSLog(@"Failed to start listening for connections to mach service %s, likely because it is not registered with launchd", serviceName);
+#endif
+            }
             if (event == XPC_ERROR_CONNECTION_INTERRUPTED) {
                 NSLog(@"Removing peer connection %p", peer);
                 connectionRemoved(peer);
