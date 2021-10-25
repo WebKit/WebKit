@@ -1,3 +1,12 @@
+2021-10-25  Eric Hutchison  <ehutchison@apple.com>
+
+        [ iOS15 Sim Release ] imported/w3c/web-platform-tests/webrtc/RTCDtlsTransport-state.html is a flaky failure (Harness Error (TIMEOUT)).
+        https://bugs.webkit.org/show_bug.cgi?id=232252.
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+
 2021-10-25  Gabriel Nava Marino  <gnavamarino@apple.com>
 
         ASSERT(node) triggered after surroundNodeRangeWithElement for node without editable style 
