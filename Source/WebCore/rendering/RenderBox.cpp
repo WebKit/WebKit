@@ -2694,8 +2694,10 @@ LayoutUnit RenderBox::fillAvailableMeasure(LayoutUnit availableLogicalWidth) con
 
 LayoutUnit RenderBox::fillAvailableMeasure(LayoutUnit availableLogicalWidth, LayoutUnit& marginStart, LayoutUnit& marginEnd) const
 {
-    marginStart = minimumValueForLength(style().marginStart(), availableLogicalWidth);
-    marginEnd = minimumValueForLength(style().marginEnd(), availableLogicalWidth);
+    bool isOrthogonalElement = isHorizontalWritingMode() != containingBlock()->isHorizontalWritingMode();
+    LayoutUnit availableSizeForResolvingMargin = isOrthogonalElement ? containingBlockLogicalWidthForContent() : availableLogicalWidth;
+    marginStart = minimumValueForLength(style().marginStart(), availableSizeForResolvingMargin);
+    marginEnd = minimumValueForLength(style().marginEnd(), availableSizeForResolvingMargin);
     return availableLogicalWidth - marginStart - marginEnd;
 }
 
