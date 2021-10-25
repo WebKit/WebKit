@@ -30,6 +30,7 @@ from webkitpy.layout_tests.controllers import test_result_writer
 from webkitpy.layout_tests.models import test_failures
 from webkitpy.port.driver import DriverOutput
 from webkitpy.port.test import TestPort
+from webkitpy.port.image_diff import ImageDiffResult
 
 
 class TestResultWriterTest(unittest.TestCase):
@@ -41,7 +42,7 @@ class TestResultWriterTest(unittest.TestCase):
         class ImageDiffTestPort(TestPort):
             def diff_image(self, expected_contents, actual_contents, tolerance=None):
                 used_tolerance_values.append(tolerance)
-                return (True, 1, None)
+                return ImageDiffResult(True, 1, None)
 
         host = MockHost()
         port = ImageDiffTestPort(host)

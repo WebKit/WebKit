@@ -56,6 +56,7 @@ from webkitpy.port import driver
 from webkitpy.port import image_diff
 from webkitpy.port import server_process
 from webkitpy.port.factory import PortFactory
+from webkitpy.port.image_diff import ImageDiffResult
 from webkitpy.layout_tests.servers import apache_http_server, http_server, http_server_base
 from webkitpy.layout_tests.servers import web_platform_test_server
 from webkitpy.layout_tests.servers import websocket_server
@@ -306,11 +307,14 @@ class Port(object):
         If an error occurs (like ImageDiff isn't found, or crashes, we log an error and return True (for a diff).
         """
         if not actual_contents and not expected_contents:
-            return (None, 0, None)
+            return ImageDiffResult(None, 0, None)
+
         if not actual_contents or not expected_contents:
-            return (True, 0, None)
+            return ImageDiffResult(True, 0, None)
+
         if not self._image_differ:
             self._image_differ = image_diff.ImageDiffer(self)
+
         self.set_option_default('tolerance', 0.1)
         if tolerance is None:
             tolerance = self.get_option('tolerance')

@@ -45,7 +45,7 @@ from webkitpy.common.system.systemhost_mock import MockSystemHost
 from webkitpy.common.version_name_map import INTERNAL_TABLE
 from webkitpy.port.base import Port
 from webkitpy.port.config import apple_additions, clear_cached_configuration
-from webkitpy.port.image_diff import ImageDiffer
+from webkitpy.port.image_diff import ImageDiffer, ImageDiffResult
 from webkitpy.port.server_process_mock import MockServerProcess
 from webkitpy.layout_tests.servers import http_server_base
 from webkitpy.tool.mocktool import MockOptions
@@ -255,30 +255,30 @@ class PortTestCase(unittest.TestCase):
         tmpfd, tmpfile = port._filesystem.open_binary_tempfile('')
         tmpfd.close()
 
-        self.assertFalse(port.diff_image(contents1, contents1)[0])
-        self.assertTrue(port.diff_image(contents1, contents2)[0])
+        self.assertFalse(port.diff_image(contents1, contents1).diff_image)
+        self.assertTrue(port.diff_image(contents1, contents2).diff_image)
 
-        self.assertTrue(port.diff_image(contents1, contents2, tmpfile)[0])
+        self.assertTrue(port.diff_image(contents1, contents2, tmpfile).diff_image)
 
         port._filesystem.remove(tmpfile)
 
     def test_diff_image__missing_both(self):
         port = self.make_port()
-        self.assertFalse(port.diff_image(None, None)[0])
-        self.assertFalse(port.diff_image(None, b'')[0])
-        self.assertFalse(port.diff_image(b'', None)[0])
+        self.assertFalse(port.diff_image(None, None).diff_image)
+        self.assertFalse(port.diff_image(None, b'').diff_image)
+        self.assertFalse(port.diff_image(b'', None).diff_image)
 
-        self.assertFalse(port.diff_image(b'', b'')[0])
+        self.assertFalse(port.diff_image(b'', b'').diff_image)
 
     def test_diff_image__missing_actual(self):
         port = self.make_port()
-        self.assertTrue(port.diff_image(None, b'foo')[0])
-        self.assertTrue(port.diff_image(b'', b'foo')[0])
+        self.assertTrue(port.diff_image(None, b'foo').diff_image)
+        self.assertTrue(port.diff_image(b'', b'foo').diff_image)
 
     def test_diff_image__missing_expected(self):
         port = self.make_port()
-        self.assertTrue(port.diff_image(b'foo', None)[0])
-        self.assertTrue(port.diff_image(b'foo', b'')[0])
+        self.assertTrue(port.diff_image(b'foo', None).diff_image)
+        self.assertTrue(port.diff_image(b'foo', b'').diff_image)
 
     def test_diff_image(self):
         port = self.make_port()
@@ -298,22 +298,22 @@ class PortTestCase(unittest.TestCase):
         # First test the case of not using the JHBuild wrapper.
         self.assertFalse(port._should_use_jhbuild())
 
-        self.assertEqual(port.diff_image(b'foo', b'bar'), (b'', 100.0, None))
+        self.assertEqual(port.diff_image(b'foo', b'bar'), ImageDiffResult(b'', 100.0, None))
         self.assertEqual(self.proc.cmd, [port._path_to_image_diff(), "--tolerance", "0.1"])
-        self.assertEqual(port.diff_image(b'foo', b'bar', None), (b'', 100.0, None))
+        self.assertEqual(port.diff_image(b'foo', b'bar', None), ImageDiffResult(b'', 100.0, None))
         self.assertEqual(self.proc.cmd, [port._path_to_image_diff(), "--tolerance", "0.1"])
-        self.assertEqual(port.diff_image(b'foo', b'bar', 0), (b'', 100.0, None))
+        self.assertEqual(port.diff_image(b'foo', b'bar', 0), ImageDiffResult(b'', 100.0, None))
         self.assertEqual(self.proc.cmd, [port._path_to_image_diff(), "--tolerance", "0"])
 
         # Now test the case of using JHBuild wrapper.
         port._filesystem.maybe_make_directory(port.path_from_webkit_base('WebKitBuild', 'Dependencies%s' % port.port_name.upper()))
         self.assertTrue(port._should_use_jhbuild())
 
-        self.assertEqual(port.diff_image(b'foo', b'bar'), (b'', 100.0, None))
+        self.assertEqual(port.diff_image(b'foo', b'bar'), ImageDiffResult(b'', 100.0, None))
         self.assertEqual(self.proc.cmd, port._jhbuild_wrapper + [port._path_to_image_diff(), "--tolerance", "0.1"])
-        self.assertEqual(port.diff_image(b'foo', b'bar', None), (b'', 100.0, None))
+        self.assertEqual(port.diff_image(b'foo', b'bar', None), ImageDiffResult(b'', 100.0, None))
         self.assertEqual(self.proc.cmd, port._jhbuild_wrapper + [port._path_to_image_diff(), "--tolerance", "0.1"])
-        self.assertEqual(port.diff_image(b'foo', b'bar', 0), (b'', 100.0, None))
+        self.assertEqual(port.diff_image(b'foo', b'bar', 0), ImageDiffResult(b'', 100.0, None))
         self.assertEqual(self.proc.cmd, port._jhbuild_wrapper + [port._path_to_image_diff(), "--tolerance", "0"])
 
         port.clean_up_test_run()
@@ -324,13 +324,13 @@ class PortTestCase(unittest.TestCase):
         port = self.make_port()
         port._server_process_constructor = lambda port, nm, cmd, env, crash_message=None: MockServerProcess(lines=['diff: 0% passed\n'])
         image_differ = ImageDiffer(port)
-        self.assertEqual(image_differ.diff_image(b'foo', b'bar', 0.1), (None, 0, None))
+        self.assertEqual(image_differ.diff_image(b'foo', b'bar', 0.1), ImageDiffResult(None, 0, None))
 
     def test_diff_image_failed(self):
         port = self.make_port()
         port._server_process_constructor = lambda port, nm, cmd, env, crash_message=None: MockServerProcess(lines=['diff: 100% failed\n'])
         image_differ = ImageDiffer(port)
-        self.assertEqual(image_differ.diff_image(b'foo', b'bar', 0.1), (b'', 100.0, None))
+        self.assertEqual(image_differ.diff_image(b'foo', b'bar', 0.1), ImageDiffResult(b'', 100.0, None))
 
     def test_diff_image_crashed(self):
         port = self.make_port()
@@ -346,7 +346,7 @@ class PortTestCase(unittest.TestCase):
 
         port._server_process_constructor = make_proc
         port.setup_test_run()
-        self.assertEqual(port.diff_image(b'foo', b'bar'), (b'', 0, 'ImageDiff crashed\n'))
+        self.assertEqual(port.diff_image(b'foo', b'bar'), ImageDiffResult(b'', 0, 'ImageDiff crashed\n'))
         port.clean_up_test_run()
 
     @slow

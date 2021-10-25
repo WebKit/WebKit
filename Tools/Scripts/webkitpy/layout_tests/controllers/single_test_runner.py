@@ -294,15 +294,14 @@ class SingleTestRunner(object):
             failures.append(test_failures.FailureMissingImageHash())
         elif driver_output.image_hash != expected_driver_output.image_hash:
             diff_result = self._port.diff_image(expected_driver_output.image, driver_output.image)
-            error_string = diff_result[2]
-            if error_string:
-                _log.warning('  %s : %s' % (self._test_name, error_string))
+            if diff_result.error_string:
+                _log.warning('  %s : %s' % (self._test_name, diff_result.error_string))
                 failures.append(test_failures.FailureImageHashMismatch())
-                driver_output.error = (driver_output.error or '') + error_string
+                driver_output.error = (driver_output.error or '') + diff_result.error_string
             else:
-                driver_output.image_diff = diff_result[0]
+                driver_output.image_diff = diff_result.diff_image
                 if driver_output.image_diff:
-                    failures.append(test_failures.FailureImageHashMismatch(diff_result[1]))
+                    failures.append(test_failures.FailureImageHashMismatch(diff_result.diff_percent))
                 else:
                     # See https://bugs.webkit.org/show_bug.cgi?id=69444 for why this isn't a full failure.
                     _log.warning('  %s -> pixel hash failed (but diff passed)' % self._test_name)
@@ -358,12 +357,11 @@ class SingleTestRunner(object):
         elif reference_driver_output.image_hash != actual_driver_output.image_hash:
             # ImageDiff has a hard coded color distance threshold even though tolerance=0 is specified.
             diff_result = self._port.diff_image(reference_driver_output.image, actual_driver_output.image, tolerance=0)
-            error_string = diff_result[2]
-            if error_string:
-                _log.warning('  %s : %s' % (self._test_name, error_string))
+            if diff_result.error_string:
+                _log.warning('  %s : %s' % (self._test_name, diff_result.error_string))
                 failures.append(test_failures.FailureReftestMismatch(reference_filename))
-                actual_driver_output.error = (actual_driver_output.error or '') + error_string
-            elif diff_result[0]:
+                actual_driver_output.error = (actual_driver_output.error or '') + diff_result.error_string
+            elif diff_result.diff_image:
                 failures.append(test_failures.FailureReftestMismatch(reference_filename))
 
         return TestResult(self._test_input, failures, total_test_time, has_stderr, pid=actual_driver_output.pid)

@@ -1,3 +1,44 @@
+2021-10-25  Simon Fraser  <simon.fraser@apple.com>
+
+        webkitpy: have diff_image() return a ImageDiffResult
+        https://bugs.webkit.org/show_bug.cgi?id=232222
+
+        Reviewed by Jonathan Bedard.
+
+        diff_image() returned a list which resulted in hard to read code. In addition, the
+        presence of a diff_image is used to indicate failure; future patches will change this,
+        so having diff_image() return a class makes that easier.
+
+        * Scripts/webkitpy/layout_tests/controllers/single_test_runner.py:
+        (SingleTestRunner._compare_image):
+        (SingleTestRunner._compare_output_with_reference):
+        * Scripts/webkitpy/layout_tests/controllers/test_result_writer_unittest.py:
+        (TestResultWriterTest.test_reftest_diff_image.ImageDiffTestPort.diff_image):
+        (TestResultWriterTest):
+        * Scripts/webkitpy/layout_tests/models/test_failures.py:
+        (FailureReftestMismatch.write_failure):
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+        (RunTest.test_tolerance.ImageDiffTestPort.diff_image):
+        * Scripts/webkitpy/port/base.py:
+        (Port.diff_image):
+        * Scripts/webkitpy/port/image_diff.py:
+        (ImageDiffResult):
+        (ImageDiffResult.__init__):
+        (ImageDiffResult.__eq__):
+        (ImageDiffResult.__ne__):
+        (ImageDiffResult.__repr__):
+        (ImageDiffer._read):
+        * Scripts/webkitpy/port/port_testcase.py:
+        (PortTestCase.integration_test_image_diff):
+        (PortTestCase.test_diff_image__missing_both):
+        (PortTestCase.test_diff_image__missing_actual):
+        (PortTestCase.test_diff_image__missing_expected):
+        (PortTestCase.test_diff_image):
+        (PortTestCase.test_diff_image_passed):
+        (PortTestCase.test_diff_image_failed):
+        (PortTestCase.test_diff_image_crashed):
+        * Scripts/webkitpy/port/test.py:
+
 2021-10-25  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [webkitpy] webkit-test-runner doesn't report all results when a test is run several times

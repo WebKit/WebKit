@@ -42,6 +42,7 @@ from webkitpy.common.host_mock import MockHost
 from webkitpy.layout_tests import run_webkit_tests
 from webkitpy.layout_tests.models.test_run_results import INTERRUPTED_EXIT_STATUS
 from webkitpy.port import test
+from webkitpy.port.image_diff import ImageDiffResult
 from webkitpy.xcode.device_type import DeviceType
 
 
@@ -751,7 +752,7 @@ class RunTest(unittest.TestCase, StreamTestingMixin):
         class ImageDiffTestPort(test.TestPort):
             def diff_image(self, expected_contents, actual_contents, tolerance=None):
                 self.tolerance_used_for_diff_image = self._options.tolerance
-                return (True, 1, None)
+                return ImageDiffResult(True, 1, None)
 
         def get_port_for_run(args):
             options, parsed_args = run_webkit_tests.parse_args(args)
