@@ -937,7 +937,6 @@ static AccessibilityObjectWrapper *ancestorWithRole(const AXCoreObject& descenda
         if ([self isSVGGroupElement])
             return true;
         FALLTHROUGH;
-    // All other elements are ignored on the iphone.
     case AccessibilityRole::Annotation:
     case AccessibilityRole::Application:
     case AccessibilityRole::ApplicationAlert:
@@ -983,7 +982,6 @@ static AccessibilityObjectWrapper *ancestorWithRole(const AXCoreObject& descenda
     case AccessibilityRole::GridCell:
     case AccessibilityRole::GrowArea:
     case AccessibilityRole::HelpTag:
-    case AccessibilityRole::Ignored:
     case AccessibilityRole::Inline:
     case AccessibilityRole::Insertion:
     case AccessibilityRole::Label:
@@ -1009,8 +1007,8 @@ static AccessibilityObjectWrapper *ancestorWithRole(const AXCoreObject& descenda
     case AccessibilityRole::Outline:
     case AccessibilityRole::Paragraph:
     case AccessibilityRole::Pre:
-    case AccessibilityRole::Presentational:
     case AccessibilityRole::RadioGroup:
+    case AccessibilityRole::RowGroup:
     case AccessibilityRole::RowHeader:
     case AccessibilityRole::Row:
     case AccessibilityRole::RubyBase:
@@ -1046,12 +1044,18 @@ static AccessibilityObjectWrapper *ancestorWithRole(const AXCoreObject& descenda
     case AccessibilityRole::TreeItem:
     case AccessibilityRole::TreeGrid:
     case AccessibilityRole::Toolbar:
-    case AccessibilityRole::Unknown:
     case AccessibilityRole::UserInterfaceTooltip:
     case AccessibilityRole::WebApplication:
     case AccessibilityRole::WebArea:
     case AccessibilityRole::Window:
-    case AccessibilityRole::RowGroup:
+        // Consider focusable leaf-nodes with a label to be accessible elements.
+        // https://bugs.webkit.org/show_bug.cgi?id=223492
+        return self.axBackingObject->isKeyboardFocusable()
+            && [self accessibilityElementCount] == 0
+            && self.axBackingObject->descriptionAttributeValue().stripWhiteSpace().length() > 0;
+    case AccessibilityRole::Ignored:
+    case AccessibilityRole::Presentational:
+    case AccessibilityRole::Unknown:
         return false;
     }
     
@@ -1174,13 +1178,6 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
 
     auto* backingObject = self.axBackingObject;
 
-    // iOS doesn't distinguish between a title and description field,
-    // so concatentation will yield the best result.
-    NSString *axTitle = backingObject->titleAttributeValue();
-    NSString *axDescription = backingObject->descriptionAttributeValue();
-    NSString *landmarkDescription = [self ariaLandmarkRoleDescription];
-    NSString *interactiveVideoDescription = [self interactiveVideoDescription];
-
     // If self is static text inside a heading, the label should be the string
     // value of the static text object, except when the heading has alternative
     // text, in which case, that alternative text is returned here.
@@ -1199,6 +1196,13 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
             return backingObject->stringValue();
         }
     }
+
+    // iOS doesn't distinguish between a title and description field,
+    // so concatentation will yield the best result.
+    NSString *axTitle = backingObject->titleAttributeValue();
+    NSString *axDescription = backingObject->descriptionAttributeValue();
+    NSString *landmarkDescription = [self ariaLandmarkRoleDescription];
+    NSString *interactiveVideoDescription = [self interactiveVideoDescription];
 
     // We should expose the value of the input type date or time through AXValue instead of AXTitle.
     if (backingObject->isInputTypePopupButton() && [axTitle isEqualToString:[self accessibilityValue]])

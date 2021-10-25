@@ -1,3 +1,15 @@
+2021-10-25  Tyler Wilcock  <tyler_w@apple.com>
+
+        AX: Keyboard-focusable leaf nodes with labels should be accessible elements on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=232126
+
+        Reviewed by Andres Gonzalez.
+
+        Add test ensuring focusable leaf nodes with labels are accessible elements on iOS.
+
+        * accessibility/ios-simulator/labeled-focusable-leaf-nodes-expected.txt: Added.
+        * accessibility/ios-simulator/labeled-focusable-leaf-nodes.html: Added.
+
 2021-10-25  Eric Hutchison  <ehutchison@apple.com>
 
         [ iOS15 Sim Release ] imported/w3c/web-platform-tests/webrtc/RTCDtlsTransport-state.html is a flaky failure (Harness Error (TIMEOUT)).
