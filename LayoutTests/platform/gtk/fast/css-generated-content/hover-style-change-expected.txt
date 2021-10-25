@@ -1,37 +1,51 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x208
-  RenderBlock {HTML} at (0,0) size 800x208
-    RenderBody {BODY} at (8,8) size 784x184
-      RenderBlock {DIV} at (0,0) size 784x18
+layer at (0,0) size 800x391
+  RenderBlock {html} at (0,0) size 800x391
+    RenderBlock {parsererror} at (16,16) size 768x151 [bgcolor=#FFDDDD] [border: (2px solid #CC7777)]
+      RenderBlock {h3} at (18,20) size 732x23
+        RenderText {#text} at (0,0) size 324x21
+          text run at (0,0) width 324: "This page contains the following errors:"
+      RenderBlock {div} at (18,61) size 732x29
+        RenderText {#text} at (0,0) size 574x14
+          text run at (0,0) width 574: "error on line 43 at column 8: Opening and ending tag mismatch: hr line 29 and body"
+          text run at (573,0) width 1: " "
+        RenderInline (generated) at (0,0) size 147x14
+          RenderText at (0,14) size 147x14
+            text run at (0,14) width 147: "and generated content"
+      RenderBlock {h3} at (18,108) size 732x23
+        RenderText {#text} at (0,0) size 427x21
+          text run at (0,0) width 427: "Below is a rendering of the page up to the first error."
+    RenderBody {body} at (8,182) size 784x201
+      RenderBlock {div} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 82x17
           text run at (0,0) width 82: "This is a test "
-        RenderInline (generated) at (0,0) size 178x17
-          RenderText at (82,0) size 178x17
-            text run at (82,0) width 178: "and generated hover content"
-      RenderBlock {HR} at (0,26) size 784x2 [border: (1px inset #000000)]
-      RenderBlock {P} at (0,44) size 784x36
-        RenderText {#text} at (0,0) size 52x17
-          text run at (0,0) width 52: "Test for "
-        RenderInline {I} at (0,0) size 781x35
-          RenderInline {A} at (0,0) size 349x17 [color=#0000EE]
-            RenderText {#text} at (51,0) size 349x17
-              text run at (51,0) width 349: "http://bugzilla.opendarwin.org/show_bug.cgi?id=6431"
-          RenderText {#text} at (399,0) size 781x35
-            text run at (399,0) width 5: " "
-            text run at (403,0) width 378: "REGRESSION: style change where :hover changes only an"
-            text run at (0,18) width 150: ":after style doesn't work"
-        RenderText {#text} at (150,18) size 4x17
-          text run at (150,18) width 4: "."
-      RenderBlock {P} at (0,96) size 784x36
-        RenderText {#text} at (0,0) size 741x35
-          text run at (0,0) width 507: "The line at the top of the page should read \x{201C}This is a test and generated content\x{201D} "
-          text run at (507,0) width 234: "or \x{201C}This is a test and generated hover"
-          text run at (0,18) width 228: "content\x{201D} depending on whether it is "
-          text run at (228,18) width 55: "hovered."
-      RenderBlock {P} at (0,148) size 784x36
-        RenderText {#text} at (0,0) size 754x35
-          text run at (0,0) width 754: "To reproduce the bug outside of DumpRenderTree, mouse over the div several times, and the style change won't update"
-          text run at (0,18) width 70: "every time "
-          text run at (70,18) width 85: "like it should."
-caret: position 3 of child 0 {#text} of child 1 {DIV} of body
+        RenderInline (generated) at (0,0) size 138x17
+          RenderText at (82,0) size 138x17
+            text run at (82,0) width 138: "and generated content"
+      RenderBlock {hr} at (0,26) size 784x174 [border: (1px inset #000000)]
+        RenderBlock {p} at (1,17) size 782x36
+          RenderText {#text} at (0,0) size 52x17
+            text run at (0,0) width 52: "Test for "
+          RenderInline {i} at (0,0) size 781x35
+            RenderInline {a} at (0,0) size 349x17 [color=#0000EE]
+              RenderText {#text} at (51,0) size 349x17
+                text run at (51,0) width 349: "http://bugzilla.opendarwin.org/show_bug.cgi?id=6431"
+            RenderText {#text} at (399,0) size 781x35
+              text run at (399,0) width 5: " "
+              text run at (403,0) width 378: "REGRESSION: style change where :hover changes only an"
+              text run at (0,18) width 150: ":after style doesn't work"
+          RenderText {#text} at (150,18) size 4x17
+            text run at (150,18) width 4: "."
+        RenderBlock {p} at (1,69) size 782x36
+          RenderText {#text} at (0,0) size 741x35
+            text run at (0,0) width 507: "The line at the top of the page should read \x{201C}This is a test and generated content\x{201D} "
+            text run at (507,0) width 234: "or \x{201C}This is a test and generated hover"
+            text run at (0,18) width 228: "content\x{201D} depending on whether it is "
+            text run at (228,18) width 55: "hovered."
+        RenderBlock {p} at (1,121) size 782x36
+          RenderText {#text} at (0,0) size 754x35
+            text run at (0,0) width 754: "To reproduce the bug outside of DumpRenderTree, mouse over the div several times, and the style change won't update"
+            text run at (0,18) width 70: "every time "
+            text run at (70,18) width 85: "like it should."
+caret: position 0 of child 0 {#text} of child 0 {h3} of child 0 {parsererror} of child 1 {html} of document

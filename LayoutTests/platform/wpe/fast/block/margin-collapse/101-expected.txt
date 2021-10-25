@@ -1,11 +1,22 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x600
-  RenderBlock {HTML} at (0,0) size 800x600
-    RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 385x347
-        RenderBlock {P} at (0,0) size 385x40 [border: (2px solid #0000FF)]
+layer at (0,0) size 800x524
+  RenderBlock {html} at (0,0) size 800x524
+    RenderBlock {parsererror} at (16,16) size 768x137 [bgcolor=#FFDDDD] [border: (2px solid #CC7777)]
+      RenderBlock {h3} at (18,20) size 732x23
+        RenderText {#text} at (0,0) size 324x21
+          text run at (0,0) width 324: "This page contains the following errors:"
+      RenderBlock {div} at (18,61) size 732x15
+        RenderText {#text} at (0,0) size 581x14
+          text run at (0,0) width 581: "error on line 30 at column 48: Opening and ending tag mismatch: img line 30 and div"
+          text run at (581,0) width 0: " "
+      RenderBlock {h3} at (18,94) size 732x23
+        RenderText {#text} at (0,0) size 429x21
+          text run at (0,0) width 429: "Below is a rendering of the page up to the first error."
+    RenderBody {body} at (8,168) size 784x348
+      RenderBlock {div} at (0,0) size 385x347
+        RenderBlock {p} at (0,0) size 385x40 [border: (2px solid #0000FF)]
           RenderText {#text} at (2,2) size 365x35
             text run at (2,2) width 365: "There should be only 2em between this paragraph and the"
             text run at (2,20) width 85: "image below."
-        RenderImage {IMG} at (0,72) size 395x275
+        RenderImage {img} at (0,72) size 395x275
