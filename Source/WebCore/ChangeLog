@@ -1,5 +1,88 @@
 2021-10-25  Null  <null@apple.com>
 
+        Cherry-pick r283489. rdar://problem/84630680
+
+    Regression (r283238)[ MacOS wk1 ] fast/mediacapturefromelement/CanvasCaptureMediaStream-webgl-events.html is timing out
+    https://bugs.webkit.org/show_bug.cgi?id=231022
+    
+    Patch by Kimmo Kinnunen <kkinnunen@apple.com> on 2021-10-04
+    Reviewed by Youenn Fablet.
+    
+    Originally the implementation would always return red frame, and the test would pass.
+    r283238 changed the implementation to not return a sample if there is not a display buffer,
+    as logically such cannot be used as a sample.
+    This broke the test case since the CanvasCaptureMediaStreamTrack would try to capture
+    the canvas display buffer during next runloop iteration (0s timeout) after each modification.
+    This does not work, as the display buffer is composed during "prepare for display"
+    phase.
+    
+    Add CanvasBase observers to observe that display buffer has been prepared, and capture
+    the media sample after that observer has fired.
+    
+    The test would work for wk2 due to timing related differences, preparation would have
+    typically run before the canvas capture 0s timeout.
+    
+    Fixes fast/mediastream/captureStream/canvas3d.html for wk1.
+    
+    * Modules/mediastream/CanvasCaptureMediaStreamTrack.cpp:
+    (WebCore::CanvasCaptureMediaStreamTrack::Source::startProducingData):
+    (WebCore::CanvasCaptureMediaStreamTrack::Source::canvasChanged):
+    (WebCore::CanvasCaptureMediaStreamTrack::Source::canvasDisplayBufferPrepared):
+    * Modules/mediastream/CanvasCaptureMediaStreamTrack.h:
+    * html/CanvasBase.cpp:
+    (WebCore::CanvasBase::addDisplayBufferObserver):
+    (WebCore::CanvasBase::removeDisplayBufferObserver):
+    (WebCore::CanvasBase::notifyObserversCanvasDisplayBufferPrepared):
+    * html/CanvasBase.h:
+    (WebCore::CanvasBase::hasDisplayBufferObservers const):
+    * html/canvas/WebGLRenderingContextBase.cpp:
+    (WebCore::WebGLRenderingContextBase::prepareForDisplay):
+    Move the "prepare only when the owner element is in the tree" logic to
+    its correct place to the caller, e.g. to the element itself.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@283489 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-10-04  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+            Regression (r283238)[ MacOS wk1 ] fast/mediacapturefromelement/CanvasCaptureMediaStream-webgl-events.html is timing out
+            https://bugs.webkit.org/show_bug.cgi?id=231022
+
+            Reviewed by Youenn Fablet.
+
+            Originally the implementation would always return red frame, and the test would pass.
+            r283238 changed the implementation to not return a sample if there is not a display buffer,
+            as logically such cannot be used as a sample.
+            This broke the test case since the CanvasCaptureMediaStreamTrack would try to capture
+            the canvas display buffer during next runloop iteration (0s timeout) after each modification.
+            This does not work, as the display buffer is composed during "prepare for display"
+            phase.
+
+            Add CanvasBase observers to observe that display buffer has been prepared, and capture
+            the media sample after that observer has fired.
+
+            The test would work for wk2 due to timing related differences, preparation would have
+            typically run before the canvas capture 0s timeout.
+
+            Fixes fast/mediastream/captureStream/canvas3d.html for wk1.
+
+            * Modules/mediastream/CanvasCaptureMediaStreamTrack.cpp:
+            (WebCore::CanvasCaptureMediaStreamTrack::Source::startProducingData):
+            (WebCore::CanvasCaptureMediaStreamTrack::Source::canvasChanged):
+            (WebCore::CanvasCaptureMediaStreamTrack::Source::canvasDisplayBufferPrepared):
+            * Modules/mediastream/CanvasCaptureMediaStreamTrack.h:
+            * html/CanvasBase.cpp:
+            (WebCore::CanvasBase::addDisplayBufferObserver):
+            (WebCore::CanvasBase::removeDisplayBufferObserver):
+            (WebCore::CanvasBase::notifyObserversCanvasDisplayBufferPrepared):
+            * html/CanvasBase.h:
+            (WebCore::CanvasBase::hasDisplayBufferObservers const):
+            * html/canvas/WebGLRenderingContextBase.cpp:
+            (WebCore::WebGLRenderingContextBase::prepareForDisplay):
+            Move the "prepare only when the owner element is in the tree" logic to
+            its correct place to the caller, e.g. to the element itself.
+
+2021-10-25  Null  <null@apple.com>
+
         Cherry-pick r283299. rdar://problem/84629227
 
     Cocoa GraphicsContextGLOpenGL should be more robust in destruction

@@ -8016,14 +8016,6 @@ void WebGLRenderingContextBase::prepareForDisplay()
     if (!m_context)
         return;
 
-    // If the canvas is not in the document body, then it won't be
-    // composited and thus doesn't need preparation. Unfortunately
-    // it can't tell at the time it was added to the list, since it
-    // could be inserted or removed from the document body afterwards.
-    auto canvas = htmlCanvas();
-    if (!canvas || !canvas->isInTreeScope())
-        return;
-
     m_context->prepareForDisplay();
 }
 
