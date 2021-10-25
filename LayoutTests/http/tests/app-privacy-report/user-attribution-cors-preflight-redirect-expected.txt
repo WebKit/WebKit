@@ -1,0 +1,11 @@
+Tests that CORS preflight checks for HTTP redirects are marked non app initiated.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS loadedUrl is "http://localhost:8000/app-privacy-report/resources/cors-preflight.py?value=1234"
+PASS successfully loaded only non app initiated requests
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

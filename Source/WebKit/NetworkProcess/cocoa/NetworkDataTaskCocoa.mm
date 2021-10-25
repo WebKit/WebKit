@@ -519,6 +519,10 @@ void NetworkDataTaskCocoa::willPerformHTTPRedirection(WebCore::ResourceResponse&
     if (isTopLevelNavigation())
         request.setFirstPartyForCookies(request.url());
 
+#if ENABLE(APP_PRIVACY_REPORT)
+    request.setIsAppInitiated(request.nsURLRequest(WebCore::HTTPBodyUpdatePolicy::DoNotUpdateHTTPBody).attribution == NSURLRequestAttributionDeveloper);
+#endif
+
 #if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
 #if HAVE(CFNETWORK_CNAME_AND_COOKIE_TRANSFORM_SPI)
     applyCookiePolicyForThirdPartyCNAMECloaking(request);

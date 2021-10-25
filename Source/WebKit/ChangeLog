@@ -1,3 +1,25 @@
+2021-10-25  Kate Cheney  <katherine_cheney@apple.com>
+
+        [App Privacy Report] CORS preflight requests attributed incorrectly
+        https://bugs.webkit.org/show_bug.cgi?id=232221
+        <rdar://problem/84116159>
+
+        Reviewed by Brent Fulgham.
+
+        HTTP redirects should already be marked as app-initiated or not based
+        on the NSURLRequest that initiated the redirect, either because the
+        same NSURLRequest is used or because it is set in the completion
+        handler of the networkDataTask->willPerformHTTPRedirection call in
+        NetworkSessionCocoa.
+
+        However, checking the request before calling the completion handler
+        can initiate CORS preflight checks that create loads that are incorrectly
+        marked for App Privacy Report. This patch sets the app initiated value
+        in the ResourceRequest object before the new NetworkDataTask is created to fix this.
+
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+        (WebKit::NetworkDataTaskCocoa::willPerformHTTPRedirection):
+
 2021-10-25  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         REGRESSION (r284079): Audio continues playing on hulu.com in private browsing mode after closing the tab

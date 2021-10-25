@@ -1,3 +1,20 @@
+2021-10-25  Kate Cheney  <katherine_cheney@apple.com>
+
+        [App Privacy Report] CORS preflight requests attributed incorrectly
+        https://bugs.webkit.org/show_bug.cgi?id=232221
+        <rdar://problem/84116159>
+
+        Reviewed by Brent Fulgham.
+
+        Layout test coverage.
+
+        * http/tests/app-privacy-report/app-attribution-cors-preflight-redirect-expected.txt: Added.
+        * http/tests/app-privacy-report/app-attribution-cors-preflight-redirect.html: Added.
+        * http/tests/app-privacy-report/resources/cors-preflight.py: Added.
+        * http/tests/app-privacy-report/resources/redirect-with-cors-preflight-check.py: Added.
+        * http/tests/app-privacy-report/user-attribution-cors-preflight-redirect-expected.txt: Added.
+        * http/tests/app-privacy-report/user-attribution-cors-preflight-redirect.html: Added.
+
 2021-10-25  Chris Dumez  <cdumez@apple.com>
 
         imported/w3c/web-platform-tests/html/semantics/forms/form-submission-0/form-submission-algorithm.html is timing out
