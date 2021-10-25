@@ -610,7 +610,6 @@ private:
     void addChild(AXCoreObject*, DescendIfIgnored = DescendIfIgnored::Yes) override;
     void insertChild(AXCoreObject*, unsigned, DescendIfIgnored = DescendIfIgnored::Yes) override;
     bool canHaveChildren() const override;
-    bool childrenInitialized() const override { return true; }
     void setNeedsToUpdateChildren() override;
     void setNeedsToUpdateSubtree() override;
     void clearChildren() override;
