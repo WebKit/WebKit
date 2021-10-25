@@ -1,3 +1,43 @@
+2021-10-25  Null  <null@apple.com>
+
+        Cherry-pick r283600. rdar://problem/84625586
+
+    Don't pass DontBuildStrings to next token after parsing an empty parameter list
+    https://bugs.webkit.org/show_bug.cgi?id=225094
+    <rdar://problem/77231778>
+    
+    Reviewed by Yusuke Suzuki.
+    
+    JSTests:
+    
+    * stress/dont-pass-DontBuildStrings-when-building-empty-arguments-list.js: Added.
+    (main.a.prototype.g.toString.string_appeared_here):
+    (main.a):
+    (main):
+    
+    Source/JavaScriptCore:
+    
+    We might need the string, it turns out!
+    
+    * parser/Parser.cpp:
+    (JSC::Parser<LexerType>::parseArguments):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@283600 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-10-05  Saam Barati  <sbarati@apple.com>
+
+            Don't pass DontBuildStrings to next token after parsing an empty parameter list
+            https://bugs.webkit.org/show_bug.cgi?id=225094
+            <rdar://problem/77231778>
+
+            Reviewed by Yusuke Suzuki.
+
+            * stress/dont-pass-DontBuildStrings-when-building-empty-arguments-list.js: Added.
+            (main.a.prototype.g.toString.string_appeared_here):
+            (main.a):
+            (main):
+
 2021-10-18  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r284348. rdar://problem/84398090
