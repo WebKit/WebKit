@@ -4,6 +4,7 @@
 <noscript>Pass: JavaScript was not allowed to execute.</noscript>
 <p id="output"></p>
 <script>
+    opener.didRunScriptInPopup = true;
     document.getElementById("output").innerHTML = "Fail: JavaScript was allowed to execute.";
 </script>
 </body>
