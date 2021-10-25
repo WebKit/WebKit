@@ -163,8 +163,8 @@ TEST(MediaLoading, RangeRequestSynthesisWithoutContentLength)
     respondToRequests = [&] (Connection connection) {
         connection.receiveHTTPRequest([&, connection] (Vector<char>&& request) {
             auto sendResponse = [&, connection] (HTTPResponse response, HTTPResponse::IncludeContentLength includeContentLength) {
-                connection.send(response.serialize(includeContentLength), [&, connection] {
-                    respondToRequests(connection);
+                connection.send(response.serialize(includeContentLength), [connection] () mutable {
+                    connection.terminate();
                 });
             };
             totalRequests++;
@@ -181,7 +181,7 @@ TEST(MediaLoading, RangeRequestSynthesisWithoutContentLength)
     HTTPServer server([&](Connection connection) {
         respondToRequests(connection);
     });
-    runVideoTest(server.request(), "error");
+    runVideoTest(server.request(), "playing");
     EXPECT_EQ(totalRequests, 2u);
 }
 

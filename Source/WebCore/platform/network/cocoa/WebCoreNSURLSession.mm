@@ -863,7 +863,6 @@ void WebCoreNSURLSessionDataTaskClient::loadFinished(PlatformMediaResource& reso
     ASSERT_UNUSED(resource, !resource || resource == _resource);
     ASSERT(isMainThread());
     [self.session task:self didReceiveResponseFromOrigin:SecurityOrigin::create(response.url())];
-    // FIXME: Think about this and make sure it's safe.
     [self.session task:self didReceiveCORSAccessCheckResult:resource ? resource->didPassAccessControlCheck() : YES];
     self.countOfBytesExpectedToReceive = response.expectedContentLength();
     RetainPtr<NSURLResponse> strongResponse = response.nsURLResponse();

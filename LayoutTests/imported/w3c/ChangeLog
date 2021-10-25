@@ -1,3 +1,12 @@
+2021-10-25  Alex Christensen  <achristensen@webkit.org>
+
+        WebKit ought to be able to play videos without Content-Length HTTP header fields and without range support
+        https://bugs.webkit.org/show_bug.cgi?id=232174
+
+        Reviewed by Geoff Garen.
+
+        * web-platform-tests/service-workers/service-worker/fetch-audio-tainting.https-expected.txt:
+
 2021-10-25  Ziran Sun  <zsun@igalia.com>
 
         [CSS-grid] Need to set prefer width dirty for the child that has constraints to the grid area
