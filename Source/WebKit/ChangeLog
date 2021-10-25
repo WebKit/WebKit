@@ -1,5 +1,61 @@
 2021-10-25  Null  <null@apple.com>
 
+        Cherry-pick r283515. rdar://problem/84624826
+
+    [WebAuthn] Prefer internal user verification if available over pin entry.
+    https://bugs.webkit.org/show_bug.cgi?id=213903
+    <rdar://problem/65359269>
+    
+    Patch by John Pascoe <j_pascoe@apple.com> on 2021-10-04
+    Reviewed by Brent Fulgham.
+    
+    Source/WebCore:
+    
+    This adds an option to mock internal user verification in tests.
+    
+    * testing/MockWebAuthenticationConfiguration.h:
+    (WebCore::MockWebAuthenticationConfiguration::HidConfiguration::encode const):
+    (WebCore::MockWebAuthenticationConfiguration::HidConfiguration::decode):
+    * testing/MockWebAuthenticationConfiguration.idl:
+    
+    Source/WebKit:
+    
+    * UIProcess/WebAuthentication/Mock/MockHidConnection.cpp:
+    (WebKit::MockHidConnection::feedReports):
+    * UIProcess/WebAuthentication/fido/CtapAuthenticator.cpp:
+    (WebKit::CtapAuthenticator::makeCredential):
+    (WebKit::CtapAuthenticator::getAssertion):
+    (WebKit::fido::toStatus): Deleted.
+    (WebKit::fido::isPinError): Deleted.
+    
+    Tools:
+    
+    * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+    * TestWebKitAPI/Tests/WebKitCocoa/_WKWebAuthenticationPanel.mm:
+    (TestWebKitAPI::TEST):
+    * TestWebKitAPI/Tests/WebKitCocoa/web-authentication-get-assertion-hid-internal-uv.html: Added.
+    * TestWebKitAPI/Tests/WebKitCocoa/web-authentication-make-credential-hid-internal-uv.html: Added.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@283515 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-10-04  John Pascoe  <j_pascoe@apple.com>
+
+            [WebAuthn] Prefer internal user verification if available over pin entry.
+            https://bugs.webkit.org/show_bug.cgi?id=213903
+            <rdar://problem/65359269>
+
+            Reviewed by Brent Fulgham.
+
+            * UIProcess/WebAuthentication/Mock/MockHidConnection.cpp:
+            (WebKit::MockHidConnection::feedReports):
+            * UIProcess/WebAuthentication/fido/CtapAuthenticator.cpp:
+            (WebKit::CtapAuthenticator::makeCredential):
+            (WebKit::CtapAuthenticator::getAssertion):
+            (WebKit::fido::toStatus): Deleted.
+            (WebKit::fido::isPinError): Deleted.
+
+2021-10-25  Null  <null@apple.com>
+
         Cherry-pick r284692. rdar://problem/84553142
 
     Followup to r284652: ensure file handle is closed in web process

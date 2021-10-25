@@ -228,15 +228,18 @@ void MockHidConnection::feedReports()
         Vector<uint8_t> infoData;
         if (m_configuration.hid->canDowngrade)
             infoData = encodeAsCBOR(AuthenticatorGetInfoResponse({ ProtocolVersion::kCtap, ProtocolVersion::kU2f }, Vector<uint8_t>(aaguidLength, 0u)));
-        else if (m_configuration.hid->supportClientPin) {
+        else {
             AuthenticatorGetInfoResponse infoResponse({ ProtocolVersion::kCtap }, Vector<uint8_t>(aaguidLength, 0u));
-            infoResponse.setPinProtocols({ pin::kProtocolVersion });
             AuthenticatorSupportedOptions options;
-            options.setClientPinAvailability(AuthenticatorSupportedOptions::ClientPinAvailability::kSupportedAndPinSet);
+            if (m_configuration.hid->supportClientPin) {
+                infoResponse.setPinProtocols({ pin::kProtocolVersion });
+                options.setClientPinAvailability(AuthenticatorSupportedOptions::ClientPinAvailability::kSupportedAndPinSet);
+            }
+            if (m_configuration.hid->supportInternalUV)
+                options.setUserVerificationAvailability(AuthenticatorSupportedOptions::UserVerificationAvailability::kSupportedAndConfigured);
             infoResponse.setOptions(WTFMove(options));
             infoData = encodeAsCBOR(infoResponse);
-        } else
-            infoData = encodeAsCBOR(AuthenticatorGetInfoResponse({ ProtocolVersion::kCtap }, Vector<uint8_t>(aaguidLength, 0u)));
+        }
         infoData.insert(0, static_cast<uint8_t>(CtapDeviceResponseCode::kSuccess)); // Prepend status code.
         if (stagesMatch() && m_configuration.hid->error == Mock::HidError::WrongChannelId)
             message = FidoHidMessage::create(m_currentChannel - 1, FidoHidDeviceCommand::kCbor, infoData);

@@ -391,6 +391,8 @@
 		524BBC9E19DF72C0002F1AF1 /* file-with-video.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 524BBC9B19DF3714002F1AF1 /* file-with-video.html */; };
 		524BBCA119E30C77002F1AF1 /* test.mp4 in Copy Resources */ = {isa = PBXBuildFile; fileRef = 524BBCA019E30C63002F1AF1 /* test.mp4 */; };
 		52B8CF9815868D9100281053 /* SetDocumentURI.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 52B8CF9415868CF000281053 /* SetDocumentURI.html */; };
+		52C8C1382706437C00BDF3B7 /* web-authentication-make-credential-hid-internal-uv.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 52C8C1372706437C00BDF3B7 /* web-authentication-make-credential-hid-internal-uv.html */; };
+		52C8C13A2706439000BDF3B7 /* web-authentication-get-assertion-hid-internal-uv.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 52C8C1392706439000BDF3B7 /* web-authentication-get-assertion-hid-internal-uv.html */; };
 		52D5D6C021B9F1B30046ABA6 /* RenderingProgress.mm in Sources */ = {isa = PBXBuildFile; fileRef = 52D5D6BD21B9F1B20046ABA6 /* RenderingProgress.mm */; };
 		52D673EE1AFB127300FA19FE /* WKPageCopySessionStateWithFiltering.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52D673EC1AFB126800FA19FE /* WKPageCopySessionStateWithFiltering.cpp */; };
 		52E5CE4914D21EAB003B2BD8 /* ParentFrame_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52E5CE4814D21EAB003B2BD8 /* ParentFrame_Bundle.cpp */; };
@@ -1738,6 +1740,7 @@
 				2EBD9D0A2134730D002DA758 /* video.html in Copy Resources */,
 				CD577799211CE0E4001B371E /* web-audio-only.html in Copy Resources */,
 				57663DF32357E48900E85E09 /* web-authentication-get-assertion-hid-cancel.html in Copy Resources */,
+				52C8C13A2706439000BDF3B7 /* web-authentication-get-assertion-hid-internal-uv.html in Copy Resources */,
 				579F1C0123C93AF500C7D4B4 /* web-authentication-get-assertion-hid-multiple-accounts.html in Copy Resources */,
 				577454D02359B378008E1ED7 /* web-authentication-get-assertion-hid-no-credentials.html in Copy Resources */,
 				578DA44C23ECD23000246010 /* web-authentication-get-assertion-hid-pin-auth-blocked-error.html in Copy Resources */,
@@ -1751,6 +1754,7 @@
 				57663DEA234EA66D00E85E09 /* web-authentication-get-assertion-nfc.html in Copy Resources */,
 				577454D22359BB01008E1ED7 /* web-authentication-get-assertion-u2f-no-credentials.html in Copy Resources */,
 				57C624502346C21E00383FE7 /* web-authentication-get-assertion.html in Copy Resources */,
+				52C8C1382706437C00BDF3B7 /* web-authentication-make-credential-hid-internal-uv.html in Copy Resources */,
 				578DA44823ECD09B00246010 /* web-authentication-make-credential-hid-pin-auth-blocked-error.html in Copy Resources */,
 				570D26F423C3CA6A00D5CF67 /* web-authentication-make-credential-hid-pin-get-key-agreement-error.html in Copy Resources */,
 				5751B28A249D5BC500664C2A /* web-authentication-make-credential-hid-pin-get-pin-token-fake-pin-invalid-error-retry.html in Copy Resources */,
@@ -2239,6 +2243,8 @@
 		524BBCA019E30C63002F1AF1 /* test.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = test.mp4; sourceTree = "<group>"; };
 		52B8CF9415868CF000281053 /* SetDocumentURI.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = SetDocumentURI.html; sourceTree = "<group>"; };
 		52B8CF9515868CF000281053 /* SetDocumentURI.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SetDocumentURI.mm; sourceTree = "<group>"; };
+		52C8C1372706437C00BDF3B7 /* web-authentication-make-credential-hid-internal-uv.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = "web-authentication-make-credential-hid-internal-uv.html"; path = "Tests/WebKitCocoa/web-authentication-make-credential-hid-internal-uv.html"; sourceTree = "<group>"; };
+		52C8C1392706439000BDF3B7 /* web-authentication-get-assertion-hid-internal-uv.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = "web-authentication-get-assertion-hid-internal-uv.html"; path = "Tests/WebKitCocoa/web-authentication-get-assertion-hid-internal-uv.html"; sourceTree = "<group>"; };
 		52CB47401448FB9300873995 /* LoadAlternateHTMLStringWithNonDirectoryURL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LoadAlternateHTMLStringWithNonDirectoryURL.cpp; sourceTree = "<group>"; };
 		52D5D6BD21B9F1B20046ABA6 /* RenderingProgress.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RenderingProgress.mm; sourceTree = "<group>"; };
 		52D5D6BE21B9F1B20046ABA6 /* RenderingProgressPlugIn.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RenderingProgressPlugIn.mm; sourceTree = "<group>"; };
@@ -3228,6 +3234,8 @@
 		08FB7794FE84155DC02AAC07 /* TestWebKitAPI */ = {
 			isa = PBXGroup;
 			children = (
+				52C8C1392706439000BDF3B7 /* web-authentication-get-assertion-hid-internal-uv.html */,
+				52C8C1372706437C00BDF3B7 /* web-authentication-make-credential-hid-internal-uv.html */,
 				49AEEF682407276F00C87E4C /* Info.plist */,
 				5C9D922622D7DD7B008E9266 /* Derived Sources */,
 				5C9D921D22D7DBF7008E9266 /* Sources.txt */,
