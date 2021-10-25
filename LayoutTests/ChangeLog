@@ -1,3 +1,12 @@
+2021-10-25  Ayumi Kojima  <ayumi_kojima@apple.com>
+
+        Regression (r284330): [ macOS wk1 Debug ] webaudio/AudioBuffer/huge-buffer.html is a flaky timeout.
+        https://bugs.webkit.org/show_bug.cgi?id=232244
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
 2021-10-25  Alan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Check across inline box boundaries for breakable position
