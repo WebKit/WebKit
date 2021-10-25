@@ -58,11 +58,22 @@ MOCK: user.open_url: http://example.com/50000
         self.assert_execute_outputs(Post(), [50000], options=options, expected_logs=expected_logs)
 
     def test_land_safely(self):
+        options = MockOptions()
+        options.fast_cq = False
         expected_logs = """Obsoleting 2 old patches on bug 50000
 MOCK reassign_bug: bug_id=50000, assignee=None
 MOCK add_patch_to_bug: bug_id=50000, description=Patch for landing, mark_for_review=False, mark_for_commit_queue=False, mark_for_landing=True
 """
-        self.assert_execute_outputs(LandSafely(), [50000], expected_logs=expected_logs)
+        self.assert_execute_outputs(LandSafely(), [50000], options=options, expected_logs=expected_logs)
+
+    def test_land_safely_with_fast_cq(self):
+        options = MockOptions()
+        options.fast_cq = True
+        expected_logs = """Obsoleting 2 old patches on bug 50000
+MOCK reassign_bug: bug_id=50000, assignee=None
+MOCK add_patch_to_bug: bug_id=50000, description=[fast-cq] Patch for landing, mark_for_review=False, mark_for_commit_queue=False, mark_for_landing=True
+"""
+        self.assert_execute_outputs(LandSafely(), [50000], options=options, expected_logs=expected_logs)
 
     def test_prepare_diff_with_arg(self):
         options = MockOptions()

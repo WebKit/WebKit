@@ -1,3 +1,16 @@
+2021-10-25  Aakash Jain  <aakash_jain@apple.com>
+
+        Add support for fast-cq mode to webkit-patch land-safely command
+        https://bugs.webkit.org/show_bug.cgi?id=232196
+
+        Reviewed by Jonathan Bedard.
+
+        * Scripts/webkitpy/tool/steps/postdiffforcommit.py:
+        (PostDiffForCommit):
+        (PostDiffForCommit.run):
+        * Scripts/webkitpy/tool/commands/upload_unittest.py: Added unit-test.
+        (test_land_safely_with_fast_cq):
+
 2021-10-25  Sam Sneddon  <gsnedders@apple.com>
 
         [Python] rename assertEquals/assertNotEquals
