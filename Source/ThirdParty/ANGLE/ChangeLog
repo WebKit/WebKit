@@ -1,3 +1,52 @@
+2021-10-25  Null  <null@apple.com>
+
+        Cherry-pick r281547. rdar://problem/84629691
+
+    ANGLE Metal infinities and NaNs generated with incorrect syntax
+    https://bugs.webkit.org/show_bug.cgi?id=229439
+    <rdar://81033366>
+    
+    Patch by Kimmo Kinnunen <kkinnunen@apple.com> on 2021-08-24
+    Reviewed by Dean Jackson.
+    
+    Source/ThirdParty/ANGLE:
+    
+    Generate NaN and infinity constant values correctly.
+    An else was missing from if-block, causing double processing.
+    
+    * src/compiler/translator/TranslatorMetalDirect/EmitMetal.cpp:
+    (GenMetalTraverser::emitSingleConstant):
+    * src/libANGLE/renderer/metal/mtl_utils.mm:
+    (rx::mtl::CreateShaderLibrary):
+    
+    LayoutTests:
+    
+    Add tests that test some aspects of NaN and -+inf that the GLSL ES 3.00 spec
+    talks about.
+    
+    * webgl/pending/conformance2/glsl3/float-constant-expressions-expected.txt: Added.
+    * webgl/pending/conformance2/glsl3/float-constant-expressions.html: Added.
+    * webgl/pending/resources/webgl_test_files/conformance2/glsl3/float-constant-expressions.html: Added.
+    * webgl/pending/resources/webgl_test_files/js/glsl-conformance-test.js: Added.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@281547 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-08-24  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+            ANGLE Metal infinities and NaNs generated with incorrect syntax
+            https://bugs.webkit.org/show_bug.cgi?id=229439
+            <rdar://81033366>
+
+            Reviewed by Dean Jackson.
+
+            Generate NaN and infinity constant values correctly.
+            An else was missing from if-block, causing double processing.
+
+            * src/compiler/translator/TranslatorMetalDirect/EmitMetal.cpp:
+            (GenMetalTraverser::emitSingleConstant):
+            * src/libANGLE/renderer/metal/mtl_utils.mm:
+            (rx::mtl::CreateShaderLibrary):
+
 2021-10-07  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r283014. rdar://problem/83954982
