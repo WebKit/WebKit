@@ -677,6 +677,7 @@ TEST(InAppBrowserPrivacy, SetCookieForNonAppBoundDomainFails)
 
     TestWebKitAPI::Util::run(&gotFlag);
     [globalCookieStore removeObserver:observer.get()];
+    cleanUpInAppBrowserPrivacyTestSettings();
 }
 
 TEST(InAppBrowserPrivacy, GetCookieForNonAppBoundDomainFails)
@@ -1164,6 +1165,7 @@ TEST(InAppBrowserPrivacy, WebViewWithoutAppBoundFlagCanFreelyNavigate)
     }];
 
     TestWebKitAPI::Util::run(&isDone);
+    cleanUpInAppBrowserPrivacyTestSettings();
 }
 
 TEST(InAppBrowserPrivacy, WebViewCannotUpdateAppBoundFlagOnceSet)
@@ -1231,6 +1233,7 @@ TEST(InAppBrowserPrivacy, InjectScriptThenNavigateToNonAppBoundDomainFails)
     [webView loadRequest:request];
     NSError *error = [delegate waitForDidFailProvisionalNavigationError];
     EXPECT_EQ(error.code, WKErrorNavigationAppBoundDomain);
+    cleanUpInAppBrowserPrivacyTestSettings();
 }
 
 TEST(InAppBrowserPrivacy, InjectScriptInNonAppBoundSubframeAppBoundMainframeFails)
@@ -1340,6 +1343,7 @@ TEST(InAppBrowserPrivacy, JavaScriptInNonAppBoundFrameFails)
     }
     
     TestWebKitAPI::Util::run(&isDone);
+    cleanUpInAppBrowserPrivacyTestSettings();
 }
 
 TEST(InAppBrowserPrivacy, LoadFromHTMLStringsSucceedsIfAppBound)
@@ -1485,6 +1489,7 @@ static void loadRequest(RetainPtr<TestWKWebView> webView, NSString *url)
     NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:url]];
     [webView loadRequest:request];
     TestWebKitAPI::Util::run(&didFinishNavigation);
+    cleanUpInAppBrowserPrivacyTestSettings();
 }
 
 TEST(InAppBrowserPrivacy, AboutBlankSubFrameMatchesTopFrameAppBound)
@@ -1523,6 +1528,7 @@ TEST(InAppBrowserPrivacy, AboutBlankSubFrameMatchesTopFrameAppBound)
         }];
     }
     TestWebKitAPI::Util::run(&isDone);
+    cleanUpInAppBrowserPrivacyTestSettings();
 }
 
 TEST(InAppBrowserPrivacy, AboutBlankSubFrameMatchesTopFrameNonAppBound)
@@ -1551,6 +1557,7 @@ TEST(InAppBrowserPrivacy, AboutBlankSubFrameMatchesTopFrameNonAppBound)
         }];
     }
     TestWebKitAPI::Util::run(&isDone);
+    cleanUpInAppBrowserPrivacyTestSettings();
 }
 
 #endif // ENABLE(APP_BOUND_DOMAINS)
