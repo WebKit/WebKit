@@ -1,3 +1,16 @@
+2021-10-25  Chris Fleizach  <cfleizach@apple.com>
+
+        WebKit should use img@title as label even if img@alt is exlicitly empty
+        https://bugs.webkit.org/show_bug.cgi?id=173870
+        <rdar://problem/33010427>
+
+        Reviewed by Andres Gonzalez.
+
+        * accessibility/img-no-alt-not-ignored-with-title-expected.txt: Added.
+        * accessibility/img-no-alt-not-ignored-with-title.html: Added.
+        * platform/ios-simulator/TestExpectations:
+        * platform/win/TestExpectations:
+
 2021-10-25  Eric Hutchison  <ehutchison@apple.com>
 
         Update test expectations for fast/scrolling/mac/scrollbars/overlay-scrollbar-hovered.html.

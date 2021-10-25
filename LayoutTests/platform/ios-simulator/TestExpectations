@@ -3,6 +3,7 @@
 # See http://trac.webkit.org/wiki/TestExpectations for more information on this file.
 #
 
+accessibility/img-no-alt-not-ignored-with-title.html [ Pass ]
 accessibility/insert-newline.html [ Pass ]
 accessibility/url-test.html [ Pass ]
 accessibility/keyevents-posted-for-dismiss-action.html [ Pass ]

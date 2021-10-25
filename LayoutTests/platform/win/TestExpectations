@@ -274,6 +274,7 @@ http/tests/misc/image-checks-for-accept.html [ Skip ]
 accessibility/aria-listbox-clear-selection-crash.html [ Skip ]
 accessibility/listbox-clear-selection.html [ Skip ]
 accessibility/embedded-image-description.html [ Skip ]
+accessibility/img-no-alt-not-ignored-with-title.html [ Skip ]
 
 # TODO Conic gradients
 http/wpt/css/css-images-4/conic-gradient-parsing.html [ Skip ]

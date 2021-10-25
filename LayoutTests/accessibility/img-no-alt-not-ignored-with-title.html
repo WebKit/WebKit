@@ -1,0 +1,25 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
+</head>
+<body>
+
+<img alt="" title="Image1" src="resources/cake.png" id="image1">
+<img alt="" aria-label="Image2" src="resources/cake.png" id="image2">
+
+<script>
+    description("This tests that if an image has an empty alt tag, but it has title or aria-label, we will NOT ignore it.");
+
+    if (window.accessibilityController) {
+        var image1 = accessibilityController.accessibleElementById("image1");
+        shouldBe("platformValueForW3CName(image1)", "'Image1'");
+
+        var image2 = accessibilityController.accessibleElementById("image2");
+        shouldBe("platformValueForW3CName(image2)", "'Image2'");
+    }
+</script>
+</body>
+</html>
+
