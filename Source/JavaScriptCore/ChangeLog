@@ -1,5 +1,33 @@
 2021-10-25  Null  <null@apple.com>
 
+        Cherry-pick r284585. rdar://problem/84338648
+
+    [JSC] ArithAbs should care about INT32_MIN
+    https://bugs.webkit.org/show_bug.cgi?id=232051
+    rdar://84338648
+    
+    Reviewed by Michael Saboff.
+    
+    ArithAbs (without overflow check) can return negative value if the input is INT32_MIN with Int32Use.
+    
+    * dfg/DFGIntegerRangeOptimizationPhase.cpp:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@284585 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-10-20  Yusuke Suzuki  <ysuzuki@apple.com>
+
+            [JSC] ArithAbs should care about INT32_MIN
+            https://bugs.webkit.org/show_bug.cgi?id=232051
+            rdar://84338648
+
+            Reviewed by Michael Saboff.
+
+            ArithAbs (without overflow check) can return negative value if the input is INT32_MIN with Int32Use.
+
+            * dfg/DFGIntegerRangeOptimizationPhase.cpp:
+
+2021-10-25  Null  <null@apple.com>
+
         Cherry-pick r284576. rdar://problem/84338462
 
     We should watch isHavingABadTime if we read from the structureCache
