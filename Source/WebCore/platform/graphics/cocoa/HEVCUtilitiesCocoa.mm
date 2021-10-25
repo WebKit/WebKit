@@ -141,9 +141,15 @@ static std::optional<Vector<uint16_t>> parseStringArrayFromDictionaryToUInt16Vec
     auto array = dynamic_cf_cast<CFArrayRef>(CFDictionaryGetValue(dictionary, key));
     if (!array)
         return std::nullopt;
-    return makeVector(bridge_cast(array), [] (id value) {
-        return parseInteger<uint16_t>(String(dynamic_objc_cast<NSString>(value)));
+    bool parseFailed = false;
+    auto result = makeVector(bridge_cast(array), [&] (id value) {
+        auto parseResult = parseInteger<uint16_t>(String(dynamic_objc_cast<NSString>(value)));
+        parseFailed |= !parseResult;
+        return parseResult;
     });
+    if (parseFailed)
+        return std::nullopt;
+    return result;
 }
 
 std::optional<MediaCapabilitiesInfo> validateDoViParameters(const DoViParameters& parameters, bool hasAlphaChannel, bool hdrSupport)
