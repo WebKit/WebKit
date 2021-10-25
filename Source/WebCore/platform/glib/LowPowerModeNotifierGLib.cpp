@@ -28,8 +28,8 @@ namespace WebCore {
 
 
 LowPowerModeNotifier::LowPowerModeNotifier(LowPowerModeChangeCallback&& callback)
-    : m_callback(WTFMove(callback))
 #if GLIB_CHECK_VERSION(2, 69, 1)
+    : m_callback(WTFMove(callback))
     , m_powerProfileMonitor(adoptGRef(g_power_profile_monitor_dup_default()))
 #endif
 {
