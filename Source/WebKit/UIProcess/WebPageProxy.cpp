@@ -4800,7 +4800,7 @@ void WebPageProxy::didFailProvisionalLoadForFrame(FrameIdentifier frameID, Frame
 void WebPageProxy::didFailProvisionalLoadForFrameShared(Ref<WebProcessProxy>&& process, WebFrameProxy& frame, FrameInfoData&& frameInfo, WebCore::ResourceRequest&& request, uint64_t navigationID, const String& provisionalURL, const ResourceError& error, WillContinueLoading willContinueLoading, const UserData& userData)
 {
     LOG(Loading, "(Loading) WebPageProxy %" PRIu64 " in web process pid %i didFailProvisionalLoadForFrame to provisionalURL %s", m_identifier.toUInt64(), process->processIdentifier(), provisionalURL.utf8().data());
-    WEBPAGEPROXY_RELEASE_LOG_ERROR(Process, "didFailProvisionalLoadForFrame: frameID=%" PRIu64 ", domain=%s, code=%d", frame.frameID().toUInt64(), error.domain().utf8().data(), error.errorCode());
+    WEBPAGEPROXY_RELEASE_LOG_ERROR(Process, "didFailProvisionalLoadForFrame: frameID=%" PRIu64 ", domain=%s, code=%d, isMainFrame=%d", frame.frameID().toUInt64(), error.domain().utf8().data(), error.errorCode(), frame.isMainFrame());
 
     PageClientProtector protector(pageClient());
 

@@ -1,3 +1,13 @@
+2021-10-26  Chris Dumez  <cdumez@apple.com>
+
+        Improve didFailProvisionalLoadForFrame logging to indicate if it is for the main frame
+        https://bugs.webkit.org/show_bug.cgi?id=232273
+
+        Reviewed by Darin Adler.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didFailProvisionalLoadForFrameShared):
+
 2021-10-26  Per Arne  <pvollan@apple.com>
 
         [iOS][WP] Reduce sandbox telemetry
