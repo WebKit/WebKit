@@ -71,7 +71,6 @@ public:
 
     bool isPseudoElementCueFunction() const;
 
-    bool hasShadowDescendant() const;
     bool matchesPseudoElement() const;
 
     bool isHostPseudoSelector() const;
@@ -95,11 +94,6 @@ private:
     std::unique_ptr<CSSSelector> m_selector;
     std::unique_ptr<CSSParserSelector> m_tagHistory;
 };
-
-inline bool CSSParserSelector::hasShadowDescendant() const
-{
-    return m_selector->relation() == CSSSelector::ShadowDescendant;
-}
 
 inline bool CSSParserSelector::needsImplicitShadowCombinatorForMatching() const
 {

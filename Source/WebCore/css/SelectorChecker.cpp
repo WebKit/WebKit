@@ -77,7 +77,6 @@ struct SelectorChecker::LocalContext {
     bool hasScrollbarPseudo { false };
     bool hasSelectionPseudo { false };
     bool mayMatchHostPseudoClass { false };
-
 };
 
 static inline void addStyleRelation(SelectorChecker::CheckingContext& checkingContext, const Element& element, Style::Relation::Type type, unsigned value = 1)
@@ -409,10 +408,10 @@ SelectorChecker::MatchResult SelectorChecker::matchRecursively(CheckingContext& 
             return MatchResult::updateWithMatchType(result, matchType);
         }
     case CSSSelector::ShadowDescendant:
+    case CSSSelector::ShadowPartDescendant:
         {
             // When matching foo::part(bar) we skip directly to the tree of element 'foo'.
-            bool isPart = context.selector->match() == CSSSelector::PseudoElement && context.selector->pseudoElementType() == CSSSelector::PseudoElementPart;
-            auto* shadowHost = isPart ? checkingContext.shadowHostInPartRuleScope : context.element->shadowHost();
+            auto* shadowHost = relation == CSSSelector::ShadowPartDescendant ? checkingContext.shadowHostInPartRuleScope : context.element->shadowHost();
             if (!shadowHost)
                 return MatchResult::fails(Match::SelectorFailsCompletely);
             nextContext.element = shadowHost;
@@ -424,7 +423,6 @@ SelectorChecker::MatchResult SelectorChecker::matchRecursively(CheckingContext& 
             return MatchResult::updateWithMatchType(result, matchType);
         }
     }
-
 
     ASSERT_NOT_REACHED();
     return MatchResult::fails(Match::SelectorFailsCompletely);
@@ -599,7 +597,7 @@ static bool canMatchHoverOrActiveInQuirksMode(const SelectorChecker::LocalContex
         }
 
         auto relation = selector->relation();
-        if (relation == CSSSelector::ShadowDescendant)
+        if (relation == CSSSelector::ShadowDescendant || relation == CSSSelector::ShadowPartDescendant)
             return true;
 
         if (relation != CSSSelector::Subselector)

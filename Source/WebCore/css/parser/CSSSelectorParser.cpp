@@ -1068,7 +1068,7 @@ std::unique_ptr<CSSParserSelector> CSSSelectorParser::splitCompoundAtImplicitSha
     } else
         secondCompound = splitAfter->releaseTagHistory();
 
-    secondCompound->appendTagHistory(CSSSelector::ShadowDescendant, WTFMove(compoundSelector));
+    secondCompound->appendTagHistory(isPart ? CSSSelector::ShadowPartDescendant : CSSSelector::ShadowDescendant, WTFMove(compoundSelector));
     return secondCompound;
 }
 

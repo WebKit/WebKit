@@ -84,6 +84,7 @@ MatchElement RuleFeatureSet::computeNextMatchElement(MatchElement matchElement, 
                 return MatchElement::AnySibling;
             return matchElement == MatchElement::Subject ? MatchElement::DirectSibling : MatchElement::IndirectSibling;
         case CSSSelector::ShadowDescendant:
+        case CSSSelector::ShadowPartDescendant:
             return MatchElement::Host;
         };
     }
@@ -97,6 +98,7 @@ MatchElement RuleFeatureSet::computeNextMatchElement(MatchElement matchElement, 
     case CSSSelector::DirectAdjacent:
         return matchElement == MatchElement::Parent ? MatchElement::ParentSibling : MatchElement::AncestorSibling;
     case CSSSelector::ShadowDescendant:
+    case CSSSelector::ShadowPartDescendant:
         return MatchElement::Host;
     };
     ASSERT_NOT_REACHED();

@@ -5191,3 +5191,5 @@ imported/w3c/web-platform-tests/css/motion/offset-rotate-005.html [ ImageOnlyFai
 
 # IPC test failing in Debug mode due to assert.
 [ Debug ] ipc/send-invalid-message.html [ Skip ]
+
+imported/w3c/web-platform-tests/css/css-shadow-parts/interaction-with-nested-pseudo-class.html [ ImageOnlyFailure ]

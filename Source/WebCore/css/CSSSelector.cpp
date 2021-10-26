@@ -822,6 +822,7 @@ String CSSSelector::selectorText(const String& rightSide) const
             FALLTHROUGH;
 #endif
         case CSSSelector::ShadowDescendant:
+        case CSSSelector::ShadowPartDescendant:
             builder.append(rightSide);
             return tagHistory->selectorText(builder.toString());
         }

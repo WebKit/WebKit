@@ -1,5 +1,20 @@
 2021-10-26  Antti Koivisto  <antti@apple.com>
 
+        Fix ::part(foo):hover
+        https://bugs.webkit.org/show_bug.cgi?id=232301
+
+        Reviewed by Alan Bujtas.
+
+        * web-platform-tests/css/css-shadow-parts/interaction-with-nested-pseudo-class-expected.html: Added.
+        * web-platform-tests/css/css-shadow-parts/interaction-with-nested-pseudo-class.html: Added.
+        * web-platform-tests/css/css-shadow-parts/invalidation-part-pseudo-expected.txt: Added.
+        * web-platform-tests/css/css-shadow-parts/invalidation-part-pseudo.html: Added.
+        * web-platform-tests/css/css-shadow-parts/part-nested-pseudo-expected.html: Added.
+        * web-platform-tests/css/css-shadow-parts/part-nested-pseudo.html: Added.
+        * web-platform-tests/css/css-shadow-parts/w3c-import.log:
+
+2021-10-26  Antti Koivisto  <antti@apple.com>
+
         Serialize :part() argument as identifier
         https://bugs.webkit.org/show_bug.cgi?id=232297
 

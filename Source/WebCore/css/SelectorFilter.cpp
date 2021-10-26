@@ -194,6 +194,7 @@ static CollectedSelectorHashes collectSelectorHashes(const CSSSelector& rightmos
         case CSSSelector::DirectAdjacent:
         case CSSSelector::IndirectAdjacent:
         case CSSSelector::ShadowDescendant:
+        case CSSSelector::ShadowPartDescendant:
             skipOverSubselectors = true;
             break;
         case CSSSelector::DescendantSpace:
