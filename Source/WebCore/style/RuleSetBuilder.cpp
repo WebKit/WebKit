@@ -67,19 +67,19 @@ RuleSetBuilder::~RuleSetBuilder()
 
 void RuleSetBuilder::addRulesFromSheet(const StyleSheetContents& sheet, const MediaQuerySet* sheetQuery)
 {
-    auto canUseDynamicMediaQueryResolution = [&] {
+    auto canUseDynamicMediaQueryEvaluation = [&] {
         if (!m_resolver)
             return false;
 
-        RuleSetBuilder mutationScanner(m_mediaQueryCollector.evaluator);
-        if (mutationScanner.m_mediaQueryCollector.pushAndEvaluate(sheetQuery))
-            mutationScanner.addRulesFromSheetContents(sheet);
-        mutationScanner.m_mediaQueryCollector.pop(sheetQuery);
+        RuleSetBuilder dynamicEvaluationScanner(m_mediaQueryCollector.evaluator);
+        if (dynamicEvaluationScanner.m_mediaQueryCollector.pushAndEvaluate(sheetQuery))
+            dynamicEvaluationScanner.addRulesFromSheetContents(sheet);
+        dynamicEvaluationScanner.m_mediaQueryCollector.pop(sheetQuery);
 
-        return !mutationScanner.didSeeResolverMutationWithinDynamicMediaQuery;
+        return !dynamicEvaluationScanner.requiresStaticMediaQueryEvaluation;
     };
 
-    m_mediaQueryCollector.collectDynamic = canUseDynamicMediaQueryResolution();
+    m_mediaQueryCollector.collectDynamic = canUseDynamicMediaQueryEvaluation();
 
     if (m_mediaQueryCollector.pushAndEvaluate(sheetQuery))
         addRulesFromSheetContents(sheet);
@@ -89,7 +89,7 @@ void RuleSetBuilder::addRulesFromSheet(const StyleSheetContents& sheet, const Me
 void RuleSetBuilder::addChildRules(const Vector<RefPtr<StyleRuleBase>>& rules)
 {
     for (auto& rule : rules) {
-        if (didSeeResolverMutationWithinDynamicMediaQuery)
+        if (requiresStaticMediaQueryEvaluation)
             return;
 
         if (is<StyleRule>(*rule)) {
@@ -110,6 +110,9 @@ void RuleSetBuilder::addChildRules(const Vector<RefPtr<StyleRuleBase>>& rules)
             continue;
         }
         if (is<StyleRuleLayer>(*rule)) {
+            if (!m_ruleSet && !m_mediaQueryCollector.dynamicContextStack.isEmpty())
+                requiresStaticMediaQueryEvaluation = true;
+
             auto& layerRule = downcast<StyleRuleLayer>(*rule);
             if (layerRule.isStatement()) {
                 // Statement syntax just registers the layers.
@@ -124,7 +127,7 @@ void RuleSetBuilder::addChildRules(const Vector<RefPtr<StyleRuleBase>>& rules)
         }
         if (is<StyleRuleFontFace>(*rule) || is<StyleRuleFontPaletteValues>(*rule) || is<StyleRuleKeyframes>(*rule)) {
             if (!m_ruleSet && !m_mediaQueryCollector.dynamicContextStack.isEmpty())
-                didSeeResolverMutationWithinDynamicMediaQuery = true;
+                requiresStaticMediaQueryEvaluation = true;
 
             if (m_resolver)
                 m_collectedResolverMutatingRules.append({ *rule, m_currentCascadeLayerIdentifier });

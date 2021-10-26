@@ -2121,6 +2121,13 @@ webkit.org/b/148650 fast/repaint/add-table-overpaint.html [ Pass Failure ]
 
 imported/w3c/web-platform-tests/css/css-cascade/important-prop.html [ ImageOnlyFailure ]
 webkit.org/b/187093 [ Debug ] imported/w3c/web-platform-tests/css/css-cascade/all-prop-initial-xml.html [ Skip ]
+webkit.org/b/232236 imported/w3c/web-platform-tests/css/css-cascade/revert-layer-001.html [ ImageOnlyFailure ]
+webkit.org/b/232236 imported/w3c/web-platform-tests/css/css-cascade/revert-layer-002.html [ ImageOnlyFailure ]
+webkit.org/b/232236 imported/w3c/web-platform-tests/css/css-cascade/revert-layer-003.html [ ImageOnlyFailure ]
+webkit.org/b/232236 imported/w3c/web-platform-tests/css/css-cascade/revert-layer-004.html [ ImageOnlyFailure ]
+webkit.org/b/232236 imported/w3c/web-platform-tests/css/css-cascade/revert-layer-005.html [ ImageOnlyFailure ]
+webkit.org/b/232236 imported/w3c/web-platform-tests/css/css-cascade/revert-layer-006.html [ ImageOnlyFailure ]
+webkit.org/b/232236 imported/w3c/web-platform-tests/css/css-cascade/revert-layer-007.html [ ImageOnlyFailure ]
 
 webkit.org/b/148801 imported/w3c/web-platform-tests/css/css-color/t422-rgba-onscreen-b.xht [ ImageOnlyFailure ]
 webkit.org/b/148801 imported/w3c/web-platform-tests/css/css-color/t422-rgba-onscreen-multiple-boxes-c.xht [ ImageOnlyFailure ]

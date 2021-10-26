@@ -79,7 +79,7 @@ private:
     RuleSet::CascadeLayerIdentifier m_currentCascadeLayerIdentifier { 0 };
 
     Vector<RuleSet::ResolverMutatingRule> m_collectedResolverMutatingRules;
-    bool didSeeResolverMutationWithinDynamicMediaQuery { false };
+    bool requiresStaticMediaQueryEvaluation { false };
 };
 
 }

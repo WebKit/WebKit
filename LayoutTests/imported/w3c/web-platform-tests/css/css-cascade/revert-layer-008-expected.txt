@@ -1,0 +1,3 @@
+
+FAIL 'revert-layer' should revert font-size to 20px and trigger a smooth transition assert_equals: expected "15px" but got "10px"
+

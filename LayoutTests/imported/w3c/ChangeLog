@@ -1,3 +1,32 @@
+2021-10-26  Antti Koivisto  <antti@apple.com>
+
+        [CSS Cascade Layers] Media queries should be able to affect layer order
+        https://bugs.webkit.org/show_bug.cgi?id=232238
+
+        Reviewed by Simon Fraser.
+
+        Also import some additional @layer WPTs.
+
+        * web-platform-tests/css/css-cascade/layer-media-query-expected.txt: Added.
+        * web-platform-tests/css/css-cascade/layer-media-query.html: Added.
+        * web-platform-tests/css/css-cascade/revert-layer-001-expected.xht: Added.
+        * web-platform-tests/css/css-cascade/revert-layer-001.html: Added.
+        * web-platform-tests/css/css-cascade/revert-layer-002-expected.xht: Added.
+        * web-platform-tests/css/css-cascade/revert-layer-002.html: Added.
+        * web-platform-tests/css/css-cascade/revert-layer-003-expected.xht: Added.
+        * web-platform-tests/css/css-cascade/revert-layer-003.html: Added.
+        * web-platform-tests/css/css-cascade/revert-layer-004-expected.xht: Added.
+        * web-platform-tests/css/css-cascade/revert-layer-004.html: Added.
+        * web-platform-tests/css/css-cascade/revert-layer-005-expected.xht: Added.
+        * web-platform-tests/css/css-cascade/revert-layer-005.html: Added.
+        * web-platform-tests/css/css-cascade/revert-layer-006-expected.xht: Added.
+        * web-platform-tests/css/css-cascade/revert-layer-006.html: Added.
+        * web-platform-tests/css/css-cascade/revert-layer-007-expected.xht: Added.
+        * web-platform-tests/css/css-cascade/revert-layer-007.html: Added.
+        * web-platform-tests/css/css-cascade/revert-layer-008-expected.txt: Added.
+        * web-platform-tests/css/css-cascade/revert-layer-008.html: Added.
+        * web-platform-tests/css/css-cascade/w3c-import.log:
+
 2021-10-25  Nikolaos Mouchtaris  <nmouchtaris@apple.com>
 
         Fix issue for transform-origin in SVG
