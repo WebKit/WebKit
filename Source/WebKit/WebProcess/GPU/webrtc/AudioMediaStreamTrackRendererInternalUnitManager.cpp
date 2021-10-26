@@ -34,6 +34,7 @@
 #include "SharedMemory.h"
 #include <WebCore/AudioMediaStreamTrackRendererInternalUnit.h>
 #include <WebCore/AudioMediaStreamTrackRendererUnit.h>
+#include <WebCore/AudioSampleBufferList.h>
 #include <WebCore/CAAudioStreamDescription.h>
 #include <WebCore/CARingBuffer.h>
 #include <WebCore/WebAudioBufferList.h>

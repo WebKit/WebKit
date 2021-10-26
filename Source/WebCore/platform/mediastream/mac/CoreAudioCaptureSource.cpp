@@ -366,7 +366,7 @@ OSStatus CoreAudioSharedUnit::provideSpeakerData(AudioUnitRenderActionFlags& /*i
 
     bool firstSource = true;
     for (auto& source : m_activeSources) {
-        source->pullSamples(*m_speakerSampleBuffer.get(), inNumberFrames, adjustedHostTime, sampleTime, firstSource ? AudioSampleDataSource::Copy : AudioSampleDataSource::Mix);
+        source->pullSamples(bufferList, inNumberFrames, adjustedHostTime, sampleTime, firstSource ? AudioSampleDataSource::Copy : AudioSampleDataSource::Mix);
         firstSource = false;
     }
 

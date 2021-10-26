@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "AudioSampleBufferList.h"
+#include "CARingBuffer.h"
 #include <CoreAudio/CoreAudioTypes.h>
 #include <wtf/LoggerHelper.h>
 #include <wtf/MediaTime.h>
@@ -33,12 +33,13 @@
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/text/WTFString.h>
 
+typedef struct OpaqueAudioConverter* AudioConverterRef;
 typedef struct opaqueCMSampleBuffer *CMSampleBufferRef;
 
 namespace WebCore {
 
-class CAAudioStreamDescription;
-class CARingBuffer;
+class AudioSampleBufferList;
+class PlatformAudioData;
 
 class AudioSampleDataSource : public ThreadSafeRefCounted<AudioSampleDataSource, WTF::DestructionThread::MainRunLoop>
 #if !RELEASE_LOG_DISABLED
@@ -57,7 +58,6 @@ public:
     void pushSamples(const AudioStreamBasicDescription&, CMSampleBufferRef);
 
     enum PullMode { Copy, Mix };
-    bool pullSamples(AudioSampleBufferList&, size_t, uint64_t, double, PullMode);
     bool pullSamples(AudioBufferList&, size_t, uint64_t, double, PullMode);
 
     bool pullAvailableSamplesAsChunks(AudioBufferList&, size_t frameCount, uint64_t timeStamp, Function<void()>&&);
@@ -84,7 +84,6 @@ private:
     AudioSampleDataSource(size_t, LoggerHelper&, size_t waitToStartForPushCount);
 
     OSStatus setupConverter();
-    bool pullSamplesInternal(AudioBufferList&, size_t, uint64_t, double, PullMode);
 
     void pushSamplesInternal(const AudioBufferList&, const MediaTime&, size_t frameCount);
 
