@@ -27,6 +27,7 @@
 #include "DaemonConnection.h"
 
 #include "PrivateClickMeasurementConnection.h"
+#include "WebPushDaemonConnection.h"
 
 namespace WebKit {
 
@@ -47,7 +48,11 @@ void ConnectionToMachService<Traits>::sendWithReply(typename Traits::MessageType
 
 template class ConnectionToMachService<PCM::ConnectionTraits>;
 
+#if ENABLE(BUILT_IN_NOTIFICATIONS)
+template class ConnectionToMachService<WebPushD::ConnectionTraits>;
 #endif
+
+#endif // !PLATFORM(COCOA)
 
 } // namespace Daemon
 

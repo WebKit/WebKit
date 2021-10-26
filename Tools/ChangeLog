@@ -1,3 +1,15 @@
+2021-10-26  Brady Eidson  <beidson@apple.com>
+
+        Add helper classes and messaging infrastructure to launch webpushd and round trip a message to it
+        https://bugs.webkit.org/show_bug.cgi?id=232262
+
+        Reviewed by Alex Christensen.
+
+        * MiniBrowser/mac/AppDelegate.m:
+        (persistentDataStore):
+        * MiniBrowser/mac/WK2BrowserWindowController.m:
+        (-[WK2BrowserWindowController _webView:requestNotificationPermissionForSecurityOrigin:decisionHandler:]):
+
 2021-10-26  Simon Fraser  <simon.fraser@apple.com>
 
         The script should decide when an image diff cases, not ImageDiff

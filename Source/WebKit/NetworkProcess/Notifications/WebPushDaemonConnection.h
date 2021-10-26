@@ -27,42 +27,48 @@
 
 #if ENABLE(BUILT_IN_NOTIFICATIONS)
 
-#include "NotificationManagerMessageHandler.h"
-#include "WebPushDaemonConnection.h"
-#include <WebCore/NotificationDirection.h>
-#include <wtf/text/WTFString.h>
+#include "DaemonConnection.h"
+#include "WebPushDaemonConstants.h"
 
 namespace WebKit {
 
-namespace WebPushD {
-enum class MessageType : uint8_t;
-}
-
+class NetworkNotificationManager;
 class NetworkSession;
 
-class NetworkNotificationManager : public NotificationManagerMessageHandler {
+namespace WebPushD {
+
+struct ConnectionTraits {
+    using MessageType = WebPushD::MessageType;
+    static constexpr const char* protocolVersionKey { WebPushD::protocolVersionKey };
+    static constexpr uint64_t protocolVersionValue { WebPushD::protocolVersionValue };
+    static constexpr const char* protocolEncodedMessageKey { WebPushD::protocolEncodedMessageKey };
+};
+
+class Connection : public Daemon::ConnectionToMachService<ConnectionTraits> {
     WTF_MAKE_FAST_ALLOCATED;
-    friend class NetworkSession;
 public:
-    NetworkSession& networkSession() const { return m_networkSession; }
+    Connection(CString&& machServiceName, NetworkNotificationManager&);
 
 private:
-    NetworkNotificationManager(NetworkSession&, const String& webPushMachServiceName);
+    void newConnectionWasInitialized() const final;
+#if PLATFORM(COCOA)
+    RetainPtr<xpc_object_t> dictionaryFromMessage(MessageType, Daemon::EncodedMessage&&) const final;
+    void connectionReceivedEvent(xpc_object_t) const final;
+#endif
+    void sendDebugModeIsEnabledMessageIfNecessary() const;
 
-    void showNotification(const String& title, const String& body, const String& iconURL, const String& tag, const String& lang, WebCore::NotificationDirection, const String& originString, uint64_t notificationID) final;
-    void cancelNotification(uint64_t notificationID) final;
-    void clearNotifications(const Vector<uint64_t>& notificationIDs) final;
-    void didDestroyNotification(uint64_t notificationID) final;
+    NetworkSession& networkSession() const;
 
-    NetworkSession& m_networkSession;
-    std::unique_ptr<WebPushD::Connection> m_connection;
+    NetworkNotificationManager& m_notificationManager;
 
-    template<WebPushD::MessageType messageType, typename... Args>
+    template<MessageType messageType, typename... Args>
     void sendMessage(Args&&...) const;
-    template<WebPushD::MessageType messageType, typename... Args, typename... ReplyArgs>
+    template<MessageType messageType, typename... Args, typename... ReplyArgs>
     void sendMessageWithReply(CompletionHandler<void(ReplyArgs...)>&&, Args&&...) const;
 };
 
+} // namespace WebPushD
 } // namespace WebKit
 
 #endif // ENABLE(BUILT_IN_NOTIFICATIONS)
+

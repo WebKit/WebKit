@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,35 +23,29 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "WebPushDaemonConnection.h"
 
-#if PLATFORM(COCOA) && HAVE(NSURLSESSION_WEBSOCKET)
-#include "WebSocketTaskCocoa.h"
-#elif USE(SOUP)
-#include "WebSocketTaskSoup.h"
-#else
+#if ENABLE(BUILT_IN_NOTIFICATIONS)
 
-#include "DataReference.h"
+#include "DaemonDecoder.h"
+#include "DaemonEncoder.h"
+#include "NetworkSession.h"
 
-namespace WebKit {
+namespace WebKit::WebPushD {
 
-struct SessionSet;
+Connection::Connection(CString&& machServiceName, NetworkNotificationManager& manager)
+    : Daemon::ConnectionToMachService<ConnectionTraits>(WTFMove(machServiceName))
+    , m_notificationManager(manager)
+{
+    LOG(Push, "Creating WebPushD connection to mach service: %s", this->machServiceName().data());
+}
 
-class WebSocketTask {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    typedef uint64_t TaskIdentifier;
+NetworkSession& Connection::networkSession() const
+{
+    return m_notificationManager.networkSession();
+}
 
-    void sendString(const IPC::DataReference&, CompletionHandler<void()>&&) { }
-    void sendData(const IPC::DataReference&, CompletionHandler<void()>&&) { }
-    void close(int32_t code, const String& reason) { }
+} // namespace WebKit::WebPushD
 
-    void cancel() { }
-    void resume() { }
-    
-    SessionSet* sessionSet() { return nullptr; }
-};
-
-} // namespace WebKit
-
-#endif
+#endif // ENABLE(BUILT_IN_NOTIFICATIONS)

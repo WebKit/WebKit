@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,33 +25,28 @@
 
 #pragma once
 
-#if PLATFORM(COCOA) && HAVE(NSURLSESSION_WEBSOCKET)
-#include "WebSocketTaskCocoa.h"
-#elif USE(SOUP)
-#include "WebSocketTaskSoup.h"
-#else
+namespace WebKit::WebPushD {
 
-#include "DataReference.h"
+constexpr const char* protocolVersionKey = "protocol version";
+constexpr uint64_t protocolVersionValue = 1;
+constexpr const char* protocolEncodedMessageKey = "encoded message";
 
-namespace WebKit {
+constexpr const char* protocolDebugMessageKey { "debug message" };
+constexpr const char* protocolDebugMessageLevelKey { "debug message level" };
 
-struct SessionSet;
-
-class WebSocketTask {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    typedef uint64_t TaskIdentifier;
-
-    void sendString(const IPC::DataReference&, CompletionHandler<void()>&&) { }
-    void sendData(const IPC::DataReference&, CompletionHandler<void()>&&) { }
-    void close(int32_t code, const String& reason) { }
-
-    void cancel() { }
-    void resume() { }
-    
-    SessionSet* sessionSet() { return nullptr; }
+constexpr const char* protocolMessageTypeKey { "message type" };
+enum class MessageType : uint8_t {
+    EchoTwice = 1,
 };
 
-} // namespace WebKit
+inline bool messageTypeSendsReply(MessageType messageType)
+{
+    switch (messageType) {
+    case MessageType::EchoTwice:
+        return true;
+    }
+    ASSERT_NOT_REACHED();
+    return false;
+}
 
-#endif
+} // namespace WebKit::WebPushD

@@ -87,6 +87,7 @@ extern "C" {
     M(ProcessSuspension) \
     M(ProcessSwapping) \
     M(ProximityNetworking) \
+    M(Push) \
     M(RemoteLayerTree) \
     M(Resize) \
     M(ResourceLoadStatistics) \

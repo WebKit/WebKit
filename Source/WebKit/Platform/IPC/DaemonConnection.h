@@ -71,6 +71,8 @@ public:
     virtual void connectionReceivedEvent(xpc_object_t) const = 0;
 #endif
 
+    const CString& machServiceName() const { return m_machServiceName; }
+
 private:
     void initializeConnectionIfNeeded() const;
 

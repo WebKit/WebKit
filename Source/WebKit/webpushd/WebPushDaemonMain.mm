@@ -28,77 +28,29 @@
 #import "DaemonDecoder.h"
 #import "DaemonEncoder.h"
 #import "DaemonUtilities.h"
+#import "WebPushDaemon.h"
 #import <Foundation/Foundation.h>
 #import <wtf/MainThread.h>
-#import <wtf/Span.h>
 #import <wtf/spi/darwin/XPCSPI.h>
+
+using WebKit::Daemon::EncodedMessage;
+using WebPushD::Daemon;
 
 namespace WebPushD {
 
-constexpr const char* protocolVersionKey = "protocol version";
-constexpr uint64_t protocolVersionValue = 1;
-constexpr const char* protocolMessageTypeKey = "message type";
-constexpr const char* protocolEncodedMessageKey = "encoded message";
-enum class MessageType : uint8_t {
-    EchoTwice = 1
-};
-
-static CompletionHandler<void(Vector<uint8_t>&&)> replySender(RetainPtr<xpc_object_t>&& request)
-{
-    return [request = WTFMove(request)] (Vector<uint8_t>&& message) {
-        auto reply = adoptNS(xpc_dictionary_create_reply(request.get()));
-        ASSERT(xpc_get_type(reply.get()) == XPC_TYPE_DICTIONARY);
-        xpc_dictionary_set_uint64(reply.get(), protocolVersionKey, protocolVersionValue);
-        xpc_dictionary_set_value(reply.get(), protocolEncodedMessageKey, WebKit::vectorToXPCData(WTFMove(message)).get());
-        xpc_connection_send_message(xpc_dictionary_get_remote_connection(request.get()), reply.get());
-    };
-}
-
-static void echoTwice(Span<const uint8_t> encodedMessage, CompletionHandler<void(Vector<uint8_t>&&)>&& replySender)
-{
-    WebKit::Daemon::Decoder decoder(encodedMessage);
-    std::optional<String> string;
-    decoder >> string;
-    if (!string)
-        return;
-
-    auto reply = makeString(*string, *string);
-    WebKit::Daemon::Encoder encoder;
-    encoder << reply;
-    replySender(encoder.takeBuffer());
-}
-
-static void decodeMessageAndSendReply(MessageType messageType, Span<const uint8_t> encodedMessage, CompletionHandler<void(Vector<uint8_t>&&)>&& replySender)
-{
-    switch (messageType) {
-    case MessageType::EchoTwice:
-        echoTwice(encodedMessage, WTFMove(replySender));
-        return;
-    }
-}
-
 static void connectionEventHandler(xpc_object_t request)
 {
-    if (xpc_get_type(request) != XPC_TYPE_DICTIONARY)
-        return;
-    if (xpc_dictionary_get_uint64(request, protocolVersionKey) != protocolVersionValue) {
-        NSLog(@"Received request that was not the current protocol version");
-        return;
-    }
-
-    auto messageType { static_cast<MessageType>(xpc_dictionary_get_uint64(request, protocolMessageTypeKey)) };
-    size_t dataSize { 0 };
-    const void* data = xpc_dictionary_get_data(request, protocolEncodedMessageKey, &dataSize);
-    Span<const uint8_t> encodedMessage { static_cast<const uint8_t*>(data), dataSize };
-    decodeMessageAndSendReply(messageType, encodedMessage, replySender(request));
+    Daemon::singleton().connectionEventHandler(request);
 }
 
-static void connectionAdded(xpc_connection_t)
+static void connectionAdded(xpc_connection_t connection)
 {
+    Daemon::singleton().connectionAdded(connection);
 }
 
-static void connectionRemoved(xpc_connection_t)
+static void connectionRemoved(xpc_connection_t connection)
 {
+    Daemon::singleton().connectionRemoved(connection);
 }
 
 } // namespace WebPushD

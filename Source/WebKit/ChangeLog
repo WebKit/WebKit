@@ -1,3 +1,82 @@
+2021-10-26  Brady Eidson  <beidson@apple.com>
+
+        Add helper classes and messaging infrastructure to launch webpushd and round trip a message to it
+        https://bugs.webkit.org/show_bug.cgi?id=232262
+
+        Reviewed by Alex Christensen.
+
+        No new tests (No behavior change yet)
+
+        This patch:
+        - Adds classes representing the WebPushDaemon and connections to it
+        - Adds classes/constants/macros related to messaging that daemon
+        - Adds SPI for configuring a connect to that daemon
+        - Gets MiniBrowser closer to supporting built-in notifications
+        - Has way more commented out code than usual for a patch, but that enables a great stopping-point milestone
+
+        * NetworkProcess/Notifications/Cocoa/WebPushDaemonConnectionCocoa.mm: Added.
+        (WebKit::WebPushD::addVersionAndEncodedMessageToDictionary):
+        (WebKit::WebPushD::Connection::newConnectionWasInitialized const):
+        (WebKit::WebPushD::Connection::connectionReceivedEvent const):
+        (WebKit::WebPushD::Connection::dictionaryFromMessage const):
+
+        * NetworkProcess/Notifications/NetworkNotificationManager.cpp:
+        (WebKit::NetworkNotificationManager::NetworkNotificationManager):
+        (WebKit::NetworkNotificationManager::showNotification):
+        (WebKit::NetworkNotificationManager::cancelNotification):
+        (WebKit::NetworkNotificationManager::clearNotifications):
+        (WebKit::NetworkNotificationManager::didDestroyNotification):
+        (WebKit::NetworkNotificationManager::sendMessage const):
+        (WebKit::ReplyCaller<>::callReply):
+        (WebKit::ReplyCaller<String>::callReply):
+        (WebKit::NetworkNotificationManager::sendMessageWithReply const):
+        * NetworkProcess/Notifications/NetworkNotificationManager.h:
+        (WebKit::NetworkNotificationManager::networkSession const):
+
+        * NetworkProcess/Notifications/WebPushDaemonConnection.cpp: Copied from Source/WebKit/Platform/IPC/DaemonConnection.cpp.
+        (WebKit::WebPushD::Connection::Connection):
+        (WebKit::WebPushD::Connection::networkSession const):
+        * NetworkProcess/Notifications/WebPushDaemonConnection.h: Copied from Source/WebKit/NetworkProcess/Notifications/NetworkNotificationManager.h.
+
+        * NetworkProcess/mac/com.apple.WebKit.NetworkProcess.sb.in:
+
+        * Platform/IPC/DaemonConnection.cpp:
+        * Platform/IPC/DaemonConnection.h:
+        (WebKit::Daemon::ConnectionToMachService::machServiceName const):
+        * Platform/IPC/cocoa/DaemonConnectionCocoa.mm:
+
+        * Platform/Logging.h:
+
+        * Shared/WebPushDaemonConstants.h: Copied from Source/WebKit/Platform/IPC/DaemonConnection.cpp.
+        (WebKit::WebPushD::messageTypeSendsReply):
+
+        * UIProcess/WebsiteData/WebsiteDataStoreConfiguration.cpp:
+        (WebKit::WebsiteDataStoreConfiguration::copy const):
+
+        * webpushd/WebPushDaemon.h: Copied from Source/WebKit/NetworkProcess/Notifications/NetworkNotificationManager.h.
+        * webpushd/WebPushDaemon.mm: Copied from Source/WebKit/webpushd/WebPushDaemonMain.mm.
+        (WebPushD::MessageInfo::echoTwice::encodeReply):
+        (WebPushD::handleWebPushDMessageWithReply):
+        (WebPushD::Daemon::singleton):
+        (WebPushD::Daemon::connectionEventHandler):
+        (WebPushD::Daemon::connectionAdded):
+        (WebPushD::Daemon::connectionRemoved):
+        (WebPushD::CompletionHandler<void):
+        (WebPushD::Daemon::decodeAndHandleMessage):
+        (WebPushD::Daemon::echoTwice):
+        
+        * webpushd/WebPushDaemonMain.mm:
+        (WebPushD::connectionEventHandler):
+        (WebPushD::connectionAdded):
+        (WebPushD::connectionRemoved):
+        (WebPushD::CompletionHandler<void): Deleted.
+        (WebPushD::echoTwice): Deleted.
+        (WebPushD::decodeMessageAndSendReply): Deleted.
+
+        * Sources.txt:
+        * SourcesCocoa.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+        
 2021-10-26  Kate Cheney  <katherine_cheney@apple.com>
 
         [ App Privacy Report ] Restoring a session after clearing the cache results in app initiated loads in Safari

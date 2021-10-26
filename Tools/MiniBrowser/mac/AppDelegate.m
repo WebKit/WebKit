@@ -98,6 +98,11 @@ static WKWebsiteDataStore *persistentDataStore()
     if (!dataStore) {
         _WKWebsiteDataStoreConfiguration *configuration = [[[_WKWebsiteDataStoreConfiguration alloc] init] autorelease];
         configuration.networkCacheSpeculativeValidationEnabled = YES;
+
+        // FIXME: When built-in notifications are enabled, WebKit doesn't yet gracefully handle a missing webpushd service
+        // Until it does, uncomment this line when the service is known to be installed.
+        // [configuration setWebPushMachServiceName:@"org.webkit.webpushtestdaemon.service"];
+
         dataStore = [[WKWebsiteDataStore alloc] _initWithConfiguration:configuration];
     }
     

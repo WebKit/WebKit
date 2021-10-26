@@ -28,6 +28,7 @@
 
 #import "DaemonEncoder.h"
 #import "PrivateClickMeasurementConnection.h"
+#import "WebPushDaemonConnection.h"
 #import <wtf/BlockPtr.h>
 #import <wtf/RunLoop.h>
 
@@ -111,6 +112,10 @@ void ConnectionToMachService<Traits>::sendWithReply(typename Traits::MessageType
 }
 
 template class ConnectionToMachService<PCM::ConnectionTraits>;
+
+#if ENABLE(BUILT_IN_NOTIFICATIONS)
+template class ConnectionToMachService<WebPushD::ConnectionTraits>;
+#endif
 
 } // namespace Daemon
 

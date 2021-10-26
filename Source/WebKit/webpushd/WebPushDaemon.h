@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,33 +25,35 @@
 
 #pragma once
 
-#if PLATFORM(COCOA) && HAVE(NSURLSESSION_WEBSOCKET)
-#include "WebSocketTaskCocoa.h"
-#elif USE(SOUP)
-#include "WebSocketTaskSoup.h"
-#else
+#include "WebPushDaemonConstants.h"
+#include <wtf/Forward.h>
+#include <wtf/OSObjectPtr.h>
+#include <wtf/Span.h>
+#include <wtf/spi/darwin/XPCSPI.h>
 
-#include "DataReference.h"
+using WebKit::WebPushD::MessageType;
 
-namespace WebKit {
+namespace WebPushD {
 
-struct SessionSet;
+using EncodedMessage = Vector<uint8_t>;
 
-class WebSocketTask {
-    WTF_MAKE_FAST_ALLOCATED;
+class Daemon {
+    friend class WTF::NeverDestroyed<Daemon>;
 public:
-    typedef uint64_t TaskIdentifier;
+    static Daemon& singleton();
 
-    void sendString(const IPC::DataReference&, CompletionHandler<void()>&&) { }
-    void sendData(const IPC::DataReference&, CompletionHandler<void()>&&) { }
-    void close(int32_t code, const String& reason) { }
+    void connectionEventHandler(xpc_object_t);
+    void connectionAdded(xpc_connection_t);
+    void connectionRemoved(xpc_connection_t);
 
-    void cancel() { }
-    void resume() { }
-    
-    SessionSet* sessionSet() { return nullptr; }
+    // Message handlers
+    void echoTwice(const String&, CompletionHandler<void(const String&)>&& replySender);
+
+private:
+    Daemon() = default;
+
+    CompletionHandler<void(EncodedMessage&&)> createReplySender(MessageType, OSObjectPtr<xpc_object_t>&& request);
+    void decodeAndHandleMessage(MessageType, Span<const uint8_t> encodedMessage, CompletionHandler<void(EncodedMessage&&)>&&);
 };
 
-} // namespace WebKit
-
-#endif
+} // namespace WebPushD

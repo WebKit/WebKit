@@ -212,6 +212,14 @@ static const int testFooterBannerHeight = 58;
     return 1;
 }
 
+- (void)_webView:(WKWebView *)webView requestNotificationPermissionForSecurityOrigin:(WKSecurityOrigin *)securityOrigin decisionHandler:(void (^)(BOOL))decisionHandler
+{
+    // For testing, grant notification permission to all origins.
+    // FIXME: Consider adding a dialog and in-memory permissions manager
+    NSLog(@"Granting notifications permission to origin %@", securityOrigin);
+    decisionHandler(YES);
+}
+
 - (IBAction)setViewScale:(id)sender
 {
     CGFloat scale = [self viewScaleForMenuItemTag:[sender tag]];
