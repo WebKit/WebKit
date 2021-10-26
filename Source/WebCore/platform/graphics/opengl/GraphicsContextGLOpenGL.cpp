@@ -45,6 +45,10 @@
 #include "MediaSample.h"
 #endif
 
+#if USE(GSTREAMER) && ENABLE(MEDIA_STREAM)
+#include "MediaSampleGStreamer.h"
+#endif
+
 namespace WebCore {
 
 #if !PLATFORM(COCOA)
@@ -186,6 +190,10 @@ std::optional<PixelBuffer> GraphicsContextGLOpenGL::paintRenderingResultsToPixel
 #if !PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
 RefPtr<MediaSample> GraphicsContextGLOpenGL::paintCompositedResultsToMediaSample()
 {
+#if USE(GSTREAMER)
+    if (auto pixelBuffer = readCompositedResults())
+        return MediaSampleGStreamer::createImageSample(WTFMove(*pixelBuffer));
+#endif
     return nullptr;
 }
 #endif

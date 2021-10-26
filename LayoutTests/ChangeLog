@@ -1,3 +1,13 @@
+2021-10-26  Philippe Normand  <pnormand@igalia.com>
+
+        REGRESSION(242280@main) fast/mediastream/captureStream/canvas3d.html is timing out
+        https://bugs.webkit.org/show_bug.cgi?id=231061
+        <rdar://problem/84012523>
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        * platform/glib/TestExpectations: Test is passing now. Unflag.
+
 2021-10-26  Antti Koivisto  <antti@apple.com>
 
         Fix ::part(foo):hover
