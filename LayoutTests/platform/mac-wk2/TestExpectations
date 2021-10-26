@@ -1659,7 +1659,7 @@ webkit.org/b/230117 [ BigSur Debug ] http/tests/inspector/network/intercept-requ
 webkit.org/b/230117 [ BigSur Debug ] http/tests/inspector/network/intercept-request-with-response.html [ Pass Failure ]
 webkit.org/b/230117 [ BigSur Debug ] http/tests/inspector/target/pause-on-inline-debugger-statement.html [ Pass Failure ]
 
-webkit.org/b/232322 [ BigSur Debug arm64 ] inspector/audit/run-accessibility.html [ Pass Timeout ]
+webkit.org/b/232322 [ BigSur Debug ] inspector/audit/run-accessibility.html [ Slow ]
 
 webkit.org/b/230359 [ BigSur+ Debug ] webrtc/video-mute-vp8.html [ Pass Failure ]
 
