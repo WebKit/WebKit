@@ -33,6 +33,7 @@ from webkitpy.layout_tests.models import test_expectations
 from webkitpy.layout_tests.models import test_failures
 from webkitpy.layout_tests.models import test_results
 from webkitpy.layout_tests.models import test_run_results
+from webkitpy.port.image_diff import ImageDiffResult
 from webkitpy.tool.mocktool import MockOptions
 
 from webkitcorepy import OutputCapture
@@ -124,10 +125,10 @@ class InterpretTestFailuresTest(unittest.TestCase):
         self.port = host.port_factory.get(port_name='test')
 
     def test_interpret_test_failures(self):
-        test_dict = test_run_results._interpret_test_failures([test_failures.FailureImageHashMismatch(diff_percent=0.42)])
+        test_dict = test_run_results._interpret_test_failures([test_failures.FailureImageHashMismatch(ImageDiffResult(passed=False, diff_image=b'', difference=0.42))])
         self.assertEqual(test_dict['image_diff_percent'], 0.42)
 
-        test_dict = test_run_results._interpret_test_failures([test_failures.FailureReftestMismatch(self.port.abspath_for_test('foo/reftest-expected.html'))])
+        test_dict = test_run_results._interpret_test_failures([test_failures.FailureReftestMismatch(self.port.abspath_for_test('foo/reftest-expected.html'), ImageDiffResult(passed=False, diff_image=b'', difference=100.0))])
         self.assertIn('image_diff_percent', test_dict)
 
         test_dict = test_run_results._interpret_test_failures([test_failures.FailureReftestMismatchDidNotOccur(self.port.abspath_for_test('foo/reftest-expected-mismatch.html'))])

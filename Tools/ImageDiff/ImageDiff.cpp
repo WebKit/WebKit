@@ -217,7 +217,7 @@ int main(int argc, const char* argv[])
 
         if (actualImage && baselineImage) {
             if (verbose)
-                fprintf(stderr, "ImageDiff: processing images\n");
+                fprintf(stderr, "ImageDiff: processing images with tolerance %01.2f%%\n", tolerance);
             auto result = processImages(std::exchange(actualImage, { }), std::exchange(baselineImage, { }), tolerance, printDifference);
             if (result != EXIT_SUCCESS)
                 return result;

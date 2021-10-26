@@ -1,3 +1,45 @@
+2021-10-26  Simon Fraser  <simon.fraser@apple.com>
+
+        Don't run ImageDiff a second time to generate diff images
+        https://bugs.webkit.org/show_bug.cgi?id=232288
+
+        Reviewed by Martin Robinson.
+
+        Currently, for a ref test failure (which is always run with tolerance=0), we run ImageDiff a
+        second time in FailureReftestMismatch.write_failure() with the intent of generating a diff
+        image with zero tolerance.
+
+        Fix by storing the ImageDiffResult in FailureReftestMismatch and FailureImageHashMismatch so
+        we already have the diff image. We only regenerate it when the first diff was run with a
+        non-zero tolerance (only relevant for pixel tests). To faciliate this, store the tolerance
+        that was used inside ImageDiffResult too.
+
+        * ImageDiff/ImageDiff.cpp:
+        (main): Show tolerance in verbose logging.
+        * Scripts/webkitpy/layout_tests/controllers/single_test_runner.py:
+        (SingleTestRunner._compare_image):
+        (SingleTestRunner._compare_output_with_reference):
+        * Scripts/webkitpy/layout_tests/controllers/test_result_writer_unittest.py:
+        (TestResultWriterTest.test_reftest_diff_image.ImageDiffTestPort.diff_image):
+        (TestResultWriterTest):
+        (TestResultWriterTest.test_reftest_diff_image):
+        * Scripts/webkitpy/layout_tests/models/test_failures.py:
+        (FailureImageHashMismatch.__init__):
+        (FailureReftestMismatch.__init__):
+        (FailureReftestMismatch.write_failure):
+        * Scripts/webkitpy/layout_tests/models/test_run_results.py:
+        (_interpret_test_failures):
+        * Scripts/webkitpy/layout_tests/models/test_run_results_unittest.py:
+        (InterpretTestFailuresTest.test_interpret_test_failures):
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+        (RunTest.test_tolerance.ImageDiffTestPort.diff_image):
+        * Scripts/webkitpy/port/image_diff.py:
+        (ImageDiffResult.__init__):
+        (ImageDiffResult.__repr__):
+        (ImageDiffer._read):
+        * Scripts/webkitpy/port/port_testcase.py:
+        (PortTestCase.test_diff_image):
+
 2021-10-25  Ryan Haddad  <ryanhaddad@apple.com>
 
         Change default iOS simulator to one with a larger screen size

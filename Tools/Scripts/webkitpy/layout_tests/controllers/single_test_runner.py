@@ -295,7 +295,7 @@ class SingleTestRunner(object):
         elif driver_output.image_hash != expected_driver_output.image_hash:
             diff_result = self._port.diff_image(expected_driver_output.image, driver_output.image)
             if not diff_result.passed:
-                failures.append(test_failures.FailureImageHashMismatch(diff_result.diff_percent))
+                failures.append(test_failures.FailureImageHashMismatch(diff_result))
                 if diff_result.error_string:
                     _log.warning('  %s : %s' % (self._test_name, diff_result.error_string))
                     driver_output.error = (driver_output.error or '') + diff_result.error_string
@@ -356,7 +356,7 @@ class SingleTestRunner(object):
             # ImageDiff has a hard coded color distance threshold even though tolerance=0 is specified.
             diff_result = self._port.diff_image(reference_driver_output.image, actual_driver_output.image, tolerance=0)
             if not diff_result.passed:
-                failures.append(test_failures.FailureReftestMismatch(reference_filename))
+                failures.append(test_failures.FailureReftestMismatch(reference_filename, diff_result))
                 if diff_result.error_string:
                     _log.warning('  %s : %s' % (self._test_name, diff_result.error_string))
                     actual_driver_output.error = (actual_driver_output.error or '') + diff_result.error_string

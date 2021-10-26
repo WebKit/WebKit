@@ -297,22 +297,26 @@ class PortTestCase(unittest.TestCase):
         # First test the case of not using the JHBuild wrapper.
         self.assertFalse(port._should_use_jhbuild())
 
-        self.assertEqual(port.diff_image(b'foo', b'bar'), ImageDiffResult(passed=False, diff_image=b'', difference=100.0))
+        self.assertEqual(port.diff_image(b'foo', b'bar'), ImageDiffResult(passed=False, diff_image=b'', difference=100.0, tolerance=0.1))
         self.assertEqual(self.proc.cmd, [port._path_to_image_diff(), "--tolerance", "0.1"])
-        self.assertEqual(port.diff_image(b'foo', b'bar', None), ImageDiffResult(passed=False, diff_image=b'', difference=100.0))
+
+        self.assertEqual(port.diff_image(b'foo', b'bar', tolerance=None), ImageDiffResult(passed=False, diff_image=b'', difference=100.0, tolerance=0.1))
         self.assertEqual(self.proc.cmd, [port._path_to_image_diff(), "--tolerance", "0.1"])
-        self.assertEqual(port.diff_image(b'foo', b'bar', 0), ImageDiffResult(passed=False, diff_image=b'', difference=100.0))
+
+        self.assertEqual(port.diff_image(b'foo', b'bar', tolerance=0), ImageDiffResult(passed=False, diff_image=b'', difference=100.0))
         self.assertEqual(self.proc.cmd, [port._path_to_image_diff(), "--tolerance", "0"])
 
         # Now test the case of using JHBuild wrapper.
         port._filesystem.maybe_make_directory(port.path_from_webkit_base('WebKitBuild', 'Dependencies%s' % port.port_name.upper()))
         self.assertTrue(port._should_use_jhbuild())
 
-        self.assertEqual(port.diff_image(b'foo', b'bar'), ImageDiffResult(passed=False, diff_image=b'', difference=100.0))
+        self.assertEqual(port.diff_image(b'foo', b'bar'), ImageDiffResult(passed=False, diff_image=b'', difference=100.0, tolerance=0.1))
         self.assertEqual(self.proc.cmd, port._jhbuild_wrapper + [port._path_to_image_diff(), "--tolerance", "0.1"])
-        self.assertEqual(port.diff_image(b'foo', b'bar', None), ImageDiffResult(passed=False, diff_image=b'', difference=100.0))
+
+        self.assertEqual(port.diff_image(b'foo', b'bar', tolerance=None), ImageDiffResult(passed=False, diff_image=b'', difference=100.0, tolerance=0.1))
         self.assertEqual(self.proc.cmd, port._jhbuild_wrapper + [port._path_to_image_diff(), "--tolerance", "0.1"])
-        self.assertEqual(port.diff_image(b'foo', b'bar', 0), ImageDiffResult(passed=False, diff_image=b'', difference=100.0))
+
+        self.assertEqual(port.diff_image(b'foo', b'bar', tolerance=0), ImageDiffResult(passed=False, diff_image=b'', difference=100.0))
         self.assertEqual(self.proc.cmd, port._jhbuild_wrapper + [port._path_to_image_diff(), "--tolerance", "0"])
 
         port.clean_up_test_run()
@@ -323,13 +327,13 @@ class PortTestCase(unittest.TestCase):
         port = self.make_port()
         port._server_process_constructor = lambda port, nm, cmd, env, crash_message=None: MockServerProcess(lines=['diff: 0% passed\n'])
         image_differ = ImageDiffer(port)
-        self.assertEqual(image_differ.diff_image(b'foo', b'bar', 0.1), ImageDiffResult(passed=True, diff_image=None, difference=0))
+        self.assertEqual(image_differ.diff_image(b'foo', b'bar', tolerance=0.1), ImageDiffResult(passed=True, diff_image=None, difference=0))
 
     def test_diff_image_failed(self):
         port = self.make_port()
         port._server_process_constructor = lambda port, nm, cmd, env, crash_message=None: MockServerProcess(lines=['diff: 100% failed\n'])
         image_differ = ImageDiffer(port)
-        self.assertEqual(image_differ.diff_image(b'foo', b'bar', 0.1), ImageDiffResult(passed=False, diff_image=b'', difference=100.0))
+        self.assertEqual(image_differ.diff_image(b'foo', b'bar', tolerance=0.1), ImageDiffResult(passed=False, diff_image=b'', difference=100.0, tolerance=0.1))
 
     def test_diff_image_crashed(self):
         port = self.make_port()
@@ -345,7 +349,7 @@ class PortTestCase(unittest.TestCase):
 
         port._server_process_constructor = make_proc
         port.setup_test_run()
-        self.assertEqual(port.diff_image(b'foo', b'bar'), ImageDiffResult(passed=False, diff_image=b'', difference=0, error_string='ImageDiff crashed\n'))
+        self.assertEqual(port.diff_image(b'foo', b'bar'), ImageDiffResult(passed=False, diff_image=b'', difference=0, tolerance=0.1, error_string='ImageDiff crashed\n'))
         port.clean_up_test_run()
 
     @slow

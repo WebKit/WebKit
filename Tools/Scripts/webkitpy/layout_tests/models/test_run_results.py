@@ -213,7 +213,7 @@ def _interpret_test_failures(failures):
     if 'image_diff_percent' not in test_dict:
         for failure in failures:
             if isinstance(failure, test_failures.FailureImageHashMismatch) or isinstance(failure, test_failures.FailureReftestMismatch):
-                test_dict['image_diff_percent'] = failure.diff_percent
+                test_dict['image_diff_percent'] = failure.image_diff_result.diff_percent
 
     return test_dict
 

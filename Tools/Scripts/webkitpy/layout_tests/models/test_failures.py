@@ -201,9 +201,9 @@ class FailureMissingImage(TestFailure):
 
 
 class FailureImageHashMismatch(TestFailure):
-    def __init__(self, diff_percent=0):
+    def __init__(self, image_diff_result=None):
         super(FailureImageHashMismatch, self).__init__()
-        self.diff_percent = diff_percent
+        self.image_diff_result = image_diff_result
 
     def message(self):
         return "image diff"
@@ -219,25 +219,26 @@ class FailureImageHashIncorrect(TestFailure):
 
 
 class FailureReftestMismatch(TestFailure):
-    def __init__(self, reference_filename=None):
+    def __init__(self, reference_filename=None, image_diff_result=None):
         super(FailureReftestMismatch, self).__init__()
         self.reference_filename = reference_filename
-        self.diff_percent = None
+        self.image_diff_result = image_diff_result
 
     def message(self):
         return "reference mismatch"
 
     def write_failure(self, writer, driver_output, expected_driver_output, port):
         writer.write_image_files(driver_output.image, expected_driver_output.image)
-        # FIXME: This work should be done earlier in the pipeline (e.g., when we compare images for non-ref tests).
-        # FIXME: We should always have 2 images here.
-        if driver_output.image and expected_driver_output.image:
-            diff_result = port.diff_image(expected_driver_output.image, driver_output.image, tolerance=0)
-            if diff_result.diff_image:
-                writer.write_image_diff_files(diff_result.diff_image)
-                self.diff_percent = diff_result.diff_percent
+        if self.image_diff_result:
+            # If the ref test was run with non-zero tolerance, generate the image diff again with zero tolerance.
+            if self.image_diff_result.tolerance != 0:
+                diff_image = port.diff_image(expected_driver_output.image, driver_output.image, tolerance=0).diff_image
             else:
-                _log.warn('ref test mismatch did not produce an image diff.')
+                diff_image = self.image_diff_result.diff_image
+
+            writer.write_image_diff_files(diff_image)
+        else:
+            _log.warn('ref test mismatch did not produce an image diff.')
         writer.write_reftest(self.reference_filename)
 
 

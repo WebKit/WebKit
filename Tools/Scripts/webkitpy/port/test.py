@@ -408,10 +408,10 @@ class TestPort(Port):
         actual_contents = string_utils.encode(actual_contents)
         diffed = actual_contents != expected_contents
         if not actual_contents and not expected_contents:
-            return ImageDiffResult(passed=True, diff_image=None, difference=0)
+            return ImageDiffResult(passed=True, diff_image=None, difference=0, tolerance=tolerance or 0)
 
         if not actual_contents or not expected_contents:
-            return ImageDiffResult(passed=False, diff_image=b'', difference=0)
+            return ImageDiffResult(passed=False, diff_image=b'', difference=0, tolerance=tolerance or 0)
 
         if b'ref' in expected_contents:
             assert tolerance == 0
@@ -422,9 +422,10 @@ class TestPort(Port):
                     string_utils.decode(expected_contents, target_type=str),
                     string_utils.decode(actual_contents, target_type=str),
                 ),
-                difference=1)
+                difference=1,
+                tolerance=tolerance or 0)
 
-        return ImageDiffResult(passed=True, diff_image=None, difference=0)
+        return ImageDiffResult(passed=True, diff_image=None, difference=0, tolerance=tolerance or 0)
 
     def layout_tests_dir(self):
         return LAYOUT_TEST_DIR
