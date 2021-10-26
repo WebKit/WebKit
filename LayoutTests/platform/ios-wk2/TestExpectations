@@ -2243,5 +2243,3 @@ webkit.org/b/232120 imported/w3c/web-platform-tests/content-security-policy/scri
 webkit.org/b/225528 http/wpt/fetch/fetch-response-body-stop-in-worker.html [ Pass Crash ]
 
 webkit.org/b/232252 [ Release ] imported/w3c/web-platform-tests/webrtc/RTCDtlsTransport-state.html [ Pass Failure ]
-
-webkit.org/b/231255 http/tests/privateClickMeasurement/attribution-conversion-through-cross-site-image-redirect.html [ Pass Crash ]

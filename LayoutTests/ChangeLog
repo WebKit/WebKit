@@ -1,3 +1,16 @@
+2021-10-26  John Wilander  <wilander@apple.com>
+
+        [ iOS 15 ] ASSERTION FAILED: isRunningTest(WebCore::applicationBundleIdentifier())
+        https://bugs.webkit.org/show_bug.cgi?id=231255
+
+        Kate's fix in https://commits.webkit.org/r284897 should now have removed the
+        cause of these assertion failures.
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+            Removed test expectation that was added in https://trac.webkit.org/changeset/284881/webkit
+
 2021-10-26  Chris Dumez  <cdumez@apple.com>
 
         error event should be fired at <style> element when @import rule fails parsing due to MIME type
