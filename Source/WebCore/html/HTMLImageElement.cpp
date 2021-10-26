@@ -683,6 +683,8 @@ void HTMLImageElement::didMoveToNewDocument(Document& oldDocument, Document& new
     HTMLElement::didMoveToNewDocument(oldDocument, newDocument);
     if (RefPtr element = pictureElement())
         element->sourcesChanged();
+    else if (hasAttribute(srcAttr) || hasAttribute(srcsetAttr))
+        selectImageSource(RelevantMutation::Yes);
 }
 
 bool HTMLImageElement::isServerMap() const
