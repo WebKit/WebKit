@@ -1,3 +1,16 @@
+2021-10-25  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Change default iOS simulator to one with a larger screen size
+        https://bugs.webkit.org/show_bug.cgi?id=231844
+
+        Reviewed by Jonathan Bedard.
+
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+        (RunTest.test_device_type_specific_listing):
+        * Scripts/webkitpy/port/ios_simulator.py:
+        (IOSSimulatorPort):
+        (IPhoneSimulatorPort):
+
 2021-10-25  Alexey Proskuryakov  <ap@apple.com>
 
         Add perl 5.30 to kill-old-processes

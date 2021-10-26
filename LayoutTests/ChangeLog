@@ -1,3 +1,49 @@
+2021-10-25  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Change default iOS simulator to one with a larger screen size
+        https://bugs.webkit.org/show_bug.cgi?id=231844
+
+        Reviewed by Jonathan Bedard.
+
+        * platform/ios-wk2/TestExpectations:
+        * platform/ios-wk2/imported/w3c/web-platform-tests/css/cssom/cssstyledeclaration-csstext-expected.txt: Removed.
+        * platform/ios/compositing/backing/page-scale-overlap-in-iframe-expected.txt: Renamed from LayoutTests/platform/ios-wk2/compositing/backing/page-scale-overlap-in-iframe-expected.txt.
+        * platform/ios/compositing/contents-format/deep-color-backing-store-expected.txt: Added.
+        * platform/ios/fast/events/ios/keyboard-scrolling-distance-expected.txt: Added.
+        * platform/ios/fast/events/ios/keyboard-should-not-trigger-resize-expected.txt: Added.
+        * platform/ios/fast/events/ios/rotation/zz-no-rotation-expected.txt: Added.
+        * platform/ios/fast/forms/ios/accessory-bar-navigation-expected.txt: Added.
+        * platform/ios/fast/forms/ios/focus-input-in-fixed-expected.txt: Added.
+        * platform/ios/fast/forms/ios/focus-input-in-iframe-expected.txt: Added.
+        * platform/ios/fast/forms/ios/focus-input-via-button-expected.txt: Added.
+        * platform/ios/fast/forms/ios/focus-input-via-button-no-scaling-expected.txt: Added.
+        * platform/ios/fast/forms/ios/focus-long-textarea-expected.txt: Added.
+        * platform/ios/fast/forms/ios/zoom-after-input-tap-expected.txt: Added.
+        * platform/ios/fast/forms/ios/zoom-after-input-tap-wide-input-expected.txt: Added.
+        * platform/ios/fast/scrolling/ios/clipping-ancestor-with-accelerated-scrolling-ancestor-expected.txt:
+        * platform/ios/fast/scrolling/ios/overflow-scrolling-ancestor-clip-expected.txt:
+        * platform/ios/fast/scrolling/ios/overflow-scrolling-ancestor-clip-size-expected.txt:
+        * platform/ios/fast/scrolling/ios/scrolling-content-clip-to-viewport-expected.txt:
+        * platform/ios/fast/scrolling/ios/subpixel-overflow-scrolling-with-ancestor-expected.txt: Copied from LayoutTests/platform/ios/fast/scrolling/ios/overflow-scrolling-ancestor-clip-expected.txt.
+        * platform/ios/fast/scrolling/ios/touch-stacking-expected.txt:
+        * platform/ios/fast/viewport/ios/device-width-viewport-after-changing-view-scale-expected.txt: Added.
+        * platform/ios/fast/viewport/ios/non-responsive-viewport-after-changing-view-scale-expected.txt: Added.
+        * platform/ios/fast/viewport/ios/responsive-viewport-with-minimum-width-after-changing-view-scale-expected.txt: Added.
+        * platform/ios/fast/viewport/ios/shrink-to-fit-for-page-without-viewport-meta-expected.txt: Added.
+        * platform/ios/fast/viewport/ios/use-minimum-device-width-for-page-without-viewport-meta-expected.txt: Added.
+        * platform/ios/fast/viewport/ios/width-is-device-width-expected.txt: Added.
+        * platform/ios/fast/viewport/ios/width-is-device-width-overflowing-body-overflow-hidden-expected.txt: Added.
+        * platform/ios/fast/viewport/ios/width-is-device-width-overflowing-body-overflow-hidden-tall-expected.txt: Added.
+        * platform/ios/fast/viewport/ios/width-is-device-width-overflowing-expected.txt: Added.
+        * platform/ios/fast/viewport/ios/width-is-device-width-overflowing-no-shrink-to-fit-expected.txt: Added.
+        * platform/ios/imported/w3c/web-platform-tests/css/cssom/cssstyledeclaration-csstext-expected.txt:
+        * platform/ios/imported/w3c/web-platform-tests/css/cssom/getComputedStyle-detached-subtree-expected.txt: Renamed from LayoutTests/platform/ios-wk2/imported/w3c/web-platform-tests/css/cssom/getComputedStyle-detached-subtree-expected.txt.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-form-submission-expected.txt:
+        * platform/ios/scrollingcoordinator/ios/fixed-in-frame-layer-reconcile-layer-position-expected.txt: Added.
+        * platform/ios/scrollingcoordinator/ios/fixed-in-overflow-scroll-scrolling-tree-expected.txt: Added.
+        * platform/ios/scrollingcoordinator/ios/fixed-scrolling-with-keyboard-expected.txt: Added.
+        * platform/ios/scrollingcoordinator/ios/ui-scrolling-tree-expected.txt: Added.
+
 2021-10-25  Kyle Piddington  <kpiddington@apple.com>
 
         REGRESSION (iOS 15), safari604.1: Could not link the shader program

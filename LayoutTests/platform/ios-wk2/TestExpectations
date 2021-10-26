@@ -2159,6 +2159,20 @@ webkit.org/b/229585 imported/w3c/web-platform-tests/navigation-timing/test_perfo
 #rdar://82183980 ([ iOS 15 ]editing/selection/ios/hide-selection-in-tiny-contenteditable.html is a flaky failure)
 editing/selection/ios/hide-selection-in-tiny-contenteditable.html [ Pass Failure ]
 
+# These tests fail/timeout on iPhone 12 simulator
+fast/events/ios/viewport-no-width-value-allows-double-tap.html [ Skip ]
+fast/visual-viewport/ios/stable-update-with-keyboard.html [ Skip ]
+media/modern-media-controls/media-documents/media-document-audio-ios-sizing.html [ Skip ]
+media/modern-media-controls/media-documents/media-document-video-iphone-sizing.html [ Skip ]
+fast/forms/ios/scroll-to-reveal-focused-select.html [ Failure ]
+fast/scrolling/ios/body-overflow-hidden-height-100-percent-zoomed-1.html [ Failure ]
+fast/scrolling/ios/overflow-div-scrolling.html [ Failure ]
+media/vp9.html [ Failure ]
+webgl/pending/conformance2/glsl3/empty-shader-with-output.html [ Failure ]
+
+# This test "fails" on iPhone 12 simulator because it supports P3, may need to rebaseline this reftest
+fast/media/mq-color-gamut.html [ ImageOnlyFailure ]
+
 webkit.org/b/230004 imported/w3c/web-platform-tests/css/css-pseudo/active-selection-011.html [ ImageOnlyFailure ]
 webkit.org/b/230004 imported/w3c/web-platform-tests/css/css-pseudo/active-selection-016.html [ ImageOnlyFailure ]
 

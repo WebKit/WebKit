@@ -939,7 +939,7 @@ class RunTest(unittest.TestCase, StreamTestingMixin):
             by_type[current_type].append(line)
 
         self.assertEqual(3, len(by_type.keys()))
-        self.assertEqual(2, len(by_type[DeviceType.from_string('iPhone SE')]))
+        self.assertEqual(2, len(by_type[DeviceType.from_string('iPhone 12')]))
         self.assertEqual(1, len(by_type[DeviceType.from_string('iPad (5th generation)')]))
         self.assertEqual(0, len(by_type[DeviceType.from_string('iPhone 7')]))
 

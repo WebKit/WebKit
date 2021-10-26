@@ -44,7 +44,7 @@ class IOSSimulatorPort(IOSPort):
     DEVICE_MANAGER = SimulatedDeviceManager
 
     DEFAULT_DEVICE_TYPES = [
-        DeviceType(hardware_family='iPhone', hardware_type='SE'),
+        DeviceType(hardware_family='iPhone', hardware_type='12'),
         DeviceType(hardware_family='iPad', hardware_type='(5th generation)'),
         DeviceType(hardware_family='iPhone', hardware_type='7'),
     ]
@@ -119,7 +119,7 @@ class IPhoneSimulatorPort(IOSSimulatorPort):
 
     DEVICE_TYPE = DeviceType(hardware_family='iPhone')
     DEFAULT_DEVICE_TYPES = [
-        DeviceType(hardware_family='iPhone', hardware_type='SE'),
+        DeviceType(hardware_family='iPhone', hardware_type='12'),
         DeviceType(hardware_family='iPhone', hardware_type='7'),
     ]
 
