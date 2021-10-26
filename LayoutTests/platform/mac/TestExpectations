@@ -993,6 +993,8 @@ webkit.org/b/149819 [ Debug ] compositing/video/video-poster.html [ Pass Crash F
 
 webkit.org/b/168953 [ Release ] compositing/video/video-poster.html [ Pass Failure ]
 
+webkit.org/b/232330 [ Debug ] compositing/video/video-reflection.html [ Pass Timeout ]
+
 # Flaky on Mac
 webkit.org/b/148435 storage/domstorage/events/basic-body-attribute.html [ Pass Failure ]
 
