@@ -278,6 +278,32 @@ TEST(BifurcatedGraphicsContextTests, TransformedClip)
     EXPECT_EQ(primaryContext.clipBounds(), FloatRect(25, 25, 50, 50));
 }
 
+TEST(BifurcatedGraphicsContextTests, ApplyDeviceScaleFactor)
+{
+    auto colorSpace = DestinationColorSpace::SRGB();
+    auto primaryCGContext = adoptCF(CGBitmapContextCreate(nullptr, 100, 100, 8, 4 * 100, colorSpace.platformColorSpace(), kCGImageAlphaPremultipliedLast));
+
+    GraphicsContextCG primaryContextCG(primaryCGContext.get());
+    GraphicsContext& primaryContext = primaryContextCG;
+
+    InMemoryDisplayList displayList;
+    RecorderImpl secondaryContextDL(displayList, { }, FloatRect(0, 0, 100, 100), { });
+    GraphicsContext& secondaryContext = secondaryContextDL;
+
+    BifurcatedGraphicsContext ctx(primaryContext, secondaryContext);
+
+    ctx.applyDeviceScaleFactor(2);
+
+    auto primaryCTM = primaryContext.getCTM(GraphicsContext::IncludeDeviceScale::DefinitelyIncludeDeviceScale);
+    auto secondaryCTM = secondaryContext.getCTM(GraphicsContext::IncludeDeviceScale::DefinitelyIncludeDeviceScale);
+
+    EXPECT_EQ(primaryCTM.xScale(), secondaryCTM.xScale());
+    EXPECT_EQ(primaryCTM.yScale(), secondaryCTM.yScale());
+
+    EXPECT_EQ(primaryCTM.xScale(), 2);
+    EXPECT_EQ(primaryCTM.yScale(), 2);
+}
+
 } // namespace TestWebKitAPI
 
 #endif // USE(CG)

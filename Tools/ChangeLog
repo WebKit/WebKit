@@ -1,3 +1,14 @@
+2021-10-26  Tim Horton  <timothy_horton@apple.com>
+
+        [GPU Process] `DisplayList::Recorder::getCTM` should include the device scale factor
+        https://bugs.webkit.org/show_bug.cgi?id=230647
+
+        Reviewed by Simon Fraser.
+
+        * TestWebKitAPI/Tests/WebCore/cg/BifurcatedGraphicsContextTestsCG.cpp:
+        (TestWebKitAPI::TEST):
+        Add a test that getCTM returns the correct scale after applyDeviceScaleFactor is called.
+
 2021-10-26  Jonathan Bedard  <jbedard@apple.com>
 
         [webkitscmpy] Comment and close pull-requests

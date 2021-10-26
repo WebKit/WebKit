@@ -232,7 +232,6 @@ void Recorder::setCTM(const AffineTransform& transform)
 
 AffineTransform Recorder::getCTM(GraphicsContext::IncludeDeviceScale) const
 {
-    // FIXME: <https://webkit.org/b/230647> ([GPU Process] add support for `IncludeDeviceScale` inside `DisplayList::Recorder::getCTM`)
     return currentState().ctm;
 }
 
@@ -495,6 +494,10 @@ void Recorder::paintFrameForMedia(MediaPlayer& player, const FloatRect& destinat
 
 void Recorder::applyDeviceScaleFactor(float deviceScaleFactor)
 {
+    // We modify the state directly here instead of calling GraphicsContext::scale()
+    // because the recorded item will scale() when replayed.
+    currentState().scale({ deviceScaleFactor, deviceScaleFactor });
+
     // FIXME: this changes the baseCTM, which will invalidate all of our cached extents.
     // Assert that it's only called early on?
     recordApplyDeviceScaleFactor(deviceScaleFactor);
