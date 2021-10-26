@@ -1,3 +1,16 @@
+2021-10-26  Kate Cheney  <katherine_cheney@apple.com>
+
+        NetworkProcess::updateBundleIdentifier, a testing function, overrides the actual bundleID instead of the override value
+        https://bugs.webkit.org/show_bug.cgi?id=232327
+
+        Reviewed by John Wilander.
+
+        No new tests, behavior confirmed by existing App Bound Domains tests.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::updateBundleIdentifier):
+        We should only ever set the override bundleID for testing purposes.
+
 2021-10-26  Brent Fulgham  <bfulgham@apple.com>
 
         [AppSSO] Avoid attempting to display a nil view controller

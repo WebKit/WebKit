@@ -2783,7 +2783,7 @@ void NetworkProcess::updateBundleIdentifier(String&& bundleIdentifier, Completio
 {
 #if PLATFORM(COCOA)
     WebCore::clearApplicationBundleIdentifierTestingOverride();
-    WebCore::setApplicationBundleIdentifier(bundleIdentifier);
+    WebCore::setApplicationBundleIdentifierOverride(bundleIdentifier);
 #endif
     completionHandler();
 }
