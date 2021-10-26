@@ -1,3 +1,13 @@
+2021-10-25  Nikolaos Mouchtaris  <nmouchtaris@apple.com>
+
+        Fix issue for transform-origin in SVG
+        https://bugs.webkit.org/show_bug.cgi?id=232189
+
+        Reviewed by Simon Fraser.
+
+        * web-platform-tests/svg/styling/render/transform-origin-not-explicit-style-ref.svg: Added.
+        * web-platform-tests/svg/styling/render/transform-origin-not-explicit-style.svg: Added.
+
 2021-10-25  Chris Dumez  <cdumez@apple.com>
 
         Form navigations with target=_blank should not have an opener
