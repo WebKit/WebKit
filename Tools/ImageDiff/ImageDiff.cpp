@@ -65,21 +65,10 @@ static int processImages(std::unique_ptr<PlatformImage>&& actualImage, std::uniq
 
     PlatformImage::Difference differenceData = { 100, 0, 0 };
     auto diffImage = actualImage->difference(*baselineImage, differenceData);
-    float legacyDifference = differenceData.percentageDifference;
-    if (legacyDifference <= tolerance)
-        legacyDifference = 0.0f;
-    else {
-        legacyDifference = roundf(legacyDifference * 100.0f) / 100.0f;
-        legacyDifference = std::max<float>(legacyDifference, 0.01f); // round to 2 decimal places
-    }
-
     if (diffImage)
         diffImage->writeAsPNGToStdout();
 
-    if (legacyDifference > 0.0f) {
-        fprintf(stdout, "diff: %01.2f%% failed\n", legacyDifference);
-    } else
-        fprintf(stdout, "diff: %01.2f%% passed\n", legacyDifference);
+    fprintf(stdout, "diff: %01.8f%%\n", differenceData.percentageDifference);
 
     if (printDifference)
         fprintf(stdout, "maxDifference=%u; totalPixels=%lu\n", differenceData.maxDifference, differenceData.totalPixels);

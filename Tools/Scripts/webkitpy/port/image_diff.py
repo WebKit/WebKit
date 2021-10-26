@@ -129,14 +129,22 @@ class ImageDiffer(object):
         if self._process.has_crashed():
             err_str += "ImageDiff crashed\n"
 
-        diff_percent = 0
-        if diff_output:
-            m = re.match(b'diff: (.+)% (passed|failed)', diff_output)
-            if m.group(2) == b'passed':
-                return ImageDiffResult(passed=True, diff_image=output_image, difference=0)
-            diff_percent = float(string_utils.decode(m.group(1), target_type=str))
+        if not diff_output:
+            return ImageDiffResult(passed=False, diff_image=None, difference=0, tolerance=self._tolerance, error_string=err_str or "Failed to read ImageDiff output")
 
-        return ImageDiffResult(passed=False, diff_image=output_image, difference=diff_percent, tolerance=self._tolerance, error_string=err_str or None)
+        m = re.match(b'diff: (.+)%', diff_output)
+        if not m:
+            return ImageDiffResult(passed=False, diff_image=None, difference=0, tolerance=self._tolerance, error_string=err_str or "Failed to match ImageDiff output %s" % diff_output)
+
+        diff_percent = float(string_utils.decode(m.group(1), target_type=str))
+
+        passed = diff_percent <= self._tolerance
+        if not passed:
+            # FIXME: This prettification should happen at display time.
+            diff_percent = round(diff_percent * 100) / 100
+            diff_percent = max(diff_percent, 0.01)
+
+        return ImageDiffResult(passed=passed, diff_image=output_image, difference=diff_percent, tolerance=self._tolerance, error_string=err_str or None)
 
     def stop(self):
         if self._process:

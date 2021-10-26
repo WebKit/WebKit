@@ -284,7 +284,7 @@ class PortTestCase(unittest.TestCase):
         self.proc = None
 
         def make_proc(port, nm, cmd, env, crash_message=None):
-            self.proc = MockServerProcess(port, nm, cmd, env, lines=['Content-Length: 6\n', 'image1', 'diff: 90% failed\n', '#EOF\n', 'Content-Length: 6\n', 'image2', 'diff: 100% failed\n', '#EOF\n'])
+            self.proc = MockServerProcess(port, nm, cmd, env, lines=['Content-Length: 6\n', 'image1', 'diff: 90%\n', '#EOF\n', 'Content-Length: 6\n', 'image2', 'diff: 100%\n', '#EOF\n'])
             return self.proc
 
         # FIXME: Can't pretend to run setup for some ports, so just skip this test.
@@ -325,15 +325,27 @@ class PortTestCase(unittest.TestCase):
 
     def test_diff_image_passed(self):
         port = self.make_port()
-        port._server_process_constructor = lambda port, nm, cmd, env, crash_message=None: MockServerProcess(lines=['diff: 0% passed\n', '#EOF\n'])
+        port._server_process_constructor = lambda port, nm, cmd, env, crash_message=None: MockServerProcess(lines=['diff: 0%\n', '#EOF\n'])
         image_differ = ImageDiffer(port)
-        self.assertEqual(image_differ.diff_image(b'foo', b'bar', tolerance=0.1), ImageDiffResult(passed=True, diff_image=None, difference=0))
+        self.assertEqual(image_differ.diff_image(b'foo', b'foo', tolerance=0), ImageDiffResult(passed=True, diff_image=None, difference=0, tolerance=0))
+
+    def test_diff_image_passed_with_tolerance(self):
+        port = self.make_port()
+        port._server_process_constructor = lambda port, nm, cmd, env, crash_message=None: MockServerProcess(lines=['Content-Length: 4\n', 'test', 'diff: 0.05%\n', '#EOF\n'])
+        image_differ = ImageDiffer(port)
+        self.assertEqual(image_differ.diff_image(b'foo', b'bar', tolerance=0.1), ImageDiffResult(passed=True, diff_image=b'test', difference=0.05, tolerance=0.1))
+
+    def test_diff_image_failed_with_rounded_diff(self):
+        port = self.make_port()
+        port._server_process_constructor = lambda port, nm, cmd, env, crash_message=None: MockServerProcess(lines=['Content-Length: 4\n', 'test', 'diff: 0.101234%\n', '#EOF\n'])
+        image_differ = ImageDiffer(port)
+        self.assertEqual(image_differ.diff_image(b'foo', b'bar', tolerance=0.1), ImageDiffResult(passed=False, diff_image=b'test', difference=0.1, tolerance=0.1))
 
     def test_diff_image_failed(self):
         port = self.make_port()
-        port._server_process_constructor = lambda port, nm, cmd, env, crash_message=None: MockServerProcess(lines=['Content-Length: 4\n', 'test', 'diff: 100% failed\n', '#EOF\n'])
+        port._server_process_constructor = lambda port, nm, cmd, env, crash_message=None: MockServerProcess(lines=['Content-Length: 4\n', 'test', 'diff: 10%\n', '#EOF\n'])
         image_differ = ImageDiffer(port)
-        self.assertEqual(image_differ.diff_image(b'foo', b'bar', tolerance=0.1), ImageDiffResult(passed=False, diff_image=b'test', difference=100.0, tolerance=0.1))
+        self.assertEqual(image_differ.diff_image(b'foo', b'bar', tolerance=0.1), ImageDiffResult(passed=False, diff_image=b'test', difference=10, tolerance=0.1))
 
     def test_diff_image_crashed(self):
         port = self.make_port()

@@ -1,3 +1,29 @@
+2021-10-26  Simon Fraser  <simon.fraser@apple.com>
+
+        The script should decide when an image diff cases, not ImageDiff
+        https://bugs.webkit.org/show_bug.cgi?id=232225
+
+        Reviewed by Martin Robinson.
+
+        Rather than have ImageDiff decide if the comparison passes or fails (with some built-in
+        tolerance), have it just print the percentage difference, and have the script compare it
+        against the tolerance.
+
+        Code to prettify diff_percent is moved into the script (but should eventually
+        move closer to display time).
+
+        * ImageDiff/ImageDiff.cpp:
+        (processImages):
+        * Scripts/webkitpy/port/image_diff.py:
+        (ImageDiffer._read):
+        * Scripts/webkitpy/port/port_testcase.py:
+        (PortTestCase.test_diff_image.make_proc):
+        (PortTestCase.test_diff_image_passed):
+        (PortTestCase):
+        (PortTestCase.test_diff_image_passed_with_tolerance):
+        (PortTestCase.test_diff_image_failed_with_rounded_diff):
+        (PortTestCase.test_diff_image_failed):
+
 2021-10-26  Kate Cheney  <katherine_cheney@apple.com>
 
         [ App Privacy Report ] Restoring a session after clearing the cache results in app initiated loads in Safari
