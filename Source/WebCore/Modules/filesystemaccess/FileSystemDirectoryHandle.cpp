@@ -36,40 +36,51 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(FileSystemDirectoryHandle);
 
-Ref<FileSystemDirectoryHandle> FileSystemDirectoryHandle::create(String&& name, FileSystemHandleIdentifier identifier, Ref<FileSystemStorageConnection>&& connection)
+Ref<FileSystemDirectoryHandle> FileSystemDirectoryHandle::create(ScriptExecutionContext* context, String&& name, FileSystemHandleIdentifier identifier, Ref<FileSystemStorageConnection>&& connection)
 {
-    return adoptRef(*new FileSystemDirectoryHandle(WTFMove(name), identifier, WTFMove(connection)));
+    return adoptRef(*new FileSystemDirectoryHandle(context, WTFMove(name), identifier, WTFMove(connection)));
 }
 
-FileSystemDirectoryHandle::FileSystemDirectoryHandle(String&& name, FileSystemHandleIdentifier identifier, Ref<FileSystemStorageConnection>&& connection)
-    : FileSystemHandle(FileSystemHandle::Kind::Directory, WTFMove(name), identifier, WTFMove(connection))
+FileSystemDirectoryHandle::FileSystemDirectoryHandle(ScriptExecutionContext* context, String&& name, FileSystemHandleIdentifier identifier, Ref<FileSystemStorageConnection>&& connection)
+    : FileSystemHandle(context, FileSystemHandle::Kind::Directory, WTFMove(name), identifier, WTFMove(connection))
 {
 }
 
 void FileSystemDirectoryHandle::getFileHandle(const String& name, std::optional<FileSystemDirectoryHandle::GetFileOptions> options, DOMPromiseDeferred<IDLInterface<FileSystemFileHandle>>&& promise)
 {
+    if (isClosed())
+        return promise.reject(Exception { InvalidStateError, "Handle is closed"_s });
+
     bool createIfNecessary = options ? options->create : false;
-    connection().getFileHandle(identifier(), name, createIfNecessary, [connection = Ref { connection() }, name, promise = WTFMove(promise)](auto result) mutable {
+    connection().getFileHandle(identifier(), name, createIfNecessary, [weakThis = WeakPtr { *this }, connection = Ref { connection() }, name, promise = WTFMove(promise)](auto result) mutable {
         if (result.hasException())
             return promise.reject(result.releaseException());
 
-        promise.settle(FileSystemFileHandle::create(String { name }, result.returnValue(), WTFMove(connection)));
+        auto* context = weakThis ? weakThis->scriptExecutionContext() : nullptr;
+        promise.settle(FileSystemFileHandle::create(context, String { name }, result.returnValue(), WTFMove(connection)));
     });
 }
 
 void FileSystemDirectoryHandle::getDirectoryHandle(const String& name, std::optional<FileSystemDirectoryHandle::GetDirectoryOptions> options, DOMPromiseDeferred<IDLInterface<FileSystemDirectoryHandle>>&& promise)
 {
+    if (isClosed())
+        return promise.reject(Exception { InvalidStateError, "Handle is closed"_s });
+
     bool createIfNecessary = options ? options->create : false;
-    connection().getDirectoryHandle(identifier(), name, createIfNecessary, [connection = Ref { connection() }, name, promise = WTFMove(promise)](auto result) mutable {
+    connection().getDirectoryHandle(identifier(), name, createIfNecessary, [weakThis = WeakPtr { *this }, connection = Ref { connection() }, name, promise = WTFMove(promise)](auto result) mutable {
         if (result.hasException())
             return promise.reject(result.releaseException());
 
-        promise.settle(FileSystemDirectoryHandle::create(String { name }, result.returnValue(), WTFMove(connection)));
+        auto* context = weakThis ? weakThis->scriptExecutionContext() : nullptr;
+        promise.settle(FileSystemDirectoryHandle::create(context, String { name }, result.returnValue(), WTFMove(connection)));
     });
 }
 
 void FileSystemDirectoryHandle::removeEntry(const String& name, std::optional<FileSystemDirectoryHandle::RemoveOptions> options, DOMPromiseDeferred<void>&& promise)
 {
+    if (isClosed())
+        return promise.reject(Exception { InvalidStateError, "Handle is closed"_s });
+
     bool deleteRecursively = options ? options->recursive : false;
     connection().removeEntry(identifier(), name, deleteRecursively, [promise = WTFMove(promise)](auto result) mutable {
         promise.settle(WTFMove(result));
@@ -78,6 +89,9 @@ void FileSystemDirectoryHandle::removeEntry(const String& name, std::optional<Fi
 
 void FileSystemDirectoryHandle::resolve(const FileSystemHandle& handle, DOMPromiseDeferred<IDLSequence<IDLUSVString>>&& promise)
 {
+    if (isClosed())
+        return promise.reject(Exception { InvalidStateError, "Handle is closed"_s });
+
     connection().resolve(identifier(), handle.identifier(), [promise = WTFMove(promise)](auto result) mutable {
         if (result.hasException())
             return promise.reject(result.releaseException());
@@ -88,22 +102,29 @@ void FileSystemDirectoryHandle::resolve(const FileSystemHandle& handle, DOMPromi
 
 void FileSystemDirectoryHandle::getHandleNames(CompletionHandler<void(ExceptionOr<Vector<String>>&&)>&& completionHandler)
 {
+    if (isClosed())
+        return completionHandler(Exception { InvalidStateError, "Handle is closed"_s });
+
     connection().getHandleNames(identifier(), WTFMove(completionHandler));
 }
 
 void FileSystemDirectoryHandle::getHandle(const String& name, CompletionHandler<void(ExceptionOr<Ref<FileSystemHandle>>&&)>&& completionHandler)
 {
-    connection().getHandle(identifier(), name, [name, connection = Ref { connection() }, completionHandler = WTFMove(completionHandler)](auto result) mutable {
+    if (isClosed())
+        return completionHandler(Exception { InvalidStateError, "Handle is closed"_s });
+
+    connection().getHandle(identifier(), name, [weakThis = WeakPtr { *this }, name, connection = Ref { connection() }, completionHandler = WTFMove(completionHandler)](auto result) mutable {
         if (result.hasException())
             return completionHandler(result.releaseException());
 
         auto [identifier, isDirectory] = result.releaseReturnValue();
+        auto* context = weakThis ? weakThis->scriptExecutionContext() : nullptr;
         if (isDirectory) {
-            Ref<FileSystemHandle> handle = FileSystemDirectoryHandle::create(String { name }, identifier, WTFMove(connection));
+            Ref<FileSystemHandle> handle = FileSystemDirectoryHandle::create(context, String { name }, identifier, WTFMove(connection));
             return completionHandler(WTFMove(handle));
         }
 
-        Ref<FileSystemHandle> handle = FileSystemFileHandle::create(String { name }, identifier, WTFMove(connection));
+        Ref<FileSystemHandle> handle = FileSystemFileHandle::create(context, String { name }, identifier, WTFMove(connection));
         completionHandler(WTFMove(handle));
     });
 }

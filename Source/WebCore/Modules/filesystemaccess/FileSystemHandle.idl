@@ -29,6 +29,7 @@ enum FileSystemHandleKind {
 };
 
 [
+    ActiveDOMObject,
     CustomToJSObject,
     Exposed=(Window,Worker),
     EnabledBySetting=FileSystemAccessEnabled,

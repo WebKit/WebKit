@@ -36,13 +36,13 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(FileSystemFileHandle);
 
-Ref<FileSystemFileHandle> FileSystemFileHandle::create(String&& name, FileSystemHandleIdentifier identifier, Ref<FileSystemStorageConnection>&& connection)
+Ref<FileSystemFileHandle> FileSystemFileHandle::create(ScriptExecutionContext* context, String&& name, FileSystemHandleIdentifier identifier, Ref<FileSystemStorageConnection>&& connection)
 {
-    return adoptRef(*new FileSystemFileHandle(WTFMove(name), identifier, WTFMove(connection)));
+    return adoptRef(*new FileSystemFileHandle(context, WTFMove(name), identifier, WTFMove(connection)));
 }
 
-FileSystemFileHandle::FileSystemFileHandle(String&& name, FileSystemHandleIdentifier identifier, Ref<FileSystemStorageConnection>&& connection)
-    : FileSystemHandle(FileSystemHandle::Kind::File, WTFMove(name), identifier, WTFMove(connection))
+FileSystemFileHandle::FileSystemFileHandle(ScriptExecutionContext* context, String&& name, FileSystemHandleIdentifier identifier, Ref<FileSystemStorageConnection>&& connection)
+    : FileSystemHandle(context, FileSystemHandle::Kind::File, WTFMove(name), identifier, WTFMove(connection))
 {
 }
 
@@ -53,6 +53,9 @@ void FileSystemFileHandle::getFile(DOMPromiseDeferred<IDLInterface<File>>&& prom
 
 void FileSystemFileHandle::createSyncAccessHandle(DOMPromiseDeferred<IDLInterface<FileSystemSyncAccessHandle>>&& promise)
 {
+    if (isClosed())
+        return promise.reject(Exception { InvalidStateError, "Handle is closed" });
+
     connection().createSyncAccessHandle(identifier(), [protectedThis = Ref { *this }, promise = WTFMove(promise)](auto result) mutable {
         if (result.hasException())
             return promise.reject(result.releaseException());
@@ -61,27 +64,39 @@ void FileSystemFileHandle::createSyncAccessHandle(DOMPromiseDeferred<IDLInterfac
         if (resultValue.second == FileSystem::invalidPlatformFileHandle)
             return promise.reject(Exception { UnknownError, "Invalid platform file handle"_s });
 
-        promise.settle(FileSystemSyncAccessHandle::create(protectedThis.get(), resultValue.first, resultValue.second));
+        promise.settle(FileSystemSyncAccessHandle::create(protectedThis->scriptExecutionContext(), protectedThis.get(), resultValue.first, resultValue.second));
     });
 }
 
 void FileSystemFileHandle::getSize(FileSystemSyncAccessHandleIdentifier accessHandleIdentifier, CompletionHandler<void(ExceptionOr<uint64_t>&&)>&& completionHandler)
 {
+    if (isClosed())
+        return completionHandler(Exception { InvalidStateError, "Handle is closed"_s });
+
     connection().getSize(identifier(), accessHandleIdentifier, WTFMove(completionHandler));
 }
 
 void FileSystemFileHandle::truncate(FileSystemSyncAccessHandleIdentifier accessHandleIdentifier, unsigned long long size, CompletionHandler<void(ExceptionOr<void>&&)>&& completionHandler)
 {
+    if (isClosed())
+        return completionHandler(Exception { InvalidStateError, "Handle is closed"_s });
+
     connection().truncate(identifier(), accessHandleIdentifier, size, WTFMove(completionHandler));
 }
 
 void FileSystemFileHandle::flush(FileSystemSyncAccessHandleIdentifier accessHandleIdentifier, CompletionHandler<void(ExceptionOr<void>&&)>&& completionHandler)
 {
+    if (isClosed())
+        return completionHandler(Exception { InvalidStateError, "Handle is closed"_s });
+
     connection().flush(identifier(), accessHandleIdentifier, WTFMove(completionHandler));
 }
 
 void FileSystemFileHandle::close(FileSystemSyncAccessHandleIdentifier accessHandleIdentifier, CompletionHandler<void(ExceptionOr<void>&&)>&& completionHandler)
 {
+    if (isClosed())
+        return completionHandler(Exception { InvalidStateError, "Handle is closed"_s });
+
     connection().close(identifier(), accessHandleIdentifier, WTFMove(completionHandler));
 }
 

@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "ActiveDOMObject.h"
 #include "FileSystemHandleIdentifier.h"
 #include "IDLTypes.h"
 #include <wtf/IsoMalloc.h>
@@ -35,7 +36,7 @@ template<typename> class DOMPromiseDeferred;
 
 class FileSystemStorageConnection;
 
-class FileSystemHandle : public RefCounted<FileSystemHandle> {
+class FileSystemHandle : public ActiveDOMObject, public CanMakeWeakPtr<FileSystemHandle>, public RefCounted<FileSystemHandle> {
     WTF_MAKE_ISO_ALLOCATED(FileSystemHandle);
 public:
     virtual ~FileSystemHandle();
@@ -47,19 +48,25 @@ public:
     Kind kind() const { return m_kind; }
     const String& name() const { return m_name; }
     FileSystemHandleIdentifier identifier() const { return m_identifier; }
+    bool isClosed() const { return m_isClosed; }
 
     void isSameEntry(FileSystemHandle&, DOMPromiseDeferred<IDLBoolean>&&) const;
     void move(FileSystemHandle&, const String& newName, DOMPromiseDeferred<void>&&);
 
 protected:
-    FileSystemHandle(Kind, String&& name, FileSystemHandleIdentifier, Ref<FileSystemStorageConnection>&&);
+    FileSystemHandle(ScriptExecutionContext*, Kind, String&& name, FileSystemHandleIdentifier, Ref<FileSystemStorageConnection>&&);
     FileSystemStorageConnection& connection() { return m_connection.get(); }
 
 private:
+    // ActiveDOMObject
+    const char* activeDOMObjectName() const final;
+    void stop() final;
+
     Kind m_kind { Kind::File };
     String m_name;
     FileSystemHandleIdentifier m_identifier;
     Ref<FileSystemStorageConnection> m_connection;
+    bool m_isClosed { false };
 };
 
 } // namespace WebCore

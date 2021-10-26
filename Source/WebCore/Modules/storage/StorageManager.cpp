@@ -115,12 +115,13 @@ void StorageManager::fileSystemAccessGetDirectory(DOMPromiseDeferred<IDLInterfac
         return promise.reject(connectionInfoOrException.releaseException());
 
     auto connectionInfo = connectionInfoOrException.releaseReturnValue();
-    connectionInfo.connection.fileSystemGetDirectory(connectionInfo.origin, [promise = WTFMove(promise)](auto result) mutable {
+    connectionInfo.connection.fileSystemGetDirectory(connectionInfo.origin, [promise = WTFMove(promise), weakNavigator = m_navigator](auto result) mutable {
         if (result.hasException())
             return promise.reject(result.releaseException());
 
+        auto* context = weakNavigator ? weakNavigator->scriptExecutionContext() : nullptr;
         auto identifierConnectionPair = result.releaseReturnValue();
-        promise.resolve(FileSystemDirectoryHandle::create({ }, identifierConnectionPair.first, Ref { * identifierConnectionPair.second }));
+        promise.resolve(FileSystemDirectoryHandle::create(context, { }, identifierConnectionPair.first, Ref { * identifierConnectionPair.second }));
     });
 }
 

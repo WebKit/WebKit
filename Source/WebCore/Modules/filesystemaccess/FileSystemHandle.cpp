@@ -34,18 +34,23 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(FileSystemHandle);
 
-FileSystemHandle::FileSystemHandle(FileSystemHandle::Kind kind, String&& name, FileSystemHandleIdentifier identifier, Ref<FileSystemStorageConnection>&& connection)
-    : m_kind(kind)
+FileSystemHandle::FileSystemHandle(ScriptExecutionContext* context, FileSystemHandle::Kind kind, String&& name, FileSystemHandleIdentifier identifier, Ref<FileSystemStorageConnection>&& connection)
+    : ActiveDOMObject(context)
+    , m_kind(kind)
     , m_name(WTFMove(name))
     , m_identifier(identifier)
     , m_connection(WTFMove(connection))
 {
+    suspendIfNeeded();
 }
 
 FileSystemHandle::~FileSystemHandle() = default;
 
 void FileSystemHandle::isSameEntry(FileSystemHandle& handle, DOMPromiseDeferred<IDLBoolean>&& promise) const
 {
+    if (isClosed())
+        return promise.reject(Exception { InvalidStateError, "Handle is closed" });
+
     if (m_kind != handle.kind() || m_name != handle.name())
         return promise.resolve(false);
 
@@ -56,6 +61,9 @@ void FileSystemHandle::isSameEntry(FileSystemHandle& handle, DOMPromiseDeferred<
 
 void FileSystemHandle::move(FileSystemHandle& destinationHandle, const String& newName, DOMPromiseDeferred<void>&& promise)
 {
+    if (isClosed())
+        return promise.reject(Exception { InvalidStateError, "Handle is closed" });
+
     if (destinationHandle.kind() != Kind::Directory)
         return promise.reject(Exception { TypeMismatchError });
 
@@ -65,6 +73,16 @@ void FileSystemHandle::move(FileSystemHandle& destinationHandle, const String& n
 
         promise.settle(WTFMove(result));
     });
+}
+
+const char* FileSystemHandle::activeDOMObjectName() const
+{
+    return "FileSystemHandle";
+}
+
+void FileSystemHandle::stop()
+{
+    m_isClosed = true;
 }
 
 } // namespace WebCore

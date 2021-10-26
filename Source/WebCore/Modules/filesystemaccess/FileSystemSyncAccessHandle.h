@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "ActiveDOMObject.h"
 #include "BufferSource.h"
 #include "ExceptionOr.h"
 #include "FileSystemSyncAccessHandleIdentifier.h"
@@ -37,13 +38,13 @@ namespace WebCore {
 class FileSystemFileHandle;
 template<typename> class DOMPromiseDeferred;
 
-class FileSystemSyncAccessHandle : public RefCounted<FileSystemSyncAccessHandle>, public CanMakeWeakPtr<FileSystemSyncAccessHandle> {
+class FileSystemSyncAccessHandle : public ActiveDOMObject, public RefCounted<FileSystemSyncAccessHandle>, public CanMakeWeakPtr<FileSystemSyncAccessHandle> {
 public:
     struct FilesystemReadWriteOptions {
         unsigned long long at;
     };
 
-    static Ref<FileSystemSyncAccessHandle> create(FileSystemFileHandle&, FileSystemSyncAccessHandleIdentifier, FileSystem::PlatformFileHandle);
+    static Ref<FileSystemSyncAccessHandle> create(ScriptExecutionContext*, FileSystemFileHandle&, FileSystemSyncAccessHandleIdentifier, FileSystem::PlatformFileHandle);
     ~FileSystemSyncAccessHandle();
 
     void truncate(unsigned long long size, DOMPromiseDeferred<void>&&);
@@ -55,16 +56,21 @@ public:
     ExceptionOr<unsigned long long> write(BufferSource&&, FilesystemReadWriteOptions);
 
 private:
-    FileSystemSyncAccessHandle(FileSystemFileHandle&, FileSystemSyncAccessHandleIdentifier, FileSystem::PlatformFileHandle);
+    FileSystemSyncAccessHandle(ScriptExecutionContext*, FileSystemFileHandle&, FileSystemSyncAccessHandleIdentifier, FileSystem::PlatformFileHandle);
     bool isClosingOrClosed() const;
-    void closeInternal(CompletionHandler<void(ExceptionOr<void>&&)>&&);
+    using CloseCallback = CompletionHandler<void(ExceptionOr<void>&&)>;
+    void closeInternal(CloseCallback&&);
+
+    // ActiveDOMObject
+    const char* activeDOMObjectName() const final;
+    void stop() final;
 
     Ref<FileSystemFileHandle> m_source;
     FileSystemSyncAccessHandleIdentifier m_identifier;
     uint64_t m_pendingOperationCount { 0 };
     FileSystem::PlatformFileHandle m_file;
     std::optional<ExceptionOr<void>> m_closeResult;
-    Vector<DOMPromiseDeferred<void>> m_closePromises;
+    Vector<CloseCallback> m_closeCallbacks;
 };
 
 } // namespace WebCore

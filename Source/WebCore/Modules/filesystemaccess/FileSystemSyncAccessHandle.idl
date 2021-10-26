@@ -24,8 +24,8 @@
  */
 
 [
+    ActiveDOMObject,
     EnabledBySetting=AccessHandleEnabled,
-    ImplementationLacksVTable,
     Exposed=DedicatedWorker,
     SecureContext
 ] interface FileSystemSyncAccessHandle {

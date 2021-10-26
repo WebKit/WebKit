@@ -33,37 +33,29 @@
 
 namespace WebCore {
 
-Ref<FileSystemSyncAccessHandle> FileSystemSyncAccessHandle::create(FileSystemFileHandle& source, FileSystemSyncAccessHandleIdentifier identifier, FileSystem::PlatformFileHandle file)
+Ref<FileSystemSyncAccessHandle> FileSystemSyncAccessHandle::create(ScriptExecutionContext* context, FileSystemFileHandle& source, FileSystemSyncAccessHandleIdentifier identifier, FileSystem::PlatformFileHandle file)
 {
-    return adoptRef(*new FileSystemSyncAccessHandle(source, identifier, file));
+    return adoptRef(*new FileSystemSyncAccessHandle(context, source, identifier, file));
 }
 
-FileSystemSyncAccessHandle::FileSystemSyncAccessHandle(FileSystemFileHandle& source, FileSystemSyncAccessHandleIdentifier identifier, FileSystem::PlatformFileHandle file)
-    : m_source(source)
+FileSystemSyncAccessHandle::FileSystemSyncAccessHandle(ScriptExecutionContext* context, FileSystemFileHandle& source, FileSystemSyncAccessHandleIdentifier identifier, FileSystem::PlatformFileHandle file)
+    : ActiveDOMObject(context)
+    , m_source(source)
     , m_identifier(identifier)
     , m_file(file)
 {
     ASSERT(m_file != FileSystem::invalidPlatformFileHandle);
+    suspendIfNeeded();
 }
 
 FileSystemSyncAccessHandle::~FileSystemSyncAccessHandle()
 {
-    if (m_closeResult)
-        return;
-
-    ASSERT(m_closePromises.isEmpty());
-    closeInternal([](auto) { });
+    ASSERT(m_closeResult);
 }
 
 bool FileSystemSyncAccessHandle::isClosingOrClosed() const
 {
-    return m_closeResult || !m_closePromises.isEmpty();
-}
-
-void FileSystemSyncAccessHandle::closeInternal(CompletionHandler<void(ExceptionOr<void>&&)>&& completionHandler)
-{
-    FileSystem::closeFile(m_file);
-    m_source->close(m_identifier, WTFMove(completionHandler));
+    return m_closeResult || !m_closeCallbacks.isEmpty();
 }
 
 void FileSystemSyncAccessHandle::truncate(unsigned long long size, DOMPromiseDeferred<void>&& promise)
@@ -110,28 +102,37 @@ void FileSystemSyncAccessHandle::flush(DOMPromiseDeferred<void>&& promise)
 
 void FileSystemSyncAccessHandle::close(DOMPromiseDeferred<void>&& promise)
 {
+    m_pendingOperationCount++;
+    closeInternal([weakThis = WeakPtr { *this }, promise = WTFMove(promise)](auto result) mutable {
+        weakThis->m_pendingOperationCount--;
+        promise.settle(WTFMove(result));
+    });
+}
+
+void FileSystemSyncAccessHandle::closeInternal(CloseCallback&& callback)
+{
     if (m_closeResult)
-        return promise.settle(ExceptionOr<void> { *m_closeResult });
-    
-    auto isClosing = !m_closePromises.isEmpty();
-    m_closePromises.append(WTFMove(promise));
+        return callback(ExceptionOr<void> { *m_closeResult });
+
+    auto isClosing = !m_closeCallbacks.isEmpty();
+    m_closeCallbacks.append(WTFMove(callback));
     if (isClosing)
         return;
 
-    m_pendingOperationCount++;
-    closeInternal([this, protectedThis = Ref { *this }](auto result) mutable {
-        m_pendingOperationCount--;
+    FileSystem::closeFile(m_file);
+    m_source->close(m_identifier, [this, protectedThis = Ref { *this }](auto result) {
         didClose(WTFMove(result));
     });
 }
 
 void FileSystemSyncAccessHandle::didClose(ExceptionOr<void>&& result)
 {
-    m_closeResult = WTFMove(result);
+    ASSERT(!m_closeResult);
 
-    auto promises = std::exchange(m_closePromises, { });
-    for (auto promise : promises)
-        promise.settle(ExceptionOr<void> { *m_closeResult });
+    m_closeResult = WTFMove(result);
+    auto callbacks = std::exchange(m_closeCallbacks, { });
+    for (auto& callback : callbacks)
+        callback(ExceptionOr<void> { *m_closeResult });
 }
 
 ExceptionOr<unsigned long long> FileSystemSyncAccessHandle::read(BufferSource&& buffer, FileSystemSyncAccessHandle::FilesystemReadWriteOptions options)
@@ -174,6 +175,16 @@ ExceptionOr<unsigned long long> FileSystemSyncAccessHandle::write(BufferSource&&
         return Exception { InvalidStateError, "Failed to write to file"_s };
 
     return result;
+}
+
+const char* FileSystemSyncAccessHandle::activeDOMObjectName() const
+{
+    return "FileSystemSyncAccessHandle";
+}
+
+void FileSystemSyncAccessHandle::stop()
+{
+    closeInternal([](auto) { });
 }
 
 } // namespace WebCore
