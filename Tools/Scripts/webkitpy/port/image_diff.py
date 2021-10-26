@@ -134,7 +134,7 @@ class ImageDiffer(object):
 
         m = re.match(b'diff: (.+)%', diff_output)
         if not m:
-            return ImageDiffResult(passed=False, diff_image=None, difference=0, tolerance=self._tolerance, error_string=err_str or "Failed to match ImageDiff output %s" % diff_output)
+            return ImageDiffResult(passed=False, diff_image=None, difference=0, tolerance=self._tolerance, error_string=err_str or 'Failed to match ImageDiff output {}'.format(diff_output))
 
         diff_percent = float(string_utils.decode(m.group(1), target_type=str))
 
