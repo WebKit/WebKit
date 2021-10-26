@@ -1,3 +1,12 @@
+2021-10-26  Ayumi Kojima  <ayumi_kojima@apple.com>
+
+        [ iOS Debug ] imported/w3c/web-platform-tests/html/dom/idlharness.worker.html is a flaky failure.
+        https://bugs.webkit.org/show_bug.cgi?id=231030
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
 2021-10-26  Chris Dumez  <cdumez@apple.com>
 
         Changing the src attribute of the <img> element inside an ImageDocument does not trigger a load
