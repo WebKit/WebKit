@@ -1,5 +1,38 @@
 2021-10-26  Simon Fraser  <simon.fraser@apple.com>
 
+        Have ImageDiff print the diff image when any pixel is different
+        https://bugs.webkit.org/show_bug.cgi?id=232294
+
+        Reviewed by Martin Robinson.
+        
+        ImageDiff currently only outputs the diff image when any pixel exceeds its built-in
+        tolerance.
+
+        To prepare for moving the "pass/fail" decision to script, have ImageDiff output the diff
+        image when any pixel is different. Also have it write "#EOF" so that we're not reliant on
+        the "diff:" line to terminate reading the output.
+
+        Fix up webkitpy unit tests for #EOF parsing, presence of image when the test passes via
+        tolerance, and to actually test which image data is present in the ImageDiffResult.
+
+        * ImageDiff/ImageDiff.cpp:
+        (processImages):
+        (main):
+        * ImageDiff/PlatformImage.cpp:
+        (ImageDiff::PlatformImage::difference): Track legacyDistanceMax if any pixel diff is non-zero,
+        since it's needed to scale the diff image.
+        * Scripts/webkitpy/port/image_diff.py:
+        (ImageDiffer._read): Look for "#EOF" to terminate the output. Save the diff image, even
+        if the test passed.
+        * Scripts/webkitpy/port/port_testcase.py:
+        (PortTestCase.test_diff_image.make_proc):
+        (PortTestCase.test_diff_image):
+        (PortTestCase.test_diff_image_passed):
+        (PortTestCase.test_diff_image_failed):
+        (PortTestCase.test_diff_image_crashed):
+
+2021-10-26  Simon Fraser  <simon.fraser@apple.com>
+
         Don't run ImageDiff a second time to generate diff images
         https://bugs.webkit.org/show_bug.cgi?id=232288
 

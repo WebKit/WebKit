@@ -101,23 +101,24 @@ class ImageDiffer(object):
 
     def _read(self):
         deadline = time.time() + 2.0
-        output = None
-        output_image = b''
+        output_image = None
+        diff_output = None
 
         while not self._process.timed_out and not self._process.has_crashed():
             output = self._process.read_stdout_line(deadline)
             if self._process.timed_out or self._process.has_crashed() or not output:
                 break
 
-            if output.startswith(b'diff'):  # This is the last line ImageDiff prints.
+            if output.startswith(b'#EOF'):
                 break
+
+            if output.startswith(b'diff:'):
+                diff_output = output
 
             if output.startswith(b'Content-Length'):
                 m = re.match(br'Content-Length: (\d+)', output)
                 content_length = int(string_utils.decode(m.group(1), target_type=str))
                 output_image = self._process.read_stdout(deadline, content_length)
-                output = self._process.read_stdout_line(deadline)
-                break
 
         stderr = string_utils.decode(self._process.pop_all_buffered_stderr(), target_type=str)
         err_str = ''
@@ -129,10 +130,10 @@ class ImageDiffer(object):
             err_str += "ImageDiff crashed\n"
 
         diff_percent = 0
-        if output and output.startswith(b'diff'):
-            m = re.match(b'diff: (.+)% (passed|failed)', output)
+        if diff_output:
+            m = re.match(b'diff: (.+)% (passed|failed)', diff_output)
             if m.group(2) == b'passed':
-                return ImageDiffResult(passed=True, diff_image=None, difference=0)
+                return ImageDiffResult(passed=True, diff_image=output_image, difference=0)
             diff_percent = float(string_utils.decode(m.group(1), target_type=str))
 
         return ImageDiffResult(passed=False, diff_image=output_image, difference=diff_percent, tolerance=self._tolerance, error_string=err_str or None)

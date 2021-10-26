@@ -73,13 +73,14 @@ std::unique_ptr<PlatformImage> PlatformImage::difference(const PlatformImage& ot
                 unsigned blueDiff   = std::abs(pixel[2] - basePixel[2]);
                 unsigned maxDiff = std::max({ redDiff, greenDiff, blueDiff });
                 difference.maxDifference = std::max(difference.maxDifference, maxDiff);
+
+                legacyDistanceMax = std::max(legacyDistanceMax, legacyDistance);
             }
 
             // Legacy difference code. Note there is some built-in tolerance here.
             if (legacyDistance >= 1.0f / 255.0f) {
                 ++pixelCountWithSignificantDifference;
                 legacyDistanceSum += legacyDistance;
-                legacyDistanceMax = std::max(legacyDistanceMax, legacyDistance);
             }
 
             basePixel += 4;
@@ -93,19 +94,16 @@ std::unique_ptr<PlatformImage> PlatformImage::difference(const PlatformImage& ot
     else
         difference.percentageDifference = 0.0f;
 
-    if (!pixelCountWithSignificantDifference) {
-        free(diffBuffer);
-        return nullptr;
-    }
-
-    // Generate a normalized diff image if there is any difference.
-    if (pixelCountWithSignificantDifference) {
+    if (difference.totalPixels) {
         diffPixel = reinterpret_cast<unsigned char*>(diffBuffer);
         for (size_t p = 0; p < height * width; ++p)
             diffPixel[p] /= legacyDistanceMax;
+
+        return PlatformImage::createFromDiffData(diffBuffer, width, height);
     }
 
-    return PlatformImage::createFromDiffData(diffBuffer, width, height);
+    free(diffBuffer);
+    return nullptr;
 }
 
 } // namespace ImageDiff

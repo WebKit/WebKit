@@ -73,15 +73,19 @@ static int processImages(std::unique_ptr<PlatformImage>&& actualImage, std::uniq
         legacyDifference = std::max<float>(legacyDifference, 0.01f); // round to 2 decimal places
     }
 
+    if (diffImage)
+        diffImage->writeAsPNGToStdout();
+
     if (legacyDifference > 0.0f) {
-        if (diffImage)
-            diffImage->writeAsPNGToStdout();
         fprintf(stdout, "diff: %01.2f%% failed\n", legacyDifference);
     } else
         fprintf(stdout, "diff: %01.2f%% passed\n", legacyDifference);
 
     if (printDifference)
         fprintf(stdout, "maxDifference=%u; totalPixels=%lu\n", differenceData.maxDifference, differenceData.totalPixels);
+
+    fprintf(stdout, "#EOF\n");
+    fflush(stdout);
 
     return EXIT_SUCCESS;
 }
@@ -222,7 +226,6 @@ int main(int argc, const char* argv[])
             if (result != EXIT_SUCCESS)
                 return result;
         }
-        fflush(stdout);
     }
 
     return EXIT_SUCCESS;
