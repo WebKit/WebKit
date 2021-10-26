@@ -1496,3 +1496,5 @@ webkit.org/b/232277 [ Catalina ] imported/w3c/web-platform-tests/html/semantics/
 
 webkit.org/b/232283 imported/w3c/web-platform-tests/media-capabilities/decodingInfo.webrtc.html [ Pass Failure ]
 webkit.org/b/232283 imported/w3c/web-platform-tests/media-capabilities/encodingInfo.webrtc.html [ Pass Failure ]
+
+webkit.org/b/232315 [ Catalina Debug ] media/track/track-disabled.html [ Pass Crash ]

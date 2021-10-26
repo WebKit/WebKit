@@ -1,3 +1,12 @@
+2021-10-26  Eric Hutchison  <ehutchison@apple.com>
+
+        [ Catalina Debug wk1 EWS ] media/track/track-disabled.html is a flaky crash.
+        https://bugs.webkit.org/show_bug.cgi?id=232315.
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
 2021-10-26  Ayumi Kojima  <ayumi_kojima@apple.com>
 
         [ iOS Release ] fast/flexbox/aspect-ratio-intrinsic-adjust.html is a flaky image failure.
