@@ -22,6 +22,7 @@
 
 import os
 import json
+import time
 
 from webkitcorepy import mocks
 from webkitscmpy import Commit, remote as scmremote
@@ -59,6 +60,7 @@ class GitHub(mocks.Requests):
         self.head = self.commits[self.default_branch][-1]
         self.tags = {}
         self.pull_requests = []
+        self.issues = dict()
         self.users = dict()
         self._environment = None
 
@@ -292,6 +294,8 @@ class GitHub(mocks.Requests):
         ), url=url)
 
     def request(self, method, url, data=None, params=None, auth=None, json=None, **kwargs):
+        from datetime import datetime, timedelta
+
         if not url.startswith('http://') and not url.startswith('https://'):
             return mocks.Response.create404(url)
 
@@ -398,11 +402,14 @@ class GitHub(mocks.Requests):
                     ref=json['base'],
                     user=dict(login=self.remote.split('/')[-2]),
                 )
+            if json.get('state'):
+                pr['state'] = json.get('state')
 
         # Create specifically
         if method == 'POST' and auth and stripped_url == pr_base:
             pr['number'] = 1 + max([0] + [pr.get('number', 0) for pr in self.pull_requests])
             pr['user'] = dict(login=auth.username)
+            pr['_links'] = dict(issue=dict(href='https://{}/issues/{}'.format(self.api_remote, pr['number'])))
             self.pull_requests.append(pr)
             return mocks.Response.fromJson(pr, url=url)
 
@@ -421,5 +428,22 @@ class GitHub(mocks.Requests):
         # Access user
         if method == 'GET' and stripped_url.startswith('{}/users'.format(self.api_remote.split('/')[0])):
             return self._users(url, stripped_url.split('/')[-1])
+
+        # Access underlying issue
+        if stripped_url.startswith('{}/issues/'.format(self.api_remote)):
+            number = int(stripped_url.split('/')[5])
+            issue = self.issues.get(number, dict(comments=[]))
+            if method == 'GET' and stripped_url.split('/')[6] == 'comments':
+                return mocks.Response.fromJson(issue['comments'], url=url)
+            if method == 'POST' and stripped_url.split('/')[6] == 'comments':
+                self.issues[number] = issue
+                now = datetime.utcfromtimestamp(int(time.time()) - timedelta(hours=7).seconds).strftime('%Y-%m-%dT%H:%M:%SZ')
+                self.issues[number]['comments'].append(dict(
+                    user=dict(login=auth.username),
+                    created_at=now, updated_at=now,
+                    body=json.get('body', ''),
+                ))
+                return mocks.Response.fromJson(issue['comments'], url=url)
+            return mocks.Response.create404(url)
 
         return mocks.Response.create404(url)
