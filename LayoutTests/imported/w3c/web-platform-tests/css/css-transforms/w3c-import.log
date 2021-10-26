@@ -9,7 +9,7 @@ Do NOT modify or remove this file.
 
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
-None
+backdrop-filter
 Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
@@ -321,6 +321,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/transform-generated-002-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/transform-generated-002-notref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/transform-generated-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/transform-getBoundingClientRect-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/transform-iframe-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/transform-iframe-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/transform-image-001-expected.html

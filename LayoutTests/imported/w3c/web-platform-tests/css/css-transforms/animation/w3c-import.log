@@ -34,6 +34,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/animation/transform-interpolation-005.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/animation/transform-interpolation-006.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/animation/transform-interpolation-computed-value.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/animation/transform-interpolation-inline-value.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/animation/transform-interpolation-matrix.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/animation/transform-interpolation-rotate-slerp.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/animation/transform-interpolation-rotate.html
