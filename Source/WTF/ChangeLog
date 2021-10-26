@@ -1,3 +1,12 @@
+2021-10-26  Alex Christensen  <achristensen@webkit.org>
+
+        Update PCM test public key to one with RSA-PSS OID
+        https://bugs.webkit.org/show_bug.cgi?id=231048
+
+        Reviewed by John Wilander.
+
+        * wtf/PlatformHave.h:
+
 2021-10-26  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WebCore] Remove unneeded WTF:: namespace prefix

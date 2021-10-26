@@ -25,6 +25,7 @@
 
 #import "config.h"
 
+#import "ASN1Utilities.h"
 #import "DaemonTestUtilities.h"
 #import "HTTPServer.h"
 #import "PlatformUtilities.h"
@@ -216,11 +217,10 @@ TEST(PrivateClickMeasurement, FraudPrevention)
         (__bridge id)kSecAttrKeyType: (__bridge id)kSecAttrKeyTypeRSA,
         (__bridge id)kSecAttrKeyClass: (__bridge id)kSecAttrKeyClassPublic
     }, nil));
+    Vector<uint8_t> rawKeyBytes(static_cast<const uint8_t*>(publicKey.get().bytes), publicKey.get().length);
+    auto wrappedKeyBytes = wrapPublicKeyWithRSAPSSOID(WTFMove(rawKeyBytes));
 
-    auto spkiData = adoptCF(SecKeyCopySubjectPublicKeyInfo(secKey.get()));
-    auto *nsSpkiData = (__bridge NSData *)spkiData.get();
-
-    auto keyData = base64URLEncodeToString(nsSpkiData.bytes, nsSpkiData.length);
+    auto keyData = base64URLEncodeToString(wrappedKeyBytes.data(), wrappedKeyBytes.size());
 
     // The server.
     HTTPServer server([&done, connectionCount = 0, &rsaPrivateKey, &modulusNBytes, &rng, &keyData, &secKey] (Connection connection) mutable {

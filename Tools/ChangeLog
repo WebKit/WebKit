@@ -1,3 +1,36 @@
+2021-10-26  Alex Christensen  <achristensen@webkit.org>
+
+        Update PCM test public key to one with RSA-PSS OID
+        https://bugs.webkit.org/show_bug.cgi?id=231048
+
+        Reviewed by John Wilander.
+
+        In rdar://79069615 support for public keys with rsaEncryption OIDs was removed as stated on the blog at
+        https://webkit.org/blog/11940/pcm-click-fraud-prevention-and-attribution-sent-to-advertiser/
+        This implements enough ASN1 serialization to serialize a public key in the form accepted by WebKit now,
+        which is described at https://datatracker.ietf.org/doc/html/rfc8017#appendix-A.2.3
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebCore/ASN1Utilities.cpp: Added.
+        (ASN1::Object::sizeSerializedSize const):
+        (ASN1::Object::serializeSize const):
+        (ASN1::ObjectIdentifier::ObjectIdentifier):
+        (ASN1::ObjectIdentifier::bytes const):
+        (ASN1::Sequence::create):
+        (ASN1::Sequence::Sequence):
+        (ASN1::Sequence::elementEncodedLengthBytes const):
+        (ASN1::IndexWrapper::IndexWrapper):
+        (ASN1::Integer::Integer):
+        (ASN1::BitString::BitString):
+        (TestWebKitAPI::wrapPublicKeyWithRSAPSSOID):
+        * TestWebKitAPI/Tests/WebCore/ASN1Utilities.h: Added.
+        * TestWebKitAPI/Tests/WebCore/PrivateClickMeasurement.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebCore/cocoa/PrivateClickMeasurementCocoa.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/EventAttribution.mm:
+        (TestWebKitAPI::TEST):
+
 2021-10-26  Tim Horton  <timothy_horton@apple.com>
 
         DisplayList::Recorder's clipBounds() becomes empty if a flip is applied to the CTM

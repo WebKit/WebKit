@@ -28,14 +28,13 @@
 
 #if HAVE(RSA_BSSA)
 
+#include "ASN1Utilities.h"
 #include "CoreCryptoSPI.h"
-
 #include <WebCore/PrivateClickMeasurement.h>
 #include <wtf/spi/cocoa/SecuritySPI.h>
 
-using namespace WebCore;
-
 namespace TestWebKitAPI {
+using namespace WebCore;
 
 TEST(PrivateClickMeasurement, ValidBlindedSecret)
 {
@@ -70,21 +69,15 @@ TEST(PrivateClickMeasurement, ValidBlindedSecret)
     const struct ccrsabssa_ciphersuite *ciphersuite = &ccrsabssa_ciphersuite_rsa4096_sha384;
 
     size_t exportSize = ccder_encode_rsa_pub_size(rsaPublicKey);
-    auto publicKey = adoptNS([[NSMutableData alloc] initWithLength:exportSize]);
-    ccder_encode_rsa_pub(rsaPublicKey, static_cast<uint8_t*>([publicKey mutableBytes]), static_cast<uint8_t*>([publicKey mutableBytes]) + [publicKey length]);
+    Vector<uint8_t> rawKeyBytes(exportSize);
+    ccder_encode_rsa_pub(rsaPublicKey, rawKeyBytes.data(), rawKeyBytes.data() + exportSize);
 
-    auto secKey = adoptCF(SecKeyCreateWithData((__bridge CFDataRef)publicKey.get(), (__bridge CFDictionaryRef)@{
-        (__bridge id)kSecAttrKeyType: (__bridge id)kSecAttrKeyTypeRSA,
-        (__bridge id)kSecAttrKeyClass: (__bridge id)kSecAttrKeyClassPublic
-    }, nil));
-    EXPECT_NOT_NULL(secKey);
-
-    auto spkiData = adoptCF(SecKeyCopySubjectPublicKeyInfo(secKey.get()));
-    auto *nsSpkiData = (__bridge NSData *)spkiData.get();
+    auto wrappedKeyBytes = wrapPublicKeyWithRSAPSSOID(WTFMove(rawKeyBytes));
 
     // Continue the test.
-    auto errorMessage = pcm.calculateAndUpdateSourceUnlinkableToken(base64URLEncodeToString(nsSpkiData.bytes, nsSpkiData.length));
+    auto errorMessage = pcm.calculateAndUpdateSourceUnlinkableToken(base64URLEncodeToString(wrappedKeyBytes.data(), wrappedKeyBytes.size()));
     EXPECT_FALSE(errorMessage);
+    
     auto sourceUnlinkableToken = pcm.tokenSignatureJSON();
     EXPECT_EQ(sourceUnlinkableToken->asObject()->size(), 4ul);
     EXPECT_STREQ(sourceUnlinkableToken->getString("source_engagement_type"_s).utf8().data(), "click");
