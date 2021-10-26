@@ -74,12 +74,16 @@ void StyleRuleImport::setCSSStyleSheet(const String& href, const URL& baseURL, c
     m_styleSheet = StyleSheetContents::create(this, href, context);
     if (m_parentStyleSheet->isContentOpaque() || !cachedStyleSheet->isCORSSameOrigin())
         m_styleSheet->setAsOpaque();
-    m_styleSheet->parseAuthorStyleSheet(cachedStyleSheet, document ? &document->securityOrigin() : nullptr);
+
+    bool parseSucceeded = m_styleSheet->parseAuthorStyleSheet(cachedStyleSheet, document ? &document->securityOrigin() : nullptr);
 
     m_loading = false;
 
     if (m_parentStyleSheet) {
-        m_parentStyleSheet->notifyLoadedSheet(cachedStyleSheet);
+        if (parseSucceeded)
+            m_parentStyleSheet->notifyLoadedSheet(cachedStyleSheet);
+        else
+            m_parentStyleSheet->setLoadErrorOccured();
         m_parentStyleSheet->checkLoaded();
     }
 }

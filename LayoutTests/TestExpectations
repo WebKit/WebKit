@@ -607,7 +607,6 @@ imported/w3c/web-platform-tests/cors/image-tainting-in-cross-origin-iframe.sub.h
 imported/w3c/web-platform-tests/dom/events/EventListener-incumbent-global-1.sub.html [ Skip ]
 imported/w3c/web-platform-tests/dom/events/EventListener-incumbent-global-2.sub.html [ Skip ]
 imported/w3c/web-platform-tests/webmessaging/broadcastchannel/origin.window.html [ Skip ]
-imported/w3c/web-platform-tests/html/semantics/document-metadata/the-style-element/style-error-01.html [ Skip ]
 imported/w3c/web-platform-tests/html/browsers/origin/relaxing-the-same-origin-restriction/document_domain_access_details.sub.html [ Skip ]
 imported/w3c/web-platform-tests/html/browsers/sandboxing/sandbox-disallow-scripts-via-unsandboxed-popup.tentative.html [ Skip ]
 imported/w3c/web-platform-tests/html/canvas/element/fill-and-stroke-styles/2d.pattern.transform.infinity.html [ Skip ]
