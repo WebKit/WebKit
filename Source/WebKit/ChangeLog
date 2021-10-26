@@ -1,3 +1,15 @@
+2021-10-26  Per Arne  <pvollan@apple.com>
+
+        [iOS][WP] Reduce sandbox telemetry
+        https://bugs.webkit.org/show_bug.cgi?id=232279
+        <rdar://problem/84634347>
+
+        Reviewed by Brent Fulgham.
+
+        Reduce sandbox telemetry for rules we already have collected information for.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb.in:
+
 2021-10-26  Youenn Fablet  <youenn@apple.com>
 
         Only one AudioSampleDataSource::pullSamples is needed

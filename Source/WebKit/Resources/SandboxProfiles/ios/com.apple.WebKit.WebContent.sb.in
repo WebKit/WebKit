@@ -1271,7 +1271,10 @@
         (syscall-number SYS_ulock_wake)
         (syscall-number SYS_workq_kernreturn)
         (syscall-number SYS_workq_open))
-    
+
+    (allow syscall-unix (with telemetry)
+        (syscall-number SYS_objc_bp_assist_cfg_np))
+
     (allow syscall-unix (with telemetry-backtrace)
         (syscall-number SYS___pthread_kill)
         (syscall-number SYS___pthread_markcancel)
@@ -1309,7 +1312,6 @@
         (syscall-number SYS_munlock)
         (syscall-number SYS_necp_client_action)
         (syscall-number SYS_necp_open)
-        (syscall-number SYS_objc_bp_assist_cfg_np)
         (syscall-number SYS_open)
         (syscall-number SYS_open_dprotected_np)
         (syscall-number SYS_open_nocancel)
@@ -1392,7 +1394,7 @@
         (fcntl-command F_SETFL) ;; CMCapture uses when camera is enabled
         (fcntl-command F_SETNOSIGPIPE)) ;; CMCapture uses when camera is enabled
 
-    (allow system-fcntl (with telemetry-backtrace)
+    (allow system-fcntl (with telemetry)
         (fcntl-command F_OFD_SETLK))
 
     (allow system-fcntl
@@ -1541,11 +1543,13 @@
                 mach_vm_region_recurse
                 task_set_exc_guard_behavior
                 task_threads_from_user
-                thread_info
                 thread_policy
-                thread_policy_set
                 (when (defined? 'vm_copy) vm_copy)
                 (when (defined? 'vm_remap_external) vm_remap_external)))
+
+            (allow mach-message-send (with telemetry) (kernel-mig-routine
+                thread_info
+                thread_policy_set))
 
             (allow mach-message-send (kernel-mig-routine
                 (when (defined? '_mach_make_memory_entry) _mach_make_memory_entry)
