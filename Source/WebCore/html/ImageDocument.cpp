@@ -242,6 +242,7 @@ void ImageDocument::createDocumentStructure()
     imageElement->setSrc(url().string());
     imageElement->cachedImage()->setResponse(loader()->response());
     body->appendChild(imageElement);
+    imageElement->setLoadManually(false);
     
     if (m_shouldShrinkImage) {
 #if PLATFORM(IOS_FAMILY)

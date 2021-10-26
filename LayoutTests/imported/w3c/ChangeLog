@@ -1,5 +1,16 @@
 2021-10-26  Chris Dumez  <cdumez@apple.com>
 
+        Changing the src attribute of the <img> element inside an ImageDocument does not trigger a load
+        https://bugs.webkit.org/show_bug.cgi?id=232323
+
+        Reviewed by Alex Christensen.
+
+        Rebaseline test that is now passing.
+
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/decode/image-decode-image-document-expected.txt:
+
+2021-10-26  Chris Dumez  <cdumez@apple.com>
+
         error event should be fired at <style> element when @import rule fails parsing due to MIME type
         https://bugs.webkit.org/show_bug.cgi?id=232313
 

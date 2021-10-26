@@ -1,3 +1,14 @@
+2021-10-26  Chris Dumez  <cdumez@apple.com>
+
+        Changing the src attribute of the <img> element inside an ImageDocument does not trigger a load
+        https://bugs.webkit.org/show_bug.cgi?id=232323
+
+        Reviewed by Alex Christensen.
+
+        Unskip test that is no longer timing out.
+
+        * TestExpectations:
+
 2021-10-26  John Wilander  <wilander@apple.com>
 
         [ iOS 15 ] ASSERTION FAILED: isRunningTest(WebCore::applicationBundleIdentifier())
