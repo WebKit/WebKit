@@ -3135,8 +3135,11 @@ static RefPtr<CSSValueList> consumeGridAutoFlow(CSSParserTokenRange& range)
             return nullptr;
     }
     RefPtr<CSSValueList> parsedValues = CSSValueList::createSpaceSeparated();
-    if (rowOrColumnValue)
-        parsedValues->append(rowOrColumnValue.releaseNonNull());
+    if (rowOrColumnValue) {
+        CSSValueID value = rowOrColumnValue->valueID();
+        if (value == CSSValueID::CSSValueColumn || (value == CSSValueID::CSSValueRow && !denseAlgorithm))
+            parsedValues->append(rowOrColumnValue.releaseNonNull());
+    }
     if (denseAlgorithm)
         parsedValues->append(denseAlgorithm.releaseNonNull());
     return parsedValues;

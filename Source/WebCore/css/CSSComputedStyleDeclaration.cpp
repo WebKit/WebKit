@@ -3007,10 +3007,10 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         case CSSPropertyGridAutoFlow: {
             auto list = CSSValueList::createSpaceSeparated();
             ASSERT(style.isGridAutoFlowDirectionRow() || style.isGridAutoFlowDirectionColumn());
-            if (style.isGridAutoFlowDirectionRow())
-                list->append(cssValuePool.createIdentifierValue(CSSValueRow));
-            else
+            if (style.isGridAutoFlowDirectionColumn())
                 list->append(cssValuePool.createIdentifierValue(CSSValueColumn));
+            else if (!style.isGridAutoFlowAlgorithmDense())
+                list->append(cssValuePool.createIdentifierValue(CSSValueRow));
 
             if (style.isGridAutoFlowAlgorithmDense())
                 list->append(cssValuePool.createIdentifierValue(CSSValueDense));
