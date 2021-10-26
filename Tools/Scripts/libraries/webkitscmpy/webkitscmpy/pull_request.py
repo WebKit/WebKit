@@ -21,11 +21,46 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import re
+import six
 
 from .commit import Commit
+from datetime import datetime
+from webkitscmpy import Contributor
 
 
 class PullRequest(object):
+    class Exception(RuntimeError):
+        pass
+
+    class Comment(object):
+        def __init__(self, author, timestamp, content):
+            if author and isinstance(author, dict) and author.get('name'):
+                self.author = Contributor(author.get('name'), author.get('emails'))
+            elif author and isinstance(author, six.string_types) and '@' in author:
+                self.author = Contributor(author, [author])
+            elif author and not isinstance(author, Contributor):
+                raise TypeError("Expected 'author' to be of type {}, got '{}'".format(Contributor, author))
+            else:
+                self.author = author
+
+            if isinstance(timestamp, six.string_types) and timestamp.isdigit():
+                timestamp = int(timestamp)
+            if timestamp and not isinstance(timestamp, int):
+                raise TypeError("Expected 'timestamp' to be of type int, got '{}'".format(timestamp))
+            self.timestamp = timestamp
+
+            if content and not isinstance(content, six.string_types):
+                raise ValueError("Expected 'content' to be a string, got '{}'".format(content))
+            self.content = content
+
+        def __repr__(self):
+            return '({} @ {}) {}'.format(
+                self.author,
+                datetime.utcfromtimestamp(self.timestamp) if self.timestamp else '-',
+                self.content,
+            )
+
+
     COMMIT_BODY_RES = [
         dict(
             re=re.compile(r'\A#### (?P<hash>[0-9a-f]+)\n```\n(?P<message>.+)\n```\n?\Z', flags=re.DOTALL),
@@ -99,7 +134,12 @@ class PullRequest(object):
                     body = part.rstrip().lstrip()
         return body or None, commits
 
-    def __init__(self, number, title=None, body=None, author=None, head=None, base=None, opened=None, generator=None):
+    def __init__(
+        self, number, title=None,
+        body=None, author=None,
+        head=None, base=None,
+        opened=None, generator=None, metadata=None,
+    ):
         self.number = number
         self.title = title
         self.body, self.commits = self.parse_body(body)
@@ -110,6 +150,8 @@ class PullRequest(object):
         self._reviewers = None
         self._approvers = None
         self._blockers = None
+        self._metadata = metadata
+        self._comments = None
         self.generator = generator
 
     @property
@@ -135,6 +177,33 @@ class PullRequest(object):
         if self._opened is None:
             return '?'
         return self._opened
+
+    def open(self):
+        if self.opened is True:
+            return self
+        if not self.generator:
+            raise self.Exception('No associated pull-request generator')
+        return self.generator.update(self, opened=True)
+
+    def close(self):
+        if self.opened is False:
+            return self
+        if not self.generator:
+            raise self.Exception('No associated pull-request generator')
+        return self.generator.update(self, opened=False)
+
+    def comment(self, content):
+        if not self.generator:
+            raise self.Exception('No associated pull-request generator')
+        self.generator.comment(self, content)
+        self._comments = None
+        return self
+
+    @property
+    def comments(self):
+        if self._comments is None and self.generator:
+            self._comments = list(self.generator.comments(self))
+        return self._comments
 
     def __repr__(self):
         return 'PR {}{}'.format(self.number, ' | {}'.format(self.title) if self.title else '')

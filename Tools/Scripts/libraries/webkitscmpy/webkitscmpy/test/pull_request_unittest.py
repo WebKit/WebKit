@@ -460,7 +460,9 @@ Reviewed by NOBODY (OOPS!).
             reviews=[
                 dict(user=dict(login='ereviewer'), state='APPROVED'),
                 dict(user=dict(login='sreviewer'), state='CHANGES_REQUESTED'),
-            ],
+            ], _links=dict(
+                issue=dict(href='https://{}/issues/1'.format(result.api_remote)),
+            ),
         )]
         return result
 
@@ -509,6 +511,24 @@ Reviewed by NOBODY (OOPS!).
             self.assertEqual(pr.approvers, [])
             self.assertEqual(pr.blockers, [Contributor('Suspicious Reviewer', ['sreviewer@webkit.org'])])
 
+    def test_comments(self):
+        with self.webserver():
+            repo = remote.GitHub(self.remote)
+            pr = repo.pull_requests.get(1)
+            self.assertEqual(pr.comments, [])
+            pr.comment('Commenting!')
+            self.assertEqual([c.content for c in pr.comments], ['Commenting!'])
+
+    def test_open_close(self):
+        with self.webserver():
+            repo = remote.GitHub(self.remote)
+            pr = repo.pull_requests.get(1)
+            self.assertTrue(pr.opened)
+            pr.close()
+            self.assertFalse(pr.opened)
+            pr.open()
+            self.assertTrue(pr.opened)
+
 
 class TestNetworkPullRequestBitBucket(unittest.TestCase):
     remote = 'https://bitbucket.example.com/projects/WEBKIT/repos/webkit'
@@ -521,6 +541,7 @@ class TestNetworkPullRequestBitBucket(unittest.TestCase):
             state='OPEN',
             open=True,
             closed=False,
+            activities=[],
             title='Example Change',
             author=dict(
                 user=dict(
@@ -606,3 +627,21 @@ Reviewed by NOBODY (OOPS!).
             ])
             self.assertEqual(pr.approvers, [])
             self.assertEqual(pr.blockers, [Contributor('Suspicious Reviewer', ['sreviewer@webkit.org'])])
+
+    def test_comments(self):
+        with self.webserver():
+            repo = remote.BitBucket(self.remote)
+            pr = repo.pull_requests.get(1)
+            self.assertEqual(pr.comments, [])
+            pr.comment('Commenting!')
+            self.assertEqual([c.content for c in pr.comments], ['Commenting!'])
+
+    def test_open_close(self):
+        with self.webserver():
+            repo = remote.BitBucket(self.remote)
+            pr = repo.pull_requests.get(1)
+            self.assertTrue(pr.opened)
+            pr.close()
+            self.assertFalse(pr.opened)
+            pr.open()
+            self.assertTrue(pr.opened)

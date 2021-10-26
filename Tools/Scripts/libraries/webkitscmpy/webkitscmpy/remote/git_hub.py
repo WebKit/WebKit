@@ -54,6 +54,9 @@ class GitHub(Scm):
                     closed=False,
                 ).get(data.get('state'), None),
                 generator=self,
+                metadata=dict(
+                    issue=data.get('_links', {}).get('issue', {}).get('href'),
+                ),
             )
 
         def get(self, number):
@@ -103,10 +106,10 @@ class GitHub(Scm):
                 return None
             return self.PullRequest(response.json())
 
-        def update(self, pull_request, head=None, title=None, body=None, commits=None, base=None):
+        def update(self, pull_request, head=None, title=None, body=None, commits=None, base=None, opened=None):
             if not isinstance(pull_request, PullRequest):
                 raise ValueError("Expected 'pull_request' to be of type '{}' not '{}'".format(PullRequest, type(pull_request)))
-            if not any((head, title, body, commits, base)):
+            if not any((head, title, body, commits, base)) and opened is None:
                 raise ValueError('No arguments to update pull-request provided')
 
             user, _ = self.repository.credentials(required=True)
@@ -117,6 +120,8 @@ class GitHub(Scm):
             )
             if body or commits:
                 updates['body'] = PullRequest.create_body(body, commits)
+            if opened is not None:
+                updates['state'] = 'open' if opened else 'closed'
             response = requests.post(
                 '{api_url}/repos/{owner}/{name}/pulls/{number}'.format(
                     api_url=self.repository.api_url,
@@ -127,6 +132,9 @@ class GitHub(Scm):
                 headers=dict(Accept='application/vnd.github.v3+json'),
                 json=updates,
             )
+            if response.status_code == 422:
+                pull_request._opened = False
+                return pull_request
             if response.status_code // 100 != 2:
                 return None
             data = response.json()
@@ -141,8 +149,11 @@ class GitHub(Scm):
             pull_request._opened = dict(
                 open=True,
                 closed=False,
-            ).get(data.get('state'), None),
+            ).get(data.get('state'), None)
             pull_request.generator = self
+            pull_request._metadata = dict(
+                issue=data.get('_links', {}).get('issue', {}).get('href'),
+            )
 
             return pull_request
 
@@ -183,6 +194,56 @@ class GitHub(Scm):
 
             pull_request._reviewers = sorted(pull_request._reviewers)
             return pull_request
+
+        def comment(self, pull_request, content):
+            issue = pull_request._metadata.get('issue')
+            if not issue:
+                old = pull_request
+                pull_request = self.get(old.number)
+                pull_request._reviewers = old._reviewers
+                pull_request._approvers = old._approvers
+                pull_request._blockers = old._blockers
+                issue = pull_request._metadata.get('issue')
+            if not issue:
+                raise self.repository.Exception('Failed to find issue underlying pull-request')
+            response = requests.post(
+                '{}/comments'.format(issue),
+                auth=HTTPBasicAuth(*self.repository.credentials(required=True)),
+                headers=dict(Accept='application/vnd.github.v3+json'),
+                json=dict(body=content),
+            )
+            if response.status_code // 100 != 2:
+                sys.stderr.write("Failed to add comment to '{}'\n".format(pull_request))
+
+        def comments(self, pull_request):
+            issue = pull_request._metadata.get('issue')
+            if not issue:
+                old = pull_request
+                pull_request = self.get(old.number)
+                pull_request._reviewers = old._reviewers
+                pull_request._approvers = old._approvers
+                pull_request._blockers = old._blockers
+                issue = pull_request._metadata.get('issue')
+            if not issue:
+                raise self.repository.Exception('Failed to find issue underlying pull-request')
+            response = requests.get(
+                '{}/comments'.format(issue),
+                auth=HTTPBasicAuth(*self.repository.credentials()),
+                headers=dict(Accept='application/vnd.github.v3+json'),
+            )
+            for node in response.json() if response.status_code // 100 == 2 else []:
+                user = node.get('user', {}).get('login')
+                if not user:
+                    continue
+                tm = node.get('updated_at', node.get('created_at'))
+                if tm:
+                    tm = int(calendar.timegm(datetime.strptime(tm, '%Y-%m-%dT%H:%M:%SZ').timetuple()))
+
+                yield PullRequest.Comment(
+                    author=self._contributor(user),
+                    timestamp=tm,
+                    content=node.get('body'),
+                )
 
 
     @classmethod

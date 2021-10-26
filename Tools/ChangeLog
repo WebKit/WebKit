@@ -1,3 +1,40 @@
+2021-10-26  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitscmpy] Comment and close pull-requests
+        https://bugs.webkit.org/show_bug.cgi?id=232095
+        <rdar://problem/84515738>
+
+        Reviewed by Dewei Zhu.
+
+        * Scripts/libraries/webkitscmpy/setup.py: Bump version.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/__init__.py: Ditto.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/mocks/remote/bitbucket.py:
+        (BitBucket.request): Add support for activities, opening and closing pull-request.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/mocks/remote/git_hub.py:
+        (GitHub.__init__): Add issues.
+        (GitHub.request): Access issue underlying pull-request (which includes global comments).
+        * Scripts/libraries/webkitscmpy/webkitscmpy/pull_request.py:
+        (PullRequest.Exception): Added.
+        (PullRequest.Comment): Added.
+        (PullRequest.__init__): Add list of pull-request comments, metadata used by generator.
+        (PullRequest.open): Re-open the pull-request.
+        (PullRequest.close): Close the pull-request.
+        (PullRequest.comment): Make a comment on the pull-request.
+        (PullRequest.comments): List all comments on a pull-request.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/remote/bitbucket.py:
+        (BitBucket.PRGenerator.update): Handle closing and opening of the pull-request.
+        (BitBucket.PRGenerator.comment): Make a comment on a pull-request.
+        (BitBucket.PRGenerator.comments): List all comments on a pull-request.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/remote/git_hub.py:
+        (GitHub.PRGenerator.update): Handle closing and opening of the pull-request.
+        (GitHub.PRGenerator.comment): Make a comment on a issue underpinning a pull-request.
+        (GitHub.PRGenerator.comments): List all comments on the pull-request.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/remote/scm.py:
+        (Scm.PRGenerator.update): Add support for opening and closing a pull-request.
+        (Scm.PRGenerator.comment): Make a comment on a pull-request.
+        (Scm.PRGenerator.comments): List all comments for a pull-request
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/pull_request_unittest.py:
+
 2021-10-26  Simon Fraser  <simon.fraser@apple.com>
 
         The script should decide when an image diff cases, not ImageDiff

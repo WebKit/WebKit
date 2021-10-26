@@ -142,10 +142,32 @@ class BitBucket(Scm):
                 return None
             return self.PullRequest(response.json())
 
-        def update(self, pull_request, head=None, title=None, body=None, commits=None, base=None):
+        def update(self, pull_request, head=None, title=None, body=None, commits=None, base=None, opened=None):
             if not isinstance(pull_request, PullRequest):
-                raise ValueError(
-                    "Expected 'pull_request' to be of type '{}' not '{}'".format(PullRequest, type(pull_request)))
+                raise ValueError("Expected 'pull_request' to be of type '{}' not '{}'".format(PullRequest, type(pull_request)))
+
+            pr_url = 'https://{domain}/rest/api/1.0/projects/{project}/repos/{name}/pull-requests/{id}'.format(
+                domain=self.repository.domain,
+                project=self.repository.project,
+                name=self.repository.name,
+                id=pull_request.number,
+            )
+
+            if opened is not None:
+                response = requests.get(pr_url)
+                if response.status_code // 100 != 2:
+                    return None
+                response = requests.post(
+                    '{}/{}'.format(pr_url, 'reopen' if opened else 'decline'),
+                    json=dict(version=response.json().get('version', 0)),
+                )
+                if response.status_code // 100 != 2:
+                    return None
+
+                pull_request._opened = opened
+                if not any((head, title, body, commits, base)):
+                    return pull_request
+
             if not any((head, title, body, commits, base)):
                 raise ValueError('No arguments to update pull-request provided')
 
@@ -176,12 +198,6 @@ class BitBucket(Scm):
                     ),
                 )
 
-            pr_url = 'https://{domain}/rest/api/1.0/projects/{project}/repos/{name}/pull-requests/{id}'.format(
-                domain=self.repository.domain,
-                project=self.repository.project,
-                name=self.repository.name,
-                id=pull_request.number,
-            )
             response = requests.get(pr_url)
             if response.status_code // 100 != 2:
                 return None
@@ -212,6 +228,32 @@ class BitBucket(Scm):
             pull_request._reviewers = got._reviewers if got else []
             pull_request._approvers = got._approvers if got else []
             return pull_request
+
+        def comment(self, pull_request, content):
+            response = requests.post(
+                'https://{domain}/rest/api/1.0/projects/{project}/repos/{name}/pull-requests/{id}/comments'.format(
+                    domain=self.repository.domain,
+                    project=self.repository.project,
+                    name=self.repository.name,
+                    id=pull_request.number,
+                ), json=dict(text=content),
+            )
+            if response.status_code // 100 != 2:
+                sys.stderr.write("Failed to add comment to '{}'\n".format(pull_request))
+
+        def comments(self, pull_request):
+            for action in reversed(self.repository.request('pull-requests/{}/activities'.format(pull_request.number)) or []):
+                comment = action.get('comment', {})
+                user = comment.get('author', {})
+                if not comment or not user or not comment.get('text'):
+                    continue
+
+                yield PullRequest.Comment(
+                    author=self.repository.contributors.create(user['displayName'], user['emailAddress']),
+                    timestamp=comment.get('updatedDate', comment.get('createdDate')) // 1000,
+                    content=comment.get('text'),
+                )
+
 
     @classmethod
     def is_webserver(cls, url):
