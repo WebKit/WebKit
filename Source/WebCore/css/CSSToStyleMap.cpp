@@ -456,50 +456,10 @@ void CSSToStyleMap::mapAnimationProperty(Animation& animation, const CSSValue& v
 
 void CSSToStyleMap::mapAnimationTimingFunction(Animation& animation, const CSSValue& value)
 {
-    if (value.treatAsInitialValue(CSSPropertyAnimationTimingFunction)) {
+    if (value.treatAsInitialValue(CSSPropertyAnimationTimingFunction))
         animation.setTimingFunction(Animation::initialTimingFunction());
-        return;
-    }
-
-    if (is<CSSPrimitiveValue>(value)) {
-        switch (downcast<CSSPrimitiveValue>(value).valueID()) {
-        case CSSValueLinear:
-            animation.setTimingFunction(LinearTimingFunction::create());
-            break;
-        case CSSValueEase:
-            animation.setTimingFunction(CubicBezierTimingFunction::create());
-            break;
-        case CSSValueEaseIn:
-            animation.setTimingFunction(CubicBezierTimingFunction::create(CubicBezierTimingFunction::EaseIn));
-            break;
-        case CSSValueEaseOut:
-            animation.setTimingFunction(CubicBezierTimingFunction::create(CubicBezierTimingFunction::EaseOut));
-            break;
-        case CSSValueEaseInOut:
-            animation.setTimingFunction(CubicBezierTimingFunction::create(CubicBezierTimingFunction::EaseInOut));
-            break;
-        case CSSValueStepStart:
-            animation.setTimingFunction(StepsTimingFunction::create(1, StepsTimingFunction::StepPosition::Start));
-            break;
-        case CSSValueStepEnd:
-            animation.setTimingFunction(StepsTimingFunction::create(1, StepsTimingFunction::StepPosition::End));
-            break;
-        default:
-            break;
-        }
-        return;
-    }
-
-    if (is<CSSCubicBezierTimingFunctionValue>(value)) {
-        auto& cubicTimingFunction = downcast<CSSCubicBezierTimingFunctionValue>(value);
-        animation.setTimingFunction(CubicBezierTimingFunction::create(cubicTimingFunction.x1(), cubicTimingFunction.y1(), cubicTimingFunction.x2(), cubicTimingFunction.y2()));
-    } else if (is<CSSStepsTimingFunctionValue>(value)) {
-        auto& stepsTimingFunction = downcast<CSSStepsTimingFunctionValue>(value);
-        animation.setTimingFunction(StepsTimingFunction::create(stepsTimingFunction.numberOfSteps(), stepsTimingFunction.stepPosition()));
-    } else if (is<CSSSpringTimingFunctionValue>(value)) {
-        auto& springTimingFunction = downcast<CSSSpringTimingFunctionValue>(value);
-        animation.setTimingFunction(SpringTimingFunction::create(springTimingFunction.mass(), springTimingFunction.stiffness(), springTimingFunction.damping(), springTimingFunction.initialVelocity()));
-    }
+    else if (auto timingFunction = TimingFunction::createFromCSSValue(value))
+        animation.setTimingFunction(WTFMove(timingFunction));
 }
 
 void CSSToStyleMap::mapNinePieceImage(CSSPropertyID property, CSSValue* value, NinePieceImage& image)
