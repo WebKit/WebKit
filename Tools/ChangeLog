@@ -1,3 +1,15 @@
+2021-10-26  Roy Reapor  <rreapor@apple.com>
+
+        webkitpy/autoinstalled/pyobjc_frameworks.py should not autoinstall frameworks if they can be imported without exceptions
+        https://bugs.webkit.org/show_bug.cgi?id=232331
+
+        Reviewed by Jonathan Bedard.
+ 
+        Avoid autointalling pyobjc frameworks if the installed frameworks can be imported without generating an exception.
+
+        * Scripts/webkitpy/autoinstalled/pyobjc_frameworks.py:
+        (_import_modules):
+
 2021-10-26  Tim Horton  <timothy_horton@apple.com>
 
         [GPU Process] `DisplayList::Recorder::getCTM` should include the device scale factor

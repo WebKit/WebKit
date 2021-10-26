@@ -24,17 +24,26 @@ import objc
 
 from webkitscmpy import AutoInstall, Package, Version
 
-pyobjc_core_version = Version.from_string(objc.__version__)
-AutoInstall.register(Package('Cocoa', pyobjc_core_version, pypi_name='pyobjc-framework-Cocoa', wheel=True))
-AutoInstall.register(Package('Quartz', pyobjc_core_version, pypi_name='pyobjc-framework-Quartz', wheel=True))
 
-# Modules from pyobjc-framework-Cocoa
-# Note, the module (`import_name`) provided to `AutoInstall.register`
-# must be imported first. This triggers the package install if necessary.
-Cocoa = __import__('Cocoa')
-AppKit = __import__('AppKit')
-CoreFoundation = __import__('CoreFoundation')
-Foundation = __import__('Foundation')
+def _import_modules():
+    # Modules from pyobjc-framework-Cocoa and pyobjc-framework-Quartz
+    # Note, the module (`import_name`) provided to `Package()`
+    # must be imported first. This triggers the package install if necessary.
+    return (
+        __import__('Cocoa'),
+        __import__('AppKit'),
+        __import__('CoreFoundation'),
+        __import__('Foundation'),
+        __import__('Quartz')
+    )
 
-# Module from pyobjc-framework-Quartz
-Quartz = __import__('Quartz')
+
+try:
+    Cocoa, AppKit, CoreFoundation, Foundation, Quartz = _import_modules()
+except Exception as e:
+    AutoInstall.log('Import failed with exception {}'.format(e))
+    AutoInstall.log('Autoinstalling...')
+    pyobjc_core_version = Version.from_string(objc.__version__)
+    AutoInstall.register(Package('Cocoa', pyobjc_core_version, pypi_name='pyobjc-framework-Cocoa', wheel=True))
+    AutoInstall.register(Package('Quartz', pyobjc_core_version, pypi_name='pyobjc-framework-Quartz', wheel=True))
+    Cocoa, AppKit, CoreFoundation, Foundation, Quartz = _import_modules()
