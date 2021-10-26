@@ -1161,12 +1161,21 @@ test/built-ins/Temporal/PlainTime/prototype/toLocaleString/options-conflict.js:
 test/built-ins/Temporal/getOwnPropertyNames.js:
   default: 'Test262Error: length Expected SameValue(«5», «11») to be true'
   strict mode: 'Test262Error: length Expected SameValue(«5», «11») to be true'
+test/intl402/DateTimeFormat/prototype/formatRange/en-US.js:
+  default: 'Test262Error: Expected SameValue(«1/3/2019 – 1/5/2019», «1/3/2019 – 1/5/2019») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«1/3/2019 – 1/5/2019», «1/3/2019 – 1/5/2019») to be true'
+test/intl402/DateTimeFormat/prototype/formatRange/fractionalSecondDigits.js:
+  default: 'Test262Error: no fractionalSecondDigits Expected SameValue(«02:03 – 02:13», «02:03 – 02:13») to be true'
+  strict mode: 'Test262Error: no fractionalSecondDigits Expected SameValue(«02:03 – 02:13», «02:03 – 02:13») to be true'
 test/intl402/DateTimeFormat/prototype/resolvedOptions/hourCycle-default.js:
   default: 'Test262Error: Expected SameValue(«h24», «h23») to be true'
   strict mode: 'Test262Error: Expected SameValue(«h24», «h23») to be true'
+test/intl402/Intl/getCanonicalLocales/non-iana-canon.js:
+  default: 'Test262Error: The value of Intl.getCanonicalLocales(tag)[0] equals the value of `canonical` Expected SameValue(«en-US-u-va-posix», «posix») to be true'
+  strict mode: 'Test262Error: The value of Intl.getCanonicalLocales(tag)[0] equals the value of `canonical` Expected SameValue(«en-US-u-va-posix», «posix») to be true'
 test/intl402/Intl/getCanonicalLocales/preferred-grandfathered.js:
-  default: 'Test262Error: Expected SameValue(«cel-gaulish», «xtg») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«cel-gaulish», «xtg») to be true'
+  default: 'Test262Error: Expected SameValue(«xtg-x-cel-gaulish», «xtg») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«xtg-x-cel-gaulish», «xtg») to be true'
 test/intl402/Intl/getCanonicalLocales/transformed-ext-canonical.js:
   default: 'Test262Error: Expected SameValue(«sl-t-sl-rozaj-biske-1994», «sl-t-sl-1994-biske-rozaj») to be true'
   strict mode: 'Test262Error: Expected SameValue(«sl-t-sl-rozaj-biske-1994», «sl-t-sl-1994-biske-rozaj») to be true'
@@ -1177,14 +1186,14 @@ test/intl402/Intl/getCanonicalLocales/unicode-ext-canonicalize-subdivision.js:
   default: 'Test262Error: Expected SameValue(«und-NO-u-sd-no23», «und-NO-u-sd-no50») to be true'
   strict mode: 'Test262Error: Expected SameValue(«und-NO-u-sd-no23», «und-NO-u-sd-no50») to be true'
 test/intl402/Locale/extensions-grandfathered.js:
-  default: 'Test262Error: Expected SameValue(«fr-Cyrl-FR-gaulish-u-nu-latn», «fr-Cyrl-FR-u-nu-latn») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«fr-Cyrl-FR-gaulish-u-nu-latn», «fr-Cyrl-FR-u-nu-latn») to be true'
-test/intl402/Locale/getters-grandfathered.js:
-  default: 'Test262Error: Expected SameValue(«cel-gaulish», «xtg») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«cel-gaulish», «xtg») to be true'
+  default: 'Test262Error: Expected SameValue(«fr-Cyrl-FR-u-nu-latn-x-cel-gaulish», «fr-Cyrl-FR-u-nu-latn») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«fr-Cyrl-FR-u-nu-latn-x-cel-gaulish», «fr-Cyrl-FR-u-nu-latn») to be true'
 test/intl402/Locale/likely-subtags-grandfathered.js:
-  default: 'Test262Error: Expected SameValue(«cel-gaulish», «xtg») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«cel-gaulish», «xtg») to be true'
+  default: 'Test262Error: Expected SameValue(«xtg-x-cel-gaulish», «xtg») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«xtg-x-cel-gaulish», «xtg») to be true'
+test/intl402/Locale/prototype/minimize/removing-likely-subtags-first-adds-likely-subtags.js:
+  default: 'Test262Error: "und".minimize() should be "en" Expected SameValue(«en-u-va-posix», «en») to be true'
+  strict mode: 'Test262Error: "und".minimize() should be "en" Expected SameValue(«en-u-va-posix», «en») to be true'
 test/intl402/Temporal/PlainTime/prototype/toLocaleString/locales-undefined.js:
   default: 'TypeError: Temporal.PlainTime.prototype.valueOf must not be called. To compare PlainTime values, use Temporal.PlainTime.compare'
   strict mode: 'TypeError: Temporal.PlainTime.prototype.valueOf must not be called. To compare PlainTime values, use Temporal.PlainTime.compare'

@@ -1,3 +1,10 @@
+2021-10-26  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Unreviewed, fix test262 bot failures
+        https://bugs.webkit.org/show_bug.cgi?id=232005
+
+        * test262/expectations.yaml:
+
 2021-10-25  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Don't branch around register allocation in DFG enumerator get by val
