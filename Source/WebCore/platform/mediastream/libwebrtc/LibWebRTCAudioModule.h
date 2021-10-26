@@ -46,7 +46,7 @@ class LibWebRTCAudioModule : public webrtc::AudioDeviceModule {
 public:
     LibWebRTCAudioModule();
 
-    static constexpr unsigned PollSamplesCount = 3;
+    static constexpr unsigned PollSamplesCount = 1;
 
 private:
     template<typename U> U shouldNotBeCalled(U value) const
