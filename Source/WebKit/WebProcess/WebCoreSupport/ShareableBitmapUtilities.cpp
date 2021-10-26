@@ -71,6 +71,7 @@ RefPtr<ShareableBitmap> createShareableBitmap(RenderImage& renderImage, CreateSh
         return bitmap;
     }
 
+#if ENABLE(VIDEO)
     if (is<RenderVideo>(renderImage)) {
         auto& renderVideo = downcast<RenderVideo>(renderImage);
         Ref video = renderVideo.videoElement();
@@ -93,6 +94,7 @@ RefPtr<ShareableBitmap> createShareableBitmap(RenderImage& renderImage, CreateSh
         context->drawNativeImage(*image, imageSize, FloatRect { { }, imageSize }, FloatRect { { }, imageSize });
         return bitmap;
     }
+#endif // ENABLE(VIDEO)
 
     auto* cachedImage = renderImage.cachedImage();
     if (!cachedImage || cachedImage->errorOccurred())

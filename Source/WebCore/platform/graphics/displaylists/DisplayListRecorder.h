@@ -116,7 +116,9 @@ protected:
 #endif
     virtual void recordFillPath(const Path&) = 0;
     virtual void recordFillEllipse(const FloatRect&) = 0;
+#if ENABLE(VIDEO)
     virtual void recordPaintFrameForMedia(MediaPlayer&, const FloatRect& destination) = 0;
+#endif
     virtual void recordStrokeRect(const FloatRect&, float) = 0;
 #if ENABLE(INLINE_PATH_DATA)
     virtual void recordStrokeLine(const LineData&) = 0;

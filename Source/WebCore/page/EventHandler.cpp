@@ -2543,8 +2543,10 @@ RefPtr<Element> EventHandler::textRecognitionCandidateElement() const
         return candidateElement;
 #endif
 
+#if ENABLE(VIDEO)
     if (is<HTMLVideoElement>(*candidateElement))
         return nullptr;
+#endif // ENABLE(VIDEO)
 
     return candidateElement;
 }

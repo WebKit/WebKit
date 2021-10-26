@@ -342,10 +342,12 @@ void RecorderImpl::recordFillEllipse(const FloatRect& rect)
     append<FillEllipse>(rect);
 }
 
+#if ENABLE(VIDEO)
 void RecorderImpl::recordPaintFrameForMedia(MediaPlayer& player, const FloatRect& destination)
 {
     append<PaintFrameForMedia>(player, destination);
 }
+#endif // ENABLE(VIDEO)
 
 void RecorderImpl::recordStrokeRect(const FloatRect& rect, float width)
 {

@@ -1,3 +1,12 @@
+2021-10-26  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Multiple build issues with ENABLE_VIDEO=OFF
+        https://bugs.webkit.org/show_bug.cgi?id=232264
+
+        Reviewed by Carlos Garcia Campos.
+
+        * Source/cmake/WebKitFeatures.cmake: Make ENABLE_MEDIA_SESSION depend on ENABLE_VIDEO.
+
 2021-10-25  Jonathan Bedard  <jbedard@apple.com>
 
         Add GitHub usernames for bedison and darinadler

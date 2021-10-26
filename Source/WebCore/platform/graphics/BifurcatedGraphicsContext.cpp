@@ -297,11 +297,13 @@ ImageDrawResult BifurcatedGraphicsContext::drawTiledImage(Image& image, const Fl
     return result;
 }
 
+#if ENABLE(VIDEO)
 void BifurcatedGraphicsContext::paintFrameForMedia(MediaPlayer& player, const FloatRect& destination)
 {
     m_primaryContext.paintFrameForMedia(player, destination);
     m_secondaryContext.paintFrameForMedia(player, destination);
 }
+#endif // ENABLE(VIDEO)
 
 void BifurcatedGraphicsContext::scale(const FloatSize& scale)
 {

@@ -114,7 +114,9 @@ private:
 #endif
     void recordFillPath(const Path&) final;
     void recordFillEllipse(const FloatRect&) final;
+#if ENABLE(VIDEO)
     void recordPaintFrameForMedia(MediaPlayer&, const FloatRect& destination) final;
+#endif
     void recordStrokeRect(const FloatRect&, float) final;
 #if ENABLE(INLINE_PATH_DATA)
     void recordStrokeLine(const LineData&) final;
