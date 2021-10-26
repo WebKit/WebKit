@@ -1,5 +1,14 @@
 2021-10-26  Antti Koivisto  <antti@apple.com>
 
+        Serialize :part() argument as identifier
+        https://bugs.webkit.org/show_bug.cgi?id=232297
+
+        Reviewed by Youenn Fablet.
+
+        * web-platform-tests/css/css-shadow-parts/serialization-expected.txt:
+
+2021-10-26  Antti Koivisto  <antti@apple.com>
+
         [CSS Cascade Layers] Media queries should be able to affect layer order
         https://bugs.webkit.org/show_bug.cgi?id=232238
 

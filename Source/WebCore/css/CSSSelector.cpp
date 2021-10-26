@@ -724,7 +724,7 @@ String CSSSelector::selectorText(const String& rightSide) const
                     if (!isFirst)
                         builder.append(' ');
                     isFirst = false;
-                    builder.append(partName);
+                    serializeIdentifier(partName, builder);
                 }
                 builder.append(')');
                 break;
