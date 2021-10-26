@@ -1,3 +1,12 @@
+2021-10-26  Ayumi Kojima  <ayumi_kojima@apple.com>
+
+        [ iPad ]Rebaselining compositing/contents-format/deep-color-backing-store.html.
+        https://bugs.webkit.org/show_bug.cgi?id=232351
+
+        Unreviewed test gardening.
+
+        * platform/ipad/compositing/contents-format/deep-color-backing-store-expected.txt: Added.
+
 2021-10-26  Eric Hutchison  <ehutchison@apple.com>
 
         N[ Mac Debug iOS Release wk2 ] imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting/navigation-reporting/reporting-coop-navigated-opener.https.html is a flaky failure.
