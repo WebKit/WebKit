@@ -46,6 +46,7 @@ ExceptionOr<Ref<ReadableStream>> ReadableStream::create(JSC::JSGlobalObject& lex
     auto& globalObject = *JSC::jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject);
 
     auto* constructor = JSC::asObject(globalObject.get(&lexicalGlobalObject, clientData.builtinNames().ReadableStreamPrivateName()));
+    RETURN_IF_EXCEPTION(scope, Exception { ExistingExceptionError });
 
     auto constructData = getConstructData(vm, constructor);
     ASSERT(constructData.type != CallData::Type::None);
@@ -115,13 +116,14 @@ void ReadableStream::lock()
 {
     auto& lexicalGlobalObject = *m_globalObject;
     auto& vm = lexicalGlobalObject.vm();
-#if ENABLE(EXCEPTION_SCOPE_VERIFICATION)
     auto scope = DECLARE_CATCH_SCOPE(vm);
-#endif
 
     auto& clientData = *static_cast<JSVMClientData*>(vm.clientData);
 
     auto* constructor = JSC::asObject(m_globalObject->get(&lexicalGlobalObject, clientData.builtinNames().ReadableStreamDefaultReaderPrivateName()));
+    EXCEPTION_ASSERT(!scope.exception() || vm.hasPendingTerminationException());
+    if (scope.exception())
+        return;
 
     auto constructData = getConstructData(vm, constructor);
     ASSERT(constructData.type != CallData::Type::None);
