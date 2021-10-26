@@ -219,6 +219,65 @@ TEST(BifurcatedGraphicsContextTests, Borders)
     EXPECT_EQ(primaryData[3], 255);
 }
 
+TEST(BifurcatedGraphicsContextTests, TransformedClip)
+{
+    auto colorSpace = DestinationColorSpace::SRGB();
+    auto primaryCGContext = adoptCF(CGBitmapContextCreate(nullptr, 100, 100, 8, 4 * 100, colorSpace.platformColorSpace(), kCGImageAlphaPremultipliedLast));
+
+    GraphicsContextCG primaryContextCG(primaryCGContext.get());
+    GraphicsContext& primaryContext = primaryContextCG;
+
+    InMemoryDisplayList displayList;
+    RecorderImpl secondaryContextDL(displayList, { }, FloatRect(0, 0, 100, 100), { });
+    GraphicsContext& secondaryContext = secondaryContextDL;
+
+    BifurcatedGraphicsContext ctx(primaryContext, secondaryContext);
+
+    ctx.clip(FloatRect(25, 25, 50, 50));
+
+    EXPECT_EQ(primaryContext.clipBounds(), secondaryContext.clipBounds());
+    EXPECT_EQ(primaryContext.clipBounds(), FloatRect(25, 25, 50, 50));
+
+    ctx.scale({ 1, -1 });
+    ctx.translate(0, -100);
+
+    EXPECT_EQ(primaryContext.clipBounds(), secondaryContext.clipBounds());
+    EXPECT_EQ(primaryContext.clipBounds(), FloatRect(25, 25, 50, 50));
+
+    ctx.scale(2);
+
+    EXPECT_EQ(primaryContext.clipBounds(), secondaryContext.clipBounds());
+    EXPECT_EQ(primaryContext.clipBounds(), FloatRect(12, 12, 26, 26));
+
+    {
+        GraphicsContextStateSaver saver(ctx);
+
+        ctx.translate(12, 12);
+
+        EXPECT_EQ(primaryContext.clipBounds(), secondaryContext.clipBounds());
+        EXPECT_EQ(primaryContext.clipBounds(), FloatRect(0, 0, 26, 26));
+
+        ctx.clip(FloatRect(0, 0, 10, 10));
+
+        EXPECT_EQ(primaryContext.clipBounds(), secondaryContext.clipBounds());
+        EXPECT_EQ(primaryContext.clipBounds(), FloatRect(0, 0, 10, 10));
+
+        ctx.rotate(M_PI / 6);
+
+        EXPECT_EQ(primaryContext.clipBounds(), secondaryContext.clipBounds());
+        EXPECT_EQ(primaryContext.clipBounds(), FloatRect(0, -5, 14, 14));
+    }
+
+    EXPECT_EQ(primaryContext.clipBounds(), secondaryContext.clipBounds());
+    EXPECT_EQ(primaryContext.clipBounds(), FloatRect(12, 12, 26, 26));
+
+    // Make the CTM non-invertible.
+    ctx.scale({ 0, 1 });
+
+    EXPECT_EQ(primaryContext.clipBounds(), secondaryContext.clipBounds());
+    EXPECT_EQ(primaryContext.clipBounds(), FloatRect(25, 25, 50, 50));
+}
+
 } // namespace TestWebKitAPI
 
 #endif // USE(CG)

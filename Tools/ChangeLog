@@ -1,3 +1,15 @@
+2021-10-26  Tim Horton  <timothy_horton@apple.com>
+
+        DisplayList::Recorder's clipBounds() becomes empty if a flip is applied to the CTM
+        https://bugs.webkit.org/show_bug.cgi?id=232134
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/Tests/WebCore/cg/BifurcatedGraphicsContextTestsCG.cpp:
+        (TestWebKitAPI::TEST):
+        Add a test ensuring that our clipBounds and CG's match through a series
+        of simple transforms.
+
 2021-10-26  Brady Eidson  <beidson@apple.com>
 
         Add helper classes and messaging infrastructure to launch webpushd and round trip a message to it

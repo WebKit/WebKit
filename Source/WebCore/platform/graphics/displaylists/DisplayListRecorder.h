@@ -255,7 +255,7 @@ private:
     WEBCORE_EXPORT void scale(const FloatSize&) final;
     WEBCORE_EXPORT void concatCTM(const AffineTransform&) final;
     WEBCORE_EXPORT void setCTM(const AffineTransform&) final;
-    WEBCORE_EXPORT AffineTransform getCTM(GraphicsContext::IncludeDeviceScale) const final;
+    WEBCORE_EXPORT AffineTransform getCTM(GraphicsContext::IncludeDeviceScale = PossiblyIncludeDeviceScale) const final;
 
     WEBCORE_EXPORT void beginTransparencyLayer(float opacity) final;
     WEBCORE_EXPORT void endTransparencyLayer() final;

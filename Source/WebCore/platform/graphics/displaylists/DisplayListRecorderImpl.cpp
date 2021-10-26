@@ -458,8 +458,7 @@ FloatRect RecorderImpl::extentFromLocalBounds(const FloatRect& rect) const
         bounds.unite(shadowExtent);
     }
 
-    FloatRect clippedExtent = intersection(state.clipBounds, bounds);
-    return state.ctm.mapRect(clippedExtent);
+    return intersection(state.clipBounds, state.ctm.mapRect(bounds));
 }
 
 } // namespace DisplayList

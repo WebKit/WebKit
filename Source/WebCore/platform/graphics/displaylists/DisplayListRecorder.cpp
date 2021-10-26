@@ -424,7 +424,7 @@ void Recorder::applyFillPattern()
 
 void Recorder::clip(const FloatRect& rect)
 {
-    currentState().clipBounds.intersect(rect);
+    currentState().clipBounds.intersect(currentState().ctm.mapRect(rect));
     recordClip(rect);
 }
 
@@ -440,12 +440,17 @@ void Recorder::clipOut(const Path& path)
 
 void Recorder::clipPath(const Path& path, WindRule windRule)
 {
-    currentState().clipBounds.intersect(path.fastBoundingRect());
+    currentState().clipBounds.intersect(currentState().ctm.mapRect(path.fastBoundingRect()));
     recordClipPath(path, windRule);
 }
 
 IntRect Recorder::clipBounds() const
 {
+    if (auto inverse = currentState().ctm.inverse())
+        return enclosingIntRect(inverse->mapRect(currentState().clipBounds));
+
+    // If the CTM is not invertible, return the original rect.
+    // This matches CGRectApplyInverseAffineTransform behavior.
     return enclosingIntRect(currentState().clipBounds);
 }
 
@@ -521,7 +526,6 @@ const AffineTransform& Recorder::ctm() const
 void Recorder::ContextState::translate(float x, float y)
 {
     ctm.translate(x, y);
-    clipBounds.move(-x, -y);
 }
 
 void Recorder::ContextState::rotate(float angleInRadians)
@@ -531,35 +535,21 @@ void Recorder::ContextState::rotate(float angleInRadians)
     
     AffineTransform rotation;
     rotation.rotate(angleInDegrees);
-
-    if (std::optional<AffineTransform> inverse = rotation.inverse())
-        clipBounds = inverse.value().mapRect(clipBounds);
 }
 
 void Recorder::ContextState::scale(const FloatSize& size)
 {
     ctm.scale(size);
-    clipBounds.scale(1 / size.width(), 1 / size.height());
 }
 
 void Recorder::ContextState::setCTM(const AffineTransform& matrix)
 {
-    std::optional<AffineTransform> inverseTransformForClipBounds;
-    if (auto originalCTMInverse = ctm.inverse())
-        inverseTransformForClipBounds = originalCTMInverse->multiply(matrix).inverse();
-
     ctm = matrix;
-
-    if (inverseTransformForClipBounds)
-        clipBounds = inverseTransformForClipBounds->mapRect(clipBounds);
 }
 
 void Recorder::ContextState::concatCTM(const AffineTransform& matrix)
 {
     ctm *= matrix;
-
-    if (std::optional<AffineTransform> inverse = matrix.inverse())
-        clipBounds = inverse.value().mapRect(clipBounds);
 }
 
 } // namespace DisplayList
