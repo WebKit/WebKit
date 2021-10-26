@@ -47,7 +47,7 @@ private:
 
 inline Structure* InternalFunctionAllocationProfile::createAllocationStructureFromBase(VM& vm, JSGlobalObject* baseGlobalObject, JSCell* owner, JSObject* prototype, Structure* baseStructure)
 {
-    ASSERT(!m_structure || m_structure.get()->classInfo() != baseStructure->classInfo() || m_structure->globalObject() != baseGlobalObject);
+    ASSERT(!m_structure || m_structure.get()->classInfo() != baseStructure->classInfo() || m_structure->globalObject() != baseStructure->globalObject());
     ASSERT(baseStructure->hasMonoProto());
 
     Structure* structure;
