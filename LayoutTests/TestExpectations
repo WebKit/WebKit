@@ -612,8 +612,6 @@ imported/w3c/web-platform-tests/html/browsers/origin/relaxing-the-same-origin-re
 imported/w3c/web-platform-tests/html/browsers/sandboxing/sandbox-disallow-scripts-via-unsandboxed-popup.tentative.html [ Skip ]
 imported/w3c/web-platform-tests/html/canvas/element/fill-and-stroke-styles/2d.pattern.transform.infinity.html [ Skip ]
 imported/w3c/web-platform-tests/html/rendering/replaced-elements/svg-inline-sizing/svg-inline.html [ Skip ]
-imported/w3c/web-platform-tests/html/semantics/document-metadata/the-link-element/link-multiple-error-events.html [ Skip ]
-imported/w3c/web-platform-tests/html/semantics/document-metadata/the-link-element/link-multiple-load-events.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_navigate_ancestor-1.sub.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/forms/historical-search-event.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-summary-element/anchor-with-inline-element.html [ Skip ]

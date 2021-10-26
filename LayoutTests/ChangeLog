@@ -1,3 +1,14 @@
+2021-10-26  Chris Dumez  <cdumez@apple.com>
+
+        <link> elements should be able to fire more than one load / error event
+        https://bugs.webkit.org/show_bug.cgi?id=232309
+
+        Reviewed by Darin Adler.
+
+        Unskip tests that are no longer timing out.
+
+        * TestExpectations:
+
 2021-10-26  Eric Hutchison  <ehutchison@apple.com>
 
         [ Windows EWS ] imported/mozilla/svg/viewBox-and-pattern-03.svg is a flaky crash.
