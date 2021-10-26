@@ -1,3 +1,12 @@
+2021-10-26  Ayumi Kojima  <ayumi_kojima@apple.com>
+
+        [ iOS Release ] fast/flexbox/aspect-ratio-intrinsic-adjust.html is a flaky image failure.
+        https://bugs.webkit.org/show_bug.cgi?id=232310
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+
 2021-10-26  Chris Dumez  <cdumez@apple.com>
 
         Regression (r284821) : [ iOS 15 ] fast/events/ios/submit-form-target-blank-using-return-key.html is a timeout

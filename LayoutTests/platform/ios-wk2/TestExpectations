@@ -2232,6 +2232,8 @@ webkit.org/b/230509 fast/events/ios/dom-update-on-keydown-quirk.html [ Pass Fail
 
 webkit.org/b/231714 fast/scrolling/ios/click-events-during-momentum-scroll-in-overflow.html [ Pass Timeout ]
 
+webkit.org/b/232310 [ Release ] fast/flexbox/aspect-ratio-intrinsic-adjust.html [ Pass ImageOnlyFailure ]
+
 webkit.org/b/231780 [ Debug ] imported/w3c/web-platform-tests/webrtc/simulcast/basic.https.html [ Pass Failure ]
 
 webkit.org/b/232099 imported/w3c/web-platform-tests/websockets/Close-1000.any.html [ Pass Crash ]
