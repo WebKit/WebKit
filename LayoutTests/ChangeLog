@@ -1,5 +1,14 @@
 2021-10-26  Eric Hutchison  <ehutchison@apple.com>
 
+        [ Windows ] fast/ruby/before-block-doesnt-crash.html is a flaky failure.
+        https://bugs.webkit.org/show_bug.cgi?id=232319.
+
+        Unreviewed test gardening.
+
+        * platform/win/TestExpectations:
+
+2021-10-26  Eric Hutchison  <ehutchison@apple.com>
+
         [ Windows EWS ] js/function-apply-aliased.html is a flaky crash.
         https://bugs.webkit.org/show_bug.cgi?id=232317.
 
