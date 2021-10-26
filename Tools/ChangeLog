@@ -1,3 +1,17 @@
+2021-10-26  Kate Cheney  <katherine_cheney@apple.com>
+
+        [ App Privacy Report ] Restoring a session after clearing the cache results in app initiated loads in Safari
+        https://bugs.webkit.org/show_bug.cgi?id=232292
+        <rdar://problem/84597422>
+
+        Reviewed by Brent Fulgham.
+
+        Update API test in 2 ways. First, close the original WebView to
+        destroy the page's document loader as if the application was being
+        quit. Second, clear history to make sure there are no cached loads.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/AppPrivacyReport.mm:
+
 2021-10-26  Simon Fraser  <simon.fraser@apple.com>
 
         Have ImageDiff print the diff image when any pixel is different

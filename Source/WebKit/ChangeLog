@@ -1,3 +1,21 @@
+2021-10-26  Kate Cheney  <katherine_cheney@apple.com>
+
+        [ App Privacy Report ] Restoring a session after clearing the cache results in app initiated loads in Safari
+        https://bugs.webkit.org/show_bug.cgi?id=232292
+        <rdar://problem/84597422>
+
+        Reviewed by Brent Fulgham.
+
+        Update session restore code to also set the app initiated value on
+        the current document loader. Previously, this was only set on the new
+        document loader. This is a problem because the main resource load
+        uses the old document loader, so if we restore from a previous session
+        state, the main resource load will have the incorrect attribution
+        value.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::goToBackForwardItem):
+
 2021-10-26  Chris Dumez  <cdumez@apple.com>
 
         Improve didFailProvisionalLoadForFrame logging to indicate if it is for the main frame
