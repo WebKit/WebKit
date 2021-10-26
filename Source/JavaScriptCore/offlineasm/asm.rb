@@ -264,6 +264,12 @@ class Assembler
                 @outp.puts(formatDump("  _#{labelName}:", lastComment))
             end
         end
+        if $emitELFDebugDirectives
+            deferNextLabelAction {
+                putStr("    \".size #{labelName} , . - #{labelName} \\n\"")
+                putStr("    \".type #{labelName} , function \\n\"")
+            }
+        end
         @newlineSpacerState = :none # After a global label, we can use another spacer.
     end
     
@@ -341,13 +347,16 @@ variants = ARGV.shift.split(/[,\s]+/)
 
 $options = {}
 OptionParser.new do |opts|
-    opts.banner = "Usage: asm.rb asmFile offsetsFile outputFileName [--assembler=<ASM>] [--webkit-additions-path=<path>]"
+    opts.banner = "Usage: asm.rb asmFile offsetsFile outputFileName [--assembler=<ASM>] [--webkit-additions-path=<path>] [--binary-format=<format>]"
     # This option is currently only used to specify the masm assembler
     opts.on("--assembler=[ASM]", "Specify an assembler to use.") do |assembler|
         $options[:assembler] = assembler
     end
     opts.on("--webkit-additions-path=PATH", "WebKitAdditions path.") do |path|
         $options[:webkit_additions_path] = path
+    end
+    opts.on("--binary-format=FORMAT", "Specify the binary format used by the target system.") do |format|
+        $options[:binary_format] = format
     end
 end.parse!
 
@@ -365,6 +374,9 @@ end
 
 $emitWinAsm = isMSVC ? outputFlnm.index(".asm") != nil : false
 $commentPrefix = $emitWinAsm ? ";" : "//"
+
+# We want this in all ELF systems we support, except for C_LOOP (we'll disable it later on if we are building cloop)
+$emitELFDebugDirectives = $options.has_key?(:binary_format) && $options[:binary_format] == "ELF"
 
 inputHash =
     $commentPrefix + " offlineasm input hash: " + parseHash(asmFile, $options) +
@@ -412,6 +424,7 @@ File.open(outputFlnm, "w") {
             if backend == "C_LOOP" || backend == "C_LOOP_WIN"
                 $enableDebugAnnotations = false
                 $preferredCommentStartColumn = 60
+                $emitELFDebugDirectives = false
             end
 
             lowLevelAST = lowLevelAST.demacroify({})

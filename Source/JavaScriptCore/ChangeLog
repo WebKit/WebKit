@@ -1,3 +1,43 @@
+2021-10-26  Xan López  <xan@igalia.com>
+
+        [JSC] Improve offlineasm debug annotations for Linux/ELF
+        https://bugs.webkit.org/show_bug.cgi?id=232303
+
+        Reviewed by Mark Lam.
+
+        This patch does two things:
+
+        Add the .size and .type directives to every llint "function"
+        (global, llint opcode, 'glue'). This allows a debugger to tell you
+        in what logical function you are inside the giant chunk of code
+        that is the llint interpreter. So instead of something like this:
+
+        (gdb) x/5i $pc
+          => 0xf5f8af60 <wasmLLIntPCRangeStart+3856>:  b.n     0xf5f8af6c <wasmLLIntPCRangeStart+3868>
+             0xf5f8af62 <wasmLLIntPCRangeStart+3858>:  ldr     r2, [r7, #8]
+             0xf5f8af64 <wasmLLIntPCRangeStart+3860>:  ldr     r2, [r2, #28]
+             0xf5f8af66 <wasmLLIntPCRangeStart+3862>:  subs    r0, #16
+             0xf5f8af68 <wasmLLIntPCRangeStart+3864>:  ldr.w   r0, [r2, r0, lsl #3]
+
+        you get something like this:
+
+        (gdb) x/5i $pc
+          => 0xf5f8c770 <wasm_f32_add+12>:      bge.n   0xf5f8c77c <wasm_f32_add+24>
+             0xf5f8c772 <wasm_f32_add+14>:      add.w   r6, r7, r9, lsl #3
+             0xf5f8c776 <wasm_f32_add+18>:      vldr    d0, [r6]
+             0xf5f8c77a <wasm_f32_add+22>:      b.n     0xf5f8c78c <wasm_f32_add+40>
+             0xf5f8c77c <wasm_f32_add+24>:      ldr     r2, [r7, #8]
+
+        The other change adds a local symbol (in addition to an internal
+        label) to all the "glue" labels. That allows wasm opcodes to be
+        seen by the debugger (and the user to break on them), among other
+        things.
+
+        * CMakeLists.txt: tell offlineasm we use the ELF binary format on Linux.
+        * llint/LowLevelInterpreter.cpp: emit a non-local label for "glue" labels.
+        * offlineasm/asm.rb: emit the .size and .type directives for every
+        llint "function" on ELF systems.
+
 2021-10-25  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Fix stale assertion in InternalFunctionAllocationProfile after r284757

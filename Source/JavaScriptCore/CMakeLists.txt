@@ -441,6 +441,10 @@ else ()
     set(LLIntOutput LLIntAssembly.h)
 endif ()
 
+if (CMAKE_SYSTEM_NAME MATCHES "Linux")
+    set(OFFLINE_ASM_ARGS --binary-format=ELF)
+endif ()
+
 add_custom_command(
     OUTPUT ${JavaScriptCore_DERIVED_SOURCES_DIR}/${LLIntOutput}
     MAIN_DEPENDENCY ${JAVASCRIPTCORE_DIR}/offlineasm/asm.rb
