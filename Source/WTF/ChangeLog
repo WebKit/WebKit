@@ -1,3 +1,18 @@
+2021-10-25  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [WTF] Make Int128 operator* constexpr
+        https://bugs.webkit.org/show_bug.cgi?id=232270
+
+        Reviewed by Mark Lam.
+
+        We remove MSVC X64 (so, Windows only) switching in Int128 operator* since
+        it breaks constexpr-ness of operator*, which makes writing code difficult.
+        We can bring this kind of optimization back when C++20 std::is_constant_evaluated()
+        becomes available.
+
+        * wtf/Int128.h:
+        (WTF::operator*):
+
 2021-10-25  Alex Christensen  <achristensen@webkit.org>
 
         Use xpc_connection_copy_invalidation_reason where available for debugging daemon connection failures

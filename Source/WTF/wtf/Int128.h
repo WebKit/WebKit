@@ -48,13 +48,9 @@
 // builtin type.  We need to make sure not to define operator wchar_t()
 // alongside operator unsigned short() in these instances.
 #define ABSL_INTERNAL_WCHAR_T __wchar_t
-#if CPU(X86_64)
-#include <intrin.h>
-#pragma intrinsic(_umul128)
-#endif  // defined(_M_X64)
-#else   // defined(_MSC_VER)
+#else
 #define ABSL_INTERNAL_WCHAR_T wchar_t
-#endif  // defined(_MSC_VER)
+#endif
 
 namespace WTF {
 
@@ -515,7 +511,7 @@ constexpr UInt128Impl operator<<(UInt128Impl lhs, int amount);
 constexpr UInt128Impl operator>>(UInt128Impl lhs, int amount);
 constexpr UInt128Impl operator+(UInt128Impl lhs, UInt128Impl rhs);
 constexpr UInt128Impl operator-(UInt128Impl lhs, UInt128Impl rhs);
-UInt128Impl operator*(UInt128Impl lhs, UInt128Impl rhs);
+constexpr UInt128Impl operator*(UInt128Impl lhs, UInt128Impl rhs);
 WTF_EXPORT_PRIVATE UInt128Impl operator/(UInt128Impl lhs, UInt128Impl rhs);
 WTF_EXPORT_PRIVATE UInt128Impl operator%(UInt128Impl lhs, UInt128Impl rhs);
 
@@ -812,14 +808,7 @@ constexpr UInt128Impl operator-(UInt128Impl lhs, UInt128Impl rhs) {
       lhs, rhs);
 }
 
-inline UInt128Impl operator*(UInt128Impl lhs, UInt128Impl rhs) {
-#if COMPILER(MSVC) && CPU(X86_64)
-  uint64_t carry;
-  uint64_t low = _umul128(UInt128Low64(lhs), UInt128Low64(rhs), &carry);
-  return MakeUInt128(UInt128Low64(lhs) * UInt128High64(rhs) +
-                         UInt128High64(lhs) * UInt128Low64(rhs) + carry,
-                     low);
-#else
+constexpr UInt128Impl operator*(UInt128Impl lhs, UInt128Impl rhs) {
   uint64_t a32 = UInt128Low64(lhs) >> 32;
   uint64_t a00 = UInt128Low64(lhs) & 0xffffffff;
   uint64_t b32 = UInt128Low64(rhs) >> 32;
@@ -828,10 +817,9 @@ inline UInt128Impl operator*(UInt128Impl lhs, UInt128Impl rhs) {
       MakeUInt128(UInt128High64(lhs) * UInt128Low64(rhs) +
                       UInt128Low64(lhs) * UInt128High64(rhs) + a32 * b32,
                   a00 * b00);
-  result += UInt128Impl(a32 * b00) << 32;
-  result += UInt128Impl(a00 * b32) << 32;
-  return result;
-#endif
+  UInt128Impl v1 = UInt128Impl(a32 * b00) << 32;
+  UInt128Impl v2 = UInt128Impl(a00 * b32) << 32;
+  return result + v1 + v2;
 }
 
 // Increment/decrement operators.
@@ -894,7 +882,7 @@ inline Int128Impl& Int128Impl::operator=(unsigned long long v) {
 constexpr Int128Impl operator-(Int128Impl v);
 constexpr Int128Impl operator+(Int128Impl lhs, Int128Impl rhs);
 constexpr Int128Impl operator-(Int128Impl lhs, Int128Impl rhs);
-Int128Impl operator*(Int128Impl lhs, Int128Impl rhs);
+constexpr Int128Impl operator*(Int128Impl lhs, Int128Impl rhs);
 WTF_EXPORT_PRIVATE Int128Impl operator/(Int128Impl lhs, Int128Impl rhs);
 WTF_EXPORT_PRIVATE Int128Impl operator%(Int128Impl lhs, Int128Impl rhs);
 constexpr Int128Impl operator|(Int128Impl lhs, Int128Impl rhs);
@@ -1192,7 +1180,7 @@ constexpr Int128Impl operator-(Int128Impl lhs, Int128Impl rhs) {
       lhs, rhs);
 }
 
-inline Int128Impl operator*(Int128Impl lhs, Int128Impl rhs) {
+constexpr Int128Impl operator*(Int128Impl lhs, Int128Impl rhs) {
   return MakeInt128(
       int128_internal::BitCastToSigned(UInt128High64(UInt128Impl(lhs) * rhs)),
       UInt128Low64(UInt128Impl(lhs) * rhs));
