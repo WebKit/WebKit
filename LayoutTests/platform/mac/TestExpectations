@@ -1621,6 +1621,8 @@ webkit.org/b/207226 http/tests/misc/image-blocked-src-change.html [ Pass Failure
 
 webkit.org/b/206908 imported/w3c/web-platform-tests/hr-time/basic.any.html [ Pass Failure ]
 
+webkit.org/b/232316 imported/w3c/web-platform-tests/hr-time/basic.html [ Pass Failure ]
+
 webkit.org/b/207306 inspector/animation/lifecycle-css-animation.html [ Pass Failure ]
 
 webkit.org/b/112939 fast/performance/performance-now-timestamps.html [ Pass Failure ]

@@ -1,5 +1,14 @@
 2021-10-26  Ayumi Kojima  <ayumi_kojima@apple.com>
 
+        [ macOS ] imported/w3c/web-platform-tests/hr-time/basic.html is a flaky failure.
+        https://bugs.webkit.org/show_bug.cgi?id=232316
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
+2021-10-26  Ayumi Kojima  <ayumi_kojima@apple.com>
+
         [ BigSur wk2 Debug arm64 ] inspector/audit/run-accessibility.html is a flaky timeout.
         https://bugs.webkit.org/show_bug.cgi?id=232322
 
