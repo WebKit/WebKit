@@ -61,11 +61,12 @@ const std::optional<const Styleable> Styleable::fromRenderer(const RenderElement
         }
         break;
     case PseudoId::Marker:
-        if (auto* parent = renderer.parent()) {
-            ASSERT(parent->element());
-            ASSERT(is<RenderListItem>(parent));
-            ASSERT(downcast<RenderListItem>(*parent).markerRenderer() == &renderer);
-            return Styleable(*parent->element(), PseudoId::Marker);
+        if (auto* ancestor = renderer.parent()) {
+            while (ancestor && !ancestor->element())
+                ancestor = ancestor->parent();
+            ASSERT(is<RenderListItem>(ancestor));
+            ASSERT(downcast<RenderListItem>(ancestor)->markerRenderer() == &renderer);
+            return Styleable(*ancestor->element(), PseudoId::Marker);
         }
         break;
     case PseudoId::After:

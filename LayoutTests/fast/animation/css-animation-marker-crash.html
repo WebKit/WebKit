@@ -1,0 +1,19 @@
+<style>
+  @keyframes a0 {
+    from {
+      opacity: 0;
+    }
+  }
+  ::marker {
+    animation-name: a0;
+    animation-duration: 1ms;
+  }
+  li {
+    columns: 3;
+  }
+</style>
+<li>PASS if this doesn't crash</li>
+<script>
+  if (window.testRunner)
+      testRunner.dumpAsText(); 
+</script>
