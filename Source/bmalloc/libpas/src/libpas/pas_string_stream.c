@@ -32,10 +32,7 @@
 #include "pas_bootstrap_free_heap.h"
 #include "pas_snprintf.h"
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wformat-nonliteral"
-
-static void string_stream_vprintf(pas_stream* stream, const char* format, va_list arg_list)
+static PAS_FORMAT_PRINTF(2, 0) void string_stream_vprintf(pas_stream* stream, const char* format, va_list arg_list)
 {
     pas_string_stream_vprintf((pas_string_stream*)stream, format, arg_list);
 }

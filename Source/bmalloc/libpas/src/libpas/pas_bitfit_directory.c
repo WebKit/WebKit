@@ -437,14 +437,14 @@ pas_page_sharing_pool_take_result pas_bitfit_directory_take_last_empty(
             /* If a page's num_live_bits drops to zero then we will mark it empty in the directory that
                owns it while holding the lock. Newly created pages start out empty.  */
             if (max_free != PAS_BITFIT_MAX_FREE_EMPTY) {
-                pas_log("%p:%u: found non-empty page that is dead when taking last empty.\n");
+                pas_log("%p:%zu: found non-empty page that is dead when taking last empty.\n", page, index);
                 PAS_ASSERT(max_free == PAS_BITFIT_MAX_FREE_EMPTY);
             }
         } else {
             /* If a page's num_live_bits goes above zero then we mark it unprocessed while holding the
                lock. */
             if (max_free == PAS_BITFIT_MAX_FREE_EMPTY) {
-                pas_log("%p:%u: found empty page that is not dead when taking last empty.\n");
+                pas_log("%p:%zu: found empty page that is not dead when taking last empty.\n", page, index);
                 PAS_ASSERT(max_free != PAS_BITFIT_MAX_FREE_EMPTY);
             }
         }

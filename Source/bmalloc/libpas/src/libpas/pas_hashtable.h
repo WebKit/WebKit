@@ -112,7 +112,7 @@ PAS_BEGIN_EXTERN_C;
         new_table_mask = new_size - 1; \
         new_byte_size = (size_t)new_size * sizeof(entry_type); \
         if (verbose) \
-            pas_log("Allocating a new table with new_size = %zu, new_byte_size = %zu.\n", new_size, new_byte_size); \
+            pas_log("Allocating a new table with new_size = %u, new_byte_size = %zu.\n", new_size, new_byte_size); \
         new_table = (entry_type*)allocation_config->allocate( \
             new_byte_size, #name "/table", pas_object_allocation, allocation_config->arg); \
         \

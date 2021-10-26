@@ -161,7 +161,7 @@ static PAS_ALWAYS_INLINE void pas_local_allocator_scan_bits_to_set_up_free_bits(
     data.granule_size = page_config.base.granule_size;
 
     if (verbose) {
-        pas_log("%p, %s: Setting up alloc bits in range %zu...%zu\n",
+        pas_log("%p, %s: Setting up alloc bits in range %u...%u\n",
                 allocator,
                 pas_local_allocator_config_kind_get_string(allocator->config_kind),
                 full_alloc_bits.word_index_begin,
@@ -1288,7 +1288,7 @@ pas_local_allocator_return_memory_to_page(pas_local_allocator* allocator,
         pas_full_alloc_bits_create_for_view_and_directory(view, directory, page_config);
 
     if (verbose) {
-        pas_log("Full alloc bits have range %zu...%zu\n",
+        pas_log("Full alloc bits have range %u...%u\n",
                 full_alloc_bits.word_index_begin,
                 full_alloc_bits.word_index_end);
     }
@@ -1453,7 +1453,7 @@ pas_local_allocator_try_allocate_inline_cases(pas_local_allocator* allocator,
         uintptr_t result;
 
         if (verbose)
-            pas_log("payload_end = %p\n", allocator->payload_end);
+            pas_log("payload_end = %p\n", (void*)allocator->payload_end);
         
         PAS_TESTING_ASSERT(allocator->payload_end);
         PAS_TESTING_ASSERT(remaining - object_size < allocator->remaining);

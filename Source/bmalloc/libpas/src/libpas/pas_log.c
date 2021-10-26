@@ -33,9 +33,6 @@
 #include "pas_snprintf.h"
 #include <unistd.h>
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wformat-nonliteral"
-
 pthread_t pas_thread_that_is_crash_logging;
 
 void pas_vlog_fd(int fd, const char* format, va_list list)

@@ -116,7 +116,7 @@ pas_segregated_directory_iterate_iterate_callback(
 
         if (config->first_considered == SIZE_MAX) {
             if (verbose)
-                pas_log("%p: setting first_considered to 0\n", config->directory, config->index);
+                pas_log("%p: setting first_considered to %zu\n", config->directory, config->index);
             config->first_considered = config->index;
         } else {
             if (verbose) {
@@ -181,7 +181,7 @@ pas_segregated_directory_iterate_forward(
 
     if (verbose) {
         pas_log("Actually using segmented bitvector iteration.\n");
-        pas_log("Segmented bitvector size = %zu\n", data->bitvectors.size);
+        pas_log("Segmented bitvector size = %u\n", data->bitvectors.size);
     }
     found_index = pas_segregated_directory_segmented_bitvectors_iterate(
         &data->bitvectors, PAS_BITVECTOR_WORD_INDEX(PAS_MAX((size_t)1, config->index) - 1),

@@ -233,9 +233,9 @@ void pas_page_sharing_pool_add_at_index(pas_page_sharing_pool* pool,
     if (verbose) {
         pas_log("Adding participant %p to pool %p (%s), index = %zu.\n",
                 participant,
+                pool,
                 pas_page_sharing_participant_kind_get_string(
                     pas_page_sharing_participant_get_kind(participant)),
-                pool,
                 index_in_sharing_pool);
     }
     

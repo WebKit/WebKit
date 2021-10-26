@@ -120,7 +120,7 @@ static void validate_min_heap(void)
             &pas_large_sharing_min_heap_instance, index);
         
         if (verbose) {
-            pas_log(" %zu:%p:%lu-%lu:%llu",
+            pas_log(" %d:%p:%lu-%lu:%llu",
                     node->index_in_min_heap,
                     node, node->range.begin, node->range.end,
                     node->use_epoch);

@@ -43,13 +43,13 @@ struct pas_stream {
 };
 
 struct pas_stream_functions {
-    void (*vprintf)(pas_stream* stream, const char* format, va_list arg_list);
+    void (*vprintf)(pas_stream* stream, const char* format, va_list) PAS_FORMAT_PRINTF(2, 0);
 };
 
 #define PAS_STREAM_INITIALIZER(passed_functions) { .functions = (passed_functions) }
 
-PAS_API void pas_stream_vprintf(pas_stream* stream, const char* format, va_list);
-PAS_API void pas_stream_printf(pas_stream* stream, const char* format, ...);
+PAS_API void pas_stream_vprintf(pas_stream* stream, const char* format, va_list) PAS_FORMAT_PRINTF(2, 0);
+PAS_API void pas_stream_printf(pas_stream* stream, const char* format, ...) PAS_FORMAT_PRINTF(2, 3);
 
 static inline void pas_stream_print_comma(pas_stream* stream, bool* comma, const char* string)
 {

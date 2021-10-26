@@ -418,19 +418,19 @@ void pas_status_reporter_dump_large_map(pas_stream* stream)
     pas_stream_printf(stream, "    Large Map:\n");
     pas_stream_printf(
         stream,
-        "        Tiny Map: Num Entries: %zu, Num Deleted: %zu, Table Size: %zu\n",
+        "        Tiny Map: Num Entries: %u, Num Deleted: %u, Table Size: %u\n",
         pas_tiny_large_map_hashtable_instance.key_count,
         pas_tiny_large_map_hashtable_instance.deleted_count,
         pas_tiny_large_map_hashtable_instance.table_size);
     pas_stream_printf(
         stream,
-        "        Small Fallback Map: Num Entries: %zu, Num Deleted: %zu, Table Size: %zu\n",
+        "        Small Fallback Map: Num Entries: %u, Num Deleted: %u, Table Size: %u\n",
         pas_small_large_map_hashtable_instance.key_count,
         pas_small_large_map_hashtable_instance.deleted_count,
         pas_small_large_map_hashtable_instance.table_size);
     pas_stream_printf(
         stream,
-        "        Fallback Map: Num Entries: %zu, Num Deleted: %zu, Table Size: %zu\n",
+        "        Fallback Map: Num Entries: %u, Num Deleted: %u, Table Size: %u\n",
         pas_large_map_hashtable_instance.key_count,
         pas_large_map_hashtable_instance.deleted_count,
         pas_large_map_hashtable_instance.table_size);

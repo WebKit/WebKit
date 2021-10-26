@@ -113,7 +113,7 @@ static inline bool pas_tiny_large_map_entry_can_create(pas_large_map_entry entry
     }
     base = pas_tiny_large_map_entry_base(entry.begin);
     if (verbose)
-        pas_log("base = %p.\n", base);
+        pas_log("base = %p.\n", (void*)base);
     result = pas_tiny_large_map_entry_create(entry);
     if (verbose) {
         pas_log("encoded: %u, %u, %u, %u, %u\n",
@@ -123,9 +123,9 @@ static inline bool pas_tiny_large_map_entry_can_create(pas_large_map_entry entry
                 (unsigned)result.bytes[3],
                 (unsigned)result.bytes[4]);
         pas_log("round tripped: %p...%p, heap = %p.\n",
-                pas_tiny_large_map_entry_begin(result, base),
-                pas_tiny_large_map_entry_end(result, base),
-                pas_tiny_large_map_entry_heap(result));
+                (void*)pas_tiny_large_map_entry_begin(result, base),
+                (void*)pas_tiny_large_map_entry_end(result, base),
+                (void*)pas_tiny_large_map_entry_heap(result));
     }
     return entry.begin == pas_tiny_large_map_entry_begin(result, base)
         && entry.end == pas_tiny_large_map_entry_end(result, base)

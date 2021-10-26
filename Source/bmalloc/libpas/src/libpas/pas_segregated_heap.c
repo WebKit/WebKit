@@ -1255,7 +1255,7 @@ pas_segregated_heap_ensure_size_directory_for_count(
                     index_to_small_size_directory + candidate_index);
                 if (candidate) {
                     if (verbose)
-                        pas_log("Have candidate with size = %zu\n", candidate->object_size);
+                        pas_log("Have candidate with size = %d\n", candidate->object_size);
                     
                     /* If the candidate at this index has an object size that is no larger than the
                        one we picked, then we should have just simply used this candidate for our

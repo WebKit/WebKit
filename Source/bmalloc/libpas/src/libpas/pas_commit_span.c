@@ -39,7 +39,7 @@ static const bool verbose = false;
 void pas_commit_span_construct(pas_commit_span* span)
 {
     if (verbose)
-        pas_log("%p: creating commit span.\n");
+        pas_log("%p: creating commit span.\n", span);
     span->index_of_start_of_span = UINTPTR_MAX;
     span->did_add_first = false;
     span->total_bytes = 0;
@@ -66,7 +66,7 @@ void pas_commit_span_add_unchanged(pas_commit_span* span,
         return;
     
     if (verbose)
-        pas_log("%p: adding a thing.\n");
+        pas_log("%p: adding a thing.\n", span);
 
     PAS_ASSERT(span->index_of_start_of_span < granule_index);
 

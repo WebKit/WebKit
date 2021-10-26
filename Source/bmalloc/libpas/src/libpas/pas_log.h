@@ -41,11 +41,11 @@ extern PAS_API pthread_t pas_thread_that_is_crash_logging;
 /* Logging functions that don't require any allocation. You cannot log more than
    PAS_LOG_MAX_BYTES at a time. */
 
-PAS_API void pas_vlog_fd(int fd, const char* format, va_list);
-PAS_API void pas_log_fd(int fd, const char* format, ...);
+PAS_API void pas_vlog_fd(int fd, const char* format, va_list) PAS_FORMAT_PRINTF(2, 0);
+PAS_API void pas_log_fd(int fd, const char* format, ...) PAS_FORMAT_PRINTF(2, 3);
 
-PAS_API void pas_vlog(const char* format, va_list);
-PAS_API void pas_log(const char* format, ...);
+PAS_API void pas_vlog(const char* format, va_list) PAS_FORMAT_PRINTF(1, 0);
+PAS_API void pas_log(const char* format, ...) PAS_FORMAT_PRINTF(1, 2);
 
 PAS_API void pas_start_crash_logging(void);
 

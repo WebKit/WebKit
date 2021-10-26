@@ -555,7 +555,7 @@ static void suspend(pas_thread_local_cache* cache)
        heap lock. */
 
     if (result != KERN_SUCCESS) {
-        pas_log("[%d] Failed to suspend pthread %p (mach thread %p) associated with TLC %p: %d\n",
+        pas_log("[%d] Failed to suspend pthread %p (mach thread %d) associated with TLC %p: %d\n",
                 getpid(), thread, mach_thread, cache, result);
         dump_thread_diagnostics(thread);
         PAS_ASSERT(result == KERN_SUCCESS);

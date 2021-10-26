@@ -367,8 +367,7 @@ static bool verify_in_steady_state_segregated_directory_callback(
         if (is_empty) {
             dump_directory_nicely(directory);
             dump_view_nicely(index, view);
-            pas_log(": didn't expect it to be empty.\n",
-                    index, view);
+            pas_log(": didn't expect it to be empty.\n");
             PAS_ASSERT(!is_empty);
         }
         

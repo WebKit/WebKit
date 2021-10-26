@@ -128,7 +128,7 @@ pas_segregated_shared_view* pas_segregated_shared_page_directory_find_first_elig
     page_config = *page_config_ptr;
 
     if (verbose)
-        pas_log("trying to allocate size = %zu, alignment = %zu.\n", size, alignment);
+        pas_log("trying to allocate size = %u, alignment = %u.\n", size, alignment);
 
     data.size = size;
     data.alignment = alignment;

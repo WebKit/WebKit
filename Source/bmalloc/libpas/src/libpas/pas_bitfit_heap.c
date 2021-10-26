@@ -83,7 +83,7 @@ pas_bitfit_variant_selection pas_bitfit_heap_select_variant(size_t requested_obj
             continue;
 
         if (verbose)
-            pas_log("max object size = %u\n", page_config.base.max_object_size);
+            pas_log("max object size = %zu\n", page_config.base.max_object_size);
 
         PAS_ASSERT(
             page_config.base.max_object_size

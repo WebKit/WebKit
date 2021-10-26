@@ -68,6 +68,8 @@ PAS_BEGIN_EXTERN_C;
 
 #define PAS_ALIGNED(amount) __attribute__((aligned(amount)))
 
+#define PAS_FORMAT_PRINTF(fmt, args) __attribute__((format(__printf__, fmt, args)))
+
 #define PAS_UNUSED __attribute__((unused))
 
 #define PAS_OFFSETOF(type, field) __PAS_OFFSETOF(type, field)
@@ -82,7 +84,7 @@ PAS_BEGIN_EXTERN_C;
 #define PAS_ARM __PAS_ARM
 
 /* NOTE: panic format string must have \n at the end. */
-PAS_API PAS_NO_RETURN void pas_panic(const char* format, ...);
+PAS_API PAS_NO_RETURN void pas_panic(const char* format, ...) PAS_FORMAT_PRINTF(1, 2);
 
 #define pas_set_deallocation_did_fail_callback __pas_set_deallocation_did_fail_callback
 #define pas_set_reallocation_did_fail_callback __pas_set_reallocation_did_fail_callback

@@ -92,7 +92,7 @@ void pas_large_map_add(pas_large_map_entry entry)
         tiny_entry = pas_tiny_large_map_entry_create(entry);
 
         if (verbose)
-            pas_log("adding base = %p.\n", tiny_base);
+            pas_log("adding base = %p.\n", (void*)tiny_base);
 
         add_result = pas_tiny_large_map_hashtable_add(
             &pas_tiny_large_map_hashtable_instance, tiny_base,
@@ -159,7 +159,7 @@ pas_large_map_entry pas_large_map_take(uintptr_t begin)
 
     tiny_base = pas_tiny_large_map_entry_base(begin);
     if (verbose)
-        pas_log("tiny_base = %p.\n", tiny_base);
+        pas_log("tiny_base = %p.\n", (void*)tiny_base);
     first_level_tiny_entry = pas_tiny_large_map_hashtable_find(
         &pas_tiny_large_map_hashtable_instance, tiny_base);
     if (first_level_tiny_entry) {

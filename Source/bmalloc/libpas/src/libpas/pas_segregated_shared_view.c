@@ -268,7 +268,7 @@ static pas_heap_summary compute_summary(pas_segregated_shared_view* view,
     end_of_page = page_config.base.page_size;
 
     if (verbose)
-        pas_log("index = %zu, bump_offset = %lu/%lu.\n", view->index, end_of_payload, end_of_page);
+        pas_log("index = %d, bump_offset = %lu/%lu.\n", view->index, end_of_payload, end_of_page);
     
     PAS_ASSERT(start_of_payload >= start_of_page);
     PAS_ASSERT(end_of_payload >= start_of_payload);

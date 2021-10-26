@@ -74,7 +74,7 @@ pas_try_allocate_common_impl_fast(
                                               allocator_counts,
                                               result_filter);
     if (verbose)
-        pas_log("in common - result.begin = %p\n", result.begin);
+        pas_log("in common - result.begin = %p\n", (void*)result.begin);
     return result;
 }
 
@@ -112,7 +112,7 @@ pas_try_allocate_common_impl_slow(
             pas_log("Debug heap enabled, asking debug heap.\n");
         result = pas_debug_heap_allocate(size, alignment);
         if (verbose)
-            pas_log("Got result.ptr = %p, did_succeed = %d\n", result.begin, result.did_succeed);
+            pas_log("Got result.ptr = %p, did_succeed = %d\n", (void*)result.begin, result.did_succeed);
         return result;
     }
 

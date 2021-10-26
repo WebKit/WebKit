@@ -369,7 +369,7 @@ static PAS_ALWAYS_INLINE pas_bitfit_allocation_result pas_bitfit_page_allocate(
 
                 if (verbose) {
                     pas_log("Need to do a search starting at word_index = %lu + 1, "
-                            "num_remaining_needed_bits = %lu\n",
+                            "num_remaining_needed_bits = %llu\n",
                             word_index, num_remaining_needed_bits);
                 }
 
@@ -383,7 +383,7 @@ static PAS_ALWAYS_INLINE pas_bitfit_allocation_result pas_bitfit_page_allocate(
                     unsigned pages_to_commit_on_reloop;
 
                     if (verbose) {
-                        pas_log("At other_word_index = %lu, num_remaining_needed_bits = %lu\n",
+                        pas_log("At other_word_index = %lu, num_remaining_needed_bits = %llu\n",
                                 other_word_index, num_remaining_needed_bits);
                     }
 
@@ -796,7 +796,7 @@ static PAS_ALWAYS_INLINE uintptr_t pas_bitfit_page_deallocate_with_page_impl(
                          intermediate_word_index++)
                         free_words[intermediate_word_index] = UINT64_MAX;
                     if (verbose) {
-                        pas_log("object_end_bit_index = %lu, mask = %llu\n",
+                        pas_log("object_end_bit_index = %llu, mask = %llu\n",
                                 object_end_bit_index, pas_make_mask64(object_end_bit_index + 1));
                     }
                     break;
@@ -804,7 +804,7 @@ static PAS_ALWAYS_INLINE uintptr_t pas_bitfit_page_deallocate_with_page_impl(
 
                 if (verbose) {
                     pas_log("word_index = %lu, bit_index_in_word = %lu, other_word_index = %lu, "
-                            "object_end_bit_index = %lu\n",
+                            "object_end_bit_index = %llu\n",
                             word_index, bit_index_in_word, other_word_index, object_end_bit_index);
                 }
 

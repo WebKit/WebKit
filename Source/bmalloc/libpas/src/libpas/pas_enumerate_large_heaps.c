@@ -53,7 +53,7 @@ static void record_span(pas_enumerator* enumerator,
 {
     static const bool verbose = false;
     if (verbose)
-        pas_log("record_span: %p...%p\n", range.begin, range.end);
+        pas_log("record_span: %p...%p\n", (void*)range.begin, (void*)range.end);
     pas_enumerator_record(
         enumerator, (void*)range.begin, pas_range_size(range), pas_enumerator_payload_record);
 }
@@ -140,7 +140,7 @@ bool pas_enumerate_large_heaps(pas_enumerator* enumerator)
             PAS_ASSERT(page);
 
             if (verbose)
-                pas_log("Looking at page %p\n", page);
+                pas_log("Looking at page %p\n", (void*)page);
             
             if (!pas_enumerator_exclude_accounted_page(enumerator, (void*)page))
                 continue;

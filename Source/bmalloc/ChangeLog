@@ -1,3 +1,79 @@
+2021-10-26  David Kilzer  <ddkilzer@apple.com>
+
+        [libpas] Add printf format attributes
+        <https://webkit.org/b/232291>
+        <rdar://problem/84643135>
+
+        Reviewed by Yusuke Suzuki.
+
+        Define PAS_FORMAT_PRINTF() macro in pas_utils.h, apply it to
+        functions that take format strings, then fix all the issues
+        found during compilation.
+
+        These changes also let us remove the clang pragma macros that
+        ignored -Wformat-nonliteral warnings in pas_log.c and
+        pas_string_stream.c.
+
+        * libpas/src/libpas/pas_all_heaps.c:
+        (verify_in_steady_state_segregated_directory_callback):
+        * libpas/src/libpas/pas_bitfit_directory.c:
+        (pas_bitfit_directory_take_last_empty):
+        * libpas/src/libpas/pas_bitfit_heap.c:
+        (pas_bitfit_heap_select_variant):
+        * libpas/src/libpas/pas_bitfit_page_inlines.h:
+        (pas_bitfit_page_allocate):
+        (pas_bitfit_page_deallocate_with_page_impl):
+        * libpas/src/libpas/pas_commit_span.c:
+        (pas_commit_span_construct):
+        (pas_commit_span_add_unchanged):
+        * libpas/src/libpas/pas_enumerate_large_heaps.c:
+        (record_span):
+        (pas_enumerate_large_heaps):
+        * libpas/src/libpas/pas_fd_stream.c:
+        (fd_stream_vprintf):
+        * libpas/src/libpas/pas_fd_stream.h:
+        * libpas/src/libpas/pas_hashtable.h:
+        * libpas/src/libpas/pas_large_map.c:
+        (pas_large_map_add):
+        (pas_large_map_take):
+        * libpas/src/libpas/pas_large_sharing_pool.c:
+        (validate_min_heap):
+        * libpas/src/libpas/pas_local_allocator_inlines.h:
+        (pas_local_allocator_scan_bits_to_set_up_free_bits):
+        (pas_local_allocator_return_memory_to_page):
+        (pas_local_allocator_try_allocate_inline_cases):
+        * libpas/src/libpas/pas_log.c:
+        * libpas/src/libpas/pas_log.h:
+        * libpas/src/libpas/pas_page_sharing_pool.c:
+        (pas_page_sharing_pool_add_at_index):
+        * libpas/src/libpas/pas_segregated_directory_inlines.h:
+        (pas_segregated_directory_iterate_iterate_callback):
+        (pas_segregated_directory_iterate_forward):
+        * libpas/src/libpas/pas_segregated_heap.c:
+        (pas_segregated_heap_ensure_size_directory_for_count):
+        * libpas/src/libpas/pas_segregated_shared_page_directory.c:
+        (pas_segregated_shared_page_directory_find_first_eligible):
+        * libpas/src/libpas/pas_segregated_shared_view.c:
+        (compute_summary):
+        * libpas/src/libpas/pas_segregated_view.c:
+        (for_each_live_object):
+        (should_be_eligible):
+        * libpas/src/libpas/pas_status_reporter.c:
+        (pas_status_reporter_dump_large_map):
+        * libpas/src/libpas/pas_stream.h:
+        * libpas/src/libpas/pas_string_stream.c:
+        (string_stream_vprintf):
+        * libpas/src/libpas/pas_string_stream.h:
+        * libpas/src/libpas/pas_thread_local_cache.c:
+        (suspend):
+        * libpas/src/libpas/pas_tiny_large_map_entry.h:
+        (pas_tiny_large_map_entry_can_create):
+        * libpas/src/libpas/pas_try_allocate_common.h:
+        (pas_try_allocate_common_impl_fast):
+        (pas_try_allocate_common_impl_slow):
+        * libpas/src/libpas/pas_try_allocate_intrinsic.h:
+        * libpas/src/libpas/pas_utils.h:
+
 2021-10-20  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         Do not use strerror()

@@ -321,7 +321,7 @@ pas_try_allocate_intrinsic_impl_inline_only(
         static const bool verbose = false; \
         pas_allocation_result result = name(size, 1); \
         if (verbose) \
-            pas_log("result.begin = %p\n", result.begin); \
+            pas_log("result.begin = %p\n", (void*)result.begin); \
         return result; \
     } \
     \

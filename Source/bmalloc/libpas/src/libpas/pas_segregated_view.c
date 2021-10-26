@@ -370,7 +370,7 @@ static bool for_each_live_object(
     object_size = pas_segregated_view_get_size_directory(view)->object_size;
 
     if (verbose) {
-        pas_log("page = %p, got alloc bits range %zu...%zu.\n",
+        pas_log("page = %p, got alloc bits range %u...%u.\n",
                 page,
                 full_alloc_bits.word_index_begin,
                 full_alloc_bits.word_index_end);
@@ -461,7 +461,7 @@ static pas_tri_state should_be_eligible(pas_segregated_view view,
 
         if (verbose) {
             pas_log("Checking if can bump for shared view %p, bump %u, max object size %zu, "
-                    "bump limit %u\n",
+                    "bump limit %zu\n",
                     shared_view, shared_view->bump_offset, page_config->base.max_object_size,
                     pas_segregated_page_config_object_payload_end_offset_from_boundary(*page_config));
         }
@@ -483,7 +483,7 @@ static pas_tri_state should_be_eligible(pas_segregated_view view,
     full_alloc_bits = pas_full_alloc_bits_create_for_view(view, *page_config);
 
     if (verbose) {
-        pas_log("page = %p, got alloc bits range %zu...%zu.\n",
+        pas_log("page = %p, got alloc bits range %u...%u.\n",
                 page,
                 full_alloc_bits.word_index_begin,
                 full_alloc_bits.word_index_end);
