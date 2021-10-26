@@ -4730,3 +4730,5 @@ webkit.org/b/232188 fast/ruby/generated-before-counter-doesnt-crash.html [ Pass 
 webkit.org/b/232317 js/function-apply-aliased.html [ Pass Crash ]
 
 webkit.org/b/232319 fast/ruby/before-block-doesnt-crash.html [ Pass Failure ]
+
+webkit.org/b/232321 imported/mozilla/svg/viewBox-and-pattern-03.svg [ Pass Crash ]
