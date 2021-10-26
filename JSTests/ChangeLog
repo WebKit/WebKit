@@ -1,3 +1,14 @@
+2021-10-25  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Don't branch around register allocation in DFG enumerator get by val
+        https://bugs.webkit.org/show_bug.cgi?id=232260
+        rdar://84544469
+
+        Reviewed by Robin Morisset.
+
+        * stress/dont-branch-around-regalloc-enumerator-get-by-val-float.js: Added.
+        (foo):
+
 2021-10-24  Alexey Shvayka  <ashvayka@apple.com>
 
         InternalFunction::createSubclassStructure() should use prototype's global object

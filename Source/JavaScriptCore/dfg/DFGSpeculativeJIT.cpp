@@ -2593,7 +2593,7 @@ void SpeculativeJIT::compileGetCharCodeAt(Node* node)
     strictInt32Result(scratchReg, m_currentNode);
 }
 
-void SpeculativeJIT::compileGetByValOnString(Node* node, const ScopedLambda<std::tuple<JSValueRegs, DataFormat>(DataFormat preferredFormat)>& prefix)
+void SpeculativeJIT::compileGetByValOnString(Node* node, const ScopedLambda<std::tuple<JSValueRegs, DataFormat, CanUseFlush>(DataFormat preferredFormat)>& prefix)
 {
     SpeculateCellOperand base(this, m_graph.child(node, 0));
     SpeculateStrictInt32Operand property(this, m_graph.child(node, 1));
@@ -2604,7 +2604,7 @@ void SpeculativeJIT::compileGetByValOnString(Node* node, const ScopedLambda<std:
 
     JSValueRegs resultRegs;
     DataFormat format;
-    std::tie(resultRegs, format) = prefix(node->arrayMode().isOutOfBounds() ? DataFormatJS : DataFormatCell);
+    std::tie(resultRegs, format, std::ignore) = prefix(node->arrayMode().isOutOfBounds() ? DataFormatJS : DataFormatCell);
     GPRReg scratchReg = resultRegs.payloadGPR();
 
     // unsigned comparison so we can filter out negative indices and indices that are too large
@@ -3388,7 +3388,7 @@ void SpeculativeJIT::setIntTypedArrayLoadResult(Node* node, JSValueRegs resultRe
     doubleResult(resultFPR, node);
 }
 
-void SpeculativeJIT::compileGetByValOnIntTypedArray(Node* node, TypedArrayType type, const ScopedLambda<std::tuple<JSValueRegs, DataFormat>(DataFormat preferredFormat)>& prefix)
+void SpeculativeJIT::compileGetByValOnIntTypedArray(Node* node, TypedArrayType type, const ScopedLambda<std::tuple<JSValueRegs, DataFormat, CanUseFlush>(DataFormat preferredFormat)>& prefix)
 {
     ASSERT(isInt(type));
     
@@ -3411,7 +3411,7 @@ void SpeculativeJIT::compileGetByValOnIntTypedArray(Node* node, TypedArrayType t
 
     JSValueRegs resultRegs;
     DataFormat format;
-    std::tie(resultRegs, format) = prefix(DataFormatInt32);
+    std::tie(resultRegs, format, std::ignore) = prefix(DataFormatInt32);
     bool shouldBox = format == DataFormatJS;
 
     emitTypedArrayBoundsCheck(node, baseReg, propertyReg, scratchGPR);
@@ -3656,7 +3656,7 @@ void SpeculativeJIT::compilePutByValForIntTypedArray(GPRReg base, GPRReg propert
     noResult(node);
 }
 
-void SpeculativeJIT::compileGetByValOnFloatTypedArray(Node* node, TypedArrayType type, const ScopedLambda<std::tuple<JSValueRegs, DataFormat>(DataFormat preferredFormat)>& prefix)
+void SpeculativeJIT::compileGetByValOnFloatTypedArray(Node* node, TypedArrayType type, const ScopedLambda<std::tuple<JSValueRegs, DataFormat, CanUseFlush>(DataFormat preferredFormat)>& prefix)
 {
     ASSERT(isFloat(type));
     
@@ -3664,18 +3664,18 @@ void SpeculativeJIT::compileGetByValOnFloatTypedArray(Node* node, TypedArrayType
     SpeculateStrictInt32Operand property(this, m_graph.varArgChild(node, 1));
     StorageOperand storage(this, m_graph.varArgChild(node, 2));
     GPRTemporary scratch(this);
+    FPRTemporary result(this);
 
     GPRReg baseReg = base.gpr();
     GPRReg propertyReg = property.gpr();
     GPRReg storageReg = storage.gpr();
     GPRReg scratchGPR = scratch.gpr();
+    FPRReg resultReg = result.fpr();
 
     JSValueRegs resultRegs;
     DataFormat format;
-    std::tie(resultRegs, format) = prefix(DataFormatDouble);
+    std::tie(resultRegs, format, std::ignore) = prefix(DataFormatDouble);
 
-    FPRTemporary result(this);
-    FPRReg resultReg = result.fpr();
     emitTypedArrayBoundsCheck(node, baseReg, propertyReg, scratchGPR);
     switch (elementSize(type)) {
     case 4:
@@ -3737,7 +3737,7 @@ void SpeculativeJIT::compilePutByValForFloatTypedArray(GPRReg base, GPRReg prope
     noResult(node);
 }
 
-void SpeculativeJIT::compileGetByValForObjectWithString(Node* node, const ScopedLambda<std::tuple<JSValueRegs, DataFormat>(DataFormat preferredFormat)>& prefix)
+void SpeculativeJIT::compileGetByValForObjectWithString(Node* node, const ScopedLambda<std::tuple<JSValueRegs, DataFormat, CanUseFlush>(DataFormat preferredFormat)>& prefix)
 {
     SpeculateCellOperand arg1(this, m_graph.varArgChild(node, 0));
     SpeculateCellOperand arg2(this, m_graph.varArgChild(node, 1));
@@ -3746,19 +3746,25 @@ void SpeculativeJIT::compileGetByValForObjectWithString(Node* node, const Scoped
     GPRReg arg2GPR = arg2.gpr();
 
     JSValueRegs resultRegs;
-    std::tie(resultRegs, std::ignore) = prefix(DataFormatJS);
+    CanUseFlush canUseFlush = CanUseFlush::Yes;
+    std::tie(resultRegs, std::ignore, canUseFlush) = prefix(DataFormatJS);
 
     speculateObject(m_graph.varArgChild(node, 0), arg1GPR);
     speculateString(m_graph.varArgChild(node, 1), arg2GPR);
 
-    flushRegisters();
+    if (canUseFlush == CanUseFlush::No)
+        silentSpillAllRegisters(resultRegs);
+    else
+        flushRegisters();
     callOperation(operationGetByValObjectString, resultRegs, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), arg1GPR, arg2GPR);
+    if (canUseFlush == CanUseFlush::No)
+        silentFillAllRegisters();
     m_jit.exceptionCheck();
 
     jsValueResult(resultRegs, node);
 }
 
-void SpeculativeJIT::compileGetByValForObjectWithSymbol(Node* node, const ScopedLambda<std::tuple<JSValueRegs, DataFormat>(DataFormat preferredFormat)>& prefix)
+void SpeculativeJIT::compileGetByValForObjectWithSymbol(Node* node, const ScopedLambda<std::tuple<JSValueRegs, DataFormat, CanUseFlush>(DataFormat preferredFormat)>& prefix)
 {
     SpeculateCellOperand arg1(this, m_graph.varArgChild(node, 0));
     SpeculateCellOperand arg2(this, m_graph.varArgChild(node, 1));
@@ -3767,13 +3773,19 @@ void SpeculativeJIT::compileGetByValForObjectWithSymbol(Node* node, const Scoped
     GPRReg arg2GPR = arg2.gpr();
 
     JSValueRegs resultRegs;
-    std::tie(resultRegs, std::ignore) = prefix(DataFormatJS);
+    CanUseFlush canUseFlush = CanUseFlush::Yes;
+    std::tie(resultRegs, std::ignore, canUseFlush) = prefix(DataFormatJS);
 
     speculateObject(m_graph.varArgChild(node, 0), arg1GPR);
     speculateSymbol(m_graph.varArgChild(node, 1), arg2GPR);
 
-    flushRegisters();
+    if (canUseFlush == CanUseFlush::No)
+        silentSpillAllRegisters(resultRegs);
+    else
+        flushRegisters();
     callOperation(operationGetByValObjectSymbol, resultRegs, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), arg1GPR, arg2GPR);
+    if (canUseFlush == CanUseFlush::No)
+        silentFillAllRegisters();
     m_jit.exceptionCheck();
 
     jsValueResult(resultRegs, node);
@@ -8110,7 +8122,7 @@ void SpeculativeJIT::compileGetTypedArrayByteOffset(Node* node)
     strictInt32Result(vectorGPR, node);
 }
 
-void SpeculativeJIT::compileGetByValOnDirectArguments(Node* node, const ScopedLambda<std::tuple<JSValueRegs, DataFormat>(DataFormat preferredFormat)>& prefix)
+void SpeculativeJIT::compileGetByValOnDirectArguments(Node* node, const ScopedLambda<std::tuple<JSValueRegs, DataFormat, CanUseFlush>(DataFormat preferredFormat)>& prefix)
 {
     SpeculateCellOperand base(this, m_graph.varArgChild(node, 0));
     SpeculateStrictInt32Operand property(this, m_graph.varArgChild(node, 1));
@@ -8119,7 +8131,7 @@ void SpeculativeJIT::compileGetByValOnDirectArguments(Node* node, const ScopedLa
     GPRReg propertyReg = property.gpr();
 
     JSValueRegs resultRegs;
-    std::tie(resultRegs, std::ignore) = prefix(DataFormatJS);
+    std::tie(resultRegs, std::ignore, std::ignore) = prefix(DataFormatJS);
     GPRReg scratchReg = resultRegs.payloadGPR();
     
     if (!m_compileOkay)
@@ -8151,7 +8163,7 @@ void SpeculativeJIT::compileGetByValOnDirectArguments(Node* node, const ScopedLa
     jsValueResult(resultRegs, node);
 }
 
-void SpeculativeJIT::compileGetByValOnScopedArguments(Node* node, const ScopedLambda<std::tuple<JSValueRegs, DataFormat>(DataFormat preferredFormat)>& prefix)
+void SpeculativeJIT::compileGetByValOnScopedArguments(Node* node, const ScopedLambda<std::tuple<JSValueRegs, DataFormat, CanUseFlush>(DataFormat preferredFormat)>& prefix)
 {
     SpeculateCellOperand base(this, m_graph.varArgChild(node, 0));
     SpeculateStrictInt32Operand property(this, m_graph.varArgChild(node, 1));
@@ -8167,7 +8179,7 @@ void SpeculativeJIT::compileGetByValOnScopedArguments(Node* node, const ScopedLa
         return;
 
     JSValueRegs resultRegs;
-    std::tie(resultRegs, std::ignore) = prefix(DataFormatJS);
+    std::tie(resultRegs, std::ignore, std::ignore) = prefix(DataFormatJS);
     
     m_jit.loadPtr(
         MacroAssembler::Address(baseReg, ScopedArguments::offsetOfStorage()), resultRegs.payloadGPR());
@@ -15865,7 +15877,7 @@ void SpeculativeJIT::compileEnumeratorGetByVal(Node* node)
         GPRReg enumeratorGPR;
         MacroAssembler::Jump badStructureSlowPath;
 
-        compileGetByVal(node, scopedLambda<std::tuple<JSValueRegs, DataFormat>(DataFormat)>([&] (DataFormat) {
+        compileGetByVal(node, scopedLambda<std::tuple<JSValueRegs, DataFormat, CanUseFlush>(DataFormat)>([&] (DataFormat) {
             Edge storageEdge = m_graph.varArgChild(node, 2);
             StorageOperand storage;
             if (storageEdge)
@@ -15938,7 +15950,7 @@ void SpeculativeJIT::compileEnumeratorGetByVal(Node* node)
             }
 
             notFastNamedCases.link(&m_jit);
-            return std::make_pair(resultRegs, DataFormatJS);
+            return std::tuple { resultRegs, DataFormatJS, CanUseFlush::No };
         }));
 
         // We rely on compileGetByVal to call jsValueResult for us.
