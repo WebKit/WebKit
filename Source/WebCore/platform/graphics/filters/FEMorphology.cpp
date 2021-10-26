@@ -205,7 +205,7 @@ void FEMorphology::platformApply(const PaintingData& paintingData)
     unsigned maxNumThreads = paintingData.height / 8;
     unsigned optimalThreadNumber = std::min<unsigned>((paintingData.width * paintingData.height * kernelFactor) / minimalArea, maxNumThreads);
     if (optimalThreadNumber > 1) {
-        WTF::ParallelJobs<PlatformApplyParameters> parallelJobs(&WebCore::FEMorphology::platformApplyWorker, optimalThreadNumber);
+        ParallelJobs<PlatformApplyParameters> parallelJobs(&WebCore::FEMorphology::platformApplyWorker, optimalThreadNumber);
         auto numOfThreads = parallelJobs.numberOfJobs();
         if (numOfThreads > 1) {
             // Split the job into "jobSize"-sized jobs but there a few jobs that need to be slightly larger since

@@ -141,9 +141,9 @@ double screenDPI()
     return cachedDpi;
 }
 
-static WTF::HashMap<void*, Function<void()>>& screenDPIObserverHandlersMap()
+static HashMap<void*, Function<void()>>& screenDPIObserverHandlersMap()
 {
-    static WTF::NeverDestroyed<WTF::HashMap<void*, Function<void()>>> handlersMap;
+    static NeverDestroyed<HashMap<void*, Function<void()>>> handlersMap;
     return handlersMap;
 }
 

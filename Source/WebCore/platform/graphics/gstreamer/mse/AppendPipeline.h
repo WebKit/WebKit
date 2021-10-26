@@ -140,7 +140,7 @@ private:
 
     // Used only for asserting that there is only one streaming thread.
     // Only the pointers are compared.
-    WTF::Thread* m_streamingThread;
+    Thread* m_streamingThread;
 
     bool m_hasReceivedFirstInitializationSegment { false };
     // Used only for asserting EOS events are only caused by demuxing errors.

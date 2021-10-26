@@ -98,7 +98,7 @@ public:
     
     bool isUnregistered() const;
 
-    void forEachConnection(const WTF::Function<void(SWServer::Connection&)>&);
+    void forEachConnection(const Function<void(SWServer::Connection&)>&);
 
     WEBCORE_EXPORT bool shouldSoftUpdate(const FetchOptions&) const;
     WEBCORE_EXPORT void scheduleSoftUpdate(IsAppInitiated);

@@ -37,7 +37,7 @@ ScrollAnimationMomentum::ScrollAnimationMomentum(ScrollAnimationClient& client)
 
 ScrollAnimationMomentum::~ScrollAnimationMomentum() = default;
 
-bool ScrollAnimationMomentum::startAnimatedScrollWithInitialVelocity(const FloatPoint& initialOffset, const FloatSize& initialVelocity, const FloatSize& initialDelta, const WTF::Function<FloatPoint(const FloatPoint&)>& destinationModifier)
+bool ScrollAnimationMomentum::startAnimatedScrollWithInitialVelocity(const FloatPoint& initialOffset, const FloatSize& initialVelocity, const FloatSize& initialDelta, const Function<FloatPoint(const FloatPoint&)>& destinationModifier)
 {
     auto extents = m_client.scrollExtentsForAnimation(*this);
 

@@ -132,7 +132,7 @@ static bool isAppleLegacyCssValueKeyword(const char* valueKeyword, unsigned leng
     && !hasPrefix(valueKeyword, length, appleSystemPrefix)
     && !hasPrefix(valueKeyword, length, applePayPrefix)
 #if PLATFORM(COCOA)
-    && !WTF::equal(reinterpret_cast<const LChar*>(valueKeyword), reinterpret_cast<const LChar*>(appleWirelessPlaybackTargetActive), length)
+    && !equal(reinterpret_cast<const LChar*>(valueKeyword), reinterpret_cast<const LChar*>(appleWirelessPlaybackTargetActive), length)
 #endif
     ;
 }
@@ -146,7 +146,7 @@ static CSSValueID cssValueKeywordID(const CharacterType* valueKeyword, unsigned 
         CharacterType c = valueKeyword[i];
         if (!c || c >= 0x7F)
             return CSSValueInvalid; // illegal keyword.
-        buffer[i] = WTF::toASCIILower(c);
+        buffer[i] = toASCIILower(c);
     }
     buffer[length] = '\0';
     

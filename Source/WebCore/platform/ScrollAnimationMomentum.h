@@ -35,7 +35,7 @@ public:
     ScrollAnimationMomentum(ScrollAnimationClient&);
     virtual ~ScrollAnimationMomentum();
 
-    bool startAnimatedScrollWithInitialVelocity(const FloatPoint& initialOffset, const FloatSize& initialVelocity, const FloatSize& initialDelta, const WTF::Function<FloatPoint(const FloatPoint&)>& destinationModifier);
+    bool startAnimatedScrollWithInitialVelocity(const FloatPoint& initialOffset, const FloatSize& initialVelocity, const FloatSize& initialDelta, const Function<FloatPoint(const FloatPoint&)>& destinationModifier);
     bool retargetActiveAnimation(const FloatPoint& newDestination) final;
     void stop() final;
     void serviceAnimation(MonotonicTime) final;

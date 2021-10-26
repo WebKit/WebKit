@@ -115,7 +115,7 @@ void ExtendableEvent::addExtendLifetimePromise(Ref<DOMPromise>&& promise)
     ++m_pendingPromiseCount;
 }
 
-void ExtendableEvent::whenAllExtendLifetimePromisesAreSettled(WTF::Function<void(HashSet<Ref<DOMPromise>>&&)>&& handler)
+void ExtendableEvent::whenAllExtendLifetimePromisesAreSettled(Function<void(HashSet<Ref<DOMPromise>>&&)>&& handler)
 {
     ASSERT_WITH_MESSAGE(target(), "Event has not been dispatched yet");
     ASSERT(!m_whenAllExtendLifetimePromisesAreSettledHandler);

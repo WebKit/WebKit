@@ -50,7 +50,7 @@ enum class TextCodecSingleByte::Encoding : uint8_t {
 
 using SingleByteDecodeTable = std::array<UChar, 128>;
 using SingleByteEncodeTableEntry = std::pair<UChar, uint8_t>;
-using SingleByteEncodeTable = WTF::IteratorRange<const SingleByteEncodeTableEntry*>;
+using SingleByteEncodeTable = IteratorRange<const SingleByteEncodeTableEntry*>;
 
 // From https://encoding.spec.whatwg.org/index-iso-8859-3.txt with 0xFFFD filling the gaps
 static constexpr SingleByteDecodeTable iso88593 {

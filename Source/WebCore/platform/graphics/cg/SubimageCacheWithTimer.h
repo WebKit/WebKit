@@ -68,7 +68,7 @@ public:
     struct SubimageCacheHash {
         static unsigned hash(CGImageRef image, const FloatRect& rect)
         {
-            return WTF::pairIntHash(PtrHash<CGImageRef>::hash(image),
+            return pairIntHash(PtrHash<CGImageRef>::hash(image),
                 (static_cast<unsigned>(rect.x()) << 16) | static_cast<unsigned>(rect.y()));
         }
         static unsigned hash(const SubimageCacheEntry& key)

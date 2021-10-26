@@ -32,7 +32,7 @@ namespace WebCore {
 class DOMTokenList {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    using IsSupportedTokenFunction = WTF::Function<bool(Document&, StringView)>;
+    using IsSupportedTokenFunction = Function<bool(Document&, StringView)>;
     DOMTokenList(Element&, const QualifiedName& attributeName, IsSupportedTokenFunction&& isSupportedToken = { });
 
     void associatedAttributeValueChanged(const AtomString&);

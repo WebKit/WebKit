@@ -35,7 +35,7 @@ namespace WebCore {
 struct CDMRestrictions {
     bool distinctiveIdentifierDenied { false };
     bool persistentStateDenied { false };
-    HashSet<CDMSessionType, WTF::IntHash<CDMSessionType>, WTF::StrongEnumHashTraits<CDMSessionType>> deniedSessionTypes;
+    HashSet<CDMSessionType, IntHash<CDMSessionType>, WTF::StrongEnumHashTraits<CDMSessionType>> deniedSessionTypes;
 
     template<class Encoder>
     void encode(Encoder& encoder) const
@@ -58,7 +58,7 @@ struct CDMRestrictions {
         if (!persistentStateDenied)
             return std::nullopt;
 
-        std::optional<HashSet<CDMSessionType, WTF::IntHash<CDMSessionType>, WTF::StrongEnumHashTraits<CDMSessionType>>> deniedSessionTypes;
+        std::optional<HashSet<CDMSessionType, IntHash<CDMSessionType>, WTF::StrongEnumHashTraits<CDMSessionType>>> deniedSessionTypes;
         decoder >> deniedSessionTypes;
         if (!deniedSessionTypes)
             return std::nullopt;

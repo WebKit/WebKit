@@ -643,7 +643,7 @@ static void drawWithShadowHelper(ID2D1RenderTarget* context, ID2D1BitmapRenderTa
     context->DrawBitmap(cropped.get());
 }
 
-void drawWithShadow(PlatformContextDirect2D& platformContext, FloatRect boundingRect, const ShadowState& shadowState, WTF::Function<void(ID2D1RenderTarget*)>&& drawCommands)
+void drawWithShadow(PlatformContextDirect2D& platformContext, FloatRect boundingRect, const ShadowState& shadowState, Function<void(ID2D1RenderTarget*)>&& drawCommands)
 {
     if (!shadowState.isVisible()) {
         drawWithoutShadow(platformContext, WTFMove(drawCommands));
@@ -694,7 +694,7 @@ void drawWithShadow(PlatformContextDirect2D& platformContext, FloatRect bounding
     platformContext.notifyPostDrawObserver();
 }
 
-void drawWithoutShadow(PlatformContextDirect2D& platformContext, WTF::Function<void(ID2D1RenderTarget*)>&& drawCommands)
+void drawWithoutShadow(PlatformContextDirect2D& platformContext, Function<void(ID2D1RenderTarget*)>&& drawCommands)
 {
     platformContext.notifyPreDrawObserver();
     drawCommands(platformContext.renderTarget());

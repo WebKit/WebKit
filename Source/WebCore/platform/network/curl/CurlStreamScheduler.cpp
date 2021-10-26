@@ -81,7 +81,7 @@ void CurlStreamScheduler::send(CurlStreamID streamID, UniqueArray<uint8_t>&& dat
     });
 }
 
-void CurlStreamScheduler::callOnWorkerThread(WTF::Function<void()>&& task)
+void CurlStreamScheduler::callOnWorkerThread(Function<void()>&& task)
 {
     ASSERT(isMainThread());
 
@@ -93,7 +93,7 @@ void CurlStreamScheduler::callOnWorkerThread(WTF::Function<void()>&& task)
     startThreadIfNeeded();
 }
 
-void CurlStreamScheduler::callClientOnMainThread(CurlStreamID streamID, WTF::Function<void(CurlStream::Client&)>&& task)
+void CurlStreamScheduler::callClientOnMainThread(CurlStreamID streamID, Function<void(CurlStream::Client&)>&& task)
 {
     ASSERT(!isMainThread());
 
@@ -139,7 +139,7 @@ void CurlStreamScheduler::executeTasks()
 {
     ASSERT(!isMainThread());
 
-    Vector<WTF::Function<void()>> taskQueue;
+    Vector<Function<void()>> taskQueue;
 
     {
         Locker locker { m_mutex };

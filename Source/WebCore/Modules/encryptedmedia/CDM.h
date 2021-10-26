@@ -62,7 +62,7 @@ public:
     static Ref<CDM> create(Document&, const String& keySystem);
     ~CDM();
 
-    using SupportedConfigurationCallback = WTF::Function<void(std::optional<MediaKeySystemConfiguration>)>;
+    using SupportedConfigurationCallback = Function<void(std::optional<MediaKeySystemConfiguration>)>;
     void getSupportedConfiguration(MediaKeySystemConfiguration&& candidateConfiguration, SupportedConfigurationCallback&&);
 
     const String& keySystem() const { return m_keySystem; }
@@ -86,7 +86,7 @@ private:
     CDM(Document&, const String& keySystem);
 
 #if !RELEASE_LOG_DISABLED
-    Ref<WTF::Logger> m_logger;
+    Ref<Logger> m_logger;
     const void* m_logIdentifier;
 #endif
     String m_keySystem;

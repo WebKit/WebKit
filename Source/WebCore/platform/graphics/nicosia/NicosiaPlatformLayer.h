@@ -89,7 +89,7 @@ class CompositionLayer : public PlatformLayer {
 public:
     class Impl {
     public:
-        using Factory = WTF::Function<std::unique_ptr<Impl>(uint64_t, CompositionLayer&)>;
+        using Factory = Function<std::unique_ptr<Impl>(uint64_t, CompositionLayer&)>;
 
         virtual ~Impl();
         virtual bool isTextureMapperImpl() const { return false; }
@@ -330,7 +330,7 @@ class ContentLayer : public PlatformLayer {
 public:
     class Impl {
     public:
-        using Factory = WTF::Function<std::unique_ptr<Impl>(ContentLayer&)>;
+        using Factory = Function<std::unique_ptr<Impl>(ContentLayer&)>;
 
         virtual ~Impl();
         virtual bool isTextureMapperImpl() const { return false; }
@@ -355,7 +355,7 @@ class BackingStore : public ThreadSafeRefCounted<BackingStore> {
 public:
     class Impl {
     public:
-        using Factory = WTF::Function<std::unique_ptr<Impl>(BackingStore&)>;
+        using Factory = Function<std::unique_ptr<Impl>(BackingStore&)>;
 
         virtual ~Impl();
         virtual bool isTextureMapperImpl() const { return false; }
@@ -379,7 +379,7 @@ class ImageBacking : public ThreadSafeRefCounted<ImageBacking> {
 public:
     class Impl {
     public:
-        using Factory = WTF::Function<std::unique_ptr<Impl>(ImageBacking&)>;
+        using Factory = Function<std::unique_ptr<Impl>(ImageBacking&)>;
 
         virtual ~Impl();
         virtual bool isTextureMapperImpl() const { return false; }

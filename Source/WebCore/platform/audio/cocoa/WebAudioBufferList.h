@@ -54,7 +54,7 @@ public:
     uint32_t bufferCount() const;
     uint32_t channelCount() const { return m_channelCount; }
     AudioBuffer* buffer(uint32_t index) const;
-    WTF::IteratorRange<AudioBuffer*> buffers() const;
+    IteratorRange<AudioBuffer*> buffers() const;
 
     WEBCORE_EXPORT static bool isSupportedDescription(const CAAudioStreamDescription&, uint32_t sampleCount);
 

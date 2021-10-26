@@ -29,7 +29,7 @@ namespace WebCore {
 
 class TextCheckerEnchant {
     WTF_MAKE_NONCOPYABLE(TextCheckerEnchant); WTF_MAKE_FAST_ALLOCATED;
-    friend class WTF::NeverDestroyed<TextCheckerEnchant>;
+    friend class NeverDestroyed<TextCheckerEnchant>;
 public:
     static TextCheckerEnchant& singleton();
 

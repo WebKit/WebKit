@@ -117,7 +117,7 @@ private:
 
     class CairoState;
     CairoState* m_cairoState;
-    WTF::Vector<CairoState> m_cairoStateStack;
+    Vector<CairoState> m_cairoStateStack;
 
     // Transparency layers.
     Vector<float> m_layers;

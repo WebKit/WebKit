@@ -44,7 +44,7 @@
 
 namespace WebCore {
 
-void createMediaPlayerDecodingConfigurationGStreamer(MediaDecodingConfiguration&& configuration, WTF::Function<void(MediaCapabilitiesDecodingInfo&&)>&& callback)
+void createMediaPlayerDecodingConfigurationGStreamer(MediaDecodingConfiguration&& configuration, Function<void(MediaCapabilitiesDecodingInfo&&)>&& callback)
 {
     bool isMediaSource = configuration.type == MediaDecodingType::MediaSource;
 #if ENABLE(MEDIA_SOURCE)
@@ -65,7 +65,7 @@ void createMediaPlayerDecodingConfigurationGStreamer(MediaDecodingConfiguration&
     callback(WTFMove(info));
 }
 
-void createMediaPlayerEncodingConfigurationGStreamer(MediaEncodingConfiguration&& configuration, WTF::Function<void(MediaCapabilitiesEncodingInfo&&)>&& callback)
+void createMediaPlayerEncodingConfigurationGStreamer(MediaEncodingConfiguration&& configuration, Function<void(MediaCapabilitiesEncodingInfo&&)>&& callback)
 {
     auto& scanner = GStreamerRegistryScanner::singleton();
     auto lookupResult = scanner.isEncodingSupported(configuration);

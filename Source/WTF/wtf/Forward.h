@@ -157,6 +157,7 @@ using WTF::TextStream;
 using WTF::URL;
 using WTF::UniqueRef;
 using WTF::Vector;
+using WTF::WeakPtr;
 
 template<class T, class E> using Expected = std::experimental::expected<T, E>;
 template<class E> using Unexpected = std::experimental::unexpected<E>;

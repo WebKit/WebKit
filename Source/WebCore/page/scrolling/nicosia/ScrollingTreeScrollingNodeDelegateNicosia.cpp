@@ -94,7 +94,7 @@ void ScrollingTreeScrollingNodeDelegateNicosia::animationTimerFired()
 
 std::unique_ptr<ScrollingEffectsControllerTimer> ScrollingTreeScrollingNodeDelegateNicosia::createTimer(Function<void()>&& function)
 {
-    return WTF::makeUnique<ScrollingEffectsControllerTimer>(RunLoop::current(), [function = WTFMove(function), protectedNode = Ref { scrollingNode() }] {
+    return makeUnique<ScrollingEffectsControllerTimer>(RunLoop::current(), [function = WTFMove(function), protectedNode = Ref { scrollingNode() }] {
         Locker locker { protectedNode->scrollingTree().treeLock() };
         function();
     });
@@ -103,10 +103,10 @@ std::unique_ptr<ScrollingEffectsControllerTimer> ScrollingTreeScrollingNodeDeleg
 void ScrollingTreeScrollingNodeDelegateNicosia::startAnimationCallback(ScrollingEffectsController&)
 {
     if (!m_animationTimer) {
-        m_animationTimer = WTF::makeUnique<RunLoop::Timer<ScrollingTreeScrollingNodeDelegateNicosia>>(RunLoop::current(), this, &ScrollingTreeScrollingNodeDelegateNicosia::animationTimerFired);
+        m_animationTimer = makeUnique<RunLoop::Timer<ScrollingTreeScrollingNodeDelegateNicosia>>(RunLoop::current(), this, &ScrollingTreeScrollingNodeDelegateNicosia::animationTimerFired);
 
 #if USE(GLIB_EVENT_LOOP)
-        m_animationTimer->setPriority(WTF::RunLoopSourcePriority::DisplayRefreshMonitorTimer);
+        m_animationTimer->setPriority(RunLoopSourcePriority::DisplayRefreshMonitorTimer);
 #endif
     }
 

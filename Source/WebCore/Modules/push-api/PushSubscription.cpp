@@ -96,7 +96,7 @@ PushSubscriptionJSON PushSubscription::toJSON() const
     return PushSubscriptionJSON {
         m_endpoint,
         m_expirationTime,
-        Vector<WTF::KeyValuePair<String, String>> {
+        Vector<KeyValuePair<String, String>> {
             { "p256dh"_s, base64URLEncodeToString(m_clientECDHPublicKey) },
             { "auth"_s, base64URLEncodeToString(m_sharedAuthenticationSecret) }
         }

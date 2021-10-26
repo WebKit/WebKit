@@ -147,7 +147,7 @@ Vector<Ref<Node>> HTMLSlotElement::assignedNodes(const AssignedNodesOptions& opt
     }
 
     if (auto* nodes = assignedNodes(); nodes) {
-        return WTF::compactMap(*nodes, [](auto& nodeWeakPtr) -> RefPtr<Node> {
+        return compactMap(*nodes, [](auto& nodeWeakPtr) -> RefPtr<Node> {
             return nodeWeakPtr.get();
         });
     }
@@ -157,7 +157,7 @@ Vector<Ref<Node>> HTMLSlotElement::assignedNodes(const AssignedNodesOptions& opt
 
 Vector<Ref<Element>> HTMLSlotElement::assignedElements(const AssignedNodesOptions& options) const
 {
-    return WTF::compactMap(assignedNodes(options), [](auto&& node) -> RefPtr<Element> {
+    return compactMap(assignedNodes(options), [](auto&& node) -> RefPtr<Element> {
         if (!is<Element>(node))
             return nullptr;
         return static_reference_cast<Element>(WTFMove(node));

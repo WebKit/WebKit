@@ -133,7 +133,7 @@ public:
 
     WEBCORE_EXPORT IntSize constrainedBetween(const IntSize& min, const IntSize& max) const;
 
-    template <typename T = WTF::CrashOnOverflow>
+    template <typename T = CrashOnOverflow>
     Checked<unsigned, T> area() const
     {
         return Checked<unsigned, T>(abs(m_width)) * abs(m_height);

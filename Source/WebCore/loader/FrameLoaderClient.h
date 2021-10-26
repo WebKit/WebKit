@@ -108,7 +108,7 @@ enum class UsedLegacyTLS : bool;
 
 struct StringWithDirection;
 
-typedef WTF::Function<void (PolicyAction, PolicyCheckIdentifier)> FramePolicyFunction;
+typedef Function<void (PolicyAction, PolicyCheckIdentifier)> FramePolicyFunction;
 
 class WEBCORE_EXPORT FrameLoaderClient {
     WTF_MAKE_FAST_ALLOCATED;

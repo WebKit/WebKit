@@ -128,7 +128,7 @@ void WebAudioBufferList::reset()
     memcpy(m_list.get(), m_canonicalList.get(), m_listBufferSize);
 }
 
-WTF::IteratorRange<AudioBuffer*> WebAudioBufferList::buffers() const
+IteratorRange<AudioBuffer*> WebAudioBufferList::buffers() const
 {
     return WTF::makeIteratorRange(&m_list->mBuffers[0], &m_list->mBuffers[m_list->mNumberBuffers]);
 }

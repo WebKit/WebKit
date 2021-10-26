@@ -66,7 +66,7 @@ static const char* logClassName()
 static PlatformMediaSession::RemoteControlCommandType platformCommandForMediaSessionAction(MediaSessionAction action)
 {
     static const auto commandMap = makeNeverDestroyed([] {
-        using ActionToCommandMap = HashMap<MediaSessionAction, PlatformMediaSession::RemoteControlCommandType, WTF::IntHash<MediaSessionAction>, WTF::StrongEnumHashTraits<MediaSessionAction>>;
+        using ActionToCommandMap = HashMap<MediaSessionAction, PlatformMediaSession::RemoteControlCommandType, IntHash<MediaSessionAction>, WTF::StrongEnumHashTraits<MediaSessionAction>>;
 
         return ActionToCommandMap {
             { MediaSessionAction::Play, PlatformMediaSession::PlayCommand },

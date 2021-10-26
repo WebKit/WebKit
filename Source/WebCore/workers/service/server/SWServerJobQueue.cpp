@@ -372,7 +372,7 @@ void SWServerJobQueue::finishCurrentJob()
         runNextJob();
 }
 
-void SWServerJobQueue::removeAllJobsMatching(const WTF::Function<bool(ServiceWorkerJobData&)>& matches)
+void SWServerJobQueue::removeAllJobsMatching(const Function<bool(ServiceWorkerJobData&)>& matches)
 {
     bool isFirst = true;
     bool didRemoveFirstJob = false;

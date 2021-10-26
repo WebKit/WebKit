@@ -59,7 +59,7 @@ struct _WebKitTextSinkClass {
     GstBinClass parentClass;
 };
 
-GstElement* webkitTextSinkNew(WTF::WeakPtr<WebCore::MediaPlayerPrivateGStreamer>&&);
+GstElement* webkitTextSinkNew(WeakPtr<WebCore::MediaPlayerPrivateGStreamer>&&);
 
 G_END_DECLS
 

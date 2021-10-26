@@ -63,7 +63,7 @@ public:
     static Ref<FetchResponse> error(ScriptExecutionContext&);
     static ExceptionOr<Ref<FetchResponse>> redirect(ScriptExecutionContext&, const String& url, int status);
 
-    using NotificationCallback = WTF::Function<void(ExceptionOr<FetchResponse&>&&)>;
+    using NotificationCallback = Function<void(ExceptionOr<FetchResponse&>&&)>;
     static void fetch(ScriptExecutionContext&, FetchRequest&, NotificationCallback&&);
 
     void startConsumingStream(unsigned);

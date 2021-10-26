@@ -219,7 +219,7 @@ void WorkerOrWorkletThread::workerOrWorkletThread()
     protector->detach();
 }
 
-void WorkerOrWorkletThread::start(WTF::Function<void(const String&)>&& evaluateCallback)
+void WorkerOrWorkletThread::start(Function<void(const String&)>&& evaluateCallback)
 {
     // Mutex protection is necessary to ensure that m_thread is initialized when the thread starts.
     Locker locker { m_threadCreationAndGlobalScopeLock };

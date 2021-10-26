@@ -72,11 +72,11 @@ static USet* getSmartSet(bool isPreviousCharacter)
         uset_addRange(smartSet, 0x2F800, 0x2F800 + 0x021E); // CJK Compatibility Ideographs (0x2F800 - 0x2FA1D)
 
         if (isPreviousCharacter) {
-            // FIXME: Silly to convert this to a WTF::String just to loop through the characters.
+            // FIXME: Silly to convert this to a String just to loop through the characters.
             addAllCodePoints(smartSet, "([\"\'#$/-`{"_s);
             preSmartSet = smartSet;
         } else {
-            // FIXME: Silly to convert this to a WTF::String just to loop through the characters.
+            // FIXME: Silly to convert this to a String just to loop through the characters.
             addAllCodePoints(smartSet, ")].,;:?\'!\"%*-/}"_s);
 
             // Punctuation (kCFCharacterSetPunctuation)

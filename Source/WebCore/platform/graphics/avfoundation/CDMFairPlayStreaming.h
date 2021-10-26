@@ -56,7 +56,7 @@ public:
     virtual ~CDMPrivateFairPlayStreaming();
 
 #if !RELEASE_LOG_DISABLED
-    void setLogger(WTF::Logger&, const void* logIdentifier) final;
+    void setLogger(Logger&, const void* logIdentifier) final;
 #endif
 
     Vector<AtomString> supportedInitDataTypes() const override;
@@ -87,11 +87,11 @@ public:
 
 private:
 #if !RELEASE_LOG_DISABLED
-    WTF::Logger* loggerPtr() const { return m_logger.get(); };
+    Logger* loggerPtr() const { return m_logger.get(); };
     const void* logIdentifier() const { return m_logIdentifier; }
     const char* logClassName() const { return "CDMPrivateFairPlayStreaming"; }
 
-    RefPtr<WTF::Logger> m_logger;
+    RefPtr<Logger> m_logger;
     const void* m_logIdentifier;
 #endif
 };

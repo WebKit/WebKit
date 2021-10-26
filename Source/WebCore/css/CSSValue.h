@@ -142,7 +142,7 @@ public:
 
     Ref<DeprecatedCSSOMValue> createDeprecatedCSSOMWrapper(CSSStyleDeclaration&) const;
 
-    bool traverseSubresources(const WTF::Function<bool (const CachedResource&)>& handler) const;
+    bool traverseSubresources(const Function<bool(const CachedResource&)>& handler) const;
 
     // What properties does this value rely on (eg, font-size for em units)
     void collectDirectComputationalDependencies(HashSet<CSSPropertyID>&) const;

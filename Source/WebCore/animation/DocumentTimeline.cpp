@@ -242,7 +242,7 @@ bool DocumentTimeline::animationCanBeRemoved(WebAnimation& animation)
         }
     }
 
-    for (auto& animationWithHigherCompositeOrder : WTF::makeReversedRange(animations)) {
+    for (auto& animationWithHigherCompositeOrder : makeReversedRange(animations)) {
         if (&animation == animationWithHigherCompositeOrder)
             break;
 

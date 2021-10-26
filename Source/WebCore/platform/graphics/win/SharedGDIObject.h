@@ -46,7 +46,7 @@ public:
 
     unsigned hash() const
     {
-        return WTF::PtrHash<T>::hash(m_object.get());
+        return PtrHash<T>::hash(m_object.get());
     }
 
 private:

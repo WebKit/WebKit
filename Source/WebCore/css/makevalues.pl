@@ -204,8 +204,8 @@ print HEADER "const size_t maxCSSValueKeywordLength = " . $maxLen . ";\n";
 print HEADER << "EOF";
 
 const char* getValueName(unsigned short id);
-const WTF::AtomString& getValueNameAtomString(CSSValueID id);
-WTF::String getValueNameString(CSSValueID id);
+const AtomString& getValueNameAtomString(CSSValueID id);
+String getValueNameString(CSSValueID id);
 
 inline CSSValueID convertToCSSValueID(int value)
 {

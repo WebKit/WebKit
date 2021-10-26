@@ -60,7 +60,7 @@ private:
 
     bool m_isParsingChildren;
     bool m_loading;
-    WTF::TextPosition m_startTextPosition;
+    TextPosition m_startTextPosition;
     AtomString m_contentType;
     AtomString m_media;
     RefPtr<CSSStyleSheet> m_sheet;

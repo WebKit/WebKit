@@ -165,7 +165,7 @@ auto ContentExtensionsBackend::actionsForResourceLoad(const ResourceLoadInfo& re
     return actionsVector;
 }
 
-void ContentExtensionsBackend::forEach(const WTF::Function<void(const String&, ContentExtension&)>& apply)
+void ContentExtensionsBackend::forEach(const Function<void(const String&, ContentExtension&)>& apply)
 {
     for (auto& pair : m_contentExtensions)
         apply(pair.key, pair.value);

@@ -103,7 +103,7 @@ private:
         static const bool safeToCompareToEmptyOrDeleted = true; // Empty and deleted values have lengths that are not equal to any valid length.
     };
 
-    struct SmallStringKeyHashTraits : WTF::SimpleClassHashTraits<SmallStringKey> {
+    struct SmallStringKeyHashTraits : SimpleClassHashTraits<SmallStringKey> {
         static const bool hasIsEmptyValueFunction = true;
         static bool isEmptyValue(const SmallStringKey& key) { return key.isHashTableEmptyValue(); }
         static const int minimumTableSize = 16;
@@ -225,7 +225,7 @@ inline bool operator==(const WidthCache::SmallStringKey& a, const WidthCache::Sm
 {
     if (a.length() != b.length())
         return false;
-    return WTF::equal(a.characters(), b.characters(), a.length());
+    return equal(a.characters(), b.characters(), a.length());
 }
 
 } // namespace WebCore

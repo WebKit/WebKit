@@ -90,7 +90,7 @@ public:
 private:
     WebGLTexture(WebGLRenderingContextBase&);
 
-    void deleteObjectImpl(const WTF::AbstractLocker&, GraphicsContextGL*, PlatformGLObject) override;
+    void deleteObjectImpl(const AbstractLocker&, GraphicsContextGL*, PlatformGLObject) override;
 
     bool isTexture() const override { return true; }
 

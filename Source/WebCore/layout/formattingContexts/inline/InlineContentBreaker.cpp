@@ -42,7 +42,7 @@ namespace Layout {
 #if ASSERT_ENABLED
 static inline bool hasTrailingTextContent(const InlineContentBreaker::ContinuousContent& continuousContent)
 {
-    for (auto& run : WTF::makeReversedRange(continuousContent.runs())) {
+    for (auto& run : makeReversedRange(continuousContent.runs())) {
         auto& inlineItem = run.inlineItem;
         if (inlineItem.isInlineBoxStart() || inlineItem.isInlineBoxEnd())
             continue;

@@ -87,8 +87,8 @@ public:
 
     bool loadCompleted() const { return m_loadCompleted; }
 
-    bool traverseRules(const WTF::Function<bool (const StyleRuleBase&)>& handler) const;
-    bool traverseSubresources(const WTF::Function<bool (const CachedResource&)>& handler) const;
+    bool traverseRules(const Function<bool(const StyleRuleBase&)>& handler) const;
+    bool traverseSubresources(const Function<bool(const CachedResource&)>& handler) const;
 
     void setIsUserStyleSheet(bool b) { m_isUserStyleSheet = b; }
     bool isUserStyleSheet() const { return m_isUserStyleSheet; }

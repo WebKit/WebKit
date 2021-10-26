@@ -80,7 +80,7 @@ bool PaymentCoordinator::canMakePayments(Document& document)
     return true;
 }
 
-void PaymentCoordinator::canMakePaymentsWithActiveCard(Document& document, const String& merchantIdentifier, WTF::Function<void(bool)>&& completionHandler)
+void PaymentCoordinator::canMakePaymentsWithActiveCard(Document& document, const String& merchantIdentifier, Function<void(bool)>&& completionHandler)
 {
     m_client.canMakePaymentsWithActiveCard(merchantIdentifier, document.domain(), [this, weakThis = WeakPtr { *this }, document = WeakPtr { document }, completionHandler = WTFMove(completionHandler)](bool canMakePayments) {
         if (!weakThis)
@@ -98,7 +98,7 @@ void PaymentCoordinator::canMakePaymentsWithActiveCard(Document& document, const
     });
 }
 
-void PaymentCoordinator::openPaymentSetup(Document& document, const String& merchantIdentifier, WTF::Function<void(bool)>&& completionHandler)
+void PaymentCoordinator::openPaymentSetup(Document& document, const String& merchantIdentifier, Function<void(bool)>&& completionHandler)
 {
     PAYMENT_COORDINATOR_RELEASE_LOG("openPaymentSetup()");
     m_client.openPaymentSetup(merchantIdentifier, document.domain(), WTFMove(completionHandler));

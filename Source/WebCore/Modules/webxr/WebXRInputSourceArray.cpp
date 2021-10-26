@@ -143,7 +143,7 @@ void WebXRInputSourceArray::handleAddedOrUpdatedInputSources(double timestamp, c
 
     for (auto& inputSource : inputSources) {
         auto index = m_inputSources.findMatching([&inputSource](auto& item) { return item->handle() == inputSource.handle; });
-        if (index == WTF::notFound) {
+        if (index == notFound) {
             // When new XR input sources become available for XRSession session, the user agent MUST run the following steps:
             // 1. If session's promise resolved flag is not set, abort these steps.
             // 2. Let added be a new list.

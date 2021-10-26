@@ -81,7 +81,7 @@ private:
     const T* m_current;
 };
 
-// Similar to WTF::is<>() but without the static_assert() making sure the check is necessary.
+// Similar to is<>() but without the static_assert() making sure the check is necessary.
 template <typename T, typename U>
 inline bool isRendererOfType(const U& renderer) { return TypeCastTraits<const T, const U>::isOfType(renderer); }
 

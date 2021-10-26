@@ -69,7 +69,7 @@ public:
 
     MediaTime totalDuration() const;
 
-    void dump(WTF::PrintStream&) const;
+    void dump(PrintStream&) const;
 
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static std::optional<PlatformTimeRanges> decode(Decoder&);

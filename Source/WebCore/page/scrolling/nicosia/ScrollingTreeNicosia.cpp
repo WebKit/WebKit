@@ -123,7 +123,7 @@ RefPtr<ScrollingTreeNode> ScrollingTreeNicosia::scrollingNodeForPoint(FloatPoint
     collectDescendantLayersAtPoint(layersAtPoint, rootContentsLayer, point);
 
     ScrollingTreeNode* returnNode = nullptr;
-    for (auto layer : WTF::makeReversedRange(layersAtPoint)) {
+    for (auto layer : makeReversedRange(layersAtPoint)) {
         layer->accessCommitted([&](const CompositionLayer::LayerState& state) {
             auto* scrollingNode = nodeForID(state.scrollingNodeID);
             if (is<ScrollingTreeScrollingNode>(scrollingNode))

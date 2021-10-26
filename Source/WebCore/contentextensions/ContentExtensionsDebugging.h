@@ -34,7 +34,7 @@
 #define CONTENT_EXTENSIONS_PERFORMANCE_REPORTING 0
 
 #if CONTENT_EXTENSIONS_STATE_MACHINE_DEBUGGING
-typedef WTF::CrashOnOverflow ContentExtensionsOverflowHandler;
+typedef CrashOnOverflow ContentExtensionsOverflowHandler;
 #else
 typedef UnsafeVectorOverflow ContentExtensionsOverflowHandler;
 #endif

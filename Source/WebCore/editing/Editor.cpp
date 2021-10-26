@@ -4010,7 +4010,7 @@ static Vector<TextList> editableTextListsAtPositionInDescendingOrder(const Posit
 FontAttributes Editor::fontAttributesAtSelectionStart()
 {
     RefPtr<Node> nodeToRemove;
-    auto nodeRemovalScope = WTF::makeScopeExit([&nodeToRemove]() {
+    auto nodeRemovalScope = makeScopeExit([&nodeToRemove]() {
         if (nodeToRemove)
             nodeToRemove->remove();
     });

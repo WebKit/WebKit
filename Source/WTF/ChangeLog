@@ -1,3 +1,12 @@
+2021-10-26  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WebCore] Remove unneeded WTF:: namespace prefix
+        https://bugs.webkit.org/show_bug.cgi?id=232226
+
+        Reviewed by Myles C. Maxfield.
+
+        * wtf/Forward.h:
+
 2021-10-25  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [WTF] Make Int128 operator* constexpr

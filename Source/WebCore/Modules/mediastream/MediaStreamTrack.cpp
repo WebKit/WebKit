@@ -376,7 +376,7 @@ static MediaConstraints createMediaConstraints(const std::optional<MediaTrackCon
 
 void MediaStreamTrack::applyConstraints(const std::optional<MediaTrackConstraints>& constraints, DOMPromiseDeferred<void>&& promise)
 {
-    m_promise = WTF::makeUnique<DOMPromiseDeferred<void>>(WTFMove(promise));
+    m_promise = makeUnique<DOMPromiseDeferred<void>>(WTFMove(promise));
 
     auto completionHandler = [this, protectedThis = Ref { *this }, constraints](auto&& error) mutable {
         if (!m_promise)

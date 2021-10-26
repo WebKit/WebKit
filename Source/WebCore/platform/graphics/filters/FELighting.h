@@ -117,9 +117,6 @@ protected:
         inline IntSize bottomRightNormal(int offset) const;
     };
 
-    template<typename Type>
-    friend class ParallelJobs;
-
     struct PlatformApplyGenericParameters {
         FELighting* filter;
         LightingData data;

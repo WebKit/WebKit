@@ -318,7 +318,7 @@ inline void accelerateBoxBlur(Uint8ClampedArray& ioBuffer, Uint8ClampedArray& te
     vImageBoxConvolve_ARGB8888(&effectInBuffer, &effectOutBuffer, tmpBuffer, 0, 0, kernelSize, kernelSize, 0, kvImageEdgeExtend);
     vImageBoxConvolve_ARGB8888(&effectOutBuffer, &effectInBuffer, tmpBuffer, 0, 0, kernelSize, kernelSize, 0, kvImageEdgeExtend);
     vImageBoxConvolve_ARGB8888(&effectInBuffer, &effectOutBuffer, tmpBuffer, 0, 0, kernelSize, kernelSize, 0, kvImageEdgeExtend);
-    WTF::fastFree(tmpBuffer);
+    fastFree(tmpBuffer);
 
     // The final result should be stored in ioBuffer.
     ASSERT(ioBuffer.length() == tempBuffer.length());
@@ -399,7 +399,7 @@ inline void FEGaussianBlur::platformApply(Uint8ClampedArray& ioBuffer, Uint8Clam
     int optimalThreadNumber = (paintSize.width() * paintSize.height()) / (s_minimalRectDimension + extraHeight * paintSize.width());
 
     if (optimalThreadNumber > 1) {
-        WTF::ParallelJobs<PlatformApplyParameters> parallelJobs(&platformApplyWorker, optimalThreadNumber);
+        ParallelJobs<PlatformApplyParameters> parallelJobs(&platformApplyWorker, optimalThreadNumber);
 
         int jobs = parallelJobs.numberOfJobs();
         if (jobs > 1) {

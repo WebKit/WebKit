@@ -72,7 +72,7 @@ private:
 
     void install(SWServerRegistration&, ServiceWorkerIdentifier);
 
-    void removeAllJobsMatching(const WTF::Function<bool(ServiceWorkerJobData&)>&);
+    void removeAllJobsMatching(const Function<bool(ServiceWorkerJobData&)>&);
 
     Deque<ServiceWorkerJobData> m_jobQueue;
 

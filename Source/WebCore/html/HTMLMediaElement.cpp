@@ -6479,7 +6479,7 @@ void HTMLMediaElement::setPreparedToReturnVideoLayerToInline(bool value)
     }
 }
 
-void HTMLMediaElement::waitForPreparedForInlineThen(WTF::Function<void()>&& completionHandler)
+void HTMLMediaElement::waitForPreparedForInlineThen(Function<void()>&& completionHandler)
 {
     INFO_LOG(LOGIDENTIFIER);
     ASSERT(!m_preparedForInlineCompletionHandler);
@@ -6511,7 +6511,7 @@ RetainPtr<PlatformLayer> HTMLMediaElement::createVideoFullscreenLayer()
     return nullptr;
 }
 
-void HTMLMediaElement::setVideoFullscreenLayer(PlatformLayer* platformLayer, WTF::Function<void()>&& completionHandler)
+void HTMLMediaElement::setVideoFullscreenLayer(PlatformLayer* platformLayer, Function<void()>&& completionHandler)
 {
     INFO_LOG(LOGIDENTIFIER);
     m_videoFullscreenLayer = platformLayer;

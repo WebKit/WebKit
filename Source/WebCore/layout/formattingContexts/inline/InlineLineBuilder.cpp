@@ -335,7 +335,7 @@ void LineBuilder::initialize(const UsedConstraints& lineConstraints, bool isFirs
             spanningLayoutBoxList.append(ancestor);
             ancestor = &ancestor->parent();
         }
-        for (auto* spanningInlineBox : WTF::makeReversedRange(spanningLayoutBoxList))
+        for (auto* spanningInlineBox : makeReversedRange(spanningLayoutBoxList))
             m_lineSpanningInlineBoxes.append({ *spanningInlineBox, InlineItem::Type::InlineBoxStart });
     };
     createLineSpanningInlineBoxes();

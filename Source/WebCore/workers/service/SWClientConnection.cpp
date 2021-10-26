@@ -41,7 +41,7 @@
 
 namespace WebCore {
 
-static bool dispatchToContextThreadIfNecessary(const DocumentOrWorkerIdentifier& contextIdentifier, WTF::Function<void(ScriptExecutionContext&)>&& task)
+static bool dispatchToContextThreadIfNecessary(const DocumentOrWorkerIdentifier& contextIdentifier, Function<void(ScriptExecutionContext&)>&& task)
 {
     RELEASE_ASSERT(isMainThread());
     bool wasPosted = false;

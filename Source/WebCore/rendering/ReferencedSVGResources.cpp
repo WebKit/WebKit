@@ -80,7 +80,7 @@ ReferencedSVGResources::~ReferencedSVGResources()
 void ReferencedSVGResources::addClientForTarget(SVGElement& targetElement, const AtomString& targetID)
 {
     m_elementClients.ensure(targetID, [&] {
-        auto client = WTF::makeUnique<CSSSVGResourceElementClient>(m_renderer);
+        auto client = makeUnique<CSSSVGResourceElementClient>(m_renderer);
         targetElement.addReferencingCSSClient(*client);
         return client;
     });

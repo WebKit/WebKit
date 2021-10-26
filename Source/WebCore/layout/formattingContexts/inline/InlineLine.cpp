@@ -213,7 +213,7 @@ void Line::visuallyCollapseHangingOverflow(InlineLayoutUnit horizontalAvailableS
     // Let's just find the trailing pre-wrap whitespace content for now (e.g check if there are multiple trailing runs with
     // different set of white-space values and decide if the in-between pre-wrap content should be collapsed as well.)
     auto trimmedContentWidth = InlineLayoutUnit { };
-    for (auto& run : WTF::makeReversedRange(m_runs)) {
+    for (auto& run : makeReversedRange(m_runs)) {
         if (!run.shouldTrailingWhitespaceHang())
             break;
         auto visuallyCollapsibleInlineItem = run.isLineSpanningInlineBoxStart() || run.isInlineBoxStart() || run.isInlineBoxEnd() || run.hasTrailingWhitespace();
@@ -297,7 +297,7 @@ void Line::appendTextContent(const InlineTextItem& inlineTextItem, const RenderS
         if (InlineTextItem::shouldPreserveSpacesAndTabs(inlineTextItem))
             return false;
         // This content is collapsible. Let's check if the last item is collapsed.
-        for (auto& run : WTF::makeReversedRange(m_runs)) {
+        for (auto& run : makeReversedRange(m_runs)) {
             if (run.isBox())
                 return false;
             // https://drafts.csswg.org/css-text-3/#white-space-phase-1
@@ -439,7 +439,7 @@ InlineLayoutUnit Line::removeBorderAndPaddingEndForInlineBoxDecorationClone(cons
 
 void Line::addTrailingHyphen(InlineLayoutUnit hyphenLogicalWidth)
 {
-    for (auto& run : WTF::makeReversedRange(m_runs)) {
+    for (auto& run : makeReversedRange(m_runs)) {
         if (!run.isText())
             continue;
         run.setNeedsHyphen(hyphenLogicalWidth);

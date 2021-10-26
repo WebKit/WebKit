@@ -38,8 +38,8 @@ struct MediaEncodingConfiguration;
 
 class MediaEngineConfigurationFactory {
 public:
-    using DecodingConfigurationCallback = WTF::Function<void(MediaCapabilitiesDecodingInfo&&)>;
-    using EncodingConfigurationCallback = WTF::Function<void(MediaCapabilitiesEncodingInfo&&)>;
+    using DecodingConfigurationCallback = Function<void(MediaCapabilitiesDecodingInfo&&)>;
+    using EncodingConfigurationCallback = Function<void(MediaCapabilitiesEncodingInfo&&)>;
 
     static bool hasDecodingConfigurationFactory();
     static bool hasEncodingConfigurationFactory();
@@ -47,8 +47,8 @@ public:
     WEBCORE_EXPORT static void createDecodingConfiguration(MediaDecodingConfiguration&&, DecodingConfigurationCallback&&);
     WEBCORE_EXPORT static void createEncodingConfiguration(MediaEncodingConfiguration&&, EncodingConfigurationCallback&&);
     
-    using CreateDecodingConfiguration = WTF::Function<void(MediaDecodingConfiguration&&, DecodingConfigurationCallback&&)>;
-    using CreateEncodingConfiguration = WTF::Function<void(MediaEncodingConfiguration&&, EncodingConfigurationCallback&&)>;
+    using CreateDecodingConfiguration = Function<void(MediaDecodingConfiguration&&, DecodingConfigurationCallback&&)>;
+    using CreateEncodingConfiguration = Function<void(MediaEncodingConfiguration&&, EncodingConfigurationCallback&&)>;
 
     struct MediaEngineFactory {
         CreateDecodingConfiguration createDecodingConfiguration;

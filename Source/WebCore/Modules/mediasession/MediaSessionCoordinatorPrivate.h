@@ -71,19 +71,19 @@ public:
     virtual void playbackStateChanged(MediaSessionPlaybackState) = 0;
     virtual void trackIdentifierChanged(const String&) = 0;
 
-    void setLogger(const WTF::Logger&, const void*);
+    void setLogger(const Logger&, const void*);
     virtual void setClient(WeakPtr<MediaSessionCoordinatorClient> client) { m_client = client;}
 
 protected:
     explicit MediaSessionCoordinatorPrivate() = default;
 
-    const WTF::Logger* loggerPtr() const { return m_logger.get(); }
+    const Logger* loggerPtr() const { return m_logger.get(); }
     const void* logIdentifier() const { return m_logIdentifier; }
 
     WeakPtr<MediaSessionCoordinatorClient> client() const { return m_client; }
 
 private:
-    RefPtr<const WTF::Logger> m_logger;
+    RefPtr<const Logger> m_logger;
     const void* m_logIdentifier;
     WeakPtr<MediaSessionCoordinatorClient> m_client;
 };

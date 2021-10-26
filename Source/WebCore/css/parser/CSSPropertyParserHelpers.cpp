@@ -3744,9 +3744,9 @@ std::optional<CSSValueID> consumeGenericFamilyRaw(CSSParserTokenRange& range)
     return consumeIdentRangeRaw(range, CSSValueSerif, CSSValueWebkitBody);
 }
 
-std::optional<WTF::Vector<FontFamilyRaw>> consumeFontFamilyRaw(CSSParserTokenRange& range)
+std::optional<Vector<FontFamilyRaw>> consumeFontFamilyRaw(CSSParserTokenRange& range)
 {
-    WTF::Vector<FontFamilyRaw> list;
+    Vector<FontFamilyRaw> list;
     do {
         if (auto ident = consumeGenericFamilyRaw(range))
             list.append({ *ident });

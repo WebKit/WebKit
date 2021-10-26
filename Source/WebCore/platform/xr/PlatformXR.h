@@ -294,7 +294,7 @@ protected:
     // https://immersive-web.github.io/webxr/#xr-device-concept
     // Each XR device has a list of enabled features for each XRSessionMode in its list of supported modes,
     // which is a list of feature descriptors which MUST be initially an empty list.
-    using FeaturesPerModeMap = WTF::HashMap<SessionMode, FeatureList, WTF::IntHash<SessionMode>, WTF::StrongEnumHashTraits<SessionMode>>;
+    using FeaturesPerModeMap = HashMap<SessionMode, FeatureList, IntHash<SessionMode>, WTF::StrongEnumHashTraits<SessionMode>>;
     FeaturesPerModeMap m_enabledFeaturesMap;
     FeaturesPerModeMap m_supportedFeaturesMap;
 
@@ -477,7 +477,7 @@ template<class Encoder>
 void Device::FrameData::LayerData::encode(Encoder& encoder) const
 {
 #if USE(IOSURFACE_FOR_XR_LAYER_DATA)
-    WTF::MachSendRight surfaceSendRight = surface ? surface->createSendRight() : WTF::MachSendRight();
+    MachSendRight surfaceSendRight = surface ? surface->createSendRight() : MachSendRight();
     encoder << surfaceSendRight;
     encoder << isShared;
 #else
@@ -490,7 +490,7 @@ std::optional<Device::FrameData::LayerData> Device::FrameData::LayerData::decode
 {
     PlatformXR::Device::FrameData::LayerData layerData;
 #if USE(IOSURFACE_FOR_XR_LAYER_DATA)
-    WTF::MachSendRight surfaceSendRight;
+    MachSendRight surfaceSendRight;
     if (!decoder.decode(surfaceSendRight))
         return std::nullopt;
     layerData.surface = WebCore::IOSurface::createFromSendRight(WTFMove(surfaceSendRight), WebCore::DestinationColorSpace::SRGB());

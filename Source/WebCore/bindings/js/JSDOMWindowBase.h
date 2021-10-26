@@ -100,7 +100,7 @@ protected:
     RefPtr<JSC::WatchpointSet> m_windowCloseWatchpoints;
 
 private:
-    using ResponseCallback = WTF::Function<void(const char*, size_t)>;
+    using ResponseCallback = Function<void(const char*, size_t)>;
 
     RefPtr<DOMWindow> m_wrapped;
     RefPtr<Event> m_currentEvent;

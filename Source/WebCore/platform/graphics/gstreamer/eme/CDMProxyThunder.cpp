@@ -42,7 +42,7 @@ GST_DEBUG_CATEGORY_EXTERN(webkitMediaThunderDecryptDebugCategory);
 namespace WebCore {
 
 // NOTE: YouTube 2019 EME conformance tests expect this to be >=5s.
-const WTF::Seconds s_licenseKeyResponseTimeout = WTF::Seconds(6);
+const Seconds s_licenseKeyResponseTimeout = Seconds(6);
 
 BoxPtr<OpenCDMSession> CDMProxyThunder::getDecryptionSession(DecryptionContext& in) const
 {

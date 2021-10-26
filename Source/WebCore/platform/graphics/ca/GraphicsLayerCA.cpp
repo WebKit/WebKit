@@ -3217,7 +3217,7 @@ void GraphicsLayerCA::updateAnimations()
 
             LayerPropertyAnimation* earliestAnimation = nullptr;
             Vector<RefPtr<PlatformCAAnimation>> caAnimations;
-            for (auto* animation : WTF::makeReversedRange(animations)) {
+            for (auto* animation : makeReversedRange(animations)) {
                 if (auto beginTime = animation->computedBeginTime()) {
                     if (!earliestAnimation || *earliestAnimation->computedBeginTime() > *beginTime)
                         earliestAnimation = animation;

@@ -410,7 +410,7 @@ RetainPtr<CFDataRef> LegacyWebArchive::createPropertyListRepresentation(const Re
 
 #endif
 
-RefPtr<LegacyWebArchive> LegacyWebArchive::create(Node& node, WTF::Function<bool (Frame&)>&& frameFilter)
+RefPtr<LegacyWebArchive> LegacyWebArchive::create(Node& node, Function<bool(Frame&)>&& frameFilter)
 {
     Frame* frame = node.document().frame();
     if (!frame)
@@ -502,7 +502,7 @@ static void addSubresourcesForAttachmentElementsIfNecessary(Frame& frame, const 
 
 #endif
 
-RefPtr<LegacyWebArchive> LegacyWebArchive::create(const String& markupString, Frame& frame, const Vector<Node*>& nodes, WTF::Function<bool (Frame&)>&& frameFilter)
+RefPtr<LegacyWebArchive> LegacyWebArchive::create(const String& markupString, Frame& frame, const Vector<Node*>& nodes, Function<bool(Frame&)>&& frameFilter)
 {
     auto& response = frame.loader().documentLoader()->response();
     URL responseURL = response.url();

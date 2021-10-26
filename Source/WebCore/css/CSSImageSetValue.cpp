@@ -137,7 +137,7 @@ String CSSImageSetValue::customCSSText() const
     return result.toString();
 }
 
-bool CSSImageSetValue::traverseSubresources(const WTF::Function<bool (const CachedResource&)>& handler) const
+bool CSSImageSetValue::traverseSubresources(const Function<bool(const CachedResource&)>& handler) const
 {
     return m_selectedImageValue && m_selectedImageValue->traverseSubresources(handler);
 }

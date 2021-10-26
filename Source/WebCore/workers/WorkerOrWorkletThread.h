@@ -46,7 +46,7 @@ class WorkerOrWorkletThread : public ThreadSafeRefCounted<WorkerOrWorkletThread>
 public:
     virtual ~WorkerOrWorkletThread();
 
-    WTF::Thread* thread() const { return m_thread.get(); }
+    Thread* thread() const { return m_thread.get(); }
 
     virtual WorkerDebuggerProxy* workerDebuggerProxy() const = 0;
     virtual WorkerLoaderProxy& workerLoaderProxy() = 0;
@@ -77,7 +77,7 @@ protected:
     virtual void runEventLoop();
 
 private:
-    virtual Ref<WTF::Thread> createThread() = 0;
+    virtual Ref<Thread> createThread() = 0;
     virtual RefPtr<WorkerOrWorkletGlobalScope> createGlobalScope() = 0;
     virtual void evaluateScriptIfNecessary(String&) { }
     virtual bool shouldWaitForWebInspectorOnStartup() const { return false; }
@@ -87,7 +87,7 @@ private:
     String m_identifier;
     Lock m_threadCreationAndGlobalScopeLock;
     RefPtr<WorkerOrWorkletGlobalScope> m_globalScope;
-    RefPtr<WTF::Thread> m_thread;
+    RefPtr<Thread> m_thread;
     UniqueRef<WorkerRunLoop> m_runLoop;
     Function<void(const String&)> m_evaluateCallback;
     Function<void()> m_stoppedCallback;

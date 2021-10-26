@@ -34,7 +34,7 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(SubmitEvent);
 
-Ref<SubmitEvent> SubmitEvent::create(const WTF::AtomString& type, Init&& init)
+Ref<SubmitEvent> SubmitEvent::create(const AtomString& type, Init&& init)
 {
     return adoptRef(*new SubmitEvent(type, WTFMove(init)));
 }

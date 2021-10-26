@@ -52,10 +52,10 @@ using PlatformLayer = void*;
 
 #if PLATFORM(COCOA)
 #include <wtf/RetainPtr.h>
-using PlatformLayerContainer = WTF::RetainPtr<PlatformLayer>;
+using PlatformLayerContainer = RetainPtr<PlatformLayer>;
 #elif USE(TEXTURE_MAPPER)
 using PlatformLayerContainer = std::unique_ptr<PlatformLayer>;
 #else
 #include <wtf/RefPtr.h>
-using PlatformLayerContainer = WTF::RefPtr<PlatformLayer>;
+using PlatformLayerContainer = RefPtr<PlatformLayer>;
 #endif

@@ -45,7 +45,7 @@ public:
     Vector<Direct2DLayerType> m_clips;
 };
 
-PlatformContextDirect2D::PlatformContextDirect2D(ID2D1RenderTarget* renderTarget, WTF::Function<void()>&& preDrawHandler, WTF::Function<void()>&& postDrawHandler)
+PlatformContextDirect2D::PlatformContextDirect2D(ID2D1RenderTarget* renderTarget, Function<void()>&& preDrawHandler, Function<void()>&& postDrawHandler)
     : m_renderTarget(renderTarget)
     , m_preDrawHandler(WTFMove(preDrawHandler))
     , m_postDrawHandler(WTFMove(postDrawHandler))

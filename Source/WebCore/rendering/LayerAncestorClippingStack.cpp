@@ -98,7 +98,7 @@ GraphicsLayer* LayerAncestorClippingStack::lastClippingLayer() const
 
 ScrollingNodeID LayerAncestorClippingStack::lastOverflowScrollProxyNodeID() const
 {
-    for (auto& entry : WTF::makeReversedRange(m_stack)) {
+    for (auto& entry : makeReversedRange(m_stack)) {
         if (entry.overflowScrollProxyNodeID)
             return entry.overflowScrollProxyNodeID;
     }

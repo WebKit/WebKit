@@ -44,7 +44,7 @@ class RootObject;
     
 typedef uint16_t NPUTF16;
 
-WTF::String convertNPStringToUTF16(const NPString *string);
+String convertNPStringToUTF16(const NPString *);
 void convertValueToNPVariant(JSGlobalObject*, JSValue, NPVariant* result);
 JSValue convertNPVariantToValue(JSGlobalObject*, const NPVariant*, RootObject*);
 Identifier identifierFromNPIdentifier(JSGlobalObject*, const NPUTF8* name);

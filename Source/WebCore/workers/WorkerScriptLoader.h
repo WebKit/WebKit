@@ -88,7 +88,7 @@ public:
     WEBCORE_EXPORT static ResourceError validateWorkerResponse(const ResourceResponse&, FetchOptions::Destination);
 
 private:
-    friend class WTF::RefCounted<WorkerScriptLoader>;
+    friend class RefCounted<WorkerScriptLoader>;
     friend struct std::default_delete<WorkerScriptLoader>;
 
     WorkerScriptLoader();

@@ -653,19 +653,19 @@ bool SQLiteDatabase::turnOnIncrementalAutoVacuum()
 
 static void destroyCollationFunction(void* arg)
 {
-    auto f = static_cast<WTF::Function<int(int, const void*, int, const void*)>*>(arg);
+    auto f = static_cast<Function<int(int, const void*, int, const void*)>*>(arg);
     delete f;
 }
 
 static int callCollationFunction(void* arg, int aLength, const void* a, int bLength, const void* b)
 {
-    auto f = static_cast<WTF::Function<int(int, const void*, int, const void*)>*>(arg);
+    auto f = static_cast<Function<int(int, const void*, int, const void*)>*>(arg);
     return (*f)(aLength, a, bLength, b);
 }
 
-void SQLiteDatabase::setCollationFunction(const String& collationName, WTF::Function<int(int, const void*, int, const void*)>&& collationFunction)
+void SQLiteDatabase::setCollationFunction(const String& collationName, Function<int(int, const void*, int, const void*)>&& collationFunction)
 {
-    auto functionObject = new WTF::Function<int(int, const void*, int, const void*)>(WTFMove(collationFunction));
+    auto functionObject = new Function<int(int, const void*, int, const void*)>(WTFMove(collationFunction));
     sqlite3_create_collation_v2(m_db, collationName.utf8().data(), SQLITE_UTF8, functionObject, callCollationFunction, destroyCollationFunction);
 }
 

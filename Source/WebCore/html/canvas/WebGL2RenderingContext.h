@@ -287,7 +287,7 @@ private:
     bool validateBufferTargetCompatibility(const char*, GCGLenum, WebGLBuffer*);
     WebGLBuffer* validateBufferDataParameters(const char* functionName, GCGLenum target, GCGLenum usage) final;
     WebGLBuffer* validateBufferDataTarget(const char* functionName, GCGLenum target) final;
-    bool validateAndCacheBufferBinding(const WTF::AbstractLocker&, const char* functionName, GCGLenum target, WebGLBuffer*) final;
+    bool validateAndCacheBufferBinding(const AbstractLocker&, const char* functionName, GCGLenum target, WebGLBuffer*) final;
     GCGLint getMaxDrawBuffers() final;
     GCGLint getMaxColorAttachments() final;
     bool validateIndexArrayConservative(GCGLenum type, unsigned& numElementsRequired) final;
@@ -326,7 +326,7 @@ private:
     bool validateTexStorageFuncParameters(GCGLenum target, GCGLsizei levels, GCGLenum internalFormat, GCGLsizei width, GCGLsizei height, const char* functionName);
 #endif
 
-    void uncacheDeletedBuffer(const WTF::AbstractLocker&, WebGLBuffer*) final;
+    void uncacheDeletedBuffer(const AbstractLocker&, WebGLBuffer*) final;
 
     enum class ClearBufferCaller : uint8_t {
         ClearBufferiv,

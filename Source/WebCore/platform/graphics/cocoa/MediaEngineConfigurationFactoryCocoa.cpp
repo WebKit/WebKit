@@ -160,7 +160,7 @@ static std::optional<MediaCapabilitiesInfo> computeMediaCapabilitiesInfo(const M
     return info;
 }
 
-void createMediaPlayerDecodingConfigurationCocoa(MediaDecodingConfiguration&& configuration, WTF::Function<void(MediaCapabilitiesDecodingInfo&&)>&& callback)
+void createMediaPlayerDecodingConfigurationCocoa(MediaDecodingConfiguration&& configuration, Function<void(MediaCapabilitiesDecodingInfo&&)>&& callback)
 {
     auto info = computeMediaCapabilitiesInfo(configuration);
     if (!info)

@@ -106,9 +106,9 @@ GraphicsContextGLOpenGL::GraphicsContextGLOpenGL(GraphicsContextGLAttributes att
     m_isForWebGL2 = attributes.webGLVersion == GraphicsContextGLWebGLVersion::WebGL2;
 #endif
 #if USE(NICOSIA)
-    m_nicosiaLayer = WTF::makeUnique<Nicosia::GCGLANGLELayer>(*this);
+    m_nicosiaLayer = makeUnique<Nicosia::GCGLANGLELayer>(*this);
 #else
-    m_texmapLayer = WTF::makeUnique<TextureMapperGCGLPlatformLayer>(*this);
+    m_texmapLayer = makeUnique<TextureMapperGCGLPlatformLayer>(*this);
 #endif
     bool success = makeContextCurrent();
     ASSERT_UNUSED(success, success);

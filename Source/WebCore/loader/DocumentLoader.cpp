@@ -2419,7 +2419,7 @@ void DocumentLoader::handleProvisionalLoadFailureFromContentFilter(const URL& bl
     frameLoader()->load(FrameLoadRequest(*frame(), blockedPageURL, substituteData));
 }
 
-ResourceError DocumentLoader::contentFilterDidBlock(ContentFilterUnblockHandler unblockHandler, WTF::String&& unblockRequestDeniedScript)
+ResourceError DocumentLoader::contentFilterDidBlock(ContentFilterUnblockHandler unblockHandler, String&& unblockRequestDeniedScript)
 {
     unblockHandler.setUnreachableURL(documentURL());
     if (!unblockRequestDeniedScript.isEmpty() && frame()) {

@@ -32,7 +32,7 @@ namespace WebCore {
 struct MediaCapabilitiesDecodingInfo;
 struct MediaDecodingConfiguration;
 
-extern void createMediaPlayerDecodingConfigurationCocoa(MediaDecodingConfiguration&&, WTF::Function<void(MediaCapabilitiesDecodingInfo&&)>&&);
+extern void createMediaPlayerDecodingConfigurationCocoa(MediaDecodingConfiguration&&, Function<void(MediaCapabilitiesDecodingInfo&&)>&&);
 
 }
 

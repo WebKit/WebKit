@@ -2289,7 +2289,7 @@ ReferencedSVGResources& RenderElement::ensureReferencedSVGResources()
 {
     auto& rareData = ensureRareData();
     if (!rareData.referencedSVGResources)
-        rareData.referencedSVGResources = WTF::makeUnique<ReferencedSVGResources>(*this);
+        rareData.referencedSVGResources = makeUnique<ReferencedSVGResources>(*this);
 
     return *rareData.referencedSVGResources;
 }

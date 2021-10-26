@@ -94,7 +94,7 @@ public:
     int width() const { return m_size.width(); }
     int height() const { return m_size.height(); }
 
-    template <typename T = WTF::CrashOnOverflow>
+    template <typename T = CrashOnOverflow>
     Checked<unsigned, T> area() const { return m_size.area<T>(); }
 
     void setX(int x) { m_location.setX(x); }

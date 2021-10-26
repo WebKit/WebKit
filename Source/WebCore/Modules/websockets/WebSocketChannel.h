@@ -187,7 +187,7 @@ private:
 
     // If you are going to send a hybi-10 frame, you need to use the outgoing frame queue
     // instead of call sendFrame() directly.
-    void sendFrame(WebSocketFrame::OpCode, const uint8_t* data, size_t dataLength, WTF::Function<void(bool)> completionHandler);
+    void sendFrame(WebSocketFrame::OpCode, const uint8_t* data, size_t dataLength, Function<void(bool)> completionHandler);
 
     enum BlobLoaderStatus {
         BlobLoaderNotStarted,

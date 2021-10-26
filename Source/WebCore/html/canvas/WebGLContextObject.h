@@ -47,7 +47,7 @@ public:
         return &context == m_context;
     }
 
-    void detachContext(const WTF::AbstractLocker&);
+    void detachContext(const AbstractLocker&);
 
     Lock& objectGraphLockForContext() override;
 

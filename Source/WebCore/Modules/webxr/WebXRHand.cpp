@@ -58,7 +58,7 @@ WebXRHand::Iterator::Iterator(WebXRHand& hand)
 {
 }
 
-std::optional<WTF::KeyValuePair<XRHandJoint, RefPtr<WebXRJointSpace>>> WebXRHand::Iterator::next()
+std::optional<KeyValuePair<XRHandJoint, RefPtr<WebXRJointSpace>>> WebXRHand::Iterator::next()
 {
     if (m_index > m_hand->m_joints.size())
         return std::nullopt;

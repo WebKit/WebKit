@@ -122,7 +122,7 @@ private:
     virtual ReferrerPolicy referrerPolicy() const = 0;
 
     Element& m_element;
-    WTF::OrdinalNumber m_startLineNumber;
+    OrdinalNumber m_startLineNumber;
     ParserInserted m_parserInserted;
     bool m_isExternalScript : 1;
     bool m_alreadyStarted : 1;

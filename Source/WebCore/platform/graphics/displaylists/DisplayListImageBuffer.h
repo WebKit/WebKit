@@ -52,8 +52,8 @@ public:
     ImageBuffer(const ImageBufferBackend::Parameters& parameters, std::unique_ptr<BackendType>&& backend)
         : BaseConcreteImageBuffer(parameters, WTFMove(backend))
         , m_drawingContext(logicalSize(), baseTransform())
-        , m_writingClient(WTF::makeUnique<InMemoryDisplayList::WritingClient>())
-        , m_readingClient(WTF::makeUnique<InMemoryDisplayList::ReadingClient>())
+        , m_writingClient(makeUnique<InMemoryDisplayList::WritingClient>())
+        , m_readingClient(makeUnique<InMemoryDisplayList::ReadingClient>())
     {
         m_drawingContext.displayList().setItemBufferWritingClient(m_writingClient.get());
         m_drawingContext.displayList().setItemBufferReadingClient(m_readingClient.get());
@@ -62,8 +62,8 @@ public:
     ImageBuffer(const ImageBufferBackend::Parameters& parameters, RecorderImpl::Delegate* delegate = nullptr)
         : BaseConcreteImageBuffer(parameters)
         , m_drawingContext(logicalSize(), baseTransform(), delegate)
-        , m_writingClient(WTF::makeUnique<InMemoryDisplayList::WritingClient>())
-        , m_readingClient(WTF::makeUnique<InMemoryDisplayList::ReadingClient>())
+        , m_writingClient(makeUnique<InMemoryDisplayList::WritingClient>())
+        , m_readingClient(makeUnique<InMemoryDisplayList::ReadingClient>())
     {
         m_drawingContext.displayList().setItemBufferWritingClient(m_writingClient.get());
         m_drawingContext.displayList().setItemBufferReadingClient(m_readingClient.get());

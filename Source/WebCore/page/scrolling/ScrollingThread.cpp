@@ -50,7 +50,7 @@ ScrollingThread::ScrollingThread()
 {
     BinarySemaphore semaphore;
     m_thread = Thread::create("WebCore: Scrolling", [this, &semaphore] {
-        WTF::Thread::setCurrentThreadIsUserInteractive();
+        Thread::setCurrentThreadIsUserInteractive();
         m_runLoop = &RunLoop::current();
         semaphore.signal();
         m_runLoop->run();

@@ -209,7 +209,7 @@ public:
     const Rows& rows() const { return m_rows; }
     Rows& rows() { return m_rows; }
 
-    using Cells = WTF::ListHashSet<std::unique_ptr<Cell>>;
+    using Cells = ListHashSet<std::unique_ptr<Cell>>;
     Cells& cells() { return m_cells; }
 
     Slot* slot(SlotPosition);
@@ -217,7 +217,7 @@ public:
     bool isSpanned(SlotPosition);
 
 private:
-    using SlotMap = WTF::HashMap<SlotPosition, std::unique_ptr<Slot>>;
+    using SlotMap = HashMap<SlotPosition, std::unique_ptr<Slot>>;
 
     Columns m_columns;
     Rows m_rows;

@@ -253,7 +253,7 @@ String ImageBufferCGBackend::toDataURL(const String& mimeType, std::optional<dou
 
 std::unique_ptr<ThreadSafeImageBufferFlusher> ImageBufferCGBackend::createFlusher()
 {
-    return WTF::makeUnique<ThreadSafeImageBufferFlusherCG>(context().platformContext());
+    return makeUnique<ThreadSafeImageBufferFlusherCG>(context().platformContext());
 }
 
 void ImageBufferCGBackend::prepareToDrawIntoContext(GraphicsContext&)

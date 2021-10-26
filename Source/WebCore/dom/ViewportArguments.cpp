@@ -37,7 +37,7 @@
 
 namespace WebCore {
 
-typedef WTF::Function<void(ViewportErrorCode, StringView, StringView)> InternalViewportErrorHandler;
+typedef Function<void(ViewportErrorCode, StringView, StringView)> InternalViewportErrorHandler;
 
 #if PLATFORM(GTK)
 const float ViewportArguments::deprecatedTargetDPI = 160;

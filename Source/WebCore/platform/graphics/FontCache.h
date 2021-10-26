@@ -227,7 +227,7 @@ template<> struct DefaultHash<WebCore::FontDescriptionKey> {
     static constexpr bool safeToCompareToEmptyOrDeleted = true;
 };
 
-template<> struct HashTraits<WebCore::FontDescriptionKey> : WTF::SimpleClassHashTraits<WebCore::FontDescriptionKey> {
+template<> struct HashTraits<WebCore::FontDescriptionKey> : SimpleClassHashTraits<WebCore::FontDescriptionKey> {
 };
 
 }
@@ -281,7 +281,7 @@ struct FontCascadeCacheKeyHashTraits : HashTraits<FontCascadeCacheKey> {
 using FontCascadeCache = HashMap<FontCascadeCacheKey, std::unique_ptr<FontCascadeCacheEntry>, FontCascadeCacheKeyHash, FontCascadeCacheKeyHashTraits>;
 
 class FontCache : public RefCounted<FontCache> {
-    friend class WTF::NeverDestroyed<FontCache, MainThreadAccessTraits>;
+    friend class NeverDestroyed<FontCache, MainThreadAccessTraits>;
 
     WTF_MAKE_NONCOPYABLE(FontCache); WTF_MAKE_FAST_ALLOCATED;
 public:

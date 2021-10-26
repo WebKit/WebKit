@@ -38,9 +38,9 @@ class LegacyCDM;
 class CDMPrivateInterface;
 class MediaPlayer;
 
-using CreateCDM = WTF::Function<std::unique_ptr<CDMPrivateInterface>(LegacyCDM*)>;
-using CDMSupportsKeySystem = WTF::Function<bool(const String&)>;
-using CDMSupportsKeySystemAndMimeType = WTF::Function<bool(const String&, const String&)>;
+using CreateCDM = Function<std::unique_ptr<CDMPrivateInterface>(LegacyCDM*)>;
+using CDMSupportsKeySystem = Function<bool(const String&)>;
+using CDMSupportsKeySystemAndMimeType = Function<bool(const String&, const String&)>;
 
 class LegacyCDMClient {
 public:

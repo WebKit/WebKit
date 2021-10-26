@@ -150,8 +150,8 @@ public:
         static Ref<DataSegment> create(FileSystem::MappedFileData&& data) { return adoptRef(*new DataSegment(WTFMove(data))); }
 
         struct Provider {
-            WTF::Function<const uint8_t*()> data;
-            WTF::Function<size_t()> size;
+            Function<const uint8_t*()> data;
+            Function<size_t()> size;
         };
 
         static Ref<DataSegment> create(Provider&& provider) { return adoptRef(*new DataSegment(WTFMove(provider))); }

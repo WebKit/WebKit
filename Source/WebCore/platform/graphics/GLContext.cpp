@@ -34,8 +34,6 @@
 #include "OpenGLShims.h"
 #endif
 
-using WTF::ThreadSpecific;
-
 namespace WebCore {
 
 class ThreadGlobalGLContext {

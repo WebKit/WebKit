@@ -44,7 +44,7 @@ class ScrollbarsControllerMock final : public ScrollbarsController {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(ScrollbarsControllerMock);
 public:
-    ScrollbarsControllerMock(ScrollableArea&, WTF::Function<void(const String&)>&&);
+    ScrollbarsControllerMock(ScrollableArea&, Function<void(const String&)>&&);
     virtual ~ScrollbarsControllerMock();
 
 private:
@@ -61,7 +61,7 @@ private:
     void mouseIsDownInScrollbar(Scrollbar*, bool) const final;
     const char* scrollbarPrefix(Scrollbar*) const;
 
-    WTF::Function<void(const String&)> m_logger;
+    Function<void(const String&)> m_logger;
     Scrollbar* m_verticalScrollbar { nullptr };
     Scrollbar* m_horizontalScrollbar { nullptr };
 };

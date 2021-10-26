@@ -87,7 +87,7 @@ public:
     {
     }
 
-    SuspendableTimer(ScriptExecutionContext* context, WTF::Function<void ()>&& function)
+    SuspendableTimer(ScriptExecutionContext* context, Function<void()>&& function)
         : SuspendableTimerBase(context)
         , m_function(WTFMove(function))
     {
@@ -101,7 +101,7 @@ private:
 
     const char* activeDOMObjectName() const final;
 
-    WTF::Function<void ()> m_function;
+    Function<void()> m_function;
 };
 
 } // namespace WebCore

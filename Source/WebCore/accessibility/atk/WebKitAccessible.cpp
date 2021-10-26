@@ -390,7 +390,7 @@ static gint webkitAccessibleGetIndexInParent(AtkObject* object)
         return -1;
 
     size_t index = parent->children().find(coreObject);
-    return (index == WTF::notFound) ? -1 : index;
+    return (index == notFound) ? -1 : index;
 }
 
 static AtkAttributeSet* webkitAccessibleGetAttributes(AtkObject* object)

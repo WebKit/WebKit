@@ -86,7 +86,7 @@ public:
         > m_segment;
     };
 
-    using CallOnClientThreadCallback = WTF::Function<void(WTF::Function<void()>&&)>;
+    using CallOnClientThreadCallback = Function<void(Function<void()>&&)>;
     void setCallOnClientThreadCallback(CallOnClientThreadCallback&&);
 
     // appendData will be called on the SourceBufferPrivateAVFObjC data parser queue.
@@ -99,40 +99,40 @@ public:
     virtual void invalidate() = 0;
     virtual void setMinimumAudioSampleDuration(float);
 #if !RELEASE_LOG_DISABLED
-    virtual void setLogger(const WTF::Logger&, const void* logIdentifier) = 0;
+    virtual void setLogger(const Logger&, const void* logIdentifier) = 0;
 #endif
 
     // Will be called on the main thread.
     using InitializationSegment = SourceBufferPrivateClient::InitializationSegment;
-    using DidParseInitializationDataCallback = WTF::Function<void(InitializationSegment&&)>;
+    using DidParseInitializationDataCallback = Function<void(InitializationSegment&&)>;
     void setDidParseInitializationDataCallback(DidParseInitializationDataCallback&& callback)
     {
         m_didParseInitializationDataCallback = WTFMove(callback);
     }
 
     // Will be called on the main thread.
-    using DidEncounterErrorDuringParsingCallback = WTF::Function<void(uint64_t errorCode)>;
+    using DidEncounterErrorDuringParsingCallback = Function<void(uint64_t errorCode)>;
     void setDidEncounterErrorDuringParsingCallback(DidEncounterErrorDuringParsingCallback&& callback)
     {
         m_didEncounterErrorDuringParsingCallback = WTFMove(callback);
     }
 
     // Will be called on the main thread.
-    using DidProvideMediaDataCallback = WTF::Function<void(Ref<MediaSample>&&, uint64_t trackID, const String& mediaType)>;
+    using DidProvideMediaDataCallback = Function<void(Ref<MediaSample>&&, uint64_t trackID, const String& mediaType)>;
     void setDidProvideMediaDataCallback(DidProvideMediaDataCallback&& callback)
     {
         m_didProvideMediaDataCallback = WTFMove(callback);
     }
 
     // Will be called synchronously on the parser thead.
-    using WillProvideContentKeyRequestInitializationDataForTrackIDCallback = WTF::Function<void(uint64_t trackID)>;
+    using WillProvideContentKeyRequestInitializationDataForTrackIDCallback = Function<void(uint64_t trackID)>;
     void setWillProvideContentKeyRequestInitializationDataForTrackIDCallback(WillProvideContentKeyRequestInitializationDataForTrackIDCallback&& callback)
     {
         m_willProvideContentKeyRequestInitializationDataForTrackIDCallback = WTFMove(callback);
     }
 
     // Will be called synchronously on the parser thead.
-    using DidProvideContentKeyRequestInitializationDataForTrackIDCallback = WTF::Function<void(Ref<Uint8Array>&&, uint64_t trackID)>;
+    using DidProvideContentKeyRequestInitializationDataForTrackIDCallback = Function<void(Ref<Uint8Array>&&, uint64_t trackID)>;
     void setDidProvideContentKeyRequestInitializationDataForTrackIDCallback(DidProvideContentKeyRequestInitializationDataForTrackIDCallback&& callback)
     {
         m_didProvideContentKeyRequestInitializationDataForTrackIDCallback = WTFMove(callback);

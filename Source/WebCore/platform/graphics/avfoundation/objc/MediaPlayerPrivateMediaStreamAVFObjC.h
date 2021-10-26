@@ -211,7 +211,7 @@ private:
     void videoSampleAvailable(MediaSample&) final;
 
     RetainPtr<PlatformLayer> createVideoFullscreenLayer() override;
-    void setVideoFullscreenLayer(PlatformLayer*, WTF::Function<void()>&& completionHandler) override;
+    void setVideoFullscreenLayer(PlatformLayer*, Function<void()>&& completionHandler) override;
     void setVideoFullscreenFrame(FloatRect) override;
 
     AudioSourceProvider* audioSourceProvider() final;

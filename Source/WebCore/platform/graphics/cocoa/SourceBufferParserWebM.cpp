@@ -589,8 +589,8 @@ MediaPlayerEnums::SupportsType SourceBufferParserWebM::isContentTypeSupported(co
         return MediaPlayerEnums::SupportsType::IsNotSupported;
 
     auto containerType = type.containerType();
-    bool isAudioContainerType = WTF::equalIgnoringASCIICase(containerType, "audio/webm");
-    bool isVideoContainerType = WTF::equalIgnoringASCIICase(containerType, "video/webm");
+    bool isAudioContainerType = equalIgnoringASCIICase(containerType, "audio/webm");
+    bool isVideoContainerType = equalIgnoringASCIICase(containerType, "video/webm");
     if (!isAudioContainerType && !isVideoContainerType)
         return MediaPlayerEnums::SupportsType::IsNotSupported;
     
@@ -673,10 +673,10 @@ RefPtr<SourceBufferParserWebM> SourceBufferParserWebM::create(const ContentType&
 }
 
 SourceBufferParserWebM::SourceBufferParserWebM()
-    : m_reader(WTF::makeUniqueRef<SegmentReader>())
+    : m_reader(makeUniqueRef<SegmentReader>())
 {
     if (isWebmParserAvailable())
-        m_parser = WTF::makeUniqueWithoutFastMallocCheck<WebmParser>();
+        m_parser = makeUniqueWithoutFastMallocCheck<WebmParser>();
 }
 
 SourceBufferParserWebM::~SourceBufferParserWebM()
@@ -921,7 +921,7 @@ Status SourceBufferParserWebM::OnEbml(const ElementMetadata& metadata, const Ebm
         return Status(Status::Code(ErrorCode::InvalidDocType));
 
     m_initializationSegmentEncountered = true;
-    m_initializationSegment = WTF::makeUniqueWithoutFastMallocCheck<InitializationSegment>();
+    m_initializationSegment = makeUniqueWithoutFastMallocCheck<InitializationSegment>();
     // TODO: Setting this to false here, will prevent adding a new media segment should a
     // partial init segment be encountered after a call to sourceBuffer.abort().
     // It's probably fine as no-one in their right mind should send partial init segment only
@@ -1208,7 +1208,7 @@ void SourceBufferParserWebM::provideMediaData(RetainPtr<CMSampleBufferRef> sampl
     });
 }
 
-#define PARSER_LOG_ERROR_IF_POSSIBLE(...) if (parser().loggerPtr()) parser().loggerPtr()->error(logChannel(), WTF::Logger::LogSiteIdentifier(logClassName(), __func__, parser().logIdentifier()), __VA_ARGS__)
+#define PARSER_LOG_ERROR_IF_POSSIBLE(...) if (parser().loggerPtr()) parser().loggerPtr()->error(logChannel(), Logger::LogSiteIdentifier(logClassName(), __func__, parser().logIdentifier()), __VA_ARGS__)
 
 RetainPtr<CMBlockBufferRef> SourceBufferParserWebM::TrackData::contiguousCompleteBlockBuffer(size_t offset, size_t length) const
 {

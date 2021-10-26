@@ -83,7 +83,7 @@ public:
 private:
     std::optional<bool> m_hardwareDecoderDisabled;
     std::optional<ScreenDataOverrides> m_screenSizeAndScale;
-    WTF::Function<void()> m_configurationChangedCallback;
+    Function<void()> m_configurationChangedCallback;
 };
 
 }

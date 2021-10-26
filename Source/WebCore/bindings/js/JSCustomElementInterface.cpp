@@ -230,7 +230,7 @@ void JSCustomElementInterface::upgradeElement(Element& element)
     element.setIsDefinedCustomElement(*this);
 }
 
-void JSCustomElementInterface::invokeCallback(Element& element, JSObject* callback, const WTF::Function<void(JSGlobalObject*, JSDOMGlobalObject*, MarkedArgumentBuffer&)>& addArguments)
+void JSCustomElementInterface::invokeCallback(Element& element, JSObject* callback, const Function<void(JSGlobalObject*, JSDOMGlobalObject*, MarkedArgumentBuffer&)>& addArguments)
 {
     if (!canInvokeCallback())
         return;

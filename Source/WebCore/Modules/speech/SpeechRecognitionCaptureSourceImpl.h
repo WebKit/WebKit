@@ -51,7 +51,7 @@ class SpeechRecognitionCaptureSourceImpl
     , public RealtimeMediaSource::AudioSampleObserver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    using DataCallback = Function<void(const WTF::MediaTime&, const PlatformAudioData&, const AudioStreamDescription&, size_t)>;
+    using DataCallback = Function<void(const MediaTime&, const PlatformAudioData&, const AudioStreamDescription&, size_t)>;
     using StateUpdateCallback = Function<void(const SpeechRecognitionUpdate&)>;
     SpeechRecognitionCaptureSourceImpl(SpeechRecognitionConnectionClientIdentifier, DataCallback&&, StateUpdateCallback&&, Ref<RealtimeMediaSource>&&);
     ~SpeechRecognitionCaptureSourceImpl();

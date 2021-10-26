@@ -453,7 +453,7 @@ static PlatformTimeRanges removeSamplesFromTrackBuffer(const DecodeOrderSampleMa
     MediaTime earliestSample = MediaTime::positiveInfiniteTime();
     MediaTime latestSample = MediaTime::zeroTime();
     uint64_t bytesRemoved = 0;
-    auto logIdentifier = WTF::Logger::LogSiteIdentifier(sourceBufferPrivate->logClassName(), logPrefix, sourceBufferPrivate->logIdentifier());
+    auto logIdentifier = Logger::LogSiteIdentifier(sourceBufferPrivate->logClassName(), logPrefix, sourceBufferPrivate->logIdentifier());
     auto& logger = sourceBufferPrivate->logger();
     auto willLog = logger.willLog(sourceBufferPrivate->logChannel(), WTFLogLevel::Debug);
 #endif

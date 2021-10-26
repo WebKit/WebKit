@@ -80,7 +80,7 @@ public:
         bool once;
     };
 
-    using EventListenersRecord = Vector<WTF::KeyValuePair<String, Vector<ListenerEntry>>>;
+    using EventListenersRecord = Vector<KeyValuePair<String, Vector<ListenerEntry>>>;
     EventListenersRecord getEventListeners(JSC::JSGlobalObject&, EventTarget&);
 
     String databaseId(Database&);

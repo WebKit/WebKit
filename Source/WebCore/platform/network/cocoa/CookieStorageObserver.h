@@ -52,7 +52,7 @@ private:
     RetainPtr<NSHTTPCookieStorage> m_cookieStorage;
     bool m_hasRegisteredInternalsForNotifications { false };
     RetainPtr<WebCookieObserverAdapter> m_observerAdapter;
-    WTF::Function<void()> m_cookieChangeCallback;
+    Function<void()> m_cookieChangeCallback;
 };
 
 } // namespace WebCore

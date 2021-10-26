@@ -38,7 +38,7 @@ namespace WebCore {
 namespace DisplayList {
 
 #if !defined(NDEBUG) || !LOG_DISABLED
-WTF::CString DisplayList::description() const
+CString DisplayList::description() const
 {
     TextStream ts;
     ts << *this;

@@ -43,7 +43,7 @@ struct PrefixTreeEdge {
     std::unique_ptr<PrefixTreeVertex> child;
 };
     
-typedef Vector<PrefixTreeEdge, 0, WTF::CrashOnOverflow, 1> PrefixTreeEdges;
+typedef Vector<PrefixTreeEdge, 0, CrashOnOverflow, 1> PrefixTreeEdges;
 
 struct PrefixTreeVertex {
     WTF_MAKE_STRUCT_FAST_ALLOCATED;
@@ -56,7 +56,7 @@ struct ReverseSuffixTreeEdge {
     const Term* term;
     std::unique_ptr<ReverseSuffixTreeVertex> child;
 };
-typedef Vector<ReverseSuffixTreeEdge, 0, WTF::CrashOnOverflow, 1> ReverseSuffixTreeEdges;
+typedef Vector<ReverseSuffixTreeEdge, 0, CrashOnOverflow, 1> ReverseSuffixTreeEdges;
 
 struct ReverseSuffixTreeVertex {
     ReverseSuffixTreeEdges edges;
@@ -195,14 +195,14 @@ void CombinedURLFilters::addPattern(uint64_t actionId, const Vector<Term>& patte
     PrefixTreeVertex* lastPrefixTree = m_prefixTreeRoot.get();
 
     for (const Term& term : pattern) {
-        size_t nextEntryIndex = WTF::notFound;
+        size_t nextEntryIndex = notFound;
         for (size_t i = 0; i < lastPrefixTree->edges.size(); ++i) {
             if (*lastPrefixTree->edges[i].term == term) {
                 nextEntryIndex = i;
                 break;
             }
         }
-        if (nextEntryIndex != WTF::notFound)
+        if (nextEntryIndex != notFound)
             lastPrefixTree = lastPrefixTree->edges[nextEntryIndex].child.get();
         else {
             lastPrefixTree->edges.append(PrefixTreeEdge({m_alphabet.interned(term), makeUnique<PrefixTreeVertex>()}));
@@ -212,7 +212,7 @@ void CombinedURLFilters::addPattern(uint64_t actionId, const Vector<Term>& patte
 
     auto addResult = m_actions.add(lastPrefixTree, ActionList());
     ActionList& actions = addResult.iterator->value;
-    if (actions.find(actionId) == WTF::notFound)
+    if (actions.find(actionId) == notFound)
         actions.append(actionId);
 }
 

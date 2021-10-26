@@ -36,7 +36,7 @@
 
 namespace WebCore {
 
-ScrollbarsControllerMock::ScrollbarsControllerMock(ScrollableArea& scrollableArea, WTF::Function<void(const String&)>&& logger)
+ScrollbarsControllerMock::ScrollbarsControllerMock(ScrollableArea& scrollableArea, Function<void(const String&)>&& logger)
     : ScrollbarsController(scrollableArea)
     , m_logger(WTFMove(logger))
 {

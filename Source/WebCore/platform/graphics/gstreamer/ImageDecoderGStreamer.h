@@ -51,7 +51,7 @@ public:
     size_t bytesDecodedToDetermineProperties() const override { return 0; }
     static bool canDecodeType(const String& mimeType);
 
-    void setEncodedDataStatusChangeCallback(WTF::Function<void(EncodedDataStatus)>&& callback) final { m_encodedDataStatusChangedCallback = WTFMove(callback); }
+    void setEncodedDataStatusChangeCallback(Function<void(EncodedDataStatus)>&& callback) final { m_encodedDataStatusChangedCallback = WTFMove(callback); }
     EncodedDataStatus encodedDataStatus() const final;
     IntSize size() const final;
     size_t frameCount() const final { return m_sampleData.size(); }
@@ -126,7 +126,7 @@ private:
 
     const ImageDecoderGStreamerSample* sampleAtIndex(size_t) const;
 
-    WTF::Function<void(EncodedDataStatus)> m_encodedDataStatusChangedCallback;
+    Function<void(EncodedDataStatus)> m_encodedDataStatusChangedCallback;
     SampleMap m_sampleData;
     DecodeOrderSampleMap::iterator m_cursor;
     Lock m_sampleGeneratorLock;

@@ -218,7 +218,7 @@ private:
     TypedImmutableNFA* m_immutableNFA { nullptr };
     MutableRangeList<CharacterType, TargetSet> m_ranges;
     TargetSet m_epsilonTransitionTargets;
-    HashSet<ActionType, WTF::IntHash<ActionType>, WTF::UnsignedWithZeroKeyHashTraits<ActionType>> m_actions;
+    HashSet<ActionType, IntHash<ActionType>, WTF::UnsignedWithZeroKeyHashTraits<ActionType>> m_actions;
     uint32_t m_nodeId;
     bool m_finalized { true };
 };

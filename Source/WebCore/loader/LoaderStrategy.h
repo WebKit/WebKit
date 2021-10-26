@@ -75,16 +75,16 @@ public:
     virtual void prioritizeResourceLoads(const Vector<SubresourceLoader*>&);
 
     virtual bool usePingLoad() const { return true; }
-    using PingLoadCompletionHandler = WTF::Function<void(const ResourceError&, const ResourceResponse&)>;
+    using PingLoadCompletionHandler = Function<void(const ResourceError&, const ResourceResponse&)>;
     virtual void startPingLoad(Frame&, ResourceRequest&, const HTTPHeaderMap& originalRequestHeaders, const FetchOptions&, ContentSecurityPolicyImposition, PingLoadCompletionHandler&& = { }) = 0;
 
-    using PreconnectCompletionHandler = WTF::Function<void(const ResourceError&)>;
+    using PreconnectCompletionHandler = Function<void(const ResourceError&)>;
     virtual void preconnectTo(FrameLoader&, const URL&, StoredCredentialsPolicy, PreconnectCompletionHandler&&) = 0;
 
     virtual void setCaptureExtraNetworkLoadMetricsEnabled(bool) = 0;
 
     virtual bool isOnLine() const = 0;
-    virtual void addOnlineStateChangeListener(WTF::Function<void(bool)>&&) = 0;
+    virtual void addOnlineStateChangeListener(Function<void(bool)>&&) = 0;
 
     virtual bool shouldPerformSecurityChecks() const { return false; }
     virtual bool havePerformedSecurityChecks(const ResourceResponse&) const { return false; }

@@ -53,7 +53,7 @@ void GStreamerDisplayCaptureDeviceManager::computeCaptureDevices(CompletionHandl
 {
     m_devices.clear();
 
-    CaptureDevice screenCaptureDevice(WTF::createCanonicalUUIDString(), CaptureDevice::DeviceType::Screen, makeString("Capture Screen"));
+    CaptureDevice screenCaptureDevice(createCanonicalUUIDString(), CaptureDevice::DeviceType::Screen, makeString("Capture Screen"));
     screenCaptureDevice.setEnabled(true);
     m_devices.append(WTFMove(screenCaptureDevice));
     callback();
@@ -76,8 +76,8 @@ CaptureSourceOrError GStreamerDisplayCaptureDeviceManager::createDisplayCaptureS
         return { };
     }
 
-    auto token = makeString("WebKit", WTF::weakRandomUint32());
-    auto sessionToken = makeString("WebKit", WTF::weakRandomUint32());
+    auto token = makeString("WebKit", weakRandomUint32());
+    auto sessionToken = makeString("WebKit", weakRandomUint32());
     GVariantBuilder options;
     g_variant_builder_init(&options, G_VARIANT_TYPE_VARDICT);
     g_variant_builder_add(&options, "{sv}", "handle_token", g_variant_new_string(token.ascii().data()));
@@ -100,7 +100,7 @@ CaptureSourceOrError GStreamerDisplayCaptureDeviceManager::createDisplayCaptureS
     // FIXME: Maybe check this depending on device.type().
     auto outputType = GStreamerDisplayCaptureDeviceManager::PipeWireOutputType::Monitor | GStreamerDisplayCaptureDeviceManager::PipeWireOutputType::Window;
 
-    token = makeString("WebKit", WTF::weakRandomUint32());
+    token = makeString("WebKit", weakRandomUint32());
     g_variant_builder_init(&options, G_VARIANT_TYPE_VARDICT);
     g_variant_builder_add(&options, "{sv}", "handle_token", g_variant_new_string(token.ascii().data()));
     g_variant_builder_add(&options, "{sv}", "types", g_variant_new_uint32(static_cast<uint32_t>(outputType)));
@@ -127,7 +127,7 @@ CaptureSourceOrError GStreamerDisplayCaptureDeviceManager::createDisplayCaptureS
     g_variant_get(result.get(), "(o)", &objectPath.outPtr());
     waitResponseSignal(objectPath.get());
 
-    token = makeString("WebKit", WTF::weakRandomUint32());
+    token = makeString("WebKit", weakRandomUint32());
     g_variant_builder_init(&options, G_VARIANT_TYPE_VARDICT);
     g_variant_builder_add(&options, "{sv}", "handle_token", g_variant_new_string(token.ascii().data()));
     result = adoptGRef(g_dbus_proxy_call_sync(m_proxy.get(), "Start",
@@ -154,7 +154,7 @@ CaptureSourceOrError GStreamerDisplayCaptureDeviceManager::createDisplayCaptureS
     g_variant_get(result.get(), "(h)", &fdOut);
     fd = g_unix_fd_list_get(fdList.get(), fdOut, nullptr);
 
-    auto session = WTF::makeUnique<GStreamerDisplayCaptureDeviceManager::Session>(fd, WTFMove(sessionPath));
+    auto session = makeUnique<GStreamerDisplayCaptureDeviceManager::Session>(fd, WTFMove(sessionPath));
     m_sessions.add(device.persistentId(), WTFMove(session));
     return GStreamerVideoCaptureSource::createPipewireSource(device.persistentId().isolatedCopy(), fd, { }, constraints, device.type());
 }

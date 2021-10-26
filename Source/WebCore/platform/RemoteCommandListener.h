@@ -52,7 +52,7 @@ public:
     void addSupportedCommand(PlatformMediaSession::RemoteControlCommandType);
     void removeSupportedCommand(PlatformMediaSession::RemoteControlCommandType);
 
-    using RemoteCommandsSet = HashSet<PlatformMediaSession::RemoteControlCommandType, WTF::IntHash<PlatformMediaSession::RemoteControlCommandType>, WTF::StrongEnumHashTraits<PlatformMediaSession::RemoteControlCommandType>>;
+    using RemoteCommandsSet = HashSet<PlatformMediaSession::RemoteControlCommandType, IntHash<PlatformMediaSession::RemoteControlCommandType>, WTF::StrongEnumHashTraits<PlatformMediaSession::RemoteControlCommandType>>;
     void setSupportedCommands(const RemoteCommandsSet&);
     const RemoteCommandsSet& supportedCommands() const;
 

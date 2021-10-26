@@ -39,7 +39,7 @@ CurlStream::CurlStream(CurlStreamScheduler& scheduler, CurlStreamID streamID, UR
 {
     ASSERT(!isMainThread());
 
-    m_curlHandle = WTF::makeUnique<CurlHandle>();
+    m_curlHandle = makeUnique<CurlHandle>();
 
     url.setProtocol(url.protocolIs("wss") ? "https" : "http");
     m_curlHandle->setUrl(WTFMove(url));

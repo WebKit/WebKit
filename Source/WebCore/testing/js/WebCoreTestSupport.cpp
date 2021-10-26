@@ -180,7 +180,7 @@ void disconnectMockGamepad(unsigned gamepadIndex)
 #endif
 }
 
-void setMockGamepadDetails(unsigned gamepadIndex, const WTF::String& gamepadID, const WTF::String& mapping, unsigned axisCount, unsigned buttonCount)
+void setMockGamepadDetails(unsigned gamepadIndex, const String& gamepadID, const String& mapping, unsigned axisCount, unsigned buttonCount)
 {
 #if ENABLE(GAMEPAD)
     MockGamepadProvider::singleton().setMockGamepadDetails(gamepadIndex, gamepadID, mapping, axisCount, buttonCount);
@@ -236,7 +236,7 @@ void setupNewlyCreatedServiceWorker(uint64_t serviceWorkerIdentifier)
 }
 
 #if PLATFORM(COCOA)
-void setAdditionalSupportedImageTypesForTesting(const WTF::String& imageTypes)
+void setAdditionalSupportedImageTypesForTesting(const String& imageTypes)
 {
     WebCore::setAdditionalSupportedImageTypesForTesting(imageTypes);
 }

@@ -125,7 +125,7 @@ public:
     JSC::JSValue evaluateModule(const URL&, JSC::JSModuleRecord&, DOMWrapperWorld&, JSC::JSValue awaitedValue, JSC::JSValue resumeMode);
     JSC::JSValue evaluateModule(const URL&, JSC::JSModuleRecord&, JSC::JSValue awaitedValue, JSC::JSValue resumeMode);
 
-    WTF::TextPosition eventHandlerPosition() const;
+    TextPosition eventHandlerPosition() const;
 
     void enableEval();
     void enableWebAssembly();

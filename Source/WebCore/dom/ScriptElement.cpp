@@ -66,7 +66,7 @@ static const auto maxUserGesturePropagationTime = 1_s;
 
 ScriptElement::ScriptElement(Element& element, bool parserInserted, bool alreadyStarted)
     : m_element(element)
-    , m_startLineNumber(WTF::OrdinalNumber::beforeFirst())
+    , m_startLineNumber(OrdinalNumber::beforeFirst())
     , m_parserInserted(parserInserted ? ParserInserted::Yes : ParserInserted::No)
     , m_isExternalScript(false)
     , m_alreadyStarted(alreadyStarted)

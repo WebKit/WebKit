@@ -411,7 +411,7 @@ private:
     bool m_builtInNotificationsEnabled { false };
 #endif
 
-    friend class WTF::NeverDestroyed<RuntimeEnabledFeatures>;
+    friend class NeverDestroyed<RuntimeEnabledFeatures>;
 };
 
 } // namespace WebCore

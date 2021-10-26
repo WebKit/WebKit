@@ -163,7 +163,7 @@ void FileSystemDirectoryHandleIterator::advance(CompletionHandler<void(Exception
             return completionHandler(result.releaseException());
         }
 
-        Result resultValue = WTF::KeyValuePair<String, Ref<FileSystemHandle>> { WTFMove(key), result.releaseReturnValue() };
+        Result resultValue = KeyValuePair<String, Ref<FileSystemHandle>> { WTFMove(key), result.releaseReturnValue() };
         completionHandler(WTFMove(resultValue));
     });
 }

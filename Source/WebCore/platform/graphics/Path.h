@@ -106,7 +106,7 @@ struct PathElement {
     Type type;
 };
 
-using PathApplierFunction = WTF::Function<void(const PathElement&)>;
+using PathApplierFunction = Function<void(const PathElement&)>;
 
 class Path {
     WTF_MAKE_FAST_ALLOCATED;
@@ -137,13 +137,13 @@ public:
     static Path polygonPathFromPoints(const Vector<FloatPoint>&);
 
     bool contains(const FloatPoint&, WindRule = WindRule::NonZero) const;
-    bool strokeContains(const FloatPoint&, const WTF::Function<void(GraphicsContext&)>& strokeStyleApplier) const;
+    bool strokeContains(const FloatPoint&, const Function<void(GraphicsContext&)>& strokeStyleApplier) const;
 
     // fastBoundingRect() should equal or contain boundingRect(); boundingRect()
     // should perfectly bound the points within the path.
     FloatRect boundingRect() const;
     WEBCORE_EXPORT FloatRect fastBoundingRect() const;
-    FloatRect strokeBoundingRect(const WTF::Function<void(GraphicsContext&)>& strokeStyleApplier = { }) const;
+    FloatRect strokeBoundingRect(const Function<void(GraphicsContext&)>& strokeStyleApplier = { }) const;
 
     WEBCORE_EXPORT size_t elementCount() const;
     float length() const;

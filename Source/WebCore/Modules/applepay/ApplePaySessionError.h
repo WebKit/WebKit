@@ -34,7 +34,7 @@
 namespace WebCore {
 
 struct ApplePaySessionError {
-    using InfoRecord = Vector<WTF::KeyValuePair<String, String>>;
+    using InfoRecord = Vector<KeyValuePair<String, String>>;
     String code;
     InfoRecord info;
 };

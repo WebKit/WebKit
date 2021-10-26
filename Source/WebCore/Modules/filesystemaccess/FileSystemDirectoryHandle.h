@@ -59,7 +59,7 @@ public:
     class Iterator : public RefCounted<FileSystemDirectoryHandle::Iterator> {
     public:
         static Ref<Iterator> create(FileSystemDirectoryHandle&);
-        using Result = std::optional<WTF::KeyValuePair<String, Ref<FileSystemHandle>>>;
+        using Result = std::optional<KeyValuePair<String, Ref<FileSystemHandle>>>;
         void next(CompletionHandler<void(ExceptionOr<Result>&&)>&&);
     private:
         explicit Iterator(FileSystemDirectoryHandle& source)

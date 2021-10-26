@@ -34,7 +34,7 @@ ReadableStreamSource::~ReadableStreamSource() = default;
 void ReadableStreamSource::start(ReadableStreamDefaultController&& controller, DOMPromiseDeferred<void>&& promise)
 {
     ASSERT(!m_promise);
-    m_promise = WTF::makeUnique<DOMPromiseDeferred<void>>(WTFMove(promise));
+    m_promise = makeUnique<DOMPromiseDeferred<void>>(WTFMove(promise));
     m_controller = WTFMove(controller);
 
     setActive();
@@ -46,7 +46,7 @@ void ReadableStreamSource::pull(DOMPromiseDeferred<void>&& promise)
     ASSERT(!m_promise);
     ASSERT(m_controller);
 
-    m_promise = WTF::makeUnique<DOMPromiseDeferred<void>>(WTFMove(promise));
+    m_promise = makeUnique<DOMPromiseDeferred<void>>(WTFMove(promise));
 
     setActive();
     doPull();

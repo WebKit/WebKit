@@ -104,7 +104,7 @@ void PaymentResponse::retry(PaymentValidationErrors&& errors, DOMPromiseDeferred
         return;
     }
 
-    m_retryPromise = WTF::makeUnique<DOMPromiseDeferred<void>>(WTFMove(promise));
+    m_retryPromise = makeUnique<DOMPromiseDeferred<void>>(WTFMove(promise));
 }
 
 void PaymentResponse::abortWithException(Exception&& exception)

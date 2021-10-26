@@ -107,7 +107,7 @@ CSSValue::Type CSSValue::cssValueType() const
     return CSS_CUSTOM;
 }
 
-bool CSSValue::traverseSubresources(const WTF::Function<bool (const CachedResource&)>& handler) const
+bool CSSValue::traverseSubresources(const Function<bool(const CachedResource&)>& handler) const
 {
     if (is<CSSValueList>(*this))
         return downcast<CSSValueList>(*this).traverseSubresources(handler);

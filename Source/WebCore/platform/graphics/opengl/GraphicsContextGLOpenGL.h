@@ -95,7 +95,7 @@ class PixelBuffer;
 class TextureMapperGCGLPlatformLayer;
 #endif
 
-typedef WTF::HashMap<CString, uint64_t> ShaderNameHash;
+typedef HashMap<CString, uint64_t> ShaderNameHash;
 
 class WEBCORE_EXPORT GraphicsContextGLOpenGL : public GraphicsContextGL
 {
@@ -713,9 +713,9 @@ private:
 
         using BoundTextureMap = HashMap<GCGLenum,
             std::pair<GCGLuint, GCGLenum>,
-            WTF::IntHash<GCGLenum>,
+            IntHash<GCGLenum>,
             WTF::UnsignedWithZeroKeyHashTraits<GCGLuint>,
-            WTF::PairHashTraits<WTF::UnsignedWithZeroKeyHashTraits<GCGLuint>, WTF::UnsignedWithZeroKeyHashTraits<GCGLuint>>
+            PairHashTraits<WTF::UnsignedWithZeroKeyHashTraits<GCGLuint>, WTF::UnsignedWithZeroKeyHashTraits<GCGLuint>>
         >;
         BoundTextureMap boundTextureMap;
         GCGLuint currentBoundTexture() const { return boundTexture(activeTextureUnit); }
@@ -741,7 +741,7 @@ private:
             boundTextureMap.set(textureUnit, std::make_pair(texture, target));
         }
 
-        using TextureSeedCount = HashCountedSet<GCGLuint, WTF::IntHash<GCGLuint>, WTF::UnsignedWithZeroKeyHashTraits<GCGLuint>>;
+        using TextureSeedCount = HashCountedSet<GCGLuint, IntHash<GCGLuint>, WTF::UnsignedWithZeroKeyHashTraits<GCGLuint>>;
         TextureSeedCount textureSeedCount;
     };
 

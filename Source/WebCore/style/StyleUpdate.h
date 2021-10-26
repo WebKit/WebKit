@@ -49,7 +49,7 @@ struct ElementUpdate {
 
 enum class DescendantsToResolve { None, ChildrenWithExplicitInherit, Children, All };
 
-using PseudoIdToElementUpdateMap = HashMap<PseudoId, ElementUpdate, WTF::IntHash<PseudoId>, WTF::StrongEnumHashTraits<PseudoId>>;
+using PseudoIdToElementUpdateMap = HashMap<PseudoId, ElementUpdate, IntHash<PseudoId>, WTF::StrongEnumHashTraits<PseudoId>>;
 
 struct ElementUpdates {
     ElementUpdate update;

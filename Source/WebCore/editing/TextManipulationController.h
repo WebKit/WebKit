@@ -112,7 +112,7 @@ public:
         template<class Decoder> static std::optional<ExclusionRule> decode(Decoder&);
     };
 
-    using ManipulationItemCallback = WTF::Function<void(Document&, const Vector<ManipulationItem>&)>;
+    using ManipulationItemCallback = Function<void(Document&, const Vector<ManipulationItem>&)>;
     WEBCORE_EXPORT void startObservingParagraphs(ManipulationItemCallback&&, Vector<ExclusionRule>&& = { });
 
     void didCreateRendererForElement(Element&);

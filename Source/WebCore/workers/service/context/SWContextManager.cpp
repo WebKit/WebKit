@@ -161,13 +161,13 @@ void SWContextManager::stopWorker(ServiceWorkerThreadProxy& serviceWorker, Secon
     });
 }
 
-void SWContextManager::forEachServiceWorkerThread(const WTF::Function<void(ServiceWorkerThreadProxy&)>& apply)
+void SWContextManager::forEachServiceWorkerThread(const Function<void(ServiceWorkerThreadProxy&)>& apply)
 {
     for (auto& workerThread : m_workerMap.values())
         apply(workerThread);
 }
 
-bool SWContextManager::postTaskToServiceWorker(ServiceWorkerIdentifier identifier, WTF::Function<void(ServiceWorkerGlobalScope&)>&& task)
+bool SWContextManager::postTaskToServiceWorker(ServiceWorkerIdentifier identifier, Function<void(ServiceWorkerGlobalScope&)>&& task)
 {
     auto* serviceWorker = m_workerMap.get(identifier);
     if (!serviceWorker)

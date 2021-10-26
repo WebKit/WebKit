@@ -433,7 +433,7 @@ AccessibilityObject* AccessibilityObject::firstAccessibleObjectFromNode(const No
     });
 }
 
-AccessibilityObject* firstAccessibleObjectFromNode(const Node* node, const WTF::Function<bool(const AccessibilityObject&)>& isAccessible)
+AccessibilityObject* firstAccessibleObjectFromNode(const Node* node, const Function<bool(const AccessibilityObject&)>& isAccessible)
 {
     if (!node)
         return nullptr;
@@ -3916,9 +3916,9 @@ static void appendChildrenToArray(AXCoreObject* object, bool isForward, AXCoreOb
             startObject = isForward ? startObject->previousSibling() : startObject->nextSibling();
     }
 
-    size_t searchPosition = startObject ? searchChildren.find(startObject) : WTF::notFound;
+    size_t searchPosition = startObject ? searchChildren.find(startObject) : notFound;
 
-    if (searchPosition != WTF::notFound) {
+    if (searchPosition != notFound) {
         if (isForward)
             endIndex = searchPosition + 1;
         else

@@ -55,7 +55,7 @@ public:
     GCGLenum adjustWebGL1TextureInternalFormat(GCGLenum internalformat, GCGLenum format, GCGLenum type);
 
 private:
-    bool supportsExtension(const WTF::String&);
+    bool supportsExtension(const String&);
     String getExtensions();
 
     virtual void initializeAvailableExtensions();

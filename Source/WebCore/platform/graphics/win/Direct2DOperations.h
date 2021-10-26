@@ -132,8 +132,8 @@ void drawPlatformImage(PlatformContextDirect2D&, ID2D1Bitmap*, const FloatSize& 
 void drawPath(PlatformContextDirect2D&, const Path&, const StrokeSource&, const ShadowState&);
 void drawPattern(PlatformContextDirect2D&, COMPtr<ID2D1Bitmap>&&, const IntSize&, const FloatRect&, const FloatRect&, const AffineTransform&, const FloatPoint&, CompositeOperator, BlendMode);
 
-void drawWithoutShadow(PlatformContextDirect2D&, WTF::Function<void(ID2D1RenderTarget*)>&& drawCommands);
-void drawWithShadow(PlatformContextDirect2D&, FloatRect boundingRect, const ShadowState&, WTF::Function<void(ID2D1RenderTarget*)>&& drawCommands);
+void drawWithoutShadow(PlatformContextDirect2D&, Function<void(ID2D1RenderTarget*)>&& drawCommands);
+void drawWithShadow(PlatformContextDirect2D&, FloatRect boundingRect, const ShadowState&, Function<void(ID2D1RenderTarget*)>&& drawCommands);
 
 void drawRect(PlatformContextDirect2D&, const FloatRect&, float, const Color&, StrokeStyle, const Color&);
 void drawLine(PlatformContextDirect2D&, const FloatPoint&, const FloatPoint&, StrokeStyle, const Color&, float, bool);

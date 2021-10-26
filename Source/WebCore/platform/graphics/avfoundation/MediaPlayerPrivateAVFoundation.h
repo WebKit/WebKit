@@ -116,7 +116,7 @@ public:
         {
         }
 
-        Notification(WTF::Function<void ()>&& function)
+        Notification(Function<void()>&& function)
             : m_type(FunctionType)
             , m_finished(false)
             , m_function(WTFMove(function))
@@ -127,13 +127,13 @@ public:
         bool isValid() { return m_type != None; }
         MediaTime time() { return m_time; }
         bool finished() { return m_finished; }
-        WTF::Function<void ()>& function() { return m_function; }
+        Function<void ()>& function() { return m_function; }
         
     private:
         Type m_type;
         MediaTime m_time;
         bool m_finished;
-        WTF::Function<void ()> m_function;
+        Function<void()> m_function;
     };
 
     void scheduleMainThreadNotification(Notification&&);
@@ -332,7 +332,7 @@ protected:
 private:
     MediaPlayer* m_player;
 
-    WTF::Function<void()> m_pendingSeek;
+    Function<void()> m_pendingSeek;
 
     mutable Lock m_queuedNotificationsLock;
     Deque<Notification> m_queuedNotifications WTF_GUARDED_BY_LOCK(m_queuedNotificationsLock);

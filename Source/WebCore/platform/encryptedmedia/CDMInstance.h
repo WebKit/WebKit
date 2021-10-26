@@ -67,7 +67,7 @@ public:
     virtual void clearClient() { }
 
 #if !RELEASE_LOG_DISABLED
-    virtual void setLogger(WTF::Logger&, const void*) { }
+    virtual void setLogger(Logger&, const void*) { }
 #endif
 
     enum class ImplementationType {

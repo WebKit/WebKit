@@ -154,7 +154,7 @@ private:
     
     HashMap<String, ApplicationCacheGroup*> m_cachesInMemory; // Excludes obsolete cache groups.
 
-    friend class WTF::NeverDestroyed<ApplicationCacheStorage>;
+    friend class NeverDestroyed<ApplicationCacheStorage>;
 };
 
 } // namespace WebCore

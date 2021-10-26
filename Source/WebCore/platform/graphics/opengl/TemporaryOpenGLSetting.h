@@ -39,7 +39,7 @@ namespace WebCore {
 // value upon destruction, making it an alternative to checking, clearing, and resetting each flag
 // at all of a block's exit points.
 //
-// Based on WTF::SetForScope<>
+// Based on SetForScope<>
 
 class TemporaryOpenGLSetting {
     WTF_MAKE_NONCOPYABLE(TemporaryOpenGLSetting);

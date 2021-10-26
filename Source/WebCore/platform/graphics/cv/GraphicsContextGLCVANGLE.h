@@ -73,7 +73,7 @@ private:
     UnsafePointer<IOSurfaceRef> m_lastSurface;
     uint32_t m_lastSurfaceSeed { 0 };
 
-    using TextureSeedMap = HashMap<GCGLuint, unsigned, WTF::IntHash<GCGLuint>, WTF::UnsignedWithZeroKeyHashTraits<GCGLuint>>;
+    using TextureSeedMap = HashMap<GCGLuint, unsigned, IntHash<GCGLuint>, WTF::UnsignedWithZeroKeyHashTraits<GCGLuint>>;
     TextureSeedMap m_lastTextureSeed;
 };
 

@@ -49,7 +49,7 @@ class PlatformContextDirect2D {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(PlatformContextDirect2D);
 public:
-    PlatformContextDirect2D(ID2D1RenderTarget*, WTF::Function<void()>&& preDrawHandler = []() { }, WTF::Function<void()>&& postDrawHandler = []() { });
+    PlatformContextDirect2D(ID2D1RenderTarget*, Function<void()>&& preDrawHandler = []() { }, Function<void()>&& postDrawHandler = []() { });
     ~PlatformContextDirect2D();
 
     ID2D1RenderTarget* renderTarget() { return m_renderTarget.get(); }
@@ -135,8 +135,8 @@ private:
 
     COMPtr<ID2D1Bitmap> m_compositeSource;
 
-    WTF::Function<void()> m_preDrawHandler;
-    WTF::Function<void()> m_postDrawHandler;
+    Function<void()> m_preDrawHandler;
+    Function<void()> m_postDrawHandler;
 
     class State;
     State* m_state { nullptr };

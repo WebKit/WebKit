@@ -50,7 +50,7 @@ namespace WebCore {
 class WorkerSharedTimer final : public SharedTimer {
 public:
     // SharedTimer interface.
-    void setFiredFunction(WTF::Function<void()>&& function) final { m_sharedTimerFunction = WTFMove(function); }
+    void setFiredFunction(Function<void()>&& function) final { m_sharedTimerFunction = WTFMove(function); }
     void setFireInterval(Seconds interval) final { m_nextFireTime = MonotonicTime::now() + interval; }
     void stop() final { m_nextFireTime = MonotonicTime { }; }
 
@@ -59,7 +59,7 @@ public:
     void fire() { m_sharedTimerFunction(); }
 
 private:
-    WTF::Function<void()> m_sharedTimerFunction;
+    Function<void()> m_sharedTimerFunction;
     MonotonicTime m_nextFireTime;
 };
 
@@ -164,7 +164,7 @@ MessageQueueWaitResult WorkerDedicatedRunLoop::runInMode(WorkerOrWorkletGlobalSc
     ASSERT(context);
     ASSERT(context->workerOrWorkletThread()->thread() == &Thread::current());
 
-    JSC::JSRunLoopTimer::TimerNotificationCallback timerAddedTask = WTF::createSharedTask<JSC::JSRunLoopTimer::TimerNotificationType>([this] {
+    JSC::JSRunLoopTimer::TimerNotificationCallback timerAddedTask = createSharedTask<JSC::JSRunLoopTimer::TimerNotificationType>([this] {
         // We don't actually do anything here, we just want to loop around runInMode
         // to both recalculate our deadline and to potentially run the run loop.
         this->postTask([](ScriptExecutionContext&) { });

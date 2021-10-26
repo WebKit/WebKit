@@ -73,7 +73,7 @@ String CSSFontFaceSrcValue::customCSSText() const
     return makeString(prefix, serializeString(m_resource), ")", " format(", serializeString(m_format), ")");
 }
 
-bool CSSFontFaceSrcValue::traverseSubresources(const WTF::Function<bool (const CachedResource&)>& handler) const
+bool CSSFontFaceSrcValue::traverseSubresources(const Function<bool(const CachedResource&)>& handler) const
 {
     if (!m_cachedFont)
         return false;

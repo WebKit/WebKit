@@ -107,7 +107,7 @@ public:
     WebCoreDecompressionSession* decompressionSession() const { return m_decompressionSession.get(); }
 
     RetainPtr<PlatformLayer> createVideoFullscreenLayer() override;
-    void setVideoFullscreenLayer(PlatformLayer*, WTF::Function<void()>&& completionHandler) override;
+    void setVideoFullscreenLayer(PlatformLayer*, Function<void()>&& completionHandler) override;
     void setVideoFullscreenFrame(FloatRect) override;
 
     bool requiresTextTrackRepresentation() const override;

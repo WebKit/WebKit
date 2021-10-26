@@ -88,7 +88,7 @@ private:
         PermissionStateAllowed,
         PermissionStateDenied,
     } m_permissionState;
-    typedef WTF::HashSet<RefPtr<Geolocation> > GeolocationSet;
+    typedef HashSet<RefPtr<Geolocation>> GeolocationSet;
     GeolocationSet m_pendingPermission;
 };
 

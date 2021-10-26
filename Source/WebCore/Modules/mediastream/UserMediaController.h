@@ -49,7 +49,7 @@ public:
 
     void enumerateMediaDevices(Document&, CompletionHandler<void(const Vector<CaptureDevice>&, const String&)>&&);
 
-    UserMediaClient::DeviceChangeObserverToken addDeviceChangeObserver(WTF::Function<void()>&&);
+    UserMediaClient::DeviceChangeObserverToken addDeviceChangeObserver(Function<void()>&&);
     void removeDeviceChangeObserver(UserMediaClient::DeviceChangeObserverToken);
 
     void logGetUserMediaDenial(Document&);
@@ -79,7 +79,7 @@ inline void UserMediaController::enumerateMediaDevices(Document& document, Compl
 }
 
 
-inline UserMediaClient::DeviceChangeObserverToken UserMediaController::addDeviceChangeObserver(WTF::Function<void()>&& observer)
+inline UserMediaClient::DeviceChangeObserverToken UserMediaController::addDeviceChangeObserver(Function<void()>&& observer)
 {
     return m_client->addDeviceChangeObserver(WTFMove(observer));
 }

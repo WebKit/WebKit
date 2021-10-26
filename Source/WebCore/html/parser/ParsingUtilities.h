@@ -174,7 +174,7 @@ template<typename CharacterType, unsigned lowercaseLettersArraySize> bool skipEx
     
     if (position + lowercaseLettersLength > end)
         return false;
-    if (!WTF::equalLettersIgnoringASCIICase(position, lowercaseLettersLength, lowercaseLetters))
+    if (!equalLettersIgnoringASCIICase(position, lowercaseLettersLength, lowercaseLetters))
         return false;
     position += lowercaseLettersLength;
     return true;
@@ -186,7 +186,7 @@ template<typename CharacterType, unsigned lowercaseLettersArraySize> bool skipEx
 
     if (buffer.lengthRemaining() < lowercaseLettersLength)
         return false;
-    if (!WTF::equalLettersIgnoringASCIICase(buffer.position(), lowercaseLettersLength, lowercaseLetters))
+    if (!equalLettersIgnoringASCIICase(buffer.position(), lowercaseLettersLength, lowercaseLetters))
         return false;
     buffer += lowercaseLettersLength;
     return true;

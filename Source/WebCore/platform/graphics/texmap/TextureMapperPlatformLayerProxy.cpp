@@ -220,7 +220,7 @@ void TextureMapperPlatformLayerProxy::dropCurrentBufferWhilePreservingTexture(bo
         [this, shouldWait] {
             Locker locker { m_lock };
 
-            auto maybeNotifySynchronousOperation = WTF::makeScopeExit([this, shouldWait]() {
+            auto maybeNotifySynchronousOperation = makeScopeExit([this, shouldWait]() {
                 if (shouldWait) {
                     Locker locker { m_wasBufferDroppedLock };
                     m_wasBufferDropped = true;

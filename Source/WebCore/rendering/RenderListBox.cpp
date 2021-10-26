@@ -128,7 +128,7 @@ void RenderListBox::updateFromElement()
         std::optional<FontCascade> boldFont;
         for (auto* element : selectElement().listItems()) {
             String text;
-            WTF::Function<const FontCascade&()> selectFont = [&normalFont] () -> const FontCascade& {
+            Function<const FontCascade&()> selectFont = [&normalFont] () -> const FontCascade& {
                 return normalFont;
             };
             if (is<HTMLOptionElement>(*element))

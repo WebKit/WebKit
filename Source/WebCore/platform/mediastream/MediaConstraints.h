@@ -237,7 +237,7 @@ public:
         return true;
     }
 
-    ValueType find(const WTF::Function<bool(ValueType)>& function) const
+    ValueType find(const Function<bool(ValueType)>& function) const
     {
         if (m_min && function(m_min.value()))
             return m_min.value();
@@ -592,7 +592,7 @@ public:
     double fitnessDistance(const String&) const;
     double fitnessDistance(const Vector<String>&) const;
 
-    const String& find(const WTF::Function<bool(const String&)>&) const;
+    const String& find(const Function<bool(const String&)>&) const;
 
     bool isEmpty() const { return m_exact.isEmpty() && m_ideal.isEmpty(); }
     bool isMandatory() const { return !m_exact.isEmpty(); }
@@ -649,8 +649,8 @@ private:
 
 class MediaTrackConstraintSetMap {
 public:
-    WEBCORE_EXPORT void forEach(WTF::Function<void(const MediaConstraint&)>&&) const;
-    void filter(const WTF::Function<bool(const MediaConstraint&)>&) const;
+    WEBCORE_EXPORT void forEach(Function<void(const MediaConstraint&)>&&) const;
+    void filter(const Function<bool(const MediaConstraint&)>&) const;
     bool isEmpty() const;
     WEBCORE_EXPORT size_t size() const;
 
@@ -894,7 +894,7 @@ private:
 
 struct MediaConstraints {
     void setDefaultVideoConstraints();
-    bool isConstraintSet(const WTF::Function<bool(const MediaTrackConstraintSetMap&)>&);
+    bool isConstraintSet(const Function<bool(const MediaTrackConstraintSetMap&)>&);
 
     MediaTrackConstraintSetMap mandatoryConstraints;
     Vector<MediaTrackConstraintSetMap> advancedConstraints;

@@ -349,7 +349,7 @@ void FELighting::platformApplyGeneric(const LightingData& data, const LightSourc
     unsigned optimalThreadNumber = std::min<unsigned>(((data.widthDecreasedByOne - 1) * rowsToProcess) / s_minimalRectDimension, maxNumThreads);
     if (optimalThreadNumber > 1) {
         // Initialize parallel jobs
-        WTF::ParallelJobs<PlatformApplyGenericParameters> parallelJobs(&platformApplyGenericWorker, optimalThreadNumber);
+        ParallelJobs<PlatformApplyGenericParameters> parallelJobs(&platformApplyGenericWorker, optimalThreadNumber);
 
         // Fill the parameter array
         int job = parallelJobs.numberOfJobs();

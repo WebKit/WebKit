@@ -64,7 +64,7 @@ public:
 
     const String& mimeType() const { return m_mimeType; }
 
-    WEBCORE_EXPORT void setEncodedDataStatusChangeCallback(WTF::Function<void(EncodedDataStatus)>&&) final;
+    WEBCORE_EXPORT void setEncodedDataStatusChangeCallback(Function<void(EncodedDataStatus)>&&) final;
     EncodedDataStatus encodedDataStatus() const final;
     WEBCORE_EXPORT IntSize size() const final;
     WEBCORE_EXPORT size_t frameCount() const final;
@@ -113,7 +113,7 @@ private:
     RetainPtr<WebCoreSharedBufferResourceLoaderDelegate> m_loader;
     std::unique_ptr<ImageRotationSessionVT> m_imageRotationSession;
     Ref<WebCoreDecompressionSession> m_decompressionSession;
-    WTF::Function<void(EncodedDataStatus)> m_encodedDataStatusChangedCallback;
+    Function<void(EncodedDataStatus)> m_encodedDataStatusChangedCallback;
 
     SampleMap m_sampleData;
     DecodeOrderSampleMap::iterator m_cursor;

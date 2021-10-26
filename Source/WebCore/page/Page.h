@@ -294,7 +294,7 @@ public:
     BroadcastChannelRegistry& broadcastChannelRegistry() { return m_broadcastChannelRegistry; }
     WEBCORE_EXPORT void setBroadcastChannelRegistry(Ref<BroadcastChannelRegistry>&&); // Only used by WebKitLegacy.
 
-    WEBCORE_EXPORT static void forEachPage(const WTF::Function<void(Page&)>&);
+    WEBCORE_EXPORT static void forEachPage(const Function<void(Page&)>&);
     WEBCORE_EXPORT static unsigned nonUtilityPageCount();
 
     unsigned subframeCount() const;
@@ -302,7 +302,7 @@ public:
     void incrementNestedRunLoopCount();
     void decrementNestedRunLoopCount();
     bool insideNestedRunLoop() const { return m_nestedRunLoopCount > 0; }
-    WEBCORE_EXPORT void whenUnnested(WTF::Function<void()>&&);
+    WEBCORE_EXPORT void whenUnnested(Function<void()>&&);
 
 #if ENABLE(REMOTE_INSPECTOR)
     WEBCORE_EXPORT bool remoteInspectionAllowed() const;
@@ -864,8 +864,8 @@ public:
     DeviceOrientationUpdateProvider* deviceOrientationUpdateProvider() const { return m_deviceOrientationUpdateProvider.get(); }
 #endif
 
-    WEBCORE_EXPORT void forEachDocument(const WTF::Function<void(Document&)>&) const;
-    void forEachMediaElement(const WTF::Function<void(HTMLMediaElement&)>&);
+    WEBCORE_EXPORT void forEachDocument(const Function<void(Document&)>&) const;
+    void forEachMediaElement(const Function<void(HTMLMediaElement&)>&);
 
     bool shouldDisableCorsForRequestTo(const URL&) const;
 
@@ -994,7 +994,7 @@ private:
     std::optional<FramesPerSecond> m_displayNominalFramesPerSecond;
 
     int m_nestedRunLoopCount { 0 };
-    WTF::Function<void()> m_unnestCallback;
+    Function<void()> m_unnestCallback;
 
     String m_groupName;
     bool m_openedByDOM { false };

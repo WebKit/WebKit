@@ -42,8 +42,8 @@ public:
     void destroyStream(CurlStreamID);
     void send(CurlStreamID, UniqueArray<uint8_t>&&, size_t);
 
-    void callOnWorkerThread(WTF::Function<void()>&&);
-    void callClientOnMainThread(CurlStreamID, WTF::Function<void(CurlStream::Client&)>&&);
+    void callOnWorkerThread(Function<void()>&&);
+    void callClientOnMainThread(CurlStreamID, Function<void(CurlStream::Client&)>&&);
 
 private:
     void startThreadIfNeeded();

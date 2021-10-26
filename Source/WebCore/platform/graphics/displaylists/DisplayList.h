@@ -83,7 +83,7 @@ public:
     void shrinkToFit();
 
 #if !defined(NDEBUG) || !LOG_DISABLED
-    WTF::CString description() const;
+    CString description() const;
     WEBCORE_EXPORT void dump() const;
 #endif
 

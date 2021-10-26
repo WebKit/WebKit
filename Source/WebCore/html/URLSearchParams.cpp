@@ -36,22 +36,22 @@ URLSearchParams::URLSearchParams(const String& init, DOMURL* associatedURL)
 {
 }
 
-URLSearchParams::URLSearchParams(const Vector<WTF::KeyValuePair<String, String>>& pairs)
+URLSearchParams::URLSearchParams(const Vector<KeyValuePair<String, String>>& pairs)
     : m_pairs(pairs)
 {
 }
 
-ExceptionOr<Ref<URLSearchParams>> URLSearchParams::create(std::variant<Vector<Vector<String>>, Vector<WTF::KeyValuePair<String, String>>, String>&& variant)
+ExceptionOr<Ref<URLSearchParams>> URLSearchParams::create(std::variant<Vector<Vector<String>>, Vector<KeyValuePair<String, String>>, String>&& variant)
 {
     auto visitor = WTF::makeVisitor([&](const Vector<Vector<String>>& vector) -> ExceptionOr<Ref<URLSearchParams>> {
-        Vector<WTF::KeyValuePair<String, String>> pairs;
+        Vector<KeyValuePair<String, String>> pairs;
         for (const auto& pair : vector) {
             if (pair.size() != 2)
                 return Exception { TypeError };
             pairs.append({pair[0], pair[1]});
         }
         return adoptRef(*new URLSearchParams(WTFMove(pairs)));
-    }, [&](const Vector<WTF::KeyValuePair<String, String>>& pairs) -> ExceptionOr<Ref<URLSearchParams>> {
+    }, [&](const Vector<KeyValuePair<String, String>>& pairs) -> ExceptionOr<Ref<URLSearchParams>> {
         return adoptRef(*new URLSearchParams(pairs));
     }, [&](const String& string) -> ExceptionOr<Ref<URLSearchParams>> {
         return adoptRef(*new URLSearchParams(string, nullptr));
@@ -151,14 +151,14 @@ void URLSearchParams::updateFromAssociatedURL()
     m_pairs = search.startsWith('?') ? WTF::URLParser::parseURLEncodedForm(StringView(search).substring(1)) : WTF::URLParser::parseURLEncodedForm(search);
 }
 
-std::optional<WTF::KeyValuePair<String, String>> URLSearchParams::Iterator::next()
+std::optional<KeyValuePair<String, String>> URLSearchParams::Iterator::next()
 {
     auto& pairs = m_target->pairs();
     if (m_index >= pairs.size())
         return std::nullopt;
 
     auto& pair = pairs[m_index++];
-    return WTF::KeyValuePair<String, String> { pair.key, pair.value };
+    return KeyValuePair<String, String> { pair.key, pair.value };
 }
 
 URLSearchParams::Iterator::Iterator(URLSearchParams& params)

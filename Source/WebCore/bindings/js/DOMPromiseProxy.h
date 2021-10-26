@@ -86,7 +86,7 @@ template<typename IDLType>
 class DOMPromiseProxyWithResolveCallback {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    using ResolveCallback = WTF::Function<typename IDLType::ParameterType ()>;
+    using ResolveCallback = Function<typename IDLType::ParameterType()>;
 
     template <typename Class, typename BaseClass>
     DOMPromiseProxyWithResolveCallback(Class&, typename IDLType::ParameterType (BaseClass::*)());

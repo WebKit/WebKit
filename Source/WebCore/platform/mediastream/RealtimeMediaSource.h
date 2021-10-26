@@ -222,7 +222,7 @@ public:
 protected:
     RealtimeMediaSource(Type, String&& name, String&& deviceID = { }, String&& hashSalt = { });
 
-    void scheduleDeferredTask(WTF::Function<void()>&&);
+    void scheduleDeferredTask(Function<void()>&&);
 
     virtual void beginConfiguration() { }
     virtual void commitConfiguration() { }

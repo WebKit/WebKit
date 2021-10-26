@@ -55,7 +55,7 @@ public:
         return contextGroup == m_contextGroup;
     }
 
-    void detachContextGroup(const WTF::AbstractLocker&);
+    void detachContextGroup(const AbstractLocker&);
 
     void detachContextGroupWithoutDeletingObject();
 

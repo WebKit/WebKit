@@ -53,7 +53,7 @@ public:
 
 private:
     bool isDirectory() const final { return true; }
-    using EntryMatchingFunction = WTF::Function<bool(const FileSystemEntry&)>;
+    using EntryMatchingFunction = Function<bool(const FileSystemEntry&)>;
     void getEntry(ScriptExecutionContext&, const String& path, const Flags& options, EntryMatchingFunction&&, RefPtr<FileSystemEntryCallback>&&, RefPtr<ErrorCallback>&&);
 
     FileSystemDirectoryEntry(ScriptExecutionContext&, DOMFileSystem&, const String& virtualPath);

@@ -63,7 +63,7 @@ public:
         if (m_ioSurface)
             encoder << m_ioSurface->createSendRight();
         else
-            encoder << WTF::MachSendRight();
+            encoder << MachSendRight();
         encoder << m_rotation;
         encoder << m_time;
         encoder << m_videoFormat;
@@ -111,7 +111,7 @@ private:
 
     std::unique_ptr<WebCore::IOSurface> m_ioSurface;
     RetainPtr<CVPixelBufferRef> m_imageBuffer;
-    WTF::MachSendRight m_sendRight;
+    MachSendRight m_sendRight;
     MediaSample::VideoRotation m_rotation { MediaSample::VideoRotation::None };
     MediaTime m_time;
     uint32_t m_videoFormat { 0 };

@@ -128,15 +128,15 @@ private:
     Ref<CSSFontFaceSet> m_cssFontFaceSet;
     HashSet<FontSelectorClient*> m_clients;
 
-    struct PaletteMapHash : WTF::DefaultHash<std::pair<AtomString, AtomString>> {
+    struct PaletteMapHash : DefaultHash<std::pair<AtomString, AtomString>> {
         static unsigned hash(const std::pair<AtomString, AtomString>& key)
         {
-            return pairIntHash(ASCIICaseInsensitiveHash::hash(key.first), WTF::DefaultHash<AtomString>::hash(key.second));
+            return pairIntHash(ASCIICaseInsensitiveHash::hash(key.first), DefaultHash<AtomString>::hash(key.second));
         }
 
         static bool equal(const std::pair<AtomString, AtomString>& a, const std::pair<AtomString, AtomString>& b)
         {
-            return ASCIICaseInsensitiveHash::equal(a.first, b.first) && WTF::DefaultHash<AtomString>::equal(a.second, b.second);
+            return ASCIICaseInsensitiveHash::equal(a.first, b.first) && DefaultHash<AtomString>::equal(a.second, b.second);
         }
     };
     HashMap<std::pair<AtomString, AtomString>, FontPaletteValues, PaletteMapHash> m_paletteMap;

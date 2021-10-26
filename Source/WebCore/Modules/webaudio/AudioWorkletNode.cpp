@@ -153,7 +153,7 @@ AudioWorkletNode::~AudioWorkletNode()
     uninitialize();
 }
 
-void AudioWorkletNode::initializeAudioParameters(const Vector<AudioParamDescriptor>& descriptors, const std::optional<Vector<WTF::KeyValuePair<String, double>>>& paramValues)
+void AudioWorkletNode::initializeAudioParameters(const Vector<AudioParamDescriptor>& descriptors, const std::optional<Vector<KeyValuePair<String, double>>>& paramValues)
 {
     ASSERT(isMainThread());
     ASSERT(m_parameters->map().isEmpty());

@@ -36,7 +36,7 @@ static TextLogicalOrderCache makeTextLogicalOrderCacheIfNeeded(const RenderText&
     if (!text.containsReversedText())
         return { };
 
-    auto cache = WTF::makeUnique<TextLogicalOrderCacheData>();
+    auto cache = makeUnique<TextLogicalOrderCacheData>();
     for (auto textBox : textBoxesFor(text))
         cache->boxes.append(textBox);
 
@@ -91,7 +91,7 @@ TextBoxIterator nextTextBoxInLogicalOrder(const TextBoxIterator& textBox, TextLo
 
 static LineLogicalOrderCache makeLineLogicalOrderCache(const LineIterator& line)
 {
-    auto cache = WTF::makeUnique<LineLogicalOrderCacheData>();
+    auto cache = makeUnique<LineLogicalOrderCacheData>();
 
     cache->line = line;
     cache->boxes = leafBoxesInLogicalOrder(line, [](auto first, auto last) {

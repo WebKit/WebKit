@@ -604,7 +604,7 @@ static int numberOfReplacedElementsBeforeOffset(AtkText* text, unsigned offset)
 
     int count = 0;
     size_t index = textBeforeOffset.find(objectReplacementCharacter, 0);
-    while (index < offset && index != WTF::notFound) {
+    while (index < offset && index != notFound) {
         index = textBeforeOffset.find(objectReplacementCharacter, index + 1);
         count++;
     }

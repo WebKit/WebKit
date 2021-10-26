@@ -119,12 +119,12 @@ public:
     const String& testTreatNullAsEmptyString() const { return m_treatNullAsEmptyString; }
     void setTestTreatNullAsEmptyString(const String& string) { m_treatNullAsEmptyString = string; }
 
-    const Vector<WTF::KeyValuePair<String, int>>& testLongRecord() const { return m_longRecord; }
-    void setTestLongRecord(const Vector<WTF::KeyValuePair<String, int>>& value) { m_longRecord = value; }
-    const Vector<WTF::KeyValuePair<String, RefPtr<Node>>>& testNodeRecord() const { return m_nodeRecord; }
-    void setTestNodeRecord(const Vector<WTF::KeyValuePair<String, RefPtr<Node>>>& value) { m_nodeRecord = value; }
-    const Vector<WTF::KeyValuePair<String, Vector<String>>>& testSequenceRecord() const { return m_sequenceRecord; }
-    void setTestSequenceRecord(const Vector<WTF::KeyValuePair<String, Vector<String>>>& value) { m_sequenceRecord = value; }
+    const Vector<KeyValuePair<String, int>>& testLongRecord() const { return m_longRecord; }
+    void setTestLongRecord(const Vector<KeyValuePair<String, int>>& value) { m_longRecord = value; }
+    const Vector<KeyValuePair<String, RefPtr<Node>>>& testNodeRecord() const { return m_nodeRecord; }
+    void setTestNodeRecord(const Vector<KeyValuePair<String, RefPtr<Node>>>& value) { m_nodeRecord = value; }
+    const Vector<KeyValuePair<String, Vector<String>>>& testSequenceRecord() const { return m_sequenceRecord; }
+    void setTestSequenceRecord(const Vector<KeyValuePair<String, Vector<String>>>& value) { m_sequenceRecord = value; }
 
     using TestUnion = std::variant<String, int, bool, RefPtr<Node>, Vector<int>>;
     const TestUnion& testUnion() const { return m_union; }
@@ -168,9 +168,9 @@ private:
     String m_usvstring;
     String m_byteString;
     String m_treatNullAsEmptyString;
-    Vector<WTF::KeyValuePair<String, int>> m_longRecord;
-    Vector<WTF::KeyValuePair<String, RefPtr<Node>>> m_nodeRecord;
-    Vector<WTF::KeyValuePair<String, Vector<String>>> m_sequenceRecord;
+    Vector<KeyValuePair<String, int>> m_longRecord;
+    Vector<KeyValuePair<String, RefPtr<Node>>> m_nodeRecord;
+    Vector<KeyValuePair<String, Vector<String>>> m_sequenceRecord;
 
     Dictionary m_testDictionary;
 

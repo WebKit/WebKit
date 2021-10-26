@@ -53,7 +53,7 @@ public:
     class Iterator {
     public:
         explicit Iterator(WebXRHand&);
-        std::optional<WTF::KeyValuePair<XRHandJoint, RefPtr<WebXRJointSpace>>> next();
+        std::optional<KeyValuePair<XRHandJoint, RefPtr<WebXRJointSpace>>> next();
 
     private:
         Ref<WebXRHand> m_hand;

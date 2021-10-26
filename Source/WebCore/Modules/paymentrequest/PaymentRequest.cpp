@@ -390,7 +390,7 @@ void PaymentRequest::show(Document& document, RefPtr<DOMPromise>&& detailsPromis
 
     m_state = State::Interactive;
     ASSERT(!m_showPromise);
-    m_showPromise = WTF::makeUnique<ShowPromise>(WTFMove(promise));
+    m_showPromise = makeUnique<ShowPromise>(WTFMove(promise));
 
     RefPtr<PaymentHandler> selectedPaymentHandler;
     for (auto& paymentMethod : m_serializedMethodData) {

@@ -557,7 +557,7 @@ inline unsigned Term::hash() const
         secondary = m_atomData.group.hash();
         break;
     }
-    return WTF::pairIntHash(primary, secondary);
+    return pairIntHash(primary, secondary);
 }
 
 inline bool Term::isEmptyValue() const

@@ -105,13 +105,13 @@ static const String v1RecordsTableSchema(const String& tableName)
 
 static const String& v1RecordsTableSchema()
 {
-    static NeverDestroyed<WTF::String> v1RecordsTableSchemaString(v1RecordsTableSchema("Records"));
+    static NeverDestroyed<String> v1RecordsTableSchemaString(v1RecordsTableSchema("Records"));
     return v1RecordsTableSchemaString;
 }
 
 static const String& v1RecordsTableSchemaAlternate()
 {
-    static NeverDestroyed<WTF::String> v1RecordsTableSchemaString(v1RecordsTableSchema("\"Records\""));
+    static NeverDestroyed<String> v1RecordsTableSchemaString(v1RecordsTableSchema("\"Records\""));
     return v1RecordsTableSchemaString;
 }
 
@@ -122,13 +122,13 @@ static const String v2RecordsTableSchema(const String& tableName)
 
 static const String& v2RecordsTableSchema()
 {
-    static NeverDestroyed<WTF::String> v2RecordsTableSchemaString(v2RecordsTableSchema("Records"));
+    static NeverDestroyed<String> v2RecordsTableSchemaString(v2RecordsTableSchema("Records"));
     return v2RecordsTableSchemaString;
 }
 
 static const String& v2RecordsTableSchemaAlternate()
 {
-    static NeverDestroyed<WTF::String> v2RecordsTableSchemaString(v2RecordsTableSchema("\"Records\""));
+    static NeverDestroyed<String> v2RecordsTableSchemaString(v2RecordsTableSchema("\"Records\""));
     return v2RecordsTableSchemaString;
 }
 
@@ -154,13 +154,13 @@ static const String v1IndexRecordsTableSchema(const String& tableName)
 
 static const String& v1IndexRecordsTableSchema()
 {
-    static NeverDestroyed<WTF::String> v1IndexRecordsTableSchemaString(v1IndexRecordsTableSchema("IndexRecords"));
+    static NeverDestroyed<String> v1IndexRecordsTableSchemaString(v1IndexRecordsTableSchema("IndexRecords"));
     return v1IndexRecordsTableSchemaString;
 }
 
 static const String& v1IndexRecordsTableSchemaAlternate()
 {
-    static NeverDestroyed<WTF::String> v1IndexRecordsTableSchemaString(v1IndexRecordsTableSchema("\"IndexRecords\""));
+    static NeverDestroyed<String> v1IndexRecordsTableSchemaString(v1IndexRecordsTableSchema("\"IndexRecords\""));
     return v1IndexRecordsTableSchemaString;
 }
 
@@ -171,13 +171,13 @@ static const String v2IndexRecordsTableSchema(const String& tableName)
 
 static const String& v2IndexRecordsTableSchema()
 {
-    static NeverDestroyed<WTF::String> v2IndexRecordsTableSchemaString(v2IndexRecordsTableSchema("IndexRecords"));
+    static NeverDestroyed<String> v2IndexRecordsTableSchemaString(v2IndexRecordsTableSchema("IndexRecords"));
     return v2IndexRecordsTableSchemaString;
 }
 
 static const String& v2IndexRecordsTableSchemaAlternate()
 {
-    static NeverDestroyed<WTF::String> v2IndexRecordsTableSchemaString(v2IndexRecordsTableSchema("\"IndexRecords\""));
+    static NeverDestroyed<String> v2IndexRecordsTableSchemaString(v2IndexRecordsTableSchema("\"IndexRecords\""));
     return v2IndexRecordsTableSchemaString;
 }
 

@@ -511,7 +511,7 @@ bool CookieJarDB::canAcceptCookie(const Cookie& cookie, const URL& firstParty, c
 bool CookieJarDB::setCookie(const Cookie& cookie)
 {
     auto expires = cookie.expires.value_or(0.0);
-    if (!cookie.session && MonotonicTime::fromRawSeconds(expires / WTF::msPerSecond) <= MonotonicTime::now())
+    if (!cookie.session && MonotonicTime::fromRawSeconds(expires / msPerSecond) <= MonotonicTime::now())
         return deleteCookieInternal(cookie.name, cookie.domain, cookie.path);
 
     auto& statement = preparedStatement(SET_COOKIE_SQL);
@@ -553,7 +553,7 @@ bool CookieJarDB::setCookie(const URL& firstParty, const URL& url, const String&
     if (cappedLifetime && cookie->expires) {
         ASSERT(*cappedLifetime >= 0_s);
         auto cappedExpires = WallTime::now() + *cappedLifetime;
-        if (cappedExpires < WallTime::fromRawSeconds(*cookie->expires / WTF::msPerSecond))
+        if (cappedExpires < WallTime::fromRawSeconds(*cookie->expires / msPerSecond))
             cookie->expires = cappedExpires.secondsSinceEpoch().milliseconds();
     }
 

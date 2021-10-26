@@ -33,7 +33,7 @@ namespace WebCore {
 class PowerSourceNotifier : public CanMakeWeakPtr<PowerSourceNotifier> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    using PowerSourceNotifierCallback = WTF::Function<void(bool hasAC)>;
+    using PowerSourceNotifierCallback = Function<void(bool hasAC)>;
     WEBCORE_EXPORT explicit PowerSourceNotifier(PowerSourceNotifierCallback&&);
     WEBCORE_EXPORT ~PowerSourceNotifier();
 

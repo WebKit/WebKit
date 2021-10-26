@@ -49,8 +49,6 @@
 #include <wtf/text/StringHash.h>
 #include <wtf/threads/BinarySemaphore.h>
 
-using WTF::ThreadSpecific;
-
 namespace WebCore {
 
 typedef HashMap<String, RefPtr<SecurityOrigin>> BlobUrlOriginMap;

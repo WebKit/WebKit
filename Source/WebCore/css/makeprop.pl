@@ -567,7 +567,7 @@ String getJSPropertyName(CSSPropertyID id)
         *resultPointer++ = character;
     }
     *resultPointer = '\\0';
-    return WTF::String(result);
+    return String(result);
 }
 
 static const bool isInheritedPropertyTable[numCSSProperties + $numPredefinedProperties] = {
@@ -846,9 +846,9 @@ bool isInternalCSSProperty(const CSSPropertyID);
 bool isEnabledCSSProperty(const CSSPropertyID);
 bool isCSSPropertyEnabledBySettings(const CSSPropertyID, const Settings* = nullptr);
 const char* getPropertyName(CSSPropertyID);
-const WTF::AtomString& getPropertyNameAtomString(CSSPropertyID id);
-WTF::String getPropertyNameString(CSSPropertyID id);
-WTF::String getJSPropertyName(CSSPropertyID);
+const AtomString& getPropertyNameAtomString(CSSPropertyID id);
+String getPropertyNameString(CSSPropertyID id);
+String getJSPropertyName(CSSPropertyID);
 CSSPropertyID getRelatedPropertyId(CSSPropertyID id);
 
 inline CSSPropertyID convertToCSSPropertyID(int value)

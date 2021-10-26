@@ -52,7 +52,7 @@ public:
 
     static std::unique_ptr<CurlStream> create(CurlStreamScheduler& scheduler, CurlStreamID streamID, URL&& url)
     {
-        return WTF::makeUnique<CurlStream>(scheduler, streamID, WTFMove(url));
+        return makeUnique<CurlStream>(scheduler, streamID, WTFMove(url));
     }
 
     CurlStream(CurlStreamScheduler&, CurlStreamID, URL&&);
@@ -78,7 +78,7 @@ private:
 
     std::unique_ptr<CurlHandle> m_curlHandle;
 
-    WTF::Vector<std::pair<UniqueArray<uint8_t>, size_t>> m_sendBuffers;
+    Vector<std::pair<UniqueArray<uint8_t>, size_t>> m_sendBuffers;
     size_t m_sendBufferOffset { 0 };
 };
 

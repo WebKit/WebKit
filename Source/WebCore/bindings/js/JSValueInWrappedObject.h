@@ -53,7 +53,7 @@ private:
     Value m_value;
 };
 
-JSC::JSValue cachedPropertyValue(JSC::JSGlobalObject&, const JSDOMObject& owner, JSValueInWrappedObject& cacheSlot, const WTF::Function<JSC::JSValue()>&);
+JSC::JSValue cachedPropertyValue(JSC::JSGlobalObject&, const JSDOMObject& owner, JSValueInWrappedObject& cacheSlot, const Function<JSC::JSValue()>&);
 
 inline auto JSValueInWrappedObject::makeValue(JSC::JSValue value) -> Value
 {
@@ -118,7 +118,7 @@ inline void JSValueInWrappedObject::clear()
     }, [] (auto&) { });
 }
 
-inline JSC::JSValue cachedPropertyValue(JSC::JSGlobalObject& lexicalGlobalObject, const JSDOMObject& owner, JSValueInWrappedObject& cachedValue, const WTF::Function<JSC::JSValue()>& function)
+inline JSC::JSValue cachedPropertyValue(JSC::JSGlobalObject& lexicalGlobalObject, const JSDOMObject& owner, JSValueInWrappedObject& cachedValue, const Function<JSC::JSValue()>& function)
 {
     if (cachedValue && isWorldCompatible(lexicalGlobalObject, cachedValue))
         return cachedValue;

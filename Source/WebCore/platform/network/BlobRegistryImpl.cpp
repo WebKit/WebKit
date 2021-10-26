@@ -284,7 +284,7 @@ bool BlobRegistryImpl::populateBlobsForFileWriting(const Vector<String>& blobURL
 
 static bool writeFilePathsOrDataBuffersToFile(const Vector<std::pair<String, ThreadSafeDataBuffer>>& filePathsOrDataBuffers, FileSystem::PlatformFileHandle file, const String& path)
 {
-    auto fileCloser = WTF::makeScopeExit([file]() mutable {
+    auto fileCloser = makeScopeExit([file]() mutable {
         FileSystem::closeFile(file);
     });
 

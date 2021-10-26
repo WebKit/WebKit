@@ -42,7 +42,7 @@ namespace WebCore {
 class LowPowerModeNotifier {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    using LowPowerModeChangeCallback = WTF::Function<void(bool isLowPowerModeEnabled)>;
+    using LowPowerModeChangeCallback = Function<void(bool isLowPowerModeEnabled)>;
     WEBCORE_EXPORT explicit LowPowerModeNotifier(LowPowerModeChangeCallback&&);
     WEBCORE_EXPORT ~LowPowerModeNotifier();
 

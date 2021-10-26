@@ -45,7 +45,7 @@
 namespace WebCore {
 
 #if !RELEASE_LOG_DISABLED
-#define LOGIDENTIFIER_SENDER WTF::Logger::LogSiteIdentifier(logClassName(), __func__, m_connection->logIdentifier())
+#define LOGIDENTIFIER_SENDER Logger::LogSiteIdentifier(logClassName(), __func__, m_connection->logIdentifier())
 #else
 #define LOGIDENTIFIER_SENDER
 #endif

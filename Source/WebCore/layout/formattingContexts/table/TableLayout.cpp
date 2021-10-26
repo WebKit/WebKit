@@ -115,7 +115,7 @@ inline static GridSpace& operator/(GridSpace& a, unsigned value)
 }
 
 template <typename SpanType>
-static Vector<LayoutUnit> distributeAvailableSpace(const TableGrid& grid, LayoutUnit availableSpace, const WTF::Function<GridSpace(const TableGrid::Slot&, size_t)>& slotSpace)
+static Vector<LayoutUnit> distributeAvailableSpace(const TableGrid& grid, LayoutUnit availableSpace, const Function<GridSpace(const TableGrid::Slot&, size_t)>& slotSpace)
 {
     auto& columns = grid.columns();
     auto& rows = grid.rows();

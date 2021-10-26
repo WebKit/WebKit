@@ -61,7 +61,7 @@ public:
 
     void loadSubimages(CachedResourceLoader&, const ResourceLoaderOptions&);
 
-    bool traverseSubresources(const WTF::Function<bool (const CachedResource&)>& handler) const;
+    bool traverseSubresources(const Function<bool(const CachedResource&)>& handler) const;
 
     RefPtr<CSSCrossfadeValue> blend(const CSSCrossfadeValue&, const BlendingContext&) const;
 

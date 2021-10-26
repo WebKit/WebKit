@@ -504,7 +504,7 @@ bool GStreamerRegistryScanner::isCodecSupported(Configuration configuration, con
 {
     // If the codec is named like a mimetype (eg: video/avc) remove the "video/" part.
     size_t slashIndex = codec.find('/');
-    String codecName = slashIndex != WTF::notFound ? codec.substring(slashIndex + 1) : codec;
+    String codecName = slashIndex != notFound ? codec.substring(slashIndex + 1) : codec;
 
     bool supported = false;
     if (codecName.startsWith("avc1"))

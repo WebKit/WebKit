@@ -128,7 +128,7 @@ std::optional<SecurityOriginData> SecurityOriginData::decode(Decoder& decoder)
     return data;
 }
 
-struct SecurityOriginDataHashTraits : WTF::SimpleClassHashTraits<SecurityOriginData> {
+struct SecurityOriginDataHashTraits : SimpleClassHashTraits<SecurityOriginData> {
     static const bool hasIsEmptyValueFunction = true;
     static const bool emptyValueIsZero = false;
     static bool isEmptyValue(const SecurityOriginData& data) { return data.isEmpty(); }
