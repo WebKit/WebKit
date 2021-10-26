@@ -236,7 +236,7 @@ void LocalAuthenticator::makeCredential()
             return excludeCredentialIds.contains(base64EncodeToString(rawId->data(), rawId->byteLength()));
         })) {
             // Obtain consent per Step 3.1
-            auto callback = [weakThis = WeakPtr { *this }] (LocalAuthenticatorPolicy policy) {
+            auto callback = [weakThis = makeWeakPtr(*this)] (LocalAuthenticatorPolicy policy) {
                 ASSERT(RunLoop::isMain());
                 if (!weakThis)
                     return;
