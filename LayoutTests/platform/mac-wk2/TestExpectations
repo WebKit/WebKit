@@ -1690,5 +1690,6 @@ webkit.org/b/231780 [ Debug ] imported/w3c/web-platform-tests/webrtc/simulcast/b
 
 webkit.org/b/229569 [ Catalina Release ] imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-perfect-negotiation-stress-glare.https.html [ Pass Crash ]
 
+webkit.org/b/232337 [ Debug ] imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting/navigation-reporting/reporting-coop-navigated-opener.https.html [ Pass Failure ]
 
 
