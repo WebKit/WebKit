@@ -350,6 +350,7 @@ using ImageAnalysisRequestIdentifier = ObjectIdentifier<ImageAnalysisRequestIden
     RetainPtr<UIMenu> _contextMenuLegacyMenu;
     BOOL _contextMenuHasRequestedLegacyData;
     BOOL _contextMenuActionProviderDelegateNeedsOverride;
+    BOOL _isDisplayingContextMenuWithAnimation;
 #endif
     RetainPtr<UIPreviewItemController> _previewItemController;
 #endif

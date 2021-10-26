@@ -1028,6 +1028,9 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
     _needsDeferredEndScrollingSelectionUpdate = NO;
     _isChangingFocus = NO;
     _isBlurringFocusedElement = NO;
+#if USE(UICONTEXTMENU)
+    _isDisplayingContextMenuWithAnimation = NO;
+#endif
 
 #if USE(UICONTEXTMENU) && ENABLE(IMAGE_ANALYSIS)
     _contextMenuWasTriggeredByImageAnalysisTimeout = NO;
@@ -8625,6 +8628,8 @@ static RetainPtr<UITargetedPreview> createFallbackTargetedPreview(UIView *rootVi
     if (_contextMenuElementInfo)
         return;
 #endif
+    if (_isDisplayingContextMenuWithAnimation)
+        return;
 #if ENABLE(DATA_DETECTION)
     // We are also using this container for the action sheet assistant...
     if ([_actionSheetAssistant hasContextMenuInteraction])
@@ -10524,13 +10529,14 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
 
 #if HAVE(LINK_PREVIEW)
     if ([userInterfaceItem isEqualToString:@"contextMenu"]) {
-        if (self._shouldUseContextMenus)
+        if (self._shouldUseContextMenus) {
             return @{ userInterfaceItem: @{
                 @"url": _positionInformation.url.isValid() ? WTF::userVisibleString(_positionInformation.url) : @"",
                 @"isLink": [NSNumber numberWithBool:_positionInformation.isLink],
                 @"isImage": [NSNumber numberWithBool:_positionInformation.isImage],
                 @"imageURL": _positionInformation.imageURL.isValid() ? WTF::userVisibleString(_positionInformation.imageURL) : @""
             } };
+        }
         NSString *url = [_previewItemController previewData][UIPreviewDataLink];
         return @{ userInterfaceItem: @{
             @"url": url,
@@ -11132,9 +11138,19 @@ static UIMenu *menuFromLegacyPreviewOrDefaultActions(UIViewController *previewVi
 {
     if (!_webView)
         return;
+
+    _isDisplayingContextMenuWithAnimation = YES;
+    [animator addCompletion:[weakSelf = WeakObjCPtr<WKContentView>(self)] {
+        if (auto strongSelf = weakSelf.get()) {
+            ASSERT_IMPLIES(strongSelf->_isDisplayingContextMenuWithAnimation, [strongSelf->_contextMenuHintContainerView window]);
+            strongSelf->_isDisplayingContextMenuWithAnimation = NO;
+        }
+    }];
+
     auto uiDelegate = static_cast<id<WKUIDelegatePrivate>>(self.webView.UIDelegate);
     if (!uiDelegate)
         return;
+
     if ([uiDelegate respondsToSelector:@selector(webView:contextMenuWillPresentForElement:)])
         [uiDelegate webView:self.webView contextMenuWillPresentForElement:_contextMenuElementInfo.get()];
     else if ([uiDelegate respondsToSelector:@selector(_webView:contextMenuWillPresentForElement:)]) {
@@ -11293,6 +11309,8 @@ static UIMenu *menuFromLegacyPreviewOrDefaultActions(UIViewController *previewVi
         auto strongSelf = weakSelf.get();
         if (!strongSelf)
             return;
+
+        strongSelf->_isDisplayingContextMenuWithAnimation = NO;
         [strongSelf _removeContextMenuHintContainerIfPossible];
         [strongSelf->_webView _didDismissContextMenu];
     }];
