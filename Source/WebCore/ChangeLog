@@ -1,5 +1,72 @@
 2021-10-26  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r284523. rdar://problem/83763291
+
+    WebRTC p2p call, VP9-SVC only low layer decoded on receiver side
+    https://bugs.webkit.org/show_bug.cgi?id=231071
+    <rdar://problem/83763291>
+    
+    Reviewed by Eric Carlson.
+    
+    Source/ThirdParty/libwebrtc:
+    
+    In case VP9 SVC is used, fallback to software decoder for now.
+    
+    * Source/webrtc/sdk/WebKit/WebKitDecoder.mm:
+    
+    Source/WebCore:
+    
+    Add Internals API to check whether VP9 VTB is used or not.
+    
+    Test: webrtc/vp9-svc.html
+    
+    * Modules/mediastream/PeerConnectionBackend.h:
+    * Modules/mediastream/RTCPeerConnection.cpp:
+    * Modules/mediastream/RTCPeerConnection.h:
+    * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.cpp:
+    * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.h:
+    * Modules/mediastream/libwebrtc/LibWebRTCPeerConnectionBackend.cpp:
+    * Modules/mediastream/libwebrtc/LibWebRTCPeerConnectionBackend.h:
+    * Modules/mediastream/libwebrtc/LibWebRTCStatsCollector.cpp:
+    * Modules/mediastream/libwebrtc/LibWebRTCStatsCollector.h:
+    * testing/Internals.cpp:
+    * testing/Internals.h:
+    * testing/Internals.idl:
+    
+    LayoutTests:
+    
+    * webrtc/vp9-svc-expected.txt: Added.
+    * webrtc/vp9-svc.html: Added.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@284523 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-10-20  Youenn Fablet  <youenn@apple.com>
+
+            WebRTC p2p call, VP9-SVC only low layer decoded on receiver side
+            https://bugs.webkit.org/show_bug.cgi?id=231071
+            <rdar://problem/83763291>
+
+            Reviewed by Eric Carlson.
+
+            Add Internals API to check whether VP9 VTB is used or not.
+
+            Test: webrtc/vp9-svc.html
+
+            * Modules/mediastream/PeerConnectionBackend.h:
+            * Modules/mediastream/RTCPeerConnection.cpp:
+            * Modules/mediastream/RTCPeerConnection.h:
+            * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.cpp:
+            * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.h:
+            * Modules/mediastream/libwebrtc/LibWebRTCPeerConnectionBackend.cpp:
+            * Modules/mediastream/libwebrtc/LibWebRTCPeerConnectionBackend.h:
+            * Modules/mediastream/libwebrtc/LibWebRTCStatsCollector.cpp:
+            * Modules/mediastream/libwebrtc/LibWebRTCStatsCollector.h:
+            * testing/Internals.cpp:
+            * testing/Internals.h:
+            * testing/Internals.idl:
+
+2021-10-26  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r284220. rdar://problem/84625558
 
     Adopt attribution AVCaptureSession SPI for GPU process

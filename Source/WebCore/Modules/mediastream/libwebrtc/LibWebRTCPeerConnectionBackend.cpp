@@ -194,6 +194,12 @@ bool LibWebRTCPeerConnectionBackend::setConfiguration(MediaEndpointConfiguration
     return m_endpoint->setConfiguration(page->libWebRTCProvider(), configurationFromMediaEndpointConfiguration(WTFMove(configuration)));
 }
 
+void LibWebRTCPeerConnectionBackend::gatherDecoderImplementationName(Function<void(String&&)>&& callback)
+{
+    m_endpoint->gatherDecoderImplementationName(WTFMove(callback));
+
+}
+
 void LibWebRTCPeerConnectionBackend::getStats(Ref<DeferredPromise>&& promise)
 {
     m_endpoint->getStats(WTFMove(promise));

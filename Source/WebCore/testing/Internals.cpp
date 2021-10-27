@@ -1605,6 +1605,22 @@ void Internals::setWebRTCVP9VTBSupport(bool value)
 #endif
 }
 
+bool Internals::isSupportingVP9VTB() const
+{
+#if USE(LIBWEBRTC)
+    if (auto* page = contextDocument()->page())
+        return page->libWebRTCProvider().isSupportingVP9VTB();
+#endif
+    return false;
+}
+
+void Internals::isVP9VTBDeccoderUsed(RTCPeerConnection& connection, DOMPromiseDeferred<IDLBoolean>&& promise)
+{
+    connection.gatherDecoderImplementationName([promise = WTFMove(promise)](auto&& name) mutable {
+        promise.resolve(name.contains("VideoToolBox"));
+    });
+}
+
 void Internals::setSFrameCounter(RTCRtpSFrameTransform& transform, const String& counter)
 {
     if (auto value = parseInteger<uint64_t>(counter))
