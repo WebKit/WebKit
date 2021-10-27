@@ -17,16 +17,16 @@ namespace
 {
     constexpr char kXfbBindingsMarker[]    = "@@XFB-Bindings@@";
     constexpr char kXfbOutMarker[]     = "ANGLE_@@XFB-OUT@@";
+    constexpr char kUserDefinedNamePrefix[] = "_u";  // Defined in GLSLANG/ShaderLang.h
+    template <size_t N>
+    constexpr size_t ConstStrLen(const char (&)[N])
+    {
+        static_assert(N > 0, "C++ shouldn't allow N to be zero");
 
-template <size_t N>
-constexpr size_t ConstStrLen(const char (&)[N])
-{
-    static_assert(N > 0, "C++ shouldn't allow N to be zero");
-
-    // The length of a string defined as a char array is the size of the array minus 1 (the
-    // terminating '\0').
-    return N - 1;
-}
+        // The length of a string defined as a char array is the size of the array minus 1
+        // ( terminating '\0').
+        return N - 1;
+    }
 
 std::string GetXfbBufferNameMtl(const uint32_t bufferIndex)
 {
@@ -258,7 +258,7 @@ std::string GenerateTransformFeedbackVaryingOutput(const gl::TransformFeedbackVa
                        << "] + (gl_VertexID + ANGLE_instanceIdMod * "
                        << "ANGLE_" << std::string(sh::kUniformsVar) << ".ANGLE_xfbVerticesPerDraw) * " << stride
                        << " + " << offset << "] = " << "as_type<float>" << "("
-                       << "ANGLE_vertexOut." << varying.name;
+                       << "ANGLE_vertexOut." << kUserDefinedNamePrefix << varying.name;
 
                 if (varying.isArray())
                 {

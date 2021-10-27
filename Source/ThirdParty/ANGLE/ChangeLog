@@ -1,5 +1,66 @@
 2021-10-26  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r283667. rdar://problem/84629931
+
+    Shadertoy "truchet district" fails to compile with error: Internal error compiling shader with Metal backend"
+    https://bugs.webkit.org/show_bug.cgi?id=229378
+    <rdar://problem/82299053>
+    
+    Reviewed by Kenneth Russell.
+    
+    Source/ThirdParty/ANGLE:
+    
+    Change TranslatorMetalDirect to prefix '_u' to all user defined variables.
+    Clean up builtins like samplers and ANGLE structs that were being
+    accidently promoted to userDefined variables.
+    
+    * src/compiler/translator/TranslatorMetalDirect.cpp:
+    (sh::GetMslKeywords):
+    * src/compiler/translator/TranslatorMetalDirect/Name.cpp:
+    (Name::emit const):
+    * src/compiler/translator/TranslatorMetalDirect/SymbolEnv.cpp:
+    (SymbolEnv::getTextureEnv):
+    (SymbolEnv::getSamplerStruct):
+    (sh::GetTextureTypeName):
+    * src/libANGLE/renderer/metal/mtl_glslang_mtl_utils.mm:
+    (rx::mtl::GenerateTransformFeedbackVaryingOutput):
+    
+    LayoutTests:
+    
+    Add a test testing Metal reserved words and standard library macros.
+    
+    * webgl/pending/conformance/glsl/misc/shader-with-reserved-words-2-expected.txt: Added.
+    * webgl/pending/conformance/glsl/misc/shader-with-reserved-words-2.html: Added.
+    * webgl/pending/resources/webgl_test_files/conformance/glsl/misc/shader-with-reserved-words-2.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@283667 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-10-06  Kyle Piddington  <kpiddington@apple.com>
+
+            Shadertoy "truchet district" fails to compile with error: Internal error compiling shader with Metal backend"
+            https://bugs.webkit.org/show_bug.cgi?id=229378
+            <rdar://problem/82299053>
+
+            Reviewed by Kenneth Russell.
+
+            Change TranslatorMetalDirect to prefix '_u' to all user defined variables.
+            Clean up builtins like samplers and ANGLE structs that were being
+            accidently promoted to userDefined variables.
+
+            * src/compiler/translator/TranslatorMetalDirect.cpp:
+            (sh::GetMslKeywords):
+            * src/compiler/translator/TranslatorMetalDirect/Name.cpp:
+            (Name::emit const):
+            * src/compiler/translator/TranslatorMetalDirect/SymbolEnv.cpp:
+            (SymbolEnv::getTextureEnv):
+            (SymbolEnv::getSamplerStruct):
+            (sh::GetTextureTypeName):
+            * src/libANGLE/renderer/metal/mtl_glslang_mtl_utils.mm:
+            (rx::mtl::GenerateTransformFeedbackVaryingOutput):
+
+2021-10-26  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r281794. rdar://problem/84625240
 
     webgl/1.0.x/conformance/glsl/misc/fragcolor-fragdata-invariant.html fails

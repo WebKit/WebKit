@@ -390,13 +390,12 @@ const TStructure &SymbolEnv::getTextureEnv(TBasicType samplerType)
     if (env == nullptr)
     {
         auto *textureType = new TType(samplerType);
-        auto *texture     = new TField(textureType, ImmutableString("texture"), kNoSourceLoc,
-                                   SymbolType::UserDefined);
+        auto *texture =
+            new TField(textureType, ImmutableString("texture"), kNoSourceLoc, SymbolType::BuiltIn);
         markAsPointer(*texture, AddressSpace::Thread);
 
-        auto *sampler =
-            new TField(new TType(&getSamplerStruct(), false), ImmutableString("sampler"),
-                       kNoSourceLoc, SymbolType::UserDefined);
+        auto *sampler = new TField(new TType(&getSamplerStruct(), false),
+                                   ImmutableString("sampler"), kNoSourceLoc, SymbolType::BuiltIn);
         markAsPointer(*sampler, AddressSpace::Thread);
 
         std::string envName;
@@ -415,7 +414,7 @@ const TStructure &SymbolEnv::getSamplerStruct()
     if (!mSampler)
     {
         mSampler = new TStructure(&mSymbolTable, ImmutableString("metal::sampler"),
-                                  new TFieldList(), SymbolType::UserDefined);
+                                  new TFieldList(), SymbolType::BuiltIn);
     }
     return *mSampler;
 }
@@ -701,5 +700,5 @@ Name sh::GetTextureTypeName(TBasicType samplerType)
 
 #undef HANDLE_TEXTURE_NAME
 
-    return Name(name, SymbolType::UserDefined);
+    return Name(name, SymbolType::BuiltIn);
 }

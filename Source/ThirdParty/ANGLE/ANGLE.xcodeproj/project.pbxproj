@@ -451,7 +451,6 @@
 		DF83E2422639FCD5000825EF /* ToposortStructs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FF81FF332581919700894E24 /* ToposortStructs.cpp */; };
 		DF83E2432639FCD5000825EF /* RewritePipelines.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FF81FF3C2581919700894E24 /* RewritePipelines.cpp */; };
 		DF83E2442639FCD5000825EF /* NameEmbeddedUniformStructsMetal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FFA0C2C525CB6A7600105306 /* NameEmbeddedUniformStructsMetal.cpp */; };
-		DF83E2452639FCD5000825EF /* RewriteKeywords.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FF81FF4F2581919700894E24 /* RewriteKeywords.cpp */; };
 		DF83E2462639FCD5000825EF /* DiscoverDependentFunctions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FF81FF292581919700894E24 /* DiscoverDependentFunctions.cpp */; };
 		DF83E2472639FCD5000825EF /* RewriteCaseDeclarations.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FF81FF582581919700894E24 /* RewriteCaseDeclarations.cpp */; };
 		DF83E2482639FCD5000825EF /* EmitMetal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FF81FF2D2581919700894E24 /* EmitMetal.cpp */; };
@@ -3842,7 +3841,6 @@
 				DF83E2742639FD33000825EF /* RewriteDoWhile.cpp in Sources */,
 				DF83E25C2639FD33000825EF /* RewriteExpressionsWithShaderStorageBlock.cpp in Sources */,
 				DF83E27F2639FD33000825EF /* RewriteInterpolateAtOffset.cpp in Sources */,
-				DF83E2452639FCD5000825EF /* RewriteKeywords.cpp in Sources */,
 				DF83E2342639FCD5000825EF /* RewriteOutArgs.cpp in Sources */,
 				DF83E2432639FCD5000825EF /* RewritePipelines.cpp in Sources */,
 				DF83E2512639FD33000825EF /* RewriteRepeatedAssignToSwizzled.cpp in Sources */,
