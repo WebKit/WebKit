@@ -4714,7 +4714,6 @@
 		7BCF70CC2614935F00E4FB70 /* ScopedWebGLRenderingResourcesRequest.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ScopedWebGLRenderingResourcesRequest.cpp; sourceTree = "<group>"; };
 		7BCF70CD2614935F00E4FB70 /* ScopedRenderingResourcesRequest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ScopedRenderingResourcesRequest.h; sourceTree = "<group>"; };
 		7BCF70CE2614935F00E4FB70 /* ScopedWebGLRenderingResourcesRequest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ScopedWebGLRenderingResourcesRequest.h; sourceTree = "<group>"; };
-		7BCF70CF261497E600E4FB70 /* ScopedWebGLRenderingResourcesRequestCocoa.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ScopedWebGLRenderingResourcesRequestCocoa.cpp; sourceTree = "<group>"; };
 		7BE726572574F67200E85D98 /* RemoteGraphicsContextGLProxyFunctionsGenerated.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteGraphicsContextGLProxyFunctionsGenerated.cpp; sourceTree = "<group>"; };
 		7BE72668257680EF00E85D98 /* RemoteGraphicsContextGLCocoa.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteGraphicsContextGLCocoa.cpp; sourceTree = "<group>"; };
 		7C065F291C8CD95F00C2D950 /* WebUserContentControllerDataTypes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebUserContentControllerDataTypes.cpp; sourceTree = "<group>"; };
@@ -9052,7 +9051,6 @@
 				7BCF70CB2614935E00E4FB70 /* ScopedRenderingResourcesRequestCocoa.mm */,
 				7BCF70CC2614935F00E4FB70 /* ScopedWebGLRenderingResourcesRequest.cpp */,
 				7BCF70CE2614935F00E4FB70 /* ScopedWebGLRenderingResourcesRequest.h */,
-				7BCF70CF261497E600E4FB70 /* ScopedWebGLRenderingResourcesRequestCocoa.cpp */,
 			);
 			path = graphics;
 			sourceTree = "<group>";

@@ -1357,8 +1357,8 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/WindRule.h
 
     platform/graphics/angle/ANGLEHeaders.h
+    platform/graphics/angle/ANGLEUtilities.h
     platform/graphics/angle/ExtensionsGLANGLE.h
-    platform/graphics/angle/GraphicsContextGLANGLEUtilities.h
 
     platform/graphics/displaylists/DisplayList.h
     platform/graphics/displaylists/DisplayListDrawGlyphsRecorder.h

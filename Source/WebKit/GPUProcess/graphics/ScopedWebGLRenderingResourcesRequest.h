@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if ENABLE(GPU_PROCESS) && ENABLE(WEBGL)
+
 #include "ScopedRenderingResourcesRequest.h"
 #include <atomic>
 #include <wtf/StdLibExtras.h>
@@ -82,3 +84,5 @@ private:
 };
 
 }
+
+#endif

@@ -37,7 +37,6 @@
 #include <wtf/UniqueRef.h>
 
 #if PLATFORM(COCOA)
-#include "GraphicsContextGLANGLEEGLUtilities.h"
 #include "IOSurface.h"
 #endif
 
@@ -46,7 +45,7 @@
 #endif
 
 #if USE(ANGLE)
-#include "GraphicsContextGLANGLEUtilities.h"
+#include "ANGLEUtilities.h"
 #else
 #include "ANGLEWebKitBridge.h"
 #include "ExtensionsGLOpenGLCommon.h"
@@ -119,17 +118,16 @@ public:
 #if USE(ANGLE)
     static GCGLenum drawingBufferTextureTarget();
 #endif
-
-#if PLATFORM(IOS_FAMILY)
-    enum class ReleaseBehavior {
-        PreserveThreadResources,
-        ReleaseThreadResources
+    enum class ReleaseThreadResourceBehavior {
+        // Releases current context after GraphicsContextGLOpenGL calls done in the thread.
+        ReleaseCurrentContext,
+        // Releases all thread resources after GraphicsContextGLOpenGL calls done in the thread.
+        ReleaseThreadResources,
+        // Releases all global state. Should be used only after all depending objects have
+        // been released.
+        TerminateAndReleaseThreadResources
     };
-    static bool releaseCurrentContext(ReleaseBehavior);
-#endif
-#if PLATFORM(COCOA)
-    static void releaseAllResourcesIfUnused();
-#endif
+    static bool releaseThreadResources(ReleaseThreadResourceBehavior);
 
     // With multisampling on, blit from multisampleFBO to regular FBO.
     void prepareTexture();
@@ -587,12 +585,15 @@ private:
     // Returns false if context should be lost due to timeout.
     bool waitAndUpdateOldestFrame() WARN_UNUSED_RETURN;
 #endif
+    // Platform specific behavior for releaseResources();
+    static void platformReleaseThreadResources();
+
 
 #if PLATFORM(COCOA)
     GraphicsContextGLIOSurfaceSwapChain* m_swapChain { nullptr };
     // TODO: this should be removed once the context draws to a image buffer. See https://bugs.webkit.org/show_bug.cgi?id=218179 .
     RetainPtr<WebGLLayer> m_webGLLayer;
-    ScopedEGLDefaultDisplay m_displayObj;
+    EGLDisplay m_displayObj { nullptr };
     PlatformGraphicsContextGL m_contextObj { nullptr };
     PlatformGraphicsContextGLConfig m_configObj { nullptr };
 #endif // PLATFORM(COCOA)

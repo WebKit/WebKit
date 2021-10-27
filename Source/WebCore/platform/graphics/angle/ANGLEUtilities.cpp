@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,39 +23,19 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "ANGLEUtilities.h"
 
 #if ENABLE(WEBGL) && USE(ANGLE)
 
-#include <algorithm>
-#include <wtf/Noncopyable.h>
-
-// Currently this not using ANGLE headers since this is exported header and we do not export ANGLE headers.
-
 namespace WebCore {
 
-class ScopedEGLDefaultDisplay {
-    WTF_MAKE_NONCOPYABLE(ScopedEGLDefaultDisplay);
-public:
-    static ScopedEGLDefaultDisplay adoptInitializedDisplay(void* display)
-    {
-        ASSERT(display != nullptr);
-        return ScopedEGLDefaultDisplay(display);
-    }
-    ScopedEGLDefaultDisplay() = default;
-    ScopedEGLDefaultDisplay(ScopedEGLDefaultDisplay&& other)
-        : m_display(std::exchange(other.m_display, nullptr))
-    {
-    }
-    ~ScopedEGLDefaultDisplay();
-    ScopedEGLDefaultDisplay& operator=(ScopedEGLDefaultDisplay&&);
-    operator void*() const { return m_display; }
-    operator bool() const { return m_display != nullptr; }
-    static void releaseAllResourcesIfUnused();
-private:
-    ScopedEGLDefaultDisplay(void*);
-    void* m_display { nullptr };
-};
+#if !PLATFORM(COCOA)
+bool platformIsANGLEAvailable()
+{
+    return true;
+}
+#endif
 
 }
 

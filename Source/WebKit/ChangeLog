@@ -1,3 +1,112 @@
+2021-10-26  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r283703. rdar://problem/84629308
+
+    ScopedEGLDefaultDisplay should be removed
+    https://bugs.webkit.org/show_bug.cgi?id=231011
+    
+    Patch by Kimmo Kinnunen <kkinnunen@apple.com> on 2021-10-07
+    Reviewed by Kenneth Russell.
+    
+    Source/WebCore:
+    
+    Hard-coding the code to EGL_DEFAULT_DISPLAY only and using the scoped
+    holder is making the EGLDisplays harder to use than neccessary. The
+    implementation target, e.g. the ability to call EGLTerminate, was also a bit
+    more convoluted than needed.
+    
+    Move the "call EGLTerminate" logic from a bit convoluted refcount mechanism
+    in ScopedEGLDefaultDisplay to the explicit GraphicsContextGLOpenGL::releaseResources().
+    The callers are expected to do the refcounting anyway, as the existing client
+    WebKit::ScopedWebGLRenderingResourcesRequest already did.
+    
+    Make GraphicsContextGLOpenGL::releaseResources() available on all platforms.
+    It is implemented on all ANGLE implementations.
+    Platforms can augment the implementation by implementing
+    GraphicsContextGLOpenGL::platformReleaseResources(). For Cocoa, this function
+    resets the currentContext cache that is used to optimize making context current.
+    
+    No new tests, refactor.
+    
+    * CMakeLists.txt:
+    * Headers.cmake:
+    * PlatformMac.cmake:
+    * SourcesCocoa.txt:
+    * WebCore.xcodeproj/project.pbxproj:
+    * platform/graphics/angle/ANGLEUtilities.cpp: Renamed from Source/WebCore/platform/graphics/angle/GraphicsContextGLANGLEEGLUtilities.h.
+    (WebCore::platformIsANGLEAvailable):
+    * platform/graphics/angle/ANGLEUtilities.h: Renamed from Source/WebCore/platform/graphics/angle/GraphicsContextGLANGLEUtilities.h.
+    Rename GraphicsContextGLANGLEUtilities to simpler and more descriptive ANGLEUtilities.
+    Add the isANGLEAvailable to there.
+    
+    * platform/graphics/angle/GraphicsContextGLANGLE.cpp:
+    (WebCore::GraphicsContextGLOpenGL::releaseResources):
+    (WebCore::GraphicsContextGLOpenGL::platformReleaseResources):
+    * platform/graphics/angle/GraphicsContextGLANGLEEGLUtilities.cpp: Removed.
+    (WebCore::refDefaultDisplay): Deleted.
+    (WebCore::unrefDefaultDisplayIfNeeded): Deleted.
+    (WebCore::ScopedEGLDefaultDisplay::operator=): Deleted.
+    (WebCore::ScopedEGLDefaultDisplay::ScopedEGLDefaultDisplay): Deleted.
+    (WebCore::ScopedEGLDefaultDisplay::~ScopedEGLDefaultDisplay): Deleted.
+    (WebCore::ScopedEGLDefaultDisplay::releaseAllResourcesIfUnused): Deleted.
+    * platform/graphics/cocoa/GraphicsContextGLOpenGLCocoa.mm:
+    (WebCore::platformIsANGLEAvailable):
+    (WebCore::initializeEGLDisplay):
+    (WebCore::GraphicsContextGLOpenGL::platformReleaseResources):
+    (WebCore::isANGLEAvailable): Deleted.
+    (WebCore::GraphicsContextGLOpenGL::releaseCurrentContext): Deleted.
+    (WebCore::GraphicsContextGLOpenGL::releaseAllResourcesIfUnused): Deleted.
+    * platform/graphics/opengl/GraphicsContextGLOpenGL.cpp:
+    (WebCore::GraphicsContextGLOpenGL::releaseResources):
+    (WebCore::GraphicsContextGLOpenGL::platformReleaseResources):
+    * platform/graphics/opengl/GraphicsContextGLOpenGL.h:
+    * platform/ios/wak/WebCoreThread.mm:
+    
+    Source/WebKit:
+    
+    Implement the release of WebGL resources with the amended
+    GraphicsContextGLOpenGL::releaseResources() instead of
+    previous separate function GraphicsContextGLOpenGL::releaseAllResources().
+    
+    Use the resource release code path universally, as
+    GraphicsContextGLOpenGL::releaseResources() is now common code.
+    
+    * GPUProcess/graphics/ScopedWebGLRenderingResourcesRequest.cpp:
+    (WebKit::ScopedWebGLRenderingResourcesRequest::scheduleFreeWebGLRenderingResources):
+    (WebKit::ScopedWebGLRenderingResourcesRequest::freeWebGLRenderingResources):
+    * GPUProcess/graphics/ScopedWebGLRenderingResourcesRequest.h:
+    * GPUProcess/graphics/ScopedWebGLRenderingResourcesRequestCocoa.cpp: Removed.
+    (WebKit::ScopedWebGLRenderingResourcesRequest::scheduleFreeWebGLRenderingResources): Deleted.
+    (WebKit::ScopedWebGLRenderingResourcesRequest::freeWebGLRenderingResources): Deleted.
+    * SourcesCocoa.txt:
+    * WebKit.xcodeproj/project.pbxproj:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@283703 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-10-07  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+            ScopedEGLDefaultDisplay should be removed
+            https://bugs.webkit.org/show_bug.cgi?id=231011
+
+            Reviewed by Kenneth Russell.
+
+            Implement the release of WebGL resources with the amended
+            GraphicsContextGLOpenGL::releaseResources() instead of
+            previous separate function GraphicsContextGLOpenGL::releaseAllResources().
+
+            Use the resource release code path universally, as
+            GraphicsContextGLOpenGL::releaseResources() is now common code.
+
+            * GPUProcess/graphics/ScopedWebGLRenderingResourcesRequest.cpp:
+            (WebKit::ScopedWebGLRenderingResourcesRequest::scheduleFreeWebGLRenderingResources):
+            (WebKit::ScopedWebGLRenderingResourcesRequest::freeWebGLRenderingResources):
+            * GPUProcess/graphics/ScopedWebGLRenderingResourcesRequest.h:
+            * GPUProcess/graphics/ScopedWebGLRenderingResourcesRequestCocoa.cpp: Removed.
+            (WebKit::ScopedWebGLRenderingResourcesRequest::scheduleFreeWebGLRenderingResources): Deleted.
+            (WebKit::ScopedWebGLRenderingResourcesRequest::freeWebGLRenderingResources): Deleted.
+            * SourcesCocoa.txt:
+            * WebKit.xcodeproj/project.pbxproj:
+
 2021-10-26  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r284344. rdar://problem/84625558
