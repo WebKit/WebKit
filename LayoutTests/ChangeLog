@@ -1,3 +1,13 @@
+2021-10-27  Antti Koivisto  <antti@apple.com>
+
+        [ iOS ] imported/w3c/web-platform-tests/css/css-shadow-parts/invalidation-part-pseudo.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=232343
+        <rdar://problem/84684454>
+
+       Unreviewed test gardening.
+
+        * platform/ios/TestExpectations:
+
 2021-10-26  Ayumi Kojima  <ayumi_kojima@apple.com>
 
         [ BigSur wk2 Debug arm64 ] inspector/audit/run-accessibility.html is a flaky timeout.
