@@ -1,5 +1,36 @@
 2021-10-26  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r284293. rdar://problem/84204653
+
+    REGRESSION (r283667): webgl/2.0.0/deqp/functional/gles3/lifetime.html fails
+    https://bugs.webkit.org/show_bug.cgi?id=231682
+    
+    Transform feedback should avoid appending _u for
+    builtin output variables.
+    
+    Reviewed by Kimmo Kinnunen.
+    
+    * src/libANGLE/renderer/metal/mtl_glslang_mtl_utils.mm:
+    (rx::mtl::GenerateTransformFeedbackVaryingOutput):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@284293 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-10-15  Kyle Piddington  <kpiddington@apple.com>
+
+            REGRESSION (r283667): webgl/2.0.0/deqp/functional/gles3/lifetime.html fails
+            https://bugs.webkit.org/show_bug.cgi?id=231682
+
+            Transform feedback should avoid appending _u for
+            builtin output variables.
+
+            Reviewed by Kimmo Kinnunen.
+
+            * src/libANGLE/renderer/metal/mtl_glslang_mtl_utils.mm:
+            (rx::mtl::GenerateTransformFeedbackVaryingOutput):
+
+2021-10-26  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r283667. rdar://problem/84629931
 
     Shadertoy "truchet district" fails to compile with error: Internal error compiling shader with Metal backend"

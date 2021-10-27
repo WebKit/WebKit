@@ -258,7 +258,12 @@ std::string GenerateTransformFeedbackVaryingOutput(const gl::TransformFeedbackVa
                        << "] + (gl_VertexID + ANGLE_instanceIdMod * "
                        << "ANGLE_" << std::string(sh::kUniformsVar) << ".ANGLE_xfbVerticesPerDraw) * " << stride
                        << " + " << offset << "] = " << "as_type<float>" << "("
-                       << "ANGLE_vertexOut." << kUserDefinedNamePrefix << varying.name;
+                       << "ANGLE_vertexOut.";
+                if (!varying.isBuiltIn())
+                {
+                    result << kUserDefinedNamePrefix;
+                }
+                result << varying.name;
 
                 if (varying.isArray())
                 {
