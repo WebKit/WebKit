@@ -1,3 +1,28 @@
+2021-10-27  David Kilzer  <ddkilzer@apple.com>
+
+        [WebRTC] Enable -Wformat=2 warnings
+        <https://webkit.org/b/232335>
+        <rdar://problem/84571752>
+
+        Reviewed by Eric Carlson.
+
+        * Configurations/Base.xcconfig:
+        (WARNING_CFLAGS):
+        - Add -Wformat=2 switch, which includes -Wformat-nonliteral.
+        * Source/third_party/libsrtp/crypto/include/err.h:
+        (LIBSRTP_FORMAT_PRINTF): Add.
+        - Define a macro for the printf format attribute.
+        (srtp_err_report):
+        - Apply LIBSRTP_FORMAT_PRINTF() macro to this function to fix
+          -Wformat-nonliteral warnings.
+        * Source/third_party/libvpx/source/libvpx/vpx/internal/vpx_codec_internal.h:
+        (LIBVPX_FORMAT_PRINTF): Add.
+        - Define a macro for the printf format attribute.
+        (vpx_internal_error):
+        - Apply LIBVPX_FORMAT_PRINTF() macro to this function to fix
+          -Wformat-nonliteral warnings.
+        * WebKit/0001-WebKitLegacy-Enable-Wformat-2-warnings.patch: Add.
+
 2021-10-21  David Kilzer  <ddkilzer@apple.com>
 
         [WebRTC] Simplify libwebtc Xcode project

@@ -435,9 +435,19 @@ struct vpx_internal_error_info {
 #endif
 #endif
 
+#if defined(__clang__) || (defined(__GNUC__) && defined(__has_attribute))
+#if __has_attribute(format)
+#define LIBVPX_FORMAT_PRINTF(fmt, args) __attribute__((format(__printf__, fmt, args)))
+#else
+#define LIBVPX_FORMAT_PRINTF(fmt, args)
+#endif
+#else
+#define LIBVPX_FORMAT_PRINTF(fmt, args)
+#endif
+
 void vpx_internal_error(struct vpx_internal_error_info *info,
                         vpx_codec_err_t error, const char *fmt,
-                        ...) CLANG_ANALYZER_NORETURN;
+                        ...) LIBVPX_FORMAT_PRINTF(3, 4) CLANG_ANALYZER_NORETURN;
 
 #ifdef __cplusplus
 }  // extern "C"

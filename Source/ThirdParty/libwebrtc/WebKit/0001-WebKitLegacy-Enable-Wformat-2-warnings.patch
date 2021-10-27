@@ -1,0 +1,78 @@
+From 7ff491cbe417d3eb286a4c7f62a0fa3789fdefad Mon Sep 17 00:00:00 2001
+From: David Kilzer <ddkilzer@apple.com>
+Date: Tue, 26 Oct 2021 15:06:20 -0700
+Subject: [PATCH] [WebRTC] Enable -Wformat=2 warnings
+ <https://webkit.org/b/232335> <rdar://problem/84571752>
+
+Reviewed by NOBODY (OOPS!).
+
+* Configurations/Base.xcconfig:
+(WARNING_CFLAGS):
+- Add -Wformat=2 switch, which includes -Wformat-nonliteral.
+* Source/third_party/libsrtp/crypto/include/err.h:
+(LIBSRTP_FORMAT_PRINTF): Add.
+- Define a macro for the printf format attribute.
+(srtp_err_report):
+- Apply LIBSRTP_FORMAT_PRINTF() macro to this function to fix
+  -Wformat-nonliteral warnings.
+* Source/third_party/libvpx/source/libvpx/vpx/internal/vpx_codec_internal.h:
+(LIBVPX_FORMAT_PRINTF): Add.
+- Define a macro for the printf format attribute.
+(vpx_internal_error):
+- Apply LIBVPX_FORMAT_PRINTF() macro to this function to fix
+  -Wformat-nonliteral warnings.
+* WebKit/0001-WebKitLegacy-Enable-Wformat-2-warnings.patch: Add.
+---
+ .../third_party/libsrtp/crypto/include/err.h  | 12 ++++-
+ .../libvpx/vpx/internal/vpx_codec_internal.h  | 12 ++++-
+ 5 files changed, 96 insertions(+), 3 deletions(-)
+ create mode 100644 Source/ThirdParty/libwebrtc/WebKit/0001-WebKitLegacy-Enable-Wformat-2-warnings.patch
+
+diff --git a/Source/ThirdParty/libwebrtc/Source/third_party/libsrtp/crypto/include/err.h b/Source/ThirdParty/libwebrtc/Source/third_party/libsrtp/crypto/include/err.h
+index 326f5e96b77c..f155bb982ff2 100644
+--- a/Source/ThirdParty/libwebrtc/Source/third_party/libsrtp/crypto/include/err.h
++++ b/Source/ThirdParty/libwebrtc/Source/third_party/libsrtp/crypto/include/err.h
+@@ -96,7 +96,17 @@ srtp_err_status_t srtp_install_err_report_handler(
+  *
+  */
+ 
+-void srtp_err_report(srtp_err_reporting_level_t level, const char *format, ...);
++#if defined(__clang__) || (defined(__GNUC__) && defined(__has_attribute))
++#if __has_attribute(format)
++#define LIBSRTP_FORMAT_PRINTF(fmt, args) __attribute__((format(__printf__, fmt, args)))
++#else
++#define LIBSRTP_FORMAT_PRINTF(fmt, args)
++#endif
++#else
++#define LIBSRTP_FORMAT_PRINTF(fmt, args)
++#endif
++
++void srtp_err_report(srtp_err_reporting_level_t level, const char *format, ...) LIBSRTP_FORMAT_PRINTF(2, 3);
+ 
+ /*
+  * debug_module_t defines a debug module
+diff --git a/Source/ThirdParty/libwebrtc/Source/third_party/libvpx/source/libvpx/vpx/internal/vpx_codec_internal.h b/Source/ThirdParty/libwebrtc/Source/third_party/libvpx/source/libvpx/vpx/internal/vpx_codec_internal.h
+index 4ef93057f5eb..011f255e1248 100644
+--- a/Source/ThirdParty/libwebrtc/Source/third_party/libvpx/source/libvpx/vpx/internal/vpx_codec_internal.h
++++ b/Source/ThirdParty/libwebrtc/Source/third_party/libvpx/source/libvpx/vpx/internal/vpx_codec_internal.h
+@@ -435,9 +435,19 @@ struct vpx_internal_error_info {
+ #endif
+ #endif
+ 
++#if defined(__clang__) || (defined(__GNUC__) && defined(__has_attribute))
++#if __has_attribute(format)
++#define LIBVPX_FORMAT_PRINTF(fmt, args) __attribute__((format(__printf__, fmt, args)))
++#else
++#define LIBVPX_FORMAT_PRINTF(fmt, args)
++#endif
++#else
++#define LIBVPX_FORMAT_PRINTF(fmt, args)
++#endif
++
+ void vpx_internal_error(struct vpx_internal_error_info *info,
+                         vpx_codec_err_t error, const char *fmt,
+-                        ...) CLANG_ANALYZER_NORETURN;
++                        ...) LIBVPX_FORMAT_PRINTF(3, 4) CLANG_ANALYZER_NORETURN;
+ 
+ #ifdef __cplusplus
+ }  // extern "C"
