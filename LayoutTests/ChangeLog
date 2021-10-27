@@ -1,3 +1,13 @@
+2021-10-27  Kate Cheney  <katherine_cheney@apple.com>
+
+        REGRESSION (r284650-284661): [iOS15 Sim] imported/w3c/web-platform-tests/content-security-policy/script-src/script-src-multiple-policies-multiple-hashing-algorithms.html is a text failure
+        https://bugs.webkit.org/show_bug.cgi?id=232120
+        <rdar://problem/84529888>
+
+        Reviewed by Brent Fulgham.
+
+        * platform/ios-wk2/TestExpectations:
+
 2021-10-27  Simon Fraser  <simon.fraser@apple.com>
 
         Preserve image diff precision until display time

@@ -2238,8 +2238,6 @@ webkit.org/b/231780 [ Debug ] imported/w3c/web-platform-tests/webrtc/simulcast/b
 
 webkit.org/b/232099 imported/w3c/web-platform-tests/websockets/Close-1000.any.html [ Pass Crash ]
 
-webkit.org/b/232120 imported/w3c/web-platform-tests/content-security-policy/script-src/script-src-multiple-policies-multiple-hashing-algorithms.html [ Pass Failure DumpJSConsoleLogInStdErr ]
-
 webkit.org/b/225528 http/wpt/fetch/fetch-response-body-stop-in-worker.html [ Pass Crash ]
 
 webkit.org/b/232252 [ Release ] imported/w3c/web-platform-tests/webrtc/RTCDtlsTransport-state.html [ Pass Failure ]

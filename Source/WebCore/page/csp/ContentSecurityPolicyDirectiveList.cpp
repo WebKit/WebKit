@@ -56,9 +56,9 @@ static inline bool checkInline(ContentSecurityPolicySourceListDirective* directi
     return !directive || directive->allowInline();
 }
 
-static inline bool checkUnsafeHashes(ContentSecurityPolicySourceListDirective* directive, const ContentSecurityPolicyHash& hash)
+static inline bool checkUnsafeHashes(ContentSecurityPolicySourceListDirective* directive, const Vector<ContentSecurityPolicyHash>& hashes)
 {
-    return !directive || directive->allowUnsafeHashes(hash);
+    return !directive || directive->allowUnsafeHashes(hashes);
 }
 
 static inline bool checkNonParserInsertedScripts(ContentSecurityPolicySourceListDirective* directive, ParserInserted parserInserted)
@@ -74,9 +74,9 @@ static inline bool checkSource(ContentSecurityPolicySourceListDirective* directi
     return !directive || directive->allows(url, didReceiveRedirectResponse, shouldAllowEmptyURLIfSourceListEmpty);
 }
 
-static inline bool checkHash(ContentSecurityPolicySourceListDirective* directive, const ContentSecurityPolicyHash& hash)
+static inline bool checkHashes(ContentSecurityPolicySourceListDirective* directive, const Vector<ContentSecurityPolicyHash>& hashes)
 {
-    return !directive || directive->allows(hash);
+    return !directive || directive->allows(hashes);
 }
 
 static inline bool checkNonce(ContentSecurityPolicySourceListDirective* directive, const String& nonce)
@@ -190,18 +190,18 @@ const ContentSecurityPolicyDirective* ContentSecurityPolicyDirectiveList::violat
     return operativeDirective;
 }
 
-const ContentSecurityPolicyDirective* ContentSecurityPolicyDirectiveList::violatedDirectiveForUnsafeHashScript(const ContentSecurityPolicyHash& hash) const
+const ContentSecurityPolicyDirective* ContentSecurityPolicyDirectiveList::violatedDirectiveForUnsafeHashScript(const Vector<ContentSecurityPolicyHash>& hashes) const
 {
     auto* operativeDirective = this->operativeDirective(m_scriptSrc.get(), ContentSecurityPolicyDirectiveNames::scriptSrc);
-    if (checkUnsafeHashes(operativeDirective, hash))
+    if (checkUnsafeHashes(operativeDirective, hashes))
         return nullptr;
     return operativeDirective;
 }
 
-const ContentSecurityPolicyDirective* ContentSecurityPolicyDirectiveList::violatedDirectiveForUnsafeHashStyle(const ContentSecurityPolicyHash& hash) const
+const ContentSecurityPolicyDirective* ContentSecurityPolicyDirectiveList::violatedDirectiveForUnsafeHashStyle(const Vector<ContentSecurityPolicyHash>& hashes) const
 {
     auto* operativeDirective = this->operativeDirective(m_styleSrc.get(), ContentSecurityPolicyDirectiveNames::scriptSrc);
-    if (checkUnsafeHashes(operativeDirective, hash))
+    if (checkUnsafeHashes(operativeDirective, hashes))
         return nullptr;
     return operativeDirective;
 }
@@ -247,18 +247,18 @@ const ContentSecurityPolicyDirective* ContentSecurityPolicyDirectiveList::violat
     return operativeDirective;
 }
 
-const ContentSecurityPolicyDirective* ContentSecurityPolicyDirectiveList::violatedDirectiveForScriptHash(const ContentSecurityPolicyHash& hash) const
+const ContentSecurityPolicyDirective* ContentSecurityPolicyDirectiveList::violatedDirectiveForScriptHash(const Vector<ContentSecurityPolicyHash>& hashes) const
 {
     auto* operativeDirective = this->operativeDirective(m_scriptSrc.get(), ContentSecurityPolicyDirectiveNames::scriptSrc);
-    if (checkHash(operativeDirective, hash))
+    if (checkHashes(operativeDirective, hashes))
         return nullptr;
     return operativeDirective;
 }
 
-const ContentSecurityPolicyDirective* ContentSecurityPolicyDirectiveList::violatedDirectiveForStyleHash(const ContentSecurityPolicyHash& hash) const
+const ContentSecurityPolicyDirective* ContentSecurityPolicyDirectiveList::violatedDirectiveForStyleHash(const Vector<ContentSecurityPolicyHash>& hashes) const
 {
     auto* operativeDirective = this->operativeDirective(m_styleSrc.get(), ContentSecurityPolicyDirectiveNames::styleSrc);
-    if (checkHash(operativeDirective, hash))
+    if (checkHashes(operativeDirective, hashes))
         return nullptr;
     return operativeDirective;
 }

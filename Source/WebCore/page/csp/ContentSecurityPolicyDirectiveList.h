@@ -52,10 +52,10 @@ public:
     const ContentSecurityPolicyDirective* violatedDirectiveForUnsafeInlineStyleElement() const;
     const ContentSecurityPolicyDirective* violatedDirectiveForUnsafeInlineStyleAttribute() const;
 
-    const ContentSecurityPolicyDirective* violatedDirectiveForScriptHash(const ContentSecurityPolicyHash&) const;
-    const ContentSecurityPolicyDirective* violatedDirectiveForStyleHash(const ContentSecurityPolicyHash&) const;
-    const ContentSecurityPolicyDirective* violatedDirectiveForUnsafeHashScript(const ContentSecurityPolicyHash&) const;
-    const ContentSecurityPolicyDirective* violatedDirectiveForUnsafeHashStyle(const ContentSecurityPolicyHash&) const;
+    const ContentSecurityPolicyDirective* violatedDirectiveForScriptHash(const Vector<ContentSecurityPolicyHash>&) const;
+    const ContentSecurityPolicyDirective* violatedDirectiveForStyleHash(const Vector<ContentSecurityPolicyHash>&) const;
+    const ContentSecurityPolicyDirective* violatedDirectiveForUnsafeHashScript(const Vector<ContentSecurityPolicyHash>&) const;
+    const ContentSecurityPolicyDirective* violatedDirectiveForUnsafeHashStyle(const Vector<ContentSecurityPolicyHash>&) const;
 
     const ContentSecurityPolicyDirective* violatedDirectiveForScriptNonce(const String&) const;
     const ContentSecurityPolicyDirective* violatedDirectiveForStyleNonce(const String&) const;

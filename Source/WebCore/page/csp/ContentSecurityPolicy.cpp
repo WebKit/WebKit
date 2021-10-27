@@ -371,15 +371,16 @@ ContentSecurityPolicy::HashInEnforcedAndReportOnlyPoliciesPair ContentSecurityPo
     auto encodedContent = encodingToUse.encode(content, UnencodableHandling::Entities);
     bool foundHashInEnforcedPolicies = false;
     bool foundHashInReportOnlyPolicies = false;
+    Vector<ContentSecurityPolicyHash> hashes;
     for (auto algorithm : algorithms) {
-        ContentSecurityPolicyHash hash = cryptographicDigestForBytes(algorithm, encodedContent.data(), encodedContent.size());
-        if (!foundHashInEnforcedPolicies && allPoliciesWithDispositionAllow(ContentSecurityPolicy::Disposition::Enforce, predicate, hash))
-            foundHashInEnforcedPolicies = true;
-        if (!foundHashInReportOnlyPolicies && allPoliciesWithDispositionAllow(ContentSecurityPolicy::Disposition::ReportOnly, predicate, hash))
-            foundHashInReportOnlyPolicies = true;
-        if (foundHashInEnforcedPolicies && foundHashInReportOnlyPolicies)
-            break;
+        auto hash = cryptographicDigestForBytes(algorithm, encodedContent.data(), encodedContent.size());
+        hashes.append(hash);
     }
+    if (!foundHashInEnforcedPolicies && allPoliciesWithDispositionAllow(ContentSecurityPolicy::Disposition::Enforce, predicate, hashes))
+        foundHashInEnforcedPolicies = true;
+    if (!foundHashInReportOnlyPolicies && allPoliciesWithDispositionAllow(ContentSecurityPolicy::Disposition::ReportOnly, predicate, hashes))
+        foundHashInReportOnlyPolicies = true;
+
     return { foundHashInEnforcedPolicies, foundHashInReportOnlyPolicies };
 }
 
