@@ -68,7 +68,10 @@ WI.WebInspectorExtensionController = class WebInspectorExtensionController exten
         let extensionTabIDsToRemove = this._tabIDsForExtensionIDMap.take(extensionID) || [];
         for (let extensionTabID of extensionTabIDsToRemove) {
             let tabContentView = this._extensionTabContentViewForExtensionTabIDMap.take(extensionTabID);
+
+            // Ensure that the iframe is actually detached and does not leak.
             WI.tabBrowser.closeTabForContentView(tabContentView, {suppressAnimations: true});
+            tabContentView.dispose();
         }
 
         this.dispatchEventToListeners(WI.WebInspectorExtensionController.Event.ExtensionRemoved, {extension});

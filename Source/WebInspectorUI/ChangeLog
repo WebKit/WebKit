@@ -1,3 +1,20 @@
+2021-10-27  BJ Burg  <bburg@apple.com>
+
+        Web Inspector: extension iframes leak when disabling an extension
+        https://bugs.webkit.org/show_bug.cgi?id=232049
+
+        Reviewed by Timothy Hatcher.
+
+        Since shouldNotRemoveFromDOMWhenHidden() is true, the <iframe> will not
+        be detached and unload its document in the normal tab-closing code path.
+        Add a `dispose()` method for cleaning up the tab when its extension is
+        unregistered.
+
+        * UserInterface/Controllers/WebInspectorExtensionController.js:
+        (WI.WebInspectorExtensionController.prototype.unregisterExtension):
+        * UserInterface/Views/WebInspectorExtensionTabContentView.js:
+        (WI.WebInspectorExtensionTabContentView.prototype.dispose):
+
 2021-10-21  Devin Rousso  <drousso@apple.com>
 
         [css-values-4] Support small (sv*), large (lv*) and dynamic (dv*) viewport units

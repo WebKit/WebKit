@@ -87,6 +87,11 @@ WI.WebInspectorExtensionTabContentView = class WebInspectorExtensionTabContentVi
         super.detached();
     }
 
+    dispose()
+    {
+        this.element?.remove();
+    }
+
     tabInfo()
     {
         return this._tabInfo;
