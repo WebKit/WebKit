@@ -1,3 +1,38 @@
+2021-10-27  Aditya Keerthi  <akeerthi@apple.com>
+
+        REGRESSION (iOS 15): Touch events are not fired during quick successive taps
+        https://bugs.webkit.org/show_bug.cgi?id=232324
+        rdar://83455472
+
+        Reviewed by Wenson Hsieh.
+
+        To support Live Text on iOS 15, two new gesture recognizers were added
+        to `WKContentView`. When the gesture recognizers were added,
+        `-[WKContentView deferringGestureRecognizer:shouldDeferOtherGestureRecognizer:]`
+        was not updated, resulting in a failure dependency between the new gesture
+        recognizers and the touchstart deferring gesture recognizer for "immediately
+        resettable" gestures.
+
+        The failure dependency causes the entire "immediately resettable" subgraph
+        (which contains UIWebTouchEventsGestureRecognizer) to have a delayed reset,
+        as the new gestures recognizers are connected to the "delayed resettable"
+        subgraph by way of UIKit's exclusion gestures that control context menu
+        presentation. The delayed reset prevents successive touches from being
+        recognized, and touch events are only recognized after the delay has
+        passed. Consequently, quick successive taps result in some touch events
+        being dropped.
+
+        To fix, remove the existing failure dependency and instead add an explicit
+        failure dependency to the "delayed resettable" subgraph. This ensures the
+        immediately resettable subgraph can reset as intended.
+
+        No new tests, as the issue has been difficult to reproduce in WebKitTestRunner,
+        even though it reproduces consistently in Safari. Filed webkit.org/b/232326
+        as a follow-up to investigate a testing strategy.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView deferringGestureRecognizer:shouldDeferOtherGestureRecognizer:]):
+
 2021-10-27  Martin Robinson  <mrobinson@webkit.org>
 
         Eliminate duplicated platform-specific code in ScrollingTreeStickyNode
