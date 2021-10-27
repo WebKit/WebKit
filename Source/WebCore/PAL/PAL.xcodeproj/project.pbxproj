@@ -137,6 +137,7 @@
 		4450FCA021F5F602004DFA56 /* QuickLookSoftLink.h in Headers */ = {isa = PBXBuildFile; fileRef = 4450FC9E21F5F602004DFA56 /* QuickLookSoftLink.h */; };
 		44E1A8AF21FA54E600C3048E /* LookupSoftLink.h in Headers */ = {isa = PBXBuildFile; fileRef = 44E1A8AD21FA54DA00C3048E /* LookupSoftLink.h */; };
 		44E1A8B021FA54EB00C3048E /* LookupSoftLink.mm in Sources */ = {isa = PBXBuildFile; fileRef = 44E1A8AE21FA54DA00C3048E /* LookupSoftLink.mm */; };
+		4996C0F32717644C002C125D /* TCCSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 4996C0F22717642B002C125D /* TCCSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		517E03F924B7C0070054895A /* IOKitSPIMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 517E03F824B7C0060054895A /* IOKitSPIMac.h */; };
 		570AB8F120AE2E8D00B8BE87 /* SecKeyProxySPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 570AB8F020AE2E8D00B8BE87 /* SecKeyProxySPI.h */; };
 		570AB8F920AF6E3D00B8BE87 /* NSXPCConnectionSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 570AB8F820AF6E3D00B8BE87 /* NSXPCConnectionSPI.h */; };
@@ -359,6 +360,7 @@
 		4450FC9E21F5F602004DFA56 /* QuickLookSoftLink.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QuickLookSoftLink.h; sourceTree = "<group>"; };
 		44E1A8AD21FA54DA00C3048E /* LookupSoftLink.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LookupSoftLink.h; sourceTree = "<group>"; };
 		44E1A8AE21FA54DA00C3048E /* LookupSoftLink.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = LookupSoftLink.mm; sourceTree = "<group>"; };
+		4996C0F22717642B002C125D /* TCCSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TCCSPI.h; sourceTree = "<group>"; };
 		517E03F824B7C0060054895A /* IOKitSPIMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IOKitSPIMac.h; sourceTree = "<group>"; };
 		570AB8F020AE2E8D00B8BE87 /* SecKeyProxySPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SecKeyProxySPI.h; sourceTree = "<group>"; };
 		570AB8F820AF6E3D00B8BE87 /* NSXPCConnectionSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NSXPCConnectionSPI.h; sourceTree = "<group>"; };
@@ -569,6 +571,7 @@
 				570AB8F020AE2E8D00B8BE87 /* SecKeyProxySPI.h */,
 				0C2DA13C1F3BEB4900DBC317 /* ServersSPI.h */,
 				93B38EC125821D2200198E63 /* SpeechSPI.h */,
+				4996C0F22717642B002C125D /* TCCSPI.h */,
 				0C2DA12B1F3BEB4900DBC317 /* URLFormattingSPI.h */,
 				F46B8C4E26740AD8007A6554 /* VisionKitCoreSPI.h */,
 				0C2DA13D1F3BEB4900DBC317 /* WebFilterEvaluatorSPI.h */,
@@ -1005,6 +1008,7 @@
 				A3AB6E581F3D1DDB009C14B1 /* SystemSleepListener.h in Headers */,
 				A3AB6E641F3D217F009C14B1 /* SystemSleepListenerMac.h in Headers */,
 				079D1D9726950DD700883577 /* SystemStatusSoftLink.h in Headers */,
+				4996C0F32717644C002C125D /* TCCSPI.h in Headers */,
 				0C7785A11F45130F00F4EBB6 /* TelephonyUtilitiesSPI.h in Headers */,
 				2E1342CC215AA10A007199D2 /* UIKitSoftLink.h in Headers */,
 				0C5AF9221F43A4C7002EAC02 /* UIKitSPI.h in Headers */,

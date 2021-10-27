@@ -1,3 +1,59 @@
+2021-10-26  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r284220. rdar://problem/84625558
+
+    Adopt attribution AVCaptureSession SPI for GPU process
+    https://bugs.webkit.org/show_bug.cgi?id=231621
+    <rdar://problem/80748535>
+    
+    Reviewed by Eric Carlson.
+    
+    Source/WebCore:
+    
+    No new tests. Manually tested by checking App Privacy Report data.
+    
+    * SourcesCocoa.txt:
+    * WebCore.xcodeproj/project.pbxproj:
+    * platform/mediastream/RealtimeMediaSourceCenter.h:
+    * platform/mediastream/mac/AVVideoCaptureSource.mm:
+    (WebCore::AVVideoCaptureSource::setupSession):
+    
+    Source/WebCore/PAL:
+    
+    * PAL.xcodeproj/project.pbxproj:
+    * pal/spi/cocoa/AVFoundationSPI.h:
+    * pal/spi/cocoa/TCCSPI.h: Renamed from Source/WebKit/Platform/spi/ios/TCCSPI.h.
+    
+    Source/WebKit:
+    
+    Add SPI to attribute camera access to host app in the GPU process.
+    
+    * GPUProcess/GPUConnectionToWebProcess.cpp:
+    * GPUProcess/GPUConnectionToWebProcess.h:
+    * GPUProcess/cocoa/GPUConnectionToWebProcessCocoa.mm:
+    (WebKit::GPUConnectionToWebProcess::setTCCIdentity):
+    * Shared/Cocoa/TCCSoftLink.h:
+    * Shared/Cocoa/TCCSoftLink.mm:
+    * UIProcess/Cocoa/UserMediaCaptureManagerProxy.cpp:
+    (WebKit::UserMediaCaptureManagerProxy::startProducingData):
+    * UIProcess/Cocoa/UserMediaCaptureManagerProxy.h:
+    (WebKit::UserMediaCaptureManagerProxy::ConnectionProxy::setTCCIdentity):
+    * WebKit.xcodeproj/project.pbxproj:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@284220 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-10-14  Kate Cheney  <katherine_cheney@apple.com>
+
+            Adopt attribution AVCaptureSession SPI for GPU process
+            https://bugs.webkit.org/show_bug.cgi?id=231621
+            <rdar://problem/80748535>
+
+            Reviewed by Eric Carlson.
+
+            * PAL.xcodeproj/project.pbxproj:
+            * pal/spi/cocoa/AVFoundationSPI.h:
+            * pal/spi/cocoa/TCCSPI.h: Renamed from Source/WebKit/Platform/spi/ios/TCCSPI.h.
+
 2021-10-25  Null  <null@apple.com>
 
         Cherry-pick r283592. rdar://problem/84625519

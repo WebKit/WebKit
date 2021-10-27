@@ -189,6 +189,13 @@ private:
         return m_process.setCaptureAttributionString();
     }
 
+#if ENABLE(APP_PRIVACY_REPORT)
+    void setTCCIdentity() final
+    {
+        m_process.setTCCIdentity();
+    }
+#endif
+
     GPUConnectionToWebProcess& m_process;
 };
 
