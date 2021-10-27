@@ -1,5 +1,40 @@
 2021-10-26  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r284349. rdar://problem/81171560
+
+    Use-after-move of m_sockets in NetworkRTCProvider::close()
+    <https://webkit.org/b/231779>
+    <rdar://problem/84278026>
+    
+    Reviewed by Youenn Fablet.
+    
+    * NetworkProcess/webrtc/NetworkRTCProvider.cpp:
+    (WebKit::NetworkRTCProvider::close):
+    - Replace WTFMove() with std::exchange() to make it clear that
+      m_sockets will be emptied, then iterate on `sockets` to close
+      them.  Update ASSERT() to check that no sockets were added
+      to m_sockets during the loop.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@284349 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-10-18  David Kilzer  <ddkilzer@apple.com>
+
+            Use-after-move of m_sockets in NetworkRTCProvider::close()
+            <https://webkit.org/b/231779>
+            <rdar://problem/84278026>
+
+            Reviewed by Youenn Fablet.
+
+            * NetworkProcess/webrtc/NetworkRTCProvider.cpp:
+            (WebKit::NetworkRTCProvider::close):
+            - Replace WTFMove() with std::exchange() to make it clear that
+              m_sockets will be emptied, then iterate on `sockets` to close
+              them.  Update ASSERT() to check that no sockets were added
+              to m_sockets during the loop.
+
+2021-10-26  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r283797. rdar://problem/81171560
 
     Bind the number of WebRTC sockets opened per process
