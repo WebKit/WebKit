@@ -5625,6 +5625,18 @@
    },
    {
       "emails" : [
+         "rreapor@apple.com",
+         "roynos@gmail.com"
+      ],
+      "github" : "roynos",
+      "name" : "Roy Reapor",
+      "nicks" : [
+         "rreapor",
+         "roynos"
+      ]
+   },
+   {
+      "emails" : [
          "rubent_22@apple.com"
       ],
       "name" : "Ruben Turcios"
