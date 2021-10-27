@@ -36,8 +36,10 @@ typedef enum {
     kTCCAccessPreflightDenied,
 } TCCAccessPreflightResult;
 
+#if HAVE(TCC_IOS_14_BIG_SUR_SPI)
 typedef uint64_t tcc_identity_type_t;
 constexpr tcc_identity_type_t TCC_IDENTITY_CODE_BUNDLE_ID = 0;
 typedef void* tcc_identity_t;
+#endif // HAVE(TCC_IOS_14_BIG_SUR_SPI)
 
 #endif

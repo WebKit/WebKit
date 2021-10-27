@@ -1,5 +1,50 @@
 2021-10-26  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r284344. rdar://problem/84625558
+
+    Build fix #3: Adopt attribution AVCaptureSession SPI for GPU process
+    https://bugs.webkit.org/show_bug.cgi?id=231621
+    <rdar://problem/80748535>
+    
+    Unreviewed build fix.
+    
+    
+    Source/WebCore/PAL:
+    
+    * pal/spi/cocoa/TCCSPI.h:
+    - Use HAVE(TCC_IOS_14_BIG_SUR_SPI).
+    
+    Source/WebKit:
+    
+    * Shared/Cocoa/TCCSoftLink.h:
+    (tcc_identity_create):
+    * Shared/Cocoa/TCCSoftLink.mm:
+    (tcc_identity_create):
+    - Use HAVE(TCC_IOS_14_BIG_SUR_SPI).
+    
+    Source/WTF:
+    
+    * wtf/PlatformHave.h:
+    (HAVE_TCC_IOS_14_BIG_SUR_SPI): Add.
+    - Used for TCC.framework SPI available in iOS 14 and macOS 11
+      Big Sur and later.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@284344 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-10-17  David Kilzer  <ddkilzer@apple.com>
+
+            Build fix #3: Adopt attribution AVCaptureSession SPI for GPU process
+            https://bugs.webkit.org/show_bug.cgi?id=231621
+            <rdar://problem/80748535>
+
+            Unreviewed build fix.
+
+            * pal/spi/cocoa/TCCSPI.h:
+            - Use HAVE(TCC_IOS_14_BIG_SUR_SPI).
+
+2021-10-26  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r284222. rdar://problem/84625558
 
     Fix non-internal iOS builds after r284220
