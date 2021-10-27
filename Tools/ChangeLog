@@ -1,3 +1,16 @@
+2021-10-27  Alex Christensen  <achristensen@webkit.org>
+
+        Use correct String constructor in PrivateClickMeasurement.FraudPrevention API test
+        https://bugs.webkit.org/show_bug.cgi?id=232362
+
+        Reviewed by Darin Adler.
+
+        The Vector<char> received in the CompletionHandler given to Connection::receiveHTTPRequest is not null terminated,
+        so we need to call the String constructor that takes a length instead of assuming the byte after the Vector buffer is 0.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/EventAttribution.mm:
+        (TestWebKitAPI::TEST):
+
 2021-10-27  Kate Cheney  <katherine_cheney@apple.com>
 
         REGRESSION: [iOS] TestWebKitAPI.InAppBrowserPrivacy.AppBoundDomainAllowsServiceWorkers is failing
