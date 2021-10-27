@@ -1,3 +1,10 @@
+2021-10-27  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
+
+        [GLIB] Update test expectations for regressions from r284521. Unreviewed test gardening.
+        https://bugs.webkit.org/show_bug.cgi?id=232393
+
+        * platform/glib/TestExpectations:
+
 2021-10-27  Chris Dumez  <cdumez@apple.com>
 
         [ iOS Release GPUProcess ] fast/forms/form-submission-crash-3.html is a flaky failure
