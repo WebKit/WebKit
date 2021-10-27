@@ -542,7 +542,16 @@ public:
 #endif
 #endif
 
+#if USE(ANGLE)
+    constexpr static EGLNativeDisplayType defaultDisplay = EGL_DEFAULT_DISPLAY;
+#if PLATFORM(COCOA)
+    constexpr static EGLNativeDisplayType lowPowerDisplay = EGL_CAST(EGLNativeDisplayType, -1);
+    constexpr static EGLNativeDisplayType highPerformanceDisplay = EGL_CAST(EGLNativeDisplayType, -2);
+#endif
+#endif
+
 private:
+
 #if PLATFORM(COCOA)
     GraphicsContextGLOpenGL(GraphicsContextGLAttributes, HostWindow*, GraphicsContextGLIOSurfaceSwapChain* = nullptr);
 #else
@@ -795,7 +804,7 @@ private:
     void* m_displayBufferPbuffer { nullptr };
 #endif
 #if PLATFORM(MAC)
-    bool m_supportsPowerPreference { false };
+    bool m_switchesGPUOnDisplayReconfiguration { false };
     ScopedHighPerformanceGPURequest m_highPerformanceGPURequest;
 #endif
 #if ENABLE(VIDEO) && USE(AVFOUNDATION)

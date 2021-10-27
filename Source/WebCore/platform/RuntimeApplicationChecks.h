@@ -45,6 +45,7 @@ enum class AuxiliaryProcessType : uint8_t {
 };
 
 WEBCORE_EXPORT void setAuxiliaryProcessType(AuxiliaryProcessType);
+WEBCORE_EXPORT void setAuxiliaryProcessTypeForTesting(std::optional<AuxiliaryProcessType>);
 WEBCORE_EXPORT bool checkAuxiliaryProcessType(AuxiliaryProcessType);
 
 bool isInAuxiliaryProcess();

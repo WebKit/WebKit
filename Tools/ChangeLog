@@ -1,3 +1,84 @@
+2021-10-26  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r284669. rdar://problem/83971417
+
+    WebGL low-power and high-performance contexts should use different ANGLE Metal EGLDisplays
+    https://bugs.webkit.org/show_bug.cgi?id=231012
+    <rdar://problem/83971417>
+    
+    Patch by Kimmo Kinnunen <kkinnunen@apple.com> on 2021-10-22
+    Reviewed by Dean Jackson.
+    
+    Source/WebCore:
+    
+    Use per-power preference EGLDisplay when creating Metal
+    contexts.
+    
+    Adds a new API test.
+    
+    * platform/RuntimeApplicationChecks.cpp:
+    (WebCore::setAuxiliaryProcessTypeForTesting):
+    * platform/RuntimeApplicationChecks.h:
+    Add a test function to reset the process type after test has set a specific type and then
+    run to completion. process for the duration of the test. The volatile context flag in
+    GraphicsContextGLOpenGL depends on condition isWebProcess || isGPUProcess.
+    * platform/graphics/angle/GraphicsContextGLANGLE.cpp:
+    (WebCore::GraphicsContextGLOpenGL::releaseThreadResources):
+    * platform/graphics/cocoa/GraphicsContextGLOpenGLCocoa.mm:
+    (WebCore::initializeEGLDisplay):
+    (WebCore::GraphicsContextGLOpenGL::GraphicsContextGLOpenGL):
+    (WebCore::GraphicsContextGLOpenGL::setContextVisibility):
+    (WebCore::GraphicsContextGLOpenGL::displayWasReconfigured):
+    * platform/graphics/opengl/GraphicsContextGLOpenGL.h:
+    
+    Tools:
+    
+    Add a API test to test GraphicsContextGLOpenGL
+    Cocoa implementation regarding the bug where
+    the GraphicsContextGLOpenGL instances would use
+    the GPU that was selected by the first instance.
+    
+    * TestWebKitAPI/Configurations/TestWebKitAPI.xcconfig:
+    * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+    * TestWebKitAPI/Tests/WebCore/cocoa/TestGraphicsContextGLOpenGLCocoa.mm: Added.
+    (TestWebKitAPI::WebCore::TestedGraphicsContextGLOpenGL::create):
+    (TestWebKitAPI::WebCore::TestedGraphicsContextGLOpenGL::TestedGraphicsContextGLOpenGL):
+    (TestWebKitAPI::hasMultipleGPUs):
+    (TestWebKitAPI::TEST):
+    * TestWebKitAPI/WebCoreUtilities.h: Added.
+    (TestWebKitAPI::ScopedSetAuxiliaryProcessTypeForTesting::ScopedSetAuxiliaryProcessTypeForTesting):
+    (TestWebKitAPI::ScopedSetAuxiliaryProcessTypeForTesting::~ScopedSetAuxiliaryProcessTypeForTesting):
+    Add a utility state setter to set the process type for the
+    duration of a test.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@284669 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-10-22  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+            WebGL low-power and high-performance contexts should use different ANGLE Metal EGLDisplays
+            https://bugs.webkit.org/show_bug.cgi?id=231012
+            <rdar://problem/83971417>
+
+            Reviewed by Dean Jackson.
+
+            Add a API test to test GraphicsContextGLOpenGL
+            Cocoa implementation regarding the bug where
+            the GraphicsContextGLOpenGL instances would use
+            the GPU that was selected by the first instance.
+
+            * TestWebKitAPI/Configurations/TestWebKitAPI.xcconfig:
+            * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+            * TestWebKitAPI/Tests/WebCore/cocoa/TestGraphicsContextGLOpenGLCocoa.mm: Added.
+            (TestWebKitAPI::WebCore::TestedGraphicsContextGLOpenGL::create):
+            (TestWebKitAPI::WebCore::TestedGraphicsContextGLOpenGL::TestedGraphicsContextGLOpenGL):
+            (TestWebKitAPI::hasMultipleGPUs):
+            (TestWebKitAPI::TEST):
+            * TestWebKitAPI/WebCoreUtilities.h: Added.
+            (TestWebKitAPI::ScopedSetAuxiliaryProcessTypeForTesting::ScopedSetAuxiliaryProcessTypeForTesting):
+            (TestWebKitAPI::ScopedSetAuxiliaryProcessTypeForTesting::~ScopedSetAuxiliaryProcessTypeForTesting):
+            Add a utility state setter to set the process type for the
+            duration of a test.
+
 2021-10-25  Null  <null@apple.com>
 
         Cherry-pick r284532. rdar://problem/84625267
