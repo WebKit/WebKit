@@ -37,16 +37,16 @@ PASS CSS Transitions with transition: all: property <clip-path> from [initial] t
 PASS CSS Transitions with transition: all: property <clip-path> from [initial] to [circle(40% at 20% 20%)] at (0.6) should be [circle(40% at 20% 20%)]
 PASS CSS Transitions with transition: all: property <clip-path> from [initial] to [circle(40% at 20% 20%)] at (1) should be [circle(40% at 20% 20%)]
 PASS CSS Transitions with transition: all: property <clip-path> from [initial] to [circle(40% at 20% 20%)] at (1.5) should be [circle(40% at 20% 20%)]
-FAIL CSS Animations: property <clip-path> from [initial] to [circle(40% at 20% 20%)] at (-0.3) should be [initial] assert_equals: expected "none " but got "circle ( 40 % at 20 % 20 % ) "
-FAIL CSS Animations: property <clip-path> from [initial] to [circle(40% at 20% 20%)] at (0) should be [initial] assert_equals: expected "none " but got "circle ( 40 % at 20 % 20 % ) "
-FAIL CSS Animations: property <clip-path> from [initial] to [circle(40% at 20% 20%)] at (0.3) should be [initial] assert_equals: expected "none " but got "circle ( 40 % at 20 % 20 % ) "
+PASS CSS Animations: property <clip-path> from [initial] to [circle(40% at 20% 20%)] at (-0.3) should be [initial]
+PASS CSS Animations: property <clip-path> from [initial] to [circle(40% at 20% 20%)] at (0) should be [initial]
+PASS CSS Animations: property <clip-path> from [initial] to [circle(40% at 20% 20%)] at (0.3) should be [initial]
 PASS CSS Animations: property <clip-path> from [initial] to [circle(40% at 20% 20%)] at (0.5) should be [circle(40% at 20% 20%)]
 PASS CSS Animations: property <clip-path> from [initial] to [circle(40% at 20% 20%)] at (0.6) should be [circle(40% at 20% 20%)]
 PASS CSS Animations: property <clip-path> from [initial] to [circle(40% at 20% 20%)] at (1) should be [circle(40% at 20% 20%)]
 PASS CSS Animations: property <clip-path> from [initial] to [circle(40% at 20% 20%)] at (1.5) should be [circle(40% at 20% 20%)]
-FAIL Web Animations: property <clip-path> from [initial] to [circle(40% at 20% 20%)] at (-0.3) should be [initial] assert_equals: expected "none " but got "circle ( 40 % at 20 % 20 % ) "
-FAIL Web Animations: property <clip-path> from [initial] to [circle(40% at 20% 20%)] at (0) should be [initial] assert_equals: expected "none " but got "circle ( 40 % at 20 % 20 % ) "
-FAIL Web Animations: property <clip-path> from [initial] to [circle(40% at 20% 20%)] at (0.3) should be [initial] assert_equals: expected "none " but got "circle ( 40 % at 20 % 20 % ) "
+PASS Web Animations: property <clip-path> from [initial] to [circle(40% at 20% 20%)] at (-0.3) should be [initial]
+PASS Web Animations: property <clip-path> from [initial] to [circle(40% at 20% 20%)] at (0) should be [initial]
+PASS Web Animations: property <clip-path> from [initial] to [circle(40% at 20% 20%)] at (0.3) should be [initial]
 PASS Web Animations: property <clip-path> from [initial] to [circle(40% at 20% 20%)] at (0.5) should be [circle(40% at 20% 20%)]
 PASS Web Animations: property <clip-path> from [initial] to [circle(40% at 20% 20%)] at (0.6) should be [circle(40% at 20% 20%)]
 PASS Web Animations: property <clip-path> from [initial] to [circle(40% at 20% 20%)] at (1) should be [circle(40% at 20% 20%)]
@@ -89,16 +89,16 @@ PASS CSS Transitions with transition: all: property <clip-path> from [unset] to 
 PASS CSS Transitions with transition: all: property <clip-path> from [unset] to [circle(40% at 20% 20%)] at (0.6) should be [circle(40% at 20% 20%)]
 PASS CSS Transitions with transition: all: property <clip-path> from [unset] to [circle(40% at 20% 20%)] at (1) should be [circle(40% at 20% 20%)]
 PASS CSS Transitions with transition: all: property <clip-path> from [unset] to [circle(40% at 20% 20%)] at (1.5) should be [circle(40% at 20% 20%)]
-FAIL CSS Animations: property <clip-path> from [unset] to [circle(40% at 20% 20%)] at (-0.3) should be [unset] assert_equals: expected "none " but got "circle ( 40 % at 20 % 20 % ) "
-FAIL CSS Animations: property <clip-path> from [unset] to [circle(40% at 20% 20%)] at (0) should be [unset] assert_equals: expected "none " but got "circle ( 40 % at 20 % 20 % ) "
-FAIL CSS Animations: property <clip-path> from [unset] to [circle(40% at 20% 20%)] at (0.3) should be [unset] assert_equals: expected "none " but got "circle ( 40 % at 20 % 20 % ) "
+PASS CSS Animations: property <clip-path> from [unset] to [circle(40% at 20% 20%)] at (-0.3) should be [unset]
+PASS CSS Animations: property <clip-path> from [unset] to [circle(40% at 20% 20%)] at (0) should be [unset]
+PASS CSS Animations: property <clip-path> from [unset] to [circle(40% at 20% 20%)] at (0.3) should be [unset]
 PASS CSS Animations: property <clip-path> from [unset] to [circle(40% at 20% 20%)] at (0.5) should be [circle(40% at 20% 20%)]
 PASS CSS Animations: property <clip-path> from [unset] to [circle(40% at 20% 20%)] at (0.6) should be [circle(40% at 20% 20%)]
 PASS CSS Animations: property <clip-path> from [unset] to [circle(40% at 20% 20%)] at (1) should be [circle(40% at 20% 20%)]
 PASS CSS Animations: property <clip-path> from [unset] to [circle(40% at 20% 20%)] at (1.5) should be [circle(40% at 20% 20%)]
-FAIL Web Animations: property <clip-path> from [unset] to [circle(40% at 20% 20%)] at (-0.3) should be [unset] assert_equals: expected "none " but got "circle ( 40 % at 20 % 20 % ) "
-FAIL Web Animations: property <clip-path> from [unset] to [circle(40% at 20% 20%)] at (0) should be [unset] assert_equals: expected "none " but got "circle ( 40 % at 20 % 20 % ) "
-FAIL Web Animations: property <clip-path> from [unset] to [circle(40% at 20% 20%)] at (0.3) should be [unset] assert_equals: expected "none " but got "circle ( 40 % at 20 % 20 % ) "
+PASS Web Animations: property <clip-path> from [unset] to [circle(40% at 20% 20%)] at (-0.3) should be [unset]
+PASS Web Animations: property <clip-path> from [unset] to [circle(40% at 20% 20%)] at (0) should be [unset]
+PASS Web Animations: property <clip-path> from [unset] to [circle(40% at 20% 20%)] at (0.3) should be [unset]
 PASS Web Animations: property <clip-path> from [unset] to [circle(40% at 20% 20%)] at (0.5) should be [circle(40% at 20% 20%)]
 PASS Web Animations: property <clip-path> from [unset] to [circle(40% at 20% 20%)] at (0.6) should be [circle(40% at 20% 20%)]
 PASS Web Animations: property <clip-path> from [unset] to [circle(40% at 20% 20%)] at (1) should be [circle(40% at 20% 20%)]
@@ -189,16 +189,16 @@ PASS CSS Transitions with transition: all: property <clip-path> from [polygon(ev
 PASS CSS Transitions with transition: all: property <clip-path> from [polygon(evenodd, 0px 0px, 25px 25px, 50px 50px)] to [polygon(nonzero, 25px 25px, 50px 50px, 75px 75px)] at (0.6) should be [polygon(nonzero, 25px 25px, 50px 50px, 75px 75px)]
 PASS CSS Transitions with transition: all: property <clip-path> from [polygon(evenodd, 0px 0px, 25px 25px, 50px 50px)] to [polygon(nonzero, 25px 25px, 50px 50px, 75px 75px)] at (1) should be [polygon(nonzero, 25px 25px, 50px 50px, 75px 75px)]
 PASS CSS Transitions with transition: all: property <clip-path> from [polygon(evenodd, 0px 0px, 25px 25px, 50px 50px)] to [polygon(nonzero, 25px 25px, 50px 50px, 75px 75px)] at (1.5) should be [polygon(nonzero, 25px 25px, 50px 50px, 75px 75px)]
-FAIL CSS Animations: property <clip-path> from [polygon(evenodd, 0px 0px, 25px 25px, 50px 50px)] to [polygon(nonzero, 25px 25px, 50px 50px, 75px 75px)] at (-0.3) should be [polygon(evenodd, 0px 0px, 25px 25px, 50px 50px)] assert_equals: expected "polygon ( evenodd , 0px 0px , 25px 25px , 50px 50px ) " but got "polygon ( 25px 25px , 50px 50px , 75px 75px ) "
-FAIL CSS Animations: property <clip-path> from [polygon(evenodd, 0px 0px, 25px 25px, 50px 50px)] to [polygon(nonzero, 25px 25px, 50px 50px, 75px 75px)] at (0) should be [polygon(evenodd, 0px 0px, 25px 25px, 50px 50px)] assert_equals: expected "polygon ( evenodd , 0px 0px , 25px 25px , 50px 50px ) " but got "polygon ( 25px 25px , 50px 50px , 75px 75px ) "
-FAIL CSS Animations: property <clip-path> from [polygon(evenodd, 0px 0px, 25px 25px, 50px 50px)] to [polygon(nonzero, 25px 25px, 50px 50px, 75px 75px)] at (0.3) should be [polygon(evenodd, 0px 0px, 25px 25px, 50px 50px)] assert_equals: expected "polygon ( evenodd , 0px 0px , 25px 25px , 50px 50px ) " but got "polygon ( 25px 25px , 50px 50px , 75px 75px ) "
+PASS CSS Animations: property <clip-path> from [polygon(evenodd, 0px 0px, 25px 25px, 50px 50px)] to [polygon(nonzero, 25px 25px, 50px 50px, 75px 75px)] at (-0.3) should be [polygon(evenodd, 0px 0px, 25px 25px, 50px 50px)]
+PASS CSS Animations: property <clip-path> from [polygon(evenodd, 0px 0px, 25px 25px, 50px 50px)] to [polygon(nonzero, 25px 25px, 50px 50px, 75px 75px)] at (0) should be [polygon(evenodd, 0px 0px, 25px 25px, 50px 50px)]
+PASS CSS Animations: property <clip-path> from [polygon(evenodd, 0px 0px, 25px 25px, 50px 50px)] to [polygon(nonzero, 25px 25px, 50px 50px, 75px 75px)] at (0.3) should be [polygon(evenodd, 0px 0px, 25px 25px, 50px 50px)]
 PASS CSS Animations: property <clip-path> from [polygon(evenodd, 0px 0px, 25px 25px, 50px 50px)] to [polygon(nonzero, 25px 25px, 50px 50px, 75px 75px)] at (0.5) should be [polygon(nonzero, 25px 25px, 50px 50px, 75px 75px)]
 PASS CSS Animations: property <clip-path> from [polygon(evenodd, 0px 0px, 25px 25px, 50px 50px)] to [polygon(nonzero, 25px 25px, 50px 50px, 75px 75px)] at (0.6) should be [polygon(nonzero, 25px 25px, 50px 50px, 75px 75px)]
 PASS CSS Animations: property <clip-path> from [polygon(evenodd, 0px 0px, 25px 25px, 50px 50px)] to [polygon(nonzero, 25px 25px, 50px 50px, 75px 75px)] at (1) should be [polygon(nonzero, 25px 25px, 50px 50px, 75px 75px)]
 PASS CSS Animations: property <clip-path> from [polygon(evenodd, 0px 0px, 25px 25px, 50px 50px)] to [polygon(nonzero, 25px 25px, 50px 50px, 75px 75px)] at (1.5) should be [polygon(nonzero, 25px 25px, 50px 50px, 75px 75px)]
-FAIL Web Animations: property <clip-path> from [polygon(evenodd, 0px 0px, 25px 25px, 50px 50px)] to [polygon(nonzero, 25px 25px, 50px 50px, 75px 75px)] at (-0.3) should be [polygon(evenodd, 0px 0px, 25px 25px, 50px 50px)] assert_equals: expected "polygon ( evenodd , 0px 0px , 25px 25px , 50px 50px ) " but got "polygon ( 25px 25px , 50px 50px , 75px 75px ) "
-FAIL Web Animations: property <clip-path> from [polygon(evenodd, 0px 0px, 25px 25px, 50px 50px)] to [polygon(nonzero, 25px 25px, 50px 50px, 75px 75px)] at (0) should be [polygon(evenodd, 0px 0px, 25px 25px, 50px 50px)] assert_equals: expected "polygon ( evenodd , 0px 0px , 25px 25px , 50px 50px ) " but got "polygon ( 25px 25px , 50px 50px , 75px 75px ) "
-FAIL Web Animations: property <clip-path> from [polygon(evenodd, 0px 0px, 25px 25px, 50px 50px)] to [polygon(nonzero, 25px 25px, 50px 50px, 75px 75px)] at (0.3) should be [polygon(evenodd, 0px 0px, 25px 25px, 50px 50px)] assert_equals: expected "polygon ( evenodd , 0px 0px , 25px 25px , 50px 50px ) " but got "polygon ( 25px 25px , 50px 50px , 75px 75px ) "
+PASS Web Animations: property <clip-path> from [polygon(evenodd, 0px 0px, 25px 25px, 50px 50px)] to [polygon(nonzero, 25px 25px, 50px 50px, 75px 75px)] at (-0.3) should be [polygon(evenodd, 0px 0px, 25px 25px, 50px 50px)]
+PASS Web Animations: property <clip-path> from [polygon(evenodd, 0px 0px, 25px 25px, 50px 50px)] to [polygon(nonzero, 25px 25px, 50px 50px, 75px 75px)] at (0) should be [polygon(evenodd, 0px 0px, 25px 25px, 50px 50px)]
+PASS Web Animations: property <clip-path> from [polygon(evenodd, 0px 0px, 25px 25px, 50px 50px)] to [polygon(nonzero, 25px 25px, 50px 50px, 75px 75px)] at (0.3) should be [polygon(evenodd, 0px 0px, 25px 25px, 50px 50px)]
 PASS Web Animations: property <clip-path> from [polygon(evenodd, 0px 0px, 25px 25px, 50px 50px)] to [polygon(nonzero, 25px 25px, 50px 50px, 75px 75px)] at (0.5) should be [polygon(nonzero, 25px 25px, 50px 50px, 75px 75px)]
 PASS Web Animations: property <clip-path> from [polygon(evenodd, 0px 0px, 25px 25px, 50px 50px)] to [polygon(nonzero, 25px 25px, 50px 50px, 75px 75px)] at (0.6) should be [polygon(nonzero, 25px 25px, 50px 50px, 75px 75px)]
 PASS Web Animations: property <clip-path> from [polygon(evenodd, 0px 0px, 25px 25px, 50px 50px)] to [polygon(nonzero, 25px 25px, 50px 50px, 75px 75px)] at (1) should be [polygon(nonzero, 25px 25px, 50px 50px, 75px 75px)]
@@ -241,16 +241,16 @@ PASS CSS Transitions with transition: all: property <clip-path> from [none] to [
 PASS CSS Transitions with transition: all: property <clip-path> from [none] to [ellipse(100% 100% at 0% 0%)] at (0.6) should be [ellipse(100% 100% at 0% 0%)]
 PASS CSS Transitions with transition: all: property <clip-path> from [none] to [ellipse(100% 100% at 0% 0%)] at (1) should be [ellipse(100% 100% at 0% 0%)]
 PASS CSS Transitions with transition: all: property <clip-path> from [none] to [ellipse(100% 100% at 0% 0%)] at (1.5) should be [ellipse(100% 100% at 0% 0%)]
-FAIL CSS Animations: property <clip-path> from [none] to [ellipse(100% 100% at 0% 0%)] at (-0.3) should be [none] assert_equals: expected "none " but got "ellipse ( 100 % 100 % at 0 % 0 % ) "
-FAIL CSS Animations: property <clip-path> from [none] to [ellipse(100% 100% at 0% 0%)] at (0) should be [none] assert_equals: expected "none " but got "ellipse ( 100 % 100 % at 0 % 0 % ) "
-FAIL CSS Animations: property <clip-path> from [none] to [ellipse(100% 100% at 0% 0%)] at (0.3) should be [none] assert_equals: expected "none " but got "ellipse ( 100 % 100 % at 0 % 0 % ) "
+PASS CSS Animations: property <clip-path> from [none] to [ellipse(100% 100% at 0% 0%)] at (-0.3) should be [none]
+PASS CSS Animations: property <clip-path> from [none] to [ellipse(100% 100% at 0% 0%)] at (0) should be [none]
+PASS CSS Animations: property <clip-path> from [none] to [ellipse(100% 100% at 0% 0%)] at (0.3) should be [none]
 PASS CSS Animations: property <clip-path> from [none] to [ellipse(100% 100% at 0% 0%)] at (0.5) should be [ellipse(100% 100% at 0% 0%)]
 PASS CSS Animations: property <clip-path> from [none] to [ellipse(100% 100% at 0% 0%)] at (0.6) should be [ellipse(100% 100% at 0% 0%)]
 PASS CSS Animations: property <clip-path> from [none] to [ellipse(100% 100% at 0% 0%)] at (1) should be [ellipse(100% 100% at 0% 0%)]
 PASS CSS Animations: property <clip-path> from [none] to [ellipse(100% 100% at 0% 0%)] at (1.5) should be [ellipse(100% 100% at 0% 0%)]
-FAIL Web Animations: property <clip-path> from [none] to [ellipse(100% 100% at 0% 0%)] at (-0.3) should be [none] assert_equals: expected "none " but got "ellipse ( 100 % 100 % at 0 % 0 % ) "
-FAIL Web Animations: property <clip-path> from [none] to [ellipse(100% 100% at 0% 0%)] at (0) should be [none] assert_equals: expected "none " but got "ellipse ( 100 % 100 % at 0 % 0 % ) "
-FAIL Web Animations: property <clip-path> from [none] to [ellipse(100% 100% at 0% 0%)] at (0.3) should be [none] assert_equals: expected "none " but got "ellipse ( 100 % 100 % at 0 % 0 % ) "
+PASS Web Animations: property <clip-path> from [none] to [ellipse(100% 100% at 0% 0%)] at (-0.3) should be [none]
+PASS Web Animations: property <clip-path> from [none] to [ellipse(100% 100% at 0% 0%)] at (0) should be [none]
+PASS Web Animations: property <clip-path> from [none] to [ellipse(100% 100% at 0% 0%)] at (0.3) should be [none]
 PASS Web Animations: property <clip-path> from [none] to [ellipse(100% 100% at 0% 0%)] at (0.5) should be [ellipse(100% 100% at 0% 0%)]
 PASS Web Animations: property <clip-path> from [none] to [ellipse(100% 100% at 0% 0%)] at (0.6) should be [ellipse(100% 100% at 0% 0%)]
 PASS Web Animations: property <clip-path> from [none] to [ellipse(100% 100% at 0% 0%)] at (1) should be [ellipse(100% 100% at 0% 0%)]
@@ -281,16 +281,16 @@ PASS CSS Transitions with transition: all: property <clip-path> from [url("/clip
 PASS CSS Transitions with transition: all: property <clip-path> from [url("/clip-source")] to [ellipse(100% 100% at 0% 0%)] at (0.6) should be [ellipse(100% 100% at 0% 0%)]
 PASS CSS Transitions with transition: all: property <clip-path> from [url("/clip-source")] to [ellipse(100% 100% at 0% 0%)] at (1) should be [ellipse(100% 100% at 0% 0%)]
 PASS CSS Transitions with transition: all: property <clip-path> from [url("/clip-source")] to [ellipse(100% 100% at 0% 0%)] at (1.5) should be [ellipse(100% 100% at 0% 0%)]
-FAIL CSS Animations: property <clip-path> from [url("/clip-source")] to [ellipse(100% 100% at 0% 0%)] at (-0.3) should be [url(http://localhost:8800/.../clip-source)] assert_equals: expected "url ( http : / / localhost : 8800 / ... / clip - source ) " but got "ellipse ( 100 % 100 % at 0 % 0 % ) "
-FAIL CSS Animations: property <clip-path> from [url("/clip-source")] to [ellipse(100% 100% at 0% 0%)] at (0) should be [url(http://localhost:8800/.../clip-source)] assert_equals: expected "url ( http : / / localhost : 8800 / ... / clip - source ) " but got "ellipse ( 100 % 100 % at 0 % 0 % ) "
-FAIL CSS Animations: property <clip-path> from [url("/clip-source")] to [ellipse(100% 100% at 0% 0%)] at (0.3) should be [url(http://localhost:8800/.../clip-source)] assert_equals: expected "url ( http : / / localhost : 8800 / ... / clip - source ) " but got "ellipse ( 100 % 100 % at 0 % 0 % ) "
+PASS CSS Animations: property <clip-path> from [url("/clip-source")] to [ellipse(100% 100% at 0% 0%)] at (-0.3) should be [url(http://localhost:8800/.../clip-source)]
+PASS CSS Animations: property <clip-path> from [url("/clip-source")] to [ellipse(100% 100% at 0% 0%)] at (0) should be [url(http://localhost:8800/.../clip-source)]
+PASS CSS Animations: property <clip-path> from [url("/clip-source")] to [ellipse(100% 100% at 0% 0%)] at (0.3) should be [url(http://localhost:8800/.../clip-source)]
 PASS CSS Animations: property <clip-path> from [url("/clip-source")] to [ellipse(100% 100% at 0% 0%)] at (0.5) should be [ellipse(100% 100% at 0% 0%)]
 PASS CSS Animations: property <clip-path> from [url("/clip-source")] to [ellipse(100% 100% at 0% 0%)] at (0.6) should be [ellipse(100% 100% at 0% 0%)]
 PASS CSS Animations: property <clip-path> from [url("/clip-source")] to [ellipse(100% 100% at 0% 0%)] at (1) should be [ellipse(100% 100% at 0% 0%)]
 PASS CSS Animations: property <clip-path> from [url("/clip-source")] to [ellipse(100% 100% at 0% 0%)] at (1.5) should be [ellipse(100% 100% at 0% 0%)]
-FAIL Web Animations: property <clip-path> from [url("/clip-source")] to [ellipse(100% 100% at 0% 0%)] at (-0.3) should be [url(http://localhost:8800/.../clip-source)] assert_equals: expected "url ( http : / / localhost : 8800 / ... / clip - source ) " but got "ellipse ( 100 % 100 % at 0 % 0 % ) "
-FAIL Web Animations: property <clip-path> from [url("/clip-source")] to [ellipse(100% 100% at 0% 0%)] at (0) should be [url(http://localhost:8800/.../clip-source)] assert_equals: expected "url ( http : / / localhost : 8800 / ... / clip - source ) " but got "ellipse ( 100 % 100 % at 0 % 0 % ) "
-FAIL Web Animations: property <clip-path> from [url("/clip-source")] to [ellipse(100% 100% at 0% 0%)] at (0.3) should be [url(http://localhost:8800/.../clip-source)] assert_equals: expected "url ( http : / / localhost : 8800 / ... / clip - source ) " but got "ellipse ( 100 % 100 % at 0 % 0 % ) "
+PASS Web Animations: property <clip-path> from [url("/clip-source")] to [ellipse(100% 100% at 0% 0%)] at (-0.3) should be [url(http://localhost:8800/.../clip-source)]
+PASS Web Animations: property <clip-path> from [url("/clip-source")] to [ellipse(100% 100% at 0% 0%)] at (0) should be [url(http://localhost:8800/.../clip-source)]
+PASS Web Animations: property <clip-path> from [url("/clip-source")] to [ellipse(100% 100% at 0% 0%)] at (0.3) should be [url(http://localhost:8800/.../clip-source)]
 PASS Web Animations: property <clip-path> from [url("/clip-source")] to [ellipse(100% 100% at 0% 0%)] at (0.5) should be [ellipse(100% 100% at 0% 0%)]
 PASS Web Animations: property <clip-path> from [url("/clip-source")] to [ellipse(100% 100% at 0% 0%)] at (0.6) should be [ellipse(100% 100% at 0% 0%)]
 PASS Web Animations: property <clip-path> from [url("/clip-source")] to [ellipse(100% 100% at 0% 0%)] at (1) should be [ellipse(100% 100% at 0% 0%)]

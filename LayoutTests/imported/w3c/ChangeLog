@@ -1,3 +1,16 @@
+2021-10-27  Kiet Ho  <tho22@apple.com>
+
+        Add discrete animation support between PathOperations
+        https://bugs.webkit.org/show_bug.cgi?id=232366
+
+        Reviewed by Simon Fraser.
+
+        Updated relevant test expectations.
+
+        * web-platform-tests/css/css-masking/animations/clip-path-composition-expected.txt:
+        * web-platform-tests/css/css-masking/animations/clip-path-interpolation-001-expected.txt:
+        * web-platform-tests/css/css-masking/animations/clip-path-interpolation-002-expected.txt:
+
 2021-10-27  Chris Dumez  <cdumez@apple.com>
 
         autofocus IDL attribute should be exposed on all HTML or SVG elements

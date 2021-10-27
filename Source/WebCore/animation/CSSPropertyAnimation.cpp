@@ -273,20 +273,16 @@ static RefPtr<TranslateTransformOperation> blendFunc(TranslateTransformOperation
 
 static inline RefPtr<PathOperation> blendFunc(PathOperation* from, PathOperation* to, const CSSPropertyBlendingContext& context)
 {
-    if (!from || !to)
-        return to;
+    if (is<ShapePathOperation>(from) && is<ShapePathOperation>(to)) {
+        auto& fromShape = downcast<ShapePathOperation>(*from).basicShape();
+        auto& toShape = downcast<ShapePathOperation>(*to).basicShape();
 
-    // Other clip-path operations than BasicShapes can not be animated.
-    if (from->type() != PathOperation::Shape || to->type() != PathOperation::Shape)
-        return to;
+        if (fromShape.canBlend(toShape))
+            return ShapePathOperation::create(toShape.blend(fromShape, context));
+    }
 
-    const BasicShape& fromShape = downcast<ShapePathOperation>(*from).basicShape();
-    const BasicShape& toShape = downcast<ShapePathOperation>(*to).basicShape();
-
-    if (!fromShape.canBlend(toShape))
-        return to;
-
-    return ShapePathOperation::create(toShape.blend(fromShape, context));
+    // fall back to discrete animation.
+    return context.progress < 0.5 ? from : to;
 }
 
 static inline RefPtr<ShapeValue> blendFunc(ShapeValue* from, ShapeValue* to, const CSSPropertyBlendingContext& context)
@@ -1028,6 +1024,21 @@ public:
     }
 
 private:
+    bool canInterpolate(const RenderStyle& from, const RenderStyle& to, CompositeOperation) const override
+    {
+        auto fromPath = value(from);
+        auto toPath = value(to);
+
+        if (is<ShapePathOperation>(fromPath) && is<ShapePathOperation>(toPath)) {
+            auto& fromShape = downcast<ShapePathOperation>(*fromPath).basicShape();
+            auto& toShape = downcast<ShapePathOperation>(*toPath).basicShape();
+
+            return fromShape.canBlend(toShape);
+        }
+
+        return false;
+    }
+
     bool equals(const RenderStyle& a, const RenderStyle& b) const final
     {
         // If the style pointers are the same, don't bother doing the test.

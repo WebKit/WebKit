@@ -37,16 +37,16 @@ PASS CSS Transitions with transition: all: property <clip-path> from [initial] t
 PASS CSS Transitions with transition: all: property <clip-path> from [initial] to [inset(20px)] at (0.6) should be [inset(20px)]
 PASS CSS Transitions with transition: all: property <clip-path> from [initial] to [inset(20px)] at (1) should be [inset(20px)]
 PASS CSS Transitions with transition: all: property <clip-path> from [initial] to [inset(20px)] at (1.5) should be [inset(20px)]
-FAIL CSS Animations: property <clip-path> from [initial] to [inset(20px)] at (-0.3) should be [initial] assert_equals: expected "none " but got "inset ( 20px ) "
-FAIL CSS Animations: property <clip-path> from [initial] to [inset(20px)] at (0) should be [initial] assert_equals: expected "none " but got "inset ( 20px ) "
-FAIL CSS Animations: property <clip-path> from [initial] to [inset(20px)] at (0.3) should be [initial] assert_equals: expected "none " but got "inset ( 20px ) "
+PASS CSS Animations: property <clip-path> from [initial] to [inset(20px)] at (-0.3) should be [initial]
+PASS CSS Animations: property <clip-path> from [initial] to [inset(20px)] at (0) should be [initial]
+PASS CSS Animations: property <clip-path> from [initial] to [inset(20px)] at (0.3) should be [initial]
 PASS CSS Animations: property <clip-path> from [initial] to [inset(20px)] at (0.5) should be [inset(20px)]
 PASS CSS Animations: property <clip-path> from [initial] to [inset(20px)] at (0.6) should be [inset(20px)]
 PASS CSS Animations: property <clip-path> from [initial] to [inset(20px)] at (1) should be [inset(20px)]
 PASS CSS Animations: property <clip-path> from [initial] to [inset(20px)] at (1.5) should be [inset(20px)]
-FAIL Web Animations: property <clip-path> from [initial] to [inset(20px)] at (-0.3) should be [initial] assert_equals: expected "none " but got "inset ( 20px ) "
-FAIL Web Animations: property <clip-path> from [initial] to [inset(20px)] at (0) should be [initial] assert_equals: expected "none " but got "inset ( 20px ) "
-FAIL Web Animations: property <clip-path> from [initial] to [inset(20px)] at (0.3) should be [initial] assert_equals: expected "none " but got "inset ( 20px ) "
+PASS Web Animations: property <clip-path> from [initial] to [inset(20px)] at (-0.3) should be [initial]
+PASS Web Animations: property <clip-path> from [initial] to [inset(20px)] at (0) should be [initial]
+PASS Web Animations: property <clip-path> from [initial] to [inset(20px)] at (0.3) should be [initial]
 PASS Web Animations: property <clip-path> from [initial] to [inset(20px)] at (0.5) should be [inset(20px)]
 PASS Web Animations: property <clip-path> from [initial] to [inset(20px)] at (0.6) should be [inset(20px)]
 PASS Web Animations: property <clip-path> from [initial] to [inset(20px)] at (1) should be [inset(20px)]
@@ -89,16 +89,16 @@ PASS CSS Transitions with transition: all: property <clip-path> from [unset] to 
 PASS CSS Transitions with transition: all: property <clip-path> from [unset] to [inset(20px)] at (0.6) should be [inset(20px)]
 PASS CSS Transitions with transition: all: property <clip-path> from [unset] to [inset(20px)] at (1) should be [inset(20px)]
 PASS CSS Transitions with transition: all: property <clip-path> from [unset] to [inset(20px)] at (1.5) should be [inset(20px)]
-FAIL CSS Animations: property <clip-path> from [unset] to [inset(20px)] at (-0.3) should be [unset] assert_equals: expected "none " but got "inset ( 20px ) "
-FAIL CSS Animations: property <clip-path> from [unset] to [inset(20px)] at (0) should be [unset] assert_equals: expected "none " but got "inset ( 20px ) "
-FAIL CSS Animations: property <clip-path> from [unset] to [inset(20px)] at (0.3) should be [unset] assert_equals: expected "none " but got "inset ( 20px ) "
+PASS CSS Animations: property <clip-path> from [unset] to [inset(20px)] at (-0.3) should be [unset]
+PASS CSS Animations: property <clip-path> from [unset] to [inset(20px)] at (0) should be [unset]
+PASS CSS Animations: property <clip-path> from [unset] to [inset(20px)] at (0.3) should be [unset]
 PASS CSS Animations: property <clip-path> from [unset] to [inset(20px)] at (0.5) should be [inset(20px)]
 PASS CSS Animations: property <clip-path> from [unset] to [inset(20px)] at (0.6) should be [inset(20px)]
 PASS CSS Animations: property <clip-path> from [unset] to [inset(20px)] at (1) should be [inset(20px)]
 PASS CSS Animations: property <clip-path> from [unset] to [inset(20px)] at (1.5) should be [inset(20px)]
-FAIL Web Animations: property <clip-path> from [unset] to [inset(20px)] at (-0.3) should be [unset] assert_equals: expected "none " but got "inset ( 20px ) "
-FAIL Web Animations: property <clip-path> from [unset] to [inset(20px)] at (0) should be [unset] assert_equals: expected "none " but got "inset ( 20px ) "
-FAIL Web Animations: property <clip-path> from [unset] to [inset(20px)] at (0.3) should be [unset] assert_equals: expected "none " but got "inset ( 20px ) "
+PASS Web Animations: property <clip-path> from [unset] to [inset(20px)] at (-0.3) should be [unset]
+PASS Web Animations: property <clip-path> from [unset] to [inset(20px)] at (0) should be [unset]
+PASS Web Animations: property <clip-path> from [unset] to [inset(20px)] at (0.3) should be [unset]
 PASS Web Animations: property <clip-path> from [unset] to [inset(20px)] at (0.5) should be [inset(20px)]
 PASS Web Animations: property <clip-path> from [unset] to [inset(20px)] at (0.6) should be [inset(20px)]
 PASS Web Animations: property <clip-path> from [unset] to [inset(20px)] at (1) should be [inset(20px)]
@@ -117,16 +117,16 @@ PASS CSS Transitions with transition: all: property <clip-path> from [none] to [
 PASS CSS Transitions with transition: all: property <clip-path> from [none] to [circle(3px at 1px 2px)] at (0.6) should be [circle(3px at 1px 2px)]
 PASS CSS Transitions with transition: all: property <clip-path> from [none] to [circle(3px at 1px 2px)] at (1) should be [circle(3px at 1px 2px)]
 PASS CSS Transitions with transition: all: property <clip-path> from [none] to [circle(3px at 1px 2px)] at (1.5) should be [circle(3px at 1px 2px)]
-FAIL CSS Animations: property <clip-path> from [none] to [circle(3px at 1px 2px)] at (-0.3) should be [none] assert_equals: expected "none " but got "circle ( 3px at 1px 2px ) "
-FAIL CSS Animations: property <clip-path> from [none] to [circle(3px at 1px 2px)] at (0) should be [none] assert_equals: expected "none " but got "circle ( 3px at 1px 2px ) "
-FAIL CSS Animations: property <clip-path> from [none] to [circle(3px at 1px 2px)] at (0.3) should be [none] assert_equals: expected "none " but got "circle ( 3px at 1px 2px ) "
+PASS CSS Animations: property <clip-path> from [none] to [circle(3px at 1px 2px)] at (-0.3) should be [none]
+PASS CSS Animations: property <clip-path> from [none] to [circle(3px at 1px 2px)] at (0) should be [none]
+PASS CSS Animations: property <clip-path> from [none] to [circle(3px at 1px 2px)] at (0.3) should be [none]
 PASS CSS Animations: property <clip-path> from [none] to [circle(3px at 1px 2px)] at (0.5) should be [circle(3px at 1px 2px)]
 PASS CSS Animations: property <clip-path> from [none] to [circle(3px at 1px 2px)] at (0.6) should be [circle(3px at 1px 2px)]
 PASS CSS Animations: property <clip-path> from [none] to [circle(3px at 1px 2px)] at (1) should be [circle(3px at 1px 2px)]
 PASS CSS Animations: property <clip-path> from [none] to [circle(3px at 1px 2px)] at (1.5) should be [circle(3px at 1px 2px)]
-FAIL Web Animations: property <clip-path> from [none] to [circle(3px at 1px 2px)] at (-0.3) should be [none] assert_equals: expected "none " but got "circle ( 3px at 1px 2px ) "
-FAIL Web Animations: property <clip-path> from [none] to [circle(3px at 1px 2px)] at (0) should be [none] assert_equals: expected "none " but got "circle ( 3px at 1px 2px ) "
-FAIL Web Animations: property <clip-path> from [none] to [circle(3px at 1px 2px)] at (0.3) should be [none] assert_equals: expected "none " but got "circle ( 3px at 1px 2px ) "
+PASS Web Animations: property <clip-path> from [none] to [circle(3px at 1px 2px)] at (-0.3) should be [none]
+PASS Web Animations: property <clip-path> from [none] to [circle(3px at 1px 2px)] at (0) should be [none]
+PASS Web Animations: property <clip-path> from [none] to [circle(3px at 1px 2px)] at (0.3) should be [none]
 PASS Web Animations: property <clip-path> from [none] to [circle(3px at 1px 2px)] at (0.5) should be [circle(3px at 1px 2px)]
 PASS Web Animations: property <clip-path> from [none] to [circle(3px at 1px 2px)] at (0.6) should be [circle(3px at 1px 2px)]
 PASS Web Animations: property <clip-path> from [none] to [circle(3px at 1px 2px)] at (1) should be [circle(3px at 1px 2px)]
@@ -169,16 +169,16 @@ PASS CSS Transitions with transition: all: property <clip-path> from [circle(far
 PASS CSS Transitions with transition: all: property <clip-path> from [circle(farthest-side at 25px 75%)] to [circle(farthest-side at 50px center)] at (0.6) should be [circle(farthest-side at 50px center)]
 PASS CSS Transitions with transition: all: property <clip-path> from [circle(farthest-side at 25px 75%)] to [circle(farthest-side at 50px center)] at (1) should be [circle(farthest-side at 50px center)]
 PASS CSS Transitions with transition: all: property <clip-path> from [circle(farthest-side at 25px 75%)] to [circle(farthest-side at 50px center)] at (1.5) should be [circle(farthest-side at 50px center)]
-FAIL CSS Animations: property <clip-path> from [circle(farthest-side at 25px 75%)] to [circle(farthest-side at 50px center)] at (-0.3) should be [circle(farthest-side at 25px 75%)] assert_equals: expected "circle ( farthest - side at 25px 75 % ) " but got "circle ( farthest - side at 50px 50 % ) "
-FAIL CSS Animations: property <clip-path> from [circle(farthest-side at 25px 75%)] to [circle(farthest-side at 50px center)] at (0) should be [circle(farthest-side at 25px 75%)] assert_equals: expected "circle ( farthest - side at 25px 75 % ) " but got "circle ( farthest - side at 50px 50 % ) "
-FAIL CSS Animations: property <clip-path> from [circle(farthest-side at 25px 75%)] to [circle(farthest-side at 50px center)] at (0.3) should be [circle(farthest-side at 25px 75%)] assert_equals: expected "circle ( farthest - side at 25px 75 % ) " but got "circle ( farthest - side at 50px 50 % ) "
+PASS CSS Animations: property <clip-path> from [circle(farthest-side at 25px 75%)] to [circle(farthest-side at 50px center)] at (-0.3) should be [circle(farthest-side at 25px 75%)]
+PASS CSS Animations: property <clip-path> from [circle(farthest-side at 25px 75%)] to [circle(farthest-side at 50px center)] at (0) should be [circle(farthest-side at 25px 75%)]
+PASS CSS Animations: property <clip-path> from [circle(farthest-side at 25px 75%)] to [circle(farthest-side at 50px center)] at (0.3) should be [circle(farthest-side at 25px 75%)]
 PASS CSS Animations: property <clip-path> from [circle(farthest-side at 25px 75%)] to [circle(farthest-side at 50px center)] at (0.5) should be [circle(farthest-side at 50px center)]
 PASS CSS Animations: property <clip-path> from [circle(farthest-side at 25px 75%)] to [circle(farthest-side at 50px center)] at (0.6) should be [circle(farthest-side at 50px center)]
 PASS CSS Animations: property <clip-path> from [circle(farthest-side at 25px 75%)] to [circle(farthest-side at 50px center)] at (1) should be [circle(farthest-side at 50px center)]
 PASS CSS Animations: property <clip-path> from [circle(farthest-side at 25px 75%)] to [circle(farthest-side at 50px center)] at (1.5) should be [circle(farthest-side at 50px center)]
-FAIL Web Animations: property <clip-path> from [circle(farthest-side at 25px 75%)] to [circle(farthest-side at 50px center)] at (-0.3) should be [circle(farthest-side at 25px 75%)] assert_equals: expected "circle ( farthest - side at 25px 75 % ) " but got "circle ( farthest - side at 50px 50 % ) "
-FAIL Web Animations: property <clip-path> from [circle(farthest-side at 25px 75%)] to [circle(farthest-side at 50px center)] at (0) should be [circle(farthest-side at 25px 75%)] assert_equals: expected "circle ( farthest - side at 25px 75 % ) " but got "circle ( farthest - side at 50px 50 % ) "
-FAIL Web Animations: property <clip-path> from [circle(farthest-side at 25px 75%)] to [circle(farthest-side at 50px center)] at (0.3) should be [circle(farthest-side at 25px 75%)] assert_equals: expected "circle ( farthest - side at 25px 75 % ) " but got "circle ( farthest - side at 50px 50 % ) "
+PASS Web Animations: property <clip-path> from [circle(farthest-side at 25px 75%)] to [circle(farthest-side at 50px center)] at (-0.3) should be [circle(farthest-side at 25px 75%)]
+PASS Web Animations: property <clip-path> from [circle(farthest-side at 25px 75%)] to [circle(farthest-side at 50px center)] at (0) should be [circle(farthest-side at 25px 75%)]
+PASS Web Animations: property <clip-path> from [circle(farthest-side at 25px 75%)] to [circle(farthest-side at 50px center)] at (0.3) should be [circle(farthest-side at 25px 75%)]
 PASS Web Animations: property <clip-path> from [circle(farthest-side at 25px 75%)] to [circle(farthest-side at 50px center)] at (0.5) should be [circle(farthest-side at 50px center)]
 PASS Web Animations: property <clip-path> from [circle(farthest-side at 25px 75%)] to [circle(farthest-side at 50px center)] at (0.6) should be [circle(farthest-side at 50px center)]
 PASS Web Animations: property <clip-path> from [circle(farthest-side at 25px 75%)] to [circle(farthest-side at 50px center)] at (1) should be [circle(farthest-side at 50px center)]
@@ -197,16 +197,16 @@ PASS CSS Transitions with transition: all: property <clip-path> from [circle(clo
 PASS CSS Transitions with transition: all: property <clip-path> from [circle(closest-side at 10px 20px)] to [circle(farthest-side at 30px 40px)] at (0.6) should be [circle(farthest-side at 30px 40px)]
 PASS CSS Transitions with transition: all: property <clip-path> from [circle(closest-side at 10px 20px)] to [circle(farthest-side at 30px 40px)] at (1) should be [circle(farthest-side at 30px 40px)]
 PASS CSS Transitions with transition: all: property <clip-path> from [circle(closest-side at 10px 20px)] to [circle(farthest-side at 30px 40px)] at (1.5) should be [circle(farthest-side at 30px 40px)]
-FAIL CSS Animations: property <clip-path> from [circle(closest-side at 10px 20px)] to [circle(farthest-side at 30px 40px)] at (-0.3) should be [circle(closest-side at 10px 20px)] assert_equals: expected "circle ( at 10px 20px ) " but got "circle ( farthest - side at 30px 40px ) "
-FAIL CSS Animations: property <clip-path> from [circle(closest-side at 10px 20px)] to [circle(farthest-side at 30px 40px)] at (0) should be [circle(closest-side at 10px 20px)] assert_equals: expected "circle ( at 10px 20px ) " but got "circle ( farthest - side at 30px 40px ) "
-FAIL CSS Animations: property <clip-path> from [circle(closest-side at 10px 20px)] to [circle(farthest-side at 30px 40px)] at (0.3) should be [circle(closest-side at 10px 20px)] assert_equals: expected "circle ( at 10px 20px ) " but got "circle ( farthest - side at 30px 40px ) "
+PASS CSS Animations: property <clip-path> from [circle(closest-side at 10px 20px)] to [circle(farthest-side at 30px 40px)] at (-0.3) should be [circle(closest-side at 10px 20px)]
+PASS CSS Animations: property <clip-path> from [circle(closest-side at 10px 20px)] to [circle(farthest-side at 30px 40px)] at (0) should be [circle(closest-side at 10px 20px)]
+PASS CSS Animations: property <clip-path> from [circle(closest-side at 10px 20px)] to [circle(farthest-side at 30px 40px)] at (0.3) should be [circle(closest-side at 10px 20px)]
 PASS CSS Animations: property <clip-path> from [circle(closest-side at 10px 20px)] to [circle(farthest-side at 30px 40px)] at (0.5) should be [circle(farthest-side at 30px 40px)]
 PASS CSS Animations: property <clip-path> from [circle(closest-side at 10px 20px)] to [circle(farthest-side at 30px 40px)] at (0.6) should be [circle(farthest-side at 30px 40px)]
 PASS CSS Animations: property <clip-path> from [circle(closest-side at 10px 20px)] to [circle(farthest-side at 30px 40px)] at (1) should be [circle(farthest-side at 30px 40px)]
 PASS CSS Animations: property <clip-path> from [circle(closest-side at 10px 20px)] to [circle(farthest-side at 30px 40px)] at (1.5) should be [circle(farthest-side at 30px 40px)]
-FAIL Web Animations: property <clip-path> from [circle(closest-side at 10px 20px)] to [circle(farthest-side at 30px 40px)] at (-0.3) should be [circle(closest-side at 10px 20px)] assert_equals: expected "circle ( at 10px 20px ) " but got "circle ( farthest - side at 30px 40px ) "
-FAIL Web Animations: property <clip-path> from [circle(closest-side at 10px 20px)] to [circle(farthest-side at 30px 40px)] at (0) should be [circle(closest-side at 10px 20px)] assert_equals: expected "circle ( at 10px 20px ) " but got "circle ( farthest - side at 30px 40px ) "
-FAIL Web Animations: property <clip-path> from [circle(closest-side at 10px 20px)] to [circle(farthest-side at 30px 40px)] at (0.3) should be [circle(closest-side at 10px 20px)] assert_equals: expected "circle ( at 10px 20px ) " but got "circle ( farthest - side at 30px 40px ) "
+PASS Web Animations: property <clip-path> from [circle(closest-side at 10px 20px)] to [circle(farthest-side at 30px 40px)] at (-0.3) should be [circle(closest-side at 10px 20px)]
+PASS Web Animations: property <clip-path> from [circle(closest-side at 10px 20px)] to [circle(farthest-side at 30px 40px)] at (0) should be [circle(closest-side at 10px 20px)]
+PASS Web Animations: property <clip-path> from [circle(closest-side at 10px 20px)] to [circle(farthest-side at 30px 40px)] at (0.3) should be [circle(closest-side at 10px 20px)]
 PASS Web Animations: property <clip-path> from [circle(closest-side at 10px 20px)] to [circle(farthest-side at 30px 40px)] at (0.5) should be [circle(farthest-side at 30px 40px)]
 PASS Web Animations: property <clip-path> from [circle(closest-side at 10px 20px)] to [circle(farthest-side at 30px 40px)] at (0.6) should be [circle(farthest-side at 30px 40px)]
 PASS Web Animations: property <clip-path> from [circle(closest-side at 10px 20px)] to [circle(farthest-side at 30px 40px)] at (1) should be [circle(farthest-side at 30px 40px)]
@@ -225,16 +225,16 @@ PASS CSS Transitions with transition: all: property <clip-path> from [circle(50p
 PASS CSS Transitions with transition: all: property <clip-path> from [circle(50px at 10px 20px)] to [circle(farthest-side at 30px 40px)] at (0.6) should be [circle(farthest-side at 30px 40px)]
 PASS CSS Transitions with transition: all: property <clip-path> from [circle(50px at 10px 20px)] to [circle(farthest-side at 30px 40px)] at (1) should be [circle(farthest-side at 30px 40px)]
 PASS CSS Transitions with transition: all: property <clip-path> from [circle(50px at 10px 20px)] to [circle(farthest-side at 30px 40px)] at (1.5) should be [circle(farthest-side at 30px 40px)]
-FAIL CSS Animations: property <clip-path> from [circle(50px at 10px 20px)] to [circle(farthest-side at 30px 40px)] at (-0.3) should be [circle(50px at 10px 20px)] assert_equals: expected "circle ( 50px at 10px 20px ) " but got "circle ( farthest - side at 30px 40px ) "
-FAIL CSS Animations: property <clip-path> from [circle(50px at 10px 20px)] to [circle(farthest-side at 30px 40px)] at (0) should be [circle(50px at 10px 20px)] assert_equals: expected "circle ( 50px at 10px 20px ) " but got "circle ( farthest - side at 30px 40px ) "
-FAIL CSS Animations: property <clip-path> from [circle(50px at 10px 20px)] to [circle(farthest-side at 30px 40px)] at (0.3) should be [circle(50px at 10px 20px)] assert_equals: expected "circle ( 50px at 10px 20px ) " but got "circle ( farthest - side at 30px 40px ) "
+PASS CSS Animations: property <clip-path> from [circle(50px at 10px 20px)] to [circle(farthest-side at 30px 40px)] at (-0.3) should be [circle(50px at 10px 20px)]
+PASS CSS Animations: property <clip-path> from [circle(50px at 10px 20px)] to [circle(farthest-side at 30px 40px)] at (0) should be [circle(50px at 10px 20px)]
+PASS CSS Animations: property <clip-path> from [circle(50px at 10px 20px)] to [circle(farthest-side at 30px 40px)] at (0.3) should be [circle(50px at 10px 20px)]
 PASS CSS Animations: property <clip-path> from [circle(50px at 10px 20px)] to [circle(farthest-side at 30px 40px)] at (0.5) should be [circle(farthest-side at 30px 40px)]
 PASS CSS Animations: property <clip-path> from [circle(50px at 10px 20px)] to [circle(farthest-side at 30px 40px)] at (0.6) should be [circle(farthest-side at 30px 40px)]
 PASS CSS Animations: property <clip-path> from [circle(50px at 10px 20px)] to [circle(farthest-side at 30px 40px)] at (1) should be [circle(farthest-side at 30px 40px)]
 PASS CSS Animations: property <clip-path> from [circle(50px at 10px 20px)] to [circle(farthest-side at 30px 40px)] at (1.5) should be [circle(farthest-side at 30px 40px)]
-FAIL Web Animations: property <clip-path> from [circle(50px at 10px 20px)] to [circle(farthest-side at 30px 40px)] at (-0.3) should be [circle(50px at 10px 20px)] assert_equals: expected "circle ( 50px at 10px 20px ) " but got "circle ( farthest - side at 30px 40px ) "
-FAIL Web Animations: property <clip-path> from [circle(50px at 10px 20px)] to [circle(farthest-side at 30px 40px)] at (0) should be [circle(50px at 10px 20px)] assert_equals: expected "circle ( 50px at 10px 20px ) " but got "circle ( farthest - side at 30px 40px ) "
-FAIL Web Animations: property <clip-path> from [circle(50px at 10px 20px)] to [circle(farthest-side at 30px 40px)] at (0.3) should be [circle(50px at 10px 20px)] assert_equals: expected "circle ( 50px at 10px 20px ) " but got "circle ( farthest - side at 30px 40px ) "
+PASS Web Animations: property <clip-path> from [circle(50px at 10px 20px)] to [circle(farthest-side at 30px 40px)] at (-0.3) should be [circle(50px at 10px 20px)]
+PASS Web Animations: property <clip-path> from [circle(50px at 10px 20px)] to [circle(farthest-side at 30px 40px)] at (0) should be [circle(50px at 10px 20px)]
+PASS Web Animations: property <clip-path> from [circle(50px at 10px 20px)] to [circle(farthest-side at 30px 40px)] at (0.3) should be [circle(50px at 10px 20px)]
 PASS Web Animations: property <clip-path> from [circle(50px at 10px 20px)] to [circle(farthest-side at 30px 40px)] at (0.5) should be [circle(farthest-side at 30px 40px)]
 PASS Web Animations: property <clip-path> from [circle(50px at 10px 20px)] to [circle(farthest-side at 30px 40px)] at (0.6) should be [circle(farthest-side at 30px 40px)]
 PASS Web Animations: property <clip-path> from [circle(50px at 10px 20px)] to [circle(farthest-side at 30px 40px)] at (1) should be [circle(farthest-side at 30px 40px)]
@@ -277,16 +277,16 @@ PASS CSS Transitions with transition: all: property <clip-path> from [ellipse(cl
 PASS CSS Transitions with transition: all: property <clip-path> from [ellipse(closest-side farthest-side at 25px 75%)] to [ellipse(closest-side farthest-side at 50px center)] at (0.6) should be [ellipse(closest-side farthest-side at 50px center)]
 PASS CSS Transitions with transition: all: property <clip-path> from [ellipse(closest-side farthest-side at 25px 75%)] to [ellipse(closest-side farthest-side at 50px center)] at (1) should be [ellipse(closest-side farthest-side at 50px center)]
 PASS CSS Transitions with transition: all: property <clip-path> from [ellipse(closest-side farthest-side at 25px 75%)] to [ellipse(closest-side farthest-side at 50px center)] at (1.5) should be [ellipse(closest-side farthest-side at 50px center)]
-FAIL CSS Animations: property <clip-path> from [ellipse(closest-side farthest-side at 25px 75%)] to [ellipse(closest-side farthest-side at 50px center)] at (-0.3) should be [ellipse(closest-side farthest-side at 25px 75%)] assert_equals: expected "ellipse ( closest - side farthest - side at 25px 75 % ) " but got "ellipse ( closest - side farthest - side at 50px 50 % ) "
-FAIL CSS Animations: property <clip-path> from [ellipse(closest-side farthest-side at 25px 75%)] to [ellipse(closest-side farthest-side at 50px center)] at (0) should be [ellipse(closest-side farthest-side at 25px 75%)] assert_equals: expected "ellipse ( closest - side farthest - side at 25px 75 % ) " but got "ellipse ( closest - side farthest - side at 50px 50 % ) "
-FAIL CSS Animations: property <clip-path> from [ellipse(closest-side farthest-side at 25px 75%)] to [ellipse(closest-side farthest-side at 50px center)] at (0.3) should be [ellipse(closest-side farthest-side at 25px 75%)] assert_equals: expected "ellipse ( closest - side farthest - side at 25px 75 % ) " but got "ellipse ( closest - side farthest - side at 50px 50 % ) "
+PASS CSS Animations: property <clip-path> from [ellipse(closest-side farthest-side at 25px 75%)] to [ellipse(closest-side farthest-side at 50px center)] at (-0.3) should be [ellipse(closest-side farthest-side at 25px 75%)]
+PASS CSS Animations: property <clip-path> from [ellipse(closest-side farthest-side at 25px 75%)] to [ellipse(closest-side farthest-side at 50px center)] at (0) should be [ellipse(closest-side farthest-side at 25px 75%)]
+PASS CSS Animations: property <clip-path> from [ellipse(closest-side farthest-side at 25px 75%)] to [ellipse(closest-side farthest-side at 50px center)] at (0.3) should be [ellipse(closest-side farthest-side at 25px 75%)]
 PASS CSS Animations: property <clip-path> from [ellipse(closest-side farthest-side at 25px 75%)] to [ellipse(closest-side farthest-side at 50px center)] at (0.5) should be [ellipse(closest-side farthest-side at 50px center)]
 PASS CSS Animations: property <clip-path> from [ellipse(closest-side farthest-side at 25px 75%)] to [ellipse(closest-side farthest-side at 50px center)] at (0.6) should be [ellipse(closest-side farthest-side at 50px center)]
 PASS CSS Animations: property <clip-path> from [ellipse(closest-side farthest-side at 25px 75%)] to [ellipse(closest-side farthest-side at 50px center)] at (1) should be [ellipse(closest-side farthest-side at 50px center)]
 PASS CSS Animations: property <clip-path> from [ellipse(closest-side farthest-side at 25px 75%)] to [ellipse(closest-side farthest-side at 50px center)] at (1.5) should be [ellipse(closest-side farthest-side at 50px center)]
-FAIL Web Animations: property <clip-path> from [ellipse(closest-side farthest-side at 25px 75%)] to [ellipse(closest-side farthest-side at 50px center)] at (-0.3) should be [ellipse(closest-side farthest-side at 25px 75%)] assert_equals: expected "ellipse ( closest - side farthest - side at 25px 75 % ) " but got "ellipse ( closest - side farthest - side at 50px 50 % ) "
-FAIL Web Animations: property <clip-path> from [ellipse(closest-side farthest-side at 25px 75%)] to [ellipse(closest-side farthest-side at 50px center)] at (0) should be [ellipse(closest-side farthest-side at 25px 75%)] assert_equals: expected "ellipse ( closest - side farthest - side at 25px 75 % ) " but got "ellipse ( closest - side farthest - side at 50px 50 % ) "
-FAIL Web Animations: property <clip-path> from [ellipse(closest-side farthest-side at 25px 75%)] to [ellipse(closest-side farthest-side at 50px center)] at (0.3) should be [ellipse(closest-side farthest-side at 25px 75%)] assert_equals: expected "ellipse ( closest - side farthest - side at 25px 75 % ) " but got "ellipse ( closest - side farthest - side at 50px 50 % ) "
+PASS Web Animations: property <clip-path> from [ellipse(closest-side farthest-side at 25px 75%)] to [ellipse(closest-side farthest-side at 50px center)] at (-0.3) should be [ellipse(closest-side farthest-side at 25px 75%)]
+PASS Web Animations: property <clip-path> from [ellipse(closest-side farthest-side at 25px 75%)] to [ellipse(closest-side farthest-side at 50px center)] at (0) should be [ellipse(closest-side farthest-side at 25px 75%)]
+PASS Web Animations: property <clip-path> from [ellipse(closest-side farthest-side at 25px 75%)] to [ellipse(closest-side farthest-side at 50px center)] at (0.3) should be [ellipse(closest-side farthest-side at 25px 75%)]
 PASS Web Animations: property <clip-path> from [ellipse(closest-side farthest-side at 25px 75%)] to [ellipse(closest-side farthest-side at 50px center)] at (0.5) should be [ellipse(closest-side farthest-side at 50px center)]
 PASS Web Animations: property <clip-path> from [ellipse(closest-side farthest-side at 25px 75%)] to [ellipse(closest-side farthest-side at 50px center)] at (0.6) should be [ellipse(closest-side farthest-side at 50px center)]
 PASS Web Animations: property <clip-path> from [ellipse(closest-side farthest-side at 25px 75%)] to [ellipse(closest-side farthest-side at 50px center)] at (1) should be [ellipse(closest-side farthest-side at 50px center)]
@@ -305,16 +305,16 @@ PASS CSS Transitions with transition: all: property <clip-path> from [ellipse(cl
 PASS CSS Transitions with transition: all: property <clip-path> from [ellipse(closest-side farthest-side at 10px 20px)] to [ellipse(farthest-side closest-side at 30px 40px)] at (0.6) should be [ellipse(farthest-side closest-side at 30px 40px)]
 PASS CSS Transitions with transition: all: property <clip-path> from [ellipse(closest-side farthest-side at 10px 20px)] to [ellipse(farthest-side closest-side at 30px 40px)] at (1) should be [ellipse(farthest-side closest-side at 30px 40px)]
 PASS CSS Transitions with transition: all: property <clip-path> from [ellipse(closest-side farthest-side at 10px 20px)] to [ellipse(farthest-side closest-side at 30px 40px)] at (1.5) should be [ellipse(farthest-side closest-side at 30px 40px)]
-FAIL CSS Animations: property <clip-path> from [ellipse(closest-side farthest-side at 10px 20px)] to [ellipse(farthest-side closest-side at 30px 40px)] at (-0.3) should be [ellipse(closest-side farthest-side at 10px 20px)] assert_equals: expected "ellipse ( closest - side farthest - side at 10px 20px ) " but got "ellipse ( farthest - side closest - side at 30px 40px ) "
-FAIL CSS Animations: property <clip-path> from [ellipse(closest-side farthest-side at 10px 20px)] to [ellipse(farthest-side closest-side at 30px 40px)] at (0) should be [ellipse(closest-side farthest-side at 10px 20px)] assert_equals: expected "ellipse ( closest - side farthest - side at 10px 20px ) " but got "ellipse ( farthest - side closest - side at 30px 40px ) "
-FAIL CSS Animations: property <clip-path> from [ellipse(closest-side farthest-side at 10px 20px)] to [ellipse(farthest-side closest-side at 30px 40px)] at (0.3) should be [ellipse(closest-side farthest-side at 10px 20px)] assert_equals: expected "ellipse ( closest - side farthest - side at 10px 20px ) " but got "ellipse ( farthest - side closest - side at 30px 40px ) "
+PASS CSS Animations: property <clip-path> from [ellipse(closest-side farthest-side at 10px 20px)] to [ellipse(farthest-side closest-side at 30px 40px)] at (-0.3) should be [ellipse(closest-side farthest-side at 10px 20px)]
+PASS CSS Animations: property <clip-path> from [ellipse(closest-side farthest-side at 10px 20px)] to [ellipse(farthest-side closest-side at 30px 40px)] at (0) should be [ellipse(closest-side farthest-side at 10px 20px)]
+PASS CSS Animations: property <clip-path> from [ellipse(closest-side farthest-side at 10px 20px)] to [ellipse(farthest-side closest-side at 30px 40px)] at (0.3) should be [ellipse(closest-side farthest-side at 10px 20px)]
 PASS CSS Animations: property <clip-path> from [ellipse(closest-side farthest-side at 10px 20px)] to [ellipse(farthest-side closest-side at 30px 40px)] at (0.5) should be [ellipse(farthest-side closest-side at 30px 40px)]
 PASS CSS Animations: property <clip-path> from [ellipse(closest-side farthest-side at 10px 20px)] to [ellipse(farthest-side closest-side at 30px 40px)] at (0.6) should be [ellipse(farthest-side closest-side at 30px 40px)]
 PASS CSS Animations: property <clip-path> from [ellipse(closest-side farthest-side at 10px 20px)] to [ellipse(farthest-side closest-side at 30px 40px)] at (1) should be [ellipse(farthest-side closest-side at 30px 40px)]
 PASS CSS Animations: property <clip-path> from [ellipse(closest-side farthest-side at 10px 20px)] to [ellipse(farthest-side closest-side at 30px 40px)] at (1.5) should be [ellipse(farthest-side closest-side at 30px 40px)]
-FAIL Web Animations: property <clip-path> from [ellipse(closest-side farthest-side at 10px 20px)] to [ellipse(farthest-side closest-side at 30px 40px)] at (-0.3) should be [ellipse(closest-side farthest-side at 10px 20px)] assert_equals: expected "ellipse ( closest - side farthest - side at 10px 20px ) " but got "ellipse ( farthest - side closest - side at 30px 40px ) "
-FAIL Web Animations: property <clip-path> from [ellipse(closest-side farthest-side at 10px 20px)] to [ellipse(farthest-side closest-side at 30px 40px)] at (0) should be [ellipse(closest-side farthest-side at 10px 20px)] assert_equals: expected "ellipse ( closest - side farthest - side at 10px 20px ) " but got "ellipse ( farthest - side closest - side at 30px 40px ) "
-FAIL Web Animations: property <clip-path> from [ellipse(closest-side farthest-side at 10px 20px)] to [ellipse(farthest-side closest-side at 30px 40px)] at (0.3) should be [ellipse(closest-side farthest-side at 10px 20px)] assert_equals: expected "ellipse ( closest - side farthest - side at 10px 20px ) " but got "ellipse ( farthest - side closest - side at 30px 40px ) "
+PASS Web Animations: property <clip-path> from [ellipse(closest-side farthest-side at 10px 20px)] to [ellipse(farthest-side closest-side at 30px 40px)] at (-0.3) should be [ellipse(closest-side farthest-side at 10px 20px)]
+PASS Web Animations: property <clip-path> from [ellipse(closest-side farthest-side at 10px 20px)] to [ellipse(farthest-side closest-side at 30px 40px)] at (0) should be [ellipse(closest-side farthest-side at 10px 20px)]
+PASS Web Animations: property <clip-path> from [ellipse(closest-side farthest-side at 10px 20px)] to [ellipse(farthest-side closest-side at 30px 40px)] at (0.3) should be [ellipse(closest-side farthest-side at 10px 20px)]
 PASS Web Animations: property <clip-path> from [ellipse(closest-side farthest-side at 10px 20px)] to [ellipse(farthest-side closest-side at 30px 40px)] at (0.5) should be [ellipse(farthest-side closest-side at 30px 40px)]
 PASS Web Animations: property <clip-path> from [ellipse(closest-side farthest-side at 10px 20px)] to [ellipse(farthest-side closest-side at 30px 40px)] at (0.6) should be [ellipse(farthest-side closest-side at 30px 40px)]
 PASS Web Animations: property <clip-path> from [ellipse(closest-side farthest-side at 10px 20px)] to [ellipse(farthest-side closest-side at 30px 40px)] at (1) should be [ellipse(farthest-side closest-side at 30px 40px)]
@@ -333,16 +333,16 @@ PASS CSS Transitions with transition: all: property <clip-path> from [ellipse(50
 PASS CSS Transitions with transition: all: property <clip-path> from [ellipse(50px closest-side at 10px 20px)] to [ellipse(150px farthest-side at 30px 40px)] at (0.6) should be [ellipse(150px farthest-side at 30px 40px)]
 PASS CSS Transitions with transition: all: property <clip-path> from [ellipse(50px closest-side at 10px 20px)] to [ellipse(150px farthest-side at 30px 40px)] at (1) should be [ellipse(150px farthest-side at 30px 40px)]
 PASS CSS Transitions with transition: all: property <clip-path> from [ellipse(50px closest-side at 10px 20px)] to [ellipse(150px farthest-side at 30px 40px)] at (1.5) should be [ellipse(150px farthest-side at 30px 40px)]
-FAIL CSS Animations: property <clip-path> from [ellipse(50px closest-side at 10px 20px)] to [ellipse(150px farthest-side at 30px 40px)] at (-0.3) should be [ellipse(50px closest-side at 10px 20px)] assert_equals: expected "ellipse ( 50px closest - side at 10px 20px ) " but got "ellipse ( 150px farthest - side at 30px 40px ) "
-FAIL CSS Animations: property <clip-path> from [ellipse(50px closest-side at 10px 20px)] to [ellipse(150px farthest-side at 30px 40px)] at (0) should be [ellipse(50px closest-side at 10px 20px)] assert_equals: expected "ellipse ( 50px closest - side at 10px 20px ) " but got "ellipse ( 150px farthest - side at 30px 40px ) "
-FAIL CSS Animations: property <clip-path> from [ellipse(50px closest-side at 10px 20px)] to [ellipse(150px farthest-side at 30px 40px)] at (0.3) should be [ellipse(50px closest-side at 10px 20px)] assert_equals: expected "ellipse ( 50px closest - side at 10px 20px ) " but got "ellipse ( 150px farthest - side at 30px 40px ) "
+PASS CSS Animations: property <clip-path> from [ellipse(50px closest-side at 10px 20px)] to [ellipse(150px farthest-side at 30px 40px)] at (-0.3) should be [ellipse(50px closest-side at 10px 20px)]
+PASS CSS Animations: property <clip-path> from [ellipse(50px closest-side at 10px 20px)] to [ellipse(150px farthest-side at 30px 40px)] at (0) should be [ellipse(50px closest-side at 10px 20px)]
+PASS CSS Animations: property <clip-path> from [ellipse(50px closest-side at 10px 20px)] to [ellipse(150px farthest-side at 30px 40px)] at (0.3) should be [ellipse(50px closest-side at 10px 20px)]
 PASS CSS Animations: property <clip-path> from [ellipse(50px closest-side at 10px 20px)] to [ellipse(150px farthest-side at 30px 40px)] at (0.5) should be [ellipse(150px farthest-side at 30px 40px)]
 PASS CSS Animations: property <clip-path> from [ellipse(50px closest-side at 10px 20px)] to [ellipse(150px farthest-side at 30px 40px)] at (0.6) should be [ellipse(150px farthest-side at 30px 40px)]
 PASS CSS Animations: property <clip-path> from [ellipse(50px closest-side at 10px 20px)] to [ellipse(150px farthest-side at 30px 40px)] at (1) should be [ellipse(150px farthest-side at 30px 40px)]
 PASS CSS Animations: property <clip-path> from [ellipse(50px closest-side at 10px 20px)] to [ellipse(150px farthest-side at 30px 40px)] at (1.5) should be [ellipse(150px farthest-side at 30px 40px)]
-FAIL Web Animations: property <clip-path> from [ellipse(50px closest-side at 10px 20px)] to [ellipse(150px farthest-side at 30px 40px)] at (-0.3) should be [ellipse(50px closest-side at 10px 20px)] assert_equals: expected "ellipse ( 50px closest - side at 10px 20px ) " but got "ellipse ( 150px farthest - side at 30px 40px ) "
-FAIL Web Animations: property <clip-path> from [ellipse(50px closest-side at 10px 20px)] to [ellipse(150px farthest-side at 30px 40px)] at (0) should be [ellipse(50px closest-side at 10px 20px)] assert_equals: expected "ellipse ( 50px closest - side at 10px 20px ) " but got "ellipse ( 150px farthest - side at 30px 40px ) "
-FAIL Web Animations: property <clip-path> from [ellipse(50px closest-side at 10px 20px)] to [ellipse(150px farthest-side at 30px 40px)] at (0.3) should be [ellipse(50px closest-side at 10px 20px)] assert_equals: expected "ellipse ( 50px closest - side at 10px 20px ) " but got "ellipse ( 150px farthest - side at 30px 40px ) "
+PASS Web Animations: property <clip-path> from [ellipse(50px closest-side at 10px 20px)] to [ellipse(150px farthest-side at 30px 40px)] at (-0.3) should be [ellipse(50px closest-side at 10px 20px)]
+PASS Web Animations: property <clip-path> from [ellipse(50px closest-side at 10px 20px)] to [ellipse(150px farthest-side at 30px 40px)] at (0) should be [ellipse(50px closest-side at 10px 20px)]
+PASS Web Animations: property <clip-path> from [ellipse(50px closest-side at 10px 20px)] to [ellipse(150px farthest-side at 30px 40px)] at (0.3) should be [ellipse(50px closest-side at 10px 20px)]
 PASS Web Animations: property <clip-path> from [ellipse(50px closest-side at 10px 20px)] to [ellipse(150px farthest-side at 30px 40px)] at (0.5) should be [ellipse(150px farthest-side at 30px 40px)]
 PASS Web Animations: property <clip-path> from [ellipse(50px closest-side at 10px 20px)] to [ellipse(150px farthest-side at 30px 40px)] at (0.6) should be [ellipse(150px farthest-side at 30px 40px)]
 PASS Web Animations: property <clip-path> from [ellipse(50px closest-side at 10px 20px)] to [ellipse(150px farthest-side at 30px 40px)] at (1) should be [ellipse(150px farthest-side at 30px 40px)]
@@ -481,16 +481,16 @@ PASS CSS Transitions with transition: all: property <clip-path> from [polygon(ev
 PASS CSS Transitions with transition: all: property <clip-path> from [polygon(evenodd, 10px 20px)] to [polygon(nonzero, 110px 120px)] at (0.6) should be [polygon(nonzero, 110px 120px)]
 PASS CSS Transitions with transition: all: property <clip-path> from [polygon(evenodd, 10px 20px)] to [polygon(nonzero, 110px 120px)] at (1) should be [polygon(nonzero, 110px 120px)]
 PASS CSS Transitions with transition: all: property <clip-path> from [polygon(evenodd, 10px 20px)] to [polygon(nonzero, 110px 120px)] at (1.5) should be [polygon(nonzero, 110px 120px)]
-FAIL CSS Animations: property <clip-path> from [polygon(evenodd, 10px 20px)] to [polygon(nonzero, 110px 120px)] at (-0.3) should be [polygon(evenodd, 10px 20px)] assert_equals: expected "polygon ( evenodd , 10px 20px ) " but got "polygon ( 110px 120px ) "
-FAIL CSS Animations: property <clip-path> from [polygon(evenodd, 10px 20px)] to [polygon(nonzero, 110px 120px)] at (0) should be [polygon(evenodd, 10px 20px)] assert_equals: expected "polygon ( evenodd , 10px 20px ) " but got "polygon ( 110px 120px ) "
-FAIL CSS Animations: property <clip-path> from [polygon(evenodd, 10px 20px)] to [polygon(nonzero, 110px 120px)] at (0.3) should be [polygon(evenodd, 10px 20px)] assert_equals: expected "polygon ( evenodd , 10px 20px ) " but got "polygon ( 110px 120px ) "
+PASS CSS Animations: property <clip-path> from [polygon(evenodd, 10px 20px)] to [polygon(nonzero, 110px 120px)] at (-0.3) should be [polygon(evenodd, 10px 20px)]
+PASS CSS Animations: property <clip-path> from [polygon(evenodd, 10px 20px)] to [polygon(nonzero, 110px 120px)] at (0) should be [polygon(evenodd, 10px 20px)]
+PASS CSS Animations: property <clip-path> from [polygon(evenodd, 10px 20px)] to [polygon(nonzero, 110px 120px)] at (0.3) should be [polygon(evenodd, 10px 20px)]
 PASS CSS Animations: property <clip-path> from [polygon(evenodd, 10px 20px)] to [polygon(nonzero, 110px 120px)] at (0.5) should be [polygon(nonzero, 110px 120px)]
 PASS CSS Animations: property <clip-path> from [polygon(evenodd, 10px 20px)] to [polygon(nonzero, 110px 120px)] at (0.6) should be [polygon(nonzero, 110px 120px)]
 PASS CSS Animations: property <clip-path> from [polygon(evenodd, 10px 20px)] to [polygon(nonzero, 110px 120px)] at (1) should be [polygon(nonzero, 110px 120px)]
 PASS CSS Animations: property <clip-path> from [polygon(evenodd, 10px 20px)] to [polygon(nonzero, 110px 120px)] at (1.5) should be [polygon(nonzero, 110px 120px)]
-FAIL Web Animations: property <clip-path> from [polygon(evenodd, 10px 20px)] to [polygon(nonzero, 110px 120px)] at (-0.3) should be [polygon(evenodd, 10px 20px)] assert_equals: expected "polygon ( evenodd , 10px 20px ) " but got "polygon ( 110px 120px ) "
-FAIL Web Animations: property <clip-path> from [polygon(evenodd, 10px 20px)] to [polygon(nonzero, 110px 120px)] at (0) should be [polygon(evenodd, 10px 20px)] assert_equals: expected "polygon ( evenodd , 10px 20px ) " but got "polygon ( 110px 120px ) "
-FAIL Web Animations: property <clip-path> from [polygon(evenodd, 10px 20px)] to [polygon(nonzero, 110px 120px)] at (0.3) should be [polygon(evenodd, 10px 20px)] assert_equals: expected "polygon ( evenodd , 10px 20px ) " but got "polygon ( 110px 120px ) "
+PASS Web Animations: property <clip-path> from [polygon(evenodd, 10px 20px)] to [polygon(nonzero, 110px 120px)] at (-0.3) should be [polygon(evenodd, 10px 20px)]
+PASS Web Animations: property <clip-path> from [polygon(evenodd, 10px 20px)] to [polygon(nonzero, 110px 120px)] at (0) should be [polygon(evenodd, 10px 20px)]
+PASS Web Animations: property <clip-path> from [polygon(evenodd, 10px 20px)] to [polygon(nonzero, 110px 120px)] at (0.3) should be [polygon(evenodd, 10px 20px)]
 PASS Web Animations: property <clip-path> from [polygon(evenodd, 10px 20px)] to [polygon(nonzero, 110px 120px)] at (0.5) should be [polygon(nonzero, 110px 120px)]
 PASS Web Animations: property <clip-path> from [polygon(evenodd, 10px 20px)] to [polygon(nonzero, 110px 120px)] at (0.6) should be [polygon(nonzero, 110px 120px)]
 PASS Web Animations: property <clip-path> from [polygon(evenodd, 10px 20px)] to [polygon(nonzero, 110px 120px)] at (1) should be [polygon(nonzero, 110px 120px)]
@@ -509,16 +509,16 @@ PASS CSS Transitions with transition: all: property <clip-path> from [polygon(ev
 PASS CSS Transitions with transition: all: property <clip-path> from [polygon(evenodd, 10px 20px)] to [polygon(110px 120px)] at (0.6) should be [polygon(110px 120px)]
 PASS CSS Transitions with transition: all: property <clip-path> from [polygon(evenodd, 10px 20px)] to [polygon(110px 120px)] at (1) should be [polygon(110px 120px)]
 PASS CSS Transitions with transition: all: property <clip-path> from [polygon(evenodd, 10px 20px)] to [polygon(110px 120px)] at (1.5) should be [polygon(110px 120px)]
-FAIL CSS Animations: property <clip-path> from [polygon(evenodd, 10px 20px)] to [polygon(110px 120px)] at (-0.3) should be [polygon(evenodd, 10px 20px)] assert_equals: expected "polygon ( evenodd , 10px 20px ) " but got "polygon ( 110px 120px ) "
-FAIL CSS Animations: property <clip-path> from [polygon(evenodd, 10px 20px)] to [polygon(110px 120px)] at (0) should be [polygon(evenodd, 10px 20px)] assert_equals: expected "polygon ( evenodd , 10px 20px ) " but got "polygon ( 110px 120px ) "
-FAIL CSS Animations: property <clip-path> from [polygon(evenodd, 10px 20px)] to [polygon(110px 120px)] at (0.3) should be [polygon(evenodd, 10px 20px)] assert_equals: expected "polygon ( evenodd , 10px 20px ) " but got "polygon ( 110px 120px ) "
+PASS CSS Animations: property <clip-path> from [polygon(evenodd, 10px 20px)] to [polygon(110px 120px)] at (-0.3) should be [polygon(evenodd, 10px 20px)]
+PASS CSS Animations: property <clip-path> from [polygon(evenodd, 10px 20px)] to [polygon(110px 120px)] at (0) should be [polygon(evenodd, 10px 20px)]
+PASS CSS Animations: property <clip-path> from [polygon(evenodd, 10px 20px)] to [polygon(110px 120px)] at (0.3) should be [polygon(evenodd, 10px 20px)]
 PASS CSS Animations: property <clip-path> from [polygon(evenodd, 10px 20px)] to [polygon(110px 120px)] at (0.5) should be [polygon(110px 120px)]
 PASS CSS Animations: property <clip-path> from [polygon(evenodd, 10px 20px)] to [polygon(110px 120px)] at (0.6) should be [polygon(110px 120px)]
 PASS CSS Animations: property <clip-path> from [polygon(evenodd, 10px 20px)] to [polygon(110px 120px)] at (1) should be [polygon(110px 120px)]
 PASS CSS Animations: property <clip-path> from [polygon(evenodd, 10px 20px)] to [polygon(110px 120px)] at (1.5) should be [polygon(110px 120px)]
-FAIL Web Animations: property <clip-path> from [polygon(evenodd, 10px 20px)] to [polygon(110px 120px)] at (-0.3) should be [polygon(evenodd, 10px 20px)] assert_equals: expected "polygon ( evenodd , 10px 20px ) " but got "polygon ( 110px 120px ) "
-FAIL Web Animations: property <clip-path> from [polygon(evenodd, 10px 20px)] to [polygon(110px 120px)] at (0) should be [polygon(evenodd, 10px 20px)] assert_equals: expected "polygon ( evenodd , 10px 20px ) " but got "polygon ( 110px 120px ) "
-FAIL Web Animations: property <clip-path> from [polygon(evenodd, 10px 20px)] to [polygon(110px 120px)] at (0.3) should be [polygon(evenodd, 10px 20px)] assert_equals: expected "polygon ( evenodd , 10px 20px ) " but got "polygon ( 110px 120px ) "
+PASS Web Animations: property <clip-path> from [polygon(evenodd, 10px 20px)] to [polygon(110px 120px)] at (-0.3) should be [polygon(evenodd, 10px 20px)]
+PASS Web Animations: property <clip-path> from [polygon(evenodd, 10px 20px)] to [polygon(110px 120px)] at (0) should be [polygon(evenodd, 10px 20px)]
+PASS Web Animations: property <clip-path> from [polygon(evenodd, 10px 20px)] to [polygon(110px 120px)] at (0.3) should be [polygon(evenodd, 10px 20px)]
 PASS Web Animations: property <clip-path> from [polygon(evenodd, 10px 20px)] to [polygon(110px 120px)] at (0.5) should be [polygon(110px 120px)]
 PASS Web Animations: property <clip-path> from [polygon(evenodd, 10px 20px)] to [polygon(110px 120px)] at (0.6) should be [polygon(110px 120px)]
 PASS Web Animations: property <clip-path> from [polygon(evenodd, 10px 20px)] to [polygon(110px 120px)] at (1) should be [polygon(110px 120px)]
@@ -537,16 +537,16 @@ PASS CSS Transitions with transition: all: property <clip-path> from [polygon(10
 PASS CSS Transitions with transition: all: property <clip-path> from [polygon(10px 20px, 30px 40px)] to [polygon(110px 120px)] at (0.6) should be [polygon(110px 120px)]
 PASS CSS Transitions with transition: all: property <clip-path> from [polygon(10px 20px, 30px 40px)] to [polygon(110px 120px)] at (1) should be [polygon(110px 120px)]
 PASS CSS Transitions with transition: all: property <clip-path> from [polygon(10px 20px, 30px 40px)] to [polygon(110px 120px)] at (1.5) should be [polygon(110px 120px)]
-FAIL CSS Animations: property <clip-path> from [polygon(10px 20px, 30px 40px)] to [polygon(110px 120px)] at (-0.3) should be [polygon(10px 20px, 30px 40px)] assert_equals: expected "polygon ( 10px 20px , 30px 40px ) " but got "polygon ( 110px 120px ) "
-FAIL CSS Animations: property <clip-path> from [polygon(10px 20px, 30px 40px)] to [polygon(110px 120px)] at (0) should be [polygon(10px 20px, 30px 40px)] assert_equals: expected "polygon ( 10px 20px , 30px 40px ) " but got "polygon ( 110px 120px ) "
-FAIL CSS Animations: property <clip-path> from [polygon(10px 20px, 30px 40px)] to [polygon(110px 120px)] at (0.3) should be [polygon(10px 20px, 30px 40px)] assert_equals: expected "polygon ( 10px 20px , 30px 40px ) " but got "polygon ( 110px 120px ) "
+PASS CSS Animations: property <clip-path> from [polygon(10px 20px, 30px 40px)] to [polygon(110px 120px)] at (-0.3) should be [polygon(10px 20px, 30px 40px)]
+PASS CSS Animations: property <clip-path> from [polygon(10px 20px, 30px 40px)] to [polygon(110px 120px)] at (0) should be [polygon(10px 20px, 30px 40px)]
+PASS CSS Animations: property <clip-path> from [polygon(10px 20px, 30px 40px)] to [polygon(110px 120px)] at (0.3) should be [polygon(10px 20px, 30px 40px)]
 PASS CSS Animations: property <clip-path> from [polygon(10px 20px, 30px 40px)] to [polygon(110px 120px)] at (0.5) should be [polygon(110px 120px)]
 PASS CSS Animations: property <clip-path> from [polygon(10px 20px, 30px 40px)] to [polygon(110px 120px)] at (0.6) should be [polygon(110px 120px)]
 PASS CSS Animations: property <clip-path> from [polygon(10px 20px, 30px 40px)] to [polygon(110px 120px)] at (1) should be [polygon(110px 120px)]
 PASS CSS Animations: property <clip-path> from [polygon(10px 20px, 30px 40px)] to [polygon(110px 120px)] at (1.5) should be [polygon(110px 120px)]
-FAIL Web Animations: property <clip-path> from [polygon(10px 20px, 30px 40px)] to [polygon(110px 120px)] at (-0.3) should be [polygon(10px 20px, 30px 40px)] assert_equals: expected "polygon ( 10px 20px , 30px 40px ) " but got "polygon ( 110px 120px ) "
-FAIL Web Animations: property <clip-path> from [polygon(10px 20px, 30px 40px)] to [polygon(110px 120px)] at (0) should be [polygon(10px 20px, 30px 40px)] assert_equals: expected "polygon ( 10px 20px , 30px 40px ) " but got "polygon ( 110px 120px ) "
-FAIL Web Animations: property <clip-path> from [polygon(10px 20px, 30px 40px)] to [polygon(110px 120px)] at (0.3) should be [polygon(10px 20px, 30px 40px)] assert_equals: expected "polygon ( 10px 20px , 30px 40px ) " but got "polygon ( 110px 120px ) "
+PASS Web Animations: property <clip-path> from [polygon(10px 20px, 30px 40px)] to [polygon(110px 120px)] at (-0.3) should be [polygon(10px 20px, 30px 40px)]
+PASS Web Animations: property <clip-path> from [polygon(10px 20px, 30px 40px)] to [polygon(110px 120px)] at (0) should be [polygon(10px 20px, 30px 40px)]
+PASS Web Animations: property <clip-path> from [polygon(10px 20px, 30px 40px)] to [polygon(110px 120px)] at (0.3) should be [polygon(10px 20px, 30px 40px)]
 PASS Web Animations: property <clip-path> from [polygon(10px 20px, 30px 40px)] to [polygon(110px 120px)] at (0.5) should be [polygon(110px 120px)]
 PASS Web Animations: property <clip-path> from [polygon(10px 20px, 30px 40px)] to [polygon(110px 120px)] at (0.6) should be [polygon(110px 120px)]
 PASS Web Animations: property <clip-path> from [polygon(10px 20px, 30px 40px)] to [polygon(110px 120px)] at (1) should be [polygon(110px 120px)]
