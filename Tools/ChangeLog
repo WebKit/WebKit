@@ -1,3 +1,23 @@
+2021-10-27  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitscmpy] Ensure empty line before canonicalization
+        https://bugs.webkit.org/show_bug.cgi?id=232103
+        <rdar://problem/84521382>
+
+        Reviewed by Stephanie Lewis.
+
+        * Scripts/libraries/webkitscmpy/setup.py: Bump version.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/__init__.py: Ditto.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/program/canonicalize/message.py:
+        (main): Handle empty lines around identifier links, add empty line before identifier links.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/canonicalize_unittest.py:
+        (TestCanonicalize.test_formated_identifier):
+        (TestCanonicalize.test_existing_identifier):
+        (TestCanonicalize.test_git_svn):
+        (TestCanonicalize.test_git_svn_existing):
+        (TestCanonicalize.test_branch_commits):
+        (TestCanonicalize.test_number):
+
 2021-10-27  Alexey Proskuryakov  <ap@apple.com>
 
         webkitdirs.pm should use JSON::XS when available
