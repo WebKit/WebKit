@@ -32,7 +32,6 @@
     EnabledAtRuntime=KeygenElementEnabled,
     Exposed=Window
 ] interface HTMLKeygenElement : HTMLElement {
-    [Reflect] attribute boolean autofocus;
     [Reflect] attribute DOMString challenge;
     [Reflect] attribute boolean disabled;
     readonly attribute HTMLFormElement form;

@@ -193,6 +193,30 @@ static Attr* findAttrNodeInList(Vector<RefPtr<Attr>>& attrNodeList, const AtomSt
     return nullptr;
 }
 
+static bool shouldAutofocus(const Element& element)
+{
+    if (!element.hasAttributeWithoutSynchronization(HTMLNames::autofocusAttr))
+        return false;
+
+    auto& document = element.document();
+    if (!element.isConnected() || !document.hasBrowsingContext())
+        return false;
+    if (document.isSandboxed(SandboxAutomaticFeatures)) {
+        // FIXME: This message should be moved off the console once a solution to https://bugs.webkit.org/show_bug.cgi?id=103274 exists.
+        document.addConsoleMessage(MessageSource::Security, MessageLevel::Error, "Blocked autofocusing on a form control because the form's frame is sandboxed and the 'allow-scripts' permission is not set."_s);
+        return false;
+    }
+    if (!document.frame()->isMainFrame() && !document.topOrigin().isSameOriginDomain(document.securityOrigin())) {
+        document.addConsoleMessage(MessageSource::Security, MessageLevel::Error, "Blocked autofocusing on a form control in a cross-origin subframe."_s);
+        return false;
+    }
+
+    if (document.topDocument().isAutofocusProcessed())
+        return false;
+
+    return true;
+}
+
 Ref<Element> Element::create(const QualifiedName& tagName, Document& document)
 {
     return adoptRef(*new Element(tagName, document, CreateElement));
@@ -2244,6 +2268,9 @@ Node::InsertedIntoAncestorResult Element::insertedIntoAncestor(InsertionType ins
 
     if (UNLIKELY(hasTagName(articleTag) && newDocument))
         newDocument->registerArticleElement(*this);
+
+    if (shouldAutofocus(*this))
+        document().topDocument().appendAutofocusCandidate(*this);
 
     return InsertedIntoAncestorResult::Done;
 }

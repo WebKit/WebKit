@@ -200,42 +200,6 @@ void HTMLFormControlElement::requiredStateChanged()
     invalidateStyleForSubtree();
 }
 
-static bool shouldAutofocus(const HTMLFormControlElement& element)
-{
-    if (!element.hasAttributeWithoutSynchronization(autofocusAttr))
-        return false;
-
-    auto& document = element.document();
-    if (!element.isConnected() || !document.hasBrowsingContext())
-        return false;
-    if (document.isSandboxed(SandboxAutomaticFeatures)) {
-        // FIXME: This message should be moved off the console once a solution to https://bugs.webkit.org/show_bug.cgi?id=103274 exists.
-        document.addConsoleMessage(MessageSource::Security, MessageLevel::Error, "Blocked autofocusing on a form control because the form's frame is sandboxed and the 'allow-scripts' permission is not set."_s);
-        return false;
-    }
-    if (!document.frame()->isMainFrame() && !document.topOrigin().isSameOriginDomain(document.securityOrigin())) {
-        document.addConsoleMessage(MessageSource::Security, MessageLevel::Error, "Blocked autofocusing on a form control in a cross-origin subframe."_s);
-        return false;
-    }
-
-    if (document.topDocument().isAutofocusProcessed())
-        return false;
-
-    // FIXME: autofocus is a global attribute.
-    if (is<HTMLInputElement>(element))
-        return !downcast<HTMLInputElement>(element).isInputTypeHidden();
-    if (element.hasTagName(selectTag))
-        return true;
-    if (element.hasTagName(keygenTag))
-        return true;
-    if (element.hasTagName(buttonTag))
-        return true;
-    if (is<HTMLTextAreaElement>(element))
-        return true;
-
-    return false;
-}
-
 void HTMLFormControlElement::didAttachRenderers()
 {
     // The call to updateFromElement() needs to go after the call through
@@ -281,9 +245,6 @@ Node::InsertedIntoAncestorResult HTMLFormControlElement::insertedIntoAncestor(In
         setAncestorDisabled(computeIsDisabledByFieldsetAncestor());
     HTMLElement::insertedIntoAncestor(insertionType, parentOfInsertedTree);
     FormAssociatedElement::insertedIntoAncestor(insertionType, parentOfInsertedTree);
-
-    if (shouldAutofocus(*this))
-        document().topDocument().appendAutofocusCandidate(*this);
 
     return InsertedIntoAncestorResult::NeedsPostInsertionCallback;
 }

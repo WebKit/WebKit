@@ -1,3 +1,23 @@
+2021-10-27  Chris Dumez  <cdumez@apple.com>
+
+        autofocus IDL attribute should be exposed on all HTML or SVG elements
+        https://bugs.webkit.org/show_bug.cgi?id=232349
+
+        Reviewed by Darin Adler.
+
+        Rebaseline some WPT tests now that more checks are passing.
+
+        * web-platform-tests/html/dom/reflection-embedded-expected.txt:
+        * web-platform-tests/html/dom/reflection-grouping-expected.txt:
+        * web-platform-tests/html/dom/reflection-metadata-expected.txt:
+        * web-platform-tests/html/dom/reflection-misc-expected.txt:
+        * web-platform-tests/html/dom/reflection-obsolete-expected.txt:
+        * web-platform-tests/html/dom/reflection-sections-expected.txt:
+        * web-platform-tests/html/dom/reflection-tabular-expected.txt:
+        * web-platform-tests/html/dom/reflection-text-expected.txt:
+        * web-platform-tests/html/interaction/focus/the-autofocus-attribute/supported-elements-expected.txt:
+        * web-platform-tests/svg/struct/scripted/autofocus-attribute-expected.txt:
+
 2021-10-27  Kate Cheney  <katherine_cheney@apple.com>
 
         REGRESSION (r284650-284661): [iOS15 Sim] imported/w3c/web-platform-tests/content-security-policy/script-src/script-src-multiple-policies-multiple-hashing-algorithms.html is a text failure

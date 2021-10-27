@@ -335,7 +335,7 @@ PASS HTMLElement interface: attribute isContentEditable
 PASS HTMLElement interface: attribute inputMode
 PASS HTMLElement interface: attribute dataset
 FAIL HTMLElement interface: attribute nonce assert_true: The prototype object must have a property "nonce" expected true got false
-FAIL HTMLElement interface: attribute autofocus assert_true: The prototype object must have a property "autofocus" expected true got false
+PASS HTMLElement interface: attribute autofocus
 PASS HTMLElement interface: attribute tabIndex
 PASS HTMLElement interface: operation focus(optional FocusOptions)
 PASS HTMLElement interface: operation blur()
@@ -430,7 +430,7 @@ PASS HTMLElement interface: document.createElement("noscript") must inherit prop
 PASS HTMLElement interface: document.createElement("noscript") must inherit property "inputMode" with the proper type
 PASS HTMLElement interface: document.createElement("noscript") must inherit property "dataset" with the proper type
 FAIL HTMLElement interface: document.createElement("noscript") must inherit property "nonce" with the proper type assert_inherits: property "nonce" not found in prototype chain
-FAIL HTMLElement interface: document.createElement("noscript") must inherit property "autofocus" with the proper type assert_inherits: property "autofocus" not found in prototype chain
+PASS HTMLElement interface: document.createElement("noscript") must inherit property "autofocus" with the proper type
 PASS HTMLElement interface: document.createElement("noscript") must inherit property "tabIndex" with the proper type
 PASS HTMLElement interface: document.createElement("noscript") must inherit property "focus(optional FocusOptions)" with the proper type
 PASS HTMLElement interface: calling focus(optional FocusOptions) on document.createElement("noscript") with too few arguments must throw TypeError
@@ -5336,7 +5336,7 @@ PASS SVGElement interface: attribute oncut
 PASS SVGElement interface: attribute onpaste
 PASS SVGElement interface: attribute dataset
 FAIL SVGElement interface: attribute nonce assert_true: The prototype object must have a property "nonce" expected true got false
-FAIL SVGElement interface: attribute autofocus assert_true: The prototype object must have a property "autofocus" expected true got false
+PASS SVGElement interface: attribute autofocus
 PASS SVGElement interface: attribute tabIndex
 PASS SVGElement interface: operation focus(optional FocusOptions)
 PASS SVGElement interface: operation blur()

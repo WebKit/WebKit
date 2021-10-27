@@ -31,8 +31,7 @@ interface mixin HTMLOrForeignElement {
     // FIXME: Implement 'nonce'.
     // attribute DOMString nonce; // intentionally no [CEReactions]
 
-    // FIXME: Implement 'autofocus'.
-    // [CEReactions] attribute boolean autofocus;
+    [CEReactions=NotNeeded, Reflect] attribute boolean autofocus;
     [CEReactions, ImplementedAs=tabIndexForBindings] attribute long tabIndex;
     undefined focus(optional FocusOptions options);
     undefined blur();
