@@ -1,3 +1,11 @@
+2021-10-27  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
+
+        [GLIB] Update test expectations. Unreviewed test gardening.
+        https://bugs.webkit.org/show_bug.cgi?id=232364
+
+        * platform/glib/TestExpectations:
+        * platform/gtk/TestExpectations:
+
 2021-10-27  Antti Koivisto  <antti@apple.com>
 
         [ iOS ] imported/w3c/web-platform-tests/css/css-shadow-parts/invalidation-part-pseudo.html is failing

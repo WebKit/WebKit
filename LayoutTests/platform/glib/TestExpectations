@@ -1196,7 +1196,6 @@ webkit.org/b/219603 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-c
 
 webkit.org/b/219885 fast/mediastream/getUserMedia-webaudio.html [ Failure Pass ]
 
-webkit.org/b/229219 http/tests/security/webaudio-render-remote-audio-allowed-crossorigin-redirect.html [ Pass Timeout ]
 webkit.org/b/229219 http/tests/security/webaudio-render-remote-audio-allowed-crossorigin.html [ Pass Timeout ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1544,6 +1543,9 @@ webkit.org/b/193322 imported/w3c/web-platform-tests/fetch/content-type/script.wi
 webkit.org/b/191003 imported/w3c/web-platform-tests/mimesniff/mime-types/charset-parameter.window.html [ Failure ]
 
 webkit.org/b/227660 imported/w3c/web-platform-tests/wasm/webapi/instantiateStreaming.any.worker.html [ Failure Pass ]
+
+webkit.org/b/232346 imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/createImageBitmap-drawImage.html [ Failure ]
+webkit.org/b/232346 imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/createImageBitmap-flipY.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of WPT-related bugs
