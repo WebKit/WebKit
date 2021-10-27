@@ -1,3 +1,7 @@
+2021-10-26  Kocsen Chung  <kocsen_chung@apple.com>
+
+        Revert r284255. rdar://problem/84666813
+
 2021-10-18  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Use USE(LARGE_TYPED_ARRAY)

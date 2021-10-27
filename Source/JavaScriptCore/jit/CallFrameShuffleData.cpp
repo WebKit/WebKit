@@ -33,6 +33,8 @@
 
 namespace JSC {
 
+#if USE(JSVALUE64)
+
 void CallFrameShuffleData::setupCalleeSaveRegisters(CodeBlock* codeBlock)
 {
     setupCalleeSaveRegisters(codeBlock->calleeSaveRegisters());
@@ -47,24 +49,9 @@ void CallFrameShuffleData::setupCalleeSaveRegisters(const RegisterAtOffsetList* 
         if (!calleeSaveRegisters.get(entry.reg()))
             continue;
 
-        int saveSlotIndexInCPURegisters = entry.offsetAsIndex();
-
-#if USE(JSVALUE64)
-        // CPU registers are the same size as virtual registers
-        VirtualRegister saveSlot { saveSlotIndexInCPURegisters };
+        VirtualRegister saveSlot { entry.offsetAsIndex() };
         registers[entry.reg()]
             = ValueRecovery::displacedInJSStack(saveSlot, DataFormatJS);
-#elif USE(JSVALUE32_64)
-        // On 32-bit architectures, 2 callee saved registers may be packed into the same slot
-        static_assert(!PayloadOffset || !TagOffset);
-        static_assert(PayloadOffset == 4 || TagOffset == 4);
-        bool inTag = (saveSlotIndexInCPURegisters & 1) == !!TagOffset;
-        if (saveSlotIndexInCPURegisters < 0)
-            saveSlotIndexInCPURegisters -= 1; // Round towards -inf
-        VirtualRegister saveSlot { saveSlotIndexInCPURegisters / 2 };
-        registers[entry.reg()]
-            = ValueRecovery::calleeSaveRegDisplacedInJSStack(saveSlot, inTag);
-#endif
     }
 
     for (Reg reg = Reg::first(); reg <= Reg::last(); reg = reg.next()) {
@@ -74,13 +61,11 @@ void CallFrameShuffleData::setupCalleeSaveRegisters(const RegisterAtOffsetList* 
         if (registers[reg])
             continue;
 
-#if USE(JSVALUE64)
         registers[reg] = ValueRecovery::inRegister(reg, DataFormatJS);
-#elif USE(JSVALUE32_64)
-        registers[reg] = ValueRecovery::inRegister(reg, DataFormatInt32);
-#endif
     }
 }
+
+#endif // USE(JSVALUE64)
 
 } // namespace JSC
 
