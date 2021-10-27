@@ -500,4 +500,12 @@ WTF_EXTERN_C_END
 - (void)_sendCloseCode:(NSURLSessionWebSocketCloseCode)closeCode reason:(NSData *)reason;
 @end
 
+@interface NSMutableURLRequest (Staging_83855325)
+- (void)_removeAllProtocolProperties;
+@end
+
+@interface NSURLRequest (Staging_83857142)
+@property (nonatomic, readonly, nullable, retain) NSDictionary<NSString *, id> *_allProtocolProperties;
+@end
+
 #endif // defined(__OBJC__)

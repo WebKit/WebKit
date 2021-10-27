@@ -1,3 +1,18 @@
+2021-10-26  Alex Christensen  <achristensen@webkit.org>
+
+        Remove properties set by NSURLProtocol on NSURLRequest before serializing
+        https://bugs.webkit.org/show_bug.cgi?id=232332
+        <rdar://79227845>
+
+        Reviewed by Geoff Garen.
+
+        NSURLRequest encodeWithCoder: encodes the protocol properties, which are not used by WebKit.
+        They exist to be used by NSURLProtocol.  Serializing them can serialize a large amount of data,
+        so to be more efficient and hopefully run out of memory less, remove the properties before serializing.
+
+        * Shared/Cocoa/WebCoreArgumentCodersCocoa.mm:
+        (IPC::ArgumentCoder<WebCore::ResourceRequest>::encodePlatformData):
+
 2021-10-26  Kate Cheney  <katherine_cheney@apple.com>
 
         NetworkProcess::updateBundleIdentifier, a testing function, overrides the actual bundleID instead of the override value

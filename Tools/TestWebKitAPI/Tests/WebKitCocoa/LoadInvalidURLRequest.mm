@@ -137,5 +137,26 @@ TEST(WebKit, LoadNSURLRequestSubclass)
     [webView _test_waitForDidFinishNavigation];
 }
 
+TEST(WebKit, LoadNSURLRequestWithProtocolProperties)
+{
+    auto request = adoptNS([[NSMutableURLRequest alloc] initWithURL:[NSURL URLWithString:@"test:///"]]);
+
+    // FIXME: Replace this with a HAS macro once rdar://83857142 has been put in a build and the bots are updated.
+    bool hasRadar83857142 = [request respondsToSelector:@selector(_allProtocolProperties)];
+
+    [NSURLProtocol setProperty:@"world" forKey:@"hello" inRequest:request.get()];
+    auto handler = adoptNS([TestURLSchemeHandler new]);
+    __block bool done = false;
+    handler.get().startURLSchemeTaskHandler = ^(WKWebView *, id<WKURLSchemeTask> task) {
+        EXPECT_EQ(hasRadar83857142, ![NSURLProtocol propertyForKey:@"hello" inRequest:task.request]);
+        done = true;
+    };
+    auto configuration = adoptNS([WKWebViewConfiguration new]);
+    [configuration setURLSchemeHandler:handler.get() forURLScheme:@"test"];
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSZeroRect configuration:configuration.get()]);
+    [webView loadRequest:request.get()];
+    Util::run(&done);
+}
+
 } // namespace TestWebKitAPI
 

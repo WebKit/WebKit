@@ -1,3 +1,14 @@
+2021-10-26  Alex Christensen  <achristensen@webkit.org>
+
+        Remove properties set by NSURLProtocol on NSURLRequest before serializing
+        https://bugs.webkit.org/show_bug.cgi?id=232332
+        <rdar://79227845>
+
+        Reviewed by Geoff Garen.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/LoadInvalidURLRequest.mm:
+        (TestWebKitAPI::TEST):
+
 2021-10-26  Roy Reapor  <rreapor@apple.com>
 
         webkitpy/autoinstalled/pyobjc_frameworks.py should not autoinstall frameworks if they can be imported without exceptions
