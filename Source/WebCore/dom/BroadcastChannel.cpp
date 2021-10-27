@@ -27,8 +27,6 @@
 #include "BroadcastChannel.h"
 
 #include "BroadcastChannelRegistry.h"
-#include "Chrome.h"
-#include "ChromeClient.h"
 #include "EventNames.h"
 #include "MessageEvent.h"
 #include "Page.h"
@@ -61,21 +59,7 @@ static HashMap<BroadcastChannelIdentifier, ScriptExecutionContextIdentifier>& ch
 
 static bool shouldPartitionOrigin(Document& document)
 {
-    if (!document.settings().broadcastChannelOriginPartitioningEnabled())
-        return false;
-
-#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
-    if (!document.settings().storageAccessAPIEnabled())
-        return true;
-
-    auto* page = document.page();
-    if (!page)
-        return true;
-
-    return !page->chrome().client().hasPageLevelStorageAccess(RegistrableDomain::uncheckedCreateFromHost(document.topOrigin().host()), RegistrableDomain::uncheckedCreateFromHost(document.securityOrigin().host()));
-#else
-    return true;
-#endif
+    return document.settings().broadcastChannelOriginPartitioningEnabled();
 }
 
 class BroadcastChannel::MainThreadBridge : public ThreadSafeRefCounted<MainThreadBridge, WTF::DestructionThread::Main> {

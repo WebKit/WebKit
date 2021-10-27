@@ -4656,7 +4656,6 @@ fast/text/offsetForPosition-complex-fallback.html [ Pass Failure ]
 # No BroadcastChannel support on Windows.
 fast/html/broadcast-channel-between-different-sessions.html [ Skip ]
 http/tests/messaging/broadcastchannel-partitioning.html [ Skip ]
-http/tests/messaging/broadcastchannel-partitioning-with-storage-access.html [ Skip ]
 
 # This test is skipped because the necessary feature flag functionality specific to the Windows WebKit legacy port is
 # not implemented.  The feature flags in question are CSSCounterStyleAtRulesEnabled and CSSCounterStyleAtRuleImageSymbolsEnabled.

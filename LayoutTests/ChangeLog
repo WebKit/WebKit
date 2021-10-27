@@ -1,5 +1,21 @@
 2021-10-27  Chris Dumez  <cdumez@apple.com>
 
+        Disable relaxation of BroadcastChannel origin partitioning based on storage access
+        https://bugs.webkit.org/show_bug.cgi?id=232401
+
+        Reviewed by John Wilander.
+
+        Dropt test added in r282366.
+
+        * http/tests/messaging/broadcastchannel-partitioning-with-storage-access-expected.txt: Removed.
+        * http/tests/messaging/broadcastchannel-partitioning-with-storage-access.html: Removed.
+        * http/tests/messaging/resources/broadcastchannel-partitioning-with-storage-access-iframe.html: Removed.
+        * http/tests/messaging/resources/broadcastchannel-partitioning-with-storage-access-popup.html: Removed.
+        * platform/mac-wk1/TestExpectations:
+        * platform/win/TestExpectations:
+
+2021-10-27  Chris Dumez  <cdumez@apple.com>
+
         autofocus IDL attribute should be exposed on all HTML or SVG elements
         https://bugs.webkit.org/show_bug.cgi?id=232349
 
