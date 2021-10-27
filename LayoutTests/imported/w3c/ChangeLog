@@ -1,3 +1,15 @@
+2021-10-27  Chris Dumez  <cdumez@apple.com>
+
+        JavaScript URL result should be treated as UTF-8 bytes
+        https://bugs.webkit.org/show_bug.cgi?id=232380
+
+        Reviewed by Darin Adler.
+
+        Rebaseline WPT test now that more checks are passing. The remaining failures are due to the fact that we ignore the JavaScript URL result
+        when the URL is set as href on an anchor (as opposed to the src of an iframe). This will be addressed separately.
+
+        * web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/javascript-url-return-value-handling-dynamic-expected.txt:
+
 2021-10-26  Chris Dumez  <cdumez@apple.com>
 
         Changing the src attribute of the <img> element inside an ImageDocument does not trigger a load

@@ -1280,17 +1280,17 @@ void DocumentLoader::commitData(const uint8_t* bytes, size_t length)
             }
         }
 
-        bool userChosen;
+        DocumentWriter::IsEncodingUserChosen userChosen;
         String encoding;
         if (overrideEncoding().isNull()) {
-            userChosen = false;
+            userChosen = DocumentWriter::IsEncodingUserChosen::No;
             encoding = response().textEncodingName();
 #if ENABLE(WEB_ARCHIVE) || ENABLE(MHTML)
             if (m_archive && m_archive->shouldUseMainResourceEncoding())
                 encoding = m_archive->mainResource()->textEncoding();
 #endif
         } else {
-            userChosen = true;
+            userChosen = DocumentWriter::IsEncodingUserChosen::Yes;
             encoding = overrideEncoding();
         }
 

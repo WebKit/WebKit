@@ -77,6 +77,8 @@ void DocumentWriter::replaceDocumentWithResultOfExecutingJavascriptURL(const Str
 
     begin(m_frame->document()->url(), true, ownerDocument);
 
+    setEncoding("UTF-8"_s, IsEncodingUserChosen::No);
+
     // begin() might fire an unload event, which will result in a situation where no new document has been attached,
     // and the old document has been detached. Therefore, bail out if no document is attached.
     if (!m_frame->document())
@@ -88,10 +90,10 @@ void DocumentWriter::replaceDocumentWithResultOfExecutingJavascriptURL(const Str
             m_frame->document()->setCompatibilityMode(DocumentCompatibilityMode::NoQuirksMode);
         }
 
-        // FIXME: This should call DocumentParser::appendBytes instead of append
-        // to support RawDataDocumentParsers.
-        if (DocumentParser* parser = m_frame->document()->parser())
-            parser->append(source.impl());
+        if (DocumentParser* parser = m_frame->document()->parser()) {
+            auto utf8Source = source.utf8();
+            parser->appendBytes(*this, reinterpret_cast<const uint8_t*>(utf8Source.data()), utf8Source.length());
+        }
     }
 
     end();
@@ -306,10 +308,10 @@ void DocumentWriter::end()
     m_parser = nullptr;
 }
 
-void DocumentWriter::setEncoding(const String& name, bool userChosen)
+void DocumentWriter::setEncoding(const String& name, IsEncodingUserChosen isUserChosen)
 {
     m_encoding = name;
-    m_encodingWasChosenByUser = userChosen;
+    m_encodingWasChosenByUser = isUserChosen == IsEncodingUserChosen::Yes;
 }
 
 void DocumentWriter::setFrame(Frame& frame)

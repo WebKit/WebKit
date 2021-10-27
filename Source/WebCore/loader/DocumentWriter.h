@@ -53,7 +53,8 @@ public:
 
     void setFrame(Frame&);
 
-    WEBCORE_EXPORT void setEncoding(const String& encoding, bool userChosen);
+    enum class IsEncodingUserChosen : bool { No, Yes };
+    WEBCORE_EXPORT void setEncoding(const String& encoding, IsEncodingUserChosen);
 
     const String& mimeType() const { return m_mimeType; }
     void setMIMEType(const String& type) { m_mimeType = type; }
