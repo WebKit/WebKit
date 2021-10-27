@@ -1,5 +1,23 @@
 2021-10-26  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r284251. rdar://problem/84625558
+
+    Unreviewed maccatalyst build fix.
+    
+    * GPUProcess/cocoa/GPUConnectionToWebProcessCocoa.mm:
+    (WebKit::GPUConnectionToWebProcess::setTCCIdentity):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@284251 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-10-15  Kate Cheney  <katherine_cheney@apple.com>
+
+            Unreviewed maccatalyst build fix.
+
+            * GPUProcess/cocoa/GPUConnectionToWebProcessCocoa.mm:
+            (WebKit::GPUConnectionToWebProcess::setTCCIdentity):
+
+2021-10-26  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r284220. rdar://problem/84625558
 
     Adopt attribution AVCaptureSession SPI for GPU process

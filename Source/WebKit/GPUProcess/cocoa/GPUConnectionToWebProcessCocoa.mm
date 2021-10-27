@@ -82,7 +82,9 @@ void GPUConnectionToWebProcess::setTCCIdentity()
     if (!identity)
         return;
 
+#if !PLATFORM(MACCATALYST)
     WebCore::RealtimeMediaSourceCenter::singleton().setIdentity(identity);
+#endif
 }
 #endif
 } // namespace WebKit
