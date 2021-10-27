@@ -13,6 +13,7 @@
 # as necessary.
 
 import os
+import platform
 import sys
 
 # We always want the real system version
@@ -31,7 +32,7 @@ if sys.platform == 'darwin':
         libraries = os.path.expanduser('~/Library/webkitpy')
 
 from webkitcorepy import AutoInstall, Package, Version
-AutoInstall.set_directory(os.path.join(libraries, 'autoinstalled', 'python-{}'.format(sys.version_info[0])))
+AutoInstall.set_directory(os.path.join(libraries, 'autoinstalled', 'python-{}-{}'.format(sys.version_info[0], platform.machine())))
 
 if sys.version_info >= (3, 5):
     AutoInstall.register(Package('pylint', Version(2, 6, 0)))
