@@ -1,3 +1,16 @@
+2021-10-27  Chris Dumez  <cdumez@apple.com>
+
+        [ iOS Release GPUProcess ] fast/forms/form-submission-crash-3.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=232312
+        <rdar://problem/84667412>
+
+        Reviewed by Alex Christensen.
+
+        Make sure the focus event has fired before calling finishJSTest since it changes the
+        output of the test.
+
+        * fast/forms/form-submission-crash-3.html:
+
 2021-10-27  Eric Hutchison  <ehutchison@apple.com>
 
         Fix test expectations for imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting/navigation-reporting/reporting-coop-navigated-opener.https.html to include DumpJSConsoleLogInStdErr.
