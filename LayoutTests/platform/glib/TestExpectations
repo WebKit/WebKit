@@ -590,9 +590,6 @@ webkit.org/b/230926 imported/w3c/web-platform-tests/css/css-fonts/font-palette.h
 webkit.org/b/230926 imported/w3c/web-platform-tests/css/css-fonts/palette-values-rule-add.html [ ImageOnlyFailure ]
 webkit.org/b/230926 imported/w3c/web-platform-tests/css/css-fonts/palette-values-rule-delete.html [ ImageOnlyFailure ]
 
-webkit.org/b/230004 imported/w3c/web-platform-tests/css/css-pseudo/highlight-painting-004.html [ ImageOnlyFailure ]
-webkit.org/b/230004 imported/w3c/web-platform-tests/css/css-pseudo/highlight-painting-003.html [ ImageOnlyFailure ]
-
 webkit.org/b/231516 fast/css/calc-parsing.html [ Pass Failure ]
 webkit.org/b/231516 imported/w3c/web-platform-tests/css/css-values/hypot-pow-sqrt-invalid.html [ Pass Failure ]
 
@@ -694,9 +691,6 @@ webkit.org/b/217845 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-s
 webkit.org/b/218321 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/active-processing.https.html [ Pass Timeout Failure ]
 # Needs to process results in order.
 
-
-webkit.org/b/179258 fast/canvas/webgl/texImage2D-mse-flipY-false.html [ Timeout ]
-webkit.org/b/179258 fast/canvas/webgl/texImage2D-mse-flipY-true.html [ Timeout ]
 
 # MSE failures
 webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/URL-createObjectURL-revoke.html [ Failure ]
@@ -1328,9 +1322,6 @@ webkit.org/b/212818 http/tests/websocket/tests/hybi/send-object-tostring-check.h
 
 webkit.org/b/215912 http/tests/websocket/tests/hybi/handshake-fail-by-no-cr.html [ Failure ]
 
-webkit.org/b/219973 http/tests/security/mixedContent/websocket/insecure-websocket-in-iframe.html [ Failure ]
-webkit.org/b/219973 http/tests/security/mixedContent/websocket/insecure-websocket-in-main-frame.html [ Failure ]
-
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of WebSocket-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1554,8 +1545,6 @@ webkit.org/b/232346 imported/w3c/web-platform-tests/html/canvas/element/manual/i
 #////////////////////////////////////////////////////////////////////////////////////////
 # XML-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
-
-webkit.org/b/216740 imported/w3c/web-platform-tests/domparsing/insert_adjacent_html-xhtml.xhtml [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of XML-related bugs

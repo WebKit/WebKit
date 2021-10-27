@@ -175,7 +175,6 @@ webkit.org/b/226474 [ Debug ] fast/text/letter-spacing-produces-nan-width.html [
 webkit.org/b/216777 compositing/reflections/masked-reflection-on-composited.html [ Pass Crash ]
 webkit.org/b/216777 compositing/video/video-update-rendering.html [ Pass Crash ]
 webkit.org/b/216777 imported/w3c/web-platform-tests/css/css-text/writing-system/writing-system-segment-break-001.html [ ImageOnlyFailure Crash ]
-webkit.org/b/216777 imported/w3c/web-platform-tests/css/css-ui/appearance-auto-001.html [ ImageOnlyFailure Crash ]
 webkit.org/b/216777 imported/w3c/web-platform-tests/css/css-ui/appearance-checkbox-001.html [ ImageOnlyFailure Crash ]
 webkit.org/b/216777 webkit.org/b/214299 imported/w3c/web-platform-tests/css/css-ui/appearance-listbox-001.html [ ImageOnlyFailure Crash ]
 
@@ -841,8 +840,6 @@ webkit.org/b/206585 imported/w3c/web-platform-tests/html/browsers/browsing-the-w
 
 # IsLoggedIn is an experimental feature (Introduced in r250944)
 http/tests/is-logged-in/ [ Skip ]
-
-webkit.org/b/206655 inspector/page/overrideSetting-MockCaptureDevicesEnabled.html [ Failure ]
 
 webkit.org/b/206753 imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/tall--cover--height.html [ Pass ]
 
