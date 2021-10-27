@@ -126,7 +126,10 @@ void NetworkRTCProvider::close()
     m_rtcMonitor.stopUpdating();
 
     callOnRTCNetworkThread([this]() {
-        m_sockets.clear();
+        auto sockets = WTFMove(m_sockets);
+        for (auto& socket : m_sockets.values())
+            socket->close();
+        ASSERT(sockets.isEmpty());
 #if PLATFORM(COCOA)
         m_attributedBundleIdentifiers.clear();
 #endif
