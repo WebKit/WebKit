@@ -84,7 +84,6 @@ class GenMetalTraverser : public TIntermTraverser
                       Sink &out,
                       IdGen &idGen,
                       const PipelineStructs &pipelineStructs,
-                      const Invariants &invariants,
                       SymbolEnv &symbolEnv);
 
     void visitSymbol(TIntermSymbol *) override;
@@ -183,7 +182,6 @@ class GenMetalTraverser : public TIntermTraverser
     Sink &mOut;
     const TCompiler &mCompiler;
     const PipelineStructs &mPipelineStructs;
-    const Invariants &mInvariants;
     SymbolEnv &mSymbolEnv;
     IdGen &mIdGen;
     int mIndentLevel           = -1;
@@ -212,13 +210,11 @@ GenMetalTraverser::GenMetalTraverser(const TCompiler &compiler,
                                      Sink &out,
                                      IdGen &idGen,
                                      const PipelineStructs &pipelineStructs,
-                                     const Invariants &invariants,
                                      SymbolEnv &symbolEnv)
     : TIntermTraverser(true, false, false),
       mOut(out),
       mCompiler(compiler),
       mPipelineStructs(pipelineStructs),
-      mInvariants(invariants),
       mSymbolEnv(symbolEnv),
       mIdGen(idGen)
 {}
@@ -937,9 +933,12 @@ void GenMetalTraverser::emitPostQualifier(const EmitVariableDeclarationConfig &e
                                           const VarDecl &decl,
                                           const TQualifier qualifier)
 {
+    bool isInvariant = false;
     switch (qualifier)
     {
         case TQualifier::EvqPosition:
+            isInvariant = decl.type().isInvariant();
+            // Fallthrough.
         case TQualifier::EvqFragCoord:
             mOut << " [[position]]";
             break;
@@ -972,9 +971,6 @@ void GenMetalTraverser::emitPostQualifier(const EmitVariableDeclarationConfig &e
         default:
             break;
     }
-
-    const bool isInvariant =
-    (decl.isField() ? mInvariants.contains(decl.field()) : mInvariants.contains(decl.variable())) && (qualifier == TQualifier::EvqPosition || qualifier == TQualifier::EvqFragCoord);
 
     if (isInvariant)
     {
@@ -2378,7 +2374,6 @@ bool GenMetalTraverser::visitBlock(Visit, TIntermBlock *blockNode)
 
 bool GenMetalTraverser::visitGlobalQualifierDeclaration(Visit, TIntermGlobalQualifierDeclaration *)
 {
-    LOGIC_ERROR();  // RewriteGlobalQualifierDecls should have been called before this.
     return false;
 }
 
@@ -2604,7 +2599,6 @@ bool sh::EmitMetal(TCompiler &compiler,
                    TIntermBlock &root,
                    IdGen &idGen,
                    const PipelineStructs &pipelineStructs,
-                   const Invariants &invariants,
                    SymbolEnv &symbolEnv,
                    const ProgramPreludeConfig &ppc)
 {
@@ -2663,7 +2657,7 @@ bool sh::EmitMetal(TCompiler &compiler,
 #else
         TInfoSinkBase &outWrapper = out;
 #endif
-        GenMetalTraverser gen(compiler, outWrapper, idGen, pipelineStructs, invariants, symbolEnv);
+        GenMetalTraverser gen(compiler, outWrapper, idGen, pipelineStructs, symbolEnv);
         root.traverse(&gen);
     }
 

@@ -27,6 +27,20 @@ using namespace sh;
 namespace
 {
 
+bool IsVariableInvariant(const std::vector<sh::ShaderVariable> &mVars, const ImmutableString &name)
+{
+    for (const auto &var : mVars)
+    {
+        if (name == var.name)
+        {
+            return var.isInvariant;
+        }
+    }
+    // TODO: this should be UNREACHABLE() but isn't because the translator generates
+    // declarations to unused built-in variables.
+    return false;
+}
+
 using VariableSet  = std::unordered_set<const TVariable *>;
 using VariableList = std::vector<const TVariable *>;
 
@@ -60,7 +74,7 @@ class GeneratePipelineStruct : private TIntermRebuild
   private:
     const Pipeline &mPipeline;
     SymbolEnv &mSymbolEnv;
-    Invariants &mInvariants;
+    const std::vector<sh::ShaderVariable>* mVariableInfos;
     VariableList mPipelineVariableList;
     IdGen &mIdGen;
     PipelineStructInfo mInfo;
@@ -72,9 +86,9 @@ class GeneratePipelineStruct : private TIntermRebuild
                      IdGen &idGen,
                      const Pipeline &pipeline,
                      SymbolEnv &symbolEnv,
-                     Invariants &invariants)
+                     const std::vector<sh::ShaderVariable>* variableInfos)
     {
-        GeneratePipelineStruct self(compiler, idGen, pipeline, symbolEnv, invariants);
+        GeneratePipelineStruct self(compiler, idGen, pipeline, symbolEnv, variableInfos);
         if (!self.exec(root))
         {
             return false;
@@ -88,11 +102,11 @@ class GeneratePipelineStruct : private TIntermRebuild
                            IdGen &idGen,
                            const Pipeline &pipeline,
                            SymbolEnv &symbolEnv,
-                           Invariants &invariants)
+                           const std::vector<sh::ShaderVariable>* variableInfos)
         : TIntermRebuild(compiler, true, true),
           mPipeline(pipeline),
           mSymbolEnv(symbolEnv),
-          mInvariants(invariants),
+          mVariableInfos(variableInfos),
           mIdGen(idGen)
     {}
 
@@ -212,7 +226,6 @@ class GeneratePipelineStruct : private TIntermRebuild
             {
                 for (const TVariable *var : mPipelineVariableList)
                 {
-                    ASSERT(!mInvariants.contains(*var));
                     const TType &varType         = var->getType();
                     const TBasicType samplerType = varType.getBasicType();
 
@@ -247,13 +260,12 @@ class GeneratePipelineStruct : private TIntermRebuild
                 for (const TVariable *var : mPipelineVariableList)
                 {
                     auto &type  = CloneType(var->getType());
+                    if (mVariableInfos && IsVariableInvariant(*mVariableInfos, var->name()))
+                    {
+                        type.setInvariant(true);
+                    }
                     auto *field = new TField(&type, var->name(), kNoSourceLoc, var->symbolType());
                     fields.push_back(field);
-
-                    if (mInvariants.contains(*var))
-                    {
-                        mInvariants.insert(*field);
-                    }
                 }
             }
             break;
@@ -848,12 +860,13 @@ bool UpdatePipelineSymbols(Pipeline::Type pipelineType,
                            PipelineScoped<TVariable> pipelineMainLocalVar)
 {
     auto map = [&](const TFunction *owner, TIntermSymbol &symbol) -> TIntermNode & {
+        if (!owner)
+            return symbol;
         const TVariable &var = symbol.variable();
         if (pipelineVariables.find(&var) == pipelineVariables.end())
         {
             return symbol;
         }
-        ASSERT(owner);
         const TVariable *structInstanceVar;
         if (owner->isMain())
         {
@@ -878,7 +891,7 @@ bool RewritePipeline(TCompiler &compiler,
                      IdGen &idGen,
                      const Pipeline &pipeline,
                      SymbolEnv &symbolEnv,
-                     Invariants &invariants,
+                     const std::vector<sh::ShaderVariable>* variableInfo,
                      PipelineScoped<TStructure> &outStruct)
 {
     ASSERT(outStruct.isTotallyEmpty());
@@ -886,7 +899,7 @@ bool RewritePipeline(TCompiler &compiler,
     TSymbolTable &symbolTable = compiler.getSymbolTable();
 
     PipelineStructInfo psi;
-    if (!GeneratePipelineStruct::Exec(psi, compiler, root, idGen, pipeline, symbolEnv, invariants))
+    if (!GeneratePipelineStruct::Exec(psi, compiler, root, idGen, pipeline, symbolEnv, variableInfo))
     {
         return false;
     }
@@ -932,10 +945,11 @@ bool RewritePipeline(TCompiler &compiler,
 
 bool sh::RewritePipelines(TCompiler &compiler,
                           TIntermBlock &root,
+                          const std::vector<sh::ShaderVariable> &inputVaryings,
+                          const std::vector<sh::ShaderVariable> &outputVaryings,
                           IdGen &idGen,
                           const TVariable &angleUniformsGlobalInstanceVar,
                           SymbolEnv &symbolEnv,
-                          Invariants &invariants,
                           PipelineStructs &outStructs)
 {
     struct Info
@@ -943,27 +957,28 @@ bool sh::RewritePipelines(TCompiler &compiler,
         Pipeline::Type pipelineType;
         PipelineScoped<TStructure> &outStruct;
         const TVariable *globalInstanceVar;
+        const std::vector<sh::ShaderVariable> *variableInfo;
     };
 
     Info infos[] = {
-        {Pipeline::Type::InstanceId, outStructs.instanceId, nullptr},
-        {Pipeline::Type::Texture, outStructs.texture, nullptr},
+        {Pipeline::Type::InstanceId, outStructs.instanceId, nullptr, nullptr},
+        {Pipeline::Type::Texture, outStructs.texture, nullptr, nullptr},
         {Pipeline::Type::NonConstantGlobals, outStructs.nonConstantGlobals, nullptr},
         {Pipeline::Type::AngleUniforms, outStructs.angleUniforms, &angleUniformsGlobalInstanceVar},
-        {Pipeline::Type::UserUniforms, outStructs.userUniforms, nullptr},
-        {Pipeline::Type::VertexIn, outStructs.vertexIn, nullptr},
-        {Pipeline::Type::VertexOut, outStructs.vertexOut, nullptr},
-        {Pipeline::Type::FragmentIn, outStructs.fragmentIn, nullptr},
-        {Pipeline::Type::FragmentOut, outStructs.fragmentOut, nullptr},
-        {Pipeline::Type::InvocationVertexGlobals, outStructs.invocationVertexGlobals, nullptr},
-        {Pipeline::Type::InvocationFragmentGlobals, outStructs.invocationFragmentGlobals, nullptr},
-        {Pipeline::Type::UniformBuffer, outStructs.uniformBuffers, nullptr},
+        {Pipeline::Type::UserUniforms, outStructs.userUniforms, nullptr, nullptr},
+        {Pipeline::Type::VertexIn, outStructs.vertexIn, nullptr, &inputVaryings},
+        {Pipeline::Type::VertexOut, outStructs.vertexOut, nullptr, &outputVaryings},
+        {Pipeline::Type::FragmentIn, outStructs.fragmentIn, nullptr, &inputVaryings},
+        {Pipeline::Type::FragmentOut, outStructs.fragmentOut, nullptr, &outputVaryings},
+        {Pipeline::Type::InvocationVertexGlobals, outStructs.invocationVertexGlobals, nullptr, nullptr},
+        {Pipeline::Type::InvocationFragmentGlobals, outStructs.invocationFragmentGlobals, nullptr, &inputVaryings},
+        {Pipeline::Type::UniformBuffer, outStructs.uniformBuffers, nullptr, nullptr},
     };
 
     for (Info &info : infos)
     {
         Pipeline pipeline{info.pipelineType, info.globalInstanceVar};
-        if (!RewritePipeline(compiler, root, idGen, pipeline, symbolEnv, invariants,
+        if (!RewritePipeline(compiler, root, idGen, pipeline, symbolEnv, info.variableInfo,
                              info.outStruct))
         {
             return false;

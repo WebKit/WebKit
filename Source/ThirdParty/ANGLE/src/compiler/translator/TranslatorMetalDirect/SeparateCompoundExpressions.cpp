@@ -619,7 +619,6 @@ class Separator : public TIntermRebuild
 
     PostResult visitGlobalQualifierDeclarationPost(TIntermGlobalQualifierDeclaration &node) override
     {
-        ASSERT(false);  // These should be scrubbed from AST before rewriter is called.
         pushStmt(node);
         return node;
     }

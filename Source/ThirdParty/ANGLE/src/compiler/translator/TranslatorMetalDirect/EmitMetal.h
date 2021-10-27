@@ -11,7 +11,6 @@
 #include "compiler/translator/Compiler.h"
 #include "compiler/translator/TranslatorMetalDirect/IdGen.h"
 #include "compiler/translator/TranslatorMetalDirect/ProgramPrelude.h"
-#include "compiler/translator/TranslatorMetalDirect/RewriteGlobalQualifierDecls.h"
 #include "compiler/translator/TranslatorMetalDirect/RewritePipelines.h"
 #include "compiler/translator/TranslatorMetalDirect/SymbolEnv.h"
 
@@ -23,7 +22,6 @@ ANGLE_NO_DISCARD bool EmitMetal(TCompiler &compiler,
                                 TIntermBlock &root,
                                 IdGen &idGen,
                                 const PipelineStructs &pipelineStructs,
-                                const Invariants &invariants,
                                 SymbolEnv &symbolEnv,
                                 const ProgramPreludeConfig &ppc);
 

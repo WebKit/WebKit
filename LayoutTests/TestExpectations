@@ -3683,6 +3683,8 @@ webgl/1.0.x [ Skip ]
 webgl/1.0.x/conformance/canvas/to-data-url-test.html [ Pass ]
 webgl/1.0.x/conformance/misc/invalid-passed-params.html [ Pass ]
 webgl/1.0.x/conformance/glsl/bugs/character-set.html [ Pass ]
+webgl/1.0.x/conformance/glsl/misc/fragcolor-fragdata-invariant.html [ Pass ]
+
 
 # WebGL conformance test suite 2.0.1 is skipped until 2.0.0 is retired.
 webgl/2.0.y [ Skip ]
@@ -3694,6 +3696,7 @@ webgl/2.0.y/conformance/glsl/bugs/character-set.html [ Pass ]
 
 # Explicitly turn on conformance test until all of webgl/2.0.y is enabled
 webgl/2.0.y/conformance/extensions/webgl-compressed-texture-s3tc-srgb.html [ Pass ]
+webgl/2.0.y/conformance/glsl/misc/fragcolor-fragdata-invariant.html [ Pass ]
 
 # WebGL 1.0.3 and 2.0.0 tests where behavior is obsolete and WebKit contains implementation
 # and tests for the new behavior. Should be removed once 1.0.3 and 2.0.0 are retired.

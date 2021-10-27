@@ -446,7 +446,6 @@
 		DF83E23C2639FCD5000825EF /* ReduceInterfaceBlocks.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FF81FF3D2581919700894E24 /* ReduceInterfaceBlocks.cpp */; };
 		DF83E23D2639FCD5000825EF /* DiscoverEnclosingFunctionTraverser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FF81FF412581919700894E24 /* DiscoverEnclosingFunctionTraverser.cpp */; };
 		DF83E23E2639FCD5000825EF /* IdGen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FF81FF512581919700894E24 /* IdGen.cpp */; };
-		DF83E23F2639FCD5000825EF /* RewriteGlobalQualifierDecls.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FF81FF452581919700894E24 /* RewriteGlobalQualifierDecls.cpp */; };
 		DF83E2402639FCD5000825EF /* RewriteUnaddressableReferences.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FF81FF462581919700894E24 /* RewriteUnaddressableReferences.cpp */; };
 		DF83E2412639FCD5000825EF /* IntroduceVertexIndexID.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FF33284725F6CAB9005FDFC4 /* IntroduceVertexIndexID.cpp */; };
 		DF83E2422639FCD5000825EF /* ToposortStructs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FF81FF332581919700894E24 /* ToposortStructs.cpp */; };
@@ -1716,9 +1715,7 @@
 		FF81FF402581919700894E24 /* Layout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Layout.h; sourceTree = "<group>"; };
 		FF81FF412581919700894E24 /* DiscoverEnclosingFunctionTraverser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DiscoverEnclosingFunctionTraverser.cpp; sourceTree = "<group>"; };
 		FF81FF422581919700894E24 /* ProgramPrelude.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProgramPrelude.h; sourceTree = "<group>"; };
-		FF81FF432581919700894E24 /* RewriteGlobalQualifierDecls.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RewriteGlobalQualifierDecls.h; sourceTree = "<group>"; };
 		FF81FF442581919700894E24 /* SymbolEnv.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SymbolEnv.h; sourceTree = "<group>"; };
-		FF81FF452581919700894E24 /* RewriteGlobalQualifierDecls.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RewriteGlobalQualifierDecls.cpp; sourceTree = "<group>"; };
 		FF81FF462581919700894E24 /* RewriteUnaddressableReferences.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RewriteUnaddressableReferences.cpp; sourceTree = "<group>"; };
 		FF81FF472581919700894E24 /* AstHelpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AstHelpers.h; sourceTree = "<group>"; };
 		FF81FF482581919700894E24 /* HoistConstants.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HoistConstants.cpp; sourceTree = "<group>"; };
@@ -3051,8 +3048,6 @@
 				FF81FF4B2581919700894E24 /* Reference.h */,
 				FF81FF582581919700894E24 /* RewriteCaseDeclarations.cpp */,
 				FF81FF592581919700894E24 /* RewriteCaseDeclarations.h */,
-				FF81FF452581919700894E24 /* RewriteGlobalQualifierDecls.cpp */,
-				FF81FF432581919700894E24 /* RewriteGlobalQualifierDecls.h */,
 				FF81FF4F2581919700894E24 /* RewriteKeywords.cpp */,
 				FF81FF312581919700894E24 /* RewriteKeywords.h */,
 				FF81FF362581919700894E24 /* RewriteOutArgs.cpp */,
@@ -3846,7 +3841,6 @@
 				DF83E2632639FD33000825EF /* RewriteDfdy.cpp in Sources */,
 				DF83E2742639FD33000825EF /* RewriteDoWhile.cpp in Sources */,
 				DF83E25C2639FD33000825EF /* RewriteExpressionsWithShaderStorageBlock.cpp in Sources */,
-				DF83E23F2639FCD5000825EF /* RewriteGlobalQualifierDecls.cpp in Sources */,
 				DF83E27F2639FD33000825EF /* RewriteInterpolateAtOffset.cpp in Sources */,
 				DF83E2452639FCD5000825EF /* RewriteKeywords.cpp in Sources */,
 				DF83E2342639FCD5000825EF /* RewriteOutArgs.cpp in Sources */,
