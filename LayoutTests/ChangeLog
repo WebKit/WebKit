@@ -1,5 +1,55 @@
 2021-10-26  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r282132. rdar://problem/84629639
+
+    webgl/2.0.y/deqp/functional/gles3/rbostatequery.html fails on Metal
+    https://bugs.webkit.org/show_bug.cgi?id=229950
+    
+    Patch by Kimmo Kinnunen <kkinnunen@apple.com> on 2021-09-08
+    Reviewed by Dean Jackson.
+    
+    Source/WebCore:
+    
+    Request ANGLE_framebuffer_multisample when creating WebGL2 context.
+    WebGL2 spec requires multisampled framebuffers.
+    
+    The test that would fail is:
+            gl.renderbufferStorageMultisample(gl.RENDERBUFFER, samples, gl.RGBA8, 128, 128);
+            var value = /** @type {number} */ (gl.getRenderbufferParameter(gl.RENDERBUFFER, gl.RENDERBUFFER_SAMPLES));
+            this.check(value >= samples, 'Expected greater or equal to ' + samples + ' got ' + value);
+    for `samples == 1` the test would have `value == 0` with INVALID_OPERATION from ANGLE due to
+    the extension not being enabled.
+    
+    Fixes tests:
+    webgl/2.0.0/deqp/functional/gles3/rbostatequery.html
+    webgl/2.0.y/deqp/functional/gles3/rbostatequery.html
+    
+    * platform/graphics/cocoa/GraphicsContextGLOpenGLCocoa.mm:
+    (WebCore::GraphicsContextGLOpenGL::GraphicsContextGLOpenGL):
+    
+    LayoutTests:
+    
+    Enable webgl/2.0.y/deqp/functional/gles3/rbostatequery.html
+    explicitly until 2.0.y is activated.
+    
+    * webgl/TestExpectations:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@282132 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-09-08  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+            webgl/2.0.y/deqp/functional/gles3/rbostatequery.html fails on Metal
+            https://bugs.webkit.org/show_bug.cgi?id=229950
+
+            Reviewed by Dean Jackson.
+
+            Enable webgl/2.0.y/deqp/functional/gles3/rbostatequery.html
+            explicitly until 2.0.y is activated.
+
+            * webgl/TestExpectations:
+
+2021-10-26  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r281794. rdar://problem/84625240
 
     webgl/1.0.x/conformance/glsl/misc/fragcolor-fragdata-invariant.html fails

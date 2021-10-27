@@ -20,3 +20,6 @@ webgl/2.0.0/deqp/functional/gles3/vertexarrays/multiple_attributes.stride.html [
 # Incorrect tests
 webgl/2.0.0/deqp/functional/gles3/builtinprecision/ [ Skip ]
 webgl/2.0.0/conformance2/textures/misc/tex-srgb-mipmap.html [ Skip ]
+
+# Explicitly enable tests which we have fixed. These expectations will be removed when 1.0.x/2.0.y is enabled.
+webgl/2.0.y/deqp/functional/gles3/rbostatequery.html [ Pass ]
