@@ -1,3 +1,12 @@
+2021-10-27  Ayumi Kojima  <ayumi_kojima@apple.com>
+
+        [ iOS macOS Debug ] imported/w3c/web-platform-tests/html/dom/idlharness.worker.html is a flaky failure.
+        https://trac.webkit.org/changeset/284727/webkit
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
 2021-10-27  Martin Robinson  <mrobinson@webkit.org>
 
         Mark some WPT transforms tests as passing
