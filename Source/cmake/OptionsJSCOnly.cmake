@@ -5,7 +5,7 @@ if (MSVC)
 else ()
     set(CMAKE_C_VISIBILITY_PRESET default)
     set(CMAKE_CXX_VISIBILITY_PRESET default)
-    set(CMAKE_VISIBILITY_INLINES_HIDDEN OFF)
+    set(CMAKE_VISIBILITY_INLINES_HIDDEN ON)
 endif ()
 
 add_definitions(-DBUILDING_JSCONLY__)

@@ -11,7 +11,7 @@ RUN ./llvm.sh 12
 
 # Use the same version of LLVM/clang used to build Zig
 # This prevents the allocation failure
-RUN apt-get update && apt-get install --no-install-recommends -y 
+RUN apt-get update && apt-get install --no-install-recommends -y \
     bc \
     build-essential \
     ca-certificates \
@@ -84,7 +84,7 @@ RUN --mount=type=tmpfs,target=/webkitbuild \
     -DCMAKE_C_COMPILER=$(which clang-12) \ 
     /webkit && \
     cd /webkitbuild && \
-    cmake --build /webkitbuild --config relwithdebuginfo -- "jsc" -j$(nproc) && \
+    CFLAGS="$CFLAGS -ffat-lto-objects" CXXFLAGS="$CXXFLAGS -ffat-lto-objects" cmake --build /webkitbuild --config relwithdebuginfo -- "jsc" -j$(nproc) && \
     cp -r $WEBKIT_OUT_DIR/lib/*.a /output/lib && \
     cp $WEBKIT_OUT_DIR/*.h /output/include && \
     find $WEBKIT_OUT_DIR/JavaScriptCore/Headers/JavaScriptCore/ -name "*.h" -exec cp {} /output/include/JavaScriptCore/ \; && \
