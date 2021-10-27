@@ -1000,7 +1000,7 @@ uint8_t *Buffer::mapWithOpt(ContextMtl *context, bool readonly, bool noSync)
 {
     mMapReadOnly = readonly;
 
-    if (!noSync)
+    if (!noSync && (isCPUReadMemNeedSync() || !readonly))
     {
         CommandQueue &cmdQueue = context->cmdQueue();
 

@@ -1,3 +1,25 @@
+2021-10-27  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        REGRESSION (Safari 15): Poor WebGL performance on https://downloads.scirra.com/labs/particles
+        https://bugs.webkit.org/show_bug.cgi?id=230749
+        <rdar://problem/83576271>
+
+        Reviewed by Kenneth Russell.
+
+        The site would draw indexed per frame with each frame increasing the size of the draw.
+        This would cause index buffer range cache update for each draw.
+        Range computation needs to look inside the index buffer.
+        Mapping the index buffer for read would cause command buffer flush for each computation,
+        since previous frame would have used the index buffer for reading. This would cause
+        performance degradation for the duration where the range cache would need update.
+
+        Since the buffer is read by the draw but not written, the map should be a no-op.
+        Consult the "CPU memory needs synchronizing" flag of the mtl::Resource when
+        mapping. Only synchronize with GPU if the memory needs synchronizing.
+
+        * src/libANGLE/renderer/metal/mtl_resources.mm:
+        (rx::mtl::Buffer::mapWithOpt):
+
 2021-10-25  Kyle Piddington  <kpiddington@apple.com>
 
         REGRESSION (iOS 15), safari604.1: Could not link the shader program
