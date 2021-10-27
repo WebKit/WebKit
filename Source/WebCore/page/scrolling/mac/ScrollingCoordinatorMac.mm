@@ -40,7 +40,7 @@
 #import "ScrollingTreeFixedNode.h"
 #import "ScrollingTreeFrameScrollingNodeMac.h"
 #import "ScrollingTreeMac.h"
-#import "ScrollingTreeStickyNode.h"
+#import "ScrollingTreeStickyNodeCocoa.h"
 #import "TiledBacking.h"
 #import <wtf/MainThread.h>
 

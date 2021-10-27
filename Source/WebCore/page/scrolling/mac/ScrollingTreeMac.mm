@@ -34,7 +34,7 @@
 #import "ScrollingTreeOverflowScrollProxyNode.h"
 #import "ScrollingTreeOverflowScrollingNodeMac.h"
 #import "ScrollingTreePositionedNode.h"
-#import "ScrollingTreeStickyNode.h"
+#import "ScrollingTreeStickyNodeCocoa.h"
 #import "WebCoreCALayerExtras.h"
 #import "WebLayer.h"
 #import "WheelEventTestMonitor.h"
@@ -69,7 +69,7 @@ Ref<ScrollingTreeNode> ScrollingTreeMac::createScrollingTreeNode(ScrollingNodeTy
     case ScrollingNodeType::Fixed:
         return ScrollingTreeFixedNode::create(*this, nodeID);
     case ScrollingNodeType::Sticky:
-        return ScrollingTreeStickyNode::create(*this, nodeID);
+        return ScrollingTreeStickyNodeCocoa::create(*this, nodeID);
     case ScrollingNodeType::Positioned:
         return ScrollingTreePositionedNode::create(*this, nodeID);
     }

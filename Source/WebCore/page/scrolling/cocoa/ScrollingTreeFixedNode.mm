@@ -35,7 +35,7 @@
 #import "ScrollingTreeOverflowScrollProxyNode.h"
 #import "ScrollingTreeOverflowScrollingNode.h"
 #import "ScrollingTreePositionedNode.h"
-#import "ScrollingTreeStickyNode.h"
+#import "ScrollingTreeStickyNodeCocoa.h"
 #import "WebCoreCALayerExtras.h"
 #import <wtf/text/TextStream.h>
 
@@ -72,7 +72,7 @@ void ScrollingTreeFixedNode::applyLayerPositions()
 {
     auto computeLayerPosition = [&] {
         FloatSize overflowScrollDelta;
-        ScrollingTreeStickyNode* lastStickyNode = nullptr;
+        ScrollingTreeStickyNodeCocoa* lastStickyNode = nullptr;
         for (auto* ancestor = parent(); ancestor; ancestor = ancestor->parent()) {
             if (is<ScrollingTreeFrameScrollingNode>(*ancestor)) {
                 // Fixed nodes are positioned relative to the containing frame scrolling node.
@@ -107,7 +107,7 @@ void ScrollingTreeFixedNode::applyLayerPositions()
             }
 
             if (is<ScrollingTreeStickyNode>(*ancestor)) {
-                auto& stickyNode = downcast<ScrollingTreeStickyNode>(*ancestor);
+                auto& stickyNode = downcast<ScrollingTreeStickyNodeCocoa>(*ancestor);
                 overflowScrollDelta += stickyNode.scrollDeltaSinceLastCommit();
                 lastStickyNode = &stickyNode;
                 continue;

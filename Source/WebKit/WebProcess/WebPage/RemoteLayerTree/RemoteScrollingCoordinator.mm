@@ -43,7 +43,7 @@
 #import <WebCore/RenderLayerCompositor.h>
 #import <WebCore/RenderView.h>
 #import <WebCore/ScrollingTreeFixedNode.h>
-#import <WebCore/ScrollingTreeStickyNode.h>
+#import <WebCore/ScrollingTreeStickyNodeCocoa.h>
 
 
 namespace WebKit {

@@ -100,7 +100,7 @@ if (USE_COORDINATED_GRAPHICS)
     )
     list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
         page/scrolling/nicosia/ScrollingTreeFixedNode.h
-        page/scrolling/nicosia/ScrollingTreeStickyNode.h
+        page/scrolling/nicosia/ScrollingTreeStickyNodeNicosia.h
 
         platform/graphics/nicosia/NicosiaAnimatedBackingStoreClient.h
         platform/graphics/nicosia/NicosiaBuffer.h

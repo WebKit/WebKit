@@ -1799,6 +1799,7 @@ page/scrolling/ScrollingTreeNode.cpp
 page/scrolling/ScrollingTreeOverflowScrollingNode.cpp
 page/scrolling/ScrollingTreeScrollingNode.cpp
 page/scrolling/ScrollingTreeScrollingNodeDelegate.cpp
+page/scrolling/ScrollingTreeStickyNode.cpp
 page/scrolling/ThreadedScrollingTree.cpp
 platform/ContentType.cpp
 platform/ContextMenu.cpp

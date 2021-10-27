@@ -1,3 +1,17 @@
+2021-10-27  Martin Robinson  <mrobinson@webkit.org>
+
+        Eliminate duplicated platform-specific code in ScrollingTreeStickyNode
+        https://bugs.webkit.org/show_bug.cgi?id=231571
+
+        Reviewed by Simon Fraser.
+
+        Abstract code from the Nicosia and Cooca version of ScrollingTreeStickyNode,
+        so that it can be shared by both ports.
+
+        * UIProcess/RemoteLayerTree/RemoteScrollingTree.cpp:
+        (WebKit::RemoteScrollingTree::createScrollingTreeNode):
+        * WebProcess/WebPage/RemoteLayerTree/RemoteScrollingCoordinator.mm:
+
 2021-10-26  Alex Christensen  <achristensen@webkit.org>
 
         Remove properties set by NSURLProtocol on NSURLRequest before serializing
