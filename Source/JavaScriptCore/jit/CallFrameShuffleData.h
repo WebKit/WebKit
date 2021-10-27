@@ -44,13 +44,13 @@ public:
     unsigned numLocals { UINT_MAX };
     unsigned numPassedArgs { UINT_MAX };
     unsigned numParameters { UINT_MAX }; // On our machine frame.
-#if USE(JSVALUE64)
     RegisterMap<ValueRecovery> registers;
+#if USE(JSVALUE64)
     GPRReg numberTagRegister { InvalidGPRReg };
+#endif
 
     void setupCalleeSaveRegisters(CodeBlock*);
     void setupCalleeSaveRegisters(const RegisterAtOffsetList*);
-#endif
     ValueRecovery callee;
 };
 

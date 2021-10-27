@@ -742,6 +742,8 @@ void SpeculativeJIT::emitCall(Node* node)
             
             for (unsigned i = numPassedArgs; i < numAllocatedArgs; ++i)
                 shuffleData.args[i] = ValueRecovery::constant(jsUndefined());
+
+            shuffleData.setupCalleeSaveRegisters(m_jit.codeBlock());
         } else {
             m_jit.store32(MacroAssembler::TrustedImm32(numPassedArgs), m_jit.calleeFramePayloadSlot(CallFrameSlot::argumentCountIncludingThis));
         

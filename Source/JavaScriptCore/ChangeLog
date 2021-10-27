@@ -1,3 +1,63 @@
+2021-10-27  Geza Lore  <glore@igalia.com>
+
+        [JSC][32bit] Fix CSR restore on DFG tail calls, add extra register on ARMv7
+        https://bugs.webkit.org/show_bug.cgi?id=230622
+
+        Reviewed by Keith Miller.
+
+        This re-introduces the patch reverted by
+        https://trac.webkit.org/changeset/284911/webkit
+        with the C_LOOP interpreter now fixed.
+
+        The only difference between the original patch and this version is in
+        LowLevelInterpreter32_64.asm and LowLevelInterpreter64.asm, which
+        need the PC base (PB) register restored on C_LOOP on return from a
+        call, as C_LOOP does not seem to handle this as a proper callee save
+        register (CSR). On non C_LOOP builds, the CSR restore mechanism takes
+        care of this, so removed the superfluous instructions.
+
+        --- Original ChangeLog ---
+
+        This patch does two things:
+
+        1. Adds an extra callee save register (CSR) to be available to DFG on
+        ARMv7. To do this properly required the following:
+
+        2. Implements the necessary shuffling in CallFrameShuffler on 32-bit
+        architectures that is required to restore CSRs properly after a tail
+        call on these architectures. This also fixes the remaining failures in
+        the 32-bit build of the unlinked baseline JIT.
+
+        * bytecode/ValueRecovery.cpp:
+        (JSC::ValueRecovery::dumpInContext const):
+        * bytecode/ValueRecovery.h:
+        (JSC::ValueRecovery::calleeSaveRegDisplacedInJSStack):
+        (JSC::ValueRecovery::isInJSStack const):
+        (JSC::ValueRecovery::dataFormat const):
+        (JSC::ValueRecovery::withLocalsOffset const):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        * jit/CachedRecovery.cpp:
+        (JSC::CachedRecovery::loadsIntoGPR const):
+        * jit/CallFrameShuffleData.cpp:
+        (JSC::CallFrameShuffleData::setupCalleeSaveRegisters):
+        * jit/CallFrameShuffleData.h:
+        * jit/CallFrameShuffler.cpp:
+        (JSC::CallFrameShuffler::CallFrameShuffler):
+        * jit/CallFrameShuffler.h:
+        (JSC::CallFrameShuffler::snapshot const):
+        (JSC::CallFrameShuffler::addNew):
+        * jit/CallFrameShuffler32_64.cpp:
+        (JSC::CallFrameShuffler::emitLoad):
+        (JSC::CallFrameShuffler::emitDisplace):
+        * jit/GPRInfo.h:
+        (JSC::GPRInfo::toRegister):
+        (JSC::GPRInfo::toIndex):
+        * jit/RegisterSet.cpp:
+        (JSC::RegisterSet::dfgCalleeSaveRegisters):
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+
 2021-10-26  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r284255.
