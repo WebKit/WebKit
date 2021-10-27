@@ -1,5 +1,13 @@
 2021-10-26  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        Unreivewed, fix CLoop build and test failure
+
+        CLoop is running Yarr interpreter instead of Yarr JIT.
+
+        * mozilla/ecma_3/RegExp/regress-85721.js:
+
+2021-10-26  Yusuke Suzuki  <ysuzuki@apple.com>
+
         Unreviewed, fix test262 bot failures
         https://bugs.webkit.org/show_bug.cgi?id=232005
 
