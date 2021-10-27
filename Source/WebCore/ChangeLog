@@ -1,5 +1,67 @@
 2021-10-26  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r283583. rdar://problem/83606128
+
+    REGRESSION (Monterey): paramountplus.com: Cannot enter fullscreen in Safari
+    https://bugs.webkit.org/show_bug.cgi?id=231005
+    
+    The page performs a lot of canvas readbacks when entering or exiting
+    fullscreen mode.
+    When the media is encrypted, attempting to do so would have made the
+    sync call from the content to GPU process hang for one full second.
+    Worse the CATransaction should it fail to paint would retry continuously.
+    After 10 attempts (and blocking the process for over 10s) the
+    content process would get automatically killed.
+    This works around rdar://83867877 where outputMediaDataWillChange isn't
+    called following a call to
+    [AVPlayerItemVideoOutput requestNotificationOfMediaDataChangeWithAdvanceInterval].
+    In case we timed out. we will disable this functionality until there's a
+    track change.
+    
+    Reviewed by Eric Carlson.
+    
+    We do not have the infrastructure to easily test interacting with encrypted
+    content. Once bug 231006 is fixed, we could write a test to ensure that canvas
+    readbacks do not lock-up.
+    
+    * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+    * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+    (WebCore::MediaPlayerPrivateAVFoundationObjC::updateVideoTracks):
+    (WebCore::MediaPlayerPrivateAVFoundationObjC::waitForVideoOutputMediaDataWillChange):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@283583 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-10-05  Jean-Yves Avenard  <jya@apple.com>
+
+            REGRESSION (Monterey): paramountplus.com: Cannot enter fullscreen in Safari
+            https://bugs.webkit.org/show_bug.cgi?id=231005
+
+            The page performs a lot of canvas readbacks when entering or exiting
+            fullscreen mode.
+            When the media is encrypted, attempting to do so would have made the
+            sync call from the content to GPU process hang for one full second.
+            Worse the CATransaction should it fail to paint would retry continuously.
+            After 10 attempts (and blocking the process for over 10s) the
+            content process would get automatically killed.
+            This works around rdar://83867877 where outputMediaDataWillChange isn't
+            called following a call to
+            [AVPlayerItemVideoOutput requestNotificationOfMediaDataChangeWithAdvanceInterval].
+            In case we timed out. we will disable this functionality until there's a
+            track change.
+
+            Reviewed by Eric Carlson.
+
+            We do not have the infrastructure to easily test interacting with encrypted
+            content. Once bug 231006 is fixed, we could write a test to ensure that canvas
+            readbacks do not lock-up.
+
+            * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+            * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+            (WebCore::MediaPlayerPrivateAVFoundationObjC::updateVideoTracks):
+            (WebCore::MediaPlayerPrivateAVFoundationObjC::waitForVideoOutputMediaDataWillChange):
+
+2021-10-26  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r283362. rdar://problem/84629481
 
     Cocoa GraphicsContextGLOpenGL should not be used by GraphicsContextGLCVANGLE

@@ -438,6 +438,7 @@ private:
     bool m_shouldPlayToPlaybackTarget { false };
 #endif
     bool m_runningModalPaint { false };
+    bool m_waitForVideoOutputMediaDataWillChangeTimedOut { false };
 };
 
 }

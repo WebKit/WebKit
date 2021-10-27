@@ -2340,6 +2340,10 @@ void MediaPlayerPrivateAVFoundationObjC::updateVideoTracks()
     for (auto& track : m_audioTracks)
         track->resetPropertiesFromTrack();
 
+    // In case the video track content changed, we may be able to perform a readback again.
+    if (count)
+        m_waitForVideoOutputMediaDataWillChangeTimedOut = false;
+
     ALWAYS_LOG(LOGIDENTIFIER, "track count was ", count, ", is ", m_videoTracks.size());
 }
 
@@ -2553,6 +2557,8 @@ RefPtr<NativeImage> MediaPlayerPrivateAVFoundationObjC::nativeImageForCurrentTim
 
 void MediaPlayerPrivateAVFoundationObjC::waitForVideoOutputMediaDataWillChange()
 {
+    if (m_waitForVideoOutputMediaDataWillChangeTimedOut)
+        return;
     [m_videoOutput requestNotificationOfMediaDataChangeWithAdvanceInterval:0];
 
     // Wait for 1 second.
@@ -2568,9 +2574,10 @@ void MediaPlayerPrivateAVFoundationObjC::waitForVideoOutputMediaDataWillChange()
     m_runningModalPaint = false;
 
     bool satisfied = timeoutTimer.isActive();
-    if (!satisfied)
+    if (!satisfied) {
         ERROR_LOG(LOGIDENTIFIER, "timed out");
-    else
+        m_waitForVideoOutputMediaDataWillChangeTimedOut = true;
+    } else
         INFO_LOG(LOGIDENTIFIER, "waiting for videoOutput took ", (MonotonicTime::now() - start).seconds());
 }
 
