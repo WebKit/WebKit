@@ -1,3 +1,13 @@
+2021-10-27  Kate Cheney  <katherine_cheney@apple.com>
+
+        REGRESSION: [iOS] TestWebKitAPI.InAppBrowserPrivacy.AppBoundDomainAllowsServiceWorkers is failing
+        https://bugs.webkit.org/show_bug.cgi?id=227918
+
+        Unreviewed fix to unskip failing test that was fixed by
+        https://commits.webkit.org/239967@main.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/InAppBrowserPrivacy.mm:
+
 2021-10-27  Simon Fraser  <simon.fraser@apple.com>
 
         Preserve image diff precision until display time
