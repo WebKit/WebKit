@@ -16,10 +16,22 @@ ADD_RESULTS({
                         "report": "REGRESSION",
                         "expected": "PASS",
                         "actual": "IMAGE LEAK",
-                        "image_diff_percent": 0.26,
+                        "image_diff_percent": 0.261234,
                         "leaks": [{
                             "document": "http://localhost:8800/WebKit/cache-storage/image-fail-with-leak.html",
                         }]
+                    },
+                    "image-fail.html": {
+                        "report": "REGRESSION",
+                        "expected": "PASS",
+                        "actual": "IMAGE",
+                        "image_diff_percent": 86.262301
+                    },
+                    "tiny-image-fail.html": {
+                        "report": "REGRESSION",
+                        "expected": "PASS",
+                        "actual": "IMAGE",
+                        "image_diff_percent": 0.002
                     },
                     "leaky-worker.html": {
                         "report": "REGRESSION",

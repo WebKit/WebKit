@@ -351,7 +351,7 @@ class PortTestCase(unittest.TestCase):
         port = self.make_port()
         port._server_process_constructor = lambda port, nm, cmd, env, crash_message=None: MockServerProcess(lines=['Content-Length: 4\n', 'test', 'diff: 0.101234%\n', 'maxDifference=8; totalPixels=20\n', '#EOF\n'])
         image_differ = ImageDiffer(port)
-        self.assertEqual(image_differ.diff_image(b'foo', b'bar', tolerance=0.1), ImageDiffResult(passed=False, diff_image=b'test', difference=0.1, tolerance=0.1, fuzzy_data={'max_difference': 8, 'total_pixels': 20}))
+        self.assertEqual(image_differ.diff_image(b'foo', b'bar', tolerance=0.1), ImageDiffResult(passed=False, diff_image=b'test', difference=0.101234, tolerance=0.1, fuzzy_data={'max_difference': 8, 'total_pixels': 20}))
 
     def test_diff_image_failed(self):
         port = self.make_port()

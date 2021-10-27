@@ -152,11 +152,6 @@ class ImageDiffer(object):
         total_pixels = int(string_utils.decode(m.group(2), target_type=str))
 
         passed = diff_percent <= self._tolerance
-        if not passed:
-            # FIXME: This prettification should happen at display time.
-            diff_percent = round(diff_percent * 100) / 100
-            diff_percent = max(diff_percent, 0.01)
-
         return ImageDiffResult(passed=passed, diff_image=output_image, difference=diff_percent, tolerance=self._tolerance, fuzzy_data={'max_difference': max_difference, 'total_pixels': total_pixels}, error_string=err_str or None)
 
     def stop(self):

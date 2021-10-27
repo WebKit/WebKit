@@ -1,3 +1,18 @@
+2021-10-27  Simon Fraser  <simon.fraser@apple.com>
+
+        Preserve image diff precision until display time
+        https://bugs.webkit.org/show_bug.cgi?id=232365
+
+        Reviewed by Martin Robinson.
+
+        Keep the precise image diff percentage value, saving it in full_results.json, and
+        only round it at presentation time in results.html.
+
+        * Scripts/webkitpy/port/image_diff.py:
+        (ImageDiffer._read):
+        * Scripts/webkitpy/port/port_testcase.py:
+        (PortTestCase.test_diff_image_failed_with_rounded_diff):
+
 2021-10-27  Dmitry Bezhetskov  <dbezhetskov@igalia.com>
 
         [WASM-Function-References] Add call_ref spec tests
