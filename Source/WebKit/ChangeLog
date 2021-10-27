@@ -1,3 +1,39 @@
+2021-10-27  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r283662. rdar://problem/84717723
+
+    Fix watchOS, tvOS, and macCatalyst builds after r283592
+    https://bugs.webkit.org/show_bug.cgi?id=231300
+    rdar://83936867
+    
+    Reviewed by Wenson Hsieh.
+    
+    Source/WebKit:
+    
+    * Platform/spi/ios/PhotosUISPI.h:
+    * UIProcess/ios/forms/WKFileUploadPanel.mm:
+    (-[WKFileUploadPanel imagePickerController:didFinishPickingMultipleMediaWithInfo:]):
+    
+    Source/WTF:
+    
+    * wtf/PlatformEnableCocoa.h:
+    * wtf/PlatformHave.h:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@283662 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-10-06  Aditya Keerthi  <akeerthi@apple.com>
+
+            Fix watchOS, tvOS, and macCatalyst builds after r283592
+            https://bugs.webkit.org/show_bug.cgi?id=231300
+            rdar://83936867
+
+            Reviewed by Wenson Hsieh.
+
+            * Platform/spi/ios/PhotosUISPI.h:
+            * UIProcess/ios/forms/WKFileUploadPanel.mm:
+            (-[WKFileUploadPanel imagePickerController:didFinishPickingMultipleMediaWithInfo:]):
+
 2021-10-25  Null  <null@apple.com>
 
         Cherry-pick r284532. rdar://problem/84625267

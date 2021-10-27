@@ -25,11 +25,15 @@
 
 #if USE(APPLE_INTERNAL_SDK)
 
+#if HAVE(PUACTIVITYPROGRESSCONTROLLER)
 #import <PhotosUI/PUActivityProgressController.h>
+#endif
 
 #else
 
 #import "UIKitSPI.h"
+
+#if HAVE(PUACTIVITYPROGRESSCONTROLLER)
 
 @interface PUActivityProgressController : NSObject
 
@@ -45,5 +49,7 @@
 - (void)hideAnimated:(BOOL)animated allowDelay:(BOOL)allowDelay;
 
 @end
+
+#endif // HAVE(PUACTIVITYPROGRESSCONTROLLER)
 
 #endif // USE(APPLE_INTERNAL_SDK)

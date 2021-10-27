@@ -54,8 +54,10 @@
 
 #import <pal/cocoa/AVFoundationSoftLink.h>
 
+#if HAVE(PUACTIVITYPROGRESSCONTROLLER)
 SOFT_LINK_FRAMEWORK(PhotosUI)
 SOFT_LINK_CLASS(PhotosUI, PUActivityProgressController)
+#endif
 
 using namespace WebKit;
 
@@ -165,6 +167,8 @@ static bool setContainsUTIThatConformsTo(NSSet<NSString *> *typeIdentifiers, UTT
 @end
 
 #pragma mark - WKFileUploadMediaTranscoder
+
+#if ENABLE(TRANSCODE_UIIMAGEPICKERCONTROLLER_VIDEO)
 
 @interface WKFileUploadMediaTranscoder : NSObject
 
@@ -321,6 +325,8 @@ static bool setContainsUTIThatConformsTo(NSSet<NSString *> *typeIdentifiers, UTT
 
 @end
 
+#endif // ENABLE(TRANSCODE_UIIMAGEPICKERCONTROLLER_VIDEO)
+
 #pragma mark - WKFileUploadPanel
 
 @interface WKFileUploadPanel () <UIPopoverControllerDelegate, UINavigationControllerDelegate, UIImagePickerControllerDelegate, UIDocumentPickerDelegate, UIAdaptivePresentationControllerDelegate
@@ -338,7 +344,9 @@ static bool setContainsUTIThatConformsTo(NSSet<NSString *> *typeIdentifiers, UTT
     CGPoint _interactionPoint;
     BOOL _allowMultipleFiles;
     BOOL _usingCamera;
+#if ENABLE(TRANSCODE_UIIMAGEPICKERCONTROLLER_VIDEO)
     RetainPtr<WKFileUploadMediaTranscoder> _mediaTranscoder;
+#endif
     RetainPtr<UIImagePickerController> _imagePicker;
     RetainPtr<UIViewController> _presentationViewController; // iPhone always. iPad for Fullscreen Camera.
     ALLOW_DEPRECATED_DECLARATIONS_BEGIN
@@ -938,7 +946,13 @@ static NSString *displayStringForDocumentsAtURLs(NSArray<NSURL *> *urls)
 {
     [self _processMediaInfoDictionaries:infos
         successBlock:^(NSArray<_WKFileUploadItem *> *items) {
+#if ENABLE(TRANSCODE_UIIMAGEPICKERCONTROLLER_VIDEO)
             [self _uploadMediaItemsTranscodingVideo:items];
+#else
+            ensureOnMainRunLoop([self, strongSelf = retainPtr(self), items = retainPtr(items)] {
+                [self _chooseMediaItems:items.get()];
+            });
+#endif
         }
         failureBlock:^{
             ensureOnMainRunLoop([self, strongSelf = retainPtr(self)] {
@@ -1084,6 +1098,8 @@ static NSString *displayStringForDocumentsAtURLs(NSArray<NSURL *> *urls)
     [self _uploadItemForJPEGRepresentationOfImage:originalImage successBlock:successBlock failureBlock:failureBlock];
 }
 
+#if ENABLE(TRANSCODE_UIIMAGEPICKERCONTROLLER_VIDEO)
+
 - (void)_uploadMediaItemsTranscodingVideo:(NSArray<_WKFileUploadItem *> *)items
 {
     auto videoCount = [[items indexesOfObjectsPassingTest:^(_WKFileUploadItem *item, NSUInteger, BOOL*) {
@@ -1107,6 +1123,8 @@ static NSString *displayStringForDocumentsAtURLs(NSArray<NSURL *> *urls)
         [_mediaTranscoder start];
     });
 }
+
+#endif
 
 - (BOOL)platformSupportsPickerViewController
 {
