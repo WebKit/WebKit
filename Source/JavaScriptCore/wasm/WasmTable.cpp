@@ -179,9 +179,9 @@ DEFINE_VISIT_AGGREGATE(Table);
 Type Table::wasmType() const
 {
     if (isExternrefTable())
-        return Types::Externref;
+        return externrefType();
     ASSERT(isFuncrefTable());
-    return Types::Funcref;
+    return funcrefType();
 }
 
 FuncRefTable* Table::asFuncrefTable()

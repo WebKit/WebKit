@@ -543,7 +543,8 @@ JSC_DEFINE_JIT_OPERATION(operationIterateResults, void, (CallFrame* callFrame, I
         JSValue value = buffer.at(index);
 
         uint64_t unboxedValue = 0;
-        switch (signature->returnType(index).kind) {
+        const auto& returnType = signature->returnType(index);
+        switch (returnType.kind) {
         case TypeKind::I32:
             unboxedValue = value.toInt32(globalObject);
             break;
@@ -556,17 +557,16 @@ JSC_DEFINE_JIT_OPERATION(operationIterateResults, void, (CallFrame* callFrame, I
         case TypeKind::F64:
             unboxedValue = bitwise_cast<uint64_t>(value.toNumber(globalObject));
             break;
-        case TypeKind::Funcref:
-            if (!value.isCallable(vm)) {
-                throwTypeError(globalObject, scope, "Funcref value is not a function"_s);
-                return;
-            }
-            FALLTHROUGH;
-        case TypeKind::Externref:
-            unboxedValue = bitwise_cast<uint64_t>(value);
-            break;
-        default:
-            RELEASE_ASSERT_NOT_REACHED();
+        default: {
+            if (isFuncref(returnType) || isExternref(returnType)) {
+                if (isFuncref(returnType) && !value.isCallable(vm)) {
+                    throwTypeError(globalObject, scope, "Funcref value is not a function"_s);
+                    return;
+                }
+                unboxedValue = bitwise_cast<uint64_t>(value);
+            } else
+                RELEASE_ASSERT_NOT_REACHED();
+        }
         }
         RETURN_IF_EXCEPTION(scope, void());
 

@@ -403,14 +403,16 @@ CString BytecodeDumper::formatConstant(Type type, uint64_t constant) const
     case TypeKind::F64:
         return toCString(bitwise_cast<double>(constant));
         break;
-    case TypeKind::Externref:
-    case TypeKind::Funcref:
-        if (JSValue::decode(constant) == jsNull())
-            return "null";
-        return toCString(RawPointer(bitwise_cast<void*>(constant)));
-    default:
+    default: {
+        if (isFuncref(type) || isExternref(type)) {
+            if (JSValue::decode(constant) == jsNull())
+                return "null";
+            return toCString(RawPointer(bitwise_cast<void*>(constant)));
+        }
+
         RELEASE_ASSERT_NOT_REACHED();
         return "";
+    }
     }
 }
 

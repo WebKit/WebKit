@@ -253,37 +253,39 @@ MacroAssemblerCodePtr<JSEntryPtrTag> WebAssemblyFunction::jsCallEntrypointSlow()
                 jit.zeroExtend32ToWord(scratchGPR, wasmCallInfo.params[i].gpr());
             break;
         }
-        case Wasm::TypeKind::TypeIdx:
-        case Wasm::TypeKind::Funcref: {
-            // Ensure we have a WASM exported function.
-            jit.load64(jsParam, scratchGPR);
-            auto isNull = jit.branchIfNull(scratchGPR);
-            if (!type.isNullable())
-                slowPath.append(isNull);
-            slowPath.append(jit.branchIfNotCell(scratchGPR));
-
-            stackLimitGPRIsClobbered = true;
-            jit.emitLoadStructure(vm, scratchGPR, scratchGPR, stackLimitGPR);
-            jit.loadPtr(CCallHelpers::Address(scratchGPR, Structure::classInfoOffset()), scratchGPR);
-
-            static_assert(std::is_final<WebAssemblyFunction>::value, "We do not check for subtypes below");
-            static_assert(std::is_final<WebAssemblyWrapperFunction>::value, "We do not check for subtypes below");
-
-            auto isWasmFunction = jit.branchPtr(CCallHelpers::Equal, scratchGPR, CCallHelpers::TrustedImmPtr(WebAssemblyFunction::info()));
-            slowPath.append(jit.branchPtr(CCallHelpers::NotEqual, scratchGPR, CCallHelpers::TrustedImmPtr(WebAssemblyWrapperFunction::info())));
-
-            isWasmFunction.link(&jit);
-            if (type.kind == Wasm::TypeKind::TypeIdx) {
+        case Wasm::TypeKind::Ref:
+        case Wasm::TypeKind::RefNull:
+        case Wasm::TypeKind::Funcref:
+        case Wasm::TypeKind::Externref: {
+            if (!Wasm::isExternref(type)) {
+                // Ensure we have a WASM exported function.
                 jit.load64(jsParam, scratchGPR);
-                jit.loadPtr(CCallHelpers::Address(scratchGPR, WebAssemblyFunctionBase::offsetOfSignatureIndex()), scratchGPR);
-                slowPath.append(jit.branchPtr(CCallHelpers::NotEqual, scratchGPR, CCallHelpers::TrustedImmPtr(type.index)));
+                auto isNull = jit.branchIfNull(scratchGPR);
+                if (!type.isNullable())
+                    slowPath.append(isNull);
+                slowPath.append(jit.branchIfNotCell(scratchGPR));
+
+                stackLimitGPRIsClobbered = true;
+                jit.emitLoadStructure(vm, scratchGPR, scratchGPR, stackLimitGPR);
+                jit.loadPtr(CCallHelpers::Address(scratchGPR, Structure::classInfoOffset()), scratchGPR);
+
+                static_assert(std::is_final<WebAssemblyFunction>::value, "We do not check for subtypes below");
+                static_assert(std::is_final<WebAssemblyWrapperFunction>::value, "We do not check for subtypes below");
+
+                auto isWasmFunction = jit.branchPtr(CCallHelpers::Equal, scratchGPR, CCallHelpers::TrustedImmPtr(WebAssemblyFunction::info()));
+                slowPath.append(jit.branchPtr(CCallHelpers::NotEqual, scratchGPR, CCallHelpers::TrustedImmPtr(WebAssemblyWrapperFunction::info())));
+
+                isWasmFunction.link(&jit);
+                if (Wasm::isRefWithTypeIndex(type)) {
+                    jit.load64(jsParam, scratchGPR);
+                    jit.loadPtr(CCallHelpers::Address(scratchGPR, WebAssemblyFunctionBase::offsetOfSignatureIndex()), scratchGPR);
+                    slowPath.append(jit.branchPtr(CCallHelpers::NotEqual, scratchGPR, CCallHelpers::TrustedImmPtr(type.index)));
+                }
+
+                if (type.isNullable())
+                    isNull.link(&jit);
             }
 
-            if (type.isNullable())
-                isNull.link(&jit);
-            FALLTHROUGH;
-        }
-        case Wasm::TypeKind::Externref: {
             if (isStack) {
                 jit.load64(jsParam, scratchGPR);
                 if (!type.isNullable())

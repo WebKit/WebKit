@@ -1,3 +1,77 @@
+2021-10-27  Dmitry Bezhetskov  <dbezhetskov@igalia.com>
+
+        [WASM-Function-References] Add call_ref spec tests
+        https://bugs.webkit.org/show_bug.cgi?id=229710
+        
+        Reviewed by Yusuke Suzuki.
+        
+        Removed redundand TypeKind::TypeIdx because new Ref and RefNull opcodes cover
+        the same cases.
+        Also use new internal representation of Funcref/Externref when typed
+        function references proposal is enabled.
+        
+        * bytecode/BytecodeDumper.cpp:
+        (JSC::Wasm::BytecodeDumper::formatConstant const):
+        * wasm/WasmAirIRGenerator.cpp:
+        (JSC::Wasm::AirIRGenerator::gRef):
+        (JSC::Wasm::AirIRGenerator::tmpForType):
+        (JSC::Wasm::AirIRGenerator::emitCCall):
+        (JSC::Wasm::AirIRGenerator::moveOpForValueType):
+        (JSC::Wasm::AirIRGenerator::AirIRGenerator):
+        (JSC::Wasm::AirIRGenerator::addLocal):
+        (JSC::Wasm::AirIRGenerator::addConstant):
+        (JSC::Wasm::AirIRGenerator::addRefFunc):
+        (JSC::Wasm::AirIRGenerator::gTypeIdx): Deleted.
+        * wasm/WasmCallingConvention.h:
+        (JSC::Wasm::WasmCallingConvention::marshallLocation const):
+        (JSC::Wasm::JSCallingConvention::marshallLocation const):
+        * wasm/WasmFormat.h:
+        (JSC::Wasm::isValueType):
+        (JSC::Wasm::isRefType):
+        (JSC::Wasm::isExternref):
+        (JSC::Wasm::isFuncref):
+        (JSC::Wasm::FuncrefType):
+        (JSC::Wasm::ExternrefType):
+        (JSC::Wasm::isRefWithTypeIndex):
+        (JSC::Wasm::isSubtype):
+        (JSC::Wasm::isDefaultableType):
+        (JSC::Wasm::TableInformation::wasmType const):
+        * wasm/WasmFunctionParser.h:
+        (JSC::Wasm::FunctionParser<Context>::parseExpression):
+        * wasm/WasmGlobal.cpp:
+        (JSC::Wasm::Global::get const):
+        (JSC::Wasm::Global::set):
+        (JSC::Wasm::Global::visitAggregateImpl):
+        * wasm/WasmLLIntGenerator.cpp:
+        (JSC::Wasm::LLIntGenerator::callInformationForCaller):
+        (JSC::Wasm::LLIntGenerator::callInformationForCallee):
+        (JSC::Wasm::LLIntGenerator::addArguments):
+        (JSC::Wasm::LLIntGenerator::addLocal):
+        * wasm/WasmOperations.cpp:
+        (JSC::Wasm::JSC_DEFINE_JIT_OPERATION):
+        * wasm/WasmParser.h:
+        (JSC::Wasm::Parser<SuccessType>::parseValueType):
+        * wasm/WasmSectionParser.cpp:
+        (JSC::Wasm::SectionParser::parseInitExpr):
+        * wasm/WasmTable.cpp:
+        (JSC::Wasm::Table::wasmType const):
+        * wasm/js/JSToWasm.cpp:
+        (JSC::Wasm::marshallJSResult):
+        * wasm/js/JSWebAssemblyGlobal.cpp:
+        (JSC::JSWebAssemblyGlobal::type):
+        * wasm/js/JSWebAssemblyHelpers.h:
+        (JSC::defaultValueForReferenceType):
+        * wasm/js/WasmToJS.cpp:
+        (JSC::Wasm::wasmToJS):
+        * wasm/js/WebAssemblyFunction.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::WebAssemblyFunction::jsCallEntrypointSlow):
+        * wasm/js/WebAssemblyGlobalConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * wasm/js/WebAssemblyModuleRecord.cpp:
+        (JSC::WebAssemblyModuleRecord::linkImpl):
+        * wasm/wasm.json:
+
 2021-10-27  Geza Lore  <glore@igalia.com>
 
         [JSC][32bit] Fix CSR restore on DFG tail calls, add extra register on ARMv7

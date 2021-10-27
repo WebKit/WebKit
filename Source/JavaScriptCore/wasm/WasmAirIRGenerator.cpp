@@ -434,7 +434,7 @@ private:
     TypedTmp g64() { return { newTmp(B3::GP), Types::I64 }; }
     TypedTmp gExternref() { return { newTmp(B3::GP), Types::Externref }; }
     TypedTmp gFuncref() { return { newTmp(B3::GP), Types::Funcref }; }
-    TypedTmp gTypeIdx(Type type) { return { newTmp(B3::GP), type }; }
+    TypedTmp gRef(Type type) { return { newTmp(B3::GP), type }; }
     TypedTmp f32() { return { newTmp(B3::FP), Types::F32 }; }
     TypedTmp f64() { return { newTmp(B3::FP), Types::F64 }; }
 
@@ -447,8 +447,9 @@ private:
             return g64();
         case TypeKind::Funcref:
             return gFuncref();
-        case TypeKind::TypeIdx:
-            return gTypeIdx(type);
+        case TypeKind::Ref:
+        case TypeKind::RefNull:
+            return gRef(type);
         case TypeKind::Externref:
             return gExternref();
         case TypeKind::F32:
@@ -625,7 +626,8 @@ private:
             case TypeKind::I64:
             case TypeKind::Externref:
             case TypeKind::Funcref:
-            case TypeKind::TypeIdx:
+            case TypeKind::Ref:
+            case TypeKind::RefNull:
                 resultType = B3::Int64;
                 break;
             case TypeKind::F32:
@@ -675,7 +677,8 @@ private:
         case TypeKind::I64:
         case TypeKind::Externref:
         case TypeKind::Funcref:
-        case TypeKind::TypeIdx:
+        case TypeKind::Ref:
+        case TypeKind::RefNull:
             return Move;
         case TypeKind::F32:
             return MoveFloat;
@@ -933,7 +936,8 @@ AirIRGenerator::AirIRGenerator(const ModuleInformation& info, B3::Procedure& pro
         case TypeKind::I64:
         case TypeKind::Externref:
         case TypeKind::Funcref:
-        case TypeKind::TypeIdx:
+        case TypeKind::Ref:
+        case TypeKind::RefNull:
             append(Move, arg, m_locals[i]);
             break;
         case TypeKind::F32:
@@ -1036,7 +1040,8 @@ auto AirIRGenerator::addLocal(Type type, uint32_t count) -> PartialResult
         switch (type.kind) {
         case TypeKind::Externref:
         case TypeKind::Funcref:
-        case TypeKind::TypeIdx:
+        case TypeKind::Ref:
+        case TypeKind::RefNull:
             append(Move, Arg::imm(JSValue::encode(jsNull())), local);
             break;
         case TypeKind::I32:
@@ -1072,7 +1077,8 @@ auto AirIRGenerator::addConstant(BasicBlock* block, Type type, uint64_t value) -
     case TypeKind::I64:
     case TypeKind::Externref:
     case TypeKind::Funcref:
-    case TypeKind::TypeIdx:
+    case TypeKind::Ref:
+    case TypeKind::RefNull:
         append(block, Move, Arg::bigImm(value), result);
         break;
     case TypeKind::F32:
@@ -1119,7 +1125,7 @@ auto AirIRGenerator::addRefFunc(uint32_t index, ExpressionType& result) -> Parti
     // FIXME: Emit this inline <https://bugs.webkit.org/show_bug.cgi?id=198506>.
     if (Options::useWebAssemblyTypedFunctionReferences()) {
         SignatureIndex signatureIndex = m_info.signatureIndexFromFunctionIndexSpace(index);
-        result = tmpForType(Type { TypeKind::TypeIdx, Nullable::No, signatureIndex });
+        result = tmpForType(Type { TypeKind::Ref, Nullable::No, signatureIndex });
     } else
         result = tmpForType(Types::Funcref);
     emitCCall(&operationWasmRefFunc, result, instanceValue(), addConstant(Types::I32, index));

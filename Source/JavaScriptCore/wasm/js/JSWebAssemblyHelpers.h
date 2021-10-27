@@ -139,9 +139,9 @@ ALWAYS_INLINE bool isWebAssemblyHostFunction(VM& vm, JSValue object)
 ALWAYS_INLINE JSValue defaultValueForReferenceType(const Wasm::Type type)
 {
     ASSERT(Wasm::isRefType(type));
-    if (type.isExternref())
+    if (Wasm::isExternref(type))
         return jsUndefined();
-    ASSERT(type.isFuncref());
+    ASSERT(Wasm::isFuncref(type));
     return jsNull();
 }
 
@@ -173,29 +173,6 @@ ALWAYS_INLINE uint64_t fromJSValue(JSGlobalObject* globalObject, const Wasm::Typ
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     switch (type.kind) {
-    case Wasm::TypeKind::TypeIdx:
-    case Wasm::TypeKind::Funcref: {
-        bool isNullable = type.isNullable();
-        WebAssemblyFunction* wasmFunction = nullptr;
-        WebAssemblyWrapperFunction* wasmWrapperFunction = nullptr;
-        if (!isWebAssemblyHostFunction(vm, value, wasmFunction, wasmWrapperFunction) && (!isNullable || !value.isNull()))
-            return throwVMException(globalObject, scope, createJSWebAssemblyRuntimeError(globalObject, vm, "Funcref must be an exported wasm function"));
-        if (type.kind == Wasm::TypeKind::TypeIdx && (wasmFunction || wasmWrapperFunction)) {
-            Wasm::SignatureIndex paramIndex = type.index;
-            Wasm::SignatureIndex argIndex;
-            if (wasmFunction)
-                argIndex = wasmFunction->signatureIndex();
-            else
-                argIndex = wasmWrapperFunction->signatureIndex();
-            if (paramIndex != argIndex)
-                return throwVMException(globalObject, scope, createJSWebAssemblyRuntimeError(globalObject, vm, "Argument function did not match the reference type"));
-        }
-        break;
-    }
-    case Wasm::TypeKind::Externref:
-        if (!type.isNullable() && value.isNull())
-            return throwVMException(globalObject, scope, createJSWebAssemblyRuntimeError(globalObject, vm, "Non-null Externref cannot be null"));
-        break;
     case Wasm::TypeKind::I32:
         RELEASE_AND_RETURN(scope, value.toInt32(globalObject));
     case Wasm::TypeKind::I64:
@@ -204,13 +181,25 @@ ALWAYS_INLINE uint64_t fromJSValue(JSGlobalObject* globalObject, const Wasm::Typ
         RELEASE_AND_RETURN(scope, bitwise_cast<uint32_t>(value.toFloat(globalObject)));
     case Wasm::TypeKind::F64:
         RELEASE_AND_RETURN(scope, bitwise_cast<uint64_t>(value.toNumber(globalObject)));
-    case Wasm::TypeKind::Void:
-    case Wasm::TypeKind::Func:
-    case Wasm::TypeKind::RefNull:
-    case Wasm::TypeKind::Ref:
-        RELEASE_ASSERT_NOT_REACHED();
+    default: {
+        if (Wasm::isExternref(type)) {
+            if (!type.isNullable() && value.isNull())
+                return throwVMException(globalObject, scope, createJSWebAssemblyRuntimeError(globalObject, vm, "Non-null Externref cannot be null"));
+        } else if (Wasm::isFuncref(type) || isRefWithTypeIndex(type)) {
+            WebAssemblyFunction* wasmFunction = nullptr;
+            WebAssemblyWrapperFunction* wasmWrapperFunction = nullptr;
+            if (!isWebAssemblyHostFunction(vm, value, wasmFunction, wasmWrapperFunction) && (!type.isNullable() || !value.isNull()))
+                return throwVMException(globalObject, scope, createJSWebAssemblyRuntimeError(globalObject, vm, "Funcref must be an exported wasm function"));
+            if (isRefWithTypeIndex(type) && !value.isNull()) {
+                Wasm::SignatureIndex paramIndex = type.index;
+                Wasm::SignatureIndex argIndex = wasmFunction ? wasmFunction->signatureIndex() : wasmWrapperFunction->signatureIndex();
+                if (paramIndex != argIndex)
+                    return throwVMException(globalObject, scope, createJSWebAssemblyRuntimeError(globalObject, vm, "Argument function did not match the reference type"));
+            }
+        } else
+            RELEASE_ASSERT_NOT_REACHED();
     }
-
+    }
     RELEASE_AND_RETURN(scope, JSValue::encode(value));
 }
 

@@ -16,12 +16,11 @@
         "ref_null":  { "type": "varint7", "value":  -20, "b3type": "B3::Int64" },
         "ref":       { "type": "varint7", "value":  -21, "b3type": "B3::Int64" },
         "func":      { "type": "varint7", "value":  -32, "b3type": "B3::Void" },
-        "void":      { "type": "varint7", "value":  -64, "b3type": "B3::Void" },
-        "type_idx":  { "type": "varint7", "value": -128, "b3type": "B3::Int64" }
+        "void":      { "type": "varint7", "value":  -64, "b3type": "B3::Void" }
     },
     "value_type": ["i32", "i64", "f32", "f64", "externref", "funcref"],
     "block_type": ["i32", "i64", "f32", "f64", "void", "externref", "funcref"],
-    "ref_type": ["funcref", "externref", "type_idx"],
+    "ref_type": ["funcref", "externref", "ref", "ref_null"],
     "external_kind": {
         "Function":    { "type": "uint8", "value": 0 },
         "Table":       { "type": "uint8", "value": 1 },

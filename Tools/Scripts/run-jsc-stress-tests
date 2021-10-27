@@ -1337,6 +1337,10 @@ def runWebAssemblyReferenceSpecTest(mode)
     runWebAssemblySpecTestBase(mode, "ref-spec-harness")
 end
 
+def runWebAssemblyFunctionReferenceSpecTest(mode)
+    runWebAssemblySpecTestBase(mode, "spec-harness", "--useWebAssemblyTypedFunctionReferences=true")
+end
+
 def runWebAssemblyLowExecutableMemory(*optionalTestSpecificOptions)
     return if !$jitTests
     return if !$isFTLPlatform

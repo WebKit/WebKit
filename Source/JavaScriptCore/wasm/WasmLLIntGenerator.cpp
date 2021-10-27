@@ -609,7 +609,8 @@ auto LLIntGenerator::callInformationForCaller(const Signature& signature) -> LLI
         case TypeKind::I64:
         case TypeKind::Externref:
         case TypeKind::Funcref:
-        case TypeKind::TypeIdx:
+        case TypeKind::RefNull:
+        case TypeKind::Ref:
             if (gprIndex < gprCount)
                 ++gprIndex;
             else if (stackIndex++ >= stackCount)
@@ -624,8 +625,6 @@ auto LLIntGenerator::callInformationForCaller(const Signature& signature) -> LLI
             break;
         case TypeKind::Void:
         case TypeKind::Func:
-        case TypeKind::RefNull:
-        case TypeKind::Ref:
             RELEASE_ASSERT_NOT_REACHED();
         }
     };
@@ -667,7 +666,8 @@ auto LLIntGenerator::callInformationForCaller(const Signature& signature) -> LLI
         case TypeKind::I64:
         case TypeKind::Externref:
         case TypeKind::Funcref:
-        case TypeKind::TypeIdx:
+        case TypeKind::RefNull:
+        case TypeKind::Ref:
             if (gprIndex > gprLimit)
                 arguments[i] = virtualRegisterForLocal(--gprIndex);
             else
@@ -682,8 +682,6 @@ auto LLIntGenerator::callInformationForCaller(const Signature& signature) -> LLI
             break;
         case TypeKind::Void:
         case TypeKind::Func:
-        case TypeKind::RefNull:
-        case TypeKind::Ref:
             RELEASE_ASSERT_NOT_REACHED();
         }
     }
@@ -697,7 +695,8 @@ auto LLIntGenerator::callInformationForCaller(const Signature& signature) -> LLI
         case TypeKind::I64:
         case TypeKind::Externref:
         case TypeKind::Funcref:
-        case TypeKind::TypeIdx:
+        case TypeKind::RefNull:
+        case TypeKind::Ref:
             if (gprIndex > gprLimit)
                 temporaryResults[i] = virtualRegisterForLocal(--gprIndex);
             else
@@ -712,8 +711,6 @@ auto LLIntGenerator::callInformationForCaller(const Signature& signature) -> LLI
             break;
         case TypeKind::Void:
         case TypeKind::Func:
-        case TypeKind::RefNull:
-        case TypeKind::Ref:
             RELEASE_ASSERT_NOT_REACHED();
         }
     }
@@ -755,7 +752,8 @@ auto LLIntGenerator::callInformationForCallee(const Signature& signature) -> Vec
         case TypeKind::I64:
         case TypeKind::Externref:
         case TypeKind::Funcref:
-        case TypeKind::TypeIdx:
+        case TypeKind::RefNull:
+        case TypeKind::Ref:
             if (gprIndex < maxGPRIndex)
                 m_results.append(virtualRegisterForLocal(numberOfLLIntCalleeSaveRegisters + gprIndex++));
             else
@@ -770,8 +768,6 @@ auto LLIntGenerator::callInformationForCallee(const Signature& signature) -> Vec
             break;
         case TypeKind::Void:
         case TypeKind::Func:
-        case TypeKind::RefNull:
-        case TypeKind::Ref:
             RELEASE_ASSERT_NOT_REACHED();
         }
     }
@@ -812,7 +808,8 @@ auto LLIntGenerator::addArguments(const Signature& signature) -> PartialResult
         case TypeKind::I64:
         case TypeKind::Externref:
         case TypeKind::Funcref:
-        case TypeKind::TypeIdx:
+        case TypeKind::RefNull:
+        case TypeKind::Ref:
             addArgument(i, gprIndex, maxGPRIndex);
             break;
         case TypeKind::F32:
@@ -821,8 +818,6 @@ auto LLIntGenerator::addArguments(const Signature& signature) -> PartialResult
             break;
         case TypeKind::Void:
         case TypeKind::Func:
-        case TypeKind::RefNull:
-        case TypeKind::Ref:
             RELEASE_ASSERT_NOT_REACHED();
         }
     }
@@ -837,16 +832,11 @@ auto LLIntGenerator::addLocal(Type type, uint32_t count) -> PartialResult
     checkConsistency();
 
     m_codeBlock->m_numVars += count;
-    switch (type.kind) {
-    case TypeKind::Externref:
-    case TypeKind::Funcref:
+    if (isFuncref(type) || isExternref(type)) {
         while (count--)
             m_unitializedLocals.append(push(NoConsistencyCheck));
-        break;
-    default:
+    } else
         m_stackSize += count;
-        break;
-    }
     return { };
 }
 

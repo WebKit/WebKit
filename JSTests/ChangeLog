@@ -1,3 +1,25 @@
+2021-10-27  Dmitry Bezhetskov  <dbezhetskov@igalia.com>
+
+        [WASM-Function-References] Add call_ref spec tests
+        https://bugs.webkit.org/show_bug.cgi?id=229710
+
+        Reviewed by Yusuke Suzuki.
+        
+        Add tests for call_ref instruction from the spec repo:
+        https://github.com/WebAssembly/function-references/blob/master/test/core/call_ref.wast.
+        Also added tests for Funcref/Externref in Wasm tables and globals to test
+        new internal representation of Funcref = (ref null funcref).
+        
+        * wasm.yaml:
+        * wasm/function-references-spec-tests/call_ref.wast.js: Added.
+        * wasm/function-references/ref_types.js:
+        (async testRefGlobalCheck):
+        (async testNonNullExternrefIncompatible):
+        (async testNonNullFuncrefIncompatible):
+        (async testWasmJSGlobals):
+        (async testRefTypesInTables):
+        * wasm/wasm.json:
+
 2021-10-26  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Unreivewed, fix CLoop build and test failure

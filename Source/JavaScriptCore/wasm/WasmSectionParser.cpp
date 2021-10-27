@@ -631,7 +631,7 @@ auto SectionParser::parseInitExpr(uint8_t& opcode, uint64_t& bitsOrImportNumber,
 
         if (Options::useWebAssemblyTypedFunctionReferences()) {
             SignatureIndex signatureIndex = m_info->signatureIndexFromFunctionIndexSpace(index);
-            resultType = { TypeKind::TypeIdx, Nullable::No, signatureIndex };
+            resultType = { TypeKind::Ref, Nullable::No, signatureIndex };
         } else
             resultType = Types::Funcref;
 

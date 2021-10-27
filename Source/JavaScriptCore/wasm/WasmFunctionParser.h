@@ -1105,7 +1105,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
 
         if (Options::useWebAssemblyTypedFunctionReferences()) {
             SignatureIndex signatureIndex = m_info.signatureIndexFromFunctionIndexSpace(index);
-            m_expressionStack.constructAndAppend(Type {TypeKind::TypeIdx, Nullable::No, signatureIndex}, result);
+            m_expressionStack.constructAndAppend(Type { TypeKind::Ref, Nullable::No, signatureIndex }, result);
             return { };
         }
 
@@ -1247,7 +1247,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
 
     case CallRef: {
         WASM_PARSER_FAIL_IF(!Options::useWebAssemblyTypedFunctionReferences(), "function references are not enabled");
-        WASM_VALIDATOR_FAIL_IF(!m_expressionStack.last().type().isTypeIdx(), "non-funcref call_ref value ", m_expressionStack.last().type().kind);
+        WASM_VALIDATOR_FAIL_IF(!isRefWithTypeIndex(m_expressionStack.last().type()), "non-funcref call_ref value ", m_expressionStack.last().type().kind);
 
         const SignatureIndex calleeSignatureIndex = m_expressionStack.last().type().index;
         const Signature& calleeSignature = SignatureInformation::get(calleeSignatureIndex);

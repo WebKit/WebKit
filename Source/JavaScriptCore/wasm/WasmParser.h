@@ -305,7 +305,11 @@ ALWAYS_INLINE bool Parser<SuccessType>::parseValueType(const ModuleInformation& 
     TypeKind typeKind = static_cast<TypeKind>(kind);
     bool isNullable = true;
     SignatureIndex sigIndex = 0;
-    if (typeKind == TypeKind::Ref || typeKind == TypeKind::RefNull) {
+
+    if (Options::useWebAssemblyTypedFunctionReferences() && (typeKind == TypeKind::Funcref || typeKind == TypeKind::Externref)) {
+        sigIndex = static_cast<SignatureIndex>(typeKind);
+        typeKind = TypeKind::RefNull;
+    } else if (typeKind == TypeKind::Ref || typeKind == TypeKind::RefNull) {
         if (!Options::useWebAssemblyTypedFunctionReferences())
             return false;
 
@@ -318,9 +322,8 @@ ALWAYS_INLINE bool Parser<SuccessType>::parseValueType(const ModuleInformation& 
             TypeKind heapKind = static_cast<TypeKind>(heapType);
             if (!isValidHeapTypeKind(heapKind))
                 return false;
-            typeKind = heapKind;
+            sigIndex = static_cast<SignatureIndex>(heapKind);
         } else {
-            typeKind = TypeKind::TypeIdx;
             if (static_cast<size_t>(heapType) >= info.usedSignatures.size())
                 return false;
             sigIndex = SignatureInformation::get(info.usedSignatures[heapType].get());

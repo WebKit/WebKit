@@ -1,3 +1,14 @@
+2021-10-27  Dmitry Bezhetskov  <dbezhetskov@igalia.com>
+
+        [WASM-Function-References] Add call_ref spec tests
+        https://bugs.webkit.org/show_bug.cgi?id=229710
+
+        Reviewed by Yusuke Suzuki.
+        
+        Add a new routine to run typed function references spec tests.
+
+        * Scripts/run-jsc-stress-tests:
+
 2021-10-27  Simon Fraser  <simon.fraser@apple.com>
 
         Store WPT-style fuzzy pixel matching data in ImageDiffResult
