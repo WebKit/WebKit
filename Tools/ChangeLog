@@ -1,3 +1,15 @@
+2021-10-27  Alexey Proskuryakov  <ap@apple.com>
+
+        webkitdirs.pm should use JSON::XS when available
+        https://bugs.webkit.org/show_bug.cgi?id=232354
+
+        Reviewed by Dewei Zhu.
+
+        JSON::XS is faster than JSON::PP. While it doesn't matter for webkitdirs' own use,
+        where JSONs are tiny, other scripts that import webkitdirs.pm do care.
+
+        * Scripts/webkitdirs.pm:
+
 2021-10-26  Alex Christensen  <achristensen@webkit.org>
 
         Remove properties set by NSURLProtocol on NSURLRequest before serializing

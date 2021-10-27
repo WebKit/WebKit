@@ -42,11 +42,15 @@ use File::Path qw(make_path mkpath rmtree);
 use File::Spec;
 use File::Temp qw(tempdir);
 use File::stat;
-use JSON::PP;
 use List::Util;
 use POSIX;
 use Time::HiRes qw(usleep);
 use VCSUtils;
+
+unless (defined(&decode_json)) {
+    eval "use JSON::XS;";
+    eval "use JSON::PP;" if $@;
+}
 
 BEGIN {
    use Exporter   ();
