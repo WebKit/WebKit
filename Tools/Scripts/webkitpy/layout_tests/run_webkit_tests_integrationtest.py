@@ -752,7 +752,7 @@ class RunTest(unittest.TestCase, StreamTestingMixin):
         class ImageDiffTestPort(test.TestPort):
             def diff_image(self, expected_contents, actual_contents, tolerance=None):
                 self.tolerance_used_for_diff_image = self._options.tolerance
-                return ImageDiffResult(passed=False, diff_image=b'', difference=1, tolerance=self._options.tolerance or 0)
+                return ImageDiffResult(passed=False, diff_image=b'', difference=1, fuzzy_data=None, tolerance=self._options.tolerance or 0)
 
         def get_port_for_run(args):
             options, parsed_args = run_webkit_tests.parse_args(args)

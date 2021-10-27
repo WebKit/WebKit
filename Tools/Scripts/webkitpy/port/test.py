@@ -423,9 +423,10 @@ class TestPort(Port):
                     string_utils.decode(actual_contents, target_type=str),
                 ),
                 difference=1,
-                tolerance=tolerance or 0)
+                tolerance=tolerance or 0,
+                fuzzy_data={'max_difference': 10, 'total_pixels': 20})
 
-        return ImageDiffResult(passed=True, diff_image=None, difference=0, tolerance=tolerance or 0)
+        return ImageDiffResult(passed=True, diff_image=None, difference=0, tolerance=tolerance or 0, fuzzy_data={'max_difference': 0, 'total_pixels': 0})
 
     def layout_tests_dir(self):
         return LAYOUT_TEST_DIR

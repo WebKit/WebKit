@@ -284,7 +284,17 @@ class PortTestCase(unittest.TestCase):
         self.proc = None
 
         def make_proc(port, nm, cmd, env, crash_message=None):
-            self.proc = MockServerProcess(port, nm, cmd, env, lines=['Content-Length: 6\n', 'image1', 'diff: 90%\n', '#EOF\n', 'Content-Length: 6\n', 'image2', 'diff: 100%\n', '#EOF\n'])
+            self.proc = MockServerProcess(port, nm, cmd, env, lines=[
+                'Content-Length: 6\n',
+                'image1',
+                'diff: 90%\n',
+                'maxDifference=6; totalPixels=50\n',
+                '#EOF\n',
+                'Content-Length: 6\n',
+                'image2',
+                'maxDifference=7; totalPixels=60\n',
+                'diff: 100%\n',
+                '#EOF\n'])
             return self.proc
 
         # FIXME: Can't pretend to run setup for some ports, so just skip this test.
@@ -297,27 +307,29 @@ class PortTestCase(unittest.TestCase):
         # First test the case of not using the JHBuild wrapper.
         self.assertFalse(port._should_use_jhbuild())
 
-        self.assertEqual(port.diff_image(b'foo', b'bar'), ImageDiffResult(passed=False, diff_image=b'image1', difference=90.0, tolerance=0.1))
-        self.assertEqual(self.proc.cmd, [port._path_to_image_diff(), "--tolerance", "0.1"])
+        result_fuzzy_data = {'max_difference': 6, 'total_pixels': 50}
 
-        self.assertEqual(port.diff_image(b'foo', b'bar', tolerance=None), ImageDiffResult(passed=False, diff_image=b'image1', difference=90.0, tolerance=0.1))
-        self.assertEqual(self.proc.cmd, [port._path_to_image_diff(), "--tolerance", "0.1"])
+        self.assertEqual(port.diff_image(b'foo', b'bar'), ImageDiffResult(passed=False, diff_image=b'image1', difference=90.0, tolerance=0.1, fuzzy_data=result_fuzzy_data))
+        self.assertEqual(self.proc.cmd, [port._path_to_image_diff(), "--difference", "--tolerance", "0.1"])
 
-        self.assertEqual(port.diff_image(b'foo', b'bar', tolerance=0), ImageDiffResult(passed=False, diff_image=b'image1', difference=90.0))
-        self.assertEqual(self.proc.cmd, [port._path_to_image_diff(), "--tolerance", "0"])
+        self.assertEqual(port.diff_image(b'foo', b'bar', tolerance=None), ImageDiffResult(passed=False, diff_image=b'image1', difference=90.0, tolerance=0.1, fuzzy_data=result_fuzzy_data))
+        self.assertEqual(self.proc.cmd, [port._path_to_image_diff(), "--difference", "--tolerance", "0.1"])
+
+        self.assertEqual(port.diff_image(b'foo', b'bar', tolerance=0), ImageDiffResult(passed=False, diff_image=b'image1', difference=90.0, fuzzy_data=result_fuzzy_data))
+        self.assertEqual(self.proc.cmd, [port._path_to_image_diff(), "--difference", "--tolerance", "0"])
 
         # Now test the case of using JHBuild wrapper.
         port._filesystem.maybe_make_directory(port.path_from_webkit_base('WebKitBuild', 'Dependencies%s' % port.port_name.upper()))
         self.assertTrue(port._should_use_jhbuild())
 
-        self.assertEqual(port.diff_image(b'foo', b'bar'), ImageDiffResult(passed=False, diff_image=b'image1', difference=90.0, tolerance=0.1))
-        self.assertEqual(self.proc.cmd, port._jhbuild_wrapper + [port._path_to_image_diff(), "--tolerance", "0.1"])
+        self.assertEqual(port.diff_image(b'foo', b'bar'), ImageDiffResult(passed=False, diff_image=b'image1', difference=90.0, tolerance=0.1, fuzzy_data=result_fuzzy_data))
+        self.assertEqual(self.proc.cmd, port._jhbuild_wrapper + [port._path_to_image_diff(), "--difference", "--tolerance", "0.1"])
 
-        self.assertEqual(port.diff_image(b'foo', b'bar', tolerance=None), ImageDiffResult(passed=False, diff_image=b'image1', difference=90.0, tolerance=0.1))
-        self.assertEqual(self.proc.cmd, port._jhbuild_wrapper + [port._path_to_image_diff(), "--tolerance", "0.1"])
+        self.assertEqual(port.diff_image(b'foo', b'bar', tolerance=None), ImageDiffResult(passed=False, diff_image=b'image1', difference=90.0, tolerance=0.1, fuzzy_data=result_fuzzy_data))
+        self.assertEqual(self.proc.cmd, port._jhbuild_wrapper + [port._path_to_image_diff(), "--difference", "--tolerance", "0.1"])
 
-        self.assertEqual(port.diff_image(b'foo', b'bar', tolerance=0), ImageDiffResult(passed=False, diff_image=b'image1', difference=90.0))
-        self.assertEqual(self.proc.cmd, port._jhbuild_wrapper + [port._path_to_image_diff(), "--tolerance", "0"])
+        self.assertEqual(port.diff_image(b'foo', b'bar', tolerance=0), ImageDiffResult(passed=False, diff_image=b'image1', difference=90.0, fuzzy_data=result_fuzzy_data))
+        self.assertEqual(self.proc.cmd, port._jhbuild_wrapper + [port._path_to_image_diff(), "--difference", "--tolerance", "0"])
 
         port.clean_up_test_run()
         self.assertTrue(self.proc.stopped)
@@ -325,27 +337,27 @@ class PortTestCase(unittest.TestCase):
 
     def test_diff_image_passed(self):
         port = self.make_port()
-        port._server_process_constructor = lambda port, nm, cmd, env, crash_message=None: MockServerProcess(lines=['diff: 0%\n', '#EOF\n'])
+        port._server_process_constructor = lambda port, nm, cmd, env, crash_message=None: MockServerProcess(lines=['diff: 0%\n', 'maxDifference=0; totalPixels=0\n', '#EOF\n'])
         image_differ = ImageDiffer(port)
-        self.assertEqual(image_differ.diff_image(b'foo', b'foo', tolerance=0), ImageDiffResult(passed=True, diff_image=None, difference=0, tolerance=0))
+        self.assertEqual(image_differ.diff_image(b'foo', b'foo', tolerance=0), ImageDiffResult(passed=True, diff_image=None, difference=0, tolerance=0, fuzzy_data={'max_difference': 0, 'total_pixels': 0}))
 
     def test_diff_image_passed_with_tolerance(self):
         port = self.make_port()
-        port._server_process_constructor = lambda port, nm, cmd, env, crash_message=None: MockServerProcess(lines=['Content-Length: 4\n', 'test', 'diff: 0.05%\n', '#EOF\n'])
+        port._server_process_constructor = lambda port, nm, cmd, env, crash_message=None: MockServerProcess(lines=['Content-Length: 4\n', 'test', 'diff: 0.05%\n', 'maxDifference=4; totalPixels=10\n', '#EOF\n'])
         image_differ = ImageDiffer(port)
-        self.assertEqual(image_differ.diff_image(b'foo', b'bar', tolerance=0.1), ImageDiffResult(passed=True, diff_image=b'test', difference=0.05, tolerance=0.1))
+        self.assertEqual(image_differ.diff_image(b'foo', b'bar', tolerance=0.1), ImageDiffResult(passed=True, diff_image=b'test', difference=0.05, tolerance=0.1, fuzzy_data={'max_difference': 4, 'total_pixels': 10}))
 
     def test_diff_image_failed_with_rounded_diff(self):
         port = self.make_port()
-        port._server_process_constructor = lambda port, nm, cmd, env, crash_message=None: MockServerProcess(lines=['Content-Length: 4\n', 'test', 'diff: 0.101234%\n', '#EOF\n'])
+        port._server_process_constructor = lambda port, nm, cmd, env, crash_message=None: MockServerProcess(lines=['Content-Length: 4\n', 'test', 'diff: 0.101234%\n', 'maxDifference=8; totalPixels=20\n', '#EOF\n'])
         image_differ = ImageDiffer(port)
-        self.assertEqual(image_differ.diff_image(b'foo', b'bar', tolerance=0.1), ImageDiffResult(passed=False, diff_image=b'test', difference=0.1, tolerance=0.1))
+        self.assertEqual(image_differ.diff_image(b'foo', b'bar', tolerance=0.1), ImageDiffResult(passed=False, diff_image=b'test', difference=0.1, tolerance=0.1, fuzzy_data={'max_difference': 8, 'total_pixels': 20}))
 
     def test_diff_image_failed(self):
         port = self.make_port()
-        port._server_process_constructor = lambda port, nm, cmd, env, crash_message=None: MockServerProcess(lines=['Content-Length: 4\n', 'test', 'diff: 10%\n', '#EOF\n'])
+        port._server_process_constructor = lambda port, nm, cmd, env, crash_message=None: MockServerProcess(lines=['Content-Length: 4\n', 'test', 'diff: 10%\n', 'maxDifference=5; totalPixels=13\n', '#EOF\n'])
         image_differ = ImageDiffer(port)
-        self.assertEqual(image_differ.diff_image(b'foo', b'bar', tolerance=0.1), ImageDiffResult(passed=False, diff_image=b'test', difference=10, tolerance=0.1))
+        self.assertEqual(image_differ.diff_image(b'foo', b'bar', tolerance=0.1), ImageDiffResult(passed=False, diff_image=b'test', difference=10, tolerance=0.1, fuzzy_data={'max_difference': 5, 'total_pixels': 13}))
 
     def test_diff_image_crashed(self):
         port = self.make_port()

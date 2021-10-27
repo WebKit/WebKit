@@ -1,3 +1,30 @@
+2021-10-27  Simon Fraser  <simon.fraser@apple.com>
+
+        Store WPT-style fuzzy pixel matching data in ImageDiffResult
+        https://bugs.webkit.org/show_bug.cgi?id=232352
+
+        Reviewed by Martin Robinson.
+
+        Always run ImageDiff with `--difference` so that it prints the "maxDifference=; totalPixels="
+        output, and parse and store this output in ImageDiffResult.
+
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+        (RunTest.test_tolerance.ImageDiffTestPort.diff_image):
+        * Scripts/webkitpy/port/image_diff.py:
+        (ImageDiffResult.__init__):
+        (ImageDiffResult.__eq__):
+        (ImageDiffResult.__repr__):
+        (ImageDiffer._start):
+        (ImageDiffer._read):
+        * Scripts/webkitpy/port/port_testcase.py:
+        (PortTestCase.test_diff_image.make_proc):
+        (PortTestCase.test_diff_image):
+        (PortTestCase.test_diff_image_passed):
+        (PortTestCase.test_diff_image_passed_with_tolerance):
+        (PortTestCase.test_diff_image_failed_with_rounded_diff):
+        (PortTestCase.test_diff_image_failed):
+        * Scripts/webkitpy/port/test.py:
+
 2021-10-27  Jonathan Bedard  <jbedard@apple.com>
 
         [webkitscmpy] Ensure empty line before canonicalization
