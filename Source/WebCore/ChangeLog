@@ -1,3 +1,22 @@
+2021-09-01  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        REGRESSION(r280928) The smooth keyboard scrolling is unconditionally enabled for PageUp and PageDown keys
+        https://bugs.webkit.org/show_bug.cgi?id=229733
+
+        Reviewed by Tim Horton.
+
+        Even though WinCairo port doesn't enable
+        EventHandlerDrivenSmoothKeyboardScrollingEnabled yet, it had been
+        enabled only for PageUp and PageDown keys since r280928. Other
+        keys (Space and Arrow keys) don't trigger the smooth scrolling.
+
+        r280928 changed to call startKeyboardScrolling for PageUp and
+        PageDown keys, but it didn't check the setting.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::startKeyboardScrolling):
+        (WebCore::EventHandler::defaultKeyboardEventHandler):
+
 2021-10-26  Adrian Perez de Castro  <aperez@igalia.com>
 
         Multiple build issues with ENABLE_VIDEO=OFF
