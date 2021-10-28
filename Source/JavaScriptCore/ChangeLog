@@ -1,3 +1,19 @@
+2021-10-28  Saam Barati  <sbarati@apple.com>
+
+        Don't call type() on Structure, instead call type() on its typeInfo()
+        https://bugs.webkit.org/show_bug.cgi?id=232414
+
+        Reviewed by Yusuke Suzuki.
+
+        * dfg/DFGOperations.cpp:
+        (JSC::DFG::JSC_DEFINE_JIT_OPERATION):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::emitAllocateRawObject):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileCompareStrictEq):
+        * runtime/Structure.h:
+        (JSC::Structure::type):
+
 2021-10-27  Dmitry Bezhetskov  <dbezhetskov@igalia.com>
 
         [WASM-Function-References] Add call_ref spec tests

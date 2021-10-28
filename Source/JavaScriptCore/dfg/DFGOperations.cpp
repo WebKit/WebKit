@@ -3114,7 +3114,7 @@ JSC_DEFINE_JIT_OPERATION(operationNewRawObject, char*, (VM* vmPointer, Structure
             length * sizeof(EncodedJSValue));
     }
 
-    if (structure->type() == JSType::ArrayType)
+    if (structure->typeInfo().type() == JSType::ArrayType)
         return bitwise_cast<char*>(JSArray::createWithButterfly(vm, nullptr, structure, butterfly));
     return bitwise_cast<char*>(JSFinalObject::createWithButterfly(vm, structure, butterfly));
 }
@@ -3130,7 +3130,7 @@ JSC_DEFINE_JIT_OPERATION(operationNewObjectWithButterfly, JSCell*, (VM* vmPointe
             vm, nullptr, 0, structure->outOfLineCapacity(), false, IndexingHeader(), 0);
     }
     
-    if (structure->type() == JSType::ArrayType)
+    if (structure->typeInfo().type() == JSType::ArrayType)
         return JSArray::createWithButterfly(vm, nullptr, structure, butterfly);
     return JSFinalObject::createWithButterfly(vm, structure, butterfly);
 }
@@ -3152,7 +3152,7 @@ JSC_DEFINE_JIT_OPERATION(operationNewObjectWithButterflyWithIndexingHeaderAndVec
             sizeof(EncodedJSValue) * length);
     }
     
-    if (structure->type() == JSType::ArrayType)
+    if (structure->typeInfo().type() == JSType::ArrayType)
         return JSArray::createWithButterfly(vm, nullptr, structure, butterfly);
     return JSFinalObject::createWithButterfly(vm, structure, butterfly);
 }
