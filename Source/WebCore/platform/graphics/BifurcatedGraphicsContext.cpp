@@ -269,11 +269,13 @@ void BifurcatedGraphicsContext::drawPattern(NativeImage& nativeImage, const Floa
     m_secondaryContext.drawPattern(nativeImage, imageSize, destRect, tileRect, patternTransform, phase, spacing, options);
 }
 
+#if ENABLE(VIDEO)
 void BifurcatedGraphicsContext::paintFrameForMedia(MediaPlayer& player, const FloatRect& destination)
 {
     m_primaryContext.paintFrameForMedia(player, destination);
     m_secondaryContext.paintFrameForMedia(player, destination);
 }
+#endif // ENABLE(VIDEO)
 
 void BifurcatedGraphicsContext::scale(const FloatSize& scale)
 {

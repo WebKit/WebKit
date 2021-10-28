@@ -528,9 +528,11 @@ static bool isSimpleImage(const RenderObject& renderer)
         || (is<HTMLImageElement>(node) && downcast<HTMLImageElement>(node)->hasAttributeWithoutSynchronization(usemapAttr)))
         return false;
 
+#if ENABLE(VIDEO)
     // Exclude video and audio elements.
     if (is<HTMLMediaElement>(node))
         return false;
+#endif // ENABLE(VIDEO)
 
     return true;
 }

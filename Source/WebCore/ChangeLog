@@ -1,3 +1,16 @@
+2021-10-26  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Multiple build issues with ENABLE_VIDEO=OFF
+        https://bugs.webkit.org/show_bug.cgi?id=232264
+
+        Reviewed by Carlos Garcia Campos.
+
+        No new tests needed.
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::isSimpleImage): Guard usage of HTMLMediaElement with ENABLE(VIDEO).
+        * platform/graphics/BifurcatedGraphicsContext.cpp: Ditto.
+
 2021-10-15  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         [WPE][GTK] Update user agent browser versions
