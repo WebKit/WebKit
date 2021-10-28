@@ -1,3 +1,12 @@
+2021-10-28  Antti Koivisto  <antti@apple.com>
+
+        Support ::before and ::after pseudo elements after ::slotted
+        https://bugs.webkit.org/show_bug.cgi?id=178237
+
+        Reviewed by Ryosuke Niwa.
+
+        * TestExpectations:
+
 2021-10-28  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         AX: AXValueChanged is only sent for range elements when value is changed with the keyboard

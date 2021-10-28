@@ -86,6 +86,9 @@ MatchElement RuleFeatureSet::computeNextMatchElement(MatchElement matchElement, 
         case CSSSelector::ShadowDescendant:
         case CSSSelector::ShadowPartDescendant:
             return MatchElement::Host;
+        case CSSSelector::ShadowSlotted:
+            // FIXME: Implement accurate invalidation.
+            return matchElement;
         };
     }
     switch (relation) {
@@ -100,6 +103,9 @@ MatchElement RuleFeatureSet::computeNextMatchElement(MatchElement matchElement, 
     case CSSSelector::ShadowDescendant:
     case CSSSelector::ShadowPartDescendant:
         return MatchElement::Host;
+    case CSSSelector::ShadowSlotted:
+        // FIXME: Implement accurate invalidation.
+        return matchElement;
     };
     ASSERT_NOT_REACHED();
     return matchElement;

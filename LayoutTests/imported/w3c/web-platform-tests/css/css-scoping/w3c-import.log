@@ -52,6 +52,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/css-scoping-shadow-with-rules-no-style-leak-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/css-scoping-shadow-with-rules-no-style-leak.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/css-scoping-shadow-with-rules.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/host-context-parsing.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/host-context-specificity-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/host-context-specificity-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/host-context-specificity-002-expected.html
@@ -69,6 +70,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/host-multiple-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/host-nested-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/host-nested-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/host-parsing.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/host-slotted-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/host-slotted-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/host-specificity-002-expected.html
@@ -125,6 +127,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/shadow-reassign-dynamic-004.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/shadow-root-insert-into-document-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/shadow-root-insert-into-document.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/shadow-shared-style-cache-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/slot-non-html-display-value.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/slotted-invalidation.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/slotted-link.html

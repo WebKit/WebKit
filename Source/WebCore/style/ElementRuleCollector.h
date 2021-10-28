@@ -135,11 +135,10 @@ private:
     void matchPartPseudoElementRulesForScope(const ShadowRoot& scopeShadowRoot);
 
     void collectMatchingShadowPseudoElementRules(const MatchRequest&);
-    std::unique_ptr<RuleSet::RuleDataVector> collectSlottedPseudoElementRulesForSlot();
 
     void collectMatchingRules(const MatchRequest&);
     void collectMatchingRulesForList(const RuleSet::RuleDataVector*, const MatchRequest&);
-    bool ruleMatches(const RuleData&, unsigned& specificity);
+    bool ruleMatches(const RuleData&, unsigned& specificity, ScopeOrdinal);
 
     void sortMatchedRules();
 
@@ -163,10 +162,8 @@ private:
     bool m_isPrintStyle { false };
     PseudoElementRequest m_pseudoElementRequest { PseudoId::None };
     SelectorChecker::Mode m_mode { SelectorChecker::Mode::ResolvingStyle };
-    bool m_isMatchingSlottedPseudoElements { false };
     bool m_isMatchingHostPseudoClass { false };
     RefPtr<const Element> m_shadowHostInPartRuleScope;
-    Vector<std::unique_ptr<RuleSet::RuleDataVector>> m_keepAliveSlottedPseudoElementRules;
 
     Vector<MatchedRule, 64> m_matchedRules;
     size_t m_matchedRuleTransferIndex { 0 };

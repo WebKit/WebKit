@@ -343,6 +343,9 @@ static bool isPseudoClassValidAfterPseudoElement(CSSSelector::PseudoClassType ps
     switch (compoundPseudoElement) {
     case CSSSelector::PseudoElementPart:
         return !isTreeStructuralPseudoClass(pseudoClass);
+    case CSSSelector::PseudoElementSlotted:
+        // FIXME: A WPT indicates :is/:where should be parsed but reduce to nothing as their content is not legal in the context.
+        return false;
     case CSSSelector::PseudoElementResizer:
     case CSSSelector::PseudoElementScrollbar:
     case CSSSelector::PseudoElementScrollbarCorner:
@@ -361,12 +364,29 @@ static bool isPseudoClassValidAfterPseudoElement(CSSSelector::PseudoClassType ps
     }
 }
 
+static bool isTreeAbidingPseudoElement(CSSSelector::PseudoElementType pseudoElementType)
+{
+    switch (pseudoElementType) {
+    // FIXME: This list should also include ::placeholder and ::file-selector-button
+    case CSSSelector::PseudoElementBefore:
+    case CSSSelector::PseudoElementAfter:
+    case CSSSelector::PseudoElementMarker:
+        return true;
+    default:
+        return false;
+    }
+}
+
 static bool isSimpleSelectorValidAfterPseudoElement(const CSSParserSelector& simpleSelector, CSSSelector::PseudoElementType compoundPseudoElement)
 {
     if (compoundPseudoElement == CSSSelector::PseudoElementUnknown)
         return true;
     if (compoundPseudoElement == CSSSelector::PseudoElementPart) {
         if (simpleSelector.match() == CSSSelector::PseudoElement && simpleSelector.pseudoElementType() != CSSSelector::PseudoElementPart)
+            return true;
+    }
+    if (compoundPseudoElement == CSSSelector::PseudoElementSlotted) {
+        if (simpleSelector.match() == CSSSelector::PseudoElement && isTreeAbidingPseudoElement(simpleSelector.pseudoElementType()))
             return true;
     }
     if (simpleSelector.match() != CSSSelector::PseudoClass)
@@ -1059,6 +1079,9 @@ std::unique_ptr<CSSParserSelector> CSSSelectorParser::splitCompoundAtImplicitSha
     // ::part() combines with other pseudo elements.
     bool isPart = splitAfter->tagHistory()->match() == CSSSelector::PseudoElement && splitAfter->tagHistory()->pseudoElementType() == CSSSelector::PseudoElementPart;
 
+    // ::slotted() combines with other pseudo elements.
+    bool isSlotted = splitAfter->tagHistory()->match() == CSSSelector::PseudoElement && splitAfter->tagHistory()->pseudoElementType() == CSSSelector::PseudoElementSlotted;
+
     std::unique_ptr<CSSParserSelector> secondCompound;
     if (context.mode == UASheetMode || isPart) {
         // FIXME: https://bugs.webkit.org/show_bug.cgi?id=161747
@@ -1068,7 +1091,14 @@ std::unique_ptr<CSSParserSelector> CSSSelectorParser::splitCompoundAtImplicitSha
     } else
         secondCompound = splitAfter->releaseTagHistory();
 
-    secondCompound->appendTagHistory(isPart ? CSSSelector::ShadowPartDescendant : CSSSelector::ShadowDescendant, WTFMove(compoundSelector));
+    auto relation = [&] {
+        if (isSlotted)
+            return CSSSelector::ShadowSlotted;
+        if (isPart)
+            return CSSSelector::ShadowPartDescendant;
+        return CSSSelector::ShadowDescendant;
+    }();
+    secondCompound->appendTagHistory(relation, WTFMove(compoundSelector));
     return secondCompound;
 }
 

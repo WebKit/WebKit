@@ -30,6 +30,7 @@
 #include "CSSSelector.h"
 #include "Element.h"
 #include "StyleRelations.h"
+#include "StyleScopeOrdinal.h"
 
 namespace WebCore {
 
@@ -95,6 +96,7 @@ public:
         const ContainerNode* scope { nullptr };
         bool isMatchingHostPseudoClass { false };
         const Element* shadowHostInPartRuleScope { nullptr };
+        Style::ScopeOrdinal styleScopeOrdinal { Style::ScopeOrdinal::Element };
 
         // FIXME: It would be nicer to have a separate object for return values. This requires some more work in the selector compiler.
         Style::Relations styleRelations;

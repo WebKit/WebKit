@@ -408,20 +408,38 @@ SelectorChecker::MatchResult SelectorChecker::matchRecursively(CheckingContext& 
             return MatchResult::updateWithMatchType(result, matchType);
         }
     case CSSSelector::ShadowDescendant:
-    case CSSSelector::ShadowPartDescendant:
-        {
-            // When matching foo::part(bar) we skip directly to the tree of element 'foo'.
-            auto* shadowHost = relation == CSSSelector::ShadowPartDescendant ? checkingContext.shadowHostInPartRuleScope : context.element->shadowHost();
-            if (!shadowHost)
-                return MatchResult::fails(Match::SelectorFailsCompletely);
-            nextContext.element = shadowHost;
-            nextContext.firstSelectorOfTheFragment = nextContext.selector;
-            nextContext.isSubjectOrAdjacentElement = false;
-            PseudoIdSet ignoreDynamicPseudo;
-            MatchResult result = matchRecursively(checkingContext, nextContext, ignoreDynamicPseudo);
+    case CSSSelector::ShadowPartDescendant: {
+        // When matching foo::part(bar) we skip directly to the tree of element 'foo'.
+        auto* shadowHost = relation == CSSSelector::ShadowPartDescendant ? checkingContext.shadowHostInPartRuleScope : context.element->shadowHost();
+        if (!shadowHost)
+            return MatchResult::fails(Match::SelectorFailsCompletely);
+        nextContext.element = shadowHost;
+        nextContext.firstSelectorOfTheFragment = nextContext.selector;
+        nextContext.isSubjectOrAdjacentElement = false;
+        PseudoIdSet ignoreDynamicPseudo;
+        MatchResult result = matchRecursively(checkingContext, nextContext, ignoreDynamicPseudo);
 
-            return MatchResult::updateWithMatchType(result, matchType);
-        }
+        return MatchResult::updateWithMatchType(result, matchType);
+    }
+    case CSSSelector::ShadowSlotted: {
+        auto* slot = context.element->assignedSlot();
+        if (!slot)
+            return MatchResult::fails(Match::SelectorFailsCompletely);
+        // We continue matching in the scope where this rule came from.
+        auto scopeDepth = static_cast<int>(checkingContext.styleScopeOrdinal);
+        while (--scopeDepth && slot->assignedSlot())
+            slot = slot->assignedSlot();
+        if (scopeDepth)
+            return MatchResult::fails(Match::SelectorFailsCompletely);
+
+        nextContext.element = slot;
+        nextContext.firstSelectorOfTheFragment = nextContext.selector;
+        nextContext.isSubjectOrAdjacentElement = false;
+        PseudoIdSet ignoreDynamicPseudo;
+        MatchResult result = matchRecursively(checkingContext, nextContext, ignoreDynamicPseudo);
+
+        return MatchResult::updateWithMatchType(result, matchType);
+    }
     }
 
     ASSERT_NOT_REACHED();
@@ -1150,11 +1168,18 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalCont
             return false;
         }
 #endif
-        case CSSSelector::PseudoElementSlotted:
-            // We see ::slotted() pseudo elements when collecting slotted rules from the slot shadow tree only.
-            ASSERT(checkingContext.resolvingMode == Mode::CollectingRules);
-            return is<HTMLSlotElement>(element);
-
+        case CSSSelector::PseudoElementSlotted: {
+            if (!context.element->assignedSlot())
+                return false;
+            auto* subselector = context.selector->selectorList()->first();
+            LocalContext subcontext(context);
+            subcontext.selector = subselector;
+            subcontext.firstSelectorOfTheFragment = subselector;
+            subcontext.pseudoElementEffective = false;
+            subcontext.inFunctionalPseudoClass = true;
+            PseudoIdSet ignoredDynamicPseudo;
+            return matchRecursively(checkingContext, subcontext, ignoredDynamicPseudo).match == Match::SelectorMatches;
+        }
         case CSSSelector::PseudoElementPart: {
             auto translatePartNameToRuleScope = [&](AtomString partName) {
                 Vector<AtomString, 1> mappedNames { partName };

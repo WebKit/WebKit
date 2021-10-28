@@ -1,3 +1,24 @@
+2021-10-28  Antti Koivisto  <antti@apple.com>
+
+        Support ::before and ::after pseudo elements after ::slotted
+        https://bugs.webkit.org/show_bug.cgi?id=178237
+
+        Reviewed by Ryosuke Niwa.
+
+        Update the tests from WPT repo.
+
+        * web-platform-tests/css/css-scoping/host-context-parsing-expected.txt: Added.
+        * web-platform-tests/css/css-scoping/host-context-parsing.html: Added.
+        * web-platform-tests/css/css-scoping/host-parsing-expected.txt: Added.
+        * web-platform-tests/css/css-scoping/host-parsing.html: Added.
+        * web-platform-tests/css/css-scoping/keyframes-001-expected.txt:
+        * web-platform-tests/css/css-scoping/shadow-shared-style-cache-001-expected.txt: Added.
+        * web-platform-tests/css/css-scoping/shadow-shared-style-cache-001.html: Added.
+        * web-platform-tests/css/css-scoping/slotted-link-expected.txt:
+        * web-platform-tests/css/css-scoping/slotted-parsing-expected.txt:
+        * web-platform-tests/css/css-scoping/slotted-parsing.html:
+        * web-platform-tests/css/css-scoping/w3c-import.log:
+
 2021-10-27  Kiet Ho  <tho22@apple.com>
 
         Add discrete animation support between PathOperations

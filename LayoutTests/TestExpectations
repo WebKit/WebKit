@@ -3097,7 +3097,6 @@ imported/w3c/web-platform-tests/css/css-display/run-in/run-in-table-row-between-
 imported/w3c/web-platform-tests/css/css-display/run-in/run-in-text-between-004.xht [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-display/run-in/run-in-text-between-005.xht [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-pseudo/placeholder-input-number.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-scoping/slotted-with-pseudo-element.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-text-decor/text-emphasis-color-001.xht [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-text-decor/text-emphasis-position-above-left-001.xht [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-text-decor/text-emphasis-position-above-left-002.xht [ ImageOnlyFailure ]
@@ -3208,7 +3207,6 @@ webkit.org/b/190032 compositing/layer-creation/scale-rotation-transition-overlap
 webkit.org/b/190032 compositing/layer-creation/translate-scale-transition-overlap.html [ Failure ]
 webkit.org/b/190032 compositing/layer-creation/translate-transition-overlap.html [ Failure ]
 webkit.org/b/190032 imported/w3c/web-platform-tests/css/css-logical/animation-003.tentative.html [ Failure ]
-webkit.org/b/190032 imported/w3c/web-platform-tests/css/css-scoping/keyframes-001.html [ Failure ]
 
 # FIXME: Need to implement MediaRecorder dataavailable event to support these testcases
 fast/mediacapturefromelement/CanvasCaptureMediaStream-imagebitmaprenderingcontext.html [ Skip ]

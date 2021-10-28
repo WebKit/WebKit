@@ -103,6 +103,7 @@ inline bool CSSParserSelector::needsImplicitShadowCombinatorForMatching() const
             || pseudoElementType() == CSSSelector::PseudoElementCue
 #endif
             || pseudoElementType() == CSSSelector::PseudoElementPart
+            || pseudoElementType() == CSSSelector::PseudoElementSlotted
             || pseudoElementType() == CSSSelector::PseudoElementWebKitCustomLegacyPrefixed);
 }
 

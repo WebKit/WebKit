@@ -501,6 +501,7 @@ static inline FragmentRelation fragmentRelationForSelectorRelation(CSSSelector::
     case CSSSelector::Subselector:
     case CSSSelector::ShadowDescendant:
     case CSSSelector::ShadowPartDescendant:
+    case CSSSelector::ShadowSlotted:
         ASSERT_NOT_REACHED();
     }
     ASSERT_NOT_REACHED();
@@ -1324,6 +1325,9 @@ static FunctionType constructFragmentsInternal(const CSSSelector* rootSelector, 
             continue;
 
         if ((relation == CSSSelector::ShadowDescendant || relation == CSSSelector::ShadowPartDescendant) && !selector->isLastInTagHistory())
+            return FunctionType::CannotCompile;
+
+        if (relation == CSSSelector::ShadowSlotted)
             return FunctionType::CannotCompile;
 
         if (relation == CSSSelector::DirectAdjacent || relation == CSSSelector::IndirectAdjacent) {
