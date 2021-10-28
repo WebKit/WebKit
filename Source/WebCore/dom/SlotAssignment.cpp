@@ -343,10 +343,7 @@ const AtomString& SlotAssignment::slotNameForHostChild(const Node& child) const
 
 HTMLSlotElement* SlotAssignment::findFirstSlotElement(Slot& slot)
 {
-    RELEASE_ASSERT(!slot.shouldResolveSlotElement());
-
     ASSERT(!slot.element || m_slotElementsForConsistencyCheck.contains(slot.element.get()));
-    ASSERT(!!slot.element == !!slot.elementCount);
 
     return slot.element.get();
 }
