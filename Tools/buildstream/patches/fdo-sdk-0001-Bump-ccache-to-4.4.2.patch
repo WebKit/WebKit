@@ -1,0 +1,22 @@
+From ac4633b31800146a9811b64de1fcc82209183f2e Mon Sep 17 00:00:00 2001
+From: Lauro Moura <lmoura@igalia.com>
+Date: Wed, 27 Oct 2021 22:45:08 -0300
+Subject: [PATCH] Bump ccache to 4.4.2
+
+---
+ elements/components/ccache.bst | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/elements/components/ccache.bst b/elements/components/ccache.bst
+index 8c8e17a18..9f34f8c6d 100644
+--- a/elements/components/ccache.bst
++++ b/elements/components/ccache.bst
+@@ -18,4 +18,4 @@ sources:
+ - kind: git_tag
+   url: github:ccache/ccache.git
+   track: master
+-  ref: v4.4-0-g6ac58b50ec7ad402395acba9b1a5fdcbeabf347d
++  ref: v4.4.2-0-g89def7d170f930a4480a132679f6a9e03d972787
+-- 
+2.27.0
+
