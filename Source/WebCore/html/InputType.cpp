@@ -731,6 +731,11 @@ void InputType::setValue(const String& sanitizedValue, bool valueChanged, TextFi
     case DispatchNoEvent:
         break;
     }
+
+    if (isRangeControl()) {
+        if (auto* cache = element()->document().existingAXObjectCache())
+            cache->postNotification(element(), AXObjectCache::AXValueChanged);
+    }
 }
 
 bool InputType::canSetValue(const String&)

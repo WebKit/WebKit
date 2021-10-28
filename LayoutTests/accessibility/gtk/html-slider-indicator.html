@@ -12,8 +12,8 @@
 
 <script>
 
-    description("This tests that a basic range returns all the correct information for the mac platform.");
-    
+    description("This tests that a basic range returns all the correct information for the gtk platform.");
+
     var range = 0;
     var valueChangeCount = 0;
     function notificationCallback(notification) {
@@ -40,31 +40,19 @@
         shouldBe("range.maxValue", "100");
         shouldBe("range.intValue", "50");
 
-        // Check the value indicator returns a value.
-        var valueIndicator = range.childAtIndex(0);
-        shouldBe("valueIndicator.intValue", "50");
-        
-        // Check that incrementing/decrementing with keyboard sends AXValueChange.
+        // Check that incrementing/decrementing with the keyboard sends AXValueChange.
         eventSender.keyDown("leftArrow");
         shouldBe("range.intValue", "49");
-        shouldBe("valueIndicator.intValue", "49");
 
         eventSender.keyDown("rightArrow");
         shouldBe("range.intValue", "50");
-        shouldBe("valueIndicator.intValue", "50");
 
         // Check that incrementing/decrementing with accessibility API sends AXValueChange.
         range.increment();
         shouldBe("range.intValue", "55");
-        shouldBe("valueIndicator.intValue", "55");
 
         range.decrement();
         shouldBe("range.intValue", "50");
-        shouldBe("valueIndicator.intValue", "50");
-
-        // Check that a hit test on the value indicator succeeds.
-        var hitTestIndicator = accessibilityController.elementAtPoint(range.x + range.width/2, range.y + range.height/2);
-        shouldBeTrue("valueIndicator.isEqual(hitTestIndicator)");
 
         // Check that outside the indicator returns the slider.
         var hitTestRange = accessibilityController.elementAtPoint(range.x + 1, range.y + range.height/2);

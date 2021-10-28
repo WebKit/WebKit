@@ -1,3 +1,18 @@
+2021-10-28  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        AX: AXValueChanged is only sent for range elements when value is changed with the keyboard
+        https://bugs.webkit.org/show_bug.cgi?id=232298
+        <rdar://problem/84653767>
+
+        Reviewed by Andres Gonzalez.
+
+        Update the mac test for slider indicator and add a new one for gtk port.
+
+        * accessibility/gtk/html-slider-indicator-expected.txt: Added.
+        * accessibility/gtk/html-slider-indicator.html: Added.
+        * accessibility/mac/html-slider-indicator-expected.txt:
+        * accessibility/mac/html-slider-indicator.html:
+
 2021-10-28  Youenn Fablet  <youenn@apple.com>
 
         Fetch API: Network process leaks when blobs are unused

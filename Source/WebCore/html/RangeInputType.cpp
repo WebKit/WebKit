@@ -32,7 +32,6 @@
 #include "config.h"
 #include "RangeInputType.h"
 
-#include "AXObjectCache.h"
 #include "Decimal.h"
 #include "DocumentInlines.h"
 #include "ElementChildIterator.h"
@@ -236,9 +235,6 @@ auto RangeInputType::handleKeydownEvent(KeyboardEvent& event) -> ShouldCallBaseE
     if (newValue != current) {
         EventQueueScope scope;
         setValueAsDecimal(newValue, DispatchInputAndChangeEvent);
-
-        if (AXObjectCache* cache = element()->document().existingAXObjectCache())
-            cache->postNotification(element(), AXObjectCache::AXValueChanged);
     }
 
     event.setDefaultHandled();
