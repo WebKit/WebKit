@@ -89,6 +89,7 @@ void CanvasCaptureMediaStreamTrack::Source::startProducingData()
     if (!m_canvas)
         return;
     m_canvas->addObserver(*this);
+    m_canvas->addDisplayBufferObserver(*this);
 
     if (!m_frameRequestRate)
         return;
@@ -104,6 +105,7 @@ void CanvasCaptureMediaStreamTrack::Source::stopProducingData()
     if (!m_canvas)
         return;
     m_canvas->removeObserver(*this);
+    m_canvas->removeDisplayBufferObserver(*this);
 }
 
 void CanvasCaptureMediaStreamTrack::Source::requestFrameTimerFired()
@@ -152,11 +154,26 @@ void CanvasCaptureMediaStreamTrack::Source::canvasResized(CanvasBase& canvas)
 void CanvasCaptureMediaStreamTrack::Source::canvasChanged(CanvasBase& canvas, const std::optional<FloatRect>&)
 {
     ASSERT_UNUSED(canvas, m_canvas == &canvas);
+    if (m_canvas->renderingContext() && m_canvas->renderingContext()->needsPreparationForDisplay())
+        return;
+    scheduleCaptureCanvas();
+}
 
+void CanvasCaptureMediaStreamTrack::Source::scheduleCaptureCanvas()
+{
     // FIXME: We should try to generate the frame at the time the screen is being updated.
     if (m_captureCanvasTimer.isActive())
         return;
     m_captureCanvasTimer.startOneShot(0_s);
+}
+
+void CanvasCaptureMediaStreamTrack::Source::canvasDisplayBufferPrepared(CanvasBase& canvas)
+{
+    ASSERT_UNUSED(canvas, m_canvas == &canvas);
+    // FIXME: Here we should capture the image instead.
+    // However, submitting the sample to the receiver might cause layout,
+    // and currently the display preparation is done after layout.
+    scheduleCaptureCanvas();
 }
 
 void CanvasCaptureMediaStreamTrack::Source::captureCanvas()
