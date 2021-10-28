@@ -1,3 +1,14 @@
+2021-10-28  Aditya Keerthi  <akeerthi@apple.com>
+
+        REGRESSION (r282451): [iOS] Cannot override background of search inputs with 'appearance: textfield'
+        https://bugs.webkit.org/show_bug.cgi?id=231503
+        rdar://84110684
+
+        Reviewed by Wenson Hsieh.
+
+        * fast/forms/ios/form-control-refresh/search/textfield-appearance-background-styled-expected.txt: Added.
+        * fast/forms/ios/form-control-refresh/search/textfield-appearance-background-styled.html: Added.
+
 2021-10-28  Youenn Fablet  <youenn@apple.com>
 
         [ Mac wk1 ] 2 media-capabilities/webrtc tests are flaky failures

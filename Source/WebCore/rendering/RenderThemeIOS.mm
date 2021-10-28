@@ -573,12 +573,20 @@ void RenderThemeIOS::adjustTextFieldStyle(RenderStyle& style, const Element* ele
         hasTextfieldAppearance = input.isTextField() && !input.isSearchField();
     }
 
+    auto adjustBackgroundColor = [&] {
+        auto styleColorOptions = element->document().styleColorOptions(&style);
+        if (!style.backgroundColorEqualsToColorIgnoringVisited(systemColor(CSSValueAppleSystemOpaqueTertiaryFill, styleColorOptions)))
+            return;
+
+        style.setBackgroundColor(systemColor(CSSValueWebkitControlBackground, styleColorOptions));
+    };
+
     bool useAlternateDesign = element->document().settings().alternateFormControlDesignEnabled();
     if (useAlternateDesign) {
         if (hasTextfieldAppearance)
             style.setBackgroundColor(Color::transparentBlack);
         else
-            style.setBackgroundColor(systemColor(CSSValueWebkitControlBackground, element->document().styleColorOptions(&style)));
+            adjustBackgroundColor();
         style.resetBorderExceptRadius();
         return;
     }
@@ -586,7 +594,7 @@ void RenderThemeIOS::adjustTextFieldStyle(RenderStyle& style, const Element* ele
     if (hasTextfieldAppearance)
         return;
 
-    style.setBackgroundColor(systemColor(CSSValueWebkitControlBackground, element->document().styleColorOptions(&style)));
+    adjustBackgroundColor();
 }
 
 void RenderThemeIOS::paintTextFieldInnerShadow(const PaintInfo& paintInfo, const FloatRoundedRect& roundedRect)
