@@ -29,6 +29,7 @@
 
 #if PLATFORM(IOS_FAMILY)
 
+#import "NetworkProcess.h"
 #import "NetworkSessionCocoa.h"
 #import "PaymentAuthorizationController.h"
 
