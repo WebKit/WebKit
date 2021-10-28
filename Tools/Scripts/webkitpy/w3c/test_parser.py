@@ -30,6 +30,8 @@
 import logging
 import re
 
+from collections import deque
+
 from webkitpy.common.host import Host
 from webkitpy.thirdparty.BeautifulSoup import BeautifulSoup as Parser
 
@@ -133,6 +135,9 @@ class TestParser(object):
         if test_info and self.is_slow_test():
             test_info['slow'] = True
 
+        if test_info:
+            test_info['fuzzy'] = self.fuzzy_metadata()
+
         return test_info
 
     def reference_links_of_type(self, reftest_type):
@@ -163,6 +168,72 @@ class TestParser(object):
 
     def is_slow_test(self):
         return any([match.name == 'meta' and match['name'] == 'timeout' for match in self.test_doc.findAll(content='long')])
+
+    def has_fuzzy_metadata(self):
+        return any([match['name'] == 'fuzzy' for match in self.test_doc.findAll('meta')])
+
+    def fuzzy_metadata(self):
+        fuzzy_nodes = self.test_doc.findAll('meta', attrs={"name": "fuzzy"})
+        if not fuzzy_nodes:
+            return None
+
+        args = [u"maxDifference", u"totalPixels"]
+        result = {}
+
+        # Taken from wpt/tools/manifest/sourcefile.py, and copied to avoid having webkitpy depend on wpt.
+        for node in fuzzy_nodes:
+            content = node['content']
+            key = None
+            # from parse_ref_keyed_meta; splits out the optional reference prefix.
+            parts = content.rsplit(u":", 1)
+            if len(parts) == 1:
+                fuzzy_data = parts[0]
+            else:
+                ref_file = parts[0]
+                key = ref_file
+                fuzzy_data = parts[1]
+
+            ranges = fuzzy_data.split(u";")
+            if len(ranges) != 2:
+                raise ValueError("Malformed fuzzy value %s" % value)
+
+            arg_values = {}  # type: Dict[Text, List[int]]
+            positional_args = deque()  # type: Deque[List[int]]
+
+            for range_str_value in ranges:  # type: Text
+                name = None  # type: Optional[Text]
+                if u"=" in range_str_value:
+                    name, range_str_value = [part.strip() for part in range_str_value.split(u"=", 1)]
+                    if name not in args:
+                        raise ValueError("%s is not a valid fuzzy property" % name)
+                    if arg_values.get(name):
+                        raise ValueError("Got multiple values for argument %s" % name)
+
+                if u"-" in range_str_value:
+                    range_min, range_max = range_str_value.split(u"-")
+                else:
+                    range_min = range_str_value
+                    range_max = range_str_value
+                try:
+                    range_value = [int(x.strip()) for x in (range_min, range_max)]
+                except ValueError:
+                    raise ValueError("Fuzzy value %s must be a range of integers" % range_str_value)
+
+                if name is None:
+                    positional_args.append(range_value)
+                else:
+                    arg_values[name] = range_value
+
+            result[key] = []
+            for arg_name in args:
+                if arg_values.get(arg_name):
+                    arg_value = arg_values.pop(arg_name)
+                else:
+                    arg_value = positional_args.popleft()
+                result[key].append(arg_value)
+            assert len(arg_values) == 0 and len(positional_args) == 0
+
+        return result
 
     def potential_ref_filename(self):
         parts = self.filesystem.splitext(self.filename)

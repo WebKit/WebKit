@@ -293,3 +293,78 @@ CONTENT OF TEST
         test_info = parser.analyze_test(test_contents=test_html)
 
         self.assertTrue('referencefile' in test_info, 'test should be detected as reference file')
+
+    def _test_info_from_test_with_contents(self, test_contents):
+        test_path = os.path.join(os.path.sep, 'some', 'madeup', 'path')
+        parser = TestParser({'all': True}, os.path.join(test_path, 'test-fuzzy.html'))
+        return parser.analyze_test(test_contents=test_contents)
+
+    def test_simple_fuzzy_data(self):
+        """ Tests basic form of fuzzy_metadata()"""
+
+        test_html = """<html><head>
+<meta name=fuzzy content="maxDifference = 15 ; totalPixels = 300">
+</head>
+<body>CONTENT OF TEST</body></html>
+"""
+        test_info = self._test_info_from_test_with_contents(test_html)
+
+        expected_fuzzy = {None: [[15, 15], [300, 300]]}
+        self.assertEqual(test_info['fuzzy'], expected_fuzzy, 'fuzzy data did not match expected')
+
+    def test_nameless_fuzzy_data(self):
+        """ Tests fuzzy_metadata() in short form"""
+
+        test_html = """<html><head>
+<meta name=fuzzy content=" 15 ; 300 ">
+</head>
+<body>CONTENT OF TEST</body></html>
+"""
+        test_info = self._test_info_from_test_with_contents(test_html)
+        expected_fuzzy = {None: [[15, 15], [300, 300]]}
+        self.assertEqual(test_info['fuzzy'], expected_fuzzy, 'fuzzy data did not match expected')
+
+    def test_range_fuzzy_data(self):
+        """ Tests fuzzy_metadata() in range form"""
+
+        test_html = """<html><head>
+<meta name=fuzzy content="maxDifference=5-15;totalPixels =  200 - 300 ">
+</head>
+<body>CONTENT OF TEST</body></html>
+"""
+        test_info = self._test_info_from_test_with_contents(test_html)
+
+        expected_fuzzy = {None: [[5, 15], [200, 300]]}
+        self.assertEqual(test_info['fuzzy'], expected_fuzzy, 'fuzzy data did not match expected')
+
+    def test_nameless_range_fuzzy_data(self):
+        """ Tests fuzzy_metadata() in short range form"""
+
+        test_html = """<html><head>
+<meta name=fuzzy content="5-15;  200 - 300 ">
+</head>
+<body>CONTENT OF TEST</body></html>
+"""
+        test_info = self._test_info_from_test_with_contents(test_html)
+
+        expected_fuzzy = {None: [[5, 15], [200, 300]]}
+        self.assertEqual(test_info['fuzzy'], expected_fuzzy, 'fuzzy data did not match expected')
+
+    def test_per_ref_fuzzy_data(self):
+        """ Tests fuzzy_metadata() with values for difference reference files"""
+
+        test_html = """<html><head>
+<meta name=fuzzy content="5-15;200-300 ">
+<meta name=fuzzy content="close-match-ref.html:5;20">
+<meta name=fuzzy content="worse-match-ref.html: 15;30">
+</head>
+<body>CONTENT OF TEST</body></html>
+"""
+        test_info = self._test_info_from_test_with_contents(test_html)
+
+        expected_fuzzy = {
+            None: [[5, 15], [200, 300]],
+            'close-match-ref.html': [[5, 5], [20, 20]],
+            'worse-match-ref.html': [[15, 15], [30, 30]]
+        }
+        self.assertEqual(test_info['fuzzy'], expected_fuzzy, 'fuzzy data did not match expected')

@@ -1,3 +1,29 @@
+2021-10-28  Simon Fraser  <simon.fraser@apple.com>
+
+        Enhance test_parser.py to find fuzzy matching metadata
+        https://bugs.webkit.org/show_bug.cgi?id=232399
+
+        Reviewed by Martin Robinson.
+
+        w3c/test_parser is used by wpt import code, and it knows how to parse a file for various
+        meta tags. Enhance it to find <meta name=fuzzy> and return the data in test_info for future
+        use by layout tests, using code copied from wpt/tools/manifest/sourcefile.py.
+
+        Tested by new unit tests in test_parser_unittest.py
+
+        * Scripts/webkitpy/w3c/test_parser.py:
+        (TestParser.analyze_test):
+        (TestParser.has_fuzzy_metadata):
+        (TestParser):
+        (TestParser.fuzzy_metadata):
+        * Scripts/webkitpy/w3c/test_parser_unittest.py:
+        (_test_info_from_test_with_contents):
+        (test_simple_fuzzy_data):
+        (test_nameless_fuzzy_data):
+        (test_range_fuzzy_data):
+        (test_nameless_range_fuzzy_data):
+        (test_per_ref_fuzzy_data):
+
 2021-10-28  David Kilzer  <ddkilzer@apple.com>
 
         [Tools] Enable -Wformat=2 warnings
