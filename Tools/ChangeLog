@@ -1,3 +1,107 @@
+2021-10-28  Andres Gonzalez  <andresg_22@apple.com>
+
+        Isolated tree mode: Dispatch all calls to [WebAccessibilityObjectWrapper accessibilityAttributeValue] in WTR::AccessibilityUIElement to the AX thread.
+        https://bugs.webkit.org/show_bug.cgi?id=232415
+        <rdar://problem/84738483>
+
+        Reviewed by Chris Fleizach.
+
+        This is necessary to simulate running accessibility layout tests on the
+        secondary AX thread.
+
+        * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.h:
+        * WebKitTestRunner/InjectedBundle/mac/AccessibilityUIElementMac.mm:
+        (WTR::AccessibilityUIElement::descriptionOfValue const):
+        (WTR::descriptionOfElements):
+        (WTR::AccessibilityUIElement::attributeValue const):
+        (WTR::AccessibilityUIElement::domIdentifier const):
+        (WTR::AccessibilityUIElement::getLinkedUIElements):
+        (WTR::AccessibilityUIElement::getDocumentLinks):
+        (WTR::AccessibilityUIElement::getUIElementsWithAttribute const):
+        (WTR::AccessibilityUIElement::children const):
+        (WTR::AccessibilityUIElement::getChildren):
+        (WTR::AccessibilityUIElement::rowHeaders const):
+        (WTR::AccessibilityUIElement::columnHeaders const):
+        (WTR::AccessibilityUIElement::elementForAttribute const):
+        (WTR::AccessibilityUIElement::elementForAttributeAtIndex const):
+        (WTR::AccessibilityUIElement::detailsElements const):
+        (WTR::AccessibilityUIElement::errorMessageElements const):
+        (WTR::AccessibilityUIElement::allAttributes):
+        (WTR::AccessibilityUIElement::stringDescriptionOfAttributeValue):
+        (WTR::AccessibilityUIElement::stringAttributeValue):
+        (WTR::AccessibilityUIElement::numberAttributeValue):
+        (WTR::AccessibilityUIElement::uiElementAttributeValue const):
+        (WTR::AccessibilityUIElement::boolAttributeValue):
+        (WTR::AccessibilityUIElement::role):
+        (WTR::AccessibilityUIElement::subrole):
+        (WTR::AccessibilityUIElement::roleDescription):
+        (WTR::AccessibilityUIElement::computedRoleString):
+        (WTR::AccessibilityUIElement::title):
+        (WTR::AccessibilityUIElement::description):
+        (WTR::AccessibilityUIElement::orientation const):
+        (WTR::AccessibilityUIElement::stringValue):
+        (WTR::AccessibilityUIElement::language):
+        (WTR::AccessibilityUIElement::helpText const):
+        (WTR::AccessibilityUIElement::x):
+        (WTR::AccessibilityUIElement::y):
+        (WTR::AccessibilityUIElement::width):
+        (WTR::AccessibilityUIElement::height):
+        (WTR::AccessibilityUIElement::clickPointX):
+        (WTR::AccessibilityUIElement::clickPointY):
+        (WTR::AccessibilityUIElement::lineRectsAndText const):
+        (WTR::AccessibilityUIElement::intValue const):
+        (WTR::AccessibilityUIElement::minValue):
+        (WTR::AccessibilityUIElement::maxValue):
+        (WTR::AccessibilityUIElement::valueDescription):
+        (WTR::AccessibilityUIElement::insertionPointLineNumber):
+        (WTR::AccessibilityUIElement::isEnabled):
+        (WTR::AccessibilityUIElement::isRequired const):
+        (WTR::AccessibilityUIElement::isFocused const):
+        (WTR::AccessibilityUIElement::isSelected const):
+        (WTR::AccessibilityUIElement::isIndeterminate const):
+        (WTR::AccessibilityUIElement::isExpanded const):
+        (WTR::AccessibilityUIElement::currentStateValue const):
+        (WTR::AccessibilityUIElement::sortDirection const):
+        (WTR::AccessibilityUIElement::hierarchicalLevel const):
+        (WTR::AccessibilityUIElement::classList const):
+        (WTR::AccessibilityUIElement::speakAs):
+        (WTR::AccessibilityUIElement::ariaIsGrabbed const):
+        (WTR::AccessibilityUIElement::ariaDropEffects const):
+        (WTR::AccessibilityUIElement::attributesOfColumnHeaders):
+        (WTR::AccessibilityUIElement::attributesOfRowHeaders):
+        (WTR::AccessibilityUIElement::attributesOfColumns):
+        (WTR::AccessibilityUIElement::attributesOfRows):
+        (WTR::AccessibilityUIElement::attributesOfVisibleCells):
+        (WTR::AccessibilityUIElement::attributesOfHeader):
+        (WTR::AccessibilityUIElement::indexInTable):
+        (WTR::AccessibilityUIElement::rowIndexRange):
+        (WTR::AccessibilityUIElement::columnIndexRange):
+        (WTR::AccessibilityUIElement::horizontalScrollbar const):
+        (WTR::AccessibilityUIElement::verticalScrollbar const):
+        (WTR::AccessibilityUIElement::selectedTextRange):
+        (WTR::AccessibilityUIElement::setSelectedChildAtIndex const):
+        (WTR::AccessibilityUIElement::removeSelectionAtIndex const):
+        (WTR::AccessibilityUIElement::documentEncoding):
+        (WTR::AccessibilityUIElement::documentURI):
+        (WTR::AccessibilityUIElement::url):
+        (WTR::AccessibilityUIElement::isMultiSelectable const):
+        (WTR::AccessibilityUIElement::isOnScreen const):
+        (WTR::AccessibilityUIElement::embeddedImageDescription const):
+        (WTR::AccessibilityUIElement::imageOverlayElements const):
+        (WTR::AccessibilityUIElement::hasPopup const):
+        (WTR::AccessibilityUIElement::popupValue const):
+        (WTR::AccessibilityUIElement::selectedTextMarkerRange):
+        (WTR::AccessibilityUIElement::resetSelectedTextMarkerRange):
+        (WTR::AccessibilityUIElement::startTextMarker):
+        (WTR::AccessibilityUIElement::endTextMarker):
+        (WTR::_convertMathMultiscriptPairsToString):
+        (WTR::AccessibilityUIElement::mathPostscriptsDescription const):
+        (WTR::AccessibilityUIElement::mathPrescriptsDescription const):
+        (WTR::AccessibilityUIElement::mathRootRadicand const):
+        (WTR::AccessibilityUIElement::pathDescription const):
+        (WTR::descriptionOfValue): Deleted.
+        (WTR::attributesOfElement): Deleted.
+
 2021-10-28  Simon Fraser  <simon.fraser@apple.com>
 
         Prepare SingleTestRunnerTest to read fuzzy pixel matching data

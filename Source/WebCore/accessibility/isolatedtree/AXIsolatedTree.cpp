@@ -142,6 +142,7 @@ RefPtr<AXIsolatedTree> AXIsolatedTree::treeForPageID(PageIdentifier pageID)
 RefPtr<AXIsolatedObject> AXIsolatedTree::nodeForID(AXID axID) const
 {
     // In isolated tree mode 2, only access m_readerThreadNodeMap on the AX thread.
+    ASSERT(m_usedOnAXThread ? !isMainThread() : isMainThread());
     if (m_usedOnAXThread && isMainThread())
         return nullptr;
 
@@ -441,6 +442,7 @@ void AXIsolatedTree::applyPendingChanges()
     AXTRACE("AXIsolatedTree::applyPendingChanges");
 
     // In isolated tree mode 2, only apply pending changes on the AX thread.
+    ASSERT(m_usedOnAXThread ? !isMainThread() : isMainThread());
     if (m_usedOnAXThread && isMainThread())
         return;
 
