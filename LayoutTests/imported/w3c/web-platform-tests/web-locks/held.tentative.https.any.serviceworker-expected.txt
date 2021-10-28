@@ -1,0 +1,6 @@
+
+FAIL callback's result is promisified if not async promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.locks.request')"
+FAIL lock is held until callback's returned promise resolves promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.locks.request')"
+FAIL lock is held until callback's returned promise rejects promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.locks.request')"
+FAIL held lock prevents the same client from acquiring it promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.locks.request')"
+

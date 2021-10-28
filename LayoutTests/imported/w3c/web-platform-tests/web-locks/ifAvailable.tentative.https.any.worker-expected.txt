@@ -1,0 +1,12 @@
+
+FAIL Lock request with ifAvailable - lock available promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.locks.request')"
+FAIL Lock request with ifAvailable - lock not available promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.locks.request')"
+FAIL Lock request with ifAvailable - lock not available, callback throws promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.locks.request')"
+FAIL Lock request with ifAvailable - unrelated lock held promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.locks.request')"
+FAIL Shared lock request with ifAvailable - shared lock held promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.locks.request')"
+FAIL Exclusive lock request with ifAvailable - shared lock held promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.locks.request')"
+FAIL Shared lock request with ifAvailable - exclusive lock held promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.locks.request')"
+FAIL Returned Promise rejects if callback throws synchronously promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.locks.request')"
+FAIL Returned Promise rejects if async callback yields rejected promise promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.locks.request')"
+FAIL Locks are available once previous release is processed promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.locks.request')"
+

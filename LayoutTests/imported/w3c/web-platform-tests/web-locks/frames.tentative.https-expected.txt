@@ -1,0 +1,10 @@
+
+FAIL Window and Frame - shared mode assert_implements: undefined
+FAIL Window and Frame - exclusive mode assert_implements: undefined
+FAIL Frame and Frame - exclusive mode assert_implements: undefined
+FAIL Terminated Frame with held lock assert_implements: undefined
+FAIL Navigated Frame with held lock assert_implements: undefined
+FAIL Navigated Frame with pending request assert_implements: undefined
+FAIL Removed Frame with pending request assert_implements: undefined
+FAIL Removed Frame as lock is granted assert_implements: undefined
+

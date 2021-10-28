@@ -1,0 +1,11 @@
+
+FAIL The signal option must be an AbortSignal promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.locks.request')"
+FAIL Passing an already aborted signal aborts promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.locks.request')"
+FAIL An aborted request results in AbortError promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.locks.request')"
+FAIL Abort after a timeout promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.locks.request')"
+FAIL Signal that is not aborted promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.locks.request')"
+FAIL Synchronously signaled abort promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.locks.request')"
+FAIL Abort signaled after lock granted promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.locks.request')"
+FAIL Abort signaled after lock released promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.locks.request')"
+FAIL Abort should process the next pending lock request promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.locks.request')"
+

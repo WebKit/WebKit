@@ -1,0 +1,14 @@
+CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'navigator.locks.request')
+
+Harness Error (FAIL), message = TypeError: undefined is not an object (evaluating 'navigator.locks.request')
+
+FAIL query() returns dictionaries with expected properties promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.locks.request')"
+FAIL query() reports individual held locks promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.locks.request')"
+FAIL query() reports multiple held locks promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.locks.request')"
+FAIL query() reports pending and held locks promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.locks.request')"
+FAIL query() reports held shared locks with appropriate count promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.locks.request')"
+FAIL query() reports pending shared locks with appropriate count promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.locks.request')"
+FAIL query() reports the same clientId for held locks from the same context promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.locks.request')"
+TIMEOUT query() reports different ids for held locks from different contexts Test timed out
+NOTRUN query() can observe a deadlock
+

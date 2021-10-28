@@ -1,0 +1,4 @@
+
+FAIL Lock requests are granted in order promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.locks.request')"
+FAIL Shared locks are not exclusive promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.locks.request')"
+

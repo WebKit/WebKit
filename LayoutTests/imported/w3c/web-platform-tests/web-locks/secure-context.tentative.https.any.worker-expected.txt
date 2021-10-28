@@ -1,0 +1,3 @@
+
+FAIL API presence in secure contexts assert_idl_attribute: navigator.locks exists in secure context property "locks" not found in prototype chain
+

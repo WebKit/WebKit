@@ -1,0 +1,6 @@
+
+FAIL Window and Worker - shared mode assert_implements: undefined
+FAIL Window and Worker - exclusive mode assert_implements: undefined
+FAIL Worker and Worker - exclusive mode assert_implements: undefined
+FAIL Terminated Worker - exclusive mode assert_implements: undefined
+

@@ -1,0 +1,4 @@
+
+FAIL Lock attributes reflect requested properties (exclusive) promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.locks.request')"
+FAIL Lock attributes reflect requested properties (shared) promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.locks.request')"
+

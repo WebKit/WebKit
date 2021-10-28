@@ -453,6 +453,7 @@
     "web-platform-tests/wasm": "import", 
     "web-platform-tests/wasm/jsapi": "import", 
     "web-platform-tests/web-animations": "import", 
+    "web-platform-tests/web-locks/": "import", 
     "web-platform-tests/web-nfc": "skip", 
     "web-platform-tests/web-share": "import", 
     "web-platform-tests/webaudio": "import", 

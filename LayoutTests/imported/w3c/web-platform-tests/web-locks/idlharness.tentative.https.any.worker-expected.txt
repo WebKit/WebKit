@@ -1,0 +1,48 @@
+
+PASS idl_test setup
+PASS idl_test validation
+PASS Partial interface mixin NavigatorID: member names are unique
+PASS Navigator includes NavigatorLocks: member names are unique
+PASS WorkerNavigator includes NavigatorLocks: member names are unique
+PASS Navigator includes NavigatorID: member names are unique
+PASS Navigator includes NavigatorLanguage: member names are unique
+PASS Navigator includes NavigatorOnLine: member names are unique
+PASS Navigator includes NavigatorContentUtils: member names are unique
+PASS Navigator includes NavigatorCookies: member names are unique
+PASS Navigator includes NavigatorPlugins: member names are unique
+PASS Navigator includes NavigatorConcurrentHardware: member names are unique
+PASS WorkerNavigator includes NavigatorID: member names are unique
+PASS WorkerNavigator includes NavigatorLanguage: member names are unique
+PASS WorkerNavigator includes NavigatorOnLine: member names are unique
+PASS WorkerNavigator includes NavigatorConcurrentHardware: member names are unique
+FAIL LockManager interface: existence and properties of interface object assert_own_property: self does not have own property "LockManager" expected property "LockManager" missing
+FAIL LockManager interface object length assert_own_property: self does not have own property "LockManager" expected property "LockManager" missing
+FAIL LockManager interface object name assert_own_property: self does not have own property "LockManager" expected property "LockManager" missing
+FAIL LockManager interface: existence and properties of interface prototype object assert_own_property: self does not have own property "LockManager" expected property "LockManager" missing
+FAIL LockManager interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "LockManager" expected property "LockManager" missing
+FAIL LockManager interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "LockManager" expected property "LockManager" missing
+FAIL LockManager interface: operation request(DOMString, LockGrantedCallback) assert_own_property: self does not have own property "LockManager" expected property "LockManager" missing
+FAIL LockManager interface: operation request(DOMString, LockOptions, LockGrantedCallback) assert_own_property: self does not have own property "LockManager" expected property "LockManager" missing
+FAIL LockManager interface: operation query() assert_own_property: self does not have own property "LockManager" expected property "LockManager" missing
+FAIL LockManager must be primary interface of navigator.locks assert_equals: wrong typeof object expected "object" but got "undefined"
+FAIL Stringification of navigator.locks assert_equals: wrong typeof object expected "object" but got "undefined"
+FAIL LockManager interface: navigator.locks must inherit property "request(DOMString, LockGrantedCallback)" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
+FAIL LockManager interface: calling request(DOMString, LockGrantedCallback) on navigator.locks with too few arguments must throw TypeError assert_equals: wrong typeof object expected "object" but got "undefined"
+FAIL LockManager interface: navigator.locks must inherit property "request(DOMString, LockOptions, LockGrantedCallback)" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
+FAIL LockManager interface: calling request(DOMString, LockOptions, LockGrantedCallback) on navigator.locks with too few arguments must throw TypeError assert_equals: wrong typeof object expected "object" but got "undefined"
+FAIL LockManager interface: navigator.locks must inherit property "query()" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
+FAIL Lock interface: existence and properties of interface object assert_own_property: self does not have own property "Lock" expected property "Lock" missing
+FAIL Lock interface object length assert_own_property: self does not have own property "Lock" expected property "Lock" missing
+FAIL Lock interface object name assert_own_property: self does not have own property "Lock" expected property "Lock" missing
+FAIL Lock interface: existence and properties of interface prototype object assert_own_property: self does not have own property "Lock" expected property "Lock" missing
+FAIL Lock interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "Lock" expected property "Lock" missing
+FAIL Lock interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "Lock" expected property "Lock" missing
+FAIL Lock interface: attribute name assert_own_property: self does not have own property "Lock" expected property "Lock" missing
+FAIL Lock interface: attribute mode assert_own_property: self does not have own property "Lock" expected property "Lock" missing
+FAIL Lock must be primary interface of lock assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: lock"
+FAIL Stringification of lock assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: lock"
+FAIL Lock interface: lock must inherit property "name" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: lock"
+FAIL Lock interface: lock must inherit property "mode" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: lock"
+FAIL WorkerNavigator interface: attribute locks assert_true: The prototype object must have a property "locks" expected true got false
+FAIL WorkerNavigator interface: navigator must inherit property "locks" with the proper type assert_inherits: property "locks" not found in prototype chain
+
