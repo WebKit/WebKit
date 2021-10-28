@@ -1,3 +1,17 @@
+2021-10-28  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [WPE][Qt] String memory leak in WPEQtView.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=232435
+
+        Reviewed by Michael Catanzaro.
+
+        No new tests needed.
+
+        * UIProcess/API/wpe/qt/WPEQtView.cpp:
+        (jsAsyncReadyCallback): Remove unneeded usage of g_strdup(), and replace direct usage
+        of the QString constructor with QString::fromUtf8(), which better indicates that the
+        call will copy the string contents.
+
 2021-10-28  Youenn Fablet  <youenn@apple.com>
 
         [ Mac wk1 ] 2 media-capabilities/webrtc tests are flaky failures

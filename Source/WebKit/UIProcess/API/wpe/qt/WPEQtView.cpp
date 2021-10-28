@@ -432,7 +432,7 @@ static void jsAsyncReadyCallback(GObject* object, GAsyncResult* result, gpointer
                 qWarning("Error running javascript: %s", jsc_exception_get_message(exception));
                 jsc_context_clear_exception(context);
             } else
-                variant.setValue(QString(g_strdup(strValue.get())));
+                variant.setValue(QString::fromUtf8(strValue.get()));
         }
         args.append(engine->toScriptValue(variant));
         data->callback.call(args);
