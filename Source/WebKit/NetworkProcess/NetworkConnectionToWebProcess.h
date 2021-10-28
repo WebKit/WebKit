@@ -54,6 +54,7 @@
 #include <WebCore/WebSocketIdentifier.h>
 #include <wtf/OptionSet.h>
 #include <wtf/RefCounted.h>
+#include <wtf/URLHash.h>
 
 namespace PAL {
 class SessionID;
@@ -411,6 +412,9 @@ private:
     HashSet<WebCore::MessagePortIdentifier> m_processEntangledPorts;
     HashMap<uint64_t, Function<void()>> m_messageBatchDeliveryCompletionHandlers;
     Ref<NetworkSchemeRegistry> m_schemeRegistry;
+        
+    HashSet<URL> m_blobURLs;
+    HashSet<URL> m_blobURLHandles;
 };
 
 } // namespace WebKit

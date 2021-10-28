@@ -379,8 +379,13 @@ void NetworkConnectionToWebProcess::didClose(IPC::Connection& connection)
     while (!m_networkResourceLoaders.isEmpty())
         m_networkResourceLoaders.begin()->value->abort();
 
-    if (auto* networkSession = this->networkSession())
+    if (auto* networkSession = this->networkSession()) {
         networkSession->broadcastChannelRegistry().removeConnection(connection);
+        for (auto& url : m_blobURLs)
+            networkSession->blobRegistry().unregisterBlobURL(url);
+        for (auto& url : m_blobURLHandles)
+            networkSession->blobRegistry().unregisterBlobURLHandle(url);
+    }
 
     // All trackers of resources that were in the middle of being loaded were
     // stopped with the abort() calls above, but we still need to sweep up the
@@ -833,6 +838,7 @@ void NetworkConnectionToWebProcess::registerFileBlobURL(const URL& url, const St
     if (!session)
         return;
 
+    m_blobURLs.add(url);
     session->blobRegistry().registerFileBlobURL(url, BlobDataFileReferenceWithSandboxExtension::create(path, replacementPath, SandboxExtension::create(WTFMove(extensionHandle))), contentType);
 }
 
@@ -842,6 +848,7 @@ void NetworkConnectionToWebProcess::registerBlobURL(const URL& url, Vector<BlobP
     if (!session)
         return;
 
+    m_blobURLs.add(url);
     session->blobRegistry().registerBlobURL(url, WTFMove(blobParts), contentType);
 }
 
@@ -851,6 +858,7 @@ void NetworkConnectionToWebProcess::registerBlobURLFromURL(const URL& url, const
     if (!session)
         return;
 
+    m_blobURLs.add(url);
     session->blobRegistry().registerBlobURL(url, srcURL, WTFMove(policyContainer));
 }
 
@@ -862,6 +870,7 @@ void NetworkConnectionToWebProcess::registerBlobURLOptionallyFileBacked(const UR
     if (!session)
         return;
 
+    m_blobURLs.add(url);
     session->blobRegistry().registerBlobURLOptionallyFileBacked(url, srcURL, BlobDataFileReferenceWithSandboxExtension::create(fileBackedPath), contentType, { });
 }
 
@@ -871,6 +880,7 @@ void NetworkConnectionToWebProcess::registerBlobURLForSlice(const URL& url, cons
     if (!session)
         return;
 
+    m_blobURLs.add(url);
     session->blobRegistry().registerBlobURLForSlice(url, srcURL, start, end, contentType);
 }
 
@@ -880,6 +890,7 @@ void NetworkConnectionToWebProcess::unregisterBlobURL(const URL& url)
     if (!session)
         return;
 
+    m_blobURLs.remove(url);
     session->blobRegistry().unregisterBlobURL(url);
 }
 
@@ -889,6 +900,7 @@ void NetworkConnectionToWebProcess::registerBlobURLHandle(const URL& url)
     if (!session)
         return;
 
+    m_blobURLHandles.add(url);
     session->blobRegistry().registerBlobURLHandle(url);
 }
 
@@ -898,6 +910,7 @@ void NetworkConnectionToWebProcess::unregisterBlobURLHandle(const URL& url)
     if (!session)
         return;
 
+    m_blobURLHandles.remove(url);
     session->blobRegistry().unregisterBlobURLHandle(url);
 }
 

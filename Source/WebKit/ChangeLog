@@ -1,3 +1,16 @@
+2021-10-28  Youenn Fablet  <youenn@apple.com>
+
+        Fetch API: Network process leaks when blobs are unused
+        https://bugs.webkit.org/show_bug.cgi?id=232371
+        <rdar://problem/84704184>
+
+        Reviewed by Geoffrey Garen.
+
+        Make sure to unregister blobs created by a WebProcess in case WebProcess terminates.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+
 2021-10-27  David Kilzer  <ddkilzer@apple.com>
 
         [WebKit] Enable -Wformat=2 warnings

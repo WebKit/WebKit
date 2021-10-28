@@ -915,6 +915,9 @@ enum AutoplayPolicy {
     undefined setResponseSizeWithPadding(FetchResponse response, unsigned long long size);
     unsigned long long responseSizeWithPadding(FetchResponse response);
 
+    DOMString blobInternalURL(Blob blob);
+    Promise<boolean> isBlobInternalURLRegistered(DOMString url);
+
     undefined updateQuotaBasedOnSpaceUsage();
 
     undefined setConsoleMessageListener(StringCallback callback);

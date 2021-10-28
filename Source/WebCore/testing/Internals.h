@@ -54,6 +54,7 @@ class ArtworkImageLoader;
 class AudioContext;
 class AudioTrack;
 class BaseAudioContext;
+class Blob;
 class CacheStorageConnection;
 class DOMPointReadOnly;
 class DOMRect;
@@ -650,6 +651,9 @@ public:
 #endif
 
     String getImageSourceURL(Element&);
+
+    String blobInternalURL(const Blob&);
+    void isBlobInternalURLRegistered(const String&, DOMPromiseDeferred<IDLBoolean>&&);
 
 #if ENABLE(VIDEO)
     unsigned mediaElementCount();

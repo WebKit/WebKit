@@ -38,6 +38,7 @@
 #include "BackForwardCache.h"
 #include "BackForwardController.h"
 #include "BitmapImage.h"
+#include "Blob.h"
 #include "CSSKeyframesRule.h"
 #include "CSSMediaRule.h"
 #include "CSSPropertyParser.h"
@@ -210,6 +211,7 @@
 #include "SystemSoundManager.h"
 #include "TextIterator.h"
 #include "TextPlaceholderElement.h"
+#include "ThreadableBlobRegistry.h"
 #include "TreeScope.h"
 #include "TypeConversions.h"
 #include "UserGestureIndicator.h"
@@ -833,6 +835,16 @@ String Internals::xhrResponseSource(XMLHttpRequest& request)
 String Internals::fetchResponseSource(FetchResponse& response)
 {
     return responseSourceToString(response.resourceResponse());
+}
+
+String Internals::blobInternalURL(const Blob& blob)
+{
+    return blob.url().string();
+}
+
+void Internals::isBlobInternalURLRegistered(const String& url, DOMPromiseDeferred<IDLBoolean>&& promise)
+{
+    promise.resolve(!!ThreadableBlobRegistry::blobSize(URL { { }, url }));
 }
 
 bool Internals::isSharingStyleSheetContents(HTMLLinkElement& a, HTMLLinkElement& b)

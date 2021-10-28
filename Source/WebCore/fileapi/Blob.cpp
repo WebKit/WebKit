@@ -154,6 +154,7 @@ Blob::Blob(ScriptExecutionContext* context, const URL& srcURL, long long start, 
 
 Blob::~Blob()
 {
+    ThreadableBlobRegistry::unregisterBlobURL(m_internalURL);
     while (!m_blobLoaders.isEmpty())
         (*m_blobLoaders.begin())->cancel();
 }

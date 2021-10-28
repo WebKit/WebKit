@@ -1,3 +1,14 @@
+2021-10-28  Youenn Fablet  <youenn@apple.com>
+
+        Fetch API: Network process leaks when blobs are unused
+        https://bugs.webkit.org/show_bug.cgi?id=232371
+        <rdar://problem/84704184>
+
+        Reviewed by Geoffrey Garen.
+
+        * http/wpt/fetch/blob-gc-expected.txt: Added.
+        * http/wpt/fetch/blob-gc.html: Added.
+
 2021-10-27  Gabriel Nava Marino  <gnavamarino@apple.com>
 
         Assertions in findFirstSlotElement hit when removing two slots with the same name in a single shadow tree
