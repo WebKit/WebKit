@@ -456,7 +456,7 @@ static RetainPtr<WKProcessPool>& sharedProcessPool()
 
 - (size_t)_pluginProcessCount
 {
-#if !PLATFORM(IOS_FAMILY)
+#if ENABLE(NETSCAPE_PLUGIN_API)
     return WebKit::PluginProcessManager::singleton().pluginProcesses().size();
 #else
     return 0;

@@ -558,7 +558,7 @@ public:
 
     std::optional<WebCore::SimpleRange> currentSelectionAsRange();
 
-#if ENABLE(NETSCAPE_PLUGIN_API)
+#if ENABLE(PDFKIT_PLUGIN)
     RefPtr<Plugin> createPlugin(WebFrame*, WebCore::HTMLPlugInElement*, const Plugin::Parameters&, String& newMIMEType);
 #endif
 

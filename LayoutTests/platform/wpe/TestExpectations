@@ -932,9 +932,6 @@ webkit.org/b/212350 fast/dom/timer-throttling-hidden-page.html [ Timeout ]
 
 webkit.org/b/118220 http/tests/cache/partitioned-cache.html [ Failure ]
 
-# Content extensions, the failures need up-to-date expectations.
-http/tests/contentextensions/plugin-doesnt-crash.html [ Timeout Failure ]
-
 # Unknown
 webkit.org/b/120839 animations/cross-fade-background-image.html [ ImageOnlyFailure ]
 

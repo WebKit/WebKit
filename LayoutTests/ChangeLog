@@ -1,3 +1,32 @@
+2021-10-28  Alex Christensen  <achristensen@webkit.org>
+
+        Disable NETSCAPE_PLUGIN_API at build time on macOS and Windows
+        https://bugs.webkit.org/show_bug.cgi?id=232396
+
+        Reviewed by Geoff Garen.
+
+        * TestExpectations:
+        * fast/frames/sandboxed-iframe-plugins-expected.txt:
+        * fast/frames/sandboxed-iframe-plugins.html:
+        * http/tests/contentextensions/plugin-doesnt-crash-expected.txt: Removed.
+        * http/tests/contentextensions/plugin-doesnt-crash.html: Removed.
+        * http/tests/contentextensions/plugin-doesnt-crash.html.json: Removed.
+        * http/tests/security/frameNavigation/xss-DENIED-plugin-navigation-expected.txt: Removed.
+        * http/tests/security/frameNavigation/xss-DENIED-plugin-navigation.html: Removed.
+        * platform/glib/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/ios/TestExpectations:
+        * platform/mac-wk1/fast/dom/collection-iterators-expected.txt: Added.
+        * platform/mac-wk2/TestExpectations:
+        * platform/mac-wk2/plugins/contents-scale-factor-expected.txt:
+        * platform/mac-wk2/plugins/contents-scale-factor.html:
+        * platform/mac/TestExpectations:
+        * platform/win/TestExpectations:
+        * platform/wk2/TestExpectations:
+        * platform/wpe/TestExpectations:
+        * tiled-drawing/scrolling/non-fast-region/wheel-event-plugin-expected.txt: Removed.
+        * tiled-drawing/scrolling/non-fast-region/wheel-event-plugin.html: Removed.
+
 2021-10-28  Nikolaos Mouchtaris  <nmouchtaris@apple.com>
 
         [Debug] imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.ellipse.basics.html is asserting

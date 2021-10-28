@@ -51,6 +51,7 @@
 #import "WebPageProxyMessages.h"
 #import "WebPasteboardProxyMessages.h"
 #import "WebProcess.h"
+#import "WebWheelEvent.h"
 #import <JavaScriptCore/JSContextRef.h>
 #import <JavaScriptCore/JSObjectRef.h>
 #import <JavaScriptCore/OpaqueJSString.h>

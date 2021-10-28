@@ -1154,21 +1154,24 @@ void WebPage::initializeInjectedBundleFullScreenClient(WKBundlePageFullScreenCli
 }
 #endif
 
-#if ENABLE(NETSCAPE_PLUGIN_API)
-
+#if ENABLE(PDFKIT_PLUGIN)
 RefPtr<Plugin> WebPage::createPlugin(WebFrame* frame, HTMLPlugInElement* pluginElement, const Plugin::Parameters& parameters, String& newMIMEType)
 {
     String frameURLString = frame->coreFrame()->loader().documentLoader()->responseURL().string();
     String pageURLString = m_page->mainFrame().loader().documentLoader()->responseURL().string();
 
+#if ENABLE(NETSCAPE_PLUGIN_API)
     bool allowOnlyApplicationPlugins = !frame->coreFrame()->arePluginsEnabled();
+#endif
 
-    uint64_t pluginProcessToken;
-    uint32_t pluginLoadPolicy;
+    uint64_t pluginProcessToken { 0 };
+    uint32_t pluginLoadPolicy { 0 };
     String unavailabilityDescription;
-    bool isUnsupported;
+    bool isUnsupported { false };
+#if ENABLE(NETSCAPE_PLUGIN_API)
     if (!sendSync(Messages::WebPageProxy::FindPlugin(parameters.mimeType, parameters.url.string(), frameURLString, pageURLString, allowOnlyApplicationPlugins), Messages::WebPageProxy::FindPlugin::Reply(pluginProcessToken, newMIMEType, pluginLoadPolicy, unavailabilityDescription, isUnsupported)))
         return nullptr;
+#endif
 
     PluginModuleLoadPolicy loadPolicy = static_cast<PluginModuleLoadPolicy>(pluginLoadPolicy);
     bool isBlockedPlugin = (loadPolicy == PluginModuleBlockedForSecurity) || (loadPolicy == PluginModuleBlockedForCompatibility);
@@ -1185,6 +1188,7 @@ RefPtr<Plugin> WebPage::createPlugin(WebFrame* frame, HTMLPlugInElement* pluginE
         return nullptr;
     }
 
+#if ENABLE(NETSCAPE_PLUGIN_API)
     if (isBlockedPlugin) {
         bool isReplacementObscured = pluginElement->setReplacement(RenderEmbeddedObject::InsecurePluginVersion, unavailabilityDescription);
         send(Messages::WebPageProxy::DidBlockInsecurePluginVersion(parameters.mimeType, parameters.url.string(), frameURLString, pageURLString, isReplacementObscured));
@@ -1195,6 +1199,9 @@ RefPtr<Plugin> WebPage::createPlugin(WebFrame* frame, HTMLPlugInElement* pluginE
         return nullptr;
 
     return PluginProxy::create(pluginProcessToken);
+#else
+    return nullptr;
+#endif
 }
 #endif // ENABLE(NETSCAPE_PLUGIN_API)
 

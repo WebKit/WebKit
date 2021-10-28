@@ -1,4 +1,0 @@
-Wheel event rect for plug-in:
-
-
-28, 70 - 328, 220

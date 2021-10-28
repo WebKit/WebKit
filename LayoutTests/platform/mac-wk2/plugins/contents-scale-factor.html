@@ -26,19 +26,19 @@ function runTest()
     plugin1 = createTestPlugin('contents-scale-factor');
     document.body.appendChild(plugin1);
     
-    shouldBe("plugin1.contentsScaleFactor", "1.0");
-    shouldBe("plugin1.cachedContentsScaleFactor", "1.0");
+    shouldBe("plugin1.contentsScaleFactor", "undefined");
+    shouldBe("plugin1.cachedContentsScaleFactor", "undefined");
 
     // Now change the backing scale factor.
     testRunner.setBackingScaleFactor(2, function() {
-        shouldBe("plugin1.contentsScaleFactor", "2.0");
-        shouldBe("plugin1.cachedContentsScaleFactor", "2.0");
+        shouldBe("plugin1.contentsScaleFactor", "undefined");
+        shouldBe("plugin1.cachedContentsScaleFactor", "undefined");
     
         plugin2 = createTestPlugin('contents-scale-factor');
         document.body.appendChild(plugin2);
     
-        shouldBe("plugin2.contentsScaleFactor", "2.0");
-        shouldBe("plugin2.cachedContentsScaleFactor", "2.0");
+        shouldBe("plugin2.contentsScaleFactor", "undefined");
+        shouldBe("plugin2.cachedContentsScaleFactor", "undefined");
 
         testRunner.notifyDone();
     });

@@ -2208,7 +2208,6 @@ http/tests/security/referrer-policy-https-unsafe-url.html [ Skip ] # Timeout
 http/tests/security/referrer-policy-https-never.html [ Skip ] # Timeout
 http/tests/security/referrer-policy-invalid.html [ Skip ] # Timeout
 http/tests/security/referrer-policy-rel-noreferrer.html [ Skip ] # Timeout
-http/tests/security/frameNavigation/xss-DENIED-plugin-navigation.html [ Skip ] # Timeout
 webkit.org/b/95530 http/tests/security/inactive-document-with-empty-security-origin.html [ Skip ] # Timeout
 http/tests/security/mixedContent/insecure-xhr-in-main-frame.html [ Skip ] # Timeout
 http/tests/security/mixedContent/insecure-iframe-in-main-frame.html [ Skip ] # Timeout

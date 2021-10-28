@@ -27,6 +27,7 @@
 #import "WKPreferencesInternal.h"
 
 #import "APIArray.h"
+#import "Logging.h"
 #import "PluginProcessManager.h"
 #import "WKNSArray.h"
 #import "WebPreferences.h"

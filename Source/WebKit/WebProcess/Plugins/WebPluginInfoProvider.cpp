@@ -43,6 +43,10 @@
 #include <WebCore/StringUtilities.h>
 #endif
 
+#if ENABLE(PDFKIT_PLUGIN)
+#include "PDFPlugin.h"
+#endif
+
 namespace WebKit {
 using namespace WebCore;
 
@@ -79,6 +83,10 @@ Vector<PluginInfo> WebPluginInfoProvider::pluginInfo(Page& page, std::optional<V
         supportedPluginIdentifiers = *m_cachedSupportedPluginIdentifiers;
 
     return page.mainFrame().arePluginsEnabled() ? m_cachedPlugins : m_cachedApplicationPlugins;
+#elif ENABLE(PDFKIT_PLUGIN)
+    UNUSED_PARAM(page);
+    UNUSED_PARAM(supportedPluginIdentifiers);
+    return { PDFPlugin::pluginInfo() };
 #else
     UNUSED_PARAM(page);
     UNUSED_PARAM(supportedPluginIdentifiers);

@@ -413,7 +413,6 @@ http/tests/security/dataURL/xss-DENIED-from-data-url-in-foreign-domain-window-op
 http/tests/security/dataURL/xss-DENIED-from-javascript-url-window-open.html
 http/tests/security/dataURL/xss-DENIED-to-data-url-in-foreign-domain-window-open.html
 http/tests/security/dataURL/xss-DENIED-to-data-url-window-open.html
-http/tests/security/frameNavigation/xss-DENIED-plugin-navigation.html
 http/tests/security/frameNavigation/xss-DENIED-targeted-link-navigation.html
 http/tests/security/javascriptURL/xss-ALLOWED-to-javascript-url-window-open.html
 http/tests/security/javascriptURL/xss-DENIED-from-javascript-url-in-foreign-domain-window-open.html

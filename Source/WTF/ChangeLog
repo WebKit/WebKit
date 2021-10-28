@@ -1,3 +1,16 @@
+2021-10-28  Alex Christensen  <achristensen@webkit.org>
+
+        Disable NETSCAPE_PLUGIN_API at build time on macOS and Windows
+        https://bugs.webkit.org/show_bug.cgi?id=232396
+
+        Reviewed by Geoff Garen.
+
+        It has been disabled at run time since https://trac.webkit.org/changeset/276720/webkit
+        and https://trac.webkit.org/changeset/275910/webkit but is still able to be reached by tests.
+        This begins the removal of the code and tests with what is close to the smallest change possible.
+
+        * wtf/PlatformEnable.h:
+
 2021-10-28  Nikolaos Mouchtaris  <nmouchtaris@apple.com>
 
         Enable lazy image loading by default

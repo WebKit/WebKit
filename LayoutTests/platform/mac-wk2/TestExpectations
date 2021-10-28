@@ -1479,9 +1479,6 @@ http/tests/webAPIStatistics/screen-functions-accessed-data-collection.html [ Pas
 
 webkit.org/b/225521 [ Release ] media/modern-media-controls/pip-support/pip-support-enabled.html [ Pass Failure ]
 
-webkit.org/b/226783 [ arm64 ] http/tests/contentextensions/plugin-doesnt-crash.html [ Skip ]
-webkit.org/b/226783 [ arm64 ] tiled-drawing/scrolling/non-fast-region/wheel-event-plugin.html [ Skip ]
-
 webkit.org/b/227273 fast/css-custom-paint/out-of-memory-while-adding-worklet-module.html [ Pass Timeout DumpJSConsoleLogInStdErr Failure ]
 
 webkit.org/b/227467 [ BigSur arm64 Release ] fast/css/sticky/sticky-left.html [ Pass ImageOnlyFailure ]
@@ -1691,4 +1688,8 @@ webkit.org/b/229569 [ Catalina Release ] imported/w3c/web-platform-tests/webrtc/
 
 webkit.org/b/232337 [ Debug ] imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting/navigation-reporting/reporting-coop-navigated-opener.https.html [ Pass Failure DumpJSConsoleLogInStdErr ]
 
-
+# Plugins
+# FIXME: Remove these tests.
+platform/mac-wk2/plugins/npruntime/remove-property-from-javascript.html [ Skip ]
+platform/mac-wk2/plugins/npp-setwindow-called-on-scroll.html [ Skip ]
+platform/mac-wk2/plugins/destroy-during-async-npp-new.html [ Skip ]

@@ -1,3 +1,13 @@
+2021-10-28  Alex Christensen  <achristensen@webkit.org>
+
+        Disable NETSCAPE_PLUGIN_API at build time on macOS and Windows
+        https://bugs.webkit.org/show_bug.cgi?id=232396
+
+        Reviewed by Geoff Garen.
+
+        * WebView/WebFramePrivate.h:
+        * WebView/WebHTMLViewPrivate.h:
+
 2021-10-28  Youenn Fablet  <youenn@apple.com>
 
         [ Mac wk1 ] 2 media-capabilities/webrtc tests are flaky failures

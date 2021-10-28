@@ -1168,7 +1168,6 @@ http/tests/navigation/scrollstate-after-http-equiv-refresh-fragment-identifier.h
 http/tests/navigation/scrollstate-after-http-equiv-refresh.html
 http/tests/navigation/scrollstate-after-location-reload.html
 http/tests/security/contentSecurityPolicy/media-src-allowed.html
-http/tests/security/frameNavigation/xss-DENIED-plugin-navigation.html
 http/tests/canvas/webgl/origin-clean-conformance.html
 
 # HTTP tests that fail:

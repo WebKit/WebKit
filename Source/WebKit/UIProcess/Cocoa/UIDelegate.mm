@@ -748,6 +748,7 @@ void UIDelegate::UIClient::unfocus(WebPageProxy*)
     [(id <WKUIDelegatePrivate>)delegate _unfocusWebView:m_uiDelegate->m_webView.get().get()];
 }
 
+#if ENABLE(NETSCAPE_PLUGIN_API)
 static _WKPlugInUnavailabilityReason toWKPlugInUnavailabilityReason(WKPluginUnavailabilityReason reason)
 {
     switch (reason) {
@@ -776,6 +777,7 @@ void UIDelegate::UIClient::unavailablePluginButtonClicked(WebPageProxy&, WKPlugi
 
     [(id <WKUIDelegatePrivate>)delegate _webView:m_uiDelegate->m_webView.get().get() unavailablePlugInButtonClickedWithReason:toWKPlugInUnavailabilityReason(reason) plugInInfo:wrapper(plugInInfo)];
 }
+#endif
     
 static _WKResourceLimit toWKResourceLimit(WKResourceLimit limit)
 {

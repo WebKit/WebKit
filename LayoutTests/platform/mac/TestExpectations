@@ -24,7 +24,6 @@ model-element [ Pass ]
 [ arm64 ] platform/mac/plugins [ Skip ]
 [ arm64 ] plugins [ Skip ]
 [ arm64 ] fullscreen/full-screen-plugin.html [ Skip ]
-[ arm64 ] http/tests/contentextensions/plugin-doesnt-crash.html [ Skip ]
 [ arm64 ] http/tests/security/contentSecurityPolicy/1.1/plugintypes-affects-child.html [ Skip ]
 [ arm64 ] http/tests/security/contentSecurityPolicy/1.1/plugintypes-invalid.html [ Skip ]
 [ arm64 ] http/tests/security/contentSecurityPolicy/1.1/plugintypes-url-01.html [ Skip ]
@@ -45,7 +44,6 @@ model-element [ Pass ]
 [ arm64 ] http/tests/security/mixedContent/insecure-plugin-in-iframe.html [ Skip ]
 [ arm64 ] http/tests/security/storage-blocking-loosened-plugin.html [ Skip ]
 [ arm64 ] http/tests/security/storage-blocking-strengthened-plugin.html [ Skip ]
-[ arm64 ] tiled-drawing/scrolling/non-fast-region/wheel-event-plugin.html [ Skip ]
 [ arm64 ] userscripts/user-script-plugin-document.html [ Skip ]
 [ arm64 ] fast/frames/sandboxed-iframe-about-blank.html [ Skip ]
 [ arm64 ] fast/frames/sandboxed-iframe-navigation-allowed.html [ Skip ]
@@ -2442,3 +2440,8 @@ webkit.org/b/230984 [ BigSur Debug arm64 ] streams/readableStream-then.html [ Pa
 webkit.org/b/231757 [ BigSur ] inspector/canvas/updateShader-webgl.html [ Pass Failure ]
 
 webkit.org/b/231924 inspector/css/modify-css-property.html [ Pass Failure ]
+
+# Plugins
+# FIXME: Remove these tests.
+platform/mac/plugins/testplugin-onnew-onpaint.html [ Skip ]
+platform/mac/plugins/convert-point.html [ Skip ]

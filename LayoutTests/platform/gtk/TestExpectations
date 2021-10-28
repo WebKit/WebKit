@@ -816,7 +816,6 @@ fast/forms/datalist/update-range-with-datalist.html [ Skip ]
 webkit.org/b/200162 http/tests/websocket/tests/hybi/inspector/ [ Skip ]
 
 # Plugins.
-http/tests/contentextensions/plugin-doesnt-crash.html [ Skip ]
 http/tests/security/contentSecurityPolicy/cross-origin-plugin-document-allowed-in-child-window.html [ Skip ]
 http/tests/security/contentSecurityPolicy/same-origin-plugin-document-allowed-in-child-window.html [ Skip ]
 http/tests/security/contentSecurityPolicy/same-origin-plugin-document-blocked-in-child-window-report.py [ Skip ]

@@ -1632,7 +1632,7 @@ RefPtr<Widget> WebFrameLoaderClient::createPlugin(const IntSize&, HTMLPlugInElem
     parameters.layerHostingMode = m_frame->page()->layerHostingMode();
 #endif
 
-#if ENABLE(NETSCAPE_PLUGIN_API)
+#if ENABLE(PDFKIT_PLUGIN)
     auto plugin = m_frame->page()->createPlugin(m_frame.ptr(), &pluginElement, parameters, parameters.mimeType);
     if (!plugin)
         return nullptr;
