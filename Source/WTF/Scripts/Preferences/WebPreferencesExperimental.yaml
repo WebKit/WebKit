@@ -727,7 +727,7 @@ IsSameSiteStrictEnforcementEnabled:
     WebKitLegacy:
       default: false
     WebKit:
-      default: true
+      default: false
     WebCore:
       default: false
 
@@ -764,7 +764,7 @@ LazyImageLoadingEnabled:
     WebKitLegacy:
       default: false
     WebKit:
-      default: false
+      default: true
     WebCore:
       default: false
 

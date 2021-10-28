@@ -1,3 +1,14 @@
+2021-10-28  Nikolaos Mouchtaris  <nmouchtaris@apple.com>
+
+        Enable lazy image loading by default
+        https://bugs.webkit.org/show_bug.cgi?id=208094
+
+        Reviewed by Simon Fraser.
+
+        Fix merge error of commit queue.
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml:
+
 2021-10-28  Youenn Fablet  <youenn@apple.com>
 
         [ Mac wk1 ] 2 media-capabilities/webrtc tests are flaky failures
