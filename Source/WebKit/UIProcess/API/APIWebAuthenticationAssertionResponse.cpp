@@ -29,6 +29,7 @@
 #if ENABLE(WEB_AUTHN)
 
 #include "APIData.h"
+#include <JavaScriptCore/ArrayBuffer.h>
 
 namespace API {
 using namespace WebCore;

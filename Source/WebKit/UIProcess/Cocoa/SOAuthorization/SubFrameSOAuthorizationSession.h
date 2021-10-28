@@ -27,6 +27,7 @@
 
 #if HAVE(APP_SSO)
 
+#include <variant>
 #include "FrameLoadState.h"
 #include "NavigationSOAuthorizationSession.h"
 #include <WebCore/FrameIdentifier.h>

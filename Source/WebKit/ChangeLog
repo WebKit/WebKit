@@ -1,3 +1,13 @@
+2021-10-28  Daniel Kolesa  <dkolesa@igalia.com>
+
+        Non-unified build fixes
+        https://bugs.webkit.org/show_bug.cgi?id=232318
+
+        Reviewed by Don Olmstead.
+
+        * UIProcess/API/APIWebAuthenticationAssertionResponse.cpp:
+        * UIProcess/Cocoa/SOAuthorization/SubFrameSOAuthorizationSession.h:
+
 2021-10-28  Adrian Perez de Castro  <aperez@igalia.com>
 
         [WPE][Qt] String memory leak in WPEQtView.cpp
