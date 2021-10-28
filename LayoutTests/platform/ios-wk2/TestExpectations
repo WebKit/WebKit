@@ -2245,3 +2245,6 @@ webkit.org/b/225528 http/wpt/fetch/fetch-response-body-stop-in-worker.html [ Pas
 webkit.org/b/232252 [ Release ] imported/w3c/web-platform-tests/webrtc/RTCDtlsTransport-state.html [ Pass Failure ]
 
 webkit.org/b/232337 [ Release ] imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting/navigation-reporting/reporting-coop-navigated-opener.https.html [ Pass Failure  DumpJSConsoleLogInStdErr ]
+
+webkit.org/b/232456 fast/css/style-element-process-crash.html [ Pass Failure ]
+
