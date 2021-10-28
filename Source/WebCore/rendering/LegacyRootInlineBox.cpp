@@ -822,7 +822,7 @@ LayoutUnit LegacyRootInlineBox::verticalPositionForBox(LegacyInlineBox* box, Ver
         const RenderStyle& parentLineStyle = firstLine ? parent->firstLineStyle() : parent->style();
         const FontCascade& font = parentLineStyle.fontCascade();
         const FontMetrics& fontMetrics = font.fontMetrics();
-        auto fontSize = LayoutUnit { font.pixelSize() };
+        int fontSize = font.pixelSize();
 
         LineDirectionMode lineDirection = parent->isHorizontalWritingMode() ? HorizontalLine : VerticalLine;
 
