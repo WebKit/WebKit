@@ -1,3 +1,30 @@
+2021-10-28  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [WPE][Qt] Do not use WebKit internals in the implementation
+        https://bugs.webkit.org/show_bug.cgi?id=232228
+
+        Reviewed by Philippe Normand.
+
+        Remove usage of GRefPtr, GUniquePtr, WTF macros, and usage of the config.h header from
+        the WPE Qt API implementation, as all the funcionality can be achieved on top of the
+        public API. This allows building the Qt plug-in in a standalone fashion, without involving
+        any of the WebKit machinery, and a sample CMakeLists.txt which does that is provided as
+        well. Distributors may prefer to build using this approach instead of as part of the whole
+        WebKit compilation process, specially if when providing split packages on top of their
+        base WPE WebKit ones.
+
+        No new tests needed.
+
+        * UIProcess/API/wpe/qt/CMakeLists.txt: Added.
+        * UIProcess/API/wpe/qt/WPEQmlExtensionPlugin.cpp:
+        * UIProcess/API/wpe/qt/WPEQtView.cpp:
+        (WPEQtView::createWebView):
+        (jsAsyncReadyCallback):
+        * UIProcess/API/wpe/qt/WPEQtView.h:
+        * UIProcess/API/wpe/qt/WPEQtViewBackend.cpp:
+        (WPEQtViewBackend::displayImage):
+        * UIProcess/API/wpe/qt/WPEQtViewLoadRequest.cpp:
+
 2021-10-28  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Add WebPageProxy identifiers to `ViewGestures` category logging

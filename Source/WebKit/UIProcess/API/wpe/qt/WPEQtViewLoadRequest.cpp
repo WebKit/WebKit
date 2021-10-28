@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018, 2019 Igalia S.L
+ * Copyright (C) 2018, 2019, 2021 Igalia S.L
  * Copyright (C) 2018, 2019 Zodiac Inflight Innovations
  *
  * This library is free software; you can redistribute it and/or
@@ -18,7 +18,6 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include "config.h"
 #include "WPEQtViewLoadRequest.h"
 
 #include "WPEQtView.h"

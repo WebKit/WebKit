@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018, 2019 Igalia S.L
+ * Copyright (C) 2018, 2019, 2021 Igalia S.L
  * Copyright (C) 2018, 2019 Zodiac Inflight Innovations
  *
  * This library is free software; you can redistribute it and/or
@@ -18,7 +18,6 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include "config.h"
 #include "WPEQtView.h"
 
 #include "WPEQtViewBackend.h"
@@ -31,7 +30,6 @@
 #include <QtGlobal>
 #include <QtPlatformHeaders/QEGLNativeContext>
 #include <qpa/qplatformnativeinterface.h>
-#include <wtf/glib/GUniquePtr.h>
 
 /*!
   \qmltype WPEView
@@ -97,18 +95,20 @@ void WPEQtView::createWebView()
     auto display = static_cast<EGLDisplay>(QGuiApplication::platformNativeInterface()->nativeResourceForIntegration("egldisplay"));
     auto* context = window()->openglContext();
     std::unique_ptr<WPEQtViewBackend> backend = WPEQtViewBackend::create(m_size, context, display, QPointer<WPEQtView>(this));
-    RELEASE_ASSERT_WITH_MESSAGE(backend, "EGL initialization failed");
-    if (!backend)
+    if (!backend) {
+        qFatal("WPEQtView::createWebView(): EGL initialization failed");
         return;
+    }
 
     m_backend = backend.get();
-    auto settings = adoptGRef(webkit_settings_new_with_settings("enable-developer-extras", TRUE,
-        "enable-webgl", TRUE, "enable-mediasource", TRUE, nullptr));
+    auto* settings = webkit_settings_new_with_settings("enable-developer-extras", TRUE,
+        "enable-webgl", TRUE, "enable-mediasource", TRUE, nullptr);
     m_webView = WEBKIT_WEB_VIEW(g_object_new(WEBKIT_TYPE_WEB_VIEW,
         "backend", webkit_web_view_backend_new(m_backend->backend(), [](gpointer data) {
             delete static_cast<WPEQtViewBackend*>(data);
         }, backend.release()),
-        "settings", settings.get(), nullptr));
+        "settings", settings, nullptr));
+    g_clear_object(&settings);
 
     g_signal_connect_swapped(m_webView, "notify::uri", G_CALLBACK(notifyUrlChangedCallback), this);
     g_signal_connect_swapped(m_webView, "notify::title", G_CALLBACK(notifyTitleChangedCallback), this);
@@ -404,11 +404,12 @@ struct JavascriptCallbackData {
 
 static void jsAsyncReadyCallback(GObject* object, GAsyncResult* result, gpointer userData)
 {
-    GUniqueOutPtr<GError> error;
+    GError* error { nullptr };
     std::unique_ptr<JavascriptCallbackData> data(reinterpret_cast<JavascriptCallbackData*>(userData));
-    WebKitJavascriptResult* jsResult = webkit_web_view_run_javascript_finish(WEBKIT_WEB_VIEW(object), result, &error.outPtr());
+    WebKitJavascriptResult* jsResult = webkit_web_view_run_javascript_finish(WEBKIT_WEB_VIEW(object), result, &error);
     if (!jsResult) {
         qWarning("Error running javascript: %s", error->message);
+        g_error_free(error);
         return;
     }
 
@@ -425,14 +426,15 @@ static void jsAsyncReadyCallback(GObject* object, GAsyncResult* result, gpointer
         QVariant variant;
         // FIXME: Handle more value types?
         if (jsc_value_is_string(value)) {
-            GUniquePtr<gchar> strValue(jsc_value_to_string(value));
+            auto* strValue = jsc_value_to_string(value);
             JSCContext* context = jsc_value_get_context(value);
             JSCException* exception = jsc_context_get_exception(context);
             if (exception) {
                 qWarning("Error running javascript: %s", jsc_exception_get_message(exception));
                 jsc_context_clear_exception(context);
             } else
-                variant.setValue(QString::fromUtf8(strValue.get()));
+                variant.setValue(QString::fromUtf8(strValue));
+            g_free(strValue);
         }
         args.append(engine->toScriptValue(variant));
         data->callback.call(args);

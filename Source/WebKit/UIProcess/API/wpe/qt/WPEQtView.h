@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018, 2019 Igalia S.L
+ * Copyright (C) 2018, 2019, 2021 Igalia S.L
  * Copyright (C) 2018, 2019 Zodiac Inflight Innovations
  *
  * This library is free software; you can redistribute it and/or
@@ -20,14 +20,11 @@
 
 #pragma once
 
-#include "config.h"
-
 #include <QQmlEngine>
 #include <QQuickItem>
 #include <QUrl>
 #include <memory>
 #include <wpe/webkit.h>
-#include <wtf/glib/GRefPtr.h>
 
 class WPEQtViewBackend;
 class WPEQtViewLoadRequest;

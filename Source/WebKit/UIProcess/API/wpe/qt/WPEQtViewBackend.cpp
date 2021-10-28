@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018, 2019 Igalia S.L
+ * Copyright (C) 2018, 2019, 2021 Igalia S.L
  * Copyright (C) 2018, 2019 Zodiac Inflight Innovations
  *
  * This library is free software; you can redistribute it and/or
@@ -18,7 +18,6 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include "config.h"
 #include "WPEQtViewBackend.h"
 
 #include "WPEQtView.h"
@@ -210,7 +209,7 @@ GLuint WPEQtViewBackend::texture(QOpenGLContext* context)
 
 void WPEQtViewBackend::displayImage(struct wpe_fdo_egl_exported_image* image)
 {
-    RELEASE_ASSERT(!m_lockedImage);
+    Q_ASSUME(!m_lockedImage);
     m_lockedImage = image;
     if (m_view)
         m_view->triggerUpdate();
