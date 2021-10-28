@@ -1,3 +1,17 @@
+2021-10-28  Razvan Caliman  <rcaliman@apple.com>
+
+        Web Inspector: Audit: testForLinkLabels Accessibility audit should ignore anchors if aria-hidden
+        https://bugs.webkit.org/show_bug.cgi?id=231038
+        <rdar://problem/83783868>
+
+        Update `testForLinkLabels` accessibility audit test to exclude hidden links.
+        See `AccessibilityObject->isHidden()`
+
+        Reviewed by BJ Burg.
+
+        * UserInterface/NonMinified/DefaultAudits.js:
+        (WI.DefaultAudits.testForLinkLabels):
+
 2021-10-27  BJ Burg  <bburg@apple.com>
 
         Web Inspector: extension iframes leak when disabling an extension

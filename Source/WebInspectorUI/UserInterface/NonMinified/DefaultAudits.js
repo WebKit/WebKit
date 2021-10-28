@@ -238,7 +238,10 @@ WI.DefaultAudits.testForMultipleBanners = function() {
 
 WI.DefaultAudits.testForLinkLabels = function() {
     let links = WebInspectorAudit.Accessibility.getElementsByComputedRole("link");
-    let domNodes = links.filter((link) => !WebInspectorAudit.Accessibility.getComputedProperties(link).label);
+    let domNodes = links.filter((link) => {
+        let properties = WebInspectorAudit.Accessibility.getComputedProperties(link);
+        return !properties.label && !properties.hidden;
+    });
     return {level: domNodes.length ? "fail" : "pass", domNodes, domAttributes: ["aria-label", "aria-labelledby", "title"]};
 };
 
