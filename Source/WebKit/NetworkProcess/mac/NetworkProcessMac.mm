@@ -63,7 +63,7 @@ void NetworkProcess::initializeProcess(const AuxiliaryProcessInitializationParam
 void NetworkProcess::initializeProcessName(const AuxiliaryProcessInitializationParameters& parameters)
 {
 #if !PLATFORM(MACCATALYST)
-    NSString *applicationName = [NSString stringWithFormat:WEB_UI_STRING("%@ Networking", "visible name of the network process. The argument is the application name."), (NSString *)parameters.uiProcessName];
+    NSString *applicationName = [NSString stringWithFormat:WEB_UI_NSSTRING(@"%@ Networking", "visible name of the network process. The argument is the application name."), (NSString *)parameters.uiProcessName];
     _LSSetApplicationInformationItem(kLSDefaultSessionID, _LSGetCurrentApplicationASN(), _kLSDisplayNameKey, (CFStringRef)applicationName, nullptr);
 #endif
 }

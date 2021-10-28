@@ -61,7 +61,7 @@ void GPUProcess::initializeProcess(const AuxiliaryProcessInitializationParameter
 void GPUProcess::initializeProcessName(const AuxiliaryProcessInitializationParameters& parameters)
 {
 #if !PLATFORM(MACCATALYST)
-    NSString *applicationName = [NSString stringWithFormat:WEB_UI_STRING("%@ Graphics and Media", "visible name of the GPU process. The argument is the application name."), (NSString *)parameters.uiProcessName];
+    NSString *applicationName = [NSString stringWithFormat:WEB_UI_NSSTRING(@"%@ Graphics and Media", "visible name of the GPU process. The argument is the application name."), (NSString *)parameters.uiProcessName];
     _LSSetApplicationInformationItem(kLSDefaultSessionID, _LSGetCurrentApplicationASN(), _kLSDisplayNameKey, (CFStringRef)applicationName, nullptr);
 #endif
 }

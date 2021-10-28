@@ -160,7 +160,7 @@ const NSTimeInterval indicatorMoveDuration = 0.3;
 
 - (void)_updateLabel
 {
-    [_label setText:[NSString localizedStringWithFormat:WEB_UI_STRING("%d of %d", "Label for PDF page number indicator."), _currentPageNumber, _pageCount]];
+    [_label setText:[NSString localizedStringWithFormat:WEB_UI_NSSTRING(@"%d of %d", "Label for PDF page number indicator."), _currentPageNumber, _pageCount]];
     [self sizeToFit];
 
     if (!_pageCount || !_currentPageNumber)

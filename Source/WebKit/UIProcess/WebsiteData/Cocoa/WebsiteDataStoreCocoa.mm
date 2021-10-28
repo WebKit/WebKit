@@ -95,11 +95,12 @@ WebCore::ThirdPartyCookieBlockingMode WebsiteDataStore::thirdPartyCookieBlocking
 static bool experimentalFeatureEnabled(const String& key)
 {
 #if PLATFORM(MAC)
-    NSString *format = @"Experimental%@";
+    constexpr NSString *format = @"Experimental%@";
 #else
-    NSString *format = @"WebKitExperimental%@";
+    constexpr NSString *format = @"WebKitExperimental%@";
 #endif
-    return [[NSUserDefaults standardUserDefaults] boolForKey:[NSString stringWithFormat:format, static_cast<NSString *>(key)]];
+    auto defaultsKey = adoptNS([[NSString alloc] initWithFormat:format, static_cast<NSString *>(key)]);
+    return [[NSUserDefaults standardUserDefaults] boolForKey:defaultsKey.get()];
 }
 
 void WebsiteDataStore::platformSetNetworkParameters(WebsiteDataStoreParameters& parameters)

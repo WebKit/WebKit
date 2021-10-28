@@ -86,7 +86,7 @@ GCC_WARN_UNUSED_FUNCTION = YES;
 GCC_WARN_UNUSED_VARIABLE = YES;
 OTHER_MIGFLAGS = -F$(BUILT_PRODUCTS_DIR);
 PREBINDING = NO;
-WARNING_CFLAGS = -Wall -Wextra -Wcast-qual -Wchar-subscripts -Wconditional-uninitialized -Wextra-tokens -Wformat-security -Winit-self -Wmissing-format-attribute -Wmissing-noreturn -Wno-unused-parameter -Wpacked -Wpointer-arith -Wredundant-decls -Wundef -Wwrite-strings -Wexit-time-destructors -Wglobal-constructors -Wtautological-compare -Wimplicit-fallthrough -Wvla -Wliteral-conversion -Wthread-safety;
+WARNING_CFLAGS = -Wall -Wextra -Wcast-qual -Wchar-subscripts -Wconditional-uninitialized -Wextra-tokens -Wformat=2 -Winit-self -Wmissing-format-attribute -Wmissing-noreturn -Wno-unused-parameter -Wpacked -Wpointer-arith -Wredundant-decls -Wundef -Wwrite-strings -Wexit-time-destructors -Wglobal-constructors -Wtautological-compare -Wimplicit-fallthrough -Wvla -Wliteral-conversion -Wthread-safety;
 
 SWIFT_VERSION = 5.0;
 

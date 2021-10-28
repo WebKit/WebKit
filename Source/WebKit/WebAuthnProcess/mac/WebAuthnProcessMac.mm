@@ -36,6 +36,7 @@
 #import <pal/spi/mac/HIServicesSPI.h>
 #import <sysexits.h>
 #import <wtf/MemoryPressureHandler.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/text/WTFString.h>
 
 namespace WebKit {
@@ -52,8 +53,8 @@ void WebAuthnProcess::initializeProcess(const AuxiliaryProcessInitializationPara
 
 void WebAuthnProcess::initializeProcessName(const AuxiliaryProcessInitializationParameters& parameters)
 {
-    NSString *applicationName = [NSString stringWithFormat:WEB_UI_STRING("%@ Web Authentication", "visible name of the WebAuthn process. The argument is the application name."), (NSString *)parameters.uiProcessName];
-    _LSSetApplicationInformationItem(kLSDefaultSessionID, _LSGetCurrentApplicationASN(), _kLSDisplayNameKey, (CFStringRef)applicationName, nullptr);
+    NSString *applicationName = [NSString stringWithFormat:WEB_UI_NSSTRING(@"%@ Web Authentication", "visible name of the WebAuthn process. The argument is the application name."), (NSString *)parameters.uiProcessName];
+    _LSSetApplicationInformationItem(kLSDefaultSessionID, _LSGetCurrentApplicationASN(), _kLSDisplayNameKey, bridge_cast(applicationName), nullptr);
 }
 
 void WebAuthnProcess::initializeSandbox(const AuxiliaryProcessInitializationParameters& parameters, SandboxInitializationParameters& sandboxParameters)
