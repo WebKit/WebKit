@@ -1,3 +1,13 @@
+2021-09-08  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        KeyboardEvent should setDefaultHandled if EventHandler::startKeyboardScrolling returns true
+        https://bugs.webkit.org/show_bug.cgi?id=229784
+
+        Reviewed by Darin Adler.
+
+        * fast/scrolling/keyboard-scrolling-last-timestamp-expected.txt: Added.
+        * fast/scrolling/keyboard-scrolling-last-timestamp.html: Added.
+
 2021-09-01  Myles C. Maxfield  <mmaxfield@apple.com>
 
         CSSFontFaceSet.clear() should not clear CSS-connected members
