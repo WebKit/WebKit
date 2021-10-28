@@ -589,10 +589,12 @@ void Internals::resetToConsistentState(Page& page)
 #if USE(LIBWEBRTC)
     auto& rtcProvider = page.libWebRTCProvider();
     WebCore::useRealRTCPeerConnectionFactory(rtcProvider);
-    rtcProvider.disableNonLocalhostConnections();
     LibWebRTCProvider::setH264HardwareEncoderAllowed(true);
-    RuntimeEnabledFeatures::sharedFeatures().setWebRTCH265CodecEnabled(true);
     page.settings().setWebRTCEncryptionEnabled(true);
+    rtcProvider.disableNonLocalhostConnections();
+    rtcProvider.setH265Support(true);
+    rtcProvider.setVP9Support(true, true);
+    rtcProvider.clearFactory();
 #endif
 
     page.setFullscreenAutoHideDuration(0_s);

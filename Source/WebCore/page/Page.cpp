@@ -369,10 +369,7 @@ Page::Page(PageConfiguration&& pageConfiguration)
     platformInitialize();
 #endif
 
-#if USE(LIBWEBRTC)
-    m_libWebRTCProvider->setH265Support(RuntimeEnabledFeatures::sharedFeatures().webRTCH265CodecEnabled());
-    m_libWebRTCProvider->setVP9Support(RuntimeEnabledFeatures::sharedFeatures().webRTCVP9Profile0CodecEnabled(), RuntimeEnabledFeatures::sharedFeatures().webRTCVP9Profile2CodecEnabled());
-#endif
+    settingsDidChange();
 
     if (!pageConfiguration.userScriptsShouldWaitUntilNotification)
         m_hasBeenNotifiedToInjectUserScripts = true;
@@ -569,6 +566,14 @@ Ref<DOMRectList> Page::passiveTouchEventListenerRectsForTesting()
         quads[i] = FloatRect(rects[i]);
 
     return DOMRectList::create(quads);
+}
+
+void Page::settingsDidChange()
+{
+#if USE(LIBWEBRTC)
+    m_libWebRTCProvider->setH265Support(settings().webRTCH265CodecEnabled());
+    m_libWebRTCProvider->setVP9Support(settings().webRTCVP9Profile0CodecEnabled(), settings().webRTCVP9Profile2CodecEnabled());
+#endif
 }
 
 bool Page::openedByDOM() const

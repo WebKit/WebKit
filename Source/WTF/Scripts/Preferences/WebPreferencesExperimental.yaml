@@ -1550,10 +1550,8 @@ WebRTCH264LowLatencyEncoderEnabled:
     WebKit:
       default: true
 
-# FIXME: Is this implemented for WebKitLegacy? If not, this should be excluded from WebKitLegacy entirely.
 WebRTCH265CodecEnabled:
   type: bool
-  webcoreBinding: RuntimeEnabledFeatures
   condition: ENABLE(WEB_RTC)
   humanReadableName: "WebRTC H265 codec"
   humanReadableDescription: "Enable WebRTC H265 codec"
@@ -1561,6 +1559,8 @@ WebRTCH265CodecEnabled:
     WebKitLegacy:
       default: false
     WebKit:
+      default: false
+    WebCore:
       default: false
 
 # FIXME: This is not relevent for WebKitLegacy, so should be excluded from WebKitLegacy entirely.
@@ -1627,24 +1627,26 @@ WebRTCVP9Profile0CodecEnabled:
   type: bool
   humanReadableName: "WebRTC VP9 profile 0 codec"
   humanReadableDescription: "Enable WebRTC VP9 profile 0 codec"
-  webcoreBinding: RuntimeEnabledFeatures
   condition: ENABLE(WEB_RTC)
   defaultValue:
     WebKitLegacy:
       default: true
     WebKit:
+      default: true
+    WebCore:
       default: true
 
 WebRTCVP9Profile2CodecEnabled:
   type: bool
   humanReadableName: "WebRTC VP9 profile 2 codec"
   humanReadableDescription: "Enable WebRTC VP9 profile 2 codec"
-  webcoreBinding: RuntimeEnabledFeatures
   condition: ENABLE(WEB_RTC)
   defaultValue:
     WebKitLegacy:
       default: false
     WebKit:
+      default: false
+    WebCore:
       default: false
 
 WebShareFileAPIEnabled:

@@ -1,5 +1,15 @@
 2021-10-28  Youenn Fablet  <youenn@apple.com>
 
+        [ Mac wk1 ] 2 media-capabilities/webrtc tests are flaky failures
+        https://bugs.webkit.org/show_bug.cgi?id=232283
+        <rdar://problem/84637007>
+
+        Reviewed by Eric Carlson.
+
+        * WebProcess/WebPage/WebPage.cpp:
+
+2021-10-28  Youenn Fablet  <youenn@apple.com>
+
         Fetch API: Network process leaks when blobs are unused
         https://bugs.webkit.org/show_bug.cgi?id=232371
         <rdar://problem/84704184>

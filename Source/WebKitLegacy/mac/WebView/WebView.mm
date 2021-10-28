@@ -2990,6 +2990,7 @@ static bool needsSelfRetainWhileLoadingQuirk()
     }
     [WAKView _setInterpolationQuality:[preferences _interpolationQuality]];
 #endif
+    _private->page->settingsDidChange();
 }
 
 static inline IMP getMethod(id o, SEL s)

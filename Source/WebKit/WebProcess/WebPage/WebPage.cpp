@@ -4031,12 +4031,6 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
     if (m_drawingArea)
         m_drawingArea->updatePreferences(store);
 
-#if USE(LIBWEBRTC)
-    m_page->libWebRTCProvider().setH265Support(RuntimeEnabledFeatures::sharedFeatures().webRTCH265CodecEnabled());
-    m_page->libWebRTCProvider().setVP9Support(RuntimeEnabledFeatures::sharedFeatures().webRTCVP9Profile0CodecEnabled(), RuntimeEnabledFeatures::sharedFeatures().webRTCVP9Profile2CodecEnabled());
-    LibWebRTCProvider::setH264HardwareEncoderAllowed(store.getBoolValueForKey(WebPreferencesKey::webRTCH264HardwareEncoderEnabledKey()));
-#endif
-
 #if ENABLE(GPU_PROCESS)
     // FIXME: useGPUProcessForMediaEnabled should be a RuntimeEnabledFeature since it's global.
     static_cast<WebMediaStrategy&>(platformStrategies()->mediaStrategy()).setUseGPUProcess(m_shouldPlayMediaInGPUProcess);
@@ -4077,6 +4071,8 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
 #if ENABLE(OPUS)
     PlatformMediaSessionManager::setOpusDecoderEnabled(RuntimeEnabledFeatures::sharedFeatures().opusDecoderEnabled());
 #endif
+
+    m_page->settingsDidChange();
 }
 
 #if ENABLE(DATA_DETECTION)

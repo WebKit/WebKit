@@ -1,3 +1,13 @@
+2021-10-28  Youenn Fablet  <youenn@apple.com>
+
+        [ Mac wk1 ] 2 media-capabilities/webrtc tests are flaky failures
+        https://bugs.webkit.org/show_bug.cgi?id=232283
+        <rdar://problem/84637007>
+
+        Reviewed by Eric Carlson.
+
+        * WebView/WebView.mm:
+
 2021-10-24  Ian Anderson  <iana@apple.com>
 
         Enable the modules verifier for WebKitLegacy in Apple internal when using a new enough Xcode

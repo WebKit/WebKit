@@ -1,3 +1,13 @@
+2021-10-28  Youenn Fablet  <youenn@apple.com>
+
+        [ Mac wk1 ] 2 media-capabilities/webrtc tests are flaky failures
+        https://bugs.webkit.org/show_bug.cgi?id=232283
+        <rdar://problem/84637007>
+
+        Reviewed by Eric Carlson.
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml:
+
 2021-10-26  Alex Christensen  <achristensen@webkit.org>
 
         Update PCM test public key to one with RSA-PSS OID

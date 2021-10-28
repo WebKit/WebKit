@@ -352,6 +352,8 @@ public:
     WEBCORE_EXPORT Ref<DOMRectList> touchEventRectsForEventForTesting(const String& eventName);
     WEBCORE_EXPORT Ref<DOMRectList> passiveTouchEventListenerRectsForTesting();
 
+    WEBCORE_EXPORT void settingsDidChange();
+
     Settings& settings() const { return *m_settings; }
     ProgressTracker& progress() const { return *m_progress; }
     BackForwardController& backForward() const { return *m_backForwardController; }
