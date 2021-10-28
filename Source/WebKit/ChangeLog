@@ -1,3 +1,15 @@
+2021-10-28  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        [WPE][GTK] Add warning comments regarding use of child setup functions
+        https://bugs.webkit.org/show_bug.cgi?id=232444
+
+        Reviewed by Adrian Perez de Castro.
+
+        * UIProcess/Launcher/glib/BubblewrapLauncher.cpp:
+        (WebKit::XDGDBusProxyLauncher::launch):
+        * UIProcess/Launcher/glib/ProcessLauncherGLib.cpp:
+        (WebKit::ProcessLauncher::launchProcess):
+
 2021-10-28  Adrian Perez de Castro  <aperez@igalia.com>
 
         [WPE][Qt] Do not use WebKit internals in the implementation

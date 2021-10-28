@@ -123,6 +123,9 @@ void ProcessLauncher::launchProcess()
 #endif
     argv[i++] = nullptr;
 
+    // Warning: do not set a child setup function, because we want GIO to be able to spawn with
+    // posix_spawn() rather than fork()/exec(), in order to better accomodate applications that use
+    // a huge amount of memory or address space in the UI process, like Eclipse.
     GRefPtr<GSubprocessLauncher> launcher = adoptGRef(g_subprocess_launcher_new(G_SUBPROCESS_FLAGS_INHERIT_FDS));
     g_subprocess_launcher_take_fd(launcher.get(), socketPair.client, socketPair.client);
 
