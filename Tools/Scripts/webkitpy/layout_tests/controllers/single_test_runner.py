@@ -28,6 +28,7 @@
 
 
 import logging
+import os
 import re
 
 from webkitcorepy import string_utils
@@ -36,6 +37,7 @@ from webkitpy.port.driver import DriverInput, DriverOutput
 from webkitpy.layout_tests.models import test_expectations
 from webkitpy.layout_tests.models import test_failures
 from webkitpy.layout_tests.models.test_results import TestResult
+from webkitpy.w3c.test_parser import TestParser
 
 
 _log = logging.getLogger(__name__)
@@ -334,6 +336,46 @@ class SingleTestRunner(object):
         reftest_type = set([reference_file[0] for reference_file in self._reference_files])
         return TestResult(self._test_input, test_result.failures, total_test_time + test_result.test_run_time, test_result.has_stderr, reftest_type=reftest_type, pid=test_result.pid, references=reference_test_names)
 
+    @staticmethod
+    def _relative_reference_path(test_full_path, reference_full_path):
+        test_dir = os.path.split(test_full_path)[0]
+        reference_dir, reference_file_name = os.path.split(reference_full_path)
+        if test_dir == reference_dir:
+            return reference_file_name
+
+        relative_path = os.path.relpath(reference_dir, test_dir)
+        return os.path.join(relative_path, reference_file_name)
+
+    def _fuzzy_tolerance_for_reference(self, reference_full_path):
+        test_full_path = self._port.abspath_for_test(self._test_name)
+        test_parser = TestParser({'all': True}, filename=test_full_path, host=self._port.host)
+        fuzzy = test_parser.fuzzy_metadata()
+        if not fuzzy:
+            return {'maxDifference': [0, 0], 'totalPixels': [0, 0]}
+
+        reference_relative_path = self._relative_reference_path(test_full_path, reference_full_path)
+        tolerance = [[0, 0], [0, 0]]
+        if reference_relative_path in fuzzy:
+            tolerance = fuzzy[reference_relative_path]
+        elif None in fuzzy:
+            tolerance = fuzzy[None]
+
+        return {'max_difference': tolerance[0], 'total_pixels': tolerance[1]}
+
+    @staticmethod
+    def _test_passes_fuzzy_matching(allowed_fuzzy_values, fuzzy_result):
+        maxDifferenceMin = allowed_fuzzy_values['max_difference'][0]
+        maxDifferenceMax = allowed_fuzzy_values['max_difference'][1]
+
+        totalPixelsMin = allowed_fuzzy_values['total_pixels'][0]
+        totalPixelsMax = allowed_fuzzy_values['total_pixels'][1]
+
+        actualMaxDifference = fuzzy_result['max_difference']
+        actualTotalPixels = fuzzy_result['total_pixels']
+
+        # https://web-platform-tests.org/writing-tests/reftests.html says "in the range" but isn't precise about whether the upper bound is included.
+        return actualMaxDifference >= maxDifferenceMin and actualMaxDifference <= maxDifferenceMax and actualTotalPixels >= totalPixelsMin and actualTotalPixels <= totalPixelsMax
+
     def _compare_output_with_reference(self, reference_driver_output, actual_driver_output, reference_filename, mismatch):
         total_test_time = reference_driver_output.test_time + actual_driver_output.test_time
         has_stderr = reference_driver_output.has_stderr() or actual_driver_output.has_stderr()
@@ -355,6 +397,9 @@ class SingleTestRunner(object):
         elif reference_driver_output.image_hash != actual_driver_output.image_hash:
             # ImageDiff has a hard coded color distance threshold even though tolerance=0 is specified.
             diff_result = self._port.diff_image(reference_driver_output.image, actual_driver_output.image, tolerance=0)
+
+            # FIXME: use the result of _fuzzy_tolerance_for_reference to allow for pass or fail based on fuzzy matching. webkit.org/b/149828
+
             if not diff_result.passed:
                 failures.append(test_failures.FailureReftestMismatch(reference_filename, diff_result))
                 if diff_result.error_string:
