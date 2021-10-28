@@ -688,10 +688,10 @@ class Git(Scm):
             while line:
                 if not line.startswith('commit '):
                     raise OSError('Failed to parse `git log` format')
-                branch_point = previous[0].branch_point
-                identifier = previous[0].identifier
+                branch_point = previous[-1].branch_point
+                identifier = previous[-1].identifier
                 hash = line.split(' ')[-1].rstrip()
-                if hash != previous[0].hash:
+                if hash != previous[-1].hash:
                     identifier -= 1
 
                 if not identifier:
@@ -715,12 +715,12 @@ class Git(Scm):
                 )
 
                 # Ensure that we don't duplicate the first and last commits
-                if commit.hash == previous[0].hash:
-                    previous[0] = commit
+                if commit.hash == previous[-1].hash:
+                    previous[-1] = commit
 
                 # If we share a timestamp with the previous commit, that means that this commit has an order
                 # less than the set of commits cached in previous
-                elif commit.timestamp == previous[0].timestamp:
+                elif commit.timestamp == previous[-1].timestamp:
                     for cached in previous:
                         cached.order += 1
                     previous.append(commit)

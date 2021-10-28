@@ -628,6 +628,15 @@ class TestGitHub(testing.TestCase):
                 git.commit(hash='9b8311f2'),
             ]), Commit.Encoder().default(list(git.commits(begin=dict(argument='9b8311f2'), end=dict(argument='621652ad')))))
 
+    def test_commits_branch_ref(self):
+        self.maxDiff = None
+        with mocks.remote.GitHub():
+            git = remote.GitHub(self.remote)
+            self.assertEqual(
+                ['2.3@branch-b', '2.2@branch-b', '2.1@branch-b'],
+                [str(commit) for commit in git.commits(begin=dict(argument='a30ce849'), end=dict(argument='branch-b'))],
+            )
+
 
 class TestBitBucket(testing.TestCase):
     remote = 'https://bitbucket.example.com/projects/WEBKIT/repos/webkit'
