@@ -67,7 +67,7 @@ GCC_WARN_UNDECLARED_SELECTOR = YES;
 CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
-WARNING_CFLAGS = -Wall -W -Wno-unused-parameter
+WARNING_CFLAGS = -Wall -W -Wformat=2 -Wno-unused-parameter;
 GCC_NO_COMMON_BLOCKS = YES;
 
 SUPPORTED_PLATFORMS = iphoneos iphonesimulator macosx appletvos appletvsimulator watchos watchsimulator;

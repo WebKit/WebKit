@@ -236,7 +236,7 @@ TEST(WebKit, OpenWindowFeatures)
     sharedCheckWindowFeaturesUIDelegate = adoptNS([[CheckWindowFeaturesUIDelegate alloc] init]);
     [webView setUIDelegate:sharedCheckWindowFeaturesUIDelegate.get()];
     [webView configuration].preferences.javaScriptCanOpenWindowsAutomatically = YES;
-    NSString *windowOpenFormatString = @"window.open(\"about:blank\", \"_blank\", \"%@\")";
+    constexpr NSString *windowOpenFormatString = @"window.open(\"about:blank\", \"_blank\", \"%@\")";
 
     [webView evaluateJavaScript:@"window.open(\"about:blank\")" completionHandler:nil];
     TestWebKitAPI::Util::run(&isDone);

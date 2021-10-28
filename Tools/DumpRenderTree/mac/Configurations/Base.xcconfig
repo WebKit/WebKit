@@ -83,7 +83,7 @@ CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 // FIXME: <http://webkit.org/b/118590> DumpRenderTree should build with -Wshorten-64-to-32
 GCC_WARN_64_TO_32_BIT_CONVERSION[arch=arm64*] = NO;
 GCC_WARN_64_TO_32_BIT_CONVERSION[arch=x86_64] = NO;
-WARNING_CFLAGS = -Wall -W -Wconditional-uninitialized -Wno-unused-parameter -Wundef;
+WARNING_CFLAGS = -Wall -W -Wconditional-uninitialized -Wformat=2 -Wno-unused-parameter -Wundef;
 
 DEBUG_DEFINES = NDEBUG;
 DEBUG_DEFINES[config=Debug] = ;

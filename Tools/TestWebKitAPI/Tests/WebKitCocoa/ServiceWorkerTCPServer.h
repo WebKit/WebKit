@@ -48,9 +48,24 @@ public:
             respondToRequests(connection, std::exchange(thirdConnection, { }), { });
         }) { }
 
-    NSURLRequest *request() { return requestWithFormat(@"http://127.0.0.1:%d/main.html"); }
-    NSURLRequest *requestWithLocalhost() { return requestWithFormat(@"http://localhost:%d/main.html"); }
-    NSURLRequest *requestWithFragment() { return requestWithFormat(@"http://127.0.0.1:%d/main.html#fragment"); }
+    NSURLRequest *request()
+    {
+        auto url = adoptNS([[NSString alloc] initWithFormat:@"http://127.0.0.1:%d/main.html", port()]);
+        return requestWithURLString(url.get());
+    }
+
+    NSURLRequest *requestWithLocalhost()
+    {
+        auto url = adoptNS([[NSString alloc] initWithFormat:@"http://localhost:%d/main.html", port()]);
+        return requestWithURLString(url.get());
+    }
+
+    NSURLRequest *requestWithFragment()
+    {
+        auto url = adoptNS([[NSString alloc] initWithFormat:@"http://127.0.0.1:%d/main.html#fragment", port()]);
+        return requestWithURLString(url.get());
+    }
+
     size_t userAgentsChecked() const { return m_userAgentsChecked; }
 
 private:
@@ -65,9 +80,9 @@ private:
                 EXPECT_TRUE(strnstr((const char*)request.data(), makeString("User-Agent: ", expectedUserAgent).utf8().data(), request.size()));
                 m_userAgentsChecked++;
             }
-            NSString *format = @"HTTP/1.1 200 OK\r\n"
+            constexpr NSString *format = @"HTTP/1.1 200 OK\r\n"
             "Content-Type: %s\r\n"
-            "Content-Length: %d\r\n\r\n"
+            "Content-Length: %zu\r\n\r\n"
             "%s";
             auto& info = vector[vectorIndex];
             NSString *response = [NSString stringWithFormat:format, info.mimeType, strlen(info.response), info.response];
@@ -77,6 +92,6 @@ private:
         });
     }
 
-    NSURLRequest *requestWithFormat(NSString *format) { return [NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:format, port()]]]; }
+    NSURLRequest *requestWithURLString(NSString *urlString) { return [NSURLRequest requestWithURL:[NSURL URLWithString:urlString]]; }
     size_t m_userAgentsChecked { 0 };
 };

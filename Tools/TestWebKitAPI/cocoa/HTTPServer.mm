@@ -351,21 +351,21 @@ uint16_t HTTPServer::port() const
 
 NSURLRequest *HTTPServer::request(const String& path) const
 {
-    NSString *format = nil;
+    const char* scheme = nullptr;
     switch (m_protocol) {
     case Protocol::Http:
-        format = @"http://127.0.0.1:%d%s";
+        scheme = "http";
         break;
     case Protocol::Https:
     case Protocol::HttpsWithLegacyTLS:
     case Protocol::Http2:
-        format = @"https://127.0.0.1:%d%s";
+        scheme = "https";
         break;
     case Protocol::HttpsProxy:
     case Protocol::HttpsProxyWithAuthentication:
         RELEASE_ASSERT_NOT_REACHED();
     }
-    return [NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:format, port(), path.utf8().data()]]];
+    return [NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%s://127.0.0.1:%d%@", scheme, port(), path.createCFString().get()]]];
 }
 
 void Connection::receiveBytes(CompletionHandler<void(Vector<uint8_t>&&)>&& completionHandler, size_t minimumSize) const

@@ -47,7 +47,9 @@ std::string toSTD(const char*);
 #if USE(FOUNDATION)
 std::string toSTD(NSString *);
 bool jsonMatchesExpectedValues(NSString *jsonString, NSDictionary *expected);
-void waitForConditionWithLogging(std::function<bool()>&&, NSTimeInterval loggingTimeout, NSString *message, ...);
+#ifdef __OBJC__
+void waitForConditionWithLogging(std::function<bool()>&&, NSTimeInterval loggingTimeout, NSString *message, ...) NS_FORMAT_FUNCTION(3, 4);
+#endif
 #endif
 
 #if WK_HAVE_C_SPI

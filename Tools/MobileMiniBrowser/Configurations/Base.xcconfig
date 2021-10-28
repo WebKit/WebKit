@@ -79,7 +79,7 @@ GCC_WARN_64_TO_32_BIT_CONVERSION[arch=arm64*] = NO;
 GCC_WARN_64_TO_32_BIT_CONVERSION[arch=x86_64] = NO;
 MTL_ENABLE_DEBUG_INFO = NO;
 VALIDATE_PRODUCT = YES;
-WARNING_CFLAGS = -Wall -W -Wno-unused-parameter -Wundef
+WARNING_CFLAGS = -Wall -W -Wformat=2 -Wno-unused-parameter -Wundef;
 
 SUPPORTED_PLATFORMS = iphoneos iphonesimulator;
 SDKROOT = $(SDKROOT_$(USE_INTERNAL_SDK));

@@ -1,3 +1,55 @@
+2021-10-28  David Kilzer  <ddkilzer@apple.com>
+
+        [Tools] Enable -Wformat=2 warnings
+        <https://webkit.org/b/232404>
+        <rdar://problem/84728058>
+
+        Reviewed by Darin Adler.
+
+        * DumpRenderTree/mac/Configurations/Base.xcconfig:
+        (WARNINGS_CFLAGS):
+        * ImageDiff/cg/Configurations/Base.xcconfig:
+        (WARNINGS_CFLAGS):
+        * MiniBrowser/Configurations/Base.xcconfig:
+        (WARNINGS_CFLAGS):
+        * MobileMiniBrowser/Configurations/Base.xcconfig:
+        (WARNINGS_CFLAGS):
+        * TestWebKitAPI/Configurations/Base.xcconfig:
+        (WARNINGS_CFLAGS):
+        - Add -Wformat=2 switch, which includes -Wformat-nonliteral.
+
+        * TestWebKitAPI/PlatformUtilities.h:
+        (TestWebKitAPI::Util::waitForConditionWithLogging):
+        - Add NS_FORMAT_FUNCTION() attribute.
+        * TestWebKitAPI/Tests/WebKitCocoa/LoadAlternateHTMLString.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/OpenAndCloseWindow.mm:
+        (TEST):
+        - Change type of format string to `NSString *const`.
+        * TestWebKitAPI/Tests/WebKitCocoa/ServiceWorkerTCPServer.h:
+        (ServiceWorkerTCPServer::request):
+        (ServiceWorkerTCPServer::requestWithLocalhost):
+        (ServiceWorkerTCPServer::requestWithFragment):
+        - Call -[NSString initWithFormat:] in each method so the format
+          string is used directly in the method call.
+        (ServiceWorkerTCPServer::respondToRequests):
+        - Change type of format string to `NSString *const`, and fix
+          placeholder for strlen() return value.
+        (ServiceWorkerTCPServer::requestWithFormat): Delete.
+        (ServiceWorkerTCPServer::requestWithURLString):
+        - Rename from requestWithFormat() and take a `url` parameter
+          instead of a `format` parameter.
+        * TestWebKitAPI/cocoa/HTTPServer.mm:
+        (TestWebKitAPI::HTTPServer::request const):
+        - Change switch statement to set the scheme for the URL, and
+          move the format string into +[NSString stringWithFormat:].
+
+        * WebEditingTester/Configurations/Base.xcconfig:
+        (WARNINGS_CFLAGS):
+        * WebKitTestRunner/Configurations/Base.xcconfig:
+        (WARNINGS_CFLAGS):
+        - Add -Wformat=2 switch, which includes -Wformat-nonliteral.
+
 2021-10-27  Jonathan Bedard  <jbedard@apple.com>
 
         [webkitscmpy] Generate commit message template

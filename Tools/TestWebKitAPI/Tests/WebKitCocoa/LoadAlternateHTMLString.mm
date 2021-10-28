@@ -171,7 +171,7 @@ TEST(WKWebView, LoadHTMLStringOrigin)
         completionHandler(WKNavigationActionPolicyAllow);
     };
     webView.get().navigationDelegate = delegate.get();
-    NSString *html = @"<script>var xhr = new XMLHttpRequest(); xhr.open('GET', 'http://127.0.0.1:%d/', true); xhr.send();</script>";
+    constexpr NSString *html = @"<script>var xhr = new XMLHttpRequest(); xhr.open('GET', 'http://127.0.0.1:%d/', true); xhr.send();</script>";
     [webView loadHTMLString:[NSString stringWithFormat:html, server.port()] baseURL:[NSURL URLWithString:@"custom-scheme://"]];
     Util::run(&done);
 }
