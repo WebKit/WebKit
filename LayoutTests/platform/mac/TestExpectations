@@ -1117,6 +1117,7 @@ webkit.org/b/162830 [ Debug ] fast/events/tabindex-focus-blur-all.html [ Pass Ti
 
 [ Debug ] fast/selectors/slow-style-sharing-with-long-cousin-list.html [ Skip ]
 
+webkit.org/b/197068 [ Debug ] fast/selectors/matches-backtracking.html [ Pass Timeout ]
 webkit.org/b/197068 [ Debug ] fast/selectors/is-backtracking.html [ Pass Timeout ]
 
 webkit.org/b/161720 [ Debug ] storage/indexeddb/key-type-array.html [ Pass Timeout ]
