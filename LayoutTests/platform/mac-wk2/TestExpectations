@@ -979,7 +979,6 @@ webkit.org/b/187391 accessibility/mac/async-increment-decrement-action.html [ Sk
 
 http/tests/storageAccess/request-and-grant-access-cross-origin-sandboxed-iframe-from-prevalent-domain-with-user-interaction-but-access-from-wrong-frame.html [ Pass Timeout ]
 
-webkit.org/b/197068 [ Debug ] fast/selectors/is-backtracking.html [ Pass Timeout ]
 webkit.org/b/197068 [ Debug ] fast/selectors/matches-backtracking.html [ Pass Timeout ]
 
 webkit.org/b/197283 fast/css-custom-paint/animate-repaint.html [ Pass Failure ]
