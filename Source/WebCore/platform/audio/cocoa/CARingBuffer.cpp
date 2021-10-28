@@ -166,31 +166,33 @@ static void FetchABL(AudioBufferList* list, size_t destOffset, Vector<Byte*>& po
         if (destOffset > dest->mDataByteSize)
             continue;
 
+        auto* destinationData = static_cast<Byte*>(dest->mData) + destOffset;
+        auto* sourceData = pointer + srcOffset;
         nbytes = std::min<size_t>(nbytes, dest->mDataByteSize - destOffset);
         if (mode == CARingBuffer::Copy)
-            memcpy(static_cast<Byte*>(dest->mData) + destOffset, pointer + srcOffset, nbytes);
+            memcpy(destinationData, sourceData, nbytes);
         else {
             switch (format) {
             case AudioStreamDescription::Int16: {
-                int16_t* destination = static_cast<int16_t*>(dest->mData);
-                int16_t* source = reinterpret_cast<int16_t*>(pointer + srcOffset);
+                auto* destination = reinterpret_cast<int16_t*>(destinationData);
+                auto* source = reinterpret_cast<int16_t*>(sourceData);
                 for (size_t i = 0; i < nbytes / sizeof(int16_t); i++)
                     destination[i] += source[i];
                 break;
             }
             case AudioStreamDescription::Int32: {
-                int32_t* destination = static_cast<int32_t*>(dest->mData);
-                vDSP_vaddi(destination, 1, reinterpret_cast<int32_t*>(pointer + srcOffset), 1, destination, 1, nbytes / sizeof(int32_t));
+                auto* destination = reinterpret_cast<int32_t*>(destinationData);
+                vDSP_vaddi(destination, 1, reinterpret_cast<int32_t*>(sourceData), 1, destination, 1, nbytes / sizeof(int32_t));
                 break;
             }
             case AudioStreamDescription::Float32: {
-                float* destination = static_cast<float*>(dest->mData);
-                vDSP_vadd(destination, 1, reinterpret_cast<float*>(pointer + srcOffset), 1, destination, 1, nbytes / sizeof(float));
+                auto* destination = reinterpret_cast<float*>(destinationData);
+                vDSP_vadd(destination, 1, reinterpret_cast<float*>(sourceData), 1, destination, 1, nbytes / sizeof(float));
                 break;
             }
             case AudioStreamDescription::Float64: {
-                double* destination = static_cast<double*>(dest->mData);
-                vDSP_vaddD(destination, 1, reinterpret_cast<double*>(pointer + srcOffset), 1, destination, 1, nbytes / sizeof(double));
+                auto* destination = reinterpret_cast<double*>(destinationData);
+                vDSP_vaddD(destination, 1, reinterpret_cast<double*>(sourceData), 1, destination, 1, nbytes / sizeof(double));
                 break;
             }
             case AudioStreamDescription::None:

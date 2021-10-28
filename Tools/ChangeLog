@@ -1,3 +1,13 @@
+2021-10-28  Youenn Fablet  <youenn@apple.com>
+
+        Fix CARingBuffer mix mode
+        https://bugs.webkit.org/show_bug.cgi?id=232427
+        <rdar://problem/84747657>
+
+        Reviewed by Eric Carlson.
+
+        * TestWebKitAPI/Tests/WebCore/CARingBuffer.cpp:
+
 2021-10-28  Simon Fraser  <simon.fraser@apple.com>
 
         Enhance test_parser.py to find fuzzy matching metadata

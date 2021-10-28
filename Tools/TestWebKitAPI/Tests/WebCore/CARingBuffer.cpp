@@ -152,7 +152,7 @@ class MixingTest {
 public:
     static void run(CARingBufferTest& test)
     {
-        const int sampleCount = 64;
+        const int sampleCount = 441;
 
         CAAudioStreamDescription::PCMFormat format;
         if (std::is_same<type, float>::value)
@@ -195,6 +195,20 @@ public:
         for (int i = 0; i < sampleCount; i++)
             referenceBuffer[i] += sourceBuffer[i] * 3;
         
+        for (int i = 0; i < sampleCount; i++)
+            EXPECT_EQ(readBuffer[i], referenceBuffer[i]) << "Ring buffer value differs at index " << i;
+
+        test.ringBuffer().fetch(&test.bufferList(), sampleCount, 0, CARingBuffer::FetchMode::Copy);
+        err = test.ringBuffer().store(&test.bufferList(), sampleCount, sampleCount);
+        EXPECT_EQ(err, CARingBuffer::Error::Ok);
+
+        test.ringBuffer().fetch(&test.bufferList(), sampleCount, sampleCount, CARingBuffer::FetchMode::Copy);
+        test.ringBuffer().fetch(&test.bufferList(), sampleCount, sampleCount, CARingBuffer::FetchMode::Mix);
+        test.ringBuffer().fetch(&test.bufferList(), sampleCount, sampleCount, CARingBuffer::FetchMode::Mix);
+
+        for (int i = 0; i < sampleCount; i++)
+            referenceBuffer[i] = sourceBuffer[i] * 3;
+
         for (int i = 0; i < sampleCount; i++)
             EXPECT_EQ(readBuffer[i], referenceBuffer[i]) << "Ring buffer value differs at index " << i;
     }
