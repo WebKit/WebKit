@@ -117,7 +117,7 @@ ImageBufferIOSurfaceBackend::ImageBufferIOSurfaceBackend(const Parameters& param
     , m_surface(WTFMove(surface))
 {
     ASSERT(m_surface);
-    setupContext();
+    applyBaseTransformToContext();
 }
 
 GraphicsContext& ImageBufferIOSurfaceBackend::context() const
@@ -125,7 +125,7 @@ GraphicsContext& ImageBufferIOSurfaceBackend::context() const
     GraphicsContext& context = m_surface->ensureGraphicsContext();
     if (m_needsSetupContext) {
         m_needsSetupContext = false;
-        setupContext();
+        applyBaseTransformToContext();
     }
     return context;
 }

@@ -1,3 +1,17 @@
+2021-10-28  Tim Horton  <timothy_horton@apple.com>
+
+        DOM GPUP: Yahoo.com has fragments of wrongly-scaled content throughout
+        https://bugs.webkit.org/show_bug.cgi?id=232356
+        <rdar://83884813>
+
+        Reviewed by Simon Fraser.
+
+        * WebProcess/GPU/graphics/cocoa/ImageBufferShareableIOSurfaceBackend.cpp:
+        (WebKit::ImageBufferShareableIOSurfaceBackend::backendSize const):
+        Implement backendSize() so that ImageBufferShareableIOSurfaceBackend
+        doesn't always report itself as being 0x0.
+        * WebProcess/GPU/graphics/cocoa/ImageBufferShareableIOSurfaceBackend.h:
+
 2021-10-28  Daniel Kolesa  <dkolesa@igalia.com>
 
         Non-unified build fixes

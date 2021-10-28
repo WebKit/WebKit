@@ -83,6 +83,7 @@ public:
     WEBCORE_EXPORT static IntSize calculateBackendSize(const Parameters&);
     WEBCORE_EXPORT static size_t calculateMemoryCost(const IntSize& backendSize, unsigned bytesPerRow);
     static size_t calculateExternalMemoryCost(const Parameters&) { return 0; }
+    WEBCORE_EXPORT static AffineTransform calculateBaseTransform(const Parameters&, bool originAtBottomLeftCorner);
 
     virtual GraphicsContext& context() const = 0;
     virtual void flushContext() { }
@@ -120,7 +121,11 @@ public:
 
     virtual std::unique_ptr<ThreadSafeImageBufferFlusher> createFlusher() { return nullptr; }
 
+    void applyBaseTransformToContext() const;
+
     static constexpr bool isOriginAtBottomLeftCorner = false;
+    virtual bool originAtBottomLeftCorner() const { return isOriginAtBottomLeftCorner; }
+
     static constexpr bool canMapBackingStore = true;
     static constexpr RenderingMode renderingMode = RenderingMode::Unaccelerated;
 

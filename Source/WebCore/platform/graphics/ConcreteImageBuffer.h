@@ -105,9 +105,7 @@ protected:
 
     AffineTransform baseTransform() const override
     {
-        if (BackendType::isOriginAtBottomLeftCorner)
-            return AffineTransform(1, 0, 0, -1, 0, logicalSize().height());
-        return { };
+        return BackendType::calculateBaseTransform(m_parameters, BackendType::isOriginAtBottomLeftCorner);
     }
 
     size_t memoryCost() const override

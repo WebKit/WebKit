@@ -43,13 +43,13 @@ namespace DisplayList {
 Recorder::Recorder(const GraphicsContextState& state, const FloatRect& initialClip, const AffineTransform& initialCTM, DrawGlyphsRecorder::DeconstructDrawGlyphs deconstructDrawGlyphs)
     : m_drawGlyphsRecorder(*this, deconstructDrawGlyphs)
 {
-    m_stateStack.append({ state, initialCTM, initialClip });
+    m_stateStack.append({ state, initialCTM, initialCTM.mapRect(initialClip) });
 }
 
 Recorder::Recorder(Recorder& parent, const GraphicsContextState& state, const FloatRect& initialClip, const AffineTransform& initialCTM)
     : m_drawGlyphsRecorder(*this, parent.m_drawGlyphsRecorder.deconstructDrawGlyphs())
 {
-    m_stateStack.append({ state, initialCTM, initialClip });
+    m_stateStack.append({ state, initialCTM, initialCTM.mapRect(initialClip) });
 }
 
 Recorder::~Recorder()

@@ -74,6 +74,11 @@ GraphicsContext& ImageBufferShareableIOSurfaceBackend::context() const
     return *(GraphicsContext*)nullptr;
 }
 
+IntSize ImageBufferShareableIOSurfaceBackend::backendSize() const
+{
+    return calculateBackendSize(m_parameters);
+}
+
 unsigned ImageBufferShareableIOSurfaceBackend::bytesPerRow() const
 {
     IntSize backendSize = calculateBackendSize(m_parameters);

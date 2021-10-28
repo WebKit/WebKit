@@ -52,12 +52,12 @@ public:
     std::unique_ptr<ThreadSafeImageBufferFlusher> createFlusher() override;
 
     static constexpr bool isOriginAtBottomLeftCorner = true;
+    bool originAtBottomLeftCorner() const override;
 
 protected:
     using ImageBufferBackend::ImageBufferBackend;
 
     static RetainPtr<CGColorSpaceRef> contextColorSpace(const GraphicsContext&);
-    void setupContext() const;
 
     virtual void prepareToDrawIntoContext(GraphicsContext&);
 

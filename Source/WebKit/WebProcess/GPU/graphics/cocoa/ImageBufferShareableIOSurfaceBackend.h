@@ -53,6 +53,7 @@ public:
     ImageBufferBackendHandle createImageBufferBackendHandle() const;
 
     WebCore::GraphicsContext& context() const override;
+    WebCore::IntSize backendSize() const override;
     RefPtr<WebCore::NativeImage> copyNativeImage(WebCore::BackingStoreCopy) const override;
     RefPtr<WebCore::Image> copyImage(WebCore::BackingStoreCopy, WebCore::PreserveResolution) const override;
     void draw(WebCore::GraphicsContext&, const WebCore::FloatRect& destRect, const WebCore::FloatRect& srcRect, const WebCore::ImagePaintingOptions&) override;
@@ -63,6 +64,8 @@ public:
     void putPixelBuffer(const WebCore::PixelBuffer&, const WebCore::IntRect& srcRect, const WebCore::IntPoint& destPoint, WebCore::AlphaPremultiplication destFormat) override;
 
     static constexpr bool isOriginAtBottomLeftCorner = true;
+    bool originAtBottomLeftCorner() const override { return isOriginAtBottomLeftCorner; }
+
     static constexpr bool canMapBackingStore = false;
     static constexpr WebCore::RenderingMode renderingMode = WebCore::RenderingMode::Accelerated;
 

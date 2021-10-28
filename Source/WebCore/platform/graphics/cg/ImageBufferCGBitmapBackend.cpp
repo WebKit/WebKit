@@ -115,7 +115,7 @@ ImageBufferCGBitmapBackend::ImageBufferCGBitmapBackend(const Parameters& paramet
     ASSERT(m_data);
     ASSERT(m_dataProvider);
     ASSERT(m_context);
-    setupContext();
+    applyBaseTransformToContext();
 }
 
 GraphicsContext& ImageBufferCGBitmapBackend::context() const
