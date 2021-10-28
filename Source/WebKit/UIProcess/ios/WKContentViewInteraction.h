@@ -429,7 +429,7 @@ using ImageAnalysisRequestIdentifier = ObjectIdentifier<ImageAnalysisRequestIden
     BOOL _treatAsContentEditableUntilNextEditorStateUpdate;
     bool _isWaitingOnPositionInformation;
 
-    WebCore::PointerID m_commitPotentialTapPointerId;
+    WebCore::PointerID _commitPotentialTapPointerId;
 
     BOOL _keyboardDidRequestDismissal;
 
