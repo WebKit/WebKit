@@ -55,7 +55,7 @@ def additional_setup(args, repository):
         repository.executable(),
         'config', 'merge.changelog.driver',
         'perl {} --merge-driver -c %O %A %B'.format(os.path.join(
-            os.path.abspath(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))),
+            os.path.abspath(os.path.dirname(os.path.dirname(os.path.dirname(__file__)))),
             'Tools', 'Scripts', 'resolve-ChangeLogs',
         )),
     ], capture_output=True, cwd=repository.root_path).returncode:

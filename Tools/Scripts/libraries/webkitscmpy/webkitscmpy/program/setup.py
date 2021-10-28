@@ -167,6 +167,7 @@ class Setup(Command):
                 with open(target, 'w') as f:
                     f.write(contents)
                     f.write('\n')
+                os.chmod(target, 0o775)
 
         log.warning('Setting git editor for {}...'.format(repository.root_path))
         editor_name = 'default' if args.defaults else Terminal.choose(
