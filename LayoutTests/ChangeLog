@@ -1,3 +1,12 @@
+2021-10-27  Ayumi Kojima  <ayumi_kojima@apple.com>
+
+        [ iOS ] imported/blink/compositing/video/video-controls-layer-creation-squashing.html is a flaky crash/timeout.
+        https://bugs.webkit.org/show_bug.cgi?id=232412
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+
 2021-10-27  Chris Dumez  <cdumez@apple.com>
 
         Disable relaxation of BroadcastChannel origin partitioning based on storage access

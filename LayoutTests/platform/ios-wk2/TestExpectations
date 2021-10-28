@@ -1356,6 +1356,8 @@ webkit.org/b/199370 [ Release ] imported/mozilla/svg/text/selectSubString.svg [ 
 
 webkit.org/b/199387 imported/blink/fast/multicol/span/overflow-on-viewport.html [ Pass ImageOnlyFailure ]
 
+webkit.org/b/232412 imported/blink/compositing/video/video-controls-layer-creation-squashing.html [ Pass Timeout Crash ]
+
 # Skip tests timing out for <rdar://problem/48616298>
 fast/viewport/ios/constant-width-viewport-after-changing-view-scale.html [ Skip ]
 fast/viewport/ios/ignore-minimum-device-width-for-page-with-viewport-device-width.html [ Skip ]
