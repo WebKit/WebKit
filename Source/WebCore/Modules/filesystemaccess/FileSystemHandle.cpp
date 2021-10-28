@@ -34,8 +34,8 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(FileSystemHandle);
 
-FileSystemHandle::FileSystemHandle(ScriptExecutionContext* context, FileSystemHandle::Kind kind, String&& name, FileSystemHandleIdentifier identifier, Ref<FileSystemStorageConnection>&& connection)
-    : ActiveDOMObject(context)
+FileSystemHandle::FileSystemHandle(ScriptExecutionContext& context, FileSystemHandle::Kind kind, String&& name, FileSystemHandleIdentifier identifier, Ref<FileSystemStorageConnection>&& connection)
+    : ActiveDOMObject(&context)
     , m_kind(kind)
     , m_name(WTFMove(name))
     , m_identifier(identifier)

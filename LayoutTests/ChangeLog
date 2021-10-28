@@ -1,3 +1,13 @@
+2021-10-28  Sihui Liu  <sihui_liu@apple.com>
+
+        Release FileSystemStorageHandle when it is not in use
+        https://bugs.webkit.org/show_bug.cgi?id=232363
+
+        Reviewed by Youenn Fablet.
+
+        * storage/filesystemaccess/resources/sync-access-handle-basics.js:
+        (getDirectory): clean up existing file before test.
+
 2021-10-28  Ayumi Kojima  <ayumi_kojima@apple.com>
 
         [ iOS Debug ] fast/selectors/ backtracking tests are timing out.

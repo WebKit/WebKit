@@ -29,6 +29,7 @@
 #include "WorkerGlobalScope.h"
 #include "WorkerLoaderProxy.h"
 #include "WorkerThread.h"
+#include <wtf/Scope.h>
 
 namespace WebCore {
 
@@ -73,6 +74,14 @@ void WorkerFileSystemStorageConnection::scopeClosed()
         callback(Exception { InvalidStateError });
 
     m_scope = nullptr;
+}
+
+void WorkerFileSystemStorageConnection::closeHandle(FileSystemHandleIdentifier identifier)
+{
+    callOnMainThread([mainThreadConnection = m_mainThreadConnection, identifier]() mutable {
+        if (mainThreadConnection)
+            mainThreadConnection->closeHandle(identifier);
+    });
 }
 
 void WorkerFileSystemStorageConnection::isSameEntry(FileSystemHandleIdentifier identifier, FileSystemHandleIdentifier otherIdentifier, FileSystemStorageConnection::SameEntryCallback&& callback)

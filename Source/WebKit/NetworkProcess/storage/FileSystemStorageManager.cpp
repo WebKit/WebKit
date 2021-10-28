@@ -94,6 +94,14 @@ FileSystemStorageHandle::Type FileSystemStorageManager::getType(WebCore::FileSys
     return handle == m_handles.end() ? FileSystemStorageHandle::Type::Any : handle->value->type();
 }
 
+void FileSystemStorageManager::closeHandle(FileSystemStorageHandle& handle)
+{
+    auto identifier = handle.identifier();
+    auto takenHandle = m_handles.take(identifier);
+    ASSERT(takenHandle.get() == &handle);
+    m_registry.unregisterHandle(identifier);
+}
+
 void FileSystemStorageManager::connectionClosed(IPC::Connection::UniqueID connection)
 {
     ASSERT(!RunLoop::isMain());
@@ -104,7 +112,7 @@ void FileSystemStorageManager::connectionClosed(IPC::Connection::UniqueID connec
 
     auto identifiers = connectionHandles->value;
     for (auto identifier : identifiers) {
-        auto handle = m_handles.take(identifier);
+        m_handles.remove(identifier);
         m_registry.unregisterHandle(identifier);
     }
 
