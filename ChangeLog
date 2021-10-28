@@ -1,3 +1,14 @@
+2021-10-28  Aditya Keerthi  <akeerthi@apple.com>
+
+        Add Aditya Keerthi as a reviewer
+        https://bugs.webkit.org/show_bug.cgi?id=232450
+
+        Unreviewed.
+
+        * metadata/contributors.json:
+
+        Add myself as a reviewer, and add GitHub username.
+
 2021-10-27  Roy Reapor  <rreapor@apple.com>
 
         Add rreapor's GitHub username to contributors.json.
