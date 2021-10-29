@@ -104,7 +104,18 @@ class GitHub(Scm):
             )
             if response.status_code // 100 != 2:
                 return None
-            return self.PullRequest(response.json())
+            result = self.PullRequest(response.json())
+
+            # FIXME: Move this to bug tracking library
+            issue = result._metadata.get('issue')
+            if not issue or requests.post(
+                '{}/assignees'.format(issue),
+                auth=HTTPBasicAuth(*self.repository.credentials()),
+                headers=dict(Accept='application/vnd.github.v3+json'),
+                json=dict(assignees=[user]),
+            ).status_code // 100 != 2:
+                sys.stderr.write("Failed to assign '{}' to '{}'\n".format(result, user))
+            return result
 
         def update(self, pull_request, head=None, title=None, body=None, commits=None, base=None, opened=None):
             if not isinstance(pull_request, PullRequest):
@@ -154,6 +165,18 @@ class GitHub(Scm):
             pull_request._metadata = dict(
                 issue=data.get('_links', {}).get('issue', {}).get('href'),
             )
+
+            # FIXME: Move this to bug tracking library
+            assignees = [node.get('login') for node in data.get('assignees', []) if node.get('login')]
+            if user not in assignees:
+                issue = pull_request._metadata.get('issue')
+                if not issue or requests.post(
+                        '{}/assignees'.format(issue),
+                        auth=HTTPBasicAuth(*self.repository.credentials()),
+                        headers=dict(Accept='application/vnd.github.v3+json'),
+                        json=dict(assignees=assignees + [user]),
+                ).status_code // 100 != 2:
+                    sys.stderr.write("Failed to assign '{}' to '{}'\n".format(pull_request, user))
 
             return pull_request
 
