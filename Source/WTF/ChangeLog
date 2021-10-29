@@ -1,3 +1,13 @@
+2021-10-29  Darin Adler  <darin@apple.com>
+
+        Create constants for all special frame names used in anchor target attribute values and elsewhere
+        https://bugs.webkit.org/show_bug.cgi?id=232488
+
+        Reviewed by Anders Carlsson.
+
+        * wtf/Forward.h: Declare ASCIILiteral.
+        * wtf/text/ASCIILiteral.h: Update for above.
+
 2021-10-29  Alex Christensen  <achristensen@webkit.org>
 
         Remove code inside ENABLE(NETSCAPE_PLUGIN_API)
