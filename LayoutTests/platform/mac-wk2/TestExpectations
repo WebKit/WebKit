@@ -1691,3 +1691,5 @@ webkit.org/b/232337 [ Debug ] imported/w3c/web-platform-tests/html/cross-origin-
 platform/mac-wk2/plugins/npruntime/remove-property-from-javascript.html [ Skip ]
 platform/mac-wk2/plugins/npp-setwindow-called-on-scroll.html [ Skip ]
 platform/mac-wk2/plugins/destroy-during-async-npp-new.html [ Skip ]
+
+webkit.org/b/232492 [ BigSur Debug ] webrtc/video-receivers.html [ Pass Crash ]
