@@ -1,5 +1,13 @@
 2021-10-29  Oriol Brufau  <obrufau@igalia.com>
 
+        Add Aakash's GitHub username to contributors.json
+
+        Unreviewed.
+
+        * metadata/contributors.json:
+
+2021-10-29  Oriol Brufau  <obrufau@igalia.com>
+
         Add obrufau's GitHub username to contributors.json
 
         Unreviewed.

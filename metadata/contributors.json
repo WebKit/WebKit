@@ -1,8 +1,10 @@
 [
    {
       "emails" : [
-         "aakash_jain@apple.com"
+         "aakash_jain@apple.com",
+         "aj355@cornell.edu"
       ],
+      "github" : "aakashja",
       "name" : "Aakash Jain",
       "nicks" : [
          "aakash_jain"
