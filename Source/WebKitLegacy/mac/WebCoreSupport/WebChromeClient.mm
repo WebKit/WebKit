@@ -93,10 +93,6 @@
 #import <wtf/Vector.h>
 #import <wtf/text/WTFString.h>
 
-#if USE(PLUGIN_HOST_PROCESS) && ENABLE(NETSCAPE_PLUGIN_API)
-#import "NetscapePluginHostManager.h"
-#endif
-
 #if PLATFORM(IOS_FAMILY) && ENABLE(GEOLOCATION)
 #import <WebCore/Geolocation.h>
 #endif
@@ -273,17 +269,10 @@ Page* WebChromeClient::createWindow(Frame& frame, const WindowFeatures& features
             [dictFeatures setObject:@(*features.height) forKey:@"height"];
         
         newWebView = CallUIDelegate(m_webView, @selector(webView:createWebViewWithRequest:windowFeatures:), nil, dictFeatures.get());
-    } else if (features.dialog && [delegate respondsToSelector:@selector(webView:createWebViewModalDialogWithRequest:)]) {
+    } else if (features.dialog && [delegate respondsToSelector:@selector(webView:createWebViewModalDialogWithRequest:)])
         newWebView = CallUIDelegate(m_webView, @selector(webView:createWebViewModalDialogWithRequest:), nil);
-    } else {
+    else
         newWebView = CallUIDelegate(m_webView, @selector(webView:createWebViewWithRequest:), nil);
-    }
-
-#if USE(PLUGIN_HOST_PROCESS) && ENABLE(NETSCAPE_PLUGIN_API)
-    if (newWebView)
-        WebKit::NetscapePluginHostManager::singleton().didCreateWindow();
-#endif
-    
     return core(newWebView);
 }
 

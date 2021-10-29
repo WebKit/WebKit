@@ -35,7 +35,6 @@
 #import "NetworkProcessCreationParameters.h"
 #import "NetworkProcessMessages.h"
 #import "NetworkProcessProxy.h"
-#import "PluginProcessManager.h"
 #import "PreferenceObserver.h"
 #import "SandboxUtilities.h"
 #import "TextChecker.h"
@@ -189,13 +188,6 @@ void WebProcessPool::updateProcessSuppressionState()
         if (auto* networkProcess = dataStore.networkProcessIfExists())
             networkProcess->setProcessSuppressionEnabled(enabled);
     });
-
-#if ENABLE(NETSCAPE_PLUGIN_API)
-    if (!m_processSuppressionDisabledForPageCounter.value())
-        m_pluginProcessManagerProcessSuppressionDisabledToken = nullptr;
-    else if (!m_pluginProcessManagerProcessSuppressionDisabledToken)
-        m_pluginProcessManagerProcessSuppressionDisabledToken = PluginProcessManager::singleton().processSuppressionDisabledToken();
-#endif
 }
 
 NSMutableDictionary *WebProcessPool::ensureBundleParameters()

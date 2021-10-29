@@ -69,10 +69,6 @@ static const char* serviceName(const ProcessLauncher::LaunchOptions& launchOptio
     case ProcessLauncher::ProcessType::WebAuthn:
         return "com.apple.WebKit.WebAuthn";
 #endif
-#if ENABLE(NETSCAPE_PLUGIN_API)
-    case ProcessLauncher::ProcessType::Plugin:
-        return "com.apple.WebKit.Plugin.64";
-#endif
     }
 }
 

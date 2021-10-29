@@ -1,3 +1,83 @@
+2021-10-29  Alex Christensen  <achristensen@webkit.org>
+
+        Remove code inside ENABLE(NETSCAPE_PLUGIN_API)
+        https://bugs.webkit.org/show_bug.cgi?id=232462
+
+        Reviewed by Anders Carlsson.
+
+        * Plugins/Hosted/HostedNetscapePluginStream.h: Removed.
+        * Plugins/Hosted/HostedNetscapePluginStream.mm: Removed.
+        * Plugins/Hosted/NetscapePluginHostManager.h: Removed.
+        * Plugins/Hosted/NetscapePluginHostManager.mm: Removed.
+        * Plugins/Hosted/NetscapePluginHostProxy.h: Removed.
+        * Plugins/Hosted/NetscapePluginHostProxy.mm: Removed.
+        * Plugins/Hosted/NetscapePluginInstanceProxy.h: Removed.
+        * Plugins/Hosted/NetscapePluginInstanceProxy.mm: Removed.
+        * Plugins/Hosted/ProxyInstance.h: Removed.
+        * Plugins/Hosted/ProxyInstance.mm: Removed.
+        * Plugins/Hosted/ProxyRuntimeObject.h: Removed.
+        * Plugins/Hosted/ProxyRuntimeObject.mm: Removed.
+        * Plugins/Hosted/WebHostedNetscapePluginView.h: Removed.
+        * Plugins/Hosted/WebHostedNetscapePluginView.mm: Removed.
+        * Plugins/Hosted/WebKitPluginAgent.defs: Removed.
+        * Plugins/Hosted/WebKitPluginAgentReply.defs: Removed.
+        * Plugins/Hosted/WebKitPluginClient.defs: Removed.
+        * Plugins/Hosted/WebKitPluginHost.defs: Removed.
+        * Plugins/Hosted/WebKitPluginHostTypes.defs: Removed.
+        * Plugins/Hosted/WebKitPluginHostTypes.h: Removed.
+        * Plugins/Hosted/WebTextInputWindowController.h: Removed.
+        * Plugins/Hosted/WebTextInputWindowController.m: Removed.
+        * Plugins/WebBaseNetscapePluginView.h: Removed.
+        * Plugins/WebBaseNetscapePluginView.mm: Removed.
+        * Plugins/WebBasePluginPackage.h:
+        * Plugins/WebBasePluginPackage.mm:
+        (+[WebBasePluginPackage pluginWithPath:]):
+        * Plugins/WebNetscapePluginEventHandler.h: Removed.
+        * Plugins/WebNetscapePluginEventHandler.mm: Removed.
+        * Plugins/WebNetscapePluginEventHandlerCocoa.h: Removed.
+        * Plugins/WebNetscapePluginEventHandlerCocoa.mm: Removed.
+        * Plugins/WebNetscapePluginPackage.h: Removed.
+        * Plugins/WebNetscapePluginPackage.mm: Removed.
+        * Plugins/WebNetscapePluginStream.h: Removed.
+        * Plugins/WebNetscapePluginStream.mm: Removed.
+        * Plugins/WebNetscapePluginView.h: Removed.
+        * Plugins/WebNetscapePluginView.mm: Removed.
+        * Plugins/WebPluginController.mm:
+        (-[WebPluginController destroyPlugin:]):
+        (-[WebPluginController destroyAllPlugins]):
+        * Plugins/WebPluginDatabase.mm:
+        (PluginPackageCandidates::update):
+        (-[WebPluginDatabase removePluginInstanceViewsFor:]):
+        (-[WebPluginDatabase destroyAllPluginInstanceViews]):
+        * Plugins/WebPluginRequest.h: Removed.
+        * Plugins/WebPluginRequest.m: Removed.
+        * Plugins/npapi.mm: Removed.
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::createWindow):
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::dispatchCreatePage):
+        (WebFrameLoaderClient::createPlugin):
+        (WebFrameLoaderClient::redirectDataToPlugin):
+        (NetscapePluginWidget::NetscapePluginWidget): Deleted.
+        (NetscapePluginWidget::platformLayer const): Deleted.
+        (NetscapePluginWidget::getFormValue): Deleted.
+        (NetscapePluginWidget::handleEvent): Deleted.
+        (NetscapePluginWidget::clipRectChanged): Deleted.
+        (NetscapePluginWidget::notifyWidget): Deleted.
+        * WebView/WebFrame.mm:
+        (-[WebFrame _recursive_resumeNullEventsForAllNetscapePlugins]): Deleted.
+        (-[WebFrame _recursive_pauseNullEventsForAllNetscapePlugins]): Deleted.
+        * WebView/WebFramePrivate.h:
+        * WebView/WebHTMLView.mm:
+        (needsCursorRectsSupportAtPoint):
+        (-[WebHTMLView viewWillMoveToHostWindow:]):
+        (-[WebHTMLView viewDidMoveToHostWindow]):
+        (-[WebHTMLView _web_makePluginSubviewsPerformSelector:withObject:]): Deleted.
+        (-[WebHTMLView _pauseNullEventsForAllNetscapePlugins]): Deleted.
+        (-[WebHTMLView _resumeNullEventsForAllNetscapePlugins]): Deleted.
+        * WebView/WebHTMLViewPrivate.h:
+        * WebView/WebView.mm:
+
 2021-10-28  Per Arne Vollan <pvollan@apple.com>
 
         Layout test is crashing inside WebChromeClient::createWindow

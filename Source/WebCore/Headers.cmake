@@ -330,15 +330,9 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     bridge/Bridge.h
     bridge/IdentifierRep.h
-    bridge/NP_jsobject.h
-    bridge/npruntime_impl.h
-    bridge/npruntime_internal.h
     bridge/runtime_method.h
     bridge/runtime_object.h
     bridge/runtime_root.h
-
-    bridge/c/c_instance.h
-    bridge/c/c_utility.h
 
     bridge/jsc/BridgeJSC.h
 
@@ -1585,10 +1579,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     plugins/PluginData.h
     plugins/PluginInfoProvider.h
     plugins/PluginViewBase.h
-    plugins/npapi.h
-    plugins/npfunctions.h
-    plugins/npruntime.h
-    plugins/nptypes.h
 
     rendering/BreakLines.h
     rendering/ClipRect.h

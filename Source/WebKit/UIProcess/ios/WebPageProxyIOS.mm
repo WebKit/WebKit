@@ -765,11 +765,6 @@ void WebPageProxy::pluginFocusOrWindowFocusChanged(uint64_t, bool)
     notImplemented();
 }
 
-void WebPageProxy::setPluginComplexTextInputState(uint64_t, uint64_t)
-{
-    notImplemented();
-}
-
 void WebPageProxy::executeSavedCommandBySelector(const String&, CompletionHandler<void(bool)>&& completionHandler)
 {
     notImplemented();

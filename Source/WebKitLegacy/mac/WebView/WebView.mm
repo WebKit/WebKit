@@ -43,7 +43,6 @@
 #import "WebApplicationCacheInternal.h"
 #import "WebArchive.h"
 #import "WebBackForwardListInternal.h"
-#import "WebBaseNetscapePluginView.h"
 #import "WebBroadcastChannelRegistry.h"
 #import "WebCache.h"
 #import "WebChromeClient.h"

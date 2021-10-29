@@ -69,9 +69,6 @@ const OptionSet<WebsiteDataType>& WebResourceLoadStatisticsStore::monitoredDataT
         WebsiteDataType::LocalStorage,
         WebsiteDataType::MediaKeys,
         WebsiteDataType::OfflineWebApplicationCache,
-#if ENABLE(NETSCAPE_PLUGIN_API)
-        WebsiteDataType::PlugInData,
-#endif
         WebsiteDataType::SearchFieldRecentSearches,
         WebsiteDataType::SessionStorage,
 #if ENABLE(SERVICE_WORKER)

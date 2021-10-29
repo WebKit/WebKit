@@ -40,7 +40,6 @@
 #import "PDFContextMenu.h"
 #import "PageClient.h"
 #import "PageClientImplMac.h"
-#import "PluginComplexTextInputState.h"
 #import "RemoteLayerTreeHost.h"
 #import "StringUtilities.h"
 #import "TextChecker.h"
@@ -364,13 +363,6 @@ void WebPageProxy::registerUIProcessAccessibilityTokens(const IPC::DataReference
 void WebPageProxy::pluginFocusOrWindowFocusChanged(uint64_t pluginComplexTextInputIdentifier, bool pluginHasFocusAndWindowHasFocus)
 {
     pageClient().pluginFocusOrWindowFocusChanged(pluginComplexTextInputIdentifier, pluginHasFocusAndWindowHasFocus);
-}
-
-void WebPageProxy::setPluginComplexTextInputState(uint64_t pluginComplexTextInputIdentifier, uint64_t pluginComplexTextInputState)
-{
-    MESSAGE_CHECK(isValidPluginComplexTextInputState(pluginComplexTextInputState));
-
-    pageClient().setPluginComplexTextInputState(pluginComplexTextInputIdentifier, static_cast<PluginComplexTextInputState>(pluginComplexTextInputState));
 }
 
 void WebPageProxy::executeSavedCommandBySelector(const String& selector, CompletionHandler<void(bool)>&& completionHandler)

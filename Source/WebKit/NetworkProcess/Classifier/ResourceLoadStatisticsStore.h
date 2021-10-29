@@ -273,9 +273,6 @@ private:
 #else
     ResourceLoadStatisticsClassifier m_resourceLoadStatisticsClassifier;
 #endif
-#if ENABLE(NETSCAPE_PLUGIN_API)
-    HashSet<uint64_t> m_activePluginTokens;
-#endif
     Parameters m_parameters;
     WallTime m_endOfGrandfatheringTimestamp;
     RegistrableDomain m_debugManualPrevalentResource;

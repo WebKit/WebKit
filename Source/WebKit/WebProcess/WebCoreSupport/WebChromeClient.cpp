@@ -693,23 +693,8 @@ bool WebChromeClient::shouldUnavailablePluginMessageBeButton(RenderEmbeddedObjec
     
 void WebChromeClient::unavailablePluginButtonClicked(Element& element, RenderEmbeddedObject::PluginUnavailabilityReason pluginUnavailabilityReason) const
 {
-#if ENABLE(NETSCAPE_PLUGIN_API)
-    ASSERT(element.hasTagName(objectTag) || element.hasTagName(embedTag) || element.hasTagName(appletTag));
-    ASSERT(pluginUnavailabilityReason == RenderEmbeddedObject::PluginMissing || pluginUnavailabilityReason == RenderEmbeddedObject::InsecurePluginVersion || pluginUnavailabilityReason);
-
-    auto& pluginElement = downcast<HTMLPlugInImageElement>(element);
-
-    String frameURLString = pluginElement.document().frame()->loader().documentLoader()->responseURL().string();
-    String pageURLString = m_page.mainFrame()->loader().documentLoader()->responseURL().string();
-    String pluginURLString = pluginElement.document().completeURL(pluginElement.url()).string();
-    URL pluginspageAttributeURL = pluginElement.document().completeURL(stripLeadingAndTrailingHTMLSpaces(pluginElement.attributeWithoutSynchronization(pluginspageAttr)));
-    if (!pluginspageAttributeURL.protocolIsInHTTPFamily())
-        pluginspageAttributeURL = URL();
-    m_page.send(Messages::WebPageProxy::UnavailablePluginButtonClicked(pluginUnavailabilityReason, pluginElement.serviceType(), pluginURLString, pluginspageAttributeURL.string(), frameURLString, pageURLString));
-#else
     UNUSED_PARAM(element);
     UNUSED_PARAM(pluginUnavailabilityReason);
-#endif // ENABLE(NETSCAPE_PLUGIN_API)
 }
 
 void WebChromeClient::mouseDidMoveOverElement(const HitTestResult& hitTestResult, unsigned modifierFlags, const String& toolTip, TextDirection)

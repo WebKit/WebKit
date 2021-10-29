@@ -26,7 +26,6 @@
 #pragma once
 
 #include "LayerTreeContext.h"
-#include "NPRuntimeObjectMap.h"
 #include "Plugin.h"
 #include "PluginController.h"
 #include "WebFrame.h"
@@ -196,19 +195,11 @@ private:
     void cancelStreamLoad(uint64_t streamID) override;
     void continueStreamLoad(uint64_t streamID) override;
     void cancelManualStreamLoad() override;
-#if ENABLE(NETSCAPE_PLUGIN_API)
-    NPObject* windowScriptNPObject() override;
-    NPObject* pluginElementNPObject() override;
-    bool evaluate(NPObject*, const String& scriptString, NPVariant* result, bool allowPopups) override;
-    void setPluginIsPlayingAudio(bool) override;
-    bool isMuted() const override;
-#endif
     void setStatusbarText(const String&) override;
     bool isAcceleratedCompositingEnabled() override;
     void pluginProcessCrashed() override;
 #if PLATFORM(COCOA)
     void pluginFocusOrWindowFocusChanged(bool pluginHasFocusAndWindowHasFocus) override;
-    void setComplexTextInputState(PluginComplexTextInputState) override;
     const WTF::MachSendRight& compositingRenderServerPort() override;
 #endif
     float contentsScaleFactor() override;
@@ -253,11 +244,6 @@ private:
 
     // Streams that the plug-in has requested to load. 
     HashMap<uint64_t, RefPtr<Stream>> m_streams;
-
-#if ENABLE(NETSCAPE_PLUGIN_API)
-    // A map of all related NPObjects for this plug-in view.
-    NPRuntimeObjectMap m_npRuntimeObjectMap { this };
-#endif
 
     // The manual stream state. This is used so we can deliver a manual stream to a plug-in
     // when it is initialized.

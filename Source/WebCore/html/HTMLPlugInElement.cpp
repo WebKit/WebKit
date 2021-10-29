@@ -50,10 +50,6 @@
 #include "Widget.h"
 #include <wtf/IsoMallocInlines.h>
 
-#if ENABLE(NETSCAPE_PLUGIN_API)
-#include "npruntime_impl.h"
-#endif
-
 #if PLATFORM(COCOA)
 #include "QuickTimePluginReplacement.h"
 #include "YouTubePluginReplacement.h"

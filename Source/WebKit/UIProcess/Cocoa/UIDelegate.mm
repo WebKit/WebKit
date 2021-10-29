@@ -748,37 +748,6 @@ void UIDelegate::UIClient::unfocus(WebPageProxy*)
     [(id <WKUIDelegatePrivate>)delegate _unfocusWebView:m_uiDelegate->m_webView.get().get()];
 }
 
-#if ENABLE(NETSCAPE_PLUGIN_API)
-static _WKPlugInUnavailabilityReason toWKPlugInUnavailabilityReason(WKPluginUnavailabilityReason reason)
-{
-    switch (reason) {
-    case kWKPluginUnavailabilityReasonPluginMissing:
-        return _WKPlugInUnavailabilityReasonPluginMissing;
-    case kWKPluginUnavailabilityReasonPluginCrashed:
-        return _WKPlugInUnavailabilityReasonPluginCrashed;
-    case kWKPluginUnavailabilityReasonInsecurePluginVersion:
-        return _WKPlugInUnavailabilityReasonInsecurePluginVersion;
-    }
-    ASSERT_NOT_REACHED();
-    return _WKPlugInUnavailabilityReasonPluginMissing;
-}
-    
-void UIDelegate::UIClient::unavailablePluginButtonClicked(WebPageProxy&, WKPluginUnavailabilityReason reason, API::Dictionary& plugInInfo)
-{
-    if (!m_uiDelegate)
-        return;
-
-    if (!m_uiDelegate->m_delegateMethods.webViewUnavailablePlugInButtonClicked)
-        return;
-    
-    auto delegate = m_uiDelegate->m_delegate.get();
-    if (!delegate)
-        return;
-
-    [(id <WKUIDelegatePrivate>)delegate _webView:m_uiDelegate->m_webView.get().get() unavailablePlugInButtonClickedWithReason:toWKPlugInUnavailabilityReason(reason) plugInInfo:wrapper(plugInInfo)];
-}
-#endif
-    
 static _WKResourceLimit toWKResourceLimit(WKResourceLimit limit)
 {
     switch (limit) {

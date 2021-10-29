@@ -30,7 +30,6 @@
 
 #import "WebKitLogging.h"
 #import "WebKitNSStringExtras.h"
-#import "WebNetscapePluginPackage.h"
 #import "WebPluginPackage.h"
 #import <JavaScriptCore/InitializeThreading.h>
 #import <WebCore/WebCoreJITOperations.h>
@@ -67,17 +66,7 @@
 
 + (WebBasePluginPackage *)pluginWithPath:(NSString *)pluginPath
 {
-    RetainPtr<WebBasePluginPackage> pluginPackage = adoptNS([[WebPluginPackage alloc] initWithPath:pluginPath]);
-
-    if (!pluginPackage) {
-#if ENABLE(NETSCAPE_PLUGIN_API)
-        pluginPackage = adoptNS([[WebNetscapePluginPackage alloc] initWithPath:pluginPath]);
-#else
-        return nil;
-#endif
-    }
-
-    return pluginPackage.autorelease();
+    return adoptNS([[WebPluginPackage alloc] initWithPath:pluginPath]).autorelease();
 }
 
 - (id)initWithPath:(NSString *)pluginPath

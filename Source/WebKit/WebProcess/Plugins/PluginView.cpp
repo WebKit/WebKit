@@ -26,7 +26,6 @@
 #include "config.h"
 #include "PluginView.h"
 
-#include "NPRuntimeUtilities.h"
 #include "Plugin.h"
 #include "ShareableBitmap.h"
 #include "WebCoreArgumentCoders.h"
@@ -260,10 +259,6 @@ void PluginView::Stream::didFinishLoading(NetscapePlugInStreamLoader*)
     // Calling streamDidFinishLoading could cause us to be deleted, so we hold on to a reference here.
     Ref<Stream> protect(*this);
 
-#if ENABLE(NETSCAPE_PLUGIN_API)
-    // Protect the plug-in while we're calling into it.
-    NPRuntimeObjectMap::PluginProtector pluginProtector(&m_pluginView->m_npRuntimeObjectMap);
-#endif
     m_pluginView->m_plugin->streamDidFinishLoading(m_streamID);
 
     m_pluginView->removeStream(this);
@@ -334,11 +329,6 @@ void PluginView::destroyPluginAndReset()
             pluginFocusOrWindowFocusChanged(false);
 #endif
     }
-
-#if ENABLE(NETSCAPE_PLUGIN_API)
-    // Invalidate the object map.
-    m_npRuntimeObjectMap.invalidate();
-#endif
 
     cancelAllStreams();
 }
@@ -589,12 +579,6 @@ void PluginView::initializePlugin()
 void PluginView::didFailToInitializePlugin()
 {
     m_plugin = nullptr;
-
-#if ENABLE(NETSCAPE_PLUGIN_API)
-    String frameURLString = frame()->loader().documentLoader()->responseURL().string();
-    String pageURLString = m_webPage->corePage()->mainFrame().loader().documentLoader()->responseURL().string();
-    m_webPage->send(Messages::WebPageProxy::DidFailToInitializePlugin(m_parameters.mimeType, frameURLString, pageURLString));
-#endif
 }
 
 void PluginView::didInitializePlugin()
@@ -660,19 +644,8 @@ JSObject* PluginView::scriptObject(JSGlobalObject* globalObject)
     if (!m_isInitialized || !m_plugin)
         return 0;
 
-#if ENABLE(NETSCAPE_PLUGIN_API)
-    NPObject* scriptableNPObject = m_plugin->pluginScriptableNPObject();
-    if (!scriptableNPObject)
-        return 0;
-
-    JSObject* jsObject = m_npRuntimeObjectMap.getOrCreateJSObject(globalObject, scriptableNPObject);
-    releaseNPObject(scriptableNPObject);
-
-    return jsObject;
-#else
     UNUSED_PARAM(globalObject);
     return 0;
-#endif
 }
 
 void PluginView::storageBlockingStateChanged()
@@ -1319,13 +1292,6 @@ void PluginView::mediaCanStart(WebCore::Document&)
 
 void PluginView::pageMutedStateDidChange()
 {
-#if ENABLE(NETSCAPE_PLUGIN_API)
-    // The plug-in can be null here if it failed to initialize.
-    if (!m_isInitialized || !m_plugin)
-        return;
-
-    m_plugin->mutedStateChanged(isMuted());
-#endif
 }
 
 void PluginView::invalidate(const IntRect& dirtyRect)
@@ -1395,68 +1361,6 @@ void PluginView::cancelManualStreamLoad()
         documentLoader->cancelMainResourceLoad(frame()->loader().cancelledError(m_parameters.url));
 }
 
-#if ENABLE(NETSCAPE_PLUGIN_API)
-NPObject* PluginView::windowScriptNPObject()
-{
-    if (!frame())
-        return nullptr;
-
-    if (!frame()->script().canExecuteScripts(NotAboutToExecuteScript)) {
-        // FIXME: Investigate if other browsers allow plug-ins to access JavaScript objects even if JavaScript is disabled.
-        return nullptr;
-    }
-
-    return m_npRuntimeObjectMap.getOrCreateNPObject(pluginWorld().vm(), frame()->windowProxy().jsWindowProxy(pluginWorld())->window());
-}
-
-NPObject* PluginView::pluginElementNPObject()
-{
-    if (!frame())
-        return 0;
-
-    if (!frame()->script().canExecuteScripts(NotAboutToExecuteScript)) {
-        // FIXME: Investigate if other browsers allow plug-ins to access JavaScript objects even if JavaScript is disabled.
-        return 0;
-    }
-
-    JSObject* object = frame()->script().jsObjectForPluginElement(m_pluginElement.get());
-    ASSERT(object);
-
-    return m_npRuntimeObjectMap.getOrCreateNPObject(pluginWorld().vm(), object);
-}
-
-bool PluginView::evaluate(NPObject* npObject, const String& scriptString, NPVariant* result, bool allowPopups)
-{
-    // FIXME: Is this check necessary?
-    if (!m_pluginElement->document().frame())
-        return false;
-
-    // Calling evaluate will run JavaScript that can potentially remove the plug-in element, so we need to
-    // protect the plug-in view from destruction.
-    NPRuntimeObjectMap::PluginProtector pluginProtector(&m_npRuntimeObjectMap);
-
-    UserGestureIndicator gestureIndicator(allowPopups ? std::optional<ProcessingUserGestureState>(ProcessingUserGesture) : std::nullopt);
-    return m_npRuntimeObjectMap.evaluate(npObject, scriptString, result);
-}
-
-void PluginView::setPluginIsPlayingAudio(bool pluginIsPlayingAudio)
-{
-    if (m_pluginIsPlayingAudio == pluginIsPlayingAudio)
-        return;
-
-    m_pluginIsPlayingAudio = pluginIsPlayingAudio;
-    m_pluginElement->document().updateIsPlayingMedia();
-}
-
-bool PluginView::isMuted() const
-{
-    if (!frame() || !frame()->page())
-        return false;
-
-    return frame()->page()->isAudioMuted();
-}
-#endif
-
 void PluginView::setStatusbarText(const String& statusbarText)
 {
     if (!frame())
@@ -1497,12 +1401,6 @@ void PluginView::pluginFocusOrWindowFocusChanged(bool pluginHasFocusAndWindowHas
 {
     if (m_webPage)
         m_webPage->send(Messages::WebPageProxy::PluginFocusOrWindowFocusChanged(m_plugin->pluginComplexTextInputIdentifier(), pluginHasFocusAndWindowHasFocus));
-}
-
-void PluginView::setComplexTextInputState(PluginComplexTextInputState pluginComplexTextInputState)
-{
-    if (m_webPage)
-        m_webPage->send(Messages::WebPageProxy::SetPluginComplexTextInputState(m_plugin->pluginComplexTextInputIdentifier(), pluginComplexTextInputState));
 }
 
 const MachSendRight& PluginView::compositingRenderServerPort()

@@ -185,18 +185,12 @@ set(WebKit_MESSAGES_IN_FILES
     NetworkProcess/webrtc/NetworkRTCProvider
     NetworkProcess/webrtc/RTCDataChannelRemoteManagerProxy
 
-    PluginProcess/PluginControllerProxy
-    PluginProcess/PluginProcess
-    PluginProcess/WebProcessConnection
-
     Shared/AuxiliaryProcess
     Shared/WebConnection
 
     Shared/Authentication/AuthenticationManager
 
     Shared/Notifications/NotificationManagerMessageHandler
-
-    Shared/Plugins/NPObjectMessageReceiver
 
     UIProcess/DrawingAreaProxy
 
@@ -223,8 +217,6 @@ set(WebKit_MESSAGES_IN_FILES
     UIProcess/Inspector/WebInspectorUIProxy
 
     UIProcess/Network/NetworkProcessProxy
-
-    UIProcess/Plugins/PluginProcessProxy
 
     UIProcess/UserContent/WebUserContentControllerProxy
 
@@ -278,10 +270,6 @@ set(WebKit_MESSAGES_IN_FILES
     WebProcess/Network/WebSocketStream
 
     WebProcess/Notifications/WebNotificationManager
-
-    WebProcess/Plugins/PluginProcessConnection
-    WebProcess/Plugins/PluginProcessConnectionManager
-    WebProcess/Plugins/PluginProxy
 
     WebProcess/Speech/SpeechRecognitionRealtimeMediaSourceManager
 

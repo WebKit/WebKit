@@ -1,3 +1,15 @@
+2021-10-29  Alex Christensen  <achristensen@webkit.org>
+
+        Remove code inside ENABLE(NETSCAPE_PLUGIN_API)
+        https://bugs.webkit.org/show_bug.cgi?id=232462
+
+        Reviewed by Anders Carlsson.
+
+        It is not used anywhere since https://trac.webkit.org/changeset/285003/webkit
+
+        * wtf/PlatformEnable.h:
+        * wtf/PlatformEnableCocoa.h:
+
 2021-10-29  Ayumi Kojima  <ayumi_kojima@apple.com>
 
         Unreviewed, reverting r285038.

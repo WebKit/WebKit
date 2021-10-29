@@ -58,8 +58,6 @@
 #import "WebKitVersionChecks.h"
 #import "WebNSURLExtras.h"
 #import "WebNavigationData.h"
-#import "WebNetscapePluginPackage.h"
-#import "WebNetscapePluginView.h"
 #import "WebPanelAuthenticationHandler.h"
 #import "WebPluginController.h"
 #import "WebPluginPackage.h"
@@ -134,11 +132,6 @@
 #import <wtf/RunLoop.h>
 #import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/text/WTFString.h>
-
-#if USE(PLUGIN_HOST_PROCESS) && ENABLE(NETSCAPE_PLUGIN_API)
-#import "NetscapePluginHostManager.h"
-#import "WebHostedNetscapePluginView.h"
-#endif
 
 #if PLATFORM(IOS_FAMILY)
 #import <WebCore/HTMLPlugInImageElement.h>
@@ -840,12 +833,6 @@ WebCore::Frame* WebFrameLoaderClient::dispatchCreatePage(const WebCore::Navigati
     WebView *newWebView = [[currentWebView _UIDelegateForwarder] webView:currentWebView 
                                                 createWebViewWithRequest:nil
                                                           windowFeatures:features.get()];
-    
-#if USE(PLUGIN_HOST_PROCESS) && ENABLE(NETSCAPE_PLUGIN_API)
-    if (newWebView)
-        WebKit::NetscapePluginHostManager::singleton().didCreateWindow();
-#endif
-        
     return core([newWebView mainFrame]);
 }
 
@@ -1779,83 +1766,6 @@ public:
 };
 #endif // PLATFORM(IOS_FAMILY)
 
-#if ENABLE(NETSCAPE_PLUGIN_API)
-
-class NetscapePluginWidget : public PluginWidget {
-public:
-    NetscapePluginWidget(WebBaseNetscapePluginView *view)
-        : PluginWidget(view)
-    {
-    }
-
-    virtual PlatformLayer* platformLayer() const
-    {
-        return [(WebBaseNetscapePluginView *)platformWidget() pluginLayer];
-    }
-
-    virtual bool getFormValue(String& value)
-    {
-        NSString* nsValue = 0;
-        if ([(WebBaseNetscapePluginView *)platformWidget() getFormValue:&nsValue]) {
-            if (!nsValue)
-                return false;
-            value = String(adoptNS(nsValue).get());
-            return true;
-        }
-        return false;
-    }
-
-    virtual void handleEvent(WebCore::Event& event)
-    {
-        auto* frame = WebCore::Frame::frameForWidget(*this);
-        if (!frame)
-            return;
-        
-        NSEvent* currentNSEvent = frame->eventHandler().currentNSEvent();
-        if (event.type() == WebCore::eventNames().mousemoveEvent)
-            [(WebBaseNetscapePluginView *)platformWidget() handleMouseMoved:currentNSEvent];
-        else if (event.type() == WebCore::eventNames().mouseoverEvent)
-            [(WebBaseNetscapePluginView *)platformWidget() handleMouseEntered:currentNSEvent];
-        else if (event.type() == WebCore::eventNames().mouseoutEvent)
-            [(WebBaseNetscapePluginView *)platformWidget() handleMouseExited:currentNSEvent];
-        else if (event.type() == WebCore::eventNames().contextmenuEvent)
-            event.setDefaultHandled(); // We don't know if the plug-in has handled mousedown event by displaying a context menu, so we never want WebKit to show a default one.
-    }
-
-    virtual void clipRectChanged()
-    {
-        // Changing the clip rect doesn't affect the view hierarchy, so the plugin must be told about the change directly.
-        [(WebBaseNetscapePluginView *)platformWidget() updateAndSetWindow];
-    }
-
-private:
-    virtual void notifyWidget(WebCore::WidgetNotification notification)
-    {
-        switch (notification) {
-        case WebCore::WillPaintFlattened: {
-            BEGIN_BLOCK_OBJC_EXCEPTIONS
-            [(WebBaseNetscapePluginView *)platformWidget() cacheSnapshot];
-            END_BLOCK_OBJC_EXCEPTIONS
-            break;
-        }
-        case WebCore::DidPaintFlattened: {
-            BEGIN_BLOCK_OBJC_EXCEPTIONS
-            [(WebBaseNetscapePluginView *)platformWidget() clearCachedSnapshot];
-            END_BLOCK_OBJC_EXCEPTIONS
-            break;
-        }
-        }
-    }
-};
-
-#if USE(PLUGIN_HOST_PROCESS)
-#define NETSCAPE_PLUGIN_VIEW WebHostedNetscapePluginView
-#else
-#define NETSCAPE_PLUGIN_VIEW WebNetscapePluginView
-#endif
-
-#endif // ENABLE(NETSCAPE_PLUGIN_API)
-
 static bool shouldBlockPlugin(WebBasePluginPackage *pluginPackage)
 {
 #if PLATFORM(MAC)
@@ -1938,22 +1848,6 @@ RefPtr<WebCore::Widget> WebFrameLoaderClient::createPlugin(const WebCore::IntSiz
         } else {
             if ([pluginPackage isKindOfClass:[WebPluginPackage class]])
                 view = pluginView(m_webFrame.get(), (WebPluginPackage *)pluginPackage, attributeKeys.get(), createNSArray(paramValues).get(), baseURL, kit(&element), loadManually);
-#if ENABLE(NETSCAPE_PLUGIN_API)
-            else if ([pluginPackage isKindOfClass:[WebNetscapePluginPackage class]] && [webView.preferences _boolValueForKey:@"WebKitNPAPIPlugInsEnabledForTestingInWebKitLegacy"]) {
-                auto pluginView = adoptNS([[NETSCAPE_PLUGIN_VIEW alloc]
-                    initWithFrame:NSMakeRect(0, 0, size.width(), size.height())
-                    pluginPackage:(WebNetscapePluginPackage *)pluginPackage
-                    URL:pluginURL
-                    baseURL:baseURL
-                    MIMEType:MIMEType
-                    attributeKeys:attributeKeys.get()
-                    attributeValues:createNSArray(paramValues).get()
-                    loadManually:loadManually
-                    element:&element]);
-
-                return adoptRef(new NetscapePluginWidget(pluginView.get()));
-            }
-#endif
         }
     } else
         errorCode = WebKitErrorCannotFindPlugIn;
@@ -1998,11 +1892,6 @@ void WebFrameLoaderClient::redirectDataToPlugin(WebCore::Widget& pluginWidget)
 
     NSView *pluginView = pluginWidget.platformWidget();
 
-#if ENABLE(NETSCAPE_PLUGIN_API)
-    if ([pluginView isKindOfClass:[NETSCAPE_PLUGIN_VIEW class]])
-        [representation _redirectDataToManualLoader:(NETSCAPE_PLUGIN_VIEW *)pluginView forPluginView:pluginView];
-    else
-#endif
     {
         WebHTMLView *documentView = (WebHTMLView *)[[m_webFrame.get() frameView] documentView];
         ASSERT([documentView isKindOfClass:[WebHTMLView class]]);

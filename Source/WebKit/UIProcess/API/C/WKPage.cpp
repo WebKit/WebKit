@@ -64,7 +64,6 @@
 #include "NavigationActionData.h"
 #include "NotificationPermissionRequest.h"
 #include "PageClient.h"
-#include "PluginInformation.h"
 #include "PrintInfo.h"
 #include "SpeechRecognitionPermissionRequest.h"
 #include "WKAPICast.h"
@@ -1800,37 +1799,6 @@ void WKPageSetPageUIClient(WKPageRef pageRef, const WKPageUIClientBase* wkClient
             auto apiHitTestResult = API::HitTestResult::create(data);
             m_client.mouseDidMoveOverElement(toAPI(&page), toAPI(apiHitTestResult.ptr()), toAPI(modifiers), toAPI(userData), m_client.base.clientInfo);
         }
-
-#if ENABLE(NETSCAPE_PLUGIN_API)
-        void unavailablePluginButtonClicked(WebPageProxy& page, WKPluginUnavailabilityReason pluginUnavailabilityReason, API::Dictionary& pluginInformation) final
-        {
-            if (pluginUnavailabilityReason == kWKPluginUnavailabilityReasonPluginMissing) {
-                if (m_client.missingPluginButtonClicked_deprecatedForUseWithV0)
-                    m_client.missingPluginButtonClicked_deprecatedForUseWithV0(
-                        toAPI(&page),
-                        toAPI(pluginInformation.get<API::String>(pluginInformationMIMETypeKey())),
-                        toAPI(pluginInformation.get<API::String>(pluginInformationPluginURLKey())),
-                        toAPI(pluginInformation.get<API::String>(pluginInformationPluginspageAttributeURLKey())),
-                        m_client.base.clientInfo);
-            }
-
-            if (m_client.unavailablePluginButtonClicked_deprecatedForUseWithV1)
-                m_client.unavailablePluginButtonClicked_deprecatedForUseWithV1(
-                    toAPI(&page),
-                    pluginUnavailabilityReason,
-                    toAPI(pluginInformation.get<API::String>(pluginInformationMIMETypeKey())),
-                    toAPI(pluginInformation.get<API::String>(pluginInformationPluginURLKey())),
-                    toAPI(pluginInformation.get<API::String>(pluginInformationPluginspageAttributeURLKey())),
-                    m_client.base.clientInfo);
-
-            if (m_client.unavailablePluginButtonClicked)
-                m_client.unavailablePluginButtonClicked(
-                    toAPI(&page),
-                    pluginUnavailabilityReason,
-                    toAPI(&pluginInformation),
-                    m_client.base.clientInfo);
-        }
-#endif // ENABLE(NETSCAPE_PLUGIN_API)
 
         void didNotHandleKeyEvent(WebPageProxy* page, const NativeWebKeyboardEvent& event) final
         {

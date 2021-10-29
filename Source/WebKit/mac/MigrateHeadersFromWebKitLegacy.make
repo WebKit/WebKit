@@ -195,10 +195,6 @@ WEBKIT_PUBLIC_HEADERS = \
     WebScriptObject.h \
     WebUIDelegate.h \
     WebView.h \
-    npapi.h \
-    npfunctions.h \
-    npruntime.h \
-    nptypes.h \
 #
 
 WEBKIT_LEGACY_PUBLIC_HEADERS = $(addprefix $(PUBLIC_HEADERS_DIR)/, $(filter $(WEBKIT_PUBLIC_HEADERS), $(notdir $(wildcard $(WEBKIT_LEGACY_PRIVATE_HEADERS_DIR)/*.h))) WebKitLegacy.h)

@@ -75,11 +75,6 @@ void AuxiliaryProcessProxy::getLaunchOptions(ProcessLauncher::LaunchOptions& lau
     case ProcessLauncher::ProcessType::Web:
         varname = "WEB_PROCESS_CMD_PREFIX";
         break;
-#if ENABLE(NETSCAPE_PLUGIN_API)
-    case ProcessLauncher::ProcessType::Plugin:
-        varname = "PLUGIN_PROCESS_CMD_PREFIX";
-        break;
-#endif
     case ProcessLauncher::ProcessType::Network:
         varname = "NETWORK_PROCESS_CMD_PREFIX";
         break;

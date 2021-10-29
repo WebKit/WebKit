@@ -181,11 +181,6 @@ Platform/IPC/SharedFileHandle.cpp @no-unify
 Platform/IPC/StreamServerConnection.cpp @no-unify
 Platform/IPC/StringReference.cpp @no-unify
 
-PluginProcess/PluginControllerProxy.cpp @no-unify
-PluginProcess/PluginCreationParameters.cpp @no-unify
-PluginProcess/PluginProcess.cpp @no-unify
-PluginProcess/WebProcessConnection.cpp @no-unify
-
 // TODO: The files here marked @no-unify should be unified once GTK's PluginProcess2 is removed.
 Shared/AccessibilityPreferences.cpp
 Shared/ActivityAssertion.cpp @no-unify
@@ -296,18 +291,6 @@ Shared/Databases/IndexedDB/IDBUtilities.cpp
 Shared/Databases/IndexedDB/WebIDBResult.cpp
 
 Shared/Gamepad/GamepadData.cpp
-
-// TODO: These files should be unified once GTK's PluginProcess2 is removed.
-Shared/Plugins/NPIdentifierData.cpp @no-unify
-Shared/Plugins/NPObjectMessageReceiver.cpp @no-unify
-Shared/Plugins/NPObjectProxy.cpp @no-unify
-Shared/Plugins/NPRemoteObjectMap.cpp @no-unify
-Shared/Plugins/NPVariantData.cpp @no-unify
-Shared/Plugins/PluginProcessCreationParameters.cpp @no-unify
-
-// TODO: These files should be unified once GTK's PluginProcess2 is removed.
-Shared/Plugins/Netscape/NetscapePluginModule.cpp  @no-unify
-Shared/Plugins/Netscape/PluginInformation.cpp @no-unify
 
 Shared/WebsiteData/WebsiteData.cpp
 
@@ -501,10 +484,6 @@ UIProcess/Notifications/WebNotificationManagerMessageHandler.cpp
 UIProcess/Notifications/WebNotificationManagerProxy.cpp
 UIProcess/Notifications/WebNotificationProvider.cpp
 
-UIProcess/Plugins/PluginInfoStore.cpp
-UIProcess/Plugins/PluginProcessManager.cpp
-UIProcess/Plugins/PluginProcessProxy.cpp
-
 UIProcess/UserContent/WebScriptMessageHandler.cpp
 UIProcess/UserContent/WebUserContentControllerProxy.cpp
 
@@ -674,21 +653,8 @@ WebProcess/Notifications/WebNotificationManager.cpp
 
 // TODO: These files should be unified once GTK's PluginProcess2 is removed.
 WebProcess/Plugins/Plugin.cpp @no-unify
-WebProcess/Plugins/PluginProcessConnection.cpp @no-unify
-WebProcess/Plugins/PluginProcessConnectionManager.cpp @no-unify
-WebProcess/Plugins/PluginProxy.cpp @no-unify
 WebProcess/Plugins/PluginView.cpp @no-unify
 WebProcess/Plugins/WebPluginInfoProvider.cpp @no-unify
-
-// TODO: These files should be unified once GTK's PluginProcess2 is removed.
-WebProcess/Plugins/Netscape/JSNPMethod.cpp @no-unify
-WebProcess/Plugins/Netscape/JSNPObject.cpp @no-unify
-WebProcess/Plugins/Netscape/NPJSObject.cpp @no-unify
-WebProcess/Plugins/Netscape/NPRuntimeObjectMap.cpp @no-unify
-WebProcess/Plugins/Netscape/NPRuntimeUtilities.cpp @no-unify
-WebProcess/Plugins/Netscape/NetscapeBrowserFuncs.cpp @no-unify
-WebProcess/Plugins/Netscape/NetscapePlugin.cpp @no-unify
-WebProcess/Plugins/Netscape/NetscapePluginStream.cpp @no-unify
 
 WebProcess/Speech/SpeechRecognitionRealtimeMediaSourceManager.cpp
 

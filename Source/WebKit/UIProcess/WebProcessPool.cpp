@@ -50,7 +50,6 @@
 #include "NetworkProcessMessages.h"
 #include "NetworkProcessProxy.h"
 #include "PerActivityStateCPUUsageSampler.h"
-#include "PluginProcessManager.h"
 #include "SandboxExtension.h"
 #include "TextChecker.h"
 #include "UIGamepad.h"
@@ -387,9 +386,6 @@ void WebProcessPool::sendMemoryPressureEvent(bool isCritical)
     sendToAllProcesses(Messages::AuxiliaryProcess::DidReceiveMemoryPressureEvent(isCritical));
     for (auto networkProcess : NetworkProcessProxy::allNetworkProcesses())
         networkProcess->send(Messages::AuxiliaryProcess::DidReceiveMemoryPressureEvent(isCritical), 0);
-#if ENABLE(NETSCAPE_PLUGIN_API)
-    PluginProcessManager::singleton().sendMemoryPressureEvent(isCritical);
-#endif
 }
 #endif
 
@@ -1248,23 +1244,6 @@ void WebProcessPool::handleMemoryPressureWarning(Critical)
     ASSERT(!m_prewarmedProcess);
 }
 
-#if ENABLE(NETSCAPE_PLUGIN_API)
-void WebProcessPool::setAdditionalPluginsDirectory(const String& directory)
-{
-    Vector<String> directories;
-    directories.append(directory);
-
-    m_pluginInfoStore.setAdditionalPluginsDirectories(directories);
-}
-
-void WebProcessPool::refreshPlugins()
-{
-    m_pluginInfoStore.refresh();
-    sendToAllProcesses(Messages::WebProcess::RefreshPlugins());
-}
-
-#endif // ENABLE(NETSCAPE_PLUGIN_API)
-
 ProcessID WebProcessPool::prewarmedProcessIdentifier()
 {
     return m_prewarmedProcess ? m_prewarmedProcess->processIdentifier() : 0;
@@ -1693,21 +1672,14 @@ void WebProcessPool::setJavaScriptGarbageCollectorTimerEnabled(bool flag)
 
 void WebProcessPool::addSupportedPlugin(String&& matchingDomain, String&& name, HashSet<String>&& mimeTypes, HashSet<String> extensions)
 {
-#if ENABLE(NETSCAPE_PLUGIN_API)
-    m_pluginInfoStore.addSupportedPlugin(WTFMove(matchingDomain), WTFMove(name), WTFMove(mimeTypes), WTFMove(extensions));
-#else
     UNUSED_PARAM(matchingDomain);
     UNUSED_PARAM(name);
     UNUSED_PARAM(mimeTypes);
     UNUSED_PARAM(extensions);
-#endif
 }
 
 void WebProcessPool::clearSupportedPlugins()
 {
-#if ENABLE(NETSCAPE_PLUGIN_API)
-    m_pluginInfoStore.clearSupportedPlugins();
-#endif
 }
 
 void WebProcessPool::setMemoryCacheDisabled(bool disabled)

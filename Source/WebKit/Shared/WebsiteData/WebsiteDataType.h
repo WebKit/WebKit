@@ -41,9 +41,6 @@ enum class WebsiteDataType : uint32_t {
     MediaKeys = 1 << 8,
     HSTSCache = 1 << 9,
     SearchFieldRecentSearches = 1 << 10,
-#if ENABLE(NETSCAPE_PLUGIN_API)
-    PlugInData = 1 << 11,
-#endif
     ResourceLoadStatistics = 1 << 12,
     Credentials = 1 << 13,
 #if ENABLE(SERVICE_WORKER)
@@ -75,9 +72,6 @@ template<> struct EnumTraits<WebKit::WebsiteDataType> {
         WebKit::WebsiteDataType::MediaKeys,
         WebKit::WebsiteDataType::HSTSCache,
         WebKit::WebsiteDataType::SearchFieldRecentSearches,
-#if ENABLE(NETSCAPE_PLUGIN_API)
-        WebKit::WebsiteDataType::PlugInData,
-#endif
         WebKit::WebsiteDataType::ResourceLoadStatistics,
         WebKit::WebsiteDataType::Credentials,
 #if ENABLE(SERVICE_WORKER)

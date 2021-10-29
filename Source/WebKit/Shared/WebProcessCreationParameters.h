@@ -49,10 +49,6 @@
 #include <WebCore/RenderThemeIOS.h>
 #endif
 
-#if ENABLE(NETSCAPE_PLUGIN_API)
-#include <WebCore/PluginData.h>
-#endif
-
 #if PLATFORM(GTK) || PLATFORM(WPE)
 #include <wtf/MemoryPressureHandler.h>
 #endif
@@ -171,10 +167,6 @@ struct WebProcessCreationParameters {
 
 #if ENABLE(NOTIFICATIONS)
     HashMap<String, bool> notificationPermissions;
-#endif
-
-#if ENABLE(NETSCAPE_PLUGIN_API)
-    HashMap<String, HashMap<String, HashMap<String, WebCore::PluginLoadClientPolicy>>> pluginLoadClientPolicies;
 #endif
 
 #if PLATFORM(COCOA)

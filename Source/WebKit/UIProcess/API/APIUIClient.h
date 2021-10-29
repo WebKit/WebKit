@@ -97,9 +97,6 @@ public:
 
     virtual void setStatusText(WebKit::WebPageProxy*, const WTF::String&) { }
     virtual void mouseDidMoveOverElement(WebKit::WebPageProxy&, const WebKit::WebHitTestResultData&, OptionSet<WebKit::WebEvent::Modifier>, Object*) { }
-#if ENABLE(NETSCAPE_PLUGIN_API)
-    virtual void unavailablePluginButtonClicked(WebKit::WebPageProxy&, WKPluginUnavailabilityReason, Dictionary&) { }
-#endif // ENABLE(NETSCAPE_PLUGIN_API)
 
     virtual void didNotHandleKeyEvent(WebKit::WebPageProxy*, const WebKit::NativeWebKeyboardEvent&) { }
     virtual void didNotHandleWheelEvent(WebKit::WebPageProxy*, const WebKit::NativeWebWheelEvent&) { }

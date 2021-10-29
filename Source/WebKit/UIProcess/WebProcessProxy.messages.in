@@ -31,11 +31,6 @@ messages -> WebProcessProxy LegacyReceiver {
     EnableSuddenTermination()
     DisableSuddenTermination()
 
-    # Plugin messages.
-#if ENABLE(NETSCAPE_PLUGIN_API)
-    GetPlugins(bool refresh) -> (Vector<WebCore::PluginInfo> plugins, Vector<WebCore::PluginInfo> applicationPlugins, struct std::optional<Vector<WebCore::SupportedPluginIdentifier>> supportedPluginIdentifiers) Synchronous
-    GetPluginProcessConnection(uint64_t pluginProcessToken) -> (IPC::Attachment connectionHandle, bool supportsAsynchronousInitialization) Synchronous
-#endif
     GetNetworkProcessConnection() -> (struct WebKit::NetworkProcessConnectionInfo connectionInfo) Synchronous
 
 #if ENABLE(GPU_PROCESS)

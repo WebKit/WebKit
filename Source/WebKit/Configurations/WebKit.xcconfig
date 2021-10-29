@@ -173,7 +173,7 @@ SECTORDER_FLAGS_Production[sdk=macosx*] = -Wl,-order_file,mac/WebKit2.order;
 EXCLUDED_IOS_RESOURCE_FILE_NAMES = Resources/ios/*;
 EXCLUDED_IOS_RESOURCE_FILE_NAMES[sdk=iphone*] = ;
 
-EXCLUDED_MACOS_PLUGIN_FILE_NAMES[sdk=iphone*] = PluginProcessShim.dylib SecItemShim.dylib WebProcessShim.dylib *.pdf Resources/mac/* com.apple.WebKit.NetworkProcess.sb com.apple.WebKit.GPUProcess.sb com.apple.WebKit.WebAuthnProcess.sb com.apple.WebProcess.sb com.apple.WebKit.plugin-common.sb PlugInSandboxProfiles/*.sb;
+EXCLUDED_MACOS_PLUGIN_FILE_NAMES[sdk=iphone*] = SecItemShim.dylib WebProcessShim.dylib *.pdf Resources/mac/* com.apple.WebKit.NetworkProcess.sb com.apple.WebKit.GPUProcess.sb com.apple.WebKit.WebAuthnProcess.sb com.apple.WebProcess.sb;
 
 INSTALLHDRS_SCRIPT_PHASE = YES;
 APPLY_RULES_IN_COPY_HEADERS = $(WK_USE_NEW_BUILD_SYSTEM);

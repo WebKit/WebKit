@@ -29,7 +29,6 @@
 #include "AuxiliaryProcess.h"
 #include "CacheModel.h"
 #include "IdentifierTypes.h"
-#include "PluginProcessConnectionManager.h"
 #include "SandboxExtension.h"
 #include "StorageAreaIdentifier.h"
 #include "TextCheckerState.h"
@@ -239,10 +238,6 @@ public:
     
     const TextCheckerState& textCheckerState() const { return m_textCheckerState; }
     void setTextCheckerState(const TextCheckerState&);
-    
-#if ENABLE(NETSCAPE_PLUGIN_API)
-    PluginProcessConnectionManager& pluginProcessConnectionManager();
-#endif
 
     EventDispatcher& eventDispatcher() { return m_eventDispatcher.get(); }
 
@@ -689,10 +684,6 @@ private:
     PAL::HysteresisActivity m_dnsPrefetchHystereris;
 
     std::unique_ptr<WebAutomationSessionProxy> m_automationSessionProxy;
-
-#if ENABLE(NETSCAPE_PLUGIN_API)
-    RefPtr<PluginProcessConnectionManager> m_pluginProcessConnectionManager;
-#endif
 
 #if ENABLE(SERVICE_CONTROLS)
     bool m_hasImageServices { false };

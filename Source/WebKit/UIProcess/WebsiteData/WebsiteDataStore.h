@@ -105,10 +105,6 @@ enum class StorageAccessStatus : uint8_t;
 enum class StorageAccessPromptStatus;
 #endif
 
-#if ENABLE(NETSCAPE_PLUGIN_API)
-struct PluginModuleInfo;
-#endif
-
 class WebsiteDataStore : public API::ObjectImpl<API::Object::Type::WebsiteDataStore>, public Identified<WebsiteDataStore>, public CanMakeWeakPtr<WebsiteDataStore>  {
 public:
     static Ref<WebsiteDataStore> defaultDataStore();
@@ -398,10 +394,6 @@ private:
 
     // Will create a temporary process pool is none exists yet.
     HashSet<RefPtr<WebProcessPool>> ensureProcessPools() const;
-
-#if ENABLE(NETSCAPE_PLUGIN_API)
-    Vector<PluginModuleInfo> plugins() const;
-#endif
 
     static Vector<WebCore::SecurityOriginData> mediaKeyOrigins(const String& mediaKeysStorageDirectory);
     static void removeMediaKeys(const String& mediaKeysStorageDirectory, WallTime modifiedSince);

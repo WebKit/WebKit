@@ -1133,28 +1133,6 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
     return _private->coreFrame->document()->domWindow()->pendingUnloadEventListeners();
 }
 
-#if ENABLE(NETSCAPE_PLUGIN_API)
-- (void)_recursive_resumeNullEventsForAllNetscapePlugins
-{
-    auto coreFrame = core(self);
-    for (auto* frame = coreFrame; frame; frame = frame->tree().traverseNext(coreFrame)) {
-        NSView <WebDocumentView> *documentView = [[kit(frame) frameView] documentView];
-        if ([documentView isKindOfClass:[WebHTMLView class]])
-            [(WebHTMLView *)documentView _resumeNullEventsForAllNetscapePlugins];
-    }
-}
-
-- (void)_recursive_pauseNullEventsForAllNetscapePlugins
-{
-    auto coreFrame = core(self);
-    for (auto* frame = coreFrame; frame; frame = frame->tree().traverseNext(coreFrame)) {
-        NSView <WebDocumentView> *documentView = [[kit(frame) frameView] documentView];
-        if ([documentView isKindOfClass:[WebHTMLView class]])
-            [(WebHTMLView *)documentView _pauseNullEventsForAllNetscapePlugins];
-    }
-}
-#endif
-
 #if PLATFORM(IOS_FAMILY)
 
 - (void)setTimeoutsPaused:(BOOL)flag

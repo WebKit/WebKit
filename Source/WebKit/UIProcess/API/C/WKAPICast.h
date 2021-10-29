@@ -29,7 +29,6 @@
 
 #include "CacheModel.h"
 #include "InjectedBundleHitTestResultMediaType.h"
-#include "PluginModuleInfo.h"
 #include "ProcessTerminationReason.h"
 #include "WKBundleHitTestResult.h"
 #include "WKContext.h"
@@ -416,78 +415,6 @@ inline WKStorageBlockingPolicy toAPI(WebCore::StorageBlockingPolicy policy)
 
     ASSERT_NOT_REACHED();
     return kWKAllowAllStorage;
-}
-
-inline WKPluginLoadPolicy toWKPluginLoadPolicy(PluginModuleLoadPolicy pluginModuleLoadPolicy)
-{
-    switch (pluginModuleLoadPolicy) {
-    case PluginModuleLoadNormally:
-        return kWKPluginLoadPolicyLoadNormally;
-    case PluginModuleLoadUnsandboxed:
-        return kWKPluginLoadPolicyLoadUnsandboxed;
-    case PluginModuleBlockedForSecurity:
-        return kWKPluginLoadPolicyBlocked;
-    case PluginModuleBlockedForCompatibility:
-        return kWKPluginLoadPolicyBlockedForCompatibility;
-    }
-    
-    ASSERT_NOT_REACHED();
-    return kWKPluginLoadPolicyBlocked;
-}
-
-inline WKPluginLoadClientPolicy toWKPluginLoadClientPolicy(WebCore::PluginLoadClientPolicy PluginLoadClientPolicy)
-{
-    switch (PluginLoadClientPolicy) {
-    case WebCore::PluginLoadClientPolicy::Undefined:
-        return kWKPluginLoadClientPolicyUndefined;
-    case WebCore::PluginLoadClientPolicy::Block:
-        return kWKPluginLoadClientPolicyBlock;
-    case WebCore::PluginLoadClientPolicy::Ask:
-        return kWKPluginLoadClientPolicyAsk;
-    case WebCore::PluginLoadClientPolicy::Allow:
-        return kWKPluginLoadClientPolicyAllow;
-    case WebCore::PluginLoadClientPolicy::AllowAlways:
-        return kWKPluginLoadClientPolicyAllowAlways;
-    }
-
-    ASSERT_NOT_REACHED();
-    return kWKPluginLoadClientPolicyBlock;
-}
-
-inline PluginModuleLoadPolicy toPluginModuleLoadPolicy(WKPluginLoadPolicy pluginLoadPolicy)
-{
-    switch (pluginLoadPolicy) {
-    case kWKPluginLoadPolicyLoadNormally:
-        return PluginModuleLoadNormally;
-    case kWKPluginLoadPolicyBlocked:
-        return PluginModuleBlockedForSecurity;
-    case kWKPluginLoadPolicyBlockedForCompatibility:
-        return PluginModuleBlockedForCompatibility;
-    case kWKPluginLoadPolicyLoadUnsandboxed:
-        return PluginModuleLoadUnsandboxed;
-    }
-    
-    ASSERT_NOT_REACHED();
-    return PluginModuleBlockedForSecurity;
-}
-
-inline WebCore::PluginLoadClientPolicy toPluginLoadClientPolicy(WKPluginLoadClientPolicy pluginLoadClientPolicy)
-{
-    switch (pluginLoadClientPolicy) {
-    case kWKPluginLoadClientPolicyUndefined:
-        return WebCore::PluginLoadClientPolicy::Undefined;
-    case kWKPluginLoadClientPolicyBlock:
-        return WebCore::PluginLoadClientPolicy::Block;
-    case kWKPluginLoadClientPolicyAsk:
-        return WebCore::PluginLoadClientPolicy::Ask;
-    case kWKPluginLoadClientPolicyAllow:
-        return WebCore::PluginLoadClientPolicy::Allow;
-    case kWKPluginLoadClientPolicyAllowAlways:
-        return WebCore::PluginLoadClientPolicy::AllowAlways;
-    }
-
-    ASSERT_NOT_REACHED();
-    return WebCore::PluginLoadClientPolicy::Block;
 }
 
 inline WebCore::WebGLLoadPolicy toWebGLLoadPolicy(WKWebGLLoadPolicy webGLLoadPolicy)

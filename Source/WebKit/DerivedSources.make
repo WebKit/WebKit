@@ -143,7 +143,6 @@ MESSAGE_RECEIVERS = \
 	NetworkProcess/webrtc/RTCDataChannelRemoteManagerProxy \
 	NetworkProcess/Cookies/WebCookieManager \
 	NetworkProcess/storage/NetworkStorageManager \
-	Shared/Plugins/NPObjectMessageReceiver \
 	Shared/AuxiliaryProcess \
 	Shared/API/Cocoa/RemoteObjectRegistry \
 	Shared/ApplePay/WebPaymentCoordinatorProxy \
@@ -160,7 +159,6 @@ MESSAGE_RECEIVERS = \
 	UIProcess/Inspector/WebInspectorUIProxy \
 	UIProcess/Inspector/RemoteWebInspectorUIProxy \
 	UIProcess/Inspector/WebInspectorUIExtensionControllerProxy \
-	UIProcess/Plugins/PluginProcessProxy \
 	UIProcess/DrawingAreaProxy \
 	UIProcess/Network/NetworkProcessProxy \
 	UIProcess/Network/CustomProtocols/LegacyCustomProtocolManagerProxy \
@@ -210,9 +208,6 @@ MESSAGE_RECEIVERS = \
 	WebProcess/Inspector/WebInspector \
 	WebProcess/Inspector/RemoteWebInspectorUI \
 	WebProcess/MediaSession/RemoteMediaSessionCoordinator \
-	WebProcess/Plugins/PluginProcessConnectionManager \
-	WebProcess/Plugins/PluginProxy \
-	WebProcess/Plugins/PluginProcessConnection \
 	WebProcess/Network/WebSocketChannel \
 	WebProcess/Network/NetworkProcessConnection \
 	WebProcess/Network/WebSocketStream \
@@ -248,9 +243,6 @@ MESSAGE_RECEIVERS = \
 	WebProcess/WebPage/ViewUpdateDispatcher \
 	WebProcess/WebAuthentication/WebAuthnProcessConnection \
 	WebProcess/XR/PlatformXRSystemProxy \
-	PluginProcess/WebProcessConnection \
-	PluginProcess/PluginControllerProxy \
-	PluginProcess/PluginProcess \
 	GPUProcess/GPUConnectionToWebProcess \
 	GPUProcess/graphics/RemoteDisplayListRecorder \
 	GPUProcess/graphics/RemoteRenderingBackend \
@@ -325,7 +317,6 @@ endif
 
 SANDBOX_PROFILES = \
 	com.apple.WebProcess.sb \
-	com.apple.WebKit.plugin-common.sb \
 	com.apple.WebKit.NetworkProcess.sb \
 	com.apple.WebKit.GPUProcess.sb \
 	com.apple.WebKit.WebAuthnProcess.sb

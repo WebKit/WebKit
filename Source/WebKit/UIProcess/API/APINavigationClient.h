@@ -30,7 +30,6 @@
 #include "AuthenticationChallengeDisposition.h"
 #include "AuthenticationChallengeProxy.h"
 #include "AuthenticationDecisionListener.h"
-#include "PluginModuleInfo.h"
 #include "ProcessTerminationReason.h"
 #include "SameDocumentNavigationType.h"
 #include "WebFramePolicyListenerProxy.h"
@@ -134,15 +133,6 @@ public:
     }
     
     virtual void contentRuleListNotification(WebKit::WebPageProxy&, WTF::URL&&, WebCore::ContentRuleListResults&&) { };
-    
-#if ENABLE(NETSCAPE_PLUGIN_API)
-    virtual bool didFailToInitializePlugIn(WebKit::WebPageProxy&, API::Dictionary&) { return false; }
-    virtual bool didBlockInsecurePluginVersion(WebKit::WebPageProxy&, API::Dictionary&) { return false; }
-    virtual void decidePolicyForPluginLoad(WebKit::WebPageProxy&, WebKit::PluginModuleLoadPolicy currentPluginLoadPolicy, Dictionary&, CompletionHandler<void(WebKit::PluginModuleLoadPolicy, const WTF::String&)>&& completionHandler)
-    {
-        completionHandler(currentPluginLoadPolicy, { });
-    }
-#endif
 
 #if ENABLE(WEBGL)
     virtual void webGLLoadPolicy(WebKit::WebPageProxy&, const WTF::URL&, CompletionHandler<void(WebCore::WebGLLoadPolicy)>&& completionHandler) const { completionHandler(WebCore::WebGLLoadPolicy::WebGLAllowCreation); }

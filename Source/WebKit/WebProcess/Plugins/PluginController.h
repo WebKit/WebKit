@@ -28,10 +28,6 @@
 #include <wtf/Forward.h>
 #include <wtf/WeakPtr.h>
 
-#if PLATFORM(COCOA)
-#include "PluginComplexTextInputState.h"
-#endif
-
 struct NPObject;
 typedef struct _NPVariant NPVariant;
 typedef void* NPIdentifier;
@@ -75,23 +71,6 @@ public:
     // Cancels the load of the manual stream.
     virtual void cancelManualStreamLoad() = 0;
 
-#if ENABLE(NETSCAPE_PLUGIN_API)
-    // Get the NPObject that corresponds to the window JavaScript object. Returns a retained object.
-    virtual NPObject* windowScriptNPObject() = 0;
-
-    // Get the NPObject that corresponds to the plug-in's element. Returns a retained object.
-    virtual NPObject* pluginElementNPObject() = 0;
-
-    // Evaluates the given script string in the context of the given NPObject.
-    virtual bool evaluate(NPObject*, const String& scriptString, NPVariant* result, bool allowPopups) = 0;
-
-    // Called by the Netscape plug-in when it starts or stops playing audio.
-    virtual void setPluginIsPlayingAudio(bool) = 0;
-
-    // Returns whether the plugin should be muted.
-    virtual bool isMuted() const = 0;
-#endif
-
     // Set the statusbar text.
     virtual void setStatusbarText(const String&) = 0;
 
@@ -104,9 +83,6 @@ public:
 #if PLATFORM(COCOA)
     // Tells the controller that the plug-in focus or window focus did change.
     virtual void pluginFocusOrWindowFocusChanged(bool) = 0;
-
-    // Tells the controller that complex text input be enabled or disabled for the plug-in.
-    virtual void setComplexTextInputState(PluginComplexTextInputState) = 0;
 
     // Returns the mach port of the compositing render server.
     virtual const WTF::MachSendRight& compositingRenderServerPort() = 0;

@@ -43,7 +43,6 @@
 #include "NetworkProcessConnectionInfo.h"
 #include "NetworkSession.h"
 #include "NetworkSessionCreationParameters.h"
-#include "PluginProcessConnectionManager.h"
 #include "ProcessAssertion.h"
 #include "RemoteAudioHardwareListener.h"
 #include "RemoteAudioSession.h"
@@ -282,9 +281,6 @@ WebProcess::WebProcess()
     , m_cookieJar(WebCookieJar::create())
     , m_reportingEndpointsCache(ReportingEndpointsCache::create())
     , m_dnsPrefetchHystereris([this](PAL::HysteresisState state) { if (state == PAL::HysteresisState::Stopped) m_dnsPrefetchedHosts.clear(); })
-#if ENABLE(NETSCAPE_PLUGIN_API)
-    , m_pluginProcessConnectionManager(PluginProcessConnectionManager::create())
-#endif
     , m_nonVisibleProcessGraphicsCleanupTimer(*this, &WebProcess::nonVisibleProcessGraphicsCleanupTimerFired)
 #if ENABLE(NON_VISIBLE_WEBPROCESS_MEMORY_CLEANUP_TIMER)
     , m_nonVisibleProcessMemoryCleanupTimer(*this, &WebProcess::nonVisibleProcessMemoryCleanupTimerFired)
@@ -373,10 +369,6 @@ void WebProcess::initializeConnection(IPC::Connection* connection)
 #endif // PLATFORM(IOS_FAMILY)
 
     m_webInspectorInterruptDispatcher->initializeConnection(connection);
-
-#if ENABLE(NETSCAPE_PLUGIN_API)
-    m_pluginProcessConnectionManager->initializeConnection(connection);
-#endif
 
     for (auto& supplement : m_supplements.values())
         supplement->initializeConnection(connection);
@@ -751,13 +743,6 @@ void WebProcess::fullKeyboardAccessModeChanged(bool fullKeyboardAccessEnabled)
     m_fullKeyboardAccessEnabled = fullKeyboardAccessEnabled;
 }
 
-#if ENABLE(NETSCAPE_PLUGIN_API)
-PluginProcessConnectionManager& WebProcess::pluginProcessConnectionManager()
-{
-    return *m_pluginProcessConnectionManager;
-}
-#endif
-
 void WebProcess::setCacheModel(CacheModel cacheModel)
 {
     if (m_hasSetCacheModel && (cacheModel == m_cacheModel))
@@ -990,9 +975,6 @@ void WebProcess::isJITEnabled(CompletionHandler<void(bool)>&& completionHandler)
 
 void WebProcess::refreshPlugins()
 {
-#if ENABLE(NETSCAPE_PLUGIN_API)
-    WebPluginInfoProvider::singleton().refresh(false);
-#endif
 }
 
 void WebProcess::garbageCollectJavaScriptObjects()

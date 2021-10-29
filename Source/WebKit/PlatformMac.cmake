@@ -181,11 +181,6 @@ set(NetworkProcess_SOURCES
     ${XPCService_SOURCES}
 )
 
-set(PluginProcess_SOURCES
-    PluginProcess/EntryPoint/Cocoa/XPCService/PluginServiceEntryPoint.mm
-    ${XPCService_SOURCES}
-)
-
 set(GPUProcess_SOURCES
     GPUProcess/EntryPoint/Cocoa/XPCService/GPUServiceEntryPoint.mm
     ${XPCService_SOURCES}
@@ -199,13 +194,11 @@ set(WebAuthnProcess_SOURCES
 # FIXME: These should not have Development in production builds.
 set(WebProcess_OUTPUT_NAME com.apple.WebKit.WebContent.Development)
 set(NetworkProcess_OUTPUT_NAME com.apple.WebKit.Networking.Development)
-set(PluginProcess_OUTPUT_NAME com.apple.WebKit.Plugin.64.Development)
 set(GPUProcess_OUTPUT_NAME com.apple.WebKit.GPU.Development)
 set(WebAuthnProcess_OUTPUT_NAME com.apple.WebKit.WebAuthn.Development)
 
 set(WebProcess_INCLUDE_DIRECTORIES ${CMAKE_BINARY_DIR})
 set(NetworkProcess_INCLUDE_DIRECTORIES ${CMAKE_BINARY_DIR})
-set(PluginProcess_INCLUDE_DIRECTORIES ${CMAKE_BINARY_DIR})
 
 add_definitions("-include WebKit2Prefix.h")
 

@@ -28,7 +28,6 @@
 
 #import "WebPluginDatabase.h"
 
-#import "WebBaseNetscapePluginView.h"
 #import "WebBasePluginPackage.h"
 #import "WebDataSourcePrivate.h"
 #import "WebFrame.h"
@@ -37,7 +36,6 @@
 #import "WebHTMLViewInternal.h"
 #import "WebKitLogging.h"
 #import "WebNSFileManagerExtras.h"
-#import "WebNetscapePluginPackage.h"
 #import "WebPluginController.h"
 #import "WebPluginPackage.h"
 #import "WebViewInternal.h"
@@ -113,13 +111,6 @@ struct PluginPackageCandidates {
             checkCandidate(&webPlugin, &plugin);
             return;
         }
-            
-#if ENABLE(NETSCAPE_PLUGIN_API)
-        if([plugin isKindOfClass:[WebNetscapePluginPackage class]]) {
-            checkCandidate(&netscapePlugin, &plugin);
-            return;
-        }
-#endif
         ASSERT_NOT_REACHED();
     }
     
@@ -354,12 +345,8 @@ static RetainPtr<NSArray>& additionalWebPlugInPaths()
     NSView <WebDocumentView> *documentView = [[webFrame frameView] documentView]; 
     if ([documentView isKindOfClass:[WebHTMLView class]]) {
         for (NSView *subview in [documentView subviews]) {
-#if ENABLE(NETSCAPE_PLUGIN_API)
-            if ([subview isKindOfClass:[WebBaseNetscapePluginView class]] || [WebPluginController isPlugInView:subview])
-#else
             if ([WebPluginController isPlugInView:subview])
-#endif
-                [pluginInstanceViews removeObject:subview]; 
+                [pluginInstanceViews removeObject:subview];
         }
     }
 }
@@ -370,12 +357,6 @@ static RetainPtr<NSArray>& additionalWebPlugInPaths()
     NSArray *pli = [pluginInstanceViews allObjects];
     NSEnumerator *enumerator = [pli objectEnumerator];
     while ((view = [enumerator nextObject]) != nil) {
-#if ENABLE(NETSCAPE_PLUGIN_API)
-        if ([view isKindOfClass:[WebBaseNetscapePluginView class]]) {
-            ASSERT([view respondsToSelector:@selector(stop)]);
-            [view performSelector:@selector(stop)];
-        } else
-#endif
         if ([WebPluginController isPlugInView:view]) {
             ASSERT([[view superview] isKindOfClass:[WebHTMLView class]]);
             ASSERT([[view superview] respondsToSelector:@selector(_destroyAllWebPlugins)]);

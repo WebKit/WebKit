@@ -174,7 +174,6 @@ private:
     void accessibilityWebProcessTokenReceived(const IPC::DataReference&) override;
 
     void pluginFocusOrWindowFocusChanged(uint64_t pluginComplexTextInputIdentifier, bool pluginHasFocusAndWindowHasFocus) override;
-    void setPluginComplexTextInputState(uint64_t pluginComplexTextInputIdentifier, PluginComplexTextInputState) override;
 
     void makeFirstResponder() override;
     void assistiveTechnologyMakeFirstResponder() override;

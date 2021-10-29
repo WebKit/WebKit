@@ -34,8 +34,6 @@
 #include "DownloadProxyMap.h"
 #include "LoadParameters.h"
 #include "Logging.h"
-#include "PluginInfoStore.h"
-#include "PluginProcessManager.h"
 #include "ProvisionalPageProxy.h"
 #include "SpeechRecognitionPermissionRequest.h"
 #include "SpeechRecognitionRemoteRealtimeMediaSourceManager.h"
@@ -802,40 +800,6 @@ void WebProcessProxy::updateBackForwardItem(const BackForwardListItemState& item
             processPool().backForwardCache().removeEntry(*item);
     }
 }
-
-#if ENABLE(NETSCAPE_PLUGIN_API)
-void WebProcessProxy::getPlugins(bool refresh, CompletionHandler<void(Vector<PluginInfo>&& plugins, Vector<PluginInfo>&& applicationPlugins, std::optional<Vector<WebCore::SupportedPluginIdentifier>>&& supportedPluginIdentifiers)>&& completionHandler)
-{
-    if (refresh)
-        m_processPool->pluginInfoStore().refresh();
-
-    auto supportedPluginIdentifiers = m_processPool->pluginInfoStore().supportedPluginIdentifiers();
-
-    Vector<PluginInfo> plugins;
-    Vector<PluginModuleInfo> pluginModules = m_processPool->pluginInfoStore().plugins();
-    for (size_t i = 0; i < pluginModules.size(); ++i)
-        plugins.append(pluginModules[i].info);
-
-    Vector<PluginInfo> applicationPlugins;
-#if ENABLE(PDFKIT_PLUGIN)
-    // Add built-in PDF last, so that it's not used when a real plug-in is installed.
-    if (!m_processPool->omitPDFSupport()) {
-        plugins.append(PDFPlugin::pluginInfo());
-        applicationPlugins.append(PDFPlugin::pluginInfo());
-    }
-#endif
-    completionHandler(WTFMove(plugins), WTFMove(applicationPlugins), WTFMove(supportedPluginIdentifiers));
-}
-#endif // ENABLE(NETSCAPE_PLUGIN_API)
-
-#if ENABLE(NETSCAPE_PLUGIN_API)
-void WebProcessProxy::getPluginProcessConnection(uint64_t pluginProcessToken, Messages::WebProcessProxy::GetPluginProcessConnection::DelayedReply&& reply)
-{
-    MESSAGE_CHECK(HashSet<uint64_t>::isValidValue(pluginProcessToken));
-    bool success = PluginProcessManager::singleton().getPluginProcessConnection(pluginProcessToken, WTFMove(reply));
-    MESSAGE_CHECK(success);
-}
-#endif
 
 void WebProcessProxy::getNetworkProcessConnection(Messages::WebProcessProxy::GetNetworkProcessConnection::DelayedReply&& reply)
 {

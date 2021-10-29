@@ -30,8 +30,6 @@
 
 #include "Logging.h"
 #include "NetworkSession.h"
-#include "PluginProcessManager.h"
-#include "PluginProcessProxy.h"
 #include "PrivateClickMeasurementManager.h"
 #include "PrivateClickMeasurementManagerProxy.h"
 #include "StorageAccessStatus.h"

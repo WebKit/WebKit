@@ -49,13 +49,10 @@
 #include "MediaKeySystemPermissionRequestManager.h"
 #include "MediaPlaybackState.h"
 #include "MediaRecorderProvider.h"
-#include "NetscapePlugin.h"
 #include "NetworkConnectionToWebProcessMessages.h"
 #include "NetworkProcessConnection.h"
 #include "NotificationPermissionRequestManager.h"
 #include "PageBanner.h"
-#include "PluginProcessAttributes.h"
-#include "PluginProxy.h"
 #include "PluginView.h"
 #include "PrintInfo.h"
 #include "RemoteRenderingBackendProxy.h"
@@ -1157,53 +1154,11 @@ void WebPage::initializeInjectedBundleFullScreenClient(WKBundlePageFullScreenCli
 #if ENABLE(PDFKIT_PLUGIN)
 RefPtr<Plugin> WebPage::createPlugin(WebFrame* frame, HTMLPlugInElement* pluginElement, const Plugin::Parameters& parameters, String& newMIMEType)
 {
-    String frameURLString = frame->coreFrame()->loader().documentLoader()->responseURL().string();
-    String pageURLString = m_page->mainFrame().loader().documentLoader()->responseURL().string();
-
-#if ENABLE(NETSCAPE_PLUGIN_API)
-    bool allowOnlyApplicationPlugins = !frame->coreFrame()->arePluginsEnabled();
-#endif
-
-    uint64_t pluginProcessToken { 0 };
-    uint32_t pluginLoadPolicy { 0 };
-    String unavailabilityDescription;
-    bool isUnsupported { false };
-#if ENABLE(NETSCAPE_PLUGIN_API)
-    if (!sendSync(Messages::WebPageProxy::FindPlugin(parameters.mimeType, parameters.url.string(), frameURLString, pageURLString, allowOnlyApplicationPlugins), Messages::WebPageProxy::FindPlugin::Reply(pluginProcessToken, newMIMEType, pluginLoadPolicy, unavailabilityDescription, isUnsupported)))
-        return nullptr;
-#endif
-
-    PluginModuleLoadPolicy loadPolicy = static_cast<PluginModuleLoadPolicy>(pluginLoadPolicy);
-    bool isBlockedPlugin = (loadPolicy == PluginModuleBlockedForSecurity) || (loadPolicy == PluginModuleBlockedForCompatibility);
-
-    if (isUnsupported || isBlockedPlugin || !pluginProcessToken) {
-#if ENABLE(PDFKIT_PLUGIN)
-        if (shouldUsePDFPlugin(parameters.mimeType, parameters.url.path()))
-            return PDFPlugin::create(*frame, pluginElement);
-#endif
-    }
-
-    if (isUnsupported) {
-        pluginElement->setReplacement(RenderEmbeddedObject::UnsupportedPlugin, unavailabilityDescription);
-        return nullptr;
-    }
-
-#if ENABLE(NETSCAPE_PLUGIN_API)
-    if (isBlockedPlugin) {
-        bool isReplacementObscured = pluginElement->setReplacement(RenderEmbeddedObject::InsecurePluginVersion, unavailabilityDescription);
-        send(Messages::WebPageProxy::DidBlockInsecurePluginVersion(parameters.mimeType, parameters.url.string(), frameURLString, pageURLString, isReplacementObscured));
-        return nullptr;
-    }
-
-    if (!pluginProcessToken)
-        return nullptr;
-
-    return PluginProxy::create(pluginProcessToken);
-#else
+    if (shouldUsePDFPlugin(parameters.mimeType, parameters.url.path()))
+        return PDFPlugin::create(*frame, pluginElement);
     return nullptr;
-#endif
 }
-#endif // ENABLE(NETSCAPE_PLUGIN_API)
+#endif // ENABLE(PDFKIT_PLUGIN)
 
 #if ENABLE(WEBGL) && !PLATFORM(MAC)
 WebCore::WebGLLoadPolicy WebPage::webGLPolicyForURL(WebFrame*, const URL&)
@@ -5787,24 +5742,8 @@ FrameView* WebPage::mainFrameView() const
 
 bool WebPage::canPluginHandleResponse(const ResourceResponse& response)
 {
-#if ENABLE(NETSCAPE_PLUGIN_API)
-    uint32_t pluginLoadPolicy;
-    bool allowOnlyApplicationPlugins = !m_mainFrame->coreFrame()->arePluginsEnabled();
-
-    uint64_t pluginProcessToken;
-    String newMIMEType;
-    String unavailabilityDescription;
-    bool isUnsupported = false;
-    if (!sendSync(Messages::WebPageProxy::FindPlugin(response.mimeType(), response.url().string(), response.url().string(), response.url().string(), allowOnlyApplicationPlugins), Messages::WebPageProxy::FindPlugin::Reply(pluginProcessToken, newMIMEType, pluginLoadPolicy, unavailabilityDescription, isUnsupported)))
-        return false;
-
-    ASSERT(!isUnsupported);
-    bool isBlockedPlugin = (pluginLoadPolicy == PluginModuleBlockedForSecurity) || (pluginLoadPolicy == PluginModuleBlockedForCompatibility);
-    return !isUnsupported && !isBlockedPlugin && pluginProcessToken;
-#else
     UNUSED_PARAM(response);
     return false;
-#endif
 }
 
 bool WebPage::shouldUseCustomContentProviderForResponse(const ResourceResponse& response)

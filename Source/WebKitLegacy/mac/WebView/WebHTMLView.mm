@@ -61,7 +61,6 @@
 #import "WebNSPrintOperationExtras.h"
 #import "WebNSURLExtras.h"
 #import "WebNSViewExtras.h"
-#import "WebNetscapePluginView.h"
 #import "WebNodeHighlight.h"
 #import "WebPluginController.h"
 #import "WebPreferences.h"
@@ -695,12 +694,6 @@ static bool needsCursorRectsSupportAtPoint(NSWindow* window, NSPoint point)
     if ([view isKindOfClass:[WebHTMLView class]])
         return false;
 
-#if ENABLE(NETSCAPE_PLUGIN_API)
-    // Neither do NPAPI plug-ins.
-    if ([view isKindOfClass:[WebBaseNetscapePluginView class]])
-        return false;
-#endif
-
     // Non-Web content, WebPDFView, and WebKit plug-ins use normal cursor handling.
     return true;
 }
@@ -848,9 +841,6 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
 - (void)_web_setPrintingModeRecursive;
 - (void)_web_setPrintingModeRecursiveAndAdjustViewSize;
 - (void)_web_clearPrintingModeRecursive;
-#endif
-#if ENABLE(NETSCAPE_PLUGIN_API)
-- (void)_web_makePluginSubviewsPerformSelector:(SEL)selector withObject:(id)object;
 #endif
 @end
 
@@ -1422,21 +1412,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 #endif // PLATFORM(MAC)
-
-#if ENABLE(NETSCAPE_PLUGIN_API)
-
-- (void)_web_makePluginSubviewsPerformSelector:(SEL)selector withObject:(id)object
-{
-    // Copy subviews because [self subviews] returns the view's mutable internal array,
-    // and we must avoid mutating the array while enumerating it.
-    auto subviewsCopy = adoptNS([self.subviews copy]);
-    for (NSView *view in subviewsCopy.get()) {
-        if ([view isKindOfClass:[WebBaseNetscapePluginView class]])
-            [view performSelector:selector withObject:object];
-    }
-}
-
-#endif
 
 @end
 
@@ -2365,20 +2340,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 #endif // PLATFORM(MAC)
 
-#if ENABLE(NETSCAPE_PLUGIN_API) 
-
-- (void)_pauseNullEventsForAllNetscapePlugins 
-{
-    [self _web_makePluginSubviewsPerformSelector:@selector(stopTimers) withObject:nil];
-}
-
-- (void)_resumeNullEventsForAllNetscapePlugins
-{
-    [self _web_makePluginSubviewsPerformSelector:@selector(restartTimers) withObject:nil];
-}
-
-#endif 
-
 - (BOOL)_isUsingAcceleratedCompositing
 {
     return _private->layerHostingView != nil;
@@ -3250,16 +3211,10 @@ IGNORE_WARNINGS_END
 
 - (void)viewWillMoveToHostWindow:(NSWindow *)hostWindow
 {
-#if ENABLE(NETSCAPE_PLUGIN_API)
-    [self _web_makePluginSubviewsPerformSelector:@selector(viewWillMoveToHostWindow:) withObject:hostWindow];
-#endif
 }
 
 - (void)viewDidMoveToHostWindow
 {
-#if ENABLE(NETSCAPE_PLUGIN_API)
-    [self _web_makePluginSubviewsPerformSelector:@selector(viewDidMoveToHostWindow) withObject:nil];
-#endif
 }
 
 - (void)addSubview:(NSView *)view

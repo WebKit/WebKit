@@ -31,7 +31,6 @@
 #import "DownloadManager.h"
 #import "LegacyDownloadClient.h"
 #import "Logging.h"
-#import "PluginProcessManager.h"
 #import "SandboxUtilities.h"
 #import "UIGamepadProvider.h"
 #import "WKDownloadInternal.h"
@@ -456,11 +455,7 @@ static RetainPtr<WKProcessPool>& sharedProcessPool()
 
 - (size_t)_pluginProcessCount
 {
-#if ENABLE(NETSCAPE_PLUGIN_API)
-    return WebKit::PluginProcessManager::singleton().pluginProcesses().size();
-#else
     return 0;
-#endif
 }
 
 - (NSUInteger)_maximumSuspendedPageCount

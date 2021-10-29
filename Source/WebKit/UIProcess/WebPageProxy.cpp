@@ -81,8 +81,6 @@
 #include "NotificationPermissionRequest.h"
 #include "NotificationPermissionRequestManager.h"
 #include "PageClient.h"
-#include "PluginInformation.h"
-#include "PluginProcessManager.h"
 #include "PrintInfo.h"
 #include "ProcessThrottler.h"
 #include "ProvisionalPageProxy.h"
@@ -1892,13 +1890,6 @@ bool WebPageProxy::canShowMIMEType(const String& mimeType)
     if (MIMETypeRegistry::canShowMIMEType(mimeType))
         return true;
 
-#if ENABLE(NETSCAPE_PLUGIN_API)
-    String newMimeType = mimeType;
-    PluginModuleInfo plugin = m_process->processPool().pluginInfoStore().findPlugin(newMimeType, URL());
-    if (!plugin.path.isNull() && m_preferences->pluginsEnabled())
-        return true;
-#endif // ENABLE(NETSCAPE_PLUGIN_API)
-
 #if PLATFORM(COCOA)
     // On Mac, we can show PDFs.
     if (MIMETypeRegistry::isPDFOrPostScriptMIMEType(mimeType) && !WebProcessPool::omitPDFSupport())
@@ -3005,64 +2996,6 @@ WebPreferencesStore WebPageProxy::preferencesStore() const
 {
     return m_preferences->store();
 }
-
-#if ENABLE(NETSCAPE_PLUGIN_API)
-void WebPageProxy::findPlugin(const String& mimeType, const String& urlString, const String& frameURLString, const String& pageURLString, bool allowOnlyApplicationPlugins, Messages::WebPageProxy::FindPlugin::DelayedReply&& reply)
-{
-    PageClientProtector protector(pageClient());
-
-    MESSAGE_CHECK_URL(m_process, urlString);
-
-    URL pluginURL = URL { URL(), urlString };
-    String newMimeType = mimeType.convertToASCIILowercase();
-
-    PluginData::AllowedPluginTypes allowedPluginTypes = allowOnlyApplicationPlugins ? PluginData::OnlyApplicationPlugins : PluginData::AllPlugins;
-
-    URL pageURL = URL { URL(), pageURLString };
-    if (!m_process->processPool().pluginInfoStore().isSupportedPlugin(mimeType, pluginURL, frameURLString, pageURL)) {
-        reply(0, newMimeType, PluginModuleLoadNormally, { }, true);
-        return;
-    }
-
-    PluginModuleInfo plugin = m_process->processPool().pluginInfoStore().findPlugin(newMimeType, pluginURL, allowedPluginTypes);
-    if (!plugin.path) {
-        reply(0, newMimeType, PluginModuleLoadNormally, { }, false);
-        return;
-    }
-
-    uint32_t pluginLoadPolicy = PluginInfoStore::defaultLoadPolicyForPlugin(plugin);
-
-#if PLATFORM(COCOA)
-    auto pluginInformation = createPluginInformationDictionary(plugin, frameURLString, String(), pageURLString, String(), String());
-#endif
-
-    auto findPluginCompletion = [reply = WTFMove(reply), newMimeType = WTFMove(newMimeType), plugin = WTFMove(plugin)] (uint32_t pluginLoadPolicy, const String& unavailabilityDescription) mutable {
-        PluginProcessSandboxPolicy pluginProcessSandboxPolicy = PluginProcessSandboxPolicy::Normal;
-        switch (pluginLoadPolicy) {
-        case PluginModuleLoadNormally:
-            pluginProcessSandboxPolicy = PluginProcessSandboxPolicy::Normal;
-            break;
-        case PluginModuleLoadUnsandboxed:
-            pluginProcessSandboxPolicy = PluginProcessSandboxPolicy::Unsandboxed;
-            break;
-
-        case PluginModuleBlockedForSecurity:
-        case PluginModuleBlockedForCompatibility:
-            reply(0, newMimeType, pluginLoadPolicy, unavailabilityDescription, false);
-            return;
-        }
-
-        reply(PluginProcessManager::singleton().pluginProcessToken(plugin, pluginProcessSandboxPolicy), newMimeType, pluginLoadPolicy, unavailabilityDescription, false);
-    };
-
-#if PLATFORM(COCOA)
-    m_navigationClient->decidePolicyForPluginLoad(*this, static_cast<PluginModuleLoadPolicy>(pluginLoadPolicy), pluginInformation.get(), WTFMove(findPluginCompletion));
-#else
-    findPluginCompletion(pluginLoadPolicy, { });
-#endif
-}
-
-#endif // ENABLE(NETSCAPE_PLUGIN_API)
 
 #if ENABLE(TOUCH_EVENTS)
 
@@ -6027,39 +5960,6 @@ void WebPageProxy::mouseDidMoveOverElement(WebHitTestResultData&& hitTestResultD
     setToolTip(hitTestResultData.toolTipText);
 }
 
-#if ENABLE(NETSCAPE_PLUGIN_API)
-void WebPageProxy::unavailablePluginButtonClicked(uint32_t opaquePluginUnavailabilityReason, const String& mimeType, const String& pluginURLString, const String& pluginspageAttributeURLString, const String& frameURLString, const String& pageURLString)
-{
-    MESSAGE_CHECK_URL(m_process, pluginURLString);
-    MESSAGE_CHECK_URL(m_process, pluginspageAttributeURLString);
-    MESSAGE_CHECK_URL(m_process, frameURLString);
-    MESSAGE_CHECK_URL(m_process, pageURLString);
-
-    String newMimeType = mimeType;
-    PluginModuleInfo plugin = m_process->processPool().pluginInfoStore().findPlugin(newMimeType, URL(URL(), pluginURLString));
-    auto pluginInformation = createPluginInformationDictionary(plugin, frameURLString, mimeType, pageURLString, pluginspageAttributeURLString, pluginURLString);
-
-    WKPluginUnavailabilityReason pluginUnavailabilityReason = kWKPluginUnavailabilityReasonPluginMissing;
-    switch (static_cast<RenderEmbeddedObject::PluginUnavailabilityReason>(opaquePluginUnavailabilityReason)) {
-    case RenderEmbeddedObject::PluginMissing:
-        pluginUnavailabilityReason = kWKPluginUnavailabilityReasonPluginMissing;
-        break;
-    case RenderEmbeddedObject::InsecurePluginVersion:
-        pluginUnavailabilityReason = kWKPluginUnavailabilityReasonInsecurePluginVersion;
-        break;
-    case RenderEmbeddedObject::PluginCrashed:
-        pluginUnavailabilityReason = kWKPluginUnavailabilityReasonPluginCrashed;
-        break;
-    case RenderEmbeddedObject::PluginBlockedByContentSecurityPolicy:
-    case RenderEmbeddedObject::UnsupportedPlugin:
-    case RenderEmbeddedObject::PluginTooSmall:
-        ASSERT_NOT_REACHED();
-    }
-
-    m_uiClient->unavailablePluginButtonClicked(*this, pluginUnavailabilityReason, pluginInformation.get());
-}
-#endif // ENABLE(NETSCAPE_PLUGIN_API)
-
 #if ENABLE(WEBGL)
 void WebPageProxy::webGLPolicyForURL(URL&& url, Messages::WebPageProxy::WebGLPolicyForURL::DelayedReply&& reply)
 {
@@ -8893,22 +8793,6 @@ Color WebPageProxy::platformUnderPageBackgroundColor() const
 }
 
 #endif // !PLATFORM(COCOA)
-
-#if ENABLE(NETSCAPE_PLUGIN_API)
-void WebPageProxy::didFailToInitializePlugin(const String& mimeType, const String& frameURLString, const String& pageURLString)
-{
-    m_navigationClient->didFailToInitializePlugIn(*this, createPluginInformationDictionary(mimeType, frameURLString, pageURLString).get());
-}
-
-void WebPageProxy::didBlockInsecurePluginVersion(const String& mimeType, const String& pluginURLString, const String& frameURLString, const String& pageURLString, bool replacementObscured)
-{
-    String newMimeType = mimeType;
-    PluginModuleInfo plugin = m_process->processPool().pluginInfoStore().findPlugin(newMimeType, URL(URL(), pluginURLString));
-    auto pluginInformation = createPluginInformationDictionary(plugin, frameURLString, mimeType, pageURLString, String(), String(), replacementObscured);
-
-    m_navigationClient->didBlockInsecurePluginVersion(*this, pluginInformation.get());
-}
-#endif // ENABLE(NETSCAPE_PLUGIN_API)
 
 bool WebPageProxy::willHandleHorizontalScrollEvents() const
 {

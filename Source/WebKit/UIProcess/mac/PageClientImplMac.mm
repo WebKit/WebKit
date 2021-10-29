@@ -659,11 +659,6 @@ void PageClientImpl::pluginFocusOrWindowFocusChanged(uint64_t pluginComplexTextI
     m_impl->pluginFocusOrWindowFocusChanged(pluginHasFocusAndWindowHasFocus, pluginComplexTextInputIdentifier);
 }
 
-void PageClientImpl::setPluginComplexTextInputState(uint64_t pluginComplexTextInputIdentifier, PluginComplexTextInputState pluginComplexTextInputState)
-{
-    m_impl->setPluginComplexTextInputStateAndIdentifier(pluginComplexTextInputState, pluginComplexTextInputIdentifier);
-}
-
 void PageClientImpl::didPerformDictionaryLookup(const DictionaryPopupInfo& dictionaryPopupInfo)
 {
     m_impl->prepareForDictionaryLookup();

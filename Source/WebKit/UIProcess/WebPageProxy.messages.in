@@ -30,9 +30,6 @@ messages -> WebPageProxy {
     RunJavaScriptPrompt(WebCore::FrameIdentifier frameID, struct WebKit::FrameInfoData frameInfo, String message, String defaultValue) -> (String result) Synchronous
     MouseDidMoveOverElement(struct WebKit::WebHitTestResultData hitTestResultData, uint32_t modifiers, WebKit::UserData userData)
 
-#if ENABLE(NETSCAPE_PLUGIN_API)
-    UnavailablePluginButtonClicked(uint32_t pluginUnavailabilityReason, String mimeType, String pluginURLString, String pluginspageAttributeURLString, String frameURLString, String pageURLString)
-#endif // ENABLE(NETSCAPE_PLUGIN_API)
 #if ENABLE(WEBGL)
     WebGLPolicyForURL(URL url) -> (enum:uint8_t WebCore::WebGLLoadPolicy loadPolicy) Synchronous
     ResolveWebGLPolicyForURL(URL url) -> (enum:uint8_t WebCore::WebGLLoadPolicy loadPolicy) Synchronous
@@ -81,10 +78,6 @@ messages -> WebPageProxy {
     ThemeColorChanged(WebCore::Color themeColor)
     PageExtendedBackgroundColorDidChange(WebCore::Color backgroundColor)
     SampledPageTopColorChanged(WebCore::Color sampledPageTopColor)
-#if ENABLE(NETSCAPE_PLUGIN_API)
-    DidFailToInitializePlugin(String mimeType, String frameURLString, String pageURLString)
-    DidBlockInsecurePluginVersion(String mimeType, String pluginURLString, String frameURLString, String pageURLString, bool replacementObscured)
-#endif // ENABLE(NETSCAPE_PLUGIN_API)
     SetCanShortCircuitHorizontalWheelEvents(bool canShortCircuitHorizontalWheelEvents)
 
     DidChangeContentSize(WebCore::IntSize newSize)
@@ -336,7 +329,6 @@ messages -> WebPageProxy {
 
     # Plug-in complex text input support messages
     PluginFocusOrWindowFocusChanged(uint64_t pluginComplexTextInputIdentifier, bool pluginHasFocusAndWindowHasFocus)
-    SetPluginComplexTextInputState(uint64_t pluginComplexTextInputIdentifier, uint64_t complexTextInputState)
 
     # Speech messages
     GetIsSpeaking() -> (bool isSpeaking) Synchronous
@@ -433,10 +425,6 @@ messages -> WebPageProxy {
 
 #if ENABLE(PDFKIT_PLUGIN)
     ShowPDFContextMenu(struct WebKit::PDFContextMenu contextMenu, WebKit::PDFPluginIdentifier identifier) -> (std::optional<int32_t> selectedItem) Synchronous
-#endif
-
-#if ENABLE(NETSCAPE_PLUGIN_API)
-    FindPlugin(String mimeType, String urlString, String frameURLString, String pageURLString, bool allowOnlyApplicationPlugins) -> (uint64_t pluginProcessToken, String newMIMEType, uint32_t pluginLoadPolicy, String unavailabilityDescription, bool isUnsupported) Synchronous
 #endif
 
     DidUpdateActivityState()

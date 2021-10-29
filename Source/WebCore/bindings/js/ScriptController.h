@@ -165,10 +165,6 @@ public:
 #endif
 
     WEBCORE_EXPORT JSC::JSObject* jsObjectForPluginElement(HTMLPlugInElement*);
-    
-#if ENABLE(NETSCAPE_PLUGIN_API)
-    WEBCORE_EXPORT NPObject* windowScriptNPObject();
-#endif
 
     void initScriptForWindowProxy(JSWindowProxy&);
 
@@ -200,9 +196,6 @@ private:
     // This ensures they are still available when the page is restored.
     RefPtr<JSC::Bindings::RootObject> m_cacheableBindingRootObject;
     RootObjectMap m_rootObjects;
-#if ENABLE(NETSCAPE_PLUGIN_API)
-    NPObject* m_windowScriptNPObject;
-#endif
 #if PLATFORM(COCOA)
     RetainPtr<WebScriptObject> m_windowScriptObject;
 #endif

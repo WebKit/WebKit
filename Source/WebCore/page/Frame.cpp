@@ -102,7 +102,6 @@
 #include "UserTypingGestureIndicator.h"
 #include "VisibleUnits.h"
 #include "markup.h"
-#include "npruntime_impl.h"
 #include "runtime_root.h"
 #include <JavaScriptCore/APICast.h>
 #include <JavaScriptCore/RegularExpression.h>

@@ -31,8 +31,6 @@
 #include "Logging.h"
 #include "NetworkProcess.h"
 #include "NetworkSession.h"
-#include "PluginProcessManager.h"
-#include "PluginProcessProxy.h"
 #include "StorageAccessStatus.h"
 #include "WebProcessProxy.h"
 #include "WebsiteDataStore.h"
@@ -163,12 +161,6 @@ void ResourceLoadStatisticsStore::removeDataRecords(CompletionHandler<void()>&& 
         completionHandler();
         return;
     }
-
-#if ENABLE(NETSCAPE_PLUGIN_API)
-    m_activePluginTokens.clear();
-    for (const auto& plugin : PluginProcessManager::singleton().pluginProcesses())
-        m_activePluginTokens.add(plugin->pluginProcessToken());
-#endif
 
     auto domainsToDeleteOrRestrictWebsiteDataFor = registrableDomainsToDeleteOrRestrictWebsiteDataFor();
     if (domainsToDeleteOrRestrictWebsiteDataFor.isEmpty()) {
@@ -391,13 +383,6 @@ bool ResourceLoadStatisticsStore::shouldRemoveDataRecords() const
 
     if (m_dataRecordsBeingRemoved)
         return false;
-
-#if ENABLE(NETSCAPE_PLUGIN_API)
-    for (const auto& plugin : PluginProcessManager::singleton().pluginProcesses()) {
-        if (!m_activePluginTokens.contains(plugin->pluginProcessToken()))
-            return true;
-    }
-#endif
 
     return !m_lastTimeDataRecordsWereRemoved || MonotonicTime::now() >= (m_lastTimeDataRecordsWereRemoved + m_parameters.minimumTimeBetweenDataRecordsRemoval) || parameters().isRunningTest;
 }

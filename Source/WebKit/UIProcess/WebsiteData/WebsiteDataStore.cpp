@@ -70,10 +70,6 @@
 #include <wtf/spi/darwin/OSVariantSPI.h>
 #endif
 
-#if ENABLE(NETSCAPE_PLUGIN_API)
-#include "PluginProcessManager.h"
-#endif
-
 #if HAVE(SEC_KEY_PROXY)
 #include "SecKeyProxyStore.h"
 #endif
@@ -391,20 +387,6 @@ void WebsiteDataStore::fetchDataAndApply(OptionSet<WebsiteDataType> dataTypes, O
                 record.addCookieHostName(hostName);
             }
 
-#if ENABLE(NETSCAPE_PLUGIN_API)
-            for (auto& hostName : websiteData.hostNamesWithPluginData) {
-                auto displayName = WebsiteDataRecord::displayNameForHostName(hostName);
-                if (!displayName)
-                    continue;
-
-                auto& record = m_websiteDataRecords.add(displayName, WebsiteDataRecord { }).iterator->value;
-                if (!record.displayName)
-                    record.displayName = WTFMove(displayName);
-
-                record.addPluginDataHostName(hostName);
-            }
-#endif
-
             for (auto& hostName : websiteData.hostNamesWithHSTSCache) {
                 auto displayName = WebsiteDataRecord::displayNameForHostName(hostName);
                 if (!displayName)
@@ -542,57 +524,6 @@ private:
             callbackAggregator->addWebsiteData(WTFMove(websiteData));
         });
     }
-
-#if ENABLE(NETSCAPE_PLUGIN_API)
-    if (dataTypes.contains(WebsiteDataType::PlugInData) && isPersistent()) {
-        class State {
-        public:
-            static void fetchData(Ref<CallbackAggregator>&& callbackAggregator, Vector<PluginModuleInfo>&& plugins)
-            {
-                new State(WTFMove(callbackAggregator), WTFMove(plugins));
-            }
-
-        private:
-            State(Ref<CallbackAggregator>&& callbackAggregator, Vector<PluginModuleInfo>&& plugins)
-                : m_callbackAggregator(WTFMove(callbackAggregator))
-                , m_plugins(WTFMove(plugins))
-            {
-                fetchWebsiteDataForNextPlugin();
-            }
-
-            ~State()
-            {
-                ASSERT(m_plugins.isEmpty());
-            }
-
-            void fetchWebsiteDataForNextPlugin()
-            {
-                if (m_plugins.isEmpty()) {
-                    WebsiteData websiteData;
-                    websiteData.hostNamesWithPluginData = WTFMove(m_hostNames);
-
-                    m_callbackAggregator->addWebsiteData(WTFMove(websiteData));
-
-                    delete this;
-                    return;
-                }
-
-                auto plugin = m_plugins.takeLast();
-                PluginProcessManager::singleton().fetchWebsiteData(plugin, m_callbackAggregator->fetchOptions(), [this](Vector<String> hostNames) {
-                    for (auto& hostName : hostNames)
-                        m_hostNames.add(WTFMove(hostName));
-                    fetchWebsiteDataForNextPlugin();
-                });
-            }
-
-            Ref<CallbackAggregator> m_callbackAggregator;
-            Vector<PluginModuleInfo> m_plugins;
-            HashSet<String> m_hostNames;
-        };
-
-        State::fetchData(callbackAggregator.copyRef(), plugins());
-    }
-#endif
 }
 
 #if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
@@ -763,51 +694,6 @@ void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, WallTime
         });
     }
 
-#if ENABLE(NETSCAPE_PLUGIN_API)
-    if (dataTypes.contains(WebsiteDataType::PlugInData) && isPersistent()) {
-        class State {
-        public:
-            static void deleteData(Ref<RemovalCallbackAggregator>&& callbackAggregator, Vector<PluginModuleInfo>&& plugins, WallTime modifiedSince)
-            {
-                new State(WTFMove(callbackAggregator), WTFMove(plugins), modifiedSince);
-            }
-
-        private:
-            State(Ref<RemovalCallbackAggregator>&& callbackAggregator, Vector<PluginModuleInfo>&& plugins, WallTime modifiedSince)
-                : m_callbackAggregator(WTFMove(callbackAggregator))
-                , m_plugins(WTFMove(plugins))
-                , m_modifiedSince(modifiedSince)
-            {
-                deleteWebsiteDataForNextPlugin();
-            }
-
-            ~State()
-            {
-                ASSERT(m_plugins.isEmpty());
-            }
-
-            void deleteWebsiteDataForNextPlugin()
-            {
-                if (m_plugins.isEmpty()) {
-                    delete this;
-                    return;
-                }
-
-                auto plugin = m_plugins.takeLast();
-                PluginProcessManager::singleton().deleteWebsiteData(plugin, m_modifiedSince, [this] {
-                    deleteWebsiteDataForNextPlugin();
-                });
-            }
-
-            Ref<RemovalCallbackAggregator> m_callbackAggregator;
-            Vector<PluginModuleInfo> m_plugins;
-            WallTime m_modifiedSince;
-        };
-
-        State::deleteData(callbackAggregator.copyRef(), plugins(), modifiedSince);
-    }
-#endif
-
 #if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
     if (dataTypes.contains(WebsiteDataType::ResourceLoadStatistics)) {
         if (!didNotifyNetworkProcessToDeleteWebsiteData)
@@ -942,59 +828,6 @@ void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, const Ve
             removeMediaKeys(mediaKeysStorageDirectory, origins);
         });
     }
-
-#if ENABLE(NETSCAPE_PLUGIN_API)
-    if (dataTypes.contains(WebsiteDataType::PlugInData) && isPersistent()) {
-        Vector<String> hostNames;
-        for (const auto& dataRecord : dataRecords) {
-            for (const auto& hostName : dataRecord.pluginDataHostNames)
-                hostNames.append(hostName);
-        }
-
-
-        class State {
-        public:
-            static void deleteData(Ref<RemovalCallbackAggregator>&& callbackAggregator, Vector<PluginModuleInfo>&& plugins, Vector<String>&& hostNames)
-            {
-                new State(WTFMove(callbackAggregator), WTFMove(plugins), WTFMove(hostNames));
-            }
-
-        private:
-            State(Ref<RemovalCallbackAggregator>&& callbackAggregator, Vector<PluginModuleInfo>&& plugins, Vector<String>&& hostNames)
-                : m_callbackAggregator(WTFMove(callbackAggregator))
-                , m_plugins(WTFMove(plugins))
-                , m_hostNames(WTFMove(hostNames))
-            {
-                deleteWebsiteDataForNextPlugin();
-            }
-
-            ~State()
-            {
-                ASSERT(m_plugins.isEmpty());
-            }
-
-            void deleteWebsiteDataForNextPlugin()
-            {
-                if (m_plugins.isEmpty()) {
-                    delete this;
-                    return;
-                }
-
-                auto plugin = m_plugins.takeLast();
-                PluginProcessManager::singleton().deleteWebsiteDataForHostNames(plugin, m_hostNames, [this] {
-                    deleteWebsiteDataForNextPlugin();
-                });
-            }
-
-            Ref<RemovalCallbackAggregator> m_callbackAggregator;
-            Vector<PluginModuleInfo> m_plugins;
-            Vector<String> m_hostNames;
-        };
-
-        if (!hostNames.isEmpty())
-            State::deleteData(callbackAggregator.copyRef(), plugins(), WTFMove(hostNames));
-    }
-#endif
 }
 
 void WebsiteDataStore::setServiceWorkerTimeoutForTesting(Seconds seconds)
@@ -1661,20 +1494,6 @@ HashSet<RefPtr<WebProcessPool>> WebsiteDataStore::ensureProcessPools() const
         processPools.add(WebProcessPool::create(API::ProcessPoolConfiguration::create()));
     return processPools;
 }
-
-#if ENABLE(NETSCAPE_PLUGIN_API)
-Vector<PluginModuleInfo> WebsiteDataStore::plugins() const
-{
-    Vector<PluginModuleInfo> plugins;
-
-    for (auto& processPool : ensureProcessPools()) {
-        for (auto& plugin : processPool->pluginInfoStore().plugins())
-            plugins.append(plugin);
-    }
-
-    return plugins;
-}
-#endif
 
 static String computeMediaKeyFile(const String& mediaKeyDirectory)
 {

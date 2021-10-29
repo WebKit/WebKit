@@ -1,3 +1,13 @@
+2021-10-29  Alex Christensen  <achristensen@webkit.org>
+
+        Remove code inside ENABLE(NETSCAPE_PLUGIN_API)
+        https://bugs.webkit.org/show_bug.cgi?id=232462
+
+        Reviewed by Anders Carlsson.
+
+        * PlatformMac.cmake:
+        * WebKitLegacy.xcodeproj/project.pbxproj:
+
 2021-10-22  Ian Anderson  <iana@apple.com>
 
         Add a module map file for PrivateFrameworks/WebKitLegacy

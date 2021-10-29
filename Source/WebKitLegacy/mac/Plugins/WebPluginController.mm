@@ -383,11 +383,6 @@ static void initializeAudioSession()
         if (_started)
             [self stopOnePlugin:view];
         [self destroyOnePlugin:view];
-
-#if ENABLE(NETSCAPE_PLUGIN_API)
-        if (auto* frame = core([self webFrame]))
-            frame->script().cleanupScriptObjectsForPlugin(self);
-#endif
         
         [pluginViews() removeObject:view];
 #if !PLATFORM(IOS_FAMILY)
@@ -431,12 +426,7 @@ static void cancelOutstandingCheck(const void *item, void *context)
     for (int i = 0; i < viewsCount; i++) {
         id aView = [_views objectAtIndex:i];
         [self destroyOnePlugin:aView];
-        
-#if ENABLE(NETSCAPE_PLUGIN_API)
-        if (auto* frame = core([self webFrame]))
-            frame->script().cleanupScriptObjectsForPlugin(self);
-#endif
-        
+
         [pluginViews() removeObject:aView];
 #if !PLATFORM(IOS_FAMILY)
         [[_documentView _webView] removePluginInstanceView:aView];
