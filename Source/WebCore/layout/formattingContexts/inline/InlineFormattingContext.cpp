@@ -34,6 +34,7 @@
 #include "InlineDisplayBox.h"
 #include "InlineDisplayContentBuilder.h"
 #include "InlineFormattingState.h"
+#include "InlineItemsBuilder.h"
 #include "InlineLineBox.h"
 #include "InlineLineBoxBuilder.h"
 #include "InlineTextItem.h"
@@ -522,51 +523,8 @@ void InlineFormattingContext::collectContentIfNeeded()
     auto& formattingState = this->formattingState();
     if (!formattingState.inlineItems().isEmpty())
         return;
-    // Traverse the tree and create inline items out of inline boxes and leaf nodes. This essentially turns the tree inline structure into a flat one.
-    // <span>text<span></span><img></span> -> [InlineBoxStart][InlineLevelBox][InlineBoxStart][InlineBoxEnd][InlineLevelBox][InlineBoxEnd]
-    ASSERT(root().hasInFlowOrFloatingChild());
-    LayoutQueue layoutQueue;
-    layoutQueue.append(root().firstChild());
-    while (!layoutQueue.isEmpty()) {
-        while (true) {
-            auto& layoutBox = *layoutQueue.last();
-            auto isInlineBoxWithInlineContent = layoutBox.isInlineBox() && !layoutBox.isInlineTextBox() && !layoutBox.isLineBreakBox() && !layoutBox.isOutOfFlowPositioned();
-            if (!isInlineBoxWithInlineContent)
-                break;
-            // This is the start of an inline box (e.g. <span>).
-            formattingState.addInlineItem({ layoutBox, InlineItem::Type::InlineBoxStart });
-            auto& inlineBoxWithInlineContent = downcast<ContainerBox>(layoutBox);
-            if (!inlineBoxWithInlineContent.hasChild())
-                break;
-            layoutQueue.append(inlineBoxWithInlineContent.firstChild());
-        }
-
-        while (!layoutQueue.isEmpty()) {
-            auto& layoutBox = *layoutQueue.takeLast();
-            if (layoutBox.isOutOfFlowPositioned()) {
-                // Let's not construct InlineItems for out-of-flow content as they don't participate in the inline layout.
-                // However to be able to static positioning them, we need to compute their approximate positions.
-                formattingState.addOutOfFlowBox(layoutBox);
-            } else if (is<LineBreakBox>(layoutBox)) {
-                auto& lineBreakBox = downcast<LineBreakBox>(layoutBox);
-                formattingState.addInlineItem({ layoutBox, lineBreakBox.isOptional() ? InlineItem::Type::WordBreakOpportunity : InlineItem::Type::HardLineBreak });
-            } else if (layoutBox.isFloatingPositioned())
-                formattingState.addInlineItem({ layoutBox, InlineItem::Type::Float });
-            else if (layoutBox.isAtomicInlineLevelBox())
-                formattingState.addInlineItem({ layoutBox, InlineItem::Type::Box });
-            else if (layoutBox.isInlineTextBox()) {
-                InlineTextItem::createAndAppendTextItems(formattingState.inlineItems(), downcast<InlineTextBox>(layoutBox));
-            } else if (layoutBox.isInlineBox())
-                formattingState.addInlineItem({ layoutBox, InlineItem::Type::InlineBoxEnd });
-            else
-                ASSERT_NOT_REACHED();
-
-            if (auto* nextSibling = layoutBox.nextSibling()) {
-                layoutQueue.append(nextSibling);
-                break;
-            }
-        }
-    }
+    auto inlineItemsBuilder = InlineItemsBuilder { root(), formattingState };
+    inlineItemsBuilder.build();
 }
 
 InlineRect InlineFormattingContext::computeGeometryForLineContent(const LineBuilder::LineContent& lineContent)
