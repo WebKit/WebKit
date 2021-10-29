@@ -38,8 +38,13 @@ function invalidRules(functonalPseudoClassName) {
 }
 
 function testQuerySelector(functonalPseudoClassName) {
-    for (var testCase of invalidRules(functonalPseudoClassName))
+    for (var testCase of invalidRules(functonalPseudoClassName)) {
+        if (testCase == ':-webkit-any\\()' || testCase == ':-webkit-any\\(') {
+            shouldNotThrow('document.querySelectorAll("' + testCase + '").length');
+            continue;
+        }
         shouldThrow('document.querySelectorAll("' + testCase + '").length');
+    }
 }
 
 function testStyling(functonalPseudoClassName) {

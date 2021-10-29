@@ -742,8 +742,9 @@ std::unique_ptr<CSSParserSelector> CSSSelectorParser::consumePseudo(CSSParserTok
             return selector;
         }
         case CSSSelector::PseudoClassIs:
+        case CSSSelector::PseudoClassWhere:
         case CSSSelector::PseudoClassMatches:
-        case CSSSelector::PseudoClassWhere: {
+        case CSSSelector::PseudoClassAny: {
             SetForScope<bool> resistDefaultNamespace(m_resistDefaultNamespace, true);
             DisallowPseudoElementsScope scope(*this);
             auto selectorList = makeUnique<CSSSelectorList>();
@@ -753,7 +754,6 @@ std::unique_ptr<CSSParserSelector> CSSSelectorParser::consumePseudo(CSSParserTok
             selector->setSelectorList(WTFMove(selectorList));
             return selector;
         }
-        case CSSSelector::PseudoClassAny:
         case CSSSelector::PseudoClassHost: {
             auto selectorList = makeUnique<CSSSelectorList>();
             *selectorList = consumeCompoundSelectorList(block);

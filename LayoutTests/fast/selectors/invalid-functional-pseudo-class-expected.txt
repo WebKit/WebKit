@@ -7,7 +7,7 @@ PASS document.querySelectorAll(":-webkit-any\").length threw exception SyntaxErr
 PASS document.querySelectorAll(":-webkit-any\\").length threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.querySelectorAll(":-webkit-any\\\").length threw exception SyntaxError: Unexpected EOF.
 PASS document.querySelectorAll(":-webkit-any\\\\").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":-webkit-any\(").length threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.querySelectorAll(":-webkit-any\(").length did not throw exception.
 PASS document.querySelectorAll(":-webkit-any\\(").length threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.querySelectorAll(":-webkit-any\\\(").length threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.querySelectorAll(":-webkit-any\\\\(").length threw exception SyntaxError: The string did not match the expected pattern..
@@ -18,7 +18,7 @@ PASS document.querySelectorAll(":-webkit-any\\\\ .foo").length threw exception S
 PASS document.querySelectorAll(":-webkit-any\\( .foo").length threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.querySelectorAll(":-webkit-any\\\( .foo").length threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.querySelectorAll(":-webkit-any\\\\( .foo").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":-webkit-any\()").length threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.querySelectorAll(":-webkit-any\()").length did not throw exception.
 PASS document.querySelectorAll(":-webkit-any\\()").length threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.querySelectorAll(":-webkit-any\\\()").length threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.querySelectorAll(":-webkit-any\\\\()").length threw exception SyntaxError: The string did not match the expected pattern..

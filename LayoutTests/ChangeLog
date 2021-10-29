@@ -1,3 +1,17 @@
+2021-10-29  Antti Koivisto  <antti@apple.com>
+
+        Make :-webkit-any() a synonym of :is()
+        https://bugs.webkit.org/show_bug.cgi?id=232482
+
+        Reviewed by Simon Fraser.
+
+        * fast/css/pseudo-any-expected.txt:
+        * fast/css/pseudo-any.html:
+        * fast/dom/SelectorAPI/not-supported-namespace-in-selector-expected.txt:
+        * fast/dom/SelectorAPI/not-supported-namespace-in-selector.html:
+        * fast/selectors/invalid-functional-pseudo-class-expected.txt:
+        * fast/selectors/invalid-functional-pseudo-class.html:
+
 2021-10-29  Ayumi Kojima  <ayumi_kojima@apple.com>
 
         Unreviewed, reverting r285007.

@@ -36,7 +36,7 @@ PASS: document.querySelector('[|name=value]') did not throw
 PASS: document.querySelectorAll('[|name=value]') did not throw
 PASS: document.body.matches('[|name=value]') did not throw
 PASS: document.body.webkitMatchesSelector('[|name=value]') did not throw
-PASS: document.querySelector(':-webkit-any(bbb|pre)') throws: SyntaxError: The string did not match the expected pattern.
+PASS: document.querySelector(':-webkit-any(bbb|pre)') did not throw
 PASS: document.querySelector('div [bbb|name=value]') throws: SyntaxError: The string did not match the expected pattern.
 PASS: document.querySelectorAll('div [bbb|name=value]') throws: SyntaxError: The string did not match the expected pattern.
 PASS: document.body.matches('div [bbb|name=value]') throws: SyntaxError: The string did not match the expected pattern.

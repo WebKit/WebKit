@@ -815,8 +815,9 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalCont
             return isFirstOfType(element, element.tagQName()) && isLastOfType(element, element.tagQName());
         }
         case CSSSelector::PseudoClassIs:
-        case CSSSelector::PseudoClassMatches:
         case CSSSelector::PseudoClassWhere:
+        case CSSSelector::PseudoClassMatches:
+        case CSSSelector::PseudoClassAny:
             {
                 bool hasMatchedAnything = false;
 
@@ -965,19 +966,6 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalCont
         case CSSSelector::PseudoClassTarget:
             if (&element == element.document().cssTarget())
                 return true;
-            break;
-        case CSSSelector::PseudoClassAny:
-            {
-                LocalContext subcontext(context);
-                subcontext.inFunctionalPseudoClass = true;
-                subcontext.pseudoElementEffective = false;
-                for (subcontext.selector = selector.selectorList()->first(); subcontext.selector; subcontext.selector = CSSSelectorList::next(subcontext.selector)) {
-                    subcontext.firstSelectorOfTheFragment = subcontext.selector;
-                    PseudoIdSet ignoreDynamicPseudo;
-                    if (matchRecursively(checkingContext, subcontext, ignoreDynamicPseudo).match == Match::SelectorMatches)
-                        return true;
-                }
-            }
             break;
         case CSSSelector::PseudoClassAutofill:
             return isAutofilled(element);

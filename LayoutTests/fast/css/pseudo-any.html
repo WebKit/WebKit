@@ -21,31 +21,31 @@ h1:-webkit-any(.h1class, #bar) {
 }
 
 :-webkit-any(s,:nonexistentpseudo) {
-    background-color: red;
+    background-color: blue;
 }
 
 div~q {
-    background-color: blue;
+    background-color: red;
 }
 :-webkit-any(div ~ q) {
     background-color: red;
 }
 :-webkit-any(div~q) {
-    background-color: red;
+    background-color: blue;
 }
 
 q+q {
-    background-color: blue;
+    background-color: red;
 }
 :-webkit-any(q+q) {
-    background-color: red;
+    background-color: blue;
 }
 
 q>span {
-    background-color: blue;
+    background-color: red;
 }
 :-webkit-any(q>span) {
-    background-color: red;
+    background-color: blue;
 }
 
 div span {
@@ -55,7 +55,7 @@ div span {
     background-color: red;
 }
 :-webkit-any( div span ) {
-    background-color: red;
+    background-color: blue;
 }
 </style>
 This page tests :-webkit-any. This window needs to be focused for the :focus tests to pass.<br>
@@ -152,7 +152,7 @@ assertGreen("#container-div a[href]");
 assertGreen("#container-div div");
 assertWhite("#container-div a[name]");
 
-assertWhite("s");
+assertBlue("s");
 assertBlue("div span");
 assertBlue("div ~ q");
 assertBlue("q+q");
