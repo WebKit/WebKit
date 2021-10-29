@@ -1,3 +1,13 @@
+2021-10-29  Ayumi Kojima  <ayumi_kojima@apple.com>
+
+        [ BigSur wk1 Debug arm64 ] inspector/audit/run-accessibility.html is a flaky timeout.
+        https://bugs.webkit.org/show_bug.cgi?id=232322
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+
 2021-10-29  Eric Hutchison  <ehutchison@apple.com>
 
         [ BigSur wk2 Debug arm64 ] webaudio/AudioBufferSource/audiobuffersource-playbackrate.html is a flaky crash.

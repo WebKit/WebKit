@@ -1181,6 +1181,8 @@ webkit.org/b/215658 svg/custom/object-sizing-no-width-height.xhtml [ Pass Failur
 
 webkit.org/b/215767 [ Debug ] inspector/animation/nameChanged.html [ Pass Crash ]
 
+webkit.org/b/232322 [ BigSur Debug ] inspector/audit/run-accessibility.html [ Slow ]
+
 webkit.org/b/215778 fast/overflow/horizontal-scroll-after-back.html [ Pass Timeout ]
 
 #<rdar://61278051> [ macOS wk2 Debug ] http/tests/websocket/construct-in-detached-frame.html is a flaky crash
