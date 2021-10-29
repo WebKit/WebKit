@@ -1177,7 +1177,6 @@ progress {
 }
 
 progress::-webkit-progress-inner-element {
-    -webkit-appearance: inherit;
     box-sizing: inherit;
     height: 100%;
     width: 100%;

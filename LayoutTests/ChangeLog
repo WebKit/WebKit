@@ -1,3 +1,19 @@
+2021-10-29  Aditya Keerthi  <akeerthi@apple.com>
+
+        REGRESSION (r283269) disneyplus.com time remaining bar shows an extra line/bar
+        https://bugs.webkit.org/show_bug.cgi?id=232461
+        rdar://84561981
+
+        Reviewed by Antti Koivisto.
+
+        Added a ref test to verify that the native progress bar is not drawn
+        when a <progress> element has custom styling.
+
+        Thanks to Antti Koivisto for the reduction leading to this test case.
+
+        * fast/dom/HTMLProgressElement/progress-element-styled-drop-appearance-expected.html: Added.
+        * fast/dom/HTMLProgressElement/progress-element-styled-drop-appearance.html: Added.
+
 2021-10-29  Antti Koivisto  <antti@apple.com>
 
         Make :-webkit-any() a synonym of :is()
