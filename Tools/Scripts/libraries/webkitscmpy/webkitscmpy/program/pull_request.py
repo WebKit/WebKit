@@ -106,6 +106,7 @@ class PullRequest(Command):
                 sys.stderr.write("Failed to rebase '{}' on '{},' please resolve conflicts\n".format(repository.branch, branch_point.branch))
                 return 1
             log.warning("Rebased '{}' on '{}!'".format(repository.branch, branch_point.branch))
+            branch_point = Branch.branch_point(repository)
 
         rmt = repository.remote()
         if not rmt:

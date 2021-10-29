@@ -288,7 +288,8 @@ class TestDoPullRequest(testing.PathTestCase):
 Creating commit...
     Found 1 commit...
 Rebasing 'eng/pr-branch' on 'main'...
-Rebased 'eng/pr-branch' on 'main!'""")
+Rebased 'eng/pr-branch' on 'main!'
+    Found 1 commit...""")
         self.assertEqual(captured.stderr.getvalue(), "'{}' doesn't have a recognized remote\n".format(self.path))
 
     def test_modified(self):
@@ -310,7 +311,8 @@ Rebased 'eng/pr-branch' on 'main!'""")
 Creating commit...
     Found 1 commit...
 Rebasing 'eng/pr-branch' on 'main'...
-Rebased 'eng/pr-branch' on 'main!'""")
+Rebased 'eng/pr-branch' on 'main!'
+    Found 1 commit...""")
 
     def test_github(self):
         with OutputCapture() as captured, mocks.remote.GitHub() as remote, \
@@ -331,6 +333,7 @@ Rebased 'eng/pr-branch' on 'main!'""")
                 '    Found 1 commit...',
                 "Rebasing 'eng/pr-branch' on 'main'...",
                 "Rebased 'eng/pr-branch' on 'main!'",
+                "    Found 1 commit...",
                 "Pushing 'eng/pr-branch' to 'fork'...",
                 "Creating pull-request for 'eng/pr-branch'...",
                 "Created 'PR 1 | Created commit'!",
@@ -362,6 +365,7 @@ Rebased 'eng/pr-branch' on 'main!'""")
                 '    Found 1 commit...',
                 "Rebasing 'eng/pr-branch' on 'main'...",
                 "Rebased 'eng/pr-branch' on 'main!'",
+                "    Found 1 commit...",
                 "Pushing 'eng/pr-branch' to 'fork'...",
                 "Updating pull-request for 'eng/pr-branch'...",
                 "Updated 'PR 1 | Amended commit'!",
@@ -388,6 +392,7 @@ Rebased 'eng/pr-branch' on 'main!'""")
                 '    Found 1 commit...',
                 "Rebasing 'eng/pr-branch' on 'main'...",
                 "Rebased 'eng/pr-branch' on 'main!'",
+                "    Found 1 commit...",
                 "Pushing 'eng/pr-branch' to 'origin'...",
                 "Creating pull-request for 'eng/pr-branch'...",
                 "Created 'PR 1 | Created commit'!",
@@ -420,6 +425,7 @@ Rebased 'eng/pr-branch' on 'main!'""")
                 '    Found 1 commit...',
                 "Rebasing 'eng/pr-branch' on 'main'...",
                 "Rebased 'eng/pr-branch' on 'main!'",
+                "    Found 1 commit...",
                 "Pushing 'eng/pr-branch' to 'origin'...",
                 "Updating pull-request for 'eng/pr-branch'...",
                 "Updated 'PR 1 | Amended commit'!",
