@@ -1340,7 +1340,7 @@ webkit.org/b/230653 imported/w3c/web-platform-tests/webrtc/simulcast/setParamete
 
 webkit.org/b/231602 imported/w3c/web-platform-tests/webrtc/simulcast/getStats.https.html [ Pass Failure ]
 
-webkit.org/b/176030 http/tests/websocket/tests/hybi/send-object-tostring-check.html [ Pass Failure ]
+webkit.org/b/176030 http/tests/websocket/tests/hybi/send-object-tostring-check.html [ Pass Failure Timeout ]
 
 webkit.org/b/196495 fast/viewport/ios/viewport-shrink-to-fit-on-new-navigation.html [ Failure ]
 
