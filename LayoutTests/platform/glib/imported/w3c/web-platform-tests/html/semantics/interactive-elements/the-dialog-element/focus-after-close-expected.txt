@@ -1,8 +1,9 @@
 
 
-
-PASS Focus should be moved to the previously focused element(Simple dialog usage)
-FAIL Focus should be moved to the previously focused element(Complex dialog usage) assert_equals: expected Element node <input></input> but got Element node <button id="button3">This is a button3</button>
+PASS Focus should be moved to the previously focused element (Simple dialog usage)
+PASS Focus should be moved to the previously focused element (Complex dialog usage)
+PASS Focus should be moved to the previously focused element even if it has moved in between show/close
+PASS Focus should be moved to the previously focused element even if it has moved to shadow DOM root in between show/close
 PASS Focus should be moved to the body if the previously focused element is removed
 PASS Focus should be moved to the shadow DOM host if the previouly focused element is a shadow DOM node
 FAIL Focus should not scroll if the previously focused element is outside the viewport assert_true: expected true got false

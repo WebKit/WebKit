@@ -1,3 +1,28 @@
+2021-10-28  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
+
+        [GLIB] Update test baselines. Unreviewed test gardening.
+        https://bugs.webkit.org/show_bug.cgi?id=232464
+
+        * platform/glib/fast/block/positioning/062-expected.txt: Added.
+        * platform/glib/fast/block/positioning/replaced-inside-fixed-top-bottom-expected.txt: Added.
+        * platform/glib/fast/layers/opacity-stacking-expected.txt: Added.
+        * platform/glib/fast/multicol/svg-content-as-column-spanner-crash-expected.txt: Added.
+        * platform/glib/fast/repaint/overflow-into-content-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/focus-after-close-expected.txt:
+        * platform/glib/imported/w3c/web-platform-tests/media-capabilities/decodingInfo.webrtc-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/media-capabilities/encodingInfo.webrtc-expected.txt: Added.
+        * platform/gtk/css1/text_properties/vertical_align-expected.txt:
+        * platform/gtk/css2.1/t100801-c544-valgn-00-a-ag-expected.txt:
+        * platform/gtk/editing/selection/3690703-2-expected.txt:
+        * platform/gtk/editing/selection/3690703-expected.txt:
+        * platform/gtk/editing/selection/3690719-expected.txt:
+        * platform/gtk/fast/block/float/multiple-float-positioning-expected.txt:
+        * platform/gtk/fast/block/margin-collapse/101-expected.txt:
+        * platform/gtk/fast/block/margin-collapse/103-expected.txt:
+        * platform/gtk/fast/text/updateNewFont-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/html/dom/idlharness.https-expected.txt:
+        * platform/gtk/imported/w3c/web-platform-tests/html/dom/reflection-forms-expected.txt:
+
 2021-10-28  Myles C. Maxfield  <mmaxfield@apple.com>
 
         The space glyph in the Filicudi font is not substituted by shaping in the complex text codepath, thereby breaking the visual effect of the font

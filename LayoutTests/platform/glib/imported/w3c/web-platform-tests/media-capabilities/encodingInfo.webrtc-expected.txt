@@ -1,0 +1,25 @@
+
+PASS Test that encodingInfo rejects if the configuration doesn't have an audio or video field
+PASS Test that encodingInfo rejects if the video configuration has a negative framerate
+PASS Test that encodingInfo rejects if the video configuration has a framerate set to 0
+PASS Test that encodingInfo rejects if the video configuration has a framerate set to Infinity
+PASS Test that encodingInfo rejects if the video configuration contentType doesn't parse
+PASS Test that encodingInfo rejects if the video configuration contentType isn't of type video
+PASS Test that encodingInfo rejects if the audio configuration contentType doesn't parse
+PASS Test that encodingInfo rejects if the audio configuration contentType isn't of type audio
+PASS Test that encodingInfo returns a valid MediaCapabilitiesInfo objects
+PASS Test that encodingInfo returns supported, smooth, and powerEfficient set to false for non-webrtc video content type.
+PASS Test that encodingInfo returns supported, smooth, and powerEfficient set to false for non-webrtc audio content type.
+PASS Test that encodingInfo returns supported true for the codec audio/opus returned by RTCRtpSender.getCapabilities()
+PASS Test that encodingInfo returns supported true for the codec audio/ISAC returned by RTCRtpSender.getCapabilities()
+PASS Test that encodingInfo returns supported true for the codec audio/G722 returned by RTCRtpSender.getCapabilities()
+PASS Test that encodingInfo returns supported true for the codec audio/PCMU returned by RTCRtpSender.getCapabilities()
+PASS Test that encodingInfo returns supported true for the codec audio/PCMA returned by RTCRtpSender.getCapabilities()
+PASS Test that encodingInfo returns supported true for the codec video/VP8 returned by RTCRtpSender.getCapabilities()
+PASS Test that encodingInfo returns supported true for the codec video/VP9; profile-id=0 returned by RTCRtpSender.getCapabilities()
+PASS Test that encodingInfo returns supported true for the codec video/VP9; profile-id=2 returned by RTCRtpSender.getCapabilities()
+PASS Test that encodingInfo returns supported true for the codec video/H264; level-asymmetry-allowed=1;packetization-mode=1;profile-level-id=42001f returned by RTCRtpSender.getCapabilities()
+PASS Test that encodingInfo returns supported true for the codec video/H264; level-asymmetry-allowed=1;packetization-mode=0;profile-level-id=42001f returned by RTCRtpSender.getCapabilities()
+PASS Test that encodingInfo returns supported true for the codec video/H264; level-asymmetry-allowed=1;packetization-mode=1;profile-level-id=42e01f returned by RTCRtpSender.getCapabilities()
+PASS Test that encodingInfo returns supported true for the codec video/H264; level-asymmetry-allowed=1;packetization-mode=0;profile-level-id=42e01f returned by RTCRtpSender.getCapabilities()
+
