@@ -125,6 +125,37 @@ MutableStyleProperties::MutableStyleProperties(const StyleProperties& other)
     }
 }
 
+bool StyleProperties::shorthandHasVariableReference(CSSPropertyID propertyID, String& shorthandValue) const
+{
+    auto shorthand = shorthandForProperty(propertyID);
+    if (shorthand.length()) {
+        size_t numSetFromShorthand = 0;
+        // Checks for shorthand property if any of its longhand properties have set to a variable
+        // or are all pending substitution
+        for (size_t i = 0; i < shorthand.length(); i++) {
+            auto cssPropertyValue =  getPropertyCSSValue(shorthand.properties()[i]);
+            
+            auto hasBeenSetFromLonghand = is<CSSVariableReferenceValue>(cssPropertyValue);
+            auto hasBeenSetFromShorthand = is<CSSPendingSubstitutionValue>(cssPropertyValue);
+            auto hasNotBeenSetFromRequestedShorthand = hasBeenSetFromShorthand && downcast<CSSPendingSubstitutionValue>(*cssPropertyValue).shorthandPropertyId() != propertyID;
+            
+            // Request for shorthand value should return empty string if any longhand values have been
+            // set to a variable or if they were set to a variable by a different shorthand.
+            if (hasBeenSetFromLonghand || hasNotBeenSetFromRequestedShorthand)
+                return true;
+            if (hasBeenSetFromShorthand)
+                numSetFromShorthand += 1;
+        }
+        if (numSetFromShorthand) {
+            if (numSetFromShorthand != shorthand.length())
+                return true;
+            shorthandValue = downcast<CSSPendingSubstitutionValue>(* getPropertyCSSValue(shorthand.properties()[0])).shorthandValue().cssText();
+            return true;
+        }
+    }
+    return false;
+}
+
 String StyleProperties::getPropertyValue(CSSPropertyID propertyID) const
 {
     if (auto value = getPropertyCSSValue(propertyID)) {
@@ -144,9 +175,9 @@ String StyleProperties::getPropertyValue(CSSPropertyID propertyID) const
     }
 
     {
-        auto shorthand = shorthandForProperty(propertyID);
-        if (shorthand.length() && is<CSSPendingSubstitutionValue>(getPropertyCSSValue(shorthand.properties()[0])))
-            return String();
+        auto shorthandValue = String();
+        if (shorthandHasVariableReference(propertyID, shorthandValue))
+            return shorthandValue;
     }
 
     // Shorthand and 4-values properties

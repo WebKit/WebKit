@@ -1,3 +1,13 @@
+2021-10-28  Nikos Mouchtaris  <nmouchtaris@apple.com>
+
+        if border-radius includes a var(), the value is not readable from .style
+        https://bugs.webkit.org/show_bug.cgi?id=230389
+
+        Reviewed by Myles Maxfield.
+
+        * css3/short-hand-var-serialization-expected.txt: Added.
+        * css3/short-hand-var-serialization.html: Added.
+
 2021-10-28  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
 
         [GLIB] Update test baselines. Unreviewed test gardening.
