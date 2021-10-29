@@ -1,3 +1,11 @@
+2021-10-29  Oriol Brufau  <obrufau@igalia.com>
+
+        Add obrufau's GitHub username to contributors.json
+
+        Unreviewed.
+
+        * metadata/contributors.json:
+
 2021-10-28  Myles C. Maxfield  <mmaxfield@apple.com>
 
         The space glyph in the Filicudi font is not substituted by shaping in the complex text codepath, thereby breaking the visual effect of the font
