@@ -1,5 +1,12 @@
 2021-10-29  Alex Christensen  <achristensen@webkit.org>
 
+        Fix internal macOS build after r285047
+        https://bugs.webkit.org/show_bug.cgi?id=232462
+
+        * Modules/OSX.modulemap:
+
+2021-10-29  Alex Christensen  <achristensen@webkit.org>
+
         Remove code inside ENABLE(NETSCAPE_PLUGIN_API)
         https://bugs.webkit.org/show_bug.cgi?id=232462
 
