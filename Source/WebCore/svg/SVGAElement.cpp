@@ -136,7 +136,7 @@ void SVGAElement::defaultEventHandler(Event& event)
 
             String target = this->target();
             if (target.isEmpty() && attributeWithoutSynchronization(XLinkNames::showAttr) == "new")
-                target = "_blank";
+                target = blankTargetFrameName();
             event.setDefaultHandled();
 
             RefPtr frame = document().frame();
