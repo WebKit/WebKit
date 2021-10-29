@@ -65,6 +65,7 @@
 #include <JavaScriptCore/VMTrapsInlines.h>
 #include <JavaScriptCore/WasmStreamingCompiler.h>
 #include <JavaScriptCore/WeakGCMapInlines.h>
+#include <wtf/Language.h>
 
 namespace WebCore {
 using namespace JSC;
@@ -79,6 +80,28 @@ JSC_DECLARE_HOST_FUNCTION(whenSignalAborted);
 JSC_DECLARE_HOST_FUNCTION(isAbortSignal);
 
 const ClassInfo JSDOMGlobalObject::s_info = { "DOMGlobalObject", &JSGlobalObject::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSDOMGlobalObject) };
+
+const GlobalObjectMethodTable JSDOMGlobalObject::s_shadowRealmGlobalObjectMethodTable = {
+    &JSGlobalObject::supportsRichSourceInfo,
+    &JSGlobalObject::shouldInterruptScript,
+    &JSGlobalObject::javaScriptRuntimeFlags,
+    nullptr,
+    &JSGlobalObject::shouldInterruptScriptBeforeTimeout,
+    &moduleLoaderImportModule,
+    &moduleLoaderResolve,
+    &moduleLoaderFetch,
+    &moduleLoaderCreateImportMetaProperties,
+    &moduleLoaderEvaluate,
+    &promiseRejectionTracker,
+    &reportUncaughtExceptionAtEventLoop,
+    &JSGlobalObject::currentScriptExecutionOwner,
+    &JSGlobalObject::scriptExecutionStatus,
+    &JSGlobalObject::reportViolationForUnsafeEval,
+    [] { return defaultLanguage(); },
+    nullptr,
+    nullptr,
+    &deriveShadowRealmGlobalObject
+};
 
 JSDOMGlobalObject::JSDOMGlobalObject(VM& vm, Structure* structure, Ref<DOMWrapperWorld>&& world, const GlobalObjectMethodTable* globalObjectMethodTable)
     : JSGlobalObject(vm, structure, globalObjectMethodTable)
@@ -329,6 +352,11 @@ void JSDOMGlobalObject::promiseRejectionTracker(JSGlobalObject* jsGlobalObject, 
 void JSDOMGlobalObject::reportUncaughtExceptionAtEventLoop(JSGlobalObject* jsGlobalObject, JSC::Exception* exception)
 {
     reportException(jsGlobalObject, exception);
+}
+
+JSC::JSGlobalObject* JSDOMGlobalObject::deriveShadowRealmGlobalObject(JSC::VM& vm, const JSC::JSGlobalObject* globalObject)
+{
+    return JSC::JSGlobalObject::createWithCustomMethodTable(vm, JSGlobalObject::createStructure(vm, JSC::jsNull()), &s_shadowRealmGlobalObjectMethodTable);
 }
 
 void JSDOMGlobalObject::clearDOMGuardedObjects() const

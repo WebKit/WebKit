@@ -57,12 +57,12 @@ void ShadowRealmObject::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 
 DEFINE_VISIT_CHILDREN(ShadowRealmObject);
 
-ShadowRealmObject* ShadowRealmObject::create(VM& vm, Structure* structure, const GlobalObjectMethodTable* methodTable)
+ShadowRealmObject* ShadowRealmObject::create(VM& vm, Structure* structure, const JSGlobalObject* globalObject)
 {
     ShadowRealmObject* object = new (NotNull, allocateCell<ShadowRealmObject>(vm)) ShadowRealmObject(vm, structure);
     object->finishCreation(vm);
-    JSGlobalObject* globalObject = JSGlobalObject::createWithCustomMethodTable(vm, JSGlobalObject::createStructure(vm, jsNull()), methodTable);
-    object->m_globalObject.set(vm, object, globalObject);
+    JSGlobalObject* shadowRealmGlobalObject = globalObject->deriveShadowRealmGlobalObject(vm);
+    object->m_globalObject.set(vm, object, shadowRealmGlobalObject);
     return object;
 }
 

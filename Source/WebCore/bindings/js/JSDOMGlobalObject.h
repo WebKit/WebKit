@@ -86,6 +86,7 @@ public:
     JSBuiltinInternalFunctions& builtinInternalFunctions() { return m_builtinInternalFunctions; }
 
     static void reportUncaughtExceptionAtEventLoop(JSGlobalObject*, JSC::Exception*);
+    static JSC::JSGlobalObject* deriveShadowRealmGlobalObject(JSC::VM& vm, const JSC::JSGlobalObject* globalObject);
 
     void clearDOMGuardedObjects() const;
 
@@ -103,6 +104,7 @@ public:
     {
         return JSC::Structure::create(vm, 0, prototype, JSC::TypeInfo(JSC::GlobalObjectType, StructureFlags), info());
     }
+    static const JSC::GlobalObjectMethodTable s_shadowRealmGlobalObjectMethodTable;
 
 protected:
     JSDOMGlobalObject(JSC::VM&, JSC::Structure*, Ref<DOMWrapperWorld>&&, const JSC::GlobalObjectMethodTable* = nullptr);

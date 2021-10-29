@@ -53,7 +53,7 @@ JSC_DEFINE_HOST_FUNCTION(constructWithShadowRealmConstructor, (JSGlobalObject* g
 {
     VM& vm = globalObject->vm();
     Structure* shadowRealmStructure = ShadowRealmObject::createStructure(vm, globalObject, globalObject->shadowRealmPrototype());
-    JSObject* shadowRealmObject = ShadowRealmObject::create(vm, shadowRealmStructure, globalObject->globalObjectMethodTable());
+    JSObject* shadowRealmObject = ShadowRealmObject::create(vm, shadowRealmStructure, globalObject);
     return JSValue::encode(shadowRealmObject);
 }
 

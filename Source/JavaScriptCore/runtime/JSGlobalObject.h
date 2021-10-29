@@ -209,6 +209,7 @@ enum class ScriptExecutionStatus {
     Stopped,
 };
 
+
 struct GlobalObjectMethodTable {
     typedef bool (*SupportsRichSourceInfoFunctionPtr)(const JSGlobalObject*);
     SupportsRichSourceInfoFunctionPtr supportsRichSourceInfo;
@@ -264,6 +265,9 @@ struct GlobalObjectMethodTable {
 
     typedef JSPromise* (*InstantiateStreamingPtr)(JSGlobalObject*, JSValue, JSObject*);
     InstantiateStreamingPtr instantiateStreaming;
+
+    typedef JSGlobalObject* (*DeriveShadowRealmGlobalFunctionPtr)(VM&, const JSGlobalObject*);
+    DeriveShadowRealmGlobalFunctionPtr deriveShadowRealmGlobalObject;
 };
 
 class JSGlobalObject : public JSSegmentedVariableObject {
@@ -295,7 +299,7 @@ public:
     template<typename T> using Initializer = typename LazyProperty<JSGlobalObject, T>::Initializer;
 
     Register m_deprecatedCallFrameForDebugger[CallFrame::headerSizeInRegisters];
-    
+
     WriteBarrier<JSObject> m_globalThis;
 
     WriteBarrier<JSGlobalLexicalEnvironment> m_globalLexicalEnvironment;
@@ -564,7 +568,7 @@ public:
     bool isStringPrototypeIteratorProtocolFastAndNonObservable();
     bool isMapPrototypeSetFastAndNonObservable();
     bool isSetPrototypeAddFastAndNonObservable();
-
+    JSGlobalObject* deriveShadowRealmGlobalObject(VM&) const;
 
 #if ENABLE(DFG_JIT)
     using ReferencedGlobalPropertyWatchpointSets = HashMap<RefPtr<UniquedStringImpl>, Ref<WatchpointSet>, IdentifierRepHash>;
@@ -1073,6 +1077,11 @@ public:
     JS_EXPORT_PRIVATE CallFrame* deprecatedCallFrameForDebugger();
 
     static bool supportsRichSourceInfo(const JSGlobalObject*) { return true; }
+
+    static JSGlobalObject* deriveShadowRealmGlobalObject(VM& vm, const JSGlobalObject* globalObject)
+    {
+        return JSGlobalObject::createWithCustomMethodTable(vm, JSGlobalObject::createStructure(vm, jsNull()), globalObject->globalObjectMethodTable());
+    }
 
     static bool shouldInterruptScript(const JSGlobalObject*) { return true; }
     static bool shouldInterruptScriptBeforeTimeout(const JSGlobalObject*) { return false; }
