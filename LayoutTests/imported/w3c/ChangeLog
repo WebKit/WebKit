@@ -1,3 +1,12 @@
+2021-10-29  Antti Koivisto  <antti@apple.com>
+
+        Allow :is/:where after all pseudo elements
+        https://bugs.webkit.org/show_bug.cgi?id=232434
+
+        Reviewed by Dean Jackson.
+
+        * web-platform-tests/css/css-scoping/slotted-parsing-expected.txt:
+
 2021-10-29  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Unreviewed, revert r284440, r284397, r284359

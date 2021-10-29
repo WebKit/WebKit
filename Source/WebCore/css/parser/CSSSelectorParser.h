@@ -91,6 +91,7 @@ private:
     bool m_disallowPseudoElements { false };
     bool m_resistDefaultNamespace { false };
     bool m_ignoreDefaultNamespace { false };
+    std::optional<CSSSelector::PseudoElementType> m_precedingPseudoElement;
 };
 
 
