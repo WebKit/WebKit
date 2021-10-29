@@ -83,6 +83,8 @@ typedef NS_ENUM(NSInteger, _WKWebAuthenticationSource) {
 WK_EXPORT extern NSString * const _WKLocalAuthenticatorCredentialNameKey;
 WK_EXPORT extern NSString * const _WKLocalAuthenticatorCredentialIDKey;
 WK_EXPORT extern NSString * const _WKLocalAuthenticatorCredentialRelyingPartyIDKey;
+WK_EXPORT extern NSString * const _WKLocalAuthenticatorCredentialLastModificationDateKey;
+WK_EXPORT extern NSString * const _WKLocalAuthenticatorCredentialCreationDateKey;
 
 @protocol _WKWebAuthenticationPanelDelegate <NSObject>
 

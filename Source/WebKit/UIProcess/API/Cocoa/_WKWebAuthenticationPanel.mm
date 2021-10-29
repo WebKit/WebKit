@@ -99,6 +99,8 @@ static Vector<uint8_t> produceClientDataJsonHash(NSData *clientDataJson)
 NSString * const _WKLocalAuthenticatorCredentialNameKey = @"_WKLocalAuthenticatorCredentialNameKey";
 NSString * const _WKLocalAuthenticatorCredentialIDKey = @"_WKLocalAuthenticatorCredentialIDKey";
 NSString * const _WKLocalAuthenticatorCredentialRelyingPartyIDKey = @"_WKLocalAuthenticatorCredentialRelyingPartyIDKey";
+NSString * const _WKLocalAuthenticatorCredentialLastModificationDateKey = @"_WKLocalAuthenticatorCredentialLastModificationDateKey";
+NSString * const _WKLocalAuthenticatorCredentialCreationDateKey = @"_WKLocalAuthenticatorCredentialCreationDateKey";
 
 @implementation _WKWebAuthenticationPanel {
 #if ENABLE(WEB_AUTHN)
@@ -248,8 +250,10 @@ static RetainPtr<NSArray> getAllLocalAuthenticatorCredentialsImpl(NSString *acce
 
         [result addObject:@{
             _WKLocalAuthenticatorCredentialNameKey: username,
-            _WKLocalAuthenticatorCredentialIDKey: attributes[bridge_id_cast(kSecAttrApplicationLabel)],
-            _WKLocalAuthenticatorCredentialRelyingPartyIDKey: attributes[bridge_id_cast(kSecAttrLabel)]
+            _WKLocalAuthenticatorCredentialIDKey: attributes[bridge_cast(kSecAttrApplicationLabel)],
+            _WKLocalAuthenticatorCredentialRelyingPartyIDKey: attributes[bridge_cast(kSecAttrLabel)],
+            _WKLocalAuthenticatorCredentialLastModificationDateKey: attributes[bridge_cast(kSecAttrModificationDate)],
+            _WKLocalAuthenticatorCredentialCreationDateKey: attributes[bridge_cast(kSecAttrCreationDate)]
         }];
     }
 

@@ -1,3 +1,17 @@
+2021-10-29  John Pascoe  <j_pascoe@apple.com>
+
+        Add last modified and creation time to +[_WKWebAuthenticationPanel getAllLocalAuthenticatorCredentials]
+        https://bugs.webkit.org/show_bug.cgi?id=232390
+        <rdar://problem/84689277>
+
+        Reviewed by Darin Adler.
+
+        These fields (creation time and last modified) are useful for providing context about credentials.
+        The modifications to the tests verify they are properly added.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/_WKWebAuthenticationPanel.mm:
+        (TestWebKitAPI::TEST):
+
 2021-10-29  Alex Christensen  <achristensen@webkit.org>
 
         Fix macOS clean build after r285047
