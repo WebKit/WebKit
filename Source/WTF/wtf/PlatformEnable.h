@@ -576,7 +576,7 @@
 #endif
 
 /* The JIT is enabled by default on all x86-64 & ARM64 platforms. */
-#if !defined(ENABLE_JIT) && (CPU(X86_64) || CPU(ARM64)) && !CPU(APPLE_ARMV7K)
+#if !defined(ENABLE_JIT) && (CPU(X86_64) || (CPU(ARM64) && CPU(ADDRESS64)))
 #define ENABLE_JIT 1
 #endif
 
@@ -600,7 +600,7 @@
 #endif
 
 #if !defined(ENABLE_C_LOOP)
-#if ENABLE(JIT) || CPU(X86_64) || (CPU(ARM64) && !defined(__ILP32__))
+#if ENABLE(JIT) || CPU(X86_64) || CPU(ARM64)
 #define ENABLE_C_LOOP 0
 #else
 #define ENABLE_C_LOOP 1

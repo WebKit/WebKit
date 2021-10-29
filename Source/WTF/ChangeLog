@@ -1,3 +1,18 @@
+2021-10-29  Saam Barati  <sbarati@apple.com>
+
+        Disable ENABLE_JIT on arm64_32
+        https://bugs.webkit.org/show_bug.cgi?id=232468
+
+        Reviewed by Yusuke Suzuki.
+
+        We were disabling JIT via a runtime configuration before since we haven't
+        yet implemented the JIT on arm64_32. However, not compiling ENABLE(JIT)
+        code on arm64_32 saves 11MB in the binary size of JavaScriptCore.
+        
+        In my local compiles, I'm going from 24M to 13M.
+
+        * wtf/PlatformEnable.h:
+
 2021-10-28  Adrian Perez de Castro  <aperez@igalia.com>
 
         [WTF] Use mcontext_t on OpenBSD
