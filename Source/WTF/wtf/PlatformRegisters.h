@@ -34,6 +34,8 @@
 #include <signal.h>
 #elif OS(WINDOWS)
 #include <windows.h>
+#elif OS(OPENBSD)
+typedef ucontext_t mcontext_t;
 #else
 #include <sys/ucontext.h>
 #endif
@@ -75,7 +77,9 @@ struct PlatformRegisters {
 
 inline PlatformRegisters& registersFromUContext(ucontext_t* ucontext)
 {
-#if CPU(PPC)
+#if OS(OPENBSD)
+    return *bitwise_cast<PlatformRegisters*>(ucontext);
+#elif CPU(PPC)
     return *bitwise_cast<PlatformRegisters*>(ucontext->uc_mcontext.uc_regs);
 #else
     return *bitwise_cast<PlatformRegisters*>(&ucontext->uc_mcontext);
