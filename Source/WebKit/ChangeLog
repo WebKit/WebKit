@@ -1,3 +1,13 @@
+2021-10-29  Cameron McCormack  <heycam@apple.com>
+
+        Avoid sending video data to Web process for canvas.drawImage(video).
+        https://bugs.webkit.org/show_bug.cgi?id=230766
+        <rdar://problem/83576009>
+
+        Reviewed by Simon Fraser.
+
+        * WebProcess/GPU/graphics/RemoteImageBufferProxy.h:
+
 2021-10-29  Alex Christensen  <achristensen@webkit.org>
 
         Fix internal macOS build after r285047

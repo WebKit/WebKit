@@ -95,6 +95,8 @@ public:
         ASSERT(m_sentFlushIdentifier == targetFlushIdentifier);
     }
 
+    bool isRemote() const final { return true; }
+
 protected:
     RemoteImageBufferProxy(const WebCore::ImageBufferBackend::Parameters& parameters, RemoteRenderingBackendProxy& remoteRenderingBackendProxy)
         : BaseConcreteImageBuffer(parameters)

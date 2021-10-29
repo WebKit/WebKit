@@ -71,6 +71,7 @@ public:
 
     virtual RenderingMode renderingMode() const = 0;
     virtual bool canMapBackingStore() const = 0;
+    virtual bool isRemote() const { return false; }
     virtual RenderingResourceIdentifier renderingResourceIdentifier() const { return { }; }
 
     virtual GraphicsContext& context() const = 0;
