@@ -724,13 +724,12 @@ static void loadSimulatedRequestTest(IsAppInitiated isAppInitiated)
     TestWebKitAPI::Util::run(&isDone);
 }
 
-// FIXME: Re-enable these two tests once webkit.org/b/232166 is resolved.
-TEST(AppPrivacyReport, DISABLED_LoadSimulatedRequestIsAppInitiated)
+TEST(AppPrivacyReport, LoadSimulatedRequestIsAppInitiated)
 {
     loadSimulatedRequestTest(IsAppInitiated::Yes);
 }
 
-TEST(AppPrivacyReport, DISABLED_LoadSimulatedRequestIsNonAppInitiated)
+TEST(AppPrivacyReport, LoadSimulatedRequestIsNonAppInitiated)
 {
     loadSimulatedRequestTest(IsAppInitiated::No);
 }

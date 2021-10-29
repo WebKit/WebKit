@@ -1,3 +1,14 @@
+2021-10-29  Alex Christensen  <achristensen@webkit.org>
+
+        Re-enable two AppPrivacyReport tests
+        webkit.org/b/232166
+
+        I ran them locally on iOS simulator and they ran fine.
+        They were disabled during a tumultuous time, and the cause of their timeouts is likely resolved.
+        I'll watch the bots and see if they agree.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/AppPrivacyReport.mm:
+
 2021-10-29  Jonathan Bedard  <jbedard@apple.com>
 
         [webkitscmpy] Add fetch and rebase
