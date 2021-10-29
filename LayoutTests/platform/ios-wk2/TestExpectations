@@ -1292,7 +1292,7 @@ webkit.org/b/181821 fast/visual-viewport/ios/caret-after-focus-in-fixed.html [ P
 
 webkit.org/b/182144 [ Debug ] webgl/1.0.3/conformance/rendering/many-draw-calls.html [ Skip ]
 
-webkit.org/b/231514 webgl/1.0.3/conformance/uniforms/uniform-default-values.html [ Pass Timeout ]
+webkit.org/b/231514 webgl/1.0.3/conformance/uniforms/uniform-default-values.html [ Slow ]
 
 webkit.org/b/231541 webgl/1.0.3/conformance/glsl/bugs/long-expressions-should-not-crash.html [ Pass Timeout ]
 
