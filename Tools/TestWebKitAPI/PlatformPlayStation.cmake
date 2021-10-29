@@ -29,8 +29,6 @@ if (ENABLE_WEBKIT)
     list(APPEND TestWebKit_SOURCES
         ${test_main_SOURCES}
 
-        Tests/WebKit/CookieStorageFile.cpp
-
         Tests/WebKit/curl/Certificates.cpp
 
         generic/UtilitiesGeneric.cpp
