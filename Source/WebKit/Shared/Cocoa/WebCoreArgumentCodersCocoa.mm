@@ -37,7 +37,6 @@
 #import <WebCore/FontCustomPlatformData.h>
 #import <WebCore/ResourceRequest.h>
 #import <WebCore/TextRecognitionResult.h>
-#import <pal/spi/cf/CFNetworkSPI.h>
 #import <pal/spi/cf/CoreTextSPI.h>
 
 #if PLATFORM(IOS_FAMILY)
@@ -627,18 +626,10 @@ void ArgumentCoder<WebCore::ResourceRequest>::encodePlatformData(Encoder& encode
 
     // We don't send HTTP body over IPC for better performance.
     // Also, it's not always possible to do, as streams can only be created in process that does networking.
-    bool hasHTTPBody = [requestToSerialize HTTPBody] || [requestToSerialize HTTPBodyStream];
-    
-    // FIXME: Replace this respondsToSelector check with a HAS macro once rdar://83857142 has been put in a build and the bots are updated.
-    bool hasProtocolProperties = [requestToSerialize respondsToSelector:@selector(_allProtocolProperties)] && [requestToSerialize _allProtocolProperties];
-
-    if (hasHTTPBody || hasProtocolProperties) {
+    if ([requestToSerialize HTTPBody] || [requestToSerialize HTTPBodyStream]) {
         auto mutableRequest = adoptNS([requestToSerialize mutableCopy]);
         [mutableRequest setHTTPBody:nil];
         [mutableRequest setHTTPBodyStream:nil];
-        // FIXME: Replace this respondsToSelector check with a HAS macro once rdar://83855325 has been put in a build and the bots are updated.
-        if ([mutableRequest respondsToSelector:@selector(_removeAllProtocolProperties)])
-            [mutableRequest _removeAllProtocolProperties];
         requestToSerialize = WTFMove(mutableRequest);
     }
 
