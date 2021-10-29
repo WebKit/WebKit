@@ -1,5 +1,14 @@
 2021-10-29  Alex Christensen  <achristensen@webkit.org>
 
+        Revert r285034
+        webkit.org/b/232166
+
+        The test still times out in EWS.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/AppPrivacyReport.mm:
+
+2021-10-29  Alex Christensen  <achristensen@webkit.org>
+
         Unreviewed, reverting r284917.
 
         Likely caused significant performance regression
