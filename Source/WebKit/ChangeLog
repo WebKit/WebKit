@@ -1,5 +1,15 @@
 2021-10-29  Alex Christensen  <achristensen@webkit.org>
 
+        Fix WPE build after r285047
+        https://bugs.webkit.org/show_bug.cgi?id=232462
+
+        * UIProcess/soup/WebProcessPoolSoup.cpp:
+        (WebKit::memoryPressureMonitorDisabledSoup):
+        (WebKit::WebProcessPool::platformInitializeNetworkProcess):
+        (WebKit::memoryPressureMonitorDisabled): Deleted.
+
+2021-10-29  Alex Christensen  <achristensen@webkit.org>
+
         Unreviewed, reverting r284917.
         <rdar://84807461>
 

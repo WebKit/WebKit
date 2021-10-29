@@ -37,7 +37,9 @@ namespace WebKit {
 
 std::optional<MemoryPressureHandler::Configuration> WebProcessPool::s_networkProcessMemoryPressureHandlerConfiguration;
 
-static bool memoryPressureMonitorDisabled()
+// This is duplicate code with memoryPressureMonitorDisabled.
+// FIXME: Put a declaration in a header and make one definition.
+static bool memoryPressureMonitorDisabledSoup()
 {
     static const char* disableMemoryPressureMonitor = getenv("WEBKIT_DISABLE_MEMORY_PRESSURE_MONITOR");
     return disableMemoryPressureMonitor && !strcmp(disableMemoryPressureMonitor, "1");
@@ -48,7 +50,7 @@ void WebProcessPool::platformInitializeNetworkProcess(NetworkProcessCreationPara
     parameters.languages = userPreferredLanguages();
     parameters.memoryPressureHandlerConfiguration = s_networkProcessMemoryPressureHandlerConfiguration;
 
-    if (memoryPressureMonitorDisabled())
+    if (memoryPressureMonitorDisabledSoup())
         parameters.shouldSuppressMemoryPressureHandler = true;
 }
 
