@@ -1,3 +1,11 @@
+2021-10-29  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Unreviewed, revert r284440, r284397, r284359
+
+        * web-platform-tests/css/css-flexbox/parsing/flex-basis-computed-expected.txt:
+        * web-platform-tests/css/css-flexbox/parsing/flex-basis-valid-expected.txt:
+        * web-platform-tests/css/css-flexbox/parsing/flex-shorthand-expected.txt:
+
 2021-10-29  Chris Dumez  <cdumez@apple.com>
 
         [ iOS ] imported/w3c/web-platform-tests/dom/events/scrolling/iframe-chains.html is missing its results

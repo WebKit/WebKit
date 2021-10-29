@@ -370,7 +370,6 @@ static TextStream& operator<<(TextStream& ts, LengthType type)
     case LengthType::FillAvailable: ts << "fill-available"; break;
     case LengthType::FitContent: ts << "fit-content"; break;
     case LengthType::Calculated: ts << "calc"; break;
-    case LengthType::Content: ts << "content"; break;
     case LengthType::Undefined: ts << "undefined"; break;
     }
     return ts;
@@ -380,7 +379,6 @@ TextStream& operator<<(TextStream& ts, Length length)
 {
     switch (length.type()) {
     case LengthType::Auto:
-    case LengthType::Content:
     case LengthType::Undefined:
         ts << length.type();
         break;

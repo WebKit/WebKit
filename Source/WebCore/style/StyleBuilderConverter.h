@@ -68,7 +68,6 @@ class BuilderConverter {
 public:
     static Length convertLength(const BuilderState&, const CSSValue&);
     static Length convertLengthOrAuto(const BuilderState&, const CSSValue&);
-    static Length convertLengthOrAutoOrContent(const BuilderState&, const CSSValue&);
     static Length convertLengthSizing(const BuilderState&, const CSSValue&);
     static Length convertLengthMaxSizing(const BuilderState&, const CSSValue&);
     static TabSize convertTabSize(const BuilderState&, const CSSValue&);
@@ -245,8 +244,6 @@ inline Length BuilderConverter::convertLengthSizing(const BuilderState& builderS
         return Length(LengthType::FitContent);
     case CSSValueAuto:
         return Length(LengthType::Auto);
-    case CSSValueContent:
-        return Length(LengthType::Content);
     default:
         ASSERT_NOT_REACHED();
         return Length();

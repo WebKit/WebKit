@@ -717,7 +717,6 @@ void ArgumentCoder<Length>::encode(Encoder& encoder, const Length& length)
 
     switch (length.type()) {
     case LengthType::Auto:
-    case LengthType::Content:
     case LengthType::Undefined:
         break;
     case LengthType::Fixed:
@@ -753,7 +752,6 @@ bool ArgumentCoder<Length>::decode(Decoder& decoder, Length& length)
 
     switch (type) {
     case LengthType::Auto:
-    case LengthType::Content:
     case LengthType::Undefined:
         length = Length(type);
         return true;

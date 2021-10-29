@@ -47,7 +47,6 @@ enum class LengthType : uint8_t {
     FillAvailable,
     FitContent,
     Calculated,
-    Content,
     Undefined
 };
 
@@ -104,7 +103,6 @@ public:
     bool isFillAvailable() const;
     bool isFitContent() const;
     bool isMinIntrinsic() const;
-    bool isContent() const;
 
     bool hasQuirk() const;
     void setHasQuirk(bool);
@@ -238,7 +236,6 @@ inline void Length::initialize(const Length& other)
 
     switch (m_type) {
     case LengthType::Auto:
-    case LengthType::Content:
     case LengthType::Undefined:
         m_intValue = 0;
         break;
@@ -271,7 +268,6 @@ inline void Length::initialize(Length&& other)
 
     switch (m_type) {
     case LengthType::Auto:
-    case LengthType::Content:
     case LengthType::Undefined:
         m_intValue = 0;
         break;
@@ -513,11 +509,6 @@ inline bool Length::isFitContent() const
 inline bool Length::isMinIntrinsic() const
 {
     return type() == LengthType::MinIntrinsic;
-}
-
-inline bool Length::isContent() const
-{
-    return type() == LengthType::Content;
 }
 
 Length convertTo100PercentMinusLength(const Length&);

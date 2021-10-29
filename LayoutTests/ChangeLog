@@ -1,3 +1,9 @@
+2021-10-29  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Unreviewed, revert r284440, r284397, r284359
+
+        * TestExpectations:
+
 2021-10-29  Ayumi Kojima  <ayumi_kojima@apple.com>
 
         [ BigSur wk1 Debug arm64 ] inspector/audit/run-accessibility.html is a flaky timeout.
