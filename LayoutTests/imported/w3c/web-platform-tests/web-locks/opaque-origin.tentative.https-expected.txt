@@ -1,6 +1,6 @@
 
-FAIL navigator.locks.request() in non-sandboxed iframe should not throw assert_equals: navigator.locks.request() should not throw expected "no exception" but got "TypeError"
-FAIL navigator.locks.request() in sandboxed iframe should throw SecurityError assert_equals: Exception should be SecurityError expected "SecurityError" but got "TypeError"
-FAIL navigator.locks.query() in non-sandboxed iframe should not throw assert_equals: navigator.locks.request() should not throw expected "no exception" but got "TypeError"
-FAIL navigator.locks.query() in sandboxed iframe should throw SecurityError assert_equals: Exception should be SecurityError expected "SecurityError" but got "TypeError"
+FAIL navigator.locks.request() in non-sandboxed iframe should not throw assert_equals: navigator.locks.request() should not throw expected "no exception" but got "NotSupportedError"
+FAIL navigator.locks.request() in sandboxed iframe should throw SecurityError assert_equals: Exception should be SecurityError expected "SecurityError" but got "NotSupportedError"
+FAIL navigator.locks.query() in non-sandboxed iframe should not throw assert_equals: navigator.locks.request() should not throw expected "no exception" but got "NotSupportedError"
+FAIL navigator.locks.query() in sandboxed iframe should throw SecurityError assert_equals: Exception should be SecurityError expected "SecurityError" but got "NotSupportedError"
 

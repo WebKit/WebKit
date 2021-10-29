@@ -1393,6 +1393,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigatorID.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigatorID.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigatorLanguage.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigatorLanguage.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigatorLocks.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigatorLocks.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigatorMaxTouchPoints.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigatorMaxTouchPoints.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigatorOnLine.cpp
@@ -2145,8 +2147,6 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSSecurityPolicyViolationEvent.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSSecurityPolicyViolationEvent.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSServiceWorker.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSServiceWorker.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSServiceWorkerRegistration+PushAPI.cpp
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSServiceWorkerRegistration+PushAPI.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSServiceWorkerClient.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSServiceWorkerClient.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSServiceWorkerClientType.cpp
@@ -2161,6 +2161,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSServiceWorkerGlobalScope.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSServiceWorkerGlobalScope.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSServiceWorkerInternals.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSServiceWorkerInternals.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSServiceWorkerRegistration+PushAPI.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSServiceWorkerRegistration+PushAPI.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSServiceWorkerRegistration.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSServiceWorkerRegistration.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSServiceWorkerUpdateViaCache.cpp
@@ -2427,6 +2429,14 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebKitPoint.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebKitPoint.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebKitTransitionEvent.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebKitTransitionEvent.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebLock.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebLock.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebLockGrantedCallback.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebLockGrantedCallback.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebLockManager.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebLockManager.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebLockMode.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebLockMode.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebSocket.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebSocket.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebXRBoundedReferenceSpace.cpp
@@ -2435,10 +2445,10 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebXRFrame+HandInput.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebXRFrame+HandInput.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebXRFrame.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebXRFrame.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebXRInputSource+Gamepad.cpp
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebXRInputSource+Gamepad.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebXRHand.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebXRHand.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebXRInputSource+Gamepad.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebXRInputSource+Gamepad.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebXRInputSource+HandInput.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebXRInputSource+HandInput.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebXRInputSource.cpp

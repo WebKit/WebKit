@@ -31,6 +31,7 @@
 #include "RuntimeEnabledFeatures.h"
 #include "ServiceWorkerContainer.h"
 #include "StorageManager.h"
+#include "WebLockManager.h"
 #include <mutex>
 #include <wtf/Language.h>
 #include <wtf/NeverDestroyed.h>
@@ -146,6 +147,14 @@ StorageManager& NavigatorBase::storage()
         m_storageManager = StorageManager::create(*this);
 
     return *m_storageManager;
+}
+
+WebLockManager& NavigatorBase::locks()
+{
+    if (!m_webLockManager)
+        m_webLockManager = WebLockManager::create();
+
+    return *m_webLockManager;
 }
 
 #if ENABLE(SERVICE_WORKER)

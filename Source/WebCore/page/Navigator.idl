@@ -32,6 +32,7 @@
 
 Navigator includes NavigatorID;
 Navigator includes NavigatorLanguage;
+Navigator includes NavigatorLocks;
 Navigator includes NavigatorMaxTouchPoints;
 Navigator includes NavigatorOnLine;
 Navigator includes NavigatorCookies;

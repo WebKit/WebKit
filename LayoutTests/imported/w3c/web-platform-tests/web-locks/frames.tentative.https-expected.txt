@@ -1,10 +1,13 @@
+CONSOLE MESSAGE: Unhandled Promise Rejection: NotSupportedError: The operation is not supported.
 
-FAIL Window and Frame - shared mode assert_implements: undefined
-FAIL Window and Frame - exclusive mode assert_implements: undefined
-FAIL Frame and Frame - exclusive mode assert_implements: undefined
-FAIL Terminated Frame with held lock assert_implements: undefined
-FAIL Navigated Frame with held lock assert_implements: undefined
-FAIL Navigated Frame with pending request assert_implements: undefined
-FAIL Removed Frame with pending request assert_implements: undefined
-FAIL Removed Frame as lock is granted assert_implements: undefined
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT Window and Frame - shared mode Test timed out
+NOTRUN Window and Frame - exclusive mode
+NOTRUN Frame and Frame - exclusive mode
+NOTRUN Terminated Frame with held lock
+NOTRUN Navigated Frame with held lock
+NOTRUN Navigated Frame with pending request
+NOTRUN Removed Frame with pending request
+NOTRUN Removed Frame as lock is granted
 

@@ -1,11 +1,11 @@
 
-FAIL query() returns dictionaries with expected properties promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.locks.request')"
-FAIL query() reports individual held locks promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.locks.request')"
-FAIL query() reports multiple held locks promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.locks.request')"
-FAIL query() reports pending and held locks promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.locks.request')"
-FAIL query() reports held shared locks with appropriate count promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.locks.request')"
-FAIL query() reports pending shared locks with appropriate count promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.locks.request')"
-FAIL query() reports the same clientId for held locks from the same context promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.locks.request')"
+FAIL query() returns dictionaries with expected properties promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+FAIL query() reports individual held locks promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+FAIL query() reports multiple held locks promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+FAIL query() reports pending and held locks promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+FAIL query() reports held shared locks with appropriate count promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+FAIL query() reports pending shared locks with appropriate count promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+FAIL query() reports the same clientId for held locks from the same context promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
 FAIL query() reports different ids for held locks from different contexts promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: Worker"
 FAIL query() can observe a deadlock promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: Worker"
 

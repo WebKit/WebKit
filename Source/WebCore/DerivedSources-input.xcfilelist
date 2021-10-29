@@ -486,6 +486,11 @@ $(PROJECT_DIR)/Modules/streams/WritableStreamDefaultWriter.idl
 $(PROJECT_DIR)/Modules/streams/WritableStreamDefaultWriter.js
 $(PROJECT_DIR)/Modules/streams/WritableStreamInternals.js
 $(PROJECT_DIR)/Modules/streams/WritableStreamSink.idl
+$(PROJECT_DIR)/Modules/web-locks/NavigatorLocks.idl
+$(PROJECT_DIR)/Modules/web-locks/WebLock.idl
+$(PROJECT_DIR)/Modules/web-locks/WebLockGrantedCallback.idl
+$(PROJECT_DIR)/Modules/web-locks/WebLockManager.idl
+$(PROJECT_DIR)/Modules/web-locks/WebLockMode.idl
 $(PROJECT_DIR)/Modules/webaudio/AnalyserNode.idl
 $(PROJECT_DIR)/Modules/webaudio/AnalyserOptions.idl
 $(PROJECT_DIR)/Modules/webaudio/AudioBuffer.idl
@@ -601,8 +606,8 @@ $(PROJECT_DIR)/Modules/webxr/Navigator+WebXR.idl
 $(PROJECT_DIR)/Modules/webxr/WebXRBoundedReferenceSpace.idl
 $(PROJECT_DIR)/Modules/webxr/WebXRFrame+HandInput.idl
 $(PROJECT_DIR)/Modules/webxr/WebXRFrame.idl
-$(PROJECT_DIR)/Modules/webxr/WebXRInputSource+Gamepad.idl
 $(PROJECT_DIR)/Modules/webxr/WebXRHand.idl
+$(PROJECT_DIR)/Modules/webxr/WebXRInputSource+Gamepad.idl
 $(PROJECT_DIR)/Modules/webxr/WebXRInputSource+HandInput.idl
 $(PROJECT_DIR)/Modules/webxr/WebXRInputSource.idl
 $(PROJECT_DIR)/Modules/webxr/WebXRInputSourceArray.idl

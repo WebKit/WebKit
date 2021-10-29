@@ -1501,6 +1501,18 @@ WebGLUsingMetal:
       "HAVE(WEBGL_COMPATIBLE_METAL)": true
       default: false
 
+WebLocksAPIEnabled:
+  type: bool
+  humanReadableName: "Web Locks API"
+  humanReadableDescription: "Web Locks API"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 WebMFormatReaderEnabled:
   type: bool
   webcoreBinding: RuntimeEnabledFeatures

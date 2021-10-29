@@ -57,6 +57,7 @@ set(WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/Modules/speech"
     "${WEBCORE_DIR}/Modules/storage"
     "${WEBCORE_DIR}/Modules/streams"
+    "${WEBCORE_DIR}/Modules/web-locks"
     "${WEBCORE_DIR}/Modules/webaudio"
     "${WEBCORE_DIR}/Modules/webauthn"
     "${WEBCORE_DIR}/Modules/webauthn/cbor"
@@ -214,6 +215,7 @@ set(WebCore_IDL_INCLUDES
     Modules/speech
     Modules/storage
     Modules/streams
+    Modules/web-locks
     Modules/webaudio
     Modules/webdatabase
     Modules/webgpu
@@ -550,6 +552,12 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/streams/WritableStreamDefaultController.idl
     Modules/streams/WritableStreamDefaultWriter.idl
     Modules/streams/WritableStreamSink.idl
+
+    Modules/web-locks/NavigatorLocks.idl
+    Modules/web-locks/WebLock.idl
+    Modules/web-locks/WebLockGrantedCallback.idl
+    Modules/web-locks/WebLockManager.idl
+    Modules/web-locks/WebLockMode.idl
 
     Modules/webaudio/AnalyserNode.idl
     Modules/webaudio/AnalyserOptions.idl

@@ -1,12 +1,12 @@
 
-FAIL navigator.locks.request requires a name and a callback promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.locks.request')"
-FAIL mode must be "shared" or "exclusive" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.locks.request')"
-FAIL The 'steal' and 'ifAvailable' options are mutually exclusive promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.locks.request')"
-FAIL The 'steal' option must be used with exclusive locks promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.locks.request')"
-FAIL The 'signal' and 'steal' options are mutually exclusive promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.locks.request')"
-FAIL The 'signal' and 'ifAvailable' options are mutually exclusive promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.locks.request')"
-FAIL callback must be a function promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.locks.request')"
-FAIL navigator.locks.request's returned promise resolves after lock is released promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.locks.request')"
-FAIL Returned Promise rejects if callback throws synchronously promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.locks.request')"
-FAIL Returned Promise rejects if callback throws asynchronously promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.locks.request')"
+PASS navigator.locks.request requires a name and a callback
+FAIL mode must be "shared" or "exclusive" promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+PASS The 'steal' and 'ifAvailable' options are mutually exclusive
+PASS The 'steal' option must be used with exclusive locks
+PASS The 'signal' and 'steal' options are mutually exclusive
+PASS The 'signal' and 'ifAvailable' options are mutually exclusive
+PASS callback must be a function
+FAIL navigator.locks.request's returned promise resolves after lock is released promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+FAIL Returned Promise rejects if callback throws synchronously promise_rejects_exactly: result should reject function "function () { throw e }" threw object "NotSupportedError: The operation is not supported." but we expected it to throw object "[object Object]"
+FAIL Returned Promise rejects if callback throws asynchronously promise_rejects_exactly: result should reject function "function () { throw e }" threw object "NotSupportedError: The operation is not supported." but we expected it to throw object "[object Object]"
 

@@ -1,6 +1,8 @@
 
-FAIL Window and Worker - shared mode assert_implements: undefined
-FAIL Window and Worker - exclusive mode assert_implements: undefined
-FAIL Worker and Worker - exclusive mode assert_implements: undefined
-FAIL Terminated Worker - exclusive mode assert_implements: undefined
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT Window and Worker - shared mode Test timed out
+NOTRUN Window and Worker - exclusive mode
+NOTRUN Worker and Worker - exclusive mode
+NOTRUN Terminated Worker - exclusive mode
 

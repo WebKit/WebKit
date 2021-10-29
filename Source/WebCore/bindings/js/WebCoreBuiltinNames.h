@@ -159,6 +159,8 @@ namespace WebCore {
     macro(IntersectionObserver) \
     macro(IntersectionObserverEntry) \
     macro(KeyframeEffect) \
+    macro(Lock) \
+    macro(LockManager) \
     macro(MediaCapabilities) \
     macro(MediaCapabilitiesInfo) \
     macro(MediaDevices) \

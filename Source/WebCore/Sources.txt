@@ -250,6 +250,8 @@ Modules/storage/WorkerStorageConnection.cpp
 Modules/streams/ReadableStreamSink.cpp
 Modules/streams/ReadableStreamSource.cpp
 Modules/streams/WritableStream.cpp
+Modules/web-locks/WebLock.cpp
+Modules/web-locks/WebLockManager.cpp
 Modules/webaudio/AnalyserNode.cpp
 Modules/webaudio/AsyncAudioDecoder.cpp
 Modules/webaudio/AudioBasicInspectorNode.cpp
@@ -3800,6 +3802,10 @@ JSWebKitNamespace.cpp
 JSWebKitPlaybackTargetAvailabilityEvent.cpp
 JSWebKitPoint.cpp
 JSWebKitTransitionEvent.cpp
+JSWebLock.cpp
+JSWebLockGrantedCallback.cpp
+JSWebLockManager.cpp
+JSWebLockMode.cpp
 JSWebSocket.cpp
 JSWebXRBoundedReferenceSpace.cpp
 JSWebXRFrame.cpp
