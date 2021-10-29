@@ -411,6 +411,11 @@ class GitHub(mocks.Requests):
             pr['user'] = dict(login=auth.username)
             pr['_links'] = dict(issue=dict(href='https://{}/issues/{}'.format(self.api_remote, pr['number'])))
             self.pull_requests.append(pr)
+            if int(pr['number']) not in self.issues:
+                self.issues[int(pr['number'])] = dict(
+                    comments=[],
+                    assignees=[],
+                )
             return mocks.Response.fromJson(pr, url=url)
 
         # Update specifically
@@ -444,6 +449,9 @@ class GitHub(mocks.Requests):
                     body=json.get('body', ''),
                 ))
                 return mocks.Response.fromJson(issue['comments'], url=url)
+            if method == 'POST' and stripped_url.split('/')[6] == 'assignees':
+                self.issues[number]['assignees'] = {'login': name for name in json.get('assignees', [])}
+                return mocks.Response.fromJson(issue['assignees'], url=url)
             return mocks.Response.create404(url)
 
         return mocks.Response.create404(url)

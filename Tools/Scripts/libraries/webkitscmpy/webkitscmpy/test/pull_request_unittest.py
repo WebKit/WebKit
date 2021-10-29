@@ -445,6 +445,12 @@ class TestNetworkPullRequestGitHub(unittest.TestCase):
             sreviewer=Contributor('Suspicious Reviewer', ['sreviewer@webkit.org'], github='sreviewer'),
             tcontributor=Contributor('Tim Contributor', ['tcontributor@webkit.org']),
         )
+        result.issues = {
+            1: dict(
+                comments=[],
+                assignees=[],
+            )
+        }
         result.pull_requests = [dict(
             number=1,
             state='open',
