@@ -61,7 +61,7 @@ CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 GCC_WARN_UNINITIALIZED_AUTOS = YES
 GCC_WARN_UNUSED_FUNCTION = YES;
 GCC_WARN_UNUSED_VARIABLE = YES
-WARNING_CFLAGS = -Wall -W -Wcast-qual -Wchar-subscripts -Wconditional-uninitialized -Wformat-security -Wmissing-format-attribute -Wpointer-arith -Wwrite-strings -Wno-unused-parameter -Wexit-time-destructors -Wvla -Wliteral-conversion -Wthread-safety;
+WARNING_CFLAGS = -Wall -W -Wcast-qual -Wchar-subscripts -Wconditional-uninitialized -Wformat=2 -Wmissing-format-attribute -Wpointer-arith -Wwrite-strings -Wno-unused-parameter -Wexit-time-destructors -Wvla -Wliteral-conversion -Wthread-safety;
 
 SUPPORTED_PLATFORMS = iphoneos iphonesimulator macosx appletvos appletvsimulator watchos watchsimulator;
 SUPPORTS_MACCATALYST = YES;

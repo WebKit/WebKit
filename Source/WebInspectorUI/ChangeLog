@@ -1,3 +1,15 @@
+2021-10-29  David Kilzer  <ddkilzer@apple.com>
+
+        Web Inspector: Enable -Wformat=2 warnings
+        <https://webkit.org/b/232359>
+        <rdar://problem/84691442>
+
+        Reviewed by Darin Adler.
+
+        * Configurations/Base.xcconfig:
+        (WARNING_CFLAGS):
+        - Add -Wformat=2 switch, which includes -Wformat-nonliteral.
+
 2021-10-28  Razvan Caliman  <rcaliman@apple.com>
 
         Web Inspector: Audit: testForLinkLabels Accessibility audit should ignore anchors if aria-hidden
