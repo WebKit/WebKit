@@ -476,6 +476,13 @@ CommitDate: {time_c}
             mrepo.staged['modified.txt'] = 'diff'
             self.assertEqual(repo.modified(staged=True), ['added.txt', 'modified.txt'])
 
+    def test_rebase(self):
+        with mocks.local.Git(self.path):
+            repo = local.Git(self.path)
+            self.assertEqual(str(repo.commit(branch='branch-a')), '2.2@branch-a')
+            self.assertEqual(repo.rebase(target='main', base='main', head='branch-a', recommit=False), 0)
+            self.assertEqual(str(repo.commit(branch='branch-a')), '5.2@branch-a')
+
 
 class TestGitHub(testing.TestCase):
     remote = 'https://github.example.com/WebKit/WebKit'
