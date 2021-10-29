@@ -1,3 +1,19 @@
+2021-10-28  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        The space glyph in the Filicudi font is not substituted by shaping in the complex text codepath, thereby breaking the visual effect of the font
+        https://bugs.webkit.org/show_bug.cgi?id=232293
+
+        Reviewed by Darin Adler.
+
+        Big thanks to Ulrike Rausch and Frank Grießhammer for contributing the test font!!!
+
+        * fast/text/complex-space-glyph-expected.html: Added.
+        * fast/text/complex-space-glyph.html: Added.
+        * fast/text/resources/Filicudi Dummy BSD2/FilicudiDummy-Barber.otf: Added.
+        * fast/text/resources/Filicudi Dummy BSD2/LICENSE.txt: Added.
+        * fast/text/resources/Filicudi Dummy BSD2/README.md: Added.
+        * fast/text/resources/Filicudi Dummy BSD2/color.html: Added.
+
 2021-10-28  Ayumi Kojima  <ayumi_kojima@apple.com>
 
         [ BigSur wk1 ] webgl/1.0.3/conformance/uniforms/uniform-default-values.html is flaky timing out.

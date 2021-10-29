@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+@font-face {
+    font-family: FilicudiDummy-Barber;
+    src:url("resources/Filicudi Dummy BSD2/FilicudiDummy-Barber.otf") format("opentype");
+}
+</style>
+</head>
+<body>
+This test makes sure that GSUB can affect the rendered space glyph. This is a font which has
+multiple alternates of the space glyph. The test passes if the correct alternate is used.
+You can see this visually if the vertical lines consistently alternate between red and blue.
+<div style="font: 4em 'FilicudiDummy-Barber';">H H</div>
+</body>
+</html>

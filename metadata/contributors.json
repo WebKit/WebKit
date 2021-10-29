@@ -2439,6 +2439,12 @@
    },
    {
       "emails" : [
+         "fgriessh@adobe.com"
+      ],
+      "name" : "Frank Grie\u00dfhammer"
+   },
+   {
+      "emails" : [
          "fred.wang@free.fr",
          "fwang@igalia.com"
       ],

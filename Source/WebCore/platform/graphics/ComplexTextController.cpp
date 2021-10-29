@@ -711,7 +711,7 @@ void ComplexTextController::adjustGlyphsAndAdvances()
             UChar ch = *(cp + characterIndex);
 
             bool treatAsSpace = FontCascade::treatAsSpace(ch);
-            CGGlyph glyph = treatAsSpace ? font.spaceGlyph() : glyphs[i];
+            CGGlyph glyph = glyphs[i];
             FloatSize advance = treatAsSpace ? FloatSize(spaceWidth, advances[i].height()) : advances[i];
 
             if (ch == '\t' && m_run.allowTabs())
