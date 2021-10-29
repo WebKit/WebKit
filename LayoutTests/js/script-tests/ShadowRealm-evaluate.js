@@ -7,9 +7,16 @@ function assert_closed_opener(w, closed, opener) {
 
 promise_test(async t => {
   const openee = window.open("", "greatname");
-  const shadowRealm = new ShadowRealm();
-  const callInRealm = shadowRealm.evaluate("(cb) => cb()");
+  const outerShadowRealm = new ShadowRealm();
+
+  // setup realm nested in outerShadowRealm
+  outerShadowRealm.evaluate("var innerRealm = new ShadowRealm();");
+  outerShadowRealm.evaluate("var callInInner = innerRealm.evaluate(\"(cb) => cb()\");");
+
+  const callInNestedRealm = outerShadowRealm.evaluate("(cb) => callInInner(cb)");
+
+  // call close window two levels deep
   assert_closed_opener(openee, false, self);
-  callInRealm(() => openee.close());
+  callInNestedRealm(() => openee.close());
   assert_closed_opener(openee, true, self);
 }, "window.close() affects name targeting immediately");
