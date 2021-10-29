@@ -51,15 +51,6 @@ HEADERS = \
     $(PRIVATE_HEADERS_DIR)/WebScriptObject.h \
 #
 
-ifeq ($(WK_PLATFORM_NAME), macosx)
-HEADERS += \
-    $(PRIVATE_HEADERS_DIR)/npapi.h \
-    $(PRIVATE_HEADERS_DIR)/npfunctions.h \
-    $(PRIVATE_HEADERS_DIR)/npruntime.h \
-    $(PRIVATE_HEADERS_DIR)/nptypes.h \
-#
-endif
-
 ifneq ($(WK_PLATFORM_NAME), macosx)
 HEADERS += \
     $(PRIVATE_HEADERS_DIR)/AbstractPasteboard.h \

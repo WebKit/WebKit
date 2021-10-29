@@ -1,3 +1,10 @@
+2021-10-29  Alex Christensen  <achristensen@webkit.org>
+
+        Fix internal macOS build after r285047
+        https://bugs.webkit.org/show_bug.cgi?id=232462
+
+        * MigrateHeaders.make:
+
 2021-10-29  David Kilzer  <ddkilzer@apple.com>
 
         [WebKitLegacy] Enable -Wformat=2 warnings
