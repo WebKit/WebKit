@@ -1,0 +1,7 @@
+
+PASS Supports passive option on addEventListener only
+FAIL preventDefault should be ignored if-and-only-if the passive option is true Can't find variable: document
+PASS returnValue should be ignored if-and-only-if the passive option is true
+FAIL passive behavior of one listener should be unaffected by the presence of other listeners Can't find variable: document
+PASS Equivalence of option values
+

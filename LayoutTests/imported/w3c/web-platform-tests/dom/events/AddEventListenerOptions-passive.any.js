@@ -1,13 +1,4 @@
-<!DOCTYPE HTML>
-<meta charset="utf-8">
-<title>EventListenerOptions.passive</title>
-<link rel="author" title="Rick Byers" href="mailto:rbyers@chromium.org">
-<link rel="help" href="https://dom.spec.whatwg.org/#dom-addeventlisteneroptions-passive">
-<script src="/resources/testharness.js"></script>
-<script src="/resources/testharnessreport.js"></script>
-<div id="log"></div>
-
-<script>
+// META: title=AddEventListenerOptions.passive
 
 test(function() {
   var supportsPassive = false;
@@ -22,11 +13,12 @@ test(function() {
     }
   };
 
-  document.addEventListener('test_event', null, query_options);
+  const et = new EventTarget();
+  et.addEventListener('test_event', null, query_options);
   assert_true(supportsPassive, "addEventListener doesn't support the passive option");
 
   supportsPassive = false;
-  document.removeEventListener('test_event', null, query_options);
+  et.removeEventListener('test_event', null, query_options);
   assert_false(supportsPassive, "removeEventListener supports the passive option when it should not");
 }, "Supports passive option on addEventListener only");
 
@@ -37,13 +29,14 @@ function testPassiveValue(optionsValue, expectedDefaultPrevented) {
     e.preventDefault();
     defaultPrevented = e.defaultPrevented;
   }
-  document.addEventListener('test', handler, optionsValue);
+  const et = new EventTarget();
+  et.addEventListener('test', handler, optionsValue);
   var uncanceled = document.body.dispatchEvent(new Event('test', {bubbles: true, cancelable: true}));
 
   assert_equals(defaultPrevented, expectedDefaultPrevented, "Incorrect defaultPrevented for options: " + JSON.stringify(optionsValue));
   assert_equals(uncanceled, !expectedDefaultPrevented, "Incorrect return value from dispatchEvent");
 
-  document.removeEventListener('test', handler, optionsValue);
+  et.removeEventListener('test', handler, optionsValue);
 }
 
 test(function() {
@@ -62,13 +55,14 @@ function testPassiveValueOnReturnValue(test, optionsValue, expectedDefaultPreven
     e.returnValue = false;
     defaultPrevented = e.defaultPrevented;
   });
-  document.addEventListener('test', handler, optionsValue);
-  var uncanceled = document.body.dispatchEvent(new Event('test', {bubbles: true, cancelable: true}));
+  const et = new EventTarget();
+  et.addEventListener('test', handler, optionsValue);
+  var uncanceled = et.dispatchEvent(new Event('test', {bubbles: true, cancelable: true}));
 
   assert_equals(defaultPrevented, expectedDefaultPrevented, "Incorrect defaultPrevented for options: " + JSON.stringify(optionsValue));
   assert_equals(uncanceled, !expectedDefaultPrevented, "Incorrect return value from dispatchEvent");
 
-  document.removeEventListener('test', handler, optionsValue);
+  et.removeEventListener('test', handler, optionsValue);
 }
 
 async_test(t => {
@@ -91,16 +85,17 @@ function testPassiveWithOtherHandlers(optionsValue, expectedDefaultPrevented) {
     handlerInvoked2 = true;
   };
 
-  document.addEventListener('test', dummyHandler1, {passive:true});
-  document.addEventListener('test', dummyHandler2);
+  const et = new EventTarget();
+  et.addEventListener('test', dummyHandler1, {passive:true});
+  et.addEventListener('test', dummyHandler2);
 
   testPassiveValue(optionsValue, expectedDefaultPrevented);
 
   assert_true(handlerInvoked1, "Extra passive handler not invoked");
   assert_true(handlerInvoked2, "Extra non-passive handler not invoked");
 
-  document.removeEventListener('test', dummyHandler1);
-  document.removeEventListener('test', dummyHandler2);
+  et.removeEventListener('test', dummyHandler1);
+  et.removeEventListener('test', dummyHandler2);
 }
 
 test(function() {
@@ -114,13 +109,14 @@ function testOptionEquivalence(optionValue1, optionValue2, expectedEquality) {
   var handler = function handler(e) {
     invocationCount++;
   }
-  document.addEventListener('test', handler, optionValue1);
-  document.addEventListener('test', handler, optionValue2);
-  document.body.dispatchEvent(new Event('test', {bubbles: true}));
+  const et = new EventTarget();
+  et.addEventListener('test', handler, optionValue1);
+  et.addEventListener('test', handler, optionValue2);
+  et.dispatchEvent(new Event('test', {bubbles: true}));
   assert_equals(invocationCount, expectedEquality ? 1 : 2, "equivalence of options " +
     JSON.stringify(optionValue1) + " and " + JSON.stringify(optionValue2));
-  document.removeEventListener('test', handler, optionValue1);
-  document.removeEventListener('test', handler, optionValue2);
+  et.removeEventListener('test', handler, optionValue1);
+  et.removeEventListener('test', handler, optionValue2);
 }
 
 test(function() {
@@ -136,4 +132,3 @@ test(function() {
 
 }, "Equivalence of option values");
 
-</script>

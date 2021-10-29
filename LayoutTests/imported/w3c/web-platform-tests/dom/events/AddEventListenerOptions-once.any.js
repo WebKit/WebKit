@@ -1,12 +1,6 @@
-<!DOCTYPE html>
-<meta charset="utf-8">
-<title>AddEventListenerOptions.once</title>
-<link rel="author" title="Xidorn Quan" href="https://www.upsuper.org">
-<link rel="help" href="https://dom.spec.whatwg.org/#dom-addeventlisteneroptions-once">
-<script src="/resources/testharness.js"></script>
-<script src="/resources/testharnessreport.js"></script>
-<div id="log"></div>
-<script>
+// META: title=AddEventListenerOptions.once
+
+"use strict";
 
 test(function() {
   var invoked_once = false;
@@ -18,41 +12,43 @@ test(function() {
     invoked_normal = true;
   }
 
-  document.addEventListener('test', handler_once, {once: true});
-  document.addEventListener('test', handler_normal);
-  document.dispatchEvent(new Event('test'));
+  const et = new EventTarget();
+  et.addEventListener('test', handler_once, {once: true});
+  et.addEventListener('test', handler_normal);
+  et.dispatchEvent(new Event('test'));
   assert_equals(invoked_once, true, "Once handler should be invoked");
   assert_equals(invoked_normal, true, "Normal handler should be invoked");
 
   invoked_once = false;
   invoked_normal = false;
-  document.dispatchEvent(new Event('test'));
+  et.dispatchEvent(new Event('test'));
   assert_equals(invoked_once, false, "Once handler shouldn't be invoked again");
   assert_equals(invoked_normal, true, "Normal handler should be invoked again");
-  document.removeEventListener('test', handler_normal);
+  et.removeEventListener('test', handler_normal);
 }, "Once listener should be invoked only once");
 
 test(function() {
+  const et = new EventTarget();
   var invoked_count = 0;
   function handler() {
     invoked_count++;
     if (invoked_count == 1)
-      document.dispatchEvent(new Event('test'));
+    et.dispatchEvent(new Event('test'));
   }
-  document.addEventListener('test', handler, {once: true});
-  document.dispatchEvent(new Event('test'));
+  et.addEventListener('test', handler, {once: true});
+  et.dispatchEvent(new Event('test'));
   assert_equals(invoked_count, 1, "Once handler should only be invoked once");
 
   invoked_count = 0;
   function handler2() {
     invoked_count++;
     if (invoked_count == 1)
-      document.addEventListener('test', handler2, {once: true});
+      et.addEventListener('test', handler2, {once: true});
     if (invoked_count <= 2)
-      document.dispatchEvent(new Event('test'));
+      et.dispatchEvent(new Event('test'));
   }
-  document.addEventListener('test', handler2, {once: true});
-  document.dispatchEvent(new Event('test'));
+  et.addEventListener('test', handler2, {once: true});
+  et.dispatchEvent(new Event('test'));
   assert_equals(invoked_count, 2, "Once handler should only be invoked once after each adding");
 }, "Once listener should be invoked only once even if the event is nested");
 
@@ -62,37 +58,39 @@ test(function() {
     invoked_count++;
   }
 
-  document.addEventListener('test', handler, {once: true});
-  document.addEventListener('test', handler);
-  document.dispatchEvent(new Event('test'));
+  const et = new EventTarget();
+
+  et.addEventListener('test', handler, {once: true});
+  et.addEventListener('test', handler);
+  et.dispatchEvent(new Event('test'));
   assert_equals(invoked_count, 1, "The handler should only be added once");
 
   invoked_count = 0;
-  document.dispatchEvent(new Event('test'));
+  et.dispatchEvent(new Event('test'));
   assert_equals(invoked_count, 0, "The handler was added as a once listener");
 
   invoked_count = 0;
-  document.addEventListener('test', handler, {once: true});
-  document.removeEventListener('test', handler);
-  document.dispatchEvent(new Event('test'));
+  et.addEventListener('test', handler, {once: true});
+  et.removeEventListener('test', handler);
+  et.dispatchEvent(new Event('test'));
   assert_equals(invoked_count, 0, "The handler should have been removed");
 }, "Once listener should be added / removed like normal listeners");
 
 test(function() {
+  const et = new EventTarget();
+
   var invoked_count = 0;
 
   for (let n = 4; n > 0; n--) {
-    document.addEventListener('test', (e) => {
+    et.addEventListener('test', (e) => {
       invoked_count++;
       e.stopImmediatePropagation();
     }, {once: true});
   }
 
   for (let n = 4; n > 0; n--) {
-    document.dispatchEvent(new Event('test'));
+    et.dispatchEvent(new Event('test'));
   }
 
   assert_equals(invoked_count, 4, "The listeners should be invoked");
 }, "Multiple once listeners should be invoked even if the stopImmediatePropagation is set");
-
-</script>

@@ -1,5 +1,16 @@
 2021-10-28  Chris Dumez  <cdumez@apple.com>
 
+        Resync web-platform-tests/dom from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=232441
+
+        Reviewed by Darin Adler.
+
+        Resync web-platform-tests/dom from upstream 038de3e0ddeaf9e.
+
+        * web-platform-tests/dom/*: Updated.
+
+2021-10-28  Chris Dumez  <cdumez@apple.com>
+
         Import web-platform-tests/web-locks API tests from upstream
         https://bugs.webkit.org/show_bug.cgi?id=232406
 

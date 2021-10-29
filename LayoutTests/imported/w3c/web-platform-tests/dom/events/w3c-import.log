@@ -14,8 +14,8 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/dom/events/AddEventListenerOptions-once.html
-/LayoutTests/imported/w3c/web-platform-tests/dom/events/AddEventListenerOptions-passive.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/events/AddEventListenerOptions-once.any.js
+/LayoutTests/imported/w3c/web-platform-tests/dom/events/AddEventListenerOptions-passive.any.js
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/AddEventListenerOptions-signal.any.js
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/CustomEvent.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/Event-cancelBubble.html
@@ -68,13 +68,14 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/EventListener-invoke-legacy.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/EventListenerOptions-capture.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/EventTarget-add-listener-platform-object.html
-/LayoutTests/imported/w3c/web-platform-tests/dom/events/EventTarget-add-remove-listener.html
-/LayoutTests/imported/w3c/web-platform-tests/dom/events/EventTarget-addEventListener.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/events/EventTarget-add-remove-listener.any.js
+/LayoutTests/imported/w3c/web-platform-tests/dom/events/EventTarget-addEventListener.any.js
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/EventTarget-constructible.any.js
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/EventTarget-dispatchEvent-returnvalue.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/EventTarget-dispatchEvent.html
-/LayoutTests/imported/w3c/web-platform-tests/dom/events/EventTarget-removeEventListener.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/events/EventTarget-removeEventListener.any.js
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/EventTarget-this-of-listener.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/events/KeyEvent-initKeyEvent.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/document-level-touchmove-event-listener-passive-by-default.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/document-level-wheel-event-listener-passive-by-default.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/event-disabled-dynamic.html
