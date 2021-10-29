@@ -1,3 +1,20 @@
+2021-10-29  David Kilzer  <ddkilzer@apple.com>
+
+        [WebKitLegacy] Enable -Wformat=2 warnings
+        <https://webkit.org/b/232333>
+        <rdar://problem/84681560>
+
+        Reviewed by Darin Adler.
+
+        * Configurations/Base.xcconfig:
+        (WARNING_CFLAGS):
+        - Replace -Wformat-security with -Wformat=2, which enables more
+          warnings like -Wformat-nonliteral.
+        * Misc/WebLocalizableStringsInternal.h:
+        (WebLocalizedStringInternal):
+        - Add NS_FORMAT_ARGUMENT() macro to fix -Wformat-nonliteral
+          warnings.
+
 2021-10-29  Alex Christensen  <achristensen@webkit.org>
 
         Remove code inside ENABLE(NETSCAPE_PLUGIN_API)
