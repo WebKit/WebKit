@@ -286,6 +286,11 @@ bool AudioSampleDataSource::pullSamples(AudioBufferList& buffer, size_t sampleCo
 
     m_isFirstPull = false;
 
+    return pullSamplesInternal(buffer, sampleCount, timeStamp, mode);
+}
+
+bool AudioSampleDataSource::pullSamplesInternal(AudioBufferList& buffer, size_t sampleCount, uint64_t timeStamp, PullMode mode)
+{
     if (mode == Copy) {
         m_ringBuffer->fetch(&buffer, sampleCount, timeStamp, CARingBuffer::Copy);
         if (m_volume < EquivalentToMaxVolume)
@@ -307,6 +312,25 @@ bool AudioSampleDataSource::pullSamples(AudioBufferList& buffer, size_t sampleCo
         return false;
 
     return true;
+}
+
+bool AudioSampleDataSource::pullAvailableSampleChunk(AudioBufferList& buffer, size_t sampleCount, uint64_t timeStamp, PullMode mode)
+{
+    ASSERT(buffer.mNumberBuffers == m_ringBuffer->channelCount());
+    if (buffer.mNumberBuffers != m_ringBuffer->channelCount())
+        return false;
+
+    if (m_muted)
+        return false;
+
+    if (m_shouldComputeOutputSampleOffset) {
+        m_shouldComputeOutputSampleOffset = false;
+        m_outputSampleOffset = m_inputSampleOffset.timeValue() * m_outputDescription->sampleRate() / m_inputSampleOffset.timeScale();
+    }
+
+    timeStamp += m_outputSampleOffset;
+
+    return pullSamplesInternal(buffer, sampleCount, timeStamp, mode);
 }
 
 bool AudioSampleDataSource::pullAvailableSamplesAsChunks(AudioBufferList& buffer, size_t sampleCountPerChunk, uint64_t timeStamp, Function<void()>&& consumeFilledBuffer)

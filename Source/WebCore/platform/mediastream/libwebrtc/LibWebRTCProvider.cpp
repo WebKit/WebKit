@@ -70,6 +70,16 @@ bool LibWebRTCProvider::webRTCAvailable()
 }
 #endif
 
+#if USE(LIBWEBRTC)
+LibWebRTCProvider::LibWebRTCProvider()
+{
+}
+#endif
+
+LibWebRTCProvider::~LibWebRTCProvider()
+{
+}
+
 #if !USE(LIBWEBRTC) || !PLATFORM(COCOA)
 void LibWebRTCProvider::registerWebKitVP9Decoder()
 {
@@ -271,9 +281,17 @@ webrtc::PeerConnectionFactoryInterface* LibWebRTCProvider::factory()
     return m_factory;
 }
 
+void LibWebRTCProvider::clearFactory()
+{
+    m_audioModule = nullptr;
+    m_factory = nullptr;
+}
+
 rtc::scoped_refptr<webrtc::PeerConnectionFactoryInterface> LibWebRTCProvider::createPeerConnectionFactory(rtc::Thread* networkThread, rtc::Thread* signalingThread)
 {
-    auto audioModule = rtc::scoped_refptr<webrtc::AudioDeviceModule>(new rtc::RefCountedObject<LibWebRTCAudioModule>());
+    ASSERT(!m_audioModule);
+    auto audioModule = rtc::scoped_refptr<LibWebRTCAudioModule>(new rtc::RefCountedObject<LibWebRTCAudioModule>());
+    m_audioModule = audioModule.get();
 
     return webrtc::CreatePeerConnectionFactory(networkThread, signalingThread, signalingThread, WTFMove(audioModule), webrtc::CreateBuiltinAudioEncoderFactory(), webrtc::CreateBuiltinAudioDecoderFactory(), createEncoderFactory(), createDecoderFactory(), nullptr, nullptr, nullptr);
 }

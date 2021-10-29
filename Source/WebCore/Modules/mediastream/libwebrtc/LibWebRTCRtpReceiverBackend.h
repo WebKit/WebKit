@@ -35,7 +35,7 @@ class RtpReceiverInterface;
 }
 
 namespace WebCore {
-
+class Document;
 class RealtimeMediaSource;
 
 class LibWebRTCRtpReceiverBackend final : public RTCRtpReceiverBackend {
@@ -46,7 +46,7 @@ public:
 
     webrtc::RtpReceiverInterface* rtcReceiver() { return m_rtcReceiver.get(); }
 
-    Ref<RealtimeMediaSource> createSource();
+    Ref<RealtimeMediaSource> createSource(Document&);
 
 private:
     RTCRtpParameters getParameters() final;

@@ -36,8 +36,9 @@
 
 namespace WebCore {
 
-AudioMediaStreamTrackRendererCocoa::AudioMediaStreamTrackRendererCocoa()
-    : m_resetObserver([this] { reset(); })
+AudioMediaStreamTrackRendererCocoa::AudioMediaStreamTrackRendererCocoa(Init&& init)
+    : AudioMediaStreamTrackRenderer(WTFMove(init))
+    , m_resetObserver([this] { reset(); })
 {
 }
 
@@ -59,12 +60,19 @@ void AudioMediaStreamTrackRendererCocoa::start(CompletionHandler<void()>&& callb
     });
 }
 
+BaseAudioMediaStreamTrackRendererUnit& AudioMediaStreamTrackRendererCocoa::rendererUnit()
+{
+    if (auto* audioModule = this->audioModule())
+        return audioModule->incomingAudioMediaStreamTrackRendererUnit();
+    return AudioMediaStreamTrackRendererUnit::singleton();
+}
+
 void AudioMediaStreamTrackRendererCocoa::stop()
 {
     ASSERT(isMainThread());
 
     if (m_registeredDataSource)
-        AudioMediaStreamTrackRendererUnit::singleton().removeSource(*m_registeredDataSource);
+        rendererUnit().removeSource(*m_registeredDataSource);
 }
 
 void AudioMediaStreamTrackRendererCocoa::clear()
@@ -95,7 +103,7 @@ void AudioMediaStreamTrackRendererCocoa::reset()
 void AudioMediaStreamTrackRendererCocoa::setAudioOutputDevice(const String& deviceId)
 {
     // FIXME: We should create a unit for ourselves here or use the default unit if deviceId is matching.
-    AudioMediaStreamTrackRendererUnit::singleton().setAudioOutputDevice(deviceId);
+    rendererUnit().setAudioOutputDevice(deviceId);
     m_shouldRecreateDataSource = true;
 }
 
@@ -104,7 +112,7 @@ void AudioMediaStreamTrackRendererCocoa::setRegisteredDataSource(RefPtr<AudioSam
     ASSERT(isMainThread());
 
     if (m_registeredDataSource)
-        AudioMediaStreamTrackRendererUnit::singleton().removeSource(*m_registeredDataSource);
+        rendererUnit().removeSource(*m_registeredDataSource);
 
     if (!m_outputDescription)
         return;
@@ -115,8 +123,8 @@ void AudioMediaStreamTrackRendererCocoa::setRegisteredDataSource(RefPtr<AudioSam
 
     m_registeredDataSource->setLogger(logger(), logIdentifier());
     m_registeredDataSource->setVolume(volume());
-    AudioMediaStreamTrackRendererUnit::singleton().addResetObserver(m_resetObserver);
-    AudioMediaStreamTrackRendererUnit::singleton().addSource(*m_registeredDataSource);
+    rendererUnit().addResetObserver(m_resetObserver);
+    rendererUnit().addSource(*m_registeredDataSource);
 }
 
 static unsigned pollSamplesCount()

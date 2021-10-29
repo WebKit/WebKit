@@ -34,6 +34,7 @@
 #if USE(LIBWEBRTC)
 
 #include "LibWebRTCAudioFormat.h"
+#include "LibWebRTCAudioModule.h"
 #include "Logging.h"
 
 namespace WebCore {
@@ -78,6 +79,12 @@ const RealtimeMediaSourceCapabilities& RealtimeIncomingAudioSource::capabilities
 const RealtimeMediaSourceSettings& RealtimeIncomingAudioSource::settings()
 {
     return m_currentSettings;
+}
+
+void RealtimeIncomingAudioSource::setAudioModule(RefPtr<LibWebRTCAudioModule>&& audioModule)
+{
+    ASSERT(!m_audioModule);
+    m_audioModule = WTFMove(audioModule);
 }
 
 }

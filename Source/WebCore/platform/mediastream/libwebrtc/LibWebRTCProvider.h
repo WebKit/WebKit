@@ -79,7 +79,7 @@ class WEBCORE_EXPORT LibWebRTCProvider {
 public:
     static UniqueRef<LibWebRTCProvider> create();
 
-    virtual ~LibWebRTCProvider() = default;
+    virtual ~LibWebRTCProvider();
 
     static bool webRTCAvailable();
     static void registerWebKitVP9Decoder();
@@ -103,6 +103,7 @@ public:
     virtual rtc::scoped_refptr<webrtc::PeerConnectionInterface> createPeerConnection(DocumentIdentifier, webrtc::PeerConnectionObserver&, rtc::PacketSocketFactory*, webrtc::PeerConnectionInterface::RTCConfiguration&&);
 
     webrtc::PeerConnectionFactoryInterface* factory();
+    LibWebRTCAudioModule* audioModule();
 
     // FIXME: Make these methods not static.
     static void callOnWebRTCNetworkThread(Function<void()>&&);
@@ -134,7 +135,7 @@ public:
     std::optional<RTCRtpCapabilities> receiverCapabilities(const String& kind);
     std::optional<RTCRtpCapabilities> senderCapabilities(const String& kind);
 
-    void clearFactory() { m_factory = nullptr; }
+    void clearFactory();
 
     virtual void setLoggingLevel(WTFLogLevel);
     void setEnableWebRTCEncryption(bool);
@@ -150,7 +151,7 @@ public:
     virtual std::unique_ptr<SuspendableSocketFactory> createSocketFactory(String&& /* userAgent */, bool /* isFirstParty */, RegistrableDomain&&) { return nullptr; }
 
 protected:
-    LibWebRTCProvider() = default;
+    LibWebRTCProvider();
 
     rtc::scoped_refptr<webrtc::PeerConnectionInterface> createPeerConnection(webrtc::PeerConnectionObserver&, rtc::NetworkManager&, rtc::PacketSocketFactory&, webrtc::PeerConnectionInterface::RTCConfiguration&&, std::unique_ptr<webrtc::AsyncResolverFactory>&&);
 
@@ -171,6 +172,7 @@ protected:
     // FIXME: Remove m_useNetworkThreadWithSocketServer member variable and make it a global.
     bool m_useNetworkThreadWithSocketServer { true };
 
+    RefPtr<LibWebRTCAudioModule> m_audioModule;
     rtc::scoped_refptr<webrtc::PeerConnectionFactoryInterface> m_factory;
     bool m_disableNonLocalhostConnections { false };
     bool m_supportsH265 { false };
@@ -186,5 +188,12 @@ protected:
     std::optional<RTCRtpCapabilities> m_videoEncodingCapabilities;
 #endif
 };
+
+#if USE(LIBWEBRTC)
+inline LibWebRTCAudioModule* LibWebRTCProvider::audioModule()
+{
+    return m_audioModule.get();
+}
+#endif
 
 } // namespace WebCore

@@ -29,8 +29,10 @@
 
 #include "Document.h"
 #include "IceCandidate.h"
+#include "LibWebRTCAudioModule.h"
 #include "LibWebRTCDataChannelHandler.h"
 #include "LibWebRTCMediaEndpoint.h"
+#include "LibWebRTCProvider.h"
 #include "LibWebRTCRtpReceiverBackend.h"
 #include "LibWebRTCRtpSenderBackend.h"
 #include "LibWebRTCRtpTransceiverBackend.h"
@@ -293,7 +295,8 @@ Ref<RTCRtpReceiver> LibWebRTCPeerConnectionBackend::createReceiver(std::unique_p
 {
     auto& document = downcast<Document>(*m_peerConnection.scriptExecutionContext());
 
-    auto source = backend->createSource();
+    auto source = backend->createSource(document);
+
     // Remote source is initially muted and will be unmuted when receiving the first packet.
     source->setMuted(true);
     auto trackID = source->persistentID();

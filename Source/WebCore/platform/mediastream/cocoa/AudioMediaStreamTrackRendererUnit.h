@@ -28,10 +28,9 @@
 #if ENABLE(MEDIA_STREAM)
 
 #include "AudioMediaStreamTrackRendererInternalUnit.h"
-#include <wtf/Forward.h>
+#include "BaseAudioMediaStreamTrackRendererUnit.h"
 #include <wtf/HashSet.h>
 #include <wtf/Lock.h>
-#include <wtf/Observer.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakHashSet.h>
@@ -43,7 +42,7 @@ class AudioSampleBufferList;
 class CAAudioStreamDescription;
 class AudioMediaStreamTrackRendererInternalUnit;
 
-class AudioMediaStreamTrackRendererUnit {
+class AudioMediaStreamTrackRendererUnit : public BaseAudioMediaStreamTrackRendererUnit {
 public:
     WEBCORE_EXPORT static AudioMediaStreamTrackRendererUnit& singleton();
 
@@ -56,14 +55,13 @@ public:
     WEBCORE_EXPORT void render(size_t sampleCount, AudioBufferList&, uint64_t sampleTime, double hostTime, AudioUnitRenderActionFlags&);
     void reset();
 
-    void setAudioOutputDevice(const String&);
-
-    void addSource(Ref<AudioSampleDataSource>&&);
-    void removeSource(AudioSampleDataSource&);
-
-    using ResetObserver = Observer<void()>;
-    void addResetObserver(ResetObserver& observer) { m_resetObservers.add(observer); }
     void retrieveFormatDescription(CompletionHandler<void(const CAAudioStreamDescription*)>&&);
+
+    // BaseAudioMediaStreamTrackRendererUnit
+    void setAudioOutputDevice(const String&) final;
+    void addSource(Ref<AudioSampleDataSource>&&) final;
+    void removeSource(AudioSampleDataSource&) final;
+    void addResetObserver(ResetObserver& observer) final { m_resetObservers.add(observer); }
 
 private:
     void start();

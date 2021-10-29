@@ -61,6 +61,7 @@ public:
     bool pullSamples(AudioBufferList&, size_t, uint64_t, double, PullMode);
 
     bool pullAvailableSamplesAsChunks(AudioBufferList&, size_t frameCount, uint64_t timeStamp, Function<void()>&&);
+    bool pullAvailableSampleChunk(AudioBufferList&, size_t frameCount, uint64_t timeStamp, PullMode);
 
     void setVolume(float volume) { m_volume = volume; }
     float volume() const { return m_volume; }
@@ -69,6 +70,7 @@ public:
     bool muted() const { return m_muted; }
 
     const CAAudioStreamDescription* inputDescription() const { return m_inputDescription ? &m_inputDescription.value() : nullptr; }
+    const CAAudioStreamDescription* outputDescription() const { return m_outputDescription ? &m_outputDescription.value() : nullptr; }
 
     void recomputeSampleOffset() { m_shouldComputeOutputSampleOffset = true; }
 
@@ -86,6 +88,7 @@ private:
     OSStatus setupConverter();
 
     void pushSamplesInternal(const AudioBufferList&, const MediaTime&, size_t frameCount);
+    bool pullSamplesInternal(AudioBufferList&, size_t sampleCount, uint64_t timeStamp, PullMode);
 
     std::optional<CAAudioStreamDescription> m_inputDescription;
     std::optional<CAAudioStreamDescription> m_outputDescription;
