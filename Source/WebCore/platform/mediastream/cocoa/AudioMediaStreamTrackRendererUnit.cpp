@@ -176,18 +176,14 @@ void AudioMediaStreamTrackRendererUnit::render(size_t sampleCount, AudioBufferLi
 
     updateRenderSourcesIfNecessary();
 
-    if (m_renderSources.isEmpty()) {
-        actionFlags = kAudioUnitRenderAction_OutputIsSilence;
-        return;
-    }
-
     // Mix all sources.
-    bool isFirstSource = true;
+    bool hasCopiedData = false;
     for (auto& source : m_renderSources) {
-        source->pullSamples(ioData, sampleCount, sampleTime, hostTime, isFirstSource ? AudioSampleDataSource::Copy : AudioSampleDataSource::Mix);
-        isFirstSource = false;
+        if (source->pullSamples(ioData, sampleCount, sampleTime, hostTime, hasCopiedData ? AudioSampleDataSource::Mix : AudioSampleDataSource::Copy))
+            hasCopiedData = true;
     }
-    return;
+    if (!hasCopiedData)
+        actionFlags = kAudioUnitRenderAction_OutputIsSilence;
 }
 
 } // namespace WebCore
