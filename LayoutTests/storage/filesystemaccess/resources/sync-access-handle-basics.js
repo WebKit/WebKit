@@ -17,7 +17,11 @@ function finishTest(error)
 function getDirectory() {
     navigator.storage.getDirectory().then((handle) => {
         rootHandle = handle;
-        createFileHandle(rootHandle);
+        rootHandle.removeEntry("sync-access-handle.txt").then(() => {
+            createFileHandle(rootHandle);
+        }, () => {
+            createFileHandle(rootHandle);
+        });
     }).catch((error) => {
         finishTest(error);
     });

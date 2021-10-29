@@ -37,7 +37,7 @@ template<typename> class ExceptionOr;
 class FileSystemFileHandle final : public FileSystemHandle {
     WTF_MAKE_ISO_ALLOCATED(FileSystemFileHandle);
 public:
-    WEBCORE_EXPORT static Ref<FileSystemFileHandle> create(ScriptExecutionContext*, String&&, FileSystemHandleIdentifier, Ref<FileSystemStorageConnection>&&);
+    WEBCORE_EXPORT static Ref<FileSystemFileHandle> create(ScriptExecutionContext&, String&&, FileSystemHandleIdentifier, Ref<FileSystemStorageConnection>&&);
     void getFile(DOMPromiseDeferred<IDLInterface<File>>&&);
 
     void createSyncAccessHandle(DOMPromiseDeferred<IDLInterface<FileSystemSyncAccessHandle>>&&);
@@ -47,7 +47,7 @@ public:
     void close(FileSystemSyncAccessHandleIdentifier, CompletionHandler<void(ExceptionOr<void>&&)>&&);
 
 private:
-    FileSystemFileHandle(ScriptExecutionContext*, String&&, FileSystemHandleIdentifier, Ref<FileSystemStorageConnection>&&);
+    FileSystemFileHandle(ScriptExecutionContext&, String&&, FileSystemHandleIdentifier, Ref<FileSystemStorageConnection>&&);
 };
 
 } // namespace WebCore

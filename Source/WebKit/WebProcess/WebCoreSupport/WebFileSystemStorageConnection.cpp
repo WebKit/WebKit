@@ -48,6 +48,14 @@ void WebFileSystemStorageConnection::connectionClosed()
     m_connection = nullptr;
 }
 
+void WebFileSystemStorageConnection::closeHandle(WebCore::FileSystemHandleIdentifier identifier)
+{
+    if (!m_connection)
+        return;
+
+    m_connection->send(Messages::NetworkStorageManager::CloseHandle(identifier), 0);
+}
+
 void WebFileSystemStorageConnection::isSameEntry(WebCore::FileSystemHandleIdentifier identifier, WebCore::FileSystemHandleIdentifier otherIdentifier, WebCore::FileSystemStorageConnection::SameEntryCallback&& completionHandler)
 {
     if (!m_connection)

@@ -1,3 +1,25 @@
+2021-10-29  Sihui Liu  <sihui_liu@apple.com>
+
+        Release FileSystemStorageHandle when it is not in use
+        https://bugs.webkit.org/show_bug.cgi?id=232363
+
+        Reviewed by Youenn Fablet.
+
+        * NetworkProcess/storage/FileSystemStorageHandle.cpp:
+        (WebKit::FileSystemStorageHandle::close):
+        * NetworkProcess/storage/FileSystemStorageHandle.h:
+        * NetworkProcess/storage/FileSystemStorageManager.cpp:
+        (WebKit::FileSystemStorageManager::closeHandle):
+        (WebKit::FileSystemStorageManager::connectionClosed):
+        * NetworkProcess/storage/FileSystemStorageManager.h:
+        * NetworkProcess/storage/NetworkStorageManager.cpp:
+        (WebKit::NetworkStorageManager::closeHandle):
+        * NetworkProcess/storage/NetworkStorageManager.h:
+        * NetworkProcess/storage/NetworkStorageManager.messages.in:
+        * WebProcess/WebCoreSupport/WebFileSystemStorageConnection.cpp:
+        (WebKit::WebFileSystemStorageConnection::closeHandle):
+        * WebProcess/WebCoreSupport/WebFileSystemStorageConnection.h:
+
 2021-10-29  Ayumi Kojima  <ayumi_kojima@apple.com>
 
         Unreviewed, reverting r285007.
