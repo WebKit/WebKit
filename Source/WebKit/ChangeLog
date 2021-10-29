@@ -1,3 +1,25 @@
+2021-10-28  Tim Horton  <timothy_horton@apple.com>
+
+        Yahoo.com has fragments of wrongly-scaled content throughout when using CGDisplayListImageBufferBackend
+        https://bugs.webkit.org/show_bug.cgi?id=232459
+
+        Reviewed by Dean Jackson.
+
+        Similar to r284991, 2D transforms that getCTM() from a CGBitmap context and set
+        the result on a CGDisplayList with setCTM() (via BifurcatedGraphicsContext)
+        corrupt the display list's CTM, because it starts out in a different initial state,
+        because the display list is always recorded with a 1x scale.
+
+        To fix this, sneak the fake scale into setCTM/getCTM (multiplying it in in get,
+        dividing it out in set) so that it appears to the outside as if it has
+        the same base transform as the CGBitmap context.
+
+        * Shared/RemoteLayerTree/CGDisplayListImageBufferBackend.cpp:
+        (WebKit::GraphicsContextCGDisplayList::GraphicsContextCGDisplayList):
+        (WebKit::CGDisplayListImageBufferBackend::create):
+        * Shared/RemoteLayerTree/RemoteLayerBackingStore.mm:
+        (WebKit::RemoteLayerBackingStore::display):
+
 2021-10-28  Sihui Liu  <sihui_liu@apple.com>
 
         Release FileSystemStorageHandle when it is not in use

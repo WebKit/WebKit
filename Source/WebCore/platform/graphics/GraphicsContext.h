@@ -415,7 +415,7 @@ public:
 
     virtual void fillRect(const FloatRect&) = 0;
     virtual void fillRect(const FloatRect&, const Color&) = 0;
-    virtual void fillRect(const FloatRect&, Gradient&);
+    WEBCORE_EXPORT virtual void fillRect(const FloatRect&, Gradient&);
     WEBCORE_EXPORT virtual void fillRect(const FloatRect&, const Color&, CompositeOperator, BlendMode = BlendMode::Normal);
     virtual void fillRoundedRectImpl(const FloatRoundedRect&, const Color&) = 0;
     WEBCORE_EXPORT virtual void fillRoundedRect(const FloatRoundedRect&, const Color&, BlendMode = BlendMode::Normal);

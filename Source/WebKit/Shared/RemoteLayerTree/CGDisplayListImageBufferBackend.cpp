@@ -35,6 +35,30 @@
 
 namespace WebKit {
 
+class GraphicsContextCGDisplayList : public WebCore::GraphicsContextCG {
+public:
+    GraphicsContextCGDisplayList(CGContextRef cgContext, double immutableBaseScaleFactor)
+        : GraphicsContextCG(cgContext)
+        , m_scaleTransform(immutableBaseScaleFactor, 0, 0, immutableBaseScaleFactor, 0, 0)
+        , m_inverseScaleTransform(1. / immutableBaseScaleFactor, 0, 0, 1. / immutableBaseScaleFactor, 0, 0)
+    {
+    }
+
+    void setCTM(const WebCore::AffineTransform& transform) final
+    {
+        GraphicsContextCG::setCTM(m_inverseScaleTransform * transform);
+    }
+
+    WebCore::AffineTransform getCTM(IncludeDeviceScale includeDeviceScale) const final
+    {
+        return m_scaleTransform * GraphicsContextCG::getCTM(includeDeviceScale);
+    }
+
+private:
+    WebCore::AffineTransform m_scaleTransform;
+    WebCore::AffineTransform m_inverseScaleTransform;
+};
+
 WTF_MAKE_ISO_ALLOCATED_IMPL(CGDisplayListImageBufferBackend);
 
 size_t CGDisplayListImageBufferBackend::calculateMemoryCost(const Parameters& parameters)
@@ -55,7 +79,7 @@ std::unique_ptr<CGDisplayListImageBufferBackend> CGDisplayListImageBufferBackend
     if (!cgContext)
         return nullptr;
 
-    auto context = makeUnique<WebCore::GraphicsContextCG>(cgContext.get());
+    auto context = makeUnique<GraphicsContextCGDisplayList>(cgContext.get(), parameters.resolutionScale);
     return std::unique_ptr<CGDisplayListImageBufferBackend>(new CGDisplayListImageBufferBackend(parameters, WTFMove(context)));
 }
 
