@@ -25,7 +25,6 @@
 
 namespace WTF {
 
-class ASCIILiteral;
 class AbstractLocker;
 class AtomString;
 class AtomStringImpl;
@@ -48,8 +47,8 @@ class StringView;
 class SuspendableWorkQueue;
 class TextPosition;
 class TextStream;
-class URL;
 class UniquedStringImpl;
+class URL;
 class WallTime;
 
 struct AnyThreadsAccessTraits;
@@ -119,7 +118,6 @@ template<class, class> class expected;
 template<class> class unexpected;
 }}} // namespace std::experimental::fundamentals_v3
 
-using WTF::ASCIILiteral;
 using WTF::AbstractLocker;
 using WTF::AtomString;
 using WTF::AtomStringImpl;

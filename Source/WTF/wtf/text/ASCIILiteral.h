@@ -26,7 +26,6 @@
 #pragma once
 
 #include <wtf/ASCIICType.h>
-#include <wtf/Forward.h>
 #include <wtf/StdLibExtras.h>
 
 namespace WTF {
@@ -79,3 +78,4 @@ constexpr ASCIILiteral operator"" _s(const char* characters, size_t n)
 } // namespace WTF
 
 using namespace WTF::StringLiterals;
+using WTF::ASCIILiteral;

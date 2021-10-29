@@ -1,3 +1,17 @@
+2021-10-29  Ayumi Kojima  <ayumi_kojima@apple.com>
+
+        Unreviewed, reverting r285038.
+
+        Reverting the commit because it broke the open source test
+        runs and also caused an impanct on EWS queues
+
+        Reverted changeset:
+
+        "Create constants for all special frame names used in anchor
+        target attribute values and elsewhere"
+        https://bugs.webkit.org/show_bug.cgi?id=232488
+        https://commits.webkit.org/r285038
+
 2021-10-29  Darin Adler  <darin@apple.com>
 
         Create constants for all special frame names used in anchor target attribute values and elsewhere
