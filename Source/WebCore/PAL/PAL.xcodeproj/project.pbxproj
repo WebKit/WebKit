@@ -137,7 +137,7 @@
 		4450FCA021F5F602004DFA56 /* QuickLookSoftLink.h in Headers */ = {isa = PBXBuildFile; fileRef = 4450FC9E21F5F602004DFA56 /* QuickLookSoftLink.h */; };
 		44E1A8AF21FA54E600C3048E /* LookupSoftLink.h in Headers */ = {isa = PBXBuildFile; fileRef = 44E1A8AD21FA54DA00C3048E /* LookupSoftLink.h */; };
 		44E1A8B021FA54EB00C3048E /* LookupSoftLink.mm in Sources */ = {isa = PBXBuildFile; fileRef = 44E1A8AE21FA54DA00C3048E /* LookupSoftLink.mm */; };
-		4996C0F32717644C002C125D /* TCCSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 4996C0F22717642B002C125D /* TCCSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		4996C0F32717644C002C125D /* TCCSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 4996C0F22717642B002C125D /* TCCSPI.h */; };
 		517E03F924B7C0070054895A /* IOKitSPIMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 517E03F824B7C0060054895A /* IOKitSPIMac.h */; };
 		570AB8F120AE2E8D00B8BE87 /* SecKeyProxySPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 570AB8F020AE2E8D00B8BE87 /* SecKeyProxySPI.h */; };
 		570AB8F920AF6E3D00B8BE87 /* NSXPCConnectionSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 570AB8F820AF6E3D00B8BE87 /* NSXPCConnectionSPI.h */; };
