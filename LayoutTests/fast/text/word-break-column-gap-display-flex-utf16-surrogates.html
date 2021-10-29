@@ -48,6 +48,12 @@
 
     // surrogate lead + surrogate trail + surrogate lead
     document.getElementById("div14").append("\ud800\udc00\ud800");
+
+    // single + surrogate trail + surrogate lead + single
+    document.getElementById("div15").append("r\udc00\ud800r");
+
+    // single + surrogate lead + surrogate trail + single
+    document.getElementById("div16").append("r\ud800\udc00r");
    
     if (window.testRunner)
         testRunner.dumpAsText();
@@ -67,4 +73,6 @@
 <div id="div12"></div>
 <div id="div13"></div>
 <div id="div14"></div>
+<div id="div15"></div>
+<div id="div16"></div>
 PASS

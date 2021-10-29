@@ -151,6 +151,8 @@ TextUtil::WordBreakLeft TextUtil::breakWord(const InlineTextItem& inlineTextItem
         // We should never break in the middle of a surrogate pair. They are considered one joint entity.
         auto offset = index + 1;
         U16_SET_CP_LIMIT(text, 0, offset, text.length());
+
+        // Returns the index at trail.
         return offset - 1;
     };
 
@@ -169,9 +171,11 @@ TextUtil::WordBreakLeft TextUtil::breakWord(const InlineTextItem& inlineTextItem
             left = middle + 1;
             leftSideWidth = width;
         } else if (width > availableWidth) {
-            // When the substring does not fit, the right side is supposed to be the start of the surrogate pair if applicable.
+            // When the substring does not fit, the right side is supposed to be the start of the surrogate pair if applicable, unless startPosition falls between surrogate pair.
             right = middle;
             U16_SET_CP_START(text, 0, right);
+            if (right < startPosition)
+                return { };
         } else {
             right = middle + 1;
             leftSideWidth = width;
