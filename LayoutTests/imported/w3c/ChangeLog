@@ -1,3 +1,13 @@
+2021-10-29  Chris Dumez  <cdumez@apple.com>
+
+        [ iOS ] imported/w3c/web-platform-tests/dom/events/scrolling/iframe-chains.html is missing its results
+        https://bugs.webkit.org/show_bug.cgi?id=232484
+        <rdar://problem/84809167>
+
+        Unreviewed, land expected.txt for new test introduced in r285010 during the WPT resync.
+
+        * web-platform-tests/dom/events/scrolling/iframe-chains-expected.txt: Added.
+
 2021-10-29  Martin Robinson  <mrobinson@webkit.org>
 
         opacity should flatten when combined with transform-style: preserve-3d
