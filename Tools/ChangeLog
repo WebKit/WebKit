@@ -1,3 +1,16 @@
+2021-10-29  Alex Christensen  <achristensen@webkit.org>
+
+        [ Monterey iOS15 ] TestWebKitAPI.URLSchemeHandler.Ranges is a constant timeout
+        https://bugs.webkit.org/show_bug.cgi?id=231394
+
+        Reviewed by Jer Noble.
+
+        For some reason, AVFoundation used to play videos from custom schemes when you respond to range requests with 1 fewer byte than requested.
+        They stopped successfully playing videos in such circumstances, which is fine.  I had accidentally done that in my test.
+        When I respond properly, the test starts passing again.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKURLSchemeHandler-1.mm:
+
 2021-10-29  John Pascoe  <j_pascoe@apple.com>
 
         Add last modified and creation time to +[_WKWebAuthenticationPanel getAllLocalAuthenticatorCredentials]
