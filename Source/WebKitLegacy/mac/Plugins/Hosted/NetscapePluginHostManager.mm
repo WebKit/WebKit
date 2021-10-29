@@ -311,7 +311,12 @@ void NetscapePluginHostManager::didCreateWindow()
     PluginHostMap::iterator end = m_pluginHosts.end();
     for (PluginHostMap::iterator it = m_pluginHosts.begin(); it != end; ++it) {
         NetscapePluginHostProxy* hostProxy = it->value;
-        
+
+        if (!hostProxy) {
+            LOG_ERROR("Could not find a NetscapePluginHostProxy for key %s.", it->key.utf8().data());
+            continue;
+        }
+
         if (!hostProxy->isMenuBarVisible()) {
             // Make ourselves the front process.
             ProcessSerialNumber psn;

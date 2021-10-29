@@ -1,3 +1,16 @@
+2021-10-28  Per Arne Vollan <pvollan@apple.com>
+
+        Layout test is crashing inside WebChromeClient::createWindow
+        https://bugs.webkit.org/show_bug.cgi?id=232460
+        <rdar://81344393>
+
+        Reviewed by Brent Fulgham.
+
+        Add null check for local NetscapePluginHostProxy pointer variable.
+
+        * Plugins/Hosted/NetscapePluginHostManager.mm:
+        (WebKit::NetscapePluginHostManager::didCreateWindow):
+
 2021-10-28  Alex Christensen  <achristensen@webkit.org>
 
         Disable NETSCAPE_PLUGIN_API at build time on macOS and Windows
