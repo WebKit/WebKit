@@ -499,8 +499,8 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
     if (style.hasPseudoStyle(PseudoId::FirstLetter))
         style.setUnique();
 
-    // FIXME: when dropping the -webkit prefix on transform-style, we should also have opacity < 1 cause flattening.
     if (style.preserves3D() && (style.overflowX() != Overflow::Visible
+        || style.hasOpacity()
         || style.overflowY() != Overflow::Visible
         || style.hasClip()
         || style.clipPath()

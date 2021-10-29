@@ -1,6 +1,6 @@
 
 PASS Preserve-3d element not flattened
-FAIL Preserve-3d element flattened due to opacity assert_not_equals: got disallowed value 0
+PASS Preserve-3d element flattened due to opacity
 PASS Preserve-3d element flattened due to overflow clip
 PASS Preserve-3d element flattened due to filter
 PASS Preserve-3d element flattened due to backdrop-filter
