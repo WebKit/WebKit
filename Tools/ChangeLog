@@ -1,5 +1,12 @@
 2021-10-29  Alex Christensen  <achristensen@webkit.org>
 
+        Fix AppleWin build after r285051
+       ​https://bugs.webkit.org/show_bug.cgi?id=232462
+
+        * DumpRenderTree/CMakeLists.txt:
+
+2021-10-29  Alex Christensen  <achristensen@webkit.org>
+
         [ Monterey iOS15 ] TestWebKitAPI.URLSchemeHandler.Ranges is a constant timeout
         https://bugs.webkit.org/show_bug.cgi?id=231394
 
