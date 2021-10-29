@@ -69,14 +69,6 @@ FileSystemStorageHandle::~FileSystemStorageHandle()
         FileSystem::closeFile(m_handle);
 }
 
-void FileSystemStorageHandle::close()
-{
-    if (!m_manager)
-        return;
-
-    m_manager->closeHandle(*this);
-}
-
 bool FileSystemStorageHandle::isSameEntry(WebCore::FileSystemHandleIdentifier identifier)
 {
     auto path = m_manager->getPath(identifier);

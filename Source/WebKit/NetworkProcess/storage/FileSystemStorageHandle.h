@@ -50,7 +50,6 @@ public:
     const String& path() const { return m_path; }
     Type type() const { return m_type; }
 
-    void close();
     bool isSameEntry(WebCore::FileSystemHandleIdentifier);
     std::optional<FileSystemStorageError> move(WebCore::FileSystemHandleIdentifier, const String& newName);
     Expected<WebCore::FileSystemHandleIdentifier, FileSystemStorageError> getFileHandle(IPC::Connection::UniqueID, String&& name, bool createIfNecessary);

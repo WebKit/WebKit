@@ -72,7 +72,6 @@ private:
     explicit WebFileSystemStorageConnection(IPC::Connection&);
 
     // FileSystemStorageConnection
-    void closeHandle(WebCore::FileSystemHandleIdentifier) final;
     void isSameEntry(WebCore::FileSystemHandleIdentifier, WebCore::FileSystemHandleIdentifier, WebCore::FileSystemStorageConnection::SameEntryCallback&&) final;
     void move(WebCore::FileSystemHandleIdentifier, WebCore::FileSystemHandleIdentifier, const String& newName, VoidCallback&&) final;
     void getFileHandle(WebCore::FileSystemHandleIdentifier, const String& name, bool createIfNecessary, WebCore::FileSystemStorageConnection::GetHandleCallback&&) final;

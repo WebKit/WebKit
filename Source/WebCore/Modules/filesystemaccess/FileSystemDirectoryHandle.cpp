@@ -36,12 +36,12 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(FileSystemDirectoryHandle);
 
-Ref<FileSystemDirectoryHandle> FileSystemDirectoryHandle::create(ScriptExecutionContext& context, String&& name, FileSystemHandleIdentifier identifier, Ref<FileSystemStorageConnection>&& connection)
+Ref<FileSystemDirectoryHandle> FileSystemDirectoryHandle::create(ScriptExecutionContext* context, String&& name, FileSystemHandleIdentifier identifier, Ref<FileSystemStorageConnection>&& connection)
 {
     return adoptRef(*new FileSystemDirectoryHandle(context, WTFMove(name), identifier, WTFMove(connection)));
 }
 
-FileSystemDirectoryHandle::FileSystemDirectoryHandle(ScriptExecutionContext& context, String&& name, FileSystemHandleIdentifier identifier, Ref<FileSystemStorageConnection>&& connection)
+FileSystemDirectoryHandle::FileSystemDirectoryHandle(ScriptExecutionContext* context, String&& name, FileSystemHandleIdentifier identifier, Ref<FileSystemStorageConnection>&& connection)
     : FileSystemHandle(context, FileSystemHandle::Kind::Directory, WTFMove(name), identifier, WTFMove(connection))
 {
 }
@@ -56,14 +56,8 @@ void FileSystemDirectoryHandle::getFileHandle(const String& name, std::optional<
         if (result.hasException())
             return promise.reject(result.releaseException());
 
-        auto identifier = result.returnValue();
         auto* context = weakThis ? weakThis->scriptExecutionContext() : nullptr;
-        if (!context) {
-            connection->closeHandle(identifier);
-            return promise.reject(Exception { InvalidStateError, "Context has stopped"_s });
-        }
-
-        promise.settle(FileSystemFileHandle::create(*context, String { name }, result.returnValue(), WTFMove(connection)));
+        promise.settle(FileSystemFileHandle::create(context, String { name }, result.returnValue(), WTFMove(connection)));
     });
 }
 
@@ -77,14 +71,8 @@ void FileSystemDirectoryHandle::getDirectoryHandle(const String& name, std::opti
         if (result.hasException())
             return promise.reject(result.releaseException());
 
-        auto identifier = result.returnValue();
         auto* context = weakThis ? weakThis->scriptExecutionContext() : nullptr;
-        if (!context) {
-            connection->closeHandle(identifier);
-            return promise.reject(Exception { InvalidStateError, "Context has stopped"_s });
-        }
-
-        promise.settle(FileSystemDirectoryHandle::create(*context, String { name }, identifier, WTFMove(connection)));
+        promise.settle(FileSystemDirectoryHandle::create(context, String { name }, result.returnValue(), WTFMove(connection)));
     });
 }
 
@@ -131,17 +119,12 @@ void FileSystemDirectoryHandle::getHandle(const String& name, CompletionHandler<
 
         auto [identifier, isDirectory] = result.releaseReturnValue();
         auto* context = weakThis ? weakThis->scriptExecutionContext() : nullptr;
-        if (!context) {
-            connection->closeHandle(identifier);
-            return completionHandler(Exception { InvalidStateError, "Context has stopped"_s });
-        }
-
         if (isDirectory) {
-            Ref<FileSystemHandle> handle = FileSystemDirectoryHandle::create(*context, String { name }, identifier, WTFMove(connection));
+            Ref<FileSystemHandle> handle = FileSystemDirectoryHandle::create(context, String { name }, identifier, WTFMove(connection));
             return completionHandler(WTFMove(handle));
         }
 
-        Ref<FileSystemHandle> handle = FileSystemFileHandle::create(*context, String { name }, identifier, WTFMove(connection));
+        Ref<FileSystemHandle> handle = FileSystemFileHandle::create(context, String { name }, identifier, WTFMove(connection));
         completionHandler(WTFMove(handle));
     });
 }

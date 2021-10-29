@@ -54,7 +54,7 @@ public:
     void move(FileSystemHandle&, const String& newName, DOMPromiseDeferred<void>&&);
 
 protected:
-    FileSystemHandle(ScriptExecutionContext&, Kind, String&& name, FileSystemHandleIdentifier, Ref<FileSystemStorageConnection>&&);
+    FileSystemHandle(ScriptExecutionContext*, Kind, String&& name, FileSystemHandleIdentifier, Ref<FileSystemStorageConnection>&&);
     FileSystemStorageConnection& connection() { return m_connection.get(); }
 
 private:

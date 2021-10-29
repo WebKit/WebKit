@@ -44,7 +44,7 @@ public:
         unsigned long long at;
     };
 
-    static Ref<FileSystemSyncAccessHandle> create(ScriptExecutionContext&, FileSystemFileHandle&, FileSystemSyncAccessHandleIdentifier, FileSystem::PlatformFileHandle);
+    static Ref<FileSystemSyncAccessHandle> create(ScriptExecutionContext*, FileSystemFileHandle&, FileSystemSyncAccessHandleIdentifier, FileSystem::PlatformFileHandle);
     ~FileSystemSyncAccessHandle();
 
     void truncate(unsigned long long size, DOMPromiseDeferred<void>&&);
@@ -56,7 +56,7 @@ public:
     ExceptionOr<unsigned long long> write(BufferSource&&, FilesystemReadWriteOptions);
 
 private:
-    FileSystemSyncAccessHandle(ScriptExecutionContext&, FileSystemFileHandle&, FileSystemSyncAccessHandleIdentifier, FileSystem::PlatformFileHandle);
+    FileSystemSyncAccessHandle(ScriptExecutionContext*, FileSystemFileHandle&, FileSystemSyncAccessHandleIdentifier, FileSystem::PlatformFileHandle);
     bool isClosingOrClosed() const;
     using CloseCallback = CompletionHandler<void(ExceptionOr<void>&&)>;
     void closeInternal(CloseCallback&&);

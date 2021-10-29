@@ -171,14 +171,6 @@ void NetworkStorageManager::fileSystemGetDirectory(IPC::Connection& connection, 
     completionHandler(localOriginStorageManager(origin).fileSystemStorageManager(*m_fileSystemStorageHandleRegistry).getDirectory(connection.uniqueID()));
 }
 
-void NetworkStorageManager::closeHandle(WebCore::FileSystemHandleIdentifier identifier)
-{
-    ASSERT(!RunLoop::isMain());
-
-    if (auto handle = m_fileSystemStorageHandleRegistry->getHandle(identifier))
-        handle->close();
-}
-
 void NetworkStorageManager::isSameEntry(WebCore::FileSystemHandleIdentifier identifier, WebCore::FileSystemHandleIdentifier targetIdentifier, CompletionHandler<void(bool)>&& completionHandler)
 {
     ASSERT(!RunLoop::isMain());

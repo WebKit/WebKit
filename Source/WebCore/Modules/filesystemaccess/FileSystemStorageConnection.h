@@ -50,7 +50,6 @@ public:
     using GetHandleNamesCallback = CompletionHandler<void(ExceptionOr<Vector<String>>&&)>;
     using GetHandleWithTypeCallback = CompletionHandler<void(ExceptionOr<std::pair<FileSystemHandleIdentifier, bool>>&&)>;
 
-    virtual void closeHandle(FileSystemHandleIdentifier) = 0;
     virtual void isSameEntry(FileSystemHandleIdentifier, FileSystemHandleIdentifier, SameEntryCallback&&) = 0;
     virtual void move(FileSystemHandleIdentifier, FileSystemHandleIdentifier, const String& newName, VoidCallback&&) = 0;
     virtual void getFileHandle(FileSystemHandleIdentifier, const String& name, bool createIfNecessary, GetHandleCallback&&) = 0;

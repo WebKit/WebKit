@@ -33,13 +33,13 @@
 
 namespace WebCore {
 
-Ref<FileSystemSyncAccessHandle> FileSystemSyncAccessHandle::create(ScriptExecutionContext& context, FileSystemFileHandle& source, FileSystemSyncAccessHandleIdentifier identifier, FileSystem::PlatformFileHandle file)
+Ref<FileSystemSyncAccessHandle> FileSystemSyncAccessHandle::create(ScriptExecutionContext* context, FileSystemFileHandle& source, FileSystemSyncAccessHandleIdentifier identifier, FileSystem::PlatformFileHandle file)
 {
     return adoptRef(*new FileSystemSyncAccessHandle(context, source, identifier, file));
 }
 
-FileSystemSyncAccessHandle::FileSystemSyncAccessHandle(ScriptExecutionContext& context, FileSystemFileHandle& source, FileSystemSyncAccessHandleIdentifier identifier, FileSystem::PlatformFileHandle file)
-    : ActiveDOMObject(&context)
+FileSystemSyncAccessHandle::FileSystemSyncAccessHandle(ScriptExecutionContext* context, FileSystemFileHandle& source, FileSystemSyncAccessHandleIdentifier identifier, FileSystem::PlatformFileHandle file)
+    : ActiveDOMObject(context)
     , m_source(source)
     , m_identifier(identifier)
     , m_file(file)
