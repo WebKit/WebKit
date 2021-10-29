@@ -38,7 +38,6 @@
 				CEB754D41BBDA26D009F0401 /* PBXTargetDependency */,
 				2D403F211508736C005358D2 /* PBXTargetDependency */,
 				A134E52D188FC09200901D06 /* PBXTargetDependency */,
-				141BF238096A451E00E0753C /* PBXTargetDependency */,
 			);
 			name = All;
 			productName = All;
@@ -46,41 +45,13 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
-		00F048541A0C3C9A000244DB /* URLRedirect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 00F048531A0C3C9A000244DB /* URLRedirect.cpp */; };
 		0F18E6EC1D6B9C070027E547 /* UIScriptContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F18E6E81D6B9C070027E547 /* UIScriptContext.cpp */; };
 		0F18E7061D6BA0230027E547 /* JSUIScriptController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F18E7041D6BA0230027E547 /* JSUIScriptController.cpp */; };
 		0F18E70D1D6BAC8C0027E547 /* UIScriptControllerIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0F18E70C1D6BAC8C0027E547 /* UIScriptControllerIOS.mm */; };
 		0F18E70F1D6BACB60027E547 /* UIScriptControllerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0F18E70E1D6BACB60027E547 /* UIScriptControllerMac.mm */; };
 		0F18E7131D6BC43A0027E547 /* JSWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F18E7111D6BC43A0027E547 /* JSWrapper.cpp */; };
-		0F37A4A711E6628700275F54 /* PluginObjectMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0F37A4A611E6628700275F54 /* PluginObjectMac.mm */; };
-		0F37A4AA11E6629100275F54 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B5A752A108AF5D1F00138E45 /* QuartzCore.framework */; };
 		0F4E43E31D5C2BAF008EBA5C /* Launch.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0F4E43E11D5C037A008EBA5C /* Launch.storyboard */; };
-		141BF435096A455900E0753C /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9335435F03D75502008635CE /* WebKit.framework */; };
-		141BF436096A455900E0753C /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A84F608908B136DA00E9745F /* Cocoa.framework */; };
-		141BF438096A455900E0753C /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A817090308B164D300CCB9FB /* JavaScriptCore.framework */; };
-		141BF439096A455900E0753C /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AE8257EF08D22389000507AB /* Carbon.framework */; };
-		141BF453096A45EB00E0753C /* PluginObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 141BF447096A45C800E0753C /* PluginObject.h */; };
-		1A1E4298141141C400388758 /* PrivateBrowsing.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A1E4296141141C400388758 /* PrivateBrowsing.cpp */; };
-		1A215A8111F2609C008AD0F5 /* PluginTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A215A7F11F2609C008AD0F5 /* PluginTest.cpp */; };
-		1A215A8211F2609C008AD0F5 /* PluginTest.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A215A8011F2609C008AD0F5 /* PluginTest.h */; };
-		1A215BE711F27658008AD0F5 /* DocumentOpenInDestroyStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A215A7511F26072008AD0F5 /* DocumentOpenInDestroyStream.cpp */; };
-		1A24BAA9120734EE00FBB059 /* NPRuntimeObjectFromDestroyedPlugin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A24BAA8120734EE00FBB059 /* NPRuntimeObjectFromDestroyedPlugin.cpp */; };
 		1A2FB84F178C80930059FD96 /* DefaultPolicyDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A2FB84D178C80930059FD96 /* DefaultPolicyDelegate.mm */; };
-		1A31EB3813466AC100017372 /* ConvertPoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A31EB3713466AC100017372 /* ConvertPoint.cpp */; };
-		1A3E28AA1311D73B00501349 /* GetURLWithJavaScriptURLDestroyingPlugin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3E28A91311D73B00501349 /* GetURLWithJavaScriptURLDestroyingPlugin.cpp */; };
-		1A4CCD4F171375A300981040 /* ToStringAndValueOfObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A4CCD4E171375A300981040 /* ToStringAndValueOfObject.cpp */; };
-		1A5CC1F5137DD2EC00A5D7E7 /* GetURLWithJavaScriptURL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A5CC1F3137DD2EC00A5D7E7 /* GetURLWithJavaScriptURL.cpp */; };
-		1A66C35114576A920099A115 /* ContentsScaleFactor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A66C34F14576A920099A115 /* ContentsScaleFactor.cpp */; };
-		1A8F02E80BB9B4EC008CFA34 /* TestObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A8F024C0BB9B056008CFA34 /* TestObject.h */; };
-		1AC6C8490D07638600CD3161 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AC6C77F0D07589B00CD3161 /* main.cpp */; };
-		1AC6C84A0D07638600CD3161 /* PluginObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AC6C7800D07589B00CD3161 /* PluginObject.cpp */; };
-		1AC6C84B0D07638600CD3161 /* TestObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AC6C7810D07589B00CD3161 /* TestObject.cpp */; };
-		1AC77DCF120605B6005C19EF /* NPRuntimeRemoveProperty.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AC77DCE120605B6005C19EF /* NPRuntimeRemoveProperty.cpp */; };
-		1ACF898D132EF41C00E915D4 /* NPDeallocateCalledBeforeNPShutdown.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1ACF898B132EF41C00E915D4 /* NPDeallocateCalledBeforeNPShutdown.cpp */; };
-		1AD4CB2212A6D1350027A7AF /* GetUserAgentWithNullNPPFromNPPNew.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AD4CB2012A6D1350027A7AF /* GetUserAgentWithNullNPPFromNPPNew.cpp */; };
-		1AD8683F163B2FD000A28583 /* NPRuntimeCallsWithNullNPP.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AD8683D163B2FD000A28583 /* NPRuntimeCallsWithNullNPP.cpp */; };
-		1AD9D2FE12028409001A70D1 /* PluginScriptableNPObjectInvokeDefault.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AD9D2FD12028409001A70D1 /* PluginScriptableNPObjectInvokeDefault.cpp */; };
-		1AFF66BC137DEFD200791696 /* GetURLNotifyWithURLThatFailsToLoad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AFF66BB137DEA8300791696 /* GetURLNotifyWithURLThatFailsToLoad.cpp */; };
 		1CB67420195BAE7B000F35B5 /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1CB6741F195BAE7B000F35B5 /* CoreText.framework */; };
 		29CFBA11122736E600BC30C0 /* AccessibilityTextMarker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 29CFBA0F122736E600BC30C0 /* AccessibilityTextMarker.cpp */; };
 		29CFBA2E12273A1000BC30C0 /* AccessibilityTextMarkerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 29CFBA2D12273A1000BC30C0 /* AccessibilityTextMarkerMac.mm */; };
@@ -89,15 +60,7 @@
 		31117B3D15D9A56A00163BC8 /* MockWebNotificationProvider.mm in Sources */ = {isa = PBXBuildFile; fileRef = 31117B3B15D9A56A00163BC8 /* MockWebNotificationProvider.mm */; };
 		312943F91E71F2B4001EE2CC /* IOSLayoutTestCommunication.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3148A0551E6F90F400D3B316 /* IOSLayoutTestCommunication.cpp */; };
 		4464CABE1C20A08B00E5BB55 /* DumpRenderTreeAppMain.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4464CABD1C20A07000E5BB55 /* DumpRenderTreeAppMain.mm */; };
-		4AD6A11413C8124000EA9737 /* FormValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4AD6A11313C8124000EA9737 /* FormValue.cpp */; };
-		5106803E15CC7B10001A8A23 /* SlowNPPNew.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5106803D15CC7B10001A8A23 /* SlowNPPNew.cpp */; };
-		51134C9916014FDC001AA513 /* InvokeDestroysPluginWithinNPP_New.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51134C9816014FDB001AA513 /* InvokeDestroysPluginWithinNPP_New.cpp */; };
-		5113DE6715F6CBE5005EC8B3 /* NPPNewFails.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5113DE6615F6CBE5005EC8B3 /* NPPNewFails.cpp */; };
-		515C0CD015EE785700F5A613 /* LogNPPSetWindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 515C0CCF15EE785700F5A613 /* LogNPPSetWindow.cpp */; };
-		515F429C15C07872007C8F90 /* PluginScriptableObjectOverridesAllProperties.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 515F429B15C07872007C8F90 /* PluginScriptableObjectOverridesAllProperties.cpp */; };
 		5185F6B210714E07007AA393 /* HistoryDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5185F69F10714A57007AA393 /* HistoryDelegate.mm */; };
-		51CACBD815D96FD000EB53A2 /* EvaluateJSWithinNPP_New.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51CACBD715D96FD000EB53A2 /* EvaluateJSWithinNPP_New.cpp */; };
-		520206CF1A0ADA5900AD5154 /* SetMuted.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 520206CE1A0ADA5900AD5154 /* SetMuted.cpp */; };
 		53CBB832134E42F3001CE6A4 /* CyclicRedundancyCheck.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53CBB830134E42F3001CE6A4 /* CyclicRedundancyCheck.cpp */; };
 		5DB9AC970F722C3600684641 /* AHEM____.TTF in Copy Font Files */ = {isa = PBXBuildFile; fileRef = AA7F10C20CB3C1030003BDC9 /* AHEM____.TTF */; };
 		5DB9AC980F722C3600684641 /* WebKitWeightWatcher100.ttf in Copy Font Files */ = {isa = PBXBuildFile; fileRef = 375F09710DAC3CB600C8B4E5 /* WebKitWeightWatcher100.ttf */; };
@@ -154,10 +117,6 @@
 		BCD08B3A0E1057EF00A7D0C1 /* AccessibilityController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCD08B390E1057EF00A7D0C1 /* AccessibilityController.cpp */; };
 		BCD08B710E1059D200A7D0C1 /* AccessibilityControllerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BCD08B700E1059D200A7D0C1 /* AccessibilityControllerMac.mm */; };
 		BCF6C6500C98E9C000AC063E /* GCController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCF6C64F0C98E9C000AC063E /* GCController.cpp */; };
-		C031182B134E4A2B00919757 /* NPPSetWindowCalledDuringDestruction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C031182A134E4A2B00919757 /* NPPSetWindowCalledDuringDestruction.cpp */; };
-		C06F9ABC1267A7060058E1F6 /* PassDifferentNPPStruct.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C06F9ABB1267A7060058E1F6 /* PassDifferentNPPStruct.cpp */; };
-		C0E720751281C828004EF533 /* EvaluateJSAfterRemovingPluginElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C0E720741281C828004EF533 /* EvaluateJSAfterRemovingPluginElement.cpp */; };
-		C0EC3C9C12787F0500939164 /* NullNPPGetValuePointer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C0EC3C9B12787F0500939164 /* NullNPPGetValuePointer.cpp */; };
 		C23EA2081BC9F05100C980B7 /* FontWithFeatures.otf in Copy Font Files */ = {isa = PBXBuildFile; fileRef = C23EA2061BC9EABA00C980B7 /* FontWithFeatures.otf */; };
 		C23EA2091BC9F05100C980B7 /* FontWithFeatures.ttf in Copy Font Files */ = {isa = PBXBuildFile; fileRef = C23EA2071BC9EABA00C980B7 /* FontWithFeatures.ttf */; };
 		E1B7816511AF31B7007E1BC2 /* MockGeolocationProvider.mm in Sources */ = {isa = PBXBuildFile; fileRef = E1B7808711AF1669007E1BC2 /* MockGeolocationProvider.mm */; };
@@ -178,13 +137,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = 0F18E6F21D6B9CAE0027E547;
 			remoteInfo = "Derived Sources";
-		};
-		141BF237096A451E00E0753C /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 141BF21E096A441D00E0753C;
-			remoteInfo = TestNetscapePlugIn;
 		};
 		2D403F201508736C005358D2 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -249,7 +201,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		00F048531A0C3C9A000244DB /* URLRedirect.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = URLRedirect.cpp; sourceTree = "<group>"; };
 		0F18E6E81D6B9C070027E547 /* UIScriptContext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = UIScriptContext.cpp; path = ../TestRunnerShared/UIScriptContext/UIScriptContext.cpp; sourceTree = "<group>"; };
 		0F18E6E91D6B9C070027E547 /* UIScriptContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UIScriptContext.h; path = ../TestRunnerShared/UIScriptContext/UIScriptContext.h; sourceTree = "<group>"; };
 		0F18E6EB1D6B9C070027E547 /* UIScriptController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UIScriptController.h; path = ../TestRunnerShared/UIScriptContext/UIScriptController.h; sourceTree = "<group>"; };
@@ -263,35 +214,11 @@
 		0F18E7101D6BC43A0027E547 /* JSWrappable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSWrappable.h; path = ../TestRunnerShared/Bindings/JSWrappable.h; sourceTree = "<group>"; };
 		0F18E7111D6BC43A0027E547 /* JSWrapper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JSWrapper.cpp; path = ../TestRunnerShared/Bindings/JSWrapper.cpp; sourceTree = "<group>"; };
 		0F18E7121D6BC43A0027E547 /* JSWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSWrapper.h; path = ../TestRunnerShared/Bindings/JSWrapper.h; sourceTree = "<group>"; };
-		0F37A4A611E6628700275F54 /* PluginObjectMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PluginObjectMac.mm; sourceTree = "<group>"; };
 		0F4E43E11D5C037A008EBA5C /* Launch.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = Launch.storyboard; path = ios/Launch.storyboard; sourceTree = "<group>"; };
-		141BF233096A44CF00E0753C /* TestNetscapePlugIn.plugin */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TestNetscapePlugIn.plugin; sourceTree = BUILT_PRODUCTS_DIR; };
-		141BF447096A45C800E0753C /* PluginObject.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = PluginObject.h; sourceTree = "<group>"; };
-		141BF448096A45C800E0753C /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.plist.xml; name = Info.plist; path = mac/Info.plist; sourceTree = "<group>"; };
 		14770FE00A22ADF7009342EE /* GCController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCController.h; sourceTree = "<group>"; };
-		1A1E4296141141C400388758 /* PrivateBrowsing.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PrivateBrowsing.cpp; sourceTree = "<group>"; };
-		1A215A7511F26072008AD0F5 /* DocumentOpenInDestroyStream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DocumentOpenInDestroyStream.cpp; sourceTree = "<group>"; };
-		1A215A7F11F2609C008AD0F5 /* PluginTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PluginTest.cpp; sourceTree = "<group>"; };
-		1A215A8011F2609C008AD0F5 /* PluginTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginTest.h; sourceTree = "<group>"; };
-		1A24BAA8120734EE00FBB059 /* NPRuntimeObjectFromDestroyedPlugin.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NPRuntimeObjectFromDestroyedPlugin.cpp; sourceTree = "<group>"; };
 		1A2FB84C178C80920059FD96 /* DefaultPolicyDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DefaultPolicyDelegate.h; sourceTree = "<group>"; };
 		1A2FB84D178C80930059FD96 /* DefaultPolicyDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DefaultPolicyDelegate.mm; sourceTree = "<group>"; };
-		1A31EB3713466AC100017372 /* ConvertPoint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConvertPoint.cpp; sourceTree = "<group>"; };
-		1A3E28A91311D73B00501349 /* GetURLWithJavaScriptURLDestroyingPlugin.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GetURLWithJavaScriptURLDestroyingPlugin.cpp; sourceTree = "<group>"; };
-		1A4CCD4E171375A300981040 /* ToStringAndValueOfObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ToStringAndValueOfObject.cpp; sourceTree = "<group>"; };
-		1A5CC1F3137DD2EC00A5D7E7 /* GetURLWithJavaScriptURL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GetURLWithJavaScriptURL.cpp; sourceTree = "<group>"; };
-		1A66C34F14576A920099A115 /* ContentsScaleFactor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ContentsScaleFactor.cpp; sourceTree = "<group>"; };
 		1A7961061803454C00FE42CD /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = /System/Library/Frameworks/IOKit.framework; sourceTree = "<absolute>"; };
-		1A8F024C0BB9B056008CFA34 /* TestObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestObject.h; sourceTree = "<group>"; };
-		1AC6C77F0D07589B00CD3161 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
-		1AC6C7800D07589B00CD3161 /* PluginObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PluginObject.cpp; sourceTree = "<group>"; };
-		1AC6C7810D07589B00CD3161 /* TestObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TestObject.cpp; sourceTree = "<group>"; };
-		1AC77DCE120605B6005C19EF /* NPRuntimeRemoveProperty.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NPRuntimeRemoveProperty.cpp; sourceTree = "<group>"; };
-		1ACF898B132EF41C00E915D4 /* NPDeallocateCalledBeforeNPShutdown.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NPDeallocateCalledBeforeNPShutdown.cpp; sourceTree = "<group>"; };
-		1AD4CB2012A6D1350027A7AF /* GetUserAgentWithNullNPPFromNPPNew.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GetUserAgentWithNullNPPFromNPPNew.cpp; sourceTree = "<group>"; };
-		1AD8683D163B2FD000A28583 /* NPRuntimeCallsWithNullNPP.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NPRuntimeCallsWithNullNPP.cpp; sourceTree = "<group>"; };
-		1AD9D2FD12028409001A70D1 /* PluginScriptableNPObjectInvokeDefault.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PluginScriptableNPObjectInvokeDefault.cpp; sourceTree = "<group>"; };
-		1AFF66BB137DEA8300791696 /* GetURLNotifyWithURLThatFailsToLoad.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GetURLNotifyWithURLThatFailsToLoad.cpp; sourceTree = "<group>"; };
 		1CB6741F195BAE7B000F35B5 /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
 		23BCB88F0EA57623003C6289 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = /System/Library/Frameworks/OpenGL.framework; sourceTree = "<absolute>"; };
 		29CFBA0E122736E600BC30C0 /* AccessibilityTextMarker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilityTextMarker.h; sourceTree = "<group>"; };
@@ -318,16 +245,8 @@
 		375F09790DAC3CB600C8B4E5 /* WebKitWeightWatcher900.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = WebKitWeightWatcher900.ttf; path = fonts/WebKitWeightWatcher900.ttf; sourceTree = "<group>"; };
 		417DAA1C137B3E24007C57FB /* WebCoreTestSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebCoreTestSupport.h; path = WebCoreTestSupport/WebCoreTestSupport.h; sourceTree = BUILT_PRODUCTS_DIR; };
 		4464CABD1C20A07000E5BB55 /* DumpRenderTreeAppMain.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = DumpRenderTreeAppMain.mm; path = ios/DumpRenderTreeAppMain.mm; sourceTree = "<group>"; };
-		4AD6A11313C8124000EA9737 /* FormValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FormValue.cpp; sourceTree = "<group>"; };
-		5106803D15CC7B10001A8A23 /* SlowNPPNew.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SlowNPPNew.cpp; path = TestNetscapePlugIn/Tests/SlowNPPNew.cpp; sourceTree = SOURCE_ROOT; };
-		51134C9816014FDB001AA513 /* InvokeDestroysPluginWithinNPP_New.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InvokeDestroysPluginWithinNPP_New.cpp; sourceTree = "<group>"; };
-		5113DE6615F6CBE5005EC8B3 /* NPPNewFails.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NPPNewFails.cpp; sourceTree = "<group>"; };
-		515C0CCF15EE785700F5A613 /* LogNPPSetWindow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LogNPPSetWindow.cpp; sourceTree = "<group>"; };
-		515F429B15C07872007C8F90 /* PluginScriptableObjectOverridesAllProperties.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PluginScriptableObjectOverridesAllProperties.cpp; sourceTree = "<group>"; };
 		5185F69E10714A57007AA393 /* HistoryDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HistoryDelegate.h; path = mac/HistoryDelegate.h; sourceTree = "<group>"; };
 		5185F69F10714A57007AA393 /* HistoryDelegate.mm */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; name = HistoryDelegate.mm; path = mac/HistoryDelegate.mm; sourceTree = "<group>"; };
-		51CACBD715D96FD000EB53A2 /* EvaluateJSWithinNPP_New.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = EvaluateJSWithinNPP_New.cpp; path = TestNetscapePlugIn/Tests/EvaluateJSWithinNPP_New.cpp; sourceTree = SOURCE_ROOT; };
-		520206CE1A0ADA5900AD5154 /* SetMuted.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SetMuted.cpp; sourceTree = "<group>"; };
 		520D64B12451023700D6391F /* DumpRenderTree.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = DumpRenderTree.entitlements; path = mac/Configurations/DumpRenderTree.entitlements; sourceTree = "<group>"; };
 		53CBB830134E42F3001CE6A4 /* CyclicRedundancyCheck.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CyclicRedundancyCheck.cpp; sourceTree = "<group>"; };
 		53CBB831134E42F3001CE6A4 /* CyclicRedundancyCheck.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CyclicRedundancyCheck.h; sourceTree = "<group>"; };
@@ -440,10 +359,6 @@
 		BCD08B390E1057EF00A7D0C1 /* AccessibilityController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AccessibilityController.cpp; sourceTree = "<group>"; };
 		BCD08B700E1059D200A7D0C1 /* AccessibilityControllerMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AccessibilityControllerMac.mm; path = mac/AccessibilityControllerMac.mm; sourceTree = "<group>"; };
 		BCF6C64F0C98E9C000AC063E /* GCController.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = GCController.cpp; sourceTree = "<group>"; };
-		C031182A134E4A2B00919757 /* NPPSetWindowCalledDuringDestruction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NPPSetWindowCalledDuringDestruction.cpp; sourceTree = "<group>"; };
-		C06F9ABB1267A7060058E1F6 /* PassDifferentNPPStruct.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PassDifferentNPPStruct.cpp; sourceTree = "<group>"; };
-		C0E720741281C828004EF533 /* EvaluateJSAfterRemovingPluginElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EvaluateJSAfterRemovingPluginElement.cpp; sourceTree = "<group>"; };
-		C0EC3C9B12787F0500939164 /* NullNPPGetValuePointer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NullNPPGetValuePointer.cpp; sourceTree = "<group>"; };
 		C23EA2061BC9EABA00C980B7 /* FontWithFeatures.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = FontWithFeatures.otf; path = fonts/FontWithFeatures.otf; sourceTree = "<group>"; };
 		C23EA2071BC9EABA00C980B7 /* FontWithFeatures.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = FontWithFeatures.ttf; path = fonts/FontWithFeatures.ttf; sourceTree = "<group>"; };
 		E1B7808511AF1643007E1BC2 /* MockGeolocationProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MockGeolocationProvider.h; path = mac/MockGeolocationProvider.h; sourceTree = "<group>"; };
@@ -466,18 +381,6 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		141BF21D096A441D00E0753C /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				141BF439096A455900E0753C /* Carbon.framework in Frameworks */,
-				141BF436096A455900E0753C /* Cocoa.framework in Frameworks */,
-				141BF438096A455900E0753C /* JavaScriptCore.framework in Frameworks */,
-				0F37A4AA11E6629100275F54 /* QuartzCore.framework in Frameworks */,
-				141BF435096A455900E0753C /* WebKit.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		2D403F03150871F9005358D2 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -535,7 +438,6 @@
 				BC9D90230C97472E0099A4A3 /* WorkQueueItem.h */,
 				A8B91AD20CF3B305008F91FF /* AppKit Overrides */,
 				A8B91AC40CF3B170008F91FF /* ObjCPlugin */,
-				141BF1F5096A439800E0753C /* TestNetscapePlugIn */,
 				2D403EA015087135005358D2 /* LayoutTestHelper */,
 				9345229B0BD12B2C0086EDA0 /* Resources */,
 				417DA9181373674D007C57FB /* WebCoreTestSupport */,
@@ -603,23 +505,6 @@
 			name = mac;
 			sourceTree = "<group>";
 		};
-		141BF1F5096A439800E0753C /* TestNetscapePlugIn */ = {
-			isa = PBXGroup;
-			children = (
-				1A215A6E11F25FF1008AD0F5 /* Tests */,
-				141BF448096A45C800E0753C /* Info.plist */,
-				1AC6C77F0D07589B00CD3161 /* main.cpp */,
-				1AC6C7800D07589B00CD3161 /* PluginObject.cpp */,
-				141BF447096A45C800E0753C /* PluginObject.h */,
-				0F37A4A611E6628700275F54 /* PluginObjectMac.mm */,
-				1A215A7F11F2609C008AD0F5 /* PluginTest.cpp */,
-				1A215A8011F2609C008AD0F5 /* PluginTest.h */,
-				1AC6C7810D07589B00CD3161 /* TestObject.cpp */,
-				1A8F024C0BB9B056008CFA34 /* TestObject.h */,
-			);
-			path = TestNetscapePlugIn;
-			sourceTree = "<group>";
-		};
 		1422A2690AF6F45200E1A883 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
@@ -682,48 +567,6 @@
 				BCA18B600C9B08C200114369 /* UIDelegate.mm */,
 			);
 			name = Delegates;
-			sourceTree = "<group>";
-		};
-		1A215A6E11F25FF1008AD0F5 /* Tests */ = {
-			isa = PBXGroup;
-			children = (
-				1A31EB3613466AC100017372 /* mac */,
-				1A215A7511F26072008AD0F5 /* DocumentOpenInDestroyStream.cpp */,
-				C0E720741281C828004EF533 /* EvaluateJSAfterRemovingPluginElement.cpp */,
-				51CACBD715D96FD000EB53A2 /* EvaluateJSWithinNPP_New.cpp */,
-				4AD6A11313C8124000EA9737 /* FormValue.cpp */,
-				1AFF66BB137DEA8300791696 /* GetURLNotifyWithURLThatFailsToLoad.cpp */,
-				1A5CC1F3137DD2EC00A5D7E7 /* GetURLWithJavaScriptURL.cpp */,
-				1A3E28A91311D73B00501349 /* GetURLWithJavaScriptURLDestroyingPlugin.cpp */,
-				1AD4CB2012A6D1350027A7AF /* GetUserAgentWithNullNPPFromNPPNew.cpp */,
-				51134C9816014FDB001AA513 /* InvokeDestroysPluginWithinNPP_New.cpp */,
-				515C0CCF15EE785700F5A613 /* LogNPPSetWindow.cpp */,
-				1ACF898B132EF41C00E915D4 /* NPDeallocateCalledBeforeNPShutdown.cpp */,
-				5113DE6615F6CBE5005EC8B3 /* NPPNewFails.cpp */,
-				C031182A134E4A2B00919757 /* NPPSetWindowCalledDuringDestruction.cpp */,
-				1AD8683D163B2FD000A28583 /* NPRuntimeCallsWithNullNPP.cpp */,
-				1A24BAA8120734EE00FBB059 /* NPRuntimeObjectFromDestroyedPlugin.cpp */,
-				1AC77DCE120605B6005C19EF /* NPRuntimeRemoveProperty.cpp */,
-				C0EC3C9B12787F0500939164 /* NullNPPGetValuePointer.cpp */,
-				C06F9ABB1267A7060058E1F6 /* PassDifferentNPPStruct.cpp */,
-				1AD9D2FD12028409001A70D1 /* PluginScriptableNPObjectInvokeDefault.cpp */,
-				515F429B15C07872007C8F90 /* PluginScriptableObjectOverridesAllProperties.cpp */,
-				1A1E4296141141C400388758 /* PrivateBrowsing.cpp */,
-				5106803D15CC7B10001A8A23 /* SlowNPPNew.cpp */,
-				1A4CCD4E171375A300981040 /* ToStringAndValueOfObject.cpp */,
-				00F048531A0C3C9A000244DB /* URLRedirect.cpp */,
-			);
-			path = Tests;
-			sourceTree = "<group>";
-		};
-		1A31EB3613466AC100017372 /* mac */ = {
-			isa = PBXGroup;
-			children = (
-				1A66C34F14576A920099A115 /* ContentsScaleFactor.cpp */,
-				1A31EB3713466AC100017372 /* ConvertPoint.cpp */,
-				520206CE1A0ADA5900AD5154 /* SetMuted.cpp */,
-			);
-			path = mac;
 			sourceTree = "<group>";
 		};
 		2D403EA015087135005358D2 /* LayoutTestHelper */ = {
@@ -798,7 +641,6 @@
 				2D403F19150871F9005358D2 /* LayoutTestHelper */,
 				A1158D7F18927E7A0088C17B /* DumpRenderTree.app */,
 				A1321C9E188F9A3600125434 /* libDumpRenderTree.a */,
-				141BF233096A44CF00E0753C /* TestNetscapePlugIn.plugin */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -978,38 +820,7 @@
 		};
 /* End PBXGroup section */
 
-/* Begin PBXHeadersBuildPhase section */
-		141BF44E096A45DD00E0753C /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				141BF453096A45EB00E0753C /* PluginObject.h in Headers */,
-				1A215A8211F2609C008AD0F5 /* PluginTest.h in Headers */,
-				1A8F02E80BB9B4EC008CFA34 /* TestObject.h in Headers */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXHeadersBuildPhase section */
-
 /* Begin PBXNativeTarget section */
-		141BF21E096A441D00E0753C /* TestNetscapePlugIn */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 141BF221096A441E00E0753C /* Build configuration list for PBXNativeTarget "TestNetscapePlugIn" */;
-			buildPhases = (
-				141BF21B096A441D00E0753C /* Resources */,
-				141BF44E096A45DD00E0753C /* Headers */,
-				141BF21C096A441D00E0753C /* Sources */,
-				141BF21D096A441D00E0753C /* Frameworks */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = TestNetscapePlugIn;
-			productName = TestNetscapePlugIn.plugin;
-			productReference = 141BF233096A44CF00E0753C /* TestNetscapePlugIn.plugin */;
-			productType = "com.apple.product-type.bundle";
-		};
 		2D403EB2150871F9005358D2 /* LayoutTestHelper */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 2D403F15150871F9005358D2 /* Build configuration list for PBXNativeTarget "LayoutTestHelper" */;
@@ -1115,7 +926,6 @@
 				A1321C9D188F9A3600125434 /* DumpRenderTree (Library) */,
 				9340994A08540CAE007F3BC8 /* DumpRenderTree */,
 				A1158D7E18927E7A0088C17B /* DumpRenderTree.app */,
-				141BF21E096A441D00E0753C /* TestNetscapePlugIn */,
 				2D403EB2150871F9005358D2 /* LayoutTestHelper */,
 				5325BDD321DFF4BD00A0DEE1 /* Apply Configuration to XCFileLists */,
 			);
@@ -1123,13 +933,6 @@
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		141BF21B096A441D00E0753C /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		A1158D7D18927E7A0088C17B /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1198,45 +1001,6 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		141BF21C096A441D00E0753C /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				1A66C35114576A920099A115 /* ContentsScaleFactor.cpp in Sources */,
-				1A31EB3813466AC100017372 /* ConvertPoint.cpp in Sources */,
-				1A215BE711F27658008AD0F5 /* DocumentOpenInDestroyStream.cpp in Sources */,
-				C0E720751281C828004EF533 /* EvaluateJSAfterRemovingPluginElement.cpp in Sources */,
-				51CACBD815D96FD000EB53A2 /* EvaluateJSWithinNPP_New.cpp in Sources */,
-				4AD6A11413C8124000EA9737 /* FormValue.cpp in Sources */,
-				1AFF66BC137DEFD200791696 /* GetURLNotifyWithURLThatFailsToLoad.cpp in Sources */,
-				1A5CC1F5137DD2EC00A5D7E7 /* GetURLWithJavaScriptURL.cpp in Sources */,
-				1A3E28AA1311D73B00501349 /* GetURLWithJavaScriptURLDestroyingPlugin.cpp in Sources */,
-				1AD4CB2212A6D1350027A7AF /* GetUserAgentWithNullNPPFromNPPNew.cpp in Sources */,
-				51134C9916014FDC001AA513 /* InvokeDestroysPluginWithinNPP_New.cpp in Sources */,
-				515C0CD015EE785700F5A613 /* LogNPPSetWindow.cpp in Sources */,
-				1AC6C8490D07638600CD3161 /* main.cpp in Sources */,
-				1ACF898D132EF41C00E915D4 /* NPDeallocateCalledBeforeNPShutdown.cpp in Sources */,
-				5113DE6715F6CBE5005EC8B3 /* NPPNewFails.cpp in Sources */,
-				C031182B134E4A2B00919757 /* NPPSetWindowCalledDuringDestruction.cpp in Sources */,
-				1AD8683F163B2FD000A28583 /* NPRuntimeCallsWithNullNPP.cpp in Sources */,
-				1A24BAA9120734EE00FBB059 /* NPRuntimeObjectFromDestroyedPlugin.cpp in Sources */,
-				1AC77DCF120605B6005C19EF /* NPRuntimeRemoveProperty.cpp in Sources */,
-				C0EC3C9C12787F0500939164 /* NullNPPGetValuePointer.cpp in Sources */,
-				C06F9ABC1267A7060058E1F6 /* PassDifferentNPPStruct.cpp in Sources */,
-				1AC6C84A0D07638600CD3161 /* PluginObject.cpp in Sources */,
-				0F37A4A711E6628700275F54 /* PluginObjectMac.mm in Sources */,
-				1AD9D2FE12028409001A70D1 /* PluginScriptableNPObjectInvokeDefault.cpp in Sources */,
-				515F429C15C07872007C8F90 /* PluginScriptableObjectOverridesAllProperties.cpp in Sources */,
-				1A215A8111F2609C008AD0F5 /* PluginTest.cpp in Sources */,
-				1A1E4298141141C400388758 /* PrivateBrowsing.cpp in Sources */,
-				520206CF1A0ADA5900AD5154 /* SetMuted.cpp in Sources */,
-				5106803E15CC7B10001A8A23 /* SlowNPPNew.cpp in Sources */,
-				1AC6C84B0D07638600CD3161 /* TestObject.cpp in Sources */,
-				1A4CCD4F171375A300981040 /* ToStringAndValueOfObject.cpp in Sources */,
-				00F048541A0C3C9A000244DB /* URLRedirect.cpp in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		2D403ED8150871F9005358D2 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1342,11 +1106,6 @@
 			target = 0F18E6F21D6B9CAE0027E547 /* Derived Sources */;
 			targetProxy = 0F18E7021D6B9CFE0027E547 /* PBXContainerItemProxy */;
 		};
-		141BF238096A451E00E0753C /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 141BF21E096A441D00E0753C /* TestNetscapePlugIn */;
-			targetProxy = 141BF237096A451E00E0753C /* PBXContainerItemProxy */;
-		};
 		2D403F211508736C005358D2 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 2D403EB2150871F9005358D2 /* LayoutTestHelper */;
@@ -1395,22 +1154,6 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Production;
-		};
-		141BF222096A441E00E0753C /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = BCB283DE0CFA7C20007E533E /* TestNetscapePlugIn.xcconfig */;
-			buildSettings = {
-				INFOPLIST_FILE = TestNetscapePlugIn/mac/Info.plist;
-			};
-			name = Debug;
-		};
-		141BF223096A441E00E0753C /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = BCB283DE0CFA7C20007E533E /* TestNetscapePlugIn.xcconfig */;
-			buildSettings = {
-				INFOPLIST_FILE = TestNetscapePlugIn/mac/Info.plist;
-			};
-			name = Release;
 		};
 		149C29C008902C6D008A9EFC /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -1513,15 +1256,6 @@
 			};
 			name = Production;
 		};
-		90CBC3540F748B1300A712B7 /* Production */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = BCB283DE0CFA7C20007E533E /* TestNetscapePlugIn.xcconfig */;
-			buildSettings = {
-				INFOPLIST_FILE = TestNetscapePlugIn/mac/Info.plist;
-				SKIP_INSTALL = NO;
-			};
-			name = Production;
-		};
 		A1158DAC18927E7B0088C17B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = A19317FD18928738001C52B1 /* DumpRenderTreeApp.xcconfig */;
@@ -1594,16 +1328,6 @@
 				0F18E6FE1D6B9CAE0027E547 /* Debug */,
 				0F18E6FF1D6B9CAE0027E547 /* Release */,
 				0F18E7001D6B9CAE0027E547 /* Production */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Production;
-		};
-		141BF221096A441E00E0753C /* Build configuration list for PBXNativeTarget "TestNetscapePlugIn" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				141BF222096A441E00E0753C /* Debug */,
-				141BF223096A441E00E0753C /* Release */,
-				90CBC3540F748B1300A712B7 /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Production;

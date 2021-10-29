@@ -1,3 +1,11 @@
+2021-10-29  Alex Christensen  <achristensen@webkit.org>
+
+        Fix macOS clean build after r285047
+        https://bugs.webkit.org/show_bug.cgi?id=232462
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+        * DumpRenderTree/TestNetscapePlugIn: Removed.
+
 2021-10-29  Jonathan Bedard  <jbedard@apple.com>
 
         [webkitscmpy] Assign PR to author
