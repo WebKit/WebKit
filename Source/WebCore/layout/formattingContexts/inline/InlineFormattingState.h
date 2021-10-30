@@ -51,7 +51,7 @@ public:
 
     InlineItems& inlineItems() { return m_inlineItems; }
     const InlineItems& inlineItems() const { return m_inlineItems; }
-    void addInlineItem(InlineItem&& inlineItem) { m_inlineItems.append(WTFMove(inlineItem)); }
+    void addInlineItems(InlineItems&& inlineItems) { m_inlineItems.appendVector(WTFMove(inlineItems)); }
 
     const InlineLineBoxes& lineBoxes() const { return m_lineBoxes; }
     void addLineBox(LineBox&& lineBox) { m_lineBoxes.append(WTFMove(lineBox)); }

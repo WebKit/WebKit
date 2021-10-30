@@ -77,13 +77,19 @@ InlineItemsBuilder::InlineItemsBuilder(const ContainerBox& formattingContextRoot
 {
 }
 
-void InlineItemsBuilder::build()
+InlineItems InlineItemsBuilder::build()
+{
+    InlineItems inlineItems;
+    collectInlineItems(inlineItems);
+    breakInlineItemsAtBidiBoundaries(inlineItems);
+    return inlineItems;
+}
+
+void InlineItemsBuilder::collectInlineItems(InlineItems& inlineItems)
 {
     // Traverse the tree and create inline items out of inline boxes and leaf nodes. This essentially turns the tree inline structure into a flat one.
     // <span>text<span></span><img></span> -> [InlineBoxStart][InlineLevelBox][InlineBoxStart][InlineBoxEnd][InlineLevelBox][InlineBoxEnd]
     ASSERT(root().hasInFlowOrFloatingChild());
-    auto& formattingState = this->formattingState();
-
     Vector<const Box*> layoutQueue;
     layoutQueue.append(root().firstChild());
     while (!layoutQueue.isEmpty()) {
@@ -93,31 +99,28 @@ void InlineItemsBuilder::build()
             if (!isInlineBoxWithInlineContent)
                 break;
             // This is the start of an inline box (e.g. <span>).
-            formattingState.addInlineItem({ layoutBox, InlineItem::Type::InlineBoxStart });
-            auto& inlineBoxWithInlineContent = downcast<ContainerBox>(layoutBox);
-            if (!inlineBoxWithInlineContent.hasChild())
+            handleInlineBox(layoutBox, EnterInlineBox::Yes, inlineItems);
+            auto& inlineBox = downcast<ContainerBox>(layoutBox);
+            if (!inlineBox.hasChild())
                 break;
-            layoutQueue.append(inlineBoxWithInlineContent.firstChild());
+            layoutQueue.append(inlineBox.firstChild());
         }
 
         while (!layoutQueue.isEmpty()) {
             auto& layoutBox = *layoutQueue.takeLast();
-            if (layoutBox.isOutOfFlowPositioned()) {
+            if (layoutBox.isInlineTextBox())
+                handleTextContent(downcast<InlineTextBox>(layoutBox), inlineItems);
+            else if (layoutBox.isAtomicInlineLevelBox() || layoutBox.isLineBreakBox())
+                handleInlineLevelBox(layoutBox, inlineItems);
+            else if (layoutBox.isInlineBox())
+                handleInlineBox(layoutBox, EnterInlineBox::No, inlineItems);
+            else if (layoutBox.isFloatingPositioned())
+                inlineItems.append({ layoutBox, InlineItem::Type::Float });
+            else if (layoutBox.isOutOfFlowPositioned()) {
                 // Let's not construct InlineItems for out-of-flow content as they don't participate in the inline layout.
                 // However to be able to static positioning them, we need to compute their approximate positions.
-                formattingState.addOutOfFlowBox(layoutBox);
-            } else if (is<LineBreakBox>(layoutBox)) {
-                auto& lineBreakBox = downcast<LineBreakBox>(layoutBox);
-                formattingState.addInlineItem({ layoutBox, lineBreakBox.isOptional() ? InlineItem::Type::WordBreakOpportunity : InlineItem::Type::HardLineBreak });
-            } else if (layoutBox.isFloatingPositioned())
-                formattingState.addInlineItem({ layoutBox, InlineItem::Type::Float });
-            else if (layoutBox.isAtomicInlineLevelBox())
-                formattingState.addInlineItem({ layoutBox, InlineItem::Type::Box });
-            else if (layoutBox.isInlineTextBox()) {
-                createAndAppendTextItems(downcast<InlineTextBox>(layoutBox));
-            } else if (layoutBox.isInlineBox())
-                formattingState.addInlineItem({ layoutBox, InlineItem::Type::InlineBoxEnd });
-            else
+                m_formattingState.addOutOfFlowBox(layoutBox);
+            } else
                 ASSERT_NOT_REACHED();
 
             if (auto* nextSibling = layoutBox.nextSibling()) {
@@ -128,13 +131,16 @@ void InlineItemsBuilder::build()
     }
 }
 
-void InlineItemsBuilder::createAndAppendTextItems(const InlineTextBox& inlineTextBox)
+void InlineItemsBuilder::breakInlineItemsAtBidiBoundaries(InlineItems&)
 {
-    auto& formattingState = this->formattingState();
+    // FIXME: Use ubidi to split the content at bidi boundaries.
+}
 
+void InlineItemsBuilder::handleTextContent(const InlineTextBox& inlineTextBox, InlineItems& inlineItems)
+{
     auto text = inlineTextBox.content();
     if (!text.length())
-        return formattingState.addInlineItem(InlineTextItem::createEmptyItem(inlineTextBox));
+        return inlineItems.append(InlineTextItem::createEmptyItem(inlineTextBox));
 
     auto& style = inlineTextBox.style();
     auto& fontCascade = style.fontCascade();
@@ -159,7 +165,7 @@ void InlineItemsBuilder::createAndAppendTextItems(const InlineTextBox& inlineTex
 
         // Segment breaks with preserve new line style (white-space: pre, pre-wrap, break-spaces and pre-line) compute to forced line break.
         if (isSegmentBreakCandidate(text[currentPosition]) && shouldPreserveNewline) {
-            formattingState.addInlineItem(InlineSoftLineBreakItem::createSoftLineBreakItem(inlineTextBox, currentPosition));
+            inlineItems.append(InlineSoftLineBreakItem::createSoftLineBreakItem(inlineTextBox, currentPosition));
             ++currentPosition;
             continue;
         }
@@ -170,7 +176,7 @@ void InlineItemsBuilder::createAndAppendTextItems(const InlineTextBox& inlineTex
             auto appendWhitespaceItem = [&] (auto startPosition, auto itemLength) {
                 auto simpleSingleWhitespaceContent = inlineTextBox.canUseSimplifiedContentMeasuring() && (itemLength == 1 || whitespaceContentIsTreatedAsSingleSpace);
                 auto width = simpleSingleWhitespaceContent ? std::make_optional(InlineLayoutUnit { fontCascade.spaceWidth() }) : inlineItemWidth(startPosition, itemLength);
-                formattingState.addInlineItem(InlineTextItem::createWhitespaceItem(inlineTextBox, startPosition, itemLength, UBIDI_DEFAULT_LTR, whitespaceContent->isWordSeparator, width));
+                inlineItems.append(InlineTextItem::createWhitespaceItem(inlineTextBox, startPosition, itemLength, UBIDI_DEFAULT_LTR, whitespaceContent->isWordSeparator, width));
             };
             if (style.whiteSpace() == WhiteSpace::BreakSpaces) {
                 // https://www.w3.org/TR/css-text-3/#white-space-phase-1
@@ -207,9 +213,27 @@ void InlineItemsBuilder::createAndAppendTextItems(const InlineTextBox& inlineTex
         ASSERT(initialNonWhitespacePosition < currentPosition);
         ASSERT_IMPLIES(style.hyphens() == Hyphens::None, !hasTrailingSoftHyphen);
         auto length = currentPosition - initialNonWhitespacePosition;
-        formattingState.addInlineItem(InlineTextItem::createNonWhitespaceItem(inlineTextBox, initialNonWhitespacePosition, length, UBIDI_DEFAULT_LTR, hasTrailingSoftHyphen, inlineItemWidth(initialNonWhitespacePosition, length)));
+        inlineItems.append(InlineTextItem::createNonWhitespaceItem(inlineTextBox, initialNonWhitespacePosition, length, UBIDI_DEFAULT_LTR, hasTrailingSoftHyphen, inlineItemWidth(initialNonWhitespacePosition, length)));
     }
 }
+
+void InlineItemsBuilder::handleInlineBox(const Box& inlineBox, EnterInlineBox enterInlineBox, InlineItems& inlineItems)
+{
+    // FIXME: Inject bidi control codes when crossing inline boxes with unicode-bidi/direction.
+    inlineItems.append({ inlineBox, enterInlineBox == EnterInlineBox::Yes ? InlineItem::Type::InlineBoxStart : InlineItem::Type::InlineBoxEnd });
+}
+
+void InlineItemsBuilder::handleInlineLevelBox(const Box& layoutBox, InlineItems& inlineItems)
+{
+    if (layoutBox.isAtomicInlineLevelBox())
+        return inlineItems.append({ layoutBox, InlineItem::Type::Box });
+
+    if (layoutBox.isLineBreakBox())
+        return inlineItems.append({ layoutBox, downcast<LineBreakBox>(layoutBox).isOptional() ? InlineItem::Type::WordBreakOpportunity : InlineItem::Type::HardLineBreak });
+
+    ASSERT_NOT_REACHED();
+}
+
 }
 }
 

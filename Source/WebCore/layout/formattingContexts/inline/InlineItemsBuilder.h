@@ -37,15 +37,21 @@ class InlineTextBox;
 class InlineItemsBuilder {
 public:
     InlineItemsBuilder(const ContainerBox& formattingContextRoot, InlineFormattingState&);
-    void build();
+    InlineItems build();
 
 private:
-    void createAndAppendTextItems(const InlineTextBox&);
+    void collectInlineItems(InlineItems&);
+    void breakInlineItemsAtBidiBoundaries(InlineItems&);
+
+    void handleTextContent(const InlineTextBox&, InlineItems&);
+    enum class EnterInlineBox { Yes, No };
+    void handleInlineBox(const Box&, EnterInlineBox, InlineItems&);
+    void handleInlineLevelBox(const Box&, InlineItems&);
 
     const ContainerBox& root() const { return m_root; }
-    InlineFormattingState& formattingState() const { return m_formattingState; }
 
     const ContainerBox& m_root;
+    // FIXME: We should not need this here. This is only required by the out of flow boxes.
     InlineFormattingState& m_formattingState;
 };
 

@@ -524,7 +524,7 @@ void InlineFormattingContext::collectContentIfNeeded()
     if (!formattingState.inlineItems().isEmpty())
         return;
     auto inlineItemsBuilder = InlineItemsBuilder { root(), formattingState };
-    inlineItemsBuilder.build();
+    formattingState.addInlineItems(inlineItemsBuilder.build());
 }
 
 InlineRect InlineFormattingContext::computeGeometryForLineContent(const LineBuilder::LineContent& lineContent)
