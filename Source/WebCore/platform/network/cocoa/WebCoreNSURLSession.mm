@@ -20,7 +20,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #import "config.h"
@@ -29,6 +29,7 @@
 #import "CachedResourceRequest.h"
 #import "ParsedRequestRange.h"
 #import "PlatformMediaResourceLoader.h"
+#import "SharedBuffer.h"
 #import "SubresourceLoader.h"
 #import "WebCoreObjCExtras.h"
 #import <pal/spi/cf/CFNetworkSPI.h>
@@ -607,7 +608,7 @@ public:
     void redirectReceived(PlatformMediaResource&, ResourceRequest&&, const ResourceResponse&, CompletionHandler<void(ResourceRequest&&)>&&) override;
     bool shouldCacheResponse(PlatformMediaResource&, const ResourceResponse&) override;
     void dataSent(PlatformMediaResource&, unsigned long long, unsigned long long) override;
-    void dataReceived(PlatformMediaResource&, const uint8_t* /* data */, int /* length */) override;
+    void dataReceived(PlatformMediaResource&, Ref<SharedBuffer>&&) override;
     void accessControlCheckFailed(PlatformMediaResource&, const ResourceError&) override;
     void loadFailed(PlatformMediaResource&, const ResourceError&) override;
     void loadFinished(PlatformMediaResource&, const NetworkLoadMetrics&) override;
@@ -651,13 +652,13 @@ bool WebCoreNSURLSessionDataTaskClient::shouldCacheResponse(PlatformMediaResourc
     return [m_task resource:&resource shouldCacheResponse:response];
 }
 
-void WebCoreNSURLSessionDataTaskClient::dataReceived(PlatformMediaResource& resource, const uint8_t* data, int length)
+void WebCoreNSURLSessionDataTaskClient::dataReceived(PlatformMediaResource& resource, Ref<SharedBuffer>&& buffer)
 {
     Locker locker { m_taskLock };
     if (!m_task)
         return;
 
-    [m_task resource:&resource receivedData:data length:length];
+    [m_task resource:&resource receivedData:WTFMove(buffer)];
 }
 
 void WebCoreNSURLSessionDataTaskClient::redirectReceived(PlatformMediaResource& resource, ResourceRequest&& request, const ResourceResponse& response, CompletionHandler<void(ResourceRequest&&)>&& completionHandler)
@@ -909,13 +910,12 @@ void WebCoreNSURLSessionDataTaskClient::loadFinished(PlatformMediaResource& reso
     return response.httpHeaderField(HTTPHeaderName::ContentRange).isEmpty();
 }
 
-- (void)resource:(PlatformMediaResource*)resource receivedData:(const uint8_t*)data length:(int)length
+- (void)resource:(PlatformMediaResource*)resource receivedData:(Ref<WebCore::SharedBuffer>&&)data
 {
     ASSERT_UNUSED(resource, !resource || resource == _resource);
-    RetainPtr<NSData> nsData = adoptNS([[NSData alloc] initWithBytes:data length:length]);
-    RetainPtr<WebCoreNSURLSessionDataTask> strongSelf { self };
-    [self.session addDelegateOperation:[strongSelf, length, nsData] {
-        strongSelf.get().countOfBytesReceived += length;
+    [self.session addDelegateOperation:[strongSelf = RetainPtr { self }, data = WTFMove(data)] {
+        auto nsData = data->createNSData();
+        strongSelf.get().countOfBytesReceived += data->size();
         id<NSURLSessionDataDelegate> dataDelegate = (id<NSURLSessionDataDelegate>)strongSelf.get().session.delegate;
         if ([dataDelegate respondsToSelector:@selector(URLSession:dataTask:didReceiveData:)])
             [dataDelegate URLSession:(NSURLSession *)strongSelf.get().session dataTask:(NSURLSessionDataTask *)strongSelf.get() didReceiveData:nsData.get()];
@@ -933,7 +933,7 @@ void WebCoreNSURLSessionDataTaskClient::loadFinished(PlatformMediaResource& reso
             });
             return;
         }
-        
+
         id<NSURLSessionDataDelegate> dataDelegate = (id<NSURLSessionDataDelegate>)strongSelf.get().session.delegate;
         if ([dataDelegate respondsToSelector:@selector(URLSession:task:willPerformHTTPRedirection:newRequest:completionHandler:)]) {
             auto completionHandlerBlock = makeBlockPtr([completionHandler = WTFMove(completionHandler)](NSURLRequest *newRequest) mutable {

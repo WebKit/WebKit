@@ -442,21 +442,37 @@ size_t SharedBuffer::DataSegment::size() const
     return std::visit(visitor, m_immutableData);
 }
 
-SharedBufferDataView::SharedBufferDataView(Ref<SharedBuffer::DataSegment>&& segment, size_t positionWithinSegment)
-    : m_positionWithinSegment(positionWithinSegment)
-    , m_segment(WTFMove(segment))
+SharedBufferDataView::SharedBufferDataView(Ref<SharedBuffer::DataSegment>&& segment, size_t positionWithinSegment, std::optional<size_t> size)
+    : m_segment(WTFMove(segment))
+    , m_positionWithinSegment(positionWithinSegment)
+    , m_size(size ? *size : m_segment->size() - positionWithinSegment)
 {
-    RELEASE_ASSERT(positionWithinSegment < m_segment->size());
+    RELEASE_ASSERT(m_positionWithinSegment < m_segment->size());
+    RELEASE_ASSERT(m_size <= m_segment->size() - m_positionWithinSegment);
+}
+
+SharedBufferDataView::SharedBufferDataView(const SharedBufferDataView& other, size_t newSize)
+    : SharedBufferDataView(other.m_segment.copyRef(), other.m_positionWithinSegment, newSize)
+{
 }
 
 size_t SharedBufferDataView::size() const
 {
-    return m_segment->size() - m_positionWithinSegment;
+    return m_size;
 }
 
 const uint8_t* SharedBufferDataView::data() const
 {
     return m_segment->data() + m_positionWithinSegment;
+}
+
+Ref<SharedBuffer> SharedBufferDataView::createSharedBuffer() const
+{
+    const Ref<SharedBuffer::DataSegment> segment = m_segment;
+    return SharedBuffer::create(SharedBuffer::DataSegment::Provider {
+        [segment, data = data()]() { return data; },
+        [segment, size = size()]() { return size; }
+    });
 }
 
 RefPtr<SharedBuffer> utf8Buffer(const String& string)
