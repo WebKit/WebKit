@@ -1,3 +1,10 @@
+2021-10-29  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Unreviewed, reduce # of iteration since it is timing out on Debug JSC bot
+
+        * stress/put-private-name-ic-write-barrier.js:
+        (PutPrivateNameIC):
+
 2021-10-29  Dmitry Bezhetskov  <dbezhetskov@igalia.com>
 
         [WASM-Function-References] Add support for (ref.null heaptype)

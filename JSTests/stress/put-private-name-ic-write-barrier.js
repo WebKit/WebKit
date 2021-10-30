@@ -18,7 +18,7 @@ function PutPrivateNameIC() {
     }
     noInline(B)
 
-    for (let i = 0; i < 1000000; ++i) {
+    for (let i = 0; i < 100000; ++i) {
         let b1 = new B
         let b2 = new B
         let b3 = new B
