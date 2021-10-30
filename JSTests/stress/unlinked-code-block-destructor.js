@@ -1,4 +1,5 @@
 //@ skip if $memoryLimited
+//@ skip if $buildType == "debug"
 //@ runDefault("--destroy-vm", "--forceDebuggerBytecodeGeneration=1", "--returnEarlyFromInfiniteLoopsForFuzzing=1")
 
 function useAllMemory() {
