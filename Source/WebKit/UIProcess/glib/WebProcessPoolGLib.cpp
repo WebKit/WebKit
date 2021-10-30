@@ -29,6 +29,7 @@
 #include "WebProcessPool.h"
 
 #include "LegacyGlobalSettings.h"
+#include "MemoryPressureMonitor.h"
 #include "WebMemoryPressureHandler.h"
 #include "WebProcessCreationParameters.h"
 #include <WebCore/PlatformDisplay.h>
@@ -52,12 +53,6 @@
 
 namespace WebKit {
 
-static bool memoryPressureMonitorDisabled()
-{
-    static const char* disableMemoryPressureMonitor = getenv("WEBKIT_DISABLE_MEMORY_PRESSURE_MONITOR");
-    return disableMemoryPressureMonitor && !strcmp(disableMemoryPressureMonitor, "1");
-}
-
 void WebProcessPool::platformInitialize()
 {
 #if PLATFORM(GTK)
@@ -66,7 +61,7 @@ void WebProcessPool::platformInitialize()
     if (const char* forceComplexText = getenv("WEBKIT_FORCE_COMPLEX_TEXT"))
         m_alwaysUsesComplexTextCodePath = !strcmp(forceComplexText, "1");
 
-    if (!memoryPressureMonitorDisabled())
+    if (!MemoryPressureMonitor::disabled())
         installMemoryPressureHandler();
 }
 
@@ -97,7 +92,7 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
 
     parameters.memoryCacheDisabled = m_memoryCacheDisabled || LegacyGlobalSettings::singleton().cacheModel() == CacheModel::DocumentViewer;
 
-    if (memoryPressureMonitorDisabled())
+    if (MemoryPressureMonitor::disabled())
         parameters.shouldSuppressMemoryPressureHandler = true;
 
 #if USE(GSTREAMER)
