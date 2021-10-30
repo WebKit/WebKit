@@ -29,6 +29,7 @@
 
 #include "LayoutBox.h"
 #include "LayoutUnits.h"
+#include <unicode/ubidi.h>
 
 namespace WebCore {
 namespace Layout {
@@ -45,9 +46,10 @@ public:
         InlineBoxEnd,
         Float
     };
-    InlineItem(const Box& layoutBox, Type);
+    InlineItem(const Box& layoutBox, Type, UBiDiLevel = UBIDI_DEFAULT_LTR);
 
     Type type() const { return m_type; }
+    UBiDiLevel bidiLevel() const { return m_bidiLevel; }
     const Box& layoutBox() const { return *m_layoutBox; }
     const RenderStyle& style() const { return layoutBox().style(); }
     const RenderStyle& firstLineStyle() const { return layoutBox().firstLineStyle(); }
@@ -65,6 +67,7 @@ public:
 private:
     const Box* m_layoutBox { nullptr };
     Type m_type { };
+    UBiDiLevel m_bidiLevel { UBIDI_DEFAULT_LTR };
 
 protected:
     // For InlineTextItem
@@ -80,9 +83,10 @@ protected:
     unsigned m_startOrPosition { 0 };
 };
 
-inline InlineItem::InlineItem(const Box& layoutBox, Type type)
+inline InlineItem::InlineItem(const Box& layoutBox, Type type, UBiDiLevel bidiLevel)
     : m_layoutBox(&layoutBox)
     , m_type(type)
+    , m_bidiLevel(bidiLevel)
 {
 }
 

@@ -37,9 +37,9 @@ using InlineItems = Vector<InlineItem>;
 
 class InlineTextItem : public InlineItem {
 public:
-    static InlineTextItem createWhitespaceItem(const InlineTextBox&, unsigned start, unsigned length, bool isWordSeparator, std::optional<InlineLayoutUnit> width);
-    static InlineTextItem createNonWhitespaceItem(const InlineTextBox&, unsigned start, unsigned length, bool hasTrailingSoftHyphen, std::optional<InlineLayoutUnit> width);
-    static InlineTextItem createEmptyItem(const InlineTextBox&);
+    static InlineTextItem createWhitespaceItem(const InlineTextBox&, unsigned start, unsigned length, UBiDiLevel, bool isWordSeparator, std::optional<InlineLayoutUnit> width);
+    static InlineTextItem createNonWhitespaceItem(const InlineTextBox&, unsigned start, unsigned length, UBiDiLevel, bool hasTrailingSoftHyphen, std::optional<InlineLayoutUnit> width);
+    static InlineTextItem createEmptyItem(const InlineTextBox&, UBiDiLevel = UBIDI_DEFAULT_LTR);
 
     unsigned start() const { return m_startOrPosition; }
     unsigned end() const { return start() + length(); }
@@ -61,24 +61,24 @@ public:
 private:
     using InlineItem::TextItemType;
 
-    InlineTextItem(const InlineTextBox&, unsigned start, unsigned length, bool hasTrailingSoftHyphen, bool isWordSeparator, std::optional<InlineLayoutUnit> width, TextItemType);
-    explicit InlineTextItem(const InlineTextBox&);
+    InlineTextItem(const InlineTextBox&, unsigned start, unsigned length, UBiDiLevel, bool hasTrailingSoftHyphen, bool isWordSeparator, std::optional<InlineLayoutUnit> width, TextItemType);
+    explicit InlineTextItem(const InlineTextBox&, UBiDiLevel);
 };
 
-inline InlineTextItem InlineTextItem::createWhitespaceItem(const InlineTextBox& inlineTextBox, unsigned start, unsigned length, bool isWordSeparator, std::optional<InlineLayoutUnit> width)
+inline InlineTextItem InlineTextItem::createWhitespaceItem(const InlineTextBox& inlineTextBox, unsigned start, unsigned length, UBiDiLevel bidiLevel, bool isWordSeparator, std::optional<InlineLayoutUnit> width)
 {
-    return { inlineTextBox, start, length, false, isWordSeparator, width, TextItemType::Whitespace };
+    return { inlineTextBox, start, length, bidiLevel, false, isWordSeparator, width, TextItemType::Whitespace };
 }
 
-inline InlineTextItem InlineTextItem::createNonWhitespaceItem(const InlineTextBox& inlineTextBox, unsigned start, unsigned length, bool hasTrailingSoftHyphen, std::optional<InlineLayoutUnit> width)
+inline InlineTextItem InlineTextItem::createNonWhitespaceItem(const InlineTextBox& inlineTextBox, unsigned start, unsigned length, UBiDiLevel bidiLevel, bool hasTrailingSoftHyphen, std::optional<InlineLayoutUnit> width)
 {
     // FIXME: Use the following list of non-whitespace characters to set the "isWordSeparator" bit: noBreakSpace, ethiopicWordspace, aegeanWordSeparatorLine aegeanWordSeparatorDot ugariticWordDivider.
-    return { inlineTextBox, start, length, hasTrailingSoftHyphen, false, width, TextItemType::NonWhitespace };
+    return { inlineTextBox, start, length, bidiLevel, hasTrailingSoftHyphen, false, width, TextItemType::NonWhitespace };
 }
 
-inline InlineTextItem InlineTextItem::createEmptyItem(const InlineTextBox& inlineTextBox)
+inline InlineTextItem InlineTextItem::createEmptyItem(const InlineTextBox& inlineTextBox, UBiDiLevel bidiLevel)
 {
-    return InlineTextItem { inlineTextBox };
+    return InlineTextItem { inlineTextBox, bidiLevel };
 }
 
 }

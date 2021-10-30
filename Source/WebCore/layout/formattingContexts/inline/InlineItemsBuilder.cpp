@@ -170,7 +170,7 @@ void InlineItemsBuilder::createAndAppendTextItems(const InlineTextBox& inlineTex
             auto appendWhitespaceItem = [&] (auto startPosition, auto itemLength) {
                 auto simpleSingleWhitespaceContent = inlineTextBox.canUseSimplifiedContentMeasuring() && (itemLength == 1 || whitespaceContentIsTreatedAsSingleSpace);
                 auto width = simpleSingleWhitespaceContent ? std::make_optional(InlineLayoutUnit { fontCascade.spaceWidth() }) : inlineItemWidth(startPosition, itemLength);
-                formattingState.addInlineItem(InlineTextItem::createWhitespaceItem(inlineTextBox, startPosition, itemLength, whitespaceContent->isWordSeparator, width));
+                formattingState.addInlineItem(InlineTextItem::createWhitespaceItem(inlineTextBox, startPosition, itemLength, UBIDI_DEFAULT_LTR, whitespaceContent->isWordSeparator, width));
             };
             if (style.whiteSpace() == WhiteSpace::BreakSpaces) {
                 // https://www.w3.org/TR/css-text-3/#white-space-phase-1
@@ -207,7 +207,7 @@ void InlineItemsBuilder::createAndAppendTextItems(const InlineTextBox& inlineTex
         ASSERT(initialNonWhitespacePosition < currentPosition);
         ASSERT_IMPLIES(style.hyphens() == Hyphens::None, !hasTrailingSoftHyphen);
         auto length = currentPosition - initialNonWhitespacePosition;
-        formattingState.addInlineItem(InlineTextItem::createNonWhitespaceItem(inlineTextBox, initialNonWhitespacePosition, length, hasTrailingSoftHyphen, inlineItemWidth(initialNonWhitespacePosition, length)));
+        formattingState.addInlineItem(InlineTextItem::createNonWhitespaceItem(inlineTextBox, initialNonWhitespacePosition, length, UBIDI_DEFAULT_LTR, hasTrailingSoftHyphen, inlineItemWidth(initialNonWhitespacePosition, length)));
     }
 }
 }

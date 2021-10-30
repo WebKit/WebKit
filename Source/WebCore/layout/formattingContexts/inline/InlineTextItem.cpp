@@ -38,8 +38,8 @@ namespace Layout {
 
 static_assert(sizeof(InlineItem) == sizeof(InlineTextItem), "");
 
-InlineTextItem::InlineTextItem(const InlineTextBox& inlineTextBox, unsigned start, unsigned length, bool hasTrailingSoftHyphen, bool isWordSeparator, std::optional<InlineLayoutUnit> width, TextItemType textItemType)
-    : InlineItem(inlineTextBox, Type::Text)
+InlineTextItem::InlineTextItem(const InlineTextBox& inlineTextBox, unsigned start, unsigned length, UBiDiLevel bidiLevel, bool hasTrailingSoftHyphen, bool isWordSeparator, std::optional<InlineLayoutUnit> width, TextItemType textItemType)
+    : InlineItem(inlineTextBox, Type::Text, bidiLevel)
 {
     m_startOrPosition = start;
     m_length = length;
@@ -50,8 +50,8 @@ InlineTextItem::InlineTextItem(const InlineTextBox& inlineTextBox, unsigned star
     m_textItemType = textItemType;
 }
 
-InlineTextItem::InlineTextItem(const InlineTextBox& inlineTextBox)
-    : InlineItem(inlineTextBox, Type::Text)
+InlineTextItem::InlineTextItem(const InlineTextBox& inlineTextBox, UBiDiLevel bidiLevel)
+    : InlineItem(inlineTextBox, Type::Text, bidiLevel)
 {
 }
 
@@ -60,7 +60,7 @@ InlineTextItem InlineTextItem::left(unsigned length) const
     RELEASE_ASSERT(length <= this->length());
     ASSERT(m_textItemType != TextItemType::Undefined);
     ASSERT(length);
-    return { inlineTextBox(), start(), length, false, isWordSeparator(), std::nullopt, m_textItemType };
+    return { inlineTextBox(), start(), length, bidiLevel(), false, isWordSeparator(), std::nullopt, m_textItemType };
 }
 
 InlineTextItem InlineTextItem::right(unsigned length, std::optional<InlineLayoutUnit> width) const
@@ -68,7 +68,7 @@ InlineTextItem InlineTextItem::right(unsigned length, std::optional<InlineLayout
     RELEASE_ASSERT(length <= this->length());
     ASSERT(m_textItemType != TextItemType::Undefined);
     ASSERT(length);
-    return { inlineTextBox(), end() - length, length, hasTrailingSoftHyphen(), isWordSeparator(), width, m_textItemType };
+    return { inlineTextBox(), end() - length, length, bidiLevel(), hasTrailingSoftHyphen(), isWordSeparator(), width, m_textItemType };
 }
 
 bool InlineTextItem::isZeroWidthSpaceSeparator() const
