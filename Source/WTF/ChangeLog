@@ -1,3 +1,12 @@
+2021-10-29  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Clean up Baseline StructureStubInfo management
+        https://bugs.webkit.org/show_bug.cgi?id=232513
+
+        Reviewed by Saam Barati.
+
+        * wtf/SegmentedVector.h:
+
 2021-10-29  Darin Adler  <darin@apple.com>
 
         Create constants for all special frame names used in anchor target attribute values and elsewhere

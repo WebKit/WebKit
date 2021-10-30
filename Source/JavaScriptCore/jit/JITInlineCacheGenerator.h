@@ -263,7 +263,7 @@ public:
 
 protected:
     JITType m_jitType;
-    StructureStubInfo* m_stubInfo;
+    StructureStubInfo* m_stubInfo { nullptr };
 
 public:
     MacroAssembler::Label m_start;

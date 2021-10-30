@@ -284,7 +284,7 @@ public:
 
     static ptrdiff_t offsetOfJITData() { return OBJECT_OFFSETOF(CodeBlock, m_jitData); }
 
-    StructureStubInfo* addStubInfo(AccessType, CodeOrigin);
+    StructureStubInfo* addOptimizingStubInfo(AccessType, CodeOrigin);
 
     // O(n) operation. Use getICStatusMap() unless you really only intend to get one stub info.
     StructureStubInfo* findStubInfo(CodeOrigin);

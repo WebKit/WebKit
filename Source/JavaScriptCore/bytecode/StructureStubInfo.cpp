@@ -441,6 +441,7 @@ void StructureStubInfo::initializeFromUnlinkedStructureStubInfo(CodeBlock*, Unli
     callSiteIndex = CallSiteIndex(BytecodeIndex(unlinkedStubInfo.bytecodeIndex.offset()));
     codeOrigin = CodeOrigin(unlinkedStubInfo.bytecodeIndex);
     m_codePtr = slowPathStartLocation;
+    propertyIsInt32 = unlinkedStubInfo.propertyIsInt32;
 
     usedRegisters = RegisterSet::stubUnavailableRegisters();
     if (accessType == AccessType::GetById && unlinkedStubInfo.bytecodeIndex.checkpoint()) {

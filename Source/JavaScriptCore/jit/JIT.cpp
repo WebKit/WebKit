@@ -93,6 +93,14 @@ JITConstantPool::Constant JIT::addToConstantPool(JITConstantPool::Type type, voi
     return result;
 }
 
+std::tuple<UnlinkedStructureStubInfo*, JITConstantPool::Constant> JIT::addUnlinkedStructureStubInfo()
+{
+    void* unlinkedStubInfoIndex = bitwise_cast<void*>(static_cast<uintptr_t>(m_unlinkedStubInfos.size()));
+    UnlinkedStructureStubInfo* stubInfo = &m_unlinkedStubInfos.alloc();
+    JITConstantPool::Constant stubInfoIndex = addToConstantPool(JITConstantPool::Type::StructureStubInfo, unlinkedStubInfoIndex);
+    return std::tuple { stubInfo, stubInfoIndex };
+}
+
 #if ENABLE(DFG_JIT)
 void JIT::emitEnterOptimizationCheck()
 {
@@ -993,7 +1001,9 @@ void JIT::link()
 
     m_jitCode->m_unlinkedCalls = WTFMove(m_unlinkedCalls);
     m_jitCode->m_evalCallLinkInfos = WTFMove(m_evalCallLinkInfos);
-    m_jitCode->m_unlinkedStubInfos = WTFMove(m_unlinkedStubInfos);
+    m_jitCode->m_unlinkedStubInfos = FixedVector<UnlinkedStructureStubInfo>(m_unlinkedStubInfos.size());
+    if (m_jitCode->m_unlinkedStubInfos.size())
+        std::copy(m_unlinkedStubInfos.begin(), m_unlinkedStubInfos.end(), m_jitCode->m_unlinkedStubInfos.begin());
     m_jitCode->m_switchJumpTables = WTFMove(m_switchJumpTables);
     m_jitCode->m_stringSwitchJumpTables = WTFMove(m_stringSwitchJumpTables);
     m_jitCode->m_jitCodeMap = jitCodeMapBuilder.finalize();

@@ -39,26 +39,24 @@
 
 namespace JSC {
 
-static StructureStubInfo* garbageStubInfo()
-{
-    static StructureStubInfo* stubInfo = new StructureStubInfo(AccessType::GetById, CodeOrigin());
-    return stubInfo;
-}
-
 JITInlineCacheGenerator::JITInlineCacheGenerator(
     CodeBlock* codeBlock, JITType jitType, CodeOrigin codeOrigin, CallSiteIndex callSite, AccessType accessType,
     const RegisterSet& usedRegisters)
     : m_jitType(jitType)
 {
-    m_stubInfo = codeBlock ? codeBlock->addStubInfo(accessType, codeOrigin) : garbageStubInfo();
-    m_stubInfo->callSiteIndex = callSite;
-
-    m_stubInfo->usedRegisters = usedRegisters;
+    if (JITCode::isOptimizingJIT(m_jitType)) {
+        ASSERT(codeBlock);
+        m_stubInfo = codeBlock->addOptimizingStubInfo(accessType, codeOrigin);
+        m_stubInfo->callSiteIndex = callSite;
+        m_stubInfo->usedRegisters = usedRegisters;
+    } else
+        ASSERT(!codeBlock);
 }
 
 void JITInlineCacheGenerator::finalize(
     LinkBuffer& fastPath, LinkBuffer& slowPath, CodeLocationLabel<JITStubRoutinePtrTag> start)
 {
+    ASSERT(m_stubInfo);
     m_stubInfo->start = start;
     m_stubInfo->doneLocation = fastPath.locationOf<JSInternalPtrTag>(m_done);
 
@@ -83,19 +81,22 @@ JITByIdGenerator::JITByIdGenerator(
     , m_base(base)
     , m_value(value)
 {
-    m_stubInfo->baseGPR = base.payloadGPR();
-    m_stubInfo->valueGPR = value.payloadGPR();
-    m_stubInfo->regs.thisGPR = InvalidGPRReg;
-    m_stubInfo->m_stubInfoGPR = stubInfoGPR;
+    if (m_stubInfo) {
+        m_stubInfo->baseGPR = base.payloadGPR();
+        m_stubInfo->valueGPR = value.payloadGPR();
+        m_stubInfo->regs.thisGPR = InvalidGPRReg;
+        m_stubInfo->m_stubInfoGPR = stubInfoGPR;
 #if USE(JSVALUE32_64)
-    m_stubInfo->baseTagGPR = base.tagGPR();
-    m_stubInfo->valueTagGPR = value.tagGPR();
-    m_stubInfo->v.thisTagGPR = InvalidGPRReg;
+        m_stubInfo->baseTagGPR = base.tagGPR();
+        m_stubInfo->valueTagGPR = value.tagGPR();
+        m_stubInfo->v.thisTagGPR = InvalidGPRReg;
 #endif
+    }
 }
 
 void JITByIdGenerator::finalize(LinkBuffer& fastPath, LinkBuffer& slowPath)
 {
+    ASSERT(m_stubInfo);
     JITInlineCacheGenerator::finalize(fastPath, slowPath, fastPath.locationOf<JITStubRoutinePtrTag>(m_start));
     if (JITCode::useDataIC(m_jitType))
         m_stubInfo->m_codePtr = m_stubInfo->slowPathStartLocation;
@@ -126,6 +127,7 @@ JITGetByIdGenerator::JITGetByIdGenerator(
 
 void JITGetByIdGenerator::generateFastPath(MacroAssembler& jit)
 {
+    ASSERT(m_stubInfo);
     generateFastCommon(jit, m_isLengthAccess ? InlineAccess::sizeForLengthAccess() : InlineAccess::sizeForPropertyAccess());
 }
 
@@ -167,15 +169,17 @@ JITGetByIdWithThisGenerator::JITGetByIdWithThisGenerator(
     : JITByIdGenerator(codeBlock, jitType, codeOrigin, callSite, AccessType::GetByIdWithThis, usedRegisters, base, value, stubInfoGPR)
 {
     RELEASE_ASSERT(thisRegs.payloadGPR() != thisRegs.tagGPR());
-
-    m_stubInfo->regs.thisGPR = thisRegs.payloadGPR();
+    if (m_stubInfo) {
+        m_stubInfo->regs.thisGPR = thisRegs.payloadGPR();
 #if USE(JSVALUE32_64)
-    m_stubInfo->v.thisTagGPR = thisRegs.tagGPR();
+        m_stubInfo->v.thisTagGPR = thisRegs.tagGPR();
 #endif
+    }
 }
 
 void JITGetByIdWithThisGenerator::generateFastPath(MacroAssembler& jit)
 {
+    ASSERT(m_stubInfo);
     generateFastCommon(jit, InlineAccess::sizeForPropertyAccess());
 }
 
@@ -203,7 +207,8 @@ JITPutByIdGenerator::JITPutByIdGenerator(
         , m_ecmaMode(ecmaMode)
         , m_putKind(putKind)
 {
-    m_stubInfo->usedRegisters.clear(scratch);
+    if (m_stubInfo)
+        m_stubInfo->usedRegisters.clear(scratch);
 }
 
 void JITPutByIdGenerator::generateBaselineDataICFastPath(JIT& jit, unsigned stubInfo, GPRReg stubInfoGPR)
@@ -234,6 +239,7 @@ void JITPutByIdGenerator::generateBaselineDataICFastPath(JIT& jit, unsigned stub
 
 void JITPutByIdGenerator::generateFastPath(MacroAssembler& jit)
 {
+    ASSERT(m_stubInfo);
     generateFastCommon(jit, InlineAccess::sizeForPropertyReplace());
 }
 
@@ -263,23 +269,28 @@ V_JITOperation_GSsiJJC JITPutByIdGenerator::slowPathFunction()
 JITDelByValGenerator::JITDelByValGenerator(CodeBlock* codeBlock, JITType jitType, CodeOrigin codeOrigin, CallSiteIndex callSiteIndex, const RegisterSet& usedRegisters, JSValueRegs base, JSValueRegs property, JSValueRegs result, GPRReg stubInfoGPR, GPRReg scratch)
     : Base(codeBlock, jitType, codeOrigin, callSiteIndex, AccessType::DeleteByVal, usedRegisters)
 {
-    m_stubInfo->hasConstantIdentifier = false;
     ASSERT(base.payloadGPR() != result.payloadGPR());
-    m_stubInfo->baseGPR = base.payloadGPR();
-    m_stubInfo->regs.propertyGPR = property.payloadGPR();
-    m_stubInfo->valueGPR = result.payloadGPR();
-    m_stubInfo->m_stubInfoGPR = stubInfoGPR;
 #if USE(JSVALUE32_64)
     ASSERT(base.tagGPR() != result.tagGPR());
-    m_stubInfo->baseTagGPR = base.tagGPR();
-    m_stubInfo->valueTagGPR = result.tagGPR();
-    m_stubInfo->v.propertyTagGPR = property.tagGPR();
 #endif
-    m_stubInfo->usedRegisters.clear(scratch);
+    if (m_stubInfo) {
+        m_stubInfo->hasConstantIdentifier = false;
+        m_stubInfo->baseGPR = base.payloadGPR();
+        m_stubInfo->regs.propertyGPR = property.payloadGPR();
+        m_stubInfo->valueGPR = result.payloadGPR();
+        m_stubInfo->m_stubInfoGPR = stubInfoGPR;
+#if USE(JSVALUE32_64)
+        m_stubInfo->baseTagGPR = base.tagGPR();
+        m_stubInfo->valueTagGPR = result.tagGPR();
+        m_stubInfo->v.propertyTagGPR = property.tagGPR();
+#endif
+        m_stubInfo->usedRegisters.clear(scratch);
+    }
 }
 
 void JITDelByValGenerator::generateFastPath(MacroAssembler& jit)
 {
+    ASSERT(m_stubInfo);
     m_start = jit.label();
     if (JITCode::useDataIC(m_jitType)) {
         jit.move(CCallHelpers::TrustedImmPtr(m_stubInfo), m_stubInfo->m_stubInfoGPR);
@@ -291,6 +302,7 @@ void JITDelByValGenerator::generateFastPath(MacroAssembler& jit)
 
 void JITDelByValGenerator::finalize(LinkBuffer& fastPath, LinkBuffer& slowPath)
 {
+    ASSERT(m_stubInfo);
     Base::finalize(fastPath, slowPath, fastPath.locationOf<JITStubRoutinePtrTag>(m_start));
     if (JITCode::useDataIC(m_jitType))
         m_stubInfo->m_codePtr = m_stubInfo->slowPathStartLocation;
@@ -299,23 +311,28 @@ void JITDelByValGenerator::finalize(LinkBuffer& fastPath, LinkBuffer& slowPath)
 JITDelByIdGenerator::JITDelByIdGenerator(CodeBlock* codeBlock, JITType jitType, CodeOrigin codeOrigin, CallSiteIndex callSiteIndex, const RegisterSet& usedRegisters, CacheableIdentifier, JSValueRegs base, JSValueRegs result, GPRReg stubInfoGPR, GPRReg scratch)
     : Base(codeBlock, jitType, codeOrigin, callSiteIndex, AccessType::DeleteByID, usedRegisters)
 {
-    m_stubInfo->hasConstantIdentifier = true;
     ASSERT(base.payloadGPR() != result.payloadGPR());
-    m_stubInfo->baseGPR = base.payloadGPR();
-    m_stubInfo->regs.propertyGPR = InvalidGPRReg;
-    m_stubInfo->valueGPR = result.payloadGPR();
-    m_stubInfo->m_stubInfoGPR = stubInfoGPR;
 #if USE(JSVALUE32_64)
     ASSERT(base.tagGPR() != result.tagGPR());
-    m_stubInfo->baseTagGPR = base.tagGPR();
-    m_stubInfo->valueTagGPR = result.tagGPR();
-    m_stubInfo->v.propertyTagGPR = InvalidGPRReg;
 #endif
-    m_stubInfo->usedRegisters.clear(scratch);
+    if (m_stubInfo) {
+        m_stubInfo->hasConstantIdentifier = true;
+        m_stubInfo->baseGPR = base.payloadGPR();
+        m_stubInfo->regs.propertyGPR = InvalidGPRReg;
+        m_stubInfo->valueGPR = result.payloadGPR();
+        m_stubInfo->m_stubInfoGPR = stubInfoGPR;
+#if USE(JSVALUE32_64)
+        m_stubInfo->baseTagGPR = base.tagGPR();
+        m_stubInfo->valueTagGPR = result.tagGPR();
+        m_stubInfo->v.propertyTagGPR = InvalidGPRReg;
+#endif
+        m_stubInfo->usedRegisters.clear(scratch);
+    }
 }
 
 void JITDelByIdGenerator::generateFastPath(MacroAssembler& jit)
 {
+    ASSERT(m_stubInfo);
     m_start = jit.label();
     if (JITCode::useDataIC(m_jitType)) {
         jit.move(CCallHelpers::TrustedImmPtr(m_stubInfo), m_stubInfo->m_stubInfoGPR);
@@ -327,6 +344,7 @@ void JITDelByIdGenerator::generateFastPath(MacroAssembler& jit)
 
 void JITDelByIdGenerator::finalize(LinkBuffer& fastPath, LinkBuffer& slowPath)
 {
+    ASSERT(m_stubInfo);
     Base::finalize(fastPath, slowPath, fastPath.locationOf<JITStubRoutinePtrTag>(m_start));
     if (JITCode::useDataIC(m_jitType))
         m_stubInfo->m_codePtr = m_stubInfo->slowPathStartLocation;
@@ -335,21 +353,23 @@ void JITDelByIdGenerator::finalize(LinkBuffer& fastPath, LinkBuffer& slowPath)
 JITInByValGenerator::JITInByValGenerator(CodeBlock* codeBlock, JITType jitType, CodeOrigin codeOrigin, CallSiteIndex callSiteIndex, AccessType accessType, const RegisterSet& usedRegisters, JSValueRegs base, JSValueRegs property, JSValueRegs result, GPRReg stubInfoGPR)
     : Base(codeBlock, jitType, codeOrigin, callSiteIndex, accessType, usedRegisters)
 {
-    m_stubInfo->hasConstantIdentifier = false;
-
-    m_stubInfo->baseGPR = base.payloadGPR();
-    m_stubInfo->regs.propertyGPR = property.payloadGPR();
-    m_stubInfo->valueGPR = result.payloadGPR();
-    m_stubInfo->m_stubInfoGPR = stubInfoGPR;
+    if (m_stubInfo) {
+        m_stubInfo->hasConstantIdentifier = false;
+        m_stubInfo->baseGPR = base.payloadGPR();
+        m_stubInfo->regs.propertyGPR = property.payloadGPR();
+        m_stubInfo->valueGPR = result.payloadGPR();
+        m_stubInfo->m_stubInfoGPR = stubInfoGPR;
 #if USE(JSVALUE32_64)
-    m_stubInfo->baseTagGPR = base.tagGPR();
-    m_stubInfo->valueTagGPR = result.tagGPR();
-    m_stubInfo->v.propertyTagGPR = property.tagGPR();
+        m_stubInfo->baseTagGPR = base.tagGPR();
+        m_stubInfo->valueTagGPR = result.tagGPR();
+        m_stubInfo->v.propertyTagGPR = property.tagGPR();
 #endif
+    }
 }
 
 void JITInByValGenerator::generateFastPath(MacroAssembler& jit)
 {
+    ASSERT(m_stubInfo);
     m_start = jit.label();
     if (JITCode::useDataIC(m_jitType)) {
         jit.move(CCallHelpers::TrustedImmPtr(m_stubInfo), m_stubInfo->m_stubInfoGPR);
@@ -363,6 +383,7 @@ void JITInByValGenerator::finalize(
     LinkBuffer& fastPath, LinkBuffer& slowPath)
 {
     ASSERT(m_start.isSet());
+    ASSERT(m_stubInfo);
     Base::finalize(fastPath, slowPath, fastPath.locationOf<JITStubRoutinePtrTag>(m_start));
     if (JITCode::useDataIC(m_jitType))
         m_stubInfo->m_codePtr = m_stubInfo->slowPathStartLocation;
@@ -380,6 +401,7 @@ JITInByIdGenerator::JITInByIdGenerator(
 
 void JITInByIdGenerator::generateFastPath(MacroAssembler& jit)
 {
+    ASSERT(m_stubInfo);
     generateFastCommon(jit, InlineAccess::sizeForPropertyAccess());
 }
 
@@ -415,29 +437,31 @@ JITInstanceOfGenerator::JITInstanceOfGenerator(
     GPRReg scratch1, GPRReg scratch2, bool prototypeIsKnownObject)
     : JITInlineCacheGenerator(codeBlock, jitType, codeOrigin, callSiteIndex, AccessType::InstanceOf, usedRegisters)
 {
-    m_stubInfo->baseGPR = value;
-    m_stubInfo->valueGPR = result;
-    m_stubInfo->regs.prototypeGPR = prototype;
-    m_stubInfo->m_stubInfoGPR = stubInfoGPR;
+    if (m_stubInfo) {
+        m_stubInfo->baseGPR = value;
+        m_stubInfo->valueGPR = result;
+        m_stubInfo->regs.prototypeGPR = prototype;
+        m_stubInfo->m_stubInfoGPR = stubInfoGPR;
 #if USE(JSVALUE32_64)
-    m_stubInfo->baseTagGPR = InvalidGPRReg;
-    m_stubInfo->valueTagGPR = InvalidGPRReg;
-    m_stubInfo->v.thisTagGPR = InvalidGPRReg;
+        m_stubInfo->baseTagGPR = InvalidGPRReg;
+        m_stubInfo->valueTagGPR = InvalidGPRReg;
+        m_stubInfo->v.thisTagGPR = InvalidGPRReg;
 #endif
 
-    m_stubInfo->usedRegisters.clear(result);
-    if (scratch1 != InvalidGPRReg)
-        m_stubInfo->usedRegisters.clear(scratch1);
-    if (scratch2 != InvalidGPRReg)
-        m_stubInfo->usedRegisters.clear(scratch2);
+        m_stubInfo->usedRegisters.clear(result);
+        if (scratch1 != InvalidGPRReg)
+            m_stubInfo->usedRegisters.clear(scratch1);
+        if (scratch2 != InvalidGPRReg)
+            m_stubInfo->usedRegisters.clear(scratch2);
 
-    m_stubInfo->prototypeIsKnownObject = prototypeIsKnownObject;
-
-    m_stubInfo->hasConstantIdentifier = false;
+        m_stubInfo->prototypeIsKnownObject = prototypeIsKnownObject;
+        m_stubInfo->hasConstantIdentifier = false;
+    }
 }
 
 void JITInstanceOfGenerator::generateFastPath(MacroAssembler& jit)
 {
+    ASSERT(m_stubInfo);
     m_start = jit.label();
     if (JITCode::useDataIC(m_jitType)) {
         jit.move(CCallHelpers::TrustedImmPtr(m_stubInfo), m_stubInfo->m_stubInfoGPR);
@@ -449,6 +473,7 @@ void JITInstanceOfGenerator::generateFastPath(MacroAssembler& jit)
 
 void JITInstanceOfGenerator::finalize(LinkBuffer& fastPath, LinkBuffer& slowPath)
 {
+    ASSERT(m_stubInfo);
     Base::finalize(fastPath, slowPath, fastPath.locationOf<JITStubRoutinePtrTag>(m_start));
     if (JITCode::useDataIC(m_jitType))
         m_stubInfo->m_codePtr = m_stubInfo->slowPathStartLocation;
@@ -459,21 +484,23 @@ JITGetByValGenerator::JITGetByValGenerator(CodeBlock* codeBlock, JITType jitType
     , m_base(base)
     , m_result(result)
 {
-    m_stubInfo->hasConstantIdentifier = false;
-
-    m_stubInfo->baseGPR = base.payloadGPR();
-    m_stubInfo->regs.propertyGPR = property.payloadGPR();
-    m_stubInfo->valueGPR = result.payloadGPR();
-    m_stubInfo->m_stubInfoGPR = stubInfoGPR;
+    if (m_stubInfo) {
+        m_stubInfo->hasConstantIdentifier = false;
+        m_stubInfo->baseGPR = base.payloadGPR();
+        m_stubInfo->regs.propertyGPR = property.payloadGPR();
+        m_stubInfo->valueGPR = result.payloadGPR();
+        m_stubInfo->m_stubInfoGPR = stubInfoGPR;
 #if USE(JSVALUE32_64)
-    m_stubInfo->baseTagGPR = base.tagGPR();
-    m_stubInfo->valueTagGPR = result.tagGPR();
-    m_stubInfo->v.propertyTagGPR = property.tagGPR();
+        m_stubInfo->baseTagGPR = base.tagGPR();
+        m_stubInfo->valueTagGPR = result.tagGPR();
+        m_stubInfo->v.propertyTagGPR = property.tagGPR();
 #endif
+    }
 }
 
 void JITGetByValGenerator::generateFastPath(MacroAssembler& jit)
 {
+    ASSERT(m_stubInfo);
     m_start = jit.label();
     if (JITCode::useDataIC(m_jitType)) {
         jit.move(CCallHelpers::TrustedImmPtr(m_stubInfo), m_stubInfo->m_stubInfoGPR);
@@ -485,6 +512,7 @@ void JITGetByValGenerator::generateFastPath(MacroAssembler& jit)
 
 void JITGetByValGenerator::finalize(LinkBuffer& fastPath, LinkBuffer& slowPath)
 {
+    ASSERT(m_stubInfo);
     Base::finalize(fastPath, slowPath, fastPath.locationOf<JITStubRoutinePtrTag>(m_start));
     if (JITCode::useDataIC(m_jitType))
         m_stubInfo->m_codePtr = m_stubInfo->slowPathStartLocation;
@@ -495,22 +523,24 @@ JITPutByValGenerator::JITPutByValGenerator(CodeBlock* codeBlock, JITType jitType
     , m_base(base)
     , m_value(value)
 {
-    m_stubInfo->hasConstantIdentifier = false;
-
-    m_stubInfo->baseGPR = base.payloadGPR();
-    m_stubInfo->regs.propertyGPR = property.payloadGPR();
-    m_stubInfo->valueGPR = value.payloadGPR();
-    m_stubInfo->m_stubInfoGPR = stubInfoGPR;
-    m_stubInfo->m_arrayProfileGPR = arrayProfileGPR;
+    if (m_stubInfo) {
+        m_stubInfo->hasConstantIdentifier = false;
+        m_stubInfo->baseGPR = base.payloadGPR();
+        m_stubInfo->regs.propertyGPR = property.payloadGPR();
+        m_stubInfo->valueGPR = value.payloadGPR();
+        m_stubInfo->m_stubInfoGPR = stubInfoGPR;
+        m_stubInfo->m_arrayProfileGPR = arrayProfileGPR;
 #if USE(JSVALUE32_64)
-    m_stubInfo->baseTagGPR = base.tagGPR();
-    m_stubInfo->valueTagGPR = value.tagGPR();
-    m_stubInfo->v.propertyTagGPR = property.tagGPR();
+        m_stubInfo->baseTagGPR = base.tagGPR();
+        m_stubInfo->valueTagGPR = value.tagGPR();
+        m_stubInfo->v.propertyTagGPR = property.tagGPR();
 #endif
+    }
 }
 
 void JITPutByValGenerator::generateFastPath(MacroAssembler& jit)
 {
+    ASSERT(m_stubInfo);
     m_start = jit.label();
     if (JITCode::useDataIC(m_jitType)) {
         jit.move(CCallHelpers::TrustedImmPtr(m_stubInfo), m_stubInfo->m_stubInfoGPR);
@@ -522,6 +552,7 @@ void JITPutByValGenerator::generateFastPath(MacroAssembler& jit)
 
 void JITPutByValGenerator::finalize(LinkBuffer& fastPath, LinkBuffer& slowPath)
 {
+    ASSERT(m_stubInfo);
     Base::finalize(fastPath, slowPath, fastPath.locationOf<JITStubRoutinePtrTag>(m_start));
     if (JITCode::useDataIC(m_jitType))
         m_stubInfo->m_codePtr = m_stubInfo->slowPathStartLocation;
@@ -531,21 +562,23 @@ JITPrivateBrandAccessGenerator::JITPrivateBrandAccessGenerator(CodeBlock* codeBl
     : Base(codeBlock, jitType, codeOrigin, callSiteIndex, accessType, usedRegisters)
 {
     ASSERT(accessType == AccessType::CheckPrivateBrand || accessType == AccessType::SetPrivateBrand);
-    m_stubInfo->hasConstantIdentifier = false;
-
-    m_stubInfo->baseGPR = base.payloadGPR();
-    m_stubInfo->regs.brandGPR = brand.payloadGPR();
-    m_stubInfo->valueGPR = InvalidGPRReg;
-    m_stubInfo->m_stubInfoGPR = stubInfoGPR;
+    if (m_stubInfo) {
+        m_stubInfo->hasConstantIdentifier = false;
+        m_stubInfo->baseGPR = base.payloadGPR();
+        m_stubInfo->regs.brandGPR = brand.payloadGPR();
+        m_stubInfo->valueGPR = InvalidGPRReg;
+        m_stubInfo->m_stubInfoGPR = stubInfoGPR;
 #if USE(JSVALUE32_64)
-    m_stubInfo->baseTagGPR = base.tagGPR();
-    m_stubInfo->v.brandTagGPR = brand.tagGPR();
-    m_stubInfo->valueTagGPR = InvalidGPRReg;
+        m_stubInfo->baseTagGPR = base.tagGPR();
+        m_stubInfo->v.brandTagGPR = brand.tagGPR();
+        m_stubInfo->valueTagGPR = InvalidGPRReg;
 #endif
+    }
 }
 
 void JITPrivateBrandAccessGenerator::generateFastPath(MacroAssembler& jit)
 {
+    ASSERT(m_stubInfo);
     m_start = jit.label();
     if (JITCode::useDataIC(m_jitType)) {
         jit.move(CCallHelpers::TrustedImmPtr(m_stubInfo), m_stubInfo->m_stubInfoGPR);
@@ -557,6 +590,7 @@ void JITPrivateBrandAccessGenerator::generateFastPath(MacroAssembler& jit)
 
 void JITPrivateBrandAccessGenerator::finalize(LinkBuffer& fastPath, LinkBuffer& slowPath)
 {
+    ASSERT(m_stubInfo);
     Base::finalize(fastPath, slowPath, fastPath.locationOf<JITStubRoutinePtrTag>(m_start));
     if (JITCode::useDataIC(m_jitType))
         m_stubInfo->m_codePtr = m_stubInfo->slowPathStartLocation;

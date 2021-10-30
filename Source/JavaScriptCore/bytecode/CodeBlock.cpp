@@ -796,7 +796,7 @@ void CodeBlock::setupWithUnlinkedBaselineCode(Ref<BaselineJITCode> jitCode)
                 break;
             }
             case JITConstantPool::Type::StructureStubInfo: {
-                UnlinkedStructureStubInfo& unlinkedStubInfo = *static_cast<UnlinkedStructureStubInfo*>(entry.pointer());
+                UnlinkedStructureStubInfo& unlinkedStubInfo = jitCode->m_unlinkedStubInfos[bitwise_cast<uintptr_t>(entry.pointer())];
                 StructureStubInfo* stubInfo = jitData.m_stubInfos.add(unlinkedStubInfo.accessType, CodeOrigin(unlinkedStubInfo.bytecodeIndex));
                 stubInfo->initializeFromUnlinkedStructureStubInfo(this, unlinkedStubInfo);
                 jitData.m_jitConstantPool[i] = stubInfo;
@@ -1707,7 +1707,7 @@ void CodeBlock::getICStatusMap(ICStatusMap& result)
 }
 
 #if ENABLE(JIT)
-StructureStubInfo* CodeBlock::addStubInfo(AccessType accessType, CodeOrigin codeOrigin)
+StructureStubInfo* CodeBlock::addOptimizingStubInfo(AccessType accessType, CodeOrigin codeOrigin)
 {
     ConcurrentJSLocker locker(m_lock);
     return ensureJITData(locker).m_stubInfos.add(accessType, codeOrigin);

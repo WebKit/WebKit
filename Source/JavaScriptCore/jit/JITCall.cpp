@@ -490,10 +490,9 @@ void JIT::emit_op_iterator_open(const Instruction* instruction)
         nullptr, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(BytecodeIndex(m_bytecodeIndex.offset())), RegisterSet::stubUnavailableRegisters(),
         CacheableIdentifier::createFromImmortalIdentifier(ident->impl()), baseJSR, resultJSR, stubInfoGPR, AccessType::GetById);
 
-    UnlinkedStructureStubInfo* stubInfo = m_unlinkedStubInfos.add();
+    auto [ stubInfo, stubInfoIndex ] = addUnlinkedStructureStubInfo();
     stubInfo->accessType = AccessType::GetById;
     stubInfo->bytecodeIndex = m_bytecodeIndex;
-    JITConstantPool::Constant stubInfoIndex = addToConstantPool(JITConstantPool::Type::StructureStubInfo, stubInfo);
     gen.m_unlinkedStubInfoConstantIndex = stubInfoIndex;
     gen.m_unlinkedStubInfo = stubInfo;
 
@@ -601,10 +600,9 @@ void JIT::emit_op_iterator_next(const Instruction* instruction)
             nullptr, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(BytecodeIndex(m_bytecodeIndex.offset())), preservedRegs,
             CacheableIdentifier::createFromImmortalIdentifier(vm().propertyNames->done.impl()), returnValueJSR, doneJSR, stubInfoGPR, AccessType::GetById);
 
-        UnlinkedStructureStubInfo* stubInfo = m_unlinkedStubInfos.add();
+        auto [ stubInfo, stubInfoIndex ] = addUnlinkedStructureStubInfo();
         stubInfo->accessType = AccessType::GetById;
         stubInfo->bytecodeIndex = m_bytecodeIndex;
-        JITConstantPool::Constant stubInfoIndex = addToConstantPool(JITConstantPool::Type::StructureStubInfo, stubInfo);
         gen.m_unlinkedStubInfoConstantIndex = stubInfoIndex;
         gen.m_unlinkedStubInfo = stubInfo;
 
@@ -634,10 +632,9 @@ void JIT::emit_op_iterator_next(const Instruction* instruction)
             nullptr, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(BytecodeIndex(m_bytecodeIndex.offset())), RegisterSet::stubUnavailableRegisters(),
             CacheableIdentifier::createFromImmortalIdentifier(vm().propertyNames->value.impl()), baseJSR, resultJSR, stubInfoGPR, AccessType::GetById);
 
-        UnlinkedStructureStubInfo* stubInfo = m_unlinkedStubInfos.add();
+        auto [ stubInfo, stubInfoIndex ] = addUnlinkedStructureStubInfo();
         stubInfo->accessType = AccessType::GetById;
         stubInfo->bytecodeIndex = m_bytecodeIndex;
-        JITConstantPool::Constant stubInfoIndex = addToConstantPool(JITConstantPool::Type::StructureStubInfo, stubInfo);
         gen.m_unlinkedStubInfoConstantIndex = stubInfoIndex;
         gen.m_unlinkedStubInfo = stubInfo;
 

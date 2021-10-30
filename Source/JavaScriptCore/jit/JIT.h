@@ -957,6 +957,7 @@ namespace JSC {
         void resetSP();
 
         JITConstantPool::Constant addToConstantPool(JITConstantPool::Type, void* payload = nullptr);
+        std::tuple<UnlinkedStructureStubInfo*, JITConstantPool::Constant> addUnlinkedStructureStubInfo();
 
         Interpreter* m_interpreter;
 
@@ -1029,7 +1030,7 @@ namespace JSC {
         JITConstantPool::Constant m_globalObjectConstant { std::numeric_limits<unsigned>::max() };
         Bag<UnlinkedCallLinkInfo> m_unlinkedCalls;
         Bag<CallLinkInfo> m_evalCallLinkInfos;
-        Bag<UnlinkedStructureStubInfo> m_unlinkedStubInfos;
+        SegmentedVector<UnlinkedStructureStubInfo> m_unlinkedStubInfos;
         FixedVector<SimpleJumpTable> m_switchJumpTables;
         FixedVector<StringJumpTable> m_stringSwitchJumpTables;
 

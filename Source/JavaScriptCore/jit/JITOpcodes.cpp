@@ -177,10 +177,9 @@ void JIT::emit_op_instanceof(const Instruction* currentInstruction)
         stubInfoGPR,
         BaselineInstanceofRegisters::scratch1, BaselineInstanceofRegisters::scratch2);
 
-    UnlinkedStructureStubInfo* stubInfo = m_unlinkedStubInfos.add();
+    auto [ stubInfo, stubInfoIndex ] = addUnlinkedStructureStubInfo();
     stubInfo->accessType = AccessType::InstanceOf;
     stubInfo->bytecodeIndex = m_bytecodeIndex;
-    JITConstantPool::Constant stubInfoIndex = addToConstantPool(JITConstantPool::Type::StructureStubInfo, stubInfo);
     gen.m_unlinkedStubInfoConstantIndex = stubInfoIndex;
     gen.m_unlinkedStubInfo = stubInfo;
 
