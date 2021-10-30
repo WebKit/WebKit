@@ -1,5 +1,125 @@
 2021-10-29  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] Having StructureStubInfo and CallLinkInfo via FixedVector for Baseline JIT
+        https://bugs.webkit.org/show_bug.cgi?id=232521
+
+        Reviewed by Saam Barati.
+
+        We know # of StructureStubInfo and # of CallLinkInfo after compiling Baseline JIT code.
+        So when installing a code into CodeBlock, we do not need to use Bag<>. Instead we can just
+        use FixedVector to allocate these instances.
+
+        We keep FixedVector<StructureStubInfo> and FixedVector<CallLinkInfo> in JITData for Baseline JIT.
+        And moving Bag<StructureStubInfo> and Bag<CallLinkInfo> to DFG::CommonData when they are instantiated
+        for DFG / FTL codes.
+
+        * bytecode/CallLinkInfo.cpp:
+        (JSC::CallLinkInfo::CallLinkInfo): Deleted.
+        * bytecode/CallLinkInfo.h:
+        (JSC::CallLinkInfo::CallLinkInfo):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::setupWithUnlinkedBaselineCode):
+        (JSC::CodeBlock::~CodeBlock):
+        (JSC::CodeBlock::propagateTransitions):
+        (JSC::CodeBlock::finalizeJITInlineCaches):
+        (JSC::CodeBlock::getICStatusMap):
+        (JSC::CodeBlock::findStubInfo):
+        (JSC::CodeBlock::getCallLinkInfoForBytecodeIndex):
+        (JSC::CodeBlock::resetJITData):
+        (JSC::CodeBlock::stronglyVisitStrongReferences):
+        (JSC::CodeBlock::jettison):
+        (JSC::CodeBlock::findPC):
+        (JSC::CodeBlock::addOptimizingStubInfo): Deleted.
+        (JSC::CodeBlock::addCallLinkInfo): Deleted.
+        * bytecode/CodeBlock.h:
+        * bytecode/StructureStubInfo.cpp:
+        (JSC::StructureStubInfo::StructureStubInfo): Deleted.
+        * bytecode/StructureStubInfo.h:
+        (JSC::StructureStubInfo::StructureStubInfo):
+        * dfg/DFGCommonData.h:
+        (JSC::DFG::CommonData::addCallLinkInfo):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileDeleteById):
+        (JSC::DFG::SpeculativeJIT::compileDeleteByVal):
+        (JSC::DFG::SpeculativeJIT::compileInById):
+        (JSC::DFG::SpeculativeJIT::compileInByVal):
+        (JSC::DFG::SpeculativeJIT::compileHasPrivate):
+        (JSC::DFG::SpeculativeJIT::compileGetPrivateNameByVal):
+        (JSC::DFG::SpeculativeJIT::compilePutPrivateName):
+        (JSC::DFG::SpeculativeJIT::compileCheckPrivateBrand):
+        (JSC::DFG::SpeculativeJIT::compileSetPrivateBrand):
+        (JSC::DFG::SpeculativeJIT::compileInstanceOfForCells):
+        (JSC::DFG::SpeculativeJIT::cachedPutById):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::cachedGetById):
+        (JSC::DFG::SpeculativeJIT::cachedGetByIdWithThis):
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        (JSC::DFG::SpeculativeJIT::compileGetByVal):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::cachedGetById):
+        (JSC::DFG::SpeculativeJIT::cachedGetByIdWithThis):
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        (JSC::DFG::SpeculativeJIT::compileGetByVal):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::getPrivateName):
+        (JSC::FTL::DFG::LowerDFGToB3::compilePrivateBrandAccess):
+        (JSC::FTL::DFG::LowerDFGToB3::compilePutPrivateName):
+        (JSC::FTL::DFG::LowerDFGToB3::cachedPutById):
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetByValImpl):
+        (JSC::FTL::DFG::LowerDFGToB3::compilePutByVal):
+        (JSC::FTL::DFG::LowerDFGToB3::compileDelBy):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCompareStrictEq):
+        * jit/BaselineJITCode.h:
+        * jit/JIT.cpp:
+        (JSC::JIT::addUnlinkedCallLinkInfo):
+        (JSC::JIT::link):
+        * jit/JIT.h:
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileOpCall):
+        (JSC::JIT::emit_op_iterator_open):
+        (JSC::JIT::emit_op_iterator_next):
+        * jit/JITInlineCacheGenerator.cpp:
+        (JSC::JITInlineCacheGenerator::JITInlineCacheGenerator):
+        (JSC::JITByIdGenerator::JITByIdGenerator):
+        (JSC::JITGetByIdGenerator::JITGetByIdGenerator):
+        (JSC::JITGetByIdWithThisGenerator::JITGetByIdWithThisGenerator):
+        (JSC::JITPutByIdGenerator::JITPutByIdGenerator):
+        (JSC::JITDelByValGenerator::JITDelByValGenerator):
+        (JSC::JITDelByIdGenerator::JITDelByIdGenerator):
+        (JSC::JITInByValGenerator::JITInByValGenerator):
+        (JSC::JITInByIdGenerator::JITInByIdGenerator):
+        (JSC::JITInstanceOfGenerator::JITInstanceOfGenerator):
+        (JSC::JITGetByValGenerator::JITGetByValGenerator):
+        (JSC::JITPutByValGenerator::JITPutByValGenerator):
+        (JSC::JITPrivateBrandAccessGenerator::JITPrivateBrandAccessGenerator):
+        * jit/JITInlineCacheGenerator.h:
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_instanceof):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_instanceof):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_get_by_val):
+        (JSC::JIT::emit_op_get_private_name):
+        (JSC::JIT::emit_op_set_private_brand):
+        (JSC::JIT::emit_op_check_private_brand):
+        (JSC::JIT::emit_op_put_by_val):
+        (JSC::JIT::emit_op_put_private_name):
+        (JSC::JIT::emit_op_del_by_id):
+        (JSC::JIT::emit_op_del_by_val):
+        (JSC::JIT::emit_op_try_get_by_id):
+        (JSC::JIT::emit_op_get_by_id_direct):
+        (JSC::JIT::emit_op_get_by_id):
+        (JSC::JIT::emit_op_get_by_id_with_this):
+        (JSC::JIT::emit_op_put_by_id):
+        (JSC::JIT::emit_op_in_by_id):
+        (JSC::JIT::emit_op_in_by_val):
+        (JSC::JIT::emitHasPrivate):
+        (JSC::JIT::emit_op_enumerator_get_by_val):
+
+2021-10-29  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] Clean up Baseline StructureStubInfo management
         https://bugs.webkit.org/show_bug.cgi?id=232513
 

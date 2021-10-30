@@ -201,7 +201,7 @@ void SpeculativeJIT::cachedGetById(
     
     CallSiteIndex callSite = m_jit.recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded(codeOrigin, m_stream->size());
     JITGetByIdGenerator gen(
-        m_jit.codeBlock(), JITType::DFGJIT, codeOrigin, callSite, usedRegisters, identifier,
+        m_jit.codeBlock(), &m_jit.jitCode()->common.m_stubInfos, JITType::DFGJIT, codeOrigin, callSite, usedRegisters, identifier,
         JSValueRegs(baseTagGPROrNone, basePayloadGPR), JSValueRegs(resultTagGPR, resultPayloadGPR), InvalidGPRReg, type);
     
     gen.generateFastPath(m_jit);
@@ -237,7 +237,7 @@ void SpeculativeJIT::cachedGetByIdWithThis(
     
     CallSiteIndex callSite = m_jit.recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded(codeOrigin, m_stream->size());
     JITGetByIdWithThisGenerator gen(
-        m_jit.codeBlock(), JITType::DFGJIT, codeOrigin, callSite, usedRegisters, identifier,
+        m_jit.codeBlock(), &m_jit.jitCode()->common.m_stubInfos, JITType::DFGJIT, codeOrigin, callSite, usedRegisters, identifier,
         JSValueRegs(resultTagGPR, resultPayloadGPR), JSValueRegs(baseTagGPROrNone, basePayloadGPR), JSValueRegs(thisTagGPR, thisPayloadGPR), InvalidGPRReg);
     
     gen.generateFastPath(m_jit);
@@ -786,7 +786,7 @@ void SpeculativeJIT::emitCall(Node* node)
         isEmulatedTail ? *staticInlineCallFrame->getCallerSkippingTailCalls() : staticOrigin;
     CallSiteIndex callSite = m_jit.recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded(dynamicOrigin, m_stream->size());
     
-    CallLinkInfo* info = m_jit.codeBlock()->addCallLinkInfo(node->origin.semantic);
+    CallLinkInfo* info = m_jit.jitCode()->common.addCallLinkInfo(node->origin.semantic);
     info->setUpCall(callType, calleePayloadGPR);
     
     auto setResultAndResetStack = [&] () {
@@ -1896,7 +1896,7 @@ void SpeculativeJIT::compileGetByVal(Node* node, const ScopedLambda<std::tuple<J
                 slowCases.append(m_jit.branchIfNotCell(baseRegs));
 
             JITGetByValGenerator gen(
-                m_jit.codeBlock(), JITType::DFGJIT, codeOrigin, callSite, AccessType::GetByVal, usedRegisters,
+                m_jit.codeBlock(), &m_jit.jitCode()->common.m_stubInfos, JITType::DFGJIT, codeOrigin, callSite, AccessType::GetByVal, usedRegisters,
                 baseRegs, propertyRegs, resultRegs, InvalidGPRReg);
 
             if (m_state.forNode(m_graph.varArgChild(node, 1)).isType(SpecString))
@@ -2783,7 +2783,7 @@ void SpeculativeJIT::compile(Node* node)
             ECMAMode ecmaMode = node->ecmaMode();
 
             JITPutByValGenerator gen(
-                m_jit.codeBlock(), JITType::DFGJIT, codeOrigin, callSite, AccessType::PutByVal, usedRegisters,
+                m_jit.codeBlock(), &m_jit.jitCode()->common.m_stubInfos, JITType::DFGJIT, codeOrigin, callSite, AccessType::PutByVal, usedRegisters,
                 baseRegs, propertyRegs, valueRegs, InvalidGPRReg, InvalidGPRReg);
 
             if (m_state.forNode(child2).isType(SpecString))

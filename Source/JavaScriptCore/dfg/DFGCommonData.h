@@ -28,6 +28,7 @@
 #if ENABLE(DFG_JIT)
 
 #include "BaselineJITCode.h"
+#include "CallLinkInfo.h"
 #include "CodeBlockJettisoningWatchpoint.h"
 #include "DFGAdaptiveInferredPropertyValueWatchpoint.h"
 #include "DFGAdaptiveStructureWatchpoint.h"
@@ -40,6 +41,7 @@
 #include "PCToCodeOriginMap.h"
 #include "ProfilerCompilation.h"
 #include "RecordedStatuses.h"
+#include "StructureStubInfo.h"
 #include <wtf/Bag.h>
 #include <wtf/Noncopyable.h>
 
@@ -108,6 +110,11 @@ public:
     
     void clearWatchpoints();
 
+    CallLinkInfo* addCallLinkInfo(CodeOrigin codeOrigin)
+    {
+        return m_callLinkInfos.add(codeOrigin);
+    }
+
     RefPtr<InlineCallFrameSet> inlineCallFrames;
     Ref<CodeOriginPool> codeOrigins;
     
@@ -122,6 +129,8 @@ public:
     std::unique_ptr<PCToCodeOriginMap> m_pcToCodeOriginMap;
     RecordedStatuses recordedStatuses;
     Vector<JumpReplacement> m_jumpReplacements;
+    Bag<StructureStubInfo> m_stubInfos;
+    Bag<CallLinkInfo> m_callLinkInfos;
     
     ScratchBuffer* catchOSREntryBuffer;
     RefPtr<Profiler::Compilation> compilation;

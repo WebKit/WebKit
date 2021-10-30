@@ -39,23 +39,6 @@ namespace StructureStubInfoInternal {
 static constexpr bool verbose = false;
 }
 
-StructureStubInfo::StructureStubInfo(AccessType accessType, CodeOrigin codeOrigin)
-    : codeOrigin(codeOrigin)
-    , accessType(accessType)
-    , bufferingCountdown(Options::repatchBufferingCountdown())
-    , resetByGC(false)
-    , tookSlowPath(false)
-    , everConsidered(false)
-    , prototypeIsKnownObject(false)
-    , sawNonCell(false)
-    , hasConstantIdentifier(true)
-    , propertyIsString(false)
-    , propertyIsInt32(false)
-    , propertyIsSymbol(false)
-{
-    regs.thisGPR = InvalidGPRReg;
-}
-
 StructureStubInfo::~StructureStubInfo()
 {
 }

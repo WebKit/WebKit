@@ -101,6 +101,14 @@ std::tuple<UnlinkedStructureStubInfo*, JITConstantPool::Constant> JIT::addUnlink
     return std::tuple { stubInfo, stubInfoIndex };
 }
 
+std::tuple<UnlinkedCallLinkInfo*, JITConstantPool::Constant> JIT::addUnlinkedCallLinkInfo()
+{
+    void* unlinkedCallLinkInfoIndex = bitwise_cast<void*>(static_cast<uintptr_t>(m_unlinkedCalls.size()));
+    UnlinkedCallLinkInfo* info = &m_unlinkedCalls.alloc();
+    JITConstantPool::Constant callLinkInfoIndex = addToConstantPool(JITConstantPool::Type::CallLinkInfo, unlinkedCallLinkInfoIndex);
+    return std::tuple { info, callLinkInfoIndex };
+}
+
 #if ENABLE(DFG_JIT)
 void JIT::emitEnterOptimizationCheck()
 {
@@ -999,11 +1007,13 @@ void JIT::link()
     MacroAssemblerCodePtr<JSEntryPtrTag> withArityCheck = patchBuffer.locationOf<JSEntryPtrTag>(m_arityCheck);
     m_jitCode = adoptRef(*new BaselineJITCode(result, withArityCheck));
 
-    m_jitCode->m_unlinkedCalls = WTFMove(m_unlinkedCalls);
+    m_jitCode->m_unlinkedCalls = FixedVector<UnlinkedCallLinkInfo>(m_unlinkedCalls.size());
+    if (m_jitCode->m_unlinkedCalls.size())
+        std::move(m_unlinkedCalls.begin(), m_unlinkedCalls.end(), m_jitCode->m_unlinkedCalls.begin());
     m_jitCode->m_evalCallLinkInfos = WTFMove(m_evalCallLinkInfos);
     m_jitCode->m_unlinkedStubInfos = FixedVector<UnlinkedStructureStubInfo>(m_unlinkedStubInfos.size());
     if (m_jitCode->m_unlinkedStubInfos.size())
-        std::copy(m_unlinkedStubInfos.begin(), m_unlinkedStubInfos.end(), m_jitCode->m_unlinkedStubInfos.begin());
+        std::move(m_unlinkedStubInfos.begin(), m_unlinkedStubInfos.end(), m_jitCode->m_unlinkedStubInfos.begin());
     m_jitCode->m_switchJumpTables = WTFMove(m_switchJumpTables);
     m_jitCode->m_stringSwitchJumpTables = WTFMove(m_stringSwitchJumpTables);
     m_jitCode->m_jitCodeMap = jitCodeMapBuilder.finalize();

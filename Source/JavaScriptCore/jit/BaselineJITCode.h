@@ -93,8 +93,8 @@ public:
     ~BaselineJITCode() override;
     PCToCodeOriginMap* pcToCodeOriginMap() override { return m_pcToCodeOriginMap.get(); }
 
-    Bag<UnlinkedCallLinkInfo> m_unlinkedCalls;
     Bag<CallLinkInfo> m_evalCallLinkInfos;
+    FixedVector<UnlinkedCallLinkInfo> m_unlinkedCalls;
     FixedVector<UnlinkedStructureStubInfo> m_unlinkedStubInfos;
     FixedVector<SimpleJumpTable> m_switchJumpTables;
     FixedVector<StringJumpTable> m_stringSwitchJumpTables;

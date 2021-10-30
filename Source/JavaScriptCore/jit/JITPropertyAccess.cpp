@@ -72,7 +72,7 @@ void JIT::emit_op_get_by_val(const Instruction* currentInstruction)
         emitArrayProfilingSiteWithCell(bytecode, baseJSR.payloadGPR(), scratchGPR);
 
         JITGetByValGenerator gen(
-            nullptr, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), AccessType::GetByVal, RegisterSet::stubUnavailableRegisters(),
+            nullptr, nullptr, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), AccessType::GetByVal, RegisterSet::stubUnavailableRegisters(),
             baseJSR, propertyJSR, resultJSR, stubInfoGPR);
 
         auto [ stubInfo, stubInfoIndex ] = addUnlinkedStructureStubInfo();
@@ -218,7 +218,7 @@ void JIT::emit_op_get_private_name(const Instruction* currentInstruction)
     emitJumpSlowCaseIfNotJSCell(baseJSR, base);
 
     JITGetByValGenerator gen(
-        nullptr, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), AccessType::GetPrivateName,
+        nullptr, nullptr, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), AccessType::GetPrivateName,
         RegisterSet::stubUnavailableRegisters(), baseJSR, propertyJSR, resultJSR, stubInfoGPR);
 
     auto [ stubInfo, stubInfoIndex ] = addUnlinkedStructureStubInfo();
@@ -340,7 +340,7 @@ void JIT::emit_op_set_private_brand(const Instruction* currentInstruction)
     emitJumpSlowCaseIfNotJSCell(baseJSR, base);
 
     JITPrivateBrandAccessGenerator gen(
-        nullptr, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), AccessType::SetPrivateBrand, RegisterSet::stubUnavailableRegisters(),
+        nullptr, nullptr, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), AccessType::SetPrivateBrand, RegisterSet::stubUnavailableRegisters(),
         baseJSR, brandJSR, stubInfoGPR);
 
     auto [ stubInfo, stubInfoIndex ] = addUnlinkedStructureStubInfo();
@@ -424,7 +424,7 @@ void JIT::emit_op_check_private_brand(const Instruction* currentInstruction)
     emitJumpSlowCaseIfNotJSCell(baseJSR, base);
 
     JITPrivateBrandAccessGenerator gen(
-        nullptr, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), AccessType::CheckPrivateBrand, RegisterSet::stubUnavailableRegisters(),
+        nullptr, nullptr, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), AccessType::CheckPrivateBrand, RegisterSet::stubUnavailableRegisters(),
         baseJSR, brandJSR, stubInfoGPR);
 
     auto [ stubInfo, stubInfoIndex ] = addUnlinkedStructureStubInfo();
@@ -508,7 +508,7 @@ void JIT::emit_op_put_by_val(const Instruction* currentInstruction)
     materializePointerIntoMetadata(bytecode, Op::Metadata::offsetOfArrayProfile(), profileGPR);
 
     JITPutByValGenerator gen(
-        nullptr, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), AccessType::PutByVal, RegisterSet::stubUnavailableRegisters(),
+        nullptr, nullptr, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), AccessType::PutByVal, RegisterSet::stubUnavailableRegisters(),
         baseJSR, propertyJSR, valueJSR, profileGPR, stubInfoGPR);
 
     auto [ stubInfo, stubInfoIndex ] = addUnlinkedStructureStubInfo();
@@ -669,7 +669,7 @@ void JIT::emit_op_put_private_name(const Instruction* currentInstruction)
     emitJumpSlowCaseIfNotJSCell(baseJSR, base);
 
     JITPutByValGenerator gen(
-        nullptr, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), AccessType::PutPrivateName, RegisterSet::stubUnavailableRegisters(),
+        nullptr, nullptr, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), AccessType::PutPrivateName, RegisterSet::stubUnavailableRegisters(),
         baseJSR, propertyJSR, valueJSR, InvalidGPRReg, stubInfoGPR);
 
     auto [ stubInfo, stubInfoIndex ] = addUnlinkedStructureStubInfo();
@@ -847,7 +847,7 @@ void JIT::emit_op_del_by_id(const Instruction* currentInstruction)
     emitGetVirtualRegister(base, baseJSR);
     emitJumpSlowCaseIfNotJSCell(baseJSR, base);
     JITDelByIdGenerator gen(
-        nullptr, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), RegisterSet::stubUnavailableRegisters(),
+        nullptr, nullptr, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), RegisterSet::stubUnavailableRegisters(),
         CacheableIdentifier::createFromIdentifierOwnedByCodeBlock(m_unlinkedCodeBlock, *ident),
         baseJSR, resultJSR, stubInfoGPR, scratchGPR);
 
@@ -983,7 +983,7 @@ void JIT::emit_op_del_by_val(const Instruction* currentInstruction)
     emitJumpSlowCaseIfNotJSCell(propertyJSR, property);
 
     JITDelByValGenerator gen(
-        nullptr, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), RegisterSet::stubUnavailableRegisters(),
+        nullptr, nullptr, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), RegisterSet::stubUnavailableRegisters(),
         baseJSR, propertyJSR, resultJSR, stubInfoGPR, scratchGPR);
 
     auto [ stubInfo, stubInfoIndex ] = addUnlinkedStructureStubInfo();
@@ -1115,7 +1115,7 @@ void JIT::emit_op_try_get_by_id(const Instruction* currentInstruction)
     emitJumpSlowCaseIfNotJSCell(baseJSR, baseVReg);
 
     JITGetByIdGenerator gen(
-        nullptr, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), RegisterSet::stubUnavailableRegisters(),
+        nullptr, nullptr, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), RegisterSet::stubUnavailableRegisters(),
         CacheableIdentifier::createFromIdentifierOwnedByCodeBlock(m_unlinkedCodeBlock, *ident), baseJSR, resultJSR, stubInfoGPR, AccessType::TryGetById);
 
     auto [ stubInfo, stubInfoIndex ] = addUnlinkedStructureStubInfo();
@@ -1198,7 +1198,7 @@ void JIT::emit_op_get_by_id_direct(const Instruction* currentInstruction)
     emitJumpSlowCaseIfNotJSCell(baseJSR, baseVReg);
 
     JITGetByIdGenerator gen(
-        nullptr, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), RegisterSet::stubUnavailableRegisters(),
+        nullptr, nullptr, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), RegisterSet::stubUnavailableRegisters(),
         CacheableIdentifier::createFromIdentifierOwnedByCodeBlock(m_unlinkedCodeBlock, *ident), baseJSR, resultJSR, stubInfoGPR, AccessType::GetByIdDirect);
 
     auto [ stubInfo, stubInfoIndex ] = addUnlinkedStructureStubInfo();
@@ -1294,7 +1294,7 @@ void JIT::emit_op_get_by_id(const Instruction* currentInstruction)
     }
 
     JITGetByIdGenerator gen(
-        nullptr, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), RegisterSet::stubUnavailableRegisters(),
+        nullptr, nullptr, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), RegisterSet::stubUnavailableRegisters(),
         CacheableIdentifier::createFromIdentifierOwnedByCodeBlock(m_unlinkedCodeBlock, *ident), baseJSR, resultJSR, stubInfoGPR, AccessType::GetById);
 
     auto [ stubInfo, stubInfoIndex ] = addUnlinkedStructureStubInfo();
@@ -1383,7 +1383,7 @@ void JIT::emit_op_get_by_id_with_this(const Instruction* currentInstruction)
     emitJumpSlowCaseIfNotJSCell(thisJSR, thisVReg);
 
     JITGetByIdWithThisGenerator gen(
-        nullptr, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), RegisterSet::stubUnavailableRegisters(),
+        nullptr, nullptr, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), RegisterSet::stubUnavailableRegisters(),
         CacheableIdentifier::createFromIdentifierOwnedByCodeBlock(m_unlinkedCodeBlock, *ident), resultJSR, baseJSR, thisJSR, stubInfoGPR);
 
     auto [ stubInfo, stubInfoIndex ] = addUnlinkedStructureStubInfo();
@@ -1563,7 +1563,7 @@ void JIT::emit_op_put_by_id(const Instruction* currentInstruction)
     emitJumpSlowCaseIfNotJSCell(baseJSR, baseVReg);
 
     JITPutByIdGenerator gen(
-        nullptr, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), RegisterSet::stubUnavailableRegisters(),
+        nullptr, nullptr, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), RegisterSet::stubUnavailableRegisters(),
         CacheableIdentifier::createFromIdentifierOwnedByCodeBlock(m_unlinkedCodeBlock, *ident),
         baseJSR, valueJSR, stubInfoGPR, scratchGPR, ecmaMode(bytecode),
         direct ? PutKind::Direct : PutKind::NotDirect);
@@ -1691,7 +1691,7 @@ void JIT::emit_op_in_by_id(const Instruction* currentInstruction)
     emitJumpSlowCaseIfNotJSCell(baseJSR, baseVReg);
 
     JITInByIdGenerator gen(
-        nullptr, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), RegisterSet::stubUnavailableRegisters(),
+        nullptr, nullptr, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), RegisterSet::stubUnavailableRegisters(),
         CacheableIdentifier::createFromIdentifierOwnedByCodeBlock(m_unlinkedCodeBlock, *ident), baseJSR, resultJSR, stubInfoGPR);
 
     auto [ stubInfo, stubInfoIndex ] = addUnlinkedStructureStubInfo();
@@ -1779,7 +1779,7 @@ void JIT::emit_op_in_by_val(const Instruction* currentInstruction)
     emitArrayProfilingSiteWithCell(bytecode, baseJSR.payloadGPR(), scratchGPR);
 
     JITInByValGenerator gen(
-        nullptr, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), AccessType::InByVal, RegisterSet::stubUnavailableRegisters(),
+        nullptr, nullptr, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), AccessType::InByVal, RegisterSet::stubUnavailableRegisters(),
         baseJSR, propertyJSR, resultJSR, stubInfoGPR);
 
     auto [ stubInfo, stubInfoIndex ] = addUnlinkedStructureStubInfo();
@@ -1864,7 +1864,7 @@ void JIT::emitHasPrivate(VirtualRegister dst, VirtualRegister base, VirtualRegis
     emitJumpSlowCaseIfNotJSCell(baseJSR, base);
 
     JITInByValGenerator gen(
-        nullptr, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), type, RegisterSet::stubUnavailableRegisters(),
+        nullptr, nullptr, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), type, RegisterSet::stubUnavailableRegisters(),
         baseJSR, propertyJSR, resultJSR, stubInfoGPR);
 
     auto [ stubInfo, stubInfoIndex ] = addUnlinkedStructureStubInfo();
@@ -3196,7 +3196,7 @@ void JIT::emit_op_enumerator_get_by_val(const Instruction* currentInstruction)
     emitArrayProfilingSiteWithCell(bytecode, baseGPR, scratch1);
 
     JITGetByValGenerator gen(
-        nullptr, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), AccessType::GetByVal, RegisterSet::stubUnavailableRegisters(),
+        nullptr, nullptr, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), AccessType::GetByVal, RegisterSet::stubUnavailableRegisters(),
         JSValueRegs(baseGPR), JSValueRegs(propertyGPR), JSValueRegs(resultGPR), stubInfoGPR);
 
     auto [ stubInfo, stubInfoIndex ] = addUnlinkedStructureStubInfo();

@@ -164,7 +164,7 @@ void SpeculativeJIT::cachedGetById(CodeOrigin codeOrigin, GPRReg baseGPR, GPRReg
             usedRegisters.set(stubInfoGPR, false);
     }
     JITGetByIdGenerator gen(
-        m_jit.codeBlock(), JITType::DFGJIT, codeOrigin, callSite, usedRegisters, identifier,
+        m_jit.codeBlock(), &m_jit.jitCode()->common.m_stubInfos, JITType::DFGJIT, codeOrigin, callSite, usedRegisters, identifier,
         JSValueRegs(baseGPR), JSValueRegs(resultGPR), stubInfoGPR, type);
     gen.generateFastPath(m_jit);
     
@@ -201,7 +201,7 @@ void SpeculativeJIT::cachedGetByIdWithThis(CodeOrigin codeOrigin, GPRReg baseGPR
         usedRegisters.set(stubInfoGPR, false);
     
     JITGetByIdWithThisGenerator gen(
-        m_jit.codeBlock(), JITType::DFGJIT, codeOrigin, callSite, usedRegisters, identifier,
+        m_jit.codeBlock(), &m_jit.jitCode()->common.m_stubInfos, JITType::DFGJIT, codeOrigin, callSite, usedRegisters, identifier,
         JSValueRegs(resultGPR), JSValueRegs(baseGPR), JSValueRegs(thisGPR), stubInfoGPR);
     gen.generateFastPath(m_jit);
     
@@ -891,7 +891,7 @@ void SpeculativeJIT::emitCall(Node* node)
         m_jit.addPtr(TrustedImm32(m_jit.graph().stackPointerOffset() * sizeof(Register)), GPRInfo::callFrameRegister, JITCompiler::stackPointerRegister);
     };
     
-    CallLinkInfo* callLinkInfo = m_jit.codeBlock()->addCallLinkInfo(m_currentNode->origin.semantic);
+    CallLinkInfo* callLinkInfo = m_jit.jitCode()->common.addCallLinkInfo(m_currentNode->origin.semantic);
     callLinkInfo->setUpCall(callType, calleeGPR);
 
     if (node->op() == CallEval) {
@@ -2421,7 +2421,7 @@ void SpeculativeJIT::compileGetByVal(Node* node, const ScopedLambda<std::tuple<J
             slowCases.append(m_jit.branchIfNotCell(baseGPR));
 
         JITGetByValGenerator gen(
-            m_jit.codeBlock(), JITType::DFGJIT, codeOrigin, callSite, AccessType::GetByVal, usedRegisters,
+            m_jit.codeBlock(), &m_jit.jitCode()->common.m_stubInfos, JITType::DFGJIT, codeOrigin, callSite, AccessType::GetByVal, usedRegisters,
             JSValueRegs(baseGPR), JSValueRegs(propertyGPR), JSValueRegs(resultGPR), stubInfoGPR);
 
         if (m_state.forNode(m_graph.varArgChild(node, 1)).isType(SpecString))
@@ -3408,7 +3408,7 @@ void SpeculativeJIT::compile(Node* node)
             ECMAMode ecmaMode = node->ecmaMode();
 
             JITPutByValGenerator gen(
-                m_jit.codeBlock(), JITType::DFGJIT, codeOrigin, callSite, AccessType::PutByVal, usedRegisters,
+                m_jit.codeBlock(), &m_jit.jitCode()->common.m_stubInfos, JITType::DFGJIT, codeOrigin, callSite, AccessType::PutByVal, usedRegisters,
                 JSValueRegs(baseGPR), JSValueRegs(propertyGPR), JSValueRegs(valueGPR), InvalidGPRReg, stubInfoGPR);
 
             if (m_state.forNode(child2).isType(SpecString))

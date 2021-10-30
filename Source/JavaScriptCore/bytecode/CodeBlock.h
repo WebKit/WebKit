@@ -68,7 +68,6 @@
 #include "ValueProfile.h"
 #include "VirtualRegister.h"
 #include "Watchpoint.h"
-#include <wtf/Bag.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/FixedVector.h>
 #include <wtf/HashSet.h>
@@ -261,8 +260,8 @@ public:
         WTF_MAKE_STRUCT_FAST_ALLOCATED;
         friend class LLIntOffsetsExtractor;
 
-        Bag<StructureStubInfo> m_stubInfos;
-        Bag<CallLinkInfo> m_callLinkInfos;
+        FixedVector<StructureStubInfo> m_stubInfos;
+        FixedVector<CallLinkInfo> m_callLinkInfos;
         SentinelLinkedList<CallLinkInfo, PackedRawSentinelNode<CallLinkInfo>> m_incomingCalls;
         SentinelLinkedList<PolymorphicCallNode, PackedRawSentinelNode<PolymorphicCallNode>> m_incomingPolymorphicCalls;
         bool m_hasCalleeSaveRegisters { false };
@@ -288,8 +287,6 @@ public:
 
     // O(n) operation. Use getICStatusMap() unless you really only intend to get one stub info.
     StructureStubInfo* findStubInfo(CodeOrigin);
-
-    CallLinkInfo* addCallLinkInfo(CodeOrigin);
 
     // This is a slow function call used primarily for compiling OSR exits in the case
     // that there had been inlining. Chances are if you want to use this, you're really

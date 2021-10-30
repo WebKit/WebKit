@@ -4034,7 +4034,7 @@ private:
                 GPRReg stubInfoGPR = JITCode::useDataIC(JITType::FTLJIT) ? params.gpScratch(0) : InvalidGPRReg;
 
                 auto generator = Box<JITGetByValGenerator>::create(
-                    jit.codeBlock(), JITType::FTLJIT, nodeSemanticOrigin, callSiteIndex, AccessType::GetPrivateName,
+                    jit.codeBlock(), &state->jitCode->common.m_stubInfos, JITType::FTLJIT, nodeSemanticOrigin, callSiteIndex, AccessType::GetPrivateName,
                     params.unavailableRegisters(), JSValueRegs(baseGPR), JSValueRegs(propertyGPR), JSValueRegs(resultGPR), stubInfoGPR);
 
                 CCallHelpers::Jump notCell;
@@ -4180,7 +4180,7 @@ private:
             GPRReg stubInfoGPR = JITCode::useDataIC(JITType::FTLJIT) ? params.gpScratch(0) : InvalidGPRReg;
 
             auto generator = Box<JITPrivateBrandAccessGenerator>::create(
-                jit.codeBlock(), JITType::FTLJIT, nodeSemanticOrigin, callSiteIndex, accessType,
+                jit.codeBlock(), &state->jitCode->common.m_stubInfos, JITType::FTLJIT, nodeSemanticOrigin, callSiteIndex, accessType,
                 params.unavailableRegisters(), JSValueRegs(baseGPR), JSValueRegs(brandGPR), stubInfoGPR);
 
             CCallHelpers::Jump notCell;
@@ -4341,7 +4341,7 @@ private:
             GPRReg stubInfoGPR = JITCode::useDataIC(JITType::FTLJIT) ? params.gpScratch(0) : InvalidGPRReg;
 
             auto generator = Box<JITPutByValGenerator>::create(
-                jit.codeBlock(), JITType::FTLJIT, nodeSemanticOrigin, callSiteIndex, AccessType::PutPrivateName,
+                jit.codeBlock(), &state->jitCode->common.m_stubInfos, JITType::FTLJIT, nodeSemanticOrigin, callSiteIndex, AccessType::PutPrivateName,
                 params.unavailableRegisters(), JSValueRegs(baseGPR), JSValueRegs(propertyGPR), JSValueRegs(valueGPR), InvalidGPRReg, stubInfoGPR);
 
             generator->stubInfo()->propertyIsSymbol = true;
@@ -4688,7 +4688,7 @@ private:
                 GPRReg stubInfoGPR = JITCode::useDataIC(JITType::FTLJIT) ? params.gpScratch(0) : InvalidGPRReg;
 
                 auto generator = Box<JITPutByIdGenerator>::create(
-                    jit.codeBlock(), JITType::FTLJIT, nodeSemanticOrigin, callSiteIndex,
+                    jit.codeBlock(), &state->jitCode->common.m_stubInfos, JITType::FTLJIT, nodeSemanticOrigin, callSiteIndex,
                     params.unavailableRegisters(), identifier, JSValueRegs(params[0].gpr()),
                     JSValueRegs(params[1].gpr()), stubInfoGPR, GPRInfo::patchpointScratchRegister, ecmaMode,
                     putKind);
@@ -5465,7 +5465,7 @@ IGNORE_CLANG_WARNINGS_END
                 GPRReg stubInfoGPR = JITCode::useDataIC(JITType::FTLJIT) ? params.gpScratch(0) : InvalidGPRReg;
 
                 auto generator = Box<JITGetByValGenerator>::create(
-                    jit.codeBlock(), JITType::FTLJIT, nodeSemanticOrigin, callSiteIndex, AccessType::GetByVal,
+                    jit.codeBlock(), &state->jitCode->common.m_stubInfos, JITType::FTLJIT, nodeSemanticOrigin, callSiteIndex, AccessType::GetByVal,
                     params.unavailableRegisters(), JSValueRegs(baseGPR), JSValueRegs(propertyGPR), JSValueRegs(resultGPR), stubInfoGPR);
 
                 generator->stubInfo()->propertyIsString = propertyIsString;
@@ -5822,7 +5822,7 @@ IGNORE_CLANG_WARNINGS_END
                 GPRReg stubInfoGPR = JITCode::useDataIC(JITType::FTLJIT) ? params.gpScratch(0) : InvalidGPRReg;
 
                 auto generator = Box<JITPutByValGenerator>::create(
-                    jit.codeBlock(), JITType::FTLJIT, nodeSemanticOrigin, callSiteIndex, AccessType::PutByVal,
+                    jit.codeBlock(), &state->jitCode->common.m_stubInfos, JITType::FTLJIT, nodeSemanticOrigin, callSiteIndex, AccessType::PutByVal,
                     params.unavailableRegisters(), JSValueRegs(baseGPR), JSValueRegs(propertyGPR), JSValueRegs(valueGPR), InvalidGPRReg, stubInfoGPR);
 
                 generator->stubInfo()->propertyIsString = propertyIsString;
@@ -6223,12 +6223,12 @@ IGNORE_CLANG_WARNINGS_END
                 const auto generator = [&] {
                     if constexpr (kind == DelByKind::ById) {
                         return Box<JITDelByIdGenerator>::create(
-                            jit.codeBlock(), JITType::FTLJIT, nodeSemanticOrigin, callSiteIndex,
+                            jit.codeBlock(), &state->jitCode->common.m_stubInfos, JITType::FTLJIT, nodeSemanticOrigin, callSiteIndex,
                             params.unavailableRegisters(), subscriptValue, base,
                             JSValueRegs(returnGPR), stubInfoGPR, scratchGPR);
                     } else {
                         return Box<JITDelByValGenerator>::create(
-                            jit.codeBlock(), JITType::FTLJIT, nodeSemanticOrigin, callSiteIndex,
+                            jit.codeBlock(), &state->jitCode->common.m_stubInfos, JITType::FTLJIT, nodeSemanticOrigin, callSiteIndex,
                             params.unavailableRegisters(), base,
                             subscript, JSValueRegs(returnGPR), stubInfoGPR, scratchGPR);
                     }
@@ -10255,7 +10255,7 @@ IGNORE_CLANG_WARNINGS_END
                     CCallHelpers::TrustedImm32(callSiteIndex.bits()),
                     CCallHelpers::tagFor(VirtualRegister(CallFrameSlot::argumentCountIncludingThis)));
 
-                CallLinkInfo* callLinkInfo = jit.codeBlock()->addCallLinkInfo(nodeSemanticOrigin);
+                CallLinkInfo* callLinkInfo = state->jitCode->common.addCallLinkInfo(nodeSemanticOrigin);
                 callLinkInfo->setUpCall(
                     nodeOp == Construct ? CallLinkInfo::Construct : CallLinkInfo::Call, GPRInfo::regT0);
 
@@ -10389,7 +10389,7 @@ IGNORE_CLANG_WARNINGS_END
                     shuffleData.numParameters = jit.codeBlock()->numParameters();
                     shuffleData.setupCalleeSaveRegisters(jit.codeBlock());
                     
-                    CallLinkInfo* callLinkInfo = jit.codeBlock()->addCallLinkInfo(semanticNodeOrigin);
+                    CallLinkInfo* callLinkInfo = state->jitCode->common.addCallLinkInfo(semanticNodeOrigin);
                     callLinkInfo->setUpCall(CallLinkInfo::DirectTailCall, InvalidGPRReg);
                     
                     CCallHelpers::Label mainPath = jit.label();
@@ -10421,7 +10421,7 @@ IGNORE_CLANG_WARNINGS_END
                     return;
                 }
                 
-                CallLinkInfo* callLinkInfo = jit.codeBlock()->addCallLinkInfo(semanticNodeOrigin);
+                CallLinkInfo* callLinkInfo = state->jitCode->common.addCallLinkInfo(semanticNodeOrigin);
                 callLinkInfo->setUpCall(
                     isConstruct ? CallLinkInfo::DirectConstruct : CallLinkInfo::DirectCall, InvalidGPRReg);
 
@@ -10549,7 +10549,7 @@ IGNORE_CLANG_WARNINGS_END
                 
                 shuffleData.setupCalleeSaveRegisters(jit.codeBlock());
 
-                CallLinkInfo* callLinkInfo = jit.codeBlock()->addCallLinkInfo(codeOrigin);
+                CallLinkInfo* callLinkInfo = state->jitCode->common.addCallLinkInfo(codeOrigin);
                 callLinkInfo->setUpCall(CallLinkInfo::TailCall, GPRInfo::regT0);
 
                 auto slowPath = callLinkInfo->emitTailCallFastPath(jit, GPRInfo::regT0, [&] {
@@ -10754,7 +10754,7 @@ IGNORE_CLANG_WARNINGS_END
                     CCallHelpers::TrustedImm32(callSiteIndex.bits()),
                     CCallHelpers::tagFor(VirtualRegister(CallFrameSlot::argumentCountIncludingThis)));
 
-                CallLinkInfo* callLinkInfo = jit.codeBlock()->addCallLinkInfo(semanticNodeOrigin);
+                CallLinkInfo* callLinkInfo = state->jitCode->common.addCallLinkInfo(semanticNodeOrigin);
 
                 RegisterSet usedRegisters = RegisterSet::allRegisters();
                 usedRegisters.exclude(RegisterSet::volatileRegistersForJSCall());
@@ -11038,7 +11038,7 @@ IGNORE_CLANG_WARNINGS_END
                     CCallHelpers::TrustedImm32(callSiteIndex.bits()),
                     CCallHelpers::tagFor(VirtualRegister(CallFrameSlot::argumentCountIncludingThis)));
 
-                CallLinkInfo* callLinkInfo = jit.codeBlock()->addCallLinkInfo(semanticNodeOrigin);
+                CallLinkInfo* callLinkInfo = state->jitCode->common.addCallLinkInfo(semanticNodeOrigin);
 
                 unsigned argIndex = 1;
                 GPRReg calleeGPR = params[argIndex++].gpr();
@@ -11280,7 +11280,7 @@ IGNORE_CLANG_WARNINGS_END
                     CCallHelpers::TrustedImm32(callSiteIndex.bits()),
                     CCallHelpers::tagFor(VirtualRegister(CallFrameSlot::argumentCountIncludingThis)));
                 
-                CallLinkInfo* callLinkInfo = jit.codeBlock()->addCallLinkInfo(semanticNodeOrigin);
+                CallLinkInfo* callLinkInfo = state->jitCode->common.addCallLinkInfo(semanticNodeOrigin);
                 callLinkInfo->setUpCall(CallLinkInfo::Call, GPRInfo::regT0);
                 
                 jit.addPtr(CCallHelpers::TrustedImm32(-static_cast<ptrdiff_t>(sizeof(CallerFrameAndPC))), CCallHelpers::stackPointerRegister, GPRInfo::regT1);
@@ -12869,12 +12869,12 @@ IGNORE_CLANG_WARNINGS_END
                 const auto generator = [&] {
                     if constexpr (type == AccessType::InById) {
                         return Box<JITInByIdGenerator>::create(
-                            jit.codeBlock(), JITType::FTLJIT, semanticNodeOrigin, callSiteIndex,
+                            jit.codeBlock(), &state->jitCode->common.m_stubInfos, JITType::FTLJIT, semanticNodeOrigin, callSiteIndex,
                             params.unavailableRegisters(), subscriptValue, base,
                             JSValueRegs(returnGPR), stubInfoGPR);
                     } else {
                         return Box<JITInByValGenerator>::create(
-                            jit.codeBlock(), JITType::FTLJIT, semanticNodeOrigin, callSiteIndex,
+                            jit.codeBlock(), &state->jitCode->common.m_stubInfos, JITType::FTLJIT, semanticNodeOrigin, callSiteIndex,
                             type, params.unavailableRegisters(), base, subscript,
                             JSValueRegs(returnGPR), stubInfoGPR);
                     }
@@ -13197,7 +13197,7 @@ IGNORE_CLANG_WARNINGS_END
                     exceptionHandle->scheduleExitCreation(params)->jumps(jit);
                 
                 auto generator = Box<JITInstanceOfGenerator>::create(
-                    jit.codeBlock(), JITType::FTLJIT, semanticNodeOrigin, callSiteIndex,
+                    jit.codeBlock(), &state->jitCode->common.m_stubInfos, JITType::FTLJIT, semanticNodeOrigin, callSiteIndex,
                     params.unavailableRegisters(), resultGPR, valueGPR, prototypeGPR, stubInfoGPR, scratchGPR,
                     scratch2GPR, prototypeIsObject);
                 generator->generateFastPath(jit);
@@ -14923,7 +14923,7 @@ IGNORE_CLANG_WARNINGS_END
                 GPRReg stubInfoGPR = JITCode::useDataIC(JITType::FTLJIT) ? params.gpScratch(0) : InvalidGPRReg;
 
                 auto generator = Box<JITGetByIdGenerator>::create(
-                    jit.codeBlock(), JITType::FTLJIT, semanticNodeOrigin, callSiteIndex,
+                    jit.codeBlock(), &state->jitCode->common.m_stubInfos, JITType::FTLJIT, semanticNodeOrigin, callSiteIndex,
                     params.unavailableRegisters(), identifier, JSValueRegs(params[1].gpr()),
                     JSValueRegs(params[0].gpr()), stubInfoGPR, type);
 
@@ -15007,7 +15007,7 @@ IGNORE_CLANG_WARNINGS_END
                 GPRReg stubInfoGPR = JITCode::useDataIC(JITType::FTLJIT) ? params.gpScratch(0) : InvalidGPRReg;
 
                 auto generator = Box<JITGetByIdWithThisGenerator>::create(
-                    jit.codeBlock(), JITType::FTLJIT, semanticNodeOrigin, callSiteIndex,
+                    jit.codeBlock(), &state->jitCode->common.m_stubInfos, JITType::FTLJIT, semanticNodeOrigin, callSiteIndex,
                     params.unavailableRegisters(), identifier, JSValueRegs(params[0].gpr()),
                     JSValueRegs(params[1].gpr()), JSValueRegs(params[2].gpr()), stubInfoGPR);
 

@@ -72,19 +72,6 @@ CallLinkInfo::CallType CallLinkInfo::callTypeFor(OpcodeID opcodeID)
     return Call;
 }
 
-CallLinkInfo::CallLinkInfo(CodeOrigin codeOrigin)
-    : m_codeOrigin(codeOrigin)
-    , m_hasSeenShouldRepatch(false)
-    , m_hasSeenClosure(false)
-    , m_clearedByGC(false)
-    , m_clearedByVirtual(false)
-    , m_allowStubs(true)
-    , m_clearedByJettison(false)
-    , m_callType(None)
-    , m_useDataIC(static_cast<unsigned>(UseDataIC::Yes))
-{
-}
-
 CallLinkInfo::~CallLinkInfo()
 {
     clearStub();

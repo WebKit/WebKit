@@ -239,7 +239,7 @@ static_assert(brandJSR == BaselineGetByValRegisters::propertyJSR);
 class JITInlineCacheGenerator {
 protected:
     JITInlineCacheGenerator() { }
-    JITInlineCacheGenerator(CodeBlock*, JITType, CodeOrigin, CallSiteIndex, AccessType, const RegisterSet& usedRegisters);
+    JITInlineCacheGenerator(CodeBlock*, Bag<StructureStubInfo>*, JITType, CodeOrigin, CallSiteIndex, AccessType, const RegisterSet& usedRegisters);
     
 public:
     StructureStubInfo* stubInfo() const { return m_stubInfo; }
@@ -277,7 +277,7 @@ protected:
     JITByIdGenerator() { }
 
     JITByIdGenerator(
-        CodeBlock*, JITType, CodeOrigin, CallSiteIndex, AccessType, const RegisterSet& usedRegisters,
+        CodeBlock*, Bag<StructureStubInfo>*, JITType, CodeOrigin, CallSiteIndex, AccessType, const RegisterSet& usedRegisters,
         JSValueRegs base, JSValueRegs value, GPRReg stubInfoGPR);
 
 public:
@@ -306,7 +306,7 @@ public:
     JITGetByIdGenerator() { }
 
     JITGetByIdGenerator(
-        CodeBlock*, JITType, CodeOrigin, CallSiteIndex, const RegisterSet& usedRegisters, CacheableIdentifier,
+        CodeBlock*, Bag<StructureStubInfo>*, JITType, CodeOrigin, CallSiteIndex, const RegisterSet& usedRegisters, CacheableIdentifier,
         JSValueRegs base, JSValueRegs value, GPRReg stubInfoGPR, AccessType);
     
     void generateFastPath(MacroAssembler&);
@@ -321,7 +321,7 @@ public:
     JITGetByIdWithThisGenerator() { }
 
     JITGetByIdWithThisGenerator(
-        CodeBlock*, JITType, CodeOrigin, CallSiteIndex, const RegisterSet& usedRegisters, CacheableIdentifier,
+        CodeBlock*, Bag<StructureStubInfo>*, JITType, CodeOrigin, CallSiteIndex, const RegisterSet& usedRegisters, CacheableIdentifier,
         JSValueRegs value, JSValueRegs base, JSValueRegs thisRegs, GPRReg stubInfoGPR);
 
     void generateBaselineDataICFastPath(JIT&, unsigned stubInfoConstant, GPRReg stubInfoGPR);
@@ -333,7 +333,7 @@ public:
     JITPutByIdGenerator() = default;
 
     JITPutByIdGenerator(
-        CodeBlock*, JITType, CodeOrigin, CallSiteIndex, const RegisterSet& usedRegisters, CacheableIdentifier,
+        CodeBlock*, Bag<StructureStubInfo>*, JITType, CodeOrigin, CallSiteIndex, const RegisterSet& usedRegisters, CacheableIdentifier,
         JSValueRegs base, JSValueRegs value, GPRReg stubInfoGPR, GPRReg scratch, ECMAMode, PutKind);
     
     void generateFastPath(MacroAssembler&);
@@ -352,7 +352,7 @@ public:
     JITPutByValGenerator() = default;
 
     JITPutByValGenerator(
-        CodeBlock*, JITType, CodeOrigin, CallSiteIndex, AccessType, const RegisterSet& usedRegisters,
+        CodeBlock*, Bag<StructureStubInfo>*, JITType, CodeOrigin, CallSiteIndex, AccessType, const RegisterSet& usedRegisters,
         JSValueRegs base, JSValueRegs property, JSValueRegs result, GPRReg arrayProfileGPR, GPRReg stubInfoGPR);
 
     MacroAssembler::Jump slowPathJump() const
@@ -377,7 +377,7 @@ public:
     JITDelByValGenerator() { }
 
     JITDelByValGenerator(
-        CodeBlock*, JITType, CodeOrigin, CallSiteIndex, const RegisterSet& usedRegisters,
+        CodeBlock*, Bag<StructureStubInfo>*, JITType, CodeOrigin, CallSiteIndex, const RegisterSet& usedRegisters,
         JSValueRegs base, JSValueRegs property, JSValueRegs result, GPRReg stubInfoGPR, GPRReg scratch);
 
     MacroAssembler::Jump slowPathJump() const
@@ -400,7 +400,7 @@ public:
     JITDelByIdGenerator() { }
 
     JITDelByIdGenerator(
-        CodeBlock*, JITType, CodeOrigin, CallSiteIndex, const RegisterSet& usedRegisters, CacheableIdentifier,
+        CodeBlock*, Bag<StructureStubInfo>*, JITType, CodeOrigin, CallSiteIndex, const RegisterSet& usedRegisters, CacheableIdentifier,
         JSValueRegs base, JSValueRegs result, GPRReg stubInfoGPR, GPRReg scratch);
 
     MacroAssembler::Jump slowPathJump() const
@@ -423,7 +423,7 @@ public:
     JITInByValGenerator() { }
 
     JITInByValGenerator(
-        CodeBlock*, JITType, CodeOrigin, CallSiteIndex, AccessType, const RegisterSet& usedRegisters,
+        CodeBlock*, Bag<StructureStubInfo>*, JITType, CodeOrigin, CallSiteIndex, AccessType, const RegisterSet& usedRegisters,
         JSValueRegs base, JSValueRegs property, JSValueRegs result, GPRReg stubInfoGPR);
 
     MacroAssembler::Jump slowPathJump() const
@@ -445,7 +445,7 @@ public:
     JITInByIdGenerator() { }
 
     JITInByIdGenerator(
-        CodeBlock*, JITType, CodeOrigin, CallSiteIndex, const RegisterSet& usedRegisters, CacheableIdentifier,
+        CodeBlock*, Bag<StructureStubInfo>*, JITType, CodeOrigin, CallSiteIndex, const RegisterSet& usedRegisters, CacheableIdentifier,
         JSValueRegs base, JSValueRegs value, GPRReg stubInfoGPR);
 
     void generateFastPath(MacroAssembler&);
@@ -458,7 +458,7 @@ public:
     JITInstanceOfGenerator() { }
     
     JITInstanceOfGenerator(
-        CodeBlock*, JITType, CodeOrigin, CallSiteIndex, const RegisterSet& usedRegisters, GPRReg result,
+        CodeBlock*, Bag<StructureStubInfo>*, JITType, CodeOrigin, CallSiteIndex, const RegisterSet& usedRegisters, GPRReg result,
         GPRReg value, GPRReg prototype, GPRReg stubInfoGPR, GPRReg scratch1, GPRReg scratch2,
         bool prototypeIsKnownObject = false);
     
@@ -481,7 +481,7 @@ public:
     JITGetByValGenerator() { }
 
     JITGetByValGenerator(
-        CodeBlock*, JITType, CodeOrigin, CallSiteIndex, AccessType, const RegisterSet& usedRegisters,
+        CodeBlock*, Bag<StructureStubInfo>*, JITType, CodeOrigin, CallSiteIndex, AccessType, const RegisterSet& usedRegisters,
         JSValueRegs base, JSValueRegs property, JSValueRegs result, GPRReg stubInfoGPR);
 
     MacroAssembler::Jump slowPathJump() const
@@ -507,7 +507,7 @@ public:
     JITPrivateBrandAccessGenerator() { }
 
     JITPrivateBrandAccessGenerator(
-        CodeBlock*, JITType, CodeOrigin, CallSiteIndex, AccessType, const RegisterSet& usedRegisters,
+        CodeBlock*, Bag<StructureStubInfo>*, JITType, CodeOrigin, CallSiteIndex, AccessType, const RegisterSet& usedRegisters,
         JSValueRegs base, JSValueRegs brand, GPRReg stubInfoGPR);
 
     MacroAssembler::Jump slowPathJump() const

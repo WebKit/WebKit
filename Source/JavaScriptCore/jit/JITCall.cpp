@@ -290,12 +290,9 @@ void JIT::compileOpCall(const Instruction* instruction, unsigned callLinkInfoInd
     UnlinkedCallLinkInfo* info = nullptr;
     JITConstantPool::Constant infoConstant = UINT_MAX;
     if (opcodeID != op_call_eval) {
-        info = m_unlinkedCalls.add();
+        std::tie(info, infoConstant) = addUnlinkedCallLinkInfo();
         info->bytecodeIndex = m_bytecodeIndex;
         info->callType = CallLinkInfo::callTypeFor(opcodeID);
-
-        infoConstant = addToConstantPool(JITConstantPool::Type::CallLinkInfo, info);
-
         ASSERT(m_callCompilationInfo.size() == callLinkInfoIndex);
         m_callCompilationInfo.append(CallCompilationInfo());
         m_callCompilationInfo[callLinkInfoIndex].unlinkedCallLinkInfo = info;
@@ -487,7 +484,7 @@ void JIT::emit_op_iterator_open(const Instruction* instruction)
     const Identifier* ident = &vm().propertyNames->next;
 
     JITGetByIdGenerator gen(
-        nullptr, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(BytecodeIndex(m_bytecodeIndex.offset())), RegisterSet::stubUnavailableRegisters(),
+        nullptr, nullptr, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(BytecodeIndex(m_bytecodeIndex.offset())), RegisterSet::stubUnavailableRegisters(),
         CacheableIdentifier::createFromImmortalIdentifier(ident->impl()), baseJSR, resultJSR, stubInfoGPR, AccessType::GetById);
 
     auto [ stubInfo, stubInfoIndex ] = addUnlinkedStructureStubInfo();
@@ -597,7 +594,7 @@ void JIT::emit_op_iterator_next(const Instruction* instruction)
         RegisterSet preservedRegs = RegisterSet::stubUnavailableRegisters();
         preservedRegs.set(iterCallResultJSR);
         JITGetByIdGenerator gen(
-            nullptr, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(BytecodeIndex(m_bytecodeIndex.offset())), preservedRegs,
+            nullptr, nullptr, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(BytecodeIndex(m_bytecodeIndex.offset())), preservedRegs,
             CacheableIdentifier::createFromImmortalIdentifier(vm().propertyNames->done.impl()), returnValueJSR, doneJSR, stubInfoGPR, AccessType::GetById);
 
         auto [ stubInfo, stubInfoIndex ] = addUnlinkedStructureStubInfo();
@@ -629,7 +626,7 @@ void JIT::emit_op_iterator_next(const Instruction* instruction)
         moveValueRegs(iterCallResultJSR, baseJSR);
 
         JITGetByIdGenerator gen(
-            nullptr, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(BytecodeIndex(m_bytecodeIndex.offset())), RegisterSet::stubUnavailableRegisters(),
+            nullptr, nullptr, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(BytecodeIndex(m_bytecodeIndex.offset())), RegisterSet::stubUnavailableRegisters(),
             CacheableIdentifier::createFromImmortalIdentifier(vm().propertyNames->value.impl()), baseJSR, resultJSR, stubInfoGPR, AccessType::GetById);
 
         auto [ stubInfo, stubInfoIndex ] = addUnlinkedStructureStubInfo();
