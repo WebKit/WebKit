@@ -781,4 +781,49 @@ TEST(AppPrivacyReport, RestoreFromSessionStateIsNonAppInitiated)
     restoreFromSessionStateTest(IsAppInitiated::No);
 }
 
+static void restoreFromInteractionStateTest(IsAppInitiated isAppInitiated)
+{
+    auto webView1 = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:@"https://www.apple.com/"]];
+    request.attribution = isAppInitiated == IsAppInitiated::Yes ? NSURLRequestAttributionDeveloper : NSURLRequestAttributionUser;
+
+    [webView1 loadRequest:request];
+    [webView1 _test_waitForDidFinishNavigation];
+
+    id interactionState = [webView1 interactionState];
+    [webView1 _close];
+
+    static bool isDone = false;
+    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
+        isDone = true;
+    }];
+    TestWebKitAPI::Util::run(&isDone);
+
+    auto webView2 = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    [webView2 setInteractionState:interactionState];
+    [webView2 _test_waitForDidFinishNavigation];
+
+    EXPECT_WK_STREQ(@"https://www.apple.com/", [[webView2 URL] absoluteString]);
+
+    isDone = false;
+    bool expectingAppInitiatedRequests = isAppInitiated == IsAppInitiated::Yes ? true : false;
+    [webView2 _appPrivacyReportTestingData:^(struct WKAppPrivacyReportTestingData data) {
+        EXPECT_EQ(data.hasLoadedAppInitiatedRequestTesting, expectingAppInitiatedRequests);
+        EXPECT_EQ(data.hasLoadedNonAppInitiatedRequestTesting, !expectingAppInitiatedRequests);
+        isDone = true;
+    }];
+    TestWebKitAPI::Util::run(&isDone);
+}
+
+TEST(AppPrivacyReport, RestoreFromInteractionStateIsAppInitiated)
+{
+    restoreFromInteractionStateTest(IsAppInitiated::Yes);
+}
+
+TEST(AppPrivacyReport, RestoreFromInteractionStateIsNonAppInitiated)
+{
+    restoreFromInteractionStateTest(IsAppInitiated::No);
+}
+
 #endif // APP_PRIVACY_REPORT

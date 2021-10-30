@@ -1,3 +1,13 @@
+2021-10-30  Kate Cheney  <katherine_cheney@apple.com>
+
+        [iOS 15] Loads after WKWebView session restore are marked as app-initiated 
+        https://bugs.webkit.org/show_bug.cgi?id=232486
+        <rdar://problem/84811692>
+
+        Reviewed by Brent Fulgham.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/AppPrivacyReport.mm:
+
 2021-10-29  Stephan Szabo  <stephan.szabo@sony.com>
 
         [PlayStation] Build fix after r285020
