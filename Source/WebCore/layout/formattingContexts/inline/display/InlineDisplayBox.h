@@ -30,6 +30,7 @@
 #include "InlineRect.h"
 #include "LayoutBox.h"
 #include "TextFlags.h"
+#include <unicode/ubidi.h>
 #include <wtf/OptionSet.h>
 
 namespace WebCore {
@@ -72,7 +73,7 @@ struct Box {
         First = 1 << 0,
         Last  = 1 << 1
     };
-    Box(size_t lineIndex, Type, const Layout::Box&, const Layout::InlineRect&, const Layout::InlineRect& inkOverflow, Expansion, std::optional<Text> = std::nullopt, bool hasContent = true, OptionSet<PositionWithinInlineLevelBox> = { PositionWithinInlineLevelBox::First, PositionWithinInlineLevelBox::Last });
+    Box(size_t lineIndex, Type, const Layout::Box&, UBiDiLevel, const Layout::InlineRect&, const Layout::InlineRect& inkOverflow, Expansion, std::optional<Text> = std::nullopt, bool hasContent = true, OptionSet<PositionWithinInlineLevelBox> = { PositionWithinInlineLevelBox::First, PositionWithinInlineLevelBox::Last });
 
     bool isText() const { return m_type == Type::Text; }
     bool isSoftLineBreak() const { return m_type == Type::SoftLineBreak; }
@@ -86,6 +87,8 @@ struct Box {
     bool isInlineLevelBox() const { return isAtomicInlineLevelBox() || isLineBreakBox() || isInlineBox() || isGenericInlineLevelBox(); }
     bool isNonRootInlineLevelBox() const { return isInlineLevelBox() && !isRootInlineBox(); }
     Type type() const { return m_type; }
+
+    UBiDiLevel bidiLevel() const { return m_bidiLevel; }
 
     bool hasContent() const { return m_hasContent; }
 
@@ -125,6 +128,7 @@ private:
     const size_t m_lineIndex { 0 };
     const Type m_type { Type::GenericInlineLevelBox };
     CheckedRef<const Layout::Box> m_layoutBox;
+    UBiDiLevel m_bidiLevel { UBIDI_DEFAULT_LTR };
     Layout::InlineRect m_logicalRect;
     Layout::InlineRect m_inkOverflow;
     bool m_hasContent : 1;
@@ -134,10 +138,11 @@ private:
     std::optional<Text> m_text;
 };
 
-inline Box::Box(size_t lineIndex, Type type, const Layout::Box& layoutBox, const Layout::InlineRect& logicalRect, const Layout::InlineRect& inkOverflow, Expansion expansion, std::optional<Text> text, bool hasContent, OptionSet<PositionWithinInlineLevelBox> positionWithinInlineLevelBox)
+inline Box::Box(size_t lineIndex, Type type, const Layout::Box& layoutBox, UBiDiLevel bidiLevel, const Layout::InlineRect& logicalRect, const Layout::InlineRect& inkOverflow, Expansion expansion, std::optional<Text> text, bool hasContent, OptionSet<PositionWithinInlineLevelBox> positionWithinInlineLevelBox)
     : m_lineIndex(lineIndex)
     , m_type(type)
     , m_layoutBox(layoutBox)
+    , m_bidiLevel(bidiLevel)
     , m_logicalRect(logicalRect)
     , m_inkOverflow(inkOverflow)
     , m_hasContent(hasContent)

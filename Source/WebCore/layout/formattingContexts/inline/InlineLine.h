@@ -30,6 +30,7 @@
 #include "InlineDisplayBox.h"
 #include "InlineItem.h"
 #include "InlineTextItem.h"
+#include <unicode/ubidi.h>
 
 namespace WebCore {
 namespace Layout {
@@ -107,6 +108,8 @@ public:
         InlineLayoutUnit letterSpacing() const;
         bool hasTextCombine() const;
 
+        UBiDiLevel bidiLevel() const { return m_bidiLevel; }
+
     private:
         friend class Line;
 
@@ -153,6 +156,7 @@ public:
             bool hasTextCombine { false };
         };
         Style m_style { };
+        UBiDiLevel m_bidiLevel { UBIDI_DEFAULT_LTR };
     };
     using RunList = Vector<Run, 10>;
     const RunList& runs() const { return m_runs; }

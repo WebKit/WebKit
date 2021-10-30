@@ -61,7 +61,7 @@ public:
     unsigned minimumCaretOffset() const { return isText() ? start() : 0; }
     unsigned maximumCaretOffset() const { return isText() ? end() : 1; }
 
-    unsigned char bidiLevel() const { return 0; }
+    unsigned char bidiLevel() const { return box().bidiLevel(); }
 
     bool hasHyphen() const { return box().text()->hasHyphen(); }
     StringView text() const { return box().text()->originalContent(); }

@@ -320,6 +320,8 @@ void Line::appendTextContent(const InlineTextItem& inlineTextItem, const RenderS
         auto& lastRun = m_runs.last();
         if (&lastRun.layoutBox() != &inlineTextItem.layoutBox())
             return true;
+        if (lastRun.bidiLevel() != inlineTextItem.bidiLevel())
+            return true;
         if (!lastRun.isText())
             return true;
         if (lastRun.hasCollapsedTrailingWhitespace())
@@ -558,6 +560,7 @@ Line::Run::Run(const InlineItem& inlineItem, const RenderStyle& style, InlineLay
     , m_logicalLeft(logicalLeft)
     , m_logicalWidth(logicalWidth)
     , m_style({ { }, style.direction(), { }, { } })
+    , m_bidiLevel(inlineItem.bidiLevel())
 {
 }
 
@@ -565,6 +568,7 @@ Line::Run::Run(const InlineItem& zeroWidhtInlineItem, InlineLayoutUnit logicalLe
     : m_type(toLineRunType(zeroWidhtInlineItem.type()))
     , m_layoutBox(&zeroWidhtInlineItem.layoutBox())
     , m_logicalLeft(logicalLeft)
+    , m_bidiLevel(zeroWidhtInlineItem.bidiLevel())
 {
 }
 
@@ -573,6 +577,7 @@ Line::Run::Run(const InlineItem& lineSpanningInlineBoxItem, InlineLayoutUnit log
     , m_layoutBox(&lineSpanningInlineBoxItem.layoutBox())
     , m_logicalLeft(logicalLeft)
     , m_logicalWidth(logicalWidth)
+    , m_bidiLevel(lineSpanningInlineBoxItem.bidiLevel())
 {
     ASSERT(lineSpanningInlineBoxItem.isInlineBoxStart());
 }
@@ -582,6 +587,7 @@ Line::Run::Run(const InlineSoftLineBreakItem& softLineBreakItem, InlineLayoutUni
     , m_layoutBox(&softLineBreakItem.layoutBox())
     , m_logicalLeft(logicalLeft)
     , m_textContent({ softLineBreakItem.position(), 1 })
+    , m_bidiLevel(softLineBreakItem.bidiLevel())
 {
 }
 
@@ -594,6 +600,7 @@ Line::Run::Run(const InlineTextItem& inlineTextItem, const RenderStyle& style, I
     , m_trailingWhitespaceWidth(m_trailingWhitespaceType != TrailingWhitespace::None ? logicalWidth : InlineLayoutUnit { })
     , m_textContent({ inlineTextItem.start(), m_trailingWhitespaceType == TrailingWhitespace::Collapsed ? 1 : inlineTextItem.length() })
     , m_style({ style.whiteSpace() == WhiteSpace::PreWrap, style.direction(), style.letterSpacing(), style.hasTextCombine() })
+    , m_bidiLevel(inlineTextItem.bidiLevel())
 {
 }
 
@@ -602,6 +609,7 @@ void Line::Run::expand(const InlineTextItem& inlineTextItem, InlineLayoutUnit lo
     ASSERT(!hasCollapsedTrailingWhitespace());
     ASSERT(isText() && inlineTextItem.isText());
     ASSERT(m_layoutBox == &inlineTextItem.layoutBox());
+    ASSERT(m_bidiLevel == inlineTextItem.bidiLevel());
 
     m_logicalWidth += logicalWidth;
     m_trailingWhitespaceType = trailingWhitespaceType(inlineTextItem);
