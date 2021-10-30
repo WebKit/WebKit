@@ -1,3 +1,11 @@
+2021-10-29  Lauro Moura  <lmoura@igalia.com>
+
+        [GLIB] Gardening timeouts affected by xhtml mimetype misdetection
+
+        Unreviewed test gardening.
+
+        * platform/glib/TestExpectations:
+
 2021-10-29  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
 
         [GTK] Layout Tests for experimental <attachment> element are failing since added

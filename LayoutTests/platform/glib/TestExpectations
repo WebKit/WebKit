@@ -1822,9 +1822,6 @@ fast/css/has-attachment.html [ Skip ]
 # NEEDS TRIAGING. If unsure, put it in this section.
 #////////////////////////////////////////////////////////////////////////////////////////
 
-Bug(GTK) jquery/offset.html [ Slow Pass ]
-Bug(GTK) jquery/traversing.html [ Slow Pass ]
-
 webkit.org/b/49179 animations/stop-animation-on-suspend.html [ Failure Pass ]
 
 webkit.org/b/133151 js/cached-window-properties.html [ Timeout Pass ]
@@ -2529,6 +2526,25 @@ webkit.org/b/232386 tables/mozilla/bugs/bug157890.html [ Failure ]
 webkit.org/b/232386 tables/mozilla/bugs/bug222846.html [ Failure ]
 webkit.org/b/232386 tables/mozilla_expected_failures/bugs/bug104898.html [ Failure ]
 webkit.org/b/232386 fast/dom/gc-11.html [ Timeout ]
+# Glib timeout since 243264@main (Mimetype woes)
+# html with xmlns xhtml. Times out evaluating document.body.innertext
+webkit.org/b/232386 svg/custom/svg-element-destructor-iteration-crash.html [ Timeout ]
+# Timing out with exception raised accessing iframe data.
+webkit.org/b/232386 jquery/offset.html [ Timeout ]
+# Uncomment after timeout is solved. Bug(GTK) jquery/offset.html [ Slow Pass ]
+webkit.org/b/232386 jquery/traversing.html [ Timeout ]
+# Uncomment after timeout is solved Bug(GTK) jquery/traversing.html [ Slow Pass ]
+webkit.org/b/232386 jquery/manipulation.html [ Timeout ]
+webkit.org/b/232386 jquery/event.html [ Timeout ]
+webkit.org/b/232386 jquery/dimensions.html [ Timeout ]
+webkit.org/b/232386 jquery/data.html [ Timeout ]
+webkit.org/b/232386 jquery/deferred.html [ Timeout ]
+webkit.org/b/232386 jquery/attributes.html [ Timeout ]
+webkit.org/b/232386 jquery/core.html [ Timeout ]
+webkit.org/b/232386 jquery/css.html [ Timeout ]
+# html with xmlns xhtml. Times out with some syntaxerrors in Js strings with &gt;
+webkit.org/b/232386 svg/as-object/embedded-svg-size-changes.html [ Timeout ]
+
 
 # End: Common failures between GTK and WPE.
 
