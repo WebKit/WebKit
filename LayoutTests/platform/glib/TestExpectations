@@ -1808,6 +1808,12 @@ http/tests/webshare [ Skip ]
 # privateClickMeasurement is disabled on glib
 http/tests/privateClickMeasurement [ Skip ]
 
+# The attachment element is not stadandard and not currently supported on glib
+fast/attachment [ Skip ]
+editing/pasteboard/copy-paste-attachment.html [ Skip ]
+editing/text-iterator/backwards-text-iterator-attachment.html [ Skip ]
+fast/css/has-attachment.html [ Skip ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of UNSUPPORTED tests.
 #////////////////////////////////////////////////////////////////////////////////////////

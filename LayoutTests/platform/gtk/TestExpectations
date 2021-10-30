@@ -605,14 +605,6 @@ webkit.org/b/131347 fast/repaint/hidpi-wrong-repaint-rect-when-parent-has-noncom
 webkit.org/b/141467 fast/multicol/pagination/LeftToRight-tb-hittest.html [ Failure ]
 webkit.org/b/141467 fast/multicol/pagination/RightToLeft-rl-hittest.html [ Failure ]
 
-webkit.org/b/141699 fast/attachment/attachment-disabled-rendering.html [ Failure ]
-webkit.org/b/141699 fast/attachment/attachment-rendering.html [ Failure ]
-webkit.org/b/141699 editing/pasteboard/copy-paste-attachment.html [ Failure ]
-webkit.org/b/141699 fast/attachment/attachment-dom.html [ Failure ]
-webkit.org/b/141699 fast/attachment/attachment-respects-css-size.html [ ImageOnlyFailure ]
-webkit.org/b/141699 fast/css/has-attachment.html [ Failure ]
-webkit.org/b/141699 editing/text-iterator/backwards-text-iterator-attachment.html [ Failure ]
-
 webkit.org/b/141458 imported/mozilla/svg/blend-overlay.svg [ ImageOnlyFailure Pass ]
 webkit.org/b/141458 imported/mozilla/svg/pattern-scale-01a.svg [ ImageOnlyFailure Pass ]
 webkit.org/b/141458 imported/mozilla/svg/pattern-scale-01b.svg [ ImageOnlyFailure Pass ]
