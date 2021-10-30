@@ -35,6 +35,7 @@ namespace DisplayList {
 template<typename BackendType>
 class ImageBuffer : public ConcreteImageBuffer<BackendType> {
     using BaseConcreteImageBuffer = ConcreteImageBuffer<BackendType>;
+    using BaseConcreteImageBuffer::truncatedLogicalSize;
     using BaseConcreteImageBuffer::logicalSize;
     using BaseConcreteImageBuffer::baseTransform;
 
@@ -51,7 +52,7 @@ public:
 
     ImageBuffer(const ImageBufferBackend::Parameters& parameters, std::unique_ptr<BackendType>&& backend)
         : BaseConcreteImageBuffer(parameters, WTFMove(backend))
-        , m_drawingContext(logicalSize(), baseTransform())
+        , m_drawingContext(truncatedLogicalSize(), baseTransform())
         , m_writingClient(makeUnique<InMemoryDisplayList::WritingClient>())
         , m_readingClient(makeUnique<InMemoryDisplayList::ReadingClient>())
     {
@@ -61,7 +62,7 @@ public:
 
     ImageBuffer(const ImageBufferBackend::Parameters& parameters, RecorderImpl::Delegate* delegate = nullptr)
         : BaseConcreteImageBuffer(parameters)
-        , m_drawingContext(logicalSize(), baseTransform(), delegate)
+        , m_drawingContext(truncatedLogicalSize(), baseTransform(), delegate)
         , m_writingClient(makeUnique<InMemoryDisplayList::WritingClient>())
         , m_readingClient(makeUnique<InMemoryDisplayList::ReadingClient>())
     {

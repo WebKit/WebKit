@@ -100,7 +100,7 @@ void FEDropShadow::platformApplySoftware()
     ShadowBlur contextShadow(blurRadius, offset, m_shadowColor);
 
     PixelBufferFormat format { AlphaPremultiplication::Premultiplied, PixelFormat::RGBA8, resultColorSpace() };
-    IntRect shadowArea(IntPoint(), resultImage->logicalSize());
+    IntRect shadowArea(IntPoint(), resultImage->truncatedLogicalSize());
     auto pixelBuffer = resultImage->getPixelBuffer(format, shadowArea);
     if (!pixelBuffer)
         return;

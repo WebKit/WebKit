@@ -124,7 +124,7 @@ static std::optional<Lab<float>> sampleColor(Document& document, IntPoint&& loca
     if (!snapshot)
         return std::nullopt;
 
-    auto pixelBuffer = snapshot->getPixelBuffer({ AlphaPremultiplication::Unpremultiplied, PixelFormat::BGRA8, colorSpace }, { { }, snapshot->logicalSize() });
+    auto pixelBuffer = snapshot->getPixelBuffer({ AlphaPremultiplication::Unpremultiplied, PixelFormat::BGRA8, colorSpace }, { { }, snapshot->truncatedLogicalSize() });
     if (!pixelBuffer)
         return std::nullopt;
 

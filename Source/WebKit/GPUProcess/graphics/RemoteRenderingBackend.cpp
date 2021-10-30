@@ -307,7 +307,7 @@ void RemoteRenderingBackend::getShareableBitmapForImageBufferWithQualifiedIdenti
         if (!image)
             return;
         auto backendSize = imageBuffer->backendSize();
-        auto resultSize = preserveResolution == WebCore::PreserveResolution::Yes ? backendSize : imageBuffer->logicalSize();
+        auto resultSize = preserveResolution == WebCore::PreserveResolution::Yes ? backendSize : imageBuffer->truncatedLogicalSize();
         auto bitmap = ShareableBitmap::createShareable(resultSize, { imageBuffer->colorSpace() });
         if (!bitmap)
             return;

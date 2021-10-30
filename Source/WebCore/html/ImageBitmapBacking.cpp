@@ -48,13 +48,13 @@ RefPtr<ImageBuffer> ImageBitmapBacking::takeImageBuffer()
 unsigned ImageBitmapBacking::width() const
 {
     // FIXME: Is this the right width?
-    return m_bitmapData ? m_bitmapData->logicalSize().width() : 0;
+    return m_bitmapData ? m_bitmapData->truncatedLogicalSize().width() : 0;
 }
 
 unsigned ImageBitmapBacking::height() const
 {
     // FIXME: Is this the right height?
-    return m_bitmapData ? m_bitmapData->logicalSize().height() : 0;
+    return m_bitmapData ? m_bitmapData->truncatedLogicalSize().height() : 0;
 }
 
 } // namespace WebCore

@@ -7798,7 +7798,7 @@ ImageBuffer* WebGLRenderingContextBase::LRUImageBufferCache::imageBuffer(const I
         if (!m_buffers[i])
             break;
         ImageBuffer& buf = m_buffers[i]->second.get();
-        if (m_buffers[i]->first != colorSpace || buf.logicalSize() != size)
+        if (m_buffers[i]->first != colorSpace || buf.truncatedLogicalSize() != size)
             continue;
         bubbleToFront(i);
         if (fillOperator != CompositeOperator::Copy && fillOperator != CompositeOperator::Clear)

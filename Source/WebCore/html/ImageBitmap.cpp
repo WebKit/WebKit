@@ -572,7 +572,7 @@ void ImageBitmap::createPromise(ScriptExecutionContext& scriptExecutionContext, 
 
     // 4. Let the ImageBitmap object's bitmap data be a copy of the image argument's
     //    bitmap data, cropped to the source rectangle with formatting.
-    auto sourceRectangle = croppedSourceRectangleWithFormatting(existingImageBitmap->buffer()->logicalSize(), options, WTFMove(rect));
+    auto sourceRectangle = croppedSourceRectangleWithFormatting(existingImageBitmap->buffer()->truncatedLogicalSize(), options, WTFMove(rect));
     if (sourceRectangle.hasException()) {
         promise.reject(sourceRectangle.releaseException());
         return;

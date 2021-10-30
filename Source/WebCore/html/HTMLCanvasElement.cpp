@@ -777,7 +777,7 @@ RefPtr<MediaSample> HTMLCanvasElement::toMediaSample()
     // FIXME: This can likely be optimized quite a bit, especially in the cases where
     // the ImageBuffer is backed by GPU memory already and/or is in the GPU process by
     // specializing toMediaSample() in ImageBufferBackend to not use getPixelBuffer().
-    auto pixelBuffer = imageBuffer->getPixelBuffer({ AlphaPremultiplication::Unpremultiplied, PixelFormat::BGRA8, DestinationColorSpace::SRGB() }, { { }, imageBuffer->logicalSize() });
+    auto pixelBuffer = imageBuffer->getPixelBuffer({ AlphaPremultiplication::Unpremultiplied, PixelFormat::BGRA8, DestinationColorSpace::SRGB() }, { { }, imageBuffer->truncatedLogicalSize() });
     if (!pixelBuffer)
         return nullptr;
 

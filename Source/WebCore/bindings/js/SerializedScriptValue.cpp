@@ -1113,7 +1113,7 @@ private:
 
         // FIXME: We should try to avoid converting pixel format.
         PixelBufferFormat format { AlphaPremultiplication::Premultiplied, PixelFormat::RGBA8, buffer->colorSpace() };
-        const IntSize& logicalSize = buffer->logicalSize();
+        const IntSize& logicalSize = buffer->truncatedLogicalSize();
         auto pixelBuffer = buffer->getPixelBuffer(format, { IntPoint::zero(), logicalSize });
         if (!pixelBuffer) {
             code = SerializationReturnCode::ValidationError;

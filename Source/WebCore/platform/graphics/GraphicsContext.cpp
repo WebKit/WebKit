@@ -591,12 +591,12 @@ ImageDrawResult GraphicsContext::drawTiledImage(Image& image, const FloatRect& d
 
 void GraphicsContext::drawImageBuffer(ImageBuffer& image, const FloatPoint& destination, const ImagePaintingOptions& imagePaintingOptions)
 {
-    drawImageBuffer(image, FloatRect(destination, image.logicalSize()), FloatRect(FloatPoint(), image.logicalSize()), imagePaintingOptions);
+    drawImageBuffer(image, FloatRect(destination, image.truncatedLogicalSize()), FloatRect(FloatPoint(), image.truncatedLogicalSize()), imagePaintingOptions);
 }
 
 void GraphicsContext::drawImageBuffer(ImageBuffer& image, const FloatRect& destination, const ImagePaintingOptions& imagePaintingOptions)
 {
-    drawImageBuffer(image, destination, FloatRect(FloatPoint(), FloatSize(image.logicalSize())), imagePaintingOptions);
+    drawImageBuffer(image, destination, FloatRect(FloatPoint(), FloatSize(image.truncatedLogicalSize())), imagePaintingOptions);
 }
 
 void GraphicsContext::drawImageBuffer(ImageBuffer& image, const FloatRect& destination, const FloatRect& source, const ImagePaintingOptions& options)
@@ -609,7 +609,7 @@ void GraphicsContext::drawConsumingImageBuffer(RefPtr<ImageBuffer> image, const 
 {
     if (!image)
         return;
-    IntSize imageLogicalSize = image->logicalSize();
+    IntSize imageLogicalSize = image->truncatedLogicalSize();
     drawConsumingImageBuffer(WTFMove(image), FloatRect(destination, imageLogicalSize), FloatRect(FloatPoint(), imageLogicalSize), imagePaintingOptions);
 }
 
@@ -617,7 +617,7 @@ void GraphicsContext::drawConsumingImageBuffer(RefPtr<ImageBuffer> image, const 
 {
     if (!image)
         return;
-    IntSize imageLogicalSize = image->logicalSize();
+    IntSize imageLogicalSize = image->truncatedLogicalSize();
     drawConsumingImageBuffer(WTFMove(image), destination, FloatRect(FloatPoint(), FloatSize(imageLogicalSize)), imagePaintingOptions);
 }
 

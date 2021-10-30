@@ -332,7 +332,7 @@ void CSSFilter::allocateBackingStoreIfNeeded(const GraphicsContext& targetContex
         return;
 
     IntSize logicalSize { m_sourceDrawingRegion.size() };
-    if (!sourceImage() || sourceImage()->logicalSize() != logicalSize) {
+    if (!sourceImage() || sourceImage()->truncatedLogicalSize() != logicalSize) {
 #if USE(DIRECT2D)
         setSourceImage(ImageBuffer::create(logicalSize, renderingMode(), &targetContext, filterScale(), DestinationColorSpace::SRGB(), PixelFormat::BGRA8));
 #else

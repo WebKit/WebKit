@@ -1,3 +1,18 @@
+2021-10-29  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Rename ImageBuffer.logicalSize to ImageBuffer.truncatedLogicalSize
+        https://bugs.webkit.org/show_bug.cgi?id=232515
+        <rdar://problem/84829689>
+
+        Reviewed by Tim Horton.
+
+        * GPUProcess/graphics/RemoteRenderingBackend.cpp:
+        (WebKit::RemoteRenderingBackend::getShareableBitmapForImageBufferWithQualifiedIdentifier):
+        * WebProcess/GPU/graphics/RemoteImageBufferProxy.h:
+        (WebKit::RemoteImageBufferProxy::RemoteImageBufferProxy):
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.cpp:
+        (WebKit::RemoteRenderingBackendProxy::createRemoteImageBuffer):
+
 2021-10-29  Kate Cheney  <katherine_cheney@apple.com>
 
         Crash setting up AVCaptureSession

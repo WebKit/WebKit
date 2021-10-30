@@ -278,19 +278,19 @@ void FEComposite::platformApplySoftware()
     }
     case FECOMPOSITE_OPERATOR_OUT:
         filterContext.drawImageBuffer(*imageBuffer, drawingRegionOfInputImage(in->absolutePaintRect()));
-        filterContext.drawImageBuffer(*imageBuffer2, drawingRegionOfInputImage(in2->absolutePaintRect()), IntRect(IntPoint(), imageBuffer2->logicalSize()), CompositeOperator::DestinationOut);
+        filterContext.drawImageBuffer(*imageBuffer2, drawingRegionOfInputImage(in2->absolutePaintRect()), IntRect(IntPoint(), imageBuffer2->truncatedLogicalSize()), CompositeOperator::DestinationOut);
         break;
     case FECOMPOSITE_OPERATOR_ATOP:
         filterContext.drawImageBuffer(*imageBuffer2, drawingRegionOfInputImage(in2->absolutePaintRect()));
-        filterContext.drawImageBuffer(*imageBuffer, drawingRegionOfInputImage(in->absolutePaintRect()), IntRect(IntPoint(), imageBuffer->logicalSize()), CompositeOperator::SourceAtop);
+        filterContext.drawImageBuffer(*imageBuffer, drawingRegionOfInputImage(in->absolutePaintRect()), IntRect(IntPoint(), imageBuffer->truncatedLogicalSize()), CompositeOperator::SourceAtop);
         break;
     case FECOMPOSITE_OPERATOR_XOR:
         filterContext.drawImageBuffer(*imageBuffer2, drawingRegionOfInputImage(in2->absolutePaintRect()));
-        filterContext.drawImageBuffer(*imageBuffer, drawingRegionOfInputImage(in->absolutePaintRect()), IntRect(IntPoint(), imageBuffer->logicalSize()), CompositeOperator::XOR);
+        filterContext.drawImageBuffer(*imageBuffer, drawingRegionOfInputImage(in->absolutePaintRect()), IntRect(IntPoint(), imageBuffer->truncatedLogicalSize()), CompositeOperator::XOR);
         break;
     case FECOMPOSITE_OPERATOR_LIGHTER:
         filterContext.drawImageBuffer(*imageBuffer2, drawingRegionOfInputImage(in2->absolutePaintRect()));
-        filterContext.drawImageBuffer(*imageBuffer, drawingRegionOfInputImage(in->absolutePaintRect()), IntRect(IntPoint(), imageBuffer->logicalSize()), CompositeOperator::PlusLighter);
+        filterContext.drawImageBuffer(*imageBuffer, drawingRegionOfInputImage(in->absolutePaintRect()), IntRect(IntPoint(), imageBuffer->truncatedLogicalSize()), CompositeOperator::PlusLighter);
         break;
     default:
         break;

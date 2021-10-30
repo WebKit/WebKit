@@ -90,7 +90,8 @@ protected:
         }
     }
 
-    IntSize logicalSize() const override { return IntSize(m_parameters.logicalSize); }
+    FloatSize logicalSize() const override { return m_parameters.logicalSize; }
+    IntSize truncatedLogicalSize() const override { return IntSize(m_parameters.logicalSize); } // You probably should be calling logicalSize() instead.
     float resolutionScale() const override { return m_parameters.resolutionScale; }
     DestinationColorSpace colorSpace() const override { return m_parameters.colorSpace; }
     PixelFormat pixelFormat() const override { return m_parameters.pixelFormat; }

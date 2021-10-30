@@ -286,7 +286,7 @@ void FEColorMatrix::platformApplySoftware()
         resultImage->context().drawImageBuffer(*inBuffer, drawingRegionOfInputImage(in->absolutePaintRect()));
 
     PixelBufferFormat format { AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA8, resultColorSpace() };
-    IntRect imageRect(IntPoint(), resultImage->logicalSize());
+    IntRect imageRect(IntPoint(), resultImage->truncatedLogicalSize());
     auto pixelBuffer = resultImage->getPixelBuffer(format, imageRect);
     if (!pixelBuffer)
         return;

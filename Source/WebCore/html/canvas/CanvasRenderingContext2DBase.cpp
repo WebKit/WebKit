@@ -2248,7 +2248,7 @@ void CanvasRenderingContext2DBase::putImageData(ImageData& data, int dx, int dy,
     IntSize destOffset { dx, dy };
     IntRect destRect = clipRect;
     destRect.move(destOffset);
-    destRect.intersect(IntRect { { }, buffer->logicalSize() });
+    destRect.intersect(IntRect { { }, buffer->truncatedLogicalSize() });
     if (destRect.isEmpty())
         return;
     IntRect sourceRect { destRect };
