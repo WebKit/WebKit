@@ -47,6 +47,7 @@
 
 #if PLATFORM(COCOA)
 #include <pal/spi/cocoa/TCCSPI.h>
+#include <wtf/OSObjectPtr.h>
 #endif
 
 namespace WebCore {
@@ -105,8 +106,8 @@ public:
     WEBCORE_EXPORT static bool shouldInterruptAudioOnPageVisibilityChange();
 
 #if ENABLE(APP_PRIVACY_REPORT)
-    void setIdentity(std::optional<tcc_identity_t> identity) { m_identity = identity; }
-    std::optional<tcc_identity_t> identity() const { return m_identity; }
+    void setIdentity(OSObjectPtr<tcc_identity_t>&& identity) { m_identity = WTFMove(identity); }
+    OSObjectPtr<tcc_identity_t> identity() const { return m_identity; }
 #endif
 
 private:
@@ -141,7 +142,7 @@ private:
     bool m_shouldInterruptAudioOnPageVisibilityChange { false };
 
 #if ENABLE(APP_PRIVACY_REPORT)
-    std::optional<tcc_identity_t> m_identity;
+    OSObjectPtr<tcc_identity_t> m_identity;
 #endif
 };
 

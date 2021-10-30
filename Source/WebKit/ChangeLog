@@ -1,3 +1,14 @@
+2021-10-29  Kate Cheney  <katherine_cheney@apple.com>
+
+        Crash setting up AVCaptureSession
+        https://bugs.webkit.org/show_bug.cgi?id=232507
+        <rdar://problem/84820282>
+
+        Reviewed by Jer Noble.
+
+        * GPUProcess/cocoa/GPUConnectionToWebProcessCocoa.mm:
+        (WebKit::GPUConnectionToWebProcess::setTCCIdentity):
+
 2021-10-29  Alex Christensen  <achristensen@webkit.org>
 
         Fix WPE build after r285047
