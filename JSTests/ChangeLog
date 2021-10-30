@@ -1,5 +1,11 @@
 2021-10-29  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        Unreviewed, reduce # of iterations in stress/validate-int-52-ai-state.js due to Debug timeout
+
+        * stress/validate-int-52-ai-state.js:
+
+2021-10-29  Yusuke Suzuki  <ysuzuki@apple.com>
+
         Unreviewed, skip stress/unlinked-code-block-destructor.js when it is debug build
 
         The bug was not related to Debug build. And it is timing out on Debug build due to
