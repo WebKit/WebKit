@@ -32,6 +32,7 @@
 
 namespace WebCore {
 namespace Layout {
+class InlineTextBox;
 
 class InlineItemsBuilder {
 public:
@@ -39,6 +40,8 @@ public:
     void build();
 
 private:
+    void createAndAppendTextItems(const InlineTextBox&);
+
     const ContainerBox& root() const { return m_root; }
     InlineFormattingState& formattingState() const { return m_formattingState; }
 

@@ -28,8 +28,48 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
+#include "InlineSoftLineBreakItem.h"
+
 namespace WebCore {
 namespace Layout {
+
+struct WhitespaceContent {
+    size_t length { 0 };
+    bool isWordSeparator { true };
+};
+static std::optional<WhitespaceContent> moveToNextNonWhitespacePosition(StringView textContent, size_t startPosition, bool preserveNewline, bool preserveTab, bool treatNonBreakingSpaceAsRegularSpace, bool stopAtWordSeparatorBoundary)
+{
+    auto hasWordSeparatorCharacter = false;
+    auto isWordSeparatorCharacter = false;
+    auto isWhitespaceCharacter = [&](auto character) {
+        // white space processing in CSS affects only the document white space characters: spaces (U+0020), tabs (U+0009), and segment breaks.
+        auto isTreatedAsSpaceCharacter = character == space || (character == newlineCharacter && !preserveNewline) || (character == tabCharacter && !preserveTab) || (character == noBreakSpace && treatNonBreakingSpaceAsRegularSpace);
+        isWordSeparatorCharacter = isTreatedAsSpaceCharacter;
+        hasWordSeparatorCharacter = hasWordSeparatorCharacter || isWordSeparatorCharacter;
+        return isTreatedAsSpaceCharacter || character == tabCharacter;
+    };
+    auto nextNonWhiteSpacePosition = startPosition;
+    while (nextNonWhiteSpacePosition < textContent.length() && isWhitespaceCharacter(textContent[nextNonWhiteSpacePosition])) {
+        if (UNLIKELY(stopAtWordSeparatorBoundary && hasWordSeparatorCharacter && !isWordSeparatorCharacter))
+            break;
+        ++nextNonWhiteSpacePosition;
+    }
+    return nextNonWhiteSpacePosition == startPosition ? std::nullopt : std::make_optional(WhitespaceContent { nextNonWhiteSpacePosition - startPosition, hasWordSeparatorCharacter });
+}
+
+static unsigned moveToNextBreakablePosition(unsigned startPosition, LazyLineBreakIterator& lineBreakIterator, const RenderStyle& style)
+{
+    auto textLength = lineBreakIterator.stringView().length();
+    auto startPositionForNextBreakablePosition = startPosition;
+    while (startPositionForNextBreakablePosition < textLength) {
+        auto nextBreakablePosition = TextUtil::findNextBreakablePosition(lineBreakIterator, startPositionForNextBreakablePosition, style);
+        // Oftentimes the next breakable position comes back as the start position (most notably hyphens).
+        if (nextBreakablePosition != startPosition)
+            return nextBreakablePosition - startPosition;
+        ++startPositionForNextBreakablePosition;
+    }
+    return textLength - startPosition;
+}
 
 InlineItemsBuilder::InlineItemsBuilder(const ContainerBox& formattingContextRoot, InlineFormattingState& formattingState)
     : m_root(formattingContextRoot)
@@ -74,7 +114,7 @@ void InlineItemsBuilder::build()
             else if (layoutBox.isAtomicInlineLevelBox())
                 formattingState.addInlineItem({ layoutBox, InlineItem::Type::Box });
             else if (layoutBox.isInlineTextBox()) {
-                InlineTextItem::createAndAppendTextItems(formattingState.inlineItems(), downcast<InlineTextBox>(layoutBox));
+                createAndAppendTextItems(downcast<InlineTextBox>(layoutBox));
             } else if (layoutBox.isInlineBox())
                 formattingState.addInlineItem({ layoutBox, InlineItem::Type::InlineBoxEnd });
             else
@@ -88,6 +128,88 @@ void InlineItemsBuilder::build()
     }
 }
 
+void InlineItemsBuilder::createAndAppendTextItems(const InlineTextBox& inlineTextBox)
+{
+    auto& formattingState = this->formattingState();
+
+    auto text = inlineTextBox.content();
+    if (!text.length())
+        return formattingState.addInlineItem(InlineTextItem::createEmptyItem(inlineTextBox));
+
+    auto& style = inlineTextBox.style();
+    auto& fontCascade = style.fontCascade();
+    auto shouldPreserveSpacesAndTabs = TextUtil::shouldPreserveSpacesAndTabs(inlineTextBox);
+    auto whitespaceContentIsTreatedAsSingleSpace = !shouldPreserveSpacesAndTabs;
+    auto shouldPreserveNewline = TextUtil::shouldPreserveNewline(inlineTextBox);
+    auto shouldTreatNonBreakingSpaceAsRegularSpace = style.nbspMode() == NBSPMode::Space;
+    auto lineBreakIterator = LazyLineBreakIterator { text, style.computedLocale(), TextUtil::lineBreakIteratorMode(style.lineBreak()) };
+    unsigned currentPosition = 0;
+
+    auto inlineItemWidth = [&](auto startPosition, auto length) -> std::optional<InlineLayoutUnit> {
+        if (!inlineTextBox.canUseSimplifiedContentMeasuring()
+            || !TextUtil::canUseSimplifiedTextMeasuringForFirstLine(inlineTextBox.style(), inlineTextBox.firstLineStyle()))
+            return { };
+        return TextUtil::width(inlineTextBox, fontCascade, startPosition, startPosition + length, { });
+    };
+
+    while (currentPosition < text.length()) {
+        auto isSegmentBreakCandidate = [](auto character) {
+            return character == '\n';
+        };
+
+        // Segment breaks with preserve new line style (white-space: pre, pre-wrap, break-spaces and pre-line) compute to forced line break.
+        if (isSegmentBreakCandidate(text[currentPosition]) && shouldPreserveNewline) {
+            formattingState.addInlineItem(InlineSoftLineBreakItem::createSoftLineBreakItem(inlineTextBox, currentPosition));
+            ++currentPosition;
+            continue;
+        }
+
+        auto stopAtWordSeparatorBoundary = shouldPreserveSpacesAndTabs && fontCascade.wordSpacing();
+        if (auto whitespaceContent = moveToNextNonWhitespacePosition(text, currentPosition, shouldPreserveNewline, shouldPreserveSpacesAndTabs, shouldTreatNonBreakingSpaceAsRegularSpace, stopAtWordSeparatorBoundary)) {
+            ASSERT(whitespaceContent->length);
+            auto appendWhitespaceItem = [&] (auto startPosition, auto itemLength) {
+                auto simpleSingleWhitespaceContent = inlineTextBox.canUseSimplifiedContentMeasuring() && (itemLength == 1 || whitespaceContentIsTreatedAsSingleSpace);
+                auto width = simpleSingleWhitespaceContent ? std::make_optional(InlineLayoutUnit { fontCascade.spaceWidth() }) : inlineItemWidth(startPosition, itemLength);
+                formattingState.addInlineItem(InlineTextItem::createWhitespaceItem(inlineTextBox, startPosition, itemLength, whitespaceContent->isWordSeparator, width));
+            };
+            if (style.whiteSpace() == WhiteSpace::BreakSpaces) {
+                // https://www.w3.org/TR/css-text-3/#white-space-phase-1
+                // For break-spaces, a soft wrap opportunity exists after every space and every tab.
+                // FIXME: if this turns out to be a perf hit with too many individual whitespace inline items, we should transition this logic to line breaking.
+                for (size_t i = 0; i < whitespaceContent->length; ++i)
+                    appendWhitespaceItem(currentPosition + i, 1);
+            } else
+                appendWhitespaceItem(currentPosition, whitespaceContent->length);
+            currentPosition += whitespaceContent->length;
+            continue;
+        }
+
+        auto hasTrailingSoftHyphen = false;
+        auto initialNonWhitespacePosition = currentPosition;
+        auto isAtSoftHyphen = [&](auto position) {
+            return text[position] == softHyphen;
+        };
+        if (style.hyphens() == Hyphens::None) {
+            // Let's merge candidate InlineTextItems separated by soft hyphen when the style says so.
+            while (currentPosition < text.length()) {
+                auto nonWhiteSpaceLength = moveToNextBreakablePosition(currentPosition, lineBreakIterator, style);
+                ASSERT(nonWhiteSpaceLength);
+                currentPosition += nonWhiteSpaceLength;
+                if (!isAtSoftHyphen(currentPosition - 1))
+                    break;
+            }
+        } else {
+            auto nonWhiteSpaceLength = moveToNextBreakablePosition(initialNonWhitespacePosition, lineBreakIterator, style);
+            ASSERT(nonWhiteSpaceLength);
+            currentPosition += nonWhiteSpaceLength;
+            hasTrailingSoftHyphen = isAtSoftHyphen(currentPosition - 1);
+        }
+        ASSERT(initialNonWhitespacePosition < currentPosition);
+        ASSERT_IMPLIES(style.hyphens() == Hyphens::None, !hasTrailingSoftHyphen);
+        auto length = currentPosition - initialNonWhitespacePosition;
+        formattingState.addInlineItem(InlineTextItem::createNonWhitespaceItem(inlineTextBox, initialNonWhitespacePosition, length, hasTrailingSoftHyphen, inlineItemWidth(initialNonWhitespacePosition, length)));
+    }
+}
 }
 }
 

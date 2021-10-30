@@ -37,7 +37,9 @@ using InlineItems = Vector<InlineItem>;
 
 class InlineTextItem : public InlineItem {
 public:
-    static void createAndAppendTextItems(InlineItems&, const InlineTextBox&);
+    static InlineTextItem createWhitespaceItem(const InlineTextBox&, unsigned start, unsigned length, bool isWordSeparator, std::optional<InlineLayoutUnit> width);
+    static InlineTextItem createNonWhitespaceItem(const InlineTextBox&, unsigned start, unsigned length, bool hasTrailingSoftHyphen, std::optional<InlineLayoutUnit> width);
+    static InlineTextItem createEmptyItem(const InlineTextBox&);
 
     unsigned start() const { return m_startOrPosition; }
     unsigned end() const { return start() + length(); }
@@ -61,10 +63,6 @@ private:
 
     InlineTextItem(const InlineTextBox&, unsigned start, unsigned length, bool hasTrailingSoftHyphen, bool isWordSeparator, std::optional<InlineLayoutUnit> width, TextItemType);
     explicit InlineTextItem(const InlineTextBox&);
-
-    static InlineTextItem createWhitespaceItem(const InlineTextBox&, unsigned start, unsigned length, bool isWordSeparator, std::optional<InlineLayoutUnit> width);
-    static InlineTextItem createNonWhitespaceItem(const InlineTextBox&, unsigned start, unsigned length, bool hasTrailingSoftHyphen, std::optional<InlineLayoutUnit> width);
-    static InlineTextItem createEmptyItem(const InlineTextBox&);
 };
 
 inline InlineTextItem InlineTextItem::createWhitespaceItem(const InlineTextBox& inlineTextBox, unsigned start, unsigned length, bool isWordSeparator, std::optional<InlineLayoutUnit> width)
@@ -81,39 +79,6 @@ inline InlineTextItem InlineTextItem::createNonWhitespaceItem(const InlineTextBo
 inline InlineTextItem InlineTextItem::createEmptyItem(const InlineTextBox& inlineTextBox)
 {
     return InlineTextItem { inlineTextBox };
-}
-
-inline InlineTextItem::InlineTextItem(const InlineTextBox& inlineTextBox, unsigned start, unsigned length, bool hasTrailingSoftHyphen, bool isWordSeparator, std::optional<InlineLayoutUnit> width, TextItemType textItemType)
-    : InlineItem(inlineTextBox, Type::Text)
-{
-    m_startOrPosition = start;
-    m_length = length;
-    m_hasWidth = !!width;
-    m_hasTrailingSoftHyphen = hasTrailingSoftHyphen;
-    m_isWordSeparator = isWordSeparator;
-    m_width = width.value_or(0);
-    m_textItemType = textItemType;
-}
-
-inline InlineTextItem::InlineTextItem(const InlineTextBox& inlineTextBox)
-    : InlineItem(inlineTextBox, Type::Text)
-{
-}
-
-inline InlineTextItem InlineTextItem::left(unsigned length) const
-{
-    RELEASE_ASSERT(length <= this->length());
-    ASSERT(m_textItemType != TextItemType::Undefined);
-    ASSERT(length);
-    return { inlineTextBox(), start(), length, false, isWordSeparator(), std::nullopt, m_textItemType };
-}
-
-inline InlineTextItem InlineTextItem::right(unsigned length, std::optional<InlineLayoutUnit> width) const
-{
-    RELEASE_ASSERT(length <= this->length());
-    ASSERT(m_textItemType != TextItemType::Undefined);
-    ASSERT(length);
-    return { inlineTextBox(), end() - length, length, hasTrailingSoftHyphen(), isWordSeparator(), width, m_textItemType };
 }
 
 }
