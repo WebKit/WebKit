@@ -1388,6 +1388,9 @@ webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/word-break/word
 
 [ Catalina ] imported/w3c/web-platform-tests/css/css-text/line-break/line-break-anywhere-001.html [ ImageOnlyFailure ]
 
+webkit.org/b/232518 imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/flex-aspect-ratio-021.html [ ImageOnlyFailure ]
+webkit.org/b/232518 imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/flex-aspect-ratio-022.html [ ImageOnlyFailure ]
+
 http/tests/cookies/same-site [ Pass ]
 
 # FIXME: Mark as Pass once <rdar://problem/47165939> is fixed.

@@ -1915,6 +1915,9 @@ webkit.org/b/214468 imported/w3c/web-platform-tests/css/css-values/ch-unit-002.h
 
 webkit.org/b/229874 imported/w3c/web-platform-tests/css/css-sizing/percentage-height-in-flexbox.html [ Pass Failure ]
 
+webkit.org/b/232518 imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/flex-aspect-ratio-021.html [ ImageOnlyFailure ]
+webkit.org/b/232518 imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/flex-aspect-ratio-022.html [ ImageOnlyFailure ]
+
 webkit.org/b/214512 imported/w3c/web-platform-tests/css/geometry/DOMMatrix2DInit-validate-fixup.html [ Pass Failure ]
 
 webkit.org/b/230959 fast/scrolling/ios/click-events-after-long-press-during-momentum-scroll-in-overflow.html [ Pass Timeout ]
