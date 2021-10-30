@@ -13,6 +13,7 @@
     let iframe0 = document.createElement('iframe');
     document.body.appendChild(iframe0);
     document.body.appendChild(document.createElement('iframe'));
+    getSelection().collapse(document.body, 0);
     getSelection().extend(document.body);
     iframe0.contentDocument.onvisibilitychange = () => {
       document.execCommand('InsertHTML', false, 'foo');

@@ -46,9 +46,10 @@ shouldBeNull("foreignSel.anchorNode");
 shouldBeNull("mainSel.anchorNode");
 
 clear();
+mainSel.addRange(new Range());
 mainSel.extend(foreignElement, 1);
 shouldBeNull("foreignSel.anchorNode");
-shouldBeNull("mainSel.anchorNode");
+shouldNotBe("mainSel.anchorNode", "null");
 
 clear();
 mainSel.selectAllChildren(foreignElement, 1);

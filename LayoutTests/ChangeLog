@@ -1,3 +1,19 @@
+2021-10-30  Brandon Stewart  <brandonstewart@apple.com>
+
+        Selection extend() should trigger exception with no ranges
+        https://bugs.webkit.org/show_bug.cgi?id=232420
+
+        Reviewed by Chris Dumez.
+
+        Resolve errors in test cases introduced by new exception being thrown by extend()
+        when no ranges are present.
+
+        * editing/execCommand/null_calc_primitive_value_for_css_property.html:
+        * editing/execCommand/transpose-backslash-with-euc.html:
+        * editing/inserting/insert-html-crash-02.html:
+        * editing/selection/DOMSelection-crossing-document-expected.txt:
+        * editing/selection/DOMSelection-crossing-document.html:
+
 2021-10-29  Lauro Moura  <lmoura@igalia.com>
 
         [GLIB] Gardening timeouts affected by xhtml mimetype misdetection

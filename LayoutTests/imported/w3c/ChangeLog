@@ -1,3 +1,19 @@
+2021-10-30  Brandon Stewart  <brandonstewart@apple.com>
+
+        Selection extend() should trigger exception with no ranges
+        https://bugs.webkit.org/show_bug.cgi?id=232420
+
+        Reviewed by Chris Dumez.
+
+        Verify extend() will throw an exception when the Selection object
+        contains no Range objects. Chrome and Firefox will also throw an
+        exception in this scenario.
+
+        https://w3c.github.io/selection-api/#dom-selection-extend
+
+        * web-platform-tests/selection/extend-exception-expected.txt: Added.
+        * web-platform-tests/selection/extend-exception.html: Added.
+
 2021-10-29  Antti Koivisto  <antti@apple.com>
 
         Allow :is/:where after all pseudo elements
