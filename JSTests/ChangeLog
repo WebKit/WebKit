@@ -1,3 +1,16 @@
+2021-10-29  Dmitry Bezhetskov  <dbezhetskov@igalia.com>
+
+        [WASM-Function-References] Add support for (ref.null heaptype)
+        https://bugs.webkit.org/show_bug.cgi?id=229707
+
+        Reviewed by Yusuke Suzuki.
+
+        Added spec tests for (ref.null $t) : https://github.com/WebAssembly/function-references/blob/master/test/core/ref_null.wast.
+
+        * wasm.yaml:
+        * wasm/function-references-spec-tests/call_ref.wast.js:
+        * wasm/function-references-spec-tests/ref_null.wast.js: Added.
+
 2021-10-27  Dmitry Bezhetskov  <dbezhetskov@igalia.com>
 
         [WASM-Function-References] Add call_ref spec tests

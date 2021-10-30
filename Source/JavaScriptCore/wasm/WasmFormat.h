@@ -138,6 +138,14 @@ inline bool isRefWithTypeIndex(Type type)
     return isRefType(type) && !isExternref(type) && !isFuncref(type);
 }
 
+inline bool isTypeIndexHeapType(int32_t heapType)
+{
+    if (!Options::useWebAssemblyTypedFunctionReferences())
+        return false;
+
+    return heapType >= 0;
+}
+
 inline bool isSubtype(Type sub, Type parent)
 {
     if (sub.isNullable() && !parent.isNullable())

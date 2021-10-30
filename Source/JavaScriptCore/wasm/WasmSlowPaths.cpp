@@ -506,6 +506,9 @@ inline SlowPathReturnType doWasmCallRef(CallFrame* callFrame, Wasm::Instance* ca
 {
     UNUSED_PARAM(callFrame);
 
+    if (targetReference.isNull())
+        WASM_THROW(Wasm::ExceptionType::NullReference);
+
     ASSERT(targetReference.isObject());
     JSObject* referenceAsObject = jsCast<JSObject*>(targetReference);
 
