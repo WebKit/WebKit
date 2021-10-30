@@ -99,7 +99,7 @@ class HttpServerBase(object):
 
         if sys.platform == 'cygwin':
             # Starting the server takes longer time on Cygwin
-            server_started = self._wait_for_action(self._is_server_running_on_all_ports, 60, 10)
+            server_started = self._wait_for_action(self._is_server_running_on_all_ports, 60)
         else:
             server_started = self._wait_for_action(self._is_server_running_on_all_ports)
 
@@ -191,7 +191,7 @@ class HttpServerBase(object):
                 full_path = self._filesystem.join(folder, file)
                 self._filesystem.remove(full_path)
 
-    def _wait_for_action(self, action, wait_secs=20.0, sleep_secs=1.0):
+    def _wait_for_action(self, action, wait_secs=20.0, sleep_secs=0.1):
         """Repeat the action for wait_sec or until it succeeds, sleeping for sleep_secs
         in between each attempt. Returns whether it succeeded."""
         start_time = time.time()

@@ -42,8 +42,14 @@ class MockProcess(object):
         self.stdout = BytesIO(string_utils.encode(stdout))
         self.stderr = BytesIO(string_utils.encode(stderr))
         self.stdin = BytesIO()
-        self.returncode = returncode
+        self._returncode = returncode
         self._is_running = False
+
+    @property
+    def returncode(self):
+        if self._is_running:
+            return None
+        return self._returncode
 
     def wait(self):
         self._is_running = False

@@ -1,3 +1,28 @@
+2021-10-30  Sam Sneddon  <gsnedders@apple.com>
+
+        Ensure we stop LayoutTest servers without them becoming zombies
+        https://bugs.webkit.org/show_bug.cgi?id=225189
+        <rdar://problem/77604119>
+
+        Reviewed by Jonathan Bedard.
+
+        Also increase the polling frequency in HttpServerBase._wait_for_action, as this is a major
+        source of delay when running run-webkit-tests --dry-run due to the number of servers we're
+        starting nowadays.
+
+        * Scripts/webkitpy/common/system/executive_mock.py:
+        (MockProcess.__init__): Rename self.returncode to _returncode
+        (MockProcess.returncode): returncode should be None if process is still running
+        * Scripts/webkitpy/layout_tests/servers/http_server.py:
+        (Lighttpd._spawn_process): Store Popen object
+        (Lighttpd._check_and_kill): Skip "kill" if process has returned
+        (Lighttpd._is_server_running_on_all_ports): Correctly raise ServerError if it has returned
+        * Scripts/webkitpy/layout_tests/servers/http_server_base.py:
+        (HttpServerBase.start): Change polling frequency for cygwin from 0.1Hz to default
+        (HttpServerBase._wait_for_action): Increase default polling frequency to 10Hz from 1Hz
+        * Scripts/webkitpy/layout_tests/servers/web_platform_test_server.py:
+        (WebPlatformTestServer._stop_running_server): Poll first so we don't have zombies keeping references to pipes
+
 2021-10-30  Kate Cheney  <katherine_cheney@apple.com>
 
         [iOS 15] Loads after WKWebView session restore are marked as app-initiated 
