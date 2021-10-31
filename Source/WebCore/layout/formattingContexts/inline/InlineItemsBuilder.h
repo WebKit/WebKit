@@ -44,9 +44,12 @@ private:
     void breakInlineItemsAtBidiBoundaries(InlineItems&);
 
     void handleTextContent(const InlineTextBox&, InlineItems&);
-    enum class EnterInlineBox { Yes, No };
-    void handleInlineBox(const Box&, EnterInlineBox, InlineItems&);
+    void handleInlineBoxStart(const Box&, InlineItems&);
+    void handleInlineBoxEnd(const Box&, InlineItems&);
     void handleInlineLevelBox(const Box&, InlineItems&);
+    
+    void enterBidiContext(const Box&, UChar);
+    void exitBidiContext(const Box&, UChar);
 
     const ContainerBox& root() const { return m_root; }
 

@@ -99,7 +99,7 @@ void InlineItemsBuilder::collectInlineItems(InlineItems& inlineItems)
             if (!isInlineBoxWithInlineContent)
                 break;
             // This is the start of an inline box (e.g. <span>).
-            handleInlineBox(layoutBox, EnterInlineBox::Yes, inlineItems);
+            handleInlineBoxStart(layoutBox, inlineItems);
             auto& inlineBox = downcast<ContainerBox>(layoutBox);
             if (!inlineBox.hasChild())
                 break;
@@ -113,7 +113,7 @@ void InlineItemsBuilder::collectInlineItems(InlineItems& inlineItems)
             else if (layoutBox.isAtomicInlineLevelBox() || layoutBox.isLineBreakBox())
                 handleInlineLevelBox(layoutBox, inlineItems);
             else if (layoutBox.isInlineBox())
-                handleInlineBox(layoutBox, EnterInlineBox::No, inlineItems);
+                handleInlineBoxEnd(layoutBox, inlineItems);
             else if (layoutBox.isFloatingPositioned())
                 inlineItems.append({ layoutBox, InlineItem::Type::Float });
             else if (layoutBox.isOutOfFlowPositioned()) {
@@ -217,10 +217,89 @@ void InlineItemsBuilder::handleTextContent(const InlineTextBox& inlineTextBox, I
     }
 }
 
-void InlineItemsBuilder::handleInlineBox(const Box& inlineBox, EnterInlineBox enterInlineBox, InlineItems& inlineItems)
+void InlineItemsBuilder::handleInlineBoxStart(const Box& inlineBox, InlineItems& inlineItems)
 {
-    // FIXME: Inject bidi control codes when crossing inline boxes with unicode-bidi/direction.
-    inlineItems.append({ inlineBox, enterInlineBox == EnterInlineBox::Yes ? InlineItem::Type::InlineBoxStart : InlineItem::Type::InlineBoxEnd });
+    inlineItems.append({ inlineBox, InlineItem::Type::InlineBoxStart });
+    // https://drafts.csswg.org/css-writing-modes/#unicode-bidi
+    auto& style = inlineBox.style();
+    if (style.rtlOrdering() == Order::Visual)
+        return;
+
+    auto isLeftToRightDirection = style.isLeftToRightDirection();
+    auto enteringContentControlChar = std::optional<UChar> { };
+    auto nestedContentControlChar = std::optional<UChar> { };
+
+    switch (style.unicodeBidi()) {
+    case EUnicodeBidi::UBNormal:
+        // The box does not open an additional level of embedding with respect to the bidirectional algorithm.
+        // For inline boxes, implicit reordering works across box boundaries.
+        break;
+    case EUnicodeBidi::Embed:
+        enteringContentControlChar = isLeftToRightDirection ? leftToRightEmbed : rightToLeftEmbed;
+        break;
+    case EUnicodeBidi::Override:
+        enteringContentControlChar = isLeftToRightDirection ? leftToRightOverride : rightToLeftOverride;
+        break;
+    case EUnicodeBidi::Isolate:
+        enteringContentControlChar = isLeftToRightDirection ? leftToRightIsolate : rightToLeftIsolate;
+        break;
+    case EUnicodeBidi::Plaintext:
+        enteringContentControlChar = firstStrongIsolate;
+        break;
+    case EUnicodeBidi::IsolateOverride:
+        enteringContentControlChar = firstStrongIsolate;
+        nestedContentControlChar = isLeftToRightDirection ? leftToRightOverride : rightToLeftOverride;
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+    }
+
+    if (enteringContentControlChar)
+        enterBidiContext(inlineBox, *enteringContentControlChar);
+    if (nestedContentControlChar)
+        enterBidiContext(inlineBox, *nestedContentControlChar);
+}
+
+void InlineItemsBuilder::handleInlineBoxEnd(const Box& inlineBox, InlineItems& inlineItems)
+{
+    inlineItems.append({ inlineBox, InlineItem::Type::InlineBoxEnd });
+    // https://drafts.csswg.org/css-writing-modes/#unicode-bidi
+    auto& style = inlineBox.style();
+    if (style.rtlOrdering() == Order::Visual)
+        return;
+
+    auto exitingContentControlChar = std::optional<UChar> { };
+    auto nestedContentControlChar = std::optional<UChar> { };
+
+    switch (style.unicodeBidi()) {
+    case EUnicodeBidi::UBNormal:
+        // The box does not open an additional level of embedding with respect to the bidirectional algorithm.
+        // For inline boxes, implicit reordering works across box boundaries.
+        break;
+    case EUnicodeBidi::Embed:
+        exitingContentControlChar = popDirectionalFormatting;
+        break;
+    case EUnicodeBidi::Override:
+        exitingContentControlChar = popDirectionalFormatting;
+        break;
+    case EUnicodeBidi::Isolate:
+        exitingContentControlChar = popDirectionalIsolate;
+        break;
+    case EUnicodeBidi::Plaintext:
+        exitingContentControlChar = popDirectionalIsolate;
+        break;
+    case EUnicodeBidi::IsolateOverride:
+        nestedContentControlChar = popDirectionalFormatting;
+        exitingContentControlChar = popDirectionalIsolate;
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+    }
+
+    if (nestedContentControlChar)
+        exitBidiContext(inlineBox, *nestedContentControlChar);
+    if (exitingContentControlChar)
+        exitBidiContext(inlineBox, *exitingContentControlChar);
 }
 
 void InlineItemsBuilder::handleInlineLevelBox(const Box& layoutBox, InlineItems& inlineItems)
@@ -232,6 +311,16 @@ void InlineItemsBuilder::handleInlineLevelBox(const Box& layoutBox, InlineItems&
         return inlineItems.append({ layoutBox, downcast<LineBreakBox>(layoutBox).isOptional() ? InlineItem::Type::WordBreakOpportunity : InlineItem::Type::HardLineBreak });
 
     ASSERT_NOT_REACHED();
+}
+
+void InlineItemsBuilder::enterBidiContext(const Box&, UChar)
+{
+    // FIXME: Inject the control character to the paragraph string.
+}
+
+void InlineItemsBuilder::exitBidiContext(const Box&, UChar)
+{
+    // FIXME: Inject the control character to the paragraph string.
 }
 
 }
