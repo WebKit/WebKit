@@ -1,3 +1,14 @@
+2021-10-30  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [GPU Process] Small ImageBuffers cause the web process to crash
+        https://bugs.webkit.org/show_bug.cgi?id=232470
+        <rdar://problem/84626560>
+
+        Reviewed by Tim Horton.
+
+        * compositing/device-pixel-image-buffer-hidpi-expected.html: Added.
+        * compositing/device-pixel-image-buffer-hidpi.html: Added.
+
 2021-10-30  Chris Dumez  <cdumez@apple.com>
 
         [ BigSur wk2 Debug arm64 ] webaudio/AudioBufferSource/audiobuffersource-playbackrate.html is a flaky crash

@@ -1,3 +1,32 @@
+2021-10-30  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [GPU Process] Small ImageBuffers cause the web process to crash
+        https://bugs.webkit.org/show_bug.cgi?id=232470
+        <rdar://problem/84626560>
+
+        Reviewed by Tim Horton.
+
+        The problem is when the (floating point) size < 1x1, but the size*resolution is >= 1x1.
+        In this situation, calculateSafeBackendSize() is correctly determining that this
+        isn't a zero-sized ImageBuffer, but when we go to actually pass the size to the GPU
+        process, we call this:
+
+        IntSize logicalSize() const override { return IntSize(m_parameters.logicalSize); }
+
+        So, the logical size gets truncated down to 0, and then the GPU process fails to allocate
+        the ImageBuffer, and then the web process blocks on the GPU process indefinitely, and then
+        eventually times out and then crashes. I'm going to deal with that last step (the crash
+        itself) in a secondary patch - if the web process doesn't hear from the GPU process, it
+        shouldn't crash.
+
+        This patch simply exposes a floatLogicalSize() function on ImageBuffer, so we can get
+        the full-fidelity logical size to pass that to the GPU process.
+
+        Test: compositing/device-pixel-image-buffer-hidpi.html
+
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.cpp:
+        (WebKit::RemoteRenderingBackendProxy::createRemoteImageBuffer):
+
 2021-10-30  Chris Dumez  <cdumez@apple.com>
 
         Improve error handling in sendWithAsyncReply()
