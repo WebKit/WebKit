@@ -1,3 +1,12 @@
+2021-10-31  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo] Unreviewed test gardening
+
+        * platform/wincairo/TestExpectations:
+        * platform/wincairo/editing/selection/3690703-2-expected.txt:
+        * platform/wincairo/editing/selection/3690703-expected.txt:
+        * platform/wincairo/editing/selection/3690719-expected.txt:
+
 2021-10-30  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Layer tree should not be stuck in frozen state after explicitly stopping a page load
