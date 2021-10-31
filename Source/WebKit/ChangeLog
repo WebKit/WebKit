@@ -1,5 +1,23 @@
 2021-10-30  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        Web process shouldn't crash if ImageBuffer::ensureBackendCreated() fails
+        https://bugs.webkit.org/show_bug.cgi?id=232520
+        <rdar://problem/84829717>
+
+        Reviewed by Simon Fraser.
+
+        Guard against the possibility of it returning null.
+
+        No new tests because there shouldn't be any behavior change after https://bugs.webkit.org/show_bug.cgi?id=232470.
+        It's still good to do this, though, to be defensive.
+
+        * Shared/RemoteLayerTree/RemoteLayerBackingStore.mm:
+        (WebKit::RemoteLayerBackingStore::encode const):
+        * WebProcess/GPU/graphics/RemoteImageBufferProxy.h:
+        (WebKit::RemoteImageBufferProxy::createImageBufferBackendHandle):
+
+2021-10-30  Myles C. Maxfield  <mmaxfield@apple.com>
+
         [GPU Process] Small ImageBuffers cause the web process to crash
         https://bugs.webkit.org/show_bug.cgi?id=232470
         <rdar://problem/84626560>
