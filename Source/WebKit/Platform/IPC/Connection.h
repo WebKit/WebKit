@@ -546,6 +546,13 @@ uint64_t Connection::sendWithAsyncReply(T&& message, C&& completionHandler, uint
 {
     COMPILE_ASSERT(!T::isSync, AsyncMessageExpected);
 
+    if (!isValid()) {
+        RunLoop::main().dispatch([completionHandler = WTFMove(completionHandler)]() mutable {
+            T::cancelReply(WTFMove(completionHandler));
+        });
+        return 0;
+    }
+
     auto encoder = makeUniqueRef<Encoder>(T::name(), destinationID);
     uint64_t listenerID = nextAsyncReplyHandlerID();
     addAsyncReplyHandler(*this, listenerID, CompletionHandler<void(Decoder*)>([completionHandler = WTFMove(completionHandler)] (Decoder* decoder) mutable {

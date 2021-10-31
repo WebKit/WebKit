@@ -428,6 +428,7 @@ void Connection::invalidate()
     }
     
     m_isValid = false;
+    clearAsyncReplyHandlers(*this);
 
     m_connectionQueue->dispatch([protectedThis = Ref { *this }]() mutable {
         protectedThis->platformInvalidate();

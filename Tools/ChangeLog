@@ -1,3 +1,15 @@
+2021-10-30  Chris Dumez  <cdumez@apple.com>
+
+        Improve error handling in sendWithAsyncReply()
+        https://bugs.webkit.org/show_bug.cgi?id=232508
+
+        Reviewed by Darin Adler.
+
+        Add API test coverage.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKWebViewGetContents.mm:
+        (TEST):
+
 2021-10-30  Sam Sneddon  <gsnedders@apple.com>
 
         Ensure we stop LayoutTest servers without them becoming zombies

@@ -49,6 +49,23 @@ TEST(WKWebView, GetContentsShouldReturnString)
     TestWebKitAPI::Util::run(&finished);
 }
 
+TEST(WKWebView, GetContentsShouldFailWhenClosingPage)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+
+    [webView synchronouslyLoadTestPageNamed:@"simple"];
+
+    __block bool finished = false;
+
+    [webView _getContentsAsStringWithCompletionHandlerKeepIPCConnectionAliveForTesting:^(NSString *string, NSError *error) {
+        finished = true;
+    }];
+
+    [webView _close];
+
+    TestWebKitAPI::Util::run(&finished);
+}
+
 TEST(WKWebView, GetContentsOfAllFramesShouldReturnString)
 {
     RetainPtr<TestWKWebView> webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
