@@ -188,6 +188,7 @@ bool ScrollingTreeScrollingNodeDelegateMac::isScrollSnapInProgress() const
 
 std::unique_ptr<ScrollingEffectsControllerTimer> ScrollingTreeScrollingNodeDelegateMac::createTimer(Function<void()>&& function)
 {
+    // This is only used for a scroll snap timer.
     return WTF::makeUnique<ScrollingEffectsControllerTimer>(RunLoop::current(), [function = WTFMove(function), protectedNode = Ref { scrollingNode() }] {
         Locker locker { protectedNode->scrollingTree().treeLock() };
         function();
@@ -196,22 +197,15 @@ std::unique_ptr<ScrollingEffectsControllerTimer> ScrollingTreeScrollingNodeDeleg
 
 void ScrollingTreeScrollingNodeDelegateMac::startAnimationCallback(ScrollingEffectsController&)
 {
-    if (!m_scrollControllerAnimationTimer)
-        m_scrollControllerAnimationTimer = WTF::makeUnique<RunLoop::Timer<ScrollingTreeScrollingNodeDelegateMac>>(RunLoop::current(), this, &ScrollingTreeScrollingNodeDelegateMac::scrollControllerAnimationTimerFired);
-
-    if (m_scrollControllerAnimationTimer->isActive())
-        return;
-
-    m_scrollControllerAnimationTimer->startRepeating(1_s / 60.);
+    scrollingNode().setScrollAnimationInProgress(true);
 }
 
 void ScrollingTreeScrollingNodeDelegateMac::stopAnimationCallback(ScrollingEffectsController&)
 {
-    if (m_scrollControllerAnimationTimer)
-        m_scrollControllerAnimationTimer->stop();
+    scrollingNode().setScrollAnimationInProgress(false);
 }
 
-void ScrollingTreeScrollingNodeDelegateMac::scrollControllerAnimationTimerFired()
+void ScrollingTreeScrollingNodeDelegateMac::serviceScrollAnimation()
 {
     m_scrollController.animationCallback(MonotonicTime::now());
 }

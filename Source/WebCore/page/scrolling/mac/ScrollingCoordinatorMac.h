@@ -44,6 +44,9 @@ public:
     bool handleWheelEventForScrolling(const PlatformWheelEvent&, ScrollingNodeID, std::optional<WheelScrollGestureState>) final;
     void wheelEventWasProcessedByMainThread(const PlatformWheelEvent&, std::optional<WheelScrollGestureState>) final;
 
+protected:
+    void hasNodeWithAnimatedScrollChanged(bool) override;
+
 private:
     void scheduleTreeStateCommit() final;
 

@@ -102,6 +102,8 @@ private:
     void delayedRenderingUpdateDetectionTimerFired();
 
     void hasNodeWithAnimatedScrollChanged(bool) final;
+    
+    void serviceScrollAnimations() WTF_REQUIRES_LOCK(m_treeLock);
 
     Seconds maxAllowableRenderingUpdateDurationForSynchronization();
     

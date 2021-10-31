@@ -87,11 +87,6 @@ WheelEventHandlingResult ScrollingTreeScrollingNodeDelegateNicosia::handleWheelE
     return WheelEventHandlingResult::handled();
 }
 
-void ScrollingTreeScrollingNodeDelegateNicosia::animationTimerFired()
-{
-    m_scrollController.animationCallback(MonotonicTime::now());
-}
-
 std::unique_ptr<ScrollingEffectsControllerTimer> ScrollingTreeScrollingNodeDelegateNicosia::createTimer(Function<void()>&& function)
 {
     return makeUnique<ScrollingEffectsControllerTimer>(RunLoop::current(), [function = WTFMove(function), protectedNode = Ref { scrollingNode() }] {
@@ -122,6 +117,16 @@ void ScrollingTreeScrollingNodeDelegateNicosia::stopAnimationCallback(ScrollingE
 {
     if (m_animationTimer)
         m_animationTimer->stop();
+}
+
+void ScrollingTreeScrollingNodeDelegateNicosia::animationTimerFired()
+{
+    m_scrollController.animationCallback(MonotonicTime::now());
+}
+
+void ScrollingTreeScrollingNodeDelegateNicosia::serviceScrollAnimation()
+{
+    // FIXME: Instead of using m_animationTimer, drive animations via ThreadedScrollingTree::serviceScrollAnimations().
 }
 
 bool ScrollingTreeScrollingNodeDelegateNicosia::allowsHorizontalScrolling() const

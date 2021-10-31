@@ -75,6 +75,8 @@ public:
     bool isScrollSnapInProgress() const;
     void setScrollSnapInProgress(bool);
 
+    virtual void serviceScrollAnimation() { }
+
     // These are imperative; they adjust the scrolling layers.
     void scrollTo(const FloatPoint&, ScrollType = ScrollType::User, ScrollClamping = ScrollClamping::Clamped);
     void scrollBy(const FloatSize&, ScrollClamping = ScrollClamping::Clamped);
@@ -130,6 +132,8 @@ protected:
 
     void willStartAnimatedScroll();
     void didStopAnimatedScroll();
+    
+    void setScrollAnimationInProgress(bool);
 
     virtual void currentScrollPositionChanged(ScrollType, ScrollingLayerPositionAction = ScrollingLayerPositionAction::Sync);
     virtual void updateViewportForCurrentScrollPosition(std::optional<FloatRect> = { }) { }

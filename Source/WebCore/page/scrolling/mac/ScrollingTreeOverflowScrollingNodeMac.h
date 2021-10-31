@@ -54,6 +54,7 @@ protected:
 
     void repositionScrollingLayers() override;
     void repositionRelatedLayers() override;
+    void serviceScrollAnimation() override;
 
     WheelEventHandlingResult handleWheelEvent(const PlatformWheelEvent&, EventTargeting) override;
 

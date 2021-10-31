@@ -225,11 +225,19 @@ void ScrollingTreeScrollingNode::setScrollSnapInProgress(bool isSnapping)
     scrollingTree().setNodeScrollSnapInProgress(scrollingNodeID(), isSnapping);
 }
 
+void ScrollingTreeScrollingNode::willStartAnimatedScroll()
+{
+}
+
 void ScrollingTreeScrollingNode::didStopAnimatedScroll()
 {
     LOG_WITH_STREAM(Scrolling, stream << "ScrollingTreeScrollingNode " << scrollingNodeID() << " didStopAnimatedScroll");
     scrollingTree().scrollingTreeNodeDidStopAnimatedScroll(*this);
-    scrollingTree().setAnimatedScrollInProgressForNode(scrollingNodeID(), false);
+}
+
+void ScrollingTreeScrollingNode::setScrollAnimationInProgress(bool animationInProgress)
+{
+    scrollingTree().setScrollAnimationInProgressForNode(scrollingNodeID(), animationInProgress);
 }
 
 void ScrollingTreeScrollingNode::handleScrollPositionRequest(const RequestedScrollData& requestedScrollData)
@@ -258,11 +266,6 @@ FloatPoint ScrollingTreeScrollingNode::adjustedScrollPosition(const FloatPoint& 
         return clampScrollPosition(scrollPosition);
 
     return scrollPosition;
-}
-
-void ScrollingTreeScrollingNode::willStartAnimatedScroll()
-{
-    scrollingTree().setAnimatedScrollInProgressForNode(scrollingNodeID(), true);
 }
 
 void ScrollingTreeScrollingNode::scrollBy(const FloatSize& delta, ScrollClamping clamp)

@@ -48,6 +48,8 @@ void TiledCoreAnimationScrollingCoordinator::pageDestroyed()
 
 void TiledCoreAnimationScrollingCoordinator::hasNodeWithAnimatedScrollChanged(bool haveAnimatedScrollingNodes)
 {
+    ScrollingCoordinatorMac::hasNodeWithAnimatedScrollChanged(haveAnimatedScrollingNodes);
+
     if (!m_page)
         return;
 

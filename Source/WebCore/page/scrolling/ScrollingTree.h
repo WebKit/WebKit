@@ -113,8 +113,10 @@ public:
     bool isScrollSnapInProgressForNode(ScrollingNodeID);
     void setNodeScrollSnapInProgress(ScrollingNodeID, bool);
 
-    bool isAnimatedScrollInProgressForNode(ScrollingNodeID);
-    void setAnimatedScrollInProgressForNode(ScrollingNodeID, bool);
+    bool isScrollAnimationInProgressForNode(ScrollingNodeID);
+    void setScrollAnimationInProgressForNode(ScrollingNodeID, bool);
+
+    bool hasNodeWithActiveScrollAnimations();
 
     virtual void invalidate() { }
     WEBCORE_EXPORT void commitTreeState(std::unique_ptr<ScrollingStateTree>&&);
@@ -247,7 +249,8 @@ protected:
     virtual void hasNodeWithAnimatedScrollChanged(bool /* hasNodeWithAnimatedScroll */) { }
 
     bool hasProcessedWheelEventsRecently();
-    bool hasNodeWithActiveAnimatedScroll();
+
+    HashSet<ScrollingNodeID> nodesWithActiveScrollAnimations();
 
     Lock m_treeLock; // Protects the scrolling tree.
 
@@ -292,7 +295,7 @@ private:
         HashSet<ScrollingNodeID> nodesWithActiveRubberBanding;
         HashSet<ScrollingNodeID> nodesWithActiveScrollSnap;
         HashSet<ScrollingNodeID> nodesWithActiveUserScrolls;
-        HashSet<ScrollingNodeID> nodesWithActiveAnimatedScrolls;
+        HashSet<ScrollingNodeID> nodesWithActiveScrollAnimations;
     };
     
     Lock m_treeStateLock;

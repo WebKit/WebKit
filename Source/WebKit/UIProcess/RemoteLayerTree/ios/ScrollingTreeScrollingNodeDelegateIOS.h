@@ -81,6 +81,8 @@ public:
     bool startAnimatedScrollToPosition(WebCore::FloatPoint) final;
     void stopAnimatedScroll() final;
 
+    void serviceScrollAnimation() final { }
+
 private:
     RetainPtr<CALayer> m_scrollLayer;
     RetainPtr<CALayer> m_scrolledContentsLayer;

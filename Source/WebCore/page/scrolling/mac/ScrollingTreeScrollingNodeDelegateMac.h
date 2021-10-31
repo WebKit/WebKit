@@ -55,6 +55,8 @@ public:
     bool startAnimatedScrollToPosition(FloatPoint) final;
     void stopAnimatedScroll() final;
 
+    void serviceScrollAnimation() final;
+
     void willDoProgrammaticScroll(const FloatPoint&);
     void currentScrollPositionChanged();
 
@@ -92,7 +94,6 @@ private:
     void adjustScrollPositionToBoundsIfNecessary() final;
 
     bool scrollPositionIsNotRubberbandingEdge(const FloatPoint&) const;
-    void scrollControllerAnimationTimerFired();
 
     FloatPoint scrollOffset() const final;
     float pageScaleFactor() const final;
@@ -110,8 +111,6 @@ private:
 
     RetainPtr<NSScrollerImp> m_verticalScrollerImp;
     RetainPtr<NSScrollerImp> m_horizontalScrollerImp;
-
-    std::unique_ptr<RunLoop::Timer<ScrollingTreeScrollingNodeDelegateMac>> m_scrollControllerAnimationTimer;
 
     bool m_inMomentumPhase { false };
 };

@@ -330,7 +330,7 @@ void ThreadedScrollingTree::setActiveScrollSnapIndices(ScrollingNodeID nodeID, s
 
 bool ThreadedScrollingTree::scrollingThreadIsActive()
 {
-    return hasProcessedWheelEventsRecently() || hasNodeWithActiveAnimatedScroll();
+    return hasProcessedWheelEventsRecently() || hasNodeWithActiveScrollAnimations();
 }
 
 void ThreadedScrollingTree::willStartRenderingUpdate()
@@ -370,6 +370,19 @@ void ThreadedScrollingTree::hasNodeWithAnimatedScrollChanged(bool hasNodeWithAni
     RunLoop::main().dispatch([scrollingCoordinator = m_scrollingCoordinator, hasNodeWithAnimatedScroll] {
         scrollingCoordinator->hasNodeWithAnimatedScrollChanged(hasNodeWithAnimatedScroll);
     });
+}
+
+void ThreadedScrollingTree::serviceScrollAnimations()
+{
+    ASSERT(ScrollingThread::isCurrentThread());
+
+    for (auto nodeID : nodesWithActiveScrollAnimations()) {
+        RefPtr targetNode = nodeForID(nodeID);
+        if (!is<ScrollingTreeScrollingNode>(targetNode))
+            continue;
+
+        downcast<ScrollingTreeScrollingNode>(*targetNode).serviceScrollAnimation();
+    }
 }
 
 // This code allows the main thread about half a frame to complete its rendering udpate. If the main thread
@@ -445,6 +458,8 @@ void ThreadedScrollingTree::displayDidRefreshOnScrollingThread()
     ASSERT(ScrollingThread::isCurrentThread());
 
     Locker locker { m_treeLock };
+    
+    serviceScrollAnimations();
 
     if (m_state != SynchronizationState::Idle && canUpdateLayersOnScrollingThread())
         applyLayerPositionsInternal();

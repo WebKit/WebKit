@@ -1,3 +1,14 @@
+2021-10-31  Simon Fraser  <simon.fraser@apple.com>
+
+        Scroll animations should run at 120Hz on 120Hz displays
+        https://bugs.webkit.org/show_bug.cgi?id=232534
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/RemoteLayerTree/ios/ScrollingTreeScrollingNodeDelegateIOS.h:
+        * WebProcess/WebPage/mac/TiledCoreAnimationScrollingCoordinator.mm:
+        (WebKit::TiledCoreAnimationScrollingCoordinator::hasNodeWithAnimatedScrollChanged):
+
 2021-10-30  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Migrate the first few callers from ImageBuffer::truncatedLogicalSize() to ImageBuffer::logicalSize()

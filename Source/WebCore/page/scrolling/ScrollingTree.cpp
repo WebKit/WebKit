@@ -583,38 +583,44 @@ void ScrollingTree::setNodeScrollSnapInProgress(ScrollingNodeID nodeID, bool isS
         m_treeState.nodesWithActiveScrollSnap.remove(nodeID);
 }
 
-bool ScrollingTree::isAnimatedScrollInProgressForNode(ScrollingNodeID nodeID)
+bool ScrollingTree::isScrollAnimationInProgressForNode(ScrollingNodeID nodeID)
 {
     if (!nodeID)
         return false;
 
     Locker locker { m_treeStateLock };
-    return m_treeState.nodesWithActiveAnimatedScrolls.contains(nodeID);
+    return m_treeState.nodesWithActiveScrollAnimations.contains(nodeID);
 }
 
-void ScrollingTree::setAnimatedScrollInProgressForNode(ScrollingNodeID nodeID, bool isAnimatedScrollInProgress)
+void ScrollingTree::setScrollAnimationInProgressForNode(ScrollingNodeID nodeID, bool isScrollAnimationInProgress)
 {
     if (!nodeID)
         return;
 
     Locker locker { m_treeStateLock };
     
-    bool hadAnyAnimatedScrollingNodes = !m_treeState.nodesWithActiveAnimatedScrolls.isEmpty();
+    bool hadAnyAnimatedScrollingNodes = !m_treeState.nodesWithActiveScrollAnimations.isEmpty();
     
-    if (isAnimatedScrollInProgress)
-        m_treeState.nodesWithActiveAnimatedScrolls.add(nodeID);
+    if (isScrollAnimationInProgress)
+        m_treeState.nodesWithActiveScrollAnimations.add(nodeID);
     else
-        m_treeState.nodesWithActiveAnimatedScrolls.remove(nodeID);
+        m_treeState.nodesWithActiveScrollAnimations.remove(nodeID);
 
-    bool hasAnyAnimatedScrollingNodes = !m_treeState.nodesWithActiveAnimatedScrolls.isEmpty();
+    bool hasAnyAnimatedScrollingNodes = !m_treeState.nodesWithActiveScrollAnimations.isEmpty();
     if (hasAnyAnimatedScrollingNodes != hadAnyAnimatedScrollingNodes)
         hasNodeWithAnimatedScrollChanged(hasAnyAnimatedScrollingNodes);
 }
 
-bool ScrollingTree::hasNodeWithActiveAnimatedScroll()
+bool ScrollingTree::hasNodeWithActiveScrollAnimations()
 {
     Locker locker { m_treeStateLock };
-    return !m_treeState.nodesWithActiveAnimatedScrolls.isEmpty();
+    return !m_treeState.nodesWithActiveScrollAnimations.isEmpty();
+}
+
+HashSet<ScrollingNodeID> ScrollingTree::nodesWithActiveScrollAnimations()
+{
+    Locker locker { m_treeStateLock };
+    return m_treeState.nodesWithActiveScrollAnimations;
 }
 
 void ScrollingTree::setMainFramePinnedState(RectEdges<bool> edgePinningState)
