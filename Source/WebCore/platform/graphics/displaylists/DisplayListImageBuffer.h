@@ -52,7 +52,7 @@ public:
 
     ImageBuffer(const ImageBufferBackend::Parameters& parameters, std::unique_ptr<BackendType>&& backend)
         : BaseConcreteImageBuffer(parameters, WTFMove(backend))
-        , m_drawingContext(truncatedLogicalSize(), baseTransform())
+        , m_drawingContext(logicalSize(), baseTransform())
         , m_writingClient(makeUnique<InMemoryDisplayList::WritingClient>())
         , m_readingClient(makeUnique<InMemoryDisplayList::ReadingClient>())
     {
@@ -62,7 +62,7 @@ public:
 
     ImageBuffer(const ImageBufferBackend::Parameters& parameters, RecorderImpl::Delegate* delegate = nullptr)
         : BaseConcreteImageBuffer(parameters)
-        , m_drawingContext(truncatedLogicalSize(), baseTransform(), delegate)
+        , m_drawingContext(logicalSize(), baseTransform(), delegate)
         , m_writingClient(makeUnique<InMemoryDisplayList::WritingClient>())
         , m_readingClient(makeUnique<InMemoryDisplayList::ReadingClient>())
     {

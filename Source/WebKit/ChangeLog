@@ -1,3 +1,13 @@
+2021-10-30  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Migrate the first few callers from ImageBuffer::truncatedLogicalSize() to ImageBuffer::logicalSize()
+        https://bugs.webkit.org/show_bug.cgi?id=232528
+
+        Reviewed by Tim Horton.
+
+        * WebProcess/GPU/graphics/RemoteImageBufferProxy.h:
+        (WebKit::RemoteImageBufferProxy::RemoteImageBufferProxy):
+
 2021-10-30  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Layer tree should not be stuck in frozen state after explicitly stopping a page load

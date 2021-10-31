@@ -591,12 +591,12 @@ ImageDrawResult GraphicsContext::drawTiledImage(Image& image, const FloatRect& d
 
 void GraphicsContext::drawImageBuffer(ImageBuffer& image, const FloatPoint& destination, const ImagePaintingOptions& imagePaintingOptions)
 {
-    drawImageBuffer(image, FloatRect(destination, image.truncatedLogicalSize()), FloatRect(FloatPoint(), image.truncatedLogicalSize()), imagePaintingOptions);
+    drawImageBuffer(image, FloatRect(destination, image.logicalSize()), FloatRect({ }, image.logicalSize()), imagePaintingOptions);
 }
 
 void GraphicsContext::drawImageBuffer(ImageBuffer& image, const FloatRect& destination, const ImagePaintingOptions& imagePaintingOptions)
 {
-    drawImageBuffer(image, destination, FloatRect(FloatPoint(), FloatSize(image.truncatedLogicalSize())), imagePaintingOptions);
+    drawImageBuffer(image, destination, FloatRect({ }, image.logicalSize()), imagePaintingOptions);
 }
 
 void GraphicsContext::drawImageBuffer(ImageBuffer& image, const FloatRect& destination, const FloatRect& source, const ImagePaintingOptions& options)
@@ -609,16 +609,16 @@ void GraphicsContext::drawConsumingImageBuffer(RefPtr<ImageBuffer> image, const 
 {
     if (!image)
         return;
-    IntSize imageLogicalSize = image->truncatedLogicalSize();
-    drawConsumingImageBuffer(WTFMove(image), FloatRect(destination, imageLogicalSize), FloatRect(FloatPoint(), imageLogicalSize), imagePaintingOptions);
+    auto imageLogicalSize = image->logicalSize();
+    drawConsumingImageBuffer(WTFMove(image), FloatRect(destination, imageLogicalSize), FloatRect({ }, imageLogicalSize), imagePaintingOptions);
 }
 
 void GraphicsContext::drawConsumingImageBuffer(RefPtr<ImageBuffer> image, const FloatRect& destination, const ImagePaintingOptions& imagePaintingOptions)
 {
     if (!image)
         return;
-    IntSize imageLogicalSize = image->truncatedLogicalSize();
-    drawConsumingImageBuffer(WTFMove(image), destination, FloatRect(FloatPoint(), FloatSize(imageLogicalSize)), imagePaintingOptions);
+    auto imageLogicalSize = image->logicalSize();
+    drawConsumingImageBuffer(WTFMove(image), destination, FloatRect({ }, imageLogicalSize), imagePaintingOptions);
 }
 
 void GraphicsContext::drawConsumingImageBuffer(RefPtr<ImageBuffer> image, const FloatRect& destination, const FloatRect& source, const ImagePaintingOptions& options)

@@ -70,7 +70,7 @@ void FEBlend::platformApplySoftware()
         return;
 
     filterContext.drawImageBuffer(*imageBuffer2, drawingRegionOfInputImage(in2->absolutePaintRect()));
-    filterContext.drawImageBuffer(*imageBuffer, drawingRegionOfInputImage(in->absolutePaintRect()), IntRect(IntPoint(), imageBuffer->truncatedLogicalSize()), { CompositeOperator::SourceOver, m_mode });
+    filterContext.drawImageBuffer(*imageBuffer, drawingRegionOfInputImage(in->absolutePaintRect()), { { }, imageBuffer->logicalSize() }, { CompositeOperator::SourceOver, m_mode });
 }
 #endif
 
