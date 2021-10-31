@@ -1210,7 +1210,7 @@ sub InterfaceHasRegularToJSONOperation
     return 0;
 }
 
-# https://heycam.github.io/webidl/#dfn-json-types
+# https://webidl.spec.whatwg.org/#dfn-json-types
 sub IsJSONType
 {
     my ($object, $interface, $type) = @_;

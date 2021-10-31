@@ -23,7 +23,7 @@
 namespace WebCore {
 
 enum ExceptionCode {
-    // DOMException error names (https://heycam.github.io/webidl/#idl-DOMException-error-names).
+    // DOMException error names (https://webidl.spec.whatwg.org/#idl-DOMException-error-names).
     // Those need to be kept in sync with the array in DOMException.cpp.
     IndexSizeError, // Deprecated. Use RangeError instead.
     HierarchyRequestError,
@@ -58,7 +58,7 @@ enum ExceptionCode {
     OperationError,
     NotAllowedError,
 
-    // Simple exceptions (https://heycam.github.io/webidl/#idl-exceptions).
+    // Simple exceptions (https://webidl.spec.whatwg.org/#idl-exceptions).
     RangeError,
     TypeError,
     JSSyntaxError, // Different from DOM SYNTAX_ERR.

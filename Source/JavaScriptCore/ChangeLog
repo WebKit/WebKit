@@ -1,3 +1,16 @@
+2021-10-31  Cameron McCormack  <heycam@apple.com>
+
+        Update Web IDL links to new URL
+        https://bugs.webkit.org/show_bug.cgi?id=232533
+        <rdar://problem/84842937>
+
+        Reviewed by Sam Weinig.
+
+        * wasm/js/WebAssemblyMemoryConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * wasm/js/WebAssemblyTableConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+
 2021-10-29  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Having StructureStubInfo and CallLinkInfo via FixedVector for Baseline JIT

@@ -96,7 +96,7 @@ JSC_DEFINE_HOST_FUNCTION(constructJSWebAssemblyMemory, (JSGlobalObject* globalOb
     Wasm::PageCount maximumPageCount;
     {
         // In WebIDL, "present" means that [[Get]] result is undefined, not [[HasProperty]] result.
-        // https://heycam.github.io/webidl/#idl-dictionaries
+        // https://webidl.spec.whatwg.org/#idl-dictionaries
         Identifier maximum = Identifier::fromString(vm, "maximum");
         JSValue maxSizeValue = memoryDescriptor->get(globalObject, maximum);
         RETURN_IF_EXCEPTION(throwScope, encodedJSValue());

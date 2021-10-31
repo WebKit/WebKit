@@ -229,7 +229,7 @@ sub AddMapLikeAttributesAndOperationIfNeeded
 
     $interface->mapLike->extendedAttributes->{ForwardToMapLike} = 1;
 
-    # https://heycam.github.io/webidl/#es-map-size
+    # https://webidl.spec.whatwg.org/#es-map-size
     my $sizeAttribute = IDLAttribute->new();
     $sizeAttribute->name("size");
     $sizeAttribute->isReadOnly(1);
@@ -238,7 +238,7 @@ sub AddMapLikeAttributesAndOperationIfNeeded
     $sizeAttribute->extendedAttributes->{NotEnumerable} = 1;
     push(@{$interface->attributes}, $sizeAttribute);
 
-    # https://heycam.github.io/webidl/#es-map-get-has
+    # https://webidl.spec.whatwg.org/#es-map-get-has
     my $getOperation = IDLOperation->new();
     $getOperation->name("get");
     my $getArgument = IDLArgument->new();
@@ -261,7 +261,7 @@ sub AddMapLikeAttributesAndOperationIfNeeded
     $hasOperation->extendedAttributes->{NotEnumerable} = 1;
     push(@{$interface->operations}, $hasOperation);
 
-    # https://heycam.github.io/webidl/#es-map-entries
+    # https://webidl.spec.whatwg.org/#es-map-entries
     my $entriesOperation = IDLOperation->new();
     $entriesOperation->name("entries");
     $entriesOperation->type(IDLParser::makeSimpleType("any"));
@@ -269,7 +269,7 @@ sub AddMapLikeAttributesAndOperationIfNeeded
     $entriesOperation->extendedAttributes->{NotEnumerable} = 1;
     push(@{$interface->operations}, $entriesOperation);
 
-    # https://heycam.github.io/webidl/#es-map-keys-values
+    # https://webidl.spec.whatwg.org/#es-map-keys-values
     my $keysOperation = IDLOperation->new();
     $keysOperation->name("keys");
     $keysOperation->type(IDLParser::makeSimpleType("any"));
@@ -284,7 +284,7 @@ sub AddMapLikeAttributesAndOperationIfNeeded
     $valuesOperation->extendedAttributes->{NotEnumerable} = 1;
     push(@{$interface->operations}, $valuesOperation);
 
-    # https://heycam.github.io/webidl/#es-forEach
+    # https://webidl.spec.whatwg.org/#es-forEach
     my $forEachOperation = IDLOperation->new();
     $forEachOperation->name("forEach");
     $forEachOperation->type(IDLParser::makeSimpleType("any"));
@@ -297,7 +297,7 @@ sub AddMapLikeAttributesAndOperationIfNeeded
 
     return if $interface->mapLike->isReadOnly;
 
-    # https://heycam.github.io/webidl/#es-map-set
+    # https://webidl.spec.whatwg.org/#es-map-set
     unless (grep { $_->name eq "set" } (@{$interface->attributes}, @{$interface->operations}, @{$interface->constants})) {
         my $setOperation = IDLOperation->new();
         $setOperation->name("set");
@@ -315,7 +315,7 @@ sub AddMapLikeAttributesAndOperationIfNeeded
         push(@{$interface->operations}, $setOperation);
     }
 
-    # https://heycam.github.io/webidl/#es-map-clear
+    # https://webidl.spec.whatwg.org/#es-map-clear
     unless (grep { $_->name eq "clear" } (@{$interface->attributes}, @{$interface->operations}, @{$interface->constants})) {
         my $clearOperation = IDLOperation->new();
         $clearOperation->name("clear");
@@ -325,7 +325,7 @@ sub AddMapLikeAttributesAndOperationIfNeeded
         push(@{$interface->operations}, $clearOperation);
     }
 
-    # https://heycam.github.io/webidl/#es-map-delete
+    # https://webidl.spec.whatwg.org/#es-map-delete
     unless (grep { $_->name eq "delete" } (@{$interface->attributes}, @{$interface->operations}, @{$interface->constants})) {
         my $deleteOperation = IDLOperation->new();
         $deleteOperation->name("delete");
@@ -348,7 +348,7 @@ sub AddSetLikeAttributesAndOperationIfNeeded
 
     $interface->setLike->extendedAttributes->{ForwardToSetLike} = 1;
 
-    # https://heycam.github.io/webidl/#es-set-size
+    # https://webidl.spec.whatwg.org/#es-set-size
     my $sizeAttribute = IDLAttribute->new();
     $sizeAttribute->name("size");
     $sizeAttribute->isReadOnly(1);
@@ -357,7 +357,7 @@ sub AddSetLikeAttributesAndOperationIfNeeded
     $sizeAttribute->extendedAttributes->{NotEnumerable} = 1;
     push(@{$interface->attributes}, $sizeAttribute);
 
-    # https://heycam.github.io/webidl/#es-set-has
+    # https://webidl.spec.whatwg.org/#es-set-has
     my $hasOperation = IDLOperation->new();
     $hasOperation->name("has");
     my $hasArgument = IDLArgument->new();
@@ -369,7 +369,7 @@ sub AddSetLikeAttributesAndOperationIfNeeded
     $hasOperation->extendedAttributes->{NotEnumerable} = 1;
     push(@{$interface->operations}, $hasOperation);
 
-    # https://heycam.github.io/webidl/#es-set-entries-keys
+    # https://webidl.spec.whatwg.org/#es-set-entries-keys
     my $entriesOperation = IDLOperation->new();
     $entriesOperation->name("entries");
     $entriesOperation->type(IDLParser::makeSimpleType("any"));
@@ -384,7 +384,7 @@ sub AddSetLikeAttributesAndOperationIfNeeded
     $keysOperation->extendedAttributes->{NotEnumerable} = 1;
     push(@{$interface->operations}, $keysOperation);
 
-    # https://heycam.github.io/webidl/#es-set-values
+    # https://webidl.spec.whatwg.org/#es-set-values
     my $valuesOperation = IDLOperation->new();
     $valuesOperation->name("values");
     $valuesOperation->type(IDLParser::makeSimpleType("any"));
@@ -392,7 +392,7 @@ sub AddSetLikeAttributesAndOperationIfNeeded
     $valuesOperation->extendedAttributes->{NotEnumerable} = 1;
     push(@{$interface->operations}, $valuesOperation);
 
-    # https://heycam.github.io/webidl/#es-forEach
+    # https://webidl.spec.whatwg.org/#es-forEach
     my $forEachOperation = IDLOperation->new();
     $forEachOperation->name("forEach");
     my $forEachArgument = IDLArgument->new();
@@ -407,7 +407,7 @@ sub AddSetLikeAttributesAndOperationIfNeeded
 
     return if $interface->setLike->isReadOnly;
 
-    # https://heycam.github.io/webidl/#es-add-delete
+    # https://webidl.spec.whatwg.org/#es-add-delete
     unless (grep { $_->name eq "add" } (@{$interface->attributes}, @{$interface->operations}, @{$interface->constants})) {
         my $addOperation = IDLOperation->new();
         $addOperation->name("add");
@@ -421,7 +421,7 @@ sub AddSetLikeAttributesAndOperationIfNeeded
         push(@{$interface->operations}, $addOperation);
     }
 
-    # https://heycam.github.io/webidl/#es-set-clear
+    # https://webidl.spec.whatwg.org/#es-set-clear
     unless (grep { $_->name eq "clear" } (@{$interface->attributes}, @{$interface->operations}, @{$interface->constants})) {
         my $clearOperation = IDLOperation->new();
         $clearOperation->name("clear");
@@ -856,7 +856,7 @@ sub GenerateNamedGetterLambda
     push(@$outputArray, "    });\n");
 }
 
-# https://heycam.github.io/webidl/#legacy-platform-object-getownproperty
+# https://webidl.spec.whatwg.org/#legacy-platform-object-getownproperty
 sub GenerateGetOwnPropertySlot
 {
     my ($outputArray, $interface, $className) = @_;
@@ -880,7 +880,7 @@ sub GenerateGetOwnPropertySlot
     # 1. Return LegacyPlatformObjectGetOwnProperty(O, P, false).
     
     # Therefore, the following steps are from the LegacyPlatformObjectGetOwnProperty algorithm
-    # https://heycam.github.io/webidl/#LegacyPlatformObjectGetOwnProperty
+    # https://webidl.spec.whatwg.org/#LegacyPlatformObjectGetOwnProperty
     
     # 1. If O supports indexed properties and P is an array index property name, then:
     if ($indexedGetterOperation) {
@@ -956,7 +956,7 @@ sub GenerateGetOwnPropertySlot
     push(@$outputArray, "}\n\n");
 }
 
-# https://heycam.github.io/webidl/#legacy-platform-object-getownproperty
+# https://webidl.spec.whatwg.org/#legacy-platform-object-getownproperty
 sub GenerateGetOwnPropertySlotByIndex
 {
     my ($outputArray, $interface, $className) = @_;
@@ -991,7 +991,7 @@ sub GenerateGetOwnPropertySlotByIndex
     # 1. Return LegacyPlatformObjectGetOwnProperty(O, P, false).
     
     # Therefore, the following steps are from the LegacyPlatformObjectGetOwnProperty algorithm
-    # https://heycam.github.io/webidl/#LegacyPlatformObjectGetOwnProperty
+    # https://webidl.spec.whatwg.org/#LegacyPlatformObjectGetOwnProperty
     
     # 1. If O supports indexed properties and P is an array index property name, then:
     if ($indexedGetterOperation) {
@@ -1071,7 +1071,7 @@ sub GenerateGetOwnPropertySlotByIndex
     push(@$outputArray, "}\n\n");
 }
 
-# https://heycam.github.io/webidl/#legacy-platform-object-property-enumeration
+# https://webidl.spec.whatwg.org/#legacy-platform-object-property-enumeration
 sub GenerateGetOwnPropertyNames
 {
     my ($outputArray, $interface, $className) = @_;
@@ -1120,7 +1120,7 @@ sub GenerateGetOwnPropertyNames
     push(@$outputArray, "}\n\n");
 }
 
-# https://heycam.github.io/webidl/#invoke-indexed-setter
+# https://webidl.spec.whatwg.org/#invoke-indexed-setter
 sub GenerateInvokeIndexedPropertySetter
 {
     my ($outputArray, $indent, $interface, $indexedSetterOperation, $indexExpression, $value) = @_;
@@ -1138,7 +1138,7 @@ sub GenerateInvokeIndexedPropertySetter
     push(@$outputArray, $indent . "invokeFunctorPropagatingExceptionIfNecessary(*lexicalGlobalObject, throwScope, [&] { return ${functionString}; });\n");
 }
 
-# https://heycam.github.io/webidl/#invoke-named-setter
+# https://webidl.spec.whatwg.org/#invoke-named-setter
 sub GenerateInvokeNamedPropertySetter
 {
     my ($outputArray, $indent, $interface, $namedSetterOperation, $value) = @_;
@@ -1339,7 +1339,7 @@ sub GenerateIsLegacyUnforgeablePropertyName
     return 1;
 }
 
-# https://heycam.github.io/webidl/#legacy-platform-object-defineownproperty
+# https://webidl.spec.whatwg.org/#legacy-platform-object-defineownproperty
 sub GenerateDefineOwnProperty
 {
     my ($outputArray, $interface, $className) = @_;
@@ -1471,7 +1471,7 @@ sub GenerateDeletePropertyCommon
 {
     my ($outputArray, $interface, $className, $operation, $conditional) = @_;
     
-    # This implements step 2 of https://heycam.github.io/webidl/#legacy-platform-object-delete
+    # This implements step 2 of https://webidl.spec.whatwg.org/#legacy-platform-object-delete
     # so it can be shared between the generation of deleteProperty and deletePropertyByIndex.
 
     # 2. If O supports named properties, O does not implement an interface with the
@@ -1518,7 +1518,7 @@ sub GenerateDeleteProperty
 {
     my ($outputArray, $interface, $className, $operation, $conditional) = @_;
 
-    # This implements https://heycam.github.io/webidl/#legacy-platform-object-delete for the
+    # This implements https://webidl.spec.whatwg.org/#legacy-platform-object-delete for the
     # for the deleteProperty override hook.
 
     push(@$outputArray, "bool ${className}::deleteProperty(JSCell* cell, JSGlobalObject* lexicalGlobalObject, PropertyName propertyName, DeletePropertySlot& slot)\n");
@@ -1549,7 +1549,7 @@ sub GenerateDeletePropertyByIndex
 {
     my ($outputArray, $interface, $className, $operation, $conditional) = @_;
 
-    # This implements https://heycam.github.io/webidl/#legacy-platform-object-delete for the
+    # This implements https://webidl.spec.whatwg.org/#legacy-platform-object-delete for the
     # for the deletePropertyByIndex override hook.
 
     push(@$outputArray, "bool ${className}::deletePropertyByIndex(JSCell* cell, JSGlobalObject* lexicalGlobalObject, unsigned index)\n");
@@ -1598,7 +1598,7 @@ sub GenerateNamedDeleterDefinition
 
     my $namedDeleterOperation = GetNamedDeleterOperation($interface);
     
-    # This implements https://heycam.github.io/webidl/#legacy-platform-object-delete using
+    # This implements https://webidl.spec.whatwg.org/#legacy-platform-object-delete using
     # the deleteProperty and deletePropertyByIndex override hooks.
 
     assert("Named property deleters are not allowed without a corresponding named property getter.") if !GetNamedGetterOperation($interface);
@@ -1923,7 +1923,7 @@ sub AttributeShouldBeOnInstance
     return 1 if $codeGenerator->IsConstructorType($attribute->type);
 
     # [LegacyUnforgeable] attributes should be on the instance.
-    # https://heycam.github.io/webidl/#LegacyUnforgeable
+    # https://webidl.spec.whatwg.org/#LegacyUnforgeable
     return 1 if IsLegacyUnforgeable($interface, $attribute);
 
     if ($interface->extendedAttributes->{CheckSecurity}) {
@@ -1986,14 +1986,14 @@ sub NeedsRuntimeReadWriteCheck
         || $context->extendedAttributes->{SettingsConditionallyReadWrite}
 }
 
-# https://heycam.github.io/webidl/#es-operations
+# https://webidl.spec.whatwg.org/#es-operations
 sub OperationShouldBeOnInstance
 {
     my ($interface, $operation) = @_;
 
     return 1 if IsGlobalInterface($interface);
 
-    # [LegacyUnforgeable] operations should be on the instance. https://heycam.github.io/webidl/#LegacyUnforgeable
+    # [LegacyUnforgeable] operations should be on the instance. https://webidl.spec.whatwg.org/#LegacyUnforgeable
     if (IsLegacyUnforgeable($interface, $operation)) {
         assert("The bindings generator does not support putting runtime-enabled operations on the instance yet (except for global objects):[" . $interface->type->name . "::" . $operation->name . "]") if NeedsRuntimeCheck($interface, $operation);
         return 1;
@@ -2568,7 +2568,7 @@ sub GenerateDictionaryImplementationContent
     AddToImplIncludes("<JavaScriptCore/JSCInlines.h>");
     AddToImplIncludes("JSDOMConvertDictionary.h");
 
-    # https://heycam.github.io/webidl/#es-dictionary
+    # https://webidl.spec.whatwg.org/#es-dictionary
     $result .= "template<> $className convertDictionary<$className>(JSGlobalObject& lexicalGlobalObject, JSValue value)\n";
     $result .= "{\n";
     $result .= "    VM& vm = JSC::getVM(&lexicalGlobalObject);\n";
@@ -4162,7 +4162,7 @@ sub GetAttributeWithName
     }
 }
 
-# https://heycam.github.io/webidl/#es-iterator
+# https://webidl.spec.whatwg.org/#es-iterator
 sub InterfaceNeedsIterator
 {
     my ($interface) = @_;
@@ -5451,7 +5451,7 @@ sub GenerateAttributeSetterBodyDefinition
         push(@$outputArray, "    auto& impl = thisObject.wrapped();\n") if !$attribute->isStatic;
        
         if ($codeGenerator->IsEnumType($attribute->type)) {
-            # As per section 3.5.6 of https://heycam.github.io/webidl/#dfn-attribute-setter, enumerations do not use
+            # As per section 3.5.6 of https://webidl.spec.whatwg.org/#dfn-attribute-setter, enumerations do not use
             # the standard conversion, but rather silently fail on invalid enumeration values.
             push(@$outputArray, "    auto optionalNativeValue = parseEnumeration<" . GetEnumerationClassName($attribute->type, $interface) . ">(lexicalGlobalObject, value);\n");
             push(@$outputArray, "    RETURN_IF_EXCEPTION(throwScope, false);\n");
@@ -5589,7 +5589,7 @@ sub GenerateOperationBodyDefinition
     GenerateCustomElementReactionsStackIfNeeded($outputArray, $operation, "*lexicalGlobalObject") unless $generatingOverloadDispatcher;
 
     # For overloads, we generate the security check in the overload dispatcher, instead of the body of each overload, as per specification:
-    # https://heycam.github.io/webidl/#dfn-create-operation-function
+    # https://webidl.spec.whatwg.org/#dfn-create-operation-function
     if (!$isOverloaded || $generatingOverloadDispatcher) {
         if ($interface->extendedAttributes->{CheckSecurity} and !$operation->extendedAttributes->{DoNotCheckSecurity}) {
             assert("Security checks are not supported for static operations.") if $operation->isStatic;
@@ -5783,7 +5783,7 @@ sub GenerateDefaultToJSONOperationDefinition
 {
     my ($outputArray, $interface, $className, $operation) = @_;
 
-    # https://heycam.github.io/webidl/#es-default-tojson
+    # https://webidl.spec.whatwg.org/#es-default-tojson
 
     my @inheritenceStack = ();
     push(@inheritenceStack, $interface);
@@ -7823,7 +7823,7 @@ sub GenerateConstructorHelperMethods
 
         # There must exist an interface prototype object for every non-callback interface defined, regardless
         # of whether the interface was declared with the [LegacyNoInterfaceObject] extended attribute.
-        # https://heycam.github.io/webidl/#interface-prototype-object
+        # https://webidl.spec.whatwg.org/#interface-prototype-object
         if ($interface->isCallback) {
             push(@$outputArray, "    UNUSED_PARAM(globalObject);\n");
         } else {

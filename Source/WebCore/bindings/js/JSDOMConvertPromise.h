@@ -34,7 +34,7 @@ namespace WebCore {
 template<typename T> struct Converter<IDLPromise<T>> : DefaultConverter<IDLPromise<T>> {
     using ReturnType = RefPtr<DOMPromise>;
 
-    // https://heycam.github.io/webidl/#es-promise
+    // https://webidl.spec.whatwg.org/#es-promise
     template<typename ExceptionThrower = DefaultExceptionThrower>
     static ReturnType convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value, ExceptionThrower&& exceptionThrower = ExceptionThrower())
     {

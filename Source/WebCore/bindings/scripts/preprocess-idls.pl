@@ -239,7 +239,7 @@ foreach my $idlFileName (sort keys %idlFileNameHash) {
     # - is a callback interface that has constants declared on it, or
     # - is a non-callback interface that is not declared with the [LegacyNoInterfaceObject] extended attribute, a corresponding
     #   property must exist on the ECMAScript environment's global object.
-    # See https://heycam.github.io/webidl/#es-interfaces
+    # See https://webidl.spec.whatwg.org/#es-interfaces
     my $extendedAttributes = getInterfaceExtendedAttributesFromIDL($idlFile);
     if (!$extendedAttributes->{"LegacyNoInterfaceObject"} && (!$isCallbackInterface || containsInterfaceWithConstantsFromIDL($idlFile))) {
         my $exposedAttribute = $extendedAttributes->{"Exposed"};
@@ -594,7 +594,7 @@ sub getPartialNamesFromIDL
 }
 
 # identifier-A includes identifier-B;
-# https://heycam.github.io/webidl/#includes-statement
+# https://webidl.spec.whatwg.org/#includes-statement
 sub getIncludedInterfacesFromIDL
 {
     my $idlFile = shift;

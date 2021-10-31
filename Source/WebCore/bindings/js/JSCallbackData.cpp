@@ -38,7 +38,7 @@
 namespace WebCore {
 using namespace JSC;
 
-// https://heycam.github.io/webidl/#call-a-user-objects-operation
+// https://webidl.spec.whatwg.org/#call-a-user-objects-operation
 JSValue JSCallbackData::invokeCallback(JSDOMGlobalObject& globalObject, JSObject* callback, JSValue thisValue, MarkedArgumentBuffer& args, CallbackType method, PropertyName functionName, NakedPtr<JSC::Exception>& returnedException)
 {
     ASSERT(callback);

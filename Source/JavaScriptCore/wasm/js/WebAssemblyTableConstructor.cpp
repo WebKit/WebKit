@@ -98,7 +98,7 @@ JSC_DEFINE_HOST_FUNCTION(constructJSWebAssemblyTable, (JSGlobalObject* globalObj
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
 
     // In WebIDL, "present" means that [[Get]] result is undefined, not [[HasProperty]] result.
-    // https://heycam.github.io/webidl/#idl-dictionaries
+    // https://webidl.spec.whatwg.org/#idl-dictionaries
     std::optional<uint32_t> maximum;
     Identifier maximumIdent = Identifier::fromString(vm, "maximum");
     JSValue maxSizeValue = memoryDescriptor->get(globalObject, maximumIdent);
