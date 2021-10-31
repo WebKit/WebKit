@@ -86,15 +86,6 @@ void AccessibilityMenuList::addChildren()
     list->addChildren();
 }
 
-void AccessibilityMenuList::childrenChanged()
-{
-    if (m_children.isEmpty())
-        return;
-
-    ASSERT(m_children.size() == 1);
-    m_children[0]->childrenChanged();
-}
-
 bool AccessibilityMenuList::isCollapsed() const
 {
 #if !PLATFORM(IOS_FAMILY)

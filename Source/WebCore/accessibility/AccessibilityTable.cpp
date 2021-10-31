@@ -429,7 +429,7 @@ void AccessibilityTable::addChildren()
     // see bug: https://bugs.webkit.org/show_bug.cgi?id=147001
     for (const auto& row : m_rows) {
         for (const auto& cell : row->children())
-            cell->updateAccessibilityRole();
+            downcast<AccessibilityObject>(*cell).updateAccessibilityRole();
     }
 }
 

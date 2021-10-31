@@ -116,61 +116,11 @@ void AccessibilityNodeObject::detachRemoteParts(AccessibilityDetachmentType deta
     m_node = nullptr;
 }
 
-void AccessibilityNodeObject::childrenChanged()
-{
-    // This method is meant as a quick way of marking a portion of the accessibility tree dirty.
-    if (!node() && !renderer())
-        return;
-
-    AXObjectCache* cache = axObjectCache();
-    if (!cache)
-        return;
-    cache->postNotification(this, document(), AXObjectCache::AXChildrenChanged);
-    
-    // Should make the sub tree dirty so that everything below will be updated correctly.
-    this->setNeedsToUpdateSubtree();
-    bool shouldStopUpdatingParent = false;
-
-    // Go up the accessibility parent chain, but only if the element already exists. This method is
-    // called during render layouts, minimal work should be done. 
-    // If AX elements are created now, they could interrogate the render tree while it's in a funky state.
-    // At the same time, process ARIA live region changes.
-    for (AccessibilityObject* parent = this; parent; parent = parent->parentObjectIfExists()) {
-        if (!shouldStopUpdatingParent)
-            parent->setNeedsToUpdateChildren();
-        
-
-        // These notifications always need to be sent because screenreaders are reliant on them to perform. 
-        // In other words, they need to be sent even when the screen reader has not accessed this live region since the last update.
-
-        // If this element supports ARIA live regions, then notify the AT of changes.
-        // Sometimes this function can be called many times within a short period of time, leading to posting too many AXLiveRegionChanged
-        // notifications. To fix this, we used a timer to make sure we only post one notification for the children changes within a pre-defined
-        // time interval.
-        if (parent->supportsLiveRegion())
-            cache->postLiveRegionChangeNotification(parent);
-        
-        // If this element is an ARIA text control, notify the AT of changes.
-        if (parent->isNonNativeTextControl()) {
-            cache->postNotification(parent, parent->document(), AXObjectCache::AXValueChanged);
-            
-            // Do not let the parent that's above the editable ancestor update its children
-            // since we already notify the AT of changes.
-            shouldStopUpdatingParent = true;
-        }
-    }
-}
-
 void AccessibilityNodeObject::updateAccessibilityRole()
 {
-    bool ignoredStatus = accessibilityIsIgnored();
     m_role = determineAccessibilityRole();
-    
-    // The AX hierarchy only needs to be updated if the ignored status of an element has changed.
-    if (ignoredStatus != accessibilityIsIgnored())
-        childrenChanged();
 }
-    
+
 AccessibilityObject* AccessibilityNodeObject::firstChild() const
 {
     if (!node())

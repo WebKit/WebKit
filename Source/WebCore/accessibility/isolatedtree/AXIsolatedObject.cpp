@@ -2127,16 +2127,6 @@ ScrollView* AXIsolatedObject::scrollViewAncestor() const
     return nullptr;
 }
 
-void AXIsolatedObject::childrenChanged()
-{
-    ASSERT_NOT_REACHED();
-}
-
-void AXIsolatedObject::updateAccessibilityRole()
-{
-    ASSERT_NOT_REACHED();
-}
-
 void AXIsolatedObject::addChildren()
 {
     ASSERT_NOT_REACHED();
@@ -2308,22 +2298,6 @@ IntRect AXIsolatedObject::scrollVisibleContentRect() const
 }
 
 void AXIsolatedObject::scrollToMakeVisible(const ScrollRectToVisibleOptions&) const
-{
-    ASSERT_NOT_REACHED();
-}
-
-bool AXIsolatedObject::lastKnownIsIgnoredValue()
-{
-    ASSERT_NOT_REACHED();
-    return false;
-}
-
-void AXIsolatedObject::setLastKnownIsIgnoredValue(bool)
-{
-    ASSERT_NOT_REACHED();
-}
-
-void AXIsolatedObject::notifyIfIgnoredValueChanged()
 {
     ASSERT_NOT_REACHED();
 }

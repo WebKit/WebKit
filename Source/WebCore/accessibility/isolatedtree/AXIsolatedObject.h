@@ -604,8 +604,6 @@ private:
     Document* topDocument() const override;
     ScrollView* scrollView() const override;
     ScrollView* scrollViewAncestor() const override;
-    void childrenChanged() override;
-    void updateAccessibilityRole() override;
     void addChildren() override;
     void addChild(AXCoreObject*, DescendIfIgnored = DescendIfIgnored::Yes) override;
     void insertChild(AXCoreObject*, unsigned, DescendIfIgnored = DescendIfIgnored::Yes) override;
@@ -637,9 +635,6 @@ private:
     IntSize scrollContentsSize() const override;
     IntRect scrollVisibleContentRect() const override;
     void scrollToMakeVisible(const ScrollRectToVisibleOptions&) const override;
-    bool lastKnownIsIgnoredValue() override;
-    void setLastKnownIsIgnoredValue(bool) override;
-    void notifyIfIgnoredValueChanged() override;
     bool isMathScriptObject(AccessibilityMathScriptObjectType) const override;
     bool isMathMultiscriptObject(AccessibilityMathMultiscriptObjectType) const override;
     bool isAXHidden() const override;

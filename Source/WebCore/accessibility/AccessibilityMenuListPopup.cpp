@@ -104,7 +104,7 @@ void AccessibilityMenuListPopup::addChildren()
     }
 }
 
-void AccessibilityMenuListPopup::childrenChanged()
+void AccessibilityMenuListPopup::handleChildrenChanged()
 {
     AXObjectCache* cache = axObjectCache();
     for (size_t i = m_children.size(); i > 0 ; --i) {
@@ -114,7 +114,7 @@ void AccessibilityMenuListPopup::childrenChanged()
             cache->remove(child->objectID());
         }
     }
-    
+
     m_children.clear();
     m_childrenInitialized = false;
     addChildren();

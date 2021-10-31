@@ -1234,9 +1234,6 @@ public:
     virtual void increment() = 0;
     virtual void decrement() = 0;
 
-    virtual void childrenChanged() = 0;
-    virtual void updateAccessibilityRole() = 0;
-
     virtual const AccessibilityChildrenVector& children(bool updateChildrenIfNeeded = true) = 0;
 
     enum class DescendIfIgnored : uint8_t {
@@ -1390,12 +1387,6 @@ public:
     virtual IntSize scrollContentsSize() const = 0;
     virtual IntRect scrollVisibleContentRect() const = 0;
     virtual void scrollToMakeVisible(const ScrollRectToVisibleOptions&) const = 0;
-
-    virtual bool lastKnownIsIgnoredValue() = 0;
-    virtual void setLastKnownIsIgnoredValue(bool) = 0;
-
-    // Fires a children changed notification on the parent if the isIgnored value changed.
-    virtual void notifyIfIgnoredValueChanged() = 0;
 
     // All math elements return true for isMathElement().
     virtual bool isMathElement() const = 0;

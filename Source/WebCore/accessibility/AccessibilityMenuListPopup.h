@@ -34,6 +34,7 @@ class AccessibilityMenuListOption;
 class HTMLElement;
 
 class AccessibilityMenuListPopup final : public AccessibilityMockObject {
+    friend class AXObjectCache;
 public:
     static Ref<AccessibilityMenuListPopup> create() { return adoptRef(*new AccessibilityMenuListPopup); }
 
@@ -53,7 +54,7 @@ private:
     bool isVisible() const override;
     bool press() override;
     void addChildren() override;
-    void childrenChanged() override;
+    void handleChildrenChanged();
     bool computeAccessibilityIsIgnored() const override;
 
     AccessibilityMenuListOption* menuListOptionAccessibilityObject(HTMLElement*) const;

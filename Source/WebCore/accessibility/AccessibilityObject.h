@@ -487,8 +487,7 @@ public:
     void increment() override { }
     void decrement() override { }
 
-    void childrenChanged() override { }
-    void updateAccessibilityRole() override { }
+    virtual void updateAccessibilityRole() { }
     const AccessibilityChildrenVector& children(bool updateChildrenIfNeeded = true) override;
     void addChildren() override { }
     void addChild(AXCoreObject*, DescendIfIgnored = DescendIfIgnored::Yes) override;
@@ -647,11 +646,9 @@ public:
     IntRect scrollVisibleContentRect() const override;
     void scrollToMakeVisible(const ScrollRectToVisibleOptions&) const override;
 
-    bool lastKnownIsIgnoredValue() override;
-    void setLastKnownIsIgnoredValue(bool) override;
-
-    // Fires a children changed notification on the parent if the isIgnored value changed.
-    void notifyIfIgnoredValueChanged() override;
+    bool lastKnownIsIgnoredValue();
+    void setLastKnownIsIgnoredValue(bool);
+    bool hasIgnoredValueChanged();
 
     // All math elements return true for isMathElement().
     bool isMathElement() const override { return false; }

@@ -48,7 +48,6 @@ private:
     bool canSetFocusAttribute() const override;
 
     void addChildren() override;
-    void childrenChanged() override;
 };
 
 } // namespace WebCore

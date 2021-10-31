@@ -988,8 +988,8 @@ void AXObjectCache::textChanged(AccessibilityObject* object)
 
     postNotification(object, object->document(), AXTextChanged);
 
-    if (object->parentObjectIfExists())
-        object->notifyIfIgnoredValueChanged();
+    if (object->parentObjectIfExists() && object->hasIgnoredValueChanged())
+        childrenChanged(object->parentObject());
 }
 
 void AXObjectCache::updateCacheAfterNodeIsAttached(Node* node)
@@ -997,6 +997,53 @@ void AXObjectCache::updateCacheAfterNodeIsAttached(Node* node)
     // Calling get() will update the AX object if we had an AccessibilityNodeObject but now we need
     // an AccessibilityRenderObject, because it was reparented to a location outside of a canvas.
     get(node);
+}
+
+void AXObjectCache::handleChildrenChanged(AccessibilityObject& object)
+{
+    // Handle MenuLists and MenuListPopups as special cases.
+    if (is<AccessibilityMenuList>(object)) {
+        auto& children = object.children(false);
+        if (children.isEmpty())
+            return;
+
+        ASSERT(children.size() == 1 && is<AccessibilityObject>(*children[0]));
+        handleChildrenChanged(downcast<AccessibilityObject>(*children[0]));
+    } else if (is<AccessibilityMenuListPopup>(object)) {
+        downcast<AccessibilityMenuListPopup>(object).handleChildrenChanged();
+        return;
+    }
+
+    // This method is meant as a quick way of marking a portion of the accessibility tree dirty.
+    if (!object.node() && !object.renderer())
+        return;
+
+    postNotification(&object, object.document(), AXChildrenChanged);
+
+    // Should make the subtree dirty so that everything below will be updated correctly.
+    object.setNeedsToUpdateSubtree();
+
+    // Go up the existing ancestors chain and fire the appropriate notifications.
+    bool shouldUpdateParent = true;
+    for (auto* parent = &object; parent; parent = parent->parentObjectIfExists()) {
+        if (shouldUpdateParent)
+            parent->setNeedsToUpdateChildren();
+
+        // If this object supports ARIA live regions, then notify AT of changes.
+        // This notification need to be sent even when the screen reader has not accessed this live region since the last update.
+        // Sometimes this function can be called many times within a short period of time, leading to posting too many AXLiveRegionChanged notifications.
+        // To fix this, we use a timer to make sure we only post one notification for the children changes within a pre-defined time interval.
+        if (parent->supportsLiveRegion())
+            postLiveRegionChangeNotification(parent);
+
+        // If this object is an ARIA text control, notify that its value changed.
+        if (parent->isNonNativeTextControl()) {
+            postNotification(parent, parent->document(), AXValueChanged);
+
+            // Do not let any ancestor of an editable object update its children.
+            shouldUpdateParent = false;
+        }
+    }
 }
 
 void AXObjectCache::handleMenuOpened(Node* node)
@@ -1029,7 +1076,8 @@ void AXObjectCache::childrenChanged(Node* node, Node* newChild)
     if (newChild)
         m_deferredChildrenChangedNodeList.add(newChild);
 
-    childrenChanged(get(node));
+    if (auto* object = get(node))
+        m_deferredChildrenChangedList.add(object);
 }
 
 void AXObjectCache::childrenChanged(RenderObject* renderer, RenderObject* newChild)
@@ -1040,15 +1088,14 @@ void AXObjectCache::childrenChanged(RenderObject* renderer, RenderObject* newChi
     if (newChild && newChild->node())
         m_deferredChildrenChangedNodeList.add(newChild->node());
 
-    childrenChanged(get(renderer));
+    if (auto* object = get(renderer))
+        m_deferredChildrenChangedList.add(object);
 }
 
-void AXObjectCache::childrenChanged(AXCoreObject* obj)
+void AXObjectCache::childrenChanged(AccessibilityObject* object)
 {
-    if (!obj)
-        return;
-
-    m_deferredChildrenChangedList.add(obj);
+    if (object)
+        m_deferredChildrenChangedList.add(object);
 }
 
 void AXObjectCache::notificationPostTimerFired()
@@ -1095,13 +1142,15 @@ void AXObjectCache::notificationPostTimerFired()
         }
 
         if (note.second == AXChildrenChanged && note.first->parentObjectIfExists()
-            && note.first->lastKnownIsIgnoredValue() != note.first->accessibilityIsIgnored())
-            childrenChanged(note.first->parentObject());
+            && downcast<AccessibilityObject>(*note.first).lastKnownIsIgnoredValue() != note.first->accessibilityIsIgnored())
+            childrenChanged(downcast<AccessibilityObject>(note.first->parentObject()));
 
         notificationsToPost.append(note);
     }
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    // FIXME: this updateIsolatedTree here may be premature in some cases.
+    // E.g., if the childrenChanged above is hit, we should updateIsolatedTree after performDeferredCacheUpdate.
     updateIsolatedTree(notificationsToPost);
 #endif
 
@@ -1718,14 +1767,15 @@ void AXObjectCache::handleAriaRoleChanged(Node* node)
     stopCachingComputedObjectAttributes();
 
     // Don't make an AX object unless it's needed
-    if (auto* obj = get(node)) {
-        obj->updateAccessibilityRole();
+    if (auto* object = get(node)) {
+        object->updateAccessibilityRole();
+
+        if (object->hasIgnoredValueChanged())
+            childrenChanged(object->parentObject());
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-        updateIsolatedTree(obj, AXObjectCache::AXAriaRoleChanged);
+        updateIsolatedTree(object, AXObjectCache::AXAriaRoleChanged);
 #endif
-
-        obj->notifyIfIgnoredValueChanged();
     }
 }
 
@@ -1864,14 +1914,18 @@ void AXObjectCache::labelChanged(Element* element)
 
 void AXObjectCache::recomputeIsIgnored(RenderObject* renderer)
 {
-    if (AccessibilityObject* obj = get(renderer))
-        obj->notifyIfIgnoredValueChanged();
+    if (auto* object = get(renderer)) {
+        if (object->hasIgnoredValueChanged())
+            childrenChanged(object->parentObject());
+    }
 }
 
 void AXObjectCache::recomputeIsIgnored(Node* node)
 {
-    if (AccessibilityObject* obj = get(node))
-        obj->notifyIfIgnoredValueChanged();
+    if (auto* object = get(node)) {
+        if (object->hasIgnoredValueChanged())
+            childrenChanged(object->parentObject());
+    }
 }
 
 void AXObjectCache::startCachingComputedObjectAttributesUntilTreeMutates()
@@ -3166,10 +3220,12 @@ void AXObjectCache::performCacheUpdateTimerFired()
     // If there's a pending layout, let the layout trigger the AX update.
     if (!document().view() || document().view()->needsLayout())
         return;
-    
+
     performDeferredCacheUpdate();
+    // FIXME: need to update the isolated tree after the above cache update.
+    // This is most likely the cause of problems with the isolated tree updates..
 }
-    
+
 void AXObjectCache::performDeferredCacheUpdate()
 {
     AXTRACE("AXObjectCache::performDeferredCacheUpdate");
@@ -3185,7 +3241,7 @@ void AXObjectCache::performDeferredCacheUpdate()
     m_deferredChildrenChangedNodeList.clear();
 
     for (auto& child : m_deferredChildrenChangedList)
-        child->childrenChanged();
+        handleChildrenChanged(*child);
     m_deferredChildrenChangedList.clear();
 
     for (auto* node : m_deferredTextChangedList)

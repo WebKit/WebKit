@@ -3257,14 +3257,14 @@ void AccessibilityObject::setLastKnownIsIgnoredValue(bool isIgnored)
     m_lastKnownIsIgnoredValue = isIgnored ? AccessibilityObjectInclusion::IgnoreObject : AccessibilityObjectInclusion::IncludeObject;
 }
 
-void AccessibilityObject::notifyIfIgnoredValueChanged()
+bool AccessibilityObject::hasIgnoredValueChanged()
 {
     bool isIgnored = accessibilityIsIgnored();
     if (lastKnownIsIgnoredValue() != isIgnored) {
-        if (AXObjectCache* cache = axObjectCache())
-            cache->childrenChanged(parentObject());
         setLastKnownIsIgnoredValue(isIgnored);
+        return true;
     }
+    return false;
 }
 
 bool AccessibilityObject::pressedIsPresent() const

@@ -184,7 +184,7 @@ private:
 public:
     void childrenChanged(Node*, Node* newChild = nullptr);
     void childrenChanged(RenderObject*, RenderObject* newChild = nullptr);
-    void childrenChanged(AXCoreObject*);
+    void childrenChanged(AccessibilityObject*);
     void checkedStateChanged(Node*);
     // Called when a node has just been attached, so we can make sure we have the right subclass of AccessibilityObject.
     void updateCacheAfterNodeIsAttached(Node*);
@@ -461,6 +461,7 @@ private:
     bool enqueuePasswordValueChangeNotification(AccessibilityObject*);
     void passwordNotificationPostTimerFired();
 
+    void handleChildrenChanged(AccessibilityObject&);
     void handleMenuOpened(Node*);
     void handleLiveRegionCreated(Node*);
     void handleMenuItemSelected(Node*);
@@ -519,7 +520,7 @@ private:
     WeakHashSet<Element> m_deferredRecomputeIsIgnoredList;
     ListHashSet<Node*> m_deferredTextChangedList;
     WeakHashSet<Element> m_deferredSelectedChildredChangedList;
-    ListHashSet<RefPtr<AXCoreObject>> m_deferredChildrenChangedList;
+    ListHashSet<RefPtr<AccessibilityObject>> m_deferredChildrenChangedList;
     ListHashSet<Node*> m_deferredChildrenChangedNodeList;
     WeakHashSet<Element> m_deferredModalChangedList;
     WeakHashSet<Element> m_deferredMenuListChange;
