@@ -968,6 +968,11 @@ void TestRunner::queueLoadHTMLString(JSStringRef content, JSStringRef baseURL, J
     InjectedBundle::singleton().queueLoadHTMLString(toWK(content).get(), baseURLWK.get(), unreachableURLWK.get());
 }
 
+void TestRunner::stopLoading()
+{
+    WKBundlePageStopLoading(page());
+}
+
 void TestRunner::queueReload()
 {
     InjectedBundle::singleton().queueReload();

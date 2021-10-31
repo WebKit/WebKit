@@ -298,7 +298,7 @@ public:
 
     const URL& previousURL() const { return m_previousURL; }
 
-    void completePageTransitionIfNeeded();
+    WEBCORE_EXPORT void completePageTransitionIfNeeded();
 
     void setOverrideCachePolicyForTesting(ResourceRequestCachePolicy policy) { m_overrideCachePolicyForTesting = policy; }
     void setOverrideResourceLoadPriorityForTesting(ResourceLoadPriority priority) { m_overrideResourceLoadPriorityForTesting = priority; }

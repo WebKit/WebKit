@@ -1,3 +1,17 @@
+2021-10-30  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Layer tree should not be stuck in frozen state after explicitly stopping a page load
+        https://bugs.webkit.org/show_bug.cgi?id=232532
+        rdar://84522357
+
+        Reviewed by Tim Horton.
+
+        Add a test that verifies that a `requestAnimationFrame()` callback fires even after stopping page load. This
+        test fails without the fix in this patch, since the layer tree ends up in a permanently frozen state.
+
+        * http/tests/navigation/unfreeze-layer-tree-after-stopping-load-expected.txt: Added.
+        * http/tests/navigation/unfreeze-layer-tree-after-stopping-load.html: Added.
+
 2021-10-30  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [GPU Process] Small ImageBuffers cause the web process to crash

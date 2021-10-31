@@ -109,6 +109,11 @@ void TestRunner::clearAllApplicationCaches()
     applicationCache->deleteAllApplicationCaches();
 }
 
+void TestRunner::stopLoading()
+{
+    // FIXME: Not implemented.
+}
+
 long long TestRunner::applicationCacheDiskUsageForOrigin(JSStringRef url)
 {
     COMPtr<IWebSecurityOrigin2> origin;

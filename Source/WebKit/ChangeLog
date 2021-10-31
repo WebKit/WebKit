@@ -1,3 +1,28 @@
+2021-10-30  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Layer tree should not be stuck in frozen state after explicitly stopping a page load
+        https://bugs.webkit.org/show_bug.cgi?id=232532
+        rdar://84522357
+
+        Reviewed by Tim Horton.
+
+        From diagnostic logs gathered in rdar://84522357, it's apparently possible for the layer tree to be stuck in a
+        state where it's indefinitely frozen after the user explicitly stops the page load (e.g. by tapping on the "x"
+        button in Safari). Specifically, these logs indicate that the `PageTransition` layer tree freeze reason may
+        persist even after the user has canceled the load, leading to situations where content may be visible but
+        unresponsive.
+
+        From code inspection, this may happen for multiple reasons, one of which is that a media element has incremented
+        the load event delay count, which in turn prevents us from transitioning to completed state inside
+        `FrameLoader::checkLoadCompleteForThisFrame()`. It's unknown whether this (in particular) is the cause of
+        unresponsiveness observed by the reporter of rdar://84522357, but we can at least use this in order to come up
+        with a layout test; to mitigate all instances where the `PageTransition` reason may persist after the load has
+        been stopped, we make `WebPage::stopLoading()` complete the page transition (thereby lifting the freeze reason)
+        if needed.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::stopLoading):
+
 2021-10-30  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Web process shouldn't crash if ImageBuffer::ensureBackendCreated() fails

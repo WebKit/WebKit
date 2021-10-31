@@ -1,3 +1,28 @@
+2021-10-30  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Layer tree should not be stuck in frozen state after explicitly stopping a page load
+        https://bugs.webkit.org/show_bug.cgi?id=232532
+        rdar://84522357
+
+        Reviewed by Tim Horton.
+
+        Add support for `TestRunner.stopLoading()`, which immediately stops the page load, emulating what would normally
+        happen if the user taps or clicks the "x" button to cancel loading in Safari. See the layout test for more
+        details.
+
+        * DumpRenderTree/TestRunner.cpp:
+        (stopLoadingCallback):
+        (TestRunner::staticFunctions):
+        * DumpRenderTree/TestRunner.h:
+        * DumpRenderTree/mac/TestRunnerMac.mm:
+        (TestRunner::stopLoading):
+        * DumpRenderTree/win/TestRunnerWin.cpp:
+        (TestRunner::stopLoading):
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::stopLoading):
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+
 2021-10-30  Chris Dumez  <cdumez@apple.com>
 
         Improve error handling in sendWithAsyncReply()

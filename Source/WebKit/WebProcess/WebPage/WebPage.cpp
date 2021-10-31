@@ -1818,7 +1818,10 @@ void WebPage::stopLoading()
         return;
 
     SendStopResponsivenessTimer stopper;
-    m_page->userInputBridge().stopLoadingFrame(*m_mainFrame->coreFrame());
+
+    Ref coreFrame = *m_mainFrame->coreFrame();
+    m_page->userInputBridge().stopLoadingFrame(coreFrame.get());
+    coreFrame->loader().completePageTransitionIfNeeded();
 }
 
 bool WebPage::defersLoading() const
