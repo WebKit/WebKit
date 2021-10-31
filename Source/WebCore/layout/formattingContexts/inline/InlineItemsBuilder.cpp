@@ -255,9 +255,9 @@ void InlineItemsBuilder::handleInlineBoxStart(const Box& inlineBox, InlineItems&
     }
 
     if (enteringContentControlChar)
-        enterBidiContext(inlineBox, *enteringContentControlChar);
+        enterBidiContext(inlineBox, *enteringContentControlChar, inlineItems);
     if (nestedContentControlChar)
-        enterBidiContext(inlineBox, *nestedContentControlChar);
+        enterBidiContext(inlineBox, *nestedContentControlChar, inlineItems);
 }
 
 void InlineItemsBuilder::handleInlineBoxEnd(const Box& inlineBox, InlineItems& inlineItems)
@@ -313,14 +313,36 @@ void InlineItemsBuilder::handleInlineLevelBox(const Box& layoutBox, InlineItems&
     ASSERT_NOT_REACHED();
 }
 
-void InlineItemsBuilder::enterBidiContext(const Box&, UChar)
+void InlineItemsBuilder::enterBidiContext(const Box& box, UChar controlCharacter, const InlineItems& inlineItems)
 {
-    // FIXME: Inject the control character to the paragraph string.
+    if (m_paragraphContentBuilder.isEmpty()) {
+        // FIXME: Move this to a dedicated function to support control characters embedded in text content.
+        auto buildPreviousTextContent = [&] {
+            const Box* lastLayoutBox = nullptr;
+            for (auto& inlineItem : inlineItems) {
+                if (!inlineItem.isText())
+                    continue;
+                auto& layoutBox = inlineItem.layoutBox();
+                if (lastLayoutBox == &layoutBox) {
+                    // We've already appended this content.
+                    continue;
+                }
+                m_contentOffsetMap.set(&layoutBox, m_paragraphContentBuilder.length());
+                m_paragraphContentBuilder.append(downcast<InlineTextBox>(layoutBox).content());
+                lastLayoutBox = &layoutBox;
+            }
+        };
+        buildPreviousTextContent();
+    }
+    // Let the first control character represent the  box.
+    m_contentOffsetMap.add(&box, m_paragraphContentBuilder.length());
+    m_paragraphContentBuilder.append(controlCharacter);
 }
 
-void InlineItemsBuilder::exitBidiContext(const Box&, UChar)
+void InlineItemsBuilder::exitBidiContext(const Box&, UChar controlCharacter)
 {
-    // FIXME: Inject the control character to the paragraph string.
+    ASSERT(!m_paragraphContentBuilder.isEmpty());
+    m_paragraphContentBuilder.append(controlCharacter);
 }
 
 }

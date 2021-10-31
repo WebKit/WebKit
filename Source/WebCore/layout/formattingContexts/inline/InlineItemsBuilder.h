@@ -29,6 +29,7 @@
 
 #include "InlineFormattingState.h"
 #include "LayoutContainerBox.h"
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 namespace Layout {
@@ -48,7 +49,7 @@ private:
     void handleInlineBoxEnd(const Box&, InlineItems&);
     void handleInlineLevelBox(const Box&, InlineItems&);
     
-    void enterBidiContext(const Box&, UChar);
+    void enterBidiContext(const Box&, UChar, const InlineItems&);
     void exitBidiContext(const Box&, UChar);
 
     const ContainerBox& root() const { return m_root; }
@@ -56,6 +57,10 @@ private:
     const ContainerBox& m_root;
     // FIXME: We should not need this here. This is only required by the out of flow boxes.
     InlineFormattingState& m_formattingState;
+
+    StringBuilder m_paragraphContentBuilder;
+    // Keep track of where each layout box starts in the paragraph content.
+    HashMap<const Box*, size_t> m_contentOffsetMap;
 };
 
 }
