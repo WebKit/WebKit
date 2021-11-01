@@ -47,6 +47,7 @@
 #include "JSWorkerGlobalScope.h"
 #include "JSWorkletGlobalScope.h"
 #include "JSWritableStream.h"
+#include "JSShadowRealmGlobalScope.h"
 #include "RejectedPromiseTracker.h"
 #include "RuntimeEnabledFeatures.h"
 #include "ScriptModuleLoader.h"
@@ -289,6 +290,8 @@ ScriptExecutionContext* JSDOMGlobalObject::scriptExecutionContext() const
         return jsCast<const JSDOMWindowBase*>(this)->scriptExecutionContext();
     if (inherits<JSRemoteDOMWindowBase>(vm()))
         return nullptr;
+    if (inherits<JSShadowRealmGlobalScope>(vm()))
+        return jsCast<const JSShadowRealmGlobalScope*>(this)->parent()->scriptExecutionContext();
     if (inherits<JSWorkerGlobalScopeBase>(vm()))
         return jsCast<const JSWorkerGlobalScopeBase*>(this)->scriptExecutionContext();
     if (inherits<JSWorkletGlobalScopeBase>(vm()))
@@ -356,6 +359,7 @@ void JSDOMGlobalObject::reportUncaughtExceptionAtEventLoop(JSGlobalObject* jsGlo
 
 JSC::JSGlobalObject* JSDOMGlobalObject::deriveShadowRealmGlobalObject(JSC::VM& vm, const JSC::JSGlobalObject* globalObject)
 {
+    // TODO: create JSShadowRealmScopeBase
     return JSC::JSGlobalObject::createWithCustomMethodTable(vm, JSGlobalObject::createStructure(vm, JSC::jsNull()), &s_shadowRealmGlobalObjectMethodTable);
 }
 
@@ -536,6 +540,8 @@ static ScriptModuleLoader* scriptModuleLoader(JSDOMGlobalObject* globalObject)
     }
     if (globalObject->inherits<JSRemoteDOMWindowBase>(vm))
         return nullptr;
+    if (globalObject->inherits<JSShadowRealmGlobalScope>(vm))
+        return scriptModuleLoader(jsCast<const JSShadowRealmGlobalScope*>(globalObject)->parent());
     if (globalObject->inherits<JSWorkerGlobalScopeBase>(vm))
         return &jsCast<const JSWorkerGlobalScopeBase*>(globalObject)->wrapped().moduleLoader();
     if (globalObject->inherits<JSWorkletGlobalScopeBase>(vm))

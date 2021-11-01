@@ -18,5 +18,6 @@ promise_test(async t => {
   // call close window two levels deep
   assert_closed_opener(openee, false, self);
   callInNestedRealm(() => openee.close());
+  // openee.close()
   assert_closed_opener(openee, true, self);
 }, "window.close() affects name targeting immediately");

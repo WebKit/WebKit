@@ -515,6 +515,7 @@ bindings/js/JSDOMConvertStrings.cpp
 bindings/js/JSDOMConvertWebGL.cpp
 bindings/js/JSDOMExceptionHandling.cpp
 bindings/js/JSDOMGlobalObject.cpp
+bindings/js/JSShadowRealmGlobalScope.cpp
 bindings/js/JSDOMGlobalObjectTask.cpp
 bindings/js/JSDOMGuardedObject.cpp
 bindings/js/JSDOMIterator.cpp
