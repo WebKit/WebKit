@@ -132,7 +132,7 @@ find_package(WebKitRequirements REQUIRED
 set(OpenGLES2_NAMES ${EGL_NAMES})
 
 find_package(Cairo REQUIRED)
-find_package(CURL REQUIRED)
+find_package(CURL 7.77.0 REQUIRED)
 find_package(EGL REQUIRED)
 find_package(Fontconfig REQUIRED)
 find_package(Freetype REQUIRED)

@@ -1,3 +1,16 @@
+2021-11-01  Don Olmstead  <don.olmstead@sony.com>
+
+        [Curl] Explicitly disable libcurl's internal cookie support
+        https://bugs.webkit.org/show_bug.cgi?id=232586
+
+        Reviewed by Ross Kirsling.
+
+        Setting CURLOPT_COOKIEFILE to NULL to disable the cookie engine was not added till 7.77.0
+        so require that version or later.
+
+        * Source/cmake/OptionsPlayStation.cmake:
+        * Source/cmake/OptionsWinCairo.cmake:
+
 2021-11-01  David Kilzer  <ddkilzer@apple.com>
 
         Add ddkilzer's GitHub name to contributors.json

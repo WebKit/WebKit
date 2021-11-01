@@ -298,6 +298,7 @@ CurlHandle::CurlHandle()
     m_handle = curl_easy_init();
     curl_easy_setopt(m_handle, CURLOPT_ERRORBUFFER, m_errorBuffer);
     curl_easy_setopt(m_handle, CURLOPT_NOSIGNAL, 1L);
+    curl_easy_setopt(m_handle, CURLOPT_COOKIEFILE, nullptr);
 
     enableShareHandle();
     enableAllowedProtocols();
