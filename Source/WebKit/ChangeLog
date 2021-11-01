@@ -1,3 +1,19 @@
+2021-11-01  Ayumi Kojima  <ayumi_kojima@apple.com>
+
+        Unreviewed, reverting r285055.
+
+        Reverting because this commit may have caused
+        webgl/1.0.x/conformance/textures/misc/texture-corner-case-
+        videos.html and webgl/2.0.y/conformance/textures/misc/texture-
+        corner-case-videos.html to time out
+
+        Reverted changeset:
+
+        "Avoid sending video data to Web process for
+        canvas.drawImage(video)"
+        https://bugs.webkit.org/show_bug.cgi?id=230766
+        https://commits.webkit.org/r285055
+
 2021-11-01  Daniel Kolesa  <dkolesa@igalia.com>
 
         Fix build with GCC 8.4 on Ubuntu 18.04
