@@ -1,3 +1,15 @@
+2021-11-01  Per Arne  <pvollan@apple.com>
+
+        [macOS] Opening local html files is failing
+        https://bugs.webkit.org/show_bug.cgi?id=232572
+        <rdar://81330442>
+
+        Reviewed by Brent Fulgham.
+
+        Declare sandbox flag.
+
+        * wtf/spi/darwin/SandboxSPI.h:
+
 2021-11-01  Tim Horton  <timothy_horton@apple.com>
 
         Add a testing preference to replay CG display lists manually

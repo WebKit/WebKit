@@ -115,6 +115,9 @@ private:
         case SandboxExtension::Type::ReadByProcess:
             if (!auditToken)
                 return nullptr;
+#if PLATFORM(MAC)
+            extensionFlags |= SANDBOX_EXTENSION_USER_INTENT;
+#endif
             return sandbox_extension_issue_file_to_process(APP_SANDBOX_READ, path, extensionFlags, *auditToken);
         }
     }
