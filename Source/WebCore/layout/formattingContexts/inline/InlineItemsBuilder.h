@@ -52,6 +52,8 @@ private:
     void enterBidiContext(const Box&, UChar, const InlineItems&);
     void exitBidiContext(const Box&, UChar);
 
+    void buildPreviousTextContent(const InlineItems&);
+
     const ContainerBox& root() const { return m_root; }
 
     const ContainerBox& m_root;

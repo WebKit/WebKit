@@ -33,6 +33,8 @@
 namespace WebCore {
 namespace Layout {
 
+#define ALLOW_BIDI_CONTENT 0
+
 struct WhitespaceContent {
     size_t length { 0 };
     bool isWordSeparator { true };
@@ -139,7 +141,8 @@ void InlineItemsBuilder::breakInlineItemsAtBidiBoundaries(InlineItems&)
 void InlineItemsBuilder::handleTextContent(const InlineTextBox& inlineTextBox, InlineItems& inlineItems)
 {
     auto text = inlineTextBox.content();
-    if (!text.length())
+    auto contentLength = text.length();
+    if (!contentLength)
         return inlineItems.append(InlineTextItem::createEmptyItem(inlineTextBox));
 
     auto& style = inlineTextBox.style();
@@ -158,20 +161,29 @@ void InlineItemsBuilder::handleTextContent(const InlineTextBox& inlineTextBox, I
         return TextUtil::width(inlineTextBox, fontCascade, startPosition, startPosition + length, { });
     };
 
-    while (currentPosition < text.length()) {
-        auto isSegmentBreakCandidate = [](auto character) {
-            return character == '\n';
+    if (!m_paragraphContentBuilder.isEmpty()) {
+        m_contentOffsetMap.set(&inlineTextBox, m_paragraphContentBuilder.length());
+        m_paragraphContentBuilder.append(text);
+    }
+
+    while (currentPosition < contentLength) {
+        auto handleSegmentBreak = [&] {
+            // Segment breaks with preserve new line style (white-space: pre, pre-wrap, break-spaces and pre-line) compute to forced line break.
+            auto isSegmentBreakCandidate = text[currentPosition] == newlineCharacter;
+            if (!isSegmentBreakCandidate || !shouldPreserveNewline)
+                return false;
+            inlineItems.append(InlineSoftLineBreakItem::createSoftLineBreakItem(inlineTextBox, currentPosition++));
+            return true;
         };
-
-        // Segment breaks with preserve new line style (white-space: pre, pre-wrap, break-spaces and pre-line) compute to forced line break.
-        if (isSegmentBreakCandidate(text[currentPosition]) && shouldPreserveNewline) {
-            inlineItems.append(InlineSoftLineBreakItem::createSoftLineBreakItem(inlineTextBox, currentPosition));
-            ++currentPosition;
+        if (handleSegmentBreak())
             continue;
-        }
 
-        auto stopAtWordSeparatorBoundary = shouldPreserveSpacesAndTabs && fontCascade.wordSpacing();
-        if (auto whitespaceContent = moveToNextNonWhitespacePosition(text, currentPosition, shouldPreserveNewline, shouldPreserveSpacesAndTabs, shouldTreatNonBreakingSpaceAsRegularSpace, stopAtWordSeparatorBoundary)) {
+        auto handleWhitespace = [&] {
+            auto stopAtWordSeparatorBoundary = shouldPreserveSpacesAndTabs && fontCascade.wordSpacing();
+            auto whitespaceContent = moveToNextNonWhitespacePosition(text, currentPosition, shouldPreserveNewline, shouldPreserveSpacesAndTabs, shouldTreatNonBreakingSpaceAsRegularSpace, stopAtWordSeparatorBoundary);
+            if (!whitespaceContent)
+                return false;
+
             ASSERT(whitespaceContent->length);
             auto appendWhitespaceItem = [&] (auto startPosition, auto itemLength) {
                 auto simpleSingleWhitespaceContent = inlineTextBox.canUseSimplifiedContentMeasuring() && (itemLength == 1 || whitespaceContentIsTreatedAsSingleSpace);
@@ -187,33 +199,60 @@ void InlineItemsBuilder::handleTextContent(const InlineTextBox& inlineTextBox, I
             } else
                 appendWhitespaceItem(currentPosition, whitespaceContent->length);
             currentPosition += whitespaceContent->length;
-            continue;
-        }
-
-        auto hasTrailingSoftHyphen = false;
-        auto initialNonWhitespacePosition = currentPosition;
-        auto isAtSoftHyphen = [&](auto position) {
-            return text[position] == softHyphen;
+            return true;
         };
-        if (style.hyphens() == Hyphens::None) {
-            // Let's merge candidate InlineTextItems separated by soft hyphen when the style says so.
-            while (currentPosition < text.length()) {
-                auto nonWhiteSpaceLength = moveToNextBreakablePosition(currentPosition, lineBreakIterator, style);
-                ASSERT(nonWhiteSpaceLength);
-                currentPosition += nonWhiteSpaceLength;
-                if (!isAtSoftHyphen(currentPosition - 1))
-                    break;
+        if (handleWhitespace())
+            continue;
+
+        auto handleNonWhitespace = [&] {
+            auto startPosition = currentPosition;
+            auto endPosition = startPosition;
+            auto hasTrailingSoftHyphen = false;
+            if (style.hyphens() == Hyphens::None) {
+                // Let's merge candidate InlineTextItems separated by soft hyphen when the style says so.
+                do {
+                    endPosition += moveToNextBreakablePosition(endPosition, lineBreakIterator, style);
+                    ASSERT(startPosition < endPosition);
+                } while (endPosition < contentLength && text[endPosition - 1] == softHyphen);
+            } else {
+                endPosition += moveToNextBreakablePosition(startPosition, lineBreakIterator, style);
+                ASSERT(startPosition < endPosition);
+                hasTrailingSoftHyphen = text[endPosition - 1] == softHyphen;
             }
-        } else {
-            auto nonWhiteSpaceLength = moveToNextBreakablePosition(initialNonWhitespacePosition, lineBreakIterator, style);
-            ASSERT(nonWhiteSpaceLength);
-            currentPosition += nonWhiteSpaceLength;
-            hasTrailingSoftHyphen = isAtSoftHyphen(currentPosition - 1);
-        }
-        ASSERT(initialNonWhitespacePosition < currentPosition);
-        ASSERT_IMPLIES(style.hyphens() == Hyphens::None, !hasTrailingSoftHyphen);
-        auto length = currentPosition - initialNonWhitespacePosition;
-        inlineItems.append(InlineTextItem::createNonWhitespaceItem(inlineTextBox, initialNonWhitespacePosition, length, UBIDI_DEFAULT_LTR, hasTrailingSoftHyphen, inlineItemWidth(initialNonWhitespacePosition, length)));
+            ASSERT_IMPLIES(style.hyphens() == Hyphens::None, !hasTrailingSoftHyphen);
+            auto inlineItemLength = endPosition - startPosition;
+            inlineItems.append(InlineTextItem::createNonWhitespaceItem(inlineTextBox, startPosition, inlineItemLength, UBIDI_DEFAULT_LTR, hasTrailingSoftHyphen, inlineItemWidth(startPosition, inlineItemLength)));
+            currentPosition = endPosition;
+#if ALLOW_BIDI_CONTENT
+            // Check if the content has bidi dependency so that we have to start building the paragraph content for ubidi.
+            if (text.is8Bit() || !m_paragraphContentBuilder.isEmpty())
+                return true;
+
+            for (auto position = startPosition; position < endPosition;) {
+                UChar32 character;
+                U16_NEXT(text.characters16(), position, contentLength, character);
+
+                auto bidiCategory = u_charDirection(character);
+                auto needsBidi = bidiCategory == U_RIGHT_TO_LEFT
+                    || bidiCategory == U_RIGHT_TO_LEFT_ARABIC
+                    || bidiCategory == U_RIGHT_TO_LEFT_EMBEDDING
+                    || bidiCategory == U_RIGHT_TO_LEFT_OVERRIDE
+                    || bidiCategory == U_LEFT_TO_RIGHT_EMBEDDING
+                    || bidiCategory == U_LEFT_TO_RIGHT_OVERRIDE
+                    || bidiCategory == U_POP_DIRECTIONAL_FORMAT;
+                if (needsBidi) {
+                    buildPreviousTextContent(inlineItems);
+                    // buildPreviousTextContent takes care of this content too as some inline items have already been constructed for this text.
+                    break;
+                }
+            }
+#endif
+            return true;
+        };
+        if (handleNonWhitespace())
+            continue;
+        // Unsupported content?
+        ASSERT_NOT_REACHED();
     }
 }
 
@@ -315,25 +354,8 @@ void InlineItemsBuilder::handleInlineLevelBox(const Box& layoutBox, InlineItems&
 
 void InlineItemsBuilder::enterBidiContext(const Box& box, UChar controlCharacter, const InlineItems& inlineItems)
 {
-    if (m_paragraphContentBuilder.isEmpty()) {
-        // FIXME: Move this to a dedicated function to support control characters embedded in text content.
-        auto buildPreviousTextContent = [&] {
-            const Box* lastLayoutBox = nullptr;
-            for (auto& inlineItem : inlineItems) {
-                if (!inlineItem.isText())
-                    continue;
-                auto& layoutBox = inlineItem.layoutBox();
-                if (lastLayoutBox == &layoutBox) {
-                    // We've already appended this content.
-                    continue;
-                }
-                m_contentOffsetMap.set(&layoutBox, m_paragraphContentBuilder.length());
-                m_paragraphContentBuilder.append(downcast<InlineTextBox>(layoutBox).content());
-                lastLayoutBox = &layoutBox;
-            }
-        };
-        buildPreviousTextContent();
-    }
+    if (m_paragraphContentBuilder.isEmpty())
+        buildPreviousTextContent(inlineItems);
     // Let the first control character represent the  box.
     m_contentOffsetMap.add(&box, m_paragraphContentBuilder.length());
     m_paragraphContentBuilder.append(controlCharacter);
@@ -343,6 +365,26 @@ void InlineItemsBuilder::exitBidiContext(const Box&, UChar controlCharacter)
 {
     ASSERT(!m_paragraphContentBuilder.isEmpty());
     m_paragraphContentBuilder.append(controlCharacter);
+}
+
+void InlineItemsBuilder::buildPreviousTextContent(const InlineItems& inlineItems)
+{
+    ASSERT(m_paragraphContentBuilder.isEmpty());
+    ASSERT(m_contentOffsetMap.isEmpty());
+
+    const Box* lastLayoutBox = nullptr;
+    for (auto& inlineItem : inlineItems) {
+        if (!inlineItem.isText())
+            continue;
+        auto& layoutBox = inlineItem.layoutBox();
+        if (lastLayoutBox == &layoutBox) {
+            // We've already appended this content.
+            continue;
+        }
+        m_contentOffsetMap.set(&layoutBox, m_paragraphContentBuilder.length());
+        m_paragraphContentBuilder.append(downcast<InlineTextBox>(layoutBox).content());
+        lastLayoutBox = &layoutBox;
+    }
 }
 
 }
