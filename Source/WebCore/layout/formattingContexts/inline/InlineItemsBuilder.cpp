@@ -136,7 +136,7 @@ void InlineItemsBuilder::collectInlineItems(InlineItems& inlineItems)
 
 void InlineItemsBuilder::breakAndComputeBidiLevels(InlineItems& inlineItems)
 {
-    if (m_paragraphContentBuilder.isEmpty())
+    if (!hasSeenBidiContent())
         return;
     ASSERT(!inlineItems.isEmpty());
 
@@ -179,6 +179,7 @@ void InlineItemsBuilder::breakAndComputeBidiLevels(InlineItems& inlineItems)
                     ++currentInlineItemIndex;
                     continue;
                 }
+                // FIXME: Find out if this is the most optimal place to measure and cache text widths. 
                 auto& inlineTextItem = downcast<InlineTextItem>(inlineItem);
                 inlineTextItem.setBidiLevel(level);
 
@@ -221,13 +222,17 @@ void InlineItemsBuilder::handleTextContent(const InlineTextBox& inlineTextBox, I
     unsigned currentPosition = 0;
 
     auto inlineItemWidth = [&](auto startPosition, auto length) -> std::optional<InlineLayoutUnit> {
+        if (hasSeenBidiContent()) {
+            // Delay content measuring until bidi split.
+            return { };
+        }
         if (!inlineTextBox.canUseSimplifiedContentMeasuring()
             || !TextUtil::canUseSimplifiedTextMeasuringForFirstLine(inlineTextBox.style(), inlineTextBox.firstLineStyle()))
             return { };
         return TextUtil::width(inlineTextBox, fontCascade, startPosition, startPosition + length, { });
     };
 
-    if (!m_paragraphContentBuilder.isEmpty()) {
+    if (hasSeenBidiContent()) {
         m_contentOffsetMap.set(&inlineTextBox, m_paragraphContentBuilder.length());
         m_paragraphContentBuilder.append(text);
     }
@@ -291,7 +296,7 @@ void InlineItemsBuilder::handleTextContent(const InlineTextBox& inlineTextBox, I
             currentPosition = endPosition;
 #if ALLOW_BIDI_CONTENT
             // Check if the content has bidi dependency so that we have to start building the paragraph content for ubidi.
-            if (text.is8Bit() || !m_paragraphContentBuilder.isEmpty())
+            if (text.is8Bit() || hasSeenBidiContent())
                 return true;
 
             for (auto position = startPosition; position < endPosition;) {
@@ -404,7 +409,7 @@ void InlineItemsBuilder::handleInlineLevelBox(const Box& layoutBox, InlineItems&
 
 void InlineItemsBuilder::enterBidiContext(const Box& box, UChar controlCharacter, const InlineItems& inlineItems)
 {
-    if (m_paragraphContentBuilder.isEmpty())
+    if (!hasSeenBidiContent())
         buildPreviousTextContent(inlineItems);
     // Let the first control character represent the  box.
     m_contentOffsetMap.add(&box, m_paragraphContentBuilder.length());
@@ -413,13 +418,13 @@ void InlineItemsBuilder::enterBidiContext(const Box& box, UChar controlCharacter
 
 void InlineItemsBuilder::exitBidiContext(const Box&, UChar controlCharacter)
 {
-    ASSERT(!m_paragraphContentBuilder.isEmpty());
+    ASSERT(hasSeenBidiContent());
     m_paragraphContentBuilder.append(controlCharacter);
 }
 
 void InlineItemsBuilder::buildPreviousTextContent(const InlineItems& inlineItems)
 {
-    ASSERT(m_paragraphContentBuilder.isEmpty());
+    ASSERT(!hasSeenBidiContent());
     ASSERT(m_contentOffsetMap.isEmpty());
 
     const Box* lastLayoutBox = nullptr;

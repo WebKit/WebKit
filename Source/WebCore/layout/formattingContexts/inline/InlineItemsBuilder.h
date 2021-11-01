@@ -54,6 +54,8 @@ private:
 
     void buildPreviousTextContent(const InlineItems&);
 
+    bool hasSeenBidiContent() const { return !m_paragraphContentBuilder.isEmpty(); }
+
     const ContainerBox& root() const { return m_root; }
 
     const ContainerBox& m_root;
