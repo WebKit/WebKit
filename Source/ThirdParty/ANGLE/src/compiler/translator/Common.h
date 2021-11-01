@@ -215,7 +215,7 @@ inline TString str(T i)
 {
     ASSERT(std::numeric_limits<T>::is_integer);
     char buffer[((8 * sizeof(T)) / 3) + 3];
-    const char *formatStr = std::numeric_limits<T>::is_signed ? "%d" : "%u";
+    constexpr const char *formatStr = std::numeric_limits<T>::is_signed ? "%d" : "%u";
     snprintf(buffer, sizeof(buffer), formatStr, i);
     return buffer;
 }

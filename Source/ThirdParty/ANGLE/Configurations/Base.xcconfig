@@ -61,7 +61,7 @@ GCC_WARN_UNUSED_VARIABLE = YES;
 
 PREBINDING = NO;
 
-WARNING_CFLAGS = -Wglobal-constructors -Wno-inconsistent-missing-override;
+WARNING_CFLAGS = -Wformat=2 -Wglobal-constructors -Wno-inconsistent-missing-override;
 
 SUPPORTED_PLATFORMS = iphoneos iphonesimulator macosx appletvos appletvsimulator watchos watchsimulator;
 SUPPORTS_MACCATALYST = YES;

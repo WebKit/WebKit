@@ -186,8 +186,6 @@ inline std::string Str(int i)
     return strstr.str();
 }
 
-size_t FormatStringIntoVector(const char *fmt, va_list vararg, std::vector<char> &buffer);
-
 template <typename T>
 std::string ToString(const T &value)
 {
@@ -371,5 +369,7 @@ inline bool IsLittleEndian()
 #else
 #    define ANGLE_REQUIRE_CONSTANT_INIT
 #endif  // __has_cpp_attribute(require_constant_initialization)
+
+size_t FormatStringIntoVector(const char *fmt, va_list vararg, std::vector<char> &buffer) ANGLE_FORMAT_PRINTF(1, 0);
 
 #endif  // COMMON_ANGLEUTILS_H_

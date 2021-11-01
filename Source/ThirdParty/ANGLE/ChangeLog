@@ -1,3 +1,24 @@
+2021-11-01  David Kilzer  <ddkilzer@apple.com>
+
+        [ANGLE] Enable -Wformat=2 warnings
+        <https://webkit.org/b/232358>
+        <rdar://problem/84568935>
+
+        Reviewed by Kimmo Kinnunen.
+
+        * Configurations/Base.xcconfig:
+        (WARNING_CFLAGS):
+        - Add -Wformat=2 switch, which includes -Wformat-nonliteral.
+        * src/common/angleutils.h:
+        (FormatStringIntoVector):
+        - Move below definition of ANGLE_FORMAT_PRINTF() and add macro
+          to the function declaration to fix -Wformat-nonliteral
+          warning.
+        * src/compiler/translator/Common.h:
+        (sh::str):
+        - Make `formatStr` a constexpr to fix -Wformat-nonliteral
+          warning.
+
 2021-10-27  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         REGRESSION (Safari 15): Poor WebGL performance on https://downloads.scirra.com/labs/particles
