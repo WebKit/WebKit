@@ -1,3 +1,21 @@
+2021-11-01  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitscmpy] Only respect the latest review
+        https://bugs.webkit.org/show_bug.cgi?id=231987
+        <rdar://problem/84434991>
+
+        Reviewed by Dewei Zhu.
+
+        GitHub will report the entire history of a review, we should only
+        respect the latest review state.
+
+        * Scripts/libraries/webkitscmpy/setup.py: Bump version.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/__init__.py: Ditto.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/remote/git_hub.py:
+        (GitHub.PRGenerator.reviewers):
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/pull_request_unittest.py:
+        (TestNetworkPullRequestGitHub.test_approved_edits):
+
 2021-11-01  Sam Sneddon  <gsnedders@apple.com>
 
         Improve LayoutTestFinder test coverage

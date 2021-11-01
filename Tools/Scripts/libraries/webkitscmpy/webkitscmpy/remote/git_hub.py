@@ -206,13 +206,17 @@ class GitHub(Scm):
             pull_request._reviewers = [self._contributor(user['login']) for user in response.get('users', [])]
             pull_request._approvers = []
             pull_request._blockers = []
-            needs_status = Contributor.REVIEWER in self.repository.contributors.statuses
+
+            state_for = {}
             for review in self.repository.request('pulls/{}/reviews'.format(pull_request.number)):
-                contributor = self._contributor(review['user']['login'])
+                state_for[self._contributor(review['user']['login'])] = review.get('state')
+
+            needs_status = Contributor.REVIEWER in self.repository.contributors.statuses
+            for contributor, status in state_for.items():
                 pull_request._reviewers.append(contributor)
-                if review.get('state') == 'APPROVED' and (not needs_status or contributor.status == Contributor.REVIEWER):
+                if status == 'APPROVED' and (not needs_status or contributor.status == Contributor.REVIEWER):
                     pull_request._approvers.append(contributor)
-                elif review.get('state') == 'CHANGES_REQUESTED':
+                elif status == 'CHANGES_REQUESTED':
                     pull_request._blockers.append(contributor)
 
             pull_request._reviewers = sorted(pull_request._reviewers)
