@@ -71,16 +71,17 @@ static unsigned rulesCountForName(const RuleSet::AtomRuleMap& map, const AtomStr
 
 static bool isHostSelectorMatchingInShadowTree(const CSSSelector& startSelector)
 {
-    auto* leftmostSelector = &startSelector;
-    bool hasDescendantOrChildRelation = false;
-    while (auto* previous = leftmostSelector->tagHistory()) {
-        hasDescendantOrChildRelation = leftmostSelector->hasDescendantOrChildRelation();
-        leftmostSelector = previous;
+    bool hasOnlyOneCompound = true;
+    bool hasHostInLastCompound = false;
+    for (auto* selector = &startSelector; selector; selector = selector->tagHistory()) {
+        if (selector->match() == CSSSelector::PseudoClass && selector->pseudoClassType() == CSSSelector::PseudoClassHost)
+            hasHostInLastCompound = true;
+        if (selector->tagHistory() && selector->relation() != CSSSelector::Subselector) {
+            hasOnlyOneCompound = false;
+            hasHostInLastCompound = false;
+        }
     }
-    if (!hasDescendantOrChildRelation)
-        return false;
-
-    return leftmostSelector->match() == CSSSelector::PseudoClass && leftmostSelector->pseudoClassType() == CSSSelector::PseudoClassHost;
+    return !hasOnlyOneCompound && hasHostInLastCompound;
 }
 
 void RuleSet::addRule(const StyleRule& rule, unsigned selectorIndex, unsigned selectorListIndex)
@@ -197,6 +198,9 @@ void RuleSet::addRule(RuleData&& ruleData, CascadeLayerIdentifier cascadeLayerId
         selector = selector->tagHistory();
     } while (selector);
 
+    if (!m_hasHostPseudoClassRulesMatchingInShadowTree)
+        m_hasHostPseudoClassRulesMatchingInShadowTree = isHostSelectorMatchingInShadowTree(*ruleData.selector());
+
 #if ENABLE(VIDEO)
     if (cuePseudoElementSelector) {
         m_cuePseudoRules.append(ruleData);
@@ -232,9 +236,6 @@ void RuleSet::addRule(RuleData&& ruleData, CascadeLayerIdentifier cascadeLayerId
         addToRuleSet(customPseudoElementSelector->value(), m_shadowPseudoElementRules, ruleData);
         return;
     }
-
-    if (!m_hasHostPseudoClassRulesMatchingInShadowTree)
-        m_hasHostPseudoClassRulesMatchingInShadowTree = isHostSelectorMatchingInShadowTree(*ruleData.selector());
 
     if (hostPseudoClassSelector) {
         m_hostPseudoClassRules.append(ruleData);

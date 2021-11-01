@@ -1,3 +1,12 @@
+2021-10-31  Antti Koivisto  <antti@apple.com>
+
+        Fix :host invalidation when combined with pseudo classes in descendant position
+        https://bugs.webkit.org/show_bug.cgi?id=232544
+
+        Reviewed by Simon Fraser.
+
+        * web-platform-tests/css/css-scoping/host-functional-descendant-invalidation-expected.txt:
+
 2021-10-30  Brandon Stewart  <brandonstewart@apple.com>
 
         Selection extend() should trigger exception with no ranges
