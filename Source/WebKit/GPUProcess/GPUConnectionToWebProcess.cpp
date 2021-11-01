@@ -355,10 +355,7 @@ void GPUConnectionToWebProcess::releaseWCLayerTreeHost(WebKit::WCLayerTreeHostId
 RefPtr<RemoteGraphicsContextGL> GPUConnectionToWebProcess::findRemoteGraphicsContextGL(GraphicsContextGLIdentifier identifier)
 {
     ASSERT(RunLoop::isMain());
-    auto iter = m_remoteGraphicsContextGLMap.find(identifier);
-    if (iter == m_remoteGraphicsContextGLMap.end())
-        return nullptr;
-    return iter->value.get();
+    return m_remoteGraphicsContextGLMap.get(identifier);
 }
 #endif
 

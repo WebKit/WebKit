@@ -1,3 +1,21 @@
+2021-11-01  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        HashMap<GraphicsContextGLIdentifier, IPC::ScopedActiveMessageReceiveQueue<RemoteGraphicsContextGL>>::get can't compile
+        https://bugs.webkit.org/show_bug.cgi?id=232554
+
+        Reviewed by Kimmo Kinnunen.
+
+        Because IPC::ScopedActiveMessageReceiveQueue didn't have own
+        HashTraits, it used GenericHashTraits. So, HashMap::get tried to
+        return PeekType, that was ScopedActiveMessageReceiveQueue. But, it
+        couldn't construct ScopedActiveMessageReceiveQueue from "const
+        ScopedActiveMessageReceiveQueue&".
+
+        * GPUProcess/GPUConnectionToWebProcess.cpp:
+        (WebKit::GPUConnectionToWebProcess::findRemoteGraphicsContextGL):
+        Use get() instead of find().
+        * Platform/IPC/ScopedActiveMessageReceiveQueue.h: Added HashTraits for it.
+
 2021-11-01  Brady Eidson  <beidson@apple.com>
 
         webpushd: Add mock in-memory registration, and the WKWebsiteDataStore SPI to manage them

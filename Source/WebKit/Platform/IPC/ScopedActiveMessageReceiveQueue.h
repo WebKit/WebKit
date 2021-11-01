@@ -99,3 +99,12 @@ template<typename T>
 ScopedActiveMessageReceiveQueue(Ref<T>&&) -> ScopedActiveMessageReceiveQueue<T, RefPtr<T>>;
 
 }
+
+namespace WTF {
+
+template<typename T, typename HolderType> struct HashTraits<IPC::ScopedActiveMessageReceiveQueue<T, HolderType>> : GenericHashTraits<IPC::ScopedActiveMessageReceiveQueue<T, HolderType>> {
+    using PeekType = T*;
+    static T* peek(const IPC::ScopedActiveMessageReceiveQueue<T, HolderType>& value) { return value.get(); }
+};
+
+}
