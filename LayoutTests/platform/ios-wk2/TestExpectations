@@ -2147,6 +2147,8 @@ webkit.org/b/231315 fast/events/ios/rotation/safe-area-insets-during-safari-type
 
 webkit.org/b/230987 fast/events/ios/viewport-shrink-to-fit-allows-double-tap.html [ Pass Timeout ]
 
+webkit.org/b/232568 fast/events/ios/viewport-device-width-allows-double-tap-zoom-out.html [ Pass Timeout ]
+
 webkit.org/b/231311 fast/events/ios/fast-click-double-tap-to-zoom-in-on-text-and-then-again-to-zoom-out.html [ Pass Failure ]
 
 webkit.org/b/229558 http/tests/navigation/page-cache-getUserMedia-pending-promise.html [ Pass Failure ]
