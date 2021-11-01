@@ -5666,7 +5666,7 @@ IntSize FrameView::calculateSizeForCSSViewportUnitsOverride(std::optional<Overri
 
 IntSize FrameView::sizeForCSSDynamicViewportUnits() const
 {
-    return visibleContentRectIncludingScrollbars().size();
+    return unobscuredContentRectIncludingScrollbars().size();
 }
 
 IntSize FrameView::sizeForCSSDefaultViewportUnits() const

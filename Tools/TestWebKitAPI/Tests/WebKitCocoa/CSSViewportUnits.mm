@@ -60,12 +60,10 @@ TEST(CSSViewportUnits, AllSame)
     EXPECT_EQ(320, getElementHeight(webView.get(), @"lvmin"));
     EXPECT_EQ(500, getElementHeight(webView.get(), @"lvmax"));
 
-    int innerWidth = evaluateForInt(webView.get(), @"window.innerWidth");
-    int innerHeight = evaluateForInt(webView.get(), @"window.innerHeight");
-    EXPECT_EQ(innerWidth, getElementHeight(webView.get(), @"dvw"));
-    EXPECT_EQ(innerHeight, getElementHeight(webView.get(), @"dvh"));
-    EXPECT_EQ(innerWidth, getElementHeight(webView.get(), @"dvmin"));
-    EXPECT_EQ(innerHeight, getElementHeight(webView.get(), @"dvmax"));
+    EXPECT_EQ(evaluateForInt(webView.get(), @"window.innerWidth"), getElementHeight(webView.get(), @"dvw"));
+    EXPECT_EQ(evaluateForInt(webView.get(), @"window.innerHeight"), getElementHeight(webView.get(), @"dvh"));
+    EXPECT_EQ(evaluateForInt(webView.get(), @"window.innerWidth"), getElementHeight(webView.get(), @"dvmin"));
+    EXPECT_EQ(evaluateForInt(webView.get(), @"window.innerHeight"), getElementHeight(webView.get(), @"dvmax"));
 }
 
 #if PLATFORM(IOS_FAMILY)
@@ -92,12 +90,10 @@ TEST(CSSViewportUnits, EmptyUnobscuredSizeOverrides)
     EXPECT_EQ(10, getElementHeight(webView.get(), @"lvmin"));
     EXPECT_EQ(20, getElementHeight(webView.get(), @"lvmax"));
 
-    int innerWidth = evaluateForInt(webView.get(), @"window.innerWidth");
-    int innerHeight = evaluateForInt(webView.get(), @"window.innerHeight");
-    EXPECT_EQ(innerWidth, getElementHeight(webView.get(), @"dvw"));
-    EXPECT_EQ(innerHeight, getElementHeight(webView.get(), @"dvh"));
-    EXPECT_EQ(innerWidth, getElementHeight(webView.get(), @"dvmin"));
-    EXPECT_EQ(innerHeight, getElementHeight(webView.get(), @"dvmax"));
+    EXPECT_EQ(evaluateForInt(webView.get(), @"window.innerWidth"), getElementHeight(webView.get(), @"dvw"));
+    EXPECT_EQ(evaluateForInt(webView.get(), @"window.innerHeight"), getElementHeight(webView.get(), @"dvh"));
+    EXPECT_EQ(evaluateForInt(webView.get(), @"window.innerWidth"), getElementHeight(webView.get(), @"dvmin"));
+    EXPECT_EQ(evaluateForInt(webView.get(), @"window.innerHeight"), getElementHeight(webView.get(), @"dvmax"));
 }
 
 TEST(CSSViewportUnits, SameUnobscuredSizeOverrides)
@@ -122,12 +118,10 @@ TEST(CSSViewportUnits, SameUnobscuredSizeOverrides)
     EXPECT_EQ(10, getElementHeight(webView.get(), @"lvmin"));
     EXPECT_EQ(20, getElementHeight(webView.get(), @"lvmax"));
 
-    int innerWidth = evaluateForInt(webView.get(), @"window.innerWidth");
-    int innerHeight = evaluateForInt(webView.get(), @"window.innerHeight");
-    EXPECT_EQ(innerWidth, getElementHeight(webView.get(), @"dvw"));
-    EXPECT_EQ(innerHeight, getElementHeight(webView.get(), @"dvh"));
-    EXPECT_EQ(innerWidth, getElementHeight(webView.get(), @"dvmin"));
-    EXPECT_EQ(innerHeight, getElementHeight(webView.get(), @"dvmax"));
+    EXPECT_EQ(evaluateForInt(webView.get(), @"window.innerWidth"), getElementHeight(webView.get(), @"dvw"));
+    EXPECT_EQ(evaluateForInt(webView.get(), @"window.innerHeight"), getElementHeight(webView.get(), @"dvh"));
+    EXPECT_EQ(evaluateForInt(webView.get(), @"window.innerWidth"), getElementHeight(webView.get(), @"dvmin"));
+    EXPECT_EQ(evaluateForInt(webView.get(), @"window.innerHeight"), getElementHeight(webView.get(), @"dvmax"));
 }
 
 TEST(CSSViewportUnits, DifferentUnobscuredSizeOverrides)
@@ -152,12 +146,10 @@ TEST(CSSViewportUnits, DifferentUnobscuredSizeOverrides)
     EXPECT_EQ(30, getElementHeight(webView.get(), @"lvmin"));
     EXPECT_EQ(40, getElementHeight(webView.get(), @"lvmax"));
 
-    int innerWidth = evaluateForInt(webView.get(), @"window.innerWidth");
-    int innerHeight = evaluateForInt(webView.get(), @"window.innerHeight");
-    EXPECT_EQ(innerWidth, getElementHeight(webView.get(), @"dvw"));
-    EXPECT_EQ(innerHeight, getElementHeight(webView.get(), @"dvh"));
-    EXPECT_EQ(innerWidth, getElementHeight(webView.get(), @"dvmin"));
-    EXPECT_EQ(innerHeight, getElementHeight(webView.get(), @"dvmax"));
+    EXPECT_EQ(evaluateForInt(webView.get(), @"window.innerWidth"), getElementHeight(webView.get(), @"dvw"));
+    EXPECT_EQ(evaluateForInt(webView.get(), @"window.innerHeight"), getElementHeight(webView.get(), @"dvh"));
+    EXPECT_EQ(evaluateForInt(webView.get(), @"window.innerWidth"), getElementHeight(webView.get(), @"dvmin"));
+    EXPECT_EQ(evaluateForInt(webView.get(), @"window.innerHeight"), getElementHeight(webView.get(), @"dvmax"));
 }
 
 #endif // PLATFORM(IOS_FAMILY)
