@@ -1,3 +1,17 @@
+2021-11-01  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        GPU process WebKit logging is not initialised
+        https://bugs.webkit.org/show_bug.cgi?id=232563
+
+        Reviewed by Chris Dumez.
+
+        The file was not including LogInitialization.h.
+        "using namespace WebCore" caused
+        WebKit::logChannels() to mean WebCore::logChannels().
+
+        * GPUProcess/GPUProcess.cpp:
+        (WebKit::GPUProcess::initializeGPUProcess):
+
 2021-11-01  Sihui Liu  <sihui_liu@apple.com>
 
         Increase responsiveness timeout for network process
