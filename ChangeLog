@@ -1,3 +1,12 @@
+2021-11-01  David Kilzer  <ddkilzer@apple.com>
+
+        Add ddkilzer's GitHub name to contributors.json
+        <https://webkit.org/b/232587>
+
+        Reviewed by Jonathan Bedard.
+
+        * metadata/contributors.json:
+
 2021-11-01  Robert Jenner  <Jenner@apple.com>
 
         Add my GitHub name (robert-jenner) to contributors.json
