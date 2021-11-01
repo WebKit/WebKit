@@ -1,3 +1,17 @@
+2021-11-01  Daniel Kolesa  <dkolesa@igalia.com>
+
+        Fix build with GCC 8.4 on Ubuntu 18.04
+        https://bugs.webkit.org/show_bug.cgi?id=232305
+
+        Reviewed by Adrian Perez de Castro.
+
+        Thes sections of the code trigger an internal compiler error with
+        GCC 8.4, segfaulting the compiler. This adds a workaround that
+        makes it work again.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::deleteAndRestrictWebsiteDataForRegistrableDomains):
+
 2021-10-31  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WinCairo] New GraphicsLayer for GPU process mode

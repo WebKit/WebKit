@@ -139,7 +139,9 @@ void ClipboardItemBindingsDataSource::collectDataForWriting(Clipboard& destinati
         });
 
         auto promise = typeAndItem.value;
-        promise->whenSettled([this, protectedItem = Ref { m_item }, destination = m_writingDestination, promise, type, weakItemTypeLoader = WeakPtr { itemTypeLoader }] () mutable {
+        /* hack: gcc 8.4 will segfault if the WeakPtr is instantiated within the lambda captures */
+        auto wl = WeakPtr { itemTypeLoader };
+        promise->whenSettled([this, protectedItem = Ref { m_item }, destination = m_writingDestination, promise, type, weakItemTypeLoader = WTFMove(wl)] () mutable {
             if (!weakItemTypeLoader)
                 return;
 
