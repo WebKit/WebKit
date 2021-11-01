@@ -74,7 +74,7 @@ public:
     PlatformCALayerRemote* layer() const { return m_layer; }
 
     enum class LayerContentsType { IOSurface, CAMachPort };
-    void applyBackingStoreToLayer(CALayer *, LayerContentsType);
+    void applyBackingStoreToLayer(CALayer *, LayerContentsType, bool replayCGDisplayListsIntoBackingStore);
 
     void encode(IPC::Encoder&) const;
     static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, RemoteLayerBackingStore&);

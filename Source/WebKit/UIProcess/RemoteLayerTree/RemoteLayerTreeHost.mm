@@ -82,6 +82,15 @@ RemoteLayerBackingStore::LayerContentsType RemoteLayerTreeHost::layerContentsTyp
 #endif
 }
 
+bool RemoteLayerTreeHost::replayCGDisplayListsIntoBackingStore() const
+{
+#if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
+    return m_drawingArea->page().preferences().replayCGDisplayListsIntoBackingStore();
+#else
+    return false;
+#endif
+}
+
 bool RemoteLayerTreeHost::updateLayerTree(const RemoteLayerTreeTransaction& transaction, float indicatorScaleFactor)
 {
     if (!m_drawingArea)

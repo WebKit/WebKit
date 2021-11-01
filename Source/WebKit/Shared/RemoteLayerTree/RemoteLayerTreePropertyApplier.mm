@@ -255,7 +255,7 @@ void RemoteLayerTreePropertyApplier::applyPropertiesToLayer(CALayer *layer, Remo
     {
         RemoteLayerBackingStore* backingStore = properties.backingStore.get();
         if (backingStore && properties.backingStoreAttached)
-            backingStore->applyBackingStoreToLayer(layer, layerContentsType);
+            backingStore->applyBackingStoreToLayer(layer, layerContentsType, layerTreeHost->replayCGDisplayListsIntoBackingStore());
         else {
             layer.contents = nil;
             layer.contentsOpaque = NO;

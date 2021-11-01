@@ -36,7 +36,11 @@
 #import <WebKitAdditions/CGDisplayListImageBufferAdditions.h>
 #endif
 
-@implementation WKCompositingLayer
+@implementation WKCompositingLayer {
+#if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
+    RetainPtr<CFDataRef> _displayListDataForTesting;
+#endif
+}
 
 - (NSString *)description
 {
@@ -44,12 +48,26 @@
 }
 
 #if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
-- (void)_setWKContents:(id)contents withDisplayList:(CFDataRef)data
+
+- (void)_setWKContents:(id)contents withDisplayList:(CFDataRef)data replayForTesting:(BOOL)replay
 {
+    if (replay) {
+        _displayListDataForTesting = data;
+        [self setNeedsDisplay];
+        return;
+    }
+
     self.contents = contents;
-    [self setValue:(id)data forKeyPath:WKCGDisplayListContentsKey];
-    
-    
+    [self setValue:(id)data forKeyPath:WKCGDisplayListContentsKey];    
+}
+
+- (void)drawInContext:(CGContextRef)context
+{
+    if (!_displayListDataForTesting)
+        return;
+    CGContextScaleCTM(context, 1, -1);
+    CGContextTranslateCTM(context, 0, -self.bounds.size.height);
+    WKCGContextDrawCGCommandsEncodedData(context, _displayListDataForTesting.get(), nullptr);
 }
 
 #endif // ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)

@@ -1,3 +1,28 @@
+2021-11-01  Tim Horton  <timothy_horton@apple.com>
+
+        Add a testing preference to replay CG display lists manually
+        https://bugs.webkit.org/show_bug.cgi?id=232566
+
+        Reviewed by Wenson Hsieh.
+
+        * Shared/RemoteLayerTree/RemoteLayerBackingStore.h:
+        * Shared/RemoteLayerTree/RemoteLayerBackingStore.mm:
+        (WebKit::RemoteLayerBackingStore::applyBackingStoreToLayer):
+        * Shared/RemoteLayerTree/RemoteLayerTreePropertyApplier.mm:
+        (WebKit::RemoteLayerTreePropertyApplier::applyPropertiesToLayer):
+        * UIProcess/RemoteLayerTree/RemoteLayerTreeHost.h:
+        * UIProcess/RemoteLayerTree/RemoteLayerTreeHost.mm:
+        (WebKit::RemoteLayerTreeHost::replayCGDisplayListsIntoBackingStore const):
+        Plumb the preference through to _setWKContents.
+
+        * UIProcess/RemoteLayerTree/cocoa/RemoteLayerTreeLayers.h:
+        * UIProcess/RemoteLayerTree/cocoa/RemoteLayerTreeLayers.mm:
+        (-[WKCompositingLayer _setWKContents:withDisplayList:replayForTesting:]):
+        (-[WKCompositingLayer drawInContext:]):
+        (-[WKCompositingLayer _setWKContents:withDisplayList:]): Deleted.
+        If the preference is set, store the display list instead of setting it on the layer,
+        and call setNeedsDisplay, and then replay the display list in drawInContext.
+
 2021-11-01  Ayumi Kojima  <ayumi_kojima@apple.com>
 
         Unreviewed, reverting r285055.

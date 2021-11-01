@@ -1,3 +1,12 @@
+2021-11-01  Tim Horton  <timothy_horton@apple.com>
+
+        Add a testing preference to replay CG display lists manually
+        https://bugs.webkit.org/show_bug.cgi?id=232566
+
+        Reviewed by Wenson Hsieh.
+
+        * Scripts/Preferences/WebPreferencesInternal.yaml:
+
 2021-10-29  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Clean up Baseline StructureStubInfo management

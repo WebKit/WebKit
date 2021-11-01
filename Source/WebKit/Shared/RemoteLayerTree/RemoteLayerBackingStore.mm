@@ -429,7 +429,7 @@ void RemoteLayerBackingStore::enumerateRectsBeingDrawn(WebCore::GraphicsContext&
     }
 }
 
-void RemoteLayerBackingStore::applyBackingStoreToLayer(CALayer *layer, LayerContentsType contentsType)
+void RemoteLayerBackingStore::applyBackingStoreToLayer(CALayer *layer, LayerContentsType contentsType, bool replayCGDisplayListsIntoBackingStore)
 {
     ASSERT(m_bufferHandle);
     layer.contentsOpaque = m_isOpaque;
@@ -465,12 +465,17 @@ void RemoteLayerBackingStore::applyBackingStoreToLayer(CALayer *layer, LayerCont
         ASSERT([layer isKindOfClass:[WKCompositingLayer class]]);
         if (![layer isKindOfClass:[WKCompositingLayer class]])
             return;
-        [layer setValue:@1 forKeyPath:WKCGDisplayListEnabledKey];
-        [layer setValue:@1 forKeyPath:WKCGDisplayListBifurcationEnabledKey];
+
+        if (!replayCGDisplayListsIntoBackingStore) {
+            [layer setValue:@1 forKeyPath:WKCGDisplayListEnabledKey];
+            [layer setValue:@1 forKeyPath:WKCGDisplayListBifurcationEnabledKey];
+        }
         auto data = std::get<IPC::SharedBufferCopy>(*m_displayListBufferHandle).buffer()->createCFData();
-        [(WKCompositingLayer *)layer _setWKContents:contents.get() withDisplayList:data.get()];
+        [(WKCompositingLayer *)layer _setWKContents:contents.get() withDisplayList:data.get() replayForTesting:replayCGDisplayListsIntoBackingStore];
         return;
     }
+#else
+    UNUSED_PARAM(replayCGDisplayListsIntoBackingStore);
 #endif
 
     layer.contents = contents.get();

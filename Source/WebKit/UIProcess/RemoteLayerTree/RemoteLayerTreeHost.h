@@ -75,6 +75,8 @@ public:
 
     CALayer *layerWithIDForTesting(uint64_t) const;
 
+    bool replayCGDisplayListsIntoBackingStore() const;
+
 private:
     void createLayer(const RemoteLayerTreeTransaction::LayerCreationProperties&);
     std::unique_ptr<RemoteLayerTreeNode> makeNode(const RemoteLayerTreeTransaction::LayerCreationProperties&);
