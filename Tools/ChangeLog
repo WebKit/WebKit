@@ -1,3 +1,16 @@
+2021-11-01  Jonathan Bedard  <jbedard@apple.com>
+
+        webkitpy: Remove obsolete port name
+        https://bugs.webkit.org/show_bug.cgi?id=169302
+        <rdar://problem/30953024>
+
+        Reviewed by Alex Christensen.
+
+        Removing a temporary workaround from r213654.
+
+        * Scripts/webkitpy/common/config/ports.py:
+        (DeprecatedPort.port): Remove mapping from 'ios' to 'ios-device.'
+
 2021-11-01  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         TestWTF.WTF_CompactUniquePtrTuple.Subclassing is randomly failing on WinCairo tester bots
