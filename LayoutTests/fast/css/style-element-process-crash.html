@@ -1,11 +1,15 @@
 <!DOCTYPE html>
 <html>
 <script>
-if (window.testRunner)
-	testRunner.dumpAsText();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
 
 function crash() {
-	document.body.innerHTML = "PASS. WebKit didn't crash.";
+    document.body.innerHTML = "PASS. WebKit didn't crash.";
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 </script>
 <object>
@@ -13,7 +17,7 @@ function crash() {
 </object>
 <style>
 .abc::first-child { 
-	font: 2147483647 small-caps 3507521020px sans-serif;
+    font: 2147483647 small-caps 3507521020px sans-serif;
 }
 </style>
 </html>

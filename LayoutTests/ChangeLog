@@ -1,3 +1,17 @@
+2021-11-01  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION (r283935): fast/css/style-element-process-crash.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=232456
+        <rdar://problem/84779240>
+
+        Reviewed by Wenson Hsieh.
+
+        After r283935, focus may happen asynchronously when using autofocus. As a result, we need to
+        update the test to use waitUntilDone() / notifyDone().
+
+        * fast/css/style-element-process-crash.html:
+        * platform/ios-wk2/TestExpectations:
+
 2021-10-31  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WinCairo] Unreviewed test gardening
