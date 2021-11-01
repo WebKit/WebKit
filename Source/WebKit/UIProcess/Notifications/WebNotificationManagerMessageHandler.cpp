@@ -35,6 +35,11 @@ WebNotificationManagerMessageHandler::WebNotificationManagerMessageHandler(WebPa
 {
 }
 
+void WebNotificationManagerMessageHandler::requestSystemNotificationPermission(const String&, CompletionHandler<void(bool)>&&)
+{
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
 void WebNotificationManagerMessageHandler::showNotification(const String& title, const String& body, const String& iconURL, const String& tag, const String& language, WebCore::NotificationDirection direction, const String& originString, uint64_t notificationID)
 {
     m_webPageProxy.showNotification(title, body, iconURL, tag, language, direction, originString, notificationID);

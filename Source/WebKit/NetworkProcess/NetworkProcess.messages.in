@@ -208,4 +208,6 @@ messages -> NetworkProcess LegacyReceiver {
 #if ENABLE(SERVICE_WORKER)
     ProcessPushMessage(PAL::SessionID sessionID, std::optional<IPC::DataReference> data, URL registrationURL) -> (bool didSucceed) Async
 #endif
+    DeletePushAndNotificationRegistration(PAL::SessionID sessionID, struct WebCore::SecurityOriginData origin) -> (String errorMessage) Async
+    GetOriginsWithPushAndNotificationPermissions(PAL::SessionID sessionID) -> (Vector<WebCore::SecurityOriginData> origins) Async
 }

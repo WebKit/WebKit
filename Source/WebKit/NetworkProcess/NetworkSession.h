@@ -191,6 +191,10 @@ public:
 
     String attributedBundleIdentifierFromPageIdentifier(WebPageProxyIdentifier) const;
 
+#if ENABLE(BUILT_IN_NOTIFICATIONS)
+    NetworkNotificationManager& notificationManager() { return m_notificationManager; }
+#endif
+
 protected:
     NetworkSession(NetworkProcess&, const NetworkSessionCreationParameters&);
 

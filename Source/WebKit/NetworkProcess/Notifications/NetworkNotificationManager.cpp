@@ -31,6 +31,7 @@
 #include "DaemonDecoder.h"
 #include "DaemonEncoder.h"
 #include "NetworkSession.h"
+#include <WebCore/SecurityOriginData.h>
 
 namespace WebKit {
 using namespace WebCore;
@@ -40,6 +41,28 @@ NetworkNotificationManager::NetworkNotificationManager(NetworkSession& networkSe
 {
     if (!m_networkSession.sessionID().isEphemeral() && !webPushMachServiceName.isEmpty())
         m_connection = makeUnique<WebPushD::Connection>(webPushMachServiceName.utf8(), *this);
+}
+
+void NetworkNotificationManager::requestSystemNotificationPermission(const String& originString, CompletionHandler<void(bool)>&& completionHandler)
+{
+    sendMessageWithReply<WebPushD::MessageType::RequestSystemNotificationPermission>(WTFMove(completionHandler), originString);
+}
+
+void NetworkNotificationManager::deletePushAndNotificationRegistration(const SecurityOriginData& origin, CompletionHandler<void(const String&)>&& completionHandler)
+{
+    sendMessageWithReply<WebPushD::MessageType::DeletePushAndNotificationRegistration>(WTFMove(completionHandler), origin.toString());
+}
+
+void NetworkNotificationManager::getOriginsWithPushAndNotificationPermissions(CompletionHandler<void(const Vector<SecurityOriginData>&)>&& completionHandler)
+{
+    CompletionHandler<void(Vector<String>&&)> replyHandler = [completionHandler = WTFMove(completionHandler)] (Vector<String> originStrings) mutable {
+        Vector<SecurityOriginData> origins;
+        for (auto& originString : originStrings)
+            origins.append(SecurityOriginData::fromURL({ { }, originString }));
+        completionHandler(WTFMove(origins));
+    };
+
+    sendMessageWithReply<WebPushD::MessageType::GetOriginsWithPushAndNotificationPermissions>(WTFMove(replyHandler));
 }
 
 void NetworkNotificationManager::showNotification(const String&, const String&, const String&, const String&, const String&, WebCore::NotificationDirection, const String&, uint64_t)
@@ -76,7 +99,6 @@ void NetworkNotificationManager::didDestroyNotification(uint64_t)
         return;
 }
 
-
 template<WebPushD::MessageType messageType, typename... Args>
 void NetworkNotificationManager::sendMessage(Args&&... args) const
 {
@@ -93,6 +115,7 @@ template<> struct ReplyCaller<> {
         completionHandler();
     }
 };
+
 template<> struct ReplyCaller<String> {
     static void callReply(Daemon::Decoder&& decoder, CompletionHandler<void(String&&)>&& completionHandler)
     {
@@ -101,6 +124,39 @@ template<> struct ReplyCaller<String> {
         if (!string)
             return completionHandler({ });
         completionHandler(WTFMove(*string));
+    }
+};
+
+template<> struct ReplyCaller<const String&> {
+    static void callReply(Daemon::Decoder&& decoder, CompletionHandler<void(const String&)>&& completionHandler)
+    {
+        std::optional<String> string;
+        decoder >> string;
+        if (!string)
+            return completionHandler({ });
+        completionHandler(WTFMove(*string));
+    }
+};
+
+template<> struct ReplyCaller<bool> {
+    static void callReply(Daemon::Decoder&& decoder, CompletionHandler<void(bool)>&& completionHandler)
+    {
+        std::optional<bool> boolean;
+        decoder >> boolean;
+        if (!boolean)
+            return completionHandler(false);
+        completionHandler(*boolean);
+    }
+};
+
+template<> struct ReplyCaller<Vector<String>&&> {
+    static void callReply(Daemon::Decoder&& decoder, CompletionHandler<void(Vector<String>&&)>&& completionHandler)
+    {
+        std::optional<Vector<String>> strings;
+        decoder >> strings;
+        if (!strings)
+            return completionHandler({ });
+        completionHandler(WTFMove(*strings));
     }
 };
 

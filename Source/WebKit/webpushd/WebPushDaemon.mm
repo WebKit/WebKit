@@ -53,12 +53,48 @@ ARGUMENTS(String)
 REPLY(String)
 END
 
+FUNCTION(getOriginsWithPushAndNotificationPermissions)
+ARGUMENTS()
+REPLY(const Vector<String>&)
+END
+
+FUNCTION(deletePushAndNotificationRegistration)
+ARGUMENTS(String)
+REPLY(String)
+END
+
+FUNCTION(requestSystemNotificationPermission)
+ARGUMENTS(String)
+REPLY(bool)
+END
+
 #undef FUNCTION
 #undef ARGUMENTS
 #undef REPLY
 #undef END
 
 WebPushD::EncodedMessage echoTwice::encodeReply(String reply)
+{
+    WebKit::Daemon::Encoder encoder;
+    encoder << reply;
+    return encoder.takeBuffer();
+}
+
+WebPushD::EncodedMessage getOriginsWithPushAndNotificationPermissions::encodeReply(const Vector<String>& reply)
+{
+    WebKit::Daemon::Encoder encoder;
+    encoder << reply;
+    return encoder.takeBuffer();
+}
+
+WebPushD::EncodedMessage deletePushAndNotificationRegistration::encodeReply(String reply)
+{
+    WebKit::Daemon::Encoder encoder;
+    encoder << reply;
+    return encoder.takeBuffer();
+}
+
+WebPushD::EncodedMessage requestSystemNotificationPermission::encodeReply(bool reply)
 {
     WebKit::Daemon::Encoder encoder;
     encoder << reply;
@@ -141,12 +177,46 @@ void Daemon::decodeAndHandleMessage(MessageType messageType, Span<const uint8_t>
     case MessageType::EchoTwice:
         handleWebPushDMessageWithReply<MessageInfo::echoTwice>(encodedMessage, WTFMove(replySender));
         break;
+    case MessageType::GetOriginsWithPushAndNotificationPermissions:
+        handleWebPushDMessageWithReply<MessageInfo::getOriginsWithPushAndNotificationPermissions>(encodedMessage, WTFMove(replySender));
+        break;
+    case MessageType::DeletePushAndNotificationRegistration:
+        handleWebPushDMessageWithReply<MessageInfo::deletePushAndNotificationRegistration>(encodedMessage, WTFMove(replySender));
+        break;
+    case MessageType::RequestSystemNotificationPermission:
+        handleWebPushDMessageWithReply<MessageInfo::requestSystemNotificationPermission>(encodedMessage, WTFMove(replySender));
+        break;
     }
 }
 
 void Daemon::echoTwice(const String& message, CompletionHandler<void(const String&)>&& replySender)
 {
     replySender(makeString(message, message));
+}
+
+void Daemon::requestSystemNotificationPermission(const String& originString, CompletionHandler<void(bool)>&& replySender)
+{
+    // FIXME: This is for an API testing checkpoint
+    // Next step is actually perform a persistent permissions request on a per-platform basis
+    m_inMemoryOriginStringsWithPermissionForTesting.add(originString);
+    replySender(true);
+}
+
+void Daemon::getOriginsWithPushAndNotificationPermissions(CompletionHandler<void(const Vector<String>&)>&& replySender)
+{
+    // FIXME: This is for an API testing checkpoint
+    // Next step is actually gather persistent permissions from the system on a per-platform basis
+    replySender(copyToVector(m_inMemoryOriginStringsWithPermissionForTesting));
+}
+
+void Daemon::deletePushAndNotificationRegistration(const String& originString, CompletionHandler<void(const String&)>&& replySender)
+{
+    // FIXME: This is for an API testing checkpoint
+    // Next step is actually delete any persistent permissions on a per-platform basis
+    if (m_inMemoryOriginStringsWithPermissionForTesting.remove(originString))
+        replySender("");
+    else
+        replySender(makeString("Origin ", originString, " not registered for push or notifications"));
 }
 
 } // namespace WebPushD

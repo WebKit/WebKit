@@ -32,6 +32,10 @@
 #include <WebCore/NotificationDirection.h>
 #include <wtf/text/WTFString.h>
 
+namespace WebCore {
+struct SecurityOriginData;
+}
+
 namespace WebKit {
 
 namespace WebPushD {
@@ -46,9 +50,13 @@ class NetworkNotificationManager : public NotificationManagerMessageHandler {
 public:
     NetworkSession& networkSession() const { return m_networkSession; }
 
+    void deletePushAndNotificationRegistration(const WebCore::SecurityOriginData&, CompletionHandler<void(const String&)>&&);
+    void getOriginsWithPushAndNotificationPermissions(CompletionHandler<void(const Vector<WebCore::SecurityOriginData>&)>&&);
+
 private:
     NetworkNotificationManager(NetworkSession&, const String& webPushMachServiceName);
 
+    void requestSystemNotificationPermission(const String& originString, CompletionHandler<void(bool)>&&) final;
     void showNotification(const String& title, const String& body, const String& iconURL, const String& tag, const String& lang, WebCore::NotificationDirection, const String& originString, uint64_t notificationID) final;
     void cancelNotification(uint64_t notificationID) final;
     void clearNotifications(const Vector<uint64_t>& notificationIDs) final;

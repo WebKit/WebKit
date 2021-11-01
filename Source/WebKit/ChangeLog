@@ -1,3 +1,75 @@
+2021-11-01  Brady Eidson  <beidson@apple.com>
+
+        webpushd: Add mock in-memory registration, and the WKWebsiteDataStore SPI to manage them
+        https://bugs.webkit.org/show_bug.cgi?id=232539
+
+        Reviewed by Alex Christensen.
+
+        Covered by API test.
+        
+        The old SPI to ask the client if notifications should be allowed will remain.
+        
+        Assuming the client okays notifications, in the case of built-in notifications, the *actual*
+        registration interaction with the system will take place as an additional step in webpushd
+        
+        This patch:
+        - Adds in-memory notification registration for webpushd
+        - Adds SPI to WKWebsiteDataStore to manage registrations
+        - Tests the SPI
+        
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::deletePushAndNotificationRegistration):
+        (WebKit::NetworkProcess::getOriginsWithPushAndNotificationPermissions):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+
+        * NetworkProcess/NetworkSession.h:
+        (WebKit::NetworkSession::notificationManager):
+
+        * NetworkProcess/Notifications/NetworkNotificationManager.cpp:
+        (WebKit::NetworkNotificationManager::requestSystemNotificationPermission):
+        (WebKit::NetworkNotificationManager::deletePushAndNotificationRegistration):
+        (WebKit::NetworkNotificationManager::getOriginsWithPushAndNotificationPermissions):
+        (WebKit::ReplyCaller<bool>::callReply):
+        (WebKit::ReplyCaller<Vector<String>::callReply):
+        * NetworkProcess/Notifications/NetworkNotificationManager.h:
+
+        * Shared/API/APISecurityOrigin.h:
+        (API::SecurityOrigin::create):
+
+        * Shared/Notifications/NotificationManagerMessageHandler.h:
+        * Shared/Notifications/NotificationManagerMessageHandler.messages.in:
+
+        * Shared/WebPushDaemonConstants.h:
+        (WebKit::WebPushD::messageTypeSendsReply):
+
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.mm:
+        (-[WKWebsiteDataStore _deletePushAndNotificationRegistration:completionHandler:]):
+        (-[WKWebsiteDataStore _getOriginsWithPushAndNotificationPermissions:]):
+        * UIProcess/API/Cocoa/WKWebsiteDataStorePrivate.h:
+
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::deletePushAndNotificationRegistration):
+        (WebKit::NetworkProcessProxy::getOriginsWithPushAndNotificationPermissions):
+        * UIProcess/Network/NetworkProcessProxy.h:
+
+        * UIProcess/Notifications/WebNotificationManagerMessageHandler.cpp:
+        (WebKit::WebNotificationManagerMessageHandler::requestSystemNotificationPermission):
+        * UIProcess/Notifications/WebNotificationManagerMessageHandler.h:
+
+        * WebProcess/Notifications/NotificationPermissionRequestManager.cpp:
+        (WebKit::NotificationPermissionRequestManager::startRequest):
+
+        * webpushd/WebPushDaemon.h:
+        * webpushd/WebPushDaemon.mm:
+        (WebPushD::MessageInfo::getOriginsWithPushAndNotificationPermissions::encodeReply):
+        (WebPushD::MessageInfo::deletePushAndNotificationRegistration::encodeReply):
+        (WebPushD::MessageInfo::requestSystemNotificationPermission::encodeReply):
+        (WebPushD::Daemon::decodeAndHandleMessage):
+        (WebPushD::Daemon::requestSystemNotificationPermission):
+        (WebPushD::Daemon::getOriginsWithPushAndNotificationPermissions):
+        (WebPushD::Daemon::deletePushAndNotificationRegistration):
+
 2021-11-01  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         GPU process WebKit logging is not initialised

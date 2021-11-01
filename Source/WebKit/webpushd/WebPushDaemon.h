@@ -27,6 +27,7 @@
 
 #include "WebPushDaemonConstants.h"
 #include <wtf/Forward.h>
+#include <wtf/HashSet.h>
 #include <wtf/OSObjectPtr.h>
 #include <wtf/Span.h>
 #include <wtf/spi/darwin/XPCSPI.h>
@@ -48,12 +49,17 @@ public:
 
     // Message handlers
     void echoTwice(const String&, CompletionHandler<void(const String&)>&& replySender);
+    void requestSystemNotificationPermission(const String&, CompletionHandler<void(bool)>&& replySender);
+    void getOriginsWithPushAndNotificationPermissions(CompletionHandler<void(const Vector<String>&)>&& replySender);
+    void deletePushAndNotificationRegistration(const String& originString, CompletionHandler<void(const String&)>&& replySender);
 
 private:
     Daemon() = default;
 
     CompletionHandler<void(EncodedMessage&&)> createReplySender(MessageType, OSObjectPtr<xpc_object_t>&& request);
     void decodeAndHandleMessage(MessageType, Span<const uint8_t> encodedMessage, CompletionHandler<void(EncodedMessage&&)>&&);
+
+    HashSet<String> m_inMemoryOriginStringsWithPermissionForTesting;
 };
 
 } // namespace WebPushD
