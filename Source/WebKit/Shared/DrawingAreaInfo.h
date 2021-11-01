@@ -37,7 +37,10 @@ enum class DrawingAreaType : uint8_t {
 #endif
     RemoteLayerTree,
 #elif USE(COORDINATED_GRAPHICS) || USE(TEXTURE_MAPPER)
-    CoordinatedGraphics
+    CoordinatedGraphics,
+#endif
+#if USE(GRAPHICS_LAYER_WC)
+    WC,
 #endif
 };
     
@@ -63,6 +66,9 @@ template<> struct EnumTraits<WebKit::DrawingAreaType> {
         , WebKit::DrawingAreaType::RemoteLayerTree
 #elif USE(COORDINATED_GRAPHICS) || USE(TEXTURE_MAPPER)
         , WebKit::DrawingAreaType::CoordinatedGraphics
+#endif
+#if USE(GRAPHICS_LAYER_WC)
+        , WebKit::DrawingAreaType::WC
 #endif
     >;
 };

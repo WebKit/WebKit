@@ -29,6 +29,7 @@
 
 #include "APIPageConfiguration.h"
 #include "DrawingAreaProxyCoordinatedGraphics.h"
+#include "DrawingAreaProxyWC.h"
 #include "Logging.h"
 #include "NativeWebKeyboardEvent.h"
 #include "NativeWebMouseEvent.h"
@@ -491,31 +492,43 @@ void WebView::paint(HDC hdc, const IntRect& dirtyRect)
     if (dirtyRect.isEmpty())
         return;
     m_page->endPrinting();
-    if (auto* drawingArea = static_cast<DrawingAreaProxyCoordinatedGraphics*>(m_page->drawingArea())) {
-        // FIXME: We should port WebKit1's rect coalescing logic here.
-        Region unpaintedRegion;
+    if (m_page->drawingArea()) {
+        auto painter = [&](auto drawingArea) {
+            // FIXME: We should port WebKit1's rect coalescing logic here.
+            Region unpaintedRegion;
 #if USE(CAIRO)
-        cairo_surface_t* surface = cairo_win32_surface_create(hdc);
-        cairo_t* context = cairo_create(surface);
-
-        drawingArea->paint(context, dirtyRect, unpaintedRegion);
-
-        cairo_destroy(context);
-        cairo_surface_destroy(surface);
-#else
-        COMPtr<ID3D11Texture2D> backBuffer; 
-        HRESULT hr = m_swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&backBuffer)); 
-        if (SUCCEEDED(hr)) {
-            BackingStore::DXConnections context { m_immediateContext.get(), backBuffer.get() };
+            cairo_surface_t* surface = cairo_win32_surface_create(hdc);
+            cairo_t* context = cairo_create(surface);
+    
             drawingArea->paint(context, dirtyRect, unpaintedRegion);
-        }
-
-        m_swapChain->Present(0, 0); 
+    
+            cairo_destroy(context);
+            cairo_surface_destroy(surface);
+#else
+            COMPtr<ID3D11Texture2D> backBuffer; 
+            HRESULT hr = m_swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&backBuffer)); 
+            if (SUCCEEDED(hr)) {
+                BackingStore::DXConnections context { m_immediateContext.get(), backBuffer.get() };
+                drawingArea->paint(context, dirtyRect, unpaintedRegion);
+            }
+    
+            m_swapChain->Present(0, 0); 
 #endif
-
-        auto unpaintedRects = unpaintedRegion.rects();
-        for (auto& rect : unpaintedRects)
-            drawPageBackground(hdc, m_page.get(), rect);
+    
+            auto unpaintedRects = unpaintedRegion.rects();
+            for (auto& rect : unpaintedRects)
+                drawPageBackground(hdc, m_page.get(), rect);
+        };
+        switch (m_page->drawingArea()->type()) {
+        case DrawingAreaType::WC:
+            painter(static_cast<DrawingAreaProxyWC*>(m_page->drawingArea()));
+            break;
+        case DrawingAreaType::CoordinatedGraphics:
+            painter(static_cast<DrawingAreaProxyCoordinatedGraphics*>(m_page->drawingArea()));
+            break;
+        default:
+            ASSERT_NOT_REACHED();
+        }
     } else
         drawPageBackground(hdc, m_page.get(), dirtyRect);
 }

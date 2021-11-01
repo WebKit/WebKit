@@ -1,3 +1,207 @@
+2021-10-31  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo] New GraphicsLayer for GPU process mode
+        https://bugs.webkit.org/show_bug.cgi?id=228308
+
+        Reviewed by Don Olmstead.
+
+        Added a new GraphicsLayer implementation GraphicsLayerWC which
+        transfers GraphicsLayer tree to GPU process and runs the
+        compositor (TextureMapper) in GPU process.
+
+        In GPU process mode, WebGL is run in GPU process. So, the
+        compositor should be run in GPU process. Otherwise, the output
+        texture of WebGL has to be transferred from GPU process to the
+        compositor process (UI process or web process).
+
+        Because ANGLE isn't thread-safe, the compositor and WebGL should
+        be run in the same thread in GPU process.
+
+        Enabling gpu_process_webgl also enables GPU process compositing now.
+        > reg add HKEY_CURRENT_USER\Software\WebKit /v gpu_process_webgl /t REG_DWORD /d 1 /f
+
+        gpu_process_canvas_rendering can also be enabled.
+        > reg add HKEY_CURRENT_USER\Software\WebKit /v gpu_process_canvas_rendering /t REG_DWORD /d 1 /f
+
+        Enabling gpu_process_dom_rendering is still experimental.
+        > reg add HKEY_CURRENT_USER\Software\WebKit /v gpu_process_dom_rendering /t REG_DWORD /d 1 /f
+
+        The following commands restore the non-GPU process mode.
+        > reg delete HKEY_CURRENT_USER\Software\WebKit /v gpu_process_canvas_rendering /f
+        > reg delete HKEY_CURRENT_USER\Software\WebKit /v gpu_process_webgl /f
+        > reg delete HKEY_CURRENT_USER\Software\WebKit /v gpu_process_dom_rendering /f
+
+        * GPUProcess/GPUConnectionToWebProcess.cpp:
+        (WebKit::GPUConnectionToWebProcess::createWCLayerTreeHost):
+        (WebKit::GPUConnectionToWebProcess::releaseWCLayerTreeHost):
+        (WebKit::GPUConnectionToWebProcess::findRemoteGraphicsContextGL):
+        * GPUProcess/GPUConnectionToWebProcess.h:
+        * GPUProcess/GPUConnectionToWebProcess.messages.in:
+        * GPUProcess/GPUProcess.h:
+        (WebKit::GPUProcess::sharedSceneContext):
+        * GPUProcess/graphics/RemoteGraphicsContextGL.h:
+        (WebKit::RemoteGraphicsContextGL::platformLayer const):
+        * GPUProcess/graphics/ScopedWebGLRenderingResourcesRequest.cpp:
+        (WebKit::ScopedWebGLRenderingResourcesRequest::scheduleFreeWebGLRenderingResources):
+        * GPUProcess/graphics/wc/RemoteWCLayerTreeHost.cpp: Added.
+        (WebKit::RemoteWCLayerTreeHost::create):
+        (WebKit::RemoteWCLayerTreeHost::RemoteWCLayerTreeHost):
+        (WebKit::RemoteWCLayerTreeHost::~RemoteWCLayerTreeHost):
+        (WebKit::RemoteWCLayerTreeHost::messageSenderConnection const):
+        (WebKit::RemoteWCLayerTreeHost::messageSenderDestinationID const):
+        (WebKit::RemoteWCLayerTreeHost::update):
+        * GPUProcess/graphics/wc/RemoteWCLayerTreeHost.h: Added.
+        * GPUProcess/graphics/wc/RemoteWCLayerTreeHost.messages.in: Added.
+        * GPUProcess/graphics/wc/WCScene.cpp: Added.
+        (WebKit::WCScene::initialize):
+        (WebKit::WCScene::~WCScene):
+        (WebKit::WCScene::update):
+        * GPUProcess/graphics/wc/WCScene.h: Added.
+        * GPUProcess/graphics/wc/WCSceneContext.cpp: Added.
+        (WebKit::WCSceneContext::WCSceneContext):
+        (WebKit::WCSceneContext::makeContextCurrent):
+        (WebKit::WCSceneContext::createTextureMapper):
+        (WebKit::WCSceneContext::swapBuffers):
+        * GPUProcess/graphics/wc/WCSceneContext.h: Added.
+        * GPUProcess/graphics/wc/WCSharedSceneContextHolder.h: Added.
+        (WebKit::WCSharedSceneContextHolder::ensureHolderForWindow):
+        (WebKit::WCSharedSceneContextHolder::removeHolder):
+        * GPUProcess/win/GPUProcessMainWin.cpp:
+        (WebKit::GPUProcessMain):
+        * PlatformWin.cmake:
+        * Scripts/webkit/messages.py:
+        (types_that_cannot_be_forward_declared):
+        (conditions_for_header):
+        * Shared/DrawingAreaInfo.h:
+        * UIProcess/wc/DrawingAreaProxyWC.cpp: Added.
+        (WebKit::DrawingAreaProxyWC::DrawingAreaProxyWC):
+        (WebKit::DrawingAreaProxyWC::paint):
+        (WebKit::DrawingAreaProxyWC::sizeDidChange):
+        (WebKit::DrawingAreaProxyWC::update):
+        (WebKit::DrawingAreaProxyWC::enterAcceleratedCompositingMode):
+        (WebKit::DrawingAreaProxyWC::incorporateUpdate):
+        (WebKit::DrawingAreaProxyWC::discardBackingStore):
+        * UIProcess/wc/DrawingAreaProxyWC.h: Added.
+        * UIProcess/win/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::createDrawingAreaProxy):
+        * UIProcess/win/WebView.cpp:
+        (WebKit::WebView::paint):
+        * WebProcess/GPU/graphics/RemoteGraphicsContextGLProxy.cpp:
+        (WebKit::RemoteGraphicsContextGLProxy::RemoteGraphicsContextGLProxy):
+        * WebProcess/GPU/graphics/wc/RemoteWCLayerTreeHostProxy.cpp: Added.
+        (WebKit::RemoteWCLayerTreeHostProxy::RemoteWCLayerTreeHostProxy):
+        (WebKit::RemoteWCLayerTreeHostProxy::~RemoteWCLayerTreeHostProxy):
+        (WebKit::RemoteWCLayerTreeHostProxy::messageSenderConnection const):
+        (WebKit::RemoteWCLayerTreeHostProxy::ensureGPUProcessConnection):
+        (WebKit::RemoteWCLayerTreeHostProxy::disconnectGpuProcessIfNeeded):
+        (WebKit::RemoteWCLayerTreeHostProxy::gpuProcessConnectionDidClose):
+        (WebKit::RemoteWCLayerTreeHostProxy::messageSenderDestinationID const):
+        (WebKit::RemoteWCLayerTreeHostProxy::update):
+        (WebKit::RemoteWCLayerTreeHostProxy::didUpdate):
+        * WebProcess/GPU/graphics/wc/RemoteWCLayerTreeHostProxy.h: Added.
+        (WebKit::RemoteWCLayerTreeHostProxy::wcLayerTreeHostIdentifier const):
+        * WebProcess/GPU/graphics/wc/RemoteWCLayerTreeHostProxy.messages.in: Added.
+        * WebProcess/GPU/graphics/wc/WCLayerTreeHostIdentifier.h: Added.
+        * WebProcess/GPU/graphics/wc/WCPlatformLayerGCGL.h: Added.
+        (WebKit::WCPlatformLayerGCGL::WCPlatformLayerGCGL):
+        (WebKit::WCPlatformLayerGCGL::graphicsContextGLIdentifier):
+        * WebProcess/WebPage/DrawingArea.cpp:
+        (WebKit::DrawingArea::create):
+        (WebKit::DrawingArea::supportsGPUProcessRendering):
+        * WebProcess/WebPage/DrawingArea.h:
+        (WebKit::DrawingArea::updateGeometry):
+        * WebProcess/WebPage/DrawingArea.messages.in:
+        * WebProcess/WebPage/wc/DrawingAreaWC.cpp: Added.
+        (WebKit::DrawingAreaWC::DrawingAreaWC):
+        (WebKit::DrawingAreaWC::~DrawingAreaWC):
+        (WebKit::DrawingAreaWC::graphicsLayerFactory):
+        (WebKit::DrawingAreaWC::updateRootLayers):
+        (WebKit::DrawingAreaWC::setRootCompositingLayer):
+        (WebKit::DrawingAreaWC::attachViewOverlayGraphicsLayer):
+        (WebKit::DrawingAreaWC::setLayerTreeStateIsFrozen):
+        (WebKit::DrawingAreaWC::updateGeometry):
+        (WebKit::DrawingAreaWC::setNeedsDisplay):
+        (WebKit::DrawingAreaWC::setNeedsDisplayInRect):
+        (WebKit::DrawingAreaWC::scroll):
+        (WebKit::DrawingAreaWC::triggerRenderingUpdate):
+        (WebKit::flushLayerImageBuffers):
+        (WebKit::DrawingAreaWC::isCompositingMode):
+        (WebKit::DrawingAreaWC::updateRendering):
+        (WebKit::DrawingAreaWC::sendUpdateAC):
+        (WebKit::shouldPaintBoundsRect):
+        (WebKit::DrawingAreaWC::sendUpdateNonAC):
+        (WebKit::DrawingAreaWC::graphicsLayerAdded):
+        (WebKit::DrawingAreaWC::graphicsLayerRemoved):
+        (WebKit::DrawingAreaWC::commitLayerUpateInfo):
+        (WebKit::DrawingAreaWC::createImageBuffer):
+        (WebKit::DrawingAreaWC::didUpdate):
+        (WebKit::DrawingAreaWC::RootLayerClient::RootLayerClient):
+        (WebKit::DrawingAreaWC::RootLayerClient::paintContents):
+        (WebKit::DrawingAreaWC::RootLayerClient::deviceScaleFactor const):
+        * WebProcess/WebPage/wc/DrawingAreaWC.h: Added.
+        * WebProcess/WebPage/wc/GraphicsLayerWC.cpp: Added.
+        (WebKit::GraphicsLayerWC::GraphicsLayerWC):
+        (WebKit::GraphicsLayerWC::~GraphicsLayerWC):
+        (WebKit::GraphicsLayerWC::generateLayerID):
+        (WebKit::GraphicsLayerWC::primaryLayerID const):
+        (WebKit::GraphicsLayerWC::setNeedsDisplay):
+        (WebKit::GraphicsLayerWC::setNeedsDisplayInRect):
+        (WebKit::GraphicsLayerWC::setContentsNeedsDisplay):
+        (WebKit::GraphicsLayerWC::setChildren):
+        (WebKit::GraphicsLayerWC::addChild):
+        (WebKit::GraphicsLayerWC::addChildAtIndex):
+        (WebKit::GraphicsLayerWC::addChildBelow):
+        (WebKit::GraphicsLayerWC::addChildAbove):
+        (WebKit::GraphicsLayerWC::replaceChild):
+        (WebKit::GraphicsLayerWC::removeFromParent):
+        (WebKit::GraphicsLayerWC::setMaskLayer):
+        (WebKit::GraphicsLayerWC::setReplicatedLayer):
+        (WebKit::GraphicsLayerWC::setReplicatedByLayer):
+        (WebKit::GraphicsLayerWC::setPosition):
+        (WebKit::GraphicsLayerWC::setAnchorPoint):
+        (WebKit::GraphicsLayerWC::setSize):
+        (WebKit::GraphicsLayerWC::setBoundsOrigin):
+        (WebKit::GraphicsLayerWC::setTransform):
+        (WebKit::GraphicsLayerWC::setChildrenTransform):
+        (WebKit::GraphicsLayerWC::setPreserves3D):
+        (WebKit::GraphicsLayerWC::setMasksToBounds):
+        (WebKit::GraphicsLayerWC::setOpacity):
+        (WebKit::GraphicsLayerWC::setContentsRect):
+        (WebKit::GraphicsLayerWC::setContentsClippingRect):
+        (WebKit::GraphicsLayerWC::setDrawsContent):
+        (WebKit::GraphicsLayerWC::setContentsVisible):
+        (WebKit::GraphicsLayerWC::setBackfaceVisibility):
+        (WebKit::GraphicsLayerWC::setContentsToSolidColor):
+        (WebKit::GraphicsLayerWC::setContentsToPlatformLayer):
+        (WebKit::GraphicsLayerWC::usesContentsLayer const):
+        (WebKit::GraphicsLayerWC::setShowDebugBorder):
+        (WebKit::GraphicsLayerWC::setDebugBorder):
+        (WebKit::GraphicsLayerWC::setShowRepaintCounter):
+        (WebKit::filtersCanBeComposited):
+        (WebKit::GraphicsLayerWC::setFilters):
+        (WebKit::GraphicsLayerWC::setBackdropFilters):
+        (WebKit::GraphicsLayerWC::setBackdropFiltersRect):
+        (WebKit::GraphicsLayerWC::noteLayerPropertyChanged):
+        (WebKit::GraphicsLayerWC::flushCompositingState):
+        (WebKit::GraphicsLayerWC::flushCompositingStateForThisLayerOnly):
+        * WebProcess/WebPage/wc/GraphicsLayerWC.h: Added.
+        * WebProcess/WebPage/wc/WCBackingStore.h: Added.
+        (WebKit::WCBackingStore::WCBackingStore):
+        (WebKit::WCBackingStore::imageBuffer):
+        (WebKit::WCBackingStore::setImageBuffer):
+        (WebKit::WCBackingStore::bitmap const):
+        (WebKit::WCBackingStore::encode const):
+        (WebKit::WCBackingStore::decode):
+        * WebProcess/WebPage/wc/WCLayerFactory.cpp: Added.
+        (WebKit::WCLayerFactory::WCLayerFactory):
+        (WebKit::WCLayerFactory::createGraphicsLayer):
+        * WebProcess/WebPage/wc/WCLayerFactory.h: Added.
+        * WebProcess/WebPage/wc/WCUpateInfo.h: Added.
+        (WebKit::WCLayerUpateInfo::encode const):
+        (WebKit::WCLayerUpateInfo::decode):
+        (WebKit::WCUpateInfo::encode const):
+        (WebKit::WCUpateInfo::decode):
+
 2021-10-31  Simon Fraser  <simon.fraser@apple.com>
 
         Scroll animations should run at 120Hz on 120Hz displays

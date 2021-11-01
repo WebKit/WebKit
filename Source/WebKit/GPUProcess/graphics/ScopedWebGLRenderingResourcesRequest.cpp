@@ -42,10 +42,12 @@ static bool didScheduleFreeWebGLRenderingResources;
 
 void ScopedWebGLRenderingResourcesRequest::scheduleFreeWebGLRenderingResources()
 {
+#if !USE(GRAPHICS_LAYER_WC)
     if (didScheduleFreeWebGLRenderingResources)
         return;
     RunLoop::main().dispatchAfter(freeWebGLRenderingResourcesTimeout, freeWebGLRenderingResources);
     didScheduleFreeWebGLRenderingResources = true;
+#endif
 }
 
 void ScopedWebGLRenderingResourcesRequest::freeWebGLRenderingResources()

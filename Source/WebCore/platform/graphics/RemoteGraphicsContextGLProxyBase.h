@@ -96,6 +96,9 @@ protected:
 #if PLATFORM(COCOA)
     RetainPtr<WebGLLayer> m_webGLLayer;
     std::unique_ptr<IOSurface> m_displayBuffer;
+#elif USE(GRAPHICS_LAYER_WC)
+    void setPlatformLayer(PlatformLayerContainer&&);
+    PlatformLayerContainer m_platformLayer;
 #endif
 private:
     void platformInitialize();

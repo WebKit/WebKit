@@ -40,6 +40,9 @@
 #elif USE(COORDINATED_GRAPHICS) || USE(TEXTURE_MAPPER)
 #include "DrawingAreaCoordinatedGraphics.h"
 #endif
+#if USE(GRAPHICS_LAYER_WC)
+#include "DrawingAreaWC.h"
+#endif
 
 namespace WebKit {
 using namespace WebCore;
@@ -57,6 +60,10 @@ std::unique_ptr<DrawingArea> DrawingArea::create(WebPage& webPage, const WebPage
 #elif USE(COORDINATED_GRAPHICS) || USE(TEXTURE_MAPPER)
     case DrawingAreaType::CoordinatedGraphics:
         return makeUnique<DrawingAreaCoordinatedGraphics>(webPage, parameters);
+#endif
+#if USE(GRAPHICS_LAYER_WC)
+    case DrawingAreaType::WC:
+        return makeUnique<DrawingAreaWC>(webPage, parameters);
 #endif
     }
 
@@ -108,6 +115,10 @@ bool DrawingArea::supportsGPUProcessRendering(DrawingAreaType type)
 #elif USE(COORDINATED_GRAPHICS) || USE(TEXTURE_MAPPER)
     case DrawingAreaType::CoordinatedGraphics:
         return false;
+#endif
+#if USE(GRAPHICS_LAYER_WC)
+    case DrawingAreaType::WC:
+        return true;
 #endif
     default:
         return false;

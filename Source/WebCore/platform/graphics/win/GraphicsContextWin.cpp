@@ -53,6 +53,8 @@ static void fillWithClearColor(HBITMAP bitmap)
 
 HDC GraphicsContext::getWindowsContext(const IntRect& dstRect, bool supportAlphaBlend)
 {
+    if (!hasPlatformContext())
+        return nullptr;
     HDC hdc = nullptr;
 #if !USE(CAIRO)
     hdc = deprecatedPrivateContext()->m_hdc;

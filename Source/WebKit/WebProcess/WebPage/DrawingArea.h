@@ -136,6 +136,10 @@ public:
     virtual void updateGeometry(const WebCore::IntSize& viewSize, bool flushSynchronously, const WTF::MachSendRight& fencePort) { }
 #endif
 
+#if USE(GRAPHICS_LAYER_WC)
+    virtual void updateGeometry(uint64_t, WebCore::IntSize) { };
+#endif
+
 #if USE(COORDINATED_GRAPHICS) || USE(GRAPHICS_LAYER_TEXTURE_MAPPER)
     virtual void layerHostDidFlushLayers() { }
 #endif

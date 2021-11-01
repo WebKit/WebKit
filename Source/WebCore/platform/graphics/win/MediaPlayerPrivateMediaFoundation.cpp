@@ -2857,15 +2857,11 @@ void MediaPlayerPrivateMediaFoundation::Direct3DPresenter::paintCurrentFrame(Web
         ASSERT(cairoFormat != CAIRO_FORMAT_INVALID);
 
         cairo_surface_t* image = nullptr;
-        if (cairoFormat != CAIRO_FORMAT_INVALID)
-            image = cairo_image_surface_create_for_data(static_cast<unsigned char*>(data), cairoFormat, width, height, pitch);
-
-        FloatRect srcRect(0, 0, width, height);
-        if (image) {
-            ASSERT(context.hasPlatformContext());
-            auto& state = context.state();
-            Cairo::drawSurface(*context.platformContext(), image, destRect, srcRect, state.imageInterpolationQuality, state.alpha, Cairo::ShadowState(state));
-            cairo_surface_destroy(image);
+        if (cairoFormat != CAIRO_FORMAT_INVALID) {
+            auto surface = adoptRef(cairo_image_surface_create_for_data(static_cast<unsigned char*>(data), cairoFormat, width, height, pitch));
+            auto image = NativeImage::create(WTFMove(surface));
+            FloatRect srcRect(0, 0, width, height);
+            context.drawNativeImage(*image, srcRect.size(), destRect, srcRect);
         }
 #else
 #error "Platform needs to implement drawing of Direct3D surface to graphics context!"

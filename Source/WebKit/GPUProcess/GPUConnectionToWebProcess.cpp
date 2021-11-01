@@ -143,6 +143,10 @@
 #include <WebCore/SecurityOrigin.h>
 #endif
 
+#if USE(GRAPHICS_LAYER_WC)
+#include "RemoteWCLayerTreeHost.h"
+#endif
+
 namespace WebKit {
 using namespace WebCore;
 
@@ -335,6 +339,28 @@ void GPUConnectionToWebProcess::configureLoggingChannel(const String& channelNam
     UNUSED_PARAM(level);
 #endif
 }
+
+#if USE(GRAPHICS_LAYER_WC)
+void GPUConnectionToWebProcess::createWCLayerTreeHost(WebKit::WCLayerTreeHostIdentifier identifier, uint64_t nativeWindow)
+{
+    auto addResult = m_remoteWCLayerTreeHostMap.add(identifier, RemoteWCLayerTreeHost::create(*this, WTFMove(identifier), nativeWindow));
+    ASSERT_UNUSED(addResult, addResult.isNewEntry);
+}
+
+void GPUConnectionToWebProcess::releaseWCLayerTreeHost(WebKit::WCLayerTreeHostIdentifier identifier)
+{
+    m_remoteWCLayerTreeHostMap.remove(identifier);
+}
+
+RefPtr<RemoteGraphicsContextGL> GPUConnectionToWebProcess::findRemoteGraphicsContextGL(GraphicsContextGLIdentifier identifier)
+{
+    ASSERT(RunLoop::isMain());
+    auto iter = m_remoteGraphicsContextGLMap.find(identifier);
+    if (iter == m_remoteGraphicsContextGLMap.end())
+        return nullptr;
+    return iter->value.get();
+}
+#endif
 
 bool GPUConnectionToWebProcess::allowsExitUnderMemoryPressure() const
 {

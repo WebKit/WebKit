@@ -40,6 +40,10 @@
 #include <WebCore/GraphicsContextGLIOSurfaceSwapChain.h>
 #endif
 
+#if USE(GRAPHICS_LAYER_WC)
+#include "WCPlatformLayerGCGL.h"
+#endif
+
 namespace WebKit {
 
 using namespace WebCore;
@@ -62,6 +66,9 @@ RemoteGraphicsContextGLProxy::RemoteGraphicsContextGLProxy(GPUProcessConnection&
     // TODO: We must wait until initialized, because at the moment we cannot receive IPC messages
     // during wait while in synchronous stream send. Should be fixed as part of https://bugs.webkit.org/show_bug.cgi?id=217211.
     waitUntilInitialized();
+#if USE(GRAPHICS_LAYER_WC)
+    setPlatformLayer(makeUnique<WCPlatformLayerGCGL>(m_graphicsContextGLIdentifier));
+#endif
 }
 
 RemoteGraphicsContextGLProxy::~RemoteGraphicsContextGLProxy()

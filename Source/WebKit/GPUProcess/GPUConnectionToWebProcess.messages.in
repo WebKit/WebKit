@@ -51,6 +51,10 @@ messages -> GPUConnectionToWebProcess WantsDispatchMessage {
     ReleaseRemoteCommandListener(WebKit::RemoteRemoteCommandListenerIdentifier identifier)
     SetUserPreferredLanguages(Vector<String> languages)
     ConfigureLoggingChannel(String channelName, enum:uint8_t WTFLogChannelState state, enum:uint8_t WTFLogLevel level)
+#if USE(GRAPHICS_LAYER_WC)
+    CreateWCLayerTreeHost(WebKit::WCLayerTreeHostIdentifier identifier, uint64_t nativeWindow)
+    ReleaseWCLayerTreeHost(WebKit::WCLayerTreeHostIdentifier identifier)
+#endif
 }
 
 #endif // ENABLE(GPU_PROCESS)

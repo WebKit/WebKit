@@ -42,6 +42,10 @@
 #include <CoreGraphics/CGDisplayConfiguration.h>
 #endif
 
+#if USE(GRAPHICS_LAYER_WC)
+#include "WCSharedSceneContextHolder.h"
+#endif
+
 namespace WebCore {
 class NowPlayingManager;
 struct MockMediaDevice;
@@ -90,6 +94,10 @@ public:
 #endif
 #if USE(LIBWEBRTC) && PLATFORM(COCOA)
     WorkQueue& libWebRTCCodecsQueue();
+#endif
+
+#if USE(GRAPHICS_LAYER_WC)
+    WCSharedSceneContextHolder& sharedSceneContext() { return m_sharedSceneContext; }
 #endif
 
 #if ENABLE(VP9)
@@ -184,6 +192,10 @@ private:
 #endif
 #if USE(LIBWEBRTC) && PLATFORM(COCOA)
     RefPtr<WorkQueue> m_libWebRTCCodecsQueue;
+#endif
+
+#if USE(GRAPHICS_LAYER_WC)
+    WCSharedSceneContextHolder m_sharedSceneContext;
 #endif
 
     struct GPUSession {

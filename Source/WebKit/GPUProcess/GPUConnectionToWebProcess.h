@@ -57,6 +57,10 @@
 #include <pal/spi/cocoa/TCCSPI.h>
 #endif
 
+#if USE(GRAPHICS_LAYER_WC)
+#include "WCLayerTreeHostIdentifier.h"
+#endif
+
 namespace WebCore {
 class SecurityOrigin;
 struct SecurityOriginData;
@@ -90,6 +94,10 @@ struct GPUProcessConnectionParameters;
 struct MediaOverridesForTesting;
 struct RemoteAudioSessionConfiguration;
 struct RemoteRenderingBackendCreationParameters;
+
+#if USE(GRAPHICS_LAYER_WC)
+class RemoteWCLayerTreeHost;
+#endif
 
 class GPUConnectionToWebProcess
     : public ThreadSafeRefCounted<GPUConnectionToWebProcess, WTF::DestructionThread::Main>
@@ -161,6 +169,10 @@ public:
     RemoteImageDecoderAVFProxy& imageDecoderAVFProxy();
 #endif
 
+#if USE(GRAPHICS_LAYER_WC)
+    RefPtr<RemoteGraphicsContextGL> findRemoteGraphicsContextGL(GraphicsContextGLIdentifier);
+#endif
+
     void updateSupportedRemoteCommands();
 
     bool allowsExitUnderMemoryPressure() const;
@@ -227,6 +239,11 @@ private:
     void setMediaOverridesForTesting(MediaOverridesForTesting);
     void setUserPreferredLanguages(const Vector<String>&);
     void configureLoggingChannel(const String&, WTFLogChannelState, WTFLogLevel);
+
+#if USE(GRAPHICS_LAYER_WC)
+    void createWCLayerTreeHost(WebKit::WCLayerTreeHostIdentifier, uint64_t nativeWindow);
+    void releaseWCLayerTreeHost(WebKit::WCLayerTreeHostIdentifier);
+#endif
 
     // IPC::Connection::Client
     void didClose(IPC::Connection&) final;
@@ -308,6 +325,11 @@ private:
 
     using RemoteAudioHardwareListenerMap = HashMap<RemoteAudioHardwareListenerIdentifier, std::unique_ptr<RemoteAudioHardwareListenerProxy>>;
     RemoteAudioHardwareListenerMap m_remoteAudioHardwareListenerMap;
+
+#if USE(GRAPHICS_LAYER_WC)
+    using RemoteWCLayerTreeHostMap = HashMap<WCLayerTreeHostIdentifier, std::unique_ptr<RemoteWCLayerTreeHost>>;
+    RemoteWCLayerTreeHostMap m_remoteWCLayerTreeHostMap;
+#endif
 
     RefPtr<RemoteRemoteCommandListenerProxy> m_remoteRemoteCommandListener;
     bool m_isActiveNowPlayingProcess { false };

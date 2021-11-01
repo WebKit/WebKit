@@ -67,6 +67,10 @@ public:
     void displayWasReconfigured();
 #endif
 
+#if USE(GRAPHICS_LAYER_WC)
+    PlatformLayer* platformLayer() const { return m_context->platformLayer(); }
+#endif
+
 protected:
     RemoteGraphicsContextGL(GPUConnectionToWebProcess&, GraphicsContextGLIdentifier, RemoteRenderingBackend&, IPC::StreamConnectionBuffer&&);
     void initialize(WebCore::GraphicsContextGLAttributes&&);

@@ -28,6 +28,7 @@
 #include "PageClientImpl.h"
 
 #include "DrawingAreaProxyCoordinatedGraphics.h"
+#include "DrawingAreaProxyWC.h"
 #include "WebContextMenuProxyWin.h"
 #include "WebPageProxy.h"
 #include "WebPopupMenuProxyWin.h"
@@ -47,6 +48,8 @@ PageClientImpl::PageClientImpl(WebView& view)
 // PageClient's pure virtual functions
 std::unique_ptr<DrawingAreaProxy> PageClientImpl::createDrawingAreaProxy(WebProcessProxy& process)
 {
+    if (m_view.page()->preferences().useGPUProcessForWebGLEnabled())
+        return makeUnique<DrawingAreaProxyWC>(*m_view.page(), process);
     return makeUnique<DrawingAreaProxyCoordinatedGraphics>(*m_view.page(), process);
 }
 
