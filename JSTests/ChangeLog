@@ -1,3 +1,15 @@
+2021-11-01  Saam Barati  <sbarati@apple.com>
+
+        ArrayBuffer species watchpoint being invalidated doesn't mean it's not an ArrayBuffer constructor from the same global object
+        https://bugs.webkit.org/show_bug.cgi?id=231322
+        <rdar://problem/84212078>
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/array-buffer-species-watchpoint-should-not-dictate-if-constructor-is-correct.js: Added.
+        (main.async v23):
+        (main):
+
 2021-11-01  Robin Morisset  <rmorisset@apple.com>
 
         JSGenericTypedArrayView<Adaptor>::set crashes if the length + objectOffset is > UINT32_MAX
