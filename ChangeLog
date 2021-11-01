@@ -1,3 +1,12 @@
+2021-11-01  BJ Burg  <bburg@apple.com>
+
+        Add bburg's GitHub username to contributors.json.
+
+        Unreviewed.
+
+        * metadata/contributors.json:
+        Also, canonicalize a recent change.
+
 2021-10-31  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WinCairo] New GraphicsLayer for GPU process mode

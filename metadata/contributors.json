@@ -939,6 +939,7 @@
          "burg@cs.washington.edu"
       ],
       "expertise" : "Developer Tools, Web Inspector, WebDriver, Cocoa API",
+      "github" : "burg",
       "name" : "BJ Burg",
       "nicks" : [
          "bburg",
@@ -5103,7 +5104,7 @@
       "emails" : [
          "obrufau@igalia.com"
       ],
-      "github": "Loirooriol",
+      "github" : "Loirooriol",
       "name" : "Oriol Brufau",
       "nicks" : [
          "obrufau"
