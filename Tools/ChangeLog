@@ -1,3 +1,55 @@
+2021-11-01  Sam Sneddon  <gsnedders@apple.com>
+
+        Improve LayoutTestFinder test coverage
+        https://bugs.webkit.org/show_bug.cgi?id=232576
+
+        Reviewed by Jonathan Bedard.
+
+        Some of these are largely copied from layout_tests/run_webkit_tests_integrationtest.py, but
+        in unit test form for the test finder.
+
+        * Scripts/webkitpy/layout_tests/controllers/layout_test_finder_legacy_unittest.py:
+        (LayoutTestFinderTests.__init__):
+        (LayoutTestFinderTests):
+        (LayoutTestFinderTests.setUp):
+        (LayoutTestFinderTests.tearDown):
+        (LayoutTestFinderTests.test_find_no_paths_specified):
+        (LayoutTestFinderTests.test_find_no_paths_sorted):
+        (LayoutTestFinderTests.test_find_all_no_paths):
+        (LayoutTestFinderTests.test_includes_other_platforms):
+        (LayoutTestFinderTests.test_find_one_test):
+        (LayoutTestFinderTests.test_find_platform):
+        (LayoutTestFinderTests.test_find_platform_self):
+        (LayoutTestFinderTests.test_find_platform_other):
+        (LayoutTestFinderTests.test_find_platform_specific):
+        (LayoutTestFinderTests.test_find_platform_specific_directory):
+        (LayoutTestFinderTests.test_find_directory_includes_platform_specific):
+        (LayoutTestFinderTests.test_find_glob):
+        (LayoutTestFinderTests.test_find_glob_mixed_file_type_sorted):
+        (LayoutTestFinderTests.test_find_glob_directory):
+        (LayoutTestFinderTests.test_find_glob_directory_b):
+        (LayoutTestFinderTests.test_find_glob_directory_e):
+        (LayoutTestFinderTests.test_find_directory):
+        (LayoutTestFinderTests.test_find_directory_trailing_slash):
+        (LayoutTestFinderTests.test_find_directory_star):
+        (LayoutTestFinderTests.test_preserves_order):
+        (LayoutTestFinderTests.test_preserves_order_multiple_times):
+        (LayoutTestFinderTests.test_preserves_order_directories):
+        (LayoutTestFinderTests.test_preserves_order_mixed_file_type):
+        (LayoutTestFinderTests.test_preserves_order_mixed_file_type_b):
+        (LayoutTestFinderTests.test_find_directory_multiple_times):
+        (LayoutTestFinderTests.test_no_reference):
+        (LayoutTestFinderTests.test_glob_no_references):
+        (LayoutTestFinderTests.test_find_with_skipped_directories):
+        (LayoutTestFinderTests.test_find_with_skipped_directories_2):
+        (LayoutTestFinderTests.test_is_test_file):
+        (LayoutTestFinderTests.test_is_w3c_resource_file):
+        (LayoutTestFinderTests.make_finder): Deleted.
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+        (RunTest.setUp): Re-enable tests on Python 3, as this now works
+        (RunTest.test_child_processes_min): Also ignore tests in platform/
+        * Scripts/webkitpy/port/test.py:
+
 2021-11-01  Tim Horton  <timothy_horton@apple.com>
 
         Add a run-webkit-tests mode to A/B test a given feature

@@ -174,8 +174,7 @@ class RunTest(unittest.TestCase, StreamTestingMixin):
 
         # FIXME: Remove this when we fix test-webkitpy to work
         # properly on cygwin (bug 63846).
-        # FIXME: Multiprocessing doesn't do well when nested in Python 3 (https://bugs.webkit.org/show_bug.cgi?id=205280)
-        self.should_test_processes = not self._platform.is_win() and sys.version_info < (3, 0)
+        self.should_test_processes = not self._platform.is_win()
 
     def serial_test_basic(self):
         options, args = parse_args(tests_included=True)
@@ -223,7 +222,7 @@ class RunTest(unittest.TestCase, StreamTestingMixin):
     def test_child_processes_min(self):
         if self.should_test_processes:
             _, regular_output, _ = logging_run(
-                ['--debug-rwt-logging', '--child-processes', '2', '-i', 'passes/passes', 'passes'],
+                ['--debug-rwt-logging', '--child-processes', '2', '-i', 'passes/passes', '-i', 'platform', 'passes'],
                 tests_included=True, shared_port=False)
             self.assertTrue(any(['Running 1 ' in line for line in regular_output.getvalue().splitlines()]))
 

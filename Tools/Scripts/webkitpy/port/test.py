@@ -106,7 +106,7 @@ class TestList(object):
 #
 # These numbers may need to be updated whenever we add or delete tests.
 #
-TOTAL_TESTS = 69
+TOTAL_TESTS = 71
 TOTAL_SKIPS = 9
 TOTAL_RETRIES = 11
 
@@ -239,6 +239,8 @@ layer at (0,0) size 800x34
     tests.add('websocket/tests/passes/text.html')
 
     # For testing test are properly included from platform directories.
+    tests.add('platform/test-mac-leopard/passes/platform-specific-test.html')
+    tests.add('platform/test-mac-leopard/platform-specific-dir/platform-specific-test.html')
     tests.add('platform/test-mac-leopard/http/test.html')
     tests.add('platform/test-win-7sp0/http/test.html')
 
