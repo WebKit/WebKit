@@ -47,13 +47,12 @@ public:
     Ref<Document> createDocumentFromSource(const String& source, const String& sourceEncoding, const String& sourceMIMEType, Node* sourceNode, Frame* frame);
     
     // DOM methods
-    void importStylesheet(RefPtr<Node>&& style)
+    void importStylesheet(Ref<Node>&& style)
     {
-        if (style)
-            m_stylesheetRootNode = WTFMove(style);
+        m_stylesheetRootNode = WTFMove(style);
     }
-    RefPtr<DocumentFragment> transformToFragment(Node* source, Document* ouputDoc);
-    RefPtr<Document> transformToDocument(Node* source);
+    RefPtr<DocumentFragment> transformToFragment(Node& source, Document& ouputDocument);
+    RefPtr<Document> transformToDocument(Node& source);
     
     void setParameter(const String& namespaceURI, const String& localName, const String& value);
     String getParameter(const String& namespaceURI, const String& localName) const;
@@ -68,7 +67,7 @@ public:
     // Only for libXSLT callbacks
     XSLStyleSheet* xslStylesheet() const { return m_stylesheet.get(); }
 
-    typedef HashMap<String, String> ParameterMap;
+    using ParameterMap = HashMap<String, String>;
 
 private:
     XSLTProcessor() = default;

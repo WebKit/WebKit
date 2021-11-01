@@ -1,3 +1,14 @@
+2021-11-01  Chris Dumez  <cdumez@apple.com>
+
+        Align XSLTProcessor with Blink and get closer to Gecko in the process
+        https://bugs.webkit.org/show_bug.cgi?id=232485
+
+        Reviewed by Alex Christensen.
+
+        Rebaseline WPT test now that more checks are passing.
+
+        * web-platform-tests/dom/idlharness.window-expected.txt:
+
 2021-10-31  Antti Koivisto  <antti@apple.com>
 
         Fix :host invalidation when combined with pseudo classes in descendant position

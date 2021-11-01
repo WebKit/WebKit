@@ -26,7 +26,7 @@ function addSectionHeader(name) {
 	testId = 0;
 }
 
-function addResultExpectException(name, func) {
+function addResultExpectException(testname, func) {
 	try {
 		var result = func();
 		addStringResult(testname, "****Failure**** (expected exception, instead got result: \"" + result + "\")", "failure");
@@ -136,7 +136,9 @@ addResultExpectValueWhenSerialized("Don't import stylesheet", newXML, undefined)
 
 
 // 2.0 DOMDocumentFragment transformToFragment(in DOMNode source, in DOMDocument output);
+
 addSectionHeader("DOMDocumentFragment transformToFragment(in DOMNode source, in DOMDocument output)");
+
 // 2.1 fragment with undefined source
 
 processor.reset();
@@ -147,9 +149,8 @@ addResultExpectException(testname, function () { return processor.transformToFra
 
 // 2.2 fragment with undefined output document
 
-ownerDocument = document.implementation.createDocument("", "test", null);
-newFragment = processor.transformToFragment(xml, undefined);
-addResultExpectValueWhenSerialized("fragment with undefined output document", newFragment, undefined);
+var testName = "fragment with undefined output document"
+addResultExpectException(testName, () => { processor.transformToFragment(xml, undefined); });
 
 // 2.3 use non-DOMDocument output parameter
 
@@ -274,7 +275,7 @@ addResultExpectValue(testname, processor.getParameter(null, "test"), null);
 processor.setParameter(undefined, "undefined", "Success");
 processor.removeParameter(undefined, undefined);
 var testname = "pass removeParameter undefined name";
-addResultExpectValue(testname, processor.getParameter(undefined, "undefined"), "Success");
+addResultExpectValue(testname, processor.getParameter(undefined, "undefined"), null);
 
 // 6.4 pass removeParameter a name which has not been set
 

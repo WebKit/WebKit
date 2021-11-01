@@ -47,7 +47,7 @@ SOURCE XML: &lt;&lt;&lt;&amp;тест&amp;&gt;&gt;&gt;</pre>
 </body>
 </html>
 1.3 Import undefined stylesheet:
-****Failure**** (expected exception, instead got result: "undefined")
+Success
 1.4 Import undefined stylesheet:
 ****Failure**** (expected exception, instead got result: "undefined")
 1.5 Don't import stylesheet:
@@ -56,7 +56,7 @@ Success
 2.0 DOMDocumentFragment transformToFragment(in DOMNode source, in DOMDocument output):
 
 2.1 fragment with undefined source:
-****Failure**** (expected exception, instead got result: "null")
+Success
 2.2 fragment with undefined output document:
 Success
 2.3 use non-DOMDocument output parameter:
@@ -70,8 +70,8 @@ Success
 
 3.0 DOMDocument transformToDocument(in DOMNode source):
 
-3.1 use non-DOMDocument output parameter:
-****Failure**** (expected exception, instead got result: "null")
+3.1 document from undefined source:
+Success
 3.2 transform twice:
 Success
 
@@ -89,7 +89,7 @@ Success
 5.0 Value getParameter(in DOMString namespaceURI, in DOMString localName):
 
 5.1 pass getParameter an undefined name:
-****Failure**** (expected exception, instead got result: "null")
+****Failure**** (expected exception, instead got result: "Success")
 5.2 pass getParameter a name which has not been set:
 Success
 5.3 verify getParameter actually gets (and set sets):

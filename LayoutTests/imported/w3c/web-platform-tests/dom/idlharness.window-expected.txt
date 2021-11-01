@@ -1871,9 +1871,9 @@ PASS XSLTProcessor interface object name
 PASS XSLTProcessor interface: existence and properties of interface prototype object
 PASS XSLTProcessor interface: existence and properties of interface prototype object's "constructor" property
 PASS XSLTProcessor interface: existence and properties of interface prototype object's @@unscopables property
-FAIL XSLTProcessor interface: operation importStylesheet(Node) assert_equals: property has wrong .length expected 1 but got 0
-FAIL XSLTProcessor interface: operation transformToFragment(Node, Document) assert_equals: property has wrong .length expected 2 but got 0
-FAIL XSLTProcessor interface: operation transformToDocument(Node) assert_equals: property has wrong .length expected 1 but got 0
+PASS XSLTProcessor interface: operation importStylesheet(Node)
+PASS XSLTProcessor interface: operation transformToFragment(Node, Document)
+PASS XSLTProcessor interface: operation transformToDocument(Node)
 PASS XSLTProcessor interface: operation setParameter(DOMString, DOMString, any)
 PASS XSLTProcessor interface: operation getParameter(DOMString, DOMString)
 PASS XSLTProcessor interface: operation removeParameter(DOMString, DOMString)
@@ -1882,17 +1882,11 @@ PASS XSLTProcessor interface: operation reset()
 PASS XSLTProcessor must be primary interface of new XSLTProcessor()
 PASS Stringification of new XSLTProcessor()
 PASS XSLTProcessor interface: new XSLTProcessor() must inherit property "importStylesheet(Node)" with the proper type
-FAIL XSLTProcessor interface: calling importStylesheet(Node) on new XSLTProcessor() with too few arguments must throw TypeError assert_throws_js: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS XSLTProcessor interface: calling importStylesheet(Node) on new XSLTProcessor() with too few arguments must throw TypeError
 PASS XSLTProcessor interface: new XSLTProcessor() must inherit property "transformToFragment(Node, Document)" with the proper type
-FAIL XSLTProcessor interface: calling transformToFragment(Node, Document) on new XSLTProcessor() with too few arguments must throw TypeError assert_throws_js: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS XSLTProcessor interface: calling transformToFragment(Node, Document) on new XSLTProcessor() with too few arguments must throw TypeError
 PASS XSLTProcessor interface: new XSLTProcessor() must inherit property "transformToDocument(Node)" with the proper type
-FAIL XSLTProcessor interface: calling transformToDocument(Node) on new XSLTProcessor() with too few arguments must throw TypeError assert_throws_js: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS XSLTProcessor interface: calling transformToDocument(Node) on new XSLTProcessor() with too few arguments must throw TypeError
 PASS XSLTProcessor interface: new XSLTProcessor() must inherit property "setParameter(DOMString, DOMString, any)" with the proper type
 PASS XSLTProcessor interface: calling setParameter(DOMString, DOMString, any) on new XSLTProcessor() with too few arguments must throw TypeError
 PASS XSLTProcessor interface: new XSLTProcessor() must inherit property "getParameter(DOMString, DOMString)" with the proper type
