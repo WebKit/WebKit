@@ -243,32 +243,10 @@ bool parseTestHeaderFeature(TestFeatures& features, std::string key, std::string
     return false;
 }
 
-static TestFeatures parseTestHeader(std::filesystem::path path, const std::unordered_map<std::string, TestHeaderKeyType>& keyTypeMap)
+static TestFeatures parseTestHeaderString(const std::string& pairString, std::filesystem::path path, const std::unordered_map<std::string, TestHeaderKeyType>& keyTypeMap)
 {
     TestFeatures features;
-    std::error_code ec;
-    if (!std::filesystem::exists(path, ec))
-        return features;
 
-    std::ifstream file(path);
-    if (!file.good()) {
-        LOG_ERROR("Could not open file to inspect test headers in %s", path.c_str());
-        return features;
-    }
-
-    std::string options;
-    getline(file, options);
-    std::string beginString("webkit-test-runner [ ");
-    std::string endString(" ]");
-    size_t beginLocation = options.find(beginString);
-    if (beginLocation == std::string::npos)
-        return features;
-    size_t endLocation = options.find(endString, beginLocation);
-    if (endLocation == std::string::npos) {
-        LOG_ERROR("Could not find end of test header in %s", path.c_str());
-        return features;
-    }
-    std::string pairString = options.substr(beginLocation + beginString.size(), endLocation - (beginLocation + beginString.size()));
     size_t pairStart = 0;
     while (pairStart < pairString.size()) {
         size_t pairEnd = pairString.find(" ", pairStart);
@@ -291,9 +269,44 @@ static TestFeatures parseTestHeader(std::filesystem::path path, const std::unord
     return features;
 }
 
+static TestFeatures parseTestHeader(std::filesystem::path path, const std::unordered_map<std::string, TestHeaderKeyType>& keyTypeMap)
+{
+    std::error_code ec;
+    if (!std::filesystem::exists(path, ec))
+        return { };
+
+    std::ifstream file(path);
+    if (!file.good()) {
+        LOG_ERROR("Could not open file to inspect test headers in %s", path.c_str());
+        return { };
+    }
+
+    std::string options;
+    getline(file, options);
+    std::string beginString("webkit-test-runner [ ");
+    std::string endString(" ]");
+    size_t beginLocation = options.find(beginString);
+    if (beginLocation == std::string::npos)
+        return { };
+    size_t endLocation = options.find(endString, beginLocation);
+    if (endLocation == std::string::npos) {
+        LOG_ERROR("Could not find end of test header in %s", path.c_str());
+        return { };
+    }
+    std::string pairString = options.substr(beginLocation + beginString.size(), endLocation - (beginLocation + beginString.size()));
+    return parseTestHeaderString(pairString, path, keyTypeMap);
+}
+
 TestFeatures featureDefaultsFromTestHeaderForTest(const TestCommand& command, const std::unordered_map<std::string, TestHeaderKeyType>& keyTypeMap)
 {
     return parseTestHeader(command.absolutePath, keyTypeMap);
 }
 
+TestFeatures featureDefaultsFromSelfComparisonHeader(const TestCommand& command, const std::unordered_map<std::string, TestHeaderKeyType>& keyTypeMap)
+{
+    if (command.selfComparisonHeader.empty())
+        return { };
+    return parseTestHeaderString(command.selfComparisonHeader, command.absolutePath, keyTypeMap);
 }
+
+} // namespace WTF

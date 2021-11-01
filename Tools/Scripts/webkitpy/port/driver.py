@@ -46,16 +46,17 @@ _log = logging.getLogger(__name__)
 
 
 class DriverInput(object):
-    def __init__(self, test_name, timeout, image_hash, should_run_pixel_test, should_dump_jsconsolelog_in_stderr=None, args=None):
+    def __init__(self, test_name, timeout, image_hash, should_run_pixel_test, should_dump_jsconsolelog_in_stderr=None, args=None, self_comparison_header=None):
         self.test_name = test_name
         self.timeout = timeout  # in ms
         self.image_hash = image_hash
         self.should_run_pixel_test = should_run_pixel_test
         self.should_dump_jsconsolelog_in_stderr = should_dump_jsconsolelog_in_stderr
         self.args = args or []
+        self.self_comparison_header = self_comparison_header
 
     def __repr__(self):
-        return "DriverInput(test_name='{}', timeout={}, image_hash={}, should_run_pixel_test={}, should_dump_jsconsolelog_in_stderr={}'".format(self.test_name, self.timeout, self.image_hash, self.should_run_pixel_test, self.should_dump_jsconsolelog_in_stderr)
+        return "DriverInput(test_name='{}', timeout={}, image_hash={}, should_run_pixel_test={}, should_dump_jsconsolelog_in_stderr={}, self_comparison_header={}'".format(self.test_name, self.timeout, self.image_hash, self.should_run_pixel_test, self.should_dump_jsconsolelog_in_stderr, self.self_comparison_header)
 
 
 class DriverOutput(object):
@@ -631,12 +632,17 @@ class Driver(object):
         # ' is the separator between arguments.
         if self._port.supports_per_test_timeout():
             command += "'--timeout'%s" % driver_input.timeout
-        if driver_input.should_run_pixel_test:
-            command += "'--pixel-test"
         if driver_input.should_dump_jsconsolelog_in_stderr:
             command += "'--dump-jsconsolelog-in-stderr"
-        if driver_input.image_hash:
-            command += "'" + driver_input.image_hash
+        if driver_input.self_comparison_header:
+            command += "'--self-compare-with-header'%s" % driver_input.self_comparison_header
+
+        # --pixel-test must be the last argument, because the hash is optional,
+        # and any argument put in its place will be incorrectly consumed as the hash.
+        if driver_input.should_run_pixel_test:
+            command += "'--pixel-test"
+            if driver_input.image_hash:
+                command += "'" + driver_input.image_hash
         return command + "\n"
 
     def _read_first_block(self, deadline, test_name):

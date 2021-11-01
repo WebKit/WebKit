@@ -111,6 +111,9 @@ class SingleTestRunner(object):
         return DriverInput(self._test_name, self._timeout, image_hash, self._should_run_pixel_test, self._should_dump_jsconsolelog_in_stderr)
 
     def run(self):
+        self_comparison_header = self._port.get_option('self_compare_with_header')
+        if self_comparison_header:
+            return self._run_self_comparison_test(self_comparison_header)
         if self._reference_files:
             if self._port.get_option('no_ref_tests') or self._options.reset_results:
                 reftest_type = set([reference_file[0] for reference_file in self._reference_files])
@@ -335,6 +338,21 @@ class SingleTestRunner(object):
         test_result_writer.write_test_result(self._filesystem, self._port, self._results_directory, self._test_name, test_output, reference_output, test_result.failures)
         reftest_type = set([reference_file[0] for reference_file in self._reference_files])
         return TestResult(self._test_input, test_result.failures, total_test_time + test_result.test_run_time, test_result.has_stderr, reftest_type=reftest_type, pid=test_result.pid, references=reference_test_names)
+
+    def _run_self_comparison_test(self, header):
+        driver_input = self._driver_input()
+        driver_input.should_run_pixel_test = True
+
+        reference_output = self._driver.run_test(driver_input, self._stop_when_done)
+        driver_input.self_comparison_header = header
+        test_output = self._driver.run_test(driver_input, self._stop_when_done)
+
+        test_full_path = self._port.abspath_for_test(self._test_name)
+        test_result = self._compare_output_with_reference(reference_output, test_output, test_full_path, False)
+
+        assert(reference_output)
+        test_result_writer.write_test_result(self._filesystem, self._port, self._results_directory, self._test_name, test_output, reference_output, test_result.failures)
+        return TestResult(self._test_input, test_result.failures, test_result.test_run_time, test_result.has_stderr, pid=test_result.pid)
 
     @staticmethod
     def _relative_reference_path(test_full_path, reference_full_path):

@@ -98,6 +98,11 @@ TestCommand parseInputLine(const std::string& inputLine)
             result.shouldDumpPixels = true;
             if (tokenizer.hasNext())
                 result.expectedPixelHash = tokenizer.next();
+        } else if (arg == "--self-compare-with-header") {
+            if (tokenizer.hasNext())
+                result.selfComparisonHeader = tokenizer.next();
+            else
+                die(inputLine);
         } else if (arg == std::string("--dump-jsconsolelog-in-stderr"))
             result.dumpJSConsoleLogInStdErr = true;
         else if (arg == std::string("--absolutePath"))

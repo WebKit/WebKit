@@ -1,3 +1,62 @@
+2021-11-01  Tim Horton  <timothy_horton@apple.com>
+
+        Add a run-webkit-tests mode to A/B test a given feature
+        https://bugs.webkit.org/show_bug.cgi?id=232553
+
+        Reviewed by Jonathan Bedard.
+
+        Add the argument --self-compare-with-header to run-webkit-tests, which
+        can be used to test the impact of a given feature (or set of features;
+        it accepts the standard test features header format).
+
+        When tests are run in this mode, all tests are run in the ref-test
+        style, but with the `expected` and `actual` results loading the same
+        test file (ignoring the usual -expected.html or whatever); they differ
+        only in the set of features/preferences enabled.
+
+        This is especially useful for testing the impact of e.g. platform
+        graphics features, where the difference between the shipping behavior
+        and in-development behavior is more interesting than whether or not
+        it actually makes the tests, as written, fail.
+
+        * Scripts/webkitpy/layout_tests/controllers/single_test_runner.py:
+        (SingleTestRunner):
+        (SingleTestRunner._run_comparison_test):
+        Add the comparison test runner, and prefer it if requested.
+
+        One note here: the run with the options derived from the given header is
+        considered the "actual" result and the default configuration the "expected".
+
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        (parse_args):
+        * Scripts/webkitpy/port/driver.py:
+        (DriverInput.__init__):
+        (DriverInput.__repr__):
+        (Driver._command_from_driver_input):
+        Pass the comparison test header along to the test runner.
+
+        Also, fix a longstanding error where --dump-jsconsolelog-in-stderr
+        could get inserted immediately after --pixel-test, causing the test runner
+        to consume it as the expected image hash! And leave a comment so nobody
+        else has to debug this again...
+
+        * TestRunnerShared/TestCommand.cpp:
+        (WTR::parseInputLine):
+        * TestRunnerShared/TestCommand.h:
+        * TestRunnerShared/TestFeatures.cpp:
+        (WTR::parseTestHeaderString):
+        (WTR::parseTestHeader):
+        (WTR::featureDefaultsFromComparisonTestHeader):
+        Factor out the parsing of the part of the test header inside the [ ],
+        since we use this format for the value of --self-compare-with-header as well.
+
+        * TestRunnerShared/TestFeatures.h:
+        * WebKitTestRunner/Options.h:
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::testOptionsForTest const):
+        Merge the comparison header's options in to the test options before
+        the test's own header, so that the comparison header wins.
+
 2021-11-01  Jonathan Bedard  <jbedard@apple.com>
 
         webkitpy: Remove obsolete port name
