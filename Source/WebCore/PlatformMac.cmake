@@ -87,7 +87,6 @@ list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${CMAKE_BINARY_DIR}/libwebrtc/PrivateHeaders"
     "${CMAKE_SOURCE_DIR}/Source/ThirdParty/libwebrtc/Source"
     "${WEBCORE_DIR}/Modules/webauthn/apdu"
-    "${WEBCORE_DIR}/Modules/webgpu/WHLSL/Metal"
     "${WEBCORE_DIR}/accessibility/isolatedtree/mac"
     "${WEBCORE_DIR}/accessibility/mac"
     "${WEBCORE_DIR}/bridge/objc"

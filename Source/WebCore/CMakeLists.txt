@@ -64,9 +64,6 @@ set(WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/Modules/webauthn/fido"
     "${WEBCORE_DIR}/Modules/webdatabase"
     "${WEBCORE_DIR}/Modules/webdriver"
-    "${WEBCORE_DIR}/Modules/webgpu"
-    "${WEBCORE_DIR}/Modules/webgpu/WHLSL"
-    "${WEBCORE_DIR}/Modules/webgpu/WHLSL/AST"
     "${WEBCORE_DIR}/Modules/websockets"
     "${WEBCORE_DIR}/Modules/webxr"
     "${WEBCORE_DIR}/accessibility"
@@ -218,7 +215,6 @@ set(WebCore_IDL_INCLUDES
     Modules/web-locks
     Modules/webaudio
     Modules/webdatabase
-    Modules/webgpu
     Modules/websockets
 
     bindings/js
