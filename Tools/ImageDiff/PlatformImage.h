@@ -62,7 +62,7 @@ public:
         unsigned maxDifference { 0 };
         size_t totalPixels { 0 };
     };
-    std::unique_ptr<PlatformImage> difference(const PlatformImage&, Difference&);
+    std::unique_ptr<PlatformImage> difference(const PlatformImage&, bool exact, Difference&);
 
     void writeAsPNGToStdout();
 

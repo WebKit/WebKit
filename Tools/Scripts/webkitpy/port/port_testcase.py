@@ -310,26 +310,26 @@ class PortTestCase(unittest.TestCase):
         result_fuzzy_data = {'max_difference': 6, 'total_pixels': 50}
 
         self.assertEqual(port.diff_image(b'foo', b'bar'), ImageDiffResult(passed=False, diff_image=b'image1', difference=90.0, tolerance=0.1, fuzzy_data=result_fuzzy_data))
-        self.assertEqual(self.proc.cmd, [port._path_to_image_diff(), "--difference", "--tolerance", "0.1"])
+        self.assertEqual(self.proc.cmd, [port._path_to_image_diff(), "--difference"])
 
         self.assertEqual(port.diff_image(b'foo', b'bar', tolerance=None), ImageDiffResult(passed=False, diff_image=b'image1', difference=90.0, tolerance=0.1, fuzzy_data=result_fuzzy_data))
-        self.assertEqual(self.proc.cmd, [port._path_to_image_diff(), "--difference", "--tolerance", "0.1"])
+        self.assertEqual(self.proc.cmd, [port._path_to_image_diff(), "--difference"])
 
         self.assertEqual(port.diff_image(b'foo', b'bar', tolerance=0), ImageDiffResult(passed=False, diff_image=b'image1', difference=90.0, fuzzy_data=result_fuzzy_data))
-        self.assertEqual(self.proc.cmd, [port._path_to_image_diff(), "--difference", "--tolerance", "0"])
+        self.assertEqual(self.proc.cmd, [port._path_to_image_diff(), "--difference"])
 
         # Now test the case of using JHBuild wrapper.
         port._filesystem.maybe_make_directory(port.path_from_webkit_base('WebKitBuild', 'Dependencies%s' % port.port_name.upper()))
         self.assertTrue(port._should_use_jhbuild())
 
         self.assertEqual(port.diff_image(b'foo', b'bar'), ImageDiffResult(passed=False, diff_image=b'image1', difference=90.0, tolerance=0.1, fuzzy_data=result_fuzzy_data))
-        self.assertEqual(self.proc.cmd, port._jhbuild_wrapper + [port._path_to_image_diff(), "--difference", "--tolerance", "0.1"])
+        self.assertEqual(self.proc.cmd, port._jhbuild_wrapper + [port._path_to_image_diff(), "--difference"])
 
         self.assertEqual(port.diff_image(b'foo', b'bar', tolerance=None), ImageDiffResult(passed=False, diff_image=b'image1', difference=90.0, tolerance=0.1, fuzzy_data=result_fuzzy_data))
-        self.assertEqual(self.proc.cmd, port._jhbuild_wrapper + [port._path_to_image_diff(), "--difference", "--tolerance", "0.1"])
+        self.assertEqual(self.proc.cmd, port._jhbuild_wrapper + [port._path_to_image_diff(), "--difference"])
 
         self.assertEqual(port.diff_image(b'foo', b'bar', tolerance=0), ImageDiffResult(passed=False, diff_image=b'image1', difference=90.0, fuzzy_data=result_fuzzy_data))
-        self.assertEqual(self.proc.cmd, port._jhbuild_wrapper + [port._path_to_image_diff(), "--difference", "--tolerance", "0"])
+        self.assertEqual(self.proc.cmd, port._jhbuild_wrapper + [port._path_to_image_diff(), "--difference"])
 
         port.clean_up_test_run()
         self.assertTrue(self.proc.stopped)

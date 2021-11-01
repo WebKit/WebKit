@@ -1,3 +1,33 @@
+2021-11-01  Simon Fraser  <simon.fraser@apple.com>
+
+        ImageDiff no longer needs a --tolerance argument, and fix sometimes-black diff images
+        https://bugs.webkit.org/show_bug.cgi?id=232522
+
+        Reviewed by Martin Robinson.
+
+        ImageDiff no longer deals with tolerance, so remove `--tolerance` handling code in ImageDiff
+        and the driving script.
+
+        Also fix an issue where the diff image could be all black pixels even when there was a diff;
+        we need to ensure that a pixel with any diff is non-zero before scaling, and we need to
+        ensure that scaling by legacyDistanceMax doesn't overflow.
+
+        * ImageDiff/ImageDiff.cpp:
+        (processImages):
+        (main):
+        * ImageDiff/PlatformImage.cpp:
+        (ImageDiff::PlatformImage::difference):
+        * ImageDiff/PlatformImage.h:
+        * ImageDiff/cg/PlatformImageCG.cpp:
+        (ImageDiff::PlatformImage::createFromFile):
+        * Scripts/webkitpy/port/image_diff.py:
+        (ImageDiffer.diff_image):
+        (ImageDiffer._start): No need to restart ImageDiff if the tolerance changed, since
+        ImageDiff doesn't consult it. Tolerance in the python here just feeds into
+        the ImageDiffResult.
+        * Scripts/webkitpy/port/port_testcase.py:
+        (PortTestCase.test_diff_image):
+
 2021-11-01  Aakash Jain  <aakash_jain@apple.com>
 
         Fix a typo in EWS emails

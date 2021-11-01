@@ -40,20 +40,20 @@ bool PlatformImage::isCompatible(const PlatformImage& other) const
         && hasAlpha() == other.hasAlpha();
 }
 
-std::unique_ptr<PlatformImage> PlatformImage::difference(const PlatformImage& other, Difference& difference)
+std::unique_ptr<PlatformImage> PlatformImage::difference(const PlatformImage& other, bool exact, Difference& difference)
 {
     size_t width = this->width();
     size_t height = this->height();
 
     // Compare the content of the 2 bitmaps
-    void* diffBuffer = malloc(width * height);
+    unsigned char* diffBuffer = static_cast<unsigned char*>(calloc(width * height, sizeof(unsigned char)));
     size_t pixelCountWithSignificantDifference = 0;
     float legacyDistanceSum = 0.0f;
     float legacyDistanceMax = 0.0f;
 
     unsigned char* basePixel = this->pixels();
     unsigned char* pixel = other.pixels();
-    unsigned char* diffPixel = reinterpret_cast<unsigned char*>(diffBuffer);
+    unsigned char* diffPixel = diffBuffer;
 
     for (size_t y = 0; y < height; ++y) {
         for (size_t x = 0; x < width; ++x) {
@@ -63,8 +63,6 @@ std::unique_ptr<PlatformImage> PlatformImage::difference(const PlatformImage& ot
             float alpha = (pixel[3] - basePixel[3]) / std::max<float>(255 - basePixel[3], basePixel[3]);
             float legacyDistance = sqrtf(red * red + green * green + blue * blue + alpha * alpha) / 2.0f;
 
-            *diffPixel++ = static_cast<unsigned char>(legacyDistance * 255.0f);
-            
             // WPT-style difference code.
             if (legacyDistance) {
                 ++difference.totalPixels;
@@ -75,16 +73,19 @@ std::unique_ptr<PlatformImage> PlatformImage::difference(const PlatformImage& ot
                 difference.maxDifference = std::max(difference.maxDifference, maxDiff);
 
                 legacyDistanceMax = std::max(legacyDistanceMax, legacyDistance);
+                *diffPixel = static_cast<unsigned char>(std::ceil(legacyDistance * 255.0f));
             }
 
-            // Legacy difference code. Note there is some built-in tolerance here.
-            if (legacyDistance >= 1.0f / 255.0f) {
+            // Legacy difference code.
+            bool pixelDiffers = exact ? legacyDistance : legacyDistance >= 1.0f / 255.0f;
+            if (pixelDiffers) {
                 ++pixelCountWithSignificantDifference;
                 legacyDistanceSum += legacyDistance;
             }
 
             basePixel += 4;
             pixel += 4;
+            ++diffPixel;
         }
     }
 
@@ -95,9 +96,14 @@ std::unique_ptr<PlatformImage> PlatformImage::difference(const PlatformImage& ot
         difference.percentageDifference = 0.0f;
 
     if (difference.totalPixels) {
-        diffPixel = reinterpret_cast<unsigned char*>(diffBuffer);
-        for (size_t p = 0; p < height * width; ++p)
-            diffPixel[p] /= legacyDistanceMax;
+        diffPixel = diffBuffer;
+        for (size_t p = 0; p < height * width; ++p) {
+            float pixel = static_cast<float>(diffPixel[p]);
+            if (!pixel)
+                continue;
+            pixel = std::min(pixel / legacyDistanceMax, 255.0f);
+            diffPixel[p] = static_cast<unsigned char>(pixel);
+        }
 
         return PlatformImage::createFromDiffData(diffBuffer, width, height);
     }

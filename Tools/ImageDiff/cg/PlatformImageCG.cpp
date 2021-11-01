@@ -74,8 +74,13 @@ namespace ImageDiff {
 std::unique_ptr<PlatformImage> PlatformImage::createFromFile(const char* filePath)
 {
     auto dataProvider = CGDataProviderCreateWithFilename(filePath);
+    if (!dataProvider)
+        return nullptr;
+
     auto image = CGImageCreateWithPNGDataProvider(dataProvider, 0, false, kCGRenderingIntentDefault);
     CGDataProviderRelease(dataProvider);
+    if (!image)
+        return nullptr;
 
     return std::make_unique<PlatformImage>(image);
 }

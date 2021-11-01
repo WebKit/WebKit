@@ -72,7 +72,7 @@ class ImageDiffer(object):
         self._process = None
 
     def diff_image(self, expected_contents, actual_contents, tolerance):
-        if tolerance != self._tolerance or (self._process and self._process.has_available_stdout()):
+        if (self._process and self._process.has_available_stdout()):
             self.stop()
         try:
             assert(expected_contents)
@@ -93,7 +93,7 @@ class ImageDiffer(object):
             return (None, 0, "Failed to compute an image diff: %s" % str(exception))
 
     def _start(self, tolerance):
-        command = [self._port._path_to_image_diff(), '--difference', '--tolerance', str(tolerance)]
+        command = [self._port._path_to_image_diff(), '--difference']
         if self._port._should_use_jhbuild():
             command = self._port._jhbuild_wrapper + command
         environment = self._port.setup_environ_for_server('ImageDiff')
