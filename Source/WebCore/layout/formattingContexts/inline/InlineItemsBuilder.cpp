@@ -265,38 +265,30 @@ void InlineItemsBuilder::handleInlineBoxStart(const Box& inlineBox, InlineItems&
         return;
 
     auto isLeftToRightDirection = style.isLeftToRightDirection();
-    auto enteringContentControlChar = std::optional<UChar> { };
-    auto nestedContentControlChar = std::optional<UChar> { };
-
     switch (style.unicodeBidi()) {
     case EUnicodeBidi::UBNormal:
         // The box does not open an additional level of embedding with respect to the bidirectional algorithm.
         // For inline boxes, implicit reordering works across box boundaries.
         break;
     case EUnicodeBidi::Embed:
-        enteringContentControlChar = isLeftToRightDirection ? leftToRightEmbed : rightToLeftEmbed;
+        enterBidiContext(inlineBox, isLeftToRightDirection ? leftToRightEmbed : rightToLeftEmbed, inlineItems);
         break;
     case EUnicodeBidi::Override:
-        enteringContentControlChar = isLeftToRightDirection ? leftToRightOverride : rightToLeftOverride;
+        enterBidiContext(inlineBox, isLeftToRightDirection ? leftToRightOverride : rightToLeftOverride, inlineItems);
         break;
     case EUnicodeBidi::Isolate:
-        enteringContentControlChar = isLeftToRightDirection ? leftToRightIsolate : rightToLeftIsolate;
+        enterBidiContext(inlineBox, isLeftToRightDirection ? leftToRightIsolate : rightToLeftIsolate, inlineItems);
         break;
     case EUnicodeBidi::Plaintext:
-        enteringContentControlChar = firstStrongIsolate;
+        enterBidiContext(inlineBox, firstStrongIsolate, inlineItems);
         break;
     case EUnicodeBidi::IsolateOverride:
-        enteringContentControlChar = firstStrongIsolate;
-        nestedContentControlChar = isLeftToRightDirection ? leftToRightOverride : rightToLeftOverride;
+        enterBidiContext(inlineBox, firstStrongIsolate, inlineItems);
+        enterBidiContext(inlineBox, isLeftToRightDirection ? leftToRightOverride : rightToLeftOverride, inlineItems);
         break;
     default:
         ASSERT_NOT_REACHED();
     }
-
-    if (enteringContentControlChar)
-        enterBidiContext(inlineBox, *enteringContentControlChar, inlineItems);
-    if (nestedContentControlChar)
-        enterBidiContext(inlineBox, *nestedContentControlChar, inlineItems);
 }
 
 void InlineItemsBuilder::handleInlineBoxEnd(const Box& inlineBox, InlineItems& inlineItems)
@@ -307,38 +299,30 @@ void InlineItemsBuilder::handleInlineBoxEnd(const Box& inlineBox, InlineItems& i
     if (style.rtlOrdering() == Order::Visual)
         return;
 
-    auto exitingContentControlChar = std::optional<UChar> { };
-    auto nestedContentControlChar = std::optional<UChar> { };
-
     switch (style.unicodeBidi()) {
     case EUnicodeBidi::UBNormal:
         // The box does not open an additional level of embedding with respect to the bidirectional algorithm.
         // For inline boxes, implicit reordering works across box boundaries.
         break;
     case EUnicodeBidi::Embed:
-        exitingContentControlChar = popDirectionalFormatting;
+        exitBidiContext(inlineBox, popDirectionalFormatting);
         break;
     case EUnicodeBidi::Override:
-        exitingContentControlChar = popDirectionalFormatting;
+        exitBidiContext(inlineBox, popDirectionalFormatting);
         break;
     case EUnicodeBidi::Isolate:
-        exitingContentControlChar = popDirectionalIsolate;
+        exitBidiContext(inlineBox, popDirectionalIsolate);
         break;
     case EUnicodeBidi::Plaintext:
-        exitingContentControlChar = popDirectionalIsolate;
+        exitBidiContext(inlineBox, popDirectionalIsolate);
         break;
     case EUnicodeBidi::IsolateOverride:
-        nestedContentControlChar = popDirectionalFormatting;
-        exitingContentControlChar = popDirectionalIsolate;
+        exitBidiContext(inlineBox, popDirectionalFormatting);
+        exitBidiContext(inlineBox, popDirectionalIsolate);
         break;
     default:
         ASSERT_NOT_REACHED();
     }
-
-    if (nestedContentControlChar)
-        exitBidiContext(inlineBox, *nestedContentControlChar);
-    if (exitingContentControlChar)
-        exitBidiContext(inlineBox, *exitingContentControlChar);
 }
 
 void InlineItemsBuilder::handleInlineLevelBox(const Box& layoutBox, InlineItems& inlineItems)
