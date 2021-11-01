@@ -1,5 +1,5 @@
 CONSOLE MESSAGE: [Private Click Measurement] Conversion was not accepted because the URL path contained unrecognized parts.
-CONSOLE MESSAGE: Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin. Status code: 200
 CONSOLE MESSAGE: Fetch API cannot load https://127.0.0.1:8443/.well-known/private-click-measurement/trigger-attribution/whatever due to access control checks.
 Tests triggering of private click measurement attributions with fetch on pagehide.
 

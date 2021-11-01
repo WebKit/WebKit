@@ -1,9 +1,9 @@
-CONSOLE MESSAGE: Origin https://localhost:9443 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: Origin https://localhost:9443 is not allowed by Access-Control-Allow-Origin. Status code: 500
 Blocked access to external URL https://www1.localhost:9443/worklets/resources/referrer-checker.py?referrer_policy=no-referrer&expected_referrer=
 Blocked access to external URL https://www1.localhost:9443/worklets/resources/referrer-checker.py?referrer_policy=origin&expected_referrer=https://localhost:9443/
-CONSOLE MESSAGE: Origin https://localhost:9443 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: Origin https://localhost:9443 is not allowed by Access-Control-Allow-Origin. Status code: 500
 Blocked access to external URL https://www1.localhost:9443/worklets/resources/referrer-checker.py?referrer_policy=same-origin&expected_referrer=
-CONSOLE MESSAGE: Origin https://localhost:9443 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: Origin https://localhost:9443 is not allowed by Access-Control-Allow-Origin. Status code: 500
 
 PASS Importing a same-origin script from a page that has "no-referrer" referrer policy should not send referrer.
 PASS Importing a remote-origin script from a page that has "no-referrer" referrer policy should not send referrer.

@@ -1,3 +1,21 @@
+2021-11-01  Michael[tm] Smith  <mike@w3.org>
+
+        [WebInspector][CORS] Show HTTP status code in CORS messages.
+        https://bugs.webkit.org/show_bug.cgi?id=231928
+
+        Reviewed by Darin Adler
+
+        Update tests with CORS messages, by adding the status code.
+
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-data-url-expected.txt:
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/sandbox_032-expected.txt:
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/image-loading-lazy-crossorigin-change.sub-expected.txt:
+        * web-platform-tests/referrer-policy/generic/sandboxed-iframe-with-opaque-origin-expected.txt:
+        * web-platform-tests/workers/modules/dedicated-worker-import-data-url-cross-origin-expected.txt:
+        * web-platform-tests/worklets/audio-worklet-credentials.https-expected.txt:
+        * web-platform-tests/worklets/audio-worklet-import.https-expected.txt:
+        * web-platform-tests/worklets/audio-worklet-referrer.https-expected.txt:
+
 2021-11-01  Chris Dumez  <cdumez@apple.com>
 
         Align XSLTProcessor with Blink and get closer to Gecko in the process

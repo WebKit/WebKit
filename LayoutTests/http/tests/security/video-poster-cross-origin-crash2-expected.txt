@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin. Status code: 404
 CONSOLE MESSAGE: Cannot load image http://localhost:8080/nonesuch.png due to access control checks.
 Test passes if it doesn't crash.
 

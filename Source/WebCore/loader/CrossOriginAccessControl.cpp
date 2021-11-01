@@ -246,7 +246,7 @@ Expected<void, String> passesAccessControlCheck(const ResourceResponse& response
             return makeUnexpected("Cannot use wildcard in Access-Control-Allow-Origin when credentials flag is true."_s);
         if (accessControlOriginString.find(',') != notFound)
             return makeUnexpected("Access-Control-Allow-Origin cannot contain more than one origin."_s);
-        return makeUnexpected(makeString("Origin ", securityOriginString, " is not allowed by Access-Control-Allow-Origin."));
+        return makeUnexpected(makeString("Origin ", securityOriginString, " is not allowed by Access-Control-Allow-Origin.", " Status code: ", response.httpStatusCode()));
     }
 
     if (storedCredentialsPolicy == StoredCredentialsPolicy::Use) {
@@ -261,7 +261,7 @@ Expected<void, String> passesAccessControlCheck(const ResourceResponse& response
 Expected<void, String> validatePreflightResponse(PAL::SessionID sessionID, const ResourceRequest& request, const ResourceResponse& response, StoredCredentialsPolicy storedCredentialsPolicy, const SecurityOrigin& securityOrigin, const CrossOriginAccessControlCheckDisabler* checkDisabler)
 {
     if (!response.isSuccessful())
-        return makeUnexpected("Preflight response is not successful"_s);
+        return makeUnexpected(makeString("Preflight response is not successful. Status code: ", response.httpStatusCode()));
 
     auto accessControlCheckResult = passesAccessControlCheck(response, storedCredentialsPolicy, securityOrigin, checkDisabler);
     if (!accessControlCheckResult)

@@ -1,3 +1,120 @@
+2021-11-01  Michael Smith  <mike@w3.org>
+
+        [WebInspector][CORS] Show HTTP status code in CORS messages.
+        https://bugs.webkit.org/show_bug.cgi?id=231928
+
+        Reviewed by Darin Adler
+
+        Update tests with CORS messages, by adding the status code.
+
+        * http/tests/eventsource/eventsource-cors-basic-expected.txt:
+        * http/tests/loading/cross-origin-XHR-willLoadRequest-expected.txt:
+        * http/tests/privateClickMeasurement/attribution-conversion-through-fetch-keepalive-expected.txt:
+        * http/tests/security/cached-cross-origin-preloaded-css-stylesheet-expected.txt:
+        * http/tests/security/cached-cross-origin-preloading-css-stylesheet-expected.txt:
+        * http/tests/security/cannot-read-cssrules-expected.txt:
+        * http/tests/security/cannot-read-cssrules-redirect-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/module-scriptnonce-redirect-expected.txt:
+        * http/tests/security/cookie-module-import-propagate-expected.txt:
+        * http/tests/security/cross-origin-cached-images-expected.txt:
+        * http/tests/security/cross-origin-cached-resource-expected.txt:
+        * http/tests/security/cross-origin-cached-scripts-expected.txt:
+        * http/tests/security/cross-origin-cached-scripts-parallel-expected.txt:
+        * http/tests/security/img-with-failed-cors-check-fails-to-load-expected.txt:
+        * http/tests/security/import-module-crossorigin-loads-error-expected.txt:
+        * http/tests/security/import-module-crossorigin-loads-error-src-expected.txt:
+        * http/tests/security/import-script-crossorigin-loads-error-expected.txt:
+        * http/tests/security/isolatedWorld/cross-origin-xhr-expected.txt:
+        * http/tests/security/load-image-after-redirection-2-expected.txt:
+        * http/tests/security/load-image-after-redirection-expected.txt:
+        * http/tests/security/script-with-failed-cors-check-fails-to-load-expected.txt:
+        * http/tests/security/shape-image-cors-redirect-error-message-logging-1-expected.txt:
+        * http/tests/security/shape-image-cors-redirect-error-message-logging-2-expected.txt:
+        * http/tests/security/shape-image-cors-redirect-error-message-logging-3-expected.txt:
+        * http/tests/security/text-track-crossorigin-expected.txt:
+        * http/tests/security/video-cross-origin-accessfailure-expected.txt:
+        * http/tests/security/video-poster-cross-origin-crash-expected.txt:
+        * http/tests/security/video-poster-cross-origin-crash2-expected.txt:
+        * http/tests/subresource-integrity/sri-fetch-expected.txt:
+        * http/tests/subresource-integrity/sri-fetch-worker-expected.txt:
+        * http/tests/subresource-integrity/sri-module-expected.txt:
+        * http/tests/subresource-integrity/sri-script-expected.txt:
+        * http/tests/subresource-integrity/sri-style-expected.txt:
+        * http/tests/workers/service/service-worker-crossorigin-fetch-expected.txt:
+        * http/tests/workers/service/serviceworkerclients-claim.https-expected.txt:
+        * http/tests/workers/service/shift-reload-navigation-expected.txt:
+        * http/tests/xmlhttprequest/access-control-and-redirects-async-expected.txt:
+        * http/tests/xmlhttprequest/access-control-and-redirects-expected.txt:
+        * http/tests/xmlhttprequest/access-control-basic-denied-expected.txt:
+        * http/tests/xmlhttprequest/access-control-basic-denied-preflight-cache-expected.txt:
+        * http/tests/xmlhttprequest/access-control-basic-get-fail-non-simple-expected.txt:
+        * http/tests/xmlhttprequest/access-control-basic-post-fail-non-simple-content-type-expected.txt:
+        * http/tests/xmlhttprequest/access-control-preflight-async-not-supported-expected.txt:
+        * http/tests/xmlhttprequest/access-control-preflight-not-successful-expected.txt:
+        * http/tests/xmlhttprequest/access-control-preflight-sync-not-supported-expected.txt:
+        * http/tests/xmlhttprequest/access-control-repeated-failed-preflight-crash-expected.txt:
+        * http/tests/xmlhttprequest/access-control-sandboxed-iframe-denied-expected.txt:
+        * http/tests/xmlhttprequest/access-control-sandboxed-iframe-denied-without-wildcard-expected.txt:
+        * http/tests/xmlhttprequest/cross-origin-no-credential-prompt-expected.txt:
+        * http/tests/xmlhttprequest/cross-site-denied-response-expected.txt:
+        * http/tests/xmlhttprequest/cross-site-denied-response-sync-2-expected.txt:
+        * http/tests/xmlhttprequest/cross-site-denied-response-sync-expected.txt:
+        * http/tests/xmlhttprequest/onerror-event-expected.txt:
+        * http/tests/xmlhttprequest/origin-allow-list-https-expected.txt:
+        * http/tests/xmlhttprequest/origin-allow-list-ip-addresses-with-subdomains-expected.txt:
+        * http/tests/xmlhttprequest/origin-allow-list-removal-expected.txt:
+        * http/tests/xmlhttprequest/origin-exact-matching-expected.txt:
+        * http/tests/xmlhttprequest/post-blob-content-type-async-expected.txt:
+        * http/tests/xmlhttprequest/post-blob-content-type-sync-expected.txt:
+        * http/tests/xmlhttprequest/redirect-cross-origin-2-expected.txt:
+        * http/tests/xmlhttprequest/redirect-cross-origin-expected.txt:
+        * http/tests/xmlhttprequest/redirect-cross-origin-post-expected.txt:
+        * http/tests/xmlhttprequest/redirect-cross-origin-post-sync-expected.txt:
+        * http/tests/xmlhttprequest/redirect-cross-origin-sync-expected.txt:
+        * http/tests/xmlhttprequest/redirect-cross-origin-tripmine-expected.txt:
+        * http/tests/xmlhttprequest/simple-cross-origin-denied-events-expected.txt:
+        * http/tests/xmlhttprequest/simple-cross-origin-denied-events-post-expected.txt:
+        * http/tests/xmlhttprequest/simple-cross-origin-denied-events-post-sync-expected.txt:
+        * http/tests/xmlhttprequest/simple-cross-origin-denied-events-sync-expected.txt:
+        * http/tests/xmlhttprequest/simple-cross-origin-progress-events-expected.txt:
+        * http/tests/xmlhttprequest/upload-request-error-event-order-expected.txt:
+        * http/tests/xmlhttprequest/workers/access-control-basic-get-fail-non-simple-expected.txt:
+        * http/tests/xmlhttprequest/xmlhttprequest-sync-no-progress-events-expected.txt:
+        * http/tests/xmlhttprequest/xmlhttprequest-unsafe-redirect-expected.txt:
+        * http/wpt/resource-timing/rt-resource-errors-expected.txt:
+        * http/wpt/webaudio/audioworklet-addModule-cors.sub.https-expected.txt:
+        * platform/glib/http/tests/xmlhttprequest/simple-cross-origin-denied-events-post-expected.txt:
+        * platform/gtk/http/tests/security/video-cross-origin-accessfailure-expected.txt:
+        * platform/ios-wk2/imported/w3c/web-platform-tests/fetch/api/cors/cors-basic-expected.txt:
+        * platform/ios-wk2/imported/w3c/web-platform-tests/fetch/api/cors/cors-basic-worker-expected.txt:
+        * platform/ios-wk2/imported/w3c/web-platform-tests/fetch/api/cors/cors-origin-worker-expected.txt:
+        * platform/ios/http/tests/privateClickMeasurement/attribution-conversion-through-fetch-keepalive-expected.txt:
+        * platform/mac-wk1/http/tests/xmlhttprequest/access-control-and-redirects-expected.txt:
+        * platform/mac-wk1/http/tests/xmlhttprequest/access-control-preflight-not-successful-expected.txt:
+        * platform/mac-wk1/http/tests/xmlhttprequest/post-blob-content-type-async-expected.txt:
+        * platform/mac-wk1/http/tests/xmlhttprequest/post-blob-content-type-sync-expected.txt:
+        * platform/mac-wk1/http/tests/xmlhttprequest/redirect-cross-origin-post-expected.txt:
+        * platform/mac-wk1/http/tests/xmlhttprequest/redirect-cross-origin-tripmine-expected.txt:
+        * platform/mac-wk1/http/tests/xmlhttprequest/simple-cross-origin-denied-events-post-expected.txt:
+        * platform/mac-wk1/http/tests/xmlhttprequest/xmlhttprequest-unsafe-redirect-expected.txt:
+        * platform/mac-wk1/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/none-sw-from-none.https-expected.txt:
+        * platform/mac-wk1/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/none-sw-from-require-corp.https-expected.txt:
+        * platform/mac-wk1/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/require-corp-sw-from-none.https-expected.txt:
+        * platform/mac-wk1/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/require-corp-sw-from-require-corp.https-expected.txt:
+        * platform/mac-wk2/imported/w3c/web-platform-tests/fetch/api/cors/cors-basic-expected.txt:
+        * platform/mac-wk2/imported/w3c/web-platform-tests/fetch/api/cors/cors-basic-worker-expected.txt:
+        * platform/mac-wk2/imported/w3c/web-platform-tests/fetch/api/cors/cors-origin-worker-expected.txt:
+        * platform/win/http/tests/xmlhttprequest/access-control-and-redirects-async-expected.txt:
+        * platform/win/http/tests/xmlhttprequest/access-control-and-redirects-expected.txt:
+        * platform/win/http/tests/xmlhttprequest/access-control-preflight-not-successful-expected.txt:
+        * platform/win/http/tests/xmlhttprequest/redirect-cross-origin-post-expected.txt:
+        * platform/win/http/tests/xmlhttprequest/redirect-cross-origin-tripmine-expected.txt:
+        * platform/win/http/tests/xmlhttprequest/simple-cross-origin-denied-events-post-expected.txt:
+        * platform/win/http/tests/xmlhttprequest/xmlhttprequest-unsafe-redirect-expected.txt:
+        * platform/wincairo-wk1/http/tests/xmlhttprequest/redirect-cross-origin-post-expected.txt:
+        * platform/wincairo-wk1/http/tests/xmlhttprequest/simple-cross-origin-denied-events-post-expected.txt:
+        * platform/wincairo/http/tests/xmlhttprequest/xmlhttprequest-unsafe-redirect-expected.txt:
+
 2021-11-01  Eric Hutchison  <ehutchison@apple.com>
 
         [ Catalina Debug wk1 EWS-only ] media/track/track-element-load-event.html is a flaky crash.

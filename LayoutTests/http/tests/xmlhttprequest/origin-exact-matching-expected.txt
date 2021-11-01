@@ -1,72 +1,72 @@
-CONSOLE MESSAGE: Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin. Status code: 200
 CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8000/xmlhttprequest/resources/access-control-allow-lists.py?origin=http%3A%2F%2Fwww2.localhost%3A8000 due to access control checks.
-CONSOLE MESSAGE: Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin. Status code: 200
 CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8000/xmlhttprequest/resources/access-control-allow-lists.py?origin=%2F%2Flocalhost%3A8000 due to access control checks.
-CONSOLE MESSAGE: Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin. Status code: 200
 CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8000/xmlhttprequest/resources/access-control-allow-lists.py?origin=%3A%2F%2Flocalhost%3A8000 due to access control checks.
-CONSOLE MESSAGE: Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin. Status code: 200
 CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8000/xmlhttprequest/resources/access-control-allow-lists.py?origin=ftp%3A%2F%2Flocalhost%3A8000 due to access control checks.
-CONSOLE MESSAGE: Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin. Status code: 200
 CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8000/xmlhttprequest/resources/access-control-allow-lists.py?origin=http%3A%3A%2F%2Flocalhost%3A8000 due to access control checks.
-CONSOLE MESSAGE: Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin. Status code: 200
 CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8000/xmlhttprequest/resources/access-control-allow-lists.py?origin=http%3A%2Flocalhost%3A8000 due to access control checks.
-CONSOLE MESSAGE: Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin. Status code: 200
 CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8000/xmlhttprequest/resources/access-control-allow-lists.py?origin=http%3Alocalhost%3A8000 due to access control checks.
-CONSOLE MESSAGE: Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin. Status code: 200
 CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8000/xmlhttprequest/resources/access-control-allow-lists.py?origin=localhost%3A8000 due to access control checks.
-CONSOLE MESSAGE: Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin. Status code: 200
 CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8000/xmlhttprequest/resources/access-control-allow-lists.py?origin=http%3A%2F%2Flocalhost%3A8000%3F due to access control checks.
-CONSOLE MESSAGE: Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin. Status code: 200
 CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8000/xmlhttprequest/resources/access-control-allow-lists.py?origin=http%3A%2F%2Flocalhost%3A8000%2F due to access control checks.
-CONSOLE MESSAGE: Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin. Status code: 200
 CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8000/xmlhttprequest/resources/access-control-allow-lists.py?origin=http%3A%2F%2Flocalhost%3A8000%20%2F due to access control checks.
-CONSOLE MESSAGE: Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin. Status code: 200
 CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8000/xmlhttprequest/resources/access-control-allow-lists.py?origin=http%3A%2F%2Flocalhost%3A8000%23 due to access control checks.
-CONSOLE MESSAGE: Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin. Status code: 200
 CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8000/xmlhttprequest/resources/access-control-allow-lists.py?origin=http%3A%2F%2Flocalhost%3A8000%2523 due to access control checks.
-CONSOLE MESSAGE: Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin. Status code: 200
 CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8000/xmlhttprequest/resources/access-control-allow-lists.py?origin=http%3A%2F%2Flocalhost%3A8000%3A80 due to access control checks.
-CONSOLE MESSAGE: Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin. Status code: 200
 CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8000/xmlhttprequest/resources/access-control-allow-lists.py?origin=http%3A%2F%2Flocalhost%3A8000%00 due to access control checks.
-CONSOLE MESSAGE: Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin. Status code: 200
 CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8000/xmlhttprequest/resources/access-control-allow-lists.py?origin=HTTP%3A%2F%2FLOCALHOST%3A8000 due to access control checks.
-CONSOLE MESSAGE: Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin. Status code: 200
 CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8000/xmlhttprequest/resources/access-control-allow-lists.py?origin=HTTP%3A%2F%2Flocalhost%3A8000 due to access control checks.
-CONSOLE MESSAGE: Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin. Status code: 200
 CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8000/xmlhttprequest/resources/access-control-allow-lists.py?origin=- due to access control checks.
-CONSOLE MESSAGE: Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin. Status code: 200
 CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8000/xmlhttprequest/resources/access-control-allow-lists.py?origin=** due to access control checks.
-CONSOLE MESSAGE: Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin. Status code: 200
 CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8000/xmlhttprequest/resources/access-control-allow-lists.py?origin=%00* due to access control checks.
-CONSOLE MESSAGE: Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin. Status code: 200
 CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8000/xmlhttprequest/resources/access-control-allow-lists.py?origin=*%00 due to access control checks.
-CONSOLE MESSAGE: Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin. Status code: 200
 CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8000/xmlhttprequest/resources/access-control-allow-lists.py?origin=%27*%27 due to access control checks.
-CONSOLE MESSAGE: Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin. Status code: 200
 CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8000/xmlhttprequest/resources/access-control-allow-lists.py?origin=%22*%22 due to access control checks.
-CONSOLE MESSAGE: Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin. Status code: 200
 CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8000/xmlhttprequest/resources/access-control-allow-lists.py?origin=*%20* due to access control checks.
-CONSOLE MESSAGE: Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin. Status code: 200
 CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8000/xmlhttprequest/resources/access-control-allow-lists.py?origin=*http%3A%2F%2F* due to access control checks.
-CONSOLE MESSAGE: Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin. Status code: 200
 CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8000/xmlhttprequest/resources/access-control-allow-lists.py?origin=*http%3A%2F%2Flocalhost%3A8000 due to access control checks.
-CONSOLE MESSAGE: Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin. Status code: 200
 CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8000/xmlhttprequest/resources/access-control-allow-lists.py?origin=*%20http%3A%2F%2Flocalhost%3A8000 due to access control checks.
-CONSOLE MESSAGE: Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin. Status code: 200
 CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8000/xmlhttprequest/resources/access-control-allow-lists.py?origin=%00http%3A%2F%2Flocalhost%3A8000 due to access control checks.
-CONSOLE MESSAGE: Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin. Status code: 200
 CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8000/xmlhttprequest/resources/access-control-allow-lists.py?origin=null%20http%3A%2F%2Flocalhost%3A8000 due to access control checks.
-CONSOLE MESSAGE: Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin. Status code: 200
 CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8000/xmlhttprequest/resources/access-control-allow-lists.py?origin=http%3A%2F%2Fexample.net due to access control checks.
-CONSOLE MESSAGE: Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin. Status code: 200
 CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8000/xmlhttprequest/resources/access-control-allow-lists.py?origin=null due to access control checks.
-CONSOLE MESSAGE: Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin. Status code: 200
 CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8000/xmlhttprequest/resources/access-control-allow-lists.py?origin= due to access control checks.
-CONSOLE MESSAGE: Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin. Status code: 200
 CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8000/xmlhttprequest/resources/access-control-allow-lists.py?origin=http%3A%2F%2Flocalhost%3A8000%2Fxmlhttprequest%2Fresources%2Forigin-exact-matching-iframe.html due to access control checks.
-CONSOLE MESSAGE: Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin. Status code: 200
 CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8000/xmlhttprequest/resources/access-control-allow-lists.py?origin=http%3A%2F%2Flocalhost%3A8000%2Fxmlhttprequest%2Fresources%2F due to access control checks.
-CONSOLE MESSAGE: Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin. Status code: 200
 CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8000/xmlhttprequest/resources/access-control-allow-lists.py?origin=http%3A%2F%2Flocalhost%3A8000%2Fxmlhttprequest%2Fresources%2Forigin-exact-matching-iframe.html due to access control checks.
 CONSOLE MESSAGE: Access-Control-Allow-Origin cannot contain more than one origin.
 CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8000/xmlhttprequest/resources/access-control-allow-lists.py?origin=http%3A%2F%2Flocalhost%3A8000%2C%20* due to access control checks.

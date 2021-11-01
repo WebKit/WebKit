@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin. Status code: 200
 CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/access-control-allow-lists.py due to access control checks.
 Test verifies that content MIME type is set correctly when Blob is sent using XMLHttpRequest synchronously.
 

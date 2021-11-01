@@ -159,7 +159,7 @@ void CrossOriginPreflightChecker::doPreflight(DocumentThreadableLoader& loader, 
     // FIXME: Ideally, we should ask platformLoadResourceSynchronously to set ResourceResponse isRedirected and use it here.
     bool isRedirect = preflightRequest.url().strippedForUseAsReferrer() != response.url().strippedForUseAsReferrer();
     if (isRedirect || !response.isSuccessful()) {
-        auto errorMessage = "Preflight response is not successful"_s;
+        auto errorMessage = makeString("Preflight response is not successful. Status code: ", response.httpStatusCode());
         loader.document().addConsoleMessage(MessageSource::Security, MessageLevel::Error, errorMessage);
 
         loader.preflightFailure(identifier, ResourceError { errorDomainWebKitInternal, 0, request.url(), errorMessage, ResourceError::Type::AccessControl });

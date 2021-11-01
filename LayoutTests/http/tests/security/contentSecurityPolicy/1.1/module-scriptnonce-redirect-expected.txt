@@ -1,2 +1,2 @@
-CONSOLE MESSAGE: Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin. Status code: 200
 This tests whether a deferred script load caused by a redirect is properly allowed by a nonce.

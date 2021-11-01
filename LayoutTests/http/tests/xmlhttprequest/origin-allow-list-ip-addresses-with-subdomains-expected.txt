@@ -1,6 +1,6 @@
-CONSOLE MESSAGE: Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin. Status code: 200
 CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8000/xmlhttprequest/resources/get.txt due to access control checks.
-CONSOLE MESSAGE: Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin. Status code: 200
 CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8000/xmlhttprequest/resources/get.txt due to access control checks.
 Specifying that an IP address should match subdomains doesn't make sense. This test verifies that it doesn't do anything.
 

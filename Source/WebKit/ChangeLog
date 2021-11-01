@@ -1,3 +1,33 @@
+2021-11-01  Michael[tm] Smith  <mike@w3.org>
+
+        [WebInspector][CORS] Show HTTP status code in CORS messages.
+        https://bugs.webkit.org/show_bug.cgi?id=231928
+
+        Reviewed by Darin Adler
+
+        Make the HTTP status be included in all CORS messages that might
+        get logged to the Inspector console when a 4xx or 5xx error occurs.
+        That means these:
+
+        * Failed to load resource: Origin foo is not allowed by
+        Access-Control-Allow-Origin
+
+        * Failed to load resource: Preflight response is not successful
+
+        The change makes those messages read as follows (in the case of,
+        for example, a 500 error):
+
+        * Failed to load resource: Origin foo is not allowed by
+        Access-Control-Allow-Origin. Status code: 500
+
+        * Failed to load resource: Preflight response is not successful.
+        Status code: 500
+
+        Tests: Updates 100+ existing tests, by changing expected messages.
+
+        * NetworkProcess/NetworkCORSPreflightChecker.cpp:
+        (WebKit::NetworkCORSPreflightChecker::willPerformHTTPRedirection):
+
 2021-11-01  Chris Dumez  <cdumez@apple.com>
 
         Avoid heap-allocating ImportanceAssertion
