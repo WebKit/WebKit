@@ -32,13 +32,16 @@
 #include <wtf/OptionSet.h>
 #include <wtf/Vector.h>
 
+#if PLATFORM(MAC)
+#include "ImportanceAssertion.h"
+#endif
+
 #if HAVE(QOS_CLASSES)
 #include <pthread/qos.h>
 #endif
 
 namespace IPC {
 
-class ImportanceAssertion;
 enum class MessageFlags : uint8_t;
 enum class ShouldDispatchWhenWaitingForSyncReply : uint8_t;
 
@@ -67,7 +70,7 @@ public:
     bool shouldMaintainOrderingWithAsyncMessages() const;
 
 #if PLATFORM(MAC)
-    void setImportanceAssertion(std::unique_ptr<ImportanceAssertion>);
+    void setImportanceAssertion(ImportanceAssertion&&);
 #endif
 
     static std::unique_ptr<Decoder> unwrapForTesting(Decoder&);
@@ -173,7 +176,7 @@ private:
     uint64_t m_destinationID;
 
 #if PLATFORM(MAC)
-    std::unique_ptr<ImportanceAssertion> m_importanceAssertion;
+    ImportanceAssertion m_importanceAssertion;
 #endif
 };
 

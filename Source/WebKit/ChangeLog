@@ -1,3 +1,26 @@
+2021-11-01  Chris Dumez  <cdumez@apple.com>
+
+        Avoid heap-allocating ImportanceAssertion
+        https://bugs.webkit.org/show_bug.cgi?id=232579
+
+        Reviewed by Alex Christensen.
+
+        Avoid heap-allocating ImportanceAssertion since this is just a wrapper around a
+        mach_port.
+
+        Also update the ImportanceAssertion destructor to null out the mach port as
+        hardening given <rdar://75139294>.
+
+        * Platform/IPC/Decoder.cpp:
+        (IPC::Decoder::setImportanceAssertion):
+        * Platform/IPC/Decoder.h:
+        * Platform/IPC/cocoa/ConnectionCocoa.mm:
+        (IPC::Connection::receiveSourceEventHandler):
+        * Platform/IPC/cocoa/ImportanceAssertion.h:
+        (IPC::ImportanceAssertion::ImportanceAssertion):
+        (IPC::ImportanceAssertion::operator=):
+        (IPC::ImportanceAssertion::~ImportanceAssertion):
+
 2021-11-01  Per Arne  <pvollan@apple.com>
 
         [macOS] Opening local html files is failing

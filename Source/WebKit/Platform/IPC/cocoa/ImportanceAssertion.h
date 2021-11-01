@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,30 +32,44 @@
 namespace IPC {
 
 class ImportanceAssertion {
-    WTF_MAKE_FAST_ALLOCATED;
-    WTF_MAKE_NONCOPYABLE(ImportanceAssertion);
-
 public:
+    ImportanceAssertion() = default;
+
     explicit ImportanceAssertion(mach_msg_header_t* header)
-        : m_voucher(0)
     {
         if (MACH_MSGH_BITS_HAS_VOUCHER(header->msgh_bits)) {
-            m_voucher = header->msgh_voucher_port;
-            header->msgh_voucher_port = MACH_VOUCHER_NULL;
+            m_voucher = std::exchange(header->msgh_voucher_port, MACH_VOUCHER_NULL);
             header->msgh_bits &= ~(MACH_MSGH_BITS_VOUCHER_MASK | MACH_MSGH_BITS_RAISEIMP);
         }
     }
 
+    ImportanceAssertion(ImportanceAssertion&& other)
+        : m_voucher(std::exchange(other.m_voucher, MACH_VOUCHER_NULL))
+    {
+    }
+
+    ImportanceAssertion& operator=(ImportanceAssertion&& other)
+    {
+        if (&other != this)
+            std::swap(m_voucher, other.m_voucher);
+        return *this;
+    }
+
+    ImportanceAssertion(const ImportanceAssertion&) = delete;
+    ImportanceAssertion& operator=(const ImportanceAssertion&) = delete;
+
     ~ImportanceAssertion()
     {
-        if (m_voucher) {
-            kern_return_t kr = mach_voucher_deallocate(m_voucher);
-            ASSERT_UNUSED(kr, !kr);
-        }
+        if (!m_voucher)
+            return;
+
+        kern_return_t kr = mach_voucher_deallocate(m_voucher);
+        ASSERT_UNUSED(kr, !kr);
+        m_voucher = MACH_VOUCHER_NULL;
     }
 
 private:
-    mach_voucher_t m_voucher;
+    mach_voucher_t m_voucher { MACH_VOUCHER_NULL };
 };
 
 }
