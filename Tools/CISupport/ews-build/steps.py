@@ -1775,7 +1775,7 @@ class AnalyzeCompileWebKitResults(buildstep.BuildStep, BugzillaMixin):
             if logs:
                 logs = logs.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
                 email_text += '\n\nError lines:\n\n<code>{}</code>'.format(logs)
-            email_text += '\n\nTo unsubscrible from these notifications or to provide any feedback please email aakash_jain@apple.com'
+            email_text += '\n\nTo unsubscribe from these notifications or to provide any feedback please email aakash_jain@apple.com'
             self._addToLog('stdio', 'Sending email notification to {}'.format(patch_author))
             send_email_to_patch_author(patch_author, email_subject, email_text, patch_id)
         except Exception as e:
@@ -2622,7 +2622,7 @@ class AnalyzeLayoutTestsResults(buildstep.BuildStep, BugzillaMixin):
             email_text += ' for <a href="{}">Bug {}</a>.'.format(Bugzilla.bug_url(bug_id), bug_id)
             email_text += '\n\nFull details are available at: {}\n\nPatch author: {}'.format(build_url, patch_author)
             email_text += '\n\nLayout test failure{}:\n{}'.format(pluralSuffix, test_names_string)
-            email_text += '\n\nTo unsubscrible from these notifications or to provide any feedback please email aakash_jain@apple.com'
+            email_text += '\n\nTo unsubscribe from these notifications or to provide any feedback please email aakash_jain@apple.com'
             self._addToLog('stdio', 'Sending email notification to {}'.format(patch_author))
             send_email_to_patch_author(patch_author, email_subject, email_text, patch_id)
         except Exception as e:

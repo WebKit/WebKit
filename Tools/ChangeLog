@@ -1,3 +1,14 @@
+2021-11-01  Aakash Jain  <aakash_jain@apple.com>
+
+        Fix a typo in EWS emails
+
+        Unreviewed minor fix.
+
+        * CISupport/ews-build/steps.py:
+        (AnalyzeCompileWebKitResults.send_email_for_new_build_failure):
+        (AnalyzeLayoutTestsResults.send_email_for_new_test_failures):
+        * CISupport/ews-build/steps_unittest.py: Unit-test fix after 243670@main.
+
 2021-10-30  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Layer tree should not be stuck in frozen state after explicitly stopping a page load
