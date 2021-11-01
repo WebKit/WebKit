@@ -401,7 +401,7 @@ platform/graphics/cv/ImageTransferSessionVT.mm
 platform/graphics/cv/PixelBufferConformerCV.cpp
 platform/graphics/cv/GraphicsContextGLCVANGLE.cpp
 platform/graphics/coreimage/FilterEffectRendererCoreImage.mm
-platform/graphics/gpu/cocoa/GPUDeviceMetal.mm
+platform/graphics/gpu/cocoa/GPUPrewarmingMetal.mm
 platform/graphics/ios/DisplayRefreshMonitorIOS.mm
 platform/graphics/ios/IconIOS.mm
 platform/graphics/mac/ColorMac.mm

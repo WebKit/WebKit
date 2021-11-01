@@ -24,7 +24,7 @@
  */
 
 #import "config.h"
-#import "GPUDevice.h"
+#import "GPUPrewarming.h"
 
 #import <Metal/Metal.h>
 

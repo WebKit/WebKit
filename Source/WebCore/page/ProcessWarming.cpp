@@ -43,7 +43,7 @@
 #include "XMLNames.h"
 
 #if ENABLE(GPU_DRIVER_PREWARMING)
-#include "GPUDevice.h"
+#include "GPUPrewarming.h"
 #endif
 
 namespace WebCore {
