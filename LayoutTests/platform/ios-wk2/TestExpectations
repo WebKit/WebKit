@@ -2046,8 +2046,6 @@ webkit.org/b/217263 imported/w3c/web-platform-tests/mediacapture-record/MediaRec
 
 webkit.org/b/196403 imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-stop.html [ Pass Failure Slow ]
 
-webkit.org/b/217268 imported/w3c/web-platform-tests/mathml/relations/html5-tree/dynamic-childlist-001.html [ Failure ]
-
 webkit.org/b/217641 [ Debug ] imported/w3c/web-platform-tests/xhr/event-timeout.any.worker.html [ Pass Failure ]
 
 webkit.org/b/219438 [ Release ] fast/canvas/canvas-overflow-hidden-animation.html [ Pass ImageOnlyFailure ]

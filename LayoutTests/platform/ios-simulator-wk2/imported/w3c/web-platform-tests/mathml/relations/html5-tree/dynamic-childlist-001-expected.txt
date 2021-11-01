@@ -31,7 +31,7 @@ PASS Adding missing children to mroot
 FAIL Removing child from valid mroot assert_approx_equals: inline position (child 0) expected 0 +/- 1 but got 20.40625
 FAIL Adding child to valid mroot assert_approx_equals: inline position (child 0) expected 0 +/- 1 but got 20.40625
 PASS Removing extra child from mroot
-FAIL Removing children from msqrt assert_approx_equals: block size expected 19.71875 +/- 1 but got 31.765625
+FAIL Removing children from msqrt assert_approx_equals: block size expected 19.703125 +/- 1 but got 31.765625
 PASS Adding children to msqrt
 PASS Removing children from mpadded
 PASS Adding children to mpadded

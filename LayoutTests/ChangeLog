@@ -1,3 +1,15 @@
+2021-11-01  Nikos Mouchtaris  <nmouchtaris@apple.com>
+
+        Add platform test expectations for imported/w3c/web-platform-tests/mathml/relations/html5-tree/dynamic-childlist-001.html
+        https://bugs.webkit.org/show_bug.cgi?id=232504
+
+        Reviewed by Myles C. Maxfield.
+
+        * platform/ios-simulator-wk2/TestExpectations:
+        * platform/ios-wk2/TestExpectations:
+        * platform/mac-bigsur/imported/w3c/web-platform-tests/mathml/relations/html5-tree/dynamic-childlist-001-expected.txt: Added.
+        * platform/mac/TestExpectations:
+
 2021-11-01  Ayumi Kojima  <ayumi_kojima@apple.com>
 
         [ iOS Debug ] http/wpt/push-api tests are flaky failing.

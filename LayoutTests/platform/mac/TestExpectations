@@ -2055,9 +2055,6 @@ webkit.org/b/217669 http/wpt/service-workers/service-worker-spinning-message.htt
 
 webkit.org/b/217994 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworkletnode-output-channel-count.https.html [ Pass Failure ]
 
-# rdar://70550210 REGRESSION (r267531): [ Big Sur iOS 14 ] imported/w3c/web-platform-tests/mathml/relations/html5-tree/dynamic-childlist-001.htm is a constant failure
-[ BigSur+ ] imported/w3c/web-platform-tests/mathml/relations/html5-tree/dynamic-childlist-001.html [ Failure ]
-
 # Mojave doesn't support COLR fonts.
 webkit.org/b/218346 [ Mojave ] fast/text/canvas-color-fonts [ Skip ]
 

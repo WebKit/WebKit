@@ -143,8 +143,6 @@ webkit.org/b/217687 accessibility/ios-simulator/accessibility-aria-table-childre
 
 webkit.org/b/217759 media/now-playing-status-without-media.html [ Pass Failure ]
 
-webkit.org/b/217268 imported/w3c/web-platform-tests/mathml/relations/html5-tree/dynamic-childlist-001.html [ Failure ]
-
 # webkit.org/b/209139 fast/canvas/webgl/webgl-clear-composited-notshowing.html [ Failure ]
 
 webkit.org/b/224121 css2.1/20110323/replaced-intrinsic-ratio-001.htm [ Pass Failure ]
