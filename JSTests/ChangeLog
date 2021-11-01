@@ -1,3 +1,24 @@
+2021-11-01  Robin Morisset  <rmorisset@apple.com>
+
+        JSGenericTypedArrayView<Adaptor>::set crashes if the length + objectOffset is > UINT32_MAX
+        https://bugs.webkit.org/show_bug.cgi?id=231975
+        rdar://84402043
+
+        Reviewed by Yusuke Suzuki.
+
+        - regress-84402043 is the testcase that revealed the problem.
+        - typed-array-set-large(-offset) test the same function, in the typed-array to typed-array case
+        - typed-array-large-slice tests the only caller that passes a non-0 objectOffset, and found other issues with it
+        - typed-array-large-oob-eventually-not.js is just another test of the Wasm4GB change that I had forgotten to commit
+
+        * stress/regress-84402043.js: Added.
+        * stress/typed-array-large-oob-eventually-not.js: Added.
+        (test):
+        * stress/typed-array-large-slice.js: Added.
+        (expect):
+        * stress/typed-array-set-large-offset.js: Added.
+        * stress/typed-array-set-large.js: Added.
+
 2021-10-29  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Unreviewed, reduce # of iterations in stress/validate-int-52-ai-state.js due to Debug timeout

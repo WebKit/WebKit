@@ -2958,6 +2958,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case NewTypedArray:
         switch (node->child1().useKind()) {
         case Int32Use:
+        case Int52RepUse:
             break;
         case UntypedUse:
             clobberWorld();
