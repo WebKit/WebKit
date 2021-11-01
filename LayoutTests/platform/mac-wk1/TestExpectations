@@ -1512,3 +1512,4 @@ webkit.org/b/232315 [ Catalina Debug ] media/track/track-disabled.html [ Pass Cr
 
 webkit.org/b/232446 [ Catalina Debug ] media/track/track-element-dom-change-crash.html [ Pass Crash ]
 
+webkit.org/b/232585 [ Catalina Debug ] media/track/track-element-load-event.html [ Pass Crash ]
