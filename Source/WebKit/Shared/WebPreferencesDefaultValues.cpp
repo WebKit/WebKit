@@ -161,7 +161,7 @@ bool defaultOfflineWebApplicationCacheEnabled()
 
 bool defaultUseGPUProcessForCanvasRenderingEnabled()
 {
-#if ENABLE(GPU_PROCESS_BY_DEFAULT)
+#if ENABLE(GPU_PROCESS_BY_DEFAULT) || PLATFORM(WIN)
     bool defaultValue = true;
 #else
     bool defaultValue = false;
@@ -188,7 +188,12 @@ bool defaultUseGPUProcessForMediaEnabled()
 
 bool defaultUseGPUProcessForWebGLEnabled()
 {
-    return isFeatureFlagEnabled("gpu_process_webgl", false);
+#if PLATFORM(WIN)
+    bool defaultValue = true;
+#else
+    bool defaultValue = false;
+#endif
+    return isFeatureFlagEnabled("gpu_process_webgl", defaultValue);
 }
 
 #endif // ENABLE(GPU_PROCESS)

@@ -39,11 +39,11 @@ bool isFeatureFlagEnabled(const char* featureName, bool defaultValue)
     DWORD keyType;
     HRESULT hr = getRegistryValue(HKEY_CURRENT_USER, L"Software\\WebKit", featureNameWide.data(), &keyType, &data, &dataSize);
     if (hr != ERROR_SUCCESS)
-        return false;
+        return defaultValue;
     if (keyType != REG_DWORD)
-        return false;
+        return defaultValue;
     if (dataSize != sizeof data)
-        return false;
+        return defaultValue;
     return data;
 }
 

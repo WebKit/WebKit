@@ -1,5 +1,23 @@
 2021-11-01  Fujii Hironori  <Hironori.Fujii@sony.com>
 
+        [WinCairo] Enable gpu_process_canvas_rendering and gpu_process_webgl by default
+        https://bugs.webkit.org/show_bug.cgi?id=232555
+
+        Reviewed by Don Olmstead.
+
+        They can be disabled by the registry.
+
+        > reg add HKEY_CURRENT_USER\Software\WebKit /v gpu_process_canvas_rendering /t REG_DWORD /d 0 /f
+        > reg add HKEY_CURRENT_USER\Software\WebKit /v gpu_process_webgl /t REG_DWORD /d 0 /f
+
+        * Shared/WebPreferencesDefaultValues.cpp:
+        (WebKit::defaultUseGPUProcessForCanvasRenderingEnabled):
+        (WebKit::defaultUseGPUProcessForWebGLEnabled):
+        * Shared/win/WebPreferencesDefaultValuesWin.cpp:
+        (WebKit::isFeatureFlagEnabled):
+
+2021-11-01  Fujii Hironori  <Hironori.Fujii@sony.com>
+
         HashMap<GraphicsContextGLIdentifier, IPC::ScopedActiveMessageReceiveQueue<RemoteGraphicsContextGL>>::get can't compile
         https://bugs.webkit.org/show_bug.cgi?id=232554
 
