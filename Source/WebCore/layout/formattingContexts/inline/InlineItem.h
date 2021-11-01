@@ -34,6 +34,8 @@
 namespace WebCore {
 namespace Layout {
 
+class InlineItemsBuilder;
+
 class InlineItem {
 public:
     enum class Type : uint8_t {
@@ -65,6 +67,10 @@ public:
     bool isInlineBoxEnd() const { return type() == Type::InlineBoxEnd; }
 
 private:
+    friend class InlineItemsBuilder;
+
+    void setBidiLevel(UBiDiLevel bidiLevel) { m_bidiLevel = bidiLevel; }
+
     const Box* m_layoutBox { nullptr };
     Type m_type { };
     UBiDiLevel m_bidiLevel { UBIDI_DEFAULT_LTR };

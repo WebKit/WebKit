@@ -42,7 +42,7 @@ public:
 
 private:
     void collectInlineItems(InlineItems&);
-    void breakInlineItemsAtBidiBoundaries(InlineItems&);
+    void breakAndComputeBidiLevels(InlineItems&);
 
     void handleTextContent(const InlineTextBox&, InlineItems&);
     void handleInlineBoxStart(const Box&, InlineItems&);

@@ -33,6 +33,8 @@
 namespace WebCore {
 namespace Layout {
 
+class InlineItemsBuilder;
+
 using InlineItems = Vector<InlineItem>;
 
 class InlineTextItem : public InlineItem {
@@ -59,7 +61,10 @@ public:
     static bool shouldPreserveSpacesAndTabs(const InlineTextItem&);
 
 private:
+    friend class InlineItemsBuilder;
     using InlineItem::TextItemType;
+
+    InlineTextItem splitAt(size_t position);
 
     InlineTextItem(const InlineTextBox&, unsigned start, unsigned length, UBiDiLevel, bool hasTrailingSoftHyphen, bool isWordSeparator, std::optional<InlineLayoutUnit> width, TextItemType);
     explicit InlineTextItem(const InlineTextBox&, UBiDiLevel);

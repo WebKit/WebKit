@@ -29,6 +29,7 @@
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 #include "InlineSoftLineBreakItem.h"
+#include <wtf/Scope.h>
 
 namespace WebCore {
 namespace Layout {
@@ -83,7 +84,7 @@ InlineItems InlineItemsBuilder::build()
 {
     InlineItems inlineItems;
     collectInlineItems(inlineItems);
-    breakInlineItemsAtBidiBoundaries(inlineItems);
+    breakAndComputeBidiLevels(inlineItems);
     return inlineItems;
 }
 
@@ -133,9 +134,74 @@ void InlineItemsBuilder::collectInlineItems(InlineItems& inlineItems)
     }
 }
 
-void InlineItemsBuilder::breakInlineItemsAtBidiBoundaries(InlineItems&)
+void InlineItemsBuilder::breakAndComputeBidiLevels(InlineItems& inlineItems)
 {
-    // FIXME: Use ubidi to split the content at bidi boundaries.
+    if (m_paragraphContentBuilder.isEmpty())
+        return;
+    ASSERT(!inlineItems.isEmpty());
+
+    // 1. Setup the bidi boundary loop by calling ubidi_setPara with the paragraph text.
+    // 2. Call ubidi_getLogicalRun to advance to the next bidi boundary until we hit the end of the content.
+    // 3. Set the computed bidi level on the associated inline items. Split them as needed.
+    UBiDi* ubidi = ubidi_open();
+
+    auto closeUBiDiOnExit = makeScopeExit([&] {
+        ubidi_close(ubidi);
+    });
+
+    UBiDiLevel bidiLevel = UBIDI_DEFAULT_LTR;
+    bool useHeuristicBaseDirection = root().style().unicodeBidi() == EUnicodeBidi::Plaintext;
+    if (!useHeuristicBaseDirection)
+        bidiLevel = root().style().isLeftToRightDirection() ? UBIDI_LTR : UBIDI_RTL;
+
+    UErrorCode error = U_ZERO_ERROR;
+    ubidi_setPara(ubidi, m_paragraphContentBuilder.characters16(), m_paragraphContentBuilder.length(), bidiLevel, nullptr, &error);
+    if (U_FAILURE(error)) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    size_t currentInlineItemIndex = 0;
+    for (size_t currentPosition = 0; currentPosition < m_paragraphContentBuilder.length();) {
+        UBiDiLevel level;
+        int32_t endPosition = currentPosition;
+        ubidi_getLogicalRun(ubidi, currentPosition, &endPosition, &level);
+
+        auto setBidiLevelOnRange = [&] {
+            // We should always have inline item(s) associated with a bidi range.
+            ASSERT(currentInlineItemIndex < inlineItems.size());
+
+            while (currentInlineItemIndex < inlineItems.size()) {
+                auto& inlineItem = inlineItems[currentInlineItemIndex];
+                if (!inlineItem.isText()) {
+                    // FIXME: This fails with multiple inline boxes as they don't advance position.
+                    inlineItem.setBidiLevel(level);
+                    ++currentInlineItemIndex;
+                    continue;
+                }
+                auto& inlineTextItem = downcast<InlineTextItem>(inlineItem);
+                inlineTextItem.setBidiLevel(level);
+
+                auto inlineTextItemEnd = inlineTextItem.end();
+                auto bidiEnd = endPosition - m_contentOffsetMap.get(&inlineTextItem.layoutBox());
+                if (bidiEnd == inlineTextItemEnd) {
+                    ++currentInlineItemIndex;
+                    break;
+                }
+                if (bidiEnd < inlineTextItemEnd) {
+                    if (currentInlineItemIndex == inlineItems.size() - 1)
+                        inlineItems.append(inlineTextItem.splitAt(bidiEnd));
+                    else
+                        inlineItems.insert(currentInlineItemIndex + 1, inlineTextItem.splitAt(bidiEnd));
+                    ++currentInlineItemIndex;
+                    break;
+                }
+                ++currentInlineItemIndex;
+            }
+        };
+        setBidiLevelOnRange();
+        currentPosition = endPosition;
+    }
 }
 
 void InlineItemsBuilder::handleTextContent(const InlineTextBox& inlineTextBox, InlineItems& inlineItems)

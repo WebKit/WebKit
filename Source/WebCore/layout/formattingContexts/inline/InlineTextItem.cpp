@@ -71,6 +71,15 @@ InlineTextItem InlineTextItem::right(unsigned length, std::optional<InlineLayout
     return { inlineTextBox(), end() - length, length, bidiLevel(), hasTrailingSoftHyphen(), isWordSeparator(), width, m_textItemType };
 }
 
+InlineTextItem InlineTextItem::splitAt(size_t position)
+{
+    RELEASE_ASSERT(length() > 1);
+    RELEASE_ASSERT(position > start() && position < end());
+    auto rightSide = right(end() - position, { });
+    m_length = length() - rightSide.length();
+    return rightSide;
+}
+
 bool InlineTextItem::isZeroWidthSpaceSeparator() const
 {
     // FIXME: We should check for more zero width content and not just U+200B.
