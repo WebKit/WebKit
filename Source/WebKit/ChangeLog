@@ -1,3 +1,25 @@
+2021-11-01  Sihui Liu  <sihui_liu@apple.com>
+
+        Increase responsiveness timeout for network process
+        https://bugs.webkit.org/show_bug.cgi?id=232505
+
+        Reviewed by Chris Dumez.
+
+        * UIProcess/AuxiliaryProcessProxy.cpp:
+        (WebKit::AuxiliaryProcessProxy::AuxiliaryProcessProxy):
+        * UIProcess/AuxiliaryProcessProxy.h:
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::NetworkProcessProxy):
+        (WebKit::NetworkProcessProxy::getNetworkProcessConnection):
+        * UIProcess/ResponsivenessTimer.cpp:
+        (WebKit::ResponsivenessTimer::ResponsivenessTimer):
+        (WebKit::ResponsivenessTimer::timerFired):
+        (WebKit::ResponsivenessTimer::start):
+        (): Deleted.
+        * UIProcess/ResponsivenessTimer.h:
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::getNetworkProcessConnection):
+
 2021-11-01  Tim Horton  <timothy_horton@apple.com>
 
         Add a testing preference to replay CG display lists manually

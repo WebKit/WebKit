@@ -1567,43 +1567,25 @@ void WebsiteDataStore::getNetworkProcessConnection(WebProcessProxy& webProcessPr
     auto& networkProcessProxy = networkProcess();
     networkProcessProxy.getNetworkProcessConnection(webProcessProxy, [weakThis = WeakPtr { *this }, networkProcessProxy = WeakPtr { networkProcessProxy }, webProcessProxy = WeakPtr { webProcessProxy }, reply = WTFMove(reply), shouldRetryOnFailure] (auto& connectionInfo) mutable {
         if (UNLIKELY(!IPC::Connection::identifierIsValid(connectionInfo.identifier()))) {
-            auto logError = [networkProcessProxy, webProcessProxy]() {
-#if OS(DARWIN)
-                if (!os_variant_allows_internal_security_policies("com.apple.WebKit"))
-                    return;
-
-                if (!webProcessProxy)
-                    return;
-
-                int networkProcessIdentifier = 0;
-                String networkProcessState = "Unknown"_s;
-                if (networkProcessProxy) {
-                    networkProcessIdentifier = networkProcessProxy->processIdentifier();
-                    networkProcessState = networkProcessProxy->stateString();
-                }
-                RELEASE_LOG_ERROR(Process, "WebsiteDataStore::getNetworkProcessConnection: Failed to get connection - networkProcessProxy=%p, networkProcessIdentifier=%d, processState=%s, webProcessProxy=%p, webProcessIdentifier=%d", networkProcessProxy.get(), networkProcessIdentifier, networkProcessState.utf8().data(), webProcessProxy.get(), webProcessProxy->processIdentifier());
-                RELEASE_ASSERT_NOT_REACHED();
-#endif
-            };
-
             if (shouldRetryOnFailure == ShouldRetryOnFailure::No || !webProcessProxy) {
-                logError();
+                RELEASE_LOG_ERROR(Process, "getNetworkProcessConnection: Failed to get connection to network process, will reply invalid identifier ...");
                 reply({ });
                 return;
             }
 
             // Retry on the next RunLoop iteration because we may be inside the WebsiteDataStore destructor.
-            RunLoop::main().dispatch([weakThis = WTFMove(weakThis), networkProcessProxy = WTFMove(networkProcessProxy), webProcessProxy = WTFMove(webProcessProxy), reply = WTFMove(reply), logError = WTFMove(logError)] () mutable {
+            RunLoop::main().dispatch([weakThis = WTFMove(weakThis), networkProcessProxy = WTFMove(networkProcessProxy), webProcessProxy = WTFMove(webProcessProxy), reply = WTFMove(reply)] () mutable {
                 if (RefPtr<WebsiteDataStore> strongThis = weakThis.get(); strongThis && webProcessProxy) {
                     // Terminate if it is the same network process.
                     if (networkProcessProxy && strongThis->m_networkProcess == networkProcessProxy.get())
                         strongThis->terminateNetworkProcess();
                     RELEASE_LOG_ERROR(Process, "getNetworkProcessConnection: Failed to get connection to network process, will retry ...");
                     strongThis->getNetworkProcessConnection(*webProcessProxy, WTFMove(reply), ShouldRetryOnFailure::No);
-                } else {
-                    logError();
-                    reply({ });
+                    return;
                 }
+
+                RELEASE_LOG_ERROR(Process, "getNetworkProcessConnection: Failed to get connection to network process, will reply invalid identifier ...");
+                reply({ });
             });
             return;
         }

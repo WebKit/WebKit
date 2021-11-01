@@ -47,7 +47,8 @@ public:
         virtual void deref() = 0;
     };
 
-    explicit ResponsivenessTimer(ResponsivenessTimer::Client&);
+    static constexpr Seconds defaultResponsivenessTimeout = 3_s;
+    ResponsivenessTimer(ResponsivenessTimer::Client&, Seconds responsivenessTimeout);
     ~ResponsivenessTimer();
 
     void start();
@@ -87,6 +88,7 @@ private:
     bool m_isResponsive { true };
     bool m_waitingForTimer { false };
     bool m_useLazyStop { false };
+    Seconds m_responsivenessTimeout;
 };
 
 } // namespace WebKit
