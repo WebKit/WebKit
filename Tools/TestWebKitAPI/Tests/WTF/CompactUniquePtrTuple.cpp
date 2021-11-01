@@ -233,6 +233,7 @@ TEST(WTF_CompactUniquePtrTuple, Subclassing)
     EXPECT_NE(oldPointer, a.pointer());
     EXPECT_EQ(0x1cU, a.type());
 
+    oldPointer = a.pointer();
     a = makeCompactUniquePtr<A, uint16_t>();
     EXPECT_EQ(4U, A::s_constructorCallCount);
     EXPECT_EQ(3U, A::s_destructorCallCount);

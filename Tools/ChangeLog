@@ -1,3 +1,18 @@
+2021-11-01  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        TestWTF.WTF_CompactUniquePtrTuple.Subclassing is randomly failing on WinCairo tester bots
+        https://bugs.webkit.org/show_bug.cgi?id=232556
+
+        Reviewed by Yusuke Suzuki.
+
+        "EXPECT_NE(oldPointer, a.pointer())" of line 241 was randomly
+        failing on WinCairo tester bots. This seems a simple mistake of
+        the test case. 'oldPointer' should be updated before destructing
+        the old value.
+
+        * TestWebKitAPI/Tests/WTF/CompactUniquePtrTuple.cpp:
+        (WTF_CompactUniquePtrTuple::Subclassing):
+
 2021-11-01  Brady Eidson  <beidson@apple.com>
 
         webpushd: Add mock in-memory registration, and the WKWebsiteDataStore SPI to manage them
