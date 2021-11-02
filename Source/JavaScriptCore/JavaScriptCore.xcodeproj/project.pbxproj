@@ -1974,6 +1974,11 @@
 		E3FF75331D9CEA1800C7E16D /* DOMJITGetterSetter.h in Headers */ = {isa = PBXBuildFile; fileRef = E3FF752F1D9CEA1200C7E16D /* DOMJITGetterSetter.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E49DC16C12EF294E00184A1F /* SourceProviderCache.h in Headers */ = {isa = PBXBuildFile; fileRef = E49DC15112EF272200184A1F /* SourceProviderCache.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E49DC16D12EF295300184A1F /* SourceProviderCacheItem.h in Headers */ = {isa = PBXBuildFile; fileRef = E49DC14912EF261A00184A1F /* SourceProviderCacheItem.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		F6D67D4026F902E9006E0349 /* TemporalInstant.h in Headers */ = {isa = PBXBuildFile; fileRef = F6D67D3A26F902E5006E0349 /* TemporalInstant.h */; };
+		F6D67D4226F902E9006E0349 /* TemporalInstantConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = F6D67D3C26F902E7006E0349 /* TemporalInstantConstructor.h */; };
+		F6D67D4426F902E9006E0349 /* TemporalInstantPrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = F6D67D3E26F902E8006E0349 /* TemporalInstantPrototype.h */; };
+		F6D67D4726F9130C006E0349 /* TemporalInstantConstructor.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = F6D67D4526F9130A006E0349 /* TemporalInstantConstructor.lut.h */; };
+		F6D67D4826F9130C006E0349 /* TemporalInstantPrototype.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = F6D67D4626F9130B006E0349 /* TemporalInstantPrototype.lut.h */; };
 		F6F150212693D450004B98EF /* TemporalObject.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = F6F150202693D450004B98EF /* TemporalObject.lut.h */; };
 		FE041553252EC0730091EB5D /* SlotVisitorMacros.h in Headers */ = {isa = PBXBuildFile; fileRef = FE041552252EC0730091EB5D /* SlotVisitorMacros.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE05FAFD1FE4CEDA00093230 /* DeprecatedInspectorValues.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 992D6A111FBD491D000245F4 /* DeprecatedInspectorValues.cpp */; };
@@ -5370,6 +5375,14 @@
 		F692A87D0255597D01FF60F7 /* RegExp.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RegExp.cpp; sourceTree = "<group>"; tabWidth = 8; };
 		F692A87E0255597D01FF60F7 /* RegExp.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = RegExp.h; sourceTree = "<group>"; tabWidth = 8; };
 		F692A8870255597D01FF60F7 /* JSCJSValue.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCJSValue.cpp; sourceTree = "<group>"; tabWidth = 8; };
+		F6D67D3926F902E5006E0349 /* TemporalInstant.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TemporalInstant.cpp; sourceTree = "<group>"; };
+		F6D67D3A26F902E5006E0349 /* TemporalInstant.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TemporalInstant.h; sourceTree = "<group>"; };
+		F6D67D3B26F902E6006E0349 /* TemporalInstantConstructor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TemporalInstantConstructor.cpp; sourceTree = "<group>"; };
+		F6D67D3C26F902E7006E0349 /* TemporalInstantConstructor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TemporalInstantConstructor.h; sourceTree = "<group>"; };
+		F6D67D3D26F902E7006E0349 /* TemporalInstantPrototype.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TemporalInstantPrototype.cpp; sourceTree = "<group>"; };
+		F6D67D3E26F902E8006E0349 /* TemporalInstantPrototype.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TemporalInstantPrototype.h; sourceTree = "<group>"; };
+		F6D67D4526F9130A006E0349 /* TemporalInstantConstructor.lut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TemporalInstantConstructor.lut.h; sourceTree = "<group>"; };
+		F6D67D4626F9130B006E0349 /* TemporalInstantPrototype.lut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TemporalInstantPrototype.lut.h; sourceTree = "<group>"; };
 		F6F150182693D33D004B98EF /* TemporalNow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TemporalNow.h; sourceTree = "<group>"; };
 		F6F150192693D33E004B98EF /* TemporalObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TemporalObject.cpp; sourceTree = "<group>"; };
 		F6F1501A2693D33E004B98EF /* TemporalObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TemporalObject.h; sourceTree = "<group>"; };
@@ -7104,6 +7117,8 @@
 				996B73141BD9FA2C00331B84 /* SymbolPrototype.lut.h */,
 				E3C4630526DB5DE900896336 /* TemporalCalendarConstructor.lut.h */,
 				E3C4630626DB5DE900896336 /* TemporalCalendarPrototype.lut.h */,
+				F6D67D4526F9130A006E0349 /* TemporalInstantConstructor.lut.h */,
+				F6D67D4626F9130B006E0349 /* TemporalInstantPrototype.lut.h */,
 				F6F150202693D450004B98EF /* TemporalObject.lut.h */,
 				533B15DE1DC7F463004D500A /* WasmOps.h */,
 				AD2FCC0A1DB59C5900B3E736 /* WebAssemblyCompileErrorConstructor.lut.h */,
@@ -8073,6 +8088,12 @@
 				A3C7EDB426B0DB37004C34C5 /* TemporalDurationConstructor.h */,
 				A3C7EDB526B0DB37004C34C5 /* TemporalDurationPrototype.cpp */,
 				A3C7EDB026B0DB36004C34C5 /* TemporalDurationPrototype.h */,
+				F6D67D3926F902E5006E0349 /* TemporalInstant.cpp */,
+				F6D67D3A26F902E5006E0349 /* TemporalInstant.h */,
+				F6D67D3B26F902E6006E0349 /* TemporalInstantConstructor.cpp */,
+				F6D67D3C26F902E7006E0349 /* TemporalInstantConstructor.h */,
+				F6D67D3D26F902E7006E0349 /* TemporalInstantPrototype.cpp */,
+				F6D67D3E26F902E8006E0349 /* TemporalInstantPrototype.h */,
 				F6F1501B2693D33E004B98EF /* TemporalNow.cpp */,
 				F6F150182693D33D004B98EF /* TemporalNow.h */,
 				F6F150192693D33E004B98EF /* TemporalObject.cpp */,
@@ -10816,6 +10837,11 @@
 				A3C7EDB926B0DB38004C34C5 /* TemporalDuration.h in Headers */,
 				A3C7EDBA26B0DB38004C34C5 /* TemporalDurationConstructor.h in Headers */,
 				A3C7EDB626B0DB38004C34C5 /* TemporalDurationPrototype.h in Headers */,
+				F6D67D4026F902E9006E0349 /* TemporalInstant.h in Headers */,
+				F6D67D4226F902E9006E0349 /* TemporalInstantConstructor.h in Headers */,
+				F6D67D4726F9130C006E0349 /* TemporalInstantConstructor.lut.h in Headers */,
+				F6D67D4426F902E9006E0349 /* TemporalInstantPrototype.h in Headers */,
+				F6D67D4826F9130C006E0349 /* TemporalInstantPrototype.lut.h in Headers */,
 				F6F150212693D450004B98EF /* TemporalObject.lut.h in Headers */,
 				E386FD7E26E867B800E4C28B /* TemporalPlainTime.h in Headers */,
 				E386FD7B26E867B800E4C28B /* TemporalPlainTimeConstructor.h in Headers */,

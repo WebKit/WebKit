@@ -94,6 +94,8 @@ private:
 
     UDateIntervalFormat* createDateIntervalFormatIfNecessary(JSGlobalObject*);
 
+    static double handleDateTimeValue(JSGlobalObject*, JSValue);
+
     enum class Weekday : uint8_t { None, Narrow, Short, Long };
     enum class Era : uint8_t { None, Narrow, Short, Long };
     enum class Year : uint8_t { None, TwoDigit, Numeric };

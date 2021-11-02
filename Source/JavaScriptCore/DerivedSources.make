@@ -200,6 +200,8 @@ OBJECT_LUT_HEADERS = \
     TemporalCalendarPrototype.lut.h \
     TemporalDurationConstructor.lut.h \
     TemporalDurationPrototype.lut.h \
+    TemporalInstantConstructor.lut.h \
+    TemporalInstantPrototype.lut.h \
     TemporalNow.lut.h \
     TemporalObject.lut.h \
     TemporalPlainTimeConstructor.lut.h \

@@ -167,6 +167,7 @@
 #include "SymbolObject.h"
 #include "TemporalCalendar.h"
 #include "TemporalDuration.h"
+#include "TemporalInstant.h"
 #include "TemporalPlainTime.h"
 #include "TemporalTimeZone.h"
 #include "TestRunnerUtils.h"
@@ -1597,6 +1598,7 @@ DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(symbolObjectSpace, cellHeapCellType.get(
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(templateObjectDescriptorSpace, destructibleCellHeapCellType.get(), JSTemplateObjectDescriptor)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(temporalCalendarSpace, cellHeapCellType.get(), TemporalCalendar)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(temporalDurationSpace, cellHeapCellType.get(), TemporalDuration)
+DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(temporalInstantSpace, cellHeapCellType.get(), TemporalInstant)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(temporalPlainTimeSpace, cellHeapCellType.get(), TemporalPlainTime)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(temporalTimeZoneSpace, cellHeapCellType.get(), TemporalTimeZone)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(uint8ArraySpace, cellHeapCellType.get(), JSUint8Array)

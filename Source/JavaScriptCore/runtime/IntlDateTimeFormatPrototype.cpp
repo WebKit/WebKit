@@ -32,6 +32,7 @@
 #include "IntlDateTimeFormatInlines.h"
 #include "JSBoundFunction.h"
 #include "JSCInlines.h"
+#include "TemporalInstant.h"
 #include <wtf/DateMath.h>
 
 namespace JSC {
@@ -90,6 +91,27 @@ void IntlDateTimeFormatPrototype::finishCreation(VM& vm, JSGlobalObject* globalO
     JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
 }
 
+// HandleDateTimeValue ( dateTimeFormat, x )
+// https://tc39.es/proposal-temporal/#sec-temporal-handledatetimevalue
+double IntlDateTimeFormat::handleDateTimeValue(JSGlobalObject* globalObject, JSValue x)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    if (x.isUndefined())
+        RELEASE_AND_RETURN(scope, dateNowImpl().toNumber(globalObject));
+
+    // FIXME:
+    //  - Add all of the other Temporal types
+    //  - Work in epoch nanoseconds
+    //  - Return UDateFormat and UDateIntervalFormat depending on the type
+    TemporalInstant* instant = jsDynamicCast<TemporalInstant*>(vm, x);
+    if (instant)
+        return instant->exactTime().epochMilliseconds();
+
+    RELEASE_AND_RETURN(scope, WTF::timeClip(x.toNumber(globalObject)));
+}
+
 JSC_DEFINE_HOST_FUNCTION(intlDateTimeFormatFuncFormatDateTime, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
@@ -100,14 +122,8 @@ JSC_DEFINE_HOST_FUNCTION(intlDateTimeFormatFuncFormatDateTime, (JSGlobalObject* 
     IntlDateTimeFormat* format = jsCast<IntlDateTimeFormat*>(callFrame->thisValue());
 
     JSValue date = callFrame->argument(0);
-    double value;
-
-    if (date.isUndefined())
-        value = dateNowImpl().toNumber(globalObject);
-    else {
-        value = WTF::timeClip(date.toNumber(globalObject));
-        RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    }
+    double value = IntlDateTimeFormat::handleDateTimeValue(globalObject, date);
+    RETURN_IF_EXCEPTION(scope, { });
 
     RELEASE_AND_RETURN(scope, JSValue::encode(format->format(globalObject, value)));
 }
@@ -156,14 +172,8 @@ JSC_DEFINE_HOST_FUNCTION(intlDateTimeFormatPrototypeFuncFormatToParts, (JSGlobal
         return JSValue::encode(throwTypeError(globalObject, scope, "Intl.DateTimeFormat.prototype.formatToParts called on value that's not a DateTimeFormat"_s));
 
     JSValue date = callFrame->argument(0);
-    double value;
-
-    if (date.isUndefined())
-        value = dateNowImpl().toNumber(globalObject);
-    else {
-        value = WTF::timeClip(date.toNumber(globalObject));
-        RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    }
+    double value = IntlDateTimeFormat::handleDateTimeValue(globalObject, date);
+    RETURN_IF_EXCEPTION(scope, { });
 
     RELEASE_AND_RETURN(scope, JSValue::encode(dateTimeFormat->formatToParts(globalObject, value)));
 }
@@ -185,9 +195,9 @@ JSC_DEFINE_HOST_FUNCTION(intlDateTimeFormatPrototypeFuncFormatRange, (JSGlobalOb
     if (startDateValue.isUndefined() || endDateValue.isUndefined())
         return throwVMTypeError(globalObject, scope, "startDate or endDate is undefined"_s);
 
-    double startDate = startDateValue.toNumber(globalObject);
+    double startDate = IntlDateTimeFormat::handleDateTimeValue(globalObject, startDateValue);
     RETURN_IF_EXCEPTION(scope, { });
-    double endDate = endDateValue.toNumber(globalObject);
+    double endDate = IntlDateTimeFormat::handleDateTimeValue(globalObject, endDateValue);
     RETURN_IF_EXCEPTION(scope, { });
     if (startDate > endDate)
         return throwVMRangeError(globalObject, scope, "startDate is larger than endDate"_s);
@@ -212,9 +222,9 @@ JSC_DEFINE_HOST_FUNCTION(intlDateTimeFormatPrototypeFuncFormatRangeToParts, (JSG
     if (startDateValue.isUndefined() || endDateValue.isUndefined())
         return throwVMTypeError(globalObject, scope, "startDate or endDate is undefined"_s);
 
-    double startDate = startDateValue.toNumber(globalObject);
+    double startDate = IntlDateTimeFormat::handleDateTimeValue(globalObject, startDateValue);
     RETURN_IF_EXCEPTION(scope, { });
-    double endDate = endDateValue.toNumber(globalObject);
+    double endDate = IntlDateTimeFormat::handleDateTimeValue(globalObject, endDateValue);
     RETURN_IF_EXCEPTION(scope, { });
     if (startDate > endDate)
         return throwVMRangeError(globalObject, scope, "startDate is larger than endDate"_s);

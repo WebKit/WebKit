@@ -210,6 +210,8 @@
 #include "TemporalCalendarPrototype.h"
 #include "TemporalDuration.h"
 #include "TemporalDurationPrototype.h"
+#include "TemporalInstant.h"
+#include "TemporalInstantPrototype.h"
 #include "TemporalObject.h"
 #include "TemporalPlainTime.h"
 #include "TemporalPlainTimePrototype.h"
@@ -1254,6 +1256,13 @@ capitalName ## Constructor* lowerName ## Constructor = featureFlag ? capitalName
                 init.set(TemporalDuration::createStructure(init.vm, globalObject, durationPrototype));
             });
 
+        m_instantStructure.initLater(
+            [] (const Initializer<Structure>& init) {
+                JSGlobalObject* globalObject = jsCast<JSGlobalObject*>(init.owner);
+                TemporalInstantPrototype* instantPrototype = TemporalInstantPrototype::create(init.vm, TemporalInstantPrototype::createStructure(init.vm, globalObject, globalObject->objectPrototype()));
+                init.set(TemporalInstant::createStructure(init.vm, globalObject, instantPrototype));
+            });
+
         m_plainTimeStructure.initLater(
             [] (const Initializer<Structure>& init) {
                 auto* globalObject = jsCast<JSGlobalObject*>(init.owner);
@@ -2166,6 +2175,7 @@ void JSGlobalObject::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 
     thisObject->m_calendarStructure.visit(visitor);
     thisObject->m_durationStructure.visit(visitor);
+    thisObject->m_instantStructure.visit(visitor);
     thisObject->m_plainTimeStructure.visit(visitor);
     thisObject->m_timeZoneStructure.visit(visitor);
 

@@ -175,6 +175,8 @@ $(PROJECT_DIR)/runtime/TemporalCalendarConstructor.cpp
 $(PROJECT_DIR)/runtime/TemporalCalendarPrototype.cpp
 $(PROJECT_DIR)/runtime/TemporalDurationConstructor.cpp
 $(PROJECT_DIR)/runtime/TemporalDurationPrototype.cpp
+$(PROJECT_DIR)/runtime/TemporalInstantConstructor.cpp
+$(PROJECT_DIR)/runtime/TemporalInstantPrototype.cpp
 $(PROJECT_DIR)/runtime/TemporalNow.cpp
 $(PROJECT_DIR)/runtime/TemporalObject.cpp
 $(PROJECT_DIR)/runtime/TemporalPlainTimeConstructor.cpp

@@ -28,6 +28,7 @@
 
 #include "IntlObject.h"
 #include "TemporalObject.h"
+#include <wtf/Int128.h>
 
 namespace JSC {
 namespace ISO8601 {
@@ -77,6 +78,122 @@ public:
 
 private:
     std::array<double, numberOfTemporalUnits> m_data { };
+};
+
+class ExactTime {
+    WTF_MAKE_FAST_ALLOCATED(ExactTime);
+public:
+    constexpr ExactTime() = default;
+    constexpr ExactTime(const ExactTime&) = default;
+    constexpr explicit ExactTime(Int128 epochNanoseconds) : m_epochNanoseconds(epochNanoseconds) { }
+
+    static constexpr ExactTime fromEpochSeconds(int64_t epochSeconds)
+    {
+        return ExactTime(Int128 { epochSeconds } * ExactTime::nsPerSecond);
+    }
+    static constexpr ExactTime fromEpochMilliseconds(int64_t epochMilliseconds)
+    {
+        return ExactTime(Int128 { epochMilliseconds } * ExactTime::nsPerMillisecond);
+    }
+    static constexpr ExactTime fromEpochMicroseconds(int64_t epochMicroseconds)
+    {
+        return ExactTime(Int128 { epochMicroseconds } * ExactTime::nsPerMicrosecond);
+    }
+    static ExactTime fromISOPartsAndOffset(int32_t y, uint8_t mon, uint8_t d, unsigned h, unsigned min, unsigned s, unsigned ms, unsigned micros, unsigned ns, int64_t offset);
+
+    int64_t epochSeconds() const
+    {
+        ASSERT(isValid());
+        return static_cast<int64_t>(m_epochNanoseconds / ExactTime::nsPerSecond);
+    }
+    int64_t epochMilliseconds() const
+    {
+        ASSERT(isValid());
+        return static_cast<int64_t>(m_epochNanoseconds / ExactTime::nsPerMillisecond);
+    }
+    int64_t epochMicroseconds() const
+    {
+        ASSERT(isValid());
+        return static_cast<int64_t>(m_epochNanoseconds / ExactTime::nsPerMicrosecond);
+    }
+    constexpr Int128 epochNanoseconds() const
+    {
+        ASSERT(isValid());
+        return m_epochNanoseconds;
+    }
+
+    int nanosecondsFraction() const
+    {
+        return static_cast<int>(m_epochNanoseconds % ExactTime::nsPerSecond);
+    }
+
+    String asString() const
+    {
+        StringBuilder builder;
+        if (m_epochNanoseconds < 0) {
+            builder.append('-');
+            asStringImpl(builder, -m_epochNanoseconds);
+        } else
+            asStringImpl(builder, m_epochNanoseconds);
+        return builder.toString();
+    }
+
+    // IsValidEpochNanoseconds ( epochNanoseconds )
+    // https://tc39.es/proposal-temporal/#sec-temporal-isvalidepochnanoseconds
+    constexpr bool isValid() const
+    {
+        return m_epochNanoseconds >= ExactTime::minValue && m_epochNanoseconds <= ExactTime::maxValue;
+    }
+
+    constexpr bool operator<(ExactTime other) const
+    {
+        return m_epochNanoseconds < other.m_epochNanoseconds;
+    }
+    constexpr bool operator<=(ExactTime other) const
+    {
+        return m_epochNanoseconds <= other.m_epochNanoseconds;
+    }
+    constexpr bool operator==(ExactTime other) const
+    {
+        return m_epochNanoseconds == other.m_epochNanoseconds;
+    }
+    constexpr bool operator!=(ExactTime other) const
+    {
+        return m_epochNanoseconds != other.m_epochNanoseconds;
+    }
+    constexpr bool operator>=(ExactTime other) const
+    {
+        return m_epochNanoseconds >= other.m_epochNanoseconds;
+    }
+    constexpr bool operator>(ExactTime other) const
+    {
+        return m_epochNanoseconds > other.m_epochNanoseconds;
+    }
+
+    std::optional<ExactTime> add(Duration) const;
+    Int128 difference(ExactTime other, unsigned increment, TemporalUnit, RoundingMode) const;
+    ExactTime round(unsigned increment, TemporalUnit, RoundingMode) const;
+
+private:
+    static constexpr Int128 dayRangeSeconds { 86400'00000000 }; // 1e8 days
+    static constexpr Int128 nsPerMicrosecond { 1000 };
+    static constexpr Int128 nsPerMillisecond { 1'000'000 };
+    static constexpr Int128 nsPerSecond { 1'000'000'000 };
+    static constexpr Int128 nsPerMinute = nsPerSecond * 60;
+    static constexpr Int128 nsPerHour = nsPerMinute * 60;
+    static constexpr Int128 minValue = -dayRangeSeconds * nsPerSecond;
+    static constexpr Int128 maxValue = dayRangeSeconds * nsPerSecond;
+
+    static void asStringImpl(StringBuilder& builder, Int128 value)
+    {
+        if (value > 9)
+            asStringImpl(builder, value / 10);
+        builder.append(static_cast<uint64_t>(value % 10) + '0');
+    }
+
+    static Int128 round(Int128 quantity, unsigned increment, TemporalUnit, RoundingMode);
+
+    Int128 m_epochNanoseconds { };
 };
 
 class PlainTime {
@@ -167,6 +284,8 @@ String formatTimeZoneOffsetString(int64_t);
 String temporalTimeToString(PlainTime, std::tuple<Precision, unsigned> precision);
 
 bool isValidDuration(const Duration&);
+
+std::optional<ExactTime> parseInstant(StringView);
 
 } // namespace ISO8601
 } // namespace JSC

@@ -1,3 +1,103 @@
+2021-11-02  Philip Chimento  <pchimento@igalia.com>
+
+        [JSC] Implement Temporal.Instant
+        https://bugs.webkit.org/show_bug.cgi?id=229826
+
+        Reviewed by Yusuke Suzuki.
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * runtime/ISO8601.cpp:
+        (JSC::ISO8601::parseInstant): Add a parsing function for Instant strings
+          reusing as much as possible from the other parsing functions.
+        (JSC::ISO8601::ExactTime::fromISOPartsAndOffset): Static method for
+          creating from ISO calendar components and UTC offset.
+        (JSC::ISO8601::checkedCastDoubleToInt128): Helper function for checking
+          whether a double can fit into an int128 without overflow.
+        (JSC::ISO8601::ExactTime::add const):
+        (JSC::ISO8601::ExactTime::round):
+        (JSC::ISO8601::ExactTime::difference const):
+        (JSC::ISO8601::ExactTime::round const):
+        * runtime/ISO8601.h:
+        (JSC::ISO8601::ExactTime::ExactTime): Add an ExactTime type that wraps
+          an Int128 and can do the basic operations. This type can be reused in
+          Temporal.ZonedDateTime.
+        (JSC::ISO8601::ExactTime::fromEpochSeconds):
+        (JSC::ISO8601::ExactTime::fromEpochMilliseconds):
+        (JSC::ISO8601::ExactTime::fromEpochMicroseconds):
+        (JSC::ISO8601::ExactTime::epochSeconds const):
+        (JSC::ISO8601::ExactTime::epochMilliseconds const):
+        (JSC::ISO8601::ExactTime::epochMicroseconds const):
+        (JSC::ISO8601::ExactTime::epochNanoseconds const):
+        (JSC::ISO8601::ExactTime::nanosecondsFraction const):
+        (JSC::ISO8601::ExactTime::asString const):
+        (JSC::ISO8601::ExactTime::isValid const):
+        (JSC::ISO8601::ExactTime::operator< const):
+        (JSC::ISO8601::ExactTime::operator<= const):
+        (JSC::ISO8601::ExactTime::operator== const):
+        (JSC::ISO8601::ExactTime::operator!= const):
+        (JSC::ISO8601::ExactTime::operator>= const):
+        (JSC::ISO8601::ExactTime::operator> const):
+        * runtime/IntlDateTimeFormat.h:
+        * runtime/IntlDateTimeFormatPrototype.cpp:
+        (JSC::IntlDateTimeFormat::handleDateTimeValue): Add a minimal
+          implementation of the HandleDateTimeValue abstract op from the
+          Temporal specification, only covering Temporal.Instant.
+        (JSC::JSC_DEFINE_HOST_FUNCTION): Use it in the existing
+          Intl.DateTimeFormat methods.
+        * runtime/JSBigInt.cpp:
+        (JSC::JSBigInt::createFrom): Add an overload that takes an Int128.
+        * runtime/JSBigInt.h: Remove declaration for nonexistent toUint64Heap().
+        * runtime/JSDateMath.cpp: Move timeToMS() into WTF.
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        (JSC::JSGlobalObject::visitChildrenImpl):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::instantStructure):
+        * runtime/TemporalDuration.cpp:
+        (JSC::TemporalDuration::toLimitedDuration): Added.
+        * runtime/TemporalDuration.h:
+        * runtime/TemporalInstant.cpp: Added.
+        (JSC::TemporalInstant::createStructure):
+        (JSC::TemporalInstant::TemporalInstant):
+        (JSC::TemporalInstant::create):
+        (JSC::TemporalInstant::tryCreateIfValid):
+        (JSC::TemporalInstant::toInstant):
+        (JSC::TemporalInstant::from):
+        (JSC::TemporalInstant::fromEpochSeconds):
+        (JSC::TemporalInstant::fromEpochMilliseconds):
+        (JSC::TemporalInstant::fromEpochMicroseconds):
+        (JSC::TemporalInstant::fromEpochNanoseconds):
+        (JSC::TemporalInstant::compare):
+        * runtime/TemporalInstant.h: Added.
+        * runtime/TemporalInstantConstructor.cpp: Added.
+        (JSC::TemporalInstantConstructor::create):
+        (JSC::TemporalInstantConstructor::createStructure):
+        (JSC::TemporalInstantConstructor::TemporalInstantConstructor):
+        (JSC::TemporalInstantConstructor::finishCreation):
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/TemporalInstantConstructor.h: Added.
+        * runtime/TemporalInstantPrototype.cpp: Added.
+        (JSC::TemporalInstantPrototype::create):
+        (JSC::TemporalInstantPrototype::createStructure):
+        (JSC::TemporalInstantPrototype::TemporalInstantPrototype):
+        (JSC::TemporalInstantPrototype::finishCreation):
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::JSC_DEFINE_CUSTOM_GETTER):
+        * runtime/TemporalInstantPrototype.h: Added.
+        * runtime/TemporalObject.cpp:
+        (JSC::createInstantConstructor): Added.
+        (JSC::formatSecondsStringPart): Added.
+        (JSC::abs): Added for clarity.
+        (JSC::roundNumberToIncrement): Add overload for Int128.
+        * runtime/TemporalObject.h:
+        * runtime/VM.cpp:
+        * runtime/VM.h:
+
 2021-11-02  Ross Kirsling  <ross.kirsling@sony.com>
 
         [JSC][LLInt] Reverse unintended effects of r285152

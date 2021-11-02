@@ -269,11 +269,6 @@ LocalTimeOffset DateCache::localTimeOffset(double millisecondsFromEpoch, WTF::Ti
     return offset;
 }
 
-static inline double timeToMS(double hour, double min, double sec, double ms)
-{
-    return (((hour * WTF::minutesPerHour + min) * WTF::secondsPerMinute + sec) * WTF::msPerSecond + ms);
-}
-
 double DateCache::gregorianDateTimeToMS(const GregorianDateTime& t, double milliseconds, WTF::TimeType inputTimeType)
 {
     double day = dateToDaysFrom1970(t.year(), t.month(), t.monthDay());

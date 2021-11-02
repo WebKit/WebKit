@@ -29,6 +29,8 @@
 
 #include "IntlObject.h"
 #include "ParseInt.h"
+#include <limits>
+#include <wtf/CheckedArithmetic.h>
 #include <wtf/DateMath.h>
 #include <wtf/text/StringParsingBuffer.h>
 #include <wtf/unicode/CharacterNames.h>
@@ -877,6 +879,37 @@ std::optional<std::tuple<PlainDate, std::optional<PlainTime>, std::optional<Time
     });
 }
 
+std::optional<ExactTime> parseInstant(StringView string)
+{
+    // https://tc39.es/proposal-temporal/#prod-TemporalInstantString
+    // TemporalInstantString :
+    //     Date TimeZoneOffsetRequired
+    //     Date DateTimeSeparator TimeSpec TimeZoneOffsetRequired
+
+    // https://tc39.es/proposal-temporal/#prod-TimeZoneOffsetRequired
+    // TimeZoneOffsetRequired :
+    //     TimeZoneUTCOffset TimeZoneBracketedAnnotation_opt
+
+    return readCharactersForParsing(string, [](auto buffer) -> std::optional<ExactTime> {
+        auto datetime = parseDateTime(buffer);
+        if (!datetime)
+            return std::nullopt;
+        auto [date, maybeTime, maybeTimeZone] = datetime.value();
+        if (!maybeTimeZone || (!maybeTimeZone->m_z && !maybeTimeZone->m_offset))
+            return std::nullopt;
+        // FIXME: parse calendar annotation
+        if (!buffer.atEnd())
+            return std::nullopt;
+
+        PlainTime time;
+        if (maybeTime)
+            time = maybeTime.value();
+
+        int64_t offset = maybeTimeZone->m_z ? 0 : *maybeTimeZone->m_offset;
+        return { ExactTime::fromISOPartsAndOffset(date.year(), date.month(), date.day(), time.hour(), time.minute(), time.second(), time.millisecond(), time.microsecond(), time.nanosecond(), offset) };
+    });
+}
+
 // https://tc39.es/proposal-temporal/#sec-temporal-formattimezoneoffsetstring
 String formatTimeZoneOffsetString(int64_t offset)
 {
@@ -967,6 +1000,130 @@ bool isValidDuration(const Duration& duration)
     }
 
     return true;
+}
+
+ExactTime ExactTime::fromISOPartsAndOffset(int32_t y, uint8_t mon, uint8_t d, unsigned h, unsigned min, unsigned s, unsigned ms, unsigned micros, unsigned ns, int64_t offset)
+{
+    ASSERT(y >= -999999 && y <= 999999);
+    ASSERT(mon >= 1 && mon <= 12);
+    ASSERT(d >= 1 && d <= 31);
+    ASSERT(h <= 23);
+    ASSERT(min <= 59);
+    ASSERT(s <= 59);
+    ASSERT(ms <= 999);
+    ASSERT(micros <= 999);
+    ASSERT(ns <= 999);
+
+    double dateDays = dateToDaysFrom1970(y, mon - 1, d);
+    double timeMs = timeToMS(h, min, s, ms);
+    double utcMs = dateDays * msPerDay + timeMs;
+    Int128 utcNs = static_cast<Int128>(utcMs) * 1'000'000 + micros * 1000 + ns;
+    return ExactTime { utcNs - offset };
+}
+
+using CheckedInt128 = Checked<Int128, RecordOverflow>;
+
+static CheckedInt128 checkedCastDoubleToInt128(double n)
+{
+    // Based on __fixdfti() and __fixunsdfti() from compiler_rt:
+    // https://github.com/llvm/llvm-project/blob/f3671de5500ff1f8210419226a9603a7d83b1a31/compiler-rt/lib/builtins/fp_fixint_impl.inc
+    // https://github.com/llvm/llvm-project/blob/f3671de5500ff1f8210419226a9603a7d83b1a31/compiler-rt/lib/builtins/fp_fixuint_impl.inc
+
+    static constexpr int significandBits = std::numeric_limits<double>::digits - 1;
+    static constexpr int exponentBits = std::numeric_limits<uint64_t>::digits - std::numeric_limits<double>::digits;
+    static constexpr int exponentBias = std::numeric_limits<double>::max_exponent - 1;
+    static constexpr uint64_t implicitBit = uint64_t { 1 } << significandBits;
+    static constexpr uint64_t significandMask = implicitBit - uint64_t { 1 };
+    static constexpr uint64_t signMask = uint64_t { 1 } << (significandBits + exponentBits);
+    static constexpr uint64_t absMask = signMask - uint64_t { 1 };
+
+    // Break n into sign, exponent, significand parts.
+    const uint64_t bits = *reinterpret_cast<uint64_t*>(&n);
+    const uint64_t nAbs = bits & absMask;
+    const int sign = bits & signMask ? -1 : 1;
+    const int exponent = (nAbs >> significandBits) - exponentBias;
+    const uint64_t significand = (nAbs & significandMask) | implicitBit;
+
+    // If exponent is negative, the result is zero.
+    if (exponent < 0)
+        return { 0 };
+
+    // If the value is too large for the integer type, overflow.
+    if (exponent >= 128)
+        return { WTF::ResultOverflowed };
+
+    // If 0 <= exponent < significandBits, right shift to get the result.
+    // Otherwise, shift left.
+    Int128 result { significand };
+    if (exponent < significandBits)
+        result >>= significandBits - exponent;
+    else
+        result <<= exponent - significandBits;
+    result *= sign;
+    return { result };
+}
+
+std::optional<ExactTime> ExactTime::add(Duration duration) const
+{
+    ASSERT(!duration.years());
+    ASSERT(!duration.months());
+    ASSERT(!duration.weeks());
+    ASSERT(!duration.days());
+
+    CheckedInt128 resultNs { m_epochNanoseconds };
+
+    // The duration's hours, minutes, seconds, and milliseconds should be
+    // able to be cast into a 64-bit int. 2*1e8 24-hour days is the maximum
+    // time span for exact time, so if we already know that the duration exceeds
+    // that, then we can bail out.
+
+    CheckedInt128 hours = checkedCastDoubleToInt128(duration.hours());
+    resultNs += hours * ExactTime::nsPerHour;
+    CheckedInt128 minutes = checkedCastDoubleToInt128(duration.minutes());
+    resultNs += minutes * ExactTime::nsPerMinute;
+    CheckedInt128 seconds = checkedCastDoubleToInt128(duration.seconds());
+    resultNs += seconds * ExactTime::nsPerSecond;
+    CheckedInt128 milliseconds = checkedCastDoubleToInt128(duration.milliseconds());
+    resultNs += milliseconds * ExactTime::nsPerMillisecond;
+    CheckedInt128 microseconds = checkedCastDoubleToInt128(duration.microseconds());
+    resultNs += microseconds * ExactTime::nsPerMicrosecond;
+    resultNs += checkedCastDoubleToInt128(duration.nanoseconds());
+    if (resultNs.hasOverflowed())
+        return std::nullopt;
+
+    ExactTime result { resultNs.value() };
+    if (!result.isValid())
+        return std::nullopt;
+    return result;
+}
+
+Int128 ExactTime::round(Int128 quantity, unsigned increment, TemporalUnit unit, RoundingMode roundingMode)
+{
+    Int128 incrementNs { increment };
+    switch (unit) {
+    case TemporalUnit::Hour: incrementNs *= ExactTime::nsPerHour; break;
+    case TemporalUnit::Minute: incrementNs *= ExactTime::nsPerMinute; break;
+    case TemporalUnit::Second: incrementNs *= ExactTime::nsPerSecond; break;
+    case TemporalUnit::Millisecond: incrementNs *= ExactTime::nsPerMillisecond; break;
+    case TemporalUnit::Microsecond: incrementNs *= ExactTime::nsPerMicrosecond; break;
+    case TemporalUnit::Nanosecond: break;
+    default:
+        ASSERT_NOT_REACHED();
+    }
+    return roundNumberToIncrement(quantity, incrementNs, roundingMode);
+}
+
+// DifferenceInstant ( ns1, ns2, roundingIncrement, smallestUnit, roundingMode )
+// https://tc39.es/proposal-temporal/#sec-temporal-differenceinstant
+Int128 ExactTime::difference(ExactTime other, unsigned increment, TemporalUnit unit, RoundingMode roundingMode) const
+{
+    Int128 diff = other.m_epochNanoseconds - m_epochNanoseconds;
+    return round(diff, increment, unit, roundingMode);
+}
+
+ExactTime ExactTime::round(unsigned increment, TemporalUnit unit, RoundingMode roundingMode) const
+{
+    return ExactTime { round(m_epochNanoseconds, increment, unit, roundingMode) };
 }
 
 } // namespace ISO8601

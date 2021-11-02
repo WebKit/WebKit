@@ -23,7 +23,8 @@ skip:
     - callable-boundary-realms
   paths:
     - test/built-ins/Temporal/Calendar
-    - test/built-ins/Temporal/Instant
+    - test/built-ins/Temporal/Instant/prototype/toZonedDateTime
+    - test/built-ins/Temporal/Instant/prototype/toZonedDateTimeISO
     - test/built-ins/Temporal/Now
     - test/built-ins/Temporal/PlainDate
     - test/built-ins/Temporal/PlainDateTime
@@ -34,7 +35,8 @@ skip:
     - test/built-ins/Temporal/TimeZone
     - test/built-ins/Temporal/ZonedDateTime
     - test/intl402/Temporal/Calendar
-    - test/intl402/Temporal/Instant
+    - test/intl402/Temporal/Instant/prototype/toZonedDateTime
+    - test/intl402/Temporal/Instant/prototype/toZonedDateTimeISO
     - test/intl402/Temporal/Now
     - test/intl402/Temporal/PlainDate
     - test/intl402/Temporal/PlainDateTime
@@ -247,6 +249,7 @@ skip:
     - test/built-ins/Temporal/Duration/prototype/toString/smallestunit-plurals-accepted.js
     - test/built-ins/Temporal/Duration/prototype/total/calendar-temporal-object.js
     - test/built-ins/Temporal/Duration/prototype/total/unit-plurals-accepted.js
+    - test/built-ins/Temporal/Instant/prototype/toString/smallestunit-plurals-accepted.js
     - test/built-ins/Temporal/PlainTime/compare/calendar-temporal-object.js
     - test/built-ins/Temporal/PlainTime/from/calendar-temporal-object.js
     - test/built-ins/Temporal/PlainTime/prototype/equals/calendar-temporal-object.js
@@ -271,6 +274,13 @@ skip:
     - test/built-ins/Temporal/Duration/prototype/subtract/negative-infinity-throws-rangeerror.js
     - test/built-ins/Temporal/Duration/prototype/subtract/order-of-operations.js
     - test/built-ins/Temporal/Duration/prototype/total/dateuntil-field.js
+
+    # Depends on Temporal.TimeZone
+    - test/built-ins/Temporal/Instant/prototype/toString/timezone-getoffsetnanosecondsfor-non-integer.js
+    - test/built-ins/Temporal/Instant/prototype/toString/timezone-getoffsetnanosecondsfor-out-of-range.js
+    - test/built-ins/Temporal/Instant/prototype/toString/timezone-getoffsetnanosecondsfor-wrong-type.js
+    - test/built-ins/Temporal/Instant/prototype/toString/timezone-string-datetime.js
+    - test/built-ins/Temporal/Instant/prototype/toString/timezone.js
 
     # Depends on Temporal.ZonedDateTime
     - test/built-ins/Temporal/Duration/compare/relativeto-zoneddatetime-negative-epochnanoseconds.js
@@ -299,6 +309,11 @@ skip:
     - test/built-ins/Temporal/Duration/prototype/total/relativeto-zoneddatetime-timezone-getoffsetnanosecondsfor-non-integer.js
     - test/built-ins/Temporal/Duration/prototype/total/relativeto-zoneddatetime-timezone-getoffsetnanosecondsfor-out-of-range.js
     - test/built-ins/Temporal/Duration/prototype/total/relativeto-zoneddatetime-timezone-getoffsetnanosecondsfor-wrong-type.js
+    - test/built-ins/Temporal/Instant/compare/argument-zoneddatetime.js
+    - test/built-ins/Temporal/Instant/from/argument-zoneddatetime.js
+    - test/built-ins/Temporal/Instant/prototype/equals/argument-zoneddatetime.js
+    - test/built-ins/Temporal/Instant/prototype/since/argument-zoneddatetime.js
+    - test/built-ins/Temporal/Instant/prototype/until/argument-zoneddatetime.js
     - test/built-ins/Temporal/PlainTime/compare/argument-zoneddatetime-negative-epochnanoseconds.js
     - test/built-ins/Temporal/PlainTime/compare/argument-zoneddatetime-timezone-getoffsetnanosecondsfor-non-integer.js
     - test/built-ins/Temporal/PlainTime/compare/argument-zoneddatetime-timezone-getoffsetnanosecondsfor-out-of-range.js
@@ -334,5 +349,6 @@ skip:
     - test/built-ins/Temporal/Duration/prototype/round/balance-negative-result.js
     - test/built-ins/Temporal/Duration/prototype/round/round-negative-result.js
     - test/built-ins/Temporal/Duration/prototype/subtract/balance-negative-result.js
+    - test/built-ins/Temporal/Instant/prototype/until/instant-string.js
     - test/built-ins/Temporal/PlainTime/prototype/since/balance-negative-time-units.js
     - test/built-ins/Temporal/PlainTime/prototype/until/balance-negative-time-units.js

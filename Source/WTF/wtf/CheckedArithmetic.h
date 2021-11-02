@@ -291,12 +291,18 @@ template <typename LHS, typename RHS, typename ResultType> struct ArithmeticOper
     static inline bool add(LHS lhs, RHS rhs, ResultType& result) WARN_UNUSED_RETURN
     {
 #if COMPILER(GCC_COMPATIBLE)
-        ResultType temp;
-        if (__builtin_add_overflow(lhs, rhs, &temp))
-            return false;
-        result = temp;
-        return true;
-#else
+#if !HAVE(INT128_T)
+        if constexpr (sizeof(LHS) <= sizeof(uint64_t) || sizeof(RHS) <= sizeof(uint64_t)) {
+#endif
+            ResultType temp;
+            if (__builtin_add_overflow(lhs, rhs, &temp))
+                return false;
+            result = temp;
+            return true;
+#if !HAVE(INT128_T)
+        }
+#endif
+#endif
         if (signsMatch(lhs, rhs)) {
             if (lhs >= 0) {
                 if ((std::numeric_limits<ResultType>::max() - rhs) < lhs)
@@ -309,18 +315,23 @@ template <typename LHS, typename RHS, typename ResultType> struct ArithmeticOper
         } // if the signs do not match this operation can't overflow
         result = lhs + rhs;
         return true;
-#endif
     }
 
     static inline bool sub(LHS lhs, RHS rhs, ResultType& result) WARN_UNUSED_RETURN
     {
 #if COMPILER(GCC_COMPATIBLE)
-        ResultType temp;
-        if (__builtin_sub_overflow(lhs, rhs, &temp))
-            return false;
-        result = temp;
-        return true;
-#else
+#if !HAVE(INT128_T)
+        if constexpr (sizeof(LHS) <= sizeof(uint64_t) || sizeof(RHS) <= sizeof(uint64_t)) {
+#endif
+            ResultType temp;
+            if (__builtin_sub_overflow(lhs, rhs, &temp))
+                return false;
+            result = temp;
+            return true;
+#if !HAVE(INT128_T)
+        }
+#endif
+#endif
         if (!signsMatch(lhs, rhs)) {
             if (lhs >= 0) {
                 if (lhs > std::numeric_limits<ResultType>::max() + rhs)
@@ -332,18 +343,26 @@ template <typename LHS, typename RHS, typename ResultType> struct ArithmeticOper
         } // if the signs match this operation can't overflow
         result = lhs - rhs;
         return true;
-#endif
     }
 
     static inline bool multiply(LHS lhs, RHS rhs, ResultType& result) WARN_UNUSED_RETURN
     {
 #if USE(MUL_OVERFLOW)
-        ResultType temp;
-        if (__builtin_mul_overflow(lhs, rhs, &temp))
-            return false;
-        result = temp;
-        return true;
-#else
+        // Don't use the builtin if the int128 type is WTF::[U]Int128Impl.
+        // Also don't use the builtin for __[u]int128_t on Clang/Linux.
+        // See https://bugs.llvm.org/show_bug.cgi?id=16404
+#if !HAVE(INT128_T) || (COMPILER(CLANG) && OS(LINUX))
+        if constexpr (sizeof(LHS) <= sizeof(uint64_t) || sizeof(RHS) <= sizeof(uint64_t)) {
+#endif
+            ResultType temp;
+            if (__builtin_mul_overflow(lhs, rhs, &temp))
+                return false;
+            result = temp;
+            return true;
+#if !HAVE(INT128_T) || (COMPILER(CLANG) && OS(LINUX))
+        }
+#endif
+#endif
         if (signsMatch(lhs, rhs)) {
             if (lhs >= 0) {
                 if (lhs && (std::numeric_limits<ResultType>::max() / lhs) < rhs)
@@ -365,7 +384,6 @@ template <typename LHS, typename RHS, typename ResultType> struct ArithmeticOper
         }
         result = lhs * rhs;
         return true;
-#endif
     }
 
     static inline bool divide(LHS lhs, RHS rhs, ResultType& result) WARN_UNUSED_RETURN
@@ -385,47 +403,66 @@ template <typename LHS, typename RHS, typename ResultType> struct ArithmeticOper
     // LHS and RHS are unsigned types so bounds checks are nice and easy
     static inline bool add(LHS lhs, RHS rhs, ResultType& result) WARN_UNUSED_RETURN
     {
-#if COMPILER(GCC_COMPATIBLE)
         ResultType temp;
-        if (__builtin_add_overflow(lhs, rhs, &temp))
-            return false;
-        result = temp;
-        return true;
-#else
-        ResultType temp = lhs + rhs;
+#if COMPILER(GCC_COMPATIBLE)
+#if !HAVE(INT128_T)
+        if constexpr (sizeof(LHS) <= sizeof(uint64_t) || sizeof(RHS) <= sizeof(uint64_t)) {
+#endif
+            if (__builtin_add_overflow(lhs, rhs, &temp))
+                return false;
+            result = temp;
+            return true;
+#if !HAVE(INT128_T)
+        }
+#endif
+#endif
+        temp = lhs + rhs;
         if (temp < lhs)
             return false;
         result = temp;
         return true;
-#endif
     }
 
     static inline bool sub(LHS lhs, RHS rhs, ResultType& result) WARN_UNUSED_RETURN
     {
-#if COMPILER(GCC_COMPATIBLE)
         ResultType temp;
-        if (__builtin_sub_overflow(lhs, rhs, &temp))
-            return false;
-        result = temp;
-        return true;
-#else
-        ResultType temp = lhs - rhs;
+#if COMPILER(GCC_COMPATIBLE)
+#if !HAVE(INT128_T)
+        if constexpr (sizeof(LHS) <= sizeof(uint64_t) || sizeof(RHS) <= sizeof(uint64_t)) {
+#endif
+            if (__builtin_sub_overflow(lhs, rhs, &temp))
+                return false;
+            result = temp;
+            return true;
+#if !HAVE(INT128_T)
+        }
+#endif
+#endif
+        temp = lhs - rhs;
         if (temp > lhs)
             return false;
         result = temp;
         return true;
-#endif
     }
 
     static inline bool multiply(LHS lhs, RHS rhs, ResultType& result) WARN_UNUSED_RETURN
     {
 #if USE(MUL_OVERFLOW)
-        ResultType temp;
-        if (__builtin_mul_overflow(lhs, rhs, &temp))
-            return false;
-        result = temp;
-        return true;
-#else
+        // Don't use the builtin if the int128 type is WTF::Int128Impl.
+        // Also don't use the builtin for __int128_t on Clang/Linux.
+        // See https://bugs.llvm.org/show_bug.cgi?id=16404
+#if !HAVE(INT128_T) || (COMPILER(CLANG) && OS(LINUX))
+        if constexpr (sizeof(LHS) <= sizeof(uint64_t) || sizeof(RHS) <= sizeof(uint64_t)) {
+#endif
+            ResultType temp;
+            if (__builtin_mul_overflow(lhs, rhs, &temp))
+                return false;
+            result = temp;
+            return true;
+#if !HAVE(INT128_T) || (COMPILER(CLANG) && OS(LINUX))
+        }
+#endif
+#endif
         if (!lhs || !rhs) {
             result = 0;
             return true;
@@ -434,7 +471,6 @@ template <typename LHS, typename RHS, typename ResultType> struct ArithmeticOper
             return false;
         result = lhs * rhs;
         return true;
-#endif
     }
 
     static inline bool divide(LHS lhs, RHS rhs, ResultType& result) WARN_UNUSED_RETURN

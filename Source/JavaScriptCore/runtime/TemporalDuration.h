@@ -46,6 +46,7 @@ public:
     DECLARE_INFO;
 
     static TemporalDuration* toTemporalDuration(JSGlobalObject*, JSValue);
+    static ISO8601::Duration toLimitedDuration(JSGlobalObject*, JSValue, std::initializer_list<TemporalUnit> disallowedUnits);
     static TemporalDuration* from(JSGlobalObject*, JSValue);
     static JSValue compare(JSGlobalObject*, JSValue, JSValue);
 

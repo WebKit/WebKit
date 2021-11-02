@@ -187,6 +187,7 @@ class RegExp;
 #endif
 class Symbol;
 class TemporalDuration;
+class TemporalInstant;
 class TypedArrayController;
 class UnlinkedCodeBlock;
 class UnlinkedEvalCodeBlock;
@@ -601,6 +602,7 @@ public:
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(templateObjectDescriptorSpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(temporalCalendarSpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(temporalDurationSpace)
+    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(temporalInstantSpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(temporalPlainTimeSpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(temporalTimeZoneSpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(uint8ArraySpace)

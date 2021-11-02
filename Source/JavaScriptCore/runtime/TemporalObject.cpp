@@ -32,11 +32,14 @@
 #include "TemporalCalendarPrototype.h"
 #include "TemporalDurationConstructor.h"
 #include "TemporalDurationPrototype.h"
+#include "TemporalInstantConstructor.h"
+#include "TemporalInstantPrototype.h"
 #include "TemporalNow.h"
 #include "TemporalPlainTimeConstructor.h"
 #include "TemporalPlainTimePrototype.h"
 #include "TemporalTimeZoneConstructor.h"
 #include "TemporalTimeZonePrototype.h"
+#include <wtf/Int128.h>
 #include <wtf/text/StringConcatenate.h>
 #include <wtf/unicode/CharacterNames.h>
 
@@ -65,6 +68,13 @@ static JSValue createDurationConstructor(VM& vm, JSObject* object)
     return TemporalDurationConstructor::create(vm, TemporalDurationConstructor::createStructure(vm, globalObject, globalObject->functionPrototype()), jsCast<TemporalDurationPrototype*>(globalObject->durationStructure()->storedPrototypeObject()));
 }
 
+static JSValue createInstantConstructor(VM& vm, JSObject* object)
+{
+    TemporalObject* temporalObject = jsCast<TemporalObject*>(object);
+    JSGlobalObject* globalObject = temporalObject->globalObject(vm);
+    return TemporalInstantConstructor::create(vm, TemporalInstantConstructor::createStructure(vm, globalObject, globalObject->functionPrototype()), jsCast<TemporalInstantPrototype*>(globalObject->instantStructure()->storedPrototypeObject()));
+}
+
 static JSValue createPlainTimeConstructor(VM& vm, JSObject* object)
 {
     TemporalObject* temporalObject = jsCast<TemporalObject*>(object);
@@ -89,6 +99,7 @@ namespace JSC {
 @begin temporalObjectTable
   Calendar       createCalendarConstructor       DontEnum|PropertyCallback
   Duration       createDurationConstructor       DontEnum|PropertyCallback
+  Instant        createInstantConstructor        DontEnum|PropertyCallback
   Now            createNowObject                 DontEnum|PropertyCallback
   PlainTime      createPlainTimeConstructor      DontEnum|PropertyCallback
   TimeZone       createTimeZoneConstructor       DontEnum|PropertyCallback
@@ -374,6 +385,17 @@ void formatSecondsStringFraction(StringBuilder& builder, unsigned fraction, std:
     }
 }
 
+// FormatSecondsStringPart ( second, millisecond, microsecond, nanosecond, precision )
+// https://tc39.es/proposal-temporal/#sec-temporal-formatsecondsstringpart
+void formatSecondsStringPart(StringBuilder& builder, unsigned second, unsigned fraction, PrecisionData precision)
+{
+    if (precision.unit == TemporalUnit::Minute)
+        return;
+
+    builder.append(':', pad('0', 2, second));
+    formatSecondsStringFraction(builder, fraction, precision.precision);
+}
+
 // MaximumTemporalDurationRoundingIncrement ( unit )
 // https://tc39.es/proposal-temporal/#sec-temporal-maximumtemporaldurationroundingincrement
 std::optional<double> maximumRoundingIncrement(TemporalUnit unit)
@@ -433,6 +455,45 @@ double roundNumberToIncrement(double x, double increment, RoundingMode mode)
     }
 
     RELEASE_ASSERT_NOT_REACHED();
+}
+
+static Int128 abs(Int128 x)
+{
+    return x < 0 ? -x : x;
+}
+
+// Same as above, but with Int128
+Int128 roundNumberToIncrement(Int128 x, Int128 increment, RoundingMode mode)
+{
+    ASSERT(increment);
+
+    if (increment == 1)
+        return x;
+
+    Int128 quotient = x / increment;
+    Int128 remainder = x % increment;
+    if (!remainder)
+        return x;
+
+    bool sign = remainder < 0;
+    switch (mode) {
+    case RoundingMode::Ceil:
+        if (!sign)
+            quotient++;
+        break;
+    case RoundingMode::Floor:
+        if (sign)
+            quotient--;
+        break;
+    case RoundingMode::Trunc:
+        break;
+    case RoundingMode::HalfExpand:
+        // "half up away from zero"
+        if (abs(remainder * 2) >= increment)
+            quotient += sign ? -1 : 1;
+        break;
+    }
+    return quotient * increment;
 }
 
 TemporalOverflow toTemporalOverflow(JSGlobalObject* globalObject, JSObject* options)

@@ -1,3 +1,17 @@
+2021-11-02  Philip Chimento  <pchimento@igalia.com>
+
+        [JSC] Implement Temporal.Instant
+        https://bugs.webkit.org/show_bug.cgi?id=229826
+
+        Reviewed by Yusuke Suzuki.
+
+        * wtf/CheckedArithmetic.h: Don't use builtin operations if __int128 is
+          being emulated using WTF::Int128. Also work around Clang/Linux bug
+          where __builtin_mul_overflow() doesn't work on __int128.
+          See https://bugs.llvm.org/show_bug.cgi?id=16404
+        * wtf/DateMath.h:
+        (WTF::timeToMS): Moved from JSDateMath.h.
+
 2021-11-02  Chris Dumez  <cdumez@apple.com>
 
         Use higher QoS for WheelEvent and DisplayWasRefreshed IPCs

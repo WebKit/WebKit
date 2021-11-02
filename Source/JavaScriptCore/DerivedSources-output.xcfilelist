@@ -72,6 +72,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/TemporalCalendarConstructor.
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/TemporalCalendarPrototype.lut.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/TemporalDurationConstructor.lut.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/TemporalDurationPrototype.lut.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/TemporalInstantConstructor.lut.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/TemporalInstantPrototype.lut.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/TemporalNow.lut.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/TemporalObject.lut.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/TemporalPlainTimeConstructor.lut.h

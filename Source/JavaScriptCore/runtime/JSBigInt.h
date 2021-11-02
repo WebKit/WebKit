@@ -33,6 +33,7 @@
 #include "JSObject.h"
 #include "MathCommon.h"
 #include <wtf/CagedUniquePtr.h>
+#include <wtf/Int128.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringView.h>
 #include <wtf/text/WTFString.h>
@@ -74,6 +75,7 @@ public:
     static JSBigInt* createFrom(JSGlobalObject*, uint32_t value);
     JS_EXPORT_PRIVATE static JSBigInt* createFrom(JSGlobalObject*, int64_t value);
     JS_EXPORT_PRIVATE static JSBigInt* createFrom(JSGlobalObject*, uint64_t value);
+    JS_EXPORT_PRIVATE static JSBigInt* createFrom(JSGlobalObject*, Int128 value);
     static JSBigInt* createFrom(JSGlobalObject*, bool value);
     static JSBigInt* createFrom(JSGlobalObject*, double value);
 
@@ -604,8 +606,6 @@ private:
     static ImplResult truncateAndSubFromPowerOfTwo(JSGlobalObject*, int32_t, BigIntImpl, bool resultSign);
 
     JS_EXPORT_PRIVATE static uint64_t toBigUInt64Heap(JSBigInt*);
-
-    JS_EXPORT_PRIVATE static std::optional<uint64_t> toUint64Heap(JSBigInt*);
 
     inline static size_t offsetOfData()
     {
