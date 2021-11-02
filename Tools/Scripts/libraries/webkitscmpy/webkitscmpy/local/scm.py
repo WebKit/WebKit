@@ -25,7 +25,6 @@ import os
 import re
 import six
 
-from webkitcorepy import run
 from webkitscmpy import ScmBase, Contributor
 
 
