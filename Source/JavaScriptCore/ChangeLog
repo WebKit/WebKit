@@ -1,3 +1,28 @@
+2021-11-01  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] LLIntCallee should have two replacements
+        https://bugs.webkit.org/show_bug.cgi?id=228552
+        rdar://81217357
+
+        Reviewed by Saam Barati.
+
+        LLIntCallee can be used for signaling memory and bounds-checking memory.
+        Thus it should have two replacements for each mode.
+
+        * wasm/WasmBBQPlan.cpp:
+        (JSC::Wasm::BBQPlan::work):
+        * wasm/WasmCallee.h:
+        (JSC::Wasm::Callee::setOSREntryCallee):
+        * wasm/WasmOMGForOSREntryPlan.cpp:
+        (JSC::Wasm::OMGForOSREntryPlan::work):
+        * wasm/WasmOMGPlan.cpp:
+        (JSC::Wasm::OMGPlan::work):
+        * wasm/WasmPlan.cpp:
+        (JSC::Wasm::Plan::updateCallSitesToCallUs):
+        * wasm/WasmSlowPaths.cpp:
+        (JSC::LLInt::jitCompileAndSetHeuristics):
+        (JSC::LLInt::WASM_SLOW_PATH_DECL):
+
 2021-11-01  Saam Barati  <sbarati@apple.com>
 
         ArrayBuffer species watchpoint being invalidated doesn't mean it's not an ArrayBuffer constructor from the same global object
