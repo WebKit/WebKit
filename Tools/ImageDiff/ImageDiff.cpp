@@ -71,7 +71,7 @@ static int processImages(std::unique_ptr<PlatformImage>&& actualImage, std::uniq
     fprintf(stdout, "diff: %01.8f%%\n", differenceData.percentageDifference);
 
     if (printDifference)
-        fprintf(stdout, "maxDifference=%u; totalPixels=%lu\n", differenceData.maxDifference, differenceData.totalPixels);
+        fprintf(stdout, "maxDifference=%u; totalPixels=%zu\n", differenceData.maxDifference, differenceData.totalPixels);
 
     fprintf(stdout, "#EOF\n");
     fflush(stdout);

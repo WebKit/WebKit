@@ -1,3 +1,18 @@
+2021-11-01  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        ImageDiff.cpp(74): warning C4477: 'fprintf' : format string '%lu' requires an argument of type 'unsigned long', but variadic argument 2 has type 'size_t'
+        https://bugs.webkit.org/show_bug.cgi?id=232596
+
+        Reviewed by Don Olmstead.
+
+        Since r284764, MSVC reports the following warning and a suggestion.
+
+        > Tools\ImageDiff\ImageDiff.cpp(74): warning C4477: 'fprintf' : format string '%lu' requires an argument of type 'unsigned long', but variadic argument 2 has type 'size_t'
+        > Tools\ImageDiff\ImageDiff.cpp(74): note: consider using '%zu' in the format string
+
+        * ImageDiff/ImageDiff.cpp:
+        (processImages): Use %zu for size_t.
+
 2021-11-01  Jonathan Bedard  <jbedard@apple.com>
 
         [webkitscmpy] Only respect the latest review
