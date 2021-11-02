@@ -73,6 +73,7 @@
 #include <wpe/WebKitURIRequest.h>
 #include <wpe/WebKitURIResponse.h>
 #include <wpe/WebKitURISchemeRequest.h>
+#include <wpe/WebKitURISchemeResponse.h>
 #include <wpe/WebKitURIUtilities.h>
 #include <wpe/WebKitUserContent.h>
 #include <wpe/WebKitUserContentFilterStore.h>

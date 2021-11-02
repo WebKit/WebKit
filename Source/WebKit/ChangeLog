@@ -1,3 +1,34 @@
+2021-11-02  Zixing Liu  <liushuyu011@gmail.com>
+
+        [GTK][WPE] Support setting status code and getting HTTP method in custom URI scheme handlers
+        https://bugs.webkit.org/show_bug.cgi?id=231880
+
+        Reviewed by Carlos Garcia Campos.
+
+        * SourcesGTK.txt: Added WebKitURISchemeResponse.cpp
+        * SourcesWPE.txt: Added WebKitURISchemeResponse.cpp
+        * UIProcess/API/glib/WebKitURISchemeRequest.cpp:
+        (webkit_uri_scheme_request_get_http_method): Added new API function
+        (webkit_uri_request_finish_with_response): Added new API function
+        * UIProcess/API/glib/WebKitURISchemeRequestPrivate.h:  Added.
+        * UIProcess/API/glib/WebKitURISchemeResponse.cpp: Added.
+        (webkit_uri_scheme_response_class_init): Added init function for the new type
+        (webkit_uri_scheme_response_new): Added new API function
+        (webkit_uri_scheme_response_set_status): Added new API function
+        (webkit_uri_scheme_response_set_content_type): Added new API function
+        * UIProcess/API/glib/WebKitURISchemeResponsePrivate.h: Copied from Source/WebKit/UIProcess/API/glib/WebKitURISchemeRequestPrivate.h.
+        * UIProcess/API/gtk/WebKitAutocleanups.h: Register clean-up function for WebkitURISchemeResponse
+        * UIProcess/API/gtk/WebKitURISchemeRequest.h: Added function prototype for 
+        webkit_uri_scheme_request_get_http_method
+        * UIProcess/API/gtk/WebKitURISchemeResponse.h: Added.
+        * UIProcess/API/gtk/docs/webkit2gtk-4.0-sections.txt: Added new symbols and new types
+        * UIProcess/API/gtk/webkit2.h: Include a new header: WebKitURISchemeResponse.h
+        * UIProcess/API/wpe/WebKitURISchemeRequest.h: Added function prototype for 
+        webkit_uri_scheme_request_get_http_method
+        * UIProcess/API/gtk/WebKitURISchemeResponse.h: Added.
+        * UIProcess/API/wpe/webkit.h: Include a new header: WebKitURISchemeResponse.h
+        * UIProcess/API/wpe/docs/wpe-1.0-sections.txt: Added new symbols and new types
+
 2021-11-01  Michael[tm] Smith  <mike@w3.org>
 
         [WebInspector][CORS] Show HTTP status code in CORS messages.

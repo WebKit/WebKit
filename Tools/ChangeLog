@@ -1,3 +1,13 @@
+2021-11-02  Zixing Liu  <liushuyu011@gmail.com>
+
+        [GTK][WPE] Support setting status code and getting HTTP method in custom URI scheme handlers
+        https://bugs.webkit.org/show_bug.cgi?id=231880
+
+        Reviewed by Carlos Garcia Campos.
+
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebKitWebContext.cpp:
+        (testWebContextURIScheme): Added tests to test new public APIs for WebKitGtk
+
 2021-11-01  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         ImageDiff.cpp(74): warning C4477: 'fprintf' : format string '%lu' requires an argument of type 'unsigned long', but variadic argument 2 has type 'size_t'

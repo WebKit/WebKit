@@ -45,6 +45,7 @@
     <xi:include href="xml/WebKitPlugin.xml"/>
     <xi:include href="xml/WebKitWebInspector.xml"/>
     <xi:include href="xml/WebKitURISchemeRequest.xml"/>
+    <xi:include href="xml/WebKitURISchemeResponse.xml"/>
     <xi:include href="xml/WebKitVersion.xml"/>
     <xi:include href="xml/WebKitContextMenu.xml"/>
     <xi:include href="xml/WebKitContextMenuItem.xml"/>
@@ -168,6 +169,11 @@
   <index id="api-index-2-30" role="2.30">
     <title>Index of new symbols in 2.30</title>
     <xi:include href="xml/api-index-2.30.xml"><xi:fallback /></xi:include>
+  </index>
+
+  <index id="api-index-2-36" role="2.36">
+    <title>Index of new symbols in 2.36</title>
+    <xi:include href="xml/api-index-2.36.xml"><xi:fallback /></xi:include>
   </index>
 
   <xi:include href="xml/annotation-glossary.xml"><xi:fallback /></xi:include>

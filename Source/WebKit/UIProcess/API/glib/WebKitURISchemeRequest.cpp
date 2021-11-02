@@ -23,6 +23,7 @@
 #include "APIData.h"
 #include "WebKitPrivate.h"
 #include "WebKitURISchemeRequestPrivate.h"
+#include "WebKitURISchemeResponsePrivate.h"
 #include "WebKitWebContextPrivate.h"
 #include "WebKitWebView.h"
 #include "WebPageProxy.h"
@@ -64,12 +65,11 @@ struct _WebKitURISchemeRequestPrivate {
     CString uriScheme;
     CString uriPath;
 
-    GRefPtr<GInputStream> stream;
-    uint64_t streamLength;
+    GRefPtr<WebKitURISchemeResponse> response;
     GRefPtr<GCancellable> cancellable;
     char readBuffer[gReadBufferSize];
     uint64_t bytesRead;
-    CString contentType;
+    const char* httpMethod;
 };
 
 WEBKIT_DEFINE_TYPE(WebKitURISchemeRequest, webkit_uri_scheme_request, G_TYPE_OBJECT)
@@ -161,6 +161,26 @@ WebKitWebView* webkit_uri_scheme_request_get_web_view(WebKitURISchemeRequest* re
     return webkitWebContextGetWebViewForPage(request->priv->webContext, request->priv->initiatingPage.get());
 }
 
+/**
+ * webkit_uri_scheme_request_get_http_method:
+ * @request: a #WebKitURISchemeRequest
+ *
+ * Get the HTTP method of the @request
+ *
+ * Returns: the HTTP method of the @request
+ * 
+ * Since: 2.36
+ */
+const gchar* webkit_uri_scheme_request_get_http_method(WebKitURISchemeRequest* request)
+{
+    g_return_val_if_fail(WEBKIT_IS_URI_SCHEME_REQUEST(request), nullptr);
+
+    if (!request->priv->httpMethod)
+        request->priv->httpMethod = g_intern_string(request->priv->task->request().httpMethod().utf8().data());
+
+    return request->priv->httpMethod;
+}
+
 static void webkitURISchemeRequestReadCallback(GInputStream* inputStream, GAsyncResult* result, WebKitURISchemeRequest* schemeRequest)
 {
     GRefPtr<WebKitURISchemeRequest> request = adoptGRef(schemeRequest);
@@ -174,20 +194,29 @@ static void webkitURISchemeRequestReadCallback(GInputStream* inputStream, GAsync
     WebKitURISchemeRequestPrivate* priv = request->priv;
     // Need to check the stream before proceeding as it can be cancelled if finish_error
     // was previously call, which won't be detected by g_input_stream_read_finish().
-    if (!priv->stream)
+    if (!priv->response)
         return;
 
+    WebKitURISchemeResponse* resp = priv->response.get();
     if (!priv->bytesRead) {
-        ResourceResponse response(priv->task->request().url(), extractMIMETypeFromMediaType(priv->contentType.data()), priv->streamLength, emptyString());
-        response.setTextEncodingName(extractCharsetFromMediaType(priv->contentType.data()));
-        response.setHTTPStatusCode(200);
-        response.setHTTPStatusText("OK"_s);
+        CString contentType = WebKitURISchemeResponseGetContentType(resp);
+        ResourceResponse response(priv->task->request().url(), extractMIMETypeFromMediaType(contentType.data()), WebKitURISchemeResponseGetStreamLength(resp), emptyString());
+        response.setTextEncodingName(extractCharsetFromMediaType(contentType.data()));
+        const CString& statusMessage = WebKitURISchemeResponseGetStatusMessage(resp);
+        if (statusMessage.isNull()) {
+            response.setHTTPStatusCode(200);
+            response.setHTTPStatusText("OK"_s);
+        } else {
+            response.setHTTPStatusCode(WebKitURISchemeResponseGetStatusCode(resp));
+            response.setHTTPStatusText(statusMessage.data());
+        }
         if (response.mimeType().isEmpty())
             response.setMimeType(MIMETypeRegistry::mimeTypeForPath(response.url().path().toString()));
         priv->task->didReceiveResponse(response);
     }
 
     if (!bytesRead) {
+        priv->response = nullptr;
         priv->task->didComplete({ });
         return;
     }
@@ -213,13 +242,31 @@ void webkit_uri_scheme_request_finish(WebKitURISchemeRequest* request, GInputStr
     g_return_if_fail(G_IS_INPUT_STREAM(inputStream));
     g_return_if_fail(streamLength == -1 || streamLength >= 0);
 
-    request->priv->stream = inputStream;
-    // We use -1 in the API for consistency with soup when the content length is not known, but 0 internally.
-    request->priv->streamLength = streamLength == -1 ? 0 : streamLength;
+    GRefPtr<WebKitURISchemeResponse> response = adoptGRef(webkit_uri_scheme_response_new(inputStream, streamLength));
+    if (contentType)
+        webkit_uri_scheme_response_set_content_type(response.get(), contentType);
+
+    webkit_uri_scheme_request_finish_with_response(request, response.get());
+}
+
+/**
+ * webkit_uri_scheme_request_finish_with_response:
+ * @request: a #WebKitURISchemeRequest
+ * @response: a #WebKitURISchemeResponse
+ *
+ * Finish a #WebKitURISchemeRequest by returning a #WebKitURISchemeResponse
+ *
+ * Since: 2.36
+ */
+void webkit_uri_scheme_request_finish_with_response(WebKitURISchemeRequest* request, WebKitURISchemeResponse* response)
+{
+    g_return_if_fail(WEBKIT_IS_URI_SCHEME_REQUEST(request));
+    g_return_if_fail(WEBKIT_IS_URI_SCHEME_RESPONSE(response));
+
     request->priv->cancellable = adoptGRef(g_cancellable_new());
-    request->priv->bytesRead = 0;
-    request->priv->contentType = contentType;
-    g_input_stream_read_async(inputStream, request->priv->readBuffer, gReadBufferSize, RunLoopSourcePriority::AsyncIONetwork, request->priv->cancellable.get(),
+    request->priv->response = response;
+
+    g_input_stream_read_async(WebKitURISchemeResponseGetStream(response), request->priv->readBuffer, gReadBufferSize, RunLoopSourcePriority::AsyncIONetwork, request->priv->cancellable.get(),
         reinterpret_cast<GAsyncReadyCallback>(webkitURISchemeRequestReadCallback), g_object_ref(request));
 }
 
@@ -238,7 +285,7 @@ void webkit_uri_scheme_request_finish_error(WebKitURISchemeRequest* request, GEr
     g_return_if_fail(error);
 
     WebKitURISchemeRequestPrivate* priv = request->priv;
-    priv->stream = nullptr;
+    priv->response = nullptr;
     ResourceError resourceError(g_quark_to_string(error->domain), toWebCoreError(error->code), priv->task->request().url(), String::fromUTF8(error->message));
     priv->task->didComplete(resourceError);
 }

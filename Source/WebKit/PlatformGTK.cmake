@@ -146,6 +146,7 @@ set(WebKit2GTK_INSTALLED_HEADERS
     ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitURIRequest.h
     ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitURIResponse.h
     ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitURISchemeRequest.h
+    ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitURISchemeResponse.h
     ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitURIUtilities.h
     ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitUserContent.h
     ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitUserContentFilterStore.h
