@@ -25,7 +25,6 @@
 #include "SVGImageElement.h"
 
 #include "CSSPropertyNames.h"
-#include "ElementInlines.h"
 #include "RenderImageResource.h"
 #include "RenderSVGImage.h"
 #include "RenderSVGResource.h"

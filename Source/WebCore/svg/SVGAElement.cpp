@@ -25,7 +25,6 @@
 
 #include "DOMTokenList.h"
 #include "Document.h"
-#include "ElementInlines.h"
 #include "EventHandler.h"
 #include "Frame.h"
 #include "FrameLoader.h"
@@ -39,6 +38,7 @@
 #include "RenderSVGText.h"
 #include "RenderSVGTransformableContainer.h"
 #include "ResourceRequest.h"
+#include "SVGElementInlines.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGNames.h"
 #include "SVGSMILElement.h"

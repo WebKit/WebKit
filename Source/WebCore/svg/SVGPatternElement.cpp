@@ -26,7 +26,6 @@
 
 #include "AffineTransform.h"
 #include "Document.h"
-#include "ElementInlines.h"
 #include "FloatConversion.h"
 #include "GraphicsContext.h"
 #include "ImageBuffer.h"

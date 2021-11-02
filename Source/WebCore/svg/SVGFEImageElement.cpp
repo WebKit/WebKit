@@ -30,6 +30,7 @@
 #include "Image.h"
 #include "RenderObject.h"
 #include "RenderSVGResource.h"
+#include "SVGElementInlines.h"
 #include "SVGNames.h"
 #include "SVGPreserveAspectRatioValue.h"
 #include <wtf/IsoMallocInlines.h>

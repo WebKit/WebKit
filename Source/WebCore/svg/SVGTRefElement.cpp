@@ -30,10 +30,11 @@
 #include "RenderSVGInline.h"
 #include "RenderSVGInlineText.h"
 #include "RenderSVGResource.h"
-#include "ShadowRoot.h"
 #include "SVGDocumentExtensions.h"
+#include "SVGElementInlines.h"
 #include "SVGNames.h"
 #include "ScriptDisallowedScope.h"
+#include "ShadowRoot.h"
 #include "StyleInheritedData.h"
 #include "Text.h"
 #include <wtf/IsoMallocInlines.h>

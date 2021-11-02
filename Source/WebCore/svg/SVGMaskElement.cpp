@@ -26,7 +26,6 @@
 #include "config.h"
 #include "SVGMaskElement.h"
 
-#include "ElementInlines.h"
 #include "RenderSVGResourceMaskerInlines.h"
 #include "SVGElementInlines.h"
 #include "SVGNames.h"
