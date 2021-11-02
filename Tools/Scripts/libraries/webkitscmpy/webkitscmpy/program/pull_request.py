@@ -20,6 +20,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import os
 import sys
 
 from .command import Command
@@ -82,6 +83,14 @@ class PullRequest(Command):
         return 0
 
     @classmethod
+    def title_for(cls, commits):
+        title = os.path.commonprefix([commit.message.splitlines()[0] for commit in commits])
+        if not title:
+            title = commits[0].message.splitlines()[0]
+        title = title.rstrip().lstrip()
+        return title[:-5].rstrip() if title.endswith('(Part') else title
+
+    @classmethod
     def main(cls, args, repository, **kwargs):
         if not isinstance(repository, local.Git):
             sys.stderr.write("Can only '{}' on a native Git repository\n".format(cls.name))
@@ -121,26 +130,14 @@ class PullRequest(Command):
         if not rmt.pull_requests:
             sys.stderr.write("'{}' cannot generate pull-requests\n".format(rmt.url))
             return 1
-        user, _ = rmt.credentials(required=True) if isinstance(rmt, remote.GitHub) else (repository.config()['user.email'], None)
         candidates = list(rmt.pull_requests.find(opened=None, head=repository.branch))
         commits = list(repository.commits(begin=dict(hash=branch_point.hash), end=dict(branch=repository.branch)))
-
-        title = commits[0].message.splitlines()[0]
-        for commit in commits[1:]:
-            title_candidate = commit.message.splitlines()[0]
-            while title and not title_candidate.startswith(title):
-                title = title[:-1]
-        if not title:
-            title = commits[0].message.splitlines()[0]
-        title = title.rstrip().lstrip()
-        if title.endswith('(Part'):
-            title = title[:-5].rstrip()
 
         if candidates:
             log.warning("Updating pull-request for '{}'...".format(repository.branch))
             pr = rmt.pull_requests.update(
                 pull_request=candidates[0],
-                title=title,
+                title=cls.title_for(commits),
                 commits=commits,
                 base=branch_point.branch,
                 head=repository.branch,
@@ -152,7 +149,7 @@ class PullRequest(Command):
         else:
             log.warning("Creating pull-request for '{}'...".format(repository.branch))
             pr = rmt.pull_requests.create(
-                title=title,
+                title=cls.title_for(commits),
                 commits=commits,
                 base=branch_point.branch,
                 head=repository.branch,
