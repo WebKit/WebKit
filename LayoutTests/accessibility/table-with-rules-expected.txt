@@ -9,6 +9,7 @@ AXRole: AXTable
 AXSubrole: (null)
 AXRoleDescription: table
 AXChildren: <array of size 4>
+AXChildrenInNavigationOrder: <array of size 4>
 AXHelp:
 AXParent: <AXTable>
 AXSize: NSSize: {58, 20}
@@ -51,6 +52,7 @@ AXRole: AXTable
 AXSubrole: (null)
 AXRoleDescription: table
 AXChildren: <array of size 4>
+AXChildrenInNavigationOrder: <array of size 4>
 AXHelp:
 AXParent: <AXTable>
 AXSize: NSSize: {63, 24}
@@ -93,6 +95,7 @@ AXRole: AXTable
 AXSubrole: (null)
 AXRoleDescription: table
 AXChildren: <array of size 4>
+AXChildrenInNavigationOrder: <array of size 4>
 AXHelp:
 AXParent: <AXTable>
 AXSize: NSSize: {57, 20}
@@ -135,6 +138,7 @@ AXRole: AXGroup
 AXSubrole: (null)
 AXRoleDescription: group
 AXChildren: <array of size 1>
+AXChildrenInNavigationOrder: <array of size 1>
 AXHelp:
 AXParent: <AXGroup>
 AXSize: NSSize: {29, 20}
@@ -166,6 +170,7 @@ AXRole: AXGroup
 AXSubrole: (null)
 AXRoleDescription: group
 AXChildren: <array of size 1>
+AXChildrenInNavigationOrder: <array of size 1>
 AXHelp:
 AXParent: <AXGroup>
 AXSize: NSSize: {30, 20}

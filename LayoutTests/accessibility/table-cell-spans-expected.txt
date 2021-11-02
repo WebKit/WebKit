@@ -12,6 +12,7 @@ AXRole: AXCell
 AXSubrole: (null)
 AXRoleDescription: cell
 AXChildren: <array of size 3>
+AXChildrenInNavigationOrder: <array of size 3>
 AXHelp:
 AXParent: <AXCell>
 AXSize: NSSize: {239, 78}
@@ -52,6 +53,7 @@ AXRole: AXCell
 AXSubrole: (null)
 AXRoleDescription: cell
 AXChildren: <array of size 3>
+AXChildrenInNavigationOrder: <array of size 3>
 AXHelp:
 AXParent: <AXCell>
 AXSize: NSSize: {239, 78}
@@ -92,6 +94,7 @@ AXRole: AXCell
 AXSubrole: (null)
 AXRoleDescription: cell
 AXChildren: <array of size 2>
+AXChildrenInNavigationOrder: <array of size 2>
 AXHelp:
 AXParent: <AXCell>
 AXSize: NSSize: {120, 60}
@@ -132,6 +135,7 @@ AXRole: AXCell
 AXSubrole: (null)
 AXRoleDescription: cell
 AXChildren: <array of size 2>
+AXChildrenInNavigationOrder: <array of size 2>
 AXHelp:
 AXParent: <AXCell>
 AXSize: NSSize: {120, 60}
@@ -172,6 +176,7 @@ AXRole: AXCell
 AXSubrole: (null)
 AXRoleDescription: cell
 AXChildren: <array of size 1>
+AXChildrenInNavigationOrder: <array of size 1>
 AXHelp:
 AXParent: <AXCell>
 AXSize: NSSize: {120, 30}

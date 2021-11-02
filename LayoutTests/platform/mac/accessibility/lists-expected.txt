@@ -15,6 +15,7 @@ AXRole: AXList
 AXSubrole: AXContentList
 AXRoleDescription: content list
 AXChildren: <array of size 2>
+AXChildrenInNavigationOrder: <array of size 2>
 AXHelp:
 AXParent: <AXList>
 AXSize: NSSize: {784, 36}
@@ -49,6 +50,7 @@ AXRole: AXList
 AXSubrole: AXContentList
 AXRoleDescription: content list
 AXChildren: <array of size 2>
+AXChildrenInNavigationOrder: <array of size 2>
 AXHelp:
 AXParent: <AXList>
 AXSize: NSSize: {784, 36}
@@ -83,6 +85,7 @@ AXRole: AXList
 AXSubrole: AXDescriptionList
 AXRoleDescription: description list
 AXChildren: <array of size 5>
+AXChildrenInNavigationOrder: <array of size 5>
 AXHelp:
 AXParent: <AXList>
 AXSize: NSSize: {784, 90}
@@ -117,6 +120,7 @@ AXRole: AXGroup
 AXSubrole: AXEmptyGroup
 AXRoleDescription: group
 AXChildren: <array of size 0>
+AXChildrenInNavigationOrder: <array of size 0>
 AXHelp:
 AXParent: <AXGroup>
 AXSize: NSSize: {784, 72}
@@ -150,6 +154,7 @@ AXRole: AXGroup
 AXSubrole: (null)
 AXRoleDescription: group
 AXChildren: <array of size 2>
+AXChildrenInNavigationOrder: <array of size 2>
 AXHelp:
 AXParent: <AXGroup>
 AXSize: NSSize: {729, 18}
@@ -181,6 +186,7 @@ AXRole: AXGroup
 AXSubrole: (null)
 AXRoleDescription: group
 AXChildren: <array of size 2>
+AXChildrenInNavigationOrder: <array of size 2>
 AXHelp:
 AXParent: <AXGroup>
 AXSize: NSSize: {729, 18}
@@ -214,6 +220,7 @@ AXRole: AXGroup
 AXSubrole: (null)
 AXRoleDescription: group
 AXChildren: <array of size 2>
+AXChildrenInNavigationOrder: <array of size 2>
 AXHelp:
 AXParent: <AXGroup>
 AXSize: NSSize: {729, 18}
@@ -245,6 +252,7 @@ AXRole: AXGroup
 AXSubrole: (null)
 AXRoleDescription: group
 AXChildren: <array of size 2>
+AXChildrenInNavigationOrder: <array of size 2>
 AXHelp:
 AXParent: <AXGroup>
 AXSize: NSSize: {729, 18}
@@ -278,6 +286,7 @@ AXRole: AXGroup
 AXSubrole: AXTerm
 AXRoleDescription: term
 AXChildren: <array of size 1>
+AXChildrenInNavigationOrder: <array of size 1>
 AXHelp:
 AXParent: <AXGroup>
 AXSize: NSSize: {769, 18}
@@ -308,6 +317,7 @@ AXRole: AXGroup
 AXSubrole: AXDescription
 AXRoleDescription: description
 AXChildren: <array of size 1>
+AXChildrenInNavigationOrder: <array of size 1>
 AXHelp:
 AXParent: <AXGroup>
 AXSize: NSSize: {729, 18}
@@ -338,6 +348,7 @@ AXRole: AXGroup
 AXSubrole: AXTerm
 AXRoleDescription: term
 AXChildren: <array of size 1>
+AXChildrenInNavigationOrder: <array of size 1>
 AXHelp:
 AXParent: <AXGroup>
 AXSize: NSSize: {769, 18}
@@ -368,6 +379,7 @@ AXRole: AXGroup
 AXSubrole: AXDescription
 AXRoleDescription: description
 AXChildren: <array of size 1>
+AXChildrenInNavigationOrder: <array of size 1>
 AXHelp:
 AXParent: <AXGroup>
 AXSize: NSSize: {729, 18}
@@ -398,6 +410,7 @@ AXRole: AXGroup
 AXSubrole: AXDescription
 AXRoleDescription: description
 AXChildren: <array of size 1>
+AXChildrenInNavigationOrder: <array of size 1>
 AXHelp:
 AXParent: <AXGroup>
 AXSize: NSSize: {729, 18}

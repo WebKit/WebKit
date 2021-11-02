@@ -7,6 +7,7 @@ AXRole: AXLink
 AXSubrole: (null)
 AXRoleDescription: link
 AXChildren: <array of size 1>
+AXChildrenInNavigationOrder: <array of size 1>
 AXHelp:
 AXParent: <AXLink: 'Delicious cake'>
 AXSize: NSSize: {280, 215}
@@ -41,6 +42,7 @@ AXRole: AXImage
 AXSubrole: (null)
 AXRoleDescription: image
 AXChildren: <array of size 0>
+AXChildrenInNavigationOrder: <array of size 0>
 AXHelp:
 AXParent: <AXImage>
 AXSize: NSSize: {280, 210}

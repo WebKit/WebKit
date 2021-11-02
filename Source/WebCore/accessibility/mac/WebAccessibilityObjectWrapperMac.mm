@@ -1302,6 +1302,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         NSAccessibilitySubroleAttribute,
         NSAccessibilityRoleDescriptionAttribute,
         NSAccessibilityChildrenAttribute,
+        NSAccessibilityChildrenInNavigationOrderAttribute,
         NSAccessibilityHelpAttribute,
         NSAccessibilityParentAttribute,
         NSAccessibilityPositionAttribute,

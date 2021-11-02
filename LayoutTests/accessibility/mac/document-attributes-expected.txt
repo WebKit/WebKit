@@ -1,6 +1,7 @@
 AXRole: AXWebArea
 AXRoleDescription: HTML content
 AXChildren: <array of size 0>
+AXChildrenInNavigationOrder: <array of size 0>
 AXHelp:
 AXParent: <AXWebArea>
 AXSize: NSSize: {800, 600}
