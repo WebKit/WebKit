@@ -25,7 +25,6 @@ import requests
 import sys
 
 from .command import Command
-from jinja2 import Template
 from requests.auth import HTTPBasicAuth
 from webkitcorepy import arguments, run, Editor, Terminal
 from webkitscmpy import log, local, remote
@@ -155,6 +154,7 @@ class Setup(Command):
                     continue
                 log.warning('Configuring and copying hook {}'.format(source_path))
                 with open(source_path, 'r') as f:
+                    from jinja2 import Template
                     contents = Template(f.read()).render(
                         git=local.Git.executable(),
                         location=source_path,

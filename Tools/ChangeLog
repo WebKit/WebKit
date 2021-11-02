@@ -1,3 +1,18 @@
+2021-11-02  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitscmpy] Reduce autoinstalls on import
+        https://bugs.webkit.org/show_bug.cgi?id=232574
+        <rdar://problem/84894275>
+
+        Reviewed by Stephanie Lewis.
+
+        * Scripts/libraries/webkitscmpy/webkitscmpy/__init__.py: Remove whichcraft (webkitcorepy registers it).
+        * Scripts/libraries/webkitscmpy/webkitscmpy/local/git.py: Remove unused webkitscmpy imports.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/local/scm.py: Remote unused webkitcorepy import.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/program/command.py: Move whichcraft to function.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/program/setup.py: Move jinja2 to function.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/remote/svn.py: Move fasteners, xmltodict import to functions.
+
 2021-11-02  Kate Cheney  <katherine_cheney@apple.com>
 
         PCM: Safari on iOS and macOS are not sending ad click attribution reports for Private Click Measurement

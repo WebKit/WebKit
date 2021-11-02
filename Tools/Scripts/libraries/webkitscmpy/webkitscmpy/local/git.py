@@ -35,7 +35,7 @@ from collections import defaultdict
 
 from webkitcorepy import run, decorators, NestedFuzzyDict
 from webkitscmpy.local import Scm
-from webkitscmpy import remote, Commit, Contributor, log
+from webkitscmpy import remote
 from webkitscmpy import Commit, Contributor, log
 
 
