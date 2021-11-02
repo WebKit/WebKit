@@ -54,6 +54,7 @@ public:
 
     enum class PcmDataCarried : bool { NonPersonallyIdentifiable, PersonallyIdentifiable };
     enum class AttributionReportEndpoint : bool { Source, Destination };
+    enum class IsRunningLayoutTest : bool { No, Yes };
 
     struct SourceID {
         static constexpr uint8_t MaxEntropy = 255;
@@ -314,7 +315,7 @@ public:
 
     WEBCORE_EXPORT static const Seconds maxAge();
     WEBCORE_EXPORT static Expected<AttributionTriggerData, String> parseAttributionRequest(const URL& redirectURL);
-    WEBCORE_EXPORT AttributionSecondsUntilSendData attributeAndGetEarliestTimeToSend(AttributionTriggerData&&);
+    WEBCORE_EXPORT AttributionSecondsUntilSendData attributeAndGetEarliestTimeToSend(AttributionTriggerData&&, IsRunningLayoutTest);
     WEBCORE_EXPORT bool hasHigherPriorityThan(const PrivateClickMeasurement&) const;
     WEBCORE_EXPORT URL attributionReportSourceURL() const;
     WEBCORE_EXPORT URL attributionReportAttributeOnURL() const;

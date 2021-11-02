@@ -1,3 +1,14 @@
+2021-11-02  Kate Cheney  <katherine_cheney@apple.com>
+
+        PCM: Safari on iOS and macOS are not sending ad click attribution reports for Private Click Measurement
+        https://bugs.webkit.org/show_bug.cgi?id=228104
+        <rdar://problem/80991209>
+
+        Reviewed by John Wilander.
+
+        * TestWebKitAPI/Tests/WebCore/PrivateClickMeasurement.cpp:
+        (TestWebKitAPI::TEST):
+
 2021-11-02  Tim Horton  <timothy_horton@apple.com>
 
         dumpAsText() tests don't get the ref-test treatment when using --self-compare-with-header

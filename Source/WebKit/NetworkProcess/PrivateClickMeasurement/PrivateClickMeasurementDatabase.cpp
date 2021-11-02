@@ -272,7 +272,7 @@ std::pair<std::optional<Database::UnattributedPrivateClickMeasurement>, std::opt
     return std::make_pair(unattributedPrivateClickMeasurement, attributedPrivateClickMeasurement);
 }
 
-std::pair<std::optional<WebCore::PrivateClickMeasurement::AttributionSecondsUntilSendData>, DebugInfo> Database::attributePrivateClickMeasurement(const WebCore::PrivateClickMeasurement::SourceSite& sourceSite, const WebCore::PrivateClickMeasurement::AttributionDestinationSite& destinationSite, const ApplicationBundleIdentifier& applicationBundleIdentifier, WebCore::PrivateClickMeasurement::AttributionTriggerData&& attributionTriggerData)
+std::pair<std::optional<WebCore::PrivateClickMeasurement::AttributionSecondsUntilSendData>, DebugInfo> Database::attributePrivateClickMeasurement(const WebCore::PrivateClickMeasurement::SourceSite& sourceSite, const WebCore::PrivateClickMeasurement::AttributionDestinationSite& destinationSite, const ApplicationBundleIdentifier& applicationBundleIdentifier, WebCore::PrivateClickMeasurement::AttributionTriggerData&& attributionTriggerData, WebCore::PrivateClickMeasurement::IsRunningLayoutTest isRunningTest)
 {
     ASSERT(!RunLoop::isMain());
 
@@ -298,7 +298,7 @@ std::pair<std::optional<WebCore::PrivateClickMeasurement::AttributionSecondsUnti
     if (previouslyUnattributed) {
         // Always convert the pending attribution and remove it from the unattributed map.
         removeUnattributed(*previouslyUnattributed);
-        secondsUntilSend = previouslyUnattributed.value().attributeAndGetEarliestTimeToSend(WTFMove(attributionTriggerData));
+        secondsUntilSend = previouslyUnattributed.value().attributeAndGetEarliestTimeToSend(WTFMove(attributionTriggerData), isRunningTest);
 
         // We should always have a valid secondsUntilSend value for a previouslyUnattributed value because there can be no previous attribution with a higher priority.
         if (!secondsUntilSend.hasValidSecondsUntilSendValues()) {
@@ -320,7 +320,7 @@ std::pair<std::optional<WebCore::PrivateClickMeasurement::AttributionSecondsUnti
         // If we have no new attribution, re-attribute the old one to respect the new priority, but only if this report has
         // not been sent to the source or destination site yet.
         if (!previouslyAttributed.value().hasPreviouslyBeenReported()) {
-            auto secondsUntilSend = previouslyAttributed.value().attributeAndGetEarliestTimeToSend(WTFMove(attributionTriggerData));
+            auto secondsUntilSend = previouslyAttributed.value().attributeAndGetEarliestTimeToSend(WTFMove(attributionTriggerData), isRunningTest);
             if (!secondsUntilSend.hasValidSecondsUntilSendValues())
                 return { std::nullopt, WTFMove(debugInfo) };
 

@@ -82,6 +82,7 @@ private:
     void clearExpired();
     bool featureEnabled() const;
     bool debugModeEnabled() const;
+    Seconds randomlyBetweenFifteenAndThirtyMinutes() const;
 
     RunLoop::Timer<PrivateClickMeasurementManager> m_firePendingAttributionRequestsTimer;
     bool m_isRunningTest { false };
