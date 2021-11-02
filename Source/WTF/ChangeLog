@@ -1,3 +1,43 @@
+2021-11-02  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r283732. rdar://problem/84944569
+
+    Add feature flag for COOP / COEP violation reporting and turn off by default
+    https://bugs.webkit.org/show_bug.cgi?id=231371
+    
+    Reviewed by Youenn Fablet.
+    
+    Add feature flag for COOP / COEP violation reporting and turn off by default since our
+    implementation doesn't match the latest specification.
+    
+    Source/WebCore:
+    
+    * loader/CrossOriginEmbedderPolicy.cpp:
+    (WebCore::sendCOEPPolicyInheritenceViolation):
+    (WebCore::sendCOEPCORPViolation):
+    * loader/CrossOriginOpenerPolicy.cpp:
+    (WebCore::sendViolationReportWhenNavigatingToCOOPResponse):
+    (WebCore::sendViolationReportWhenNavigatingAwayFromCOOPResponse):
+    
+    Source/WTF:
+    
+    * Scripts/Preferences/WebPreferencesExperimental.yaml:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@283732 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-10-07  Chris Dumez  <cdumez@apple.com>
+
+            Add feature flag for COOP / COEP violation reporting and turn off by default
+            https://bugs.webkit.org/show_bug.cgi?id=231371
+
+            Reviewed by Youenn Fablet.
+
+            Add feature flag for COOP / COEP violation reporting and turn off by default since our
+            implementation doesn't match the latest specification.
+
+            * Scripts/Preferences/WebPreferencesExperimental.yaml:
+
 2021-10-26  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r284344. rdar://problem/84625558
