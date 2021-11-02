@@ -55,6 +55,7 @@ void Line::initialize(const Vector<InlineItem>& lineSpanningInlineBoxes)
     m_inlineBoxListWithClonedDecorationEnd.clear();
     m_clonedEndDecorationWidthForInlineBoxRuns = { };
     m_nonSpanningInlineLevelBoxCount = 0;
+    m_hasNonDefaultBidiLevelRun = false;
     m_contentLogicalWidth = { };
     m_runs.clear();
     resetTrailingContent();
@@ -257,6 +258,7 @@ void Line::append(const InlineItem& inlineItem, const RenderStyle& style, Inline
         appendNonReplacedInlineLevelBox(inlineItem, style, logicalWidth);
     else
         ASSERT_NOT_REACHED();
+    m_hasNonDefaultBidiLevelRun = m_hasNonDefaultBidiLevelRun || inlineItem.bidiLevel() != UBIDI_DEFAULT_LTR;
 }
 
 void Line::appendInlineBoxStart(const InlineItem& inlineItem, const RenderStyle& style, InlineLayoutUnit logicalWidth)
