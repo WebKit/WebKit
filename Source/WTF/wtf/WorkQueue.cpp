@@ -81,6 +81,11 @@ void WorkQueueBase::dispatchSync(Function<void()>&& function)
     semaphore.wait();
 }
 
+void WorkQueueBase::dispatchWithQOS(Function<void()>&& function, QOS)
+{
+    dispatch(WTFMove(function));
+}
+
 void ConcurrentWorkQueue::apply(size_t iterations, WTF::Function<void(size_t index)>&& function)
 {
     if (!iterations)

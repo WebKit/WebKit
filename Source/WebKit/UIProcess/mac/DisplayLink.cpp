@@ -236,9 +236,9 @@ void DisplayLink::notifyObserversDisplayWasRefreshed()
             << " observers, on background queue " << shouldSendIPCOnBackgroundQueue << " maxFramesPerSecond " << observersMaxFramesPerSecond << " full speed clients " << connectionInfo.fullSpeedUpdatesClientCount << " relevant " << mainThreadWantsUpdate);
 
         if (connectionInfo.fullSpeedUpdatesClientCount) {
-            IPC::Connection::send(connectionID, Messages::EventDispatcher::DisplayWasRefreshed(m_displayID, m_currentUpdate, mainThreadWantsUpdate), 0);
+            IPC::Connection::send(connectionID, Messages::EventDispatcher::DisplayWasRefreshed(m_displayID, m_currentUpdate, mainThreadWantsUpdate), 0, { }, Thread::QOS::UserInteractive);
         } else if (mainThreadWantsUpdate)
-            IPC::Connection::send(connectionID, Messages::WebProcess::DisplayWasRefreshed(m_displayID, m_currentUpdate), 0);
+            IPC::Connection::send(connectionID, Messages::WebProcess::DisplayWasRefreshed(m_displayID, m_currentUpdate), 0, { }, Thread::QOS::UserInteractive);
     }
 
     m_currentUpdate = m_currentUpdate.nextUpdate();

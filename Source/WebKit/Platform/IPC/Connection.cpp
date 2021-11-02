@@ -454,7 +454,7 @@ UniqueRef<Encoder> Connection::createSyncMessageEncoder(MessageName messageName,
     return encoder;
 }
 
-bool Connection::sendMessage(UniqueRef<Encoder>&& encoder, OptionSet<SendOption> sendOptions)
+bool Connection::sendMessage(UniqueRef<Encoder>&& encoder, OptionSet<SendOption> sendOptions, std::optional<Thread::QOS> qos)
 {
     if (!isValid())
         return false;
@@ -494,9 +494,15 @@ bool Connection::sendMessage(UniqueRef<Encoder>&& encoder, OptionSet<SendOption>
     }
     
     // FIXME: We should add a boolean flag so we don't call this when work has already been scheduled.
-    m_connectionQueue->dispatch([protectedThis = Ref { *this }]() mutable {
+    auto sendOutgoingMessages = [protectedThis = Ref { *this }]() mutable {
         protectedThis->sendOutgoingMessages();
-    });
+    };
+
+    if (qos)
+        m_connectionQueue->dispatchWithQOS(WTFMove(sendOutgoingMessages), *qos);
+    else
+        m_connectionQueue->dispatch(WTFMove(sendOutgoingMessages));
+
     return true;
 }
 

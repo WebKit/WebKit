@@ -2928,12 +2928,16 @@ void WebPageProxy::sendWheelEvent(const WebWheelEvent& event)
     m_wheelEventActivityHysteresis.impulse();
 #endif
 
+    auto* connection = messageSenderConnection();
+    if (!connection)
+        return;
+
     auto rubberBandableEdges = this->rubberBandableEdges();
     if (shouldUseImplicitRubberBandControl()) {
         rubberBandableEdges.setLeft(!m_backForwardList->backItem());
         rubberBandableEdges.setRight(!m_backForwardList->forwardItem());
     }
-    send(Messages::EventDispatcher::WheelEvent(m_webPageID, event, rubberBandableEdges), 0);
+    connection->send(Messages::EventDispatcher::WheelEvent(m_webPageID, event, rubberBandableEdges), 0, { }, Thread::QOS::UserInteractive);
 
     // Manually ping the web process to check for responsiveness since our wheel
     // event will dispatch to a non-main thread, which always responds.

@@ -1,3 +1,28 @@
+2021-11-02  Chris Dumez  <cdumez@apple.com>
+
+        Use higher QoS for WheelEvent and DisplayWasRefreshed IPCs
+        https://bugs.webkit.org/show_bug.cgi?id=232458
+        <rdar://82657744>
+
+        Reviewed by Simon Fraser.
+
+        Use higher QoS for WheelEvent and DisplayWasRefreshed IPCs since those are high priority. The
+        UIProcess's main thread has high UserInteractive QoS but the IPC thread has a lower QoS by default.
+
+        We cannot raise the QoS of the IPC thread without regressing some performance benchmarks since not
+        all IPC is high priority.
+
+        Making this change helps with responsiveness under heavy load scenarios.
+
+        * Platform/IPC/Connection.cpp:
+        (IPC::Connection::sendMessage):
+        * Platform/IPC/Connection.h:
+        (IPC::Connection::send):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::sendWheelEvent):
+        * UIProcess/mac/DisplayLink.cpp:
+        (WebKit::DisplayLink::notifyObserversDisplayWasRefreshed):
+
 2021-11-02  Zixing Liu  <liushuyu011@gmail.com>
 
         [GTK][WPE] Support setting status code and getting HTTP method in custom URI scheme handlers

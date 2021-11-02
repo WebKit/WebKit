@@ -1,3 +1,19 @@
+2021-11-02  Chris Dumez  <cdumez@apple.com>
+
+        Use higher QoS for WheelEvent and DisplayWasRefreshed IPCs
+        https://bugs.webkit.org/show_bug.cgi?id=232458
+        <rdar://82657744>
+
+        Reviewed by Simon Fraser.
+
+        Add dispatchWithQOS() function to WorkQueue to dispatch a task with a given QoS.
+
+        * wtf/WorkQueue.cpp:
+        (WTF::WorkQueueBase::dispatchWithQOS):
+        * wtf/WorkQueue.h:
+        * wtf/cocoa/WorkQueueCocoa.cpp:
+        (WTF::WorkQueueBase::dispatchWithQOS):
+
 2021-11-01  Per Arne  <pvollan@apple.com>
 
         [macOS] Opening local html files is failing
