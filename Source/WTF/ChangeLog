@@ -1,3 +1,19 @@
+2021-11-02  David Kilzer  <ddkilzer@apple.com>
+
+        [WTF] Minor clean-up for format-related functions
+        <https://webkit.org/b/232514>
+
+        Reviewed by Yusuke Suzuki.
+
+        * wtf/Assertions.cpp:
+        (WTF::createWithFormatAndArguments):
+        - Put WTF_ATTRIBUTE_PRINTF() on its own line to match other
+          functions.
+        (WTF::vprintf_stderr_with_prefix):
+        (WTF::vprintf_stderr_with_trailing_newline):
+        - Move ALLOW_NONLITERAL_FORMAT_{BEGIN,END} around specific
+          function calls that need them.
+
 2021-11-02  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         Fails to execute JavaScript when soft stack limit is unlimited

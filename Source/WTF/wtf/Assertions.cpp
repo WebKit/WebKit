@@ -69,7 +69,8 @@
 
 namespace WTF {
 
-WTF_ATTRIBUTE_PRINTF(1, 0) static String createWithFormatAndArguments(const char* format, va_list args)
+WTF_ATTRIBUTE_PRINTF(1, 0)
+static String createWithFormatAndArguments(const char* format, va_list args)
 {
     va_list argsCopy;
     va_copy(argsCopy, args);
@@ -182,8 +183,6 @@ static void vprintf_stderr_common(const char* format, va_list args)
     vfprintf(stderr, format, args);
 }
 
-ALLOW_NONLITERAL_FORMAT_BEGIN
-
 WTF_ATTRIBUTE_PRINTF(2, 0)
 static void vprintf_stderr_with_prefix(const char* prefix, const char* format, va_list args)
 {
@@ -194,7 +193,9 @@ static void vprintf_stderr_with_prefix(const char* prefix, const char* format, v
     memcpy(formatWithPrefix.data() + prefixLength, format, formatLength);
     formatWithPrefix[prefixLength + formatLength] = 0;
 
+    ALLOW_NONLITERAL_FORMAT_BEGIN
     vprintf_stderr_common(formatWithPrefix.data(), args);
+    ALLOW_NONLITERAL_FORMAT_END
 }
 
 WTF_ATTRIBUTE_PRINTF(1, 0)
@@ -211,10 +212,10 @@ static void vprintf_stderr_with_trailing_newline(const char* format, va_list arg
     formatWithNewline[formatLength] = '\n';
     formatWithNewline[formatLength + 1] = 0;
 
+    ALLOW_NONLITERAL_FORMAT_BEGIN
     vprintf_stderr_common(formatWithNewline.data(), args);
+    ALLOW_NONLITERAL_FORMAT_END
 }
-
-ALLOW_NONLITERAL_FORMAT_END
 
 WTF_ATTRIBUTE_PRINTF(1, 2)
 static void printf_stderr_common(const char* format, ...)
