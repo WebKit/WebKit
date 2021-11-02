@@ -1,3 +1,18 @@
+2021-11-02  Per Arne  <pvollan@apple.com>
+
+        REGRESSION (r268421): TestWebKitAPI.WebKit.PreferenceChanges* tests are flaky failures
+        https://bugs.webkit.org/show_bug.cgi?id=221848
+        <rdar://problem/70966379>
+
+        Reviewed by Brent Fulgham.
+
+        After r268421, the preferences are set asynchronously in the WebContent process, which introduced this flakiness.
+        This patch addresses this by modifying the flaky tests to loop until the preference value is equal to the expected
+        value.
+
+        * TestWebKitAPI/Tests/WebKit/PreferenceChanges.mm:
+        (TEST):
+
 2021-11-02  Jonathan Bedard  <jbedard@apple.com>
 
         [webkitscmpy] Reduce autoinstalls on import
