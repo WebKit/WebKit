@@ -1,3 +1,13 @@
+2021-11-02  Saam Barati  <sbarati@apple.com>
+
+        EnumeratorGetByVal for IndexedMode+OwnStructureMode doesn't always recover the property name
+        https://bugs.webkit.org/show_bug.cgi?id=231321
+        <rdar://problem/84211697>
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/enumerator-get-by-val-needs-to-recover-property-name.js: Added.
+
 2021-11-01  Saam Barati  <sbarati@apple.com>
 
         ArrayBuffer species watchpoint being invalidated doesn't mean it's not an ArrayBuffer constructor from the same global object

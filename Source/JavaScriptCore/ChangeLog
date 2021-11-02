@@ -1,3 +1,21 @@
+2021-11-02  Saam Barati  <sbarati@apple.com>
+
+        EnumeratorGetByVal for IndexedMode+OwnStructureMode doesn't always recover the property name
+        https://bugs.webkit.org/show_bug.cgi?id=231321
+        <rdar://problem/84211697>
+
+        Reviewed by Yusuke Suzuki.
+
+        When running an EnumeratorGetByVal in IndexedMode+OwnStructureMode, we may
+        go to the slow path. However, we were incorrectly going to the slow path
+        before recovering the actual property name. Instead, we were passing in
+        the integer index value to the get by val.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileEnumeratorGetByVal):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileCompareStrictEq):
+
 2021-11-02  Patrick Angle  <pangle@apple.com>
 
         WebDriver: [Cocoa] support `acceptInsecureCerts` capability

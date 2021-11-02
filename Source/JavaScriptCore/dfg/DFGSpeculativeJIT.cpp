@@ -15875,7 +15875,7 @@ void SpeculativeJIT::compileEnumeratorGetByVal(Node* node)
         JSValueRegs resultRegs;
         GPRReg indexGPR;
         GPRReg enumeratorGPR;
-        MacroAssembler::Jump badStructureSlowPath;
+        MacroAssembler::JumpList recoverGenericCase;
 
         compileGetByVal(node, scopedLambda<std::tuple<JSValueRegs, DataFormat, CanUseFlush>(DataFormat)>([&] (DataFormat) {
             Edge storageEdge = m_graph.varArgChild(node, 2);
@@ -15904,12 +15904,15 @@ void SpeculativeJIT::compileEnumeratorGetByVal(Node* node)
             GPRReg scratchGPR = resultRegs.payloadGPR();
 
             MacroAssembler::JumpList notFastNamedCases;
+            // FIXME: Maybe we should have a better way to represent IndexedMode+OwnStructureMode?
+            bool indexedAndOwnStructureMode = m_graph.varArgChild(node, 1).node() == m_graph.varArgChild(node, 3).node();
+            MacroAssembler::JumpList& genericOrRecoverCase = indexedAndOwnStructureMode ? recoverGenericCase : notFastNamedCases;
 
             // FIXME: We shouldn't generate this code if we know base is not an object.
             notFastNamedCases.append(m_jit.branchTest32(MacroAssembler::NonZero, modeGPR, TrustedImm32(JSPropertyNameEnumerator::IndexedMode | JSPropertyNameEnumerator::GenericMode)));
             {
                 if (!m_state.forNode(baseEdge).isType(SpecCell))
-                    notFastNamedCases.append(m_jit.branchIfNotCell(baseRegs));
+                    genericOrRecoverCase.append(m_jit.branchIfNotCell(baseRegs));
 
                 // Check the structure
                 // FIXME: If we know there's only one structure for base we can just embed it here.
@@ -15920,12 +15923,7 @@ void SpeculativeJIT::compileEnumeratorGetByVal(Node* node)
                     scratchGPR,
                     MacroAssembler::Address(
                         enumeratorGPR, JSPropertyNameEnumerator::cachedStructureIDOffset()));
-
-                // FIXME: Maybe we should have a better way to represent Indexed+Named?
-                if (m_graph.varArgChild(node, 1).node() == m_graph.varArgChild(node, 3).node())
-                    badStructureSlowPath = badStructure;
-                else
-                    notFastNamedCases.append(badStructure);
+                genericOrRecoverCase.append(badStructure);
 
                 // Compute the offset
                 // If index is less than the enumerator's cached inline storage, then it's an inline access
@@ -15957,11 +15955,11 @@ void SpeculativeJIT::compileEnumeratorGetByVal(Node* node)
         // FIXME: This is kinda hacky...
         ASSERT(generationInfo(node).jsValueRegs() == resultRegs && generationInfo(node).registerFormat() == DataFormatJS);
 
-        if (badStructureSlowPath.isSet()) {
+        if (!recoverGenericCase.empty()) {
             if (baseRegs.tagGPR() == InvalidGPRReg)
-                addSlowPathGenerator(slowPathCall(badStructureSlowPath, this, operationEnumeratorRecoverNameAndGetByVal, resultRegs, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), CCallHelpers::CellValue(baseRegs.payloadGPR()), indexGPR, enumeratorGPR));
+                addSlowPathGenerator(slowPathCall(recoverGenericCase, this, operationEnumeratorRecoverNameAndGetByVal, resultRegs, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), CCallHelpers::CellValue(baseRegs.payloadGPR()), indexGPR, enumeratorGPR));
             else
-                addSlowPathGenerator(slowPathCall(badStructureSlowPath, this, operationEnumeratorRecoverNameAndGetByVal, resultRegs, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), baseRegs, indexGPR, enumeratorGPR));
+                addSlowPathGenerator(slowPathCall(recoverGenericCase, this, operationEnumeratorRecoverNameAndGetByVal, resultRegs, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), baseRegs, indexGPR, enumeratorGPR));
         }
 
         doneCases.link(&m_jit);

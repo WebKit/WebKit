@@ -13681,6 +13681,14 @@ IGNORE_CLANG_WARNINGS_END
         LBasicBlock outOfLineLoadBlock = m_out.newBlock();
         LBasicBlock genericICBlock = m_out.newBlock();
         LBasicBlock continuation = m_out.newBlock();
+        LBasicBlock genericOrRecover;
+
+        // FIXME: This is not the cleanest way to say we're using IndexedMode+OwnStructureMode mode. 
+        bool indexedAndOwnStructureMode = indexEdge.node() == propertyNameEdge.node();
+        if (indexedAndOwnStructureMode)
+            genericOrRecover = m_out.newBlock();
+        else
+            genericOrRecover = genericICBlock;
 
         Vector<ValueFromBlock, 4> results;
 
@@ -13688,7 +13696,7 @@ IGNORE_CLANG_WARNINGS_END
         m_out.branch(isNotNamed, unsure(genericICBlock), unsure(checkIsCellBlock));
 
         m_out.appendTo(checkIsCellBlock);
-        m_out.branch(isCell(base, provenType(baseEdge)), usually(checkStructureBlock), rarely(genericICBlock));
+        m_out.branch(isCell(base, provenType(baseEdge)), usually(checkStructureBlock), rarely(genericOrRecover));
 
         m_out.appendTo(checkStructureBlock);
         LValue structureID;
@@ -13700,15 +13708,7 @@ IGNORE_CLANG_WARNINGS_END
 
         LValue hasEnumeratorStructure = m_out.equal(structureID, m_out.load32(enumerator, m_heaps.JSPropertyNameEnumerator_cachedStructureID));
 
-        if (indexEdge.node() == propertyNameEdge.node()) {
-            JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
-            LBasicBlock badStructureSlowPath = m_out.newBlock();
-            m_out.branch(hasEnumeratorStructure, usually(checkInlineOrOutOfLineBlock), rarely(genericICBlock));
-
-            m_out.appendTo(badStructureSlowPath);
-            results.append(m_out.anchor(vmCall(Int64, operationEnumeratorRecoverNameAndGetByVal, weakPointer(globalObject), base, index, enumerator)));
-        } else
-            m_out.branch(hasEnumeratorStructure, usually(checkInlineOrOutOfLineBlock), rarely(genericICBlock));
+        m_out.branch(hasEnumeratorStructure, usually(checkInlineOrOutOfLineBlock), rarely(genericOrRecover));
 
         m_out.appendTo(checkInlineOrOutOfLineBlock);
         LValue inlineCapacity = nullptr;
@@ -13752,6 +13752,12 @@ IGNORE_CLANG_WARNINGS_END
 
         results.append(m_out.anchor(genericResult));
         m_out.jump(continuation);
+
+        if (indexedAndOwnStructureMode) {
+            m_out.appendTo(genericOrRecover);
+            results.append(m_out.anchor(vmCall(Int64, operationEnumeratorRecoverNameAndGetByVal, weakPointer(m_graph.globalObjectFor(m_origin.semantic)), base, index, enumerator)));
+            m_out.jump(continuation);
+        }
 
         m_out.appendTo(continuation);
         ASSERT(results.size());
