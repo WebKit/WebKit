@@ -309,6 +309,18 @@ ContactPickerAPIEnabled:
     WebCore:
       default: false
 
+CoopCoepViolationReportingEnabled:
+  type: bool
+  humanReadableName: "COOP and COEP violations reporting"
+  humanReadableDescription: "Cross-Origin-Opener-Policy and Cross-Origin-Embedder-Policy reporting"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 CoreImageAcceleratedFilterRenderEnabled:
   type: bool
   webcoreOnChange: setNeedsRelayoutAllFrames
