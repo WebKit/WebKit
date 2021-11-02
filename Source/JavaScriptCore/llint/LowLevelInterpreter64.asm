@@ -1199,7 +1199,7 @@ macro binaryOpCustomStore(opcodeName, opcodeStruct, integerOperationAndStore, do
         get(m_dst, t2)
         addq numberTag, t0
         fq2d t0, ft0
-        doubleOperation(ft0, ft1, ft0)
+        doubleOperation(ft0, ft1)
         fd2q ft0, t0
         subq numberTag, t0
         storeq t0, [cfr, t2, 8]
@@ -1213,7 +1213,7 @@ macro binaryOpCustomStore(opcodeName, opcodeStruct, integerOperationAndStore, do
         ci2ds t0, ft0
         addq numberTag, t1
         fq2d t1, ft1
-        doubleOperation(ft0, ft1, ft0)
+        doubleOperation(ft0, ft1)
         fd2q ft0, t0
         subq numberTag, t0
         storeq t0, [cfr, t2, 8]
@@ -1231,7 +1231,7 @@ if X86_64 or X86_64_WIN
             # Assume t3 is scratchable.
             btiz rhs, slow
             bineq rhs, -1, .notNeg2TwoThe31DivByNeg1
-            bieq lhs, -2147483648, .slow
+            bieq lhs, -2147483648, slow
         .notNeg2TwoThe31DivByNeg1:
             btinz lhs, .intOK
             bilt rhs, 0, slow
@@ -1244,7 +1244,7 @@ if X86_64 or X86_64_WIN
             orq numberTag, t0
             storeq t0, [cfr, index, 8]
         end,
-        macro (left, right, result) divd left, right, result end)
+        macro (lhs, rhs) divd rhs, lhs end)
 else
     slowPathOp(div)
 end
@@ -1262,7 +1262,7 @@ binaryOpCustomStore(mul, OpMul,
         orq numberTag, t3
         storeq t3, [cfr, index, 8]
     end,
-    macro (left, right, result) muld left, right, result end)
+    macro (lhs, rhs) muld rhs, lhs end)
 
 
 macro binaryOp(opcodeName, opcodeStruct, integerOperation, doubleOperation)
@@ -1277,12 +1277,12 @@ end
 
 binaryOp(add, OpAdd,
     macro (lhs, rhs, slow) baddio rhs, lhs, slow end,
-    macro (left, right, result) addd left, right, result end)
+    macro (lhs, rhs) addd rhs, lhs end)
 
 
 binaryOp(sub, OpSub,
     macro (lhs, rhs, slow) bsubio rhs, lhs, slow end,
-    macro (left, right, result) subd left, right, result end)
+    macro (lhs, rhs) subd rhs, lhs end)
 
 
 llintOpWithReturn(op_unsigned, OpUnsigned, macro (size, get, dispatch, return)

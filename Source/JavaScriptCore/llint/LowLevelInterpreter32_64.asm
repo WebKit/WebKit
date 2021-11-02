@@ -1135,7 +1135,7 @@ macro binaryOpCustomStore(opcodeName, opcodeStruct, integerOperationAndStore, do
     .op1NotIntReady:
         get(m_dst, t1)
         fii2d t0, t2, ft0
-        doubleOperation(ft0, ft1, ft0)
+        doubleOperation(ft0, ft1)
         stored ft0, [cfr, t1, 8]
         dispatch()
 
@@ -1146,7 +1146,7 @@ macro binaryOpCustomStore(opcodeName, opcodeStruct, integerOperationAndStore, do
         get(m_dst, t2)
         ci2ds t0, ft0
         fii2d t1, t3, ft1
-        doubleOperation(ft0, ft1, ft0)
+        doubleOperation(ft0, ft1)
         stored ft0, [cfr, t2, 8]
         dispatch()
 
@@ -1168,7 +1168,7 @@ end
 
 binaryOp(add, OpAdd,
     macro (lhs, rhs, slow) baddio rhs, lhs, slow end,
-    macro (left, right, result) addd left, right, result end)
+    macro (lhs, rhs) addd rhs, lhs end)
 
 
 binaryOpCustomStore(mul, OpMul,
@@ -1183,12 +1183,12 @@ binaryOpCustomStore(mul, OpMul,
         storei Int32Tag, TagOffset[cfr, index, 8]
         storei scratch, PayloadOffset[cfr, index, 8]
     end,
-    macro (left, right, result) muld left, right, result end)
+    macro (lhs, rhs) muld rhs, lhs end)
 
 
 binaryOp(sub, OpSub,
     macro (lhs, rhs, slow) bsubio rhs, lhs, slow end,
-    macro (left, right, result) subd left, right, result end)
+    macro (lhs, rhs) subd rhs, lhs end)
 
 
 binaryOpCustomStore(div, OpDiv,
@@ -1204,7 +1204,7 @@ binaryOpCustomStore(div, OpDiv,
         stored ft1, [cfr, index, 8]
     .done:
     end,
-    macro (left, right, result) divd left, right, result end)
+    macro (lhs, rhs) divd rhs, lhs end)
 
 
 llintOpWithReturn(op_unsigned, OpUnsigned, macro (size, get, dispatch, return)

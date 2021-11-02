@@ -1,3 +1,20 @@
+2021-11-02  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [JSC][LLInt] Reverse unintended effects of r285152
+        https://bugs.webkit.org/show_bug.cgi?id=232633
+
+        Reviewed by Saam Barati.
+
+        The previous patch was not intended to change the generated assembly whatsoever,
+        but it turns out that 3-argument syntax produces, e.g. `vsub` instead of `sub` on x86.
+
+        As such, this patch does away with the 3-arg cases and merely clarifies names as `rhs, lhs` across the board.
+
+        (Also: Fix a line from the previous patch where a macro was not referring to a passed label properly.)
+
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+
 2021-11-02  Saam Barati  <sbarati@apple.com>
 
         EnumeratorGetByVal for IndexedMode+OwnStructureMode doesn't always recover the property name
