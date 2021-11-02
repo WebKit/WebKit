@@ -69,9 +69,13 @@ DisplayBoxes InlineDisplayContentBuilder::build(const LineBuilder::LineContent& 
 
 void InlineDisplayContentBuilder::createBoxesAndUpdateGeometryForLineContent(const LineBuilder::LineContent& lineContent, const LineBox& lineBox, const InlineLayoutPoint& lineBoxLogicalTopLeft, const size_t lineIndex, DisplayBoxes& boxes)
 {
-    auto& formattingState = this->formattingState();
     // Create the inline boxes on the current line. This is mostly text and atomic inline boxes.
-    for (auto& lineRun : lineContent.runs) {
+    auto& formattingState = this->formattingState();
+    auto& runs = lineContent.runs;
+    auto contentNeedsBidiReordering = !lineContent.visualOrderList.isEmpty();
+    ASSERT(!contentNeedsBidiReordering || lineContent.visualOrderList.size() == runs.size());
+    for (size_t i = 0; i < runs.size(); ++i) {
+        auto& lineRun = runs[contentNeedsBidiReordering ? lineContent.visualOrderList[i] : i];
         auto& layoutBox = lineRun.layoutBox();
         auto& style = [&] () -> const RenderStyle& {
             return !lineIndex ? layoutBox.firstLineStyle() : layoutBox.style();

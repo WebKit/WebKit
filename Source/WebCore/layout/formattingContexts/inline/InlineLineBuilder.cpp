@@ -283,16 +283,36 @@ LineBuilder::LineContent LineBuilder::layoutInlineContent(const InlineItemRange&
 
     auto committedContent = placeInlineContent(needsLayoutRange);
     auto committedRange = close(needsLayoutRange, committedContent);
+    auto& lineRuns = m_line.runs();
+
+    auto computedVisualOrder = [&]() -> Vector<int32_t> {
+        if (!m_line.contentNeedsBidiReordering())
+            return { };
+
+        Vector<UBiDiLevel> runLevels(lineRuns.size());
+        // FIXME: We may cache these values in Line, if it turns out to be a perf hit.
+        for (size_t i = 0; i < lineRuns.size(); ++i)
+            runLevels[i] = lineRuns[i].bidiLevel();
+
+        Vector<int32_t> visualOrderList(lineRuns.size());
+        ubidi_reorderVisual(runLevels.data(), runLevels.size(), visualOrderList.data());
+        return visualOrderList;
+    };
 
     auto isLastLine = isLastLineWithInlineContent(committedRange, needsLayoutRange.end, committedContent.partialTrailingContentLength);
-    return LineContent { committedRange, committedContent.partialTrailingContentLength, committedContent.overflowLogicalWidth, m_floats, m_contentIsConstrainedByFloat
+    return LineContent { committedRange
+        , committedContent.partialTrailingContentLength
+        , committedContent.overflowLogicalWidth
+        , m_floats
+        , m_contentIsConstrainedByFloat
         , m_lineLogicalRect.topLeft()
         , m_lineLogicalRect.width()
         , m_line.contentLogicalWidth()
         , m_line.hangingWhitespaceWidth()
         , isLastLine
         , m_line.nonSpanningInlineLevelBoxCount()
-        , m_line.runs()};
+        , computedVisualOrder()
+        , lineRuns };
 }
 
 LineBuilder::IntrinsicContent LineBuilder::computedIntrinsicWidth(const InlineItemRange& needsLayoutRange, InlineLayoutUnit availableWidth)
