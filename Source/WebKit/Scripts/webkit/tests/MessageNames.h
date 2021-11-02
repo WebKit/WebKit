@@ -107,6 +107,7 @@ enum class MessageName : uint16_t {
     , ProcessOutOfStreamMessage
     , SetStreamDestinationID
     , SyncMessageReply
+    , Terminate
     , TestWithSuperclass_TestAsyncMessageReply
     , TestWithSuperclass_TestAsyncMessageWithConnectionReply
     , TestWithSuperclass_TestAsyncMessageWithMultipleArgumentsReply

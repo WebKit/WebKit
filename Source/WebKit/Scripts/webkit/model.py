@@ -77,7 +77,8 @@ ipc_receiver = MessageReceiver(name="IPC", superclass=None, attributes=[BUILTIN_
     Message('InitializeConnection', [], [], attributes=[BUILTIN_ATTRIBUTE], condition="PLATFORM(COCOA)"),
     Message('LegacySessionState', [], [], attributes=[BUILTIN_ATTRIBUTE], condition=None),
     Message('SetStreamDestinationID', [], [], attributes=[BUILTIN_ATTRIBUTE], condition=None),
-    Message('ProcessOutOfStreamMessage', [], [], attributes=[BUILTIN_ATTRIBUTE], condition=None)
+    Message('ProcessOutOfStreamMessage', [], [], attributes=[BUILTIN_ATTRIBUTE], condition=None),
+    Message('Terminate', [], [], attributes=[BUILTIN_ATTRIBUTE], condition=None),
 ], condition=None)
 
 

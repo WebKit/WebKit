@@ -1,3 +1,31 @@
+2021-11-02  Sihui Liu  <sihui_liu@apple.com>
+
+        Terminate unresponsive network process by crashing it
+        https://bugs.webkit.org/show_bug.cgi?id=232603
+
+        Reviewed by Chris Dumez.
+
+        UI process currently kills network process when it does not respond message in some time (network process being 
+        unresponsive). We've found one common case where network process becomes unresponsive is that it is blocked by 
+        some slow operation on the main thread (like file operation in rdar://84511633). To understand what the 
+        operations are and make a fix, we now ask network process to crash itself on IPC thread. In this way, we can get 
+        crash report that includes the call stack of the main thread. To avoid generating too many crash reports, we 
+        only send the crash message to network process when it becomes unresponsive multiple times in a short time 
+        period.
+
+        * Platform/IPC/Connection.cpp:
+        (IPC::terminateDueToIPCTerminateMessage):
+        (IPC::Connection::processIncomingMessage):
+        * Scripts/webkit/model.py:
+        * Scripts/webkit/tests/MessageNames.cpp:
+        (IPC::description):
+        (IPC::receiverName):
+        (IPC::isValidMessageName):
+        * Scripts/webkit/tests/MessageNames.h:
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::shouldTerminateNetworkProcessBySendingMessage):
+        (WebKit::NetworkProcessProxy::didBecomeUnresponsive):
+
 2021-11-02  Kate Cheney  <katherine_cheney@apple.com>
 
         PCM: Safari on iOS and macOS are not sending ad click attribution reports for Private Click Measurement
