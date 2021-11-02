@@ -46,8 +46,8 @@ CurlRequest::CurlRequest(const ResourceRequest&request, CurlRequestClient* clien
     : m_client(client)
     , m_messageQueue(WTFMove(messageQueue))
     , m_request(request.isolatedCopy())
-    , m_startState(shouldSuspend == ShouldSuspend::Yes ? StartState::StartSuspended : StartState::WaitingForStart)
     , m_enableMultipart(enableMultipart == EnableMultipart::Yes)
+    , m_startState(shouldSuspend == ShouldSuspend::Yes ? StartState::StartSuspended : StartState::WaitingForStart)
     , m_formDataStream(m_request.httpBody())
     , m_captureExtraMetrics(captureExtraMetrics == CaptureNetworkLoadMetrics::Extended)
 {
