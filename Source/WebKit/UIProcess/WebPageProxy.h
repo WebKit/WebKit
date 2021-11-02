@@ -2387,7 +2387,6 @@ private:
     void sendWheelEvent(const WebWheelEvent&);
 
     WebWheelEventCoalescer& wheelEventCoalescer();
-    bool shouldCoalesceWheelEventsDuringDeceleration() const;
 
 #if HAVE(CVDISPLAYLINK)
     void wheelEventHysteresisUpdated(PAL::HysteresisState);

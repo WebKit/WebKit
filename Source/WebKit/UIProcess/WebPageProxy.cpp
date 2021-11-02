@@ -2946,25 +2946,10 @@ void WebPageProxy::sendWheelEvent(const WebWheelEvent& event)
 
 WebWheelEventCoalescer& WebPageProxy::wheelEventCoalescer()
 {
-    if (!m_wheelEventCoalescer) {
+    if (!m_wheelEventCoalescer)
         m_wheelEventCoalescer = makeUnique<WebWheelEventCoalescer>();
-        m_wheelEventCoalescer->setShouldCoalesceEventsDuringDeceleration(shouldCoalesceWheelEventsDuringDeceleration());
-    }
 
     return *m_wheelEventCoalescer;
-}
-
-bool WebPageProxy::shouldCoalesceWheelEventsDuringDeceleration() const
-{
-#if HAVE(CVDISPLAYLINK)
-    if (!m_displayID)
-        return false;
-
-    auto framesPerSecond = m_process->processPool().nominalFramesPerSecondForDisplay(*m_displayID);
-    return framesPerSecond > WebCore::FullSpeedFramesPerSecond;
-#else
-    return false;
-#endif
 }
 
 bool WebPageProxy::hasQueuedKeyEvent() const
@@ -3947,9 +3932,6 @@ void WebPageProxy::setIntrinsicDeviceScaleFactor(float scaleFactor)
 void WebPageProxy::windowScreenDidChange(PlatformDisplayID displayID, std::optional<unsigned> nominalFramesPerSecond)
 {
     m_displayID = displayID;
-
-    if (m_wheelEventCoalescer)
-        m_wheelEventCoalescer->setShouldCoalesceEventsDuringDeceleration(shouldCoalesceWheelEventsDuringDeceleration());
 
     if (!hasRunningProcess())
         return;
