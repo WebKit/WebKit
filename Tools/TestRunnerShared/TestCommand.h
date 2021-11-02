@@ -38,6 +38,7 @@ struct TestCommand {
     std::string selfComparisonHeader;
     WTF::Seconds timeout;
     bool shouldDumpPixels { false };
+    bool forceDumpPixels { false };
     bool dumpJSConsoleLogInStdErr { false };
 };
 

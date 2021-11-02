@@ -342,6 +342,7 @@ class SingleTestRunner(object):
     def _run_self_comparison_test(self, header):
         driver_input = self._driver_input()
         driver_input.should_run_pixel_test = True
+        driver_input.force_dump_pixels = True
 
         reference_output = self._driver.run_test(driver_input, self._stop_when_done)
         driver_input.self_comparison_header = header

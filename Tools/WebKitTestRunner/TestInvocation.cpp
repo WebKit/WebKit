@@ -829,7 +829,7 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
     }
 
     if (WKStringIsEqualToUTF8CString(messageName, "SetDumpPixels")) {
-        m_dumpPixels = booleanValue(messageBody);
+        m_dumpPixels = booleanValue(messageBody) || m_forceDumpPixels;
         return nullptr;
     }
     if (WKStringIsEqualToUTF8CString(messageName, "GetDumpPixels"))

@@ -1,3 +1,33 @@
+2021-11-02  Tim Horton  <timothy_horton@apple.com>
+
+        dumpAsText() tests don't get the ref-test treatment when using --self-compare-with-header
+        https://bugs.webkit.org/show_bug.cgi?id=232611
+
+        Reviewed by Jonathan Bedard.
+
+        One oversight in r285132: a test can disable pixel dumping by calling
+        dumpAsText(). This causes --self-compare-with-header to fall over because
+        it expects every test to have pixel results (and that is the whole point).
+
+        Add an un-overrideable `--force-dump-pixels` TestCommand argument,
+        and adopt it for self-comparison tests.
+
+        * Scripts/webkitpy/layout_tests/controllers/single_test_runner.py:
+        (SingleTestRunner._run_self_comparison_test):
+        * Scripts/webkitpy/port/driver.py:
+        (DriverInput.__init__):
+        (DriverInput.__repr__):
+        (Driver._command_from_driver_input):
+        * TestRunnerShared/TestCommand.cpp:
+        (WTR::parseInputLine):
+        * TestRunnerShared/TestCommand.h:
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::runTest):
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::dumpResults):
+        (WTR::TestInvocation::didReceiveSynchronousMessageFromInjectedBundle):
+        * WebKitTestRunner/TestInvocation.h:
+
 2021-11-02  Kate Cheney  <katherine_cheney@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=232593

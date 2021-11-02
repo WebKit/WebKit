@@ -107,6 +107,8 @@ TestCommand parseInputLine(const std::string& inputLine)
             result.dumpJSConsoleLogInStdErr = true;
         else if (arg == std::string("--absolutePath"))
             result.absolutePath = tokenizer.next();
+        else if (arg == "--force-dump-pixels")
+            result.forceDumpPixels = true;
         else
             die(inputLine);
     }

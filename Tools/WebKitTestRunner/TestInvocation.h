@@ -51,6 +51,7 @@ public:
     const TestOptions& options() const { return m_options; }
 
     void setIsPixelTest(const std::string& expectedPixelHash);
+    void setForceDumpPixels(bool forceDumpPixels) { m_forceDumpPixels = forceDumpPixels; }
 
     void setCustomTimeout(Seconds duration) { m_timeout = duration; }
     void setDumpJSConsoleLogInStdErr(bool value) { m_dumpJSConsoleLogInStdErr = value; }
@@ -164,6 +165,7 @@ private:
     bool m_waitUntilDone { false };
     bool m_dumpFrameLoadCallbacks { false };
     bool m_dumpPixels { false };
+    bool m_forceDumpPixels { false };
     bool m_pixelResultIsPending { false };
     bool m_shouldDumpResourceLoadStatistics { false };
     bool m_canOpenWindows { true };
