@@ -45,7 +45,6 @@ public:
 
 private:
     void createBoxesAndUpdateGeometryForLineContent(const LineBuilder::LineContent&, const LineBox&, const InlineLayoutPoint& lineBoxLogicalTopLeft, const size_t lineIndex, DisplayBoxes&);
-    void createBoxesAndUpdateGeometryForLineSpanningInlineBoxes(const LineBox&, const InlineLayoutPoint& lineBoxLogicalTopLeft, const size_t lineIndex, DisplayBoxes&);
     void collectInkOverflowForInlineBoxes(const LineBox&, DisplayBoxes&);
 
     const ContainerBox& root() const { return m_formattingContextRoot; }
