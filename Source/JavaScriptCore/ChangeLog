@@ -1,3 +1,25 @@
+2021-11-01  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [JSC][LLInt] Non-commutative binops are hard to reason about when operands are labelled in reverse
+        https://bugs.webkit.org/show_bug.cgi?id=232598
+
+        Reviewed by Saam Barati.
+
+        In offlineasm, `OP a, b, c` is `c = a OP b` but `OP a, b` is `b = b OP a`.
+
+        This can make identifiers like `left` and `right` quite confusing --
+        simple cases like `subd left, right` are already misleading, while OpDiv literally
+        passes its RHS to a macro as `left` and then checks `left` for division by zero.
+        It becomes difficult to keep this all in one's brain without rewriting it on paper.
+
+        This patch may not constitute a "complete solution", but it at least makes our naming honest:
+        1. Use 3-argument syntax (as `left, right, result`) whenever possible.
+        2. When not possible (e.g. because `bsubio` isn't flexible about its arguments or
+           because x86 doesn't have 3-argument shift operations), then say `rhs, lhs` explicitly.
+
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+
 2021-11-01  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] LLIntCallee should have two replacements

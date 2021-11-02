@@ -1178,7 +1178,7 @@ macro binaryOpCustomStore(opcodeName, opcodeStruct, integerOperationAndStore, do
         bqb t0, numberTag, .op1NotInt
         bqb t1, numberTag, .op2NotInt
         get(m_dst, t2)
-        integerOperationAndStore(t1, t0, .slow, t2)
+        integerOperationAndStore(t0, t1, .slow, t2)
 
         updateBinaryArithProfile(size, opcodeStruct, ArithProfileIntInt, t5, t2)
         dispatch()
@@ -1199,7 +1199,7 @@ macro binaryOpCustomStore(opcodeName, opcodeStruct, integerOperationAndStore, do
         get(m_dst, t2)
         addq numberTag, t0
         fq2d t0, ft0
-        doubleOperation(ft1, ft0)
+        doubleOperation(ft0, ft1, ft0)
         fd2q ft0, t0
         subq numberTag, t0
         storeq t0, [cfr, t2, 8]
@@ -1213,7 +1213,7 @@ macro binaryOpCustomStore(opcodeName, opcodeStruct, integerOperationAndStore, do
         ci2ds t0, ft0
         addq numberTag, t1
         fq2d t1, ft1
-        doubleOperation(ft1, ft0)
+        doubleOperation(ft0, ft1, ft0)
         fd2q ft0, t0
         subq numberTag, t0
         storeq t0, [cfr, t2, 8]
@@ -1227,62 +1227,62 @@ end
 
 if X86_64 or X86_64_WIN
     binaryOpCustomStore(div, OpDiv,
-        macro (left, right, slow, index)
+        macro (lhs, rhs, slow, index)
             # Assume t3 is scratchable.
-            btiz left, slow
-            bineq left, -1, .notNeg2TwoThe31DivByNeg1
-            bieq right, -2147483648, .slow
+            btiz rhs, slow
+            bineq rhs, -1, .notNeg2TwoThe31DivByNeg1
+            bieq lhs, -2147483648, .slow
         .notNeg2TwoThe31DivByNeg1:
-            btinz right, .intOK
-            bilt left, 0, slow
+            btinz lhs, .intOK
+            bilt rhs, 0, slow
         .intOK:
-            move left, t3
-            move right, t0
+            move rhs, t3
+            move lhs, t0
             cdqi
             idivi t3
             btinz t1, slow
             orq numberTag, t0
             storeq t0, [cfr, index, 8]
         end,
-        macro (left, right) divd left, right end)
+        macro (left, right, result) divd left, right, result end)
 else
     slowPathOp(div)
 end
 
 
 binaryOpCustomStore(mul, OpMul,
-    macro (left, right, slow, index)
+    macro (lhs, rhs, slow, index)
         # Assume t3 is scratchable.
-        move right, t3
-        bmulio left, t3, slow
+        move lhs, t3
+        bmulio rhs, t3, slow
         btinz t3, .done
-        bilt left, 0, slow
-        bilt right, 0, slow
+        bilt rhs, 0, slow
+        bilt lhs, 0, slow
     .done:
         orq numberTag, t3
         storeq t3, [cfr, index, 8]
     end,
-    macro (left, right) muld left, right end)
+    macro (left, right, result) muld left, right, result end)
 
 
 macro binaryOp(opcodeName, opcodeStruct, integerOperation, doubleOperation)
     binaryOpCustomStore(opcodeName, opcodeStruct,
-        macro (left, right, slow, index)
-            integerOperation(left, right, slow)
-            orq numberTag, right
-            storeq right, [cfr, index, 8]
+        macro (lhs, rhs, slow, index)
+            integerOperation(lhs, rhs, slow)
+            orq numberTag, lhs
+            storeq lhs, [cfr, index, 8]
         end,
         doubleOperation)
 end
 
 binaryOp(add, OpAdd,
-    macro (left, right, slow) baddio left, right, slow end,
-    macro (left, right) addd left, right end)
+    macro (lhs, rhs, slow) baddio rhs, lhs, slow end,
+    macro (left, right, result) addd left, right, result end)
 
 
 binaryOp(sub, OpSub,
-    macro (left, right, slow) bsubio left, right, slow end,
-    macro (left, right) subd left, right end)
+    macro (lhs, rhs, slow) bsubio rhs, lhs, slow end,
+    macro (left, right, result) subd left, right, result end)
 
 
 llintOpWithReturn(op_unsigned, OpUnsigned, macro (size, get, dispatch, return)
@@ -1304,7 +1304,7 @@ macro commonBitOp(opKind, opcodeName, opcodeStruct, operation)
         loadConstantOrVariable(size, t2, t0)
         bqb t0, numberTag, .slow
         bqb t1, numberTag, .slow
-        operation(t1, t0)
+        operation(t0, t1)
         orq numberTag, t0
         return(t0)
 
@@ -1323,24 +1323,24 @@ macro bitOpProfiled(opcodeName, opcodeStruct, operation)
 end
 
 bitOpProfiled(lshift, OpLshift,
-    macro (left, right) lshifti left, right end)
+    macro (lhs, rhs) lshifti rhs, lhs end)
 
 
 bitOpProfiled(rshift, OpRshift,
-    macro (left, right) rshifti left, right end)
+    macro (lhs, rhs) rshifti rhs, lhs end)
 
 
 bitOp(urshift, OpUrshift,
-    macro (left, right) urshifti left, right end)
+    macro (lhs, rhs) urshifti rhs, lhs end)
 
 bitOpProfiled(bitand, OpBitand,
-    macro (left, right) andi left, right end)
+    macro (lhs, rhs) andi rhs, lhs end)
 
 bitOpProfiled(bitor, OpBitor,
-    macro (left, right) ori left, right end)
+    macro (lhs, rhs) ori rhs, lhs end)
 
 bitOpProfiled(bitxor, OpBitxor,
-    macro (left, right) xori left, right end)
+    macro (lhs, rhs) xori rhs, lhs end)
 
 llintOpWithProfile(op_bitnot, OpBitnot, macro (size, get, dispatch, return)
     get(m_operand, t0)
