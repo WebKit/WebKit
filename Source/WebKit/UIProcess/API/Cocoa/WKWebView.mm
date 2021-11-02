@@ -2646,7 +2646,7 @@ static void convertAndAddHighlight(Vector<Ref<WebKit::SharedMemory>>& buffers, N
 - (WKNavigation *)_restoreSessionState:(_WKSessionState *)sessionState andNavigate:(BOOL)navigate
 {
     THROW_IF_SUSPENDED;
-    return wrapper(_page->restoreFromSessionState(sessionState ? sessionState._sessionStateWithAppInitiatedValue : WebKit::SessionState { }, navigate));
+    return wrapper(_page->restoreFromSessionState(sessionState ? sessionState->_sessionState : WebKit::SessionState { }, navigate));
 }
 
 - (void)_close

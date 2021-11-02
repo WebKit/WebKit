@@ -33,6 +33,5 @@ WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
 - (instancetype)initWithData:(NSData *)data;
 
 @property (nonatomic, readonly, copy) NSData *data;
-@property (nonatomic) BOOL isAppInitiated;
 
 @end

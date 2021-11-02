@@ -1,3 +1,24 @@
+2021-11-02  Kate Cheney  <katherine_cheney@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=232593
+        Remove isAppInitiated from _WKSessionState
+
+        Reviewed by Brent Fulgham.
+
+        After https://bugs.webkit.org/show_bug.cgi?id=232486 we no longer need
+        the isAppInitiated value on _WKSessionState. It will be set
+        automatically when session state is retrieved.
+
+        No new tests. Confirmed by existing RestoreFromSessionState* API
+        tests.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _restoreSessionState:andNavigate:]):
+        * UIProcess/API/Cocoa/_WKSessionState.h:
+        * UIProcess/API/Cocoa/_WKSessionState.mm:
+        (-[_WKSessionState _sessionStateWithAppInitiatedValue]): Deleted.
+        * UIProcess/API/Cocoa/_WKSessionStateInternal.h:
+
 2021-11-02  Chris Dumez  <cdumez@apple.com>
 
         Use higher QoS for WheelEvent and DisplayWasRefreshed IPCs

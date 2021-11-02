@@ -746,7 +746,6 @@ static void restoreFromSessionStateTest(IsAppInitiated isAppInitiated)
     [webView1 _test_waitForDidFinishNavigation];
 
     RetainPtr<_WKSessionState> sessionState = [webView1 _sessionState];
-    sessionState.get().isAppInitiated = isAppInitiated == IsAppInitiated::Yes ? true : false;
     [webView1 _close];
 
     static bool isDone = false;
