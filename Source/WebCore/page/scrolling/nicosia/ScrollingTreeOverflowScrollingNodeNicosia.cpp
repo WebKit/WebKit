@@ -99,6 +99,11 @@ void ScrollingTreeOverflowScrollingNodeNicosia::stopAnimatedScroll()
     m_delegate.stopAnimatedScroll();
 }
 
+void ScrollingTreeOverflowScrollingNodeNicosia::serviceScrollAnimation()
+{
+    m_delegate.serviceScrollAnimation();
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(ASYNC_SCROLLING) && USE(NICOSIA)

@@ -52,6 +52,7 @@ private:
 
     bool startAnimatedScrollToPosition(FloatPoint) override;
     void stopAnimatedScroll() override;
+    void serviceScrollAnimation() final;
 
     ScrollingTreeScrollingNodeDelegateNicosia m_delegate;
 };

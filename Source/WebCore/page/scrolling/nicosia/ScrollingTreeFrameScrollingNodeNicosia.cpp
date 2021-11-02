@@ -116,6 +116,11 @@ void ScrollingTreeFrameScrollingNodeNicosia::stopAnimatedScroll()
     m_delegate.stopAnimatedScroll();
 }
 
+void ScrollingTreeFrameScrollingNodeNicosia::serviceScrollAnimation()
+{
+    m_delegate.serviceScrollAnimation();
+}
+
 FloatPoint ScrollingTreeFrameScrollingNodeNicosia::adjustedScrollPosition(const FloatPoint& position, ScrollClamping clamping) const
 {
     FloatPoint scrollPosition(roundf(position.x()), roundf(position.y()));

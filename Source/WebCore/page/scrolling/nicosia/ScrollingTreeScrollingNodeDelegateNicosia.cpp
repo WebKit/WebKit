@@ -97,36 +97,17 @@ std::unique_ptr<ScrollingEffectsControllerTimer> ScrollingTreeScrollingNodeDeleg
 
 void ScrollingTreeScrollingNodeDelegateNicosia::startAnimationCallback(ScrollingEffectsController&)
 {
-    if (!m_animationTimer) {
-        m_animationTimer = makeUnique<RunLoop::Timer<ScrollingTreeScrollingNodeDelegateNicosia>>(RunLoop::current(), this, &ScrollingTreeScrollingNodeDelegateNicosia::animationTimerFired);
-
-#if USE(GLIB_EVENT_LOOP)
-        m_animationTimer->setPriority(RunLoopSourcePriority::DisplayRefreshMonitorTimer);
-#endif
-    }
-
-    if (m_animationTimer->isActive())
-        return;
-
-    static constexpr double frameRate = 60;
-    static constexpr Seconds tickTime = 1_s / frameRate;
-    m_animationTimer->startRepeating(tickTime);
+    scrollingNode().setScrollAnimationInProgress(true);
 }
 
 void ScrollingTreeScrollingNodeDelegateNicosia::stopAnimationCallback(ScrollingEffectsController&)
 {
-    if (m_animationTimer)
-        m_animationTimer->stop();
-}
-
-void ScrollingTreeScrollingNodeDelegateNicosia::animationTimerFired()
-{
-    m_scrollController.animationCallback(MonotonicTime::now());
+    scrollingNode().setScrollAnimationInProgress(false);
 }
 
 void ScrollingTreeScrollingNodeDelegateNicosia::serviceScrollAnimation()
 {
-    // FIXME: Instead of using m_animationTimer, drive animations via ThreadedScrollingTree::serviceScrollAnimations().
+    m_scrollController.animationCallback(MonotonicTime::now());
 }
 
 bool ScrollingTreeScrollingNodeDelegateNicosia::allowsHorizontalScrolling() const

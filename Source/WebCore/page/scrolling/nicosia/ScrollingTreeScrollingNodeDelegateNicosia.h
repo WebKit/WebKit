@@ -55,8 +55,6 @@ public:
     void serviceScrollAnimation() final;
 
 private:
-    void animationTimerFired();
-
     // ScrollingEffectsControllerClient.
     std::unique_ptr<ScrollingEffectsControllerTimer> createTimer(Function<void()>&&) final;
 
@@ -83,7 +81,6 @@ private:
     bool scrollAnimationEnabled() const final { return m_scrollAnimatorEnabled; }
 
     ScrollingEffectsController m_scrollController;
-    std::unique_ptr<RunLoop::Timer<ScrollingTreeScrollingNodeDelegateNicosia>> m_animationTimer;
 
     bool m_scrollAnimatorEnabled { false };
 };

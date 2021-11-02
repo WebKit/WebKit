@@ -102,6 +102,22 @@ void ScrollingCoordinatorNicosia::willStartRenderingUpdate()
     synchronizeStateFromScrollingTree();
 }
 
+void ScrollingCoordinatorNicosia::didCompleteRenderingUpdate()
+{
+    downcast<ThreadedScrollingTree>(scrollingTree())->didCompleteRenderingUpdate();
+
+    // Scroll animations are driven by the display refresh, so make sure that we
+    // keep firing until they're complete.
+    if (scrollingTree()->hasNodeWithActiveScrollAnimations())
+        scheduleRenderingUpdate();
+}
+
+void ScrollingCoordinatorNicosia::hasNodeWithAnimatedScrollChanged(bool hasAnimatingNode)
+{
+    if (hasAnimatingNode)
+        scheduleRenderingUpdate();
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(ASYNC_SCROLLING) && USE(NICOSIA)
