@@ -4319,13 +4319,13 @@ void WebPage::sendCSPViolationReport(FrameIdentifier frameID, const URL& reportU
 
 void WebPage::sendCOEPPolicyInheritenceViolation(FrameIdentifier frameID, const SecurityOriginData& embedderOrigin, const String& endpoint, COEPDisposition disposition, const String& type, const URL& blockedURL)
 {
-    if (auto* frame = WebProcess::singleton().webFrame(frameID); frame->coreFrame())
+    if (auto* frame = WebProcess::singleton().webFrame(frameID); frame && frame->coreFrame())
         WebCore::sendCOEPPolicyInheritenceViolation(*frame->coreFrame(), embedderOrigin, endpoint, disposition, type, blockedURL);
 }
 
 void WebPage::sendCOEPCORPViolation(FrameIdentifier frameID, const SecurityOriginData& embedderOrigin, const String& endpoint, COEPDisposition disposition, FetchOptions::Destination destination, const URL& blockedURL)
 {
-    if (auto* frame = WebProcess::singleton().webFrame(frameID); frame->coreFrame())
+    if (auto* frame = WebProcess::singleton().webFrame(frameID); frame && frame->coreFrame())
         WebCore::sendCOEPCORPViolation(*frame->coreFrame(), embedderOrigin, endpoint, disposition, destination, blockedURL);
 }
 
@@ -4338,7 +4338,7 @@ void WebPage::sendViolationReportWhenNavigatingToCOOPResponse(FrameIdentifier fr
     if (Page::nonUtilityPageCount() <= 1)
         return;
 
-    if (auto* frame = WebProcess::singleton().webFrame(frameID); frame->coreFrame())
+    if (auto* frame = WebProcess::singleton().webFrame(frameID); frame && frame->coreFrame())
         WebCore::sendViolationReportWhenNavigatingToCOOPResponse(*frame->coreFrame(), coop, disposition, coopURL, previousResponseURL, coopOrigin.securityOrigin(), previousResponseOrigin.securityOrigin(), referrer, userAgent);
 }
 
@@ -4348,7 +4348,7 @@ void WebPage::sendViolationReportWhenNavigatingAwayFromCOOPResponse(FrameIdentif
     if (Page::nonUtilityPageCount() <= 1)
         return;
 
-    if (auto* frame = WebProcess::singleton().webFrame(frameID); frame->coreFrame())
+    if (auto* frame = WebProcess::singleton().webFrame(frameID); frame && frame->coreFrame())
         WebCore::sendViolationReportWhenNavigatingAwayFromCOOPResponse(*frame->coreFrame(), coop, disposition, coopURL, nextResponseURL, coopOrigin.securityOrigin(), nextResponseOrigin.securityOrigin(), isCOOPResponseNavigationSource, userAgent);
 }
 

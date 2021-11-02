@@ -1,3 +1,19 @@
+2021-11-02  Chris Dumez  <cdumez@apple.com>
+
+        Crash under WebPage::sendCOEPCORPViolation()
+        https://bugs.webkit.org/show_bug.cgi?id=232631
+        <rdar://84919898>
+
+        Reviewed by Alex Christensen.
+
+        Add missing null checks for the frame after calling `WebProcess::singleton().webFrame(frameID)`.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::sendCOEPPolicyInheritenceViolation):
+        (WebKit::WebPage::sendCOEPCORPViolation):
+        (WebKit::WebPage::sendViolationReportWhenNavigatingToCOOPResponse):
+        (WebKit::WebPage::sendViolationReportWhenNavigatingAwayFromCOOPResponse):
+
 2021-11-02  Sihui Liu  <sihui_liu@apple.com>
 
         Terminate unresponsive network process by crashing it
