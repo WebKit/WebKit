@@ -43,7 +43,7 @@ from webkitcorepy.call_by_need import CallByNeed
 from webkitcorepy.editor import Editor
 from webkitcorepy.file_lock import FileLock
 
-version = Version(0, 11, 3)
+version = Version(0, 11, 4)
 
 from webkitcorepy.autoinstall import Package, AutoInstall
 if sys.version_info > (3, 0):
@@ -66,7 +66,6 @@ AutoInstall.register(Package('pyparsing', Version(2, 4, 7)))
 AutoInstall.register(Package('requests', Version(2, 24)))
 AutoInstall.register(Package('setuptools_scm', Version(5, 0, 2), pypi_name='setuptools-scm'))
 AutoInstall.register(Package('socks', Version(1, 7, 1), pypi_name='PySocks'))
-AutoInstall.register(Package('six', Version(1, 15, 0)))
 AutoInstall.register(Package('tblib', Version(1, 7, 0)))
 AutoInstall.register(Package('urllib3', Version(1, 25, 10)))
 AutoInstall.register(Package('wheel', Version(0, 35, 1)))

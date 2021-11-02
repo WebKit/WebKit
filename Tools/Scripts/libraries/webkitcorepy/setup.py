@@ -30,7 +30,7 @@ def readme():
 
 setup(
     name='webkitcorepy',
-    version='0.11.3',
+    version='0.11.4',
     description='Library containing various Python support classes and functions.',
     long_description=readme(),
     classifiers=[
@@ -56,7 +56,6 @@ setup(
     install_requires=[
         'mock',
         'requests',
-        'six',
         'tblib',
         'whichcraft',
     ],
