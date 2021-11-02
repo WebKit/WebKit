@@ -58,9 +58,9 @@ public:
     const InlineFormattingGeometry& formattingGeometry() const final { return m_inlineFormattingGeometry; }
     const InlineFormattingQuirks& formattingQuirks() const final { return m_inlineFormattingQuirks; }
 
-private:
     IntrinsicWidthConstraints computedIntrinsicWidthConstraints() override;
 
+private:
     void lineLayout(InlineItems&, LineBuilder::InlineItemRange, const ConstraintsForInFlowContent&);
     void computeStaticPositionForOutOfFlowContent(const FormattingState::OutOfFlowBoxList&);
 

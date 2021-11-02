@@ -359,7 +359,8 @@ void InlineFormattingContext::computeStaticPositionForOutOfFlowContent(const For
 IntrinsicWidthConstraints InlineFormattingContext::computedIntrinsicWidthConstraints()
 {
     auto& layoutState = this->layoutState();
-    ASSERT(!formattingState().intrinsicWidthConstraints());
+    if (formattingState().intrinsicWidthConstraints())
+        return *formattingState().intrinsicWidthConstraints();
 
     if (!root().hasInFlowOrFloatingChild()) {
         auto constraints = formattingGeometry().constrainByMinMaxWidth(root(), { });

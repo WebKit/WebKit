@@ -79,6 +79,9 @@ public:
     void updateLineBreakBoxDimensions(const RenderLineBreak&);
     void updateInlineBoxDimensions(const RenderInline&);
     void updateStyle(const RenderBoxModelObject&, const RenderStyle& oldStyle);
+
+    std::pair<LayoutUnit, LayoutUnit> computeIntrinsicWidthConstraints();
+
     void layout();
 
     LayoutUnit contentLogicalHeight() const;
