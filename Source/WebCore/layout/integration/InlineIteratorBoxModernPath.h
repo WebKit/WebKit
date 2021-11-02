@@ -55,6 +55,7 @@ public:
     FloatRect rect() const { return box().logicalRect(); }
 
     bool isHorizontal() const { return true; }
+    // FIXME: Provide or remove.
     bool dirOverride() const { return false; }
     bool isLineBreak() const { return box().isLineBreak(); }
 
@@ -288,10 +289,15 @@ private:
             return makeString(text(), style.hyphenString());
         }();
 
-        TextRun textRun { textForRun, xPos, expansion.horizontalExpansion, expansion.behavior };
+        bool directionalOverride = dirOverride() || style.rtlOrdering() == Order::Visual;
+        bool characterScanForCodePath = !renderText().canUseSimpleFontCodePath();
+        TextRun textRun { textForRun, xPos, expansion.horizontalExpansion, expansion.behavior, direction(), directionalOverride, characterScanForCodePath };
         textRun.setTabSize(!style.collapseWhiteSpace(), style.tabSize());
         return textRun;
     };
+
+    const RenderText& renderText() const { return downcast<RenderText>(renderer()); }
+    TextDirection direction() const { return bidiLevel() % 2 ? TextDirection::RTL : TextDirection::LTR; }
 
     RefPtr<const LayoutIntegration::InlineContent> m_inlineContent;
     size_t m_boxIndex { 0 };
