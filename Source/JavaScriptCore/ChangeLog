@@ -1,3 +1,14 @@
+2021-11-01  Mark Lam  <mark.lam@apple.com>
+
+        Remove some unused Heap fields.
+        https://bugs.webkit.org/show_bug.cgi?id=232604
+
+        Reviewed by Yusuke Suzuki.
+
+        * heap/Heap.cpp:
+        (JSC::Heap::notifyThreadStopping):
+        * heap/Heap.h:
+
 2021-11-01  Ross Kirsling  <ross.kirsling@sony.com>
 
         [JSC][LLInt] Non-commutative binops are hard to reason about when operands are labelled in reverse

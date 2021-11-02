@@ -2042,7 +2042,6 @@ void Heap::clearMutatorWaiting()
 
 void Heap::notifyThreadStopping(const AbstractLocker&)
 {
-    m_threadIsStopping = true;
     clearMutatorWaiting();
     ParkingLot::unparkAll(&m_worldState);
 }

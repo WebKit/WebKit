@@ -709,7 +709,6 @@ private:
     static constexpr unsigned mutatorWaitingBit = 1u << 4u; // Allows the mutator to use this as a condition variable.
     Atomic<unsigned> m_worldState;
     bool m_worldIsStopped { false };
-    Lock m_visitRaceLock;
     Lock m_markingMutex;
     Condition m_markingConditionVariable;
 
@@ -727,7 +726,6 @@ private:
     CollectorPhase m_nextPhase { CollectorPhase::NotRunning };
     bool m_collectorThreadIsRunning { false };
     bool m_threadShouldStop { false };
-    bool m_threadIsStopping { false };
     bool m_mutatorDidRun { true };
     bool m_didDeferGCWork { false };
     bool m_shouldStopCollectingContinuously { false };
