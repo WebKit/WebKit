@@ -1,3 +1,16 @@
+2021-11-02  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        Fails to execute JavaScript when soft stack limit is unlimited
+        https://bugs.webkit.org/show_bug.cgi?id=232328
+
+        Reviewed by Yusuke Suzuki.
+
+        Fall back to assuming an 8 MB stack limit when the real limit is unlimited. JSC needs to
+        have some maximum stack size to work with, and this is as good as any.
+
+        * wtf/StackBounds.cpp:
+        (WTF::StackBounds::currentThreadStackBoundsInternal):
+
 2021-11-02  Philip Chimento  <pchimento@igalia.com>
 
         [JSC] Implement Temporal.Instant
