@@ -51,9 +51,6 @@ private:
 
     static const int s_minimalRectDimension = 100 * 100; // Empirical data limit for parallel jobs
 
-    template<typename Type>
-    friend class ParallelJobs;
-
     struct PlatformApplyParameters {
         FEGaussianBlur* filter;
         RefPtr<Uint8ClampedArray> ioPixelArray;

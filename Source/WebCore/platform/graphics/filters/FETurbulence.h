@@ -92,9 +92,6 @@ private:
         int wrapY { 0 };
     };
 
-    template<typename Type>
-    friend class ParallelJobs;
-
     struct FillRegionParameters {
         FETurbulence* filter;
         Uint8ClampedArray* pixelArray;
