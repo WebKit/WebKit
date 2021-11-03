@@ -880,9 +880,9 @@ MediaSessionPlaylistEnabled:
     WebKitLegacy:
       default: false
     WebKit:
-      default: false
+      default: WebKit::defaultMediaSessionCoordinatorEnabled()
     WebCore:
-      default: false
+      default: true
 
 MediaSourceInlinePaintingEnabled:
   type: bool

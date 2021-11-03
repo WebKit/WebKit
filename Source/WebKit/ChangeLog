@@ -1,3 +1,22 @@
+2021-11-03  Jer Noble  <jer.noble@apple.com>
+
+        [macOS] MediaSession coordinator enabled in UIProcess, disabled in WebContent
+        https://bugs.webkit.org/show_bug.cgi?id=232687
+        <rdar://84990898>
+
+        Reviewed by Eric Carlson.
+
+        The default value of defaultMediaSessionCoordinatorEnabled() will be true if the UIProcess has
+        the correct entitlement. However, this value is not passed across the XPC boundary unless it has
+        been overridden, which means defaultMediaSessionCoordinatorEnabled() will control the setting
+        in the WebContent process, which is not entitled.
+
+        Have the WebContent process check its parent process's entitlement rather than its own when
+        determining the default value for defaultMediaSessionCoordinatorEnabled().
+
+        * Shared/WebPreferencesDefaultValues.cpp:
+        (WebKit::defaultMediaSessionCoordinatorEnabled):
+
 2021-11-03  Tyler Wilcock  <tyler_w@apple.com>
 
         AX: WKAccessibilityWebPageObjectMac.mm should expose accessibilityChildrenInNavigationOrder and NSAccessibilityChildrenInNavigationOrderAttribute
