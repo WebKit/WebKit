@@ -40,8 +40,8 @@
 
 namespace WebKit {
 
-AuxiliaryProcessProxy::AuxiliaryProcessProxy(bool alwaysRunsAtBackgroundPriority)
-    : m_responsivenessTimer(*this)
+AuxiliaryProcessProxy::AuxiliaryProcessProxy(bool alwaysRunsAtBackgroundPriority, Seconds responsivenessTimeout)
+    : m_responsivenessTimer(*this, responsivenessTimeout)
     , m_alwaysRunsAtBackgroundPriority(alwaysRunsAtBackgroundPriority)
 {
 }

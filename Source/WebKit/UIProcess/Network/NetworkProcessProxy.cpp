@@ -85,6 +85,8 @@
 namespace WebKit {
 using namespace WebCore;
 
+static constexpr Seconds networkProcessResponsivenessTimeout = 6_s;
+
 static HashSet<NetworkProcessProxy*>& networkProcessesSet()
 {
     ASSERT(RunLoop::isMain());
@@ -196,7 +198,7 @@ static bool anyProcessPoolShouldTakeUIBackgroundAssertion()
 }
 
 NetworkProcessProxy::NetworkProcessProxy()
-    : AuxiliaryProcessProxy(anyProcessPoolAlwaysRunsAtBackgroundPriority())
+    : AuxiliaryProcessProxy(anyProcessPoolAlwaysRunsAtBackgroundPriority(), networkProcessResponsivenessTimeout)
 #if ENABLE(LEGACY_CUSTOM_PROTOCOL_MANAGER)
     , m_customProtocolManagerClient(makeUniqueRef<LegacyCustomProtocolManagerClient>())
     , m_customProtocolManagerProxy(*this)
@@ -250,8 +252,7 @@ void NetworkProcessProxy::processWillShutDown(IPC::Connection& connection)
 void NetworkProcessProxy::getNetworkProcessConnection(WebProcessProxy& webProcessProxy, Messages::WebProcessProxy::GetNetworkProcessConnection::DelayedReply&& reply)
 {
     RELEASE_LOG(ProcessSuspension, "%p - NetworkProcessProxy is taking a background assertion because a web process is requesting a connection", this);
-    if (!isLaunching())
-        startResponsivenessTimer(UseLazyStop::No);
+    startResponsivenessTimer(UseLazyStop::No);
     sendWithAsyncReply(Messages::NetworkProcess::CreateNetworkConnectionToWebProcess { webProcessProxy.coreProcessIdentifier(), webProcessProxy.sessionID() }, [this, weakThis = makeWeakPtr(*this), reply = WTFMove(reply)](auto&& identifier, auto cookieAcceptPolicy) mutable {
         if (!weakThis) {
             RELEASE_LOG_ERROR(Process, "NetworkProcessProxy::getNetworkProcessConnection: NetworkProcessProxy deallocated during connection establishment");

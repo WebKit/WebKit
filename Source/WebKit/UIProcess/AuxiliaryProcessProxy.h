@@ -43,7 +43,7 @@ class AuxiliaryProcessProxy : public ThreadSafeRefCounted<AuxiliaryProcessProxy,
     WTF_MAKE_NONCOPYABLE(AuxiliaryProcessProxy);
 
 protected:
-    explicit AuxiliaryProcessProxy(bool alwaysRunsAtBackgroundPriority = false);
+    AuxiliaryProcessProxy(bool alwaysRunsAtBackgroundPriority = false, Seconds responsivenessTimeout = ResponsivenessTimer::defaultResponsivenessTimeout);
 
 public:
     virtual ~AuxiliaryProcessProxy();

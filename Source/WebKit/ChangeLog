@@ -1,5 +1,53 @@
 2021-11-03  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r285115. rdar://problem/84984094
+
+    Increase responsiveness timeout for network process
+    https://bugs.webkit.org/show_bug.cgi?id=232505
+    
+    Reviewed by Chris Dumez.
+    
+    * UIProcess/AuxiliaryProcessProxy.cpp:
+    (WebKit::AuxiliaryProcessProxy::AuxiliaryProcessProxy):
+    * UIProcess/AuxiliaryProcessProxy.h:
+    * UIProcess/Network/NetworkProcessProxy.cpp:
+    (WebKit::NetworkProcessProxy::NetworkProcessProxy):
+    (WebKit::NetworkProcessProxy::getNetworkProcessConnection):
+    * UIProcess/ResponsivenessTimer.cpp:
+    (WebKit::ResponsivenessTimer::ResponsivenessTimer):
+    (WebKit::ResponsivenessTimer::timerFired):
+    (WebKit::ResponsivenessTimer::start):
+    (): Deleted.
+    * UIProcess/ResponsivenessTimer.h:
+    * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+    (WebKit::WebsiteDataStore::getNetworkProcessConnection):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@285115 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-11-01  Sihui Liu  <sihui_liu@apple.com>
+
+            Increase responsiveness timeout for network process
+            https://bugs.webkit.org/show_bug.cgi?id=232505
+
+            Reviewed by Chris Dumez.
+
+            * UIProcess/AuxiliaryProcessProxy.cpp:
+            (WebKit::AuxiliaryProcessProxy::AuxiliaryProcessProxy):
+            * UIProcess/AuxiliaryProcessProxy.h:
+            * UIProcess/Network/NetworkProcessProxy.cpp:
+            (WebKit::NetworkProcessProxy::NetworkProcessProxy):
+            (WebKit::NetworkProcessProxy::getNetworkProcessConnection):
+            * UIProcess/ResponsivenessTimer.cpp:
+            (WebKit::ResponsivenessTimer::ResponsivenessTimer):
+            (WebKit::ResponsivenessTimer::timerFired):
+            (WebKit::ResponsivenessTimer::start):
+            (): Deleted.
+            * UIProcess/ResponsivenessTimer.h:
+            * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+            (WebKit::WebsiteDataStore::getNetworkProcessConnection):
+
+2021-11-03  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r284651. rdar://problem/84984058
 
     Call to [NSURL URLByAppendingPathComponent:] under NetworkSessionCocoa() may be inefficient
