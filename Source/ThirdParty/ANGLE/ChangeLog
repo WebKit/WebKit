@@ -1,3 +1,21 @@
+2021-11-03  Kyle Piddington  <kpiddington@apple.com>
+
+        REGRESSION (iOS 15): Tab crashes when trying to render Projector stories
+        https://bugs.webkit.org/show_bug.cgi?id=231607
+
+	Rework vertex buffer caching to allow us to reuse parts
+	of converted buffers. This dramatically drops the memory usage 
+	of this tab from 4.5 gb to roughly 1.3gb
+
+        Reviewed by Dean Jackson.
+
+        * src/libANGLE/renderer/metal/BufferMtl.mm:
+        (rx::BufferMtl::getVertexConversionBuffer):
+        * src/libANGLE/renderer/metal/VertexArrayMtl.mm:
+        (rx::VertexArrayMtl::convertVertexBuffer):
+        (rx::VertexArrayMtl::convertVertexBufferCPU):
+        (rx::VertexArrayMtl::convertVertexBufferGPU):
+
 2021-11-01  David Kilzer  <ddkilzer@apple.com>
 
         [ANGLE] Enable -Wformat=2 warnings
