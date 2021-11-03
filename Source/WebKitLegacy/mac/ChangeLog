@@ -1,3 +1,12 @@
+2021-11-03  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed iOS build fix.
+
+        * WebCoreSupport/WebNotificationClient.mm:
+        (-[WebNotificationPolicyListener NO_RETURN_DUE_TO_ASSERT]):
+        (-[WebNotificationPolicyListener denyOnlyThisRequest]): Deleted.
+        (-[WebNotificationPolicyListener shouldClearCache]): Deleted.
+
 2021-11-01  Brady Eidson  <beidson@apple.com>
 
         Make WebChromeClient's m_webView pointer weak.
