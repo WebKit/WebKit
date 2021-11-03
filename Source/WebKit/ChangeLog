@@ -1,3 +1,40 @@
+2021-11-03  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r284651. rdar://problem/84984058
+
+    Call to [NSURL URLByAppendingPathComponent:] under NetworkSessionCocoa() may be inefficient
+    https://bugs.webkit.org/show_bug.cgi?id=232098
+    
+    Reviewed by Alex Christensen.
+    
+    Call [NSURL URLByAppendingPathComponent:isDirectory:] whenever possible instead of
+    [NSURL URLByAppendingPathComponent], as it is more efficient.
+    
+    * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+    (WebKit::NetworkSessionCocoa::NetworkSessionCocoa):
+    * UIProcess/Cocoa/WKShareSheet.mm:
+    (+[WKShareSheet createRandomSharingDirectoryForFile:]):
+    (+[WKShareSheet writeFileToShareableURL:data:temporaryDirectory:]):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@284651 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-10-21  Chris Dumez  <cdumez@apple.com>
+
+            Call to [NSURL URLByAppendingPathComponent:] under NetworkSessionCocoa() may be inefficient
+            https://bugs.webkit.org/show_bug.cgi?id=232098
+
+            Reviewed by Alex Christensen.
+
+            Call [NSURL URLByAppendingPathComponent:isDirectory:] whenever possible instead of
+            [NSURL URLByAppendingPathComponent], as it is more efficient.
+
+            * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+            (WebKit::NetworkSessionCocoa::NetworkSessionCocoa):
+            * UIProcess/Cocoa/WKShareSheet.mm:
+            (+[WKShareSheet createRandomSharingDirectoryForFile:]):
+            (+[WKShareSheet writeFileToShareableURL:data:temporaryDirectory:]):
+
 2021-10-26  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r284349. rdar://problem/81171560
