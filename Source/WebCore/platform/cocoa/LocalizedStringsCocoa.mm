@@ -57,15 +57,16 @@ String copyImageUnknownFileLabel()
 {
     return WEB_UI_STRING("unknown", "Unknown filename");
 }
+
 #if ENABLE(APP_HIGHLIGHTS)
 String contextMenuItemTagAddHighlightToCurrentQuickNote()
 {
-    return localizedNSString(@"Add to Quick Note");
+    return WEB_UI_NSSTRING(@"Add to Quick Note", "Add to Quick Note context menu item.");
 }
 
 String contextMenuItemTagAddHighlightToNewQuickNote()
 {
-    return localizedNSString(@"New Quick Note");
+    return WEB_UI_NSSTRING(@"New Quick Note", "New Quick Note context menu item.");
 }
 #endif
 

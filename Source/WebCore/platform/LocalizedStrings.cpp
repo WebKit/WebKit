@@ -1193,7 +1193,7 @@ String addTextTrackKindEasyReaderSuffix(const String& text)
 {
     if (text.isEmpty())
         return textTrackKindEasyReaderDisplayName();
-    return formatLocalizedString(WEB_UI_CFSTRING_KEY("%@ Easy Reader", "%@ Easy (text track)", "Easy Reader (i.e. 3rd-grade level) text track display name format that includes the language and/or locale (e.g. 'English Easy Reader')."), text.createCFString().get());
+    return formatLocalizedString(WEB_UI_CFSTRING_KEY("%@ Easy Reader", "%@ Easy Reader (text track)", "Easy Reader (i.e. 3rd-grade level) text track display name format that includes the language and/or locale (e.g. 'English Easy Reader')."), text.createCFString().get());
 }
 
 String textTrackKindForcedDisplayName()
@@ -1248,7 +1248,7 @@ String snapshottedPlugInLabelSubtitle()
 
 String useBlockedPlugInContextMenuTitle()
 {
-    return formatLocalizedString(WEB_UI_STRING("Show in blocked plug-in", "Title of the context menu item to show when PDFPlugin was used instead of a blocked plugin"));
+    return WEB_UI_STRING("Show in blocked plug-in", "Title of the context menu item to show when PDFPlugin was used instead of a blocked plugin");
 }
 
 #if ENABLE(WEB_CRYPTO)

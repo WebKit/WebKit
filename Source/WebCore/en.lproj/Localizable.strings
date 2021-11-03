@@ -13,9 +13,6 @@
 /* window title for a standalone image (uses multiplication symbol, not x) */
 "%@ %@×%@ pixels" = "%@ %@×%@ pixels";
 
-/* visible name of the plug-in host process. The first argument is the plug-in name and the second argument is the application name. */
-"%@ (%@ Internet plug-in)" = "%@ (%@ Internet plug-in)";
-
 /* Audio/Text track display name format that includes the label and language of the track, in the form of 'Language (Label)'. */
 "%@ (%@) (audio/text track)" = "%@ (%@)";
 
@@ -103,8 +100,8 @@
 /* Present the element <select multiple> when a single <option> is selected (iOS only) */
 "1 Item" = "1 Item";
 
-/* 1× media controls context menu playback speed label */
-"1× (Media Controls Menu Playback Speed)" = "1×";
+/* Option in segmented control for choosing list type in text editing */
+"1. 2. 3." = "1. 2. 3.";
 
 /* 1.25× media controls context menu playback speed label */
 "1.25× (Media Controls Menu Playback Speed)" = "1.25×";
@@ -112,14 +109,14 @@
 /* 1.5× media controls context menu playback speed label */
 "1.5× (Media Controls Menu Playback Speed)" = "1.5×";
 
-/* Option in segmented control for choosing list type in text editing */
-"1. 2. 3." = "1. 2. 3.";
-
-/* 2× media controls context menu playback speed label */
-"2× (Media Controls Menu Playback Speed)" = "2×";
+/* 1× media controls context menu playback speed label */
+"1× (Media Controls Menu Playback Speed)" = "1×";
 
 /* Menu item title for KEYGEN pop-up menu */
 "2048 (High Grade)" = "2048 (High Grade)";
+
+/* 2× media controls context menu playback speed label */
+"2× (Media Controls Menu Playback Speed)" = "2×";
 
 /* Name of application's single WebCrypto master key in Keychain */
 "<application> WebCrypto Master Key" = "<application> WebCrypto Master Key";
@@ -130,14 +127,14 @@
 /* WKErrorJavaScriptExceptionOccurred description */
 "A JavaScript exception occurred" = "A JavaScript exception occurred";
 
-/* Add to Quick Note context menu item. */
-"Add to Quick Note" = "Add to Quick Note";
-
 /* Label for the add money with Apple Pay button. */
 "Add money with Apple Pay" = "Add money with Apple Pay";
 
 /* Title for Add to Photos action button */
 "Add to Photos" = "Add to Photos";
+
+/* Add to Quick Note context menu item. */
+"Add to Quick Note" = "Add to Quick Note";
 
 /* Title for Add to Reading List action button */
 "Add to Reading List" = "Add to Reading List";
@@ -157,23 +154,23 @@
 /* Allow button title in geolocation prompt */
 "Allow (geolocation)" = "Allow";
 
+/* Allow button title in screen sharing prompt */
+"Allow (screensharing)" = "Allow";
+
 /* Allow button title in speech recognition prompt */
 "Allow (speechrecognition)" = "Allow";
 
 /* Allow button title in user media prompt */
 "Allow (usermedia)" = "Allow";
 
-/* Allow button title in screen sharing prompt */
-"Allow (screensharing)" = "Allow";
-
 /* Message for requesting cross-site cookie and website data access. */
 "Allow “%@” and “%@” to use cookies and website data while browsing “%@”?" = "Allow “%@” and “%@” to use cookies and website data while browsing “%@”?";
 
-/* Message for geolocation prompt */
-"Allow “%@” to use your current location?" = "Allow “%@” to use your current location?";
-
 /* Message for spechrecognition prompt */
 "Allow “%@” to capture your audio and use it for speech recognition?" = "Allow “%@” to capture your audio and use it for speech recognition?";
+
+/* Message for screen sharing prompt */
+"Allow “%@” to observe your screen?" = "Allow “%@” to observe your screen?";
 
 /* Message for requesting cross-site cookie and website data access. */
 "Allow “%@” to use cookies and website data while browsing “%@”?" = "Allow “%@” to use cookies and website data while browsing “%@”?";
@@ -184,11 +181,11 @@
 /* Message for user camera access prompt */
 "Allow “%@” to use your camera?" = "Allow “%@” to use your camera?";
 
+/* Message for geolocation prompt */
+"Allow “%@” to use your current location?" = "Allow “%@” to use your current location?";
+
 /* Message for user microphone access prompt */
 "Allow “%@” to use your microphone?" = "Allow “%@” to use your microphone?";
-
-/* Message for screen sharing prompt. */
-"Allow “%@” to observe your screen?" = "Allow “%@” to observe your screen?";
 
 /* WKErrorUnknown description */
 "An unknown error occurred" = "An unknown error occurred";
@@ -391,14 +388,14 @@
 /* Disallow button title in geolocation prompt */
 "Don’t Allow (geolocation)" = "Don’t Allow";
 
+/* Disallow button title in screen sharing prompt */
+"Don’t Allow (screensharing)" = "Don’t Allow";
+
 /* Disallow button title in speech recognition prompt */
 "Don’t Allow (speechrecognition)" = "Don’t Allow";
 
 /* Disallow button title in user media prompt */
 "Don’t Allow (usermedia)" = "Don’t Allow";
-
-/* Disallow button title in screen sharing prompt */
-"Don’t Allow (screensharing)" = "Don’t Allow";
 
 /* Download Audio To Disk context menu item */
 "Download Audio" = "Download Audio";
@@ -739,11 +736,11 @@
 /* Media Play context menu item */
 "Play" = "Play";
 
-/* Playback Speed media controls context menu title */
-"Playback Speed (Media Controls Menu)" = "Playback Speed";
-
 /* accessibility help text for enter full screen button */
 "Play movie in full screen mode" = "Play movie in full screen mode";
+
+/* Playback Speed media controls context menu title */
+"Playback Speed (Media Controls Menu)" = "Playback Speed";
 
 /* Label text to be used when a plug-in was blocked from loading because it was too small */
 "Plug-In too small" = "Plug-In too small";
@@ -1090,11 +1087,11 @@
 /* Undo action name */
 "Underline (Undo action name)" = "Underline";
 
-/* Unknown filesize FTP directory listing item */
-"Unknown (filesize)" = "Unknown";
-
 /* Menu item label for a audio/text track that has no other name. */
 "Unknown (audio/text track)" = "Unknown";
+
+/* Unknown filesize FTP directory listing item */
+"Unknown (filesize)" = "Unknown";
 
 /* Undo action name */
 "Unlink (Undo action name)" = "Unlink";
@@ -1639,6 +1636,9 @@
 /* Message for requesting access to the device motion and orientation */
 "“%@” Would Like to Access Motion and Orientation" = "“%@” Would Like to Access Motion and Orientation";
 
+/* The domain and application using the camera and/or microphone. The first argument is domain, the second is the application name (iOS only). */
+"“%@” in “%%@”" = "“%@” in “%%@”";
+
 /* Allow the specified bundle to sign in to the specified website */
 "“%@” would like to sign in to “%@”." = "“%@” would like to sign in to “%@”.";
 
@@ -1648,5 +1648,3 @@
 /* Option in segmented control for choosing list type in text editing */
 "•" = "•";
 
-/* The domain and application using the camera and/or microphone. The first argument is domain, the second is the application name (iOS only). */
-"“%@” in “%%@”" = "“%@” in “%%@”";
