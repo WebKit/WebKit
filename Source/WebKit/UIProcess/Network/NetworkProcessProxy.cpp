@@ -154,7 +154,7 @@ void NetworkProcessProxy::didBecomeUnresponsive()
     // time period to avoid generating too many crash reports with same back trace on user's device.
     if (shouldTerminateNetworkProcessBySendingMessage()) {
         sendMessage(makeUniqueRef<IPC::Encoder>(IPC::MessageName::Terminate, 0), { });
-        RunLoop::main().dispatchAfter(1_s, [weakThis = WeakPtr { *this }] () mutable {
+        RunLoop::main().dispatchAfter(1_s, [weakThis = makeWeakPtr(*this)] () mutable {
             if (weakThis)
                 weakThis->terminate();
         });
