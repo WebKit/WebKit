@@ -1,3 +1,16 @@
+2021-11-03  Dean Jackson  <dino@apple.com>
+
+        REGRESSION: AR Quicklook asset is shared instead of page URL
+        https://bugs.webkit.org/show_bug.cgi?id=232674
+        rdar://84220997
+
+        Reviewed by Antoine Quint.
+
+        There was a typo. ENABLE(ARKIT_QUICK_LOOK_PREVIEW_ITEM)
+        should be HAVE(ARKIT_QUICK_LOOK_PREVIEW_ITEM).
+
+        * UIProcess/Cocoa/SystemPreviewControllerCocoa.mm:
+
 2021-11-03  Chris Dumez  <cdumez@apple.com>
 
         Clicking a link should preconnect to destination as first party
