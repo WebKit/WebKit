@@ -83,7 +83,9 @@ static void ensureITPFileIsCreated()
 
 TEST(ResourceLoadStatistics, GrandfatherCallback)
 {
-    auto *dataStore = [WKWebsiteDataStore defaultDataStore];
+    auto dataStoreConfiguration = adoptNS([_WKWebsiteDataStoreConfiguration new]);
+    dataStoreConfiguration.get().pcmMachServiceName = nil;
+    auto dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:dataStoreConfiguration.get()]);
 
     NSURL *statisticsDirectoryURL = [NSURL fileURLWithPath:[@"~/Library/WebKit/com.apple.WebKit.TestWebKitAPI/WebsiteData/ResourceLoadStatistics" stringByExpandingTildeInPath] isDirectory:YES];
     NSURL *fileURL = [statisticsDirectoryURL URLByAppendingPathComponent:@"observations.db"];

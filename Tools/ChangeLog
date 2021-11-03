@@ -1,3 +1,16 @@
+2021-11-03  Alex Christensen  <achristensen@webkit.org>
+
+        [ iOS Debug ] TestWebKitAPI.ResourceLoadStatistics.GrandfatherCallback is failing
+        https://bugs.webkit.org/show_bug.cgi?id=232675
+
+        Reviewed by Kate Cheney.
+
+        Clearing website data attempts a connection with the daemon.
+        For now, just tell it not to connect to the daemon.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ResourceLoadStatistics.mm:
+        (TEST):
+
 2021-11-03  Chris Dumez  <cdumez@apple.com>
 
         _pasteboardWithName should be thread-safe
