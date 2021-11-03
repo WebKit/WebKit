@@ -7,16 +7,13 @@ html { position: sticky; }
 </style>
 <script>
   onload = () => {
-    diag = document.getElementById('diag0');
-    diag.showModal(); 
-    if (window.testRunner)
-        testRunner.dumpAsText();
+    document.querySelector("dialog").showModal();
   }
 </script>
 </head>
 <body>
-<dialog id="diag0">
-PASS if this doesn't crash
+<dialog>
+PASS if this displays and doesn't crash
 </dialog>
 </body>
 </html>

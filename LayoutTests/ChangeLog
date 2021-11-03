@@ -1,3 +1,19 @@
+2021-11-03  Tim Nguyen  <ntim@apple.com>
+
+        Make render-layer-rebuild-z-order-lists.html use an HTML reference
+        https://bugs.webkit.org/show_bug.cgi?id=232658
+
+        Reviewed by Antti Koivisto.
+
+        This not only tests the crash, but also tests that the dialog is rendered (which was not
+        the case at the first iteration of the patch which introduced this test).
+
+        Also done some minor cleanups to the test.
+
+        * fast/layers/render-layer-rebuild-z-order-lists-expected.html: Added.
+        * fast/layers/render-layer-rebuild-z-order-lists-expected.txt: Removed.
+        * fast/layers/render-layer-rebuild-z-order-lists.html:
+
 2021-11-03  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
 
         REGRESSION(r284603) [GTK][WPE] test fast/frames/flattening/scrolling-in-object.html fails
