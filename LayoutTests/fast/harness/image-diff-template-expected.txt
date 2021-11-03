@@ -1,3 +1,5 @@
+Pixel difference:	__PIXEL_DIFF__
+Fuzzy match:	__FUZZY_DATA__
 Expected Image	Actual Image	Diff Image
 Animate:	Expected	Actual	Diff
 Loading...

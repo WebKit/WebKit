@@ -692,7 +692,7 @@ class Manager(object):
         self._filesystem.write_text_file(stats_path, json.dumps(stats_trie))
 
         full_results_path = self._filesystem.join(self._results_directory, "full_results.json")
-        # We write full_results.json out as jsonp because we need to load it from a file url and Chromium doesn't allow that.
+        # We write full_results.json out as jsonp because we need to load it from a file url and WebKit doesn't allow that.
         json_results_generator.write_json(self._filesystem, summarized_results, full_results_path, callback="ADD_RESULTS")
 
         generator = json_layout_results_generator.JSONLayoutResultsGenerator(

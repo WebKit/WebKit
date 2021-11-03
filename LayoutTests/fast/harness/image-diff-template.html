@@ -3,40 +3,53 @@
 <head>
 <title>__TITLE__</title>
 <style>
+    body {
+        font-family: Helvetica, sans-serif;
+        font-size: 11pt;
+    }
+
     .imageContainer {
         position: absolute;
         margin: 10px;
         outline: 10px solid silver;
+        min-width: 300px;
+        min-height: 150px;
     }
     
     .imageContainer > img {
         display: block;
     }
 
-    
     .controls {
-        margin-bottom: 20px;
+        margin-bottom: 15px;
+        padding: 10px;
+    }
+    
+    .pixel-diff {
+        font-size: 10pt;
+        font-family: -apple-system;
+    }
+    
+    .pixel-diff > td:first-child {
+        text-align: right;
+    }
+    
+    .hidden {
+        display: none;
     }
     
     .controls button {
         width: 12em;
+        padding: 4px;
     }
     
     .controls td {
-        padding: 0 10px;
+        padding: 5px 10px;
     }
     
     .controls label {
-        font-family: -webkit-system-font;
-        font-size: 11px;
-    }
-    
-    .buttons {
-    }
-    .controls > .indicator {
-        display: table-cell;
-        -webkit-column-span: 1;
-        border-top: 2px solid black;
+        font-family: -apple-system;
+        font-size: 12px;
     }
     
     button.selected {
@@ -46,6 +59,14 @@
 </head>
 <body>
 <table class="controls">
+    <tr class="pixel-diff __HIDE_DIFF_CLASS__">
+        <td>Pixel difference:</td>
+        <td>__PIXEL_DIFF__</td>
+    </tr>
+    <tr class="pixel-diff __HIDE_FUZZY_CLASS__">
+        <td>Fuzzy match:</td>
+        <td>__FUZZY_DATA__</td>
+    </tr>
     <tr>
         <td></td>
         <td><button id="expected-label" data-type="expected" onclick="switchToImage(this)">Expected Image</button></td>
@@ -53,10 +74,10 @@
         <td><button id="diff-label" data-type="diff" onclick="switchToImage(this)">Diff Image</button></td>
     </tr>
     <tr>
-        <td><input type="checkbox" id="animate" onchange="toggleAnimate()" checked></input><label for="animate">Animate:</label></td>
-        <td><input type="checkbox" id="cycle-expected" onchange="updateImageCycle()" checked></input><label for="cycle-expected">Expected</label></td>
-        <td><input type="checkbox" id="cycle-actual" onchange="updateImageCycle()" checked></input><label for="cycle-actual">Actual</label></td>
-        <td><input type="checkbox" id="cycle-diff" onchange="updateImageCycle()"></input><label for="cycle-diff">Diff</label></td>
+        <td><input type="checkbox" id="animate" onchange="toggleAnimate()" checked><label for="animate">Animate:</label></td>
+        <td><input type="checkbox" id="cycle-expected" onchange="updateImageCycle()" checked><label for="cycle-expected">Expected</label></td>
+        <td><input type="checkbox" id="cycle-actual" onchange="updateImageCycle()" checked><label for="cycle-actual">Actual</label></td>
+        <td><input type="checkbox" id="cycle-diff" onchange="updateImageCycle()"><label for="cycle-diff">Diff</label></td>
     </tr>
 </table>
 

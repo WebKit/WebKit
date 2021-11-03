@@ -215,6 +215,11 @@ def _interpret_test_failures(failures):
             if isinstance(failure, test_failures.FailureImageHashMismatch) or isinstance(failure, test_failures.FailureReftestMismatch):
                 test_dict['image_diff_percent'] = failure.image_diff_result.diff_percent
 
+    if 'image_difference' not in test_dict:
+        for failure in failures:
+            if (isinstance(failure, test_failures.FailureImageHashMismatch) or isinstance(failure, test_failures.FailureReftestMismatch)) and failure.image_diff_result.fuzzy_data:
+                test_dict['image_difference'] = failure.image_diff_result.fuzzy_data
+
     return test_dict
 
 

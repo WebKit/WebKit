@@ -208,9 +208,18 @@ class FailureImageHashMismatch(TestFailure):
     def message(self):
         return "image diff"
 
+    def formatted_diff_percent(self):
+        return '{:.2f}%'.format(max(self.image_diff_result.diff_percent, 0.01))
+
+    def formatted_fuzzy_data(self):
+        fuzzy_data = self.image_diff_result.fuzzy_data if self.image_diff_result else None
+        if fuzzy_data:
+            return 'maxDifference={}; totalPixels={}'.format(fuzzy_data['max_difference'], fuzzy_data['total_pixels'])
+        return None
+
     def write_failure(self, writer, driver_output, expected_driver_output, port):
         writer.write_image_files(driver_output.image, expected_driver_output.image)
-        writer.write_image_diff_files(driver_output.image_diff)
+        writer.write_image_diff_files(driver_output.image_diff, self.formatted_diff_percent(), self.formatted_fuzzy_data())
 
 
 class FailureImageHashIncorrect(TestFailure):
@@ -225,7 +234,19 @@ class FailureReftestMismatch(TestFailure):
         self.image_diff_result = image_diff_result
 
     def message(self):
+        fuzzy_data = self.image_diff_result.fuzzy_data if self.image_diff_result else None
+        if fuzzy_data:
+            return "reference mismatch maxDifference={}; totalPixels={}".format(fuzzy_data['max_difference'], fuzzy_data['total_pixels'])
         return "reference mismatch"
+
+    def formatted_diff_percent(self):
+        return '{:.2f}%'.format(max(self.image_diff_result.diff_percent, 0.01))
+
+    def formatted_fuzzy_data(self):
+        fuzzy_data = self.image_diff_result.fuzzy_data if self.image_diff_result else None
+        if fuzzy_data:
+            return 'maxDifference={}; totalPixels={}'.format(fuzzy_data['max_difference'], fuzzy_data['total_pixels'])
+        return None
 
     def write_failure(self, writer, driver_output, expected_driver_output, port):
         writer.write_image_files(driver_output.image, expected_driver_output.image)
@@ -236,7 +257,7 @@ class FailureReftestMismatch(TestFailure):
             else:
                 diff_image = self.image_diff_result.diff_image
 
-            writer.write_image_diff_files(diff_image)
+            writer.write_image_diff_files(diff_image, self.formatted_diff_percent(), self.formatted_fuzzy_data())
         else:
             _log.warn('ref test mismatch did not produce an image diff.')
         writer.write_reftest(self.reference_filename)

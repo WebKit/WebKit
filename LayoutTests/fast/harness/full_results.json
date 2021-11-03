@@ -25,13 +25,21 @@ ADD_RESULTS({
                         "report": "REGRESSION",
                         "expected": "PASS",
                         "actual": "IMAGE",
-                        "image_diff_percent": 86.262301
+                        "image_diff_percent": 86.262301,
+                        "image_difference": {
+                            "max_difference": 13,
+                            "total_pixels": 167
+                        }
                     },
                     "tiny-image-fail.html": {
                         "report": "REGRESSION",
                         "expected": "PASS",
                         "actual": "IMAGE",
-                        "image_diff_percent": 0.002
+                        "image_diff_percent": 0.002,
+                        "image_difference": {
+                            "max_difference": 3,
+                            "total_pixels": 24
+                        }
                     },
                     "leaky-worker.html": {
                         "report": "REGRESSION",

@@ -1415,8 +1415,8 @@ class FailuresSectionBuilder extends SectionBuilder {
                     result += TestResultsController.resultLink(testPrefix, '-actual.png', 'actual');
                 }
 
-                let diff = Math.max(testResult.info.image_diff_percent, 0.01).toFixed(2);
-                result += TestResultsController.resultLink(testPrefix, '-diff.png', 'diff (' + diff + '%)');
+                const diff = Math.max(testResult.info.image_diff_percent, 0.01).toFixed(2);
+                result += TestResultsController.resultLink(testPrefix, '-diff.png', `diff (${diff}%)`);
             }
         }
         

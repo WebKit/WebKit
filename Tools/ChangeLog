@@ -1,3 +1,40 @@
+2021-11-03  Simon Fraser  <simon.fraser@apple.com>
+
+        Expose fuzzy match data in layout test results
+        https://bugs.webkit.org/show_bug.cgi?id=232523
+
+        Reviewed by Jonathan Bedard.
+
+        For a failing ref (or image) test, include the fuzzy matching data in full_results.json
+        in the form "image_difference": { "max_difference": 13, "total_pixels": 167 }, and
+        show that in the image comparison page that's written out for each test result.
+
+        Fix some tests that relied on JSON property serialization ordering (we don't serialize
+        with `sort_keys=True`).
+
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        (Manager._save_json_files):
+        * Scripts/webkitpy/layout_tests/controllers/test_result_writer.py:
+        (TestResultWriter.write_image_diff_files):
+        * Scripts/webkitpy/layout_tests/layout_package/json_results_generator.py:
+        (JSONResultsGenerator.generate_times_ms_file):
+        * Scripts/webkitpy/layout_tests/models/test_failures.py:
+        (FailureImageHashMismatch.formatted_diff_percent):
+        (FailureImageHashMismatch):
+        (FailureImageHashMismatch.formatted_fuzzy_data):
+        (FailureImageHashMismatch.write_failure):
+        (FailureReftestMismatch.message):
+        (FailureReftestMismatch.formatted_diff_percent):
+        (FailureReftestMismatch):
+        (FailureReftestMismatch.formatted_fuzzy_data):
+        (FailureReftestMismatch.write_failure):
+        * Scripts/webkitpy/layout_tests/models/test_run_results.py:
+        (_interpret_test_failures):
+        * Scripts/webkitpy/layout_tests/models/test_run_results_unittest.py:
+        (InterpretTestFailuresTest.test_interpret_test_failures):
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+        (RunTest.test_retrying_force_pixel_tests):
+
 2021-11-03  Kate Cheney  <katherine_cheney@apple.com>
 
         [iOS] Need API for marking file requests as non-app-initiated

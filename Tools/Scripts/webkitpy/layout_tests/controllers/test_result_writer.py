@@ -184,7 +184,7 @@ class TestResultWriter(object):
     def write_image_files(self, actual_image, expected_image):
         self.write_output_files('.png', actual_image, expected_image)
 
-    def write_image_diff_files(self, image_diff):
+    def write_image_diff_files(self, image_diff, diff_percent_text=None, fuzzy_data_text=None):
         diff_filename = self.output_filename(self.FILENAME_SUFFIX_IMAGE_DIFF)
         self._write_binary_file(diff_filename, image_diff)
 
@@ -197,6 +197,18 @@ class TestResultWriter(object):
 
         html = image_diff_file.replace('__TITLE__', self._test_name)
         html = html.replace('__PREFIX__', self._output_testname(''))
+
+        if not diff_percent_text:
+            html = html.replace('__HIDE_DIFF_CLASS__', 'hidden')
+        else:
+            html = html.replace('__HIDE_DIFF_CLASS__', '')
+            html = html.replace('__PIXEL_DIFF__', diff_percent_text)
+
+        if not fuzzy_data_text:
+            html = html.replace('__HIDE_FUZZY_CLASS__', 'hidden')
+        else:
+            html = html.replace('__HIDE_FUZZY_CLASS__', '')
+            html = html.replace('__FUZZY_DATA__', fuzzy_data_text)
 
         diffs_html_filename = self.output_filename(self.FILENAME_SUFFIX_IMAGE_DIFFS_HTML)
         self._filesystem.write_text_file(diffs_html_filename, html)

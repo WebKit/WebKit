@@ -517,16 +517,20 @@ class RunTest(unittest.TestCase, StreamTestingMixin):
     def test_pixel_test_directories(self):
         host = MockHost()
 
-        """Both tests have faling checksum. We include only the first in pixel tests so only that should fail."""
+        """Both tests have failing checksum. We include only the first in pixel tests so only that should fail."""
         args = ['--pixel-tests', '--pixel-test-directory', 'failures/unexpected/pixeldir',
                 'failures/unexpected/pixeldir/image_in_pixeldir.html',
                 'failures/unexpected/image_not_in_pixeldir.html']
         details, err, _ = logging_run(extra_args=args, host=host, tests_included=True)
 
         self.assertEqual(details.exit_code, 1)
-        expected_token = '"unexpected":{"pixeldir":{"image_in_pixeldir.html":{"report":"REGRESSION","expected":"PASS","actual":"IMAGE"'
+
         json_string = host.filesystem.read_text_file('/tmp/layout-test-results/full_results.json')
-        self.assertTrue(json_string.find(expected_token) != -1)
+        json = parse_full_results(json_string)
+        test_data = json["tests"]["failures"]["unexpected"]["pixeldir"]["image_in_pixeldir.html"]
+        self.assertEqual(test_data["expected"], "PASS")
+        self.assertEqual(test_data["actual"], "IMAGE")
+        self.assertEqual(test_data["report"], "REGRESSION")
 
     def test_missing_and_unexpected_results_with_custom_exit_code(self):
         # Test that we update expectations in place. If the expectation
@@ -710,7 +714,7 @@ class RunTest(unittest.TestCase, StreamTestingMixin):
         json_string = host.filesystem.read_text_file('/tmp/layout-test-results/full_results.json')
         json = parse_full_results(json_string)
         self.assertEqual(json["tests"]["failures"]["unexpected"]["text-image-checksum.html"],
-            {"expected": "PASS", "actual": "TEXT IMAGE+TEXT", "image_diff_percent": 1, "report": "REGRESSION"})
+                         {"expected": "PASS", "actual": "TEXT IMAGE+TEXT", "image_diff_percent": 1, 'image_difference': {'max_difference': 10, 'total_pixels': 20}, "report": "REGRESSION"})
         self.assertFalse(json["pixel_tests_enabled"])
         self.assertEqual(details.enabled_pixel_tests_in_retry, True)
 
@@ -723,9 +727,15 @@ class RunTest(unittest.TestCase, StreamTestingMixin):
             tests_included=True, host=host)
         file_list = host.filesystem.written_files.keys()
         self.assertEqual(details.exit_code, 1)
-        expected_token = '"unexpected":{"text-image-missing.html":{"report":"REGRESSION","expected":"PASS","actual":"TEXT MISSING","is_missing_image":true}}'
         json_string = host.filesystem.read_text_file('/tmp/layout-test-results/full_results.json')
-        self.assertTrue(json_string.find(expected_token) != -1)
+
+        json = parse_full_results(json_string)
+        test_data = json["tests"]["failures"]["unexpected"]["text-image-missing.html"]
+        self.assertEqual(test_data["expected"], "PASS")
+        self.assertEqual(test_data["actual"], "TEXT MISSING")
+        self.assertEqual(test_data["report"], "REGRESSION")
+        self.assertEqual(test_data["is_missing_image"], True)
+
         self.assertTrue(json_string.find('"num_regressions":1') != -1)
         self.assertTrue(json_string.find('"num_flaky":0') != -1)
         self.assertTrue(json_string.find('"num_missing":1') != -1)

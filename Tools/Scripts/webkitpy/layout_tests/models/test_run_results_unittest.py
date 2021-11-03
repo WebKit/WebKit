@@ -128,8 +128,10 @@ class InterpretTestFailuresTest(unittest.TestCase):
         test_dict = test_run_results._interpret_test_failures([test_failures.FailureImageHashMismatch(ImageDiffResult(passed=False, diff_image=b'', difference=0.42))])
         self.assertEqual(test_dict['image_diff_percent'], 0.42)
 
-        test_dict = test_run_results._interpret_test_failures([test_failures.FailureReftestMismatch(self.port.abspath_for_test('foo/reftest-expected.html'), ImageDiffResult(passed=False, diff_image=b'', difference=100.0))])
+        result_fuzzy_data = {'max_difference': 6, 'total_pixels': 50}
+        test_dict = test_run_results._interpret_test_failures([test_failures.FailureReftestMismatch(self.port.abspath_for_test('foo/reftest-expected.html'), ImageDiffResult(passed=False, diff_image=b'', difference=100.0, fuzzy_data=result_fuzzy_data))])
         self.assertIn('image_diff_percent', test_dict)
+        self.assertIn('image_difference', test_dict)
 
         test_dict = test_run_results._interpret_test_failures([test_failures.FailureReftestMismatchDidNotOccur(self.port.abspath_for_test('foo/reftest-expected-mismatch.html'))])
         self.assertEqual(len(test_dict), 0)

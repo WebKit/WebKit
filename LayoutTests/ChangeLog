@@ -1,3 +1,18 @@
+2021-11-03  Simon Fraser  <simon.fraser@apple.com>
+
+        Expose fuzzy match data in layout test results
+        https://bugs.webkit.org/show_bug.cgi?id=232523
+
+        Reviewed by Jonathan Bedard.
+
+        Add some "image_difference" values to the test JSON and update the resulting
+        files.
+
+        * fast/harness/full_results.json:
+        * fast/harness/image-diff-template-expected.txt:
+        * fast/harness/image-diff-template.html:
+        * fast/harness/results.html:
+
 2021-11-03  Jer Noble  <jer.noble@apple.com>
 
         [iOS] AVAssetResourceLoadingRequest.request does not include a Range: header on iOS 15.
