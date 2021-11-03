@@ -1,3 +1,16 @@
+2021-11-03  David Kilzer  <ddkilzer@apple.com>
+
+        Disable WebXR on tvOS and watchOS
+        <https://webkit.org/b/232672>
+        <rdar://problem/84982378>
+
+        Reviewed by Brent Fulgham.
+
+        * wtf/PlatformEnableCocoa.h:
+        (ENABLE_WEBXR):
+        (ENABLE_WEBXR_HANDS):
+        - Disable features on tvOS and watchOS.
+
 2021-11-03  Jer Noble  <jer.noble@apple.com>
 
         [macOS] MediaSession coordinator enabled in UIProcess, disabled in WebContent
