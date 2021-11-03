@@ -129,8 +129,8 @@ void ModelElementController::modelElementDidCreatePreview(const WebCore::Element
     if (!m_webPageProxy.preferences().modelElementEnabled())
         return;
 
-    auto uuid = adoptNS([[NSUUID alloc] initWithUUIDString:uuid]);
-    auto preview = adoptNS([allocASVInlinePreviewInstance() initWithFrame:CGRectMake(0, 0, size.width(), size.height()) UUID:uuid.get()]);
+    auto nsUUID = adoptNS([[NSUUID alloc] initWithUUIDString:uuid]);
+    auto preview = adoptNS([allocASVInlinePreviewInstance() initWithFrame:CGRectMake(0, 0, size.width(), size.height()) UUID:nsUUID.get()]);
 
     LOG(ModelElement, "Created remote preview with UUID %s.", uuid.utf8().data());
 

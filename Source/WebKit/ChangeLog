@@ -1,3 +1,10 @@
+2021-11-03  Tim Horton  <timothy_horton@apple.com>
+
+        Fix the build.
+
+        * UIProcess/Cocoa/ModelElementControllerCocoa.mm:
+        (WebKit::ModelElementController::modelElementDidCreatePreview):
+
 2021-11-03  Dean Jackson  <dino@apple.com>
 
         REGRESSION: AR Quicklook asset is shared instead of page URL
