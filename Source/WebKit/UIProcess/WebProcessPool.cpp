@@ -404,6 +404,11 @@ void WebProcessPool::screenPropertiesStateChanged()
 #if PLATFORM(COCOA)
     auto screenProperties = WebCore::collectScreenProperties();
     sendToAllProcesses(Messages::WebProcess::SetScreenProperties(screenProperties));
+
+#if PLATFORM(MAC)
+    if (auto process = gpuProcess())
+        process->setScreenProperties(screenProperties);
+#endif
 #endif
 }
 
@@ -652,8 +657,10 @@ static void displayReconfigurationCallBack(CGDirectDisplayID display, CGDisplayC
     for (auto& processPool : WebProcessPool::allProcessPools()) {
         processPool->sendToAllProcesses(Messages::WebProcess::SetScreenProperties(screenProperties));
         processPool->sendToAllProcesses(Messages::WebProcess::DisplayConfigurationChanged(display, flags));
-        if (auto gpuProcess = processPool->gpuProcess())
+        if (auto gpuProcess = processPool->gpuProcess()) {
             gpuProcess->displayConfigurationChanged(display, flags);
+            gpuProcess->setScreenProperties(screenProperties);
+        }
     }
 }
 

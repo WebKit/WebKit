@@ -48,6 +48,7 @@
 #include <WebCore/LogInitialization.h>
 #include <WebCore/MockRealtimeMediaSourceCenter.h>
 #include <WebCore/RuntimeApplicationChecks.h>
+#include <WebCore/ScreenProperties.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/LogInitialization.h>
 #include <wtf/TranslatedProcess.h>
@@ -573,6 +574,11 @@ void GPUProcessProxy::displayConfigurationChanged(CGDirectDisplayID displayID, C
 {
     send(Messages::GPUProcess::DisplayConfigurationChanged { displayID, flags }, 0);
 }
+
+void GPUProcessProxy::setScreenProperties(const ScreenProperties& properties)
+{
+    send(Messages::GPUProcess::SetScreenProperties { properties }, 0);
+}
 #endif
 
 void GPUProcessProxy::updatePreferences()
@@ -635,6 +641,10 @@ void GPUProcessProxy::updatePreferences()
 
 #if ENABLE(VORBIS)
     send(Messages::GPUProcess::SetVorbisDecoderEnabled(hasEnabledVorbis), 0);
+#endif
+
+#if PLATFORM(MAC)
+    setScreenProperties(WebCore::collectScreenProperties());
 #endif
 }
 

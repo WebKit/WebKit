@@ -32,10 +32,13 @@
 #import "SandboxInitializationParameters.h"
 #import "WKFoundation.h"
 #import <WebCore/LocalizedStrings.h>
+#import <WebCore/PlatformScreen.h>
+#import <WebCore/ScreenProperties.h>
 #import <pal/spi/cocoa/LaunchServicesSPI.h>
 #import <pal/spi/mac/HIServicesSPI.h>
 #import <sysexits.h>
 #import <wtf/MemoryPressureHandler.h>
+#import <wtf/ProcessPrivilege.h>
 #import <wtf/text/WTFString.h>
 
 namespace WebKit {
@@ -75,6 +78,28 @@ void GPUProcess::initializeSandbox(const AuxiliaryProcessInitializationParameter
 
     AuxiliaryProcess::initializeSandbox(parameters, sandboxParameters);
 }
+
+#if PLATFORM(MAC)
+void GPUProcess::setScreenProperties(const ScreenProperties& screenProperties)
+{
+#if !HAVE(AVPLAYER_VIDEORANGEOVERRIDE)
+    // Only override HDR support at the MediaToolbox level if AVPlayer.videoRangeOverride support is
+    // not present, as the MediaToolbox override functionality is both duplicative and process global.
+
+    // This override is not necessary if AVFoundation is allowed to communicate
+    // with the window server to query for HDR support.
+    if (hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer)) {
+        setShouldOverrideScreenSupportsHighDynamicRange(false, false);
+        return;
+    }
+
+    bool allScreensAreHDR = allOf(screenProperties.screenDataMap.values(), [] (auto& screenData) {
+        return screenData.screenSupportsHighDynamicRange;
+    });
+    setShouldOverrideScreenSupportsHighDynamicRange(true, allScreensAreHDR);
+#endif
+}
+#endif
 
 } // namespace WebKit
 

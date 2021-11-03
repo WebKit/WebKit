@@ -1,3 +1,30 @@
+2021-11-03  Jer Noble  <jer.noble@apple.com>
+
+        [Catalina] HLS streams will not select HDR variants when GPU Process is enabled
+        https://bugs.webkit.org/show_bug.cgi?id=232671
+        <rdar://84686676>
+
+        Reviewed by Eric Carlson.
+
+        Tested manually.
+
+        In Catalina, fall back to a MediaToolbox API for setting a global HDR override in the GPU
+        process which instructs all AVPlayer instances whether HDR playback is supported for the
+        current set of displays. Pass the required data across from the UIProcess to the GPU process
+        at process start up and when the displays are reconfigured.
+
+        * GPUProcess/GPUProcess.h:
+        * GPUProcess/GPUProcess.messages.in:
+        * GPUProcess/mac/GPUProcessMac.mm:
+        (WebKit::GPUProcess::setScreenProperties):
+        * UIProcess/GPU/GPUProcessProxy.cpp:
+        (WebKit::GPUProcessProxy::setScreenProperties):
+        (WebKit::GPUProcessProxy::updatePreferences):
+        * UIProcess/GPU/GPUProcessProxy.h:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::screenPropertiesStateChanged):
+        (WebKit::displayReconfigurationCallBack):
+
 2021-11-03  David Kilzer  <ddkilzer@apple.com>
 
         Leak of UUID in WebKit::ModelElementController::modelElementDidCreatePreview()
