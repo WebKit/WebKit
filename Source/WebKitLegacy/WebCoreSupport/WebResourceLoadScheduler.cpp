@@ -402,7 +402,7 @@ void WebResourceLoadScheduler::addOnlineStateChangeListener(WTF::Function<void(b
     NetworkStateNotifier::singleton().addListener(WTFMove(listener));
 }
 
-void WebResourceLoadScheduler::preconnectTo(FrameLoader&, const URL&, StoredCredentialsPolicy, PreconnectCompletionHandler&&)
+void WebResourceLoadScheduler::preconnectTo(FrameLoader&, const URL&, StoredCredentialsPolicy, ShouldPreconnectAsFirstParty, PreconnectCompletionHandler&&)
 {
 }
 

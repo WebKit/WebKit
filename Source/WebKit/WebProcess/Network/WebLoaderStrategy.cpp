@@ -766,7 +766,7 @@ void WebLoaderStrategy::didFinishPingLoad(WebCore::ResourceLoaderIdentifier ping
         completionHandler(WTFMove(error), WTFMove(response));
 }
 
-void WebLoaderStrategy::preconnectTo(FrameLoader& frameLoader, const URL& url, StoredCredentialsPolicy storedCredentialsPolicy, PreconnectCompletionHandler&& completionHandler)
+void WebLoaderStrategy::preconnectTo(FrameLoader& frameLoader, const URL& url, StoredCredentialsPolicy storedCredentialsPolicy, ShouldPreconnectAsFirstParty shouldPreconnectAsFirstParty, PreconnectCompletionHandler&& completionHandler)
 {
     auto* webFrameLoaderClient = toWebFrameLoaderClient(frameLoader.client());
     if (!webFrameLoaderClient) {
@@ -782,10 +782,10 @@ void WebLoaderStrategy::preconnectTo(FrameLoader& frameLoader, const URL& url, S
         return;
     }
 
-    preconnectTo(ResourceRequest { url }, *webPage, webFrame, storedCredentialsPolicy, WTFMove(completionHandler));
+    preconnectTo(ResourceRequest { url }, *webPage, webFrame, storedCredentialsPolicy, shouldPreconnectAsFirstParty, WTFMove(completionHandler));
 }
 
-void WebLoaderStrategy::preconnectTo(WebCore::ResourceRequest&& request, WebPage& webPage, WebFrame& webFrame, WebCore::StoredCredentialsPolicy storedCredentialsPolicy, PreconnectCompletionHandler&& completionHandler)
+void WebLoaderStrategy::preconnectTo(WebCore::ResourceRequest&& request, WebPage& webPage, WebFrame& webFrame, WebCore::StoredCredentialsPolicy storedCredentialsPolicy, ShouldPreconnectAsFirstParty shouldPreconnectAsFirstParty, PreconnectCompletionHandler&& completionHandler)
 {
     if (webPage.corePage() && !webPage.corePage()->allowsLoadFromURL(request.url(), MainFrameMainResource::No)) {
         if (completionHandler)
@@ -794,7 +794,10 @@ void WebLoaderStrategy::preconnectTo(WebCore::ResourceRequest&& request, WebPage
     }
 
     if (auto* document = webPage.mainFrame()->document()) {
-        request.setFirstPartyForCookies(document->firstPartyForCookies());
+        if (shouldPreconnectAsFirstParty == ShouldPreconnectAsFirstParty::Yes)
+            request.setFirstPartyForCookies(request.url());
+        else
+            request.setFirstPartyForCookies(document->firstPartyForCookies());
         if (auto* loader = document->loader())
             request.setIsAppInitiated(loader->lastNavigationWasAppInitiated());
     }

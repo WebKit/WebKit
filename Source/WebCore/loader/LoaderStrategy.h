@@ -79,7 +79,8 @@ public:
     virtual void startPingLoad(Frame&, ResourceRequest&, const HTTPHeaderMap& originalRequestHeaders, const FetchOptions&, ContentSecurityPolicyImposition, PingLoadCompletionHandler&& = { }) = 0;
 
     using PreconnectCompletionHandler = Function<void(const ResourceError&)>;
-    virtual void preconnectTo(FrameLoader&, const URL&, StoredCredentialsPolicy, PreconnectCompletionHandler&&) = 0;
+    enum class ShouldPreconnectAsFirstParty : bool { No, Yes };
+    virtual void preconnectTo(FrameLoader&, const URL&, StoredCredentialsPolicy, ShouldPreconnectAsFirstParty, PreconnectCompletionHandler&&) = 0;
 
     virtual void setCaptureExtraNetworkLoadMetricsEnabled(bool) = 0;
 

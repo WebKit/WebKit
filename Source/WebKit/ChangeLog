@@ -1,3 +1,18 @@
+2021-11-03  Chris Dumez  <cdumez@apple.com>
+
+        Clicking a link should preconnect to destination as first party
+        https://bugs.webkit.org/show_bug.cgi?id=232668
+
+        Reviewed by Alex Christensen.
+
+        Clicking a link should preconnect to destination as first party, not third-party. Otherwise, the
+        preconnect is wasted when session isolation based on registrable domain is enabled. This is a
+        follow-up to r284730.
+
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::WebLoaderStrategy::preconnectTo):
+        * WebProcess/Network/WebLoaderStrategy.h:
+
 2021-11-03  Jer Noble  <jer.noble@apple.com>
 
         [Catalina] HLS streams will not select HDR variants when GPU Process is enabled
