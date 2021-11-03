@@ -57,10 +57,10 @@ const GlobalObjectMethodTable JSShadowRealmGlobalScope::s_globalObjectMethodTabl
     &deriveShadowRealmGlobalObject
 };
 
-JSShadowRealmGlobalScope::JSShadowRealmGlobalScope(VM& vm, Structure* structure, JSDOMGlobalObject* parentGlobal)
+JSShadowRealmGlobalScope::JSShadowRealmGlobalScope(VM& vm, Structure* structure, const JSDOMGlobalObject* parentGlobal)
     : JSDOMGlobalObject(vm, structure, parentGlobal->world(), &s_globalObjectMethodTable)
+    , m_parent(parentGlobal)
 {
-    m_parent = parentGlobal;
 }
 
 void JSShadowRealmGlobalScope::destroy(JSCell* cell)
@@ -104,7 +104,7 @@ template void JSShadowRealmGlobalScope::visitOutputConstraints(JSCell*, SlotVisi
 void JSShadowRealmGlobalScope::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer)
 {
     auto* thisObject = jsCast<JSShadowRealmGlobalScope*>(cell);
-    analyzer.setWrappedObjectForCell(cell, thisObject->parent());
+    analyzer.setWrappedObjectForCell(cell, (void*)thisObject->parent());
     if (thisObject->scriptExecutionContext())
         analyzer.setLabelForCell(cell, "url " + thisObject->parent()->scriptExecutionContext()->url().string());
     Base::analyzeHeap(cell, analyzer);

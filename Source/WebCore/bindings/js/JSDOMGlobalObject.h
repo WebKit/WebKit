@@ -80,6 +80,7 @@ public:
     DECLARE_VISIT_CHILDREN;
 
     DOMWrapperWorld& world() { return m_world.get(); }
+    DOMWrapperWorld& world() const { return m_world.get(); }
     bool worldIsNormal() const { return m_worldIsNormal; }
     static ptrdiff_t offsetOfWorldIsNormal() { return OBJECT_OFFSETOF(JSDOMGlobalObject, m_worldIsNormal); }
 

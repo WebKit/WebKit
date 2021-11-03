@@ -28,7 +28,7 @@ namespace WebCore {
 class JSShadowRealmGlobalScope : public JSDOMGlobalObject {
 public:
     using Base = JSDOMGlobalObject;
-    static JSShadowRealmGlobalScope* create(JSC::VM& vm, JSC::Structure* structure, JSDOMGlobalObject* impl)
+    static JSShadowRealmGlobalScope* create(JSC::VM& vm, JSC::Structure* structure, const JSDOMGlobalObject* impl)
     {
         JSShadowRealmGlobalScope* ptr = new (NotNull, JSC::allocateCell<JSShadowRealmGlobalScope>(vm.heap)) JSShadowRealmGlobalScope(vm, structure, impl);
         /* ptr->finishCreation(vm); */
@@ -52,24 +52,25 @@ public:
     {
         if constexpr (mode == JSC::SubspaceAccess::Concurrently)
             return nullptr;
-        return subspaceForImpl(vm);
+        /* return subspaceForImpl(vm); */
+        return &vm.plainObjectSpace;
     }
-    static JSC::IsoSubspace* subspaceForImpl(JSC::VM& vm);
+    /* static JSC::IsoSubspace* subspaceForImpl(JSC::VM& vm); */
     DECLARE_VISIT_CHILDREN;
     template<typename Visitor> void visitAdditionalChildren(Visitor&);
 
     template<typename Visitor> static void visitOutputConstraints(JSCell*, Visitor&);
     static void analyzeHeap(JSCell*, JSC::HeapAnalyzer&);
 
-    JSDOMGlobalObject* parent() const { return m_parent; }
+    const JSDOMGlobalObject* parent() const { return m_parent; }
 
     static constexpr unsigned StructureFlags = Base::StructureFlags | JSC::HasStaticPropertyTable | JSC::IsImmutablePrototypeExoticObject;
 
 private:
-    JSDOMGlobalObject* m_parent;
+    const JSDOMGlobalObject* m_parent;
 
 protected:
-    JSShadowRealmGlobalScope(JSC::VM&, JSC::Structure*, JSDOMGlobalObject*);
+    JSShadowRealmGlobalScope(JSC::VM&, JSC::Structure*, const JSDOMGlobalObject*);
     /* void finishCreation(JSC::VM&); */
 };
 

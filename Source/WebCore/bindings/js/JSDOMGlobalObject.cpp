@@ -291,6 +291,7 @@ ScriptExecutionContext* JSDOMGlobalObject::scriptExecutionContext() const
     if (inherits<JSRemoteDOMWindowBase>(vm()))
         return nullptr;
     if (inherits<JSShadowRealmGlobalScope>(vm()))
+        // TODO PLM
         return jsCast<const JSShadowRealmGlobalScope*>(this)->parent()->scriptExecutionContext();
     if (inherits<JSWorkerGlobalScopeBase>(vm()))
         return jsCast<const JSWorkerGlobalScopeBase*>(this)->scriptExecutionContext();
@@ -359,8 +360,9 @@ void JSDOMGlobalObject::reportUncaughtExceptionAtEventLoop(JSGlobalObject* jsGlo
 
 JSC::JSGlobalObject* JSDOMGlobalObject::deriveShadowRealmGlobalObject(JSC::VM& vm, const JSC::JSGlobalObject* globalObject)
 {
-    // TODO: create JSShadowRealmScopeBase
-    return JSC::JSGlobalObject::createWithCustomMethodTable(vm, JSGlobalObject::createStructure(vm, JSC::jsNull()), &s_shadowRealmGlobalObjectMethodTable);
+    // TODO PLM: create JSShadowRealmScopeBase
+    return JSShadowRealmGlobalScope::create(vm, JSGlobalObject::createStructure(vm, JSC::jsNull()), jsCast<const JSDOMGlobalObject*>(globalObject));
+    /* return JSC::JSGlobalObject::createWithCustomMethodTable(vm, JSGlobalObject::createStructure(vm, JSC::jsNull()), &s_shadowRealmGlobalObjectMethodTable); */
 }
 
 void JSDOMGlobalObject::clearDOMGuardedObjects() const
@@ -530,7 +532,7 @@ JSC::JSPromise* JSDOMGlobalObject::instantiateStreaming(JSC::JSGlobalObject* glo
 }
 #endif
 
-static ScriptModuleLoader* scriptModuleLoader(JSDOMGlobalObject* globalObject)
+static ScriptModuleLoader* scriptModuleLoader(const JSDOMGlobalObject* globalObject)
 {
     VM& vm = globalObject->vm();
     if (globalObject->inherits<JSDOMWindowBase>(vm)) {
@@ -541,6 +543,7 @@ static ScriptModuleLoader* scriptModuleLoader(JSDOMGlobalObject* globalObject)
     if (globalObject->inherits<JSRemoteDOMWindowBase>(vm))
         return nullptr;
     if (globalObject->inherits<JSShadowRealmGlobalScope>(vm))
+        // TODO PLM:
         return scriptModuleLoader(jsCast<const JSShadowRealmGlobalScope*>(globalObject)->parent());
     if (globalObject->inherits<JSWorkerGlobalScopeBase>(vm))
         return &jsCast<const JSWorkerGlobalScopeBase*>(globalObject)->wrapped().moduleLoader();
