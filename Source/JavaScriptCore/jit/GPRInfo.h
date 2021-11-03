@@ -544,6 +544,9 @@ public:
     static constexpr unsigned InvalidIndex = 0xffffffff;
 };
 
+static_assert(GPRInfo::regT0 == X86Registers::eax);
+static_assert(GPRInfo::returnValueGPR2 == X86Registers::edx);
+
 #endif // CPU(X86_64)
 
 #if CPU(ARM_THUMB2)

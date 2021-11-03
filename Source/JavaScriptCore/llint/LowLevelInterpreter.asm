@@ -2098,7 +2098,6 @@ end
 
 slowPathOp(is_callable)
 slowPathOp(is_constructor)
-slowPathOp(mod)
 slowPathOp(new_array_buffer)
 slowPathOp(new_array_with_spread)
 slowPathOp(pow)

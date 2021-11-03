@@ -1,3 +1,34 @@
+2021-11-02  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [JSC] Add LLInt fast path for OpMod on x86_64
+        https://bugs.webkit.org/show_bug.cgi?id=232644
+
+        Reviewed by Saam Barati and Yusuke Suzuki.
+
+        This patch ports the x86_64 fast path for OpMod from baseline JIT to LLInt.
+
+        This is quite similar to OpDiv but the implementation avoids using binaryOpCustomStore
+        because OpMod is not a ProfiledBinaryOp.
+
+        Performance results appear negligible with all JIT tiers enabled;
+        relevant microbenchmarks with JIT off are as follows.
+
+                                                    Before                    After
+
+        int-or-other-mod-then-get-by-val      158.0136+-0.9338     ^     39.7698+-0.4394        ^ definitely 3.9732x faster
+        integer-modulo                         15.1972+-0.4197     ^      7.1461+-0.1530        ^ definitely 2.1266x faster
+        mod-boolean                           145.4011+-2.0483     ?    146.1243+-1.6816        ?
+        mod-boolean-double                    145.6148+-1.8530     ?    145.9380+-1.7073        ?
+        mod-untyped                           286.9585+-3.9535          284.0360+-4.1221          might be 1.0103x faster
+        negative-zero-modulo                    1.2951+-0.1275     ^      1.0220+-0.0412        ^ definitely 1.2672x faster
+
+        <geometric>                            51.5408+-0.8164     ^     34.7341+-0.3365        ^ definitely 1.4839x faster
+
+        * jit/GPRInfo.h: Add assertions.
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+
 2021-11-02  Don Olmstead  <don.olmstead@sony.com>
 
         Non-unified build fixes early November 2021 edition

@@ -1230,14 +1230,13 @@ if X86_64 or X86_64_WIN
         macro (lhs, rhs, slow, index)
             # Assume t3 is scratchable.
             btiz rhs, slow
-            bineq rhs, -1, .notNeg2TwoThe31DivByNeg1
+            bineq rhs, -1, .notNeg2ToThe31DivByNeg1
             bieq lhs, -2147483648, slow
-        .notNeg2TwoThe31DivByNeg1:
+        .notNeg2ToThe31DivByNeg1:
             btinz lhs, .intOK
             bilt rhs, 0, slow
         .intOK:
             move rhs, t3
-            move lhs, t0
             cdqi
             idivi t3
             btinz t1, slow
@@ -1284,6 +1283,39 @@ binaryOp(sub, OpSub,
     macro (lhs, rhs, slow) bsubio rhs, lhs, slow end,
     macro (lhs, rhs) subd rhs, lhs end)
 
+if X86_64 or X86_64_WIN
+    llintOpWithReturn(op_mod, OpMod, macro (size, get, dispatch, return)
+        get(m_rhs, t0)
+        get(m_lhs, t2)
+        loadConstantOrVariableInt32(size, t0, t1, .slow)
+        loadConstantOrVariableInt32(size, t2, t0, .slow)
+
+        # Assume t3 is scratchable.
+        # r1 is always edx (even on Windows).
+        btiz t1, .slow
+        bineq t1, -1, .notNeg2ToThe31ModByNeg1
+        bieq t0, -2147483648, .slow
+    .notNeg2ToThe31ModByNeg1:
+        move t1, t3
+        bilt t0, 0, .needsNegZeroCheck
+        cdqi
+        idivi t3
+        orq numberTag, r1
+        return(r1)
+    .needsNegZeroCheck:
+        cdqi
+        idivi t3
+        btiz r1, .slow
+        orq numberTag, r1
+        return(r1)
+
+    .slow:
+        callSlowPath(_slow_path_mod)
+        dispatch()
+    end)
+else
+    slowPathOp(mod)
+end
 
 llintOpWithReturn(op_unsigned, OpUnsigned, macro (size, get, dispatch, return)
     get(m_operand, t1)
