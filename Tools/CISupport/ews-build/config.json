@@ -83,6 +83,9 @@
     { "name": "ews180", "platform": "mac-bigsur" },
     { "name": "ews181", "platform": "mac-catalina" },
     { "name": "ews182", "platform": "mac-catalina" },
+    { "name": "ews183", "platform": "*" },
+    { "name": "ews184", "platform": "ios-simulator-15" },
+    { "name": "ews185", "platform": "ios-simulator-15" },
     { "name": "ews210", "platform": "win" },
     { "name": "ews211", "platform": "win" },
     { "name": "ews212", "platform": "win" },
@@ -135,7 +138,7 @@
       "factory": "iOSTestsFactory", "platform": "ios-simulator-15",
       "configuration": "release", "architectures": ["x86_64"],
       "triggered_by": ["ios-15-sim-build-ews"],
-      "workernames": ["ews121", "ews122", "ews123", "ews124", "ews125", "ews126"]
+      "workernames": ["ews121", "ews122", "ews123", "ews124", "ews125", "ews126", "ews184", "ews185"]
     },
     {
       "name": "macOS-AppleSilicon-Big-Sur-Debug-Build-EWS", "shortname": "mac-AS-debug", "icon": "buildOnly",
@@ -295,7 +298,7 @@
       "name": "API-Tests-iOS-Simulator-EWS", "shortname": "api-ios", "icon": "testOnly",
       "factory": "APITestsFactory", "platform": "*",
       "triggered_by": ["ios-15-sim-build-ews"],
-      "workernames": ["ews156", "ews157", "ews158", "ews159"]
+      "workernames": ["ews156", "ews157", "ews158", "ews159", "ews183"]
     },
     {
       "name": "API-Tests-macOS-EWS", "shortname": "api-mac", "icon": "testOnly",

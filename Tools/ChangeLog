@@ -1,3 +1,12 @@
+2021-11-03  Ryan Haddad  <ryanhaddad@apple.com>
+
+        [EWS] Add more bots to iOS layout and API test queues
+        https://bugs.webkit.org/show_bug.cgi?id=232678
+
+        Reviewed by Aakash Jain.
+
+        * CISupport/ews-build/config.json:
+
 2021-11-03  Simon Fraser  <simon.fraser@apple.com>
 
         Expose fuzzy match data in layout test results
