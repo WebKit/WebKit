@@ -34,8 +34,9 @@
 [
     Conditional=NOTIFICATIONS,
     ActiveDOMObject,
+    EnabledBySetting=NotificationsEnabled,
     ExportMacro=WEBCORE_EXPORT,
-    Exposed=Window
+    Exposed=Window,
 ] interface Notification : EventTarget {
     [CallWith=Document] constructor(DOMString title, optional NotificationOptions options);
 

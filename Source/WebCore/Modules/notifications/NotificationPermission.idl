@@ -25,6 +25,7 @@
 
 [
     Conditional=NOTIFICATIONS,
+    EnabledBySetting=NotificationsEnabled,
 ] enum NotificationPermission {
     "default",
     "denied",
