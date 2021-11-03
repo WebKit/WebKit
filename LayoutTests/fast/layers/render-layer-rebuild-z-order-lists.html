@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+* { z-index: -1; }
+html { position: sticky; }
+</style>
+<script>
+  onload = () => {
+    diag = document.getElementById('diag0');
+    diag.showModal(); 
+    if (window.testRunner)
+        testRunner.dumpAsText();
+  }
+</script>
+</head>
+<body>
+<dialog id="diag0">
+PASS if this doesn't crash
+</dialog>
+</body>
+</html>

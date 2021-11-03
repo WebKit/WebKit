@@ -794,10 +794,14 @@ void RenderLayer::rebuildZOrderLists(std::unique_ptr<Vector<RenderLayer*>>& posZ
             auto backdropRenderer = renderer->backdropRenderer();
             if (backdropRenderer && backdropRenderer->hasLayer()) {
                 RenderLayer* layer = backdropRenderer->layer();
+                if (!posZOrderList)
+                    posZOrderList = makeUnique<Vector<RenderLayer*>>();
                 posZOrderList->append(layer);
             }
             if (renderer->hasLayer()) {
                 RenderLayer* layer = downcast<RenderLayerModelObject>(*renderer).layer();
+                if (!posZOrderList)
+                    posZOrderList = makeUnique<Vector<RenderLayer*>>();
                 posZOrderList->append(layer);
             }
         }

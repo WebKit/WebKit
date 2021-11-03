@@ -3643,6 +3643,9 @@ webkit.org/b/162415 imported/w3c/web-platform-tests/html/syntax [ Skip ]
 # Only Mac has implemented DictionaryLookup
 fast/layers/prevent-hit-test-during-layout.html [ Skip ]
 
+# Dialog showModal is disabled on Windows
+fast/layers/render-layer-rebuild-z-order-lists.html [ Skip ]
+
 # webrtc not supported
 imported/w3c/web-platform-tests/webrtc [ Skip ]
 webrtc [ Skip ]
