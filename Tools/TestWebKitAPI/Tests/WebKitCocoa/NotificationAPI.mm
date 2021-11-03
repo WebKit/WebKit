@@ -25,7 +25,7 @@
 
 #import "config.h"
 
-#if ENABLE(NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS) && !PLATFORM(IOS)
 #import "PlatformUtilities.h"
 #import "TestWKWebView.h"
 #import <WebKit/WKUIDelegatePrivate.h>
@@ -170,4 +170,4 @@ TEST(Notification, ParallelPermissionRequestsGranted)
 
 } // namespace TestWebKitAPI
 
-#endif // ENABLE(NOTIFICATIONS)
+#endif // ENABLE(NOTIFICATIONS) && !PLATFORM(IOS)
