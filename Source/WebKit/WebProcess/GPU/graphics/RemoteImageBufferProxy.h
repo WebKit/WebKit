@@ -208,8 +208,7 @@ protected:
             return std::nullopt;
         size_t dataSize = pixelBuffer->data().byteLength();
 
-        IPC::Timeout timeout = 5_s;
-        SharedMemory* sharedMemory = m_remoteRenderingBackendProxy->sharedMemoryForGetPixelBuffer(dataSize, timeout);
+        SharedMemory* sharedMemory = m_remoteRenderingBackendProxy->sharedMemoryForGetPixelBuffer(dataSize);
         if (!sharedMemory)
             return std::nullopt;
 
@@ -217,7 +216,7 @@ protected:
         mutableThis.m_remoteDisplayList.getPixelBuffer(destinationFormat, srcRect);
         mutableThis.flushDrawingContextAsync();
 
-        if (m_remoteRenderingBackendProxy->waitForGetPixelBufferToComplete(timeout))
+        if (m_remoteRenderingBackendProxy->waitForGetPixelBufferToComplete())
             memcpy(pixelBuffer->data().data(), sharedMemory->data(), dataSize);
         else
             memset(pixelBuffer->data().data(), 0, dataSize);

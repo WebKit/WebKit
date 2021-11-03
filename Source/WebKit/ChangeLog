@@ -1,3 +1,48 @@
+2021-11-03  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [GPU Process] Rendering backend may stop processing IPC stream messages after a sync message timeout
+        https://bugs.webkit.org/show_bug.cgi?id=232580
+
+        Reviewed by Tim Horton.
+
+        Currently, it's possible for sync IPC messages that are sent through IPC streams to time out and subsequently
+        cause the IPC stream server (e.g. RemoteRenderingBackend) to stop processing IPC stream messages altogether. The
+        following example illustrates how this might happen:
+
+        1.      Web process sends the sync message at offset `n` (relative to the start of the ring buffer).
+                Web process then begins to wait for the sync stream response under `tryAcquireAll()`.
+
+        2.      GPU process receives the sync message, and takes a while (> 1 sec.) attempting to dispatch it.
+
+        3.      Meanwhile in the web process, we hit the IPC timeout and bail from `tryAcquireAll()`. The client offset
+                is still at `n`. Shortly afterwards, the web process tries to send a regular stream message, calling
+                `tryAcquire()` and waiting for the client semaphore to be signaled.
+
+        4.      The GPU process finally finishes dispatching the sync message from (2), sends a sync reply (unaware that
+                the web process has already given up waiting), and finally calls `releaseAll()`, signaling the client
+                semaphore. The server offset is then reset back to 0.
+
+        5.      The web process finishes waiting, returns from `tryAcquire()`, proceeds to write the new stream
+                message after offset `n`, and wakes up the GPU process with the intention of handling this message.
+
+        6.      The GPU process wakes up and begins reading from offset 0. The first message it encounters is the
+                `SyncMessageReply` it just wrote in step (4), and subsequently bails from the processing loop because it
+                isn't capable of dispatching this message (which was meant to be consumed in the web process in the
+                first place).
+
+        In summary, the sync IPC timeout causes us to enter a state where the web process continues to encode messages
+        at the buffer offset prior to timeout (i.e. offset `n`), while the GPU process is reading from the start of the
+        buffer (offset `0`). To avoid this, simply replace the timeouts when synchronously grabbing image data from the
+        GPU process. This ensures that we're never in a state where we're continuing to send stream messages to a
+        rendering backend connection stream after timing out when waiting for a previous sync message to that stream to
+        finish.
+
+        * WebProcess/GPU/graphics/RemoteImageBufferProxy.h:
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.cpp:
+        (WebKit::RemoteRenderingBackendProxy::sharedMemoryForGetPixelBuffer):
+        (WebKit::RemoteRenderingBackendProxy::waitForGetPixelBufferToComplete):
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.h:
+
 2021-11-03  Tim Horton  <timothy_horton@apple.com>
 
         Fix the build.

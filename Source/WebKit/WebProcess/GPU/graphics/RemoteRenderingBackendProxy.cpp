@@ -155,7 +155,7 @@ RefPtr<ImageBuffer> RemoteRenderingBackendProxy::createImageBuffer(const FloatSi
     return nullptr;
 }
 
-SharedMemory* RemoteRenderingBackendProxy::sharedMemoryForGetPixelBuffer(size_t dataSize, IPC::Timeout timeout)
+SharedMemory* RemoteRenderingBackendProxy::sharedMemoryForGetPixelBuffer(size_t dataSize)
 {
     bool needsSharedMemory = !m_getPixelBufferSharedMemory || dataSize > m_getPixelBufferSharedMemoryLength;
     bool needsSemaphore = !m_getPixelBufferSemaphore;
@@ -167,11 +167,11 @@ SharedMemory* RemoteRenderingBackendProxy::sharedMemoryForGetPixelBuffer(size_t 
     IPC::Semaphore semaphore;
 
     if (needsSharedMemory && needsSemaphore)
-        sendSyncToStream(Messages::RemoteRenderingBackend::UpdateSharedMemoryAndSemaphoreForGetPixelBuffer(dataSize), Messages::RemoteRenderingBackend::UpdateSharedMemoryAndSemaphoreForGetPixelBuffer::Reply(handle, semaphore), timeout);
+        sendSyncToStream(Messages::RemoteRenderingBackend::UpdateSharedMemoryAndSemaphoreForGetPixelBuffer(dataSize), Messages::RemoteRenderingBackend::UpdateSharedMemoryAndSemaphoreForGetPixelBuffer::Reply(handle, semaphore));
     else if (needsSharedMemory)
-        sendSyncToStream(Messages::RemoteRenderingBackend::UpdateSharedMemoryForGetPixelBuffer(dataSize), Messages::RemoteRenderingBackend::UpdateSharedMemoryForGetPixelBuffer::Reply(handle), timeout);
+        sendSyncToStream(Messages::RemoteRenderingBackend::UpdateSharedMemoryForGetPixelBuffer(dataSize), Messages::RemoteRenderingBackend::UpdateSharedMemoryForGetPixelBuffer::Reply(handle));
     else if (needsSemaphore)
-        sendSyncToStream(Messages::RemoteRenderingBackend::SemaphoreForGetPixelBuffer(), Messages::RemoteRenderingBackend::SemaphoreForGetPixelBuffer::Reply(semaphore), timeout);
+        sendSyncToStream(Messages::RemoteRenderingBackend::SemaphoreForGetPixelBuffer(), Messages::RemoteRenderingBackend::SemaphoreForGetPixelBuffer::Reply(semaphore));
 
     if (!handle.handle.isNull()) {
         m_getPixelBufferSharedMemory = SharedMemory::map(handle.handle, SharedMemory::Protection::ReadOnly);
@@ -187,10 +187,10 @@ SharedMemory* RemoteRenderingBackendProxy::sharedMemoryForGetPixelBuffer(size_t 
     return m_getPixelBufferSharedMemory.get();
 }
 
-bool RemoteRenderingBackendProxy::waitForGetPixelBufferToComplete(IPC::Timeout timeout)
+bool RemoteRenderingBackendProxy::waitForGetPixelBufferToComplete()
 {
     ASSERT(m_getPixelBufferSemaphore);
-    return m_getPixelBufferSemaphore->waitFor(timeout);
+    return m_getPixelBufferSemaphore->wait();
 }
 
 void RemoteRenderingBackendProxy::destroyGetPixelBufferSharedMemory()
@@ -202,21 +202,21 @@ void RemoteRenderingBackendProxy::destroyGetPixelBufferSharedMemory()
 String RemoteRenderingBackendProxy::getDataURLForImageBuffer(const String& mimeType, std::optional<double> quality, PreserveResolution preserveResolution, RenderingResourceIdentifier renderingResourceIdentifier)
 {
     String urlString;
-    sendSyncToStream(Messages::RemoteRenderingBackend::GetDataURLForImageBuffer(mimeType, quality, preserveResolution, renderingResourceIdentifier), Messages::RemoteRenderingBackend::GetDataURLForImageBuffer::Reply(urlString), 1_s);
+    sendSyncToStream(Messages::RemoteRenderingBackend::GetDataURLForImageBuffer(mimeType, quality, preserveResolution, renderingResourceIdentifier), Messages::RemoteRenderingBackend::GetDataURLForImageBuffer::Reply(urlString));
     return urlString;
 }
 
 Vector<uint8_t> RemoteRenderingBackendProxy::getDataForImageBuffer(const String& mimeType, std::optional<double> quality, RenderingResourceIdentifier renderingResourceIdentifier)
 {
     Vector<uint8_t> data;
-    sendSyncToStream(Messages::RemoteRenderingBackend::GetDataForImageBuffer(mimeType, quality, renderingResourceIdentifier), Messages::RemoteRenderingBackend::GetDataForImageBuffer::Reply(data), 1_s);
+    sendSyncToStream(Messages::RemoteRenderingBackend::GetDataForImageBuffer(mimeType, quality, renderingResourceIdentifier), Messages::RemoteRenderingBackend::GetDataForImageBuffer::Reply(data));
     return data;
 }
 
 RefPtr<ShareableBitmap> RemoteRenderingBackendProxy::getShareableBitmap(RenderingResourceIdentifier imageBuffer, PreserveResolution preserveResolution)
 {
     ShareableBitmap::Handle handle;
-    auto sendResult = sendSyncToStream(Messages::RemoteRenderingBackend::GetShareableBitmapForImageBuffer(imageBuffer, preserveResolution), Messages::RemoteRenderingBackend::GetShareableBitmapForImageBuffer::Reply(handle), 1_s);
+    auto sendResult = sendSyncToStream(Messages::RemoteRenderingBackend::GetShareableBitmapForImageBuffer(imageBuffer, preserveResolution), Messages::RemoteRenderingBackend::GetShareableBitmapForImageBuffer::Reply(handle));
     if (handle.isNull())
         return { };
     ASSERT_UNUSED(sendResult, sendResult);

@@ -74,8 +74,8 @@ public:
 
     RemoteResourceCacheProxy& remoteResourceCacheProxy() { return m_remoteResourceCacheProxy; }
 
-    SharedMemory* sharedMemoryForGetPixelBuffer(size_t dataSize, IPC::Timeout);
-    bool waitForGetPixelBufferToComplete(IPC::Timeout);
+    SharedMemory* sharedMemoryForGetPixelBuffer(size_t dataSize);
+    bool waitForGetPixelBufferToComplete();
     void destroyGetPixelBufferSharedMemory();
 
     void createRemoteImageBuffer(WebCore::ImageBuffer&);
@@ -140,7 +140,7 @@ private:
     IPC::StreamClientConnection& streamConnection();
 
     template<typename T>
-    auto sendSyncToStream(T&& message, typename T::Reply&& reply, IPC::Timeout timeout)
+    auto sendSyncToStream(T&& message, typename T::Reply&& reply, IPC::Timeout timeout = { Seconds::infinity() })
     {
         return streamConnection().sendSync(WTFMove(message), WTFMove(reply), renderingBackendIdentifier(), timeout);
     }
