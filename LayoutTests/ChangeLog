@@ -1,3 +1,20 @@
+2021-11-03  Jer Noble  <jer.noble@apple.com>
+
+        [iOS] AVAssetResourceLoadingRequest.request does not include a Range: header on iOS 15.
+        https://bugs.webkit.org/show_bug.cgi?id=232195
+        <rdar://84574375>
+
+        Reviewed by Darin Adler.
+
+        The existing media-blocked-by-willsendrequest.html test only verified that file:// URLs were blocked,
+        not http://, so this test is moved to the http/tests/ directory where media will use http:// for loading.
+
+        * http/tests/media/media-blocked-by-willsendrequest-expected.txt: Renamed from LayoutTests/media/media-blocked-by-willsendrequest-expected.txt.
+        * http/tests/media/media-blocked-by-willsendrequest.html: Renamed from LayoutTests/media/media-blocked-by-willsendrequest.html.
+        * platform/mac/media/video-blob-request-contains-range-header.html:
+        * platform/mac/media/video-blob-request-contains-range-header-expected.txt: Added.
+        * platform/mac/media/video-blob-request-contains-range-header.html: Added.
+
 2021-11-03  Tim Nguyen  <ntim@apple.com>
 
         Make render-layer-rebuild-z-order-lists.html use an HTML reference

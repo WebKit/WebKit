@@ -290,8 +290,7 @@ void WebCoreAVFResourceLoader::startLoading()
     request.setPriority(ResourceLoadPriority::Low);
 
     if (AVAssetResourceLoadingDataRequest *dataRequest = [m_avRequest dataRequest]; dataRequest.requestedLength
-        && !request.hasHTTPHeaderField(HTTPHeaderName::Range)
-        && !request.url().protocolIsBlob()) {
+        && !request.hasHTTPHeaderField(HTTPHeaderName::Range)) {
         String rangeEnd = dataRequest.requestsAllDataToEndOfResource ? "*"_s : makeString(dataRequest.requestedOffset + dataRequest.requestedLength - 1);
         request.addHTTPHeaderField(HTTPHeaderName::Range, makeString("bytes=", dataRequest.requestedOffset, '-', rangeEnd));
     }

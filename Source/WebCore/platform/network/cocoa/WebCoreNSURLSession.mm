@@ -747,8 +747,13 @@ void WebCoreNSURLSessionDataTaskClient::loadFinished(PlatformMediaResource& reso
         return;
 
     _resource = self.session.loader.requestResource(self.originalRequest, PlatformMediaResourceLoader::LoadOption::DisallowCaching);
-    if (_resource)
+    if (_resource) {
         _resource->setClient(adoptRef(*new WebCoreNSURLSessionDataTaskClient(self)));
+        return;
+    }
+
+    // A nil return from requestResource means the load was cancelled by a delegate client
+    [self _resource:nil loadFinishedWithError:ResourceError(ResourceError::Type::Cancellation) metrics:{ }];
 }
 
 - (void)_cancel

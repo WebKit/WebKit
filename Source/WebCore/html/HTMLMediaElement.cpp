@@ -1472,10 +1472,12 @@ void HTMLMediaElement::loadResource(const URL& initialURL, ContentType& contentT
     }
 
     URL url = initialURL;
-    if (!url.isEmpty() && !frame->loader().willLoadMediaElementURL(url, *this)) {
+#if PLATFORM(COCOA)
+    if (url.isLocalFile() && !frame->loader().willLoadMediaElementURL(url, *this)) {
         mediaLoadingFailed(MediaPlayer::NetworkState::FormatError);
         return;
     }
+#endif
 
 #if ENABLE(CONTENT_EXTENSIONS)
     if (RefPtr documentLoader = frame->loader().documentLoader()) {
