@@ -1156,6 +1156,9 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalCont
         case CSSSelector::PseudoElementSlotted: {
             if (!context.element->assignedSlot())
                 return false;
+            // ::slotted matches after flattening so it can't match an active <slot>.
+            if (is<HTMLSlotElement>(*context.element) && context.element->containingShadowRoot())
+                return false;
             auto* subselector = context.selector->selectorList()->first();
             LocalContext subcontext(context);
             subcontext.selector = subselector;

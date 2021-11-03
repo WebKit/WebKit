@@ -1,3 +1,12 @@
+2021-11-03  Antti Koivisto  <antti@apple.com>
+
+        ::slotted shouldn't match an active <slot>
+        https://bugs.webkit.org/show_bug.cgi?id=232664
+
+        Reviewed by Simon Fraser.
+
+        * web-platform-tests/css/css-scoping/slotted-slot-expected.txt:
+
 2021-11-01  Michael[tm] Smith  <mike@w3.org>
 
         [WebInspector][CORS] Show HTTP status code in CORS messages.
