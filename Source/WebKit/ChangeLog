@@ -1,3 +1,21 @@
+2021-11-03  Tyler Wilcock  <tyler_w@apple.com>
+
+        AX: WKAccessibilityWebPageObjectMac.mm should expose accessibilityChildrenInNavigationOrder and NSAccessibilityChildrenInNavigationOrderAttribute
+        https://bugs.webkit.org/show_bug.cgi?id=232654
+
+        Reviewed by Chris Fleizach.
+
+        Some clients expect accessibilityChildrenInNavigationOrder and 
+        NSAccessibilityChildrenInNavigationOrderAttribute to be available,
+        and WKAccessibilityWebPageObjectMac didn't expose them.
+
+        * WebProcess/WebPage/mac/WKAccessibilityWebPageObjectMac.mm:
+        (-[WKAccessibilityWebPageObject accessibilityChildrenInNavigationOrder]): Added.
+        (-[WKAccessibilityWebPageObject accessibilityAttributeValue:]):
+        Handle NSAccessibilityChildrenInNavigationOrderAttribute.
+        (-[WKAccessibilityWebPageObject accessibilityAttributeNames:]):
+        Add NSAccessibilityChildrenInNavigationOrderAttribute.
+
 2021-11-03  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [GPU Process] Rendering backend may stop processing IPC stream messages after a sync message timeout
