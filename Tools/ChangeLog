@@ -1,3 +1,28 @@
+2021-11-02  Tim Horton  <timothy_horton@apple.com>
+
+        UnicodeDecodeError in write_reftest copying a non-UTF8 expected result file
+        https://bugs.webkit.org/show_bug.cgi?id=232643
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Scripts/webkitpy/layout_tests/controllers/test_result_writer.py:
+        (TestResultWriter.write_reftest):
+        If a reftest's -expected.html file is not valid UTF-8, and the test fails,
+        when we copy the expected file from the layout tests directory to the
+        test results directory, we attempt to parse it as UTF-8, resulting in
+        an exception being thrown.
+
+        Instead of needlessly reading in the file as a string and immediately
+        writing it back out, just copy the file...
+
+        I'm not sure there are any not-valid-UTF-8 *ref* tests in the tree, but
+        there is at least one not-valid-UTF-8 *text* test, which can be run
+        as a ref-test in some scenarios (see r285132), in which case this problem
+        occurs: fast/css/line-height-determined-by-primary-font.html.
+
+        Also, explicitly ensure the output directory exists before copying
+        to avoid regressing r122505. Previously this was done inside _write_text_file.
+
 2021-11-02  Per Arne  <pvollan@apple.com>
 
         REGRESSION (r268421): TestWebKitAPI.WebKit.PreferenceChanges* tests are flaky failures

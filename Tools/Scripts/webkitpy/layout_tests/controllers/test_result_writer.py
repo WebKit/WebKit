@@ -205,4 +205,5 @@ class TestResultWriter(object):
         fs = self._filesystem
         dst_dir = fs.dirname(fs.join(self._root_output_dir, self._test_name))
         dst_filepath = fs.join(dst_dir, fs.basename(src_filepath))
-        self._write_text_file(dst_filepath, fs.read_text_file(src_filepath))
+        self._make_output_directory()
+        fs.copyfile(src_filepath, dst_filepath)
