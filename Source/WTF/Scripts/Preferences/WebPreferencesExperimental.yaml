@@ -780,9 +780,9 @@ MediaSessionPlaylistEnabled:
     WebKitLegacy:
       default: false
     WebKit:
-      default: false
+      default: WebKit::defaultMediaSessionCoordinatorEnabled()
     WebCore:
-      default: false
+      default: true
 
 ModelElementEnabled:
   type: bool
