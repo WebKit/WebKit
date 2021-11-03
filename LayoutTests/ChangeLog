@@ -1,3 +1,14 @@
+2021-11-03  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
+
+        REGRESSION(r284603) [GTK][WPE] test fast/frames/flattening/scrolling-in-object.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=232627
+
+        Use UIHelper.waitForTargetScrollAnimationToSettle rather than a timeout to make the test reliable.
+
+        Reviewed by Martin Robinson.
+
+        * fast/frames/flattening/scrolling-in-object.html:
+
 2021-11-02  Gabriel Nava Marino  <gnavamarino@apple.com>
 
         Crash in RenderLayer::rebuildZOrderLists
