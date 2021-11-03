@@ -92,6 +92,10 @@ private:
 
     bool hasDetachedChannelBuffer() const;
 
+    // We do not currently support having the Float32Arrays in m_channels being more than 2GB,
+    // and we have tests that we return an error promptly on trying to create such a huge AudioBuffer.
+    static constexpr uint64_t s_maxLength = (1ull << 32) / sizeof(float);
+
     float m_sampleRate;
     mutable Lock m_channelsLock;
     size_t m_originalLength;

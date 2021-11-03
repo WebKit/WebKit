@@ -86,6 +86,11 @@ AudioBuffer::AudioBuffer(unsigned numberOfChannels, size_t length, float sampleR
     , m_originalLength(length)
     , m_isDetachable(preventDetaching == LegacyPreventDetaching::No)
 {
+    if (static_cast<uint64_t>(m_originalLength) > s_maxLength) {
+        invalidate();
+        return;
+    }
+
     m_channels.reserveCapacity(numberOfChannels);
 
     for (unsigned i = 0; i < numberOfChannels; ++i) {
@@ -107,6 +112,11 @@ AudioBuffer::AudioBuffer(AudioBus& bus)
     : m_sampleRate(bus.sampleRate())
     , m_originalLength(bus.length())
 {
+    if (static_cast<uint64_t>(m_originalLength) > s_maxLength) {
+        invalidate();
+        return;
+    }
+
     // Copy audio data from the bus to the Float32Arrays we manage.
     unsigned numberOfChannels = bus.numberOfChannels();
     m_channels.reserveCapacity(numberOfChannels);
