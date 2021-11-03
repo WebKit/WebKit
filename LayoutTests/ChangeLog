@@ -1,3 +1,22 @@
+2021-11-03  Chris Dumez  <cdumez@apple.com>
+
+        Javascript URLs do not run in the right context when using frame targeting
+        https://bugs.webkit.org/show_bug.cgi?id=232382
+
+        Reviewed by Alex Christensen.
+
+        Add layout test coverage. I have verified that these tests are passing in both
+        Chrome 94 and Firefox 94.
+
+        * fast/frames/javascript-url-anchor-target-expected.txt: Added.
+        * fast/frames/javascript-url-anchor-target-new-window-expected.txt: Added.
+        * fast/frames/javascript-url-anchor-target-new-window.html: Added.
+        * fast/frames/javascript-url-anchor-target.html: Added.
+        * fast/frames/javascript-url-form-target-expected.txt: Added.
+        * fast/frames/javascript-url-form-target-new-window-expected.txt: Added.
+        * fast/frames/javascript-url-form-target-new-window.html: Added.
+        * fast/frames/javascript-url-form-target.html: Added.
+
 2021-11-03  Simon Fraser  <simon.fraser@apple.com>
 
         Expose fuzzy match data in layout test results

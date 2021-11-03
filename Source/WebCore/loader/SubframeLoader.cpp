@@ -223,6 +223,10 @@ bool FrameLoader::SubframeLoader::requestObject(HTMLPlugInImageElement& ownerEle
 
     document.contentSecurityPolicy()->upgradeInsecureRequestIfNeeded(completedURL, ContentSecurityPolicy::InsecureRequestType::Load);
 
+    // Historically, we haven't run javascript URLs in <embed> / <object> elements.
+    if (completedURL.protocolIsJavaScript())
+        return false;
+
     bool hasFallbackContent = is<HTMLObjectElement>(ownerElement) && downcast<HTMLObjectElement>(ownerElement).hasFallbackContent();
 
     bool useFallback;

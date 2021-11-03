@@ -1,3 +1,15 @@
+2021-11-03  Chris Dumez  <cdumez@apple.com>
+
+        Javascript URLs do not run in the right context when using frame targeting
+        https://bugs.webkit.org/show_bug.cgi?id=232382
+
+        Reviewed by Alex Christensen.
+
+        * web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/010-expected.txt:
+        The test is no longer timing out now that we run the javascript URL contained in the <form>'s action in the context
+        of the "test" iframe instead of the top frame. However, the test is still failing, possibly because the JavaScript
+        URL is run synchronously.
+
 2021-11-03  Antti Koivisto  <antti@apple.com>
 
         ::slotted element style not invalidated correctly in nested case

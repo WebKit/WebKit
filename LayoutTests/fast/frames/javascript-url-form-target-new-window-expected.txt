@@ -1,0 +1,10 @@
+Tests that javascript URL execute in the right context when set as action on a form with a target popup.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS contextName is "testPopup"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

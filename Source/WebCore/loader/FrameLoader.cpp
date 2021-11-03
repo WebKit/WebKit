@@ -446,12 +446,6 @@ void FrameLoader::changeLocation(FrameLoadRequest&& frameRequest, Event* trigger
 
     Ref<Frame> protect(m_frame);
 
-    if (frameRequest.resourceRequest().url().protocolIsJavaScript()) {
-        m_frame.script().executeJavaScriptURL(frameRequest.resourceRequest().url(), &frameRequest.requester().securityOrigin(), frameRequest.shouldReplaceDocumentIfJavaScriptURL());
-        m_quickRedirectComing = false;
-        return;
-    }
-
     if (frameRequest.frameName().isEmpty())
         frameRequest.setFrameName(m_frame.document()->baseTarget());
 
@@ -482,14 +476,6 @@ void FrameLoader::submitForm(Ref<FormSubmission>&& submission)
     URL formAction = submission->action();
     if (!m_frame.document()->contentSecurityPolicy()->allowFormAction(formAction))
         return;
-
-    if (formAction.protocolIsJavaScript()) {
-        m_isExecutingJavaScriptFormAction = true;
-        Ref<Frame> protect(m_frame);
-        m_frame.script().executeJavaScriptURL(submission->action(), nullptr, DoNotReplaceDocumentIfJavaScriptURL);
-        m_isExecutingJavaScriptFormAction = false;
-        return;
-    }
 
     Frame* targetFrame = findFrameForNavigation(submission->target(), &submission->state().sourceDocument());
     if (!targetFrame) {
@@ -1366,6 +1352,7 @@ void FrameLoader::loadURL(FrameLoadRequest&& frameLoadRequest, const String& ref
     NavigationAction action { frameLoadRequest.requester(), request, frameLoadRequest.initiatedByMainFrame(), newLoadType, isFormSubmission, event, frameLoadRequest.shouldOpenExternalURLsPolicy(), frameLoadRequest.downloadAttribute() };
     action.setLockHistory(frameLoadRequest.lockHistory());
     action.setLockBackForwardList(frameLoadRequest.lockBackForwardList());
+    action.setShouldReplaceDocumentIfJavaScriptURL(frameLoadRequest.shouldReplaceDocumentIfJavaScriptURL());
     if (privateClickMeasurement && m_frame.isMainFrame())
         action.setPrivateClickMeasurement(WTFMove(*privateClickMeasurement));
 
@@ -1495,6 +1482,12 @@ void FrameLoader::load(FrameLoadRequest&& request)
 void FrameLoader::loadWithNavigationAction(const ResourceRequest& request, NavigationAction&& action, FrameLoadType type, RefPtr<FormState>&& formState, AllowNavigationToInvalidURL allowNavigationToInvalidURL, CompletionHandler<void()>&& completionHandler)
 {
     FRAMELOADER_RELEASE_LOG(ResourceLoading, "loadWithNavigationAction: frame load started");
+
+    if (request.url().protocolIsJavaScript()) {
+        m_frame.script().executeJavaScriptURL(request.url(), action.requester() ? action.requester()->securityOrigin.ptr() : nullptr, action.shouldReplaceDocumentIfJavaScriptURL());
+        m_quickRedirectComing = false;
+        return completionHandler();
+    }
 
     Ref<DocumentLoader> loader = m_client->createDocumentLoader(request, defaultSubstituteDataForURL(request.url()));
     applyShouldOpenExternalURLsPolicyToNewDocumentLoader(m_frame, loader, action.initiatedByMainFrame(), action.shouldOpenExternalURLsPolicy());
@@ -3072,6 +3065,7 @@ void FrameLoader::loadPostRequest(FrameLoadRequest&& request, const String& refe
 
     NavigationAction action { request.requester(), workingResourceRequest, request.initiatedByMainFrame(), loadType, true, event, request.shouldOpenExternalURLsPolicy(), { } };
     action.setLockHistory(lockHistory);
+    action.setShouldReplaceDocumentIfJavaScriptURL(request.shouldReplaceDocumentIfJavaScriptURL());
 
     if (!frameName.isEmpty()) {
         // The search for a target frame is done earlier in the case of form submission.
@@ -3566,6 +3560,10 @@ void FrameLoader::continueLoadAfterNewWindowPolicy(const ResourceRequest& reques
         return;
 
     Ref<Frame> frame(m_frame);
+
+    if (request.url().protocolIsJavaScript() && !frame->document()->contentSecurityPolicy()->allowJavaScriptURLs(frame->document()->url().string(), { }, request.url().string()))
+        return;
+
     RefPtr<Frame> mainFrame = m_client->dispatchCreatePage(action, openerPolicy);
     if (!mainFrame)
         return;
@@ -3585,6 +3583,7 @@ void FrameLoader::continueLoadAfterNewWindowPolicy(const ResourceRequest& reques
     }
 
     NavigationAction newAction { *frame->document(), request, InitiatedByMainFrame::Unknown, NavigationType::Other, action.shouldOpenExternalURLsPolicy(), nullptr, action.downloadAttribute() };
+    newAction.setShouldReplaceDocumentIfJavaScriptURL(action.shouldReplaceDocumentIfJavaScriptURL());
     mainFrame->loader().loadWithNavigationAction(request, WTFMove(newAction), FrameLoadType::Standard, formState, allowNavigationToInvalidURL);
 }
 

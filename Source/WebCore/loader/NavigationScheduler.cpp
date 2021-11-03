@@ -318,6 +318,7 @@ public:
         frameLoadRequest.setReferrerPolicy(m_submission->referrerPolicy());
         frameLoadRequest.setNewFrameOpenerPolicy(m_submission->newFrameOpenerPolicy());
         frameLoadRequest.setShouldOpenExternalURLsPolicy(shouldOpenExternalURLs());
+        frameLoadRequest.disableShouldReplaceDocumentIfJavaScriptURL();
         m_submission->populateFrameLoadRequest(frameLoadRequest);
         frame.loader().loadFrameRequest(WTFMove(frameLoadRequest), m_submission->event(), m_submission->takeState());
     }
@@ -505,8 +506,18 @@ void NavigationScheduler::scheduleFormSubmission(Ref<FormSubmission>&& submissio
         && (submission->state().formSubmissionTrigger() == SubmittedByJavaScript && m_frame.tree().parent() && !UserGestureIndicator::processingUserGesture())) {
         lockBackForwardList = LockBackForwardList::Yes;
     }
+
+    bool isJavaScriptURL = submission->requestURL().protocolIsJavaScript();
+
+    auto scheduledFormSubmission = makeUnique<ScheduledFormSubmission>(WTFMove(submission), lockBackForwardList, duringLoad);
+
+    // FIXME: We currently run JavaScript URLs synchronously even though this doesn't appear to match the specification.
+    if (isJavaScriptURL) {
+        scheduledFormSubmission->fire(m_frame);
+        return;
+    }
     
-    schedule(makeUnique<ScheduledFormSubmission>(WTFMove(submission), lockBackForwardList, duringLoad));
+    schedule(WTFMove(scheduledFormSubmission));
 }
 
 void NavigationScheduler::scheduleRefresh(Document& initiatingDocument)

@@ -246,7 +246,8 @@ URL FormSubmission::requestURL() const
         return m_action;
 
     URL requestURL(m_action);
-    requestURL.setQuery(m_formData->flattenToString());
+    if (!requestURL.protocolIsJavaScript())
+        requestURL.setQuery(m_formData->flattenToString());
     return requestURL;
 }
 
