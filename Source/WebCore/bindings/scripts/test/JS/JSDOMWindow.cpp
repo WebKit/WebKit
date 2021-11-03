@@ -30,6 +30,7 @@
 #include "JSDOMGlobalObjectInlines.h"
 #include "JSDOMWindow.h"
 #include "JSDOMWrapperCache.h"
+#include "JSExposedStar.h"
 #include "JSExposedToWorkerAndWindow.h"
 #include "JSTestConditionalIncludes.h"
 #include "JSTestConditionallyReadWrite.h"
@@ -64,6 +65,7 @@ using namespace JSC;
 
 static JSC_DECLARE_CUSTOM_GETTER(jsDOMWindowConstructor);
 static JSC_DECLARE_CUSTOM_GETTER(jsDOMWindow_DOMWindowConstructor);
+static JSC_DECLARE_CUSTOM_GETTER(jsDOMWindow_ExposedStarConstructor);
 static JSC_DECLARE_CUSTOM_GETTER(jsDOMWindow_ExposedToWorkerAndWindowConstructor);
 static JSC_DECLARE_CUSTOM_GETTER(jsDOMWindow_TestConditionalIncludesConstructor);
 static JSC_DECLARE_CUSTOM_GETTER(jsDOMWindow_TestConditionallyReadWriteConstructor);
@@ -84,7 +86,7 @@ using JSDOMWindowDOMConstructor = JSDOMConstructorNotConstructable<JSDOMWindow>;
 
 static const struct CompactHashIndex JSDOMWindowTableIndex[37] = {
     { -1, -1 },
-    { 5, 35 },
+    { 6, 35 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
@@ -97,35 +99,36 @@ static const struct CompactHashIndex JSDOMWindowTableIndex[37] = {
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
-    { 4, 33 },
+    { 5, 33 },
     { -1, -1 },
-    { 2, -1 },
-    { 1, 32 },
+    { 3, -1 },
+    { 2, 32 },
     { 0, -1 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
+    { 1, -1 },
     { -1, -1 },
-    { -1, -1 },
-    { 9, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { 3, 34 },
-    { 6, 36 },
-    { 7, -1 },
-    { 8, -1 },
     { 10, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 4, 34 },
+    { 7, 36 },
+    { 8, -1 },
+    { 9, -1 },
+    { 11, -1 },
 };
 
 
 static const HashTableValue JSDOMWindowTableValues[] =
 {
     { "DOMWindow", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsDOMWindow_DOMWindowConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
+    { "ExposedStar", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsDOMWindow_ExposedStarConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
     { "ExposedToWorkerAndWindow", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsDOMWindow_ExposedToWorkerAndWindowConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
     { "TestConditionalIncludes", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsDOMWindow_TestConditionalIncludesConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
     { "TestConditionallyReadWrite", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsDOMWindow_TestConditionallyReadWriteConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
@@ -142,7 +145,7 @@ static const HashTableValue JSDOMWindowTableValues[] =
     { "TestPromiseRejectionEvent", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsDOMWindow_TestPromiseRejectionEventConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
 };
 
-static const HashTable JSDOMWindowTable = { 11, 31, true, JSDOMWindow::info(), JSDOMWindowTableValues, JSDOMWindowTableIndex };
+static const HashTable JSDOMWindowTable = { 12, 31, true, JSDOMWindow::info(), JSDOMWindowTableValues, JSDOMWindowTableIndex };
 template<> const ClassInfo JSDOMWindowDOMConstructor::s_info = { "DOMWindow", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSDOMWindowDOMConstructor) };
 
 template<> JSValue JSDOMWindowDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
@@ -223,6 +226,17 @@ static inline JSValue jsDOMWindow_DOMWindowConstructorGetter(JSGlobalObject& lex
 JSC_DEFINE_CUSTOM_GETTER(jsDOMWindow_DOMWindowConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
 {
     return IDLAttribute<JSDOMWindow>::get<jsDOMWindow_DOMWindowConstructorGetter>(*lexicalGlobalObject, thisValue, attributeName);
+}
+
+static inline JSValue jsDOMWindow_ExposedStarConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSDOMWindow& thisObject)
+{
+    UNUSED_PARAM(lexicalGlobalObject);
+    return JSExposedStar::getConstructor(JSC::getVM(&lexicalGlobalObject), &thisObject);
+}
+
+JSC_DEFINE_CUSTOM_GETTER(jsDOMWindow_ExposedStarConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
+{
+    return IDLAttribute<JSDOMWindow>::get<jsDOMWindow_ExposedStarConstructorGetter>(*lexicalGlobalObject, thisValue, attributeName);
 }
 
 static inline JSValue jsDOMWindow_ExposedToWorkerAndWindowConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSDOMWindow& thisObject)

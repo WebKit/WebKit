@@ -488,12 +488,15 @@ sub ProcessDictionarySupplementalDependencies
 }
 
 # Attributes / Operations / Constants of supplemental interfaces can have an [Exposed=XX] attribute which restricts
-# on which global contexts they should be exposed.
+# on which global contexts they should be exposed. [Exposed=*] will expose the attribute on the interface for all
+# supported global contexts.
 sub shouldPropertyBeExposed
 {
     my ($context, $target) = @_;
 
     my $exposedAttribute = $target->extendedAttributes->{"Exposed"} || "Window";
+    return 1 if $exposedAttribute eq "*";
+
     $exposedAttribute = substr($exposedAttribute, 1, -1) if substr($exposedAttribute, 0, 1) eq "(";
     my @targetGlobalContexts = split(",", $exposedAttribute);
 

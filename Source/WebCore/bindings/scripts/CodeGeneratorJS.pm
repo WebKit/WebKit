@@ -3946,6 +3946,8 @@ sub GenerateRuntimeEnableConditionalStringForExposed
     AddToImplIncludes("ScriptExecutionContext.h");
 
     my $exposed = $context->extendedAttributes->{Exposed};
+    return if $exposed eq "*";
+
     if (ref($exposed) eq 'ARRAY') {
         if (scalar(@$exposed) > 1) {
             return;
