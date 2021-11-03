@@ -908,6 +908,11 @@ String RenderListBox::debugDescription() const
     return RenderObject::debugDescription();
 }
 
+void RenderListBox::didStartScrollAnimation()
+{
+    page().scheduleRenderingUpdate({ RenderingUpdateStep::Scroll });
+}
+
 Ref<Scrollbar> RenderListBox::createScrollbar()
 {
     RefPtr<Scrollbar> widget;

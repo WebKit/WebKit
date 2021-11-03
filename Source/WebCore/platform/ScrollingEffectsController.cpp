@@ -120,12 +120,11 @@ bool ScrollingEffectsController::retargetAnimatedScroll(FloatPoint newDestinatio
 
 bool ScrollingEffectsController::retargetAnimatedScrollBy(FloatSize offset)
 {
-    if (!is<ScrollAnimationSmooth>(m_currentAnimation.get()))
+    if (!is<ScrollAnimationSmooth>(m_currentAnimation.get()) || !m_currentAnimation->isActive())
         return false;
 
     LOG_WITH_STREAM(ScrollAnimations, stream << "ScrollingEffectsController " << this << " retargetAnimatedScrollBy " << offset);
 
-    ASSERT(m_currentAnimation->isActive());
     if (auto destinationOffset = m_currentAnimation->destinationOffset())
         return m_currentAnimation->retargetActiveAnimation(*destinationOffset + offset);
 

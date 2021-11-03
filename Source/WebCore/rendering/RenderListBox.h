@@ -141,6 +141,7 @@ private:
     bool mockScrollAnimatorEnabled() const final;
     void logMockScrollAnimatorMessage(const String&) const final;
     String debugDescription() const final;
+    void didStartScrollAnimation() final;
 
     // NOTE: This should only be called by the overridden setScrollOffset from ScrollableArea.
     void scrollTo(int newOffset);

@@ -194,6 +194,7 @@ public:
     void logMockScrollAnimatorMessage(const String&) const final;
 
     String debugDescription() const final;
+    void didStartScrollAnimation() final;
 
     IntSize visibleSize() const final;
     IntSize contentsSize() const final;

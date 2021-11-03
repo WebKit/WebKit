@@ -876,6 +876,7 @@ private:
 
     // ScrollableArea.
     float pageScaleFactor() const override;
+    void didStartScrollAnimation() final;
 
     static MonotonicTime sCurrentPaintTimeStamp; // used for detecting decoded resource thrash in the cache
 

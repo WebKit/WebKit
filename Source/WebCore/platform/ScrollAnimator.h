@@ -123,13 +123,14 @@ public:
     const LayoutScrollSnapOffsetsInfo* snapOffsetsInfo() const;
     void resnapAfterLayout();
 
+    ScrollAnimationStatus serviceScrollAnimation(MonotonicTime);
+
 protected:
     virtual bool platformAllowsScrollAnimation() const { return true; }
 
 private:
     void notifyPositionChanged(const FloatSize& delta);
 
-    void scrollControllerAnimationTimerFired();
     void updateActiveScrollSnapIndexForOffset();
 
     FloatPoint offsetFromPosition(const FloatPoint& position) const;
@@ -176,10 +177,12 @@ protected:
     ScrollableArea& m_scrollableArea;
     RefPtr<WheelEventTestMonitor> m_wheelEventTestMonitor;
     ScrollingEffectsController m_scrollController;
-    Timer m_scrollControllerAnimationTimer;
     FloatPoint m_currentPosition;
 
     std::unique_ptr<KeyboardScrollingAnimator> m_keyboardScrollingAnimator;
+
+private:
+    bool m_scrollAnimationScheduled { false };
 };
 
 } // namespace WebCore

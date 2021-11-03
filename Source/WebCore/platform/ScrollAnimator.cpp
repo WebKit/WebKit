@@ -54,7 +54,6 @@ std::unique_ptr<ScrollAnimator> ScrollAnimator::create(ScrollableArea& scrollabl
 ScrollAnimator::ScrollAnimator(ScrollableArea& scrollableArea)
     : m_scrollableArea(scrollableArea)
     , m_scrollController(*this)
-    , m_scrollControllerAnimationTimer(*this, &ScrollAnimator::scrollControllerAnimationTimerFired)
     , m_keyboardScrollingAnimator(makeUnique<KeyboardScrollingAnimator>(*this, m_scrollController))
 {
 }
@@ -384,20 +383,15 @@ std::unique_ptr<ScrollingEffectsControllerTimer> ScrollAnimator::createTimer(Fun
 
 void ScrollAnimator::startAnimationCallback(ScrollingEffectsController&)
 {
-    if (m_scrollControllerAnimationTimer.isActive())
-        return;
-
-    m_scrollControllerAnimationTimer.startRepeating(1_s / 60.);
+    if (!m_scrollAnimationScheduled) {
+        m_scrollAnimationScheduled = true;
+        m_scrollableArea.didStartScrollAnimation();
+    }
 }
 
 void ScrollAnimator::stopAnimationCallback(ScrollingEffectsController&)
 {
-    m_scrollControllerAnimationTimer.stop();
-}
-
-void ScrollAnimator::scrollControllerAnimationTimerFired()
-{
-    m_scrollController.animationCallback(MonotonicTime::now());
+    m_scrollAnimationScheduled = false;
 }
 
 #if PLATFORM(MAC)
@@ -463,6 +457,13 @@ float ScrollAnimator::scrollOffsetAdjustedForSnapping(ScrollEventAxis axis, cons
     }
 
     return m_scrollController.adjustedScrollDestination(axis, newOffset, velocityInScrollAxis, originalOffset);
+}
+
+ScrollAnimationStatus ScrollAnimator::serviceScrollAnimation(MonotonicTime time)
+{
+    if (m_scrollAnimationScheduled)
+        m_scrollController.animationCallback(time);
+    return m_scrollAnimationScheduled ? ScrollAnimationStatus::Animating : ScrollAnimationStatus::NotAnimating;
 }
 
 } // namespace WebCore

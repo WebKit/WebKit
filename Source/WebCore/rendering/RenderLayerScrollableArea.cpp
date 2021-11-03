@@ -1840,4 +1840,9 @@ String RenderLayerScrollableArea::debugDescription() const
     return m_layer.debugDescription();
 }
 
+void RenderLayerScrollableArea::didStartScrollAnimation()
+{
+    m_layer.page().scheduleRenderingUpdate({ RenderingUpdateStep::Scroll });
+}
+
 } // namespace WebCore

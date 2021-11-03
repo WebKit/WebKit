@@ -211,6 +211,7 @@
 #include "ScriptSourceCode.h"
 #include "ScriptState.h"
 #include "ScriptedAnimationController.h"
+#include "ScrollAnimator.h"
 #include "ScrollbarTheme.h"
 #include "ScrollingCoordinator.h"
 #include "SecurityOrigin.h"
@@ -4347,9 +4348,35 @@ void Document::setNeedsVisualViewportScrollEvent()
     m_needsVisualViewportScrollEvent = true;
 }
 
+static bool serviceScrollAnimationForScrollableArea(ScrollableArea* scrollableArea, MonotonicTime time)
+{
+    if (!scrollableArea)
+        return false;
+
+    if (auto* animator = scrollableArea->existingScrollAnimator())
+        return animator->serviceScrollAnimation(time) == ScrollAnimationStatus::Animating;
+
+    return false;
+}
+
 // https://drafts.csswg.org/cssom-view/#run-the-scroll-steps
 void Document::runScrollSteps()
 {
+    // Service user scroll animations before scroll event dispatch.
+    RefPtr<FrameView> frameView = view();
+    if (frameView) {
+        MonotonicTime now = MonotonicTime::now();
+        bool scrollAnimationsInProgress = serviceScrollAnimationForScrollableArea(frameView.get(), now);
+        if (auto* scrollableAreas = frameView->scrollableAreas()) {
+            for (auto* scrollableArea : *scrollableAreas) {
+                if (serviceScrollAnimationForScrollableArea(scrollableArea, now))
+                    scrollAnimationsInProgress = true;
+            }
+        }
+        if (scrollAnimationsInProgress)
+            page()->scheduleRenderingUpdate({ RenderingUpdateStep::Scroll });
+    }
+
     // FIXME: The order of dispatching is not specified: https://github.com/WICG/visual-viewport/issues/66.
     if (m_pendingScrollEventTargetList && !m_pendingScrollEventTargetList->targets.isEmpty()) {
         LOG_WITH_STREAM(Events, stream << "Document " << this << " sending scroll events to pending scroll event targets");

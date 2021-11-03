@@ -5700,6 +5700,12 @@ float FrameView::pageScaleFactor() const
     return frame().frameScaleFactor();
 }
 
+void FrameView::didStartScrollAnimation()
+{
+    if (auto* page = frame().page())
+        page->scheduleRenderingUpdate({ RenderingUpdateStep::Scroll });
+}
+
 void FrameView::updateScrollbarSteps()
 {
     auto* documentElement = frame().document() ? frame().document()->documentElement() : nullptr;
