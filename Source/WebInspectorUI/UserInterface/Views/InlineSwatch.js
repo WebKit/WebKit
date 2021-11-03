@@ -238,12 +238,10 @@ WI.InlineSwatch = class InlineSwatch extends WI.Object
         if (!value)
             value = this._fallbackValue();
 
-        let bounds = WI.Rect.rectFromClientRect(this._swatchElement.getBoundingClientRect());
         let popover = new WI.Popover(this);
 
         popover.windowResizeHandler = () => {
-            let bounds = WI.Rect.rectFromClientRect(this._swatchElement.getBoundingClientRect());
-            popover.present(bounds.pad(2), [WI.RectEdge.MIN_X]);
+            this._presentPopover(popover);
         };
 
         this._valueEditor = null;
@@ -307,7 +305,7 @@ WI.InlineSwatch = class InlineSwatch extends WI.Object
             return;
 
         popover.content = this._valueEditor.element;
-        popover.present(bounds.pad(2), [WI.RectEdge.MIN_X]);
+        this._presentPopover(popover);
 
         this.dispatchEventToListeners(WI.InlineSwatch.Event.Activated);
 
@@ -381,6 +379,12 @@ WI.InlineSwatch = class InlineSwatch extends WI.Object
         }
 
         this._updateSwatch();
+    }
+
+    _presentPopover(popover)
+    {
+        let bounds = WI.Rect.rectFromClientRect(this._swatchElement.getBoundingClientRect());
+        popover.present(bounds.pad(2), [WI.RectEdge.MAX_Y, WI.RectEdge.MIN_Y, WI.RectEdge.MIN_X]);
     }
 
     _handleContextMenuEvent(event)
