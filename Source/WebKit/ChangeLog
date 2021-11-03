@@ -1,3 +1,15 @@
+2021-11-03  David Kilzer  <ddkilzer@apple.com>
+
+        Leak of UUID in WebKit::ModelElementController::modelElementDidCreatePreview()
+        <https://webkit.org/b/232628>
+        <rdar://problem/84935290>
+
+        Reviewed by Brent Fulgham.
+
+        * UIProcess/Cocoa/ModelElementControllerCocoa.mm:
+        (WebKit::ModelElementController::modelElementDidCreatePreview):
+        - Use adoptNS() to fix the leak.
+
 2021-11-03  Kate Cheney  <katherine_cheney@apple.com>
 
         [iOS] Need API for marking file requests as non-app-initiated
