@@ -37,6 +37,7 @@
 #include "CSSPropertyNames.h"
 #include "CSSValueKeywords.h"
 #include "DocumentFragment.h"
+#include "ElementInlines.h"
 #include "Event.h"
 #include "HTMLDivElement.h"
 #include "HTMLSpanElement.h"

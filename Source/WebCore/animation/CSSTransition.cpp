@@ -30,6 +30,7 @@
 #include "DocumentTimeline.h"
 #include "InspectorInstrumentation.h"
 #include "KeyframeEffect.h"
+#include "StyleResolver.h"
 #include "TransitionEvent.h"
 #include <wtf/IsoMallocInlines.h>
 

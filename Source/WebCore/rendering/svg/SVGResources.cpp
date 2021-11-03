@@ -24,7 +24,7 @@
 #include "PathOperation.h"
 #include "RenderSVGResourceClipper.h"
 #include "RenderSVGResourceFilter.h"
-#include "RenderSVGResourceMarker.h"
+#include "RenderSVGResourceMarkerInlines.h"
 #include "RenderSVGResourceMaskerInlines.h"
 #include "RenderSVGRoot.h"
 #include "SVGElementTypeHelpers.h"

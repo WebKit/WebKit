@@ -29,6 +29,7 @@
 #pragma once
 
 #include "CSSPropertyNames.h"
+#include "CompositeOperation.h"
 #include <wtf/HashSet.h>
 
 namespace WebCore {

@@ -42,7 +42,6 @@
 #include "CachedImage.h"
 #include "CalculationValue.h"
 #include "ColorBlending.h"
-#include "CompositeOperation.h"
 #include "FloatConversion.h"
 #include "FontCascade.h"
 #include "FontSelectionAlgorithm.h"

@@ -33,6 +33,7 @@
 #include "JSCJSValue.h"
 #include "PutKind.h"
 #include "RegisterSet.h"
+#include <wtf/Bag.h>
 
 namespace JSC {
 

@@ -27,6 +27,7 @@
 #include "BreakBlockquoteCommand.h"
 
 #include "Editing.h"
+#include "ElementInlines.h"
 #include "HTMLBRElement.h"
 #include "HTMLNames.h"
 #include "NodeTraversal.h"

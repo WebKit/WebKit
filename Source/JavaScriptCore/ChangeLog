@@ -1,3 +1,23 @@
+2021-11-02  Don Olmstead  <don.olmstead@sony.com>
+
+        Non-unified build fixes early November 2021 edition
+        https://bugs.webkit.org/show_bug.cgi?id=232589
+
+        Unreviewed non-unified build fixes.
+
+        * API/JSAPIGlobalObject.cpp:
+        * bytecode/EvalCodeBlock.cpp:
+        * bytecode/FunctionCodeBlock.cpp:
+        * bytecode/ModuleProgramCodeBlock.cpp:
+        * bytecode/ProgramCodeBlock.cpp:
+        * jit/JITInlineCacheGenerator.h:
+        * runtime/CustomGetterSetter.cpp:
+        * runtime/JSScriptFetcher.cpp:
+        * runtime/JSSourceCode.cpp:
+        * runtime/ShadowRealmObject.cpp:
+        * runtime/ShadowRealmPrototype.cpp:
+        * runtime/TemporalInstant.cpp:
+
 2021-11-02  Philip Chimento  <pchimento@igalia.com>
 
         [JSC] Implement Temporal.Instant

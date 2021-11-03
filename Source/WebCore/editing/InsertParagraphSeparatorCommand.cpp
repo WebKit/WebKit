@@ -29,6 +29,7 @@
 #include "Document.h"
 #include "Editing.h"
 #include "EditingStyle.h"
+#include "ElementInlines.h"
 #include "HTMLBRElement.h"
 #include "HTMLFormElement.h"
 #include "HTMLNames.h"

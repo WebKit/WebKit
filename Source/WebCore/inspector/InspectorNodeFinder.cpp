@@ -34,7 +34,7 @@
 
 #include "Attr.h"
 #include "Document.h"
-#include "Element.h"
+#include "ElementInlines.h"
 #include "Frame.h"
 #include "HTMLFrameOwnerElement.h"
 #include "NodeList.h"

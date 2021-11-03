@@ -24,6 +24,7 @@
 #include "HTMLTitleElement.h"
 
 #include "Document.h"
+#include "ElementInlines.h"
 #include "HTMLNames.h"
 #include "NodeRenderStyle.h"
 #include "RenderElement.h"

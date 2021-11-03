@@ -26,6 +26,9 @@
 #include "config.h"
 #include "ShadowRealmObject.h"
 
+#include "AuxiliaryBarrierInlines.h"
+#include "StructureInlines.h"
+
 namespace JSC {
 
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(ShadowRealmObject);

@@ -27,6 +27,7 @@
 #include "SplitTextNodeContainingElementCommand.h"
 
 #include "Element.h"
+#include "ElementInlines.h"
 #include "RenderElement.h"
 #include "Text.h"
 #include <wtf/Assertions.h>

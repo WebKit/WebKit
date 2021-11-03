@@ -29,7 +29,11 @@
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 #include "InlineSoftLineBreakItem.h"
+#include "LayoutLineBreakBox.h"
+#include "StyleResolver.h"
+#include "TextUtil.h"
 #include <wtf/Scope.h>
+#include <wtf/text/TextBreakIterator.h>
 
 namespace WebCore {
 namespace Layout {

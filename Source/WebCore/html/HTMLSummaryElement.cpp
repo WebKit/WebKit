@@ -22,6 +22,7 @@
 #include "HTMLSummaryElement.h"
 
 #include "DetailsMarkerControl.h"
+#include "ElementInlines.h"
 #include "EventNames.h"
 #include "HTMLDetailsElement.h"
 #include "HTMLFormControlElement.h"

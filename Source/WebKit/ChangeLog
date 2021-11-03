@@ -1,3 +1,18 @@
+2021-11-02  Don Olmstead  <don.olmstead@sony.com>
+
+        Non-unified build fixes early November 2021 edition
+        https://bugs.webkit.org/show_bug.cgi?id=232589
+
+        Unreviewed non-unified build fixes.
+
+        * GPUProcess/GPUProcess.cpp:
+        (WebKit::GPUProcess::createGPUConnectionToWebProcess):
+        (WebKit::GPUProcess::webProcessConnection const):
+        (WebKit::GPUProcess::updateCaptureAccess):
+        (WebKit::GPUProcess::updateCaptureOrigin):
+        (WebKit::GPUProcess::nowPlayingManager):
+        * GPUProcess/graphics/RemoteRenderingBackend.cpp:
+
 2021-11-02  Chris Dumez  <cdumez@apple.com>
 
         Crash under WebPage::sendCOEPCORPViolation()

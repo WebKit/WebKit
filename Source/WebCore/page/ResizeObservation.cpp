@@ -24,9 +24,9 @@
  */
 
 #include "config.h"
-
 #include "ResizeObservation.h"
 
+#include "ElementInlines.h"
 #include "HTMLFrameOwnerElement.h"
 #include "RenderBox.h"
 #include "SVGElement.h"

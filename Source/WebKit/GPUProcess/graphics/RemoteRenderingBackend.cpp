@@ -32,6 +32,7 @@
 #include "Logging.h"
 #include "PlatformRemoteImageBuffer.h"
 #include "QualifiedRenderingResourceIdentifier.h"
+#include "RemoteDisplayListRecorderMessages.h"
 #include "RemoteMediaPlayerManagerProxy.h"
 #include "RemoteMediaPlayerProxy.h"
 #include "RemoteRenderingBackendCreationParameters.h"

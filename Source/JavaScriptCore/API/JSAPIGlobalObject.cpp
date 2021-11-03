@@ -26,6 +26,8 @@
 #include "config.h"
 #include "JSAPIGlobalObject.h"
 
+#include "JSCellInlines.h"
+
 #if !JSC_OBJC_API_ENABLED
 
 namespace JSC {

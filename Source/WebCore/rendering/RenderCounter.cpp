@@ -25,6 +25,7 @@
 #include "CounterNode.h"
 #include "Document.h"
 #include "Element.h"
+#include "ElementInlines.h"
 #include "ElementTraversal.h"
 #include "HTMLNames.h"
 #include "HTMLOListElement.h"

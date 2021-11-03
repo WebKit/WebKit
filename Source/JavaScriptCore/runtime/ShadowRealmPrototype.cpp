@@ -26,12 +26,14 @@
 #include "config.h"
 #include "ShadowRealmPrototype.h"
 
+#include "AuxiliaryBarrierInlines.h"
 #include "IndirectEvalExecutable.h"
 #include "Interpreter.h"
 #include "JSGlobalObject.h"
 #include "JSInternalPromise.h"
 #include "JSModuleLoader.h"
 #include "ShadowRealmObject.h"
+#include "StructureInlines.h"
 
 #include "ShadowRealmPrototype.lut.h"
 

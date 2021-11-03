@@ -28,6 +28,7 @@
 #include "FloatPoint.h"
 #include "ScrollTypes.h"
 #include <wtf/EnumTraits.h>
+#include <wtf/OptionSet.h>
 
 namespace WebCore {
 

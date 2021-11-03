@@ -26,6 +26,8 @@
 #include "config.h"
 #include "CustomGetterSetter.h"
 
+#include "JSCellInlines.h"
+
 namespace JSC {
 
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(CustomGetterSetter);
