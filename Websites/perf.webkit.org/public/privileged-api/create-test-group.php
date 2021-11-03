@@ -43,7 +43,7 @@ function main()
     else if ($repetition_count < 1)
         exit_with_error('InvalidRepetitionCount', array('repetitionCount' => $repetition_count));
 
-    if (!in_array($repetition_type, array('alternating', 'sequential')))
+    if (!in_array($repetition_type, array('alternating', 'sequential', 'paired-parallel')))
         exit_with_error('InvalidRepetitionType', array('repetitionType' => $repetition_type));
 
     $triggerable_id = NULL;
@@ -59,6 +59,10 @@ function main()
         $triggerable = find_triggerable_for_task($db, $task_id);
         if ($triggerable) {
             $triggerable_id = $triggerable['id'];
+
+            if (!in_array($repetition_type, $triggerable['supportedRepetitionTypes']))
+                exit_with_error('UnsupportedRepetitionTypeForTriggerable', array('repetitionType' => $repetition_type, 'triggerableId' => $triggerable_id));
+
             if (!$platform_id && !$test_id) {
                 $platform_id = $triggerable['platform'];
                 $test_id = $triggerable['test'];
@@ -73,8 +77,14 @@ function main()
     if (!$triggerable_id && $platform_id && $test_id) {
         $triggerable_configuration = $db->select_first_row('triggerable_configurations', 'trigconfig',
             array('test' => $test_id, 'platform' => $platform_id));
-        if ($triggerable_configuration)
+        if ($triggerable_configuration) {
             $triggerable_id = $triggerable_configuration['trigconfig_triggerable'];
+
+            $is_repetition_type_supported = !!$db->select_first_row('triggerable_configuration_repetition_types',
+                'configrepetition', array('config' => $triggerable_configuration['trigconfig_id'], 'type' => $repetition_type));
+            if (!$is_repetition_type_supported)
+                exit_with_error('UnsupportedRepetitionTypeForTriggerable', array('repetitionType' => $repetition_type, 'triggerableId' => $triggerable_id));
+        }
     }
 
     if (!$triggerable_id)

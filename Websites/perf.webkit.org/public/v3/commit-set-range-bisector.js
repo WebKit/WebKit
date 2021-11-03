@@ -120,7 +120,9 @@ class CommitSetRangeBisector {
 
         const commitToCommitSetMap = this._buildCommitToCommitSetMap(repositoriesWithCommitTime, sortedCommitSets);
         const closestCommit = this._findCommitClosestToMiddleIndex(indexByCommitWithTime, commitToCommitSetMap.keys());
-        return Array.from(commitToCommitSetMap.get(closestCommit));
+        if (closestCommit)
+            return Array.from(commitToCommitSetMap.get(closestCommit));
+        return [];
     }
 
     static _findCommitSetsClosestToMiddleOfCommitsWithOrder(remainingCommitSets, indexForAllTimelessCommitsWithOrderByRepository)

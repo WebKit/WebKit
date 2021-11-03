@@ -24,6 +24,7 @@ DROP TABLE IF EXISTS analysis_strategies CASCADE;
 DROP TYPE IF EXISTS analysis_task_result_type CASCADE;
 DROP TABLE IF EXISTS build_triggerables CASCADE;
 DROP TABLE IF EXISTS triggerable_configurations CASCADE;
+DROP TABLE IF EXISTS triggerable_configuration_repetition_types CASCADE;
 DROP TABLE IF EXISTS triggerable_repository_groups CASCADE;
 DROP TABLE IF EXISTS triggerable_repositories CASCADE;
 DROP TABLE IF EXISTS uploaded_files CASCADE;
@@ -265,10 +266,17 @@ CREATE TABLE triggerable_repositories (
     CONSTRAINT repository_must_be_unique_for_repository_group UNIQUE(trigrepo_repository, trigrepo_group));
 
 CREATE TABLE triggerable_configurations (
+    trigconfig_id serial PRIMARY KEY,
     trigconfig_test integer REFERENCES tests NOT NULL,
     trigconfig_platform integer REFERENCES platforms NOT NULL,
     trigconfig_triggerable integer REFERENCES build_triggerables NOT NULL,
     CONSTRAINT triggerable_must_be_unique_for_test_and_platform UNIQUE(trigconfig_test, trigconfig_platform));
+
+CREATE TYPE analysis_test_group_repetition_type as ENUM ('alternating', 'sequential', 'paired-parallel');
+CREATE TABLE triggerable_configuration_repetition_types (
+    configrepetition_config INTEGER NOT NULL REFERENCES triggerable_configurations ON DELETE CASCADE,
+    configrepetition_type analysis_test_group_repetition_type NOT NULL,
+    PRIMARY KEY (configrepetition_config, configrepetition_type));
 
 CREATE TABLE uploaded_files (
     file_id serial PRIMARY KEY,
@@ -283,7 +291,6 @@ CREATE TABLE uploaded_files (
 CREATE INDEX file_author_index ON uploaded_files(file_author);
 CREATE UNIQUE INDEX file_sha256_index ON uploaded_files(file_sha256) WHERE file_deleted_at is NULL;
 
-CREATE TYPE analysis_test_group_repetition_type as ENUM ('alternating', 'sequential');
 CREATE TABLE analysis_test_groups (
     testgroup_id serial PRIMARY KEY,
     testgroup_task integer REFERENCES analysis_tasks NOT NULL,

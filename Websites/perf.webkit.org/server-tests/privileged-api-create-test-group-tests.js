@@ -101,8 +101,8 @@ function addTriggerableAndCreateTask(name, webkitRevisions)
         'workerPassword': 'anotherPassword',
         'triggerable': 'build-webkit',
         'configurations': [
-            {test: MockData.someTestId(), platform: MockData.somePlatformId()},
-            {test: MockData.someTestId(), platform: MockData.otherPlatformId()},
+            {test: MockData.someTestId(), platform: MockData.somePlatformId(), supportedRepetitionTypes: ['alternating', 'sequential']},
+            {test: MockData.someTestId(), platform: MockData.otherPlatformId(), supportedRepetitionTypes: ['alternating', 'sequential']},
         ],
         'repositoryGroups': [
             {name: 'os-only', acceptsRoot: true, repositories: [
@@ -1465,7 +1465,7 @@ describe('/privileged-api/create-test-group', function () {
         assert.strictEqual(set1.revisionForRepository(webkit), '191623');
     });
 
-    it('should reject with "InvalidRepetitionType" if repetition type is not "alternating" or "sequential"', async () => {
+    it('should reject with "InvalidRepetitionType" if repetition type is not "alternating", "sequential", or "paired-parallel"', async () => {
         await addTriggerableAndCreateTask('some task');
         const webkit = Repository.all().filter((repository) => repository.name() == 'WebKit')[0];
         const revisionSets = [{[webkit.id()]: {revision: '191622'}}, {[webkit.id()]: {revision: '191623'}}];
@@ -1474,6 +1474,18 @@ describe('/privileged-api/create-test-group', function () {
             return PrivilegedAPI.sendRequest('create-test-group', {name: 'test', taskName: 'other task',
                 platform: MockData.somePlatformId(), test: MockData.someTestId(),
                 needsNotification: true, repetitionType: 'invalid-mode', repetitionCount: 2, revisionSets})
+        });
+    });
+
+    it('should reject with "UnsupportedRepetitionTypeForTriggerable" if repetition type is "paired-parallel" but triggerable configuration only supports "sequential" and "alternating"', async () => {
+        await addTriggerableAndCreateTask('some task');
+        const webkit = Repository.all().filter((repository) => repository.name() == 'WebKit')[0];
+        const revisionSets = [{[webkit.id()]: {revision: '191622'}}, {[webkit.id()]: {revision: '191623'}}];
+
+        await assertThrows('UnsupportedRepetitionTypeForTriggerable', () => {
+            return PrivilegedAPI.sendRequest('create-test-group', {name: 'test', taskName: 'other task',
+                platform: MockData.somePlatformId(), test: MockData.someTestId(),
+                needsNotification: true, repetitionType: 'paired-parallel', repetitionCount: 2, revisionSets})
         });
     });
 

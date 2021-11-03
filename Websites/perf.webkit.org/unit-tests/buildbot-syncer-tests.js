@@ -44,23 +44,40 @@ function sampleiOSConfig()
                 'builder': 'ABTest-iPhone-RunBenchmark-Tests',
                 'properties': {'forcescheduler': 'ABTest-iPhone-RunBenchmark-Tests-ForceScheduler'},
                 'workerList': ['ABTest-iPhone-0'],
+                'supportedRepetitionTypes': ['alternating', 'sequential']
             },
             'iPad-bench': {
                 'builder': 'ABTest-iPad-RunBenchmark-Tests',
                 'properties': {'forcescheduler': 'ABTest-iPad-RunBenchmark-Tests-ForceScheduler'},
                 'workerList': ['ABTest-iPad-0', 'ABTest-iPad-1'],
+                'supportedRepetitionTypes': ['alternating', 'sequential']
             },
             'iOS-builder': {
                 'builder': 'ABTest-iOS-Builder',
                 'properties': {'forcescheduler': 'ABTest-Builder-ForceScheduler'},
+                'supportedRepetitionTypes': ['alternating', 'sequential', 'paired-parallel']
             },
         },
         'buildConfigurations': [
-            {'builders': ['iOS-builder'], 'platforms': ['iPhone', 'iPad']},
+            {
+                'builders': ['iOS-builder'],
+                'platforms': ['iPhone', 'iPad'],
+                'supportedRepetitionTypes': ['alternating', 'sequential', 'paired-parallel']
+            },
         ],
         'testConfigurations': [
-            {'builders': ['iPhone-bench'], 'types': ['speedometer', 'jetstream', 'dromaeo-dom'], 'platforms': ['iPhone']},
-            {'builders': ['iPad-bench'], 'types': ['speedometer', 'jetstream'], 'platforms': ['iPad']},
+            {
+                'builders': ['iPhone-bench'],
+                'types': ['speedometer', 'jetstream', 'dromaeo-dom'],
+                'platforms': ['iPhone'],
+                'supportedRepetitionTypes': ['alternating', 'sequential']
+            },
+            {
+                'builders': ['iPad-bench'],
+                'types': ['speedometer', 'jetstream'],
+                'platforms': ['iPad'],
+                'supportedRepetitionTypes': ['alternating', 'sequential', 'paired-parallel']
+            },
         ]
     };
 }
@@ -89,14 +106,17 @@ function sampleiOSConfigWithExpansions()
             "iphone": {
                 "builder": "iPhone AB Tests",
                 "properties": {"forcescheduler": "force-iphone-ab-tests"},
+                'supportedRepetitionTypes': ['alternating', 'sequential']
             },
             "iphone-2": {
                 "builder": "iPhone 2 AB Tests",
                 "properties": {"forcescheduler": "force-iphone-2-ab-tests"},
+                'supportedRepetitionTypes': ['alternating', 'sequential']
             },
             "ipad": {
                 "builder": "iPad AB Tests",
                 "properties": {"forcescheduler": "force-ipad-ab-tests"},
+                'supportedRepetitionTypes': ['alternating', 'sequential']
             },
         },
         "testConfigurations": [
@@ -104,11 +124,13 @@ function sampleiOSConfigWithExpansions()
                 "builders": ["iphone", "iphone-2"],
                 "platforms": ["iPhone", "iOS 10 iPhone"],
                 "types": ["iphone-plt", "speedometer"],
+                'supportedRepetitionTypes': ['alternating', 'sequential']
             },
             {
                 "builders": ["ipad"],
                 "platforms": ["iPad"],
                 "types": ["ipad-plt", "speedometer"],
+                'supportedRepetitionTypes': ['alternating', 'sequential']
             },
         ]
     }
@@ -135,12 +157,48 @@ function smallConfiguration()
         'builders': {
             'some-builder': {
                 'builder': 'some builder',
-                'properties': {'forcescheduler': 'some-builder-ForceScheduler'}
+                'properties': {'forcescheduler': 'some-builder-ForceScheduler'},
+                'supportedRepetitionTypes': ["alternating", "sequential"]
             }
         },
         'testConfigurations': [{
             'builders': ['some-builder'],
             'platforms': ['Some platform'],
+            'types': ['some-test'],
+            'supportedRepetitionTypes': ["alternating", "sequential"]
+        }]
+    };
+}
+
+function smallConfigurationWithCustomRepetitionTypes(supportedRepetitionTypes)
+{
+    return {
+        'buildRequestArgument': 'id',
+        'repositoryGroups': {
+            'ios-svn-webkit': {
+                'repositories': {'iOS': {}, 'WebKit': {}},
+                'testProperties': {
+                    'os': {'revision': 'iOS'},
+                    'wk': {'revision': 'WebKit'}
+                }
+            }
+        },
+        'types': {
+            'some-test': {
+                'test': ['Some test'],
+            }
+        },
+        'builders': {
+            'some-builder': {
+                'builder': 'some builder',
+                'properties': {'forcescheduler': 'some-builder-ForceScheduler'},
+                'supportedRepetitionTypes': ['sequential', 'paired-parallel'],
+            }
+        },
+        'testConfigurations': [{
+            'builders': ['some-builder'],
+            'platforms': ['Some platform'],
+            'supportedRepetitionTypes': supportedRepetitionTypes,
             'types': ['some-test'],
         }]
     };
@@ -184,10 +242,12 @@ function createSampleBuildRequest(platform, test)
     const ios13A452 = CommitLog.ensureSingleton('88930', {'id': '88930', 'time': 0, 'repository': MockModels.ios, 'revision': '13A452'});
 
     const commitSet = CommitSet.ensureSingleton('4197', {customRoots: [], revisionItems: [{commit: webkit197463}, {commit: shared111237}, {commit: ios13A452}]});
+    const testGroup = TestGroup.ensureSingleton('123', {task: '123', createdAt: 1456931874000, hidden: false, needsNotification: true, mayNeedMoreRequests: false,
+        initialRepetitionCount: 3, repetitionType: 'alternating'})
 
     return BuildRequest.ensureSingleton('16733-' + platform.id(), {'triggerable': MockModels.triggerable,
         repositoryGroup: MockModels.svnRepositoryGroup,
-        'commitSet': commitSet, 'status': 'pending', 'platform': platform, 'test': test, order: 0});
+        'commitSet': commitSet, 'status': 'pending', 'platform': platform, 'test': test, order: 0, testGroup, testGroupId: testGroup.id()});
 }
 
 function createSampleBuildRequestWithPatch(platform, test, order)
@@ -508,32 +568,42 @@ describe('BuildbotSyncer', () => {
 
             let configurations = syncers[0].testConfigurations();
             assert(syncers[0].isTester());
+            assert.deepEqual(syncers[0]._builderSupportedRepetitionTypes, ['alternating', 'sequential']);
             assert.equal(configurations.length, 3);
             assert.equal(configurations[0].platform, MockModels.iphone);
             assert.equal(configurations[0].test, MockModels.speedometer);
+            assert.deepEqual(configurations[0].supportedRepetitionTypes, ['alternating', 'sequential']);
             assert.equal(configurations[1].platform, MockModels.iphone);
             assert.equal(configurations[1].test, MockModels.jetstream);
+            assert.deepEqual(configurations[1].supportedRepetitionTypes, ['alternating', 'sequential']);
             assert.equal(configurations[2].platform, MockModels.iphone);
             assert.equal(configurations[2].test, MockModels.domcore);
+            assert.deepEqual(configurations[2].supportedRepetitionTypes, ['alternating', 'sequential']);
             assert.deepEqual(syncers[0].buildConfigurations(), []);
 
             configurations = syncers[1].testConfigurations();
             assert(syncers[1].isTester());
+            assert.deepEqual(syncers[1]._builderSupportedRepetitionTypes, ['alternating', 'sequential']);
             assert.equal(configurations.length, 2);
             assert.equal(configurations[0].platform, MockModels.ipad);
             assert.equal(configurations[0].test, MockModels.speedometer);
+            assert.deepEqual(configurations[0].supportedRepetitionTypes, ['alternating', 'sequential', 'paired-parallel']);
             assert.equal(configurations[1].platform, MockModels.ipad);
             assert.equal(configurations[1].test, MockModels.jetstream);
+            assert.deepEqual(configurations[1].supportedRepetitionTypes, ['alternating', 'sequential', 'paired-parallel']);
             assert.deepEqual(syncers[1].buildConfigurations(), []);
 
             assert(!syncers[2].isTester());
+            assert.deepEqual(syncers[2]._builderSupportedRepetitionTypes, ['alternating', 'sequential', 'paired-parallel']);
             assert.deepEqual(syncers[2].testConfigurations(), []);
             configurations = syncers[2].buildConfigurations();
             assert.equal(configurations.length, 2);
             assert.equal(configurations[0].platform, MockModels.iphone);
             assert.equal(configurations[0].test, null);
+            assert.deepEqual(configurations[0].supportedRepetitionTypes, ['alternating', 'sequential', 'paired-parallel']);
             assert.equal(configurations[1].platform, MockModels.ipad);
             assert.equal(configurations[1].test, null);
+            assert.deepEqual(configurations[1].supportedRepetitionTypes, ['alternating', 'sequential', 'paired-parallel']);
         });
 
         it('should throw when a build configuration use the same builder as a test configuration', () => {
@@ -1099,7 +1169,6 @@ describe('BuildbotSyncer', () => {
             assert.equal(properties['build_request_id'], request.id());
         });
     });
-
 
     describe('BuildbotBuildEntry', () => {
         it('should create BuildbotBuildEntry for pending build', () => {
@@ -1731,6 +1800,15 @@ describe('BuildbotSyncer', () => {
                 syncer.scheduleRequestInGroupIfAvailable(request, [request], null);
                 assert.equal(requests.length, 1);
             });
+        });
+
+        it('should not schedule a build request if repetition type if not supported by buildbot syncer', async () => {
+            const syncer = BuildbotSyncer._loadConfig(MockRemoteAPI, smallConfigurationWithCustomRepetitionTypes(['sequential', 'paired-parallel']), builderNameToIDMap())[0];
+            await pullBuildbotWithAssertion(syncer, {}, {});
+            const request = createSampleBuildRequest(MockModels.somePlatform, MockModels.someTest);
+            const scheduleResult = syncer.scheduleRequestInGroupIfAvailable(request, [request], null);
+            assert.equal(scheduleResult, null);
+            assert.equal(requests.length, 0);
         });
     });
 });

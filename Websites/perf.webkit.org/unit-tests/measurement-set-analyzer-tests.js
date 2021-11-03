@@ -191,7 +191,8 @@ describe('MeasurementSetAnalyzer', () => {
 
             Triggerable.ensureSingleton(4, {name: 'some-triggerable',
                 repositoryGroups: [MockModels.osRepositoryGroup, MockModels.svnRepositoryGroup, MockModels.gitRepositoryGroup, MockModels.svnRepositoryWithOwnedRepositoryGroup],
-                configurations: [{test: MockModels.someMetric.test(), platform: MockModels.somePlatform}]});
+                configurations: [{test: MockModels.someMetric.test(), platform: MockModels.somePlatform,
+                    supportedRepetitionTypes: MockModels.someTriggableConfiguration.supportedRepetitionTypes}]});
 
             const measurementSet = MeasurementSet.findSet(MockModels.somePlatform.id(), MockModels.someMetric.id(), 5000);
             const logger = mockLogger();
@@ -251,7 +252,8 @@ describe('MeasurementSetAnalyzer', () => {
 
             Triggerable.ensureSingleton(4, {name: 'some-triggerable',
                 repositoryGroups: [MockModels.osRepositoryGroup, MockModels.svnRepositoryGroup, MockModels.gitRepositoryGroup, MockModels.svnRepositoryWithOwnedRepositoryGroup],
-                configurations: [{test: MockModels.someMetric.test(), platform: MockModels.somePlatform}]});
+                configurations: [{test: MockModels.someMetric.test(), platform: MockModels.somePlatform,
+                    supportedRepetitionTypes: MockModels.someTriggableConfiguration.supportedRepetitionTypes}]});
 
             const measurementSet = MeasurementSet.findSet(MockModels.somePlatform.id(), MockModels.someMetric.id(), 5000);
             const logger = mockLogger();
@@ -484,7 +486,8 @@ describe('MeasurementSetAnalyzer', () => {
 
             Triggerable.ensureSingleton(4, {name: 'some-triggerable',
                 repositoryGroups: [MockModels.osRepositoryGroup, MockModels.svnRepositoryGroup, MockModels.gitRepositoryGroup, MockModels.svnRepositoryWithOwnedRepositoryGroup],
-                configurations: [{test: MockModels.someMetric.test(), platform: MockModels.somePlatform}]});
+                configurations: [{test: MockModels.someMetric.test(), platform: MockModels.somePlatform,
+                    supportedRepetitionTypes: MockModels.someTriggableConfiguration.supportedRepetitionTypes}]});
 
             const measurementSet = MeasurementSet.findSet(MockModels.somePlatform.id(), MockModels.someMetric.id(), 5000);
             const logger = mockLogger();
@@ -577,7 +580,8 @@ describe('MeasurementSetAnalyzer', () => {
 
             Triggerable.ensureSingleton(4, {name: 'some-triggerable',
                 repositoryGroups: [MockModels.osRepositoryGroup, MockModels.svnRepositoryGroup, MockModels.gitRepositoryGroup, MockModels.svnRepositoryWithOwnedRepositoryGroup],
-                configurations: [{test: MockModels.someMetric.test(), platform: MockModels.somePlatform}]});
+                configurations: [{test: MockModels.someMetric.test(), platform: MockModels.somePlatform,
+                    supportedRepetitionTypes: MockModels.someTriggableConfiguration.supportedRepetitionTypes}]});
 
             const measurementSet = MeasurementSet.findSet(MockModels.somePlatform.id(), MockModels.someMetric.id(), 5000);
             const logger = mockLogger();

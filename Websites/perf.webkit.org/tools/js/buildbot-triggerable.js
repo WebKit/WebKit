@@ -56,7 +56,7 @@ class BuildbotTriggerable {
         let repositoryGroups = [];
         for (const syncer of this._syncers) {
             for (const config of syncer.testConfigurations()) {
-                const entry = {test: config.test.id(), platform: config.platform.id()};
+                const entry = {test: config.test.id(), platform: config.platform.id(), supportedRepetitionTypes: config.supportedRepetitionTypes};
                 map.set(entry.test + '-' + entry.platform, entry);
             }
             // FIXME: Move BuildbotSyncer._loadConfig here and store repository groups directly.
@@ -83,6 +83,8 @@ class BuildbotTriggerable {
         this._logger.log(`Fetching build requests for ${this._name}...`);
 
         const buildRequests = await BuildRequest.fetchForTriggerable(this._name);
+        const testGroupIds = new Set(buildRequests.map(request => request.testGroupId()));
+        await Promise.all(Array.from(testGroupIds).map(testGroupId => TestGroup.fetchById(testGroupId, /* ignoreCache */ true)));
         const validRequests = this._validateRequests(buildRequests);
         const buildRequestsByGroup = BuildbotTriggerable._testGroupMapForBuildRequests(buildRequests);
         let updates = await this._pullBuildbotOnAllSyncers(buildRequestsByGroup);
@@ -90,7 +92,6 @@ class BuildbotTriggerable {
         this._logger.log('Scheduling builds');
         const testGroupList = Array.from(buildRequestsByGroup.values()).sort(function (a, b) { return a.groupOrder - b.groupOrder; });
 
-        await Promise.all(Array.from(buildRequestsByGroup.keys()).map(testGroupId => TestGroup.fetchById(testGroupId, /* ignoreCache */ true)));
         for (const group of testGroupList) {
             const request = this._nextRequestInGroup(group, updates);
             if (!validRequests.has(request))

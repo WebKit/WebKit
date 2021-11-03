@@ -261,6 +261,11 @@ class ManifestGenerator {
             }
         }
 
+        $repetition_types_by_configuration = $db->fetch_table('triggerable_configuration_repetition_types');
+        $repetition_types_by_config = array();
+        foreach ($repetition_types_by_configuration as &$row)
+            array_push(array_ensure_item_has_array($repetition_types_by_config, $row['configrepetition_config']), $row['configrepetition_type']);
+
         $configuration_map = $db->fetch_table('triggerable_configurations');
         if ($configuration_map) {
             foreach ($configuration_map as &$row) {
@@ -268,7 +273,8 @@ class ManifestGenerator {
                 if (!array_key_exists($triggerable_id, $id_to_triggerable))
                     continue;
                 $triggerable = &$id_to_triggerable[$triggerable_id];
-                array_push($triggerable['configurations'], array($row['trigconfig_test'], $row['trigconfig_platform']));
+                $repetition_types = $repetition_types_by_config[$row['trigconfig_id']];
+                array_push($triggerable['configurations'], array($row['trigconfig_test'], $row['trigconfig_platform'], $repetition_types));
             }
         }
 

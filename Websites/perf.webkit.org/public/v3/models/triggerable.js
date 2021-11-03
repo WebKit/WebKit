@@ -7,16 +7,12 @@ class Triggerable extends LabeledObject {
         this._isDisabled = !!object.isDisabled;
         this._acceptedRepositories = object.acceptedRepositories;
         this._repositoryGroups = object.repositoryGroups;
-        this._configurationList = object.configurations;
         this._acceptedTests = new Set;
 
-        const configurationMap = this.ensureNamedStaticMap('testConfigurations');
-        for (const config of object.configurations) {
-            const key = `${config.test.id()}-${config.platform.id()}`;
+        this._triggerableConfigurationList = object.configurations.map(config => {
             this._acceptedTests.add(config.test);
-            console.assert(!(key in configurationMap));
-            configurationMap[key] = this;
-        }
+            return TriggerableConfiguration.createForTriggerable(this, config.test, config.platform, config.supportedRepetitionTypes);
+        });
     }
 
     name() { return this._name; }
@@ -25,18 +21,7 @@ class Triggerable extends LabeledObject {
 
     acceptedTests() { return this._acceptedTests; }
 
-    static findByTestConfiguration(test, platform)
-    {
-        let configurationMap = this.ensureNamedStaticMap('testConfigurations');
-        if (!configurationMap)
-            return null;
-        for (; test; test = test.parentTest()) {
-            const key = `${test.id()}-${platform.id()}`;
-            if (key in configurationMap)
-                return configurationMap[key];
-        }
-        return null;
-    }
+    static findByTestConfiguration(test, platform) { return TriggerableConfiguration.findByTestAndPlatform(test, platform)?.triggerable; }
 
     static triggerablePlatformsForTests(tests)
     {
@@ -51,6 +36,50 @@ class Triggerable extends LabeledObject {
         }));
     }
 }
+
+
+class TriggerableConfiguration extends DataModelObject {
+    #triggerable;
+    #test;
+    #platform;
+    #supportedRepetitionTypes;
+
+    constructor(id, object)
+    {
+        super(id);
+        this.#triggerable = object.triggerable;
+        this.#test = object.test;
+        this.#platform = object.platform;
+        console.assert(object.supportedRepetitionTypes.every(TriggerableConfiguration.isValidRepetitionType.bind(TriggerableConfiguration)));
+        this.#supportedRepetitionTypes = object.supportedRepetitionTypes;
+    }
+
+    get triggerable() { return this.#triggerable; }
+    get supportedRepetitionTypes() { return [...this.#supportedRepetitionTypes]; }
+    isSupportedRepetitionType(repetitionType) { return this.#supportedRepetitionTypes.includes(repetitionType); }
+
+    static idForTestAndPlatform(test, platform) { return `${test.id()}-${platform.id()}`; }
+
+    static createForTriggerable(triggerable, test, platform, supportedRepetitionTypes)
+    {
+        const id = this.idForTestAndPlatform(test, platform);
+        return TriggerableConfiguration.ensureSingleton(id, {test, platform, supportedRepetitionTypes, triggerable});
+    }
+
+    static findByTestAndPlatform(test, platform)
+    {
+        for (; test; test = test.parentTest()) {
+            const id = this.idForTestAndPlatform(test, platform);
+            const triggerableConfiguration = TriggerableConfiguration.findById(id);
+            if (triggerableConfiguration)
+                return triggerableConfiguration;
+        }
+        return null;
+    }
+
+    static isValidRepetitionType(repetitionType) { return ['alternating', 'sequential', 'paired-parallel'].includes(repetitionType); }
+}
+
 
 class TriggerableRepositoryGroup extends LabeledObject {
 
@@ -109,6 +138,7 @@ class TriggerableRepositoryGroup extends LabeledObject {
 
 if (typeof module != 'undefined') {
     module.exports.Triggerable = Triggerable;
+    module.exports.TriggerableConfiguration = TriggerableConfiguration;
     module.exports.TriggerableRepositoryGroup = TriggerableRepositoryGroup;
 }
 

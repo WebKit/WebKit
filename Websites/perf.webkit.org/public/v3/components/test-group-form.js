@@ -14,6 +14,19 @@ class TestGroupForm extends ComponentBase {
         this._repetitionCount = count;
     }
 
+    setTestAndPlatform(test, platform)
+    {
+        this.part('repetition-type-selector').setTestAndPlatform(test, platform);
+    }
+
+    updateWithTestGroup(testGroup)
+    {
+        console.assert(testGroup);
+        this.setRepetitionCount(testGroup.initialRepetitionCount());
+        this.setTestAndPlatform(testGroup.test(), testGroup.platform());
+        this.part('repetition-type-selector').selectedRepetitionType = testGroup.repetitionType();
+    }
+
     didConstructShadowTree()
     {
         const repetitionCountSelect = this.content('repetition-count');
@@ -27,7 +40,7 @@ class TestGroupForm extends ComponentBase {
 
     startTesting()
     {
-        const repetitionType = this.content('repetition-type').value;
+        const repetitionType = this.part('repetition-type-selector').selectedRepetitionType;
         this.dispatchAction('startTesting', this._repetitionCount, repetitionType, this._notifyOnCompletion);
     }
 
@@ -67,10 +80,7 @@ class TestGroupForm extends ComponentBase {
                 <option>10</option>
             </select>
             <label>iterations per set in</label>
-            <select id="repetition-type">
-                <option selected value="alternating">alternate (ABAB)</option>
-                <option value="sequential">sequence (AABB)</option>
-            </select>
+            <repetition-type-selection id="repetition-type-selector"></repetition-type-selection>
             <input id="notify-on-completion-checkbox" type="checkbox" checked/>Notify on completion
         `;
     }

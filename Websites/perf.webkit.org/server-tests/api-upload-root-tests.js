@@ -38,7 +38,7 @@ function createTestGroupWihPatch()
         'workerPassword': 'password',
         'triggerable': 'build-webkit',
         'configurations': [
-            {test: MockData.someTestId(), platform: MockData.somePlatformId()},
+            {test: MockData.someTestId(), platform: MockData.somePlatformId(), supportedRepetitionTypes: ['alternating', 'sequential']},
         ],
         'repositoryGroups': [
             {name: 'webkit', repositories: [
@@ -80,7 +80,7 @@ function createTestGroupWithPatchAndOwnedCommits()
         'workerPassword': 'password',
         'triggerable': 'build-webkit',
         'configurations': [
-            {test: MockData.someTestId(), platform: MockData.somePlatformId()},
+            {test: MockData.someTestId(), platform: MockData.somePlatformId(), supportedRepetitionTypes: ['alternating', 'sequential']},
         ],
         'repositoryGroups': [
             {name: 'webkit', repositories: [

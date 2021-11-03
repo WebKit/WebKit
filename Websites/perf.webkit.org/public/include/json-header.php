@@ -182,20 +182,31 @@ function find_triggerable_for_task($db, $task_id) {
     $path_resolver = new TestPathResolver($db);
     $test_ids = $path_resolver->ancestors_for_test($target_test_id);
 
-    $results = $db->query_and_fetch_all('SELECT trigconfig_triggerable AS "triggerable", trigconfig_test AS "test"
+    $results = $db->query_and_fetch_all('SELECT trigconfig_id AS "config_id",
+        trigconfig_triggerable AS "triggerable", trigconfig_test AS "test"
         FROM triggerable_configurations WHERE trigconfig_platform = $1 AND trigconfig_test = ANY($2)',
         array($platform_id, '{' . implode(', ', $test_ids) . '}'));
     if (!$results)
         return NULL;
 
     $test_to_triggerable = array();
-    foreach ($results as $row)
+    $test_to_trigconfig = array();
+    foreach ($results as $row) {
         $test_to_triggerable[$row['test']] = $row['triggerable'];
+        $test_to_trigconfig[$row['test']] = $row['config_id'];
+    }
+
+    $configrepetition_rows = $db->select_rows('triggerable_configuration_repetition_types', 'configrepetition', array());
+    $trigconfig_to_repetition_types = array();
+    foreach ($configrepetition_rows as $row)
+        array_push(array_ensure_item_has_array($trigconfig_to_repetition_types, $row['configrepetition_config']), $row['configrepetition_type']);
 
     foreach ($test_ids as $test_id) {
         $triggerable = array_get($test_to_triggerable, $test_id);
-        if ($triggerable)
-            return array('id' => $triggerable, 'test' => $test_id, 'platform' => $platform_id);
+        if ($triggerable) {
+            $supported_repetition_types = $trigconfig_to_repetition_types[$test_to_trigconfig[$test_id]];
+            return array('id' => $triggerable, 'test' => $test_id, 'platform' => $platform_id, 'supportedRepetitionTypes' => $supported_repetition_types);
+        }
     }
 
     return NULL;

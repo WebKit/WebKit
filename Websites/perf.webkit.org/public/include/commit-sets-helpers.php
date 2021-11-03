@@ -6,7 +6,7 @@ require_once('commit-log-fetcher.php');
 # FIXME: Should create a helper class for below 3 helper functions to avoid passing long argument list.
 function create_test_group_and_build_requests($db, $commit_sets, $task_id, $name, $author, $triggerable_id, $platform_id, $test_id, $repetition_count, $repetition_type, $needs_notification)
 {
-    assert(in_array($repetition_type, array('alternating', 'sequential')));
+    assert(in_array($repetition_type, array('alternating', 'sequential', 'paired-parallel')));
     list ($build_configuration_list, $test_configuration_list) = insert_commit_sets_and_construct_configuration_list($db, $commit_sets);
 
     $group_id = $db->insert_row('analysis_test_groups', 'testgroup',
@@ -24,7 +24,7 @@ function create_test_group_and_build_requests($db, $commit_sets, $task_id, $name
                 insert_build_request_for_configuration($db, $test_configuration, $order++, $triggerable_id, $platform_id, $test_id, $group_id);
         }
     } else {
-        assert($repetition_type == 'alternating');
+        assert($repetition_type == 'alternating' || $repetition_type == 'paired-parallel');
         for ($i = 0; $i < $repetition_count; $i++) {
             foreach ($test_configuration_list as $test_configuration)
                 insert_build_request_for_configuration($db, $test_configuration, $order++, $triggerable_id, $platform_id, $test_id, $group_id);

@@ -8,6 +8,7 @@ const TestServer = require('./resources/test-server.js');
 const MockData = require('./resources/mock-data.js');
 const addWorkerForReport = require('./resources/common-operations.js').addWorkerForReport;
 const prepareServerTest = require('./resources/common-operations.js').prepareServerTest;
+const assertThrows = require('../server-tests/resources/common-operations').assertThrows;
 
 describe('/api/update-triggerable/', function () {
     prepareServerTest(this);
@@ -19,14 +20,16 @@ describe('/api/update-triggerable/', function () {
         'configurations': [],
     };
 
-    const smallUpdate = {
-        'workerName': 'someWorker',
-        'workerPassword': 'somePassword',
-        'triggerable': 'build-webkit',
-        'configurations': [
-            {test: MockData.someTestId(), platform: MockData.somePlatformId()}
-        ],
-    };
+    function createUpdateWithRepetitionTypes(supportedRepetitionTypes) {
+        return {
+            'workerName': 'someWorker',
+            'workerPassword': 'somePassword',
+            'triggerable': 'build-webkit',
+            'configurations': [{test: MockData.someTestId(), platform: MockData.somePlatformId(), supportedRepetitionTypes}],
+        }
+    }
+
+    const smallUpdate = createUpdateWithRepetitionTypes(['alternating', 'sequential']);
 
     it('should reject when worker name is missing', () => {
         return TestServer.remoteAPI().postJSON('/api/update-triggerable/', {}).then((response) => {
@@ -119,7 +122,7 @@ describe('/api/update-triggerable/', function () {
             'workerPassword': 'somePassword',
             'triggerable': 'empty-triggerable',
             'configurations': [
-                {test: MockData.someTestId(), platform: MockData.somePlatformId()}
+                {test: MockData.someTestId(), platform: MockData.somePlatformId(), supportedRepetitionTypes: ['alternating', 'sequential']},
             ],
             'repositoryGroups': [
                 {name: 'system-only', repositories: [
@@ -253,6 +256,8 @@ describe('/api/update-triggerable/', function () {
         }).then((result) => {
             const [initialConfigurations, initialRepositoryGroups] = initialResult;
             const [configurations, repositoryGroups] = result;
+            initialConfigurations.forEach(config => delete config.id);
+            configurations.forEach(config => delete config.id);
             assert.deepStrictEqual(configurations, initialConfigurations);
             assert.deepStrictEqual(repositoryGroups, initialRepositoryGroups);
         })
@@ -275,6 +280,8 @@ describe('/api/update-triggerable/', function () {
         }).then((result) => {
             const [initialConfigurations, initialRepositoryGroups] = initialResult;
             const [configurations, repositoryGroups] = result;
+            initialConfigurations.forEach(config => delete config.id);
+            configurations.forEach(config => delete config.id);
             assert.deepStrictEqual(configurations, initialConfigurations);
             assert.deepStrictEqual(repositoryGroups, initialRepositoryGroups);
         })
@@ -308,7 +315,7 @@ describe('/api/update-triggerable/', function () {
             'workerPassword': 'somePassword',
             'triggerable': 'empty-triggerable',
             'configurations': [
-                {test: MockData.someTestId(), platform: MockData.somePlatformId()}
+                {test: MockData.someTestId(), platform: MockData.somePlatformId(), supportedRepetitionTypes: ['alternating', 'sequential']},
             ],
             'repositoryGroups': [
                 {name: 'system-only', repositories: [{repository: MockData.macosRepositoryId()}]},
@@ -463,6 +470,41 @@ describe('/api/update-triggerable/', function () {
 
             assert.deepStrictEqual(repositories, initialRepositories);
         });
+    });
+
+    it('should allow adding "paired-parallel" repetition type to triggerable configuration', async () => {
+        const db = TestServer.database();
+        await MockData.addMockData(db);
+        const initialUpdate = createUpdateWithRepetitionTypes(['alternating', 'sequential']);
+        await addWorkerForReport(initialUpdate);
+        await TestServer.remoteAPI().postJSONWithStatus('/api/update-triggerable', initialUpdate);
+
+        let rows = await db.selectAll('triggerable_configuration_repetition_types', 'type');
+        assert.strictEqual(rows.length, 2);
+        assert.deepEqual(rows.map(row => row.type).sort(), ['alternating', 'sequential']);
+
+        const updateWithParallelRepetition = createUpdateWithRepetitionTypes(['alternating', 'sequential', 'paired-parallel']);
+        await TestServer.remoteAPI().postJSONWithStatus('/api/update-triggerable', updateWithParallelRepetition);
+        rows = await db.selectAll('triggerable_configuration_repetition_types', 'type');
+        assert.strictEqual(rows.length, 3);
+        assert.deepEqual(rows.map(row => row.type).sort(), ['alternating', 'paired-parallel', 'sequential']);
+    });
+
+    it('should allow updating an empty triggerable', async () => {
+        const db = TestServer.database();
+        await MockData.addMockData(db);
+        const emptyTriggerableUpdate = { workerName: 'someWorker', workerPassword: 'somePassword', triggerable: 'build-webkit', configurations: [] };
+        await addWorkerForReport(emptyTriggerableUpdate);
+        await TestServer.remoteAPI().postJSONWithStatus('/api/update-triggerable', emptyTriggerableUpdate);
+
+        let rows = await db.selectAll('triggerable_configuration_repetition_types', 'type');
+        assert.strictEqual(rows.length, 0);
+
+        const updateWithParallelRepetition = createUpdateWithRepetitionTypes(['alternating', 'sequential', 'paired-parallel']);
+        await TestServer.remoteAPI().postJSONWithStatus('/api/update-triggerable', updateWithParallelRepetition);
+        rows = await db.selectAll('triggerable_configuration_repetition_types', 'type');
+        assert.strictEqual(rows.length, 3);
+        assert.deepEqual(rows.map(row => row.type).sort(), ['alternating', 'paired-parallel', 'sequential']);
     });
 
 });

@@ -31,28 +31,27 @@ function main() {
         exit_with_error('NoTestingBuildRequests');
 
     $repetition_type = $test_group['testgroup_repetition_type'];
-    assert(in_array($repetition_type, ['alternating', 'sequential']));
-    $is_alternating_type = $repetition_type == 'alternating';
-    if ($is_alternating_type && $commit_set_id)
-        exit_with_error('CommitSetNotSupportedForAlternatingRepetitionType');
+    assert(in_array($repetition_type, ['alternating', 'sequential', 'paired-parallel']));
+    $is_sequential_type = $repetition_type == 'sequential';
+    if (!$is_sequential_type && $commit_set_id)
+        exit_with_error('CommitSetNotSupportedRepetitionType');
 
     $existing_test_type_build_requests = array_filter($existing_build_requests, function($build_request) {
         return $build_request['request_order'] >= 0;
     });
 
-    if ($is_alternating_type)
-        add_alternating_build_requests($db, $existing_test_type_build_requests, $additional_build_request_count, $current_order);
-    else {
+    if ($is_sequential_type) {
         if ($commit_set_id)
             add_sequential_build_requests_for_commit_set($db, $existing_test_type_build_requests, $additional_build_request_count, $commit_set_id);
         else
             add_sequential_build_requests_for_all_commit_sets($db, $existing_build_requests, $additional_build_request_count, $test_group_id);
-    }
+    } else
+        add_alternating_or_paired_parallel_build_requests($db, $existing_test_type_build_requests, $additional_build_request_count, $current_order);
 
     exit_with_success();
 }
 
-function add_alternating_build_requests($db, $existing_build_requests, $additional_build_request_count, $order)
+function add_alternating_or_paired_parallel_build_requests($db, $existing_build_requests, $additional_build_request_count, $order)
 {
     $commit_sets = array();
     $build_request_by_commit_set = array();

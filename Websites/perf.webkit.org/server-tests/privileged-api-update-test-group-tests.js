@@ -96,8 +96,8 @@ async function addTriggerableAndCreateTask(name, webkitRevisions)
         'workerPassword': 'anotherPassword',
         'triggerable': 'build-webkit',
         'configurations': [
-            {test: MockData.someTestId(), platform: MockData.somePlatformId()},
-            {test: MockData.someTestId(), platform: MockData.otherPlatformId()},
+            {test: MockData.someTestId(), platform: MockData.somePlatformId(), supportedRepetitionTypes: ['alternating', 'sequential']},
+            {test: MockData.someTestId(), platform: MockData.otherPlatformId(), supportedRepetitionTypes: ['alternating', 'sequential']},
         ],
         'repositoryGroups': [
             {name: 'os-only', acceptsRoot: true, repositories: [

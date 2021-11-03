@@ -1,3 +1,123 @@
+2021-11-02  Dewei Zhu  <dewei_zhu@apple.com>
+
+        Add 'paired-parallel' repetition type for A/B testing.
+        https://bugs.webkit.org/show_bug.cgi?id=229545
+
+        Reviewed by Ryosuke Niwa and Alexey Proskuryakov.
+
+        Add 'paired-parallel' repetition type for A/B testing.
+        Add 'TriggerableConfiguration' model to store repetition type information for each (platform, test) pair.
+        Add new component 'repetition-type-selection' to unify A/B testing UI for repetition type selection.
+        Extend A/B testing syncing script to update repetition types for each triggerable configuration and only
+        schedule A/B testing on a builder which supports a given repetition type.
+
+        * browser-tests/custom-analysis-task-configurator-tests.js: Updated unit tests accordingly.
+        (async createCustomAnalysisTaskConfiguratorWithContext):
+        * browser-tests/customizable-test-group-form-tests.js: Updated unit tests accordingly.
+        (async createCustomizableTestGroupFormWithContext):
+        * browser-tests/test-group-form-tests.js: Updated unit tests accordingly.
+        (async createTestGroupFormWithContext):
+        * init-database.sql: Added 'triggerable_configuration_repetition_types' table to store supported
+        repetition types for each triggerable configuration.
+        Added 'paired-parallel' repetition type.
+        * migrate-database.sql: Updated migration scripts.
+        * public/api/update-triggerable.php: Added logic to update repetition types for each tirggerable configurations.
+        * public/include/commit-sets-helpers.php: Added support for 'paired-parallel' repetition type.
+        * public/include/json-header.php: Extended 'find_triggerable_for_task' to include supported repetition types in
+        return value.
+        * public/include/manifest-generator.php: Added logic to include supported repetition types in manifest.
+        * public/privileged-api/add-build-requests.php: Extended API to support 'paired-parallel' repetition type.
+        * public/privileged-api/create-analysis-task.php: Extended API to support 'paired-parallel' repetition type.
+        * public/privileged-api/create-test-group.php: Extended API to support 'paired-parallel' repetition type.
+        * public/v3/commit-set-range-bisector.js:
+        (CommitSetRangeBisector._closestCommitSetsToBisectingCommitByTime): Fix a bug that error is raise when there is
+        no middle commit set in a range.
+        * public/v3/components/custom-configuration-test-group-form.js: Added code to update supported repetition types
+        on test config change.
+        (CustomConfigurationTestGroupForm.prototype.startTesting):
+        (CustomConfigurationTestGroupForm.prototype.didConstructShadowTree):
+        * public/v3/components/customizable-test-group-form.js:
+        (CustomizableTestGroupForm.prototype.startTesting):
+        * public/v3/components/repetition-type-selection.js: Added a new model that stores repetition types information
+        for each (platform, test) pair.
+        (RepetitionTypeSelection):
+        (RepetitionTypeSelection.prototype.didConstructShadowTree):
+        (RepetitionTypeSelection.prototype.get selectedRepetitionType):
+        (RepetitionTypeSelection.prototype.set selectedRepetitionType):
+        (RepetitionTypeSelection.prototype.set disabled):
+        (RepetitionTypeSelection.prototype.setTestAndPlatform):
+        (RepetitionTypeSelection.prototype.labelForRepetitionType):
+        (RepetitionTypeSelection.prototype.render):
+        (RepetitionTypeSelection.prototype._renderRepetitionTypeList):
+        (RepetitionTypeSelection.htmlTemplate):
+        * public/v3/components/test-group-form.js: Adopt 'repetition-type-selection'.
+        (TestGroupForm.prototype.setTestAndPlatform):
+        (TestGroupForm.prototype.updateWithTestGroup):
+        (TestGroupForm.prototype.startTesting):
+        * public/v3/index.html:
+        * public/v3/models/manifest.js: Pass 'supportedRepetitionTypes' and 'id' for TriggerableConfiguration.
+        (Manifest.reset):
+        (Manifest._didFetchManifest):
+        (Manifest):
+        * public/v3/models/test-group.js: Updated logic to share retry logic of 'alternating' test group with 'paired-parallel'
+        test group.
+        (TestGroup.prototype.async scheduleMoreRequestsOrClearFlag):
+        * public/v3/models/triggerable.js: Added TriggerableConfiguration model.
+        Added code to creat TriggerableConfiguration in 'Triggerable' constructor.
+        (Triggerable):
+        (Triggerable.findByTestConfiguration):
+        (prototype.get triggerable):
+        (prototype.get supportedRepetitionTypes):
+        (findByTestAndPlatform):
+        * public/v3/pages/analysis-task-page.js: Added code to update repetition type in the UI based on (test, platform) pair.
+        (AnalysisTaskResultsPane.prototype.setTestGroups):
+        (AnalysisTaskTestGroupPane.prototype._renderCurrentTestGroup):
+        (AnalysisTaskTestGroupPane.prototype._renderTestGroupForm):
+        * public/v3/pages/chart-pane.js: Adopt 'repetition-type-selection'.
+        (ChartPane.prototype.didConstructShadowTree):
+        (ChartPane.prototype.async _analyzeRange):
+        (ChartPane.prototype._renderActionToolbar):
+        * server-tests/api-manifest-tests.js:
+        * server-tests/api-update-triggerable-tests.js: Added and updated unit tests.
+        (updateWithMacWebKitRepositoryGroups):
+        * server-tests/api-upload-root-tests.js: Updated unit tests.
+        * server-tests/privileged-api-add-build-requests-tests.js: Added and updated unit tests.
+        (async addTriggerableAndCreateTask):
+        * server-tests/privileged-api-create-analysis-task-tests.js: Added and updated unit tests.
+        * server-tests/privileged-api-create-test-group-tests.js: Added and updated unit tests.
+        * server-tests/privileged-api-update-test-group-tests.js: Updated unit tests.
+        (async addTriggerableAndCreateTask):
+        * server-tests/resources/mock-data.js:
+        (MockData.someTestConfigurationId):
+        (MockData.otherTestConfigurationId):
+        (MockData.addMockConfiguration):
+        (MockData.set mockTestSyncConfigWithSingleBuilder):
+        (MockData.mockTestSyncConfigWithPatchAcceptingBuilder):
+        (MockData.mockTestSyncConfigWithTwoBuilders):
+        * server-tests/tools-sync-buildbot-integration-tests.js: Added and updated unit tests.
+        * tools/js/buildbot-syncer.js: Added code to update supported repetition types on triggerable updates.
+        Update configuration match code to only scheduler build requests the repetition types of which are both
+        supported by builder and triggerable configuration.
+        (BuildbotSyncer):
+        (BuildbotSyncer.prototype.addTestConfiguration):
+        (BuildbotSyncer.prototype.matchesConfiguration):
+        (BuildbotSyncer._loadConfig):
+        * tools/js/buildbot-triggerable.js:
+        (BuildbotTriggerable.prototype.updateTriggerable):
+        (BuildbotTriggerable.prototype.async syncOnce): Move the code that fetches all related test groups before
+        invoking 'BuildbotTriggerable._validateRequests' which needs repetition types stored in test group in
+        'BuildbotSyncer.matchesConfiguration'.
+        * tools/js/v3-models.js:
+        * unit-tests/buildbot-syncer-tests.js: Added and updated unit tests.
+        (sampleiOSConfig):
+        (sampleiOSConfigWithExpansions):
+        (smallConfiguration):
+        (smallConfigurationWithCustomRepetitionTypes):
+        (createSampleBuildRequest):
+        * unit-tests/measurement-set-analyzer-tests.js: Updated unit tests.
+        * unit-tests/resources/mock-v3-models.js:
+        (MockModels.inject):
+
 2021-09-26  Dewei Zhu  <dewei_zhu@apple.com>
 
         Summary page should support calculating summary using weighted mean.
