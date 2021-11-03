@@ -128,20 +128,28 @@ Invalidator::RuleInformation Invalidator::collectRuleInformation()
     return information;
 }
 
+static void invalidateAssignedElements(HTMLSlotElement& slot)
+{
+    auto* assignedNodes = slot.assignedNodes();
+    if (!assignedNodes)
+        return;
+    for (auto& node : *assignedNodes) {
+        if (!is<Element>(node.get()))
+            continue;
+        if (is<HTMLSlotElement>(*node) && node->containingShadowRoot()) {
+            invalidateAssignedElements(downcast<HTMLSlotElement>(*node));
+            continue;
+        }
+        downcast<Element>(*node).invalidateStyleInternal();
+    }
+}
+
 Invalidator::CheckDescendants Invalidator::invalidateIfNeeded(Element& element, const SelectorFilter* filter)
 {
     invalidateInShadowTreeIfNeeded(element);
 
-    bool shouldCheckForSlots = m_ruleInformation.hasSlottedPseudoElementRules && !m_didInvalidateHostChildren;
-    if (shouldCheckForSlots && is<HTMLSlotElement>(element)) {
-        auto* containingShadowRoot = element.containingShadowRoot();
-        if (containingShadowRoot && containingShadowRoot->host()) {
-            for (auto& possiblySlotted : childrenOfType<Element>(*containingShadowRoot->host()))
-                possiblySlotted.invalidateStyleInternal();
-        }
-        // No need to do this again.
-        m_didInvalidateHostChildren = true;
-    }
+    if (m_ruleInformation.hasSlottedPseudoElementRules && is<HTMLSlotElement>(element))
+        invalidateAssignedElements(downcast<HTMLSlotElement>(element));
 
     switch (element.styleValidity()) {
     case Style::Validity::Valid: {
@@ -161,8 +169,6 @@ Invalidator::CheckDescendants Invalidator::invalidateIfNeeded(Element& element, 
         return CheckDescendants::Yes;
     case Style::Validity::SubtreeInvalid:
     case Style::Validity::SubtreeAndRenderersInvalid:
-        if (shouldCheckForSlots)
-            return CheckDescendants::Yes;
         return CheckDescendants::No;
     }
     ASSERT_NOT_REACHED();
