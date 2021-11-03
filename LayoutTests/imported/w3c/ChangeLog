@@ -1,3 +1,16 @@
+2021-11-03  Joonghun Park  <jh718.park@samsung.com>
+
+        border-radius inline style should serialize with valid syntax
+        https://bugs.webkit.org/show_bug.cgi?id=183994
+
+        This patch have border-radius property serializes in canonical order
+        as specified in https://drafts.csswg.org/css-backgrounds/#border-radius.
+
+        Reviewed by Darin Adler.
+
+        * web-platform-tests/css/css-backgrounds/parsing/border-radius-valid-expected.txt: Add more test case results.
+        * web-platform-tests/css/css-backgrounds/parsing/border-radius-valid.html: Add more test cases.
+
 2021-11-03  Chris Dumez  <cdumez@apple.com>
 
         Javascript URLs do not run in the right context when using frame targeting

@@ -63,6 +63,10 @@
 #include "Counter.h"
 #include "FontFace.h"
 #include "HashTools.h"
+// FIXME-NEWPARSER: CSSPrimitiveValue is a large class that holds many unrelated objects,
+// switching behavior on the type of the object it is holding.
+// Since CSSValue is already a class hierarchy, this adds an unnecessary second level to the hierarchy that complicates code.
+// So we need to remove the various behaviors from CSSPrimitiveValue and split them into separate subclasses of CSSValue.
 // FIXME-NEWPARSER: Replace Pair and Rect with actual CSSValue subclasses (CSSValuePair and CSSQuadValue).
 #include "Pair.h"
 #include "Rect.h"
