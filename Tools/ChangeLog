@@ -1,3 +1,21 @@
+2021-11-03  Chris Dumez  <cdumez@apple.com>
+
+        _pasteboardWithName should be thread-safe
+        https://bugs.webkit.org/show_bug.cgi?id=232670
+
+        Reviewed by Tim Horton.
+
+        _pasteboardWithName should be thread-safe, to match [NSPasteboard _pasteboardWithName].
+        This was leading to flaky crashes in _pasteboardWithName getting called off the main
+        thread from ShareKit code.
+
+        * DumpRenderTree/mac/DumpRenderTreePasteboard.mm:
+        (+[DumpRenderTreePasteboard _pasteboardWithName:]):
+        (+[DumpRenderTreePasteboard releaseLocalPasteboards]):
+        * WebKitTestRunner/mac/WebKitTestRunnerPasteboard.mm:
+        (+[WebKitTestRunnerPasteboard _pasteboardWithName:]):
+        (+[WebKitTestRunnerPasteboard releaseLocalPasteboards]):
+
 2021-11-03  Ryan Haddad  <ryanhaddad@apple.com>
 
         [EWS] Add more bots to iOS layout and API test queues

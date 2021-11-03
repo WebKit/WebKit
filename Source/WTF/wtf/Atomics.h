@@ -26,6 +26,7 @@
 #pragma once
 
 #include <atomic>
+#include <wtf/FastMalloc.h>
 #include <wtf/StdLibExtras.h>
 
 #if OS(WINDOWS)
