@@ -288,7 +288,7 @@ void PrivateClickMeasurementManager::setPrivateClickMeasurementAppBundleIDForTes
 
 void PrivateClickMeasurementManager::startTimer(Seconds seconds)
 {
-    m_firePendingAttributionRequestsTimer.startOneShot(m_isRunningTest ? 0_s : seconds);
+    m_firePendingAttributionRequestsTimer.startOneShot(seconds);
 }
 
 void PrivateClickMeasurementManager::attribute(const SourceSite& sourceSite, const AttributionDestinationSite& destinationSite, AttributionTriggerData&& attributionTriggerData, const ApplicationBundleIdentifier& applicationBundleIdentifier)
@@ -306,7 +306,7 @@ void PrivateClickMeasurementManager::attribute(const SourceSite& sourceSite, con
     }
         
     if (auto* resourceLoadStatistics = m_networkSession->resourceLoadStatistics()) {
-        resourceLoadStatistics->privateClickMeasurementStore().attributePrivateClickMeasurement(sourceSite, destinationSite, applicationBundleIdentifier, WTFMove(attributionTriggerData), std::exchange(m_ephemeralMeasurement, std::nullopt), [this, weakThis = makeWeakPtr(*this)] (auto attributionSecondsUntilSendData, auto debugInfo) {
+        resourceLoadStatistics->privateClickMeasurementStore().attributePrivateClickMeasurement(sourceSite, destinationSite, applicationBundleIdentifier, WTFMove(attributionTriggerData), std::exchange(m_ephemeralMeasurement, std::nullopt), m_isRunningTest ? WebCore::PrivateClickMeasurement::IsRunningLayoutTest::Yes : WebCore::PrivateClickMeasurement::IsRunningLayoutTest::No, [this, weakThis = makeWeakPtr(*this)] (auto attributionSecondsUntilSendData, auto debugInfo) {
             if (!weakThis)
                 return;
             
@@ -413,6 +413,14 @@ void PrivateClickMeasurementManager::clearSentAttribution(PrivateClickMeasuremen
 #endif
 }
 
+Seconds PrivateClickMeasurementManager::randomlyBetweenFifteenAndThirtyMinutes() const
+ {
+     if (m_isRunningTest)
+         return 0_s;
+ 
+     return debugModeEnabled() ? debugModeSecondsUntilSend : 15_min + Seconds(cryptographicallyRandomNumber() % 900);
+ }
+
 void PrivateClickMeasurementManager::firePendingAttributionRequests()
 {
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
@@ -444,8 +452,7 @@ void PrivateClickMeasurementManager::firePendingAttributionRequests()
                     // We've already sent an attribution this round. We should send additional overdue attributions at
                     // a random time between 15 and 30 minutes to avoid a burst of simultaneous attributions. If debug
                     // mode is enabled, this should be much shorter for easy testing.
-                    auto interval = debugModeEnabled() ? debugModeSecondsUntilSend : 15_min + Seconds(cryptographicallyRandomNumber() % 900);
-                    startTimer(interval);
+                    startTimer(randomlyBetweenFifteenAndThirtyMinutes());
                     return;
                 }
 
@@ -456,9 +463,12 @@ void PrivateClickMeasurementManager::firePendingAttributionRequests()
 
                 // Update nextTimeToFire in case the later report time for this attribution is sooner than the scheduled next time to fire.
                 // Or, if debug mode is enabled, we should send the second report on a much shorter delay for easy testing.
-                if (laterTimeToSend)
-                    nextTimeToFire = debugModeEnabled() ? debugModeSecondsUntilSend : std::min(nextTimeToFire, laterTimeToSend.value().secondsSinceEpoch());
-
+                if (laterTimeToSend) {
+                     Seconds laterTimeToSendInSecondsFromNow = (*laterTimeToSend - WallTime::now());
+                     // Avoid sending expired attributions in bursts by using a random 15-30 minute interval if laterTimeToSend is expired.
+                     laterTimeToSendInSecondsFromNow = laterTimeToSendInSecondsFromNow.value() < 0 ? randomlyBetweenFifteenAndThirtyMinutes() : laterTimeToSendInSecondsFromNow;
+                     nextTimeToFire = debugModeEnabled() ? debugModeSecondsUntilSend : std::min(nextTimeToFire, laterTimeToSendInSecondsFromNow);
+                 }
                 continue;
             }
 

@@ -46,7 +46,7 @@ public:
     static void interruptAllDatabases();
 
     void insertPrivateClickMeasurement(WebCore::PrivateClickMeasurement&&, PrivateClickMeasurementAttributionType);
-    std::pair<std::optional<WebCore::PrivateClickMeasurement::AttributionSecondsUntilSendData>, DebugInfo> attributePrivateClickMeasurement(const WebCore::PrivateClickMeasurement::SourceSite&, const WebCore::PrivateClickMeasurement::AttributionDestinationSite&, const ApplicationBundleIdentifier&, WebCore::PrivateClickMeasurement::AttributionTriggerData&&);
+    std::pair<std::optional<WebCore::PrivateClickMeasurement::AttributionSecondsUntilSendData>, DebugInfo> attributePrivateClickMeasurement(const WebCore::PrivateClickMeasurement::SourceSite&, const WebCore::PrivateClickMeasurement::AttributionDestinationSite&, const ApplicationBundleIdentifier&, WebCore::PrivateClickMeasurement::AttributionTriggerData&&, WebCore::PrivateClickMeasurement::IsRunningLayoutTest);
     Vector<WebCore::PrivateClickMeasurement> allAttributedPrivateClickMeasurement();
     void clearPrivateClickMeasurement(std::optional<WebCore::RegistrableDomain>);
     void clearExpiredPrivateClickMeasurement();

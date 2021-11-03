@@ -1,3 +1,1034 @@
+2021-10-26  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r284349. rdar://problem/81171560
+
+    Use-after-move of m_sockets in NetworkRTCProvider::close()
+    <https://webkit.org/b/231779>
+    <rdar://problem/84278026>
+    
+    Reviewed by Youenn Fablet.
+    
+    * NetworkProcess/webrtc/NetworkRTCProvider.cpp:
+    (WebKit::NetworkRTCProvider::close):
+    - Replace WTFMove() with std::exchange() to make it clear that
+      m_sockets will be emptied, then iterate on `sockets` to close
+      them.  Update ASSERT() to check that no sockets were added
+      to m_sockets during the loop.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@284349 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-10-18  David Kilzer  <ddkilzer@apple.com>
+
+            Use-after-move of m_sockets in NetworkRTCProvider::close()
+            <https://webkit.org/b/231779>
+            <rdar://problem/84278026>
+
+            Reviewed by Youenn Fablet.
+
+            * NetworkProcess/webrtc/NetworkRTCProvider.cpp:
+            (WebKit::NetworkRTCProvider::close):
+            - Replace WTFMove() with std::exchange() to make it clear that
+              m_sockets will be emptied, then iterate on `sockets` to close
+              them.  Update ASSERT() to check that no sockets were added
+              to m_sockets during the loop.
+
+2021-10-26  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r283797. rdar://problem/81171560
+
+    Bind the number of WebRTC sockets opened per process
+    https://bugs.webkit.org/show_bug.cgi?id=231171
+    
+    Reviewed by Alex Christensen.
+    
+    Migrate from HashMap to StdMap so that we can keep the order based on socket identifiers.
+    Take benefit of the ordering so that, above a certain size, we get the oldest socket, close it and remove it from the map.
+    We set the maximum size to 256 sockets per process.
+    Fix a potential bug in NetworkRTCTCPSocketCocoa to ensure we remove the socket from the map even if the nw connection is not live.
+    Manually tested.
+    
+    * NetworkProcess/webrtc/NetworkRTCProvider.cpp:
+    * NetworkProcess/webrtc/NetworkRTCProvider.h:
+    * NetworkProcess/webrtc/NetworkRTCTCPSocketCocoa.mm:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@283797 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-10-08  Youenn Fablet  <youenn@apple.com>
+
+            Bind the number of WebRTC sockets opened per process
+            https://bugs.webkit.org/show_bug.cgi?id=231171
+
+            Reviewed by Alex Christensen.
+
+            Migrate from HashMap to StdMap so that we can keep the order based on socket identifiers.
+            Take benefit of the ordering so that, above a certain size, we get the oldest socket, close it and remove it from the map.
+            We set the maximum size to 256 sockets per process.
+            Fix a potential bug in NetworkRTCTCPSocketCocoa to ensure we remove the socket from the map even if the nw connection is not live.
+            Manually tested.
+
+            * NetworkProcess/webrtc/NetworkRTCProvider.cpp:
+            * NetworkProcess/webrtc/NetworkRTCProvider.h:
+            * NetworkProcess/webrtc/NetworkRTCTCPSocketCocoa.mm:
+
+2021-10-26  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r283604. rdar://problem/81171560
+
+    Close NetworkRTCProvider sockets explicitly when closing NetworkRTCProvider
+    https://bugs.webkit.org/show_bug.cgi?id=231228
+    <rdar://83237496>
+    
+    Reviewed by Eric Carlson.
+    
+    * NetworkProcess/webrtc/NetworkRTCProvider.cpp:
+    (WebKit::NetworkRTCProvider::close):
+    Make sure to explictly closing the socket before deleting it.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@283604 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-10-06  Youenn Fablet  <youenn@apple.com>
+
+            Close NetworkRTCProvider sockets explicitly when closing NetworkRTCProvider
+            https://bugs.webkit.org/show_bug.cgi?id=231228
+            <rdar://83237496>
+
+            Reviewed by Eric Carlson.
+
+            * NetworkProcess/webrtc/NetworkRTCProvider.cpp:
+            (WebKit::NetworkRTCProvider::close):
+            Make sure to explictly closing the socket before deleting it.
+
+2021-10-26  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r283703. rdar://problem/84629308
+
+    ScopedEGLDefaultDisplay should be removed
+    https://bugs.webkit.org/show_bug.cgi?id=231011
+    
+    Patch by Kimmo Kinnunen <kkinnunen@apple.com> on 2021-10-07
+    Reviewed by Kenneth Russell.
+    
+    Source/WebCore:
+    
+    Hard-coding the code to EGL_DEFAULT_DISPLAY only and using the scoped
+    holder is making the EGLDisplays harder to use than neccessary. The
+    implementation target, e.g. the ability to call EGLTerminate, was also a bit
+    more convoluted than needed.
+    
+    Move the "call EGLTerminate" logic from a bit convoluted refcount mechanism
+    in ScopedEGLDefaultDisplay to the explicit GraphicsContextGLOpenGL::releaseResources().
+    The callers are expected to do the refcounting anyway, as the existing client
+    WebKit::ScopedWebGLRenderingResourcesRequest already did.
+    
+    Make GraphicsContextGLOpenGL::releaseResources() available on all platforms.
+    It is implemented on all ANGLE implementations.
+    Platforms can augment the implementation by implementing
+    GraphicsContextGLOpenGL::platformReleaseResources(). For Cocoa, this function
+    resets the currentContext cache that is used to optimize making context current.
+    
+    No new tests, refactor.
+    
+    * CMakeLists.txt:
+    * Headers.cmake:
+    * PlatformMac.cmake:
+    * SourcesCocoa.txt:
+    * WebCore.xcodeproj/project.pbxproj:
+    * platform/graphics/angle/ANGLEUtilities.cpp: Renamed from Source/WebCore/platform/graphics/angle/GraphicsContextGLANGLEEGLUtilities.h.
+    (WebCore::platformIsANGLEAvailable):
+    * platform/graphics/angle/ANGLEUtilities.h: Renamed from Source/WebCore/platform/graphics/angle/GraphicsContextGLANGLEUtilities.h.
+    Rename GraphicsContextGLANGLEUtilities to simpler and more descriptive ANGLEUtilities.
+    Add the isANGLEAvailable to there.
+    
+    * platform/graphics/angle/GraphicsContextGLANGLE.cpp:
+    (WebCore::GraphicsContextGLOpenGL::releaseResources):
+    (WebCore::GraphicsContextGLOpenGL::platformReleaseResources):
+    * platform/graphics/angle/GraphicsContextGLANGLEEGLUtilities.cpp: Removed.
+    (WebCore::refDefaultDisplay): Deleted.
+    (WebCore::unrefDefaultDisplayIfNeeded): Deleted.
+    (WebCore::ScopedEGLDefaultDisplay::operator=): Deleted.
+    (WebCore::ScopedEGLDefaultDisplay::ScopedEGLDefaultDisplay): Deleted.
+    (WebCore::ScopedEGLDefaultDisplay::~ScopedEGLDefaultDisplay): Deleted.
+    (WebCore::ScopedEGLDefaultDisplay::releaseAllResourcesIfUnused): Deleted.
+    * platform/graphics/cocoa/GraphicsContextGLOpenGLCocoa.mm:
+    (WebCore::platformIsANGLEAvailable):
+    (WebCore::initializeEGLDisplay):
+    (WebCore::GraphicsContextGLOpenGL::platformReleaseResources):
+    (WebCore::isANGLEAvailable): Deleted.
+    (WebCore::GraphicsContextGLOpenGL::releaseCurrentContext): Deleted.
+    (WebCore::GraphicsContextGLOpenGL::releaseAllResourcesIfUnused): Deleted.
+    * platform/graphics/opengl/GraphicsContextGLOpenGL.cpp:
+    (WebCore::GraphicsContextGLOpenGL::releaseResources):
+    (WebCore::GraphicsContextGLOpenGL::platformReleaseResources):
+    * platform/graphics/opengl/GraphicsContextGLOpenGL.h:
+    * platform/ios/wak/WebCoreThread.mm:
+    
+    Source/WebKit:
+    
+    Implement the release of WebGL resources with the amended
+    GraphicsContextGLOpenGL::releaseResources() instead of
+    previous separate function GraphicsContextGLOpenGL::releaseAllResources().
+    
+    Use the resource release code path universally, as
+    GraphicsContextGLOpenGL::releaseResources() is now common code.
+    
+    * GPUProcess/graphics/ScopedWebGLRenderingResourcesRequest.cpp:
+    (WebKit::ScopedWebGLRenderingResourcesRequest::scheduleFreeWebGLRenderingResources):
+    (WebKit::ScopedWebGLRenderingResourcesRequest::freeWebGLRenderingResources):
+    * GPUProcess/graphics/ScopedWebGLRenderingResourcesRequest.h:
+    * GPUProcess/graphics/ScopedWebGLRenderingResourcesRequestCocoa.cpp: Removed.
+    (WebKit::ScopedWebGLRenderingResourcesRequest::scheduleFreeWebGLRenderingResources): Deleted.
+    (WebKit::ScopedWebGLRenderingResourcesRequest::freeWebGLRenderingResources): Deleted.
+    * SourcesCocoa.txt:
+    * WebKit.xcodeproj/project.pbxproj:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@283703 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-10-07  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+            ScopedEGLDefaultDisplay should be removed
+            https://bugs.webkit.org/show_bug.cgi?id=231011
+
+            Reviewed by Kenneth Russell.
+
+            Implement the release of WebGL resources with the amended
+            GraphicsContextGLOpenGL::releaseResources() instead of
+            previous separate function GraphicsContextGLOpenGL::releaseAllResources().
+
+            Use the resource release code path universally, as
+            GraphicsContextGLOpenGL::releaseResources() is now common code.
+
+            * GPUProcess/graphics/ScopedWebGLRenderingResourcesRequest.cpp:
+            (WebKit::ScopedWebGLRenderingResourcesRequest::scheduleFreeWebGLRenderingResources):
+            (WebKit::ScopedWebGLRenderingResourcesRequest::freeWebGLRenderingResources):
+            * GPUProcess/graphics/ScopedWebGLRenderingResourcesRequest.h:
+            * GPUProcess/graphics/ScopedWebGLRenderingResourcesRequestCocoa.cpp: Removed.
+            (WebKit::ScopedWebGLRenderingResourcesRequest::scheduleFreeWebGLRenderingResources): Deleted.
+            (WebKit::ScopedWebGLRenderingResourcesRequest::freeWebGLRenderingResources): Deleted.
+            * SourcesCocoa.txt:
+            * WebKit.xcodeproj/project.pbxproj:
+
+2021-10-26  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r284344. rdar://problem/84625558
+
+    Build fix #3: Adopt attribution AVCaptureSession SPI for GPU process
+    https://bugs.webkit.org/show_bug.cgi?id=231621
+    <rdar://problem/80748535>
+    
+    Unreviewed build fix.
+    
+    
+    Source/WebCore/PAL:
+    
+    * pal/spi/cocoa/TCCSPI.h:
+    - Use HAVE(TCC_IOS_14_BIG_SUR_SPI).
+    
+    Source/WebKit:
+    
+    * Shared/Cocoa/TCCSoftLink.h:
+    (tcc_identity_create):
+    * Shared/Cocoa/TCCSoftLink.mm:
+    (tcc_identity_create):
+    - Use HAVE(TCC_IOS_14_BIG_SUR_SPI).
+    
+    Source/WTF:
+    
+    * wtf/PlatformHave.h:
+    (HAVE_TCC_IOS_14_BIG_SUR_SPI): Add.
+    - Used for TCC.framework SPI available in iOS 14 and macOS 11
+      Big Sur and later.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@284344 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-10-17  David Kilzer  <ddkilzer@apple.com>
+
+            Build fix #3: Adopt attribution AVCaptureSession SPI for GPU process
+            https://bugs.webkit.org/show_bug.cgi?id=231621
+            <rdar://problem/80748535>
+
+            Unreviewed build fix.
+
+            * Shared/Cocoa/TCCSoftLink.h:
+            (tcc_identity_create):
+            * Shared/Cocoa/TCCSoftLink.mm:
+            (tcc_identity_create):
+            - Use HAVE(TCC_IOS_14_BIG_SUR_SPI).
+
+2021-10-26  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r284251. rdar://problem/84625558
+
+    Unreviewed maccatalyst build fix.
+    
+    * GPUProcess/cocoa/GPUConnectionToWebProcessCocoa.mm:
+    (WebKit::GPUConnectionToWebProcess::setTCCIdentity):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@284251 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-10-15  Kate Cheney  <katherine_cheney@apple.com>
+
+            Unreviewed maccatalyst build fix.
+
+            * GPUProcess/cocoa/GPUConnectionToWebProcessCocoa.mm:
+            (WebKit::GPUConnectionToWebProcess::setTCCIdentity):
+
+2021-10-26  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r284220. rdar://problem/84625558
+
+    Adopt attribution AVCaptureSession SPI for GPU process
+    https://bugs.webkit.org/show_bug.cgi?id=231621
+    <rdar://problem/80748535>
+    
+    Reviewed by Eric Carlson.
+    
+    Source/WebCore:
+    
+    No new tests. Manually tested by checking App Privacy Report data.
+    
+    * SourcesCocoa.txt:
+    * WebCore.xcodeproj/project.pbxproj:
+    * platform/mediastream/RealtimeMediaSourceCenter.h:
+    * platform/mediastream/mac/AVVideoCaptureSource.mm:
+    (WebCore::AVVideoCaptureSource::setupSession):
+    
+    Source/WebCore/PAL:
+    
+    * PAL.xcodeproj/project.pbxproj:
+    * pal/spi/cocoa/AVFoundationSPI.h:
+    * pal/spi/cocoa/TCCSPI.h: Renamed from Source/WebKit/Platform/spi/ios/TCCSPI.h.
+    
+    Source/WebKit:
+    
+    Add SPI to attribute camera access to host app in the GPU process.
+    
+    * GPUProcess/GPUConnectionToWebProcess.cpp:
+    * GPUProcess/GPUConnectionToWebProcess.h:
+    * GPUProcess/cocoa/GPUConnectionToWebProcessCocoa.mm:
+    (WebKit::GPUConnectionToWebProcess::setTCCIdentity):
+    * Shared/Cocoa/TCCSoftLink.h:
+    * Shared/Cocoa/TCCSoftLink.mm:
+    * UIProcess/Cocoa/UserMediaCaptureManagerProxy.cpp:
+    (WebKit::UserMediaCaptureManagerProxy::startProducingData):
+    * UIProcess/Cocoa/UserMediaCaptureManagerProxy.h:
+    (WebKit::UserMediaCaptureManagerProxy::ConnectionProxy::setTCCIdentity):
+    * WebKit.xcodeproj/project.pbxproj:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@284220 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-10-14  Kate Cheney  <katherine_cheney@apple.com>
+
+            Adopt attribution AVCaptureSession SPI for GPU process
+            https://bugs.webkit.org/show_bug.cgi?id=231621
+            <rdar://problem/80748535>
+
+            Reviewed by Eric Carlson.
+
+            Add SPI to attribute camera access to host app in the GPU process.
+
+            * GPUProcess/GPUConnectionToWebProcess.cpp:
+            * GPUProcess/GPUConnectionToWebProcess.h:
+            * GPUProcess/cocoa/GPUConnectionToWebProcessCocoa.mm:
+            (WebKit::GPUConnectionToWebProcess::setTCCIdentity):
+            * Shared/Cocoa/TCCSoftLink.h:
+            * Shared/Cocoa/TCCSoftLink.mm:
+            * UIProcess/Cocoa/UserMediaCaptureManagerProxy.cpp:
+            (WebKit::UserMediaCaptureManagerProxy::startProducingData):
+            * UIProcess/Cocoa/UserMediaCaptureManagerProxy.h:
+            (WebKit::UserMediaCaptureManagerProxy::ConnectionProxy::setTCCIdentity):
+            * WebKit.xcodeproj/project.pbxproj:
+
+2021-10-27  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r283662. rdar://problem/84717723
+
+    Fix watchOS, tvOS, and macCatalyst builds after r283592
+    https://bugs.webkit.org/show_bug.cgi?id=231300
+    rdar://83936867
+    
+    Reviewed by Wenson Hsieh.
+    
+    Source/WebKit:
+    
+    * Platform/spi/ios/PhotosUISPI.h:
+    * UIProcess/ios/forms/WKFileUploadPanel.mm:
+    (-[WKFileUploadPanel imagePickerController:didFinishPickingMultipleMediaWithInfo:]):
+    
+    Source/WTF:
+    
+    * wtf/PlatformEnableCocoa.h:
+    * wtf/PlatformHave.h:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@283662 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-10-06  Aditya Keerthi  <akeerthi@apple.com>
+
+            Fix watchOS, tvOS, and macCatalyst builds after r283592
+            https://bugs.webkit.org/show_bug.cgi?id=231300
+            rdar://83936867
+
+            Reviewed by Wenson Hsieh.
+
+            * Platform/spi/ios/PhotosUISPI.h:
+            * UIProcess/ios/forms/WKFileUploadPanel.mm:
+            (-[WKFileUploadPanel imagePickerController:didFinishPickingMultipleMediaWithInfo:]):
+
+2021-10-25  Null  <null@apple.com>
+
+        Cherry-pick r284532. rdar://problem/84625267
+
+    Source/WebKit:
+    [WebAuthn] Obtain consent to create new credential when platform authenticator in excludedCredentials
+    https://bugs.webkit.org/show_bug.cgi?id=219813
+    <rdar://problem/72484635>
+    
+    Patch by John Pascoe <j_pascoe@apple.com> on 2021-10-20
+    Reviewed by Brent Fulgham.
+    
+    Currently, whenever the platform authenticator is within excludedCredentials during makeCredential we
+    always return NotAllowedError and merely flash a consent screen. This does not match the spec per Step 3.1
+    of makeCredential (https://w3c.github.io/webauthn/#sctn-op-make-cred). Instead, we should always obtain consent
+    and return a different error depending on consent was obtained.
+    
+    A fixme to add this was inadvertently removed in https://bugs.webkit.org/attachment.cgi?id=393180&action=prettypatch
+    
+    Added api test TestWebKitAPI.WebAuthenticationPanel.LADuplicateCredentialWithConsent
+    
+    * UIProcess/WebAuthentication/Cocoa/LocalAuthenticator.mm:
+    (WebKit::LocalAuthenticator::makeCredential):
+    
+    Tools:
+    [WebAuthn] Obtain consent to create new credential when platform authenticator in excludedCredentials
+    https://bugs.webkit.org/show_bug.cgi?id=219813
+    <rdar://problem/72484635>
+    
+    Patch by John Pascoe <j_pascoe@apple.com> on 2021-10-20
+    Reviewed by Brent Fulgham.
+    
+    Currently, whenever the platform authenticator is within excludedCredentials during makeCredential we
+    always return NotAllowedError and merely flash a consent screen. This does not match the spec per Step 3.1
+    of makeCredential (https://w3c.github.io/webauthn/#sctn-op-make-cred). Instead, we should always obtain consent
+    and return a different error depending on consent was obtained.
+    
+    This adds a test to confirm a different path is taken whenever consent is obtained.
+    
+    * TestWebKitAPI/Tests/WebKitCocoa/_WKWebAuthenticationPanel.mm:
+    (TestWebKitAPI::TEST):
+    
+    LayoutTests:
+    WebAuthn] Obtain consent to create new credential when platform authenticator in excludedCredentials
+    https://bugs.webkit.org/show_bug.cgi?id=219813
+    <rdar://problem/72484635>
+    
+    Patch by John Pascoe <j_pascoe@apple.com> on 2021-10-20
+    Reviewed by Brent Fulgham.
+    
+    Modify layout tests to reflect different exception returned when consent is provided
+    
+    * http/wpt/webauthn/public-key-credential-create-failure-local-silent.https.html:
+    * http/wpt/webauthn/public-key-credential-create-failure-local.https.html:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@284532 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-10-20  John Pascoe  <j_pascoe@apple.com>
+            [WebAuthn] Obtain consent to create new credential when platform authenticator in excludedCredentials
+            https://bugs.webkit.org/show_bug.cgi?id=219813
+            <rdar://problem/72484635>
+
+            Reviewed by Brent Fulgham.
+
+            Currently, whenever the platform authenticator is within excludedCredentials during makeCredential we
+            always return NotAllowedError and merely flash a consent screen. This does not match the spec per Step 3.1
+            of makeCredential (https://w3c.github.io/webauthn/#sctn-op-make-cred). Instead, we should always obtain consent
+            and return a different error depending on consent was obtained.
+
+            A fixme to add this was inadvertently removed in https://bugs.webkit.org/attachment.cgi?id=393180&action=prettypatch
+
+            Added api test TestWebKitAPI.WebAuthenticationPanel.LADuplicateCredentialWithConsent
+
+            * UIProcess/WebAuthentication/Cocoa/LocalAuthenticator.mm:
+            (WebKit::LocalAuthenticator::makeCredential):
+
+2021-10-25  Null  <null@apple.com>
+
+        Cherry-pick r284294. rdar://problem/84630302
+
+    [iOS] Screen Sharing doesn't switch to AirPlay when <video> enters fullscreen mode
+    https://bugs.webkit.org/show_bug.cgi?id=231807
+    <rdar://82995799>
+    
+    Reviewed by Eric Carlson.
+    
+    WebKit will allow AVPlayer to switch to AirPlay Video mode from Screen Sharing when a
+    <video> element is in fullscreen mode. However, the fullscreen state this code depends on
+    is not stored in the GPU process.
+    
+    Implement RemoteMediaPlayerProxy::mediaPlayerFullscreenMode()
+    and ::mediaPlayerIsVideoFullscreenStandby().
+    
+    * GPUProcess/media/RemoteMediaPlayerProxy.cpp:
+    (WebKit::RemoteMediaPlayerProxy::setVideoFullscreenMode):
+    (WebKit::RemoteMediaPlayerProxy::videoFullscreenStandbyChanged):
+    (WebKit::RemoteMediaPlayerProxy::mediaPlayerFullscreenMode const):
+    (WebKit::RemoteMediaPlayerProxy::mediaPlayerIsVideoFullscreenStandby const):
+    * GPUProcess/media/RemoteMediaPlayerProxy.h:
+    * GPUProcess/media/RemoteMediaPlayerProxy.messages.in:
+    * WebProcess/GPU/media/MediaPlayerPrivateRemote.cpp:
+    (WebKit::MediaPlayerPrivateRemote::videoFullscreenStandbyChanged):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@284294 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-10-15  Jer Noble  <jer.noble@apple.com>
+
+            [iOS] Screen Sharing doesn't switch to AirPlay when <video> enters fullscreen mode
+            https://bugs.webkit.org/show_bug.cgi?id=231807
+            <rdar://82995799>
+
+            Reviewed by Eric Carlson.
+
+            WebKit will allow AVPlayer to switch to AirPlay Video mode from Screen Sharing when a
+            <video> element is in fullscreen mode. However, the fullscreen state this code depends on
+            is not stored in the GPU process.
+
+            Implement RemoteMediaPlayerProxy::mediaPlayerFullscreenMode()
+            and ::mediaPlayerIsVideoFullscreenStandby().
+
+            * GPUProcess/media/RemoteMediaPlayerProxy.cpp:
+            (WebKit::RemoteMediaPlayerProxy::setVideoFullscreenMode):
+            (WebKit::RemoteMediaPlayerProxy::videoFullscreenStandbyChanged):
+            (WebKit::RemoteMediaPlayerProxy::mediaPlayerFullscreenMode const):
+            (WebKit::RemoteMediaPlayerProxy::mediaPlayerIsVideoFullscreenStandby const):
+            * GPUProcess/media/RemoteMediaPlayerProxy.h:
+            * GPUProcess/media/RemoteMediaPlayerProxy.messages.in:
+            * WebProcess/GPU/media/MediaPlayerPrivateRemote.cpp:
+            (WebKit::MediaPlayerPrivateRemote::videoFullscreenStandbyChanged):
+
+2021-10-25  Null  <null@apple.com>
+
+        Cherry-pick r284102. rdar://problem/84630200
+
+    WebGL video texture upload is very slow due to excessive transfer of the video pixel buffer
+    https://bugs.webkit.org/show_bug.cgi?id=231425
+    
+    Patch by Kimmo Kinnunen <kkinnunen@apple.com> on 2021-10-13
+    Reviewed by Youenn Fablet.
+    
+    Typical WebGL content requests the videos to be uploaded to a texture
+    once per render loop update, even though the video has not changed.
+    The video pixel buffer is slow to transfer across IPC. It should be transferred
+    only when it has changed.
+    
+    MediaPlayerPrivateAVFoundationObjC and MediaPlayerPrivateMediaSourceAVFObjC hold
+    the last requested pixel buffer ref. They will update it or discard it only
+    when pixelBufferForCurrentTime() is called.
+    
+    Cache the pixel buffer to MediaPlayerPrivateRemote (GPUP side proxy)
+    Cache the pixel buffer to RemoteMediaPlayerProxy (WebP side proxy)
+    
+    The caches increase the total memory use only during the duration
+    of the call, since after the ref has been updated, it refers
+    to the one always held in the original objects (MediaPlayerPrivateAVFoundationObjC
+    and MediaPlayerPrivateMediaSourceAVFObjC)
+    
+    No new tests, fixes a perf regression wrt GPUP media.
+    
+    * GPUProcess/media/RemoteMediaPlayerProxy.cpp:
+    (WebKit::RemoteMediaPlayerProxy::invalidate):
+    * GPUProcess/media/RemoteMediaPlayerProxy.h:
+    * GPUProcess/media/RemoteMediaPlayerProxy.messages.in:
+    * GPUProcess/media/cocoa/RemoteMediaPlayerProxyCocoa.mm:
+    (WebKit::RemoteMediaPlayerProxy::nativeImageForCurrentTime):
+    (WebKit::RemoteMediaPlayerProxy::pixelBufferForCurrentTimeIfChanged):
+    (WebKit::RemoteMediaPlayerProxy::pixelBufferForCurrentTime): Deleted.
+    * WebProcess/GPU/media/MediaPlayerPrivateRemote.h:
+    * WebProcess/GPU/media/cocoa/MediaPlayerPrivateRemoteCocoa.mm:
+    (WebKit::MediaPlayerPrivateRemote::pixelBufferForCurrentTime):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@284102 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-10-13  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+            WebGL video texture upload is very slow due to excessive transfer of the video pixel buffer
+            https://bugs.webkit.org/show_bug.cgi?id=231425
+
+            Reviewed by Youenn Fablet.
+
+            Typical WebGL content requests the videos to be uploaded to a texture
+            once per render loop update, even though the video has not changed.
+            The video pixel buffer is slow to transfer across IPC. It should be transferred
+            only when it has changed.
+
+            MediaPlayerPrivateAVFoundationObjC and MediaPlayerPrivateMediaSourceAVFObjC hold
+            the last requested pixel buffer ref. They will update it or discard it only
+            when pixelBufferForCurrentTime() is called.
+
+            Cache the pixel buffer to MediaPlayerPrivateRemote (GPUP side proxy)
+            Cache the pixel buffer to RemoteMediaPlayerProxy (WebP side proxy)
+
+            The caches increase the total memory use only during the duration
+            of the call, since after the ref has been updated, it refers
+            to the one always held in the original objects (MediaPlayerPrivateAVFoundationObjC
+            and MediaPlayerPrivateMediaSourceAVFObjC)
+
+            No new tests, fixes a perf regression wrt GPUP media.
+
+            * GPUProcess/media/RemoteMediaPlayerProxy.cpp:
+            (WebKit::RemoteMediaPlayerProxy::invalidate):
+            * GPUProcess/media/RemoteMediaPlayerProxy.h:
+            * GPUProcess/media/RemoteMediaPlayerProxy.messages.in:
+            * GPUProcess/media/cocoa/RemoteMediaPlayerProxyCocoa.mm:
+            (WebKit::RemoteMediaPlayerProxy::nativeImageForCurrentTime):
+            (WebKit::RemoteMediaPlayerProxy::pixelBufferForCurrentTimeIfChanged):
+            (WebKit::RemoteMediaPlayerProxy::pixelBufferForCurrentTime): Deleted.
+            * WebProcess/GPU/media/MediaPlayerPrivateRemote.h:
+            * WebProcess/GPU/media/cocoa/MediaPlayerPrivateRemoteCocoa.mm:
+            (WebKit::MediaPlayerPrivateRemote::pixelBufferForCurrentTime):
+
+2021-10-25  Null  <null@apple.com>
+
+        Cherry-pick r283975. rdar://problem/84630618
+
+    Error the encoder in case we cannot create a RemoteVideoSample
+    https://bugs.webkit.org/show_bug.cgi?id=231505
+    <rdar://83975229>
+    
+    Reviewed by Eric Carlson.
+    
+    * WebProcess/GPU/webrtc/LibWebRTCCodecs.cpp:
+    (WebKit::LibWebRTCCodecs::encodeFrame):
+    RemoteVideoSample::create can return nullptr if we cannot get an IOSurface from the pixel buffer or if pixel buffer is null
+    due to VTPixelBufferConformerCopyConformedPixelBuffer failing.
+    In that case, we error the encoder instead of trying to encode the frame.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@283975 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-10-12  Youenn Fablet  <youenn@apple.com>
+
+            Error the encoder in case we cannot create a RemoteVideoSample
+            https://bugs.webkit.org/show_bug.cgi?id=231505
+            <rdar://83975229>
+
+            Reviewed by Eric Carlson.
+
+            * WebProcess/GPU/webrtc/LibWebRTCCodecs.cpp:
+            (WebKit::LibWebRTCCodecs::encodeFrame):
+            RemoteVideoSample::create can return nullptr if we cannot get an IOSurface from the pixel buffer or if pixel buffer is null
+            due to VTPixelBufferConformerCopyConformedPixelBuffer failing.
+            In that case, we error the encoder instead of trying to encode the frame.
+
+2021-10-25  Null  <null@apple.com>
+
+        Cherry-pick r283592. rdar://problem/84625519
+
+    [iOS] Transcode videos selected from UIImagePickerController
+    https://bugs.webkit.org/show_bug.cgi?id=230639
+    rdar://79665678
+    
+    Reviewed by Tim Horton.
+    
+    Source/WebCore:
+    
+    * en.lproj/Localizable.strings:
+    
+    Add a localizable string for the message displayed while transcoding
+    video.
+    
+    Source/WebCore/PAL:
+    
+    Add AVFoundation API needed to transcode video.
+    
+    * pal/cocoa/AVFoundationSoftLink.h:
+    * pal/cocoa/AVFoundationSoftLink.mm:
+    
+    Source/WebKit:
+    
+    File inputs on iOS allow users to choose images/videos from the system
+    photo picker, using UIImagePickerController. In single selection mode,
+    UIImagePickerController transcodes the selected video to H.264. However,
+    in multiple selection mode, video is not transcoded and is left in its
+    original format.
+    
+    Today, videos on most iOS devices are encoded with HEVC by default.
+    However, some sites, such as Twitter, only accept H.264 encoded video.
+    Thus, the current video upload behavior is problematic, as users may be
+    unable to upload video.
+    
+    Unfortunately, the photo picking functionality of UIImagePickerController
+    is deprecated. The best solution would be to adopt PHPickerViewController,
+    the replacement API, which performs transcoding when retrieving selected
+    items (regardless of single/multiple selection). However,
+    PHPickerViewController currently lacks other functionality that WebKit
+    requires, preventing adoption.
+    
+    Consequently, the short term solution is to transcode the videos in
+    WebKit, ensuring H.264 encoded video is always provided to sites. See
+    below for implementation details.
+    
+    * Platform/spi/ios/PhotosUISPI.h: Added.
+    * UIProcess/ios/forms/WKFileUploadPanel.mm:
+    (-[_WKFileUploadItem setFileURL:]):
+    
+    Add a setter to update the file URL. Called after transcoding a _WKFileUploadItem.
+    
+    (-[WKFileUploadMediaTranscoder initWithItems:videoCount:completionHandler:]):
+    
+    Introduce WKFileUploadMediaTranscoder to manage transcoding of videos
+    and the display of progress UI. Transcoding is performed serially
+    (one video at a time), but occurs off the main thread.
+    
+    (-[WKFileUploadMediaTranscoder start]):
+    
+    Begin transcoding. Run a timer to update the progress UI, as
+    AVAssetExportSession does not provide progress updates on its own.
+    
+    The progress UI is implemented using PUActivityProgressController, to
+    match system Photos UI.
+    
+    (-[WKFileUploadMediaTranscoder _processItemAtIndex:]):
+    
+    Transcode a single video, using AVAssetExportSession. If transcoding
+    fails for any reason, the original video is used as a fallback.
+    Transcoding can also be cancelled using the progress UI, in which case
+    no more videos are processed.
+    
+    (-[WKFileUploadMediaTranscoder _finishedProcessing]):
+    (-[WKFileUploadMediaTranscoder _dismissProgress]):
+    (-[WKFileUploadMediaTranscoder _updateProgress:]):
+    (-[WKFileUploadMediaTranscoder _temporaryDirectoryCreateIfNecessary]):
+    (-[WKFileUploadPanel _chooseMediaItems:]):
+    
+    Refactor the common aspects of single/multiple media selection into a
+    single method.
+    
+    (-[WKFileUploadPanel imagePickerController:didFinishPickingMediaWithInfo:]):
+    (-[WKFileUploadPanel imagePickerController:didFinishPickingMultipleMediaWithInfo:]):
+    (-[WKFileUploadPanel _processMediaInfoDictionaries:successBlock:failureBlock:]):
+    (-[WKFileUploadPanel _processMediaInfoDictionaries:atIndex:processedResults:successBlock:failureBlock:]):
+    (-[WKFileUploadPanel _uploadItemFromMediaInfo:successBlock:failureBlock:]):
+    
+    Remove redundant platform conditional.
+    
+    (-[WKFileUploadPanel _uploadMediaItemsTranscodingVideo:]):
+    
+    If any videos were selected, transcode them prior to uploading.
+    
+    * WebKit.xcodeproj/project.pbxproj:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@283592 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-10-05  Aditya Keerthi  <akeerthi@apple.com>
+
+            [iOS] Transcode videos selected from UIImagePickerController
+            https://bugs.webkit.org/show_bug.cgi?id=230639
+            rdar://79665678
+
+            Reviewed by Tim Horton.
+
+            File inputs on iOS allow users to choose images/videos from the system
+            photo picker, using UIImagePickerController. In single selection mode,
+            UIImagePickerController transcodes the selected video to H.264. However,
+            in multiple selection mode, video is not transcoded and is left in its
+            original format.
+
+            Today, videos on most iOS devices are encoded with HEVC by default.
+            However, some sites, such as Twitter, only accept H.264 encoded video.
+            Thus, the current video upload behavior is problematic, as users may be
+            unable to upload video.
+
+            Unfortunately, the photo picking functionality of UIImagePickerController
+            is deprecated. The best solution would be to adopt PHPickerViewController,
+            the replacement API, which performs transcoding when retrieving selected
+            items (regardless of single/multiple selection). However,
+            PHPickerViewController currently lacks other functionality that WebKit
+            requires, preventing adoption.
+
+            Consequently, the short term solution is to transcode the videos in
+            WebKit, ensuring H.264 encoded video is always provided to sites. See
+            below for implementation details.
+
+            * Platform/spi/ios/PhotosUISPI.h: Added.
+            * UIProcess/ios/forms/WKFileUploadPanel.mm:
+            (-[_WKFileUploadItem setFileURL:]):
+
+            Add a setter to update the file URL. Called after transcoding a _WKFileUploadItem.
+
+            (-[WKFileUploadMediaTranscoder initWithItems:videoCount:completionHandler:]):
+
+            Introduce WKFileUploadMediaTranscoder to manage transcoding of videos
+            and the display of progress UI. Transcoding is performed serially
+            (one video at a time), but occurs off the main thread.
+
+            (-[WKFileUploadMediaTranscoder start]):
+
+            Begin transcoding. Run a timer to update the progress UI, as
+            AVAssetExportSession does not provide progress updates on its own.
+
+            The progress UI is implemented using PUActivityProgressController, to
+            match system Photos UI.
+
+            (-[WKFileUploadMediaTranscoder _processItemAtIndex:]):
+
+            Transcode a single video, using AVAssetExportSession. If transcoding
+            fails for any reason, the original video is used as a fallback.
+            Transcoding can also be cancelled using the progress UI, in which case
+            no more videos are processed.
+
+            (-[WKFileUploadMediaTranscoder _finishedProcessing]):
+            (-[WKFileUploadMediaTranscoder _dismissProgress]):
+            (-[WKFileUploadMediaTranscoder _updateProgress:]):
+            (-[WKFileUploadMediaTranscoder _temporaryDirectoryCreateIfNecessary]):
+            (-[WKFileUploadPanel _chooseMediaItems:]):
+
+            Refactor the common aspects of single/multiple media selection into a
+            single method.
+
+            (-[WKFileUploadPanel imagePickerController:didFinishPickingMediaWithInfo:]):
+            (-[WKFileUploadPanel imagePickerController:didFinishPickingMultipleMediaWithInfo:]):
+            (-[WKFileUploadPanel _processMediaInfoDictionaries:successBlock:failureBlock:]):
+            (-[WKFileUploadPanel _processMediaInfoDictionaries:atIndex:processedResults:successBlock:failureBlock:]):
+            (-[WKFileUploadPanel _uploadItemFromMediaInfo:successBlock:failureBlock:]):
+
+            Remove redundant platform conditional.
+
+            (-[WKFileUploadPanel _uploadMediaItemsTranscodingVideo:]):
+
+            If any videos were selected, transcode them prior to uploading.
+
+            * WebKit.xcodeproj/project.pbxproj:
+
+2021-10-25  Null  <null@apple.com>
+
+        Cherry-pick r283515. rdar://problem/84624826
+
+    [WebAuthn] Prefer internal user verification if available over pin entry.
+    https://bugs.webkit.org/show_bug.cgi?id=213903
+    <rdar://problem/65359269>
+    
+    Patch by John Pascoe <j_pascoe@apple.com> on 2021-10-04
+    Reviewed by Brent Fulgham.
+    
+    Source/WebCore:
+    
+    This adds an option to mock internal user verification in tests.
+    
+    * testing/MockWebAuthenticationConfiguration.h:
+    (WebCore::MockWebAuthenticationConfiguration::HidConfiguration::encode const):
+    (WebCore::MockWebAuthenticationConfiguration::HidConfiguration::decode):
+    * testing/MockWebAuthenticationConfiguration.idl:
+    
+    Source/WebKit:
+    
+    * UIProcess/WebAuthentication/Mock/MockHidConnection.cpp:
+    (WebKit::MockHidConnection::feedReports):
+    * UIProcess/WebAuthentication/fido/CtapAuthenticator.cpp:
+    (WebKit::CtapAuthenticator::makeCredential):
+    (WebKit::CtapAuthenticator::getAssertion):
+    (WebKit::fido::toStatus): Deleted.
+    (WebKit::fido::isPinError): Deleted.
+    
+    Tools:
+    
+    * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+    * TestWebKitAPI/Tests/WebKitCocoa/_WKWebAuthenticationPanel.mm:
+    (TestWebKitAPI::TEST):
+    * TestWebKitAPI/Tests/WebKitCocoa/web-authentication-get-assertion-hid-internal-uv.html: Added.
+    * TestWebKitAPI/Tests/WebKitCocoa/web-authentication-make-credential-hid-internal-uv.html: Added.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@283515 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-10-04  John Pascoe  <j_pascoe@apple.com>
+
+            [WebAuthn] Prefer internal user verification if available over pin entry.
+            https://bugs.webkit.org/show_bug.cgi?id=213903
+            <rdar://problem/65359269>
+
+            Reviewed by Brent Fulgham.
+
+            * UIProcess/WebAuthentication/Mock/MockHidConnection.cpp:
+            (WebKit::MockHidConnection::feedReports):
+            * UIProcess/WebAuthentication/fido/CtapAuthenticator.cpp:
+            (WebKit::CtapAuthenticator::makeCredential):
+            (WebKit::CtapAuthenticator::getAssertion):
+            (WebKit::fido::toStatus): Deleted.
+            (WebKit::fido::isPinError): Deleted.
+
+2021-10-25  Null  <null@apple.com>
+
+        Cherry-pick r284692. rdar://problem/84553142
+
+    Followup to r284652: ensure file handle is closed in web process
+    https://bugs.webkit.org/show_bug.cgi?id=232127
+    
+    Reviewed by Youenn Fablet.
+    
+    Source/WebCore:
+    
+    Covered by test: storage/filesystemaccess/sync-access-handle-close-worker.html
+    
+    * Modules/filesystemaccess/FileSystemSyncAccessHandle.cpp:
+    (WebCore::FileSystemSyncAccessHandle::~FileSystemSyncAccessHandle): make sure file handle is closed when
+    FileSystemSyncAccessHandle is destroyed.
+    (WebCore::FileSystemSyncAccessHandle::closeInternal):
+    (WebCore::FileSystemSyncAccessHandle::close):
+    * Modules/filesystemaccess/FileSystemSyncAccessHandle.h:
+    
+    Source/WebKit:
+    
+    * NetworkProcess/storage/FileSystemStorageHandle.cpp:
+    (WebKit::FileSystemStorageHandle::~FileSystemStorageHandle):
+    (WebKit::FileSystemStorageHandle::createSyncAccessHandle):
+    (WebKit::FileSystemStorageHandle::close):
+    * NetworkProcess/storage/FileSystemStorageHandle.h:
+    * Platform/IPC/cocoa/SharedFileHandleCocoa.cpp: an extra fd is created here and does not get closed.
+    (IPC::SharedFileHandle::decode):
+    
+    LayoutTests:
+    
+    * storage/filesystemaccess/resources/sync-access-handle-close.js:
+    (testSyncFunction):
+    (async testAsyncFunction):
+    (async testFunctions):
+    (async testMultipleHandles):
+    (async test):
+    * storage/filesystemaccess/sync-access-handle-close-worker-expected.txt:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@284692 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-10-22  Sihui Liu  <sihui_liu@apple.com>
+
+            Followup to r284652: ensure file handle is closed in web process
+            https://bugs.webkit.org/show_bug.cgi?id=232127
+
+            Reviewed by Youenn Fablet.
+
+            * NetworkProcess/storage/FileSystemStorageHandle.cpp:
+            (WebKit::FileSystemStorageHandle::~FileSystemStorageHandle):
+            (WebKit::FileSystemStorageHandle::createSyncAccessHandle):
+            (WebKit::FileSystemStorageHandle::close):
+            * NetworkProcess/storage/FileSystemStorageHandle.h:
+            * Platform/IPC/cocoa/SharedFileHandleCocoa.cpp: an extra fd is created here and does not get closed.
+            (IPC::SharedFileHandle::decode):
+
+2021-10-25  Null  <null@apple.com>
+
+        Cherry-pick r284712. rdar://problem/81586485
+
+    AX: Inform AX when the injected bundle sends a synchronous message
+    https://bugs.webkit.org/show_bug.cgi?id=232159
+    
+    Reviewed by Andres Gonzalez.
+    
+    When an injected bundle sends a synchronous message we need to inform accessibility clients, so they don't get
+    stuck trying to message the WebContent process. This is already handled for synchronous messages
+    generated from the WebPage.
+    
+    * WebProcess/InjectedBundle/InjectedBundle.cpp:
+    (WebKit::InjectedBundle::postSynchronousMessage):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@284712 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-10-22  Chris Fleizach  <cfleizach@apple.com>
+
+            AX: Inform AX when the injected bundle sends a synchronous message
+            https://bugs.webkit.org/show_bug.cgi?id=232159
+
+            Reviewed by Andres Gonzalez.
+
+            When an injected bundle sends a synchronous message we need to inform accessibility clients, so they don't get
+            stuck trying to message the WebContent process. This is already handled for synchronous messages
+            generated from the WebPage.
+
+            * WebProcess/InjectedBundle/InjectedBundle.cpp:
+            (WebKit::InjectedBundle::postSynchronousMessage):
+
+2021-10-25  Null  <null@apple.com>
+
+        Cherry-pick r284644. rdar://problem/84153991
+
+    Rare crash under DisplayLink::displayLinkCallback()
+    https://bugs.webkit.org/show_bug.cgi?id=232101
+    <rdar://84153991>
+    
+    Reviewed by Tim Horton.
+    
+    The crash was a divide by zero under m_currentUpdate.nextUpdate(), indicating that
+    m_currentUpdate.updatesPerSecond was zero. Previous assumptions that this was caused
+    by weird display configs were wrong. The actual issue is a race condition where
+    the callback can fire while we're still inside CVDisplayLinkStart(), or at least
+    before we've updated m_currentUpdate.
+    
+    The fix is to initialize m_currentUpdate before we call CVDisplayLinkStart().
+    
+    * UIProcess/mac/DisplayLink.cpp:
+    (WebKit::DisplayLink::addObserver):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@284644 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-10-21  Simon Fraser  <simon.fraser@apple.com>
+
+            Rare crash under DisplayLink::displayLinkCallback()
+            https://bugs.webkit.org/show_bug.cgi?id=232101
+            <rdar://84153991>
+
+            Reviewed by Tim Horton.
+
+            The crash was a divide by zero under m_currentUpdate.nextUpdate(), indicating that
+            m_currentUpdate.updatesPerSecond was zero. Previous assumptions that this was caused
+            by weird display configs were wrong. The actual issue is a race condition where
+            the callback can fire while we're still inside CVDisplayLinkStart(), or at least
+            before we've updated m_currentUpdate.
+
+            The fix is to initialize m_currentUpdate before we call CVDisplayLinkStart().
+
+            * UIProcess/mac/DisplayLink.cpp:
+            (WebKit::DisplayLink::addObserver):
+
+2021-10-19  Russell Epstein  <repstein@apple.com>
+
+        Revert r283931. rdar://problem/83953710
+
+2021-10-18  Russell Epstein  <repstein@apple.com>
+
+        Apply patch. rdar://problem/84351866
+
+    2021-10-18  Alex Christensen  <achristensen@webkit.org>
+
+            Use attributedBundleIdentifier instead of applicationBundleIdentifier when present for handling PCM attribution
+            https://bugs.webkit.org/show_bug.cgi?id=231827
+
+            Reviewed by John Wilander.
+
+            This is the same identifier that SafariViewController uses in _setEphemeralUIEventAttribution:forApplicationWithBundleID:
+            If we don't do this, then SafariViewController looks in the database for PCMs from com.apple.SafariViewService and doesn't find any and doesn't send any reports.
+
+            * NetworkProcess/NetworkDataTask.cpp:
+            (WebKit::NetworkDataTask::attributedBundleIdentifier):
+            * NetworkProcess/NetworkDataTask.h:
+            * NetworkProcess/NetworkLoad.cpp:
+            (WebKit::NetworkLoad::attributedBundleIdentifier):
+            * NetworkProcess/NetworkLoad.h:
+            * NetworkProcess/NetworkResourceLoader.cpp:
+            (WebKit::NetworkResourceLoader::continueWillSendRedirectedRequest):
+            * NetworkProcess/NetworkResourceLoader.h:
+            * NetworkProcess/NetworkSession.cpp:
+            (WebKit::NetworkSession::handlePrivateClickMeasurementConversion):
+            * NetworkProcess/NetworkSession.h:
+            * UIProcess/API/Cocoa/WKWebViewPrivateForTesting.h:
+            * UIProcess/API/Cocoa/WKWebViewTesting.mm:
+            (-[WKWebView _addEventAttributionWithSourceID:destinationURL:sourceDescription:purchaser:reportEndpoint:optionalNonce:applicationBundleID:ephemeral:]):
+            (-[WKWebView _addEventAttributionWithSourceID:destinationURL:sourceDescription:purchaser:reportEndpoint:optionalNonce:applicationBundleID:]): Deleted.
+
 2021-10-18  Russell Epstein  <repstein@apple.com>
 
         Apply patch. rdar://problem/84313358
