@@ -185,31 +185,18 @@ Scope& Scope::forNode(Node& node)
 
 Scope* Scope::forOrdinal(Element& element, ScopeOrdinal ordinal)
 {
-    switch (ordinal) {
-    case ScopeOrdinal::Element:
+    if (ordinal == ScopeOrdinal::Element)
         return &forNode(element);
-    case ScopeOrdinal::ContainingHost: {
-        auto* containingShadowRoot = element.containingShadowRoot();
-        if (!containingShadowRoot)
-            return nullptr;
-        return &forNode(*containingShadowRoot->host());
-    }
-    case ScopeOrdinal::Shadow: {
+    if (ordinal == ScopeOrdinal::Shadow) {
         auto* shadowRoot = element.shadowRoot();
-        if (!shadowRoot)
-            return nullptr;
-        return &shadowRoot->styleScope();
+        return shadowRoot ? &shadowRoot->styleScope() : nullptr;
     }
-    default: {
-        ASSERT(ordinal >= ScopeOrdinal::FirstSlot);
-        auto slotIndex = ScopeOrdinal::FirstSlot;
-        for (auto* slot = element.assignedSlot(); slot; slot = slot->assignedSlot(), ++slotIndex) {
-            if (slotIndex == ordinal)
-                return &forNode(*slot);
-        }
-        return nullptr;
+    if (ordinal <= ScopeOrdinal::ContainingHost) {
+        auto* host = hostForScopeOrdinal(element, ordinal);
+        return host ? &forNode(*host) : nullptr;
     }
-    }
+    auto* slot = assignedSlotForScopeOrdinal(element, ordinal);
+    return slot ? &forNode(*slot) : nullptr;
 }
 
 void Scope::setPreferredStylesheetSetName(const String& name)
@@ -787,6 +774,24 @@ Scope& Scope::documentScope()
 bool Scope::isForUserAgentShadowTree() const
 {
     return m_shadowRoot && m_shadowRoot->mode() == ShadowRootMode::UserAgent;
+}
+
+HTMLSlotElement* assignedSlotForScopeOrdinal(const Element& element, ScopeOrdinal scopeOrdinal)
+{
+    ASSERT(scopeOrdinal >= ScopeOrdinal::FirstSlot);
+    auto* slot = element.assignedSlot();
+    for (auto scopeDepth = ScopeOrdinal::FirstSlot; slot && scopeDepth != scopeOrdinal; ++scopeDepth)
+        slot = slot->assignedSlot();
+    return slot;
+}
+
+Element* hostForScopeOrdinal(const Element& element, ScopeOrdinal scopeOrdinal)
+{
+    ASSERT(scopeOrdinal <= ScopeOrdinal::ContainingHost);
+    auto* host = element.shadowHost();
+    for (auto scopeDepth = ScopeOrdinal::ContainingHost; host && scopeDepth != scopeOrdinal; --scopeDepth)
+        host = host->shadowHost();
+    return host;
 }
 
 }

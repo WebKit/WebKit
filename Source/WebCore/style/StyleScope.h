@@ -45,6 +45,7 @@ namespace WebCore {
 class CSSStyleSheet;
 class Document;
 class Element;
+class HTMLSlotElement;
 class Node;
 class ProcessingInstruction;
 class StyleSheet;
@@ -202,6 +203,9 @@ private:
     // FIXME: These (and some things above) are only relevant for the root scope.
     HashMap<ResolverSharingKey, Ref<Resolver>> m_sharedShadowTreeResolvers;
 };
+
+HTMLSlotElement* assignedSlotForScopeOrdinal(const Element&, ScopeOrdinal);
+Element* hostForScopeOrdinal(const Element&, ScopeOrdinal);
 
 inline bool Scope::hasPendingSheets() const
 {

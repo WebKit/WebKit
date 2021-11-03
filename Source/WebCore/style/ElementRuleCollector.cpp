@@ -306,21 +306,23 @@ void ElementRuleCollector::matchPartPseudoElementRules()
 
 void ElementRuleCollector::matchPartPseudoElementRulesForScope(const ShadowRoot& scopeShadowRoot)
 {
-    auto& shadowHost = *scopeShadowRoot.host();
-    {
-        SetForScope<RefPtr<const Element>> partMatchingScope(m_shadowHostInPartRuleScope, &shadowHost);
+    auto* host = scopeShadowRoot.host();
+    auto styleScopeOrdinal = ScopeOrdinal::ContainingHost;
 
-        auto& hostAuthorRules = Scope::forNode(shadowHost).resolver().ruleSets().authorStyle();
-        MatchRequest hostAuthorRequest { &hostAuthorRules, ScopeOrdinal::ContainingHost };
-        collectMatchingRulesForList(&hostAuthorRules.partPseudoElementRules(), hostAuthorRequest);
+    for (; host; host = host->shadowHost(), --styleScopeOrdinal) {
+        auto& styleScope = Scope::forNode(*host);
+        if (!styleScope.resolver().ruleSets().isAuthorStyleDefined())
+            continue;
+
+        auto& hostAuthorRules = styleScope.resolver().ruleSets().authorStyle();
+
+        MatchRequest scopeMatchRequest(&hostAuthorRules, styleScopeOrdinal);
+        collectMatchingRulesForList(&hostAuthorRules.partPseudoElementRules(), scopeMatchRequest);
+
+        // Element may only be exposed to styling from enclosing scopes via exportparts attributes.
+        if (host->shadowRoot()->partMappings().isEmpty())
+            break;
     }
-
-    // Element may be exposed to styling from enclosing scopes via exportparts attributes.
-    if (scopeShadowRoot.partMappings().isEmpty())
-        return;
-
-    if (auto* parentScopeShadowRoot = shadowHost.containingShadowRoot())
-        matchPartPseudoElementRulesForScope(*parentScopeShadowRoot);
 }
 
 void ElementRuleCollector::collectMatchingShadowPseudoElementRules(const MatchRequest& matchRequest)
@@ -431,7 +433,6 @@ inline bool ElementRuleCollector::ruleMatches(const RuleData& ruleData, unsigned
     context.scrollbarState = m_pseudoElementRequest.scrollbarState;
     context.nameForHightlightPseudoElement = m_pseudoElementRequest.highlightName;
     context.isMatchingHostPseudoClass = m_isMatchingHostPseudoClass;
-    context.shadowHostInPartRuleScope = m_shadowHostInPartRuleScope.get();
     context.styleScopeOrdinal = styleScopeOrdinal;
 
     bool selectorMatches;
@@ -549,8 +550,8 @@ void ElementRuleCollector::matchAllRules(bool matchAuthorAndUserStyles, bool inc
         // Inline style behaves as if it has higher specificity than any rule.
         addElementInlineStyleProperties(includeSMILProperties);
 
-        // Rules from the host scope override inline style.
-        transferMatchedRules(DeclarationOrigin::Author, ScopeOrdinal::ContainingHost);
+        // Rules from the host scopes override inline style.
+        transferMatchedRules(DeclarationOrigin::Author);
     }
 }
 

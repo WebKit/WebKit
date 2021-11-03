@@ -29,6 +29,7 @@
 #include "Document.h"
 #include "DocumentFragment.h"
 #include "Element.h"
+#include "StyleScopeOrdinal.h"
 #if ENABLE(PICTURE_IN_PICTURE_API)
 #include "HTMLVideoElement.h"
 #endif

@@ -95,7 +95,6 @@ public:
         AtomString nameForHightlightPseudoElement;
         const ContainerNode* scope { nullptr };
         bool isMatchingHostPseudoClass { false };
-        const Element* shadowHostInPartRuleScope { nullptr };
         Style::ScopeOrdinal styleScopeOrdinal { Style::ScopeOrdinal::Element };
 
         // FIXME: It would be nicer to have a separate object for return values. This requires some more work in the selector compiler.

@@ -30,7 +30,7 @@ namespace Style {
 // This is used to identify style scopes that can affect an element.
 // Scopes are in tree-of-trees order. Styles from earlier scopes win over later ones (modulo !important).
 enum class ScopeOrdinal : int {
-    ContainingHost = -1, // ::part rules and author-exposed UA pseudo classes from the host tree scope.
+    ContainingHost = -1, // ::part rules and author-exposed UA pseudo classes from the host tree scope. Values less than ContainingHost indicate enclosing scopes.
     Element = 0, // Normal rules in the same tree where the element is.
     FirstSlot = 1, // ::slotted rules in the parent's shadow tree. Values greater than FirstSlot indicate subsequent slots in the chain.
     Shadow = std::numeric_limits<int>::max(), // :host rules in element's own shadow tree.
@@ -40,6 +40,12 @@ inline ScopeOrdinal& operator++(ScopeOrdinal& ordinal)
 {
     ASSERT(ordinal < ScopeOrdinal::Shadow);
     return ordinal = static_cast<ScopeOrdinal>(static_cast<int>(ordinal) + 1);
+}
+
+inline ScopeOrdinal& operator--(ScopeOrdinal& ordinal)
+{
+    ASSERT(ordinal < ScopeOrdinal::Shadow);
+    return ordinal = static_cast<ScopeOrdinal>(static_cast<int>(ordinal) - 1);
 }
 
 }
