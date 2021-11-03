@@ -825,4 +825,35 @@ TEST(AppPrivacyReport, RestoreFromInteractionStateIsNonAppInitiated)
     restoreFromInteractionStateTest(IsAppInitiated::No);
 }
 
+static void loadFileTest(IsAppInitiated isAppInitiated)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+
+    NSURL *file = [[NSBundle mainBundle] URLForResource:@"file-with-iframe" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:file];
+    request.attribution = isAppInitiated == IsAppInitiated::Yes ? NSURLRequestAttributionDeveloper : NSURLRequestAttributionUser;
+
+    [webView loadFileRequest:request allowingReadAccessToURL:file.URLByDeletingLastPathComponent];
+    [webView _test_waitForDidFinishNavigation];
+
+    static bool isDone = false;
+    bool expectingAppInitiatedRequests = isAppInitiated == IsAppInitiated::Yes ? true : false;
+    [webView _appPrivacyReportTestingData:^(struct WKAppPrivacyReportTestingData data) {
+        EXPECT_EQ(data.hasLoadedAppInitiatedRequestTesting, expectingAppInitiatedRequests);
+        EXPECT_EQ(data.hasLoadedNonAppInitiatedRequestTesting, !expectingAppInitiatedRequests);
+        isDone = true;
+    }];
+    TestWebKitAPI::Util::run(&isDone);
+}
+
+TEST(AppPrivacyReport, LoadFileRequestIsAppInitiated)
+{
+    loadFileTest(IsAppInitiated::Yes);
+}
+
+TEST(AppPrivacyReport, LoadFileRequestIsNonAppInitiated)
+{
+    loadFileTest(IsAppInitiated::No);
+}
+
 #endif // APP_PRIVACY_REPORT
