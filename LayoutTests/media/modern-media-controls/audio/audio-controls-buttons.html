@@ -42,7 +42,7 @@ function playbackTargetAvailabilityChangedAgain(event)
     debug("AirPlay routes became available.");
     media.removeEventListener('webkitplaybacktargetavailabilitychanged', playbackTargetAvailabilityChangedAgain, true);
 
-    shouldBe("mediaController.controls.rightContainer.children.length", "3");
+    shouldBe("mediaController.controls.rightContainer.children.length", "4");
     shouldBe("mediaController.controls.rightContainer.children[0]", "mediaController.controls.muteButton");
     shouldBe("mediaController.controls.rightContainer.children[1]", "mediaController.controls.airplayButton");
     mediaController.controls.bottomControlsBar.element.setAttribute("id", "audio-controls");

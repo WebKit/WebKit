@@ -1,0 +1,66 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<meta name="viewport" content="width=device-width">
+<script src="../resources/media-controls-utils.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<script src="../../../resources/js-test-pre.js"></script>
+<body>
+<audio src="../../content/audio-tracks.mp4" style="position: absolute; left: 0; top: 0; width: 600px;" controls></audio>
+<script type="text/javascript">
+
+window.jsTestIsAsync = true;
+
+description("Check that the tracks button is shown if there's more than one audio track.");
+
+const media = document.querySelector("audio");
+const shadowRoot = window.internals.shadowRoot(media);
+
+window.internals.setMediaControlsMaximumRightContainerButtonCountOverride(media, 100); // A finite value larger than anything likely.
+
+let contextmenu = null;
+
+media.addEventListener("canplay", async () => {
+    await shouldBecomeDifferent("shadowRoot.querySelector('button.overflow')", "null");
+    await shouldBecomeDifferent("shadowRoot.querySelector('button.overflow').getBoundingClientRect().width", "0");
+
+    debug("Tapping overflow button...");
+    await pressOnElement(shadowRoot.querySelector("button.overflow"));
+    contextmenu = await getTracksContextMenu();
+    if (contextmenu.length === 1 && !contextmenu[0].title && contextmenu[0].children?.length)
+        contextmenu = contextmenu[0].children;
+    shouldBeTrue("contextmenu.some((item) => item.title === 'Playback Speed')");
+
+    debug("Dismissing contextmenu...");
+    await new Promise((resolve, reject) => {
+        testRunner.runUIScript(`
+            uiController.dismissMenu();
+            uiController.uiScriptComplete();
+        `, resolve);
+    });
+    await UIHelper.waitForContextMenuToHide();
+
+    await shouldBecomeDifferent("shadowRoot.querySelector('button.tracks')", "null");
+    await shouldBecomeDifferent("shadowRoot.querySelector('button.tracks').getBoundingClientRect().width", "0");
+
+    debug("Tapping tracks button...");
+    await pressOnElement(shadowRoot.querySelector("button.tracks"));
+    contextmenu = await getTracksContextMenu();
+    if (contextmenu.length === 1 && !contextmenu[0].title && contextmenu[0].children?.length)
+        contextmenu = contextmenu[0].children;
+    shouldBeTrue("contextmenu.some((item) => item.title === 'Languages')");
+
+    debug("Dismissing contextmenu...");
+    await new Promise((resolve, reject) => {
+        testRunner.runUIScript(`
+            uiController.dismissMenu();
+            uiController.uiScriptComplete();
+        `, resolve);
+    });
+    await UIHelper.waitForContextMenuToHide();
+
+    media.remove();
+    finishJSTest();
+});
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>

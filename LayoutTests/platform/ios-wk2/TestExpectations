@@ -68,6 +68,8 @@ webkit.org/b/231187 media/modern-media-controls/tracks-support/off-text-track.ht
 webkit.org/b/231187 media/modern-media-controls/tracks-support/hidden-tracks.html [ Timeout ]
 webkit.org/b/231187 media/modern-media-controls/tracks-support/click-track-in-contextmenu.html [ Timeout ]
 webkit.org/b/231187 media/modern-media-controls/tracks-support/auto-text-track.html [ Timeout ]
+webkit.org/b/231187 media/modern-media-controls/tracks-support/audio-multiple-tracks.html [ Timeout ]
+webkit.org/b/231187 media/modern-media-controls/tracks-support/audio-single-track.html [ Timeout ]
 
 fast/images/text-recognition [ Pass ]
 fast/images/text-recognition/ios [ Pass ]
