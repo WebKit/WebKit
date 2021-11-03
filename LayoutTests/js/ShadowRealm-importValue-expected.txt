@@ -1,0 +1,8 @@
+Test to ensure correct behaviour of ShadowRealm.prototype.importValue
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+PASS can import module in a shadow realm
+
