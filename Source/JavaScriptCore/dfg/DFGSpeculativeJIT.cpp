@@ -134,7 +134,7 @@ void SpeculativeJIT::emitAllocateRawObject(GPRReg resultGPR, RegisteredStructure
     }
 
     Allocator allocator;
-    if (structure->type() == JSType::ArrayType)
+    if (structure->typeInfo().type() == JSType::ArrayType)
         allocator = allocatorForNonVirtualConcurrently<JSArray>(vm, JSArray::allocationSize(inlineCapacity), AllocatorForMode::AllocatorIfExists);
     else
         allocator = allocatorForNonVirtualConcurrently<JSFinalObject>(vm, JSFinalObject::allocationSize(inlineCapacity), AllocatorForMode::AllocatorIfExists);

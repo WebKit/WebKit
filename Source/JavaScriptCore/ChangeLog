@@ -1,5 +1,42 @@
 2021-11-04  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r285004. rdar://problem/84778008
+
+    Don't call type() on Structure, instead call type() on its typeInfo()
+    https://bugs.webkit.org/show_bug.cgi?id=232414
+    
+    Reviewed by Yusuke Suzuki.
+    
+    * dfg/DFGOperations.cpp:
+    (JSC::DFG::JSC_DEFINE_JIT_OPERATION):
+    * dfg/DFGSpeculativeJIT.cpp:
+    (JSC::DFG::SpeculativeJIT::emitAllocateRawObject):
+    * ftl/FTLLowerDFGToB3.cpp:
+    (JSC::FTL::DFG::LowerDFGToB3::compileCompareStrictEq):
+    * runtime/Structure.h:
+    (JSC::Structure::type):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@285004 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-10-28  Saam Barati  <sbarati@apple.com>
+
+            Don't call type() on Structure, instead call type() on its typeInfo()
+            https://bugs.webkit.org/show_bug.cgi?id=232414
+
+            Reviewed by Yusuke Suzuki.
+
+            * dfg/DFGOperations.cpp:
+            (JSC::DFG::JSC_DEFINE_JIT_OPERATION):
+            * dfg/DFGSpeculativeJIT.cpp:
+            (JSC::DFG::SpeculativeJIT::emitAllocateRawObject):
+            * ftl/FTLLowerDFGToB3.cpp:
+            (JSC::FTL::DFG::LowerDFGToB3::compileCompareStrictEq):
+            * runtime/Structure.h:
+            (JSC::Structure::type):
+
+2021-11-04  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r284716. rdar://problem/84366658
 
     [JSC] GetTypedArrayLengthAsInt52 must be inserted only when we ensure that input is TypedArray via array-mode-based filtering
