@@ -639,7 +639,7 @@ void DocumentLoader::willSendRequest(ResourceRequest&& newRequest, const Resourc
             reportingEndpointsCache->addEndpointsFromResponse(redirectResponse);
     }
 
-    if (!frameLoader()->checkIfFormActionAllowedByCSP(newRequest.url(), didReceiveRedirectResponse)) {
+    if (!frameLoader()->checkIfFormActionAllowedByCSP(newRequest.url(), didReceiveRedirectResponse, redirectResponse.url())) {
         DOCUMENTLOADER_RELEASE_LOG("willSendRequest: canceling - form action not allowed by CSP");
         cancelMainResourceLoad(frameLoader()->cancelledError(newRequest));
         return completionHandler(WTFMove(newRequest));

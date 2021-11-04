@@ -1021,13 +1021,13 @@ String FrameLoader::outgoingOrigin() const
     return m_frame.document()->securityOrigin().toString();
 }
 
-bool FrameLoader::checkIfFormActionAllowedByCSP(const URL& url, bool didReceiveRedirectResponse) const
+bool FrameLoader::checkIfFormActionAllowedByCSP(const URL& url, bool didReceiveRedirectResponse, const URL& preRedirectURL) const
 {
     if (m_submittedFormURL.isEmpty())
         return true;
 
     auto redirectResponseReceived = didReceiveRedirectResponse ? ContentSecurityPolicy::RedirectResponseReceived::Yes : ContentSecurityPolicy::RedirectResponseReceived::No;
-    return m_frame.document()->contentSecurityPolicy()->allowFormAction(url, redirectResponseReceived);
+    return m_frame.document()->contentSecurityPolicy()->allowFormAction(url, redirectResponseReceived, preRedirectURL);
 }
 
 void FrameLoader::setOpener(Frame* opener)
