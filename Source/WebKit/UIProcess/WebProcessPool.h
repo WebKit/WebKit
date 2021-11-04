@@ -64,6 +64,7 @@ OBJC_CLASS NSObject;
 OBJC_CLASS NSSet;
 OBJC_CLASS NSString;
 OBJC_CLASS WKPreferenceObserver;
+OBJC_CLASS WKProcessPoolWeakObserver;
 #if PLATFORM(MAC)
 OBJC_CLASS WKWebInspectorPreferenceObserver;
 #endif
@@ -549,6 +550,9 @@ private:
     bool usesSingleWebProcess() const { return m_configuration->usesSingleWebProcess(); }
 
 #if PLATFORM(COCOA)
+    void addCFNotificationObserver(CFNotificationCallback, CFStringRef name, CFNotificationCenterRef = CFNotificationCenterGetDarwinNotifyCenter());
+    void removeCFNotificationObserver(CFStringRef name, CFNotificationCenterRef = CFNotificationCenterGetDarwinNotifyCenter());
+
     void registerNotificationObservers();
     void unregisterNotificationObservers();
 #endif
@@ -567,22 +571,22 @@ private:
 
 #if PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)
     static float displayBrightness();
-    static void backlightLevelDidChangeCallback(CFNotificationCenterRef, void *observer, CFStringRef name, const void *, CFDictionaryRef userInfo);    
+    static void backlightLevelDidChangeCallback(CFNotificationCenterRef, void* observer, CFStringRef name, const void* postingObject, CFDictionaryRef userInfo);
 #if ENABLE(REMOTE_INSPECTOR)
-    static void remoteWebInspectorEnabledCallback(CFNotificationCenterRef, void *observer, CFStringRef name, const void *, CFDictionaryRef userInfo);
+    static void remoteWebInspectorEnabledCallback(CFNotificationCenterRef, void* observer, CFStringRef name, const void* postingObject, CFDictionaryRef userInfo);
 #endif
 #endif
 
 #if PLATFORM(COCOA)
-    static void accessibilityPreferencesChangedCallback(CFNotificationCenterRef, void *observer, CFStringRef name, const void *, CFDictionaryRef userInfo);
+    static void accessibilityPreferencesChangedCallback(CFNotificationCenterRef, void* observer, CFStringRef name, const void* postingObject, CFDictionaryRef userInfo);
 #endif
 
 #if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
-    static void mediaAccessibilityPreferencesChangedCallback(CFNotificationCenterRef, void *observer, CFStringRef name, const void *, CFDictionaryRef userInfo);
+    static void mediaAccessibilityPreferencesChangedCallback(CFNotificationCenterRef, void* observer, CFStringRef name, const void* postingObject, CFDictionaryRef userInfo);
 #endif
 
 #if PLATFORM(MAC)
-    static void colorPreferencesDidChangeCallback(CFNotificationCenterRef, void *observer, CFStringRef name, const void *, CFDictionaryRef userInfo);
+    static void colorPreferencesDidChangeCallback(CFNotificationCenterRef, void* observer, CFStringRef name, const void* postingObject, CFDictionaryRef userInfo);
 #endif
     
 #if ENABLE(CFPREFS_DIRECT_MODE)
@@ -689,6 +693,8 @@ private:
     RetainPtr<NSObject> m_activationObserver;
     RetainPtr<NSObject> m_accessibilityEnabledObserver;
     RetainPtr<NSObject> m_applicationLaunchObserver;
+
+    RetainPtr<WKProcessPoolWeakObserver> m_weakObserver;
 #endif
 
     bool m_processTerminationEnabled { true };

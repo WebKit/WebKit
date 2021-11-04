@@ -859,6 +859,14 @@
 #endif
 #endif
 
+#if COMPILER(GCC_COMPATIBLE) && defined(__has_attribute)
+#if __has_attribute(objc_direct) && (!PLATFORM(MAC) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 120000)
+#if !defined(HAVE_NS_DIRECT_SUPPORT)
+#define HAVE_NS_DIRECT_SUPPORT 1
+#endif
+#endif
+#endif
+
 #if PLATFORM(COCOA)
 #if !defined(HAVE_CG_CONTEXT_DRAW_PATH_DIRECT)
 #define HAVE_CG_CONTEXT_DRAW_PATH_DIRECT 1

@@ -20,6 +20,7 @@ list(APPEND WTF_PUBLIC_HEADERS
     cocoa/RuntimeApplicationChecksCocoa.h
     cocoa/SoftLinking.h
     cocoa/SpanCocoa.h
+    cocoa/TypeCastsNS.h
     cocoa/VectorCocoa.h
 
     darwin/WeakLinking.h
@@ -31,6 +32,7 @@ list(APPEND WTF_PUBLIC_HEADERS
     spi/cocoa/CrashReporterClientSPI.h
     spi/cocoa/MachVMSPI.h
     spi/cocoa/NSLocaleSPI.h
+    spi/cocoa/NSObjCRuntimeSPI.h
     spi/cocoa/SecuritySPI.h
     spi/cocoa/objcSPI.h
 

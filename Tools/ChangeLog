@@ -1,3 +1,121 @@
+2021-11-04  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r282632. rdar://problem/83067708
+
+    WebKit::WebProcessPool should use a weak observer with CFNotificationCenter
+    <https://webkit.org/b/230227>
+    <rdar://problem/83067708>
+    
+    Reviewed by Darin Adler.
+    
+    Source/WebKit:
+    
+    To fix the bug, implement an Objective-C class named
+    WKProcessPoolWeakObserver which contains an instance variable
+    holding a WeakPtr<WebProcessPool>, and tell CFNotificationCenter
+    to hold a weak reference to WKProcessPoolWeakObserver.
+    
+    Since WKProcessPoolWeakObserver is self-contained within the
+    source file, it uses the NS_DIRECT_MEMBERS attribute since it
+    does not require the overhead of dynamic Objective-C method
+    dispatch.
+    
+    * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+    (-[WKProcessPoolWeakObserver initWithWeakPtr:]): Add.
+    (-[WKProcessPoolWeakObserver pool]): Add.
+    - Implement WKProcessPoolWeakObserver class.
+    - Note that init methods can never be marked as NS_DIRECT, and
+      @property statements can't use NS_DIRECT in their declaration,
+      so the @property is declared in a category which uses
+      NS_DIRECT_MEMBERS.
+    (WebKit::extractWebProcessPool): Add.
+    - Static helper method for extracting RefPtr<WebProcessPool>
+      from type-punned WKProcessPoolWeakObserver.
+    (WebKit::WebProcessPool::backlightLevelDidChangeCallback):
+    (WebKit::WebProcessPool::accessibilityPreferencesChangedCallback):
+    (WebKit::WebProcessPool::mediaAccessibilityPreferencesChangedCallback):
+    (WebKit::WebProcessPool::colorPreferencesDidChangeCallback):
+    (WebKit::WebProcessPool::remoteWebInspectorEnabledCallback):
+    - Clean up function parameter list.
+    - Use extractWebProcessPool() helper method to get a
+      RefPtr<WebProcessPool> from `observer`.
+    (WebKit::WebProcessPool::addCFNotificationObserver): Add.
+    (WebKit::WebProcessPool::removeCFNotificationObserver): Add.
+    - Private helper methods to reduce duplicate code.
+    - Use m_weakObserver for CFNotificationCenter observer and
+      include _CFNotificationObserverIsObjC to fix the bug.
+    (WebKit::WebProcessPool::registerNotificationObservers):
+    - Make use of new addCFNotificationObserver() helper method.
+    - Fixes use of static_cast<CFStringRef> to make code ready for
+      ARC by using a __bridge cast or removing the static_cast when
+      CFSTR() is used.
+    (WebKit::WebProcessPool::unregisterNotificationObservers):
+    - Make use of new removeCFNotificationObserver() helper method.
+    
+    * UIProcess/WebProcessPool.h:
+    - Add m_weakObserver instance variable to hold the
+      WKProcessPoolWeakObserver object.
+    (WebKit::WebProcessPool::addCFNotificationObserver): Add.
+    (WebKit::WebProcessPool::removeCFNotificationObserver): Add.
+    - Add declarations for new helper methods.
+    (WebKit::WebProcessPool::backlightLevelDidChangeCallback):
+    (WebKit::WebProcessPool::accessibilityPreferencesChangedCallback):
+    (WebKit::WebProcessPool::mediaAccessibilityPreferencesChangedCallback):
+    (WebKit::WebProcessPool::colorPreferencesDidChangeCallback):
+    (WebKit::WebProcessPool::remoteWebInspectorEnabledCallback):
+    - Clean up function parameter list.
+    
+    Source/WTF:
+    
+    Tests (API):
+        TestWTF.TypeCastsNS.checked_ns_cast
+        TestWTF.TypeCastsNS.dynamic_ns_cast
+        TestWTF.TypeCastsNS.dynamic_ns_cast_RetainPtr
+    
+    * WTF.xcodeproj/project.pbxproj:
+    * wtf/PlatformMac.cmake:
+    - Add new header files to the project.
+    
+    * wtf/cocoa/TypeCastsNS.h: Add.
+    (WTF::checked_ns_cast):
+    (WTF::dynamic_ns_cast):
+    - Add casts for NS objects similar to TypeCastsCF.h.
+    
+    * wtf/PlatformHave.h:
+    (HAVE_NS_DIRECT_SUPPORT): Add.
+    - Note that clang for macOS 11 Big Sur claims to know about the
+      attributes, but will fail to compile if they are actually
+      used.
+    
+    * wtf/spi/cocoa/NSObjCRuntimeSPI.h: Add.
+    (NS_DIRECT):
+    (NS_DIRECT_MEMBERS):
+    - Define compiler attributes for direct dispatch of Objective-C
+      methods.
+    
+    Tools:
+    
+    * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+    - Add TypeCastsNS.mm to the project.
+    * TestWebKitAPI/Tests/WTF/cocoa/TypeCastsNS.mm: Add.
+    (TestWebKitAPI::TEST): Add tests for <wtf/TypeCastsNS.h>.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@282632 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-09-16  David Kilzer  <ddkilzer@apple.com>
+
+            WebKit::WebProcessPool should use a weak observer with CFNotificationCenter
+            <https://webkit.org/b/230227>
+            <rdar://problem/83067708>
+
+            Reviewed by Darin Adler.
+
+            * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+            - Add TypeCastsNS.mm to the project.
+            * TestWebKitAPI/Tests/WTF/cocoa/TypeCastsNS.mm: Add.
+            (TestWebKitAPI::TEST): Add tests for <wtf/TypeCastsNS.h>.
+
 2021-10-26  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r284669. rdar://problem/83971417
