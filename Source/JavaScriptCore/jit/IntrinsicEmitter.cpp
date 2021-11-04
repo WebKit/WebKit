@@ -48,13 +48,6 @@ typedef CCallHelpers::Imm64 Imm64;
 
 bool IntrinsicGetterAccessCase::canEmitIntrinsicGetter(JSFunction* getter, Structure* structure)
 {
-    // We aren't structure checking the this value, so we don't know:
-    // - For type array loads, that it's a typed array.
-    // - For __proto__ getter, that the incoming value is an object,
-    //   and if it overrides getPrototype structure flags.
-    // So for these cases, it's simpler to just call the getter directly.
-    if (stubInfo.thisValueIsInThisGPR())
-        return false;
 
     switch (getter->intrinsic()) {
     case TypedArrayByteOffsetIntrinsic:
