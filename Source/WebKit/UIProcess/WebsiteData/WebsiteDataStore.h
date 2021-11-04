@@ -87,6 +87,7 @@ class SecKeyProxyStore;
 class DeviceIdHashSaltStorage;
 class NetworkProcessProxy;
 class SOAuthorizationCoordinator;
+class VirtualAuthenticatorManager;
 class WebPageProxy;
 class WebProcessPool;
 class WebProcessProxy;
@@ -307,6 +308,7 @@ public:
 #if ENABLE(WEB_AUTHN)
     AuthenticatorManager& authenticatorManager() { return m_authenticatorManager.get(); }
     void setMockWebAuthenticationConfiguration(WebCore::MockWebAuthenticationConfiguration&&);
+    VirtualAuthenticatorManager& virtualAuthenticatorManager();
 #endif
 
     const WebsiteDataStoreConfiguration& configuration() { return m_configuration.get(); }

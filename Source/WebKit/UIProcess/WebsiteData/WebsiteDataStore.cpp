@@ -82,6 +82,10 @@
 #include "DefaultWebBrowserChecks.h"
 #endif
 
+#if ENABLE(WEB_AUTHN)
+#include "VirtualAuthenticatorManager.h"
+#endif // ENABLE(WEB_AUTHN)
+
 namespace WebKit {
 
 static bool allowsWebsiteDataRecordsForAllOrigins;
@@ -1944,6 +1948,13 @@ void WebsiteDataStore::setMockWebAuthenticationConfiguration(WebCore::MockWebAut
         return;
     }
     static_cast<MockAuthenticatorManager*>(&m_authenticatorManager)->setTestConfiguration(WTFMove(configuration));
+}
+
+VirtualAuthenticatorManager& WebsiteDataStore::virtualAuthenticatorManager()
+{
+    if (!m_authenticatorManager->isVirtual())
+        m_authenticatorManager = makeUniqueRef<VirtualAuthenticatorManager>();
+    return static_cast<VirtualAuthenticatorManager&>(m_authenticatorManager.get());
 }
 #endif
 

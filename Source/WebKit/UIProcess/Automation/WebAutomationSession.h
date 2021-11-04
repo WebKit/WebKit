@@ -204,6 +204,14 @@ public:
     Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Inspector::Protocol::Automation::SessionPermissionData>>> getSessionPermissions();
     Inspector::Protocol::ErrorStringOr<void> setSessionPermissions(Ref<JSON::Array>&&);
 
+    Inspector::Protocol::ErrorStringOr<String /* authenticatorId */> addVirtualAuthenticator(const String& browsingContextHandle, Ref<JSON::Object>&& authenticator);
+    Inspector::Protocol::ErrorStringOr<void> removeVirtualAuthenticator(const String& browsingContextHandle, const String& authenticatorId);
+    Inspector::Protocol::ErrorStringOr<void> addVirtualAuthenticatorCredential(const String& browsingContextHandle, const String& authenticatorId, Ref<JSON::Object>&& credential);
+    Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Inspector::Protocol::Automation::VirtualAuthenticatorCredential>> /* credentials */> getVirtualAuthenticatorCredentials(const String& browsingContextHandle, const String& authenticatorId);
+    Inspector::Protocol::ErrorStringOr<void> removeVirtualAuthenticatorCredential(const String& browsingContextHandle, const String& authenticatorId, const String& credentialId);
+    Inspector::Protocol::ErrorStringOr<void> removeAllVirtualAuthenticatorCredentials(const String& browsingContextHandle, const String& authenticatorId);
+    Inspector::Protocol::ErrorStringOr<void> setVirtualAuthenticatorUserVerified(const String& browsingContextHandle, const String& authenticatorId, bool isUserVerified);
+
 #if PLATFORM(MAC)
     void inspectBrowsingContext(const Inspector::Protocol::Automation::BrowsingContextHandle&, std::optional<bool>&& enableAutoCapturing, Ref<InspectBrowsingContextCallback>&&);
 #endif

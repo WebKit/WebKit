@@ -1049,6 +1049,13 @@
 		51FD18B61651FBAD00DBE1CE /* NetworkResourceLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 51FD18B41651FBAD00DBE1CE /* NetworkResourceLoader.h */; };
 		5272D4C91E735F0900EB4290 /* WKProtectionSpaceNS.h in Headers */ = {isa = PBXBuildFile; fileRef = 5272D4C71E735F0900EB4290 /* WKProtectionSpaceNS.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		528C37C1195CBB1A00D8B9CC /* WKBackForwardListPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A9F28101958F478008CAC72 /* WKBackForwardListPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		52CDC5C42731DA0D00A3E3EB /* VirtualAuthenticatorConfiguration.h in Headers */ = {isa = PBXBuildFile; fileRef = 52CDC5BD2731DA0C00A3E3EB /* VirtualAuthenticatorConfiguration.h */; };
+		52CDC5C52731DA0D00A3E3EB /* VirtualService.mm in Sources */ = {isa = PBXBuildFile; fileRef = 52CDC5BE2731DA0C00A3E3EB /* VirtualService.mm */; };
+		52CDC5C62731DA0D00A3E3EB /* VirtualAuthenticatorManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52CDC5BF2731DA0C00A3E3EB /* VirtualAuthenticatorManager.cpp */; };
+		52CDC5C72731DA0D00A3E3EB /* VirtualLocalConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 52CDC5C02731DA0C00A3E3EB /* VirtualLocalConnection.h */; };
+		52CDC5C82731DA0D00A3E3EB /* VirtualService.h in Headers */ = {isa = PBXBuildFile; fileRef = 52CDC5C12731DA0C00A3E3EB /* VirtualService.h */; };
+		52CDC5C92731DA0D00A3E3EB /* VirtualLocalConnection.mm in Sources */ = {isa = PBXBuildFile; fileRef = 52CDC5C22731DA0C00A3E3EB /* VirtualLocalConnection.mm */; };
+		52CDC5CA2731DA0D00A3E3EB /* VirtualAuthenticatorManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 52CDC5C32731DA0C00A3E3EB /* VirtualAuthenticatorManager.h */; };
 		52D5A1B01C57495A00DE34A3 /* VideoFullscreenManagerProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 52D5A1AA1C57494E00DE34A3 /* VideoFullscreenManagerProxy.h */; };
 		52F060E11654318500F3281B /* NetworkContentRuleListManagerMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52F060DD1654317500F3281B /* NetworkContentRuleListManagerMessageReceiver.cpp */; };
 		532159551DBAE7290054AA3C /* NetworkSessionCocoa.h in Headers */ = {isa = PBXBuildFile; fileRef = 532159501DBAE6D70054AA3C /* NetworkSessionCocoa.h */; };
@@ -4069,6 +4076,13 @@
 		51FD18B41651FBAD00DBE1CE /* NetworkResourceLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkResourceLoader.h; sourceTree = "<group>"; };
 		5272D4C71E735F0900EB4290 /* WKProtectionSpaceNS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKProtectionSpaceNS.h; path = mac/WKProtectionSpaceNS.h; sourceTree = "<group>"; };
 		5272D4C81E735F0900EB4290 /* WKProtectionSpaceNS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WKProtectionSpaceNS.mm; path = mac/WKProtectionSpaceNS.mm; sourceTree = "<group>"; };
+		52CDC5BD2731DA0C00A3E3EB /* VirtualAuthenticatorConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VirtualAuthenticatorConfiguration.h; sourceTree = "<group>"; };
+		52CDC5BE2731DA0C00A3E3EB /* VirtualService.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VirtualService.mm; sourceTree = "<group>"; };
+		52CDC5BF2731DA0C00A3E3EB /* VirtualAuthenticatorManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VirtualAuthenticatorManager.cpp; sourceTree = "<group>"; };
+		52CDC5C02731DA0C00A3E3EB /* VirtualLocalConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VirtualLocalConnection.h; sourceTree = "<group>"; };
+		52CDC5C12731DA0C00A3E3EB /* VirtualService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VirtualService.h; sourceTree = "<group>"; };
+		52CDC5C22731DA0C00A3E3EB /* VirtualLocalConnection.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VirtualLocalConnection.mm; sourceTree = "<group>"; };
+		52CDC5C32731DA0C00A3E3EB /* VirtualAuthenticatorManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VirtualAuthenticatorManager.h; sourceTree = "<group>"; };
 		52D5A1AA1C57494E00DE34A3 /* VideoFullscreenManagerProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoFullscreenManagerProxy.h; sourceTree = "<group>"; };
 		52D5A1AB1C57494E00DE34A3 /* VideoFullscreenManagerProxy.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = VideoFullscreenManagerProxy.messages.in; sourceTree = "<group>"; };
 		52D5A1AC1C57494E00DE34A3 /* VideoFullscreenManagerProxy.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VideoFullscreenManagerProxy.mm; sourceTree = "<group>"; };
@@ -8740,6 +8754,20 @@
 			path = ios;
 			sourceTree = "<group>";
 		};
+		52CDC5BC2731DA0C00A3E3EB /* Virtual */ = {
+			isa = PBXGroup;
+			children = (
+				52CDC5BD2731DA0C00A3E3EB /* VirtualAuthenticatorConfiguration.h */,
+				52CDC5BF2731DA0C00A3E3EB /* VirtualAuthenticatorManager.cpp */,
+				52CDC5C32731DA0C00A3E3EB /* VirtualAuthenticatorManager.h */,
+				52CDC5C02731DA0C00A3E3EB /* VirtualLocalConnection.h */,
+				52CDC5C22731DA0C00A3E3EB /* VirtualLocalConnection.mm */,
+				52CDC5C12731DA0C00A3E3EB /* VirtualService.h */,
+				52CDC5BE2731DA0C00A3E3EB /* VirtualService.mm */,
+			);
+			path = Virtual;
+			sourceTree = "<group>";
+		};
 		5506409C240715AA00AAE045 /* graphics */ = {
 			isa = PBXGroup;
 			children = (
@@ -8939,6 +8967,7 @@
 				57DCED9E2148F9D10016B847 /* Cocoa */,
 				57597EBF218184B20037F924 /* fido */,
 				57DCEDBD214C9FA90016B847 /* Mock */,
+				52CDC5BC2731DA0C00A3E3EB /* Virtual */,
 				57DCEDA42149E64A0016B847 /* Authenticator.cpp */,
 				57DCED8B21485BD70016B847 /* Authenticator.h */,
 				57DCED852147363A0016B847 /* AuthenticatorManager.cpp */,
@@ -12335,6 +12364,10 @@
 				2D819BA21862800E001F03D1 /* ViewGestureGeometryCollectorMessages.h in Headers */,
 				2D6CD119189058A500E5A4A0 /* ViewSnapshotStore.h in Headers */,
 				2684055318B86ED60022C38B /* ViewUpdateDispatcherMessages.h in Headers */,
+				52CDC5C42731DA0D00A3E3EB /* VirtualAuthenticatorConfiguration.h in Headers */,
+				52CDC5CA2731DA0D00A3E3EB /* VirtualAuthenticatorManager.h in Headers */,
+				52CDC5C72731DA0D00A3E3EB /* VirtualLocalConnection.h in Headers */,
+				52CDC5C82731DA0D00A3E3EB /* VirtualService.h in Headers */,
 				2684054418B85A630022C38B /* VisibleContentRectUpdateInfo.h in Headers */,
 				2DD5A7291EBF08D5009BA597 /* VisibleWebPageCounter.h in Headers */,
 				3155EE0D2673F4F00085E59A /* VisionKitSPI.h in Headers */,
@@ -14390,6 +14423,9 @@
 				2D1B5D5D185869C8006C6596 /* ViewGestureControllerMessageReceiver.cpp in Sources */,
 				2D819BA11862800E001F03D1 /* ViewGestureGeometryCollectorMessageReceiver.cpp in Sources */,
 				2684055218B86ED60022C38B /* ViewUpdateDispatcherMessageReceiver.cpp in Sources */,
+				52CDC5C62731DA0D00A3E3EB /* VirtualAuthenticatorManager.cpp in Sources */,
+				52CDC5C92731DA0D00A3E3EB /* VirtualLocalConnection.mm in Sources */,
+				52CDC5C52731DA0D00A3E3EB /* VirtualService.mm in Sources */,
 				1A60224C18C16B9F00C3E8C9 /* VisitedLinkStoreMessageReceiver.cpp in Sources */,
 				1A8E7D3C18C15149005A702A /* VisitedLinkTableControllerMessageReceiver.cpp in Sources */,
 				57DCED702142EE680016B847 /* WebAuthenticatorCoordinatorProxyMessageReceiver.cpp in Sources */,

@@ -53,6 +53,11 @@
 #include <wtf/UUID.h>
 #include <wtf/text/StringConcatenate.h>
 
+#if ENABLE(WEB_AUTHN)
+#include "VirtualAuthenticatorManager.h"
+#include <WebCore/AuthenticatorTransport.h>
+#endif // ENABLE(WEB_AUTHN)
+
 namespace WebKit {
 
 using namespace Inspector;
@@ -1528,6 +1533,105 @@ Inspector::Protocol::ErrorStringOr<void> WebAutomationSession::setSessionPermiss
     }
 
     return { };
+}
+
+#if ENABLE(WEB_AUTHN)
+static WebCore::AuthenticatorTransport toAuthenticatorTransport(Inspector::Protocol::Automation::AuthenticatorTransport transport)
+{
+    switch (transport) {
+    case Inspector::Protocol::Automation::AuthenticatorTransport::Usb:
+        return WebCore::AuthenticatorTransport::Usb;
+    case Inspector::Protocol::Automation::AuthenticatorTransport::Nfc:
+        return WebCore::AuthenticatorTransport::Nfc;
+    case Inspector::Protocol::Automation::AuthenticatorTransport::Ble:
+        return WebCore::AuthenticatorTransport::Ble;
+    case Inspector::Protocol::Automation::AuthenticatorTransport::Internal:
+        return WebCore::AuthenticatorTransport::Internal;
+    default:
+        ASSERT_NOT_REACHED();
+        return WebCore::AuthenticatorTransport::Internal;
+    }
+}
+#endif // ENABLE(WEB_AUTHN)
+
+Inspector::Protocol::ErrorStringOr<String /* authenticatorId */> WebAutomationSession::addVirtualAuthenticator(const String& browsingContextHandle, Ref<JSON::Object>&& authenticator)
+{
+#if ENABLE(WEB_AUTHN)
+    auto protocol = authenticator->getString("protocol"_s);
+    if (!protocol)
+        SYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "The parameter 'protocol' is missing or invalid.");
+    auto transport = authenticator->getString("transport"_s);
+    if (!transport)
+        SYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "The parameter 'transport' is missing or invalid.");
+    auto parsedTransport = Inspector::Protocol::AutomationHelpers::parseEnumValueFromString<Inspector::Protocol::Automation::AuthenticatorTransport>(transport);
+    if (!parsedTransport)
+        SYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "The parameter 'transport' has an unknown value.");
+    auto hasResidentKey = authenticator->getBoolean("hasResidentKey"_s);
+    if (!hasResidentKey)
+        SYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "The parameter 'hasResidentKey' is missing or invalid.");
+    auto hasUserVerification = authenticator->getBoolean("hasUserVerification"_s);
+    if (!hasUserVerification)
+        SYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "The parameter 'hasUserVerification' is missing or invalid.");
+    auto isUserConsenting = authenticator->getBoolean("isUserConsenting"_s);
+    if (!isUserConsenting)
+        SYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "The parameter 'isUserConsenting' is missing or invalid.");
+    auto isUserVerified = authenticator->getBoolean("isUserVerified"_s);
+    if (!isUserVerified)
+        SYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "The parameter 'isUserVerified' is missing or invalid.");
+
+    auto page = webPageProxyForHandle(browsingContextHandle);
+    if (!page)
+        SYNC_FAIL_WITH_PREDEFINED_ERROR(WindowNotFound);
+    return page->websiteDataStore().virtualAuthenticatorManager().createAuthenticator({
+        .protocol = protocol,
+        .transport = toAuthenticatorTransport(parsedTransport.value()),
+        .hasResidentKey = *hasResidentKey,
+        .hasUserVerification = *hasUserVerification,
+        .isUserConsenting = *isUserConsenting,
+        .isUserVerified = *isUserVerified,
+    });
+#else
+    SYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(NotImplemented, "This method is not yet implemented.");
+#endif // ENABLE(WEB_AUTHN)
+}
+
+Inspector::Protocol::ErrorStringOr<void> WebAutomationSession::removeVirtualAuthenticator(const String& browsingContextHandle, const String& authenticatorId)
+{
+#if ENABLE(WEB_AUTHN)
+    auto page = webPageProxyForHandle(browsingContextHandle);
+    if (!page)
+        SYNC_FAIL_WITH_PREDEFINED_ERROR(WindowNotFound);
+    if (!page->websiteDataStore().virtualAuthenticatorManager().removeAuthenticator(authenticatorId))
+        SYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "No such authenticator exists.");
+    return { };
+#else
+    SYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(NotImplemented, "This method is not yet implemented.");
+#endif // ENABLE(WEB_AUTHN)
+}
+
+Inspector::Protocol::ErrorStringOr<void> WebAutomationSession::addVirtualAuthenticatorCredential(const String& browsingContextHandle, const String& authenticatorId, Ref<JSON::Object>&& credential)
+{
+    SYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(NotImplemented, "This method is not yet implemented.");
+}
+
+Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Inspector::Protocol::Automation::VirtualAuthenticatorCredential>> /* credentials */> WebAutomationSession::getVirtualAuthenticatorCredentials(const String& browsingContextHandle, const String& authenticatorId)
+{
+    SYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(NotImplemented, "This method is not yet implemented.");
+}
+
+Inspector::Protocol::ErrorStringOr<void> WebAutomationSession::removeVirtualAuthenticatorCredential(const String& browsingContextHandle, const String& authenticatorId, const String& credentialId)
+{
+    SYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(NotImplemented, "This method is not yet implemented.");
+}
+
+Inspector::Protocol::ErrorStringOr<void> WebAutomationSession::removeAllVirtualAuthenticatorCredentials(const String& browsingContextHandle, const String& authenticatorId)
+{
+    SYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(NotImplemented, "This method is not yet implemented.");
+}
+
+Inspector::Protocol::ErrorStringOr<void> WebAutomationSession::setVirtualAuthenticatorUserVerified(const String& browsingContextHandle, const String& authenticatorId, bool isUserVerified)
+{
+    SYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(NotImplemented, "This method is not yet implemented.");
 }
 
 bool WebAutomationSession::shouldAllowGetUserMediaForPage(const WebPageProxy&) const

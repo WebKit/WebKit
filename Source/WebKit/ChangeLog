@@ -1,3 +1,56 @@
+2021-11-04  John Pascoe  <j_pascoe@apple.com>
+
+        [WebAuthn] Implement add/remove_virtual_authenticator for transport=internal
+        https://bugs.webkit.org/show_bug.cgi?id=232635
+        <rdar://problem/84942173>
+
+        Reviewed by Brent Fulgham.
+
+        This change implements much of the plumbing needed to call the virtual authenticator
+        commands from safaridriver. The idea is that virtual authenticators are added via
+        the add_virtual_authenticator call, which replaces the default AuthenticatorManager
+        with a VirtualAuthenticatorManager similar to how we do it for mocks. Then the
+        VirtualService will create the virtual connections for authenticators as nessesary
+        to make webauthn calls within WebDriver based tests.
+
+        Tested manually via safaridriver.
+
+        * UIProcess/Automation/Automation.json:
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::toAuthenticatorTransport):
+        (WebKit::WebAutomationSession::removeVirtualAuthenticator):
+        (WebKit::WebAutomationSession::addVirtualAuthenticatorCredential):
+        (WebKit::WebAutomationSession::removeVirtualAuthenticatorCredential):
+        (WebKit::WebAutomationSession::removeAllVirtualAuthenticatorCredentials):
+        (WebKit::WebAutomationSession::setVirtualAuthenticatorUserVerified):
+        * UIProcess/Automation/WebAutomationSession.h:
+        Plumbing to call from safaridriver
+        * UIProcess/WebAuthentication/AuthenticatorManager.h:
+        (WebKit::AuthenticatorManager::isVirtual const):
+        * UIProcess/WebAuthentication/Virtual/VirtualAuthenticatorConfiguration.h: Added.
+        * UIProcess/WebAuthentication/Virtual/VirtualAuthenticatorManager.cpp: Added.
+        (WebKit::VirtualAuthenticatorManager::VirtualAuthenticatorManager):
+        (WebKit::VirtualAuthenticatorManager::createAuthenticator):
+        (WebKit::VirtualAuthenticatorManager::removeAuthenticator):
+        (WebKit::VirtualAuthenticatorManager::createService const):
+        Manages virtual authenticators, replaces the default manager when used similar to MockAuthenticatorManager.
+        * UIProcess/WebAuthentication/Virtual/VirtualAuthenticatorManager.h: Added.
+        * UIProcess/WebAuthentication/Virtual/VirtualLocalConnection.h: Added.
+        * UIProcess/WebAuthentication/Virtual/VirtualLocalConnection.mm: Added.
+        (WebKit::VirtualLocalConnection::VirtualLocalConnection):
+        (WebKit::VirtualLocalConnection::verifyUser):
+        (WebKit::VirtualLocalConnection::getAttestation const):
+        (WebKit::VirtualLocalConnection::filterResponses const):
+        * UIProcess/WebAuthentication/Virtual/VirtualService.h: Added.
+        * UIProcess/WebAuthentication/Virtual/VirtualService.mm: Added.
+        (WebKit::VirtualService::VirtualService):
+        (WebKit::VirtualService::createVirtual):
+        (WebKit::VirtualService::startDiscoveryInternal):
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::virtualAuthenticatorManager):
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+        * WebKit.xcodeproj/project.pbxproj:
+
 2021-11-04  Lauro Moura  <lmoura@igalia.com>
 
         REGRESSION(r285077) [GLIB] 'MemoryPressureMonitor' has not been declared
