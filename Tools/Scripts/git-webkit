@@ -72,5 +72,6 @@ if '__main__' == __name__:
         subversion=is_webkit_filter('https://svn.webkit.org/repository/webkit'),
         additional_setup=is_webkit_filter(additional_setup),
         hooks=os.path.join(os.path.abspath(os.path.join(os.path.dirname(__file__))), 'hooks'),
+        canonical_svn=is_webkit_filter(True),
     ))
 

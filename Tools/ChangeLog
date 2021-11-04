@@ -1,3 +1,45 @@
+2021-11-03  Jonathan Bedard  <jbedard@apple.com>
+
+        [git-webkit] Add land command
+        https://bugs.webkit.org/show_bug.cgi?id=231821
+        <rdar://problem/84309339>
+
+        Reviewed by Dewei Zhu.
+
+        * Scripts/git-webkit: WebKit still uses Svn as it's canonical source of truth.
+        * Scripts/libraries/webkitscmpy/setup.py: Bump version.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/__init__.py: Ditto.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/local/git.py:
+        (Git._to_git_ref): Convert identifiers or revisions to git refs.
+        (Git.checkout): Use shared _to_git_ref function.
+        (Git.rebase): Support rebasing identifiers.
+        (Git.pull): Generalize computation of the gmtoffset.
+        (Git.diff_lines): Output diff between two refs.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/mocks/local/git.py:
+        (Git.__init__): Add branch, push and diff commands.
+        (Git.filter_branch): Support sed.
+        (Git.pull): Mock `git pull`
+        (Git.move_branch): Mock `git rebase`.
+        (Git.push): Mock `git push`.
+        (Git.reset): Mock `git reset HEAD~#`.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/program/__init__.py:
+        (main): Add land command.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/program/land.py: Added.
+        (Land.parser):
+        (Land.main): Rebase the current branch against it's root, assign the reviewer, check for 'oops' messages,
+        rebase against target branch, update target branch ref, optionally canonicalize, push (or svn dcommit) and
+        update and close pull-request with information on the landed commit.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/scm_base.py:
+        (ScmBase.gmtoffset): Add shared computation of GMT offset.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/git_unittest.py:
+        (TestGit.test_commits): `git log` should exclude base ref.
+        (TestGit.test_commits_branch): Ditto.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/land_unittest.py: Added.
+        (repository):
+        (TestLand):
+        (TestLandGitHub):
+        (TestLandBitBucket):
+
 2021-11-04  Jonathan Bedard  <jbedard@apple.com>
 
         [generate-webkit-css-docs] Change shebang to Python 3
