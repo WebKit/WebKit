@@ -575,7 +575,7 @@ Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Protocol::CSS::CSSComputedStylePropert
 static Ref<Protocol::CSS::Font> buildObjectForFont(const Font& font)
 {
     auto resultVariationAxes = JSON::ArrayOf<Protocol::CSS::FontVariationAxis>::create();
-    for (auto& variationAxis : font.platformData().variationAxes()) {
+    for (auto& variationAxis : font.platformData().variationAxes(ShouldLocalizeAxisNames::Yes)) {
         auto axis = Protocol::CSS::FontVariationAxis::create()
             .setTag(variationAxis.tag())
             .setMinimumValue(variationAxis.minimumValue())
