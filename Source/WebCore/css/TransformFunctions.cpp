@@ -322,21 +322,25 @@ bool transformsForValue(const CSSValue& value, const CSSToLengthConversionData& 
             break;
         }
         case CSSValuePerspective: {
-            Length p = Length(0, LengthType::Fixed);
-            if (firstValue.isLength())
-                p = convertToFloatLength(&firstValue, conversionData);
-            else {
-                // This is a quirk that should go away when 3d transforms are finalized.
-                double val = firstValue.doubleValue();
-                p = val >= 0 ? Length(clampToPositiveInteger(val), LengthType::Fixed) : Length(LengthType::Undefined);
-            }
+            std::optional<Length> perspectiveLength;
+            if (!firstValue.isValueID()) {
+                if (firstValue.isLength())
+                    perspectiveLength = convertToFloatLength(&firstValue, conversionData);
+                else {
+                    // This is a quirk that should go away when 3d transforms are finalized.
+                    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=232669
+                    // This does not deal properly with calc(), because we aren't passing conversionData here.
+                    double doubleValue = firstValue.doubleValue();
+                    if (doubleValue < 0) {
+                        operations.clear();
+                        return false;
+                    }
+                    perspectiveLength = Length(clampToPositiveInteger(doubleValue), LengthType::Fixed);
+                }
+            } else
+                ASSERT(firstValue.valueID() == CSSValueNone);
 
-            if (p.isUndefined()) {
-                operations.clear();
-                return false;
-            }
-
-            operations.append(PerspectiveTransformOperation::create(p));
+            operations.append(PerspectiveTransformOperation::create(perspectiveLength));
             break;
         }
         default:

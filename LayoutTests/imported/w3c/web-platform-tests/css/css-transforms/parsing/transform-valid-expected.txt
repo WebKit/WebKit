@@ -38,6 +38,6 @@ PASS e.style['transform'] = "skewX(90deg)" should set the property value
 PASS e.style['transform'] = "skewY(0)" should set the property value
 PASS e.style['transform'] = "skewY(-90deg)" should set the property value
 PASS e.style['transform'] = "perspective(10px)" should set the property value
-FAIL e.style['transform'] = "perspective(none)" should set the property value assert_not_equals: property should be set got disallowed value ""
+PASS e.style['transform'] = "perspective(none)" should set the property value
 PASS e.style['transform'] = "translate(1px, 2%) scale(3, 4) rotate(-90deg)" should set the property value
 

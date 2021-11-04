@@ -45,19 +45,29 @@ Ref<TransformOperation> PerspectiveTransformOperation::blend(const TransformOper
         return *this;
     
     if (blendToIdentity) {
-        double p = floatValueForLength(m_p, 1);
+        if (!m_p)
+            return PerspectiveTransformOperation::create(m_p);
+
+        double p = floatValueForLength(*m_p, 1);
         p = WebCore::blend(p, 1.0, context); // FIXME: this seems wrong. https://bugs.webkit.org/show_bug.cgi?id=52700
         return PerspectiveTransformOperation::create(Length(clampToPositiveInteger(p), LengthType::Fixed));
     }
     
     const PerspectiveTransformOperation* fromOp = downcast<PerspectiveTransformOperation>(from);
-    Length fromP = fromOp ? fromOp->m_p : Length(m_p.type());
-    Length toP = m_p;
+    if (!fromOp)
+        return *this;
+
+    auto fromP = fromOp->m_p;
+    auto toP = m_p;
 
     TransformationMatrix fromT;
+    if (fromP)
+        fromT.applyPerspective(floatValueForLength(*fromP, 1));
+
     TransformationMatrix toT;
-    fromT.applyPerspective(floatValueForLength(fromP, 1));
-    toT.applyPerspective(floatValueForLength(toP, 1));
+    if (toP)
+        toT.applyPerspective(floatValueForLength(*toP, 1));
+
     toT.blend(fromT, context.progress);
     TransformationMatrix::Decomposed4Type decomp;
     toT.decompose4(decomp);
@@ -71,7 +81,12 @@ Ref<TransformOperation> PerspectiveTransformOperation::blend(const TransformOper
 
 void PerspectiveTransformOperation::dump(TextStream& ts) const
 {
-    ts << type() << "(" << m_p << ")";
+    ts << type() << "(";
+    if (!m_p)
+        ts << "none";
+    else
+        ts << m_p;
+    ts << ")";
 }
 
 } // namespace WebCore

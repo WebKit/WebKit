@@ -91,26 +91,26 @@ PASS Web Animations: property <transform> from [scaleZ(2)] to [scaleZ(2) perspec
 PASS Web Animations: property <transform> from [scaleZ(2)] to [scaleZ(2) perspective(500px)] at (0.5) should be [scaleZ(2) perspective(1000px)]
 PASS Web Animations: property <transform> from [scaleZ(2)] to [scaleZ(2) perspective(500px)] at (1) should be [scaleZ(2) perspective(500px)]
 PASS Web Animations: property <transform> from [scaleZ(2)] to [scaleZ(2) perspective(500px)] at (2) should be [scaleZ(2) perspective(250px)]
-FAIL CSS Transitions: property <transform> from [perspective(none)] to [perspective(500px)] at (-1) should be [perspective(none)] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions: property <transform> from [perspective(none)] to [perspective(500px)] at (0) should be [perspective(none)] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions: property <transform> from [perspective(none)] to [perspective(500px)] at (0.5) should be [perspective(1000px)] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions: property <transform> from [perspective(none)] to [perspective(500px)] at (1) should be [perspective(500px)] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions: property <transform> from [perspective(none)] to [perspective(500px)] at (2) should be [perspective(250px)] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition: all: property <transform> from [perspective(none)] to [perspective(500px)] at (-1) should be [perspective(none)] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition: all: property <transform> from [perspective(none)] to [perspective(500px)] at (0) should be [perspective(none)] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition: all: property <transform> from [perspective(none)] to [perspective(500px)] at (0.5) should be [perspective(1000px)] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition: all: property <transform> from [perspective(none)] to [perspective(500px)] at (1) should be [perspective(500px)] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition: all: property <transform> from [perspective(none)] to [perspective(500px)] at (2) should be [perspective(250px)] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Animations: property <transform> from [perspective(none)] to [perspective(500px)] at (-1) should be [perspective(none)] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Animations: property <transform> from [perspective(none)] to [perspective(500px)] at (0) should be [perspective(none)] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Animations: property <transform> from [perspective(none)] to [perspective(500px)] at (0.5) should be [perspective(1000px)] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Animations: property <transform> from [perspective(none)] to [perspective(500px)] at (1) should be [perspective(500px)] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Animations: property <transform> from [perspective(none)] to [perspective(500px)] at (2) should be [perspective(250px)] assert_true: 'from' value should be supported expected true got false
-FAIL Web Animations: property <transform> from [perspective(none)] to [perspective(500px)] at (-1) should be [perspective(none)] assert_true: 'from' value should be supported expected true got false
-FAIL Web Animations: property <transform> from [perspective(none)] to [perspective(500px)] at (0) should be [perspective(none)] assert_true: 'from' value should be supported expected true got false
-FAIL Web Animations: property <transform> from [perspective(none)] to [perspective(500px)] at (0.5) should be [perspective(1000px)] assert_true: 'from' value should be supported expected true got false
-FAIL Web Animations: property <transform> from [perspective(none)] to [perspective(500px)] at (1) should be [perspective(500px)] assert_true: 'from' value should be supported expected true got false
-FAIL Web Animations: property <transform> from [perspective(none)] to [perspective(500px)] at (2) should be [perspective(250px)] assert_true: 'from' value should be supported expected true got false
+PASS CSS Transitions: property <transform> from [perspective(none)] to [perspective(500px)] at (-1) should be [perspective(none)]
+PASS CSS Transitions: property <transform> from [perspective(none)] to [perspective(500px)] at (0) should be [perspective(none)]
+PASS CSS Transitions: property <transform> from [perspective(none)] to [perspective(500px)] at (0.5) should be [perspective(1000px)]
+PASS CSS Transitions: property <transform> from [perspective(none)] to [perspective(500px)] at (1) should be [perspective(500px)]
+PASS CSS Transitions: property <transform> from [perspective(none)] to [perspective(500px)] at (2) should be [perspective(250px)]
+PASS CSS Transitions with transition: all: property <transform> from [perspective(none)] to [perspective(500px)] at (-1) should be [perspective(none)]
+PASS CSS Transitions with transition: all: property <transform> from [perspective(none)] to [perspective(500px)] at (0) should be [perspective(none)]
+PASS CSS Transitions with transition: all: property <transform> from [perspective(none)] to [perspective(500px)] at (0.5) should be [perspective(1000px)]
+PASS CSS Transitions with transition: all: property <transform> from [perspective(none)] to [perspective(500px)] at (1) should be [perspective(500px)]
+PASS CSS Transitions with transition: all: property <transform> from [perspective(none)] to [perspective(500px)] at (2) should be [perspective(250px)]
+PASS CSS Animations: property <transform> from [perspective(none)] to [perspective(500px)] at (-1) should be [perspective(none)]
+PASS CSS Animations: property <transform> from [perspective(none)] to [perspective(500px)] at (0) should be [perspective(none)]
+PASS CSS Animations: property <transform> from [perspective(none)] to [perspective(500px)] at (0.5) should be [perspective(1000px)]
+PASS CSS Animations: property <transform> from [perspective(none)] to [perspective(500px)] at (1) should be [perspective(500px)]
+PASS CSS Animations: property <transform> from [perspective(none)] to [perspective(500px)] at (2) should be [perspective(250px)]
+PASS Web Animations: property <transform> from [perspective(none)] to [perspective(500px)] at (-1) should be [perspective(none)]
+PASS Web Animations: property <transform> from [perspective(none)] to [perspective(500px)] at (0) should be [perspective(none)]
+PASS Web Animations: property <transform> from [perspective(none)] to [perspective(500px)] at (0.5) should be [perspective(1000px)]
+PASS Web Animations: property <transform> from [perspective(none)] to [perspective(500px)] at (1) should be [perspective(500px)]
+PASS Web Animations: property <transform> from [perspective(none)] to [perspective(500px)] at (2) should be [perspective(250px)]
 PASS CSS Transitions: property <transform> from [rotate(30deg)] to [rotate(330deg)] at (-1) should be [rotate(-270deg)]
 PASS CSS Transitions: property <transform> from [rotate(30deg)] to [rotate(330deg)] at (0) should be [rotate(30deg)]
 PASS CSS Transitions: property <transform> from [rotate(30deg)] to [rotate(330deg)] at (0.25) should be [rotate(105deg)]

@@ -1831,16 +1831,22 @@ static bool consumeNumbersOrPercents(CSSParserTokenRange& args, RefPtr<CSSFuncti
 
 static bool consumePerspective(CSSParserTokenRange& args, CSSParserMode cssParserMode, RefPtr<CSSFunctionValue>& transformValue)
 {
+    if (args.peek().id() == CSSValueNone) {
+        transformValue->append(consumeIdent(args).releaseNonNull());
+        return true;
+    }
+
     if (auto parsedValue = consumeLength(args, cssParserMode, ValueRange::NonNegative)) {
         transformValue->append(parsedValue.releaseNonNull());
         return true;
     }
 
-    auto perspective = consumeNumberRaw(args);
-    if (!perspective || *perspective < 0)
-        return false;
-    transformValue->append(CSSPrimitiveValue::create(*perspective, CSSUnitType::CSS_PX));
-    return true;
+    if (auto perspective = consumeNumberRaw(args, ValueRange::NonNegative)) {
+        transformValue->append(CSSPrimitiveValue::create(*perspective, CSSUnitType::CSS_PX));
+        return true;
+    }
+
+    return false;
 }
 
 static RefPtr<CSSValue> consumeTransformValue(CSSParserTokenRange& range, CSSParserMode cssParserMode)
