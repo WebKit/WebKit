@@ -4881,11 +4881,6 @@ sub GenerateImplementation
         push(@implContent, "    ASSERT_GC_OBJECT_INHERITS(thisObject, info());\n");
         push(@implContent, "    Base::visitChildren(thisObject, visitor);\n");
         push(@implContent, "    thisObject->visitAdditionalChildren(visitor);\n") if $interface->extendedAttributes->{JSCustomMarkFunction};
-        if ($interface->extendedAttributes->{Plugin}) {
-            push(@implContent, "#if PLATFORM(COCOA)\n");
-            push(@implContent, "    thisObject->wrapped().pluginReplacementScriptObject().visit(visitor);\n");
-            push(@implContent, "#endif\n");
-        }
         if ($interface->extendedAttributes->{GenerateAddOpaqueRoot}) {
             AddToImplIncludes("<wtf/GetPtr.h>");
             my $functionName = $interface->extendedAttributes->{GenerateAddOpaqueRoot};

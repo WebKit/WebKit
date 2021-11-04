@@ -445,12 +445,6 @@ PrivateClickMeasurementFraudPreventionEnabled:
       "HAVE(RSA_BSSA)": true
       default: false
 
-QuickTimePluginReplacementEnabled:
-  type: bool
-  defaultValue:
-    WebCore:
-      default: false
-
 RepaintOutsideLayoutEnabled:
   type: bool
   defaultValue:
@@ -634,12 +628,6 @@ WebRTCEncryptionEnabled:
       default: true
 
 WebkitImageReadyEventEnabled:
-  type: bool
-  defaultValue:
-    WebCore:
-      default: false
-
-YouTubeFlashPluginReplacementEnabled:
   type: bool
   defaultValue:
     WebCore:

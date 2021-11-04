@@ -1,3 +1,12 @@
+2021-11-03  Alex Christensen  <achristensen@webkit.org>
+
+        Remove QuickTimePluginReplacement and YouTubePluginReplacement
+        https://bugs.webkit.org/show_bug.cgi?id=232400
+
+        Reviewed by Chris Dumez.
+
+        * UserInterface/Models/NativeFunctionParameters.js:
+
 2021-11-03  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Display swatch popovers below the swatch by default, not on the left side

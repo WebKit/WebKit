@@ -1631,8 +1631,6 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPushSubscriptionOptions.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPushSubscriptionOptions.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPushSubscriptionOptionsInit.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPushSubscriptionOptionsInit.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSQuickTimePluginReplacement.cpp
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSQuickTimePluginReplacement.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCAnswerOptions.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCAnswerOptions.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCCertificate.cpp

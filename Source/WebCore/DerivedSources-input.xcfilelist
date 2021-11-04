@@ -422,9 +422,6 @@ $(PROJECT_DIR)/Modules/pictureinpicture/DocumentOrShadowRoot+PictureInPicture.id
 $(PROJECT_DIR)/Modules/pictureinpicture/EnterPictureInPictureEvent.idl
 $(PROJECT_DIR)/Modules/pictureinpicture/HTMLVideoElement+PictureInPicture.idl
 $(PROJECT_DIR)/Modules/pictureinpicture/PictureInPictureWindow.idl
-$(PROJECT_DIR)/Modules/plugins/QuickTimePluginReplacement.css
-$(PROJECT_DIR)/Modules/plugins/QuickTimePluginReplacement.idl
-$(PROJECT_DIR)/Modules/plugins/QuickTimePluginReplacement.js
 $(PROJECT_DIR)/Modules/push-api/PushEncryptionKeyName.idl
 $(PROJECT_DIR)/Modules/push-api/PushEvent.idl
 $(PROJECT_DIR)/Modules/push-api/PushEventInit.idl

@@ -35,7 +35,6 @@ class Instance;
 
 namespace WebCore {
 
-class PluginReplacement;
 class RenderWidget;
 class Widget;
 
@@ -58,11 +57,6 @@ public:
     };
     DisplayState displayState() const { return m_displayState; }
     void setDisplayState(DisplayState);
-
-    JSC::JSObject* scriptObjectForPluginReplacement();
-#if PLATFORM(COCOA)
-    JSValueInWrappedObject& pluginReplacementScriptObject() { return m_pluginReplacementScriptObject; }
-#endif
 
     bool isCapturingMouseEvents() const { return m_isCapturingMouseEvents; }
     void setIsCapturingMouseEvents(bool capturing) { m_isCapturingMouseEvents = capturing; }
@@ -119,10 +113,6 @@ private:
 
     RefPtr<JSC::Bindings::Instance> m_instance;
     Timer m_swapRendererTimer;
-    RefPtr<PluginReplacement> m_pluginReplacement;
-#if PLATFORM(COCOA)
-    JSValueInWrappedObject m_pluginReplacementScriptObject;
-#endif
     bool m_isCapturingMouseEvents { false };
     bool m_inBeforeLoadEventHandler { false };
     DisplayState m_displayState { Playing };

@@ -1,3 +1,13 @@
+2021-11-03  Alex Christensen  <achristensen@webkit.org>
+
+        Remove QuickTimePluginReplacement and YouTubePluginReplacement
+        https://bugs.webkit.org/show_bug.cgi?id=232400
+
+        Reviewed by Chris Dumez.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebCore/YouTubePluginReplacement.cpp: Removed.
+
 2021-11-03  Yousuke Kimoto  <Yousuke.Kimoto@sony.com>
 
         Use 0.0.0.0 when "--all-interfaces" is given for websocket_server

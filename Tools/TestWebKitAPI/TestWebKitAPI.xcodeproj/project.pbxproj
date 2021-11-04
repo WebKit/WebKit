@@ -946,7 +946,6 @@
 		9BDD95581F83683600D20C60 /* PasteRTFD.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9BDD95561F83683600D20C60 /* PasteRTFD.mm */; };
 		9BF00133267C4C5900DCFB3F /* CheckedRef.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9BF00132267C4C5900DCFB3F /* CheckedRef.cpp */; };
 		9BF356CD202D458500F71160 /* mso-list.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 9BF356CC202D44F200F71160 /* mso-list.html */; };
-		9C64DC321D76198A004B598E /* YouTubePluginReplacement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C64DC311D76198A004B598E /* YouTubePluginReplacement.cpp */; };
 		A10F047E1E3AD29C00C95E19 /* NSFileManagerExtras.mm in Sources */ = {isa = PBXBuildFile; fileRef = A10F047C1E3AD29C00C95E19 /* NSFileManagerExtras.mm */; };
 		A1146A8D1D2D7115000FE710 /* ContentFiltering.mm in Sources */ = {isa = PBXBuildFile; fileRef = A1146A8A1D2D704F000FE710 /* ContentFiltering.mm */; };
 		A11E7DA024A169F900026745 /* link-with-hover-menu.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = A11E7D9F24A169E200026745 /* link-with-hover-menu.html */; };
@@ -2710,7 +2709,6 @@
 		9BDD95561F83683600D20C60 /* PasteRTFD.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PasteRTFD.mm; sourceTree = "<group>"; };
 		9BF00132267C4C5900DCFB3F /* CheckedRef.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CheckedRef.cpp; sourceTree = "<group>"; };
 		9BF356CC202D44F200F71160 /* mso-list.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "mso-list.html"; sourceTree = "<group>"; };
-		9C64DC311D76198A004B598E /* YouTubePluginReplacement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = YouTubePluginReplacement.cpp; sourceTree = "<group>"; };
 		A10F047C1E3AD29C00C95E19 /* NSFileManagerExtras.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = NSFileManagerExtras.mm; sourceTree = "<group>"; };
 		A1146A8A1D2D704F000FE710 /* ContentFiltering.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ContentFiltering.mm; sourceTree = "<group>"; };
 		A11E7D9F24A169E200026745 /* link-with-hover-menu.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "link-with-hover-menu.html"; sourceTree = "<group>"; };
@@ -3854,7 +3852,6 @@
 				7AD3FE8D1D75FB8D00B169A4 /* TransformationMatrix.cpp */,
 				57D1D75E21DCB7A80093E86A /* U2fCommandConstructorTest.cpp */,
 				E3A1E77E21B25B39008C6007 /* URLParserTextEncoding.cpp */,
-				9C64DC311D76198A004B598E /* YouTubePluginReplacement.cpp */,
 			);
 			path = WebCore;
 			sourceTree = "<group>";
@@ -6076,7 +6073,6 @@
 				953ABB3525C0D682004C8B73 /* WKWebViewUnderPageBackgroundColor.mm in Sources */,
 				7C74C8FA22DFBA9600DA2DAB /* WTFStringUtilities.cpp in Sources */,
 				C14D304624B4C3BA00480387 /* XPCEndpoint.mm in Sources */,
-				9C64DC321D76198A004B598E /* YouTubePluginReplacement.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

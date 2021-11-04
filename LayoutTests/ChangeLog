@@ -1,3 +1,13 @@
+2021-11-03  Alex Christensen  <achristensen@webkit.org>
+
+        Remove QuickTimePluginReplacement and YouTubePluginReplacement
+        https://bugs.webkit.org/show_bug.cgi?id=232400
+
+        Reviewed by Chris Dumez.
+
+        * security/contentSecurityPolicy/object-src-none-blocks-youtube-plugin-replacement-expected.txt: Removed.
+        * security/contentSecurityPolicy/object-src-none-blocks-youtube-plugin-replacement.html: Removed.
+
 2021-11-03  Nikos Mouchtaris  <nmouchtaris@apple.com>
 
         Add platform test expectations for imported/w3c/web-platform-tests/mathml/relations/html5-tree/dynamic-childlist-001.html

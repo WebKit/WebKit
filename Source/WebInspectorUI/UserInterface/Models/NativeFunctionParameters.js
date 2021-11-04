@@ -1271,11 +1271,6 @@ WI.NativePrototypeFunctionParameters = {
         __proto__: null,
     },
 
-    QuickTimePluginReplacement: {
-        postEvent: "eventName",
-        __proto__: null,
-    },
-
     RTCDTMFSender: {
         insertDTMF: "tones, [duration], [interToneGap]",
         __proto__: null,

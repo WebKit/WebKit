@@ -352,7 +352,6 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/pictureinpicture/EnterPictureInPictureEvent.idl \
     $(WebCore)/Modules/pictureinpicture/HTMLVideoElement+PictureInPicture.idl \
     $(WebCore)/Modules/pictureinpicture/PictureInPictureWindow.idl \
-    $(WebCore)/Modules/plugins/QuickTimePluginReplacement.idl \
     $(WebCore)/Modules/push-api/PushEncryptionKeyName.idl \
     $(WebCore)/Modules/push-api/PushEvent.idl \
     $(WebCore)/Modules/push-api/PushEventInit.idl \
@@ -1623,7 +1622,6 @@ USER_AGENT_STYLE_SHEETS = \
     $(WebCore)/css/svg.css \
     $(WebCore)/html/shadow/imageOverlay.css \
     $(WebCore)/html/shadow/meterElementShadow.css \
-    $(WebCore)/Modules/plugins/QuickTimePluginReplacement.css \
     ModernMediaControls.css \
     $(POSSIBLE_ADDITIONAL_USER_AGENT_STYLE_SHEETS) \
 #
@@ -1732,7 +1730,6 @@ ModernMediaControls.js : $(MODERN_MEDIA_CONTROLS_SCRIPTS)
 # user agent scripts
 
 USER_AGENT_SCRIPTS = \
-    $(WebCore)/Modules/plugins/QuickTimePluginReplacement.js \
     ModernMediaControls.js \
 #
 
