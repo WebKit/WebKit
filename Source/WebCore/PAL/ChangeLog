@@ -1,5 +1,29 @@
 2021-11-04  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r283480. rdar://problem/83732537
+
+    Build fix: GPU Process microphone attribution SPI adoption
+    <https://bugs.webkit.org/show_bug.cgi?id=231034>
+    <rdar://problem/83732537>
+    
+    * pal/spi/cocoa/AVFoundationSPI.h:
+    (-[AVAudioSession setHostProcessAttribution:error:]):
+    - Add SPI declaration for open source bots.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@283480 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-10-03  David Kilzer  <ddkilzer@apple.com>
+
+            Build fix: GPU Process microphone attribution SPI adoption
+            <https://bugs.webkit.org/show_bug.cgi?id=231034>
+            <rdar://problem/83732537>
+
+            * pal/spi/cocoa/AVFoundationSPI.h:
+            (-[AVAudioSession setHostProcessAttribution:error:]):
+            - Add SPI declaration for open source bots.
+
+2021-11-04  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r283394. rdar://problem/83732537
 
     GPU Process microphone attribution SPI adoption
