@@ -175,8 +175,9 @@ bool SelectorChecker::match(const CSSSelector& selector, const Element& element,
 {
     LocalContext context(selector, element, checkingContext.resolvingMode == SelectorChecker::Mode::QueryingRules ? VisitedMatchType::Disabled : VisitedMatchType::Enabled, checkingContext.pseudoId);
 
-    if (checkingContext.isMatchingHostPseudoClass) {
+    if (checkingContext.styleScopeOrdinal == Style::ScopeOrdinal::Shadow) {
         ASSERT(element.shadowRoot());
+        // Rules coming from the element's shadow tree must match :host pseudo class.
         context.mustMatchHostPseudoClass = true;
     }
 
@@ -201,8 +202,8 @@ bool SelectorChecker::match(const CSSSelector& selector, const Element& element,
 
 bool SelectorChecker::matchHostPseudoClass(const CSSSelector& selector, const Element& element, CheckingContext& checkingContext) const
 {
-    ASSERT(element.shadowRoot());
-    ASSERT(selector.match() == CSSSelector::PseudoClass && selector.pseudoClassType() == CSSSelector::PseudoClassHost);
+    if (!element.shadowRoot())
+        return false;
 
     if (auto* selectorList = selector.selectorList()) {
         LocalContext context(*selectorList->first(), element, VisitedMatchType::Enabled, PseudoId::None);

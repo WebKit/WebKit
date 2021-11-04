@@ -162,7 +162,6 @@ private:
     bool m_isPrintStyle { false };
     PseudoElementRequest m_pseudoElementRequest { PseudoId::None };
     SelectorChecker::Mode m_mode { SelectorChecker::Mode::ResolvingStyle };
-    bool m_isMatchingHostPseudoClass { false };
 
     Vector<MatchedRule, 64> m_matchedRules;
     size_t m_matchedRuleTransferIndex { 0 };

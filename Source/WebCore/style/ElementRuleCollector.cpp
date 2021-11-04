@@ -268,8 +268,6 @@ void ElementRuleCollector::matchHostPseudoClassRules()
     if (shadowHostRules.isEmpty())
         return;
 
-    SetForScope<bool> change(m_isMatchingHostPseudoClass, true);
-
     MatchRequest hostMatchRequest { nullptr, ScopeOrdinal::Shadow };
     collectMatchingRulesForList(&shadowHostRules, hostMatchRequest);
 }
@@ -432,7 +430,6 @@ inline bool ElementRuleCollector::ruleMatches(const RuleData& ruleData, unsigned
     context.pseudoId = m_pseudoElementRequest.pseudoId;
     context.scrollbarState = m_pseudoElementRequest.scrollbarState;
     context.nameForHightlightPseudoElement = m_pseudoElementRequest.highlightName;
-    context.isMatchingHostPseudoClass = m_isMatchingHostPseudoClass;
     context.styleScopeOrdinal = styleScopeOrdinal;
 
     bool selectorMatches;
