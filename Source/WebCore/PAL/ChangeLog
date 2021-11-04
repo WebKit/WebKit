@@ -1,3 +1,61 @@
+2021-11-04  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r282313. rdar://problem/82987695
+
+    CFNotificationCenterAddObserver() should use weak observers
+    <https://webkit.org/b/230168>
+    <rdar://problem/82987695>
+    
+    Reviewed by Darin Adler.
+    
+    Source/WebCore/PAL:
+    
+    * PAL.xcodeproj/project.pbxproj:
+    - Add CFNotificationCenterSPI.h to the project.
+    * pal/spi/cf/CFNotificationCenterSPI.h: Add.
+    
+    Source/WebKit:
+    
+    * UIProcess/API/Cocoa/WKWebView.mm:
+    (hardwareKeyboardAvailabilityChangedCallback):
+    - Use RetainPtr to store `observer` for the duration of the
+      function, and add an early return if it is nil.
+    (-[WKWebView _initializeWithConfiguration:]):
+    - Use _CFNotificationObserverIsObjC to fix the bug.
+    - Extract local variables and change notificationName cast to be
+      ARC-ready.  Remove notificationName from autoreleasePool.
+    (-[WKWebView dealloc]):
+    - Extract local variable and change notificationName cast to be
+      ARC-ready.  Remove notificationName from autoreleasePool.
+    
+    Source/WebKitLegacy/mac:
+    
+    * WebView/WebHTMLView.mm:
+    (hardwareKeyboardAvailabilityChangedCallback):
+    - Modernize syntax for WeakObjCPtr constructor.
+    (-[WebHTMLView initWithFrame:]):
+    - Use _CFNotificationObserverIsObjC to fix the bug.
+    - Extract local variables and change notificationName cast to be
+      ARC-ready.  Remove notificationName from autoreleasePool.
+    (-[WebHTMLView dealloc]):
+    - Extract local variable and change notificationName cast to be
+      ARC-ready.  Remove notificationName from autoreleasePool.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@282313 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-09-11  David Kilzer  <ddkilzer@apple.com>
+
+            CFNotificationCenterAddObserver() should use weak observers
+            <https://webkit.org/b/230168>
+            <rdar://problem/82987695>
+
+            Reviewed by Darin Adler.
+
+            * PAL.xcodeproj/project.pbxproj:
+            - Add CFNotificationCenterSPI.h to the project.
+            * pal/spi/cf/CFNotificationCenterSPI.h: Add.
+
 2021-10-29  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r284494. rdar://problem/84816590
