@@ -359,7 +359,25 @@ ImageDrawResult SVGImage::drawAsNativeImage(GraphicsContext& context, const Floa
 {
     ASSERT(!context.hasPlatformContext());
 
-    auto rectInNativeImage = FloatRect { { }, destination.size() };
+    auto transform = context.getCTM();
+    if (!transform.isInvertible())
+        return ImageDrawResult::DidNothing;
+
+    // Consider the scaling of the context only.
+    auto contextScale = FloatSize(transform.xScale(), transform.yScale());
+    auto scaledDestination = destination;
+    scaledDestination.scale(contextScale);
+
+    // Check if we need to clamp the temporary ImageBuffer.
+    auto clampingScale = FloatSize(1, 1);
+    ImageBuffer::sizeNeedsClamping(scaledDestination.size(), clampingScale);
+
+    // contextScale * clampingScale is the scaling factor.
+    auto scale = contextScale * clampingScale;
+    scaledDestination.scale(clampingScale);
+
+    auto rectInNativeImage = FloatRect { { }, flooredIntSize(scaledDestination.size()) };
+
     auto nativeImage = this->nativeImage(rectInNativeImage.size(), source, colorSpace);
     if (!nativeImage)
         return ImageDrawResult::DidNothing;
@@ -369,7 +387,12 @@ ImageDrawResult SVGImage::drawAsNativeImage(GraphicsContext& context, const Floa
     if (orientation == ImageOrientation::Orientation::FromImage)
         localImagePaintingOptions = ImagePaintingOptions(options, ImageOrientation::Orientation::None);
 
-    context.drawNativeImage(*nativeImage, rectInNativeImage.size(), destination, rectInNativeImage, localImagePaintingOptions);
+    // Change the coordinate system to reflect the scaling factor.
+    context.scale(FloatSize(1 / scale.width(), 1 / scale.height()));
+    
+    context.drawNativeImage(*nativeImage, rectInNativeImage.size(), scaledDestination, rectInNativeImage, localImagePaintingOptions);
+    
+    context.scale(scale);
 
     if (imageObserver())
         imageObserver()->didDraw(*this);

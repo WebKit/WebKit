@@ -1,5 +1,54 @@
 2021-11-04  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r284740. rdar://problem/83628607
+
+    [GPU Process] REGRESSION: Drawing a large SVG image on a canvas may take too much memory
+    https://bugs.webkit.org/show_bug.cgi?id=230886
+    rdar://83628607
+    
+    Reviewed by Simon Fraser.
+    
+    Source/WebCore:
+    
+    For the GPUProcess rendering on a canvas, we have to draw the SVGImage to
+    a temporary ImageBuffer, get a NativeImage from this ImageBuffer and send
+    it to GPUProcess through a DrawNativeImage display list item.
+    
+    The fix is:
+    
+    1. Make sure the size of temporary ImageBuffer is scaled to the Graphics
+       Context CTM.
+    2. Clamp the scaled size to the MaxClampedArea. So ImageBuffer::create()
+       returns a valid ImageBuffer.
+    3. Scale the destination GraphicsContext to the reciprocal of the scaling
+       factor before drawing the NativeImage.
+    
+    Test: fast/canvas/canvas-draw-large-svg-image.html
+    
+    * svg/graphics/SVGImage.cpp:
+    (WebCore::SVGImage::drawAsNativeImage):
+    
+    LayoutTests:
+    
+    * fast/canvas/canvas-draw-large-svg-image-expected.html: Added.
+    * fast/canvas/canvas-draw-large-svg-image.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@284740 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-10-22  Said Abou-Hallawa  <said@apple.com>
+
+            [GPU Process] REGRESSION: Drawing a large SVG image on a canvas may take too much memory
+            https://bugs.webkit.org/show_bug.cgi?id=230886
+            rdar://83628607
+
+            Reviewed by Simon Fraser.
+
+            * fast/canvas/canvas-draw-large-svg-image-expected.html: Added.
+            * fast/canvas/canvas-draw-large-svg-image.html: Added.
+
+2021-11-04  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r283803. rdar://problem/83823282
 
     REGRESSION (r277818): XHR with requestType document broken for larger HTML files
