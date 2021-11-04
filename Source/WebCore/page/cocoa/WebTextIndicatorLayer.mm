@@ -130,6 +130,7 @@ static bool indicatorWantsFadeIn(const WebCore::TextIndicator& indicator)
     
     self.anchorPoint = CGPointZero;
     self.frame = frame;
+    self.name = @"WebTextIndicatorLayer";
 
     _textIndicator = &textIndicator;
     _margin = margin;
@@ -377,11 +378,6 @@ static RetainPtr<CABasicAnimation> createFadeInAnimation(CFTimeInterval duration
         for (CALayer *bounceLayer in _bounceLayers.get())
             bounceLayer.timeOffset = progress * animationDuration;
     }
-}
-
-- (BOOL)isFlipped
-{
-    return YES;
 }
 
 @end
