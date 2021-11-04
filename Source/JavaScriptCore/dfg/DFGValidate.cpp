@@ -138,7 +138,7 @@ public:
                     m_myRefCounts.find(edge.node())->value++;
 
                     validateEdgeWithDoubleResultIfNecessary(node, edge);
-                    VALIDATE((node, edge), edge->hasInt52Result() == (edge.useKind() == Int52RepUse));
+                    validateEdgeWithInt52ResultIfNecessary(node, edge);
                     
                     if (m_graph.m_form == SSA) {
                         // In SSA, all edges must hasResult().
@@ -969,6 +969,14 @@ private:
             return;
         
         VALIDATE((node, edge), edge.useKind() == DoubleRepUse || edge.useKind() == DoubleRepRealUse || edge.useKind() == DoubleRepAnyIntUse);
+    }
+
+    void validateEdgeWithInt52ResultIfNecessary(Node* node, Edge edge)
+    {
+        if (m_graph.m_planStage < PlanStage::AfterFixup)
+            return;
+
+        VALIDATE((node, edge), edge->hasInt52Result() == (edge.useKind() == Int52RepUse));
     }
 
     void checkOperand(

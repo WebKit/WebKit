@@ -2173,13 +2173,11 @@ private:
             blessArrayOperation(node->child1(), Edge(), node->child2(), lengthNeedsStorage);
 
             fixEdge<KnownCellUse>(node->child1());
-            node->setResult(NodeResultInt52);
             break;
         }
 
         case GetTypedArrayByteOffsetAsInt52: {
             fixEdge<KnownCellUse>(node->child1());
-            node->setResult(NodeResultInt52);
             break;
         }
 
