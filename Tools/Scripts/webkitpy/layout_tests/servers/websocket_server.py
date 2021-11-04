@@ -96,7 +96,8 @@ class PyWebSocket(http_server.Lighttpd):
             try:
                 self._layout_tests = self._port_obj.layout_tests_dir()
                 self._web_socket_tests = self._filesystem.join(self._layout_tests, 'http', 'tests', 'websocket', 'tests')
-            except:
+            except Exception as e:
+                _log.error('Failed to join path for layout_test websocket server: %s' % str(e))
                 self._web_socket_tests = None
 
         if self._use_tls:
@@ -128,7 +129,7 @@ class PyWebSocket(http_server.Lighttpd):
         pywebsocket_script = self._filesystem.join(pywebsocket_base, 'mod_pywebsocket', 'standalone.py')
         start_cmd = [
             python_interp, '-u', pywebsocket_script,
-            '--server-host', 'localhost',
+            '--server-host', '0.0.0.0' if self._port_obj.get_option("http_all_interfaces") else 'localhost',
             '--port', str(self._port),
             # FIXME: Don't we have a self._port_obj.layout_test_path?
             '--document-root', self._filesystem.join(self._layout_tests, 'http', 'tests'),
