@@ -1,5 +1,43 @@
 2021-11-04  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r285080. rdar://problem/84811692
+
+    [iOS 15] Loads after WKWebView session restore are marked as app-initiated
+    https://bugs.webkit.org/show_bug.cgi?id=232486
+    <rdar://problem/84811692>
+    
+    Reviewed by Brent Fulgham.
+    
+    Source/WebKit:
+    
+    Return app initiated value in the page's SessionState so it can be restored
+    by third party apps using the [WKWebView setInteractionState] API.
+    
+    * UIProcess/WebPageProxy.cpp:
+    (WebKit::WebPageProxy::sessionState const):
+    * UIProcess/mac/LegacySessionStateCoding.cpp:
+    (WebKit::encodeLegacySessionState):
+    (WebKit::decodeLegacySessionState):
+    
+    Tools:
+    
+    * TestWebKitAPI/Tests/WebKitCocoa/AppPrivacyReport.mm:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@285080 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-10-30  Kate Cheney  <katherine_cheney@apple.com>
+
+            [iOS 15] Loads after WKWebView session restore are marked as app-initiated
+            https://bugs.webkit.org/show_bug.cgi?id=232486
+            <rdar://problem/84811692>
+
+            Reviewed by Brent Fulgham.
+
+            * TestWebKitAPI/Tests/WebKitCocoa/AppPrivacyReport.mm:
+
+2021-11-04  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r284875. rdar://problem/84597422
 
     [ App Privacy Report ] Restoring a session after clearing the cache results in app initiated loads in Safari

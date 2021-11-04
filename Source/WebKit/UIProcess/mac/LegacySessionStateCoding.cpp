@@ -41,6 +41,7 @@ static const uint32_t sessionStateDataVersion = 2;
 static const CFStringRef sessionHistoryKey = CFSTR("SessionHistory");
 static const CFStringRef provisionalURLKey = CFSTR("ProvisionalURL");
 static const CFStringRef renderTreeSizeKey = CFSTR("RenderTreeSize");
+static const CFStringRef isAppInitiatedKey = CFSTR("IsAppInitiated");
 
 // Session history keys.
 static const uint32_t sessionHistoryVersion = 1;
@@ -481,18 +482,21 @@ RefPtr<API::Data> encodeLegacySessionState(const SessionState& sessionState)
     auto sessionHistoryDictionary = encodeSessionHistory(sessionState.backForwardListState);
     auto provisionalURLString = sessionState.provisionalURL.isNull() ? nullptr : sessionState.provisionalURL.string().createCFString();
     RetainPtr<CFNumberRef> renderTreeSizeNumber(adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberSInt64Type, &sessionState.renderTreeSize)));
+    RetainPtr<CFBooleanRef> isAppInitiated = adoptCF(sessionState.isAppInitiated ? kCFBooleanTrue : kCFBooleanFalse);
 
     RetainPtr<CFDictionaryRef> stateDictionary;
     if (provisionalURLString) {
         stateDictionary = createDictionary({
             { sessionHistoryKey, sessionHistoryDictionary.get() },
             { provisionalURLKey, provisionalURLString.get() },
-            { renderTreeSizeKey, renderTreeSizeNumber.get() }
+            { renderTreeSizeKey, renderTreeSizeNumber.get() },
+            { isAppInitiatedKey, isAppInitiated.get() }
         });
     } else {
         stateDictionary = createDictionary({
             { sessionHistoryKey, sessionHistoryDictionary.get() },
-            { renderTreeSizeKey, renderTreeSizeNumber.get() }
+            { renderTreeSizeKey, renderTreeSizeNumber.get() },
+            { isAppInitiatedKey, isAppInitiated.get() }
         });
     }
 
@@ -1151,6 +1155,11 @@ bool decodeLegacySessionState(const uint8_t* bytes, size_t size, SessionState& s
         CFNumberGetValue(renderTreeSize, kCFNumberSInt64Type, &sessionState.renderTreeSize);
     else
         sessionState.renderTreeSize = 0;
+
+    if (auto isAppInitiated = dynamic_cf_cast<CFBooleanRef>(CFDictionaryGetValue(sessionStateDictionary, isAppInitiatedKey)))
+        sessionState.isAppInitiated = isAppInitiated == kCFBooleanTrue;
+    else
+        sessionState.isAppInitiated = true;
 
     return true;
 }
