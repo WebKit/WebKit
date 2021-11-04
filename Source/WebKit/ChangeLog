@@ -1,5 +1,35 @@
 2021-11-04  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r282849. rdar://problem/83067708
+
+    Follow-up: WebKit::WebProcessPool should use a weak observer with CFNotificationCenter
+    <https://webkit.org/b/230227>
+    <rdar://problem/83067708>
+    
+    Reviewed by Tim Horton.
+    
+    * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+    (WebKit::WebProcessPool::registerNotificationObservers):
+    - Set m_weakObserver for all platforms at the beginning of the
+      method.  Previously it was only set for macOS.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@282849 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-09-21  David Kilzer  <ddkilzer@apple.com>
+
+            Follow-up: WebKit::WebProcessPool should use a weak observer with CFNotificationCenter
+            <https://webkit.org/b/230227>
+            <rdar://problem/83067708>
+
+            Reviewed by Tim Horton.
+
+            * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+            (WebKit::WebProcessPool::registerNotificationObservers):
+            - Set m_weakObserver for all platforms at the beginning of the
+              method.  Previously it was only set for macOS.
+
+2021-11-04  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r285165. rdar://problem/84908023
 
     Revert the wheel event coalescing added in r277587
