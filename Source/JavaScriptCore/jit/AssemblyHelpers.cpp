@@ -413,6 +413,36 @@ void AssemblyHelpers::emitLoadPrototype(VM& vm, GPRReg objectGPR, JSValueRegs re
     hasMonoProto.link(this);
 }
 
+void AssemblyHelpers::emitLoadPrototypeWithoutCheck(VM& vm, GPRReg objectGPR, JSValueRegs resultRegs, GPRReg scratchGPR, GPRReg scratch2GPR)
+{
+    ASSERT(objectGPR != scratchGPR);
+    ASSERT(objectGPR != scratch2GPR);
+    ASSERT(resultRegs.payloadGPR() != scratchGPR);
+    ASSERT(resultRegs.payloadGPR() != scratch2GPR);
+#if USE(JSVALUE32_64)
+    ASSERT(resultRegs.tagGPR() != scratchGPR);
+    ASSERT(resultRegs.tagGPR() != scratch2GPR);
+#endif
+
+    emitLoadStructure(vm, objectGPR, scratchGPR, scratch2GPR);
+#if USE(JSVALUE64)
+    loadValue(MacroAssembler::Address(scratchGPR, Structure::prototypeOffset()), JSValueRegs(scratch2GPR));
+#else
+    load32(MacroAssembler::Address(scratchGPR, Structure::prototypeOffset() + TagOffset), scratch2GPR);
+#endif
+    auto hasMonoProto = branchIfNotEmpty(scratch2GPR);
+    loadValue(MacroAssembler::Address(objectGPR, offsetRelativeToBase(knownPolyProtoOffset)), resultRegs);
+    auto done = jump();
+    hasMonoProto.link(this);
+#if USE(JSVALUE64)
+    move(scratch2GPR, resultRegs.payloadGPR());
+#else
+    load32(MacroAssembler::Address(scratchGPR, Structure::prototypeOffset() + PayloadOffset), resultRegs.payloadGPR());
+    move(scratch2GPR, resultRegs.tagGPR());
+#endif
+    done.link(this);
+}
+
 void AssemblyHelpers::makeSpaceOnStackForCCall()
 {
     unsigned stackOffset = WTF::roundUpToMultipleOf(stackAlignmentBytes(), maxFrameExtentForSlowPathCall);
