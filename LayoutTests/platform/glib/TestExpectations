@@ -1192,6 +1192,8 @@ webkit.org/b/219885 fast/mediastream/getUserMedia-webaudio.html [ Failure Pass ]
 
 webkit.org/b/229219 http/tests/security/webaudio-render-remote-audio-allowed-crossorigin.html [ Pass Timeout ]
 
+webkit.org/b/232726 webaudio/AudioBuffer/huge-buffer.html [ Pass Slow ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of WebAudio-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1745,6 +1747,7 @@ webkit.org/b/166536 fast/canvas/webgl/webgl-transformed-varying-name-crash.html 
 webkit.org/b/166536 fast/canvas/webgl/shader-mix-with-bool.html [ Skip ]
 webkit.org/b/166536 fast/canvas/webgl/shader-vec-array-deref-no-crash.html [ Skip ]
 webkit.org/b/166536 fast/canvas/webgl/shader-with-reserved-keyword.html [ Skip ]
+webkit.org/b/166536 webgl/pending/conformance/glsl/misc/shader-with-reserved-words-2.html [ Skip ]
 
 # LFC (LayoutFormatingContext is disabled by default).
 fast/layoutformattingcontext/ [ Skip ]
@@ -2552,6 +2555,7 @@ webkit.org/b/232386 jquery/offset.html [ Timeout ]
 webkit.org/b/232386 jquery/traversing.html [ Timeout ]
 # Uncomment after timeout is solved Bug(GTK) jquery/traversing.html [ Slow Pass ]
 webkit.org/b/232386 jquery/manipulation.html [ Timeout ]
+# Uncomment after timeout is solved webkit.org/b/212960 jquery/manipulation.html [ Slow Pass ]
 webkit.org/b/232386 jquery/event.html [ Timeout ]
 webkit.org/b/232386 jquery/dimensions.html [ Timeout ]
 webkit.org/b/232386 jquery/data.html [ Timeout ]

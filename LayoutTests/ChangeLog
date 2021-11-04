@@ -1,3 +1,13 @@
+2021-11-04  Lauro Moura  <lmoura@igalia.com>
+
+        [GLIB] Gardening some timeouts
+
+        Unreviewed test gardening.
+
+        * platform/glib/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/wpe/TestExpectations:
+
 2021-11-04  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
 
         Update global test expectations to skip more rvfc tests (and enable them only on Mac/iOS)
