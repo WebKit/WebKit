@@ -39,7 +39,7 @@
 #import <pal/spi/ios/QuickLookSPI.h>
 #import <wtf/WeakObjCPtr.h>
 
-#if HAVE(ARKIT_QUICK_LOOK_PREVIEW_ITEM)
+#if ENABLE(ARKIT_QUICK_LOOK_PREVIEW_ITEM)
 #import <pal/spi/ios/SystemPreviewSPI.h>
 SOFT_LINK_PRIVATE_FRAMEWORK(ARKit);
 SOFT_LINK_CLASS(ARKit, ARQuickLookPreviewItem);
@@ -57,7 +57,7 @@ static NSString * const _WKARQLWebsiteURLParameterKey = @"ARQLWebsiteURLParamete
 @interface _WKPreviewControllerDataSource : NSObject <QLPreviewControllerDataSource> {
 #endif
     RetainPtr<NSItemProvider> _itemProvider;
-#if HAVE(ARKIT_QUICK_LOOK_PREVIEW_ITEM)
+#if ENABLE(ARKIT_QUICK_LOOK_PREVIEW_ITEM)
     RetainPtr<ARQuickLookWebKitItem> _item;
 #else
     RetainPtr<QLItem> _item;
@@ -108,7 +108,7 @@ static NSString * const _WKARQLWebsiteURLParameterKey = @"ARQLWebsiteURLParamete
     // means we don't actually know the real MIME type yet.
     NSString *contentType = WebCore::UTIFromMIMEType("model/vnd.usdz+zip"_s);
 
-#if HAVE(ARKIT_QUICK_LOOK_PREVIEW_ITEM)
+#if ENABLE(ARKIT_QUICK_LOOK_PREVIEW_ITEM)
     auto previewItem = adoptNS([allocARQuickLookPreviewItemInstance() initWithFileAtURL:_downloadedURL]);
     [previewItem setCanonicalWebPageURL:_originatingPageURL];
 
@@ -159,7 +159,7 @@ static NSString * const _WKARQLWebsiteURLParameterKey = @"ARQLWebsiteURLParamete
         self.completionHandler(nil, error);
 }
 
-#if HAVE(ARKIT_QUICK_LOOK_PREVIEW_ITEM)
+#if ENABLE(ARKIT_QUICK_LOOK_PREVIEW_ITEM)
 - (void)previewItem:(ARQuickLookWebKitItem *)previewItem didReceiveMessage:(NSDictionary *)message
 {
     if (!_previewController)
