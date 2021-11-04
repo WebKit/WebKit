@@ -875,7 +875,7 @@ MediaSessionPlaylistEnabled:
   type: bool
   humanReadableName: "Experimental MediaSession playlist API"
   humanReadableDescription: "Enable experimental MediaSession playlist API"
-  condition: ENABLE(MEDIA_SESSION_PLAYLIST)
+  condition: ENABLE(MEDIA_SESSION_COORDINATOR) && ENABLE(MEDIA_SESSION_PLAYLIST)
   defaultValue:
     WebKitLegacy:
       default: false
