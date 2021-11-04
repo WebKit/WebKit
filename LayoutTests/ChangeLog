@@ -1,5 +1,49 @@
 2021-11-04  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r284849. rdar://problem/84066469
+
+    REGRESSION (iOS 15), safari604.1: Could not link the shader program
+    https://bugs.webkit.org/show_bug.cgi?id=231475
+    
+    Renaming regex incorrectly substituted an attribute.
+    Update to require exact attribute match
+    
+    Source/ThirdParty/ANGLE:
+    
+    Reviewed by Dean Jackson
+    
+    * src/libANGLE/renderer/metal/mtl_glslang_mtl_utils.mm:
+    (rx::mtl::updateShaderAttributes):
+    
+    LayoutTests:
+    
+    Add test to expose bug, verify test passes
+    
+    Reviewed by Dean Jackson.
+    
+    * fast/canvas/webgl/attrib-name-aliasing-bug-expected.txt: Added.
+    * fast/canvas/webgl/attrib-name-aliasing-bug.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@284849 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-10-25  Kyle Piddington  <kpiddington@apple.com>
+
+            REGRESSION (iOS 15), safari604.1: Could not link the shader program
+            https://bugs.webkit.org/show_bug.cgi?id=231475
+
+            Renaming regex incorrectly substituted an attribute.
+            Update to require exact attribute match
+
+            Add test to expose bug, verify test passes
+
+            Reviewed by Dean Jackson.
+
+            * fast/canvas/webgl/attrib-name-aliasing-bug-expected.txt: Added.
+            * fast/canvas/webgl/attrib-name-aliasing-bug.html: Added.
+
+2021-11-04  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r284740. rdar://problem/83628607
 
     [GPU Process] REGRESSION: Drawing a large SVG image on a canvas may take too much memory
