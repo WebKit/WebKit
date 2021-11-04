@@ -32,6 +32,7 @@
 #import <AVFoundation/AVAudioSession.h>
 #import <objc/runtime.h>
 #import <pal/spi/cocoa/AVFoundationSPI.h>
+#import <pal/spi/cocoa/LaunchServicesSPI.h>
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/WorkQueue.h>
@@ -135,6 +136,25 @@ AudioSessionIOS::~AudioSessionIOS()
 {
     [m_interruptionObserverHelper clearCallback];
 }
+
+void AudioSessionIOS::setHostProcessAttribution(audit_token_t auditToken)
+{
+#if ENABLE(APP_PRIVACY_REPORT)
+    NSError *error = nil;
+    auto bundleProxy = [LSBundleProxy bundleProxyWithAuditToken:auditToken error:&error];
+    if (error) {
+        RELEASE_LOG_ERROR(WebRTC, "Failed to get attribution bundleID from audit token with error: %@.", error.localizedDescription);
+        return;
+    }
+
+    [[PAL::getAVAudioSessionClass() sharedInstance] setHostProcessAttribution:@[ bundleProxy.bundleIdentifier ] error:&error];
+    if (error)
+        RELEASE_LOG_ERROR(WebRTC, "Failed to set attribution bundleID with error: %@.", error.localizedDescription);
+#else
+    UNUSED_PARAM(auditToken);
+#endif
+};
+
 
 void AudioSessionIOS::setCategory(CategoryType newCategory, RouteSharingPolicy policy)
 {

@@ -1,5 +1,53 @@
 2021-11-04  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r283394. rdar://problem/83732537
+
+    GPU Process microphone attribution SPI adoption
+    https://bugs.webkit.org/show_bug.cgi?id=231034
+    <rdar://problem/83732537>
+    
+    Reviewed by Youenn Fablet.
+    
+    Source/WebCore:
+    
+    No new tests. Tested manually by inspecting APR JSON files.
+    
+    * platform/audio/AudioSession.h:
+    * platform/audio/ios/AudioSessionIOS.h:
+    * platform/audio/ios/AudioSessionIOS.mm:
+    (WebCore::AudioSessionIOS::setHostProcessAttribution):
+    
+    Source/WebCore/PAL:
+    
+    * pal/spi/cocoa/LaunchServicesSPI.h:
+    
+    Source/WebKit:
+    
+    Adopt SPI for App Privacy Report that attributes mic capture to the
+    host app.
+    
+    * GPUProcess/GPUConnectionToWebProcess.cpp:
+    (WebKit::GPUConnectionToWebProcess::audioSessionProxy):
+    * GPUProcess/media/RemoteAudioSessionProxyManager.cpp:
+    (WebKit::RemoteAudioSessionProxyManager::addProxy):
+    * GPUProcess/media/RemoteAudioSessionProxyManager.h:
+    * Scripts/process-entitlements.sh:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@283394 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-10-01  Kate Cheney  <katherine_cheney@apple.com>
+
+            GPU Process microphone attribution SPI adoption
+            https://bugs.webkit.org/show_bug.cgi?id=231034
+            <rdar://problem/83732537>
+
+            Reviewed by Youenn Fablet.
+
+            * pal/spi/cocoa/LaunchServicesSPI.h:
+
+2021-11-04  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r282313. rdar://problem/82987695
 
     CFNotificationCenterAddObserver() should use weak observers

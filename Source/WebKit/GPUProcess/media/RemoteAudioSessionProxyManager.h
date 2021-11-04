@@ -44,7 +44,7 @@ public:
     RemoteAudioSessionProxyManager();
     ~RemoteAudioSessionProxyManager();
 
-    void addProxy(RemoteAudioSessionProxy&);
+    void addProxy(RemoteAudioSessionProxy&, std::optional<audit_token_t>);
     void removeProxy(RemoteAudioSessionProxy&);
 
     void updateCategory();

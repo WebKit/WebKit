@@ -44,6 +44,8 @@ typedef void (^LSAppLinkOpenCompletionHandler)(BOOL success, NSError *error);
 @end
 
 @interface LSBundleProxy : LSResourceProxy <NSSecureCoding>
++ (LSBundleProxy *)bundleProxyWithAuditToken:(audit_token_t)auditToken error:(NSError **)outError;
+@property (nonatomic, readonly) NSString *bundleIdentifier;
 @end
 
 #if HAVE(APP_LINKS)
