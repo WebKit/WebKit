@@ -38,6 +38,7 @@ class RenderGeometryMap;
 class RenderLayerModelObject;
 class RenderStyle;
 class RenderSVGRoot;
+class SVGElement;
 class TransformState;
 
 // SVGRendererSupport is a helper class sharing code between all SVG renderers.
@@ -80,6 +81,8 @@ public:
     static void clipContextToCSSClippingArea(GraphicsContext&, const RenderElement& renderer);
 
     static void styleChanged(RenderElement&, const RenderStyle*);
+    
+    static FloatRect transformReferenceBox(const RenderElement&, const SVGElement&, const RenderStyle&);
 
 #if ENABLE(CSS_COMPOSITING)
     static bool isolatesBlending(const RenderStyle&);

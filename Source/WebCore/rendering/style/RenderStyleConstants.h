@@ -1238,6 +1238,8 @@ enum class Containment : uint8_t {
     Size     = 1 << 2,
 };
 
+CSSBoxType transformBoxToCSSBoxType(TransformBox);
+
 extern const float defaultMiterLimit;
 
 WTF::TextStream& operator<<(WTF::TextStream&, AnimationFillMode);
