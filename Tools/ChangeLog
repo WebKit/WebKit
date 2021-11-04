@@ -1,3 +1,15 @@
+2021-11-04  Jonathan Bedard  <jbedard@apple.com>
+
+        [run-webkit-websocketserver] Replace `/usr/bin/python` with `/usr/bin/env python`
+        https://bugs.webkit.org/show_bug.cgi?id=232713
+        <rdar://problem/85019074>
+
+        Reviewed by Ryan Haddad.
+
+        * Scripts/run-webkit-websocketserver:
+        (openWebSocketServer):
+        (closeWebSocketServer):
+
 2021-11-04  Andres Gonzalez  <andresg_22@apple.com>
 
         Fix for crashes in layout tests in AX isolated tree mode.
