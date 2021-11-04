@@ -278,7 +278,7 @@ ALWAYS_INLINE EncodedJSValue constructGenericTypedArrayViewImpl(JSGlobalObject* 
     size_t offset = 0;
     std::optional<size_t> length = std::nullopt;
     if (jsDynamicCast<JSArrayBuffer*>(vm, firstValue) && argCount > 1) {
-        offset = callFrame->uncheckedArgument(1).toIndex(globalObject, "byteOffset");
+        offset = callFrame->uncheckedArgument(1).toTypedArrayIndex(globalObject, "byteOffset");
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
         if (argCount > 2) {

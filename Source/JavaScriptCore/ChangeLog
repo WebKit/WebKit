@@ -1,5 +1,115 @@
 2021-11-04  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r285117. rdar://problem/84402043
+
+    JSGenericTypedArrayView<Adaptor>::set crashes if the length + objectOffset is > UINT32_MAX
+    https://bugs.webkit.org/show_bug.cgi?id=231975
+    rdar://84402043
+    
+    Reviewed by Yusuke Suzuki.
+    
+    JSTests:
+    
+    - regress-84402043 is the testcase that revealed the problem.
+    - typed-array-set-large(-offset) test the same function, in the typed-array to typed-array case
+    - typed-array-large-slice tests the only caller that passes a non-0 objectOffset, and found other issues with it
+    - typed-array-large-oob-eventually-not.js is just another test of the Wasm4GB change that I had forgotten to commit
+    
+    * stress/regress-84402043.js: Added.
+    * stress/typed-array-large-oob-eventually-not.js: Added.
+    (test):
+    * stress/typed-array-large-slice.js: Added.
+    (expect):
+    * stress/typed-array-set-large-offset.js: Added.
+    * stress/typed-array-set-large.js: Added.
+    
+    Source/JavaScriptCore:
+    
+    UINT_MAX (and anything above it) is not a valid array index, so we cannot use JSObject::get(JSGlobalObject*, unsigned) with an index that big.
+    This was pointed by Yusuke in his review of my recent patch that introduced the problem (https://bugs.webkit.org/show_bug.cgi?id=229353#c21),
+    but I misunderstood the code and thought we could never get values that big at that point, thus only putting a RELEASE_ASSERT.
+    In this patch I instead apply his original suggestion to have a first loop using the (fast) JSObject::get(),
+    and a second loop for any large indices, using a slower but safe code path.
+    
+    I also fixed an unrelated bug I noticed in Clobberize/AbstractInterpreter while testing the rest of the patch:
+    they were not aware that NewTypedArray can take a Int52RepUse child.
+    
+    Finally, while trying to properly test this change, I discovered that genericTypedArrayViewProtoFuncSlice
+    (which is the only caller of JSGenericTypedArrayView<Adaptor>::set which passes it a non-0 objectOffset)
+    was still using unsigned everywhere instead of size_t, and that the same was true of all other functions in the same file.
+    So I fixed it in the same patch.
+    
+    * dfg/DFGAbstractInterpreterInlines.h:
+    (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+    * dfg/DFGClobberize.h:
+    (JSC::DFG::clobberize):
+    * runtime/JSArrayBufferConstructor.cpp:
+    (JSC::JSGenericArrayBufferConstructor<sharingMode>::constructImpl):
+    * runtime/JSGenericTypedArrayViewConstructorInlines.h:
+    (JSC::constructGenericTypedArrayViewImpl):
+    * runtime/JSGenericTypedArrayViewInlines.h:
+    (JSC::JSGenericTypedArrayView<Adaptor>::set):
+    * runtime/JSGenericTypedArrayViewPrototypeFunctions.h:
+    (JSC::argumentClampedIndexFromStartOrEnd):
+    (JSC::genericTypedArrayViewProtoFuncSet):
+    (JSC::genericTypedArrayViewProtoFuncCopyWithin):
+    (JSC::genericTypedArrayViewProtoFuncIncludes):
+    (JSC::genericTypedArrayViewProtoFuncIndexOf):
+    (JSC::genericTypedArrayViewProtoFuncJoin):
+    (JSC::genericTypedArrayViewProtoFuncFill):
+    (JSC::genericTypedArrayViewProtoFuncLastIndexOf):
+    (JSC::genericTypedArrayViewProtoFuncSlice):
+    (JSC::genericTypedArrayViewPrivateFuncSubarrayCreate):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@285117 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-11-01  Robin Morisset  <rmorisset@apple.com>
+
+            JSGenericTypedArrayView<Adaptor>::set crashes if the length + objectOffset is > UINT32_MAX
+            https://bugs.webkit.org/show_bug.cgi?id=231975
+            rdar://84402043
+
+            Reviewed by Yusuke Suzuki.
+
+            UINT_MAX (and anything above it) is not a valid array index, so we cannot use JSObject::get(JSGlobalObject*, unsigned) with an index that big.
+            This was pointed by Yusuke in his review of my recent patch that introduced the problem (https://bugs.webkit.org/show_bug.cgi?id=229353#c21),
+            but I misunderstood the code and thought we could never get values that big at that point, thus only putting a RELEASE_ASSERT.
+            In this patch I instead apply his original suggestion to have a first loop using the (fast) JSObject::get(),
+            and a second loop for any large indices, using a slower but safe code path.
+
+            I also fixed an unrelated bug I noticed in Clobberize/AbstractInterpreter while testing the rest of the patch:
+            they were not aware that NewTypedArray can take a Int52RepUse child.
+
+            Finally, while trying to properly test this change, I discovered that genericTypedArrayViewProtoFuncSlice
+            (which is the only caller of JSGenericTypedArrayView<Adaptor>::set which passes it a non-0 objectOffset)
+            was still using unsigned everywhere instead of size_t, and that the same was true of all other functions in the same file.
+            So I fixed it in the same patch.
+
+            * dfg/DFGAbstractInterpreterInlines.h:
+            (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+            * dfg/DFGClobberize.h:
+            (JSC::DFG::clobberize):
+            * runtime/JSArrayBufferConstructor.cpp:
+            (JSC::JSGenericArrayBufferConstructor<sharingMode>::constructImpl):
+            * runtime/JSGenericTypedArrayViewConstructorInlines.h:
+            (JSC::constructGenericTypedArrayViewImpl):
+            * runtime/JSGenericTypedArrayViewInlines.h:
+            (JSC::JSGenericTypedArrayView<Adaptor>::set):
+            * runtime/JSGenericTypedArrayViewPrototypeFunctions.h:
+            (JSC::argumentClampedIndexFromStartOrEnd):
+            (JSC::genericTypedArrayViewProtoFuncSet):
+            (JSC::genericTypedArrayViewProtoFuncCopyWithin):
+            (JSC::genericTypedArrayViewProtoFuncIncludes):
+            (JSC::genericTypedArrayViewProtoFuncIndexOf):
+            (JSC::genericTypedArrayViewProtoFuncJoin):
+            (JSC::genericTypedArrayViewProtoFuncFill):
+            (JSC::genericTypedArrayViewProtoFuncLastIndexOf):
+            (JSC::genericTypedArrayViewProtoFuncSlice):
+            (JSC::genericTypedArrayViewPrivateFuncSubarrayCreate):
+
+2021-11-04  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r285004. rdar://problem/84778008
 
     Don't call type() on Structure, instead call type() on its typeInfo()
