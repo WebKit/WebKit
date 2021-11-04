@@ -1,5 +1,84 @@
 2021-11-04  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r283803. rdar://problem/83823282
+
+    REGRESSION (r277818): XHR with requestType document broken for larger HTML files
+    https://bugs.webkit.org/show_bug.cgi?id=231138
+    <rdar://problem/83823282>
+    
+    Reviewed by Darin Adler.
+    
+    Source/WebCore:
+    
+    The parser may end up yielding during XHR or DOMParser parsing even though those should be
+    synchronous. This appears to be a long standing bug that was made more visible by r277818
+    because it makes the parser yield more eagerly. This only affects cases where the document
+    being parsed contains <script> tags as those are considered potential yield points.
+    
+    Tests: http/tests/xmlhttprequest/xhr-and-parse-large-document.html
+           http/tests/xmlhttprequest/xhr-large-document.html
+    
+    * dom/Document.cpp:
+    (WebCore::Document::setContent):
+    
+    Explicitly parse synchronously. The comment was wrong, nothing forces parser flushing on close().
+    
+    * dom/DocumentParser.h:
+    (WebCore::DocumentParser::appendSynchronously):
+    * html/parser/HTMLDocumentParser.cpp:
+    (WebCore::HTMLDocumentParser::append):
+    (WebCore::HTMLDocumentParser::appendSynchronously):
+    * html/parser/HTMLDocumentParser.h:
+    * html/parser/HTMLParserScheduler.cpp:
+    (WebCore::HTMLParserScheduler::shouldYieldBeforeExecutingScript):
+    
+    Also avoid script yielding if script execution is not allowed.
+    
+    LayoutTests:
+    
+    * http/tests/xmlhttprequest/resources/large-html-with-script-tags.py: Added.
+    * http/tests/xmlhttprequest/xhr-and-parse-large-document-expected.txt: Added.
+    * http/tests/xmlhttprequest/xhr-and-parse-large-document.html: Added.
+    * http/tests/xmlhttprequest/xhr-large-document-expected.txt: Added.
+    * http/tests/xmlhttprequest/xhr-large-document.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@283803 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-10-08  Antti Koivisto  <antti@apple.com>
+
+            REGRESSION (r277818): XHR with requestType document broken for larger HTML files
+            https://bugs.webkit.org/show_bug.cgi?id=231138
+            <rdar://problem/83823282>
+
+            Reviewed by Darin Adler.
+
+            The parser may end up yielding during XHR or DOMParser parsing even though those should be
+            synchronous. This appears to be a long standing bug that was made more visible by r277818
+            because it makes the parser yield more eagerly. This only affects cases where the document
+            being parsed contains <script> tags as those are considered potential yield points.
+
+            Tests: http/tests/xmlhttprequest/xhr-and-parse-large-document.html
+                   http/tests/xmlhttprequest/xhr-large-document.html
+
+            * dom/Document.cpp:
+            (WebCore::Document::setContent):
+
+            Explicitly parse synchronously. The comment was wrong, nothing forces parser flushing on close().
+
+            * dom/DocumentParser.h:
+            (WebCore::DocumentParser::appendSynchronously):
+            * html/parser/HTMLDocumentParser.cpp:
+            (WebCore::HTMLDocumentParser::append):
+            (WebCore::HTMLDocumentParser::appendSynchronously):
+            * html/parser/HTMLDocumentParser.h:
+            * html/parser/HTMLParserScheduler.cpp:
+            (WebCore::HTMLParserScheduler::shouldYieldBeforeExecutingScript):
+
+            Also avoid script yielding if script execution is not allowed.
+
+2021-11-04  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r283498. rdar://problem/83732537
 
     Unreviewed maccatalyst build fix.

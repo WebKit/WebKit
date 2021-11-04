@@ -68,6 +68,7 @@ protected:
 
     void insert(SegmentedString&&) final;
     void append(RefPtr<StringImpl>&&) override;
+    void appendSynchronously(RefPtr<StringImpl>&&) override;
     void finish() override;
 
     HTMLTreeBuilder& treeBuilder();
@@ -104,6 +105,8 @@ private:
     Document* contextForParsingSession();
 
     enum SynchronousMode { AllowYield, ForceSynchronous };
+    void append(RefPtr<StringImpl>&&, SynchronousMode);
+
     void pumpTokenizer(SynchronousMode);
     bool pumpTokenizerLoop(SynchronousMode, bool parsingFragment, PumpSession&);
     void pumpTokenizerIfPossible(SynchronousMode);
