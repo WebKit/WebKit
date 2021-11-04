@@ -1,5 +1,100 @@
 2021-11-04  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r284513. rdar://problem/84441842
+
+    Address post-landing feedback to wasm exceptions
+    https://bugs.webkit.org/show_bug.cgi?id=231973
+    
+    Reviewed by Saam Barati.
+    
+    Address comments left by Saam in https://bugs.webkit.org/show_bug.cgi?id=229681
+    after the patch landed. This includes deleting some unused code, and renaming a
+    couple variables and methods, but the biggest change is copying the callee saves
+    to VMEntry in the llint rethrow.
+    
+    * interpreter/Interpreter.cpp:
+    (JSC::CatchInfo::CatchInfo):
+    (JSC::UnwindFunctor::operator() const):
+    * interpreter/Interpreter.h:
+    (JSC::CatchInfo::CatchInfo): Deleted.
+    * jit/JSInterfaceJIT.h:
+    (JSC::JSInterfaceJIT::convertCalleeToVM): Deleted.
+    * llint/WebAssembly.asm:
+    * wasm/WasmB3IRGenerator.cpp:
+    (JSC::Wasm::B3IRGenerator::ControlData::ControlData):
+    (JSC::Wasm::B3IRGenerator::ControlData::tryDepth const):
+    (JSC::Wasm::B3IRGenerator::connectControlAtEntrypoint):
+    (JSC::Wasm::B3IRGenerator::addLoop):
+    (JSC::Wasm::B3IRGenerator::addTry):
+    (JSC::Wasm::B3IRGenerator::preparePatchpointForExceptions):
+    (JSC::Wasm::B3IRGenerator::emitCatchImpl):
+    (JSC::Wasm::B3IRGenerator::addDelegateToUnreachable):
+    (JSC::Wasm::B3IRGenerator::addThrow):
+    (JSC::Wasm::B3IRGenerator::addRethrow):
+    (JSC::Wasm::B3IRGenerator::addEndToUnreachable):
+    (JSC::Wasm::B3IRGenerator::connectControlEntry): Deleted.
+    * wasm/WasmCallee.h:
+    (JSC::Wasm::Callee::llintFunctionCodeBlock const):
+    (JSC::Wasm::Callee::functionCodeBlock const): Deleted.
+    * wasm/WasmLLIntGenerator.cpp:
+    (JSC::Wasm::LLIntGenerator::unifyValuesWithBlock):
+    (JSC::Wasm::LLIntGenerator::addTry):
+    (JSC::Wasm::LLIntGenerator::addThrow):
+    (JSC::Wasm::LLIntGenerator::repatch): Deleted.
+    * wasm/WasmOperations.cpp:
+    (JSC::Wasm::JSC_DEFINE_JIT_OPERATION):
+    * wasm/WasmOperations.h:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@284513 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-10-19  Tadeu Zagallo  <tzagallo@apple.com>
+
+            Address post-landing feedback to wasm exceptions
+            https://bugs.webkit.org/show_bug.cgi?id=231973
+
+            Reviewed by Saam Barati.
+
+            Address comments left by Saam in https://bugs.webkit.org/show_bug.cgi?id=229681
+            after the patch landed. This includes deleting some unused code, and renaming a
+            couple variables and methods, but the biggest change is copying the callee saves
+            to VMEntry in the llint rethrow.
+
+            * interpreter/Interpreter.cpp:
+            (JSC::CatchInfo::CatchInfo):
+            (JSC::UnwindFunctor::operator() const):
+            * interpreter/Interpreter.h:
+            (JSC::CatchInfo::CatchInfo): Deleted.
+            * jit/JSInterfaceJIT.h:
+            (JSC::JSInterfaceJIT::convertCalleeToVM): Deleted.
+            * llint/WebAssembly.asm:
+            * wasm/WasmB3IRGenerator.cpp:
+            (JSC::Wasm::B3IRGenerator::ControlData::ControlData):
+            (JSC::Wasm::B3IRGenerator::ControlData::tryDepth const):
+            (JSC::Wasm::B3IRGenerator::connectControlAtEntrypoint):
+            (JSC::Wasm::B3IRGenerator::addLoop):
+            (JSC::Wasm::B3IRGenerator::addTry):
+            (JSC::Wasm::B3IRGenerator::preparePatchpointForExceptions):
+            (JSC::Wasm::B3IRGenerator::emitCatchImpl):
+            (JSC::Wasm::B3IRGenerator::addDelegateToUnreachable):
+            (JSC::Wasm::B3IRGenerator::addThrow):
+            (JSC::Wasm::B3IRGenerator::addRethrow):
+            (JSC::Wasm::B3IRGenerator::addEndToUnreachable):
+            (JSC::Wasm::B3IRGenerator::connectControlEntry): Deleted.
+            * wasm/WasmCallee.h:
+            (JSC::Wasm::Callee::llintFunctionCodeBlock const):
+            (JSC::Wasm::Callee::functionCodeBlock const): Deleted.
+            * wasm/WasmLLIntGenerator.cpp:
+            (JSC::Wasm::LLIntGenerator::unifyValuesWithBlock):
+            (JSC::Wasm::LLIntGenerator::addTry):
+            (JSC::Wasm::LLIntGenerator::addThrow):
+            (JSC::Wasm::LLIntGenerator::repatch): Deleted.
+            * wasm/WasmOperations.cpp:
+            (JSC::Wasm::JSC_DEFINE_JIT_OPERATION):
+            * wasm/WasmOperations.h:
+
+2021-11-04  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r284036. rdar://problem/84167629
 
     Fix spec-correctness when inlining __proto__ intrinsic using get_by_id_with_this

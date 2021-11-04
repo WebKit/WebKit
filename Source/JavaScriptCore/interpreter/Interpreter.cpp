@@ -541,7 +541,7 @@ CatchInfo::CatchInfo(const Wasm::HandlerInfo* handler, const Wasm::Callee* calle
     if (m_valid) {
         m_type = HandlerType::Catch;
         m_nativeCode = handler->m_nativeCode;
-        if (const Wasm::FunctionCodeBlock* codeBlock = callee->functionCodeBlock())
+        if (const Wasm::FunctionCodeBlock* codeBlock = callee->llintFunctionCodeBlock())
             m_catchPCForInterpreter = codeBlock->instructions().at(handler->m_target).ptr();
         else
             m_catchPCForInterpreter = nullptr;
@@ -591,7 +591,6 @@ public:
         if (callee.isCell()) {
             if (auto* jsToWasmICCallee = jsDynamicCast<JSToWasmICCallee*>(m_vm, callee.asCell()))
                 m_vm.wasmContext.store(jsToWasmICCallee->function()->previousInstance(m_callFrame), m_vm.softStackLimit());
-
         }
 
         if (m_catchableFromWasm && callee.isWasm()) {
