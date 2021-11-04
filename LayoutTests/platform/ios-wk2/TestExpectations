@@ -1095,7 +1095,7 @@ http/tests/appcache/load-from-appcache-defer-resume-crash.html [ Skip ]
 
 webkit.org/b/227891 http/tests/appcache/fail-on-update.html [ Pass Timeout DumpJSConsoleLogInStdErr ]
 
-webkit.org/b/225665 http/tests/appcache/fail-on-update-2.html [ DumpJSConsoleLogInStdErr Slow ]
+webkit.org/b/225665 http/tests/appcache/fail-on-update-2.html [ DumpJSConsoleLogInStdErr Timeout ]
 
 webkit.org/b/228588 http/tests/appcache/main-resource-redirect-with-sw.html [ Pass Timeout ]
 
