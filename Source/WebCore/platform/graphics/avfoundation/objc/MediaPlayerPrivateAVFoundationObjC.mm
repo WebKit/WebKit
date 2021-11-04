@@ -2633,8 +2633,15 @@ void MediaPlayerPrivateAVFoundationObjC::waitForVideoOutputMediaDataWillChange()
 
 void MediaPlayerPrivateAVFoundationObjC::outputMediaDataWillChange()
 {
-    if (m_runningModalPaint)
-        RunLoop::main().stop();
+    if (m_runningModalPaint) {
+        if (RunLoop::isMain())
+            RunLoop::main().stop();
+        else {
+            RunLoop::main().dispatch([] {
+                RunLoop::main().stop();
+            });
+        }
+    }
 }
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
@@ -4017,9 +4024,9 @@ NSArray* playerKVOProperties()
 {
     UNUSED_PARAM(output);
     m_semaphore.signal();
-    RunLoop::main().dispatch([player = _player] {
-        if (player)
-            player->outputMediaDataWillChange();
+    callOnMainThread([self, strongSelf = RetainPtr { self }] {
+        if (_player)
+            _player->outputMediaDataWillChange();
     });
 }
 
