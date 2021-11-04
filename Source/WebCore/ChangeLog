@@ -1,5 +1,23 @@
 2021-11-04  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r283498. rdar://problem/83732537
+
+    Unreviewed maccatalyst build fix.
+    
+    * platform/audio/ios/AudioSessionIOS.mm:
+    (WebCore::AudioSessionIOS::setHostProcessAttribution):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@283498 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-10-04  Kate Cheney  <katherine_cheney@apple.com>
+
+            Unreviewed maccatalyst build fix.
+
+            * platform/audio/ios/AudioSessionIOS.mm:
+            (WebCore::AudioSessionIOS::setHostProcessAttribution):
+
+2021-11-04  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r283394. rdar://problem/83732537
 
     GPU Process microphone attribution SPI adoption
