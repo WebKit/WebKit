@@ -259,5 +259,5 @@ private:
     bool m_mockVideoPresentationModeEnabled { false };
 #endif
 
-    WebView *m_webView;
+    __weak WebView *m_webView;
 };

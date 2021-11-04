@@ -1,5 +1,28 @@
 2021-11-04  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r285148. rdar://problem/81053743
+
+    Make WebChromeClient's m_webView pointer weak.
+    https://bugs.webkit.org/show_bug.cgi?id=232588
+    
+    Reviewed by David Kilzer.
+    
+    * WebCoreSupport/WebChromeClient.h:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@285148 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-11-01  Brady Eidson  <beidson@apple.com>
+
+            Make WebChromeClient's m_webView pointer weak.
+            https://bugs.webkit.org/show_bug.cgi?id=232588
+
+            Reviewed by David Kilzer.
+
+            * WebCoreSupport/WebChromeClient.h:
+
+2021-11-04  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r282313. rdar://problem/82987695
 
     CFNotificationCenterAddObserver() should use weak observers
