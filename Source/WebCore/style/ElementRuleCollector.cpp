@@ -301,16 +301,16 @@ void ElementRuleCollector::matchPartPseudoElementRules()
     if (partMatchingElement.partNames().isEmpty() || !partMatchingElement.isInShadowTree())
         return;
 
-    matchPartPseudoElementRulesForScope(*partMatchingElement.containingShadowRoot());
+    matchPartPseudoElementRulesForScope(partMatchingElement);
 }
 
-void ElementRuleCollector::matchPartPseudoElementRulesForScope(const ShadowRoot& scopeShadowRoot)
+void ElementRuleCollector::matchPartPseudoElementRulesForScope(const Element& partMatchingElement)
 {
-    auto* host = scopeShadowRoot.host();
-    auto styleScopeOrdinal = ScopeOrdinal::ContainingHost;
+    auto* element = &partMatchingElement;
+    auto styleScopeOrdinal = ScopeOrdinal::Element;
 
-    for (; host; host = host->shadowHost(), --styleScopeOrdinal) {
-        auto& styleScope = Scope::forNode(*host);
+    for (; element; element = element->shadowHost(), --styleScopeOrdinal) {
+        auto& styleScope = Scope::forNode(const_cast<Element&>(*element));
         if (!styleScope.resolver().ruleSets().isAuthorStyleDefined())
             continue;
 
@@ -320,7 +320,7 @@ void ElementRuleCollector::matchPartPseudoElementRulesForScope(const ShadowRoot&
         collectMatchingRulesForList(&hostAuthorRules.partPseudoElementRules(), scopeMatchRequest);
 
         // Element may only be exposed to styling from enclosing scopes via exportparts attributes.
-        if (host->shadowRoot()->partMappings().isEmpty())
+        if (element != &partMatchingElement && element->shadowRoot()->partMappings().isEmpty())
             break;
     }
 }

@@ -76,7 +76,7 @@ struct SelectorChecker::LocalContext {
     bool pseudoElementEffective { true };
     bool hasScrollbarPseudo { false };
     bool hasSelectionPseudo { false };
-    bool mayMatchHostPseudoClass { false };
+    bool mustMatchHostPseudoClass { false };
 };
 
 static inline void addStyleRelation(SelectorChecker::CheckingContext& checkingContext, const Element& element, Style::Relation::Type type, unsigned value = 1)
@@ -177,7 +177,7 @@ bool SelectorChecker::match(const CSSSelector& selector, const Element& element,
 
     if (checkingContext.isMatchingHostPseudoClass) {
         ASSERT(element.shadowRoot());
-        context.mayMatchHostPseudoClass = true;
+        context.mustMatchHostPseudoClass = true;
     }
 
     PseudoIdSet pseudoIdSet;
@@ -236,7 +236,7 @@ static SelectorChecker::LocalContext localContextForParent(const SelectorChecker
     updatedContext.isMatchElement = false;
     updatedContext.isSubjectOrAdjacentElement = false;
 
-    if (updatedContext.mayMatchHostPseudoClass) {
+    if (updatedContext.mustMatchHostPseudoClass) {
         updatedContext.element = nullptr;
         return updatedContext;
     }
@@ -244,7 +244,7 @@ static SelectorChecker::LocalContext localContextForParent(const SelectorChecker
     // Move to the shadow host if matching :host and the parent is the shadow root.
     if (context.selector->match() == CSSSelector::PseudoClass && context.selector->pseudoClassType() == CSSSelector::PseudoClassHost && is<ShadowRoot>(context.element->parentNode())) {
         updatedContext.element = downcast<ShadowRoot>(*context.element->parentNode()).host();
-        updatedContext.mayMatchHostPseudoClass = true;
+        updatedContext.mustMatchHostPseudoClass = true;
         return updatedContext;
     }
 
@@ -406,18 +406,32 @@ SelectorChecker::MatchResult SelectorChecker::matchRecursively(CheckingContext& 
 
             return MatchResult::updateWithMatchType(result, matchType);
         }
-    case CSSSelector::ShadowDescendant:
-    case CSSSelector::ShadowPartDescendant: {
-        // Continue matching in the scope where this rule came from.
-        auto* host = relation == CSSSelector::ShadowPartDescendant
-            ? Style::hostForScopeOrdinal(*context.element, checkingContext.styleScopeOrdinal)
-            : context.element->shadowHost();
+    case CSSSelector::ShadowDescendant:  {
+        auto* host = context.element->shadowHost();
         if (!host)
             return MatchResult::fails(Match::SelectorFailsCompletely);
 
         nextContext.element = host;
         nextContext.firstSelectorOfTheFragment = nextContext.selector;
         nextContext.isSubjectOrAdjacentElement = false;
+        PseudoIdSet ignoreDynamicPseudo;
+        MatchResult result = matchRecursively(checkingContext, nextContext, ignoreDynamicPseudo);
+
+        return MatchResult::updateWithMatchType(result, matchType);
+    }
+    case CSSSelector::ShadowPartDescendant: {
+        // Continue matching in the scope where this rule came from.
+        auto* host = checkingContext.styleScopeOrdinal == Style::ScopeOrdinal::Element
+            ? context.element->shadowHost()
+            : Style::hostForScopeOrdinal(*context.element, checkingContext.styleScopeOrdinal);
+        if (!host)
+            return MatchResult::fails(Match::SelectorFailsCompletely);
+
+        nextContext.element = host;
+        nextContext.firstSelectorOfTheFragment = nextContext.selector;
+        nextContext.isSubjectOrAdjacentElement = false;
+        // ::part rules from the element's own scope can only match if they apply to :host.
+        nextContext.mustMatchHostPseudoClass = checkingContext.styleScopeOrdinal == Style::ScopeOrdinal::Element;
         PseudoIdSet ignoreDynamicPseudo;
         MatchResult result = matchRecursively(checkingContext, nextContext, ignoreDynamicPseudo);
 
@@ -641,7 +655,7 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalCont
     const Element& element = *context.element;
     const CSSSelector& selector = *context.selector;
 
-    if (context.mayMatchHostPseudoClass) {
+    if (context.mustMatchHostPseudoClass) {
         // :host doesn't combine with anything except pseudo elements.
         bool isHostPseudoClass = selector.match() == CSSSelector::PseudoClass && selector.pseudoClassType() == CSSSelector::PseudoClassHost;
         bool isPseudoElement = selector.match() == CSSSelector::PseudoElement;
@@ -1089,7 +1103,7 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalCont
             break;
         }
         case CSSSelector::PseudoClassHost: {
-            if (!context.mayMatchHostPseudoClass)
+            if (!context.mustMatchHostPseudoClass)
                 return false;
             return matchHostPseudoClass(selector, element, checkingContext);
         }
@@ -1171,6 +1185,10 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalCont
         case CSSSelector::PseudoElementPart: {
             auto translatePartNameToRuleScope = [&](AtomString partName) {
                 Vector<AtomString, 1> mappedNames { partName };
+
+                if (checkingContext.styleScopeOrdinal == Style::ScopeOrdinal::Element)
+                    return mappedNames;
+
                 auto* ruleScopeHost = Style::hostForScopeOrdinal(*context.element, checkingContext.styleScopeOrdinal);
 
                 for (auto* shadowRoot = element.containingShadowRoot(); shadowRoot; shadowRoot = shadowRoot->host()->containingShadowRoot()) {

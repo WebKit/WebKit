@@ -132,7 +132,7 @@ private:
     void matchHostPseudoClassRules();
     void matchSlottedPseudoElementRules();
     void matchPartPseudoElementRules();
-    void matchPartPseudoElementRulesForScope(const ShadowRoot& scopeShadowRoot);
+    void matchPartPseudoElementRulesForScope(const Element& partMatchingElement);
 
     void collectMatchingShadowPseudoElementRules(const MatchRequest&);
 
