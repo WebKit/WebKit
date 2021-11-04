@@ -26,7 +26,8 @@ shouldThrow(() => {
     let toIndex = false;
     let toBigInt = false;
     let index = {
-        [Symbol.toPrimitive]() {
+        [Symbol.toPrimitive](hint) {
+            shouldBe(hint, "number");
             shouldBe(toIndex, false);
             shouldBe(toBigInt, false);
             toIndex = true;
@@ -34,7 +35,8 @@ shouldThrow(() => {
         }
     };
     let bigint = {
-        [Symbol.toPrimitive]() {
+        [Symbol.toPrimitive](hint) {
+            shouldBe(hint, "number");
             shouldBe(toIndex, true);
             shouldBe(toBigInt, false);
             toBigInt = true;

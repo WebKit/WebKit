@@ -78,7 +78,7 @@ JSC_DEFINE_HOST_FUNCTION(callBigIntConstructor, (JSGlobalObject* globalObject, C
     auto scope = DECLARE_THROW_SCOPE(vm);
     
     JSValue value = callFrame->argument(0);
-    JSValue primitive = value.toPrimitive(globalObject);
+    JSValue primitive = value.toPrimitive(globalObject, PreferNumber);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     if (primitive.isInt32()) {

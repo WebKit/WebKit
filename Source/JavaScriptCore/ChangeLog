@@ -1,3 +1,24 @@
+2021-11-04  Alexey Shvayka  <ashvayka@apple.com>
+
+        We need to PreferNumber when calling toPrimitive for coercion to BigInt
+        https://bugs.webkit.org/show_bug.cgi?id=232720
+
+        Reviewed by Saam Barati.
+
+        The difference between "default" and "number" hints is observable only via
+        Symbol.toPrimitive method.
+
+        This patch aligns hints in ToBigInt [1] and BigInt constructor [2] with the
+        spec, V8, and SpiderMonkey.
+
+        [1]: https://tc39.es/ecma262/#sec-tobigint (step 1)
+        [2]: https://tc39.es/ecma262/#sec-bigint-constructor-number-value (step 2)
+
+        * runtime/BigIntConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/JSCJSValue.cpp:
+        (JSC::JSValue::toBigInt const):
+
 2021-11-03  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Clean up StructureStubInfo initialization

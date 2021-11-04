@@ -1,3 +1,14 @@
+2021-11-04  Alexey Shvayka  <ashvayka@apple.com>
+
+        We need to PreferNumber when calling toPrimitive for coercion to BigInt
+        https://bugs.webkit.org/show_bug.cgi?id=232720
+
+        Reviewed by Saam Barati.
+
+        * stress/big-int-constructor.js:
+        * stress/bigint-asintn.js:
+        * stress/bigint-asuintn.js:
+
 2021-11-04  Mikhail R. Gadelha  <mikhail@igalia.com>
 
         Unskip tests disabled because of the recent 32 bits issues

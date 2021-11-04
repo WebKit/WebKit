@@ -96,7 +96,7 @@ JSValue JSValue::toBigInt(JSGlobalObject* globalObject) const
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSValue primitive = toPrimitive(globalObject);
+    JSValue primitive = toPrimitive(globalObject, PreferNumber);
     RETURN_IF_EXCEPTION(scope, { });
 
     if (primitive.isBigInt())
