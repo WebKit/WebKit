@@ -156,6 +156,8 @@ const char* description(MessageName name)
         return "SetStreamDestinationID";
     case MessageName::SyncMessageReply:
         return "SyncMessageReply";
+    case MessageName::Terminate:
+        return "Terminate";
     case MessageName::TestWithSuperclass_TestAsyncMessageReply:
         return "TestWithSuperclass_TestAsyncMessageReply";
     case MessageName::TestWithSuperclass_TestAsyncMessageWithConnectionReply:
@@ -258,6 +260,7 @@ ReceiverName receiverName(MessageName messageName)
     case MessageName::ProcessOutOfStreamMessage:
     case MessageName::SetStreamDestinationID:
     case MessageName::SyncMessageReply:
+    case MessageName::Terminate:
         return ReceiverName::IPC;
     case MessageName::TestWithSuperclass_TestAsyncMessageReply:
     case MessageName::TestWithSuperclass_TestAsyncMessageWithConnectionReply:
@@ -465,6 +468,8 @@ bool isValidMessageName(MessageName messageName)
     if (messageName == IPC::MessageName::SetStreamDestinationID)
         return true;
     if (messageName == IPC::MessageName::SyncMessageReply)
+        return true;
+    if (messageName == IPC::MessageName::Terminate)
         return true;
 #if ENABLE(TEST_FEATURE)
     if (messageName == IPC::MessageName::TestWithSuperclass_TestAsyncMessageReply)
