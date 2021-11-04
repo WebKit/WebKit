@@ -1,4 +1,3 @@
-//@ skip if (["arm", "mips"].include?($architecture) and $hostOS == "linux")
 function isReserved(word)
 {
     try {

@@ -1,3 +1,13 @@
+2021-11-04  Mikhail R. Gadelha  <mikhail@igalia.com>
+
+        Unskip tests disabled because of the recent 32 bits issues
+        https://bugs.webkit.org/show_bug.cgi?id=230490
+
+        Unreviewed gardening.
+
+        * js/script-tests/reserved-words.js:
+        * platform/glib/TestExpectations:
+
 2021-11-03  Antoine Quint  <graouts@webkit.org>
 
         REGRESSION (r268932): CPU usage higher than expected with sibling elements running WebAnimations

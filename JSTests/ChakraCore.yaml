@@ -462,13 +462,7 @@
 - path: ChakraCore/test/ControlFlow/forInPrimitive.js
   cmd: runChakra :baseline, "NoException", "forInPrimitive.baseline-jsc", []
 - path: ChakraCore/test/ControlFlow/enumeration_adddelete.js
-  # Currently fails on the mips (in 32-bits mode).
-  cmd: |
-    if $architecture == "mips"
-      skip
-    else
-      runChakra :baseline, "NoException", "enumeration_adddelete.baseline", []
-    end
+  cmd: runChakra :baseline, "NoException", "enumeration_adddelete.baseline", []
 - path: ChakraCore/test/ControlFlow/forInArrayAdd.js
   cmd: runChakra :baseline, "NoException", "forinArrayAddv3.baseline", []
 - path: ChakraCore/test/ControlFlow/forInObjectWithPrototype.js
@@ -1393,13 +1387,7 @@
 - path: ChakraCore/test/UnifiedRegex/captures.js
   cmd: runChakra :baseline, "NoException", "captures.baseline-jsc", []
 - path: ChakraCore/test/UnifiedRegex/class-case.js
-  # Currently fails on the mips (in 32-bits mode).
-  cmd: |
-    if $architecture == "mips"
-      skip
-    else
-      runChakra :baseline, "NoException", "class-case.baseline", []
-    end
+  cmd: runChakra :baseline, "NoException", "class-case.baseline", []
 - path: ChakraCore/test/UnifiedRegex/crazy.js
   # Skipped because the original test file contained tabs which we don't allow in WebKit source.
   cmd: runChakra :skip, "NoException", "crazy.baseline", []
@@ -2261,21 +2249,9 @@
   # Different behavior.
   cmd: runChakra :skip, "NoException", "22.callerCalleeArguments_sm.baseline", []
 - path: ChakraCore/test/strict/23.reservedWords.js
-  # Currently fails on the mips (in 32-bits mode).
-  cmd: |
-    if $architecture == "mips"
-      skip
-    else
-      runChakra :baseline, "NoException", "23.reservedWords.baseline-jsc", []
-    end
+  cmd: runChakra :baseline, "NoException", "23.reservedWords.baseline-jsc", []
 - path: ChakraCore/test/strict/23.reservedWords_sm.js
-  # Currently fails on the mips (in 32-bits mode).
-  cmd: |
-    if $architecture == "mips"
-      skip
-    else
-      runChakra :baseline, "NoException", "23.reservedWords_sm.baseline-jsc", []
-    end
+  cmd: runChakra :baseline, "NoException", "23.reservedWords_sm.baseline-jsc", []
 - path: ChakraCore/test/strict/24.properties.js
   cmd: runChakra :baseline, "NoException", "24.properties.baseline", []
 - path: ChakraCore/test/strict/24.properties_sm.js
@@ -2389,13 +2365,7 @@
   # Different behavior. JSC allows writing/reading to negative indicies of typed arrays and Chakra doesn't.
   cmd: runChakra :skip, "NoException", "negIndexes.baseline", []
 - path: ChakraCore/test/typedarray/set.js
-  # Currently fails on the mips (in 32-bits mode).
-  cmd: |
-    if $architecture == "mips"
-      skip
-    else
-      runChakra :baseline, "NoException", "set.baseline-jsc", []
-    end
+  cmd: runChakra :baseline, "NoException", "set.baseline-jsc", []
 - path: ChakraCore/test/typedarray/samethread.js
   cmd: runChakra :skip, "NoException", "samethread.baseline", ["util.js"]
 - path: ChakraCore/test/typedarray/Int8Array2.js
