@@ -108,6 +108,18 @@ namespace WTF {
         using iterator = Iterator;
 
         SegmentedVector() = default;
+        SegmentedVector(SegmentedVector&& other)
+            : SegmentedVector()
+        {
+            swap(other);
+        }
+
+        SegmentedVector& operator=(SegmentedVector&& other)
+        {
+            SegmentedVector moved(WTFMove(other));
+            swap(moved);
+            return *this;
+        }
 
         ~SegmentedVector()
         {
@@ -219,6 +231,12 @@ namespace WTF {
         void shrinkToFit()
         {
             m_segments.shrinkToFit();
+        }
+
+        void swap(SegmentedVector& other)
+        {
+            std::swap(m_size, other.m_size);
+            m_segments.swap(other.m_segments);
         }
 
     private:

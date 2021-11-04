@@ -163,8 +163,8 @@ struct VectorCopier;
 template<typename T>
 struct VectorCopier<false, T>
 {
-    template<typename U>
-    static void uninitializedCopy(const T* src, const T* srcEnd, U* dst)
+    template<typename InputIterator, typename U>
+    static void uninitializedCopy(InputIterator src, InputIterator srcEnd, U* dst)
     {
         while (src != srcEnd) {
             new (NotNull, dst) U(*src);
@@ -181,8 +181,8 @@ struct VectorCopier<true, T>
     {
         memcpy(static_cast<void*>(dst), static_cast<void*>(const_cast<T*>(src)), reinterpret_cast<const char*>(srcEnd) - reinterpret_cast<const char*>(src));
     }
-    template<typename U>
-    static void uninitializedCopy(const T* src, const T* srcEnd, U* dst)
+    template<typename InputIterator, typename U>
+    static void uninitializedCopy(InputIterator src, InputIterator srcEnd, U* dst)
     {
         VectorCopier<false, T>::uninitializedCopy(src, srcEnd, dst);
     }
@@ -265,7 +265,8 @@ struct VectorTypeOperations
         VectorMover<VectorTraits<T>::canMoveWithMemcpy, T>::moveOverlapping(src, srcEnd, dst);
     }
 
-    static void uninitializedCopy(const T* src, const T* srcEnd, T* dst)
+    template<typename InputIterator>
+    static void uninitializedCopy(InputIterator src, InputIterator srcEnd, T* dst)
     {
         VectorCopier<VectorTraits<T>::canCopyWithMemcpy, T>::uninitializedCopy(src, srcEnd, dst);
     }

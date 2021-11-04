@@ -93,32 +93,36 @@ public:
         return result;
     }
 
-    template<size_t inlineCapacity, typename OverflowHandler>
-    explicit RefCountedArray(const Vector<T, inlineCapacity, OverflowHandler>& other)
+    template<typename Container, std::enable_if_t<!std::is_integral_v<Container>, bool> = true>
+    explicit RefCountedArray(const Container& container)
     {
-        if (other.isEmpty()) {
+        unsigned size = std::size(container);
+        if (!size) {
             PtrTraits::exchange(m_data, nullptr);
             return;
         }
 
-        T* data = allocateUninitializedData(other.size());
+        T* data = allocateUninitializedData(size);
         m_data = data;
-        VectorTypeOperations<T>::uninitializedCopy(other.begin(), other.end(), data);
+        VectorTypeOperations<T>::uninitializedCopy(std::begin(container), std::end(container), data);
     }
 
-    template<size_t inlineCapacity, typename OverflowHandler>
-    explicit RefCountedArray(Vector<T, inlineCapacity, OverflowHandler>&& other)
+    template<typename Container, std::enable_if_t<!std::is_integral_v<Container> && !std::is_lvalue_reference_v<Container>, bool> = true>
+    explicit RefCountedArray(Container&& other)
     {
-        Vector<T, inlineCapacity, OverflowHandler> vector(WTFMove(other));
-        if (vector.isEmpty()) {
+        Container container(std::forward<Container>(other));
+        unsigned size = std::size(container);
+        if (!size) {
             PtrTraits::exchange(m_data, nullptr);
             return;
         }
 
-        T* data = allocateUninitializedData(vector.size());
+        T* data = allocateUninitializedData(size);
         m_data = data;
-        for (unsigned index = 0; index < vector.size(); ++index)
-            new (data + index) T(WTFMove(vector[index]));
+        auto iterator = std::begin(container);
+        auto end = std::end(container);
+        for (; iterator != end; ++iterator)
+            new (data++) T(WTFMove(*iterator));
     }
     
     template<typename OtherTraits = PtrTraits>
@@ -132,16 +136,17 @@ public:
         return assign<PtrTraits>(other);
     }
 
-    template<size_t inlineCapacity, typename OverflowHandler>
-    RefCountedArray& operator=(const Vector<T, inlineCapacity, OverflowHandler>& other)
+    template<typename Container, typename = std::enable_if_t<!std::is_integral_v<Container>>>
+    RefCountedArray& operator=(const Container& container)
     {
         T* oldData = data();
-        if (other.isEmpty())
+        unsigned size = std::size(container);
+        if (!size)
             PtrTraits::exchange(m_data, nullptr);
         else {
-            T* data = allocateUninitializedData(other.size());
+            T* data = allocateUninitializedData(size);
             m_data = data;
-            VectorTypeOperations<T>::uninitializedCopy(other.begin(), other.end(), data);
+            VectorTypeOperations<T>::uninitializedCopy(std::begin(container), std::end(container), data);
         }
         if (!oldData)
             return *this;
@@ -156,18 +161,21 @@ public:
         return *this;
     }
 
-    template<size_t inlineCapacity, typename OverflowHandler>
-    RefCountedArray& operator=(Vector<T, inlineCapacity, OverflowHandler>&& other)
+    template<typename Container, std::enable_if_t<!std::is_integral_v<Container> && !std::is_lvalue_reference_v<Container>, bool> = true>
+    RefCountedArray& operator=(Container&& other)
     {
-        Vector<T, inlineCapacity, OverflowHandler> vector(WTFMove(other));
+        Container container(std::forward<Container>(other));
         T* oldData = data();
-        if (vector.isEmpty())
+        unsigned size = std::size(container);
+        if (!size)
             PtrTraits::exchange(m_data, nullptr);
         else {
-            T* data = allocateUninitializedData(vector.size());
+            T* data = allocateUninitializedData(size);
             m_data = data;
-            for (unsigned index = 0; index < vector.size(); ++index)
-                new (data + index) T(WTFMove(vector[index]));
+            auto iterator = std::begin(container);
+            auto end = std::end(container);
+            for (; iterator != end; ++iterator)
+                new (data++) T(WTFMove(*iterator));
         }
         if (!oldData)
             return *this;

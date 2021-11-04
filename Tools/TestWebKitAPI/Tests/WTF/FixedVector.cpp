@@ -171,6 +171,81 @@ TEST(WTF_FixedVector, MoveAssignVector)
         EXPECT_EQ(vec2[index].value(), index);
 }
 
+template<typename T>
+class NoncopyableVector : public Vector<T> {
+    WTF_MAKE_NONCOPYABLE(NoncopyableVector);
+public:
+    NoncopyableVector() = default;
+    NoncopyableVector(NoncopyableVector&&) = default;
+    NoncopyableVector& operator=(NoncopyableVector&&) = default;
+};
+
+TEST(WTF_FixedVector, MoveContainer)
+{
+    NoncopyableVector<MoveOnly> vec1;
+    vec1.constructAndAppend(0);
+    vec1.constructAndAppend(1);
+    vec1.constructAndAppend(2);
+    vec1.constructAndAppend(3);
+    EXPECT_EQ(vec1.size(), 4U);
+    FixedVector<MoveOnly> vec2(WTFMove(vec1));
+    EXPECT_EQ(vec1.size(), 0U);
+    EXPECT_EQ(vec2.size(), 4U);
+    for (unsigned index = 0; index < vec2.size(); ++index)
+        EXPECT_EQ(vec2[index].value(), index);
+}
+
+TEST(WTF_FixedVector, MoveAssignContainer)
+{
+    FixedVector<MoveOnly> vec2;
+    {
+        NoncopyableVector<MoveOnly> vec1;
+        vec1.constructAndAppend(0);
+        vec1.constructAndAppend(1);
+        vec1.constructAndAppend(2);
+        vec1.constructAndAppend(3);
+        EXPECT_EQ(vec1.size(), 4U);
+        vec2 = WTFMove(vec1);
+        EXPECT_EQ(vec1.size(), 0U);
+    }
+    EXPECT_EQ(vec2.size(), 4U);
+    for (unsigned index = 0; index < vec2.size(); ++index)
+        EXPECT_EQ(vec2[index].value(), index);
+}
+
+TEST(WTF_FixedVector, ReferenceContainer)
+{
+    NoncopyableVector<unsigned> vec1;
+    vec1.constructAndAppend(0);
+    vec1.constructAndAppend(1);
+    vec1.constructAndAppend(2);
+    vec1.constructAndAppend(3);
+    EXPECT_EQ(vec1.size(), 4U);
+    FixedVector<unsigned> vec2(vec1);
+    EXPECT_EQ(vec1.size(), 4U);
+    EXPECT_EQ(vec2.size(), 4U);
+    for (unsigned index = 0; index < vec2.size(); ++index)
+        EXPECT_EQ(vec2[index], index);
+}
+
+TEST(WTF_FixedVector, ReferenceAssignContainer)
+{
+    FixedVector<unsigned> vec2;
+    {
+        NoncopyableVector<unsigned> vec1;
+        vec1.constructAndAppend(0);
+        vec1.constructAndAppend(1);
+        vec1.constructAndAppend(2);
+        vec1.constructAndAppend(3);
+        EXPECT_EQ(vec1.size(), 4U);
+        vec2 = vec1;
+        EXPECT_EQ(vec1.size(), 4U);
+    }
+    EXPECT_EQ(vec2.size(), 4U);
+    for (unsigned index = 0; index < vec2.size(); ++index)
+        EXPECT_EQ(vec2[index], index);
+}
+
 TEST(WTF_FixedVector, Swap)
 {
     FixedVector<unsigned> vec1(3);

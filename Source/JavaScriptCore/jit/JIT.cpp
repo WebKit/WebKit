@@ -1007,13 +1007,9 @@ void JIT::link()
     MacroAssemblerCodePtr<JSEntryPtrTag> withArityCheck = patchBuffer.locationOf<JSEntryPtrTag>(m_arityCheck);
     m_jitCode = adoptRef(*new BaselineJITCode(result, withArityCheck));
 
-    m_jitCode->m_unlinkedCalls = FixedVector<UnlinkedCallLinkInfo>(m_unlinkedCalls.size());
-    if (m_jitCode->m_unlinkedCalls.size())
-        std::move(m_unlinkedCalls.begin(), m_unlinkedCalls.end(), m_jitCode->m_unlinkedCalls.begin());
+    m_jitCode->m_unlinkedCalls = WTFMove(m_unlinkedCalls);
     m_jitCode->m_evalCallLinkInfos = WTFMove(m_evalCallLinkInfos);
-    m_jitCode->m_unlinkedStubInfos = FixedVector<UnlinkedStructureStubInfo>(m_unlinkedStubInfos.size());
-    if (m_jitCode->m_unlinkedStubInfos.size())
-        std::move(m_unlinkedStubInfos.begin(), m_unlinkedStubInfos.end(), m_jitCode->m_unlinkedStubInfos.begin());
+    m_jitCode->m_unlinkedStubInfos = WTFMove(m_unlinkedStubInfos);
     m_jitCode->m_switchJumpTables = WTFMove(m_switchJumpTables);
     m_jitCode->m_stringSwitchJumpTables = WTFMove(m_stringSwitchJumpTables);
     m_jitCode->m_jitCodeMap = jitCodeMapBuilder.finalize();

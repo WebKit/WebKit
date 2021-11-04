@@ -782,7 +782,7 @@ void CodeBlock::setupWithUnlinkedBaselineCode(Ref<BaselineJITCode> jitCode)
 
         RELEASE_ASSERT(jitData.m_jitConstantPool.isEmpty());
         jitData.m_jitConstantPool = FixedVector<void*>(jitCode->m_constantPool.size());
-        jitData.m_stubInfos = FixedVector<StructureStubInfo>(jitCode->m_unlinkedStubInfos.size());
+        jitData.m_stubInfos = FixedVector<StructureStubInfo>(jitCode->m_unlinkedStubInfos);
         jitData.m_callLinkInfos = FixedVector<CallLinkInfo>(jitCode->m_unlinkedCalls.size());
         for (size_t i = 0; i < jitCode->m_constantPool.size(); ++i) {
             auto entry = jitCode->m_constantPool.at(i);
@@ -800,9 +800,7 @@ void CodeBlock::setupWithUnlinkedBaselineCode(Ref<BaselineJITCode> jitCode)
             }
             case JITConstantPool::Type::StructureStubInfo: {
                 unsigned index = bitwise_cast<uintptr_t>(entry.pointer());
-                UnlinkedStructureStubInfo& unlinkedStubInfo = jitCode->m_unlinkedStubInfos[index];
                 StructureStubInfo& stubInfo = jitData.m_stubInfos[index];
-                stubInfo.initializeFromUnlinkedStructureStubInfo(this, unlinkedStubInfo);
                 jitData.m_jitConstantPool[i] = &stubInfo;
                 break;
             }

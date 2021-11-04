@@ -1,3 +1,24 @@
+2021-11-03  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Clean up StructureStubInfo initialization
+        https://bugs.webkit.org/show_bug.cgi?id=232652
+
+        Reviewed by Saam Barati.
+
+        This patch enhances FixedVector to initialize it from the other containers.
+        So we can simplify baseline StructureStubInfo initialization.
+        Now, StructureStubInfo::initializeFromUnlinkedStructureStubInfo becomes
+        StructureStubInfo constructor taking const UnlinkedStructureStubInfo&.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::setupWithUnlinkedBaselineCode):
+        * bytecode/StructureStubInfo.cpp:
+        (JSC::StructureStubInfo::StructureStubInfo):
+        (JSC::StructureStubInfo::initializeFromUnlinkedStructureStubInfo): Deleted.
+        * bytecode/StructureStubInfo.h:
+        * jit/JIT.cpp:
+        (JSC::JIT::link):
+
 2021-11-02  Ross Kirsling  <ross.kirsling@sony.com>
 
         [JSC] Add LLInt fast path for OpMod on x86_64

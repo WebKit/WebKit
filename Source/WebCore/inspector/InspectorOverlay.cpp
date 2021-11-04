@@ -1207,7 +1207,7 @@ void InspectorOverlay::drawLayoutHatching(GraphicsContext& context, FloatQuad qu
 FontCascade InspectorOverlay::fontForLayoutLabel()
 {
     FontCascadeDescription fontDescription;
-    fontDescription.setFamilies({ "system-ui" });
+    fontDescription.setFamilies(Vector<AtomString> { "system-ui" });
     fontDescription.setWeight(FontSelectionValue(500));
     fontDescription.setComputedSize(12);
 
