@@ -134,7 +134,8 @@ RemoteAudioMediaStreamTrackRendererInternalUnitManager::Unit::Unit(AudioMediaStr
             callback({ }, 0);
             return;
         }
-        m_frameChunkSize = std::max(WebCore::AudioUtilities::renderQuantumSize, WebCore::AudioSession::sharedSession().preferredBufferSize());
+        size_t tenMsSampleSize = description->sampleRate() * 10 / 1000;
+        m_frameChunkSize = std::max(WebCore::AudioUtilities::renderQuantumSize, tenMsSampleSize);
         callback(*description, m_frameChunkSize);
     });
 }

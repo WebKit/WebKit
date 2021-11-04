@@ -1,5 +1,44 @@
 2021-11-04  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r284689. rdar://problem/83692944
+
+    REGRESSION (Safari 15 - iOS15): [WebRTC] Increased audio latency while playing webrtc audio stream over audio element
+    https://bugs.webkit.org/show_bug.cgi?id=230903
+    <rdar://problem/83692944>
+    
+    Reviewed by Eric Carlson.
+    
+    We used to render audio tracks in process and are now doing rendering in GPU process.
+    Current implementation requests data with a fixed chunk size, that we were setting as the max of preferred buffer size and web audio chunk size.
+    If we are reading too close to the end of data in AudioSampleDataSource, we will delay reading the data by this buffer size. This triggers delay but allows getting a consistent rendering.
+    To reduce delay, we are now using the maximum of web audio chunk size and 10 ms chunk size, as WebRTC tracks are usually manipulating 10 ms chunks.
+    
+    Manually tested.
+    
+    * GPUProcess/webrtc/RemoteAudioMediaStreamTrackRendererInternalUnitManager.cpp:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@284689 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-10-22  Youenn Fablet  <youenn@apple.com>
+
+            REGRESSION (Safari 15 - iOS15): [WebRTC] Increased audio latency while playing webrtc audio stream over audio element
+            https://bugs.webkit.org/show_bug.cgi?id=230903
+            <rdar://problem/83692944>
+
+            Reviewed by Eric Carlson.
+
+            We used to render audio tracks in process and are now doing rendering in GPU process.
+            Current implementation requests data with a fixed chunk size, that we were setting as the max of preferred buffer size and web audio chunk size.
+            If we are reading too close to the end of data in AudioSampleDataSource, we will delay reading the data by this buffer size. This triggers delay but allows getting a consistent rendering.
+            To reduce delay, we are now using the maximum of web audio chunk size and 10 ms chunk size, as WebRTC tracks are usually manipulating 10 ms chunks.
+
+            Manually tested.
+
+            * GPUProcess/webrtc/RemoteAudioMediaStreamTrackRendererInternalUnitManager.cpp:
+
+2021-11-04  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r283886. rdar://problem/83743661
 
     [iOS] Add message filter in the WebContent process' sandbox
