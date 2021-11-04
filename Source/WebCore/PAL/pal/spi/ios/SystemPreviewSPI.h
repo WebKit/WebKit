@@ -25,7 +25,7 @@
 
 #if USE(APPLE_INTERNAL_SDK)
 
-#if ENABLE(ARKIT_QUICK_LOOK_PREVIEW_ITEM)
+#if HAVE(ARKIT_QUICK_LOOK_PREVIEW_ITEM)
 #import <AssetViewer/ARQuickLookWebKitItem.h>
 #endif
 
@@ -42,8 +42,9 @@
 #import <UIKit/UIKit.h>
 
 #if PLATFORM(IOS)
+#import <pal/spi/ios/QuickLookSPI.h>
+
 @class ASVThumbnailView;
-@class QLItem;
 @class QLPreviewController;
 
 NS_ASSUME_NONNULL_BEGIN
@@ -59,8 +60,12 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 #endif
 
-#if ENABLE(ARKIT_QUICK_LOOK_PREVIEW_ITEM)
+NS_ASSUME_NONNULL_END
+
+#if HAVE(ARKIT_QUICK_LOOK_PREVIEW_ITEM)
 #import <ARKit/ARKit.h>
+
+NS_ASSUME_NONNULL_BEGIN
 
 @protocol ARQuickLookWebKitItemDelegate
 @end
