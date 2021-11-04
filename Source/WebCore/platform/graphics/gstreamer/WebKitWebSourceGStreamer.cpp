@@ -69,7 +69,7 @@ private:
 
     // PlatformMediaResourceClient virtual methods.
     void responseReceived(PlatformMediaResource&, const ResourceResponse&, CompletionHandler<void(ShouldContinuePolicyCheck)>&&) override;
-    void dataReceived(PlatformMediaResource&, const uint8_t*, int) override;
+    void dataReceived(PlatformMediaResource&, Ref<SharedBuffer>&&) override;
     void accessControlCheckFailed(PlatformMediaResource&, const ResourceError&) override;
     void loadFailed(PlatformMediaResource&, const ResourceError&) override;
     void loadFinished(PlatformMediaResource&, const NetworkLoadMetrics&) override;
@@ -1091,7 +1091,7 @@ void CachedResourceStreamingClient::responseReceived(PlatformMediaResource&, con
     completionHandler(ShouldContinuePolicyCheck::Yes);
 }
 
-void CachedResourceStreamingClient::dataReceived(PlatformMediaResource&, const uint8_t* data, int length)
+void CachedResourceStreamingClient::dataReceived(PlatformMediaResource&, Ref<SharedBuffer>&& buffer)
 {
     ASSERT(isMainThread());
     WebKitWebSrc* src = WEBKIT_WEB_SRC(m_src.get());
@@ -1101,13 +1101,11 @@ void CachedResourceStreamingClient::dataReceived(PlatformMediaResource&, const u
     if (members->requestNumber != m_requestNumber)
         return;
 
-    GST_LOG_OBJECT(src, "R%u: Have %d bytes of data", m_requestNumber, length);
-
     // Rough bandwidth calculation. We ignore here the first data package because we would have to reset the counters when we issue the request and
     // that first package delivery would include the time of sending out the request and getting the data back. Since we can't distinguish the
     // sending time from the receiving time, it is better to ignore it.
     if (!std::isnan(members->downloadStartTime)) {
-        members->totalDownloadedBytes += length;
+        members->totalDownloadedBytes += buffer->size();
         double timeSinceStart = (WallTime::now() - members->downloadStartTime).seconds();
         GST_TRACE_OBJECT(src, "R%u: downloaded %" G_GUINT64_FORMAT " bytes in %f seconds =~ %1.0f bytes/second", m_requestNumber, members->totalDownloadedBytes, timeSinceStart
             , timeSinceStart ? members->totalDownloadedBytes / timeSinceStart : 0);
@@ -1115,16 +1113,20 @@ void CachedResourceStreamingClient::dataReceived(PlatformMediaResource&, const u
         members->downloadStartTime = WallTime::now();
     }
 
-    members->readPosition += length;
-    ASSERT(!members->haveSize || members->readPosition <= members->size);
+    buffer->forEachSegment([&](auto& segment) {
+        int length = segment.size();
+        GST_LOG_OBJECT(src, "R%u: Have %d bytes of data", m_requestNumber, length);
 
-    gst_element_post_message(GST_ELEMENT_CAST(src), gst_message_new_element(GST_OBJECT_CAST(src),
-        gst_structure_new("webkit-network-statistics", "read-position", G_TYPE_UINT64, members->readPosition, "size", G_TYPE_UINT64, members->size, nullptr)));
+        members->readPosition += length;
+        ASSERT(!members->haveSize || members->readPosition <= members->size);
 
-    checkUpdateBlocksize(length);
+        gst_element_post_message(GST_ELEMENT_CAST(src), gst_message_new_element(GST_OBJECT_CAST(src),
+            gst_structure_new("webkit-network-statistics", "read-position", G_TYPE_UINT64, members->readPosition, "size", G_TYPE_UINT64, members->size, nullptr)));
 
-    GstBuffer* buffer = gstBufferNewWrappedFast(fastMemDup(data, length), length);
-    gst_adapter_push(members->adapter.get(), buffer);
+        checkUpdateBlocksize(length);
+        GstBuffer* buffer = gstBufferNewWrappedFast(fastMemDup(segment.data(), length), length);
+        gst_adapter_push(members->adapter.get(), buffer);
+    });
     stopLoaderIfNeeded(src, members);
     members->responseCondition.notifyOne();
 }

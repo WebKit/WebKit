@@ -1,5 +1,144 @@
 2021-11-04  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r285069. rdar://problem/84558835
+
+    Have PlatformMediaResourceClient use SharedBuffer
+    https://bugs.webkit.org/show_bug.cgi?id=232422
+    rdar://84558835
+    
+    Reviewed by Alex Christensen.
+    
+    When playing a non-mse media element, the download gets controlled by a
+    MediaResource into a WebCoreNSURLSession to be used by the media framework.
+    The data got copied at least three times along the way due to the
+    multi-threaded nature of the framework and the need for thread
+    safety.
+    The situation was made worse when the content server didn't support
+    range-request: as a RangeResponseGenerator is then used by the
+    WebCoreNSURLSession which downloads the entire media to be played and
+    keep it in memory.
+    
+    By modifying the various actors between a MediaResource and WebCoreNSURLSession
+    to use SharedBuffers ; we can remove most copies and allocation.
+    This also completely eliminates the need for new memory buffer allocations and
+    copies by the RangeResponseGenerator object.
+    
+    With WK2 and the GPU process, it allows for the memory to be allocated once
+    and only be assigned to the content process by using SharedMemory wrapped
+    in a SharedBuffer.
+    
+    In the future, by refactoring CachedRawResourceClient to use SharedBuffers,
+    we could remove further allocation/copies. We could likely get the data from the
+    network process all the way to the final client in the GPU process without
+    a single copy. This is tracked in bug 232424.
+    
+    No change in observable behaviour. Covered by all the existing media tests.
+    
+    * platform/SharedBuffer.cpp:
+    (WebCore::SharedBufferDataView::size const):
+    (WebCore::SharedBufferDataView::trim): Add ability to trim a SharedBufferDataView.
+    This allows to avoid having to copy into a new buffer.
+    (WebCore::SharedBufferDataView::createSharedBuffer const): Cross declarations
+    makes it difficult to add a new SharedBuffer constructor that would take a
+    SharedBufferDataView.
+    * platform/SharedBuffer.h: Add new methods.
+    * platform/cocoa/SharedBufferCocoa.mm: Update to allow for end trimming
+    information.
+    (-[WebCoreSharedBufferData initWithDataSegment:position:endTrim:]):
+    (-[WebCoreSharedBufferData length]):
+    (WebCore::SharedBuffer::DataSegment::createNSData const):
+    (WebCore::SharedBufferDataView::createNSData const):
+    (-[WebCoreSharedBufferData initWithDataSegment:position:]): Deleted.
+    * platform/graphics/PlatformMediaResourceLoader.h:
+    (WebCore::PlatformMediaResourceClient::dataReceived): Add a new API using
+    a SharedBuffer. We keep the old one taking a pointer/size due to a WebKit
+    implementation details which allows us to save an intermediary allocation/copy
+    when used with SharedMemory.
+    * platform/graphics/avfoundation/objc/WebCoreAVFResourceLoader.mm:
+    (WebCore::PlatformResourceMediaLoader::dataReceived):
+    * platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp:
+    (CachedResourceStreamingClient::dataReceived): Update to use SharedBuffer.
+    * platform/network/cocoa/RangeResponseGenerator.mm:
+    (WebCore::RangeResponseGenerator::giveResponseToTaskIfBytesInRangeReceived):
+    * platform/network/cocoa/WebCoreNSURLSession.h: Change prototypes.
+    Fly-by fix, property countOfBytesReceived needed to be atomic.
+    * platform/network/cocoa/WebCoreNSURLSession.mm:
+    (WebCore::WebCoreNSURLSessionDataTaskClient::dataReceived):
+    (-[WebCoreNSURLSessionDataTask resource:receivedData:]):
+    (-[WebCoreNSURLSessionDataTask resource:receivedRedirect:request:completionHandler:]):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@285069 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-10-29  Jean-Yves Avenard  <jya@apple.com>
+
+            Have PlatformMediaResourceClient use SharedBuffer
+            https://bugs.webkit.org/show_bug.cgi?id=232422
+            rdar://84558835
+
+            Reviewed by Alex Christensen.
+
+            When playing a non-mse media element, the download gets controlled by a
+            MediaResource into a WebCoreNSURLSession to be used by the media framework.
+            The data got copied at least three times along the way due to the
+            multi-threaded nature of the framework and the need for thread
+            safety.
+            The situation was made worse when the content server didn't support
+            range-request: as a RangeResponseGenerator is then used by the
+            WebCoreNSURLSession which downloads the entire media to be played and
+            keep it in memory.
+
+            By modifying the various actors between a MediaResource and WebCoreNSURLSession
+            to use SharedBuffers ; we can remove most copies and allocation.
+            This also completely eliminates the need for new memory buffer allocations and
+            copies by the RangeResponseGenerator object.
+
+            With WK2 and the GPU process, it allows for the memory to be allocated once
+            and only be assigned to the content process by using SharedMemory wrapped
+            in a SharedBuffer.
+
+            In the future, by refactoring CachedRawResourceClient to use SharedBuffers,
+            we could remove further allocation/copies. We could likely get the data from the
+            network process all the way to the final client in the GPU process without
+            a single copy. This is tracked in bug 232424.
+
+            No change in observable behaviour. Covered by all the existing media tests.
+
+            * platform/SharedBuffer.cpp:
+            (WebCore::SharedBufferDataView::size const):
+            (WebCore::SharedBufferDataView::trim): Add ability to trim a SharedBufferDataView.
+            This allows to avoid having to copy into a new buffer.
+            (WebCore::SharedBufferDataView::createSharedBuffer const): Cross declarations
+            makes it difficult to add a new SharedBuffer constructor that would take a
+            SharedBufferDataView.
+            * platform/SharedBuffer.h: Add new methods.
+            * platform/cocoa/SharedBufferCocoa.mm: Update to allow for end trimming
+            information.
+            (-[WebCoreSharedBufferData initWithDataSegment:position:endTrim:]):
+            (-[WebCoreSharedBufferData length]):
+            (WebCore::SharedBuffer::DataSegment::createNSData const):
+            (WebCore::SharedBufferDataView::createNSData const):
+            (-[WebCoreSharedBufferData initWithDataSegment:position:]): Deleted.
+            * platform/graphics/PlatformMediaResourceLoader.h:
+            (WebCore::PlatformMediaResourceClient::dataReceived): Add a new API using
+            a SharedBuffer. We keep the old one taking a pointer/size due to a WebKit
+            implementation details which allows us to save an intermediary allocation/copy
+            when used with SharedMemory.
+            * platform/graphics/avfoundation/objc/WebCoreAVFResourceLoader.mm:
+            (WebCore::PlatformResourceMediaLoader::dataReceived):
+            * platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp:
+            (CachedResourceStreamingClient::dataReceived): Update to use SharedBuffer.
+            * platform/network/cocoa/RangeResponseGenerator.mm:
+            (WebCore::RangeResponseGenerator::giveResponseToTaskIfBytesInRangeReceived):
+            * platform/network/cocoa/WebCoreNSURLSession.h: Change prototypes.
+            Fly-by fix, property countOfBytesReceived needed to be atomic.
+            * platform/network/cocoa/WebCoreNSURLSession.mm:
+            (WebCore::WebCoreNSURLSessionDataTaskClient::dataReceived):
+            (-[WebCoreNSURLSessionDataTask resource:receivedData:]):
+            (-[WebCoreNSURLSessionDataTask resource:receivedRedirect:request:completionHandler:]):
+
+2021-11-04  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r284853. rdar://problem/84516016
 
     Fix issue for transform-origin in SVG

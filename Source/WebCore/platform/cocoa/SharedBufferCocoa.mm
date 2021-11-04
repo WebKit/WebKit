@@ -34,12 +34,13 @@
 #import <wtf/cocoa/VectorCocoa.h>
 
 @interface WebCoreSharedBufferData : NSData
-- (instancetype)initWithDataSegment:(const WebCore::SharedBuffer::DataSegment&)dataSegment position:(NSUInteger)position;
+- (instancetype)initWithDataSegment:(const WebCore::SharedBuffer::DataSegment&)dataSegment position:(NSUInteger)position size:(NSUInteger)size;
 @end
 
 @implementation WebCoreSharedBufferData {
     RefPtr<const WebCore::SharedBuffer::DataSegment> _dataSegment;
     NSUInteger _position;
+    NSUInteger _size;
 }
 
 + (void)initialize
@@ -59,20 +60,22 @@
     [super dealloc];
 }
 
-- (instancetype)initWithDataSegment:(const WebCore::SharedBuffer::DataSegment&)dataSegment position:(NSUInteger)position
+- (instancetype)initWithDataSegment:(const WebCore::SharedBuffer::DataSegment&)dataSegment position:(NSUInteger)position size:(NSUInteger)size
 {
     if (!(self = [super init]))
         return nil;
 
-    RELEASE_ASSERT(!position || position < dataSegment.size());
+    RELEASE_ASSERT(position <= dataSegment.size());
+    RELEASE_ASSERT(size <= dataSegment.size() - position);
     _dataSegment = &dataSegment;
     _position = position;
+    _size = size;
     return self;
 }
 
 - (NSUInteger)length
 {
-    return _dataSegment->size() - _position;
+    return _size;
 }
 
 - (const void *)bytes
@@ -125,12 +128,12 @@ RetainPtr<NSArray> SharedBuffer::createNSDataArray() const
 
 RetainPtr<NSData> SharedBuffer::DataSegment::createNSData() const
 {
-    return adoptNS([[WebCoreSharedBufferData alloc] initWithDataSegment:*this position:0]);
+    return adoptNS([[WebCoreSharedBufferData alloc] initWithDataSegment:*this position:0 size:size()]);
 }
 
 RetainPtr<NSData> SharedBufferDataView::createNSData() const
 {
-    return adoptNS([[WebCoreSharedBufferData alloc] initWithDataSegment:m_segment.get() position:m_positionWithinSegment]);
+    return adoptNS([[WebCoreSharedBufferData alloc] initWithDataSegment:m_segment.get() position:m_positionWithinSegment size:size()]);
 }
 
 } // namespace WebCore
