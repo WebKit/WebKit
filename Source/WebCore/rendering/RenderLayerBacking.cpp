@@ -2138,9 +2138,9 @@ bool RenderLayerBacking::updateOverflowControlsLayers(bool needsHorizontalScroll
     if (auto* scrollingCoordinator = m_owningLayer.page().scrollingCoordinator()) {
         if (auto* scrollableArea = m_owningLayer.scrollableArea()) {
             if (horizontalScrollbarLayerChanged)
-                scrollingCoordinator->scrollableAreaScrollbarLayerDidChange(*scrollableArea, HorizontalScrollbar);
+                scrollingCoordinator->scrollableAreaScrollbarLayerDidChange(*scrollableArea, ScrollbarOrientation::Horizontal);
             if (verticalScrollbarLayerChanged)
-                scrollingCoordinator->scrollableAreaScrollbarLayerDidChange(*scrollableArea, VerticalScrollbar);
+                scrollingCoordinator->scrollableAreaScrollbarLayerDidChange(*scrollableArea, ScrollbarOrientation::Vertical);
         }
     }
 

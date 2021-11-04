@@ -143,9 +143,9 @@ enum ScrollElasticity : uint8_t {
     ScrollElasticityAllowed
 };
 
-enum ScrollbarOrientation : uint8_t {
-    HorizontalScrollbar,
-    VerticalScrollbar
+enum class ScrollbarOrientation : uint8_t {
+    Horizontal,
+    Vertical
 };
 
 enum ScrollbarMode : uint8_t {

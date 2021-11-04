@@ -184,7 +184,7 @@ void RenderListBox::layout()
         m_vBar->setSteps(1, std::max(1, numVisibleItems() - 1), itemHeight());
         m_vBar->setProportion(numVisibleItems(), numItems());
         if (!enabled) {
-            scrollToOffsetWithoutAnimation(VerticalScrollbar, 0);
+            scrollToOffsetWithoutAnimation(ScrollbarOrientation::Vertical, 0);
             m_indexOffset = 0;
         }
     }
@@ -600,7 +600,7 @@ bool RenderListBox::scrollToRevealElementAtListIndex(int index)
     else
         newOffset = index - numVisibleItems() + 1;
 
-    scrollToOffsetWithoutAnimation(VerticalScrollbar, newOffset);
+    scrollToOffsetWithoutAnimation(ScrollbarOrientation::Vertical, newOffset);
 
     return true;
 }
@@ -755,7 +755,7 @@ void RenderListBox::setScrollTop(int newTop, const ScrollPositionChangeOptions&)
         return;
 
     setupWheelEventTestMonitor(*this);
-    scrollToOffsetWithoutAnimation(VerticalScrollbar, index);
+    scrollToOffsetWithoutAnimation(ScrollbarOrientation::Vertical, index);
 }
 
 bool RenderListBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction hitTestAction)
@@ -918,10 +918,10 @@ Ref<Scrollbar> RenderListBox::createScrollbar()
     RefPtr<Scrollbar> widget;
     bool hasCustomScrollbarStyle = style().hasPseudoStyle(PseudoId::Scrollbar);
     if (hasCustomScrollbarStyle)
-        widget = RenderScrollbar::createCustomScrollbar(*this, VerticalScrollbar, &selectElement());
+        widget = RenderScrollbar::createCustomScrollbar(*this, ScrollbarOrientation::Vertical, &selectElement());
     else {
-        widget = Scrollbar::createNativeScrollbar(*this, VerticalScrollbar, theme().scrollbarControlSizeForPart(ListboxPart));
-        didAddScrollbar(widget.get(), VerticalScrollbar);
+        widget = Scrollbar::createNativeScrollbar(*this, ScrollbarOrientation::Vertical, theme().scrollbarControlSizeForPart(ListboxPart));
+        didAddScrollbar(widget.get(), ScrollbarOrientation::Vertical);
         if (page().isMonitoringWheelEvents())
             scrollAnimator().setWheelEventTestMonitor(page().wheelEventTestMonitor());
     }
@@ -935,7 +935,7 @@ void RenderListBox::destroyScrollbar()
         return;
 
     if (!m_vBar->isCustomScrollbar())
-        ScrollableArea::willRemoveScrollbar(m_vBar.get(), VerticalScrollbar);
+        ScrollableArea::willRemoveScrollbar(m_vBar.get(), ScrollbarOrientation::Vertical);
     m_vBar->removeFromParent();
     m_vBar = nullptr;
 }

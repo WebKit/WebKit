@@ -149,7 +149,7 @@ IntRect ScrollbarThemeWin::backButtonRect(Scrollbar& scrollbar, ScrollbarPart pa
     // we have < 34 pixels left.  This allows the scrollbar
     // to scale down and function even at tiny sizes.
     int thickness = scrollbarThickness();
-    if (scrollbar.orientation() == HorizontalScrollbar)
+    if (scrollbar.orientation() == ScrollbarOrientation::Horizontal)
         return IntRect(scrollbar.x(), scrollbar.y(),
                        scrollbar.width() < 2 * thickness ? scrollbar.width() / 2 : thickness, thickness);
     return IntRect(scrollbar.x(), scrollbar.y(),
@@ -168,7 +168,7 @@ IntRect ScrollbarThemeWin::forwardButtonRect(Scrollbar& scrollbar, ScrollbarPart
     // we have < 34 pixels left.  This allows the scrollbar
     // to scale down and function even at tiny sizes.
     int thickness = scrollbarThickness();
-    if (scrollbar.orientation() == HorizontalScrollbar) {
+    if (scrollbar.orientation() == ScrollbarOrientation::Horizontal) {
         int w = scrollbar.width() < 2 * thickness ? scrollbar.width() / 2 : thickness;
         return IntRect(scrollbar.x() + scrollbar.width() - w, scrollbar.y(), w, thickness);
     }
@@ -180,7 +180,7 @@ IntRect ScrollbarThemeWin::forwardButtonRect(Scrollbar& scrollbar, ScrollbarPart
 IntRect ScrollbarThemeWin::trackRect(Scrollbar& scrollbar, bool)
 {
     int thickness = scrollbarThickness();
-    if (scrollbar.orientation() == HorizontalScrollbar) {
+    if (scrollbar.orientation() == ScrollbarOrientation::Horizontal) {
         if (scrollbar.width() < 2 * thickness)
             return IntRect();
         return IntRect(scrollbar.x() + thickness, scrollbar.y(), scrollbar.width() - 2 * thickness, thickness);
@@ -215,7 +215,7 @@ bool ScrollbarThemeWin::shouldSnapBackToDragOrigin(Scrollbar& scrollbar, const P
     // Find the rect within which we shouldn't snap, by expanding the track rect
     // in both dimensions.
     IntRect rect = trackRect(scrollbar);
-    const bool horz = scrollbar.orientation() == HorizontalScrollbar;
+    const bool horz = scrollbar.orientation() == ScrollbarOrientation::Horizontal;
     const int thickness = scrollbarThickness(scrollbar.controlSize());
     rect.inflateX((horz ? kOffEndMultiplier : kOffSideMultiplier) * thickness);
     rect.inflateY((horz ? kOffSideMultiplier : kOffEndMultiplier) * thickness);
@@ -241,7 +241,7 @@ void ScrollbarThemeWin::paintTrackPiece(GraphicsContext& context, Scrollbar& scr
 
     bool start = partType == BackTrackPart;
     int part;
-    if (scrollbar.orientation() == HorizontalScrollbar)
+    if (scrollbar.orientation() == ScrollbarOrientation::Horizontal)
         part = start ? SP_TRACKSTARTHOR : SP_TRACKENDHOR;
     else
         part = start ? SP_TRACKSTARTVERT : SP_TRACKENDVERT;
@@ -296,7 +296,7 @@ void ScrollbarThemeWin::paintButton(GraphicsContext& context, Scrollbar& scrollb
     bool start = (part == BackButtonStartPart);
     int xpState = 0;
     int classicState = 0;
-    if (scrollbar.orientation() == HorizontalScrollbar)
+    if (scrollbar.orientation() == ScrollbarOrientation::Horizontal)
         xpState = start ? TS_LEFT_BUTTON : TS_RIGHT_BUTTON;
     else
         xpState = start ? TS_UP_BUTTON : TS_DOWN_BUTTON;
@@ -317,7 +317,7 @@ void ScrollbarThemeWin::paintButton(GraphicsContext& context, Scrollbar& scrollb
         if (scrollbar.hoveredPart() == NoPart || !runningVista)
             xpState += TS_NORMAL;
         else {
-            if (scrollbar.orientation() == HorizontalScrollbar)
+            if (scrollbar.orientation() == ScrollbarOrientation::Horizontal)
                 xpState = start ? TS_LEFT_BUTTON_HOVER : TS_RIGHT_BUTTON_HOVER;
             else
                 xpState = start ? TS_UP_BUTTON_HOVER : TS_DOWN_BUTTON_HOVER;
@@ -375,7 +375,7 @@ static void paintGripper(Scrollbar& scrollbar, HDC hdc, const IntRect& rect)
         state = TS_NORMAL;
 
     RECT themeRect(rect);
-    DrawThemeBackground(scrollbarTheme, hdc, scrollbar.orientation() == HorizontalScrollbar ? SP_GRIPPERHOR : SP_GRIPPERVERT, state, &themeRect, 0);
+    DrawThemeBackground(scrollbarTheme, hdc, scrollbar.orientation() == ScrollbarOrientation::Horizontal ? SP_GRIPPERHOR : SP_GRIPPERVERT, state, &themeRect, 0);
 }
 
 void ScrollbarThemeWin::paintThumb(GraphicsContext& context, Scrollbar& scrollbar, const IntRect& rect)
@@ -394,11 +394,11 @@ void ScrollbarThemeWin::paintThumb(GraphicsContext& context, Scrollbar& scrollba
 
     bool alphaBlend = false;
     if (scrollbarTheme)
-        alphaBlend = IsThemeBackgroundPartiallyTransparent(scrollbarTheme, scrollbar.orientation() == HorizontalScrollbar ? SP_THUMBHOR : SP_THUMBVERT, state);
+        alphaBlend = IsThemeBackgroundPartiallyTransparent(scrollbarTheme, scrollbar.orientation() == ScrollbarOrientation::Horizontal ? SP_THUMBHOR : SP_THUMBVERT, state);
     LocalWindowsContext windowsContext(context, rect, alphaBlend);
     RECT themeRect(rect);
     if (scrollbarTheme) {
-        DrawThemeBackground(scrollbarTheme, windowsContext.hdc(), scrollbar.orientation() == HorizontalScrollbar ? SP_THUMBHOR : SP_THUMBVERT, state, &themeRect, 0);
+        DrawThemeBackground(scrollbarTheme, windowsContext.hdc(), scrollbar.orientation() == ScrollbarOrientation::Horizontal ? SP_THUMBHOR : SP_THUMBVERT, state, &themeRect, 0);
         paintGripper(scrollbar, windowsContext.hdc(), gripperRect(scrollbarThickness(), rect));
     } else
         ::DrawEdge(windowsContext.hdc(), &themeRect, EDGE_RAISED, BF_RECT | BF_MIDDLE);

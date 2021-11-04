@@ -54,8 +54,8 @@ enum class WheelScrollGestureState : uint8_t;
 inline int offsetForOrientation(ScrollOffset offset, ScrollbarOrientation orientation)
 {
     switch (orientation) {
-    case HorizontalScrollbar: return offset.x();
-    case VerticalScrollbar: return offset.y();
+    case ScrollbarOrientation::Horizontal: return offset.x();
+    case ScrollbarOrientation::Vertical: return offset.y();
     }
     ASSERT_NOT_REACHED();
     return 0;

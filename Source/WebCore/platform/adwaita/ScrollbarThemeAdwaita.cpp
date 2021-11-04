@@ -165,7 +165,7 @@ bool ScrollbarThemeAdwaita::paint(Scrollbar& scrollbar, GraphicsContext& graphic
         graphicsContext.fillRect(rect, scrollbarBackgroundColor);
 
         IntRect frame = rect;
-        if (scrollbar.orientation() == VerticalScrollbar) {
+        if (scrollbar.orientation() == ScrollbarOrientation::Vertical) {
             if (scrollbar.scrollableArea().shouldPlaceVerticalScrollbarOnLeft())
                 frame.move(frame.width() - hoveredScrollbarBorderSize, 0);
             frame.setWidth(hoveredScrollbarBorderSize);
@@ -182,7 +182,7 @@ bool ScrollbarThemeAdwaita::paint(Scrollbar& scrollbar, GraphicsContext& graphic
         int overlayThumbMargin = thumbMargin - thumbBorderSize;
         thumbCornerSize = overlayThumbSize / 2;
 
-        if (scrollbar.orientation() == VerticalScrollbar) {
+        if (scrollbar.orientation() == ScrollbarOrientation::Vertical) {
             if (scrollbar.scrollableArea().shouldPlaceVerticalScrollbarOnLeft())
                 thumb.move(0, thumbPos + overlayThumbMargin);
             else
@@ -198,7 +198,7 @@ bool ScrollbarThemeAdwaita::paint(Scrollbar& scrollbar, GraphicsContext& graphic
         int thumbSize = scrollbarSize - hoveredScrollbarBorderSize - thumbMargin * 2;
         thumbCornerSize = thumbSize / 2;
 
-        if (scrollbar.orientation() == VerticalScrollbar) {
+        if (scrollbar.orientation() == ScrollbarOrientation::Vertical) {
             if (scrollbar.scrollableArea().shouldPlaceVerticalScrollbarOnLeft())
                 thumb.move(scrollbarSize - (scrollbarSize / 2 + thumbSize / 2) - hoveredScrollbarBorderSize, thumbPos + thumbMargin);
             else

@@ -370,7 +370,7 @@ using WebCore::LogOverlayScrollbars;
         return nil;
 
     WebCore::GraphicsLayer* layer;
-    if (_scrollbar->orientation() == WebCore::VerticalScrollbar)
+    if (_scrollbar->orientation() == WebCore::ScrollbarOrientation::Vertical)
         layer = _scrollbar->scrollableArea().layerForVerticalScrollbar();
     else
         layer = _scrollbar->scrollableArea().layerForHorizontalScrollbar();
@@ -455,7 +455,7 @@ using WebCore::LogOverlayScrollbars;
     if (auto* macTheme = WebCore::macScrollbarTheme())
         macTheme->setPaintCharacteristicsForScrollbar(*_scrollbar);
 
-    if (part == WebCore::ThumbPart && _scrollbar->orientation() == WebCore::VerticalScrollbar) {
+    if (part == WebCore::ThumbPart && _scrollbar->orientation() == WebCore::ScrollbarOrientation::Vertical) {
         if (newAlpha == 1) {
             auto thumbRect = WebCore::IntRect([scrollerPainter rectForPart:NSScrollerKnob]);
             [self scrollbarsController]->setVisibleScrollerThumbRect(thumbRect);

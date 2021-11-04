@@ -43,7 +43,7 @@ struct StyleScrollbarState {
     ScrollbarPart scrollbarPart { NoPart };
     ScrollbarPart hoveredPart { NoPart };
     ScrollbarPart pressedPart { NoPart };
-    ScrollbarOrientation orientation { VerticalScrollbar };
+    ScrollbarOrientation orientation { ScrollbarOrientation::Vertical };
     ScrollbarButtonsPlacement buttonsPlacement { ScrollbarButtonsNone };
     bool enabled { false };
     bool scrollCornerIsVisible { false };

@@ -199,7 +199,7 @@ void WebPopupMenuProxyWin::showPopupMenu(const IntRect& rect, TextDirection, dou
     HWND hostWindow = m_webView->window();
 
     if (!m_scrollbar && visibleItems() < m_items.size()) {
-        m_scrollbar = Scrollbar::createNativeScrollbar(*this, VerticalScrollbar, ScrollbarControlSize::Small);
+        m_scrollbar = Scrollbar::createNativeScrollbar(*this, ScrollbarOrientation::Vertical, ScrollbarControlSize::Small);
         m_scrollbar->styleChanged();
     }
 
@@ -983,12 +983,12 @@ bool WebPopupMenuProxyWin::scrollToRevealSelection()
     int index = focusedIndex();
 
     if (index < m_scrollOffset) {
-        ScrollableArea::scrollToOffsetWithoutAnimation(VerticalScrollbar, index);
+        ScrollableArea::scrollToOffsetWithoutAnimation(ScrollbarOrientation::Vertical, index);
         return true;
     }
 
     if (index >= m_scrollOffset + visibleItems()) {
-        ScrollableArea::scrollToOffsetWithoutAnimation(VerticalScrollbar, index - visibleItems() + 1);
+        ScrollableArea::scrollToOffsetWithoutAnimation(ScrollbarOrientation::Vertical, index - visibleItems() + 1);
         return true;
     }
 

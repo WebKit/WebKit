@@ -67,12 +67,12 @@ void ScrollView::removeChild(Widget& child)
 
 bool ScrollView::setHasHorizontalScrollbar(bool hasBar, bool* contentSizeAffected)
 {
-    return setHasScrollbarInternal(m_horizontalScrollbar, HorizontalScrollbar, hasBar, contentSizeAffected);
+    return setHasScrollbarInternal(m_horizontalScrollbar, ScrollbarOrientation::Horizontal, hasBar, contentSizeAffected);
 }
 
 bool ScrollView::setHasVerticalScrollbar(bool hasBar, bool* contentSizeAffected)
 {
-    return setHasScrollbarInternal(m_verticalScrollbar, VerticalScrollbar, hasBar, contentSizeAffected);
+    return setHasScrollbarInternal(m_verticalScrollbar, ScrollbarOrientation::Vertical, hasBar, contentSizeAffected);
 }
 
 bool ScrollView::setHasScrollbarInternal(RefPtr<Scrollbar>& scrollbar, ScrollbarOrientation orientation, bool hasBar, bool* contentSizeAffected)

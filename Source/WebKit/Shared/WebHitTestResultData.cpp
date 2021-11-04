@@ -58,7 +58,7 @@ WebHitTestResultData::WebHitTestResultData(const WebCore::HitTestResult& hitTest
     , imageSize(0)
 {
     if (auto* scrollbar = hitTestResult.scrollbar())
-        isScrollbar = scrollbar->orientation() == HorizontalScrollbar ? IsScrollbar::Horizontal : IsScrollbar::Vertical;
+        isScrollbar = scrollbar->orientation() == ScrollbarOrientation::Horizontal ? IsScrollbar::Horizontal : IsScrollbar::Vertical;
 }
 
 WebHitTestResultData::WebHitTestResultData(const WebCore::HitTestResult& hitTestResult, bool includeImage)
@@ -79,7 +79,7 @@ WebHitTestResultData::WebHitTestResultData(const WebCore::HitTestResult& hitTest
     , imageSize(0)
 {
     if (auto* scrollbar = hitTestResult.scrollbar())
-        isScrollbar = scrollbar->orientation() == HorizontalScrollbar ? IsScrollbar::Horizontal : IsScrollbar::Vertical;
+        isScrollbar = scrollbar->orientation() == ScrollbarOrientation::Horizontal ? IsScrollbar::Horizontal : IsScrollbar::Vertical;
 
     if (!includeImage)
         return;

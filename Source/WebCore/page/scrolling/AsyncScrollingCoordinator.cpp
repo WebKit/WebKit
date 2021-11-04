@@ -613,13 +613,13 @@ void AsyncScrollingCoordinator::scrollableAreaScrollbarLayerDidChange(Scrollable
     auto* node = m_scrollingStateTree->stateNodeForID(scrollableArea.scrollingNodeID());
     if (is<ScrollingStateScrollingNode>(node)) {
         auto& scrollingNode = downcast<ScrollingStateScrollingNode>(*node);
-        if (orientation == VerticalScrollbar)
+        if (orientation == ScrollbarOrientation::Vertical)
             scrollingNode.setVerticalScrollbarLayer(scrollableArea.layerForVerticalScrollbar());
         else
             scrollingNode.setHorizontalScrollbarLayer(scrollableArea.layerForHorizontalScrollbar());
     }
 
-    if (orientation == VerticalScrollbar)
+    if (orientation == ScrollbarOrientation::Vertical)
         scrollableArea.verticalScrollbarLayerDidChange();
     else
         scrollableArea.horizontalScrollbarLayerDidChange();

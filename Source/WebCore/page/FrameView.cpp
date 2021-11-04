@@ -1494,7 +1494,7 @@ bool FrameView::horizontalScrollbarHiddenByStyle() const
         return scrollbar && scrollbar->isHiddenByStyle();
     }
 
-    return styleHidesScrollbarWithOrientation(HorizontalScrollbar);
+    return styleHidesScrollbarWithOrientation(ScrollbarOrientation::Horizontal);
 }
 
 bool FrameView::verticalScrollbarHiddenByStyle() const
@@ -1504,7 +1504,7 @@ bool FrameView::verticalScrollbarHiddenByStyle() const
         return scrollbar && scrollbar->isHiddenByStyle();
     }
     
-    return styleHidesScrollbarWithOrientation(VerticalScrollbar);
+    return styleHidesScrollbarWithOrientation(ScrollbarOrientation::Vertical);
 }
 
 void FrameView::setCannotBlitToWindow()
@@ -3588,14 +3588,14 @@ void FrameView::performSizeToContentAutoSize()
         if (newSize.width() > m_autoSizeConstraint.width()) {
             RefPtr<Scrollbar> localHorizontalScrollbar = horizontalScrollbar();
             if (!localHorizontalScrollbar)
-                localHorizontalScrollbar = createScrollbar(HorizontalScrollbar);
+                localHorizontalScrollbar = createScrollbar(ScrollbarOrientation::Horizontal);
             newSize.expand(0, localHorizontalScrollbar->occupiedHeight());
             // Don't bother checking for a vertical scrollbar because the width is at
             // already greater the maximum.
         } else if (newSize.height() > m_autoSizeConstraint.height()) {
             RefPtr<Scrollbar> localVerticalScrollbar = verticalScrollbar();
             if (!localVerticalScrollbar)
-                localVerticalScrollbar = createScrollbar(VerticalScrollbar);
+                localVerticalScrollbar = createScrollbar(ScrollbarOrientation::Vertical);
             newSize.expand(localVerticalScrollbar->occupiedWidth(), 0);
             // Don't bother checking for a horizontal scrollbar because the height is
             // already greater the maximum.
@@ -3817,7 +3817,7 @@ void FrameView::scrollToPositionWithAnimation(const ScrollPosition& position, Sc
 
 float FrameView::adjustScrollStepForFixedContent(float step, ScrollbarOrientation orientation, ScrollGranularity granularity)
 {
-    if (granularity != ScrollByPage || orientation == HorizontalScrollbar)
+    if (granularity != ScrollByPage || orientation == ScrollbarOrientation::Horizontal)
         return step;
 
     TrackedRendererListHashSet* positionedObjects = nullptr;

@@ -1070,9 +1070,9 @@ bool RenderBox::hasAutoScrollbar(ScrollbarOrientation orientation) const
     };
 
     switch (orientation) {
-    case ScrollbarOrientation::HorizontalScrollbar:
+    case ScrollbarOrientation::Horizontal:
         return isAutoOrScrollWithOverlayScrollbar(style().overflowX());
-    case ScrollbarOrientation::VerticalScrollbar:
+    case ScrollbarOrientation::Vertical:
         return isAutoOrScrollWithOverlayScrollbar(style().overflowY());
     }
     return false;
@@ -1088,9 +1088,9 @@ bool RenderBox::hasAlwaysPresentScrollbar(ScrollbarOrientation orientation) cons
     };
 
     switch (orientation) {
-    case ScrollbarOrientation::HorizontalScrollbar:
+    case ScrollbarOrientation::Horizontal:
         return isAlwaysVisibleScrollbar(style().overflowX());
-    case ScrollbarOrientation::VerticalScrollbar:
+    case ScrollbarOrientation::Vertical:
         return isAlwaysVisibleScrollbar(style().overflowY());
     }
     return false;

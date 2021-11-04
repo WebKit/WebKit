@@ -193,9 +193,9 @@ void ScrollbarThemeComposite::splitTrack(Scrollbar& scrollbar, const IntRect& un
     // This function won't even get called unless we're big enough to have some combination of these three rects where at least
     // one of them is non-empty.
     IntRect trackRect = constrainTrackRectToTrackPieces(scrollbar, unconstrainedTrackRect);
-    int thickness = scrollbar.orientation() == HorizontalScrollbar ? scrollbar.height() : scrollbar.width();
+    int thickness = scrollbar.orientation() == ScrollbarOrientation::Horizontal ? scrollbar.height() : scrollbar.width();
     int thumbPos = thumbPosition(scrollbar);
-    if (scrollbar.orientation() == HorizontalScrollbar) {
+    if (scrollbar.orientation() == ScrollbarOrientation::Horizontal) {
         thumbRect = IntRect(trackRect.x() + thumbPos, trackRect.y() + (trackRect.height() - thickness) / 2, thumbLength(scrollbar), thickness);
         beforeThumbRect = IntRect(trackRect.x(), trackRect.y(), thumbPos + thumbRect.width() / 2, trackRect.height()); 
         afterThumbRect = IntRect(trackRect.x() + beforeThumbRect.width(), trackRect.y(), trackRect.maxX() - beforeThumbRect.maxX(), trackRect.height());
@@ -251,13 +251,13 @@ int ScrollbarThemeComposite::minimumThumbLength(Scrollbar& scrollbar)
 int ScrollbarThemeComposite::trackPosition(Scrollbar& scrollbar)
 {
     IntRect constrainedTrackRect = constrainTrackRectToTrackPieces(scrollbar, trackRect(scrollbar));
-    return (scrollbar.orientation() == HorizontalScrollbar) ? constrainedTrackRect.x() - scrollbar.x() : constrainedTrackRect.y() - scrollbar.y();
+    return (scrollbar.orientation() == ScrollbarOrientation::Horizontal) ? constrainedTrackRect.x() - scrollbar.x() : constrainedTrackRect.y() - scrollbar.y();
 }
 
 int ScrollbarThemeComposite::trackLength(Scrollbar& scrollbar)
 {
     IntRect constrainedTrackRect = constrainTrackRectToTrackPieces(scrollbar, trackRect(scrollbar));
-    return (scrollbar.orientation() == HorizontalScrollbar) ? constrainedTrackRect.width() : constrainedTrackRect.height();
+    return (scrollbar.orientation() == ScrollbarOrientation::Horizontal) ? constrainedTrackRect.width() : constrainedTrackRect.height();
 }
 
 IntRect ScrollbarThemeComposite::thumbRect(Scrollbar& scrollbar)

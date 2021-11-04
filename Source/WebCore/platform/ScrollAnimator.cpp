@@ -75,16 +75,16 @@ bool ScrollAnimator::scroll(ScrollbarOrientation orientation, ScrollGranularity 
 
         auto currentOffset = offsetFromPosition(currentPosition());
         auto newOffset = currentOffset + delta;
-        if (orientation == HorizontalScrollbar)
+        if (orientation == ScrollbarOrientation::Horizontal)
             newOffset.setX(m_scrollController.adjustedScrollDestination(ScrollEventAxis::Horizontal, newOffset, multiplier, currentOffset.x()));
         else
             newOffset.setY(m_scrollController.adjustedScrollDestination(ScrollEventAxis::Vertical, newOffset, multiplier, currentOffset.y()));
 
         auto newDelta = newOffset - currentOffset;
-        if (orientation == HorizontalScrollbar)
-            return scroll(HorizontalScrollbar, granularity, newDelta.width(), 1.0, behavior);
+        if (orientation == ScrollbarOrientation::Horizontal)
+            return scroll(ScrollbarOrientation::Horizontal, granularity, newDelta.width(), 1.0, behavior);
 
-        return scroll(VerticalScrollbar, granularity, newDelta.height(), 1.0, behavior);
+        return scroll(ScrollbarOrientation::Vertical, granularity, newDelta.height(), 1.0, behavior);
     }
 
     if (m_scrollableArea.scrollAnimatorEnabled() && platformAllowsScrollAnimation() && !behavior.contains(ScrollBehavior::NeverAnimate)) {
@@ -144,7 +144,7 @@ FloatPoint ScrollAnimator::positionFromOffset(const FloatPoint& offset) const
 FloatSize ScrollAnimator::deltaFromStep(ScrollbarOrientation orientation, float step, float multiplier)
 {
     FloatSize delta;
-    if (orientation == HorizontalScrollbar)
+    if (orientation == ScrollbarOrientation::Horizontal)
         delta.setWidth(step * multiplier);
     else
         delta.setHeight(step * multiplier);
@@ -217,7 +217,7 @@ bool ScrollAnimator::handleWheelEvent(const PlatformWheelEvent& e)
                 if (negative)
                     deltaY = -deltaY;
             }
-            scroll(VerticalScrollbar, ScrollByPixel, verticalScrollbar->pixelStep(), -deltaY, behavior);
+            scroll(ScrollbarOrientation::Vertical, ScrollByPixel, verticalScrollbar->pixelStep(), -deltaY, behavior);
         }
 
         if (deltaX) {
@@ -227,7 +227,7 @@ bool ScrollAnimator::handleWheelEvent(const PlatformWheelEvent& e)
                 if (negative)
                     deltaX = -deltaX;
             }
-            scroll(HorizontalScrollbar, ScrollByPixel, horizontalScrollbar->pixelStep(), -deltaX, behavior);
+            scroll(ScrollbarOrientation::Horizontal, ScrollByPixel, horizontalScrollbar->pixelStep(), -deltaX, behavior);
         }
     }
     return handled;

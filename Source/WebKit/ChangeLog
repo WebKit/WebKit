@@ -1,3 +1,18 @@
+2021-11-04  Nikolaos Mouchtaris  <nmouchtaris@apple.com>
+
+        Make scrollbar orientation an enum class
+        https://bugs.webkit.org/show_bug.cgi?id=232648
+
+        Reviewed by Simon Fraser.
+
+        * Shared/WebHitTestResultData.cpp:
+        (WebKit::WebHitTestResultData::WebHitTestResultData):
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::PDFPlugin::updateScrollbars):
+        (WebKit::PDFPlugin::createScrollbar):
+        (WebKit::PDFPlugin::destroyScrollbar):
+        (WebKit::PDFPlugin::destroy):
+
 2021-11-04  Aditya Keerthi  <akeerthi@apple.com>
 
         Crash when opening and closing color picker while resetting form

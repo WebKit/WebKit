@@ -1312,15 +1312,15 @@ void PDFPlugin::updateScrollbars()
 
     if (m_horizontalScrollbar) {
         if (m_size.width() >= m_pdfDocumentSize.width())
-            destroyScrollbar(HorizontalScrollbar);
+            destroyScrollbar(ScrollbarOrientation::Horizontal);
     } else if (m_size.width() < m_pdfDocumentSize.width())
-        m_horizontalScrollbar = createScrollbar(HorizontalScrollbar);
+        m_horizontalScrollbar = createScrollbar(ScrollbarOrientation::Horizontal);
 
     if (m_verticalScrollbar) {
         if (m_size.height() >= m_pdfDocumentSize.height())
-            destroyScrollbar(VerticalScrollbar);
+            destroyScrollbar(ScrollbarOrientation::Vertical);
     } else if (m_size.height() < m_pdfDocumentSize.height())
-        m_verticalScrollbar = createScrollbar(VerticalScrollbar);
+        m_verticalScrollbar = createScrollbar(ScrollbarOrientation::Vertical);
 
     IntSize scrollbarSpace = scrollbarIntrusion();
 
@@ -1385,7 +1385,7 @@ const PluginView* PDFPlugin::pluginView() const
 Ref<Scrollbar> PDFPlugin::createScrollbar(ScrollbarOrientation orientation)
 {
     auto widget = Scrollbar::createNativeScrollbar(*this, orientation, ScrollbarControlSize::Regular);
-    if (orientation == HorizontalScrollbar) {
+    if (orientation == ScrollbarOrientation::Horizontal) {
         m_horizontalScrollbarLayer = adoptNS([[WKPDFPluginScrollbarLayer alloc] initWithPDFPlugin:this]);
         [m_containerLayer addSublayer:m_horizontalScrollbarLayer.get()];
     } else {
@@ -1413,7 +1413,7 @@ Ref<Scrollbar> PDFPlugin::createScrollbar(ScrollbarOrientation orientation)
 
 void PDFPlugin::destroyScrollbar(ScrollbarOrientation orientation)
 {
-    RefPtr<Scrollbar>& scrollbar = orientation == HorizontalScrollbar ? m_horizontalScrollbar : m_verticalScrollbar;
+    RefPtr<Scrollbar>& scrollbar = orientation == ScrollbarOrientation::Horizontal ? m_horizontalScrollbar : m_verticalScrollbar;
     if (!scrollbar)
         return;
 
@@ -1421,7 +1421,7 @@ void PDFPlugin::destroyScrollbar(ScrollbarOrientation orientation)
     scrollbar->removeFromParent();
     scrollbar = nullptr;
 
-    if (orientation == HorizontalScrollbar) {
+    if (orientation == ScrollbarOrientation::Horizontal) {
         [m_horizontalScrollbarLayer removeFromSuperlayer];
         m_horizontalScrollbarLayer = 0;
     } else {
@@ -1953,8 +1953,8 @@ void PDFPlugin::destroy()
     m_activeAnnotation = nullptr;
     m_annotationContainer = nullptr;
 
-    destroyScrollbar(HorizontalScrollbar);
-    destroyScrollbar(VerticalScrollbar);
+    destroyScrollbar(ScrollbarOrientation::Horizontal);
+    destroyScrollbar(ScrollbarOrientation::Vertical);
     
     [m_scrollCornerLayer removeFromSuperlayer];
     [m_contentLayer removeFromSuperlayer];

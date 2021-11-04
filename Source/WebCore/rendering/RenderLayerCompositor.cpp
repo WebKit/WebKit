@@ -4027,13 +4027,13 @@ void RenderLayerCompositor::updateOverflowControlsLayers()
             m_overflowControlsHostLayer->addChild(*m_layerForHorizontalScrollbar);
 
             if (auto* scrollingCoordinator = this->scrollingCoordinator())
-                scrollingCoordinator->scrollableAreaScrollbarLayerDidChange(m_renderView.frameView(), HorizontalScrollbar);
+                scrollingCoordinator->scrollableAreaScrollbarLayerDidChange(m_renderView.frameView(), ScrollbarOrientation::Horizontal);
         }
     } else if (m_layerForHorizontalScrollbar) {
         GraphicsLayer::unparentAndClear(m_layerForHorizontalScrollbar);
 
         if (auto* scrollingCoordinator = this->scrollingCoordinator())
-            scrollingCoordinator->scrollableAreaScrollbarLayerDidChange(m_renderView.frameView(), HorizontalScrollbar);
+            scrollingCoordinator->scrollableAreaScrollbarLayerDidChange(m_renderView.frameView(), ScrollbarOrientation::Horizontal);
     }
 
     if (requiresVerticalScrollbarLayer()) {
@@ -4048,13 +4048,13 @@ void RenderLayerCompositor::updateOverflowControlsLayers()
             m_overflowControlsHostLayer->addChild(*m_layerForVerticalScrollbar);
 
             if (auto* scrollingCoordinator = this->scrollingCoordinator())
-                scrollingCoordinator->scrollableAreaScrollbarLayerDidChange(m_renderView.frameView(), VerticalScrollbar);
+                scrollingCoordinator->scrollableAreaScrollbarLayerDidChange(m_renderView.frameView(), ScrollbarOrientation::Vertical);
         }
     } else if (m_layerForVerticalScrollbar) {
         GraphicsLayer::unparentAndClear(m_layerForVerticalScrollbar);
 
         if (auto* scrollingCoordinator = this->scrollingCoordinator())
-            scrollingCoordinator->scrollableAreaScrollbarLayerDidChange(m_renderView.frameView(), VerticalScrollbar);
+            scrollingCoordinator->scrollableAreaScrollbarLayerDidChange(m_renderView.frameView(), ScrollbarOrientation::Vertical);
     }
 
     if (requiresScrollCornerLayer()) {
@@ -4175,7 +4175,7 @@ void RenderLayerCompositor::destroyRootLayer()
     if (m_layerForHorizontalScrollbar) {
         GraphicsLayer::unparentAndClear(m_layerForHorizontalScrollbar);
         if (auto* scrollingCoordinator = this->scrollingCoordinator())
-            scrollingCoordinator->scrollableAreaScrollbarLayerDidChange(m_renderView.frameView(), HorizontalScrollbar);
+            scrollingCoordinator->scrollableAreaScrollbarLayerDidChange(m_renderView.frameView(), ScrollbarOrientation::Horizontal);
         if (auto* horizontalScrollbar = m_renderView.frameView().verticalScrollbar())
             m_renderView.frameView().invalidateScrollbar(*horizontalScrollbar, IntRect(IntPoint(0, 0), horizontalScrollbar->frameRect().size()));
     }
@@ -4183,7 +4183,7 @@ void RenderLayerCompositor::destroyRootLayer()
     if (m_layerForVerticalScrollbar) {
         GraphicsLayer::unparentAndClear(m_layerForVerticalScrollbar);
         if (auto* scrollingCoordinator = this->scrollingCoordinator())
-            scrollingCoordinator->scrollableAreaScrollbarLayerDidChange(m_renderView.frameView(), VerticalScrollbar);
+            scrollingCoordinator->scrollableAreaScrollbarLayerDidChange(m_renderView.frameView(), ScrollbarOrientation::Vertical);
         if (auto* verticalScrollbar = m_renderView.frameView().verticalScrollbar())
             m_renderView.frameView().invalidateScrollbar(*verticalScrollbar, IntRect(IntPoint(0, 0), verticalScrollbar->frameRect().size()));
     }

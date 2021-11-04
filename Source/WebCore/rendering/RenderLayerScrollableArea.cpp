@@ -95,8 +95,8 @@ void RenderLayerScrollableArea::clear()
     if (Element* element = renderer.element())
         element->setSavedLayerScrollPosition(m_scrollPosition);
 
-    destroyScrollbar(HorizontalScrollbar);
-    destroyScrollbar(VerticalScrollbar);
+    destroyScrollbar(ScrollbarOrientation::Horizontal);
+    destroyScrollbar(ScrollbarOrientation::Vertical);
 
     if (auto* scrollingCoordinator = renderer.page().scrollingCoordinator())
         scrollingCoordinator->willDestroyScrollableArea(*this);
@@ -839,7 +839,7 @@ Ref<Scrollbar> RenderLayerScrollableArea::createScrollbar(ScrollbarOrientation o
 
 void RenderLayerScrollableArea::destroyScrollbar(ScrollbarOrientation orientation)
 {
-    RefPtr<Scrollbar>& scrollbar = orientation == HorizontalScrollbar ? m_hBar : m_vBar;
+    RefPtr<Scrollbar>& scrollbar = orientation == ScrollbarOrientation::Horizontal ? m_hBar : m_vBar;
     if (!scrollbar)
         return;
 
@@ -856,14 +856,14 @@ void RenderLayerScrollableArea::setHasHorizontalScrollbar(bool hasScrollbar)
         return;
 
     if (hasScrollbar) {
-        m_hBar = createScrollbar(HorizontalScrollbar);
+        m_hBar = createScrollbar(ScrollbarOrientation::Horizontal);
 #if HAVE(RUBBER_BANDING)
         auto& renderer = m_layer.renderer();
         ScrollElasticity elasticity = scrollsOverflow() && renderer.settings().rubberBandingForSubScrollableRegionsEnabled() ? ScrollElasticityAutomatic : ScrollElasticityNone;
         ScrollableArea::setHorizontalScrollElasticity(elasticity);
 #endif
     } else {
-        destroyScrollbar(HorizontalScrollbar);
+        destroyScrollbar(ScrollbarOrientation::Horizontal);
 #if HAVE(RUBBER_BANDING)
         ScrollableArea::setHorizontalScrollElasticity(ScrollElasticityNone);
 #endif
@@ -882,14 +882,14 @@ void RenderLayerScrollableArea::setHasVerticalScrollbar(bool hasScrollbar)
         return;
 
     if (hasScrollbar) {
-        m_vBar = createScrollbar(VerticalScrollbar);
+        m_vBar = createScrollbar(ScrollbarOrientation::Vertical);
 #if HAVE(RUBBER_BANDING)
         auto& renderer = m_layer.renderer();
         ScrollElasticity elasticity = scrollsOverflow() && renderer.settings().rubberBandingForSubScrollableRegionsEnabled() ? ScrollElasticityAutomatic : ScrollElasticityNone;
         ScrollableArea::setVerticalScrollElasticity(elasticity);
 #endif
     } else {
-        destroyScrollbar(VerticalScrollbar);
+        destroyScrollbar(ScrollbarOrientation::Vertical);
 #if HAVE(RUBBER_BANDING)
         ScrollableArea::setVerticalScrollElasticity(ScrollElasticityNone);
 #endif
@@ -1080,7 +1080,7 @@ void RenderLayerScrollableArea::updateScrollbarPresenceAndState(std::optional<bo
     };
 
     auto scrollbarForAxis = [&](ScrollbarOrientation orientation) -> RefPtr<Scrollbar>& {
-        return orientation == ScrollbarOrientation::HorizontalScrollbar ? m_hBar : m_vBar;
+        return orientation == ScrollbarOrientation::Horizontal ? m_hBar : m_vBar;
     };
 
     auto stateForScrollbar = [&](ScrollbarOrientation orientation, std::optional<bool> hasOverflow, ScrollbarState nonScrollableState) {
@@ -1102,12 +1102,12 @@ void RenderLayerScrollableArea::updateScrollbarPresenceAndState(std::optional<bo
         return ScrollbarState::NoScrollbar;
     };
 
-    auto horizontalBarState = stateForScrollbarOnAxis(ScrollbarOrientation::HorizontalScrollbar, hasHorizontalOverflow);
+    auto horizontalBarState = stateForScrollbarOnAxis(ScrollbarOrientation::Horizontal, hasHorizontalOverflow);
     setHasHorizontalScrollbar(horizontalBarState != ScrollbarState::NoScrollbar);
     if (horizontalBarState != ScrollbarState::NoScrollbar)
         m_hBar->setEnabled(horizontalBarState == ScrollbarState::Enabled);
 
-    auto verticalBarState = stateForScrollbarOnAxis(ScrollbarOrientation::VerticalScrollbar, hasVerticalOverflow);
+    auto verticalBarState = stateForScrollbarOnAxis(ScrollbarOrientation::Vertical, hasVerticalOverflow);
     setHasVerticalScrollbar(verticalBarState != ScrollbarState::NoScrollbar);
     if (verticalBarState != ScrollbarState::NoScrollbar)
         m_vBar->setEnabled(verticalBarState == ScrollbarState::Enabled);
@@ -1150,8 +1150,8 @@ void RenderLayerScrollableArea::updateScrollbarsAfterLayout()
     updateScrollbarPresenceAndState(hasHorizontalOverflow(), hasVerticalOverflow());
 
     // Scrollbars with auto behavior may need to lay out again if scrollbars got added or removed.
-    bool autoHorizontalScrollBarChanged = box->hasAutoScrollbar(ScrollbarOrientation::HorizontalScrollbar) && (hadHorizontalScrollbar != hasHorizontalScrollbar());
-    bool autoVerticalScrollBarChanged = box->hasAutoScrollbar(ScrollbarOrientation::VerticalScrollbar) && (hadVerticalScrollbar != hasVerticalScrollbar());
+    bool autoHorizontalScrollBarChanged = box->hasAutoScrollbar(ScrollbarOrientation::Horizontal) && (hadHorizontalScrollbar != hasHorizontalScrollbar());
+    bool autoVerticalScrollBarChanged = box->hasAutoScrollbar(ScrollbarOrientation::Vertical) && (hadVerticalScrollbar != hasVerticalScrollbar());
 
     if (autoHorizontalScrollBarChanged || autoVerticalScrollBarChanged) {
         if (autoVerticalScrollBarChanged && shouldPlaceVerticalScrollbarOnLeft())

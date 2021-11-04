@@ -101,10 +101,10 @@ bool ScrollableArea::scroll(ScrollDirection direction, ScrollGranularity granula
     ScrollbarOrientation orientation;
     Scrollbar* scrollbar;
     if (direction == ScrollUp || direction == ScrollDown) {
-        orientation = VerticalScrollbar;
+        orientation = ScrollbarOrientation::Vertical;
         scrollbar = verticalScrollbar();
     } else {
-        orientation = HorizontalScrollbar;
+        orientation = ScrollbarOrientation::Horizontal;
         scrollbar = horizontalScrollbar();
     }
 
@@ -163,7 +163,7 @@ void ScrollableArea::scrollToOffsetWithoutAnimation(const FloatPoint& offset, Sc
 void ScrollableArea::scrollToOffsetWithoutAnimation(ScrollbarOrientation orientation, float offset)
 {
     auto currentPosition = scrollAnimator().currentPosition();
-    if (orientation == HorizontalScrollbar)
+    if (orientation == ScrollbarOrientation::Horizontal)
         scrollAnimator().scrollToPositionWithoutAnimation(FloatPoint(offset, currentPosition.y()));
     else
         scrollAnimator().scrollToPositionWithoutAnimation(FloatPoint(currentPosition.x(), offset));
@@ -325,7 +325,7 @@ bool ScrollableArea::scrollbarsCanBeActive() const
 
 void ScrollableArea::didAddScrollbar(Scrollbar* scrollbar, ScrollbarOrientation orientation)
 {
-    if (orientation == VerticalScrollbar)
+    if (orientation == ScrollbarOrientation::Vertical)
         scrollbarsController().didAddVerticalScrollbar(scrollbar);
     else
         scrollbarsController().didAddHorizontalScrollbar(scrollbar);
@@ -338,7 +338,7 @@ void ScrollableArea::didAddScrollbar(Scrollbar* scrollbar, ScrollbarOrientation 
 
 void ScrollableArea::willRemoveScrollbar(Scrollbar* scrollbar, ScrollbarOrientation orientation)
 {
-    if (orientation == VerticalScrollbar)
+    if (orientation == ScrollbarOrientation::Vertical)
         scrollbarsController().willRemoveVerticalScrollbar(scrollbar);
     else
         scrollbarsController().willRemoveHorizontalScrollbar(scrollbar);
@@ -565,7 +565,7 @@ void ScrollableArea::doPostThumbMoveSnapping(ScrollbarOrientation orientation)
 
     auto currentOffset = scrollOffset();
     auto newOffset = currentOffset;
-    if (orientation == HorizontalScrollbar)
+    if (orientation == ScrollbarOrientation::Horizontal)
         newOffset.setX(scrollAnimator->scrollOffsetAdjustedForSnapping(ScrollEventAxis::Horizontal, currentOffset, ScrollSnapPointSelectionMethod::Closest));
     else
         newOffset.setY(scrollAnimator->scrollOffsetAdjustedForSnapping(ScrollEventAxis::Vertical, currentOffset, ScrollSnapPointSelectionMethod::Closest));
