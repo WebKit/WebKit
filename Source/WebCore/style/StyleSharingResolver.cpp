@@ -260,7 +260,7 @@ bool SharingResolver::canShareStyleWithElement(const Context& context, const Sty
     if (isControl && !canShareStyleWithControl(downcast<HTMLFormControlElement>(element), downcast<HTMLFormControlElement>(candidateElement)))
         return false;
 
-    if (style->transitions() || style->animations())
+    if (candidateElement.hasKeyframeEffects(PseudoId::None))
         return false;
 
     // Turn off style sharing for elements that can gain layers for reasons outside of the style system.
