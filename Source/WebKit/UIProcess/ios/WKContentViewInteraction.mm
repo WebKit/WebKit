@@ -8079,6 +8079,11 @@ static WebCore::DataOwnerType coreDataOwnerType(_UIDataOwner platformType)
             return YES;
 #endif
 
+#if ENABLE(IMAGE_ANALYSIS)
+        if (gestureRecognizer == _imageAnalysisGestureRecognizer || gestureRecognizer == _imageAnalysisTimeoutGestureRecognizer)
+            return YES;
+#endif
+
         if (gestureRecognizer._wk_isTapAndAHalf)
             return YES;
 
