@@ -1,5 +1,42 @@
 2021-11-04  Russell Epstein  <repstein@apple.com>
 
+        Apply patch. rdar://problem/80991209
+
+    2021-11-04  Kate Cheney  <katherine_cheney@apple.com>
+
+            PCM: Safari on iOS and macOS are not sending ad click attribution reports for Private Click Measurement
+            https://bugs.webkit.org/show_bug.cgi?id=228104
+            <rdar://problem/80991209>
+
+            Reviewed by John Wilander.
+
+            firePendingAttributionRequests() was sometimes scheduling the next timer
+            fire to be the raw time value instead of the difference between now
+            and the scheduled send time. This was resulting in some reports not being
+            sent within the 24-48 hour range.
+
+            To test this, this patch removes the immediate timer fire for testing
+            and instead sets the earliest time to send values to both be 1 second.
+            This will test that the proper timer gets set to send both reports.
+
+            * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementDatabase.cpp:
+            (WebKit::PCM::Database::attributePrivateClickMeasurement):
+            * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementDatabase.h:
+            * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementManager.cpp:
+            (WebKit::PrivateClickMeasurementManager::startTimer):
+            (WebKit::PrivateClickMeasurementManager::attribute):
+            (WebKit::PrivateClickMeasurementManager::randomlyBetweenFifteenAndThirtyMinutes const):
+            (WebKit::PrivateClickMeasurementManager::firePendingAttributionRequests):
+            In the case of both times being past due to report, schedule one for
+            15 - 30 minutes later.
+
+            * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementManager.h:
+            * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementStore.cpp:
+            (WebKit::PCM::Store::attributePrivateClickMeasurement):
+            * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementStore.h:
+
+2021-11-04  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r285177. rdar://problem/85033636
 
     Terminate unresponsive network process by crashing it
