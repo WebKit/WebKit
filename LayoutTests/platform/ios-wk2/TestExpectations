@@ -141,6 +141,8 @@ http/tests/resourceLoadStatistics/cname-cloaking-top-no-cname-sub-3p-cname.html 
 http/tests/resourceLoadStatistics/cname-cloaking-top-no-cname-sub-no-cname.html [ Pass ]
 
 imported/w3c/web-platform-tests/video-rvfc [ Pass ]
+fast/mediastream/getUserMedia-rvfc.html [ Pass ]
+webrtc/peerConnection-rvfc.html [ Pass ]
 # Timing out tests until we add regular video streaming backend support.
 imported/w3c/web-platform-tests/video-rvfc/request-video-frame-callback-before-xr-session.https.html [ Skip ]
 imported/w3c/web-platform-tests/video-rvfc/request-video-frame-callback-dom.html [ Skip ]

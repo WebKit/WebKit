@@ -219,6 +219,8 @@ imported/w3c/web-platform-tests/dom/events/document-level-touchmove-event-listen
 
 # Only Mac and iOS WK2 have an implementation right now.
 imported/w3c/web-platform-tests/video-rvfc [ Skip ]
+fast/mediastream/getUserMedia-rvfc.html [ Skip ]
+webrtc/peerConnection-rvfc.html [ Skip ]
 
 # This test only makes sense on Mac
 fast/attachment/attachment-subtitle-resize.html [ Skip ]
