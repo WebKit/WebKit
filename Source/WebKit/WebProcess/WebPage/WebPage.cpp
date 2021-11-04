@@ -1888,6 +1888,8 @@ void WebPage::goToBackForwardItem(uint64_t navigationID, const BackForwardItemId
     SendStopResponsivenessTimer stopper;
 
     m_lastNavigationWasAppInitiated = lastNavigationWasAppInitiated;
+    if (auto* documentLoader = corePage()->mainFrame().loader().documentLoader())
+        documentLoader->setLastNavigationWasAppInitiated(lastNavigationWasAppInitiated);
 
     ASSERT(isBackForwardLoadType(backForwardType));
 

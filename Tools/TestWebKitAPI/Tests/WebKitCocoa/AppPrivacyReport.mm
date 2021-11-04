@@ -746,16 +746,21 @@ static void restoreFromSessionStateTest(IsAppInitiated isAppInitiated)
 
     RetainPtr<_WKSessionState> sessionState = [webView1 _sessionState];
     sessionState.get().isAppInitiated = isAppInitiated == IsAppInitiated::Yes ? true : false;
-    webView1 = nullptr;
+    [webView1 _close];
+
+    static bool isDone = false;
+    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
+        isDone = true;
+    }];
+    TestWebKitAPI::Util::run(&isDone);
 
     auto webView2 = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
-
     [webView2 _restoreSessionState:sessionState.get() andNavigate:YES];
     [webView2 _test_waitForDidFinishNavigation];
 
     EXPECT_WK_STREQ(@"https://www.apple.com/", [[webView2 URL] absoluteString]);
 
-    static bool isDone = false;
+    isDone = false;
     bool expectingAppInitiatedRequests = isAppInitiated == IsAppInitiated::Yes ? true : false;
     [webView2 _appPrivacyReportTestingData:^(struct WKAppPrivacyReportTestingData data) {
         EXPECT_EQ(data.hasLoadedAppInitiatedRequestTesting, expectingAppInitiatedRequests);

@@ -1,5 +1,56 @@
 2021-11-04  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r284875. rdar://problem/84597422
+
+    [ App Privacy Report ] Restoring a session after clearing the cache results in app initiated loads in Safari
+    https://bugs.webkit.org/show_bug.cgi?id=232292
+    <rdar://problem/84597422>
+    
+    Reviewed by Brent Fulgham.
+    
+    Source/WebKit:
+    
+    Update session restore code to also set the app initiated value on
+    the current document loader. Previously, this was only set on the new
+    document loader. This is a problem because the main resource load
+    uses the old document loader, so if we restore from a previous session
+    state, the main resource load will have the incorrect attribution
+    value.
+    
+    * WebProcess/WebPage/WebPage.cpp:
+    (WebKit::WebPage::goToBackForwardItem):
+    
+    Tools:
+    
+    Update API test in 2 ways. First, close the original WebView to
+    destroy the page's document loader as if the application was being
+    quit. Second, clear history to make sure there are no cached loads.
+    
+    * TestWebKitAPI/Tests/WebKitCocoa/AppPrivacyReport.mm:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@284875 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-10-26  Kate Cheney  <katherine_cheney@apple.com>
+
+            [ App Privacy Report ] Restoring a session after clearing the cache results in app initiated loads in Safari
+            https://bugs.webkit.org/show_bug.cgi?id=232292
+            <rdar://problem/84597422>
+
+            Reviewed by Brent Fulgham.
+
+            Update session restore code to also set the app initiated value on
+            the current document loader. Previously, this was only set on the new
+            document loader. This is a problem because the main resource load
+            uses the old document loader, so if we restore from a previous session
+            state, the main resource load will have the incorrect attribution
+            value.
+
+            * WebProcess/WebPage/WebPage.cpp:
+            (WebKit::WebPage::goToBackForwardItem):
+
+2021-11-04  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r284689. rdar://problem/83692944
 
     REGRESSION (Safari 15 - iOS15): [WebRTC] Increased audio latency while playing webrtc audio stream over audio element
