@@ -139,9 +139,9 @@ void Plan::updateCallSitesToCallUs(CodeBlock& codeBlock, CodeLocationLabel<WasmE
         stageRepatch(codeBlock.m_wasmToWasmCallsites[i]);
         if (codeBlock.m_llintCallees) {
             LLIntCallee& llintCallee = codeBlock.m_llintCallees->at(i).get();
-            if (JITCallee* replacementCallee = llintCallee.replacement())
+            if (JITCallee* replacementCallee = llintCallee.replacement(codeBlock.mode()))
                 stageRepatch(replacementCallee->wasmToWasmCallsites());
-            if (OMGForOSREntryCallee* osrEntryCallee = llintCallee.osrEntryCallee())
+            if (OMGForOSREntryCallee* osrEntryCallee = llintCallee.osrEntryCallee(codeBlock.mode()))
                 stageRepatch(osrEntryCallee->wasmToWasmCallsites());
         }
         if (BBQCallee* bbqCallee = codeBlock.m_bbqCallees[i].get()) {
@@ -174,9 +174,9 @@ void Plan::updateCallSitesToCallUs(CodeBlock& codeBlock, CodeLocationLabel<WasmE
         repatchCalls(codeBlock.m_wasmToWasmCallsites[i]);
         if (codeBlock.m_llintCallees) {
             LLIntCallee& llintCallee = codeBlock.m_llintCallees->at(i).get();
-            if (JITCallee* replacementCallee = llintCallee.replacement())
+            if (JITCallee* replacementCallee = llintCallee.replacement(codeBlock.mode()))
                 repatchCalls(replacementCallee->wasmToWasmCallsites());
-            if (OMGForOSREntryCallee* osrEntryCallee = llintCallee.osrEntryCallee())
+            if (OMGForOSREntryCallee* osrEntryCallee = llintCallee.osrEntryCallee(codeBlock.mode()))
                 repatchCalls(osrEntryCallee->wasmToWasmCallsites());
         }
         if (BBQCallee* bbqCallee = codeBlock.m_bbqCallees[i].get()) {

@@ -106,7 +106,7 @@ inline bool jitCompileAndSetHeuristics(Wasm::LLIntCallee* callee, Wasm::Function
         return false;
     }
 
-    if (callee->replacement())  {
+    if (callee->replacement(instance->memory()->mode()))  {
         dataLogLnIf(Options::verboseOSR(), "    Code was already compiled.");
         tierUpCounter.optimizeSoon();
         return true;
@@ -143,7 +143,7 @@ inline bool jitCompileAndSetHeuristics(Wasm::LLIntCallee* callee, Wasm::Function
             tierUpCounter.optimizeAfterWarmUp();
     }
 
-    return !!callee->replacement();
+    return !!callee->replacement(instance->memory()->mode());
 }
 
 WASM_SLOW_PATH_DECL(prologue_osr)
@@ -166,7 +166,7 @@ WASM_SLOW_PATH_DECL(prologue_osr)
     if (!jitCompileAndSetHeuristics(callee, codeBlock, instance))
         WASM_RETURN_TWO(nullptr, nullptr);
 
-    WASM_RETURN_TWO(callee->replacement()->entrypoint().executableAddress(), nullptr);
+    WASM_RETURN_TWO(callee->replacement(instance->memory()->mode())->entrypoint().executableAddress(), nullptr);
 }
 
 WASM_SLOW_PATH_DECL(loop_osr)
@@ -190,8 +190,7 @@ WASM_SLOW_PATH_DECL(loop_osr)
         WASM_RETURN_TWO(nullptr, nullptr);
     }
 
-    const auto doOSREntry = [&] {
-        Wasm::OMGForOSREntryCallee* osrEntryCallee = callee->osrEntryCallee();
+    const auto doOSREntry = [&](Wasm::OMGForOSREntryCallee* osrEntryCallee) {
         if (osrEntryCallee->loopIndex() != osrEntryData.loopIndex)
             WASM_RETURN_TWO(nullptr, nullptr);
 
@@ -208,8 +207,8 @@ WASM_SLOW_PATH_DECL(loop_osr)
         WASM_RETURN_TWO(buffer, osrEntryCallee->entrypoint().executableAddress());
     };
 
-    if (callee->osrEntryCallee())
-        return doOSREntry();
+    if (auto* osrEntryCallee = callee->osrEntryCallee(instance->memory()->mode()))
+        return doOSREntry(osrEntryCallee);
 
     bool compile = false;
     {
@@ -236,8 +235,8 @@ WASM_SLOW_PATH_DECL(loop_osr)
             tierUpCounter.optimizeAfterWarmUp();
     }
 
-    if (callee->osrEntryCallee())
-        return doOSREntry();
+    if (auto* osrEntryCallee = callee->osrEntryCallee(instance->memory()->mode()))
+        return doOSREntry(osrEntryCallee);
 
     WASM_RETURN_TWO(nullptr, nullptr);
 }
