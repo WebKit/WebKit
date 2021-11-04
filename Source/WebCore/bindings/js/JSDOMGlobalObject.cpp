@@ -46,8 +46,8 @@
 #include "JSRemoteDOMWindow.h"
 #include "JSWorkerGlobalScope.h"
 #include "JSWorkletGlobalScope.h"
+#include "JSShadowRealmGlobalScopeBase.h"
 #include "JSWritableStream.h"
-#include "JSShadowRealmGlobalScope.h"
 #include "RejectedPromiseTracker.h"
 #include "RuntimeEnabledFeatures.h"
 #include "ScriptModuleLoader.h"
@@ -290,9 +290,10 @@ ScriptExecutionContext* JSDOMGlobalObject::scriptExecutionContext() const
         return jsCast<const JSDOMWindowBase*>(this)->scriptExecutionContext();
     if (inherits<JSRemoteDOMWindowBase>(vm()))
         return nullptr;
-    if (inherits<JSShadowRealmGlobalScope>(vm()))
+    if (inherits<JSShadowRealmGlobalScopeBase>(vm()))
         // TODO PLM
-        return jsCast<const JSShadowRealmGlobalScope*>(this)->parent()->scriptExecutionContext();
+        return jsCast<const JSShadowRealmGlobalScopeBase*>(this)->scriptExecutionContext();
+        return nullptr;
     if (inherits<JSWorkerGlobalScopeBase>(vm()))
         return jsCast<const JSWorkerGlobalScopeBase*>(this)->scriptExecutionContext();
     if (inherits<JSWorkletGlobalScopeBase>(vm()))
@@ -361,8 +362,8 @@ void JSDOMGlobalObject::reportUncaughtExceptionAtEventLoop(JSGlobalObject* jsGlo
 JSC::JSGlobalObject* JSDOMGlobalObject::deriveShadowRealmGlobalObject(JSC::VM& vm, const JSC::JSGlobalObject* globalObject)
 {
     // TODO PLM: create JSShadowRealmScopeBase
-    return JSShadowRealmGlobalScope::create(vm, JSGlobalObject::createStructure(vm, JSC::jsNull()), jsCast<const JSDOMGlobalObject*>(globalObject));
-    /* return JSC::JSGlobalObject::createWithCustomMethodTable(vm, JSGlobalObject::createStructure(vm, JSC::jsNull()), &s_shadowRealmGlobalObjectMethodTable); */
+    /* return JSShadowRealmGlobalScope::create(vm, JSGlobalObject::createStructure(vm, JSC::jsNull()), jsCast<const JSDOMGlobalObject*>(globalObject)); */
+    return JSC::JSGlobalObject::createWithCustomMethodTable(vm, JSGlobalObject::createStructure(vm, JSC::jsNull()), &s_shadowRealmGlobalObjectMethodTable);
 }
 
 void JSDOMGlobalObject::clearDOMGuardedObjects() const
@@ -542,9 +543,9 @@ static ScriptModuleLoader* scriptModuleLoader(const JSDOMGlobalObject* globalObj
     }
     if (globalObject->inherits<JSRemoteDOMWindowBase>(vm))
         return nullptr;
-    if (globalObject->inherits<JSShadowRealmGlobalScope>(vm))
+    if (globalObject->inherits<JSShadowRealmGlobalScopeBase>(vm))
         // TODO PLM:
-        return scriptModuleLoader(jsCast<const JSShadowRealmGlobalScope*>(globalObject)->parent());
+        return &jsCast<const JSShadowRealmGlobalScopeBase*>(globalObject)->wrapped().moduleLoader();
     if (globalObject->inherits<JSWorkerGlobalScopeBase>(vm))
         return &jsCast<const JSWorkerGlobalScopeBase*>(globalObject)->wrapped().moduleLoader();
     if (globalObject->inherits<JSWorkletGlobalScopeBase>(vm))

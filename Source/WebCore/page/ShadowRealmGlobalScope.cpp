@@ -1,0 +1,505 @@
+/*
+ * Copyright (C) 2021 Igalia S.L.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include "config.h"
+#include "ShadowRealmGlobalScope.h"
+
+#include "CSSFontSelector.h"
+#include "CSSValueList.h"
+#include "CSSValuePool.h"
+#include "CommonVM.h"
+#include "ContentSecurityPolicy.h"
+#include "FontCache.h"
+#include "FontCustomPlatformData.h"
+#include "FontFaceSet.h"
+#include "ImageBitmapOptions.h"
+#include "InspectorInstrumentation.h"
+#include "JSDOMExceptionHandling.h"
+#include "Performance.h"
+#include "RTCDataChannelRemoteHandlerConnection.h"
+#include "RuntimeEnabledFeatures.h"
+#include "ScheduledAction.h"
+#include "ScriptSourceCode.h"
+#include "SecurityOrigin.h"
+#include "SecurityOriginPolicy.h"
+#include "SocketProvider.h"
+#include "WorkerFontLoadRequest.h"
+#include "WorkerLoaderProxy.h"
+#include "WorkerLocation.h"
+#include "WorkerMessagingProxy.h"
+#include "WorkerNavigator.h"
+#include "WorkerReportingProxy.h"
+#include "WorkerSWClientConnection.h"
+#include "WorkerScriptLoader.h"
+#include "WorkerStorageConnection.h"
+#include <JavaScriptCore/ScriptArguments.h>
+#include <JavaScriptCore/ScriptCallStack.h>
+#include <wtf/IsoMallocInlines.h>
+#include <wtf/Lock.h>
+#include <wtf/threads/BinarySemaphore.h>
+
+namespace WebCore {
+using namespace Inspector;
+
+static Lock allWorkerGlobalScopeIdentifiersLock;
+static HashSet<ScriptExecutionContextIdentifier>& allWorkerGlobalScopeIdentifiers() WTF_REQUIRES_LOCK(allWorkerGlobalScopeIdentifiersLock)
+{
+    static NeverDestroyed<HashSet<ScriptExecutionContextIdentifier>> identifiers;
+    ASSERT(allWorkerGlobalScopeIdentifiersLock.isLocked());
+    return identifiers;
+}
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(ShadowRealmGlobalScope);
+
+ShadowRealmGlobalScope::ShadowRealmGlobalScope(WorkerThreadType type, const WorkerParameters& params, Ref<SecurityOrigin>&& origin, WorkerThread& thread, Ref<SecurityOrigin>&& topOrigin, SocketProvider* socketProvider)
+    : WorkerOrWorkletGlobalScope(type, isMainThread() ? Ref { commonVM() } : JSC::VM::create(), &thread)
+    , m_url(params.scriptURL)
+    , m_identifier(params.identifier)
+    , m_userAgent(params.userAgent)
+    , m_isOnline(params.isOnline)
+    , m_shouldBypassMainWorldContentSecurityPolicy(params.shouldBypassMainWorldContentSecurityPolicy)
+    , m_topOrigin(WTFMove(topOrigin))
+    , m_socketProvider(socketProvider)
+    , m_performance(Performance::create(this, params.timeOrigin))
+    , m_referrerPolicy(params.referrerPolicy)
+    , m_settingsValues(params.settingsValues)
+    , m_workerType(params.workerType)
+    , m_credentials(params.credentials)
+{
+    {
+        Locker locker { allWorkerGlobalScopeIdentifiersLock };
+        allWorkerGlobalScopeIdentifiers().add(contextIdentifier());
+    }
+
+    if (m_topOrigin->hasUniversalAccess())
+        origin->grantUniversalAccess();
+    if (m_topOrigin->needsStorageAccessFromFileURLsQuirk())
+        origin->grantStorageAccessFromFileURLsQuirk();
+
+    setSecurityOriginPolicy(SecurityOriginPolicy::create(WTFMove(origin)));
+    setContentSecurityPolicy(makeUnique<ContentSecurityPolicy>(URL { m_url }, *this));
+    setCrossOriginEmbedderPolicy(params.crossOriginEmbedderPolicy);
+}
+
+ShadowRealmGlobalScope::~ShadowRealmGlobalScope()
+{
+    ASSERT(thread().thread() == &Thread::current());
+    // We need to remove from the contexts map very early in the destructor so that calling postTask() on this ShadowRealmGlobalScope from another thread is safe.
+    removeFromContextsMap();
+
+    {
+        Locker locker { allWorkerGlobalScopeIdentifiersLock };
+        allWorkerGlobalScopeIdentifiers().remove(contextIdentifier());
+    }
+
+    m_performance = nullptr;
+
+    // Notify proxy that we are going away. This can free the WorkerThread object, so do not access it after this.
+    thread().workerReportingProxy().workerGlobalScopeDestroyed();
+}
+
+String ShadowRealmGlobalScope::origin() const
+{
+    auto* securityOrigin = this->securityOrigin();
+    return securityOrigin ? securityOrigin->toString() : emptyString();
+}
+
+void ShadowRealmGlobalScope::prepareForDestruction()
+{
+    WorkerOrWorkletGlobalScope::prepareForDestruction();
+}
+
+void ShadowRealmGlobalScope::removeAllEventListeners()
+{
+    WorkerOrWorkletGlobalScope::removeAllEventListeners();
+    m_performance->removeAllEventListeners();
+    m_performance->removeAllObservers();
+}
+
+bool ShadowRealmGlobalScope::isSecureContext() const
+{
+    if (!RuntimeEnabledFeatures::sharedFeatures().secureContextChecksEnabled())
+        return true;
+
+    return securityOrigin() && securityOrigin()->isPotentiallyTrustworthy();
+}
+
+void ShadowRealmGlobalScope::applyContentSecurityPolicyResponseHeaders(const ContentSecurityPolicyResponseHeaders& contentSecurityPolicyResponseHeaders)
+{
+    contentSecurityPolicy()->didReceiveHeaders(contentSecurityPolicyResponseHeaders, String { });
+}
+
+URL ShadowRealmGlobalScope::completeURL(const String& url, ForceUTF8) const
+{
+    // Always return a null URL when passed a null string.
+    // FIXME: Should we change the URL constructor to have this behavior?
+    if (url.isNull())
+        return URL();
+    // Always use UTF-8 in Workers.
+    return URL(m_url, url);
+}
+
+String ShadowRealmGlobalScope::userAgent(const URL&) const
+{
+    return m_userAgent;
+}
+
+SocketProvider* ShadowRealmGlobalScope::socketProvider()
+{
+    return m_socketProvider.get();
+}
+
+RefPtr<RTCDataChannelRemoteHandlerConnection> ShadowRealmGlobalScope::createRTCDataChannelRemoteHandlerConnection()
+{
+    RefPtr<RTCDataChannelRemoteHandlerConnection> connection;
+    callOnMainThreadAndWait([workerThread = Ref { thread() }, &connection]() mutable {
+        connection = workerThread->workerLoaderProxy().createRTCDataChannelRemoteHandlerConnection();
+    });
+    ASSERT(connection);
+
+    return connection;
+}
+
+WorkerLocation& ShadowRealmGlobalScope::location() const
+{
+    if (!m_location)
+        m_location = WorkerLocation::create(URL { m_url }, origin());
+    return *m_location;
+}
+
+void ShadowRealmGlobalScope::close()
+{
+    if (isClosing())
+        return;
+
+    // Let current script run to completion but prevent future script evaluations.
+    // After m_closing is set, all the tasks in the queue continue to be fetched but only
+    // tasks with isCleanupTask()==true will be executed.
+    markAsClosing();
+    postTask({ ScriptExecutionContext::Task::CleanupTask, [] (ScriptExecutionContext& context) {
+        ASSERT_WITH_SECURITY_IMPLICATION(is<ShadowRealmGlobalScope>(context));
+        ShadowRealmGlobalScope& workerGlobalScope = downcast<ShadowRealmGlobalScope>(context);
+        // Notify parent that this context is closed. Parent is responsible for calling WorkerThread::stop().
+        workerGlobalScope.thread().workerReportingProxy().workerGlobalScopeClosed();
+    } });
+}
+
+WorkerNavigator& ShadowRealmGlobalScope::navigator()
+{
+    if (!m_navigator)
+        m_navigator = WorkerNavigator::create(*this, m_userAgent, m_isOnline);
+    return *m_navigator;
+}
+
+void ShadowRealmGlobalScope::setIsOnline(bool isOnline)
+{
+    m_isOnline = isOnline;
+    if (m_navigator)
+        m_navigator->setIsOnline(isOnline);
+}
+
+ExceptionOr<int> ShadowRealmGlobalScope::setTimeout(JSC::JSGlobalObject& state, std::unique_ptr<ScheduledAction> action, int timeout, Vector<JSC::Strong<JSC::Unknown>>&& arguments)
+{
+    // FIXME: Should this check really happen here? Or should it happen when code is about to eval?
+    if (action->type() == ScheduledAction::Type::Code) {
+        if (!contentSecurityPolicy()->allowEval(&state, LogToConsole::Yes))
+            return 0;
+    }
+
+    action->addArguments(WTFMove(arguments));
+
+    return DOMTimer::install(*this, WTFMove(action), Seconds::fromMilliseconds(timeout), true);
+}
+
+void ShadowRealmGlobalScope::clearTimeout(int timeoutId)
+{
+    DOMTimer::removeById(*this, timeoutId);
+}
+
+ExceptionOr<int> ShadowRealmGlobalScope::setInterval(JSC::JSGlobalObject& state, std::unique_ptr<ScheduledAction> action, int timeout, Vector<JSC::Strong<JSC::Unknown>>&& arguments)
+{
+    // FIXME: Should this check really happen here? Or should it happen when code is about to eval?
+    if (action->type() == ScheduledAction::Type::Code) {
+        if (!contentSecurityPolicy()->allowEval(&state, LogToConsole::Yes))
+            return 0;
+    }
+
+    action->addArguments(WTFMove(arguments));
+
+    return DOMTimer::install(*this, WTFMove(action), Seconds::fromMilliseconds(timeout), false);
+}
+
+void ShadowRealmGlobalScope::clearInterval(int timeoutId)
+{
+    DOMTimer::removeById(*this, timeoutId);
+}
+
+ExceptionOr<void> ShadowRealmGlobalScope::importScripts(const Vector<String>& urls)
+{
+    ASSERT(contentSecurityPolicy());
+
+    // https://html.spec.whatwg.org/multipage/workers.html#importing-scripts-and-libraries
+    // 1. If worker global scope's type is "module", throw a TypeError exception.
+    if (m_workerType == WorkerType::Module)
+        return Exception { TypeError, "importScripts cannot be used if worker type is \"module\""_s };
+
+    Vector<URL> completedURLs;
+    completedURLs.reserveInitialCapacity(urls.size());
+    for (auto& entry : urls) {
+        URL url = completeURL(entry);
+        if (!url.isValid())
+            return Exception { SyntaxError };
+        completedURLs.uncheckedAppend(WTFMove(url));
+    }
+
+    FetchOptions::Cache cachePolicy = FetchOptions::Cache::Default;
+
+    for (auto& url : completedURLs) {
+        // FIXME: Convert this to check the isolated world's Content Security Policy once webkit.org/b/104520 is solved.
+        bool shouldBypassMainWorldContentSecurityPolicy = this->shouldBypassMainWorldContentSecurityPolicy();
+        if (!shouldBypassMainWorldContentSecurityPolicy && !contentSecurityPolicy()->allowScriptFromSource(url))
+            return Exception { NetworkError };
+
+        auto scriptLoader = WorkerScriptLoader::create();
+        auto cspEnforcement = shouldBypassMainWorldContentSecurityPolicy ? ContentSecurityPolicyEnforcement::DoNotEnforce : ContentSecurityPolicyEnforcement::EnforceScriptSrcDirective;
+        if (auto exception = scriptLoader->loadSynchronously(this, url, FetchOptions::Mode::NoCors, cachePolicy, cspEnforcement, resourceRequestIdentifier()))
+            return WTFMove(*exception);
+
+        InspectorInstrumentation::scriptImported(*this, scriptLoader->identifier(), scriptLoader->script().toString());
+
+        WeakPtr<ScriptBufferSourceProvider> sourceProvider;
+        {
+            NakedPtr<JSC::Exception> exception;
+            ScriptSourceCode sourceCode(scriptLoader->script(), URL(scriptLoader->responseURL()));
+            sourceProvider = static_cast<ScriptBufferSourceProvider&>(sourceCode.provider());
+            script()->evaluate(sourceCode, exception);
+            if (exception) {
+                script()->setException(exception);
+                return { };
+            }
+        }
+        if (sourceProvider)
+            addImportedScriptSourceProvider(url, *sourceProvider);
+    }
+
+    return { };
+}
+
+EventTarget* ShadowRealmGlobalScope::errorEventTarget()
+{
+    return this;
+}
+
+void ShadowRealmGlobalScope::logExceptionToConsole(const String& errorMessage, const String& sourceURL, int lineNumber, int columnNumber, RefPtr<ScriptCallStack>&&)
+{
+    thread().workerReportingProxy().postExceptionToWorkerObject(errorMessage, lineNumber, columnNumber, sourceURL);
+}
+
+void ShadowRealmGlobalScope::addConsoleMessage(std::unique_ptr<Inspector::ConsoleMessage>&& message)
+{
+    if (!isContextThread()) {
+        postTask(AddConsoleMessageTask(message->source(), message->level(), message->message()));
+        return;
+    }
+
+    InspectorInstrumentation::addMessageToConsole(*this, WTFMove(message));
+}
+
+void ShadowRealmGlobalScope::addConsoleMessage(MessageSource source, MessageLevel level, const String& message, unsigned long requestIdentifier)
+{
+    addMessage(source, level, message, { }, 0, 0, nullptr, nullptr, requestIdentifier);
+}
+
+void ShadowRealmGlobalScope::addMessage(MessageSource source, MessageLevel level, const String& messageText, const String& sourceURL, unsigned lineNumber, unsigned columnNumber, RefPtr<ScriptCallStack>&& callStack, JSC::JSGlobalObject* state, unsigned long requestIdentifier)
+{
+    if (!isContextThread()) {
+        postTask(AddConsoleMessageTask(source, level, messageText));
+        return;
+    }
+
+    std::unique_ptr<Inspector::ConsoleMessage> message;
+    if (callStack)
+        message = makeUnique<Inspector::ConsoleMessage>(source, MessageType::Log, level, messageText, callStack.releaseNonNull(), requestIdentifier);
+    else
+        message = makeUnique<Inspector::ConsoleMessage>(source, MessageType::Log, level, messageText, sourceURL, lineNumber, columnNumber, state, requestIdentifier);
+    InspectorInstrumentation::addMessageToConsole(*this, WTFMove(message));
+}
+
+Performance& ShadowRealmGlobalScope::performance() const
+{
+    return *m_performance;
+}
+
+void ShadowRealmGlobalScope::createImageBitmap(ImageBitmap::Source&& source, ImageBitmapOptions&& options, ImageBitmap::Promise&& promise)
+{
+    ImageBitmap::createPromise(*this, WTFMove(source), WTFMove(options), WTFMove(promise));
+}
+
+void ShadowRealmGlobalScope::createImageBitmap(ImageBitmap::Source&& source, int sx, int sy, int sw, int sh, ImageBitmapOptions&& options, ImageBitmap::Promise&& promise)
+{
+    ImageBitmap::createPromise(*this, WTFMove(source), WTFMove(options), sx, sy, sw, sh, WTFMove(promise));
+}
+
+CSSValuePool& ShadowRealmGlobalScope::cssValuePool()
+{
+    if (!m_cssValuePool)
+        m_cssValuePool = makeUnique<CSSValuePool>();
+    return *m_cssValuePool;
+}
+
+CSSFontSelector* ShadowRealmGlobalScope::cssFontSelector()
+{
+    if (!m_cssFontSelector)
+        m_cssFontSelector = CSSFontSelector::create(*this);
+    return m_cssFontSelector.get();
+}
+
+FontCache& ShadowRealmGlobalScope::fontCache()
+{
+    if (!m_fontCache)
+        m_fontCache = FontCache::create();
+    return *m_fontCache;
+}
+
+Ref<FontFaceSet> ShadowRealmGlobalScope::fonts()
+{
+    ASSERT(cssFontSelector());
+    return cssFontSelector()->fontFaceSet();
+}
+
+std::unique_ptr<FontLoadRequest> ShadowRealmGlobalScope::fontLoadRequest(String& url, bool, bool, LoadedFromOpaqueSource loadedFromOpaqueSource)
+{
+    return makeUnique<WorkerFontLoadRequest>(completeURL(url), loadedFromOpaqueSource);
+}
+
+void ShadowRealmGlobalScope::beginLoadingFontSoon(FontLoadRequest& request)
+{
+    ASSERT(is<WorkerFontLoadRequest>(request));
+    // TODO PLM:
+    /* downcast<WorkerFontLoadRequest>(request).load(*this); */
+}
+
+ReferrerPolicy ShadowRealmGlobalScope::referrerPolicy() const
+{
+    return m_referrerPolicy;
+}
+
+WorkerThread& ShadowRealmGlobalScope::thread() const
+{
+    return *static_cast<WorkerThread*>(workerOrWorkletThread());
+}
+
+void ShadowRealmGlobalScope::releaseMemory(Synchronous synchronous)
+{
+    ASSERT(isContextThread());
+    deleteJSCodeAndGC(synchronous);
+    clearDecodedScriptData();
+}
+
+void ShadowRealmGlobalScope::deleteJSCodeAndGC(Synchronous synchronous)
+{
+    ASSERT(isContextThread());
+
+    JSC::JSLockHolder lock(vm());
+    vm().deleteAllCode(JSC::DeleteAllCodeIfNotCollecting);
+
+    if (synchronous == Synchronous::Yes) {
+        if (!vm().heap.isCurrentThreadBusy()) {
+            vm().heap.collectNow(JSC::Sync, JSC::CollectionScope::Full);
+            WTF::releaseFastMallocFreeMemory();
+            return;
+        }
+    }
+#if PLATFORM(IOS_FAMILY)
+    if (!vm().heap.isCurrentThreadBusy()) {
+        vm().heap.collectNowFullIfNotDoneRecently(JSC::Async);
+        return;
+    }
+#endif
+#if USE(CF) || USE(GLIB)
+    vm().heap.reportAbandonedObjectGraph();
+#else
+    vm().heap.collectNow(JSC::Async, JSC::CollectionScope::Full);
+#endif
+}
+
+void ShadowRealmGlobalScope::releaseMemoryInWorkers(Synchronous synchronous)
+{
+    Locker locker { allWorkerGlobalScopeIdentifiersLock };
+    for (auto& globalScopeIdentifier : allWorkerGlobalScopeIdentifiers()) {
+        postTaskTo(globalScopeIdentifier, [synchronous](auto& context) {
+            downcast<ShadowRealmGlobalScope>(context).releaseMemory(synchronous);
+        });
+    }
+}
+
+void ShadowRealmGlobalScope::setMainScriptSourceProvider(ScriptBufferSourceProvider& provider)
+{
+    ASSERT(!m_mainScriptSourceProvider);
+    m_mainScriptSourceProvider = provider;
+}
+
+void ShadowRealmGlobalScope::addImportedScriptSourceProvider(const URL& url, ScriptBufferSourceProvider& provider)
+{
+    m_importedScriptsSourceProviders.ensure(url, [] {
+        return WeakHashSet<ScriptBufferSourceProvider> { };
+    }).iterator->value.add(provider);
+}
+
+void ShadowRealmGlobalScope::clearDecodedScriptData()
+{
+    ASSERT(isContextThread());
+
+    if (m_mainScriptSourceProvider)
+        m_mainScriptSourceProvider->clearDecodedData();
+
+    for (auto& sourceProviders : m_importedScriptsSourceProviders.values()) {
+        for (auto& sourceProvider : sourceProviders)
+            sourceProvider.clearDecodedData();
+    }
+}
+
+bool ShadowRealmGlobalScope::crossOriginIsolated() const
+{
+    return ScriptExecutionContext::crossOriginMode() == CrossOriginMode::Isolated;
+}
+
+void ShadowRealmGlobalScope::updateSourceProviderBuffers(const ScriptBuffer& mainScript, const HashMap<URL, ScriptBuffer>& importedScripts)
+{
+    ASSERT(isContextThread());
+
+    if (mainScript && m_mainScriptSourceProvider)
+        m_mainScriptSourceProvider->tryReplaceScriptBuffer(mainScript);
+
+    for (auto& pair : importedScripts) {
+        auto it = m_importedScriptsSourceProviders.find(pair.key);
+        if (it == m_importedScriptsSourceProviders.end())
+            continue;
+        for (auto& sourceProvider : it->value)
+            sourceProvider.tryReplaceScriptBuffer(pair.value);
+    }
+}
+
+} // namespace WebCore

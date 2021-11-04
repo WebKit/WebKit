@@ -515,7 +515,6 @@ bindings/js/JSDOMConvertStrings.cpp
 bindings/js/JSDOMConvertWebGL.cpp
 bindings/js/JSDOMExceptionHandling.cpp
 bindings/js/JSDOMGlobalObject.cpp
-bindings/js/JSShadowRealmGlobalScope.cpp
 bindings/js/JSDOMGlobalObjectTask.cpp
 bindings/js/JSDOMGuardedObject.cpp
 bindings/js/JSDOMIterator.cpp
@@ -613,6 +612,7 @@ bindings/js/JSWebXRSpaceCustom.cpp
 bindings/js/JSWebXRViewCustom.cpp
 bindings/js/JSWindowProxy.cpp
 bindings/js/JSWorkerGlobalScopeBase.cpp
+bindings/js/JSShadowRealmGlobalScopeBase.cpp
 bindings/js/JSWorkerGlobalScopeCustom.cpp
 bindings/js/JSWorkerNavigatorCustom.cpp
 bindings/js/JSWorkletGlobalScopeBase.cpp
@@ -2711,6 +2711,7 @@ workers/WorkerConsoleClient.cpp
 workers/WorkerEventLoop.cpp
 workers/WorkerFontLoadRequest.cpp
 workers/WorkerGlobalScope.cpp
+page/ShadowRealmGlobalScope.cpp
 workers/WorkerInspectorProxy.cpp
 workers/WorkerLocation.cpp
 workers/WorkerMessagingProxy.cpp
