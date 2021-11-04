@@ -36,7 +36,6 @@
 #endif
 
 #if ENABLE(MEDIA_SESSION_COORDINATOR)
-#import "WebProcess.h"
 #import <wtf/cocoa/Entitlements.h>
 #endif
 
@@ -324,10 +323,7 @@ bool defaultMediaSessionCoordinatorEnabled()
     static dispatch_once_t onceToken;
     static bool enabled { false };
     dispatch_once(&onceToken, ^{
-        if (isInWebProcess())
-            enabled = WebProcess::singleton().parentProcessHasEntitlement("com.apple.developer.group-session.urlactivity");
-        else
-            enabled = WTF::processHasEntitlement("com.apple.developer.group-session.urlactivity");
+        enabled = WTF::processHasEntitlement("com.apple.developer.group-session.urlactivity");
     });
     return enabled;
 }
