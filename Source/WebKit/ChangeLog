@@ -1,3 +1,36 @@
+2021-11-04  Aditya Keerthi  <akeerthi@apple.com>
+
+        Crash when opening and closing color picker while resetting form
+        https://bugs.webkit.org/show_bug.cgi?id=232689
+        rdar://84979791
+
+        Reviewed by Simon Fraser.
+
+        Resetting a <form> element containing an <input type=color> resets
+        the value of the color input. If the WebProcess believes that a
+        color picker is visible in the UIProcess, an IPC message
+        (WebPageProxy_SetColorPickerColor) is sent to the UIProcess to update
+        the selected color.
+
+        If the color picker is closed by user action (on macOS, clicking
+        outside the popover), the UIProcess nulls out `m_colorPicker`, and
+        notifies the WebProcess that the color picker is no longer visible
+        by sending the WebPage_DidEndColorPicker message.
+
+        Consequently, it is possible for WebPageProxy_SetColorPickerColor to be
+        dispatched in the UIProcess after `m_colorPicker` is nulled out, while
+        the WebProcess is still waiting to process WebPage_DidEndColorPicker.
+        This sequence of events results in a MESSAGE_CHECK failure in
+        WebPageProxy::setColorPickerColor, leading to WebProcess termination.
+
+        To fix, remove the MESSAGE_CHECK and replace it with a null check, since
+        a null `m_colorPicker` is a valid state.
+
+        Test: fast/forms/color/color-input-reset-crash.html
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::setColorPickerColor):
+
 2021-11-04  John Pascoe  <j_pascoe@apple.com>
 
         [WebAuthn] Implement add/remove_virtual_authenticator for transport=internal

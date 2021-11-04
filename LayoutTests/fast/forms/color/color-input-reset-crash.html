@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+    <script src="../../../resources/js-test.js"></script>
+    <script src="../../../resources/ui-helper.js"></script>
+</head>
+<body>
+    <form id="form">
+        <input type="color" id="color">
+    </form>
+</body>
+<script>
+jsTestIsAsync = true;
+
+addEventListener("load", async () => {
+    description("This test verifies that opening and closing a color picker, while resetting the form associated with the input, does not result in a crash.");
+
+    let interval = 100;
+
+    setInterval(() => {
+        form.reset();
+    }, interval);
+
+    await UIHelper.activateElement(color);
+    await UIHelper.ensurePresentationUpdate();
+
+    await UIHelper.activateAt(0, 0);
+    await UIHelper.delayFor(interval);
+
+    testPassed("Did not crash.");
+
+    finishJSTest();
+});
+</script>
+</html>

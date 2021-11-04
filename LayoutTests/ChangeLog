@@ -1,3 +1,16 @@
+2021-11-04  Aditya Keerthi  <akeerthi@apple.com>
+
+        Crash when opening and closing color picker while resetting form
+        https://bugs.webkit.org/show_bug.cgi?id=232689
+        rdar://84979791
+
+        Reviewed by Simon Fraser.
+
+        Added a layout test to exercise the crash.
+
+        * fast/forms/color/color-input-reset-crash-expected.txt: Added.
+        * fast/forms/color/color-input-reset-crash.html: Added.
+
 2021-11-04  Eric Hutchison  <ehutchison@apple.com>
 
         Update test expectations for http/tests/appcache/fail-on-update-2.html.
