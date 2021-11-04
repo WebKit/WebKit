@@ -10,6 +10,7 @@ navigator.getStorageUpdates() is OK
 navigator.javaEnabled() is OK
 navigator.language is OK
 navigator.languages is OK
+navigator.locks is OK
 navigator.maxTouchPoints is OK
 navigator.mediaCapabilities is OK
 navigator.mediaSession is OK
@@ -39,6 +40,7 @@ navigator.getStorageUpdates() is OK
 navigator.javaEnabled() is OK
 navigator.language is OK
 navigator.languages is OK
+navigator.locks is OK
 navigator.maxTouchPoints is OK
 navigator.mediaCapabilities is OK
 navigator.mediaSession is OK
