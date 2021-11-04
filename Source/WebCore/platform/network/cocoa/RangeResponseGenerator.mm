@@ -213,7 +213,7 @@ private:
     // These methods should have been called before changing the client to this.
     void responseReceived(PlatformMediaResource&, const ResourceResponse&, CompletionHandler<void(ShouldContinuePolicyCheck)>&& completionHandler) final
     {
-        RELEASE_ASSERT_NOT_REACHED();
+        ASSERT_NOT_REACHED();
         completionHandler(ShouldContinuePolicyCheck::No);
     }
     void redirectReceived(PlatformMediaResource&, ResourceRequest&&, const ResourceResponse&, CompletionHandler<void(ResourceRequest&&)>&& completionHandler) final

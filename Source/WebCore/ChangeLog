@@ -1,5 +1,36 @@
 2021-11-04  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r284694. rdar://problem/79244664
+
+    Remove release assertion in MediaResourceClient::responseReceived
+    https://bugs.webkit.org/show_bug.cgi?id=232121
+    
+    Patch by Alex Christensen <achristensen@webkit.org> on 2021-10-22
+    Reviewed by David Kilzer.
+    
+    I tried and was unable to reproduce this, even with multipart responses which can call didReceiveResponse multiple times in the same load.
+    In any case, it's clear where the crash is and that this assertion can be hit.  Not continuing with the response is better than crashing.
+    Keep the debug assertion because if it is hit, we want to notice.
+    
+    * platform/network/cocoa/RangeResponseGenerator.mm:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@284694 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-10-22  Alex Christensen  <achristensen@webkit.org>
+
+            Remove release assertion in MediaResourceClient::responseReceived
+            https://bugs.webkit.org/show_bug.cgi?id=232121
+
+            Reviewed by David Kilzer.
+
+            I tried and was unable to reproduce this, even with multipart responses which can call didReceiveResponse multiple times in the same load.
+            In any case, it's clear where the crash is and that this assertion can be hit.  Not continuing with the response is better than crashing.
+            Keep the debug assertion because if it is hit, we want to notice.
+
+            * platform/network/cocoa/RangeResponseGenerator.mm:
+
+2021-11-04  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r284163. rdar://problem/84129338
 
     WebCore::CaptionUserPreferencesMediaAF should use a weak observer with CFNotificationCenter
