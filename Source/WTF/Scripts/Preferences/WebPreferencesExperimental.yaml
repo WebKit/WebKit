@@ -1036,6 +1036,18 @@ PermissionsAPIEnabled:
     WebCore:
       default: false
 
+PreferPageRenderingUpdatesNear60FPSEnabled:
+  type: bool
+  humanReadableName: "Prefer Page Rendering Updates near 60fps"
+  humanReadableDescription: "Prefer page rendering updates near 60 frames per second rather than using the display's refresh rate"
+  defaultValue:
+    WebKitLegacy:
+      default: true
+    WebKit:
+      default: true
+    WebCore:
+      default: true
+
 PrivateClickMeasurementDebugModeEnabled:
   type: bool
   humanReadableName: "Private Click Measurement Debug Mode"

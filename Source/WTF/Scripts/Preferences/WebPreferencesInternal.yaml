@@ -609,18 +609,6 @@ PreferInlineTextSelectionInImages:
     WebKit:
       default: true
 
-PreferPageRenderingUpdatesNear60FPSEnabled:
-  type: bool
-  humanReadableName: "Prefer Page Rendering Updates near 60fps"
-  humanReadableDescription: "Prefer page rendering updates near 60 frames per second rather than use the display's refresh rate"
-  defaultValue:
-    WebKitLegacy:
-      default: true
-    WebKit:
-      default: true
-    WebCore:
-      default: true
-
 ReplayCGDisplayListsIntoBackingStore:
   type: bool
   humanReadableName: "CG Display Lists: Replay for Testing"
