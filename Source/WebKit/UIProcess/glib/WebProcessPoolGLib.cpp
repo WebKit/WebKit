@@ -61,8 +61,10 @@ void WebProcessPool::platformInitialize()
     if (const char* forceComplexText = getenv("WEBKIT_FORCE_COMPLEX_TEXT"))
         m_alwaysUsesComplexTextCodePath = !strcmp(forceComplexText, "1");
 
+#if OS(LINUX)
     if (!MemoryPressureMonitor::disabled())
         installMemoryPressureHandler();
+#endif
 }
 
 void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process, WebProcessCreationParameters& parameters)
@@ -92,8 +94,10 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
 
     parameters.memoryCacheDisabled = m_memoryCacheDisabled || LegacyGlobalSettings::singleton().cacheModel() == CacheModel::DocumentViewer;
 
+#if OS(LINUX)
     if (MemoryPressureMonitor::disabled())
         parameters.shouldSuppressMemoryPressureHandler = true;
+#endif
 
 #if USE(GSTREAMER)
     parameters.gstreamerOptions = WebCore::extractGStreamerOptionsFromCommandLine();

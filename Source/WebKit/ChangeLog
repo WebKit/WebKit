@@ -1,3 +1,17 @@
+2021-11-04  Lauro Moura  <lmoura@igalia.com>
+
+        REGRESSION(r285077) [GLIB] 'MemoryPressureMonitor' has not been declared
+        https://bugs.webkit.org/show_bug.cgi?id=232706
+
+        Unreviewed non-linux build fix.
+
+        MemoryPressureMonitor is only available on Linux, so its usage should
+        be guarded, like WebProcessPool.cpp does when starting it.
+
+        * UIProcess/glib/WebProcessPoolGLib.cpp:
+        (WebKit::WebProcessPool::platformInitialize): Add OS(LINUX) guard.
+        (WebKit::WebProcessPool::platformInitializeWebProcess): Ditto.
+
 2021-11-04  Brent Fulgham  <bfulgham@apple.com>
 
         [iOS] Update IOKit message filters for later iOS releases
