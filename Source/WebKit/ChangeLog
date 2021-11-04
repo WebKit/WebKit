@@ -1,5 +1,60 @@
 2021-11-04  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r285165. rdar://problem/84908023
+
+    Revert the wheel event coalescing added in r277587
+    https://bugs.webkit.org/show_bug.cgi?id=232602
+    <rdar://84908023>
+    
+    Reviewed by Wenson Hsieh.
+    
+    This wheel event coalescing was added to allow the tail end of momentum scrolls on
+    120Hz devices to fall back to 60fps for power reasons. However, the OS does this for
+    us, so we don't need to do our own coalescing.
+    
+    * Shared/WebWheelEventCoalescer.cpp:
+    (WebKit::WebWheelEventCoalescer::shouldDispatchEvent):
+    (WebKit::WebWheelEventCoalescer::isMomentumPhaseEvent): Deleted.
+    * Shared/WebWheelEventCoalescer.h:
+    (WebKit::WebWheelEventCoalescer::shouldCoalesceEventsDuringDeceleration const): Deleted.
+    (WebKit::WebWheelEventCoalescer::setShouldCoalesceEventsDuringDeceleration): Deleted.
+    (): Deleted.
+    * UIProcess/WebPageProxy.cpp:
+    (WebKit::WebPageProxy::wheelEventCoalescer):
+    (WebKit::WebPageProxy::windowScreenDidChange):
+    (WebKit::WebPageProxy::shouldCoalesceWheelEventsDuringDeceleration const): Deleted.
+    * UIProcess/WebPageProxy.h:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@285165 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-11-02  Simon Fraser  <simon.fraser@apple.com>
+
+            Revert the wheel event coalescing added in r277587
+            https://bugs.webkit.org/show_bug.cgi?id=232602
+            <rdar://84908023>
+
+            Reviewed by Wenson Hsieh.
+
+            This wheel event coalescing was added to allow the tail end of momentum scrolls on
+            120Hz devices to fall back to 60fps for power reasons. However, the OS does this for
+            us, so we don't need to do our own coalescing.
+
+            * Shared/WebWheelEventCoalescer.cpp:
+            (WebKit::WebWheelEventCoalescer::shouldDispatchEvent):
+            (WebKit::WebWheelEventCoalescer::isMomentumPhaseEvent): Deleted.
+            * Shared/WebWheelEventCoalescer.h:
+            (WebKit::WebWheelEventCoalescer::shouldCoalesceEventsDuringDeceleration const): Deleted.
+            (WebKit::WebWheelEventCoalescer::setShouldCoalesceEventsDuringDeceleration): Deleted.
+            (): Deleted.
+            * UIProcess/WebPageProxy.cpp:
+            (WebKit::WebPageProxy::wheelEventCoalescer):
+            (WebKit::WebPageProxy::windowScreenDidChange):
+            (WebKit::WebPageProxy::shouldCoalesceWheelEventsDuringDeceleration const): Deleted.
+            * UIProcess/WebPageProxy.h:
+
+2021-11-04  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r285089. rdar://problem/84522357
 
     Layer tree should not be stuck in frozen state after explicitly stopping a page load
