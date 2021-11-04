@@ -1,5 +1,34 @@
 2021-11-04  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r283886. rdar://problem/83743661
+
+    [iOS] Add message filter in the WebContent process' sandbox
+    https://bugs.webkit.org/show_bug.cgi?id=231046
+    <rdar://problem/83743661>
+    
+    Reviewed by Brent Fulgham.
+    
+    Add IOKit message filter in the WebContent process' sandbox on iOS.
+    
+    * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb.in:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@283886 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-10-11  Per Arne Vollan <pvollan@apple.com>
+
+            [iOS] Add message filter in the WebContent process' sandbox
+            https://bugs.webkit.org/show_bug.cgi?id=231046
+            <rdar://problem/83743661>
+
+            Reviewed by Brent Fulgham.
+
+            Add IOKit message filter in the WebContent process' sandbox on iOS.
+
+            * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb.in:
+
+2021-11-04  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r283394. rdar://problem/83732537
 
     GPU Process microphone attribution SPI adoption

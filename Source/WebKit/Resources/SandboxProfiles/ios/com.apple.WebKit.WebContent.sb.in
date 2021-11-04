@@ -96,9 +96,14 @@
             (apply-message-filter
                 (deny (with telemetry)
                     iokit-async-external-method
+                    iokit-external-method
                     iokit-external-trap)
-                (allow (with telemetry)
-                    iokit-external-method)
+                (allow (with telemetry) iokit-external-method
+                    (iokit-method-number
+                        8
+                        28
+                    )
+                )
             )
         )
     )
