@@ -5645,9 +5645,9 @@
       "github" : "roynos",
       "name" : "Roy Reapor",
       "nicks" : [
-         "rreapor",
-         "roynos"
-      ]
+         "rreapor"
+      ],
+      "status" : "committer"
    },
    {
       "emails" : [
