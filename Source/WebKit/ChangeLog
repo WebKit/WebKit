@@ -1,5 +1,72 @@
 2021-11-04  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r284889. rdar://problem/82671325
+
+    REGRESSION (r281054): [iOS] Context menu presents from wrong location when long pressing a link in Mail
+    https://bugs.webkit.org/show_bug.cgi?id=232287
+    rdar://82671325
+    
+    Reviewed by Tim Horton.
+    
+    In the case where the WebKit client isn't overriding the context menu configuration via WebKit context menu UI
+    delegate methods, `_contextMenuElementInfo` on WKContentView will end up being nil while presenting the context
+    menu via long press.
+    
+    After the changes in r281054, this means that when the last view is removed from our WKTargetedPreviewContainer,
+    we'll unparent WKTargetedPreviewContainer too early, since `_contextMenuElementInfo` won't prevent us from
+    bailing in `-_removeContextMenuHintContainerIfPossible`. To fix this, we add a boolean flag to track when the
+    context menu presentation animation is running, and avoid unparenting the preview container if the flag is set.
+    
+    * UIProcess/ios/WKContentViewInteraction.h:
+    * UIProcess/ios/WKContentViewInteraction.mm:
+    (-[WKContentView setUpInteraction]):
+    (-[WKContentView _removeContextMenuHintContainerIfPossible]):
+    (-[WKContentView _contentsOfUserInterfaceItem:]):
+    (-[WKContentView contextMenuInteraction:willDisplayMenuForConfiguration:animator:]):
+    
+    To test this change, add an assertion that fires if the context menu preview hint container has already been
+    unparented by the time we've presented the context menu. This assertion already fires during the extant layout
+    test fast/events/touch/ios/long-press-on-link.html, which technically exhibits the bug (albeit in a more subtle
+    way).
+    
+    (-[WKContentView contextMenuInteraction:willEndForConfiguration:animator:]):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@284889 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-10-26  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+            REGRESSION (r281054): [iOS] Context menu presents from wrong location when long pressing a link in Mail
+            https://bugs.webkit.org/show_bug.cgi?id=232287
+            rdar://82671325
+
+            Reviewed by Tim Horton.
+
+            In the case where the WebKit client isn't overriding the context menu configuration via WebKit context menu UI
+            delegate methods, `_contextMenuElementInfo` on WKContentView will end up being nil while presenting the context
+            menu via long press.
+
+            After the changes in r281054, this means that when the last view is removed from our WKTargetedPreviewContainer,
+            we'll unparent WKTargetedPreviewContainer too early, since `_contextMenuElementInfo` won't prevent us from
+            bailing in `-_removeContextMenuHintContainerIfPossible`. To fix this, we add a boolean flag to track when the
+            context menu presentation animation is running, and avoid unparenting the preview container if the flag is set.
+
+            * UIProcess/ios/WKContentViewInteraction.h:
+            * UIProcess/ios/WKContentViewInteraction.mm:
+            (-[WKContentView setUpInteraction]):
+            (-[WKContentView _removeContextMenuHintContainerIfPossible]):
+            (-[WKContentView _contentsOfUserInterfaceItem:]):
+            (-[WKContentView contextMenuInteraction:willDisplayMenuForConfiguration:animator:]):
+
+            To test this change, add an assertion that fires if the context menu preview hint container has already been
+            unparented by the time we've presented the context menu. This assertion already fires during the extant layout
+            test fast/events/touch/ios/long-press-on-link.html, which technically exhibits the bug (albeit in a more subtle
+            way).
+
+            (-[WKContentView contextMenuInteraction:willEndForConfiguration:animator:]):
+
+2021-11-04  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r284875. rdar://problem/84597422
 
     [ App Privacy Report ] Restoring a session after clearing the cache results in app initiated loads in Safari
