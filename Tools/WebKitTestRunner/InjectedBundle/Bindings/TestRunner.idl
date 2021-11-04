@@ -95,6 +95,7 @@ interface TestRunner {
     undefined setNavigationGesturesEnabled(boolean value);
     undefined setIgnoresViewportScaleLimits(boolean value);
     undefined setShouldDownloadUndisplayableMIMETypes(boolean value);
+    undefined stopLoading();
 
     // Special DOM functions.
     undefined clearBackForwardList();

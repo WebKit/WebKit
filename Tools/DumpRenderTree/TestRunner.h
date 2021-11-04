@@ -76,6 +76,7 @@ public:
     void execCommand(JSStringRef name, JSStringRef value);
     bool findString(JSContextRef, JSStringRef, JSObjectRef optionsArray);
     void forceImmediateCompletion();
+    void stopLoading();
     void goBack();
     JSValueRef originsWithApplicationCache(JSContextRef);
     long long applicationCacheDiskUsageForOrigin(JSStringRef name);

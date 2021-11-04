@@ -1,5 +1,97 @@
 2021-11-04  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r285089. rdar://problem/84522357
+
+    Layer tree should not be stuck in frozen state after explicitly stopping a page load
+    https://bugs.webkit.org/show_bug.cgi?id=232532
+    rdar://84522357
+    
+    Reviewed by Tim Horton.
+    
+    Source/WebCore:
+    
+    Add WEBCORE_EXPORT to a method. See WebKit/ChangeLog for more details.
+    
+    Test: http/tests/navigation/unfreeze-layer-tree-after-stopping-load.html
+    
+    * loader/FrameLoader.h:
+    
+    Source/WebKit:
+    
+    From diagnostic logs gathered in rdar://84522357, it's apparently possible for the layer tree to be stuck in a
+    state where it's indefinitely frozen after the user explicitly stops the page load (e.g. by tapping on the "x"
+    button in Safari). Specifically, these logs indicate that the `PageTransition` layer tree freeze reason may
+    persist even after the user has canceled the load, leading to situations where content may be visible but
+    unresponsive.
+    
+    From code inspection, this may happen for multiple reasons, one of which is that a media element has incremented
+    the load event delay count, which in turn prevents us from transitioning to completed state inside
+    `FrameLoader::checkLoadCompleteForThisFrame()`. It's unknown whether this (in particular) is the cause of
+    unresponsiveness observed by the reporter of rdar://84522357, but we can at least use this in order to come up
+    with a layout test; to mitigate all instances where the `PageTransition` reason may persist after the load has
+    been stopped, we make `WebPage::stopLoading()` complete the page transition (thereby lifting the freeze reason)
+    if needed.
+    
+    * WebProcess/WebPage/WebPage.cpp:
+    (WebKit::WebPage::stopLoading):
+    
+    Tools:
+    
+    Add support for `TestRunner.stopLoading()`, which immediately stops the page load, emulating what would normally
+    happen if the user taps or clicks the "x" button to cancel loading in Safari. See the layout test for more
+    details.
+    
+    * DumpRenderTree/TestRunner.cpp:
+    (stopLoadingCallback):
+    (TestRunner::staticFunctions):
+    * DumpRenderTree/TestRunner.h:
+    * DumpRenderTree/mac/TestRunnerMac.mm:
+    (TestRunner::stopLoading):
+    * DumpRenderTree/win/TestRunnerWin.cpp:
+    (TestRunner::stopLoading):
+    * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+    * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+    (WTR::TestRunner::stopLoading):
+    * WebKitTestRunner/InjectedBundle/TestRunner.h:
+    
+    LayoutTests:
+    
+    Add a test that verifies that a `requestAnimationFrame()` callback fires even after stopping page load. This
+    test fails without the fix in this patch, since the layer tree ends up in a permanently frozen state.
+    
+    * http/tests/navigation/unfreeze-layer-tree-after-stopping-load-expected.txt: Added.
+    * http/tests/navigation/unfreeze-layer-tree-after-stopping-load.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@285089 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-10-30  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+            Layer tree should not be stuck in frozen state after explicitly stopping a page load
+            https://bugs.webkit.org/show_bug.cgi?id=232532
+            rdar://84522357
+
+            Reviewed by Tim Horton.
+
+            Add support for `TestRunner.stopLoading()`, which immediately stops the page load, emulating what would normally
+            happen if the user taps or clicks the "x" button to cancel loading in Safari. See the layout test for more
+            details.
+
+            * DumpRenderTree/TestRunner.cpp:
+            (stopLoadingCallback):
+            (TestRunner::staticFunctions):
+            * DumpRenderTree/TestRunner.h:
+            * DumpRenderTree/mac/TestRunnerMac.mm:
+            (TestRunner::stopLoading):
+            * DumpRenderTree/win/TestRunnerWin.cpp:
+            (TestRunner::stopLoading):
+            * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+            * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+            (WTR::TestRunner::stopLoading):
+            * WebKitTestRunner/InjectedBundle/TestRunner.h:
+
+2021-11-04  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r285080. rdar://problem/84811692
 
     [iOS 15] Loads after WKWebView session restore are marked as app-initiated

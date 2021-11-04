@@ -1812,6 +1812,13 @@ static JSValueRef simulateWebNotificationClickCallback(JSContextRef context, JSO
     return JSValueMakeUndefined(context);
 }
 
+static JSValueRef stopLoadingCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
+    controller->stopLoading();
+    return JSValueMakeUndefined(context);
+}
+
 static JSValueRef forceImmediateCompletionCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
@@ -2124,6 +2131,7 @@ const JSStaticFunction* TestRunner::staticFunctions()
         { "setSpellCheckerLoggingEnabled", setSpellCheckerLoggingEnabledCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "setOpenPanelFiles", setOpenPanelFilesCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "setOpenPanelFilesMediaIcon", SetOpenPanelFilesMediaIconCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "stopLoading", stopLoadingCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "forceImmediateCompletion", forceImmediateCompletionCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
 #if PLATFORM(IOS_FAMILY)
         { "setPagePaused", setPagePausedCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },

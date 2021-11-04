@@ -282,6 +282,11 @@ void TestRunner::notifyDone()
         fprintf(stderr, "TestRunner::notifyDone() called unexpectedly.");
 }
 
+void TestRunner::stopLoading()
+{
+    [mainFrame.webView stopLoading:nil];
+}
+
 void TestRunner::forceImmediateCompletion()
 {
     if (m_waitToDump) {
