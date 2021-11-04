@@ -32,6 +32,7 @@ from .clean import Clean
 from .command import Command
 from .checkout import Checkout
 from .find import Find, Info
+from .land import Land
 from .log import Log
 from .pull import Pull
 from .pull_request import PullRequest
@@ -45,6 +46,7 @@ from webkitscmpy import local, log, remote
 def main(
     args=None, path=None, loggers=None, contributors=None,
     identifier_template=None, subversion=None, additional_setup=None, hooks=None,
+    canonical_svn=False,
 ):
     logging.basicConfig(level=logging.WARNING)
 
@@ -69,7 +71,7 @@ def main(
     )
 
     subparsers = parser.add_subparsers(help='sub-command help')
-    programs = [Blame, Branch, Canonicalize, Checkout, Clean, Find, Info, Log, Pull, PullRequest, Setup]
+    programs = [Blame, Branch, Canonicalize, Checkout, Clean, Find, Info, Land, Log, Pull, PullRequest, Setup]
     if subversion:
         programs.append(SetupGitSvn)
 
@@ -122,6 +124,9 @@ def main(
     if callable(additional_setup) and list(inspect.signature(additional_setup).parameters.keys()) == ['repository']:
         additional_setup = additional_setup(repository)
 
+    if callable(canonical_svn):
+        canonical_svn = canonical_svn(repository)
+
     if not getattr(parsed, 'main', None):
         parser.print_help()
         return -1
@@ -133,4 +138,5 @@ def main(
         subversion=subversion,
         additional_setup=additional_setup,
         hooks=hooks,
+        canonical_svn=canonical_svn,
     )

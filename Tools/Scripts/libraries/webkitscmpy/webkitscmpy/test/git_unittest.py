@@ -296,7 +296,6 @@ class TestGit(testing.PathTestCase):
                     git.commit(hash='bae5d1e9'),
                     git.commit(hash='1abe25b4'),
                     git.commit(hash='fff83bb2'),
-                    git.commit(hash='9b8311f2'),
                 ]), Commit.Encoder().default(list(git.commits(begin=dict(hash='9b8311f2'), end=dict(hash='bae5d1e9')))))
 
     def test_commits_branch(self):
@@ -307,7 +306,6 @@ class TestGit(testing.PathTestCase):
                     git.commit(hash='621652ad'),
                     git.commit(hash='a30ce849'),
                     git.commit(hash='fff83bb2'),
-                    git.commit(hash='9b8311f2'),
                 ]), Commit.Encoder().default(list(git.commits(begin=dict(argument='9b8311f2'), end=dict(argument='621652ad')))))
 
     def test_log(self):
@@ -333,15 +331,6 @@ CommitDate: {time_a}
 
     8th commit
     git-svn-id: https://svn.example.org/repository/repository/trunk@8 268f45cc-cd09-0410-ab3c-d52691b4dbfc
-
-commit 1abe25b443e985f93b90d830e4a7e3731336af4d
-Author:     Jonathan Bedard <jbedard@apple.com>
-AuthorDate: {time_b}
-Commit:     Jonathan Bedard <jbedard@apple.com>
-CommitDate: {time_b}
-
-    4th commit
-    git-svn-id: https://svn.example.org/repository/repository/trunk@4 268f45cc-cd09-0410-ab3c-d52691b4dbfc
 '''.format(
                 time_a=datetime.utcfromtimestamp(1601668000 + time.timezone).strftime('%a %b %d %H:%M:%S %Y +0000'),
                 time_b=datetime.utcfromtimestamp(1601663000 + time.timezone).strftime('%a %b %d %H:%M:%S %Y +0000'),
@@ -372,15 +361,6 @@ CommitDate: {time_b}
         Cherry pick
         git-svn-id: https://svn.webkit.org/repository/webkit/trunk@6 268f45cc-cd09-0410-ab3c-d52691b4dbfc
     git-svn-id: https://svn.example.org/repository/repository/trunk@5 268f45cc-cd09-0410-ab3c-d52691b4dbfc
-
-commit a30ce8494bf1ac2807a69844f726be4a9843ca55
-Author:     Jonathan Bedard <jbedard@apple.com>
-AuthorDate: {time_c}
-Commit:     Jonathan Bedard <jbedard@apple.com>
-CommitDate: {time_c}
-
-    3rd commit
-    git-svn-id: https://svn.example.org/repository/repository/trunk@3 268f45cc-cd09-0410-ab3c-d52691b4dbfc
 '''.format(
                 time_a=datetime.utcfromtimestamp(1601667000 + time.timezone).strftime('%a %b %d %H:%M:%S %Y +0000'),
                 time_b=datetime.utcfromtimestamp(1601664000 + time.timezone).strftime('%a %b %d %H:%M:%S %Y +0000'),
@@ -477,11 +457,27 @@ CommitDate: {time_c}
             self.assertEqual(repo.modified(staged=True), ['added.txt', 'modified.txt'])
 
     def test_rebase(self):
-        with mocks.local.Git(self.path):
+        with mocks.local.Git(self.path), OutputCapture():
             repo = local.Git(self.path)
             self.assertEqual(str(repo.commit(branch='branch-a')), '2.2@branch-a')
             self.assertEqual(repo.rebase(target='main', base='main', head='branch-a', recommit=False), 0)
             self.assertEqual(str(repo.commit(branch='branch-a')), '5.2@branch-a')
+
+    def test_diff_lines(self):
+        with mocks.local.Git(self.path), OutputCapture():
+            repo = local.Git(self.path)
+            self.assertEqual(
+                ['--- a/ChangeLog', '+++ b/ChangeLog', '@@ -1,0 +1,0 @@', '+ Patch Series'],
+                list(repo.diff_lines(base='bae5d1e90999d4f916a8a15810ccfa43f37a2fd6'))
+            )
+
+    def test_diff_lines_identifier(self):
+        with mocks.local.Git(self.path), OutputCapture():
+            repo = local.Git(self.path)
+            self.assertEqual(
+                ['--- a/ChangeLog', '+++ b/ChangeLog', '@@ -1,0 +1,0 @@', '+ 8th commit'],
+                list(repo.diff_lines(base='3@main', head='4@main'))
+            )
 
 
 class TestGitHub(testing.TestCase):
