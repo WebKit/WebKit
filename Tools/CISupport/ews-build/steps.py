@@ -3193,18 +3193,9 @@ class PrintConfiguration(steps.ShellSequence):
             return 'Unknown'
 
         build_to_name_mapping = {
+            '12': 'Monterey',
             '11': 'Big Sur',
             '10.15': 'Catalina',
-            '10.14': 'Mojave',
-            '10.13': 'High Sierra',
-            '10.12': 'Sierra',
-            '10.11': 'El Capitan',
-            '10.10': 'Yosemite',
-            '10.9': 'Maverick',
-            '10.8': 'Mountain Lion',
-            '10.7': 'Lion',
-            '10.6': 'Snow Leopard',
-            '10.5': 'Leopard',
         }
 
         for key, value in build_to_name_mapping.items():
