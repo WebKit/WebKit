@@ -105,6 +105,7 @@ private:
                     Node* length = m_insertionSet.insertNode(
                         m_nodeIndex, SpecInt52Any, GetTypedArrayLengthAsInt52, m_node->origin,
                         OpInfo(m_node->arrayMode().asWord()), base, storage);
+                    length->setResult(NodeResultInt52);
                     m_graph.varArgChild(m_node, 4) = Edge(length, Int52RepUse);
                 } else {
 #endif
