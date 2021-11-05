@@ -142,7 +142,7 @@ private:
     void addMessage(MessageSource, MessageLevel, const String& message, const String& sourceURL, unsigned lineNumber, unsigned columnNumber, RefPtr<Inspector::ScriptCallStack>&&, JSC::JSGlobalObject*, unsigned long requestIdentifier) final;
     void addConsoleMessage(MessageSource, MessageLevel, const String& message, unsigned long requestIdentifier) final;
 
-    bool isWorkerGlobalScope() const final { return true; }
+    bool isShadowRealmGlobalScope() const final { return true; }
 
     void deleteJSCodeAndGC(Synchronous);
     void clearDecodedScriptData();
@@ -188,5 +188,5 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ShadowRealmGlobalScope)
-    static bool isType(const WebCore::ScriptExecutionContext& context) { return context.isWorkerGlobalScope(); }
+    static bool isType(const WebCore::ScriptExecutionContext& context) { return context.isShadowRealmGlobalScope(); }
 SPECIALIZE_TYPE_TRAITS_END()
