@@ -32,8 +32,8 @@
 #include <wtf/WeakPtr.h>
 
 #if ENABLE(CONTENT_EXTENSIONS)
-#include "ContentExtensionActions.h"
 #include "ContentExtensionsBackend.h"
+#include "ContentRuleListResults.h"
 #endif
 
 namespace WebCore {

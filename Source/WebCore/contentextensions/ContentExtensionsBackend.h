@@ -36,7 +36,9 @@
 namespace WebCore {
 
 class DocumentLoader;
+class Page;
 class ResourceRequest;
+struct ContentRuleListResults;
 
 namespace ContentExtensions {
 
@@ -60,6 +62,11 @@ public:
     WEBCORE_EXPORT void removeAllContentExtensions();
 
     // - Internal WebCore Interface.
+    struct ActionsFromContentRuleList {
+        String contentRuleListIdentifier;
+        bool sawIgnorePreviousRules { false };
+        Vector<DeserializedAction> actions;
+    };
     WEBCORE_EXPORT Vector<ActionsFromContentRuleList> actionsForResourceLoad(const ResourceLoadInfo&) const;
     WEBCORE_EXPORT StyleSheetContents* globalDisplayNoneStyleSheet(const String& identifier) const;
 
@@ -75,6 +82,8 @@ public:
 private:
     HashMap<String, Ref<ContentExtension>> m_contentExtensions;
 };
+
+WEBCORE_EXPORT void applyResultsToRequest(ContentRuleListResults&&, Page*, ResourceRequest&);
 
 } // namespace ContentExtensions
 } // namespace WebCore

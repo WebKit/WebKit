@@ -47,26 +47,6 @@
 namespace WebCore {
 namespace ContentExtensions {
 
-static void serializeString(Vector<SerializedActionByte>& actions, const String& string)
-{
-    // Append Selector length (4 bytes).
-    uint32_t stringLength = string.length();
-    actions.grow(actions.size() + sizeof(uint32_t));
-    *reinterpret_cast<uint32_t*>(&actions[actions.size() - sizeof(uint32_t)]) = stringLength;
-    bool wideCharacters = !string.is8Bit();
-    actions.append(wideCharacters);
-    // Append Selector.
-    if (wideCharacters) {
-        uint32_t startIndex = actions.size();
-        actions.grow(actions.size() + sizeof(UChar) * stringLength);
-        for (uint32_t i = 0; i < stringLength; ++i)
-            *reinterpret_cast<UChar*>(&actions[startIndex + i * sizeof(UChar)]) = string[i];
-    } else {
-        for (uint32_t i = 0; i < stringLength; ++i)
-            actions.append(string[i]);
-    }
-}
-
 // css-display-none combining is special because we combine the string arguments with commas because we know they are css selectors.
 struct PendingDisplayNoneActions {
     StringBuilder combinedSelectors;
@@ -79,7 +59,7 @@ static void resolvePendingDisplayNoneActions(Vector<SerializedActionByte>& actio
 {
     for (auto& pendingDisplayNoneActions : map.values()) {
         uint32_t actionLocation = actions.size();
-        actions.append(static_cast<SerializedActionByte>(ActionType::CSSDisplayNoneSelector));
+        actions.append(WTF::alternativeIndexV<CSSDisplayNoneSelectorAction, ActionData>);
         serializeString(actions, pendingDisplayNoneActions.combinedSelectors.toString());
         for (uint32_t clientLocation : pendingDisplayNoneActions.clientLocations)
             actionLocations[clientLocation] = actionLocation;
@@ -105,9 +85,9 @@ static Vector<unsigned> serializeActions(const Vector<ContentExtensionRule>& rul
 
     for (unsigned ruleIndex = 0; ruleIndex < ruleList.size(); ++ruleIndex) {
         const ContentExtensionRule& rule = ruleList[ruleIndex];
-        ActionType actionType = rule.action().type();
 
-        if (actionType == ActionType::IgnorePreviousRules) {
+        auto& actionData = rule.action().data();
+        if (std::holds_alternative<IgnorePreviousRulesAction>(actionData)) {
             resolvePendingDisplayNoneActions(actions, actionLocations, cssDisplayNoneActionsMap);
 
             blockLoadActionsMap.clear();
@@ -123,11 +103,10 @@ static Vector<unsigned> serializeActions(const Vector<ContentExtensionRule>& rul
         if (!rule.trigger().conditions.isEmpty()) {
             actionLocations.append(actions.size());
 
-            actions.append(static_cast<SerializedActionByte>(actionType));
-            if (hasStringArgument(actionType))
-                serializeString(actions, rule.action().stringArgument());
-            else
-                ASSERT(rule.action().stringArgument().isNull());
+            actions.append(actionData.index());
+            std::visit(WTF::makeVisitor([&](const auto& member) {
+                member.serialize(actions);
+            }), actionData);
             continue;
         }
 
@@ -138,53 +117,44 @@ static Vector<unsigned> serializeActions(const Vector<ContentExtensionRule>& rul
             const auto existingAction = map.find(flags);
             if (existingAction == map.end()) {
                 actionLocation = actions.size();
-                actions.append(static_cast<SerializedActionByte>(actionType));
+                actions.append(actionData.index());
                 map.set(flags, actionLocation);
             } else
                 actionLocation = existingAction->value;
         };
         
-        auto findOrMakeStringActionLocation = [&] (StringActionMap& map) {
-            const String& argument = rule.action().stringArgument();
-            auto existingAction = map.find(std::make_pair(argument, flags));
+        auto findOrMakeStringActionLocation = [&] (StringActionMap& map, const NotifyAction& actionData) {
+            const String& notification = actionData.string;
+            auto existingAction = map.find(std::make_pair(notification, flags));
             if (existingAction == map.end()) {
                 actionLocation = actions.size();
-                actions.append(static_cast<SerializedActionByte>(actionType));
-                serializeString(actions, argument);
-                map.set(std::make_pair(argument, flags), actionLocation);
+                actions.append(WTF::alternativeIndexV<NotifyAction, ActionData>);
+                serializeString(actions, notification);
+                map.set(std::make_pair(notification, flags), actionLocation);
             } else
                 actionLocation = existingAction->value;
         };
-
-        switch (actionType) {
-        case ActionType::CSSDisplayNoneSelector: {
+        
+        std::visit(WTF::makeVisitor([&] (const CSSDisplayNoneSelectorAction& actionData) {
             const auto addResult = cssDisplayNoneActionsMap.add(rule.trigger(), PendingDisplayNoneActions());
             auto& pendingStringActions = addResult.iterator->value;
             if (!pendingStringActions.combinedSelectors.isEmpty())
                 pendingStringActions.combinedSelectors.append(',');
-            pendingStringActions.combinedSelectors.append(rule.action().stringArgument());
+            pendingStringActions.combinedSelectors.append(actionData.string);
             pendingStringActions.clientLocations.append(actionLocations.size());
 
             actionLocation = std::numeric_limits<unsigned>::max();
-            break;
-        }
-        case ActionType::IgnorePreviousRules:
+        }, [&] (const IgnorePreviousRulesAction&) {
             findOrMakeActionLocation(ignorePreviousRuleActionsMap);
-            break;
-        case ActionType::BlockLoad:
+        }, [&] (const BlockLoadAction&) {
             findOrMakeActionLocation(blockLoadActionsMap);
-            break;
-        case ActionType::BlockCookies:
+        }, [&] (const BlockCookiesAction&) {
             findOrMakeActionLocation(blockCookiesActionsMap);
-            break;
-        case ActionType::MakeHTTPS:
+        }, [&] (const MakeHTTPSAction&) {
             findOrMakeActionLocation(makeHTTPSActionsMap);
-            break;
-        case ActionType::Notify:
-            findOrMakeStringActionLocation(notifyActionsMap);
-            break;
-        }
-
+        }, [&] (const NotifyAction& actionData) {
+            findOrMakeStringActionLocation(notifyActionsMap, actionData);
+        }), actionData);
         actionLocations.append(actionLocation);
     }
     resolvePendingDisplayNoneActions(actions, actionLocations, cssDisplayNoneActionsMap);

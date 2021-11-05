@@ -27,57 +27,47 @@
 
 #if ENABLE(CONTENT_EXTENSIONS)
 
-#include <wtf/Vector.h>
-#include <wtf/text/WTFString.h>
+#include "ContentExtensionStringSerialization.h"
 
-namespace WebCore {
-
-class Page;
-class ResourceRequest;
-
-struct ContentRuleListResults;
-
-namespace ContentExtensions {
+namespace WebCore::ContentExtensions {
 
 struct Action;
 
 using SerializedActionByte = uint8_t;
 
-enum class ActionType : uint8_t {
-    BlockLoad,
-    BlockCookies,
-    CSSDisplayNoneSelector,
-    Notify,
-    IgnorePreviousRules,
-    MakeHTTPS,
+template<typename T> struct ActionWithoutMetadata {
+    T isolatedCopy() const { return { }; }
+    bool operator==(const T&) const { return true; }
+    void serialize(Vector<uint8_t>&) const { }
+    static T deserialize(Span<const uint8_t>) { return { }; }
+    static size_t serializedLength(Span<const uint8_t>) { return 0; }
 };
 
-static inline bool hasStringArgument(ActionType actionType)
-{
-    switch (actionType) {
-    case ActionType::CSSDisplayNoneSelector:
-    case ActionType::Notify:
-        return true;
-    case ActionType::BlockLoad:
-    case ActionType::BlockCookies:
-    case ActionType::IgnorePreviousRules:
-    case ActionType::MakeHTTPS:
-        return false;
-    }
-    ASSERT_NOT_REACHED();
-    return false;
-}
-
-struct ActionsFromContentRuleList {
-    String contentRuleListIdentifier;
-    bool sawIgnorePreviousRules { false };
-    Vector<Action> actions;
+template<typename T> struct ActionWithStringMetadata {
+    const String string;
+    T isolatedCopy() const { return { { string.isolatedCopy() } }; }
+    bool operator==(const T& other) const { return other.string == this->string; }
+    void serialize(Vector<uint8_t>& vector) const { serializeString(vector, string); }
+    static T deserialize(Span<const uint8_t> span) { return { { deserializeString(span) } }; }
+    static size_t serializedLength(Span<const uint8_t> span) { return stringSerializedLength(span); }
 };
 
-WEBCORE_EXPORT void applyResultsToRequest(ContentRuleListResults&&, Page*, ResourceRequest&);
+struct BlockLoadAction : public ActionWithoutMetadata<BlockLoadAction> { };
+struct BlockCookiesAction : public ActionWithoutMetadata<BlockCookiesAction> { };
+struct CSSDisplayNoneSelectorAction : public ActionWithStringMetadata<CSSDisplayNoneSelectorAction> { };
+struct NotifyAction : public ActionWithStringMetadata<NotifyAction> { };
+struct IgnorePreviousRulesAction : public ActionWithoutMetadata<IgnorePreviousRulesAction> { };
+struct MakeHTTPSAction : public ActionWithoutMetadata<MakeHTTPSAction> { };
 
-} // namespace ContentExtensions
+using ActionData = std::variant<
+    BlockLoadAction,
+    BlockCookiesAction,
+    CSSDisplayNoneSelectorAction,
+    NotifyAction,
+    IgnorePreviousRulesAction,
+    MakeHTTPSAction
+>;
 
-} // namespace WebCore
+} // namespace WebCore::ContentExtensions
 
 #endif // ENABLE(CONTENT_EXTENSIONS)

@@ -342,6 +342,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     contentextensions/ContentExtensionError.h
     contentextensions/ContentExtensionParser.h
     contentextensions/ContentExtensionRule.h
+    contentextensions/ContentExtensionStringSerialization.h
     contentextensions/ContentExtensionsBackend.h
     contentextensions/ContentExtensionsDebugging.h
     contentextensions/ContentRuleListResults.h

@@ -53,8 +53,7 @@ struct Trigger {
         UnlessDomain,
         IfTopURL,
         UnlessTopURL,
-    };
-    ConditionType conditionType { ConditionType::None };
+    } conditionType { ConditionType::None };
 
     WEBCORE_EXPORT Trigger isolatedCopy() const;
     
@@ -99,8 +98,8 @@ struct TriggerHash {
 };
 
 struct TriggerHashTraits : public WTF::CustomHashTraits<Trigger> {
-    static const bool emptyValueIsZero = false;
-    static const bool hasIsEmptyValueFunction = true;
+    static constexpr bool emptyValueIsZero = false;
+    static constexpr bool hasIsEmptyValueFunction = true;
 
     static void constructDeletedValue(Trigger& trigger)
     {
@@ -124,45 +123,34 @@ struct TriggerHashTraits : public WTF::CustomHashTraits<Trigger> {
 };
 
 struct Action {
-    Action(ActionType type, const String& stringArgument, uint32_t actionID = std::numeric_limits<uint32_t>::max())
-        : m_type(type)
-        , m_actionID(actionID)
-        , m_stringArgument(stringArgument)
-    {
-        ASSERT(hasStringArgument(type));
-    }
+    Action(ActionData&& data)
+        : m_data(WTFMove(data)) { }
 
-    Action(ActionType type, uint32_t actionID = std::numeric_limits<uint32_t>::max())
-        : m_type(type)
-        , m_actionID(actionID)
-    {
-        ASSERT(!hasStringArgument(type));
-    }
-    Action(Action&&) = default;
+    bool operator==(const Action& other) const { return m_data == other.m_data; }
+    bool operator!=(const Action& other) const { return !(*this == other); }
 
-    bool operator==(const Action& other) const
-    {
-        return m_type == other.m_type
-            && m_actionID == other.m_actionID
-            && m_stringArgument == other.m_stringArgument;
-    }
-
-    static Action deserialize(const SerializedActionByte* actions, const uint32_t actionsLength, uint32_t location);
-    static ActionType deserializeType(const SerializedActionByte* actions, const uint32_t actionsLength, uint32_t location);
-    static uint32_t serializedLength(const SerializedActionByte* actions, const uint32_t actionsLength, uint32_t location);
-
-    ActionType type() const { return m_type; }
-    uint32_t actionID() const { return m_actionID; }
-    const String& stringArgument() const { return m_stringArgument; }
+    const ActionData& data() const { return m_data; }
 
     WEBCORE_EXPORT Action isolatedCopy() const;
-    
+
 private:
-    ActionType m_type;
-    uint32_t m_actionID;
-    String m_stringArgument;
+    const ActionData m_data;
 };
-    
+
+struct DeserializedAction : public Action {
+    static DeserializedAction deserialize(const SerializedActionByte* actions, const uint32_t actionsLength, uint32_t location);
+    static size_t serializedLength(const SerializedActionByte* actions, const uint32_t actionsLength, uint32_t location);
+
+    uint32_t actionID() const { return m_actionID; }
+
+private:
+    DeserializedAction(uint32_t actionID, ActionData&& data)
+        : Action(WTFMove(data))
+        , m_actionID(actionID) { }
+
+    const uint32_t m_actionID;
+};
+
 class ContentExtensionRule {
 public:
     WEBCORE_EXPORT ContentExtensionRule(Trigger&&, Action&&);
@@ -180,8 +168,8 @@ public:
     }
 
 private:
-    Trigger m_trigger;
-    Action m_action;
+    const Trigger m_trigger;
+    const Action m_action;
 };
 
 } // namespace ContentExtensions

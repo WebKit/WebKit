@@ -27,7 +27,7 @@
 #include "CachedResourceRequest.h"
 
 #include "CachedResourceLoader.h"
-#include "ContentExtensionActions.h"
+#include "ContentExtensionsBackend.h"
 #include "CrossOriginAccessControl.h"
 #include "Document.h"
 #include "Element.h"

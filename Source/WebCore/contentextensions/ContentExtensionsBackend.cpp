@@ -148,8 +148,8 @@ auto ContentExtensionsBackend::actionsForResourceLoad(const ResourceLoadInfo& re
 
             // Add actions in reverse order to properly deal with IgnorePreviousRules.
             for (unsigned i = actionLocations.size(); i; i--) {
-                Action action = Action::deserialize(actions, actionsLength, actionLocations[i - 1]);
-                if (action.type() == ActionType::IgnorePreviousRules) {
+                auto action = DeserializedAction::deserialize(actions, actionsLength, actionLocations[i - 1]);
+                if (std::holds_alternative<IgnorePreviousRulesAction>(action.data())) {
                     actionsStruct.sawIgnorePreviousRules = true;
                     break;
                 }
@@ -206,36 +206,29 @@ ContentRuleListResults ContentExtensionsBackend::processContentRuleListsForLoad(
         const String& contentRuleListIdentifier = actionsFromContentRuleList.contentRuleListIdentifier;
         ContentRuleListResults::Result result;
         for (const auto& action : actionsFromContentRuleList.actions) {
-            switch (action.type()) {
-            case ContentExtensions::ActionType::BlockLoad:
+            std::visit(WTF::makeVisitor([&](const BlockLoadAction&) {
                 results.summary.blockedLoad = true;
                 result.blockedLoad = true;
-                break;
-            case ContentExtensions::ActionType::BlockCookies:
+            }, [&](const BlockCookiesAction&) {
                 results.summary.blockedCookies = true;
                 result.blockedCookies = true;
-                break;
-            case ContentExtensions::ActionType::CSSDisplayNoneSelector:
+            }, [&](const CSSDisplayNoneSelectorAction& actionData) {
                 if (resourceType == ResourceType::Document)
-                    initiatingDocumentLoader.addPendingContentExtensionDisplayNoneSelector(contentRuleListIdentifier, action.stringArgument(), action.actionID());
+                    initiatingDocumentLoader.addPendingContentExtensionDisplayNoneSelector(contentRuleListIdentifier, actionData.string, action.actionID());
                 else if (currentDocument)
-                    currentDocument->extensionStyleSheets().addDisplayNoneSelector(contentRuleListIdentifier, action.stringArgument(), action.actionID());
-                break;
-            case ContentExtensions::ActionType::Notify:
+                    currentDocument->extensionStyleSheets().addDisplayNoneSelector(contentRuleListIdentifier, actionData.string, action.actionID());
+            }, [&](const NotifyAction& actionData) {
                 results.summary.hasNotifications = true;
-                result.notifications.append(action.stringArgument());
-                break;
-            case ContentExtensions::ActionType::MakeHTTPS: {
+                result.notifications.append(actionData.string);
+            }, [&](const MakeHTTPSAction&) {
                 if ((url.protocolIs("http") || url.protocolIs("ws"))
                     && (!url.port() || WTF::isDefaultPortForProtocol(url.port().value(), url.protocol()))) {
                     results.summary.madeHTTPS = true;
                     result.madeHTTPS = true;
                 }
-                break;
-            }
-            case ContentExtensions::ActionType::IgnorePreviousRules:
+            }, [&](const IgnorePreviousRulesAction&) {
                 RELEASE_ASSERT_NOT_REACHED();
-            }
+            }), action.data());
         }
 
         if (!actionsFromContentRuleList.sawIgnorePreviousRules) {
@@ -282,24 +275,19 @@ ContentRuleListResults ContentExtensionsBackend::processContentRuleListsForPingL
     makeSecureIfNecessary(results, url);
     for (const auto& actionsFromContentRuleList : actions) {
         for (const auto& action : actionsFromContentRuleList.actions) {
-            switch (action.type()) {
-            case ContentExtensions::ActionType::BlockLoad:
+            std::visit(WTF::makeVisitor([&](const BlockLoadAction&) {
                 results.summary.blockedLoad = true;
-                break;
-            case ContentExtensions::ActionType::BlockCookies:
+            }, [&](const BlockCookiesAction&) {
                 results.summary.blockedCookies = true;
-                break;
-            case ContentExtensions::ActionType::MakeHTTPS:
+            }, [&](const CSSDisplayNoneSelectorAction&) {
+            }, [&](const NotifyAction&) {
+                // We currently have not implemented notifications from the NetworkProcess to the UIProcess.
+            }, [&](const MakeHTTPSAction&) {
                 if ((url.protocolIs("http") || url.protocolIs("ws")) && (!url.port() || WTF::isDefaultPortForProtocol(url.port().value(), url.protocol())))
                     results.summary.madeHTTPS = true;
-                break;
-            case ContentExtensions::ActionType::CSSDisplayNoneSelector:
-            case ContentExtensions::ActionType::Notify:
-                // We currently have not implemented notifications from the NetworkProcess to the UIProcess.
-                break;
-            case ContentExtensions::ActionType::IgnorePreviousRules:
+            }, [&](const IgnorePreviousRulesAction&) {
                 RELEASE_ASSERT_NOT_REACHED();
-            }
+            }), action.data());
         }
     }
 

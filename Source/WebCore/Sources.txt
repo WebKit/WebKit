@@ -611,6 +611,7 @@ contentextensions/ContentExtensionCompiler.cpp
 contentextensions/ContentExtensionError.cpp
 contentextensions/ContentExtensionParser.cpp
 contentextensions/ContentExtensionRule.cpp
+contentextensions/ContentExtensionStringSerialization.cpp
 contentextensions/ContentExtensionStyleSheet.cpp
 contentextensions/ContentExtensionsBackend.cpp
 contentextensions/DFA.cpp

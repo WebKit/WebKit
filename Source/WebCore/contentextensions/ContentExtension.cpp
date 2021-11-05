@@ -68,9 +68,10 @@ uint32_t ContentExtension::findFirstIgnorePreviousRules() const
     uint32_t actionsLength = m_compiledExtension->actionsLength();
     uint32_t currentActionIndex = 0;
     while (currentActionIndex < actionsLength) {
-        if (Action::deserializeType(actions, actionsLength, currentActionIndex) == ActionType::IgnorePreviousRules)
+        RELEASE_ASSERT(currentActionIndex < actionsLength);
+        if (actions[currentActionIndex] == WTF::alternativeIndexV<IgnorePreviousRulesAction, ActionData>)
             return currentActionIndex;
-        currentActionIndex += Action::serializedLength(actions, actionsLength, currentActionIndex);
+        currentActionIndex += DeserializedAction::serializedLength(actions, actionsLength, currentActionIndex);
     }
     return std::numeric_limits<uint32_t>::max();
 }
@@ -87,9 +88,9 @@ void ContentExtension::compileGlobalDisplayNoneStyleSheet()
     auto* actions = m_compiledExtension->actions();
     uint32_t actionsLength = m_compiledExtension->actionsLength();
 
-    auto inGlobalDisplayNoneStyleSheet = [&](const uint32_t location)
-    {
-        return location < firstIgnorePreviousRules && Action::deserializeType(actions, actionsLength, location) == ActionType::CSSDisplayNoneSelector;
+    auto inGlobalDisplayNoneStyleSheet = [&](const uint32_t location) {
+        RELEASE_ASSERT(location < actionsLength);
+        return location < firstIgnorePreviousRules && actions[location] == WTF::alternativeIndexV<CSSDisplayNoneSelectorAction, ActionData>;
     };
     
     StringBuilder css;
@@ -97,9 +98,10 @@ void ContentExtension::compileGlobalDisplayNoneStyleSheet()
         if (inGlobalDisplayNoneStyleSheet(universalActionLocation)) {
             if (!css.isEmpty())
                 css.append(',');
-            Action action = Action::deserialize(actions, actionsLength, universalActionLocation);
-            ASSERT(action.type() == ActionType::CSSDisplayNoneSelector);
-            css.append(action.stringArgument());
+            auto action = DeserializedAction::deserialize(actions, actionsLength, universalActionLocation);
+            ASSERT(std::holds_alternative<CSSDisplayNoneSelectorAction>(action.data()));
+            if (auto* actionData = std::get_if<CSSDisplayNoneSelectorAction>(&action.data()))
+                css.append(actionData->string);
         }
     }
     if (css.isEmpty())

@@ -187,11 +187,11 @@ static Expected<std::optional<Action>, std::error_code> loadAction(const JSON::O
     String actionType = actionObject->getString("type");
 
     if (actionType == "block")
-        return { Action(ActionType::BlockLoad) };
+        return { Action(BlockLoadAction()) };
     if (actionType == "ignore-previous-rules")
-        return { Action(ActionType::IgnorePreviousRules) };
+        return { Action(IgnorePreviousRulesAction()) };
     if (actionType == "block-cookies")
-        return { Action(ActionType::BlockCookies) };
+        return { Action(BlockCookiesAction()) };
     if (actionType == "css-display-none") {
         String selectorString = actionObject->getString("selector");
         if (!selectorString)
@@ -200,15 +200,15 @@ static Expected<std::optional<Action>, std::error_code> loadAction(const JSON::O
             // Skip rules with invalid selectors to be backwards-compatible.
             return { std::nullopt };
         }
-        return { Action(ActionType::CSSDisplayNoneSelector, WTFMove(selectorString)) };
+        return { Action { CSSDisplayNoneSelectorAction { { WTFMove(selectorString) } } } };
     }
     if (actionType == "make-https")
-        return { Action(ActionType::MakeHTTPS) };
+        return { Action(MakeHTTPSAction()) };
     if (actionType == "notify") {
         String notification = actionObject->getString("notification");
         if (!notification)
             return makeUnexpected(ContentExtensionError::JSONInvalidNotification);
-        return { Action(ActionType::Notify, WTFMove(notification)) };
+        return { Action { NotifyAction { { WTFMove(notification) } } } };
     }
     return makeUnexpected(ContentExtensionError::JSONInvalidActionType);
 }

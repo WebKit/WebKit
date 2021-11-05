@@ -496,6 +496,7 @@
 		5C23DF0B2246015800F454B6 /* Challenge.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C23DF0A2245C9D700F454B6 /* Challenge.mm */; };
 		5C2936931D5BF70D00DEAB1E /* CookieAcceptPolicy.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C2936911D5BF63E00DEAB1E /* CookieAcceptPolicy.mm */; };
 		5C2936961D5C00ED00DEAB1E /* CookieMessage.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 5C2936941D5BFD1900DEAB1E /* CookieMessage.html */; };
+		5C2C01A82734883600F89D37 /* CrossThreadCopier.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 278DE64B22B8D611004E0E7A /* CrossThreadCopier.cpp */; };
 		5C3A77AA22F20BEA003827FF /* UploadDirectory.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C3A77A922F20B8A003827FF /* UploadDirectory.mm */; };
 		5C3B1D2622A74F6700BCF4D0 /* ContextMenus.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C3B1D2522A74EA400BCF4D0 /* ContextMenus.mm */; };
 		5C4259462266A68A0039AA7A /* BasicProposedCredentialPlugIn.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C42594422669E9B0039AA7A /* BasicProposedCredentialPlugIn.mm */; };
@@ -1389,7 +1390,6 @@
 			dstPath = TestWebKitAPI.resources;
 			dstSubfolderSpec = 7;
 			files = (
-				49D2E5C22731E3BC00BCCAED /* file-with-iframe.html in Copy Resources */,
 				55A817FF2181021A0004A39A /* 100x100-red.tga in Copy Resources */,
 				1A9E52C913E65EF4006917F5 /* 18-characters.html in Copy Resources */,
 				55A81800218102210004A39A /* 400x400-green.png in Copy Resources */,
@@ -1516,6 +1516,7 @@
 				CDA29B2B20FD358400F15CED /* ExitFullscreenOnEnterPiP.html in Copy Resources */,
 				F41AB9A31EF4696B0083FA08 /* file-uploading.html in Copy Resources */,
 				BC2D006412AA04CE00E732A3 /* file-with-anchor.html in Copy Resources */,
+				49D2E5C22731E3BC00BCCAED /* file-with-iframe.html in Copy Resources */,
 				CD59F53419E9110D00CF1835 /* file-with-mse.html in Copy Resources */,
 				524BBC9E19DF72C0002F1AF1 /* file-with-video.html in Copy Resources */,
 				1A02C870125D4CFD00E3F4BD /* find.html in Copy Resources */,
@@ -4104,6 +4105,7 @@
 				7283A9D122FB1D9700B21C7D /* exif-orientation-8-llo.jpg */,
 				CDA29B2A20FD344E00F15CED /* ExitFullscreenOnEnterPiP.html */,
 				F41AB99B1EF4692C0083FA08 /* file-uploading.html */,
+				49D2E5C12731E37400BCCAED /* file-with-iframe.html */,
 				A17EAC542083056E0084B41B /* find.pdf */,
 				F43E3BC020DADB8000A4E7ED /* fixed-nav-bar.html */,
 				93575C551D30366E000D604D /* focus-inputs.html */,
@@ -4289,7 +4291,6 @@
 				51714EB31CF8C761004723C4 /* WebProcessKillIDBCleanup-2.html */,
 				5120C83B1E674E350025B250 /* WebsiteDataStoreCustomPaths.html */,
 				2E131C171D83A97E001BA36C /* wide-autoplaying-video-with-audio.html */,
-				49D2E5C12731E37400BCCAED /* file-with-iframe.html */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -5327,6 +5328,7 @@
 				0F30CB5C1FCE1796004B5323 /* ConcurrentPtrHashSet.cpp in Sources */,
 				7C83DEC31D0A590C00FEBCF3 /* Condition.cpp in Sources */,
 				7C83DEA61D0A590C00FEBCF3 /* Counters.cpp in Sources */,
+				5C2C01A82734883600F89D37 /* CrossThreadCopier.cpp in Sources */,
 				7C83DEA91D0A590C00FEBCF3 /* CString.cpp in Sources */,
 				7C83DEAD1D0A590C00FEBCF3 /* Deque.cpp in Sources */,
 				1AF7B21F1D6CD14D008C126C /* EnumTraits.cpp in Sources */,

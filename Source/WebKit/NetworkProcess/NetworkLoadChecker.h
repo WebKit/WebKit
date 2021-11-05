@@ -41,6 +41,7 @@
 
 namespace WebCore {
 class ContentSecurityPolicy;
+struct ContentRuleListResults;
 struct ContentSecurityPolicyClient;
 class SecurityOrigin;
 enum class PreflightPolicy : uint8_t;
