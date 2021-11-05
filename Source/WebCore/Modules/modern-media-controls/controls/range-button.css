@@ -23,6 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+button.range {
+    touch-action: none;
+}
+
 button.range > div.indicator {
     --indicator-width: 45px;
     --indicator-height: 134px;
