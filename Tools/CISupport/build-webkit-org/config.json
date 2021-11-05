@@ -10,7 +10,7 @@
                     { "name": "bot179", "platform": "mac-monterey" },
                     { "name": "bot183", "platform": "mac-monterey" },
                     { "name": "bot184", "platform": "mac-monterey" },
-                    { "name": "bot186", "platform": "mac-monterey" },
+                    { "name": "bot185", "platform": "mac-monterey" },
                     { "name": "bot187", "platform": "mac-monterey" },
                     { "name": "bot198", "platform": "mac-monterey" },
                     { "name": "bot279", "platform": "mac-monterey" },
@@ -53,7 +53,6 @@
                     { "name": "bot687", "platform": "mac-catalina" },
                     { "name": "bot688", "platform": "mac-catalina" },
 
-                    { "name": "bot185", "platform": "*" },
                     { "name": "bot611", "platform": "*" },
                     { "name": "bot612", "platform": "*" },
                     { "name": "bot613", "platform": "*" },
@@ -141,7 +140,7 @@
                           "monterey-applesilicon-release-tests-test262" ,"monterey-release-tests-test262", "monterey-release-tests-wk1", "monterey-release-tests-wk2",
                           "monterey-release-applesilicon-tests-wk1", "monterey-release-applesilicon-tests-wk2", "monterey-applesilicon-release-tests-jsc"
                       ],
-                      "workernames": ["bot186", "bot187"]
+                      "workernames": ["bot185", "bot187"]
                     },
                     { "name": "Apple-Monterey-AppleSilicon-Release-Test262-Tests", "factory": "Test262Factory", "builddir": "monterey-applesilicon-release-tests-test262",
                       "platform": "mac-monterey", "configuration": "release", "architectures": ["x86_64", "arm64"],
