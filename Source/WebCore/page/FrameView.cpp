@@ -297,9 +297,9 @@ void FrameView::resetScrollbars()
     // Reset the document's scrollbars back to our defaults before we yield the floor.
     setScrollbarsSuppressed(true);
     if (m_canHaveScrollbars)
-        setScrollbarModes(ScrollbarAuto, ScrollbarAuto);
+        setScrollbarModes(ScrollbarMode::Auto, ScrollbarMode::Auto);
     else
-        setScrollbarModes(ScrollbarAlwaysOff, ScrollbarAlwaysOff);
+        setScrollbarModes(ScrollbarMode::AlwaysOff, ScrollbarMode::AlwaysOff);
     setScrollbarsSuppressed(false);
 }
 
@@ -322,7 +322,7 @@ void FrameView::init()
 
     // Propagate the scrolling mode to the view.
     auto* ownerElement = frame().ownerElement();
-    if (is<HTMLFrameElementBase>(ownerElement) && downcast<HTMLFrameElementBase>(*ownerElement).scrollingMode() == ScrollbarAlwaysOff)
+    if (is<HTMLFrameElementBase>(ownerElement) && downcast<HTMLFrameElementBase>(*ownerElement).scrollingMode() == ScrollbarMode::AlwaysOff)
         setCanHaveScrollbars(false);
 
     Page* page = frame().page();
@@ -521,7 +521,7 @@ void FrameView::updateCanHaveScrollbars()
     ScrollbarMode hMode;
     ScrollbarMode vMode;
     scrollbarModes(hMode, vMode);
-    if (hMode == ScrollbarAlwaysOff && vMode == ScrollbarAlwaysOff)
+    if (hMode == ScrollbarMode::AlwaysOff && vMode == ScrollbarMode::AlwaysOff)
         setCanHaveScrollbars(false);
     else
         setCanHaveScrollbars(true);
@@ -659,15 +659,15 @@ void FrameView::applyOverflowToViewport(const RenderElement& renderer, Scrollbar
     case Overflow::Hidden:
     case Overflow::Clip:
         if (overrideHidden)
-            hMode = ScrollbarAuto;
+            hMode = ScrollbarMode::Auto;
         else
-            hMode = ScrollbarAlwaysOff;
+            hMode = ScrollbarMode::AlwaysOff;
         break;
     case Overflow::Scroll:
-        hMode = ScrollbarAlwaysOn;
+        hMode = ScrollbarMode::AlwaysOn;
         break;
     case Overflow::Auto:
-        hMode = ScrollbarAuto;
+        hMode = ScrollbarMode::Auto;
         break;
     default:
         // Don't set it at all.
@@ -678,15 +678,15 @@ void FrameView::applyOverflowToViewport(const RenderElement& renderer, Scrollbar
     case Overflow::Hidden:
     case Overflow::Clip:
         if (overrideHidden)
-            vMode = ScrollbarAuto;
+            vMode = ScrollbarMode::Auto;
         else
-            vMode = ScrollbarAlwaysOff;
+            vMode = ScrollbarMode::AlwaysOff;
         break;
     case Overflow::Scroll:
-        vMode = ScrollbarAlwaysOn;
+        vMode = ScrollbarMode::AlwaysOn;
         break;
     case Overflow::Auto:
-        vMode = ScrollbarAuto;
+        vMode = ScrollbarMode::Auto;
         break;
     default:
         // Don't set it at all. Values of Overflow::PagedX and Overflow::PagedY are handled by applyPaginationToViewPort().
@@ -731,18 +731,18 @@ void FrameView::calculateScrollbarModesForLayout(ScrollbarMode& hMode, Scrollbar
     m_viewportRendererType = ViewportRendererType::None;
 
     const HTMLFrameOwnerElement* owner = frame().ownerElement();
-    if (owner && (owner->scrollingMode() == ScrollbarAlwaysOff)) {
-        hMode = ScrollbarAlwaysOff;
-        vMode = ScrollbarAlwaysOff;
+    if (owner && (owner->scrollingMode() == ScrollbarMode::AlwaysOff)) {
+        hMode = ScrollbarMode::AlwaysOff;
+        vMode = ScrollbarMode::AlwaysOff;
         return;
     }  
     
     if (m_canHaveScrollbars || strategy == RulesFromWebContentOnly) {
-        hMode = ScrollbarAuto;
-        vMode = ScrollbarAuto;
+        hMode = ScrollbarMode::Auto;
+        vMode = ScrollbarMode::Auto;
     } else {
-        hMode = ScrollbarAlwaysOff;
-        vMode = ScrollbarAlwaysOff;
+        hMode = ScrollbarMode::AlwaysOff;
+        vMode = ScrollbarMode::AlwaysOff;
     }
     
     if (layoutContext().subtreeLayoutRoot())
@@ -767,8 +767,8 @@ void FrameView::calculateScrollbarModesForLayout(ScrollbarMode& hMode, Scrollbar
     }
     
     if (is<HTMLFrameSetElement>(*bodyOrFrameset) && !frameFlatteningEnabled()) {
-        vMode = ScrollbarAlwaysOff;
-        hMode = ScrollbarAlwaysOff;
+        vMode = ScrollbarMode::AlwaysOff;
+        hMode = ScrollbarMode::AlwaysOff;
         return;
     }
 
@@ -1254,11 +1254,11 @@ void FrameView::adjustScrollbarsForLayout(bool isFirstLayout)
     if (isFirstLayout && !layoutContext().isLayoutNested()) {
         setScrollbarsSuppressed(true);
         // Set the initial vMode to AlwaysOn if we're auto.
-        if (vMode == ScrollbarAuto)
-            setVerticalScrollbarMode(ScrollbarAlwaysOn); // This causes a vertical scrollbar to appear.
+        if (vMode == ScrollbarMode::Auto)
+            setVerticalScrollbarMode(ScrollbarMode::AlwaysOn); // This causes a vertical scrollbar to appear.
         // Set the initial hMode to AlwaysOff if we're auto.
-        if (hMode == ScrollbarAuto)
-            setHorizontalScrollbarMode(ScrollbarAlwaysOff); // This causes a horizontal scrollbar to disappear.
+        if (hMode == ScrollbarMode::Auto)
+            setHorizontalScrollbarMode(ScrollbarMode::AlwaysOff); // This causes a horizontal scrollbar to disappear.
         ASSERT(frame().page());
         if (frame().page()->isMonitoringWheelEvents())
             scrollAnimator().setWheelEventTestMonitor(frame().page()->wheelEventTestMonitor());
@@ -3521,8 +3521,8 @@ void FrameView::performFixedWidthAutoSize()
     auto* renderView = document->renderView();
     auto* firstChild = renderView->firstChild();
 
-    ScrollbarMode horizonalScrollbarMode = ScrollbarAlwaysOff;
-    ScrollbarMode verticalScrollbarMode = ScrollbarAlwaysOff;
+    auto horizonalScrollbarMode = ScrollbarMode::AlwaysOff;
+    auto verticalScrollbarMode = ScrollbarMode::AlwaysOff;
     setVerticalScrollbarLock(false);
     setHorizontalScrollbarLock(false);
     setScrollbarModes(horizonalScrollbarMode, verticalScrollbarMode, true, true);
@@ -3605,15 +3605,15 @@ void FrameView::performSizeToContentAutoSize()
         newSize = newSize.expandedTo(minAutoSize);
 
         // Bound the dimensions by the max bounds and determine what scrollbars to show.
-        ScrollbarMode horizonalScrollbarMode = ScrollbarAlwaysOff;
+        ScrollbarMode horizonalScrollbarMode = ScrollbarMode::AlwaysOff;
         if (newSize.width() > m_autoSizeConstraint.width()) {
             newSize.setWidth(m_autoSizeConstraint.width());
-            horizonalScrollbarMode = ScrollbarAlwaysOn;
+            horizonalScrollbarMode = ScrollbarMode::AlwaysOn;
         }
-        ScrollbarMode verticalScrollbarMode = ScrollbarAlwaysOff;
+        ScrollbarMode verticalScrollbarMode = ScrollbarMode::AlwaysOff;
         if (newSize.height() > m_autoSizeConstraint.height()) {
             newSize.setHeight(m_autoSizeConstraint.height());
-            verticalScrollbarMode = ScrollbarAlwaysOn;
+            verticalScrollbarMode = ScrollbarMode::AlwaysOn;
         }
 
         if (newSize == size)
@@ -3950,7 +3950,7 @@ bool FrameView::isScrollable(Scrollability definitionOfScrollable)
     ScrollbarMode horizontalMode;
     ScrollbarMode verticalMode;
     calculateScrollbarModesForLayout(horizontalMode, verticalMode, RulesFromWebContentOnly);
-    if (horizontalMode == ScrollbarAlwaysOff && verticalMode == ScrollbarAlwaysOff)
+    if (horizontalMode == ScrollbarMode::AlwaysOff && verticalMode == ScrollbarMode::AlwaysOff)
         return false;
 
     return true;
@@ -4722,7 +4722,7 @@ void FrameView::enableAutoSizeMode(bool enable, const IntSize& viewSize, AutoSiz
     // Since autosize mode forces the scrollbar mode, change them to being auto.
     setVerticalScrollbarLock(false);
     setHorizontalScrollbarLock(false);
-    setScrollbarModes(ScrollbarAuto, ScrollbarAuto);
+    setScrollbarModes(ScrollbarMode::Auto, ScrollbarMode::Auto);
 }
 
 void FrameView::forceLayout(bool allowSubtreeLayout)

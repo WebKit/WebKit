@@ -918,7 +918,7 @@ void Frame::createView(const IntSize& viewportSize, const std::optional<Color>& 
         ownerRenderer()->setWidget(frameView);
 
     if (HTMLFrameOwnerElement* owner = ownerElement())
-        view()->setCanHaveScrollbars(owner->scrollingMode() != ScrollbarAlwaysOff);
+        view()->setCanHaveScrollbars(owner->scrollingMode() != ScrollbarMode::AlwaysOff);
 }
 
 DOMWindow* Frame::window() const

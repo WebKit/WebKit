@@ -194,12 +194,12 @@ static void _notificationCallback(WKViewRef v, WKViewNotificationType type, void
 
 - (WebCore::ScrollbarMode)horizontalScrollingMode
 {
-    return WebCore::ScrollbarAuto;
+    return WebCore::ScrollbarMode::Auto;
 }
 
 - (WebCore::ScrollbarMode)verticalScrollingMode
 {
-    return WebCore::ScrollbarAuto;
+    return WebCore::ScrollbarMode::Auto;
 }
 
 #pragma mark -

@@ -121,9 +121,9 @@ public:
     void setHorizontalScrollElasticity(ScrollElasticity scrollElasticity) { m_horizontalScrollElasticity = scrollElasticity; }
     ScrollElasticity horizontalScrollElasticity() const { return m_horizontalScrollElasticity; }
 
-    virtual ScrollbarMode horizontalScrollbarMode() const { return ScrollbarAuto; }
-    virtual ScrollbarMode verticalScrollbarMode() const { return ScrollbarAuto; }
-    bool canHaveScrollbars() const { return horizontalScrollbarMode() != ScrollbarAlwaysOff || verticalScrollbarMode() != ScrollbarAlwaysOff; }
+    virtual ScrollbarMode horizontalScrollbarMode() const { return ScrollbarMode::Auto; }
+    virtual ScrollbarMode verticalScrollbarMode() const { return ScrollbarMode::Auto; }
+    bool canHaveScrollbars() const { return horizontalScrollbarMode() != ScrollbarMode::AlwaysOff || verticalScrollbarMode() != ScrollbarMode::AlwaysOff; }
 
     virtual bool horizontalScrollbarHiddenByStyle() const { return false; }
     virtual bool verticalScrollbarHiddenByStyle() const { return false; }

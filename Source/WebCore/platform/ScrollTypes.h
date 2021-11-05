@@ -148,10 +148,10 @@ enum class ScrollbarOrientation : uint8_t {
     Vertical
 };
 
-enum ScrollbarMode : uint8_t {
-    ScrollbarAuto,
-    ScrollbarAlwaysOff,
-    ScrollbarAlwaysOn
+enum class ScrollbarMode : uint8_t {
+    Auto,
+    AlwaysOff,
+    AlwaysOn
 };
 
 enum class ScrollbarControlSize : uint8_t {
@@ -261,6 +261,7 @@ WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, ScrollType);
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, ScrollClamping);
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, ScrollBehaviorForFixedElements);
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, ScrollElasticity);
+WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, ScrollbarMode);
 
 struct ScrollPositionChangeOptions {
     ScrollType type;
@@ -304,9 +305,9 @@ template<> struct EnumTraits<WebCore::ScrollIsAnimated> {
 template<> struct EnumTraits<WebCore::ScrollbarMode> {
     using values = EnumValues<
         WebCore::ScrollbarMode,
-        WebCore::ScrollbarMode::ScrollbarAuto,
-        WebCore::ScrollbarMode::ScrollbarAlwaysOff,
-        WebCore::ScrollbarMode::ScrollbarAlwaysOn
+        WebCore::ScrollbarMode::Auto,
+        WebCore::ScrollbarMode::AlwaysOff,
+        WebCore::ScrollbarMode::AlwaysOn
     >;
 };
 

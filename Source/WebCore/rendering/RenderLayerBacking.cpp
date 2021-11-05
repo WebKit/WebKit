@@ -403,10 +403,10 @@ static TiledBacking::TileCoverage computePageTiledBackingCoverage(const RenderLa
     bool useMinimalTilesDuringLiveResize = frameView.inLiveResize();
     if (frameView.speculativeTilingEnabled() && !useMinimalTilesDuringLiveResize) {
         bool clipsToExposedRect = static_cast<bool>(frameView.viewExposedRect());
-        if (frameView.horizontalScrollbarMode() != ScrollbarAlwaysOff || clipsToExposedRect)
+        if (frameView.horizontalScrollbarMode() != ScrollbarMode::AlwaysOff || clipsToExposedRect)
             tileCoverage |= TiledBacking::CoverageForHorizontalScrolling;
 
-        if (frameView.verticalScrollbarMode() != ScrollbarAlwaysOff || clipsToExposedRect)
+        if (frameView.verticalScrollbarMode() != ScrollbarMode::AlwaysOff || clipsToExposedRect)
             tileCoverage |= TiledBacking::CoverageForVerticalScrolling;
     }
     return tileCoverage;

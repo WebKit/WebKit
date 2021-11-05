@@ -154,15 +154,15 @@ void ScrollView::setCanHaveScrollbars(bool canScroll)
     
     scrollbarModes(newHorizontalMode, newVerticalMode);
     
-    if (canScroll && newVerticalMode == ScrollbarAlwaysOff)
-        newVerticalMode = ScrollbarAuto;
+    if (canScroll && newVerticalMode == ScrollbarMode::AlwaysOff)
+        newVerticalMode = ScrollbarMode::Auto;
     else if (!canScroll)
-        newVerticalMode = ScrollbarAlwaysOff;
+        newVerticalMode = ScrollbarMode::AlwaysOff;
     
-    if (canScroll && newHorizontalMode == ScrollbarAlwaysOff)
-        newHorizontalMode = ScrollbarAuto;
+    if (canScroll && newHorizontalMode == ScrollbarMode::AlwaysOff)
+        newHorizontalMode = ScrollbarMode::Auto;
     else if (!canScroll)
-        newHorizontalMode = ScrollbarAlwaysOff;
+        newHorizontalMode = ScrollbarMode::AlwaysOff;
     
     setScrollbarModes(newHorizontalMode, newVerticalMode);
 }
@@ -634,14 +634,14 @@ void ScrollView::updateScrollbars(const ScrollPosition& desiredPosition)
     ScrollbarMode hScroll = m_horizontalScrollbarMode;
     ScrollbarMode vScroll = m_verticalScrollbarMode;
 
-    if (hScroll != ScrollbarAuto)
-        newHasHorizontalScrollbar = (hScroll == ScrollbarAlwaysOn);
-    if (vScroll != ScrollbarAuto)
-        newHasVerticalScrollbar = (vScroll == ScrollbarAlwaysOn);
+    if (hScroll != ScrollbarMode::Auto)
+        newHasHorizontalScrollbar = (hScroll == ScrollbarMode::AlwaysOn);
+    if (vScroll != ScrollbarMode::Auto)
+        newHasVerticalScrollbar = (vScroll == ScrollbarMode::AlwaysOn);
 
     bool scrollbarAddedOrRemoved = false;
 
-    if (m_scrollbarsSuppressed || (hScroll != ScrollbarAuto && vScroll != ScrollbarAuto)) {
+    if (m_scrollbarsSuppressed || (hScroll != ScrollbarMode::Auto && vScroll != ScrollbarMode::Auto)) {
         if (hasHorizontalScrollbar != newHasHorizontalScrollbar && (hasHorizontalScrollbar || !avoidScrollbarCreation())) {
             if (setHasHorizontalScrollbar(newHasHorizontalScrollbar))
                 scrollbarAddedOrRemoved = true;
@@ -657,9 +657,9 @@ void ScrollView::updateScrollbars(const ScrollPosition& desiredPosition)
         IntSize docSize = totalContentsSize();
         IntSize fullVisibleSize = unobscuredContentRectIncludingScrollbars().size();
 
-        if (hScroll == ScrollbarAuto)
+        if (hScroll == ScrollbarMode::Auto)
             newHasHorizontalScrollbar = docSize.width() > visibleWidth();
-        if (vScroll == ScrollbarAuto)
+        if (vScroll == ScrollbarMode::Auto)
             newHasVerticalScrollbar = docSize.height() > visibleHeight();
 
         bool needAnotherPass = false;
@@ -667,16 +667,16 @@ void ScrollView::updateScrollbars(const ScrollPosition& desiredPosition)
             // If we ever turn one scrollbar off, do not turn the other one on. Never ever
             // try to both gain/lose a scrollbar in the same pass.
             if (!m_updateScrollbarsPass && docSize.width() <= fullVisibleSize.width() && docSize.height() <= fullVisibleSize.height()) {
-                if (hScroll == ScrollbarAuto)
+                if (hScroll == ScrollbarMode::Auto)
                     newHasHorizontalScrollbar = false;
-                if (vScroll == ScrollbarAuto)
+                if (vScroll == ScrollbarMode::Auto)
                     newHasVerticalScrollbar = false;
             }
-            if (!newHasHorizontalScrollbar && hasHorizontalScrollbar && vScroll != ScrollbarAlwaysOn && !hasVerticalScrollbar) {
+            if (!newHasHorizontalScrollbar && hasHorizontalScrollbar && vScroll != ScrollbarMode::AlwaysOn && !hasVerticalScrollbar) {
                 newHasVerticalScrollbar = false;
                 needAnotherPass = true;
             }
-            if (!newHasVerticalScrollbar && hasVerticalScrollbar && hScroll != ScrollbarAlwaysOn && !hasHorizontalScrollbar) {
+            if (!newHasVerticalScrollbar && hasVerticalScrollbar && hScroll != ScrollbarMode::AlwaysOn && !hasHorizontalScrollbar) {
                 newHasHorizontalScrollbar = false;
                 needAnotherPass = true;
             }
@@ -1619,8 +1619,8 @@ void ScrollView::platformSetScrollbarModes()
 
 void ScrollView::platformScrollbarModes(ScrollbarMode& horizontal, ScrollbarMode& vertical) const
 {
-    horizontal = ScrollbarAuto;
-    vertical = ScrollbarAuto;
+    horizontal = ScrollbarMode::Auto;
+    vertical = ScrollbarMode::Auto;
 }
 
 void ScrollView::platformSetCanBlitOnScroll(bool)

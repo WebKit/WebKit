@@ -93,7 +93,7 @@ void RenderFrameBase::performLayoutWithFlattening(bool hasFixedWidth, bool hasFi
     // if scrollbars are off, and the width or height are fixed
     // we obey them and do not expand. With frame flattening
     // no subframe much ever become scrollable.
-    bool isScrollable = frameOwnerElement().scrollingMode() != ScrollbarAlwaysOff;
+    bool isScrollable = frameOwnerElement().scrollingMode() != ScrollbarMode::AlwaysOff;
 
     // consider iframe inset border
     int hBorder = borderLeft() + borderRight();

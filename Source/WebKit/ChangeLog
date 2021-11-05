@@ -1,5 +1,18 @@
 2021-11-05  Nikolaos Mouchtaris  <nmouchtaris@apple.com>
 
+        Make scroll bar mode an enum class
+        https://bugs.webkit.org/show_bug.cgi?id=232651
+
+        Reviewed by Simon Fraser.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::transitionToCommittedForNewPage):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::setAlwaysShowsHorizontalScroller):
+        (WebKit::WebPage::setAlwaysShowsVerticalScroller):
+
+2021-11-05  Nikolaos Mouchtaris  <nmouchtaris@apple.com>
+
         Make scroll elasticity an enum class
         https://bugs.webkit.org/show_bug.cgi?id=232646
 

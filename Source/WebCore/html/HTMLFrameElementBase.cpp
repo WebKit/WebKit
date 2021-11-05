@@ -231,7 +231,7 @@ ScrollbarMode HTMLFrameElementBase::scrollingMode() const
     return equalLettersIgnoringASCIICase(scrollingAttribute, "no")
         || equalLettersIgnoringASCIICase(scrollingAttribute, "noscroll")
         || equalLettersIgnoringASCIICase(scrollingAttribute, "off")
-        ? ScrollbarAlwaysOff : ScrollbarAuto;
+        ? ScrollbarMode::AlwaysOff : ScrollbarMode::Auto;
 }
 
 } // namespace WebCore

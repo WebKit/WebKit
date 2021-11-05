@@ -74,8 +74,8 @@ struct ScrollableAreaParameters {
     ScrollElasticity horizontalScrollElasticity { ScrollElasticity::None };
     ScrollElasticity verticalScrollElasticity { ScrollElasticity::None };
 
-    ScrollbarMode horizontalScrollbarMode { ScrollbarAuto };
-    ScrollbarMode verticalScrollbarMode { ScrollbarAuto };
+    ScrollbarMode horizontalScrollbarMode { ScrollbarMode::Auto };
+    ScrollbarMode verticalScrollbarMode { ScrollbarMode::Auto };
 
     bool allowsHorizontalScrolling { false };
     bool allowsVerticalScrolling { false };

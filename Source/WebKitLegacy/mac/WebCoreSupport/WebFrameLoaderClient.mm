@@ -1468,7 +1468,7 @@ void WebFrameLoaderClient::transitionToCommittedForNewPage()
         documentLoader->setTitle({ [dataSource pageTitle], WebCore::TextDirection::LTR });
 
     if (auto* ownerElement = coreFrame->ownerElement())
-        coreFrame->view()->setCanHaveScrollbars(ownerElement->scrollingMode() != WebCore::ScrollbarAlwaysOff);
+        coreFrame->view()->setCanHaveScrollbars(ownerElement->scrollingMode() != WebCore::ScrollbarMode::AlwaysOff);
 
     // If the document view implicitly became first responder, make sure to set the focused frame properly.
     if ([[documentView window] firstResponder] == documentView) {

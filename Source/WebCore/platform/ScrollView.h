@@ -534,8 +534,8 @@ private:
 
     RefPtr<Scrollbar> m_horizontalScrollbar;
     RefPtr<Scrollbar> m_verticalScrollbar;
-    ScrollbarMode m_horizontalScrollbarMode { ScrollbarAuto };
-    ScrollbarMode m_verticalScrollbarMode { ScrollbarAuto };
+    ScrollbarMode m_horizontalScrollbarMode { ScrollbarMode::Auto };
+    ScrollbarMode m_verticalScrollbarMode { ScrollbarMode::Auto };
 
 
     // FIXME: More things will move into here.

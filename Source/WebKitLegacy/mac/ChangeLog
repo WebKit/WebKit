@@ -1,3 +1,23 @@
+2021-11-05  Nikolaos Mouchtaris  <nmouchtaris@apple.com>
+
+        Make scroll bar mode an enum class
+        https://bugs.webkit.org/show_bug.cgi?id=232651
+
+        Reviewed by Simon Fraser.
+
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::transitionToCommittedForNewPage):
+        * WebView/WebDynamicScrollBarsView.mm:
+        (-[WebDynamicScrollBarsView setAllowsHorizontalScrolling:]):
+        (-[WebDynamicScrollBarsView updateScrollers]):
+        (-[WebDynamicScrollBarsView allowsHorizontalScrolling]):
+        (-[WebDynamicScrollBarsView allowsVerticalScrolling]):
+        * WebView/WebView.mm:
+        (-[WebView setAlwaysShowVerticalScroller:]):
+        (-[WebView alwaysShowVerticalScroller]):
+        (-[WebView setAlwaysShowHorizontalScroller:]):
+        (-[WebView alwaysShowHorizontalScroller]):
+
 2021-11-03  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed iOS build fix.
