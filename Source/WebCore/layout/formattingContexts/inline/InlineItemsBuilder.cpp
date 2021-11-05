@@ -402,11 +402,17 @@ void InlineItemsBuilder::handleInlineBoxEnd(const Box& inlineBox, InlineItems& i
 
 void InlineItemsBuilder::handleInlineLevelBox(const Box& layoutBox, InlineItems& inlineItems)
 {
-    if (layoutBox.isAtomicInlineLevelBox())
-        return inlineItems.append({ layoutBox, InlineItem::Type::Box });
+    if (layoutBox.isAtomicInlineLevelBox()) {
+        inlineItems.append({ layoutBox, InlineItem::Type::Box });
+        if (hasSeenBidiContent())
+            m_paragraphContentBuilder.append(objectReplacementCharacter);
+        return;
+    }
 
-    if (layoutBox.isLineBreakBox())
+    if (layoutBox.isLineBreakBox()) {
+        // FIXME: Figure out what (if any) character to append to the bidi paragraph.
         return inlineItems.append({ layoutBox, downcast<LineBreakBox>(layoutBox).isOptional() ? InlineItem::Type::WordBreakOpportunity : InlineItem::Type::HardLineBreak });
+    }
 
     ASSERT_NOT_REACHED();
 }
@@ -431,18 +437,19 @@ void InlineItemsBuilder::buildPreviousTextContent(const InlineItems& inlineItems
     ASSERT(!hasSeenBidiContent());
     ASSERT(m_contentOffsetMap.isEmpty());
 
-    const Box* lastLayoutBox = nullptr;
+    const Box* lastInlineTextBox = nullptr;
     for (auto& inlineItem : inlineItems) {
-        if (!inlineItem.isText())
-            continue;
-        auto& layoutBox = inlineItem.layoutBox();
-        if (lastLayoutBox == &layoutBox) {
-            // We've already appended this content.
-            continue;
-        }
-        m_contentOffsetMap.set(&layoutBox, m_paragraphContentBuilder.length());
-        m_paragraphContentBuilder.append(downcast<InlineTextBox>(layoutBox).content());
-        lastLayoutBox = &layoutBox;
+        if (inlineItem.isText()) {
+            auto& layoutBox = inlineItem.layoutBox();
+            if (lastInlineTextBox != &layoutBox) {
+                m_contentOffsetMap.set(&layoutBox, m_paragraphContentBuilder.length());
+                m_paragraphContentBuilder.append(downcast<InlineTextBox>(layoutBox).content());
+                lastInlineTextBox = &layoutBox;
+            }
+        } else if (inlineItem.isBox())
+            m_paragraphContentBuilder.append(objectReplacementCharacter);
+        else
+            ASSERT_NOT_IMPLEMENTED_YET();
     }
 }
 
