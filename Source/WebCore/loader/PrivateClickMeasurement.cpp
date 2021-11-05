@@ -148,12 +148,12 @@ void PrivateClickMeasurement::setSourceApplicationBundleIDForTesting(const Strin
     m_sourceApplicationBundleID = appBundleIDForTesting;
 }
 
-static Seconds randomlyBetweenTwentyFourAndFortyEightHours()
+static Seconds randomlyBetweenTwentyFourAndFortyEightHours(PrivateClickMeasurement::IsRunningLayoutTest isRunningTest)
 {
-    return 24_h + Seconds(randomNumber() * (24_h).value());
+    return isRunningTest == PrivateClickMeasurement::IsRunningLayoutTest::Yes ? 1_s : 24_h + Seconds(randomNumber() * (24_h).value());
 }
 
-PrivateClickMeasurement::AttributionSecondsUntilSendData PrivateClickMeasurement::attributeAndGetEarliestTimeToSend(AttributionTriggerData&& attributionTriggerData)
+PrivateClickMeasurement::AttributionSecondsUntilSendData PrivateClickMeasurement::attributeAndGetEarliestTimeToSend(AttributionTriggerData&& attributionTriggerData, IsRunningLayoutTest isRunningTest)
 {
     if (!attributionTriggerData.isValid() || (m_attributionTriggerData && m_attributionTriggerData->priority >= attributionTriggerData.priority))
         return { };
@@ -161,8 +161,8 @@ PrivateClickMeasurement::AttributionSecondsUntilSendData PrivateClickMeasurement
     m_attributionTriggerData = WTFMove(attributionTriggerData);
     // 24-48 hour delay before sending. This helps privacy since the conversion and the attribution
     // requests are detached and the time of the attribution does not reveal the time of the conversion.
-    auto sourceSecondsUntilSend = randomlyBetweenTwentyFourAndFortyEightHours();
-    auto destinationSecondsUntilSend = randomlyBetweenTwentyFourAndFortyEightHours();
+    auto sourceSecondsUntilSend = randomlyBetweenTwentyFourAndFortyEightHours(isRunningTest);
+    auto destinationSecondsUntilSend = randomlyBetweenTwentyFourAndFortyEightHours(isRunningTest);
     m_timesToSend = { WallTime::now() + sourceSecondsUntilSend, WallTime::now() + destinationSecondsUntilSend };
 
     return AttributionSecondsUntilSendData { sourceSecondsUntilSend, destinationSecondsUntilSend };

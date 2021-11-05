@@ -83,6 +83,7 @@ private:
     void clearExpired();
     bool featureEnabled() const;
     bool debugModeEnabled() const;
+    Seconds randomlyBetweenFifteenAndThirtyMinutes() const;
 
     std::optional<PrivateClickMeasurement> m_ephemeralMeasurement;
     WebCore::Timer m_firePendingAttributionRequestsTimer;

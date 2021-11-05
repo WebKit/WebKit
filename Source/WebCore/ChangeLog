@@ -1,5 +1,34 @@
 2021-11-04  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r285239. rdar://problem/80991209
+
+    Apply patch. rdar://problem/84982191
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/branches/safari-612.3.3.0-branch@285239 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-11-03  Russell Epstein  <repstein@apple.com>
+
+            Apply patch. rdar://problem/84982191
+
+        2021-11-03  Kate Cheney  <katherine_cheney@apple.com>
+
+                PCM: Safari on iOS and macOS are not sending ad click attribution reports for Private Click Measurement
+                https://bugs.webkit.org/show_bug.cgi?id=228104
+                <rdar://problem/80991209>
+
+                Reviewed by John Wilander.
+
+                No new tests. Several existing tests would timeout with the removal of
+                m_firePendingAttributionRequestsTimer.startOneShot(m_isRunningTest ? 0_s : seconds)
+                if the fix wasn't in place.
+
+                * loader/PrivateClickMeasurement.cpp:
+                (WebCore::randomlyBetweenTwentyFourAndFortyEightHours):
+                (WebCore::PrivateClickMeasurement::attributeAndGetEarliestTimeToSend):
+                * loader/PrivateClickMeasurement.h:
+
+2021-11-04  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r284163. rdar://problem/85042122
 
     WebCore::CaptionUserPreferencesMediaAF should use a weak observer with CFNotificationCenter

@@ -1,5 +1,28 @@
 2021-11-04  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r285239. rdar://problem/80991209
+
+    Apply patch. rdar://problem/84982191
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/branches/safari-612.3.3.0-branch@285239 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-11-03  Russell Epstein  <repstein@apple.com>
+
+            Apply patch. rdar://problem/84982191
+
+        2021-11-03  Kate Cheney  <katherine_cheney@apple.com>
+
+                PCM: Safari on iOS and macOS are not sending ad click attribution reports for Private Click Measurement
+                https://bugs.webkit.org/show_bug.cgi?id=228104
+                <rdar://problem/80991209>
+
+                Reviewed by John Wilander.
+
+                * TestWebKitAPI/Tests/WebCore/PrivateClickMeasurement.cpp:
+                (TestWebKitAPI::TEST):
+
+2021-11-04  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r285089. rdar://problem/84522357
 
     Layer tree should not be stuck in frozen state after explicitly stopping a page load
