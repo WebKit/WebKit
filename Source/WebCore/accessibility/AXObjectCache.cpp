@@ -1450,10 +1450,12 @@ void AXObjectCache::setIsSynchronizingSelection(bool isSynchronizing)
     m_isSynchronizingSelection = isSynchronizing;
 }
 
+#if PLATFORM(COCOA) || USE(ATSPI)
 static bool isPasswordFieldOrContainedByPasswordField(AccessibilityObject* object)
 {
     return object && (object->isPasswordField() || object->isContainedByPasswordField());
 }
+#endif
 
 void AXObjectCache::postTextStateChangeNotification(Node* node, const AXTextStateChangeIntent& intent, const VisibleSelection& selection)
 {
