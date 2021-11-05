@@ -1,3 +1,12 @@
+2021-11-05  Lauro Moura  <lmoura@igalia.com>
+
+        [GLIB] Gardening more timeouts
+
+        Unreviewed test gardening.
+
+        * platform/glib/TestExpectations:
+        * platform/wpe/TestExpectations:
+
 2021-11-05  Chris Dumez  <cdumez@apple.com>
 
         Resync web-platform-tests/html from upstream

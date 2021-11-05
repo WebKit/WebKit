@@ -177,6 +177,9 @@ imported/w3c/web-platform-tests/css/css-contain/contain-size-inline-block-003.ht
 webkit.org/b/225479 accessibility/aria-modal.html [ Timeout ]
 webkit.org/b/225479 accessibility/dialog-showModal.html [ Timeout ]
 
+# Animations
+webkit.org/b/232745 fast/animation/request-animation-frame-throttling-lowPowerMode.html [ Timeout ]
+
 # Complex Text Path: Tests passing with --complex-text
 webkit.org/b/215355 fonts/ligature.html [ ImageOnlyFailure ]
 webkit.org/b/215421 fast/encoding/denormalised-voiced-japanese-chars.html [ ImageOnlyFailure ]
