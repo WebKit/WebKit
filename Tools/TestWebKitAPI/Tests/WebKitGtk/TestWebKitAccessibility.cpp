@@ -1523,6 +1523,97 @@ static void testTextStateChanged(AccessibilityTest* test, gconstpointer)
 #endif
 }
 
+static void testTextReplacedObjects(AccessibilityTest* test, gconstpointer)
+{
+#if !USE(ATSPI)
+    g_test_skip("Embedded objects are not correctly handled with ATK");
+#else
+    test->showInWindow(800, 600);
+    test->loadHtml(
+        "<html>"
+        "  <body>"
+        "    <p>This is <button>button1</button> and <button>button2</button> in paragraph</p>"
+        "  </body>"
+        "</html>",
+        nullptr);
+    test->waitUntilLoadFinished();
+
+    auto testApp = test->findTestApplication();
+    g_assert_true(ATSPI_IS_ACCESSIBLE(testApp.get()));
+
+    auto documentWeb = test->findDocumentWeb(testApp.get());
+    g_assert_true(ATSPI_IS_ACCESSIBLE(documentWeb.get()));
+    g_assert_cmpint(atspi_accessible_get_child_count(documentWeb.get(), nullptr), ==, 1);
+
+    auto p = adoptGRef(atspi_accessible_get_child_at_index(documentWeb.get(), 0, nullptr));
+    g_assert_true(ATSPI_IS_TEXT(p.get()));
+    auto length = atspi_text_get_character_count(ATSPI_TEXT(p.get()), nullptr);
+    g_assert_cmpint(length, ==, 28);
+    GUniquePtr<char> text(atspi_text_get_text(ATSPI_TEXT(p.get()), 0, -1, nullptr));
+    g_assert_cmpstr(text.get(), ==, "This is \357\277\274 and \357\277\274 in paragraph");
+    g_assert_cmpint(atspi_accessible_get_child_count(p.get(), nullptr), ==, 2);
+
+    auto button1 = adoptGRef(atspi_accessible_get_child_at_index(p.get(), 0, nullptr));
+    g_assert_true(ATSPI_IS_ACCESSIBLE(button1.get()));
+    text.reset(atspi_accessible_get_name(button1.get(), nullptr));
+    g_assert_cmpstr(text.get(), ==, "button1");
+
+    auto button2 = adoptGRef(atspi_accessible_get_child_at_index(p.get(), 1, nullptr));
+    g_assert_true(ATSPI_IS_ACCESSIBLE(button2.get()));
+    text.reset(atspi_accessible_get_name(button2.get(), nullptr));
+    g_assert_cmpstr(text.get(), ==, "button2");
+
+    UniqueAtspiTextRange range(atspi_text_get_string_at_offset(ATSPI_TEXT(p.get()), 8, ATSPI_TEXT_GRANULARITY_CHAR, nullptr));
+    g_assert_cmpstr(range->content, ==, "\357\277\274");
+    g_assert_cmpint(range->start_offset, ==, 8);
+    g_assert_cmpint(range->end_offset, ==, 9);
+    range.reset(atspi_text_get_string_at_offset(ATSPI_TEXT(p.get()), 14, ATSPI_TEXT_GRANULARITY_CHAR, nullptr));
+    g_assert_cmpstr(range->content, ==, "\357\277\274");
+    g_assert_cmpint(range->start_offset, ==, 14);
+    g_assert_cmpint(range->end_offset, ==, 15);
+
+    range.reset(atspi_text_get_string_at_offset(ATSPI_TEXT(p.get()), 8, ATSPI_TEXT_GRANULARITY_WORD, nullptr));
+    g_assert_cmpstr(range->content, ==, "\357\277\274 ");
+    g_assert_cmpint(range->start_offset, ==, 8);
+    g_assert_cmpint(range->end_offset, ==, 10);
+    range.reset(atspi_text_get_string_at_offset(ATSPI_TEXT(p.get()), 14, ATSPI_TEXT_GRANULARITY_WORD, nullptr));
+    g_assert_cmpstr(range->content, ==, "\357\277\274 ");
+    g_assert_cmpint(range->start_offset, ==, 14);
+    g_assert_cmpint(range->end_offset, ==, 16);
+
+    int startOffset, endOffset;
+    GRefPtr<GHashTable> attributes = adoptGRef(atspi_text_get_attribute_run(ATSPI_TEXT(p.get()), 0, FALSE, &startOffset, &endOffset, nullptr));
+    g_assert_nonnull(attributes.get());
+    g_assert_cmpuint(g_hash_table_size(attributes.get()), ==, 0);
+    g_assert_cmpint(startOffset, ==, 0);
+    g_assert_cmpint(endOffset, ==, 8);
+
+    attributes = adoptGRef(atspi_text_get_attribute_run(ATSPI_TEXT(p.get()), 9, FALSE, &startOffset, &endOffset, nullptr));
+    g_assert_nonnull(attributes.get());
+    g_assert_cmpuint(g_hash_table_size(attributes.get()), >, 0);
+    g_assert_cmpint(startOffset, ==, 8);
+    g_assert_cmpint(endOffset, ==, 9);
+
+    attributes = adoptGRef(atspi_text_get_attribute_run(ATSPI_TEXT(p.get()), 11, FALSE, &startOffset, &endOffset, nullptr));
+    g_assert_nonnull(attributes.get());
+    g_assert_cmpuint(g_hash_table_size(attributes.get()), ==, 0);
+    g_assert_cmpint(startOffset, ==, 9);
+    g_assert_cmpint(endOffset, ==, 14);
+
+    attributes = adoptGRef(atspi_text_get_attribute_run(ATSPI_TEXT(p.get()), 15, FALSE, &startOffset, &endOffset, nullptr));
+    g_assert_nonnull(attributes.get());
+    g_assert_cmpuint(g_hash_table_size(attributes.get()), >, 0);
+    g_assert_cmpint(startOffset, ==, 14);
+    g_assert_cmpint(endOffset, ==, 15);
+
+    attributes = adoptGRef(atspi_text_get_attribute_run(ATSPI_TEXT(p.get()), 18, FALSE, &startOffset, &endOffset, nullptr));
+    g_assert_nonnull(attributes.get());
+    g_assert_cmpuint(g_hash_table_size(attributes.get()), ==, 0);
+    g_assert_cmpint(startOffset, ==, 15);
+    g_assert_cmpint(endOffset, ==, 28);
+#endif
+}
+
 void beforeAll()
 {
     AccessibilityTest::add("WebKitAccessibility", "accessible/basic-hierarchy", testAccessibleBasicHierarchy);
@@ -1542,6 +1633,7 @@ void beforeAll()
     AccessibilityTest::add("WebKitAccessibility", "text/selections", testTextSelections);
     AccessibilityTest::add("WebKitAccessibility", "text/attributes", testTextAttributes);
     AccessibilityTest::add("WebKitAccessibility", "text/state-changed", testTextStateChanged);
+    AccessibilityTest::add("WebKitAccessibility", "text/replaced-objects", testTextReplacedObjects);
 }
 
 void afterAll()

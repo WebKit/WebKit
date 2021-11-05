@@ -610,9 +610,9 @@ IntPoint AccessibilityObjectAtspi::boundsForSelection(const VisibleSelection& se
     auto rangeInParent = *makeSimpleRange(parentFirstPosition, nodeRangeStart);
 
     // Set values for start offsets and calculate initial range length.
-    int startOffset = characterCount(rangeInParent, TextIteratorBehavior::EmitsCharactersBetweenAllVisiblePositions);
+    int startOffset = characterCount(rangeInParent, TextIteratorBehavior::EmitsObjectReplacementCharacters);
     auto nodeRange = *makeSimpleRange(nodeRangeStart, nodeRangeEnd);
-    int rangeLength = characterCount(nodeRange, TextIteratorBehavior::EmitsCharactersBetweenAllVisiblePositions);
+    int rangeLength = characterCount(nodeRange, TextIteratorBehavior::EmitsObjectReplacementCharacters);
     return { startOffset, startOffset + rangeLength };
 }
 

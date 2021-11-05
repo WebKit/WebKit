@@ -2145,7 +2145,12 @@ VisiblePosition AccessibilityRenderObject::visiblePositionForIndex(int index) co
     if (!node)
         return VisiblePosition();
 
+#if USE(ATSPI)
+    // We need to consider replaced elements for GTK, as they will be presented with the 'object replacement character' (0xFFFC).
+    return WebCore::visiblePositionForIndex(index, node, TextIteratorBehavior::EmitsObjectReplacementCharacters);
+#else
     return visiblePositionForIndexUsingCharacterIterator(*node, index);
+#endif
 }
     
 int AccessibilityRenderObject::indexForVisiblePosition(const VisiblePosition& position) const
@@ -2163,15 +2168,16 @@ int AccessibilityRenderObject::indexForVisiblePosition(const VisiblePosition& po
     if (!node)
         return 0;
 
-#if USE(ATK) || USE(ATSPI)
     // We need to consider replaced elements for GTK, as they will be
     // presented with the 'object replacement character' (0xFFFC).
-    bool forSelectionPreservation = true;
-#else
-    bool forSelectionPreservation = false;
+    TextIteratorBehaviors behaviors;
+#if USE(ATSPI)
+    behaviors.add(TextIteratorBehavior::EmitsObjectReplacementCharacters);
+#elif USE(ATK)
+    behaviors.add(TextIteratorBehavior::EmitsCharactersBetweenAllVisiblePositions);
 #endif
 
-    return WebCore::indexForVisiblePosition(*node, position, forSelectionPreservation);
+    return WebCore::indexForVisiblePosition(*node, position, behaviors);
 }
 
 Element* AccessibilityRenderObject::rootEditableElementForPosition(const Position& position) const

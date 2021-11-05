@@ -994,15 +994,12 @@ int indexForVisiblePosition(const VisiblePosition& visiblePosition, RefPtr<Conta
 }
 
 // FIXME: Merge this function with the one above.
-int indexForVisiblePosition(Node& node, const VisiblePosition& visiblePosition, bool forSelectionPreservation)
+int indexForVisiblePosition(Node& node, const VisiblePosition& visiblePosition, TextIteratorBehaviors behaviors)
 {
     if (visiblePosition.isNull())
         return 0;
 
     auto range = makeSimpleRange(makeBoundaryPointBeforeNodeContents(node), visiblePosition);
-    TextIteratorBehaviors behaviors;
-    if (forSelectionPreservation)
-        behaviors.add(TextIteratorBehavior::EmitsCharactersBetweenAllVisiblePositions);
     return range ? characterCount(*range, behaviors) : 0;
 }
 
@@ -1016,11 +1013,11 @@ VisiblePosition visiblePositionForPositionWithOffset(const VisiblePosition& posi
     return visiblePositionForIndex(startIndex + offset, root.get());
 }
 
-VisiblePosition visiblePositionForIndex(int index, ContainerNode* scope)
+VisiblePosition visiblePositionForIndex(int index, Node* scope, TextIteratorBehaviors behaviors)
 {
     if (!scope)
         return { };
-    return { makeDeprecatedLegacyPosition(resolveCharacterLocation(makeRangeSelectingNodeContents(*scope), index, TextIteratorBehavior::EmitsCharactersBetweenAllVisiblePositions)) };
+    return { makeDeprecatedLegacyPosition(resolveCharacterLocation(makeRangeSelectingNodeContents(*scope), index, behaviors)) };
 }
 
 VisiblePosition visiblePositionForIndexUsingCharacterIterator(Node& node, int index)
