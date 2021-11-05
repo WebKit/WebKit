@@ -28,7 +28,7 @@
 
 #if ENABLE(VIDEO) && PLATFORM(COCOA)
 
-#import <wtf/cocoa/TypeCastsCocoa.h>
+#import <wtf/cocoa/TypeCastsNS.h>
 #import <wtf/spi/cocoa/NSObjCRuntimeSPI.h>
 
 @interface WebCaptionUserPreferencesMediaAFWeakObserver : NSObject {
