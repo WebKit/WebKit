@@ -45,7 +45,6 @@ class CodeBlock;
 class PolymorphicAccess;
 class StructureStubInfo;
 class WatchpointsOnStructureStubInfo;
-class ScratchRegisterAllocator;
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(PolymorphicAccess);
 
@@ -277,6 +276,8 @@ struct AccessGenerationState {
         m_spillStateForJSGetterSetter = spillState;
     }
     SpillState spillStateForJSGetterSetter() const { return m_spillStateForJSGetterSetter; }
+
+    ScratchRegisterAllocator makeDefaultScratchAllocator(GPRReg extraToLock = InvalidGPRReg);
     
 private:
     const RegisterSet& liveRegistersToPreserveAtExceptionHandlingCallSite();

@@ -136,13 +136,7 @@ void GetterSetterAccessCase::emitDOMJITGetter(AccessGenerationState& state, cons
     Vector<FPRReg> fpScratch;
     Vector<SnippetParams::Value> regs;
 
-    ScratchRegisterAllocator allocator(stubInfo.usedRegisters);
-    allocator.lock(stubInfo.baseRegs());
-    allocator.lock(valueRegs);
-    if (stubInfo.m_stubInfoGPR != InvalidGPRReg)
-        allocator.lock(stubInfo.m_stubInfoGPR);
-    ASSERT(stubInfo.m_arrayProfileGPR == InvalidGPRReg);
-    allocator.lock(scratchGPR);
+    auto allocator = state.makeDefaultScratchAllocator(scratchGPR);
 
     GPRReg paramBaseGPR = InvalidGPRReg;
     GPRReg paramGlobalObjectGPR = InvalidGPRReg;
