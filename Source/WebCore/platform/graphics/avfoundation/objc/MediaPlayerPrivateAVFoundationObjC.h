@@ -428,6 +428,7 @@ private:
     mutable long long m_cachedTotalBytes { 0 };
     unsigned m_pendingStatusChanges { 0 };
     int m_cachedItemStatus;
+    int m_runLoopNestingLevel { 0 };
     MediaPlayer::BufferingPolicy m_bufferingPolicy { MediaPlayer::BufferingPolicy::Default };
     bool m_cachedLikelyToKeepUp { false };
     bool m_cachedBufferEmpty { false };
@@ -447,7 +448,6 @@ private:
     mutable bool m_allowsWirelessVideoPlayback { true };
     bool m_shouldPlayToPlaybackTarget { false };
 #endif
-    bool m_runningModalPaint { false };
     bool m_haveProcessedChapterTracks { false };
     bool m_waitForVideoOutputMediaDataWillChangeTimedOut { false };
     bool m_haveBeenAskedToPaint { false };
