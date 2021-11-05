@@ -289,9 +289,6 @@ static VideoFullscreenInterfaceAVKit::ExitFullScreenReason convertToExitFullScre
     if ([_videoSublayer superlayer] != self)
         return;
 
-    if (![_avPlayerController delegate])
-        return;
-
     [_videoSublayer setPosition:CGPointMake(CGRectGetMidX(self.bounds), CGRectGetMidY(self.bounds))];
 
     if (self.videoDimensions.height <= 0 || self.videoDimensions.width <= 0)
@@ -328,8 +325,6 @@ static VideoFullscreenInterfaceAVKit::ExitFullScreenReason convertToExitFullScre
 - (void)resolveBounds
 {
     [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(resolveBounds) object:nil];
-    if (![_avPlayerController delegate])
-        return;
     
     if ([_videoSublayer superlayer] != self)
         return;
