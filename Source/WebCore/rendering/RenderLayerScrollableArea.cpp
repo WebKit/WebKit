@@ -859,13 +859,13 @@ void RenderLayerScrollableArea::setHasHorizontalScrollbar(bool hasScrollbar)
         m_hBar = createScrollbar(ScrollbarOrientation::Horizontal);
 #if HAVE(RUBBER_BANDING)
         auto& renderer = m_layer.renderer();
-        ScrollElasticity elasticity = scrollsOverflow() && renderer.settings().rubberBandingForSubScrollableRegionsEnabled() ? ScrollElasticityAutomatic : ScrollElasticityNone;
+        ScrollElasticity elasticity = scrollsOverflow() && renderer.settings().rubberBandingForSubScrollableRegionsEnabled() ? ScrollElasticity::Automatic : ScrollElasticity::None;
         ScrollableArea::setHorizontalScrollElasticity(elasticity);
 #endif
     } else {
         destroyScrollbar(ScrollbarOrientation::Horizontal);
 #if HAVE(RUBBER_BANDING)
-        ScrollableArea::setHorizontalScrollElasticity(ScrollElasticityNone);
+        ScrollableArea::setHorizontalScrollElasticity(ScrollElasticity::None);
 #endif
     }
 
@@ -885,13 +885,13 @@ void RenderLayerScrollableArea::setHasVerticalScrollbar(bool hasScrollbar)
         m_vBar = createScrollbar(ScrollbarOrientation::Vertical);
 #if HAVE(RUBBER_BANDING)
         auto& renderer = m_layer.renderer();
-        ScrollElasticity elasticity = scrollsOverflow() && renderer.settings().rubberBandingForSubScrollableRegionsEnabled() ? ScrollElasticityAutomatic : ScrollElasticityNone;
+        ScrollElasticity elasticity = scrollsOverflow() && renderer.settings().rubberBandingForSubScrollableRegionsEnabled() ? ScrollElasticity::Automatic : ScrollElasticity::None;
         ScrollableArea::setVerticalScrollElasticity(elasticity);
 #endif
     } else {
         destroyScrollbar(ScrollbarOrientation::Vertical);
 #if HAVE(RUBBER_BANDING)
-        ScrollableArea::setVerticalScrollElasticity(ScrollElasticityNone);
+        ScrollableArea::setVerticalScrollElasticity(ScrollElasticity::None);
 #endif
     }
 

@@ -137,10 +137,10 @@ enum ScrollGranularity : uint8_t {
     ScrollByPixel
 };
 
-enum ScrollElasticity : uint8_t {
-    ScrollElasticityAutomatic,
-    ScrollElasticityNone,
-    ScrollElasticityAllowed
+enum class ScrollElasticity : uint8_t {
+    Automatic,
+    None,
+    Allowed
 };
 
 enum class ScrollbarOrientation : uint8_t {
@@ -260,6 +260,7 @@ using ScrollingNodeID = uint64_t;
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, ScrollType);
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, ScrollClamping);
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, ScrollBehaviorForFixedElements);
+WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, ScrollElasticity);
 
 struct ScrollPositionChangeOptions {
     ScrollType type;
@@ -312,9 +313,9 @@ template<> struct EnumTraits<WebCore::ScrollbarMode> {
 template<> struct EnumTraits<WebCore::ScrollElasticity> {
     using values = EnumValues<
         WebCore::ScrollElasticity,
-        WebCore::ScrollElasticity::ScrollElasticityAutomatic,
-        WebCore::ScrollElasticity::ScrollElasticityNone,
-        WebCore::ScrollElasticity::ScrollElasticityAllowed
+        WebCore::ScrollElasticity::Automatic,
+        WebCore::ScrollElasticity::None,
+        WebCore::ScrollElasticity::Allowed
     >;
 };
 

@@ -144,7 +144,7 @@ static bool gestureShouldBeginSnap(const PlatformWheelEvent& wheelEvent, ScrollE
 bool ScrollAnimatorMac::allowsVerticalStretching(const PlatformWheelEvent& wheelEvent) const
 {
     switch (m_scrollableArea.verticalScrollElasticity()) {
-    case ScrollElasticityAutomatic: {
+    case ScrollElasticity::Automatic: {
         Scrollbar* hScroller = m_scrollableArea.horizontalScrollbar();
         Scrollbar* vScroller = m_scrollableArea.verticalScrollbar();
         bool scrollbarsAllowStretching = ((vScroller && vScroller->enabled()) || (!hScroller || !hScroller->enabled()));
@@ -154,9 +154,9 @@ bool ScrollAnimatorMac::allowsVerticalStretching(const PlatformWheelEvent& wheel
             eventPreventsStretching = gestureShouldBeginSnap(wheelEvent, ScrollEventAxis::Vertical, m_scrollableArea.snapOffsetsInfo());
         return scrollbarsAllowStretching && !eventPreventsStretching;
     }
-    case ScrollElasticityNone:
+    case ScrollElasticity::None:
         return false;
-    case ScrollElasticityAllowed:
+    case ScrollElasticity::Allowed:
         return true;
     }
 
@@ -167,7 +167,7 @@ bool ScrollAnimatorMac::allowsVerticalStretching(const PlatformWheelEvent& wheel
 bool ScrollAnimatorMac::allowsHorizontalStretching(const PlatformWheelEvent& wheelEvent) const
 {
     switch (m_scrollableArea.horizontalScrollElasticity()) {
-    case ScrollElasticityAutomatic: {
+    case ScrollElasticity::Automatic: {
         Scrollbar* hScroller = m_scrollableArea.horizontalScrollbar();
         Scrollbar* vScroller = m_scrollableArea.verticalScrollbar();
         bool scrollbarsAllowStretching = ((hScroller && hScroller->enabled()) || (!vScroller || !vScroller->enabled()));
@@ -177,9 +177,9 @@ bool ScrollAnimatorMac::allowsHorizontalStretching(const PlatformWheelEvent& whe
             eventPreventsStretching = gestureShouldBeginSnap(wheelEvent, ScrollEventAxis::Horizontal, m_scrollableArea.snapOffsetsInfo());
         return scrollbarsAllowStretching && !eventPreventsStretching;
     }
-    case ScrollElasticityNone:
+    case ScrollElasticity::None:
         return false;
-    case ScrollElasticityAllowed:
+    case ScrollElasticity::Allowed:
         return true;
     }
 

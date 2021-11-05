@@ -196,14 +196,14 @@ FrameView::FrameView(Frame& frame)
     init();
 
 #if HAVE(RUBBER_BANDING)
-    ScrollElasticity verticalElasticity = ScrollElasticityNone;
-    ScrollElasticity horizontalElasticity = ScrollElasticityNone;
+    auto verticalElasticity = ScrollElasticity::None;
+    auto horizontalElasticity = ScrollElasticity::None;
     if (m_frame->isMainFrame()) {
-        verticalElasticity = m_frame->page() ? m_frame->page()->verticalScrollElasticity() : ScrollElasticityAllowed;
-        horizontalElasticity = m_frame->page() ? m_frame->page()->horizontalScrollElasticity() : ScrollElasticityAllowed;
+        verticalElasticity = m_frame->page() ? m_frame->page()->verticalScrollElasticity() : ScrollElasticity::Allowed;
+        horizontalElasticity = m_frame->page() ? m_frame->page()->horizontalScrollElasticity() : ScrollElasticity::Allowed;
     } else if (m_frame->settings().rubberBandingForSubScrollableRegionsEnabled()) {
-        verticalElasticity = ScrollElasticityAutomatic;
-        horizontalElasticity = ScrollElasticityAutomatic;
+        verticalElasticity = ScrollElasticity::Automatic;
+        horizontalElasticity = ScrollElasticity::Automatic;
     }
 
     ScrollableArea::setVerticalScrollElasticity(verticalElasticity);

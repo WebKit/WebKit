@@ -213,15 +213,15 @@ void ScrollingTreeScrollingNodeDelegateMac::serviceScrollAnimation()
 bool ScrollingTreeScrollingNodeDelegateMac::allowsHorizontalStretching(const PlatformWheelEvent& wheelEvent) const
 {
     switch (horizontalScrollElasticity()) {
-    case ScrollElasticityAutomatic: {
+    case ScrollElasticity::Automatic: {
         bool scrollbarsAllowStretching = allowsHorizontalScrolling() || !allowsVerticalScrolling();
         auto relevantSide = ScrollableArea::targetSideForScrollDelta(-wheelEvent.delta(), ScrollEventAxis::Horizontal);
         bool eventPreventsStretching = wheelEvent.isGestureStart() && relevantSide && isPinnedOnSide(*relevantSide);
         return scrollbarsAllowStretching && !eventPreventsStretching;
     }
-    case ScrollElasticityNone:
+    case ScrollElasticity::None:
         return false;
-    case ScrollElasticityAllowed: {
+    case ScrollElasticity::Allowed: {
         auto relevantSide = ScrollableArea::targetSideForScrollDelta(-wheelEvent.delta(), ScrollEventAxis::Horizontal);
         if (relevantSide)
             return shouldRubberBandOnSide(*relevantSide);
@@ -236,15 +236,15 @@ bool ScrollingTreeScrollingNodeDelegateMac::allowsHorizontalStretching(const Pla
 bool ScrollingTreeScrollingNodeDelegateMac::allowsVerticalStretching(const PlatformWheelEvent& wheelEvent) const
 {
     switch (verticalScrollElasticity()) {
-    case ScrollElasticityAutomatic: {
+    case ScrollElasticity::Automatic: {
         bool scrollbarsAllowStretching = allowsVerticalScrolling() || !allowsHorizontalScrolling();
         auto relevantSide = ScrollableArea::targetSideForScrollDelta(-wheelEvent.delta(), ScrollEventAxis::Vertical);
         bool eventPreventsStretching = wheelEvent.isGestureStart() && relevantSide && isPinnedOnSide(*relevantSide);
         return scrollbarsAllowStretching && !eventPreventsStretching;
     }
-    case ScrollElasticityNone:
+    case ScrollElasticity::None:
         return false;
-    case ScrollElasticityAllowed: {
+    case ScrollElasticity::Allowed: {
         auto relevantSide = ScrollableArea::targetSideForScrollDelta(-wheelEvent.delta(), ScrollEventAxis::Vertical);
         if (relevantSide)
             return shouldRubberBandOnSide(*relevantSide);

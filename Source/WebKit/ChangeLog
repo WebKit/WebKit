@@ -1,3 +1,14 @@
+2021-11-05  Nikolaos Mouchtaris  <nmouchtaris@apple.com>
+
+        Make scroll elasticity an enum class
+        https://bugs.webkit.org/show_bug.cgi?id=232646
+
+        Reviewed by Simon Fraser.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::setEnableVerticalRubberBanding):
+        (WebKit::WebPage::setEnableHorizontalRubberBanding):
+
 2021-11-05  Devin Rousso  <drousso@apple.com>
 
         [css-values-4] viewport units should be floats

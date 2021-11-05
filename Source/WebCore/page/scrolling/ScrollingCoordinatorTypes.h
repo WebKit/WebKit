@@ -71,8 +71,8 @@ enum class ScrollingLayerPositionAction {
 };
 
 struct ScrollableAreaParameters {
-    ScrollElasticity horizontalScrollElasticity { ScrollElasticityNone };
-    ScrollElasticity verticalScrollElasticity { ScrollElasticityNone };
+    ScrollElasticity horizontalScrollElasticity { ScrollElasticity::None };
+    ScrollElasticity verticalScrollElasticity { ScrollElasticity::None };
 
     ScrollbarMode horizontalScrollbarMode { ScrollbarAuto };
     ScrollbarMode verticalScrollbarMode { ScrollbarAuto };

@@ -404,8 +404,8 @@ private:
 
     ScrollClamping m_scrollClamping { ScrollClamping::Clamped };
 
-    ScrollElasticity m_verticalScrollElasticity { ScrollElasticityNone };
-    ScrollElasticity m_horizontalScrollElasticity { ScrollElasticityNone };
+    ScrollElasticity m_verticalScrollElasticity { ScrollElasticity::None };
+    ScrollElasticity m_horizontalScrollElasticity { ScrollElasticity::None };
 
     ScrollbarOverlayStyle m_scrollbarOverlayStyle { ScrollbarOverlayStyle::ScrollbarOverlayStyleDefault };
 

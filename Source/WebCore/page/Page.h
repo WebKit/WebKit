@@ -1039,8 +1039,8 @@ private:
     
     bool m_suppressScrollbarAnimations { false };
     
-    unsigned m_verticalScrollElasticity : 2; // ScrollElasticity
-    unsigned m_horizontalScrollElasticity : 2; // ScrollElasticity    
+    ScrollElasticity m_verticalScrollElasticity { ScrollElasticity::Allowed };
+    ScrollElasticity m_horizontalScrollElasticity { ScrollElasticity::Allowed };
 
     Pagination m_pagination;
     bool m_paginationLineGridEnabled { false };
