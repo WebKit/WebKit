@@ -1,3 +1,14 @@
+2021-11-05  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        AX: rename actionVerb() as localizedActionVerb()
+        https://bugs.webkit.org/show_bug.cgi?id=232711
+        <rdar://problem/85015496>
+
+        Reviewed by Andres Gonzalez.
+
+        * AccessibleBase.cpp:
+        (AccessibleBase::get_accDefaultAction): Use localizedActionVerb().
+
 2021-10-11  Chris Dumez  <cdumez@apple.com>
 
         DOMTimeStamp is now EpochTimeStamp

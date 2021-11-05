@@ -1800,7 +1800,7 @@ const String AccessibilityObject::defaultLiveRegionStatusForRole(AccessibilityRo
 }
     
 #if ENABLE(ACCESSIBILITY)
-String AccessibilityObject::actionVerb() const
+String AccessibilityObject::localizedActionVerb() const
 {
 #if !PLATFORM(IOS_FAMILY)
     // FIXME: Need to add verbs for select elements.
@@ -1841,6 +1841,36 @@ String AccessibilityObject::actionVerb() const
 #else
     return nullAtom();
 #endif
+}
+
+String AccessibilityObject::actionVerb() const
+{
+#if !PLATFORM(IOS_FAMILY)
+    // FIXME: Need to add verbs for select elements.
+    switch (roleValue()) {
+    case AccessibilityRole::Button:
+    case AccessibilityRole::ToggleButton:
+        return "press"_s;
+    case AccessibilityRole::TextField:
+    case AccessibilityRole::TextArea:
+        return "activate"_s;
+    case AccessibilityRole::RadioButton:
+        return "select"_s;
+    case AccessibilityRole::CheckBox:
+    case AccessibilityRole::Switch:
+        return isChecked() ? "uncheck"_s : "check"_s;
+    case AccessibilityRole::Link:
+    case AccessibilityRole::WebCoreLink:
+        return "jump"_s;
+    case AccessibilityRole::PopUpButton:
+    case AccessibilityRole::MenuListPopup:
+    case AccessibilityRole::ListItem:
+        return "select"_s;
+    default:
+        break;
+    }
+#endif
+    return { };
 }
 #endif
 

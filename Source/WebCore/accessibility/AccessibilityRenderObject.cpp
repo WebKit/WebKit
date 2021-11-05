@@ -3728,40 +3728,7 @@ void AccessibilityRenderObject::tabChildren(AccessibilityChildrenVector& result)
             result.append(child);
     }
 }
-    
-String AccessibilityRenderObject::actionVerb() const
-{
-#if !PLATFORM(IOS_FAMILY)
-    // FIXME: Need to add verbs for select elements.
-    static NeverDestroyed<const String> buttonAction(AXButtonActionVerb());
-    static NeverDestroyed<const String> textFieldAction(AXTextFieldActionVerb());
-    static NeverDestroyed<const String> radioButtonAction(AXRadioButtonActionVerb());
-    static NeverDestroyed<const String> checkedCheckBoxAction(AXUncheckedCheckBoxActionVerb());
-    static NeverDestroyed<const String> uncheckedCheckBoxAction(AXUncheckedCheckBoxActionVerb());
-    static NeverDestroyed<const String> linkAction(AXLinkActionVerb());
 
-    switch (roleValue()) {
-    case AccessibilityRole::Button:
-    case AccessibilityRole::ToggleButton:
-        return buttonAction;
-    case AccessibilityRole::TextField:
-    case AccessibilityRole::TextArea:
-        return textFieldAction;
-    case AccessibilityRole::RadioButton:
-        return radioButtonAction;
-    case AccessibilityRole::CheckBox:
-        return isChecked() ? checkedCheckBoxAction : uncheckedCheckBoxAction;
-    case AccessibilityRole::Link:
-    case AccessibilityRole::WebCoreLink:
-        return linkAction;
-    default:
-        return nullAtom();
-    }
-#else
-    return nullAtom();
-#endif
-}
-    
 void AccessibilityRenderObject::setAccessibleName(const AtomString& name)
 {
     // Setting the accessible name can store the value in the DOM

@@ -111,7 +111,7 @@ static const gchar* webkitAccessibleHyperlinkActionGetName(AtkAction* action, gi
         return nullptr;
 
     auto& coreObject = webkitAccessibleGetAccessibilityObject(accessibleHyperlink->priv->hyperlinkImpl);
-    accessibleHyperlink->priv->actionName = coreObject.actionVerb().utf8();
+    accessibleHyperlink->priv->actionName = coreObject.localizedActionVerb().utf8();
     return accessibleHyperlink->priv->actionName.data();
 }
 

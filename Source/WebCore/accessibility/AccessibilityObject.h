@@ -441,6 +441,7 @@ public:
     VisibleSelection selection() const override { return VisibleSelection(); }
     String selectedText() const override { return String(); }
     String accessKey() const override { return nullAtom(); }
+    String localizedActionVerb() const override;
     String actionVerb() const override;
 
     bool isWidget() const override { return false; }
@@ -824,6 +825,7 @@ private:
 
 #if !ENABLE(ACCESSIBILITY)
 inline const AccessibilityObject::AccessibilityChildrenVector& AccessibilityObject::children(bool) { return m_children; }
+inline String AccessibilityObject::localizedActionVerb() const { return emptyString(); }
 inline String AccessibilityObject::actionVerb() const { return emptyString(); }
 inline int AccessibilityObject::lineForPosition(const VisiblePosition&) const { return -1; }
 inline void AccessibilityObject::updateBackingStore() { }

@@ -134,7 +134,6 @@ public:
     int textLength() const override;
     String selectedText() const override;
     String accessKey() const override;
-    String actionVerb() const override;
 
     bool isWidget() const override;
     Widget* widget() const override;

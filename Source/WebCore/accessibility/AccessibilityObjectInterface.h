@@ -1189,6 +1189,7 @@ public:
     virtual VisibleSelection selection() const = 0;
     virtual String selectedText() const = 0;
     virtual String accessKey() const = 0;
+    virtual String localizedActionVerb() const = 0;
     virtual String actionVerb() const = 0;
 
     // Widget support.

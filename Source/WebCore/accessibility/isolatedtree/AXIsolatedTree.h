@@ -237,6 +237,7 @@ enum class AXPropertyName : uint16_t {
     LiveRegionAtomic,
     LiveRegionRelevant,
     LiveRegionStatus,
+    LocalizedActionVerb,
     MathFencedOpenString,
     MathFencedCloseString,
     MathLineThickness,

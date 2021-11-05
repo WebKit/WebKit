@@ -290,6 +290,7 @@ private:
     void ariaTreeItemContent(AccessibilityChildrenVector& children) override { fillChildrenVectorForProperty(AXPropertyName::ARIATreeItemContent, children); }
     URL url() const override { return urlAttributeValue(AXPropertyName::URL); }
     String accessKey() const override { return stringAttributeValue(AXPropertyName::AccessKey); }
+    String localizedActionVerb() const override { return stringAttributeValue(AXPropertyName::LocalizedActionVerb); }
     String actionVerb() const override { return stringAttributeValue(AXPropertyName::ActionVerb); }
     String readOnlyValue() const override { return stringAttributeValue(AXPropertyName::ReadOnlyValue); }
     String autoCompleteValue() const override { return stringAttributeValue(AXPropertyName::AutoCompleteValue); }

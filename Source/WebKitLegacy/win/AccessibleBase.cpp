@@ -717,7 +717,7 @@ HRESULT AccessibleBase::get_accDefaultAction(VARIANT vChild, __deref_opt_out BST
     if (FAILED(hr))
         return hr;
 
-    if (*action = BString(childObj->actionVerb()).release())
+    if (*action = BString(childObj->localizedActionVerb()).release())
         return S_OK;
     return S_FALSE;
 }
