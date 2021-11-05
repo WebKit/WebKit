@@ -124,7 +124,6 @@ void GetterSetterAccessCase::dumpImpl(PrintStream& out, CommaPrinter& comma) con
 void GetterSetterAccessCase::emitDOMJITGetter(AccessGenerationState& state, const DOMJIT::GetterSetter* domJIT, GPRReg baseForGetGPR)
 {
     CCallHelpers& jit = *state.jit;
-    StructureStubInfo& stubInfo = *state.stubInfo;
     JSValueRegs valueRegs = state.valueRegs;
     GPRReg baseGPR = state.baseGPR;
     GPRReg scratchGPR = state.scratchGPR;
