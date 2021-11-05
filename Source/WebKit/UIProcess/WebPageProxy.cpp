@@ -8981,7 +8981,7 @@ void WebPageProxy::setAutoSizingShouldExpandToViewHeight(bool shouldExpand)
     send(Messages::WebPage::SetAutoSizingShouldExpandToViewHeight(shouldExpand));
 }
 
-void WebPageProxy::setViewportSizeForCSSViewportUnits(const IntSize& viewportSize)
+void WebPageProxy::setViewportSizeForCSSViewportUnits(const FloatSize& viewportSize)
 {
     if (m_viewportSizeForCSSViewportUnits && *m_viewportSizeForCSSViewportUnits == viewportSize)
         return;

@@ -127,7 +127,7 @@ struct WebPageCreationParameters {
     WebCore::IntSize minimumSizeForAutoLayout;
     WebCore::IntSize sizeToContentAutoSizeMaximumSize;
     bool autoSizingShouldExpandToViewHeight;
-    std::optional<WebCore::IntSize> viewportSizeForCSSViewportUnits;
+    std::optional<WebCore::FloatSize> viewportSizeForCSSViewportUnits;
     
     WebCore::ScrollPinningBehavior scrollPinningBehavior;
 

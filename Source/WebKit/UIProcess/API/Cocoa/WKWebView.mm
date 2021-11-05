@@ -1891,7 +1891,7 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKCONTENTVIEW)
 - (void)_setViewportSizeForCSSViewportUnits:(CGSize)viewportSize
 {
     THROW_IF_SUSPENDED;
-    auto viewportSizeForViewportUnits = WebCore::IntSize(viewportSize);
+    auto viewportSizeForViewportUnits = WebCore::FloatSize(viewportSize);
     if (viewportSizeForViewportUnits.isEmpty())
         [NSException raise:NSInvalidArgumentException format:@"Viewport size should not be empty"];
 

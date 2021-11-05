@@ -480,7 +480,7 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     SetSizeToContentAutoSizeMaximumSize(WebCore::IntSize size)
     SetAutoSizingShouldExpandToViewHeight(bool shouldExpand)
 
-    SetViewportSizeForCSSViewportUnits(std::optional<WebCore::IntSize> viewportSize)
+    SetViewportSizeForCSSViewportUnits(std::optional<WebCore::FloatSize> viewportSize)
 
 #if PLATFORM(COCOA)
     HandleAlternativeTextUIResult(String result)

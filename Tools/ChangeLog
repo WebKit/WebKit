@@ -1,3 +1,22 @@
+2021-11-05  Devin Rousso  <drousso@apple.com>
+
+        [css-values-4] viewport units should be floats
+        https://bugs.webkit.org/show_bug.cgi?id=231644
+        <rdar://problem/84172685>
+
+        Reviewed by Tim Horton.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/CSSViewportUnits.mm:
+        (evaluateForNumber):
+        (getElementHeight):
+        (TEST.CSSViewportUnits.AllSame):
+        (TEST.CSSViewportUnits.EmptyUnobscuredSizeOverrides):
+        (TEST.CSSViewportUnits.SameUnobscuredSizeOverrides):
+        (TEST.CSSViewportUnits.DifferentUnobscuredSizeOverrides):
+
+        * TestWebKitAPI/Tests/WebKit/ViewportSizeForViewportUnits.mm:
+        (TEST.WebKit.ViewportSizeForViewportUnits):
+
 2021-11-05  Jonathan Bedard  <jbedard@apple.com>
 
         [ic-stats.py] Change shebang to Python 3

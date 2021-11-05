@@ -5557,12 +5557,12 @@ void FrameView::clearSizeOverrideForCSSSmallViewportUnits()
         document->styleScope().didChangeStyleSheetEnvironment();
 }
 
-void FrameView::setSizeForCSSSmallViewportUnits(IntSize size)
+void FrameView::setSizeForCSSSmallViewportUnits(FloatSize size)
 {
     overrideSizeForCSSSmallViewportUnits({ size.width(), size.height() });
 }
 
-void FrameView::overrideWidthForCSSSmallViewportUnits(int width)
+void FrameView::overrideWidthForCSSSmallViewportUnits(float width)
 {
     overrideSizeForCSSSmallViewportUnits({ width, m_smallViewportSizeOverride ? m_smallViewportSizeOverride->height : std::nullopt });
 }
@@ -5583,7 +5583,7 @@ void FrameView::overrideSizeForCSSSmallViewportUnits(OverrideViewportSize size)
         document->styleScope().didChangeStyleSheetEnvironment();
 }
 
-IntSize FrameView::sizeForCSSSmallViewportUnits() const
+FloatSize FrameView::sizeForCSSSmallViewportUnits() const
 {
     return calculateSizeForCSSViewportUnitsOverride(m_smallViewportSizeOverride);
 }
@@ -5598,12 +5598,12 @@ void FrameView::clearSizeOverrideForCSSLargeViewportUnits()
         document->styleScope().didChangeStyleSheetEnvironment();
 }
 
-void FrameView::setSizeForCSSLargeViewportUnits(IntSize size)
+void FrameView::setSizeForCSSLargeViewportUnits(FloatSize size)
 {
     overrideSizeForCSSLargeViewportUnits({ size.width(), size.height() });
 }
 
-void FrameView::overrideWidthForCSSLargeViewportUnits(int width)
+void FrameView::overrideWidthForCSSLargeViewportUnits(float width)
 {
     overrideSizeForCSSLargeViewportUnits({ width, m_largeViewportSizeOverride ? m_largeViewportSizeOverride->height : std::nullopt });
 }
@@ -5624,30 +5624,22 @@ void FrameView::overrideSizeForCSSLargeViewportUnits(OverrideViewportSize size)
         document->styleScope().didChangeStyleSheetEnvironment();
 }
 
-IntSize FrameView::sizeForCSSLargeViewportUnits() const
+FloatSize FrameView::sizeForCSSLargeViewportUnits() const
 {
     return calculateSizeForCSSViewportUnitsOverride(m_largeViewportSizeOverride);
 }
 
-IntSize FrameView::calculateSizeForCSSViewportUnitsOverride(std::optional<OverrideViewportSize> override) const
+FloatSize FrameView::calculateSizeForCSSViewportUnitsOverride(std::optional<OverrideViewportSize> override) const
 {
     OverrideViewportSize viewportSize;
 
-    if (override)
+    if (override) {
         viewportSize = *override;
 
-    // Use the large size if no override is given since it's considered the default size.
-    // if (m_largeViewportSizeOverride) {
-    //     if (!viewportSize.width)
-    //         viewportSize.width = m_largeViewportSizeOverride->width;
-
-    //     if (!viewportSize.height)
-    //         viewportSize.height = m_largeViewportSizeOverride->height;
-    // }
-
-    // auto-size overrides the width only, so we can't always bail out early here.
-    if (viewportSize.width && viewportSize.height)
-        return { *viewportSize.width, *viewportSize.height };
+        // auto-size overrides the width only, so we can't always bail out early here.
+        if (viewportSize.width && viewportSize.height)
+            return { *viewportSize.width, *viewportSize.height };
+    }
 
     if (useFixedLayout()) {
         auto fixedLayoutSize = this->fixedLayoutSize();
@@ -5664,12 +5656,12 @@ IntSize FrameView::calculateSizeForCSSViewportUnitsOverride(std::optional<Overri
     return { *viewportSize.width, *viewportSize.height };
 }
 
-IntSize FrameView::sizeForCSSDynamicViewportUnits() const
+FloatSize FrameView::sizeForCSSDynamicViewportUnits() const
 {
     return unobscuredContentRectIncludingScrollbars().size();
 }
 
-IntSize FrameView::sizeForCSSDefaultViewportUnits() const
+FloatSize FrameView::sizeForCSSDefaultViewportUnits() const
 {
     return sizeForCSSLargeViewportUnits();
 }

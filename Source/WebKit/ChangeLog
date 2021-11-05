@@ -1,3 +1,30 @@
+2021-11-05  Devin Rousso  <drousso@apple.com>
+
+        [css-values-4] viewport units should be floats
+        https://bugs.webkit.org/show_bug.cgi?id=231644
+        <rdar://problem/84172685>
+
+        Reviewed by Tim Horton.
+
+        Views can be fractional pixels wide. We should not round, especially since viewport units
+        are used as percentage values (e.g. `50dvh` is "50% of the height of the current viewport").
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _setViewportSizeForCSSViewportUnits:]):
+
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::setViewportSizeForCSSViewportUnits):
+
+        * Shared/WebPageCreationParameters.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::setViewportSizeForCSSViewportUnits):
+        (WebKit::WebPage::viewportSizeForCSSViewportUnits const):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::updateViewportSizeForCSSViewportUnits):
+
 2021-11-04  Jean-Yves Avenard  <jya@apple.com>
 
         Have RemoteMediaResource use SharedMemory

@@ -228,17 +228,17 @@ public:
 
     WEBCORE_EXPORT void adjustViewSize();
 
-    WEBCORE_EXPORT void setSizeForCSSSmallViewportUnits(IntSize);
+    WEBCORE_EXPORT void setSizeForCSSSmallViewportUnits(FloatSize);
     void clearSizeOverrideForCSSSmallViewportUnits();
-    IntSize sizeForCSSSmallViewportUnits() const;
+    FloatSize sizeForCSSSmallViewportUnits() const;
 
-    WEBCORE_EXPORT void setSizeForCSSLargeViewportUnits(IntSize);
+    WEBCORE_EXPORT void setSizeForCSSLargeViewportUnits(FloatSize);
     void clearSizeOverrideForCSSLargeViewportUnits();
-    IntSize sizeForCSSLargeViewportUnits() const;
+    FloatSize sizeForCSSLargeViewportUnits() const;
 
-    IntSize sizeForCSSDynamicViewportUnits() const;
+    FloatSize sizeForCSSDynamicViewportUnits() const;
 
-    IntSize sizeForCSSDefaultViewportUnits() const;
+    FloatSize sizeForCSSDefaultViewportUnits() const;
 
     IntRect windowClipRect() const final;
     WEBCORE_EXPORT IntRect windowClipRectForFrameOwner(const HTMLFrameOwnerElement*, bool clipToLayerContents) const;
@@ -857,19 +857,19 @@ private:
     void didLayout(WeakPtr<RenderElement> layoutRoot);
 
     struct OverrideViewportSize {
-        std::optional<int> width;
-        std::optional<int> height;
+        std::optional<float> width;
+        std::optional<float> height;
 
         bool operator==(const OverrideViewportSize& rhs) const { return rhs.width == width && rhs.height == height; }
     };
-    IntSize calculateSizeForCSSViewportUnitsOverride(std::optional<OverrideViewportSize>) const;
+    FloatSize calculateSizeForCSSViewportUnitsOverride(std::optional<OverrideViewportSize>) const;
 
     void overrideSizeForCSSSmallViewportUnits(OverrideViewportSize);
-    void overrideWidthForCSSSmallViewportUnits(int);
+    void overrideWidthForCSSSmallViewportUnits(float);
     void resetOverriddenWidthForCSSSmallViewportUnits();
 
     void overrideSizeForCSSLargeViewportUnits(OverrideViewportSize);
-    void overrideWidthForCSSLargeViewportUnits(int);
+    void overrideWidthForCSSLargeViewportUnits(float);
     void resetOverriddenWidthForCSSLargeViewportUnits();
 
     void didFinishProhibitingScrollingWhenChangingContentSize() final;

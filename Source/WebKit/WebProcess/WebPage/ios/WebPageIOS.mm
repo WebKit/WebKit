@@ -3880,8 +3880,8 @@ void WebPage::updateViewportSizeForCSSViewportUnits()
     FrameView& frameView = *mainFrameView();
     smallestUnobscuredSize.scale(1 / m_viewportConfiguration.initialScaleIgnoringContentSize());
     largestUnobscuredSize.scale(1 / m_viewportConfiguration.initialScaleIgnoringContentSize());
-    frameView.setSizeForCSSSmallViewportUnits(roundedIntSize(smallestUnobscuredSize));
-    frameView.setSizeForCSSLargeViewportUnits(roundedIntSize(largestUnobscuredSize));
+    frameView.setSizeForCSSSmallViewportUnits(smallestUnobscuredSize);
+    frameView.setSizeForCSSLargeViewportUnits(largestUnobscuredSize);
 }
 
 void WebPage::applicationWillResignActive()

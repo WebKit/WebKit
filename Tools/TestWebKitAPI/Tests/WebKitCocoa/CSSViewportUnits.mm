@@ -30,14 +30,14 @@
 #import <WebKit/WKWebViewPrivate.h>
 #import <wtf/RetainPtr.h>
 
-static int evaluateForInt(WKWebView *webView, NSString *script)
+static double evaluateForNumber(WKWebView *webView, NSString *script)
 {
-    return [(NSNumber *)[webView objectByEvaluatingJavaScript:script] intValue];
+    return [(NSNumber *)[webView objectByEvaluatingJavaScript:script] doubleValue];
 }
 
-static int getElementHeight(WKWebView *webView, NSString *elementID)
+static double getElementHeight(WKWebView *webView, NSString *elementID)
 {
-    return evaluateForInt(webView, [NSString stringWithFormat:@"document.getElementById('%@').getBoundingClientRect().height", elementID]);
+    return evaluateForNumber(webView, [NSString stringWithFormat:@"document.getElementById('%@').getBoundingClientRect().height", elementID]);
 }
 
 TEST(CSSViewportUnits, AllSame)
@@ -45,25 +45,25 @@ TEST(CSSViewportUnits, AllSame)
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
     [webView synchronouslyLoadTestPageNamed:@"CSSViewportUnits"];
 
-    EXPECT_EQ(320, getElementHeight(webView.get(), @"vw"));
-    EXPECT_EQ(500, getElementHeight(webView.get(), @"vh"));
-    EXPECT_EQ(320, getElementHeight(webView.get(), @"vmin"));
-    EXPECT_EQ(500, getElementHeight(webView.get(), @"vmax"));
+    EXPECT_FLOAT_EQ(320, getElementHeight(webView.get(), @"vw"));
+    EXPECT_FLOAT_EQ(500, getElementHeight(webView.get(), @"vh"));
+    EXPECT_FLOAT_EQ(320, getElementHeight(webView.get(), @"vmin"));
+    EXPECT_FLOAT_EQ(500, getElementHeight(webView.get(), @"vmax"));
 
-    EXPECT_EQ(320, getElementHeight(webView.get(), @"svw"));
-    EXPECT_EQ(500, getElementHeight(webView.get(), @"svh"));
-    EXPECT_EQ(320, getElementHeight(webView.get(), @"svmin"));
-    EXPECT_EQ(500, getElementHeight(webView.get(), @"svmax"));
+    EXPECT_FLOAT_EQ(320, getElementHeight(webView.get(), @"svw"));
+    EXPECT_FLOAT_EQ(500, getElementHeight(webView.get(), @"svh"));
+    EXPECT_FLOAT_EQ(320, getElementHeight(webView.get(), @"svmin"));
+    EXPECT_FLOAT_EQ(500, getElementHeight(webView.get(), @"svmax"));
 
-    EXPECT_EQ(320, getElementHeight(webView.get(), @"lvw"));
-    EXPECT_EQ(500, getElementHeight(webView.get(), @"lvh"));
-    EXPECT_EQ(320, getElementHeight(webView.get(), @"lvmin"));
-    EXPECT_EQ(500, getElementHeight(webView.get(), @"lvmax"));
+    EXPECT_FLOAT_EQ(320, getElementHeight(webView.get(), @"lvw"));
+    EXPECT_FLOAT_EQ(500, getElementHeight(webView.get(), @"lvh"));
+    EXPECT_FLOAT_EQ(320, getElementHeight(webView.get(), @"lvmin"));
+    EXPECT_FLOAT_EQ(500, getElementHeight(webView.get(), @"lvmax"));
 
-    EXPECT_EQ(evaluateForInt(webView.get(), @"window.innerWidth"), getElementHeight(webView.get(), @"dvw"));
-    EXPECT_EQ(evaluateForInt(webView.get(), @"window.innerHeight"), getElementHeight(webView.get(), @"dvh"));
-    EXPECT_EQ(evaluateForInt(webView.get(), @"window.innerWidth"), getElementHeight(webView.get(), @"dvmin"));
-    EXPECT_EQ(evaluateForInt(webView.get(), @"window.innerHeight"), getElementHeight(webView.get(), @"dvmax"));
+    EXPECT_FLOAT_EQ(evaluateForNumber(webView.get(), @"window.innerWidth"), getElementHeight(webView.get(), @"dvw"));
+    EXPECT_FLOAT_EQ(evaluateForNumber(webView.get(), @"window.innerHeight"), getElementHeight(webView.get(), @"dvh"));
+    EXPECT_FLOAT_EQ(evaluateForNumber(webView.get(), @"window.innerWidth"), getElementHeight(webView.get(), @"dvmin"));
+    EXPECT_FLOAT_EQ(evaluateForNumber(webView.get(), @"window.innerHeight"), getElementHeight(webView.get(), @"dvmax"));
 }
 
 #if PLATFORM(IOS_FAMILY)
@@ -71,85 +71,85 @@ TEST(CSSViewportUnits, AllSame)
 TEST(CSSViewportUnits, EmptyUnobscuredSizeOverrides)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
-    [webView _overrideLayoutParametersWithMinimumLayoutSize:CGSizeMake(10, 20)
+    [webView _overrideLayoutParametersWithMinimumLayoutSize:CGSizeMake(10.5, 20.5)
                               maximumUnobscuredSizeOverride:CGSizeZero];
     [webView synchronouslyLoadTestPageNamed:@"CSSViewportUnits"];
 
-    EXPECT_EQ(10, getElementHeight(webView.get(), @"vw"));
-    EXPECT_EQ(20, getElementHeight(webView.get(), @"vh"));
-    EXPECT_EQ(10, getElementHeight(webView.get(), @"vmin"));
-    EXPECT_EQ(20, getElementHeight(webView.get(), @"vmax"));
+    EXPECT_FLOAT_EQ(10.5, getElementHeight(webView.get(), @"vw"));
+    EXPECT_FLOAT_EQ(20.5, getElementHeight(webView.get(), @"vh"));
+    EXPECT_FLOAT_EQ(10.5, getElementHeight(webView.get(), @"vmin"));
+    EXPECT_FLOAT_EQ(20.5, getElementHeight(webView.get(), @"vmax"));
 
-    EXPECT_EQ(10, getElementHeight(webView.get(), @"svw"));
-    EXPECT_EQ(20, getElementHeight(webView.get(), @"svh"));
-    EXPECT_EQ(10, getElementHeight(webView.get(), @"svmin"));
-    EXPECT_EQ(20, getElementHeight(webView.get(), @"svmax"));
+    EXPECT_FLOAT_EQ(10.5, getElementHeight(webView.get(), @"svw"));
+    EXPECT_FLOAT_EQ(20.5, getElementHeight(webView.get(), @"svh"));
+    EXPECT_FLOAT_EQ(10.5, getElementHeight(webView.get(), @"svmin"));
+    EXPECT_FLOAT_EQ(20.5, getElementHeight(webView.get(), @"svmax"));
 
-    EXPECT_EQ(10, getElementHeight(webView.get(), @"lvw"));
-    EXPECT_EQ(20, getElementHeight(webView.get(), @"lvh"));
-    EXPECT_EQ(10, getElementHeight(webView.get(), @"lvmin"));
-    EXPECT_EQ(20, getElementHeight(webView.get(), @"lvmax"));
+    EXPECT_FLOAT_EQ(10.5, getElementHeight(webView.get(), @"lvw"));
+    EXPECT_FLOAT_EQ(20.5, getElementHeight(webView.get(), @"lvh"));
+    EXPECT_FLOAT_EQ(10.5, getElementHeight(webView.get(), @"lvmin"));
+    EXPECT_FLOAT_EQ(20.5, getElementHeight(webView.get(), @"lvmax"));
 
-    EXPECT_EQ(evaluateForInt(webView.get(), @"window.innerWidth"), getElementHeight(webView.get(), @"dvw"));
-    EXPECT_EQ(evaluateForInt(webView.get(), @"window.innerHeight"), getElementHeight(webView.get(), @"dvh"));
-    EXPECT_EQ(evaluateForInt(webView.get(), @"window.innerWidth"), getElementHeight(webView.get(), @"dvmin"));
-    EXPECT_EQ(evaluateForInt(webView.get(), @"window.innerHeight"), getElementHeight(webView.get(), @"dvmax"));
+    EXPECT_FLOAT_EQ(evaluateForNumber(webView.get(), @"window.innerWidth"), getElementHeight(webView.get(), @"dvw"));
+    EXPECT_FLOAT_EQ(evaluateForNumber(webView.get(), @"window.innerHeight"), getElementHeight(webView.get(), @"dvh"));
+    EXPECT_FLOAT_EQ(evaluateForNumber(webView.get(), @"window.innerWidth"), getElementHeight(webView.get(), @"dvmin"));
+    EXPECT_FLOAT_EQ(evaluateForNumber(webView.get(), @"window.innerHeight"), getElementHeight(webView.get(), @"dvmax"));
 }
 
 TEST(CSSViewportUnits, SameUnobscuredSizeOverrides)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
-    [webView _overrideLayoutParametersWithMinimumLayoutSize:CGSizeMake(10, 20)
-                              maximumUnobscuredSizeOverride:CGSizeMake(10, 20)];
+    [webView _overrideLayoutParametersWithMinimumLayoutSize:CGSizeMake(10.5, 20.5)
+                              maximumUnobscuredSizeOverride:CGSizeMake(10.5, 20.5)];
     [webView synchronouslyLoadTestPageNamed:@"CSSViewportUnits"];
 
-    EXPECT_EQ(10, getElementHeight(webView.get(), @"vw"));
-    EXPECT_EQ(20, getElementHeight(webView.get(), @"vh"));
-    EXPECT_EQ(10, getElementHeight(webView.get(), @"vmin"));
-    EXPECT_EQ(20, getElementHeight(webView.get(), @"vmax"));
+    EXPECT_FLOAT_EQ(10.5, getElementHeight(webView.get(), @"vw"));
+    EXPECT_FLOAT_EQ(20.5, getElementHeight(webView.get(), @"vh"));
+    EXPECT_FLOAT_EQ(10.5, getElementHeight(webView.get(), @"vmin"));
+    EXPECT_FLOAT_EQ(20.5, getElementHeight(webView.get(), @"vmax"));
 
-    EXPECT_EQ(10, getElementHeight(webView.get(), @"svw"));
-    EXPECT_EQ(20, getElementHeight(webView.get(), @"svh"));
-    EXPECT_EQ(10, getElementHeight(webView.get(), @"svmin"));
-    EXPECT_EQ(20, getElementHeight(webView.get(), @"svmax"));
+    EXPECT_FLOAT_EQ(10.5, getElementHeight(webView.get(), @"svw"));
+    EXPECT_FLOAT_EQ(20.5, getElementHeight(webView.get(), @"svh"));
+    EXPECT_FLOAT_EQ(10.5, getElementHeight(webView.get(), @"svmin"));
+    EXPECT_FLOAT_EQ(20.5, getElementHeight(webView.get(), @"svmax"));
 
-    EXPECT_EQ(10, getElementHeight(webView.get(), @"lvw"));
-    EXPECT_EQ(20, getElementHeight(webView.get(), @"lvh"));
-    EXPECT_EQ(10, getElementHeight(webView.get(), @"lvmin"));
-    EXPECT_EQ(20, getElementHeight(webView.get(), @"lvmax"));
+    EXPECT_FLOAT_EQ(10.5, getElementHeight(webView.get(), @"lvw"));
+    EXPECT_FLOAT_EQ(20.5, getElementHeight(webView.get(), @"lvh"));
+    EXPECT_FLOAT_EQ(10.5, getElementHeight(webView.get(), @"lvmin"));
+    EXPECT_FLOAT_EQ(20.5, getElementHeight(webView.get(), @"lvmax"));
 
-    EXPECT_EQ(evaluateForInt(webView.get(), @"window.innerWidth"), getElementHeight(webView.get(), @"dvw"));
-    EXPECT_EQ(evaluateForInt(webView.get(), @"window.innerHeight"), getElementHeight(webView.get(), @"dvh"));
-    EXPECT_EQ(evaluateForInt(webView.get(), @"window.innerWidth"), getElementHeight(webView.get(), @"dvmin"));
-    EXPECT_EQ(evaluateForInt(webView.get(), @"window.innerHeight"), getElementHeight(webView.get(), @"dvmax"));
+    EXPECT_FLOAT_EQ(evaluateForNumber(webView.get(), @"window.innerWidth"), getElementHeight(webView.get(), @"dvw"));
+    EXPECT_FLOAT_EQ(evaluateForNumber(webView.get(), @"window.innerHeight"), getElementHeight(webView.get(), @"dvh"));
+    EXPECT_FLOAT_EQ(evaluateForNumber(webView.get(), @"window.innerWidth"), getElementHeight(webView.get(), @"dvmin"));
+    EXPECT_FLOAT_EQ(evaluateForNumber(webView.get(), @"window.innerHeight"), getElementHeight(webView.get(), @"dvmax"));
 }
 
 TEST(CSSViewportUnits, DifferentUnobscuredSizeOverrides)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
-    [webView _overrideLayoutParametersWithMinimumLayoutSize:CGSizeMake(10, 20)
-                              maximumUnobscuredSizeOverride:CGSizeMake(30, 40)];
+    [webView _overrideLayoutParametersWithMinimumLayoutSize:CGSizeMake(10.5, 20.5)
+                              maximumUnobscuredSizeOverride:CGSizeMake(30.5, 40.5)];
     [webView synchronouslyLoadTestPageNamed:@"CSSViewportUnits"];
 
-    EXPECT_EQ(30, getElementHeight(webView.get(), @"vw"));
-    EXPECT_EQ(40, getElementHeight(webView.get(), @"vh"));
-    EXPECT_EQ(30, getElementHeight(webView.get(), @"vmin"));
-    EXPECT_EQ(40, getElementHeight(webView.get(), @"vmax"));
+    EXPECT_FLOAT_EQ(30.5, getElementHeight(webView.get(), @"vw"));
+    EXPECT_FLOAT_EQ(40.5, getElementHeight(webView.get(), @"vh"));
+    EXPECT_FLOAT_EQ(30.5, getElementHeight(webView.get(), @"vmin"));
+    EXPECT_FLOAT_EQ(40.5, getElementHeight(webView.get(), @"vmax"));
 
-    EXPECT_EQ(10, getElementHeight(webView.get(), @"svw"));
-    EXPECT_EQ(20, getElementHeight(webView.get(), @"svh"));
-    EXPECT_EQ(10, getElementHeight(webView.get(), @"svmin"));
-    EXPECT_EQ(20, getElementHeight(webView.get(), @"svmax"));
+    EXPECT_FLOAT_EQ(10.5, getElementHeight(webView.get(), @"svw"));
+    EXPECT_FLOAT_EQ(20.5, getElementHeight(webView.get(), @"svh"));
+    EXPECT_FLOAT_EQ(10.5, getElementHeight(webView.get(), @"svmin"));
+    EXPECT_FLOAT_EQ(20.5, getElementHeight(webView.get(), @"svmax"));
 
-    EXPECT_EQ(30, getElementHeight(webView.get(), @"lvw"));
-    EXPECT_EQ(40, getElementHeight(webView.get(), @"lvh"));
-    EXPECT_EQ(30, getElementHeight(webView.get(), @"lvmin"));
-    EXPECT_EQ(40, getElementHeight(webView.get(), @"lvmax"));
+    EXPECT_FLOAT_EQ(30.5, getElementHeight(webView.get(), @"lvw"));
+    EXPECT_FLOAT_EQ(40.5, getElementHeight(webView.get(), @"lvh"));
+    EXPECT_FLOAT_EQ(30.5, getElementHeight(webView.get(), @"lvmin"));
+    EXPECT_FLOAT_EQ(40.5, getElementHeight(webView.get(), @"lvmax"));
 
-    EXPECT_EQ(evaluateForInt(webView.get(), @"window.innerWidth"), getElementHeight(webView.get(), @"dvw"));
-    EXPECT_EQ(evaluateForInt(webView.get(), @"window.innerHeight"), getElementHeight(webView.get(), @"dvh"));
-    EXPECT_EQ(evaluateForInt(webView.get(), @"window.innerWidth"), getElementHeight(webView.get(), @"dvmin"));
-    EXPECT_EQ(evaluateForInt(webView.get(), @"window.innerHeight"), getElementHeight(webView.get(), @"dvmax"));
+    EXPECT_FLOAT_EQ(evaluateForNumber(webView.get(), @"window.innerWidth"), getElementHeight(webView.get(), @"dvw"));
+    EXPECT_FLOAT_EQ(evaluateForNumber(webView.get(), @"window.innerHeight"), getElementHeight(webView.get(), @"dvh"));
+    EXPECT_FLOAT_EQ(evaluateForNumber(webView.get(), @"window.innerWidth"), getElementHeight(webView.get(), @"dvmin"));
+    EXPECT_FLOAT_EQ(evaluateForNumber(webView.get(), @"window.innerHeight"), getElementHeight(webView.get(), @"dvmax"));
 }
 
 #endif // PLATFORM(IOS_FAMILY)
