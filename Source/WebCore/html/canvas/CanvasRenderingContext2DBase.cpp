@@ -1677,17 +1677,19 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(HTMLVideoElement& vide
     checkOrigin(&video);
 
 #if USE(CG)
-    if (auto image = video.nativeImageForCurrentTime()) {
-        c->drawNativeImage(*image, FloatSize(video.videoWidth(), video.videoHeight()), dstRect, srcRect);
+    if (c->hasPlatformContext()) {
+        if (auto image = video.nativeImageForCurrentTime()) {
+            c->drawNativeImage(*image, FloatSize(video.videoWidth(), video.videoHeight()), dstRect, srcRect);
 
-        if (isEntireBackingStoreDirty())
-            didDraw(std::nullopt);
-        else if (rectContainsCanvas(dstRect))
-            didDrawEntireCanvas();
-        else
-            didDraw(dstRect);
+            if (isEntireBackingStoreDirty())
+                didDraw(std::nullopt);
+            else if (rectContainsCanvas(dstRect))
+                didDrawEntireCanvas();
+            else
+                didDraw(dstRect);
 
-        return { };
+            return { };
+        }
     }
 #endif
 
