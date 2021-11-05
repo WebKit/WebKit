@@ -278,10 +278,10 @@ class BaseGenerator(object):
             input_lines = self._get_file_lines(input.name)
             output_lines = self._get_file_lines(output.name)
 
-            input_lines = self._replace(input_lines, "^JavaScriptCore/",               "$(PROJECT_DIR)/")
-            input_lines = self._replace(input_lines, "^JavaScriptCorePrivateHeaders/", "$(JAVASCRIPTCORE_PRIVATE_HEADERS_DIR)/")
-            input_lines = self._replace(input_lines, "^WebCore/",                      "$(PROJECT_DIR)/")
-            input_lines = self._replace(input_lines, "^WebKit2PrivateHeaders/",        "$(WEBKIT2_PRIVATE_HEADERS_DIR)/")
+            input_lines = self._replacePrefix(input_lines, "JavaScriptCore/",               "$(PROJECT_DIR)/")
+            input_lines = self._replacePrefix(input_lines, "JavaScriptCorePrivateHeaders/", "$(JAVASCRIPTCORE_PRIVATE_HEADERS_DIR)/")
+            input_lines = self._replacePrefix(input_lines, "WebCore/",                      "$(PROJECT_DIR)/")
+            input_lines = self._replacePrefix(input_lines, "WebKit2PrivateHeaders/",        "$(WEBKIT2_PRIVATE_HEADERS_DIR)/")
 
             input_lines = self._unexpand(input_lines, "JAVASCRIPTCORE_PRIVATE_HEADERS_DIR")
             input_lines = self._unexpand(input_lines, "PROJECT_DIR")
@@ -290,7 +290,7 @@ class BaseGenerator(object):
             input_lines = self._unexpand(input_lines, "WEBKITADDITIONS_HEADERS_FOLDER_PATH")
             input_lines = self._unexpand(input_lines, "BUILT_PRODUCTS_DIR")    # Do this last, since it's a prefix of some other variables and will "intercept" them if executed earlier than them.
 
-            output_lines = self._replace(output_lines, "^", self._get_derived_sources_dir() + "/")
+            output_lines = [self._get_derived_sources_dir() + "/" + line for line in output_lines]
             output_lines = self._unexpand(output_lines, "BUILT_PRODUCTS_DIR")
 
             self.added_lines_input_derived = self._find_added_lines(input_lines, self._get_input_derived_xcfilelist_project_path())
@@ -343,9 +343,14 @@ class BaseGenerator(object):
     # Utility for post-processing the initial .xcfilelist content. Used to
     # replace text in the file.
 
+    def _replaceSinglePrefix(self, line, prefix, replace_with):
+        if line.startswith(prefix):
+            return replace_with + line[len(prefix):]
+        return line
+
     @util.LogEntryExit
-    def _replace(self, lines, to_replace, replace_with):
-        return set([re.sub(to_replace, replace_with, line) for line in lines])
+    def _replacePrefix(self, lines, to_replace, replace_with):
+        return set([self._replaceSinglePrefix(line, to_replace, replace_with) for line in lines])
 
     # Utility for post-processing the initial .xcfilelist content. Used to
     # replace file path segments with the variables that represent those path
@@ -417,7 +422,7 @@ class BaseGenerator(object):
             return (x for x in _gen(path))
 
         def _try_unexpand(prefix, line):
-            new_line = re.sub("^{}/".format(prefix), "$({})/".format(variable_name), line)
+            new_line = self._replaceSinglePrefix(line, prefix + "/", "$({})/".format(variable_name))
             return new_line != line, new_line
 
         def _do_unexpand(line):

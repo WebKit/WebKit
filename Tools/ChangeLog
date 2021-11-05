@@ -1,3 +1,21 @@
+2021-11-05  Tim Horton  <timothy_horton@apple.com>
+
+        generate-xcfilelists doesn't work if build path contains a `+`
+        https://bugs.webkit.org/show_bug.cgi?id=232493
+
+        Reviewed by Simon Fraser.
+
+        * Scripts/webkitpy/generate_xcfilelists_lib/generators.py:
+        (BaseGenerator._generate_derived):
+        (BaseGenerator._replaceSinglePrefix):
+        (BaseGenerator._replacePrefix):
+        (BaseGenerator._unexpand._try_unexpand):
+        (BaseGenerator._replace): Deleted.
+        The xcfilelist generator had a regex injection issue that resulted in
+        paths with not-very-special characters causing it to infinitely
+        regenerate the xcfilelists; we can just use simple string prefix
+        replacement instead.
+
 2021-11-05  Devin Rousso  <drousso@apple.com>
 
         [css-values-4] viewport units should be floats
