@@ -1,3 +1,39 @@
+2021-11-05  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r284635. rdar://problem/85039977
+
+    [JSC] Inserted GetTypedArrayLengthAsInt52 for PutByVal should have NodeResultInt52
+    https://bugs.webkit.org/show_bug.cgi?id=232059
+    
+    Reviewed by Saam Barati.
+    
+    JSTests:
+    
+    * stress/inserted-gettypedarraylengthasint52-should-have-int52-result-for-put-by-val.js: Added.
+    (foo.bar):
+    (foo):
+    
+    Source/JavaScriptCore:
+    
+    When inserting GetTypedArrayLengthAsInt52 after fixup phase, we must set NodeResultInt52.
+    
+    * dfg/DFGSSALoweringPhase.cpp:
+    (JSC::DFG::SSALoweringPhase::handleNode):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@284635 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-10-21  Yusuke Suzuki  <ysuzuki@apple.com>
+
+            [JSC] Inserted GetTypedArrayLengthAsInt52 for PutByVal should have NodeResultInt52
+            https://bugs.webkit.org/show_bug.cgi?id=232059
+
+            Reviewed by Saam Barati.
+
+            * stress/inserted-gettypedarraylengthasint52-should-have-int52-result-for-put-by-val.js: Added.
+            (foo.bar):
+            (foo):
+
 2021-11-04  Alexey Shvayka  <ashvayka@apple.com>
 
         We need to PreferNumber when calling toPrimitive for coercion to BigInt
