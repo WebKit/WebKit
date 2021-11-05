@@ -49,11 +49,6 @@
 
 namespace WebCore {
 
-Ref<CaptionUserPreferences> CaptionUserPreferences::create(PageGroup& group)
-{
-    return adoptRef(*new CaptionUserPreferences(group));
-}
-
 CaptionUserPreferences::CaptionUserPreferences(PageGroup& group)
     : m_pageGroup(group)
     , m_displayMode(ForcedOnly)

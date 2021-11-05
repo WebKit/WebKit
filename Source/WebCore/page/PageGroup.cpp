@@ -113,9 +113,9 @@ CaptionUserPreferences& PageGroup::ensureCaptionPreferences()
 {
     if (!m_captionPreferences) {
 #if PLATFORM(MAC) || HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
-        m_captionPreferences = CaptionUserPreferencesMediaAF::create(*this);
+        m_captionPreferences = makeUnique<CaptionUserPreferencesMediaAF>(*this);
 #else
-        m_captionPreferences = CaptionUserPreferences::create(*this);
+        m_captionPreferences = makeUnique<CaptionUserPreferences>(*this);
 #endif
     }
 

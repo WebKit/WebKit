@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,7 +32,6 @@
 #include "Timer.h"
 #include <wtf/EnumTraits.h>
 #include <wtf/HashSet.h>
-#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
@@ -42,10 +41,10 @@ class AudioTrackList;
 class TextTrackList;
 struct MediaSelectionOption;
 
-class CaptionUserPreferences : public RefCounted<CaptionUserPreferences>, public CanMakeWeakPtr<CaptionUserPreferences> {
+class CaptionUserPreferences {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<CaptionUserPreferences> create(PageGroup&);
+    CaptionUserPreferences(PageGroup&);
     virtual ~CaptionUserPreferences();
 
     enum CaptionDisplayMode {
@@ -103,8 +102,6 @@ public:
     PageGroup& pageGroup() const { return m_pageGroup; }
 
 protected:
-    explicit CaptionUserPreferences(PageGroup&);
-
     void updateCaptionStyleSheetOverride();
     void beginBlockingNotifications();
     void endBlockingNotifications();

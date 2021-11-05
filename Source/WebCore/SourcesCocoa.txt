@@ -184,7 +184,6 @@ loader/mac/DocumentLoaderMac.cpp
 loader/mac/LoaderNSURLExtras.mm
 loader/mac/ResourceLoaderMac.mm
 page/CaptionUserPreferencesMediaAF.cpp
-page/cocoa/CaptionUserPreferencesMediaAFCocoa.mm
 page/cocoa/MemoryReleaseCocoa.mm
 page/cocoa/PerformanceLoggingCocoa.mm
 page/cocoa/ResourceUsageOverlayCocoa.mm
