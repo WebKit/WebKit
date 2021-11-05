@@ -19,7 +19,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/document-metadata/the-meta-element/color-scheme/meta-color-scheme-first-valid-applies.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/document-metadata/the-meta-element/color-scheme/meta-color-scheme-insert.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/document-metadata/the-meta-element/color-scheme/meta-color-scheme-no-content-value.html
-/LayoutTests/imported/w3c/web-platform-tests/html/semantics/document-metadata/the-meta-element/color-scheme/meta-color-scheme-presentational-hint.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/document-metadata/the-meta-element/color-scheme/meta-color-scheme-remove-head.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/document-metadata/the-meta-element/color-scheme/meta-color-scheme-remove.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/document-metadata/the-meta-element/color-scheme/meta-color-scheme-single-value-in-body.html

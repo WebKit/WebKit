@@ -1,0 +1,5 @@
+
+PASS setting document.domain must give sync access
+FAIL parent: originAgentCluster must equal false assert_equals: expected (boolean) false but got (undefined) undefined
+FAIL child: originAgentCluster must equal false assert_equals: expected (boolean) false but got (undefined) undefined
+

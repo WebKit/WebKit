@@ -1,0 +1,5 @@
+CONSOLE MESSAGE: Unhandled Promise Rejection: Error: assert_equals: speculative case incorrectly fetched expected "" but got "param-encodingcheck: %C4%9E\r\n"
+
+
+FAIL Speculative parsing, page load: picture-source-no-img Unhandled rejection: assert_equals: speculative case incorrectly fetched expected "" but got "param-encodingcheck: %C4%9E\r\n"
+

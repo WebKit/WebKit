@@ -14,7 +14,6 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/html/canvas/tools/build.sh
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/tools/gentest.py
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/tools/gentestutils.py
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/tools/name2dir-offscreen.yaml

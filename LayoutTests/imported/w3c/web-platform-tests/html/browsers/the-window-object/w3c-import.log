@@ -37,6 +37,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/the-window-object/window-open-invalid-url.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/the-window-object/window-open-noopener.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/the-window-object/window-open-noreferrer.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/the-window-object/window-opener-unconfigurable.window.js
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/the-window-object/window-properties.https.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/the-window-object/window-prototype-chain.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/the-window-object/window-reuse-in-nested-browsing-contexts.tentative.html

@@ -25,6 +25,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dataset-prototype.html
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dataset-set.html
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dataset.html
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir-bdi-script.html
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir-slots-directionality.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir_auto-EN-L-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir_auto-EN-L.html
@@ -127,8 +128,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir_auto-textarea-script-N-EN-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir_auto-textarea-script-N-EN.html
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir_auto-textarea-script-N-between-Rs-expected.html
-/LayoutTests/imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir_auto-textarea-script-N-between-Rs-ref-expected.html
-/LayoutTests/imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir_auto-textarea-script-N-between-Rs-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir_auto-textarea-script-N-between-Rs.html
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir_auto-textarea-script-mixed-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir_auto-textarea-script-mixed.html

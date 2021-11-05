@@ -1,4 +1,0 @@
-
-FAIL Putting a float-32 ImageData with no color settings on a context 2D should not crash. Value NaN is outside the range [-2147483648, 2147483647]
-FAIL Putting a uint-16 ImageData with no color settings on a context 2D should not crash. Value NaN is outside the range [-2147483648, 2147483647]
-

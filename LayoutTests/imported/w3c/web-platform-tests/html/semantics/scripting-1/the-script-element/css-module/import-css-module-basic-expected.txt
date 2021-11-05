@@ -1,8 +1,10 @@
+I am a test div.
+I am a test div.
+I am a test div.
+I am a test div.
+I am a test div.
+I am a test div.
 
+Harness Error (FAIL), message = ReferenceError: Can't find variable: unreachable
 
-FAIL A CSS Module should load assert_equals: CSS module import should succeed expected "rgb(255, 0, 0)" but got "rgba(0, 0, 0, 0)"
-FAIL A large CSS Module should load assert_equals: CSS module import should succeed expected "rgb(255, 0, 0)" but got "rgba(0, 0, 0, 0)"
-FAIL An @import CSS Module should not load, but should not throw an exception undefined is not an object (evaluating 'iframe.contentDocument.adoptedStyleSheets[0]')
-FAIL A parse error should not prevent subsequent rules from being included in a CSS module undefined is not an object (evaluating 'iframe.contentDocument.adoptedStyleSheets[0]')
-PASS CSS module without type assertion should result in a fetch error
 

@@ -1,0 +1,4 @@
+
+
+PASS Speculative parsing, page load: script-src
+

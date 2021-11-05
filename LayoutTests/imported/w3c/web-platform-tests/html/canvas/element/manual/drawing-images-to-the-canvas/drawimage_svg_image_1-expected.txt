@@ -1,3 +1,0 @@
-
-FAIL Load a 100x100 image to a SVG image and draw it to a 100x100 canvas. Type error
-

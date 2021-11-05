@@ -1,0 +1,8 @@
+
+    <!-- speculative case in document.write -->
+    <xmp><script src="/html/syntax/speculative-parsing/resources/stash.py?action=put&amp;uuid=a583efc4-c5a6-4b79-84dd-374e909eae57&amp;encodingcheck=&Gbreve;"></script></xmp>
+
+
+
+PASS Speculative parsing, document.write(): xmp-script-src
+

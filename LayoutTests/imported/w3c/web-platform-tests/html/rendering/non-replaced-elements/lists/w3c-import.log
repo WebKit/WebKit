@@ -11,10 +11,11 @@ Do NOT modify or remove this file.
 Properties requiring vendor prefixes:
 None
 Property values requiring vendor prefixes:
-None
+match-parent
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/lists/TODO-lists.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/lists/li-text-align.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/lists/li-type-supported-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/lists/li-type-supported-xhtml-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/lists/li-type-supported-xhtml.xhtml

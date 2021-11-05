@@ -68,6 +68,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/history_pushstate_err.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/history_pushstate_nooptionalparam.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/history_pushstate_url.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/history_pushstate_url_rewriting.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/history_replacestate.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/history_replacestate_err.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/history_replacestate_nooptionalparam.html

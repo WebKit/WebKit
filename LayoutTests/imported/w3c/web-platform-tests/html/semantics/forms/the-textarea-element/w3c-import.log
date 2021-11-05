@@ -28,6 +28,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-textarea-element/textarea-minlength.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-textarea-element/textarea-newline-bidi-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-textarea-element/textarea-newline-bidi.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-textarea-element/textarea-placeholder-lineheight.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-textarea-element/textarea-setcustomvalidity.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-textarea-element/textarea-textLength.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-textarea-element/textarea-type.html

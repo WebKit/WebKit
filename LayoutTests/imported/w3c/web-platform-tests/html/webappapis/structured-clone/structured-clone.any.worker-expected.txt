@@ -104,6 +104,14 @@ PASS Object with non-enumerable property
 PASS Object with non-writable property
 PASS Object with non-configurable property
 FAIL ObjectPrototype must lose its exotic-ness when cloned promise_test: Unhandled rejection with value: object "DataCloneError: The object can not be cloned."
+PASS Serializing a non-serializable platform object fails
+PASS An object whose interface is deleted from the global must still deserialize
+PASS A subclass instance will deserialize as its closest serializable superclass
 PASS ArrayBuffer
 PASS MessagePort
+PASS A detached ArrayBuffer cannot be transferred
+PASS A detached platform object cannot be transferred
+PASS Transferring a non-transferable platform object fails
+PASS An object whose interface is deleted from the global object must still be received
+NOTRUN A subclass instance will be received as its closest transferable superclass ReadableStream isn't transferable
 

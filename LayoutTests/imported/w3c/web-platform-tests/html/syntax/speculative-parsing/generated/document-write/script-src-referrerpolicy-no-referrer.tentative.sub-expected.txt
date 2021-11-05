@@ -1,0 +1,9 @@
+CONSOLE MESSAGE: Unhandled Promise Rejection: Error: assert_not_equals: non-speculative case did not fetch got disallowed value ""
+
+    <!-- speculative case in document.write -->
+    <script src="/html/syntax/speculative-parsing/resources/stash.py?action=put&amp;uuid=54aa3572-7864-409b-acf7-cad7469e872d&amp;encodingcheck=&Gbreve;" referrerpolicy=no-referrer></script>
+
+
+
+FAIL Speculative parsing, document.write(): script-src-referrerpolicy-no-referrer Unhandled rejection: assert_not_equals: non-speculative case did not fetch got disallowed value ""
+

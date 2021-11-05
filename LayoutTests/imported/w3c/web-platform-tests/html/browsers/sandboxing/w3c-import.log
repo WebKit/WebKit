@@ -16,6 +16,7 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/sandboxing/inner-iframe.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/sandboxing/noscript-iframe.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/sandboxing/popup-from-initial-empty-sandboxed-document.window.js
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/sandboxing/sandbox-allow-same-origin.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/sandboxing/sandbox-allow-scripts.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/sandboxing/sandbox-disallow-popups.html

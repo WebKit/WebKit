@@ -1,0 +1,6 @@
+Blocked access to external URL http://www.localhost:8800/html/browsers/browsing-the-web/navigating-across-documents/resources/multi-globals-subframe-1.sub.html
+Blocked access to external URL http://www.localhost:8800/html/browsers/browsing-the-web/navigating-across-documents/resources/multi-globals-subframe-1.sub.html
+
+FAIL Using iframeEl.src promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'innerIframe.src = "javascript:'test'"')"
+FAIL Using location.href promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'iframe.contentWindow.frames[0].location')"
+

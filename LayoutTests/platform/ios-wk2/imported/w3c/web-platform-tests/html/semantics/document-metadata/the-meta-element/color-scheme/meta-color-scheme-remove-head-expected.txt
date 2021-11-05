@@ -1,0 +1,4 @@
+
+FAIL Meta color-scheme applies. assert_not_equals: CanvasText system color should be different with light and dark color schemes got disallowed value "rgb(0, 0, 0)"
+FAIL Initial value after removing head including meta color-scheme. assert_not_equals: CanvasText system color should be different with light and dark color schemes got disallowed value "rgb(0, 0, 0)"
+

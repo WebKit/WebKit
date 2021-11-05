@@ -310,6 +310,7 @@ PASS Path2D interface: operation quadraticCurveTo(unrestricted double, unrestric
 PASS Path2D interface: operation bezierCurveTo(unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double)
 PASS Path2D interface: operation arcTo(unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double)
 PASS Path2D interface: operation rect(unrestricted double, unrestricted double, unrestricted double, unrestricted double)
+FAIL Path2D interface: operation roundRect(unrestricted double, unrestricted double, unrestricted double, unrestricted double, sequence<(unrestricted double or DOMPointInit)>) assert_own_property: interface prototype object missing non-static operation expected property "roundRect" missing
 PASS Path2D interface: operation arc(unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, optional boolean)
 PASS Path2D interface: operation ellipse(unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, optional boolean)
 PASS ImageBitmapRenderingContext interface: existence and properties of interface object
@@ -331,6 +332,8 @@ FAIL OffscreenCanvas interface: attribute height assert_own_property: self does 
 FAIL OffscreenCanvas interface: operation getContext(OffscreenRenderingContextId, optional any) assert_own_property: self does not have own property "OffscreenCanvas" expected property "OffscreenCanvas" missing
 FAIL OffscreenCanvas interface: operation transferToImageBitmap() assert_own_property: self does not have own property "OffscreenCanvas" expected property "OffscreenCanvas" missing
 FAIL OffscreenCanvas interface: operation convertToBlob(optional ImageEncodeOptions) assert_own_property: self does not have own property "OffscreenCanvas" expected property "OffscreenCanvas" missing
+FAIL OffscreenCanvas interface: attribute oncontextlost assert_own_property: self does not have own property "OffscreenCanvas" expected property "OffscreenCanvas" missing
+FAIL OffscreenCanvas interface: attribute oncontextrestored assert_own_property: self does not have own property "OffscreenCanvas" expected property "OffscreenCanvas" missing
 FAIL OffscreenCanvasRenderingContext2D interface: existence and properties of interface object assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
 FAIL OffscreenCanvasRenderingContext2D interface object length assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
 FAIL OffscreenCanvasRenderingContext2D interface object name assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
@@ -342,6 +345,7 @@ FAIL OffscreenCanvasRenderingContext2D interface: attribute canvas assert_own_pr
 FAIL OffscreenCanvasRenderingContext2D interface: operation save() assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
 FAIL OffscreenCanvasRenderingContext2D interface: operation restore() assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
 FAIL OffscreenCanvasRenderingContext2D interface: operation reset() assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
+FAIL OffscreenCanvasRenderingContext2D interface: operation isContextLost() assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
 FAIL OffscreenCanvasRenderingContext2D interface: operation scale(unrestricted double, unrestricted double) assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
 FAIL OffscreenCanvasRenderingContext2D interface: operation rotate(unrestricted double) assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
 FAIL OffscreenCanvasRenderingContext2D interface: operation translate(unrestricted double, unrestricted double) assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
@@ -414,6 +418,7 @@ FAIL OffscreenCanvasRenderingContext2D interface: operation quadraticCurveTo(unr
 FAIL OffscreenCanvasRenderingContext2D interface: operation bezierCurveTo(unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double) assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
 FAIL OffscreenCanvasRenderingContext2D interface: operation arcTo(unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double) assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
 FAIL OffscreenCanvasRenderingContext2D interface: operation rect(unrestricted double, unrestricted double, unrestricted double, unrestricted double) assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
+FAIL OffscreenCanvasRenderingContext2D interface: operation roundRect(unrestricted double, unrestricted double, unrestricted double, unrestricted double, sequence<(unrestricted double or DOMPointInit)>) assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
 FAIL OffscreenCanvasRenderingContext2D interface: operation arc(unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, optional boolean) assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
 FAIL OffscreenCanvasRenderingContext2D interface: operation ellipse(unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, optional boolean) assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
 PASS CustomElementRegistry interface: existence and properties of interface object
@@ -451,6 +456,10 @@ PASS PromiseRejectionEvent interface: attribute promise
 PASS PromiseRejectionEvent interface: attribute reason
 PASS DOMParser interface: existence and properties of interface object
 PASS Navigator interface: existence and properties of interface object
+PASS PluginArray interface: existence and properties of interface object
+PASS MimeTypeArray interface: existence and properties of interface object
+PASS Plugin interface: existence and properties of interface object
+PASS MimeType interface: existence and properties of interface object
 PASS ImageBitmap interface: existence and properties of interface object
 PASS ImageBitmap interface object length
 PASS ImageBitmap interface object name
@@ -596,7 +605,7 @@ PASS MessagePort interface: existence and properties of interface prototype obje
 PASS MessagePort interface: existence and properties of interface prototype object's "constructor" property
 PASS MessagePort interface: existence and properties of interface prototype object's @@unscopables property
 PASS MessagePort interface: operation postMessage(any, sequence<object>)
-PASS MessagePort interface: operation postMessage(any, optional PostMessageOptions)
+PASS MessagePort interface: operation postMessage(any, optional StructuredSerializeOptions)
 PASS MessagePort interface: operation start()
 PASS MessagePort interface: operation close()
 PASS MessagePort interface: attribute onmessage
@@ -631,6 +640,7 @@ PASS WorkerGlobalScope interface: attribute onunhandledrejection
 PASS WorkerGlobalScope interface: attribute origin
 PASS WorkerGlobalScope interface: attribute isSecureContext
 PASS WorkerGlobalScope interface: attribute crossOriginIsolated
+PASS WorkerGlobalScope interface: operation reportError(any)
 PASS WorkerGlobalScope interface: operation btoa(DOMString)
 PASS WorkerGlobalScope interface: operation atob(DOMString)
 PASS WorkerGlobalScope interface: operation setTimeout(TimerHandler, optional long, any...)
@@ -640,6 +650,7 @@ PASS WorkerGlobalScope interface: operation clearInterval(optional long)
 PASS WorkerGlobalScope interface: operation queueMicrotask(VoidFunction)
 PASS WorkerGlobalScope interface: operation createImageBitmap(ImageBitmapSource, optional ImageBitmapOptions)
 PASS WorkerGlobalScope interface: operation createImageBitmap(ImageBitmapSource, long, long, long, long, optional ImageBitmapOptions)
+PASS WorkerGlobalScope interface: operation structuredClone(any, optional StructuredSerializeOptions)
 PASS DedicatedWorkerGlobalScope interface: existence and properties of interface object
 PASS DedicatedWorkerGlobalScope interface object length
 PASS DedicatedWorkerGlobalScope interface object name
@@ -654,7 +665,7 @@ PASS DedicatedWorkerGlobalScope interface: existence and properties of interface
 PASS DedicatedWorkerGlobalScope interface: existence and properties of interface prototype object's @@unscopables property
 PASS DedicatedWorkerGlobalScope interface: attribute name
 PASS DedicatedWorkerGlobalScope interface: operation postMessage(any, sequence<object>)
-PASS DedicatedWorkerGlobalScope interface: operation postMessage(any, optional PostMessageOptions)
+PASS DedicatedWorkerGlobalScope interface: operation postMessage(any, optional StructuredSerializeOptions)
 PASS DedicatedWorkerGlobalScope interface: operation close()
 PASS DedicatedWorkerGlobalScope interface: attribute onmessage
 FAIL DedicatedWorkerGlobalScope interface: attribute onmessageerror assert_own_property: The global object must have a property "onmessageerror" expected property "onmessageerror" missing
@@ -671,8 +682,8 @@ PASS Stringification of self
 PASS DedicatedWorkerGlobalScope interface: self must inherit property "name" with the proper type
 PASS DedicatedWorkerGlobalScope interface: self must inherit property "postMessage(any, sequence<object>)" with the proper type
 PASS DedicatedWorkerGlobalScope interface: calling postMessage(any, sequence<object>) on self with too few arguments must throw TypeError
-PASS DedicatedWorkerGlobalScope interface: self must inherit property "postMessage(any, optional PostMessageOptions)" with the proper type
-PASS DedicatedWorkerGlobalScope interface: calling postMessage(any, optional PostMessageOptions) on self with too few arguments must throw TypeError
+PASS DedicatedWorkerGlobalScope interface: self must inherit property "postMessage(any, optional StructuredSerializeOptions)" with the proper type
+PASS DedicatedWorkerGlobalScope interface: calling postMessage(any, optional StructuredSerializeOptions) on self with too few arguments must throw TypeError
 PASS DedicatedWorkerGlobalScope interface: self must inherit property "close()" with the proper type
 PASS DedicatedWorkerGlobalScope interface: self must inherit property "onmessage" with the proper type
 FAIL DedicatedWorkerGlobalScope interface: self must inherit property "onmessageerror" with the proper type assert_own_property: expected property "onmessageerror" missing
@@ -694,6 +705,8 @@ PASS WorkerGlobalScope interface: self must inherit property "onunhandledrejecti
 PASS WorkerGlobalScope interface: self must inherit property "origin" with the proper type
 PASS WorkerGlobalScope interface: self must inherit property "isSecureContext" with the proper type
 PASS WorkerGlobalScope interface: self must inherit property "crossOriginIsolated" with the proper type
+PASS WorkerGlobalScope interface: self must inherit property "reportError(any)" with the proper type
+PASS WorkerGlobalScope interface: calling reportError(any) on self with too few arguments must throw TypeError
 PASS WorkerGlobalScope interface: self must inherit property "btoa(DOMString)" with the proper type
 PASS WorkerGlobalScope interface: calling btoa(DOMString) on self with too few arguments must throw TypeError
 PASS WorkerGlobalScope interface: self must inherit property "atob(DOMString)" with the proper type
@@ -712,6 +725,8 @@ PASS WorkerGlobalScope interface: self must inherit property "createImageBitmap(
 PASS WorkerGlobalScope interface: calling createImageBitmap(ImageBitmapSource, optional ImageBitmapOptions) on self with too few arguments must throw TypeError
 PASS WorkerGlobalScope interface: self must inherit property "createImageBitmap(ImageBitmapSource, long, long, long, long, optional ImageBitmapOptions)" with the proper type
 PASS WorkerGlobalScope interface: calling createImageBitmap(ImageBitmapSource, long, long, long, long, optional ImageBitmapOptions) on self with too few arguments must throw TypeError
+PASS WorkerGlobalScope interface: self must inherit property "structuredClone(any, optional StructuredSerializeOptions)" with the proper type
+PASS WorkerGlobalScope interface: calling structuredClone(any, optional StructuredSerializeOptions) on self with too few arguments must throw TypeError
 PASS SharedWorkerGlobalScope interface: existence and properties of interface object
 FAIL Worker interface: existence and properties of interface object assert_own_property: self does not have own property "Worker" expected property "Worker" missing
 FAIL Worker interface object length assert_own_property: self does not have own property "Worker" expected property "Worker" missing
@@ -721,7 +736,7 @@ FAIL Worker interface: existence and properties of interface prototype object's 
 FAIL Worker interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "Worker" expected property "Worker" missing
 FAIL Worker interface: operation terminate() assert_own_property: self does not have own property "Worker" expected property "Worker" missing
 FAIL Worker interface: operation postMessage(any, sequence<object>) assert_own_property: self does not have own property "Worker" expected property "Worker" missing
-FAIL Worker interface: operation postMessage(any, optional PostMessageOptions) assert_own_property: self does not have own property "Worker" expected property "Worker" missing
+FAIL Worker interface: operation postMessage(any, optional StructuredSerializeOptions) assert_own_property: self does not have own property "Worker" expected property "Worker" missing
 FAIL Worker interface: attribute onmessage assert_own_property: self does not have own property "Worker" expected property "Worker" missing
 FAIL Worker interface: attribute onmessageerror assert_own_property: self does not have own property "Worker" expected property "Worker" missing
 FAIL Worker interface: attribute onerror assert_own_property: self does not have own property "Worker" expected property "Worker" missing
@@ -801,8 +816,4 @@ PASS HTMLFrameElement interface: existence and properties of interface object
 PASS HTMLDirectoryElement interface: existence and properties of interface object
 PASS HTMLFontElement interface: existence and properties of interface object
 PASS External interface: existence and properties of interface object
-PASS PluginArray interface: existence and properties of interface object
-PASS MimeTypeArray interface: existence and properties of interface object
-PASS Plugin interface: existence and properties of interface object
-PASS MimeType interface: existence and properties of interface object
 

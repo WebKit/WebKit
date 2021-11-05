@@ -158,9 +158,6 @@ imported/w3c/web-platform-tests/webaudio/the-audio-api/the-destinationnode-inter
 http/tests/cache/network-error-during-revalidation.html [ DumpJSConsoleLogInStdErr ]
 http/tests/xmlhttprequest/state-after-network-error.html [ DumpJSConsoleLogInStdErr ]
 
-# Still failing in GTK
-webkit.org/b/215462 imported/w3c/web-platform-tests/html/canvas/offscreen/manual/the-offscreen-canvas/offscreencanvas.commit.html [ Pass ]
-
 # WPE passing since (237579@main - 237582@main]. GTK back failing after revert.
 imported/w3c/web-platform-tests/css/css-contain/contain-size-block-003.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-contain/contain-size-inline-block-003.html [ Pass ]
@@ -275,7 +272,6 @@ webkit.org/b/229455 webxr/high-performance.html [ Failure ]
 webkit.org/b/187597 fast/workers/worker-exception-during-navigation.html [ Timeout Pass ]
 
 # WPT tests
-webkit.org/b/215306 imported/w3c/web-platform-tests/html/user-activation/basic.html [ Timeout ]
 webkit.org/b/215299 [ Release ] imported/w3c/web-platform-tests/css/css-logical/parsing/margin-block-inline-computed.html [ Pass Failure ]
 webkit.org/b/215299 [ Release ] imported/w3c/web-platform-tests/css/css-logical/parsing/padding-block-inline-computed.html [ Pass Failure ]
 
@@ -541,9 +537,6 @@ webkit.org/b/208869 fast/images/inline-image-box-with-no-alt-should-collapse-no-
 webkit.org/b/208869 fast/images/inline-image-box-with-no-alt-should-collapse-quirks.html [ Failure ]
 
 webkit.org/b/208979 imported/w3c/web-platform-tests/html/semantics/text-level-semantics/the-a-element/a-download-click-redirect-to-javascript.html [ Failure ]
-
-webkit.org/b/208980 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_anchor_download_allow_downloads.sub.tentative.html [ Failure ]
-webkit.org/b/208980 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_anchor_download_block_downloads.sub.tentative.html [ Failure ]
 
 webkit.org/b/208982 imported/w3c/web-platform-tests/html/rendering/widgets/button-layout/computed-style.html [ Failure ]
 

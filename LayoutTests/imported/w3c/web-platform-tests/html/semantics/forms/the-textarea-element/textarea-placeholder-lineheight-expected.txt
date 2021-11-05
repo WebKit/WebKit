@@ -1,0 +1,5 @@
+
+
+FAIL Bounding rect height for textarea must be the same as line-height assert_equals: expected 19.5 but got 19
+PASS ComputedStyle line-height for textarea must be the same as set value
+

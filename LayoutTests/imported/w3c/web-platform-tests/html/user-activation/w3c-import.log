@@ -14,8 +14,10 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/html/user-activation/activation-thru-contextmenu-event.html
-/LayoutTests/imported/w3c/web-platform-tests/html/user-activation/basic.html
+/LayoutTests/imported/w3c/web-platform-tests/html/user-activation/activation-trigger-keyboard-enter.html
+/LayoutTests/imported/w3c/web-platform-tests/html/user-activation/activation-trigger-keyboard-escape.html
+/LayoutTests/imported/w3c/web-platform-tests/html/user-activation/activation-trigger-mouse-left.html
+/LayoutTests/imported/w3c/web-platform-tests/html/user-activation/activation-trigger-mouse-right.html
 /LayoutTests/imported/w3c/web-platform-tests/html/user-activation/chained-setTimeout.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/user-activation/consumption-crossorigin.sub.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/user-activation/consumption-sameorigin.tentative.html

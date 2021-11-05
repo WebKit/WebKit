@@ -1,0 +1,22 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/origin/origin-keyed-agent-clusters/getter-special-cases/resources/data-to-javascript-test.mjs
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/origin/origin-keyed-agent-clusters/getter-special-cases/resources/data-url-test.mjs
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/origin/origin-keyed-agent-clusters/getter-special-cases/resources/helpers.mjs
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/origin/origin-keyed-agent-clusters/getter-special-cases/resources/javascript-url-test.mjs
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/origin/origin-keyed-agent-clusters/getter-special-cases/resources/sandboxed-iframe-test.sub.mjs
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/origin/origin-keyed-agent-clusters/getter-special-cases/resources/sandboxed-same-origin-iframe-test.sub.mjs

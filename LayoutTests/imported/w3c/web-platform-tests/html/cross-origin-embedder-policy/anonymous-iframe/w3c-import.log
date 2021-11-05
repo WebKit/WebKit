@@ -14,10 +14,10 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/anonymous-iframe/anonymous-iframe-popup.tentative.https.html
-/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/anonymous-iframe/cookie.tentative.https.html
-/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/anonymous-iframe/local-storage.tentative.https.html
-/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/anonymous-iframe/require-corp-embed-anonymous-iframe.tentative.https.html
-/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/anonymous-iframe/require-corp-embed-anonymous-iframe.tentative.https.html.headers
-/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/anonymous-iframe/serviceworker-partitioning.tentative.https.html
-/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/anonymous-iframe/sharedworker-partitioning.tentative.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/anonymous-iframe/anonymous-iframe-popup.tentative.https.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/anonymous-iframe/cookie.tentative.https.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/anonymous-iframe/local-storage.tentative.https.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/anonymous-iframe/require-corp-embed-anonymous-iframe.tentative.https.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/anonymous-iframe/require-corp-embed-anonymous-iframe.tentative.https.window.js.headers
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/anonymous-iframe/serviceworker-partitioning.tentative.https.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/anonymous-iframe/sharedworker-partitioning.tentative.https.window.js

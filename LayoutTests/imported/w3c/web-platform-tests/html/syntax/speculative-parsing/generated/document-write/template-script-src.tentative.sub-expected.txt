@@ -1,0 +1,8 @@
+
+    <!-- speculative case in document.write -->
+    <template><script src="/html/syntax/speculative-parsing/resources/stash.py?action=put&amp;uuid=c839e07e-ef88-4b04-9f8b-5589734be751&amp;encodingcheck=&Gbreve;"></script></template>
+
+
+
+PASS Speculative parsing, document.write(): template-script-src
+

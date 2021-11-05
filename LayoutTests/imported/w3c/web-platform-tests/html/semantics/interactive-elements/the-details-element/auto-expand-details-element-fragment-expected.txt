@@ -1,0 +1,4 @@
+spacer
+
+FAIL auto-expand-details-element-fragment assert_true: <details> should be opened by navigating to an element inside it. expected true got false
+

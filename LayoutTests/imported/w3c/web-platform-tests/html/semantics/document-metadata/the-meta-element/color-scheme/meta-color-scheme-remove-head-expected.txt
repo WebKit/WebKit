@@ -1,4 +1,4 @@
 
-FAIL Meta color-scheme applies. assert_equals: expected "dark" but got "auto"
-FAIL Initial value after removing head including meta color-scheme. assert_equals: expected "normal" but got "auto"
+FAIL Meta color-scheme applies. assert_equals: Root element's color-scheme should be 'normal' expected "normal" but got "auto"
+FAIL Initial value after removing head including meta color-scheme. assert_equals: expected "light" but got "dark"
 

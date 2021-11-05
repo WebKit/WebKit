@@ -1,0 +1,8 @@
+
+    <!-- speculative case in document.write -->
+    <math><font face><script src="/html/syntax/speculative-parsing/resources/stash.py?action=put&amp;uuid=bf5756c8-29cf-41b6-a5a1-cdc547f54928&amp;encodingcheck=&Gbreve;"></script></font></math>
+
+
+
+PASS Speculative parsing, document.write(): math-font-face-script-src
+

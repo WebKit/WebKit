@@ -1,0 +1,4 @@
+
+
+FAIL Navigating a cross-origin iframe to its current url should not replace assert_equals: expected 40 but got 41
+

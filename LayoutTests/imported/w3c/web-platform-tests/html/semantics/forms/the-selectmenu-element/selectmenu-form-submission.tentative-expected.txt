@@ -1,0 +1,5 @@
+
+
+FAIL Test that HTMLSelectMenu.value is used for form submission assert_equals: expected (string) "one" but got (undefined) undefined
+FAIL Test that HTMLSelectMenu.value is not used for form submission without name attribute assert_equals: expected (string) "one" but got (undefined) undefined
+

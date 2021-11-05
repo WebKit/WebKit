@@ -1,7 +1,0 @@
-
-PASS Test that drawing sans-serif produces the same result between canvas and OffscreenCanvas
-PASS Test that drawing serif produces the same result between canvas and OffscreenCanvas
-PASS Test that drawing cursive produces the same result between canvas and OffscreenCanvas
-PASS Test that drawing fantasy produces the same result between canvas and OffscreenCanvas
-PASS Test that drawing monospace produces the same result between canvas and OffscreenCanvas
-

@@ -24,6 +24,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/webappapis/system-state-and-capabilities/the-navigator-object/navigatorcookies-cookieenabled-true.html
 /LayoutTests/imported/w3c/web-platform-tests/html/webappapis/system-state-and-capabilities/the-navigator-object/navigatorlanguage.html
 /LayoutTests/imported/w3c/web-platform-tests/html/webappapis/system-state-and-capabilities/the-navigator-object/per-global.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/system-state-and-capabilities/the-navigator-object/plugins-and-mimetypes.html
 /LayoutTests/imported/w3c/web-platform-tests/html/webappapis/system-state-and-capabilities/the-navigator-object/protocol.https.html
 /LayoutTests/imported/w3c/web-platform-tests/html/webappapis/system-state-and-capabilities/the-navigator-object/protocol.tentative.https.html
 /LayoutTests/imported/w3c/web-platform-tests/html/webappapis/system-state-and-capabilities/the-navigator-object/secure_context.html

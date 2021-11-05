@@ -1,0 +1,8 @@
+Test for right-click activation trigger
+
+Tests user activation from a mouse right-click.
+
+Right-click anywhere in the document.
+
+FAIL Activation through right-click mouse event assert_true: mousedown event should result in activation expected true got false
+

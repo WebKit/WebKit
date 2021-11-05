@@ -1,0 +1,16 @@
+
+FAIL An iframe with src set to a redirect to about:blank assert_throws_dom: function "() => {
+      iframe.contentWindow.document;
+    }" did not throw
+FAIL An iframe that is navigated to a redirect to about:blank assert_throws_dom: function "() => {
+      iframe.contentWindow.document;
+    }" did not throw
+FAIL An iframe with src set to a redirect to about:srcdoc assert_throws_dom: function "() => {
+      iframe.contentWindow.document;
+    }" did not throw
+FAIL An iframe that is navigated to a redirect to about:srcdoc assert_throws_dom: function "() => {
+      iframe.contentWindow.document;
+    }" did not throw
+PASS An iframe with src set to a redirect to about:nonstandard
+PASS An iframe that is navigated to a redirect to about:nonstandard
+

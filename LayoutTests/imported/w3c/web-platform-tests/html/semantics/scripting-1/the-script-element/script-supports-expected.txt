@@ -1,0 +1,7 @@
+
+FAIL Type of HTMLScriptElement.supports is function assert_equals: expected "function" but got "undefined"
+FAIL HTMLScriptElement.supports resurns true for 'classic' HTMLScriptElement.supports is not a function. (In 'HTMLScriptElement.supports('classic')', 'HTMLScriptElement.supports' is undefined)
+FAIL HTMLScriptElement.supports resurns true for 'module' HTMLScriptElement.supports is not a function. (In 'HTMLScriptElement.supports('module')', 'HTMLScriptElement.supports' is undefined)
+FAIL HTMLScriptElement.supports returns false for JavaScript MIME types HTMLScriptElement.supports is not a function. (In 'HTMLScriptElement.supports('application/ecmascript')', 'HTMLScriptElement.supports' is undefined)
+FAIL HTMLScriptElement.supports returns false for unsupported types HTMLScriptElement.supports is not a function. (In 'HTMLScriptElement.supports('')', 'HTMLScriptElement.supports' is undefined)
+

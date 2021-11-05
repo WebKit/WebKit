@@ -16,6 +16,7 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/sandboxing/resources/check-sandbox-flags.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/sandboxing/resources/document-open.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/sandboxing/resources/execute-postmessage.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/sandboxing/resources/executor.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/sandboxing/resources/post-done-to-opener.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/sandboxing/resources/sandbox-inherited-from-initiator-response-helper.html

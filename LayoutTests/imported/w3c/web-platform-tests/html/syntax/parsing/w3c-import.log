@@ -20,6 +20,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/Element.getElementsByTagName-foreign-01.html
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/Element.getElementsByTagName-foreign-02.html
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/README
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/adoption_agency_check_the_end_tag_name.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/ambiguous-ampersand.html
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/common.js
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/empty-doctype-ids.html
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/foreign_content_001.html
@@ -46,6 +48,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/html5lib_innerHTML_adoption01.html
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/html5lib_innerHTML_foreign-fragment.html
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/html5lib_innerHTML_math.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/html5lib_innerHTML_svg.html
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/html5lib_innerHTML_tests4.html
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/html5lib_innerHTML_tests6.html
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/html5lib_innerHTML_tests7.html

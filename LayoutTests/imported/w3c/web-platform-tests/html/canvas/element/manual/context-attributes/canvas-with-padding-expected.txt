@@ -1,3 +1,0 @@
-
-PASS // The test case passes by not crashing.
-

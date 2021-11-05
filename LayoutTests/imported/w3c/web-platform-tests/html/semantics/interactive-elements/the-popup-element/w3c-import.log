@@ -18,9 +18,12 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-popup-element/popup-anchor-nesting.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-popup-element/popup-element-basic.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-popup-element/popup-element-not-keyboard-focusable.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-popup-element/popup-element-removal-2.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-popup-element/popup-element-removal.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-popup-element/popup-focus.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-popup-element/popup-hidden-display.tentative-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-popup-element/popup-hidden-display.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-popup-element/popup-initiallyopen-2.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-popup-element/popup-initiallyopen-display.tentative-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-popup-element/popup-initiallyopen-display.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-popup-element/popup-initiallyopen.tentative.html

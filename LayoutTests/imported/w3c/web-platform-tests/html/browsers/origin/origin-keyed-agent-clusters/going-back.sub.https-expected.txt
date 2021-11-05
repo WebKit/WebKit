@@ -1,0 +1,18 @@
+Blocked access to external URL https://www.localhost:9443/html/browsers/origin/origin-keyed-agent-clusters/resources/send-oac-header.py
+
+Harness Error (TIMEOUT), message = null
+
+NOTRUN Before navigation: parent to child1: messageerror event must occur
+NOTRUN Before navigation: parent to child1: setting document.domain must not give sync access
+NOTRUN Navigation
+NOTRUN Inserting a second iframe
+NOTRUN After navigation: parent to child2: messageerror event must occur
+NOTRUN After navigation: parent to child2: setting document.domain must not give sync access
+NOTRUN Going back in history (navigating back the first iframe)
+NOTRUN After back: parent to child1: messageerror event must occur
+NOTRUN After back: parent to child1: setting document.domain must not give sync access
+NOTRUN After back: parent to child2: messageerror event must occur
+NOTRUN After back: parent to child2: setting document.domain must not give sync access
+NOTRUN child1 to child2: setting document.domain must give sync access
+NOTRUN child2 to child1: setting document.domain must give sync access
+

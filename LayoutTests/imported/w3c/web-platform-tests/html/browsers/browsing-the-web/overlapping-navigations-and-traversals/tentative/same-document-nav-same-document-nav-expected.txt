@@ -1,0 +1,6 @@
+
+PASS fragment navigation then fragment navigation
+PASS pushState() then pushState()
+PASS pushState() then fragment navigation
+PASS fragment navigation then pushState()
+

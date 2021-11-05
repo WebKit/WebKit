@@ -1,0 +1,11 @@
+Test for keyboard activation trigger for ESCAPE key
+
+Tests missing user activation from a ESCAPE keyboard event.
+
+
+Press ESCAPE key.
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT Activation through ESCAPE keyboard event Test timed out
+

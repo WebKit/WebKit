@@ -1,3 +1,13 @@
+2021-11-05  Chris Dumez  <cdumez@apple.com>
+
+        Resync web-platform-tests/html from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=232449
+
+        Reviewed by Alex Christensen.
+
+        * TestExpectations:
+        * tests-options.json:
+
 2021-11-05  Kiet Ho  <tho22@apple.com>
 
         Implement parsing and animation support for offset-path

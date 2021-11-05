@@ -14,9 +14,12 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/README.md
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/array.json
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/bom-utf-16be.json
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/bom-utf-16le.json
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/bom-utf-8.json
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/charset-2.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/charset-bom.any.js
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/charset.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/cors-crossorigin-requests.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/credentials-iframe.sub.html
@@ -30,16 +33,16 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/integrity-matches.js
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/integrity-mismatches.js
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/integrity.html
-/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/invalid-content-type.tentative.any.js
-/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/json-module-service-worker-test.https.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/invalid-content-type.any.js
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/json-module-service-worker-test.https.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/load-error-events.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/load-error-events.py
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/module.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/module.json
-/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/module.tentative.html
-/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/non-object.tentative.any.js
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/non-object.any.js
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/null.json
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/parse-error.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/parse-error.json
-/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/parse-error.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/referrer-checker.py
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/referrer-policies.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/repeated-imports.any.js
@@ -49,5 +52,5 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/string.json
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/true.json
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/utf-8.json
-/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/valid-content-type.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/valid-content-type.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/windows-1250.json

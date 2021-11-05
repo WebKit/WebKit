@@ -9,12 +9,15 @@ Do NOT modify or remove this file.
 
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
-appearance
+None
 Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/baseline-alignment-and-overflow.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/input-checkbox-disabled-checked-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/input-checkbox-disabled-checked-notref.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/input-checkbox-disabled-checked.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/input-date-baseline-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/input-date-baseline-print-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/input-date-baseline-print.html
@@ -22,6 +25,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/input-date-content-size-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/input-date-content-size.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/input-date-no-resize-on-hover.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/input-radio-disabled-checked-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/input-radio-disabled-checked-notref.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/input-radio-disabled-checked.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/input-time-content-size-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/input-time-content-size.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/select-wrap-no-spill.optional.html

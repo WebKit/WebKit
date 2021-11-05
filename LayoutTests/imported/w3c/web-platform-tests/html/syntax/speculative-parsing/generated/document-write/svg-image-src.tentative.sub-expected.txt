@@ -1,0 +1,8 @@
+
+    <!-- speculative case in document.write -->
+    <svg><image src="/html/syntax/speculative-parsing/resources/stash.py?action=put&amp;uuid=4bb698a4-5ed5-4e6c-afd1-c3be9761c4aa&amp;encodingcheck=&Gbreve;"></image></svg>
+
+
+
+PASS Speculative parsing, document.write(): svg-image-src
+

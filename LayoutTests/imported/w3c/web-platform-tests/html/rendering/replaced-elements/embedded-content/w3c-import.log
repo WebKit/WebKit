@@ -15,6 +15,8 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/replaced-elements/embedded-content/audio-controls-intrinsic-size.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/replaced-elements/embedded-content/change-src-while-not-displayed-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/replaced-elements/embedded-content/change-src-while-not-displayed.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/replaced-elements/embedded-content/cross-domain-iframe.sub-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/replaced-elements/embedded-content/cross-domain-iframe.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/replaced-elements/embedded-content/object-fallback-text-decoration-expected.html

@@ -1,0 +1,8 @@
+
+FAIL messageerror event must occur assert_equals: expected "messageerror" but got "WebAssembly.Module message received"
+FAIL setting document.domain must not give sync access assert_throws_dom: function "() => {
+        frameWindow.document;
+      }" did not throw
+FAIL parent: originAgentCluster must equal true assert_equals: expected (boolean) true but got (undefined) undefined
+FAIL child: originAgentCluster must equal false assert_equals: expected (boolean) false but got (undefined) undefined
+
