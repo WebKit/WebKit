@@ -324,6 +324,8 @@ private:
     };
     void didDraw(std::optional<FloatRect>, OptionSet<DidDrawOption> = { DidDrawOption::ApplyTransform, DidDrawOption::ApplyShadow, DidDrawOption::ApplyClip });
     void didDrawEntireCanvas();
+    void didDraw(bool entireCanvas, const FloatRect&);
+    template<typename RectProvider> void didDraw(bool entireCanvas, RectProvider);
 
     void paintRenderingResultsToCanvas() override;
     bool needsPreparationForDisplay() const final;

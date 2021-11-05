@@ -1061,12 +1061,9 @@ void CanvasRenderingContext2DBase::fillInternal(const Path& path, CanvasFillRule
     } else
         c->fillPath(path);
     
-    if (isEntireBackingStoreDirty())
-        didDraw(std::nullopt);
-    else if (repaintEntireCanvas)
-        didDrawEntireCanvas();
-    else
-        didDraw(path.fastBoundingRect());
+    didDraw(repaintEntireCanvas, [&] {
+        return path.fastBoundingRect();
+    });
 
     c->setFillRule(savedFillRule);
 }
@@ -1100,15 +1097,11 @@ void CanvasRenderingContext2DBase::strokeInternal(const Path& path)
     } else
         c->strokePath(path);
 
-    if (isEntireBackingStoreDirty())
-        didDraw(std::nullopt);
-    else if (repaintEntireCanvas)
-        didDrawEntireCanvas();
-    else {
+    didDraw(repaintEntireCanvas, [&] {
         auto dirtyRect = path.fastBoundingRect();
         inflateStrokeRect(dirtyRect);
-        didDraw(dirtyRect);
-    }
+        return dirtyRect;
+    });
 }
 
 void CanvasRenderingContext2DBase::clipInternal(const Path& path, CanvasFillRule windingRule)
@@ -1270,12 +1263,7 @@ void CanvasRenderingContext2DBase::fillRect(double x, double y, double width, do
     } else
         c->fillRect(rect);
 
-    if (isEntireBackingStoreDirty())
-        didDraw(std::nullopt);
-    else if (repaintEntireCanvas)
-        didDrawEntireCanvas();
-    else
-        didDraw(rect);
+    didDraw(repaintEntireCanvas, rect);
 }
 
 void CanvasRenderingContext2DBase::strokeRect(double x, double y, double width, double height)
@@ -1310,15 +1298,11 @@ void CanvasRenderingContext2DBase::strokeRect(double x, double y, double width, 
     } else
         c->strokeRect(rect, state().lineWidth);
 
-    if (isEntireBackingStoreDirty())
-        didDraw(std::nullopt);
-    else if (repaintEntireCanvas)
-        didDrawEntireCanvas();
-    else {
+    didDraw(repaintEntireCanvas, [&] {
         auto boundingRect = rect;
         boundingRect.inflate(state().lineWidth / 2);
-        didDraw(boundingRect);
-    }
+        return boundingRect;
+    });
 }
 
 void CanvasRenderingContext2DBase::setShadow(float width, float height, float blur, const String& colorString, std::optional<float> alpha)
@@ -1582,12 +1566,7 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(Document& document, Ca
     } else
         c->drawImageForCanvas(*image, normalizedDstRect, normalizedSrcRect, options, colorSpace());
 
-    if (isEntireBackingStoreDirty())
-        didDraw(std::nullopt);
-    else if (repaintEntireCanvas)
-        didDrawEntireCanvas();
-    else
-        didDraw(normalizedDstRect);
+    didDraw(repaintEntireCanvas, normalizedDstRect);
 
     if (image->drawsSVGImage())
         image->setImageObserver(observer);
@@ -1644,12 +1623,7 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(CanvasBase& sourceCanv
     } else
         c->drawImageBuffer(*buffer, dstRect, srcRect, { state().globalComposite, state().globalBlend });
 
-    if (isEntireBackingStoreDirty())
-        didDraw(std::nullopt);
-    else if (repaintEntireCanvas)
-        didDrawEntireCanvas();
-    else
-        didDraw(dstRect);
+    didDraw(repaintEntireCanvas, dstRect);
 
     return { };
 }
@@ -1676,17 +1650,14 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(HTMLVideoElement& vide
 
     checkOrigin(&video);
 
+    bool repaintEntireCanvas = rectContainsCanvas(dstRect);
+
 #if USE(CG)
     if (c->hasPlatformContext()) {
         if (auto image = video.nativeImageForCurrentTime()) {
             c->drawNativeImage(*image, FloatSize(video.videoWidth(), video.videoHeight()), dstRect, srcRect);
 
-            if (isEntireBackingStoreDirty())
-                didDraw(std::nullopt);
-            else if (rectContainsCanvas(dstRect))
-                didDrawEntireCanvas();
-            else
-                didDraw(dstRect);
+            didDraw(repaintEntireCanvas, dstRect);
 
             return { };
         }
@@ -1701,10 +1672,7 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(HTMLVideoElement& vide
     video.paintCurrentFrameInContext(*c, FloatRect(FloatPoint(), size(video)));
     stateSaver.restore();
 
-    if (isEntireBackingStoreDirty())
-        didDraw(std::nullopt);
-    else
-        didDraw(dstRect);
+    didDraw(repaintEntireCanvas, dstRect);
 
     return { };
 }
@@ -1752,12 +1720,7 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(ImageBitmap& imageBitm
     } else
         c->drawImageBuffer(*buffer, dstRect, srcRect, { state().globalComposite, state().globalBlend });
 
-    if (isEntireBackingStoreDirty())
-        didDraw(std::nullopt);
-    else if (repaintEntireCanvas)
-        didDrawEntireCanvas();
-    else
-        didDraw(dstRect);
+    didDraw(repaintEntireCanvas, dstRect);
 
     return { };
 }
@@ -2091,6 +2054,24 @@ void CanvasRenderingContext2DBase::didDraw(std::optional<FloatRect> rect, Option
         m_dirtyRect.unite(dirtyRect);
         canvasBase().didDraw(m_dirtyRect);
     }
+}
+
+void CanvasRenderingContext2DBase::didDraw(bool entireCanvas, const FloatRect& rect)
+{
+    return didDraw(entireCanvas, [&] {
+        return rect;
+    });
+}
+
+template<typename RectProvider>
+void CanvasRenderingContext2DBase::didDraw(bool entireCanvas, RectProvider rectProvider)
+{
+    if (isEntireBackingStoreDirty())
+        didDraw(std::nullopt);
+    else if (entireCanvas)
+        didDrawEntireCanvas();
+    else
+        didDraw(rectProvider());
 }
 
 void CanvasRenderingContext2DBase::clearAccumulatedDirtyRect()
@@ -2533,12 +2514,7 @@ void CanvasRenderingContext2DBase::drawTextUnchecked(const TextRun& textRun, dou
     } else
         fontProxy.drawBidiText(*c, textRun, location, FontCascade::UseFallbackIfFontNotReady);
 
-    if (isEntireBackingStoreDirty())
-        didDraw(std::nullopt);
-    else if (repaintEntireCanvas)
-        didDrawEntireCanvas();
-    else
-        didDraw(textRect);
+    didDraw(repaintEntireCanvas, textRect);
 }
 
 Ref<TextMetrics> CanvasRenderingContext2DBase::measureTextInternal(const String& text)
