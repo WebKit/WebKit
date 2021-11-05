@@ -31,11 +31,16 @@ LowPowerModeNotifier::LowPowerModeNotifier(LowPowerModeChangeCallback&& callback
 #if GLIB_CHECK_VERSION(2, 69, 1)
     : m_callback(WTFMove(callback))
     , m_powerProfileMonitor(adoptGRef(g_power_profile_monitor_dup_default()))
+    , m_lowPowerModeEnabled(g_power_profile_monitor_get_power_saver_enabled(m_powerProfileMonitor.get()))
 #endif
 {
 #if GLIB_CHECK_VERSION(2, 69, 1)
-    g_signal_connect_swapped(m_powerProfileMonitor.get(), "notify::power-saver-enabled", G_CALLBACK(+[] (LowPowerModeNotifier* self, GParamSpec*, GPowerProfileMonitor*) {
-        self->m_callback(self->isLowPowerModeEnabled());
+    g_signal_connect_swapped(m_powerProfileMonitor.get(), "notify::power-saver-enabled", G_CALLBACK(+[] (LowPowerModeNotifier* self, GParamSpec*, GPowerProfileMonitor* monitor) {
+        bool powerSaverEnabled = g_power_profile_monitor_get_power_saver_enabled(monitor);
+        if (self->m_lowPowerModeEnabled != powerSaverEnabled) {
+            self->m_lowPowerModeEnabled = powerSaverEnabled;
+            self->m_callback(self->m_lowPowerModeEnabled);
+        }
     }), this);
 #endif
 }
@@ -49,11 +54,7 @@ LowPowerModeNotifier::~LowPowerModeNotifier()
 
 bool LowPowerModeNotifier::isLowPowerModeEnabled() const
 {
-#if GLIB_CHECK_VERSION(2, 69, 1)
-    return g_power_profile_monitor_get_power_saver_enabled(m_powerProfileMonitor.get());
-#else
-    return false;
-#endif
+    return m_lowPowerModeEnabled;
 }
 
 } // namespace WebCore

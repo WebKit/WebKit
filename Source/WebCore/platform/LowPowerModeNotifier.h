@@ -60,6 +60,7 @@ private:
     LowPowerModeChangeCallback m_callback;
     GRefPtr<GPowerProfileMonitor> m_powerProfileMonitor;
 #endif
+    bool m_lowPowerModeEnabled { false };
 #endif
 };
 
