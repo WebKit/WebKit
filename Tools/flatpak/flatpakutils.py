@@ -1034,6 +1034,8 @@ class WebkitFlatpak:
                     package.install()
                     regenerate_toolchains = True
 
+            print("SDK version: {}".format(self.sdk_repo.version("org.webkit.Sdk")))
+
         else:
             regenerate_toolchains = self.regenerate_toolchains
 
