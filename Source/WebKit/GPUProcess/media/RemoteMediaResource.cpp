@@ -96,10 +96,10 @@ void RemoteMediaResource::dataSent(uint64_t bytesSent, uint64_t totalBytesToBeSe
         m_client->dataSent(*this, bytesSent, totalBytesToBeSent);
 }
 
-void RemoteMediaResource::dataReceived(const uint8_t* data, int64_t length)
+void RemoteMediaResource::dataReceived(Ref<SharedBuffer>&& data)
 {
     if (m_client)
-        m_client->dataReceived(*this, data, length);
+        m_client->dataReceived(*this, WTFMove(data));
 }
 
 void RemoteMediaResource::accessControlCheckFailed(const ResourceError& error)

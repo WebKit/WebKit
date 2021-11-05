@@ -1,5 +1,70 @@
 2021-11-04  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r285335. rdar://problem/85045948
+
+    Have RemoteMediaResource use SharedMemory
+    https://bugs.webkit.org/show_bug.cgi?id=232744
+    rdar://85045948
+    
+    Reviewed by Alex Christensen.
+    
+    When playing a non-mse media element, the loading gets initiated in the
+    GPU Process and proxied to the WebContent process via a RemoteMediaResource.
+    By using a SharedBuffer in the RemoteMediaResource wrapping a SharedMemory
+    we can allocate the buffer in the content process and pass it to the GPU
+    process without copy nor new allocations.
+    Playing a 694MB mp4, the GPU memory usage goes from 868MB to 14MB on an
+    iPhone running iOS 15.
+    This is a follow-up on bug 232422, what landed was missing this part.
+    
+    * GPUProcess/media/RemoteMediaResource.cpp:
+    (WebKit::RemoteMediaResource::dataReceived):
+    * GPUProcess/media/RemoteMediaResource.h:
+    * GPUProcess/media/RemoteMediaResourceManager.cpp:
+    (WebKit::RemoteMediaResourceManager::dataReceived): Wrap SharedMemory into
+    a SharedBuffer.
+    * GPUProcess/media/RemoteMediaResourceManager.h:
+    * GPUProcess/media/RemoteMediaResourceManager.messages.in: Change data type
+    from an IPCDataReference to a ShareMemory's handle.
+    * WebProcess/GPU/media/RemoteMediaResourceProxy.cpp:
+    (WebKit::RemoteMediaResourceProxy::dataReceived): Allocate a SharedMemory
+    and copy the download data into it, before sending it to the GPU process.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@285335 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-11-04  Jean-Yves Avenard  <jya@apple.com>
+
+            Have RemoteMediaResource use SharedMemory
+            https://bugs.webkit.org/show_bug.cgi?id=232744
+            rdar://85045948
+
+            Reviewed by Alex Christensen.
+
+            When playing a non-mse media element, the loading gets initiated in the
+            GPU Process and proxied to the WebContent process via a RemoteMediaResource.
+            By using a SharedBuffer in the RemoteMediaResource wrapping a SharedMemory
+            we can allocate the buffer in the content process and pass it to the GPU
+            process without copy nor new allocations.
+            Playing a 694MB mp4, the GPU memory usage goes from 868MB to 14MB on an
+            iPhone running iOS 15.
+            This is a follow-up on bug 232422, what landed was missing this part.
+
+            * GPUProcess/media/RemoteMediaResource.cpp:
+            (WebKit::RemoteMediaResource::dataReceived):
+            * GPUProcess/media/RemoteMediaResource.h:
+            * GPUProcess/media/RemoteMediaResourceManager.cpp:
+            (WebKit::RemoteMediaResourceManager::dataReceived): Wrap SharedMemory into
+            a SharedBuffer.
+            * GPUProcess/media/RemoteMediaResourceManager.h:
+            * GPUProcess/media/RemoteMediaResourceManager.messages.in: Change data type
+            from an IPCDataReference to a ShareMemory's handle.
+            * WebProcess/GPU/media/RemoteMediaResourceProxy.cpp:
+            (WebKit::RemoteMediaResourceProxy::dataReceived): Allocate a SharedMemory
+            and copy the download data into it, before sending it to the GPU process.
+
+2021-11-04  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r285239. rdar://problem/80991209
 
     Apply patch. rdar://problem/84982191
