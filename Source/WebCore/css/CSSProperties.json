@@ -2432,7 +2432,7 @@
                 "aliases": [
                     "-webkit-clip-path"
                 ],
-                "converter": "ClipPath"
+                "converter": "PathOperation"
             }
         },
         "clip-rule": {
@@ -3514,6 +3514,16 @@
             "specification": {
                 "category": "css-images",
                 "url": "https://www.w3.org/TR/css3-images/#object-position"
+            }
+        },
+        "offset-path": {
+            "codegen-properties": {
+                "converter": "PathOperation",
+                "settings-flag": "cssMotionPathEnabled"
+            },
+            "specification": {
+                "category": "css-motion-path",
+                "url": "https://drafts.fxtf.org/motion-1/#offset-path-property"
             }
         },
         "offset-distance": {

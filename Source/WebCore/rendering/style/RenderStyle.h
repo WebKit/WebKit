@@ -1887,6 +1887,10 @@ public:
     const Color& accentColor() const { return m_rareInheritedData->accentColor; }
     bool hasAutoAccentColor() const { return m_rareInheritedData->hasAutoAccentColor; }
 
+    PathOperation* offsetPath() const { return m_rareNonInheritedData->offsetPath.get(); }
+    void setOffsetPath(RefPtr<PathOperation>&& path) { SET_VAR(m_rareNonInheritedData, offsetPath, WTFMove(path)); }
+    static PathOperation* initialOffsetPath() { return nullptr; }
+
     const Length& offsetDistance() const { return m_rareNonInheritedData->offsetDistance; }
     void setOffsetDistance(Length&& distance) { SET_VAR(m_rareNonInheritedData, offsetDistance, WTFMove(distance)); }
     static Length initialOffsetDistance() { return Length(0, LengthType::Fixed); }

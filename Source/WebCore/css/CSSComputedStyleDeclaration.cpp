@@ -1456,6 +1456,30 @@ static Ref<CSSValue> valueForPositionOrAuto(const RenderStyle& style, const Leng
     return valueForPosition(style, position);
 }
 
+static Ref<CSSValue> valueForPathOperation(const RenderStyle& style, const PathOperation* operation, SVGPathConversion conversion = SVGPathConversion::None)
+{
+    auto& cssValuePool = CSSValuePool::singleton();
+
+    if (!operation)
+        return cssValuePool.createIdentifierValue(CSSValueNone);
+
+    if (is<ReferencePathOperation>(*operation))
+        return CSSPrimitiveValue::create(downcast<ReferencePathOperation>(*operation).url(), CSSUnitType::CSS_URI);
+
+    auto list = CSSValueList::createSpaceSeparated();
+    if (is<ShapePathOperation>(*operation)) {
+        auto& shapeOperation = downcast<ShapePathOperation>(*operation);
+        list->append(valueForBasicShape(style, shapeOperation.basicShape(), conversion));
+        if (shapeOperation.referenceBox() != CSSBoxType::BoxMissing)
+            list->append(cssValuePool.createValue(shapeOperation.referenceBox()));
+    }
+
+    if (is<BoxPathOperation>(*operation))
+        list->append(cssValuePool.createValue(downcast<BoxPathOperation>(*operation).referenceBox()));
+
+    return list;
+}
+
 ComputedStyleExtractor::ComputedStyleExtractor(Node* node, bool allowVisitedStyle, PseudoId pseudoElementSpecifier)
     : m_element(styleElementForNode(node))
     , m_pseudoElementSpecifier(pseudoElementSpecifier)
@@ -3179,6 +3203,10 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
             return cssValuePool.createValue(style.objectFit());
         case CSSPropertyObjectPosition:
             return valueForPosition(style, style.objectPosition());
+        case CSSPropertyOffsetPath:
+            // The computed value of offset-path must only contain absolute draw commands.
+            // https://github.com/w3c/fxtf-drafts/issues/225#issuecomment-334322738
+            return valueForPathOperation(style, style.offsetPath(), SVGPathConversion::ForceAbsolute);
         case CSSPropertyOffsetDistance:
             return cssValuePool.createValue(style.offsetDistance(), style);
         case CSSPropertyOffsetPosition:
@@ -3789,23 +3817,8 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
             return counterToCSSValue(style, propertyID);
         case CSSPropertyCounterReset:
             return counterToCSSValue(style, propertyID);
-        case CSSPropertyClipPath: {
-            auto* operation = style.clipPath();
-            if (!operation)
-                return cssValuePool.createIdentifierValue(CSSValueNone);
-            if (is<ReferencePathOperation>(*operation))
-                return CSSPrimitiveValue::create(downcast<ReferencePathOperation>(*operation).url(), CSSUnitType::CSS_URI);
-            auto list = CSSValueList::createSpaceSeparated();
-            if (is<ShapePathOperation>(*operation)) {
-                auto& shapeOperation = downcast<ShapePathOperation>(*operation);
-                list->append(valueForBasicShape(style, shapeOperation.basicShape()));
-                if (shapeOperation.referenceBox() != CSSBoxType::BoxMissing)
-                    list->append(cssValuePool.createValue(shapeOperation.referenceBox()));
-            }
-            if (is<BoxPathOperation>(*operation))
-                list->append(cssValuePool.createValue(downcast<BoxPathOperation>(*operation).referenceBox()));
-            return list;
-        }
+        case CSSPropertyClipPath:
+            return valueForPathOperation(style, style.clipPath());
         case CSSPropertyShapeMargin:
             return cssValuePool.createValue(style.shapeMargin(), style);
         case CSSPropertyShapeImageThreshold:

@@ -196,6 +196,7 @@ PASS object-fit
 PASS object-position
 PASS offset-anchor
 PASS offset-distance
+PASS offset-path
 PASS offset-position
 PASS opacity
 PASS order

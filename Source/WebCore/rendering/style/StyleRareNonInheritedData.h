@@ -188,6 +188,7 @@ public:
     RefPtr<RotateTransformOperation> rotate;
     RefPtr<ScaleTransformOperation> scale;
     RefPtr<TranslateTransformOperation> translate;
+    RefPtr<PathOperation> offsetPath;
 
     OptionSet<TouchAction> touchActions;
 

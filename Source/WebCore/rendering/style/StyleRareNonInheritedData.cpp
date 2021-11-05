@@ -82,6 +82,7 @@ StyleRareNonInheritedData::StyleRareNonInheritedData()
     , rotate(RenderStyle::initialRotate())
     , scale(RenderStyle::initialScale())
     , translate(RenderStyle::initialTranslate())
+    , offsetPath(RenderStyle::initialOffsetPath())
     , touchActions(RenderStyle::initialTouchActions())
     , pageSizeType(PAGE_SIZE_AUTO)
     , transformStyle3D(static_cast<unsigned>(RenderStyle::initialTransformStyle3D()))
@@ -186,6 +187,7 @@ inline StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonIn
     , rotate(o.rotate)
     , scale(o.scale)
     , translate(o.translate)
+    , offsetPath(o.offsetPath)
     , touchActions(o.touchActions)
     , pageSizeType(o.pageSizeType)
     , transformStyle3D(o.transformStyle3D)
@@ -311,6 +313,7 @@ bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) c
         && arePointingToEqualData(rotate, o.rotate)
         && arePointingToEqualData(scale, o.scale)
         && arePointingToEqualData(translate, o.translate)
+        && arePointingToEqualData(offsetPath, o.offsetPath)
         && touchActions == o.touchActions
 #if ENABLE(CSS_COMPOSITING)
         && effectiveBlendMode == o.effectiveBlendMode

@@ -2747,8 +2747,10 @@ static RefPtr<CSSValue> consumeBasicShapeOrBox(CSSParserTokenRange& range, const
     
     return list;
 }
-    
-static RefPtr<CSSValue> consumeClipPath(CSSParserTokenRange& range, const CSSParserContext& context)
+
+// Consumes shapes accepted by clip-path and offset-path.
+// FIXME: implement support for ray() shape accepted by offset-path.
+static RefPtr<CSSValue> consumePathOperation(CSSParserTokenRange& range, const CSSParserContext& context)
 {
     if (range.peek().id() == CSSValueNone)
         return consumeIdent(range);
@@ -4359,6 +4361,8 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSS
         if (auto parsedValue = consumeNumber(m_range, ValueRange::All))
             return parsedValue;
         return consumePercent(m_range, ValueRange::All);
+    case CSSPropertyOffsetPath:
+        return consumePathOperation(m_range, m_context);
     case CSSPropertyOffsetDistance:
         return consumeLengthOrPercent(m_range, m_context.mode, ValueRange::All, UnitlessQuirk::Forbid);
     case CSSPropertyOffsetPosition:
@@ -4419,7 +4423,7 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSS
     case CSSPropertyShapeOutside:
         return consumeShapeOutside(m_range, m_context);
     case CSSPropertyClipPath:
-        return consumeClipPath(m_range, m_context);
+        return consumePathOperation(m_range, m_context);
     case CSSPropertyJustifyContent:
         // justify-content property does not allow the <baseline-position> values.
         if (isBaselineKeyword(m_range.peek().id()))

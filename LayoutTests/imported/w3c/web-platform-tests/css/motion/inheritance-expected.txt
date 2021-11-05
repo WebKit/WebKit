@@ -3,8 +3,8 @@ PASS Property offset-anchor has initial value auto
 PASS Property offset-anchor does not inherit
 PASS Property offset-distance has initial value 0px
 PASS Property offset-distance does not inherit
-FAIL Property offset-path has initial value none assert_true: offset-path doesn't seem to be supported in the computed style expected true got false
-FAIL Property offset-path does not inherit assert_true: expected true got false
+PASS Property offset-path has initial value none
+PASS Property offset-path does not inherit
 PASS Property offset-position has initial value auto
 PASS Property offset-position does not inherit
 FAIL Property offset-rotate has initial value ['auto 0deg' or 'auto'] assert_true: offset-rotate doesn't seem to be supported in the computed style expected true got false

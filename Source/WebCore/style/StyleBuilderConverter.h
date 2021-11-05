@@ -97,7 +97,7 @@ public:
     static String convertStringOrNone(BuilderState&, const CSSValue&);
     static OptionSet<TextEmphasisPosition> convertTextEmphasisPosition(BuilderState&, const CSSValue&);
     static TextAlignMode convertTextAlign(BuilderState&, const CSSValue&);
-    static RefPtr<PathOperation> convertClipPath(BuilderState&, const CSSValue&);
+    static RefPtr<PathOperation> convertPathOperation(BuilderState&, const CSSValue&);
     static Resize convertResize(BuilderState&, const CSSValue&);
     static int convertMarqueeRepetition(BuilderState&, const CSSValue&);
     static int convertMarqueeSpeed(BuilderState&, const CSSValue&);
@@ -616,7 +616,7 @@ inline TextAlignMode BuilderConverter::convertTextAlign(BuilderState& builderSta
     return parentStyle.textAlign();
 }
 
-inline RefPtr<PathOperation> BuilderConverter::convertClipPath(BuilderState& builderState, const CSSValue& value)
+inline RefPtr<PathOperation> BuilderConverter::convertPathOperation(BuilderState& builderState, const CSSValue& value)
 {
     if (is<CSSPrimitiveValue>(value)) {
         auto& primitiveValue = downcast<CSSPrimitiveValue>(value);

@@ -2594,6 +2594,7 @@ svg/SVGMetadataElement.cpp
 svg/SVGMissingGlyphElement.cpp
 svg/SVGNumberList.cpp
 svg/SVGParserUtilities.cpp
+svg/SVGPathAbsoluteConverter.cpp
 svg/SVGPathBlender.cpp
 svg/SVGPathBuilder.cpp
 svg/SVGPathByteStreamBuilder.cpp
