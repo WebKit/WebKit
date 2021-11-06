@@ -43,6 +43,7 @@
 #include "Timer.h"
 #include "VideoTrackClient.h"
 #include <wtf/LoggerHelper.h>
+#include <wtf/Observer.h>
 
 namespace WebCore {
 

@@ -34,6 +34,7 @@
 #include "ApplePayShippingMethod.h"
 #include "ApplePayShippingMethodUpdate.h"
 #include "Document.h"
+#include "ExceptionDetails.h"
 #include "LinkIconCollector.h"
 #include "Logging.h"
 #include "Page.h"

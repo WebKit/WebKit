@@ -18,6 +18,7 @@ set(WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${CMAKE_BINARY_DIR}"
     "${WebCore_DERIVED_SOURCES_DIR}"
     "${WEBCORE_DIR}"
+    "${WEBCORE_DIR}/Modules/WebGPU"
     "${WEBCORE_DIR}/Modules/airplay"
     "${WEBCORE_DIR}/Modules/applepay"
     "${WEBCORE_DIR}/Modules/applepay/paymentrequest"
@@ -191,6 +192,7 @@ set(WebCore_IDL_INCLUDES
     workers
     xml
 
+    Modules/WebGPU
     Modules/airplay
     Modules/cache
     Modules/credentialmanagement
@@ -1463,6 +1465,22 @@ list(APPEND WebCore_NON_SVG_IDL_FILES
     Modules/webxr/XRTargetRayMode.idl
     Modules/webxr/XRVisibilityState.idl
     Modules/webxr/XRWebGLLayerInit.idl
+)
+
+list(APPEND WebCore_NON_SVG_IDL_FILES
+    Modules/WebGPU/GPU.idl
+    Modules/WebGPU/GPUAdapter.idl
+    Modules/WebGPU/GPUDevice.idl
+    Modules/WebGPU/GPUDeviceDescriptor.idl
+    Modules/WebGPU/GPUFeatureName.idl
+    Modules/WebGPU/GPUObjectBase.idl
+    Modules/WebGPU/GPUObjectDescriptorBase.idl
+    Modules/WebGPU/GPUPowerPreference.idl
+    Modules/WebGPU/GPUPredefinedColorSpace.idl
+    Modules/WebGPU/GPURequestAdapterOptions.idl
+    Modules/WebGPU/GPUSupportedFeatures.idl
+    Modules/WebGPU/GPUSupportedLimits.idl
+    Modules/WebGPU/NavigatorGPU.idl
 )
 
 set(WebCore_IDL_FILES

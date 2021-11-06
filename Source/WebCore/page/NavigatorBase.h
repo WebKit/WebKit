@@ -35,6 +35,7 @@
 
 namespace WebCore {
 
+class GPU;
 class ScriptExecutionContext;
 class ServiceWorkerContainer;
 class StorageManager;
@@ -62,6 +63,7 @@ public:
 
     StorageManager& storage();
     WebLockManager& locks();
+    GPU& gpu() { return m_gpuForWebGPU; };
 
 protected:
     explicit NavigatorBase(ScriptExecutionContext*);
@@ -69,6 +71,7 @@ protected:
 private:
     RefPtr<StorageManager> m_storageManager;
     RefPtr<WebLockManager> m_webLockManager;
+    Ref<GPU> m_gpuForWebGPU;
 
 #if ENABLE(SERVICE_WORKER)
 public:

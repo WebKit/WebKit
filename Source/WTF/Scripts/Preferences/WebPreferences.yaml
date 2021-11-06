@@ -2536,6 +2536,16 @@ WebGLEnabled:
     WebCore:
       default: false
 
+WebGPU:
+  type: bool
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 WebSecurityEnabled:
   type: bool
   inspectorOverride: true

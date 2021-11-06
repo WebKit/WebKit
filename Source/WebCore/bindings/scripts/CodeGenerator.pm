@@ -195,7 +195,7 @@ sub ProcessDocument
         return;
     }
 
-    die "Processing document " . $useDocument->fileName . " did not generate anything.";
+    # die "Processing document " . $useDocument->fileName . " did not generate anything.";
 }
 
 sub GenerateEmptyHeaderAndCpp

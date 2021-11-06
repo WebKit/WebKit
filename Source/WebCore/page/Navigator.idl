@@ -40,3 +40,4 @@ Navigator includes NavigatorPlugins;
 Navigator includes NavigatorServiceWorker;
 Navigator includes NavigatorShare;
 Navigator includes NavigatorStorage;
+Navigator includes NavigatorGPU;

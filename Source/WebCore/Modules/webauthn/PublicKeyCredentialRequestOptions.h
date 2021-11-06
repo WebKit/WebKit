@@ -27,6 +27,7 @@
 
 #if ENABLE(WEB_AUTHN)
 #include "AuthenticationExtensionsClientInputs.h"
+#include "AuthenticatorAttachment.h"
 #include "BufferSource.h"
 #include "PublicKeyCredentialDescriptor.h"
 #include "UserVerificationRequirement.h"

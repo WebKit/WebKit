@@ -28,6 +28,7 @@
 #include "NavigatorBase.h"
 
 #include "Document.h"
+#include "GPU.h"
 #include "RuntimeEnabledFeatures.h"
 #include "ServiceWorkerContainer.h"
 #include "StorageManager.h"
@@ -67,6 +68,7 @@ namespace WebCore {
 
 NavigatorBase::NavigatorBase(ScriptExecutionContext* context)
     : ContextDestructionObserver(context)
+    , m_gpuForWebGPU(GPU::create())
 {
 }
 

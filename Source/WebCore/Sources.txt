@@ -21,6 +21,11 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 // THE POSSIBILITY OF SUCH DAMAGE.
 
+Modules/WebGPU/GPU.cpp
+Modules/WebGPU/GPUAdapter.cpp
+Modules/WebGPU/GPUDevice.cpp
+Modules/WebGPU/GPUSupportedFeatures.cpp
+Modules/WebGPU/GPUSupportedLimits.cpp
 Modules/airplay/WebKitPlaybackTargetAvailabilityEvent.cpp
 Modules/applicationmanifest/ApplicationManifestParser.cpp
 Modules/async-clipboard/Clipboard.cpp
@@ -3065,6 +3070,18 @@ JSFocusOptions.cpp
 JSFontFace.cpp
 JSFontFaceSet.cpp
 JSFormDataEvent.cpp
+JSGPU.cpp
+JSGPUAdapter.cpp
+JSGPUDevice.cpp
+JSGPUDeviceDescriptor.cpp
+JSGPUFeatureName.cpp
+JSGPUObjectBase.cpp
+JSGPUObjectDescriptorBase.cpp
+JSGPUPowerPreference.cpp
+JSGPUPredefinedColorSpace.cpp
+JSGPURequestAdapterOptions.cpp
+JSGPUSupportedFeatures.cpp
+JSGPUSupportedLimits.cpp
 JSGainNode.cpp
 JSGainOptions.cpp
 JSGamepad.cpp
@@ -3274,6 +3291,7 @@ JSMutationObserver.cpp
 JSMutationRecord.cpp
 JSNamedNodeMap.cpp
 JSNavigator.cpp
+JSNavigatorGPU.cpp
 JSNode.cpp
 JSNodeFilter.cpp
 JSCustomXPathNSResolver.cpp

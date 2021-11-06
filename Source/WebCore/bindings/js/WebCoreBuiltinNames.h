@@ -126,6 +126,11 @@ namespace WebCore {
     macro(FileSystemFileHandle) \
     macro(FileSystemHandle) \
     macro(FileSystemSyncAccessHandle) \
+    macro(GPU) \
+    macro(GPUAdapter) \
+    macro(GPUDevice) \
+    macro(GPUSupportedFeatures) \
+    macro(GPUSupportedLimits) \
     macro(Gamepad) \
     macro(GamepadButton) \
     macro(GamepadEvent) \

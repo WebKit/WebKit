@@ -39,3 +39,4 @@ WorkerNavigator includes NavigatorLocks;
 WorkerNavigator includes NavigatorOnLine;
 WorkerNavigator includes NavigatorServiceWorker;
 WorkerNavigator includes NavigatorStorage;
+WorkerNavigator includes NavigatorGPU;

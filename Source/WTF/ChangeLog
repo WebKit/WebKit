@@ -1,3 +1,12 @@
+2021-11-04  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WebGPU] Bindings part 1: Bring back Adapter/Device bindings code
+        https://bugs.webkit.org/show_bug.cgi?id=232550
+
+        Reviewed by Alex Christensen.
+
+        * Scripts/Preferences/WebPreferences.yaml:
+
 2021-11-05  Alex Christensen  <achristensen@webkit.org>
 
         Restructure WKContentRuleList Action storage during compilation and interpretation

@@ -15,6 +15,7 @@ DOMWindow
 EventSource
 FileReader
 FontFaceSet
+GPUDevice
 IDBDatabase
 IDBOpenDBRequest
 IDBRequest
