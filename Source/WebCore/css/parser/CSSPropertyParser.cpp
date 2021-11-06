@@ -982,19 +982,51 @@ static RefPtr<CSSValue> consumeFontSynthesis(CSSParserTokenRange& range)
     CSSValueID id = range.peek().id();
     if (id == CSSValueNone)
         return consumeIdent(range);
-    
-    RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
+
+    bool foundWeight = false;
+    bool foundStyle = false;
+    bool foundSmallCaps = false;
+
+    auto checkAndMarkExistence = [](bool* found) {
+        if (*found)
+            return false;
+        return *found = true;
+    };
+
     while (true) {
         auto ident = consumeIdent<CSSValueWeight, CSSValueStyle, CSSValueSmallCaps>(range);
         if (!ident)
             break;
-        if (list->hasValue(ident.get()))
+        switch (ident->valueID()) {
+        case CSSValueWeight:
+            if (!checkAndMarkExistence(&foundWeight))
+                return nullptr;
+            break;
+        case CSSValueStyle:
+            if (!checkAndMarkExistence(&foundStyle))
+                return nullptr;
+            break;
+        case CSSValueSmallCaps:
+            if (!checkAndMarkExistence(&foundSmallCaps))
+                return nullptr;
+            break;
+        default:
+            ASSERT_NOT_REACHED();
             return nullptr;
-        list->append(ident.releaseNonNull());
+        }
     }
-    
+
+    RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
+    if (foundWeight)
+        list->append(CSSValuePool::singleton().createIdentifierValue(CSSValueWeight));
+    if (foundStyle)
+        list->append(CSSValuePool::singleton().createIdentifierValue(CSSValueStyle));
+    if (foundSmallCaps)
+        list->append(CSSValuePool::singleton().createIdentifierValue(CSSValueSmallCaps));
+
     if (!list->length())
         return nullptr;
+
     return list;
 }
 

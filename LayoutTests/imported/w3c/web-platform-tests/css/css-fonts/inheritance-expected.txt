@@ -16,7 +16,7 @@ FAIL Property font-stretch has initial value 100% assert_equals: expected "100%"
 FAIL Property font-stretch inherits assert_equals: expected "75%" but got "condensed"
 PASS Property font-style has initial value normal
 PASS Property font-style inherits
-FAIL Property font-synthesis has initial value weight style assert_equals: expected "weight style" but got "style weight small-caps"
+FAIL Property font-synthesis has initial value weight style assert_equals: expected "weight style" but got "weight style small-caps"
 PASS Property font-synthesis inherits
 PASS Property font-variant has initial value normal
 FAIL Property font-variant inherits assert_equals: expected "none" but got "no-common-ligatures no-discretionary-ligatures no-historical-ligatures no-contextual"

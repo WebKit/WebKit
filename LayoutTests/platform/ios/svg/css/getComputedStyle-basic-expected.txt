@@ -154,7 +154,7 @@ rect: style.getPropertyValue(font-size) : 16px
 rect: style.getPropertyCSSValue(font-size) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(font-style) : normal
 rect: style.getPropertyCSSValue(font-style) : [object CSSValue]
-rect: style.getPropertyValue(font-synthesis) : style weight small-caps
+rect: style.getPropertyValue(font-synthesis) : weight style small-caps
 rect: style.getPropertyCSSValue(font-synthesis) : [object CSSValueList]
 rect: style.getPropertyValue(font-variant-alternates) : normal
 rect: style.getPropertyCSSValue(font-variant-alternates) : [object CSSPrimitiveValue]
@@ -674,7 +674,7 @@ g: style.getPropertyValue(font-size) : 16px
 g: style.getPropertyCSSValue(font-size) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(font-style) : normal
 g: style.getPropertyCSSValue(font-style) : [object CSSValue]
-g: style.getPropertyValue(font-synthesis) : style weight small-caps
+g: style.getPropertyValue(font-synthesis) : weight style small-caps
 g: style.getPropertyCSSValue(font-synthesis) : [object CSSValueList]
 g: style.getPropertyValue(font-variant-alternates) : normal
 g: style.getPropertyCSSValue(font-variant-alternates) : [object CSSPrimitiveValue]

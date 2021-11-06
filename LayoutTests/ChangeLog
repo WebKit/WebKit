@@ -1,3 +1,35 @@
+2021-11-06  Joonghun Park  <jh718.park@samsung.com>
+
+        font-synthesis inline/computed style should be in canonical order.
+        https://bugs.webkit.org/show_bug.cgi?id=186344
+
+        Reviewed by Myles C. Maxfield.
+
+        Per the spec, https://drafts.csswg.org/css-fonts/#font-synthesis.
+
+        * fast/css/getComputedStyle/computed-style-expected.txt:
+        * fast/css/getComputedStyle/computed-style-font-family-expected.txt:
+        * fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * fast/css3-text/font-synthesis-parse-expected.txt:
+        * fast/css3-text/font-synthesis-parse.html:
+        * fast/text/font-synthesis-parsing-expected.txt:
+        * fast/text/font-synthesis-parsing.html:
+        * platform/glib/fast/css/getComputedStyle/computed-style-expected.txt:
+        * platform/glib/fast/css/getComputedStyle/computed-style-font-family-expected.txt:
+        * platform/glib/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * platform/glib/svg/css/getComputedStyle-basic-expected.txt:
+        * platform/gtk/imported/w3c/web-platform-tests/css/cssom/cssstyledeclaration-csstext-expected.txt:
+        * platform/ios-wk2/imported/w3c/web-platform-tests/css/cssom/cssstyledeclaration-csstext-expected.txt:
+        * platform/ios/fast/css/getComputedStyle/computed-style-expected.txt:
+        * platform/ios/fast/css/getComputedStyle/computed-style-font-family-expected.txt:
+        * platform/ios/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * platform/ios/svg/css/getComputedStyle-basic-expected.txt:
+        * platform/mac/fast/css/getComputedStyle/computed-style-expected.txt:
+        * platform/mac/fast/css/getComputedStyle/computed-style-font-family-expected.txt:
+        * platform/mac/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * platform/mac/svg/css/getComputedStyle-basic-expected.txt:
+        * svg/css/getComputedStyle-basic-expected.txt:
+
 2021-11-06  Tyler Wilcock  <tyler_w@apple.com>
 
         AX: Rename usages DefinitionList to DescriptionList and DescriptionListDefinition to DescriptionListDetail

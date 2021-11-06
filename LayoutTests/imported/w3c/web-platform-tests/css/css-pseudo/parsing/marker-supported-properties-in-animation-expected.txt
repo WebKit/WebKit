@@ -7,7 +7,7 @@ PASS Animation of font-size in ::marker
 FAIL Animation of font-size-adjust in ::marker assert_true: font-size-adjust doesn't seem to be supported in the computed style expected true got false
 PASS Animation of font-stretch in ::marker
 PASS Animation of font-style in ::marker
-FAIL Animation of font-synthesis in ::marker assert_equals: expected "none" but got "style weight small-caps"
+FAIL Animation of font-synthesis in ::marker assert_equals: expected "none" but got "weight style small-caps"
 FAIL Animation of font-variant in ::marker assert_equals: expected "small-caps" but got "tabular-nums"
 FAIL Animation of font-variant-caps in ::marker assert_equals: expected "small-caps" but got "normal"
 FAIL Animation of font-variant-east-asian in ::marker assert_equals: expected "full-width" but got "normal"

@@ -14,7 +14,7 @@
       shouldBe("declaration.length", "0");
       shouldBeEqualToString("declaration.getPropertyValue('font-synthesis')", "");
       computedStyle = window.getComputedStyle(target, null);
-      shouldBeEqualToString("computedStyle.getPropertyCSSValue('font-synthesis').cssText", "style weight small-caps");
+      shouldBeEqualToString("computedStyle.getPropertyCSSValue('font-synthesis').cssText", "weight style small-caps");
       stylesheet.deleteRule(0);
     }
 
@@ -25,7 +25,7 @@
       shouldBe("declaration.length", "1");
       shouldBeEqualToString("declaration.getPropertyValue('font-synthesis')", "initial");
       computedStyle = window.getComputedStyle(target, null);
-      shouldBeEqualToString("computedStyle.getPropertyCSSValue('font-synthesis').cssText", "style weight small-caps");
+      shouldBeEqualToString("computedStyle.getPropertyCSSValue('font-synthesis').cssText", "weight style small-caps");
       stylesheet.deleteRule(0);
     }
 
@@ -58,7 +58,7 @@
       shouldBe("declaration.length", "1");
       shouldBeEqualToString("declaration.getPropertyValue('font-synthesis')", "weight style");
       computedStyle = window.getComputedStyle(target, null);
-      shouldBeEqualToString("computedStyle.getPropertyCSSValue('font-synthesis').cssText", "style weight");
+      shouldBeEqualToString("computedStyle.getPropertyCSSValue('font-synthesis').cssText", "weight style");
       stylesheet.deleteRule(0);
     }
 
@@ -67,9 +67,9 @@
       shouldBe("cssRule.type", "cssRule.STYLE_RULE");
       declaration = cssRule.style;
       shouldBe("declaration.length", "1");
-      shouldBeEqualToString("declaration.getPropertyValue('font-synthesis')", "style weight");
+      shouldBeEqualToString("declaration.getPropertyValue('font-synthesis')", "weight style");
       computedStyle = window.getComputedStyle(target, null);
-      shouldBeEqualToString("computedStyle.getPropertyCSSValue('font-synthesis').cssText", "style weight");
+      shouldBeEqualToString("computedStyle.getPropertyCSSValue('font-synthesis').cssText", "weight style");
       stylesheet.deleteRule(0);
     }
 

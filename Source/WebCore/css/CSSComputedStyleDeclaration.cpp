@@ -2137,10 +2137,10 @@ static Ref<CSSValue> fontSynthesisFromStyle(const RenderStyle& style)
         return CSSValuePool::singleton().createIdentifierValue(CSSValueNone);
 
     auto list = CSSValueList::createSpaceSeparated();
-    if (style.fontDescription().fontSynthesis() & FontSynthesisStyle)
-        list->append(CSSValuePool::singleton().createIdentifierValue(CSSValueStyle));
     if (style.fontDescription().fontSynthesis() & FontSynthesisWeight)
         list->append(CSSValuePool::singleton().createIdentifierValue(CSSValueWeight));
+    if (style.fontDescription().fontSynthesis() & FontSynthesisStyle)
+        list->append(CSSValuePool::singleton().createIdentifierValue(CSSValueStyle));
     if (style.fontDescription().fontSynthesis() & FontSynthesisSmallCaps)
         list->append(CSSValuePool::singleton().createIdentifierValue(CSSValueSmallCaps));
     return list;

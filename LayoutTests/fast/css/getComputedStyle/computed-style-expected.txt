@@ -77,7 +77,7 @@ flood-color: rgb(0, 0, 0);
 flood-opacity: 1;
 font-size: 16px;
 font-style: normal;
-font-synthesis: style weight small-caps;
+font-synthesis: weight style small-caps;
 font-variant-alternates: normal;
 font-variant-caps: normal;
 font-variant-east-asian: normal;
