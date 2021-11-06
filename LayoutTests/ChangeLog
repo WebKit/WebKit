@@ -1,3 +1,18 @@
+2021-11-05  Simon Fraser  <simon.fraser@apple.com>
+
+        Simplify code that makes use of WheelEventDeltaFilter
+        https://bugs.webkit.org/show_bug.cgi?id=232536
+
+        Reviewed by Wenson Hsieh.
+
+        Add a test to verify that wheel events sent to JS aren't affected by the wheel event
+        delta filter.
+
+        * fast/scrolling/mac/wheel-event-deltas-are-not-filtered-expected.txt: Added.
+        * fast/scrolling/mac/wheel-event-deltas-are-not-filtered.html: Added.
+        * tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-2d-overflow.html:
+        Adjust the test for the fact that the momentum phase is now axis-locked.
+
 2021-11-05  Alan Bujtas  <zalan@apple.com>
 
         Rebaseline for fast/text/midword-break-after-breakable-char.html

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../../../resources/js-test-pre.js"></script>
+    <script src="../../../resources/ui-helper.js"></script>
+    <script>
+        var jsTestIsAsync = true;
+
+        async function dispatchWheelEvents()
+        {
+            eventSender.monitorWheelEvents();
+            eventSender.mouseMoveTo(100, 100);
+
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(1, -1, "began", "none");
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(1, -2, "changed", "none");
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, "ended", "none");
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(1, -1, "none", "begin");
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(1, -2, "none", "continue");
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(2, -3, "none", "continue");
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, "none", "end");
+            await UIHelper.waitForScrollCompletion();
+            finishJSTest();
+        }
+
+        window.addEventListener('load', () => {
+
+            window.addEventListener('wheel', (event) => {
+                debug(`${event.deltaX} ${event.deltaY}`)
+            });
+
+            dispatchWheelEvents();
+        }, false);
+    </script>
+</head>
+<body>
+    
+    <script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -40,13 +40,13 @@ class WheelEventDeltaFilterMac final : public WheelEventDeltaFilter {
 public:
     WheelEventDeltaFilterMac();
 
-    void updateFromDelta(const FloatSize&) override;
-    void beginFilteringDeltas() override;
-    void endFilteringDeltas() override;
+    void updateFromEvent(const PlatformWheelEvent&) final;
 
 private:
+    void reset();
+
     RetainPtr<_NSScrollingPredominantAxisFilter> m_predominantAxisFilter;
-    MonotonicTime m_beginFilteringDeltasTime;
+    WallTime m_initialWallTime;
 };
 
 } // namespace WebCore

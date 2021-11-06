@@ -98,34 +98,17 @@ void EventDispatcher::initializeConnection(IPC::Connection* connection)
 
 void EventDispatcher::wheelEvent(PageIdentifier pageID, const WebWheelEvent& wheelEvent, RectEdges<bool> rubberBandableEdges)
 {
-#if PLATFORM(COCOA) || ENABLE(SCROLLING_THREAD)
-    PlatformWheelEvent platformWheelEvent = platform(wheelEvent);
-#endif
-
-#if PLATFORM(COCOA)
-    switch (wheelEvent.phase()) {
-    case WebWheelEvent::PhaseBegan:
-        m_recentWheelEventDeltaFilter->beginFilteringDeltas();
-        break;
-    case WebWheelEvent::PhaseEnded:
-        m_recentWheelEventDeltaFilter->endFilteringDeltas();
-        break;
-    default:
-        break;
-    }
-
-    if (m_recentWheelEventDeltaFilter->isFilteringDeltas()) {
-        m_recentWheelEventDeltaFilter->updateFromDelta(FloatSize(platformWheelEvent.deltaX(), platformWheelEvent.deltaY()));
-        FloatSize filteredDelta = m_recentWheelEventDeltaFilter->filteredDelta();
-        platformWheelEvent = platformWheelEvent.copyWithDeltasAndVelocity(filteredDelta.width(), filteredDelta.height(), m_recentWheelEventDeltaFilter->filteredVelocity());
-    }
-#endif
-
     auto processingSteps = OptionSet<WebCore::WheelEventProcessingSteps> { WheelEventProcessingSteps::MainThreadForScrolling, WheelEventProcessingSteps::MainThreadForBlockingDOMEventDispatch };
 #if ENABLE(SCROLLING_THREAD)
     do {
-        Locker locker { m_scrollingTreesLock };
+        auto platformWheelEvent = platform(wheelEvent);
+#if PLATFORM(COCOA)
+        m_recentWheelEventDeltaFilter->updateFromEvent(platformWheelEvent);
+        if (m_recentWheelEventDeltaFilter->shouldApplyFilteringForEvent(platformWheelEvent))
+            platformWheelEvent = m_recentWheelEventDeltaFilter->eventCopyWithFilteredDeltas(platformWheelEvent);
+#endif
 
+        Locker locker { m_scrollingTreesLock };
         auto scrollingTree = m_scrollingTrees.get(pageID);
         if (!scrollingTree) {
             dispatchWheelEventViaMainThread(pageID, wheelEvent, processingSteps);

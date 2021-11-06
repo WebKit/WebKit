@@ -120,11 +120,11 @@ public:
         return copy;
     }
 
-    PlatformWheelEvent copyWithDeltasAndVelocity(float deltaX, float deltaY, const FloatSize& velocity) const
+    PlatformWheelEvent copyWithDeltaAndVelocity(FloatSize delta, FloatSize velocity) const
     {
         PlatformWheelEvent copy = *this;
-        copy.m_deltaX = deltaX;
-        copy.m_deltaY = deltaY;
+        copy.m_deltaX = delta.width();
+        copy.m_deltaY = delta.height();
         copy.m_scrollingVelocity = velocity;
         return copy;
     }

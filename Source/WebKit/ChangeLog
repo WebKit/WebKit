@@ -1,3 +1,16 @@
+2021-11-05  Simon Fraser  <simon.fraser@apple.com>
+
+        Simplify code that makes use of WheelEventDeltaFilter
+        https://bugs.webkit.org/show_bug.cgi?id=232536
+
+        Reviewed by Wenson Hsieh.
+
+        Push the decision about which kinds of wheel events to apply filtering to down into
+        WheelEventDeltaFilter, which simplifies call sites.
+
+        * WebProcess/WebPage/EventDispatcher.cpp:
+        (WebKit::EventDispatcher::wheelEvent):
+
 2021-11-05  Chris Dumez  <cdumez@apple.com>
 
         [iOS] IPC decoder for ResourceRequest loses systemPreviewInfo when there is platform data

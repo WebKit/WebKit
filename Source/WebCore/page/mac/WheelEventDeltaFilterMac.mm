@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,6 +29,7 @@
 #import "WheelEventDeltaFilterMac.h"
 
 #import "FloatPoint.h"
+#import "PlatformWheelEvent.h"
 #import <pal/spi/mac/NSScrollingInputFilterSPI.h>
 
 namespace WebCore {
@@ -36,33 +37,46 @@ namespace WebCore {
 WheelEventDeltaFilterMac::WheelEventDeltaFilterMac()
     : WheelEventDeltaFilter()
     , m_predominantAxisFilter(adoptNS([[_NSScrollingPredominantAxisFilter alloc] init]))
+    , m_initialWallTime(WallTime::now())
 {
 }
 
-void WheelEventDeltaFilterMac::beginFilteringDeltas()
+void WheelEventDeltaFilterMac::updateFromEvent(const PlatformWheelEvent& event)
 {
-    m_beginFilteringDeltasTime = MonotonicTime::now();
-    m_isFilteringDeltas = true;
-}
-
-void WheelEventDeltaFilterMac::updateFromDelta(const FloatSize& delta)
-{
-    if (!m_isFilteringDeltas)
+    if (event.momentumPhase() != PlatformWheelEventPhase::None)
         return;
 
-    NSPoint filteredDeltaResult;
-    NSPoint filteredVelocityResult;
-    [m_predominantAxisFilter filterInputDelta:NSPoint(FloatPoint(delta.width(), delta.height())) timestamp:(MonotonicTime::now() - m_beginFilteringDeltasTime).seconds() outputDelta:&filteredDeltaResult velocity:&filteredVelocityResult];
-    m_currentFilteredVelocity = FloatSize(filteredVelocityResult.x, filteredVelocityResult.y);
-    m_currentFilteredDelta = FloatSize(filteredDeltaResult.x, filteredDeltaResult.y);
+    // The absolute value of timestamp doesn't matter; the filter looks at deltas from the previous event.
+    auto timestamp = event.timestamp() - m_initialWallTime;
+
+    switch (event.phase()) {
+    case PlatformWheelEventPhase::None:
+        break;
+
+    case PlatformWheelEventPhase::Began:
+    case PlatformWheelEventPhase::Changed: {
+        NSPoint filteredDeltaResult;
+        NSPoint filteredVelocityResult;
+
+        [m_predominantAxisFilter filterInputDelta:toFloatPoint(event.delta()) timestamp:timestamp.seconds() outputDelta:&filteredDeltaResult velocity:&filteredVelocityResult];
+        m_currentFilteredVelocity = toFloatSize(filteredVelocityResult);
+        m_currentFilteredDelta = toFloatSize(filteredDeltaResult);
+        break;
+    }
+    case PlatformWheelEventPhase::MayBegin:
+    case PlatformWheelEventPhase::Cancelled:
+    case PlatformWheelEventPhase::Stationary:
+    case PlatformWheelEventPhase::Ended:
+        reset();
+        break;
+    }
 }
 
-void WheelEventDeltaFilterMac::endFilteringDeltas()
+void WheelEventDeltaFilterMac::reset()
 {
-    m_currentFilteredDelta = FloatSize(0, 0);
-    m_beginFilteringDeltasTime = MonotonicTime();
     [m_predominantAxisFilter reset];
-    m_isFilteringDeltas = false;
+    m_currentFilteredVelocity = { };
+    m_currentFilteredDelta = { };
 }
 
 }

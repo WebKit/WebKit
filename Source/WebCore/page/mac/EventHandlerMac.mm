@@ -885,29 +885,7 @@ void EventHandler::determineWheelEventTarget(const PlatformWheelEvent& wheelEven
     if (wheelEvent.shouldResetLatching() || wheelEvent.isNonGestureEvent())
         return;
 
-    if (m_frame.isMainFrame() && wheelEvent.isGestureStart())
-        page->wheelEventDeltaFilter()->beginFilteringDeltas();
-
     page->scrollLatchingController().updateAndFetchLatchingStateForFrame(m_frame, wheelEvent, wheelEventTarget, scrollableArea, isOverWidget);
-}
-
-void EventHandler::recordWheelEventForDeltaFilter(const PlatformWheelEvent& wheelEvent)
-{
-    auto* page = m_frame.page();
-    if (!page)
-        return;
-
-    switch (wheelEvent.phase()) {
-    case PlatformWheelEventPhase::Began:
-        page->wheelEventDeltaFilter()->beginFilteringDeltas();
-        break;
-    case PlatformWheelEventPhase::Ended:
-        page->wheelEventDeltaFilter()->endFilteringDeltas();
-        break;
-    default:
-        break;
-    }
-    page->wheelEventDeltaFilter()->updateFromDelta(FloatSize(wheelEvent.deltaX(), wheelEvent.deltaY()));
 }
 
 bool EventHandler::processWheelEventForScrolling(const PlatformWheelEvent& wheelEvent, const WeakPtr<ScrollableArea>& scrollableArea, OptionSet<EventHandling> eventHandling)

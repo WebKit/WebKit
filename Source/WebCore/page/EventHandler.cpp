@@ -2813,12 +2813,6 @@ void EventHandler::determineWheelEventTarget(const PlatformWheelEvent&, RefPtr<E
 {
 }
 
-void EventHandler::recordWheelEventForDeltaFilter(const PlatformWheelEvent& event)
-{
-    if (auto* page = m_frame.page())
-        page->wheelEventDeltaFilter()->updateFromDelta(FloatSize(event.deltaX(), event.deltaY()));
-}
-
 bool EventHandler::processWheelEventForScrolling(const PlatformWheelEvent& event, const WeakPtr<ScrollableArea>&, OptionSet<EventHandling> eventHandling)
 {
     Ref<Frame> protectedFrame(m_frame);
@@ -2972,7 +2966,7 @@ bool EventHandler::handleWheelEventInternal(const PlatformWheelEvent& event, Opt
 #if ENABLE(WHEEL_EVENT_LATCHING)
         m_frame.page()->scrollLatchingController().receivedWheelEvent(event);
 #endif
-        recordWheelEventForDeltaFilter(event);
+        m_frame.page()->wheelEventDeltaFilter()->updateFromEvent(event);
     }
 
     HitTestRequest request;
@@ -3086,7 +3080,7 @@ bool EventHandler::handleWheelEventInAppropriateEnclosingBox(Node* startNode, co
             auto platformEvent = wheelEvent.underlyingPlatformEvent();
             bool scrollingWasHandled;
             if (platformEvent) {
-                auto copiedEvent = platformEvent->copyWithDeltasAndVelocity(filteredPlatformDelta.width(), filteredPlatformDelta.height(), filteredVelocity);
+                auto copiedEvent = platformEvent->copyWithDeltaAndVelocity(filteredPlatformDelta, filteredVelocity);
                 scrollingWasHandled = scrollableAreaCanHandleEvent(copiedEvent, *boxScrollableArea) && handleWheelEventInScrollableArea(copiedEvent, *boxScrollableArea, eventHandling);
             } else
                 scrollingWasHandled = didScrollInScrollableArea(*boxScrollableArea, wheelEvent);
@@ -3153,8 +3147,6 @@ void EventHandler::clearLatchedState()
     if (auto* scrollLatchingController = page->scrollLatchingControllerIfExists())
         scrollLatchingController->removeLatchingStateForFrame(m_frame);
 #endif
-    if (auto* filter = page->wheelEventDeltaFilter())
-        filter->endFilteringDeltas();
 }
 
 void EventHandler::defaultWheelEventHandler(Node* startNode, WheelEvent& wheelEvent)
@@ -3175,21 +3167,20 @@ void EventHandler::defaultWheelEventHandler(Node* startNode, WheelEvent& wheelEv
 
     FloatSize filteredPlatformDelta(wheelEvent.deltaX(), wheelEvent.deltaY());
     FloatSize filteredVelocity;
-    if (auto platformWheelEvent = wheelEvent.underlyingPlatformEvent()) {
-        filteredPlatformDelta.setWidth(platformWheelEvent->deltaX());
-        filteredPlatformDelta.setHeight(platformWheelEvent->deltaY());
-    }
+    if (platformEvent)
+        filteredPlatformDelta = platformEvent->delta();
 
     OptionSet<EventHandling> eventHandling = { EventHandling::DispatchedToDOM };
     if (wheelEvent.defaultPrevented())
         eventHandling.add(EventHandling::DefaultPrevented);
 
-#if ENABLE(WHEEL_EVENT_LATCHING)
-    if (m_frame.page()->wheelEventDeltaFilter()->isFilteringDeltas()) {
-        filteredPlatformDelta = m_frame.page()->wheelEventDeltaFilter()->filteredDelta();
-        filteredVelocity = m_frame.page()->wheelEventDeltaFilter()->filteredVelocity();
+    auto* deltaFilter = m_frame.page()->wheelEventDeltaFilter();
+    if (platformEvent && deltaFilter && deltaFilter->shouldApplyFilteringForEvent(*platformEvent)) {
+        filteredPlatformDelta = deltaFilter->filteredDelta();
+        filteredVelocity = deltaFilter->filteredVelocity();
     }
 
+#if ENABLE(WHEEL_EVENT_LATCHING)
     WeakPtr<ScrollableArea> latchedScroller;
     if (!m_frame.page()->scrollLatchingController().latchingAllowsScrollingInFrame(m_frame, latchedScroller))
         return;
@@ -3201,7 +3192,7 @@ void EventHandler::defaultWheelEventHandler(Node* startNode, WheelEvent& wheelEv
         }
 
         if (platformEvent) {
-            auto copiedEvent = platformEvent->copyWithDeltasAndVelocity(filteredPlatformDelta.width(), filteredPlatformDelta.height(), filteredVelocity);
+            auto copiedEvent = platformEvent->copyWithDeltaAndVelocity(filteredPlatformDelta, filteredVelocity);
             if (handleWheelEventInScrollableArea(copiedEvent, *latchedScroller, eventHandling))
                 wheelEvent.setDefaultHandled();
             return;
