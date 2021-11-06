@@ -3175,7 +3175,7 @@ void EventHandler::defaultWheelEventHandler(Node* startNode, WheelEvent& wheelEv
         eventHandling.add(EventHandling::DefaultPrevented);
 
     auto* deltaFilter = m_frame.page()->wheelEventDeltaFilter();
-    if (platformEvent && deltaFilter && deltaFilter->shouldApplyFilteringForEvent(*platformEvent)) {
+    if (platformEvent && deltaFilter && WheelEventDeltaFilter::shouldApplyFilteringForEvent(*platformEvent)) {
         filteredPlatformDelta = deltaFilter->filteredDelta();
         filteredVelocity = deltaFilter->filteredVelocity();
     }

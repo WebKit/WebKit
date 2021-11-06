@@ -104,7 +104,7 @@ void EventDispatcher::wheelEvent(PageIdentifier pageID, const WebWheelEvent& whe
         auto platformWheelEvent = platform(wheelEvent);
 #if PLATFORM(COCOA)
         m_recentWheelEventDeltaFilter->updateFromEvent(platformWheelEvent);
-        if (m_recentWheelEventDeltaFilter->shouldApplyFilteringForEvent(platformWheelEvent))
+        if (WheelEventDeltaFilter::shouldApplyFilteringForEvent(platformWheelEvent))
             platformWheelEvent = m_recentWheelEventDeltaFilter->eventCopyWithFilteredDeltas(platformWheelEvent);
 #endif
 

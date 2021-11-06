@@ -50,7 +50,7 @@ std::unique_ptr<WheelEventDeltaFilter> WheelEventDeltaFilter::create()
 #endif
 }
 
-bool WheelEventDeltaFilter::shouldApplyFilteringForEvent(const PlatformWheelEvent& event) const
+bool WheelEventDeltaFilter::shouldApplyFilteringForEvent(const PlatformWheelEvent& event)
 {
 #if ENABLE(KINETIC_SCROLLING)
     // Maybe it's a per-platform decision about which event phases get filtered. Ideally we'd filter momentum events too (but that breaks some diagonal scrolling cases).

@@ -42,11 +42,12 @@ public:
 
     WEBCORE_EXPORT virtual void updateFromEvent(const PlatformWheelEvent&) = 0;
 
-    WEBCORE_EXPORT bool shouldApplyFilteringForEvent(const PlatformWheelEvent&) const;
     WEBCORE_EXPORT PlatformWheelEvent eventCopyWithFilteredDeltas(const PlatformWheelEvent&) const;
 
     WEBCORE_EXPORT FloatSize filteredVelocity() const;
     WEBCORE_EXPORT FloatSize filteredDelta() const;
+
+    WEBCORE_EXPORT static bool shouldApplyFilteringForEvent(const PlatformWheelEvent&);
 
 protected:
     FloatSize m_currentFilteredDelta;
