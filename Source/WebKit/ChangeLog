@@ -1,3 +1,25 @@
+2021-11-05  Chris Dumez  <cdumez@apple.com>
+
+        [iOS] IPC decoder for ResourceRequest loses systemPreviewInfo when there is platform data
+        https://bugs.webkit.org/show_bug.cgi?id=232769
+
+        Reviewed by Wenson Hsieh.
+
+        The IPC decoder for ResourceRequest decodes systemPreviewInfo and sets it on the ResourceRequest.
+        It then uses different code paths to decode the rest of the ResourceRequest based on whether or not
+        there is underlying platform data. If there is underlying platform data, we call decodePlatformData()
+        which creates a brand-new ResourceRequest, and thus loses the systemPreviewInfo we've just set.
+
+        To address the issue, we now decode extra data members *after* decoding platform data instead of
+        *before*.
+
+        This was causing the ProcessSwap.SameOriginSystemPreview API test to fail on iOS with the patch for
+        Bug 231727.
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<ResourceRequest>::encode):
+        (IPC::ArgumentCoder<ResourceRequest>::decode):
+
 2021-11-05  Nikolaos Mouchtaris  <nmouchtaris@apple.com>
 
         Make scroll bar mode an enum class
