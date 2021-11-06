@@ -1504,9 +1504,17 @@ bool atBoundaryOfGranularity(const VisiblePosition& vp, TextGranularity granular
         boundary = useDownstream ? endOfWord(vp, LeftWordIfOnBoundary) : startOfWord(vp, RightWordIfOnBoundary);
         break;
 
-    case TextGranularity::SentenceGranularity:
-        boundary = useDownstream ? endOfSentence(previousSentencePosition(vp)) : startOfSentence(nextSentencePosition(vp));
+    case TextGranularity::SentenceGranularity: {
+        auto boundaryInDirection = useDownstream ? endOfSentence : startOfSentence;
+        if (vp == boundaryInDirection(vp)) {
+            boundary = vp;
+            break;
+        }
+
+        auto position = useDownstream ? previousSentencePosition(vp) : nextSentencePosition(vp);
+        boundary = boundaryInDirection(position);
         break;
+    }
 
     case TextGranularity::LineGranularity:
         boundary = vp;
@@ -1683,7 +1691,7 @@ static VisiblePosition nextSentenceBoundaryInDirection(const VisiblePosition& vp
         if (result.isNull() || result == vp)
             return VisiblePosition();
 
-        result = useDownstream ? startOfSentence(vp) : endOfSentence(vp);
+        result = useDownstream ? startOfSentence(result) : endOfSentence(result);
     }
 
     if (result == vp)

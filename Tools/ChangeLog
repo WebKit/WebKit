@@ -1,3 +1,25 @@
+2021-11-05  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Mail compose becomes unresponsive after pasting in text and attempting to type
+        https://bugs.webkit.org/show_bug.cgi?id=232764
+        rdar://84669661
+
+        Reviewed by Geoff Garen.
+
+        Add an API test that exercises the hang (and also verifies that we don't hit any debug assertions in the
+        process).
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/DocumentEditingContext.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/InsertTextAlternatives.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/simple-editor.html: Added.
+        * TestWebKitAPI/ios/UIKitSPI.h:
+
+        Drive-by fixes: remove some old staging declarations for UIKit SPI that has long been in the internal iOS 15
+        SDK. Remove the staging categories and definitions, and move them to the non-internal SDK section instead.
+
 2021-11-05  Ryan Haddad  <ryanhaddad@apple.com>
 
         [steps.py] Update macOS versions in build_to_name_mapping

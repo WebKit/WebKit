@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script>
+        addEventListener("DOMContentLoaded", () => {
+            let target = document.getElementById("target");
+            getSelection().setPosition(target, 1);
+        });
+    </script>
+</head>
+<body contenteditable>
+Hello world.
+<br id="br1">
+<div style="background: tomato;" id='target'>F</div>
+<br id="br2">
+This is a test.
+</body>
+</html>

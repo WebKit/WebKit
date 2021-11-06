@@ -1326,4 +1326,15 @@ TEST(DocumentEditingContext, RequestLastTwoLines)
     EXPECT_NULL(context.contextAfter);
 }
 
+TEST(DocumentEditingContext, RequestSentencesAfterTextInsertion)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    [webView synchronouslyLoadTestPageNamed:@"simple-editor"];
+
+    auto *context = [webView synchronouslyRequestDocumentContext:makeRequest(UIWKDocumentRequestText, UITextGranularitySentence, 1)];
+    EXPECT_NSSTRING_EQ("F", context.contextBefore);
+    EXPECT_NULL(context.selectedText);
+    EXPECT_NSSTRING_EQ("\nThis is a test.", context.contextAfter);
+}
+
 #endif // PLATFORM(IOS_FAMILY) && HAVE(UI_WK_DOCUMENT_CONTEXT)

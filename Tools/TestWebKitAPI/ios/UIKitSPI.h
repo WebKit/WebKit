@@ -167,6 +167,8 @@ typedef NS_OPTIONS(NSInteger, UIWKDocumentRequestFlags) {
     UIWKDocumentRequestRects = 1 << 2,
     UIWKDocumentRequestSpatial = 1 << 3,
     UIWKDocumentRequestAnnotation = 1 << 4,
+    UIWKDocumentRequestMarkedTextRects = 1 << 5,
+    UIWKDocumentRequestSpatialAndCurrentSelection = 1 << 6,
 };
 
 @interface UIWKDocumentRequest : NSObject
@@ -207,6 +209,7 @@ typedef NS_ENUM(NSInteger, UIWKGestureType) {
 - (void)updateSelectionWithExtentPoint:(CGPoint)point withBoundary:(UITextGranularity)granularity completionHandler:(void (^)(BOOL selectionEndIsMoving))completionHandler;
 - (void)selectWordForReplacement;
 - (BOOL)textInteractionGesture:(UIWKGestureType)gesture shouldBeginAtPoint:(CGPoint)point;
+- (NSArray<NSTextAlternatives *> *)alternativesForSelectedText;
 @property (nonatomic, readonly) NSString *selectedText;
 
 @optional
@@ -266,14 +269,6 @@ IGNORE_WARNINGS_END
 @end
 
 #endif // USE(APPLE_INTERNAL_SDK)
-
-#define UIWKDocumentRequestMarkedTextRects (1 << 5)
-#define UIWKDocumentRequestSpatialAndCurrentSelection (1 << 6)
-
-@protocol UIWKInteractionViewProtocol_Staging66646042 <UIWKInteractionViewProtocol>
-@optional
-- (NSArray<NSTextAlternatives *> *)alternativesForSelectedText;
-@end
 
 @interface UITextAutofillSuggestion ()
 + (instancetype)autofillSuggestionWithUsername:(NSString *)username password:(NSString *)password;
