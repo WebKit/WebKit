@@ -71,11 +71,11 @@ InlineTextItem InlineTextItem::right(unsigned length, std::optional<InlineLayout
     return { inlineTextBox(), end() - length, length, bidiLevel(), hasTrailingSoftHyphen(), isWordSeparator(), width, m_textItemType };
 }
 
-InlineTextItem InlineTextItem::splitAt(size_t position)
+InlineTextItem InlineTextItem::split(size_t leftSideLength)
 {
     RELEASE_ASSERT(length() > 1);
-    RELEASE_ASSERT(position > start() && position < end());
-    auto rightSide = right(end() - position, { });
+    RELEASE_ASSERT(leftSideLength && leftSideLength < length());
+    auto rightSide = right(length() - leftSideLength, { });
     m_length = length() - rightSide.length();
     return rightSide;
 }

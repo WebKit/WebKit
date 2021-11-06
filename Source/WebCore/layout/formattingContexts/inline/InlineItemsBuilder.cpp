@@ -139,32 +139,37 @@ void InlineItemsBuilder::collectInlineItems(InlineItems& inlineItems)
     }
 }
 
-using ContentOffsetMap = HashMap<const Box*, size_t>;
-static inline void buildBidiParagraph(const InlineItems& inlineItems,  StringBuilder& paragraphContentBuilder, ContentOffsetMap& contentOffsetMap)
+using InlineItemOffsetList = Vector<std::optional<size_t>>;
+static inline void buildBidiParagraph(const InlineItems& inlineItems,  StringBuilder& paragraphContentBuilder, InlineItemOffsetList& inlineItemOffsetList)
 {
     const Box* lastInlineTextBox = nullptr;
-    for (auto& inlineItem : inlineItems) {
+    size_t inlineTextBoxOffset = 0;
+    for (size_t index = 0; index < inlineItems.size(); ++index) {
+        auto& inlineItem = inlineItems[index];
         auto& layoutBox = inlineItem.layoutBox();
 
         if (inlineItem.isText()) {
             if (lastInlineTextBox != &layoutBox) {
-                contentOffsetMap.set(&layoutBox, paragraphContentBuilder.length());
+                inlineTextBoxOffset = paragraphContentBuilder.length();
                 paragraphContentBuilder.append(downcast<InlineTextBox>(layoutBox).content());
                 lastInlineTextBox = &layoutBox;
             }
-        } else if (inlineItem.isBox())
+            inlineItemOffsetList.uncheckedAppend({ inlineTextBoxOffset + downcast<InlineTextItem>(inlineItem).start() });
+        } else if (inlineItem.isBox()) {
+            inlineItemOffsetList.uncheckedAppend({ paragraphContentBuilder.length() });
             paragraphContentBuilder.append(objectReplacementCharacter);
+        }
         else if (inlineItem.isInlineBoxStart() || inlineItem.isInlineBoxEnd()) {
             // https://drafts.csswg.org/css-writing-modes/#unicode-bidi
             auto& style = inlineItem.style();
             auto initiatesControlCharacter = style.rtlOrdering() == Order::Logical && style.unicodeBidi() != EUnicodeBidi::UBNormal;
-            if (!initiatesControlCharacter)
+            if (!initiatesControlCharacter) {
+                // Opaque items do not have position in the bidi paragraph. They inherit their bidi level from the next inline item.
+                inlineItemOffsetList.uncheckedAppend({ });
                 continue;
+            }
+            inlineItemOffsetList.uncheckedAppend({ paragraphContentBuilder.length() });
             auto isEnteringBidi = inlineItem.isInlineBoxStart();
-
-            if (isEnteringBidi)
-                contentOffsetMap.add(&layoutBox, paragraphContentBuilder.length());
-
             switch (style.unicodeBidi()) {
             case EUnicodeBidi::UBNormal:
                 // The box does not open an additional level of embedding with respect to the bidirectional algorithm.
@@ -206,8 +211,10 @@ void InlineItemsBuilder::breakAndComputeBidiLevels(InlineItems& inlineItems)
     ASSERT(!inlineItems.isEmpty());
 
     StringBuilder paragraphContentBuilder;
-    ContentOffsetMap contentOffsetMap;
-    buildBidiParagraph(inlineItems, paragraphContentBuilder, contentOffsetMap);
+    InlineItemOffsetList inlineItemOffsets;
+    inlineItemOffsets.reserveInitialCapacity(inlineItems.size());
+    buildBidiParagraph(inlineItems, paragraphContentBuilder, inlineItemOffsets);
+    ASSERT(inlineItemOffsets.size() == inlineItems.size());
 
     // 1. Setup the bidi boundary loop by calling ubidi_setPara with the paragraph text.
     // 2. Call ubidi_getLogicalRun to advance to the next bidi boundary until we hit the end of the content.
@@ -218,61 +225,74 @@ void InlineItemsBuilder::breakAndComputeBidiLevels(InlineItems& inlineItems)
         ubidi_close(ubidi);
     });
 
-    UBiDiLevel bidiLevel = UBIDI_DEFAULT_LTR;
+    UBiDiLevel rootBidiLevel = UBIDI_DEFAULT_LTR;
     bool useHeuristicBaseDirection = root().style().unicodeBidi() == EUnicodeBidi::Plaintext;
     if (!useHeuristicBaseDirection)
-        bidiLevel = root().style().isLeftToRightDirection() ? UBIDI_LTR : UBIDI_RTL;
+        rootBidiLevel = root().style().isLeftToRightDirection() ? UBIDI_LTR : UBIDI_RTL;
 
     UErrorCode error = U_ZERO_ERROR;
     ASSERT(!paragraphContentBuilder.isEmpty());
-    ubidi_setPara(ubidi, paragraphContentBuilder.characters16(), paragraphContentBuilder.length(), bidiLevel, nullptr, &error);
+    ubidi_setPara(ubidi, paragraphContentBuilder.characters16(), paragraphContentBuilder.length(), rootBidiLevel, nullptr, &error);
     if (U_FAILURE(error)) {
         ASSERT_NOT_REACHED();
         return;
     }
 
-    size_t currentInlineItemIndex = 0;
+    size_t inlineItemIndex = 0;
+    auto hasSeenOpaqueItem = false;
     for (size_t currentPosition = 0; currentPosition < paragraphContentBuilder.length();) {
-        UBiDiLevel level;
+        UBiDiLevel bidiLevel;
         int32_t endPosition = currentPosition;
-        ubidi_getLogicalRun(ubidi, currentPosition, &endPosition, &level);
+        ubidi_getLogicalRun(ubidi, currentPosition, &endPosition, &bidiLevel);
 
-        auto setBidiLevelOnRange = [&] {
+        auto setBidiLevelOnRange = [&](size_t bidiEnd, auto bidiLevelForRange) {
             // We should always have inline item(s) associated with a bidi range.
-            ASSERT(currentInlineItemIndex < inlineItems.size());
-
-            while (currentInlineItemIndex < inlineItems.size()) {
-                auto& inlineItem = inlineItems[currentInlineItemIndex];
-                if (!inlineItem.isText()) {
-                    // FIXME: This fails with multiple inline boxes as they don't advance position.
-                    inlineItem.setBidiLevel(level);
-                    ++currentInlineItemIndex;
+            ASSERT(inlineItemIndex < inlineItemOffsets.size());
+            // Start of the range is always where we left off (bidi ranges do not have gaps).
+            for (; inlineItemIndex < inlineItemOffsets.size(); ++inlineItemIndex) {
+                auto offset = inlineItemOffsets[inlineItemIndex];
+                if (!offset) {
+                    // This is an opaque item. Let's post-process it.
+                    hasSeenOpaqueItem = true;
                     continue;
                 }
-                // FIXME: Find out if this is the most optimal place to measure and cache text widths. 
+                if (*offset >= bidiEnd) {
+                    // This inline item is outside of the bidi range.
+                    break;
+                }
+                auto& inlineItem = inlineItems[inlineItemIndex];
+                inlineItem.setBidiLevel(bidiLevelForRange);
+                if (!inlineItem.isText())
+                    continue;
+                // Check if this text item is on bidi boundary and needs splitting.
                 auto& inlineTextItem = downcast<InlineTextItem>(inlineItem);
-                inlineTextItem.setBidiLevel(level);
-
-                auto inlineTextItemEnd = inlineTextItem.end();
-                auto bidiEnd = endPosition - contentOffsetMap.get(&inlineTextItem.layoutBox());
-                if (bidiEnd == inlineTextItemEnd) {
-                    ++currentInlineItemIndex;
+                auto endPosition = *offset + inlineTextItem.length();
+                if (endPosition > bidiEnd) {
+                    inlineItems.insert(inlineItemIndex + 1, inlineTextItem.split(bidiEnd - *offset));
+                    // Right side is going to be processed at the next bidi range.
+                    inlineItemOffsets.insert(inlineItemIndex + 1, bidiEnd);
+                    ++inlineItemIndex;
                     break;
                 }
-                if (bidiEnd < inlineTextItemEnd) {
-                    if (currentInlineItemIndex == inlineItems.size() - 1)
-                        inlineItems.append(inlineTextItem.splitAt(bidiEnd));
-                    else
-                        inlineItems.insert(currentInlineItemIndex + 1, inlineTextItem.splitAt(bidiEnd));
-                    ++currentInlineItemIndex;
-                    break;
-                }
-                ++currentInlineItemIndex;
             }
         };
-        setBidiLevelOnRange();
+        setBidiLevelOnRange(endPosition, bidiLevel);
         currentPosition = endPosition;
     }
+
+    auto setBidiLevelForOpaqueInlineItems = [&] {
+        if (!hasSeenOpaqueItem)
+            return;
+        // Opaque items (inline items with no paragraph content) get their bidi level values from their adjacent items.
+        auto lastBidiLevel = rootBidiLevel;
+        for (auto index = inlineItems.size(); index--;) {
+            if (!inlineItemOffsets[index])
+                inlineItems[index].setBidiLevel(lastBidiLevel);
+            else
+                lastBidiLevel = inlineItems[index].bidiLevel();
+        }
+    };
+    setBidiLevelForOpaqueInlineItems();
 }
 
 void InlineItemsBuilder::handleTextContent(const InlineTextBox& inlineTextBox, InlineItems& inlineItems)

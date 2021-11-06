@@ -64,7 +64,7 @@ private:
     friend class InlineItemsBuilder;
     using InlineItem::TextItemType;
 
-    InlineTextItem splitAt(size_t position);
+    InlineTextItem split(size_t leftSideLength);
 
     InlineTextItem(const InlineTextBox&, unsigned start, unsigned length, UBiDiLevel, bool hasTrailingSoftHyphen, bool isWordSeparator, std::optional<InlineLayoutUnit> width, TextItemType);
     explicit InlineTextItem(const InlineTextBox&, UBiDiLevel);
