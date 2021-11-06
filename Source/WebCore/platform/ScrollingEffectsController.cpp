@@ -150,7 +150,7 @@ bool ScrollingEffectsController::startMomentumScrollWithInitialVelocity(const Fl
     if (!m_currentAnimation)
         m_currentAnimation = makeUnique<ScrollAnimationMomentum>(*this);
 
-    LOG_WITH_STREAM(ScrollAnimations, stream << "ScrollingEffectsController " << this << " startMomentumScrollWithInitialVelocity " << initialVelocity << " from " << initialOffset);
+    LOG_WITH_STREAM(ScrollAnimations, stream << "ScrollingEffectsController " << this << " startMomentumScrollWithInitialVelocity " << initialVelocity << " initialDelta " << initialDelta << " from " << initialOffset);
     return downcast<ScrollAnimationMomentum>(*m_currentAnimation).startAnimatedScrollWithInitialVelocity(initialOffset, initialVelocity, initialDelta, destinationModifier);
 }
 

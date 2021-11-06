@@ -47,16 +47,20 @@ public:
 
     virtual FloatPoint scrollOffsetAfterElapsedTime(Seconds) = 0;
     virtual Seconds animationDuration() = 0;
-    virtual FloatPoint predictedDestinationOffset();
+
+    FloatPoint destinationScrollOffset() const { return m_retargetedScrollOffset.value_or(m_initialDestinationOffset); }
+
     void setRetargetedScrollOffset(const FloatPoint&);
 
 protected:
-    const FloatPoint& retargetedScrollOffset() const { return m_retargetedScrollOffset.value(); }
-    virtual void retargetedScrollOffsetDidChange() { }
+    virtual FloatPoint predictedDestinationOffset();
+
+    virtual void destinationScrollOffsetDidChange() { }
 
     FloatSize m_initialDelta;
     FloatSize m_initialVelocity;
     FloatPoint m_initialScrollOffset;
+    FloatPoint m_initialDestinationOffset;
     ScrollExtents m_scrollExtents;
 
 private:
@@ -70,9 +74,11 @@ public:
 private:
     FloatPoint scrollOffsetAfterElapsedTime(Seconds) final;
     Seconds animationDuration() final;
+
     void initializeInterpolationCoefficientsIfNecessary();
     void initializeSnapProgressCurve();
     float animationProgressAfterElapsedTime(Seconds) const;
+
     FloatPoint linearlyInterpolatedOffsetAtProgress(float progress);
     FloatPoint cubicallyInterpolatedOffsetAtProgress(float progress) const;
 
@@ -81,7 +87,6 @@ private:
     FloatSize m_snapAnimationCurveCoefficients[4] { };
     bool m_forceLinearAnimationCurve { false };
     bool m_momentumCalculatorRequiresInitialization { true };
-    std::optional<FloatSize> m_predictedDestinationOffset;
 };
 
 } // namespace WebCore

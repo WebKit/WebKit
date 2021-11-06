@@ -40,14 +40,14 @@ private:
     FloatPoint scrollOffsetAfterElapsedTime(Seconds) final;
     Seconds animationDuration() final;
     FloatPoint predictedDestinationOffset() final;
-    void retargetedScrollOffsetDidChange() final;
+    void destinationScrollOffsetDidChange() final;
 
     _NSScrollingMomentumCalculator *ensurePlatformMomentumCalculator();
     bool requiresMomentumScrolling();
+    void setMomentumCalculatorDestinationOffset(FloatPoint);
 
     RetainPtr<_NSScrollingMomentumCalculator> m_platformMomentumCalculator;
     std::optional<bool> m_requiresMomentumScrolling;
-    FloatPoint m_initialDestinationOrigin;
 };
 
 } // namespace WebCore

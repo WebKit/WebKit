@@ -47,29 +47,43 @@ void ScrollingMomentumCalculator::setPlatformMomentumScrollingPredictionEnabled(
 ScrollingMomentumCalculatorMac::ScrollingMomentumCalculatorMac(const ScrollExtents& scrollExtents, const FloatPoint& initialOffset, const FloatSize& initialDelta, const FloatSize& initialVelocity)
     : ScrollingMomentumCalculator(scrollExtents, initialOffset, initialDelta, initialVelocity)
 {
+    m_initialDestinationOffset = predictedDestinationOffset();
+    // We could compute m_requiresMomentumScrolling here, based on whether initialDelta is non-zero or we are in a rubber-banded state.
 }
 
 FloatPoint ScrollingMomentumCalculatorMac::scrollOffsetAfterElapsedTime(Seconds elapsedTime)
 {
     if (!requiresMomentumScrolling())
-        return retargetedScrollOffset();
+        return destinationScrollOffset();
 
     return [ensurePlatformMomentumCalculator() positionAfterDuration:elapsedTime.value()];
 }
 
 FloatPoint ScrollingMomentumCalculatorMac::predictedDestinationOffset()
 {
-    if (!gEnablePlatformMomentumScrollingPrediction)
-        return ScrollingMomentumCalculator::predictedDestinationOffset();
-
     ensurePlatformMomentumCalculator();
-    return { m_initialDestinationOrigin.x(), m_initialDestinationOrigin.y() };
+
+    if (!gEnablePlatformMomentumScrollingPrediction) {
+        auto nonPlatformPredictedOffset = ScrollingMomentumCalculator::predictedDestinationOffset();
+        // We need to make sure the _NSScrollingMomentumCalculator has the same idea of what offset we're shooting for.
+        if (nonPlatformPredictedOffset != m_initialDestinationOffset)
+            setMomentumCalculatorDestinationOffset(nonPlatformPredictedOffset);
+
+        return nonPlatformPredictedOffset;
+    }
+
+    return m_initialDestinationOffset;
 }
 
-void ScrollingMomentumCalculatorMac::retargetedScrollOffsetDidChange()
+void ScrollingMomentumCalculatorMac::destinationScrollOffsetDidChange()
+{
+    setMomentumCalculatorDestinationOffset(destinationScrollOffset());
+}
+
+void ScrollingMomentumCalculatorMac::setMomentumCalculatorDestinationOffset(FloatPoint scrollOffset)
 {
     _NSScrollingMomentumCalculator *calculator = ensurePlatformMomentumCalculator();
-    calculator.destinationOrigin = retargetedScrollOffset();
+    calculator.destinationOrigin = scrollOffset;
     [calculator calculateToReachDestination];
 }
 
@@ -84,7 +98,7 @@ Seconds ScrollingMomentumCalculatorMac::animationDuration()
 bool ScrollingMomentumCalculatorMac::requiresMomentumScrolling()
 {
     if (m_requiresMomentumScrolling == std::nullopt)
-        m_requiresMomentumScrolling = m_initialScrollOffset != retargetedScrollOffset() || m_initialVelocity.area();
+        m_requiresMomentumScrolling = m_initialScrollOffset != destinationScrollOffset() || m_initialVelocity.area();
     return m_requiresMomentumScrolling.value();
 }
 
@@ -97,7 +111,7 @@ _NSScrollingMomentumCalculator *ScrollingMomentumCalculatorMac::ensurePlatformMo
     NSRect contentFrame = NSMakeRect(0, 0, m_scrollExtents.contentsSize.width(), m_scrollExtents.contentsSize.height());
     NSPoint velocity = NSMakePoint(m_initialVelocity.width(), m_initialVelocity.height());
     m_platformMomentumCalculator = adoptNS([[_NSScrollingMomentumCalculator alloc] initWithInitialOrigin:origin velocity:velocity documentFrame:contentFrame constrainedClippingOrigin:NSZeroPoint clippingSize:m_scrollExtents.viewportSize tolerance:NSMakeSize(1, 1)]);
-    m_initialDestinationOrigin = [m_platformMomentumCalculator destinationOrigin];
+    m_initialDestinationOffset = [m_platformMomentumCalculator destinationOrigin];
     return m_platformMomentumCalculator.get();
 }
 

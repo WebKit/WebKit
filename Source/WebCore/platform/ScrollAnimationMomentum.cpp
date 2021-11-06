@@ -27,6 +27,7 @@
 
 #include "Logging.h"
 #include "ScrollingMomentumCalculator.h"
+#include <wtf/text/TextStream.h>
 
 namespace WebCore {
 
@@ -40,16 +41,21 @@ ScrollAnimationMomentum::~ScrollAnimationMomentum() = default;
 bool ScrollAnimationMomentum::startAnimatedScrollWithInitialVelocity(const FloatPoint& initialOffset, const FloatSize& initialVelocity, const FloatSize& initialDelta, const Function<FloatPoint(const FloatPoint&)>& destinationModifier)
 {
     auto extents = m_client.scrollExtentsForAnimation(*this);
+    m_currentOffset = initialOffset;
 
     m_momentumCalculator = ScrollingMomentumCalculator::create(extents, initialOffset, initialDelta, initialVelocity);
-    auto predictedScrollOffset = m_momentumCalculator->predictedDestinationOffset();
+    auto destinationScrollOffset = m_momentumCalculator->destinationScrollOffset();
 
     if (destinationModifier) {
-        predictedScrollOffset = destinationModifier(predictedScrollOffset);
-        m_momentumCalculator->setRetargetedScrollOffset(predictedScrollOffset);
+        auto modifiedOffset = destinationModifier(destinationScrollOffset);
+        if (modifiedOffset != destinationScrollOffset) {
+            LOG_WITH_STREAM(ScrollAnimations, stream << "ScrollAnimationMomentum " << this << " startAnimatedScrollWithInitialVelocity - predicted offset " << destinationScrollOffset << " modified to " << modifiedOffset);
+            destinationScrollOffset = modifiedOffset;
+            m_momentumCalculator->setRetargetedScrollOffset(destinationScrollOffset);
+        }
     }
 
-    if (predictedScrollOffset == initialOffset) {
+    if (destinationScrollOffset == initialOffset) {
         m_momentumCalculator = nullptr;
         return false;
     }
@@ -99,7 +105,7 @@ void ScrollAnimationMomentum::serviceAnimation(MonotonicTime currentTime)
 void ScrollAnimationMomentum::updateScrollExtents()
 {
     auto extents = m_client.scrollExtentsForAnimation(*this);
-    auto predictedScrollOffset = m_momentumCalculator->predictedDestinationOffset();
+    auto predictedScrollOffset = m_momentumCalculator->destinationScrollOffset();
     auto constrainedOffset = predictedScrollOffset.constrainedBetween(extents.minimumScrollOffset(), extents.maximumScrollOffset());
     if (constrainedOffset != predictedScrollOffset)
         retargetActiveAnimation(constrainedOffset);
