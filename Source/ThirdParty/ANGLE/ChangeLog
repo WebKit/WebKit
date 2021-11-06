@@ -1,3 +1,14 @@
+2021-11-06  David Kilzer  <ddkilzer@apple.com>
+
+        Remove empty directories from from svn.webkit.org repository as of r285357
+        <https://webkit.org/b/232773>
+
+        Unreviewed clean up.
+
+        * src/id: Removed.
+        * src/libANGLE/renderer/metal/shaders/compiled: Removed.
+        * src/tests/perf_tests/restricted_traces: Removed.
+
 2021-11-03  Kyle Piddington  <kpiddington@apple.com>
 
         REGRESSION (iOS 15): Tab crashes when trying to render Projector stories

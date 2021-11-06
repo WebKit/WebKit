@@ -1,3 +1,83 @@
+2021-11-06  David Kilzer  <ddkilzer@apple.com>
+
+        Remove empty directories from from svn.webkit.org repository as of r285357
+        <https://webkit.org/b/232773>
+
+        Unreviewed clean up.
+
+        * canvas: Removed.
+        * platform/glib/imported/w3c/web-platform-tests/cors: Removed.
+        * platform/glib/imported/w3c/web-platform-tests/dom/events: Removed.
+        * platform/glib/imported/w3c/web-platform-tests/eventsource: Removed.
+        * platform/glib/imported/w3c/web-platform-tests/svg/shapes/scripted: Removed.
+        * platform/gtk/fast/forms/fieldset: Removed.
+        * platform/gtk/imported/w3c/web-platform-tests/css/css-images: Removed.
+        * platform/gtk/imported/w3c/web-platform-tests/media-source: Removed.
+        * platform/gtk/imported/w3c/web-platform-tests/svg/animations: Removed.
+        * platform/gtk/imported/w3c/web-platform-tests/svg/embedded: Removed.
+        * platform/gtk/imported/w3c/web-platform-tests/svg/geometry/reftests: Removed.
+        * platform/gtk/imported/w3c/web-platform-tests/svg/pservers: Removed.
+        * platform/gtk/imported/w3c/web-platform-tests/svg/struct: Removed.
+        * platform/gtk/media/W3C: Removed.
+        * platform/gtk/media/media-source: Removed.
+        * platform/gtk/media/mediacapabilities: Removed.
+        * platform/gtk/webaudio: Removed.
+        * platform/ios-14-wk2/imported/w3c/web-platform-tests/css: Removed.
+        * platform/ios-simulator/webgl/2.0.0/conformance/buffers: Removed.
+        * platform/ios-simulator/webgl/2.0.0/conformance/glsl: Removed.
+        * platform/ios-simulator/webgl/2.0.0/conformance/reading: Removed.
+        * platform/ios-wk2/fast/clip: Removed.
+        * platform/ios-wk2/fast/dom/Window: Removed.
+        * platform/ios-wk2/fast/multicol: Removed.
+        * platform/ios-wk2/http/tests/adClickAttribution: Removed.
+        * platform/ios-wk2/http/tests/security: Removed.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/html/webappapis: Removed.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/svg/painting: Removed.
+        * platform/ios/compositing/contents-opaque: Removed.
+        * platform/ios/css3/calc: Removed.
+        * platform/ios/fast/events/constructors: Removed.
+        * platform/ios/imported/w3c/web-platform-tests/cors: Removed.
+        * platform/ios/imported/w3c/web-platform-tests/fetch/api/basic: Removed.
+        * platform/ios/imported/w3c/web-platform-tests/html/semantics/forms/the-form-element: Removed.
+        * platform/ios/imported/w3c/web-platform-tests/html/semantics/forms/the-meter-element: Removed.
+        * platform/ios/imported/w3c/web-platform-tests/html/semantics/interactive-elements: Removed.
+        * platform/ios/imported/w3c/web-platform-tests/web-animations: Removed.
+        * platform/mac-mojave/imported/w3c/web-platform-tests/WebCryptoAPI: Removed.
+        * platform/mac-wk1/fast/canvas: Removed.
+        * platform/mac-wk1/http/wpt/html/browsers: Removed.
+        * platform/mac-wk1/imported/w3c/web-platform-tests/css/geometry: Removed.
+        * platform/mac-wk1/imported/w3c/web-platform-tests/html/browsers/history/joint-session-history: Removed.
+        * platform/mac-wk1/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface: Removed.
+        * platform/mac-wk1/imported/w3c/web-platform-tests/svg: Removed.
+        * platform/mac-wk1/inspector/model: Removed.
+        * platform/mac-wk2/canvas: Removed.
+        * platform/mac-wk2/editing/style: Removed.
+        * platform/mac-wk2/fast/frames/flattening: Removed.
+        * platform/mac-wk2/imported/w3c/web-platform-tests/html/dom/documents: Removed.
+        * platform/mac-wk2/imported/w3c/web-platform-tests/html/semantics/embedded-content: Removed.
+        * platform/mac-wk2/media: Removed.
+        * platform/mac/canvas: Removed.
+        * platform/mac/editing/mac/selection: Removed.
+        * platform/mac/fast/dom/HTMLImageElement/resources: Removed.
+        * platform/mac/imported/w3c/web-platform-tests/IndexedDB: Removed.
+        * platform/mac/imported/w3c/web-platform-tests/cors: Removed.
+        * platform/mac/imported/w3c/web-platform-tests/css/css-masking: Removed.
+        * platform/mac/security: Removed.
+        * platform/mac/userscripts: Removed.
+        * platform/win-7sp0/media/W3C/audio: Removed.
+        * platform/win/canvas: Removed.
+        * platform/wincairo/css3/calc: Removed.
+        * platform/wk2/http/tests/contentdispositionattachmentsandbox: Removed.
+        * platform/wk2/http/tests/contentextensions: Removed.
+        * platform/wk2/imported/w3c/web-platform-tests/html/browsers: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/css/css-images: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/html/webappapis: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/embedded: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/geometry/reftests: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/pservers: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/struct: Removed.
+
 2021-11-06  Joonghun Park  <jh718.park@samsung.com>
 
         font-synthesis inline/computed style should be in canonical order.

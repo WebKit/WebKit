@@ -1,3 +1,13 @@
+2021-11-06  David Kilzer  <ddkilzer@apple.com>
+
+        Remove empty directories from from svn.webkit.org repository as of r285357
+        <https://webkit.org/b/232773>
+
+        Unreviewed clean up.
+
+        * patches/fdo: Removed.
+        * patches/mesa: Removed.
+
 2021-10-28  Lauro Moura  <lmoura@igalia.com>
 
         [FlatpakSDK] Import ccache 4.4.2 over fdo-sdk 4.4.0
