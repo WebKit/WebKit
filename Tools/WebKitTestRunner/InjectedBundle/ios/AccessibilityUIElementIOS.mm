@@ -837,12 +837,14 @@ bool AccessibilityUIElement::isSearchField() const
     return ([m_element accessibilityTraits] & [m_element _axSearchFieldTrait]) == [m_element _axSearchFieldTrait];
 }
 
-bool AccessibilityUIElement::isInDefinitionListDefinition() const
+bool AccessibilityUIElement::isInDescriptionListDetail() const
 {
+    // The names are inconsistent here (isInDescriptionListDetail vs. isInDescriptionListDefinition)
+    // because the iOS interface requires the latter form.
     return [m_element accessibilityIsInDescriptionListDefinition];
 }
 
-bool AccessibilityUIElement::isInDefinitionListTerm() const
+bool AccessibilityUIElement::isInDescriptionListTerm() const
 {
     return [m_element accessibilityIsInDescriptionListTerm];
 }

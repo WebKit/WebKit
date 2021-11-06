@@ -285,8 +285,8 @@
     undefined assistiveTechnologySimulatedFocus();
     readonly attribute boolean isSearchField;
     readonly attribute boolean isTextArea;
-    readonly attribute boolean isInDefinitionListDefinition;
-    readonly attribute boolean isInDefinitionListTerm;
+    readonly attribute boolean isInDescriptionListDetail;
+    readonly attribute boolean isInDescriptionListTerm;
 
     // Fieldset
     readonly attribute boolean hasContainedByFieldsetTrait;

@@ -18,14 +18,14 @@ var successfullyParsed = false;
 
 <script>
 
-    description("This tests that the definition lists are exposed on ios.");
+    description("This tests that description lists are exposed on iOS.");
 
     if (window.accessibilityController) {
 
         var term = accessibilityController.accessibleElementById("term").childAtIndex(0);
         var def = accessibilityController.accessibleElementById("def").childAtIndex(0);
-        shouldBeTrue("term.isInDefinitionListTerm");
-        shouldBeTrue("def.isInDefinitionListDefinition");
+        shouldBeTrue("term.isInDescriptionListTerm");
+        shouldBeTrue("def.isInDescriptionListDetail");
     }
 
     successfullyParsed = true;

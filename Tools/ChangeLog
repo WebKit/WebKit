@@ -1,3 +1,33 @@
+2021-11-06  Tyler Wilcock  <tyler_w@apple.com>
+
+        AX: Rename usages DefinitionList to DescriptionList and DescriptionListDefinition to DescriptionListDetail
+        https://bugs.webkit.org/show_bug.cgi?id=232775
+
+        Reviewed by Chris Fleizach.
+
+        Rename usages of "definition list" to "description list" and
+        DescriptionListDefinition to DescriptionListDetail, as the latter
+        versions of each pair are what the corresponding HTML elements are
+        actually called.
+
+        https://html.spec.whatwg.org/multipage/grouping-content.html#the-dl-element
+        https://html.spec.whatwg.org/multipage/grouping-content.html#the-dd-element
+
+        * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.cpp:
+        (WTR::AccessibilityUIElement::isInDescriptionListDetail const): Added.
+        (WTR::AccessibilityUIElement::isInDescriptionListTerm const): Added.
+        (WTR::AccessibilityUIElement::isInDefinitionListDefinition const): Deleted.
+        (WTR::AccessibilityUIElement::isInDefinitionListTerm const): Deleted.
+        * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.h:
+        * WebKitTestRunner/InjectedBundle/Bindings/AccessibilityUIElement.idl:
+        Rename isInDefinitionListDefinition to isInDescriptionListDetail and
+        isInDefinitionListTerm to isInDescriptionListTerm.
+        * WebKitTestRunner/InjectedBundle/ios/AccessibilityUIElementIOS.mm:
+        (WTR::AccessibilityUIElement::isInDescriptionListDetail const): Added.
+        (WTR::AccessibilityUIElement::isInDescriptionListTerm const): Added.
+        (WTR::AccessibilityUIElement::isInDefinitionListDefinition const): Deleted.
+        (WTR::AccessibilityUIElement::isInDefinitionListTerm const): Deleted.
+
 2021-11-05  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Mail compose becomes unresponsive after pasting in text and attempting to type
