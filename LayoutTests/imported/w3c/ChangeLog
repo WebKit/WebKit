@@ -1,5 +1,14 @@
 2021-11-06  Tim Nguyen  <ntim@apple.com>
 
+        Unreviewed, add missing green-dialog-and-backdrop.html
+        https://bugs.webkit.org/show_bug.cgi?id=232784
+
+        This should have been part of r285368 to avoid resource-files.json referencing an non-existing file.
+
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/green-dialog-and-backdrop.html: Added.
+
+2021-11-06  Tim Nguyen  <ntim@apple.com>
+
         Re-import html/semantics/interactive-elements/the-dialog-element WPT
         https://bugs.webkit.org/show_bug.cgi?id=232784
 
