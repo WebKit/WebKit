@@ -27,6 +27,9 @@
 
 #include "ActiveDOMObject.h"
 #include "EventTarget.h"
+#include "GPUComputePipeline.h"
+#include "GPURenderPipeline.h"
+#include "JSDOMPromiseDeferred.h"
 #include "ScriptExecutionContext.h"
 #include <optional>
 #include <wtf/Ref.h>
@@ -40,12 +43,18 @@ class GPUBindGroupLayout;
 struct GPUBindGroupLayoutDescriptor;
 class GPUBuffer;
 struct GPUBufferDescriptor;
+class GPUComputePipeline;
+struct GPUComputePipelineDescriptor;
 class GPUExternalTexture;
 struct GPUExternalTextureDescriptor;
+class GPURenderPipeline;
+struct GPURenderPipelineDescriptor;
 class GPUPipelineLayout;
 struct GPUPipelineLayoutDescriptor;
 class GPUSampler;
 struct GPUSamplerDescriptor;
+class GPUShaderModule;
+struct GPUShaderModuleDescriptor;
 class GPUSupportedFeatures;
 class GPUSupportedLimits;
 class GPUTexture;
@@ -76,6 +85,14 @@ public:
     Ref<GPUBindGroupLayout> createBindGroupLayout(const GPUBindGroupLayoutDescriptor&);
     Ref<GPUPipelineLayout> createPipelineLayout(const GPUPipelineLayoutDescriptor&);
     Ref<GPUBindGroup> createBindGroup(const GPUBindGroupDescriptor&);
+
+    Ref<GPUShaderModule> createShaderModule(const GPUShaderModuleDescriptor&);
+    Ref<GPUComputePipeline> createComputePipeline(const GPUComputePipelineDescriptor&);
+    Ref<GPURenderPipeline> createRenderPipeline(const GPURenderPipelineDescriptor&);
+    using CreateComputePipelineAsyncPromise = DOMPromiseDeferred<IDLInterface<GPUComputePipeline>>;
+    void createComputePipelineAsync(const GPUComputePipelineDescriptor&, CreateComputePipelineAsyncPromise&&);
+    using CreateRenderPipelineAsyncPromise = DOMPromiseDeferred<IDLInterface<GPURenderPipeline>>;
+    void createRenderPipelineAsync(const GPURenderPipelineDescriptor&, CreateRenderPipelineAsyncPromise&&);
 
 private:
     GPUDevice(ScriptExecutionContext* scriptExecutionContext)

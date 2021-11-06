@@ -62,13 +62,26 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/WebGPU/GPUBindGroupLayout.idl \
     $(WebCore)/Modules/WebGPU/GPUBindGroupLayoutDescriptor.idl \
     $(WebCore)/Modules/WebGPU/GPUBindGroupLayoutEntry.idl \
+    $(WebCore)/Modules/WebGPU/GPUBlendComponent.idl \
+    $(WebCore)/Modules/WebGPU/GPUBlendFactor.idl \
+    $(WebCore)/Modules/WebGPU/GPUBlendOperation.idl \
+    $(WebCore)/Modules/WebGPU/GPUBlendState.idl \
     $(WebCore)/Modules/WebGPU/GPUBuffer.idl \
     $(WebCore)/Modules/WebGPU/GPUBufferBinding.idl \
     $(WebCore)/Modules/WebGPU/GPUBufferBindingLayout.idl \
     $(WebCore)/Modules/WebGPU/GPUBufferBindingType.idl \
     $(WebCore)/Modules/WebGPU/GPUBufferDescriptor.idl \
     $(WebCore)/Modules/WebGPU/GPUBufferUsage.idl \
+    $(WebCore)/Modules/WebGPU/GPUColorTargetState.idl \
+    $(WebCore)/Modules/WebGPU/GPUColorWrite.idl \
     $(WebCore)/Modules/WebGPU/GPUCompareFunction.idl \
+    $(WebCore)/Modules/WebGPU/GPUCompilationInfo.idl \
+    $(WebCore)/Modules/WebGPU/GPUCompilationMessage.idl \
+    $(WebCore)/Modules/WebGPU/GPUCompilationMessageType.idl \
+    $(WebCore)/Modules/WebGPU/GPUComputePipeline.idl \
+    $(WebCore)/Modules/WebGPU/GPUComputePipelineDescriptor.idl \
+    $(WebCore)/Modules/WebGPU/GPUCullMode.idl \
+    $(WebCore)/Modules/WebGPU/GPUDepthStencilState.idl \
     $(WebCore)/Modules/WebGPU/GPUDevice.idl \
     $(WebCore)/Modules/WebGPU/GPUDeviceDescriptor.idl \
     $(WebCore)/Modules/WebGPU/GPUExtent3DDict.idl \
@@ -77,19 +90,34 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/WebGPU/GPUExternalTextureDescriptor.idl \
     $(WebCore)/Modules/WebGPU/GPUFeatureName.idl \
     $(WebCore)/Modules/WebGPU/GPUFilterMode.idl \
+    $(WebCore)/Modules/WebGPU/GPUFragmentState.idl \
+    $(WebCore)/Modules/WebGPU/GPUFrontFace.idl \
+    $(WebCore)/Modules/WebGPU/GPUIndexFormat.idl \
     $(WebCore)/Modules/WebGPU/GPUMapMode.idl \
+    $(WebCore)/Modules/WebGPU/GPUMultisampleState.idl \
     $(WebCore)/Modules/WebGPU/GPUObjectBase.idl \
     $(WebCore)/Modules/WebGPU/GPUObjectDescriptorBase.idl \
+    $(WebCore)/Modules/WebGPU/GPUPipelineBase.idl \
+    $(WebCore)/Modules/WebGPU/GPUPipelineDescriptorBase.idl \
     $(WebCore)/Modules/WebGPU/GPUPipelineLayout.idl \
     $(WebCore)/Modules/WebGPU/GPUPipelineLayoutDescriptor.idl \
     $(WebCore)/Modules/WebGPU/GPUPowerPreference.idl \
     $(WebCore)/Modules/WebGPU/GPUPredefinedColorSpace.idl \
+    $(WebCore)/Modules/WebGPU/GPUPrimitiveState.idl \
+    $(WebCore)/Modules/WebGPU/GPUPrimitiveTopology.idl \
+    $(WebCore)/Modules/WebGPU/GPUProgrammableStage.idl \
+    $(WebCore)/Modules/WebGPU/GPURenderPipeline.idl \
+    $(WebCore)/Modules/WebGPU/GPURenderPipelineDescriptor.idl \
     $(WebCore)/Modules/WebGPU/GPURequestAdapterOptions.idl \
     $(WebCore)/Modules/WebGPU/GPUSampler.idl \
     $(WebCore)/Modules/WebGPU/GPUSamplerBindingLayout.idl \
     $(WebCore)/Modules/WebGPU/GPUSamplerBindingType.idl \
     $(WebCore)/Modules/WebGPU/GPUSamplerDescriptor.idl \
+    $(WebCore)/Modules/WebGPU/GPUShaderModule.idl \
+    $(WebCore)/Modules/WebGPU/GPUShaderModuleDescriptor.idl \
     $(WebCore)/Modules/WebGPU/GPUShaderStage.idl \
+    $(WebCore)/Modules/WebGPU/GPUStencilFaceState.idl \
+    $(WebCore)/Modules/WebGPU/GPUStencilOperation.idl \
     $(WebCore)/Modules/WebGPU/GPUStorageTextureAccess.idl \
     $(WebCore)/Modules/WebGPU/GPUStorageTextureBindingLayout.idl \
     $(WebCore)/Modules/WebGPU/GPUSupportedFeatures.idl \
@@ -105,6 +133,11 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/WebGPU/GPUTextureView.idl \
     $(WebCore)/Modules/WebGPU/GPUTextureViewDescriptor.idl \
     $(WebCore)/Modules/WebGPU/GPUTextureViewDimension.idl \
+    $(WebCore)/Modules/WebGPU/GPUVertexAttribute.idl \
+    $(WebCore)/Modules/WebGPU/GPUVertexBufferLayout.idl \
+    $(WebCore)/Modules/WebGPU/GPUVertexFormat.idl \
+    $(WebCore)/Modules/WebGPU/GPUVertexState.idl \
+    $(WebCore)/Modules/WebGPU/GPUVertexStepMode.idl \
     $(WebCore)/Modules/WebGPU/NavigatorGPU.idl \
     $(WebCore)/Modules/airplay/WebKitPlaybackTargetAvailabilityEvent.idl \
     $(WebCore)/Modules/applepay/ApplePayCancelEvent.idl \

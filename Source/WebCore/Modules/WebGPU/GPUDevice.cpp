@@ -32,12 +32,18 @@
 #include "GPUBindGroupLayoutDescriptor.h"
 #include "GPUBuffer.h"
 #include "GPUBufferDescriptor.h"
+#include "GPUComputePipeline.h"
+#include "GPUComputePipelineDescriptor.h"
 #include "GPUExternalTexture.h"
 #include "GPUExternalTextureDescriptor.h"
 #include "GPUPipelineLayout.h"
 #include "GPUPipelineLayoutDescriptor.h"
+#include "GPURenderPipeline.h"
+#include "GPURenderPipelineDescriptor.h"
 #include "GPUSampler.h"
 #include "GPUSamplerDescriptor.h"
+#include "GPUShaderModule.h"
+#include "GPUShaderModuleDescriptor.h"
 #include "GPUSupportedFeatures.h"
 #include "GPUSupportedLimits.h"
 #include "GPUTexture.h"
@@ -103,6 +109,29 @@ Ref<GPUPipelineLayout> GPUDevice::createPipelineLayout(const GPUPipelineLayoutDe
 Ref<GPUBindGroup> GPUDevice::createBindGroup(const GPUBindGroupDescriptor&)
 {
     return GPUBindGroup::create();
+}
+
+Ref<GPUShaderModule> GPUDevice::createShaderModule(const GPUShaderModuleDescriptor&)
+{
+    return GPUShaderModule::create();
+}
+
+Ref<GPUComputePipeline> GPUDevice::createComputePipeline(const GPUComputePipelineDescriptor&)
+{
+    return GPUComputePipeline::create();
+}
+
+Ref<GPURenderPipeline> GPUDevice::createRenderPipeline(const GPURenderPipelineDescriptor&)
+{
+    return GPURenderPipeline::create();
+}
+
+void GPUDevice::createComputePipelineAsync(const GPUComputePipelineDescriptor&, CreateComputePipelineAsyncPromise&&)
+{
+}
+
+void GPUDevice::createRenderPipelineAsync(const GPURenderPipelineDescriptor&, CreateRenderPipelineAsyncPromise&&)
+{
 }
 
 }

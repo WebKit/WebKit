@@ -132,11 +132,17 @@ namespace WebCore {
     macro(GPUBindGroupLayout) \
     macro(GPUBuffer) \
     macro(GPUBufferUsage) \
+    macro(GPUColorWrite) \
+    macro(GPUCompilationInfo) \
+    macro(GPUCompilationMessage) \
+    macro(GPUComputePipeline) \
     macro(GPUDevice) \
     macro(GPUExternalTexture) \
     macro(GPUMapMode) \
     macro(GPUPipelineLayout) \
+    macro(GPURenderPipeline) \
     macro(GPUSampler) \
+    macro(GPUShaderModule) \
     macro(GPUShaderStage) \
     macro(GPUSupportedFeatures) \
     macro(GPUSupportedLimits) \

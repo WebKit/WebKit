@@ -1477,13 +1477,26 @@ list(APPEND WebCore_NON_SVG_IDL_FILES
     Modules/WebGPU/GPUBindGroupLayout.idl
     Modules/WebGPU/GPUBindGroupLayoutDescriptor.idl
     Modules/WebGPU/GPUBindGroupLayoutEntry.idl
+    Modules/WebGPU/GPUBlendComponent.idl
+    Modules/WebGPU/GPUBlendFactor.idl
+    Modules/WebGPU/GPUBlendOperation.idl
+    Modules/WebGPU/GPUBlendState.idl
     Modules/WebGPU/GPUBuffer.idl
     Modules/WebGPU/GPUBufferBinding.idl
     Modules/WebGPU/GPUBufferBindingLayout.idl
     Modules/WebGPU/GPUBufferBindingType.idl
     Modules/WebGPU/GPUBufferDescriptor.idl
     Modules/WebGPU/GPUBufferUsage.idl
+    Modules/WebGPU/GPUColorTargetState.idl
+    Modules/WebGPU/GPUColorWrite.idl
     Modules/WebGPU/GPUCompareFunction.idl
+    Modules/WebGPU/GPUCompilationInfo.idl
+    Modules/WebGPU/GPUCompilationMessage.idl
+    Modules/WebGPU/GPUCompilationMessageType.idl
+    Modules/WebGPU/GPUComputePipeline.idl
+    Modules/WebGPU/GPUComputePipelineDescriptor.idl
+    Modules/WebGPU/GPUCullMode.idl
+    Modules/WebGPU/GPUDepthStencilState.idl
     Modules/WebGPU/GPUDevice.idl
     Modules/WebGPU/GPUDeviceDescriptor.idl
     Modules/WebGPU/GPUExtent3DDict.idl
@@ -1492,19 +1505,34 @@ list(APPEND WebCore_NON_SVG_IDL_FILES
     Modules/WebGPU/GPUExternalTextureDescriptor.idl
     Modules/WebGPU/GPUFeatureName.idl
     Modules/WebGPU/GPUFilterMode.idl
+    Modules/WebGPU/GPUFragmentState.idl
+    Modules/WebGPU/GPUFrontFace.idl
+    Modules/WebGPU/GPUIndexFormat.idl
     Modules/WebGPU/GPUMapMode.idl
+    Modules/WebGPU/GPUMultisampleState.idl
     Modules/WebGPU/GPUObjectBase.idl
     Modules/WebGPU/GPUObjectDescriptorBase.idl
+    Modules/WebGPU/GPUPipelineBase.idl
+    Modules/WebGPU/GPUPipelineDescriptorBase.idl
     Modules/WebGPU/GPUPipelineLayout.idl
     Modules/WebGPU/GPUPipelineLayoutDescriptor.idl
     Modules/WebGPU/GPUPowerPreference.idl
     Modules/WebGPU/GPUPredefinedColorSpace.idl
+    Modules/WebGPU/GPUPrimitiveState.idl
+    Modules/WebGPU/GPUPrimitiveTopology.idl
+    Modules/WebGPU/GPUProgrammableStage.idl
+    Modules/WebGPU/GPURenderPipeline.idl
+    Modules/WebGPU/GPURenderPipelineDescriptor.idl
     Modules/WebGPU/GPURequestAdapterOptions.idl
     Modules/WebGPU/GPUSampler.idl
     Modules/WebGPU/GPUSamplerBindingLayout.idl
     Modules/WebGPU/GPUSamplerBindingType.idl
     Modules/WebGPU/GPUSamplerDescriptor.idl
+    Modules/WebGPU/GPUShaderModule.idl
+    Modules/WebGPU/GPUShaderModuleDescriptor.idl
     Modules/WebGPU/GPUShaderStage.idl
+    Modules/WebGPU/GPUStencilFaceState.idl
+    Modules/WebGPU/GPUStencilOperation.idl
     Modules/WebGPU/GPUStorageTextureAccess.idl
     Modules/WebGPU/GPUStorageTextureBindingLayout.idl
     Modules/WebGPU/GPUSupportedFeatures.idl
@@ -1520,6 +1548,11 @@ list(APPEND WebCore_NON_SVG_IDL_FILES
     Modules/WebGPU/GPUTextureView.idl
     Modules/WebGPU/GPUTextureViewDescriptor.idl
     Modules/WebGPU/GPUTextureViewDimension.idl
+    Modules/WebGPU/GPUVertexAttribute.idl
+    Modules/WebGPU/GPUVertexBufferLayout.idl
+    Modules/WebGPU/GPUVertexFormat.idl
+    Modules/WebGPU/GPUVertexState.idl
+    Modules/WebGPU/GPUVertexStepMode.idl
     Modules/WebGPU/NavigatorGPU.idl
 )
 
