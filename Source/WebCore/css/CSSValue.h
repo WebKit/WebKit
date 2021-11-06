@@ -107,11 +107,11 @@ public:
     bool isImageSetValue() const { return m_classType == ImageSetClass; }
     bool isImageValue() const { return m_classType == ImageClass; }
     bool isImplicitInitialValue() const;
-    bool isInheritedValue() const { return m_classType == InheritedClass; }
-    bool isInitialValue() const { return m_classType == InitialClass; }
-    bool isUnsetValue() const { return m_classType == UnsetClass; }
-    bool isRevertValue() const { return m_classType == RevertClass; }
-    bool isGlobalKeyword() const { return isInheritedValue() || isInitialValue() || isUnsetValue() || isRevertValue(); }
+    bool isInheritValue() const;
+    bool isInitialValue() const;
+    bool isUnsetValue() const;
+    bool isRevertValue() const;
+    bool isCSSWideKeyword() const;
     bool treatAsInitialValue(CSSPropertyID) const;
     bool treatAsInheritedValue(CSSPropertyID) const;
     bool isLinearGradientValue() const { return m_classType == LinearGradientClass; }
@@ -191,11 +191,6 @@ protected:
         FontPaletteValuesOverrideColorsClass,
         FunctionClass,
 
-        InheritedClass,
-        InitialClass,
-        UnsetClass,
-        RevertClass,
-
         ReflectClass,
         ShadowClass,
         UnicodeRangeClass,
@@ -237,6 +232,7 @@ protected:
         : m_primitiveUnitType(0)
         , m_hasCachedCSSText(false)
         , m_valueSeparator(SpaceSeparator)
+        , m_isImplicit(false)
         , m_classType(classType)
     {
     }
@@ -263,6 +259,7 @@ protected:
     mutable unsigned m_hasCachedCSSText : 1;
 
     unsigned m_valueSeparator : ValueSeparatorBits;
+    unsigned m_isImplicit : 1;
 
 private:
     unsigned m_classType : ClassTypeBits; // ClassType

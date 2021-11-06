@@ -185,7 +185,7 @@ bool PropertyCascade::addMatch(const MatchedProperties& matchedProperties, Casca
         if (m_includedProperties == IncludedProperties::InheritedOnly && !current.isInherited()) {
             // Inherited only mode is used after matched properties cache hit.
             // A match with a value that is explicitly inherited should never have been cached.
-            ASSERT(!current.value()->isInheritedValue());
+            ASSERT(!current.value()->isInheritValue());
             continue;
         }
         CSSPropertyID propertyID = current.id();
@@ -308,7 +308,7 @@ PropertyCascade::Direction PropertyCascade::resolveDirectionAndWritingMode(Direc
         for (const auto& matchedProperties : declarationsForCascadeLevel(m_matchResult, cascadeLevel)) {
             for (unsigned i = 0, count = matchedProperties.properties->propertyCount(); i < count; ++i) {
                 auto property = matchedProperties.properties->propertyAt(i);
-                if (!property.value()->isPrimitiveValue())
+                if (!property.value()->isPrimitiveValue() || property.value()->isCSSWideKeyword())
                     continue;
                 switch (property.id()) {
                 case CSSPropertyWritingMode:

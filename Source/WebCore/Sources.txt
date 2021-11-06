@@ -691,8 +691,6 @@ css/CSSImageGeneratorValue.cpp
 css/CSSImageSetValue.cpp
 css/CSSImageValue.cpp
 css/CSSImportRule.cpp
-css/CSSInheritedValue.cpp
-css/CSSInitialValue.cpp
 css/CSSKeyframeRule.cpp
 css/CSSKeyframesRule.cpp
 css/CSSLayerRule.cpp
@@ -708,7 +706,6 @@ css/CSSProperty.cpp
 css/CSSPropertySourceData.cpp
 css/CSSReflectValue.cpp
 css/CSSRegisteredCustomProperty.cpp
-css/CSSRevertValue.cpp
 css/CSSRule.cpp
 css/CSSRuleList.cpp
 css/CSSSegmentedFontFace.cpp
@@ -724,7 +721,6 @@ css/CSSToLengthConversionData.cpp
 css/CSSToStyleMap.cpp
 css/CSSUnicodeRangeValue.cpp
 css/CSSUnits.cpp
-css/CSSUnsetValue.cpp
 css/CSSValue.cpp
 css/CSSValueList.cpp
 css/CSSValuePair.cpp

@@ -290,7 +290,7 @@ void Builder::applyProperty(CSSPropertyID id, CSSValue& value, SelectorChecker::
         customPropertyRegistered = m_state.document().getCSSRegisteredCustomPropertySet().get(name);
     }
 
-    bool isInherit = valueToApply->isInheritedValue() || customPropertyValueID == CSSValueInherit;
+    bool isInherit = valueToApply->isInheritValue() || customPropertyValueID == CSSValueInherit;
     bool isInitial = valueToApply->isInitialValue() || customPropertyValueID == CSSValueInitial;
 
     bool isUnset = valueToApply->isUnsetValue() || customPropertyValueID == CSSValueUnset;
@@ -361,8 +361,8 @@ Ref<CSSValue> Builder::resolveValue(CSSPropertyID propertyID, CSSValue& value)
     // If the cascade has already applied this id, then we detected a cycle, and this value should be unset.
     if (!variableValue || m_state.m_appliedProperties.get(propertyID)) {
         if (CSSProperty::isInheritedProperty(propertyID))
-            return CSSValuePool::singleton().createInheritedValue();
-        return CSSValuePool::singleton().createExplicitInitialValue();
+            return CSSValuePool::singleton().createValue(CSSValueInherit);
+        return CSSValuePool::singleton().createValue(CSSValueInitial);
     }
 
     return *variableValue;

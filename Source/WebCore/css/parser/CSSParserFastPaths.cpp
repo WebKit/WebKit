@@ -1115,19 +1115,11 @@ static RefPtr<CSSValue> parseKeywordValue(CSSPropertyID propertyId, StringView s
     if (!valueID)
         return nullptr;
 
-    if (!parsingDescriptor) {
-        if (valueID == CSSValueInherit)
-            return CSSValuePool::singleton().createInheritedValue();
-        if (valueID == CSSValueInitial)
-            return CSSValuePool::singleton().createExplicitInitialValue();
-        if (valueID == CSSValueUnset)
-            return CSSValuePool::singleton().createUnsetValue();
-        if (valueID == CSSValueRevert)
-            return CSSValuePool::singleton().createRevertValue();
-    }
-    
+    if (!parsingDescriptor && isCSSWideKeyword(valueID))
+        return CSSValuePool::singleton().createIdentifierValue(valueID);
+
     if (CSSParserFastPaths::isValidKeywordPropertyAndValue(propertyId, valueID, context))
-        return CSSPrimitiveValue::createIdentifier(valueID);
+        return CSSValuePool::singleton().createIdentifierValue(valueID);
     return nullptr;
 }
 

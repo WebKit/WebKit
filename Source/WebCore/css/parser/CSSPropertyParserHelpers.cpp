@@ -59,11 +59,6 @@ namespace WebCore {
 
 namespace CSSPropertyParserHelpers {
 
-static inline bool isCSSWideKeyword(CSSValueID id)
-{
-    return id == CSSValueInitial || id == CSSValueInherit || id == CSSValueUnset || id == CSSValueRevert || id == CSSValueDefault;
-}
-
 bool consumeCommaIncludingWhitespace(CSSParserTokenRange& range)
 {
     CSSParserToken value = range.peek();
@@ -1370,7 +1365,7 @@ RefPtr<CSSPrimitiveValue> consumeIdentRange(CSSParserTokenRange& range, CSSValue
 
 RefPtr<CSSPrimitiveValue> consumeCustomIdent(CSSParserTokenRange& range, bool shouldLowercase)
 {
-    if (range.peek().type() != IdentToken || isCSSWideKeyword(range.peek().id()))
+    if (range.peek().type() != IdentToken || !isValidCustomIdentifier(range.peek().id()))
         return nullptr;
     auto identifier = range.consumeIncludingWhitespace().value();
     return CSSValuePool::singleton().createCustomIdent(shouldLowercase ? identifier.convertToASCIILowercase() : identifier.toString());
@@ -3648,7 +3643,7 @@ AtomString consumeCounterStyleNameInPrelude(CSSParserTokenRange& prelude)
     if (!prelude.atEnd())
         return AtomString();
     // Ensure this token is a valid <custom-ident>.
-    if (nameToken.type() != IdentToken || isCSSWideKeyword(nameToken.id()))
+    if (nameToken.type() != IdentToken || !isValidCustomIdentifier(nameToken.id()))
         return AtomString();
     // In the context of the prelude of an @counter-style rule, a <counter-style-name> must not be an ASCII
     // case-insensitive match for "decimal" or "disc". No <counter-style-name>, prelude or not, may be an ASCII
@@ -3725,7 +3720,7 @@ String concatenateFamilyName(CSSParserTokenRange& range)
         }
         builder.append(range.consumeIncludingWhitespace().value());
     }
-    if (!addedSpace && isCSSWideKeyword(firstToken.id()))
+    if (!addedSpace && !isValidCustomIdentifier(firstToken.id()))
         return String();
     return builder.toString();
 }

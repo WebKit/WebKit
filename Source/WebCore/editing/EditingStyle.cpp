@@ -266,6 +266,9 @@ static bool fontWeightIsBold(CSSValue& fontWeight)
         return false;
 
     auto& primitiveValue = downcast<CSSPrimitiveValue>(fontWeight);
+    if (primitiveValue.isCSSWideKeyword())
+        return false;
+
     switch (primitiveValue.valueID()) {
     case CSSValueNormal:
         return false;

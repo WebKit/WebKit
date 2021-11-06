@@ -602,7 +602,7 @@ void ElementRuleCollector::addMatchedProperties(MatchedProperties&& matchedPrope
             // as they might override the value inherited here. For this reason we don't allow declarations with
             // explicitly inherited properties to be cached.
             const CSSValue& value = *current.value();
-            if (value.isInheritedValue())
+            if (value.isInheritValue())
                 return false;
 
             // The value currentColor has implicitely the same side effect. It depends on the value of color,

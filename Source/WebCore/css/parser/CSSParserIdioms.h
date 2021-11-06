@@ -59,4 +59,15 @@ bool isNameCodePoint(CharacterType c)
 
 bool isValueAllowedInMode(unsigned short, CSSParserMode);
 
+static inline bool isCSSWideKeyword(CSSValueID valueID)
+{
+    return valueID == CSSValueInitial || valueID == CSSValueInherit || valueID == CSSValueUnset || valueID == CSSValueRevert;
+}
+
+static inline bool isValidCustomIdentifier(CSSValueID valueID)
+{
+    // "default" is obsolete as a CSS-wide keyword but is still not allowed as a custom identifier.
+    return !isCSSWideKeyword(valueID) && valueID != CSSValueDefault;
+}
+
 } // namespace WebCore

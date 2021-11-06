@@ -400,7 +400,7 @@ String StyleProperties::borderRadiusValue(const StylePropertyShorthand& shorthan
     if (topLeft.isImportant() != topRight.isImportant() || topRight.isImportant() != bottomRight.isImportant() || bottomRight.isImportant() != bottomLeft.isImportant())
         return String();
 
-    if (topLeftValue->isInheritedValue() && topRightValue->isInheritedValue() && bottomRightValue->isInheritedValue() && bottomLeftValue->isInheritedValue())
+    if (topLeftValue->isInheritValue() && topRightValue->isInheritValue() && bottomRightValue->isInheritValue() && bottomLeftValue->isInheritValue())
         return getValueName(CSSValueInherit);
 
     if (topLeftValue->isInitialValue() || topRightValue->isInitialValue() || bottomRightValue->isInitialValue() || bottomLeftValue->isInitialValue()) {
@@ -852,8 +852,8 @@ String StyleProperties::pageBreakPropertyValue(const StylePropertyShorthand& sho
     auto value = getPropertyCSSValue(shorthand.properties()[0]);
     if (!value)
         return String();
-    // FIXME: Remove this isGlobalKeyword check after we do this consistently for all shorthands in getPropertyValue.
-    if (value->isGlobalKeyword())
+    // FIXME: Remove this isCSSWideKeyword check after we do this consistently for all shorthands in getPropertyValue.
+    if (value->isCSSWideKeyword())
         return value->cssText();
     
     if (!is<CSSPrimitiveValue>(*value))

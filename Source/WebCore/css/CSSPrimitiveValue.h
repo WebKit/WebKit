@@ -115,6 +115,13 @@ public:
     bool isFlex() const { return primitiveType() == CSSUnitType::CSS_FR; }
     bool isCustomIdent() const { return primitiveUnitType() == CSSUnitType::CustomIdent; }
 
+    bool isInitialValue() const { return valueID() == CSSValueInitial; }
+    bool isImplicitInitialValue() const { return isInitialValue() && m_isImplicit; }
+    bool isInheritValue() const { return valueID() == CSSValueInherit; }
+    bool isUnsetValue() const { return valueID() == CSSValueUnset; }
+    bool isRevertValue() const { return valueID() == CSSValueRevert; }
+    bool isCSSWideKeyword() const;
+
     static Ref<CSSPrimitiveValue> createIdentifier(CSSValueID valueID) { return adoptRef(*new CSSPrimitiveValue(valueID)); }
     static Ref<CSSPrimitiveValue> createIdentifier(CSSPropertyID propertyID) { return adoptRef(*new CSSPrimitiveValue(propertyID)); }
 
@@ -198,6 +205,7 @@ public:
 
 private:
     friend class CSSValuePool;
+    friend class StaticCSSValuePool;
     friend LazyNeverDestroyed<CSSPrimitiveValue>;
 
     CSSPrimitiveValue(CSSValueID);
@@ -212,6 +220,8 @@ private:
     CSSPrimitiveValue(StaticCSSValueTag, CSSValueID);
     CSSPrimitiveValue(StaticCSSValueTag, const Color&);
     CSSPrimitiveValue(StaticCSSValueTag, double, CSSUnitType);
+    enum ImplicitInitialValueTag { ImplicitInitialValue };
+    CSSPrimitiveValue(StaticCSSValueTag, ImplicitInitialValueTag);
 
     template<typename T> CSSPrimitiveValue(T); // Defined in CSSPrimitiveValueMappings.h
     template<typename T> CSSPrimitiveValue(RefPtr<T>&&);

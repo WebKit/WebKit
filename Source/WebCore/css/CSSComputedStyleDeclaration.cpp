@@ -1652,7 +1652,7 @@ static Ref<CSSValue> renderTextDecorationStyleFlagsToCSSValue(TextDecorationStyl
     }
 
     ASSERT_NOT_REACHED();
-    return CSSValuePool::singleton().createExplicitInitialValue();
+    return CSSValuePool::singleton().createIdentifierValue(CSSValueInitial);
 }
 
 static RefPtr<CSSValue> renderTextDecorationSkipToCSSValue(TextDecorationSkipInk textDecorationSkipInk)
@@ -1667,7 +1667,7 @@ static RefPtr<CSSValue> renderTextDecorationSkipToCSSValue(TextDecorationSkipInk
     }
 
     ASSERT_NOT_REACHED();
-    return CSSValuePool::singleton().createExplicitInitialValue();
+    return CSSValuePool::singleton().createIdentifierValue(CSSValueInitial);
 }
 
 static Ref<CSSValue> textUnderlineOffsetToCSSValue(const TextUnderlineOffset& textUnderlineOffset)

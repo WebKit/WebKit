@@ -84,7 +84,7 @@ void SVGFontFaceElement::parseAttribute(const QualifiedName& name, const AtomStr
             // Rather than invasively modifying the parser for the properties to have a special mode, we can simply detect the error condition after-the-fact and
             // avoid it explicitly.
             if (auto parsedValue = properties.getPropertyCSSValue(propertyId)) {
-                if (parsedValue->isGlobalKeyword())
+                if (parsedValue->isCSSWideKeyword())
                     properties.removeProperty(propertyId);
             }
         }

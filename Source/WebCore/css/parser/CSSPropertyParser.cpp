@@ -258,20 +258,11 @@ static RefPtr<CSSValue> maybeConsumeCSSWideKeyword(CSSParserTokenRange& range)
     if (!rangeCopy.atEnd())
         return nullptr;
 
-    RefPtr<CSSValue> value;
-    if (valueID == CSSValueInherit)
-        value = CSSValuePool::singleton().createInheritedValue();
-    else if (valueID == CSSValueInitial)
-        value = CSSValuePool::singleton().createExplicitInitialValue();
-    else if (valueID == CSSValueUnset)
-        value = CSSValuePool::singleton().createUnsetValue();
-    else if (valueID == CSSValueRevert)
-        value = CSSValuePool::singleton().createRevertValue();
-    else
+    if (!isCSSWideKeyword(valueID))
         return nullptr;
 
     range = rangeCopy;
-    return value;
+    return CSSValuePool::singleton().createIdentifierValue(valueID);
 }
 
 RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, const CSSParserTokenRange& range, const CSSParserContext& context)

@@ -587,7 +587,7 @@ String HTMLConverterCaches::propertyValueForNode(Node& node, CSSPropertyID prope
 
     if (RefPtr<CSSValue> value = inlineStylePropertyForElement(element, propertyId)) {
         String result;
-        if (value->isInheritedValue())
+        if (value->isInheritValue())
             inherit = true;
         else if (stringFromCSSValue(*value, result))
             return result;
@@ -735,7 +735,7 @@ bool HTMLConverterCaches::floatPropertyValueForNode(Node& node, CSSPropertyID pr
     if (RefPtr<CSSValue> value = inlineStylePropertyForElement(element, propertyId)) {
         if (is<CSSPrimitiveValue>(*value) && floatValueFromPrimitiveValue(downcast<CSSPrimitiveValue>(*value), result))
             return true;
-        if (value->isInheritedValue())
+        if (value->isInheritValue())
             inherit = true;
     }
 
@@ -877,7 +877,7 @@ Color HTMLConverterCaches::colorPropertyValueForNode(Node& node, CSSPropertyID p
     if (RefPtr<CSSValue> value = inlineStylePropertyForElement(element, propertyId)) {
         if (is<CSSPrimitiveValue>(*value) && downcast<CSSPrimitiveValue>(*value).isRGBColor())
             return normalizedColor(downcast<CSSPrimitiveValue>(*value).color(), ignoreDefaultColor, element);
-        if (value->isInheritedValue())
+        if (value->isInheritValue())
             inherit = true;
     }
 

@@ -26,6 +26,7 @@
 #include "CSSFontFamily.h"
 #include "CSSHelper.h"
 #include "CSSMarkup.h"
+#include "CSSParserIdioms.h"
 #include "CSSPrimitiveValueMappings.h"
 #include "CSSPropertyNames.h"
 #include "CSSToLengthConversionData.h"
@@ -359,6 +360,13 @@ CSSPrimitiveValue::CSSPrimitiveValue(StaticCSSValueTag, const Color& color)
 CSSPrimitiveValue::CSSPrimitiveValue(StaticCSSValueTag, double num, CSSUnitType type)
     : CSSPrimitiveValue(num, type)
 {
+    makeStatic();
+}
+
+CSSPrimitiveValue::CSSPrimitiveValue(StaticCSSValueTag, ImplicitInitialValueTag)
+    : CSSPrimitiveValue(CSSValueInitial)
+{
+    m_isImplicit = true;
     makeStatic();
 }
 
@@ -1436,6 +1444,11 @@ void CSSPrimitiveValue::collectDirectRootComputationalDependencies(HashSet<CSSPr
     default:
         break;
     }
+}
+
+bool CSSPrimitiveValue::isCSSWideKeyword() const
+{
+    return WebCore::isCSSWideKeyword(valueID());
 }
 
 } // namespace WebCore

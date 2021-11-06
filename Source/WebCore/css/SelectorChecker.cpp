@@ -45,6 +45,7 @@
 #include "RenderElement.h"
 #include "SelectorCheckerTestFunctions.h"
 #include "ShadowRoot.h"
+#include "StyleScope.h"
 #include "Text.h"
 #include "TypedElementDescendantIterator.h"
 

@@ -89,6 +89,8 @@ public:
     static ExceptionOr<void> setStringValue(unsigned short, const String&) { return Exception { NoModificationAllowedError }; }
 
     String stringValue() const { return m_value->stringValue(); }
+    bool isCSSWideKeyword() const { return m_value->isCSSWideKeyword(); }
+    unsigned cssValueType() const { return m_value->cssValueType(); }
 
 private:
     DeprecatedCSSOMPrimitiveValue(const CSSPrimitiveValue& value, CSSStyleDeclaration& owner)
