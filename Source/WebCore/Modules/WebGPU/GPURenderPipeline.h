@@ -41,15 +41,13 @@ public:
         return adoptRef(*new GPURenderPipeline());
     }
 
-    const String& label() const { return m_label; }
-    void setLabel(String&& label) { m_label = WTFMove(label); }
+    String label() const;
+    void setLabel(String&&);
 
     Ref<GPUBindGroupLayout> getBindGroupLayout(uint32_t index);
 
 private:
     GPURenderPipeline() = default;
-
-    String m_label;
 };
 
 }

@@ -32,12 +32,18 @@
 #include "GPUBindGroupLayoutDescriptor.h"
 #include "GPUBuffer.h"
 #include "GPUBufferDescriptor.h"
+#include "GPUCommandEncoder.h"
+#include "GPUCommandEncoderDescriptor.h"
 #include "GPUComputePipeline.h"
 #include "GPUComputePipelineDescriptor.h"
 #include "GPUExternalTexture.h"
 #include "GPUExternalTextureDescriptor.h"
 #include "GPUPipelineLayout.h"
 #include "GPUPipelineLayoutDescriptor.h"
+#include "GPUQuerySet.h"
+#include "GPUQuerySetDescriptor.h"
+#include "GPURenderBundleEncoder.h"
+#include "GPURenderBundleEncoderDescriptor.h"
 #include "GPURenderPipeline.h"
 #include "GPURenderPipelineDescriptor.h"
 #include "GPUSampler.h"
@@ -132,6 +138,21 @@ void GPUDevice::createComputePipelineAsync(const GPUComputePipelineDescriptor&, 
 
 void GPUDevice::createRenderPipelineAsync(const GPURenderPipelineDescriptor&, CreateRenderPipelineAsyncPromise&&)
 {
+}
+
+Ref<GPUCommandEncoder> GPUDevice::createCommandEncoder(const std::optional<GPUCommandEncoderDescriptor>&)
+{
+    return GPUCommandEncoder::create();
+}
+
+Ref<GPURenderBundleEncoder> GPUDevice::createRenderBundleEncoder(const GPURenderBundleEncoderDescriptor&)
+{
+    return GPURenderBundleEncoder::create();
+}
+
+Ref<GPUQuerySet> GPUDevice::createQuerySet(const GPUQuerySetDescriptor&)
+{
+    return GPUQuerySet::create();
 }
 
 }

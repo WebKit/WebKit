@@ -72,12 +72,21 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/WebGPU/GPUBufferBindingType.idl \
     $(WebCore)/Modules/WebGPU/GPUBufferDescriptor.idl \
     $(WebCore)/Modules/WebGPU/GPUBufferUsage.idl \
+    $(WebCore)/Modules/WebGPU/GPUColorDict.idl \
     $(WebCore)/Modules/WebGPU/GPUColorTargetState.idl \
     $(WebCore)/Modules/WebGPU/GPUColorWrite.idl \
+    $(WebCore)/Modules/WebGPU/GPUCommandBuffer.idl \
+    $(WebCore)/Modules/WebGPU/GPUCommandBufferDescriptor.idl \
+    $(WebCore)/Modules/WebGPU/GPUCommandEncoder.idl \
+    $(WebCore)/Modules/WebGPU/GPUCommandEncoderDescriptor.idl \
     $(WebCore)/Modules/WebGPU/GPUCompareFunction.idl \
     $(WebCore)/Modules/WebGPU/GPUCompilationInfo.idl \
     $(WebCore)/Modules/WebGPU/GPUCompilationMessage.idl \
     $(WebCore)/Modules/WebGPU/GPUCompilationMessageType.idl \
+    $(WebCore)/Modules/WebGPU/GPUComputePassDescriptor.idl \
+    $(WebCore)/Modules/WebGPU/GPUComputePassEncoder.idl \
+    $(WebCore)/Modules/WebGPU/GPUComputePassTimestampLocation.idl \
+    $(WebCore)/Modules/WebGPU/GPUComputePassTimestampWrite.idl \
     $(WebCore)/Modules/WebGPU/GPUComputePipeline.idl \
     $(WebCore)/Modules/WebGPU/GPUComputePipelineDescriptor.idl \
     $(WebCore)/Modules/WebGPU/GPUCullMode.idl \
@@ -92,20 +101,46 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/WebGPU/GPUFilterMode.idl \
     $(WebCore)/Modules/WebGPU/GPUFragmentState.idl \
     $(WebCore)/Modules/WebGPU/GPUFrontFace.idl \
+    $(WebCore)/Modules/WebGPU/GPUImageCopyBuffer.idl \
+    $(WebCore)/Modules/WebGPU/GPUImageCopyExternalImage.idl \
+    $(WebCore)/Modules/WebGPU/GPUImageCopyTexture.idl \
+    $(WebCore)/Modules/WebGPU/GPUImageCopyTextureTagged.idl \
+    $(WebCore)/Modules/WebGPU/GPUImageDataLayout.idl \
     $(WebCore)/Modules/WebGPU/GPUIndexFormat.idl \
+    $(WebCore)/Modules/WebGPU/GPULoadOp.idl \
     $(WebCore)/Modules/WebGPU/GPUMapMode.idl \
     $(WebCore)/Modules/WebGPU/GPUMultisampleState.idl \
     $(WebCore)/Modules/WebGPU/GPUObjectBase.idl \
     $(WebCore)/Modules/WebGPU/GPUObjectDescriptorBase.idl \
+    $(WebCore)/Modules/WebGPU/GPUOrigin2DDict.idl \
+    $(WebCore)/Modules/WebGPU/GPUOrigin3DDict.idl \
     $(WebCore)/Modules/WebGPU/GPUPipelineBase.idl \
     $(WebCore)/Modules/WebGPU/GPUPipelineDescriptorBase.idl \
     $(WebCore)/Modules/WebGPU/GPUPipelineLayout.idl \
     $(WebCore)/Modules/WebGPU/GPUPipelineLayoutDescriptor.idl \
+    $(WebCore)/Modules/WebGPU/GPUPipelineStatisticName.idl \
     $(WebCore)/Modules/WebGPU/GPUPowerPreference.idl \
     $(WebCore)/Modules/WebGPU/GPUPredefinedColorSpace.idl \
     $(WebCore)/Modules/WebGPU/GPUPrimitiveState.idl \
     $(WebCore)/Modules/WebGPU/GPUPrimitiveTopology.idl \
+    $(WebCore)/Modules/WebGPU/GPUProgrammablePassEncoder.idl \
     $(WebCore)/Modules/WebGPU/GPUProgrammableStage.idl \
+    $(WebCore)/Modules/WebGPU/GPUQuerySet.idl \
+    $(WebCore)/Modules/WebGPU/GPUQuerySetDescriptor.idl \
+    $(WebCore)/Modules/WebGPU/GPUQueryType.idl \
+    $(WebCore)/Modules/WebGPU/GPUQueue.idl \
+    $(WebCore)/Modules/WebGPU/GPURenderBundle.idl \
+    $(WebCore)/Modules/WebGPU/GPURenderBundleDescriptor.idl \
+    $(WebCore)/Modules/WebGPU/GPURenderBundleEncoder.idl \
+    $(WebCore)/Modules/WebGPU/GPURenderBundleEncoderDescriptor.idl \
+    $(WebCore)/Modules/WebGPU/GPURenderEncoderBase.idl \
+    $(WebCore)/Modules/WebGPU/GPURenderPassColorAttachment.idl \
+    $(WebCore)/Modules/WebGPU/GPURenderPassDepthStencilAttachment.idl \
+    $(WebCore)/Modules/WebGPU/GPURenderPassDescriptor.idl \
+    $(WebCore)/Modules/WebGPU/GPURenderPassEncoder.idl \
+    $(WebCore)/Modules/WebGPU/GPURenderPassLayout.idl \
+    $(WebCore)/Modules/WebGPU/GPURenderPassTimestampLocation.idl \
+    $(WebCore)/Modules/WebGPU/GPURenderPassTimestampWrite.idl \
     $(WebCore)/Modules/WebGPU/GPURenderPipeline.idl \
     $(WebCore)/Modules/WebGPU/GPURenderPipelineDescriptor.idl \
     $(WebCore)/Modules/WebGPU/GPURequestAdapterOptions.idl \
@@ -120,6 +155,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/WebGPU/GPUStencilOperation.idl \
     $(WebCore)/Modules/WebGPU/GPUStorageTextureAccess.idl \
     $(WebCore)/Modules/WebGPU/GPUStorageTextureBindingLayout.idl \
+    $(WebCore)/Modules/WebGPU/GPUStoreOp.idl \
     $(WebCore)/Modules/WebGPU/GPUSupportedFeatures.idl \
     $(WebCore)/Modules/WebGPU/GPUSupportedLimits.idl \
     $(WebCore)/Modules/WebGPU/GPUTexture.idl \

@@ -30,6 +30,15 @@
 
 namespace WebCore {
 
+String GPURenderPipeline::label() const
+{
+    return StringImpl::empty();
+}
+
+void GPURenderPipeline::setLabel(String&&)
+{
+}
+
 Ref<GPUBindGroupLayout> GPURenderPipeline::getBindGroupLayout(uint32_t)
 {
     return GPUBindGroupLayout::create();

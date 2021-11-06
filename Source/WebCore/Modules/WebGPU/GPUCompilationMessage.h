@@ -48,9 +48,7 @@ public:
     uint64_t length() const;
 
 private:
-    GPUCompilationMessage()
-    {
-    }
+    GPUCompilationMessage() = default;
 };
 
 }

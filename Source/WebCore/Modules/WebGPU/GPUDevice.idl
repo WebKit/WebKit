@@ -52,6 +52,9 @@ interface GPUDevice : EventTarget {
     Promise<GPUComputePipeline> createComputePipelineAsync(GPUComputePipelineDescriptor descriptor);
     Promise<GPURenderPipeline> createRenderPipelineAsync(GPURenderPipelineDescriptor descriptor);
 
-    // FIXME: Add more here.
+    GPUCommandEncoder createCommandEncoder(optional GPUCommandEncoderDescriptor descriptor);
+    GPURenderBundleEncoder createRenderBundleEncoder(GPURenderBundleEncoderDescriptor descriptor);
+
+    GPUQuerySet createQuerySet(GPUQuerySetDescriptor descriptor);
 };
 GPUDevice includes GPUObjectBase;

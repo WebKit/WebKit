@@ -133,13 +133,21 @@ namespace WebCore {
     macro(GPUBuffer) \
     macro(GPUBufferUsage) \
     macro(GPUColorWrite) \
+    macro(GPUCommandBuffer) \
+    macro(GPUCommandEncoder) \
     macro(GPUCompilationInfo) \
     macro(GPUCompilationMessage) \
+    macro(GPUComputePassEncoder) \
     macro(GPUComputePipeline) \
     macro(GPUDevice) \
     macro(GPUExternalTexture) \
     macro(GPUMapMode) \
     macro(GPUPipelineLayout) \
+    macro(GPUQuerySet) \
+    macro(GPUQueue) \
+    macro(GPURenderBundle) \
+    macro(GPURenderBundleEncoder) \
+    macro(GPURenderPassEncoder) \
     macro(GPURenderPipeline) \
     macro(GPUSampler) \
     macro(GPUShaderModule) \

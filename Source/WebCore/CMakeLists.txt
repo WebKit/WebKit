@@ -1487,12 +1487,21 @@ list(APPEND WebCore_NON_SVG_IDL_FILES
     Modules/WebGPU/GPUBufferBindingType.idl
     Modules/WebGPU/GPUBufferDescriptor.idl
     Modules/WebGPU/GPUBufferUsage.idl
+    Modules/WebGPU/GPUColorDict.idl
     Modules/WebGPU/GPUColorTargetState.idl
     Modules/WebGPU/GPUColorWrite.idl
+    Modules/WebGPU/GPUCommandBuffer.idl
+    Modules/WebGPU/GPUCommandBufferDescriptor.idl
+    Modules/WebGPU/GPUCommandEncoder.idl
+    Modules/WebGPU/GPUCommandEncoderDescriptor.idl
     Modules/WebGPU/GPUCompareFunction.idl
     Modules/WebGPU/GPUCompilationInfo.idl
     Modules/WebGPU/GPUCompilationMessage.idl
     Modules/WebGPU/GPUCompilationMessageType.idl
+    Modules/WebGPU/GPUComputePassDescriptor.idl
+    Modules/WebGPU/GPUComputePassEncoder.idl
+    Modules/WebGPU/GPUComputePassTimestampLocation.idl
+    Modules/WebGPU/GPUComputePassTimestampWrite.idl
     Modules/WebGPU/GPUComputePipeline.idl
     Modules/WebGPU/GPUComputePipelineDescriptor.idl
     Modules/WebGPU/GPUCullMode.idl
@@ -1507,20 +1516,46 @@ list(APPEND WebCore_NON_SVG_IDL_FILES
     Modules/WebGPU/GPUFilterMode.idl
     Modules/WebGPU/GPUFragmentState.idl
     Modules/WebGPU/GPUFrontFace.idl
+    Modules/WebGPU/GPUImageCopyBuffer.idl
+    Modules/WebGPU/GPUImageCopyExternalImage.idl
+    Modules/WebGPU/GPUImageCopyTexture.idl
+    Modules/WebGPU/GPUImageCopyTextureTagged.idl
+    Modules/WebGPU/GPUImageDataLayout.idl
     Modules/WebGPU/GPUIndexFormat.idl
+    Modules/WebGPU/GPULoadOp.idl
     Modules/WebGPU/GPUMapMode.idl
     Modules/WebGPU/GPUMultisampleState.idl
     Modules/WebGPU/GPUObjectBase.idl
     Modules/WebGPU/GPUObjectDescriptorBase.idl
+    Modules/WebGPU/GPUOrigin2DDict.idl
+    Modules/WebGPU/GPUOrigin3DDict.idl
     Modules/WebGPU/GPUPipelineBase.idl
     Modules/WebGPU/GPUPipelineDescriptorBase.idl
     Modules/WebGPU/GPUPipelineLayout.idl
     Modules/WebGPU/GPUPipelineLayoutDescriptor.idl
+    Modules/WebGPU/GPUPipelineStatisticName.idl
     Modules/WebGPU/GPUPowerPreference.idl
     Modules/WebGPU/GPUPredefinedColorSpace.idl
     Modules/WebGPU/GPUPrimitiveState.idl
     Modules/WebGPU/GPUPrimitiveTopology.idl
+    Modules/WebGPU/GPUProgrammablePassEncoder.idl
     Modules/WebGPU/GPUProgrammableStage.idl
+    Modules/WebGPU/GPUQuerySet.idl
+    Modules/WebGPU/GPUQuerySetDescriptor.idl
+    Modules/WebGPU/GPUQueryType.idl
+    Modules/WebGPU/GPUQueue.idl
+    Modules/WebGPU/GPURenderBundle.idl
+    Modules/WebGPU/GPURenderBundleDescriptor.idl
+    Modules/WebGPU/GPURenderBundleEncoder.idl
+    Modules/WebGPU/GPURenderBundleEncoderDescriptor.idl
+    Modules/WebGPU/GPURenderEncoderBase.idl
+    Modules/WebGPU/GPURenderPassColorAttachment.idl
+    Modules/WebGPU/GPURenderPassDepthStencilAttachment.idl
+    Modules/WebGPU/GPURenderPassDescriptor.idl
+    Modules/WebGPU/GPURenderPassEncoder.idl
+    Modules/WebGPU/GPURenderPassLayout.idl
+    Modules/WebGPU/GPURenderPassTimestampLocation.idl
+    Modules/WebGPU/GPURenderPassTimestampWrite.idl
     Modules/WebGPU/GPURenderPipeline.idl
     Modules/WebGPU/GPURenderPipelineDescriptor.idl
     Modules/WebGPU/GPURequestAdapterOptions.idl
@@ -1535,6 +1570,7 @@ list(APPEND WebCore_NON_SVG_IDL_FILES
     Modules/WebGPU/GPUStencilOperation.idl
     Modules/WebGPU/GPUStorageTextureAccess.idl
     Modules/WebGPU/GPUStorageTextureBindingLayout.idl
+    Modules/WebGPU/GPUStoreOp.idl
     Modules/WebGPU/GPUSupportedFeatures.idl
     Modules/WebGPU/GPUSupportedLimits.idl
     Modules/WebGPU/GPUTexture.idl

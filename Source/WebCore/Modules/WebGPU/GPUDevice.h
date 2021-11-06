@@ -43,6 +43,8 @@ class GPUBindGroupLayout;
 struct GPUBindGroupLayoutDescriptor;
 class GPUBuffer;
 struct GPUBufferDescriptor;
+class GPUCommandEncoder;
+struct GPUCommandEncoderDescriptor;
 class GPUComputePipeline;
 struct GPUComputePipelineDescriptor;
 class GPUExternalTexture;
@@ -51,6 +53,12 @@ class GPURenderPipeline;
 struct GPURenderPipelineDescriptor;
 class GPUPipelineLayout;
 struct GPUPipelineLayoutDescriptor;
+class GPUQuerySet;
+struct GPUQuerySetDescriptor;
+class GPURenderBundleEncoder;
+struct GPURenderBundleEncoderDescriptor;
+class GPURenderPipeline;
+struct GPURenderPipelineDescriptor;
 class GPUSampler;
 struct GPUSamplerDescriptor;
 class GPUShaderModule;
@@ -93,6 +101,11 @@ public:
     void createComputePipelineAsync(const GPUComputePipelineDescriptor&, CreateComputePipelineAsyncPromise&&);
     using CreateRenderPipelineAsyncPromise = DOMPromiseDeferred<IDLInterface<GPURenderPipeline>>;
     void createRenderPipelineAsync(const GPURenderPipelineDescriptor&, CreateRenderPipelineAsyncPromise&&);
+
+    Ref<GPUCommandEncoder> createCommandEncoder(const std::optional<GPUCommandEncoderDescriptor>&);
+    Ref<GPURenderBundleEncoder> createRenderBundleEncoder(const GPURenderBundleEncoderDescriptor&);
+
+    Ref<GPUQuerySet> createQuerySet(const GPUQuerySetDescriptor&);
 
 private:
     GPUDevice(ScriptExecutionContext* scriptExecutionContext)

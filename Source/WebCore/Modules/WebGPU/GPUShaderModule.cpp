@@ -28,6 +28,15 @@
 
 namespace WebCore {
 
+String GPUShaderModule::label() const
+{
+    return StringImpl::empty();
+}
+
+void GPUShaderModule::setLabel(String&&)
+{
+}
+
 void GPUShaderModule::compilationInfo(Ref<DeferredPromise>&&)
 {
 }

@@ -30,21 +30,21 @@
 
 namespace WebCore {
 
-Ref<GPUTextureView> GPUTexture::createView(const std::optional<GPUTextureViewDescriptor>&) const
-{
-    return GPUTextureView::create();
-}
-
-void GPUTexture::destroy()
-{
-}
-
 String GPUTexture::label() const
 {
     return StringImpl::empty();
 }
 
 void GPUTexture::setLabel(String&&)
+{
+}
+
+Ref<GPUTextureView> GPUTexture::createView(const std::optional<GPUTextureViewDescriptor>&) const
+{
+    return GPUTextureView::create();
+}
+
+void GPUTexture::destroy()
 {
 }
 
