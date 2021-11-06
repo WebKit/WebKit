@@ -916,6 +916,26 @@ webkit.org/b/221311 [ Debug ] imported/w3c/web-platform-tests/html/canvas/offscr
 # Failing since r277543.
 webkit.org/b/225870 imported/w3c/web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.gradient.conic.worker.html [ Failure ]
 
+
+webkit.org/b/232780 imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.1.radius.dompointinit.html [ Missing Failure ]
+webkit.org/b/232780 imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.1.radius.dompointinit.worker.html [ Missing Failure ]
+webkit.org/b/232780 imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.2.radii.1.dompointinit.html [ Missing Failure ]
+webkit.org/b/232780 imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.2.radii.1.dompointinit.worker.html [ Missing Failure ]
+webkit.org/b/232780 imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.2.radii.2.dompointinit.html [ Missing Failure ]
+webkit.org/b/232780 imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.2.radii.2.dompointinit.worker.html [ Missing Failure ]
+webkit.org/b/232780 imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.3.radii.1.dompointinit.html [ Missing Failure ]
+webkit.org/b/232780 imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.3.radii.2.dompointinit.worker.html [ Missing Failure ]
+webkit.org/b/232780 imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.3.radii.3.dompointinit.html [ Missing Failure ]
+webkit.org/b/232780 imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.3.radii.3.dompointinit.worker.html [ Missing Failure ]
+webkit.org/b/232780 imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.4.radii.1.dompointinit.html [ Missing Failure ]
+webkit.org/b/232780 imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.4.radii.1.dompointinit.worker.html [ Missing Failure ]
+webkit.org/b/232780 imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.4.radii.2.dompointinit.html [ Missing Failure ]
+webkit.org/b/232780 imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.4.radii.2.dompointinit.worker.html [ Missing Failure ]
+webkit.org/b/232780 imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.4.radii.3.dompointinit.html [ Missing Failure ]
+webkit.org/b/232780 imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.4.radii.3.dompointinit.worker.html [ Missing Failure ]
+webkit.org/b/232780 imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.4.radii.4.dompointinit.html [ Missing Failure ]
+webkit.org/b/232780 imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.4.radii.4.dompointinit.worker.html [ Missing Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of OffscreenCanvas-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
