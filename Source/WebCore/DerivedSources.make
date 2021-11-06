@@ -55,21 +55,26 @@ FEATURE_AND_PLATFORM_DEFINE_DEPENDENCIES = $(WebCore)/DerivedSources.make
 JS_BINDING_IDLS := \
     $(WebCore)/Modules/WebGPU/GPU.idl \
     $(WebCore)/Modules/WebGPU/GPUAdapter.idl \
+    $(WebCore)/Modules/WebGPU/GPUAddressMode.idl \
     $(WebCore)/Modules/WebGPU/GPUBuffer.idl \
     $(WebCore)/Modules/WebGPU/GPUBufferDescriptor.idl \
     $(WebCore)/Modules/WebGPU/GPUBufferUsage.idl \
+    $(WebCore)/Modules/WebGPU/GPUCompareFunction.idl \
     $(WebCore)/Modules/WebGPU/GPUDevice.idl \
     $(WebCore)/Modules/WebGPU/GPUDeviceDescriptor.idl \
     $(WebCore)/Modules/WebGPU/GPUExtent3DDict.idl \
     $(WebCore)/Modules/WebGPU/GPUExternalTexture.idl \
     $(WebCore)/Modules/WebGPU/GPUExternalTextureDescriptor.idl \
     $(WebCore)/Modules/WebGPU/GPUFeatureName.idl \
+    $(WebCore)/Modules/WebGPU/GPUFilterMode.idl \
     $(WebCore)/Modules/WebGPU/GPUMapMode.idl \
     $(WebCore)/Modules/WebGPU/GPUObjectBase.idl \
     $(WebCore)/Modules/WebGPU/GPUObjectDescriptorBase.idl \
     $(WebCore)/Modules/WebGPU/GPUPowerPreference.idl \
     $(WebCore)/Modules/WebGPU/GPUPredefinedColorSpace.idl \
     $(WebCore)/Modules/WebGPU/GPURequestAdapterOptions.idl \
+    $(WebCore)/Modules/WebGPU/GPUSampler.idl \
+    $(WebCore)/Modules/WebGPU/GPUSamplerDescriptor.idl \
     $(WebCore)/Modules/WebGPU/GPUSupportedFeatures.idl \
     $(WebCore)/Modules/WebGPU/GPUSupportedLimits.idl \
     $(WebCore)/Modules/WebGPU/GPUTexture.idl \

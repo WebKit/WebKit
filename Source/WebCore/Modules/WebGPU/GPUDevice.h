@@ -28,6 +28,7 @@
 #include "ActiveDOMObject.h"
 #include "EventTarget.h"
 #include "ScriptExecutionContext.h"
+#include <optional>
 #include <wtf/Ref.h>
 #include <wtf/text/WTFString.h>
 
@@ -37,6 +38,8 @@ class GPUBuffer;
 struct GPUBufferDescriptor;
 class GPUExternalTexture;
 struct GPUExternalTextureDescriptor;
+class GPUSampler;
+struct GPUSamplerDescriptor;
 class GPUSupportedFeatures;
 class GPUSupportedLimits;
 class GPUTexture;
@@ -61,6 +64,7 @@ public:
 
     Ref<GPUBuffer> createBuffer(const GPUBufferDescriptor&);
     Ref<GPUTexture> createTexture(const GPUTextureDescriptor&);
+    Ref<GPUSampler> createSampler(const std::optional<GPUSamplerDescriptor>&);
     Ref<GPUExternalTexture> importExternalTexture(const GPUExternalTextureDescriptor&);
 
 private:

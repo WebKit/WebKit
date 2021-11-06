@@ -23,25 +23,26 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// https://gpuweb.github.io/gpuweb/#gpudevice
+#pragma once
 
-[
-    EnabledBySetting=WebGPU,
-    ActiveDOMObject,
-    Exposed=(Window), /* https://bugs.webkit.org/show_bug.cgi?id=232542: DedicatedWorker */
-    SecureContext
-]
-interface GPUDevice : EventTarget {
-    [SameObject] readonly attribute GPUSupportedFeatures features;
-    [SameObject] readonly attribute GPUSupportedLimits limits;
+#include <wtf/Ref.h>
+#include <wtf/RefCounted.h>
+#include <wtf/text/WTFString.h>
 
-    undefined destroy();
+namespace WebCore {
 
-    GPUBuffer createBuffer(GPUBufferDescriptor descriptor);
-    GPUTexture createTexture(GPUTextureDescriptor descriptor);
-    GPUSampler createSampler(optional GPUSamplerDescriptor descriptor);
-    GPUExternalTexture importExternalTexture(GPUExternalTextureDescriptor descriptor);
+class GPUSampler : public RefCounted<GPUSampler> {
+public:
+    static Ref<GPUSampler> create()
+    {
+        return adoptRef(*new GPUSampler());
+    }
 
-    // FIXME: Add more here.
+    String label() const;
+    void setLabel(String&&);
+
+private:
+    GPUSampler() = default;
 };
-GPUDevice includes GPUObjectBase;
+
+}

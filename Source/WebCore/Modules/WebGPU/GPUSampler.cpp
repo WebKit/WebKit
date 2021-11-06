@@ -23,25 +23,18 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// https://gpuweb.github.io/gpuweb/#gpudevice
+#include "config.h"
+#include "GPUSampler.h"
 
-[
-    EnabledBySetting=WebGPU,
-    ActiveDOMObject,
-    Exposed=(Window), /* https://bugs.webkit.org/show_bug.cgi?id=232542: DedicatedWorker */
-    SecureContext
-]
-interface GPUDevice : EventTarget {
-    [SameObject] readonly attribute GPUSupportedFeatures features;
-    [SameObject] readonly attribute GPUSupportedLimits limits;
+namespace WebCore {
 
-    undefined destroy();
+String GPUSampler::label() const
+{
+    return StringImpl::empty();
+}
 
-    GPUBuffer createBuffer(GPUBufferDescriptor descriptor);
-    GPUTexture createTexture(GPUTextureDescriptor descriptor);
-    GPUSampler createSampler(optional GPUSamplerDescriptor descriptor);
-    GPUExternalTexture importExternalTexture(GPUExternalTextureDescriptor descriptor);
+void GPUSampler::setLabel(String&&)
+{
+}
 
-    // FIXME: Add more here.
-};
-GPUDevice includes GPUObjectBase;
+}

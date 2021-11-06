@@ -1470,21 +1470,26 @@ list(APPEND WebCore_NON_SVG_IDL_FILES
 list(APPEND WebCore_NON_SVG_IDL_FILES
     Modules/WebGPU/GPU.idl
     Modules/WebGPU/GPUAdapter.idl
+    Modules/WebGPU/GPUAddressMode.idl
     Modules/WebGPU/GPUBuffer.idl
     Modules/WebGPU/GPUBufferDescriptor.idl
     Modules/WebGPU/GPUBufferUsage.idl
+    Modules/WebGPU/GPUCompareFunction.idl
     Modules/WebGPU/GPUDevice.idl
     Modules/WebGPU/GPUDeviceDescriptor.idl
     Modules/WebGPU/GPUExtent3DDict.idl
     Modules/WebGPU/GPUExternalTexture.idl
     Modules/WebGPU/GPUExternalTextureDescriptor.idl
     Modules/WebGPU/GPUFeatureName.idl
+    Modules/WebGPU/GPUFilterMode.idl
     Modules/WebGPU/GPUMapMode.idl
     Modules/WebGPU/GPUObjectBase.idl
     Modules/WebGPU/GPUObjectDescriptorBase.idl
     Modules/WebGPU/GPUPowerPreference.idl
     Modules/WebGPU/GPUPredefinedColorSpace.idl
     Modules/WebGPU/GPURequestAdapterOptions.idl
+    Modules/WebGPU/GPUSampler.idl
+    Modules/WebGPU/GPUSamplerDescriptor.idl
     Modules/WebGPU/GPUSupportedFeatures.idl
     Modules/WebGPU/GPUSupportedLimits.idl
     Modules/WebGPU/GPUTexture.idl

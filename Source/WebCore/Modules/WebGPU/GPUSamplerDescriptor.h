@@ -23,25 +23,28 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// https://gpuweb.github.io/gpuweb/#gpudevice
+#pragma once
 
-[
-    EnabledBySetting=WebGPU,
-    ActiveDOMObject,
-    Exposed=(Window), /* https://bugs.webkit.org/show_bug.cgi?id=232542: DedicatedWorker */
-    SecureContext
-]
-interface GPUDevice : EventTarget {
-    [SameObject] readonly attribute GPUSupportedFeatures features;
-    [SameObject] readonly attribute GPUSupportedLimits limits;
+#include "GPUAddressMode.h"
+#include "GPUCompareFunction.h"
+#include "GPUFilterMode.h"
+#include "GPUObjectDescriptorBase.h"
+#include <cstdint>
+#include <optional>
 
-    undefined destroy();
+namespace WebCore {
 
-    GPUBuffer createBuffer(GPUBufferDescriptor descriptor);
-    GPUTexture createTexture(GPUTextureDescriptor descriptor);
-    GPUSampler createSampler(optional GPUSamplerDescriptor descriptor);
-    GPUExternalTexture importExternalTexture(GPUExternalTextureDescriptor descriptor);
-
-    // FIXME: Add more here.
+struct GPUSamplerDescriptor : public GPUObjectDescriptorBase {
+    GPUAddressMode addressModeU;
+    GPUAddressMode addressModeV;
+    GPUAddressMode addressModeW;
+    GPUFilterMode magFilter;
+    GPUFilterMode minFilter;
+    GPUFilterMode mipmapFilter;
+    float lodMinClamp;
+    float lodMaxClamp;
+    std::optional<GPUCompareFunction> compare;
+    uint16_t maxAnisotropy;
 };
-GPUDevice includes GPUObjectBase;
+
+}

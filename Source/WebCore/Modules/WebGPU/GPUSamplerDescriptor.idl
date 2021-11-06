@@ -23,25 +23,20 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// https://gpuweb.github.io/gpuweb/#gpudevice
+// https://gpuweb.github.io/gpuweb/#dictdef-gpusamplerdescriptor
 
 [
-    EnabledBySetting=WebGPU,
-    ActiveDOMObject,
-    Exposed=(Window), /* https://bugs.webkit.org/show_bug.cgi?id=232542: DedicatedWorker */
-    SecureContext
+    EnabledBySetting=WebGPU
 ]
-interface GPUDevice : EventTarget {
-    [SameObject] readonly attribute GPUSupportedFeatures features;
-    [SameObject] readonly attribute GPUSupportedLimits limits;
-
-    undefined destroy();
-
-    GPUBuffer createBuffer(GPUBufferDescriptor descriptor);
-    GPUTexture createTexture(GPUTextureDescriptor descriptor);
-    GPUSampler createSampler(optional GPUSamplerDescriptor descriptor);
-    GPUExternalTexture importExternalTexture(GPUExternalTextureDescriptor descriptor);
-
-    // FIXME: Add more here.
+dictionary GPUSamplerDescriptor : GPUObjectDescriptorBase {
+    GPUAddressMode addressModeU = "clamp-to-edge";
+    GPUAddressMode addressModeV = "clamp-to-edge";
+    GPUAddressMode addressModeW = "clamp-to-edge";
+    GPUFilterMode magFilter = "nearest";
+    GPUFilterMode minFilter = "nearest";
+    GPUFilterMode mipmapFilter = "nearest";
+    float lodMinClamp = 0;
+    float lodMaxClamp = 32;
+    GPUCompareFunction compare;
+    [Clamp] unsigned short maxAnisotropy = 1;
 };
-GPUDevice includes GPUObjectBase;

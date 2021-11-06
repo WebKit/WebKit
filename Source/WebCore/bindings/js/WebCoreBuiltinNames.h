@@ -133,6 +133,7 @@ namespace WebCore {
     macro(GPUDevice) \
     macro(GPUExternalTexture) \
     macro(GPUMapMode) \
+    macro(GPUSampler) \
     macro(GPUSupportedFeatures) \
     macro(GPUSupportedLimits) \
     macro(GPUTexture) \

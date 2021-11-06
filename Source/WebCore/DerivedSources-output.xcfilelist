@@ -871,12 +871,16 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPU.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPU.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUAdapter.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUAdapter.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUAddressMode.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUAddressMode.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUBuffer.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUBuffer.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUBufferDescriptor.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUBufferDescriptor.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUBufferUsage.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUBufferUsage.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUCompareFunction.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUCompareFunction.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUDevice.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUDevice.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUDeviceDescriptor.cpp
@@ -889,6 +893,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUExternalTextureDescriptor.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUExternalTextureDescriptor.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUFeatureName.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUFeatureName.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUFilterMode.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUFilterMode.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUMapMode.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUMapMode.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUObjectBase.cpp
@@ -901,6 +907,10 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUPredefinedColorSpace.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUPredefinedColorSpace.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPURequestAdapterOptions.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPURequestAdapterOptions.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUSampler.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUSampler.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUSamplerDescriptor.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUSamplerDescriptor.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUSize64.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUSize64.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUSupportedFeatures.cpp

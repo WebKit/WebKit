@@ -30,6 +30,8 @@
 #include "GPUBufferDescriptor.h"
 #include "GPUExternalTexture.h"
 #include "GPUExternalTextureDescriptor.h"
+#include "GPUSampler.h"
+#include "GPUSamplerDescriptor.h"
 #include "GPUSupportedFeatures.h"
 #include "GPUSupportedLimits.h"
 #include "GPUTexture.h"
@@ -70,6 +72,11 @@ Ref<GPUBuffer> GPUDevice::createBuffer(const GPUBufferDescriptor&)
 Ref<GPUTexture> GPUDevice::createTexture(const GPUTextureDescriptor&)
 {
     return GPUTexture::create();
+}
+
+Ref<GPUSampler> GPUDevice::createSampler(const std::optional<GPUSamplerDescriptor>&)
+{
+    return GPUSampler::create();
 }
 
 Ref<GPUExternalTexture> GPUDevice::importExternalTexture(const GPUExternalTextureDescriptor&)
