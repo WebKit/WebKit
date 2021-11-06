@@ -42,9 +42,7 @@ public:
     void setLabel(String&&);
 
 private:
-    GPUCommandBuffer()
-    {
-    }
+    GPUCommandBuffer() = default;
 };
 
 }

@@ -1487,6 +1487,9 @@ list(APPEND WebCore_NON_SVG_IDL_FILES
     Modules/WebGPU/GPUBufferBindingType.idl
     Modules/WebGPU/GPUBufferDescriptor.idl
     Modules/WebGPU/GPUBufferUsage.idl
+    Modules/WebGPU/GPUCanvasCompositingAlphaMode.idl
+    Modules/WebGPU/GPUCanvasConfiguration.idl
+    Modules/WebGPU/GPUCanvasContext.idl
     Modules/WebGPU/GPUColorDict.idl
     Modules/WebGPU/GPUColorTargetState.idl
     Modules/WebGPU/GPUColorWrite.idl
@@ -1508,6 +1511,12 @@ list(APPEND WebCore_NON_SVG_IDL_FILES
     Modules/WebGPU/GPUDepthStencilState.idl
     Modules/WebGPU/GPUDevice.idl
     Modules/WebGPU/GPUDeviceDescriptor.idl
+    Modules/WebGPU/GPUDeviceError.idl
+    Modules/WebGPU/GPUDeviceLost.idl
+    Modules/WebGPU/GPUDeviceLostInfo.idl
+    Modules/WebGPU/GPUDeviceLostReason.idl
+    Modules/WebGPU/GPUDeviceUncapturedError.idl
+    Modules/WebGPU/GPUErrorFilter.idl
     Modules/WebGPU/GPUExtent3DDict.idl
     Modules/WebGPU/GPUExternalTexture.idl
     Modules/WebGPU/GPUExternalTextureBindingLayout.idl
@@ -1529,6 +1538,7 @@ list(APPEND WebCore_NON_SVG_IDL_FILES
     Modules/WebGPU/GPUObjectDescriptorBase.idl
     Modules/WebGPU/GPUOrigin2DDict.idl
     Modules/WebGPU/GPUOrigin3DDict.idl
+    Modules/WebGPU/GPUOutOfMemoryError.idl
     Modules/WebGPU/GPUPipelineBase.idl
     Modules/WebGPU/GPUPipelineDescriptorBase.idl
     Modules/WebGPU/GPUPipelineLayout.idl
@@ -1584,6 +1594,9 @@ list(APPEND WebCore_NON_SVG_IDL_FILES
     Modules/WebGPU/GPUTextureView.idl
     Modules/WebGPU/GPUTextureViewDescriptor.idl
     Modules/WebGPU/GPUTextureViewDimension.idl
+    Modules/WebGPU/GPUUncapturedErrorEvent.idl
+    Modules/WebGPU/GPUUncapturedErrorEventInit.idl
+    Modules/WebGPU/GPUValidationError.idl
     Modules/WebGPU/GPUVertexAttribute.idl
     Modules/WebGPU/GPUVertexBufferLayout.idl
     Modules/WebGPU/GPUVertexFormat.idl

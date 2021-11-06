@@ -72,6 +72,9 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/WebGPU/GPUBufferBindingType.idl \
     $(WebCore)/Modules/WebGPU/GPUBufferDescriptor.idl \
     $(WebCore)/Modules/WebGPU/GPUBufferUsage.idl \
+    $(WebCore)/Modules/WebGPU/GPUCanvasCompositingAlphaMode.idl \
+    $(WebCore)/Modules/WebGPU/GPUCanvasConfiguration.idl \
+    $(WebCore)/Modules/WebGPU/GPUCanvasContext.idl \
     $(WebCore)/Modules/WebGPU/GPUColorDict.idl \
     $(WebCore)/Modules/WebGPU/GPUColorTargetState.idl \
     $(WebCore)/Modules/WebGPU/GPUColorWrite.idl \
@@ -93,6 +96,12 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/WebGPU/GPUDepthStencilState.idl \
     $(WebCore)/Modules/WebGPU/GPUDevice.idl \
     $(WebCore)/Modules/WebGPU/GPUDeviceDescriptor.idl \
+    $(WebCore)/Modules/WebGPU/GPUDeviceError.idl \
+    $(WebCore)/Modules/WebGPU/GPUDeviceLost.idl \
+    $(WebCore)/Modules/WebGPU/GPUDeviceLostInfo.idl \
+    $(WebCore)/Modules/WebGPU/GPUDeviceLostReason.idl \
+    $(WebCore)/Modules/WebGPU/GPUDeviceUncapturedError.idl \
+    $(WebCore)/Modules/WebGPU/GPUErrorFilter.idl \
     $(WebCore)/Modules/WebGPU/GPUExtent3DDict.idl \
     $(WebCore)/Modules/WebGPU/GPUExternalTexture.idl \
     $(WebCore)/Modules/WebGPU/GPUExternalTextureBindingLayout.idl \
@@ -114,6 +123,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/WebGPU/GPUObjectDescriptorBase.idl \
     $(WebCore)/Modules/WebGPU/GPUOrigin2DDict.idl \
     $(WebCore)/Modules/WebGPU/GPUOrigin3DDict.idl \
+    $(WebCore)/Modules/WebGPU/GPUOutOfMemoryError.idl \
     $(WebCore)/Modules/WebGPU/GPUPipelineBase.idl \
     $(WebCore)/Modules/WebGPU/GPUPipelineDescriptorBase.idl \
     $(WebCore)/Modules/WebGPU/GPUPipelineLayout.idl \
@@ -169,6 +179,9 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/WebGPU/GPUTextureView.idl \
     $(WebCore)/Modules/WebGPU/GPUTextureViewDescriptor.idl \
     $(WebCore)/Modules/WebGPU/GPUTextureViewDimension.idl \
+    $(WebCore)/Modules/WebGPU/GPUUncapturedErrorEvent.idl \
+    $(WebCore)/Modules/WebGPU/GPUUncapturedErrorEventInit.idl \
+    $(WebCore)/Modules/WebGPU/GPUValidationError.idl \
     $(WebCore)/Modules/WebGPU/GPUVertexAttribute.idl \
     $(WebCore)/Modules/WebGPU/GPUVertexBufferLayout.idl \
     $(WebCore)/Modules/WebGPU/GPUVertexFormat.idl \

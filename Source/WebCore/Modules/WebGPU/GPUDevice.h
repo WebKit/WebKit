@@ -26,8 +26,12 @@
 #pragma once
 
 #include "ActiveDOMObject.h"
+#include "DOMPromiseProxy.h"
 #include "EventTarget.h"
 #include "GPUComputePipeline.h"
+#include "GPUDeviceLostInfo.h"
+#include "GPUError.h"
+#include "GPUErrorFilter.h"
 #include "GPURenderPipeline.h"
 #include "JSDOMPromiseDeferred.h"
 #include "ScriptExecutionContext.h"
@@ -107,6 +111,13 @@ public:
 
     Ref<GPUQuerySet> createQuerySet(const GPUQuerySetDescriptor&);
 
+    void pushErrorScope(GPUErrorFilter);
+    using ErrorScopePromise = DOMPromiseDeferred<IDLNullable<IDLInterface<GPUError>>>;
+    void popErrorScope(ErrorScopePromise&&);
+
+    using LostPromise = DOMPromiseProxy<IDLInterface<GPUDeviceLostInfo>>;
+    LostPromise& lost() { return m_lostPromise; }
+ 
 private:
     GPUDevice(ScriptExecutionContext* scriptExecutionContext)
         : ActiveDOMObject { scriptExecutionContext }
@@ -122,6 +133,8 @@ private:
     ScriptExecutionContext* scriptExecutionContext() const final { return ActiveDOMObject::scriptExecutionContext(); }
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
+
+    LostPromise m_lostPromise;
 };
 
 }

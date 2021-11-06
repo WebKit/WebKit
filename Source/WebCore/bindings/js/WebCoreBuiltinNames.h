@@ -132,6 +132,7 @@ namespace WebCore {
     macro(GPUBindGroupLayout) \
     macro(GPUBuffer) \
     macro(GPUBufferUsage) \
+    macro(GPUCanvasContext) \
     macro(GPUColorWrite) \
     macro(GPUCommandBuffer) \
     macro(GPUCommandEncoder) \
@@ -140,8 +141,10 @@ namespace WebCore {
     macro(GPUComputePassEncoder) \
     macro(GPUComputePipeline) \
     macro(GPUDevice) \
+    macro(GPUDeviceLostInfo) \
     macro(GPUExternalTexture) \
     macro(GPUMapMode) \
+    macro(GPUOutOfMemoryError) \
     macro(GPUPipelineLayout) \
     macro(GPUQuerySet) \
     macro(GPUQueue) \
@@ -157,6 +160,8 @@ namespace WebCore {
     macro(GPUTexture) \
     macro(GPUTextureUsage) \
     macro(GPUTextureView) \
+    macro(GPUUncapturedErrorEvent) \
+    macro(GPUValidationError) \
     macro(Gamepad) \
     macro(GamepadButton) \
     macro(GamepadEvent) \

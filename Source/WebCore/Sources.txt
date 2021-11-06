@@ -26,6 +26,7 @@ Modules/WebGPU/GPUAdapter.cpp
 Modules/WebGPU/GPUBindGroup.cpp
 Modules/WebGPU/GPUBindGroupLayout.cpp
 Modules/WebGPU/GPUBuffer.cpp
+Modules/WebGPU/GPUCanvasContext.cpp
 Modules/WebGPU/GPUCommandBuffer.cpp
 Modules/WebGPU/GPUCommandEncoder.cpp
 Modules/WebGPU/GPUCompilationInfo.cpp
@@ -33,6 +34,7 @@ Modules/WebGPU/GPUCompilationMessage.cpp
 Modules/WebGPU/GPUComputePassEncoder.cpp
 Modules/WebGPU/GPUComputePipeline.cpp
 Modules/WebGPU/GPUDevice.cpp
+Modules/WebGPU/GPUDeviceLostInfo.cpp
 Modules/WebGPU/GPUExternalTexture.cpp
 Modules/WebGPU/GPUPipelineLayout.cpp
 Modules/WebGPU/GPUQuerySet.cpp
@@ -47,6 +49,8 @@ Modules/WebGPU/GPUSupportedFeatures.cpp
 Modules/WebGPU/GPUSupportedLimits.cpp
 Modules/WebGPU/GPUTexture.cpp
 Modules/WebGPU/GPUTextureView.cpp
+Modules/WebGPU/GPUUncapturedErrorEvent.cpp
+Modules/WebGPU/GPUValidationError.cpp
 Modules/airplay/WebKitPlaybackTargetAvailabilityEvent.cpp
 Modules/applicationmanifest/ApplicationManifestParser.cpp
 Modules/async-clipboard/Clipboard.cpp
@@ -3110,6 +3114,9 @@ JSGPUBufferBindingLayout.cpp
 JSGPUBufferBindingType.cpp
 JSGPUBufferDescriptor.cpp
 JSGPUBufferUsage.cpp
+JSGPUCanvasCompositingAlphaMode.cpp
+JSGPUCanvasConfiguration.cpp
+JSGPUCanvasContext.cpp
 JSGPUColorDict.cpp
 JSGPUColorTargetState.cpp
 JSGPUColorWrite.cpp
@@ -3131,6 +3138,12 @@ JSGPUCullMode.cpp
 JSGPUDepthStencilState.cpp
 JSGPUDevice.cpp
 JSGPUDeviceDescriptor.cpp
+JSGPUDeviceError.cpp
+JSGPUDeviceLost.cpp
+JSGPUDeviceLostInfo.cpp
+JSGPUDeviceLostReason.cpp
+JSGPUDeviceUncapturedError.cpp
+JSGPUErrorFilter.cpp
 JSGPUExtent3DDict.cpp
 JSGPUExternalTexture.cpp
 JSGPUExternalTextureBindingLayout.cpp
@@ -3152,6 +3165,7 @@ JSGPUObjectBase.cpp
 JSGPUObjectDescriptorBase.cpp
 JSGPUOrigin2DDict.cpp
 JSGPUOrigin3DDict.cpp
+JSGPUOutOfMemoryError.cpp
 JSGPUPipelineBase.cpp
 JSGPUPipelineDescriptorBase.cpp
 JSGPUPipelineLayout.cpp
@@ -3207,6 +3221,9 @@ JSGPUTextureUsage.cpp
 JSGPUTextureView.cpp
 JSGPUTextureViewDescriptor.cpp
 JSGPUTextureViewDimension.cpp
+JSGPUUncapturedErrorEvent.cpp
+JSGPUUncapturedErrorEventInit.cpp
+JSGPUValidationError.cpp
 JSGPUVertexAttribute.cpp
 JSGPUVertexBufferLayout.cpp
 JSGPUVertexFormat.cpp

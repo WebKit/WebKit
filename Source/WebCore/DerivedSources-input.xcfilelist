@@ -40,6 +40,9 @@ $(PROJECT_DIR)/Modules/WebGPU/GPUBufferBindingLayout.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUBufferBindingType.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUBufferDescriptor.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUBufferUsage.idl
+$(PROJECT_DIR)/Modules/WebGPU/GPUCanvasCompositingAlphaMode.idl
+$(PROJECT_DIR)/Modules/WebGPU/GPUCanvasConfiguration.idl
+$(PROJECT_DIR)/Modules/WebGPU/GPUCanvasContext.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUColorDict.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUColorTargetState.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUColorWrite.idl
@@ -61,6 +64,12 @@ $(PROJECT_DIR)/Modules/WebGPU/GPUCullMode.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUDepthStencilState.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUDevice.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUDeviceDescriptor.idl
+$(PROJECT_DIR)/Modules/WebGPU/GPUDeviceError.idl
+$(PROJECT_DIR)/Modules/WebGPU/GPUDeviceLost.idl
+$(PROJECT_DIR)/Modules/WebGPU/GPUDeviceLostInfo.idl
+$(PROJECT_DIR)/Modules/WebGPU/GPUDeviceLostReason.idl
+$(PROJECT_DIR)/Modules/WebGPU/GPUDeviceUncapturedError.idl
+$(PROJECT_DIR)/Modules/WebGPU/GPUErrorFilter.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUExtent3DDict.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUExternalTexture.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUExternalTextureBindingLayout.idl
@@ -82,6 +91,7 @@ $(PROJECT_DIR)/Modules/WebGPU/GPUObjectBase.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUObjectDescriptorBase.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUOrigin2DDict.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUOrigin3DDict.idl
+$(PROJECT_DIR)/Modules/WebGPU/GPUOutOfMemoryError.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUPipelineBase.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUPipelineDescriptorBase.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUPipelineLayout.idl
@@ -138,6 +148,9 @@ $(PROJECT_DIR)/Modules/WebGPU/GPUTextureUsage.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUTextureView.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUTextureViewDescriptor.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUTextureViewDimension.idl
+$(PROJECT_DIR)/Modules/WebGPU/GPUUncapturedErrorEvent.idl
+$(PROJECT_DIR)/Modules/WebGPU/GPUUncapturedErrorEventInit.idl
+$(PROJECT_DIR)/Modules/WebGPU/GPUValidationError.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUVertexAttribute.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUVertexBufferLayout.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUVertexFormat.idl

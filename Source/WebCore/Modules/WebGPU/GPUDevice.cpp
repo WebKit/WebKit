@@ -155,4 +155,12 @@ Ref<GPUQuerySet> GPUDevice::createQuerySet(const GPUQuerySetDescriptor&)
     return GPUQuerySet::create();
 }
 
+void GPUDevice::pushErrorScope(GPUErrorFilter)
+{
+}
+
+void GPUDevice::popErrorScope(ErrorScopePromise&&)
+{
+}
+
 }
