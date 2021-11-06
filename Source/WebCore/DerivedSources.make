@@ -60,6 +60,9 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/WebGPU/GPUBufferUsage.idl \
     $(WebCore)/Modules/WebGPU/GPUDevice.idl \
     $(WebCore)/Modules/WebGPU/GPUDeviceDescriptor.idl \
+    $(WebCore)/Modules/WebGPU/GPUExtent3DDict.idl \
+    $(WebCore)/Modules/WebGPU/GPUExternalTexture.idl \
+    $(WebCore)/Modules/WebGPU/GPUExternalTextureDescriptor.idl \
     $(WebCore)/Modules/WebGPU/GPUFeatureName.idl \
     $(WebCore)/Modules/WebGPU/GPUMapMode.idl \
     $(WebCore)/Modules/WebGPU/GPUObjectBase.idl \
@@ -69,6 +72,15 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/WebGPU/GPURequestAdapterOptions.idl \
     $(WebCore)/Modules/WebGPU/GPUSupportedFeatures.idl \
     $(WebCore)/Modules/WebGPU/GPUSupportedLimits.idl \
+    $(WebCore)/Modules/WebGPU/GPUTexture.idl \
+    $(WebCore)/Modules/WebGPU/GPUTextureAspect.idl \
+    $(WebCore)/Modules/WebGPU/GPUTextureDescriptor.idl \
+    $(WebCore)/Modules/WebGPU/GPUTextureDimension.idl \
+    $(WebCore)/Modules/WebGPU/GPUTextureFormat.idl \
+    $(WebCore)/Modules/WebGPU/GPUTextureUsage.idl \
+    $(WebCore)/Modules/WebGPU/GPUTextureView.idl \
+    $(WebCore)/Modules/WebGPU/GPUTextureViewDescriptor.idl \
+    $(WebCore)/Modules/WebGPU/GPUTextureViewDimension.idl \
     $(WebCore)/Modules/WebGPU/NavigatorGPU.idl \
     $(WebCore)/Modules/airplay/WebKitPlaybackTargetAvailabilityEvent.idl \
     $(WebCore)/Modules/applepay/ApplePayCancelEvent.idl \

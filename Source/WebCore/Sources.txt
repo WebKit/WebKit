@@ -25,8 +25,11 @@ Modules/WebGPU/GPU.cpp
 Modules/WebGPU/GPUAdapter.cpp
 Modules/WebGPU/GPUBuffer.cpp
 Modules/WebGPU/GPUDevice.cpp
+Modules/WebGPU/GPUExternalTexture.cpp
 Modules/WebGPU/GPUSupportedFeatures.cpp
 Modules/WebGPU/GPUSupportedLimits.cpp
+Modules/WebGPU/GPUTexture.cpp
+Modules/WebGPU/GPUTextureView.cpp
 Modules/airplay/WebKitPlaybackTargetAvailabilityEvent.cpp
 Modules/applicationmanifest/ApplicationManifestParser.cpp
 Modules/async-clipboard/Clipboard.cpp
@@ -3078,6 +3081,9 @@ JSGPUBufferDescriptor.cpp
 JSGPUBufferUsage.cpp
 JSGPUDevice.cpp
 JSGPUDeviceDescriptor.cpp
+JSGPUExtent3DDict.cpp
+JSGPUExternalTexture.cpp
+JSGPUExternalTextureDescriptor.cpp
 JSGPUFeatureName.cpp
 JSGPUMapMode.cpp
 JSGPUObjectBase.cpp
@@ -3087,6 +3093,15 @@ JSGPUPredefinedColorSpace.cpp
 JSGPURequestAdapterOptions.cpp
 JSGPUSupportedFeatures.cpp
 JSGPUSupportedLimits.cpp
+JSGPUTexture.cpp
+JSGPUTextureAspect.cpp
+JSGPUTextureDescriptor.cpp
+JSGPUTextureDimension.cpp
+JSGPUTextureFormat.cpp
+JSGPUTextureUsage.cpp
+JSGPUTextureView.cpp
+JSGPUTextureViewDescriptor.cpp
+JSGPUTextureViewDimension.cpp
 JSGainNode.cpp
 JSGainOptions.cpp
 JSGamepad.cpp

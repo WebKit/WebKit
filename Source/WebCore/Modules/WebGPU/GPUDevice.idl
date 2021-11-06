@@ -38,6 +38,8 @@ interface GPUDevice : EventTarget {
     undefined destroy();
 
     GPUBuffer createBuffer(GPUBufferDescriptor descriptor);
+    GPUTexture createTexture(GPUTextureDescriptor descriptor);
+    GPUExternalTexture importExternalTexture(GPUExternalTextureDescriptor descriptor);
 
     // FIXME: Add more here.
 };

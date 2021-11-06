@@ -35,8 +35,12 @@ namespace WebCore {
 
 class GPUBuffer;
 struct GPUBufferDescriptor;
+class GPUExternalTexture;
+struct GPUExternalTextureDescriptor;
 class GPUSupportedFeatures;
 class GPUSupportedLimits;
+class GPUTexture;
+struct GPUTextureDescriptor;
 
 class GPUDevice : public ActiveDOMObject, public EventTargetWithInlineData {
 public:
@@ -56,6 +60,8 @@ public:
     void destroy();
 
     Ref<GPUBuffer> createBuffer(const GPUBufferDescriptor&);
+    Ref<GPUTexture> createTexture(const GPUTextureDescriptor&);
+    Ref<GPUExternalTexture> importExternalTexture(const GPUExternalTextureDescriptor&);
 
 private:
     GPUDevice(ScriptExecutionContext* scriptExecutionContext)
@@ -72,8 +78,6 @@ private:
     ScriptExecutionContext* scriptExecutionContext() const final { return ActiveDOMObject::scriptExecutionContext(); }
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
-
-    String m_label;
 };
 
 }

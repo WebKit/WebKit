@@ -1475,6 +1475,9 @@ list(APPEND WebCore_NON_SVG_IDL_FILES
     Modules/WebGPU/GPUBufferUsage.idl
     Modules/WebGPU/GPUDevice.idl
     Modules/WebGPU/GPUDeviceDescriptor.idl
+    Modules/WebGPU/GPUExtent3DDict.idl
+    Modules/WebGPU/GPUExternalTexture.idl
+    Modules/WebGPU/GPUExternalTextureDescriptor.idl
     Modules/WebGPU/GPUFeatureName.idl
     Modules/WebGPU/GPUMapMode.idl
     Modules/WebGPU/GPUObjectBase.idl
@@ -1484,6 +1487,15 @@ list(APPEND WebCore_NON_SVG_IDL_FILES
     Modules/WebGPU/GPURequestAdapterOptions.idl
     Modules/WebGPU/GPUSupportedFeatures.idl
     Modules/WebGPU/GPUSupportedLimits.idl
+    Modules/WebGPU/GPUTexture.idl
+    Modules/WebGPU/GPUTextureAspect.idl
+    Modules/WebGPU/GPUTextureDescriptor.idl
+    Modules/WebGPU/GPUTextureDimension.idl
+    Modules/WebGPU/GPUTextureFormat.idl
+    Modules/WebGPU/GPUTextureUsage.idl
+    Modules/WebGPU/GPUTextureView.idl
+    Modules/WebGPU/GPUTextureViewDescriptor.idl
+    Modules/WebGPU/GPUTextureViewDimension.idl
     Modules/WebGPU/NavigatorGPU.idl
 )
 

@@ -28,8 +28,12 @@
 
 #include "GPUBuffer.h"
 #include "GPUBufferDescriptor.h"
+#include "GPUExternalTexture.h"
+#include "GPUExternalTextureDescriptor.h"
 #include "GPUSupportedFeatures.h"
 #include "GPUSupportedLimits.h"
+#include "GPUTexture.h"
+#include "GPUTextureDescriptor.h"
 
 namespace WebCore {
 
@@ -61,6 +65,16 @@ void GPUDevice::destroy()
 Ref<GPUBuffer> GPUDevice::createBuffer(const GPUBufferDescriptor&)
 {
     return GPUBuffer::create();
+}
+
+Ref<GPUTexture> GPUDevice::createTexture(const GPUTextureDescriptor&)
+{
+    return GPUTexture::create();
+}
+
+Ref<GPUExternalTexture> GPUDevice::importExternalTexture(const GPUExternalTextureDescriptor&)
+{
+    return GPUExternalTexture::create();
 }
 
 }

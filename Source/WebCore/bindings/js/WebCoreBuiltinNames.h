@@ -131,9 +131,13 @@ namespace WebCore {
     macro(GPUBuffer) \
     macro(GPUBufferUsage) \
     macro(GPUDevice) \
+    macro(GPUExternalTexture) \
     macro(GPUMapMode) \
     macro(GPUSupportedFeatures) \
     macro(GPUSupportedLimits) \
+    macro(GPUTexture) \
+    macro(GPUTextureUsage) \
+    macro(GPUTextureView) \
     macro(Gamepad) \
     macro(GamepadButton) \
     macro(GamepadEvent) \
