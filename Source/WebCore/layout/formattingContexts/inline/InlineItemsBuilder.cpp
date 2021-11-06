@@ -88,7 +88,8 @@ InlineItems InlineItemsBuilder::build()
 {
     InlineItems inlineItems;
     collectInlineItems(inlineItems);
-    breakAndComputeBidiLevels(inlineItems);
+    if (hasSeenBidiContent())
+        breakAndComputeBidiLevels(inlineItems);
     return inlineItems;
 }
 
@@ -138,11 +139,75 @@ void InlineItemsBuilder::collectInlineItems(InlineItems& inlineItems)
     }
 }
 
+using ContentOffsetMap = HashMap<const Box*, size_t>;
+static inline void buildBidiParagraph(const InlineItems& inlineItems,  StringBuilder& paragraphContentBuilder, ContentOffsetMap& contentOffsetMap)
+{
+    const Box* lastInlineTextBox = nullptr;
+    for (auto& inlineItem : inlineItems) {
+        auto& layoutBox = inlineItem.layoutBox();
+
+        if (inlineItem.isText()) {
+            if (lastInlineTextBox != &layoutBox) {
+                contentOffsetMap.set(&layoutBox, paragraphContentBuilder.length());
+                paragraphContentBuilder.append(downcast<InlineTextBox>(layoutBox).content());
+                lastInlineTextBox = &layoutBox;
+            }
+        } else if (inlineItem.isBox())
+            paragraphContentBuilder.append(objectReplacementCharacter);
+        else if (inlineItem.isInlineBoxStart() || inlineItem.isInlineBoxEnd()) {
+            // https://drafts.csswg.org/css-writing-modes/#unicode-bidi
+            auto& style = inlineItem.style();
+            auto initiatesControlCharacter = style.rtlOrdering() == Order::Logical && style.unicodeBidi() != EUnicodeBidi::UBNormal;
+            if (!initiatesControlCharacter)
+                continue;
+            auto isEnteringBidi = inlineItem.isInlineBoxStart();
+
+            if (isEnteringBidi)
+                contentOffsetMap.add(&layoutBox, paragraphContentBuilder.length());
+
+            switch (style.unicodeBidi()) {
+            case EUnicodeBidi::UBNormal:
+                // The box does not open an additional level of embedding with respect to the bidirectional algorithm.
+                // For inline boxes, implicit reordering works across box boundaries.
+                ASSERT_NOT_REACHED();
+                break;
+            case EUnicodeBidi::Embed:
+                paragraphContentBuilder.append(isEnteringBidi ? (style.isLeftToRightDirection() ? leftToRightEmbed : rightToLeftEmbed) : popDirectionalFormatting);
+                break;
+            case EUnicodeBidi::Override:
+                paragraphContentBuilder.append(isEnteringBidi ? (style.isLeftToRightDirection() ? leftToRightOverride : rightToLeftOverride) : popDirectionalFormatting);
+                break;
+            case EUnicodeBidi::Isolate:
+                paragraphContentBuilder.append(isEnteringBidi ? (style.isLeftToRightDirection() ? leftToRightIsolate : rightToLeftIsolate) : popDirectionalIsolate);
+                break;
+            case EUnicodeBidi::Plaintext:
+                paragraphContentBuilder.append(isEnteringBidi ? firstStrongIsolate : popDirectionalIsolate);
+                break;
+            case EUnicodeBidi::IsolateOverride:
+                if (isEnteringBidi) {
+                    paragraphContentBuilder.append(firstStrongIsolate);
+                    paragraphContentBuilder.append(style.isLeftToRightDirection() ? leftToRightOverride : rightToLeftOverride);
+                } else {
+                    paragraphContentBuilder.append(popDirectionalFormatting);
+                    paragraphContentBuilder.append(popDirectionalIsolate);
+                }
+                break;
+            default:
+                ASSERT_NOT_REACHED();
+            }
+        } else
+            ASSERT_NOT_IMPLEMENTED_YET();
+    }
+}
+
 void InlineItemsBuilder::breakAndComputeBidiLevels(InlineItems& inlineItems)
 {
-    if (!hasSeenBidiContent())
-        return;
+    ASSERT(hasSeenBidiContent());
     ASSERT(!inlineItems.isEmpty());
+
+    StringBuilder paragraphContentBuilder;
+    ContentOffsetMap contentOffsetMap;
+    buildBidiParagraph(inlineItems, paragraphContentBuilder, contentOffsetMap);
 
     // 1. Setup the bidi boundary loop by calling ubidi_setPara with the paragraph text.
     // 2. Call ubidi_getLogicalRun to advance to the next bidi boundary until we hit the end of the content.
@@ -159,14 +224,15 @@ void InlineItemsBuilder::breakAndComputeBidiLevels(InlineItems& inlineItems)
         bidiLevel = root().style().isLeftToRightDirection() ? UBIDI_LTR : UBIDI_RTL;
 
     UErrorCode error = U_ZERO_ERROR;
-    ubidi_setPara(ubidi, m_paragraphContentBuilder.characters16(), m_paragraphContentBuilder.length(), bidiLevel, nullptr, &error);
+    ASSERT(!paragraphContentBuilder.isEmpty());
+    ubidi_setPara(ubidi, paragraphContentBuilder.characters16(), paragraphContentBuilder.length(), bidiLevel, nullptr, &error);
     if (U_FAILURE(error)) {
         ASSERT_NOT_REACHED();
         return;
     }
 
     size_t currentInlineItemIndex = 0;
-    for (size_t currentPosition = 0; currentPosition < m_paragraphContentBuilder.length();) {
+    for (size_t currentPosition = 0; currentPosition < paragraphContentBuilder.length();) {
         UBiDiLevel level;
         int32_t endPosition = currentPosition;
         ubidi_getLogicalRun(ubidi, currentPosition, &endPosition, &level);
@@ -188,7 +254,7 @@ void InlineItemsBuilder::breakAndComputeBidiLevels(InlineItems& inlineItems)
                 inlineTextItem.setBidiLevel(level);
 
                 auto inlineTextItemEnd = inlineTextItem.end();
-                auto bidiEnd = endPosition - m_contentOffsetMap.get(&inlineTextItem.layoutBox());
+                auto bidiEnd = endPosition - contentOffsetMap.get(&inlineTextItem.layoutBox());
                 if (bidiEnd == inlineTextItemEnd) {
                     ++currentInlineItemIndex;
                     break;
@@ -235,11 +301,6 @@ void InlineItemsBuilder::handleTextContent(const InlineTextBox& inlineTextBox, I
             return { };
         return TextUtil::width(inlineTextBox, fontCascade, startPosition, startPosition + length, { });
     };
-
-    if (hasSeenBidiContent()) {
-        m_contentOffsetMap.set(&inlineTextBox, m_paragraphContentBuilder.length());
-        m_paragraphContentBuilder.append(text);
-    }
 
     while (currentPosition < contentLength) {
         auto handleSegmentBreak = [&] {
@@ -308,18 +369,15 @@ void InlineItemsBuilder::handleTextContent(const InlineTextBox& inlineTextBox, I
                 U16_NEXT(text.characters16(), position, contentLength, character);
 
                 auto bidiCategory = u_charDirection(character);
-                auto needsBidi = bidiCategory == U_RIGHT_TO_LEFT
+                m_hasSeenBidiContent = bidiCategory == U_RIGHT_TO_LEFT
                     || bidiCategory == U_RIGHT_TO_LEFT_ARABIC
                     || bidiCategory == U_RIGHT_TO_LEFT_EMBEDDING
                     || bidiCategory == U_RIGHT_TO_LEFT_OVERRIDE
                     || bidiCategory == U_LEFT_TO_RIGHT_EMBEDDING
                     || bidiCategory == U_LEFT_TO_RIGHT_OVERRIDE
                     || bidiCategory == U_POP_DIRECTIONAL_FORMAT;
-                if (needsBidi) {
-                    buildPreviousTextContent(inlineItems);
-                    // buildPreviousTextContent takes care of this content too as some inline items have already been constructed for this text.
+                if (m_hasSeenBidiContent)
                     break;
-                }
             }
 #endif
             return true;
@@ -334,123 +392,26 @@ void InlineItemsBuilder::handleTextContent(const InlineTextBox& inlineTextBox, I
 void InlineItemsBuilder::handleInlineBoxStart(const Box& inlineBox, InlineItems& inlineItems)
 {
     inlineItems.append({ inlineBox, InlineItem::Type::InlineBoxStart });
-    // https://drafts.csswg.org/css-writing-modes/#unicode-bidi
     auto& style = inlineBox.style();
-    if (style.rtlOrdering() == Order::Visual)
-        return;
-
-    auto isLeftToRightDirection = style.isLeftToRightDirection();
-    switch (style.unicodeBidi()) {
-    case EUnicodeBidi::UBNormal:
-        // The box does not open an additional level of embedding with respect to the bidirectional algorithm.
-        // For inline boxes, implicit reordering works across box boundaries.
-        break;
-    case EUnicodeBidi::Embed:
-        enterBidiContext(inlineBox, isLeftToRightDirection ? leftToRightEmbed : rightToLeftEmbed, inlineItems);
-        break;
-    case EUnicodeBidi::Override:
-        enterBidiContext(inlineBox, isLeftToRightDirection ? leftToRightOverride : rightToLeftOverride, inlineItems);
-        break;
-    case EUnicodeBidi::Isolate:
-        enterBidiContext(inlineBox, isLeftToRightDirection ? leftToRightIsolate : rightToLeftIsolate, inlineItems);
-        break;
-    case EUnicodeBidi::Plaintext:
-        enterBidiContext(inlineBox, firstStrongIsolate, inlineItems);
-        break;
-    case EUnicodeBidi::IsolateOverride:
-        enterBidiContext(inlineBox, firstStrongIsolate, inlineItems);
-        enterBidiContext(inlineBox, isLeftToRightDirection ? leftToRightOverride : rightToLeftOverride, inlineItems);
-        break;
-    default:
-        ASSERT_NOT_REACHED();
-    }
+    m_hasSeenBidiContent = m_hasSeenBidiContent || (style.rtlOrdering() == Order::Logical && style.unicodeBidi() != EUnicodeBidi::UBNormal); 
 }
 
 void InlineItemsBuilder::handleInlineBoxEnd(const Box& inlineBox, InlineItems& inlineItems)
 {
     inlineItems.append({ inlineBox, InlineItem::Type::InlineBoxEnd });
-    // https://drafts.csswg.org/css-writing-modes/#unicode-bidi
-    auto& style = inlineBox.style();
-    if (style.rtlOrdering() == Order::Visual)
-        return;
-
-    switch (style.unicodeBidi()) {
-    case EUnicodeBidi::UBNormal:
-        // The box does not open an additional level of embedding with respect to the bidirectional algorithm.
-        // For inline boxes, implicit reordering works across box boundaries.
-        break;
-    case EUnicodeBidi::Embed:
-        exitBidiContext(inlineBox, popDirectionalFormatting);
-        break;
-    case EUnicodeBidi::Override:
-        exitBidiContext(inlineBox, popDirectionalFormatting);
-        break;
-    case EUnicodeBidi::Isolate:
-        exitBidiContext(inlineBox, popDirectionalIsolate);
-        break;
-    case EUnicodeBidi::Plaintext:
-        exitBidiContext(inlineBox, popDirectionalIsolate);
-        break;
-    case EUnicodeBidi::IsolateOverride:
-        exitBidiContext(inlineBox, popDirectionalFormatting);
-        exitBidiContext(inlineBox, popDirectionalIsolate);
-        break;
-    default:
-        ASSERT_NOT_REACHED();
-    }
+    // Inline box end item itself can not trigger bidi content.
+    ASSERT(hasSeenBidiContent() || inlineBox.style().rtlOrdering() == Order::Visual || inlineBox.style().unicodeBidi() == EUnicodeBidi::UBNormal);
 }
 
 void InlineItemsBuilder::handleInlineLevelBox(const Box& layoutBox, InlineItems& inlineItems)
 {
-    if (layoutBox.isAtomicInlineLevelBox()) {
-        inlineItems.append({ layoutBox, InlineItem::Type::Box });
-        if (hasSeenBidiContent())
-            m_paragraphContentBuilder.append(objectReplacementCharacter);
-        return;
-    }
+    if (layoutBox.isAtomicInlineLevelBox())
+        return inlineItems.append({ layoutBox, InlineItem::Type::Box });
 
-    if (layoutBox.isLineBreakBox()) {
-        // FIXME: Figure out what (if any) character to append to the bidi paragraph.
+    if (layoutBox.isLineBreakBox())
         return inlineItems.append({ layoutBox, downcast<LineBreakBox>(layoutBox).isOptional() ? InlineItem::Type::WordBreakOpportunity : InlineItem::Type::HardLineBreak });
-    }
 
     ASSERT_NOT_REACHED();
-}
-
-void InlineItemsBuilder::enterBidiContext(const Box& box, UChar controlCharacter, const InlineItems& inlineItems)
-{
-    if (!hasSeenBidiContent())
-        buildPreviousTextContent(inlineItems);
-    // Let the first control character represent the  box.
-    m_contentOffsetMap.add(&box, m_paragraphContentBuilder.length());
-    m_paragraphContentBuilder.append(controlCharacter);
-}
-
-void InlineItemsBuilder::exitBidiContext(const Box&, UChar controlCharacter)
-{
-    ASSERT(hasSeenBidiContent());
-    m_paragraphContentBuilder.append(controlCharacter);
-}
-
-void InlineItemsBuilder::buildPreviousTextContent(const InlineItems& inlineItems)
-{
-    ASSERT(!hasSeenBidiContent());
-    ASSERT(m_contentOffsetMap.isEmpty());
-
-    const Box* lastInlineTextBox = nullptr;
-    for (auto& inlineItem : inlineItems) {
-        if (inlineItem.isText()) {
-            auto& layoutBox = inlineItem.layoutBox();
-            if (lastInlineTextBox != &layoutBox) {
-                m_contentOffsetMap.set(&layoutBox, m_paragraphContentBuilder.length());
-                m_paragraphContentBuilder.append(downcast<InlineTextBox>(layoutBox).content());
-                lastInlineTextBox = &layoutBox;
-            }
-        } else if (inlineItem.isBox())
-            m_paragraphContentBuilder.append(objectReplacementCharacter);
-        else
-            ASSERT_NOT_IMPLEMENTED_YET();
-    }
 }
 
 }
