@@ -498,8 +498,8 @@ void FrameSelection::updateAndRevealSelection(const AXTextStateChangeIntent& int
 
         revealSelection(m_selectionRevealMode, alignment, revealExtent, scrollBehavior);
     }
-
-    notifyAccessibilityForSelectionChange(intent);
+    if (!m_document->editor().ignoreSelectionChanges())
+        notifyAccessibilityForSelectionChange(intent);
 }
 
 void FrameSelection::updateDataDetectorsForSelection()

@@ -81,8 +81,8 @@ RefPtr<TextIndicator> TextIndicator::createWithRange(const SimpleRange& range, O
 
     OptionSet<TemporarySelectionOption> temporarySelectionOptions;
     temporarySelectionOptions.add(TemporarySelectionOption::DoNotSetFocus);
-#if PLATFORM(IOS_FAMILY)
     temporarySelectionOptions.add(TemporarySelectionOption::IgnoreSelectionChanges);
+#if PLATFORM(IOS_FAMILY)
     temporarySelectionOptions.add(TemporarySelectionOption::EnableAppearanceUpdates);
 #endif
     TemporarySelectionChange selectionChange(*document, { range }, temporarySelectionOptions);
