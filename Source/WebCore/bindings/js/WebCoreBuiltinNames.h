@@ -128,12 +128,16 @@ namespace WebCore {
     macro(FileSystemSyncAccessHandle) \
     macro(GPU) \
     macro(GPUAdapter) \
+    macro(GPUBindGroup) \
+    macro(GPUBindGroupLayout) \
     macro(GPUBuffer) \
     macro(GPUBufferUsage) \
     macro(GPUDevice) \
     macro(GPUExternalTexture) \
     macro(GPUMapMode) \
+    macro(GPUPipelineLayout) \
     macro(GPUSampler) \
+    macro(GPUShaderStage) \
     macro(GPUSupportedFeatures) \
     macro(GPUSupportedLimits) \
     macro(GPUTexture) \

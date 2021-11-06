@@ -23,33 +23,28 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "GPUAdapter.h"
+#pragma once
+
+#include "GPUBufferBindingLayout.h"
+#include "GPUExternalTextureBindingLayout.h"
+#include "GPUIntegralTypes.h"
+#include "GPUSamplerBindingLayout.h"
+#include "GPUShaderStage.h"
+#include "GPUStorageTextureBindingLayout.h"
+#include "GPUTextureBindingLayout.h"
+#include <optional>
 
 namespace WebCore {
 
-String GPUAdapter::name() const
-{
-    return StringImpl::empty();
-}
+struct GPUBindGroupLayoutEntry {
+    GPUIndex32 binding;
+    GPUShaderStageFlags visibility;
 
-Ref<GPUSupportedFeatures> GPUAdapter::features() const
-{
-    return GPUSupportedFeatures::create();
-}
-
-Ref<GPUSupportedLimits> GPUAdapter::limits() const
-{
-    return GPUSupportedLimits::create();
-}
-
-bool GPUAdapter::isFallbackAdapter() const
-{
-    return false;
-}
-
-void GPUAdapter::requestDevice(ScriptExecutionContext&, const std::optional<GPUDeviceDescriptor>&, RequestDevicePromise&&)
-{
-}
+    std::optional<GPUBufferBindingLayout> buffer;
+    std::optional<GPUSamplerBindingLayout> sampler;
+    std::optional<GPUTextureBindingLayout> texture;
+    std::optional<GPUStorageTextureBindingLayout> storageTexture;
+    std::optional<GPUExternalTextureBindingLayout> externalTexture;
+};
 
 }

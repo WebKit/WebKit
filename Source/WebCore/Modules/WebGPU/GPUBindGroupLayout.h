@@ -23,33 +23,26 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "GPUAdapter.h"
+#pragma once
+
+#include <wtf/Ref.h>
+#include <wtf/RefCounted.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-String GPUAdapter::name() const
-{
-    return StringImpl::empty();
-}
+class GPUBindGroupLayout : public RefCounted<GPUBindGroupLayout> {
+public:
+    static Ref<GPUBindGroupLayout> create()
+    {
+        return adoptRef(*new GPUBindGroupLayout());
+    }
 
-Ref<GPUSupportedFeatures> GPUAdapter::features() const
-{
-    return GPUSupportedFeatures::create();
-}
+    String label() const;
+    void setLabel(String&&);
 
-Ref<GPUSupportedLimits> GPUAdapter::limits() const
-{
-    return GPUSupportedLimits::create();
-}
-
-bool GPUAdapter::isFallbackAdapter() const
-{
-    return false;
-}
-
-void GPUAdapter::requestDevice(ScriptExecutionContext&, const std::optional<GPUDeviceDescriptor>&, RequestDevicePromise&&)
-{
-}
+private:
+    GPUBindGroupLayout() = default;
+};
 
 }

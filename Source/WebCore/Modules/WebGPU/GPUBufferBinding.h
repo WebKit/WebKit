@@ -23,33 +23,19 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "GPUAdapter.h"
+#pragma once
+
+#include "GPUBuffer.h"
+#include "GPUIntegralTypes.h"
+#include <optional>
+#include <wtf/Ref.h>
 
 namespace WebCore {
 
-String GPUAdapter::name() const
-{
-    return StringImpl::empty();
-}
-
-Ref<GPUSupportedFeatures> GPUAdapter::features() const
-{
-    return GPUSupportedFeatures::create();
-}
-
-Ref<GPUSupportedLimits> GPUAdapter::limits() const
-{
-    return GPUSupportedLimits::create();
-}
-
-bool GPUAdapter::isFallbackAdapter() const
-{
-    return false;
-}
-
-void GPUAdapter::requestDevice(ScriptExecutionContext&, const std::optional<GPUDeviceDescriptor>&, RequestDevicePromise&&)
-{
-}
+struct GPUBufferBinding {
+    RefPtr<GPUBuffer> buffer;
+    GPUSize64 offset;
+    std::optional<GPUSize64> size;
+};
 
 }

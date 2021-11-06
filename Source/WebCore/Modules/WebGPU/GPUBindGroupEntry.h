@@ -23,33 +23,23 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "GPUAdapter.h"
+#pragma once
+
+#include "GPUBufferBinding.h"
+#include "GPUExternalTexture.h"
+#include "GPUIntegralTypes.h"
+#include "GPUSampler.h"
+#include "GPUTextureView.h"
+#include <utility>
+#include <variant>
 
 namespace WebCore {
 
-String GPUAdapter::name() const
-{
-    return StringImpl::empty();
-}
+using GPUBindingResource = std::variant<RefPtr<GPUSampler>, RefPtr<GPUTextureView>, GPUBufferBinding, RefPtr<GPUExternalTexture>>;
 
-Ref<GPUSupportedFeatures> GPUAdapter::features() const
-{
-    return GPUSupportedFeatures::create();
-}
-
-Ref<GPUSupportedLimits> GPUAdapter::limits() const
-{
-    return GPUSupportedLimits::create();
-}
-
-bool GPUAdapter::isFallbackAdapter() const
-{
-    return false;
-}
-
-void GPUAdapter::requestDevice(ScriptExecutionContext&, const std::optional<GPUDeviceDescriptor>&, RequestDevicePromise&&)
-{
-}
+struct GPUBindGroupEntry {
+    GPUIndex32 binding;
+    GPUBindingResource resource;
+};
 
 }

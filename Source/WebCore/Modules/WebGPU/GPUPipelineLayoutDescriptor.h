@@ -23,33 +23,16 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "GPUAdapter.h"
+#pragma once
+
+#include "GPUBindGroupLayout.h"
+#include "GPUObjectDescriptorBase.h"
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
-String GPUAdapter::name() const
-{
-    return StringImpl::empty();
-}
-
-Ref<GPUSupportedFeatures> GPUAdapter::features() const
-{
-    return GPUSupportedFeatures::create();
-}
-
-Ref<GPUSupportedLimits> GPUAdapter::limits() const
-{
-    return GPUSupportedLimits::create();
-}
-
-bool GPUAdapter::isFallbackAdapter() const
-{
-    return false;
-}
-
-void GPUAdapter::requestDevice(ScriptExecutionContext&, const std::optional<GPUDeviceDescriptor>&, RequestDevicePromise&&)
-{
-}
+struct GPUPipelineLayoutDescriptor : public GPUObjectDescriptorBase {
+    Vector<RefPtr<GPUBindGroupLayout>> bindGroupLayouts;
+};
 
 }

@@ -26,10 +26,16 @@
 #include "config.h"
 #include "GPUDevice.h"
 
+#include "GPUBindGroup.h"
+#include "GPUBindGroupDescriptor.h"
+#include "GPUBindGroupLayout.h"
+#include "GPUBindGroupLayoutDescriptor.h"
 #include "GPUBuffer.h"
 #include "GPUBufferDescriptor.h"
 #include "GPUExternalTexture.h"
 #include "GPUExternalTextureDescriptor.h"
+#include "GPUPipelineLayout.h"
+#include "GPUPipelineLayoutDescriptor.h"
 #include "GPUSampler.h"
 #include "GPUSamplerDescriptor.h"
 #include "GPUSupportedFeatures.h"
@@ -82,6 +88,21 @@ Ref<GPUSampler> GPUDevice::createSampler(const std::optional<GPUSamplerDescripto
 Ref<GPUExternalTexture> GPUDevice::importExternalTexture(const GPUExternalTextureDescriptor&)
 {
     return GPUExternalTexture::create();
+}
+
+Ref<GPUBindGroupLayout> GPUDevice::createBindGroupLayout(const GPUBindGroupLayoutDescriptor&)
+{
+    return GPUBindGroupLayout::create();
+}
+
+Ref<GPUPipelineLayout> GPUDevice::createPipelineLayout(const GPUPipelineLayoutDescriptor&)
+{
+    return GPUPipelineLayout::create();
+}
+
+Ref<GPUBindGroup> GPUDevice::createBindGroup(const GPUBindGroupDescriptor&)
+{
+    return GPUBindGroup::create();
 }
 
 }

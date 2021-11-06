@@ -42,6 +42,10 @@ interface GPUDevice : EventTarget {
     GPUSampler createSampler(optional GPUSamplerDescriptor descriptor);
     GPUExternalTexture importExternalTexture(GPUExternalTextureDescriptor descriptor);
 
+    GPUBindGroupLayout createBindGroupLayout(GPUBindGroupLayoutDescriptor descriptor);
+    GPUPipelineLayout createPipelineLayout(GPUPipelineLayoutDescriptor descriptor);
+    GPUBindGroup createBindGroup(GPUBindGroupDescriptor descriptor);
+
     // FIXME: Add more here.
 };
 GPUDevice includes GPUObjectBase;

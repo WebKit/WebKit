@@ -56,7 +56,16 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/WebGPU/GPU.idl \
     $(WebCore)/Modules/WebGPU/GPUAdapter.idl \
     $(WebCore)/Modules/WebGPU/GPUAddressMode.idl \
+    $(WebCore)/Modules/WebGPU/GPUBindGroup.idl \
+    $(WebCore)/Modules/WebGPU/GPUBindGroupDescriptor.idl \
+    $(WebCore)/Modules/WebGPU/GPUBindGroupEntry.idl \
+    $(WebCore)/Modules/WebGPU/GPUBindGroupLayout.idl \
+    $(WebCore)/Modules/WebGPU/GPUBindGroupLayoutDescriptor.idl \
+    $(WebCore)/Modules/WebGPU/GPUBindGroupLayoutEntry.idl \
     $(WebCore)/Modules/WebGPU/GPUBuffer.idl \
+    $(WebCore)/Modules/WebGPU/GPUBufferBinding.idl \
+    $(WebCore)/Modules/WebGPU/GPUBufferBindingLayout.idl \
+    $(WebCore)/Modules/WebGPU/GPUBufferBindingType.idl \
     $(WebCore)/Modules/WebGPU/GPUBufferDescriptor.idl \
     $(WebCore)/Modules/WebGPU/GPUBufferUsage.idl \
     $(WebCore)/Modules/WebGPU/GPUCompareFunction.idl \
@@ -64,24 +73,34 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/WebGPU/GPUDeviceDescriptor.idl \
     $(WebCore)/Modules/WebGPU/GPUExtent3DDict.idl \
     $(WebCore)/Modules/WebGPU/GPUExternalTexture.idl \
+    $(WebCore)/Modules/WebGPU/GPUExternalTextureBindingLayout.idl \
     $(WebCore)/Modules/WebGPU/GPUExternalTextureDescriptor.idl \
     $(WebCore)/Modules/WebGPU/GPUFeatureName.idl \
     $(WebCore)/Modules/WebGPU/GPUFilterMode.idl \
     $(WebCore)/Modules/WebGPU/GPUMapMode.idl \
     $(WebCore)/Modules/WebGPU/GPUObjectBase.idl \
     $(WebCore)/Modules/WebGPU/GPUObjectDescriptorBase.idl \
+    $(WebCore)/Modules/WebGPU/GPUPipelineLayout.idl \
+    $(WebCore)/Modules/WebGPU/GPUPipelineLayoutDescriptor.idl \
     $(WebCore)/Modules/WebGPU/GPUPowerPreference.idl \
     $(WebCore)/Modules/WebGPU/GPUPredefinedColorSpace.idl \
     $(WebCore)/Modules/WebGPU/GPURequestAdapterOptions.idl \
     $(WebCore)/Modules/WebGPU/GPUSampler.idl \
+    $(WebCore)/Modules/WebGPU/GPUSamplerBindingLayout.idl \
+    $(WebCore)/Modules/WebGPU/GPUSamplerBindingType.idl \
     $(WebCore)/Modules/WebGPU/GPUSamplerDescriptor.idl \
+    $(WebCore)/Modules/WebGPU/GPUShaderStage.idl \
+    $(WebCore)/Modules/WebGPU/GPUStorageTextureAccess.idl \
+    $(WebCore)/Modules/WebGPU/GPUStorageTextureBindingLayout.idl \
     $(WebCore)/Modules/WebGPU/GPUSupportedFeatures.idl \
     $(WebCore)/Modules/WebGPU/GPUSupportedLimits.idl \
     $(WebCore)/Modules/WebGPU/GPUTexture.idl \
     $(WebCore)/Modules/WebGPU/GPUTextureAspect.idl \
+    $(WebCore)/Modules/WebGPU/GPUTextureBindingLayout.idl \
     $(WebCore)/Modules/WebGPU/GPUTextureDescriptor.idl \
     $(WebCore)/Modules/WebGPU/GPUTextureDimension.idl \
     $(WebCore)/Modules/WebGPU/GPUTextureFormat.idl \
+    $(WebCore)/Modules/WebGPU/GPUTextureSampleType.idl \
     $(WebCore)/Modules/WebGPU/GPUTextureUsage.idl \
     $(WebCore)/Modules/WebGPU/GPUTextureView.idl \
     $(WebCore)/Modules/WebGPU/GPUTextureViewDescriptor.idl \

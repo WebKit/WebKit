@@ -24,31 +24,16 @@
  */
 
 #include "config.h"
-#include "GPUAdapter.h"
+#include "GPUBindGroup.h"
 
 namespace WebCore {
 
-String GPUAdapter::name() const
+String GPUBindGroup::label() const
 {
     return StringImpl::empty();
 }
 
-Ref<GPUSupportedFeatures> GPUAdapter::features() const
-{
-    return GPUSupportedFeatures::create();
-}
-
-Ref<GPUSupportedLimits> GPUAdapter::limits() const
-{
-    return GPUSupportedLimits::create();
-}
-
-bool GPUAdapter::isFallbackAdapter() const
-{
-    return false;
-}
-
-void GPUAdapter::requestDevice(ScriptExecutionContext&, const std::optional<GPUDeviceDescriptor>&, RequestDevicePromise&&)
+void GPUBindGroup::setLabel(String&&)
 {
 }
 

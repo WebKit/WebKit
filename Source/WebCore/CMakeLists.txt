@@ -1471,7 +1471,16 @@ list(APPEND WebCore_NON_SVG_IDL_FILES
     Modules/WebGPU/GPU.idl
     Modules/WebGPU/GPUAdapter.idl
     Modules/WebGPU/GPUAddressMode.idl
+    Modules/WebGPU/GPUBindGroup.idl
+    Modules/WebGPU/GPUBindGroupDescriptor.idl
+    Modules/WebGPU/GPUBindGroupEntry.idl
+    Modules/WebGPU/GPUBindGroupLayout.idl
+    Modules/WebGPU/GPUBindGroupLayoutDescriptor.idl
+    Modules/WebGPU/GPUBindGroupLayoutEntry.idl
     Modules/WebGPU/GPUBuffer.idl
+    Modules/WebGPU/GPUBufferBinding.idl
+    Modules/WebGPU/GPUBufferBindingLayout.idl
+    Modules/WebGPU/GPUBufferBindingType.idl
     Modules/WebGPU/GPUBufferDescriptor.idl
     Modules/WebGPU/GPUBufferUsage.idl
     Modules/WebGPU/GPUCompareFunction.idl
@@ -1479,24 +1488,34 @@ list(APPEND WebCore_NON_SVG_IDL_FILES
     Modules/WebGPU/GPUDeviceDescriptor.idl
     Modules/WebGPU/GPUExtent3DDict.idl
     Modules/WebGPU/GPUExternalTexture.idl
+    Modules/WebGPU/GPUExternalTextureBindingLayout.idl
     Modules/WebGPU/GPUExternalTextureDescriptor.idl
     Modules/WebGPU/GPUFeatureName.idl
     Modules/WebGPU/GPUFilterMode.idl
     Modules/WebGPU/GPUMapMode.idl
     Modules/WebGPU/GPUObjectBase.idl
     Modules/WebGPU/GPUObjectDescriptorBase.idl
+    Modules/WebGPU/GPUPipelineLayout.idl
+    Modules/WebGPU/GPUPipelineLayoutDescriptor.idl
     Modules/WebGPU/GPUPowerPreference.idl
     Modules/WebGPU/GPUPredefinedColorSpace.idl
     Modules/WebGPU/GPURequestAdapterOptions.idl
     Modules/WebGPU/GPUSampler.idl
+    Modules/WebGPU/GPUSamplerBindingLayout.idl
+    Modules/WebGPU/GPUSamplerBindingType.idl
     Modules/WebGPU/GPUSamplerDescriptor.idl
+    Modules/WebGPU/GPUShaderStage.idl
+    Modules/WebGPU/GPUStorageTextureAccess.idl
+    Modules/WebGPU/GPUStorageTextureBindingLayout.idl
     Modules/WebGPU/GPUSupportedFeatures.idl
     Modules/WebGPU/GPUSupportedLimits.idl
     Modules/WebGPU/GPUTexture.idl
     Modules/WebGPU/GPUTextureAspect.idl
+    Modules/WebGPU/GPUTextureBindingLayout.idl
     Modules/WebGPU/GPUTextureDescriptor.idl
     Modules/WebGPU/GPUTextureDimension.idl
     Modules/WebGPU/GPUTextureFormat.idl
+    Modules/WebGPU/GPUTextureSampleType.idl
     Modules/WebGPU/GPUTextureUsage.idl
     Modules/WebGPU/GPUTextureView.idl
     Modules/WebGPU/GPUTextureViewDescriptor.idl

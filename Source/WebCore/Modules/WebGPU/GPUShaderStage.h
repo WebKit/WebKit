@@ -23,33 +23,20 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "GPUAdapter.h"
+#pragma once
+
+#include "GPUIntegralTypes.h"
+#include <cstdint>
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-String GPUAdapter::name() const
-{
-    return StringImpl::empty();
-}
-
-Ref<GPUSupportedFeatures> GPUAdapter::features() const
-{
-    return GPUSupportedFeatures::create();
-}
-
-Ref<GPUSupportedLimits> GPUAdapter::limits() const
-{
-    return GPUSupportedLimits::create();
-}
-
-bool GPUAdapter::isFallbackAdapter() const
-{
-    return false;
-}
-
-void GPUAdapter::requestDevice(ScriptExecutionContext&, const std::optional<GPUDeviceDescriptor>&, RequestDevicePromise&&)
-{
-}
+using GPUShaderStageFlags = uint32_t;
+class GPUShaderStage : public RefCounted<GPUShaderStage> {
+public:
+    static constexpr GPUFlagsConstant VERTEX   = 0x1;
+    static constexpr GPUFlagsConstant FRAGMENT = 0x2;
+    static constexpr GPUFlagsConstant COMPUTE  = 0x4;
+};
 
 }

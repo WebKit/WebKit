@@ -34,10 +34,16 @@
 
 namespace WebCore {
 
+class GPUBindGroup;
+struct GPUBindGroupDescriptor;
+class GPUBindGroupLayout;
+struct GPUBindGroupLayoutDescriptor;
 class GPUBuffer;
 struct GPUBufferDescriptor;
 class GPUExternalTexture;
 struct GPUExternalTextureDescriptor;
+class GPUPipelineLayout;
+struct GPUPipelineLayoutDescriptor;
 class GPUSampler;
 struct GPUSamplerDescriptor;
 class GPUSupportedFeatures;
@@ -66,6 +72,10 @@ public:
     Ref<GPUTexture> createTexture(const GPUTextureDescriptor&);
     Ref<GPUSampler> createSampler(const std::optional<GPUSamplerDescriptor>&);
     Ref<GPUExternalTexture> importExternalTexture(const GPUExternalTextureDescriptor&);
+
+    Ref<GPUBindGroupLayout> createBindGroupLayout(const GPUBindGroupLayoutDescriptor&);
+    Ref<GPUPipelineLayout> createPipelineLayout(const GPUPipelineLayoutDescriptor&);
+    Ref<GPUBindGroup> createBindGroup(const GPUBindGroupDescriptor&);
 
 private:
     GPUDevice(ScriptExecutionContext* scriptExecutionContext)
