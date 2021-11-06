@@ -1,5 +1,15 @@
 2021-11-05  Alan Bujtas  <zalan@apple.com>
 
+        Rebaseline for fast/text/midword-break-after-breakable-char.html
+        https://bugs.webkit.org/show_bug.cgi?id=232777
+        <rdar://84995628>
+
+        Unreviewed.
+
+        * platform/mac/fast/text/midword-break-after-breakable-char-expected.txt: soft-hyphen font fallback measuring progression.
+
+2021-11-05  Alan Bujtas  <zalan@apple.com>
+
         Rebaseline for fast/text/basic/014.html
         https://bugs.webkit.org/show_bug.cgi?id=232776
         <rdar://84995386>
