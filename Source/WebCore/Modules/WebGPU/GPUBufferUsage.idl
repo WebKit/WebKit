@@ -23,22 +23,24 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// https://gpuweb.github.io/gpuweb/#gpudevice
+// https://gpuweb.github.io/gpuweb/#namespacedef-gpubufferusage
 
+typedef [EnforceRange] unsigned long GPUBufferUsageFlags;
 [
     EnabledBySetting=WebGPU,
-    ActiveDOMObject,
+    ImplementationLacksVTable,
     Exposed=(Window), /* https://bugs.webkit.org/show_bug.cgi?id=232542: DedicatedWorker */
     SecureContext
 ]
-interface GPUDevice : EventTarget {
-    [SameObject] readonly attribute GPUSupportedFeatures features;
-    [SameObject] readonly attribute GPUSupportedLimits limits;
-
-    undefined destroy();
-
-    GPUBuffer createBuffer(GPUBufferDescriptor descriptor);
-
-    // FIXME: Add more here.
+interface GPUBufferUsage {
+    const GPUFlagsConstant MAP_READ      = 0x0001;
+    const GPUFlagsConstant MAP_WRITE     = 0x0002;
+    const GPUFlagsConstant COPY_SRC      = 0x0004;
+    const GPUFlagsConstant COPY_DST      = 0x0008;
+    const GPUFlagsConstant INDEX         = 0x0010;
+    const GPUFlagsConstant VERTEX        = 0x0020;
+    const GPUFlagsConstant UNIFORM       = 0x0040;
+    const GPUFlagsConstant STORAGE       = 0x0080;
+    const GPUFlagsConstant INDIRECT      = 0x0100;
+    const GPUFlagsConstant QUERY_RESOLVE = 0x0200;
 };
-GPUDevice includes GPUObjectBase;

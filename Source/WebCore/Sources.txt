@@ -23,6 +23,7 @@
 
 Modules/WebGPU/GPU.cpp
 Modules/WebGPU/GPUAdapter.cpp
+Modules/WebGPU/GPUBuffer.cpp
 Modules/WebGPU/GPUDevice.cpp
 Modules/WebGPU/GPUSupportedFeatures.cpp
 Modules/WebGPU/GPUSupportedLimits.cpp
@@ -3072,9 +3073,13 @@ JSFontFaceSet.cpp
 JSFormDataEvent.cpp
 JSGPU.cpp
 JSGPUAdapter.cpp
+JSGPUBuffer.cpp
+JSGPUBufferDescriptor.cpp
+JSGPUBufferUsage.cpp
 JSGPUDevice.cpp
 JSGPUDeviceDescriptor.cpp
 JSGPUFeatureName.cpp
+JSGPUMapMode.cpp
 JSGPUObjectBase.cpp
 JSGPUObjectDescriptorBase.cpp
 JSGPUPowerPreference.cpp

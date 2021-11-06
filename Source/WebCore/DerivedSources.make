@@ -55,9 +55,13 @@ FEATURE_AND_PLATFORM_DEFINE_DEPENDENCIES = $(WebCore)/DerivedSources.make
 JS_BINDING_IDLS := \
     $(WebCore)/Modules/WebGPU/GPU.idl \
     $(WebCore)/Modules/WebGPU/GPUAdapter.idl \
+    $(WebCore)/Modules/WebGPU/GPUBuffer.idl \
+    $(WebCore)/Modules/WebGPU/GPUBufferDescriptor.idl \
+    $(WebCore)/Modules/WebGPU/GPUBufferUsage.idl \
     $(WebCore)/Modules/WebGPU/GPUDevice.idl \
     $(WebCore)/Modules/WebGPU/GPUDeviceDescriptor.idl \
     $(WebCore)/Modules/WebGPU/GPUFeatureName.idl \
+    $(WebCore)/Modules/WebGPU/GPUMapMode.idl \
     $(WebCore)/Modules/WebGPU/GPUObjectBase.idl \
     $(WebCore)/Modules/WebGPU/GPUObjectDescriptorBase.idl \
     $(WebCore)/Modules/WebGPU/GPUPowerPreference.idl \

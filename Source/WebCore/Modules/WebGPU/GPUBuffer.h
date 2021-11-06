@@ -25,55 +25,36 @@
 
 #pragma once
 
-#include "ActiveDOMObject.h"
-#include "EventTarget.h"
-#include "ScriptExecutionContext.h"
+#include "GPUIntegralTypes.h"
+#include "GPUMapMode.h"
+#include "JSDOMPromiseDeferred.h"
+#include <JavaScriptCore/ArrayBuffer.h>
+#include <cstdint>
+#include <optional>
 #include <wtf/Ref.h>
+#include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-class GPUBuffer;
-struct GPUBufferDescriptor;
-class GPUSupportedFeatures;
-class GPUSupportedLimits;
-
-class GPUDevice : public ActiveDOMObject, public EventTargetWithInlineData {
+class GPUBuffer : public RefCounted<GPUBuffer> {
 public:
-    static Ref<GPUDevice> create(ScriptExecutionContext* scriptExecutionContext)
+    static Ref<GPUBuffer> create()
     {
-        return adoptRef(*new GPUDevice(scriptExecutionContext));
+        return adoptRef(*new GPUBuffer());
     }
-
-    virtual ~GPUDevice();
 
     String label() const;
     void setLabel(String&&);
 
-    Ref<GPUSupportedFeatures> features() const;
-    Ref<GPUSupportedLimits> limits() const;
+    void mapAsync(GPUMapModeFlags, std::optional<GPUSize64> offset, std::optional<GPUSize64> sizeForMap, Ref<DeferredPromise>&&);
+    Ref<JSC::ArrayBuffer> getMappedRange(std::optional<GPUSize64> offset, std::optional<GPUSize64> rangeSize);
+    void unmap();
 
     void destroy();
 
-    Ref<GPUBuffer> createBuffer(const GPUBufferDescriptor&);
-
 private:
-    GPUDevice(ScriptExecutionContext* scriptExecutionContext)
-        : ActiveDOMObject { scriptExecutionContext }
-    {
-    }
-
-    // ActiveDOMObject.
-    // FIXME: We probably need to override more methods to make this work properly.
-    const char* activeDOMObjectName() const final { return "GPUDevice"; }
-
-    // EventTargetWithInlineData.
-    EventTargetInterface eventTargetInterface() const final { return GPUDeviceEventTargetInterfaceType; }
-    ScriptExecutionContext* scriptExecutionContext() const final { return ActiveDOMObject::scriptExecutionContext(); }
-    void refEventTarget() final { ref(); }
-    void derefEventTarget() final { deref(); }
-
-    String m_label;
+    GPUBuffer() = default;
 };
 
 }

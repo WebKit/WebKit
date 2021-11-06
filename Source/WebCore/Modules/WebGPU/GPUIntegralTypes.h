@@ -23,22 +23,23 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// https://gpuweb.github.io/gpuweb/#gpudevice
+#pragma once
 
-[
-    EnabledBySetting=WebGPU,
-    ActiveDOMObject,
-    Exposed=(Window), /* https://bugs.webkit.org/show_bug.cgi?id=232542: DedicatedWorker */
-    SecureContext
-]
-interface GPUDevice : EventTarget {
-    [SameObject] readonly attribute GPUSupportedFeatures features;
-    [SameObject] readonly attribute GPUSupportedLimits limits;
+#include <cstdint>
 
-    undefined destroy();
+namespace WebCore {
 
-    GPUBuffer createBuffer(GPUBufferDescriptor descriptor);
+using GPUBufferDynamicOffset = uint32_t;
+using GPUStencilValue = uint32_t;
+using GPUSampleMask = uint32_t;
+using GPUDepthBias = int32_t;
 
-    // FIXME: Add more here.
-};
-GPUDevice includes GPUObjectBase;
+using GPUSize64 = uint64_t;
+using GPUIntegerCoordinate = uint32_t;
+using GPUIndex32 = uint32_t;
+using GPUSize32 = uint32_t;
+using GPUSignedOffset32 = int32_t;
+
+using GPUFlagsConstant = uint32_t;
+
+}

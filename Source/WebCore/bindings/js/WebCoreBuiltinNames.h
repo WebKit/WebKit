@@ -128,7 +128,10 @@ namespace WebCore {
     macro(FileSystemSyncAccessHandle) \
     macro(GPU) \
     macro(GPUAdapter) \
+    macro(GPUBuffer) \
+    macro(GPUBufferUsage) \
     macro(GPUDevice) \
+    macro(GPUMapMode) \
     macro(GPUSupportedFeatures) \
     macro(GPUSupportedLimits) \
     macro(Gamepad) \

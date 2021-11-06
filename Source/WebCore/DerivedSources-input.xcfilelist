@@ -23,9 +23,13 @@ $(JAVASCRIPTCORE_PRIVATE_HEADERS_DIR)/xxd.pl
 $(PROJECT_DIR)/DerivedSources.make
 $(PROJECT_DIR)/Modules/WebGPU/GPU.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUAdapter.idl
+$(PROJECT_DIR)/Modules/WebGPU/GPUBuffer.idl
+$(PROJECT_DIR)/Modules/WebGPU/GPUBufferDescriptor.idl
+$(PROJECT_DIR)/Modules/WebGPU/GPUBufferUsage.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUDevice.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUDeviceDescriptor.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUFeatureName.idl
+$(PROJECT_DIR)/Modules/WebGPU/GPUMapMode.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUObjectBase.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUObjectDescriptorBase.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUPowerPreference.idl

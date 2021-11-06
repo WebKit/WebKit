@@ -48,7 +48,7 @@ bool GPUAdapter::isFallbackAdapter() const
     return false;
 }
 
-void GPUAdapter::requestDevice(ScriptExecutionContext&, const GPUDeviceDescriptor&, RequestDevicePromise&&)
+void GPUAdapter::requestDevice(ScriptExecutionContext&, const std::optional<GPUDeviceDescriptor>&, RequestDevicePromise&&)
 {
 
 }

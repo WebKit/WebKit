@@ -23,22 +23,20 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// https://gpuweb.github.io/gpuweb/#gpudevice
+#pragma once
 
-[
-    EnabledBySetting=WebGPU,
-    ActiveDOMObject,
-    Exposed=(Window), /* https://bugs.webkit.org/show_bug.cgi?id=232542: DedicatedWorker */
-    SecureContext
-]
-interface GPUDevice : EventTarget {
-    [SameObject] readonly attribute GPUSupportedFeatures features;
-    [SameObject] readonly attribute GPUSupportedLimits limits;
+#include "GPUIntegralTypes.h"
+#include <cstdint>
+#include <wtf/RefCounted.h>
 
-    undefined destroy();
+namespace WebCore {
 
-    GPUBuffer createBuffer(GPUBufferDescriptor descriptor);
+using GPUMapModeFlags = uint32_t;
 
-    // FIXME: Add more here.
+class GPUMapMode : public RefCounted<GPUMapMode> {
+public:
+    static constexpr GPUFlagsConstant READ  = 0x0001;
+    static constexpr GPUFlagsConstant WRITE = 0x0002;
 };
-GPUDevice includes GPUObjectBase;
+
+}

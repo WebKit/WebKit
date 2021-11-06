@@ -26,6 +26,11 @@
 #include "config.h"
 #include "GPUDevice.h"
 
+#include "GPUBuffer.h"
+#include "GPUBufferDescriptor.h"
+#include "GPUSupportedFeatures.h"
+#include "GPUSupportedLimits.h"
+
 namespace WebCore {
 
 GPUDevice::~GPUDevice() = default;
@@ -47,6 +52,15 @@ Ref<GPUSupportedFeatures> GPUDevice::features() const
 Ref<GPUSupportedLimits> GPUDevice::limits() const
 {
     return GPUSupportedLimits::create();
+}
+
+void GPUDevice::destroy()
+{
+}
+
+Ref<GPUBuffer> GPUDevice::createBuffer(const GPUBufferDescriptor&)
+{
+    return GPUBuffer::create();
 }
 
 }

@@ -31,6 +31,7 @@
 #include "GPUSupportedLimits.h"
 #include "JSDOMPromiseDeferred.h"
 #include "ScriptExecutionContext.h"
+#include <optional>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
@@ -50,7 +51,7 @@ public:
     bool isFallbackAdapter() const;
 
     using RequestDevicePromise = DOMPromiseDeferred<IDLInterface<GPUDevice>>;
-    void requestDevice(ScriptExecutionContext&, const GPUDeviceDescriptor&, RequestDevicePromise&&);
+    void requestDevice(ScriptExecutionContext&, const std::optional<GPUDeviceDescriptor>&, RequestDevicePromise&&);
 
 private:
     GPUAdapter() = default;

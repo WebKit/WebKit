@@ -28,6 +28,7 @@
 #include "GPUAdapter.h"
 #include "GPURequestAdapterOptions.h"
 #include "JSDOMPromiseDeferred.h"
+#include <optional>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 
@@ -41,7 +42,7 @@ public:
     }
 
     using RequestAdapterPromise = DOMPromiseDeferred<IDLNullable<IDLInterface<GPUAdapter>>>;
-    void requestAdapter(const GPURequestAdapterOptions&, RequestAdapterPromise&&);
+    void requestAdapter(const std::optional<GPURequestAdapterOptions>&, RequestAdapterPromise&&);
 
 private:
     GPU() = default;

@@ -23,22 +23,42 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// https://gpuweb.github.io/gpuweb/#gpudevice
+#pragma once
 
-[
-    EnabledBySetting=WebGPU,
-    ActiveDOMObject,
-    Exposed=(Window), /* https://bugs.webkit.org/show_bug.cgi?id=232542: DedicatedWorker */
-    SecureContext
-]
-interface GPUDevice : EventTarget {
-    [SameObject] readonly attribute GPUSupportedFeatures features;
-    [SameObject] readonly attribute GPUSupportedLimits limits;
+#include "config.h"
+#include "GPUBuffer.h"
 
-    undefined destroy();
+namespace WebCore {
 
-    GPUBuffer createBuffer(GPUBufferDescriptor descriptor);
+String GPUBuffer::label() const
+{
+    return StringImpl::empty();
+}
 
-    // FIXME: Add more here.
-};
-GPUDevice includes GPUObjectBase;
+void GPUBuffer::setLabel(String&&)
+{
+}
+
+void GPUBuffer::mapAsync(GPUMapModeFlags mode, std::optional<GPUSize64> offset, std::optional<GPUSize64> size, Ref<DeferredPromise>&&)
+{
+    UNUSED_PARAM(mode);
+    UNUSED_PARAM(offset);
+    UNUSED_PARAM(size);
+}
+
+Ref<JSC::ArrayBuffer> GPUBuffer::getMappedRange(std::optional<GPUSize64> offset, std::optional<GPUSize64> size)
+{
+    UNUSED_PARAM(offset);
+    UNUSED_PARAM(size);
+    return ArrayBuffer::create(nullptr, 0);
+}
+
+void GPUBuffer::unmap()
+{
+}
+
+void GPUBuffer::destroy()
+{
+}
+
+}

@@ -23,22 +23,28 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// https://gpuweb.github.io/gpuweb/#gpudevice
+#pragma once
 
-[
-    EnabledBySetting=WebGPU,
-    ActiveDOMObject,
-    Exposed=(Window), /* https://bugs.webkit.org/show_bug.cgi?id=232542: DedicatedWorker */
-    SecureContext
-]
-interface GPUDevice : EventTarget {
-    [SameObject] readonly attribute GPUSupportedFeatures features;
-    [SameObject] readonly attribute GPUSupportedLimits limits;
+#include "GPUIntegralTypes.h"
+#include <cstdint>
+#include <wtf/RefCounted.h>
 
-    undefined destroy();
+namespace WebCore {
 
-    GPUBuffer createBuffer(GPUBufferDescriptor descriptor);
+using GPUBufferUsageFlags = uint32_t;
 
-    // FIXME: Add more here.
+class GPUBufferUsage : public RefCounted<GPUBufferUsage> {
+public:
+    static constexpr GPUFlagsConstant MAP_READ      = 0x0001;
+    static constexpr GPUFlagsConstant MAP_WRITE     = 0x0002;
+    static constexpr GPUFlagsConstant COPY_SRC      = 0x0004;
+    static constexpr GPUFlagsConstant COPY_DST      = 0x0008;
+    static constexpr GPUFlagsConstant INDEX         = 0x0010;
+    static constexpr GPUFlagsConstant VERTEX        = 0x0020;
+    static constexpr GPUFlagsConstant UNIFORM       = 0x0040;
+    static constexpr GPUFlagsConstant STORAGE       = 0x0080;
+    static constexpr GPUFlagsConstant INDIRECT      = 0x0100;
+    static constexpr GPUFlagsConstant QUERY_RESOLVE = 0x0200;
 };
-GPUDevice includes GPUObjectBase;
+
+}

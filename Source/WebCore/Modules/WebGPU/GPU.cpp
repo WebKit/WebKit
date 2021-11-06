@@ -28,7 +28,7 @@
 
 namespace WebCore {
 
-void GPU::requestAdapter(const GPURequestAdapterOptions&, RequestAdapterPromise&&)
+void GPU::requestAdapter(const std::optional<GPURequestAdapterOptions>&, RequestAdapterPromise&&)
 {
 
 }
