@@ -1,3 +1,14 @@
+2021-11-06  Tim Nguyen  <ntim@apple.com>
+
+        Re-import html/semantics/interactive-elements/the-dialog-element WPT
+        https://bugs.webkit.org/show_bug.cgi?id=232784
+
+        Unreviewed, reverting some changes made by r285346, and upstreamed them.
+
+        Upstream commit: https://github.com/web-platform-tests/wpt/commit/301143db2eced1c387ca4927c03cf2be41056a83
+
+        * TestExpectations:
+
 2021-11-05  Simon Fraser  <simon.fraser@apple.com>
 
         Simplify code that makes use of WheelEventDeltaFilter

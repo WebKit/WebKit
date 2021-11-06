@@ -59,6 +59,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/element-removed-from-top-layer-has-original-position-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/element-removed-from-top-layer-has-original-position.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/focus-after-close.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/green-dialog-and-backdrop.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/inert-does-not-match-disabled-selector.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/inert-node-is-not-highlighted-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/inert-node-is-not-highlighted.html
