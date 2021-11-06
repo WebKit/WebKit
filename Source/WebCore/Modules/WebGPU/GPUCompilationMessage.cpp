@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "GPUCompilationInfo.h"
+#include "GPUCompilationMessage.h"
 
 namespace WebCore {
 

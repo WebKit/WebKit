@@ -117,7 +117,7 @@ public:
 
     using LostPromise = DOMPromiseProxy<IDLInterface<GPUDeviceLostInfo>>;
     LostPromise& lost() { return m_lostPromise; }
- 
+
 private:
     GPUDevice(ScriptExecutionContext* scriptExecutionContext)
         : ActiveDOMObject { scriptExecutionContext }

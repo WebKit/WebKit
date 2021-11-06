@@ -42,7 +42,7 @@ public:
     }
 
     String label() const;
-    void setLabel(String&& label);
+    void setLabel(String&&);
 
     Ref<GPUBindGroupLayout> getBindGroupLayout(uint32_t index);
 
