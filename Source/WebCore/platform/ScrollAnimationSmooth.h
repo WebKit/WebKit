@@ -47,6 +47,7 @@ private:
 
     void updateScrollExtents() final;
     void serviceAnimation(MonotonicTime) final;
+    String debugDescription() const final;
 
     Seconds durationFromDistance(const FloatSize&) const;
 

@@ -100,6 +100,13 @@ void ScrollAnimationRubberBand::serviceAnimation(MonotonicTime currentTime)
         didEnd();
 }
 
+String ScrollAnimationRubberBand::debugDescription() const
+{
+    TextStream textStream;
+    textStream << "ScrollAnimationRubberBand " << this << " active " << isActive() << " target " << m_targetOffset << " current offset " << currentOffset();
+    return textStream.release();
+}
+
 } // namespace WebCore
 
 #endif // HAVE(RUBBER_BANDING)

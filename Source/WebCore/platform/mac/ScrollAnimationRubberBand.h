@@ -43,6 +43,7 @@ private:
     void serviceAnimation(MonotonicTime) final;
     bool retargetActiveAnimation(const FloatPoint&) final;
     ScrollClamping clamping() const final { return ScrollClamping::Unclamped; }
+    String debugDescription() const final;
 
     bool animateScroll(MonotonicTime);
 

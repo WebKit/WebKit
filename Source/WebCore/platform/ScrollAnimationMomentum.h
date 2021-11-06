@@ -42,6 +42,8 @@ public:
     void updateScrollExtents() final;
 
 private:
+    String debugDescription() const final;
+
     std::unique_ptr<ScrollingMomentumCalculator> m_momentumCalculator;
 };
 

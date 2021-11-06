@@ -43,7 +43,7 @@ TextStream& operator<<(TextStream& ts, ScrollAnimation::Type animationType)
 
 TextStream& operator<<(TextStream& ts, const ScrollAnimation& animation)
 {
-    ts << "ScrollAnimation " << &animation << " " << animation.type() << " active " << animation.isActive() << " current offset " << animation.currentOffset();
+    ts << animation.debugDescription();
     return ts;
 }
 

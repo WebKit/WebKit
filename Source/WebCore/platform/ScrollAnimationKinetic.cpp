@@ -29,6 +29,7 @@
 
 #include "PlatformWheelEvent.h"
 #include "ScrollExtents.h"
+#include <wtf/text/TextStream.h>
 
 /*
  * PerAxisData is a port of GtkKineticScrolling as of GTK+ 3.20,
@@ -223,5 +224,13 @@ void ScrollAnimationKinetic::serviceAnimation(MonotonicTime currentTime)
     if (!m_horizontalData && !m_verticalData)
         didEnd();
 }
+
+String ScrollAnimationKinetic::debugDescription() const
+{
+    TextStream textStream;
+    textStream << "ScrollAnimationKinetic " << this << " active " << isActive() << " current offset " << currentOffset();
+    return textStream.release();
+}
+
 
 } // namespace WebCore

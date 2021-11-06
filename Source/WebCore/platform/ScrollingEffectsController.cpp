@@ -99,12 +99,12 @@ bool ScrollingEffectsController::startAnimatedScrollToDestination(FloatPoint sta
     if (m_currentAnimation)
         m_currentAnimation->stop();
 
-    LOG_WITH_STREAM(ScrollAnimations, stream << "ScrollingEffectsController " << this << " startAnimatedScrollToDestination start " << startOffset << " end " << destinationOffset);
-
     // We always create and attempt to start the animation. If it turns out to not need animating, then the animation
     // remains inactive, and we'll remove it on the next animationCallback().
     m_currentAnimation = makeUnique<ScrollAnimationSmooth>(*this);
-    return downcast<ScrollAnimationSmooth>(*m_currentAnimation).startAnimatedScrollToDestination(startOffset, destinationOffset);
+    bool started = downcast<ScrollAnimationSmooth>(*m_currentAnimation).startAnimatedScrollToDestination(startOffset, destinationOffset);
+    LOG_WITH_STREAM(ScrollAnimations, stream << "ScrollingEffectsController " << this << " startAnimatedScrollToDestination " << *m_currentAnimation << " started " << started);
+    return started;
 }
 
 bool ScrollingEffectsController::retargetAnimatedScroll(FloatPoint newDestinationOffset)
@@ -150,8 +150,9 @@ bool ScrollingEffectsController::startMomentumScrollWithInitialVelocity(const Fl
     if (!m_currentAnimation)
         m_currentAnimation = makeUnique<ScrollAnimationMomentum>(*this);
 
-    LOG_WITH_STREAM(ScrollAnimations, stream << "ScrollingEffectsController " << this << " startMomentumScrollWithInitialVelocity " << initialVelocity << " initialDelta " << initialDelta << " from " << initialOffset);
-    return downcast<ScrollAnimationMomentum>(*m_currentAnimation).startAnimatedScrollWithInitialVelocity(initialOffset, initialVelocity, initialDelta, destinationModifier);
+    bool started = downcast<ScrollAnimationMomentum>(*m_currentAnimation).startAnimatedScrollWithInitialVelocity(initialOffset, initialVelocity, initialDelta, destinationModifier);
+    LOG_WITH_STREAM(ScrollAnimations, stream << "ScrollingEffectsController::startMomentumScrollWithInitialVelocity() - animation " << *m_currentAnimation << " started " << started);
+    return started;
 }
 
 void ScrollingEffectsController::setIsAnimatingRubberBand(bool isAnimatingRubberBand)

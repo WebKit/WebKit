@@ -33,6 +33,7 @@
 #include "ScrollExtents.h"
 #include "ScrollableArea.h"
 #include "TimingFunction.h"
+#include <wtf/text/TextStream.h>
 
 namespace WebCore {
 
@@ -126,6 +127,13 @@ bool ScrollAnimationSmooth::animateScroll(MonotonicTime currentTime)
     };
 
     return currentTime < endTime;
+}
+
+String ScrollAnimationSmooth::debugDescription() const
+{
+    TextStream textStream;
+    textStream << "ScrollAnimationSmooth " << this << " active " << isActive() << " from " << m_startOffset << " to " << m_destinationOffset << " current offset " << currentOffset();
+    return textStream.release();
 }
 
 } // namespace WebCore

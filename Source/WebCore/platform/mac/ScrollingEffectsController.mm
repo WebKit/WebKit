@@ -391,14 +391,15 @@ void ScrollingEffectsController::stopRubberBanding()
     updateRubberBandingState();
 }
 
-void ScrollingEffectsController::startRubberBandAnimation(const FloatPoint& targetOffset, const FloatSize& initialVelocity, const FloatSize& initialOverscroll)
+bool ScrollingEffectsController::startRubberBandAnimation(const FloatPoint& targetOffset, const FloatSize& initialVelocity, const FloatSize& initialOverscroll)
 {
     if (m_currentAnimation)
         m_currentAnimation->stop();
 
     m_currentAnimation = makeUnique<ScrollAnimationRubberBand>(*this);
-    LOG_WITH_STREAM(ScrollAnimations, stream << "ScrollingEffectsController::startRubberBandAnimation() - starting rubbberband with targetOffset " << targetOffset << " initialVelocity " << initialVelocity << " initialOverscroll " << initialOverscroll);
-    downcast<ScrollAnimationRubberBand>(*m_currentAnimation).startRubberBandAnimation(targetOffset, initialVelocity, initialOverscroll);
+    bool started = downcast<ScrollAnimationRubberBand>(*m_currentAnimation).startRubberBandAnimation(targetOffset, initialVelocity, initialOverscroll);
+    LOG_WITH_STREAM(ScrollAnimations, stream << "ScrollingEffectsController::startRubberBandAnimation() - animation " << *m_currentAnimation << " started " << started);
+    return started;
 }
 
 void ScrollingEffectsController::stopRubberBandAnimation()

@@ -70,6 +70,7 @@ public:
 
 private:
     void serviceAnimation(MonotonicTime) final;
+    String debugDescription() const final;
 
     std::optional<PerAxisData> m_horizontalData;
     std::optional<PerAxisData> m_verticalData;

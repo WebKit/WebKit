@@ -205,7 +205,7 @@ private:
 
     void startRubberBandAnimationIfNecessary();
 
-    void startRubberBandAnimation(const FloatPoint& targetOffset, const FloatSize& initialVelocity, const FloatSize& initialOverscroll);
+    bool startRubberBandAnimation(const FloatPoint& targetOffset, const FloatSize& initialVelocity, const FloatSize& initialOverscroll);
     void stopRubberBandAnimation();
 
     void willStartRubberBandAnimation();

@@ -111,4 +111,11 @@ void ScrollAnimationMomentum::updateScrollExtents()
         retargetActiveAnimation(constrainedOffset);
 }
 
+String ScrollAnimationMomentum::debugDescription() const
+{
+    TextStream textStream;
+    textStream << "ScrollAnimationMomentum " << this << " active " << isActive() << " destination " << (m_momentumCalculator ? m_momentumCalculator->destinationScrollOffset() : FloatPoint()) << " current offset " << currentOffset();
+    return textStream.release();
+}
+
 } // namespace WebCore
