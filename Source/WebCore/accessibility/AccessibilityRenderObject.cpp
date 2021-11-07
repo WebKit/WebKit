@@ -534,8 +534,9 @@ bool AccessibilityRenderObject::isAttachment() const
     if (!renderer)
         return false;
 
-    // Although plugins are also a type of widget, we need to treat them differently than attachments.
-    if (is<PluginViewBase>(widget()))
+    // WebKit2 plugins need to be treated differently than attachments, so return false here.
+    // Only WebKit1 plugins have an associated platformWidget.
+    if (is<PluginViewBase>(widget()) && !widget()->platformWidget())
         return false;
 
     // Widgets are the replaced elements that we represent to AX as attachments

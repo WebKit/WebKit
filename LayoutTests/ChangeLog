@@ -1,3 +1,18 @@
+2021-11-06  Tyler Wilcock  <tyler_w@apple.com>
+
+        AX: WebKit1 PluginViewBase objects with an associated widget()->platformWidget() should be considered attachments
+        https://bugs.webkit.org/show_bug.cgi?id=232759
+
+        Reviewed by Chris Fleizach.
+
+        This patch changes the Mac WebAccessibilityObjectWrapper to not return
+        an AXEmptyGroup subrole for objects with renderWidgetChildren.
+
+        * accessibility/mac/basic-embed-pdf-accessibility-expected.txt:
+        * accessibility/mac/basic-embed-pdf-accessibility.html:
+        Add expectation that the embed container doesn't have an AXEmptyGroup
+        subrole.
+
 2021-11-06  David Kilzer  <ddkilzer@apple.com>
 
         Remove empty directories from from svn.webkit.org repository as of r285357

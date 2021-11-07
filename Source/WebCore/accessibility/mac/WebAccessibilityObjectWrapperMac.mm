@@ -1841,7 +1841,7 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         return @"AXMeter";
 
     // Treat any group without exposed children as empty.
-    if ([[self role] isEqual:NSAccessibilityGroupRole] && !backingObject->children().size())
+    if ([[self role] isEqual:NSAccessibilityGroupRole] && !backingObject->children().size() && ![[self renderWidgetChildren] count])
         return @"AXEmptyGroup";
 
     AccessibilityRole role = backingObject->roleValue();
