@@ -107,21 +107,21 @@ void PropertyCascade::buildCascade(OptionSet<CascadeLevel> cascadeLevels)
     }
 }
 
-void PropertyCascade::setPropertyInternal(Property& property, CSSPropertyID id, CSSValue& cssValue, unsigned linkMatchType, CascadeLevel cascadeLevel, ScopeOrdinal styleScopeOrdinal)
+void PropertyCascade::setPropertyInternal(Property& property, CSSPropertyID id, CSSValue& cssValue, const MatchedProperties& matchedProperties, CascadeLevel cascadeLevel)
 {
-    ASSERT(linkMatchType <= SelectorChecker::MatchAll);
+    ASSERT(matchedProperties.linkMatchType <= SelectorChecker::MatchAll);
     property.id = id;
     property.level = cascadeLevel;
-    property.styleScopeOrdinal = styleScopeOrdinal;
-    if (linkMatchType == SelectorChecker::MatchAll) {
+    property.styleScopeOrdinal = matchedProperties.styleScopeOrdinal;
+    if (matchedProperties.linkMatchType == SelectorChecker::MatchAll) {
         property.cssValue[0] = &cssValue;
         property.cssValue[SelectorChecker::MatchLink] = &cssValue;
         property.cssValue[SelectorChecker::MatchVisited] = &cssValue;
     } else
-        property.cssValue[linkMatchType] = &cssValue;
+        property.cssValue[matchedProperties.linkMatchType] = &cssValue;
 }
 
-void PropertyCascade::set(CSSPropertyID id, CSSValue& cssValue, unsigned linkMatchType, CascadeLevel cascadeLevel, ScopeOrdinal styleScopeOrdinal)
+void PropertyCascade::set(CSSPropertyID id, CSSValue& cssValue, const MatchedProperties& matchedProperties, CascadeLevel cascadeLevel)
 {
     if (CSSProperty::isDirectionAwareProperty(id)) {
         auto direction = this->direction();
@@ -140,11 +140,11 @@ void PropertyCascade::set(CSSPropertyID id, CSSValue& cssValue, unsigned linkMat
             Property property;
             property.id = id;
             memset(property.cssValue, 0, sizeof(property.cssValue));
-            setPropertyInternal(property, id, cssValue, linkMatchType, cascadeLevel, styleScopeOrdinal);
+            setPropertyInternal(property, id, cssValue, matchedProperties, cascadeLevel);
             m_customProperties.set(customValue.name(), property);
         } else {
             Property property = customProperty(customValue.name());
-            setPropertyInternal(property, id, cssValue, linkMatchType, cascadeLevel, styleScopeOrdinal);
+            setPropertyInternal(property, id, cssValue, matchedProperties, cascadeLevel);
             m_customProperties.set(customValue.name(), property);
         }
         return;
@@ -153,17 +153,17 @@ void PropertyCascade::set(CSSPropertyID id, CSSValue& cssValue, unsigned linkMat
     if (!m_propertyIsPresent[id])
         memset(property.cssValue, 0, sizeof(property.cssValue));
     m_propertyIsPresent.set(id);
-    setPropertyInternal(property, id, cssValue, linkMatchType, cascadeLevel, styleScopeOrdinal);
+    setPropertyInternal(property, id, cssValue, matchedProperties, cascadeLevel);
 }
 
-void PropertyCascade::setDeferred(CSSPropertyID id, CSSValue& cssValue, unsigned linkMatchType, CascadeLevel cascadeLevel, ScopeOrdinal styleScopeOrdinal)
+void PropertyCascade::setDeferred(CSSPropertyID id, CSSValue& cssValue, const MatchedProperties& matchedProperties, CascadeLevel cascadeLevel)
 {
     ASSERT(!CSSProperty::isDirectionAwareProperty(id));
     ASSERT(shouldApplyPropertyInParseOrder(id));
 
     Property property;
     memset(property.cssValue, 0, sizeof(property.cssValue));
-    setPropertyInternal(property, id, cssValue, linkMatchType, cascadeLevel, styleScopeOrdinal);
+    setPropertyInternal(property, id, cssValue, matchedProperties, cascadeLevel);
     m_deferredProperties.append(property);
 }
 
@@ -198,9 +198,9 @@ bool PropertyCascade::addMatch(const MatchedProperties& matchedProperties, Casca
             continue;
 
         if (shouldApplyPropertyInParseOrder(propertyID))
-            setDeferred(propertyID, *current.value(), matchedProperties.linkMatchType, cascadeLevel, matchedProperties.styleScopeOrdinal);
+            setDeferred(propertyID, *current.value(), matchedProperties, cascadeLevel);
         else
-            set(propertyID, *current.value(), matchedProperties.linkMatchType, cascadeLevel, matchedProperties.styleScopeOrdinal);
+            set(propertyID, *current.value(), matchedProperties, cascadeLevel);
     }
 
     return hasImportantProperties;

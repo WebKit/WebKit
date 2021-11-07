@@ -77,9 +77,9 @@ private:
     void addImportantMatches(CascadeLevel);
     bool addMatch(const MatchedProperties&, CascadeLevel, bool important);
 
-    void set(CSSPropertyID, CSSValue&, unsigned linkMatchType, CascadeLevel, ScopeOrdinal);
-    void setDeferred(CSSPropertyID, CSSValue&, unsigned linkMatchType, CascadeLevel, ScopeOrdinal);
-    static void setPropertyInternal(Property&, CSSPropertyID, CSSValue&, unsigned linkMatchType, CascadeLevel, ScopeOrdinal);
+    void set(CSSPropertyID, CSSValue&, const MatchedProperties&, CascadeLevel);
+    void setDeferred(CSSPropertyID, CSSValue&, const MatchedProperties&, CascadeLevel);
+    static void setPropertyInternal(Property&, CSSPropertyID, CSSValue&, const MatchedProperties&, CascadeLevel);
 
     Direction resolveDirectionAndWritingMode(Direction inheritedDirection) const;
 
