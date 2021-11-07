@@ -1,3 +1,22 @@
+2021-11-07  Cameron McCormack  <heycam@apple.com>
+
+        Restore canvas WPTs removed in bug 232449
+        https://bugs.webkit.org/show_bug.cgi?id=232795
+        <rdar://problem/85108161>
+
+        Rubber-stamped by Ryosuke Niwa.
+
+        * TestExpectations:
+        * platform/glib/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/ios-14/TestExpectations:
+        * platform/ios-simulator/TestExpectations:
+        * platform/ios-wk2/TestExpectations:
+        * platform/ios/TestExpectations:
+        * platform/mac-catalina/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/wpe/TestExpectations:
+
 2021-11-07  Simon Fraser  <simon.fraser@apple.com>
 
         Implement UIScriptController.sendEventStream() on macOS for wheel events
