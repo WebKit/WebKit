@@ -28,7 +28,7 @@
 
 namespace WebCore {
 
-Vector<GPUCompilationMessage> GPUCompilationInfo::messages() const
+Vector<Ref<GPUCompilationMessage>> GPUCompilationInfo::messages() const
 {
     return { };
 }

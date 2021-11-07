@@ -42,12 +42,12 @@ public:
         return adoptRef(*new GPUTexture());
     }
 
+    String label() const;
+    void setLabel(String&&);
+
     Ref<GPUTextureView> createView(const std::optional<GPUTextureViewDescriptor>&) const;
 
     void destroy();
-
-    String label() const;
-    void setLabel(String&&);
 
 private:
     GPUTexture() = default;

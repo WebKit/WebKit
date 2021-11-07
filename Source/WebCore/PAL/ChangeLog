@@ -1,3 +1,210 @@
+2021-11-07  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WebGPU] Add internal WebGPU API interface
+        https://bugs.webkit.org/show_bug.cgi?id=232792
+
+        Reviewed by Dean Jackson.
+
+        Whenever we add new public API, we always have an internal version of the API which doesn't
+        know anything about things like promises and ActiveDOMObject. (One example is the difference
+        between FontFace and CSSFontFace.)
+
+        Adding such a internal version of the WebGPU API has 2 benefits:
+
+        1. We can use WebGPU to implement WebKit features. For example, if we wanted to, we could
+               implement hardware accelerated SVG filters using WebGPU.
+        2. We are actually going to have two implementations of the WebGPU API - one that is
+               implemented in WebKit (rather than WebCore) and implements all commands by simply
+               sending messages to the GPU process, and a second implementation in PAL that is
+               hooked up to WebGPU.framework (or Dawn or WGPU for the non-Apple ports). When the GPU
+               process receives the messages, it will forward them to the second implementation to
+               be executed. This new internal API provides a great places to provide virtual
+               function signatures which can be implemented in both places.
+
+        Mechanically, this new API lives in its own namespace within PAL: WebGPU, and therefore stops
+        using prefixes for all the type names. So, for example, the Javascript type named "GPUDevice"
+        corresponds to PAL::WebGPU::Device. This new API lives in PAL because it shouldn't need to
+        know anything about the DOM or style or anything like that.
+
+        There are no .cpp files in this patch - this patch just adds interfaces. Those interfaces will
+        be hooked up to real implementations in subsequent patches.
+
+        * pal/graphics/WebGPU/WebGPU.h: Added.
+        * pal/graphics/WebGPU/WebGPUAdapter.h: Added.
+        (PAL::WebGPU::Adapter::name const):
+        (PAL::WebGPU::Adapter::features const):
+        (PAL::WebGPU::Adapter::limits const):
+        (PAL::WebGPU::Adapter::isFallbackAdapter const):
+        (PAL::WebGPU::Adapter::Adapter):
+        * pal/graphics/WebGPU/WebGPUAddressMode.h: Added.
+        * pal/graphics/WebGPU/WebGPUBindGroup.h: Added.
+        (PAL::WebGPU::BindGroup::label const):
+        (PAL::WebGPU::BindGroup::setLabel):
+        * pal/graphics/WebGPU/WebGPUBindGroupDescriptor.h: Added.
+        * pal/graphics/WebGPU/WebGPUBindGroupEntry.h: Added.
+        * pal/graphics/WebGPU/WebGPUBindGroupLayout.h: Added.
+        (PAL::WebGPU::BindGroupLayout::label const):
+        (PAL::WebGPU::BindGroupLayout::setLabel):
+        * pal/graphics/WebGPU/WebGPUBindGroupLayoutDescriptor.h: Added.
+        * pal/graphics/WebGPU/WebGPUBindGroupLayoutEntry.h: Added.
+        * pal/graphics/WebGPU/WebGPUBlendComponent.h: Added.
+        * pal/graphics/WebGPU/WebGPUBlendFactor.h: Added.
+        * pal/graphics/WebGPU/WebGPUBlendOperation.h: Added.
+        * pal/graphics/WebGPU/WebGPUBlendState.h: Added.
+        * pal/graphics/WebGPU/WebGPUBuffer.h: Added.
+        (PAL::WebGPU::Buffer::label const):
+        (PAL::WebGPU::Buffer::setLabel):
+        * pal/graphics/WebGPU/WebGPUBufferBinding.h: Added.
+        * pal/graphics/WebGPU/WebGPUBufferBindingLayout.h: Added.
+        * pal/graphics/WebGPU/WebGPUBufferBindingType.h: Added.
+        * pal/graphics/WebGPU/WebGPUBufferDescriptor.h: Added.
+        * pal/graphics/WebGPU/WebGPUBufferUsage.h: Added.
+        * pal/graphics/WebGPU/WebGPUCanvasCompositingAlphaMode.h: Added.
+        * pal/graphics/WebGPU/WebGPUCanvasConfiguration.h: Added.
+        * pal/graphics/WebGPU/WebGPUColorDict.h: Added.
+        * pal/graphics/WebGPU/WebGPUColorTargetState.h: Added.
+        * pal/graphics/WebGPU/WebGPUColorWrite.h: Added.
+        * pal/graphics/WebGPU/WebGPUCommandBuffer.h: Added.
+        (PAL::WebGPU::CommandBuffer::label const):
+        (PAL::WebGPU::CommandBuffer::setLabel):
+        * pal/graphics/WebGPU/WebGPUCommandBufferDescriptor.h: Added.
+        * pal/graphics/WebGPU/WebGPUCommandEncoder.h: Added.
+        (PAL::WebGPU::CommandEncoder::label const):
+        (PAL::WebGPU::CommandEncoder::setLabel):
+        * pal/graphics/WebGPU/WebGPUCommandEncoderDescriptor.h: Added.
+        * pal/graphics/WebGPU/WebGPUCompareFunction.h: Added.
+        * pal/graphics/WebGPU/WebGPUCompilationInfo.h: Added.
+        * pal/graphics/WebGPU/WebGPUCompilationMessage.h: Added.
+        * pal/graphics/WebGPU/WebGPUCompilationMessageType.h: Added.
+        * pal/graphics/WebGPU/WebGPUComputePassDescriptor.h: Added.
+        * pal/graphics/WebGPU/WebGPUComputePassEncoder.h: Added.
+        (PAL::WebGPU::ComputePassEncoder::label const):
+        (PAL::WebGPU::ComputePassEncoder::setLabel):
+        * pal/graphics/WebGPU/WebGPUComputePassTimestampLocation.h: Added.
+        * pal/graphics/WebGPU/WebGPUComputePassTimestampWrite.h: Added.
+        * pal/graphics/WebGPU/WebGPUComputePipeline.h: Added.
+        (PAL::WebGPU::ComputePipeline::label const):
+        (PAL::WebGPU::ComputePipeline::setLabel):
+        * pal/graphics/WebGPU/WebGPUComputePipelineDescriptor.h: Added.
+        * pal/graphics/WebGPU/WebGPUCullMode.h: Added.
+        * pal/graphics/WebGPU/WebGPUDepthStencilState.h: Added.
+        * pal/graphics/WebGPU/WebGPUDevice.h: Added.
+        (PAL::WebGPU::Device::label const):
+        (PAL::WebGPU::Device::setLabel):
+        (PAL::WebGPU::Device::registerDeviceLostClient):
+        (PAL::WebGPU::Device::unregisterDeviceLostClient):
+        * pal/graphics/WebGPU/WebGPUDeviceDescriptor.h: Added.
+        * pal/graphics/WebGPU/WebGPUDeviceLostInfo.h: Added.
+        * pal/graphics/WebGPU/WebGPUDeviceLostReason.h: Added.
+        * pal/graphics/WebGPU/WebGPUError.h: Added.
+        * pal/graphics/WebGPU/WebGPUErrorFilter.h: Added.
+        * pal/graphics/WebGPU/WebGPUExtent3DDict.h: Added.
+        * pal/graphics/WebGPU/WebGPUExternalTexture.h: Added.
+        (PAL::WebGPU::ExternalTexture::label const):
+        (PAL::WebGPU::ExternalTexture::setLabel):
+        * pal/graphics/WebGPU/WebGPUExternalTextureBindingLayout.h: Added.
+        * pal/graphics/WebGPU/WebGPUExternalTextureDescriptor.h: Added.
+        * pal/graphics/WebGPU/WebGPUFeatureName.h: Added.
+        * pal/graphics/WebGPU/WebGPUFilterMode.h: Added.
+        * pal/graphics/WebGPU/WebGPUFragmentState.h: Added.
+        * pal/graphics/WebGPU/WebGPUFrontFace.h: Added.
+        * pal/graphics/WebGPU/WebGPUImageCopyBuffer.h: Added.
+        * pal/graphics/WebGPU/WebGPUImageCopyExternalImage.h: Added.
+        * pal/graphics/WebGPU/WebGPUImageCopyTexture.h: Added.
+        * pal/graphics/WebGPU/WebGPUImageCopyTextureTagged.h: Added.
+        * pal/graphics/WebGPU/WebGPUImageDataLayout.h: Added.
+        * pal/graphics/WebGPU/WebGPUIndexFormat.h: Added.
+        * pal/graphics/WebGPU/WebGPUIntegralTypes.h: Added.
+        * pal/graphics/WebGPU/WebGPULoadOp.h: Added.
+        * pal/graphics/WebGPU/WebGPUMapMode.h: Added.
+        * pal/graphics/WebGPU/WebGPUMultisampleState.h: Added.
+        * pal/graphics/WebGPU/WebGPUObjectDescriptorBase.h: Added.
+        * pal/graphics/WebGPU/WebGPUOrigin2DDict.h: Added.
+        * pal/graphics/WebGPU/WebGPUOrigin3DDict.h: Added.
+        * pal/graphics/WebGPU/WebGPUOutOfMemoryError.h: Added.
+        * pal/graphics/WebGPU/WebGPUPipelineDescriptorBase.h: Added.
+        * pal/graphics/WebGPU/WebGPUPipelineLayout.h: Added.
+        (PAL::WebGPU::PipelineLayout::label const):
+        (PAL::WebGPU::PipelineLayout::setLabel):
+        * pal/graphics/WebGPU/WebGPUPipelineLayoutDescriptor.h: Added.
+        * pal/graphics/WebGPU/WebGPUPipelineStatisticName.h: Added.
+        * pal/graphics/WebGPU/WebGPUPowerPreference.h: Added.
+        * pal/graphics/WebGPU/WebGPUPredefinedColorSpace.h: Added.
+        * pal/graphics/WebGPU/WebGPUPrimitiveState.h: Added.
+        * pal/graphics/WebGPU/WebGPUPrimitiveTopology.h: Added.
+        * pal/graphics/WebGPU/WebGPUProgrammableStage.h: Added.
+        * pal/graphics/WebGPU/WebGPUQuerySet.h: Added.
+        (PAL::WebGPU::QuerySet::label const):
+        (PAL::WebGPU::QuerySet::setLabel):
+        * pal/graphics/WebGPU/WebGPUQuerySetDescriptor.h: Added.
+        * pal/graphics/WebGPU/WebGPUQueryType.h: Added.
+        * pal/graphics/WebGPU/WebGPUQueue.h: Added.
+        (PAL::WebGPU::Queue::label const):
+        (PAL::WebGPU::Queue::setLabel):
+        * pal/graphics/WebGPU/WebGPURenderBundle.h: Added.
+        (PAL::WebGPU::RenderBundle::label const):
+        (PAL::WebGPU::RenderBundle::setLabel):
+        * pal/graphics/WebGPU/WebGPURenderBundleDescriptor.h: Added.
+        * pal/graphics/WebGPU/WebGPURenderBundleEncoder.h: Added.
+        (PAL::WebGPU::RenderBundleEncoder::label const):
+        (PAL::WebGPU::RenderBundleEncoder::setLabel):
+        * pal/graphics/WebGPU/WebGPURenderBundleEncoderDescriptor.h: Added.
+        * pal/graphics/WebGPU/WebGPURenderPassColorAttachment.h: Added.
+        * pal/graphics/WebGPU/WebGPURenderPassDepthStencilAttachment.h: Added.
+        * pal/graphics/WebGPU/WebGPURenderPassDescriptor.h: Added.
+        * pal/graphics/WebGPU/WebGPURenderPassEncoder.h: Added.
+        (PAL::WebGPU::RenderPassEncoder::label const):
+        (PAL::WebGPU::RenderPassEncoder::setLabel):
+        * pal/graphics/WebGPU/WebGPURenderPassLayout.h: Added.
+        * pal/graphics/WebGPU/WebGPURenderPassTimestampLocation.h: Added.
+        * pal/graphics/WebGPU/WebGPURenderPassTimestampWrite.h: Added.
+        * pal/graphics/WebGPU/WebGPURenderPipeline.h: Added.
+        (PAL::WebGPU::RenderPipeline::label const):
+        (PAL::WebGPU::RenderPipeline::setLabel):
+        * pal/graphics/WebGPU/WebGPURenderPipelineDescriptor.h: Added.
+        * pal/graphics/WebGPU/WebGPURequestAdapterOptions.h: Added.
+        * pal/graphics/WebGPU/WebGPUSampler.h: Added.
+        (PAL::WebGPU::Sampler::label const):
+        (PAL::WebGPU::Sampler::setLabel):
+        * pal/graphics/WebGPU/WebGPUSamplerBindingLayout.h: Added.
+        * pal/graphics/WebGPU/WebGPUSamplerBindingType.h: Added.
+        * pal/graphics/WebGPU/WebGPUSamplerDescriptor.h: Added.
+        * pal/graphics/WebGPU/WebGPUShaderModule.h: Added.
+        (PAL::WebGPU::ShaderModule::label const):
+        (PAL::WebGPU::ShaderModule::setLabel):
+        * pal/graphics/WebGPU/WebGPUShaderModuleDescriptor.h: Added.
+        * pal/graphics/WebGPU/WebGPUShaderStage.h: Added.
+        * pal/graphics/WebGPU/WebGPUStencilFaceState.h: Added.
+        * pal/graphics/WebGPU/WebGPUStencilOperation.h: Added.
+        * pal/graphics/WebGPU/WebGPUStorageTextureAccess.h: Added.
+        * pal/graphics/WebGPU/WebGPUStorageTextureBindingLayout.h: Added.
+        * pal/graphics/WebGPU/WebGPUStoreOp.h: Added.
+        * pal/graphics/WebGPU/WebGPUSupportedFeatures.h: Added.
+        * pal/graphics/WebGPU/WebGPUSupportedLimits.h: Added.
+        * pal/graphics/WebGPU/WebGPUTexture.h: Added.
+        (PAL::WebGPU::Texture::label const):
+        (PAL::WebGPU::Texture::setLabel):
+        * pal/graphics/WebGPU/WebGPUTextureAspect.h: Added.
+        * pal/graphics/WebGPU/WebGPUTextureBindingLayout.h: Added.
+        * pal/graphics/WebGPU/WebGPUTextureDescriptor.h: Added.
+        * pal/graphics/WebGPU/WebGPUTextureDimension.h: Added.
+        * pal/graphics/WebGPU/WebGPUTextureFormat.h: Added.
+        * pal/graphics/WebGPU/WebGPUTextureSampleType.h: Added.
+        * pal/graphics/WebGPU/WebGPUTextureUsage.h: Added.
+        * pal/graphics/WebGPU/WebGPUTextureView.h: Added.
+        (PAL::WebGPU::TextureView::label const):
+        (PAL::WebGPU::TextureView::setLabel):
+        * pal/graphics/WebGPU/WebGPUTextureViewDescriptor.h: Added.
+        * pal/graphics/WebGPU/WebGPUTextureViewDimension.h: Added.
+        * pal/graphics/WebGPU/WebGPUUncapturedErrorEvent.h: Added.
+        * pal/graphics/WebGPU/WebGPUUncapturedErrorEventInit.h: Added.
+        * pal/graphics/WebGPU/WebGPUValidationError.h: Added.
+        * pal/graphics/WebGPU/WebGPUVertexAttribute.h: Added.
+        * pal/graphics/WebGPU/WebGPUVertexBufferLayout.h: Added.
+        * pal/graphics/WebGPU/WebGPUVertexFormat.h: Added.
+        * pal/graphics/WebGPU/WebGPUVertexState.h: Added.
+        * pal/graphics/WebGPU/WebGPUVertexStepMode.h: Added.
+
 2021-11-04  Dean Jackson  <dino@apple.com>
 
         REGRESSION: AR Quicklook asset is shared instead of page URL

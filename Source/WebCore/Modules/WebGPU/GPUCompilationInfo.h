@@ -38,7 +38,7 @@ public:
         return adoptRef(*new GPUCompilationInfo());
     }
 
-    Vector<GPUCompilationMessage> messages() const;
+    Vector<Ref<GPUCompilationMessage>> messages() const;
 
 private:
     GPUCompilationInfo() = default;
