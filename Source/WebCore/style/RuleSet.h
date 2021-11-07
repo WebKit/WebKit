@@ -43,6 +43,8 @@ namespace Style {
 class Resolver;
 class RuleSet;
 
+using CascadeLayerPriority = uint16_t;
+
 using InvalidationRuleSetVector = Vector<RefPtr<const RuleSet>, 1>;
 
 struct DynamicMediaQueryEvaluationChanges {
@@ -103,8 +105,8 @@ public:
     bool hasShadowPseudoElementRules() const { return !m_shadowPseudoElementRules.isEmpty(); }
     bool hasHostPseudoClassRulesMatchingInShadowTree() const { return m_hasHostPseudoClassRulesMatchingInShadowTree; }
 
-    static constexpr auto cascadeLayerPriorityForUnlayered = std::numeric_limits<unsigned>::max();
-    unsigned cascadeLayerPriorityFor(const RuleData&) const;
+    static constexpr auto cascadeLayerPriorityForUnlayered = std::numeric_limits<CascadeLayerPriority>::max();
+    CascadeLayerPriority cascadeLayerPriorityFor(const RuleData&) const;
 
 private:
     friend class RuleSetBuilder;
@@ -132,11 +134,11 @@ private:
     struct CascadeLayer {
         CascadeLayerName resolvedName;
         CascadeLayerIdentifier parentIdentifier;
-        unsigned priority { 0 };
+        CascadeLayerPriority priority { 0 };
     };
     CascadeLayer& cascadeLayerForIdentifier(CascadeLayerIdentifier identifier) { return m_cascadeLayers[identifier - 1]; }
     const CascadeLayer& cascadeLayerForIdentifier(CascadeLayerIdentifier identifier) const { return m_cascadeLayers[identifier - 1]; }
-    unsigned cascadeLayerPriorityForIdentifier(CascadeLayerIdentifier) const;
+    CascadeLayerPriority cascadeLayerPriorityForIdentifier(CascadeLayerIdentifier) const;
 
     struct DynamicMediaQueryRules {
         Vector<Ref<const MediaQuerySet>> mediaQuerySets;
@@ -193,14 +195,14 @@ inline const RuleSet::RuleDataVector* RuleSet::tagRules(const AtomString& key, b
     return tagRules->get(key);
 }
 
-inline unsigned RuleSet::cascadeLayerPriorityForIdentifier(CascadeLayerIdentifier identifier) const
+inline CascadeLayerPriority RuleSet::cascadeLayerPriorityForIdentifier(CascadeLayerIdentifier identifier) const
 {
     if (!identifier)
         return cascadeLayerPriorityForUnlayered;
     return cascadeLayerForIdentifier(identifier).priority;
 }
 
-inline unsigned RuleSet::cascadeLayerPriorityFor(const RuleData& ruleData) const
+inline CascadeLayerPriority RuleSet::cascadeLayerPriorityFor(const RuleData& ruleData) const
 {
     if (m_cascadeLayerIdentifierForRulePosition.size() <= ruleData.position())
         return cascadeLayerPriorityForUnlayered;

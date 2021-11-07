@@ -63,7 +63,7 @@ struct MatchedRule {
     const RuleData* ruleData;
     unsigned specificity;
     ScopeOrdinal styleScopeOrdinal;
-    unsigned cascadeLayerPriority;
+    CascadeLayerPriority cascadeLayerPriority;
 };
 
 struct MatchedProperties {

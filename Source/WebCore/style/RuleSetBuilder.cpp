@@ -270,8 +270,10 @@ void RuleSetBuilder::updateCascadeLayerPriorities()
 
     std::sort(layersInPriorityOrder.begin(), layersInPriorityOrder.end(), compare);
 
-    for (unsigned priority = 0; priority < layerCount; ++priority)
-        m_ruleSet->cascadeLayerForIdentifier(layersInPriorityOrder[priority]).priority = priority;
+    for (unsigned i = 0; i < layerCount; ++i) {
+        auto priority = std::min<unsigned>(i, RuleSet::cascadeLayerPriorityForUnlayered - 1);
+        m_ruleSet->cascadeLayerForIdentifier(layersInPriorityOrder[i]).priority = priority;
+    }
 }
 
 void RuleSetBuilder::addMutatingRulesToResolver()

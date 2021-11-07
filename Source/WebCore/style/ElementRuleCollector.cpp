@@ -286,6 +286,9 @@ void ElementRuleCollector::matchSlottedPseudoElementRules()
 
         MatchRequest scopeMatchRequest(&scopeAuthorRules, styleScopeOrdinal);
         collectMatchingRulesForList(&scopeAuthorRules.slottedPseudoElementRules(), scopeMatchRequest);
+
+        if (styleScopeOrdinal == ScopeOrdinal::SlotLimit)
+            break;
     }
 }
 
@@ -319,6 +322,9 @@ void ElementRuleCollector::matchPartPseudoElementRulesForScope(const Element& pa
 
         // Element may only be exposed to styling from enclosing scopes via exportparts attributes.
         if (element != &partMatchingElement && element->shadowRoot()->partMappings().isEmpty())
+            break;
+
+        if (styleScopeOrdinal == ScopeOrdinal::ContainingHostLimit)
             break;
     }
 }
