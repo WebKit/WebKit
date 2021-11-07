@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "GPUObjectDescriptorBase.h"
 #include <JavaScriptCore/JSObject.h>
 #include <JavaScriptCore/Strong.h>
 #include <wtf/text/WTFString.h>
