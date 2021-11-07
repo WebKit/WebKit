@@ -46,10 +46,14 @@ static inline bool endsWithSoftWrapOpportunity(const InlineTextItem& currentText
     // We are at the position after a whitespace.
     if (currentTextItem.isWhitespace())
         return true;
-    // When both these non-whitespace runs belong to the same layout box, it's guaranteed that
-    // they are split at a soft breaking opportunity. See InlineTextItem::moveToNextBreakablePosition.
-    if (&currentTextItem.inlineTextBox() == &nextInlineTextItem.inlineTextBox())
-        return true;
+    // When both these non-whitespace runs belong to the same layout box with the same bidi level, it's guaranteed that
+    // they are split at a soft breaking opportunity. See InlineItemsBuilder::moveToNextBreakablePosition.
+    if (&currentTextItem.inlineTextBox() == &nextInlineTextItem.inlineTextBox()) {
+        if (currentTextItem.bidiLevel() == nextInlineTextItem.bidiLevel())
+            return true;
+        // The bidi boundary may or may not be the reason for splitting the inline text box content.
+        // FIXME: We could add a "reason flag" to InlineTextItem to tell why the split happened.
+    }
     // Now we need to collect at least 3 adjacent characters to be able to make a decision whether the previous text item ends with breaking opportunity.
     // [ex-][ample] <- second to last[x] last[-] current[a]
     // We need at least 1 character in the current inline text item and 2 more from previous inline items.
