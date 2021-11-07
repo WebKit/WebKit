@@ -29,6 +29,7 @@
 #include "GPUBlendOperation.h"
 #include "GPUIntegralTypes.h"
 #include <cstdint>
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
