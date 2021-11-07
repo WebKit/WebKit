@@ -753,6 +753,76 @@ void EventSenderProxy::mouseScrollByWithWheelAndMomentumPhases(int x, int y, int
     }
 }
 
+
+static CGScrollPhase cgScrollPhaseFromPhase(EventSenderProxy::WheelEventPhase phase)
+{
+    switch (phase) {
+    case EventSenderProxy::WheelEventPhase::None:
+        return static_cast<CGScrollPhase>(0);
+    case EventSenderProxy::WheelEventPhase::Began:
+        return kCGScrollPhaseBegan;
+    case EventSenderProxy::WheelEventPhase::Changed:
+        return kCGScrollPhaseChanged;
+    case EventSenderProxy::WheelEventPhase::Ended:
+        return kCGScrollPhaseEnded;
+    case EventSenderProxy::WheelEventPhase::Cancelled:
+        return kCGScrollPhaseCancelled;
+    case EventSenderProxy::WheelEventPhase::MayBegin:
+        return kCGScrollPhaseMayBegin;
+    }
+    ASSERT_NOT_REACHED();
+    return static_cast<CGScrollPhase>(0);
+}
+
+static CGGesturePhase cgGesturePhaseFromString(EventSenderProxy::WheelEventPhase phase)
+{
+    switch (phase) {
+    case EventSenderProxy::WheelEventPhase::None:
+        return kCGGesturePhaseNone;
+    case EventSenderProxy::WheelEventPhase::Began:
+        return kCGGesturePhaseBegan;
+    case EventSenderProxy::WheelEventPhase::Changed:
+        return kCGGesturePhaseChanged;
+    case EventSenderProxy::WheelEventPhase::Ended:
+        return kCGGesturePhaseEnded;
+    case EventSenderProxy::WheelEventPhase::Cancelled:
+        return kCGGesturePhaseCancelled;
+    case EventSenderProxy::WheelEventPhase::MayBegin:
+        return kCGGesturePhaseMayBegin;
+    }
+
+    ASSERT_NOT_REACHED();
+    return kCGGesturePhaseNone;
+}
+
+void EventSenderProxy::sendWheelEvent(EventTimestamp timestamp, double windowX, double windowY, double deltaX, double deltaY, WheelEventPhase phase, WheelEventPhase momentumPhase)
+{
+    constexpr uint32_t wheelCount = 2;
+    auto cgScrollEvent = adoptCF(CGEventCreateScrollWheelEvent2(nullptr, kCGScrollEventUnitPixel, wheelCount, deltaY, deltaX, 0));
+    CGEventSetTimestamp(cgScrollEvent.get(), timestamp);
+
+    // Set the CGEvent location in flipped coords relative to the first screen, which
+    // compensates for the behavior of +[NSEvent eventWithCGEvent:] when the event has
+    // no associated window. See <rdar://problem/17180591>.
+    CGPoint flippedWindowMousePosition = CGPointMake(windowX, [[[NSScreen screens] objectAtIndex:0] frame].size.height - windowY);
+    CGEventSetLocation(cgScrollEvent.get(), flippedWindowMousePosition);
+
+    CGEventSetIntegerValueField(cgScrollEvent.get(), kCGScrollWheelEventIsContinuous, 1);
+    CGEventSetIntegerValueField(cgScrollEvent.get(), kCGScrollWheelEventScrollPhase, cgScrollPhaseFromPhase(phase));
+    CGEventSetIntegerValueField(cgScrollEvent.get(), kCGScrollWheelEventMomentumPhase, cgGesturePhaseFromString(momentumPhase));
+
+    NSEvent* event = [NSEvent eventWithCGEvent:cgScrollEvent.get()];
+    // Our event should have the correct settings:
+    if (NSView *targetView = [m_testController->mainWebView()->platformView() hitTest:[event locationInWindow]]) {
+        [NSApp _setCurrentEvent:event];
+        [targetView scrollWheel:event];
+        [NSApp _setCurrentEvent:nil];
+    } else {
+        NSPoint windowLocation = [event locationInWindow];
+        WTFLogAlways("EventSenderProxy::sendWheelEvent failed to find the target view at %f,%f\n", windowLocation.x, windowLocation.y);
+    }
+}
+
 #if ENABLE(MAC_GESTURE_EVENTS)
 
 void EventSenderProxy::scaleGestureStart(double scale)

@@ -1,3 +1,24 @@
+2021-11-07  Simon Fraser  <simon.fraser@apple.com>
+
+        Implement UIScriptController.sendEventStream() on macOS for wheel events
+        https://bugs.webkit.org/show_bug.cgi?id=232794
+
+        Reviewed by Tim Horton.
+
+        eventSender.mouseScrollByWithWheelAndMomentumPhases() is problematic for timing-sensitive
+        scrolling behaviors because the timestamps used are not under script control. It's also
+        a rather unwieldy API.
+        
+        To make wheel event testing easier, implement enough of UIScriptController.sendEventStream()
+        on macOS that it can generate a series of wheel events with predicable timestamps
+        (currently hardcoded to be 16.6ms apart).
+
+        * fast/scrolling/mac/momentum-event-sequence-expected.txt: Added.
+        * fast/scrolling/mac/momentum-event-sequence.html: Added.
+        * resources/ui-helper.js:
+        (window.UIHelper.async mouseWheelSequence.await.new.Promise):
+        (window.UIHelper.async mouseWheelSequence):
+
 2021-11-06  Tyler Wilcock  <tyler_w@apple.com>
 
         AX: WebKit1 PluginViewBase objects with an associated widget()->platformWidget() should be considered attachments

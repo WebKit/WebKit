@@ -44,6 +44,7 @@
 #import <JavaScriptCore/OpaqueJSString.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WKWebViewPrivateForTesting.h>
+#import <mach/mach_time.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/WorkQueue.h>
 
@@ -306,5 +307,114 @@ void UIScriptControllerMac::setSpellCheckerResults(JSValueRef results)
 {
     [[LayoutTestSpellChecker checker] setResultsFromJSValue:results inContext:m_context->jsContext()];
 }
+
+static NSString* const TopLevelEventInfoKey = @"events";
+static NSString* const EventTypeKey = @"type";
+static NSString* const ViewRelativeXPositionKey = @"viewX";
+static NSString* const ViewRelativeYPositionKey = @"viewY";
+static NSString* const DeltaXKey = @"deltaX";
+static NSString* const DeltaYKey = @"deltaY";
+static NSString* const PhaseKey = @"phase";
+static NSString* const MomentumPhaseKey = @"momentumPhase";
+
+static EventSenderProxy::WheelEventPhase eventPhaseFromString(NSString *phaseStr)
+{
+    if ([phaseStr isEqualToString:@"began"])
+        return EventSenderProxy::WheelEventPhase::Began;
+    if ([phaseStr isEqualToString:@"changed"])
+        return EventSenderProxy::WheelEventPhase::Changed;
+    if ([phaseStr isEqualToString:@"ended"])
+        return EventSenderProxy::WheelEventPhase::Ended;
+    if ([phaseStr isEqualToString:@"cancelled"])
+        return EventSenderProxy::WheelEventPhase::Cancelled;
+    if ([phaseStr isEqualToString:@"maybegin"])
+        return EventSenderProxy::WheelEventPhase::MayBegin;
+
+    ASSERT_NOT_REACHED();
+    return EventSenderProxy::WheelEventPhase::None;
+}
+
+void UIScriptControllerMac::sendEventStream(JSStringRef eventsJSON, JSValueRef callback)
+{
+    auto* eventSender = TestController::singleton().eventSenderProxy();
+    if (!eventSender) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
+
+    auto jsonString = eventsJSON->string();
+    auto eventInfo = dynamic_objc_cast<NSDictionary>([NSJSONSerialization JSONObjectWithData:[(NSString *)jsonString dataUsingEncoding:NSUTF8StringEncoding] options:NSJSONReadingMutableContainers | NSJSONReadingMutableLeaves error:nil]);
+    if (!eventInfo || ![eventInfo isKindOfClass:[NSDictionary class]]) {
+        WTFLogAlways("JSON is not convertible to a dictionary");
+        return;
+    }
+
+    auto *webView = this->webView();
+
+    double currentViewRelativeX = 0;
+    double currentViewRelativeY = 0;
+
+    constexpr uint64_t nanosecondsPerSecond = 1e9;
+    constexpr uint64_t nanosecondsEventInterval = nanosecondsPerSecond / 60;
+
+    auto currentTime = mach_absolute_time();
+
+    for (NSMutableDictionary *event in eventInfo[TopLevelEventInfoKey]) {
+
+        id eventType = event[EventTypeKey];
+        if (!event[EventTypeKey]) {
+            WTFLogAlways("Missing event type");
+            break;
+        }
+        
+        if ([eventType isEqualToString:@"wheel"]) {
+            auto phase = EventSenderProxy::WheelEventPhase::None;
+            auto momentumPhase = EventSenderProxy::WheelEventPhase::None;
+
+            if (!event[PhaseKey] && !event[MomentumPhaseKey]) {
+                WTFLogAlways("Event must specify phase or momentumPhase");
+                break;
+            }
+
+            if (id phaseString = event[PhaseKey])
+                phase = eventPhaseFromString(phaseString);
+
+            if (id phaseString = event[MomentumPhaseKey])
+                momentumPhase = eventPhaseFromString(phaseString);
+
+            ASSERT_IMPLIES(phase == EventSenderProxy::WheelEventPhase::None, momentumPhase != EventSenderProxy::WheelEventPhase::None);
+            ASSERT_IMPLIES(momentumPhase == EventSenderProxy::WheelEventPhase::None, phase != EventSenderProxy::WheelEventPhase::None);
+
+            if (event[ViewRelativeXPositionKey])
+                currentViewRelativeX = [event[ViewRelativeXPositionKey] floatValue];
+
+            if (event[ViewRelativeYPositionKey])
+                currentViewRelativeY = [event[ViewRelativeYPositionKey] floatValue];
+
+            double deltaX = 0;
+            double deltaY = 0;
+
+            if (event[DeltaXKey])
+                deltaX = [event[DeltaXKey] floatValue];
+
+            if (event[DeltaYKey])
+                deltaY = [event[DeltaYKey] floatValue];
+
+            auto windowPoint = [webView convertPoint:CGPointMake(currentViewRelativeX, currentViewRelativeY) toView:nil];
+            eventSender->sendWheelEvent(currentTime, windowPoint.x, windowPoint.y, deltaX, deltaY, phase, momentumPhase);
+        }
+
+        currentTime += nanosecondsEventInterval;
+    }
+
+    WorkQueue::main().dispatch([this, strongThis = Ref { *this }, callbackID] {
+        if (!m_context)
+            return;
+        m_context->asyncTaskComplete(callbackID);
+    });
+}
+
 
 } // namespace WTR

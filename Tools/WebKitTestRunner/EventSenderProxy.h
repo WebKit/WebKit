@@ -60,12 +60,29 @@ public:
     void mouseForceClick();
     void startAndCancelMouseForceClick();
     void mouseMoveTo(double x, double y, WKStringRef pointerType = nullptr);
+    
+    // Legacy wheel events.
     void mouseScrollBy(int x, int y);
     void mouseScrollByWithWheelAndMomentumPhases(int x, int y, int phase, int momentum);
 #if PLATFORM(GTK)
     void setWheelHasPreciseDeltas(bool);
 #endif
     void continuousMouseScrollBy(int x, int y, bool paged);
+
+#if PLATFORM(MAC)
+    enum class WheelEventPhase : uint8_t {
+        None,
+        Began,
+        Changed,
+        Ended,
+        Cancelled,
+        MayBegin,
+    };
+    
+    using EventTimestamp = uint64_t; // mach_absolute_time units.
+
+    void sendWheelEvent(EventTimestamp, double globalX, double globalY, double deltaX, double deltaY, WheelEventPhase, WheelEventPhase momentumPhase);
+#endif
 
     void leapForward(int milliseconds);
 
