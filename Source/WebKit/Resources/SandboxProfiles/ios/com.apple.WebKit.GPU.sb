@@ -580,9 +580,6 @@
 (allow ipc-posix-shm-read* (with telemetry)
        (ipc-posix-name "apple.shm.notification_center"))
 
-(allow mach-lookup (with telemetry)
-    (global-name "com.apple.diagnosticd"))
-
 (managed-configuration-read-public)
 
 (deny system-info (with no-report)
@@ -871,9 +868,10 @@
 
 (media-accessibility-support)
 
-;; Various services required by CFNetwork and other frameworks
-(allow mach-lookup (with telemetry)
-    (global-name "com.apple.analyticsd"))
+(with-filter (system-attribute apple-internal)
+    (allow mach-lookup
+        (global-name "com.apple.diagnosticd")
+        (global-name "com.apple.analyticsd")))
 
 ;; Silence reports about things we do not want access to:
 (deny mach-lookup (with no-report)

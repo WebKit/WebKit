@@ -730,12 +730,7 @@
     (allow mach-lookup
         (global-name "com.apple.analyticsd")
         (global-name "com.apple.diagnosticd")
-    )
-)
-
-(allow mach-lookup
-    (global-name "com.apple.powerlog.plxpclogger.xpc")
-)
+        (global-name "com.apple.powerlog.plxpclogger.xpc")))
 
 ;; Various services required by AppKit and other frameworks
 (allow mach-lookup

@@ -209,7 +209,6 @@ struct WebProcessCreationParameters {
     Vector<SandboxExtension::Handle> videoDecoderExtensionHandles;
 #endif
 
-    Vector<SandboxExtension::Handle> diagnosticsExtensionHandles;
 #if PLATFORM(IOS_FAMILY)
     Vector<SandboxExtension::Handle> dynamicMachExtensionHandles;
     Vector<SandboxExtension::Handle> dynamicIOKitExtensionHandles;

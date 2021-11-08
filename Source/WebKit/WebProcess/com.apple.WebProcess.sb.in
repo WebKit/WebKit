@@ -1741,11 +1741,15 @@
 )
 #endif
 
+(with-filter (system-attribute apple-internal)
+    (allow mach-lookup
+        (global-name "com.apple.analyticsd")
+        (global-name "com.apple.diagnosticd")))
+
 (allow mach-lookup
     (require-all
         (extension "com.apple.webkit.extension.mach")
         (global-name
-            "com.apple.analyticsd"
             "com.apple.nehelper"
             "com.apple.nesessionmanager.content-filter"
             "com.apple.webinspector"
@@ -1753,7 +1757,6 @@
             "com.apple.cfprefsd.daemon"
             "com.apple.containermanagerd"
             "com.apple.coreservices.launchservicesd"
-            "com.apple.diagnosticd"
             "com.apple.iconservices"
             "com.apple.iconservices.store"
             "com.apple.tccd"

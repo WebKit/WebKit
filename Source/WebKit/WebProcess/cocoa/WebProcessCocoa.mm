@@ -227,8 +227,6 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
 {
     setQOS(parameters.latencyQOS, parameters.throughputQOS);
     
-    SandboxExtension::consumePermanently(parameters.diagnosticsExtensionHandles);
-
 #if HAVE(CATALYST_USER_INTERFACE_IDIOM_AND_SCALE_FACTOR)
     if (canLoad_UIKit__UIApplicationCatalystRequestViewServiceIdiomAndScaleFactor()) {
         auto [overrideUserInterfaceIdiom, overrideScaleFactor] = parameters.overrideUserInterfaceIdiomAndScale;

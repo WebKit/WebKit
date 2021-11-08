@@ -1,3 +1,32 @@
+2021-11-08  Per Arne Vollan <pvollan@apple.com>
+
+        Unify sandbox rules for diagnostic services
+        https://bugs.webkit.org/show_bug.cgi?id=232207
+        <rdar://problem/84582424>
+
+        Reviewed by Darin Adler.
+
+        In the WebContent process, we only allow access to diagnostic services for internal builds. We should do the same in all WebKit sandboxes.
+
+        * GPUProcess/mac/com.apple.WebKit.GPUProcess.sb.in:
+        * NetworkProcess/mac/com.apple.WebKit.NetworkProcess.sb.in:
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.GPU.sb:
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.Networking.sb:
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebAuthn.sb:
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb.in:
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode const):
+        (WebKit::WebProcessCreationParameters::decode):
+        * Shared/WebProcessCreationParameters.h:
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitializeWebProcess):
+        (WebKit::isInternalInstall): Deleted.
+        (WebKit::diagnosticServices): Deleted.
+        * WebAuthnProcess/mac/com.apple.WebKit.WebAuthnProcess.sb.in:
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2021-11-08  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Enabling "media source inline painting" by default should work when using GPU Process for media

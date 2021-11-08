@@ -493,12 +493,6 @@
 (allow mach-lookup (with telemetry)
     (global-name "com.apple.distributed_notifications@1v3"))
 
-;; These are always needed in the Network process:
-(allow mach-lookup (with telemetry)
-    (global-name "com.apple.diagnosticd")
-    (global-name "com.apple.aggregated")
-)
-
 (managed-configuration-read-public)
 
 (allow mach-lookup (with telemetry)
@@ -642,8 +636,13 @@
 
 ;; Various services required by system frameworks
 (allow mach-lookup (with telemetry)
-    (global-name "com.apple.lsd.mapdb")
-    (global-name "com.apple.analyticsd"))
+    (global-name "com.apple.lsd.mapdb"))
+
+(with-filter (system-attribute apple-internal)
+    (allow mach-lookup
+        (global-name "com.apple.diagnosticd")
+        (global-name "com.apple.aggregated")
+        (global-name "com.apple.analyticsd")))
 
 ;; For reporting progress for active downloads <rdar://problem/44405661>
 (allow mach-lookup (with telemetry)

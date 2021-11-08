@@ -282,16 +282,6 @@ void WebProcessPool::platformResolvePathsForSandboxExtensions()
 #endif
 }
 
-static bool isInternalInstall()
-{
-#if PLATFORM(IOS_FAMILY)
-    static bool isInternal = MGGetBoolAnswer(kMGQAppleInternalInstallCapability);
-#else
-    static bool isInternal = FileSystem::fileType("/AppleInternal") == FileSystem::FileType::Directory;
-#endif
-    return isInternal;
-}
-
 #if PLATFORM(IOS_FAMILY)
 static const Vector<ASCIILiteral>& nonBrowserServices()
 {
@@ -305,21 +295,6 @@ static const Vector<ASCIILiteral>& nonBrowserServices()
     return services;
 }
 #endif
-
-static const Vector<ASCIILiteral>& diagnosticServices()
-{
-    ASSERT(isMainRunLoop());
-    static const auto services = makeNeverDestroyed(Vector<ASCIILiteral> {
-        "com.apple.diagnosticd"_s,
-#if PLATFORM(IOS_FAMILY)
-        "com.apple.osanalytics.osanalyticshelper"_s
-#else
-        "com.apple.analyticsd"_s,
-#endif
-    });
-    return services;
-}
-
 
 static bool requiresContainerManagerAccess()
 {
@@ -462,9 +437,6 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
     if (WebCore::deviceHasAGXCompilerService())
         parameters.dynamicIOKitExtensionHandles = SandboxExtension::createHandlesForIOKitClassExtensions(WebCore::agxCompilerClasses(), std::nullopt);
 #endif
-
-    if (isInternalInstall())
-        parameters.diagnosticsExtensionHandles = SandboxExtension::createHandlesForMachLookup(diagnosticServices(), std::nullopt, SandboxExtension::Flags::NoReport);
 
     parameters.systemHasBattery = systemHasBattery();
     parameters.systemHasAC = cachedSystemHasAC().value_or(true);

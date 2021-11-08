@@ -350,12 +350,9 @@
     (global-name "com.apple.FileCoordination")
     (global-name "com.apple.PowerManagement.control")
     (global-name "com.apple.SystemConfiguration.configd")
-    (global-name "com.apple.aggregated")
-    (global-name "com.apple.analyticsd")
     (global-name "com.apple.cookied")
     (global-name "com.apple.cfnetwork.AuthBrokerAgent")
     (global-name "com.apple.cfnetwork.cfnetworkagent")
-    (global-name "com.apple.diagnosticd")
     (global-name "com.apple.ist.ds.appleconnect2.service.kdctunnelcontroller")
     (global-name "com.apple.logd")
     (global-name "com.apple.logd.events")
@@ -365,6 +362,12 @@
     (global-name "com.apple.system.notification_center")
     (global-name "com.apple.AppSSO.service-xpc")
 )
+
+(with-filter (system-attribute apple-internal)
+    (allow mach-lookup
+        (global-name "com.apple.aggregated")
+        (global-name "com.apple.analyticsd")
+        (global-name "com.apple.diagnosticd")))
 
 (allow mach-lookup (with telemetry) (global-name "com.apple.webkit.adattributiond.service"))
 (allow mach-lookup (with telemetry) (global-name "org.webkit.pcmtestdaemon.service"))
