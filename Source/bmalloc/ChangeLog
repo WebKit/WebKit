@@ -1,5 +1,18 @@
 2021-11-08  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        Unreviewed, fix internal build failure on Catalina
+        https://bugs.webkit.org/show_bug.cgi?id=231815
+
+        Several pthread functions are not available.
+
+        * bmalloc/BPlatform.h:
+        * libpas/src/libpas/pas_thread_local_cache.h:
+        (pas_thread_local_cache_is_guaranteed_to_destruct):
+        (pas_thread_local_cache_can_set):
+        * libpas/src/libpas/pas_utils.h:
+
+2021-11-08  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [libpas] Enable libpas on macOS
         https://bugs.webkit.org/show_bug.cgi?id=231815
 

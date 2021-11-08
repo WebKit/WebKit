@@ -83,6 +83,69 @@ PAS_BEGIN_EXTERN_C;
 
 #define PAS_ARM __PAS_ARM
 
+#define PAS_PLATFORM(PLATFORM) (defined PAS_PLATFORM_##PLATFORM && PAS_PLATFORM_##PLATFORM)
+#define PAS_OS(OS) (defined PAS_OS_##OS && PAS_OS_##OS)
+
+#ifdef __APPLE__
+#define PAS_OS_DARWIN 1
+#endif
+
+#if defined(__unix) || defined(__unix__)
+#define PAS_OS_UNIX 1
+#endif
+
+#ifdef __linux__
+#define PAS_OS_LINUX 1
+#endif
+
+#if defined(__FreeBSD__) || defined(__DragonFly__) || defined(__FreeBSD_kernel__)
+#define PAS_OS_FREEBSD 1
+#endif
+
+#if defined(WIN32) || defined(_WIN32)
+#define PAS_OS_WINDOWS 1
+#endif
+
+#if PAS_OS(DARWIN) && !defined(BUILDING_WITH_CMAKE)
+#if TARGET_OS_IOS
+#define PAS_OS_IOS 1
+#define PAS_PLATFORM_IOS 1
+#if TARGET_OS_SIMULATOR
+#define PAS_PLATFORM_IOS_SIMULATOR 1
+#endif
+#if defined(TARGET_OS_MACCATALYST) && TARGET_OS_MACCATALYST
+#define PAS_PLATFORM_MACCATALYST 1
+#endif
+#endif
+#if TARGET_OS_IPHONE
+#define PAS_PLATFORM_IOS_FAMILY 1
+#if TARGET_OS_SIMULATOR
+#define PAS_PLATFORM_IOS_FAMILY_SIMULATOR 1
+#endif
+#elif TARGET_OS_MAC
+#define PAS_OS_MAC 1
+#define PAS_PLATFORM_MAC 1
+#endif
+#endif
+
+#if PAS_PLATFORM(MAC) || PAS_PLATFORM(IOS_FAMILY)
+#define PAS_PLATFORM_COCOA 1
+#endif
+
+#if defined(TARGET_OS_WATCH) && TARGET_OS_WATCH
+#define PAS_OS_WATCHOS 1
+#define PAS_PLATFORM_WATCHOS 1
+#endif
+
+#if defined(TARGET_OS_TV) && TARGET_OS_TV
+#define PAS_OS_APPLETV 1
+#define PAS_PLATFORM_APPLETV 1
+#endif
+
+#if defined(__SCE__)
+#define PAS_PLATFORM_PLAYSTATION 1
+#endif
+
 /* NOTE: panic format string must have \n at the end. */
 PAS_API PAS_NO_RETURN void pas_panic(const char* format, ...) PAS_FORMAT_PRINTF(1, 2);
 

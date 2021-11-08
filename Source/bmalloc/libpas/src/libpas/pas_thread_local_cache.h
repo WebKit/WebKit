@@ -43,6 +43,12 @@
 #define PAS_HAVE_PTHREAD_PRIVATE 0
 #endif
 
+#ifdef __APPLE__
+#include <Availability.h>
+#include <AvailabilityMacros.h>
+#include <TargetConditionals.h>
+#endif
+
 PAS_BEGIN_EXTERN_C;
 
 struct pas_magazine;
@@ -89,21 +95,30 @@ static inline pas_thread_local_cache* pas_thread_local_cache_try_get(void)
 }
 
 #if PAS_HAVE_PTHREAD_PRIVATE
-#define PAS_THREAD_LOCAL_CACHE_CAN_DETECT_THREAD_EXIT \
-    __builtin_available(macos 10.16, ios 14.0, tvos 14.0, watchos 7.0, *)
+#if (PAS_PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 110000) \
+    || (PAS_PLATFORM(MACCATALYST) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 140000) \
+    || (PAS_PLATFORM(IOS) && PAS_PLATFORM(IOS_FAMILY_SIMULATOR) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 140000) \
+    || (PAS_PLATFORM(WATCHOS) && PAS_PLATFORM(IOS_FAMILY_SIMULATOR) && __WATCH_OS_VERSION_MIN_REQUIRED >= 70000) \
+    || (PAS_PLATFORM(APPLETV) && PAS_PLATFORM(IOS_FAMILY_SIMULATOR) && __TV_OS_VERSION_MIN_REQUIRED >= 140000)
+#define PAS_THREAD_LOCAL_CACHE_CAN_DETECT_THREAD_EXIT 1
+#endif
 
 static inline bool pas_thread_local_cache_is_guaranteed_to_destruct(void)
 {
-    if (PAS_THREAD_LOCAL_CACHE_CAN_DETECT_THREAD_EXIT)
-        return true;
+#ifdef PAS_THREAD_LOCAL_CACHE_CAN_DETECT_THREAD_EXIT
+    return true;
+#else
     return false;
+#endif
 }
 
 static inline bool pas_thread_local_cache_can_set(void)
 {
-    if (PAS_THREAD_LOCAL_CACHE_CAN_DETECT_THREAD_EXIT)
-        return !pthread_self_is_exiting_np();
+#ifdef PAS_THREAD_LOCAL_CACHE_CAN_DETECT_THREAD_EXIT
+    return !pthread_self_is_exiting_np();
+#else
     return true;
+#endif
 }
 #else /* PAS_HAVE_PTHREAD_PRIVATE -> so !PAS_HAVE_PTHREAD_PRIVATE */
 static inline bool pas_thread_local_cache_is_guaranteed_to_destruct(void)

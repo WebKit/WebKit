@@ -93,7 +93,7 @@
 #endif
 
 #if defined(__SCE__)
-#define BPLATORM_PLAYSTATION 1
+#define BPLATFORM_PLAYSTATION 1
 #endif
 
 /* ==== Feature decision macros: these define feature choices for a particular port. ==== */
