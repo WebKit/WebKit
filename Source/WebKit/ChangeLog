@@ -1,3 +1,36 @@
+2021-11-08  Per Arne Vollan <pvollan@apple.com>
+
+        [macOS][GPUP] Remove access in sandbox to com.apple.audio.AudioComponentRegistrar
+        https://bugs.webkit.org/show_bug.cgi?id=231694
+        <rdar://75225923>
+
+        Reviewed by Brent Fulgham.
+
+        After https://trac.webkit.org/changeset/274435/webkit, there is no need to allow access to this service. This patch also implements sending
+        the Audio component registrations to the GPU process, which is a requirement before blocking the service in the GPU process.
+
+        * GPUProcess/GPUProcess.h:
+        * GPUProcess/GPUProcess.messages.in:
+        * GPUProcess/cocoa/GPUProcessCocoa.mm:
+        (WebKit::GPUProcess::consumeAudioComponentRegistrations):
+        * GPUProcess/mac/com.apple.WebKit.GPUProcess.sb.in:
+        * Shared/Cocoa/AudioComponentRegistration.cpp: Added.
+        (WebKit::consumeAudioComponentRegistrations):
+        * Shared/Cocoa/AudioComponentRegistration.h: Added.
+        (WebKit::sendAudioComponentRegistrations):
+        * UIProcess/Cocoa/WebProcessProxyCocoa.mm:
+        (WebKit::WebProcessProxy::sendAudioComponentRegistrations): Deleted.
+        * UIProcess/GPU/GPUProcessProxy.cpp:
+        (WebKit::GPUProcessProxy::didFinishLaunching):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::initializeNewWebProcess):
+        * UIProcess/WebProcessProxy.h:
+        (WebKit::WebProcessProxy::revokeAudioCaptureExtension):
+        * WebAuthnProcess/mac/com.apple.WebKit.WebAuthnProcess.sb.in:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::consumeAudioComponentRegistrations):
+
 2021-11-08  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         WKSyntheticTapGestureRecognizer's action targets should be weak pointers
