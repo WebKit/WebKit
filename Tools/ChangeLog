@@ -1,25 +1,35 @@
-2021-11-04  Russell Epstein  <repstein@apple.com>
+2021-11-08  Kocsen Chung  <kocsen_chung@apple.com>
 
-        Cherry-pick r285239. rdar://problem/80991209
+        Apply patch. rdar://problem/83438282
 
-    Apply patch. rdar://problem/84982191
+    Revert r284669. rdar://problem/83971417
     
-    git-svn-id: https://svn.webkit.org/repository/webkit/branches/safari-612.3.3.0-branch@285239 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+    This reverts r284954.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/branches/safari-612-branch@285438 268f45cc-cd09-0410-ab3c-d52691b4dbfc
 
-    2021-11-03  Russell Epstein  <repstein@apple.com>
+    2021-11-04  Russell Epstein  <repstein@apple.com>
 
-            Apply patch. rdar://problem/84982191
+            Cherry-pick r285239. rdar://problem/80991209
 
-        2021-11-03  Kate Cheney  <katherine_cheney@apple.com>
+        Apply patch. rdar://problem/84982191
 
-                PCM: Safari on iOS and macOS are not sending ad click attribution reports for Private Click Measurement
-                https://bugs.webkit.org/show_bug.cgi?id=228104
-                <rdar://problem/80991209>
+        git-svn-id: https://svn.webkit.org/repository/webkit/branches/safari-612.3.3.0-branch@285239 268f45cc-cd09-0410-ab3c-d52691b4dbfc
 
-                Reviewed by John Wilander.
+        2021-11-03  Russell Epstein  <repstein@apple.com>
 
-                * TestWebKitAPI/Tests/WebCore/PrivateClickMeasurement.cpp:
-                (TestWebKitAPI::TEST):
+                Apply patch. rdar://problem/84982191
+
+            2021-11-03  Kate Cheney  <katherine_cheney@apple.com>
+
+                    PCM: Safari on iOS and macOS are not sending ad click attribution reports for Private Click Measurement
+                    https://bugs.webkit.org/show_bug.cgi?id=228104
+                    <rdar://problem/80991209>
+
+                    Reviewed by John Wilander.
+
+                    * TestWebKitAPI/Tests/WebCore/PrivateClickMeasurement.cpp:
+                    (TestWebKitAPI::TEST):
 
 2021-11-04  Russell Epstein  <repstein@apple.com>
 

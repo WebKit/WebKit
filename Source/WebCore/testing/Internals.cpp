@@ -3967,6 +3967,11 @@ void Internals::endSimulatedHDCPError(HTMLMediaElement& element)
         player->endSimulatedHDCPError();
 }
 
+ExceptionOr<bool> Internals::mediaPlayerRenderingCanBeAccelerated(HTMLMediaElement& element)
+{
+    return element.mediaPlayerRenderingCanBeAccelerated();
+}
+
 bool Internals::elementShouldBufferData(HTMLMediaElement& element)
 {
     return element.bufferingPolicy() < MediaPlayer::BufferingPolicy::LimitReadAhead;
