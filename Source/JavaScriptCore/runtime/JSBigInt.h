@@ -464,6 +464,8 @@ public:
         return hashSlow();
     }
 
+    static std::optional<double> tryExtractDouble(JSValue);
+
 private:
     JSBigInt(VM&, Structure*, Digit*, unsigned length);
 
@@ -674,6 +676,44 @@ ALWAYS_INLINE JSValue tryConvertToBigInt32(JSBigInt* bigInt)
 #endif
 
     return bigInt;
+}
+
+ALWAYS_INLINE std::optional<double> JSBigInt::tryExtractDouble(JSValue value)
+{
+    if (value.isNumber())
+        return value.asNumber();
+
+    if (!value.isBigInt())
+        return std::nullopt;
+
+#if USE(BIGINT32)
+    if (value.isBigInt32())
+        return value.bigInt32AsInt32();
+#endif
+
+    ASSERT(value.isHeapBigInt());
+    JSBigInt* bigInt = value.asHeapBigInt();
+    if (!bigInt->length())
+        return 0;
+
+    uint64_t integer = 0;
+    if constexpr (sizeof(Digit) == 8) {
+        if (bigInt->length() != 1)
+            return std::nullopt;
+        integer = bigInt->digit(0);
+    } else {
+        ASSERT(sizeof(Digit) == 4);
+        if (bigInt->length() > 2)
+            return std::nullopt;
+        integer = bigInt->digit(0);
+        if (bigInt->length() == 2)
+            integer |= (static_cast<uint64_t>(bigInt->digit(1)) << 32);
+    }
+
+    if (integer <= static_cast<uint64_t>(maxSafeInteger()))
+        return (bigInt->sign()) ? -static_cast<double>(integer) : static_cast<double>(integer);
+
+    return std::nullopt;
 }
 
 } // namespace JSC

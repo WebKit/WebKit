@@ -1845,6 +1845,7 @@
 		E307178C24C7829800DF0644 /* IntlLocalePrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = A3AFF930245A3CFC00C9BA3B /* IntlLocalePrototype.h */; };
 		E307178D24C7829A00DF0644 /* IntlLocaleConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = A3AFF92C245A3CFA00C9BA3B /* IntlLocaleConstructor.h */; };
 		E307178E24C7829D00DF0644 /* IntlLocale.h in Headers */ = {isa = PBXBuildFile; fileRef = A3AFF92B245A3CF900C9BA3B /* IntlLocale.h */; };
+		E30873E7272559410053B601 /* IntlPluralRules.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7D5FB18F20744BF1005DDF64 /* IntlPluralRules.cpp */; };
 		E30E8A5426DE2E4800DA4915 /* TemporalTimeZonePrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = E30E8A4E26DE2E4700DA4915 /* TemporalTimeZonePrototype.h */; };
 		E30E8A5626DE2E4800DA4915 /* TemporalTimeZone.h in Headers */ = {isa = PBXBuildFile; fileRef = E30E8A5026DE2E4800DA4915 /* TemporalTimeZone.h */; };
 		E30E8A5726DE2E4800DA4915 /* TemporalTimeZoneConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = E30E8A5126DE2E4800DA4915 /* TemporalTimeZoneConstructor.h */; };
@@ -1916,6 +1917,7 @@
 		E3711992253FA87F00BA69A0 /* Gate.h in Headers */ = {isa = PBXBuildFile; fileRef = E3711991253FA87E00BA69A0 /* Gate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E374166E26912BC700C80789 /* ObjectConstructorInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = E374166D26912BC700C80789 /* ObjectConstructorInlines.h */; };
 		E3750CC82502E87E006A0AAB /* IntlDateTimeFormatInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = E3750CC72502E87E006A0AAB /* IntlDateTimeFormatInlines.h */; };
+		E378DC8D2727629400427B0B /* IntlNumberFormat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1D792F61B43864B004516F5 /* IntlNumberFormat.cpp */; };
 		E3794E761B77EB97005543AE /* ModuleAnalyzer.h in Headers */ = {isa = PBXBuildFile; fileRef = E3794E741B77EB97005543AE /* ModuleAnalyzer.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E383500A2390D93B0036316D /* WasmGlobal.h in Headers */ = {isa = PBXBuildFile; fileRef = E38350092390D9370036316D /* WasmGlobal.h */; };
 		E3850B15226ED641009ABF9C /* DFGMinifiedIDInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = E3850B14226ED63E009ABF9C /* DFGMinifiedIDInlines.h */; };
@@ -11858,6 +11860,8 @@
 				5C4196622270E0000047B7CD /* InspectorBackendDispatcherCompatibility.cpp in Sources */,
 				E399AEC32559457F00B78485 /* IntlDateTimeFormat.cpp in Sources */,
 				E366441E254409B30001876F /* IntlListFormat.cpp in Sources */,
+				E378DC8D2727629400427B0B /* IntlNumberFormat.cpp in Sources */,
+				E30873E7272559410053B601 /* IntlPluralRules.cpp in Sources */,
 				A3EE8543262514B000FC9B8D /* IntlWorkaround.cpp in Sources */,
 				E38E8790254B978400F6F9E4 /* JSDateMath.cpp in Sources */,
 				536B319E1F735F160037FC33 /* LowLevelInterpreter.cpp in Sources */,

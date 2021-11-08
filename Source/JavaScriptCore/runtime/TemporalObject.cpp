@@ -452,6 +452,14 @@ double roundNumberToIncrement(double x, double increment, RoundingMode mode)
         return std::trunc(quotient) * increment;
     case RoundingMode::HalfExpand:
         return std::round(quotient) * increment;
+
+    // They are not supported in Temporal right now.
+    case RoundingMode::Expand:
+    case RoundingMode::HalfCeil:
+    case RoundingMode::HalfFloor:
+    case RoundingMode::HalfTrunc:
+    case RoundingMode::HalfEven:
+        return std::trunc(quotient) * increment;
     }
 
     RELEASE_ASSERT_NOT_REACHED();

@@ -835,11 +835,11 @@ runtime/IntlListFormatPrototype.cpp
 runtime/IntlLocale.cpp
 runtime/IntlLocaleConstructor.cpp
 runtime/IntlLocalePrototype.cpp
-runtime/IntlNumberFormat.cpp
+runtime/IntlNumberFormat.cpp @no-unify // Confine U_HIDE_DRAFT_API's effect in this file.
 runtime/IntlNumberFormatConstructor.cpp
 runtime/IntlNumberFormatPrototype.cpp
 runtime/IntlObject.cpp
-runtime/IntlPluralRules.cpp
+runtime/IntlPluralRules.cpp @no-unify // Confine U_HIDE_DRAFT_API's effect to this file.
 runtime/IntlPluralRulesConstructor.cpp
 runtime/IntlPluralRulesPrototype.cpp
 runtime/IntlRelativeTimeFormat.cpp

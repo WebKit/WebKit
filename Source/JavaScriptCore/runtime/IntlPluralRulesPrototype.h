@@ -49,7 +49,7 @@ public:
 
 private:
     IntlPluralRulesPrototype(VM&, Structure*);
-    void finishCreation(VM&);
+    void finishCreation(VM&, JSGlobalObject*);
 };
 
 } // namespace JSC

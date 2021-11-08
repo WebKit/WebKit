@@ -53,9 +53,13 @@ function testNumberFormat(numberFormat, possibleDifferences) {
             maximumFractionDigits: 3,
             minimumSignificantDigits: undefined,
             maximumSignificantDigits: undefined,
-            useGrouping: true,
+            useGrouping: "auto",
             notation: "standard",
-            signDisplay: "auto"
+            signDisplay: "auto",
+            roundingMode: "halfExpand",
+            roundingIncrement: 1,
+            trailingZeroDisplay: "auto",
+            roundingPriority: "auto",
         };
         Object.assign(defaultOptions, difference);
         return JSON.stringify(defaultOptions);
@@ -184,9 +188,9 @@ shouldThrow(() => Intl.NumberFormat('en', {maximumSignificantDigits: 0}), RangeE
 shouldThrow(() => Intl.NumberFormat('en', {maximumSignificantDigits: 22}), RangeError);
 
 // The option useGrouping is processed correctly.
-shouldBe(testNumberFormat(Intl.NumberFormat('en', {useGrouping: true}), [{locale: 'en', useGrouping: true}]), true);
+shouldBe(testNumberFormat(Intl.NumberFormat('en', {useGrouping: true}), [{locale: 'en', useGrouping: "always"}]), true);
 shouldBe(testNumberFormat(Intl.NumberFormat('en', {useGrouping: false}), [{locale: 'en', useGrouping: false}]), true);
-shouldBe(testNumberFormat(Intl.NumberFormat('en', {useGrouping: 'false'}), [{locale: 'en', useGrouping: true}]), true);
+shouldBe(testNumberFormat(Intl.NumberFormat('en', {useGrouping: 'min2'}), [{locale: 'en', useGrouping: "min2"}]), true);
 shouldThrow(() => Intl.NumberFormat('en', { get useGrouping() { throw new Error(); } }), Error);
 
 // 11.2 Properties of the Intl.NumberFormat Constructor
@@ -435,7 +439,7 @@ shouldThrow(() => Intl.NumberFormat.prototype.resolvedOptions.call(5), TypeError
 {
     let options = defaultNFormat.resolvedOptions();
     delete options.locale; 
-    shouldBe(JSON.stringify(options), '{"numberingSystem":"latn","style":"decimal","minimumIntegerDigits":1,"minimumFractionDigits":0,"maximumFractionDigits":3,"useGrouping":true,"notation":"standard","signDisplay":"auto"}');
+    shouldBe(JSON.stringify(options), `{"numberingSystem":"latn","style":"decimal","minimumIntegerDigits":1,"minimumFractionDigits":0,"maximumFractionDigits":3,"useGrouping":"auto","notation":"standard","signDisplay":"auto","roundingMode":"halfExpand","roundingIncrement":1,"trailingZeroDisplay":"auto","roundingPriority":"auto"}`);
 }
 
 // Legacy compatibility with ECMA-402 1.0

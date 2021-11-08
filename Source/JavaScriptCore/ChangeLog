@@ -1,3 +1,86 @@
+2021-11-08  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Implement IntlNumberFormat v3
+        https://bugs.webkit.org/show_bug.cgi?id=215438
+
+        Reviewed by Ross Kirsling.
+
+        This patch implements part of Intl.NumberFormat v3 proposal[1].
+        It adds (1) several new options to Intl.NumberFormat, (2) adds
+        formatRange and formatRangeToParts to Intl.NumberFormat and Intl.PluralRules,
+        and (3) adds toIntlMathematicalValue support, which allows some of Intl.NumberFormat
+        functions to take "string" decimal form.
+
+        We cannot implement some features because it requires super new ICU.
+
+            - trailingZeroDisplay (requires ICU 69)
+            - halfCeil / halfFloor (requires ICU 69)
+            - signDisplay: "negative" (requires ICU 69)
+            - formatRangeToParts (requires ICU 70)
+
+        [1]: https://github.com/tc39/proposal-intl-numberformat-v3
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * runtime/BigIntPrototype.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/CommonIdentifiers.h:
+        * runtime/IntlNumberFormat.cpp:
+        (JSC::UNumberFormatterDeleter::operator()):
+        (JSC::UNumberRangeFormatterDeleter::operator()):
+        (JSC::partTypeString):
+        (JSC::IntlNumberFormat::initializeNumberFormat):
+        (JSC::IntlNumberFormat::format const):
+        (JSC::IntlNumberFormat::formatRange const):
+        (JSC::IntlNumberFormat::signDisplayString):
+        (JSC::IntlNumberFormat::roundingModeString):
+        (JSC::IntlNumberFormat::trailingZeroDisplayString):
+        (JSC::IntlNumberFormat::roundingPriorityString):
+        (JSC::IntlNumberFormat::useGroupingValue):
+        (JSC::IntlNumberFormat::resolvedOptions const):
+        (JSC::IntlNumberFormat::formatToPartsInternal):
+        (JSC::IntlNumberFormat::formatToParts const):
+        * runtime/IntlNumberFormat.h:
+        (JSC::IntlMathematicalValue::IntlMathematicalValue):
+        (JSC::IntlMathematicalValue::ensureNonDouble):
+        (JSC::IntlMathematicalValue::numberType const):
+        (JSC::IntlMathematicalValue::sign const):
+        (JSC::IntlMathematicalValue::tryGetDouble const):
+        (JSC::IntlMathematicalValue::getString const):
+        (JSC::IntlMathematicalValue::numberTypeFromDouble):
+        * runtime/IntlNumberFormatInlines.h:
+        (JSC::setNumberFormatDigitOptions):
+        (JSC::appendNumberFormatDigitOptionsToSkeleton):
+        (JSC::toIntlMathematicalValue):
+        * runtime/IntlNumberFormatPrototype.cpp:
+        (JSC::IntlNumberFormatPrototype::create):
+        (JSC::IntlNumberFormatPrototype::finishCreation):
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/IntlNumberFormatPrototype.h:
+        * runtime/IntlObjectInlines.h:
+        (JSC::intlStringOrBooleanOption):
+        * runtime/IntlPluralRules.cpp:
+        (JSC::UPluralRulesDeleter::operator()):
+        (JSC::IntlPluralRules::initializePluralRules):
+        (JSC::IntlPluralRules::resolvedOptions const):
+        (JSC::IntlPluralRules::select const):
+        (JSC::IntlPluralRules::selectRange const):
+        * runtime/IntlPluralRules.h:
+        * runtime/IntlPluralRulesPrototype.cpp:
+        (JSC::IntlPluralRulesPrototype::create):
+        (JSC::IntlPluralRulesPrototype::finishCreation):
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/IntlPluralRulesPrototype.h:
+        * runtime/IntlRelativeTimeFormat.cpp:
+        (JSC::IntlRelativeTimeFormat::formatToParts const):
+        * runtime/JSBigInt.h:
+        (JSC::JSBigInt::tryExtractDouble):
+        * runtime/MathCommon.h:
+        (JSC::isNegativeZero):
+        * runtime/TemporalObject.cpp:
+        (JSC::roundNumberToIncrement):
+        * runtime/TemporalObject.h:
+
 2021-11-08  Saam Barati  <sbarati@apple.com>
 
         We need to PreferNumber when calling toPrimitive for negate

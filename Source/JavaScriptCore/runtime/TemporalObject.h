@@ -80,8 +80,13 @@ private:
 enum class RoundingMode : uint8_t {
     Ceil,
     Floor,
+    Expand,
     Trunc,
-    HalfExpand
+    HalfCeil,
+    HalfFloor,
+    HalfExpand,
+    HalfTrunc,
+    HalfEven
 };
 
 enum class Precision : uint8_t {

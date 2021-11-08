@@ -39,6 +39,10 @@ static JSC_DECLARE_HOST_FUNCTION(intlNumberFormatPrototypeFuncFormatToParts);
 static JSC_DECLARE_HOST_FUNCTION(intlNumberFormatPrototypeFuncResolvedOptions);
 static JSC_DECLARE_HOST_FUNCTION(intlNumberFormatFuncFormat);
 
+#if HAVE(ICU_U_NUMBER_RANGE_FORMATTER)
+static JSC_DECLARE_HOST_FUNCTION(intlNumberFormatPrototypeFuncFormatRange);
+#endif
+
 }
 
 #include "IntlNumberFormatPrototype.lut.h"
@@ -55,10 +59,10 @@ const ClassInfo IntlNumberFormatPrototype::s_info = { "Intl.NumberFormat", &Base
 @end
 */
 
-IntlNumberFormatPrototype* IntlNumberFormatPrototype::create(VM& vm, JSGlobalObject*, Structure* structure)
+IntlNumberFormatPrototype* IntlNumberFormatPrototype::create(VM& vm, JSGlobalObject* globalObject, Structure* structure)
 {
     IntlNumberFormatPrototype* object = new (NotNull, allocateCell<IntlNumberFormatPrototype>(vm.heap)) IntlNumberFormatPrototype(vm, structure);
-    object->finishCreation(vm);
+    object->finishCreation(vm, globalObject);
     return object;
 }
 
@@ -72,11 +76,15 @@ IntlNumberFormatPrototype::IntlNumberFormatPrototype(VM& vm, Structure* structur
 {
 }
 
-void IntlNumberFormatPrototype::finishCreation(VM& vm)
+void IntlNumberFormatPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
 {
     Base::finishCreation(vm);
     ASSERT(inherits(vm, info()));
     JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
+    UNUSED_PARAM(globalObject);
+#if HAVE(ICU_U_NUMBER_RANGE_FORMATTER)
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("formatRange", intlNumberFormatPrototypeFuncFormatRange, static_cast<unsigned>(PropertyAttribute::DontEnum), 1);
+#endif
 }
 
 // https://tc39.es/ecma402/#sec-number-format-functions
@@ -86,26 +94,13 @@ JSC_DEFINE_HOST_FUNCTION(intlNumberFormatFuncFormat, (JSGlobalObject* globalObje
     auto scope = DECLARE_THROW_SCOPE(vm);
     auto* numberFormat = jsCast<IntlNumberFormat*>(callFrame->thisValue());
 
-    JSValue bigIntOrNumber = callFrame->argument(0).toNumeric(globalObject);
-    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    auto value = toIntlMathematicalValue(globalObject, callFrame->argument(0));
+    RETURN_IF_EXCEPTION(scope, { });
 
-    scope.release();
-    if (bigIntOrNumber.isNumber()) {
-        double value = bigIntOrNumber.asNumber();
-        return JSValue::encode(numberFormat->format(globalObject, value));
-    }
+    if (auto number = value.tryGetDouble())
+        RELEASE_AND_RETURN(scope, JSValue::encode(numberFormat->format(globalObject, number.value())));
 
-#if USE(BIGINT32)
-    if (bigIntOrNumber.isBigInt32()) {
-        JSBigInt* value = JSBigInt::createFrom(globalObject, bigIntOrNumber.bigInt32AsInt32());
-        RETURN_IF_EXCEPTION(scope, { });
-        RELEASE_AND_RETURN(scope, JSValue::encode(numberFormat->format(globalObject, value)));
-    }
-#endif
-
-    ASSERT(bigIntOrNumber.isHeapBigInt());
-    JSBigInt* value = bigIntOrNumber.asHeapBigInt();
-    return JSValue::encode(numberFormat->format(globalObject, value));
+    RELEASE_AND_RETURN(scope, JSValue::encode(numberFormat->format(globalObject, WTFMove(value))));
 }
 
 JSC_DEFINE_CUSTOM_GETTER(intlNumberFormatPrototypeGetterFormat, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName))
@@ -137,6 +132,38 @@ JSC_DEFINE_CUSTOM_GETTER(intlNumberFormatPrototypeGetterFormat, (JSGlobalObject*
     return JSValue::encode(boundFormat);
 }
 
+#if HAVE(ICU_U_NUMBER_RANGE_FORMATTER)
+JSC_DEFINE_HOST_FUNCTION(intlNumberFormatPrototypeFuncFormatRange, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    // Do not use unwrapForOldFunctions.
+    auto* numberFormat = jsDynamicCast<IntlNumberFormat*>(vm, callFrame->thisValue());
+    if (UNLIKELY(!numberFormat))
+        return JSValue::encode(throwTypeError(globalObject, scope, "Intl.NumberFormat.prototype.formatRange called on value that's not a NumberFormat"_s));
+
+    JSValue startValue = callFrame->argument(0);
+    JSValue endValue = callFrame->argument(1);
+
+    if (startValue.isUndefined() || endValue.isUndefined())
+        return throwVMTypeError(globalObject, scope, "start or end is undefined"_s);
+
+    auto start = toIntlMathematicalValue(globalObject, startValue);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    auto end = toIntlMathematicalValue(globalObject, endValue);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    if (auto startNumber = start.tryGetDouble()) {
+        if (auto endNumber = end.tryGetDouble())
+            RELEASE_AND_RETURN(scope, JSValue::encode(numberFormat->formatRange(globalObject, startNumber.value(), endNumber.value())));
+    }
+
+    RELEASE_AND_RETURN(scope, JSValue::encode(numberFormat->formatRange(globalObject, WTFMove(start), WTFMove(end))));
+}
+#endif
+
 JSC_DEFINE_HOST_FUNCTION(intlNumberFormatPrototypeFuncFormatToParts, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
@@ -150,10 +177,20 @@ JSC_DEFINE_HOST_FUNCTION(intlNumberFormatPrototypeFuncFormatToParts, (JSGlobalOb
     if (UNLIKELY(!numberFormat))
         return JSValue::encode(throwTypeError(globalObject, scope, "Intl.NumberFormat.prototype.formatToParts called on value that's not a NumberFormat"_s));
 
+#if HAVE(ICU_U_NUMBER_FORMATTER)
+    auto value = toIntlMathematicalValue(globalObject, callFrame->argument(0));
+    RETURN_IF_EXCEPTION(scope, { });
+
+    if (auto number = value.tryGetDouble())
+        RELEASE_AND_RETURN(scope, JSValue::encode(numberFormat->formatToParts(globalObject, number.value())));
+
+    RELEASE_AND_RETURN(scope, JSValue::encode(numberFormat->formatToParts(globalObject, WTFMove(value))));
+#else
     double value = callFrame->argument(0).toNumber(globalObject);
-    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    RETURN_IF_EXCEPTION(scope, { });
 
     RELEASE_AND_RETURN(scope, JSValue::encode(numberFormat->formatToParts(globalObject, value)));
+#endif
 }
 
 JSC_DEFINE_HOST_FUNCTION(intlNumberFormatPrototypeFuncResolvedOptions, (JSGlobalObject* globalObject, CallFrame* callFrame))

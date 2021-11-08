@@ -103,6 +103,12 @@ skip:
     # https://unicode-org.atlassian.net/browse/ICU-21367
     - test/intl402/Intl/getCanonicalLocales/unicode-ext-canonicalize-yes-to-true.js
 
+    # Intl.NumberFormat v3 changes the behavior.
+    - test/intl402/PluralRules/prototype/resolvedOptions/order.js
+    - test/intl402/NumberFormat/prototype/resolvedOptions/basic.js
+    - test/intl402/NumberFormat/prototype/resolvedOptions/order.js
+    - test/intl402/NumberFormat/test-option-useGrouping.js
+
     # Failing because we are building WebKit with very old ICU headers
     - test/intl402/ListFormat/constructor/constructor/locales-invalid.js
     - test/intl402/ListFormat/constructor/constructor/locales-valid.js

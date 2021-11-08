@@ -1,3 +1,68 @@
+2021-11-08  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Implement IntlNumberFormat v3
+        https://bugs.webkit.org/show_bug.cgi?id=215438
+
+        Reviewed by Ross Kirsling.
+
+        * stress/intl-numberformat-format-large.js: Added.
+        (shouldBe):
+        * stress/intl-numberformat-format-range-v3.js: Added.
+        (shouldBe):
+        (shouldThrow):
+        (shouldNotThrow):
+        (nf.formatRange.string_appeared_here.forEach):
+        (nf.formatRangeToParts.validRanges.forEach):
+        (nf6.formatRange.shouldThrow):
+        * stress/intl-numberformat-format-string-v3.js: Added.
+        (shouldBe):
+        * stress/intl-numberformat-format-string.js: Added.
+        (shouldBe):
+        * stress/intl-numberformat-format-to-parts.js:
+        * stress/intl-numberformat-rounding-increment-resolved-match-v3.js: Added.
+        (shouldBe):
+        (validRoundingIncrements.forEach):
+        * stress/intl-numberformat-rounding-increment-v3.js: Added.
+        (shouldThrow):
+        (validRoundingIncrements.forEach):
+        (invalidRoundingIncrements.forEach):
+        * stress/intl-numberformat-rounding-increment-value-hanidec.js: Added.
+        (shouldBe):
+        * stress/intl-numberformat-rounding-increment-value-v3.js: Added.
+        (shouldBe):
+        * stress/intl-numberformat-rounding-increment-value.js: Added.
+        (shouldBe):
+        * stress/intl-numberformat-rounding-mode-table-v3.js: Added.
+        (shouldBe):
+        (Object.keys.expectations.forEach):
+        * stress/intl-numberformat-rounding-mode-v3.js: Added.
+        (shouldBe):
+        (shouldThrow):
+        (validRoundingMode.forEach):
+        (invalidRoundingMode.forEach):
+        (let.options.get signDisplay):
+        (let.options.get roundingMode):
+        * stress/intl-numberformat-sign-display-v3.js: Added.
+        (shouldBe):
+        * stress/intl-numberformat-trailing-zero-display-resolved-options-v3.js: Added.
+        (shouldBe):
+        * stress/intl-numberformat-trailing-zero-display-v3.js: Added.
+        (shouldBe):
+        * stress/intl-numberformat-usegrouping-v3.js: Added.
+        (shouldBe):
+        (shouldThrow):
+        (validUseGrouping.forEach):
+        (invalidUseGrouping.forEach):
+        (all.forEach):
+        (mgd1.forEach):
+        (mgd2.forEach):
+        * stress/intl-numberformat.js:
+        (testNumberFormat):
+        (shouldBe.testNumberFormat.Intl.NumberFormat):
+        * stress/intl-pluralrules-selectrange.js: Added.
+        (shouldBe):
+        * test262/config.yaml:
+
 2021-11-08  Saam Barati  <sbarati@apple.com>
 
         We need to PreferNumber when calling toPrimitive for negate

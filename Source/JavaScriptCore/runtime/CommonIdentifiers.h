@@ -217,10 +217,12 @@
     macro(resolve) \
     macro(roundingIncrement) \
     macro(roundingMode) \
+    macro(roundingPriority) \
     macro(script) \
     macro(second) \
     macro(seconds) \
     macro(segment) \
+    macro(selectRange) \
     macro(sensitivity) \
     macro(set) \
     macro(size) \
@@ -249,6 +251,7 @@
     macro(toLocaleString) \
     macro(toPrecision) \
     macro(toString) \
+    macro(trailingZeroDisplay) \
     macro(type) \
     macro(uid) \
     macro(unicode) \
