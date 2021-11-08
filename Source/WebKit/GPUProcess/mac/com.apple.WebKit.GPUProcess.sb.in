@@ -46,10 +46,9 @@
         (file-mode #o0004)
         (subpath "/System")))
 
-(allow file-read* (with telemetry)
+(allow file-read*
     (require-all (file-mode #o0004)
-    (require-any (subpath "/Library/Filesystems/NetFSPlugins")
-    (subpath "/Library/Apple/System")
+    (require-any
     (subpath "/Library/Preferences/Logging")      ; Logging Rethink
 #if __MAC_OS_X_VERSION_MIN_REQUIRED < 110000
     (subpath "/private/var/db/dyld")
@@ -57,12 +56,6 @@
     (subpath "/private/var/db/timezone")
     (subpath "/usr/lib")
     (subpath "/usr/share"))))
-
-;;; Allow reading internal profiles on development builds
-(allow file-read* (with telemetry)
-    (require-all (file-mode #o0004)
-    (subpath "/AppleInternal/Library/Preferences/Logging")
-    (system-attribute apple-internal)))
 
 ;;; Allow mapping of system frameworks + dylibs
 (allow file-map-executable (with telemetry)
@@ -75,23 +68,17 @@
 )
 
 (allow file-read-metadata
-    (literal "/var"))
-(allow file-read-metadata (with telemetry)
+    (literal "/var")
     (literal "/etc")
     (literal "/tmp")
     (literal "/private/etc/localtime"))
 
-
 ;;; Allow access to standard special files.
-(allow file-read* (with telemetry)
-    (literal "/dev/autofs_nowait")
+(allow file-read*
     (literal "/dev/random")
-    (literal "/dev/urandom")
-    (literal "/private/etc/master.passwd")
     (literal "/private/etc/passwd"))
 
-(allow file-read*
-       file-write-data (with telemetry)
+(allow file-write-data (with telemetry)
     (literal "/dev/null")
     (literal "/dev/zero"))
 
@@ -605,29 +592,16 @@
     *uuid-pattern*)
 
 ;; Read-only preferences and data
-(allow file-read* (with telemetry)
+(allow file-read*
     ;; Basic system paths
-    (subpath "/Library/Dictionaries")
-    (subpath "/Library/Fonts")
-    (subpath "/Library/Frameworks")
-    (subpath "/Library/Managed Preferences")
-    (subpath "/Library/Speech/Synthesizers")
-    (regex #"^/private/etc/(hosts|group|passwd)$")
-
-    ;; System and user preferences
-    (home-literal "/.CFUserTextEncoding")
-
-    ;; FIXME: This should be removed when <rdar://problem/8957845> is fixed.
-    (home-subpath "/Library/Fonts")
-
     (subpath "/Library/Audio/Plug-Ins/HAL")
+    (subpath "/Library/Fonts")
+    (subpath "/Library/Managed Preferences")
+    ;; FIXME: This should be removed when <rdar://problem/8957845> is fixed.
+    (home-subpath "/Library/Fonts"))
 
-    (home-subpath "/Library/Dictionaries"))
-
-(allow file-read-data (with telemetry)
-    (literal "/usr/local/lib/log") ; <rdar://problem/36629495>
-    ;; Needed for AES3 support
-    (subpath "/Library/Audio/Plug-Ins/Components"))
+(allow file-read-data
+    (literal "/usr/local/lib/log")) ; <rdar://problem/36629495>
 
 ;; Preferences support
 (shared-preferences-read
@@ -665,10 +639,6 @@
 ;; On-disk WebKit2 framework location, to account for debug installations outside of /System/Library/Frameworks,
 ;; and to allow issuing extensions.
 (allow-read-directory-and-issue-read-extensions (param "WEBKIT2_FRAMEWORK_DIR"))
-
-;; Allow issuing extensions to system libraries that the Network process can already read.
-;; This is to avoid warnings attempting to create extensions for these resources.
-(allow-read-directory-and-issue-read-extensions "/System/Library/PrivateFrameworks/WebInspectorUI.framework")
 
 ;; Sandbox extensions
 (define (apply-read-and-issue-extension op path-filter)
@@ -776,15 +746,14 @@
     (global-name "com.apple.SecurityServer")
     (global-name "com.apple.ocspd"))
 
-(allow file-read* (with telemetry) (subpath "/private/var/db/mds/system")) ;; FIXME: This should be removed when <rdar://problem/9538414> is fixed.
+(allow file-read* (subpath "/private/var/db/mds/system")) ;; FIXME: This should be removed when <rdar://problem/9538414> is fixed.
 (with-filter (uid 0)
     (allow file-write* (with telemetry)
         (subpath "/private/var/db/mds/system")) ;; FIXME: This should be removed when <rdar://problem/9538414> is fixed.
 )
 
-(allow file-read* (with telemetry)
-       (subpath "/private/var/db/mds")
-       (literal "/private/var/db/DetachedSignatures"))
+(allow file-read*
+    (subpath "/private/var/db/mds"))
 
 (allow ipc-posix-shm-read* ipc-posix-shm-write-data ipc-posix-shm-write-create (with telemetry)
        (ipc-posix-name "com.apple.AppleDatabaseChanged"))
@@ -797,8 +766,6 @@
 #endif
 )
 
-(allow file-read-data (with telemetry)
-    (literal "/dev/autofs_nowait")) ; Used by CF to circumvent automount triggers
 (allow ipc-posix-shm (with telemetry)
     (ipc-posix-name-prefix "CFPBS:")) ; <rdar://problem/13757475>
 (allow system-fsctl (with telemetry) (fsctl-command (_IO "h" 47)))
@@ -822,7 +789,7 @@
 )
 
 ;; CFNetwork
-(allow file-read-data (with telemetry) (path "/private/var/db/nsurlstoraged/dafsaData.bin"))
+(allow file-read-data (path "/private/var/db/nsurlstoraged/dafsaData.bin"))
 
 #if PLATFORM(MAC)
 ;; FIXME should be removed when <rdar://problem/9347205> + related radar in Safari is fixed
@@ -853,16 +820,6 @@
        (global-name "com.apple.coreservices.appleevents")
        (global-name "com.apple.pasteboard.1")
        (global-name "com.apple.speech.recognitionserver"))
-#if PLATFORM(MAC)
-;; Also part of unnecessary NSApplication initialization, but we can't block access to these yet, see <rdar://problem/13869765>.
-(allow file-read* (with telemetry)
-       (subpath "/Library/Components")
-       (subpath "/Library/Keyboard Layouts")
-       (subpath "/Library/Input Methods")
-       (home-subpath "/Library/Components")
-       (home-subpath "/Library/Keyboard Layouts")
-       (home-subpath "/Library/Input Methods"))
-#endif
 
 ;; AirPlay
 (allow mach-lookup
@@ -880,9 +837,6 @@
 #endif
     (global-name "com.apple.coremedia.volumecontroller.xpc")
 )
-
-;; Data Detectors
-(allow file-read* (with telemetry) (subpath "/private/var/db/datadetectors/sys"))
 
 #if PLATFORM(MAC)
 ;; Media capture, utilities
@@ -933,7 +887,7 @@
 (with-filter (extension "com.apple.webkit.camera")
     (shared-preferences-read "com.apple.cmio")
     (shared-preferences-read "com.apple.coremedia")
-    (allow file-read* (with telemetry) (subpath "/Library/CoreMediaIO/Plug-Ins/DAL"))
+    (allow file-read* (subpath "/Library/CoreMediaIO/Plug-Ins/DAL"))
     (allow mach-lookup (with telemetry) (extension "com.apple.app-sandbox.mach"))
     (allow mach-lookup (with telemetry)
         (global-name "com.apple.cmio.AppleCameraAssistant")

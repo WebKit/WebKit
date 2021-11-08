@@ -1,3 +1,15 @@
+2021-11-08  Per Arne  <pvollan@apple.com>
+
+        [macOS][GPUP] Remove sandbox read access to files
+        https://bugs.webkit.org/show_bug.cgi?id=232245
+        <rdar://problem/84617482>
+
+        Reviewed by Brent Fulgham.
+
+        Based on telemetry, remove sandbox read access to files in the GPU process on macOS.
+
+        * GPUProcess/mac/com.apple.WebKit.GPUProcess.sb.in:
+
 2021-11-08  Brent Fulgham  <bfulgham@apple.com>
 
         Add additional mach message filter 
