@@ -54,7 +54,6 @@ using namespace HTMLNames;
 inline HTMLSourceElement::HTMLSourceElement(const QualifiedName& tagName, Document& document)
     : HTMLElement(tagName, document)
     , ActiveDOMObject(document)
-    , m_errorEventTimer(*this, &HTMLSourceElement::errorEventTimerFired)
 {
     LOG(Media, "HTMLSourceElement::HTMLSourceElement - %p", this);
     ASSERT(hasTagName(sourceTag));
@@ -125,22 +124,16 @@ void HTMLSourceElement::removedFromAncestor(RemovalType removalType, ContainerNo
 void HTMLSourceElement::scheduleErrorEvent()
 {
     LOG(Media, "HTMLSourceElement::scheduleErrorEvent - %p", this);
-    if (m_errorEventTimer.isActive())
+    if (m_errorEventCancellationGroup.hasPendingTask())
         return;
 
-    m_errorEventTimer.startOneShot(0_s);
+    queueCancellableTaskToDispatchEvent(*this, TaskSource::MediaElement, m_errorEventCancellationGroup, Event::create(eventNames().errorEvent, Event::CanBubble::No, Event::IsCancelable::Yes));
 }
 
 void HTMLSourceElement::cancelPendingErrorEvent()
 {
     LOG(Media, "HTMLSourceElement::cancelPendingErrorEvent - %p", this);
-    m_errorEventTimer.stop();
-}
-
-void HTMLSourceElement::errorEventTimerFired()
-{
-    LOG(Media, "HTMLSourceElement::errorEventTimerFired - %p", this);
-    dispatchEvent(Event::create(eventNames().errorEvent, Event::CanBubble::No, Event::IsCancelable::Yes));
+    m_errorEventCancellationGroup.cancel();
 }
 
 bool HTMLSourceElement::isURLAttribute(const Attribute& attribute) const
@@ -151,23 +144,6 @@ bool HTMLSourceElement::isURLAttribute(const Attribute& attribute) const
 const char* HTMLSourceElement::activeDOMObjectName() const
 {
     return "HTMLSourceElement";
-}
-
-void HTMLSourceElement::suspend(ReasonForSuspension reason)
-{
-    // FIXME: Shouldn't this also stop the timer for PageWillBeSuspended?
-    if (reason == ReasonForSuspension::BackForwardCache) {
-        m_shouldRescheduleErrorEventOnResume = m_errorEventTimer.isActive();
-        m_errorEventTimer.stop();
-    }
-}
-
-void HTMLSourceElement::resume()
-{
-    if (m_shouldRescheduleErrorEventOnResume) {
-        m_errorEventTimer.startOneShot(0_s);
-        m_shouldRescheduleErrorEventOnResume = false;
-    }
 }
 
 void HTMLSourceElement::stop()
