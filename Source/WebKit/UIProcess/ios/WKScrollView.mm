@@ -127,6 +127,8 @@ static BOOL shouldForwardScrollViewDelegateMethodToExternalDelegate(SEL selector
     WeakObjCPtr<id <UIScrollViewDelegate>> _externalDelegate;
     RetainPtr<WKScrollViewDelegateForwarder> _delegateForwarder;
 
+    BOOL _backgroundColorSetByClient;
+    BOOL _indicatorStyleSetByClient;
 // FIXME: Likely we can remove this special case for watchOS and tvOS.
 #if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
     BOOL _contentInsetAdjustmentBehaviorWasExternallyOverridden;
@@ -218,6 +220,44 @@ static BOOL shouldForwardScrollViewDelegateMethodToExternalDelegate(SEL selector
         _delegateForwarder = adoptNS([[WKScrollViewDelegateForwarder alloc] initWithInternalDelegate:_internalDelegate externalDelegate:externalDelegate.get()]);
         [super setDelegate:_delegateForwarder.get()];
     }
+}
+
+- (void)setBackgroundColor:(UIColor *)backgroundColor
+{
+    _backgroundColorSetByClient = backgroundColor;
+
+    super.backgroundColor = backgroundColor;
+
+    if (!_backgroundColorSetByClient) {
+        [_internalDelegate _resetCachedScrollViewBackgroundColor];
+        [_internalDelegate _updateScrollViewBackground];
+    }
+}
+
+- (void)_setBackgroundColorInternal:(UIColor *)backgroundColor
+{
+    if (_backgroundColorSetByClient)
+        return;
+
+    super.backgroundColor = backgroundColor;
+}
+
+- (void)setIndicatorStyle:(UIScrollViewIndicatorStyle)indicatorStyle
+{
+    _indicatorStyleSetByClient = indicatorStyle != UIScrollViewIndicatorStyleDefault;
+
+    super.indicatorStyle = indicatorStyle;
+
+    if (!_indicatorStyleSetByClient)
+        [_internalDelegate _updateScrollViewIndicatorStyle];
+}
+
+- (void)_setIndicatorStyleInternal:(UIScrollViewIndicatorStyle)indicatorStyle
+{
+    if (_indicatorStyleSetByClient)
+        return;
+
+    super.indicatorStyle = indicatorStyle;
 }
 
 static inline bool valuesAreWithinOnePixel(CGFloat a, CGFloat b)

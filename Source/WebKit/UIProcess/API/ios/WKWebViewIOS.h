@@ -99,7 +99,9 @@ enum class TapHandlingResult : uint8_t;
 - (BOOL)_isShowingVideoPictureInPicture;
 - (BOOL)_mayAutomaticallyShowVideoPictureInPicture;
 
+- (void)_resetCachedScrollViewBackgroundColor;
 - (void)_updateScrollViewBackground;
+- (void)_updateScrollViewIndicatorStyle;
 
 - (void)_videoControlsManagerDidChange;
 

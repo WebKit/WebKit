@@ -531,20 +531,30 @@ static WebCore::Color scrollViewBackgroundColor(WKWebView *webView, AllowPageBac
     return color;
 }
 
+- (void)_resetCachedScrollViewBackgroundColor
+{
+    _scrollViewBackgroundColor = WebCore::Color();
+}
+
 - (void)_updateScrollViewBackground
 {
     auto newScrollViewBackgroundColor = scrollViewBackgroundColor(self, AllowPageBackgroundColorOverride::Yes);
     if (_scrollViewBackgroundColor != newScrollViewBackgroundColor) {
         _scrollViewBackgroundColor = newScrollViewBackgroundColor;
-        [_scrollView setBackgroundColor:cocoaColor(newScrollViewBackgroundColor).get()];
+        [_scrollView _setBackgroundColorInternal:cocoaColor(newScrollViewBackgroundColor).get()];
     }
 
+    [self _updateScrollViewIndicatorStyle];
+}
+
+- (void)_updateScrollViewIndicatorStyle
+{
     // Update the indicator style based on the lightness/darkness of the background color.
     auto newPageBackgroundColor = scrollViewBackgroundColor(self, AllowPageBackgroundColorOverride::No);
     if (newPageBackgroundColor.lightness() <= .5f && newPageBackgroundColor.isVisible())
-        [_scrollView setIndicatorStyle:UIScrollViewIndicatorStyleWhite];
+        [_scrollView _setIndicatorStyleInternal:UIScrollViewIndicatorStyleWhite];
     else
-        [_scrollView setIndicatorStyle:UIScrollViewIndicatorStyleBlack];
+        [_scrollView _setIndicatorStyleInternal:UIScrollViewIndicatorStyleBlack];
 }
 
 - (void)_videoControlsManagerDidChange
@@ -725,7 +735,7 @@ static WebCore::Color scrollViewBackgroundColor(WKWebView *webView, AllowPageBac
     [self _processWillSwapOrDidExit];
 
     [_contentView setFrame:self.bounds];
-    [_scrollView setBackgroundColor:[_contentView backgroundColor]];
+    [_scrollView _setBackgroundColorInternal:[_contentView backgroundColor]];
     [_scrollView setContentOffset:[self _initialContentOffsetForScrollView]];
     [_scrollView setZoomScale:1];
 }
