@@ -63,7 +63,7 @@ struct MatchedRule {
     const RuleData* ruleData;
     unsigned specificity;
     ScopeOrdinal styleScopeOrdinal;
-    CascadeLayerPriority cascadeLayerPriority;
+    unsigned cascadeLayerPriority;
 };
 
 enum class FromStyleAttribute : bool { No, Yes };
