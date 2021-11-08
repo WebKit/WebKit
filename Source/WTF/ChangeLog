@@ -1,3 +1,12 @@
+2021-11-08  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [libpas] Enable libpas on macOS
+        https://bugs.webkit.org/show_bug.cgi?id=231815
+
+        Reviewed by Filip Pizlo.
+
+        * WTF.xcodeproj/project.pbxproj:
+
 2021-11-08  Kate Cheney  <katherine_cheney@apple.com>
 
         trustd network connections occasionally omitted from App Privacy report

@@ -1,3 +1,28 @@
+2021-11-08  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [libpas] Enable libpas on macOS
+        https://bugs.webkit.org/show_bug.cgi?id=231815
+
+        Reviewed by Filip Pizlo.
+
+        Enabling libpas on x64 macOS. Previously, we enabled it only on AppleSilicon.
+        This helps stressing libpas more. And it offers large performance improvement.
+
+            1. Speedometer2 is 2.1% improved on low-end macOS (MBA8,2) and 1.7% improved on high-end macOS (MBP14,1).
+            2. JetStream2 is neutral on both.
+
+        libpas is written in C to be portable to the other components. But since C does not have templates,
+        we are using particular programming pattern where we pass set of functions annotated with ALWAYS_INLINE to
+        the functions with ALWAYS_INLINE. This pattern ensures that the fast path function will be inlined completely
+        while we can pass function pointer to configure the malloc implementation. However, we found that this pattern
+        emits massive amount of unnecessary mov, movd etc. when it is built with O0 in x64.
+        Discussed with Phil, and we use O3 options to build bmalloc and its inlined functions to keep C-written libpas
+        customizable while avoiding timeouts in Debug tests.
+
+        * Configurations/Base.xcconfig:
+        * bmalloc.xcodeproj/project.pbxproj:
+        * bmalloc/BPlatform.h:
+
 2021-10-26  David Kilzer  <ddkilzer@apple.com>
 
         [libpas] Add printf format attributes

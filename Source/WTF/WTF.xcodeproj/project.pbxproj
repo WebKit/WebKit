@@ -25,7 +25,7 @@
 		0F30CB5A1FCDF134004B5323 /* ConcurrentPtrHashSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F30CB581FCDF133004B5323 /* ConcurrentPtrHashSet.cpp */; };
 		0F3492D722AF431C004F85FC /* TextStreamCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0F3492D622AF42F1004F85FC /* TextStreamCocoa.mm */; };
 		0F43D8F11DB5ADDC00108FB6 /* AutomaticThread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F43D8EF1DB5ADDC00108FB6 /* AutomaticThread.cpp */; };
-		0F5BF1761F23D49A0029D91D /* Gigacage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F5BF1741F23D49A0029D91D /* Gigacage.cpp */; };
+		0F5BF1761F23D49A0029D91D /* Gigacage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F5BF1741F23D49A0029D91D /* Gigacage.cpp */; settings = {COMPILER_FLAGS = "-O3"; }; };
 		0F60F32F1DFCBD1B00416D6C /* LockedPrintStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F60F32D1DFCBD1B00416D6C /* LockedPrintStream.cpp */; };
 		0F66B28A1DC97BAB004A1D3F /* ClockType.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F66B2801DC97BAB004A1D3F /* ClockType.cpp */; };
 		0F66B28C1DC97BAB004A1D3F /* MonotonicTime.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F66B2821DC97BAB004A1D3F /* MonotonicTime.cpp */; };
@@ -140,7 +140,7 @@
 		A8A473B5151A825B004123FF /* fixed-dtoa.cc in Sources */ = {isa = PBXBuildFile; fileRef = A8A47290151A825A004123FF /* fixed-dtoa.cc */; };
 		A8A473B7151A825B004123FF /* strtod.cc in Sources */ = {isa = PBXBuildFile; fileRef = A8A47294151A825A004123FF /* strtod.cc */; };
 		A8A473BA151A825B004123FF /* dtoa.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8A47297151A825A004123FF /* dtoa.cpp */; };
-		A8A473C3151A825B004123FF /* FastMalloc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8A472A1151A825A004123FF /* FastMalloc.cpp */; };
+		A8A473C3151A825B004123FF /* FastMalloc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8A472A1151A825A004123FF /* FastMalloc.cpp */; settings = {COMPILER_FLAGS = "-O3"; }; };
 		A8A473D8151A825B004123FF /* HashTable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8A472B8151A825A004123FF /* HashTable.cpp */; };
 		A8A473E4151A825B004123FF /* MainThreadCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = A8A472C5151A825A004123FF /* MainThreadCocoa.mm */; };
 		A8A473E5151A825B004123FF /* MainThread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8A472C6151A825A004123FF /* MainThread.cpp */; };
@@ -185,7 +185,7 @@
 		E38C41281EB4E0680042957D /* CPUTime.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E38C41261EB4E0680042957D /* CPUTime.cpp */; };
 		E38D6E271F5522E300A75CC4 /* StringBuilderJSON.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E38D6E261F5522E300A75CC4 /* StringBuilderJSON.cpp */; };
 		E392FA2722E92BFF00ECDC73 /* ResourceUsageCocoa.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E392FA2622E92BFF00ECDC73 /* ResourceUsageCocoa.cpp */; };
-		E3A32BC41FC830E2007D7E76 /* JSValueMalloc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3A32BC21FC830E2007D7E76 /* JSValueMalloc.cpp */; };
+		E3A32BC41FC830E2007D7E76 /* JSValueMalloc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3A32BC21FC830E2007D7E76 /* JSValueMalloc.cpp */; settings = {COMPILER_FLAGS = "-O3"; }; };
 		E3B8E41D24E7CE92003655D8 /* LineBreakIteratorPoolICU.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3B8E41C24E7CE92003655D8 /* LineBreakIteratorPoolICU.cpp */; };
 		E3BE09A724A5854D009DF2B4 /* ICUHelpers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3BE09A624A58545009DF2B4 /* ICUHelpers.cpp */; };
 		E4A0AD391A96245500536DF6 /* WorkQueue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4A0AD371A96245500536DF6 /* WorkQueue.cpp */; };
