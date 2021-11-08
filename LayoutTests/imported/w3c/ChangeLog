@@ -1,3 +1,18 @@
+2021-11-08  Chris Dumez  <cdumez@apple.com>
+
+        Add abort reason to AbortSignal
+        https://bugs.webkit.org/show_bug.cgi?id=232299
+        <rdar://problem/84921281>
+
+        Reviewed by Alexey Shvayka.
+
+        Import https://github.com/web-platform-tests/wpt/commit/9c7dfd2809b6c3a209a2c4df43c1d6816e6bfc1b from
+        upstream WPT to gain layout test coverage and rebaseline the test.
+
+        * web-platform-tests/dom/abort/event.any-expected.txt:
+        * web-platform-tests/dom/abort/event.any.js:
+        * web-platform-tests/dom/abort/event.any.worker-expected.txt:
+
 2021-11-08  Tim Nguyen  <ntim@apple.com>
 
         Stop skipping html/semantics/interactive-elements/the-details-element/toggleEvent.html in import-expectations.json

@@ -4,4 +4,9 @@ PASS controller.signal should always return the same object
 PASS controller.abort() should do nothing the second time it is called
 PASS event handler should not be called if added after controller.abort()
 PASS the abort event should have the right properties
+PASS AbortController abort(reason) should set signal.reason
+PASS aborting AbortController without reason creates an "AbortError" DOMException
+PASS AbortController abort(undefined) creates an "AbortError" DOMException
+PASS static aborting signal should have right properties
+PASS static aborting signal with reason should set signal.reason
 

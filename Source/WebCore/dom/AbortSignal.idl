@@ -26,12 +26,15 @@
 [
     CustomIsReachable,
     Exposed=(Window,Worker),
+    JSCustomMarkFunction,
     PrivateIdentifier,
     PublicIdentifier
 ] interface AbortSignal : EventTarget {
     [PrivateIdentifier] static boolean whenSignalAborted(AbortSignal object, AbortAlgorithm algorithm);
 
-    [NewObject, CallWith=ScriptExecutionContext] static AbortSignal abort();
+    [NewObject, CallWith=ScriptExecutionContext&GlobalObject] static AbortSignal abort(optional any reason);
     readonly attribute boolean aborted;
+    readonly attribute any reason;
+
     attribute EventHandler onabort;
 };

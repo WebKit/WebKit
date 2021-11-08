@@ -32,5 +32,5 @@
 
     [SameObject] readonly attribute AbortSignal signal;
 
-    undefined abort();
+    [CallWith=GlobalObject] undefined abort(optional any reason);
 };

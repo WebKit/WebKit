@@ -28,6 +28,7 @@
 #include "ContextDestructionObserver.h"
 #include "EventTarget.h"
 #include "JSDOMPromiseDeferred.h"
+#include "JSValueInWrappedObject.h"
 #include <wtf/Function.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
@@ -43,14 +44,15 @@ class AbortSignal final : public RefCounted<AbortSignal>, public EventTargetWith
 public:
     static Ref<AbortSignal> create(ScriptExecutionContext&);
 
-    static Ref<AbortSignal> abort(ScriptExecutionContext&);
+    static Ref<AbortSignal> abort(JSDOMGlobalObject&, ScriptExecutionContext&, JSC::JSValue reason);
 
     static bool whenSignalAborted(AbortSignal&, Ref<AbortAlgorithm>&&);
 
-    void signalAbort();
+    void signalAbort(JSC::JSValue reason);
     void signalFollow(AbortSignal&);
 
     bool aborted() const { return m_aborted; }
+    const JSValueInWrappedObject& reason() const { return m_reason; }
 
     using RefCounted::ref;
     using RefCounted::deref;
@@ -62,7 +64,7 @@ public:
 
 private:
     enum class Aborted : bool { No, Yes };
-    explicit AbortSignal(ScriptExecutionContext&, Aborted = Aborted::No);
+    explicit AbortSignal(ScriptExecutionContext&, Aborted = Aborted::No, JSC::JSValue reason = { });
 
     // EventTarget.
     EventTargetInterface eventTargetInterface() const final { return AbortSignalEventTargetInterfaceType; }
@@ -73,6 +75,7 @@ private:
     bool m_aborted { false };
     Vector<Algorithm> m_algorithms;
     WeakPtr<AbortSignal> m_followingSignal;
+    JSValueInWrappedObject m_reason;
 };
 
 }

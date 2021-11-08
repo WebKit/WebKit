@@ -27,8 +27,10 @@
 #include "AbortSignal.h"
 
 #include "AbortAlgorithm.h"
+#include "DOMException.h"
 #include "Event.h"
 #include "EventNames.h"
+#include "JSDOMException.h"
 #include "ScriptExecutionContext.h"
 #include <wtf/IsoMallocInlines.h>
 
@@ -42,19 +44,23 @@ Ref<AbortSignal> AbortSignal::create(ScriptExecutionContext& context)
 }
 
 // https://dom.spec.whatwg.org/#dom-abortsignal-abort
-Ref<AbortSignal> AbortSignal::abort(ScriptExecutionContext& context)
+Ref<AbortSignal> AbortSignal::abort(JSDOMGlobalObject& globalObject, ScriptExecutionContext& context, JSC::JSValue reason)
 {
-    return adoptRef(*new AbortSignal(context, Aborted::Yes));
+    ASSERT(reason);
+    if (reason.isUndefined())
+        reason = toJS(&globalObject, &globalObject, DOMException::create(AbortError));
+    return adoptRef(*new AbortSignal(context, Aborted::Yes, reason));
 }
 
-AbortSignal::AbortSignal(ScriptExecutionContext& context, Aborted aborted)
+AbortSignal::AbortSignal(ScriptExecutionContext& context, Aborted aborted, JSC::JSValue reason)
     : ContextDestructionObserver(&context)
     , m_aborted(aborted == Aborted::Yes)
+    , m_reason(reason)
 {
 }
 
 // https://dom.spec.whatwg.org/#abortsignal-signal-abort
-void AbortSignal::signalAbort()
+void AbortSignal::signalAbort(JSC::JSValue reason)
 {
     // 1. If signal's aborted flag is set, then return.
     if (m_aborted)
@@ -62,6 +68,9 @@ void AbortSignal::signalAbort()
     
     // 2. Set signal’s aborted flag.
     m_aborted = true;
+
+    ASSERT(reason);
+    m_reason = reason;
 
     Ref protectedThis { *this };
     auto algorithms = std::exchange(m_algorithms, { });
@@ -79,7 +88,7 @@ void AbortSignal::signalFollow(AbortSignal& signal)
         return;
 
     if (signal.aborted()) {
-        signalAbort();
+        signalAbort(signal.reason());
         return;
     }
 
@@ -87,7 +96,7 @@ void AbortSignal::signalFollow(AbortSignal& signal)
     m_followingSignal = signal;
     signal.addAlgorithm([weakThis = WeakPtr { this }] {
         if (weakThis)
-            weakThis->signalAbort();
+            weakThis->signalAbort(weakThis->m_followingSignal ? static_cast<JSC::JSValue>(weakThis->m_followingSignal->reason()) : JSC::jsUndefined());
     });
 }
 

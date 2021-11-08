@@ -46,4 +46,12 @@ bool JSAbortSignalOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> ha
     return visitor.containsOpaqueRoot(&abortSignal);
 }
 
+template<typename Visitor>
+void JSAbortSignal::visitAdditionalChildren(Visitor& visitor)
+{
+    wrapped().reason().visit(visitor);
+}
+
+DEFINE_VISIT_ADDITIONAL_CHILDREN(JSAbortSignal);
+
 } // namespace WebCore
